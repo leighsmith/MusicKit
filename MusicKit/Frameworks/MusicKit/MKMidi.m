@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2000/04/07 18:15:14  leigh
+  Fixed incoming MIDI distribution
+
   Revision 1.16  2000/04/01 01:18:48  leigh
   Removed redundant imports, defined around for MacOsX (temporarily)
 
@@ -236,16 +239,18 @@ NSLocalizedStringFromTableInBundle(@"Problem communicating with MIDI device driv
 
 #define NO_UNIT (-1)
 
+// class variables
 static int addedPortsCount = 0;
-static NSMutableDictionary *portTable = nil;  // class variable
+static NSMutableDictionary *portTable = nil;
+static MKMidi *receivingMidi = nil;           // the instance that has received the MIDI driver NSPort machMessage
 static NSMutableArray *midiDriverNames = nil; // This and midiDriverUnits will have the same number of elements.
 static NSMutableArray *midiDriverUnits = nil;
-#if WIN32 || defined(__ppc__)
+#if WIN32 || macosx
 static unsigned int systemDefaultDriverNum;   // index into the midiDriverNames and units that the operating system has nominated as default
 #endif
+
 /* Some mtc forward decls */
 static double mtcTimeOffset = 0;
-
 static BOOL tearDownMTC(MKMidi *self);
 static BOOL setUpMTC(MKMidi *self);
 
@@ -274,21 +279,6 @@ NSString *midiDriverErrorString(int errorCode)
             [aList addObject:midiObj];
     }
     return aList;
-}
-
-// Given the NSPort, retrieve the MKMidi instance that is receiving on that port.
-static MKMidi *getMidiFromRecvPort(NSPort *aPort)
-{
-    MKMidi *midiObj;
-
-    // This is inefficient, once we can do better compares we should use a search mechanism.
-    // which has the port as the key. This needs a separate NSDictionary to portTable.
-    NSEnumerator *enumerator = [portTable objectEnumerator];
-    while ((midiObj = [enumerator nextObject])) {
-        if ([aPort isEqual: midiObj->recvPort])
-            return midiObj;
-    }
-    return nil;
 }
 
 static int closeMidiDev(MKMidi *self)
@@ -371,7 +361,7 @@ static int openMidiDev(MKMidi *self)
     int r;
     BOOL isSoftDevice;
     NSMutableArray *otherUnits;
-#if defined(__ppc__)
+#if macosx
     self->unit = getNumSuffix(self->midiDevName, &isSoftDevice);
     self->devicePort = [[NSPortNameServer defaultPortNameServer] portForName: DRIVER_NAME onHost: self->hostname];
 
@@ -395,7 +385,7 @@ static int openMidiDev(MKMidi *self)
         }
     }
     [otherUnits release];
-#elif !defined(WIN32) // i.e MacOsX-Server
+#elif macosx_server
     self->unit = getNumSuffix(self->midiDevName, &isSoftDevice);
     self->devicePort = [[NSPortNameServer defaultPortNameServer] portForName: DRIVER_NAME onHost: self->hostname];
     [self->devicePort retain];
@@ -872,7 +862,7 @@ static id handleSysExclbyte(_MKMidiInStruct *ptr,unsigned char midiByte)
     return nil; /* We're not done yet. */
 } 
 
-static void sendIncomingNote(short chan,id aNote,MKMidi *sendingMidi,int quanta)
+static void sendIncomingNote(short chan, MKNote *aNote, MKMidi *sendingMidi, int quanta)
 {
     if (aNote) {
 	double t;
@@ -907,29 +897,34 @@ static int incomingDataCount = 0; /* We use a static here to allow us to
 				   */
 
 // my_data_reply is called direct from the MIDI Reply routine, so the Mach port needs to be defined rather than
-// an NSPort.
+// an NSPort for the first parameter.
 static void my_data_reply(mach_port_t reply_port, short unit, MIDIRawEvent *events, unsigned int count) {
-    MKMidi *receivingMidi = getMidiFromRecvPort([NSPort portWithMachPort: reply_port]);
-    _MKMidiInStruct *ptr = MIDIINPTR(receivingMidi);
-    id aNote;
+    _MKMidiInStruct *ptr;
+    MKNote *aNote;
     unsigned char statusByte;
-    incomingDataCount = count; 
-    for (; incomingDataCount--; events++) {
+
+    if(receivingMidi == nil) { // check we assigned this in handleMachMessage
+        _MKErrorf(MK_musicKitErr, @"Internal error, receiving MKMidi has not been assigned\n");
+        return;
+    }
+    ptr = MIDIINPTR(receivingMidi);
+    for (incomingDataCount = count; incomingDataCount--; events++) {
 	if (statusByte = parseMidiByte(events->byte, ptr)) {
-	    if (statusByte == MIDI_SYSEXCL) 
-	      aNote = handleSysExclbyte(ptr,events->byte);
-	    else 
-	      aNote = _MKMidiToMusicKit(ptr,statusByte);
+	    if (statusByte == MIDI_SYSEXCL)
+                aNote = handleSysExclbyte(ptr, events->byte);
+	    else
+                aNote = _MKMidiToMusicKit(ptr, statusByte);
 	    if (aNote) {
-                sendIncomingNote(ptr->chan,aNote,receivingMidi,events->time);
-		/* sending the Note can have unknown side-effects, since the
-		 * user defines the behavior here.  For example, the Midi obj 
+                sendIncomingNote(ptr->chan, aNote, receivingMidi, events->time);
+		/* sending the MKNote can have unknown side-effects, since the
+		 * user defines the behavior here.  For example, the MKMidi obj 
 		 * could be aborted or re-opened. It could even be freed!
 		 * So when we abort, we clear incomingDataCount.  This 
 		 * guarantees that we won't be left in a bad state */
 	    }
 	}
     }
+    receivingMidi = nil; // to rigourously check handleMachMessage does its job, prevents spurious wrong messages being sent.
 }
 
 /*sb: added the following method to handle mach messages. This replaces the earlier function
@@ -946,8 +941,11 @@ static void my_data_reply(mach_port_t reply_port, short unit, MIDIRawEvent *even
 {
     msg_header_t *msg = (msg_header_t *)machMessage;
     int r;
-    MIDIReplyFunctions recvStruct =
-        { /* Tells driver funcs to call */ my_data_reply,0,0,0};
+    MIDIReplyFunctions recvStruct = { /* Tells driver funcs to call */ my_data_reply,0,0,0};
+
+    receivingMidi = self;
+    // Eventually MIDIHandleReply should be unnecessary, when we receive the MIDI data direct into handlePortMessage
+    // Then we can merge this method and my_data_reply into a single handlePortMessage. 
     r = MIDIHandleReply(msg,&recvStruct);        /* This gets data */
     if (r != KERN_SUCCESS)
       _MKErrorf(MK_machErr, INPUT_ERROR, midiDriverErrorString(r), @"midiIn");
@@ -1050,7 +1048,7 @@ static BOOL getAvailableMidiDevices(void)
     List *installedDrivers;
     NSMutableArray *midiDriverList;
     id aConfigTable;
-#elif WIN32 || defined(__ppc__)
+#elif WIN32 || macosx
     const char **systemDriverNames;
     int i;
 #endif
@@ -1061,7 +1059,7 @@ static BOOL getAvailableMidiDevices(void)
     }
     else
         driverInfoInitialized = YES;
-#if WIN32 || defined(__ppc__)
+#if WIN32 || macosx
     // Windows98/NT YellowBox/NT, WebObjects or OpenStep Enterprise using the MKPerformSndMIDI framework
     // In future, this should become the cross-platform means to obtain the available drivers.
     systemDriverNames = MIDIGetAvailableDrivers(&systemDefaultDriverNum);
@@ -1112,7 +1110,7 @@ static BOOL getAvailableMidiDevices(void)
 	s = (char *)[aConfigTable valueForStringKey:"Instance"];
 	[midiDriverUnits insertObject: s ? atoi(s) : 0 atIndex: i];
     }
-#elif ppc && !defined(__ppc__)
+#elif macosx_server
     // hardwire this for MOXS1.0 until tablesForInstalledDrivers gives us what we expect
     midiDriverNames = [NSMutableArray arrayWithObject: [NSString stringWithFormat:@"%@0",DRIVER_NAME]];
     midiDriverUnits = [NSMutableArray arrayWithObject: [NSNumber numberWithInt: 0]];
@@ -1145,7 +1143,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
 	if ([defaultsValue length]) 
 	  num = getNumSuffix(defaultsValue, &isSoft);
 	else if (num == 0) { 
-#if WIN32 || defined(__ppc__)
+#if WIN32 || macosx
           // Use the system default MIDI driver
 	  *midiDevStrArr = [[midiDriverNames objectAtIndex: systemDefaultDriverNum] copy];
 #else
@@ -1155,7 +1153,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
 	  return YES;
 	}
     }
-#if WIN32 || defined(__ppc__)
+#if WIN32 || macosx
     // here we assume if we didn't have a soft device name, we are referring to a described device.
     *midiDevStrArr = [[devName copy] retain];
 #else
@@ -1352,6 +1350,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
     [noteSenders makeObjectsPerformSelector:@selector(disconnect)];
     [noteSenders removeAllObjects];  
     [noteSenders release];
+    NSLog(@"removing the object");
     [portTable removeObjectForKey:midiDevName];
     [super dealloc];
 }
