@@ -43,7 +43,7 @@ MKDSP_API int DSPEnableErrorFP(FILE *fp);
  */
 
 
-MKDSP_API int DSPSetErrorFile(char *fn);
+MKDSP_API int DSPSetErrorFile(const char *fn);
 /* 
  * Set the file-name for DSP error messages to fn.
  * The default file used if this is not called is
