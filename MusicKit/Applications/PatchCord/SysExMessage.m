@@ -1,7 +1,7 @@
 /*
-** Routines to control sys-ex MIDI messages being received and sent, converting
-** to and from ASCII and retrieving individual bytes from the message.
-*/
+ ** Routines to control sys-ex MIDI messages being received and sent, converting
+ ** to and from ASCII and retrieving individual bytes from the message.
+ */
 #import <MusicKit/MusicKit.h>
 #import "SysExReceiver.h"
 #import "SysExMessage.h"
@@ -21,71 +21,71 @@ static void handleMKError(NSString *msg)
 // Class initialization
 + (void) initialize
 {
-  if (self == [SysExMessage class]) {
-      sysExMidi = nil;	// initialise our static class vars. 
-      sysExReceiver = nil;
-  }
-  return;
+    if (self == [SysExMessage class]) {
+	sysExMidi = nil;	// initialise our static class vars. 
+	sysExReceiver = nil;
+    }
+    return;
 }
 
 // Enable reception of MIDI data to our designated system exclusive receiver.
 + (void) open
 {
-  MKSetErrorProc(handleMKError);
-  sysExReceiver = [[SysExReceiver alloc] init];
-  sysExMidi = [[MKMidi midi] retain];
-  [[sysExMidi noteSender] connect: [sysExReceiver noteReceiver]];
-  [sysExMidi setOutputTimed:NO];
-  [sysExMidi setUseInputTimeStamps:NO];
-  [sysExMidi open];
-  [sysExMidi run];
-  [MKConductor setFinishWhenEmpty: NO];
-  [MKConductor setClocked: YES];
-  [MKConductor startPerformance];
+    MKSetErrorProc(handleMKError);
+    sysExReceiver = [[SysExReceiver alloc] init];
+    sysExMidi = [[MKMidi midi] retain];
+    [[sysExMidi noteSender] connect: [sysExReceiver noteReceiver]];
+    [sysExMidi setOutputTimed: NO];
+    [sysExMidi setUseInputTimeStamps: NO];
+    [sysExMidi open];
+    [sysExMidi run];
+    [MKConductor setFinishWhenEmpty: NO];
+    [MKConductor setClocked: YES];
+    [MKConductor startPerformance];
 }
 
 // close down the System Exclusive handling
 + (void) close
 {
-  [MKConductor finishPerformance];
-  [sysExMidi stop];
-  [sysExMidi close];
-  [sysExMidi autorelease];
+    [MKConductor finishPerformance];
+    [sysExMidi stop];
+    [sysExMidi close];
+    [sysExMidi autorelease];
 }
 
 // Hand on synth registrations to the sysExReceiver.
 + (void) registerSynth: (MIDISysExSynth *) sender
 {
-  [sysExReceiver registerSynth: sender];
+    [sysExReceiver registerSynth: sender];
 }
 
 // and enabling/disabling of messages
 + (void) enable
 {
-  [sysExReceiver enable];
+    [sysExReceiver enable];
 }
 
 + (void) disable
 {
-  [sysExReceiver disable];
+    [sysExReceiver disable];
 }
 
 + (NSMutableArray *) registeredSynths
 {
-  return [sysExReceiver registeredSynths];
+    return [sysExReceiver registeredSynths];
 }
 
 + (SysExReceiver *) receiver
 {
-  return sysExReceiver;
+    return sysExReceiver;
 }
 
 // initialise our data structure to empty
 - (id) init
 {
-  [super init];
-  message = [[NSMutableData dataWithCapacity: 256] retain];
-  return self;
+    [super init];
+    message = [[NSMutableData dataWithCapacity: 256] retain];
+    return self;
 }
 
 // initialise our data structure to the new mutable data
@@ -93,12 +93,12 @@ static void handleMKError(NSString *msg)
 // Why does this have to be mutable?
 - (id) initWithMessage: (NSMutableData *) newMessage
 {
-  [super init];
-  message = [[NSMutableData dataWithData: newMessage] retain];
-  return self;
+    [super init];
+    message = [[NSMutableData dataWithData: newMessage] retain];
+    return self;
 }
 
-// if there is a sysEx parameter there, extract it into the message return YES, no if there wasn't a sysEx message\
+// if there is a sysEx parameter there, extract it into the message return YES, no if there wasn't a sysEx message
 - (id) initWithNote: (MKNote *) note
 {
 //  if([note isParPresent:
@@ -116,14 +116,14 @@ static void handleMKError(NSString *msg)
     NSScanner *exclScanner;
     NSCharacterSet *hexDigitSeparatorsSet; // Mutable character sets are less efficient
     NSMutableCharacterSet *whitespaceSet;  // to use than immutable character sets.
-
+    
     exclScanner = [NSScanner scannerWithString: exclusiveString];
     whitespaceSet = [[NSCharacterSet whitespaceAndNewlineCharacterSet] mutableCopy];
     [whitespaceSet addCharactersInString: @","];   // delimiters: commas, white space. 
     hexDigitSeparatorsSet = [whitespaceSet copy];
     [whitespaceSet release];
     [exclScanner setCharactersToBeSkipped: hexDigitSeparatorsSet];
-
+    
     while ([exclScanner isAtEnd] == NO) {
   	if([exclScanner scanHexInt: &midiByte] == YES) {
 	    if(midiByte > 0xff) {
@@ -137,29 +137,29 @@ static void handleMKError(NSString *msg)
             }
 	}
 	else {			// non hex int input encountered, TODO report the error
-		NSLog(@"Error reading hex numbers\n");
+	    NSLog(@"Error reading hex numbers\n");
 	}
-   }
-   [message setLength: length];
+    }
+    [message setLength: length];
 }
 
 
 // Encode the system exclusive message into ascii NSString according to the format parameter.
 - (NSString *) exportToAscii: (SysExMsgExportFormat) format
 {
-  unsigned int byteCount, i;
-  NSString *hexString;
-
-  byteCount = [message length];
-  if(byteCount > 0) {
-    hexString = [NSString stringWithFormat: @"%02X", [self messageByteAt: 0]];
-    for(i = 1; i < byteCount; i++) {
-      hexString = [hexString stringByAppendingFormat: @",%02X", [self messageByteAt: i]];
+    unsigned int byteCount, i;
+    NSString *hexString;
+    
+    byteCount = [message length];
+    if(byteCount > 0) {
+	hexString = [NSString stringWithFormat: @"%02X", [self messageByteAt: 0]];
+	for(i = 1; i < byteCount; i++) {
+	    hexString = [hexString stringByAppendingFormat: @",%02X", [self messageByteAt: i]];
+	}
+	return hexString;     // I guess NSString has marked it to be autoreleased already
     }
-    return hexString;     // I guess NSString has marked it to be autoreleased already
-  }
-  else
-    return nil;                        // bodged for now (TODO)
+    else
+	return nil;                        // bodged for now (TODO)
 }
 
 // copying protocol method as per the NSCopying protocol
@@ -184,8 +184,8 @@ static void handleMKError(NSString *msg)
 // Set the byte (unsigned char) in the SysEx message at the index (from 0).
 - (void) setMessageByteAt: (unsigned int) index to: (unsigned char) value
 {
-   NSRange changeSingleByte = { index, 1 };
-   [message replaceBytesInRange: changeSingleByte withBytes: &value];
+    NSRange changeSingleByte = { index, 1 };
+    [message replaceBytesInRange: changeSingleByte withBytes: &value];
 }
 
 // make the sysEx message be tested against the receiver.
@@ -199,7 +199,7 @@ static void handleMKError(NSString *msg)
 {
     NSString *s = [self exportToAscii: musicKitSysExSyntax];
     MKNote *myNote = [[MKNote alloc] init];
-
+    
     [myNote setPar:MK_sysExclusive toString: s];
     return [myNote autorelease];
 }
@@ -209,11 +209,11 @@ static void handleMKError(NSString *msg)
 - (void) send
 {
     // [[sysExMidi noteReceiver] receiveAndFreeNote: [self note]];
-// Ok for some reason this doesn't work??
+    // Ok for some reason this doesn't work??
     [[sysExMidi noteReceiver] receiveNote: [self note]];
 //    NSLog(s);
-    // loop back to check other synths, only for debugging, perhaps this should be a feature
-    //[self receive];
+// loop back to check other synths, only for debugging, perhaps this should be a feature
+//[self receive];
 }
 
 - (NSString *) description

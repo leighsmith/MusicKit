@@ -1,5 +1,11 @@
-// Bank - responsible for controlling (managing) each PatchBank object (model) and it's view by loading the nib via
-// the NSDocument functionality.
+//
+//  $Id$
+//  PatchCord
+//
+//  Created by Leigh Smith
+//  Copyright 2001 The MusicKit Project. All rights reserved.
+//
+
 #import "Bank.h"
 //#import <EOControl/EOControl.h>
 #import "PreferencesManager.h"          // for preferences constants
