@@ -1,0 +1,19 @@
+/*
+   $Id$
+   HTML 4.0 CSS declaration for MusicKit web pages.
+   Copyright The MusicKit Project. (c) 2005, All Rights Reserved.
+
+   Leigh Smith <leigh@leighsmith.com>
+*/
+
+body {
+    color: rgb(255, 255, 255);
+    background: rgb(68, 38, 67); 
+    font-family: Helvetica, sans-serif; 
+    font-size: 10pt;
+}
+
+A:link { color: rgb(205, 222, 30); } /* for unvisited links */
+A:visited { color: rgb(128, 194, 226); } /* for visited links */
+A:active { color: rgb(150, 159, 244);  } /* when link is clicked */
+
