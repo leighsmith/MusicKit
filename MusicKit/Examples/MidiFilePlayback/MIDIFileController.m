@@ -158,7 +158,7 @@
 - (void) startPlaying
 {
     MKMsgStruct *endRequest;
-    MKScore *outputScore = [[MKScore alloc] init];
+    MKScore *outputScore = [MKScore score];
     MKPart *dronePart = [self generateDroneOfDuration: 3.0];
     NSArray *instruments = [[NSArray arrayWithObject: [NSNumber numberWithUnsignedInt: 0x01]] retain];
 
