@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2000/04/01 01:18:48  leigh
+  Removed redundant imports, defined around for MacOsX (temporarily)
+
   Revision 1.15  2000/03/31 00:15:33  leigh
   Removed redundant include files
 
@@ -118,13 +121,6 @@ Modification history:
 #import <mach/mach_error.h>
 #import <Foundation/NSUserDefaults.h>
 
-#if !m68k && !WIN32
-//#import <driverkit/IOConfigTable.h> // MacOsX-Server V1.2 lost these.
-//#import <driverkit/IODeviceMaster.h>
-//#import <driverkit/IODevice.h>
-#endif
-
-// #import <midi_driver_compatability.h> // LMS obsoleted by the following include 
 #import <MKPerformSndMIDI/midi_driver.h>
 
 /* MusicKit include files */
@@ -244,7 +240,7 @@ static int addedPortsCount = 0;
 static NSMutableDictionary *portTable = nil;  // class variable
 static NSMutableArray *midiDriverNames = nil; // This and midiDriverUnits will have the same number of elements.
 static NSMutableArray *midiDriverUnits = nil;
-#if WIN32
+#if WIN32 || defined(__ppc__)
 static unsigned int systemDefaultDriverNum;   // index into the midiDriverNames and units that the operating system has nominated as default
 #endif
 /* Some mtc forward decls */
@@ -289,7 +285,7 @@ static MKMidi *getMidiFromRecvPort(NSPort *aPort)
     // which has the port as the key. This needs a separate NSDictionary to portTable.
     NSEnumerator *enumerator = [portTable objectEnumerator];
     while ((midiObj = [enumerator nextObject])) {
-        if (midiObj->recvPort == aPort)
+        if ([aPort isEqual: midiObj->recvPort])
             return midiObj;
     }
     return nil;
@@ -375,7 +371,31 @@ static int openMidiDev(MKMidi *self)
     int r;
     BOOL isSoftDevice;
     NSMutableArray *otherUnits;
-#ifndef WIN32
+#if defined(__ppc__)
+    self->unit = getNumSuffix(self->midiDevName, &isSoftDevice);
+    self->devicePort = [[NSPortNameServer defaultPortNameServer] portForName: DRIVER_NAME onHost: self->hostname];
+
+    if (self->devicePort == nil) {
+        _MKErrorf(MK_machErr, NETNAME_ERROR, @"Unable to find devicePort", @"MIDI Port Server lookup");
+        return !KERN_SUCCESS;
+    }
+    [self->devicePort retain];
+    otherUnits = [MKMidi midisOnHost: self->hostname otherThanUnit: self->unit];
+    if ([otherUnits count]) {
+        MKMidi *aMidi;
+        int i;
+        int cnt = [otherUnits count];
+        for (i=0; i<cnt; i++) {
+            aMidi = [otherUnits objectAtIndex:i];
+            /* Should be the first one, but just in case... */
+            if (aMidi->ownerPort != nil) {
+                self->ownerPort = aMidi->ownerPort;
+                break;
+            }
+        }
+    }
+    [otherUnits release];
+#elif !defined(WIN32) // i.e MacOsX-Server
     self->unit = getNumSuffix(self->midiDevName, &isSoftDevice);
     self->devicePort = [[NSPortNameServer defaultPortNameServer] portForName: DRIVER_NAME onHost: self->hostname];
     [self->devicePort retain];
@@ -448,7 +468,7 @@ static int openMidiDev(MKMidi *self)
 	    return !KERN_SUCCESS;
 	}
         /* sb: first self was midiIn. Changed to self because 'self' responds to -handleMachMessage */
-        _MKAddPort(self->recvPort,self,MSG_SIZE_MAX,self, _MK_DPSPRIORITY);
+        _MKAddPort(self->recvPort,self, 0, self, _MK_DPSPRIORITY);
 	addedPortsCount++;
     }
     if (OUTPUTENABLED(self->ioMode)) {
@@ -1030,7 +1050,7 @@ static BOOL getAvailableMidiDevices(void)
     List *installedDrivers;
     NSMutableArray *midiDriverList;
     id aConfigTable;
-#elif WIN32
+#elif WIN32 || defined(__ppc__)
     const char **systemDriverNames;
     int i;
 #endif
@@ -1041,7 +1061,7 @@ static BOOL getAvailableMidiDevices(void)
     }
     else
         driverInfoInitialized = YES;
-#if WIN32
+#if WIN32 || defined(__ppc__)
     // Windows98/NT YellowBox/NT, WebObjects or OpenStep Enterprise using the MKPerformSndMIDI framework
     // In future, this should become the cross-platform means to obtain the available drivers.
     systemDriverNames = MIDIGetAvailableDrivers(&systemDefaultDriverNum);
@@ -1092,7 +1112,7 @@ static BOOL getAvailableMidiDevices(void)
 	s = (char *)[aConfigTable valueForStringKey:"Instance"];
 	[midiDriverUnits insertObject: s ? atoi(s) : 0 atIndex: i];
     }
-#elif ppc
+#elif ppc && !defined(__ppc__)
     // hardwire this for MOXS1.0 until tablesForInstalledDrivers gives us what we expect
     midiDriverNames = [NSMutableArray arrayWithObject: [NSString stringWithFormat:@"%@0",DRIVER_NAME]];
     midiDriverUnits = [NSMutableArray arrayWithObject: [NSNumber numberWithInt: 0]];
@@ -1125,7 +1145,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
 	if ([defaultsValue length]) 
 	  num = getNumSuffix(defaultsValue, &isSoft);
 	else if (num == 0) { 
-#if WIN32
+#if WIN32 || defined(__ppc__)
           // Use the system default MIDI driver
 	  *midiDevStrArr = [[midiDriverNames objectAtIndex: systemDefaultDriverNum] copy];
 #else
@@ -1135,7 +1155,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
 	  return YES;
 	}
     }
-#if WIN32
+#if WIN32 || defined(__ppc__)
     // here we assume if we didn't have a soft device name, we are referring to a described device.
     *midiDevStrArr = [[devName copy] retain];
 #else
