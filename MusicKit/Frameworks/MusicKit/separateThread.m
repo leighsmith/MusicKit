@@ -74,9 +74,12 @@ static NSConditionLock *abortPlayLock = nil;  // Used to abort a playing separat
 // Locking definitions.
 #define nonrecursive 0
 #define recursive 1
+
+// TODO better describe what this "lock" actually protects.
 #define lockIt() { lockingThread = [NSThread currentThread]; [musicKitLock lock]; }
 // LMS: at the moment, we always recursively unlock (ignoring _x) until we determine exactly when we shouldn't
-#define unlockIt(_x) [musicKitLock unlock]
+// #define unlockIt(_x) [musicKitLock unlock]
+#define unlockIt(_x) { [musicKitLock unlock]; lockingThread = nil; }
 #define MK_ABORTED_PLAYING 1
 #define MK_PLAYING_UNINTERRUPTED 0
 
@@ -226,7 +229,7 @@ static BOOL musicKitHasLock(void)
        */
 {
     BOOL hasLock = musicKitThread != nil && lockingThread == musicKitThread;
-    // NSLog(@"MusicKit Has Lock = %d\n", hasLock);
+    // NSLog(@"MusicKit Has Lock = %d, musicKitThread %@ lockingThread %@\n", hasLock, musicKitThread, lockingThread);
     return hasLock;
 }
 
