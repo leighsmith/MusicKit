@@ -20,6 +20,10 @@
 */
 /*
 // $Log$
+// Revision 1.3  2001/09/03 17:19:41  sbrandon
+// - increased default buffer size to 16k in line with MacOSX version
+// - properly implemented retrieveDriverList() for SNDGetAvailableDriverNames
+//
 // Revision 1.2  2001/09/03 15:09:12  sbrandon
 // implemented SNDSetBufferSizeInBytes method for portaudio
 //
@@ -60,7 +64,7 @@ extern "C" {
  * divisible by PA_BYTES_PER_FRAME (which is 8 for stereo, 4 byte
  * floats).
  */
-#define PA_DEFAULT_BUFFERSIZE      (4096)
+#define PA_DEFAULT_BUFFERSIZE      (16384)
 #define PA_DEFAULT_DATA_FORMAT     (SND_FORMAT_FLOAT)
 #define PA_BYTES_PER_FRAME         (sizeof(float) * PA_DEFAULT_OUT_CHANNELS)
 #define PA_DEFAULT_BUFFER_SIZE_IN_FRAMES ( bufferSizeInBytes \
@@ -110,15 +114,24 @@ static float *fInputBuffer = NULL;
 static BOOL retrieveDriverList(void)
 {
     int driverIndex = 0;
-    numOfDevices = 1;
+    numOfDevices = Pa_CountDevices();
 
     if((driverList = (char **) malloc(sizeof(char *) * (numOfDevices + 1))) == NULL) {
         fprintf(stderr, "Unable to malloc driver list\n");
         return FALSE;
     }
-    driverList[0]="portaudio device";
-	driverList[1]=NULL;
-	return TRUE;
+    for (driverIndex = 0 ; driverIndex < numOfDevices ; driverIndex++) {
+        const char *name = Pa_GetDeviceInfo(driverIndex)->name;
+        char *deviceName;
+        if((deviceName = (char *) malloc((strlen(name) + 1) * sizeof(char))) == NULL) {
+            NSLog(@"Unable to malloc deviceName string\n");
+            return FALSE;
+        }
+        strcpy(deviceName,name);
+        driverList[driverIndex] = deviceName;
+    }
+    driverList[driverIndex]=NULL;
+    return TRUE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
