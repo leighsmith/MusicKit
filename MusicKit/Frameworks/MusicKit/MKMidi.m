@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.39  2001/07/05 22:59:04  leighsmith
+  commented out debugging, corrected typing of return parameters
+
   Revision 1.38  2001/05/14 21:01:34  leighsmith
   Added description, cleaned comments, temporarily disabled SysEx slowing code
 
@@ -439,7 +442,7 @@ static MKMDReturn openMidiDev(MKMidi *self)
     self->unit = [[midiDriverUnits objectAtIndex: [midiDriverNames indexOfObject: self->midiDevName]] intValue];
     driverDevicePort = MKMDGetMIDIDeviceOnHost([self->hostname cString]);
 
-    if (driverDevicePort == NULL) {
+    if (driverDevicePort == (MKMDPort) NULL) {
         _MKErrorf(MK_machErr, NETNAME_ERROR, @"Unable to find devicePort", @"MIDI Port Server lookup");
         return !MKMD_SUCCESS;
     }
@@ -651,7 +654,7 @@ static int emptyMidi(MKMidi *self)
     r = MKMDClearQueue((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], self->unit);
     if (r != MKMD_SUCCESS)
         _MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r), @"emptyMidi");
-    NSLog(@"emptying the enqued MIDI messages\n");
+    // NSLog(@"emptying the enqued MIDI messages\n");
     return r;
 }
 
