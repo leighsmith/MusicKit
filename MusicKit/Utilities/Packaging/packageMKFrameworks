@@ -23,7 +23,7 @@ else
 fi
 packagefrom=/Local/Library/Frameworks
 # TODO unitgenerators synthpatches
-packages=(MusicKit MKPerformSndMIDI dsp SndKit)
+packages=(MusicKit MKPerformSndMIDI MKDSP SndKit)
 workingdir=/tmp
 install_file_directory=${frameworkname}Install
 
