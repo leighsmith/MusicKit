@@ -356,12 +356,13 @@ SNDKIT_API int SndRead(FILE *fp,
 /*!
 @function SndReadHeader
  @abstract To come 
- @param fd
+ @param f
  @param sound
  @result
  */
-SNDKIT_API int SndReadHeader(int fd,
-                  SndSoundStruct **sound);
+SNDKIT_API int SndReadHeader(const char *path,
+                         SndSoundStruct **sound,
+                             const char *fileTypeStr);
 
 /*!
 @function SndReadSoundfile
