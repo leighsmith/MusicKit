@@ -326,41 +326,6 @@
 			target = D84E221205B70AED002B493F;
 			targetProxy = D80DA5CA0764E4250052DFAF;
 		};
-		D8160E9905BB5A0400A1BB23 = {
-			children = (
-				D8160EB905BB5A1E00A1BB23,
-			);
-			isa = PBXGroup;
-			name = "External Frameworks";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D8160EB905BB5A1E00A1BB23 = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = SndKit.framework;
-			path = /Library/Frameworks/SndKit.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D8160EF105BB5AF000A1BB23 = {
-			children = (
-				D8160F0F05BB5B1200A1BB23,
-			);
-			isa = PBXGroup;
-			name = "External Frameworks";
-			path = "";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D8160F0F05BB5B1200A1BB23 = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = SndKit.framework;
-			path = /Library/Frameworks/SndKit.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
 		D81B12FF0628D9FF009058DB = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -615,6 +580,7 @@
 				D825578905A216CB00B0192B,
 				D825578A05A216CB00B0192B,
 				D825578B05A216CB00B0192B,
+				D847901007A8B84500F7C83A,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -864,6 +830,7 @@
 		};
 		D825565E05A2131D00B0192B = {
 			children = (
+				D847900B07A8B7F500F7C83A,
 				D825571405A2163400B0192B,
 				D825569705A2142800B0192B,
 				D825569E05A2142800B0192B,
@@ -5445,6 +5412,64 @@
 			settings = {
 			};
 		};
+		D847900B07A8B7F500F7C83A = {
+			children = (
+				D847900E07A8B84500F7C83A,
+				D847900F07A8B84500F7C83A,
+			);
+			isa = PBXGroup;
+			name = "Configured Headers";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D847900E07A8B84500F7C83A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = MusicKitConfig.h;
+			path = Frameworks/MusicKit/MusicKitConfig.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D847900F07A8B84500F7C83A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = MusicKitConfig.h.in;
+			path = Frameworks/MusicKit/MusicKitConfig.h.in;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D847901007A8B84500F7C83A = {
+			fileRef = D847900E07A8B84500F7C83A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D847902007A8BDB400F7C83A = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D847902107A8BDB400F7C83A = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D847902207A8BDB400F7C83A = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D847902307A8BDB400F7C83A = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		D84AE06A0623249200A477FA = {
 			buildPhases = (
 			);
@@ -5554,14 +5579,6 @@
 			);
 			isa = PBXGroup;
 			name = Interfaces;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D84E1E5405B5E457002B493F = {
-			children = (
-			);
-			isa = PBXGroup;
-			name = "External Frameworks";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -5848,17 +5865,10 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		D84E1F6B05B5E55F002B493F = {
-			children = (
-			);
-			isa = PBXGroup;
-			name = "External Frameworks";
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		D84E1F6E05B5E566002B493F = {
 			children = (
-				D84E1FCC05B5E61E002B493F,
+				D86CBB8A07ADAF6100CB06E4,
+				D86CBB8307ADAE9A00CB06E4,
 			);
 			isa = PBXGroup;
 			name = Interfaces;
@@ -5899,7 +5909,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D84E1FB405B5E5EC002B493F,
-				D84E1FCE05B5E61F002B493F,
+				D86CBB8507ADAE9A00CB06E4,
+				D86CBB8C07ADAF6100CB06E4,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6034,8 +6045,8 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = MyApp.h;
-			path = "Examples/MidiEcho-1-MIDI-Channel/MyApp.h";
+			name = MidiEchoController.h;
+			path = "Examples/MidiEcho-1-MIDI-Channel/MidiEchoController.h";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -6043,8 +6054,8 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.objc;
-			name = MyApp.m;
-			path = "Examples/MidiEcho-1-MIDI-Channel/MyApp.m";
+			name = MidiEchoController.m;
+			path = "Examples/MidiEcho-1-MIDI-Channel/MidiEchoController.m";
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -6101,30 +6112,6 @@
 			name = Documentation;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		D84E1FCC05B5E61E002B493F = {
-			children = (
-				D84E1FCD05B5E61E002B493F,
-			);
-			isa = PBXVariantGroup;
-			name = Info.nib;
-			path = "";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D84E1FCD05B5E61E002B493F = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.nib;
-			name = English;
-			path = "Examples/MidiEcho-1-MIDI-Channel/English.lproj/Info.nib";
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D84E1FCE05B5E61F002B493F = {
-			fileRef = D84E1FCC05B5E61E002B493F;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		D84E206105B5E9B6002B493F = {
 			containerPortal = D8DB4E4C059FA05500624233;
@@ -6351,7 +6338,6 @@
 		D84E216405B707AA002B493F = {
 			children = (
 				D84E216A05B707B3002B493F,
-				D8160E9905BB5A0400A1BB23,
 			);
 			isa = PBXGroup;
 			name = maxamp;
@@ -6446,7 +6432,6 @@
 		D84E219F05B70846002B493F = {
 			children = (
 				D84E21B505B70861002B493F,
-				D8160EF105BB5AF000A1BB23,
 			);
 			isa = PBXGroup;
 			name = extractchannel;
@@ -6644,6 +6629,7 @@
 				D84E220F05B70AED002B493F,
 				D84E221005B70AED002B493F,
 				D84E221105B70AED002B493F,
+				D86CBBB707ADB80A00CB06E4,
 			);
 			buildRules = (
 			);
@@ -6696,7 +6682,7 @@
 				D84E223A05B70B7F002B493F,
 			);
 			isa = PBXGroup;
-			name = Documentation;
+			name = Help;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -8097,6 +8083,95 @@
 			target = D88FED7005A10EAF0024FD88;
 			targetProxy = D8673D8605A210D0009FFCAA;
 		};
+		D86CBB8307ADAE9A00CB06E4 = {
+			children = (
+				D86CBB8407ADAE9A00CB06E4,
+			);
+			isa = PBXVariantGroup;
+			name = MidiEcho.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86CBB8407ADAE9A00CB06E4 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = "Examples/MidiEcho-1-MIDI-Channel/English.lproj/MidiEcho.nib";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86CBB8507ADAE9A00CB06E4 = {
+			fileRef = D86CBB8307ADAE9A00CB06E4;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D86CBB8A07ADAF6100CB06E4 = {
+			children = (
+				D86CBB8B07ADAF6100CB06E4,
+			);
+			isa = PBXVariantGroup;
+			name = Info.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86CBB8B07ADAF6100CB06E4 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = "Examples/MidiEcho-1-MIDI-Channel/English.lproj/Info.nib";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86CBB8C07ADAF6100CB06E4 = {
+			fileRef = D86CBB8A07ADAF6100CB06E4;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D86CBBB707ADB80A00CB06E4 = {
+			buildActionMask = 8;
+			dstPath = /usr/local/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		D86CBBBB07ADB84C00CB06E4 = {
+			buildActionMask = 8;
+			dstPath = /usr/local/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				D86CBBBC07ADB89A00CB06E4,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		D86CBBBC07ADB89A00CB06E4 = {
+			fileRef = D8708B5205B312E00074C18D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D86CBBC507ADB8B900CB06E4 = {
+			buildActionMask = 8;
+			dstPath = /usr/local/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				D86CBBC607ADB8D100CB06E4,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		D86CBBC607ADB8D100CB06E4 = {
+			fileRef = D8708BA005B314B70074C18D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		D86D239D06F2293A003565CB = {
 			children = (
 				D86D23A306F2295C003565CB,
@@ -8502,7 +8577,6 @@
 			children = (
 				D8708B3205B3125C0074C18D,
 				D8708B3C05B312730074C18D,
-				D8708C0205B317740074C18D,
 			);
 			isa = PBXGroup;
 			name = convertscore;
@@ -8567,6 +8641,7 @@
 				D8708B4505B312A70074C18D,
 				D8708B4605B312A70074C18D,
 				D8708B4705B312A70074C18D,
+				D86CBBBB07ADB84C00CB06E4,
 			);
 			buildRules = (
 			);
@@ -8812,6 +8887,7 @@
 				D8708B9605B314800074C18D,
 				D8708B9705B314800074C18D,
 				D8708B9805B314800074C18D,
+				D86CBBC507ADB8B900CB06E4,
 			);
 			buildRules = (
 			);
@@ -8916,14 +8992,6 @@
 			target = D8708B9905B314800074C18D;
 			targetProxy = D8708BCD05B315980074C18D;
 		};
-		D8708C0205B317740074C18D = {
-			children = (
-			);
-			isa = PBXGroup;
-			name = "External Frameworks";
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		D8708C5305B3180E0074C18D = {
 			children = (
 			);
@@ -8980,8 +9048,8 @@
 				D84E219F05B70846002B493F,
 				D84E216405B707AA002B493F,
 				D84E20F405B70575002B493F,
-				D8708EB505B494780074C18D,
 				D8708E5C05B493C20074C18D,
+				D8708EB505B494780074C18D,
 				D8708E5505B493B80074C18D,
 				D8708E4E05B493AB0074C18D,
 				D8708E8205B4941C0074C18D,
@@ -9044,7 +9112,6 @@
 				D84E1E4B05B5E444002B493F,
 				D84E1E4E05B5E449002B493F,
 				D84E1E5105B5E452002B493F,
-				D84E1E5405B5E457002B493F,
 				D84E1E5705B5E460002B493F,
 			);
 			isa = PBXGroup;
@@ -9058,7 +9125,6 @@
 				D84E1F7405B5E572002B493F,
 				D84E1F7105B5E56C002B493F,
 				D84E1F6E05B5E566002B493F,
-				D84E1F6B05B5E55F002B493F,
 				D84E1F6805B5E552002B493F,
 			);
 			isa = PBXGroup;
@@ -11249,6 +11315,10 @@
 		D88C502706C7E37100D33D99 = {
 			buildActionMask = 2147483647;
 			files = (
+				D847902007A8BDB400F7C83A,
+				D847902107A8BDB400F7C83A,
+				D847902207A8BDB400F7C83A,
+				D847902307A8BDB400F7C83A,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
