@@ -15,6 +15,10 @@
 
 #Modification history:
 # $Log$
+# Revision 1.7  2001/09/11 17:12:11  sbrandon
+# added cpp.subproj subproject, for GNUstep only, as a way of incorporating
+# C++ files into GNUstep framework
+#
 # Revision 1.6  2001/09/03 10:36:17  sbrandon
 # fixed typo in last commit
 #
@@ -67,7 +71,8 @@ $(FRAMEWORK_NAME)_OBJC_FILES = \
           SndPerformance.m SndAudioProcessorChain.m\
           SndAudioProcessor.m  SndAudioProcessorDelay.m SndEnvelope.m\
           SndAudioFader.m SndBreakpoint.m\
-          SndAudioBufferQueue.m #SndMeter.m
+          SndAudioBufferQueue.m SndAudioProcessorReverb.m \
+          #SndMeter.m
 
 $(FRAMEWORK_NAME)_C_FILES = \
          SndEndianFunctions.c _SndConvert.c _Sndfilterkit.c _Sndlibst.c\
@@ -83,12 +88,13 @@ $(FRAMEWORK_NAME)_HEADER_FILES = \
          SndStreamRecorder.h SndStreamMixer.h\
          SndPlayer.h SndPerformance.h\
          SndAudioProcessorChain.h SndAudioProcessor.h SndAudioProcessorDelay.h\
-         SndAudioFader.h SndEnvelope.h SndBreakpoint.h SndAudioBufferQueue.h
+         SndAudioFader.h SndEnvelope.h SndBreakpoint.h SndAudioBufferQueue.h\
+         SndAudioProcessorReverb.h
 
+$(FRAMEWORK_NAME)_SUBPROJECTS = cpp.subproj
 
 SRCS = $(LIBRARY_NAME:=.m)
 HDRS = $(LIBRARY_NAME:=.h)
-
 
 -include Makefile.preamble
 
