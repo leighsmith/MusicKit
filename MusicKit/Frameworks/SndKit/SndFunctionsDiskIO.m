@@ -149,7 +149,8 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
   informat.swap = 0;
   informat.filename = "input";
 
-  st_gettype(&informat);
+  if(st_gettype(&informat) != ST_SUCCESS)
+      return SND_ERR_CANNOT_OPEN;
 
   /* Read and write starters can change their formats. */
   (* informat.h->startread)(&informat);
