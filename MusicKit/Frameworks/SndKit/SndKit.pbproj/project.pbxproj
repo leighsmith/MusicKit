@@ -246,9 +246,10 @@
 				00D2C455FEDB2CB5CFED3B93,
 				00D2C457FEDB2CB5CFED3B93,
 				00D2C458FEDB2CB5CFED3B93,
-				0B0671370034C9D6CFED3B96,
 				055C7F3A0049CD79CFED3B96,
 				3AE3B96C007931DBCFED3B8B,
+				47FCF5D900CBCFEACFED3B8B,
+				04F0C04C00EA6A89CFED3B8B,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -283,7 +284,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Network/Servers/whiteley/lauren/Local/Library/Frameworks";
 				FRAMEWORK_VERSION = 2.0;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -609,9 +610,10 @@
 				00D2C47BFEDB2CB5CFED3B93,
 				00D2C47DFEDB2CB5CFED3B93,
 				00D2C47EFEDB2CB5CFED3B93,
-				0B0671380034C9D6CFED3B96,
 				055C7F3B0049CD79CFED3B96,
 				3AE3B96D007931DBCFED3B8B,
+				47FCF5DA00CBCFEACFED3B8B,
+				04F0C04D00EA6A89CFED3B8B,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -784,6 +786,18 @@
 				);
 			};
 		};
+		04F0C04C00EA6A89CFED3B8B = {
+			isa = PBXFrameworkReference;
+			name = vecLib.framework;
+			path = /System/Library/Frameworks/vecLib.framework;
+			refType = 0;
+		};
+		04F0C04D00EA6A89CFED3B8B = {
+			fileRef = 04F0C04C00EA6A89CFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		055C7F3A0049CD79CFED3B96 = {
 			isa = PBXFrameworkReference;
 			name = ApplicationServices.framework;
@@ -865,18 +879,6 @@
 				ATTRIBUTES = (
 					Public,
 				);
-			};
-		};
-		0B0671370034C9D6CFED3B96 = {
-			isa = PBXFrameworkReference;
-			name = MKPerformSndMIDI.framework;
-			path = /Library/Frameworks/MKPerformSndMIDI.framework;
-			refType = 0;
-		};
-		0B0671380034C9D6CFED3B96 = {
-			fileRef = 0B0671370034C9D6CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
 			};
 		};
 		36C5C1C10039F18CCFED3B96 = {
@@ -968,6 +970,18 @@
 		};
 		3AE3B96D007931DBCFED3B8B = {
 			fileRef = 3AE3B96C007931DBCFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		47FCF5D900CBCFEACFED3B8B = {
+			isa = PBXFrameworkReference;
+			name = MKPerformSndMIDI.framework;
+			path = /Network/Servers/whiteley/lauren/Local/Library/Frameworks/MKPerformSndMIDI.framework;
+			refType = 0;
+		};
+		47FCF5DA00CBCFEACFED3B8B = {
+			fileRef = 47FCF5D900CBCFEACFED3B8B;
 			isa = PBXBuildFile;
 			settings = {
 			};

@@ -22,7 +22,7 @@
 
 + delayWithLength: (long) nSams feedback: (float) fFB
 {
-  SndAudioProcessorDelay* delay = [[SndAudioProcessorDelay alloc] init];
+  SndAudioProcessorDelay* delay = [SndAudioProcessorDelay new];
   [delay initWithLength: nSams feedback: fFB];
   return [delay autorelease];
 }
@@ -33,8 +33,10 @@
 
 - init
 {
+  [super init];
+  
   if (lock == nil)
-    lock    = [[[NSLock alloc] init] retain];
+    lock    = [[NSLock new] retain];
    length   = 0;
    feedback = 0;
    chanL    = NULL;

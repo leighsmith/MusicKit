@@ -12,6 +12,7 @@
   accompany all relevant code.
 */
 #import "SndAudioBuffer.h"
+#import <vecLib/vecLib.h>
 
 @implementation SndAudioBuffer
 
@@ -35,8 +36,8 @@
 + audioBufferWrapperAroundSNDStreamBuffer: (SNDStreamBuffer*) cBuff
 {
     SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
-    [ab initWithFormat: &(cBuff->streamFormat) data: cBuff->streamData];
     ab->bOwnsData = FALSE;
+    [ab initWithFormat: &(cBuff->streamFormat) data: cBuff->streamData];
     return [ab autorelease];
 }
 
@@ -66,6 +67,10 @@
     return [ab autorelease];
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// audioBufferWithFormat:
+////////////////////////////////////////////////////////////////////////////////
+
 + audioBufferWithFormat: (SndSoundStruct*) f duration: (double) timeInSec
 {
     SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
@@ -80,6 +85,10 @@
     
     return [ab autorelease];
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// dealloc
+////////////////////////////////////////////////////////////////////////////////
 
 - (void) dealloc
 {
@@ -113,6 +122,10 @@
     }
     return self;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// zero
+////////////////////////////////////////////////////////////////////////////////
 
 - zero
 {
@@ -185,9 +198,13 @@
                 float *out = (float*) data;
 
                 if (selfNumChannels == buffNumChannels) {
-                    for (i = 0; i < frameCount * buffNumChannels; i++) {
-                        out[i+start] += in[i]; // interleaving automatically taken care of!
-                    }
+
+                    vadd(in, 1,out+start,1,out+start,1,frameCount * buffNumChannels);
+
+// ALTIVEC                
+//                    for (i = 0; i < frameCount * buffNumChannels; i++) {
+//                        out[i+start] += in[i]; // interleaving automatically taken care of!
+//                    }
                 }
                 else if (selfNumChannels == 2) {
                     switch (buffNumChannels) {
@@ -282,12 +299,16 @@
 
 - copyData: (SndAudioBuffer*) from
 {
-    if (from->formatSnd.dataSize == formatSnd.dataSize)
+    if (from != nil) {
+      if (from->formatSnd.dataSize == formatSnd.dataSize)
         memcpy(data, from->data, formatSnd.dataSize);
-    else {
+      else {
         NSLog(@"Buffers are different lengths - need code to handle this case!");
         // TO DO!
+      }
     }
+    else
+        NSLog(@"AudioBuffer::copyData: ERR: param 'from' is nil!");
     return self;
 }
 

@@ -114,18 +114,21 @@ static SndStreamManager *sm = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// startStreaming: responsible for calling low-level C stuff to stop a stream,
+// stopStreaming: responsible for calling low-level C stuff to stop a stream,
 // and unregister the processAudioAtTime: selector as the callback function.
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) stopStreaming
 {
-    if(active) {
+    if (active) {
         [mixer managerIsShuttingDown];
         nowTime = 0.0;
         SNDStreamStop();    
         active = FALSE;
+        fprintf(stderr,"SND Manager: stream stopping\n");
     }
+    else
+        fprintf(stderr,"SND Manager: ERR: stopStreaming called when not streaming!\n");
     return active;
 }
 
@@ -194,8 +197,10 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
     NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
     // Eventually these must be made instance variables which you just wrap
     // around each of the C-side buffers, to avoid allocation costs.
-    SndAudioBuffer *inB  = [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
-    SndAudioBuffer *outB = [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
+    SndAudioBuffer *inB  = nil;
+    SndAudioBuffer *outB = nil;
+    inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
+    outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
     // set our current notion of time.
     nowTime = sampleCount / [outB samplingRate];
 

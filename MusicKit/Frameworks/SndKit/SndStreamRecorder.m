@@ -156,7 +156,7 @@
 // setUpRecordFile:
 ////////////////////////////////////////////////////////////////////////////////
 
-unsigned char* convert2byteNative2LE(unsigned short* si)
+static unsigned char* convert2byteNative2LE(unsigned short* si)
 {
     static unsigned char pch[2];
     pch[0] = (*si & 0x00FF);
@@ -164,7 +164,7 @@ unsigned char* convert2byteNative2LE(unsigned short* si)
     return pch;
 }
 
-unsigned char* convert4byteNative2LE(unsigned long* li)
+static unsigned char* convert4byteNative2LE(unsigned long* li)
 {
     static unsigned char pch[4];
     pch[0] = (*li & 0x000000FF);
