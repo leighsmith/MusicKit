@@ -21,6 +21,9 @@
 */
 /*
   $Log$
+  Revision 1.16  2001/08/27 20:04:52  leighsmith
+  Renamed the stop method to allNotesOff since this gives a clearer understanding of its function, better matches the behaviour of other MKInstruments and doesn't confuse against the stop method of MKMidi or MKOrchestra
+
   Revision 1.15  2001/08/07 17:20:35  leighsmith
   Corrected initWithCoder to MK prefixed class name
 
@@ -182,7 +185,9 @@
     }
     // needed to remove notes when sounds complete playing.
     [existingSound setDelegate: self];
+    // NSLog(@"playInFuture:inSeconds = %lf\n", inSeconds);
     newPerformance = [existingSound playInFuture: inSeconds];
+    // NSLog(@"newPerformance = %@\n", newPerformance);
     // keep a dictionary of playing notes (keyed by note instance, added in time order) and their performances.
     [playingNotes setObject: newPerformance forKey: aNote];
     return self;
@@ -212,7 +217,8 @@
     return self;
 }
 
-- stop
+// Stop any playing notes.
+- allNotesOff
 {
     MKNote *note;
     NSEnumerator *noteEnumerator;
@@ -338,7 +344,7 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
 // Early out, no different from just stopping all playing samples.
 - abort
 {
-    return [self stop];
+    return [self allNotesOff];
 }
 
 #if 0 // antiquated

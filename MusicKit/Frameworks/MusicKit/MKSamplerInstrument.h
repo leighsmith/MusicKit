@@ -18,6 +18,9 @@
 */
 /*
   $Log$
+  Revision 1.13  2001/08/27 20:04:52  leighsmith
+  Renamed the stop method to allNotesOff since this gives a clearer understanding of its function, better matches the behaviour of other MKInstruments and doesn't confuse against the stop method of MKMidi or MKOrchestra
+
   Revision 1.12  2001/04/23 21:17:45  leighsmith
   Removed unnecessary @public
 
@@ -100,7 +103,12 @@
 
 - init;
 - abort;
-- stop;
+/*!
+    @method allNotesOff
+    @result returns self
+    @discussion Stop any playing (i.e. sounding) notes.
+*/
+- allNotesOff;
 - reset;
 - prepareSoundWithNote: (MKNote *) aNote;
 - (void) removePreparedSounds;
