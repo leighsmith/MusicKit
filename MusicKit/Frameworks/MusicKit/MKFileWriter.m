@@ -49,6 +49,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2002/01/29 16:07:54  sbrandon
+  simplified retain/autorelease usage (not bugfixes)
+
   Revision 1.5  2002/01/15 12:17:33  sbrandon
   Fixed up autorelease/release errors with stream and filename. Potential
   crashers.
@@ -151,7 +154,8 @@ Modification history:
      by-instance basis. For example MKScorefileWriter returns a different
      default extension for binary format scorefiles. */
 {
-    return [[[[self class] fileExtension] retain] autorelease];
+    /* no need to retain/autorelease since class method should do this*/
+    return [[self class] fileExtension]; 
 }
 
 - (void)dealloc
@@ -198,8 +202,7 @@ Modification history:
     if (_noteSeen)
       return nil;
     [self setFile:nil];
-    if (stream)
-        [stream autorelease];
+    [stream autorelease];
     stream = [aStream retain];
     return self;
 }
@@ -222,9 +225,7 @@ Modification history:
      and stream set to NULL. */
 {
     MKFileWriter *newObj = [super copyWithZone:zone];
-    if (filename) {
-      newObj->filename = [filename retain];
-    }
+    newObj->filename = [filename retain];
     newObj->stream = nil;
     return newObj;
 }
@@ -233,7 +234,7 @@ Modification history:
   /* TYPE: Querying; Returns the name set through setFile:.
    * If the file associated with the receiver was set through 
    * setFile:,
-   * returns the file name, otherwise returns NULL.
+   * returns the file name, otherwise returns nil.
    */
 {
     return [[filename retain] autorelease];

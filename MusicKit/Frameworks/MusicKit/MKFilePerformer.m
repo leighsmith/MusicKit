@@ -92,6 +92,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2002/01/29 16:07:54  sbrandon
+  simplified retain/autorelease usage (not bugfixes)
+
   Revision 1.10  2002/01/23 15:33:02  sbrandon
   The start of a major cleanup of memory management within the MK. This set of
   changes revolves around MKNote allocation/retain/release/autorelease.
@@ -238,8 +241,7 @@ Modification history:
     if (status != MK_inactive) 
         return nil;
     [self setFile:nil];
-    if(stream != nil)
-        [stream autorelease];
+    [stream autorelease];
     stream = [aStream retain];
     return self;
 }
