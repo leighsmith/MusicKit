@@ -278,7 +278,7 @@ static int ioTags = 1000;
 // for debugging
 - (NSString *) description
 {
-    return [NSString stringWithCString: SndStructDescription(soundStruct)];
+    return SndStructDescription(soundStruct);
 }
 
 - readSoundFromStream:(NSData *)stream
