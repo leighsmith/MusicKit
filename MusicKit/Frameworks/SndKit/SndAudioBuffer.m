@@ -786,7 +786,7 @@ return self;
 - (void) findMin:(float*) pMin max:(float*) pMax
 {
   int i, c = [self lengthInSampleFrames] * channelCount;
-  float *pE = [data bytes];
+  const float *pE = [data bytes];
   *pMin = 0.0;
   *pMax = 0.0;
 
