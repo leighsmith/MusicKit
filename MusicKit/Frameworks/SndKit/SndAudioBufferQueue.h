@@ -17,6 +17,10 @@
 
 #import <Foundation/Foundation.h>
 
+#ifdef __MINGW32__
+# import "SndConditionLock.h"
+#endif
+
 @class SndAudioBuffer;
 
 /*!
