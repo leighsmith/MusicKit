@@ -4,14 +4,18 @@
 #endif
 
 /*
-  ScorefilePerformer.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:42  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   09/18/89/daj - Added casts to (id) in _getData/_setData: to accomodate new
                  void * type.
@@ -278,7 +282,9 @@ Modification history:
     [aNoteSender _setData:aPart];  /* Back ptr */
     [aPart _setNoteSender:aNoteSender];/* Forward ptr for performNote */
     [_partStubs addObject:aPart];
-    return aPart;
+    [aNoteSender release];/*sb*/
+    [aPart release];
+    return aPart;/*sb: retain is held in _partStubs */
 }
 
 -_elements

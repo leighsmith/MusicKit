@@ -4,15 +4,19 @@
 #endif
 
 /*
-  Conductor.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:36  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   09/15/89/daj - Added caching of inverse of beatSize. 
   09/19/89/daj - Unraveled inefficient MIN(MAX construct.
@@ -229,7 +233,7 @@ static void condInit();    /* Forward decl */
 static void masterConductorBody();
 static double theTimeToWait(double nextMsgTime);
 
-#import "lock.m"
+#import "separateThread.m"
 
 static MKMsgStruct *evalSpecialQueue();
 

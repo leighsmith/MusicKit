@@ -4,13 +4,17 @@
 #endif
 
 /*
-  ScorePerformer.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* Modification history:
+
+   $Log$
+   Revision 1.2  1999/07/29 01:16:42  leigh
+   Added Win32 compatibility, CVS logs, SBs changes
 
    03/17/90/daj - Added delegate mechanism. Added settable PartPerformerClass
    04/21/90/daj - Small mods to get rid of -W compiler warnings.
@@ -271,6 +275,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
 	    [partPerformers addObject:newEl = [partPerformerClass new]];
             [newEl setPart:[aList objectAtIndex:i]];
 	    _MKSetScorePerformerOfPartPerformer(newEl,self);
+            [newEl release];/*sb: prevent leak. retain is held by partPerformers */
 	}
     }
     /* Broadcast current state. */ 

@@ -6,10 +6,10 @@
 #endif
 
 /*
-  MKOrchestra.m
-  Responsibility:David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
   */
 
@@ -18,6 +18,10 @@
    
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:39  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   11/10/89/daj - Moved StartSoundOut from -run to -open. The idea is to
                  let soundout fill up the buffers so we don't get random
@@ -1744,8 +1748,9 @@ static void freeUGs(self)
 	[self->readDataUG release]; /* sb */
     }
     [self->_sysUG mkdealloc]; /*sb: changed to mkdealloc */
-    self->_sysUG = [self->_sysUG _free];
+    [self->_sysUG _free];
     [self->_sysUG release];/* sb */
+    self->_sysUG = nil;
     _MKProtectSynthElement(self->xZero,NO);
     [self->xZero mkdealloc]; /*sb: changed to mkdealloc */
     _MKProtectSynthElement(self->yZero,NO);
@@ -2056,8 +2061,9 @@ static id loadOrchLoop(self)
             reloc:&reloc looper:self->_looper]))))) { /* Should never happen */
         if (self->_sysUG) {
             [self->_sysUG mkdealloc];  /*sb: changed to mkdealloc */
-	    self->_sysUG = [self->_sysUG _free];
+	    [self->_sysUG _free];
             [self->_sysUG release];
+            self->_sysUG = nil;
 	}
       loadOrchLoopAbort:
         freeUGs(self);
@@ -2861,7 +2867,10 @@ static BOOL popReso(self)
                        aUG);
         freeUG(self,aUG,sp);/*sb: this includes a release, to finally release what we held above */
     }
-    [spTail _freeList:spHead];
+//sb: see explanation in MKSynthpatch.m
+//    [spTail _freeList:spHead];
+    [spTail _freeList2];
+    [spTail release];
     return resetLooper;
 }
 
@@ -3006,7 +3015,7 @@ static BOOL compactResourceStack(MKOrchestra *self)
         int pendingLoopBLT = -1; // *pendingLoopBLT = NULL;
         MKOrchMemStruct *ugReso,resoToBLT,newReloc,fromBLT,toBLT, *oldReloc;
         int pLoopNeeds;
-        register id aList = [self->stack copy]; /* Local copy */
+        register id aList = _MKLightweightArrayCopy(self->stack);//was [self->stack copy]; /* Local copy */
         id spHead = nil;
         id spTail = nil;
         [self beginAtomicSection];
@@ -3137,7 +3146,7 @@ static BOOL compactResourceStack(MKOrchestra *self)
           bltLoop(self,&fromBLT,&toBLT,&resoToBLT,&pendingLoopBLT,elNum,aList);
         if (pendingArgBLT != -1) 
           bltArgs(self,&fromBLT,&toBLT,&resoToBLT,&pendingArgBLT,elNum,aList); 
-        [aList release];                        /* Free local copy */
+//        [aList release];                        /* Free local copy */
         [spTail _freeList:spHead];           /* Free synthpatches */
         setLooper(self);                     
         [self endAtomicSection];

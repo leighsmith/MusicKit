@@ -1,3 +1,22 @@
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description:
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:40  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #import "_musickit.h"
 #import "PartialsPrivate.h"
 
@@ -120,7 +139,7 @@ NSLocalizedStringFromTableInBundle(@"Waveshaping harmonics must be integers.", _
 
     /* Now allocate an array from 0 to highestFreqRatio */
     Hk = (double *)alloca((highestFreqRatio+1)*sizeof(double));
-    bzero(Hk,(highestFreqRatio+1)*sizeof(double));
+    memset(Hk,0,(highestFreqRatio+1)*sizeof(double));
     /* Now fill it with amplitudes.  */
     for (i=0; i<partialCount; i++) {
 	if (ampRatios[i] == 0.0) /* Necessary--see highestFreqRatio */

@@ -4,26 +4,30 @@
 #endif
 
 /*
-  TuningSystem.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 
 /* 
 Modification history:
 
-       09/22/89/daj - Removed addReadOnlyVar, which was never called.
-                      Changes corresponding to those in _MKNameTable.h.
-       10/20/89/daj - Added binary scorefile support.
-       11/27/89/daj - Optimized MKAdjustFreqWithPitchBend to check for
-                      no-bend case.
-       01/02/90/daj - Deleted a comment.		      
-       03/21/90/daj - Added archiving.
-       04/21/90/daj - Small mods to get rid of -W compiler warnings.
-       06/27/90/daj - Fix to setKeyNumAndOctaves:toFreq:.
-       08/27/90/daj - Changed to zone API.
+  $Log$
+  Revision 1.2  1999/07/29 01:16:44  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+  09/22/89/daj - Removed addReadOnlyVar, which was never called.
+                 Changes corresponding to those in _MKNameTable.h.
+  10/20/89/daj - Added binary scorefile support.
+  11/27/89/daj - Optimized MKAdjustFreqWithPitchBend to check for
+                 no-bend case.
+  01/02/90/daj - Deleted a comment.		      
+  03/21/90/daj - Added archiving.
+  04/21/90/daj - Small mods to get rid of -W compiler warnings.
+  06/27/90/daj - Fix to setKeyNumAndOctaves:toFreq:.
+  08/27/90/daj - Changed to zone API.
   09/02/90/daj - Changed MAXDOUBLE references to noDVal.h way of doing things
   10/09/90/daj - Changed [super new] to 
                  [super allocFromZone:NXDefaultMallocZone()]

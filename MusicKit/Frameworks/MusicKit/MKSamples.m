@@ -1,10 +1,24 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 #ifdef SHLIB
 #include "shlib.h"
 #endif
 
-/* 
-  modification history:
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description:
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:42  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   12/4/89 /daj - Fixed normalization in fillTableLength:scale:.
    3/19/90/daj - Added MKGet/SetSamplesClass().
@@ -26,7 +40,7 @@
 //#import <SoundKit/Sound.h>   
 
 @implementation  MKSamples : MKWaveTable
-/* The Samples object allows you to use a Sound as data in DSP synthesis.
+/* The Samples object allows you to use a Snd as data in DSP synthesis.
    The most common use is as a wavetable table for an oscillator.
    You may set the Sound from a Sound object or from a Soundfile using
    setSound: or readSoundfile:.
@@ -37,7 +51,7 @@
    length of the original Sound passed to the object.
    */
 {
-	Sound *sound;          /* Sound object set by app or internally. */
+	Snd *sound;          /* Sound object set by app or internally. */
 	NSString * soundfile; /* Name of soundfile set by app. */
 	int tableType;
 }
@@ -113,7 +127,7 @@ id MKGetSamplesClass(void)
 {
     MKSamples *newObj = [super copyWithZone:zone];
     newObj->soundfile = /*_MKMakeStr(soundfile); */ [soundfile copy]; /*sb */
-    newObj->sound = [Sound alloc];
+    newObj->sound = [Snd alloc];
     if ([newObj->sound copySound:sound] != SND_ERR_NONE) 
       return newObj;
     return nil;
@@ -127,7 +141,7 @@ id MKGetSamplesClass(void)
    
    Returns self or nil if there's an error. */
 {
-    id aTmpSound = [[Sound alloc] initFromSoundfile:aSoundfile];
+    id aTmpSound = [[Snd alloc] initFromSoundfile:aSoundfile];
     if (!aTmpSound)
       return 0;
     if (![self setSound:aTmpSound]) {
@@ -142,7 +156,7 @@ id MKGetSamplesClass(void)
     return 1;//sb: was self
 }
 
-- (BOOL)setSound:(Sound *)aSoundObj //sb: originally returned self/nil -- now BOOL.
+- (BOOL)setSound:(Snd *)aSoundObj //sb: originally returned self/nil -- now BOOL.
 /* Sets the Sound of the Samples object to be aSoundObj.
    aSoundObj must be in 16-bit linear mono format. If not, setSound: returns
    nil. aSoundObj is copied. 
@@ -156,7 +170,7 @@ id MKGetSamplesClass(void)
     if (([aSoundObj dataFormat] != SND_FORMAT_LINEAR_16) ||
 	([aSoundObj channelCount] != 1))
       return FALSE; /*** FIXME Eventually convert ***/
-    sound = [Sound alloc];
+    sound = [Snd alloc];
     if ([sound copySound:aSoundObj] != SND_ERR_NONE) {
 	[sound release];
 	return FALSE;

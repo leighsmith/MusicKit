@@ -4,26 +4,30 @@
 #endif
 
 /*
-  PatchTemplate.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
 
-       01/02/90/daj - Deleted a comment.		      
-       03/13/90/daj - Changes to support new categories for private methods.
-       03/21/90/daj - Added archiving.
-       04/21/90/daj - Small mods to get rid of -W compiler warnings.
-       04/25/90/daj - Added CHECKCLASS to make sure that the right class is
-                      returned when inheritance is used in SynthPatch design.
-       04/27/90/daj - Removed checks for _MKClassOrchestra, since we're a
-                      shlib now so Orchestra will always be there.
-       08/27/90/daj - Added zone support API.
-       07/05/91/daj - Fixed bug in _MKAllocSynthPatch.
-       08/22/91/daj - Changed Storage API for 3.0.
+  $Log$
+  Revision 1.2  1999/07/29 01:16:40  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+  01/02/90/daj - Deleted a comment.		      
+  03/13/90/daj - Changes to support new categories for private methods.
+  03/21/90/daj - Added archiving.
+  04/21/90/daj - Small mods to get rid of -W compiler warnings.
+  04/25/90/daj - Added CHECKCLASS to make sure that the right class is
+                 returned when inheritance is used in SynthPatch design.
+  04/27/90/daj - Removed checks for _MKClassOrchestra, since we're a
+                 shlib now so Orchestra will always be there.
+  08/27/90/daj - Added zone support API.
+  07/05/91/daj - Fixed bug in _MKAllocSynthPatch.
+  08/22/91/daj - Changed Storage API for 3.0.
 */
 #import "_musickit.h"
 

@@ -4,14 +4,18 @@
 #endif
 
 /*
-  Score.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:42  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   12/8/89/daj  - Fixed bug in midi-file reading -- first part was being
                  initialized to a bogus info object. 
@@ -1451,7 +1455,8 @@ static BOOL isUnarchiving = NO;
     id aPart = [MKGetPartClass() new];
     MKNameObject(name,aPart);
     [self addPart:aPart];
-    return aPart;
+    [aPart release];
+    return aPart; /* sb: I have checked, and it's ok to return "reference" here rather than retained object */
 }
 
 #if 0

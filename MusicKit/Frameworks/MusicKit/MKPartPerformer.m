@@ -4,14 +4,18 @@
 #endif
 
 /*
-  PartPerformer.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 
 /* Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:39  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   04/21/90/daj - Small mods to get rid of -W compiler warnings.
   08/23/90/daj - Changed to zone API.
@@ -144,6 +148,7 @@ static BOOL fastActivation = NO;
      * maybe need to put self in a global list of non-dealloced objects for later cleanup */
     if ((status != MK_inactive) || _scorePerformer) 
       return;
+    [noteSender release]; /* sb */
     [super dealloc];
 }
 
@@ -202,7 +207,7 @@ static BOOL fastActivation = NO;
       return nil;
     [part _addPerformanceObj:self];
     if (!fastActivation)
-	_list = [part notes];
+        _list = [[part notes] retain];/*sb: "notes" used to return a new list. Now it's autoreleased and needs retaining */
     else {
 	[part sort];
 	_list = [part notesNoCopy]; /* this is autoreleased */

@@ -1,14 +1,28 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 #ifdef SHLIB
 #include "shlib.h"
 #endif
 
-/* 
-  Modification history:
+/*
+  $Id$
+  Defined In: The MusicKit
 
-   04/21/90/daj - Small mods to get rid of -W compiler warnings.
-   08/27/90/daj - Changed to zone API.
-   06/29/98/sb - changed length to unsigned int. Hope compares still work.
+  Description:
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:44  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+  04/21/90/daj - Small mods to get rid of -W compiler warnings.
+  08/27/90/daj - Changed to zone API.
+  06/29/98/sb - changed length to unsigned int. Hope compares still work.
 */
 
 #import "_musickit.h"

@@ -4,14 +4,18 @@
 #endif
 
 /*
-
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:37  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   09/18/89/daj - Changed hash table to be non-object variety. Changed parameters
                  to be structs rather than objects. Added C-function access

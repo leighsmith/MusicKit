@@ -4,13 +4,17 @@
 #endif
 
 /*
-  PartRecorder.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* Modification History:
+
+   $Log$
+   Revision 1.2  1999/07/29 01:16:39  leigh
+   Added Win32 compatibility, CVS logs, SBs changes
 
    03/13/90/daj - Minor changes for new private category scheme.
    04/21/90/daj - Small mods to get rid of -W compiler warnings.
@@ -118,6 +122,7 @@
      * maybe need to put self in a global list of non-dealloced objects for later cleanup */
     if ([self inPerformance] || _scoreRecorder) 
       return;
+    [noteReceiver release];/* sb */
     [super dealloc];
 }
 

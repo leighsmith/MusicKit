@@ -4,14 +4,18 @@
 #endif
 
 /*
-  MidiIn.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
-
-
+*/
+/*
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:37  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   09/19/89/daj - Change to accomodate new way of doing parameters (structs 
                  rather than objects).
@@ -73,7 +77,7 @@ Modification history:
 //#import <objc/hashtable.h>
 #import <Foundation/NSUserDefaults.h>
 
-#if !m68k
+#if !m68k && !WIN32
 #import <driverkit/IOConfigTable.h>
 #import <driverkit/IODeviceMaster.h>
 #import <driverkit/IODevice.h>
@@ -95,7 +99,7 @@ Modification history:
 #import "_midi.h"
 #import "_time.h"
 #import "ConductorPrivate.h"
-#import "_MKSprintf.h"
+//#import "_MKSprintf.h"
 
 #import "MidiPrivate.h"
 
@@ -869,21 +873,17 @@ static id handleSysExclbyte(_MKMidiInStruct *ptr,unsigned char midiByte)
 	*ptr->_sysExP++ = midiByte;
     }
     if (midiByte == MIDI_EOX) {
-	char *str,*strP;
 	unsigned char *p;
-	unsigned j;
+	NSString *sysExString;
+
 	[ptr->_note release]; /* Free old note. */ 
 	ptr->_note = [MKGetNoteClass() new];
-	_MK_MALLOC(str,char,(ptr->_sysExP - ptr->_sysExBuf) * 3 + 1);
-	strP = str;
-	p = ptr->_sysExBuf; 
-	_MKSprintf(strP,"%-2x",j = *p++); /* First byte */
-	strP += 2;
-	for (; p < ptr->_sysExP; strP += 3) 
-	    _MKSprintf(strP,",%-2x",j = *p++);
-	*strP = '\0';
-	[ptr->_note setPar:MK_sysExclusive toString:[NSString stringWithCString:str]];
-	free(str);                /* Note copies string */
+	p = ptr->_sysExBuf;
+        sysExString = [NSString stringWithFormat: @"%-2x", (unsigned) *p++]; /* First byte */
+	while (p < ptr->_sysExP) {
+            sysExString = [sysExString stringByAppendingFormat: @",%-2x", (unsigned) *p++];
+	}
+	[ptr->_note setPar: MK_sysExclusive toString: sysExString];
 	/* We might want to use a special setPar: that doesn't turn the
 	   thing into an NXAtom.  This would involve introducing a
 	   noCopy type into Note.m.  FIXME */
@@ -1084,7 +1084,9 @@ static BOOL initDriverKitBasedMIDIs(void)
 {
     char *s;
     const char *familyStr;
+#ifndef WIN32
     List *installedDrivers;
+#endif
     NSMutableArray *midiDriverList;
     id aConfigTable;
     int i;
@@ -1095,7 +1097,7 @@ static BOOL initDriverKitBasedMIDIs(void)
     }
     else
         driverInfoInitialized = YES;
-#if  i386
+#if  i386  && !WIN32
     installedDrivers = [IOConfigTable tablesForInstalledDrivers];
     /* Creates, if necessary, and returns IOConfigTables, one for each
        device that has been loaded into the system.  This method knows only
@@ -1299,6 +1301,8 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName,NSString **midiDevS
          aNoteSender = [MKNoteSender new];
          [noteSenders addObject:aNoteSender];
          [aNoteSender _setPerformer:self];
+         [aNoteReceiver release];
+         [aNoteSender release]; /*sb: retains are held in arrays */
      }
      useInputTimeStamps = YES;
      _timeOffset = 0;

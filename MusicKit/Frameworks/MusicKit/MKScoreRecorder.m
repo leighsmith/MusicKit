@@ -4,13 +4,17 @@
 #endif
 
 /*
-  ScoreRecorder.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* Modification History:
+
+   $Log$
+   Revision 1.2  1999/07/29 01:16:42  leigh
+   Added Win32 compatibility, CVS logs, SBs changes
 
    03/13/90/daj - Minor changes for new private category scheme.
    03/17/90/daj - Added settable PartRecorderClass
@@ -139,6 +143,7 @@
        	[partRecorders addObject:newEl = [partRecorderClass new]];
 	[newEl setPart:el];
 	_MKSetScoreRecorderOfPartRecorder(newEl,self);
+        [newEl release]; /*sb */
     }
     return self;
 }

@@ -4,14 +4,18 @@
 #endif
 
 /*
-  Envelope.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:36  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   01/07/90/daj - Changed comments and flushed false conditional comp.
   01/09/90/daj - Fixed minor bug in setStickPoint: -- error checking wasn't

@@ -1,10 +1,24 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 #ifdef SHLIB
 #include "shlib.h"
 #endif
 
-/* 
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description:
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:40  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   09/15/89/daj - Changed to use new fastFft.
   10/02/89/daj - Fixed scaling bug (bug 3670)
@@ -616,7 +630,7 @@ NSLocalizedStringFromTableInBundle(@"Partials object currently supports table si
     length = aLength;
     if (dataDSP) {free(dataDSP); dataDSP = NULL;}
     halfLength = length / 2;
-    bzero(dataDouble,length * sizeof(double));
+    memset(dataDouble, 0, length * sizeof(double));
     if (!phases) {
 	cosPhase = myCos(DEG_TO_RADIANS(defaultPhase)-M_PI_2);
 	sinPhase = mySin(DEG_TO_RADIANS(defaultPhase)-M_PI_2);

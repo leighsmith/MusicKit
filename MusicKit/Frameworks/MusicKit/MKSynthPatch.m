@@ -4,14 +4,18 @@
 #endif
 
 /*
-  SynthPatch.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:43  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   10/08/89/mtm - Changed _noteEndAndScheduleOff: to work without a conductor.
   11/11/89/daj - Added supression of multiple noteOffs in -noteOff and
@@ -888,10 +892,23 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
   /* Same as above but removes patch from deallocated list. Used by Orchestra.
      Must be method to avoid required load of SynthPatch by Orchestra. */
 {
+    int ix;
+    id theArray;
     if (_whichList == _MK_ORCHTMPLIST) 
       return *headP;        /* Don't add it twice. */
-    [self retain]; /* transfers ownership from the list below, to the headP list */
-    [_MKDeallocatedSynthPatches(patchTemplate,_orchIndex) removeObject:self];
+    theArray = _MKDeallocatedSynthPatches(patchTemplate,_orchIndex);
+    ix = [theArray indexOfObject:self];
+    if (ix != NSNotFound) { /*sb: this ensures that only 1 instance is removed from the array, not
+        all instances of the object, if they are there multiple times. Should this be so? If not, we
+        may need to add the number of instances as retains, and remove them all. Hmmm. I am not
+        sure what the original List behaviour was.
+        */
+        [self retain]; /* transfers ownership from the list below, to the headP list */
+        [theArray removeObjectAtIndex:ix];
+    }
+    /* sb: the following should probably NOT happen if the object was not in the array, but
+        I am assuming that if we got this far it must have been there anyway.
+        */
     _whichList = _MK_ORCHTMPLIST;
     if (!*tailP) 
       *tailP = self;
@@ -910,17 +927,35 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
    undesired loading of the SynthPatch class when no SynthPatches are being
    used. */
 
--_freeList:(MKSynthPatch *)head 
+-_freeList:(MKSynthPatch *)head
   /* Frees list of ugs. Used by orch only. */
 {
     register MKSynthPatch *tmp;
     while (head) {
-	tmp = head->_next;
-	[head _free];
+        tmp = head->_next;
+        [head _free];
         [head release];
-	head = tmp;
+        head = tmp;
     }
     return nil;
+}
+-(void)_freeList2
+  /* Frees list of ugs. Used by orch only. */
+/*sb: the previous _freeList looks all wrong to me. As long as the last link is to "nil"
+ * we don't need to be passed a "head", since we're the head ourselves. In any case,
+ * we should be working up from the tail, not the head! it was back to front before, and
+ * only released the last synthpatch in the list.
+ * Remember: the calling method must release this object after calling _freeList2.
+ */
+{
+    register MKSynthPatch *tmp;
+    register MKSynthPatch *head = [self retain];
+    while (head) {
+        tmp = head->_next;
+        [head _free];
+        [head release];
+        head = tmp;
+    }
 }      
 
 

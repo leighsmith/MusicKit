@@ -4,14 +4,18 @@
 #endif
 
 /*
-  Part.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:39  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   01/24/90/daj - Fixed bug in removeNote:. 
   03/19/90/daj - Added MKSetPartClass() and MKGetPartClass().
@@ -249,7 +253,7 @@ static void removeNote(MKPart *self,id aNote);
             }                               /* End of search forward */
       }                                     /* End of if noteOn */
 
-    [aList release];/*sb: this is just my local copy of the list, not the real thing */
+//    [aList release];/*sb: this is just my local copy of the list, not the real thing UNNECESSARY NOW */
 /*sb: don't need to compact, as this method now self-compacting */
 //    compact(self); /* drops all notes that are PlaceHolder and remakes list without them */
     return self;
@@ -310,7 +314,7 @@ static void removeNote(MKPart *self,id aNote);
                              SELFADDNOTE(noteOff);
           }
       }
-    [aList release];
+//    [aList release]; /*sb: unecessary as "notes" array returned is autoreleased */
 #   undef SELFADDNOTE
     return self;
 }
@@ -794,7 +798,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 {
     id aList = [self notes];
     id rtn = [self addNotes:aList timeShift:shift];
-    [aList release];
+//    [aList release]; /*sb: unnecessary. It's autoreleased */
     return rtn;
 }
 
@@ -994,8 +998,8 @@ static void removeNote(MKPart *self, MKNote *aNote)
    */
 {
     sortIfNeeded(self);
-    return [notes copy];  // LMS at the moment this stops problems with overly freed objects.
-//    return _MKLightweightArrayCopy(notes); // LMS this should be (I think) the final version.
+//    return [notes copy];  // LMS at the moment this stops problems with overly freed objects.
+    return _MKLightweightArrayCopy(notes); // LMS this should be (I think) the final version.
 }
 
 -score  

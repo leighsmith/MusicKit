@@ -4,14 +4,18 @@
 #endif
 
 /*
-  FileWriter.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:36  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   10/26/89/daj - Added instance fileExtension method for binary scorefile
                  support.

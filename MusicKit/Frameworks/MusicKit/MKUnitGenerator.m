@@ -4,14 +4,18 @@
 #endif
 
 /*
-  MKUnitGenerator.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:44  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   11/20/89/daj - Minor change for new lazy shared data garbage collection. 
   11/26/89/daj - Added _MKBeginUGBlock() and _MKEndUGBlock() to avoid calling
@@ -931,11 +935,18 @@ extern int _MKOrchestraGetNoops(void);
 -writeSymbolsToStream:(NSMutableData *)s
 {
     int i;
-    [s appendData:[[NSString stringWithFormat:@"_COMMENT\nUG%d: %s", _instanceNumber,[NSStringFromClass([self class]) cString]] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    [s appendData:[[NSString stringWithFormat:@"_COMMENT\nUG%d: %s",
+        _instanceNumber,
+        [NSStringFromClass([self class]) cString]] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     if (synthPatch)
-        [s appendData:[[NSString stringWithFormat:@" in %s_0x%x\n", [NSStringFromClass([synthPatch class]) cString],synthPatch] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+        [s appendData:[[NSString stringWithFormat:@" in %s_0x%x\n",
+            [NSStringFromClass([synthPatch class]) cString],
+            synthPatch] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     else [s appendData:[@"\n" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-    [s appendData:[[NSString stringWithFormat:@"_SYMBOL P\nUG%d_%s I %06X\n", _instanceNumber,[NSStringFromClass([self class]) cString],relocation.pLoop] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    [s appendData:[[NSString stringWithFormat:@"_SYMBOL P\nUG%d_%s I %06X\n",
+        _instanceNumber,
+        [NSStringFromClass([self class]) cString],
+        relocation.pLoop] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     {   /* Write argument blocks */
 	/* FIXME Assumes args count up. */
 	int lowestX = MAXINT,lowestY = MAXINT,lowestL = MAXINT;
@@ -962,14 +973,20 @@ extern int _MKOrchestraGetNoops(void);
 	    }
 	}
 	if (lowestX != MAXINT)
-	  [s appendData:[[NSString stringWithFormat:@"_SYMBOL X\nUG%d_%s_XARGS I %06X\n", _instanceNumber,
-		   [NSStringFromClass([self class]) cString],lowestX] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+	  [s appendData:[[NSString stringWithFormat:@"_SYMBOL X\nUG%d_%s_XARGS I %06X\n",
+              _instanceNumber,
+              [NSStringFromClass([self class]) cString],
+              lowestX] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 	if (lowestY != MAXINT)
-	  [s appendData:[[NSString stringWithFormat:@"_SYMBOL Y\nUG%d_%s_YARGS I %06X\n", _instanceNumber,
-		   [NSStringFromClass([self class]) cString],lowestY] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+	  [s appendData:[[NSString stringWithFormat:@"_SYMBOL Y\nUG%d_%s_YARGS I %06X\n",
+              _instanceNumber,
+              [NSStringFromClass([self class]) cString],
+              lowestY] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 	if (lowestL != MAXINT)
-	  [s appendData:[[NSString stringWithFormat:@"_SYMBOL L\nUG%d_%s_LARGS I %06X\n", _instanceNumber,
-		   [NSStringFromClass([self class]) cString],lowestL] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+	  [s appendData:[[NSString stringWithFormat:@"_SYMBOL L\nUG%d_%s_LARGS I %06X\n",
+              _instanceNumber,
+              [NSStringFromClass([self class]) cString],
+              lowestL] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     }
     {   /* Write arguments */
 	DSPSymbol *sp = self->_classInfo->master->argSymbols;
@@ -978,8 +995,12 @@ extern int _MKOrchestraGetNoops(void);
 	MKUGArgStruct *argP = self->args;
 	for (i = 0; i < argCount; i++) {
 	    addrP = &(argP->addrStruct);
-	    [s appendData:[[NSString stringWithFormat:@"_SYMBOL %s\n", DSPMemoryNames[addrP->memSpace]] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-	    [s appendData:[[NSString stringWithFormat:@"UG%d_%s I %06X\n", _instanceNumber,sp->name,addrP->address] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+	    [s appendData:[[NSString stringWithFormat:@"_SYMBOL %s\n",
+                DSPMemoryNames[addrP->memSpace]] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+	    [s appendData:[[NSString stringWithFormat:@"UG%d_%s I %06X\n",
+                _instanceNumber,
+                sp->name,
+                addrP->address] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 	    argP++;
 	    sp++;
 	}
@@ -1224,6 +1245,9 @@ extern int _MKOrchestraGetNoops(void);
       else tmp = tmp->_next;
     free(args);
 //    [super release];
+    if (_MK_ORCHTRACE(orchestra,MK_TRACEORCHALLOC))
+        _MKOrchTrace(orchestra,MK_TRACEORCHALLOC,"Freeing %s_%p",[NSStringFromClass([self class]) cString],
+                     self);
     return nil; /*sb: to maintain compatibility with return of old [super free] method */
 }
 

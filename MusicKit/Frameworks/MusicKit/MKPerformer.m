@@ -3,15 +3,19 @@
 #include "shlib.h"
 #endif
 
- /*
-  Performer.m
-  Responsibility: David A. Jaffe
+/*
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:40  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   12/13/89/daj - Fixed deactivate to always reinitialize _performMsgPtr
   01/09/90/daj - Changed pause/resume mechanism to fix bug 4310.

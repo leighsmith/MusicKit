@@ -4,14 +4,18 @@
 #endif
 
 /*
-  SynthData.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:43  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   11/20/89/daj - Minor change for new lazy shared data garbage collection. 
   11/27/89/daj - Removed arg from _MKCurSample.

@@ -4,13 +4,17 @@
 #endif
 
 /*
-  MKInstrument.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:37  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   03/13/90/daj - Changes to support category for private methods.
   03/21/90/daj - Added archiving.

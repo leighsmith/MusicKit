@@ -4,14 +4,18 @@
 #endif
 
 /*
-  SynthInstrument.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
   */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:16:43  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   09/19/89/daj - Changed to use Note C functions for efficiency.
   12/15/89/daj - Changed _noteOffAndScheduleEnd: to noteOff:.
@@ -251,12 +255,14 @@ static id initPatchLists(id oldLists)
      If subclass overrides this method, it must send [super initialize]
      before setting its own defaults. */
 {
+    id aNoteRec = [MKNoteReceiver new];
     _MKLinkUnreferencedClasses([MKSynthPatch class]);
     [super init];
     _patchLists = initPatchLists(nil);
     taggedPatches = [HashTable newKeyDesc:"i"];
     controllerTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
-    [self addNoteReceiver:[MKNoteReceiver new]];
+    [self addNoteReceiver:aNoteRec];
+    [aNoteRec release];
     updates = [MKGetNoteClass() new];  /* For remembering partUpdate 
 				parameter values on this channel. */
     [updates setNoteType:MK_noteUpdate];
@@ -1003,7 +1009,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
 	if (!aPatch)
 	  break;
 	if (MKIsTraced(MK_TRACESYNTHINS))
-	  fprintf(stderr,"SynthInstrument allocates patch %d from orchestra %d.\n",(int)aPatch,(int)[aPatch orchestra]);
+	  fprintf(stderr,"SynthInstrument allocates patch %p from orchestra %p.\n",aPatch,[aPatch orchestra]);
 	aPatchList->manualCount++;  
 	aPatchList->totalCount++;  
 	aPatchList->idleCount++;
