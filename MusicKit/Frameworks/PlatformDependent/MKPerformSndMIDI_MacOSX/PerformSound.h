@@ -15,6 +15,9 @@
 */
 /*
   $Log$
+  Revision 1.11  2003/06/13 03:23:04  leighsmith
+  Removed redundant functions, improved comments
+
   Revision 1.10  2001/11/07 17:54:18  sbrandon
   put #ifndefs around file to protect from using "include" instead of import.
 
@@ -49,7 +52,7 @@
 /*!
     @header PerformSound
     
-    This is basically a bare-bones duplicate of NeXT/Apples' performsound module functionality.
+    @abstract This is basically a bare-bones duplicate of NeXT/Apples' performsound module functionality.
     It provides sound playback and recording, in either streaming (preferred) or single sound
     operation (where the operating system lacks streaming buffers).
     It draws inspiration (only) from Steinberg's ASIO.
@@ -147,38 +150,16 @@ PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex);
 PERFORM_API unsigned int SNDGetAssignedDriverIndex(void);
 
 /*!
-    @function       SNDGetVolume
-    @abstract       Retrieve the current volume.
-    @param          left
-                        Receives the current left volume value (what units?).
-    @param          right
-                        Receives the current right volume value (what units?).
-*/
-PERFORM_API void SNDGetVolume(float *left, float *right);
-
-/*!
-    @function       SNDSetVolume
-    @abstract       Sets the current volume.
-    @param          left
-                        Sets the current left volume value (what units?).
-    @param          right
-                        Sets the current right volume value (what units?).
-    @result         Returns a readable string.
-*/
-PERFORM_API void SNDSetVolume(float left, float right);
-
-/*!
     @function       SNDIsMuted
-    @abstract       Determine if the currently playing sound is muted.
+    @abstract       Determine if all the sound output is muted.
     @result         Returns YES if the currently playing sound is muted.
 */
 PERFORM_API BOOL SNDIsMuted(void);
 
 /*!
     @function       SNDSetMute
-    @abstract       Mute or unmute the currently playing sound..
-    @param          aFlag
-                        YES to mute, NO to unmute.
+    @abstract       Mute or unmute all sound output.
+    @param          aFlag YES to mute, NO to unmute.
 */
 PERFORM_API void SNDSetMute(BOOL aFlag);
 
