@@ -15,6 +15,10 @@
 
 # Modification history:
 # $Log$
+# Revision 1.19  2002/02/01 10:57:36  sbrandon
+# we now compile c++ files directly from this makefile due to advances in
+# GNUstep - no need for specially constructed subproject.
+#
 # Revision 1.18  2002/01/21 10:10:01  sbrandon
 # added new files from MacOSX additions to GNUstep project (SndExpt,
 # SndFunctionsDiskIO, SndTable)
@@ -94,7 +98,7 @@ srcdir = .
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   SK_COMPILE_APPKIT_CLASSES = yes 
-  SK_COMPILE_MP3_ENCODER = no
+  SK_COMPILE_MP3_ENCODER = yes
 else
   SK_COMPILE_APPKIT_CLASSES = yes
   SK_COMPILE_MP3_ENCODER = yes
@@ -136,6 +140,8 @@ $(MY_NAME)_C_FILES = \
          SndEndianFunctions.c _SndConvert.c _Sndfilterkit.c _Sndlibst.c\
          _Sndresamplesubs.c
 
+$(MY_NAME)_CC_FILES = allpass.cpp comb.cpp reverbBridge.cpp revmodel.cpp
+
 # The framework installed header files
 $(MY_NAME)_HEADER_FILES = \
          Snd.h SndAudioBuffer.h SndDisplayData.h SndDisplayDataList.h\
@@ -151,7 +157,8 @@ $(MY_NAME)_HEADER_FILES = \
 	 SndAudioProcessorDistortion.h SndAudioProcessorFlanger.h \
 	 SndAudioProcessorRecorder.h SndAudioProcessorInspector.h \
          SndAudioProcessorToneGenerator.h SndAudioProcessorNoiseGate.h \
-         SndStreamArchitectureView.h SndTable.h SndExpt.h
+         SndStreamArchitectureView.h SndTable.h SndExpt.h \
+         SndConditionLock.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
 
@@ -175,8 +182,6 @@ endif
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   $(MY_NAME)_OBJC_FILES += SndConditionLock.m
 endif
-
-$(MY_NAME)_SUBPROJECTS = cpp.subproj
 
 SRCS = $(LIBRARY_NAME:=.m)
 HDRS = $(LIBRARY_NAME:=.h)
