@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.24  2001/09/07 18:45:08  leighsmith
+  Replaced HTML numeric entity with correct symbolic entity for double quotes, moved @class before headerdoc declaration
+
   Revision 1.23  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -102,6 +105,8 @@
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
+@class MKConductor;
+
 /*!
   @class MKMidi
   @discussion
@@ -214,8 +219,6 @@ See<b> ../Administration/MidiHardwareInfo.rtf</b>
 #define NSMachPort NSPort
 #endif
 
-@class MKConductor;
-
 @interface MKMidi:NSObject
 {
     NSMutableArray *noteSenders;         /* @var noteSenders The object's collection of MKNoteSenders. */
@@ -323,10 +326,10 @@ See<b> ../Administration/MidiHardwareInfo.rtf</b>
 /*!
   @method midi
   @result Returns an id.
-  @discussion If a MKMidi object for the device &#170;midi0&#186; doesn't already
+  @discussion If a MKMidi object for the device &ldquo;midi0&ldquo; doesn't already
               exist, this creates such an object and creates and adds to it a full
               complement of MKNoteSenders and MKNoteReceivers.  Otherwise, returns
-              the existing object.  "midi0" corresponds to serial port A on the
+              the existing object.  &ldquo;midi0&rdquo; corresponds to serial port A on the
               NeXT (black) hardware, the default MIDI port on other platforms.  
 */
 +midi;
