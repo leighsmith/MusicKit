@@ -177,7 +177,7 @@ static int ioTags = 1000;
     return [super init];
 }
 
-- initWithFormat: (int) format channels: (int) channels frames: (int) frames samplingRate: (int) samplingRate
+- initWithFormat: (int) format channels: (int) channels frames: (int) frames samplingRate: (float) samplingRate
 {
   self = [self init];
   if (soundStruct == NULL)
@@ -186,20 +186,21 @@ static int ioTags = 1000;
                                reason:@"Can't allocate memory for Snd class"
                              userInfo:nil] raise];
 
-  soundStruct->magic        = SND_MAGIC; // _why_ do we still have bloody file format specific data in Snd???? Grrrr.
+  // TODO _why_ do we still have file format specific data in Snd???? History is the only reason,
+  // it should eventually be removed now we use Sox for File I/O.
+  soundStruct->magic        = SND_MAGIC;
   soundStruct->dataLocation = 0; 
   soundStruct->dataSize     = 0;
   soundStruct->dataFormat   = format;
-  soundStruct->samplingRate = samplingRate;
+  soundStruct->samplingRate = (int) samplingRate;
   soundStruct->channelCount = channels;
 
   [self setDataSize: SndSamplesToBytes(frames, channels, format)
          dataFormat: format
-       samplingRate: samplingRate
+       samplingRate: (int) samplingRate
        channelCount: channels
            infoSize: 0];
-    
-  
+
   return self;
 }
 
@@ -244,6 +245,13 @@ static int ioTags = 1000;
 {
     printf("Snd: -initFromSection:(NSString *)sectionName obsolete, not implemented\n");
     return nil;
+}
+
+- initFromSoundURL: (NSURL *) url
+{
+    self = [self init];
+    printf("Snd: -initFromSoundURL:(NSURL *) url, not implemented\n");
+    return self;
 }
 
 - (unsigned) hash
@@ -292,7 +300,10 @@ static int ioTags = 1000;
 // for debugging
 - (NSString *) description
 {
-    return SndStructDescription(soundStruct);
+    if(soundStruct != NULL)
+        return SndStructDescription(soundStruct);
+    else
+        return name;
 }
 
 - readSoundFromStream:(NSData *)stream

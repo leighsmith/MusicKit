@@ -313,14 +313,31 @@ architecture, as described in the <b>SndStruct</b> header.
               contains a sound entry; otherwise, frees the newly allocated Snd
               and returns <b>nil</b>.
               
-              See also:	+<b>alloc</b> (NSObject), + <b>allocWithZone:</b> (NSObject)
+              See also:	+<b>alloc</b> (NSObject), +<b>allocWithZone:</b> (NSObject)
 */
 - initFromPasteboard:(NSPasteboard *)thePboard;
 
 /*!
+  @method initFromSoundURL:
+  @param  url is a NSURL *.
+  @result Returns an id.
+  @discussion Initializes the Snd instance, which must be newly allocated, by
+              copying the sound data from the possibly remote sound file located using
+              <i>url</i>. Returns <b>self</b> (an unnamed Snd) if <i>url</i> can retrieve
+              a sound file; otherwise, frees the newly allocated Snd and returns <b>nil</b>.
+
+     See also:	<b>initFromSoundfile:</b>, +<b>alloc</b> (NSObject), +<b>allocWithZone:</b> (NSObject)
+  */
+- initFromSoundURL: (NSURL *) url;
+
+/*!
   @method initWithFormat:channels:frames:samplingRate:
+  @param  format
+  @param  channels
+  @param  frames
+  @param  samplingRate
 */
-- initWithFormat: (int) format channels: (int) channels frames: (int) frames samplingRate: (int) samplingRate;
+- initWithFormat: (int) format channels: (int) channels frames: (int) frames samplingRate: (float) samplingRate;
 
 - (void)dealloc;
 
