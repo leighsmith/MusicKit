@@ -237,8 +237,8 @@ enum SndViewStereoMode {
     Snd		*pasteboardSound;
     /*! @var The delegate receiving notification of SndView state changes. */
     id 		delegate;
-    /*! @var selectionRange The region of the sound (in frames) selected (and displayed highlighted) for copy/paste/drag operations. */
-    NSRange	selectionRange;
+    /*! @var selectedFrames The region of the sound (in frames) selected (and displayed highlighted) for copy/paste/drag operations. */
+    NSRange	selectedFrames;
     /*! @var displayMode The form of display, either SND_SOUNDVIEW_MINMAX or SND_SOUNDVIEW_WAVE */
     int		displayMode;
     /*! @var backgroundColour Colour used as a non image background. */
@@ -254,12 +254,14 @@ enum SndViewStereoMode {
 
     /*! @struct svFlags 
 	@field autoscale With autoscaling NO, the SndView's frame grows or shrinks (horizontally) to fit
-	the new sound data and the reduction factor is unchanged. If autoscaling is enabled, the
-	reduction factor is automatically recomputed to maintain a constant frame size.
+	       the new sound data and the reduction factor is unchanged. If autoscaling is enabled, the
+	       reduction factor is automatically recomputed to maintain a constant frame size.
+	@field continuousSelectionUpdates If YES, <b>selectionChanged:</b> delegate messages are sent as the mouse is being dragged.
+	       If NO, the message is sent only on mouse	up.
 	*/
     struct {
         unsigned int  disabled:1;
-        unsigned int  continuous:1;
+        unsigned int  continuousSelectionUpdates:1;
         unsigned int  cursorOn:1;
         unsigned int  drawsCrosses:1;
         unsigned int  autoscale:1;
@@ -286,8 +288,10 @@ enum SndViewStereoMode {
     Snd *recordingSound;
     
     /*! @var cachedSelectionRect An NSRect holding the pixel region of the SndView which has been selected.
-	Holds the previous selection after selectionRange has been changed in order to redraw just that region now deselected. */
+	Holds the previous selection after selectedFrames has been changed in order to redraw just that region now deselected. */
     NSRect	cachedSelectionRect;
+    /*! @var previousSelectedFrames An NSRange holding the range in frames previously selected. */
+    NSRange     previousSelectedFrames;
 
     int		lastPasteCount;
     int		lastCopyCount;
@@ -477,12 +481,12 @@ enum SndViewStereoMode {
 - (BOOL) isBezeled;
 
 /*!
-  @method isContinuous
+  @method isContinuousSelectionUpdates
   @result Returns a BOOL.
-  @abstract Returns YES if the SndView responds to mouse-dragged events (as set through <b>setContinuous:</b>). 
+  @abstract Returns YES if the SndView responds to mouse-dragged events (as set through <b>setContinuousSelectionUpdates:</b>). 
   @discussion The default is NO.
 */
-- (BOOL) isContinuous;
+- (BOOL) isContinuousSelectionUpdates;
 
 /*!
   @method isEditable
@@ -523,6 +527,14 @@ enum SndViewStereoMode {
 
 - (float) getDefaultRecordTime;
 - (void) setDefaultRecordTime: (float) seconds;
+
+/*!
+  @method selectionChanged
+  @discussion Not normally messaged directly by a client class, it's default operation is to inform the delegate
+              that the selection changed if setContinuousSelectionUpdates was set to YES.
+              This allows subclasses to know when selections change and override default behaviour.
+ */
+- (void) selectionChanged;
 
 /*!
   @method mouseDown:
@@ -737,14 +749,14 @@ enum SndViewStereoMode {
 - (void) setBezeled: (BOOL) aFlag;
 
 /*!
-  @method setContinuous:
+  @method setContinuousSelectionUpdates:
   @param  aFlag is a BOOL.
   @abstract Sets the state of continuous action messages.
   @discussion If <i>aFlag</i> is YES, <b>selectionChanged:</b> messages are sent to the delegate as
               the mouse is being dragged. If NO, the message is sent only on mouse
               up. The default is NO. 
 */
-- (void) setContinuous: (BOOL) aFlag;
+- (void) setContinuousSelectionUpdates: (BOOL) aFlag;
 
 /*!
   @method setDelegate:
