@@ -70,7 +70,7 @@ enum {
 - (NSString*) description;
 /*!
   @method     processReplacingInputBuffer:outputBuffer:
-  @abstract
+  @abstract   See baseclass SndAudioProcessor
   @discussion
   @result
 */
@@ -78,22 +78,22 @@ enum {
                         outputBuffer: (SndAudioBuffer*) outB;
 /*!
   @method     setParam:toValue:
-  @abstract
+  @abstract   See baseclass SndAudioProcessor
   @discussion
   @result
 */
 - setParam: (const int) index toValue: (const float) value;
 /*!
   @method     paramValue:
-  @abstract
+  @abstract   See baseclass SndAudioProcessor
   @discussion
   @result
 */
 - (float) paramValue: (const int) index;
 /*!
   @method     paramName:
-  @abstract
-  @discussion
+  @abstract   See baseclass SndAudioProcessor
+  @discussion 
   @result
 */
 - (NSString*) paramName: (const int) index;

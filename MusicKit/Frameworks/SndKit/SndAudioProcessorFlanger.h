@@ -5,7 +5,7 @@
 //
 //  Created by SKoT McDonald on Mon Dec 17 2001.
 //
-//  Based on the C++ Vellocet VFlanger Cubase VST plugin by
+//  Based on the 1997 C++ Vellocet VFlanger Cubase VST plugin by
 //  Vellocet / SKoT McDonald <skot@vellocet.com>
 //  http://www.vellocet.com
 //
