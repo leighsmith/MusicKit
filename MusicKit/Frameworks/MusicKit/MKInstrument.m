@@ -29,7 +29,6 @@
 #import "_musickit.h"
 
 #import "ConductorPrivate.h"
-#import "NoteReceiverPrivate.h"
 #import "InstrumentPrivate.h"
 
 @implementation MKInstrument
@@ -90,6 +89,7 @@
    */
 {
     return _MKLightweightArrayCopy(noteReceivers);
+    // return [_MKLightweightArrayCopy(noteReceivers) autorelease];
 }
 
 - (int) indexOfNoteReceiver: (MKNoteReceiver *) aNoteReceiver
@@ -170,8 +170,8 @@
     }
 }
 
+/* Broadcasts "disconnect" to MKNoteReceivers. */ 
 - disconnectNoteReceivers
-    /* Broadcasts "disconnect" to MKNoteReceivers. */ 
 {
     [noteReceivers makeObjectsPerformSelector: @selector(disconnect)];
     return self;
