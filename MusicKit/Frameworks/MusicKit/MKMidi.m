@@ -71,166 +71,10 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2004, The MusicKit Project.
 */
 /*
-Modification history:
-
-  $Log$
-  Revision 1.50  2004/10/22 01:54:54  leighsmith
-  Correctly typed parameters and return types
-
-  Revision 1.49  2004/08/21 23:27:09  leighsmith
-  Cleaned up
-
-  Revision 1.48  2003/08/04 21:19:36  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
-  Revision 1.47  2002/09/25 17:38:09  leighsmith
-  Made setupMTC and tearDownMTC methods rather than functions to avoid warnings of private ivar use
-
-  Revision 1.46  2002/04/03 03:59:41  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.45  2002/01/29 16:20:33  sbrandon
-  tidied up object retain/release in getAvailableMidiDevices,
-  preventing array leaks/stale pointers when no MIDI devices are
-  present
-
-  Revision 1.44  2002/01/23 15:33:02  sbrandon
-  The start of a major cleanup of memory management within the MK. This set of
-  changes revolves around MKNote allocation/retain/release/autorelease.
-
-  Revision 1.43  2002/01/15 11:25:35  sbrandon
-  fixed casting problem which caused compiler warnings and may have led to
-  errors in reading sysex strings (thanks Nerijus Baliunas)
-
-  Revision 1.42  2001/10/15 01:34:00  leighsmith
-  Removed warning caused by assigning self in factory methods
-
-  Revision 1.41  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.40  2001/08/07 16:20:05  leighsmith
-  Added first draft of encode/decode methods, typed _pIn/_pOut
-
-  Revision 1.39  2001/07/05 22:59:04  leighsmith
-  commented out debugging, corrected typing of return parameters
-
-  Revision 1.38  2001/05/14 21:01:34  leighsmith
-  Added description, cleaned comments, temporarily disabled SysEx slowing code
-
-  Revision 1.37  2001/05/12 09:13:45  sbrandon
-  - changed mach_port_t to MKMDReplyPort, as this fits in with the types used
-    on GNUSTEP. This may break MacOSX.
-  - changed KERN_SUCCESS to MKMD_SUCCESS. Need to check this is ok on MacOSX.
-
-  Revision 1.36  2001/03/30 23:05:43  leighsmith
-  Enabled multiple ports (midi1, midi2 etc) to connect to the MKMD routines
-
-  Revision 1.35  2001/03/12 01:57:55  leigh
-  Introduced slowing bytes while sending SysEx messages
-
-  Revision 1.34  2001/02/03 02:28:09  leigh
-  Moved mach error string dependency to MKMDErrorString,
-  fixed overly cautious check that receivedMidi was not being set properly, allowing for multiple calls of my_data_reply
-
-  Revision 1.33  2001/01/31 21:36:45  leigh
-  Typed note parameters
-
-  Revision 1.32  2001/01/17 22:59:50  leigh
-  Fixed bug caused by driverInfoInitialized being set YES, even if there were no drivers available
-
-  Revision 1.31  2000/12/15 02:02:27  leigh
-  Initial Revision
-
-  Revision 1.30  2000/12/07 00:28:37  leigh
-  Standardised on machPorts as the mechanism for MKMD routines.
-
-  Revision 1.29  2000/11/27 23:49:43  leigh
-  Added autorelease pool for the MIDI receive call back function
-
-  Revision 1.28  2000/11/25 22:50:51  leigh
-  Improved class description, made error messages less NeXT specific, introduced a call-back function alternative to using a port for receiving MIDI messages from the driver, ensured ownerPort is nil when closing the device
-
-  Revision 1.27  2000/11/13 23:07:51  leigh
-  Renamed MIDI functions to the more explicit prefix MKMD to avoid confusion with OS MIDI routines. Replaced KERN_SUCCESS with MKMD_SUCCESS to remove the Mach dependency. queuePort is now a MKMDReplyPort. Introduced a macro to determine whether to treat the ports as NSObjects requiring retain/releases.
-  Removed tvs since only one copy was held per instance, integrating the MTC variables as ivars, fixing a related bug.
-
-  Revision 1.26  2000/10/30 15:13:19  leigh
-  Made MKMD instead of MIDI prefixes, ioMode now an enum,ports are now typed within MKPerformSndMIDI, so the machPort methods have been removed. Platform specific code has been moved to MKPerformSndMIDI.
-
-  Revision 1.25  2000/09/18 23:44:07  leigh
-  Moved the openstep includes to properly function
-
-  Revision 1.24  2000/07/22 00:32:20  leigh
-  Minor doco and typing cleanups.
-
-  Revision 1.23  2000/06/23 20:30:30  leigh
-  Added fixes for OpenStep MIDI
-
-  Revision 1.22  2000/06/15 01:10:28  leigh
-  Added possibly more correct search for the Midi driver for MOX/DP4
-
-  Revision 1.21  2000/05/06 02:36:42  leigh
-  Made Win32 declare regression class types also
-
-  Revision 1.20  2000/04/26 01:24:25  leigh
-  Removed use of HashTable, fixed memory leak in factory methods
-
-  Revision 1.19  2000/04/22 20:15:25  leigh
-  user defaults standardised to MK prefix
-
-  Revision 1.18  2000/04/16 04:19:42  leigh
-  Removed assignment in condition warning
-
-  Revision 1.17  2000/04/07 18:15:14  leigh
-  Fixed incoming MIDI distribution
-
-  Revision 1.16  2000/04/01 01:18:48  leigh
-  Removed redundant imports, defined around for MacOsX (temporarily)
-
-  Revision 1.15  2000/03/31 00:15:33  leigh
-  Removed redundant include files
-
-  Revision 1.14  2000/02/08 04:37:48  leigh
-  Added check to downloadDLS: to ensure the MIDI device is open
-
-  Revision 1.13  2000/02/03 19:14:56  leigh
-  Removed extraneous header imports
-
-  Revision 1.12  2000/01/27 19:05:59  leigh
-  Now using NSPort replacing C Mach port API
-
-  Revision 1.11  2000/01/20 17:15:36  leigh
-  Replaced sleepMs with OpenStep NSThread delay
-
-  Revision 1.10  1999/11/14 21:33:53  leigh
-  Corrected _MKErrorf arguments to be NSStrings, properly return error codes from initOnDevice, fixed hardnamed device initialisation.
-
-  Revision 1.9  1999/11/09 02:18:36  leigh
-  Enabled Win32 driver selection with default driver automatically selected
-
-  Revision 1.8  1999/10/28 01:40:52  leigh
-  driver names and units now returned by separate class methods, renamed ivars, Win32 driver naming
-
-  Revision 1.7  1999/09/28 03:05:29  leigh
-  Cleaned up warnings
-
-  Revision 1.6  1999/09/24 17:05:36  leigh
-  downloadDLS method added, MKPerformSndMIDI framework now used
-
-  Revision 1.5  1999/09/04 22:02:17  leigh
-  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
-
-  Revision 1.4  1999/08/26 19:54:54  leigh
-  Code cleanup, Win32 clock support
-
-  Revision 1.3  1999/08/08 01:59:22  leigh
-  Removed extraVars cruft
-
-  Revision 1.2  1999/07/29 01:16:37  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history prior to commit to CVS:
 
   09/19/89/daj - Change to accomodate new way of doing parameters (structs 
                  rather than objects).
@@ -360,7 +204,7 @@ static double mtcTimeOffset = 0;
 /* Some forward decls */
 void handleCallBack(void *midiObj);
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder: (NSCoder *) aCoder
   /* TYPE: Archiving; Writes object.
      You never send this message directly.  
      Archives the note senders and receivers, device and host names, the ports used as handles
@@ -392,7 +236,7 @@ void handleCallBack(void *midiObj);
     //_MKMidiOutStruct *_pOut;                // TODO perhaps we can get away without archiving
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) initWithCoder: (NSCoder *) aDecoder
 {
     if ([aDecoder versionForClassName: @"MKMidi"] == VERSION1) {
         midiDevName = [[aDecoder decodeObject] retain];
@@ -439,9 +283,10 @@ NSString *midiDriverErrorString(int errorCode)
     // This is inefficient, once we can do better compares we should retrieve the objectsForKeys:notFoundMarker:.
     // which has the port as the key
     NSEnumerator *enumerator = [portTable objectEnumerator];
+    
     while ((midiObj = [enumerator nextObject])) {
         if ([midiObj->hostname isEqualToString: midiHostname] && (midiObj->unit != midiUnit))
-            [aList addObject:midiObj];
+            [aList addObject: midiObj];
     }
     return [aList autorelease];
 }
@@ -492,48 +337,23 @@ static int closeMidiDev(MKMidi *self)
     return YES;
 }
 
-static int getNumSuffix(NSString *s, BOOL *isSoftDev)
-    /* Assumes s is valid string. Returns -1 if no final number found or if 
-     * entire string is one number. Otherwise, returns number. */
-{
-    NSScanner *scanner = [NSScanner scannerWithString: s];
-    int unitNum;
-    BOOL gotInt;
-    NSRange softDevPrefixRange = {0, 4};
-
-    [scanner scanUpToCharactersFromSet: [NSCharacterSet decimalDigitCharacterSet] intoString: NULL]; 
-    gotInt = [scanner scanInt: &unitNum];
-    if(!gotInt || ![scanner isAtEnd] || [scanner scanLocation] == 0) {
-        *isSoftDev = NO;
-        return NO_UNIT;
-    }
-    else {
-        *isSoftDev = [s compare: @"midi" 
-                        options: NSAnchoredSearch
-                          range: softDevPrefixRange] == NSOrderedSame;
-	return unitNum;
-    }
-}
-
+/* "Opens". If the device represented by devicePortName is already 
+   accessed by this task, uses the ownerPort currently accessed.
+   Otherwise, if ownerPort is nil, allocates a new
+   port. Otherwise, uses ownerPort as specified. 
+   To make the device truly public, you can pass the device port as the
+   owner port. Returns the MIDI driver MKMDReturn status, MKMD_SUCCESS 
+   if the device was successfully opened.
+   */
 static MKMDReturn openMidiDev(MKMidi *self)
-    /* "Opens". If the device represented by devicePortName is already 
-       accessed by this task, uses the ownerPort currently accessed.
-       Otherwise, if ownerPort is nil, allocates a new
-       port. Otherwise, uses ownerPort as specified. 
-       To make the device truly public, you can pass the device port as the
-       owner port. Returns the MIDI driver MKMDReturn status, MKMD_SUCCESS 
-       if the device was successfully opened.
-       */
 {
     MKMDReturn r;
-//    BOOL isSoftDevice;
     NSMutableArray *otherUnits;
     MKMDPort driverDevicePort;
 
-    // FIXME the soft and hard (i.e explicit driver name) forms needs to be integrated with midiDriver units.
-    // self->unit = getNumSuffix(self->midiDevName, &isSoftDevice);
-    // FIXME Verify that self->midiDevName has already been mapped to a hard device.
-    // kludged FIXME midiDriverUnits
+    // TODO Verify that self->midiDevName has already been mapped to a hard device.
+    // TODO Remove midiDriverUnits altogether and replace with:
+    // TODO self->unit = [midiDriverNames indexOfObject: self->midiDevName]
     self->unit = [[midiDriverUnits objectAtIndex: [midiDriverNames indexOfObject: self->midiDevName]] intValue];
     driverDevicePort = MKMDGetMIDIDeviceOnHost([self->hostname cString]);
 
@@ -544,11 +364,11 @@ static MKMDReturn openMidiDev(MKMidi *self)
     self->devicePort = [[NSMachPort portWithMachPort: (int) driverDevicePort] retain];
     otherUnits = [MKMidi midisOnHost: self->hostname otherThanUnit: self->unit];
     if ([otherUnits count]) {
-        MKMidi *aMidi;
-        int i;
-        int cnt = [otherUnits count];
-        for (i=0; i<cnt; i++) {
-            aMidi = [otherUnits objectAtIndex:i];
+        int unitIndex;
+        int unitCount = [otherUnits count];
+	
+        for (unitIndex = 0; unitIndex < unitCount; unitIndex++) {
+	    MKMidi *aMidi = [otherUnits objectAtIndex: unitIndex];
             /* Should be the first one, but just in case... */
             if (aMidi->ownerPort != nil) {
                 self->ownerPort = aMidi->ownerPort;
@@ -756,8 +576,7 @@ static int setMidiSysIgnore(MKMidi *self,unsigned bits)
     /* Tell driver to ignore particular incoming MIDI system messages */
 {
 #if FCC_DID_NOT_APPROVE_DRIVER_CHANGE
-    int r = MKMDSetSystemIgnores((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort],
-				 self->unit,bits);
+    int r = MKMDSetSystemIgnores((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], self->unit, bits);
 #else 
     int r = 0;
     r |= MKMDFilterMessage(devicePort, (MKMDOwnerPort) [self->ownerPort machPort], self->unit, 
@@ -1113,9 +932,9 @@ static void my_data_reply(MKMDReplyPort reply_port, short unit, MKMDRawEvent *ev
  * The delegate has to repond to selector -handleMachMessage or -handlePortMessage
  */
 
-- (void)handleMachMessage:(void *)machMessage
+- (void) handleMachMessage: (void *) machMessage
 {
-    msg_header_t *msg = (msg_header_t *)machMessage;
+    msg_header_t *msg = (msg_header_t *) machMessage;
     NSString *errorMessage;
     MKMDReturn r;
     /* Tells driver funcs to call: */ 
@@ -1167,7 +986,7 @@ void handleCallBack(void *midiObj)
 }
 /* Input configuration */
 
--setUseInputTimeStamps:(BOOL)yesOrNo
+- setUseInputTimeStamps: (BOOL) yesOrNo
 {
     if (deviceStatus != MK_devClosed)
       return nil;
@@ -1241,7 +1060,7 @@ static unsigned ignoreBit(unsigned param)
  */
 
 // Return YES if able to initialise for the MIDI driver which registers available MIDI output ports.
-// This includes DriverKit based MIDI drivers and Windows DirectMusic (MKPerformSndMIDI) based drivers.
+// This checks MIDI drivers via MKPerformSndMIDI framework based drivers.
 // Returns NO if there was no MIDI driver found. 
 static BOOL getAvailableMidiDevices(void)
 {
@@ -1273,58 +1092,70 @@ static BOOL getAvailableMidiDevices(void)
     return YES;
 }
 
-static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverNameAndUnit)
-    /* Maps a name of the form "midi0" to a name of the form "Mididriver2".
-     * See above long explanation.  Returns temporary NSString of hard name.
-     */
+/* Assumes deviceName is valid string. Returns NO if no final number found or if 
+* entire string is one number. Otherwise, returns number in unitNum and YES. */
+static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
+{
+    NSScanner *scanner = [NSScanner scannerWithString: deviceName];
+    BOOL gotInt;
+    NSRange softDevPrefixRange = {0, 4};
+    
+    [scanner scanUpToCharactersFromSet: [NSCharacterSet decimalDigitCharacterSet] intoString: NULL]; 
+    gotInt = [scanner scanInt: unitNum];
+    if(!gotInt || ![scanner isAtEnd] || [scanner scanLocation] == 0) {
+	*unitNum = NO_UNIT;
+        return NO;
+    }
+    else {
+        return [deviceName compare: @"midi" 
+			   options: NSAnchoredSearch
+			     range: softDevPrefixRange] == NSOrderedSame;
+    }
+}
+
+/* Maps a name of the form "midi0" to a name of the form "Mididriver2".
+ * See above long explanation.
+ */
++ (NSString *) mapSoftNameToDriverName: (NSString *) devName
 {
     NSString *midiNumStrArr;
     unsigned int deviceIndex;
-    BOOL isSoft;
     NSString *defaultsValue;
-    int num = getNumSuffix(devName, &isSoft);
+    int num; 
+    // devName can be of the soft form "midi0", or the hard driver name "Mididriver0" or "SB Live! MIDI Out"
+    BOOL isSoft = isSoftDevice(devName, &num);
 
-    // assigns midiDriverNames and midiDriverUnits
+    // assigns midiDriverNames
     if(!getAvailableMidiDevices())
-        return NO; 
-    // devName can be of the soft form "midi0", or the hard description "Mididriver0" or "SB Live! MIDI Out"
+        return nil; 
     if (isSoft) {
-        midiNumStrArr = [NSString stringWithFormat:@"MKMIDI%d", num];
+        midiNumStrArr = [NSString stringWithFormat: @"MKMIDI%d", num];
 
         // The owner will be whatever application links against this framework. 
         // This is what we want to allow for different applications to use different MIDI
         // devices if necessary.
         defaultsValue = (NSString *) [[NSUserDefaults standardUserDefaults] objectForKey: midiNumStrArr];
 	if ([defaultsValue length]) {
-            num = getNumSuffix(defaultsValue, &isSoft);
-	} else if (num == 0) { 
+            isSoft = isSoftDevice(defaultsValue, &num);
+	}
+	else if (num == 0) { 
             // Use the system default MIDI driver for midi0, not necessarily the first entry.
             // TODO this should probably be changed to allow "midiDefault" as a device name,
             // or consign midi0 to be the default, midi1 as [midiDriverNames objectAtIndex: 0], etc.
-            *driverNameAndUnit = [midiDriverNames objectAtIndex: systemDefaultDriverNum];
-            return YES;
+            return [midiDriverNames objectAtIndex: systemDefaultDriverNum];
 	}
         else {
-            *driverNameAndUnit = [midiDriverNames objectAtIndex: num];
-            return YES;
+            return [midiDriverNames objectAtIndex: num];
         }
     }
     // here we assume if we didn't have a soft device name, we are referring to a described device.
-    *driverNameAndUnit = devName;
-
     // ensure the driver was on the legitimate list
     for (deviceIndex = 0; deviceIndex < [midiDriverNames count]; deviceIndex++) {
-        if ([*driverNameAndUnit isEqualToString: [midiDriverNames objectAtIndex: deviceIndex]]) {
-	    // num will be NO_UNIT if there was no conversion from soft to hard driver names
-	    // LMS: Disabled unit check as getNumSuffix() will report MPU-401 as the 401st unit!
-            // The check was really doing very little since we have verified the name is correct anyway.
-            // If the driver name included a numeric suffix i.e Mididriver0 then the match above
-            // has verified correctly.
-	    // if ((num == NO_UNIT) || ([[midiDriverUnits objectAtIndex: deviceIndex] intValue] == num)) 
-		return YES;
+        if ([devName isEqualToString: [midiDriverNames objectAtIndex: deviceIndex]]) {
+	    return devName;
 	}
     }
-    return NO;
+    return nil;
 }
 
 // Returns autoreleased copies of all available driverNames as an NSArray
@@ -1334,6 +1165,8 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
     return [[midiDriverNames copy] autorelease];
 }
 
+// TODO this is redundant, we should just return a list of driver names. The unit should then be the index in the
+// driver name table.
 // Returns autoreleased copies of all available driverUnits
 + (NSArray *) getDriverUnits
 {
@@ -1343,7 +1176,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
 
 - (NSString *) driverName 
 {
-    return midiDevName;
+    return [[midiDevName copy] autorelease];
 }
 
 - (int) driverUnit
@@ -1390,63 +1223,66 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
 }
 
 // This is where all the initialisation is performed.
-- initOnDevice:(NSString *) devName hostName:(NSString *) hostName
+- initOnDevice: (NSString *) devName hostName: (NSString *) hostName
 {
-    NSString *driverNameAndUnit;
-    MKMidi *obj;
-    NSString *hostAndDevName;
-    MKNoteSender *aNoteSender;
-    MKNoteReceiver *aNoteReceiver;
-    int i;
-    _MKParameter *aParam;
-
+    self = [super init];
+    if(self != nil) {
+	MKMidi *obj;
+	NSString *hostAndDevName;
+	int notePortIndex;
+	NSString *driverName = [[self class] mapSoftNameToDriverName: devName];
+	
+	if (driverName == nil)
+	    return nil;
+	devName = driverName;
 #if !m68k
-    hostName = @""; /* Only on local host, see extensive comment above */
+	hostName = @""; /* Only on local host, see extensive comment above */
 #endif
-    if (!mapSoftNameToDriverNameAndUnit(devName, &driverNameAndUnit))
-        return nil;
-    devName = driverNameAndUnit;
-    hostAndDevName = [hostName stringByAppendingString: devName];
-    if ((obj = [portTable objectForKey: hostAndDevName]) == nil) {         // Doesn't already exist
-        getTimeInfoFromHost(self, hostName);
-        [portTable setObject: self forKey: hostAndDevName]; 
+	hostAndDevName = [hostName stringByAppendingString: devName];
+	if ((obj = [portTable objectForKey: hostAndDevName]) == nil) {         // Doesn't already exist
+	    getTimeInfoFromHost(self, hostName);
+	    [portTable setObject: self forKey: hostAndDevName]; 
+	}
+	// even if the device is in the portTable, we still need to set the device and host name
+	hostname = [hostName retain];
+	midiDevName = [devName retain];
+	
+	if (noteSenders != nil) /* Already initialized */
+	    return nil;
+	outputIsTimed = YES;               /* Default is outputIsTimed */
+	noteSenders = [NSMutableArray arrayWithCapacity: _MK_MIDINOTEPORTS];
+	[noteSenders retain];
+	noteReceivers = [NSMutableArray arrayWithCapacity: _MK_MIDINOTEPORTS];
+	[noteReceivers retain];
+	for (notePortIndex = 0; notePortIndex < _MK_MIDINOTEPORTS; notePortIndex++) {
+	    MKNoteSender *aNoteSender;
+	    MKNoteReceiver *aNoteReceiver = [MKNoteReceiver new];
+	    _MKParameter *aParam;
+	    
+	    [noteReceivers addObject: aNoteReceiver];
+	    [aNoteReceiver _setOwner: self];
+	    [aNoteReceiver _setData: aParam = _MKNewIntPar(0, MK_noPar)];
+	    _MKSetIntPar(aParam, notePortIndex);
+	    aNoteSender = [MKNoteSender new];
+	    [noteSenders addObject: aNoteSender];
+	    [aNoteSender _setPerformer: self];
+	    [aNoteReceiver release];
+	    [aNoteSender release]; /*sb: retains are held in arrays */
+	}
+	useInputTimeStamps = YES;
+	_timeOffset = 0;
+	_ignoreBits = (IGNORE_ACTIVE |
+		       IGNORE_CLOCK |
+		       IGNORE_START |
+		       IGNORE_CONTINUE |
+		       IGNORE_STOP);
+	deviceStatus = MK_devClosed;
+	_MKCheckInit(); /* Maybe we don't want this here, in case we ever want
+	    to use MKMidi without MKNotes. (?) FIXME */
+	_MKClassOrchestra(); /* Force find-class here */
+	ioMode = MKMidiInputOutput;	
     }
-    // even if the device is in the portTable, we still need to set the device and host name
-    hostname = [hostName retain];
-    midiDevName = [devName retain];
-
-    if (noteSenders != nil) /* Already initialized */
-        return nil;
-    outputIsTimed = YES;               /* Default is outputIsTimed */
-    noteSenders = [NSMutableArray arrayWithCapacity: _MK_MIDINOTEPORTS];
-    [noteSenders retain];
-    noteReceivers = [NSMutableArray arrayWithCapacity: _MK_MIDINOTEPORTS];
-    [noteReceivers retain];
-    for (i = 0; i < _MK_MIDINOTEPORTS; i++) {
-        aNoteReceiver = [MKNoteReceiver new];
-        [noteReceivers addObject:aNoteReceiver];
-        [aNoteReceiver _setOwner:self];
-        [aNoteReceiver _setData:aParam = _MKNewIntPar(0,MK_noPar)];
-        _MKSetIntPar(aParam,i);
-        aNoteSender = [MKNoteSender new];
-        [noteSenders addObject:aNoteSender];
-        [aNoteSender _setPerformer:self];
-        [aNoteReceiver release];
-        [aNoteSender release]; /*sb: retains are held in arrays */
-     }
-     useInputTimeStamps = YES;
-     _timeOffset = 0;
-     _ignoreBits = (IGNORE_ACTIVE |
-                    IGNORE_CLOCK |
-                    IGNORE_START |
-                    IGNORE_CONTINUE |
-                    IGNORE_STOP);
-     deviceStatus = MK_devClosed;
-     _MKCheckInit(); /* Maybe we don't want this here, in case we ever want
-                        to use MKMidi without MKNotes. (?) FIXME */
-     _MKClassOrchestra(); /* Force find-class here */
-     ioMode = MKMidiInputOutput;
-     return self;
+    return self;
 }
 
 - initOnDevice: (NSString *) devName
@@ -1466,7 +1302,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
 
 + midiOnDevice: (NSString *) devName
 {
-    return [[[MKMidi alloc] initOnDevice:devName] autorelease];
+    return [[[MKMidi alloc] initOnDevice: devName] autorelease];
 }
 
 + midi
@@ -1491,19 +1327,20 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
 {
     int i;
     int size = [noteReceivers count];
+    
     [self abort];
     if ([self unitHasMTC]) 
-        [synchConductor _setMTCSynch:nil];
-    [self _setSynchConductor:nil];
-    for (i=0; i<size; i++)
-        _MKFreeParameter([[noteReceivers objectAtIndex:i] _getData]);
-    [noteReceivers makeObjectsPerformSelector:@selector(disconnect)];
+        [synchConductor _setMTCSynch: nil];
+    [self _setSynchConductor: nil];
+    for (i = 0; i < size; i++)
+        _MKFreeParameter([[noteReceivers objectAtIndex: i] _getData]);
+    [noteReceivers makeObjectsPerformSelector: @selector(disconnect)];
     [noteReceivers removeAllObjects];  
     [noteReceivers release];
-    [noteSenders makeObjectsPerformSelector:@selector(disconnect)];
+    [noteSenders makeObjectsPerformSelector: @selector(disconnect)];
     [noteSenders removeAllObjects];  
     [noteSenders release];
-    [portTable removeObjectForKey:midiDevName];
+    [portTable removeObjectForKey: midiDevName];
     [super dealloc];
 }
 /* Control of device */
@@ -1522,10 +1359,10 @@ static id openMidi(MKMidi *self)
         if (!(self->_pIn = (void *)_MKInitMidiIn()))
             return nil;
         else
-            setMidiSysIgnore(self,self->_ignoreBits);
+            setMidiSysIgnore(self, self->_ignoreBits);
     }
     if (OUTPUTENABLED(self->ioMode)) {
-	if (!(self->_pOut = (void *)_MKInitMidiOut()))
+	if (!(self->_pOut = (void *) _MKInitMidiOut()))
             return nil;
 	else {
 	    _MKMidiOutStruct *p = self->_pOut;
@@ -1549,15 +1386,16 @@ static id openMidi(MKMidi *self)
     */
 {
     NSMutableArray *aList;
-    int i,cnt,j;
+    int i, cnt, j;
+    
     if (!MIDIOUTPTR(self) || deviceStatus != MK_devRunning)
-      return nil;
+	return nil;
     MKMDFlushQueue((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], self->unit);
     /* Not MKMDClearQueue, which can leave MIDI devices confused. */
     for (i = 1; i <= MIDI_NUMCHANS; i++) {
 	aList = _MKGetNoteOns(MIDIOUTPTR(self), i);
 	for (j = 0, cnt = [aList count]; j < cnt; j++)
-            _MKWriteMidiOut([aList objectAtIndex: j], 0, i, MIDIOUTPTR(self), [self channelNoteReceiver:i]);
+            _MKWriteMidiOut([aList objectAtIndex: j], 0, i, MIDIOUTPTR(self), [self channelNoteReceiver: i]);
         MKMDFlushQueue((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], self->unit);
 	[aList removeAllObjects];
 	[aList release];
@@ -1578,14 +1416,13 @@ int _MKAllNotesOffPause = 500; /* mSec between MIDI channel blasts
        (Currently, it is, indeed, the case that we're not encoding
        running status.) */
 {
-    MKMDRawEvent tmpMidiBuf[257];  
-                                    /* 1 for "noteOff",256 for keyNum/chan */
+    MKMDRawEvent tmpMidiBuf[257];                     /* 1 for "noteOff", 256 for keyNum/chan */
     MKMDRawEvent *tmpBufPtr = &(tmpMidiBuf[1]);
     unsigned char chan;
-    int i,r;
+    int i, r;
     if (deviceStatus == MK_devClosed || !OUTPUTENABLED(ioMode))
 	return nil;
-    for (i=0; i<128; i++) {
+    for (i = 0; i < 128; i++) {
 	tmpBufPtr->time = 0; 
 	tmpBufPtr++->byte = i;   /* Keynum */
 	tmpBufPtr->time = 0; 
@@ -1597,8 +1434,9 @@ int _MKAllNotesOffPause = 500; /* mSec between MIDI channel blasts
      */
     MKMDFlushQueue((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], unit);
     /* Not ClearQueue, which can leave MIDI devices confused. */
-    for (i=0; i<16; i++) {       
-	int j,k;
+    for (i = 0; i < 16; i++) {       
+	int j, k;
+	
 	chan = i;
 	tmpMidiBuf[0].time = 0;
 	tmpMidiBuf[0].byte = MIDI_NOTEOFF | chan;
