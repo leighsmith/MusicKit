@@ -340,8 +340,8 @@ int SndWriteWithSOX(NSString* filename, SndSoundStruct *sound)
   ft.info.size     = sz;
   ft.info.channels = sound->channelCount;
   
-  ft.filename      = [[filename lastPathComponent] cString];
-  ft.filetype      = [[filename pathExtension] cString];
+  ft.filename      = (char*) [[filename lastPathComponent] cString];
+  ft.filetype      = (char*) [[filename pathExtension] cString];
 
 
   ft.fp            = fopen(ft.filename,"wb");
