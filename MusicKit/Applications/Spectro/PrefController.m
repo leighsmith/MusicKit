@@ -1,4 +1,7 @@
+/*
+  $Id$
 
+*/
 #import "PrefController.h"
 #import "SoundController.h"
 #import "SoundDocument.h"
