@@ -30,48 +30,39 @@
 	      chunks of sound data ready for signal processing or performance. Using classes such as SndAudioBufferQueue
               enables a fragmented arrangement of buffers across memory, typically for processing constraints. SndAudioBuffers
               are the closest SndKit match to the underlying audio hardware buffer. In addition to holding the sample data,
-              SndAudioBuffer encapsulates sampling rate, number of channels and the format of the sample data.
+              SndAudioBuffer encapsulates sampling rate, number of channels, number of frames and the format of the sample data.
 */
 @interface SndAudioBuffer : NSObject
 {
-/*! @var byteCount  */
-  unsigned int byteCount;
-/*! @var maxByteCount  */
-  unsigned int maxByteCount;
-/*! @var samplingRate  */
-  double samplingRate;
-/*! @var dataFormat */
-  int    dataFormat;
-/*! @var channelCount  */
-  int    channelCount;
-/*! @var format Will hold sound parameters and frame count rather than byteCount. Replaces samplingRate, dataFormat, channelCount */
-  SndFormat format;
-/*! @var data */
-  NSMutableData *data;
+    /*! @var byteCount  */
+    // TODO frame count rather than byteCount.
+    unsigned int byteCount;
+    /*! @var format Holds sound parameters (sample rate, data format, channel count, frame count). */
+    SndFormat format;
+    /*! @var data The audio sample data. */
+    NSMutableData *data;
 }
 
 /*!
   @method     audioBufferWithFormat:duration:
-  @abstract   Factory method
-  @discussion
-  @param      format
-  @param      timeInSec
-  @result     An SndAudioBuffer
+  @abstract   Factory method creating an empty buffer of the given format and duration.
+  @param      format A SndFormat describing the format of the buffer to be created.
+  @param      timeInSec Duration in seconds.
+  @result     Returns an autoreleased SndAudioBuffer instance.
 */
-// TODO + audioBufferWithFormat: (SndFormat *) format duration: (double) timeInSec;
-+ audioBufferWithFormat: (SndSoundStruct*) format duration: (double) timeInSec;
++ audioBufferWithFormat: (SndFormat *) format duration: (double) timeInSec;
 
 /*!
   @method     audioBufferWithDataFormat:channelCount:samplingRate:duration:
   @abstract   Factory method
   @discussion
-  @param      dataFormat
+  @param      dataFormat A SndSampleFormat.
   @param      chanCount
   @param      samRate
   @param      duration
-  @result     An SndAudioBuffer
+  @result     Returns an autoreleased SndAudioBuffer instance.
 */
-+ audioBufferWithDataFormat: (int) dataFormat
++ audioBufferWithDataFormat: (SndSampleFormat) dataFormat
                channelCount: (int) chanCount
                samplingRate: (double) samRate
                    duration: (double) time;
@@ -80,9 +71,9 @@
     @method     audioBufferWithFormat:data:
     @abstract   Factory method
     @discussion The dataLength member of format MUST be set to the length of d (in bytes)!
-    @param      format
+    @param      format A pointer to a SndFormat.
     @param      d
-    @result     An SndAudioBuffer
+    @result     Returns an autoreleased SndAudioBuffer instance.
 */
 + audioBufferWithFormat: (SndFormat *) format data: (void *) d;
 
@@ -92,7 +83,7 @@
     @discussion The dataLength member of format MUST be set to the length of d (in bytes)!
     @param      format
     @param      d
-    @result     An SndAudioBuffer
+    @result     Returns an autoreleased SndAudioBuffer instance.
 */
 + audioBufferWithSoundStruct: (SndSoundStruct *) format data: (void *) d;
 
@@ -111,7 +102,7 @@
     @discussion
     @param      snd 
     @param      r An NSRange structure indicating the start and end of the region in samples.
-    @result     An SndAudioBuffer 
+    @result     Returns an autoreleased SndAudioBuffer instance.
 */
 + audioBufferWithSnd: (Snd *) snd inRange: (NSRange) r;
 
@@ -122,7 +113,7 @@
               You should transition to using initWithFormat:data:
   @param      sndStruct A SndSoundStruct
   @param      sampleData A pointer to the memory holding the sample data in the format described by sndStruct.
-  @result     self.
+  @result     Returns self.
 */
 - initWithSoundStruct: (SndSoundStruct *) sndStruct data: (void *) sampleData;
 
@@ -132,7 +123,7 @@
   @discussion
   @param      format A SndFormat
   @param      sampleData A pointer to the memory holding the sample data in the format described by format.
-  @result     self.
+  @result     Returns self.
 */
 - initWithFormat: (SndFormat *) format data: (void *) sampleData;
 
@@ -141,9 +132,9 @@
   @abstract   Initialize a buffer with a matching format to the supplied buffer
   @discussion Creates a duplicated buffer (with a shallow copy, the data is referenced)
   @param      b is a SndAudioBuffer.
-  @result     self.
+  @result     Returns self.
 */
-- initWithBuffer: (SndAudioBuffer*) b;
+- initWithBuffer: (SndAudioBuffer *) b;
 
 /*!
   @method     initWithBuffer:range:
@@ -151,22 +142,22 @@
   @discussion
   @param      b
   @param      r
-  @result     self.
+  @result     Returns self.
 */
-- initWithBuffer: (SndAudioBuffer*) b
+- initWithBuffer: (SndAudioBuffer *) b
            range: (NSRange) r;
 
 /*!
   @method     initWithDataFormat:channelCount:samplingRate:duration:
   @abstract   Initialization method
   @discussion
-  @param      dataFormat
+  @param      dataFormat A SndSampleFormat.
   @param      channelCount
   @param      samplingRate
   @param      time
-  @result     An SndAudioBuffer
+  @result     Returns self.
 */
-- initWithDataFormat: (int) dataFormat
+- initWithDataFormat: (SndSampleFormat) dataFormat
         channelCount: (int) channelCount
         samplingRate: (double) samplingRate
             duration: (double) time;
@@ -182,7 +173,7 @@
                   if required to change data format before mixing, (not sample rate).
   @result     Returns the number of frames mixed.
 */
-- (long) mixWithBuffer: (SndAudioBuffer*) buff
+- (long) mixWithBuffer: (SndAudioBuffer *) buff
 	     fromStart: (unsigned long) start
 		 toEnd: (unsigned long) end
 	     canExpand: (BOOL) exp;
@@ -215,27 +206,27 @@
 
 /*!
   @method     copyBytes:count:format:
-  @abstract   copies bytes from the char* array given
-  @discussion grows the internal NSMutableData object as necessary
-  @param      bytes the char* array to copy from
-  @param      count the number of bytes to copy from the array
-  @param      format pointer to a SndSoundStruct containing valid channelCount,
+  @abstract   Copies bytes from the void * array given.
+  @discussion Grows the internal NSMutableData object as necessary
+  @param      bytes The void * array to copy from.
+  @param      count The number of bytes to copy from the array.
+  @param      format A SndFormat containing valid channelCount,
               samplingRate and dataFormat variables.
-  @result     self.
+  @result     Returns self.
 */
-- copyBytes: (char *) bytes count: (unsigned int) count format: (SndSoundStruct *) f;
+- copyBytes: (void *) bytes count: (unsigned int) count format: (SndFormat) f;
 
 /*!
   @method     copyBytes:intoRange:format:
-  @abstract   copies bytes from the char* array given into a sub region of the buffer.
-  @discussion grows the internal NSMutableData object as necessary
-  @param      bytes The char* array to copy from.
+  @abstract   Copies bytes from the void * array given into a sub region of the buffer.
+  @discussion Grows the internal NSMutableData object as necessary
+  @param      bytes The void * array to copy from.
   @param      range The start location and number of bytes to copy from the array.
-  @param      format pointer to a SndSoundStruct containing valid channelCount,
+  @param      format A SndFormat containing valid channelCount,
               samplingRate and dataFormat variables.
-  @result     self.
+  @result     Returns self.
  */
-- copyBytes: (char *) bytes intoRange: (NSRange) range format: (SndSoundStruct *) f;
+- copyBytes: (void *) bytes intoRange: (NSRange) range format: (SndFormat) f;
 
 /*!
   @method     copyFromBuffer:intoRange:
@@ -243,7 +234,7 @@
   @discussion Grows the internal NSMutableData object as necessary
   @param      fromBuffer The audio buffer to copy from.
   @param      range The start location and number of samples to copy to the receiving buffer.
-  @result     self.
+  @result     Returns self.
  */
 - copyFromBuffer: (SndAudioBuffer *) sourceBuffer intoRange: (NSRange) rangeInSamples;
 
@@ -272,15 +263,15 @@
 
 /*!
   @method     duration
-  @abstract
+  @abstract   Returns the length of the audio buffer in seconds.
   @discussion
-  @result     Duration in seconds (as determined by format sampling rate)
+  @result     Duration in seconds (as determined by format sampling rate).
 */
 - (double) duration;
 
 /*!
   @method     samplingRate
-  @abstract
+  @abstract   Returns the sampling rate of the audio buffer in Hertz.
   @discussion
   @result     sampling rate
 */
@@ -296,19 +287,19 @@
 
 /*!
   @method     dataFormat
-  @abstract
+  @abstract   Returns the format of the sample data as a SndSampleFormat enumerated type.
   @discussion
   @result     Data format identifier
 */
-- (int) dataFormat;
+- (SndSampleFormat) dataFormat;
 
 /*!
   @method     bytes
-  @abstract
-  @discussion
-  @result     pointer to NSData object containing the audio data
+  @abstract   Returns a C pointer to the sample data.
+  @discussion The user of this method will need to have determined the format of the data in order to correctly traverse it.
+  @result     Pointer to the audio data.
 */
-- (void*) bytes;
+- (void *) bytes;
 
 /*!
   @method     hasSameFormatAsBuffer:
@@ -321,7 +312,7 @@
 
 /*!
     @method     zero
-    @abstract   Sets buffer data to zero.
+    @abstract   Sets buffer data to zero. Silence.
     @discussion
     @result     self
 */
@@ -329,7 +320,7 @@
 
 /*!
   @method     zeroFrameRange:
-  @abstract   Zeros a given range of frames.
+  @abstract   Zeros (silences) a given range of frames.
   @discussion The range must be between 0 and the buffers frame length.
   @result     Returns self.
  */
