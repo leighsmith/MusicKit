@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2001/09/07 18:44:12  leighsmith
+  Moved @class before headerdoc declaration, corrected URL reference
+
   Revision 1.15  2001/09/07 00:14:46  leighsmith
   Corrected @discussion
 
@@ -58,6 +61,8 @@ Modification history:
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
+@class MKConductor;
+
 /*!
   @class MKConductor
   @discussion
@@ -185,8 +190,8 @@ implement both.  By implementing these methods, the delegate specifies
 that it is using the <i>Time Map Protocol</i>.  The two methods are
 <b>beatToClock:from:</b> and <b>clockToBeat:from:</b>.  These methods
 map from pre-tempo to post-tempo time.  For details, see 
-<a href=http://www.musickit.org/MusicKitConcepts/MusicPerformance.html>
-The section entitled Music Performance
+<a href=http://www.musickit.org/MusicKitConcepts/musicperformance.html>
+the section entitled Music Performance
 </a>
 
 The responsiveness of a performance to the user's actions depends on
@@ -314,8 +319,6 @@ extern "C" {
   * shouldn't be altered directly from an application.
   * LMS: should become an object named MKConductorMsg
   */
-@class MKConductor;
-
 typedef struct _MKMsgStruct { 
     double _timeOfMsg;     
     SEL _aSelector;       
