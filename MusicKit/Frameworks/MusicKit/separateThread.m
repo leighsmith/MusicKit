@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.7  2000/01/13 06:41:13  leigh
+  Corrected _MKErrorf to take NSString error message
+
   Revision 1.6  1999/12/20 17:07:53  leigh
   Removed faulty diagnostic message
 
@@ -78,7 +81,7 @@
 #import	<mach/message.h>
 #import "_error.h"
 
-#define COND_ERROR NSLocalizedStringFromTableInBundle(@"MKConductor encountered problem.", [NSString stringWithString:_MK_ERRTAB], _MKErrorBundle(), "This error occurs if the Music Kit's MKConductor class encounters a Mach error (this should never happen, so this error should never appear--in particular, it should never be seen by the user).")
+#define COND_ERROR NSLocalizedStringFromTableInBundle(@"MKConductor encountered problem.", _MK_ERRTAB, _MKErrorBundle(), "This error occurs if the Music Kit's MKConductor class encounters a Mach error (this should never happen, so this error should never appear--in particular, it should never be seen by the user).")
 
 static NSRecursiveLock *musicKitLock = nil;  
 static NSThread *musicKitThread = nil;
@@ -283,7 +286,7 @@ static void sendMessageIfNeeded()
     if (ec == SEND_TIMED_OUT)
       ;	/* message queue is full, don't need to send another */
     else if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, [COND_ERROR cString], mach_error_string(ec), @"sendMessageIfNeeded");
+      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"sendMessageIfNeeded");
 }
 
 static void killMusicKitThread(void)
@@ -434,7 +437,7 @@ void _MKAddPort(port_name_t aPort,
     else {
 	ec = port_set_add(task_self(),conductorPortSet,aPort);
 	if (ec != KERN_SUCCESS)
-	    _MKErrorf(MK_machErr, [COND_ERROR cString], mach_error_string(ec), @"_MKAddPort");
+	    _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"_MKAddPort");
     }
 }
 
@@ -456,7 +459,7 @@ void _MKRemovePort(port_name_t aPort)
           else {
 	      ec = port_set_remove(task_self(),aPort);
 	      if (ec != KERN_SUCCESS)
-		  _MKErrorf(MK_machErr, [COND_ERROR cString], mach_error_string(ec), @"_MKRemovePort");
+		  _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"_MKRemovePort");
 	  }
 	  free(portInfos[i]);
 	  portInfos[i] = NULL;
@@ -623,16 +626,16 @@ static void initializeBackgroundThread()
     musicKitAbortCondition = [[NSLock alloc] init];
     ec = port_set_allocate(task_self(), &conductorPortSet);
     if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, [COND_ERROR cString], mach_error_string(ec), @"initializeBackgroundThread");
+      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"initializeBackgroundThread");
     ec = port_allocate(task_self(), &appToMKPort);
     if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, [COND_ERROR cString], mach_error_string(ec), @"initializeBackgroundThread");
+      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"initializeBackgroundThread");
     ec = port_set_add(task_self(),conductorPortSet,appToMKPort);
     if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, [COND_ERROR cString], mach_error_string(ec), @"port_set_add");
+      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"port_set_add");
     ec = port_allocate(task_self(), &MKToAppPort);
     if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, [COND_ERROR cString], mach_error_string(ec), @"initializeBackgroundThread");
+      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"initializeBackgroundThread");
     appToMKPortObj = [[NSPort alloc] initWithMachPort:appToMKPort];
     MKToAppPortObj = [[NSPort alloc] initWithMachPort:MKToAppPort];
     [MKToAppPortObj setDelegate:[MKConductor class]]; //sb:MKConductor handles messages
@@ -672,7 +675,7 @@ static void emptyAppToMKPort(void)
     kern_return_t ec;
     ec = port_set_remove(task_self(),appToMKPort);
     if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, [COND_ERROR cString],
+      _MKErrorf(MK_machErr, COND_ERROR,
 		mach_error_string(ec), @"emptyAppToMKPort port_set_remove");
     do {
 	msg.header.msg_size = MSG_SIZE_MAX;
@@ -680,11 +683,11 @@ static void emptyAppToMKPort(void)
 	ret = msg_receive(&msg.header, RCV_TIMEOUT, 0);
     } while (ret == RCV_SUCCESS);
     if (ret != RCV_TIMED_OUT)
-      _MKErrorf(MK_machErr, [COND_ERROR cString],
+      _MKErrorf(MK_machErr, COND_ERROR,
 		mach_error_string(ec), @"emptyAppToMKPort msg_receive");
     ec = port_set_add(task_self(),conductorPortSet,appToMKPort);
     if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, [COND_ERROR cString],
+      _MKErrorf(MK_machErr, COND_ERROR,
 		mach_error_string(ec), @"emptyAppToMKPort port_set_add");
 }
 
@@ -695,7 +698,7 @@ static BOOL getThreadInfo(int *info)
     unsigned int count = THREAD_INFO_MAX;
     ec = thread_info(thread_self(), THREAD_SCHED_INFO, (thread_info_t)info, &count);
     if (ec != KERN_SUCCESS) {
-	_MKErrorf(MK_machErr, [COND_ERROR cString], mach_error_string(ec), @"getThreadInfo");
+	_MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"getThreadInfo");
 	return NO;
     }
     return YES;
@@ -707,7 +710,7 @@ static BOOL setThreadPriority(int priority)
 {
    kern_return_t ec = thread_priority(thread_self(), priority, 0);
     if (ec != KERN_SUCCESS) {
-	_MKErrorf(MK_machErr, [COND_ERROR cString],
+	_MKErrorf(MK_machErr, COND_ERROR,
 		  mach_error_string(ec), @"setThreadPriority");
 	return NO;
     }
@@ -866,7 +869,7 @@ void _MKSetConductorThreadMaxStress(unsigned int val)
 	      [MKConductor masterConductorBody: nil];
 	}
 	else if (ret != RCV_SUCCESS)
-	  _MKErrorf(MK_machErr, [COND_ERROR cString], mach_error_string(ret), @"separateThreadLoop");
+	  _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ret), @"separateThreadLoop");
 	else if (msg.header.msg_local_port == appToMKPort) 
 	  thingsHaveChanged = NO;
 	  /* This can happen if there is more than one message in the

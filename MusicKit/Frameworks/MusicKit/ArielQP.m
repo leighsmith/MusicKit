@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/01/13 06:41:46  leigh
+  Corrected _MKErrorf to take NSString error message
+
   Revision 1.2  1999/07/29 01:25:42  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -157,11 +160,11 @@ Modification history:
         varAddr =  DSPGetSystemSymbolValueInLC("X_SAT1_REB", DSP_LC_X);     
         if (varAddr > 0)
 	  DSPWriteValue(addr,DSP_MS_X,varAddr);
-	else _MKErrorf(MK_dspMonitorVersionError,[self class]);
+        else _MKErrorf(MK_dspMonitorVersionError, NSStringFromClass([self class]));
 	hmVal = DSPGetSystemSymbolValueInLC("HM_DMA_RD_SAT_ON", DSP_LC_P);      
 	if (hmVal > 0)
 	  DSPHostMessage(hmVal);
-	else _MKErrorf(MK_dspMonitorVersionError,[self class]);
+        else _MKErrorf(MK_dspMonitorVersionError, NSStringFromClass([self class]));
     }
     return self;
 }
@@ -187,7 +190,7 @@ Modification history:
 	DSPHostMessage(hmVal);
 	return self;
     }
-    _MKErrorf(MK_dspMonitorVersionError,[self class]);
+    _MKErrorf(MK_dspMonitorVersionError, NSStringFromClass([self class]));
     return nil;
 }
 
@@ -440,7 +443,7 @@ static int validSlot(int i)
 	hmVal = DSPGetSystemSymbolValueInLC("HM_DMA_WD_HUB_ON", DSP_LC_P);      
 	if (hmVal > 0)
 	  DSPHostMessage(hmVal);
-	else _MKErrorf(MK_dspMonitorVersionError,[self class]);
+        else _MKErrorf(MK_dspMonitorVersionError, NSStringFromClass([self class]));
     }
     return self;
 }

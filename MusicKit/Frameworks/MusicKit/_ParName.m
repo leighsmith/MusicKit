@@ -51,6 +51,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/01/13 06:37:23  leigh
+  Corrected _MKErrorf to take NSString error message
+
   Revision 1.4  1999/11/07 05:12:44  leigh
   Removal of redundant HashTable include
 
@@ -626,7 +629,7 @@ static void writeObj(id dataObj,NSMutableData *aStream,_MKToken declToken,BOOL
       [aStream appendData:[@"[" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     if (declToken == MK_object) {
 	if (![dataObj respondsToSelector:@selector(writeASCIIStream:)]) {
-            _MKErrorf(MK_notScorefileObjectTypeErr,[NSStringFromClass([dataObj class]) cString]);
+            _MKErrorf(MK_notScorefileObjectTypeErr, NSStringFromClass([dataObj class]));
 	    if (binary)
 	      _MKWriteChar(aStream,'\0');
 	    else [aStream appendData:[@"]" dataUsingEncoding:NSNEXTSTEPStringEncoding]];

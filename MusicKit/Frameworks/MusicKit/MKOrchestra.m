@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/01/13 06:39:08  leigh
+  Corrected _MKErrorf to take NSString error message
+
   Revision 1.5  1999/09/28 03:06:52  leigh
   trace: now takes NSString fmt argument
 
@@ -2093,7 +2096,7 @@ static id loadOrchLoop(self)
       goto loadOrchLoopAbort;
     self->version = sysver; /* Bad RISC cast? */
     if (self->version != 'A') {
-        _MKErrorf(MK_dspMonitorVersionError,[NSStringFromClass([self class]) cString]);
+        _MKErrorf(MK_dspMonitorVersionError, NSStringFromClass([self class]));
 	goto loadOrchLoopAbort;
     }
     DSPMKStartReaders();
