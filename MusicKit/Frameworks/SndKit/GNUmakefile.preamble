@@ -1,3 +1,4 @@
+# -*- Makefile -*-
 #  $Id$
 #  Defined In: The MusicKit
 #  Description:
@@ -48,9 +49,9 @@ else
   PKG_CONFIG=$(shell which pkg-config 2>/dev/null)
   ifneq ($(PKG_CONFIG),"")
     SNDFILE_LIBS=$(shell pkg-config --libs sndfile 2>/dev/null)
-      ifneq ($(SNDFILE_LIBS),)
-        LIBRARIES_DEPEND_UPON += $(SNDFILE_LIBS)
-        SndKit_CPPFLAGS += $(shell pkg-config --cflags)
-      endif
+    ifneq ($(SNDFILE_LIBS),)
+      LIBRARIES_DEPEND_UPON += $(SNDFILE_LIBS)
+      SndKit_CPPFLAGS += $(shell pkg-config --cflags)
+    endif
   endif
 endif
