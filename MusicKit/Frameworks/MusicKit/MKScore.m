@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2000/03/29 03:17:47  leigh
+  Cleaned up doco and ivar declarations
+
   Revision 1.9  2000/03/11 01:11:24  leigh
   Reading instrument and track names in level 1 MIDI files now are stored in the MKPart infoNote
 
@@ -93,7 +96,7 @@ Modification history:
 #import "_error.h"
 
 #import "ScorePrivate.h"
-@implementation MKScore:NSObject
+@implementation MKScore
 
 #define READIT 0
 #define WRITEIT 1

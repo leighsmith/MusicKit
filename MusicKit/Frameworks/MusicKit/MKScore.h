@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2000/03/29 03:17:47  leigh
+  Cleaned up doco and ivar declarations
+
   Revision 1.5  2000/03/07 18:19:57  leigh
   Fixed misleading doco
 
@@ -54,8 +57,7 @@
 {
     NSMutableArray *parts;                  /* The object's collection of Parts. */
     NSMutableData *scorefilePrintStream;    /* The stream used by scorefile print statements. */
-    id info;                                /* The object's info Note. */
-//    void *_reservedScore1; // LMS obsolete
+    MKNote *info;                           /* The object's info Note. */
 }
  
 - init;
@@ -72,15 +74,15 @@
 
 - freeNotes; 
  /* 
- Removes and frees the Notes contained in the receiver's Parts.
- Also frees the receiver's info Note.  Returns the receiver.
+ Removes and frees the MKNotes contained in the receiver's MKParts.
+ Also frees the receiver's info MKNote.  Returns the receiver.
  */
 
 - freeParts; 
  /* 
- Removes and frees the receiver's Parts and the Notes contained therein.
- Doesn't free the receiver's info Note.  Parts that are currently
- being performed by a PartPerformer aren't freed.
+ Removes and frees the receiver's MKParts and the MKNotes contained therein.
+ Doesn't free the receiver's info MKNote.  MKParts that are currently
+ being performed by a MKPartPerformer aren't freed.
  Returns the receiver.
  */
 

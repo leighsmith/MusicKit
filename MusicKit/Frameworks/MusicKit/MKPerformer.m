@@ -1,19 +1,115 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
+
+  Description:
+    A Performer produces a series of time-ordered Note
+    objects and initiates their distribution to
+    a set of Instruments during a Music Kit performance.
+    Performer is an abstract class which managed an List
+    of NoteSenders. These NoteSenders are "Note outputs" of the
+    Performer. For convenience,
+    Performers support a subset of the MKNoteSender connection methods.
+    Sending one of the connection messages to a Performer merely
+    broadcasts the message to its NoteSenders.
+    The Performer class creates and frees the List for you.
+
+    Every Performer object is owned by exactly one Conductor.
+    Unless you set its Conductor
+    by sending it the setConductor: message, a Performer
+    is owned by the defaultConductor (see the Conductor class).
+    During a performance, the Conductor sends
+    perform messages to the Performer according
+    to requests scheduled by the Performer.
+   
+    perform is the most important method for a Performer.
+    A subclass responsibility, each implementation of the
+    method should include two activities:
+   
+     * It may send a Note object to one of its NoteSenders.
+     * It must schedule the next invocation of perform.
+   
+    A Performer usually sends a Note by sending the sendNote: message
+    to one of its NoteSenders.
+    The Note object to be sent can be supplied in any manner:  for example
+    the Performer
+    can read Notes from a file, or from another object, or it can
+    create them itself.
+   
+    The second step, scheduling the next invocation of perform, is
+    accomplished simply by setting the value of the variable nextPerform.
+    The value of nextPerform is the amount of time, in beats,
+    that the Conductor waits before sending the next
+    perform message to the Performer.
+    The perform method should only be invoked in this way --
+    an application shouldn't send the perform message itself.
+   
+    To use a Performer in a performance,
+    you must first activate it by invoking its
+    activate method.  This prepares the Performer
+    by first invoking the activateSelf method and then scheduling
+    the first perform message request.
+    activateSelf can be overridden to provide
+    further initialization of the Performer.  For instance,
+    the PartSegment subclass implements activateSelf
+    to set the value of nextPerform
+    to the timeTag value of its first Note.
+   
+    The performance begins when the Conductor factory receives the
+    startPerformance message.
+    It's legal to activate a Performer after the performance has started.
+   
+    Sending the deactivate message removes the Performer
+    from the performance.
+    This method can be overridden to implement
+    any necessary finalization, such as freeing contained objects.
+   
+    During a performance, a Performer can be stopped and restarted by
+    sending it the
+    paused and resume messages, respectively.
+    perform messages destined for a paused Performer are suppressed.
+    When a paused Performer is resumed, it recommences
+    performing from the point at which it was stopped.
+    (Compare this with the squelch
+    method, inherited from MKNoteSender, which doesn't suppress
+    perform messages
+    but simply prevents Notes from
+    being sent.)
+   
+    Each Performer has two instance variables
+    that can adjust its performance time window:
+    timeShift, and duration.
+    timeShift and duration set the time, in beats, that the
+    first Note will be sent and the maximum duration of the Performer's
+    performance,
+    respectively.  A Performer is automatically deactivated if its
+    performance extends beyond duration beats.
+   
+    A Performer has a status, represented as one of the
+    following MKPerformerStatus values:
+   
+     * MK_inactive.  A deactivated or not-yet-activated Performer.
+     * MK_active.  An activated, unpaused Performer.
+     * MK_paused.  The Performer is activated but currently paused.
+   
+    Some messages can only be sent to an inactive (MK_inactive)
+    Performer.  A Performer's status can be queried with the status
+    message.  
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University  
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  2000/03/29 03:17:08  leigh
+  Cleaned up doco and ivar declarations
+
   Revision 1.2  1999/07/29 01:16:40  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -51,123 +147,8 @@ Modification history:
 #import "MKNoteSender.h"
 #import "PerformerPrivate.h"
 
-@implementation MKPerformer:NSObject
-/* A Performer produces a series of time-ordered Note
- * objects and initiates their distribution to 
- * a set of Instruments during a Music Kit performance.
- * Performer is an abstract class which managed an List
-   of NoteSenders. These NoteSenders are "Note outputs" of the 
-   Performer. For convenience, 
-   Performers support a subset of the MKNoteSender connection methods.
-   Sending one of the connection messages to a Performer merely 
-   broadcasts the message to its NoteSenders.
-   The Performer class creates and frees the List for you.
+@implementation MKPerformer
 
- * Every Performer object is owned by exactly one Conductor.  
- * Unless you set its Conductor
- * by sending it the setConductor: message, a Performer
- * is owned by the defaultConductor (see the Conductor class).
- * During a performance, the Conductor sends
- * perform messages to the Performer according
- * to requests scheduled by the Performer.
- *
- * perform is the most important method for a Performer.
- * A subclass responsibility, each implementation of the 
- * method should include two activities:  
- *
- *  * It may send a Note object to one of its NoteSenders.
- *  * It must schedule the next invocation of perform. 
- *
- * A Performer usually sends a Note by sending the sendNote: message
- * to one of its NoteSenders.
- * The Note object to be sent can be supplied in any manner:  for example
- * the Performer
- * can read Notes from a file, or from another object, or it can
- * create them itself.
- *
- * The second step, scheduling the next invocation of perform, is 
- * accomplished simply by setting the value of the variable nextPerform.
- * The value of nextPerform is the amount of time, in beats,
- * that the Conductor waits before sending the next 
- * perform message to the Performer.
- * The perform method should only be invoked in this way --
- * an application shouldn't send the perform message itself. 
- * 
- * To use a Performer in a performance,
- * you must first activate it by invoking its
- * activate method.  This prepares the Performer
- * by first invoking the activateSelf method and then scheduling
- * the first perform message request.
- * activateSelf can be overridden to provide 
- * further initialization of the Performer.  For instance,
- * the PartSegment subclass implements activateSelf
- * to set the value of nextPerform
- * to the timeTag value of its first Note. 
- *
- * The performance begins when the Conductor factory receives the 
- * startPerformance message.
- * It's legal to activate a Performer after the performance has started.
- *
- * Sending the deactivate message removes the Performer
- * from the performance.
- * This method can be overridden to implement
- * any necessary finalization, such as freeing contained objects.
- * 
- * During a performance, a Performer can be stopped and restarted by 
- * sending it the
- * paused and resume messages, respectively. 
- * perform messages destined for a paused Performer are suppressed.
- * When a paused Performer is resumed, it recommences
- * performing from the point at which it was stopped.  
- * (Compare this with the squelch
- * method, inherited from MKNoteSender, which doesn't suppress
- * perform messages
- * but simply prevents Notes from
- * being sent.)  
- *
- * Each Performer has two instance variables
- * that can adjust its performance time window:
- * timeShift, and duration.
- * timeShift and duration set the time, in beats, that the
- * first Note will be sent and the maximum duration of the Performer's
- * performance,
- * respectively.  A Performer is automatically deactivated if its
- * performance extends beyond duration beats.
- *
- * A Performer has a status, represented as one of the
- * following MKPerformerStatus values:
- * 
- *  * MK_inactive.  A deactivated or not-yet-activated Performer.
- *  * MK_active.  An activated, unpaused Performer.
- *  * MK_paused.  The Performer is activated but currently paused.
- *
- * Some messages can only be sent to an inactive (MK_inactive)
- * Performer.  A Performer's status can be queried with the status
- * message.  
- */
-{
-    id conductor;  /* The object's conductor. */
-    MKPerformerStatus status; /* The object's status. */
-    int performCount;	/* Number of times the perform
-			   message has been received. */
-    double timeShift;	/* Performance offset time in beats. */
-    double  duration;   /* Performance duration in beats. */
-    double  time;    /* the time in beats of the current invocation of 
-			perform, if any, otherwise, the time in beats of the 
-			last invocation of perform. */
-    double  nextPerform;/* Amount of time in beats until the next
-					* perform message is sent. */
-    id noteSenders;    /* Collection of NoteSenders. */
-    id delegate;       
-    double _pauseOffset;  /* Difference between the beat when a performer
-			     is paused and its time. */
-    double _endTime;     /* End time for the object.  Used internally.
-			    Subclass should not set _endTime. */
-    MKMsgStruct *_performMsgPtr;
-    MKMsgStruct *_deactivateMsgPtr;
-    MKMsgStruct *_pauseForMsgPtr;
-    void *_reservedPerformer6;
-}			
 #import "PerformerPrivate.h"
 
 #define VERSION2 2
