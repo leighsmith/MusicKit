@@ -66,7 +66,7 @@ extern NSString *NXSoundPboardType;
 
 /*!
 @class Snd
-@abstract The Snd object encapsulates a SndSoundStruct, which holds a sounds format parameters and it's sample data.
+@abstract The Snd object encapsulates a sounds format parameters and it's sample data.
           It supports reading and writing to a soundfile, playback of sound,
           recording of sampled sound, conversion among various sampled formats, 
           basic editing of the sound, and name and storage
@@ -361,23 +361,6 @@ typedef enum {
 - initFromSoundfile: (NSString *) filename;
 
 /*!
-  @method initFromSection:
-  @param  sectionName is a NSString *.
-  @result Returns an id.
-  @discussion Initializes the Snd instance, which must be newly allocated, by
-              copying the sound data from section <i>sectionName</i> of the sound
-              segment of the application's executable file. If the section isn't
-              found, the object looks for a sound file named <i>sectionName</i> in
-              the same directory as the application's executable.   Returns
-              <b>self</b> (an unnamed Snd) if the sound data was successfully
-              copied; otherwise, frees the newly allocated Snd and returns
-              <b>nil</b>.
-              
-              See also:	+<b>alloc</b> (NSObject), +<b>allocWithZone:</b> (NSObject)
-*/
-- initFromSection: (NSString *) sectionName;
-
-/*!
   @method initFromPasteboard:
   @param  thePboard is a NSPasteboard *.
   @result Returns an id.
@@ -664,7 +647,8 @@ typedef enum {
 - (int) record;
 
 /*!
-  @method samplesProcessed
+  @method samplesPerformedOfPerformance:
+  @param performance The SndPerformance of which to enquire.
   @result Returns an int.
   @discussion If the Snd is currently playing or recording, this returns the
               number of sample frames that have been played or recorded so far.
@@ -672,7 +656,7 @@ typedef enum {
               the sample frame count can't be determined, -1 is
               returned.
 */
-- (int) samplesProcessed;
+- (int) samplesPerformedOfPerformance: (SndPerformance *) performance;
 
 /*!
   @method status
@@ -1068,6 +1052,7 @@ typedef enum {
   @result Returns a SndSoundStruct *.
   @discussion Returns a pointer to the Snd's SndSoundStruct structure that holds
               the object's sound data.
+              TODO This will be changed to soundData and return an NSData instance.
 */
 - (SndSoundStruct *) soundStruct;
 
@@ -1095,20 +1080,9 @@ typedef enum {
               in a Snd object yet. The Snd's status must be
               SND_SoundInitialized or SND_SoundStopped for this method to do
               anything.
+              TODO This will be changed to setSoundData: (NSData *).
 */
 - setSoundStruct: (SndSoundStruct *) aStruct soundStructSize: (int) aSize;
-
-/*!
-  @method soundStructBeingProcessed
-  @result Returns a SndSoundStruct *.
-  @discussion Returns a pointer to the SndSoundStruct structure that's being
-              performed. This may not be the same structure as returned by the
-              <b>soundStruct</b> method - Snd object's contain a private sound
-              structure that may be used for recording playing. If the Snd isn't
-              currently playing or recording, then this will return the public
-              structure.
-*/
-- (SndSoundStruct *) soundStructBeingProcessed;
 
 /*!
   @method processingError
@@ -1215,7 +1189,8 @@ typedef enum {
 
 /*!
   @method audioBufferForSamplesInRange:
-  @param  playRegion range of sample FRAMES (as opposed to individual single
+  @abstract Returns a SndAudioBuffer containing a range of samples in the Snd.
+  @param  r Range of sample <I>frames</I> (as opposed to individual single
           channel samples) to stick into the audioBuffer
   @result An SndAudioBuffer containing the samples in the range r.
 */
@@ -1237,7 +1212,7 @@ typedef enum {
           samplesInRange: (NSRange) sndReadingRange;
 
 /*!
-  @method insertIntoAudioBuffer:intoFrameRange:samplesStartingAt:
+  @method insertIntoAudioBuffer:intoFrameRange:samplesInRange:
   @abstract Copies samples from self into a sub region of the provided SndAudioBuffer.
   @discussion If the buffer and the Snd instance have different formats, a format
               conversion will be performed to the buffers format, including resampling
