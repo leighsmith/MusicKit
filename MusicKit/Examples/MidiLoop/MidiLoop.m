@@ -1,8 +1,8 @@
-#import "MidiLoop.h"
+/* 
+  $Id$
 
-@implementation MidiLoop
-
-/* MidiLoop is an example of a Music Kit performance where the interactive
+  Description:
+   MidiLoop is an example of a Music Kit performance where the interactive
    response time needs to be as fast as possible, even if at the expense of 
    a bit of timing indeterminacy. Therefore, the Conductor is clocked and 
    Midi is untimed (i.e. no delays are introduced in the Midi object). 
@@ -12,7 +12,12 @@
    performance. The Midi object is set to not 'useInputTimeStamps' because
    we are interested in producing regular echoes (using the Conductor's notion
    of time), rather than in recording the exact time the MIDI entered the 
-   MIDI device driver. */
+   MIDI device driver. 
+*/
+
+#import "MidiLoop.h"
+
+@implementation MidiLoop
 
 - showInfoPanel:sender
 {
@@ -27,7 +32,7 @@ static void handleMKError(NSString *msg)
 	[NSApp terminate:NSApp];
 }
 
-- go:sender
+- go: sender
 {
     int i;
     if ([MKConductor inPerformance]) /* Already started */
@@ -39,7 +44,7 @@ static void handleMKError(NSString *msg)
     MKSetErrorProc(handleMKError); /* Intercept Music Kit errors. */
 
     /* 16 midi channels plus one for system messages */
-    for (i=0; i<=16; i++) 
+    for (i = 0; i <= 16; i++) 
 	/* Connect them up */
 	[[midiObj channelNoteSender:i] connect: [midiObj channelNoteReceiver:i]];
 
@@ -60,14 +65,13 @@ static void handleMKError(NSString *msg)
     return self;
 }
 
-- (void)terminate:(id)sender
+- (void) applicationWillTerminate: (NSNotification *) aNotification
 {
     /* Finish up */
     [MKConductor finishPerformance];
     
     /* Close the MIDI device */
     [midiObj close];
-    [super terminate:self];
 }
 
 @end
