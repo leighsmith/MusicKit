@@ -18,6 +18,8 @@
 
 @implementation SndAudioProcessor
 
+#define SNDAUDIOPROCESSOR_DEBUG 0
+
 static NSMutableArray *fxClassesArray = nil;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,7 +34,9 @@ static NSMutableArray *fxClassesArray = nil;
   if (fxclass != [SndAudioProcessor class]) {// don't want to register the base class!
     if (![fxClassesArray containsObject: fxclass]) {
       [fxClassesArray addObject: fxclass];
+#if SNDAUDIOPROCESSOR_DEBUG
       NSLog(@"registering FX class: %@",[fxclass className]);
+#endif      
     }
   }
 }
