@@ -214,7 +214,7 @@ int main (int argc, const char * argv[])
         }
 
 #if !USE_SNDEXPT
-        [s convertToFormat: SND_FORMAT_FLOAT];
+        [s convertToSampleFormat: SND_FORMAT_FLOAT];
 #endif
 	/*
 	    s = [[Snd alloc] initWithFormat: SND_FORMAT_FLOAT
