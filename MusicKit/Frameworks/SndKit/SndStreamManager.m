@@ -23,7 +23,7 @@
 
 #define SNDSTREAMMANAGER_DEBUG                  0
 #define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
-#define SNDSTREAMMANAGER_DELEGATEMESSAGING      0
+#define SNDSTREAMMANAGER_DELEGATEMESSAGING      1
 
 #ifdef __MINGW32__
 #import "SndConditionLock.h"
@@ -105,18 +105,20 @@ static SndStreamManager *sm = nil;
     /* might as well set up the delegate background thread now too */
 
 #if SNDSTREAMMANAGER_DELEGATEMESSAGING
-    delegateMessageArray = [[NSMutableArray alloc] init];
-    managerReceivePort   = [NSPort port]; /* we don't need to retain - the connection will do that */
-    managerSendPort      = [NSPort port]; 
+    if ([[NSRunLoop currentRunLoop] currentMode] != nil) {
+	    printf("looks like we're running in a run loop\n");
+        delegateMessageArray = [[NSMutableArray alloc] init];
+        managerReceivePort   = (NSPort *)[NSPort port]; /* we don't need to retain, the connection does that */
+        managerSendPort      = (NSPort *)[NSPort port]; 
     
-    threadConnection     = [[NSConnection alloc] initWithReceivePort: managerReceivePort
-                                                            sendPort: managerSendPort]; 
-    [threadConnection setRootObject:self];
-    
+        threadConnection     = [[NSConnection alloc] initWithReceivePort: managerReceivePort
+                                                                sendPort: managerSendPort]; 
+		[threadConnection setRootObject:self];
 
-    [NSThread detachNewThreadSelector: @selector(delegateMessageThread:)
-                             toTarget: self
-                           withObject: [NSArray arrayWithObjects: managerSendPort, managerReceivePort, nil]];
+        [NSThread detachNewThreadSelector: @selector(delegateMessageThread:)
+                                 toTarget: self
+                               withObject: [NSArray arrayWithObjects: managerSendPort, managerReceivePort, nil]];
+	}
 #endif
 
     return self;
@@ -139,9 +141,9 @@ static SndStreamManager *sm = nil;
 
 #if SNDSTREAMMANAGER_DELEGATEMESSAGING
     [delegateMessageArray release];
-    [delegateMessageArrayLock release];
 #endif
 
+    [delegateMessageArrayLock release];
     [bg_threadLock release];
     [bgdm_threadLock release];
 
@@ -223,17 +225,23 @@ static SndStreamManager *sm = nil;
           }
           [delegateMessageArrayLock unlock];
           if (!count) break;
-#if 1
           if (!controllerProxy) {
-            // SKoT: Thread blocks here... but _why_????
             NSConnection *theConnection = [NSConnection connectionWithReceivePort:[ports objectAtIndex:0]
                                                   sendPort:[ports objectAtIndex:1]];
+			// Note: if there's a problem with the NSRunLoop not running or
+			// responding here, the -rootProxy method will block. We could
+			// set a timout here and catch the exception thrown as a result,
+			// but there may be valid reasons why the NSRunLoop does not respond
+			// (perhaps the main loop is busy doing other stuff?). THis could do
+			// with some testing cos I think a timeout exception would be the
+			// best way forward.
+			
+			//[theConnection setReplyTimeout:0.1];
             controllerProxy = [theConnection rootProxy];
             [controllerProxy setProtocolForProxy:@protocol(SndDelegateMessagePassing)];
           }
           /* cast to unsigned long to prevent compiler warnings */
-          [controllerProxy _sendDelegateInvocation:(unsigned long)delegateMessage];
-#endif          
+          [controllerProxy _sendDelegateInvocation:(unsigned long)delegateMessage];         
         }
       }
       else if (bgdm_sem == BGDM_abortNow) {        
@@ -303,12 +311,14 @@ static SndStreamManager *sm = nil;
             bg_sem  = 0;
             
 #if SNDSTREAMMANAGER_DELEGATEMESSAGING            
-            [bgdm_threadLock lock];
-            bgdm_sem = BGDM_abortNow;
-            [bgdm_threadLock unlockWithCondition: BGDM_hasFlag];
+            if ([[NSRunLoop currentRunLoop] currentMode] != nil) {
+                [bgdm_threadLock lock];
+                bgdm_sem = BGDM_abortNow;
+                [bgdm_threadLock unlockWithCondition: BGDM_hasFlag];
 
-            [bgdm_threadLock lockWhenCondition: BGDM_threadStopped];
-            [bgdm_threadLock unlockWithCondition: BGDM_threadInactive];
+                [bgdm_threadLock lockWhenCondition: BGDM_threadStopped];
+                [bgdm_threadLock unlockWithCondition: BGDM_threadInactive];
+			}
 #endif
             
 #if SNDSTREAMMANAGER_DEBUG
@@ -361,9 +371,15 @@ static SndStreamManager *sm = nil;
 - (void) sendMessageInMainThreadToTarget:(id)target sel:(SEL)sel arg1:(id)arg1 arg2:(id)arg2
 {
 #if SNDSTREAMMANAGER_DELEGATEMESSAGING
+    NSMethodSignature *aSignature;
+	NSInvocation *anInvocation;
+	
+	if ([[NSRunLoop currentRunLoop] currentMode] == nil) {
+	    return;
+	}
 
-    NSMethodSignature *aSignature = [[target class] instanceMethodSignatureForSelector:sel];
-    NSInvocation *anInvocation = [NSInvocation invocationWithMethodSignature:aSignature];
+    aSignature = [[target class] instanceMethodSignatureForSelector:sel];
+    anInvocation = [NSInvocation invocationWithMethodSignature:aSignature];
     
     [anInvocation setSelector:sel];
     [anInvocation setTarget:target];
