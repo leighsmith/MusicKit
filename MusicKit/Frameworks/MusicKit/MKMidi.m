@@ -1243,33 +1243,33 @@ static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
     NSString *midiNumStrArr;
     unsigned int deviceIndex;
     NSString *defaultsValue;
-    int num; 
-    // devName can be of the soft form "midi0", or the hard driver name "Mididriver0" or "SB Live! MIDI Out 1"
-    BOOL isSoft = isSoftDevice(devName, &num);
+    int deviceNumber = 0;
+    BOOL isSoft;
     NSMutableArray *unionOfDrivers = [NSMutableArray arrayWithCapacity: [inputDriverNames count] + [outputDriverNames count]];
 
     // assigns the separate lists of driver names for input, output and bidirectional devices.
     if(![[self class] getAllAvailableMidiDevices])
-        return nil; 
-    if (isSoft) {
-        midiNumStrArr = [NSString stringWithFormat: @"MKMIDI%d", num];
+        return nil;
+    if(devName == nil || [devName length] == 0)
+	return nil;
+    // devName can be of the soft form "midi0", or the hard driver name "Mididriver0" or "SB Live! MIDI Out 1"
+    if (isSoftDevice(devName, &deviceNumber)) {
+        midiNumStrArr = [NSString stringWithFormat: @"MKMIDI%d", deviceNumber];
 
         // The owner will be whatever application links against this framework. 
         // This is what we want to allow for different applications to use different MIDI
         // devices if necessary.
         defaultsValue = (NSString *) [[NSUserDefaults standardUserDefaults] objectForKey: midiNumStrArr];
 	if ([defaultsValue length]) {
-            isSoft = isSoftDevice(defaultsValue, &num);
+            isSoft = isSoftDevice(defaultsValue, &deviceNumber);
 	}
-	else if (num == 0) { 
+	else if (deviceNumber == 0) { 
             // Use the system default MIDI driver for midi0, not necessarily the first entry.
             // TODO this should probably be changed to allow "midiDefault" as a device name,
             // or consign midi0 to be the default, midi1 as [midiDriverNames objectAtIndex: 0], etc.
             return [bidirectionalDriverNames objectAtIndex: systemDefaultDriverNum];
 	}
-        else {
-            return [bidirectionalDriverNames objectAtIndex: num];
-        }
+	return [bidirectionalDriverNames objectAtIndex: deviceNumber];
     }
     // Here we assume if we didn't have a soft device name, we are referring to a described device.
     // Ensure the driver was on the legitimate list, which we form by a redundant union of input and output devices.
