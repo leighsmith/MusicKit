@@ -126,7 +126,7 @@
     
     sfinfo.samplerate = (int) format.sampleRate;
     sfinfo.channels = format.channelCount;
-    sfinfo.format = SndDataFormatToSndFileEncoding([[filename pathExtension] cString], format.dataFormat);
+    sfinfo.format = [Snd fileFormatForEncoding: [filename pathExtension] dataFormat: format.dataFormat];
     
     if (!sf_format_check(&sfinfo)) {
 	NSLog(@"SndAudioProcessorRecorder -setupRecordFile: Bad output format 0x%x\n", sfinfo.format);
