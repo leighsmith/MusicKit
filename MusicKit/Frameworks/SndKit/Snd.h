@@ -1175,31 +1175,41 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 - (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) r;
 
 /*!
-  @method fillAudioBuffer:withSamplesInRange:
-  @abstract  copies samples from self into the provided SndAudioBuffer
-  @discussion  The SndAudioBuffer's data object's size is increased if necessary.
-  @param buff the SndAudioBuffer object into which to copy the data
-  @param r an NSRange of sample frames to copy
-  @result
+  @method fillAudioBuffer:toLength:samplesStartingFrom:
+  @abstract Copies samples from self into the provided SndAudioBuffer
+  @discussion The SndAudioBuffer's data object's size is decreased if less than fillLength number
+              of samples can be read. The buffer is not expanded.
+  @param buff The SndAudioBuffer object into which to copy the data.
+  @param fillLength The number of sample frames to copy.
+  @param readFromSndSample The sample frame in the Snd to start reading from.
+  @result Returns the number of sample frames filled, can be less than the number requested, but not more.
 */
-- (void) fillAudioBuffer: (SndAudioBuffer *) buff withSamplesInRange: (NSRange) r;
+- (long) fillAudioBuffer: (SndAudioBuffer *) buff
+	        toLength: (long) fillLength
+     samplesStartingFrom: (long) readFromSndSample;
 
 /*!
-  @method insertIntoAudioBuffer:startingAt:samplesInRange:
+  @method insertIntoAudioBuffer:intoRange:samplesStartingAt:
   @abstract Copies samples from self into a sub region of the provided SndAudioBuffer.
   @discussion If the buffer and the Snd instance have different formats, a format
               conversion will be performed to the buffers format, including resampling
               if necessary. The Snd audio data will be read enough to fill the range of samples
               specified according to the sample rate of the buffer compared to the sample rate
-              of the Snd instance.
+              of the Snd instance. In the case where there are less than the needed number of
+              samples left in the Snd to completely insert into the specified buffer region, the
+              number of samples inserted will be returned less than bufferRange.length.
   @param buff The SndAudioBuffer object into which to copy the data.
-  @param bufferStartIndex The frame position (i.e the time position in samples) within the
-                          buffer to start writing data at.
-  @param sndSampleRange An NSRange of sample frames in the sound to copy.
+  @param bufferRange An NSRange of sample frames (i.e channel independent time position specified in samples)
+		     in the buffer to copy into.
+  @param sndStartIndex The frame position (i.e channel independent time position specified in samples) within
+                       the Snd to start reading data from.
+  @result Returns the number of samples actually inserted. This may be less than the length specified
+          in the bufferRange if sndStartIndex is less than the number samples needed to convert to
+          insert in the specified buffer region.
  */
-- (void) insertIntoAudioBuffer: (SndAudioBuffer *) buff
-		    startingAt: (long) bufferStartIndex
-	        samplesInRange: (NSRange) sndSampleRange;
+- (long) insertIntoAudioBuffer: (SndAudioBuffer *) buff
+		     intoRange: (NSRange) bufferRange
+	     samplesStartingAt: (long) sndStartIndex;
 
 /*!
   @method initWithAudioBuffer:
@@ -1284,8 +1294,10 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @method     setLoopEndIndex:
   @abstract   Sets the sample at which the performance loops back to the start index (set using setLoopStartIndex:).
   @param      newLoopEndIndex The sample index at the end of the loop.
-  @discussion The loop end index may be changed while the sound is being performed and regardless of
-              whether the performance is looping.
+  @discussion This sample index is the last sample of the loop, i.e. it is the last sample heard before
+              the performance loops, the next sample heard will be that returned by -<B>loopStartIndex</B>.
+              The loop end index may be changed while the sound is being performed and regardless of whether
+              the performance is looping.
  */
 - (void) setLoopEndIndex: (long) newLoopEndIndex;
 

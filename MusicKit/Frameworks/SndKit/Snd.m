@@ -63,19 +63,6 @@ Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 NSString *NXSoundPboardType = @"NXSoundPboardType";
 #endif
 
-/* the following ensures Sox doesn't attempt to define its own
- * prototype
- */
-#define HAVE_RAND 1 
-/* the following defines are to fool st.h into importing the right
- * headers.
- */
-#define HAVE_UNISTD_H 1
-#define HAVE_STDINT_H 1
-#define HAVE_SYS_TYPES 1
-#import <st.h>  // prototypes and structures from the Sox sound tools library
-
-#define DEFAULT_SOUNDFILE_EXTENSION @"snd" // TODO this should probably be determined at run time.
 #define USE_STREAMING 1  // 0 will use the older monophonic sound API, 1 uses the newer SndPlayer API
 
 @implementation Snd
@@ -91,7 +78,7 @@ static int ioTags = 1000;
 
 + (NSString*) defaultFileExtension
 {
-  return DEFAULT_SOUNDFILE_EXTENSION;
+    return @"snd"; // TODO this should probably be determined at run time.
 }
 
 + soundNamed:(NSString *)aName
@@ -346,18 +333,12 @@ static int ioTags = 1000;
     s->channelCount = NSSwapBigLongToHost(s->channelCount);
 #endif
 
-//  SndPrintStruct(s);
+    // SndPrintStruct(s);
     finalSize = s->dataSize + s->dataLocation;
 
     s = realloc((char *)s,finalSize);
     [stream getBytes:(char *)s + sizeof(SndSoundStruct)
                range:NSMakeRange(sizeof(SndSoundStruct),finalSize - sizeof(SndSoundStruct))];
-//  if (s->dataLocation > sizeof(SndSoundStruct)) {
-//		/* read off the rest of the info string */
-//		NXRead(stream,(char *)s + sizeof(SndSoundStruct),
-//			s->dataLocation - sizeof(SndSoundStruct));
-//  }
-//  NXRead(stream, (char *)s + s->dataLocation, s->dataSize);
 
     soundStruct = s;
     status = SND_SoundInitialized;
@@ -372,10 +353,6 @@ static int ioTags = 1000;
     int headerSize;
     int df;
     int i,j=0;
-//  int newPriority = (int)htonl(priority);
-
-//  NXPrintf(stream, "%s\n",name);
-//  NXWrite(stream,&newPriority,sizeof(int));
 
     df = soundStruct->dataFormat;
     if (df == SND_FORMAT_INDIRECT) headerSize = soundStruct->dataSize;
@@ -469,9 +446,9 @@ static int ioTags = 1000;
         s->dataSize = newCount;
     }
 
-/* no need to swap data in the header, because coders take care
- * of endian issues for us.
- */
+    /* no need to swap data in the header, because coders take care
+    * of endian issues for us.
+    */
     [aCoder encodeValuesOfObjCTypes:"iiiiii", s->magic, s->dataLocation, s->dataSize,
             s->dataFormat, s->samplingRate,s->channelCount];
     [aCoder encodeArrayOfObjCType:"c" count:headerSize - sizeof(SndSoundStruct) + 4 at:s->info];
@@ -511,36 +488,36 @@ static int ioTags = 1000;
     s = realloc((char *)s, s->dataLocation + 1); /* allocate enough room for info string */
     [aDecoder decodeArrayOfObjCType:"c" count:s->dataLocation - sizeof(SndSoundStruct) + 4 at:s->info];
 
-//	SndPrintStruct(s);
+    // SndPrintStruct(s);
 
     finalSize = s->dataSize + s->dataLocation;
 
     s = realloc((char *)s,finalSize);
     if (s->dataLocation > sizeof(SndSoundStruct)) {
             /* read off the rest of the info string */
-        [aDecoder decodeArrayOfObjCType:"c"
-                                  count:s->dataLocation - sizeof(SndSoundStruct)
-                                     at:(char *)s + sizeof(SndSoundStruct)];
+        [aDecoder decodeArrayOfObjCType: "c"
+                                  count: s->dataLocation - sizeof(SndSoundStruct)
+                                     at: (char *)s + sizeof(SndSoundStruct)];
     }
-    [aDecoder decodeArrayOfObjCType:"c" count:s->dataSize at:(char *)s + s->dataLocation];
+    [aDecoder decodeArrayOfObjCType: "c" count: s->dataSize at: (char *)s + s->dataLocation];
 
     soundStruct = s;
     return SND_ERR_NONE;
 }
 
-- awakeAfterUsingCoder:(NSCoder *)aDecoder
+- awakeAfterUsingCoder: (NSCoder *) aDecoder
 {
     status = SND_SoundInitialized;
     conversionQuality = SND_CONVERT_LOWQ;
-    return self;/* what to do here??? Doesn't seem to be anything pressing... */
+    return self; /* what to do here??? Doesn't seem to be anything pressing... */
 }
 
-- (NSString *)name
+- (NSString *) name
 {
     return name;
 }
 
-- setName:(NSString *)theName
+- setName: (NSString *) theName
 /* this needs to interface with an object-wide name table
  * to identify sounds by name. At the moment multiple sound
  * objects may share the same name, which is not right.
@@ -574,7 +551,6 @@ static int ioTags = 1000;
 {
     if (!soundStruct) return 0;
     return (double)(soundStruct->samplingRate);
-
 }
 
 - (int) sampleCount
@@ -829,13 +805,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 #endif
 }
 
-- (int)record
+- (int) record
 {
-    [self record:self];
+    [self record: self];
     return SND_ERR_NONE;
 }
 
-- (int)samplesProcessed
+- (int) samplesProcessed
 {
 #if !USE_STREAMING
     return (tag == 0) ? -1 : SNDSamplesProcessed(tag);
@@ -846,18 +822,18 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 #endif
 }
 
-- (int)status
+- (int) status
 {
     return status;
 }
 
-- (void)_setStatus:(int)newStatus
+- (void) _setStatus: (int) newStatus
 /* for use in the beginFunc and endFunc routines and the SndPlayer */
 {
     status = newStatus;
 }
 
-- (int)waitUntilStopped
+- (int) waitUntilStopped
 {
     return SND_ERR_NOT_IMPLEMENTED;
 }
@@ -882,7 +858,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 //    }
 }
 
-- (void)stop:(id)sender
+- (void) stop: (id) sender
 {
 #if !USE_STREAMING
     NSNumber *tagNumber = [NSNumber numberWithInt: tag];
@@ -908,13 +884,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 #endif
 }
 
-- (int)stop
+- (int) stop
 {
     [self stop: self];
     return SND_ERR_NONE;
 }
 
-- pause:sender
+- pause: sender
 {
   [performancesArrayLock lock];
   [performancesArray makeObjectsPerformSelector: @selector(pause)];
@@ -922,13 +898,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
   return self;
 }
 
-- (int)pause
+- (int) pause
 {
   [self pause: self];
   return SND_ERR_NONE;
 }
 
-- resume:sender
+- resume: sender
 {
   [performancesArrayLock lock];
   [performancesArray makeObjectsPerformSelector: @selector(resume)];
@@ -936,13 +912,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
   return self;
 }
 
-- (int)resume;
+- (int) resume;
 {
   [self resume:self];
   return SND_ERR_NONE;
 }
 
-- (int) readSoundfile:(NSString *)filename
+- (int) readSoundfile: (NSString *) filename
 {
     int err;
     NSDictionary *fileAttributeDictionary;
@@ -972,20 +948,20 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     if (!err) {
         soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
         // This is probably a bit kludgy but it will do for now.
-        loopEndIndex = [self sampleCount];
+        loopEndIndex = [self sampleCount] - 1;
     }
     return err;
 }
 
-- (int)writeSoundfile:(NSString *)filename
+- (int) writeSoundfile: (NSString *) filename
 {
-    // compaction ideally should not be necessary, but the SOX saving requires it for now
+    // compaction ideally should not be necessary, but SoX saving requires it for now
     [self compactSamples]; 
     return SndWriteSoundfile(filename, soundStruct);
     //return SndWriteSoundfile([filename fileSystemRepresentation], soundStruct);
 }
 
-- (void)writeToPasteboard:(NSPasteboard *)thePboard
+- (void) writeToPasteboard: (NSPasteboard *) thePboard
 {
 /* here I provide data straight away. Ideally, a non-freeing object
  * should be given the data to hold, and it should implement the "provideData"
@@ -1016,7 +992,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     }
 }
 
-- initFromPasteboard:(NSPasteboard *)thePboard
+- initFromPasteboard: (NSPasteboard *) thePboard
 {
     NSData *ts;
     ts = [thePboard dataForType:NXSoundPboardType];
@@ -1026,7 +1002,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return self;
 }
 
-- (BOOL)isEmpty
+- (BOOL) isEmpty
 {
     if (![self isEditable]) return NO;
     if (!soundStruct) return YES;
@@ -1034,7 +1010,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return NO;
 }
 
-- (BOOL)isEditable
+- (BOOL) isEditable
 {
     int df;
     if (!soundStruct) return YES; /* empty sound can be played! */
@@ -1056,7 +1032,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return NO;
 }
 
-- (BOOL)compatibleWith:(Snd *)aSound
+- (BOOL) compatibleWith: (Snd *) aSound
 {
     SndSoundStruct *aStruct;
     if (!soundStruct) return YES;
@@ -1068,7 +1044,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return NO;
 }
 
-- (BOOL)isPlayable
+- (BOOL) isPlayable
 {
     int df,cc,sr;
     if (!soundStruct) return YES; /* empty sound can be played! */
@@ -1140,7 +1116,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 	
         SndFree(soundStruct);
 	// We need to copy the buffer sample data back into the soundStruct. In the future, post-soundStruct,
-	// to we should just be able to use the buffer directly.
+	// we should just be able to use the buffer directly.
 	memcpy((void *) toSound->dataLocation, [bufferToConvert bytes], [bufferToConvert lengthInBytes]);
 	soundStruct = toSound;
         soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
@@ -1156,12 +1132,12 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
                     channelCount: soundStruct->channelCount];
 }
 
-- (int)deleteSamples
+- (int) deleteSamples
 {
-    return [self deleteSamplesAt:0 count:[self sampleCount]];
+    return [self deleteSamplesAt: 0 count: [self sampleCount]];
 }
 
-- (int)deleteSamplesAt:(int)startSample count:(int)sampleCount
+- (int) deleteSamplesAt: (int) startSample count: (int) sampleCount
 {
     int err;
     err = SndDeleteSamples(soundStruct, startSample, sampleCount);
@@ -1173,7 +1149,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return err;
 }
 
-- (int)insertSamples:(Snd *)aSnd at:(int)startSample
+- (int) insertSamples: (Snd *) aSnd at: (int) startSample
 {
     int err;
     SndSoundStruct *fromSound;
@@ -1198,7 +1174,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return newSound;
 }
 
-- (int)copySound:(Snd *)aSnd
+- (int) copySound: (Snd *) aSnd
 {
     int err;
     SndSoundStruct *fromSound;
@@ -1228,7 +1204,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return err;
 }
 
-- (int)copySamples:(Snd *)aSnd at:(int)startSample count:(int)sampleCount
+- (int) copySamples: (Snd *) aSnd at: (int) startSample count: (int) sampleCount
 {
     int err;
     status = SND_SoundInitialized;
@@ -1259,7 +1235,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return err;
 }
 
-- (int)compactSamples
+- (int) compactSamples
 {
     SndSoundStruct *newStruct;
     int err;
@@ -1273,13 +1249,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return SND_ERR_NONE;
 }
 
-- (BOOL)needsCompacting
+- (BOOL) needsCompacting
 {
     if (!soundStruct) return NO;
     return (soundStruct->dataFormat == SND_FORMAT_INDIRECT);
 }
 
-- (unsigned char *)data
+- (unsigned char *) data
 {
   if (!soundStruct) return NULL;
   if (soundStruct->dataFormat == SND_FORMAT_INDIRECT)
@@ -1287,7 +1263,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
   return (char *)soundStruct + soundStruct->dataLocation;
 }
 
-- (int)dataSize
+- (int) dataSize
 /* This looks after fragged sounds ok, as the docs say that for a
  * fragged sound, this should return the length of the main SndSoundStruct
  * (not including data); otherwise, should return num of bytes of data,
@@ -1298,7 +1274,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return soundStruct->dataSize; 
 }
 
-- (int)dataFormat
+- (int) dataFormat
 {
     int df;
     if (!soundStruct) return 0;
@@ -1344,7 +1320,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
         return soundStruct->dataSize; /* see SndFunctions.h */
 }
 
-- setSoundStruct:(SndSoundStruct *)aStruct soundStructSize:(int)aSize
+- setSoundStruct: (SndSoundStruct *) aStruct soundStructSize: (int) aSize
 {
     if (status != SND_SoundInitialized && status != SND_SoundStopped)
             return nil;
@@ -1372,7 +1348,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 }
 
 // delegations which are not nominated per performance.
-- (void) tellDelegate:(SEL)theMessage
+- (void) tellDelegate: (SEL) theMessage
 {
     if (delegate) {
         if ([delegate respondsToSelector:theMessage]) {
@@ -1382,7 +1358,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 }
 
 // delegations which are nominated per performance.
-- (void) tellDelegate:(SEL)theMessage duringPerformance: (SndPerformance *) performance
+- (void) tellDelegate: (SEL) theMessage duringPerformance: (SndPerformance *) performance
 {
     if (delegate) {
         if ([delegate respondsToSelector:theMessage]) {
@@ -1393,12 +1369,12 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 // Convenience function for when using NSInvocations to send messages. NSInvocations don't like
 // dealing with SEL types, so we use a NSString on the other end, and convert to SEL here.
-- (void) tellDelegateString:(NSString *)theMessage duringPerformance: (SndPerformance *) performance
+- (void) tellDelegateString: (NSString *) theMessage duringPerformance: (SndPerformance *) performance
 {
     [self tellDelegate: NSSelectorFromString(theMessage) duringPerformance: performance];
 }
 
-- (void) setConversionQuality:(int)quality /* default is SND_CONVERT_LOWQ */
+- (void) setConversionQuality: (int) quality /* default is SND_CONVERT_LOWQ */
 {
     conversionQuality = quality;
 }
@@ -1449,35 +1425,46 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
   return [ab autorelease];
 }
 
-- (void) insertIntoAudioBuffer: (SndAudioBuffer *) buff
-		    startingAt: (long) bufferStartIndex
-		samplesInRange: (NSRange) sndSampleRange
+- (long) insertIntoAudioBuffer: (SndAudioBuffer *) buff
+		     intoRange: (NSRange) bufferRange
+	     samplesStartingAt: (long) sndStartIndex
 {
     int   sndFrameSize  = SndFrameSize(soundStruct);
-    void  *sndDataPtr = [self data] + sndFrameSize * sndSampleRange.location;
+    void  *sndDataPtr = [self data] + sndFrameSize * sndStartIndex;
     int   buffFrameSize = [buff frameSizeInBytes];
-    NSRange bufferByteRange = { bufferStartIndex * buffFrameSize, sndSampleRange.length * buffFrameSize };
+    NSRange bufferByteRange = { bufferRange.location * buffFrameSize, bufferRange.length * buffFrameSize };
 
     if(![self hasSameFormatAsBuffer: buff]) {
 	// If not the same, do a data conversion.
-	// NSLog(@"buffer to fill and sound mismatched in data formats %d vs. %d or channels %d vs. %d, converting",
-	// [buff dataFormat], [self dataFormat], [buff channelCount], [self channelCount]);
+	//NSLog(@"buffer to fill and sound mismatched in data formats from %d to %d, or channels from %d to %d, converting",
+	//    [self dataFormat], [buff dataFormat], [self channelCount], [buff channelCount]);
 	[buff convertBytes: sndDataPtr
 		 intoRange: bufferByteRange
 		fromFormat: [self dataFormat]
 		  channels: [self channelCount]
-              samplingRate: [self samplingRate]]; 
+              samplingRate: [self samplingRate]];
+	return bufferRange.length;  // TODO this isn't right, it depends on resampling.
     }
     else {
 	// Matching sound buffer formats, so we can just do a copy.
 	// NSLog(@"channel count of sound = %d, of buffer = %d\n", soundStruct->channelCount, [buff channelCount]);
 	[buff copyBytes: sndDataPtr intoRange: bufferByteRange format: soundStruct];
+	return bufferRange.length;
     }
 }
 
-- (void) fillAudioBuffer: (SndAudioBuffer *) buff withSamplesInRange: (NSRange) r
+- (long) fillAudioBuffer: (SndAudioBuffer *) buff
+		toLength: (long) fillLength
+     samplesStartingFrom: (long) readFromSndSample
 {
-    [self insertIntoAudioBuffer: buff startingAt: 0 samplesInRange: r];
+    NSRange bufferRange;
+
+    bufferRange.location = 0;
+    bufferRange.length = fillLength; // TODO this may become [buff lengthInSamples] if we remove toLength: parameter.
+    
+    return [self insertIntoAudioBuffer: buff
+			     intoRange: bufferRange
+		     samplesStartingAt: readFromSndSample];
 }
 
 - (void) setUseVolumeWhenPlaying: (BOOL) yesOrNo
