@@ -9,6 +9,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  1999/08/26 20:00:19  leigh
+  new MKError prototype
+
   Revision 1.2  1999/07/29 01:26:04  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -64,7 +67,7 @@ extern void MKSetErrorProc(void (*errProc)(char *msg));
        set; it's up to the application to set it, if desired. 
        */
 
-extern id MKError(char * msg);
+extern id MKError(NSString *msg);
     /* Calls the user's error proc (set with MKSetErrorProc), if any, with 
        one argument, the msg. Otherwise, writes the message on the Music
        Kit error stream. (See MKSetErrorStream) Returns nil.
