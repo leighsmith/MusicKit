@@ -16,6 +16,8 @@
 #import "SndStreamMixer.h"
 #import "SndAudioProcessor.h"
 
+#define SNDSTREAMMIXER_DEBUG 0
+
 @implementation SndStreamMixer
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,8 +26,7 @@
 
 + sndStreamMixer
 {
-  SndStreamMixer* mixer = [[SndStreamMixer alloc] init];
-  return [mixer autorelease];
+  return [[SndStreamMixer new] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -34,18 +35,15 @@
 
 - init
 {
-    if(streamClients == nil) {
-      streamClients = [NSMutableArray arrayWithCapacity: 10];
-      [streamClients retain];
-    }
-    if(streamClientsLock == nil) {
-      streamClientsLock = [[NSLock alloc] init];
-      [streamClientsLock retain];
-    }
-    if (processorChain == nil) {
-      processorChain = [SndAudioProcessorChain audioProcessorChain];
-      [processorChain retain];
-    }
+    if(streamClients == nil) 
+      streamClients = [[NSMutableArray arrayWithCapacity: 10] retain];
+      
+    if(streamClientsLock == nil) 
+      streamClientsLock = [[NSRecursiveLock new] retain];
+      
+    if (processorChain == nil) 
+      processorChain = [[SndAudioProcessorChain audioProcessorChain] retain];
+      
     return self;
 }
 
@@ -115,6 +113,10 @@
     if (!clientPresent) 
         [streamClients addObject: client];
     clientCount   = [streamClients count];
+
+#if SNDSTREAMMIXER_DEBUG    
+    NSLog(@"SndStreamManager::addClient - client added.");
+#endif
     
     [streamClientsLock unlock];
     return clientCount;
@@ -131,8 +133,14 @@
     if (clientPresent) {
         [streamClientsLock lock];
         [streamClients removeObject: client];        
+#if SNDSTREAMMIXER_DEBUG    
+        NSLog(@"SndStreamManager::removeClient - Removing client");
+#endif
         [streamClientsLock unlock];
     }
+    else
+        NSLog(@"SndStreamManager::removeClient - Error: client was not present.");
+    
     return clientPresent;
 }
 
@@ -152,8 +160,10 @@
 - managerIsShuttingDown
 {
     [streamClientsLock lock];    // wait for current processBuffers to finish.
-    [streamClients makeObjectsPerformSelector: @selector(managerIsShuttingDown)];    
+    if ([streamClients count] > 0)
+      [streamClients makeObjectsPerformSelector: @selector(managerIsShuttingDown)];    
     [streamClientsLock unlock];
+    
     return self;
 }
 
@@ -163,7 +173,7 @@
 
 - (SndAudioProcessorChain*) audioProcessorChain
 {
-  return [[processorChain retain] autorelease];
+  return [[processorChain retain] autorelease]; // SKoT: err... why all this retain/release action???
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -17,6 +17,8 @@
 #import "SndStreamMixer.h"
 #import "SndStreamManager.h"
 
+#define SNDSTREAMMANAGER_DEBUG 0
+
 void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj);
 
 @implementation SndStreamManager
@@ -110,6 +112,10 @@ static SndStreamManager *sm = nil;
     active = SNDStreamStart(processAudio, (void*) self);
     nowTime = 0.0;
 
+#if SNDSTREAMMANAGER_DEBUG
+    NSLog(@"SndManager::startStreaming - Stream starting!\n"); 
+#endif        
+
     return active;
 }
 
@@ -125,10 +131,13 @@ static SndStreamManager *sm = nil;
         nowTime = 0.0;
         SNDStreamStop();
         active = FALSE;
+#if SNDSTREAMMANAGER_DEBUG
         NSLog(@"SndManager::stopStreaming -  stream stopping");
+#endif        
     }
-    else
+    else {
         NSLog(@"SndManager::stopStreaming - Error: stopStreaming called when not streaming!\n");
+    }
     return active;
 }
 
@@ -189,26 +198,34 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 }
 
 
+
 - (void) processStreamAtTime: (double) sampleCount 
                        input: (SNDStreamBuffer*) cInB
                       output: (SNDStreamBuffer*) cOutB
 {
-    NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-    // Eventually these must be made instance variables which you just wrap
-    // around each of the C-side buffers, to avoid allocation costs.
-    SndAudioBuffer *inB  = nil;
-    SndAudioBuffer *outB = nil;
-    inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
-    outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
-    // set our current notion of time.
-    nowTime = sampleCount / [outB samplingRate];
+    if (active) {
+      NSAutoreleasePool *localPool = [NSAutoreleasePool new];
+      // Eventually these must be made instance variables which you just wrap
+      // around each of the C-side buffers, to avoid allocation costs.
+      SndAudioBuffer *inB  = nil;
+      SndAudioBuffer *outB = nil;
+      inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
+      outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
+      // set our current notion of time.
+      nowTime = sampleCount / [outB samplingRate];
+    
+#if SNDSTREAMMANAGER_DEBUG
+      fprintf(stderr,"[Manager] nowTime: %.3f sampleCount: %.3f\n",nowTime,sampleCount);
+#endif
+      [mixer processInBuffer: inB outBuffer: outB nowTime: nowTime];
 
-    [mixer processInBuffer: inB outBuffer: outB nowTime: nowTime];
-
-    if ([mixer clientCount] == 0) // Hmm, no clients hey? Shut down the Stream.
+      if ([mixer clientCount] == 0) // Hmm, no clients hey? Shut down the Stream.
         [self stopStreaming];
 
-    [localPool release];
+      [localPool release];
+    }
+    else
+      NSLog(@"SndStreamManager::processStreamAtTime - called when not active...?");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
