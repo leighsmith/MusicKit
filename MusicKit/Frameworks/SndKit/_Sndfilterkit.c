@@ -85,6 +85,8 @@
 
 #define IzeroEPSILON 1E-21               /* Max error acceptable in Izero */
 
+#ifndef SUPERCEDED
+
 static double Izero(double x)
 {
    double sum, u, halfx, temp;
@@ -101,8 +103,6 @@ static double Izero(double x)
       } while (u >= IzeroEPSILON*sum);
    return(sum);
 }
-
-#ifndef SUPERCEDED
 
 void LpFilter(double c[], int N, double frq, double Beta, int Num)
 {
@@ -186,9 +186,10 @@ int writeFilter(SND_HWORD Imp[], SND_HWORD ImpD[], SND_UHWORD LpScl, SND_UHWORD 
  * Made following global to avoid stack problems in Sun3 compilation: */
 
 #define MAXNWING   8192
-static double ImpR[MAXNWING];
 
 #ifndef SUPERCEDED
+
+static double ImpR[MAXNWING];
 
 int makeFilter(SND_HWORD Imp[], SND_HWORD ImpD[], SND_UHWORD *LpScl, SND_UHWORD Nwing,
                double Froll, double Beta)
