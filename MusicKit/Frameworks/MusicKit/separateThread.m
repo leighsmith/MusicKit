@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.15  2000/04/16 04:06:55  leigh
+  Removed debugging messages
+
   Revision 1.14  2000/04/08 00:59:04  leigh
   Fixed bug when inPerformance set during final pending masterConductorBody
 
@@ -268,8 +271,6 @@ static void sendMessageToWakeUpMKThread(void)
 						     receivePort: nil   // I think this is the correct way to have no reply.
                                                       components: [NSArray arrayWithObject: [NSData data]]];
 
-    NSLog(@"sendMessageToWakeUpMKThread\n");
-
     /*  We send the message only when someone other than the Music Kit has
 	the lock. If we're not in performance, the value of musicKitThread
 	and lockingThread will both be nil. The assumption here
@@ -280,7 +281,7 @@ static void sendMessageToWakeUpMKThread(void)
 	return;
     }
     wakeUpCall = YES;
-    [msg sendBeforeDate: [NSDate dateWithTimeIntervalSinceNow: 0.020]];  //20mSec's *should* be plenty.
+    [msg sendBeforeDate: [NSDate dateWithTimeIntervalSinceNow: 0.020]];  // 20mSec's *should* be plenty.
     [msg release];
 }
 
@@ -418,15 +419,6 @@ static id sendObjcMsg(id toObject,SEL aSelector,int argCount,id arg1,id arg2)
         // NSLog(@"Handling port Message not as a wakeup call");
     }
 }
-
-#if 0
-/* just in case messages get sent to the wrong place... */
-- (void) handlePortMessage: (NSPortMessage *) portMessage
-{
-    NSLog(@"Handling the instance method port message\n");
-    [MKConductor handlePortMessage: portMessage];
-}
-#endif
 
 +sendMsgToApplicationThreadSel:(SEL)aSelector 
   to:(id)toObject 
