@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/04/16 04:10:27  leigh
+  Removed unnecessary MAKECOMPILERHAPPY test
+
   Revision 1.2  1999/07/29 01:16:40  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -429,12 +432,8 @@ id _MKAllocSynthPatch(MKPatchTemplate *templ,id synthPatchClass,id anOrch,
     
     {
 	register templateEntry *arrEnd,*el;
-#if _MK_MAKECOMPILERHAPPY
 	id anOrderedUG = nil;
 	id aSE = nil;
-#else
-	id anOrderedUG,aSE;
-#endif
 	BOOL firstOrdered;
 	
 	firstOrdered = YES;
