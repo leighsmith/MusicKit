@@ -1,19 +1,27 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
+
+  Description:
+    Data memory object. Used to allocate DSP data memory. Also used
+    to allocate patchpoints. You never create instances of SynthData or any
+    of its subclasses directly. They are created automatically by the
+    Orchestra object in response to messages such as allocSynthData:length:.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University  
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  2000/03/29 03:35:41  leigh
+  Cleaned up doco and ivar declarations
+
   Revision 1.2  1999/07/29 01:16:43  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -29,7 +37,7 @@ Modification history:
   11/6/94/daj - Changed error returns to notify orch on abort.
   06/29/98/sb - changed length to unsigned int. Hope compares still work.
 */
-#import <objc/objc-class.h>
+//#import <objc/objc-class.h>
 
 #import "_musickit.h"
 #import "_SharedSynthInfo.h"
@@ -38,29 +46,7 @@ Modification history:
 #import "OrchestraPrivate.h"
 
 #import "SynthDataPrivate.h"
-@implementation MKSynthData:NSObject
-/* Data memory object. Used to allocate DSP data memory. Also used 
-   to allocate patchpoints. You never create instances of SynthData or any 
-   of its subclasses directly. They are created automatically by the 
-   Orchestra object in response to messages such as allocSynthData:length:. */
-{
-    /* DO NOT CHANGE THE POSITION OF THE FOLLOWING BLOCK OF IVARS! */
-    id synthPatch;      /* The SynthPatch to which this resource
-			     belongs, if any. */
-    id orchestra;       /* The orchestra of this SynthElement. */
-    unsigned short _orchIndex;
-    unsigned short _synthPatchLoc;
-    id _sharedKey;
-    BOOL _protected;
-    int _instanceNumber;
-    /* END OF INVARIANT IVARS */
-
-    unsigned int length;            /* Length of allocated memory. */
-    MKOrchAddrStruct orchAddr; /* Contains size, space, etc. */
-    BOOL readOnly;       /* Yes if data is not to be written to. */
-    MKOrchMemStruct _reso; /* Each instance has its own here */
-    BOOL isModulus;
-}
+@implementation MKSynthData
 
 #define ISDATA (orchAddr.memSegment == MK_xData || \
 		orchAddr.memSegment == MK_yData)
