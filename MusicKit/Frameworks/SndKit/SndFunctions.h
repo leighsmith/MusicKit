@@ -2,52 +2,65 @@
 $Id$
 
 LEGAL:
-This framework and all source code supplied with it, except where specified, are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use the source code for any purpose, including commercial applications, as long as you reproduce this notice on all such software.
+This framework and all source code supplied with it, except where specified,
+are Copyright Stephen Brandon and the University of Glasgow, 1999. You are
+free to use the source code for any purpose, including commercial applications,
+as long as you reproduce this notice on all such software.
 
-Software production is complex and we cannot warrant that the Software will be error free.  Further, we will not be liable to you if the Software is not fit for the purpose for which you acquired it, or of satisfactory quality. 
+Software production is complex and we cannot warrant that the Software will be
+error free.  Further, we will not be liable to you if the Software is not fit
+for the purpose for which you acquired it, or of satisfactory quality. 
 
-WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD PARTIES RIGHTS.
+WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL
+WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES
+OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD
+PARTIES RIGHTS.
 
-If a court finds that we are liable for death or personal injury caused by our negligence our liability shall be unlimited.  
+If a court finds that we are liable for death or personal injury caused by our
+negligence our liability shall be unlimited.  
 
-WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND CONDITIONS OF THIS AGREEMENT.
+WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS
+OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR
+POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE
+NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED
+DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND
+CONDITIONS OF THIS AGREEMENT.
 
 ******************************************************************************/
 
 //#define USE_MACH_MEMORY_ALLOCATION
-#ifdef GNUSTEP
 #include <MKPerformSndMIDI/PerformSound.h>
-#include "sounderror.h"
+#include "SndKitDefines.h"
+
+#ifdef GNUSTEP
+# include "sounderror.h"
+#else
+# ifndef USE_NEXTSTEP_SOUND_IO
+#  import "sounderror.h"
+# endif
+#endif /* GNUSTEP */
+
 #include "SndEndianFunctions.h"
 #include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
-#include <stdio.h> // for FILE
+#include <stdio.h>     /* for FILE */
 
-#else
 
-#import <MKPerformSndMIDI/PerformSound.h>
-#ifndef USE_NEXTSTEP_SOUND_IO
-#import "sounderror.h"
-#endif
-
-#import "SndEndianFunctions.h"
-#import <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
-
-#import <stdio.h> // for FILE
-
-#endif /* GNUSTEP */
 	/*
 	 *   functions.h
 	 * A library of functions intended to be compatible with NeXTs
 	 * now defunct SoundKit.
 	 *
 	 *		Stephen Brandon, 1999
-	 *		S.Brandon@music.gla.ac.uk
+	 *		stephen@brandonitconsulting.co.uk
 	 */
 
-const char *SndStructDescription(SndSoundStruct *sound);
-void	SndPrintStruct(SndSoundStruct *sound);
-int	SndPrintFrags(SndSoundStruct *sound);
-int	SndSampleWidth(int format);
+SNDKIT_API const char *SndStructDescription(SndSoundStruct *sound);
+
+SNDKIT_API void	SndPrintStruct(SndSoundStruct *sound);
+
+SNDKIT_API int	SndPrintFrags(SndSoundStruct *sound);
+
+SNDKIT_API int	SndSampleWidth(int format);
 
 /*!
     @function SndBytesToSamples
@@ -57,25 +70,47 @@ int	SndSampleWidth(int format);
     @param dataFormat The sample data encoding format.
     @result Return the number of samples
 */
-int	SndBytesToSamples(int byteCount, int channelCount, int dataFormat);
-int	SndSamplesToBytes(int sampleCount, int channelCount, int dataFormat);
-float	SndConvertDecibelsToLinear(float db);
-float	SndConvertLinearToDecibels(float lin);
-int	SndConvertSound(const SndSoundStruct *fromSound, SndSoundStruct **toSound);
-int	SndConvertSoundGoodQuality(const SndSoundStruct *fromSound, SndSoundStruct **toSound);
-int	SndConvertSoundHighQuality(const SndSoundStruct *fromSound, SndSoundStruct **toSound);
-void	*SndGetDataAddresses(int sample,
-			const SndSoundStruct *theSound,
-			int *lastSampleInBlock,
-			int *currentSample);
-int	SndSampleCount(const SndSoundStruct *sound);
-int	SndGetDataPointer(const SndSoundStruct *sound, char **ptr, int *size, 
+SNDKIT_API int	SndBytesToSamples(int byteCount,
+                                  int channelCount,
+                                  int dataFormat);
+
+SNDKIT_API int	SndSamplesToBytes(int sampleCount,
+                                  int channelCount,
+                                  int dataFormat);
+
+SNDKIT_API float SndConvertDecibelsToLinear(float db);
+
+SNDKIT_API float SndConvertLinearToDecibels(float lin);
+
+SNDKIT_API int SndConvertSound(const SndSoundStruct *fromSound,
+                                     SndSoundStruct **toSound);
+
+SNDKIT_API int SndConvertSoundGoodQuality(const SndSoundStruct *fromSound,
+                                                SndSoundStruct **toSound);
+
+SNDKIT_API int SndConvertSoundHighQuality(const SndSoundStruct *fromSound,
+                                                SndSoundStruct **toSound);
+
+SNDKIT_API void	*SndGetDataAddresses(int sample,
+                    const SndSoundStruct *theSound,
+                                     int *lastSampleInBlock,
+                                     int *currentSample);
+
+SNDKIT_API int SndSampleCount(const SndSoundStruct *sound);
+
+/* SndGetDataPointer is only useful for non-fragmented sounds */
+SNDKIT_API int SndGetDataPointer(const SndSoundStruct *sound, char **ptr, int *size, 
 			int *width);
-/* only useful for non-fragmented sounds */
-int	SndFree(SndSoundStruct *sound);
-extern int	SndAlloc(SndSoundStruct **sound, int dataSize, int dataFormat,
-			int samplingRate, int channelCount, int infoSize);
-int	SndCompactSamples(SndSoundStruct **toSound, SndSoundStruct *fromSound);
+
+SNDKIT_API int SndFree(SndSoundStruct *sound);
+
+SNDKIT_API int SndAlloc(SndSoundStruct **sound,
+                                   int dataSize,
+                                   int dataFormat,
+			           int samplingRate,
+                                   int channelCount,
+                                   int infoSize);
+
 /* There's a wee bit of a problem when compacting sounds. That is the info
  * string. When a sound isn't fragmented, the size of the info string is held
  * in "dataLocation" by virtue of the fact that the info will always
@@ -90,27 +125,70 @@ int	SndCompactSamples(SndSoundStruct **toSound, SndSoundStruct *fromSound);
  * will be the length of the SndSoundStruct INCLUDING the info string, and
  * adjusted to the upper 4-byte boundary.
  */
-int	SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSound);
-int	SndCopySamples(SndSoundStruct **toSound, SndSoundStruct *fromSound,
-		int startSample, int sampleCount);
-int	SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromSound, 
-		int startSample);
-SndSoundStruct * _SndCopyFrag(const SndSoundStruct *fromSoundFrag);
-SndSoundStruct * _SndCopyFragBytes(SndSoundStruct *fromSoundFrag, int startByte, int byteCount);
-/* Does the same as _SndCopyFrag, but used for `partial' frags that occur when 
- * you insert or delete data from a SndStruct.
+
+SNDKIT_API int SndCompactSamples(SndSoundStruct **toSound,
+                                 SndSoundStruct *fromSound);
+
+SNDKIT_API int SndCopySound(SndSoundStruct **toSound,
+                      const SndSoundStruct *fromSound);
+
+SNDKIT_API int SndCopySamples(SndSoundStruct **toSound,
+                              SndSoundStruct *fromSound,
+                                         int startSample,
+                                         int sampleCount);
+
+SNDKIT_API int SndInsertSamples(SndSoundStruct *toSound,
+                          const SndSoundStruct *fromSound, 
+                                           int startSample);
+
+SNDKIT_API SndSoundStruct * _SndCopyFrag(const SndSoundStruct *fromSoundFrag);
+
+/* _SndCopyFragBytes Does the same as _SndCopyFrag, but used for `partial' frags 
+ * that occur whenyou insert or delete data from a SndStruct.
  * If byteCount == -1, uses all data from startByte to end of frag.
  * Does not make copy of fragged sound. Info string should therefore be only 4 bytes,
  * but this takes account of longer info strings if they exist.
  */
-int	SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCount);
-unsigned char SndMulaw(short linearValue);
-short	SndiMulaw(unsigned char mulawValue);
-int	SndRead(FILE *fp, SndSoundStruct **sound, const char *filetype);
-int	SndReadHeader(int fd, SndSoundStruct **sound);
-int	SndReadSoundfile(const char *path, SndSoundStruct **sound);
-int	SndWriteHeader(int fd, SndSoundStruct *sound);
-int	SndWrite(int fd, SndSoundStruct *sound);
-int	SndWriteSoundfile(const char *path, SndSoundStruct *sound);
-int	SndSwapSoundToHost(void *dest, void *src, int sampleCount, int channelCount, int dataFormat);
-int	SndSwapHostToSound(void *dest, void *src, int sampleCount, int channelCount, int dataFormat);
+
+SNDKIT_API SndSoundStruct * _SndCopyFragBytes(SndSoundStruct *fromSoundFrag,
+                                                         int startByte,
+                                                         int byteCount);
+
+SNDKIT_API int	SndDeleteSamples(SndSoundStruct *sound,
+                                            int startSample,
+                                            int sampleCount);
+
+SNDKIT_API unsigned char SndMulaw(short linearValue);
+
+SNDKIT_API short SndiMulaw(unsigned char mulawValue);
+
+SNDKIT_API int SndRead(FILE *fp,
+             SndSoundStruct **sound,
+                 const char *filetype);
+
+SNDKIT_API int SndReadHeader(int fd,
+                  SndSoundStruct **sound);
+
+SNDKIT_API int SndReadSoundfile(const char *path,
+                            SndSoundStruct **sound);
+
+SNDKIT_API int SndWriteHeader(int fd,
+                   SndSoundStruct *sound);
+
+SNDKIT_API int SndWrite(int fd,
+             SndSoundStruct *sound);
+
+SNDKIT_API int SndWriteSoundfile(const char *path,
+                             SndSoundStruct *sound);
+
+SNDKIT_API int SndSwapSoundToHost(void *dest,
+                                  void *src,
+                                   int sampleCount,
+                                   int channelCount,
+                                   int dataFormat);
+
+SNDKIT_API int SndSwapHostToSound(void *dest,
+                                  void *src,
+                                   int sampleCount,
+                                   int channelCount,
+                                   int dataFormat);
