@@ -95,7 +95,7 @@
 ;; use graphics in admonitions, and have their path be "stylesheet-images"
 ;; NO: they do not yet look very good
 (define %admon-graphics-path%
-  "../images/")
+  "Images/")
 (define %admon-graphics%
   #t)
 
