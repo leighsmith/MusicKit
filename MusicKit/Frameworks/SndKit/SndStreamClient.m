@@ -2,13 +2,13 @@
 //
 //  $Id$ 
 //
-//  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
-//  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
+//  Sat 10-Feb-2001, Copyright (c) 2001 SndKit project
 //
-//  Permission is granted to use and modify this code for commercial and non-commercial
-//  purposes so long as the author attribution and copyright messages remain intact and
-//  accompany all relevant code.
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
+//  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -316,6 +316,18 @@ enum {
     }
 }
 
+- offlineProcessBuffer: (SndAudioBuffer*) anAudioBuffer nowTime: (double) t
+{
+  SndAudioBuffer *tempBuffer = synthOutputBuffer;
+  clientNowTime = t;
+  synthOutputBuffer = anAudioBuffer;
+  [self processBuffers];
+  [processorChain processBuffer: anAudioBuffer forTime: clientNowTime];
+  synthOutputBuffer = tempBuffer;
+  return self;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // startProcessingNextBufferWithInput:
 //
@@ -507,7 +519,7 @@ int get_bus_speed()
         fprintf(stderr,"[%s] SYNTH THREAD: ... LOCKED\n", [clientName cString]);
 #endif
         {
-          NSAutoreleasePool *innerPool2 = [[NSAutoreleasePool alloc] init];
+          NSAutoreleasePool *innerPool2 = [NSAutoreleasePool new];
           [self processBuffers];
           [innerPool2 release];
         }
@@ -524,7 +536,7 @@ int get_bus_speed()
           clientNowTime = [self streamTime]  + [synthOutputBuffer duration] * [outputQueue processedBuffersCount];
           [outputQueue addProcessedBuffer: synthOutputBuffer];
           [synthOutputBuffer release];
-	  synthOutputBuffer = nil;
+          synthOutputBuffer = nil;
         }
         else {
           clientNowTime += [synthOutputBuffer duration];
