@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/02/07 00:30:14  leigh
+  removed _MKHighestPar()
+
   Revision 1.2  1999/07/29 01:25:59  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -76,7 +79,6 @@ extern void _MKParWriteValueOn(_MKParameter *rcvr,NSMutableData *aStream,
 extern unsigned _MKGetParNamePar(id aParName);
 extern void _MKArchiveParOn(_MKParameter *param,NSCoder *aTypedStream); /*sb: NSCoder originally ocnverted as NSArchiver */
 extern void _MKUnarchiveParOn(_MKParameter *param,NSCoder *aTypedStream); /*sb: originally ocnverted as NSArchiver */
-extern int _MKHighestPar();
 extern id  _MKDummyParameter();
 extern BOOL _MKIsPar(unsigned aPar);
 extern BOOL _MKIsPrivatePar(unsigned aPar);

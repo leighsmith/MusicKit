@@ -51,6 +51,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/02/07 00:29:53  leigh
+  removed _MKHighestPar()
+
   Revision 1.5  2000/01/13 06:37:23  leigh
   Corrected _MKErrorf to take NSString error message
 
@@ -184,12 +187,6 @@ int MKHighestPar()
     /* Returns the number of the most recently-created parameter name */
 {
     return highestPar;
-}
-
-int _MKHighestPar()
-    /* Obsolete, but kept around for backward compatibility */
-{
-    return MKHighestPar();
 }
 
 int _MKGetPar(NSString *aName,_ParName **aPar)
