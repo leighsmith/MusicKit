@@ -33,12 +33,16 @@
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2001 The MusicKit Project.
 */
 /*
 Modification history:
 
  $Log$
+ Revision 1.8  2001/08/30 19:07:17  leighsmith
+ upgraded parName to parTagForName methods
+
  Revision 1.7  2000/05/13 17:21:11  leigh
  Better variable naming
 
@@ -83,8 +87,8 @@ enum {applyEnvBefore = 0,applyEnvAfter = 1,scaleEnvToFit = 2};
 
 + (void) initialize
 {
-    timeOffsetPar = [MKNote parName:@"timeOffset"];
-    timeScalePar = [MKNote parName:@"ampEnvTimeScale"];
+    timeOffsetPar = [MKNote parTagForName:@"timeOffset"];
+    timeScalePar = [MKNote parTagForName:@"ampEnvTimeScale"];
     /* ### Add a par int initialization statement here. */
 }
 
