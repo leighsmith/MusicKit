@@ -16,6 +16,10 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2002/04/01 12:00:31  sbrandon
+  fixed bug leading to double-dealloc of notes used in MIDI. _MKMidiToMusicKit
+  now returns a retained/autoreleased MKNote instead of just an autoreleased one.
+
   Revision 1.6  2002/01/23 15:33:02  sbrandon
   The start of a major cleanup of memory management within the MK. This set of
   changes revolves around MKNote allocation/retain/release/autorelease.
@@ -442,6 +446,6 @@ id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte)
 
 #endif
 
-    return (id)[aNote autorelease];
+    return (id)[[aNote  retain] autorelease];
 }
 
