@@ -33,24 +33,24 @@
 */
 @interface SndAudioProcessorInspector : NSObject {
 /*! @var parameterTableView */   
-  IBOutlet id parameterTableView;
+  IBOutlet NSTableView *parameterTableView;
 /*! @var parameterValueSilder */   
-  IBOutlet id parameterValueSilder;
-/*! @var processorActive */   
-  IBOutlet id processorActive;
+  IBOutlet NSSlider *parameterValueSilder;
+/*! @var processorActive Checkbox */   
+  IBOutlet NSButton *processorActive;
 /*! @var processorName */   
-  IBOutlet id processorName;
+  IBOutlet NSTextField *processorName;
 /*! @var sndArchView */   
   IBOutlet SndStreamArchitectureView *sndArchView;
 /*! @var theAudProc The current target for inspection */   
   SndAudioProcessor *theAudProc;
 
 /*! @var addFxButton */   
-  IBOutlet id addFxButton;
+  IBOutlet NSButton *addFxButton;
 /*! @var delFxButton */   
-  IBOutlet id delFxButton;
+  IBOutlet NSButton *delFxButton;
 /*! @var fxChooser */   
-  IBOutlet id fxChooser;
+  IBOutlet NSComboBox *fxChooser;
 /*! @var window */   
   IBOutlet NSPanel *window;
 }
