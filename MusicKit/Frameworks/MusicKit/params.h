@@ -4,7 +4,7 @@
 
   Description:
     This file defines the Music Kit Note parameters. You can also create your
-    own parameters using the Note method +parTagForName:. When an unrecognized
+    own parameters using the MKNote method +parTagForName:. When an unrecognized
     parameter is found in a scorefile, it is created automatically.
 
     These parameters are not recognized by all SynthPatches. You must check
@@ -21,6 +21,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/02/07 00:29:14  leigh
+  comment improvements
+
   Revision 1.3  1999/09/26 19:57:10  leigh
   Added MK_filename parameter
 
@@ -321,7 +324,8 @@ typedef enum _MKPars {     /* Note Parameters. */
        class. However, by convention, they may appear in Score info notes to 
        associate information with a Score. */
 
-    MK_title,            /* A name for the piece. Used in Score info. */
+    MK_title,            /* Used in MKScore infoNote as the name for the piece.
+			    Used for the Track name for MKPart infoNote. */
     MK_samplingRate,     /* Suggested DSP sampling rate to be used. For real-
                             time synthesis with the NeXT hardware, this 
                             must be 44100 or 22050. */
@@ -376,53 +380,53 @@ typedef enum _MKPars {     /* Note Parameters. */
    the value when the envelope is at 1.  The "0" suffix parameter indicates
    the value when the envelope is at 0.  */
    
-#define MK_freq1    MK_freq
-#define MK_amp1        MK_amp
-#define MK_bright1    MK_brightness
-#define MK_bearing1    MK_bearing
+#define MK_freq1        MK_freq
+#define MK_amp1         MK_amp
+#define MK_bright1      MK_brightness
+#define MK_bearing1     MK_bearing
 #define MK_waveform1    MK_waveform
-#define MK_c1Ratio    MK_cRatio
-#define MK_c1Amp    MK_amp
-#define MK_c1AmpAtt    MK_ampAtt
-#define MK_c1AmpRel    MK_ampRel
-#define MK_c1Waveform    MK_waveform
-#define MK_c1Phase    MK_phase
-#define MK_c1Amp1    MK_c1Amp
-#define MK_c2Amp1    MK_c2Amp
-#define MK_c3Amp1    MK_c3Amp
-#define MK_m1Ind1    MK_m1Ind
-#define MK_m2Ind1    MK_m2Ind
-#define MK_m3Ind1    MK_m3Ind
-#define MK_m4Ind1    MK_m4Ind
+#define MK_c1Ratio      MK_cRatio
+#define MK_c1Amp        MK_amp
+#define MK_c1AmpAtt     MK_ampAtt
+#define MK_c1AmpRel     MK_ampRel
+#define MK_c1Waveform   MK_waveform
+#define MK_c1Phase      MK_phase
+#define MK_c1Amp1       MK_c1Amp
+#define MK_c2Amp1       MK_c2Amp
+#define MK_c3Amp1       MK_c3Amp
+#define MK_m1Ind1       MK_m1Ind
+#define MK_m2Ind1       MK_m2Ind
+#define MK_m3Ind1       MK_m3Ind
+#define MK_m4Ind1       MK_m4Ind
 #define MK_svibFreq1    MK_svibFreq
 #define MK_rvibFreq1    MK_rvibFreq
 #define MK_indSvibFreq1 MK_indSvibFreq
-#define MK_indRvibFreq1    MK_indRvibFreq
-#define MK_svibAmp1    MK_svibAmp
-#define MK_rvibAmp1    MK_rvibAmp
-#define MK_indSvibAmp1     MK_indSvibAmp
-#define MK_indRvibAmp1    MK_indRvibAmp
+#define MK_indRvibFreq1 MK_indRvibFreq
+#define MK_svibAmp1     MK_svibAmp
+#define MK_rvibAmp1     MK_rvibAmp
+#define MK_indSvibAmp1  MK_indSvibAmp
+#define MK_indRvibAmp1  MK_indRvibAmp
 #define MK_noiseAmp1    MK_noiseAmp
-#define MK_noiseFreq1    MK_noiseFreq
+#define MK_noiseFreq1   MK_noiseFreq
 
 /* Some default parameter values */
 
-#define MK_DEFAULTAMP         0.1
-#define MK_DEFAULTSMOOTHING    1.0     /* Used by Envelope */
+#define MK_DEFAULTAMP        0.1
+#define MK_DEFAULTSMOOTHING  1.0     /* Used by Envelope */
 #define MK_DEFAULTBRIGHT     0.5     
-#define MK_DEFAULTFREQ              440.0
-#define MK_DEFAULTPORTAMENTO     0.1
+#define MK_DEFAULTFREQ       440.0
+#define MK_DEFAULTPORTAMENTO 0.1
 #define MK_DEFAULTCRATIO     1.0
 #define MK_DEFAULTMRATIO     1.0
-#define MK_DEFAULTINDEX        2.0
-#define MK_DEFAULTSVIBFREQ     4.0
-#define MK_DEFAULTSVIBAMP     0.01
-#define MK_DEFAULTRVIBFREQ    15.0
+#define MK_DEFAULTINDEX      2.0
+#define MK_DEFAULTSVIBFREQ   4.0
+#define MK_DEFAULTSVIBAMP    0.01
+#define MK_DEFAULTRVIBFREQ   15.0
 #define MK_DEFAULTRVIBAMP    0.008
-#define MK_DEFAULTBEARING       0.0
-#define MK_DEFAULTSUSTAIN       0.0     /* Used by Pluck */
-#define MK_DEFAULTDECAY         0.0     /* Used by Pluck */
-#define MK_DEFAULTVELOCITY      64
+#define MK_DEFAULTBEARING    0.0
+#define MK_DEFAULTSUSTAIN    0.0     /* Used by Pluck */
+#define MK_DEFAULTDECAY      0.0     /* Used by Pluck */
+#define MK_DEFAULTVELOCITY   64
 
 typedef enum _MKMidiParVal {  /* The order of these is taken from MIDI spec. */
     /* These correspond to MIDI channel mode message values. 
