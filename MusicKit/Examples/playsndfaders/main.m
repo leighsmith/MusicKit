@@ -77,7 +77,7 @@ int main (int argc, const char * argv[])
     int    numzigzags         = 0;
 
     if (argc == 1) {
-      printf("Use: playsndfaders [options] <soundfile>\nType playsnd -h for more help.\n");
+      printf("Use: playsndfaders [options] <soundfile>\nType playsndfaders -h for more help.\n");
       return 0;
     }
     
@@ -135,7 +135,7 @@ int main (int argc, const char * argv[])
       else if (soundFileName == NULL)
         soundFileName = argv[i];
       else {
-        printf("Regrettably, playsnd doesn't support playing multiple files yet (no tech reason why not...).\n");
+        printf("Regrettably,  doesn't support playing multiple files yet (no tech reason why not...).\n");
         printf("  This file will not be played: %s\n",argv[i]);
       }
     }
