@@ -290,6 +290,19 @@ static int ioTags = 1000;
     return [NSArray arrayWithArray: fileTypes]; // make it immutable
 }
 
++ (BOOL) isPathForSoundFile: (NSString*) path
+{
+  NSArray *exts = [Snd soundFileExtensions];
+  NSString *ext  = [path pathExtension];
+  int i, c = [exts count];
+  for (i = 0; i < c; i++) {
+    NSString *anExt = [exts objectAtIndex: i];
+    if ([ext isEqualToString: anExt])
+      return YES;
+  }
+  return NO;
+}
+
 - (void)dealloc
 {
     if (name) {

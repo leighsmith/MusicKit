@@ -266,6 +266,12 @@ architecture, as described in the <b>SndStruct</b> header.
 */
 + (NSArray *) soundFileExtensions;
 /*!
+ @method isPathForSoundFile:
+ @param path A file path
+ @result TRUE if the file at path is a sound file.
+ */
++ (BOOL) isPathForSoundFile: (NSString*) path;
+/*!
   @method defaultFileExtension
 */
 + (NSString*) defaultFileExtension;
