@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.20  2000/09/18 23:43:12  leigh
+  Removed retain and releases to properly isolate problems if they exist
+
   Revision 1.19  2000/06/16 23:21:01  leigh
   Added other older OpenStep platforms to NSPort fudging
 
@@ -599,7 +602,7 @@ static void resetPriority(void)
 + (void) separateThreadLoop
 {
     double timeToWait; // In fractions of seconds
-    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSRunLoop *theLoop = [NSRunLoop currentRunLoop];
 
     lockIt();                // Must be the first thing in this function
@@ -607,7 +610,7 @@ static void resetPriority(void)
     [musicKitThread retain];
     setPriority();           // if ever this does something, we may need to retrieve the currentRunLoop afterwards.
     [theLoop addPort: appToMKPortObj forMode: interThreadThreshold];
-    [condQueue retain];      // I'm not sure this is neccessary, but we do have an errant autorelease on condQueue somewhere.
+    //[condQueue retain];      // I'm not sure this is neccessary, but we do have an errant autorelease on condQueue somewhere.
 
     while ([MKConductor inPerformance]) {
         // finishPerformance can be called from within the MusicKit thread
@@ -658,7 +661,7 @@ static void resetPriority(void)
         NSLog(@"Exited the inPerformance loop\n");
     resetPriority();
     musicKitThread = nil;
-    [condQueue release];      // I'm not sure this is neccessary, but we do have an errant autorelease on condQueue somewhere.
+    // [condQueue release];      // I'm not sure this is neccessary, but we do have an errant autorelease on condQueue somewhere.
     unlockIt(nonrecursive);
 
     [pool release];
