@@ -3,7 +3,7 @@
   Defined In: The MusicKit
 
   Description: 
-    The MKMidi object provides Midi input/output access. It emulates some of the
+    The MKMidi object provides MIDI input/output access. It emulates some of the
     behavior of a Performer: It contains a NSMutableArray of MKNoteSenders, one per MIDI
     channel (as well as an extra one for MIDI system and channel mode messages).
     You can receive MKNotes derived from MIDI input by connecting an Instrument's
@@ -29,9 +29,13 @@
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 CCRMA, Stanford University
   Portions (Time code extensions) Copyright (c) 1993 Pinnacle Research
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.14  2000/11/13 23:15:20  leigh
+  Moved timeVars structure into MKMidi ivars, abstracted from NSMachPort for ports to MKMDPorts
+
   Revision 1.13  2000/06/16 23:23:33  leigh
   Added other older OpenStep platforms to NSPort fudging
 
@@ -73,37 +77,14 @@
 #define __MK_Midi_H___
 
 #import <Foundation/NSObject.h>
+#import <MKPerformSndMIDI/midi_driver.h>
 #import "MKDeviceStatus.h"
 #import "params.h"
 
-// Determine the MacOsX derivative being compiled on. This is a passing phase (MOXS 1.2) until the two O.S. merge API
-#define macosx (defined(__ppc__) && !defined(ppc))
-#define macosx_server (defined(__ppc__) && defined(ppc))
-#define openstep_i386 (i386 && !WIN32)
-// earlier OpenStep incantations had NSPort as a concrete class.
-#if macosx_server || WIN32 || m68k || openstep_i386
-#define NSMachPort NSPort
-#endif
-
-
-// this is a private structure that now has to live in a public header after the ivar freeze,
-// but it will become an object one day anyway.
-
-typedef struct _timeVars {
-    id synchConductor;         /* If non-nil, time mode is MTC Synch */
-    NSMachPort *exceptionPort; /* Exception port.  Only one unit per device may have one */
-    NSMachPort *alarmPort;     /* Alarm port.  Only one unit per device may have one */
-    id midiObj;                /* Which unit is receiving MTC. */
-    double alarmTime;
-    int intAlarmTime;
-    BOOL alarmTimeValid;
-    BOOL alarmPending;
-} timeVars;
-
 @interface MKMidi:NSObject
 {
-    NSMutableArray * noteSenders;        /* The object's collection of NoteSenders. */
-    NSMutableArray * noteReceivers;      /* The object's collection of NoteReceivers */
+    NSMutableArray *noteSenders;         /* The object's collection of NoteSenders. */
+    NSMutableArray *noteReceivers;       /* The object's collection of NoteReceivers */
     MKDeviceStatus deviceStatus;         /* See MKDeviceStatus.h */
     NSString *midiDevName;               /* Midi device port name. */
     BOOL useInputTimeStamps;             /* YES if MKConductor's time updated from driver's time stamps.*/
@@ -115,18 +96,27 @@ typedef struct _timeVars {
     void *_pIn;  // should be _MKMidiInStruct *
     void *_pOut; // should be _MKMidiOutStruct *
     double _timeOffset;
-    char ioMode; // should be an enumerated type. 'i' = MKMidiInputOnly 'o' = MKMidiOutputOnly 'a' = MKMidiIO
+    enum {MKMidiInputOnly, MKMidiOutputOnly, MKMidiInputOutput} ioMode; 
     BOOL isOwner;
-    NSMachPort *devicePort; // Device port
-    NSMachPort *ownerPort;
-    NSMachPort *recvPort;   // Port on which we receive midiIn messages
-    NSMachPort *queuePort;  // Queues.
+    // These are handles used to identify the MIDI communication channel. 
+    MKMDPort  devicePort;       // Device port
+    MKMDOwnerPort ownerPort;    // Owner port, as for the device port.
+    MKMDReplyPort recvPort;     // Port on which we receive midiIn messages
+    MKMDReplyPort queuePort;    // Port on which we notify when there is space on the playback queue.
     BOOL mergeInput;
     NSString *hostname;
     int unit;
     int queueSize;
-    id conductor;       // Used by conductor and setConductor: methods
-    timeVars *tvs;      // MIDI Time Code (MTC) additions
+    id conductor;               // Used by conductor and setConductor: methods
+    // MIDI Time Code (MTC):
+    id synchConductor;          // If non-nil, time mode is MTC Synch
+    MKMDReplyPort exceptionPort; // Exception port.  Only one unit per device may have one.
+    MKMDReplyPort alarmPort;    // Alarm port.  Only one unit per device may have one.
+    MKMidi *mtcMidiObj;         // Which unit is receiving MTC.
+    double alarmTime;
+    int intAlarmTime;
+    BOOL alarmTimeValid;
+    BOOL alarmPending;
 }
 
 #define MK_MAXMIDIS 16  /* Maximum number of Intel-based Midi objects */
