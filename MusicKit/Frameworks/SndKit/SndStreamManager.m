@@ -66,15 +66,22 @@ static SndStreamManager *defaultStreamManager = nil;
 
 + (void) initialize
 {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	
     if (SNDInit(TRUE)) {
-        if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowDriverSelected"]) {
+        if([defaults boolForKey: @"SndShowDriverSelected"]) {
             char **driverNames = SNDGetAvailableDriverNames();
             
             NSLog(@"SndStreamManager::initialise: driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
         }
+	if([defaults boolForKey: @"SndShowSpeakerConfiguration"]) {
+	    const char **speakerNames = SNDSpeakerConfiguration();
+
+            NSLog(@"SndStreamManager::initialise: speaker configuration is %s %s\n", speakerNames[0], speakerNames[1]);
+        }
     }
     else {
-        NSLog(@"SndStreamManager::initialise: Error - Unable to initialise MKPerformSound!\n");
+        NSLog(@"SndStreamManager::initialise: Error - Unable to initialise SNDInit()!\n");
     }
     if (defaultStreamManager == nil)
         defaultStreamManager = [SndStreamManager new];  // create our default
@@ -126,8 +133,8 @@ static SndStreamManager *defaultStreamManager = nil;
     managerSendPort      = (NSPort *)[NSPort port];
 
     threadConnection     = [[NSConnection alloc] initWithReceivePort: managerReceivePort
-                                                                sendPort: managerSendPort];
-    [threadConnection setRootObject:self];
+							    sendPort: managerSendPort];
+    [threadConnection setRootObject: self];
 
     [NSThread detachNewThreadSelector: @selector(delegateMessageThread:)
                              toTarget: self
@@ -209,9 +216,9 @@ static SndStreamManager *defaultStreamManager = nil;
   }
   [bg_threadLock lock];
   bg_sem = BG_startNow;
-  [bg_threadLock unlockWithCondition:BG_hasFlag];
-  [bg_threadLock lockWhenCondition:BG_hasStarted];
-  [bg_threadLock unlockWithCondition:BG_ready];
+  [bg_threadLock unlockWithCondition: BG_hasFlag];
+  [bg_threadLock lockWhenCondition: BG_hasStarted];
+  [bg_threadLock unlockWithCondition: BG_ready];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -255,8 +262,8 @@ static SndStreamManager *defaultStreamManager = nil;
 	    NSInvocation *delegateMessage = nil;
 	    int count;
 	    
-      // quickly release the lock so we don't deadlock if the queued messages take
-      // a while to go through.
+	    // quickly release the lock so we don't deadlock if the queued messages take
+	    // a while to go through.
 	    [bgdm_threadLock unlockWithCondition: bgdm_sem];
 	    while (1) {
 		[delegateMessageArrayLock lock];
@@ -306,9 +313,9 @@ static SndStreamManager *defaultStreamManager = nil;
     [self release];  // TODO eeek, why is this necessary?
     [localPool release];
     /* even if there is a new thread is created between the following two
-	* statements, that would be ok -- there would temporarily be one
-	* extra thread but it won't cause a problem
-	*/
+     * statements, that would be ok -- there would temporarily be one
+     * extra thread but it won't cause a problem
+     */
 #if SNDSTREAMMANAGER_DEBUG
     NSLog(@"SndManager::exiting delegate thread\n");
 #endif
@@ -386,9 +393,9 @@ static SndStreamManager *defaultStreamManager = nil;
   NSLog(@"SndManager::exiting bg thread\n");
 #endif
   /* even if there is a new thread is created between the following two
-    * statements, that would be ok -- there would temporarily be one
-    * extra thread but it won't cause a problem
-    */
+   * statements, that would be ok -- there would temporarily be one
+   * extra thread but it won't cause a problem
+   */
   [NSThread exit];
 }
 
@@ -444,7 +451,7 @@ static SndStreamManager *defaultStreamManager = nil;
 
     [bg_threadLock lock];
     bg_sem = BG_stopNow;
-    [bg_threadLock unlockWithCondition:BG_hasFlag];
+    [bg_threadLock unlockWithCondition: BG_hasFlag];
 
 #if SNDSTREAMMANAGER_DEBUG
     NSLog(@"[manager] shutdown sent.\n");
