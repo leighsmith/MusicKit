@@ -41,7 +41,8 @@
     bBypass = FALSE;
     nowTime = 0.0;
     postFader = [[SndAudioFader alloc] init];
-    [postFader setAudioProcessorChain:self];
+    [postFader setActive: YES]; // By default, our post effects fader is active.
+    [postFader setAudioProcessorChain: self];
     return self;
 }
 
@@ -55,6 +56,13 @@
     [tempBuffer release];
     [postFader release];
     [super dealloc];
+}
+
+
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ audioProcessors: %@, postFader %@ %@\n", 
+	[super description], audioProcessorArray, postFader, bBypass ? @"(bypassed)" : @"(active)"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +79,7 @@
 // addAudioProcessor
 ////////////////////////////////////////////////////////////////////////////////
 
-- addAudioProcessor: (SndAudioProcessor*) proc
+- addAudioProcessor: (SndAudioProcessor *) proc
 {
     [audioProcessorArray addObject: proc];
     [proc setAudioProcessorChain:self];
@@ -82,7 +90,7 @@
 // removeAudioProcessor
 ////////////////////////////////////////////////////////////////////////////////
 
-- removeAudioProcessor: (SndAudioProcessor*) proc
+- removeAudioProcessor: (SndAudioProcessor *) proc
 {
     [audioProcessorArray removeObject: proc];
     return self;
@@ -92,7 +100,7 @@
 // processorAtIndex
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndAudioProcessor*) processorAtIndex: (int) index
+- (SndAudioProcessor *) processorAtIndex: (int) index
 {
     return [audioProcessorArray objectAtIndex: index];
 }
@@ -111,8 +119,9 @@
 // processBuffer:forTime:
 ////////////////////////////////////////////////////////////////////////////////
 
-- processBuffer: (SndAudioBuffer*) buff forTime: (double) t
+- processBuffer: (SndAudioBuffer *) buff forTime: (double) t
 {
+    int audioProcessorIndex, audioProcessorCount = [audioProcessorArray count];
     if (bBypass)
         return self;
 
@@ -122,21 +131,23 @@
     if (tempBuffer == nil) {
         tempBuffer = [[SndAudioBuffer alloc] initWithBuffer: buff];
     }
-    {
-        int i, c = [audioProcessorArray count];
-        for (i = 0; i < c; i++) {
-            SndAudioProcessor *proc = [audioProcessorArray objectAtIndex: i];
-            if ([proc isActive]) {
-                if ([proc processReplacingInputBuffer: buff
-                                         outputBuffer: tempBuffer]) {
-                    [buff copyData: tempBuffer];
-              }
-            }
-        }
-        if ([postFader processReplacingInputBuffer: buff
-                                      outputBuffer: tempBuffer]) {
-            [buff copyData: tempBuffer];
-        }
+    for (audioProcessorIndex = 0; audioProcessorIndex < audioProcessorCount; audioProcessorIndex++) {
+	SndAudioProcessor *proc = [audioProcessorArray objectAtIndex: audioProcessorIndex];
+	if ([proc isActive]) {
+	    if ([proc processReplacingInputBuffer: buff
+				     outputBuffer: tempBuffer]) {
+		// NSLog(@"buff %@\n", buff);
+		[buff copyData: tempBuffer];
+		// NSLog(@"after buff %@\n", buff);
+	    }
+	}
+    }
+    if ([postFader isActive]) {
+	if ([postFader processReplacingInputBuffer: buff
+				      outputBuffer: tempBuffer]) {
+	    [buff copyData: tempBuffer];
+	}
+	// NSLog(@"fader after buff %@\n", buff);
     }
     return self;
 }
