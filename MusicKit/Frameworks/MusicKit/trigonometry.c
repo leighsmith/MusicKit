@@ -4,7 +4,7 @@
 
   Description:
     Simple sine table of size 1024 with linear interpolation.  Note that this
-    version differs from the one in fastFft.c in that the latter takes its
+    version differs from the one in fastFFT.c in that the latter takes its
     argument in terms of the FFT size.  This one makes no such assumptions.
 
   Original Author: David Jaffe
@@ -12,13 +12,17 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2002 The MusicKit Project.
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.1  2002/09/25 22:28:52  leighsmith
+  Renamed mySin and myCos to MKSine, MKCosine and placed into better named file and split out prototypes to a header for inclusion in MKPartials
+
   Revision 1.5  2002/09/25 17:40:37  leighsmith
-  Commented out unused myCos function to stop warnings
+  Commented out unused MKCosine function to stop warnings
 
   Revision 1.4  2001/05/12 09:37:37  sbrandon
   - GNUSTEP: include headers, don't import them
@@ -56,7 +60,7 @@ static void initSineTab(void)
 	sinTab[i] = sin(i * (M_PI * 2/SINTABLEN));
 }
 
-static double mySin(double x)
+double MKSine(double x)
 {
     int floorVal;
     double diff;
@@ -76,10 +80,7 @@ static double mySin(double x)
     else return sinTab[floorVal] * (1-diff) + sinTab[floorVal+1] * diff;
 }
 
-// LMS Not used so commented out to stop warnings, but can be uncommented if you need it.
-#if 0 
-static double myCos(double x)
+double MKCosine(double x)
 {
-    return mySin(x + M_PI_2);
+    return MKSine(x + M_PI_2);
 }
-#endif

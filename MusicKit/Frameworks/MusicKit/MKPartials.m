@@ -26,6 +26,9 @@
  Modification history:
 
  $Log$
+ Revision 1.14  2002/09/25 22:28:52  leighsmith
+ Renamed mySin and myCos to MKSine, MKCosine and placed into better named file and split out prototypes to a header for inclusion in MKPartials
+
  Revision 1.13  2002/09/24 21:45:29  leighsmith
  Cleaned up _normalize for gcc 3.1 warnings
 
@@ -100,7 +103,7 @@
 #import "_scorefile.h"
 #import "PartialsPrivate.h"
 #import "_error.h"
-#import "sin.c"
+#import "trigonometry.h"
 
 @implementation  MKPartials:MKWaveTable
 
@@ -749,8 +752,8 @@ automatically if necessary by the various getData: methods
   halfLength = length / 2;
   memset(dataDouble, 0, length * sizeof(double));
   if (!phases) {
-    cosPhase = myCos(DEG_TO_RADIANS(defaultPhase)-M_PI_2);
-    sinPhase = mySin(DEG_TO_RADIANS(defaultPhase)-M_PI_2);
+    cosPhase = MKCosine(DEG_TO_RADIANS(defaultPhase)-M_PI_2);
+    sinPhase = MKSine(DEG_TO_RADIANS(defaultPhase)-M_PI_2);
     /* We subtract M_PI_2 so that a zero phase means sine and a PI/2
       phase means cosine. */
   }
@@ -764,8 +767,8 @@ automatically if necessary by the various getData: methods
       } else if (indexVal < halfLength) {
         if (phases) {
           tmp = DEG_TO_RADIANS(phases[i])-M_PI_2;
-          cosPhase = myCos(tmp);
-          sinPhase = mySin(tmp);
+          cosPhase = MKCosine(tmp);
+          sinPhase = MKSine(tmp);
         }
  	      tmp = ((float *)ampRatios)[i] * halfLength;
  	      dataDouble[indexVal] = tmp * cosPhase;
@@ -781,8 +784,8 @@ automatically if necessary by the various getData: methods
         } else if (indexVal < halfLength) {
           if (phases) {
             tmp = DEG_TO_RADIANS(phases[i])-M_PI_2;
-            cosPhase = myCos(tmp);
-            sinPhase = mySin(tmp);
+            cosPhase = MKCosine(tmp);
+            sinPhase = MKSine(tmp);
           }
           tmp = ampRatios[i] * halfLength;
           dataDouble[indexVal] = tmp * cosPhase;
