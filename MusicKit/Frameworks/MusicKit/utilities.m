@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  1999/11/09 00:16:28  leigh
+  dummy error message printout to NSLog
+
   Revision 1.6  1999/09/22 16:03:13  leigh
   Allocation error messages more meaningful and standard
 
@@ -65,7 +68,9 @@ Modification history:
 
 #import "_error.h"
 
+#ifndef WIN32
 #import <mach/cthreads.h>  // LMS only needed for cthread_set_errno_self and that seems nearly redundant
+#endif
 #import <stddef.h>  /* errno */
 #import <Foundation/NSBundle.h>
 
@@ -262,6 +267,7 @@ void MKSetErrorStream(NSMutableData *aStream)
 
 #define UNKNOWN_ERROR NSLocalizedStringFromTableInBundle(@"unknown error", _MK_ERRTAB, _MKErrorBundle(), "")
 
+// LMS: This should be done with a NSDictionary 
 NSString * _MKGetErrStr(int errCode)
     /* Returns the error string for the given code or "unknown error" if
        the code is not a MKErrno. The string is not copied. Note that
@@ -528,17 +534,15 @@ id MKError(NSString * msg)
        */
 {
     if (!msg)
-      return nil;
+        return nil;
     if (errorProc) {
 	errorProc(msg);
 	return nil;
     }
     else if (!errorStreamEnabled)
-      return nil;
-    [MKErrorStream() appendData:[msg dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-    [errorStream appendData:[@"\n" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-//#error StreamConversion: NXFlush should be converted to an NSData method
-//    NXFlush(errorStream); //sb: unnec
+        return nil;
+    [MKErrorStream() appendData: [msg dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+    [MKErrorStream() appendData: [@"\n" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
     return nil;
 }
 
@@ -563,19 +567,16 @@ id _MKErrorf(int errorCode,...)
         // MKError(_errBuf);
     }
     else if (!errorStreamEnabled)
-      return nil;
+        return nil;
     else {
 //#error StreamConversion: NXVPrintf should be converted to an NSData method
 //	NXVPrintf(MKErrorStream(),fmt,ap);
-        NSString *theErrorString = [[[NSString alloc] initWithFormat:fmt
-            arguments:ap] autorelease]; //sb: this should do it!
-        [MKErrorStream() appendData:[theErrorString dataUsingEncoding:NSNEXTSTEPStringEncoding]];//sb...
-	[errorStream appendData:[@"\n" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-//#error StreamConversion: NXFlush should be converted to an NSData method
-//	NXFlush(errorStream); //sb: unnec
-#if 0
-	vfprintf(stderr,fmt,ap);
-	fprintf(stderr,"\n");
+        NSString *theErrorString = [[[NSString alloc] initWithFormat:fmt arguments:ap] autorelease]; //sb: this should do it!
+        [MKErrorStream() appendData: [theErrorString dataUsingEncoding: NSNEXTSTEPStringEncoding]];//sb...
+	[MKErrorStream() appendData: [@"\n" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+#if 1
+	NSLog(theErrorString); // kludge until we get the error stream output working properly.
+	NSLog(@"\n");	
 #endif
     }
     va_end(ap);
