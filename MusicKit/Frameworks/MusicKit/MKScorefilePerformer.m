@@ -10,10 +10,10 @@
     A MKScorefilePerformer creates
     a separate MKNoteSender object for each part name in the file
     (as given in the file's part statements).  The MKNoteSender objects
-    are maintained as an List in the inherited variable noteSenders.
+    are maintained as an NSArray in the inherited variable noteSenders.
     The MKNoteSenders are named with the names of the MKParts in the file.
     Thus, you can find out the names of the MKParts in the file by getting
-    a List of the noteSenders (using -noteSenders) and using the function
+    an NSArray of the noteSenders (using -noteSenders) and using the function
     MKGetObjectName(noteSender).
    
     Much of MKScorefilePeformer's functionality is
@@ -29,6 +29,10 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2002/04/15 14:23:50  sbrandon
+  - fixed a couple of internal comments that wrongly referred to List objects
+    (now NSArray)
+
   Revision 1.9  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
