@@ -126,17 +126,6 @@ typedef enum {
 + audioBufferWithSnd: (Snd *) snd inRange: (NSRange) rangeInFrames;
 
 /*!
-  @method     initWithSoundStruct:data:
-  @abstract   Initialization method from a SndSoundStruct.
-  @discussion This used to be called initWithFormat:data: and is deprecated. 
-              You should transition to using initWithFormat:data:
-  @param      sndStruct A SndSoundStruct
-  @param      sampleData A pointer to the memory holding the sample data in the format described by sndStruct.
-  @result     Returns self.
-*/
-- initWithSoundStruct: (SndSoundStruct *) sndStruct data: (void *) sampleData;
-
-/*!
   @method     initWithFormat:data:
   @abstract   Initialization method from a SndFormat and the data it describes.
   @discussion Can be used to initialize an instance with a buffer of data or with empty (i.e zeroed)

@@ -196,36 +196,6 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// initWithSoundStruct:data:
-////////////////////////////////////////////////////////////////////////////////
-
-// deprecated, will be removed.
-- initWithSoundStruct: (SndSoundStruct *) f data: (void *) d
-{
-  self = [super init];
-  if (self) {
-    format.sampleRate = f->samplingRate;
-    format.channelCount = f->channelCount;
-    format.dataFormat   = f->dataFormat;
-
-    if (data != nil)
-      [data release];
-    if (f->dataSize < 0)
-      NSLog(@"SndAudioBuffer::initWithSoundStruct: ERR - f->dataSize (%d) < 0", f->dataSize);
-
-
-    if (d == NULL) {
-      data = [[NSMutableData alloc] initWithLength: f->dataSize];
-    }
-    else {
-      data = [[NSMutableData alloc] initWithBytes: d length: f->dataSize];
-    }
-    format.frameCount = f->dataSize / [self frameSizeInBytes];
-  }
-  return self;
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // initWithFormat:data:
 ////////////////////////////////////////////////////////////////////////////////
 
