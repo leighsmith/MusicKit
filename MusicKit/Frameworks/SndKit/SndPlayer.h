@@ -30,7 +30,8 @@
 + player;
 
 - playSnd: (Snd*) s;
-- playSnd: (Snd*) s withTimeOffset: (double) dt;
+- playSnd: (Snd*) s withTimeOffset: (double) inSeconds;
+- stopSnd: (Snd*) s withTimeOffset: (double) inSeconds;
 - (void) processBuffers;
 
 - init;

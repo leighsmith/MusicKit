@@ -155,6 +155,12 @@
     return self;
 }
 
+// 
+- stopSnd: (Snd*) s withTimeOffset: (double) inSeconds
+{
+    return self;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // processBuffers
 ////////////////////////////////////////////////////////////////////////////////
@@ -179,6 +185,12 @@
             [removalArray addObject: spd];
             [spd setPlayIndex: - [[spd snd] samplingRate] * ([spd playTime] - nowTime)];
             [playing addObject: spd];
+            // The delay between receiving this delegate and when the audio is actually played 
+            // is an extra buffer, therefore: delay = buffLength/sampleRate after the delegate 
+            // message has been received.
+            NSLog(@"telling delegate willPlay:");
+            [[spd snd] _setStatus:SND_SoundPlaying];
+            [[spd snd] tellDelegate:@selector(willPlay:)];
         }
     }
     [toBePlayed removeObjectsInArray: removalArray];
@@ -217,11 +229,16 @@
             if (end + startIndex > sndLength)
                 end = sndLength - startIndex;
 
+            // NSLog(@"calling mixWithBuffer from SndPlayer processBuffers\n");
             [ab mixWithBuffer: temp fromStart: start toEnd: end];
         }
         [spd setPlayIndex: startIndex + buffLength];
-        if ([spd playIndex] >= sndLength)
+        // When at the end of sounds, signal the delegate and 
+        if ([spd playIndex] >= sndLength) {
             [removalArray addObject: spd];
+            [[spd snd] _setStatus: SND_SoundStopped];
+            [[spd snd] tellDelegate:@selector(didPlay:)];
+        }
     }
 
     // NSLog(@"playing %i sounds",[playing count]);
