@@ -2,15 +2,29 @@
 $Id$
 
 LEGAL:
-This framework and all source code supplied with it, except where specified, are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use the source code for any purpose, including commercial applications, as long as you reproduce this notice on all such software.
+This framework and all source code supplied with it, except where specified,
+are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free
+to use the source code for any purpose, including commercial applications, as
+long as you reproduce this notice on all such software.
 
-Software production is complex and we cannot warrant that the Software will be error free.  Further, we will not be liable to you if the Software is not fit for the purpose for which you acquired it, or of satisfactory quality. 
+Software production is complex and we cannot warrant that the Software will be
+error free.  Further, we will not be liable to you if the Software is not fit
+for the purpose for which you acquired it, or of satisfactory quality. 
 
-WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD PARTIES RIGHTS.
+WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL
+WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES
+OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD
+PARTIES RIGHTS.
 
-If a court finds that we are liable for death or personal injury caused by our negligence our liability shall be unlimited.  
+If a court finds that we are liable for death or personal injury caused by our
+negligence our liability shall be unlimited.  
 
-WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND CONDITIONS OF THIS AGREEMENT.
+WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS
+OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR
+POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE
+NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED
+DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND
+CONDITIONS OF THIS AGREEMENT.
 
 ******************************************************************************/
 
@@ -40,8 +54,21 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #import <mach/mach_init.h>
 #endif
 
-#define HAVE_RAND 1 // this ensures Sox doesn't attempt to define its own prototype
-#import <st.h>  // prototypes and structures from the Sox sound tools library
+/* the following ensures Sox doesn't attempt to define its own
+ * prototype
+ */
+#define HAVE_RAND 1 
+/* the following defines are to fool st.h into importing the right
+ * headers.
+ */
+#define HAVE_UNISTD_H 1
+#define HAVE_STDINT_H 1
+#define HAVE_SYS_TYPES 1
+#import <st.h> /* prototypes and structures from the Sox sound tools library */
+#ifndef RIGHT  /* used to be in old version of libst.h */
+# define RIGHT(datum, bits)      ((datum) >> bits)
+#endif
+
 int st_ausunencoding(int size, int encoding);  // from sox au.c 
 
 #define SNDREADCHUNKSIZE 256*1024   // Number of LONG samples to read into a buffer.
@@ -1169,7 +1196,7 @@ int SndReadSoundfile(const char *path, SndSoundStruct **sound)
         *sound = NULL;
 	if (!path) return SND_ERR_BAD_FILENAME;
 	if (!strlen(path)) return SND_ERR_BAD_FILENAME;
-        fp = fopen(path, READBINARY);
+        fp = fopen(path, "rb");
         if (fp == NULL) return SND_ERR_CANNOT_OPEN;
 
         if ((filetype = strrchr(path, LASTCHAR)) != NULL)
