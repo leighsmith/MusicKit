@@ -11,6 +11,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/05/13 17:07:35  leigh
+  Added extra controller type definitions
+
   Revision 1.3  2000/02/07 23:53:26  leigh
   added patch bank change and MIDI pitch bend range defintions
 
@@ -64,7 +67,7 @@ Modification history:
 #define MIDI_DEFAULTVELOCITY    64
 
 /* MIDI Controller numbers */
-
+#define MIDI_BANKSELECT_MSB	0
 #define MIDI_MODWHEEL           1
 #define MIDI_BREATH             2
 #define MIDI_FOOT               4
@@ -96,7 +99,18 @@ Modification history:
 #define MIDI_PORTAMENTO         65
 #define MIDI_SOSTENUTO          66
 #define MIDI_SOFTPEDAL          67
+#define MIDI_LEGATOFOOTSWITCH	68
 #define MIDI_HOLD2              69
+
+// default sound controller values
+#define MIDI_SOUNDVARIATION	70
+#define MIDI_HARMONICINTENSITY	71
+#define MIDI_RELEASETIME	72
+#define MIDI_ATTACKTIME		73
+#define	MIDI_BRIGHTNESS		74
+
+#define MIDI_PORTAMENTOCONTROL	84
+
 /*
  * Controller 91-95 definitions from original 1.0 MIDI spec
  */
