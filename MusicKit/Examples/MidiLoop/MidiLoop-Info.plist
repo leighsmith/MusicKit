@@ -23,7 +23,7 @@
 	<key>CFBundleVersion</key>
 	<string>5.5.0</string>
 	<key>NSMainNibFile</key>
-	<string>MidiLoop-macos</string>
+	<string>MidiLoop-macosx</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
