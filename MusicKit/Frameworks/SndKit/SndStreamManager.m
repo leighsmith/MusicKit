@@ -28,7 +28,7 @@
 #define SNDSTREAMMANAGER_DELEGATE_DEBUG         0
 #define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
 
-static void processAudio(double sampleCount, SNDStreamBuffer *cInB, SNDStreamBuffer *cOutB, void *obj);
+static void processAudio(double sampleCount, SNDStreamBuffer *streamInputBuffer, SNDStreamBuffer *streamOutputBuffer, void *obj);
 
 ////////////////////////////////////////////////////////////////////////////////
 // The enums are dual purpose -- they serve as condition locks for
@@ -127,13 +127,13 @@ static SndStreamManager *defaultStreamManager = nil;
     if (!self)
 	return nil;
     
-    mixer           = [[SndStreamMixer sndStreamMixer] retain];
+    mixer           = [[SndStreamMixer mixer] retain];
     bg_threadLock   = [[NSConditionLock alloc] initWithCondition: BG_ready];
     bgdm_threadLock = [[NSConditionLock alloc] initWithCondition: BGDM_ready];
     delegateMessageArrayLock = [NSLock new];
     active        = FALSE;
     bg_active     = FALSE;
-    nowTime       = 0;
+    nowTime       = 0.0;
     bDelegateMessagingEnabled = FALSE;
     format = [Snd nativeFormat];
     if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowStreamingFormat"])
@@ -461,7 +461,7 @@ static SndStreamManager *defaultStreamManager = nil;
 #if SNDSTREAMMANAGER_DEBUG
 	NSLog(@"[manager] sending shutdown to mixer...\n");
 #endif
-	[mixer managerIsShuttingDown];
+	[mixer finishMixing];
 #if SNDSTREAMMANAGER_DEBUG
 	NSLog(@"[manager] about to send shutdown to stream...\n");
 #endif
@@ -524,26 +524,26 @@ static SndStreamManager *defaultStreamManager = nil;
 // processAudio
 ////////////////////////////////////////////////////////////////////////////////
 
-static void processAudio(double sampleCount, SNDStreamBuffer *cInB, SNDStreamBuffer *cOutB, void *manager)
+static void processAudio(double sampleCount, SNDStreamBuffer *streamInputBuffer, SNDStreamBuffer *streamOutputBuffer, void *manager)
 {
-    // Eventually these must be made instance variables which you just wrap
-    // around each of the SNDStreamBuffers, to avoid allocation costs.
+    // These could be made instance variables which are just wrapped
+    // around each of the SNDStreamBuffers, to avoid allocation costs. 
+    // However if the underlying streamBuffers are non-interleaved, there is a conversion
+    // process required, hence the need for full allocation and initialisation. If SndAudioBuffers
+    // themselves can be non-interleaved, we then _really_ need to hide all this within the class.
 
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-    SndAudioBuffer *inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWithSNDStreamBuffer: cInB ];
-    SndAudioBuffer *outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWithSNDStreamBuffer: cOutB];
-    long outputStreamDataSizeInBytes = SndFramesToBytes(cOutB->frameCount, cOutB->channelCount, cOutB->dataFormat);
+    SndAudioBuffer *inB  = (streamInputBuffer  == NULL) ? nil : [SndAudioBuffer audioBufferWithSNDStreamBuffer: streamInputBuffer ];
+    SndAudioBuffer *outB = (streamOutputBuffer == NULL) ? nil : [SndAudioBuffer audioBufferWithSNDStreamBuffer: streamOutputBuffer];
 
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] --> processAudio sampleCount = %ld, cOutB = %p, cOutB->streamData = %p\n", 
-        (long) sampleCount, cOutB, cOutB->streamData);
+    NSLog(@"[Manager] --> processAudio sampleCount = %ld, streamOutputBuffer = %p, streamOutputBuffer->streamData = %p\n", 
+        (long) sampleCount, streamOutputBuffer, streamOutputBuffer->streamData);
+    // NSLog(@"[Manager] --> processAudio outB = %@\n", outB);
 #endif
+    
     [(SndStreamManager *) manager processStreamAtTime: sampleCount input: inB output: outB];
-
-#if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] <-- processAudio, copying %d bytes to output buffer\n", outputStreamDataSizeInBytes);
-#endif
-    memcpy(cOutB->streamData, [outB bytes], outputStreamDataSizeInBytes);
+    [outB fillSNDStreamBuffer: streamOutputBuffer];
 
 #if SNDSTREAMMANAGER_DEBUG
     NSLog(@"[Manager] About to release pool...\n");
@@ -566,14 +566,23 @@ static void processAudio(double sampleCount, SNDStreamBuffer *cInB, SNDStreamBuf
                       output: (SndAudioBuffer *) outB
 {
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] Entering processStreamAtTime inB %@, outB %@\n", inB, outB);
+    NSLog(@"[Manager] Entering processStreamAtTime %lf inB %@, outB %@\n", sampleCount, inB, outB);
 #endif
     if (active) {
-	// set our current notion of time.
-	if (outB != nil)
-	    nowTime += [outB duration];
-	else if (inB != nil)
-	    nowTime += [inB duration];
+	// Set our current notion of time.
+	if (outB != nil) {
+	    // Calculate nowTime from sampleCount. This guards against deinterleaved streams repeatedly
+	    // requesting processing at the same sampleCount value causing nowTime to over-increment.
+	    nowTime = sampleCount / [outB samplingRate];
+	    // TODO Earlier versions calculated nowTime by preincrementing by the buffer duration. 
+	    // This put nowTime at the end of the buffer, not at the start. 
+	    // I don't think it matters but that needs checking and setting a policy. 
+	    // Here's what we would need to do to recreate those semantics:
+	    // nowTime = (sampleCount + [outB duration]) / [outB samplingRate];
+	}
+	else if (inB != nil) {
+	    nowTime = sampleCount / [inB samplingRate];
+	}
 
 #if SNDSTREAMMANAGER_DEBUG
 	NSLog(@"[Manager] nowTime: %.3f sampleCount: %.3f\n", nowTime, sampleCount);
@@ -582,7 +591,7 @@ static void processAudio(double sampleCount, SNDStreamBuffer *cInB, SNDStreamBuf
 #if SNDSTREAMMANAGER_DEBUG
 	NSLog(@"[Manager] post mixer\n");
 #endif
-	if ([mixer clientCount] == 0) { // Hmm, no clients hey? Shut down the Stream.
+	if ([mixer clientCount] == 0) { // Shut down the Stream if there are no clients.
 	    [self stopStreaming];
 #if SNDSTREAMMANAGER_DEBUG
 	    NSLog(@"[Manager] signalling a stop stream...\n");
