@@ -11,8 +11,6 @@
  
  TODO this should be restructured such that each instance is a tuning system that can be copied rather than
  installing an instance as the default. Then use +defaultTuningSystem or +twelveToneTempered to return an pristine instance.
- Make the functions into class methods so that +initialize is called rather than relying on _MKCheckInit() to initialise
- things.
  
  Original Author: David A. Jaffe
  
@@ -53,7 +51,7 @@ Modification history prior to commit to CVS:
 
 @implementation MKTuningSystem
 
-#import "equalTempered.m"
+#import "equalTempered.m" // for A=440Hz tunings in twelve tone equal temperament.
 
 /* Mapping from keyNum to freq. Not necessarily monotonically increasing. */
 static _ScorefileVar *pitchVars[MIDI_NUMKEYS] = { nil };   
