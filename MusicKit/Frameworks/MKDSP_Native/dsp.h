@@ -152,10 +152,15 @@
 /* Make alloca() safe */
 
 /**** Include files ****/
-
+#ifdef GNUSTEP
+#include "dsp_structs.h"		/* DSP struct declarations */
+#include "dsp_errno.h"		/* Error codes for DSP C functions */
+#include "libdsp.h"		/* Function prototypes for libdsp functions */
+#else
 #import "dsp_structs.h"		/* DSP struct declarations */
 #import "dsp_errno.h"		/* Error codes for DSP C functions */
 #import "libdsp.h"		/* Function prototypes for libdsp functions */
+#endif
 
 #ifdef WIN32
 // LMS it turns out -ObjC++ barfs including winsock.h
@@ -169,12 +174,23 @@ struct timeval {
         long    tv_usec;        /* and microseconds */
 };
 #else // WIN32
+ #ifdef GNUSTEP
+ #include <unistd.h>
+ #else
  #import <unistd.h> // LMS do we need this?
+ #endif
 #endif
-#import <sys/types.h> // LMS replacement
-#import <stdio.h>
-#import <math.h>
-#import <mach/mach.h>
+
+#ifdef GNUSTEP
+# import <sys/types.h> // LMS replacement
+# import <stdio.h>
+# import <math.h>
+#else
+# import <sys/types.h> // LMS replacement
+# import <stdio.h>
+# import <math.h>
+# import <mach/mach.h>
+#endif
 
 #define DSP_MAX_HM (DSP_NB_HMS-2) /* Leave room in HMS for begin/end marks */
 
