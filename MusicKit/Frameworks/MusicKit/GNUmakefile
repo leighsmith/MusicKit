@@ -15,6 +15,11 @@
 
 #Modification history:
 # $Log$
+# Revision 1.2  2001/07/02 19:52:55  sbrandon
+# - (temporarily) added -g flag for better debugging
+# - added writeScore.[hm] (why were these not in there? They were not in the
+#   OpenStep Makefile either.
+#
 # Revision 1.1  2001/05/12 09:07:25  sbrandon
 # - first attempt at compilation on GNUSTEP. This makefile needs to be kept
 #   in sync as much as possible with file additions/removals done on MacOSX.
@@ -42,6 +47,7 @@ $(FRAMEWORK_NAME)_RESOURCE_DIRS =
 #sb: not sure about this...
 #$(FRAMEWORK_NAME)BUNDLE_LIBS = 
 
+ADDITIONAL_FLAGS = -g
 
 # The Bundle Objective-C source files to be compiled
 $(FRAMEWORK_NAME)_OBJC_FILES = \
@@ -61,7 +67,7 @@ $(FRAMEWORK_NAME)_OBJC_FILES = \
           _SharedSynthInfo.m SynthPatchList.m conversion.m midifile.m\
           noteRecorderCFuncs.m parseMidi.m parseScore.m time.m\
           tokenNames.m utilities.m writeBinary.m writeMidi.m\
-          writeScore.m #ArielQP.m DSPSerialPortDevice.m
+          writeScore.m MKPatch.m #ArielQP.m DSPSerialPortDevice.m 
 
 $(FRAMEWORK_NAME)_C_FILES = fastFFT.c sin.c
 
@@ -94,7 +100,7 @@ $(FRAMEWORK_NAME)_HEADER_FILES = \
          _noteRecorder.h _scorefile.h _time.h classFuncs.h dsp_types.h\
          dspwrap.h errors.h keynums.h midiTranslation.h midi_spec.h\
          midifile.h names.h noDVal.h orch.h params.h pitches.h\
-         timeunits.h tokens.h fastFFT.h \
+         timeunits.h tokens.h fastFFT.h MKPatch.h\
 		 #ArielQP.h DSPSerialPortDevice.h
 
 
