@@ -1,18 +1,18 @@
-#
-#   $Id$
-#   Defined In: The MusicKit
-#
-#  Description:
-#    Defines for MKPerformSndMIDI to facilitate dll creation on Win32
-#
-#  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
-#
-#  31 Oct 2001, Copyright (c) 2001 Stephen Brandon.
-#
-#  Permission is granted to use and modify this code for commercial and non-
-#  commercial purposes so long as the author attribution and this copyright
-#  message remains intact and accompanies all derived code.
-
+/*
+ *   $Id$
+ *   Defined In: The MusicKit
+ *
+ *  Description:
+ *    Defines for MKPerformSndMIDI to facilitate dll creation on Win32
+ *
+ *  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
+ *
+ *  31 Oct 2001, Copyright (c) 2001 Stephen Brandon.
+ *
+ *  Permission is granted to use and modify this code for commercial and non-
+ *  commercial purposes so long as the author attribution and this copyright
+ *  message remains intact and accompanies all derived code.
+ */
 
 
 
