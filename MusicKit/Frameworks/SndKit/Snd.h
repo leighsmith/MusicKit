@@ -96,9 +96,7 @@ A Snd object contains a SndSoundStruct, the structure that describes
 and contains sound data and that's used as the sound file format and
 the pasteboard sound type. Most of the methods defined in the Snd
 class are implemented so that you needn't be aware of this
-structure. However, if you wish to directly manipulate the sound data
-in a Snd object, you need to be familiar with the SndSoundStruct
-architecture, as described in the <b>SndStruct</b> header.
+structure.
 
 <H3>Sound Conversion Features</H3>
 
@@ -150,7 +148,7 @@ typedef enum {
     int dataFormat;
     int samplingRate;
     int channelCount;
-    char info[4];
+    char info[4]; // now redundant, always "\0\0\0\0".
   } SndSoundStruct;
   </pre>
   */
@@ -702,6 +700,7 @@ typedef enum {
 */
 - (SndSoundStruct *) soundStruct;
 
+#if 0
 /*!
   @method soundStructSize
   @result Returns an int.
@@ -729,6 +728,7 @@ typedef enum {
               TODO This will be changed to setSoundData: (NSData *).
 */
 - setSoundStruct: (SndSoundStruct *) aStruct soundStructSize: (int) aSize;
+#endif
 
 /*!
   @function fragmentBlockOfFrame:indexInBlock:lastFrameInBlock:
