@@ -68,8 +68,8 @@ O- handle native formats better
                            
 #define PRINT(x)   { printf x; fflush(stdout); }
 #define ERR_RPT(x) PRINT(x)
-#define DBUG(x)     PRINT(x)
-#define DBUGX(x)    PRINT(x)
+#define DBUG(x)     /* PRINT(x) */
+#define DBUGX(x)    /* PRINT(x) */
 
 #define BAD_DEVICE_ID (-1)
 
@@ -462,7 +462,6 @@ static PaError Pa_AudioThreadProc( internalPortAudioStream   *past )
 	/* Write data to device. */
 		if( pahsc->pahsc_NativeOutputBuffer )
 		{
-{int i; for ( i = 0; i < 100 ; i++) {printf("%d ",((short*)(pahsc->pahsc_NativeOutputBuffer))[i] );}}
             		write(pahsc->pahsc_OutputHandle,
 				(void *)pahsc->pahsc_NativeOutputBuffer,
             			pahsc->pahsc_BytesPerOutputBuffer);  	
@@ -675,6 +674,7 @@ PaError PaHost_StartEngine( internalPortAudioStream *past )
  *   - pthread_create also works for other UNIX systems like Solaris,
  *   - the Java HotSpot VM crashes in pthread_setcanceltype() when using __clone()
  */
+    DBUGX(("pahsc: %p\n",pahsc));
 	hres = pthread_create(&(pahsc->pahsc_ThreadPID),
 		NULL /*pthread_attr_t * attr*/,
 		(void*)Pa_AudioThreadProc, past);
@@ -698,6 +698,7 @@ PaError PaHost_StopEngine( internalPortAudioStream *past, int abort )
 	PaHostSoundControl *pahsc = (PaHostSoundControl *) past->past_DeviceData;
 	
 	if( pahsc == NULL ) return paNoError;
+    DBUGX(("PaHost_StopEngine\n"));
  
 /* Tell background thread to stop generating more data and to let current data play out. */
         past->past_StopSoon = 1;
@@ -707,7 +708,13 @@ PaError PaHost_StopEngine( internalPortAudioStream *past, int abort )
 /* Join thread to recover memory resources. */
 	if( pahsc->pahsc_ThreadPID != -1 )
 	{
-		hres = pthread_join( pahsc->pahsc_ThreadPID, NULL );
+		if ( !pthread_equal( pahsc->pahsc_ThreadPID, pthread_self() ) ) {
+			hres = pthread_join( pahsc->pahsc_ThreadPID, NULL );
+		}
+		else {
+			DBUG(("Play thread was stopped from itself - can't do pthread_join()\n"));
+			hres = 0;
+		}
 		if( hres != 0 )
 		{
 			result = paHostError;
