@@ -4,6 +4,9 @@
 */
 /*
   $Log$
+  Revision 1.3  2001/01/31 21:43:50  leigh
+  Typed note parameters
+
   Revision 1.2  1999/07/29 01:25:43  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -19,8 +22,8 @@
 
 @interface MKInstrument(Private)
 
--_realizeNote:aNote fromNoteReceiver:aNoteReceiver;
--_afterPerformance;
+- _realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
+- _afterPerformance;
 
 @end
 

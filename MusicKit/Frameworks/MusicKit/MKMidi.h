@@ -4,7 +4,7 @@
 
   Description: 
     The MKMidi object provides MIDI input/output access. It emulates some of the
-    behavior of a Performer: It contains a NSMutableArray of MKNoteSenders, one per MIDI
+    behavior of a MKPerformer: It contains a NSMutableArray of MKNoteSenders, one per MIDI
     channel (as well as an extra one for MIDI system and channel mode messages).
     You can receive MKNotes derived from MIDI input by connecting an Instrument's
     MKNoteReceivers to the MKNoteSenders of a MKMidi instance.
@@ -17,7 +17,7 @@
     However, the MKMidi object is unlike a MKPerformer in that it represents a 
     real-time  device. In this manner, MKMidi is somewhat like MKOrchestra, 
     which represents the DSP. The protocol for controlling Midi is the same 
-    as that for the Orchestra. This protocol is described in the file 
+    as that for the MKOrchestra. This protocol is described in the file 
     <MusicKit/MKDeviceStatus.h>.
     
     The conversion between Music Kit and MIDI semantics is described in the
@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.17  2001/01/31 21:43:50  leigh
+  Typed note parameters
+
   Revision 1.16  2000/12/07 00:33:01  leigh
   Standardised on NSMachPorts and machPorts as the mechanism for MKMD routines.
 

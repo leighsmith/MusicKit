@@ -14,6 +14,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.7  2001/01/31 21:43:50  leigh
+  Typed note parameters
+
   Revision 1.6  2000/05/13 17:22:04  leigh
   Added indexOfNoteReciever method
 
@@ -322,7 +325,7 @@
 
 @implementation MKInstrument(Private)
 
--_realizeNote:aNote fromNoteReceiver:aNoteReceiver
+- _realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
   /* Private */
 {
     if (!_noteSeen) {
