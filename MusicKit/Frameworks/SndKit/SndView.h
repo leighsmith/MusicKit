@@ -236,13 +236,7 @@ NSScrollView.
 
 #define SV_LEFTONLY 0
 #define SV_RIGHTONLY 1
-#define SV_STEREOMODE 256
-/* (open the way for up to 8 channel sound) */
-
-#define TENPERCENT 0.05
-#define FASTSKIPSTART 29
-#define FASTSKIPAMOUNT 8
-#define CROSSTHRESH 0.34
+#define SV_STEREOMODE 256 /* (open the way for up to 8 channel sound) */
 
 #define SND_SOUNDVIEW_MINMAX 0
 #define SND_SOUNDVIEW_WAVE 1
@@ -251,26 +245,25 @@ NSScrollView.
 #define NX_SOUNDVIEW_MINMAX SND_SOUNDVIEW_MINMAX
 #define NX_SOUNDVIEW_WAVE SND_SOUNDVIEW_WAVE
 
-#define DEFAULT_RECORD_SECONDS 5
 
 @interface SndView: NSView <NSCoding>
 {
     /*! @var sound The sound to display. */
     Snd       	*sound;
+    /*! @var pasteboardSound The region of the sound currently held on the pasteboard. */
     Snd		*pasteboardSound;
+    /*! @var The delegate receiving notification of SndView state changes. */
     id 		delegate;
     /*! @var selectionRange The region of the sound (in frames) selected (and displayed highlighted) for copy/paste/drag operations. */
     NSRange	selectionRange;
     /*! @var displayMode The form of display, either SND_SOUNDVIEW_MINMAX or SND_SOUNDVIEW_WAVE */
     int		displayMode;
-
     /*! @var backgroundColour Colour used as a non image background. */
     NSColor	*backgroundColour;
     /*! @var foregroundColour Colour used when drawing the amplitude of each pixel. */
     NSColor	*foregroundColour;
     /*! @var selectionColour Colour used when user selects a region of sound. */
     NSColor	*selectionColour;
-
     /*! @var reductionFactor Reduction in the horizontal time axis */
     float	reductionFactor;
     /*! @var amplitudeZoom Zoom in the vertical amplitude axis */
@@ -292,7 +285,11 @@ NSScrollView.
         unsigned int  notOptimizedForSpeed:1;
     } svFlags;
     
-    NSTimer 	*cursorFlashTimer; /* for flashing cursor */
+    /*! @cursorFlashTimer The NSTimer used for flashing the cursor. */
+    NSTimer 	*cursorFlashTimer;
+    /*! @var dragIcon The image used when dragging a selection from a SndView. If nil, then the visible region of a selection is used. */
+    NSImage     *dragIcon;
+    
     int		optThreshold;
     int		optSkip;
     int		stereoMode;
@@ -304,8 +301,10 @@ NSScrollView.
     float	defaultRecordSeconds;
     /*! @var recordingSound A Snd instance holding the sound recorded from an input source. */
     Snd *recordingSound;
-
-    NSRect	selCacheRect;
+    
+    /*! @var cachedSelectionRect An NSRect holding the pixel region of the SndView which has been selected.
+	Holds the previous selection after selectionRange has been changed in order to redraw just that region now deselected. */
+    NSRect	cachedSelectionRect;
 
     int		lastPasteCount;
     int		lastCopyCount;
@@ -314,8 +313,8 @@ NSScrollView.
     BOOL	firstDraw;
 
     SndDisplayDataList *dataList;
+    
 @private
-
     float ampScaler;
     float amplitudeDisplayHeight;
 #ifdef QUARTZ_RENDERING
@@ -326,23 +325,17 @@ NSScrollView.
     NSArray *validPasteboardReturnTypes;
 }
 
-- (void) toggleCursor;
-
 /*!
   @method hideCursor
-  @discussion Hides the SndView's cursor. This is usually handled
-              automatically.
+  @abstract Hides the SndView's cursor.
 */
 - hideCursor;
 
 /*!
   @method showCursor
-  @discussion Displays the SndView's cursor. This is usually handled
-              automatically.
+  @abstract Displays the SndView's cursor.
 */
 - showCursor;
-
-- (BOOL) scrollPointToVisible: (const NSPoint) point;
 
 /*!
   @method resignFirstResponder
@@ -439,16 +432,6 @@ NSScrollView.
 - (int) displayMode;
 
 /*!
-  @method drawSamplesFrom:to:
-  @param  first is an int.
-  @param  last is an int.
-  @result Returns an id.
-  @discussion Redisplays the given range of samples. Returns YES if there is data
-              that can be displayed, NO otherwise.
-*/
-- drawSamplesFrom: (int) first to: (int) last;
-
-/*!
   @method drawRect:
   @param  rects is a NSRect.
   @discussion Displays the SndView's sound data. The selection is highlighted
@@ -477,8 +460,7 @@ NSScrollView.
   @param  firstSample is an int.
   @param  sampleCount is an int.
   @discussion Sets the selection to be <i>sampleCount</i> samples wide, starting
-              with sample <i>firstSample</i> (samples are counted from
-              0).
+              with sample <i>firstSample</i> (samples are counted from 0).
 */
 - (void) setSelection: (int) firstSample size: (int) sampleCount;
 
@@ -907,79 +889,126 @@ NSScrollView.
 
 - (BOOL) writeSelectionToPasteboard: (NSPasteboard *) thePasteboard types: (NSArray *) pboardTypes;
 - (BOOL) writeSelectionToPasteboardNoProvide: thePasteboard types: (NSArray *) pboardTypes;
+
 - (id) initWithCoder: (NSCoder *) aDecoder;
 - (void) encodeWithCoder: (NSCoder *) aCoder;
 
 
-    /*************************
-     * these methods are unique
-     * to SndKit.
-     *************************/
+/*************************
+ * these methods are unique to SndKit.
+ *************************/
 
 - (BOOL) invalidateCacheStartPixel: (int) start end: (int) end;
 	/* if end == -1, invalidates to end of last cache*/
 - (BOOL) invalidateCacheStartSample: (int) start end: (int) end;
 	/* start and end are samples. Must be exact. */
-- (void) invalidateCache; /* convenience method for above */
-   /* invalidation: if you change the data of a sound which is being used
-    * in a SndView in any way, you must inform the SndView. The easiest message
-    * is -invalidateCache, but you can be more specific and tell it the
-    * exact sample number with -invalidateCacheStartSample: (int) start end: (int) end
-    */
 
-- (void) setDrawsCrosses: (BOOL) aFlag; /* default YES */
-    /* see README for explanation of optimisation thresholds and skips, and peak fractions */
-- (void) setOptThreshold: (int) threshold;
-- (void) setOptSkip: (int) skip;
-- (void) setPeakFraction: (float) fraction;
-- (BOOL) setStereoMode: (int) aMode;
+/*!
+  @method invalidateCache
+  @abstract Used if you change the data of a sound which is being used
+            in a SndView in any way, to inform the SndView.
+  @discussion The easiest message to use is -invalidateCache, but you can be more specific and tell it the
+    exact sample number with -invalidateCacheStartSample:end:
+ */
+- (void) invalidateCache;
+
+/*!
+  @method setDrawsCrosses:
+  @abstract Determines whether individual samples should be drawn as crosses when displaying sounds at extreme
+	    magnification.
+  @param aFlag YES to draw crosses linked by line segments, NO to draw samples as points linked by line segments.
+  @discussion defaults to YES.
+ */
+- (void) setDrawsCrosses: (BOOL) aFlag;
+
+/*!
+  @method drawsCrosses
+  @abstract Returns whether individual samples are drawn as crosses at extreme magnification.
+  @result Returns YES if samples are drawn with a cross, NO if they are drawn as points.
+ */
 - (BOOL) drawsCrosses;
+
+/* see README for explanation of optimisation thresholds and skips, and peak fractions */
+- (void) setOptThreshold: (int) threshold;
 - (int) getOptThreshold;
+- (void) setOptSkip: (int) skip;
 - (int) getOptSkip;
-- (int) getStereoMode;
+- (void) setPeakFraction: (float) fraction;
 - (float) getPeakFraction;
 
 /*!
+  @method setStereoMode:
+  @abstract Determines how to draw multichannel sounds.
+  @param stereoMode one of the values SV_LEFTONLY, SV_RIGHTONLY, SV_STEREOMODE
+ */
+- (BOOL) setStereoMode: (int) stereoMode;
+
+/*!
+  @method getStereoMode
+  @abstract Returns the mode of drawing multichannel sounds.
+  @result Returns 
+ */
+- (int) getStereoMode;
+
+/*!
   @method setSelectionColor:
-  @discussion Sets the selection colour.
+  @abstract Sets the selection colour.
   @param color An NSColor.
  */
 - (void) setSelectionColor: (NSColor *) color;
 
 /*!
   @method selectionColor
-  @discussion Returns the current selection colour.
+  @abstract Returns the current selection colour.
   @result Returns an NSColor.
  */
 - (NSColor *) selectionColor;
 
 /*!
   @method setBackgroundColor:
-  @discussion Sets the background colour.
+  @abstract Sets the background colour.
   @param color An NSColor.
  */
 - (void) setBackgroundColor: (NSColor *) color;
 
 /*!
   @method backgroundColor
-  @discussion Returns the current background colour.
+  @abstract Returns the current background colour.
   @result Returns an NSColor.
  */
 - (NSColor *) backgroundColor;
 
 /*!
   @method setForegroundColor:
-  @discussion Sets the foreground colour.
-  @param color An NSColor.
+  @abstract Sets the foreground colour.
+  @param color An NSColor instance.
  */
 - (void) setForegroundColor: (NSColor *) color;
 
 /*!
   @method foregroundColor
-  @discussion Returns the current foreground colour.
-  @result Returns an NSColor.
+  @abstract Returns the current foreground colour.
+  @result Returns an NSColor instance.
  */
 - (NSColor *) foregroundColor;
+
+/*!
+  @method setDragIcon:
+  @abstract Sets the icon used when dragging selections from the SndView.
+  @param newDragIcon An NSImage instance to be used as the drag image. 
+         If nil, the icon to appear will be the visible region of the selected SndView.
+  @discussion If the default workspace image icon is desired, use:
+    [sndView setDragIcon: [[NSWorkspace sharedWorkspace] iconForFileType: [Snd defaultFileExtension]]];
+ */
+- (void) setDragIcon: (NSImage *) newDragIcon;
+
+/*!
+  @method dragIcon
+  @abstract Returns the current NSImage instance used when dragging a selection from the receiver.
+  @result Returns an NSImage instance.
+  @discussion If nil, the icon to appear will be the visible region of the selected SndView.
+ */
+- (NSImage *) dragIcon;
 
 @end
 
