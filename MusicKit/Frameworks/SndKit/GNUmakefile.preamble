@@ -24,19 +24,15 @@ LIBRARIES_DEPEND_UPON += -lMKPerformSndMIDI \
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   LIBRARIES_DEPEND_UPON += -lobjc -l$(FOUNDATION_LIBRARY_NAME) -lgnustep-gui \
-                           -lshout -lmp3lame -lwinmm
+                           -lsndfile -lshout -lmp3lame -lwinmm -lvorbis -logg  
 
-  CYG_PREFIX = $(shell cygpath -w '/' | tr '\\' '/')
-
-# You need the DirectX SDK from Microsoft in the following location. The 
-# /usr/local/[include|lib] is where the shout and lame headers and libraries
+# The /usr/local/[include|lib] is where the shout and lame headers and libraries
 # should have been placed.
 
-  ADDITIONAL_FLAGS += -Ic:/DXVCSDK/include \
-           -I$(CYG_PREFIX)/usr/local/include \
+  ADDITIONAL_FLAGS += -I/usr/local/include \
            -DSK_MP3_ENCODER
 
-  SHARED_LD_POSTFLAGS += -L$(CYG_PREFIX)/usr/local/lib
+  SHARED_LD_POSTFLAGS += -L/usr/local/lib
 
 else
   LIBRARIES_DEPEND_UPON += -lgnustep-gui -lshout -lmp3lame
