@@ -15,6 +15,9 @@
 
 # Modification history:
 # $Log$
+# Revision 1.4  2002/05/09 12:01:56  sbrandon
+# added support for rpm creation
+#
 # Revision 1.3  2001/11/08 21:40:27  sbrandon
 # added the new DSPerror_gnustep.m
 #
@@ -36,6 +39,9 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
 GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
 
 include $(GNUSTEP_MAKEFILES)/common.make
+
+PACKAGE_NAME = MKDSP
+VERSION = 5.4.1
 
 srcdir = .
 
