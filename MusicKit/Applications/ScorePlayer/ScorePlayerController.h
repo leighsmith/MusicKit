@@ -6,7 +6,7 @@
 #import <AppKit/AppKit.h>
 #define TEXT 0
 
-@interface MyApp: NSObject
+@interface ScorePlayerController: NSObject
 {
 	id button;
 	id tempoSlider;

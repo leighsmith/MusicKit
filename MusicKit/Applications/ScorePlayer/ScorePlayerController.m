@@ -32,19 +32,13 @@
 
 #import "ErrorLog.h"
 #import "MKAlert.h"
-#import "MyApp.h"
+#import "ScorePlayerController.h"
 #import "Animator.h"
 #import <AppKit/AppKit.h>
 #import <objc/NXBundle.h>
 #import <MusicKit/MusicKit.h>
-#import <string.h>
-#import <libc.h>
-#import <mach/cthreads.h>
-#import <objc/objc-runtime.h>
-//#import <appkit/Cell.h>
-#import <MusicKit/DSPSerialPortDevice.h>
 
-@implementation MyApp
+@implementation ScorePlayerController
 
 static BOOL playScoreForm;
 static id synthInstruments;
@@ -441,7 +435,7 @@ static char *soundOutputTagToName[] =
     return NXApp;
 }
 
-static id setFile(MyApp* self)
+static id setFile(ScorePlayerController* self)
 {
     id tuningSys;
     id scoreInfo;                                    
@@ -487,7 +481,7 @@ static id setFile(MyApp* self)
     headroom = .1;
     initialTempo = 60.0;
     [[condClass defaultConductor] setTempo:initialTempo];
-    scoreInfo = [(Score *)scoreObj info];
+    scoreInfo = [(MKScore *)scoreObj infoNote];
     if (scoreInfo) { /* Configure performance as specified in info. */ 
 	int midiOffsetPar;
 	midiOffset = 0;
@@ -580,7 +574,7 @@ static port_t endOfTimePort = PORT_NULL;
 
 static id tempoAnimator = nil;
 
-void *endOfTimeProc(msg_header_t *msg,MyApp *myself )
+void *endOfTimeProc(msg_header_t *msg,ScorePlayerController *myself )
 {
     [tempoAnimator stopEntry];
     [myself->button setImage:playImage];
@@ -614,7 +608,7 @@ static BOOL isMidiClassName(char *className)
 
 static BOOL checkForMidi(MKScore *obj)
 {
-    id subobjs;
+    NSArray *subobjs;
     int i,cnt;
     id info;
     subobjs = [obj parts];
@@ -622,14 +616,12 @@ static BOOL checkForMidi(MKScore *obj)
       return NO;
     cnt = [subobjs count];
     for (i=0; i<cnt; i++) {
-	info = [(Part *)[subobjs objectAt:i] info];
+	info = [(MKPart *)[subobjs objectAtIndex:i] infoNote];
 	if ([info isParPresent:MK_synthPatch] &&
 	    (isMidiClassName([info parAsStringNoCopy:MK_synthPatch]))) {
-	    [subobjs free];
 	    return YES;
 	}
     }
-    [subobjs free];
     return NO;
 }
 #endif
@@ -652,14 +644,14 @@ static double getUntempo(float tempoVal)
 #define ANIMATE_DIFF_THRESHOLD 1.0
 #define ANIMATE_INCREMENT 0.3
 
-static id playIt(self)
-MyApp*	self;
+static id playIt(ScorePlayerController *self)
 {
     int partCount,synthPatchCount,voices,i,whichMidi,midiChan;
     char *className;
     char *msg = NULL;
     double actualSrate;  
-    id partPerformers,synthPatchClass,partPerformer,partInfo,anIns,aPart;
+    NSArray *partPerformers;
+    id synthPatchClass,partPerformer,partInfo,anIns,aPart;
 
     /* Could keep these around, in repeat-play cases: */ 
     scorePerformer = [scorePerformer free];
@@ -722,16 +714,16 @@ MyApp*	self;
 	NXRunAlertPanel(STR_SCOREPLAYER,msg,STR_OK,NULL,NULL);
 	return nil;
     }
-    scorePerformer = [ScorePerformer new];
+    scorePerformer = [MKScorePerformer new];
     [scorePerformer setScore:scoreObj];
-    [(ScorePerformer *)scorePerformer activate]; 
+    [(MKScorePerformer *)scorePerformer activate]; 
     partPerformers = [scorePerformer partPerformers];
     partCount = [partPerformers count];
     synthInstruments = [List new];
     for (i = 0; i < partCount; i++) {
-	partPerformer = [partPerformers objectAt:i];
+	partPerformer = [partPerformers objectAtIndex:i];
 	aPart = [partPerformer part]; 
-	partInfo = [(Part *)aPart info];      
+	partInfo = [(MKPart *)aPart infoNote];      
 	if ((!partInfo) || ![partInfo isParPresent:MK_synthPatch]) {
 	    sprintf(errMsg,STR_INFO_MISSING,
 		    (char *)MKGetObjectName(aPart));
@@ -1032,8 +1024,6 @@ static void abortNow()
 - (BOOL) appAcceptsAnotherFile : sender {
     return YES;
 }
-
-#import <dpsclient/event.h>
 
 - (BOOL)appOpenFile: (char *)filename type:(char *)aType {
     if (aType)
@@ -1416,17 +1406,17 @@ static BOOL fileExists(char *name)
 
 -pause:sender
 {
-    [Conductor lockPerformance];
-    [((Conductor *)[Conductor defaultConductor]) pause];
-    [Conductor unlockPerformance];
+    [MKConductor lockPerformance];
+    [[MKConductor defaultConductor] pause];
+    [MKConductor unlockPerformance];
     return self;
 }
 
 -resume:sender
 {
-    [Conductor lockPerformance];
-    [((Conductor *)[Conductor defaultConductor]) resume];
-    [Conductor unlockPerformance];
+    [MKConductor lockPerformance];
+    [[MKonductor defaultConductor] resume];
+    [MKConductor unlockPerformance];
     return self;
 }
 
