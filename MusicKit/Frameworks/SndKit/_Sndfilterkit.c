@@ -24,6 +24,12 @@
 // both sox and SndKit use Julius Smiths resampling code, logically sox should be the final version and SndKit use that.
 #define SUPERCEDED 1 
 
+#ifdef GNUSTEP
+#include "SndResample.h"
+#include "_Sndfilterkit.h"
+#include <math.h>
+#else
+
 #import "SndResample.h"
 #import "_Sndfilterkit.h"
 
@@ -35,8 +41,8 @@
 #import <malloc.h>
 #import <wtypes.h>
 #endif
-
 #import <math.h>
+#endif
 
 
 /* LpFilter()
