@@ -11,9 +11,11 @@
   purposes so long as the author attribution and copyright messages remain intact and
   accompany all relevant code.
 */
+#ifndef __SNDSTREAMMANAGER_H__
+#define __SNDSTREAMMANAGER_H__
 
 #import <Foundation/Foundation.h>
-#import <SndKit/SndKit.h>
+//#import <SndKit/SndKit.h>
 #import "SndAudioBuffer.h"
 
 @class SndStreamClient;
@@ -62,3 +64,5 @@
 - (BOOL) isActive;
 
 @end
+
+#endif
