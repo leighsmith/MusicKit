@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2000/03/07 18:19:57  leigh
+  Fixed misleading doco
+
   Revision 1.4  2000/02/08 04:15:18  leigh
   Added +midifileExtension
 
@@ -309,9 +312,9 @@
 + (NSString *) midifileExtension;
   /* returns the extension used in writing and reading MIDI files */  
 
- /* Obsolete */
-+ score; 
-//- (void)initialize;
++ score;
+  /* manufactures an allocated, initialised and autoreleased instance */
+
 - writeScorefile:(NSString * )aFileName 
  firstTimeTag:(double )firstTimeTag 
  lastTimeTag:(double )lastTimeTag;
