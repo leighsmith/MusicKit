@@ -51,8 +51,8 @@ Add in the MusicKit icon and colour the web pages (perhaps not these below):
     </author>
     <revhistory>
       <revision>
-	<revnumber>V1.2</revnumber>
-	<date>24 July 2000</date>
+	<revnumber>V1.3</revnumber>
+	<date>31 July 2000</date>
       </revision>
     </revhistory>
 
@@ -265,7 +265,8 @@ body of the message (not the Subject line) should contain this text:
       </cmdsynopsis>
       <para>
 Don't assume nothing is being done if you don't hear anything for a while!
-To subscribe to a Music Kit news group, send 
+The maintainers are usually adding fixes/code, but full releases are
+less frequent. The <link linkend=fixes>CVS repository</link> can be made available to track all updates.
 </para>
     </sect2>
 
