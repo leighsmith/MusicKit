@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/10/11 07:32:26  skot
+  Fixed link error
+
   Revision 1.5  2000/10/04 07:52:05  skot
   Improved description method for debug purposes
 
@@ -530,7 +533,7 @@ NSLocalizedStringFromTableInBundle(@"Partials object currently supports table si
 #define DEG_TO_RADIANS(_degrees) ((_degrees) * ((M_PI*2)/360.0))
 #define RADIANS_TO_DEG(_radians) ((_radians) * (360.0/(M_PI*2)))
 
-#import "fastFFT.c"
+// #import "fastFFT.c"
 
 - setFromSamples:(MKSamples *)samplesObject
     /* Sets three arrays based on FFT of the supplied samples object. */

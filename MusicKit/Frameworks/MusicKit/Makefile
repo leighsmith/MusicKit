@@ -59,9 +59,9 @@ HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          _noteRecorder.h _scorefile.h _time.h classFuncs.h dsp_types.h\
          dspwrap.h errors.h keynums.h midiTranslation.h midi_spec.h\
          midifile.h names.h noDVal.h orch.h params.h pitches.h\
-         timeunits.h tokens.h
+         timeunits.h tokens.h fastFFT.h
 
-CFILES = sin.c fastFFT.c
+CFILES = fastFFT.c sin.c
 
 OTHERSRCS = Makefile Makefile.postamble Makefile.preamble\
             _synthElementMethods.m equalTempered.m h.template\

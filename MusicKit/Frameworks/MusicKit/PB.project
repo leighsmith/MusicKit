@@ -179,11 +179,12 @@
             params.h, 
             pitches.h, 
             timeunits.h, 
-            tokens.h
+            tokens.h, 
+            fastFFT.h
         ); 
         LIBRARYSEARCH = (./); 
         OTHER_LIBS = (); 
-        OTHER_LINKED = (sin.c, fastFFT.c); 
+        OTHER_LINKED = (fastFFT.c, sin.c); 
         OTHER_RESOURCES = (Localized.strings); 
         OTHER_SOURCES = (
             Makefile, 
