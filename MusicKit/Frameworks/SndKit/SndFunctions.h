@@ -129,10 +129,15 @@ SNDKIT_API int  SndBytesToFrames(int byteCount,
  @param dataFormat
  @result The size of the sample data in bytes.
  */
-SNDKIT_API long  SndFramesToBytes(long sampleCount,
-                                  int channelCount,
-                                  int dataFormat);
+SNDKIT_API long  SndFramesToBytes(long sampleCount, int channelCount, int dataFormat);
 
+/*!
+  @function SndFormatOfSNDStreamBuffer
+  @abstract Returns the format of a SNDStreamBuffer.
+  @param streamBuffer A pointer to a SNDStreamBuffer. 
+  @result A SndFormat structure holding valid frame and channel counts and the data format.
+ */
+SNDKIT_API SndFormat SndFormatOfSNDStreamBuffer(SNDStreamBuffer *streamBuffer);
 
 /*!
   @function SndDataSize
