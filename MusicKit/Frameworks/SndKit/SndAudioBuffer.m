@@ -150,7 +150,8 @@
       dataLength = length;
 
     if (length < 0)
-      NSLog(@"SndAudioBuffer::initWithBuffer:range: ERR - length (%d) < 0", length);
+      NSLog(@"SndAudioBuffer::initWithBuffer:range: ERR - length (%d) < 0! frameSize = %d, range.length = %d", length, frameSize, r.length);
+        
     [data setLength: length];
     memcpy([data mutableBytes], ptr, dataLength);
     byteCount = maxByteCount = dataLength;
