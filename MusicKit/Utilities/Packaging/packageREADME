@@ -38,5 +38,6 @@ FINAL=`basename $MKSRC .sgml`.pdf
 dvips -o intermediate.ps MusicKit_README.dvi
 #psprepare intermediate.ps prepared.ps
 cp intermediate.ps prepared.ps
-ps2pdf prepared.ps $FINAL
-echo MusicKit README PDF file generated into $PDF_TMPDIR/$FINAL
+ps2pdf prepared.ps /tmp/$FINAL
+echo MusicKit README PDF file generated into /tmp/$FINAL
+rm -r $PDF_TMPDIR
