@@ -661,22 +661,57 @@ return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// copyBytes:count:
+// copyBytes:intoRange:format:
 ////////////////////////////////////////////////////////////////////////////////
 
-- copyBytes: (char*) bytes count:(unsigned int)count format:(SndSoundStruct *)f
+- copyBytes: (char*) bytes intoRange: (NSRange) bytesRange format: (SndSoundStruct *) f
 {
-  if (!bytes) {
-    NSLog(@"AudioBuffer::copyData: ERR: param 'from' is nil!");
+    if (!bytes) {
+	NSLog(@"AudioBuffer::copyBytes:intoRange:format: ERR: param 'from' is nil!");
+	return nil;
+    }
+    if (bytesRange.location < 0) {
+	NSLog(@"AudioBuffer::copyBytes:intoRange:format: ERR: param 'bytesRange' invalid location");
+	return nil;
+    }
+    [data replaceBytesInRange: bytesRange withBytes: (const void *)bytes];
+    dataFormat   = f->dataFormat;
+    channelCount = f->channelCount;
+    samplingRate = f->samplingRate;
+    byteCount    = bytesRange.length;
+    maxByteCount = [data length];
+    return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// copyBytes:count:format:
+////////////////////////////////////////////////////////////////////////////////
+
+- copyBytes: (char*) bytes count: (unsigned int) count format: (SndSoundStruct *) f
+{
+  return [self copyBytes: bytes intoRange: NSMakeRange(0, count) format: f];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// copyFromBuffer:intoRange:
+////////////////////////////////////////////////////////////////////////////////
+
+- copyFromBuffer: (SndAudioBuffer *) fromBuffer intoRange: (NSRange) rangeInSamples
+{
+    if([self hasSameFormatAsBuffer: fromBuffer]) {
+	SndSoundStruct f;
+	int   sampleSize;
+	NSRange rangeInBytes;
+	
+	f.dataFormat = dataFormat;
+	f.channelCount = channelCount;
+	f.samplingRate = samplingRate;
+	sampleSize = SndFrameSize(&f);
+	rangeInBytes.location = rangeInSamples.location * sampleSize;
+	rangeInBytes.length = rangeInSamples.length * sampleSize;
+	return [self copyBytes: [fromBuffer bytes] intoRange: rangeInBytes format: &f];
+    }
     return nil;
-  }
-  [data replaceBytesInRange:NSMakeRange(0,count) withBytes:(const void *)bytes];
-  dataFormat   = f->dataFormat;
-  channelCount = f->channelCount;
-  samplingRate = f->samplingRate;
-  byteCount    = count;
-  maxByteCount = [data length];
-  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

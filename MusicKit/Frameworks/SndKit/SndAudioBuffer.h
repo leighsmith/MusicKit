@@ -192,7 +192,29 @@
               samplingRate and dataFormat variables.
   @result     self.
 */
-- copyBytes: (char*) bytes count:(unsigned int)count format:(SndSoundStruct *)f;
+- copyBytes: (char*) bytes count:(unsigned int)count format: (SndSoundStruct *) f;
+
+/*!
+  @method     copyBytes:intoRange:format:
+  @abstract   copies bytes from the char* array given into a sub region of the buffer.
+  @discussion grows the internal NSMutableData object as necessary
+  @param      bytes The char* array to copy from.
+  @param      range The start location and number of bytes to copy from the array.
+  @param      format pointer to a SndSoundStruct containing valid channelCount,
+              samplingRate and dataFormat variables.
+  @result     self.
+ */
+- copyBytes: (char*) bytes intoRange: (NSRange) range format: (SndSoundStruct *) f;
+
+/*!
+  @method     copyFromBuffer:intoRange:
+  @abstract   Copies from the start of the given buffer into a sub region of the receiving buffer.
+  @discussion Grows the internal NSMutableData object as necessary
+  @param      fromBuffer The audio buffer to copy from.
+  @param      range The start location and number of samples to copy to the receiving buffer.
+  @result     self.
+ */
+- copyFromBuffer: (SndAudioBuffer *) sourceBuffer intoRange: (NSRange) rangeInSamples;
 
 /*!
   @method     lengthInSamples
