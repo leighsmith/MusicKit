@@ -191,7 +191,7 @@ NSScrollView.
 
  <H2>Other Features of the Source Code</H2>
  <UL>
- <LI> There are #ifdefs for turning on/off the SndView UserPath support, and the timing. There's not much reason to use the timing any more really.
+ <LI> There are #ifdefs for turning on/off the SndView timing. There's not much reason to use the timing any more really.
  <LI> I have put any thought into the setting of zones. If anyone would like to advise on this I'd be happy to hear from you.
  <LI> The mechanism for retrieving data from fragmented sound files is (I think) rather elegant and should be really fast.
  <LI> The archival -read and -write methods are untested.
