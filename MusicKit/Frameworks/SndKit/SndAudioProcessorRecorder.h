@@ -19,10 +19,10 @@
 
 #import <Foundation/Foundation.h>
 #import "SndAudioProcessor.h"
-//#import <stdio.h>
 #import <sndfile.h>
 
 @class SndAudioBuffer;
+@class SndAudioBufferQueue;
 
 /*!
  @enum SndRecorderParam
@@ -47,12 +47,10 @@ enum SndRecorderParam {
 @interface SndAudioProcessorRecorder : SndAudioProcessor {
 
 @protected
-    /*! @var recordBuffer A buffer of same format, but normally longer than a processor input buffer, used to cache samples before writing to disk. */
-    SndAudioBuffer *recordBuffer;
-    /*! @var fileFormat The format of the data to be stored in the file. Can differ from the format of recordBuffer. */
+    /*! @var writingQueue A queue of buffers copied from those received by processReplacingInputBuffer: */
+    SndAudioBufferQueue *writingQueue;
+    /*! @var fileFormat The format of the data to be stored in the file. */
     SndFormat fileFormat;
-    /*! @var recordPosition The location within the recordBuffer in bytes to write the next processed buffer. */
-    long            recordPosition;
     /*! @var isRecording Indicates if recording is currently active. */
     BOOL            isRecording; 
     /*! @var framesRecorded Number of sample frames written */
@@ -111,12 +109,12 @@ enum SndRecorderParam {
 - stopRecording;
 
 /*!
-    @method     stopRecordingWait:disconnectFromStream:
+    @method     stopRecordingWait:
     @abstract 
-    @discussion 
+    @discussion TODO remove this, redundant, always wait until the queue clears.
     @result     
 */
-- stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream;
+- stopRecordingWait: (BOOL) wait;
 
 /*!
     @method     framesRecorded
