@@ -268,9 +268,9 @@ Keep in mind that if you send a MKNote directly to an Instrument, then the MKNot
 
 \fs16 \
 
-\fs28 Instead of or in addition to being actively realized, a MKNote object can be stored.  In a running application, MKNotes are stored within Part objects through the 
+\fs28 Instead of or in addition to being actively realized, a MKNote object can be stored.  In a running application, MKNotes are stored within MKPart objects through the 
 \b addToPart:
-\b0  method.  A MKNote can only be added to one Part at a time; adding it to a Part automatically removes it from its previous Part.  Within a Part object, MKNotes are sorted according to their time tag
+\b0  method.  A MKNote can only be added to one MKPart at a time; adding it to a MKPart automatically removes it from its previous MKPart.  Within a MKPart object, MKNotes are sorted according to their time tag
 \i  
 \i0 values
 \i .\
@@ -330,11 +330,11 @@ id	conductor;\
 
 \fs16 \
 
-\fs28 performer 	The Performer that most recently performed this MKNote.\
+\fs28 performer 	The MKPerformer that most recently performed this MKNote.\
 
 \fs16 \
 
-\fs28 part 	The Part that this MKNote is a member of.\
+\fs28 part 	The MKPart that this MKNote is a member of.\
 
 \fs16 \
 
@@ -344,7 +344,7 @@ id	conductor;\
 \fs16 \cf0 \
 \pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
 
-\fs28 \cf0 conductor 	The Conductor used to schedule this MKNote's noteOff, if it is a noteDur.\
+\fs28 \cf0 conductor 	The MKConductor used to schedule this MKNote's noteOff, if it is a noteDur.\
 \pard\tx7140\li2100\ql\qnatural
 
 \fs16 \cf0 \
@@ -620,13 +620,13 @@ id	conductor;\
 \fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\i0\fs28 \cf0 Removes the MKNote from the Part that it's currently a member of and adds it to 
+\i0\fs28 \cf0 Removes the MKNote from the MKPart that it's currently a member of and adds it to 
 \i aPart
-\i0 .  Returns the MKNote's old Part, if any. \
+\i0 .  Returns the MKNote's old MKPart, if any. \
 
 \fs16 \
 
-\fs28 This method is equivalent to Part's 
+\fs28 This method is equivalent to MKPart's 
 \b addNote:
 \b0  method.\
 
@@ -656,7 +656,7 @@ id	conductor;\
 \fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\i0\fs28 \cf0 Returns a value that indicates which of the receiving MKNote and the argument MKNote would appear first if the two MKNotes were sorted into the same Part:\
+\i0\fs28 \cf0 Returns a value that indicates which of the receiving MKNote and the argument MKNote would appear first if the two MKNotes were sorted into the same MKPart:\
 
 \fs16 \
 \pard\tx3120\tx3620\tx4120\tx4620\li3120\fi-520\ql\qnatural
@@ -674,7 +674,7 @@ id	conductor;\
 
 \fs16 \cf0 \
 
-\fs28 Keep in mind that the two MKNotes needn't actually be members of the same Part, nor must they be members of Parts at all.  Naturally, the comparison is judged first on the relative values of the two MKNotes' time tags; changing one or both of the MKNotes' time tags invalidates the result of a previous invocation of this method.\
+\fs28 Keep in mind that the two MKNotes needn't actually be members of the same MKPart, nor must they be members of MKParts at all.  Naturally, the comparison is judged first on the relative values of the two MKNotes' time tags; changing one or both of the MKNotes' time tags invalidates the result of a previous invocation of this method.\
 
 \fs16 \
 \pard\tx7140\li2100\ql\qnatural
@@ -691,13 +691,13 @@ id	conductor;\
 \fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\b0\fs28 \cf0 If the MKNote is being sent by a Performer (or Midi), returns the Performer's Conductor.   Otherwise, if conductor was set with 
+\b0\fs28 \cf0 If the MKNote is being sent by a MKPerformer (or Midi), returns the MKPerformer's MKConductor.   Otherwise, if conductor was set with 
 \b setConductor:
 \b0 , returns the 
 \i conductor 
 \i0 instance variable.  Otherwise returns the 
 \i defaultConductor
-\i0 .  A MKNote's Conductor is used, primarily, by Instrument objects that split noteDurs into noteOn/noteOff pairs; performance of the noteOff is scheduled with the Conductor that's returned by this method. \
+\i0 .  A MKNote's MKConductor is used, primarily, by Instrument objects that split noteDurs into noteOn/noteOff pairs; performance of the noteOff is scheduled with the MKConductor that's returned by this method. \
 
 \fs16 \
 
@@ -720,7 +720,7 @@ id	conductor;\
 \fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\b0\fs28 \cf0 Creates and returns a new MKNote object as a copy of the receiving MKNote.  The receiving MKNote's parameters, time tag, duration, note type, and note tag are copied into the new MKNote.  Object-valued parameters are shared by the two MKNotes.  The new MKNote isn't a member of a Part, regardless of the membership of the original MKNote.  However, the new MKNote's Performer is that of the original MKNote, even though the new MKNote hasn't actually been performed.  This imposture is necessary so that an Instrument can copy the MKNotes that it receives (prior to altering them, for example) without sacrificing access to the appropriate Conductor (more specifically, to the Conductor's tempo), which is retrieved through the MKNote's Performer.\
+\b0\fs28 \cf0 Creates and returns a new MKNote object as a copy of the receiving MKNote.  The receiving MKNote's parameters, time tag, duration, note type, and note tag are copied into the new MKNote.  Object-valued parameters are shared by the two MKNotes.  The new MKNote isn't a member of a MKPart, regardless of the membership of the original MKNote.  However, the new MKNote's MKPerformer is that of the original MKNote, even though the new MKNote hasn't actually been performed.  This imposture is necessary so that an Instrument can copy the MKNotes that it receives (prior to altering them, for example) without sacrificing access to the appropriate MKConductor (more specifically, to the MKConductor's tempo), which is retrieved through the MKNote's MKPerformer.\
 
 \fs16 \
 
@@ -842,7 +842,7 @@ id	conductor;\
 \fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\b0\fs28 \cf0 Removes the MKNote from its Part and then frees the MKNote (the MKNote's object-valued parameters aren't freed).\
+\b0\fs28 \cf0 Removes the MKNote from its MKPart and then frees the MKNote (the MKNote's object-valued parameters aren't freed).\
 
 \fs16 \
 \pard\tx7140\li2100\ql\qnatural
@@ -1473,9 +1473,9 @@ id	conductor;\
 \fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\b0\fs28 \cf0 Returns the Part that contains the MKNote, or 
+\b0\fs28 \cf0 Returns the MKPart that contains the MKNote, or 
 \b nil
-\b0  if none.  By default, a MKNote isn't contained in a Part. \
+\b0  if none.  By default, a MKNote isn't contained in a MKPart. \
 
 \fs16 \
 
@@ -1501,7 +1501,7 @@ id	conductor;\
 \fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\b0\fs28 \cf0 Returns the Performer that most recently performed the MKNote.  This is provided, primarily, as part of the implementation of the 
+\b0\fs28 \cf0 Returns the MKPerformer that most recently performed the MKNote.  This is provided, primarily, as part of the implementation of the 
 \b conductor
 \b0  method. \
 
@@ -1553,7 +1553,7 @@ id	conductor;\
 \fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\b0\fs28 \cf0 Removes the MKNote from its Part.  Returns the Part, or 
+\b0\fs28 \cf0 Removes the MKNote from its MKPart.  Returns the MKPart, or 
 \b nil
 \b0  if none.\
 
@@ -1639,11 +1639,11 @@ id	conductor;\
 \i conductor
 \i0  instance variable.  Note that 
 \i conductor
-\i0  is not archived, nor is it saved when a MKNote is added to a Part–it is used only in performance.   Note that 
+\i0  is not archived, nor is it saved when a MKNote is added to a MKPart–it is used only in performance.   Note that 
 \b ±setConductor
 \b0  is called implicitly when a MKNote is copied with the 
 \b copy 
-\b0 method.   Be careful not to free a Conductor while leaving a dangling reference to it in a MKNote!\
+\b0 method.   Be careful not to free a MKConductor while leaving a dangling reference to it in a MKNote!\
 
 \fs16 \
 
@@ -2121,7 +2121,7 @@ If you're setting the value as an Envelope or WaveTable object, you should use t
 
 \i0\fs28 \cf0 Sets the MKNote's time tag to 
 \i newTimeTag
-\i0  or 0.0, whichever is greater (a time tag can't be negative) .  The old time tag value is returned; a return value of MK_ENDOFTIME indicates that the time tag hadn't been set.  Time tags are used to sort the MKNotes within a Part; if you change the time tag of a MKNote that's been added to a Part, the MKNote is automatically resorted.\
+\i0  or 0.0, whichever is greater (a time tag can't be negative) .  The old time tag value is returned; a return value of MK_ENDOFTIME indicates that the time tag hadn't been set.  Time tags are used to sort the MKNotes within a MKPart; if you change the time tag of a MKNote that's been added to a MKPart, the MKNote is automatically resorted.\
 
 \fs16 \
 
@@ -2133,7 +2133,7 @@ If you're setting the value as an Envelope or WaveTable object, you should use t
 \b0 , 
 \f1 -
 \f0\b sort 
-\b0 (Part)\
+\b0 (MKPart)\
 
 \fs16 \
 \pard\tx7140\li2100\ql\qnatural
@@ -2163,7 +2163,7 @@ If you're setting the value as an Envelope or WaveTable object, you should use t
 
 \fs16 \
 
-\fs28 The receiving MKNote's MK_relVelocity parameter, if present, is copied into the noteOff.  All other parameters are copied into (or, in the case of object-valued parameters, referenced by) the noteOn.  The noteOn takes the receiving MKNote's time tag value; the noteOff's time tag is that of the MKNote plus its duration.  If the receiving MKNote has a note tag, it's copied into the noteOn and noteOff; otherwise a new note tag is generated for them.  The new MKNotes are added to the receiving MKNote's Part, if any.\
+\fs28 The receiving MKNote's MK_relVelocity parameter, if present, is copied into the noteOff.  All other parameters are copied into (or, in the case of object-valued parameters, referenced by) the noteOn.  The noteOn takes the receiving MKNote's time tag value; the noteOff's time tag is that of the MKNote plus its duration.  If the receiving MKNote has a note tag, it's copied into the noteOn and noteOff; otherwise a new note tag is generated for them.  The new MKNotes are added to the receiving MKNote's MKPart, if any.\
 
 \fs16 \
 
@@ -2185,7 +2185,7 @@ If you're setting the value as an Envelope or WaveTable object, you should use t
 \fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\b0\fs28 \cf0 Returns the MKNote's time tag.  If the time tag isn't set, MK_ENDOFTIME is returned.  Time tag values are used to sort the MKNotes within a Part.\
+\b0\fs28 \cf0 Returns the MKNote's time tag.  If the time tag isn't set, MK_ENDOFTIME is returned.  Time tag values are used to sort the MKNotes within a MKPart.\
 
 \fs16 \
 
@@ -2234,7 +2234,7 @@ If you're setting the value as an Envelope or WaveTable object, you should use t
 
 \i0\fs28 \cf0 You never invoke this method directly; to archive a MKNote, call the 
 \b NXWriteRootObject()
-\b0  C function.  The MKNote's parameters, note type, note tag, and time tag are archived directly.  Its Performer and Part are archived through 
+\b0  C function.  The MKNote's parameters, note type, note tag, and time tag are archived directly.  Its MKPerformer and MKPart are archived through 
 \b NXWriteObjectReference()
 \b0 .\
 
