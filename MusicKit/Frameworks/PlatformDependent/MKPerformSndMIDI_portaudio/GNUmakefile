@@ -17,6 +17,9 @@
 #  Modification history:
 #
 #  $Log$
+#  Revision 1.5  2001/11/07 14:49:25  sbrandon
+#  removed unecessary lines
+#
 #  Revision 1.4  2001/10/31 17:34:11  sbrandon
 #  Substantial changes which were required to get it to work under MinGW.
 #
@@ -57,10 +60,6 @@ endif
 $(MY_NAME)_RESOURCE_FILES = 
 
 $(MY_NAME)_RESOURCE_DIRS = 
-
-# The framework libraries to link against
-#sb: not sure about this...
-#MKPerformSndMIDIBUNDLE_LIBS = 
 
 ADDITIONAL_CFLAGS += -g -Wall
 
