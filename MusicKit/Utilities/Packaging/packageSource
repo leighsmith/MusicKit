@@ -12,25 +12,33 @@ DISTNAME=MusicKit
 DISTCHECKEDOUTSRCLOC=/tmp/MKSRC
 # This allows us to have a different default CVSROOT
 MKCVSROOT=:ext:leighsmith@cvs.musickit.sourceforge.net:/cvsroot/musickit
-PACKAGENAME=MK
+# Salt to taste:
+TAR=gnutar
+CHGLOGGEN=cvs2cl.pl
+TARLOC=/tmp
+
 if [ x_$1 = x_ ]; then
-    echo "${DISTNAME} source shipping script"
-    echo "Usage: $0 distribution version_number previous_version"
-    echo "Where version_number is of the form V.R.P and matches the CVS tag ${DISTNAME}_V-R-P"
+    echo "source shipping script for the ${DISTNAME} projects"
+    echo "Usage: $0 distribution version_number previous_version\n"
+    echo "Where distribution is either MusicKit or SndKit,"
+    echo "      version_number is of the form V.R.P and matches the CVS tag ${DISTNAME}_V-R-P"
+    echo "      previous_version is previous version released for generating differential change logs."
     exit 1;
 else
     DISTNAME=$1
     RELEASE=$2
     PREVRELEASE=$3
 fi
-# Salt to taste:
-TAR=gnutar
-CHGLOGGEN=cvs2cl.pl
-TARLOC=/tmp
+
+if [ $DISTNAME = MusicKit ]; then
+    PACKAGENAME=MK
+elif [ $DISTNAME = SndKit ]; then
+    PACKAGENAME=SndKit
+fi
+
 CVSTAG=${DISTNAME}_`echo $RELEASE | tr '.' '-'`
 
 # determine the date of the last tagged release.
-# PREVCVSTAG=${DISTNAME}_5-3-1 
 PREVCVSTAG=${DISTNAME}_`echo $PREVRELEASE | tr '.' '-'`
 
 # Checkout the source tree
@@ -54,10 +62,12 @@ echo Logging changes after $PREVCVSTAG to $CVSTAG
 # '-d\>2000-10-09'
 $CHGLOGGEN --no-wrap --separate-header --window 43200 --file $TARLOC/${DISTNAME}_ChangeLog_${RELEASE} --log-opts "-r${PREVCVSTAG}:${CVSTAG}"
 
-# create a readily readable PDF version of the README.sgml file
-# packageREADME
-# Unfortunately, the SGML tools don't work on MacOS X, so we suffice by copying them...
-cp /tmp/${DISTNAME}_README.pdf $DISTCHECKEDOUTSRCLOC/$DISTNAME
+# create a readily readable PDF version of the MusicKit_README.sgml file
+if [ $DISTNAME = MusicKit ]; then
+    # packageDocumentation $TARLOC/${DISTNAME}_ChangeLog $DISTCHECKOUTSRCLOC/$DISTNAME/${DISTNAME}_README.pdf
+    # Unfortunately, the SGML tools don't work on MacOS X, so we suffice by copying them...
+    cp /tmp/${DISTNAME}_README.pdf $DISTCHECKEDOUTSRCLOC/$DISTNAME
+fi
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
 find $DISTCHECKEDOUTSRCLOC -name CVS -type d -exec rm -r {} \; -prune
