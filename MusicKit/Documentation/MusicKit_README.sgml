@@ -561,7 +561,7 @@ sourceforge.net
       </listitem>
       <listitem>
 	<para>
-	<ulink url="http://softrak.stepwise.com/Apps/WebObjects/Softrak.woa/7/wa/displayPackage?package=191&os=10">
+	<ulink url="http://softrak.stepwise.com/Apps/WebObjects/Softrak.woa/7/wa/displayPackage?package=191&amp;os=10">
 	<inlinemediaobject>
 	      <imageobject>
 		<imagedata fileref="Stepwise.eps" width=50 depth=30 scalefit=1>
