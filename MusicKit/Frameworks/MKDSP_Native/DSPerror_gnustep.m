@@ -9,22 +9,22 @@ static char *s_err_fn = DSP_ERRORS_FILE;
 MKDSP_API int _DSPVerbose;
 MKDSP_API int DSPErrorNo;
 
-extern const char LITERAL_N[];
-extern const char LITERAL_X[];
-extern const char LITERAL_XL[];
-extern const char LITERAL_XH[];
-extern const char LITERAL_Y[];
-extern const char LITERAL_YL[];
-extern const char LITERAL_YH[];
-extern const char LITERAL_L[];
-extern const char LITERAL_LL[];
-extern const char LITERAL_LH[];
-extern const char LITERAL_P[];
-extern const char LITERAL_PL[];
-extern const char LITERAL_PH[];
-extern const char LITERAL_GLOBAL[];
-extern const char LITERAL_SYSTEM[];
-extern const char LITERAL_USER[];
+static const char LITERAL_N[] = "N";
+static const char LITERAL_X[] = "X";
+static const char LITERAL_XL[] = "XL";
+static const char LITERAL_XH[] = "XH";
+static const char LITERAL_Y[] = "Y";
+static const char LITERAL_YL[] = "YL";
+static const char LITERAL_YH[] = "YH";
+static const char LITERAL_L[] = "L";
+static const char LITERAL_LL[] = "LL";
+static const char LITERAL_LH[] = "LH";
+static const char LITERAL_P[] = "P";
+static const char LITERAL_PL[] = "PL";
+static const char LITERAL_PH[] = "PH";
+static const char LITERAL_GLOBAL[] = "GLOBAL";
+static const char LITERAL_SYSTEM[] = "SYSTEM";
+static const char LITERAL_USER[] = "USER";
 
 MKDSP_API const char * DSPMemoryNames(int memorySpaceNum)
 {
@@ -70,7 +70,7 @@ MKDSP_API int _DSPError(
     if (s_error_log_disabled)
         return errorcode;       /* To avoid memory leak assoc. w DSPCat() */
     else
-        return(_DSPError1(errorcode,DSPCat(msg,"%s"),""));
+        return(_DSPError1(errorcode,[NSString stringWithFormat:@"%s%s",msg,"%s"],""));
 }
 int DSPEnableErrorLog(void)
 {
@@ -95,19 +95,21 @@ char *DSPGetErrorFile(void)
 MKDSP_API int DSPEnableErrorFile(
     const char *fn)
 {
-    DSP_UNTIL_ERROR(DSPEnableErrorLog());
+    //DSP_UNTIL_ERROR(DSPEnableErrorLog());
+    DSPEnableErrorLog();
     return DSPSetErrorFile(fn);
 }
 int _DSPCheckErrorFP(void)
 {
-    time_t tloc;
+    //time_t tloc;
+    NSDate *now = [NSDate date];
  
     if (s_error_log_disabled)
       return 0;
  
     if (s_err_fp == 0) { /* open error log */
 //      umask(0); /* Don't CLEAR any filemode bits (arg is backwards!) */
-        if ((s_err_fp=fopen(s_err_fn,"w"))==NULL) {
+        if ((s_err_fp=fopen(s_err_fn,"wb"))==NULL) {
             fprintf(stderr,
                     "*** _DSPCheckErrorFP: Could not open DSP error file %s\n"
                     "Setting error output to stderr.\n",
@@ -118,19 +120,14 @@ int _DSPCheckErrorFP(void)
           if (_DSPVerbose)
             fprintf(stderr,"Opened DSP error log file %s\n",s_err_fn);
  
-        tloc = time(0);
+        //tloc = time(0);
  
         fprintf(s_err_fp,"DSP error log for PID %d started on %s\n",
-                getpid(),ctime(&tloc));
+                getpid(),[[now description] cString]);
  
         fflush(s_err_fp);
         return(0);
     }
     return 0;
 }
-
-//DSPMemoryNames
-//DSPEnableErrorFile
-//_DSPError
-//_DSPError1
 
