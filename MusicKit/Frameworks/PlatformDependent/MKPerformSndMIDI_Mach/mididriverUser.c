@@ -13,11 +13,14 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2001/02/15 19:12:08  skot
+  Added some stub files from silent MKPerformSndMIDI ready for sndkit2-erization
+
   Revision 1.4  2000/12/07 00:08:03  leigh
   Corrected typo
 
   Revision 1.3  2000/11/29 23:21:27  leigh
-  Renamed MD functions to MKMD
+  Renamed MD functions to MKMD 
 
   Revision 1.2  2000/01/27 18:15:43  leigh
   upgraded to new typedef names for Mach

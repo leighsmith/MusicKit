@@ -6,12 +6,20 @@
         CLASSES = (); 
         FRAMEWORKS = (Foundation.framework); 
         FRAMEWORKSEARCH = (); 
-        H_FILES = (mididriver.h, mididriver_types.h, midi_driver.h); 
+        H_FILES = (
+            mididriver.h, 
+            mididriver_types.h, 
+            midi_driver.h, 
+            PerformSound.h, 
+            PerformSoundPrivate.h, 
+            SndStruct.h
+        ); 
         OTHER_LINKED = (
             mididriverServer.c, 
             mididriverUser.c, 
             mididriver_nonMig.m, 
-            mididriver_replyServer.c
+            mididriver_replyServer.c, 
+            PerformSound.c
         ); 
         OTHER_SOURCES = (
             Makefile.preamble, 
@@ -24,7 +32,7 @@
         ); 
         PRECOMPILED_HEADERS = (); 
         PROJECT_HEADERS = (); 
-        PUBLIC_HEADERS = (midi_driver.h, mididriver.h, mididriver_types.h); 
+        PUBLIC_HEADERS = (midi_driver.h, mididriver.h, mididriver_types.h, PerformSound.h, SndStruct.h); 
     }; 
     LANGUAGE = English; 
     MAKEFILEDIR = .; 

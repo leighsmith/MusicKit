@@ -12,11 +12,13 @@ NAME = MKPerformSndMIDI
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Framework
 
-HFILES = mididriver.h mididriver_types.h midi_driver.h
+HFILES = mididriver.h mididriver_types.h midi_driver.h PerformSound.h\
+         PerformSoundPrivate.h SndStruct.h
 
 MFILES = mididriver_nonMig.m
 
-CFILES = mididriverServer.c mididriverUser.c mididriver_replyServer.c
+CFILES = mididriverServer.c mididriverUser.c mididriver_replyServer.c\
+         PerformSound.c
 
 OTHERSRCS = Makefile.preamble Makefile Makefile.postamble m.template\
             h.template make.sh platform.make
@@ -36,7 +38,8 @@ PROF_LIBS = $(LIBS)
 
 
 FRAMEWORKS = -framework Foundation
-PUBLIC_HEADERS = midi_driver.h mididriver.h mididriver_types.h
+PUBLIC_HEADERS = midi_driver.h mididriver.h mididriver_types.h\
+                 PerformSound.h SndStruct.h
 
 
 
