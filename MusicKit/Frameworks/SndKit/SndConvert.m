@@ -238,6 +238,8 @@ void SndChannelMap(void *inPtr, void *outPtr, long numberOfSampleFrames, int old
 // Check channel count -- if we need to increase the number of channels from 1 to
 // 2, or 4, we have hopefully got enough data malloced in *toSound to duplicate pairs
 // of samples.
+// TODO remove either fromSampleData: or toSampleData: parameter and directly read from or write to
+// SndAudioBuffer's data
 - (int) changeFromChannelCount: (int) oldNumChannels
                 fromSampleData: (void *) inPtr
                 toChannelCount: (int) newNumChannels
@@ -815,6 +817,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 							       frameCount: sampleFrames];
     void *fromDataPtr = [data mutableBytes];
     void *toDataPtr = [newBuffer bytes];
+    BOOL convertedSomething = NO;
 
     // TODO need to do sample conversion.
     if(format.sampleRate != toSamplingRate) {
@@ -833,12 +836,17 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 
 	if(error != SND_ERR_NONE)
 	    return nil;
+	convertedSomething = YES;
     }
 
+    if(!convertedSomething) {
+	[newBuffer copyDataFromBuffer: self];
+    }
+    
     if([newBuffer convertToSampleFormat: toDataFormat] == nil)
 	return nil;
-
-    return newBuffer;
+    
+    return newBuffer; // Already autoreleased...
 }
 
 @end
