@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/04/16 04:05:57  leigh
+  improved typing
+
   Revision 1.4  2000/04/07 18:33:34  leigh
   Unified tracing to the function for data hiding
 
@@ -216,7 +219,7 @@ id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte)
 #   define KITCHAN(_x) ((MIDI_MAXCHAN & _x)+1)
 #   define NOTETAG(_chan,_keyNum) (ptr->_noteTags[_chan-1] + _keyNum)
       
-    id aNote;                   /* The note. */
+    MKNote *aNote;                   /* The note. */
     int keyNum = 0; /* Init to shut up compiler warning */
 
     if (!ptr)
@@ -287,8 +290,8 @@ id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte)
 	switch (MIDI_OP(statusByte)) {
 	  case MIDI_NOTEOFF:
 	    keyNum = ptr->_dataByte1;
-	    /* Note that we don't set the keynum in the note here. 
-	       Noteoffs don't need a keyNum. It's in the noteTag. */
+            /* Note that we don't set the keynum in the note here.
+               Noteoffs don't need a keyNum. It's in the noteTag. */
 	    if ((ptr->_dataByte2 != 0) && (ptr->_dataByte2 != 64)) 
 	      /* Omit relVelocity of 0. This is maybe not the right thing? 
 	       * We omit relvelocties of 64, because this is the default you
@@ -301,7 +304,7 @@ id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte)
 	    keyNum = ptr->_dataByte1;
 	    if (ptr->_dataByte2) { /* A true note on? */
 		[aNote setPar:MK_velocity toInt:ptr->_dataByte2];
-		[aNote setPar:MK_keyNum toInt:keyNum];
+                [aNote setPar:MK_keyNum toInt:keyNum];
 		[aNote setNoteType:MK_noteOn];
 	    } else {
 		[aNote setNoteType:MK_noteOff]; 
