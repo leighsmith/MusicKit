@@ -36,6 +36,11 @@
 Modification history:
 
  $Log$
+ Revision 1.12  2002/04/16 15:07:06  sbrandon
+ - now use proper capacity for new nametbles instead of default 10
+ - included new debug tool "_MKPrintGlobalNameTables()" to view
+   what's in there
+
  Revision 1.11  2002/04/15 14:28:15  sbrandon
  - changed symbols and types NSDictionaries to NSMapTables, because NSMapTables
    do not have to retain their objects (and I have set them up not to do so).
@@ -117,8 +122,8 @@ Modification history:
   // released. This means that if the objects in question are ever dealloced, they MUST
   // call MKRemoveObjectName() in their dealloc method, so the map tables don't hold
   // dangling references.
-    symbols    = NSCreateMapTable(NSObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks,10); 
-    types      = NSCreateMapTable(NSObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks,10);
+    symbols    = NSCreateMapTable(NSObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks,capacity); 
+    types      = NSCreateMapTable(NSObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks,capacity);
   }
   return self;
 }
@@ -332,6 +337,18 @@ local tables used for parsing. */
 
 static _MKNameTable *globalParseNameTable;
 static _MKNameTable *mkNameTable = nil;
+
+void _MKPrintGlobalNameTables()
+{
+  NSLog(@"globalParseNameTable symbols:");
+  NSLog(NSStringFromMapTable(globalParseNameTable->symbols));
+  NSLog(@"globalParseNameTable types:");
+  NSLog(NSStringFromMapTable(globalParseNameTable->types));
+  NSLog(@"mkNameTable symbols:");
+  NSLog(NSStringFromMapTable(mkNameTable->symbols));
+  NSLog(@"mkNameTable types:");
+  NSLog(NSStringFromMapTable(mkNameTable->types));
+}
 
 id MKRemoveObjectName(id object)
 /*
