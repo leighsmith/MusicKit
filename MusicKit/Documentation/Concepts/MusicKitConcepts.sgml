@@ -102,12 +102,11 @@ direct suggestions to <email>leigh@tomandandy.com</email>.
 To gain a quick overview of the capabilities of the Kits and to decide
 whether to investigate further, read <xref
 linkend="SystemOverview">. Class and Functions are well described in
-this book, but fully referenced in separate documents. At the time
-of writing, these are yet to be formatted for access via a web-browser
-and must be read in their original <acronym>RTF</acronym> format
-located in the source distribution available from the
-<ulink url="&MKWeb;">
-<productname>MusicKit</productname> web site</ulink>.
+this book, but fully referenced in separate documents comprising the
+<ulink url="&MKClassReferences;"><productname>MusicKit</productname>
+framework documentation</ulink> and <ulink
+url="&SKClassReferences;"><productname>SndKit</productname> framework
+documentation</ulink>.
 </para>
 </preface>
 
