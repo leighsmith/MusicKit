@@ -11,6 +11,8 @@
 */
 typedef unsigned int dsp_id;
 
+#import "dsp_types.h"
+
 /************  Set-up functions ****************************/
 
 /* To use a DSP, you must first "add" it, then "open" it, then "reset" it. 

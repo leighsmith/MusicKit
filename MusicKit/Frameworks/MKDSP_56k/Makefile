@@ -11,6 +11,7 @@ NAME = MKDSP
 
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Framework
+LANGUAGE = English
 
 CLASSES = DSPObjectObjc.m
 
@@ -49,7 +50,8 @@ PROF_LIBS = $(LIBS)
 
 LIBRARY_PATHS = -L$(LOCAL_DEVELOPER_DIR)/Libraries
 FRAMEWORK_PATHS = -F$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\
-                  -F$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks
+                  -F$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks\
+                  -F$(LOCAL_DEVELOPER_DIR)/Frameworks
 FRAMEWORKS = -framework Foundation -framework SndKit -framework System
 PUBLIC_HEADERS = dsp.h DSPControl.h DSPConversion.h dspdriverAccess.h\
                  DSPError.h DSPMessage.h DSPObject.h dspreg.h\

@@ -25,4 +25,8 @@ typedef int DSP_BOOL;
 #define DSP_MAYBE (-2)		/* TRUE and FALSE defined in nextstd.h */
 #define DSP_UNKNOWN (-1)	/* like DSP_{MAYBE,NOT_SET} for adresses */
 
+#if WIN32
+#import <mach/mach.h>
+typedef port_t mach_port_t;
+#endif
 #endif

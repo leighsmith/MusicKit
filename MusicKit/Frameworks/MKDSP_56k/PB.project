@@ -7,8 +7,10 @@
         FRAMEWORKS = (Foundation.framework, SndKit.framework, System.framework); 
         FRAMEWORKSEARCH = (
             "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks", 
-            "$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks"
+            "$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks", 
+            "$(LOCAL_DEVELOPER_DIR)/Frameworks"
         ); 
+        HEADERSEARCH = (); 
         H_FILES = (
             dsp.h, 
             DSPControl.h, 
