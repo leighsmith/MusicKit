@@ -109,6 +109,7 @@
     }
     else {
         stopAtSample = (whenToStop - beginPlayTime) * [[performance snd] samplingRate];
+        NSLog(@"stopping at sample %ld\n", stopAtSample);
         // check stopAtSample since it could be beyond the length of the sound. 
         // If so, leave it stop at the end of the sound.
         if(stopAtSample < [[performance snd] sampleCount])
@@ -251,38 +252,37 @@
     numberPlaying = [playing count];
     for (i = 0; i < numberPlaying; i++) {
         SndPerformance *performance = [playing objectAtIndex: i];
-        Snd    *snd        = [performance snd];
-        long    startIndex = [performance playIndex];
-        long    sndLength  = [performance endAtIndex];  // allows us to play a sub-section of a sound.
-        SndAudioBuffer *temp = nil;
-        NSRange playRegion = {startIndex, buffLength};
-
-        // NSLog(@"startIndex = %ld, sndLength = %ld, location = %d, length = %d\n", startIndex, sndLength, playRegion.location, playRegion.length);
+        Snd    *snd          = [performance snd];
+        long    startIndex   = [performance playIndex];
+        long    endAtIndex   = [performance endAtIndex];  // allows us to play a sub-section of a sound.
+        NSRange playRegion   = {startIndex, buffLength};
         
-        if (buffLength + startIndex > sndLength)
-            buffLength = sndLength - startIndex;
+        if (buffLength + startIndex > endAtIndex)
+            buffLength = endAtIndex - startIndex;
         playRegion.length = buffLength;
 
         if (startIndex < 0) {
             playRegion.length += startIndex;
             playRegion.location = 0;
         }
-        
-        temp = [SndAudioBuffer audioBufferWithSndSeg: snd range: playRegion];
 
-        {
+        // NSLog(@"startIndex = %ld, endAtIndex = %ld, location = %d, length = %d\n", startIndex, endAtIndex, playRegion.location, playRegion.length);
+        // Negative buffer length means the endAtIndex was moved before the current playIndex, so we should skip any mixing and stop.
+        if(buffLength > 0) {      
             int start = 0, end = buffLength;
+            SndAudioBuffer *temp = [SndAudioBuffer audioBufferWithSndSeg: snd range: playRegion];
+    
             if (startIndex < 0)
                 start = -startIndex;
-            if (end + startIndex > sndLength)
-                end = sndLength - startIndex;
+            if (end + startIndex > endAtIndex)
+                end = endAtIndex - startIndex;
 
             // NSLog(@"calling mixWithBuffer from SndPlayer processBuffers start = %ld, end = %ld\n", start, end);
             [ab mixWithBuffer: temp fromStart: start toEnd: end];
+            [performance setPlayIndex: startIndex + buffLength];
         }
-        [performance setPlayIndex: startIndex + buffLength];
-        // When at the end of sounds, signal the delegate and 
-        if ([performance playIndex] >= sndLength) {
+        // When at the end of sounds, signal the delegate and remove the performance.
+        if ([performance playIndex] >= endAtIndex) {
             [removalArray addObject: performance];
             [[performance snd] _setStatus: SND_SoundStopped];
             [[performance snd] tellDelegate: @selector(didPlay:duringPerformance:)
