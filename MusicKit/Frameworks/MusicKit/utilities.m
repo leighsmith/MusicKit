@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2000/03/31 00:08:28  leigh
+  _MKErrorf doco cleanup
+
   Revision 1.10  2000/03/24 16:28:35  leigh
   cthreads are now just a memory
 
@@ -550,31 +553,24 @@ id MKError(NSString * msg)
     return nil;
 }
 
+/* Calling sequence like NSLog, but first arg is error code. It used to set errno. */
 id _MKErrorf(int errorCode,...)
-    /* Calling sequence like printf, but first arg is error code. 
-       It's the caller's responsibility
-       that the expansion of the arguments using sprintf doesn't
-       exceed the size of the error buffer (ERRLEN). Also sets errno. */
 {
-    NSString * fmt;
+    NSString *fmt;
     va_list ap;
     va_start(ap,errorCode);
     errno = errorCode;
     // cthread_set_errno_self(errorCode);
     fmt = _MKGetErrStr(errorCode);
     if (errorProc) {
-	//_MKVsprintf(_errBuf,[fmt cString],ap); // LMS _MKVsprintf only existed to be thread-safe
-	// Immutable NSStrings are that:
+       // Immutable NSStrings are that thread-safe
         MKError([[[NSString alloc] initWithFormat:fmt arguments:ap] autorelease]);
-        // MKError(_errBuf);
     }
     else if (!errorStreamEnabled)
         return nil;
     else {
-//#error StreamConversion: NXVPrintf should be converted to an NSData method
-//	NXVPrintf(MKErrorStream(),fmt,ap);
-        NSString *theErrorString = [[[NSString alloc] initWithFormat:fmt arguments:ap] autorelease]; //sb: this should do it!
-        [MKErrorStream() appendData: [theErrorString dataUsingEncoding: NSNEXTSTEPStringEncoding]];//sb...
+        NSString *theErrorString = [[[NSString alloc] initWithFormat:fmt arguments:ap] autorelease];
+        [MKErrorStream() appendData: [theErrorString dataUsingEncoding: NSNEXTSTEPStringEncoding]];
 	[MKErrorStream() appendData: [@"\n" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
 #if 1
 	NSLog(theErrorString); // kludge until we get the error stream output working properly.

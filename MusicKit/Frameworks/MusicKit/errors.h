@@ -9,6 +9,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/03/31 00:08:55  leigh
+  _MKErrorf doco cleanup
+
   Revision 1.4  1999/09/04 23:01:08  leigh
   MKSetErrorProc now takes a function with a NSString parameter
 
@@ -192,9 +195,9 @@ typedef enum _MKErrno {
  */
 
 extern id _MKErrorf(int errorCode, ...); 
-/* Calling sequence like printf, but first arg is musickit error code instead 
- * of formating info and the formating info is derived from the string in
- * /usr/local/lib/MusicKit/Languages/<language>.lproj/Localized.strings. 
+/* Calling sequence like printf, but first arg is musickit error code instead
+ * of formating info, the second arg is a formating NSString derived from the string in
+ * /Local/Library/MusicKit/Languages/<language>.lproj/Localized.strings. 
  *
  * It's the caller's responsibility that the expansion of the arguments 
  * using sprintf doesn't exceed the size of the error buffer (_MK_ERRLEN). 
