@@ -1,16 +1,25 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
 
-  Private MusicKit include file.
-  This file contains everything used by the Music Kit privately.
-  It should probably be broken up for compilation efficiency.
+  Description:
+    Private MusicKit include file.
+    This file contains everything used by the Music Kit privately.
+    It should probably be broken up for compilation efficiency.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  2000/04/16 04:04:31  leigh
+  removed unnecessary includes and defines
+
   Revision 1.2  1999/07/29 01:26:02  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -20,7 +29,7 @@ Modification history:
   11/10/89/daj - Added caching of Partials class. (_MKClassPartials())
   11/26/89/daj - Added _MKBeginUGBlock() and _MKEndUGBlock().
   11/27/89/daj - Removed arg from _MKCurSample.
-  12/3/89/daj - Added seed and ranSeed tokens.
+  12/3/89/daj  - Added seed and ranSeed tokens.
   12/22/89/daj - Removed uPlus
   01/08/90/daj - Added name arg to _MKNewScoreInStruct().
   02/26/90/daj - Changes to accomodate new way of doing midiFiles. 
@@ -47,16 +56,11 @@ Modification history:
 #define __MK__musickit_H___
 
 //sb: for NSData etc
-#import <Foundation/NSData.h>
 #import <Foundation/Foundation.h>
 
 #ifndef _MKUTILITIES_H
 #define _MKUTILITIES_H
 
-//#import <sys/file.h>
-/*#import <AppKit/nextstd.h>*/
-//sb:
-//#import <objc/objc.h>
 //sb: for _MK_maxPrivPar etc...
 #import "_MKParameter.h"
 //sb: for MK_freq
@@ -65,8 +69,6 @@ Modification history:
 #import <stdarg.h> 
 #import "midi_spec.h"
 #import "MusicKit.h"
-
-#define _MK_MAKECOMPILERHAPPY 1
 
 /* These are used to see if a class is loaded */ 
 /* These are used to avoid going through the findClass hash every time */
