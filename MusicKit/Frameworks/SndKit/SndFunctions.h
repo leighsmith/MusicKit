@@ -39,6 +39,15 @@ const char *SndStructDescription(SndSoundStruct *sound);
 void	SndPrintStruct(SndSoundStruct *sound);
 int	SndPrintFrags(SndSoundStruct *sound);
 int	SndSampleWidth(int format);
+
+/*!
+    @function SndBytesToSamples
+    @abstract Given the data size in bytes, the number of channels and the data format, return the number of samples.
+    @param byteCount The size of sample data in bytes.
+    @param channelCount The number of audio channels.
+    @param dataFormat The sample data encoding format.
+    @result Return the number of samples
+*/
 int	SndBytesToSamples(int byteCount, int channelCount, int dataFormat);
 int	SndSamplesToBytes(int sampleCount, int channelCount, int dataFormat);
 float	SndConvertDecibelsToLinear(float db);

@@ -90,10 +90,13 @@ int mcheck()
     return YES;
 #endif
 }
+
+// Given the data size in bytes, the number of channels and the data format, return the number of samples.
 int SndBytesToSamples(int byteCount, int channelCount, int dataFormat)
 {
-	return (int)(byteCount / (channelCount * SndSampleWidth(dataFormat)));
+    return (int)(byteCount / (channelCount * SndSampleWidth(dataFormat)));
 }
+
 int SndSamplesToBytes(int sampleCount, int channelCount, int dataFormat)
 {
 	return (int)(sampleCount * channelCount * SndSampleWidth(dataFormat));
@@ -151,23 +154,22 @@ void *SndGetDataAddresses(int sample,
 
 int SndSampleCount(const SndSoundStruct *sound)
 {
-	SndSoundStruct **ssList;
-	SndSoundStruct *theStruct;
-	int count = 0, i = 0, df;
+    SndSoundStruct **ssList;
+    SndSoundStruct *theStruct;
+    int count = 0, i = 0, df;
 
-	if (!sound) return SND_ERR_NOT_SOUND;
-	if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+    if (!sound) return SND_ERR_NOT_SOUND;
+    if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
     df = sound->dataFormat;
-	if (df != SND_FORMAT_INDIRECT) /* simple case */
-		return SndBytesToSamples(sound->dataSize,
-					sound->channelCount, df);
-	/* more complicated */
-	ssList = (SndSoundStruct **)sound->dataLocation;
-	if (ssList[0]) df = ssList[0]->dataFormat;
-	else return 0; /* fragged sound with no frags! */
-	while ((theStruct = ssList[i++]) != NULL)
-		count += theStruct->dataSize;
-	return SndBytesToSamples(count, sound->channelCount, df);
+    if (df != SND_FORMAT_INDIRECT) /* simple case */
+        return SndBytesToSamples(sound->dataSize, sound->channelCount, df);
+    /* more complicated */
+    ssList = (SndSoundStruct **)sound->dataLocation;
+    if (ssList[0]) df = ssList[0]->dataFormat;
+    else return 0; /* fragged sound with no frags! */
+    while ((theStruct = ssList[i++]) != NULL)
+        count += theStruct->dataSize;
+    return SndBytesToSamples(count, sound->channelCount, df);
 }
 
 const char *SndStructDescription(SndSoundStruct *s)
