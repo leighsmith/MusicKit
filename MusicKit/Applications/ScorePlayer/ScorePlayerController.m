@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/11/28 23:10:38  leigh
+  Removed dependency on Edit.app and OpenStep directory structure
+
   Revision 1.3  2000/10/22 18:21:59  leigh
   added SB's OpenStep conversions
 
@@ -177,7 +180,7 @@ static int warnedAboutSrate = NO;
 
 #define STR_NO_SETTINGS NSLocalizedStringFromTableInBundle(@"The selected device has no user-settable settings.", @"ScorePlayer", MB, "This message appears when the user asks to set settings of a sound out device for which there is no settings panel.")
 
-#define STR_EDIT_CANT_OPEN_FILE NSLocalizedStringFromTableInBundle(@"Edit can't open file.", @"ScorePlayer", MB, "This message appears if the user tries to edit a file but that file can't be opened.")
+#define STR_EDIT_CANT_OPEN_FILE NSLocalizedStringFromTableInBundle(@"Can't open file for editing.", @"ScorePlayer", MB, "This message appears if the user tries to edit a file but that file can't be opened.")
 
 #define STR_READING NSLocalizedStringFromTableInBundle(@"Reading %@...", @"ScorePlayer", MB, "This message appears when a file is being read.  It takes one argument which follows the message. E.g. 'Reading x.score...'")
 
@@ -329,6 +332,11 @@ static NSArray *soundOutputTagToName;
     return;
 }
 
++ scoreFileEditorAppName
+{
+    return @"Edit";
+}
+
 - (void)setSoundOutFrom:sender
   /* Invoked by U.I. */
 {
@@ -454,7 +462,7 @@ static NSArray *soundOutputTagToName;
 	return;
     }
 
-    if (![[NSWorkspace sharedWorkspace] openFile:fileName withApplication:@"Edit"])
+    if (![[NSWorkspace sharedWorkspace] openFile:fileName])
         NSRunAlertPanel(STR_SCOREPLAYER, STR_EDIT_CANT_OPEN_FILE, STR_OK, nil, nil);
 
 }
@@ -961,22 +969,24 @@ static BOOL setUpFile(NSString *workspaceFileName)
     if (!openPanel)
         openPanel = [NSOpenPanel new];    
     if (!workspaceFileName) {
-	if (firstTime)
-	  success = [openPanel 
-		   runModalForDirectory:@"/LocalLibrary/Music/Scores"
-		   file:@"Examp1.score" 
-		   types:fileSuffixes]; 
-	else if (dir) {
-	    success = [openPanel 
+	if (firstTime) {
+            NSArray *libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
+
+            success = [openPanel
+                    runModalForDirectory: [[libraryDirs objectAtIndex: 0] stringByAppendingPathComponent: @"/Music/Scores"]
+                    file:@"Examp1.score"
+                    types:fileSuffixes];
+        }
+        else if (dir) {
+             success = [openPanel 
 		     runModalForDirectory:dir
 		     file:shortFileName 
 		     types:fileSuffixes]; 
-	    [dir release];
-	    dir = nil;
+	     [dir release];
+	     dir = nil;
 	}
 	else 
-	  success = [openPanel 
-		   runModalForTypes:fileSuffixes];
+	  success = [openPanel runModalForTypes:fileSuffixes];
 	if (!success)
 	  return NO;
         [fileName release];
