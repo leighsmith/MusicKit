@@ -1,13 +1,19 @@
+// $Id$
 // Zilog 8530 serial port code, assuming memory map access
 // Extensive conversion from old NeXT hardware to Macintosh PPC serial port hardware
-// by Leigh Smith leigh@psychokiller.dialix.oz.au, leigh@cs.uwa.edu.au, leigh@tomandandy.com
+// by Leigh Smith <leigh@leighsmith.com>, <leigh@tomandandy.com>, <leigh@cs.uwa.edu.au>
+// $Log$
+// Revision 1.2  2000/02/29 01:01:19  leigh
+// Added G4 OpenFirmware test
+//
 
 #define ARCH_PRIVATE
 
 #import "zsreg.h"  // our own kludged version
 
-#define CHECK_INPUT_STATUS 1 /* Set to 0 to skip check for hw overflow */
-#define NON_RECEIVING 0	    // 1 to disable reception while PPC version is buggy
+#define CHECK_INPUT_STATUS 1     // Set to 0 to skip check for hw overflow
+#define NON_RECEIVING 0	         // Set to 1 to disable reception while PPC version is buggy
+#define G4_OPENFIRMWARE_BUG 1    // Set to 1 if escc-legacy/ch-a is found before escc/ch-a by the DriverKit.
 
 /* Forward declarations */
 static int rcvInterrupt (short unit);
@@ -28,7 +34,7 @@ static boolean_t deviceInit(short unit) {
     }
     zsaddr = var.u[unit].addr = (struct zsdevice *) driverObjects[unit]->zsaddr;
 
-    midi_log(" addr = %u ", zsaddr, 2, 3, 4, 5);
+    midi_log("zsaddr = 0x%x...\n", zsaddr, 2, 3, 4, 5);
 
     /* Reset appropriate channel */
     ZSWRITE(zsaddr, 9, reset);            
@@ -339,6 +345,19 @@ static int stsInterrupt(short unit) {
     range = [deviceDescription memoryRangeList];
     IOLog("number of memory ranges = %d\n", [deviceDescription numMemoryRanges]);
     baseMem = range->start;
+
+#if G4_OPENFIRMWARE_BUG
+    // This is a horrible hack to work around the PowerMac G4 OpenFirmware and DriverKit bug
+    // which conflagrates to have a escc-legacy chip be chosen by the DriverKit (matching ch-a in Default.table) 
+    // as the first Mididriver instead of the legitimite escc chip. Since there seems no way to change the order
+    // of search in the DriverKit, nor the device name escc-legacy/ch-a, we have to check a hardwired address
+    // and if found, reject the driver load. Any slight variation in the firmware address will cause this to break.
+    // Hopefully that variation will be to improve the DriverKit...fat chance...
+    if((baseMem & 0xFFFF) == 0x2004)
+	return nil;
+#warning Checking for G4 OpenFirmware bug
+#endif
+
     zsaddr = (struct zsdevice *) baseMem;
     // determine zsaddrB from deviceDescription
     sprintf(name, "%s%d", "Mididriver", _MididriverUnit);
