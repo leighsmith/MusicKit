@@ -24,9 +24,7 @@
 // the SndKit will compile. LAME encoder is LGPL
 // License statement: http://www.sulaco.org/mp3/license.txt
 
-#ifndef SK_NO_MP3_ENCODER
 #import <shout/shout.h>
-#endif
 
 // Note:
 // The <shout/shout.h> header is NOT part of the shoutcast server, but part of
@@ -82,11 +80,9 @@ enum {
   /*! @var encodeNShoutcastLock Lock controlling access to icecasting code      */
   NSLock            *encodeNShoutcastLock;
   /*! @var lameGlobalFlags Data structure required for LAME encoding            */
-#ifndef SK_NO_MP3_ENCODER
   lame_global_flags *lameGlobalFlags;
   /*! @var conn icecast 'shout-cast' server connection data structure           */
   shout_conn_t       conn;
-#endif
 }
 /*!
  @method     defaultServerAddress
