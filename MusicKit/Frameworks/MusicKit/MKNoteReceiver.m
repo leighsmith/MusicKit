@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2002/01/29 16:24:16  sbrandon
+  removed redundant comments relating to NeXTSTEP-isms
+
   Revision 1.11  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -290,9 +293,7 @@ Modification history:
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
   /* You never send this message directly.  
-     Should be invoked with NXWriteRootObject(). 
-     Archives isSquelched. Also archives MKNoteSender List and owner using 
-     NXWriteObjectReference(). */
+     Archives isSquelched. Also archives MKNoteSender List and owner. */
 {
     NSString *str;
 
@@ -304,7 +305,6 @@ Modification history:
 
 - (id)initWithCoder:(NSCoder *)aDecoder
   /* You never send this message directly.  
-     Should be invoked via NXReadObject(). 
      See write:. */
 {
     NSString *str;
