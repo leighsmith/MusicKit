@@ -64,8 +64,7 @@
     [tadPolePath lineToPoint: maxPoint];
     if (minPoint.x == 2) {
         [tadPolePath setLineWidth: 3.0];
-
-        [[NSColor controlHighlightColor] set]; // TODO needs to be some color based on partNum
+        [[NSColor purpleColor] set];  // TODO needs to be some color based on partNum
         minPoint.y = 0.0;
         [tadPolePath moveToPoint: minPoint];
         maxPoint.x = 2.0;
