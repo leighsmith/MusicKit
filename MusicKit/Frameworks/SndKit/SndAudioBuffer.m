@@ -21,11 +21,8 @@
 
 + audioBufferWithFormat: (SndSoundStruct*) f data: (void*) d
 {
-    SndAudioBuffer *ab = [SndAudioBuffer alloc];
-    
-    ab->data = NULL; 
-    [ab initWithFormat: f data: NULL];
-    
+    SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
+    [ab initWithFormat: f data: NULL];    
     return [ab autorelease];
 }
 
@@ -35,9 +32,9 @@
 
 + audioBufferWrapperAroundSNDStreamBuffer: (SNDStreamBuffer*) cBuff
 {
-    SndAudioBuffer *ab = [SndAudioBuffer alloc];
-    ab->data = NULL;
+    SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
     [ab initWithFormat: &(cBuff->streamFormat) data: cBuff->streamData];
+    ab->bOwnsData = FALSE;
     return [ab autorelease];
 }
 
@@ -47,10 +44,10 @@
 
 + audioBufferWithSndSeg: (Snd*) snd range: (NSRange) r
 {
-    SndAudioBuffer *ab = [SndAudioBuffer alloc];
+    SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
 
     // PUT THIS IN AN INIT FN!!!!
-    
+
     memcpy(&(ab->format),[snd soundStruct], sizeof(SndSoundStruct));
     {
         int samSize       = [ab multiChannelSampleSizeInBytes];
@@ -65,7 +62,7 @@
 
 - (void) dealloc
 {
-    if (data != NULL && bOwnsData)
+    if (bOwnsData)
         free(data);
 }
 
@@ -75,14 +72,18 @@
 
 - initWithFormat: (SndSoundStruct*) f data: (void*) d
 {
-    memcpy(&format,f,sizeof(SndSoundStruct));
+    memcpy(&format, f, sizeof(SndSoundStruct));
 
-    if (data != NULL && bOwnsData)
+    if (data != NULL && bOwnsData) {
+        NSLog(@"freeing\n");
         free(data);
+        data = NULL;
+    }
 
     if (d == NULL) {
-        data = malloc(format.dataSize);
-        memset(data,0,format.dataSize);
+        if((data = malloc(format.dataSize)) == NULL)
+            NSLog(@"Unable to malloc %d bytes\n", format.dataSize);
+        memset(data, 0, format.dataSize);
         bOwnsData = TRUE;
     }
     else {
@@ -242,21 +243,23 @@
 
 - copy
 {
-    SndAudioBuffer *ab = [SndAudioBuffer audioBufferWithFormat: &format data: data];
-    return [ab autorelease];
+    SndAudioBuffer *to = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
+    memcpy(to->data, data, format.dataSize);
+    return to;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-- copyData: (SndAudioBuffer*) ab
+- copyData: (SndAudioBuffer*) from
 {
-    if (ab->format.dataSize == format.dataSize)
-        memcpy(ab->data, data, format.dataSize);
-    else
+    if (from->format.dataSize == format.dataSize)
+        memcpy(data, from->data, format.dataSize);
+    else {
         NSLog(@"Buffers are different lengths - code to handle");
-    // TO DO!
+        // TO DO!
+    }
     return self;
 }
 
