@@ -33,17 +33,37 @@
 /*!
     @method performanceOfSnd:playingAtTime:
     @abstract Create and return an autoreleased instance of SndPerformance with a sound
-              and a time to begin playing.
+              and a time to begin playing. Convenience method to
+              performanceOfSnd:playingAtTime:endAtIndex
     @result Returns the newly created instance if able to initialise, nil if unable.
 */
 + (SndPerformance *) performanceOfSnd: (Snd *) s playingAtTime: (double) seconds;
 
 /*!
+    @method performanceOfSnd:playingAtTime:endAtIndex:
+    @abstract Create and return an autoreleased instance of SndPerformance with a sound
+              and a time to begin playing.
+    @result Returns the newly created instance if able to initialise, nil if unable.
+*/
++ (SndPerformance *) performanceOfSnd: (Snd *) s 
+                        playingAtTime: (double) seconds
+			   endAtIndex: (long) endIndex;
+
+/*!
     @method initWithSnd:playingAtTime:
     @abstract Initialise a performance with a sound and a time to begin playing.
+              Convenience method to initWithSnd:playingAtTime:endAtIndex:
     @result Returns self if able to initialise, nil if unable.
 */
 - initWithSnd: (Snd *) s playingAtTime: (double) t;
+
+/*!
+    @method initWithSnd:playingAtTime:endAtIndex:
+    @abstract Initialise a performance with a sound and a time to begin playing,
+              and the index of the last sample of the sound to play.
+    @result Returns self if able to initialise, nil if unable.
+*/
+- initWithSnd: (Snd *) s playingAtTime: (double) t endAtIndex: (long) endIndex;
 
 /*!
     @method snd
