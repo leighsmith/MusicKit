@@ -80,29 +80,30 @@ Leigh Smith <leigh@tomandandy.com>
 
 &SystemOverview;
 
-<part label="The SndKit">
-<title>The <productname>SndKit</productname></title>
+<part id="SndKitPart" label="The SndKit">
+<title>Sound Representation, Processing, Display and Audition</title>
 &IntroSndKit;
 </part>
 
-<part label="The MusicKit">
-<title>Representation, Synthesis, Processing and Performance</title>
+<part id="MusicKitPart" label="The MusicKit">
+<title>Music Representation, Synthesis, Processing and Performance</title>
 &IntroMusicKit;
 &MusicData;
 &MusicSynthAndProc;
 &MusicPerformance;
 </part>
 
-<part label="Scorefiles">
+<part id="ScorefilesPart" label="Scorefiles">
 <title>A Language for MusicKit Scores</title>
 &ScoreFileRef;
 &NoteListToScorefile;
 </part>
 
-<part label="Appendices">
+<part id="AppendicesPart" label="Appendices">
 <title>Reference Material</title>
 &MusicTables;
 &MIDITimeCode;
+&ScoreFileSummary;
 </part>
 
 </book>
