@@ -4,12 +4,6 @@
 
 #import <AppKit/AppKit.h>
 
-void main(int argc, char *argv[]) {
-
-    [NSApplication sharedApplication];
-    if ([NSBundle loadNibNamed:@"TwoWaves.nib" owner:NSApp])
-	    [NSApp run];
-	    
-    [NSApp release];
-    exit(0);
+int main(int argc, const char *argv[]) {
+    return NSApplicationMain(argc, argv);
 }
