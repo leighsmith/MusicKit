@@ -50,7 +50,7 @@
 - (unsigned char*) data
 {
   NSLog(@"SndExpt:Don't even *think* of using the data method in experimental Snd objects!");
-  return nil;
+  return NULL;
 }
 
 - (int) dataSize
