@@ -19,6 +19,10 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2000/04/25 02:14:05  leigh
+  Moved separate thread locking into masterConductorBody since
+  it was being locked before being called, which under NSRunLoop dispatching was not possible.
+
   Revision 1.15  2000/04/22 20:17:02  leigh
   Extra info in description, proper class ivar initialisations
 
@@ -968,6 +972,8 @@ static void evalAfterQueues()
    */
 {	
     double lastTime;
+    if (MKIsTraced(MK_TRACECONDUCTOR))
+        NSLog(@"finishPerformance,%s separate threaded,%s in performance.\n", separateThread ? "" : " not", inPerformance ? "" : " not");
     if (!inPerformance) {
 	evalAfterQueues(); /* This is needed for MKFinishPerformance() */
 	return nil;
@@ -1855,12 +1861,14 @@ static double getNextMsgTime(MKConductor *aCond)
 {
     MKMsgStruct  *curProc;
 
+    _MKLock();  // ensure we can do our thang uninterrupted.
     // Since masterConductorBody can be called from a NSTimer in a separate thread NSRunLoop without being
     // able to check the performance status, it's possible for the performance to end while waiting, 
     // such that by the time we arrive here, we don't want to perform anything, so we split this crazy scene...
     if(!inPerformance) {
         if (MKIsTraced(MK_TRACECONDUCTOR))
             NSLog(@"Early escape from masterConductorBody as not in performance\n"); 
+        _MKUnlock(); // drop the lock before this early out.
         return;
     }
 
@@ -1870,13 +1878,16 @@ static double getNextMsgTime(MKConductor *aCond)
 
     /* Here is the meat of the conductor's performance. */
     do {
+        // NSLog(@"curRunningCond %x\n", curRunningCond);
         curProc = popMsgQueue(&(curRunningCond->_msgQueue));
         if (curProc->_timeOfMsg > curRunningCond->time) // IMPORTANT--Performers can give us negative vals
             curRunningCond->time = curProc->_timeOfMsg;
         if (MKIsTraced(MK_TRACECONDUCTOR))
             NSLog(@"t %f\n", clockTime);
         if (!curProc->_conductorFrees) {
-            curProc->_onQueue = NO;
+            // NSLog(@"I'm not supposed to free %d, %@\n", curProc->_argCount, curProc->_toObject);
+            // NSLog(@"separateThreaded %d and in MusicKit thread %d\n", separateThread, separateThreadedAndInMusicKitThread());
+            curProc->_onQueue = NO;  // LMS this is neccessary but why?
             switch (curProc->_argCount) {
             case 0:
                 (*curProc->_methodImp)(curProc->_toObject, curProc->_aSelector);
@@ -1888,8 +1899,11 @@ static double getNextMsgTime(MKConductor *aCond)
                 (*curProc->_methodImp)(curProc->_toObject, curProc->_aSelector, curProc->_arg1, curProc->_arg2);
                 break;
             }
+            // NSLog(@"Returned from method call (conductor doesnt free) %@ sepThreadMK %d\n", 
+	    // curProc->_toObject, separateThreadedAndInMusicKitThread());
         }
         else {
+            // NSLog(@"I'm supposed to free %@\n", curProc->_toObject);
             switch (curProc->_argCount) {
             case 0:
                 [curProc->_toObject performSelector:curProc->_aSelector];
@@ -1898,27 +1912,31 @@ static double getNextMsgTime(MKConductor *aCond)
                 [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1];
                 break;
             case 2:
-                  [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1 withObject:curProc->_arg2];
+                [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1 withObject:curProc->_arg2];
                 break;
             default:
                 break;
             }
+            // NSLog(@"Returned from method call (conductor frees)\n");
             freeSp(curProc);
         }
+        // NSLog(@"curRunningCond at end of loop %x\n", curRunningCond);
     } while (PEEKTIME(curRunningCond->_msgQueue)  <= curRunningCond->time);
     if (!curRunningCond->isPaused) {
         double theNextTime = PEEKTIME(curRunningCond->_msgQueue);
         repositionCond(curRunningCond,beatToClock(curRunningCond,theNextTime));
     }
-    /* If at the end, repositionCond triggers [MKConductor finishPerformance].
-       If this occurs, adjustTimedEntry is a noop (see masterConductorBody:).
-       */
+    // If at the end, repositionCond triggers [MKConductor finishPerformance].
+    // If this occurs, adjustTimedEntry is a noop (see masterConductorBody:).
     [_MKClassOrchestra() flushTimedMessages];
 
     /* Postamble */
+    // NSLog(@"Setting curRunningCond nil\n");
     curRunningCond = nil;
-    if (inPerformance)     /* Performance can be ended by repositionCond(). */
+    if (inPerformance) {        /* Performance can be ended by repositionCond(). */
         adjustTimedEntry(condQueue->nextMsgTime);
+    }
+    _MKUnlock();
 }
 
 +(MKMsgStruct *)_afterPerformanceSel:(SEL)aSelector 
