@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2004/08/21 23:20:56  leighsmith
+  Better typing of results
+
   Revision 1.10  2002/04/15 14:23:50  sbrandon
   - fixed a couple of internal comments that wrongly referred to List objects
     (now NSArray)
@@ -293,13 +296,14 @@ Modification history:
      the differences between MKScore and MKScorefilePerformer.
      */
 {
-    id aNoteSender = [MKNoteSender new];
-    id aPart = [MKPart new];
-    [self addNoteSender:aNoteSender];
-    MKNameObject(name,aNoteSender);  // enable retrieving the noteSender by name.
-    [aNoteSender _setData:aPart];  /* Back ptr */
-    [aPart _setNoteSender:aNoteSender];/* Forward ptr for performNote */
-    [_partStubs addObject:aPart];
+    MKNoteSender *aNoteSender = [MKNoteSender new];
+    MKPart *aPart = [MKPart new];
+    
+    [self addNoteSender: aNoteSender];
+    MKNameObject(name, aNoteSender);  // enable retrieving the noteSender by name.
+    [aNoteSender _setData: aPart];  /* Back ptr */
+    [aPart _setNoteSender: aNoteSender];/* Forward ptr for performNote */
+    [_partStubs addObject: aPart];
     [aNoteSender release];/*sb*/
     [aPart release];
     return aPart;/*sb: retain is held in _partStubs */
