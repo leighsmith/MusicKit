@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.4  2001/12/18 18:29:47  skotmcdonald
+// Fixed an init sequence potential bug - could try to get native format before init.
+//
 // Revision 1.3  2001/12/09 02:41:34  skotmcdonald
 // Fixed bug in input stream routine that allowed a memcpy into possibly dealloced memory; fixed bug that shut down output before shutting down the currently dependent input.
 //
@@ -937,14 +940,17 @@ PERFORM_API void SNDTerminate(void)
 // the operating system. For CoreAudio, we use the basicDescription.
 PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat)
 {
-    streamFormat->magic        = SND_MAGIC;
-    streamFormat->dataLocation = 0;   /* Offset or pointer to the raw data */
-    /* Number of bytes of data in a buffer */
-    streamFormat->dataSize     = bufferSizeInFrames * outputStreamBasicDescription.mBytesPerFrame;
-    streamFormat->dataFormat   = SND_FORMAT_FLOAT;
-    streamFormat->samplingRate = outputStreamBasicDescription.mSampleRate;
-    streamFormat->channelCount = outputStreamBasicDescription.mChannelsPerFrame;
-    streamFormat->info[0]      = '\0';
+  if (!initialised)
+    SNDInit(TRUE);
+  
+  streamFormat->magic        = SND_MAGIC;
+  streamFormat->dataLocation = 0;   /* Offset or pointer to the raw data */
+  /* Number of bytes of data in a buffer */
+  streamFormat->dataSize     = bufferSizeInFrames * outputStreamBasicDescription.mBytesPerFrame;
+  streamFormat->dataFormat   = SND_FORMAT_FLOAT;
+  streamFormat->samplingRate = outputStreamBasicDescription.mSampleRate;
+  streamFormat->channelCount = outputStreamBasicDescription.mChannelsPerFrame;
+  streamFormat->info[0]      = '\0';
 }
 
 ////////////////////////////////////////////////////////////////////////////////
