@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.4  1999/09/10 02:47:45  leigh
+  removed warnings
+
   Revision 1.3  1999/09/04 22:59:18  leigh
   Big overhaul, replaced cthreads with NSThreads, rec_mutexs with NSLocks
 
@@ -281,7 +284,7 @@ static void killMusicKitThread(void)
 {
   /* We have to do this complicated thing because the cthread package doesn't
      support a terminate function. */
-  int count;
+//  int count;
   if (musicKitThread == nil)
     return;
   if (MKIsTraced(MK_TRACECONDUCTOR))
