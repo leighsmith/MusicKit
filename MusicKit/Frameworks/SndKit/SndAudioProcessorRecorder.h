@@ -29,7 +29,7 @@
  @constant recorder_kRecordFile             Record filename              
  @constant recorder_kNumParams              Number of parameters
 */
-enum {
+enum SndRecorderParam {
   recorder_kStartTriggerThreshold = 0,
   recorder_kRecordFile            = 1,
   recorder_kNumParams             = 2
@@ -45,45 +45,44 @@ enum {
 @interface SndAudioProcessorRecorder : SndAudioProcessor {
 
 @protected
-/*! @var recordBuffer */
-  SndAudioBuffer *recordBuffer;
-/*! @var conversionBuffer */
-  short          *conversionBuffer;
-/*! @var position */
-  long            position;
-/*! @var isRecording */
-  BOOL            isRecording; 
-/*! @var bytesrecorded */
-  long            bytesRecorded;  
-/*! @var recordFile */
-  FILE           *recordFile;
-/*! @var recordFileName */
-  NSString       *recordFileName;
-/*! @var bStartTrigger */
-  BOOL            bStartTrigger;
-/*! @var fStartTriggerThreshold */
-  float           fStartTriggerThreshold;
-/*! @var stopSignal */
-  BOOL            stopSignal;
+    /*! @var recordBuffer A buffer of same format, but normally longer than a processor input buffer, used to cache samples before writing to disk. */
+    SndAudioBuffer *recordBuffer;
+    /*! @var conversionBuffer */
+    short          *conversionBuffer;
+    /*! @var fileFormat The format of the data to be stored in the file. Can differ from the format of recordBuffer. */
+    SndFormat fileFormat;
+    /*! @var recordPosition The location within the recordBuffer in bytes to write the next processed buffer. */
+    long            recordPosition;
+    /*! @var isRecording Indicates if recording is currently active. */
+    BOOL            isRecording; 
+    /*! @var bytesrecorded */
+    long            bytesRecorded;  
+    /*! @var recordFile */
+    FILE           *recordFile;
+    /*! @var recordFileName */
+    NSString       *recordFileName;
+    /*! @var startedRecording Indicates if a minimum threshold or time trigger has passed and recording has begun. */
+    BOOL            startedRecording;
+    /*! @var startTriggerThreshold A floating point threshold to begin the recording of sound. */
+    float           startTriggerThreshold;
+    /*! @var stopSignal */
+    BOOL            stopSignal;
 }
 
 /*!
     @method     isRecording    
-    @abstract 
+    @abstract   Returns whether the receiver is currently recording.
     @discussion 
     @result     TRUE if currently recording
 */
 - (BOOL) isRecording;
+
 /*!
-    @method     prepareToRecordForDuration:withFormat:
-    @abstract 
-    @discussion 
-    @result     BOOL indicating success when preparing for recording
-*/
-- (BOOL) prepareToRecordForDuration: (double) time
-                     withDataFormat: (int) dataFormat
-                       channelCount: (int) chanChan
-                       samplingRate: (int) samRate;
+  @method prepareToRecordForDuration:
+  @abstract Sets the buffer used for recording.
+ */
+- (BOOL) prepareToRecordForDuration: (double) recordDuration;
+
 /*!
     @method     startRecording
     @abstract 
@@ -91,6 +90,7 @@ enum {
     @result     TRUE if recording started ok
 */
 - (BOOL) startRecording;
+
 /*!
     @method     startRecordingToFile:withFormat:
     @abstract 
@@ -98,16 +98,10 @@ enum {
     @result     
 */
 - (BOOL) startRecordingToFile: (NSString*) filename
-               withDataFormat: (int) dataFormat
+               withDataFormat: (SndSampleFormat) dataFormat
                  channelCount: (int) chanChan
                  samplingRate: (int) samRate;
-/*!
-    @method     closeRecordFile 
-    @abstract 
-    @discussion 
-    @result     Boolean indicating success
-*/
-- (BOOL) closeRecordFile;
+
 /*!
     @method     stopRecording
     @abstract 
@@ -115,6 +109,7 @@ enum {
     @result     self
 */
 - stopRecording;
+
 /*!
     @method     stopRecordingWait:disconnectFromStream:
     @abstract 
@@ -122,13 +117,7 @@ enum {
     @result     
 */
 - stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream;
-/*!
-    @method     setRecordBuffer:
-    @abstract 
-    @discussion 
-    @result     
-*/
-- setRecordBuffer: (SndAudioBuffer*) buffer;
+
 /*!
     @method     bytesRecorded
     @abstract 
@@ -136,6 +125,7 @@ enum {
     @result     
 */
 - (long) bytesRecorded;
+
 /*!
     @method     primeStartTrigger
     @abstract 
@@ -143,6 +133,7 @@ enum {
     @result     
 */
 - primeStartTrigger;
+
 /*!
     @method     setStartTriggerThreshold:
     @abstract 
@@ -150,26 +141,6 @@ enum {
     @result     
 */
 - setStartTriggerThreshold: (float) f;
-/*! 
-    @method     streamToDiskData:length:
-    @abstract    
-    @discussion 
-    @param      recData Raw bytes pointer to data to be written to disk.
-    @param      bytesToRecord Count of bytes to write to disk
-*/
-- (void) streamToDiskData: (void*) recData length: (long) bytesToRecord;
-/*! 
-    @method     setUpRecordFile:withFormat:
-    @abstract   Sets up the record file amd 
-    @discussion For internal use - you shouldn't have to call this.
-    @param      filename
-    @param      format
-    @result     Boolean indicating success
-*/
-- (BOOL) setUpRecordFile: (NSString*) filename
-          withDataFormat: (int) dataFormat
-            channelCount: (int) chanChan
-            samplingRate: (int) samRate;
 
 @end
 
