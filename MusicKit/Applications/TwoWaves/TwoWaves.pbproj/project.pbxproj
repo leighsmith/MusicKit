@@ -10,6 +10,7 @@
 				0BDB7E0E01569F997F000001,
 				0BDB7E0F01569F997F000001,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 0141A52EFFE98C9ACFED3B96;
 			productRefGroup = 0141A542FFE98C9ACFED3B96;
@@ -41,6 +42,7 @@
 			refType = 4;
 		};
 		0141A530FFE98C9ACFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Controller.m;
 			refType = 4;
@@ -54,6 +56,7 @@
 			refType = 4;
 		};
 		0141A532FFE98C9ACFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Controller.h;
 			refType = 4;
@@ -67,6 +70,7 @@
 			refType = 4;
 		};
 		0141A534FFE98C9ACFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = TwoWaves_main.m;
 			refType = 4;
@@ -111,16 +115,19 @@
 			refType = 4;
 		};
 		0141A53AFFE98C9ACFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Makefile.preamble;
 			refType = 4;
 		};
 		0141A53BFFE98C9ACFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Makefile;
 			refType = 4;
 		};
 		0141A53CFFE98C9ACFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Makefile.postamble;
 			refType = 4;
@@ -227,7 +234,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		0141A545FFE98C9ACFED3B96 = {
 			buildActionMask = 2147483647;

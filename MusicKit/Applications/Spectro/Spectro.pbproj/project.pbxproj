@@ -23,6 +23,7 @@
 			refType = 4;
 		};
 		029604BF006FB31FCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = English;
 			path = Help/English.lproj/SpectroHelp.sgml;
@@ -97,6 +98,7 @@
 //073
 //074
 		071719DE0156540D7F000001 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WaterfallView.m;
 			refType = 4;
@@ -122,6 +124,7 @@
 				06C97E270056EE8CCFED3B96,
 				06C97E280056EE8CCFED3B96,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 0F183AF30035F7AECFED3B96;
 			productRefGroup = 0F183B2E0035F7AECFED3B96;
@@ -166,56 +169,67 @@
 			refType = 4;
 		};
 		0F183AF50035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PrefController.m;
 			refType = 4;
 		};
 		0F183AF60035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SaveToController.m;
 			refType = 4;
 		};
 		0F183AF70035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ScrollingSound.m;
 			refType = 4;
 		};
 		0F183AF80035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ScrollingSpectrum.m;
 			refType = 4;
 		};
 		0F183AF90035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SignalProcessor.m;
 			refType = 4;
 		};
 		0F183AFA0035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SoundController.m;
 			refType = 4;
 		};
 		0F183AFB0035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SoundDocument.m;
 			refType = 4;
 		};
 		0F183AFC0035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SoundInfo.m;
 			refType = 4;
 		};
 		0F183AFD0035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SpectrumDocument.m;
 			refType = 4;
 		};
 		0F183AFE0035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SpectrumView.m;
 			refType = 4;
 		};
 		0F183AFF0035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SubSoundView.m;
 			refType = 4;
@@ -240,61 +254,73 @@
 			refType = 4;
 		};
 		0F183B020035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PrefController.h;
 			refType = 4;
 		};
 		0F183B030035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SaveToController.h;
 			refType = 4;
 		};
 		0F183B040035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ScrollingSound.h;
 			refType = 4;
 		};
 		0F183B050035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ScrollingSpectrum.h;
 			refType = 4;
 		};
 		0F183B060035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SignalProcessor.h;
 			refType = 4;
 		};
 		0F183B070035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SoundController.h;
 			refType = 4;
 		};
 		0F183B080035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SoundDocument.h;
 			refType = 4;
 		};
 		0F183B090035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SoundInfo.h;
 			refType = 4;
 		};
 		0F183B0A0035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SpectrumDocument.h;
 			refType = 4;
 		};
 		0F183B0B0035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SpectrumView.h;
 			refType = 4;
 		};
 		0F183B0C0035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SubSoundView.h;
 			refType = 4;
 		};
 		0F183B0D0035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WaterfallView.h;
 			refType = 4;
@@ -308,6 +334,7 @@
 			refType = 4;
 		};
 		0F183B0F0035F7AECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Spectro_main.m;
 			refType = 4;
@@ -550,7 +577,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		0F183B310035F7AECFED3B96 = {
 			buildActionMask = 2147483647;
