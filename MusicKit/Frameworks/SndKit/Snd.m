@@ -297,9 +297,9 @@ static int ioTags = 1000;
 {
     NSArray *exts = [[self class] soundFileExtensions];
     NSString *ext  = [path pathExtension];
-    int extensionIndex, c = [exts count];
+    int extensionIndex, extensionCount = [exts count];
     
-    for (extensionIndex = 0; extensionIndex < c; extensionIndex++) {
+    for (extensionIndex = 0; extensionIndex < extensionCount; extensionIndex++) {
 	NSString *anExt = [exts objectAtIndex: extensionIndex];
 	if ([ext compare: anExt options: NSCaseInsensitiveSearch] == NSOrderedSame)
 	    return YES;
@@ -307,11 +307,11 @@ static int ioTags = 1000;
     return NO;
 }
 
-- (void)dealloc
+- (void) dealloc
 {
     if (name) {
-        if ([[SndTable defaultSndTable] objectForKey:name] == self)
-            [[SndTable defaultSndTable] removeSoundForName:name];
+        if ([[SndTable defaultSndTable] soundNamed: name] == self)
+            [[SndTable defaultSndTable] removeSoundForName: name];
         [name release];
     }
     if (soundStruct) SndFree(soundStruct);
@@ -970,7 +970,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
     // check its seekable, by checking its POSIX regular.
     fileAttributeDictionary = [fileManager fileAttributesAtPath: filename
-					   traverseLink: YES];
+					           traverseLink: YES];
 
     if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular)
         return SND_ERR_CANNOT_OPEN;
@@ -1102,35 +1102,60 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return NO;
 }
 	
-- (int) convertToFormat: (int) aFormat
-	   samplingRate: (double) aRate
-	   channelCount: (int) aChannelCount
+- (int) convertToFormat: (int) toFormat
+	   samplingRate: (double) toRate
+	   channelCount: (int) toChannelCount
 {
-    int err;
-    SndSoundStruct *toSound;
-    err = SndAlloc(&toSound,0,aFormat,aRate,aChannelCount,4);
-    if (err) return err;
+    NSRange wholeSound = { 0, [self sampleCount] };
+    SndAudioBuffer *bufferToConvert = [SndAudioBuffer audioBufferWithSnd: self inRange: wholeSound];
+    SndAudioBuffer *error;
+
     switch (conversionQuality) {
     case SND_CONVERT_LOWQ:
     default:
 	/* fastest conversion, non-interpolated */
-	err = SndConvertSound(soundStruct, &toSound, YES, NO, NO, YES);
-        break;
+	error = [bufferToConvert convertToFormat: toFormat
+			            channelCount: toChannelCount
+			            samplingRate: toRate
+		                  useLargeFilter: NO
+		               interpolateFilter: NO
+		          useLinearInterpolation: YES];
+	    
+	break;
     case SND_CONVERT_MEDQ:
 	/* medium conversion, small filter, uses interpolation */
-	err = SndConvertSound(soundStruct, &toSound, YES, NO, YES, NO);
+	error = [bufferToConvert convertToFormat: toFormat
+				    channelCount: toChannelCount
+				    samplingRate: toRate
+				  useLargeFilter: NO
+			       interpolateFilter: YES
+			  useLinearInterpolation: NO];
         break;
     case SND_CONVERT_HIQ:
 	/* slow, accurate conversion, large filter, uses interpolation */
-	err = SndConvertSound(soundStruct, &toSound, YES, YES, YES, NO);
+	error = [bufferToConvert convertToFormat: toFormat
+				    channelCount: toChannelCount
+				    samplingRate: toRate
+				  useLargeFilter: YES
+			       interpolateFilter: YES
+			  useLinearInterpolation: NO];
     }
-    if (!err) {
-	// TODO this should be after soundStruct is assigned to toSound, surely?
-        soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
+    if (error != nil) {
+	SndSoundStruct *toSound;
+	int err = SndAlloc(&toSound, [bufferToConvert lengthInBytes], toFormat, toRate, toChannelCount, 4);
+
+	if (err != SND_ERR_NONE)
+	    return err;
+	
         SndFree(soundStruct);
-        soundStruct = toSound;
+	// We need to copy the buffer sample data back into the soundStruct. In the future, post-soundStruct,
+	// to we should just be able to use the buffer directly.
+	memcpy((void *) toSound->dataLocation, [bufferToConvert bytes], [bufferToConvert lengthInBytes]);
+	soundStruct = toSound;
+        soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
+	return SND_ERR_NONE;
     }
-    return err;
+    return SND_ERR_UNKNOWN;
 }
 
 - (int) convertToFormat: (int) aFormat
@@ -1432,11 +1457,11 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     int   buffFrameSize = [buff frameSizeInBytes];
     NSRange bufferByteRange = { bufferStartIndex * buffFrameSize, sndSampleRange.length * buffFrameSize };
 
-    // TODO this test is insufficient, should use something similar to: [buff hasSameFormatAsBuffer: [self nativeFormatBuffer]]
+    // TODO this test is insufficient, should use something similar to: [self hasSameFormatAsBuffer: buff]
     if([buff dataFormat] != [self dataFormat] || [buff channelCount] != [self channelCount]) {
 	// If not the same, do a data conversion.
-	//NSLog(@"buffer to fill and sound mismatched in data formats %d vs. %d or channels %d vs. %d, converting",
-	//[buff dataFormat], [self dataFormat], [buff channelCount], [self channelCount]);
+	// NSLog(@"buffer to fill and sound mismatched in data formats %d vs. %d or channels %d vs. %d, converting",
+	// [buff dataFormat], [self dataFormat], [buff channelCount], [self channelCount]);
 	[buff convertBytes: sndDataPtr
 		 intoRange: bufferByteRange
 		fromFormat: [self dataFormat]
