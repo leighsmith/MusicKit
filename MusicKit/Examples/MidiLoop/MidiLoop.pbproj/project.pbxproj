@@ -29,6 +29,15 @@
 				017B1EA300507160CFED3B96,
 			);
 			isa = PBXProject;
+			knownPlatforms = (
+				macos,
+				macosclassic,
+				macintosh,
+				windows,
+				solaris,
+				hpux,
+				openstep,
+			);
 			mainGroup = 01A886EDFFC5B356CFED3B96;
 			productRefGroup = 01A88706FFC5B356CFED3B96;
 			projectDirPath = .;
@@ -93,7 +102,7 @@
 		01A886F4FFC5B356CFED3B96 = {
 			children = (
 				01A886F5FFC5B356CFED3B96,
-				01A886F7FFC5B356CFED3B96,
+				067F784300520FE6CFED3B96,
 			);
 			isa = PBXGroup;
 			name = Interfaces;
@@ -101,30 +110,11 @@
 		};
 		01A886F5FFC5B356CFED3B96 = {
 			children = (
-				01A886F6FFC5B356CFED3B96,
+				067F784200520F69CFED3B96,
+				067F78460052103BCFED3B96,
 			);
 			isa = PBXVariantGroup;
 			name = MidiLoop.nib;
-			refType = 4;
-		};
-		01A886F6FFC5B356CFED3B96 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/MidiLoop.nib;
-			refType = 4;
-		};
-		01A886F7FFC5B356CFED3B96 = {
-			children = (
-				01A886F8FFC5B356CFED3B96,
-			);
-			isa = PBXVariantGroup;
-			name = Info.nib;
-			refType = 4;
-		};
-		01A886F8FFC5B356CFED3B96 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/Info.nib;
 			refType = 4;
 		};
 		01A886F9FFC5B356CFED3B96 = {
@@ -254,7 +244,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>Example that routes MIDI through the MusicKit and out again</string>
 	<key>CFBundleIconFile</key>
-	<string>MidiLoop</string>
+	<string>MidiLoop.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.musickit.MidiLoop</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -272,7 +262,7 @@
 	<key>NSExtensions</key>
 	<dict/>
 	<key>NSMainNibFile</key>
-	<string>MidiLoop</string>
+	<string>MidiLoop-macos</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
@@ -298,20 +288,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				01A8870CFFC5B356CFED3B96,
-				01A8870DFFC5B356CFED3B96,
 				01A8870EFFC5B356CFED3B96,
+				067F784500520FE6CFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
 		};
 		01A8870CFFC5B356CFED3B96 = {
 			fileRef = 01A886F5FFC5B356CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		01A8870DFFC5B356CFED3B96 = {
-			fileRef = 01A886F7FFC5B356CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -401,6 +385,46 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		067F784200520F69CFED3B96 = {
+			isa = PBXFileReference;
+			name = "English - openstep";
+			path = "English.lproj/MidiLoop-openstep.nib";
+			refType = 4;
+		};
+		067F784300520FE6CFED3B96 = {
+			children = (
+				067F784400520FE6CFED3B96,
+				067F784700521079CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = Info.nib;
+			path = "";
+			refType = 4;
+		};
+		067F784400520FE6CFED3B96 = {
+			isa = PBXFileReference;
+			name = "English - macos";
+			path = "English.lproj/Info-macos.nib";
+			refType = 4;
+		};
+		067F784500520FE6CFED3B96 = {
+			fileRef = 067F784300520FE6CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		067F78460052103BCFED3B96 = {
+			isa = PBXFileReference;
+			name = "English - macos";
+			path = "English.lproj/MidiLoop-macos.nib";
+			refType = 4;
+		};
+		067F784700521079CFED3B96 = {
+			isa = PBXFileReference;
+			name = "English - openstep";
+			path = "English.lproj/Info-openstep.nib";
+			refType = 4;
 		};
 	};
 	rootObject = 01A886ECFFC5B356CFED3B96;
