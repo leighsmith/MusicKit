@@ -474,33 +474,25 @@ SNDKIT_API int SndChangeSampleType (void *fromPtr, void *toPtr, int dfFrom, int 
            control the speed and accuracy of the conversion. The output is
            always 16 bit, but the input routine can read ulaw, char, short,
            int, float and double types, of any number of channels. The old
-           and new sample rates are determined by fromSound>samplingRate
-           and toSound>samplingRate, respectively. Data must be in host
+           and new sample rates are determined by fromSound.samplingRate
+           and toSound->samplingRate, respectively. Data must be in host
            endian order.
-  @param fromSound Holds header information about the input sound, and
-                  optionally the input sound data itself (see also
-		    "alternativeInput" below). The fromSound may hold fragmented
-                  SndSoundStruct data.
-  @param toSound Holds header information about the target sound
+  @param fromSound Holds header information about the input sound.
+  @param inputPtr Points to a contiguous buffer of input data to be used.
+  @param toSound Holds header information about the target sound.
+  @param outPtr Pointer to a buffer big enough to hold the output data.
   @param factor Ratio of new_sample_rate / old_sample_rate
   @param largeFilter TRUE means use 65tap FIR filter, with higher quality.
   @param interpFilter When not in "fast" mode, controls whether or not the
                      filter coefficients are interpolated (disregarded in fast mode).
   @param fast if TRUE, uses a fast, noninterpolating resample routine.
-  @param alternativeInput If nonnull, points to a contiguous buffer of input
-                         data to be used instead of any data pointed to by
-                         fromSound.
-                         If null, the "fromSound" structure hold the
-                         input data.
-  @param outPtr pointer to a buffer big enough to hold the output data
   @result void
  */
-SNDKIT_API void SndChangeSampleRate(const SndSoundStruct *fromSound,
-				    SndSoundStruct *toSound,
-				    BOOL largeFilter, BOOL interpFilter,
-				    BOOL fast,
-				    void *alternativeInput,
-				    short *outPtr);
+SNDKIT_API void SndChangeSampleRate(const SndFormat fromSound,
+				    void *inputPtr,
+				    SndFormat *toSound,
+				    short *outPtr,
+				    BOOL largeFilter, BOOL interpFilter, BOOL fast);
 
 /*!
   @function    SndChannelIncrease
