@@ -14,7 +14,7 @@
    fast as possible until all Notes have been sent, then returns.  */
 
 #import <MusicKit/MusicKit.h>
-// LMS #import <synthpatches/synthpatches.h>
+// LMS #import <MKSynthPatches/synthpatches.h>
 #import <MusicKit/pitches.h>
 
 static double ranNum(void)
@@ -55,7 +55,12 @@ int computeNotes(void)
     double freqBase,curTime;
     id ampEnvelope, freqEnvelope;
     int i,j;
-    id aPartPerformer,anOrch,aPart,aNote,aSynthInstrument;
+    MKPartPerformer *aPartPerformer;
+    MKPart *aPart;
+    MKNote *aNote;
+    MKSynthInstrument *aSynthInstrument;
+    MKOrchestra *anOrch;
+    
 
     /* Make envelopes */
     double xAmpArray[] = {0,.1,.2,.3}; 
@@ -94,7 +99,7 @@ int computeNotes(void)
 	    /* Ascending whole tone scales */
 	    [aNote setPar:MK_freq toDouble:freqBase * pow(2.0,j/6.0)];
 	    /* A bunch of other parameters */
-	    [aNote setPar:MK_waveform toString:ranTimbre(freqBase)];
+	    [aNote setPar:MK_waveform toString: [NSString stringWithCString: ranTimbre(freqBase)]];
 	    [aNote setPar:MK_ampAtt toDouble:ranNum() * .3 + .1];
 	    [aNote setPar:MK_freqAtt toDouble:ranNum() * .3 + .1];
 	    [aNote setPar:MK_svibAmp toDouble:.015 * ranNum() + .005];
@@ -107,7 +112,7 @@ int computeNotes(void)
     /* Open the Orchestra. */
     anOrch = [MKOrchestra new];
     if ([anOrch prefersAlternativeSamplingRate]) 
-      [anOrch setSamplingRate:11025]; /* For slow memory DSP cards */ 
+        [anOrch setSamplingRate: 11025]; /* For slow memory DSP cards */ 
 
     if (![anOrch open]) {
 	fprintf(stderr,"Can't open DSP.\n");
@@ -125,7 +130,7 @@ int computeNotes(void)
     aSynthInstrument = [[MKSynthInstrument alloc] init];
 // LMS    [aSynthInstrument setSynthPatchClass:[DBWave1vi class]];
     [aSynthInstrument setSynthPatchCount:10];
-    /* Connect the PartPerformer to the SynthInstrument */
+    /* Connect the MKPartPerformer to the MKSynthInstrument */
     [[aPartPerformer noteSender] connect:[aSynthInstrument noteReceiver]];
 
     /* Prepare Conductor */
@@ -135,9 +140,9 @@ int computeNotes(void)
 
     fprintf(stderr,"playing...\n");
     [anOrch run];                  /* Start the DSP. */
-    [MKConductor startPerformance];  /* Start sending Notes, loops until done. */
+    [MKConductor startPerformance];  /* Start sending MKNotes, loops until done. */
 
-     /* Conductor's startPerformance method
+     /* MKConductor's startPerformance method
        does not return until the performance is over.  Note, however, that
        if the Conductor is in a different mode, startPerformance returns 
        immediately (if it is in clocked mode or if you have specified that the 
