@@ -20,18 +20,24 @@
 
 @implementation SndPerformance
 
-+ (SndPerformance *) performanceOfSnd: (Snd *) s playTime: (double) t;
++ (SndPerformance *) performanceOfSnd: (Snd *) s playingAtTime: (double) t;
 {
-    SndPerformance *spd = [[SndPerformance alloc] init];
-    spd->snd = [s retain];
-    spd->playTime = t;
-    spd->playIndex = 0;
-    return [spd autorelease];
+    return [[[SndPerformance alloc] initWithSnd: s playingAtTime: t] autorelease];
+}
+
+- initWithSnd: (Snd *) s playingAtTime: (double) t
+{
+    snd = [s retain];
+    playTime = t;
+    playIndex = 0;
+    endAtIndex = [s sampleCount];
+    return self;
 }
 
 - (void) dealloc
 {
     [snd release];
+    [super dealloc]; 
 }
 
 // Copies receiver, including its Snd reference, play time and index.
@@ -43,6 +49,7 @@
     newPerformance->snd = snd; 
     newPerformance->playTime = playTime;
     newPerformance->playIndex = playIndex;
+    newPerformance->endAtIndex = endAtIndex;
     return newPerformance; // should we autorelease?
 }
 
@@ -52,14 +59,15 @@
 - (BOOL) isEqual: (id) anotherPerformance
 {
     BOOL equal = ((SndPerformance *) anotherPerformance)->snd == snd &&
-                 ((SndPerformance *) anotherPerformance)->playTime == playTime;
+                 ((SndPerformance *) anotherPerformance)->playTime == playTime &&
+                 ((SndPerformance *) anotherPerformance)->endAtIndex == endAtIndex;
     // NSLog(@"checking if equal %@ vs. %@ = %s\n", self, anotherPerformance, equal ? "YES" : "NO");
     return equal;
 }
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@, playing at %f, from %ld", snd, playTime, playIndex];
+    return [NSString stringWithFormat: @"%@, playing at %f, from %ld, to %ld", snd, playTime, playIndex, endAtIndex];
 }
 
 - (Snd*) snd
@@ -77,9 +85,24 @@
     return playIndex;
 }
 
-- (void) setPlayIndex: (long) li
+- (void) setPlayIndex: (long) newPlayIndex
 {
-    playIndex = li;
+    playIndex = newPlayIndex;
+}
+
+- (long) endAtIndex
+{
+    return endAtIndex;
+}
+
+- (void) setEndAtIndex: (long) newEndAtIndex
+{
+    endAtIndex = newEndAtIndex;
+}
+
+- (void) stopInFuture: (double) inSeconds
+{
+    [Snd stopPerformance: self inFuture: inSeconds];
 }
 
 @end
