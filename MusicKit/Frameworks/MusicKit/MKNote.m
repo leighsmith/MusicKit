@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/02/07 00:31:39  leigh
+  improved description method, printing parameter values
+
   Revision 1.3  1999/09/24 05:49:31  leigh
   cleaned up documentation, improved description method, changed parameter type of writeNoteAux to NSString
 
@@ -1803,11 +1806,12 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
 //        partString = [NSString stringWithFormat: @"of (%@)", part];
 //    else
         partString = @"";
+
     // loop thru the parameter table and list all parameters being used and their values.
     par = MKNextParameter(self, aState);
     do {
         if(par != MK_noPar) {
-            [paramString appendFormat: @"%@", _MKParNameStr(par)];
+            [paramString appendFormat: @"%@: %@", _MKParNameStr(par), MKGetNoteParAsString(self,par)];
             par = MKNextParameter(self, aState);
         }
         [paramString appendString: (par != MK_noPar) ? @", " : @"."];
