@@ -3,6 +3,10 @@
   Defined In: The MusicKit
   HEADER FILES: musickit.h
 
+  Description:
+    This file should contain only utilities that we always want. 
+    That is, this module is always loaded.
+
   Original Author: David A. Jaffe
   
   Copyright (c) 1988-1992, NeXT Computer, Inc.
@@ -13,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2000/07/22 00:25:02  leigh
+  Now properly manages error stream assignments.
+
   Revision 1.12  2000/04/01 23:16:44  leigh
   removed redundant extensionPresent function
 
@@ -86,8 +93,6 @@ Modification history:
 #import <stddef.h>  /* errno */
 #import <Foundation/NSBundle.h>
 
-/* This file should contain only utilities that we always want. I.e. this module is always loaded. */
-
 /* globals */
 
 _MK_GLOBAL _MKClassLoaded _MKNoteClass = {0};
@@ -103,10 +108,7 @@ _MK_GLOBAL unsigned _MKTraceFlag = 0;
 /* A dumb function that causes a reference to its arguments (to fool the linker.) */
 void _MKLinkUnreferencedClasses()
 {
-
-}
-
-
+}
 /* The following mechanism is to make it so it's fast to check if a class
    is loaded. See the macros in _musickit.h */ 
 static id checkClass(_MKClassLoaded *cl,NSString *className)
@@ -245,8 +247,8 @@ void MKSetErrorProc(void (*errProc)(NSString *msg))
     errorProc = errProc;
 }
 
-static NSMutableData *errorStream = NULL;
-static NSMutableData *stderrStream = NULL;
+// errorStream == nil implies output to standard error
+static NSMutableData *errorStream = nil;
 
 NSMutableData *MKErrorStream(void)
     /* Returns the Music Kit error stream */
@@ -255,27 +257,16 @@ NSMutableData *MKErrorStream(void)
 }
 
 void MKSetErrorStream(NSMutableData *aStream) 
-    /* Sets the Music Kit error stream. 
-       NULL means stderr. The Music Kit initialization sets the error 
-       stream to stderr. */
+    /* Sets the Music Kit error stream. nil means stderr.
+       The Music Kit initialization sets the error stream to stderr. */
 {
     if (aStream) {
-	if (errorStream && (errorStream == stderrStream)) {
-	    [stderrStream release];
-	    stderrStream = NULL;
-	}
+        errorStream = aStream;
     }
-    else if (!stderrStream) 
-//#error StreamConversion: NXOpenFile should be converted to an NSData method
-#warning sb: This function tries to open a stream to stderr. As we are using NSMutableData objects instead of streams, this doesn't make sense any more. What do we do? For now I'll just log an error.
-// LMS we should replace the whole thing with a notification approach
-        {
-//      aStream = (stderrStream = NXOpenFile((int)stderr->_file,NX_WRITEONLY));
-        NSLog(@"MusicKit Error: tried to set stderr to new stream. Needs fixing in the MusicKit.\n");
-        }
-    errorStream = aStream;
+    else {
+        errorStream = nil;
+    }
 }
-
 
 #define UNKNOWN_ERROR NSLocalizedStringFromTableInBundle(@"unknown error", _MK_ERRTAB, _MKErrorBundle(), "")
 
@@ -543,6 +534,7 @@ id MKError(NSString * msg)
        Returns nil.
        */
 {
+    NSMutableData *errorStream = MKErrorStream();
     if (!msg)
         return nil;
     if (errorProc) {
@@ -551,8 +543,14 @@ id MKError(NSString * msg)
     }
     else if (!errorStreamEnabled)
         return nil;
-    [MKErrorStream() appendData: [msg dataUsingEncoding: NSNEXTSTEPStringEncoding]];
-    [MKErrorStream() appendData: [@"\n" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+    if(errorStream == nil) {
+        NSLog(msg);      // default is to write to the standard logging.
+        NSLog(@"\n");
+    }
+    else {
+        [errorStream appendData: [msg dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+        [errorStream appendData: [@"\n" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+    }
     return nil;
 }
 
@@ -573,18 +571,19 @@ id _MKErrorf(int errorCode,...)
         return nil;
     else {
         NSString *theErrorString = [[[NSString alloc] initWithFormat:fmt arguments:ap] autorelease];
-        [MKErrorStream() appendData: [theErrorString dataUsingEncoding: NSNEXTSTEPStringEncoding]];
-	[MKErrorStream() appendData: [@"\n" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
-#if 1
-	NSLog(theErrorString); // kludge until we get the error stream output working properly.
-	NSLog(@"\n");	
-#endif
+        NSMutableData *errorStream = MKErrorStream();
+        if(errorStream == nil) {
+            NSLog(theErrorString); // default is to write to the standard logging.
+            NSLog(@"\n");
+        }
+        else {
+            [errorStream appendData: [theErrorString dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+            [errorStream appendData: [@"\n" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+        }
     }
     va_end(ap);
     return nil;
 }
-
-
 
 /* Decibels */
 /* See musickit.h */
@@ -594,7 +593,6 @@ double MKdB(double dbVal)
     return (double) pow(10.0,dbVal/20.0);
 }
 
-
 /* Function to simplify file read/write of files. */
 
 BOOL _MKOpenFileStreamForWriting(NSString * fileName,NSString *defaultExtension,NSMutableData *theData,BOOL errorMsg)
@@ -610,13 +608,13 @@ BOOL _MKOpenFileStreamForWriting(NSString * fileName,NSString *defaultExtension,
     if (defaultExtension) {
         if (![[fileName pathExtension] isEqualToString:defaultExtension]) {
             fileName = [fileName stringByAppendingPathExtension:defaultExtension];
-            }
         }
+    }
     if (![theData writeToFile:fileName atomically:YES]) {
         if (errorMsg)
-          _MKErrorf(MK_cantOpenFileErr,fileName);
+            _MKErrorf(MK_cantOpenFileErr,fileName);
         return NO;
-        }
+    }
 
     return YES;
 }
