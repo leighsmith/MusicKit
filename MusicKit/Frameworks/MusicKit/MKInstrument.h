@@ -1,10 +1,46 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+ Description: 
+   MKInstrument is an abstract class that defines the general mechanism for
+   obtaining and realizing MKNotes during a MusicKit performance.  Each
+   subclass of MKInstrument defines its particular manner of realization by
+   implementing realizeNote:fromNoteReceiver:.
+  
+   Every MKInstrument contains a NSMutableArray of MKNoteReceivers, objects
+   that receive MKNotes during a performance.  Each subclass of MKInstrument
+   should implement its init method to automatically create and add
+   some number of MKNoteReceivers to a newly created instance.  When a
+   MKNoteReceiver receives a MKNote (through the receiveNote: method), it
+   causes realizeNote:fromNoteReceiver: to be sent to its MKInstrument with
+   the MKNote as the first argument and the MKNoteReceiver's id as the second
+   argument.
+  
+   An MKInstrument is considered to be in performance from the time it
+   realizes its first MKNote until the peformance is over.
+  
+   The MKInstrument subclasses provided by the MusicKit are:
+  
+   Subclass             Realization
+   --------             -----------
+   MKNoteFilter         Processes the MKNote and sends it on.
+   MKNoteRecorder       Adds the MKNote to a MKPart or writes it to a file.
+   MKSynthInstrument    Synthesizes a musical sound on the DSP.
+  
+   CF: MKNoteReceiver
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
   $Log$
+  Revision 1.3  1999/09/20 03:06:50  leigh
+  Cleaned up documentation.
+
   Revision 1.2  1999/07/29 01:25:45  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -16,38 +52,9 @@
 #import <Foundation/NSArray.h>
 #import "MKNoteReceiver.h"
 
-@interface MKInstrument : NSObject
-/* 
- * 
- * Instrument is an abstract class that defines the general mechanism for
- * obtaining and realizing Notes during a Music Kit performance.  Each
- * subclass of Instrument defines its particular manner of realization by
- * implementing realizeNote:fromNoteReceiver:.
- * 
- * Every Instrument contains a List of NoteReceivers, objects that
- * receive Notes during a performance.  Each subclass of Instrument
- * should implement its init method to automatically create and add
- * some number of NoteReceivers to a newly created instance.  When a
- * NoteReceiver receives a Note (through the receiveNote: method), it
- * causes realizeNote:fromNoteReceiver: to be sent to its Instrument with
- * the Note as the first argument and the NoteReceiver's id as the second
- * argument.
- * 
- * An Instrument is considered to be in performance from the time it
- * realizes its first Note until the peformance is over.
- * 
- * The Instrument subclasses provided by the Music Kit are:
- * 
- * Subclass                    Realization
- * 
- * NoteFilter           Processes the Note and sends it on.
- * NoteRecorder         Adds the Note to a Part or writes it to a file. 
- * SynthInstrument      Synthesizes a musical sound on the DSP.    
- *
- * CF:  NoteReceiver
- */
+@interface MKInstrument: NSObject
 {
-    NSMutableArray *noteReceivers; /* The object's List of NoteReceivers. */
+    NSMutableArray *noteReceivers; /* The object's array of MKNoteReceivers. */
 
     /* The following for internal use only */
     BOOL _noteSeen;
@@ -85,7 +92,7 @@
   * NoteReceivers themselves aren't copied.  It's the sender's
   * responsibility to free the List.  */
 
--(BOOL ) isNoteReceiverPresent:aNoteReceiver; 
+-(BOOL) isNoteReceiverPresent:aNoteReceiver; 
  /* 
   * Returns YES if aNoteReceiver is in the receiver's NoteReceiver List.
   * Otherwise returns NO.  */
@@ -132,7 +139,7 @@
   * Removes all the receiver's NoteReceivers but neither disconnects nor
   * frees them. Returns the receiver.  */
 
--(BOOL ) inPerformance;
+-(BOOL) inPerformance;
  /* 
   * Returns YES if the receiver is in performance (it has received its first
   * Note).  Otherwise returns NO.  
@@ -150,7 +157,7 @@
     Same as [self copyFromZone:[self zone]] 
   */
 
-- copyWithZone:(NSZone *)zone; 
+- copyWithZone: (NSZone *) zone; 
  /* 
   * Creates and returns a new Instrument as a copy of the receiver.  The
   * new object has its own NoteReceiver collection that contains copies of
@@ -163,12 +170,12 @@
   * Returns the first NoteReceiver in the receiver's List.  This is useful
   * for Instruments that have only one NoteReceiver.  */
 
-- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (void)encodeWithCoder: (NSCoder *) aCoder;
  /* 
   * You never send this message directly.  Should be invoked with
   * NXWriteRootObject().  Archives noteReceiver List. */
 
-- (id)initWithCoder:(NSCoder *)aDecoder;
+- (id)initWithCoder: (NSCoder *) aDecoder;
  /* 
   * You never send this message directly.  
   * Should be invoked via NXReadObject(). 
@@ -177,7 +184,6 @@
 
  /* Obsolete methods: */
 + new; 
-//- (void)initialize;
 
 @end
 
