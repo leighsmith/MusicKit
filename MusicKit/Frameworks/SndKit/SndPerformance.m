@@ -46,9 +46,10 @@
 - initWithSnd: (Snd *) s playingAtTime: (double) t 
                             endAtIndex: (long) endIndex
 {
-    snd = [s retain];
-    playTime = t;
-    playIndex = 0;
+    [super init];
+    snd        = [s retain];
+    playTime   = t;
+    playIndex  = 0;
     endAtIndex = endIndex;
     return self;
 }
@@ -65,9 +66,9 @@
     SndPerformance *newPerformance = [[SndPerformance allocWithZone: zone] init];
     
     // We do a lightweight copy since this is just a reference to the Snd anyway.
-    newPerformance->snd = snd; 
-    newPerformance->playTime = playTime;
-    newPerformance->playIndex = playIndex;
+    newPerformance->snd        = snd; 
+    newPerformance->playTime   = playTime;
+    newPerformance->playIndex  = playIndex;
     newPerformance->endAtIndex = endAtIndex;
     return newPerformance; // should we autorelease?
 }
