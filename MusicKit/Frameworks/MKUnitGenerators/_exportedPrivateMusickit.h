@@ -1,10 +1,24 @@
-#ifndef __MK__exportedPrivateMusickit_H___
-#define __MK__exportedPrivateMusickit_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* This file represents that portion of the Music Kit's private interface
-   that the UnitGenerator library depends on. */
-/* 
-  Modification history:  
+/*
+  $Id$
+  
+  Defined In: The MusicKit
+  Description:
+    This file represents that portion of the MusicKit's private interface
+   that the UnitGenerator library depends on.
+   
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
+*/
+/*
+  Modification history:
+  $Log$
+  Revision 1.3  2001/09/15 17:12:07  leighsmith
+  Merged RTF class documentation into headerdoc comments
+
 
   10/12/89/daj - Created.
   11/12/89/daj - Added _MKClassSamples() and _MKClassPartials().
@@ -14,6 +28,8 @@
   3/7/93/daj - Added tracing support
   2/26/94/daj - Got rid of _MKUGLog2 
 */
+#ifndef __MK__exportedPrivateMusickit_H___
+#define __MK__exportedPrivateMusickit_H___
 
 
 extern BOOL _MKUGIsPowerOf2 (int n);
@@ -75,7 +91,6 @@ extern MKEnvStatus _MKGetEnvelopeNth(id self,int n,double *xPtr,double *yPtr,
 
 #define _MK_ERRTAB _MKErrorStringFile()
 
-#import <objc/Object.h>
 #import <Foundation/NSObject.h>
 @interface musickitprivatemsgs:Object
 +(MKMsgStruct *) _cancelMsgRequest:(MKMsgStruct *)aMsgStructPtr;
