@@ -515,9 +515,9 @@ reduce the compatibility issue.
                 The source to MusicKit and nearly all utilites, applications, documentation and example code.
               </para>
 	      <para>
-                This is the most recent revision and patch. Older
-                revisions are located in this directory for regression
-                testing.
+This is the most recent revision and patch. Older revisions are
+located at the <ulink url="ftp://ftp.tomandandy.com/pub/MusicKit">ftp
+site</ulink> for regression testing.
               </para>
             </listitem>
           </varlistentry>
@@ -590,10 +590,42 @@ reduce the compatibility issue.
             </term>
 	    <listitem>
 	      <para>
-                The MIDI driver binary for SCC UARTs in the Mac.
+                The MacOsX-Server MIDI driver binary for SCC UARTs in the Mac.
               </para>
 	    </listitem>
 	  </varlistentry>
+	  <varlistentry>
+	    <term>
+            <ulink url="http://www.tomandandy.com/MusicKit/binaries/MacOsX/MK-5.1.9.pkg.tar">MK-5.1.9.pkg.tar</ulink>
+            </term>
+	    <listitem>
+	      <para>
+              The MacOsX frameworks (including the SndKit).
+              </para>
+	    </listitem>
+	  </varlistentry>
+<!--
+	  <varlistentry>
+	    <term>
+            <ulink url="http://www.tomandandy.com/MusicKit/binaries/Windows9X/MK-5.1.9.pkg.tar">MK-5.1.9.pkg.tar</ulink>
+            </term>
+	    <listitem>
+	      <para>
+              The Windows9X frameworks (including the SndKit).
+              </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	    <term>
+            <ulink url="http://www.tomandandy.com/MusicKit/binaries/Linux/MK-5.1.9.pkg.tar">MK-5.1.9.pkg.tar</ulink>
+            </term>
+	    <listitem>
+	      <para>
+              The Linux frameworks (including the SndKit).
+              </para>
+	    </listitem>
+	  </varlistentry>
+-->
         </variablelist>
       </para>
     </sect2>
