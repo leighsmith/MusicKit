@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2000/11/28 18:59:11  leigh
+  enforced constant string behaviour to remove warnings
+
   Revision 1.11  2000/10/01 06:45:42  leigh
   Corrected parameter passed to _MKNewStringPar.
 
@@ -138,7 +141,7 @@ static jmp_buf begin;       /* For long jump. */ // LMS this is broken and cause
 
 #define INITIALMAXTOKENLENGTH 100
 
-#define STRTYPE unsigned char           /* Must match streams.h */
+#define STRTYPE const unsigned char           /* Must match streams.h */
 
 static void
 error(MKErrno errCode,...);
@@ -209,7 +212,7 @@ char c;
 /* We need backhash bit because we may have to find it later to remove it,
    if it becomes "exported" as a global. */
 
-static unsigned char *errorLoc = NULL;
+static STRTYPE *errorLoc = NULL;
 
 static const char transtab[][2] = {{'b',BACKSPACE}, 
 				   {'f',FORMFEED},
