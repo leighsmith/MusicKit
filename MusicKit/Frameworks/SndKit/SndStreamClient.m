@@ -12,7 +12,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#define SET_THREAD_PRIORITY 1
+#ifndef __MINGW32__
+ #define SET_THREAD_PRIORITY 1
+#endif
 
 #if SET_THREAD_PRIORITY
  #include <sched.h>
@@ -463,15 +465,23 @@ int get_bus_speed()
         fprintf(stderr, "Can't do thread_policy_set\n");
  #endif
 #else  /* POSIX_RT, must be running with root privileges */ 
+ #ifndef __MINGW32__
       struct sched_param sp;
       int theError;
 
       memset(&sp, 0, sizeof(struct sched_param));
       sp.sched_priority = sched_get_priority_min(SCHED_FIFO);
       theError = sched_setscheduler(0, SCHED_RR, &sp);                
- #if SNDSTREAMCLIENT_DEBUG
+  #if SNDSTREAMCLIENT_DEBUG
       if (theError == -1)
         fprintf(stderr,"Can't get real-time priority, errno = %d, min priority = %d\n",errno,sp.sched_priority);
+  #endif
+ #else
+      int theError = sched_setscheduler(getpid(), SCHED_RR);
+  #if SNDSTREAMCLIENT_DEBUG
+      if (theError == -1)
+        fprintf(stderr,"Can't get real-time priority, errno = %d, min priority = %d\n",errno,sp.sched_priority);
+  #endif
  #endif
 #endif
 #endif
