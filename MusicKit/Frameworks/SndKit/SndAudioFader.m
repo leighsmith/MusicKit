@@ -179,7 +179,7 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
 BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObject> anEnvelope)
 {
     int prevBreakpoint = saf->bpBeforeOrEqual(anEnvelope,bpBeforeOrEqualSel,xVal);
-    if (prevBreakpoint == -1) {
+    if (prevBreakpoint == BP_NOT_FOUND) {
         return NO;
     }
     if (saf->flagsForBp(anEnvelope,flagsForBpSel,prevBreakpoint) &
@@ -220,11 +220,11 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
     // do we span any breakpoints, which we will need to delete?
         int index1 = [theEnv breakpointIndexBeforeOrEqualToX:startRampTime];
         int index2 = [theEnv breakpointIndexAfterX:endRampTime];
-    // If index1 == -1, that means that there must be an end dissection,
+    // If index1 == BP_NOT_FOUND, that means that there must be an end dissection,
     // and bp[0] is definitely to be deleted
-    // If index2 == -1, that means that our new end point lies beyond the
+    // If index2 == BP_NOT_FOUND, that means that our new end point lies beyond the
     // rightmost bp.
-        if (index2 == -1) index2 = [theEnv breakpointCount];
+        if (index2 == BP_NOT_FOUND) index2 = [theEnv breakpointCount];
 
     // calculate a new end point and/or start point for the enclosing
     // envelope(s). The flags for these will be SND_FADER_ATTACH_RAMP_LEFT
@@ -328,7 +328,7 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
     }
     else {
         int endBp = [theEnv breakpointIndexAfterX:atTime];
-        if (endBp == -1) {
+        if (endBp == BP_NOT_FOUND) {
             /* A ramp was started but not finished. Just set the
              * new bp, and change the status of the previous bp
              * to static (flag 0)
@@ -446,7 +446,7 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
 {
 //    int prevBreakpoint = [anEnvelope breakpointIndexBeforeOrEqualToX:theX];
     int prevBreakpoint = saf->bpBeforeOrEqual(anEnvelope,bpBeforeOrEqualSel,theX);
-    if (prevBreakpoint == -1) {
+    if (prevBreakpoint == BP_NOT_FOUND) {
         return 0;
     }
     /* it was a static breakpoint: take last y val and don't interpolate */
@@ -462,7 +462,7 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
 
 }
 
-static int _processBalance( int xPtr,
+inline int _processBalance( int xPtr,
                             SndUnifiedEnvelopeEntry *uee,
                             double tempXVal,
                             float tempAmpY,
@@ -528,9 +528,6 @@ static int _processBalance( int xPtr,
 
   nowTime = [[self audioProcessorChain] nowTime];
 
-#define balanceFun1(theta)    fabs(cos(theta))
-#define balanceFun2(theta)    fabs(sin(theta))
-
   [lock lock];
 
   if ([outB lengthInSamples] == [inB lengthInSamples] &&
@@ -540,23 +537,24 @@ static int _processBalance( int xPtr,
       [inB channelCount]     == 2) {
 
       float *inD  = (float*) [inB  data];
-      float *outD = (float*) [outB data];
+//      float *outD = (float*) [outB data];
       long   len  = [inB  lengthInSamples], i;
 
       if (!ampEnv && !balanceEnv) {
         if (staticBalance == 0) {
+//        NSLog(@"staticBalance 0\n");
           for (i=0;i<len*2;i+=2) {
-            outD[i]   = inD[i] * staticAmp;
-            outD[i+1] = inD[i+1] * staticAmp;
+            inD[i] *= staticAmp;
+            inD[i+1] *= staticAmp;
           }
         }
         else {
-          double balanceD = staticBalance * M_PI/180.0 + M_PI/4.0;
-          double leftAmpD = staticAmp * balanceFun1(balanceD);
-          double rightAmpD = staticAmp * balanceFun2(balanceD);
+          double leftAmpD = (staticBalance <= 0) ? staticAmp : staticAmp * (1 - staticBalance);
+          double rightAmpD = (staticBalance >= 0) ? staticAmp : staticAmp * (1 + staticBalance);
+//          NSLog(@"leftAmpD %f, rightAmpD %f\n",leftAmpD,rightAmpD);
           for (i=0;i<len*2;i+=2) {
-            outD[i]   = inD[i] * leftAmpD;
-            outD[i+1] = inD[i+1] * rightAmpD;
+            inD[i] *= leftAmpD;
+            inD[i+1] *= rightAmpD;
           }
         }
       }
@@ -600,7 +598,7 @@ static int _processBalance( int xPtr,
         /* prime the loop */
         nextAmpIndx = [ampEnv breakpointIndexAfterX:nowTime];
         nextBalanceIndx = [balanceEnv breakpointIndexAfterX:nowTime];
-        if (nextAmpIndx != -1) {
+        if (nextAmpIndx != BP_NOT_FOUND) {
 //            nextAmpX = [ampEnv lookupXForBreakpoint:nextAmpIndx];
 //            nextAmpFlags = [ampEnv lookupFlagsForBreakpoint:nextAmpIndx];
             nextAmpX = xForBp(ampEnv,xForBpSel,nextAmpIndx);
@@ -609,7 +607,7 @@ static int _processBalance( int xPtr,
         else {
             nextAmpX = maxX + 1;
         }
-        if (nextBalanceIndx != -1) {
+        if (nextBalanceIndx != BP_NOT_FOUND) {
 //            nextBalanceX = [balanceEnv lookupXForBreakpoint:nextBalanceIndx];
 //            nextBalanceFlags = [balanceEnv lookupFlagsForBreakpoint:nextBalanceIndx];
             nextBalanceX = xForBp(balanceEnv,xForBpSel,nextBalanceIndx);
@@ -636,21 +634,21 @@ static int _processBalance( int xPtr,
 //            int b4BalanceIndx = [balanceEnv breakpointIndexBeforeOrEqualToX:nowTime];
             int b4AmpIndx = bpBeforeOrEqual(ampEnv,bpBeforeOrEqualSel,nowTime);
             int b4BalanceIndx = bpBeforeOrEqual(balanceEnv,bpBeforeOrEqualSel,nowTime);
-            if (b4AmpIndx != -1) {
+            if (b4AmpIndx != BP_NOT_FOUND) {
 //                uee[xPtr].ampFlags = [ampEnv lookupFlagsForBreakpoint:b4AmpIndx];
                 uee[xPtr].ampFlags = flagsForBp(ampEnv,flagsForBpSel,b4AmpIndx);
                 uee[xPtr].ampY = _lookupEnvForX(self, ampEnv, ampX);
             } else {
                 uee[xPtr].ampFlags = 0;
-                uee[xPtr].ampY = 1; /* FIXME what about static amp??? */
+                uee[xPtr].ampY = staticAmp; /* FIXME what about static amp??? */
             }
-            if (b4BalanceIndx != -1) {
+            if (b4BalanceIndx != BP_NOT_FOUND) {
 //                uee[xPtr].balanceFlags = [balanceEnv lookupFlagsForBreakpoint:b4BalanceIndx];
                 uee[xPtr].balanceFlags = flagsForBp(balanceEnv,flagsForBpSel,b4BalanceIndx);
                 uee[xPtr].balanceY = _lookupEnvForX(self, balanceEnv, ampX);
             } else {
                 uee[xPtr].balanceFlags = 0;
-                uee[xPtr].balanceY = 0; /* FIXME what about static balance??? */
+                uee[xPtr].balanceY = staticBalance; /* FIXME what about static balance??? */
             }
             if (uee[xPtr].balanceY >= 0) {
                 uee[xPtr].balanceR = 1;
