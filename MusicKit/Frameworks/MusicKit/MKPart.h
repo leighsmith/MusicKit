@@ -11,49 +11,10 @@
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
   Portions Copyright (c) 1999-2000, The MusicKit Project.
-*/
-/*
-  $Log$
-  Revision 1.14  2001/12/07 20:13:57  skotmcdonald
-  Added hasSoundingNotes method, which returns TRUE if a part contains mk_noteDur or mk_noteOn notes
 
-  Revision 1.13  2001/11/16 19:56:45  skotmcdonald
-  Added scaleTime method to MKPart and MKScore, which adjusts the timeTags and durations of notes by a scaling factor (useful for compensating for changes in score tempo). Note: parameters inside individual MKNotes (apart from MK_dur) will need to receive scaling msgs, eg envelopes that match physical sample or synthesis parameters that should(n't) be scaled... a conundrum for discussion at present.
+  Modification history in CVS at musickit.sourceforge.net
+ */
 
-  Revision 1.12  2001/09/07 18:37:52  leighsmith
-  Generates lists and moved @class before headerdoc declaration
-
-  Revision 1.11  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.10  2001/08/28 23:39:34  leighsmith
-  Cleaned up doco (variable naming and tables)
-
-  Revision 1.9  2001/08/28 20:39:40  leighsmith
-  Incorporated RTF class documentation into headerdoc comments
-
-  Revision 1.8  2000/11/25 22:55:56  leigh
-  Enforced ivar privacy
-
-  Revision 1.7  2000/05/06 00:31:59  leigh
-  Converted tagTable to NSMutableDictionary
-
-  Revision 1.6  2000/04/25 02:11:01  leigh
-  Renamed free methods to release methods to reflect OpenStep behaviour
-
-  Revision 1.5  2000/04/10 18:05:01  leigh
-  Typed parameters to methods to reduce warnings for client applications
-
-  Revision 1.4  1999/09/20 02:46:53  leigh
-  Added description method
-
-  Revision 1.3  1999/09/04 22:02:18  leigh
-  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
-
-  Revision 1.2  1999/07/29 01:25:47  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 @class MKNote;
 @class MKScore;
 @class MKNoteSender;
