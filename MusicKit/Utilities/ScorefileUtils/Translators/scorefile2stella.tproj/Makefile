@@ -11,7 +11,6 @@ NAME = scorefile2stella
 
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Tool
-LANGUAGE = English
 
 MFILES = scorefile2stella_main.m
 

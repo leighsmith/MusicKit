@@ -1,86 +1,225 @@
-{\rtf0\ansi{\fonttbl\f0\fswiss Helvetica;}
+{\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\fswiss Helvetica;\f2\fmodern Courier;
+}
 {\colortbl;\red255\green255\blue255;}
-\paperw12080\paperh8400
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f0\b\fs36 \cf0 The MusicKit V5.1\
+\f0\b\fs36 \cf0 The MusicKit V5.1
+\f1 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \b0\fs24 \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\i \cf0 25th August 1999\
-Leigh Smith <leigh@tomandandy.com>\
+\f0\i \cf0 $Id$\
+Leigh M. Smith <leigh@tomandandy.com>\
+incorporating original notes by David A. Jaffe\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\i0 \cf0 \
-These are overall comments until integrated into the existing Release notes.\
-\
-Release notes can be found in 
-\i ./Documentation/Frameworks/MusicKit/ReleaseNotes
-\i0 .\
-\
-What needs to be done is in
-\i  ./Documentation/Frameworks/MusicKit/ReleaseNotes/TODO.rtf\
-
-\i0 \
-Updates, announcements and queries are sent to the MusicKit mail-list <mkdist@ccrma.stanford.edu>.\
-Don't assuming nothing is being done if you don't hear anything for a while!\
-\
+\f1\i0 \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\i\fs28 \cf0 Description
+\f0 \cf0 These are overall comments and serve as the highest level overview of the MusicKit.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\i\fs28 \cf0 Description
 \i0\fs24 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1 \cf0 \
+\pard\tx720\tx1080\tx1440\tx1800\ql\qnatural
+
+\f0 \cf0 The MusicKit is an object-oriented software system for building music, sound, signal processing, and MIDI applications under OpenStep, MacOsX Server and Windows 98 (using WebObjects/NT).  It has been used in such diverse commercial applications as music sequencers, computer games, and document processors.  Professors and students in academia have used the MusicKit in a host of areas, including music performance, scientific experiments, computer-aided instruction, and physical modeling.  The MusicKit was the first to unify the MIDI and Music V paradigms, thus combining interaction with generality.  (Music V, written by Max Mathews and others at Bell Labs three decades ago, was the first widely available "computer music compiler".)\
 \
+The MusicKit currently runs on NeXT hardware and Intel-based hardware running OpenStep, Macintosh hardware running MacOsX Server (and eventually MacOsX), and Intel-based hardware running Windows 98 and Rhapsody DR2/NT or WebObjects/NT). \
+\
+The NeXT MusicKit was first demonstrated at the 1988 NeXT product introduction and was bundled in NeXT software releases 1.0 and 2.0.  Beginning with NeXT's 3.0 release, the MusicKit is no longer part of the standard NeXT software release.  Instead, it was being distributed and supported by the Center for Computer  Research in Music and Acoustics (CCRMA) of Stanford University. Since 1999 and version 5.0, the most recent releases have been generously provided by my employer, tomandandy music inc. as open source to the community.\
+\
+The MusicKit Distribution is a comprehensive package that includes on-line documentation, programming examples, utilities, applications and sample score documents.  \
+\
+Source code is available for everything, with the exception of the NeXT hardware implementation of the low-level sound and DSP drivers.  This means researchers and developers may study the source or even customize the Music Kit and DSP Tools to suit their needs.  Enhancements can be sent to <
+\f2 leigh@tomandandy.com>
+\f0  to have them incorporated for future releases. Commercial software developers may freely incorporate and adapt the software to accelerate development of software products.  (Free commercial use of files copyrighted by NeXT Inc. are understandably restricted to NeXTSTEP platforms.)\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\i \cf0 Contributors and History (As best as LMS knows):\
+\f1 \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\i0 \cf0 \
-David Jaffe and Julius Smith III at NeXT did the original design, with David coding most of the Objective C and Julius most of the 56K DSP, but there was a fair degree of overlap. Their original design appeared in 
+\f0 \cf0 Release notes can be found in
+\f1  
+\f2 ./Documentation/Frameworks/MusicKit/ReleaseNotes
+\f1 .\
+\
+
+\f0 What needs to be done is in
+\f1\i  
+\f2\i0 ./Documentation/Frameworks/MusicKit/ReleaseNotes/TODO.rtf\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0 \cf0 The file ./
+\f2 Documentation/ChangeLog
+\f0  lists changes and is generated from the CVS logs.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0 \cf0 Updates, announcements and queries are sent to the MusicKit mail-list 
+\f2 <mkdist@ccrma.stanford.edu>
+\f0 .\
+Don't assuming nothing is being done if you don't hear anything for a while!\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\i\fs28 \cf0 Contributors and History (As best as LMS knows):\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\i0\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0 \cf0 David A. Jaffe and Julius O. Smith III at NeXT did the original design, with David coding the Objective C and Julius most of the 56K DSP. Their original design appeared in
+\f1  
 \i David A. Jaffe and Lee R. Boynton, "An Overview of the Sound and Music Kits for the NeXT Computer",1989, Computer Music Journal, Vol. 13(2),  pages 48-55
-\i0 . I understand Dana Massie, Lee Boynton and Roger Dannenberg made code and design contributions also. Following NeXT's release of the source to Stanford in 1994, David did the port to Intel NeXTStep and the MPU-401 MIDI and DSP drivers. There were some other bug fix contributors (acknowledged in code comments).\
-\
-Stephen Brandon  <sbrandon@music.gla.ac.uk> did the initial OpenStep port in early 1998 and the majority of the conversion work. Leigh Smith <
-\i leigh@cs.uwa.edu.au
-\i0 >, now <
-\i leigh@tomandandy.com
-\i0 > fixed some bugs and ported the MusicKit and MIDI drivers to Intel and PowerPC Rhapsody in late 1998 and reorganised the packages and documentation for MacOsX Server. The port from Rhapsody to MacOsX Server was trivial.  The frameworks were then ported to Windows 98/NT using DirectMusic. The MusicKit now uses the SndKit, rather than the SoundKit for its sound processing.\
-Keith Hamel tested and bug fixed the MacOsX Server version.\
-\
+\i0 . 
+\f0 The Ensemble application and much of the SynthPatch library were written by Michael Mcnabb.   Douglas Fulton had primary responsibility  for the documentation. Dana Massie, James A. Moorer, Lee Boynton, Greg Kellogg, Douglas Keislar, Michael Minnick, Perry Cook, John Strawn, Rob Poor and Roger Dannenberg made code and design contributions also. Following NeXT's release of the source to Stanford in 1994, David did the port to Intel NeXTStep and the MPU-401 MIDI and DSP drivers. There were some other bug fix contributors (acknowledged in code comments).\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\i \cf0 What works:
-\i0 \
-The frameworks have been exercised fairly extensively and seem quite stable.\
-MIDI playback of scores & computed parts works. The example playscorefilemidi demonstrate these capabilities.\
+\f1 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0 \cf0 Stephen Brandon  
+\f2 <sbrandon@music.gla.ac.uk>
+\f0  did the initial OpenStep port in early 1998 and the majority of the conversion work. Leigh M. Smith 
+\f2 <leigh@cs.uwa.edu.au>
+\f0 , now
+\f1  
+\f2 <leigh@tomandandy.com>
+\f1  
+\f0 fixed some bugs and ported the MusicKit and MIDI drivers to Intel and PowerPC Rhapsody in late 1998 and reorganised the packages and documentation for MacOsX Server. The port from Rhapsody to MacOsX Server was trivial.  The frameworks were then ported to Windows 98/NT using DirectMusic. The MusicKit now uses the SndKit, rather than the SoundKit for its sound processing. Keith Hamel tested and bug fixed the MacOsX Server version.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1 \cf0 \
+\pard\tx720\tx1080\tx1440\tx1800\ql\qnatural
+
+\f0\i\fs28 \cf0 License:\
+
+\fs24 \
+\pard\tx720\tx1080\tx1440\tx1800\ql\qnatural
+
+\i0 \cf0 The source code as distributed by Stanford (V4.2) included the following usage message:\
 \
-Compile the dsp framework then either the MacOsX-Server or Windows MKPerformMIDI framework, then the MusicKit framework. They will install into /Local/Library/Frameworks. The unitgenerators framework won't compile on MacOsX-Server because the Motorola asm56000 and lnk56000 tools are missing. I've asked Apple and Motorola for a MacOsX-Server port, why don't you also? :-)\
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\qc
+
+\f1\b \cf0 Music Kit Usage\
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\ql\qnatural
+
+\b0 \cf0 \
+The Music Kit software is distributed free of charge.  Copyright remains with the owner indicated in each file.   The software may be freely incorporated into any NeXTstep commercial application, any academic application, or any musical composition.  \
+\
+We would appreciate your acknowledging the use of the Music Kit in any academic paper, music program notes and application documentation that use the Music Kit. 
+\f0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0 \cf0 In regard of this version as indicated at the top of this file (consitituting all changes and modifications, porting efforts and documentation), I am continuing this usage philosophy. The latest usage file is found in 
+\f2 ./Documentation/Administration/Usage.rtf
+\f0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\i\fs28 \cf0 What works:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\i0\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0 \cf0 The frameworks have been exercised fairly extensively and seem quite stable.\
+MIDI playback of scores & computed parts works. The examples MIDIFilePlayback and playscorefilemidi and the utility playscore demonstrate these capabilities.\
+\
+At the moment, there is no single 
+\f2 make
+\f0  operation to build the entire source tree.\
+\
+Compile either the MacOsX-Server or Windows 
+\f2 MKPerformSndMIDI
+\f0  framework, then either the 
+\f2 MKDSP_56k 
+\f0 or
+\f2  MKDSP_Native
+\f0  framework, then the 
+\f2 MusicKit
+\f0  framework. They will install into 
+\f2 /Local/Library/Frameworks
+\f0 . The 
+\f2 MKUnitGenerators
+\f0 /
+\f2 MKSynthPatches
+\f0  framework won't compile on MacOsX-Server because the Motorola asm56000 and lnk56000 tools are missing. I've asked Apple and Motorola for a MacOsX-Server port, why don't you also? :-)\
 \
 At the moment header files are problematic. I copied over the 3.3 headers to compile against the SoundKit and to compile the MIDI driver. These legacy headers may not actually be needed and could be removed in time. You can get them from the Darwin distribution of the SoundKit or just copy them from a NeXTStep 3.3/OpenStep 4.2 system. \
 \
 The documentation is about half converted and updated to the new naming convention and OpenStep behaviour.\
-\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\i Windows support
-\i0 \
-After much fun with the pinnacle of Microsoft development tools, we have the MusicKit working on Windows. The solution was to emulate the Mach MIDI device driver with the core layer of DirectMusic. There is a fairly similar match in functionality between these API with the exception of the downloadable sound capability of DirectMusic, which provides a MIDI orientated sample playback API to PC soundcards.\
-\
-While the future of Apple's Windows for OpenStep/YellowBox/Cocoa/WebObjects (!) support is far from clear, the combination of Gnu technologies of GnuStep and cygwin would suggest in the near future that Apple's corporate interests will not dictate whether we can deploy applications on either platform.\
-\
+\f1 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\i What doesnt work:
-\i0 \
-DSP on MacOsX-Server. Stephen mentioned he got sound out under OS4.2. However none of the dsp drivers have been ported from NeXTStep V3.3 (as they are all ISA and I don't know of a PCI 56K card with published interface specs). A more fruitful avenue seems to be to convert the unit generators to use Apples AltiVec vector libraries and then do an open source version of them to support other vector processors.\
-\
-There are several programs in the Examples and Applications directories which have yet to be converted to the OpenStep version. Please feel free to dive in and upgrade them!\
-\
+\f0\i \cf0 Windows support:
+\f1\i0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\i Contributing Fixes:\
+\f0 \cf0 \
+After much fun with the pinnacle of Microsoft development tools, we have the MusicKit working on Windows9X. The solution was to emulate the Mach MIDI device driver with the core layer of DirectMusic. There is a fairly similar match in functionality between these API with the exception of the downloadable sound (DLS) capability of DirectMusic, which provides a MIDI orientated sample playback API to PC soundcards.\
+\
+While the future of Apple's Windows for OpenStep/YellowBox/Cocoa/WebObjects (!) support is far from clear, the combination of Gnu technologies of GnuStep and cygwin would suggest in the near future that Apple's corporate interests will not dictate whether applications can be deployed on either platform.\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\i0 \cf0 Please! I am maintaining changes via a closed CVS system at the moment. If you send me <
-\i leigh@tomandandy.com
-\i0 > changes I will incorporate them and check them in. If you are planning to do major work, I can provide access to the CVS server.}
+\i \cf0 Linux support:
+\i0 \
+\
+A series of stubs for a performance framework (
+\f2 MKPerformSndMIDI.framework
+\f0 ) are in place in preparation for porting the MusicKit to Linux using the GnuStep libraries. Further work is needed on this, please help!\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\i\fs28 \cf0 What doesn't work:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\i0\fs24 \cf0 \
+DSP on MacOsX-Server. Stephen mentioned he got sound out under OS4.2. However none of the dsp drivers have been ported from NeXTStep V3.3 (as they are all ISA bus cards and I don't know of a PCI 56K card with published interface specs). A more fruitful avenue seems to be to convert the unit generators to use Apples AltiVec vector libraries and then do an open source version of them to support other vector processors. Another option is to convert the unit generators to the MPEG Layer 4 structured audio language SAOL (Need CMJ reference) and modify the MKDSP framework to download to a supporting card (or do the emulation using the native processor).\
+\
+There are several programs in the Examples and Applications directories which have yet to be converted to the OpenStep version. Please feel free to dive in and upgrade them!\
+\
+Documentation is currently in Rich Text Format (RTF). It should be migrated to HTML.\
+\
+For this current revision the .nibs have been upgraded to work with MacOsX and MacOsX-Server and will not load with OpenStep 4.2. Please contact 
+\f2 <leigh@tomandandy.com> 
+\f0 to obtain a set that work with OpenStep 4.2. Future versions of the MusicKit will have both nib sets for backward compatibility with OpenStep 4.2. Eventually Apple's InterfaceBuilder will produce XML based nibs which should reduce the compability issue.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\i\fs28 \cf0 Contributing Fixes:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs24 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\i0 \cf0 Please! I am maintaining changes via a closed CVS system (
+\f2 cvs.tomandandy.com
+\f0 ) at the moment. If you send me 
+\f2 <leigh@tomandandy.com>
+\f1  
+\f0 changes I will incorporate them and check them in. If you are planning to do major work, I can provide access to the CVS server.}

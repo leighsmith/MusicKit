@@ -1,23 +1,26 @@
-{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;}
-\paperw13080
-\paperh11940
-\margl960
-\margr0
-{\colortbl;\red0\green0\blue0;}
-\pard\tx3320\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\f0\b0\i0\ulnone\qc\fs48\fi20\li1220\fc0\cf0 MIDI Time Code in the Music Kit\
+{\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\ftech\fcharset2 Symbol;\f2\fmodern Courier;
+}
+{\colortbl;\red255\green255\blue255;}
+\paperw13080\paperh11940
+\pard\tx3320\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fi20\qc
+
+\f0\fs48 \cf0 MIDI Time Code in the Music Kit\
 
 \fs28 by David A. Jaffe \
  
 \f1 „
 \f0  Copyright Pinnacle Research, 1993\
 \
+\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1880\fi-680\ql\qnatural
 
-\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b\fs36\fi-680\li1880\fc0\cf0 Introduction
+\b\fs36 \cf0 Introduction
 \fs32  \
+\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1880\fi-1880\ql\qnatural
 
-\b0\fs30\fi-1880 \
+\b0\fs30 \cf0 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\fs28\li1220\fc0\cf0 MIDI Time Code is a synchronization technique widely used in the audio and music industry, often in conjunction with SMPTE time code.  In fact, MIDI Time Code (MTC) is simply a MIDI implementation of SMPTE time code.  A typical use of MTC is as follows:  A musician records himself playing an acoustic instrument (e.g. violin) on one track of a multi-track tape recorder.  He records SMPTE time code on another track, using one of the commercially available hardware SMPTE generators, such as the OpCode Studio-3.  Next, he synchronizes a sequencer to the time code, using a SMPTE-to-MIDI converter, and plays along with it on a MIDI keyboard.  The MIDI is recorded in the sequencer.   He continues, building up a number of "tracks" in this manner.  Finally, he records the entire MIDI performance to tape.  The sequencer begins playing in exactly the right place, thanks to the SMPTE.  He can even begin the tape in the middle and the sequencer finds the correct location in the sequence and begins playing from that spot.\
+\fs28 \cf0 MIDI Time Code is a synchronization technique widely used in the audio and music industry, often in conjunction with SMPTE time code.  In fact, MIDI Time Code (MTC) is simply a MIDI implementation of SMPTE time code.  A typical use of MTC is as follows:  A musician records himself playing an acoustic instrument (e.g. violin) on one track of a multi-track tape recorder.  He records SMPTE time code on another track, using one of the commercially available hardware SMPTE generators, such as the OpCode Studio-3.  Next, he synchronizes a sequencer to the time code, using a SMPTE-to-MIDI converter, and plays along with it on a MIDI keyboard.  The MIDI is recorded in the sequencer.   He continues, building up a number of "tracks" in this manner.  Finally, he records the entire MIDI performance to tape.  The sequencer begins playing in exactly the right place, thanks to the SMPTE.  He can even begin the tape in the middle and the sequencer finds the correct location in the sequence and begins playing from that spot.\
 \
 MTC is organized in hours:minutes:seconds:frames, where there are either 24, 25, or 30 frames per second, depending on the MTC 
 \i format
@@ -29,88 +32,89 @@ MTC is organized in hours:minutes:seconds:frames, where there are either 24, 25,
 \i quarter-frame 
 \i0 messages.  MTC normally runs forward, but can run backwards as well.  For further details of MTC, see the
 \b  
-\b0\ul MIDI Detailed Specification
-\ulnone , available from the The International MIDI Association.   Their address at the time of this writing is 5316 W. 57th St., Los Angeles, CA. 90056.  \
-
-\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\fi-1880\li1880\fc0\cf0 \
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc0\cf0 The Music Kit accepts MIDI Time Code (MTC) through any MIDI device (either of the serial ports on NeXT hardware) and provides a way of synchronizing a Conductor's performance to the incoming time code.    It can also generate MTC and send it out any MIDI device.  It can even receive MTC and generate it at the same time, through the same or different MIDI devices.  Finally, it can receive and transmit ordinary MIDI  through any MIDI device while receiving or generating time code.  \
+\b0 \ul MIDI Detailed Specification\ulnone , available from the The International MIDI Association.   Their address at the time of this writing is 5316 W. 57th St., Los Angeles, CA. 90056.  \
+\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1880\fi-1880\ql\qnatural
+\cf0 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 The Music Kit accepts MIDI Time Code (MTC) through any MIDI device (either of the serial ports on NeXT hardware) and provides a way of synchronizing a MKConductor's performance to the incoming time code.    It can also generate MTC and send it out any MIDI device.  It can even receive MTC and generate it at the same time, through the same or different MIDI devices.  Finally, it can receive and transmit ordinary MIDI  through any MIDI device while receiving or generating time code.  \
 \
+\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1880\fi-680\ql\qnatural
 
-\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b\fs36\fi-680\li1880\fc0\cf0 Generating MIDI Time Code\
+\b\fs36 \cf0 Generating MIDI Time Code\
+\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1880\fi-680\ql\qnatural
 
-\fs30  
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b0\fs28\li1220\fc0\cf0 \
-Generating MIDI Time Code is quite easy.  You simply instantiate an instance of the class 
-\b MTCPerformer
+\fs30 \cf0  
+\b0\fs28 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 Generating MIDI Time Code is quite easy.  You simply instantiate an instance of the class 
+\b MKMTCPerformer
 \b0 .  This is a subclass of 
-\b Performer
+\b MKPerformer
 \b0  with a 
 \b perform 
 \b0 method that sends MIDI time code messages.   To use an 
-\b MTCPerformer
-\b0 , simply, instantiate the object, activate it, connect it to a Midi object and start the performance.  This is done with the usual Performer methods:\
+\b MKMTCPerformer
+\b0 , simply, instantiate the object, activate it, connect it to a MKMidi object and start the performance.  This is done with the usual MKPerformer methods:\
 \
-
-\pard\tx2260\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc0\cf0 	id myMTCPerformer =[[MTCPerformer alloc] init];\
-
-\fc1\cf1 	id myMidi = [Midi newOnDevice:"midi0"];\
+\pard\tx2260\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 	id myMTCPerformer =[[MKMTCPerformer alloc] init];\
+	id myMidi = [MKMidi midiOnDevice: @"midi0"];\
 	[[myMTCPerformer noteSender] connect:[myMidi noteReceiver]];\
 	[myMTCPerformer activate];\
 	[myMidi run];\
-	[Conductor startPerformance];\
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc0\cf0 \
+	[MKConductor startPerformance];\
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 \
 This will begin generating time code in a forward direction, beginning with the value 0:0:0:0, using the default format (24 frames/second).  \
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b\i Customizing Time Code Generation\
+\i\b \cf0 Customizing Time Code Generation\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b0\i0 You set the format with the method 
+\i0\b0 \cf0 You set the format with the method 
 \b setFormat:
 \b0 .  The argument should be one of the following constants, defined in 
-\b <musickit/MTCPerformer.h>
+\b <MusicKit/MKMTCPerformer.h>
 \b0 :\
-
-\pard\tx2260\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc0\cf0 	\
-
-\fc1\cf1 	MK_MTC_FORMAT_24\
+\pard\tx2260\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 	\
+	MK_MTC_FORMAT_24\
    	MK_MTC_FORMAT_25\
    	MK_MTC_FORMAT_DROP_30\
    	MK_MTC_FORMAT_30\
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc0\cf0 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 \
 You set the first and last MTC value using the methods 
 \b setFirstTimeTag:
 \b0 , 
 \b setLastTimeTag:
 \b0  and 
 \b setTimeShift:.   
-\b0  To set the first value the Performer will generate, you use 
+\b0  To set the first value the MKPerformer will generate, you use 
 \b setFirstTimetTag:
-\b0 .   Note that this method also sets the time from activation at which the Performer will start sending time code.  For example, if you set a Performer's 
+\b0 .   Note that this method also sets the time from activation at which the MKPerformer will start sending time code.  For example, if you set a MKPerformer's 
 \i firstTimeTag
 \b  
-\b0\i0 to 10.0 seconds before the performance has started, then activate the Performer and start the performance, the Performer will begin sending time code at time 10.0 seconds and the values will begin at the MTC time 0:0:10:0  (zero hours, zero minutes, ten seconds, zero frames).   \
+\i0\b0 to 10.0 seconds before the performance has started, then activate the MKPerformer and start the performance, the MKPerformer will begin sending time code at time 10.0 seconds and the values will begin at the MTC time 0:0:10:0  (zero hours, zero minutes, ten seconds, zero frames).   \
 \
 You may want the time code to begin sending immediately, regardless of 
 \i firstTimeTag
-\i0 .  To do this, use the Performer method 
+\i0 .  To do this, use the MKPerformer method 
 \b setTimeShift:
 \b0  and pass it an argument of ±
 \i firstTimeTag
 \i0 :\
-
-\fc1\cf1 \
-
-\pard\tx2260\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc1\cf1 	id myMTCPerformer =[[MTCPerformer alloc] init];\
+\
+\pard\tx2260\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 	id myMTCPerformer =[[MTCPerformer alloc] init];\
 	[myMTCPerformer setFirstTimeTag:10.0];\
 	[myMTCPerformer setTimeShift:-10.0];\
 	[myMTCPerformer activate];\
-	[Conductor startPerformance];\
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc0\cf0 \
+	[MKConductor startPerformance];\
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 \
 If you want to generate time code beginning with a value of 2.0 seconds and start sending that time that time code at time 3.0 seconds, set 
 \i firstTimeTag 
 \i0 to 2.0 and 
@@ -128,18 +132,18 @@ If you want to generate time code beginning with a value of 2.0 seconds and star
 \i start time
 \i0  given in the formula above is relative to the time of activation.  \
 \
-By default, time code generation continues until you deactivate the Performer or finish the performance.  However, you can specify that the Performer automatically deactivate when it reaches a certain target MTC value by sending it the 
+By default, time code generation continues until you deactivate the MKPerformer or finish the performance.  However, you can specify that the MKPerformer automatically deactivate when it reaches a certain target MTC value by sending it the 
 \b setLastTimeTag:
 \b0  message.   Normally, 
 \i lastTimeTag
 \i0  should be greater than 
 \i firstTimeTag.  
-\i0 However, you can tell the Performer to send reverse time code as follows:\
+\i0 However, you can tell the MKPerformer to send reverse time code as follows:\
 \
-
-\pard\tx2260\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc1\cf1 	[myMTCPerformer setDirection:MK_MTC_REVERSE];\
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc0\cf0 \
+\pard\tx2260\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 	[myMTCPerformer setDirection:MK_MTC_REVERSE];\
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 \
 Then, 
 \i lastTimeTag 
 \i0 should be 
@@ -152,13 +156,11 @@ Then,
 \i lastTimeTag 
 \i0 is reached.   You cancel generation of reverse time code by sending the message:\
 \
-
-\pard\tx2260\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc0\cf0 	
-\fc1\cf1 [myMTCPerformer setDirection:MK_MTC_FORWARD];\
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc1\cf1 \
-
-\fc0\cf0 As an alternative to using 
+\pard\tx2260\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 	[myMTCPerformer setDirection:MK_MTC_FORWARD];\
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 \
+As an alternative to using 
 \b setFirstTimeTag:
 \b0 , 
 \b setLastTimeTag:
@@ -167,14 +169,13 @@ Then,
 \b0 , you can use met hods that allow you to specify the time directly in MTC units.   For example, to set 
 \i firstTimeTag 
 \i0 to a MTC value of 0:21:59:5, you send the following mesage:\
-
-\fc1\cf1 \
-
-\pard\tx2260\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc1\cf1 	[myMTCPerformer setFirstTimeTagMTCHours:0 minutes:21 \
+\
+\pard\tx2260\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 	[myMTCPerformer setFirstTimeTagMTCHours:0 minutes:21 \
 		seconds:59 frames:5];\
 \
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc0\cf0 This sets the 
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 This sets the 
 \i firstTimeTag 
 \i0 value as specified, assuming the current MTC format.  Analagous methods are provided for setting 
 \i lastTimeTag 
@@ -183,8 +184,7 @@ Then,
 \i0 .  \
 \
 To conveniently convert between seconds and MTC time formats, the Music Kit provides two C functions:\
-
-\fc1\cf1 \
+\
 extern double  /* Returns time in seconds */\
   MKConvertMTCToSeconds(short format,\
 		short hours,\
@@ -200,18 +200,19 @@ extern void    /* Returns (by reference) time in MTC units */\
                        		 short *secondsPtr,\
 		short *framesPtr);\
 \
-
-\fc0\cf0 These functions do straight translation.  They do not take into account any 
+These functions do straight translation.  They do not take into account any 
 \i DeltaTime
 \i0  value (described later in this document.)  \
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b\i Pausing or Freezing Time Code Generation\
+\i\b \cf0 Pausing or Freezing Time Code Generation\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b0\i0 You can pause time code generation using the standard Performer 
+\i0\b0 \cf0 You can pause time code generation using the standard MKPerformer 
 \b pause 
-\b0  method.   A paused Performer stops sending MIDI time code until it is resumed using the 
+\b0  method.   A paused MKPerformer stops sending MIDI time code until it is resumed using the 
 \b resume 
 \b0 message.  When it is resumed, it sends a MTC Full Message, then resumes time code generation where it left off. \
 \
@@ -223,10 +224,12 @@ You can also
 \b thawTimeCode 
 \b0 message.\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b\i Generating Full Messages and SMPTE User Bits\
+\i\b \cf0 Generating Full Messages and SMPTE User Bits\
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\i0 \
+\i0 \cf0 \
 
 \b0 A MTC Full Message is sent when the performer is resumed and the first time it is activated.  Normally, this is sufficient.  However, you can send a Full Message at any time, by sending  
 \b sendFullMTCMessage
@@ -238,11 +241,13 @@ You can also
 \b sendUserBits:groupFlagBits:
 \b0 .  See the MIDI Time Code specification or the SMPTE specification for the meaning of the arguments.\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b\i What Time is It?\
+\i\b \cf0 What Time is It?\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b0\i0 You can ask the MTCPerformer the current MTC time with the 
+\i0\b0 \cf0 You can ask the MTCPerformer the current MTC time with the 
 \b timeTag
 \b0  or 
 \b getMTCHours:minutes:seconds:frames: 
@@ -251,82 +256,93 @@ You can also
 See the 
 \b MTCPerformer
 \b0  Class Description for further information.  \
+\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1880\fi-680\ql\qnatural
 
-\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b\fs30\fi-680\li1880\fc0\cf0 \
+\b\fs30 \cf0 \
+\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1880\fi-680\ql\qnatural
 
-\fs36\fc1\cf1 Synchronizing to Incoming MIDI Time Code\
+\fs36 \cf0 Synchronizing to Incoming MIDI Time Code\
+\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1880\fi-1880\ql\qnatural
 
-\b0\fs28\fi-1880\fc0\cf0 \
+\b0\fs28 \cf0 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b\i\li1220\fc0\cf0 Overview\
+\i\b \cf0 Overview\
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b0\i0 \
+\i0\b0 \cf0 \
 To synchronize a Music Kit performance to incoming MIDI Time Code, send a conductor the message 
 \b setMTCSynch:
-\b0 , with a Midi object as the argument.  The  Midi object pass ed to this method corresponds to the MIDI device  to which the user will be sending MIDI time code.   You must send 
+\b0 , with a MKMidi object as the argument.  The  MKMidi object passed to this method corresponds to the MIDI device  to which the user will be sending MIDI time code.   You must send 
 \b setMTCSynch:
 \b0  before the performance has started, i.e. before +
 \b startPerformance
-\b0  is sent.   You must also assign your conductor as the conductor for any Performers that you would like tosynchronize to time code.   \
+\b0  is sent.   You must also assign your conductor as the conductor for any MKPerformers that you would like tosynchronize to time code.   \
 \
-Once you start the performance, the MIDI time code Conductor waits until time code starts running.  It then tells its active performers the current time, reactivates them, and begins conducting them.  \
+Once you start the performance, the MIDI time code MKConductor waits until time code starts running.  It then tells its active performers the current time, reactivates them, and begins conducting them.  \
 \
-Here is an example of a simple performance with one PartPerformer that is synchronized to MIDI time code:\
+Here is an example of a simple performance with one MKPartPerformer that is synchronized to MIDI time code:\
 \
-
-\pard\tx2100\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc1\cf1 	Midi *aMidi = [Midi newOnDevice:"midi0"];\
-	PartPerformer *aPartPerf = [[PartPerformer alloc] init];\
-	Conductor *aCond = [Conductor defaultConductor]; \
+\pard\tx2100\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 	MKMidi *aMidi = [MKMidi midiOnDevice: @"midi0"];\
+	MKPartPerformer *aPartPerf = [[MKPartPerformer alloc] init];\
+	MKConductor *aCond = [MKConductor defaultConductor]; \
 	[aMidi open];\
 	[aCond setMTCSynch:aMidi];\
 	[aPartPerf setConductor:aCond];\
 	[aPartPerf activate];\
 	[aMidi run];\
-	[Conductor startPerformance];\
-
-\fi-1880\li1880 \
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc0\cf0 In this example, the default Conductor is used.  Any Conductor, with the exception of the clockConductor, may be made to synchronize with MIDI time code.  \
+	[MKConductor startPerformance];\
+\pard\tx2100\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1880\fi-1880\ql\qnatural
+\cf0 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 In this example, the default MKConductor is used.  Any MKConductor, with the exception of the clockConductor, may be made to synchronize with MIDI time code.  \
 \
-Currently, only one Conductor at a time may be in that mode.  If you send a second Conductor the 
+Currently, only one MKConductor at a time may be in that mode.  If you send a second MKConductor the 
 \b setMTCSynch:
-\b0  message, it steals the role of MTC Conductor from the Conductor that previously received the 
+\b0  message, it steals the role of MTC Conductor from the MKConductor that previously received the 
 \b setMTCSynch:
 \b0  message.  Thus, there can only be one MIDI time code source. \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b\fs30 \
+\b\fs30 \cf0 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\i\fs28 Adding a Time Offset 
+\i\fs28 \cf0 Adding a Time Offset 
 \fs30 to Incoming MIDI Time Code\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b0\i0\fs28 MIDI Time Code provides an absolute time base.  The Music Kit allows you to shift that time base using the Conductor method 
+\i0\b0\fs28 \cf0 MIDI Time Code provides an absolute time base.  The Music Kit allows you to shift that time base using the MKConductor method 
 \b setTimeOffset:
 \b0 .   The offset you specify is subtracted from the MIDI time code.  All Music Kit time methods take this offset into account.  For example, if you would like a MIDI time code time of 30 minutes to correspond to a Music Kit time of 1 minute, you send\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\qc
+\cf0 [myConductor setTimeOffset:29 * 60];\
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220
 
-\qc\fc1\cf1 [myConductor setTimeOffset:29 * 60];\
-
-\f2\ql\fs20\fc0\cf0 \
+\f2\fs20 \cf0 \
 
 \f0\fs28 If, on the other hand, you want a MIDI time code time of 0 to correspond to a Music Kit time of 1 minute, you send\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\qc
+\cf0 [myConductor setTimeOffset:-60];\
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220
 
-\qc\fc1\cf1 [myConductor setTimeOffset:-60];\
-
-\b\i\ql\fs30\fc0\cf0 \
+\i\b\fs30 \cf0 \
 
 \fs28 Finding Out What's Going On With MTC
 \fs30  \
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220
 
-\b0\i0\fs28 The Conductor sends its delegate messages reflecting the status of MIDI Time Code.   When time code starts the first time, the delegate receives the message 
+\i0\b0\fs28 \cf0 The MKConductor sends its delegate messages reflecting the status of MIDI Time Code.   When time code starts the first time, the delegate receives the message 
 \b conductorWillSeek:
-\b0 , indicating that the Performers were reactivated, followed by 
+\b0 , indicating that the MKPerformers were reactivated, followed by 
 \b conductorDidSeek: 
 \b0 and 
 \b  conductorDidResume:
-\b0 .   If time code stops, the Conductor sends its delegate the message 
+\b0 .   If time code stops, the MKConductor sends its delegate the message 
 \b conductorDidPause:
 \b0 .   If time code starts again in the same place, the delegate receives 
 \b conductorDidResume:
@@ -348,33 +364,37 @@ Currently, only one Conductor at a time may be in that mode.  If you send a seco
 
 \b0 For example, you might want to silence any sounding notes when time code stops are seeks.   The SynthInstrument 
 \b allNotesOff 
-\b0 and the Midi method 
+\b0 and the MKMidi method 
 \b allNotesOffIfNeeded 
 \b0 are useful for this purpose.   Another typical use of the delegate methods is to inform the user of the status of MIDI time code.  \
 \
-As usual, if the delegate does not respond to one of these messages, the Conductor does not send that message. \
+As usual, if the delegate does not respond to one of these messages, the MKConductor does not send that message. \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220
 
-\b \
+\b \cf0 \
 N.B. 
 \b0 There is a known bug in the MIDI driver that sometimes causes it to spuriously report backward time code.  The only work-around is to stop the SMPTE tape, wait a second, and then start it again.  That should unwedge the driver. \
 
 \b \
 
-\i\fs30 Synchronizing Your Own Performer Subclass to Incoming MIDI Time Code\
+\i\fs30 Synchronizing Your Own MKPerformer Subclass to Incoming MIDI Time Code\
+\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1880\fi-680\ql\qnatural
 
-\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\i0\fi-680\li1880\fc0\cf0 \
+\i0 \cf0 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b0\fs28\li1220\fc0\cf0 The Music Kit Performers all synchronize correctly to MIDI time code.  If you make your own Performer subclass synchronize, you need to support a simple informal protocol called 
+\b0\fs28 \cf0 The Music Kit MKPerformers all synchronize correctly to MIDI time code.  If you make your own MKPerformer subclass synchronize, you need to support a simple informal protocol called 
 \b Time Code Performer Protocol
-\b0 .  There are three parts to this protocol.   \
-
-\pard\tx1900\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc0\cf0 	1. A Time Code Performer must implement a method 
+\b0 .  There are three parts to this protocol:\
+\
+\pard\tx1900\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 	1. A Time Code MKPerformer must implement a method 
 \b setFirstTimeTag:
 \b0 , which takes a 
 \i double 
-\i0 argument, represnting the starting value of MIDI time code in seconds.  A common implementation of this method stores the value it is passed in an instance variable.  The Performer class provides a default implementation, which does nothing.\
+\i0 argument, represnting the starting value of MIDI time code in seconds.  A common implementation of this method stores the value it is passed in an instance variable.  The MKPerformer class provides a default implementation, which does nothing.\
 	\
-	2.  A Time Code Performer's 
+	2.  A Time Code MKPerformer's 
 \b activateSelf 
 \b0 method must position itself at the Note it wants to send at  
 \i firstTimeTag
@@ -385,7 +405,7 @@ N.B.
 \i0 It then sets its 
 \i nextPerform
 \b  
-\b0\i0 instance variable
+\i0\b0 instance variable
 \i  
 \i0 to that Note's time (which will be greater than or equal to 
 \i firstTimeTag.
@@ -397,7 +417,7 @@ N.B.
 \b nil
 \b0 .  \
 \
-	3.  The first invocation of a Time Code Performer's 
+	3.  The first invocation of a Time Code MKPerformer's 
 \b perform 
 \b0 method should send the selected Note, then choose the next Note and set 
 \i nextPerform 
@@ -411,25 +431,26 @@ N.B.
 \i firstTimeTag
 \i0 .  This makes sure that all SynthInstrument  and MIDI controllers are up to date.  (This is sometimes called "chasing controller values" in MIDI parlance.)\
 	\
-Here is an example of a simple, but complete, Time Code Perfomer.  This example is a simplified version of the Music Kit PartPerformer:\
+Here is an example of a simple, but complete, Time Code Perfomer.  This example is a simplified version of the Music Kit MKPartPerformer:\
 \
+\pard\tx1900\tx2460\tx3380\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1960\ql\qnatural
 
-\pard\tx1900\tx2460\tx3380\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1960\fc1\cf1 #import <musickit/musickit.h>\
+\f2\fs24 \cf0 #import <MusicKit/MusicKit.h>\
 #import "MyPartPerformer.h"\
-@implementation MyPartPerformer:Performer\
+@implementation MyPartPerformer:MKPerformer\
 \{\
     id part;             /* Part over which we're sequencing. */\
     double firstTimeTag; /* Required by Time Code Protocol. */        \
     int currentIndex;    /* Index of nextNote */\
 \}\
 \
--±initForPart:aPart\
+±initForPart:aPart\
 \{\
     if (!aPart) \
 	   return nil;\
     [super init];\
     part = aPart;\
-    [self addNoteSender: [[NoteSender alloc] init]];\
+    [self addNoteSender: [[MKNoteSender alloc] init]];\
     return self;\
 \}\
 \
@@ -481,295 +502,134 @@ Here is an example of a simple, but complete, Time Code Perfomer.  This example 
 	  nextPerform = [[noteList objectAt:currentIndex] timeTag]-t;\
  	return self;\
 \}\
+\pard\tx1900\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1960\ql\qnatural
 
-\pard\tx1900\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1960\fc1\cf1 \
-
-\li1220\fc0\cf0 Of course, any performer can be used with a MIDI time code conductor.  However, unless you follow the Time Code Performer protocol described above, it will not seek as you might expect.   \
+\f0\fs28 \cf0 \
+\pard\tx1900\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 Of course, any performer can be used with a MIDI time code conductor.  However, unless you follow the Time Code Performer protocol described above, it will not seek as you might expect.   \
 \
-N.B.  When a Performer is activated while a performance is in progress, the Performer 
+N.B.  When a MKPerformer is activated while a performance is in progress, the MKPerformer 
 \b activate 
 \b0 method adds its 
 \i nextPerform 
-\i0 to the current Conductor time to determine the time of the first invocation of the Performer's 
+\i0 to the current MKConductor time to determine the time of the first invocation of the MKPerformer's 
 \b perform 
-\b0 method.  Thus, the protocol described above would seem to introduce an undesired offset equal to the Conductor's current time.  Therfore, the 
+\b0 method.  Thus, the protocol described above would seem to introduce an undesired offset equal to the MKConductor's current time.  Therfore, the 
 \b activate 
-\b0 method makes a special case of Performers that are managed by a MIDI Time Code Conductor–  it does 
+\b0 method makes a special case of MKPerformers that are managed by a MIDI Time Code Conductor–  it does 
 \i not
-\i0  add in the Conductor's time when activating such Performers.  The distinction between the two interpretations of 
+\i0  add in the MKConductor's time when activating such MKPerformers.  The distinction between the two interpretations of 
 \i nextPerform 
 \i0 is an historical artifact.  \
+\pard\tx1900\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b\fs30 \
+\b\fs30 \cf0 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\i\li1220\fc0\cf0 Specifying Tempo\
+\i \cf0 Specifying Tempo\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b0\i0\fs28 MIDI Time Code is not intended for conveying tempo.   It is simply a steady stream reporting the passage of time.  If you want to incorporate tempo into your performance, you have two options.  You can use the Conductor's 
+\i0\b0\fs28 \cf0 MIDI Time Code is not intended for conveying tempo.   It is simply a steady stream reporting the passage of time.  If you want to incorporate tempo into your performance, you have two options.  You can use the MKConductor's 
 \i Tempo Protoco
 \i0 l or you can implement the 
 \i Time Map Protocol 
-\i0 (informal).  You cannot use both for the same Conductor.  In particular, if you implement the 
+\i0 (informal).  You cannot use both for the same MKConductor.  In particular, if you implement the 
 \i Time Map Protocol, 
-\i0 the Conductor 
+\i0 the MKConductor 
 \b setTempo: 
 \b0 and 
 \b setBeatSize: 
 \b0 methods have no effect.\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b\i\fs30 Using the Conductor's Tempo Protocol\
+\i\b\fs30 \cf0 Using the Conductor's Tempo Protocol\
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b0\i0\fs28 \
-To use the Conductor's tempo in a MIDI time code performance, simply set the MIDI time code Conductor's tempo with the 
+\i0\b0\fs28 \cf0 \
+To use the MKConductor's tempo in a MIDI time code performance, simply set the MIDI time code MKConductor's tempo with the 
 \b setTempo:
-\b0  method.  Changing the tempo during the course of a MIDI time code performance will work, but when the time code seeks, the Conductor uses the current tempo as that of the entire piece.  It sets its new time based on that value.  For example, if the tempo is 120 beats per minute and MIDI time code starts at time 30.0 seconds, the Conductor sets its time to 60 beats. \
+\b0  method.  Changing the tempo during the course of a MIDI time code performance will work, but when the time code seeks, the MKConductor uses the current tempo as that of the entire piece.  It sets its new time based on that value.  For example, if the tempo is 120 beats per minute and MIDI time code starts at time 30.0 seconds, the MKConductor sets its time to 60 beats. \
 \
 For more complex situations, when you want a planned and predicatable tempo trajectory synchronized to the MIDI time code, you should implement the Time Map Protocol.\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b\i\fs30 Using the Conductor's Time Map Protocol\
+\i\b\fs30 \cf0 Using the Conductor's Time Map Protocol\
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b0\i0\fs28 \
-This protocol relies on the Conductor's delegate to implement two methods that specify the mapping between "beat time" and "clock time."   For more information, see  \
+\i0\b0\fs28 \cf0 \
+This protocol relies on the MKConductor's delegate to implement two methods that specify the mapping between "beat time" and "clock time."   For more information, see  \
 \
         
-{\b{\NeXTHelpLink17426 \markername ;\linkFilename /LocalLibrary/Documentation/MusicKit/Concepts/MusicPerformance.rtfd ;\linkMarkername ;}
-¨}\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\f0\b\i0\ulnone\fs28\li1220\fc0\cf0  /LocalLibrary/Documentation/MusicKit/Concepts/MusicPerformance.rtfd
+\b  /Local/Library/Documentation/MusicKit/Concepts/MusicPerformance.rtfd
 \b0    \
+\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1880\fi-680\ql\qnatural
 
-\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b\fi-680\li1880\fc0\cf0 \
+\b \cf0 \
 
-\i\fs30 The Relationships between MIDI, the DSP, the Conductor and the Clock on the Wall\
+\i\fs30 Other Useful Methods\
+\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1880\fi-680\ql\qnatural
 
-\i0 \
+\i0 \cf0 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b0\fs28\li1220\fc0\cf0 The Music Kit needs to satisfying two conflicting requirements, timely execution of scheduled events and steady performance.  The Music Kit variable 
-\i deltaT 
-\i0 adjusts the tread-off between responsiveness and dependability.  
-\i deltaT 
-\i0 provides the Music Kit with a "cushion" of time to absorb any bursts of computation that would otherwise result in unsteady performance.   Setting 
-\i deltaT 
-\i0 to 0.0 gives the most responsive performance, but one that is likely to be unsteady in musically dense textures.   Setting 
-\i deltaT 
-\i0 to a larger values gives a more dependable performance at the expense of a greater latency.   
-\i DeltaT 
-\i0 is returned by the function 
-\f2\fs20 MKGetDeltaT()
-\f0\i\fs28 .  
-\i0 You can set the value of 
-\i deltaT 
-\i0 with the function 
-\f2\fs20 MKSetDeltaT().  
-\f0\fs28 \
+\b0\fs28 \cf0 To round out the support for MIDI time code, the Music Kit provides the following support methods:\
 \
-The manner in which 
-\i deltaT 
-\i0 is interpreted depends on the 
-\i deltaT mode.  
-\i0  Music Kit supplies two modes, 
-\i device lag mode
-\i0  and 
-\i scheduler advance mode.
-\i0  
-\i   
-\i0 In 
-\i device lag mode
-\i0 , the Music Kit clockConductor stays in synch, as much as possible, with "wall time", the actual time since the performance began, while devices such as MIDI and the DSP lag behind by 
-\i deltaT.   
-\i0 In contrast, in 
-\i scheduler advance mode, 
-\i0 the devices stay in synch with wall time, while the clockConductor runs in advance of wall time by 
-\i deltaT.  
-\i0 You set the 
-\i deltaT
-\i0  mode with the C function: 
-\f2\fs20 MKSetDeltaTMode()
-\f0\fs28 , passing it an argument of either MK_DELTAT_SCHEDULER_ADVANCE or MK_DELTAT_DEVICE_LAG.\
-Both of these modes work whether or notany Conductors are synchronizing to MTC.\
-\
-Keep in mind that in order for a non-zero 
-\i deltaT 
-\i0 to have the desired effect , you must set the Midi and Orchestra objects to timed mode.  See the Class Descriptions of these objects for details.\
-\
-
-\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b\fi-680\li1880\fc0\cf0 	Device Lag Mode \
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b0\li1220\fc0\cf0 \
-The default mode is 
-\i device lag mode 
-\i0 (for historical reasons.)   The value returned by 
-\f2\fs20 MKGetDeltaT() 
-\f0\fs28 is added to time stamps sent to the MIDI driver and DSP, providing the Music Kit with its "cushion".   The function 
-\f2\fs20 MKGetDeltaTTime()
-\f0\fs28  does this addition.
-\f2\fs20   
-\f0\fs28  The Conductor runs steadily from the time it is started, while the output of the devices, such as MIDI and the DSP, seems to wait 
-\i deltaT 
-\i0 seconds and then runs steadily.  The amount of time it waits is 
-\i deltaT.  \
-\
-
-\i0 In addition, the Orchestra and Midi provide a "local deltaT" which is added in on top of the ordinary 
-\i deltaT.  
-\i0 This allows you to compensate for any difference of delay between these devices.\
-\
-
-\i Device lag mode 
-\i0 works well for many cases.  But there are other cases, and MIDI Time Code synchronization is one of them, when we want the 
-\i devices' 
-\i0 notion of time to be that of wall time, while still keeping a cushion to absorb bursts ofcomputation.   This is the functionality provided by 
-\i scheduler advance mode. 
-\i0 \
-\
-
-\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b\fi-680\li1880\fc0\cf0 	Scheduler Advance Mode \
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b0\li1220\fc0\cf0 \
-Here, we let the clockConductor's notion of time run 
-\i ahead
-\i0  of wall time by 
-\i deltaT.  
-\i0 That is, the clockConductor races ahead when started, then maintains time such that the wall time since the performance began is the clockConductor's time minus 
-\i deltaT
-\i0 .   The time it reports (returned by 
-\f2\fs20 MKGetTime() 
-\f0\fs28 and 
-\f2\fs20 [[Conductor clockConductor] time]
-\f0\fs28 ) includes this 
-\i deltaT
-\i0 .  
-\i \
-
-\i0 \
-For example, assume 
-\i deltaT 
-\i0 is 1.0.  At MTC time 4.0, the Conductor runs Performers scheduled for time 5.0, causing them to send the events destined for time 5.0 to the drivers.  The drivers provide a delay of 
-\i deltaT 
-\i0 to compensate for the fact that the events were sent early.   Thus, the events are rendered at the correct time–when MTC reaches 5.0, the listener hears the events for time 5.0.   \
-\
-Implementation details:   In this mode,  instead of adding 
-\i deltaT
-\i0  to the time stamps sent to the devices, we just send the Notes early by 
-\i deltaT
-\i0 .   Thus, 
-\f2\fs20 MKGetDeltaTTime()
-\f0\fs28  returns the same value as 
-\f2\fs20 MKGetTime()
-\f0\fs28  so objects such as Midi and Orchestra that use 
-\f2\fs20 MKGetDeltaTTime()
-\f0\fs28  to determine their time stamps work correctly.   As a final refinement, if Midi's method 
-\b useInputTimeStamps:
-\b0 YES was sent, the time stamps returned from the Midi driver are adjusted by 
-\i adding
-\i0  
-\i deltaT
-\i0  before the Conductor's time is set from them.  The makes sure that these stamps are in the Conductor's time base.  Note that it is still possible to add a "local deltaT" to Midi or the Orchestra–these methods work the same way in 
-\i scheduler advance mode 
-\i0 as they do in 
-\i device lag mode.
-\i0 \
-\
-
-\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b\fi-680\li1880\fc0\cf0 	Sequencer Overdubbing \
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b0\li1220\fc0\cf0 \
-To simplify the task of overdubbing, PartRecorder and FileRecorder provide a method that makes sure that recorded time tags match wall time:
-\i \
-\
-
-\i0\fc1\cf1         - compensateForDeltaT:(BOOL)yesOrNo /* default is NO */\
-
-\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\f2\fs20\fi-680\li1880\fc0\cf0 \
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\f0\fs28\li1220\fc0\cf0 If sent with an argument of YES, this method instructs the object to subtract 
-\i deltaT
-\i0  from the time it assigns the Notes it records.  This is useful because the effect of 
-\i deltaT 
-\i0 causes the listener to respond to an event at time 
-\i t 
-\i0 with a response at time 
-\i t + deltaT.    
-\i0 By subtracting 
-\i deltaT, 
-\i0 we undo that undesired offset.\
-
-\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\f2\fs20\fi-680\li1880\fc0\cf0         \
-
-\f0\b\fs28 	Hints and Reminders\
-\
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b0\li1220\fc0\cf0 To minimize delays when using the DSP, be sure to send \
-
-\fc1\cf1 [Orchestra setFastResponse:YES].  
-\fc0\cf0 Also, using a high sampling rate will give less of a delay when sending sound out the NeXT monitor. 
-\b  \
-
-\pard\tx800\tx1880\tx2980\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\f2\b0\fs20\fi-680\li1880\fc0\cf0 \
-
-\f0\b\i\fs30 Other Useful Methods\
-
-\i0 \
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\b0\fs28\li1220\fc0\cf0 To round out the support for MIDI time code, the Music Kit provides the following support methods:\
-\
-The Midi method 
+The MKMidi method 
 \b time 
 \b0 returns the current time, according to the MIDI driver, adjusted as follows: \
 If 
 \i deltaT
 \i0  mode is MK_DELTAT_SCHEDULER_ADVANCE, 
 \i deltaT
-\i0  is added to this time.  If the receiver is providing time code for a Conductor, that  Conductor's time offset is reflected in the time returned by this method.   A similar Midi method, 
+\i0  is added to this time.  If the receiver is providing time code for a MKConductor, that  MKConductor's time offset is reflected in the time returned by this method.   A similar MKMidi method, 
 \b getMTCFormat:hours:min:sec:frames:
 \b0 ,
 \b  
-\b0 returns by reference the current MIDI time code time, according to the MIDI driver.   This method only works ifa Midi object is open and acting as a source of MIDI time code.  The time is adjusted as with the 
+\b0 returns by reference the current MIDI time code time, according to the MIDI driver.   This method only works if a MKMidi object is open and acting as a source of MIDI time code.  The time is adjusted as with the 
 \b time 
 \b0 method.   Unlike most of the Music Kit time methods and functions, both 
 \b time 
 \b0 and 
 \b getMTCFormat:hours:min:sec:frames:
-\b0  get the current time, whether or not 
-\fc1\cf1 [Conductor adjustTime] 
-\fc0\cf0 or  
-\fc1\cf1 [Conductor lockPerformacne]
-\f2\fs20\fc0\cf0  
+\b0  get the current time, whether or not [MKConductor adjustTime] or  [MKConductor lockPerformacne]
+\f2\fs20  
 \f0\fs28 was done.  \
 \
-The Conductor method 
+The MKConductor method 
 \b clockTime 
-\b0 is a convenience method.  It returns a double representing the current clock time for the object.  If the object is a MIDI time code Conductor, this is the current MIDI time code time, the same value returned by Midi's 
+\b0 is a convenience method.  It returns a double representing the current clock time for the object.  If the object is a MIDI time code MKConductor, this is the current MIDI time code time, the same value returned by MKMidi's 
 \b time 
-\b0 method.   If the object is not a MIDI time code Conductor, it is the same as the value returned by \
-
-\fc1\cf1 [[Conductor clockConductor] time].\
-
-\i\fc0\cf0 \
-
-\i0 The Conductor method 
-\b MTCSynch 
-\b0 returns the Midi object previously set with 
-\b setMTCSynch:
-\b0 , if any, else nil.   Similarly,the Midi method 
-\b synchConductor 
-\b0 returns the Conductor object managing MIDI time code, if any, else nil.    Keep in mind that only one Conductor at a time may have an MTCSynch object. \
+\b0 method.   If the object is not a MIDI time code MKConductor, it is the same as the value returned by \
+[[MKConductor clockConductor] time].\
 
 \i \
 
-\i0 The Conductor method 
+\i0 The MKConductor method 
+\b MTCSynch 
+\b0 returns the MKMidi object previously set with 
+\b setMTCSynch:
+\b0 , if any, else nil.   Similarly,the MKMidi method 
+\b synchConductor 
+\b0 returns the MKConductor object managing MIDI time code, if any, else nil.    Keep in mind that only one MKConductor at a time may have an MTCSynch object. \
+
+\i \
+
+\i0 The MKConductor method 
 \b activePerformers 
-\b0 returns a List object of active Performers using that Conductor.  \
-
-\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\fc0\cf0 \
-
-\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\fc0\cf0 The SynthInstrument method 
+\b0 returns a List object of active MKPerformers using that MKConductor.  \
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\ql\qnatural
+\cf0 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
+\cf0 The SynthInstrument method 
 \b allNotesOff 
 \b0 sends a 
 \b noteOff: 
 \b0 message to all running SynthPatches.  \
 \
-The Midi 
+The MKMidi 
 \b allNotesOff 
 \b0 method sends a 
 \b noteOff 
@@ -781,33 +641,38 @@ The Midi
 \b \
 \
 
-\b0 To help support MIDI time code, the PartPerformer  method 
+\b0 To help support MIDI time code, the MKPartPerformer  method 
 \b perform
 \b0  now sends all noteUpdates up to the current time the first time it is invoked.  This makes sure that all SynthInstruments and MIDI controllers have the proper values. 
 \i\fs30 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b \
+\b \cf0 \
 Debugging MIDI Time Code\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b0\i0\fs28 Calling the function 
-\fc1\cf1 MKSetTrace(MK_TRACEMIDI)
-\f2\fs20\fc0\cf0  
-\f0\fs28 causes messages to be written to stderr whenever the time code Conductor resumes, pauses, or seeks.  Also, it prints a message when time code "slips" in comparison to the system clock.  A negative slip means that time code is running faster than the system clock.  A positive slip means that time code is running slower than the system clock.  Note that slip messages are not printed when time code seeks.  \
+\i0\b0\fs28 \cf0 Calling the function MKSetTrace(MK_TRACEMIDI)
+\f2\fs20  
+\f0\fs28 causes messages to be written to stderr whenever the time code MKConductor resumes, pauses, or seeks.  Also, it prints a message when time code "slips" in comparison to the system clock.  A negative slip means that time code is running faster than the system clock.  A positive slip means that time code is running slower than the system clock.  Note that slip messages are not printed when time code seeks.  \
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b\i\fs30 Restrictions \
+\i\b\fs30 \cf0 Restrictions \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b0\i0\fs28 \
-You cannot pause a performance in which a MIDI time code Conductor is participating.  An attempt to do wo will be ignored.   Similarly, you cannot  pause a MIDI time code Conductor.   Unclocked performances involving MIDI time code conductors are not supported. Hence, 
+\i0\b0\fs28 \cf0 \
+You cannot pause a performance in which a MIDI time code MKConductor is participating.  An attempt to do wo will be ignored.   Similarly, you cannot  pause a MIDI time code MKConductor.   Unclocked performances involving MIDI time code conductors are not supported. Hence, 
 \b setMTCSynch: 
-\b0 sends [Conductor setClocked:YES];\
+\b0 sends [MKConductor setClocked:YES];\
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b\i\fs30 Obsolete methods \
+\i\b\fs30 \cf0 Obsolete methods \
 \
+\pard\tx3380\tx4080\tx4820\tx5500\tx6340\tx7240\tx8160\tx9040\tx9940\tx10840\li1220\ql\qnatural
 
-\b0\i0\fs28 The Conductor method 
+\i0\b0\fs28 \cf0 The MKConductor method 
 \b predictTime: 
 \b0 should no longer be overridden as a way to control tempo.  Use the tempo protocols described above.\
 \
@@ -815,5 +680,4 @@ You cannot pause a performance in which a MIDI time code Conductor is participat
 \
 \
 \
-
 }

@@ -1,3 +1,5 @@
+#ifndef __MK_EnvySimplified_H___
+#define __MK_EnvySimplified_H___
 #import <musickit/SynthPatch.h>
 
 /* Interface for example SynthPatch EnvySimplified. */
@@ -13,3 +15,4 @@
 
 @end
 
+#endif

@@ -18,14 +18,14 @@
 #import <signal.h>
 #import <servers/netname.h>
 #import <libc.h>
-#import <MKPerformMIDI/midi_driver.h>
-#import <MusicKit/midi_spec.h>
+#import <MusicKit/MusicKit.h> // one day this should be the only header we include..not yet.. 
+#import <MKPerformSndMIDI/midi_driver.h>
 #import <MusicKit/midifile.h>
 
-static port_t driverPort;    /* Port for driver on particular host. */
-static port_t ownerPort;     /* Port that represents ownership */
-static port_t queuePort;     /* Port for output queue notification messages */
-static port_t exceptionPort; /* Port for timing exceptions */
+static mach_port_t driverPort;    /* Port for driver on particular host. */
+static mach_port_t ownerPort;     /* Port that represents ownership */
+static mach_port_t queuePort;     /* Port for output queue notification messages */
+static mach_port_t exceptionPort; /* Port for timing exceptions */
 static int maxQueueSize;     /* Maximum output queue size */
 static boolean_t allRead;    /* Flag signaling all data read from file. */
 static boolean_t allSent;    /* Flag signaling all data sent to driver. */ 
@@ -38,12 +38,12 @@ static port_set_name_t ports;/* Port set to listen for messages from driver */
 /* Forward references */
 static void usage(void);
 static void checkForError(char *msg,int errorReturn);
-static port_t allocPort(void);
-static port_t createPortSet(port_t queuePort, port_t exceptionPort); 
+static mach_port_t allocPort(void);
+static mach_port_t createPortSet(mach_port_t queuePort, mach_port_t exceptionPort); 
 static void initFile(void);
 static void setTempo(int newTempo);
-static void myExceptionReply(port_t replyPort, int exception);
-static void myQueueReply(port_t replyPort, short unit);
+static void myExceptionReply(mach_port_t replyPort, int exception);
+static void myQueueReply(mach_port_t replyPort, short unit);
 static void cleanup();
 
 int main(int argc, char **argv)
@@ -213,7 +213,7 @@ static int sendData(void)
     return TRUE;
 }
 
-static void myQueueReply(port_t replyPort, short unit)
+static void myQueueReply(mach_port_t replyPort, short unit)
     /* This gets invoked when the queue has enough room for more data. */
 {
     for (;;) {
@@ -230,7 +230,7 @@ static void myQueueReply(port_t replyPort, short unit)
     }
 }
 
-static void myExceptionReply(port_t replyPort, int exception)
+static void myExceptionReply(mach_port_t replyPort, int exception)
     /* This gets invoked when exceptions occur. */
 {
     switch (exception) {
@@ -286,16 +286,16 @@ static void checkForError(char *msg,int errorReturn)
     }
 }
 
-static port_t allocPort(void)
+static mach_port_t allocPort(void)
     /* Allocates a port and returns it. */
 {
-    port_t aPort;
+    mach_port_t aPort;
     int r = port_allocate(task_self(), &aPort);
     checkForError("allocPort",r);
     return aPort;
 }
 
-static port_t createPortSet(port_t queuePort, port_t exceptionPort) 
+static mach_port_t createPortSet(mach_port_t queuePort, mach_port_t exceptionPort) 
     /* Creates the port set and adds the two ports.  */
 {
     port_set_name_t aPortSet;

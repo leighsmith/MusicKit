@@ -1,6 +1,6 @@
-#import <objc/Object.h>
+#import <Foundation/Foundation.h>
 
-@interface MyCustomObject:Object
+@interface MyCustomObject: NSObject
 {}
 
 -init;

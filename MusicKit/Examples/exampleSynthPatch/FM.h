@@ -1,3 +1,5 @@
+#ifndef __MK_FM_H___
+#define __MK_FM_H___
 #import <musickit/SynthPatch.h>
 #import <musickit/WaveTable.h>
 #import <musickit/Envelope.h>
@@ -154,3 +156,4 @@
 
 @end
 
+#endif

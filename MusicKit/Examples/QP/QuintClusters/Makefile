@@ -9,11 +9,14 @@
 
 NAME = QuintClusters
 
-PROJECTVERSION = 1.1
-LANGUAGE = English
+PROJECTVERSION = 2.8
+PROJECT_TYPE = Application
+NEXTSTEP_APPICON = QuintClusters.tiff
+ICONSECTIONS =	-sectcreate __ICON app QuintClusters.tiff
 
-APPICON = QuintClusters.tiff
-LOCAL_RESOURCES = Info.nib QC.nib
+English_RESOURCES = QC.nib Info.nib
+
+LANGUAGES = English
 
 GLOBAL_RESOURCES = mkmon_A_8k.dsp mkmon_A_qp_hub_8k.dsp\
                    mkmon_A_qp_sat_16k.dsp
@@ -27,18 +30,27 @@ MFILES = DramEchos.m QuintClusters_main.m
 OTHERSRCS = Makefile Makefile.preamble QuintClusters.iconheader README
 
 
-MAKEFILEDIR = /NextDeveloper/Makefiles/app
+MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles
+CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = app.make
-INSTALLDIR = $(HOME)/Apps
-INSTALLFLAGS = -c -s -m 755
-SOURCEMODE = 444
-
-ICONSECTIONS =	-sectcreate __ICON app QuintClusters.tiff
-
+NEXTSTEP_INSTALLDIR = $(HOME)/Apps
+WINDOWS_INSTALLDIR = $(HOME)/Apps
+PDO_UNIX_INSTALLDIR = $(HOME)/Apps
 LIBS = -lsynthpatches -lunitgenerators -lmusickit -ldsp -lNeXT_s
 DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
+
+
+
+NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc
+WINDOWS_OBJCPLUS_COMPILER = $(DEVDIR)/gcc
+PDO_UNIX_OBJCPLUS_COMPILER = $(NEXTDEV_BIN)/gcc
+NEXTSTEP_JAVA_COMPILER = /usr/bin/javac
+WINDOWS_JAVA_COMPILER = $(JDKBINDIR)/javac.exe
+PDO_UNIX_JAVA_COMPILER = $(JDKBINDIR)/javac
+
+include $(MAKEFILEDIR)/platform.make
 
 -include Makefile.preamble
 

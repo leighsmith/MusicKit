@@ -6,8 +6,8 @@
 @implementation MySliderCell
 {}
 
-- (BOOL)trackMouse:(NXEvent *)theEvent
-    inRect:(const NXRect *)cellFrame
+- (BOOL)trackMouse:(NSEvent *)theEvent
+    inRect:(const NSRect *)cellFrame
     ofView:controlView
     /* When finished tracking, snap back to a preset value. */
 {

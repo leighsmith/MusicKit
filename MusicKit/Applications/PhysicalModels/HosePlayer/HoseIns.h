@@ -1,6 +1,6 @@
-#import <musickit/SynthPatch.h>
+#import <MusicKit/MKSynthPatch.h>
 
-@interface HoseIns:SynthPatch
+@interface HoseIns:MKSynthPatch
 {
     /* Amplitude parameters. */
     id		ampEnv;	/* the Envelope object for amplitude */

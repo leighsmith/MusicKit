@@ -9,11 +9,14 @@
 
 NAME = ResoLab
 
-PROJECTVERSION = 1.1
-LANGUAGE = English
+PROJECTVERSION = 2.8
+PROJECT_TYPE = Application
+NEXTSTEP_APPICON = Reso.tiff
+ICONSECTIONS =	-sectcreate __ICON app Reso.tiff
 
-APPICON = Reso.tiff
-GLOBAL_RESOURCES = ResoLab.nib
+English_RESOURCES = ResoLab.nib
+
+LANGUAGES = English
 
 CLASSES = ResoController.m SourceFilterIns.m SpectrumView.m Xforms.m\
           Z3DPlaneView.m ZPlaneView.m
@@ -23,20 +26,34 @@ HFILES = ResoController.h SourceFilterIns.h SpectrumView.h Xforms.h\
 
 MFILES = ResoLab_main.m
 
+OTHERSRCS = Overview.txt README.rtf
 
 
-MAKEFILEDIR = $(SYSTEM_DEVELOPER_DIR)/Makefiles/app
+MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles
+CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = app.make
-INSTALLDIR = $(HOME)/Apps
-INSTALLFLAGS = -c -s -m 755
-SOURCEMODE = 444
-
-ICONSECTIONS =	-sectcreate __ICON app Reso.tiff
-
-LIBS = -lMedia_s -lmusickit -ldsp -lunitgenerators -lNeXT_s -lDriver
+NEXTSTEP_INSTALLDIR = $(HOME)/Apps
+WINDOWS_INSTALLDIR = $(HOME)/Apps
+PDO_UNIX_INSTALLDIR = $(HOME)/Apps
+LIBS = 
 DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
+
+FRAMEWORK_PATHS = -F/Local/Library/Frameworks
+FRAMEWORKS = -framework AppKit -framework Foundation -framework MKDSP\
+             -framework MKPerformSndMIDI -framework MusicKit\
+             -framework SndKit
+
+
+NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc
+WINDOWS_OBJCPLUS_COMPILER = $(DEVDIR)/gcc
+PDO_UNIX_OBJCPLUS_COMPILER = $(NEXTDEV_BIN)/gcc
+NEXTSTEP_JAVA_COMPILER = /usr/bin/javac
+WINDOWS_JAVA_COMPILER = $(JDKBINDIR)/javac.exe
+PDO_UNIX_JAVA_COMPILER = $(JDKBINDIR)/javac
+
+include $(MAKEFILEDIR)/platform.make
 
 -include Makefile.preamble
 

@@ -9,34 +9,45 @@
 
 NAME = Looching
 
-PROJECTVERSION = 1.1
-LANGUAGE = English
+PROJECTVERSION = 2.8
+PROJECT_TYPE = Application
+NEXTSTEP_APPICON = LoochityDog.tiff
+ICONSECTIONS =	-sectcreate __ICON app LoochityDog.tiff
 
-APPICON = LoochityDog.tiff
-LOCAL_RESOURCES = Looching.nib
+English_RESOURCES = Looching.nib
 
-CLASSES = Bark.m Looching.m LoochPerformer.m RandomIzer.m Stopit.m
+LANGUAGES = English
 
-HFILES = Bark.h Looching.h LoochPerformer.h LoochWaves.h RandomIzer.h\
-         Stopit.h
+CLASSES = Bark.m Looching.m LoochPerformer.m RandomIzer.m
+
+HFILES = Bark.h Looching.h LoochPerformer.h LoochWaves.h RandomIzer.h
 
 MFILES = Looching_main.m
 
 OTHERSRCS = Makefile.preamble Makefile Makefile.postamble
 
 
-MAKEFILEDIR = $(SYSTEM_DEVELOPER_DIR)/Makefiles/app
+MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles
+CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = app.make
-INSTALLDIR = $(HOME)/Apps
-INSTALLFLAGS = -c -s -m 755
-SOURCEMODE = 444
-
-ICONSECTIONS =	-sectcreate __ICON app LoochityDog.tiff
-
+NEXTSTEP_INSTALLDIR = $(HOME)/Apps
+WINDOWS_INSTALLDIR = $(HOME)/Apps
+PDO_UNIX_INSTALLDIR = $(HOME)/Apps
 LIBS = -lMedia_s -lmusickit -ldsp -lunitgenerators -lNeXT_s -lDriver
 DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
+
+
+
+NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc
+WINDOWS_OBJCPLUS_COMPILER = $(DEVDIR)/gcc
+PDO_UNIX_OBJCPLUS_COMPILER = $(NEXTDEV_BIN)/gcc
+NEXTSTEP_JAVA_COMPILER = /usr/bin/javac
+WINDOWS_JAVA_COMPILER = $(JDKBINDIR)/javac.exe
+PDO_UNIX_JAVA_COMPILER = $(JDKBINDIR)/javac
+
+include $(MAKEFILEDIR)/platform.make
 
 -include Makefile.preamble
 

@@ -1,8 +1,8 @@
 #ifndef __MK_RandomPerformer_H___
 #define __MK_RandomPerformer_H___
-#import <musickit/Performer.h>
+#import <MusicKit/MusicKit.h>
 
-@interface RandomPerformer:Performer
+@interface RandomPerformer:MKPerformer
 {
     id noteOn,noteOff;
     double rhythmicValue;

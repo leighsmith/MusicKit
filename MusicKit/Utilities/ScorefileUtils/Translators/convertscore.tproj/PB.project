@@ -3,6 +3,7 @@
     FILESTABLE = {
         FRAMEWORKS = (Foundation.framework, MusicKit.framework); 
         FRAMEWORKSEARCH = (/Local/Library/Frameworks); 
+        H_FILES = (); 
         OTHER_LINKED = (convertscore_main.m); 
         OTHER_SOURCES = (
             Makefile.preamble, 
@@ -12,6 +13,7 @@
             h.template, 
             convertscore.1
         ); 
+        SUBPROJECTS = (); 
     }; 
     LANGUAGE = English; 
     MAKEFILEDIR = "$(MAKEFILEPATH)/pb_makefiles"; 

@@ -44,11 +44,14 @@
 */
 /*
  $Log$
- Revision 1.1  1999/11/17 17:57:14  leigh
- Initial revision
+ Revision 1.2  2000/01/03 20:38:38  leigh
+ comments improved
+
+ Revision 1.1.1.1  1999/11/17 17:57:14  leigh
+ Initial working version
 
 */
-// #define FUNCLOG 1
+// #define FUNCLOG 1 // define this to log function calls to a text file.
 
 #ifdef FUNCLOG
 #include <stdio.h> // for fprintf and debug

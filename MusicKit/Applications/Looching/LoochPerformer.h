@@ -1,8 +1,7 @@
-#import <musickit/musickit.h>
-#import <musickit/Performer.h>
+#import <MusicKit/MusicKit.h>
 
 
-@interface LoochPerformer:Performer
+@interface LoochPerformer: MKPerformer
 {
     id LoochNote;
 }

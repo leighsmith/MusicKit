@@ -22,7 +22,7 @@
 
 @implementation Z3DPlaneView
 
-+ newFrame:(NXRect*)frameRect
++ newFrame:(NSRect*)frameRect
 {    
     self = [super newFrame:frameRect];
     yRad = bounds.size.width / 2.0 * IMAGESCALE * ANGLE;
@@ -44,7 +44,7 @@ the user presses the "graph" button is the data updated and this method called.*
 }
 
 /* Drawself: this function draws the graph */
-- drawSelf: (NXRect *) rects : (int) rectCount
+- drawSelf: (NSRect *) rects : (int) rectCount
 {    
     float zValue();
     register int i;

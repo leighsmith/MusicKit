@@ -1,0 +1,11 @@
+# Compilation Sequence
+cd PlatformDependent/MKPerformSndMIDI_$(PLATFORM)
+make install
+cd MKDSP
+make install
+cd MusicKit
+make install
+cd MKUnitGenerators
+make install
+cd MKSynthPatches
+make install

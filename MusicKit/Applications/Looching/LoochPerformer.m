@@ -1,8 +1,8 @@
-#import <musickit/musickit.h>
+#import <MusicKit/MusicKit.h>
 #import "LoochPerformer.h"
 #import "RandomIzer.h"
 
-@implementation LoochPerformer:Performer
+@implementation LoochPerformer: MKPerformer
 {
 	id LoochNote;
 }
@@ -16,11 +16,11 @@ id RandNum;
 
 	/* You must send [super initialize] in your subclass' implementation. */
 	[super initialize];
-	LoochNote = [Note new];
+	LoochNote = [MKNote new];
 	[LoochNote setNoteType:MK_noteOn];
 	[LoochNote setNoteTag:aTag = MKNoteTag()];
 	/* We give ourselves one NoteSender. */  
-	[self addNoteSender:[NoteSender new]];
+	[self addNoteSender:[MKNoteSender new]];
 
 	[self setDefaults];
 	

@@ -17,16 +17,15 @@
 #import <signal.h>
 #import <servers/netname.h>
 #import <libc.h>
-//#import <MusicKit/MusicKit.h> // not yet..one day this should be the only header we include 
-#import <MKPerformMIDI/midi_driver.h>
-#import <MusicKit/midi_spec.h>
+#import <MusicKit/MusicKit.h> // one day this should be the only header we include..not yet.. 
+#import <MKPerformSndMIDI/midi_driver.h>
 #import <MusicKit/midifile.h>
 
-static port_t driverPort;    /* Port for driver on particular host. */
-static port_t ownerPort;     /* Port that represents ownership */
-static port_t dataPort;      /* Port for incoming data. */
-static port_t exceptionPort; /* Port for timing exceptions */
-static port_t alarmPort;     /* To get periodic messages. */
+static mach_port_t driverPort;    /* Port for driver on particular host. */
+static mach_port_t ownerPort;     /* Port that represents ownership */
+static mach_port_t dataPort;      /* Port for incoming data. */
+static mach_port_t exceptionPort; /* Port for timing exceptions */
+static mach_port_t alarmPort;     /* To get periodic messages. */
 static NSMutableData *outputMIDIdata;          /* Stream for writing output file */
 static int unit = MIDI_PORT_A_UNIT;/* Serial port to read from */
 static int byteCount = 0;
@@ -36,14 +35,14 @@ static boolean_t verbose;    /* Flag. */
 /* Forward references */
 static void usage(void);
 static void checkForError(char *msg,int errorReturn);
-static port_t allocPort(void);
+static mach_port_t allocPort(void);
 static void initFile(NSMutableData *stream);
-static void myExceptionReply(port_t replyPort, int exception);
-static void myAlarmReply(port_t replyPort, int requestedTime, int actualTime); 
-static void myDataReply(port_t replyPort, short unit, MIDIRawEvent *events, unsigned int count);
+static void myExceptionReply(mach_port_t replyPort, int exception);
+static void myAlarmReply(mach_port_t replyPort, int requestedTime, int actualTime); 
+static void myDataReply(mach_port_t replyPort, short unit, MIDIRawEvent *events, unsigned int count);
 static void cleanup();
-static port_t createPortSet(port_t dataPort, port_t exceptionPort,
-			    port_t alarmPort);
+static mach_port_t createPortSet(mach_port_t dataPort, mach_port_t exceptionPort,
+			    mach_port_t alarmPort);
 static char *filename = NULL;	
 
 int main(int argc, char **argv)
@@ -218,7 +217,7 @@ static char *setBufferSize(char *bytes,int size)
     return bytes;
 }
 
-static void myDataReply(port_t replyPort, short unit, MIDIRawEvent *events, unsigned int count)
+static void myDataReply(mach_port_t replyPort, short unit, MIDIRawEvent *events, unsigned int count)
     /* This gets invoked when data comes in. */
 {
     static int byteIndex;
@@ -249,7 +248,7 @@ static void myDataReply(port_t replyPort, short unit, MIDIRawEvent *events, unsi
     }
 }
 
-static void myAlarmReply(port_t replyPort, int requestedTime, int actualTime) 
+static void myAlarmReply(mach_port_t replyPort, int requestedTime, int actualTime) 
     /* This gets invoked when an alarm occurs. */ 
 {
     kern_return_t r;
@@ -258,7 +257,7 @@ static void myAlarmReply(port_t replyPort, int requestedTime, int actualTime)
     checkForError("MIDIRequestAlarm",r);
 }
 
-static void myExceptionReply(port_t replyPort, int exception)
+static void myExceptionReply(mach_port_t replyPort, int exception)
     /* This gets invoked when exceptions occur. */
 {
     switch (exception) {
@@ -306,16 +305,16 @@ static void checkForError(char *msg,int errorReturn)
     }
 }
 
-static port_t allocPort(void)
+static mach_port_t allocPort(void)
     /* Allocates a port and returns it. */
 {
-    port_t aPort;
+    mach_port_t aPort;
     int r = port_allocate(task_self(), &aPort);
     checkForError("allocPort",r);
     return aPort;
 }
 
-static port_t createPortSet(port_t dataPort, port_t exceptionPort, port_t alarmPort) 
+static mach_port_t createPortSet(mach_port_t dataPort, mach_port_t exceptionPort, mach_port_t alarmPort) 
     /* Creates the port set and adds the three ports.  */
 {
     port_set_name_t aPortSet;

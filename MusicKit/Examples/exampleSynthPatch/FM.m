@@ -18,7 +18,7 @@
 
 /* Written by Mike McNabb and David Jaffe. */
   
-#import <midi/midi_types.h>
+#import <mididriver/midi_spec.h>
 #import <musickit/unitgenerators/unitgenerators.h>
 #import "FM.h"
   

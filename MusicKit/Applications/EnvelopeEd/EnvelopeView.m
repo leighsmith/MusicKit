@@ -1,12 +1,19 @@
 //////////////////////////////////////////////////////////////
 //
-// EnvelopeView.m -- Implementation for the EnvelopeView class
+// $Id$
+// Implementation for the EnvelopeView class
 // Copyright 1991-94 Fernando Lopez Lezcano All Rights Reserved
 //
 //////////////////////////////////////////////////////////////
 
 // Revision History:
-
+// $Log$
+// Revision 1.3  2000/04/01 01:07:44  leigh
+// Removed redundant PS include
+//
+// Revision 1.2  2000/01/11 21:57:03  leigh
+// Capitialised defaults
+//
 // 6/16/1998 Converted to OpenStep API by Leigh Smith leigh@cs.uwa.edu.au
 // 8/25/92 Add parsing of exponential format numbers
 // 8/21/92 Memory allocation bug on allocateTemp and allocateDraw
@@ -17,7 +24,7 @@
 #import <objc/zone.h>
 #import <math.h>
 #import <Foundation/NSUserDefaults.h>
-#import <AppKit/psopsOpenStep.h>              // for PSxxx stuff
+#import <AppKit/AppKit.h>              // for PSxxx stuff
 
 #import "Controller.h"
 #import "EnvelopeView.h"
@@ -73,10 +80,10 @@
 #define sValues [theEnvelope smoothingArray]
 
 // The application defaults
-#define SHOWSMOOTH   @"showSmoothing"
-#define DRAWSEGMENTS @"drawSegments"
-#define DEFSMOOTH    @"defaultSmoothing"
-#define DEFFORMAT    @"defaultFormat"
+#define SHOWSMOOTH   @"ShowSmoothing"
+#define DRAWSEGMENTS @"DrawSegments"
+#define DEFSMOOTH    @"DefaultSmoothing"
+#define DEFFORMAT    @"DefaultFormat"
 
 //-------------------------------------------------------------------
 // Temporary copy arrays for envelope copy operations

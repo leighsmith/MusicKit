@@ -103,7 +103,8 @@ static int ampAsymp,   /* amplitude envelope UG */
     MKPhraseStatus phraseStatus = [self phraseStatus];
 
     /* Is aNote a noteOn? */
-    BOOL isNoteOn = [aNote noteType] == MK_noteOn;
+    MKNoteType noteType = [aNote noteType];
+    BOOL isNoteOn = (noteType == MK_noteOn || noteType == MK_noteDur);
 
     /* Is aNote the beginning of a new phrase? */
     BOOL isNewPhrase = (phraseStatus == MK_phraseOn) || 
