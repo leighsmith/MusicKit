@@ -17,6 +17,7 @@
 
 #import <Foundation/Foundation.h>
 #import "SndAudioProcessor.h"
+#import "SndAudioBuffer.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
