@@ -49,7 +49,6 @@ static SndAudioProcessorInspector* defaultInspector = nil;
     [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorFlanger class]];
     [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorNoiseGate class]];
     [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorReverb class]];
-//temporary: don't register this one on mingw32 since we can't get it working
 #ifdef SND_MP3_ENCODER
     [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorMP3Encoder class]];
 #endif
@@ -66,36 +65,36 @@ static SndAudioProcessorInspector* defaultInspector = nil;
 
 - init
 {
-  if (defaultInspector != nil)
-    self = defaultInspector;
-  else {
-    self = [super init];
-
-    [NSBundle loadNibNamed:@"SndAudioProcessorInspector" owner:self];
-    [window makeKeyAndOrderFront:self];
-    {
-      NSArray *tableColumns = [parameterTableView tableColumns];
-      id tcN = [tableColumns objectAtIndex: 0];
-      id tcV = [tableColumns objectAtIndex: 1];
-      [tcN setIdentifier: @"Name"];
-      [tcN setEditable: NO];
-      [tcV setIdentifier: @"Value"];
-      [tcV setEditable: NO];
+    if (defaultInspector != nil)
+	self = defaultInspector;
+    else {
+	self = [super init];
+	
+	[NSBundle loadNibNamed:@"SndAudioProcessorInspector" owner:self];
+	[window makeKeyAndOrderFront:self];
+	{
+	    NSArray *tableColumns = [parameterTableView tableColumns];
+	    id tcN = [tableColumns objectAtIndex: 0];
+	    id tcV = [tableColumns objectAtIndex: 1];
+	    [tcN setIdentifier: @"Name"];
+	    [tcN setEditable: NO];
+	    [tcV setIdentifier: @"Value"];
+	    [tcV setEditable: NO];
+	}
+	[sndArchView setDelegate: self];
+	
+	{
+	    NSArray *fxClassesArray = [SndAudioProcessor fxClasses];
+	    int i, c = [fxClassesArray count];
+	    [fxChooser removeAllItems];
+	    for (i = 0; i < c; i++) {
+		NSString *className = NSStringFromClass([[fxClassesArray objectAtIndex: i] class]);
+		[fxChooser addItemWithObjectValue: className];
+	    }
+	    [fxChooser selectItemAtIndex: 0];
+	}
     }
-    [sndArchView setDelegate: self];
-
-    {
-      NSArray *fxClassesArray = [SndAudioProcessor fxClasses];
-      int i, c = [fxClassesArray count];
-      [fxChooser removeAllItems];
-      for (i = 0; i < c; i++) {
-        NSString *className = NSStringFromClass([[fxClassesArray objectAtIndex: i] class]);
-        [fxChooser addItemWithObjectValue: className];
-      }
-      [fxChooser selectItemAtIndex: 0];
-    }
-  }
-  return self;
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
