@@ -1,23 +1,24 @@
+// $Id$
 
 #import <AppKit/AppKit.h>
 #import <SndKit/SndKit.h>
 
 @interface Controller: NSObject
 {
-    id	freqNum1;
-    id	freqNum2;
-    id	freqSlide1;
-    id	freqSlide2;
+    IBOutlet NSTextField *freqNum1;
+    IBOutlet NSTextField *freqNum2;
+    IBOutlet NSSlider *freqSlide1;
+    IBOutlet NSSlider *freqSlide2;
     IBOutlet SndView *soundView1;
     IBOutlet SndView *soundView2;
     IBOutlet SndView *soundView3;
-    id	volNum1;
-    id	volNum2;
-    id	volSlide1;
-    id	volSlide2;
-    id	waveType1;
-    id	waveType2;
-    id  mesgBox;
+    IBOutlet NSTextField *volNum1;
+    IBOutlet NSTextField *volNum2;
+    IBOutlet NSSlider *volSlide1;
+    IBOutlet NSSlider *volSlide2;
+    IBOutlet NSMatrix *waveType1;
+    IBOutlet NSMatrix *waveType2;
+    IBOutlet NSTextView *mesgBox;
     id  sLength;
     
     Snd * theSound1;
