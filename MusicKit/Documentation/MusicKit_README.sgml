@@ -1,6 +1,7 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 <!entity mkvers "5.2">
 <!entity mkvertuple "5.2.0">
+<!entity sndvertuple "1.3.0">
 ]>
 
 <!--
@@ -413,7 +414,7 @@ lists changes and is generated from the CVS logs.
 	  </row>
 	  <row>
 	    <entry>MacOS X Public Beta</entry>
-	    <entry>Pending</entry>
+	    <entry>Y</entry>
 	    <entry>Y</entry>
 	    <entry>N</entry>
 	  </row>
@@ -427,15 +428,21 @@ lists changes and is generated from the CVS logs.
 After much fun with the pinnacle of Microsoft development tools, we
 have the MusicKit working on Windows9X. The solution was to emulate
 the Mach MIDI device driver with the core layer of DirectMusic. There
-is a fairly similar match in functionality between these API with the
-exception of the downloadable sound (DLS) capability of DirectMusic,
-which provides a MIDI orientated sample playback API to PC
-soundcards. While the future of Apple's
-OpenStep/YellowBox/Cocoa/WebObjects (!) for Windows support is far
-from clear, the combination of Gnu technologies of 
-<ulink url="http://www.gnustep.org">GnuStep</ulink> and 
-<ulink url="http://www.cygnus.com/cygwin">cygwin</ulink>
-would suggest in the
+is a fairly similar match in functionality between these API.
+</para>
+      <para>
+The downloadable sound (DLS) capability of DirectMusic (providing a
+MIDI oriented sample playback API to PC soundcards) is also supported
+when playing to a DirectMusic software synthesiser. There is minimal
+but usable support for downloading new DLS instruments to the software
+synthesiser.
+</para>
+      <para>
+While the future
+of Apple's OpenStep/YellowBox/Cocoa/WebObjects (!) for Windows support
+is far from clear, the combination of Gnu technologies of <ulink
+url="http://www.gnustep.org">GnuStep</ulink> and <ulink
+url="http://www.cygnus.com/cygwin">cygwin</ulink> would suggest in the
 near future that Apple's corporate interests will not dictate whether
 applications can be deployed on either platform.
 </para>
@@ -549,7 +556,13 @@ introduce new behaviour.
 </para>
 
     <para>
-Each framework has it's own version tuple. This is encoded in the framework and is used by the dynamic loader to verify the correct versions of applications link against the correct versions of frameworks. However, to allow new framework with patches to be installed into operational sites without forcing recompiles of the application, the version tuple encoded in the framework is of the form <TODO>V.R</TODO>.
+Each framework has it's own version tuple. This is encoded in the
+framework and is used by the dynamic loader to verify the correct
+versions of applications link against the correct versions of
+frameworks. However, to allow new framework with patches to be
+installed into operational sites without forcing recompiles of the
+application, the version tuple encoded in the framework is of the form
+<replaceable>V.R</replaceable>.
 </para>
   </sect1>
 
@@ -641,7 +654,7 @@ for regression testing.
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://download.sourceforge.net/musickit/SndKit_V1.3.0.s.tar.gz">SndKit_V1.3.0.s.tar.gz</ulink>
+              <ulink url="http://download.sourceforge.net/musickit/SndKit_V&sndvertuple;.s.tar.gz">SndKit_V&sndvertuple;.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -952,9 +965,6 @@ port, why don't you also? :-) In theory the 56K assembler runs on
 Windows, so it may be possible to run these on Windows, but that is
 yet to be tested.
 </para>
-	</listitem>
-      </orderedlist>
-
       <para>
 The frameworks will install into <filename
 class=directory>/Local/Library/Frameworks</filename> on MacOS
@@ -963,6 +973,17 @@ class=directory>/LocalLibrary/Frameworks</filename> on OpenStep and
 <filename class=directory>/Library/Frameworks</filename> on MacOS X
 Public Beta.
 </para>
+
+	</listitem>
+	<listitem>
+	  <para>
+Compile and install applications and examples located in the
+directories <filename
+class=directory>Applications</filename> and <filename
+class=directory>Examples</filename> respectively.
+</para>
+	</listitem>
+      </orderedlist>
 
       <para>
 To compile the MacOS X-Server Zilog SCC MIDI driver, some header files
@@ -1043,7 +1064,9 @@ and Apple's <application>WrapIt.app</application> utility.
 	</listitem>
       <listitem>
 	<para>
-Translating the MusicKit framework's Localized.strings file to languages other than English.
+Translating the MusicKit framework's
+<filename>Localized.strings</filename> file to languages other than
+English.
 </para>
 	</listitem>
     </itemizedlist>
@@ -1052,14 +1075,14 @@ Translating the MusicKit framework's Localized.strings file to languages other t
   <sect1 id=fixes>
     <title>Contributing Fixes</title>
     <para>
-Please! I am maintaining changes
-via a closed CVS system 
-(<systemitem class="systemname">cvs.tomandandy.com</systemitem>)
-at the moment. If you
-send me <email>leigh@tomandandy.com</email>
-changes I will incorporate them and
-check them in. If you are planning to do major work, I can provide
-access to the CVS server.
+Please! I am maintaining changes via a closed CVS system (<systemitem
+class="systemname">cvs.tomandandy.com</systemitem>) at the moment,
+since sourceforge does not provide a CVS which supports -t/-f wrappers
+enabling .nib support. If you send me
+<email>leigh@tomandandy.com</email> changes I will incorporate them
+and check them in. If you are planning to do major work, I can provide
+access to the CVS server. The long-term goal is to make the CVS tree
+fully available to all interested developers, please help!
 </para>
   </sect1>
 
