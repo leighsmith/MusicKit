@@ -28,6 +28,7 @@
 			buildStyles = (
 				01575C4F0048D569CFED3B96,
 				01575C500048D569CFED3B96,
+				D85E248F0403DB9C0055A8A6,
 			);
 			hasScannedForEncodings = 1;
 			isa = PBXProject;
@@ -387,6 +388,27 @@
 					Public,
 				);
 			};
+		};
+//150
+//151
+//152
+//153
+//154
+//D80
+//D81
+//D82
+//D83
+//D84
+		D85E248F0403DB9C0055A8A6 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/EmbeddedFrameworks";
+			};
+			isa = PBXBuildStyle;
+			name = Embedded;
 		};
 	};
 	rootObject = 016D5A22FED483BACFED3B93;
