@@ -8,18 +8,15 @@ Edit this file, not the HTML, RTF or LaTeX output.
 $Id$
 -->
 
-<!-- TODO
-Add in the MusicKit icon and colour the web pages (perhaps not these below):
-<BODY bgcolor="#EC5629" text="#FFFFFF" link="#C7DE1E" alink="#969FF4" vlink="#5116EC">
--->
-
 <article>
 
   <artheader>
     <title>The MusicKit V5.1</title>
 
-  <!-- 
-   Ok, how do we place a logo for the document?
+<!-- TODO
+   Add in the MusicKit icon
+
+   Ok, how do we place a logo for the document in the title?
    <informalfigure>
     <mediaobject>
       <imageobject>
@@ -33,7 +30,7 @@ Add in the MusicKit icon and colour the web pages (perhaps not these below):
       </imageobject>
     </mediaobject>
   </informalfigure>
-   -->
+-->
 
     <author>
       <firstname>Leigh</firstname> <othername>M.</othername> <surname>Smith</surname>
@@ -102,11 +99,14 @@ as open source to the community.
    </para>
 
    <para>
-     The <ulink url="http://www.tomandandy.com/MusicKit">
+     The <ulink url="http://www.sourceforge.net/projects/musickit">
      MusicKit Distribution</ulink>
      is a comprehensive package that
      includes on-line documentation, programming examples, utilities,
-     applications and sample score documents.
+     applications and sample score documents. The MusicKit is
+     dependent on the SndKit distribution,
+     originally written by Stephen Brandon, and both Framework
+     collections are available at the same distribution site.
 </para>
 
 <para>
@@ -207,14 +207,32 @@ ScoreFile, a textual scripting language for music.
 	<listitem>
 	  <para>
              <ulink url="http://ccrma-www.stanford.edu/CCRMA/Overview/hardsoftware.html">
-                CCRMA's MusicKit site
+                CCRMA's MusicKit site.
              </ulink>
 	   </para>
 	</listitem>
 	<listitem>
 	  <para>
-	     <ulink url="http://www.jaffe.com/mk97.html">
-                David Jaffe's (the original author) MusicKit site
+	    <ulink url="http://www.jaffe.com/mk97.html">
+                David Jaffe's (the original author) MusicKit site.
+            </ulink>
+	  </para>
+	</listitem>
+	<listitem>
+	  <para>
+            <ulink url="http://sourceforge.net">
+	      <inlinemediaobject>
+		<imageobject>
+		  <imagedata fileref="http://sourceforge.net/sflogo.php?group_id=9881" 
+			     width="88"
+			     depth="31"
+			     align=left>
+		</imageobject>
+		<textobject>
+		  <phrase>SourceForge Logo</phrase>
+		</textobject>
+	      </inlinemediaobject>
+                The SourceForge site hosting the package.
              </ulink>
 	   </para>
 	</listitem>
@@ -236,7 +254,7 @@ Release notes can be found in
 
 	<listitem>
 	  <para>
-            What needs to be done is in
+What needs to be done is in
 <filename>
 ./Documentation/Frameworks/MusicKit/ReleaseNotes/TODO.rtf
 </filename>
@@ -246,10 +264,9 @@ Release notes can be found in
 	<listitem>
 	  <para>
 The file 
-<ulink url="http://www.tomandandy.com/MusicKit/ChangeLog">
 <filename>
 ./Documentation/ChangeLog
-</filename></ulink>
+</filename>
 lists changes and is generated from the CVS logs.
 </para>
 	</listitem>
@@ -257,17 +274,39 @@ lists changes and is generated from the CVS logs.
     </sect2>
     
     <sect2 id=maillist>
-      <title>MusicKit Mail-list</title>
-  <para>
-Updates, announcements and queries are sent to the MusicKit mail-list
-<email>mkdist@ccrma.stanford.edu</email>. Subscribe to the list by
-sending a message to <email>listproc@ccrma.stanford.edu</email>. The
-body of the message (not the Subject line) should contain this text:
+      <title>MusicKit Mail-lists</title>
+      <itemizedlist>
+	<listitem>
+	  <para>
+Announcements of new releases are sent to
+<email>musickit-announce@lists.sourceforge.net</email>. 
+Subscribe to the list by visiting 
+<ulink url="http://lists.sourceforge.net/mailman/listinfo/musickit-announce">
+http://lists.sourceforge.net/mailman/listinfo/musickit-announce</ulink>.
 </para>
-      <cmdsynopsis>
-	<command>subscribe mkdist</command>
-	<arg choice=req><replaceable>YOURNAME</replaceable></arg>
-      </cmdsynopsis>
+	</listitem>
+
+	<listitem>
+	  <para>
+Discussions on development of the MusicKit are sent to
+<email>musickit-developer@lists.sourceforge.net</email>. 
+Subscribe to the list by visiting 
+<ulink url="http://lists.sourceforge.net/mailman/listinfo/musickit-developer">
+http://lists.sourceforge.net/mailman/listinfo/musickit-developer</ulink>.
+</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+Discussions on writing applications using the MusicKit (not developing
+it) are sent to
+<email>musickit-users@lists.sourceforge.net</email>. 
+Subscribe to the list by visiting 
+<ulink url="http://lists.sourceforge.net/mailman/listinfo/musickit-users">
+http://lists.sourceforge.net/mailman/listinfo/musickit-users</ulink>.
+</para>
+	</listitem>
+      </itemizedlist>
       <para>
 Don't assume nothing is being done if you don't hear anything for a while!
 The maintainers are usually adding fixes/code, but full releases are
@@ -280,13 +319,58 @@ less frequent. The <link linkend=fixes>CVS repository</link> can be made availab
   <sect1 id="platforms">
     <title>Supported Platforms</title>
     <para>
-        The MusicKit currently runs on NeXT hardware and Intel-based hardware
-        running OpenStep, Macintosh hardware running MacOsX Server and MacOsX
-        (the latter currently without MIDI output), and Intel-based hardware
-        running Windows 98 with Rhapsody DR2/NT or WebObjects/NT). Intel Linux
-        support is achievable, planned, partially completed and looking for
-        volunteers.
+        The MusicKit currently runs on:
 </para>
+    <table frame=all><title>MusicKit Supported Platforms</title>
+      <tgroup cols=4 colsep=1 rowsep=1>
+	<colspec colnum=1 align=left>
+	<colspec colnum=2 align=center>
+	<colspec colnum=3 align=center>
+	<colspec colnum=4 align=center>
+	<thead>
+	  <row>
+	    <entry>Platform</entry>
+	    <entry>MIDI</entry>
+	    <entry>Sound</entry>
+	    <entry>DSP</entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry>OpenStep 4.2/Intel (with ISA 56k card)</entry>
+	    <entry>Y</entry>
+	    <entry>Y</entry>
+	    <entry>Y</entry>
+	  </row>
+	  <row>
+	    <entry>OpenStep 4.2/m68k (NeXT)</entry>
+	    <entry>Y</entry>
+	    <entry>Y</entry>
+	    <entry>Y</entry>
+	  </row>
+	  <row>
+	    <entry>Windows 98 (using OpenStep
+	    Enterprise, Rhapsody DR2/NT, WebObjects 4.5/NT) (Win2000 untried)</entry>
+	    <entry>Y</entry>
+	    <entry>Y</entry>
+	    <entry>N</entry>
+	  </row>
+	  <row>
+	    <entry>MacOS X-Server V1.0-1.2</entry>
+	    <entry>Y</entry>
+	    <entry>Y</entry>
+	    <entry>N</entry>
+	  </row>
+	  <row>
+	    <entry>MacOS X Public Beta</entry>
+	    <entry>Pending</entry>
+	    <entry>Y</entry>
+	    <entry>N</entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </table>
+
     <sect2 id="windows">
       <title>Windows support</title>
       <para>
@@ -310,11 +394,11 @@ applications can be deployed on either platform.
     <sect2 id="linux">
       <title>Linux support</title>
       <para>
-A series of stubs for
-a performance framework (<filename>MKPerformSndMIDI.framework</filename>) are in place in
+Intel Linux support is achievable, planned, partially completed and
+looking for volunteers. A series of stubs for a performance framework
+(<filename>MKPerformSndMIDI.framework</filename>) are in place in
 preparation for porting the MusicKit to Linux using the GnuStep
-libraries. Further work is needed on this, please
-help!
+libraries. Further work is needed on this, please help!
 </para>
     </sect2>
   </sect1>
@@ -496,29 +580,21 @@ reduce the compatibility issue.
 
     <para>
         <variablelist>
-          <varlistentry>
-            <term>
-              <ulink url="http://www.tomandandy.com/MusicKit/ChangeLog">ChangeLog</ulink>
-            </term>
-            <listitem>
-              <para>
-                The ChangeLog listing changes to the source (auto-generated by cvs2cl,
-                also in the source tar).
-              </para>
-            </listitem>
-          </varlistentry>
 	  <varlistentry>
 	    <term>
-              <ulink url="http://www.tomandandy.com/MusicKit/MK_V5.1.9.s.tar.gz">MK_V5.1.9.s.tar.gz</ulink>
+              <ulink url="http://www.sourceforge.net/projects/musickit">MusicKit</ulink>
             </term>
 	    <listitem>
 	      <para>
-                The source to MusicKit and nearly all utilites, applications, documentation and example code.
+The source to MusicKit, MKDSP, MKPerformSndMIDI,
+MKUnitGenerators and MKSynthPatches frameworks and all utilites,
+applications, documentation and example code.
               </para>
 	      <para>
 This is the most recent revision and patch. Older revisions are
-located at the <ulink url="ftp://ftp.tomandandy.com/pub/MusicKit">ftp
-site</ulink> for regression testing.
+located at the 
+<ulink url="ftp://ftp.tomandandy.com/pub/MusicKit">tomandandy ftp site</ulink>
+for regression testing.
               </para>
             </listitem>
           </varlistentry>
@@ -544,7 +620,7 @@ site</ulink> for regression testing.
 	  </varlistentry>
           <varlistentry>
             <term>
-              <ulink url="http://www.tomandandy.com/MusicKit/SndKit_V1.2.0.s.tar.gz">SndKit_V1.2.0.s.tar.gz</ulink>
+              <ulink url="http://www.sourceforge.net/projects/musickit/">SndKit</ulink>
             </term>
 	    <listitem>
 	      <para>
@@ -552,17 +628,6 @@ site</ulink> for regression testing.
               </para>
 	    </listitem>
 	  </varlistentry>
-          <varlistentry>
-            <term>
-              <ulink url="http://www.tomandandy.com/MusicKit/SndKit_ChangeLog">SndKit_ChangeLog</ulink>
-            </term>
-            <listitem>
-              <para>
-                The SndKit ChangeLog listing changes to the SndKit source (auto-generated by cvs2cl,
-                also in the source tar).
-              </para>
-            </listitem>
-          </varlistentry>
         </variablelist>
       </para>
 
