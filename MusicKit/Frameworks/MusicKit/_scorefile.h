@@ -1,12 +1,22 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+  Description:
+    Functions for writing and reading text and binary score files.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University  
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.5  2000/06/09 14:55:11  leigh
+  Typed ivars to reduce warnings
+
   Revision 1.4  2000/05/06 00:26:59  leigh
   Converted _binaryIndecies to NSMutableDictionary
 
@@ -43,7 +53,7 @@ typedef struct __MKScoreInStruct {
 				       sequence. */
     id _owner;                      /* Private. Where to put part decls. */
     int _errCount;                  /* Error count. */
-    id _binaryIndexedObjects;       /* List of indexed objects. */
+    NSMutableArray *_binaryIndexedObjects; /* List of indexed objects. */
     BOOL _binary;
     void *_repeatStack;
 } _MKScoreInStruct;
@@ -100,7 +110,5 @@ extern void _MKWriteFloat(NSMutableData *aStream,float aFloat);
 
 #define _MK_BINARYSCOREFILEEXT @"playscore"
 #define _MK_SCOREFILEEXT @"score"
-
-
 
 #endif
