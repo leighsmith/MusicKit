@@ -18,9 +18,9 @@ AC_REVISION($Id$)
 AC_CONFIG_SRCDIR([Frameworks/SndKit/Snd.h])
 AC_LANG(C)
 
-# Create SndKitConfig.h header to control which library headers are included.
-# TODO should this be MusicKitConfig.h and in a higher directory?
-AC_CONFIG_HEADERS(Frameworks/SndKit/SndKitConfig.h)
+# Create configure headers to control which library headers are included.
+AC_CONFIG_HEADERS(Frameworks/SndKit/SndKitConfig.h \
+                  Frameworks/MusicKit/MusicKitConfig.h)
 
 # Needs to create a GNUmakefile for GNUstep, and possibly a makefile which
 # then runs xcodebuild on MacOS X.
