@@ -285,7 +285,7 @@ static SndPlayer *defaultSndPlayer;
 - (NSArray *) performancesOfSnd: (Snd *) snd
 {
     int performanceIndex;
-    NSMutableArray *performances = [NSArray array];
+    NSMutableArray *performances = [NSMutableArray arrayWithCapacity: 10];
     SndPerformance *aPerformance;
 
     // extract out from our playing/toBePlayed lists those with Snds matching snd
