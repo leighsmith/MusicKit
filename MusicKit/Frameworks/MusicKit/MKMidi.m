@@ -1325,21 +1325,23 @@ static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
 - (void) dealloc
   /* Aborts and frees the receiver. */
 {
-    int i;
+    int noteReceiverIndex;
     int size = [noteReceivers count];
     
     [self abort];
     if ([self unitHasMTC]) 
         [synchConductor _setMTCSynch: nil];
     [self _setSynchConductor: nil];
-    for (i = 0; i < size; i++)
-        _MKFreeParameter([[noteReceivers objectAtIndex: i] _getData]);
+    for (noteReceiverIndex = 0; noteReceiverIndex < size; noteReceiverIndex++)
+        _MKFreeParameter([[noteReceivers objectAtIndex: noteReceiverIndex] _getData]);
     [noteReceivers makeObjectsPerformSelector: @selector(disconnect)];
     [noteReceivers removeAllObjects];  
     [noteReceivers release];
+    noteReceivers = nil;
     [noteSenders makeObjectsPerformSelector: @selector(disconnect)];
     [noteSenders removeAllObjects];  
     [noteSenders release];
+    noteSenders = nil;
     [portTable removeObjectForKey: midiDevName];
     [super dealloc];
 }
