@@ -32,6 +32,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2000/08/11 16:44:51  leigh
+  Added notice of bugginess of jmp_buf, cleaned up typing
+
   Revision 1.9  2000/05/05 01:56:18  leigh
   Fixed errant use of immutable NSDictionary for _noteTagTable
 
@@ -123,7 +126,7 @@ Modification history:
 
 #define FIRST_CHAR_SCOREMAGIC '.'
 
-static jmp_buf begin;       /* For long jump. */
+static jmp_buf begin;       /* For long jump. */ // LMS this is broken and causes bus errors. It should be replaced with NSNotification
 
 /* Lexical analysis. ---------------------------------------------------- */
 
@@ -2152,7 +2155,8 @@ static short getBinaryShort(void)
 static int getBinaryInt(void)
 {
     int rtn;
-    if (parsePtr->_pointer + sizeof(int) > parsePtr->_length) abortBinary(); //sb
+    if (parsePtr->_pointer + sizeof(int) > parsePtr->_length)
+        abortBinary(); //sb
     [parsePtr->_stream getBytes: &rtn range: NSMakeRange(parsePtr->_pointer,sizeof(int))];
     parsePtr->_pointer += sizeof(int);
 //    NXRead(parsePtr->_stream, &rtn, sizeof(int));
@@ -2202,13 +2206,13 @@ static NSString *getBinaryString(BOOL install)
     } while ( (c=NEXTTCHAR()) != '\0'); 
     ENDTOKEN();
     if (install)
-      tokenVal->sval = [[NSString stringWithCString:tokenBuf] retain];//sb: was (char *)NXUniqueString(tokenBuf); 
+        tokenVal->sval = [[NSString stringWithCString:tokenBuf] retain];//sb: was (char *)NXUniqueString(tokenBuf); 
     /* We can't anticipate where the damn thing will end up so we can't
        do garbage collection. So we make it unique to avoid accumulating
        garbage. At some point in the future, might want to really move
        to unique strings system-wide. This makes string compares faster,
        for example. */
-        return tokenVal->sval = [[NSString stringWithCString:tokenBuf] retain];//sb: was tokenBuf;
+    return tokenVal->sval = [[NSString stringWithCString:tokenBuf] retain];//sb: was tokenBuf;
 }
 
 static id nullObject = nil;
@@ -2748,7 +2752,7 @@ static void getGlobal()
 static void
 varDecl(void)
 {
-    id aScorefileVar;
+    _ScorefileVar *aScorefileVar;
     _MKParameter *aPar;
     BOOL isUntyped = NO;
     short varType = lookahead;
