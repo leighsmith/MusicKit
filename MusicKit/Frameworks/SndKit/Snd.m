@@ -260,7 +260,7 @@ static int ioTags = 1000;
                              userInfo:nil] raise];
 
   soundStruct->magic        = SND_MAGIC; // _why_ do we still have bloody file format specific data in Snd???? Grrrr.
-  soundStruct->dataLocation = NULL; 
+  soundStruct->dataLocation = 0; 
   soundStruct->dataSize     = 0;
   soundStruct->dataFormat   = format;
   soundStruct->samplingRate = samplingRate;
