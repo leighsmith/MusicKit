@@ -45,28 +45,32 @@
 
 @interface MKMixerInstrument: MKInstrument
 {
-    /*! @var samplesToMix Array of MKSamples to mix */
-    NSMutableArray *samplesToMix;
-    /*! @var curOutSamp Index of current output sample. */
-    unsigned int curOutSamp;
+    /*! @var samplesToMix Dictionary of MKSamples to mix, keyed by noteTags */
+    NSMutableDictionary *samplesToMix;
+    /*! @var currentMixFrame Index of current output sample. */
+    unsigned int currentMixFrame;
     /*! @var soundFormat The format for the final sound, (sample rate, channels, sample format). */
     SndFormat soundFormat;
     /*! @var sound Output sound */
     Snd *sound;                       
     /*! @var mixedProcessorChain A chain of SndAudioProcessing instances, including fader, applied after mixing all sounds. */
     SndAudioProcessorChain *mixedProcessorChain;
-    /*! @var defaultAmp Default amplitude (set with no-tag noteUpdate) */
-    double defaultAmp;
-    /*! @var defaultFreq0 default resampling factor numerator */
-    double defaultFreq0;
-    /*! @var defaultFreq1 default resampling factor denominator */
-    double defaultFreq1;
-    /*! @var defaultFile default sound file name */
+    /*! @var defaultAmplitude Default amplitude (set at the start of a MK_noteDur and modified with MK_noteUpdate) */
+    double defaultAmplitude;
+    /*! @var defaultBearing Default bearing in +/- degrees (set at the start of a MK_noteDur and modified with MK_noteUpdate) */
+    double defaultBearing;
+    /*! @var defaultNewFrequency Default resampling factor numerator. What the new frequency of the sample is desired to be. */
+    double defaultNewFrequency;
+    /*! @var defaultOriginalFrequency Default resampling factor denominator. What the original frequency of the sample is. */
+    double defaultOriginalFrequency;
+    /*! @var defaultFile Default sound file name */
     NSString *defaultFile;
-    /*! @var defaultEnvelope default amplitude envelope */
+    /*! @var defaultEnvelope Default amplitude envelope */
     id defaultEnvelope;
     /*! @var defaultTimeScale See README */
     int defaultTimeScale;
+    /*! @var currentlyLooping Loop the sound if the duration exceeds the sounds length. */
+    BOOL currentlyLooping;
 }
 
 /*!
