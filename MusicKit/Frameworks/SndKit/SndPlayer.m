@@ -137,6 +137,10 @@
     if(![self isActive]) {
         [[SndStreamManager defaultStreamManager] addClient: self];
     }
+    // NSLog(@"checking endAtIndex %lf exceeds sampleCount %d\n", endAtIndex, [s sampleCount]);
+    if(endAtIndex > [s sampleCount]) {
+        endAtIndex = [s sampleCount];	// Ensure the end of play can't exceed the sound data
+    }
     if (dt == 0.0) {  // play now!
         SndPerformance *nowPerformance;
         if (endAtIndex >= 0) {
