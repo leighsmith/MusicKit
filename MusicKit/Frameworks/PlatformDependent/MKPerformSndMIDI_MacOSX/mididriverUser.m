@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/12/12 22:59:20  leigh
+  Removed function logging to file as default
+
   Revision 1.6  2000/12/07 18:32:29  leigh
   Standardised to mach ports for driver handles, properly prefixed constants
 
@@ -40,7 +43,7 @@ Modification history:
 #include <CoreMIDI/MIDIServices.h>
 #include <CarbonCore/CarbonCore.h> // needed for AbsoluteTime definitions.
 
-#define FUNCLOG 1
+#define FUNCLOG 0
 
 #ifdef FUNCLOG
 #include <stdio.h> // for fprintf and debug
