@@ -17,6 +17,11 @@
 
 #import <Foundation/Foundation.h>
 
+enum {
+    OB_notInit,
+    OB_isInit
+};
+
 @class SndAudioBuffer; 
 @class SndAudioBufferQueue;
 @class SndStreamManager;
@@ -72,6 +77,14 @@
 #else
     SndConditionLock *synthThreadLock;
 #endif
+
+#ifndef __MINGW32__
+/*! @var       outputBufferLock */
+    NSConditionLock *outputBufferLock;
+#else
+    SndConditionLock *outputBufferLock;
+#endif
+
 /*! @var       active */
     BOOL       active;
 /*! @var       needsInput */
