@@ -5,10 +5,10 @@
 # README tarball from package temporary directory to the
 # sourceforge website.
 #
-# Leigh Smith <leigh@tomandandy.com> 2000/11/28
+# Leigh Smith <leigh@leighsmith.com> 2000/11/28
 #
 TARBALLLOC=/tmp
-TARBALL=MusicKitREADME.tar.gz
+TARBALL=MusicKitREADME.tar.bz2
 SITEUSER=leighsmith
 SITE=musickit.sourceforge.net
 SITEHTMLDIR=/home/groups/m/mu/musickit
@@ -19,10 +19,9 @@ SITEHTMLDIR=/home/groups/m/mu/musickit
 # cd incoming
 # bin
 # lcd $TARBALLLOC
-# send SndKit-$SKVERS.s.tar.gz
 # send MK-$MKVERS.s.tar.gz
 # send MK-$MKVERS.MOX.b.tar.gz
 
 scp $TARBALLLOC/$TARBALL $SITEUSER@$SITE:$TARBALL
-ssh -l $SITEUSER $SITE "cd $SITEHTMLDIR; tar xzf ~/$TARBALL"
+ssh -l $SITEUSER $SITE "cd $SITEHTMLDIR; tar xjf ~/$TARBALL"
 
