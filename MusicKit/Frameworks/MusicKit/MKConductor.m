@@ -14,108 +14,11 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2003 The MusicKit Project.
 */
-/* 
-Modification history:
-
-  $Log$
-  Revision 1.28  2002/11/03 21:03:53  leighsmith
-  Updated insertMsgQueue prototype, removed redundant function _MKSetPollProc
-
-  Revision 1.27  2002/04/08 19:09:04  sbrandon
-  removed extraneous semicolons
-
-  Revision 1.26  2002/04/08 17:34:29  sbrandon
-  Changed newMsgRequest() definition to include a couple of BOOL flags saying
-  whether or not to retain arg1 and arg2 (to be used if they are objects).
-  Changed all references to this function
-  Added -sel:to:withDelay:argCount:arg1:retain:arg2:retain
-  Added -del:to:atTime:argCount:arg1:retain:arg2:retain
-  Now selectively retain and release arg1 and arg2 based on flags passed in
-  with the arguments
-  New function MKNewMsgRequestWithObjectArgs similar to MKNewMsgRequest
-  except with boolean retain flags as above
-  New function MKRescheduleMsgRequestWithObjectArgs similar to MKRescheduleMsgRequest
-  except with boolean retain flags as above
-  New method -afterPerformanceSel:to:argCount:arg1:retain:arg2:retain as above
-  New method -beforePerformanceSel:to:argCount:arg1:retain:arg2:retain as above
-  New method +_afterPerformanceSel:to:argCount:arg1:retain:arg2:retain as above
-  New method +_newMsgRequestAtTime:sel:to:argCount:arg1:retain:arg2:retain as above
-  New method -_rescheduleMsgRequestWithObjectArgs:atTime:sel:to:argCount:arg1...
-  as above
-
-  Revision 1.25  2002/03/20 17:02:58  sbrandon
-  call detachDelegateMessageThread in +initialize to set up background delegate message passing thread.
-
-  Revision 1.24  2002/01/29 16:50:42  sbrandon
-  checked over MKCancelMsgRequest and other MsgStruct-related functions and methods, and fixed some leaks by retaining and releasing objects where appropriate.
-
-  Revision 1.23  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.22  2001/08/27 23:51:47  skotmcdonald
-  deltaT fetched from conductor, took out accidently left behind debug messages (MKSampler). Conductor: renamed time methods to timeInBeat, timeInSamples to be more explicit
-
-  Revision 1.21  2001/08/07 16:16:11  leighsmith
-  Corrected class name during decode to match latest MK prefixed name
-
-  Revision 1.20  2001/07/05 22:52:42  leighsmith
-  Comment cleanups, removed redundant getNextMsgTime()
-
-  Revision 1.19  2000/05/27 19:16:08  leigh
-  Code cleanup
-
-  Revision 1.18  2000/05/06 00:57:16  leigh
-  Parenthetised to remove warnings
-
-  Revision 1.17  2000/05/06 00:29:58  leigh
-  removed redundant setjmp include
-
-  Revision 1.16  2000/04/25 02:14:05  leigh
-  Moved separate thread locking into masterConductorBody since
-  it was being locked before being called, which under NSRunLoop dispatching was not possible.
-
-  Revision 1.15  2000/04/22 20:17:02  leigh
-  Extra info in description, proper class ivar initialisations
-
-  Revision 1.14  2000/04/20 21:39:00  leigh
-  Removed flakey longjmp for unclocked MKConductors, improved description
-
-  Revision 1.13  2000/04/16 04:28:17  leigh
-  Class typing and added description method
-
-  Revision 1.12  2000/04/08 01:01:33  leigh
-  Fixed bug when inPerformance set during final pending masterConductorBody
-
-  Revision 1.11  2000/04/02 17:22:13  leigh
-  Cleaned doco
-
-  Revision 1.10  2000/04/01 01:19:27  leigh
-  Removed redundant getTime function
-
-  Revision 1.9  2000/03/31 00:13:57  leigh
-  theTimeToWait now a shared function, using _MKAppProxy
-
-  Revision 1.8  2000/03/24 16:27:25  leigh
-  Removed redundant AppKit headers
-
-  Revision 1.7  2000/01/24 22:32:02  leigh
-  Comment improvements
-
-  Revision 1.6  2000/01/20 17:15:36  leigh
-  Fixed accidental commenting out of header files, reorganised #imports
-
-  Revision 1.5  2000/01/13 06:44:07  leigh
-  Added a missing (pre-OpenStep conversion!) _error: method, improved forward declaration of newMsgRequest
-
-  Revision 1.4  1999/09/04 22:02:17  leigh
-  Added setDeltaT, deltaT class methods. Merged to single masterConductorBody method.
-
-  Revision 1.3  1999/08/06 16:31:12  leigh
-  Removed extraInstances and implementation ivar cruft
-
-  Revision 1.2  1999/07/29 01:16:36  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+/*
+  Original pre MusicKit.org project modification history. For current history, 
+  check the CVS log on musickit.org.
 
   09/15/89/daj - Added caching of inverse of beatSize. 
   09/19/89/daj - Unraveled inefficient MIN(MAX construct.
@@ -450,7 +353,7 @@ static void repositionCond(MKConductor *cond,double nextMsgTime)
     checkForEndOfTime();
 }
 
-#if i386         /* There's a Pentium optimization bug that is tickled here */
+#if i386 && defined(__NeXT__)  /* There's a Pentium optimization bug that is tickled here */
 #pragma CC_OPT_OFF
 #endif
 
@@ -483,7 +386,7 @@ static double beatToClock(MKConductor *self,double newBeat)
     return MAX(x,clockTime);
 }
 
-#if i386
+#if i386 && defined(__NeXT__)
 #pragma CC_OPT_ON
 #endif
 
