@@ -1,0 +1,371 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 32;
+	objects = {
+		03722A87007511AECFED3B96 = {
+			buildStyles = (
+			);
+			isa = PBXProject;
+			mainGroup = 03722A88007511AECFED3B96;
+			productRefGroup = 03722AA1007511AECFED3B96;
+			projectDirPath = .;
+			targets = (
+				03722AA3007511AECFED3B96,
+			);
+		};
+		03722A88007511AECFED3B96 = {
+			children = (
+				03722A89007511AECFED3B96,
+				03722A8B007511AECFED3B96,
+				03722A8D007511AECFED3B96,
+				03722A8F007511AECFED3B96,
+				03722A93007511AECFED3B96,
+				03722A9A007511AECFED3B96,
+				03722AA1007511AECFED3B96,
+			);
+			isa = PBXGroup;
+			name = example4;
+			refType = 4;
+		};
+		03722A89007511AECFED3B96 = {
+			children = (
+				03722A8A007511AECFED3B96,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+		};
+		03722A8A007511AECFED3B96 = {
+			isa = PBXFileReference;
+			path = MyObject.m;
+			refType = 4;
+		};
+		03722A8B007511AECFED3B96 = {
+			children = (
+				03722A8C007511AECFED3B96,
+			);
+			isa = PBXGroup;
+			name = Headers;
+			refType = 4;
+		};
+		03722A8C007511AECFED3B96 = {
+			isa = PBXFileReference;
+			path = MyObject.h;
+			refType = 4;
+		};
+		03722A8D007511AECFED3B96 = {
+			children = (
+				03722A8E007511AECFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+		};
+		03722A8E007511AECFED3B96 = {
+			isa = PBXFileReference;
+			path = example4_main.m;
+			refType = 4;
+		};
+		03722A8F007511AECFED3B96 = {
+			children = (
+				03722A90007511AECFED3B96,
+			);
+			isa = PBXGroup;
+			name = Interfaces;
+			refType = 4;
+		};
+		03722A90007511AECFED3B96 = {
+			children = (
+				03722A91007511AECFED3B96,
+				03722A92007511AECFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = example4.nib;
+			refType = 4;
+		};
+		03722A91007511AECFED3B96 = {
+			isa = PBXFileReference;
+			name = "English - windows";
+			path = "English.lproj/example4-windows.nib";
+			refType = 4;
+		};
+		03722A92007511AECFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/example4.nib;
+			refType = 4;
+		};
+		03722A93007511AECFED3B96 = {
+			children = (
+				03722A94007511AECFED3B96,
+				03722A95007511AECFED3B96,
+				03722A96007511AECFED3B96,
+				03722A97007511AECFED3B96,
+				03722A98007511AECFED3B96,
+				03722A99007511AECFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+		};
+		03722A94007511AECFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile.preamble;
+			refType = 4;
+		};
+		03722A95007511AECFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile;
+			refType = 4;
+		};
+		03722A96007511AECFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile.postamble;
+			refType = 4;
+		};
+		03722A97007511AECFED3B96 = {
+			isa = PBXFileReference;
+			path = m.template;
+			refType = 4;
+		};
+		03722A98007511AECFED3B96 = {
+			isa = PBXFileReference;
+			path = h.template;
+			refType = 4;
+		};
+		03722A99007511AECFED3B96 = {
+			isa = PBXFileReference;
+			path = java.template;
+			refType = 4;
+		};
+		03722A9A007511AECFED3B96 = {
+			children = (
+				03722A9B007511AECFED3B96,
+				03722A9C007511AECFED3B96,
+				03722A9D007511AECFED3B96,
+				03722A9E007511AECFED3B96,
+				03722A9F007511AECFED3B96,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+		};
+		03722A9B007511AECFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = dsp.framework;
+			path = /System/Library/Frameworks/dsp.framework;
+			refType = 0;
+		};
+		03722A9C007511AECFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = MKPerformSndMIDI.framework;
+			path = /Network/Servers/whiteley/lauren/Local/Library/Frameworks/MKPerformSndMIDI.framework;
+			refType = 0;
+		};
+		03722A9D007511AECFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = MusicKit.framework;
+			path = /Network/Servers/whiteley/lauren/Local/Library/Frameworks/MusicKit.framework;
+			refType = 0;
+		};
+		03722A9E007511AECFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = AppKit.framework;
+			path = /System/Library/Frameworks/AppKit.framework;
+			refType = 0;
+		};
+		03722A9F007511AECFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+		};
+		03722AA1007511AECFED3B96 = {
+			children = (
+				03722AA2007511AECFED3B96,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		03722AA2007511AECFED3B96 = {
+			isa = PBXApplicationReference;
+			path = example4.app;
+			refType = 3;
+		};
+		03722AA3007511AECFED3B96 = {
+			buildPhases = (
+				03722AA4007511AECFED3B96,
+				03722AA6007511AECFED3B96,
+				03722AA8007511AECFED3B96,
+				03722AAB007511AECFED3B96,
+				03722AB1007511AECFED3B96,
+			);
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" /Network/Servers/whiteley/lauren/Local/Library/Frameworks";
+				INSTALL_PATH = /Applications;
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = example4;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WRAPPER_EXTENSION = app;
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXApplicationTarget;
+			name = "example4 (Application)";
+			productInstallPath = /Applications;
+			productName = "example4 (Application)";
+			productReference = 03722AA2007511AECFED3B96;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
+<plist version=\"0.9\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>example4</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+	<key>NSExtensions</key>
+	<dict/>
+	<key>NSMainNibFile</key>
+	<string>example4.nib</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+			shouldUseHeadermap = 0;
+		};
+		03722AA4007511AECFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				03722AA5007511AECFED3B96,
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		03722AA5007511AECFED3B96 = {
+			fileRef = 03722A8C007511AECFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722AA6007511AECFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				03722AA7007511AECFED3B96,
+			);
+			isa = PBXResourcesBuildPhase;
+			name = "Bundle Resources";
+		};
+		03722AA7007511AECFED3B96 = {
+			fileRef = 03722A90007511AECFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722AA8007511AECFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				03722AA9007511AECFED3B96,
+				03722AAA007511AECFED3B96,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		03722AA9007511AECFED3B96 = {
+			fileRef = 03722A8A007511AECFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+			};
+		};
+		03722AAA007511AECFED3B96 = {
+			fileRef = 03722A8E007511AECFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+			};
+		};
+		03722AAB007511AECFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				03722AAC007511AECFED3B96,
+				03722AAD007511AECFED3B96,
+				03722AAE007511AECFED3B96,
+				03722AAF007511AECFED3B96,
+				03722AB0007511AECFED3B96,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		03722AAC007511AECFED3B96 = {
+			fileRef = 03722A9B007511AECFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722AAD007511AECFED3B96 = {
+			fileRef = 03722A9C007511AECFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722AAE007511AECFED3B96 = {
+			fileRef = 03722A9D007511AECFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722AAF007511AECFED3B96 = {
+			fileRef = 03722A9E007511AECFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722AB0007511AECFED3B96 = {
+			fileRef = 03722A9F007511AECFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722AB1007511AECFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+	};
+	rootObject = 03722A87007511AECFED3B96;
+}
