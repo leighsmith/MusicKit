@@ -54,6 +54,8 @@ OF THIS AGREEMENT.
 #import "SndAudioBuffer.h"
 
 #define DEBUG_CHANNEL_MAPPING 0  // 1 to dump out the channel map.
+#define CONVERTFORMATERR(from, to) NSLog(@"Sorry, unsupported conversion from format %@ to %@.\n", SndFormatName((from), NO), SndFormatName((to), NO));
+
 
 @implementation SndAudioBuffer(SampleConversion)
 
@@ -343,7 +345,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 		break;
             default:
                 /* that should be all the common ones. Maybe aLaw too? */
-                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+		CONVERTFORMATERR(fromDataFormat, toDataFormat);
                 return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
@@ -372,7 +374,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 		break;
             default:
                 /* that should be all the common ones. Maybe aLaw too? */
-                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+		CONVERTFORMATERR(fromDataFormat, toDataFormat);
                 return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
@@ -396,7 +398,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 		break;
             default:
                 /* that should be all the common ones. Maybe aLaw too? */
-                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+		CONVERTFORMATERR(fromDataFormat, toDataFormat);
                 return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
@@ -421,7 +423,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 		break;
             default:
                 /* that should be all the common ones. Maybe aLaw too? */
-                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+		CONVERTFORMATERR(fromDataFormat, toDataFormat);
                 return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
@@ -440,7 +442,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 		break;
             default:
                 /* that should be all the common ones. Maybe aLaw too? */
-                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+		CONVERTFORMATERR(fromDataFormat, toDataFormat);
                 return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
@@ -454,14 +456,14 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 		break;
             default:
                 /* that should be all the common ones. Maybe aLaw too? */
-                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+		CONVERTFORMATERR(fromDataFormat, toDataFormat);
                 return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 	    
 	default:
 	    /* that should be all the common ones. Maybe aLaw too? */
-            NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+	    CONVERTFORMATERR(fromDataFormat, toDataFormat);
             return SND_ERR_BAD_FORMAT;
         }
     }
@@ -506,7 +508,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 		break;
             default:
                 /* that should be all the common ones. Maybe aLaw too? */
-                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+		CONVERTFORMATERR(fromDataFormat, toDataFormat);
                 return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
@@ -535,7 +537,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 		break;
             default:
                 /* that should be all the common ones. Maybe aLaw too? */
-                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+		CONVERTFORMATERR(fromDataFormat, toDataFormat);
                 return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
@@ -559,7 +561,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 		break;
             default:
                 /* that should be all the common ones. Maybe aLaw too? */
-                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+		CONVERTFORMATERR(fromDataFormat, toDataFormat);
                 return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
@@ -578,7 +580,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 		break;
             default:
                 /* that should be all the common ones. Maybe aLaw too? */
-                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+		CONVERTFORMATERR(fromDataFormat, toDataFormat);
                 return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
@@ -592,13 +594,13 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 		break;
             default:
                 /* that should be all the common ones. Maybe aLaw too? */
-                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+		CONVERTFORMATERR(fromDataFormat, toDataFormat);
                 return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 
 	default:
-	    NSLog(@"Sorry, conversion to format %d unsupported, in attempting to convert from %d format.\n", toDataFormat, fromDataFormat);
+	    CONVERTFORMATERR(fromDataFormat, toDataFormat);
 	    return SND_ERR_BAD_FORMAT;
 	}
     }
