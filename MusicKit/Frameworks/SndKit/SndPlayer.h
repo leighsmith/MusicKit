@@ -23,5 +23,7 @@
 - (NSString*) description;
 // Return an array of the performances of a given sound.
 - (NSArray *) performancesOfSnd: (Snd *) snd;
+// initiate the performance. You shouldn't need to call this method, use playSnd: instead.
+- startPerformance: (SndPerformance *) performance;
 
 @end

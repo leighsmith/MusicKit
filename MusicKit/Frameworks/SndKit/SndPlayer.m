@@ -73,37 +73,26 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// playSnd:
-////////////////////////////////////////////////////////////////////////////////
-
-- (SndPerformance *) playSnd: (Snd*) s
-{
-    SndPerformance *thisPerformance = [SndPerformance performanceOfSnd: s playTime: nowTime];
-    [playing addObject: thisPerformance];
-    return thisPerformance;
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // playSnd:withTimeOffset:
 ////////////////////////////////////////////////////////////////////////////////
 
 - (SndPerformance *) playSnd: (Snd*) s withTimeOffset: (double) dt
 {
-    SndPerformance *thisPerformance;
     if(![self isActive]) {
         // NSLog(@"Added sndPlayer to defaultStreamManager\n");
         [[SndStreamManager defaultStreamManager] addClient: self];
     }
 
-    if (dt == 0.0) {
-        thisPerformance = [SndPerformance performanceOfSnd: s playTime: nowTime];
-        [playing addObject: thisPerformance];    
+    if (dt == 0.0) {  // play now!
+        SndPerformance *nowPerformance = [SndPerformance performanceOfSnd: s playTime: nowTime];
+        [self startPerformance: nowPerformance];    
+        return nowPerformance;
     }		
-    else {
-        double playT = nowTime+dt;
+    else {            // play later!
+        double playT = nowTime + dt;
         int i, c = [toBePlayed count];
         int insertIndex = c;
-        thisPerformance = [SndPerformance performanceOfSnd: s playTime: playT];
+        SndPerformance *laterPerformance = [SndPerformance performanceOfSnd: s playTime: playT];
 
         for (i = 0; i < c; i++) {
             SndPerformance *this = [toBePlayed objectAtIndex: i];
@@ -112,12 +101,21 @@
                 break;
             }
         }
-        [toBePlayed insertObject: thisPerformance atIndex: i];
+        [toBePlayed insertObject: laterPerformance atIndex: i];
+        return laterPerformance;
     }
-    return thisPerformance;
 }
 
-// 
+////////////////////////////////////////////////////////////////////////////////
+// playSnd:
+////////////////////////////////////////////////////////////////////////////////
+
+- (SndPerformance *) playSnd: (Snd*) s
+{
+    return [self playSnd: s withTimeOffset: 0.0];
+}
+
+// TODO stop the sound, at some point in the future.
 - stopSnd: (Snd*) s withTimeOffset: (double) inSeconds
 {
     return self;
@@ -131,6 +129,19 @@
     return performances;
 }
 
+// start this performance by adding it to the playing list and firing off the delegate.
+- startPerformance: (SndPerformance *) performance
+{
+    [playing addObject: performance];
+    // The delay between receiving this delegate and when the audio is actually played 
+    // is an extra buffer, therefore: delay = buffLength/sampleRate after the delegate 
+    // message has been received.
+    [[performance snd] _setStatus:SND_SoundPlaying];
+    [[performance snd] tellDelegate: @selector(willPlay:duringPerformance:)
+                  duringPerformance: performance];
+    return self;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // processBuffers
 ////////////////////////////////////////////////////////////////////////////////
@@ -141,27 +152,21 @@
     double       bufferDur     = [ab duration];
 //    double       sampleRate    = [ab samplingRate];
     double       bufferEndTime = [self nowTime] + bufferDur;
-    int c;
+    int numberToBePlayed;
+    int numberPlaying;
     int buffLength = [ab lengthInSamples];
     int i;
     NSMutableArray *removalArray = [NSMutableArray arrayWithCapacity: 10];
 
     // Are any of the 'toBePlayed' samples gonna fire off during this buffer?
     // If so, add 'em to the play array
-    c = [toBePlayed count];
-    for (i = 0; i < c; i++) {
+    numberToBePlayed = [toBePlayed count];
+    for (i = 0; i < numberToBePlayed; i++) {
         SndPerformance *performance = [toBePlayed objectAtIndex: i];
         if ([performance playTime] < bufferEndTime) {
             [removalArray addObject: performance];
             [performance setPlayIndex: - [[performance snd] samplingRate] * ([performance playTime] - nowTime)];
-            [playing addObject: performance];
-            // The delay between receiving this delegate and when the audio is actually played 
-            // is an extra buffer, therefore: delay = buffLength/sampleRate after the delegate 
-            // message has been received.
-            // NSLog(@"telling delegate willPlay:");
-            [[performance snd] _setStatus:SND_SoundPlaying];
-            [[performance snd] tellDelegate: @selector(willPlay:duringPerformance:)
-                          duringPerformance: performance];
+            [self startPerformance: performance];
         }
     }
     [toBePlayed removeObjectsInArray: removalArray];
@@ -171,27 +176,27 @@
     //
     // Create a temporary wrapper buffer around each audio segment we are mixing.
 
-    c = [playing count];
-    for (i = 0; i < c; i++) {
+    numberPlaying = [playing count];
+    for (i = 0; i < numberPlaying; i++) {
         SndPerformance *performance = [playing objectAtIndex: i];
         Snd    *snd        = [performance snd];
         long    startIndex = [performance playIndex];
         long    sndLength  = [snd sampleCount];
         SndAudioBuffer *temp = nil;
-        NSRange r = {startIndex, buffLength};
+        NSRange playRegion = {startIndex, buffLength};
 
         // NSLog(@"location = %d, length = %d\n", r.location, r.length);
         
         if (buffLength + startIndex > sndLength)
             buffLength = sndLength - startIndex;
-        r.length = buffLength;
+        playRegion.length = buffLength;
 
         if (startIndex < 0) {
-            r.length += startIndex;
-            r.location = 0;
+            playRegion.length += startIndex;
+            playRegion.location = 0;
         }
         
-        temp = [SndAudioBuffer audioBufferWithSndSeg: snd range: r];
+        temp = [SndAudioBuffer audioBufferWithSndSeg: snd range: playRegion];
 
         {
             int start = 0, end = buffLength;
