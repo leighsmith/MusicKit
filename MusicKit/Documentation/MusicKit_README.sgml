@@ -412,14 +412,15 @@ framework, then the <filename>MusicKit</filename> framework. They will
 install into <filename
 class=directory>/Local/Library/Frameworks</filename>. The
 <filename>MKUnitGenerators</filename>/<filename>MKSynthPatches</filename>
-framework won't compile on MacOsX-Server because the Motorola asm56000
-and lnk56000 tools are missing. I've asked Apple and Motorola for a
-MacOsX-Server port, why don't you also? :-) At the moment header files
-are problematic. I copied over the 3.3 headers to compile against the
-SoundKit and to compile the MIDI driver. These legacy headers may not
-actually be needed and could be removed in time. You can get them from
-the Darwin distribution of the SoundKit or just copy them from a
-NeXTStep 3.3/OpenStep 4.2 system.
+framework won't compile on MacOsX-Server because the Motorola
+<command>asm56000</command> and <command>lnk56000</command> tools are
+missing. I've asked Apple and Motorola for a MacOsX-Server port, why
+don't you also? :-) At the moment header files are problematic. I
+copied over the 3.3 headers to compile against the SoundKit and to
+compile the MIDI driver. These legacy headers may not actually be
+needed and could be removed in time. You can get them from the Darwin
+distribution of the SoundKit or just copy them from a NeXTStep
+3.3/OpenStep 4.2 system.
 </para>
     </sect2>
 
