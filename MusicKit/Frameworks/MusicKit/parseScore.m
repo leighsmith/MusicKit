@@ -27,92 +27,10 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2000 The MusicKit Project.
+  Portions Copyright (c) 1999-2004 The MusicKit Project.
 */
 /* 
-Modification history:
-
-  $Log$
-  Revision 1.25  2004/09/18 19:32:30  leighsmith
-  Removed win32 specific rand() use since random() is now available on win32/MinGW
-
-  Revision 1.24  2003/08/04 21:14:33  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
-  Revision 1.23  2002/04/16 15:21:40  sbrandon
-  new envelopes read from scores are now autoreleased, since the ref counting
-  system works properly for note parameters (they were being leaked before)
-
-  Revision 1.22  2002/04/03 03:59:41  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.21  2002/03/12 23:17:41  sbrandon
-  Major overhaul of binary scorefile handling, fixes some longstanding bugs.
-  Most internal functions dealing with binary IO now take an extra argument
-  indicating whether the IO is in the header or body of the file. This is
-  because the pointer structures used in the 2 cases are different.
-  Lots of debugging printf statements, gated with DEBUG_PARSE_SCORE
-  macro (off by default).
-
-  Revision 1.20  2002/01/23 15:33:02  sbrandon
-  The start of a major cleanup of memory management within the MK. This set of
-  changes revolves around MKNote allocation/retain/release/autorelease.
-
-  Revision 1.19  2002/01/15 10:49:53  sbrandon
-  removed unecessary tokens appended to undef statements
-
-  Revision 1.18  2001/10/12 23:14:53  leighsmith
-  Corrected warning created by two slightly different prototypes between SndEnvelopes and MKEnvelopes
-
-  Revision 1.17  2001/09/12 13:59:29  sbrandon
-  changed -cString to -fileSystemRepresentation
-
-  Revision 1.16  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.15  2001/07/02 17:03:17  sbrandon
-  - For GNUStep (ifdef'd it) use [MKTuningSystem _transpose:val] instead of
-    [MKTuningSystem transpose:val] because GNUStep has difficulties with
-    class methods that have the same signatures as instance methods.
-
-  Revision 1.14  2001/05/22 22:27:56  leighsmith
-  Added string.h to avoid warning on GnuStep
-
-  Revision 1.13  2001/03/06 21:49:24  leigh
-  renamed to pTypePtr to avoid name clashes
-
-  Revision 1.12  2000/11/28 18:59:11  leigh
-  enforced constant string behaviour to remove warnings
-
-  Revision 1.11  2000/10/01 06:45:42  leigh
-  Corrected parameter passed to _MKNewStringPar.
-
-  Revision 1.10  2000/08/11 16:44:51  leigh
-  Added notice of bugginess of jmp_buf, cleaned up typing
-
-  Revision 1.9  2000/05/05 01:56:18  leigh
-  Fixed errant use of immutable NSDictionary for _noteTagTable
-
-  Revision 1.8  2000/04/26 01:18:11  leigh
-  Corrected readScorefileStream to take a NSData instead of NSMutableData instance
-
-  Revision 1.7  2000/04/13 21:49:32  leigh
-  Fixed uninitialised readPosition index
-
-  Revision 1.6  2000/03/31 00:05:46  leigh
-  Adopted OpenStep naming of factory methods
-
-  Revision 1.5  2000/02/11 22:52:40  leigh
-  Fixed memory leak reading scorefiles
-
-  Revision 1.4  1999/08/26 20:00:53  leigh
-  using new MKError prototype
-
-  Revision 1.3  1999/08/07 23:59:30  leigh
-  Enabled reading MS-DOS format scorefiles \r\n and replaced HashTable use with NSDictionary
-
-  Revision 1.2  1999/07/29 01:26:14  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history prior to CVS commit:
 
   09/18/89/daj - Changes to accomodate new way of doing parameters (structs 
                  rather than objects).
@@ -213,8 +131,7 @@ typedef struct _parseStateStruct {
     STRTYPE * _buf_base;
 } parseStateStruct;
 
-/* All of the following are global for speed -- to avoid indirection and
-   passing arguments. */
+/* All of the following are global for speed -- to avoid indirection and passing arguments. */
 
 static _MKScoreInStruct * scoreRPtr = NULL; /* Main structure */
 static parseStateStruct * parsePtr = {NULL}; 
@@ -225,7 +142,7 @@ static unsigned int scoreStreamPointer = 0; /*sb: new variable to track current 
 static STRTYPE *scoreStreamBuf_Base = 0;    /*sb: holds pointer to start of scoreStream (convenience) */
 static unsigned int scoreStreamLength = 0;  /*sb: new variable to track current position within stream */
 static short lookahead = 0;         /* Next token */
-static        _MKParameterUnion *tokenVal = NULL;/* Current token (union type) */
+static _MKParameterUnion *tokenVal = NULL; /* Current token (union type) */
     
 /* The following are for the current token scan. */
 static char * tokenBuf = NULL;   /* start of name field */
@@ -233,12 +150,10 @@ static char * tokenPtr = NULL;  /* current location in name field */
 static unsigned tokenSize = INITIALMAXTOKENLENGTH; /* Size of tokenBuf */
 static char * tokenEndBuf = NULL; /* If tokenPtr gets here, token must expand. */
     
-static char
-  expandTok(c)
-char c;
+static char expandTok(char c)
 {
-    int newSize;
-    newSize = (tokenSize * 2);
+    int newSize = (tokenSize * 2);
+    
     _MK_REALLOC(tokenBuf,char,newSize);
     tokenPtr = &(tokenBuf[tokenSize]);
     tokenSize = newSize;
@@ -246,13 +161,11 @@ char c;
     return (*tokenPtr = c);
 }
 
-//#define NEXTCHAR() NXGetc(scoreStream)
 #define NEXTCHAR() (scoreStreamPointer >= scoreStreamLength) ? EOF : ((const char *)scoreStreamBuf_Base)[scoreStreamPointer++]
 #define NEXTTCHAR() ((++tokenPtr > tokenEndBuf) ? expandTok(NEXTCHAR()) : \
                      (*tokenPtr = NEXTCHAR()))
 #define NEWTOKEN(_c) tokenPtr = tokenBuf; *tokenPtr = _c
 #define ENDTOKEN() *(tokenPtr+1) = '\0'; tokenPtr = NULL
-//#define BACKUP(_c) if (_c != -1) NXUngetc(scoreStream)
 #define BACKUP(_c) if (_c != -1) scoreStreamPointer--
 #define BACKUPENDTOKEN(_c) *(tokenPtr) = '\0'; tokenPtr = NULL; BACKUP(_c)
 
@@ -298,14 +211,14 @@ const char *_MKTranstab()
    */
 
 
-enum {noLongjmp = 0,errorLongjmp,fatalErrorLongjmp,eofLongjmp};
+enum { noLongjmp = 0, errorLongjmp, fatalErrorLongjmp, eofLongjmp };
 
-static short
-  lexan(void)
+/* lexan() is the lexical analyzer. Time spent optimizing this function
+   is well-spent, as this is where the bulk of the compute time goes
+   in parsing a file. 
+*/
+static short lexan(void)
 {        
-    /* lexan is the lexical analyzer. Time spent optimizing this function
-       is well-spent, as this is where the bulk of the compute time goes
-       in parsing a file. */
     register short c;
     char *transcharloc;
 
@@ -509,8 +422,7 @@ static short
 
 #define MATCH(_dummy) lookahead = lexan()
   
-static BOOL 
-  match(short token)
+static BOOL match(short token)
 {
     if (lookahead == token)
       lookahead = lexan();
@@ -518,9 +430,7 @@ static BOOL
     return YES;
 }
 
-
-static char * 
-  curToken(void)
+static char *curToken(void)
 {
     /* Used for error reporting. */
     static char charS[2] = {'\0','\0'};
@@ -533,8 +443,7 @@ static char *
     return (char *)_MKTokName(lookahead);
 }
 
-static void
-  insertError(int op)
+static void insertError(int op)
 {
     char s[2];
     char c = (char) op;
@@ -617,8 +526,7 @@ static double *dataCurX = NULL;
 static double *dataCurY = NULL;
 static double *dataCurZ = NULL;
 
-static void expandEnvBuf(double **startPtrPtr,double **curPtrPtr,
-                         double **endPtrPtr)
+static void expandEnvBuf(double **startPtrPtr, double **curPtrPtr, double **endPtrPtr)
 {
 #   define EXPANDAMOUNT 10    
     int newSize,curOffset;
@@ -630,8 +538,7 @@ static void expandEnvBuf(double **startPtrPtr,double **curPtrPtr,
 #   undef EXPANDAMOUNT
 }
 
-static void 
-  initExpressionParser(void)
+static void initExpressionParser(void)
 {
     static BOOL beenHere = NO;
     _MKParameterUnion * *sp;  
@@ -642,8 +549,7 @@ static void
       NEWPARVAL(*sp);   /* The *sp is the pointer to the parameterUnion. */
 }
 
-static void
-  initScanner(void)
+static void initScanner(void)
 {
     if (tokenBuf) 
       return;
@@ -661,8 +567,7 @@ static void
 #   undef INITDATASIZE
 }
 
-static void 
-stackPush(_MKParameterUnion *val, short type)
+static void stackPush(_MKParameterUnion *val, short type)
     /* Copies the value of val to stack as well as the type. */
 {
     if (pTypePtr == fullStack)
@@ -671,8 +576,7 @@ stackPush(_MKParameterUnion *val, short type)
     *(++pTypePtr) = type;
 }
 
-static _MKParameterUnion * 
-stackPop(short *typeAddr)
+static _MKParameterUnion *stackPop(short *typeAddr)
 {
     if (pTypePtr < typeStack)
       error(MK_sfBadExprErr);
@@ -680,8 +584,7 @@ stackPop(short *typeAddr)
     return *pValPtr--;
 }
 
-static short
-rvalue(_MKParameterUnion **valAddr,short type)
+static short rvalue(_MKParameterUnion **valAddr, short type)
 {
     short resultType;
     switch (type) {
@@ -757,23 +660,21 @@ static void ranSeed(void)
 
 /* Expression parsing: Envelopes and other data objects */
 
-enum restrictions {noRestriction,noWaveTab,noRecursiveDefines};
+enum restrictions { noRestriction, noWaveTab, noRecursiveDefines };
 static enum restrictions restriction;
 
-static void 
-assign(void);         /* Forward reference needed. */
+static void assign(void);         /* Forward reference needed. */
 
-static void
-emit(short t);
+static void emit(short t);
 
-static void
-emitVar(short t,_MKParameterUnion * tokenVal);
+static void emitVar(short t,_MKParameterUnion * tokenVal);
 
 #define SETDATAVAL(_ptr,_val) *++_ptr = _val
 
+/* Parse SEG-style envelope and push it onto stack. It is assumed
+   that lookahead == '(' when this function is entered. 
+ */
 static id env(void)
-    /* Parse SEG-style envelope and push it onto stack. It is assumed
-       that lookahead == '(' when this function is entered. */
 {
 #   define NOSTICK -1
 #   define INITPTR(_cur,_base) _cur = _base - 1
@@ -938,8 +839,8 @@ static id wave(void)
 
 static short expression(_MKParameterUnion *rtnValPtr);
 
+/* Parse user-defined object. */ 
 static id obj(void) 
-    /* Parse user-defined object. */ 
 {
 #   define WILD 0    
     _MKParameterUnion tmpUnion;
@@ -955,42 +856,42 @@ static id obj(void)
       Also, it is forbidden to write a MKNote, MKScore or MKPart as a parameter value
       since these may use ']' in their description.
       */
-    if (!strcmp("Envelope",tokenBuf)) {
+    if (!strcmp("Envelope", tokenBuf)) {
         MATCH(_MK_undef);
         return env();
     }
-    if ((!strcmp("MKPartials",tokenBuf)) ||
-        (!strcmp("Samples",tokenBuf))) {
+    if ((!strcmp("MKPartials", tokenBuf)) ||
+        (!strcmp("Samples", tokenBuf))) {
         MATCH(_MK_undef);
         return wave();
     }
     tmpUnion.symbol = [aClass new];
     /* No MATCH here, because we don't want to read it yet. */
-    if (![tmpUnion.symbol respondsToSelector:@selector(readASCIIStream:)]) {
+    if (![tmpUnion.symbol respondsToSelector: @selector(readASCIIStream:)]) {
         for (; ;) {
             lookahead = NEXTCHAR();
             if (lookahead == ']')
               break;
         }
-        error(MK_notScorefileObjectTypeErr,tokenBuf);
+        error(MK_notScorefileObjectTypeErr, tokenBuf);
     }
-    [tmpUnion.symbol readASCIIStream:scoreStream];
+    [tmpUnion.symbol readASCIIStream: scoreStream];
     MATCH(WILD);                          /* Needed to init parser again */
     if (!match(']'))
-      error(MK_sfMissingStringErr,"]");
-    emitVar(MK_object,&tmpUnion);
+      error(MK_sfMissingStringErr, "]");
+    emitVar(MK_object, &tmpUnion);
     restriction = noRestriction;
     return tmpUnion.symbol;
 }
 
-static void declErrCheck(const char *typeS,short declaredType);
+static void declErrCheck(const char *typeS, short declaredType);
 
+/* Parse named data declaration and push resultant data
+   onto stack. It is assumed that lookahead is the name of 
+   the new data when this function is entered. Type is the
+   type of the declaration, i.e. _MK_envelopeDecl or _MK_waveTableDecl or
+   _MK_objectDecl. */
 static void namedDataDecl(_MKToken type)
-    /* Parse named data declaration and push resultant data
-       onto stack. It is assumed that lookahead is the name of 
-       the new data when this function is entered. Type is the
-       type of the declaration, i.e. _MK_envelopeDecl or _MK_waveTableDecl or
-       _MK_objectDecl. */
 {
     id dataObj;
     char * name;
@@ -1047,9 +948,11 @@ static void namedDataDecl(_MKToken type)
 
 /* Expression parsing: Evaluation. */
 
-static void
-  unaryEval(_MKParameterUnion * val,short type,short *resultTypeAddr,
-            _MKParameterUnion * rtnVal,short op)
+static void unaryEval(_MKParameterUnion *val, 
+		      short type, 
+		      short *resultTypeAddr,
+		      _MKParameterUnion *rtnVal,
+		      short op)
 {
     *resultTypeAddr = rvalue(&val,type);
     switch (op) {
@@ -1128,12 +1031,16 @@ static void
     }
 }
  
-static void evalAssign(_MKParameterUnion *val1,_MKParameterUnion *val2,
-                       short type1,short type2,short *resultTypeAddr,short op,
+static void evalAssign(_MKParameterUnion *val1,
+		       _MKParameterUnion *val2,
+                       short type1,
+		       short type2,
+		       short *resultTypeAddr,
+		       short op,
                        _MKParameterUnion *rtnVal)
 {
     short err;
-    type2 = rvalue(&val2,type2);        /* Dereference if needed. */
+    type2 = rvalue(&val2, type2);        /* Dereference if needed. */
     if (type1 == INT(_MK_untypedVar))
       *resultTypeAddr = type2;
     else if (type1 == INT(_MK_typedVar) )
@@ -1171,8 +1078,11 @@ static void evalAssign(_MKParameterUnion *val1,_MKParameterUnion *val2,
     *rtnVal = *(_MKSFVarRaw(val1->symbol));
 }
 
-static void lookupEnv(_MKParameterUnion *theEnv,short theEnvType,
-                      _MKParameterUnion *lookup,short lookupType,short op,
+static void lookupEnv(_MKParameterUnion *theEnv,
+		      short theEnvType,
+                      _MKParameterUnion *lookup,
+		      short lookupType,
+		      short op,
                       _MKParameterUnion *rtnVal)
 { 
     double lookupVal;
@@ -1199,9 +1109,13 @@ static void lookupEnv(_MKParameterUnion *theEnv,short theEnvType,
       error(MK_sfBoundsErr);
 }
 
-static void
-eval(_MKParameterUnion *val1,_MKParameterUnion *val2,short type1,short type2,
-     short *resultTypeAddr,short op,_MKParameterUnion *rtnVal)
+static void eval(_MKParameterUnion *val1,
+		 _MKParameterUnion *val2,
+		 short type1,
+		 short type2,
+		 short *resultTypeAddr,
+		 short op,
+		 _MKParameterUnion *rtnVal)
 {
     _MKParameterUnion v1,v2;
     /* Do type conversion. */
@@ -1502,8 +1416,7 @@ eval(_MKParameterUnion *val1,_MKParameterUnion *val2,short type1,short type2,
 
 /* Expression parsing: Emit. */
 
-static void
-emitVar(short t,_MKParameterUnion * tokenVal)
+static void emitVar(short t, _MKParameterUnion * tokenVal)
 {
     switch(t) {
       case MK_double: case MK_string: case MK_int: case MK_envelope:
@@ -1517,8 +1430,7 @@ emitVar(short t,_MKParameterUnion * tokenVal)
     }
 }
 
-static void
-emit(short t)
+static void emit(short t)
 {
     _MKParameterUnion *val1,*val2;
     _MKParameterUnion valResult;
@@ -1568,8 +1480,7 @@ emit(short t)
 
 /* Expression parsing: Syntax. */
 
-static void
-factor(void) 
+static void factor(void) 
 { 
     switch(lookahead) {
       case '(':         
@@ -1649,8 +1560,7 @@ factor(void)
     } 
 }
 
-static void
-unary(void)
+static void unary(void)
     /* To omit one level of recursion, the prefix and postfix operators
        are on the same precedence level. The way I used to do this,
        wasn't right because -4dB evaluated to -(4dB), not (-4)dB, as it
@@ -2993,11 +2903,11 @@ varDecl(void)
     }  while (match(','));
 }  
 
-static void
-tune(void)
+static void tune(void)
 {
     double val;
     MATCH(_MK_tune);
+    
     /* There are two forms of the tune statement. */
     if (lookahead != INT(_MK_typedVar)) { 
         _MKParameterUnion tmpUnion;
@@ -3006,7 +2916,7 @@ tune(void)
             val = tmpUnion.rval;
             break;
           case MK_int:
-            val = (double)tmpUnion.ival;
+            val = (double) tmpUnion.ival;
             break;
           default:
             error(MK_sfNoTuneErr,curToken());
@@ -3015,25 +2925,26 @@ tune(void)
 #ifdef GNUSTEP
         [MKTuningSystem _transpose:val]; /* GNUSTEP silliness: can't call transpose because it conflicts with NSResponder:-transpose */
 #else
-        [MKTuningSystem transpose:val];
+        [MKTuningSystem transpose: val];
 #endif
     }
     else {
         id var = tokenVal->symbol;
         short keyNum;
+	
         MATCH(lookahead);                 /* Arg is pitch to retune */
-        keyNum = _MKFindPitchVar(var);
+        keyNum = [MKTuningSystem findPitchVar: var];
         if (keyNum >= MIDI_NUMKEYS)
           error(MK_sfNoTuneErr);
         match('=');
         val = getDouble();
-        [MKTuningSystem setKeyNumAndOctaves:keyNum toFreq:val];
+        [MKTuningSystem setKeyNumAndOctaves: keyNum toFreq: val];
     }
 }
 
 /* Control structure --------------------------------------------------- */
 
-enum {thenClause, elseClause, repeatClause, whileClause, doClause }; 
+enum { thenClause, elseClause, repeatClause, whileClause, doClause }; 
 
 typedef struct _progStructure {
     struct _progStructure *next;
@@ -3949,8 +3860,7 @@ BOOL _MKParseScoreHeaderStmt(_MKScoreInStruct *scorefileRPtr)
 /* Statement processing. -------------------------------------------- */
 
 
-static double
-  getTime(double curT)
+static double getTime(double curT)
 {        
     BOOL relativeTime;
     double val;
@@ -3965,8 +3875,7 @@ static double
     return val;
 }
 
-static int
-  getNoteTag(BOOL binary,MKNoteType noteType)
+static int getNoteTag(BOOL binary,MKNoteType noteType)
 {
     int fileTag;
     if (binary) {
@@ -4189,8 +4098,6 @@ static id parseScoreNote(void)
     }
 }
 
-static id 
-  parseBinaryScoreNote(void)
 /* Returns the 
    current note or nil if the current statement in the file is a time setting.
    If EOF is reached, the timeTag field of scorefileRPtr is set to 
@@ -4202,6 +4109,7 @@ static id
    The notes are never in the header - so the argument to getBinaryFloat etc
    is always NO.
  */
+static id parseBinaryScoreNote(void)
 {
     register id aNote;
     id aPart;
@@ -4246,8 +4154,6 @@ static id
     return nil; /* This stmt can never be reached but makes compiler happy */
 }    
 
-id 
-_MKParseScoreNote(_MKScoreInStruct * scorefileRPtr)
 /* Returns the current note or nil if the current statement in the file is a 
    time setting. If EOF is reached, the timeTag field of scorefileRPtr is 
    set to MK_ENDOFTIME and _MKParseScoreNote returns nil. 
@@ -4255,6 +4161,7 @@ _MKParseScoreNote(_MKScoreInStruct * scorefileRPtr)
    field of scorefileRPtr is set to the MKPart of the current note.
    The note returned should be retained if required as it is returned autoreleased. 
  */
+id _MKParseScoreNote(_MKScoreInStruct * scorefileRPtr)
 {
     if (!scorefileRPtr || !scorefileRPtr->_parsePtr) 
       return nil;
@@ -4341,23 +4248,23 @@ NSMutableData *_MKFindScorefile(int *fd,NSString *name)
     return rtnVal;
 }
 
+/* This function opens a scorefile in read-only mode. The search
+   proceeds as follows:
+   
+   If name is a path beginning with '/', name is used as an absolute path.
+   Otherwise, name is relative and the following directories are searched
+   in the order given:
+
+   1. The current working directory.
+   2. ~/Library/Music/Scores/
+   3. /LocalLibrary/Music/Scores/
+   4. /NextLibrary/Music/Scores/
+
+   Returns a file descriptor or -1 if the file can't be opened.
+   sb: now returns an NSData object filled with the contents of the file,
+   or nil if the file was empty/not found.
+   */
 NSMutableData * MKFindScorefile(NSString *name) /*sb: used to return int (fd) */
-    /* This function opens a scorefile in read-only mode. The search
-       proceeds as follows:
-       
-       If name is a path beginning with '/', name is used as an absolute path.
-       Otherwise, name is relative and the following directories are searched
-       in the order given:
-
-       1. The current working directory.
-       2. ~/Library/Music/Scores/
-       3. /LocalLibrary/Music/Scores/
-       4. /NextLibrary/Music/Scores/
-
-       Returns a file descriptor or -1 if the file can't be opened.
-       sb: now returns an NSData object filled with the contents of the file,
-       or nil if the file was empty/not found.
-       */
 {
     NSData *theArray,*home,*local,*system;
     NSMutableString *thePath = ([name hasSuffix:@".score"]) ?
