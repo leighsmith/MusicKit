@@ -24,11 +24,6 @@
 #import "sounderror.h"
 #import "SndFormats.h"
 
-#ifdef macosx
-#import <CoreAudio/AudioHardware.h>
-#import <pthread.h>
-#endif
-
 #import "SndFunctions.h"
 
 @class NSPasteboard;
@@ -62,30 +57,8 @@ extern NSString *NXSoundPboardType;
     int currentError;
     int conversionQuality;	 /* see defines below */
 
-#ifdef macosx
-
     int		playBegin,
 		playEnd;
-
-    int		bufferCount,
-		bufferFrameSize;
-
-    float	*bufferEven,
-		*bufferOdd;
-
-    BOOL        stopRequest,
-                soundPlaying;
-
-    id		playSender;
-
-    pthread_t             soundThread;
-    pthread_cond_t        soundCondition;
-    pthread_mutex_t       soundMutex;
-
-    AudioDeviceID                 outputDeviceID;
-
-#endif
-
 @public
     int tag;
 }
