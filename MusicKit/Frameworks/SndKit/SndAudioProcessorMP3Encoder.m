@@ -3,25 +3,41 @@
 // SndAudioProcessorMP3Encoder.m
 // SndKit
 //
-// Created by SKoT McDonald <skot@tomandandy.com> 
-// Mon Oct 01 2001. Copyright (c) 2001 tomandandy. 
-// All rights reserved.
+//  Created by SKoT McDonald <skot@tomandandy.com> on Mon Oct 01 2001.
 //
-// Requires the libshout library produced by the 
-// Icecast mp3 shoutcasting library.
-//
-// See http://icecast.org
+// Requires the libshout library produced by the Icecast 
+// mp3 shoutcasting library (see http://www.icecast.org), 
+// and the LAME MP3 encoder / decoder (http://www.lame.org)
 //
 ////////////////////////////////////////////////////////////////////////////////
 
 #import "SndAudioProcessorMP3Encoder.h"
 
 #define DEFAULT_MP3SERVER_PASSWORD     "letmein"
-#define DEFAULT_MP3SERVER_SOURCE_PORT  8000
-#define DEFAULT_MP3SERVER_ADDRESS      "127.0.0.1"      
+#define DEFAULT_MP3SERVER_PORT         8000
+#define DEFAULT_MP3SERVER_ADDRESS      "localhost"      
 // could also be "localhost" - icecast accepts both.
 
 @implementation SndAudioProcessorMP3Encoder
+
+////////////////////////////////////////////////////////////////////////////////
+// defaults accessors
+////////////////////////////////////////////////////////////////////////////////
+
++ (int) defaultSourcePort
+{
+  return DEFAULT_MP3SERVER_PORT; 
+}
+
++ (NSString*) defaultSourcePassword
+{
+  return [NSString stringWithCString: DEFAULT_MP3SERVER_PASSWORD];
+}
+
++ (NSString*) defaultServerAddress
+{
+  return [NSString stringWithCString: DEFAULT_MP3SERVER_ADDRESS];
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // init
@@ -47,7 +63,7 @@
   }
 
   conn.ip         = strdup(DEFAULT_MP3SERVER_ADDRESS);
-  conn.port       = DEFAULT_MP3SERVER_SOURCE_PORT;
+  conn.port       = DEFAULT_MP3SERVER_PORT;
   conn.password   = strdup(DEFAULT_MP3SERVER_PASSWORD);
   conn.icy_compat = 1;
     
@@ -125,6 +141,25 @@
   [encodeNShoutcastLock unlock];
   
   return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// basic accessors
+////////////////////////////////////////////////////////////////////////////////
+
+- (NSString*) serverAddress
+{
+  return [NSString stringWithCString: conn.ip];
+}
+ 
+- (NSString*) serverPassword
+{
+  return [NSString stringWithCString: conn.password];
+}
+
+- (int) serverPort
+{
+  return conn.port;    
 }
 
 ////////////////////////////////////////////////////////////////////////////////

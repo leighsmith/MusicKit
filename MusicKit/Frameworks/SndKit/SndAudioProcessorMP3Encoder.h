@@ -41,6 +41,14 @@
   shout_conn_t       conn;
 }
 
++ (int) defaultSourcePort;
++ (NSString*) defaultSourcePassword;
++ (NSString*) defaultServerAddress;
+
+- (NSString*) serverAddress;
+- (NSString*) serverPassword;
+- (int) serverPort;
+
 - init;
 
 - setShoutcastServerAddress: (NSString*) address
