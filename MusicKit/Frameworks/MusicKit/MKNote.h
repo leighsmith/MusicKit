@@ -100,9 +100,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.8  2000/10/01 06:52:40  leigh
+  Changed NXHashTable to NSHashTable, typing _parameter properly.
+
   Revision 1.7  2000/06/16 23:25:34  leigh
   MKConductor imported for typing of ivars
 
@@ -209,7 +213,7 @@ MKDataType;
 #if 0
     NSMutableArray *_parameters;       /* Set of parameter values. */
 #else
-    void *_parameters;
+    NSHashTable *_parameters;       /* Set of parameter values. */
 #endif
     unsigned _mkPars[MK_MKPARBITVECTS]; /* Bit vectors specifying presence of Music Kit parameters. */
     unsigned *_appPars; /* Bit-vector for application-defined parameters. */
@@ -539,8 +543,8 @@ MKDataType;
 // for debugging
 - (NSString *) description;
 
-extern void *MKInitParameterIteration(id aNote);
-extern int MKNextParameter(id aNote,void *aState);
+extern NSHashEnumerator *MKInitParameterIteration(id aNote);
+extern int MKNextParameter(id aNote, NSHashEnumerator *aState);
  /* These functions provide iteration over the parameters of a Note. 
  * Usage:
  *
@@ -584,7 +588,5 @@ extern BOOL MKIsNoteParPresent(id aNote,int par);
 +(NSString *) nameOfPar:(int)aPar;
 
 @end
-
-
 
 #endif
