@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2001/08/31 21:01:59  skotmcdonald
+  Changed calls to conductor time to appropriate new timeInSeconds, timeInBeats calls
+
   Revision 1.4  1999/09/04 23:02:34  leigh
   Source cleanup
 
@@ -38,16 +41,15 @@ Modification history:
       
 */
 
-
 #define MK_INLINE 1
 #import "_musickit.h"
 #import "ConductorPrivate.h"
 
 static double myTime = 0;
 static double deltaT = 0;
-static BOOL conductedPerformance = NO;
-static BOOL wasConductedPerformance = NO;
-static id cond = nil;
+static BOOL   conductedPerformance    = NO;
+static BOOL   wasConductedPerformance = NO;
+static id     cond = nil;
 static double (*getTimeImp)() = NULL;
 
 void _MKSetConductedPerformance(BOOL yesOrNo,id conductorClass)
@@ -56,12 +58,12 @@ void _MKSetConductedPerformance(BOOL yesOrNo,id conductorClass)
        musickit was not a shlib. */
 {
     if (!yesOrNo && conductedPerformance) {
-	wasConductedPerformance = YES;
-	myTime = 0; /* Reset in case next performance isn't conducted. */
+        wasConductedPerformance = YES;
+        myTime = 0; // Reset in case next performance isn't conducted. 
     }
     conductedPerformance = yesOrNo;
     cond = conductorClass;
-    getTimeImp = (double (*)())[conductorClass methodForSelector:@selector(time)];
+    getTimeImp = (double (*)())[conductorClass methodForSelector:@selector(timeInSeconds)];
 }
 
 double _MKLastTime()
@@ -75,15 +77,18 @@ double _MKLastTime()
        use cond as a test, since it's conceivable that the performance
        hasn't started yet. */
     if (conductedPerformance || wasConductedPerformance)
-      return [cond _getLastTime] + deltaT;
-    else return MKGetDeltaTTime();
+        return [cond _getLastTime] + deltaT;
+    else 
+        return MKGetDeltaTTime();
 }
 
 double MKGetTime(void) 
     /* Returns the time in seconds. */
 {
+    if (conductedPerformance && cond == nil)
+        NSLog(@"MKGetTime: conductedPerformance is true, but cond is nil!");
     return ((conductedPerformance) ? 
-	    (myTime = (*getTimeImp)(cond,@selector(time))) : myTime);
+        (myTime = (*getTimeImp)(cond, @selector(timeInSeconds))): myTime);
 }
 
 double MKSetTime(double newTime)
@@ -94,7 +99,7 @@ double MKSetTime(double newTime)
        function. */
 {
     if (conductedPerformance)
-      return MK_NODVAL;
+        return MK_NODVAL;
     wasConductedPerformance = NO; 
 
     /* The first call to MKSetTime() after a conducted performance is over
@@ -139,8 +144,9 @@ double MKGetDeltaTTime(void)
     /* Returns deltaT + time, in seconds. */
 {
     if (deltaTMode == MK_DELTAT_DEVICE_LAG)
-      return deltaT + MKGetTime();
-    else return MKGetTime();
+        return deltaT + MKGetTime();
+    else 
+        return MKGetTime();
 }
 
 void MKSetDeltaT(double val)

@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2001/08/31 21:01:59  skotmcdonald
+  Changed calls to conductor time to appropriate new timeInSeconds, timeInBeats calls
+
   Revision 1.9  2001/01/31 21:32:56  leigh
   Typed note parameters
 
@@ -170,7 +173,7 @@ static void midiOutNodeNoteDur(midiOutNode *node,id aNoteDur,id msgReceiver)
     if (node->noteDurOff) 
       [node->noteDurOff release];
     node->noteDurOff = [aNoteDur _noteOffForNoteDur];      
-    time = [cond time] + [aNoteDur dur]; 
+    time = [cond timeInBeats] + [aNoteDur dur]; 
     /* Always do beat time here. When the note eventually happens, it will
        be written in beats or seconds depending on how the caller of 
        _MKMidiOut passes the time. */

@@ -52,6 +52,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2001/08/31 21:01:59  skotmcdonald
+  Changed calls to conductor time to appropriate new timeInSeconds, timeInBeats calls
+
   Revision 1.10  2001/05/12 09:30:32  sbrandon
   - GNUSTEP: minor change to casting in WRITECHAR call to keep compiler happy
 
@@ -420,16 +423,16 @@ int _MKParAsInt(_MKParameter *param)
        */
 {
     switch (param->_uType) {
-      case MK_double:	
-	return ((int) param->_uVal.rval);
-      case MK_string:	
-	return (_MKStringToInt(param->_uVal.sval));
-      case MK_int: 	
-	return param->_uVal.ival;
-      case MK_envelope:
-	return (int)firstEnvValue(param);
-      default: 
-	break;
+    case MK_double:	
+        return ((int) param->_uVal.rval);
+    case MK_string:	
+        return (_MKStringToInt(param->_uVal.sval));
+    case MK_int: 	
+        return param->_uVal.ival;
+    case MK_envelope:
+        return (int)firstEnvValue(param);
+    default: 
+        break;
     }
     return MAXINT;
 }

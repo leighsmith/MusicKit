@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2001/08/31 21:01:59  skotmcdonald
+  Changed calls to conductor time to appropriate new timeInSeconds, timeInBeats calls
+
   Revision 1.10  2001/07/02 16:44:07  sbrandon
   - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
     compliant)
@@ -136,33 +139,31 @@ Modification history:
 
 @implementation MKSynthPatch
 
-/* Low-level functions for canceling msgs. The conductor class is passed
-   in as a (dubious) optimization. */
+/*//////////////////////////////////////////////////////////////////////////////
+   Low-level functions for canceling msgs. The conductor class is passed
+   in as a (dubious) optimization. 
+//////////////////////////////////////////////////////////////////////////////*/
 
 static void cancelNoteDurMsg(register MKSynthPatch *self,register id condClass) 
 {
     if (self->_noteDurMsgPtr) {
-	[self->_noteDurMsgPtr->_arg1 release]; /* Free noteDurOff */
-	self->_noteDurMsgPtr = 
-	  [condClass _cancelMsgRequest:self->_noteDurMsgPtr]; 
+        [self->_noteDurMsgPtr->_arg1 release]; /* Free noteDurOff */
+        self->_noteDurMsgPtr = [condClass _cancelMsgRequest:self->_noteDurMsgPtr]; 
     }
 }
 
 static void cancelNoteEndMsg(register MKSynthPatch *self,register id condClass) 
 {
     if (self->_noteEndMsgPtr)
-      self->_noteEndMsgPtr = 
-	[condClass _cancelMsgRequest:self->_noteEndMsgPtr]; 
+      self->_noteEndMsgPtr = [condClass _cancelMsgRequest:self->_noteEndMsgPtr]; 
 }
 
 static void cancelPreemptMsg(register MKSynthPatch *self,register id condClass)
 {
     if (self->_notePreemptMsgPtr) {
-	if (self->_notePreemptMsgPtr->_aSelector == 
-	    @selector(_preemptNoteOn:controllers:)) /* See noteOff: */
-	  [self->_notePreemptMsgPtr->_arg1 release]; /* Free Note */
-	self->_notePreemptMsgPtr = 
-	  [condClass _cancelMsgRequest:self->_notePreemptMsgPtr]; 
+        if (self->_notePreemptMsgPtr->_aSelector == @selector(_preemptNoteOn:controllers:)) // See noteOff:
+            [self->_notePreemptMsgPtr->_arg1 release]; // Free Note 
+        self->_notePreemptMsgPtr = [condClass _cancelMsgRequest:self->_notePreemptMsgPtr]; 
     }
 }
 
@@ -171,14 +172,15 @@ static void cancelMsgs(register id self)
 {
     register id condClass = _MKClassConductor();
     if (condClass) {
-	cancelNoteDurMsg(self,condClass);
-	cancelPreemptMsg(self,condClass);
-	cancelNoteEndMsg(self,condClass);
+        cancelNoteDurMsg(self,condClass);
+        cancelPreemptMsg(self,condClass);
+        cancelNoteEndMsg(self,condClass);
     }
 }
 
-+orchestraClass
-  /* This method always returns the Orchestra factory. It is provided for
+/*//////////////////////////////////////////////////////////////////////////////
++ orchestraClass
+   This method always returns the Orchestra factory. It is provided for
    applications that extend the Music Kit to use other hardware. Each 
    SynthPatch subclass is associated with a particular kind of hardware.
    The default hardware is that represented by Orchestra, the DSP56001.
@@ -192,109 +194,158 @@ static void cancelMsgs(register id self)
    is not documented yet. Talk to the NeXT developer support group for more
    information. They can also tell you exactly what part of the Orchestra
    protocol your Orchestra analog needs to support.
-   */
+//////////////////////////////////////////////////////////////////////////////*/
+
++ orchestraClass
 {
     return _MKClassOrchestra();
 }
 
-+new 
-  /* We override this method since instances are never created directly; they
-     are always created by the Orchestra. 
-     A private version of +new is used internally. */
+/*//////////////////////////////////////////////////////////////////////////////
++ new 
+   We override this method since instances are never created directly; they
+   are always created by the Orchestra. 
+   A private version of +new is used internally. 
+//////////////////////////////////////////////////////////////////////////////*/
+
++ new 
 {
     [self doesNotRecognizeSelector:_cmd];  return nil;
 }
 
--copy
-  /* We override this method since instances are never created directly. 
-     They are always created by the Orchestra. */
+/*//////////////////////////////////////////////////////////////////////////////
+- copy
+   We override this method since instances are never created directly. 
+   They are always created by the Orchestra. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- copy
 {
     [self doesNotRecognizeSelector:_cmd];  return nil;
 }
 
-+ allocWithZone:(NSZone *)zone
-  /* We override this method since instances are never created directly.
+/*//////////////////////////////////////////////////////////////////////////////
++ allocWithZone: (NSZone*) zone
+   We override this method since instances are never created directly.
+   They are always created by the Orchestra.
+   A private version of +new is used internally. 
+//////////////////////////////////////////////////////////////////////////////*/
+
++ allocWithZone: (NSZone*) zone
+{
+    [self doesNotRecognizeSelector:_cmd];  return nil;
+}
+
+/*//////////////////////////////////////////////////////////////////////////////
++ alloc
+     We override this method since instances are never created directly.
      They are always created by the Orchestra.
-     A private version of +new is used internally. */
+     A private version of +new is used internally. 
+//////////////////////////////////////////////////////////////////////////////*/
+
++ alloc
 {
     [self doesNotRecognizeSelector:_cmd];  return nil;
 }
 
-+alloc
-  /* We override this method since instances are never created directly.
-     They are always created by the Orchestra.
-     A private version of +new is used internally. */
-{
-    [self doesNotRecognizeSelector:_cmd];  return nil;
-}
+/*//////////////////////////////////////////////////////////////////////////////
+- (void) deallo 
+//////////////////////////////////////////////////////////////////////////////*/
 
-- (void)dealloc /*sb: was -free before OS conversion */
+- (void) dealloc //sb: was -free before OS conversion 
 {
     if (isAllocated) [self mkdealloc];
-    [super dealloc]; /*sb: added manually */
+    [super dealloc]; //sb: added manually 
 }
 
-- copyWithZone:(NSZone *)zone
-  /* We override this method since instances are never created directly. 
-     They are always created by the Orchestra. */
+/*//////////////////////////////////////////////////////////////////////////////
+- copyWithZone: (NSZone*) zone
+     We override this method since instances are never created directly. 
+     They are always created by the Orchestra. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- copyWithZone: (NSZone*) zone
 {
     [self doesNotRecognizeSelector:_cmd];  return nil;
 }
 
--synthElementAt:(unsigned)anIndex
-  /* Returns the UnitGenerator or SynthData at the specified index or nil if 
-     anIndex is out of bounds. */
+/*//////////////////////////////////////////////////////////////////////////////
+- synthElementAt: (unsigned) anIndex
+     Returns the UnitGenerator or SynthData at the specified index or nil if 
+     anIndex is out of bounds.
+//////////////////////////////////////////////////////////////////////////////*/
+
+- synthElementAt: (unsigned) anIndex
 {
     return [synthElements objectAtIndex:anIndex];
 }
 
-+patchTemplateFor:(id)currentNote
-    /* patchTemplateFor: determines
-       an appropriate patchTemplate and returns it. 
-       In some cases, it is necessary to look at the current note to 
-       determine which patch to use. See documentation for details.
-       patchTemplateFor: is sent by the SynthInstrument 
-       when a new SynthPatch is to be created. It may also be sent by
-       an application to obtain the template to be used as an argument to 
-       SynthInstrument's -setSynthPatchCount:patchTemplate:.
-       Implementation of this method is a subclass responsibility. 
-       The subclass should implement this method such that when
-       currentNote is nil, a default template is returned. */
+/*//////////////////////////////////////////////////////////////////////////////
++ patchTemplateFor: (id) currentNote
+
+     patchTemplateFor: determines
+     an appropriate patchTemplate and returns it. 
+     In some cases, it is necessary to look at the current note to 
+     determine which patch to use. See documentation for details.
+     patchTemplateFor: is sent by the SynthInstrument 
+     when a new SynthPatch is to be created. It may also be sent by
+     an application to obtain the template to be used as an argument to 
+     SynthInstrument's -setSynthPatchCount:patchTemplate:.
+     Implementation of this method is a subclass responsibility. 
+     The subclass should implement this method such that when
+     currentNote is nil, a default template is returned. 
+//////////////////////////////////////////////////////////////////////////////*/
+
++ patchTemplateFor: (id) currentNote
 {
     [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
     return nil;
 }
 
-+defaultPatchTemplate
-  /* You never implement this method. It is the same as 
-     return [self patchTemplateFor:nil]. */
+/*//////////////////////////////////////////////////////////////////////////////
++ defaultPatchTemplate
+     You never implement this method. It is the same as 
+     return [self patchTemplateFor:nil]. 
+//////////////////////////////////////////////////////////////////////////////*/
+
++ defaultPatchTemplate
 {
     return [self patchTemplateFor:nil];
 }
 
--synthElements
-  /* Returns a copy of the Array of UnitGenerators and SynthData. 
+/*//////////////////////////////////////////////////////////////////////////////
+- synthElements
+     Returns a copy of the Array of UnitGenerators and SynthData. 
      The elements themselves are not copied. */
+//////////////////////////////////////////////////////////////////////////////*/
+
+- synthElements
 {
     return _MKLightweightArrayCopy(synthElements);
 }
 
--(id)init
-    /* Init is sent by the orchestra 
-       only when a new SynthPatch has just been created and before its
-       connections have been made, as defined by the PatchTemplate.
-       Subclass may override the init method to provide additional 
-       initialization. The subclass method may return nil to 
-       abort the creation. In this case, the new SynthPatch is freed.
-       The patchTemplate is available in the instance variable patchTemplate.
-       Default implementation just returns self.
-       */
+/*//////////////////////////////////////////////////////////////////////////////
+- (id) init
+     Init is sent by the orchestra 
+     only when a new SynthPatch has just been created and before its
+     connections have been made, as defined by the PatchTemplate.
+     Subclass may override the init method to provide additional 
+     initialization. The subclass method may return nil to 
+     abort the creation. In this case, the new SynthPatch is freed.
+     The patchTemplate is available in the instance variable patchTemplate.
+     Default implementation just returns self.      
+//////////////////////////////////////////////////////////////////////////////*/
+
+- (id) init
 {
     return self;
 }
 
--controllerValues:controllers
-  /* This message is sent by the SynthInstrument 
+/*//////////////////////////////////////////////////////////////////////////////
+
+- controllerValues: controllers
+
+     This message is sent by the SynthInstrument 
      to a SynthPatch when a new tag stream begins, before the noteOn:
      message is sent. The argument, 'controllers' describing the state of
      the MIDI controllers. It is a HashTable object 
@@ -310,20 +361,28 @@ static void cancelMsgs(register id self)
 
      Note also that the sustain pedal controller is handled automatically
      by the SynthPatch abstract class.
-     */
+//////////////////////////////////////////////////////////////////////////////*/
+
+- controllerValues: controllers
 {
     return self;
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
+
 static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
-    /* This is factored out of noteOn: because of special treatment during
-       preemption. (cf. noteOn: and _preemptNoteOn:controllers:) */
+
+       This is factored out of noteOn: because of special treatment during
+       preemption. (cf. noteOn: and _preemptNoteOn:controllers:) 
+//////////////////////////////////////////////////////////////////////////////*/
+
+static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
 {
     _MKBeginUGBlock(self->orchestra,_MKOrchLateDeltaTMode(self->orchestra));
     if ((!aNote) || (![self noteOnSelf:aNote])) {
-	_MKEndUGBlock();
-	[self noteEnd];
-	return nil;
+        _MKEndUGBlock();
+        [self noteEnd];
+        return nil;
     }
     self->status = MK_running;
     self->_phraseStatus = MK_noPhraseActivity;
@@ -331,23 +390,27 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
     return self;
 }
 
--noteOn:aNote
-  /* Sends [self noteOnSelf:aNote]. If noteOnSelf:aNote returns self, 
+/*//////////////////////////////////////////////////////////////////////////////
+- noteOn: aNote
+     Sends [self noteOnSelf:aNote]. If noteOnSelf:aNote returns self, 
      sets status to MK_running, returns self. Otherwise,
      if noteOnSelf returns nil, sends [self noteEnd] and returns nil.
      Ordinarily sent only by SynthInstrument.
-     */
+//////////////////////////////////////////////////////////////////////////////*/
+
+- noteOn: aNote
 {
     _phraseStatus = ((status == MK_idle) ? MK_phraseOn : MK_phraseRearticulate);
     if (noteOnGuts(self,aNote)) {
-	cancelMsgs(self);
-	return self;
+        cancelMsgs(self);
+        return self;
     }
-    else return nil;
+    else 
+        return nil;
 }
 
--noteOnSelf:aNote
-  /* You never call this method. Sent by noteOn: method.
+/*//////////////////////////////////////////////////////////////////////////////
+     You never call this method. Sent by noteOn: method.
      Subclass may override this method to do any initialization needed for 
      each new note. noteOnSelf: is sent whenever a new note commences, even if
      the SynthPatch is already running. (Subclass can determine whether or not
@@ -357,17 +420,23 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
      Returns self or nil if the SynthPatch should immediately
      become idle. The message -noteEnd is sent to the SynthPatch
      if noteOnSelf: returns nil.
-     The default implementation just returns self. */
+     The default implementation just returns self. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- noteOnSelf: aNote
 {
   return self;
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
+     Sent ordinarily only by the SynthInstrument when an update note is 
+     received. Implemented simply as [self noteUpdateSelf:aNote]. 
+//////////////////////////////////////////////////////////////////////////////*/
+
 -noteUpdate:aNote
-  /* Sent ordinarily only by the SynthInstrument when an update note is 
-     received. Implemented simply as [self noteUpdateSelf:aNote]. */
 {
     if (status == MK_idle)
-      return nil;
+        return nil;
     _MKBeginUGBlock(orchestra,_MKOrchLateDeltaTMode(orchestra)); 
     if (!aNote)
       return nil;
@@ -378,20 +447,25 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
     return self;
 }
 
--noteUpdateSelf:aNote
-  /* You override but never send this message. It is sent by the noteUpdate:
+/*//////////////////////////////////////////////////////////////////////////////
+     You override but never send this message. It is sent by the noteUpdate:
      method. noteUpdateSelf: should send whatever messages are necessary
      to update the state of the DSP as reflected by the parameters in 
-     aNote. */
+     aNote. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+-noteUpdateSelf:aNote
 {
     return self;
 }
 
--(double)noteOff:aNote
-  /* Sends [self noteOffSelf:aNote]. Sets status to MK_finishing.
+/*//////////////////////////////////////////////////////////////////////////////
+     Sends [self noteOffSelf:aNote]. Sets status to MK_finishing.
      Returns the release duration as returned by noteOffSelf:.
      Ordinarily sent only by SynthInstrument.
-     */
+//////////////////////////////////////////////////////////////////////////////*/
+
+-(double)noteOff:aNote
 {
     id condClass = _MKClassConductor();
     double releaseDur;
@@ -399,65 +473,73 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
 	/* It's possible that we've been preempted for a noteOn and 
 	   a noteOff (on that tag) arrives even before the delayed noteOn 
 	   has a chance to occur. */
-	double noteEndTime = _notePreemptMsgPtr->_timeOfMsg;
-	cancelMsgs(self);
+        double noteEndTime = _notePreemptMsgPtr->_timeOfMsg;
+        cancelMsgs(self);
 	/* We use _preemptMsgPtr instead of _noteEndMsgPtr here
 	   because we want to be able to know that we were originally 
 	   preempted. This enables us to be smart about when to schedule
 	   a new note if another noteOn sneaks in before the noteEnd. */ 
-	_notePreemptMsgPtr = [[condClass clockConductor]
-			  _rescheduleMsgRequest:_notePreemptMsgPtr 
-			  atTime:noteEndTime sel:@selector(noteEnd) to:self 
-			  argCount:0];
-	return noteEndTime - MKGetTime();
+        _notePreemptMsgPtr = [[condClass clockConductor]
+                _rescheduleMsgRequest:_notePreemptMsgPtr 
+                atTime:noteEndTime sel:@selector(noteEnd) to:self 
+                argCount:0];
+        return noteEndTime - MKGetTime();
     }
     if (status == MK_finishing)
-      return 0.0;
+        return 0.0;
     [synthInstrument _repositionInActiveList:self template:patchTemplate];
     /* Here's where we'd put a sustain pedal check, if we ever implement a
        sustain pedal at this level. I.e. we check after the reposition. */
     _MKBeginUGBlock(orchestra,_MKOrchLateDeltaTMode(orchestra)); 
     if (aNote) {
-	_phraseStatus = MK_phraseOff;
-	releaseDur = [self noteOffSelf:aNote];
-	_phraseStatus = MK_noPhraseActivity;
-    } else releaseDur = 0;
+        _phraseStatus = MK_phraseOff;
+        releaseDur = [self noteOffSelf:aNote];
+        _phraseStatus = MK_noPhraseActivity;
+    } 
+    else 
+        releaseDur = 0;
     cancelMsgs(self);
     status = MK_finishing;
     _MKEndUGBlock();
-    if ([condClass inPerformance])
-      _noteEndMsgPtr = 
-	[[condClass clockConductor] 
-	 _rescheduleMsgRequest:_noteEndMsgPtr 
-       atTime:releaseDur + MKGetTime() - _MK_TINYTIME
-       sel:@selector(noteEnd) 
-       to:self
-       argCount:0];
+    if ([condClass inPerformance]) 
+        _noteEndMsgPtr = [[condClass clockConductor] 
+              _rescheduleMsgRequest:_noteEndMsgPtr 
+              atTime:releaseDur + MKGetTime() - _MK_TINYTIME
+              sel:@selector(noteEnd) 
+              to:self
+              argCount:0];
     else 
-      [self noteEnd]; /* Try and do sort-of the right thing here. (mtm) */
+        [self noteEnd]; // Try and do sort-of the right thing here. (mtm) 
     return releaseDur;
 }
 
--(double)noteOffSelf:aNote
-  /* You may override but never call this method. It is sent when a noteOff
+/*//////////////////////////////////////////////////////////////////////////////
+- (double) noteOffSelf: aNote
+     You may override but never call this method. It is sent when a noteOff
      or end-of-noteDur is received. The subclass may override it to do whatever
      it needs to do to begin the final segment of the phrase.
      The return value is a duration to wait before releasing the 
      SynthPatch.
      For example, a SynthPatch that has 2 envelope handlers should implement
      this method to send finish to each envelope handler and return
-     the maximum of the two. The default implementation returns 0. */
+     the maximum of the two. The default implementation returns 0. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- (double) noteOffSelf: aNote
 {
     return 0;
 }
 
--noteEnd
-    /* Causes the receiver to become idle.
-       The message noteEndSelf is sent to self, the status
-       is set to MK_idle and returns self.
-       Ordinarily sent automatically only, but may be sent by anyone to
-       immediately stop a patch. 
-       */
+/*//////////////////////////////////////////////////////////////////////////////
+- noteEnd
+    Causes the receiver to become idle.
+    The message noteEndSelf is sent to self, the status
+    is set to MK_idle and returns self.
+    Ordinarily sent automatically only, but may be sent by anyone to
+    immediately stop a patch. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- noteEnd
 {
     _MKBeginUGBlock(orchestra,
 		    (_MKOrchLateDeltaTMode(orchestra) && (status != MK_idle)));
@@ -475,234 +557,313 @@ static id noteOnGuts(register MKSynthPatch *self,register MKNote *aNote)
     return self;
 }
 
--noteEndSelf
-  /* You never call this method directly. It is sent automatically when
-     the phrase is completed. 
-     Subclass may override this to do what it needs to do to insure that
-     the SynthPatch produces no output. Usually, the subclass implementation
-     sends the -idle message to the Out2sumUGx or Out2sumUGy UnitGenerator. 
-     The default implementation just returns self. */
+/*//////////////////////////////////////////////////////////////////////////////
+- noteEndSelf
+   You never call this method directly. It is sent automatically when
+   the phrase is completed. 
+   Subclass may override this to do what it needs to do to insure that
+   the SynthPatch produces no output. Usually, the subclass implementation
+   sends the -idle message to the Out2sumUGx or Out2sumUGy UnitGenerator. 
+   The default implementation just returns self. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- noteEndSelf
 {
   return self;
 }
 
--(BOOL ) isEqual:anObject 
-  /* Obsolete. */
+/*//////////////////////////////////////////////////////////////////////////////
+- (BOOL) isEqual: anObject 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- (BOOL) isEqual: anObject // Obsolete.
 {
     int otherTag = [anObject noteTag];
     return (otherTag == noteTag);
 }
 
--(unsigned ) hash;  
-  /* Obsolete. */
+- (unsigned) hash;  // Obsolete. 
 {
     return noteTag;
 }
 
--synthInstrument
-  /* Returns the synthInstrument owning the receiver, if any. */
+/*//////////////////////////////////////////////////////////////////////////////
+- synthInstrument
+   Returns the synthInstrument owning the receiver, if any. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- synthInstrument
 {
     return synthInstrument;
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
 id _MKSynthPatchPreempt(MKSynthPatch *aPatch,id aNote,id controllers)
-    /* This function returns aPatch almost all the time. The exception is 
-       when the preemption happens right now and the SynthPatch noteOn
-       method aborts. */
+
+    This function returns aPatch almost all the time. The exception is 
+    when the preemption happens right now and the SynthPatch noteOn
+    method aborts. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+id _MKSynthPatchPreempt(MKSynthPatch *aPatch,id aNote,id controllers)
 {
-    id condClass;
+    id     condClass;
     double preemptTime,preemptDur;
     if (aPatch->_notePreemptMsgPtr) { /* Already preempted? */
-	/* Use old time. The point here is to avoid accumulating preemption
-	   delays. */
-	preemptTime = aPatch->_notePreemptMsgPtr->_timeOfMsg;
-	preemptDur = preemptTime - MKGetTime(); 
+      	/* Use old time. The point here is to avoid accumulating preemption delays. */
+        preemptTime = aPatch->_notePreemptMsgPtr->_timeOfMsg;
+        preemptDur = preemptTime - MKGetTime(); 
     }
-    else {
-	/* Preempt it. */
-	if (![aPatch preemptFor:aNote])
-	  preemptDur = 0;
-	else preemptDur = MKGetPreemptDuration();
-	preemptTime = preemptDur + MKGetTime();
+    else {	/* Preempt it. */
+        if (![aPatch preemptFor:aNote])
+            preemptDur = 0;
+        else 
+            preemptDur = MKGetPreemptDuration();
+        preemptTime = preemptDur + MKGetTime();
     }
     cancelMsgs(aPatch);
-    if ((preemptDur > 0) && 
-	[(condClass = _MKClassConductor()) inPerformance]) {
-	aPatch->_notePreemptMsgPtr = 
-	    [[condClass clockConductor] 
-	     _rescheduleMsgRequest:aPatch->_notePreemptMsgPtr 
-	   atTime:preemptTime
-	   sel:@selector(_preemptNoteOn:controllers:) 
-	   to:aPatch
-	   argCount:2, aNote,controllers]; 
-	return aPatch;
+    if ((preemptDur > 0) && [(condClass = _MKClassConductor()) inPerformance]) {
+        aPatch->_notePreemptMsgPtr = [[condClass clockConductor] 
+              _rescheduleMsgRequest:aPatch->_notePreemptMsgPtr 
+              atTime:preemptTime
+              sel:@selector(_preemptNoteOn:controllers:) 
+              to:aPatch
+              argCount:2, aNote,controllers]; 
+        return aPatch;
     }
     else 
-	return [aPatch _preemptNoteOn:aNote controllers:controllers]; /* returns self */
+        return [aPatch _preemptNoteOn:aNote controllers:controllers]; /* returns self */
     /* Do it now */
 }
 
--preemptFor:aNote
-  /* The preemptFor: message is sent when a running or finishing SynthPatch
-     is 'preempted'. This happens, for example, when a SynthInstrument with 
-     3 voices receives a fourth note. It preempts one of the voices by 
-     sending it preemptFor:newNote followed by noteOn:newNote. The default
-     implementation does nothing. */
+/*//////////////////////////////////////////////////////////////////////////////
+- preemptFor: aNote
+
+  The preemptFor: message is sent when a running or finishing SynthPatch
+  is 'preempted'. This happens, for example, when a SynthInstrument with 
+  3 voices receives a fourth note. It preempts one of the voices by 
+  sending it preemptFor:newNote followed by noteOn:newNote. The default
+  implementation does nothing. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- preemptFor: aNote
 {
     return self;
 }
 
--moved:aUG
-  /* 
-     The moved: message is sent when the Orchestra moves a SynthPatch's
-     UnitGenerator during DSP memory compaction. aUG is the unit generator that
-     was moved.
-     Subclass occasionally overrides this method.
-     The default method does nothing. See also phraseStatus.
-     */
+/*//////////////////////////////////////////////////////////////////////////////
+- moved:aUG
+
+   The moved: message is sent when the Orchestra moves a SynthPatch's
+   UnitGenerator during DSP memory compaction. aUG is the unit generator that
+   was moved.
+   Subclass occasionally overrides this method.
+   The default method does nothing. See also phraseStatus.
+//////////////////////////////////////////////////////////////////////////////*/
+
+- moved:aUG
 {
     return self;
 }
 
--(MKPhraseStatus)phraseStatus
-/* This is a convenience method for SynthPatch subclass implementors.
+/*//////////////////////////////////////////////////////////////////////////////
+ - (MKPhraseStatus) phraseStatus
+
+   This is a convenience method for SynthPatch subclass implementors.
    The value returned takes into account whether the phrase is preempted.
    the type of the current note and the status of the synthPatch. 
-   If not called by a SynthPatch subclass, returns MK_noPhraseActivity */
+   If not called by a SynthPatch subclass, returns MK_noPhraseActivity 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- (MKPhraseStatus) phraseStatus
 {
     return _phraseStatus;
 }
 
--(int) status
-    /* Returns status of this SynthPatch. This is not necessarily the status
-       of all contained synthElements. For example, it is not unusual
-       for a SynthPatch to be idle but most of its UnitGenerators, with the
-       exception of the Out2sum, to be running. */
+/*//////////////////////////////////////////////////////////////////////////////
+ - (int) status
+
+    Returns status of this SynthPatch. This is not necessarily the status
+    of all contained synthElements. For example, it is not unusual
+    for a SynthPatch to be idle but most of its UnitGenerators, with the
+    exception of the Out2sum, to be running. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- (int) status
 {
     return (int)status;
 }
 
--patchTemplate
-    /* Returns patch template associated with the receiver. */
+/*//////////////////////////////////////////////////////////////////////////////
+- patchTemplate
+   Returns patch template associated with the receiver. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- patchTemplate
 {
     return patchTemplate;
 }
 
--(int)noteTag
-    /* Returns the noteTag associated with the receiver. */
+/*//////////////////////////////////////////////////////////////////////////////
+- (int) noteTag
+   Returns the noteTag associated with the receiver. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- (int) noteTag
 {
     return noteTag;
 }
 
--orchestra
-    /* Returns the orchestra instance to which the receiver belongs. All
-       UnitGenerators and SynthData in an instance of SynthPatch are on
-       the same Orchestra instance. In the standard NeXT configuration, there
-       is one DSP and, thus, one Orchestra instance. */
+/*//////////////////////////////////////////////////////////////////////////////
+- orchestra
+
+   Returns the orchestra instance to which the receiver belongs. All
+   UnitGenerators and SynthData in an instance of SynthPatch are on
+   the same Orchestra instance. In the standard NeXT configuration, there
+   is one DSP and, thus, one Orchestra instance. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- orchestra
 {
     return orchestra;
 }
 
--(BOOL)isFreeable
-  /* Returns whether or not the receiver may be freed. A SynthPatch may only
-     be freed if it is idle and not owned by any SynthInstrument in 
-     MK_MANUALALLOC mode. */
+/*//////////////////////////////////////////////////////////////////////////////
+- (BOOL) isFreeable
+
+   Returns whether or not the receiver may be freed. A SynthPatch may only
+   be freed if it is idle and not owned by any SynthInstrument in 
+   MK_MANUALALLOC mode. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- (BOOL) isFreeable
 {
     return (!(isAllocated));
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
+- (void) mkdealloc 
 
-- (void)mkdealloc /*sb: used to be dealloc, but changed to prevent conflict with foundation kit */
-  /* This is used to explicitly deallocate a SynthPatch you previously
-     allocated manually from the Orchestra with allocSynthPatch: or 
-     allocSynthPatch:patchTemplate:.
-     It sends noteEnd to the receiver, then causes the receiver to become 
-     deallocated and returns nil. This message is ignored (and self is returned)
-     if the receiver is owned by a SynthInstrument. 
-     */
+   This is used to explicitly deallocate a SynthPatch you previously
+   allocated manually from the Orchestra with allocSynthPatch: or 
+   allocSynthPatch:patchTemplate:.
+   It sends noteEnd to the receiver, then causes the receiver to become 
+   deallocated and returns nil. This message is ignored (and self is returned)
+   if the receiver is owned by a SynthInstrument. 
+   
+   sb: used to be dealloc, but changed to prevent conflict with foundation kit 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- (void) mkdealloc 
 {
     if (synthInstrument)
-      return;
+        return;
     if (_sharedKey) {
-	if (_MKReleaseSharedSynthClaim(_sharedKey,NO))
-	  return;
-	else _sharedKey = nil;
+        if (_MKReleaseSharedSynthClaim(_sharedKey,NO))
+            return;
+        else 
+            _sharedKey = nil;
     }
     [self noteEnd];
     [self _deallocate];
     return;
 }
 
--next
-  /* This method is used in conjunction with a SynthInstrument's
-     -preemptSynthPatchFor:patches: method. If you send -next to a SynthPatch
-     which is active (not idle) and which is managed by a 
-     SynthInstrument,
-     the value returned is the next in the list of active SynthPatches (for
-     a given PatchTemplate) managed 
-     by that SynthInstrument. The list is in the order of the onset times
-     of the phrases played by the SynthPatches. */
+/*//////////////////////////////////////////////////////////////////////////////
+- next
+
+   This method is used in conjunction with a SynthInstrument's
+   -preemptSynthPatchFor:patches: method. If you send -next to a SynthPatch
+   which is active (not idle) and which is managed by a 
+   SynthInstrument,
+   the value returned is the next in the list of active SynthPatches (for
+   a given PatchTemplate) managed 
+   by that SynthInstrument. The list is in the order of the onset times
+   of the phrases played by the SynthPatches. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- next
 {
     switch (status) {
-      case MK_running:
-      case MK_finishing:
-	return _next;
-      default:
-	return nil;
+        case MK_running:
+        case MK_finishing:
+            return _next;
+        default:
+            return nil;
     }
 }
 
--freeSelf
-  /* You can optionally implement this method. FreeSelf is sent to the object
-     before it is freed. */
+/*//////////////////////////////////////////////////////////////////////////////
+- freeSelf
+
+   You can optionally implement this method. FreeSelf is sent to the object
+   before it is freed. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- freeSelf
 {
     return nil;
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
+id _MKSynthPatchSetInfo(MKSynthPatch *synthP, int aNoteTag, id synthIns)
+
+     Associate noteTag with receiver. Returns self. 
+//////////////////////////////////////////////////////////////////////////////*/
 
 id _MKSynthPatchSetInfo(MKSynthPatch *synthP, int aNoteTag, id synthIns)
-    /* Associate noteTag with receiver. Returns self. */
 {
     synthP->noteTag = aNoteTag;
     synthP->synthInstrument = synthIns;
     return synthP;
 }
 
--_receiveNoteDurNoteOff:aNote
+/*//////////////////////////////////////////////////////////////////////////////
+- _receiveNoteDurNoteOff:aNote
+
+    We have to do it like this so that realizeNote:fromNoteReceiver: can
+    alter the note and restore it.  Otherwise, the Note gets freed  
+    prematurely. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- _receiveNoteDurNoteOff:aNote
 {
-    /* We have to do it like this so that realizeNote:fromNoteReceiver: can
-       alter the note and restore it.  Otherwise, the Note gets freed  
-       prematurely. */
     _noteDurMsgPtr->_arg1 = nil; 
     [[synthInstrument noteReceiver] receiveNote:aNote];
     [aNote release];
     return self;
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
 id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
-  /* Private method that enqueues a noteOff:aNote to self at the
-     end of the noteDur. */
+
+     Private method that enqueues a noteOff:aNote to self at the
+     end of the noteDur. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
 {
-    id cond,noteDurOff;
+    id     cond;
+    id     noteDurOff;
     double time;
-    SEL aSel;
-    id msgReceiver;
+    SEL    aSel;
+    id     msgReceiver;
     cond = [aNoteDur conductor];
     /* If the noteTag is MAXINT,
        there can never be another noteOff coming directed to this patch. 
        Therefore, we can optimize by sending the noteOff:
        directly to the SynthPatch */
     if (synthP->_noteDurMsgPtr) 
-      [synthP->_noteDurMsgPtr->_arg1 release];
+        [synthP->_noteDurMsgPtr->_arg1 release];
     noteDurOff = [aNoteDur _noteOffForNoteDur];      
-    time = [cond time] + [aNoteDur dur];
+    time = [cond timeInBeats] + [aNoteDur dur];
     if (noTag) {
-	aSel = @selector(noteOff:);
-	msgReceiver = synthP;
+        aSel = @selector(noteOff:);
+        msgReceiver = synthP;
     } 
     else {
-	aSel = @selector(_receiveNoteDurNoteOff:);
-	msgReceiver = synthP;
+        aSel = @selector(_receiveNoteDurNoteOff:);
+        msgReceiver = synthP;
     }
     /* We subtract TINY here to make sure that a series of NoteDurs where
        the next note begins at exactly the time of the first plus dur works
@@ -721,6 +882,9 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     return noteDurOff;
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
 //#define DUMMY self
 #define DUMMY @""
 /*sb: defining DUMMY as self meant that when releasing an array containing the dummy,
@@ -728,17 +892,17 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
  */
 
 - (void)doesNotRecognizeSelector:(SEL)aSelector
-    /* Don't document this -- it's just for better error handling. */
+    // Don't document this -- it's just for better error handling. 
 {
     if (!isAllocated) {
-	MKError(@"Attempt to use a deallocated SynthPatch.");
+        MKError(@"Attempt to use a deallocated SynthPatch.");
         return;
     }
     if (synthElements) {
-	int count,i;
-	for (i = 0,count = [synthElements count]; i<count; i++) 
-	    if ([synthElements objectAtIndex:i] == DUMMY) {
-		MKError(@"Attempt to use a freed SynthPatch.");
+        int count,i;
+        for (i = 0,count = [synthElements count]; i<count; i++) 
+            if ([synthElements objectAtIndex:i] == DUMMY) {
+                MKError(@"Attempt to use a freed SynthPatch.");
                 return;
             }
     }
@@ -749,29 +913,37 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
 
 @implementation MKSynthPatch(Private)
 
-+_newWithTemplate:(id)aTemplate
- inOrch:(id)anOrch index:(int)whichDSP
-    /* Private method sent by Orchestra to create a new instance. The
-       new instance is sent the noteEndSelf message. */
+/*//////////////////////////////////////////////////////////////////////////////
++ _newWithTemplate: (id) aTemplate inOrch: (id) anOrch index: (int) whichDSP
+
+     Private method sent by Orchestra to create a new instance. The
+     new instance is sent the noteEndSelf message. 
+//////////////////////////////////////////////////////////////////////////////*/
+
++ _newWithTemplate: (id) aTemplate inOrch: (id) anOrch index: (int) whichDSP
 {
-    MKSynthPatch *newObj = [super allocWithZone:NSDefaultMallocZone()];
+    MKSynthPatch *newObj  = [super allocWithZone:NSDefaultMallocZone()];
     newObj->synthElements = [[NSMutableArray arrayWithCapacity:[aTemplate synthElementCount]] retain];
-    newObj->status = MK_idle;
-    newObj->orchestra = anOrch;
-    newObj->_orchIndex = whichDSP;
+    newObj->status        = MK_idle;
+    newObj->orchestra     = anOrch;
+    newObj->_orchIndex    = whichDSP;
     newObj->patchTemplate = aTemplate;
     newObj->_notePreemptMsgPtr = NULL;
     newObj->_noteEndMsgPtr = NULL;
     newObj->_noteDurMsgPtr = NULL;
-    newObj->isAllocated = YES;     
-    /* Must be here to avoid it getting taken apart before it's built! */
+    newObj->isAllocated    = YES;     
+    // Must be here to avoid it getting taken apart before it's built! 
     return newObj;
 }
 
--_free
-    /* Should only be sent by Orchestra. 
-       Deallocates all contained unit generators and frees the receiver. 
-     */
+/*//////////////////////////////////////////////////////////////////////////////
+- _free
+
+     Should only be sent by Orchestra. 
+     Deallocates all contained unit generators and frees the receiver. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- _free
 {
     id el;
     unsigned n;
@@ -779,7 +951,7 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     cancelMsgs(self);
     [self freeSelf];
     n = [synthElements count];
-    for (i=0;i<n;i++) {
+    for (i = 0; i < n; i++) {
         el = [synthElements objectAtIndex:i];
         if (el != DUMMY)
             _MKDeallocSynthElement(el,YES);
@@ -787,20 +959,24 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     /* We know it can't be shared because you can't specify shared 
        synthElements in the Template. */
     if (_MK_ORCHTRACE(orchestra,MK_TRACEORCHALLOC))
-        _MKOrchTrace(orchestra,MK_TRACEORCHALLOC,"Freeing %s_%p",[NSStringFromClass([self class]) cString],
-		     self);
+        _MKOrchTrace(orchestra,MK_TRACEORCHALLOC,"Freeing %s_%p",
+                     [NSStringFromClass([self class]) cString], self);
 //    [synthElements makeObjectsPerformSelector:@selector(retain)]; /*sb: this defers the deallocation of the objects from the following statement to a later time. This may be a leak. */
     [synthElements release];
 //    [super release]; /*sb: removed, following advice from NSObject class docs. Ok to do super dealloc though, in dealloc methods */
     return nil;
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
 -(BOOL)_usesEMem:(MKOrchMemSegment) segment
-    /* Returns YES if the given external dsp memory segment is utilized in one
-       of the contained unit generators or synthdata.  
-       This method is used by Orchestra
-       to determine when it is advantageous to free a SynthPatch to
-       possibly gain off-chip  memory. */
+     Returns YES if the given external dsp memory segment is utilized in one
+     of the contained unit generators or synthdata.  
+     This method is used by Orchestra
+     to determine when it is advantageous to free a SynthPatch to
+     possibly gain off-chip  memory. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+-(BOOL)_usesEMem:(MKOrchMemSegment) segment
 {
     /* Note that if the compile-time
        variable DSP_SEPARATEOFFCHIPADDRESSING is undefined, this method returns
@@ -814,15 +990,19 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
 #   endif
 }
 
--_preemptNoteOn:aNote controllers:controllers
+/*//////////////////////////////////////////////////////////////////////////////
+- _preemptNoteOn: aNote controllers: controllers
+//////////////////////////////////////////////////////////////////////////////*/
+
+- _preemptNoteOn: aNote controllers: controllers
 {
     id condClass;
     id success;
     /* Can't do a cancelPreemptMsg() here because it would free the message
        argument, aNote! */
     if (self->_notePreemptMsgPtr) 
-	self->_notePreemptMsgPtr = 
-	    MKCancelMsgRequest(self->_notePreemptMsgPtr); 
+        self->_notePreemptMsgPtr = 
+        MKCancelMsgRequest(self->_notePreemptMsgPtr); 
     _phraseStatus = MK_phraseOnPreempt; 
     [self controllerValues:controllers];
     success = noteOnGuts(self,aNote);
@@ -845,7 +1025,11 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     return self;
 }
 
--_remove:aUG
+/*//////////////////////////////////////////////////////////////////////////////
+- _remove: aUG
+//////////////////////////////////////////////////////////////////////////////*/
+
+- _remove: aUG
     /* Used by orch. This invalidates the integrity of the List object!. 
        A safer implementation would substitute a dummy object. */
 {
@@ -853,7 +1037,11 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     return self;
 }
 
--_add:aUG
+/*//////////////////////////////////////////////////////////////////////////////
+- _add: aUG
+//////////////////////////////////////////////////////////////////////////////*/
+
+- _add: aUG
     /* Private method used by Orchestra to add a unit generator to the
        receiver. */
 {
@@ -863,7 +1051,14 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     return self;
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
 -_prepareToFree:(MKSynthPatch **)headP :(MKSynthPatch **)tailP 
+
+   Same as above but removes patch from deallocated list. Used by Orchestra.
+   Must be method to avoid required load of SynthPatch by Orchestra. 
+//////////////////////////////////////////////////////////////////////////////*/
+
+- _prepareToFree: (MKSynthPatch**) headP: (MKSynthPatch**) tailP 
   /* Same as above but removes patch from deallocated list. Used by Orchestra.
      Must be method to avoid required load of SynthPatch by Orchestra. */
 {
@@ -886,12 +1081,15 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
         */
     _whichList = _MK_ORCHTMPLIST;
     if (!*tailP) 
-      *tailP = self;
+        *tailP = self;
     else (*headP)->_next = self;
     return *headP = self;
 }
 
-/* The following is for the linked list of synth patches. This is used
+/*//////////////////////////////////////////////////////////////////////////////
+-_freeList:(MKSynthPatch *)head
+
+   The following is for the linked list of synth patches. This is used
    for 2 different things, depending on whether the synthpatch is 
    allocated or not. If it is deallocated,
    it is used temporarily by the Orchestra
@@ -900,10 +1098,12 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
 
    The following must be methods (rather than C functions) to avoid the
    undesired loading of the SynthPatch class when no SynthPatches are being
-   used. */
+   used. 
+//////////////////////////////////////////////////////////////////////////////*/
 
--_freeList:(MKSynthPatch *)head
-  /* Frees list of ugs. Used by orch only. */
+
+- _freeList: (MKSynthPatch*) head
+  // Frees list of ugs. Used by orch only. 
 {
     register MKSynthPatch *tmp;
     while (head) {
@@ -914,14 +1114,20 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     }
     return nil;
 }
--(void)_freeList2
-  /* Frees list of ugs. Used by orch only. */
-/*sb: the previous _freeList looks all wrong to me. As long as the last link is to "nil"
- * we don't need to be passed a "head", since we're the head ourselves. In any case,
- * we should be working up from the tail, not the head! it was back to front before, and
- * only released the last synthpatch in the list.
- * Remember: the calling method must release this object after calling _freeList2.
- */
+
+/*//////////////////////////////////////////////////////////////////////////////
+- (void) _freeList2
+
+  Frees list of ugs. Used by orch only. 
+  
+  sb: the previous _freeList looks all wrong to me. As long as the last link is 
+  to "nil" we don't need to be passed a "head", since we're the head ourselves. 
+  In any case, we should be working up from the tail, not the head! it was back 
+  to front before, and only released the last synthpatch in the list.
+  Remember: the calling method must release this object after calling _freeList2.
+//////////////////////////////////////////////////////////////////////////////*/
+
+- (void) _freeList2
 {
     register MKSynthPatch *tmp;
     register MKSynthPatch *head = [self retain];
@@ -933,86 +1139,107 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     }
 }      
 
+/*//////////////////////////////////////////////////////////////////////////////
+id _MKRemoveSynthPatch(MKSynthPatch *synthP,MKSynthPatch **headP,
+		                   MKSynthPatch **tailP,unsigned short listFlag)
+
+    Finds synthP in list and removes and returns it if found, else nil. 
+    
+    sb: also releases the synthP. Take care to retain BEFORE calling this 
+        to ensure you don't release prematurely 
+//////////////////////////////////////////////////////////////////////////////*/
 
 id _MKRemoveSynthPatch(MKSynthPatch *synthP,MKSynthPatch **headP,
-		       MKSynthPatch **tailP,unsigned short listFlag)
-    /* Finds synthP in list and removes and returns it if found, else nil. */
-/*sb: also releases the synthP. Take care to retain BEFORE calling this to ensure you don't release prematurely */
+		                   MKSynthPatch **tailP,unsigned short listFlag)
 {
     register MKSynthPatch *tmp = *tailP;
     if (synthP->_whichList != listFlag)
-      return nil;        
+        return nil;        
     synthP->_whichList = 0;
     if (tmp == synthP) {
-	*tailP = synthP->_next;
-	if (!*tailP)
-	  *headP = nil;
-	synthP->_next = nil;
+        *tailP = synthP->_next;
+        if (!*tailP)
+            *headP = nil;
+        synthP->_next = nil;
         [synthP release];
-	return synthP;
+        return synthP;
     }
     while (tmp->_next)
-      if (tmp->_next == synthP) {
-	  if (synthP == *headP)
-	    *headP = tmp;
-	  tmp->_next = synthP->_next;
-	  synthP->_next = nil;
-          [synthP release];
-	  return synthP;
-      }
-      else tmp = tmp->_next;
+        if (tmp->_next == synthP) {
+            if (synthP == *headP)
+                *headP = tmp;
+            tmp->_next = synthP->_next;
+            synthP->_next = nil;
+            [synthP release];
+            return synthP;
+        }
+        else 
+            tmp = tmp->_next;
     /* Not found. This should never happen. */
     synthP->_next = nil;  
     return nil;
 }
 
-void _MKReplaceFinishingPatch(MKSynthPatch *synthP,MKSynthPatch **headP,
-			      MKSynthPatch **tailP,
-			      unsigned short listFlag)
-    /* Repositions SynthPatch as follows:
-       The list consists of finishing patches in the order they received
-       noteOff followed by running patches in the order that they received
-       their noteOns. This means we have to search for the end of the 
-       finishing patches before adding our patch. */
+/*//////////////////////////////////////////////////////////////////////////////
+void _MKReplaceFinishingPatch (MKSynthPatch *synthP,MKSynthPatch **headP,
+			                         MKSynthPatch **tailP,
+			                         unsigned short listFlag)
+
+     Repositions SynthPatch as follows:
+     The list consists of finishing patches in the order they received
+     noteOff followed by running patches in the order that they received
+     their noteOns. This means we have to search for the end of the 
+     finishing patches before adding our patch.
+//////////////////////////////////////////////////////////////////////////////*/
+
+void _MKReplaceFinishingPatch (MKSynthPatch *synthP,MKSynthPatch **headP,
+			                         MKSynthPatch **tailP,
+			                         unsigned short listFlag)
 {
-    [synthP retain]; /* so we don't lose it in next line before adding to list later*/
+    [synthP retain]; // so we don't lose it in next line before adding to list later
     if (!_MKRemoveSynthPatch(synthP,headP,tailP,listFlag)) {
         [synthP release];
         return;
     }
     synthP->_whichList = listFlag; 
-    if (!*tailP) {        /* It's the only one in the whole list */
-	*headP = synthP;
-	*tailP = synthP;
+    if (!*tailP) {        // It's the only one in the whole list 
+        *headP = synthP;
+        *tailP = synthP;
     }
-    else if ((*tailP)->status != MK_finishing) { /* The only finishing patch */
-	synthP->_next = *tailP;
-	*tailP = synthP;
+    else if ((*tailP)->status != MK_finishing) { // The only finishing patch 
+        synthP->_next = *tailP;
+        *tailP = synthP;
     }
-    else { /* Find last finishing patch */
-	register MKSynthPatch *anObj;
-	register MKSynthPatch *next;
-	anObj = *tailP;
-	next = anObj->_next;
-	while (next && (next->status == MK_finishing)) {
-	    anObj = next;
-	    next = anObj->_next;
-	}
-	synthP->_next = next;
-	anObj->_next = synthP;
-	if (!next)
-	  *headP = synthP;
+    else { // Find last finishing patch 
+        register MKSynthPatch *anObj;
+        register MKSynthPatch *next;
+        anObj = *tailP;
+        next = anObj->_next;
+        while (next && (next->status == MK_finishing)) {
+            anObj = next;
+            next = anObj->_next;
+        }
+        synthP->_next = next;
+        anObj->_next = synthP;
+        if (!next)
+            *headP = synthP;
     }
 }
 
-
+/*//////////////////////////////////////////////////////////////////////////////
 id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tailP,
-		     unsigned short listFlag)
-    /* Add receiver to end of singly-linked list. List is pointed to by
+                     unsigned short listFlag)
+         
+       Add receiver to end of singly-linked list. List is pointed to by
        tailP. There's also a pointer to the head of the list (last element). 
        Empty list is represented by tailP==headP==nil. Single element list is 
-       represented by tailP==headP!=nil. */
-/*sb: also keeps a retain of the object! */
+       represented by tailP==headP!=nil. 
+       
+       sb: also keeps a retain of the object! 
+//////////////////////////////////////////////////////////////////////////////*/
+
+id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tailP,
+                     unsigned short listFlag)
 {
     if (self->_whichList == listFlag)
       return *headP;        /* Don't add it twice. */
@@ -1025,6 +1252,9 @@ id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tail
     return *headP = self;
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
 -(void)_setShared:aSharedKey
   /* makes object shared. If aSharedKey is nil, makes it unshared.
      Private method. */
@@ -1032,12 +1262,18 @@ id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tail
     _sharedKey = aSharedKey;
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
 -(void)_addSharedSynthClaim
   /* makes object shared. If aSharedKey is nil, makes it unshared.
      Private method. */
 {
     _MKAddSharedSynthClaim(_sharedKey);
 }
+
+/*//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
 
 -_connectContents 
   /* Private method used by Orchestra to connect contents. */
@@ -1051,18 +1287,24 @@ id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tail
     return self;
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
 -(void)_allocate
-  /* Private */
+  // Private 
 {
     isAllocated = YES;
 }
 
+/*//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
+
 -_deallocate
-  /* Private */
+  // Private 
 {
-    if (!isAllocated)           /* It's already deallocated. */
+    if (!isAllocated)           // It's already deallocated.
       return self;
-    cancelMsgs(self);           /* A noop under normal circumstances. */
+    cancelMsgs(self);           // A noop under normal circumstances. 
     synthInstrument = nil;
     isAllocated = NO;
     [_MKDeallocatedSynthPatches(patchTemplate,_orchIndex) addObject:self];
@@ -1076,6 +1318,9 @@ id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tail
 @end
 
 @implementation MKSynthPatch(PatchLoad)
+
+/*//////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////*/
 
 + findPatchClass: (NSString *) className
 {

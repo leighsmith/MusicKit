@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/08/31 21:01:59  skotmcdonald
+  Changed calls to conductor time to appropriate new timeInSeconds, timeInBeats calls
+
   Revision 1.2  1999/07/29 01:26:10  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -41,30 +44,32 @@ double _MKTimeTagForTimeUnit(id aNote,MKTimeUnit timeUnit,BOOL compensateForDelt
 {
     double t;
     switch (timeUnit) {
-      default:
-      case MK_second: 
-	t = MKGetTime();
-	break;
-      case MK_beat: {
-	  id cond; 
-	  cond = [aNote conductor];
-	  if (cond) {
-	      t = [cond time];
-	      if (compensateForDeltaT)
-		t -= MKGetDeltaT()/[cond beatSize]; 
+        default:
+        case MK_second: 
+            t = MKGetTime();
+            break;
+        case MK_beat: 
+        {
+            id cond; 
+            cond = [aNote conductor];
+            if (cond) {
+                t = [cond timeInBeats];
+                if (compensateForDeltaT)
+                    t -= MKGetDeltaT()/[cond beatSize]; 
 	      /* This is only really correct if the tempo was constant during the
 	       * last deltaT seconds. 
 	       */
-	      return t;
-	  }
-	  else t = MKGetTime();
-      }
-      case MK_timeTag:
-	t = [aNote timeTag];
-	break;
+                return t;
+            }
+            else 
+                t = MKGetTime();
+        }
+        case MK_timeTag:
+            t = [aNote timeTag];
+            break;
     }
     if (compensateForDeltaT)
-      t -= MKGetDeltaT();
+        t -= MKGetDeltaT();
     return t;
 }
 
@@ -74,15 +79,15 @@ double _MKDurForTimeUnit(id aNoteDur,MKTimeUnit timeUnit)
      the dur predicted by aNoteDur's conductor. If aNoteDur is not of 
      type MK_noteDur, returns 0. */
 {
-    id aCond;
-    double dur = [aNoteDur dur];
-    if ([aNoteDur noteType] != MK_noteDur)
-      return 0;
-    if (timeUnit != MK_second)
-      return dur;
-    aCond = [aNoteDur conductor];
-    if (!aCond)  
-      return dur;
-    return [aCond predictTime:[aCond time] + dur] - MKGetTime();
+      id aCond;
+      double dur = [aNoteDur dur];
+      if ([aNoteDur noteType] != MK_noteDur)
+          return 0;
+      if (timeUnit != MK_second)
+          return dur;
+      aCond = [aNoteDur conductor];
+      if (!aCond)  
+          return dur;
+      return [aCond predictTime:[aCond timeInBeats] + dur] - MKGetTime();
 }
 
