@@ -1138,7 +1138,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 	    
 	    CGContextMoveToPoint(ctx, (int) j + 0.5, theValue+3);
 	    CGContextAddLineToPoint(ctx, (int) j + 0.5, theValue-3);
-	    CGContextMoveToPoint(ctx, (int) j + 0.5, theValue+3);
+	    CGContextMoveToPoint(ctx, (int) j + 0.5, theValue);
 	  }
 
 #endif
