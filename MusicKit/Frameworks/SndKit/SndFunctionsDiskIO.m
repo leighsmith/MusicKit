@@ -586,7 +586,7 @@ int SndWriteSoundfile(NSString *filename, SndSoundStruct *sound)
     SF_INFO sfinfo;
     SNDFILE *sfp;
     char *comment = NULL;
-    long sampleCount = SndSampleCount(sound) * sound->channelCount;
+    long sampleCount = SndFrameCount(sound) * sound->channelCount;
     
     sfinfo.samplerate = (int) sound->samplingRate;
     sfinfo.channels = sound->channelCount;
@@ -687,7 +687,7 @@ int SndWriteSoundfile(NSString *filename, SndSoundStruct *sound)
   {
   int i;
   long readChunkSizeInBytes = SNDREADCHUNKSIZE * sizeof(st_sample_t);
-  long sampleCount = SndSampleCount(sound) * sound->channelCount;
+  long sampleCount = SndFrameCount(sound) * sound->channelCount;
   void *data = (char *)sound + sound->dataLocation;
   st_sample_t *writeBuffer = malloc(readChunkSizeInBytes);
   
