@@ -131,7 +131,7 @@
       memcpy(&s,soundStruct,sizeof(SndSoundStruct));
       s->dataSize = lengthInBytes;
       [ab initWithFormat: s data: nil];
-      memcpy([ab data], dataPtr, lengthInBytes);
+      memcpy([ab bytes], dataPtr, lengthInBytes);
     }
     else {
 
@@ -161,6 +161,8 @@
                                     cachedBufferRange.location,
                                     cachedBufferRange.length, TRUE);
         if (cacheStruct) {
+          if (cachedBuffer == nil)
+            cachedBuffer = [SndAudioBuffer alloc];
           [cachedBuffer initWithFormat: cacheStruct data: ((char*)cacheStruct) + cacheStruct->dataLocation];
           [cachedBuffer convertToFormat: SND_FORMAT_FLOAT];
         }
