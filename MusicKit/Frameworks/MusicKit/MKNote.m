@@ -72,8 +72,6 @@ Modification history prior to committal to CVS:
   03/08/95/daj/nick - Added check for MK_noPar in -isParPresent:
 */
 
-#define INT(_x) ((int) _x)
-
 #define MK_INLINE 1
 #import "_musickit.h"
 #import "tokens.h"
