@@ -14,7 +14,7 @@
   MusicKit customizations for sourceforge.
   Basically all this does is add in BODY statements and header images 
   to make the output more typically SourceForge style HTML pages.
-  by Leigh Smith, stolen from: 
+  by Leigh Smith <leigh@tomandandy.com>, stolen from: 
 -->
 <!-- Cygnus customizations by Mark Galassi -->
 
@@ -107,7 +107,7 @@
    (list "TEXT" "#FFFFFF")
    (list "LINK" "#C7DE1E")
    (list "ALINK" "#969FF4")
-   (list "VLINK" "#A13D38")))
+   (list "VLINK" "#80C2E2")))
 
 
 (define %generate-article-toc% 
