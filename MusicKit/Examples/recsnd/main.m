@@ -50,26 +50,27 @@ void ShowVersion(void)
 
 void DoRecord(const char* recordFilename, double recordDuration)
 {
-    NSAutoreleasePool *pool     = [NSAutoreleasePool new];
-    SndStreamRecorder *recorder = [SndStreamRecorder streamRecorder];
-    [[SndStreamManager defaultStreamManager] addClient: recorder];
+    NSAutoreleasePool *pool     = [[NSAutoreleasePool alloc] init];
+    SndStreamRecorder *recorder = [[SndStreamRecorder alloc] init];
+    [[SndStreamManager defaultStreamManager] addClient: [recorder autorelease]];
+    
     [recorder startRecordingToFile: [[NSFileManager defaultManager]
                 stringWithFileSystemRepresentation:recordFilename
                                             length:strlen(recordFilename)]];
 
     if (recordDuration >= 0.0) {
-        while (recordDuration > 0.0) {
-          printf("."); 
-          fflush(stdout);
-          if (recordDuration > 1.0) {
-            usleep(1000000);
-            recordDuration -= 1.0;
-          }
-          else {
-            usleep(1000000 * recordDuration);
-            recordDuration = 0.0;
-          }
+      while (recordDuration > 0.0) {
+        printf(".");
+        fflush(stdout);
+        if (recordDuration > 1.0) {
+          usleep(1000000);
+          recordDuration -= 1.0;
         }
+        else {
+          usleep(1000000 * recordDuration);
+          recordDuration = 0.0;
+        }
+      }
     }
     else {
       printf("Press return key to stop recording...\n");
@@ -80,6 +81,7 @@ void DoRecord(const char* recordFilename, double recordDuration)
     
     if (!bSilent) 
         printf("Done.\n");
+
     
     [pool release];
 }
@@ -142,6 +144,7 @@ int main (int argc, const char * argv[])
     
     // Record!
     
-    DoRecord(recordFilename, recordDuration);    
+    DoRecord(recordFilename, recordDuration);
+    
     return 0;  
 }
