@@ -523,7 +523,7 @@ char *g; int ng;	/* At most ng chars are read */
 {
 #define MAXC 100
 
-	char *s; int nstr, lstr; register c; register char *cs;
+	char *s; int nstr, lstr; register int c; register char *cs;
 	FILE *in;
 
 	in = fopen("/dev/tty", "r");
