@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.22  2002/03/12 22:50:31  sbrandon
+  change _binaryIndecies from NSMutableDictionary to NSMapTable
+
   Revision 1.21  2002/01/24 13:55:39  sbrandon
   fixed a couple of places where notes could possibly get dealloced between
   being removed from one array and added to another
@@ -1431,7 +1434,7 @@ static id writeBinaryNoteAux(MKNote *self,id aPart,_MKScoreOutStruct *p)
 {
     NSMutableData *aStream = p->_stream;
     _MKWriteShort(aStream, _MK_partInstance);
-    _MKWriteShort(aStream, [[p->_binaryIndecies objectForKey: aPart] intValue]);
+    _MKWriteShort(aStream, (int)NSMapGet(p->_binaryIndecies, aPart));
     switch (self->noteType) {
       case MK_noteDur: {
           double dur = ((p->_ownerIsNoteRecorder) ? 
