@@ -1,23 +1,37 @@
 /*
   $Id$
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
 
   Description:
     This is fairly complicated, due to the differences between Music Kit and
     MIDI semantics. See the discussion in the manual (not in 1.0); also
     available as ~david/doc/Midi.doc.
 
+    Musickit-to-MIDI:
+   
+      On a given tag stream: 
+      * If we get two noteOns on the same key, do noteOff followed by noteOn.
+      * If we get a noteOn on a new key, do noteOn followed by noteOff on old key.
+   
+      As an added feature, we map identical tags on different channels to
+      different pseudo-tag streams. Sending the same tag to two channels is 
+      really an application bug. So this is just a way of being forgiving.
+
   Original Author: David A. Jaffe
   
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.8  2000/10/01 06:49:35  leigh
+  Replaced HashTable with NSMapTable functions.
+
   Revision 1.7  2000/07/22 00:29:11  leigh
   Typed _MKGetNoteOns
 
@@ -51,7 +65,6 @@ Modification history:
 		 Note that the stored keyNum still takes precedence.
 */
 
-
 #import "_musickit.h"
 #import "_midi.h"
 #import "NotePrivate.h"   
@@ -75,10 +88,10 @@ typedef struct _midiOutNode {
 } midiOutNode;    
 
 #define CACHESIZE 20
-static midiOutNode *cache[CACHESIZE]; 
-static int cachePtr = 0;
+static midiOutNode *midiOutNodeCache[CACHESIZE]; 
+static int midiOutNodeCachePtr = 0;
 
-#import <objc/HashTable.h>
+static void freeMidiOutNode(NSMapTable *table, void *aNode);
 
 _MKMidiOutStruct *_MKInitMidiOut()
     /* Creates new _MKMidiOutStruct data structure */
@@ -86,14 +99,17 @@ _MKMidiOutStruct *_MKInitMidiOut()
     static BOOL beenHere = NO;
     int i;
     _MKMidiOutStruct *rtn;
+    NSMapTableValueCallBacks valueCallBacks = {NULL, freeMidiOutNode, NULL};
+    NSMapTableKeyCallBacks keyCallBacks = {NULL, NULL, NULL, NULL, NULL, NULL};
+
     if (!beenHere) {
 	beenHere = YES;
-	for ( ; cachePtr < CACHESIZE; cachePtr++) 
-	  _MK_CALLOC(cache[cachePtr],midiOutNode,1);
+	for ( ; midiOutNodeCachePtr < CACHESIZE; midiOutNodeCachePtr++) 
+            _MK_CALLOC(midiOutNodeCache[midiOutNodeCachePtr],midiOutNode,1);
     }
     _MK_MALLOC(rtn, _MKMidiOutStruct, 1);
     for (i=0; i<MIDI_NUMCHANS; i++) /* Map from tag to midiOutNode. */
-      rtn->_map[i] = [HashTable newKeyDesc:"i" valueDesc:"$"];
+        rtn->_map[i] = NSCreateMapTable(keyCallBacks, valueCallBacks, CACHESIZE);
     rtn->_timeTag = 0;
     return rtn;
 }
@@ -101,7 +117,6 @@ _MKMidiOutStruct *_MKInitMidiOut()
 unsigned char _MKGetSysExByte(char **strP)
     /* Helper function for putSysExcl below */
 {
-#   import <ctype.h>
     char *str = *strP;
     BOOL gotOne = NO;
     unsigned char rtn = 0;
@@ -124,8 +139,8 @@ static midiOutNode *newMidiOutNode(unsigned akey)
   /* Make a new ordered triple with x1 and x2 values. */
 {
     midiOutNode *rtn;
-    if (cachePtr > 0) 
-      rtn = cache[--cachePtr];
+    if (midiOutNodeCachePtr > 0) 
+      rtn = midiOutNodeCache[--midiOutNodeCachePtr];
     else _MK_CALLOC(rtn,midiOutNode,1);
     rtn->key = akey;
     return rtn;
@@ -133,13 +148,14 @@ static midiOutNode *newMidiOutNode(unsigned akey)
 
 static void cancelMidiOutNoteDurMsg(midiOutNode *node);
 
-static void freeMidiOutNode(midiOutNode *aNode)
+static void freeMidiOutNode(NSMapTable *table, void *aNode)
     /* free struct, caching if possible */
 {
-    cancelMidiOutNoteDurMsg(aNode);
-    if (cachePtr < CACHESIZE)
-      cache[cachePtr++] = aNode;
-    else free(aNode);
+    cancelMidiOutNoteDurMsg((midiOutNode *) aNode);
+    if (midiOutNodeCachePtr < CACHESIZE)
+        midiOutNodeCache[midiOutNodeCachePtr++] = (midiOutNode *) aNode;
+    else
+        free(aNode);
 }
 
 static void midiOutNodeNoteDur(midiOutNode *node,id aNoteDur,id msgReceiver)
@@ -178,16 +194,14 @@ NSMutableArray *_MKGetNoteOns(_MKMidiOutStruct *ptr,int chan)
      * Caller must free the List and the objects. chan is 1-based
      */
 {
-    id map = ptr->_map[chan-1]; 
+    NSMapTable *map = ptr->_map[chan-1]; 
     int noteTag;
     NSMutableArray *aList = [[NSMutableArray alloc] init];
     MKNote *aNote;
     midiOutNode *value;
-    NXHashState state;
-//    int count = [map count];
-    state = [map initState];
-    while ([map nextState:&state key:(const void **)&noteTag
-	  value:(void **)&value]) {
+    NSMapEnumerator state = NSEnumerateMapTable(map);
+    
+    while (NSNextMapEnumeratorPair(&state, (const void **)&noteTag, (void **)&value)) {
 	aNote = [[MKNote alloc] init];
 	[aNote setNoteType:MK_noteOff];
 	[aNote setPar:MK_keyNum toInt:value->key];
@@ -201,19 +215,12 @@ NSMutableArray *_MKGetNoteOns(_MKMidiOutStruct *ptr,int chan)
 _MKMidiOutStruct *_MKFinishMidiOut(_MKMidiOutStruct *ptr)
     /* Delete _MKMidiOutStruct data structure */
 {
-    id map;
-    int i,key;
-    midiOutNode *value;
-    NXHashState state;
+    int i;
+    
     if (!ptr) 
-      return NULL;
-    for (i=0; i<MIDI_NUMCHANS; i++) {
-	map = ptr->_map[i]; 
-	state = [map initState];
-	while ([map nextState:&state key:(const void **)&key 
-	      value:(void **)&value]) 
-	  freeMidiOutNode(value);
-	[map release];
+        return NULL;
+    for (i = 0; i < MIDI_NUMCHANS; i++) {
+	NSFreeMapTable(ptr->_map[i]);
     }
     free(ptr);
     return NULL;
@@ -455,8 +462,8 @@ void  _MKWriteMidiOut(id aNote,double timeTag,unsigned chan, /* 1 based */
             }
 	    velocity = MKGetNoteParAsInt(aNote,MK_velocity);
 	    if (velocity == MAXINT)
-	      velocity = 64;
-	    mapNode = (midiOutNode *)[ptr->_map[chan] valueForKey: (const void *)noteTag];
+                velocity = 64;
+	    mapNode = (midiOutNode *) NSMapGet(ptr->_map[chan], (const void *) noteTag);
 	    keyNum = [aNote keyNum];
             if (keyNum == MAXINT) {
                 if (mapNode)
@@ -493,8 +500,7 @@ void  _MKWriteMidiOut(id aNote,double timeTag,unsigned chan, /* 1 based */
 	    }
 	    else {
 		noteOn(chan, UCHAR(keyNum), UCHAR(velocity), ptr);
-		[ptr->_map[chan] insertKey:(const void *)noteTag
-                 value:(void *)(mapNode = newMidiOutNode(keyNum))];
+		NSMapInsert(ptr->_map[chan], (const void *)noteTag, (void *)(mapNode = newMidiOutNode(keyNum)));
 	    }
 	    if (KEYPRESSURE()) {
 		SET3BYTES(ptr,ADDCHAN(MIDI_POLYPRES),keyNum,
@@ -521,13 +527,14 @@ void  _MKWriteMidiOut(id aNote,double timeTag,unsigned chan, /* 1 based */
 			}
 			break;
 		    } else noteOff(chan,UCHAR(keyNum),velocity,ptr);
-		} else
+		} else {
                     if (MKIsTraced(MK_TRACEMIDI)) {
-		      NSLog(@"NoteOff missing a note tag at time %f", ptr->_timeTag);
-		  }
+                        NSLog(@"NoteOff missing a note tag at time %f", ptr->_timeTag);
+                    }
+                }
 		break;
 	    } else {
-		mapNode = (midiOutNode *)[ptr->_map[chan] removeKey: (const void *)noteTag];
+                mapNode = (midiOutNode *) NSMapGet(ptr->_map[chan], (const void *) noteTag);
 		if (!mapNode) {
                     if (MKIsTraced(MK_TRACEMIDI)) {
 			NSLog(@"NoteOff for noteTag which is already off at time %f", ptr->_timeTag);
@@ -536,7 +543,7 @@ void  _MKWriteMidiOut(id aNote,double timeTag,unsigned chan, /* 1 based */
 		}
 		keyNum = mapNode->key;
 		noteOff(chan,UCHAR(keyNum),velocity,ptr);
-		freeMidiOutNode(mapNode);
+                NSMapRemove(ptr->_map[chan], (const void *) noteTag);
 	    }
 	    if (KEYPRESSURE()) {
 		SET3BYTES(ptr,ADDCHAN(MIDI_POLYPRES),keyNum,
@@ -548,8 +555,7 @@ void  _MKWriteMidiOut(id aNote,double timeTag,unsigned chan, /* 1 based */
       case MK_noteUpdate:
 	if (KEYPRESSURE()) {
 	    int noteTag = [aNote noteTag];
-	    midiOutNode *mapNode = 
-	      (midiOutNode *)[ptr->_map[chan] valueForKey:(const void *)noteTag];
+	    midiOutNode *mapNode = (midiOutNode *) NSMapGet(ptr->_map[chan], (const void *) noteTag);
 	    if (!mapNode) {
 		if (MKGetInclusiveMidiTranslation()) {
 		    keyNum = [aNote parAsInt:MK_keyNum];
@@ -557,7 +563,7 @@ void  _MKWriteMidiOut(id aNote,double timeTag,unsigned chan, /* 1 based */
 		else {
 		    (*ptr->_sendBufferedData)(ptr);
                     if (MKIsTraced(MK_TRACEMIDI)) {
-			NSLog(@"PolyKeyPressure with invalid noteTag or missing keyNum: %s %f;", _MKTokNameNoCheck(_MK_time),ptr->_timeTag);
+			NSLog(@"PolyKeyPressure with invalid noteTag or missing keyNum: %s %f;", _MKTokNameNoCheck(_MK_time), ptr->_timeTag);
 		    }
 		    break; /* Gets us out of entire case statement */
 		}
@@ -573,16 +579,3 @@ void  _MKWriteMidiOut(id aNote,double timeTag,unsigned chan, /* 1 based */
     }
     (*ptr->_sendBufferedData)(ptr);
 }
-
-/* Musickit-to-MIDI:
-   
-   On a given tag stream: 
-   * If we get two noteOns on the same key, do noteOff followed by noteOn.
-   * If we get a noteOn on a new key, do noteOn followed by noteOff on old key.
-   
-   As an added feature, we map identical tags on different channels to
-   different pseudo-tag streams. Sending the same tag to two channels is 
-   really an application bug. So this is just a way of being forgiving.
-
-*/
-
