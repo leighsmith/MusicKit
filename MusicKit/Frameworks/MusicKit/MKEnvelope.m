@@ -1,19 +1,43 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
-  $Id$
-  Original Author: David A. Jaffe
-  
+  $Id$  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
+
+  Description:
+    Julius sez:
+
+    Tau has a precise meaning.  It is the "time constant".  During tau seconds
+    you get 1/e of the way to where you're going, or about .37th of the way.
+    Setting it to 0.2 means you are going 5 time constants in 1 second.  You
+    determined empirically that 5 or 6 time constants "really gets there".
+    Still, it is an exponential approach that never quite reaches its target.
+    The formula
+
+         exp(-t/tau) = epsilon
+
+    Can be solved for t to find out how many time constants will get you
+    to within epsilon times the inital distance.  For example, epsilon = 0.001
+    gives t around 7.  This means it takes 7 time constants to traverse 99.999%
+    of the distance.
+
+    If we redefine the meaning of tau, we have to give it another name, such
+    as "relaxation time".  We can never call it the time constant.
+
+    That's why we call it "smoothing".
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  2000/04/02 16:50:32  leigh
+  Cleaned up doco
+
   Revision 1.2  1999/07/29 01:16:36  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -33,46 +57,13 @@ Modification history:
 #import "_scorefile.h"
 
 #import "EnvelopePrivate.h"
-@implementation  MKEnvelope:NSObject
-{
-    double defaultSmoothing;    /* If no Smoothing-array, this is time constant. */
-    double samplingPeriod;	/* If no X-array, this is abcissa scale */
-    double *xArray;             /* Array of x values, if any. */
-    double *yArray;	        /* Arrays of data values */
-    double *smoothingArray;           /* Array of time constants. */
-    int stickPoint;		/* Index of "steady-state", if any */
-    int pointCount;		/* Number of points in envelope */
-    void *_reservedEnvelope1;
-}
-
-/* Julius sez:
-
-Tau has a precise meaning.  It is the "time constant".  During tau seconds
-you get 1/e of the way to where you're going, or about .37th of the way.
-Setting it to 0.2 means you are going 5 time constants in 1 second.  You
-determined empirically that 5 or 6 time constants "really gets there".
-Still, it is an exponential approach that never quite reaches its target.
-The formula
-
-	exp(-t/tau) = epsilon
-
-Can be solved for t to find out how many time constants will get you
-to within epsilon times the inital distance.  For example, epsilon = 0.001
-gives t around 7.  This means it takes 7 time constants to traverse 99.999%
-of the distance.
-
-If we redefine the meaning of tau, we have to give it another name, such
-as "relaxation time".  We can never call it the time constant.
-
-That's why we call it "smoothing".
-*/
+@implementation  MKEnvelope
 
 +  new
   /* This is how you make up an empty seg envelope */
 {
     self = [super allocWithZone:NSDefaultMallocZone()];
     [self init];
-//    [self initialize]; /* Attempt to avoid breaking old programs. */ //sb: removed
     return self;
 }
 
@@ -86,14 +77,6 @@ That's why we call it "smoothing".
     return;
 }
 
-#if 0
-
-- (void)initialize 
-  /* For backwards compatibility. See below. */
-{ 
-    
-} 
-#endif
 
 -init
 {
@@ -153,7 +136,6 @@ static void getArray(int pointCount,NSCoder *aTypedStream, /*sb: originally conv
 		    &stickPoint,&pointCount,&str];
 	if (str) {
 	    MKNameObject(str,self);
-//	    free(str);
 	}
 	getArray(pointCount,aDecoder,&xArray);
 	getArray(pointCount,aDecoder,&yArray);
