@@ -172,6 +172,7 @@ typedef enum {
 - (int)deleteSamples;
 - (int)deleteSamplesAt:(int)startSample count:(int)sampleCount;
 - (int)insertSamples:(Snd *)aSnd at:(int)startSample;
+- (id) copyWithZone: (NSZone *) zone;
 - (int)copySound:(Snd *)aSnd;
 - (int)copySamples:(Snd *)aSnd at:(int)startSample count:(int)sampleCount;
 - (int)compactSamples;

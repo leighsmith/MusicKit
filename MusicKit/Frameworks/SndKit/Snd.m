@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.18  2001/03/07 22:07:38  leigh
+ * Adopted NSCopying protocol
+ *
  * Revision 1.17  2001/03/03 03:12:06  leigh
  * SndPerformance used to indicate samplesProcessed and identifying delegates
  *
@@ -1060,9 +1063,9 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return err;
 }
 
-- (id)copy
+- (id) copyWithZone: (NSZone *) zone
 {
-    id newSound = [[[self class] alloc] init];
+    id newSound = [[[self class] allocWithZone: zone] init];
     [newSound copySound:self];
     return newSound;
 }
