@@ -80,9 +80,9 @@ performance classes, showing their hierarchical relationship:</para>
       <title>Performance Classes</title>
       <mediaobject>
 	<imageobject><imagedata
-	fileref="Performance.eps"></imageobject>
+	fileref="Images/MusicPerformance.eps"></imageobject>
 	<imageobject><imagedata
-	fileref="Performance.gif"></imageobject>
+	fileref="Images/MusicPerformance.gif"></imageobject>
 	<textobject><phrase><productname>MusicKit</productname> Image</phrase></textobject>
       </mediaobject>
     </figure>
@@ -127,7 +127,9 @@ setting it up; in fact, many of the methods that are defined by the
 classes that are involved in a performance can only be invoked before
 the performance starts (or between performances).  As you design your
 own application, you should consult the class descriptions in 
-<xref linkend="MKClassReferences"> to check for the conditions under
+<ulink url="&MKClassReferences;">
+<productname>MusicKit</productname> Class References</ulink>
+to check for the conditions under
 which a method may be invoked.</para>
 
 <para>The following sections examine the three primary classes
@@ -531,12 +533,12 @@ of the following integer constants:</para>
 	      </thead>
 	      <tbody>
 		<row>
-		  <entry>MK_AUTOALLOC</entry> <entry>Automatic
-		  allocation</entry>
+		  <entry><constant>MK_AUTOALLOC</constant></entry>
+		  <entry>Automatic allocation</entry>
 		</row>
 		<row>
-		  <entry>MK_MANUALALLOC</entry> <entry>Manual
-		  allocation</entry>
+		  <entry><constant>MK_MANUALALLOC</constant></entry>
+                  <entry>Manual allocation</entry>
 		</row>
 	      </tbody>
 	    </tgroup>
@@ -770,16 +772,18 @@ state as one of the following MKSynthStatus constants:</para>
 	      </thead>
 	      <tbody>
 		<row>
-		  <entry>MK_idle</entry>
+		  <entry><constant>MK_idle</constant></entry>
 		  <entry>The <classname>MKSynthPatch</classname> is currently inactive.</entry>
 		</row>
 		<row>
-		  <entry>MK_running</entry> <entry>The
+		  <entry><constant>MK_running</constant></entry> 
+		  <entry>The
 		  <classname>MKSynthPatch</classname> is synthesizing
 		  the body of a musical note.</entry>
 		</row>
 		<row>
-		  <entry>MK_finishing</entry> <entry>The
+		  <entry><constant>MK_finishing</constant></entry>
+                  <entry>The
 		  <classname>MKSynthPatch</classname> is in the
 		  release portions of its
 		  <classname>MKEnvelope</classname>s.</entry>
@@ -789,11 +793,12 @@ state as one of the following MKSynthStatus constants:</para>
 	  </table>
 	  
 <para>The <emphasis role="bold">noteOn:</emphasis> message sets the
-synthesis status to MK_running; <emphasis
-role="bold">noteOff:</emphasis> sets it to MK_finishing.  In either of
-these states, the <classname>MKSynthPatch</classname> is considered to
-be active.  The status is set to MK_idle when the release portion of
-the <classname>MKSynthPatch</classname>'s amplitude
+synthesis status to <constant>MK_running</constant>; <emphasis
+role="bold">noteOff:</emphasis> sets it to
+<constant>MK_finishing</constant>.  In either of these states, the
+<classname>MKSynthPatch</classname> is considered to be active.  The
+status is set to <constant>MK_idle</constant> when the release portion of the
+<classname>MKSynthPatch</classname>'s amplitude
 <classname>MKEnvelope</classname> (in other words, the object set as
 the value of the MK_ampEnv parameter of the
 <classname>MKNote</classname> that the
@@ -925,7 +930,7 @@ new <classname>MKNote</classname>.</para>
 <emphasis role="bold">noteOff:</emphasis> message, if any, is
 preempted.  In other words, the preemption scheme first looks for a
 <classname>MKSynthPatch</classname> whose synthesis status is
-MK_finishing.</para>
+<constant>MK_finishing</constant>.</para>
 	    </listitem>
 
 	    <listitem>
@@ -1710,8 +1715,10 @@ pseudo-<classname>MKPerformer</classname>s that fashion
 (<classname>MKScorePerformer</classname>, which creates a
 <classname>MKPartPerformer</classname> for each
 <classname>MKPart</classname> in the <classname>MKScore</classname>).
-Consult <xref linkend="MKClassReferences"> for further
-descriptions of these classes.</para>
+Consult 
+<ulink url="&MKClassReferences;">
+<productname>MusicKit</productname> Class References</ulink> for
+further descriptions of these classes.</para>
 
 <para>Using a <classname>MKPerformer</classname> object is quite
 simple; creating your own subclass is a bit more complicated and
