@@ -62,6 +62,14 @@
 #import "SndEndianFunctions.h"
 
 /*!
+  @function SndFormatDescription
+  @abstract Returns a NSString description of the sound format. 
+  @param format A SndFormat structure containing the sound format parameters.
+  @result Returns a NSString description of the sound format.
+ */
+SNDKIT_API NSString *SndFormatDescription(SndFormat format);
+
+/*!
   @function SndStructDescription
   @abstract Returns a NSString description of the sound. 
   @param sound A SndStructSound containing the Snd

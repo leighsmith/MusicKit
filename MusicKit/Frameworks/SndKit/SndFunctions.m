@@ -125,9 +125,9 @@ NSString *SndFormatName(int dataFormat, BOOL verbose)
     case SND_FORMAT_DOUBLE:
 	return verbose ? @"Signed 64-bit floating point" : @"64-bit Floating Point";
     case SND_FORMAT_INDIRECT:
-	return verbose ? @"Indirect" : @"Fragmented";
+	return @"Fragmented";
     default:
-	return verbose ? [NSString stringWithFormat: @"Unknown format %d", dataFormat] : @"DSP?";
+	return [NSString stringWithFormat: @"Unknown format %d", dataFormat];
     }
 }
 
@@ -232,14 +232,25 @@ int SndFrameCount(const SndSoundStruct *sound)
   return SndBytesToFrames(count, sound->channelCount, df);
 }
 
+NSString *SndFormatDescription(SndFormat format)
+{
+    return [NSString stringWithFormat: @"(frames: %li duration: %fs dataFormat: %@ samplingRate: %.2f channels: %i)",
+	format.frameCount, format.frameCount / format.sampleRate, SndFormatName(format.dataFormat, NO), format.sampleRate, format.channelCount];
+}
+
+// TODO marked for demolition.
 NSString *SndStructDescription(SndSoundStruct *s)
 {
     if(s != NULL) {
-        NSString *message = [NSString stringWithFormat: 
-                @"%slocation:%d size:%d format:%d sample rate:%d channels:%d info:%s\n",
-                (s->magic != SND_MAGIC) ? "(struct lacking magic number): " : "",
-                s->dataLocation, s->dataSize, s->dataFormat,
-                s->samplingRate, s->channelCount, s->info];
+	SndFormat f;
+	
+	f.sampleRate = s->samplingRate;
+	f.dataFormat = s->dataFormat;
+	f.channelCount = s->channelCount;
+	f.frameCount = SndFrameCount(s);
+        NSString *message = [NSString stringWithFormat: @"%s location:%d size:%d %@ info:%s\n",
+	    (s->magic != SND_MAGIC) ? "(no SND_MAGIC)" : "SND_MAGIC",
+	    s->dataLocation, s->dataSize, SndFormatDescription(f), s->info];
         return message;
     }
     else {
@@ -247,9 +258,10 @@ NSString *SndStructDescription(SndSoundStruct *s)
     }
 }
 
+// TODO marked for demolition.
 void SndPrintStruct(SndSoundStruct *s)
 {
-  puts([SndStructDescription(s) cString]);
+    puts([SndStructDescription(s) cString]);
 }
 
 int SndPrintFrags(SndSoundStruct *sound)
@@ -1014,5 +1026,5 @@ int SndSwapHostToBigEndianSound(void *dest, void *src, int sampleCount, int chan
   return SND_ERR_BAD_FORMAT;
 
 #endif
+
 }
-        
