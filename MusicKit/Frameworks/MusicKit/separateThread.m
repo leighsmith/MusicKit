@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.10  2000/03/27 16:53:58  leigh
+  Removed mach messaging from separateThreadLoop
+
   Revision 1.9  2000/01/27 19:17:58  leigh
   Now using NSPort replacing C Mach port API, disabled the ErrorStream disabling (since NSLog is thread-safe)
 
@@ -118,15 +121,15 @@ static int oldPriority = MAXINT;
 static int oldPolicy = INVALID_POLICY;
 #endif
 
-static port_name_t appToMKPort;
-static NSPort* appToMKPortObj = nil; /*sb: added these 2 to provide NSPort objects */
-static NSPort* MKToAppPortObj = nil; /*    that contain the actual ports.          */
+#define NSMessagePort NSPort  // fudge around MacOsX-Server old concrete NSPort
 
-static NSString * interThreadThreshold = nil;
+static NSMessagePort *appToMKPortObj = nil; /*sb: added these 2 to provide NSPort objects */
+static NSMessagePort *MKToAppPortObj = nil; /*    that contain the actual ports.          */
+static NSString *interThreadThreshold = nil;
+static BOOL wakeUpCall = NO; /* See below */
 
 /* Forward declarations */ 
 static void adjustTimedEntry(double nextMsgTime);
-static void emptyAppToMKPort(void);
 
 // Should declare this as part of the MKConductor category, not include it.
 // Unfortunately that would mean making many variables and functions public when they are currently private (static).
@@ -157,7 +160,6 @@ static void emptyAppToMKPort(void);
    if we're running as root.  So we invoke a small setuid command-line program
    to enable the fixed policy.
  */
-
 + setThreadPriority:(float)priorityFactor
 {
 #if PRIORITY_THREADING // LMS: disabled for safety for now 
@@ -254,78 +256,69 @@ static BOOL musicKitHasLock(void)
 	    lockingThread == musicKitThread);
 }
 
-static BOOL thingsHaveChanged = NO; /* See below */
-
-static void sendMessageIfNeeded(void)
+// Fires a message to the MusicKit thread to wake it out of it's slumber.
+// Typically this occurs from a pause scheduling a wait till the end of time (MK_ENDOFTIME).
+/* LMS: I think this comment still holds. I don't think it really matters.
+   The way this is currently implemented, an extra context switch
+   gets done. The alternative is to not send the message until
+   the _MKUnlock(). But this is more complicated (since multiple
+   messages may cancel each other out) and should be left
+   as an optimization, if needed.
+*/
+static void sendMessageToWakeUpMKThread(void)
 {
-	/* The way this is currently implemented, an extra context switch
-	   gets done. The alternative is to not send the message until 
-	   the _MKUnlock(). But this is more complicated (since multiple
-	   messages may cancel each other out) and should be left
-	   as an optimization, if needed. */
+    // Create a valid but empty message.
+    NSPortMessage *msg = [[NSPortMessage alloc] initWithSendPort: appToMKPortObj
+						     receivePort: MKToAppPortObj // this might be breaking the rules.
+                                                      components: [NSArray arrayWithObject: [NSData data]]];
 
-    kern_return_t ec;
-    msg_header_t msg =    {0,                   /* msg_unused */
-                           TRUE,                /* msg_simple */
-			   sizeof(msg_header_t),/* msg_size */
-			   MSG_TYPE_NORMAL,     /* msg_type */
-			   0};                  /* Fills in remaining fields */
-    if (!separateThread)
-      return;
+    NSLog(@"sendMessageToWakeUpMKThread\n");
 
     /*  We send the message only when someone other than the Music Kit has
 	the lock. If we're not in performance, the value of musicKitThread
 	and lockingThread will both be nil. The assumption here
 	is that the caller has the lock if we are in performance. */
-    if (musicKitThread == nil ||       /* Not in performance? */
-        lockingThread == musicKitThread) {  /* MK doesn't have the lock */
+    if (!separateThread ||
+        musicKitThread == nil ||            // Not in performance?
+        lockingThread == musicKitThread) {  // Ensure MK doesn't have the lock
 	return;
     }
-
-    thingsHaveChanged = YES; /* Added Sep6,90 by daj */
-    msg.msg_local_port = PORT_NULL;
-    msg.msg_remote_port = appToMKPort;
-    /*  If we ever want to pass a simple message identification to the other 
-	thread, we can do it in	msg.msg_id */
-
-    ec = msg_send(&msg, SEND_TIMEOUT, 0);
-    if (ec == SEND_TIMED_OUT)
-      ;	/* message queue is full, don't need to send another */
-    else if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"_MKsendMessageIfNeeded");
+    wakeUpCall = YES;
+    [msg sendBeforeDate: [NSDate dateWithTimeIntervalSinceNow: 0.020]];  //20mSec's *should* be plenty.
+    [msg release];
 }
 
+/* We have to do this complicated thing because the NSThread class doesn't
+   support a terminate method to terminate another thread. 
+ */
 static void killMusicKitThread(void)
 {
-  /* We have to do this complicated thing because the NSThread class doesn't
-     support a terminate function. */
-//  int count;
-  if (musicKitThread == nil)
-    return;
-  if (MKIsTraced(MK_TRACECONDUCTOR))
-    NSLog(@"attempting to kill musicKitThread\n");
+    if (musicKitThread == nil)
+        return;
+    if (MKIsTraced(MK_TRACECONDUCTOR))
+        NSLog(@"Attempting to kill the MK Thread\n");
 
-  // This is only called by a function that has checked it is not in the MusicKit thread.
-  // Must check if the current thread (known to not be the musicKitThread) has the lock.
-  if (lockingThread == [NSThread currentThread]) { // Must be holding lock to do this
-    /* Since we've got the lock, we know that the Music Kit thread is either
-       in a msg_receive or waiting for the lock. */
-    sendMessageIfNeeded();             /* Get it out of msg_receive */
-                                       /* Can't use thread_abort() here
-					  because it's possible (unlikely)
-					  that thread has not even gotten the
-					  initial lock yet! */
-// LMS: FIXME Danger Will Robinson! This is totally kludged out and I've yet to stress test things to
-// see if we need them. So far, it seems to work...
-//    count = musicKitLock->count;       /* Save the count */
-//    musicKitLock->count = 0;           /* Fudge the rec_mutex for now */
-//    musicKitLock->thread = NO_CTHREAD;
-    /* Wait for it to be done */
-//    [musicKitAbortCondition lock];
-//    musicKitLock->count = count;       /* Fix up the rec_mutex */        
-//    musicKitLock->thread = [NSThread currentThread];
-  }
-  unlockIt(recursive);
+    // This is only called by a function that has checked it is not in the MusicKit thread.
+    // Must check if the current thread (known to not be the musicKitThread) has the lock.
+    if (lockingThread == [NSThread currentThread]) { // Must be holding lock to do this
+        /* Since we've got the lock, we know that the Music Kit thread is either
+                    in a msg_receive or waiting for the lock. */
+        NSLog(@"Sending a message if needed\n");
+        sendMessageToWakeUpMKThread();             /* Get the MK thread out of its deep sleep (if paused). */
+        /* Can't use thread_abort() here because it's possible (unlikely) that thread has not 
+           even received the initial lock yet!
+         */
+        // LMS: FIXME Danger Will Robinson! This is totally kludged out and I've yet to stress test things to
+        // see if we need them. So far, it seems to work...
+        //    count = musicKitLock->count;       /* Save the count */
+        //    musicKitLock->count = 0;           /* Fudge the rec_mutex for now */
+        //    musicKitLock->thread = NO_CTHREAD;
+        /* Wait for it to be done */
+        //    [musicKitAbortCondition lock];
+        //    musicKitLock->count = count;       /* Fix up the rec_mutex */
+        //    musicKitLock->thread = [NSThread currentThread];
+    }
+    unlockIt(recursive);
 }
 
 static BOOL separateThreadedAndNotInMusicKitThread(void)
@@ -338,18 +331,19 @@ BOOL separateThreadedAndInMusicKitThread(void)
     return ([NSThread currentThread] == musicKitThread); 
 }
 
+/* Destroys the timed entry. */
 static void removeTimedEntry(int arg)
-  /* Destroys the timed entry. Made to be compatible with dpsclient version */
 {
+    NSLog(@"in removeTimedEntry\n");
     switch (arg) {
         case pauseThread:
             if (MKIsTraced(MK_TRACECONDUCTOR))
                 NSLog(@"pausing separate thread\n");
-            adjustTimedEntry(MK_ENDOFTIME);
+            adjustTimedEntry(MK_ENDOFTIME); // just wait for a long, long time.
             break;
         case exitThread:
             if (separateThreadedAndNotInMusicKitThread())
-                killMusicKitThread ();
+                killMusicKitThread();
 	    break;
         default:
 	    break;
@@ -358,11 +352,7 @@ static void removeTimedEntry(int arg)
 
 static port_set_name_t conductorPortSet = 0;
 
-/* This is made exactly parallel to dpsclient, in case we ever want to
-   export it. */
-/*sb: in OpenStep we have moved away from this paradigm (I think) so I feel
- * free to add bits to the structure. In particular, the handler function is
- * no longer used, and is replaced with a handler object that responds to -handleMachMessage.
+/* The handler object responds to -handleMachMessage.
  * Additionally, I need to be able to store the NSPort object (that holds the Mach port) somewhere,
  * so this is the obvious place.
  */
@@ -397,7 +387,11 @@ static int portInfoCount = 0;
       msg_receive()***
 
 */
-
+// If this is in main thread, its NSRunLoop looks after incoming messages.
+// If it is not in the main thread, the port is added to the port set. From there, messages are caught
+// by separateThreadLoop. From there, they are sent as plain old objC messages.
+// After all, we assume that if both the calling function AND the conductor are in the other thread,
+// it's ok to send normal objC messages between them.
 void _MKAddPort(NSPort *aPort,
                 id handlerObj,
 		unsigned max_msg_size, 
@@ -585,7 +579,6 @@ static id sendObjcMsg(id toObject,SEL aSelector,int argCount,id arg1,id arg2)
 	return nil;
     [MKConductor lockPerformance];
     
-//#warning DPSConversion: 'removePort:forMode:' used to be DPSRemovePort(MKToAppPort).  MKToAppPort should be retained to avoid loss through deallocation, and <mode> should be the mode for which the port was added.
     if (interThreadThreshold == nil) interThreadThreshold = NSDefaultRunLoopMode;
     
     [[NSRunLoop currentRunLoop] removePort:MKToAppPortObj forMode:interThreadThreshold];
@@ -595,82 +588,29 @@ static id sendObjcMsg(id toObject,SEL aSelector,int argCount,id arg1,id arg2)
     
     interThreadThreshold = newThreshold;
 
-//#error DPSConversion: 'addPort:forMode:' used to be DPSAddPort(MKToAppPort, (DPSPortProc)MKToAppProc, sizeof(msg_header_t), NULL, interThreadThreshold).  MKToAppPort should be retained to avoid loss through deallocation, the functionality of (DPSPortProc)MKToAppProc should be implemented by a delegate of the NSPort in response to 'handleMachMessage:' or 'handlePortMessage:',  and interThreadThreshold should be converted to an NSRunLoop mode (NSDefaultRunLoopMode, NSModalPanelRunLoopMode, and NSEventTrackingRunLoopMode are predefined).
-
     [[NSRunLoop currentRunLoop] addPort:MKToAppPortObj forMode:interThreadThreshold]; 
     return [MKConductor unlockPerformance];
 }
 
+/* Must be called from App thread. Called once when the MKConductor is initialized. */
 static void initializeBackgroundThread()
 {
-    /* Must be called from App thread. Called once when the MKConductor is initialized. */
-    kern_return_t ec;
-    port_name_t MKToAppPort;
-
     musicKitLock = [[NSRecursiveLock alloc] init];
     // musicKitAbortCondition = [[NSLock alloc] init];
-    ec = port_set_allocate(task_self(), &conductorPortSet);
-    if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"initializeBackgroundThread");
-    ec = port_allocate(task_self(), &appToMKPort);
-    if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"initializeBackgroundThread");
-    ec = port_set_add(task_self(),conductorPortSet,appToMKPort);
-    if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"port_set_add");
-    ec = port_allocate(task_self(), &MKToAppPort);
-    if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"initializeBackgroundThread");
-    appToMKPortObj = [[NSPort alloc] initWithMachPort:appToMKPort];
-    MKToAppPortObj = [[NSPort alloc] initWithMachPort:MKToAppPort];
-    [MKToAppPortObj setDelegate:[MKConductor class]]; //sb:MKConductor handles messages
+
+    appToMKPortObj = [[NSMessagePort alloc] init];
+    if (appToMKPortObj == nil)
+      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(0), @"initializeBackgroundThread"); //TODO
+
+    MKToAppPortObj = [[NSMessagePort alloc] init];
+    if (MKToAppPortObj == nil)
+      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(0), @"initializeBackgroundThread"); //TODO
+    [MKToAppPortObj setDelegate:[MKConductor class]]; //sb: MKConductor handles messages
     
-//#error DPSConversion: 'addPort:forMode:' used to be DPSAddPort(MKToAppPort, (DPSPortProc)MKToAppProc, sizeof(msg_header_t), NULL, interThreadThreshold).  MKToAppPort should be retained to avoid loss through deallocation, the functionality of (DPSPortProc)MKToAppProc should be implemented by a delegate of the NSPort in response to 'handleMachMessage:' or 'handlePortMessage:',  and interThreadThreshold should be converted to an NSRunLoop mode (NSDefaultRunLoopMode, NSModalPanelRunLoopMode, and NSEventTrackingRunLoopMode are predefined).
     if (interThreadThreshold == nil) interThreadThreshold = NSDefaultRunLoopMode;
 
     [[NSRunLoop currentRunLoop] addPort:MKToAppPortObj forMode:interThreadThreshold]; 
     appKitThread = [NSThread currentThread];
-}
-
-static void emptyAppToMKPort(void)
-    /* This is called twice, once at the end of the performance and
-       once at the beginning. The reason is: We want to make sure it's
-       empty at the start of the performance. But we want to empty it as
-       quickly as possible to avoid timing differences between midi and 
-       conductor (or orchestra and conductor). So we empty it at the end
-       to increase the likelyhood that emptying will be quick at the 
-       beginning.  
-       */
-{
-    /* We only empty the appToMKPort and not the MIDI port. The reason
-       is obscure. We think that Midi empties the port and we're concerned
-       about possible timing race at the start of a performance. 
-       */
-    /* sb: I am a bit concerned about what happens to the NSPort wrappers on the
-     * port, while the port is removed from then re-added to the port set. I should
-     * probably temporarily remove the object from the run loop, release it, then re-create
-     * it when the port is added to the port set again. But since this may not be necessary
-     * I'll chance it. (Oh hang on, we aren't monitoring this with NSRunLoop are we?)
-     */
-    struct {
-        msg_header_t header;
-	char data[MSG_SIZE_MAX];
-    } msg;
-    msg_return_t ret;
-    kern_return_t ec;
-    ec = port_set_remove(task_self(),appToMKPort);
-    if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"emptyAppToMKPort port_set_remove");
-    do {
-	msg.header.msg_size = MSG_SIZE_MAX;
-	msg.header.msg_local_port = appToMKPort;
-	ret = msg_receive(&msg.header, RCV_TIMEOUT, 0);
-    } while (ret == RCV_SUCCESS);
-    if (ret != RCV_TIMED_OUT)
-      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"emptyAppToMKPort msg_receive");
-    ec = port_set_add(task_self(),conductorPortSet,appToMKPort);
-    if (ec != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ec), @"emptyAppToMKPort port_set_add");
 }
 
 #if PRIORITY_THREADING // LMS: disabled until we find a OpenStep way of changing thread priority...i.e forever.
@@ -744,139 +684,79 @@ static void resetPriority(void)
 #endif
 }
 
-#define MAXSTRESS 100
-static unsigned int threadStress = 0;
-static unsigned int maxStress = MAXSTRESS;
-
-void _MKSetConductorThreadMaxStress(unsigned int val)
-{
-    maxStress = val;
-}
-
 //@end
 
 //@implementation MKConductor(SeparateThreadPrivate)
 
-/* This is the main loop for a separate-threaded performance.
-   Re: _MKDisableErrorStream/_MKEnableErrorStream,
-   It's kind of gross to call these functions every time through the loop,
-   even though they're very cheap.
-   The alternative, however, is to drag the MKConductor into every MusicKit
-   app by having the error routines poll the MKConductor if it's in
-   a performance (using _MKMusicKitHasLock).  I don't know which is worse.
-*/
+// This is the main loop for a separate-threaded performance.
 + (void) separateThreadLoop
 {
-    struct {
-        msg_header_t header;
-	char data[MSG_SIZE_MAX];
-    } msg;
-    msg_return_t ret;
-    /*
-     * When timeToWait is <= MIN_TIMEOUT (in milliseconds), we
-     * avoid a context switch by doing a msg_receive() with a zero
-     * timeout.  According to Doug Mitchell this is special-cased in the
-     * kernel to just poll your ports.
-     */
-#   define	MIN_TIMEOUT	3
-    int timeout;
-    double timeToWait;
-    BOOL yield;
+    int timeout;       // In milliseconds
+    double timeToWait; // In fractions of seconds
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
 
     lockIt();                /* Must be the first thing in this function */
     musicKitThread = [NSThread currentThread];
-    // _MKDisableErrorStream(); /* See note above */
-    emptyAppToMKPort(); /* See comment above */
     setPriority();
-    threadStress = 0;
-    _jmpSet = YES;
-    setjmp(conductorJmp);
-    while (inPerformance) { 
-	/* finishPerformance can be called from within the musickit thread
-	   or from the appkit thread.  In both cases, inPerformance gets
-	   set to NO. In the appkit thread case, we also send a message
-	   to kick the musickit thread.
-	   */
-	/**************************** GOODNIGHT ***************************/
-	timeToWait = (performanceIsPaused ? MK_ENDOFTIME : 
-		      (isClocked ? theTimeToWait(condQueue->nextMsgTime) : 0.0));
-	if (timeToWait >= (MAXINT/1000))
-	  timeout = MAXINT;  /* Don't wrap around. */
-	else timeout = (int)(timeToWait * 1000);
-	if (timeout <= MIN_TIMEOUT) {
-	    timeout = 0;
-	    if (yield = (threadStress++ > maxStress))
-	      threadStress = 0;
-	} else {
-	    yield = NO;
-	    threadStress = 0;
-	}
-	msg.header.msg_size = MSG_SIZE_MAX;
-	msg.header.msg_local_port = conductorPortSet;
-	// _MKEnableErrorStream(); /* See note below */
+    while (inPerformance) {
+        // finishPerformance can be called from within the MusicKit thread
+        // or from the AppKit thread.  In both cases, inPerformance gets
+        // set to NO. In the AppKit thread case, we also send a message
+        // (with sendMessageToWakeUpMKThread) to kick the MusicKit thread outta bed.
+
+        /**************************** GOODNIGHT ***************************/
+        timeToWait = (performanceIsPaused ? MK_ENDOFTIME :
+                      (isClocked ? theTimeToWait(condQueue->nextMsgTime) : 0.0));
+#if 0
+        if (timeToWait >= (MAXINT/1000))
+            timeout = MAXINT;  /* Don't wrap around. */
+        else
+            timeout = (int)(timeToWait * 1000);
+#endif
         if (MKIsTraced(MK_TRACECONDUCTOR))
-	  NSLog(@"timeToWait %lf, timeout %d, yield %d, threadStress %d\n", timeToWait, timeout, yield, threadStress);
-	if (timeout != 0) 
-	  unlockIt(nonrecursive); /* We better have the lock and we know we
-				 * want to give it up. By making this 
-				 * nonrecursive, we actually make the code 
-				 * more forgiving here. */
-// LMS maybe yielding is not necessary now that we are NSThreaded - optimistic I know...
-//	if (yield) 
-//	  cthread_yield();
-	ret = msg_receive(&msg.header, RCV_TIMEOUT, timeout);
-	if (timeout != 0)  
-	  lockIt();
-	if (!inPerformance)
-	    break;	/* may have been set during unlocked period above */
-	/**************************** IT'S MORNING! *************************/
-	/* If the desire is to exit the thread, this will be 
-	   accomplished by the setting of inPerformance to false.
-	   If the desire is to pause the thread, this will be
-	   accomplished by the setting of timedEntry to MK_ENDOFTIME.
-	   If the desire is to reposition the thread, this will be
-	   accomplished by the setting of timedEntry to the new 
-	   time. */
-	// _MKDisableErrorStream(); /* See note below */
-	if (ret == RCV_TIMED_OUT) {
-	    /* The following 2 lines added Sep6,90 by daj. They are necessary
-	       because things could change between the time we return from the
-	       msg_receive and the time we get the lock. */
-	    if (thingsHaveChanged)  /* It's a "kick-me". Go back to loop */
-	      thingsHaveChanged = NO;
-	    else 
-	      [MKConductor masterConductorBody: nil];
-	}
-	else if (ret != RCV_SUCCESS)
-	  _MKErrorf(MK_machErr, COND_ERROR, mach_error_string(ret), @"separateThreadLoop");
-	else if (msg.header.msg_local_port == appToMKPort) 
-	  thingsHaveChanged = NO;
-	  /* This can happen if there is more than one message in the
-	       appToMKPort. This probably should be optimized to make it
-	       so that the port accepts only one message. */
-	else { 
-	    register mkPortInfo *p;
-	    register int i;
-	    for (i = 0; i<portInfoCount; i++) {
-	        if ([portInfos[i]->thePortObj machPort] == msg.header.msg_local_port) {
-                    p = portInfos[i];
-                    //sb: this should echo what the NSRunLoop handler mechanism does
-                    [p->theHandlerObj handleMachMessage:&msg.header];
-                    break; /* Stop looking */
-	        }
-	    }
-	}
+            NSLog(@"timeToWait %lf\n", timeToWait);
+        // We better have the lock and we know we  want to give it up. By making this
+        // nonrecursive, we actually make the code more forgiving here.
+        unlockIt(nonrecursive); 
+        // FIXME While this achieves what we want, it doesn't wake up when a message arrives.
+	// This needs replacing with a NSRunLoop checking the appToMKPortObj and an NSTimer
+        [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:(timeToWait)]];
+
+        /**************************** IT'S MORNING! *************************/
+        /* If the desire is to exit the thread, this will be
+           accomplished by the setting of inPerformance to false.
+           If the desire is to pause the thread, this will be
+           accomplished by the setting of timedEntry to MK_ENDOFTIME.
+           If the desire is to reposition the thread, this will be
+           accomplished by the setting of timedEntry to the new
+           time. */
+        lockIt();
+        if (!inPerformance)
+            break;	 // may have been set during unlocked period above, just skips a final conduct.
+        if (wakeUpCall)  // It's a wakeup rather than a timeout. Go back to loop
+            wakeUpCall = NO;
+        else
+            [MKConductor masterConductorBody: nil];
+// Message received on a port that was added  using _MKAddPort(). This dispatching and adding should be done with an NSRunLoop.
+#if 0
+        register mkPortInfo *p;
+        register int i;
+        for (i = 0; i<portInfoCount; i++) {
+            if ([portInfos[i]->thePortObj machPort] == msg.header.msg_local_port) {
+                p = portInfos[i];
+                //sb: this should echo what the NSRunLoop handler mechanism does
+                [p->theHandlerObj handleMachMessage:&msg.header];
+                break; /* Stop looking */
+            }
+        }
+#endif
     }
-    _MKEnableErrorStream();
     if (MKIsTraced(MK_TRACECONDUCTOR))
-      NSLog(@"Exited the inPerformance loop\n");
-    emptyAppToMKPort();  // empty again, so the next time round it is fast to empty
+        NSLog(@"Exited the inPerformance loop\n");
     resetPriority();
     musicKitThread = nil;
-    unlockIt(nonrecursive);  /* Changed to before condition_signal. 11/5/94 */
-//    [musicKitAbortCondition unlock];
-    
+    unlockIt(nonrecursive);
+
     [pool release];
 }
 
