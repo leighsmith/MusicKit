@@ -6,6 +6,8 @@
 	01/13/90/jos - Replaced _DSPMessage.h expansion by explicit import.
 */
 
+#include "MKDSPDefines.h"
+
 #import "_DSPTransfer.h"
 #import "_DSPObject.h"
 #import "_DSPMach.h"
@@ -13,7 +15,7 @@
 
 /* ============================= _DSPRelocate.c ============================ */
 
-extern int _DSPReloc(DSPDataRecord *data, DSPFixup *fixups,
+MKDSP_API int _DSPReloc(DSPDataRecord *data, DSPFixup *fixups,
     int fixupCount, int *loadAddresses);
 /* 
  * dataRec is assumed to be a P data space. Fixes it up in place. 
@@ -21,47 +23,47 @@ extern int _DSPReloc(DSPDataRecord *data, DSPFixup *fixups,
  * _DSPRelocate. 
  */
 
-extern int _DSPRelocate();
-extern int _DSPRelocateUser();
+MKDSP_API int _DSPRelocate();
+MKDSP_API int _DSPRelocateUser();
 
 /* ============================= DSPControl.c ============================== */
-extern int _DSPCheckMappedMode();
-extern int _DSPEnterMappedMode();
-extern int _DSPEnterMappedModeNoCheck();
-extern int _DSPEnterMappedModeNoPing();
-extern int _DSPExitMappedMode();
-extern int _DSPReadSSI();
-extern int _DSPSetSCISCR();
-extern int _DSPSetSCISCCR();
-extern int _DSPSetSSICRA();
-extern int _DSPSetSSICRB();
-extern int _DSPSetStartTimed();
-extern int _DSPSetTime();
-extern int _DSPSetTimeFromInts();
-extern int _DSPSineTest();
-extern int _DSPStartTimed();
-extern DSPDatum _DSPGetValue();
+MKDSP_API int _DSPCheckMappedMode();
+MKDSP_API int _DSPEnterMappedMode();
+MKDSP_API int _DSPEnterMappedModeNoCheck();
+MKDSP_API int _DSPEnterMappedModeNoPing();
+MKDSP_API int _DSPExitMappedMode();
+MKDSP_API int _DSPReadSSI();
+MKDSP_API int _DSPSetSCISCR();
+MKDSP_API int _DSPSetSCISCCR();
+MKDSP_API int _DSPSetSSICRA();
+MKDSP_API int _DSPSetSSICRB();
+MKDSP_API int _DSPSetStartTimed();
+MKDSP_API int _DSPSetTime();
+MKDSP_API int _DSPSetTimeFromInts();
+MKDSP_API int _DSPSineTest();
+MKDSP_API int _DSPStartTimed();
+MKDSP_API DSPDatum _DSPGetValue();
 
 /* ============================= DSPReadFile.c ============================= */
-extern char *_DSPFGetRecord();
-extern int _DSPGetIntHexStr6();
-extern int _DSPLnkRead();
-extern char *_DSPAddSymbol();
-extern int _DSPGetRelIntHexStr();
-extern char *_DSPUniqueName();
+MKDSP_API char *_DSPFGetRecord();
+MKDSP_API int _DSPGetIntHexStr6();
+MKDSP_API int _DSPLnkRead();
+MKDSP_API char *_DSPAddSymbol();
+MKDSP_API int _DSPGetRelIntHexStr();
+MKDSP_API char *_DSPUniqueName();
 
 /* ============================ DSPStructMisc.c ============================ */
 
-int _DSPCheckingFWrite( int *ptr, int size, int nitems, FILE *stream);
-int _DSPWriteString(char *str, FILE *fp);
-int _DSPReadString(char **spp, FILE *fp);
-int _DSPFreeString(char *str);
-char *_DSPContiguousMalloc(unsigned size);
-int _DSPContiguousFree(char *ptr);
-void DSPMemMapInit(_DSPMemMap *mm);
-void DSPMemMapPrint(_DSPMemMap *mm);
+MKDSP_API int _DSPCheckingFWrite( int *ptr, int size, int nitems, FILE *stream);
+MKDSP_API int _DSPWriteString(char *str, FILE *fp);
+MKDSP_API int _DSPReadString(char **spp, FILE *fp);
+MKDSP_API int _DSPFreeString(char *str);
+MKDSP_API char *_DSPContiguousMalloc(unsigned size);
+MKDSP_API int _DSPContiguousFree(char *ptr);
+MKDSP_API void DSPMemMapInit(_DSPMemMap *mm);
+MKDSP_API void DSPMemMapPrint(_DSPMemMap *mm);
 
-extern char *_DSPContiguousMalloc(unsigned size);
+MKDSP_API char *_DSPContiguousMalloc(unsigned size);
 /*
  *	Same as malloc except allocates in one contiguous piece of
  *	memory.	 Calls realloc as necessary to extend the block.
@@ -69,44 +71,44 @@ extern char *_DSPContiguousMalloc(unsigned size);
 
 
 /* ============================ _DSPUtilities.c ============================ */
-extern void _DSPErr();
-extern char *_DSPFirstReadableFile(char *fn,...);
-extern char *_DSPGetBody();
-extern int _DSPGetDSPIntStr();
-extern char _DSPGetField();
-extern int _DSPGetFilter();
-extern float _DSPGetFloatStr();
-extern char *_DSPGetHead();
-extern void _DSPGetInputFile();
-extern void _DSPGetInputOutputFiles();
-extern int _DSPGetIntHexStr();
-extern int _DSPGetIntStr();
-extern char *_DSPGetLineStr();
-extern void _DSPGetOutputFile();
-extern char *_DSPGetSN();
-extern char *_DSPGetTail();
-extern char *_DSPGetTokStr();
-extern int _DSPInInt();
-extern int _DSPIndexS();
-extern char *_DSPIntToChar();
-extern int *_DSPMakeArray();
-extern FILE *_DSPMyFopen();
-extern char *_DSPPadStr();
-extern void _DSPParseName();
-extern void _DSPPutFilter();
-extern char *_DSPRemoveHead();
-extern char *_DSPRemoveTail();
-extern int _DSPSaveMatD();
-extern int _DSPSezYes();
-extern char *_DSPSkipToWhite();
-extern char *_DSPSkipWhite();
-extern DSP_BOOL _DSPGetFile();
-extern DSPLocationCounter _DSPGetMemStr();
-extern DSP_BOOL _DSPNotBlank();
+MKDSP_API void _DSPErr();
+MKDSP_API char *_DSPFirstReadableFile(char *fn,...);
+MKDSP_API char *_DSPGetBody();
+MKDSP_API int _DSPGetDSPIntStr();
+MKDSP_API char _DSPGetField();
+MKDSP_API int _DSPGetFilter();
+MKDSP_API float _DSPGetFloatStr();
+MKDSP_API char *_DSPGetHead();
+MKDSP_API void _DSPGetInputFile();
+MKDSP_API void _DSPGetInputOutputFiles();
+MKDSP_API int _DSPGetIntHexStr();
+MKDSP_API int _DSPGetIntStr();
+MKDSP_API char *_DSPGetLineStr();
+MKDSP_API void _DSPGetOutputFile();
+MKDSP_API char *_DSPGetSN();
+MKDSP_API char *_DSPGetTail();
+MKDSP_API char *_DSPGetTokStr();
+MKDSP_API int _DSPInInt();
+MKDSP_API int _DSPIndexS();
+MKDSP_API char *_DSPIntToChar();
+MKDSP_API int *_DSPMakeArray();
+MKDSP_API FILE *_DSPMyFopen();
+MKDSP_API char *_DSPPadStr();
+MKDSP_API void _DSPParseName();
+MKDSP_API void _DSPPutFilter();
+MKDSP_API char *_DSPRemoveHead();
+MKDSP_API char *_DSPRemoveTail();
+MKDSP_API int _DSPSaveMatD();
+MKDSP_API int _DSPSezYes();
+MKDSP_API char *_DSPSkipToWhite();
+MKDSP_API char *_DSPSkipWhite();
+MKDSP_API DSP_BOOL _DSPGetFile();
+MKDSP_API DSPLocationCounter _DSPGetMemStr();
+MKDSP_API DSP_BOOL _DSPNotBlank();
 
 /* ============================ DSPConversion.c ============================ */
 
-DSPFix48 *_DSPDoubleIntToFix48UseArg(double dval,DSPFix48 *aFix48P);
+MKDSP_API DSPFix48 *_DSPDoubleIntToFix48UseArg(double dval,DSPFix48 *aFix48P);
 /* 
  * The double is assumed to be between -2^47 and 2^47.
  *  Returns, in *aFix48P, the value as represented by dval. 
@@ -115,7 +117,7 @@ DSPFix48 *_DSPDoubleIntToFix48UseArg(double dval,DSPFix48 *aFix48P);
 
 /* ============================= _DSPError.c =============================== */
 
-int _DSPCheckErrorFP(void);
+MKDSP_API int _DSPCheckErrorFP(void);
 /*
  * Check error file-pointer.
  * If nonzero, return.
@@ -124,31 +126,31 @@ int _DSPCheckErrorFP(void);
  */
 
 
-int _DSPErrorV(int errorcode,char *fmt,...);
+MKDSP_API int _DSPErrorV(int errorcode,char *fmt,...);
 
 
-int _DSPError1(
+MKDSP_API int _DSPError1(
     int errorcode,
     char *msg,
     char *arg);
 
 
-int _DSPError(
+MKDSP_API int _DSPError(
     int errorcode,
     char *msg);
 
 
-void _DSPFatalError(
+MKDSP_API void _DSPFatalError(
     int errorcode,
     char *msg);
 
 
-int _DSPMachError(
+MKDSP_API int _DSPMachError(
     int error,
     char *msg);
 
 
-int _DSPCheckErrorFP(void);
+MKDSP_API int _DSPCheckErrorFP(void);
 /*
  * Check error file-pointer.
  * If nonzero, return.
@@ -157,32 +159,32 @@ int _DSPCheckErrorFP(void);
  */
 
 
-int _DSPErrorV(int errorcode,char *fmt,...);
+MKDSP_API int _DSPErrorV(int errorcode,char *fmt,...);
 
 
-int _DSPError1(
+MKDSP_API int _DSPError1(
     int errorcode,
     char *msg,
     char *arg);
 
 
-int _DSPError(
+MKDSP_API int _DSPError(
     int errorcode,
     char *msg);
 
 
-void _DSPFatalError(
+MKDSP_API void _DSPFatalError(
     int errorcode,
     char *msg);
 
 
-int _DSPMachError(
+MKDSP_API int _DSPMachError(
     int error,
     char *msg);
 
 /* ============================== _DSPCV.c ================================= */
 
-char *_DSPCVAS(
+MKDSP_API char *_DSPCVAS(
     int n,			/* number to be converted */
     int fmt);			/* 0=decimal, 1=hex format */
 /* 
@@ -190,44 +192,44 @@ char *_DSPCVAS(
  */
 
 
-char *_DSPCVS(int n);
+MKDSP_API char *_DSPCVS(int n);
 /* 
  * Convert integer to decimal string 
  */
 
 
-char *_DSPCVHS(int n);
+MKDSP_API char *_DSPCVHS(int n);
 /* 
  * Convert integer to hex string 
  */
 
 
-char *_DSPCVDS(float d);
+MKDSP_API char *_DSPCVDS(float d);
 /* 
  * Convert double to hex string 
  */
 
 
-char *_DSPCVFS(float f);
+MKDSP_API char *_DSPCVFS(float f);
 /* 
  * Convert float to hex string 
  */
 
 
-char *_DSPIntToChar(int i);
+MKDSP_API char *_DSPIntToChar(int i);
 /* 
  * Convert digit between 0 and 9 to corresponding character.
  */
 
 /* ============================ _DSPString.c =============================== */
 
-char *_DSPNewStr(int size);
+MKDSP_API char *_DSPNewStr(int size);
 /*
  * Create string of given total length in bytes.
  */
 
 
-char *_DSPMakeStr(
+MKDSP_API char *_DSPMakeStr(
     int size,			/* size = total length incl \0 */
     char *init);		/* initialization string */
 /* 
@@ -235,7 +237,7 @@ char *_DSPMakeStr(
  */
 
 
-char *_DSPCat(
+MKDSP_API char *_DSPCat(
     char *f1,
     char *f2);
 /*
@@ -243,7 +245,7 @@ char *_DSPCat(
  */
 
 
-char *_DSPReCat(
+MKDSP_API char *_DSPReCat(
     char *f1,
     char *f2);
 /*
@@ -251,32 +253,32 @@ char *_DSPReCat(
  */
 
 
-char *_DSPCopyStr(char *s);
+MKDSP_API char *_DSPCopyStr(char *s);
 /*
  * Copy string s into freshly malloc'd storage.
  */
 
 
-char *_DSPToLowerStr(
+MKDSP_API char *_DSPToLowerStr(
     char *s);			/* input string = output string */
 /*
  * Convert all string chars to lower case.
  */
 
 
-char *_DSPToUpperStr(
+MKDSP_API char *_DSPToUpperStr(
     char *s);			/* input string = output string */
 /*
  * Convert all string chars to upper case.
  */
 
-char *_DSPCopyToUpperStr(
+MKDSP_API char *_DSPCopyToUpperStr(
     char *s);			/* input string = output string */
 /*
  * Efficient combo of _DSPCopyStr and _DSPToUpperStr 
  */
 
-int _DSPStrCmpI(char *mixedCaseStr,char *upperCaseStr) ;
+MKDSP_API int _DSPStrCmpI(char *mixedCaseStr,char *upperCaseStr) ;
 /* like strcmp but assumes first arg is mixed case and second is upper case
  * and does a case-independent compare.
  *
@@ -286,3 +288,4 @@ int _DSPStrCmpI(char *mixedCaseStr,char *upperCaseStr) ;
  */
 
 #endif
+

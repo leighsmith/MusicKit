@@ -45,16 +45,18 @@
 #import "DSPSymbols.h"
 #import "DSPError.h"
 
+#include "MKDSPDefines.h"
+
 /* ============================= DSPLoad.c ================================= */
 
-extern int DSPLoadFile(char *fn);
+MKDSP_API int DSPLoadFile(char *fn);
 /*
  * Load DSP from the file specified.
  * Equivalent to DSPReadFile followed by DSPLoad.
  *
  */
 
-extern int DSPLoad(DSPLoadSpec *dspimg);	
+MKDSP_API int DSPLoad(DSPLoadSpec *dspimg);	
 /*
  * Load everything in *dspimg to the DSP.
  */
@@ -62,14 +64,14 @@ extern int DSPLoad(DSPLoadSpec *dspimg);
 
 /* =============================== DSPBoot.c =============================== */
 
-extern int DSPBootFile(char *fn);
+MKDSP_API int DSPBootFile(char *fn);
 /*
  * Boot DSP from the file specified.
  * Equivalent to DSPReadFile followed by DSPBoot.
  */
 
 
-extern int DSPBoot(DSPLoadSpec *system);
+MKDSP_API int DSPBoot(DSPLoadSpec *system);
 /* 
  * Load DSP bootstrap program.
  * DSPBoot closes the DSP if it is open, resets it, and feeds the
@@ -78,7 +80,7 @@ extern int DSPBoot(DSPLoadSpec *system);
  * On return, the DSP is open.
  */
 
-extern int DSPReboot(DSPLoadSpec *system);
+MKDSP_API int DSPReboot(DSPLoadSpec *system);
 /* 
  * Like DSPBoot() but assumes system is the same one used 
  * the last time this DSP was booted (an optimization to avoid 
@@ -88,7 +90,7 @@ extern int DSPReboot(DSPLoadSpec *system);
 
 /* ============================= DSPReadFile.c ============================= */
 
-extern int DSPReadFile(DSPLoadSpec **dsppp, const char *fn);
+MKDSP_API int DSPReadFile(DSPLoadSpec **dsppp, const char *fn);
 /*
  * Read in a DSP file (as produced by the assembler in absolute mode).
  * It looks in the system-wide .dsp directory for the given file if 
@@ -98,19 +100,19 @@ extern int DSPReadFile(DSPLoadSpec **dsppp, const char *fn);
 
 /* ================================ _DSPCV.c =============================== */
 
-extern char *DSPFix24ToStr(DSPFix24 datum);
+MKDSP_API char *DSPFix24ToStr(DSPFix24 datum);
 /* 
  * Convert type DSPFix24 to fractional fixed-point string 
  */
 
 
-extern char *DSPFix48ToSampleStr(DSPFix48 *aTimeStampP);
+MKDSP_API char *DSPFix48ToSampleStr(DSPFix48 *aTimeStampP);
 /* 
  * Convert type DSPFix48 to fractional time-stamp string in samples
  */
 
 
-extern char *DSPTimeStampStr(DSPFix48 *aTimeStampP);
+MKDSP_API char *DSPTimeStampStr(DSPFix48 *aTimeStampP);
 /* 
  * Convert type DSPFix48 to fractional time-stamp string in samples
  * or the string "<untimed>" if null, or the string "at end of current tick"
@@ -119,7 +121,7 @@ extern char *DSPTimeStampStr(DSPFix48 *aTimeStampP);
 
 /* ============================= _DSPString.c ============================== */
 
-extern char *DSPCat(char *f1, const char *f2);
+MKDSP_API char *DSPCat(char *f1, const char *f2);
 /* 
  * Concatenate two strings into the returned string.
  * Uses malloc to create the returned string.

@@ -9,6 +9,8 @@
   However it may be exported so other systems can access the driver
   functionality directly.
 */
+
+#include "MKDSPDefines.h"
 #include "_DSPMach.h"
 
 typedef unsigned int dsp_id;
@@ -17,14 +19,14 @@ typedef unsigned int dsp_id;
 
 /* To use a DSP, you must first "add" it, then "open" it, then "reset" it. 
  */
-extern int dsp_addDsp(dsp_id dspId,const char *driver,int unit,int subUnit);
+MKDSP_API int dsp_addDsp(dsp_id dspId,const char *driver,int unit,int subUnit);
 /* dspId must not have been added yet. */
 
-extern int dsp_open(dsp_id dspId);  
-extern int dsp_close(dsp_id dspId); 
-extern int dsp_reset(dsp_id dspId,char on);
+MKDSP_API int dsp_open(dsp_id dspId);  
+MKDSP_API int dsp_close(dsp_id dspId); 
+MKDSP_API int dsp_reset(dsp_id dspId,char on);
 
-extern void 
+MKDSP_API void 
   setDSPDriverErrorProc(void (*errFunc)(dsp_id dspId,
 					char *caller,
 					char *errorMessage,
@@ -36,54 +38,54 @@ extern void
  */
 
 /* Simple low level functions *************************/
-extern char dsp_getICR(dsp_id dspId);
-extern char dsp_getCVR(dsp_id dspId);
-extern char dsp_getISR(dsp_id dspId);
-extern char dsp_getIVR(dsp_id dspId);
+MKDSP_API char dsp_getICR(dsp_id dspId);
+MKDSP_API char dsp_getCVR(dsp_id dspId);
+MKDSP_API char dsp_getISR(dsp_id dspId);
+MKDSP_API char dsp_getIVR(dsp_id dspId);
 
-extern void dsp_putICR(dsp_id dspId, char b);
-extern void dsp_putCVR(dsp_id dspId, char b);
-extern void dsp_putIVR(dsp_id dspId, char b);
+MKDSP_API void dsp_putICR(dsp_id dspId, char b);
+MKDSP_API void dsp_putCVR(dsp_id dspId, char b);
+MKDSP_API void dsp_putIVR(dsp_id dspId, char b);
 
-extern void dsp_putTXRaw(dsp_id dspId,char high,char med,char low);
-extern void dsp_getRXRaw(dsp_id dspId,char *high,char *med,char *low);
+MKDSP_API void dsp_putTXRaw(dsp_id dspId,char high,char med,char low);
+MKDSP_API void dsp_getRXRaw(dsp_id dspId,char *high,char *med,char *low);
 
-extern int dsp_getHI(dsp_id dspId); /* Returns: ICR|CVR|ISR|IVR packed */
+MKDSP_API int dsp_getHI(dsp_id dspId); /* Returns: ICR|CVR|ISR|IVR packed */
 
 /**************** Word I/O with checking of ISR bits ******/
-extern void dsp_putTX(dsp_id dspId,char high,char med,char low);
+MKDSP_API void dsp_putTX(dsp_id dspId,char high,char med,char low);
 /* Like dsp_putTXRaw, but waits for TXDE to be set. */
 
-extern void dsp_getRX(dsp_id dspId,char *high,char *med,char *low);
+MKDSP_API void dsp_getRX(dsp_id dspId,char *high,char *med,char *low);
 /* Like dsp_getRXRaw but waits for ISR&1 (RXDF) to be set. */
 
 
 /**************** Array (TX/RX) I/O with checking of ISR bits ******/
-extern void dsp_putArray(dsp_id dspId,int *arr,unsigned int count);
+MKDSP_API void dsp_putArray(dsp_id dspId,int *arr,unsigned int count);
 /* Like dsp_putTX, but puts a whole array of 24-bit numbers, right-justified   
    in 32-bits
    */
 
-extern void dsp_getArray(dsp_id dspId,int *arr,unsigned int count);
+MKDSP_API void dsp_getArray(dsp_id dspId,int *arr,unsigned int count);
 /* Like dsp_getRX but gets a whole array.
    arr must point to at least count elements 
    */
 
-extern void dsp_putShortArray(dsp_id dspId,short *arr,unsigned int count);
+MKDSP_API void dsp_putShortArray(dsp_id dspId,short *arr,unsigned int count);
 /* Like dsp_putTX but puts a whole array of 16-bit numbers.  These numbers
    are sign extended into TXH */
 
-extern void dsp_putLeftArray(dsp_id dspId,int *arr,unsigned int count);
+MKDSP_API void dsp_putLeftArray(dsp_id dspId,int *arr,unsigned int count);
 /* Like dsp_putTX but puts a whole array of 24-bit numbers, left-justified
    in 32-bits
    */
 
-extern void dsp_putByteArray(dsp_id dspId,char *arr,unsigned int count);
+MKDSP_API void dsp_putByteArray(dsp_id dspId,char *arr,unsigned int count);
 /* Like dsp_putTX but puts a whole array of bytes.  These numbers are
    sign extended into TXH and TXM 
    */
 
-extern void dsp_putPackedArray(dsp_id dspId,char *arr,unsigned int count);
+MKDSP_API void dsp_putPackedArray(dsp_id dspId,char *arr,unsigned int count);
 /* Like dsp_putTX but puts a whole array of 24-bit packed numbers.  
    Note that count is the number of 24-bit numbers, not the number of bytes.
    */
@@ -93,23 +95,23 @@ extern void dsp_putPackedArray(dsp_id dspId,char *arr,unsigned int count);
 #define DSPDRIVER_DEBUG_TRACE      4
 #define DSPDRIVER_DEBUG_VERBOSE    8
 
-extern int dsp_debug(char *driverName,int flags);
+MKDSP_API int dsp_debug(char *driverName,int flags);
 /* Sets debugging flags for all units.  This may be done even if you're
  * not the owner of the driver (so another process can set/clear debug flags)
  * Returns 0 if successful, -1 if bad driverName, -2 if can't set flags.
  */
 
 /******************* Special Music Kit functions. *************/
-extern void dsp_executeMKTimedMessage(dsp_id dspId,int highWord,int lowWord,
+MKDSP_API void dsp_executeMKTimedMessage(dsp_id dspId,int highWord,int lowWord,
 				      int opCode);
     /* Special Music Kit function for finishing a timed message */
 
-extern void dsp_executeMKHostMessage(dsp_id dspId);
+MKDSP_API void dsp_executeMKHostMessage(dsp_id dspId);
     /* Special Music Kit function for executing a Host Message, which
      * is assumed already written to the HMS. (obsolete)
      */
 
-extern void dsp_call(dsp_id dspId,int *arr,unsigned int count); 
+MKDSP_API void dsp_call(dsp_id dspId,int *arr,unsigned int count); 
     /* Special Music Kit function for writing a host message to the HMS 
      * and executing it.
      */
@@ -119,7 +121,7 @@ extern void dsp_call(dsp_id dspId,int *arr,unsigned int count);
 
 /******************* Special functions for DSP-initiated transfer protocol ***/
 
-extern void dsp_setMessaging(dsp_id dspId, boolean_t flag);
+MKDSP_API void dsp_setMessaging(dsp_id dspId, boolean_t flag);
     /* Turns DSP messaging (i.e. "DSP-initiated DMA") on or off.
      * Messaging should be turned on once the DSP has been booted
      * and code loaded, using the functions above.  Reseting the
@@ -130,7 +132,7 @@ extern void dsp_setMessaging(dsp_id dspId, boolean_t flag);
      * in that direction. 
      */
 
-extern void dsp_putPage(dsp_id dspId, vm_address_t pageAddress,
+MKDSP_API void dsp_putPage(dsp_id dspId, vm_address_t pageAddress,
 			int regionTag, boolean_t msgStarted,
 			boolean_t msgCompleted, mach_port_t reply_port);
     /* Puts a page of ints (actually 2048 DSPFix24s), located at
@@ -149,7 +151,7 @@ extern void dsp_putPage(dsp_id dspId, vm_address_t pageAddress,
      * for compatibility with snddriver protocol.
      */
 
-extern void dsp_queuePage(dsp_id dspId, vm_address_t pageAddress,
+MKDSP_API void dsp_queuePage(dsp_id dspId, vm_address_t pageAddress,
 			  int regionTag, boolean_t msgStarted,
 			  boolean_t msgCompleted, mach_port_t reply_port);
     /* Queues a page of 2048 DSPFix24s to the driver.  This queue is
@@ -171,7 +173,7 @@ extern void dsp_queuePage(dsp_id dspId, vm_address_t pageAddress,
 
 #define DSPDRIVER_MAX_TRANSFER_CHAN             18
 
-extern void dsp_setShortBigEndianReturn(dsp_id dspId, int regionTag,
+MKDSP_API void dsp_setShortBigEndianReturn(dsp_id dspId, int regionTag,
 					int wordCount, mach_port_t reply_port, 
 					int chan);
     /* Sets the reply_port, region tag, and buffer size for returning
@@ -199,13 +201,13 @@ extern void dsp_setShortBigEndianReturn(dsp_id dspId, int regionTag,
      * Channel is between 0 and DSPDRIVER_MAX_TRANSFER_CHAN
      */
 
-extern void dsp_setShortReturn(dsp_id dspId, int regionTag,
+MKDSP_API void dsp_setShortReturn(dsp_id dspId, int regionTag,
 			       int wordCount, mach_port_t reply_port, 
 			       int chan);
      /* Like dsp_setShortBigEndianReturn(), but little-endian.  */
 
 
-extern void dsp_setLongReturn(dsp_id dspId, int regionTag,
+MKDSP_API void dsp_setLongReturn(dsp_id dspId, int regionTag,
 			      int wordCount, mach_port_t reply_port, 
 				int chan);
      /* Like dsp_setShortReturn(), but for 24-bit numbers, 
@@ -214,17 +216,17 @@ extern void dsp_setLongReturn(dsp_id dspId, int regionTag,
       * Channel is between 0 and DSPDRIVER_MAX_TRANSFER_CHAN
       */
 
-extern void dsp_freePage(dsp_id dspId, int pageIndex);
+MKDSP_API void dsp_freePage(dsp_id dspId, int pageIndex);
 /* 
  * May be called in a separate thread. Use instead of vm_deallocate() to
  * free memory returned by above functions.  pageIndex is a field
  * in the message.
  */
 
-extern void dsp_setMsgPort(dsp_id dspId, mach_port_t replyPort);
+MKDSP_API void dsp_setMsgPort(dsp_id dspId, mach_port_t replyPort);
 /* Set port to receive asynchronous DSP messages */
 
-extern void dsp_setErrorPort(dsp_id dspId, mach_port_t replyPort);
+MKDSP_API void dsp_setErrorPort(dsp_id dspId, mach_port_t replyPort);
 /* Set port to receive asynchronous DSP errors */
 
 /*** The following are for decoding messages returned via reply ports ***/

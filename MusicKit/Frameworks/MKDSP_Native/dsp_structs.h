@@ -26,18 +26,19 @@
 
 #import <stdio.h>
 
+#include "MKDSPDefines.h"
 #import "dsp_types.h"
 
 typedef enum _DSPSectionType {DSP_Global=0,DSP_System,DSP_User,
 	DSP_NSectionTypes} DSPSectionType;
 
 /* strings from DSPGlobals.c */
-extern const char * const DSPSectionNames[]; /* "GLOBAL", "SYSTEM", "USER" */
+MKDSP_DECLARE const char * const DSPSectionNames[]; /* "GLOBAL", "SYSTEM", "USER" */
 // Now a function LMS
 //extern const char * const DSPMemoryNames[];  /* Memory spaces (N,X,Y,L,P) */
-const char *DSPMemoryNames(int memSpaceNo);  /* Memory spaces (N,X,Y,L,P) */
-extern const char * const DSPLCNames[];	/* Location counters (N,XL,X,XH,...) */
-extern int   DSPLCtoMS[];	/* DSP memory code given LC number */
+MKDSP_API const char *DSPMemoryNames(int memSpaceNo);  /* Memory spaces (N,X,Y,L,P) */
+MKDSP_DECLARE const char * const DSPLCNames[];	/* Location counters (N,XL,X,XH,...) */
+MKDSP_DECLARE int   DSPLCtoMS[];	/* DSP memory code given LC number */
 
 /* enum for DSP memory spaces */
 typedef enum _DSPMemorySpace {DSP_MS_N=0, 

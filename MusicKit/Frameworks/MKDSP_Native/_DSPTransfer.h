@@ -2,7 +2,9 @@
 #define __MK__DSPTransfer_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 
-int _DSPPrintDatum(
+#include "MKDSPDefines.h"
+
+MKDSP_API int _DSPPrintDatum(
     FILE *fp,
     DSPFix24 word);
 /*
@@ -10,7 +12,7 @@ int _DSPPrintDatum(
  */
 
 
-int _DSPPrintValue(
+MKDSP_API int _DSPPrintValue(
     DSPMemorySpace space,
     DSPAddress address);
 /*
@@ -18,14 +20,14 @@ int _DSPPrintValue(
  */
 
 
-int _DSPDump(char *name);
+MKDSP_API int _DSPDump(char *name);
 /*
  * Dump DSP external RAM into files of the form _DSPCat(name,"X.ram") etc.
  */
 
 
 /*** data arg should be in 2nd position but the shlib is frozen ***/
-int _DSPMKSendUnitGeneratorWithLooperTimed(
+MKDSP_API int _DSPMKSendUnitGeneratorWithLooperTimed(
     DSPFix48 *aTimeStampP, 
     DSPMemorySpace space,
     DSPAddress address,
@@ -39,7 +41,7 @@ int _DSPMKSendUnitGeneratorWithLooperTimed(
  */
 
 /* Flush? */
-int _DSPMKSendTwoArraysTimed(
+MKDSP_API int _DSPMKSendTwoArraysTimed(
     DSPFix48 *aTimeStampP, 
     DSPMemorySpace space,
     DSPAddress address,
@@ -50,7 +52,7 @@ int _DSPMKSendTwoArraysTimed(
 
 /* Required for 1.0 MK binary compatibility */
 
-int _DSPSendArraySkipTimed(
+MKDSP_API int _DSPSendArraySkipTimed(
     DSPFix48 *aTimeStampP,
     DSPMemorySpace space,
     DSPAddress address,
@@ -61,20 +63,20 @@ int _DSPSendArraySkipTimed(
  * Calls DSPMKSendArraySkipModeTimed() with mode == DSP_MODE32.
  */
 
-int _DSPSendValueTimed(
+MKDSP_API int _DSPSendValueTimed(
     DSPFix48 *aTimeStampP,
     DSPMemorySpace space,
     int addr,
     int value);
 
-int _DSPSendLongTimed(
+MKDSP_API int _DSPSendLongTimed(
     DSPFix48 *aTimeStampP,
     int addr,
     DSPFix48 *aFix48Val);
 
 /******************** GETTING PRIVATE DSP MEMORY ADDRESSES *******************/
 
-DSPAddress _DSPMKGetDMABufferAddress(void);
+MKDSP_API DSPAddress _DSPMKGetDMABufferAddress(void);
 /* 
  * Returns DSPGetSystemSymbolValue("YB_DMA_W").  This is the beginning of
  * the DSP DMA buffer pool used by the Music Kit.  Both sound-out and
@@ -83,7 +85,7 @@ DSPAddress _DSPMKGetDMABufferAddress(void);
  * changed at run time.  Each direction is always double-buffered.
  */
 
-DSPAddress _DSPMKGetDMABufferSize(void);
+MKDSP_API DSPAddress _DSPMKGetDMABufferSize(void);
 /* 
  * Returns DSPGetSystemSymbolValue("NB_DMA").  This is the total size in
  * words of the DSP DMA buffer pool.  Typically it is four times the size of

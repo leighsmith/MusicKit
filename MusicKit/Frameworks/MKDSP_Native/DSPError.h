@@ -5,43 +5,45 @@
  * Author: Julius O. Smith III
  */
 
+#include "MKDSPDefines.h"
+
 /***************************** Error Enabling ********************************/
 
-extern int DSPEnableErrorLog(void);
+MKDSP_API int DSPEnableErrorLog(void);
 /* 
  * Turn on DSP error logging into the current error log file
  * set by DSPSetErrorFile().
  */
 
 
-extern int DSPDisableErrorLog(void);
+MKDSP_API int DSPDisableErrorLog(void);
 /* 
  * Turn off DSP error message logging.
  */
 
 
-extern int DSPErrorLogIsEnabled(void);
+MKDSP_API int DSPErrorLogIsEnabled(void);
 /* 
  * Returns nonzero if DSP error logging is enabled.
  */
 
 /******************************* ERROR FILE CONTROL **************************/
 
-extern int DSPEnableErrorFile(const char *fn);
+MKDSP_API int DSPEnableErrorFile(const char *fn);
 /* 
  * Turn on DSP error message logging (equivalent to DSPEnableErrorLog())
  * and set the error file to fn (equivalent to DSPSetErrorFile(fn)).
  */
 
 
-extern int DSPEnableErrorFP(FILE *fp);
+MKDSP_API int DSPEnableErrorFP(FILE *fp);
 /* 
  * Turn on DSP error message logging (equivalent to DSPEnableErrorLog())
  * and set the error file pointer to fp (equivalent to DSPSetErrorFP(fp)).
  */
 
 
-extern int DSPSetErrorFile(char *fn);
+MKDSP_API int DSPSetErrorFile(char *fn);
 /* 
  * Set the file-name for DSP error messages to fn.
  * The default file used if this is not called is
@@ -51,7 +53,7 @@ extern int DSPSetErrorFile(char *fn);
  */
 
 
-extern char *DSPGetErrorFile(void);
+MKDSP_API char *DSPGetErrorFile(void);
 /* 
  * Get the file-name being used for DSP error messages, if known.
  * If unknown, such as when only a file-pointer was passed to
@@ -59,7 +61,7 @@ extern char *DSPGetErrorFile(void);
  */
 
 
-extern int DSPSetErrorFP(FILE *fp);
+MKDSP_API int DSPSetErrorFP(FILE *fp);
 /* 
  * Set the file-pointer for DSP error messages to fp.
  * The file-pointer will clear and override any prior specification
@@ -67,13 +69,13 @@ extern int DSPSetErrorFP(FILE *fp);
  */
 
 
-extern FILE *DSPGetErrorFP(void);
+MKDSP_API FILE *DSPGetErrorFP(void);
 /* 
  * Get the file-pointer being used for DSP error messages.
  */
 
 
-extern int DSPCloseErrorFP(void);
+MKDSP_API int DSPCloseErrorFP(void);
 /*
  * Close DSP error log file.
  */
@@ -82,7 +84,7 @@ extern int DSPCloseErrorFP(void);
 /******************************* Error File Usage ****************************/
 
 
-extern int DSPUserError(
+MKDSP_API int DSPUserError(
     int errorcode,
     char *msg);
 /* 
@@ -94,7 +96,7 @@ extern int DSPUserError(
  */
 
 
-extern int DSPUserError1(
+MKDSP_API int DSPUserError1(
     int errorcode,
     char *msg,
     char *str);
@@ -106,7 +108,7 @@ extern int DSPUserError1(
  */
 
 
-extern char *DSPMessageExpand(int msg);
+MKDSP_API char *DSPMessageExpand(int msg);
 /*
  * Convert 24-bit DSP message into a string containing mnemonic message 
  * opcode and argument datum in hex. Example: The DSP message 0x800040

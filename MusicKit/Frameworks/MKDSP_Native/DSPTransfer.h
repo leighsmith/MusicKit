@@ -68,8 +68,9 @@
 
 /****************** READING/WRITING HOST-INTERFACE REGISTERS *****************/
 
+#include "MKDSPDefines.h"
 
-extern int DSPReadRegs(unsigned int *regsP);
+MKDSP_API int DSPReadRegs(unsigned int *regsP);
 /* 
  * Read DSP Interrupt Control Register (ICR), 
  * Command Vector Register (CVR),
@@ -79,13 +80,13 @@ extern int DSPReadRegs(unsigned int *regsP);
  * a single 32-bit word.
  */
 
-extern unsigned int DSPGetRegs(void);
+MKDSP_API unsigned int DSPGetRegs(void);
 /*
  * Same as DSPReadRegs() but returns regs as function value.
  */
 
 
-extern int DSPWriteRegs(
+MKDSP_API int DSPWriteRegs(
     int mask,			/* bit mask in (ICR,CVR,ISR,IVR) longword */
     int value);			/* bit values in (ICR,CVR,ISR,IVR) longword */
 /*
@@ -99,33 +100,33 @@ extern int DSPWriteRegs(
  */
 
 
-extern int DSPReadICR(int *icrP);		
+MKDSP_API int DSPReadICR(int *icrP);		
 /* 
  * Read DSP Interrupt Control Register (ICR).
  * value returned in *icrP is 8 bits, right justified.
  */
 
 
-extern int DSPGetICR(void);
+MKDSP_API int DSPGetICR(void);
 /*
  * Return ICR register of the DSP host interface.
  */
 
 
-extern int DSPReadCVR(int *cvrP);
+MKDSP_API int DSPReadCVR(int *cvrP);
 /* 
  * Read DSP Command Vector Register (CVR).
  * value returned in *cvrP is 8 bits, right justified.
  */
 
 
-extern int DSPGetCVR(void);
+MKDSP_API int DSPGetCVR(void);
 /*
  * Return CVR register of the DSP host interface.
  */
 
 
-extern int DSPHostCommand(int cmd);
+MKDSP_API int DSPHostCommand(int cmd);
 /*
  * Issue DSP "host command". The low-order 5 bits of cmd are sent.
  * There are 32 possible host commands, with 18 predefined by Motorola.
@@ -134,33 +135,33 @@ extern int DSPHostCommand(int cmd);
  */
 
 
-extern int DSPReadISR(int *isrP);
+MKDSP_API int DSPReadISR(int *isrP);
 /*
  * Read DSP Interrupt Status Register (ISR).
  * value returned in *isrP is 8 bits, right justified.
  */
 
 
-extern int DSPGetISR(void);
+MKDSP_API int DSPGetISR(void);
 /*
  * Return ISR register of the DSP host interface.
  */
 
 
-extern int DSPGetRX(void);
+MKDSP_API int DSPGetRX(void);
 /*
  * Return RX register of the DSP host interface.
  * Equivalent to "DSPReadRX(&tmp); return tmp;".
  */
 
-extern int DSPReadDataAndToss(int n);
+MKDSP_API int DSPReadDataAndToss(int n);
 /*
  * Read n ints from the  RX register of the DSP host interface
  * and toss them into the bit bucket.  Faster than a real read
  * for pulling words out of the DSP.
  */
 
-extern int DSPReadDataArrayMode(void *data, int nwords, int mode);
+MKDSP_API int DSPReadDataArrayMode(void *data, int nwords, int mode);
 /*
  * Read nwords words from DSP Receive Byte Registers (RX) in "DMA mode" mode.
  * The mode is DSP_MODE<n> where <n> = 8,16,24,32, (using the defines in 
@@ -177,7 +178,7 @@ extern int DSPReadDataArrayMode(void *data, int nwords, int mode);
  */
 
 
-extern int DSPReadMessageArrayMode(void *data, int nwords, int mode);
+MKDSP_API int DSPReadMessageArrayMode(void *data, int nwords, int mode);
 /*
  * Like DSPReadDataArrayMode() except for DSP messages.
  * Only useable in "host message protocol" mode.
@@ -189,7 +190,7 @@ extern int DSPReadMessageArrayMode(void *data, int nwords, int mode);
  */
 
 
-extern int DSPReadRXArrayMode(void *data, int nwords, int mode);
+MKDSP_API int DSPReadRXArrayMode(void *data, int nwords, int mode);
 /*
  * Equivalent to 
  *
@@ -200,7 +201,7 @@ extern int DSPReadRXArrayMode(void *data, int nwords, int mode);
  */
 
 
-extern int DSPAwaitRX(int msTimeLimit);
+MKDSP_API int DSPAwaitRX(int msTimeLimit);
 /*
  * Equivalent to 
  *
@@ -211,14 +212,14 @@ extern int DSPAwaitRX(int msTimeLimit);
  */
 
 
-extern int DSPReadRXArray(DSPFix24 *data, int nwords);
+MKDSP_API int DSPReadRXArray(DSPFix24 *data, int nwords);
 /*
  * Equivalent to DSPReadRXArrayMode(data,nwords,DSP_MODE32);
  * Each value is returned as 24 bits, right justified in 32.
  */
 
 
-extern int DSPReadRX(DSPFix24 *wordp);
+MKDSP_API int DSPReadRX(DSPFix24 *wordp);
 /*
  * Equivalent to DSPReadRXArrayMode(data,1,DSP_MODE32);
  * Value returned in *wordp is 24 bits, right justified.
@@ -226,14 +227,14 @@ extern int DSPReadRX(DSPFix24 *wordp);
  */
 
 
-extern int DSPWriteTX(DSPFix24 word);
+MKDSP_API int DSPWriteTX(DSPFix24 word);
 /*
  * Write word into DSP transmit byte registers.
  * Low-order 24 bits are written from word.
  */
 
 
-extern int DSPWriteTXArray(
+MKDSP_API int DSPWriteTXArray(
     DSPFix24 *data,
     int nwords);
 /* 
@@ -241,7 +242,7 @@ extern int DSPWriteTXArray(
  */
 
 
-extern int DSPWriteTXArrayB(
+MKDSP_API int DSPWriteTXArrayB(
     DSPFix24 *data,
     int nwords);
 /*
@@ -253,7 +254,7 @@ extern int DSPWriteTXArrayB(
 
 /* For DMA array transfers to/from DSP */
 
-extern int DSPWriteArraySkipMode(
+MKDSP_API int DSPWriteArraySkipMode(
     void *data,			/* array to send to DSP (any type ok) */
     DSPMemorySpace memorySpace, /* /LocalDeveloper/Headers/dsp/dsp_structs.h */
     int startAddress,		/* within DSP memory */
@@ -318,7 +319,7 @@ extern int DSPWriteArraySkipMode(
  */
 
 
-extern int DSPReadNewArraySkipMode(
+MKDSP_API int DSPReadNewArraySkipMode(
     void **data,		/* array to fill from DSP */
     DSPMemorySpace memorySpace, /* /LocalDeveloper/Headers/dsp/dsp_structs.h */
     int startAddress,		/* within DSP memory */
@@ -341,7 +342,7 @@ extern int DSPReadNewArraySkipMode(
  */
 
 
-extern int DSPReadArraySkipMode(
+MKDSP_API int DSPReadArraySkipMode(
     void *data,			/* array to fill from DSP */
     DSPMemorySpace memorySpace,
     int startAddress,		/* within DSP memory */
@@ -355,7 +356,7 @@ extern int DSPReadArraySkipMode(
 
 /****************************************************************************/
 
-extern int DSPWriteValue(int value, DSPMemorySpace space, int addr);
+MKDSP_API int DSPWriteValue(int value, DSPMemorySpace space, int addr);
 /*
  * Write the low-order 24 bits of value to space:addr in DSP memory.
  * The space argument is one of
@@ -366,7 +367,7 @@ extern int DSPWriteValue(int value, DSPMemorySpace space, int addr);
  */
 
 
-extern int DSPWriteLong(DSPFix48 *aFix48Val, int addr);
+MKDSP_API int DSPWriteLong(DSPFix48 *aFix48Val, int addr);
 /* 
  * Write a DSP double-precision value to l:addr in DSP memory.
  * Equivalent to two calls to DSPWriteValue() for the high-order
@@ -374,7 +375,7 @@ extern int DSPWriteLong(DSPFix48 *aFix48Val, int addr);
  */
 
 
-extern int DSPWriteFix24Array(
+MKDSP_API int DSPWriteFix24Array(
     DSPFix24 *data,		/* array to write to DSP */
     DSPMemorySpace memorySpace,
     DSPAddress startAddress,	/* within DSP memory */
@@ -411,7 +412,7 @@ extern int DSPWriteFix24Array(
  */
 
 
-extern int DSPWriteFix24ArrayLJ(
+MKDSP_API int DSPWriteFix24ArrayLJ(
     DSPFix24 *data,		/* array to write to DSP */
     DSPMemorySpace memorySpace,
     DSPAddress startAddress,	/* within DSP memory */
@@ -423,7 +424,7 @@ extern int DSPWriteFix24ArrayLJ(
  */
 
 
-extern int DSPWriteIntArray(
+MKDSP_API int DSPWriteIntArray(
     int *intArray,
     DSPMemorySpace memorySpace,
     DSPAddress startAddress,
@@ -435,7 +436,7 @@ extern int DSPWriteIntArray(
  */
 
 
-extern int DSPWritePackedArray(
+MKDSP_API int DSPWritePackedArray(
     unsigned char *data,	/* Data to write to DSP */
     DSPMemorySpace memorySpace, /* DSP memory space */
     DSPAddress startAddress,	/* DSP start address */
@@ -449,7 +450,7 @@ extern int DSPWritePackedArray(
  */
 
 
-extern int DSPEnableDmaReadWrite(int enable_dma_reads, int enable_dma_writes);
+MKDSP_API int DSPEnableDmaReadWrite(int enable_dma_reads, int enable_dma_writes);
 /*
  * Enable or disable use of DMA in 16-bit and 8-bit mode transfers.
  * The default is disabled.  To enable DMA in both directions, say
@@ -461,7 +462,7 @@ extern int DSPEnableDmaReadWrite(int enable_dma_reads, int enable_dma_writes);
  */
 
 
-extern int DSPWriteShortArray(
+MKDSP_API int DSPWriteShortArray(
     short int *data,		/* Packed short data to write to DSP */
     DSPMemorySpace memorySpace, /* DSP memory space */
     DSPAddress startAddress,	/* DSP start address */
@@ -484,7 +485,7 @@ extern int DSPWriteShortArray(
  */
 
 
-extern int DSPWriteByteArray(
+MKDSP_API int DSPWriteByteArray(
     unsigned char *data,	/* Data to write to DSP */
     DSPMemorySpace memorySpace, /* DSP memory space */
     DSPAddress startAddress,	/* DSP start address */
@@ -502,7 +503,7 @@ extern int DSPWriteByteArray(
  */
 
 
-extern int DSPWriteFloatArray(
+MKDSP_API int DSPWriteFloatArray(
     float *floatArray,
     DSPMemorySpace memorySpace,
     DSPAddress startAddress,
@@ -514,7 +515,7 @@ extern int DSPWriteFloatArray(
  */
 
 
-extern int DSPWriteDoubleArray(
+MKDSP_API int DSPWriteDoubleArray(
     double *doubleArray,
     DSPMemorySpace memorySpace,
     DSPAddress startAddress,
@@ -525,12 +526,12 @@ extern int DSPWriteDoubleArray(
  * Equivalent to DSPDoubleToFix24Array() followed by DSPWriteFix24Array().
  */
 
-extern int DSPWriteSCI(unsigned char value, DSPSCITXReg reg);
+MKDSP_API int DSPWriteSCI(unsigned char value, DSPSCITXReg reg);
 /* Write a byte to the specified SCI register.  SCI must already be
  * set up with DSPSetupSerialPort(DSPSerialPortParameters *p).
  */
 
-extern int DSPDataRecordLoad(DSPDataRecord *dr); 
+MKDSP_API int DSPDataRecordLoad(DSPDataRecord *dr); 
 /* 
  * Load data record (as filled from assembler's _DATA record) into DSP.
  * See "/LocalDeveloper/Headers/dsp/dsp_structs.h" for the struct format.
@@ -539,7 +540,7 @@ extern int DSPDataRecordLoad(DSPDataRecord *dr);
 
 /* Music Kit versions: timed data transfers to DSP */
 
-extern int DSPMKSendValue(int value, DSPMemorySpace space, int addr);
+MKDSP_API int DSPMKSendValue(int value, DSPMemorySpace space, int addr);
 /*
  * Equivalent to DSPWriteValue() except synchronized to a tick boundary
  * (i.e., executed at the top of the orchestra loop).
@@ -547,7 +548,7 @@ extern int DSPMKSendValue(int value, DSPMemorySpace space, int addr);
  */
 
 
-extern int DSPMKSendValueTimed(DSPFix48 *aTimeStampP,
+MKDSP_API int DSPMKSendValueTimed(DSPFix48 *aTimeStampP,
 			       int value,
 			       DSPMemorySpace space,
 			       int addr);
@@ -556,18 +557,18 @@ extern int DSPMKSendValueTimed(DSPFix48 *aTimeStampP,
  */
 
 
-extern int DSPMKSendLong(DSPFix48 *aFix48Val, int addr);
+MKDSP_API int DSPMKSendLong(DSPFix48 *aFix48Val, int addr);
 /*
  * etc.
  */
 
 
-extern int DSPMKSendLongTimed(DSPFix48 *aTimeStampP, 
+MKDSP_API int DSPMKSendLongTimed(DSPFix48 *aTimeStampP, 
 			      DSPFix48 *aFix48Val,
 			      int addr);
 
 
-extern int DSPMKSendArraySkipModeTimed(
+MKDSP_API int DSPMKSendArraySkipModeTimed(
     DSPFix48 *aTimeStampP,
     void *data,			/* Interpretation depends on mode arg */
     DSPMemorySpace space,
@@ -602,7 +603,7 @@ extern int DSPMKSendArraySkipModeTimed(
  */
 
 
-extern int DSPMKSendArraySkipTimed(DSPFix48 *aTimeStampP,
+MKDSP_API int DSPMKSendArraySkipTimed(DSPFix48 *aTimeStampP,
 				   DSPFix24 *data,
 				   DSPMemorySpace space,
 				   DSPAddress address,
@@ -613,7 +614,7 @@ extern int DSPMKSendArraySkipTimed(DSPFix48 *aTimeStampP,
  */
 
 
-extern int DSPMKSendArrayTimed(DSPFix48 *aTimeStampP, 
+MKDSP_API int DSPMKSendArrayTimed(DSPFix48 *aTimeStampP, 
 			       DSPFix24 *data,
 			       DSPMemorySpace space,
 			       DSPAddress address,
@@ -623,7 +624,7 @@ extern int DSPMKSendArrayTimed(DSPFix48 *aTimeStampP,
  */
 
 
-extern int DSPMKSendArray(DSPFix24 *data,
+MKDSP_API int DSPMKSendArray(DSPFix24 *data,
 			  DSPMemorySpace space,
 			  DSPAddress address,
 			  int count);
@@ -632,7 +633,7 @@ extern int DSPMKSendArray(DSPFix24 *data,
  */
 
 
-extern int DSPMKSendShortArraySkipTimed(DSPFix48 *aTimeStampP,
+MKDSP_API int DSPMKSendShortArraySkipTimed(DSPFix48 *aTimeStampP,
     short int *data,
     DSPMemorySpace space,
     DSPAddress address,
@@ -652,7 +653,7 @@ extern int DSPMKSendShortArraySkipTimed(DSPFix48 *aTimeStampP,
  * the DSP's private static RAM.
  */
 
-extern int DSPMemoryFill(
+MKDSP_API int DSPMemoryFill(
     DSPFix24 fillConstant,	/* value to use as DSP memory initializer */
     DSPMemorySpace memorySpace, 
     DSPAddress startAddress,	/* first address within DSP memory to fill */
@@ -672,7 +673,7 @@ extern int DSPMemoryFill(
  */
 
 
-extern int DSPMKSendMemoryFill(
+MKDSP_API int DSPMKSendMemoryFill(
     DSPFix24 fillConstant,	/* value to fill memory with */
     DSPMemorySpace space,	/* space of memory fill in DSP */
     DSPAddress address,		/* first address of fill in DSP memory	*/
@@ -683,7 +684,7 @@ extern int DSPMKSendMemoryFill(
  */
 
 
-extern int DSPMKMemoryFillTimed(
+MKDSP_API int DSPMKMemoryFillTimed(
     DSPFix48 *aTimeStampP,	/* time to do memory fill in the DSP */
     DSPFix24 fillConstant,
     DSPMemorySpace space,
@@ -695,7 +696,7 @@ extern int DSPMKMemoryFillTimed(
  */
 
 
-extern int DSPMKMemoryFillSkipTimed(
+MKDSP_API int DSPMKMemoryFillSkipTimed(
     DSPFix48 *aTimeStampP,
     DSPFix24 fillConstant,
     DSPMemorySpace space,
@@ -708,7 +709,7 @@ extern int DSPMKMemoryFillSkipTimed(
  */
 
 
-extern int DSPMemoryClear(DSPMemorySpace memorySpace,
+MKDSP_API int DSPMemoryClear(DSPMemorySpace memorySpace,
 			  DSPAddress startAddress,
 			  int wordCount);
 /*
@@ -716,18 +717,18 @@ extern int DSPMemoryClear(DSPMemorySpace memorySpace,
  * Equivalent to DSPMemoryFill(0,memorySpace,startAddress,wordCount);
  */
 
-extern int DSPMKSendMemoryClear(DSPMemorySpace space,
+MKDSP_API int DSPMKSendMemoryClear(DSPMemorySpace space,
 				DSPAddress address,
 				int count);
 
-extern int DSPMKMemoryClearTimed(DSPFix48 *aTimeStampP, 
+MKDSP_API int DSPMKMemoryClearTimed(DSPFix48 *aTimeStampP, 
 				 DSPMemorySpace space,
 				 DSPAddress address,
 				 int count);
 
 /****************************  Poking DSP Symbols ****************************/
 
-extern int DSPPoke(char *name, DSPFix24 value, DSPLoadSpec *dsp);
+MKDSP_API int DSPPoke(char *name, DSPFix24 value, DSPLoadSpec *dsp);
 /*
  * Set the value of the DSP symbol with the given name to value (in the DSP).
  *
@@ -737,7 +738,7 @@ extern int DSPPoke(char *name, DSPFix24 value, DSPLoadSpec *dsp);
  */
 
 
-extern int DSPPokeFloat(char *name, float value, DSPLoadSpec *dsp);
+MKDSP_API int DSPPokeFloat(char *name, float value, DSPLoadSpec *dsp);
 /*
  * Equivalent to DSPPoke(name, DSPFloatToFix24(value), dsp).
  */
@@ -751,7 +752,7 @@ extern int DSPPokeFloat(char *name, float value, DSPLoadSpec *dsp);
  */
 
 
-extern int DSPMKRetValueTimed(
+MKDSP_API int DSPMKRetValueTimed(
     DSPTimeStamp *aTimeStampP,
     DSPMemorySpace space,
     DSPAddress address,
@@ -763,7 +764,7 @@ extern int DSPMKRetValueTimed(
  */
 
 
-extern int DSPMKRetValue(DSPMemorySpace space, 
+MKDSP_API int DSPMKRetValue(DSPMemorySpace space, 
 			 DSPAddress address, 
 			 DSPFix24 *value);
 /* 
@@ -780,7 +781,7 @@ extern int DSPMKRetValue(DSPMemorySpace space,
  * time the Music Kit runs ahead of the DSP's clock.
  */
 
-extern int DSPReadValue(DSPMemorySpace space,
+MKDSP_API int DSPReadValue(DSPMemorySpace space,
 			DSPAddress address,
 			DSPFix24 *value);
 /* 
@@ -805,7 +806,7 @@ DSPFix24 DSPGetValue(DSPMemorySpace space, DSPAddress address);
  * DSPReadArraySkipMode(&datum,space,address,skipFactor,count,DSP_MODE32))
  */
 
-extern int DSPReadFix24Array(
+MKDSP_API int DSPReadFix24Array(
     DSPFix24 *data,		/* array to fill from DSP */
     DSPMemorySpace memorySpace, 
     DSPAddress startAddress,	/* within DSP memory */
@@ -845,7 +846,7 @@ extern int DSPReadFix24Array(
  */
 
 
-extern int DSPReadFix24ArrayLJ(
+MKDSP_API int DSPReadFix24ArrayLJ(
     DSPFix24 *data,		/* array to fill from DSP */
     DSPMemorySpace memorySpace, 
     DSPAddress startAddress,	/* within DSP memory */
@@ -861,7 +862,7 @@ extern int DSPReadFix24ArrayLJ(
  */
 
 
-extern int DSPReadIntArray(int *intArray,
+MKDSP_API int DSPReadIntArray(int *intArray,
 			   DSPMemorySpace memorySpace,
 			   DSPAddress startAddress,
 			   int skipFactor,
@@ -872,34 +873,34 @@ extern int DSPReadIntArray(int *intArray,
  */
 
 
-extern int DSPReadPackedArray(
+MKDSP_API int DSPReadPackedArray(
     unsigned char *data,	/* Data to fill from DSP */
     DSPMemorySpace memorySpace, /* DSP memory space */
     DSPAddress startAddress,	/* DSP start address */
     int skipFactor,		/* DSP index increment per DSP word read */
     int wordCount);		/* DSP words = byte count / 3 */
 
-extern int DSPReadShortArray(
+MKDSP_API int DSPReadShortArray(
     short int *data,		/* Packed data to fill from DSP */
     DSPMemorySpace memorySpace, /* DSP memory space */
     DSPAddress startAddress,	/* DSP start address */
     int skipFactor,		/* DSP index increment per array element */
     int wordCount);		/* DSP word count = byte count / 2 */
 
-extern int DSPReadByteArray(
+MKDSP_API int DSPReadByteArray(
     unsigned char *data,	/* Data to fill from DSP */
     DSPMemorySpace memorySpace, /* DSP memory space */
     DSPAddress startAddress,	/* DSP start address */
     int skipFactor,		/* DSP index increment per byte transferred */
     int byteCount);		/* Same as DSP word count */
 
-extern int DSPReadFloatArray(float *floatArray,
+MKDSP_API int DSPReadFloatArray(float *floatArray,
 			     DSPMemorySpace memorySpace,
 			     DSPAddress startAddress,
 			     int skipFactor,
 			     int wordCount);
 
-extern int DSPReadDoubleArray(double *doubleArray,
+MKDSP_API int DSPReadDoubleArray(double *doubleArray,
 			      DSPMemorySpace memorySpace,
 			      DSPAddress startAddress,
 			      int skipFactor,
@@ -907,17 +908,17 @@ extern int DSPReadDoubleArray(double *doubleArray,
 
 /************************** TRANSFERS WITHIN THE DSP *************************/
 
-extern int DSPMKBLT(DSPMemorySpace memorySpace,
+MKDSP_API int DSPMKBLT(DSPMemorySpace memorySpace,
 		    DSPAddress sourceAddr,
 		    DSPAddress destinationAddr,
 		    int wordCount);
 
-extern int DSPMKBLTB(DSPMemorySpace memorySpace,
+MKDSP_API int DSPMKBLTB(DSPMemorySpace memorySpace,
 		     DSPAddress sourceAddr,
 		     DSPAddress destinationAddr,
 		     int wordCount);
 
-extern int DSPMKBLTSkipTimed(DSPFix48 *timeStamp,
+MKDSP_API int DSPMKBLTSkipTimed(DSPFix48 *timeStamp,
 			     DSPMemorySpace memorySpace,
 			     DSPAddress srcAddr,
 			     DSPFix24 srcSkip,
@@ -925,24 +926,24 @@ extern int DSPMKBLTSkipTimed(DSPFix48 *timeStamp,
 			     DSPFix24 dstSkip,
 			     DSPFix24 wordCount);
 
-extern int DSPMKBLTTimed(DSPFix48 *timeStamp,
+MKDSP_API int DSPMKBLTTimed(DSPFix48 *timeStamp,
 			 DSPMemorySpace memorySpace,
 			 DSPAddress sourceAddr,
 			 DSPAddress destinationAddr,
 			 DSPFix24 wordCount);
 
-extern int DSPMKBLTBTimed(DSPFix48 *timeStamp,
+MKDSP_API int DSPMKBLTBTimed(DSPFix48 *timeStamp,
 			  DSPMemorySpace memorySpace,
 			  DSPAddress sourceAddr,
 			  DSPAddress destinationAddr,
 			  DSPFix24 wordCount);
 
-extern int DSPMKSendBLT(DSPMemorySpace memorySpace,
+MKDSP_API int DSPMKSendBLT(DSPMemorySpace memorySpace,
 			DSPAddress sourceAddr,
 			DSPAddress destinationAddr,
 			DSPFix24 wordCount);
 
-extern int DSPMKSendBLTB(DSPMemorySpace memorySpace,
+MKDSP_API int DSPMKSendBLTB(DSPMemorySpace memorySpace,
 			 DSPAddress sourceAddr,
 			 DSPAddress destinationAddr,
 			 DSPFix24 wordCount);
@@ -965,46 +966,46 @@ extern int DSPMKSendBLTB(DSPMemorySpace memorySpace,
  * All of these routines return -1 (an impossible address) on error.
  */
 
-extern DSPAddress DSPGetLowestInternalUserXAddress(void);
+MKDSP_API DSPAddress DSPGetLowestInternalUserXAddress(void);
 /* Returns DSPGetSystemSymbolValue("XLI_USR") */
 
-extern DSPAddress DSPGetHighestInternalUserXAddress(void);
+MKDSP_API DSPAddress DSPGetHighestInternalUserXAddress(void);
 /* Returns DSPGetSystemSymbolValue("XHI_USR") */
 
-extern DSPAddress DSPGetLowestInternalUserYAddress(void);
+MKDSP_API DSPAddress DSPGetLowestInternalUserYAddress(void);
 /* Returns DSPGetSystemSymbolValue("YLI_USR") */
 
-extern DSPAddress DSPGetHighestInternalUserYAddress(void);
+MKDSP_API DSPAddress DSPGetHighestInternalUserYAddress(void);
 /* Returns DSPGetSystemSymbolValue("YHI_USR") */
 
-extern DSPAddress DSPGetLowestInternalUserPAddress(void);
+MKDSP_API DSPAddress DSPGetLowestInternalUserPAddress(void);
 /* Returns DSPGetSystemSymbolValue("PLI_USR") */
 
-extern DSPAddress DSPGetHighestInternalUserPAddress(void);
+MKDSP_API DSPAddress DSPGetHighestInternalUserPAddress(void);
 /* Returns DSPGetSystemSymbolValue("PHI_USR") */
 
-extern DSPAddress DSPGetLowestExternalUserXAddress(void);
+MKDSP_API DSPAddress DSPGetLowestExternalUserXAddress(void);
 /* Returns DSPGetSystemSymbolValue("XLE_USR") */
 
-extern DSPAddress DSPGetHighestExternalUserXAddress(void);
+MKDSP_API DSPAddress DSPGetHighestExternalUserXAddress(void);
 /* Returns DSPGetSystemSymbolValue("XHE_USR") */
 
-extern DSPAddress DSPGetLowestExternalUserYAddress(void);
+MKDSP_API DSPAddress DSPGetLowestExternalUserYAddress(void);
 /* Returns DSPGetSystemSymbolValue("YLE_USR") */
 
-extern DSPAddress DSPGetHighestExternalUserYAddress(void);
+MKDSP_API DSPAddress DSPGetHighestExternalUserYAddress(void);
 /* Returns DSPGetSystemSymbolValue("YHE_USR") */
 
-extern DSPAddress DSPGetLowestExternalUserPAddress(void);
+MKDSP_API DSPAddress DSPGetLowestExternalUserPAddress(void);
 /* Returns DSPGetSystemSymbolValue("PLE_USR") */
 
-extern DSPAddress DSPGetHighestExternalUserPAddress(void);
+MKDSP_API DSPAddress DSPGetHighestExternalUserPAddress(void);
 /* Returns DSPGetSystemSymbolValue("PHE_USR") */
 
-extern DSPAddress DSPGetHighestExternalUserAddress(void);
+MKDSP_API DSPAddress DSPGetHighestExternalUserAddress(void);
 /* Returns DSPGetSystemSymbolValue("HE_USR") */
 
-extern DSPAddress DSPGetLowestExternalUserAddress(void);
+MKDSP_API DSPAddress DSPGetLowestExternalUserAddress(void);
 /* Returns DSPGetSystemSymbolValue("LE_USR") */
 
 DSPAddress DSPGetLowestXYPartitionUserAddress(void);
@@ -1021,13 +1022,13 @@ DSPAddress DSPGetHighestXYPartitionUserAddress(void);
  *	       DSPGetHighestXYPartitionYUserAddress());
  */
 
-extern DSPAddress DSPGetLowestDegMonAddress(void);
+MKDSP_API DSPAddress DSPGetLowestDegMonAddress(void);
 /* Returns DSPGetSystemSymbolValue("DEGMON_L") */
 
-extern DSPAddress DSPGetHighestDegMonAddress(void);
+MKDSP_API DSPAddress DSPGetHighestDegMonAddress(void);
 /* Returns DSPGetSystemSymbolValue("DEGMON_H") */
 
-extern DSPAddress DSPMKGetClipCountXAddress(void);
+MKDSP_API DSPAddress DSPMKGetClipCountXAddress(void);
 /* 
  * Returns DSPGetSystemSymbolValue("X_NCLIP").  This is the address of the
  * location in DSP X memory used to store a cumulative count of "clips". A

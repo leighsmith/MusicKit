@@ -31,6 +31,7 @@
  */
  
 #import <stdio.h>
+#import "MKDSPDefines.h"
 #import "dsp_types.h"
 #import "dsp_structs.h"
 
@@ -40,7 +41,7 @@
 #include <MKPerformSndMIDI/PerformMIDI.h>
 #endif
 
-extern int DSPGetHostTime(void);
+MKDSP_API int DSPGetHostTime(void);
 /*
  * Returns the time in microseconds since it was last called.
  */
@@ -62,61 +63,66 @@ extern int DSPGetHostTime(void);
 /* End of "Warning" section */
 
 /********** Intel utilities ***************************/
-char *DSPGetDriverParameter(const char *parameterName);
+MKDSP_API char *DSPGetDriverParameter(const char *parameterName);
 /* Returns the specified driver parameter of the current DSP.  
    This value can be overridden by the user's defaults data base.
    The returned value is an NXAtom and should not be freed. 
  */
 
-int DSPGetDriverCount(void);
+MKDSP_API int DSPGetDriverCount(void);
 /* Returns the total number of DSP drivers that have been installed/added to 
  * the system.  This is the size of the arrays returned by DSPGetDriverNames()
  * and DSPGetDriverUnits().
  */
 
-char **DSPGetDriverNames(void);
-int *DSPGetDriverUnits(void);
-int *DSPGetDriverSubUnits(void);
-unsigned long *DSPGetDriverSUVects(void);
+MKDSP_API char **DSPGetDriverNames(void);
+MKDSP_API int *DSPGetDriverUnits(void);
+MKDSP_API int *DSPGetDriverSubUnits(void);
+MKDSP_API unsigned long *DSPGetDriverSUVects(void);
 /* Return the names and units of all the DSP drivers. The size of these arrays
  * is DSPGetDriverCount(). */
 
-char **DSPGetInUseDriverNames(void);
-int *DSPGetInUseDriverUnits(void);
-int *DSPGetInUseDriverSubUnits(void);
+MKDSP_API char **DSPGetInUseDriverNames(void);
+MKDSP_API int *DSPGetInUseDriverUnits(void);
+MKDSP_API int *DSPGetInUseDriverSubUnits(void);
 /* Return the names and units of the drivers in use.  The size of these arrays
  * is DSP_MAXDSPS
  */
 /********** end of Intel utilities ***************************/
 
 
-extern int DSPGetDSPCount(void);
+MKDSP_API
+int DSPGetDSPCount(void);
 /* 
  * Returns the number of actual DSPs on NeXT hardware systems.
  * On all other architectures, returns the value DSP_MAXDSPS,
  * which is the maximum possible number of DSPs.
  */
 
-extern int DSPSetHostName(char *newHost);
+MKDSP_API
+int DSPSetHostName(char *newHost);
 /*
  * Set name of host on which to open the DSP.  
  * The default is NULL which means that of the local processor.
  * Currently, only one DSP can be open at a time.
  */
 
-extern char *DSPGetHostName(void);
+MKDSP_API
+char *DSPGetHostName(void);
 /*
  * Get name of host on which the DSP is being or will be used.
  * NULL means that of the local processor.
  * Use gethostname(2) to retrieve the local processor's host name.
  */
 
-extern int DSPSetCurrentDSP(int newidsp);
+MKDSP_API
+int DSPSetCurrentDSP(int newidsp);
 /* 
  * Set DSP number.  Calls to functions in this file will act on that DSP.
  */
 
-extern int DSPGetCurrentDSP(void);
+MKDSP_API
+int DSPGetCurrentDSP(void);
 /* 
  * Returns currently selected DSP number.
  */
@@ -130,7 +136,8 @@ extern int DSPGetCurrentDSP(void);
  */
 
 
-extern int DSPGetMessagePriority(void);
+MKDSP_API
+int DSPGetMessagePriority(void);
 /*
  * Return DSP Mach message priority:
  *
@@ -149,20 +156,23 @@ extern int DSPGetMessagePriority(void);
  */
 
 
-extern int DSPSetMessagePriority(int pri);
+MKDSP_API
+int DSPSetMessagePriority(int pri);
 /*
  * Set DSP message priority for future messages sent to the kernel.
  * Can be called before or after DSP is opened.
  */
 
 
-extern double DSPMKGetSamplingRate(void);
+MKDSP_API
+double DSPMKGetSamplingRate(void);
 /*
  * Returns sampling rate assumed by DSP software in Hz.
  */
 
 
-extern int DSPMKSetSamplingRate(double srate);
+MKDSP_API
+int DSPMKSetSamplingRate(double srate);
 /*
  * Set sampling rate assumed by DSP software to rate in samples per
  * second (Hz).	 Note that only sampling rates 22050.0 and 44100.0 
@@ -172,8 +182,8 @@ extern int DSPMKSetSamplingRate(double srate);
  */
 
 
-extern int DSPEnableMachMessageOptimization(void);
-extern int DSPDisableMachMessageOptimization(void);
+MKDSP_API int DSPEnableMachMessageOptimization(void);
+MKDSP_API int DSPDisableMachMessageOptimization(void);
 /*
  * By default, optimization is enabled.  In this mode, as many Mach
  * message components as possible are combined into a single, multicomponent
@@ -196,7 +206,8 @@ extern int DSPDisableMachMessageOptimization(void);
  */
 
 
-extern int DSPGetOpenPriority(void);
+MKDSP_API
+int DSPGetOpenPriority(void);
 /*
  * Return DSP open priority.
  *	0 = low priority (default).
@@ -212,7 +223,8 @@ extern int DSPGetOpenPriority(void);
  */
 
 
-extern int DSPSetOpenPriority(int pri);
+MKDSP_API
+int DSPSetOpenPriority(int pri);
 /*
  * Set DSP open priority.
  * The new priority has effect when DSPOpenNoBoot is next called.
@@ -221,13 +233,15 @@ extern int DSPSetOpenPriority(int pri);
  */
 
 
-extern int DSPGetMessageAtomicity(void);
+MKDSP_API
+int DSPGetMessageAtomicity(void);
 /*
  * Returns nonzero if libdsp Mach messages are atomic, zero otherwise.
  */
 
 
-extern int DSPSetMessageAtomicity(int atomicity);
+MKDSP_API
+int DSPSetMessageAtomicity(int atomicity);
 /*
  * If atomicity is nonzero, future libdsp Mach messages will be atomic.
  * Otherwise they will not be atomic.  If not atomic, DMA complete interrupts,
@@ -266,33 +280,38 @@ int DSPDisableHostMsg(void);
  */
 
 
-extern int DSPHostMsgIsEnabled(void);
+MKDSP_API
+int DSPHostMsgIsEnabled(void);
 /* 
  * Return state of HostMsg enable flag.
  */
 
 
-extern int DSPMKIsWithSoundOut(void);
+MKDSP_API
+int DSPMKIsWithSoundOut(void);
 /* 
  * Returns nonzero if the DSP is linked to sound out.
  */
 
 
-extern int DSPMKEnableSoundOut(void);
+MKDSP_API
+int DSPMKEnableSoundOut(void);
 /* 
  * Enable DSP linkage to sound out.
  * When DSP is next opened, it will be linked to sound out.
  */
 
 
-extern int DSPMKDisableSoundOut(void);
+MKDSP_API
+int DSPMKDisableSoundOut(void);
 /* 
  * Disable DSP linkage to sound out.
  * When DSP is next opened, it will not be linked to sound out.
  */
 
 
-extern int DSPMKSoundOutIsEnabled(void);
+MKDSP_API
+int DSPMKSoundOutIsEnabled(void);
 /* 
  * Return state of SoundOut enable flag.
  */
@@ -300,7 +319,8 @@ extern int DSPMKSoundOutIsEnabled(void);
 
 /* Sound out to the serial port */
 
-extern int DSPMKEnableSSISoundOut(void);
+MKDSP_API
+int DSPMKEnableSSISoundOut(void);
 /* 
  * Enable DSP serial port sound out.
  * When DSP is next opened with a Music Kit DSP system, it will be 
@@ -308,7 +328,8 @@ extern int DSPMKEnableSSISoundOut(void);
  */
 
 
-extern int DSPMKDisableSSISoundOut(void);
+MKDSP_API
+int DSPMKDisableSSISoundOut(void);
 /* 
  * Disable DSP serial port sound out.
  * When DSP is next opened with a Music Kit DSP system, the SSI
@@ -316,13 +337,15 @@ extern int DSPMKDisableSSISoundOut(void);
  */
 
 
-extern int DSPMKSSISoundOutIsEnabled(void);
+MKDSP_API
+int DSPMKSSISoundOutIsEnabled(void);
 /* 
  * Return state of serial port SoundOut enable flag.
  */
 
 
-extern int DSPMKStartSSISoundOut(void);
+MKDSP_API
+int DSPMKStartSSISoundOut(void);
 /*
  * Tell DSP to send sound-out data to the SSI serial port in the DSP.
  * The DSP will block until the SSI port has read the current sound-out
@@ -331,7 +354,8 @@ extern int DSPMKStartSSISoundOut(void);
  */
 
 
-extern int DSPMKStopSSISoundOut(void);
+MKDSP_API
+int DSPMKStopSSISoundOut(void);
 /*
  * Tell DSP not to send sound-out data to the SSI serial port.
  */
@@ -339,7 +363,8 @@ extern int DSPMKStopSSISoundOut(void);
 
 /* Sound in from the serial port */
 
-extern int DSPMKEnableSSIReadData(void);
+MKDSP_API
+int DSPMKEnableSSIReadData(void);
 /* 
  * Enable DSP serial port sound in.
  * When DSP is next opened with a Music Kit DSP system, it will be 
@@ -347,7 +372,8 @@ extern int DSPMKEnableSSIReadData(void);
  */
 
 
-extern int DSPMKDisableSSIReadData(void);
+MKDSP_API
+int DSPMKDisableSSIReadData(void);
 /* 
  * Disable DSP serial port sound in.
  * When DSP is next opened with a Music Kit DSP system, the SSI
@@ -355,13 +381,15 @@ extern int DSPMKDisableSSIReadData(void);
  */
 
 
-extern int DSPMKSSIReadDataIsEnabled(void);
+MKDSP_API
+int DSPMKSSIReadDataIsEnabled(void);
 /* 
  * Return state of serial port ReadData enable flag.
  */
 
 
-extern int DSPMKStartSSIReadData(void);
+MKDSP_API
+int DSPMKStartSSIReadData(void);
 /*
  * Tell DSP to read sound-in data from the SSI serial port in the DSP.
  * The DSP will block until the SSI port has written the current sound-in
@@ -369,13 +397,15 @@ extern int DSPMKStartSSIReadData(void);
  */
 
 
-extern int DSPMKStopSSIReadData(void);
+MKDSP_API
+int DSPMKStopSSIReadData(void);
 /*
  * Tell DSP not to take sound-in data from the SSI serial port.
  */
 
 
-extern int DSPMKEnableSmallBuffers(void);
+MKDSP_API
+int DSPMKEnableSmallBuffers(void);
 /* 
  * Enable use of small buffers for DSP sound-out.
  * This is something worth doing when real-time response
@@ -385,19 +415,22 @@ extern int DSPMKEnableSmallBuffers(void);
  */
 
 
-extern int DSPMKDisableSmallBuffers(void);
+MKDSP_API
+int DSPMKDisableSmallBuffers(void);
 /* 
  * Disable use of small buffers for DSP sound-out.
  */
 
 
-extern int DSPMKSmallBuffersIsEnabled(void);
+MKDSP_API
+int DSPMKSmallBuffersIsEnabled(void);
 /* 
  * Return true if small sound-out buffers are enabled.
  */
 
 
-extern int DSPMKEnableTMFlush(void);
+MKDSP_API
+int DSPMKEnableTMFlush(void);
 /* 
  * Enable flushing timed messages every message.
  * This is for debugging so it is easy to see each message go by.
@@ -406,20 +439,24 @@ extern int DSPMKEnableTMFlush(void);
  */
 
 
-extern int DSPMKDisableTMFlush(void);
+MKDSP_API
+int DSPMKDisableTMFlush(void);
 /* 
  * Disable auto-flushing timed messages.
  */
 
 
-extern int DSPMKTMFlushIsEnabled(void);
+MKDSP_API
+int DSPMKTMFlushIsEnabled(void);
 /* 
  * Return true if auto-flushing timed messages is enabled.
  */
 
-extern int DSPSetTimedZeroNoFlush(int yesOrNo);
+MKDSP_API
+int DSPSetTimedZeroNoFlush(int yesOrNo);
 
-extern int DSPMKEnableBlockingOnTMQEmptyTimed(DSPFix48 *aTimeStampP);
+MKDSP_API
+int DSPMKEnableBlockingOnTMQEmptyTimed(DSPFix48 *aTimeStampP);
 /* 
  * Tell the DSP to block when the Timed Message Queue is empty.
  * This prevents the possibility of late score information.
@@ -429,7 +466,8 @@ extern int DSPMKEnableBlockingOnTMQEmptyTimed(DSPFix48 *aTimeStampP);
  */
 
 
-extern int DSPMKDisableBlockingOnTMQEmptyTimed(DSPFix48 *aTimeStampP);
+MKDSP_API
+int DSPMKDisableBlockingOnTMQEmptyTimed(DSPFix48 *aTimeStampP);
 /* 
  * Tell the DSP to NOT block when the Timed Message Queue is empty.
  */
@@ -452,7 +490,8 @@ const char *DSPGetDSPDirectory(void);    /* DSP_SYSTEM_DIRECTORY or $DSP if set 
 char *DSPGetSystemDirectory(void); /* <DSPDirectory>/monitor */
 char *DSPGetAPDirectory(void);	   /* <DSPDirectory>/DSP_AP_BIN_DIRECTORY */
 
-extern int DSPSetSystem(DSPLoadSpec *system);
+MKDSP_API
+int DSPSetSystem(DSPLoadSpec *system);
 /* 
  * Set the DSP system image (called by DSPBoot.c) 
  * If the system name begins with "MKMON" or "APMON",
@@ -481,27 +520,31 @@ char *DSPGetSystemMapFile(void);
  */
 
 
-extern int DSPMonitorIsMK(void);
+MKDSP_API
+int DSPMonitorIsMK(void);
 /*
  * Returns true if the currently set DSP system is of the
  * for "mkmon*.dsp", otherwise false.
  */
 
 
-extern int DSPSetMKSystemFiles(void);
+MKDSP_API
+int DSPSetMKSystemFiles(void);
 /*
  * Set the system binary, link, and map files to the MK world.
  */
 
 
-extern int DSPMonitorIsAP(void);
+MKDSP_API
+int DSPMonitorIsAP(void);
 /*
  * Returns true if the currently set DSP system is of the
  * form "apmon*.dsp", otherwise false.
  */
 
 
-extern int DSPSetAPSystemFiles(void);
+MKDSP_API
+int DSPSetAPSystemFiles(void);
 /*
  * Set the system binary, link, and map files to the AP world.
  */
@@ -514,7 +557,8 @@ extern int DSPSetAPSystemFiles(void);
  */
 
 
-extern int DSPMKSetWriteDataFile(const char *fn);
+MKDSP_API
+int DSPMKSetWriteDataFile(const char *fn);
 /* 
  * Set the file-name for DSP write-data to fn.
  */
@@ -526,7 +570,8 @@ char *DSPMKGetWriteDataFile(void);
  */
 
 
-extern int DSPMKEnableWriteData(void);
+MKDSP_API
+int DSPMKEnableWriteData(void);
 /* 
  * Enable DSP write data.
  * When DSP is next opened, stream ports will be set up between the
@@ -539,19 +584,22 @@ extern int DSPMKEnableWriteData(void);
  */
 
 
-extern int DSPMKDisableWriteData(void);
+MKDSP_API
+int DSPMKDisableWriteData(void);
 /* 
  * Disable DSP write data (default).
  */
 
 
-extern int DSPMKWriteDataIsEnabled(void);
+MKDSP_API
+int DSPMKWriteDataIsEnabled(void);
 /* 
  * Return state of DSP write-data enable flag.
  */
 
 
-extern int DSPMKWriteDataIsRunning(void);
+MKDSP_API
+int DSPMKWriteDataIsRunning(void);
 /* 
  * Return nonzero if DSP write data thread is still running.
  */
@@ -565,14 +613,16 @@ extern int DSPMKWriteDataIsRunning(void);
  */
 
 
-extern int DSPMKGetWriteDataTimeOut(void);
+MKDSP_API
+int DSPMKGetWriteDataTimeOut(void);
 /* 
  * Get number of milliseconds to wait in msg_receive() for a sound buffer
  * from the DSP before giving up.
  */
 
 
-extern int DSPMKSetWriteDataTimeOut(int to);
+MKDSP_API
+int DSPMKSetWriteDataTimeOut(int to);
 /* 
  * Set number of milliseconds to wait in msg_receive() for a sound buffer
  * from the DSP before giving up.  The default is 60 seconds.  It must be
@@ -585,7 +635,8 @@ extern int DSPMKSetWriteDataTimeOut(int to);
 typedef void (*DSPMKWriteDataUserFunc)
     (short *data,unsigned int dataCount,int dspNum);
 
-extern int DSPMKSetUserWriteDataFunc(DSPMKWriteDataUserFunc userFunc);
+MKDSP_API
+int DSPMKSetUserWriteDataFunc(DSPMKWriteDataUserFunc userFunc);
 /* Set user function to be called on each write data buffer.  Args to userFunc
    are the data buffer, the number of words in that buffer, the actual 
    vm size of that buffer (for vm_deallocate), and the dsp number.
@@ -597,7 +648,8 @@ extern int DSPMKSetUserWriteDataFunc(DSPMKWriteDataUserFunc userFunc);
    vm_deallocate(), using vmCount as the size.
 */
 
-extern int DSPMKSoundOutDMASize(void);
+MKDSP_API
+int DSPMKSoundOutDMASize(void);
 /*
  * Returns the size of single DMA transfer used for DSP sound-out
  * 16-bit words.  This may change at run time depending on whether
@@ -605,7 +657,8 @@ extern int DSPMKSoundOutDMASize(void);
  */
 
 
-extern int DSPMKClearDSPSoundOutBufferTimed(DSPTimeStamp *aTimeStamp);
+MKDSP_API
+int DSPMKClearDSPSoundOutBufferTimed(DSPTimeStamp *aTimeStamp);
 /*
  * Clears the DSP's sound-out buffer.  Normally, this is unnecessary
  * because the DSP orchestra puts out zeros by default.
@@ -619,26 +672,30 @@ extern int DSPMKClearDSPSoundOutBufferTimed(DSPTimeStamp *aTimeStamp);
  */
 
 
-extern int DSPMKEnableReadData(void);
+MKDSP_API
+int DSPMKEnableReadData(void);
 /* 
  * Enable DSP read data.
  * When the DSP is next opened, a read-data stream to the DSP will be opened.
  */
 
 
-extern int DSPMKDisableReadData(void);
+MKDSP_API
+int DSPMKDisableReadData(void);
 /* 
  * Disable DSP read data (default).
  */
 
 
-extern int DSPMKReadDataIsEnabled(void);
+MKDSP_API
+int DSPMKReadDataIsEnabled(void);
 /* 
  * Return state of DSP read-data enable flag.
  */
 
 
-extern int DSPMKSetReadDataFile(const char *fn);
+MKDSP_API
+int DSPMKSetReadDataFile(const char *fn);
 /* 
  * Set the read-data file-name to fn.
  */
@@ -646,7 +703,8 @@ extern int DSPMKSetReadDataFile(const char *fn);
 
 /*********************** OPENING AND CLOSING THE DSP ***********************/
 
-extern int DSPOpenNoBootHighPriority(void);
+MKDSP_API
+int DSPOpenNoBootHighPriority(void);
 /*
  * Open the DSP at highest priority.
  * This will normally only be called by a debugger trying to obtain
@@ -654,7 +712,8 @@ extern int DSPOpenNoBootHighPriority(void);
  */ 
 
 
-extern int DSPOpenNoBoot(void);
+MKDSP_API
+int DSPOpenNoBoot(void);
 /*
  * Open the DSP in the state implied by the DSP state variables.
  * If the open is successful or DSP is already open, 0 is returned.
@@ -665,7 +724,8 @@ extern int DSPOpenNoBoot(void);
  */
 
 
-extern int DSPIsOpen(void);
+MKDSP_API
+int DSPIsOpen(void);
 /* 
  * Returns nonzero if the DSP is open.
  */
@@ -678,7 +738,8 @@ DSPLoadSpec *DSPGetSystemImage(void);
  */
 
 
-extern int DSPClose(void);
+MKDSP_API
+int DSPClose(void);
 /*
  * Close the DSP device (if open). If sound-out DMA is in progress, 
  * it is first turned off which leaves the DSP in a better state.
@@ -686,7 +747,8 @@ extern int DSPClose(void);
  */
 
 
-extern int DSPCloseSaveState(void);
+MKDSP_API
+int DSPCloseSaveState(void);
 /*
  * Same as DSPClose(), but retains all enabled features such that
  * a subsequent DSPBoot() or DSPOpenNoBoot() will come up in the same mode.
@@ -695,7 +757,8 @@ extern int DSPCloseSaveState(void);
  */
 
 
-extern int DSPRawCloseSaveState(void);
+MKDSP_API
+int DSPRawCloseSaveState(void);
 /*
  * Close the DSP device without trying to clean up things in the DSP,
  * and without clearing the open state (so that a subsequent open
@@ -705,7 +768,8 @@ extern int DSPRawCloseSaveState(void);
  */
 
 
-extern int DSPRawClose(void);
+MKDSP_API
+int DSPRawClose(void);
 /*
  * Close the DSP device without trying to clean up things in the DSP.
  * This function is normally only called by DSPClose, but it is nice
@@ -713,7 +777,8 @@ extern int DSPRawClose(void);
  */
 
 
-extern int DSPOpenWhoFile(void);
+MKDSP_API
+int DSPOpenWhoFile(void);
 /*
  * Open DSP "who file" (unless already open) and log PID and time of open.
  * This file is read to find out who has the DSP when an attempt to
@@ -724,12 +789,14 @@ extern int DSPOpenWhoFile(void);
  */
 
 
-extern int DSPCloseWhoFile(void);
+MKDSP_API
+int DSPCloseWhoFile(void);
 /*
  * Close and delete the DSP lock file.
  */
 
 
+MKDSP_API
 char *DSPGetOwnerString(void);
 /*
  * Return string containing information about the current task owning
@@ -744,7 +811,8 @@ char *DSPGetOwnerString(void);
  */
 
 
-extern int DSPReset(void);
+MKDSP_API
+int DSPReset(void);
 /* 
  * Reset the DSP.
  * The DSP must be open.
@@ -760,7 +828,8 @@ extern int DSPReset(void);
 #define DSP_64K (0xfbff)  /* 63k-1 */
 
 #if m68k  /* We currently only support memory sensing on NeXT hardware */
-extern int DSPSenseMem(int *memCount);
+MKDSP_API
+int DSPSenseMem(int *memCount);
     /* Returns 0 for success, 1 otherwise.
      * If successful, *memCount is DSP_8K, DSP_32K or DSP_64K (or 64k x 3 = 192K)
      */
@@ -772,7 +841,8 @@ extern int DSPSenseMem(int *memCount);
  * function calls followed by DSPOpen().
  */
 
-extern int DSPMKInit(void);
+MKDSP_API
+int DSPMKInit(void);
 /* NOTE: The Music Kit currently uses its own version of this function
  *       so that it can check the "app wrapper" for a version of the monitor.
  *
@@ -788,7 +858,8 @@ extern int DSPMKInit(void);
  */
 
 
-extern int DSPMKInitWithSoundOut(int lowSamplingRate);
+MKDSP_API
+int DSPMKInitWithSoundOut(int lowSamplingRate);
 /* 
  * Open and reset the DSP such that it is ready to receive a user 
  * orchestra program.  Also set up link from DSP to sound-out.
@@ -799,7 +870,8 @@ extern int DSPMKInitWithSoundOut(int lowSamplingRate);
 
 /****************************** SoundOut Handling ****************************/
 
-extern int DSPMKStartSoundOut(void);
+MKDSP_API
+int DSPMKStartSoundOut(void);
 /*
  * Tell the DSP to begin sending sound-out packets which were linked
  * to the sound-out hardware by calling DSPMKEnableSoundOut().
@@ -807,7 +879,8 @@ extern int DSPMKStartSoundOut(void);
  */
 
 
-extern int DSPMKStopSoundOut(void);
+MKDSP_API
+int DSPMKStopSoundOut(void);
 /*
  * Tell DSP to stop sending sound-out packets.
  */
@@ -815,7 +888,8 @@ extern int DSPMKStopSoundOut(void);
 
 /***************************** WriteData Handling ****************************/
 
-extern int DSPMKStartWriteDataTimed(DSPTimeStamp *aTimeStampP);
+MKDSP_API
+int DSPMKStartWriteDataTimed(DSPTimeStamp *aTimeStampP);
 /*
  * Tell the DSP to start sending sound-out requests to the DSP driver when a
  * buffer of sound-out data is ready in the DSP.  A thread is spawned which
@@ -836,19 +910,22 @@ extern int DSPMKStartWriteDataTimed(DSPTimeStamp *aTimeStampP);
  */
 
 
-extern int DSPMKStartWriteData(void);
+MKDSP_API
+int DSPMKStartWriteData(void);
 /*
  * Equivalent to DSPMKStartWriteDataTimed(DSPMK_UNTIMED);
  */
 
 
-extern int DSPMKGetWriteDataSampleCount(void);
+MKDSP_API
+int DSPMKGetWriteDataSampleCount(void);
 /* 
  * Get number of samples written to disk since write-data was initialized.
  */
 
 
-extern int DSPMKStopWriteDataTimed(DSPTimeStamp *aTimeStampP);
+MKDSP_API
+int DSPMKStopWriteDataTimed(DSPTimeStamp *aTimeStampP);
 /*
  * Tell DSP not to generate write-data requests.
  * If write-data is going to disk, it does NOT tell the write-data thread
@@ -867,7 +944,8 @@ extern int DSPMKStopWriteDataTimed(DSPTimeStamp *aTimeStampP);
  */
 
 
-extern int DSPMKStopWriteData(void);
+MKDSP_API
+int DSPMKStopWriteData(void);
 /*
  * Same as DSPMKStopWriteDataTimed(aTimeStampP) but using an untimed
  * host message to the DSP.  Called by DSPMKStopSoundOut().
@@ -876,7 +954,8 @@ extern int DSPMKStopWriteData(void);
  */
 
 
-extern int DSPMKRewindWriteData(void);
+MKDSP_API
+int DSPMKRewindWriteData(void);
 /*
  * Rewind write-data to beginning of file.
  * DSPMKStopWriteData() must have been called first to terminate
@@ -884,7 +963,8 @@ extern int DSPMKRewindWriteData(void);
  * After this, write-data can be resumed by DSPMKStartWriteData{Timed}().
  */
 
-extern int DSPMKCloseWriteDataFile(void);
+MKDSP_API
+int DSPMKCloseWriteDataFile(void);
 /*
  * Close the write-data file.
  * DSPMKStopWriteData() is called automatically if write-data is running.
@@ -895,7 +975,8 @@ extern int DSPMKCloseWriteDataFile(void);
 
 /***************************** ReadData Handling ****************************/
 
-extern int DSPMKStartReadDataTimed(DSPTimeStamp *aTimeStampP);
+MKDSP_API
+int DSPMKStartReadDataTimed(DSPTimeStamp *aTimeStampP);
 /*
  * Start read-data flowing from disk to the DSP.
  * This function must be called after the DSP is initialized by DSPMKInit()
@@ -924,26 +1005,30 @@ extern int DSPMKStartReadDataTimed(DSPTimeStamp *aTimeStampP);
  */
 
 
-extern int DSPMKStartReadDataPaused(void);
+MKDSP_API
+int DSPMKStartReadDataPaused(void);
 /*
  * Equivalent to DSPMKStartReadDataTimed(DSPMK_UNTIMED);
  */
 
 
-extern int DSPMKStartReadData(void);
+MKDSP_API
+int DSPMKStartReadData(void);
 /*
  * Equivalent to DSPMKStartReadDataTimed(&DSPMKTimeStamp0);
  * Read-data starts in the DSP immediately.
  */
 
 
-extern int DSPMKGetReadDataSampleCount(void);
+MKDSP_API
+int DSPMKGetReadDataSampleCount(void);
 /* 
  * Get number of samples sent to the DSP since read-data was started.
  */
 
 
-extern int DSPMKPauseReadDataTimed(DSPTimeStamp *aTimeStampP); 
+MKDSP_API
+int DSPMKPauseReadDataTimed(DSPTimeStamp *aTimeStampP); 
 /* 
  * Tell the DSP to stop requesting read-data buffer refills at the
  * specified time.  When this happens, the read-data stream going from
@@ -957,13 +1042,15 @@ extern int DSPMKPauseReadDataTimed(DSPTimeStamp *aTimeStampP);
  */
 
 
-extern int DSPMKResumeReadDataTimed(DSPTimeStamp *aTimeStampP);
+MKDSP_API
+int DSPMKResumeReadDataTimed(DSPTimeStamp *aTimeStampP);
 /* 
  * Tell the DSP to resume read-data at the specified time.
  */
 
 
-extern int DSPMKReadDataIsRunning(void);
+MKDSP_API
+int DSPMKReadDataIsRunning(void);
 /* 
  * Return nonzero if DSP read data thread is still running.
  * "Paused" is considered a special case of "running" since the
@@ -971,21 +1058,24 @@ extern int DSPMKReadDataIsRunning(void);
  */
 
 
-extern int DSPMKStopReadData(void);
+MKDSP_API
+int DSPMKStopReadData(void);
 /*
  * Tell DSP to stop read-data consumption, if active, and tell the host
  * read-data thread to exit.  See also DSPMKPauseReadDataTimed() above.
  */
 
 
-extern int DSPMKRewindReadData(void);
+MKDSP_API
+int DSPMKRewindReadData(void);
 /*
  * Rewind read-data to beginning of file.
  * The read-data thread should be paused or stopped during this operation.
  */
 
 
-extern int DSPMKSetReadDataBytePointer(int offset);
+MKDSP_API
+int DSPMKSetReadDataBytePointer(int offset);
 /*
  * Move read-data file pointer to given offset in bytes.
  * Returns file pointer in bytes from beginning of file after the seek
@@ -993,7 +1083,8 @@ extern int DSPMKSetReadDataBytePointer(int offset);
  * The read-data thread should be paused or stopped during this operation.
  */
 
-extern int DSPMKIncrementReadDataBytePointer(int offset);
+MKDSP_API
+int DSPMKIncrementReadDataBytePointer(int offset);
 /*
  * Move read-data file pointer to given offset from current location in bytes.
  * Returns file pointer in bytes from beginning of file after the seek
@@ -1004,17 +1095,20 @@ extern int DSPMKIncrementReadDataBytePointer(int offset);
 
 /******************************* User aborted function ***********************/
 
-extern void DSPSetUserAbortedFunction(char (*abortFunc)(void));
+MKDSP_API
+void DSPSetUserAbortedFunction(char (*abortFunc)(void));
 
 /************************ SIMULATOR FILE MANAGEMENT **************************/
 
-extern int DSPIsSimulated(void);
+MKDSP_API
+int DSPIsSimulated(void);
 /* 
  * Returns nonzero if the DSP is simulated.
  */
 
 
-extern int DSPIsSimulatedOnly(void);
+MKDSP_API
+int DSPIsSimulatedOnly(void);
 /* 
  * Returns nonzero if the DSP simulator output is open but the DSP device 
  * is not open.	 This would happen if DSPOpenSimulatorFile() were called
@@ -1022,71 +1116,82 @@ extern int DSPIsSimulatedOnly(void);
  */
 
 
+MKDSP_API
 FILE *DSPGetSimulatorFP(void);
 /*
  * Returns file pointer used for the simulator output file, if any.
  */
 
 
-extern int DSPOpenSimulatorFile(char *fn);			
+MKDSP_API
+int DSPOpenSimulatorFile(char *fn);			
 /* 
  * Open simulator output file fn.
  */
 
 
-extern int DSPStartSimulator(void);
+MKDSP_API
+int DSPStartSimulator(void);
 /*
  * Initiate simulation mode, copying DSP commumications to the simulator
  * file pointer.
  */
 
 
-extern int DSPStartSimulatorFP(FILE *fp);
+MKDSP_API
+int DSPStartSimulatorFP(FILE *fp);
 /*
  * Initiate simulation mode, copying DSP commumications to the file pointer fp.
  * If fp is NULL, the previously set fp, if any, will be used.
  */
 
 
-extern int DSPStopSimulator(void);
+MKDSP_API
+int DSPStopSimulator(void);
 /*
  * Clear simulation bit, halting DSP command output to the simulator file.
  */
 
 
-extern int DSPCloseSimulatorFile(void);
+MKDSP_API
+int DSPCloseSimulatorFile(void);
 /* 
  * Close simulator output file.
  */
 
 /*********************** DSP COMMANDS FILE MANAGEMENT ************************/
 
-extern int DSPIsSavingCommands(void);
+MKDSP_API
+int DSPIsSavingCommands(void);
 /* 
  * Returns nonzero if a "DSP commands file" is open.
  */
 
-extern int DSPIsSavingCommandsOnly(void);
+MKDSP_API
+int DSPIsSavingCommandsOnly(void);
 /* 
  * Returns nonzero if the DSP commands file is open but the DSP device 
  * is not open.	 This would happen if DSPOpenCommandsFile() were called
  * without opening the DSP.
  */
 
-extern int DSPOpenCommandsFile(const char *fn);
+MKDSP_API
+int DSPOpenCommandsFile(const char *fn);
 /*
  * Opens a "DSP Commands file" which will receive all Mach messages
  * to the DSP.  The filename suffix should be ".snd".  This pseudo-
  * sound file can be played by the sound library.
  */
 
-extern int DSPCloseCommandsFile(DSPFix48 *endTimeStamp);
+MKDSP_API
+int DSPCloseCommandsFile(DSPFix48 *endTimeStamp);
 /*
  * Closes a "DSP Commands file".  The endTimeStamp is used by the
  * sound library to terminate the DSP-sound playback thread.
  */
 
-extern int DSPBailingOut(int dspNum);
+MKDSP_API
+int DSPBailingOut(int dspNum);
 /* Returns non-zero if the DSP library aborted for the current DSP because 
  * of a seemingly dead DSP */
 
@@ -1115,7 +1220,8 @@ int DSPSetProtocol(int newProto);
  * combined into a single message to maximize performance.)
  */
 
-extern int DSPSetComplexDMAModeBit(int bit);
+MKDSP_API
+int DSPSetComplexDMAModeBit(int bit);
 /*
  * Set or clear the bit "SNDDRIVER_DSP_PROTO_C_DMA" in the DSP driver protocol.
  * For DMA transfers carried out by libdsp, this protocol bit is automatically
@@ -1124,7 +1230,8 @@ extern int DSPSetComplexDMAModeBit(int bit);
  * DSP and main memory, you must set the C_DMA protocol bit yourself.
  */
 
-extern int DSPSetHostMessageMode(void);
+MKDSP_API
+int DSPSetHostMessageMode(void);
 /*
  * Set "Host Message" protocol.  This is the dynamic version of DSPEnableHostMsg()
  * followed by a form of DSPOpen().  It can be called after the DSP is already open.
@@ -1133,7 +1240,8 @@ extern int DSPSetHostMessageMode(void);
  * when not in host message mode, which are SNDDRIVER_DSP_PROTO_{RAW|HFABORT}.
  */
 
-extern int DSPClearHostMessageMode(void);
+MKDSP_API
+int DSPClearHostMessageMode(void);
 /*
  * Clear "Host Message" protocol.  This is the dynamic version of DSPDisableHostMsg()
  * followed by a form of DSPOpen().  It can be called after the DSP is already open.
@@ -1172,13 +1280,15 @@ extern int DSPClearHostMessageMode(void);
  */
 
 
-extern int DSPSymbolIsFloat(DSPSymbol *sym);
+MKDSP_API
+int DSPSymbolIsFloat(DSPSymbol *sym);
 /* 
  * Returns TRUE if the DSP assembler symbol is type 'F'.
  */
 
 
-extern DSPSymbol *DSPGetSectionSymbol(char *name, DSPSection *sec);
+MKDSP_API
+DSPSymbol *DSPGetSectionSymbol(char *name, DSPSection *sec);
 /*
  * Find symbol within the given DSPSection with the given name. 
  * See "/LocalDeveloper/Headers/dsp/dsp_structs.h" for the definition of a 
@@ -1187,7 +1297,8 @@ extern DSPSymbol *DSPGetSectionSymbol(char *name, DSPSection *sec);
  */
 
 
-extern DSPSymbol *DSPGetSectionSymbolInLC(char *name, DSPSection *sec, 
+MKDSP_API
+DSPSymbol *DSPGetSectionSymbolInLC(char *name, DSPSection *sec, 
 				   DSPLocationCounter lc);
 /*
  * Find symbol within the given DSPSection and location counter
@@ -1196,7 +1307,8 @@ extern DSPSymbol *DSPGetSectionSymbolInLC(char *name, DSPSection *sec,
  */
 
 
-extern int DSPReadSectionSymbolAddress(DSPMemorySpace *spacep,
+MKDSP_API
+int DSPReadSectionSymbolAddress(DSPMemorySpace *spacep,
 				       DSPAddress *addressp,
 				       char *name,
 				       DSPSection *sec);
@@ -1206,7 +1318,8 @@ extern int DSPReadSectionSymbolAddress(DSPMemorySpace *spacep,
  * both space and address need to be returned.
  */
 
-extern int DSPGetSystemSymbolValue(char *name);
+MKDSP_API
+int DSPGetSystemSymbolValue(char *name);
 /*
  * Returns the value of the symbol "name" in the DSP system image, or -1 if
  * the symbol is not found or the DSP is not opened.  
@@ -1229,7 +1342,8 @@ extern int DSPGetSystemSymbolValue(char *name);
  * is only one section, the global section, for absolute assemblies).
  */
 
-extern int DSPGetSystemSymbolValueInLC(char *name, DSPLocationCounter lc);
+MKDSP_API
+int DSPGetSystemSymbolValueInLC(char *name, DSPLocationCounter lc);
 /*
  * Same as DSPGetSystemSymbolValue() except faster because the location 
  * counter is known, and the rest are not searched.
