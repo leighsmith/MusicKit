@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/12/07 18:32:29  leigh
+  Standardised to mach ports for driver handles, properly prefixed constants
+
   Revision 1.5  2000/11/29 19:42:29  leigh
   Checked if calling executable is actually a tool, not an app before posting the client name
 
@@ -61,8 +64,8 @@ static MIDIEndpointRef claimedDestinationUnit = NULL;
 static MIDIEndpointRef claimedSourceUnit = NULL;
 static MKMDReplyFunctions *userFuncs;   // functions to be called on reception from the driver.
 
-static MKMDReplyPort   dataReplyPort;	// NSPort-like port to reply received MIDI on.
-static MKMDReplyPort   queue_port;	// NSPort-like port to reply when queue is available.
+static MKMDReplyPort   dataReplyPort;	// mach port-like port to reply received MIDI on.
+  //static MKMDReplyPort   queue_port;	// mach port-like port to reply when queue is available.
 static const MIDIPacketList *receivedPacketList;
 static void (*callbackFn)(void *);
 static void *callbackParam;
@@ -77,7 +80,7 @@ MIDITimeStamp MIDIGetCurrentTime(void)
 // TODO we need to properly convert the result to an int, since the division will reduce the actual result within those bounds.
 static int timeStampToMKTime(MIDITimeStamp timeStamp)
 {
-    return (int) (timeStamp - datumRefTime) / quantumFactor;
+    return (int) ((timeStamp - datumRefTime) / quantumFactor);
 }
 
 // called on reception of MIDI packets.
@@ -135,13 +138,12 @@ PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
 // that has meaning.
 PERFORM_API MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
 {
-    NSMachPort *devicePort = [NSMachPort port]; // kludge it so it seems initialised
     if(*hostname) {
         NSLog(@"MIDI on remote hosts not yet implemented on MacOS X\n");
-        return nil;
+        return MKMD_PORT_NULL;
     }
     else
-        return devicePort;
+        return !MKMD_PORT_NULL; // kludge it so it seems initialised
 }
 
 /* Routine MKMDBecomeOwner */
@@ -358,7 +360,7 @@ PERFORM_API MKMDReturn MKMDReleaseUnit (
 PERFORM_API MKMDReturn MKMDRequestExceptions (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
-	port_t error_port)
+	MKMDReplyPort error_port)
 {
 #ifdef FUNCLOG
   fprintf(debug, "MKMDRequestExceptions called\n");
@@ -555,8 +557,8 @@ static void replyDispatch(MKMDReplyFunctions *userFuncs)
             }
             // NSLog(@"\n");
             // claimedSourceUnit == 0; // determine from refCon and connRefCon
-            if(dataReplyPort != nil)
-                (*(userFuncs->dataReply))([dataReplyPort machPort], 0, events, packet->length);
+            if(dataReplyPort != MKMD_PORT_NULL)
+                (*(userFuncs->dataReply))(dataReplyPort, 0, events, packet->length);
             else
                 fprintf(stderr, "not receiving stuff\n");
             free(events);

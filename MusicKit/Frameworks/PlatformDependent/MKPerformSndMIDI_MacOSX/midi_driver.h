@@ -25,6 +25,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/12/07 18:31:11  leigh
+  Standardised to mach ports for driver handles, properly prefixed constants
+
   Revision 1.7  2000/11/27 21:49:54  leigh
   Added MKMDReplyPort typing to MKMDRequestAlarm
 
@@ -61,12 +64,13 @@ Modification history:
 // kludge around type definitions. This should be replaced.
 typedef int msg_header_t;  // mach_msg_header_t
 
-#define PORTS_ARE_NSOBJECTS 1
-#define RECEPTION_USING_PORTS 0
-#define MKMDPort NSMachPort *
-#define MKMDOwnerPort NSMachPort *
-#define MKMDReplyPort NSMachPort *
+#define MKMDPort int
+#define MKMDOwnerPort int
+#define MKMDReplyPort int
 typedef int MKMDReturn;
+
+#define MKMD_RECEPTION_USING_PORTS 0
+#define MKMD_PORT_NULL 0
 
 /* Each event consists of a byte and a time stamp. */
 typedef struct {
@@ -178,7 +182,7 @@ PERFORM_API MKMDReturn
 PERFORM_API MKMDReturn 
     MKMDRequestAlarm(MKMDPort driver, MKMDOwnerPort owner, MKMDReplyPort replyPort, int time);
 PERFORM_API MKMDReturn 
-    MKMDRequestExceptions(MKMDPort driver, MKMDOwnerPort owner, port_t exceptionPort);
+    MKMDRequestExceptions(MKMDPort driver, MKMDOwnerPort owner, MKMDReplyPort exceptionPort);
 PERFORM_API MKMDReturn 
     MKMDRequestQueueNotification(MKMDPort driver, MKMDOwnerPort owner, short unit, MKMDReplyPort notificationPort, int size);
 
