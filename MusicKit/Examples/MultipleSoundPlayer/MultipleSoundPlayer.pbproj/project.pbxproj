@@ -213,7 +213,7 @@
 	<key>CFBundleExecutable</key>
 	<string>MultipleSoundPlayer</string>
 	<key>CFBundleGetInfoString</key>
-	<string></string>
+	<string>Demonstration of play multiple overlapping simultaneous sounds with the SndKit</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -225,11 +225,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string></string>
+	<string>V1.0.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.0.1d1</string>
+	<string>1.0.0</string>
 	<key>NSExtensions</key>
 	<dict/>
 	<key>NSMainNibFile</key>
