@@ -86,9 +86,25 @@ int sk_ausunencoding(int size, int encoding) /* used to be in libst.a, but made 
     sun_encoding = SUN_LIN_8;
   else if (encoding == ST_ENCODING_SIGN2 && size == ST_SIZE_WORD)
     sun_encoding = SUN_LIN_16;
+  else if (encoding == ST_ENCODING_SIGN2 && size == ST_SIZE_DWORD)
+    sun_encoding = SUN_LIN_32;
   else
     sun_encoding = -1;
   return sun_encoding;
+}
+
+int SndFormatToSoxFormat(int sndFormatCode, int *size)
+{
+  int r = ST_ENCODING_SIGN2;
+  switch (sndFormatCode) {
+    case SND_FORMAT_LINEAR_8:  *size = 1; break;
+    case SND_FORMAT_LINEAR_16: *size = 2; break;
+    case SND_FORMAT_LINEAR_32: *size = 4; break;
+    case SND_FORMAT_FLOAT:     *size = 4; r = ST_ENCODING_FLOAT; break;
+    default:
+      NSLog(@"Argh, this sndtosox format conversion not written yet...");
+  }
+  return r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -119,6 +135,9 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
   *sound = NULL;
   if (fp == NULL)
     return SND_ERR_CANNOT_OPEN;
+
+  
+  st_initformat(&informat);
   informat.fp = fp;
   informat.seekable = YES;
   /* use a default file type in the absence of an explicit type -- the user shouldn't
@@ -149,7 +168,7 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
   s->magic        = SND_MAGIC; // could be extended using fileTypeStr but only when we write in all formats.
   s->dataLocation = 0;
   s->dataFormat   = sk_ausunencoding(informat.info.size, informat.info.encoding);
-  bUnsigned = informat.info.encoding == ST_ENCODING_UNSIGNED;
+  bUnsigned       = informat.info.encoding == ST_ENCODING_UNSIGNED;
   s->samplingRate = informat.info.rate;
   s->channelCount = informat.info.channels;
   s->dataSize     = informat.info.size * informat.length; // whole sound for the moment
@@ -229,6 +248,13 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
             storePtr += informat.info.size;
           }
           break;
+        case SUN_LIN_32:
+          for(i = 0; i < c; i++) {
+            long sample = RIGHT(readBuffer[i], (sizeof(st_sample_t) - informat.info.size) * 8);
+            *((long *) storePtr) =  htons(sample); // kludged assuming 16 bits. We always adopt big-endian format.
+            storePtr += informat.info.size;
+          }
+          break;
         default:
           NSLog(@"SndFunctionsDiskIO: Argh! Can't convert this stuff I'm reading!");
       }
@@ -238,7 +264,7 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
         break;
     } while(lenRead == SNDREADCHUNKSIZE); // sound files exactly modulo SNDREADCHUNKSIZE will read 0 bytes next time thru.
 
-    // s->dataSize = samplesRead * informat.info.size;
+    s->dataSize = samplesRead * informat.info.size;
     //        s = realloc((char *)s, headerLen + s->dataSize);
     free(readBuffer);
 
@@ -298,6 +324,29 @@ int SndReadSoundfileRange(const char *path, SndSoundStruct **sound, int startFra
 int SndReadSoundfile(const char *path, SndSoundStruct **sound)
 {
   return SndReadSoundfileRange(path, sound, 0, -1, TRUE);
+}
+
+
+// TODO - Work In Progress... SKoT
+
+int SndWriteWithSOX(NSString* filename, SndSoundStruct *sound)
+{
+  int sz;
+  struct st_soundstream ft;
+  st_initformat(&ft);
+  
+  ft.info.rate     = sound->samplingRate;
+  ft.info.encoding = SndFormatToSoxFormat(sound->dataFormat, &sz);
+  ft.info.size     = sz;
+  ft.info.channels = sound->channelCount;
+  
+  ft.filename      = [[filename lastPathComponent] cString];
+  ft.filetype      = [[filename pathExtension] cString];
+
+
+  ft.fp            = fopen(ft.filename,"wb");
+
+  return SND_ERR_UNKNOWN;
 }
 
 int SndWriteSoundfile(const char *path, SndSoundStruct *sound)
