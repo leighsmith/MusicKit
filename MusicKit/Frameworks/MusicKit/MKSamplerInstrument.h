@@ -18,6 +18,9 @@
 */
 /*
   $Log$
+  Revision 1.12  2001/04/23 21:17:45  leighsmith
+  Removed unnecessary @public
+
   Revision 1.11  2001/04/20 02:53:25  leighsmith
   Revised to use stopInFuture: and SndPerformances for correct stopping and performance management
 
@@ -81,7 +84,6 @@
     BOOL damperOn;
     double velocitySensitivity;
 
-@public
     int voiceCount;
     int keyNum;					/* The current key number */
     BOOL diatonic;
