@@ -107,6 +107,10 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/07/02 16:40:00  sbrandon
+  - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
+    compliant)
+
   Revision 1.5  2000/04/25 02:09:53  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -327,7 +331,7 @@ Modification history:
    * The value returned by perform is ignored.
    */
 {
-    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", sel_getName(_cmd)]; return nil;
+    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)]; return nil;
 }
 
 
