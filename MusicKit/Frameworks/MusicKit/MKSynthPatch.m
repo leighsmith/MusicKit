@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2002/01/29 16:34:27  sbrandon
+  changed to use NSString args for _MKOrchTrace calls
+
   Revision 1.13  2001/09/08 21:53:16  leighsmith
   Prefixed MK for UnitGenerators and SynthPatches
 
@@ -832,7 +835,7 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
 + _newWithTemplate: (id) aTemplate inOrch: (id) anOrch index: (int) whichDSP
 {
     MKSynthPatch *newObj  = [super allocWithZone:NSDefaultMallocZone()];
-    newObj->synthElements = [[NSMutableArray arrayWithCapacity:[aTemplate synthElementCount]] retain];
+    newObj->synthElements = [[NSMutableArray alloc] initWithCapacity:[aTemplate synthElementCount]];
     newObj->status        = MK_idle;
     newObj->orchestra     = anOrch;
     newObj->_orchIndex    = whichDSP;
@@ -864,8 +867,8 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     /* We know it can't be shared because you can't specify shared 
        synthElements in the Template. */
     if (_MK_ORCHTRACE(orchestra,MK_TRACEORCHALLOC))
-        _MKOrchTrace(orchestra,MK_TRACEORCHALLOC,"Freeing %s_%p",
-                     [NSStringFromClass([self class]) cString], self);
+        _MKOrchTrace(orchestra,MK_TRACEORCHALLOC,@"Freeing %@_%p",
+                     NSStringFromClass([self class]), self);
 //    [synthElements makeObjectsPerformSelector:@selector(retain)]; /*sb: this defers the deallocation of the objects from the following statement to a later time. This may be a leak. */
     [synthElements release];
 //    [super release]; /*sb: removed, following advice from NSObject class docs. Ok to do super dealloc though, in dealloc methods */
@@ -1194,7 +1197,7 @@ id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tail
     _MKOrchResetPreviousLosingTemplate(orchestra);
     if (_MK_ORCHTRACE(orchestra,MK_TRACEORCHALLOC))
       _MKOrchTrace(orchestra,MK_TRACEORCHALLOC,
-                   "Returning %s_%p to avail pool.",[NSStringFromClass([self class]) cString],self);
+                   @"Returning %s_%p to avail pool.",NSStringFromClass([self class]),self);
     return self;
 }
 
