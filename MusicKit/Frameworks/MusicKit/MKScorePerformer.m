@@ -25,6 +25,10 @@
 /* Modification history:
 
    $Log$
+   Revision 1.10  2002/01/29 16:33:16  sbrandon
+   don't retain conductor in new copies of object (would create retain
+   loop)
+
    Revision 1.9  2001/09/06 21:27:48  leighsmith
    Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -402,7 +406,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
     newObj->firstTimeTag = firstTimeTag;
     newObj->timeShift = timeShift;
     newObj->duration = duration;
-    newObj->conductor = [conductor retain];
+    newObj->conductor = conductor; /* no retain held to prevent retain loops */
 
 /*
     MKScorePerformer *newObj = [super copyWithZone:zone];
