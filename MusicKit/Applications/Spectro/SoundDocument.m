@@ -55,26 +55,27 @@ static int calcFormat(SndSoundStruct *s)
     NSRect theFrame;
 	
     [super init];
-    [NSBundle loadNibNamed:@"soundDocument.nib" owner:self];
-    [soundWindow setDelegate:self];
+    [NSBundle loadNibNamed: @"soundDocument.nib" owner: self];
+    [soundWindow setDelegate: self];
     theFrame = [soundWindow frame];
-    [self newSoundLocation:&theFrame.origin];
-    [soundWindow setFrameOrigin:NSMakePoint(theFrame.origin.x, theFrame.origin.y)];
+    [self newSoundLocation: &theFrame.origin];
+    [soundWindow setFrameOrigin: NSMakePoint(theFrame.origin.x, theFrame.origin.y)];
 //    [soundWindow makeKeyAndOrderFront:nil];
-    [scrollSound setDelegate:self];
+    [scrollSound setDelegate: self];
     mySoundView = [scrollSound soundView];
     if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"DisplayType"] floatValue] < 1.0)
-        [mySoundView setDisplayMode:NX_SOUNDVIEW_WAVE];
+        [mySoundView setDisplayMode: SND_SOUNDVIEW_WAVE];
     else
-        [mySoundView setDisplayMode:NX_SOUNDVIEW_MINMAX];
-    [mySoundView setDelegate:self];
-    [mySoundView setContinuous:YES];
+        [mySoundView setDisplayMode: SND_SOUNDVIEW_MINMAX];
+    [mySoundView setDelegate: self];
+    [mySoundView setContinuous: YES];
+    // [mySoundView setForegroundColor: [NSColor blueColor]];
     soundInfo = [[SoundInfo alloc] init];
     fresh = YES;
     return self;
 }
 
-- newSoundLocation:(NSPoint *)p
+- newSoundLocation: (NSPoint *) p
 {
     int count = [[NSApp delegate] documentCount];
 	
@@ -316,8 +317,8 @@ static int calcFormat(SndSoundStruct *s)
 - displayMode:sender
 {
 	if ([[sender selectedCell] tag] == OUTLINE_MODE)
-		[mySoundView setDisplayMode:NX_SOUNDVIEW_MINMAX];
-	else [mySoundView setDisplayMode:NX_SOUNDVIEW_WAVE];	
+		[mySoundView setDisplayMode:SND_SOUNDVIEW_MINMAX];
+	else [mySoundView setDisplayMode:SND_SOUNDVIEW_WAVE];	
 	return self;
 }
 
@@ -628,19 +629,17 @@ static int calcFormat(SndSoundStruct *s)
     NSBundle *mainB = [NSBundle mainBundle];
     if ([playButton state]) 
         NSRunAlertPanel(
-            [mainB localizedStringForKey:@"Play error" value:@"Play error" table:nil],
-            [mainB localizedStringForKey:[NSString stringWithCString:SndSoundError(err)]
-                    value:[NSString stringWithCString:SndSoundError(err)] table:nil],
-            [mainB localizedStringForKey:@"OK" value:@"OK" table:nil],
+            [mainB localizedStringForKey: @"Play error" value: @"Play error" table: nil],
+            [mainB localizedStringForKey: SndSoundError(err) value: SndSoundError(err) table: nil],
+            [mainB localizedStringForKey: @"OK" value: @"OK" table: nil],
             nil, nil);
     else if ([recordButton state])
         NSRunAlertPanel(
-            [mainB localizedStringForKey:@"Record error" value:@"Record error" table:nil],
-            [mainB localizedStringForKey:[NSString stringWithCString:SndSoundError(err)]
-                   value:[NSString stringWithCString:SndSoundError(err)] table:nil],
-            [mainB localizedStringForKey:@"OK" value:@"OK" table:nil],
+            [mainB localizedStringForKey: @"Record error" value: @"Record error" table: nil],
+            [mainB localizedStringForKey: SndSoundError(err) value: SndSoundError(err) table: nil],
+            [mainB localizedStringForKey: @"OK" value: @"OK" table: nil],
             nil, nil);
-    [self stop:self];
+    [self stop: self];
     return self;
 }
 
