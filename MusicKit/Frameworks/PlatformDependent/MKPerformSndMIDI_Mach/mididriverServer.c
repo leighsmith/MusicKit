@@ -13,8 +13,11 @@
 Modification history:
 
   $Log$
-  Revision 1.1  1999/09/12 00:20:18  leigh
-  Initial revision
+  Revision 1.2  2000/12/07 00:07:10  leigh
+  renamed MD functions to MKMD prefix
+
+  Revision 1.1.1.1  1999/09/12 00:20:18  leigh
+  separated out from MusicKit framework
 
   Revision 1.2  1999/07/29 01:26:07  leigh
   Added Win32 compatibility, CVS logs, SBs changes
@@ -52,8 +55,8 @@ Modification history:
 #include <mach/std_types.h>
 #include "mididriver_types.h"
 
-/* Routine MDBecomeOwner */
-mig_internal novalue _XMDBecomeOwner
+/* Routine MKMDBecomeOwner */
+mig_internal novalue _XMKMDBecomeOwner
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -70,7 +73,7 @@ mig_internal novalue _XMDBecomeOwner
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDBecomeOwner (port_t mididriver_port, port_t owner_port);
+	extern kern_return_t MKMDBecomeOwner (port_t mididriver_port, port_t owner_port);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -111,7 +114,7 @@ mig_internal novalue _XMDBecomeOwner
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDBecomeOwner(In0P->Head.msg_request_port, In0P->owner_port);
+	OutP->RetCode = MKMDBecomeOwner(In0P->Head.msg_request_port, In0P->owner_port);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -125,8 +128,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDReleaseOwnership */
-mig_internal novalue _XMDReleaseOwnership
+/* Routine MKMDReleaseOwnership */
+mig_internal novalue _XMKMDReleaseOwnership
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -143,7 +146,7 @@ mig_internal novalue _XMDReleaseOwnership
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDReleaseOwnership (port_t mididriver_port, port_t owner_port);
+	extern kern_return_t MKMDReleaseOwnership (port_t mididriver_port, port_t owner_port);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -184,7 +187,7 @@ mig_internal novalue _XMDReleaseOwnership
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDReleaseOwnership(In0P->Head.msg_request_port, In0P->owner_port);
+	OutP->RetCode = MKMDReleaseOwnership(In0P->Head.msg_request_port, In0P->owner_port);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -198,8 +201,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDSetClockMode */
-mig_internal novalue _XMDSetClockMode
+/* Routine MKMDSetClockMode */
+mig_internal novalue _XMKMDSetClockMode
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -221,7 +224,7 @@ mig_internal novalue _XMDSetClockMode
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDSetClockMode (port_t mididriver_port, port_t owner_port, short unit, int clock_mode);
+	extern kern_return_t MKMDSetClockMode (port_t mididriver_port, port_t owner_port, short unit, int clock_mode);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -314,7 +317,7 @@ mig_internal novalue _XMDSetClockMode
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDSetClockMode(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit, In0P->clock_mode);
+	OutP->RetCode = MKMDSetClockMode(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit, In0P->clock_mode);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -328,8 +331,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDGetClockTime */
-mig_internal novalue _XMDGetClockTime
+/* Routine MKMDGetClockTime */
+mig_internal novalue _XMKMDGetClockTime
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -348,7 +351,7 @@ mig_internal novalue _XMDGetClockTime
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDGetClockTime (port_t mididriver_port, port_t owner_port, int *time);
+	extern kern_return_t MKMDGetClockTime (port_t mididriver_port, port_t owner_port, int *time);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -401,7 +404,7 @@ mig_internal novalue _XMDGetClockTime
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDGetClockTime(In0P->Head.msg_request_port, In0P->owner_port, &OutP->time);
+	OutP->RetCode = MKMDGetClockTime(In0P->Head.msg_request_port, In0P->owner_port, &OutP->time);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -426,8 +429,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDGetMTCTime */
-mig_internal novalue _XMDGetMTCTime
+/* Routine MKMDGetMTCTime */
+mig_internal novalue _XMKMDGetMTCTime
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -459,7 +462,7 @@ mig_internal novalue _XMDGetMTCTime
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDGetMTCTime (port_t mididriver_port, port_t owner_port, short *format, short *hours, short *minutes, short *seconds, short *frames);
+	extern kern_return_t MKMDGetMTCTime (port_t mididriver_port, port_t owner_port, short *format, short *hours, short *minutes, short *seconds, short *frames);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -560,7 +563,7 @@ mig_internal novalue _XMDGetMTCTime
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDGetMTCTime(In0P->Head.msg_request_port, In0P->owner_port, &OutP->format, &OutP->hours, &OutP->minutes, &OutP->seconds, &OutP->frames);
+	OutP->RetCode = MKMDGetMTCTime(In0P->Head.msg_request_port, In0P->owner_port, &OutP->format, &OutP->hours, &OutP->minutes, &OutP->seconds, &OutP->frames);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -629,8 +632,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDSetClockTime */
-mig_internal novalue _XMDSetClockTime
+/* Routine MKMDSetClockTime */
+mig_internal novalue _XMKMDSetClockTime
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -649,7 +652,7 @@ mig_internal novalue _XMDSetClockTime
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDSetClockTime (port_t mididriver_port, port_t owner_port, int time);
+	extern kern_return_t MKMDSetClockTime (port_t mididriver_port, port_t owner_port, int time);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -716,7 +719,7 @@ mig_internal novalue _XMDSetClockTime
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDSetClockTime(In0P->Head.msg_request_port, In0P->owner_port, In0P->time);
+	OutP->RetCode = MKMDSetClockTime(In0P->Head.msg_request_port, In0P->owner_port, In0P->time);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -730,8 +733,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* SimpleRoutine MDRequestAlarm */
-mig_internal novalue _XMDRequestAlarm
+/* SimpleRoutine MKMDRequestAlarm */
+mig_internal novalue _XMKMDRequestAlarm
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -752,7 +755,7 @@ mig_internal novalue _XMDRequestAlarm
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDRequestAlarm (port_t mididriver_port, port_t owner_port, port_t reply_port, int time);
+	extern kern_return_t MKMDRequestAlarm (port_t mididriver_port, port_t owner_port, port_t reply_port, int time);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -845,7 +848,7 @@ mig_internal novalue _XMDRequestAlarm
 #define	label_punt0
 #endif	TypeCheck
 
-	(void) MDRequestAlarm(In0P->Head.msg_request_port, In0P->owner_port, In0P->reply_port, In0P->time);
+	(void) MKMDRequestAlarm(In0P->Head.msg_request_port, In0P->owner_port, In0P->reply_port, In0P->time);
 	OutP->RetCode = MIG_NO_REPLY;
 #ifdef	label_punt0
 #undef	label_punt0
@@ -854,8 +857,8 @@ punt0:
 	;
 }
 
-/* Routine MDStartClock */
-mig_internal novalue _XMDStartClock
+/* Routine MKMDStartClock */
+mig_internal novalue _XMKMDStartClock
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -872,7 +875,7 @@ mig_internal novalue _XMDStartClock
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDStartClock (port_t mididriver_port, port_t owner_port);
+	extern kern_return_t MKMDStartClock (port_t mididriver_port, port_t owner_port);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -913,7 +916,7 @@ mig_internal novalue _XMDStartClock
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDStartClock(In0P->Head.msg_request_port, In0P->owner_port);
+	OutP->RetCode = MKMDStartClock(In0P->Head.msg_request_port, In0P->owner_port);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -927,8 +930,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDStopClock */
-mig_internal novalue _XMDStopClock
+/* Routine MKMDStopClock */
+mig_internal novalue _XMKMDStopClock
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -945,7 +948,7 @@ mig_internal novalue _XMDStopClock
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDStopClock (port_t mididriver_port, port_t owner_port);
+	extern kern_return_t MKMDStopClock (port_t mididriver_port, port_t owner_port);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -986,7 +989,7 @@ mig_internal novalue _XMDStopClock
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDStopClock(In0P->Head.msg_request_port, In0P->owner_port);
+	OutP->RetCode = MKMDStopClock(In0P->Head.msg_request_port, In0P->owner_port);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -1000,8 +1003,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDClaimUnit */
-mig_internal novalue _XMDClaimUnit
+/* Routine MKMDClaimUnit */
+mig_internal novalue _XMKMDClaimUnit
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -1021,7 +1024,7 @@ mig_internal novalue _XMDClaimUnit
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDClaimUnit (port_t mididriver_port, port_t owner_port, short unit);
+	extern kern_return_t MKMDClaimUnit (port_t mididriver_port, port_t owner_port, short unit);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -1088,7 +1091,7 @@ mig_internal novalue _XMDClaimUnit
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDClaimUnit(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit);
+	OutP->RetCode = MKMDClaimUnit(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -1102,8 +1105,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDReleaseUnit */
-mig_internal novalue _XMDReleaseUnit
+/* Routine MKMDReleaseUnit */
+mig_internal novalue _XMKMDReleaseUnit
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -1123,7 +1126,7 @@ mig_internal novalue _XMDReleaseUnit
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDReleaseUnit (port_t mididriver_port, port_t owner_port, short unit);
+	extern kern_return_t MKMDReleaseUnit (port_t mididriver_port, port_t owner_port, short unit);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -1190,7 +1193,7 @@ mig_internal novalue _XMDReleaseUnit
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDReleaseUnit(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit);
+	OutP->RetCode = MKMDReleaseUnit(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -1204,8 +1207,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDRequestExceptions */
-mig_internal novalue _XMDRequestExceptions
+/* Routine MKMDRequestExceptions */
+mig_internal novalue _XMKMDRequestExceptions
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -1224,7 +1227,7 @@ mig_internal novalue _XMDRequestExceptions
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDRequestExceptions (port_t mididriver_port, port_t owner_port, port_t error_port);
+	extern kern_return_t MKMDRequestExceptions (port_t mididriver_port, port_t owner_port, port_t error_port);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -1291,7 +1294,7 @@ mig_internal novalue _XMDRequestExceptions
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDRequestExceptions(In0P->Head.msg_request_port, In0P->owner_port, In0P->error_port);
+	OutP->RetCode = MKMDRequestExceptions(In0P->Head.msg_request_port, In0P->owner_port, In0P->error_port);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -1305,8 +1308,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDRequestData */
-mig_internal novalue _XMDRequestData
+/* Routine MKMDRequestData */
+mig_internal novalue _XMKMDRequestData
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -1328,7 +1331,7 @@ mig_internal novalue _XMDRequestData
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDRequestData (port_t mididriver_port, port_t owner_port, short unit, port_t reply_port);
+	extern kern_return_t MKMDRequestData (port_t mididriver_port, port_t owner_port, short unit, port_t reply_port);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -1421,7 +1424,7 @@ mig_internal novalue _XMDRequestData
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDRequestData(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit, In0P->reply_port);
+	OutP->RetCode = MKMDRequestData(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit, In0P->reply_port);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -1435,8 +1438,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDSendData */
-mig_internal novalue _XMDSendData
+/* Routine MKMDSendData */
+mig_internal novalue _XMKMDSendData
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -1447,7 +1450,7 @@ mig_internal novalue _XMDSendData
 		short unit;
 		char unitPad[2];
 		msg_type_t dataType;
-		MDRawEvent data[100];
+		MKMDRawEvent data[100];
 	} Request;
 
 	typedef struct {
@@ -1458,7 +1461,7 @@ mig_internal novalue _XMDSendData
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDSendData (port_t mididriver_port, port_t owner_port, short unit, MDRawEventPtr data, unsigned int dataCnt);
+	extern kern_return_t MKMDSendData (port_t mididriver_port, port_t owner_port, short unit, MKMDRawEventPtr data, unsigned int dataCnt);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -1542,7 +1545,7 @@ mig_internal novalue _XMDSendData
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDSendData(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit, In0P->data, In0P->dataType.msg_type_number / 8);
+	OutP->RetCode = MKMDSendData(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit, In0P->data, In0P->dataType.msg_type_number / 8);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -1556,8 +1559,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDGetAvailableQueueSize */
-mig_internal novalue _XMDGetAvailableQueueSize
+/* Routine MKMDGetAvailableQueueSize */
+mig_internal novalue _XMKMDGetAvailableQueueSize
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -1579,7 +1582,7 @@ mig_internal novalue _XMDGetAvailableQueueSize
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDGetAvailableQueueSize (port_t mididriver_port, port_t owner_port, short unit, int *size);
+	extern kern_return_t MKMDGetAvailableQueueSize (port_t mididriver_port, port_t owner_port, short unit, int *size);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -1658,7 +1661,7 @@ mig_internal novalue _XMDGetAvailableQueueSize
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDGetAvailableQueueSize(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit, &OutP->size);
+	OutP->RetCode = MKMDGetAvailableQueueSize(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit, &OutP->size);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -1683,8 +1686,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDRequestQueueNotification */
-mig_internal novalue _XMDRequestQueueNotification
+/* Routine MKMDRequestQueueNotification */
+mig_internal novalue _XMKMDRequestQueueNotification
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -1708,7 +1711,7 @@ mig_internal novalue _XMDRequestQueueNotification
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDRequestQueueNotification (port_t mididriver_port, port_t owner_port, short unit, port_t notification_port, int size);
+	extern kern_return_t MKMDRequestQueueNotification (port_t mididriver_port, port_t owner_port, short unit, port_t notification_port, int size);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -1827,7 +1830,7 @@ mig_internal novalue _XMDRequestQueueNotification
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDRequestQueueNotification(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit, In0P->notification_port, In0P->size);
+	OutP->RetCode = MKMDRequestQueueNotification(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit, In0P->notification_port, In0P->size);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -1841,8 +1844,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDClearQueue */
-mig_internal novalue _XMDClearQueue
+/* Routine MKMDClearQueue */
+mig_internal novalue _XMKMDClearQueue
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -1862,7 +1865,7 @@ mig_internal novalue _XMDClearQueue
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDClearQueue (port_t mididriver_port, port_t owner_port, short unit);
+	extern kern_return_t MKMDClearQueue (port_t mididriver_port, port_t owner_port, short unit);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -1929,7 +1932,7 @@ mig_internal novalue _XMDClearQueue
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDClearQueue(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit);
+	OutP->RetCode = MKMDClearQueue(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -1943,8 +1946,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDFlushQueue */
-mig_internal novalue _XMDFlushQueue
+/* Routine MKMDFlushQueue */
+mig_internal novalue _XMKMDFlushQueue
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -1964,7 +1967,7 @@ mig_internal novalue _XMDFlushQueue
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDFlushQueue (port_t mididriver_port, port_t owner_port, short unit);
+	extern kern_return_t MKMDFlushQueue (port_t mididriver_port, port_t owner_port, short unit);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -2031,7 +2034,7 @@ mig_internal novalue _XMDFlushQueue
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDFlushQueue(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit);
+	OutP->RetCode = MKMDFlushQueue(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -2045,8 +2048,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDSetSystemIgnores */
-mig_internal novalue _XMDSetSystemIgnores
+/* Routine MKMDSetSystemIgnores */
+mig_internal novalue _XMKMDSetSystemIgnores
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -2068,7 +2071,7 @@ mig_internal novalue _XMDSetSystemIgnores
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDSetSystemIgnores (port_t mididriver_port, port_t owner_port, short unit, int sys_ignores);
+	extern kern_return_t MKMDSetSystemIgnores (port_t mididriver_port, port_t owner_port, short unit, int sys_ignores);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -2161,7 +2164,7 @@ mig_internal novalue _XMDSetSystemIgnores
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDSetSystemIgnores(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit, In0P->sys_ignores);
+	OutP->RetCode = MKMDSetSystemIgnores(In0P->Head.msg_request_port, In0P->owner_port, In0P->unit, In0P->sys_ignores);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -2175,8 +2178,8 @@ punt0:
 	OutP->Head.msg_size = msg_size;
 }
 
-/* Routine MDSetClockQuantum */
-mig_internal novalue _XMDSetClockQuantum
+/* Routine MKMDSetClockQuantum */
+mig_internal novalue _XMKMDSetClockQuantum
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -2195,7 +2198,7 @@ mig_internal novalue _XMDSetClockQuantum
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDSetClockQuantum (port_t mididriver_port, port_t owner_port, int microseconds);
+	extern kern_return_t MKMDSetClockQuantum (port_t mididriver_port, port_t owner_port, int microseconds);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -2262,7 +2265,7 @@ mig_internal novalue _XMDSetClockQuantum
 #define	label_punt0
 #endif	TypeCheck
 
-	OutP->RetCode = MDSetClockQuantum(In0P->Head.msg_request_port, In0P->owner_port, In0P->microseconds);
+	OutP->RetCode = MKMDSetClockQuantum(In0P->Head.msg_request_port, In0P->owner_port, In0P->microseconds);
 #ifdef	label_punt0
 #undef	label_punt0
 punt0:
@@ -2319,26 +2322,26 @@ boolean_t mididriver_server
 		typedef novalue (*SERVER_STUB_PROC)
 			(msg_header_t *, msg_header_t *);
 		static const SERVER_STUB_PROC routines[] = {
-			_XMDBecomeOwner,
-			_XMDReleaseOwnership,
-			_XMDSetClockMode,
-			_XMDGetClockTime,
-			_XMDGetMTCTime,
-			_XMDSetClockTime,
-			_XMDRequestAlarm,
-			_XMDStartClock,
-			_XMDStopClock,
-			_XMDClaimUnit,
-			_XMDReleaseUnit,
-			_XMDRequestExceptions,
-			_XMDRequestData,
-			_XMDSendData,
-			_XMDGetAvailableQueueSize,
-			_XMDRequestQueueNotification,
-			_XMDClearQueue,
-			_XMDFlushQueue,
-			_XMDSetSystemIgnores,
-			_XMDSetClockQuantum,
+			_XMKMDBecomeOwner,
+			_XMKMDReleaseOwnership,
+			_XMKMDSetClockMode,
+			_XMKMDGetClockTime,
+			_XMKMDGetMTCTime,
+			_XMKMDSetClockTime,
+			_XMKMDRequestAlarm,
+			_XMKMDStartClock,
+			_XMKMDStopClock,
+			_XMKMDClaimUnit,
+			_XMKMDReleaseUnit,
+			_XMKMDRequestExceptions,
+			_XMKMDRequestData,
+			_XMKMDSendData,
+			_XMKMDGetAvailableQueueSize,
+			_XMKMDRequestQueueNotification,
+			_XMKMDClearQueue,
+			_XMKMDFlushQueue,
+			_XMKMDSetSystemIgnores,
+			_XMKMDSetClockQuantum,
 		};
 
 		if (routines[InP->msg_id - 400])

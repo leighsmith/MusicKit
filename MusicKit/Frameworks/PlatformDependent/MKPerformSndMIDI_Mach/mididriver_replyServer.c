@@ -13,8 +13,11 @@
 Modification history:
 
   $Log$
-  Revision 1.1  1999/09/12 00:20:18  leigh
-  Initial revision
+  Revision 1.2  2000/12/07 00:03:30  leigh
+  renamed MD functions to MKMD prefix
+
+  Revision 1.1.1.1  1999/09/12 00:20:18  leigh
+  separated out from MusicKit framework
 
   Revision 1.2  1999/07/29 01:26:08  leigh
   Added Win32 compatibility, CVS logs, SBs changes
@@ -52,8 +55,8 @@ Modification history:
 #include <mach/std_types.h>
 #include "mididriver_types.h"
 
-/* SimpleRoutine MDAlarmReply */
-mig_internal novalue _XMDAlarmReply
+/* SimpleRoutine MKMDAlarmReply */
+mig_internal novalue _XMKMDAlarmReply
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -72,7 +75,7 @@ mig_internal novalue _XMDAlarmReply
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDAlarmReply (port_t reply_port, int requestedTime, int actualTime);
+	extern kern_return_t MKMDAlarmReply (port_t reply_port, int requestedTime, int actualTime);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -139,7 +142,7 @@ mig_internal novalue _XMDAlarmReply
 #define	label_punt0
 #endif	TypeCheck
 
-	(void) MDAlarmReply(In0P->Head.msg_request_port, In0P->requestedTime, In0P->actualTime);
+	(void) MKMDAlarmReply(In0P->Head.msg_request_port, In0P->requestedTime, In0P->actualTime);
 	OutP->RetCode = MIG_NO_REPLY;
 #ifdef	label_punt0
 #undef	label_punt0
@@ -148,8 +151,8 @@ punt0:
 	;
 }
 
-/* SimpleRoutine MDDataReply */
-mig_internal novalue _XMDDataReply
+/* SimpleRoutine MKMDDataReply */
+mig_internal novalue _XMKMDDataReply
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -158,7 +161,7 @@ mig_internal novalue _XMDDataReply
 		short unit;
 		char unitPad[2];
 		msg_type_t dataType;
-		MDRawEvent data[100];
+		MKMDRawEvent data[100];
 	} Request;
 
 	typedef struct {
@@ -169,7 +172,7 @@ mig_internal novalue _XMDDataReply
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDDataReply (port_t reply_port, short unit, MDRawEventPtr data, unsigned int dataCnt);
+	extern kern_return_t MKMDDataReply (port_t reply_port, short unit, MKMDRawEventPtr data, unsigned int dataCnt);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -227,7 +230,7 @@ mig_internal novalue _XMDDataReply
 #define	label_punt0
 #endif	TypeCheck
 
-	(void) MDDataReply(In0P->Head.msg_request_port, In0P->unit, In0P->data, In0P->dataType.msg_type_number / 8);
+	(void) MKMDDataReply(In0P->Head.msg_request_port, In0P->unit, In0P->data, In0P->dataType.msg_type_number / 8);
 	OutP->RetCode = MIG_NO_REPLY;
 #ifdef	label_punt0
 #undef	label_punt0
@@ -236,8 +239,8 @@ punt0:
 	;
 }
 
-/* SimpleRoutine MDExceptionReply */
-mig_internal novalue _XMDExceptionReply
+/* SimpleRoutine MKMDExceptionReply */
+mig_internal novalue _XMKMDExceptionReply
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -254,7 +257,7 @@ mig_internal novalue _XMDExceptionReply
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDExceptionReply (port_t reply_port, int exception_code);
+	extern kern_return_t MKMDExceptionReply (port_t reply_port, int exception_code);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -295,7 +298,7 @@ mig_internal novalue _XMDExceptionReply
 #define	label_punt0
 #endif	TypeCheck
 
-	(void) MDExceptionReply(In0P->Head.msg_request_port, In0P->exception_code);
+	(void) MKMDExceptionReply(In0P->Head.msg_request_port, In0P->exception_code);
 	OutP->RetCode = MIG_NO_REPLY;
 #ifdef	label_punt0
 #undef	label_punt0
@@ -304,8 +307,8 @@ punt0:
 	;
 }
 
-/* SimpleRoutine MDQueueReply */
-mig_internal novalue _XMDQueueReply
+/* SimpleRoutine MKMDQueueReply */
+mig_internal novalue _XMKMDQueueReply
 	(msg_header_t *InHeadP, msg_header_t *OutHeadP)
 {
 	typedef struct {
@@ -323,7 +326,7 @@ mig_internal novalue _XMDQueueReply
 
 	register Request *In0P = (Request *) InHeadP;
 	register Reply *OutP = (Reply *) OutHeadP;
-	extern kern_return_t MDQueueReply (port_t reply_port, short unit);
+	extern kern_return_t MKMDQueueReply (port_t reply_port, short unit);
 
 #if	TypeCheck
 	boolean_t msg_simple;
@@ -364,7 +367,7 @@ mig_internal novalue _XMDQueueReply
 #define	label_punt0
 #endif	TypeCheck
 
-	(void) MDQueueReply(In0P->Head.msg_request_port, In0P->unit);
+	(void) MKMDQueueReply(In0P->Head.msg_request_port, In0P->unit);
 	OutP->RetCode = MIG_NO_REPLY;
 #ifdef	label_punt0
 #undef	label_punt0
@@ -416,10 +419,10 @@ boolean_t mididriver_reply_server
 		typedef novalue (*SERVER_STUB_PROC)
 			(msg_header_t *, msg_header_t *);
 		static const SERVER_STUB_PROC routines[] = {
-			_XMDAlarmReply,
-			_XMDDataReply,
-			_XMDExceptionReply,
-			_XMDQueueReply,
+			_XMKMDAlarmReply,
+			_XMKMDDataReply,
+			_XMKMDExceptionReply,
+			_XMKMDQueueReply,
 		};
 
 		if (routines[InP->msg_id - 400])
