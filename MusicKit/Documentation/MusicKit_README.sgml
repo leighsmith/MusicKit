@@ -19,12 +19,12 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity maintaineremail "leigh@leighsmith.com">
 <!entity mkvers "5.4">
 <!entity mkvertuple "5.4.2">
-<!entity sndvertuple "2.2.1">
+<!entity sndvertuple "2.3.1">
 <!entity soxvertuple "12.17.3">
 <!entity lamevertuple "3.92">
 <!entity icesvertuple "0.2.2">
 <!entity mkurl "http://www.musickit.org">
-<!entity mkdownload "http://ftp.musickit.org/musickit">
+<!entity mkdownload "http://prdownloads.sourceforge.net/musickit/">
 <!entity mkcvsweb "http://cvs.musickit.org">
 <!entity soxdownload "http://ftp1.sourceforge.net/sox">
 <!entity lamedownload "http://ftp1.sourceforge.net/lame">
@@ -32,41 +32,47 @@ and binary distributions. Likewise if the distribution web site changes.
 ]>
 
 <article id="README">
-
-  <artheader>
+  <articleinfo>
     <title>The MusicKit V&mkvers;</title>
 
 <!-- TODO
    Add in the MusicKit icon
 
-   Ok, how do we place a logo for the document in the title?
-   <informalfigure>
+   Ok, how do we place a logo for the document in the title, since
+   this is legal DocBook, but is ignored?
+-->
     <mediaobject>
       <imageobject>
-	<imagedata FileRef="MK_icon.eps" format="eps">
+	<imagedata FileRef="Images/MK_icon.eps" format="eps">
       </imageobject>
       <imageobject>
-	<imagedata FileRef="MK_icon.png" format="png">
+	<imagedata FileRef="Images/MK_icon.png" format="png">
       </imageobject>
       <imageobject>
-	<imagedata FileRef=".dir.tiff" format="tiff">
+	<imagedata FileRef="Images/.dir.tiff" format="tiff">
       </imageobject>
     </mediaobject>
-  </informalfigure>
--->
 
     <author>
       <firstname>Leigh</firstname>
       <othername role=mi>M.</othername>
       <surname>Smith</surname>
       <affiliation>
+        <orgname>
+          <ulink url="http://www.ozmusiccode.com">Oz Music Code LLC.</ulink>
+        </orgname>
         <address>
+          <street>686 Degraw Street</street>
+          <city>Brooklyn</city>, <state>NY</state>
+          <postcode>11217</postcode>
+          <country>USA</country>
+          <phone>+1-917-498-7743</phone> 
           <email>&maintaineremail;</email>
         </address>
       </affiliation>
     </author>
     <copyright>
-      <year>2000-2002</year>
+      <year>2000-2003</year>
       <holder>The MusicKit Project</holder>
     </copyright>
     <revhistory>
@@ -83,7 +89,7 @@ A. Jaffe) and serve as the highest level overview of the
 MusicKit &mkvertuple; &horbar; the &ldquo;README&rdquo;.
       </para>
     </abstract>
-  </artheader>
+  </articleinfo>
 
 <sect1 id="description">
   <title>Description</title>
@@ -391,8 +397,22 @@ lists changes and is generated from the CVS logs.
       <itemizedlist>
 	<listitem>
 	  <para>
+<ulink url="&mkurl;/MusicKit_README.pdf">
+README in <acronym>PDF</acronym>
+</ulink>
+&horbar; 
+This README document in the 
+<productname>Adobe Portable Document Format</productname>
+(e.g <productname>Acrobat</productname>).
+</para>
+	</listitem>
+	<listitem>
+	  <para>
 <ulink url="&mkurl;/MusicKitConcepts">
 <productname>MusicKit</productname> and <productname>SndKit</productname> Concepts
+</ulink>
+<ulink url="&mkurl;/MusicKitConcepts.pdf">
+(<acronym>PDF</acronym> version)
 </ulink>
 &horbar; Thorough documentation of the <productname>MusicKit</productname> and <productname>SndKit</productname> in operation.
 </para>
@@ -402,18 +422,10 @@ lists changes and is generated from the CVS logs.
 <ulink url="&mkurl;/TutorialClasses">
 <productname>MusicKit</productname> Tutorials
 </ulink>
-&horbar; Tutorial exercises by David A. Jaffe, used in his lecture series.
-</para>
-	</listitem>
-	<listitem>
-	  <para>
-<ulink url="&mkurl;/MusicKit_README.pdf">
-README in <acronym>PDF</acronym>
+<ulink url="&mkurl;/MusicKitTutorials.pdf">
+(<acronym>PDF</acronym> version)
 </ulink>
-&horbar; 
-This README document in the 
-<productname>Adobe Portable Document Format</productname>
-(e.g <productname>Acrobat</productname>).
+&horbar; Tutorial exercises by David A. Jaffe, used in his lecture series.
 </para>
 	</listitem>
 	<listitem>
@@ -796,11 +808,11 @@ The <productname>MusicKit</productname> is listed on the following open source p
 	<ulink url="http://www.sourceforge.net/projects/musickit">
 	<inlinemediaobject>
 	      <imageobject>
-		<imagedata fileref="sourceforge.eps" width=50 depth=30
+		<imagedata fileref="Images/sourceforge.eps" width=50 depth=30
 			   scalefit=1>
 	      </imageobject>
 	      <imageobject>
-		<imagedata fileref="sourceforge.png">
+		<imagedata fileref="Images/sourceforge.png">
 	      </imageobject>
 
 	    </inlinemediaobject>
@@ -813,11 +825,11 @@ sourceforge.net
 	<ulink url="http://www.freshmeat.net/projects/musickit/">
 	<inlinemediaobject>
 	      <imageobject>
-		<imagedata fileref="freshmeat.eps" width=25 depth=15
+		<imagedata fileref="Images/freshmeat.eps" width=25 depth=15
 			   scalefit=1>
 	      </imageobject>
 	      <imageobject>
-		<imagedata fileref="freshmeat.jpg">
+		<imagedata fileref="Images/freshmeat.jpg">
 	      </imageobject>
 	    </inlinemediaobject>
 freshmeat.net
@@ -829,10 +841,10 @@ freshmeat.net
 	<ulink url="http://softrak.stepwise.com/Apps/WebObjects/Softrak.woa/7/wa/displayPackage?package=191&amp;os=10">
 	<inlinemediaobject>
 	      <imageobject>
-		<imagedata fileref="Stepwise.eps" width=50 depth=30 scalefit=1>
+		<imagedata fileref="Images/Stepwise.eps" width=50 depth=30 scalefit=1>
 	      </imageobject>
 	      <imageobject>
-		<imagedata fileref="Stepwise.gif">
+		<imagedata fileref="Images/Stepwise.gif">
 	      </imageobject>
 	    </inlinemediaobject>
 SoftTrak on <systemitem class="systemname">stepwise.com</systemitem>
@@ -844,11 +856,11 @@ SoftTrak on <systemitem class="systemname">stepwise.com</systemitem>
 	<ulink url="http://www.advogato.org/proj/MusicKit%20and%20SndKit/">
 	<inlinemediaobject>
 	      <imageobject>
-		<imagedata fileref="advogato.eps" width=25 depth=15
+		<imagedata fileref="Images/advogato.eps" width=25 depth=15
 			   scalefit=1>
 	      </imageobject>
 	      <imageobject>
-		<imagedata fileref="advogato.gif">
+		<imagedata fileref="Images/advogato.gif">
 	      </imageobject>
 	    </inlinemediaobject>
 advogato.org
@@ -860,11 +872,11 @@ advogato.org
 	<ulink url="http://www.opensourcedirectory.org/projects/musickit/">
 	<inlinemediaobject>
 	      <imageobject>
-		<imagedata fileref="osd.eps" width=25 depth=15
+		<imagedata fileref="Images/osd.eps" width=25 depth=15
 			   scalefit=1>
 	      </imageobject>
 	      <imageobject>
-		<imagedata fileref="osd.gif">
+		<imagedata fileref="Images/osd.gif">
 	      </imageobject>
 	    </inlinemediaobject>
 opensourcedirectory.org
@@ -961,10 +973,12 @@ Newer versions than &soxvertuple; will probably just work.
               </para>
               <para>
 Install the library using:
+<informalexample>
 <screen>
 cd sox-&soxvertuple;
 sudo make install-lib
 </screen>
+</informalexample>
               </para>
 	    </listitem>
 	  </varlistentry>
@@ -999,6 +1013,7 @@ This version requires a
 <ulink url="&mkurl;/libshout.patch">patch</ulink> to be applied to compile on
 <productname>MacOS X</productname>. Apply it using the commands:
 
+<informalexample>
 <screen>
 cd <replaceable>directory above ices-&icesvertuple;</replaceable>
 patch -p1 < libshout.patch
@@ -1008,6 +1023,7 @@ autoconf
 make
 sudo make install
 </screen>
+</informalexample>
 
 </para>
 <!-- End of patch for ices-0.2.2 -->
@@ -1626,11 +1642,11 @@ If you have discovered a bug, please report it via the
    <ulink url="http://sourceforge.net">
 	<inlinemediaobject>
 	<imageobject>
-	  <imagedata fileref="sourceforge.eps" width=50 depth=30
+	  <imagedata fileref="Images/sourceforge.eps" width=50 depth=30
 		     scalefit=1>
 	</imageobject>
 	<imageobject>
-	  <imagedata fileref="sourceforge.png">
+	  <imagedata fileref="Images/sourceforge.png">
 <!--
 	<imagedata fileref="http://sourceforge.net/sflogo.php?group_id=9881"
 	  width="88"
