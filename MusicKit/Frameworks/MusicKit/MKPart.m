@@ -15,6 +15,11 @@ Modification history:
  Now in CVS - musickit.sourceforge.net
 
  $Log$
+ Revision 1.23  2002/03/12 22:59:03  sbrandon
+ Added -hash and -isEqual methods so that MKPart objects can be used
+ successfully as keys in NSMutableDictionaries. Previously this failed and
+ this caused various bugs including one in saving/loading binary scorefiles.
+
  Revision 1.22  2002/03/06 09:48:58  skotmcdonald
  Added not-nil checks around ivar releases in dealloc
 
@@ -369,6 +374,45 @@ static void removeNote(MKPart *self,id aNote);
   // Changed on K. Hamels suggestion, used to message to releaseSelfOnly but this would cause a dealloc loop.
 }
 
+- (unsigned) hash
+{
+    unsigned val = 0;
+    if (info) {
+        val += 1000 * [info noteTag];
+    }
+    if (notes) {
+        val += [notes count];
+    }
+    return val;
+}
+
+- (BOOL) isEqual:(MKPart *) anObject
+{
+    unsigned i,count;
+    SEL oaiSel;
+    IMP objectAtIndex;
+#define OBJECTATINDEX(_o,_x)  (*objectAtIndex)((_o), oaiSel, (_x))
+    id othernotes;
+    if (!anObject)                           return NO;
+    if (self == anObject)                    return YES;
+    if ([self class] != [anObject class])    return NO;
+    if ([anObject noteCount] != noteCount)   return NO;
+    if (![[anObject infoNote] isEqual:info]) return NO;
+    count = [notes count];
+    othernotes = [anObject notes];
+
+    oaiSel = @selector(objectAtIndex:);
+    objectAtIndex = [notes methodForSelector: oaiSel];
+    
+    for (i = 0 ; i < count ; i++) {
+        if (![OBJECTATINDEX(notes,i) isEqual:OBJECTATINDEX(notes,i)]) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+
 static void unsetPartLinks(MKPart *aPart)
 {
   id notes = aPart->notes;
@@ -683,8 +727,10 @@ static void removeNote(MKPart *self, MKNote *aNote)
 # define OBJECTATINDEX(x)  (*objectAtIndex)(aList, oaiSel, (x))
     IMP addPart = [parts methodForSelector:@selector(addObject:)];
 # define ADDPART(x) (*addPart)(parts, @selector(addObject:), (x))
-    IMP partsContainsObject = [parts methodForSelector:@selector(containsObject:)];
-# define PARTSCONTAINSOBJECT(x) (*partsContainsObject)(parts, @selector(containsObject:), (x))
+    IMP partsIndexOfObjectIdenticalTo = 
+       [parts methodForSelector:@selector(indexOfObjectIdenticalTo:)];
+# define PARTSCONTAINSOBJECT(x) ( (int)((*partsIndexOfObjectIdenticalTo)\
+       (parts, @selector(indexOfObjectIdenticalTo:), (x))) != NSNotFound )
 
     suspendCompaction = YES;
     alc = [aList count];
