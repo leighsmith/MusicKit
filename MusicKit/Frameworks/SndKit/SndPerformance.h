@@ -36,9 +36,8 @@
     double  playTime;
 /*! @var startIndex The index where the sound will begin playing from at the start of a sound performance. */
     long    startAtIndex;
-/*! @var playIndex The index where the sound will next play from (using <i>retrievePerformBuffer:</i>).
-                   TODO why is the playIndex a double rather than a long? */
-    double  playIndex;
+/*! @var playIndex The index where the sound will next play from (using <i>retrievePerformBuffer:</i>). */
+    long  playIndex;
 /*! @var endAtIndex */
     long    endAtIndex;
 /*! @var paused */
@@ -48,9 +47,9 @@
 
 /*! @var looping Indicates whether to loop during performance. */
     BOOL looping;
-/*! @var loopStartIndex The sample the loop begins at. */
+/*! @var loopStartIndex The sample the loop begins at. This sample is included in the loop. */
     long loopStartIndex;
-/*! @var loopEndIndex The sample the loop ends at. */
+/*! @var loopEndIndex The sample the loop ends at. This sample is included in the loop. */
     long loopEndIndex;
 
     // ivars for variable speed playback - TODO needs fixing and documenting
@@ -151,14 +150,14 @@ startPosition: (double) startPosition
     @abstract   Returns the sample to start playing from.
     @result     Returns the sample index to start playing from.
 */
-- (double) playIndex;
+- (long) playIndex;
 
 /*!
     @method     setPlayIndex:
     @abstract   Sets the sample to start playing from.
     @param      newPlayIndex The sample index that playing should begin from.
 */
-- (void) setPlayIndex: (double) newPlayIndex;
+- (void) setPlayIndex: (long) newPlayIndex;
 
 /*!
   @method     rewindPlayIndexBySamples:
@@ -169,7 +168,7 @@ startPosition: (double) startPosition
   @param      numberOfSamplesToRewind The number of samples to rewind to where playing should begin from.
   @result     Returns the new play index as a convience to save calling <i>playIndex</i>.
  */
-- (double) rewindPlayIndexBySamples: (long) numberOfSamplesToRewind;
+- (long) rewindPlayIndexBySamples: (long) numberOfSamplesToRewind;
 
 /*!
     @method   endAtIndex
@@ -208,25 +207,29 @@ startPosition: (double) startPosition
 
 /*!
   @method     setLoopStartIndex:
-  @abstract   Sets the sample to stop playing at.
-  @param      newEndAtIndex The sample index that playing should stop after.
+  @abstract   Sets the sample to start looping from.
+  @param      loopStartIndex The sample index to start looping from.
   @discussion The loop start index may be changed while the sound is being performed and regardless of
-              whether the performance is looping.
+              whether the performance is looping. This sample index is the first sample of the loop, i.e it is
+              the first sample heard when the performance loops.
  */
 - (void) setLoopStartIndex: (long) loopStartIndex;
 
 /*!
   @method     loopStartIndex
-  @abstract   Returns the sample to start playing at.
-  @result     Returns the sample index to start playing at.
+  @abstract   Returns the sample to start looping from.
+  @result     Returns the sample index to start looping from.
  */
 - (long) loopStartIndex;
 
 /*!
   @method     setLoopEndIndex:
-  @abstract   Sets the sample at which the performance loops back to the start index (set using setLoopStartIndex:).
+  @abstract   Sets the sample at which the performance loops back to the start index
+              (set using <B>setLoopStartIndex:</B>).
   @param      newLoopEndIndex The sample index at the end of the loop.
-  @discussion The loop end index may be changed while the sound is being performed and regardless of
+  @discussion This sample index is the last sample of the loop, i.e. it is the last sample heard
+              before the performance loops, the next sample heard will be that returned by -<B>loopStartIndex</B>.
+              The loop end index may be changed while the sound is being performed and regardless of
               whether the performance is looping.
  */
 - (void) setLoopEndIndex: (long) newLoopEndIndex;
@@ -266,8 +269,8 @@ startPosition: (double) startPosition
 
 /*!
     @method   description
-    @abstract 
-    @result     A string containing a brief description of the performance object
+    @abstract Returns a string containing a brief description of the performance object.
+    @result     A string containing a brief description of the performance object.
 */
 - (NSString *) description;
 
@@ -299,7 +302,8 @@ startPosition: (double) startPosition
 /*!
   @method isPlaying
   @abstract Indicates whether the current performance is actually sounding.
-  @result Returns YES if the performance is currently sounding, NO if it is paused, has yet to be begin playing or has finished.
+  @result Returns YES if the performance is currently sounding, NO if it is paused,
+          has yet to be begin playing or has finished.
  */
 - (BOOL) isPlaying;
 
