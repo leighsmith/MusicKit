@@ -1,5 +1,21 @@
 /*
- * Copyright (c) 1999 Apple Computer, Inc. All rights reserved.
+  $Id$
+
+  Description:
+    Error codes.
+
+  Substantially based on Sound Kit, Release 2.0, Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
+  Copyright (c) 1999 Apple Computer, Inc. All rights reserved.
+  Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
+
+ Legal Statement Covering Additions by The MusicKit Project:
+ 
+     Permission is granted to use and modify this code for commercial and
+     non-commercial purposes so long as the author attribution and copyright
+     messages remain intact and accompany all relevant code.
+ 
+*/
+/*
  *
  * @APPLE_LICENSE_HEADER_START@
  * 
@@ -22,11 +38,6 @@
  * @APPLE_LICENSE_HEADER_END@
  */
 
-/*
- *	sounderror.h
- *	Copyright 1988-89 NeXT, Inc.
- *
- */
 #ifndef __SNDKIT_SNDERROR_H__
 #define __SNDKIT_SNDERROR_H__
 
@@ -117,11 +128,11 @@ typedef enum {
 #endif
 
 /*!
-@function SndSoundError
- @abstract This routine returns a pointer to a string that describes the given error code.
- @param err The reported error number
- @result A pointer to a string that describes the given error code.
+  @function SndSoundError
+  @abstract This routine returns a NSString that describes the given error code.
+  @param err The reported error number
+  @result An NSString that describes the given error code.
  */
-const char *SndSoundError(int err);
+const NSString *SndSoundError(int err);
 
 #endif
