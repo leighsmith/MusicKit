@@ -7,11 +7,11 @@
             SUPERCLASS = NSObject; 
         }, 
         {
-            ACTIONS = {go = id; showInfoPanel = id; terminate = id; }; 
+            ACTIONS = {go = id; showInfoPanel = id; }; 
             CLASS = MidiLoop; 
             LANGUAGE = ObjC; 
-            OUTLETS = {infoPanel = id; midiObj = id; stringTable = id; }; 
-            SUPERCLASS = NSApplication; 
+            OUTLETS = {infoPanel = id; }; 
+            SUPERCLASS = NSObject; 
         }, 
         {
             ACTIONS = {go = id; showInfoPanel = id; terminate = id; }; 
