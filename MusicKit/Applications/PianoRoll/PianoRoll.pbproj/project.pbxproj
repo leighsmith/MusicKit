@@ -1,10 +1,15 @@
+// !$*UTF8*$!
 {
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 30;
+	objectVersion = 32;
 	objects = {
 		014780A1FFC46F29CFED3B96 = {
+			buildStyles = (
+				26063802005AEBA3CFED3B96,
+				26063803005AEBA3CFED3B96,
+			);
 			isa = PBXProject;
 			mainGroup = 014780A2FFC46F29CFED3B96;
 			productRefGroup = 014780BFFFC46F29CFED3B96;
@@ -128,6 +133,7 @@
 		014780B8FFC46F29CFED3B96 = {
 			children = (
 				014780B9FFC46F29CFED3B96,
+				26063804005AEC78CFED3B96,
 			);
 			isa = PBXGroup;
 			name = Images;
@@ -190,10 +196,12 @@
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				INSTALL_PATH = "$(HOME)/Apps";
 				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = PianoRoll;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
@@ -218,7 +226,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string></string>
 	<key>CFBundleIconFile</key>
-	<string>PianoRoll.tiff</string>
+	<string>PianoRoll.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.musickit.PianoRoll</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -260,55 +268,30 @@
 			fileRef = 014780AAFFC46F29CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		014780C4FFC46F29CFED3B96 = {
 			fileRef = 014780ABFFC46F29CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		014780C5FFC46F29CFED3B96 = {
 			fileRef = 014780ACFFC46F29CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		014780C6FFC46F29CFED3B96 = {
 			fileRef = 014780ADFFC46F29CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		014780C7FFC46F29CFED3B96 = {
 			fileRef = 014780AEFFC46F29CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		014780C8FFC46F29CFED3B96 = {
@@ -319,6 +302,7 @@
 				5A1B9004FFEA9AC4CFED3B96,
 				5A1B9005FFEA9AC4CFED3B96,
 				5A1B9009FFEAA4D0CFED3B96,
+				26063805005AEC78CFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
@@ -327,11 +311,6 @@
 			fileRef = 014780B9FFC46F29CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		014780CDFFC46F29CFED3B96 = {
@@ -352,12 +331,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -366,12 +339,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -380,12 +347,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -394,12 +355,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -408,12 +363,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -422,12 +371,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -446,33 +389,18 @@
 			fileRef = 014780BBFFC46F29CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		014780D6FFC46F29CFED3B96 = {
 			fileRef = 014780BCFFC46F29CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		014780D7FFC46F29CFED3B96 = {
 			fileRef = 014780BDFFC46F29CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		014780D8FFC46F29CFED3B96 = {
@@ -492,11 +420,35 @@
 			fileRef = 014780DAFFC4726BCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
+			};
+		};
+		26063802005AEBA3CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		26063803005AEBA3CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
+		26063804005AEC78CFED3B96 = {
+			isa = PBXFileReference;
+			path = PianoRoll.icns;
+			refType = 4;
+		};
+		26063805005AEC78CFED3B96 = {
+			fileRef = 26063804005AEC78CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
 			};
 		};
 		5A1B8FFDFFEA9AC4CFED3B96 = {
@@ -548,33 +500,18 @@
 			fileRef = 5A1B8FFDFFEA9AC4CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		5A1B9004FFEA9AC4CFED3B96 = {
 			fileRef = 5A1B9001FFEA9AC4CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		5A1B9005FFEA9AC4CFED3B96 = {
 			fileRef = 5A1B8FFFFFEA9AC4CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		5A1B9007FFEAA4D0CFED3B96 = {
@@ -596,11 +533,6 @@
 			fileRef = 5A1B9007FFEAA4D0CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 	};
