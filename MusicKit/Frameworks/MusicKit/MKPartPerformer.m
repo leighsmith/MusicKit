@@ -217,7 +217,11 @@ static BOOL fastActivation = NO;
   */
 {
   [super deactivate];  // added by LMS - never stopped the performance.
-  if ([part notesNoCopy] != _list) /* Was copied. */
+  // TODO we have to do the casting since notesNoCopy returns an NSMutableArray
+  // and _list is an NSArray, we should investigate why notesNoCopy returns a
+  // mutable array, it should be the job of the method using the result to
+  // reset it's mutability.
+  if ((NSArray *) [part notesNoCopy] != _list) /* Was copied. */
     [_list release];
   _list = nil;
   _loc = _endLoc = -1;//sb: was NULL;
