@@ -16,7 +16,7 @@
 #import "SndStreamMixer.h"
 #import "SndAudioProcessor.h"
 
-#define SNDSTREAMMIXER_DEBUG 0
+#define SNDSTREAMMIXER_DEBUG 1
 
 @implementation SndStreamMixer
 
@@ -36,13 +36,13 @@
 - init
 {
     if(streamClients == nil) 
-      streamClients = [NSMutableArray arrayWithCapacity: 10];
+      streamClients = [[NSMutableArray arrayWithCapacity: 10] retain];
       
     if(streamClientsLock == nil) 
       streamClientsLock = [NSRecursiveLock new];
       
     if (processorChain == nil) 
-      processorChain = [SndAudioProcessorChain audioProcessorChain];
+      processorChain = [[SndAudioProcessorChain audioProcessorChain] retain];
       
     return self;
 }
