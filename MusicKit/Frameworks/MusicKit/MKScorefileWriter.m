@@ -33,6 +33,10 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2002/01/29 16:32:01  sbrandon
+  don't bother to retain/release constant NSStrings
+  (_MK_BINARYSCOREFILEEXT, _MK_SCOREFILEEXT)
+
   Revision 1.6  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -134,9 +138,9 @@ Modification history:
 + (NSString *) fileExtension
   /* Returns "score", the default file extension for score files.
      This method is used by the MKFileWriter class. The string is not
-     copied. */
+     copied. No need to retain/autorelease since it's static anyway */
 {
-    return [[_MK_SCOREFILEEXT retain] autorelease];
+    return _MK_SCOREFILEEXT;
 }
 
 - (NSString *) fileExtension
@@ -144,9 +148,9 @@ Modification history:
      file was set with setFile: or setStream:. Returns "playscore", the
      default file extension for optimized format score files if the file
      was set with setOptimizedFile: or setOptimizedStream:. 
-     The string is not copied. */
+     The string is not copied. No need to retain/autorelease since it's static anyway */
 {
-    return [[(_isOptimized ? _MK_BINARYSCOREFILEEXT : _MK_SCOREFILEEXT) retain] autorelease];
+    return _isOptimized ? _MK_BINARYSCOREFILEEXT : _MK_SCOREFILEEXT ;
 }
 
 -initializeFile
