@@ -4,19 +4,19 @@
   Defined In: The MusicKit
 
   Description:
-    A Samples object is a type of WaveTable that uses a NSSound object (from
-    the AppKit) as its data.  The Sound itself can only contain sampled
-    data; each sample in the Sound corresponds to an array entry in the
-    Samples object.  The Sound object can be set directly by invoking the
+    A MKSamples object is a type of MKWaveTable that uses a Snd object (from
+    the SndKit) as its data.  The Snd itself can only contain sampled
+    data; each sample in the Snd corresponds to an array entry in the
+    MKSamples object.  The Snd object can be set directly by invoking the
     method setSound:, or you can read it from a soundfile, through the
     readSoundfile: method.
    
-    Note that the Samples object currently does not resample (except in
+    Note that the MKSamples object currently does not resample (except in
     one special case, when the sound is evenly divisible by the access
     length). Except in this special case, the length of the sound must be
     the same as the length you ask for with the access methods.
    
-    Note also that for use with the Music Kit oscillator unit generators,
+    Note also that for use with the MusicKit oscillator unit generators,
     the length must be a power of 2 and must fit in DSP memory (1024 or
     less is a good length).
 
@@ -30,6 +30,9 @@
  Modification history:
 
   $Log$
+  Revision 1.4  2000/04/20 21:33:12  leigh
+  Added extra methods to allow processing regions of samples
+
   Revision 1.3  2000/03/11 01:22:19  leigh
   Now using NSSound to replace Snd. This means removing functionality until NSSound is full-featured
 
@@ -45,9 +48,13 @@
 
 @interface MKSamples : MKWaveTable
 {
-    NSSound *sound;        /* The object's Sound object. */ 
-    NSString *soundfile;   /* The name of the soundfile, if the Sound was set through readSoundfile:. */
+    Snd *sound;                       /* The object's Sound object. */
+    NSString *soundfile;              /* The name of the soundfile, if the Sound was set through readSoundfile:. */
     int tableType;
+    int curLoc;                       /* Index into current sample in soundfile */
+    double amplitude;                 /* Amplitude scaling of soundfile in fixed point */
+    unsigned int startSampleLoc;      /* Starting sample to be processed */
+    unsigned int lastSampleLoc;       /* Ending sample to be processed, defining the portion of sound to be used. */
 }
 
 - init;
@@ -69,7 +76,7 @@
   * See also superclass -copy.
   */
 
-- (BOOL)setSound:(NSSound *)aSound; 
+- (BOOL)setSound:(Snd *)aSound; 
  /* 
   * Sets the receiver's Sound to a copy of aSound (the receiver's current
   * Sound is freed).  aSound must be one-channel, 16-bit linear data.  You
@@ -78,7 +85,7 @@
   * Returns nil if aSound is in the wrong format, otherwise frees the
   * receiver.  */
 
-- (int)readSoundfile:(NSString *)aSoundfile;
+- (BOOL)readSoundfile:(NSString *)aSoundfile;
  /* 
   * Creates a new Sound object, reads the data from aSoundfile into the
   * object, and then sends setSound: to the receiver with the new Sound as
@@ -90,7 +97,7 @@
   * of nil, 1 otherwise (success)
   */
 
-- sound;
+- (Snd *) sound;
  /* Returns the receiver's Sound object. */
 
 - (NSString *) soundfile;
@@ -133,6 +140,30 @@
 /* Returns type of currently cached data.  One of MK_oscTable or 
  * MK_excitationTable.
  */
+
+- (void) setProcessingStartSample: (unsigned int) sampleNum;
+    /* assigns the starting sample to begin some (arbitary) processing from */
+
+- (unsigned int) processingStartSample;
+    /* returns the sample used to begin some (arbitary) processing from */
+
+- (void) setProcessingEndSample: (unsigned int) sampleNum;
+    /* assigns the sample to end some (arbitary) processing at */
+
+- (unsigned int) processingEndSample;
+    /* returns the sample to end some (arbitary) processing at */
+
+- (unsigned int) currentSample;
+    /* returns the current sample being used to perform processing */
+
+- (void) setCurrentSample: (unsigned int) sampleNum;
+    /* assigns the current sample to perform processing at */
+
+- (double) amplitude;
+    /* returns the amplitude scaling */
+
+- (void) setAmplitude: (double) amp;
+    /* assigns an amplitude scaling */
 
 - _fillTableLength:(int)aLength scale:(double)aScaling ;
  /* Private method that supports both OscTable and ExcitationTable */

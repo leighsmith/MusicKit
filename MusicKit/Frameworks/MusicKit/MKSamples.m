@@ -23,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/04/20 21:33:12  leigh
+  Added extra methods to allow processing regions of samples
+
   Revision 1.3  2000/03/11 01:22:19  leigh
   Now using NSSound to replace Snd. This means removing functionality until NSSound is full-featured
 
@@ -123,7 +126,7 @@ id MKGetSamplesClass(void)
     return newObj;
 }
 
-- (int)readSoundfile:(NSString *)aSoundfile 
+- (BOOL)readSoundfile:(NSString *)aSoundfile 
 /* Creates a sound object from the specified file and initializes the
    receiver from the data in that file. Implemented in terms of 
    setSound:. This method creates a Sound object which is owned
@@ -131,23 +134,26 @@ id MKGetSamplesClass(void)
    
    Returns self or nil if there's an error. */
 {
+#if 1
+    Snd *aTmpSound = [[Snd alloc] initFromSoundfile: aSoundfile];
+#else
     NSSound *aTmpSound = [[NSSound alloc] initWithContentsOfFile: aSoundfile byReference: NO];
+#endif
 
     if (!aTmpSound)
-      return 0;
+      return NO;
     if (![self setSound:aTmpSound]) {
 	[aTmpSound release];
 	if (soundfile) [soundfile release];
-	return 0;
+	return NO;
     }
-/*    soundfile = _MKMakeStr(aSoundfile); */
-    if (soundfile) [soundfile autorelease]; /*sb: gets rid of old one! */
+    if (soundfile) [soundfile autorelease]; /* gets rid of old one! */
     soundfile = [aSoundfile copy];
     [aTmpSound release]; /* It's copied by setSound: */
-    return 1;//sb: was self
+    return YES; //sb: was self
 }
 
-- (BOOL)setSound:(NSSound *)aSoundObj //sb: originally returned self/nil -- now BOOL.
+- (BOOL)setSound:(Snd *)aSoundObj //sb: originally returned self/nil -- now BOOL.
 /* Sets the Sound of the Samples object to be aSoundObj.
    aSoundObj must be in 16-bit linear mono format. If not, setSound: returns
    nil. aSoundObj is copied. 
@@ -161,8 +167,9 @@ id MKGetSamplesClass(void)
 // LMS disabled since we can't check it and it shouldn't matter anyway.
 //    if (([aSoundObj dataFormat] != SND_FORMAT_LINEAR_16) ||
 //	([aSoundObj channelCount] != 1))
-      return FALSE; /*** FIXME Eventually convert ***/
+//      return FALSE; /*** FIXME Eventually convert ***/
     sound = [aSoundObj copy];
+    curLoc = 0;
     return TRUE;
 }
 
@@ -244,12 +251,55 @@ id MKGetSamplesClass(void)
 /* Returns the name of the soundfile from which the data was 
    obtained, if any. The receiver should not alter this string. 
    If the data was obtained using setSound:,
-   returns a NULL. 
+   returns a nil. 
    */
 {
     return soundfile;
 }
 
+// Methods for setting and using processing sub-regions
+
+- (void) setProcessingStartSample: (unsigned int) sampleNum
+{
+    startSampleLoc = sampleNum;
+}
+
+- (unsigned int) processingStartSample
+{
+    return startSampleLoc;
+}
+
+- (void) setProcessingEndSample: (unsigned int) sampleNum
+{
+    lastSampleLoc = sampleNum;
+}
+
+- (unsigned int) processingEndSample
+{
+    return lastSampleLoc;
+}
+
+- (unsigned int) currentSample
+{
+    return curLoc;
+}
+
+- (void) setCurrentSample: (unsigned int) sampleNum
+{
+    curLoc = sampleNum;
+}
+
+- (double) amplitude
+    /* returns the amplitude scaling */
+{
+    return amplitude;
+}
+
+- (void) setAmplitude: (double) newAmp;
+    /* assigns an amplitude scaling */
+{
+    amplitude = newAmp;
+}
 
 /* 
 
@@ -271,7 +321,7 @@ download 16-bit data by really writing two bytes per word.  If it really
 will be treated as 24 bits, then you have your choice.  Left-shifting is
 reasonable (maxamp in 16 => maxamp in 24) but it leaves you no dynamic
 range for growth.  If you don't left-shift, you do have to sign extend.
--Julius
+- Julius Smith
 
 Since the Samples object has a scale factor argument in its
 fileTableLength:scale: method, you can always 'get there from here'.
