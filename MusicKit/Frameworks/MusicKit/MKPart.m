@@ -89,6 +89,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2000/05/06 01:12:14  leigh
+  Typed parameters to reduce warnings
+
   Revision 1.9  2000/05/06 00:31:25  leigh
   Converted tagTable to NSMutableDictionary
 
@@ -753,7 +756,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
       return self;
     {
         id aPart;
-        id parts = [[NSMutableArray alloc] init];
+        NSMutableArray *parts = [[NSMutableArray alloc] init];
 	int noteIndex;
         int partsIndex;
         /*sb: the following are fairly obselete. addObjectIfAbsent is obselete, and must

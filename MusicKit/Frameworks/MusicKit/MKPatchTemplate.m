@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/05/06 01:12:14  leigh
+  Typed parameters to reduce warnings
+
   Revision 1.3  2000/04/16 04:10:27  leigh
   Removed unnecessary MAKECOMPILERHAPPY test
 
@@ -93,7 +96,7 @@ Modification history:
 {
     id _elementStorage; /* Storage class object of template entries */
     id _connectionStorage; /* Storage class object of connection info */     
-    id *_deallocatedPatches; /* If Orchestra is loaded, 
+    NSMutableArray **_deallocatedPatches; /* If Orchestra is loaded, 
 				this is an array of Lists 
 				of deallocated patches, one per DSP.  */
     unsigned int _eMemSegments; /* External memory segment bit vector */    
@@ -329,7 +332,7 @@ static unsigned addEl(MKPatchTemplate *self,templateEntry *newEntry)
     return addEl(self,&newEntry);
 }
 
-id _MKDeallocatedSynthPatches(MKPatchTemplate *templ,int orchIndex)
+NSMutableArray *_MKDeallocatedSynthPatches(MKPatchTemplate *templ,int orchIndex)
 {
     return templ->_deallocatedPatches[orchIndex];
 }
