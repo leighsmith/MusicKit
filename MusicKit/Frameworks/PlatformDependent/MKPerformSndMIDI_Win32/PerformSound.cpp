@@ -33,6 +33,9 @@
 */
 /*
 // $Log$
+// Revision 1.4  2001/02/23 03:15:11  leigh
+// formatting cleanup
+//
 // Revision 1.3  2000/01/03 20:33:26  leigh
 // initialises the SND API before attempting to retrieve the DirectSound object
 //
@@ -133,58 +136,58 @@ static void GenAudio(float** ppfBuffer, DWORD dwLen, DWORD channelsToPlay, DWORD
 	float pan    = 1;
 	float ipan   = 1 - pan;
 */
-  float mixedSample;
-	int bytesPerSample;
-	DWORD byteToPlayFrom;
-	DWORD channel;
-  unsigned char *grabDataFrom;
-  signed short sampleWord;
-  AudioStream *playing = (AudioStream *) audStreamPtr;
-  SNDSoundStruct *snd = playing->snd;
+    float mixedSample;
+            int bytesPerSample;
+            DWORD byteToPlayFrom;
+            DWORD channel;
+    unsigned char *grabDataFrom;
+    signed short sampleWord;
+    AudioStream *playing = (AudioStream *) audStreamPtr;
+    SNDSoundStruct *snd = playing->snd;
 
-	bytesPerSample = 2; // TODO assume its a short (2 byte / WORD format) needs checking dataFormat.
+    bytesPerSample = 2; // TODO assume its a short (2 byte / WORD format) needs checking dataFormat.
 	
-  // we do each sample individually so we have the option of mixing using floating point.
-	for (DWORD sampBufferIndex = 0; sampBufferIndex < dwLen; sampBufferIndex++) {
-    if(playing->isPlaying)  // we can arrive here trying to play a finished sample, if so just play silence.
-      playing->sampleToPlay = playing->sampleFramesGenerated * snd->channelCount;
-		for(channel = 0; channel < channelsToPlay; channel++) {
-			byteToPlayFrom = playing->sampleToPlay * bytesPerSample;
-      if(playing->isPlaying) {
-        // check if the sound has been played to the end.
-        if(byteToPlayFrom < (unsigned) snd->dataSize) {
-          grabDataFrom = (unsigned char *) snd + snd->dataLocation + byteToPlayFrom;
-          // obtain data from big-endian ordered words
-          sampleWord = (((signed short) grabDataFrom[0]) << 8) + (grabDataFrom[1] & 0xff);
-          mixedSample = sampleWord / 32768.0f;  // make a float, do any other sounds, normalize and then write it.
+    // we do each sample individually so we have the option of mixing using floating point.
+    for (DWORD sampBufferIndex = 0; sampBufferIndex < dwLen; sampBufferIndex++) {
+        if(playing->isPlaying)  // we can arrive here trying to play a finished sample, if so just play silence.
+            playing->sampleToPlay = playing->sampleFramesGenerated * snd->channelCount;
+        for(channel = 0; channel < channelsToPlay; channel++) {
+            byteToPlayFrom = playing->sampleToPlay * bytesPerSample;
+            if(playing->isPlaying) {
+                // check if the sound has been played to the end.
+                if(byteToPlayFrom < (unsigned) snd->dataSize) {
+                    grabDataFrom = (unsigned char *) snd + snd->dataLocation + byteToPlayFrom;
+                    // obtain data from big-endian ordered words
+                    sampleWord = (((signed short) grabDataFrom[0]) << 8) + (grabDataFrom[1] & 0xff);
+                    mixedSample = sampleWord / 32768.0f;  // make a float, do any other sounds, normalize and then write it.
 #if SQUAREWAVE_DEBUG
-          if (playing->sampleFramesGenerated % 44 > 22) {
-            mixedSample = 0.4f;
-          }
-          else {
-            mixedSample = -0.4f;
-          }
+                    if (playing->sampleFramesGenerated % 44 > 22) {
+                        mixedSample = 0.4f;
+                    }
+                    else {
+                        mixedSample = -0.4f;
+                    }
 #endif
+                }
+                else {
+                    mixedSample = 0.0f;   // if at end of sound, play silence
+                    // Signal back to the rest of the world that we've finished playing the sound.
+                    if(playing->finishedPlayFun != SND_NULL_FUN && playing->isPlaying) {
+                        // Mark this sound as finished, but its up to the delegate to stop things?
+                        (*(playing->finishedPlayFun))(snd, playing->playTag, SND_ERR_NONE);
+                    }
+                    playing->isPlaying = FALSE;
+                }
+            }
+            else {
+                mixedSample = 0.0f;
+            }
+            ppfBuffer[channel][sampBufferIndex] = mixedSample;  // * pan;
+            if(snd->channelCount != 1)	// play mono by sending same sample to both channels
+                playing->sampleToPlay++;
         }
-        else {
-          mixedSample = 0.0f;   // if at end of sound, play silence
-          // Signal back to the rest of the world that we've finished playing the sound.
-          if(playing->finishedPlayFun != SND_NULL_FUN && playing->isPlaying) {
-            // Mark this sound as finished, but its up to the delegate to stop things?
-            (*(playing->finishedPlayFun))(snd, playing->playTag, SND_ERR_NONE);
-          }
-          playing->isPlaying = FALSE;
-        }
-      }
-      else {
-        mixedSample = 0.0f;
-      }
-      ppfBuffer[channel][sampBufferIndex] = mixedSample;  // * pan;
-      if(snd->channelCount != 1)	// play mono by sending same sample to both channels
-        playing->sampleToPlay++;
+        playing->sampleFramesGenerated++; // This is number of samples per time-frame.
     }
-		playing->sampleFramesGenerated++; // This is number of samples per time-frame.
-	}
 }
 
 // Iterate through the possible devices and build a formatted list.
@@ -193,27 +196,27 @@ static void GenAudio(float** ppfBuffer, DWORD dwLen, DWORD channelsToPlay, DWORD
 // A NULL char * terminates the list a la argv behaviour.
 static void retrieveDriverList(void)
 {
-  char *devName;
-  DWORD directSoundIndex;
-  DWORD waveIndex;
-  int driverIndex = 0;
+    char *devName;
+    DWORD directSoundIndex;
+    DWORD waveIndex;
+    int driverIndex = 0;
+    
+    driverList = (char **) malloc(sizeof(char *) * (audioOutDX.NumDev() + audioOutWO.NumDev() + 1));
 
-  driverList = (char **) malloc(sizeof(char *) * (audioOutDX.NumDev() + audioOutWO.NumDev() + 1));
-
-	// DirectSound seems to be the latest new world order by dear MS, so try that first
-	for (directSoundIndex = 0; directSoundIndex < audioOutDX.NumDev(); directSoundIndex++) {
-		devName = audioOutDX.GetDevName(directSoundIndex);
-    driverList[driverIndex] = (char *) malloc(strlen(devName) + strlen(directSoundPrefix) + PADDING);
-    sprintf(driverList[driverIndex], PADFORMAT, directSoundPrefix, devName);
-    driverIndex++;
-	}
-  for (waveIndex = 0; waveIndex < audioOutWO.NumDev(); waveIndex++) {
-    devName = audioOutWO.GetDevName(waveIndex);
-    driverList[driverIndex] = (char *) malloc(strlen(devName) + strlen(waveOutPrefix) + PADDING);
-    sprintf(driverList[driverIndex], PADFORMAT, waveOutPrefix, devName);
-    driverIndex++;
-  }
-  driverList[driverIndex] = NULL;
+    // DirectSound seems to be the latest new world order by dear MS, so try that first
+    for (directSoundIndex = 0; directSoundIndex < audioOutDX.NumDev(); directSoundIndex++) {
+        devName = audioOutDX.GetDevName(directSoundIndex);
+        driverList[driverIndex] = (char *) malloc(strlen(devName) + strlen(directSoundPrefix) + PADDING);
+        sprintf(driverList[driverIndex], PADFORMAT, directSoundPrefix, devName);
+        driverIndex++;
+    }
+    for (waveIndex = 0; waveIndex < audioOutWO.NumDev(); waveIndex++) {
+        devName = audioOutWO.GetDevName(waveIndex);
+        driverList[driverIndex] = (char *) malloc(strlen(devName) + strlen(waveOutPrefix) + PADDING);
+        sprintf(driverList[driverIndex], PADFORMAT, waveOutPrefix, devName);
+        driverIndex++;
+    }
+    driverList[driverIndex] = NULL;
 }
 
 // Guess the device. Actually all we do for now is search through the list to find our
