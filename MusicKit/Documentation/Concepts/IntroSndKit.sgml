@@ -149,9 +149,10 @@ the NeXT sound facilities for simple recording and playback.  However,
 to access and manipulate sound data intelligently, you should be
 familiar with a few basic terms and concepts.  This section presents a
 brief tutorial on the basic concepts of sound and its digital
-representation, followed by an in-depth examination of <structname>SNDSoundStruct</structname>,
-the structure that's used by the <productname>SndKit</productname>
-software to represent sound.</para>
+representation, followed by an in-depth examination of
+<structname>SndSoundStruct</structname>, the structure that's used by
+the <productname>SndKit</productname> software to represent
+sound.</para>
 
 <sect2 id="WhatIsSound">
 <title>What is Sound?</title>
@@ -342,29 +343,31 @@ number of data compression schemes have been devised to decrease
 storage while sacrificing some fidelity.</para>
 </sect3>
 </sect2>
-<sect2 id="SNDSoundStruct">
-<title><structname>SNDSoundStruct</structname>: How a NeXT Computer Represents Sound</title>
+<sect2 id="SndSoundStruct">
+<title><structname>SndSoundStruct</structname>: How a NeXT Computer
+Represents Sound</title>
 
-<para>The NeXT sound software defines the <structname>SNDSoundStruct</structname> structure to
-represent sound.  This structure defines the soundfile and Mach-O
-sound segment formats and the sound pasteboard type.  It's also used
-to describe sounds in Interface Builder.  In addition, each instance
-of the <productname>SndKit</productname>'s <classname>Sound</classname> class encapsulates a
-<structname>SNDSoundStruct</structname> and provides methods to access and modify its
-attributes.</para>
+<para>The <productname>SndKit</productname> defines the
+<structname>SndSoundStruct</structname> structure to represent sound.
+This structure defines the soundfile formats
+and the sound pasteboard type.  It's also used to describe sounds in
+Interface Builder.  In addition, each instance of the
+<productname>SndKit</productname>'s <classname>Sound</classname> class
+encapsulates a <structname>SndSoundStruct</structname> and provides
+methods to access and modify its attributes.</para>
 
 <para>Basic sound operations, such as playing, recording, and
 cut-and-paste editing, are most easily performed by a <classname>Sound</classname> object.
 In many cases, the <productname>SndKit</productname> obviates the need
-for in-depth understanding of the <structname>SNDSoundStruct</structname> architecture.  For
+for in-depth understanding of the <structname>SndSoundStruct</structname> architecture.  For
 example, if you simply want to incorporate sound effects into an
 application, or to provide a simple graphic sound editor (such as the
 one in the Mail application), you needn't be aware of the details of
-the <structname>SNDSoundStruct</structname>.  However, if you want to closely examine or
+the <structname>SndSoundStruct</structname>.  However, if you want to closely examine or
 manipulate sound data you should be familiar with this
 structure.</para>
 
-<para>The <structname>SNDSoundStruct</structname> contains a header, information that describes
+<para>The <structname>SndSoundStruct</structname> contains a header, information that describes
 the attributes of a sound, followed by the data (usually samples) that
 represents the sound.  The structure is defined (in <emphasis
 role="bold">sound/soundstruct.h</emphasis>) as:</para>
@@ -378,17 +381,17 @@ typedef struct {
     int samplingRate;        /* the sampling rate */
     int channelCount;        /* the number of channels */
     char info[4];            /* optional text information */
-} SNDSoundStruct;
+} SndSoundStruct;
 </programlisting>
 
-<sect3 id="SNDSoundStructFields">
-<title><structname>SNDSoundStruct</structname> Fields</title>
+<sect3 id="SndSoundStructFields">
+<title><structname>SndSoundStruct</structname> Fields</title>
 
 <sect4 id="magic">
 <title>magic</title>
 
 <para>magic is a magic number that's used to identify the structure as
-a <structname>SNDSoundStruct</structname>.  Keep in mind that the structure also defines the
+a <structname>SndSoundStruct</structname>.  Keep in mind that the structure also defines the
 soundfile and Mach-O sound segment formats, so the magic number is
 also used to identify these entities as containing a sound.</para>
 
@@ -396,14 +399,14 @@ also used to identify these entities as containing a sound.</para>
 <sect4 id="dataLocation">
 <title>dataLocation</title>
 
-<para>It was mentioned above that the <structname>SNDSoundStruct</structname> contains a header
+<para>It was mentioned above that the <structname>SndSoundStruct</structname> contains a header
 followed by sound data.  In reality, the structure
 <emphasis>only</emphasis> contains the header; the data itself is
 external to, although usually contiguous with, the structure.
-(Nonetheless, it's often useful to speak of the <structname>SNDSoundStruct</structname> as the
+(Nonetheless, it's often useful to speak of the <structname>SndSoundStruct</structname> as the
 header and the data.)  <emphasis role="bold">dataLocation</emphasis>
 is used to point to the data.  Usually, this value is an offset (in
-bytes) from the beginning of the <structname>SNDSoundStruct</structname> to the first byte of
+bytes) from the beginning of the <structname>SndSoundStruct</structname> to the first byte of
 sound data.  The data, in this case, immediately follows the
 structure, so <emphasis role="bold">dataLocation</emphasis> can also
 be thought of as the size of the structure's header.  The other use of
@@ -418,7 +421,7 @@ locates data that isn't contiguous with the structure, is described in
 <para>These fields describe the sound data.</para>
 
 <para><emphasis role="bold">dataSize</emphasis> is its size in bytes
-(not including the size of the <structname>SNDSoundStruct</structname>).</para>
+(not including the size of the <structname>SndSoundStruct</structname>).</para>
 
 <para><emphasis role="bold">dataFormat</emphasis> is a code that
 identifies the type of sound.  For sampled sounds, this is the
@@ -621,15 +624,15 @@ for unrecognized formats.</para>
 However, when sampled sound data is edited (such that a portion of the
 sound is deleted or a portion inserted), the data may become
 discontiguous, or <emphasis>fragmented</emphasis>.  Each fragment of
-data is given its own <structname>SNDSoundStruct</structname> header;
+data is given its own <structname>SndSoundStruct</structname> header;
 thus, each fragment becomes a separate
-<structname>SNDSoundStruct</structname> structure.  The addresses of
+<structname>SndSoundStruct</structname> structure.  The addresses of
 these new structures are collected into a contiguous, NULL-terminated
 block; the <emphasis role="bold">dataLocation</emphasis> field of the
-original <structname>SNDSoundStruct</structname> is set to the address
+original <structname>SndSoundStruct</structname> is set to the address
 of this block, while the original format, sampling rate, and channel
 count are copied into the new
-<structname>SNDSoundStruct</structname>s.</para>
+<structname>SndSoundStruct</structname>s.</para>
 
 <para>Fragmentation serves one purpose: It avoids the high cost of
 moving data when the sound is edited.  Playback of a fragmented sound
@@ -649,10 +652,10 @@ data can become fragmented.</para>
 
 <para>A number of C functions are provided that let you record,
 manipulate, and play sounds.  These C functions operate on
-<structname>SNDSoundStruct</structname>s and demand a familiarity with
+<structname>SndSoundStruct</structname>s and demand a familiarity with
 the structure.  It's expected that most sound operations will be
 performed through the <productname>SndKit</productname>, where
-knowledge of the <structname>SNDSoundStruct</structname> isn't
+knowledge of the <structname>SndSoundStruct</structname> isn't
 necessary.  Nonetheless, the C functions are provided for generality
 and to allow sound manipulation without the
 <productname>SndKit</productname>.  The functions are fully described
@@ -698,7 +701,7 @@ categories:</para>
 </itemizedlist>
 
 <para>While a <classname>Sound</classname> object uses the
-<structname>SNDSoundStruct</structname> structure to represent its
+<structname>SndSoundStruct</structname> structure to represent its
 sound, you only need to be familiar with this structure if you're
 directly manipulating sound data.</para>
 
@@ -1310,7 +1313,7 @@ the receiver's sound data.</para></listitem>
 memory.  However, when you edit a <classname>Sound</classname> object,
 its data can become fragmented, or discontiguous.  Fragmentation is
 explained in the description of the
-<structname>SNDSoundStruct</structname>, earlier in this chapter.
+<structname>SndSoundStruct</structname>, earlier in this chapter.
 Briefly, fragmentation lets you edit <classname>Sound</classname>s
 without incurring the cost of moving large sections of data in memory.
 However, fragmented <classname>Sound</classname>s can be less
