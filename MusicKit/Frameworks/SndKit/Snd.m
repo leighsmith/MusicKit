@@ -74,11 +74,6 @@ static NSMutableDictionary *playRecTable = nil;
 static int ioTags = 1000;
 #endif
 
-+ (NSString*) defaultFileExtension
-{
-    return @"snd"; // TODO this should probably be determined at run time based on the operating system
-}
-
 + soundNamed:(NSString *)aName
 {
   return [[SndTable defaultSndTable] soundNamed: aName];
@@ -136,6 +131,7 @@ static int ioTags = 1000;
     conversionQuality = SndConvertLowQuality;
     delegate = nil;
     status = SND_SoundInitialized;
+	info = nil;
 
     currentError = 0;
     _scratchSnd = NULL;
@@ -143,11 +139,11 @@ static int ioTags = 1000;
     tag = 0;
 
     if (performancesArray == nil) {
-      performancesArray     = [NSMutableArray new];
-      performancesArrayLock = [NSLock new];
+		performancesArray     = [NSMutableArray new];
+		performancesArrayLock = [NSLock new];
     }
     else
-      [performancesArray removeAllObjects];
+		[performancesArray removeAllObjects];
 
     // initialize loop points to legal values
     loopWhenPlaying = NO;
@@ -162,33 +158,41 @@ static int ioTags = 1000;
 }
 
 - initWithFormat: (SndSampleFormat) format
-	channels: (int) channels
-	  frames: (int) frames
+		channels: (int) channels
+		  frames: (int) frames
     samplingRate: (float) samplingRate
 {
-  self = [self init];
-  if (soundStruct == NULL)
-    if (!(soundStruct = malloc(sizeof(SndSoundStruct))))
-      [[NSException exceptionWithName: @"Sound Error"
-                               reason: @"Can't allocate memory for Snd class"
-                             userInfo: nil] raise];
-
-  // TODO _why_ do we still have file format specific data in Snd???? History is the only reason,
-  // it should eventually be removed now we use Sox for File I/O.
-  soundStruct->magic        = SND_MAGIC;
-  soundStruct->dataLocation = 0; 
-  soundStruct->dataSize     = 0;
-  soundStruct->dataFormat   = format;
-  soundStruct->samplingRate = (int) samplingRate;
-  soundStruct->channelCount = channels;
-
-  [self setDataSize: SndFramesToBytes(frames, channels, format)
-         dataFormat: format
-       samplingRate: (int) samplingRate
-       channelCount: channels
-           infoSize: 0];
-
-  return self;
+	self = [self init];
+	if(self != nil) {
+#if 1 // while we still use soundStruct
+		if (soundStruct == NULL) {
+			if (!(soundStruct = malloc(sizeof(SndSoundStruct))))
+				[[NSException exceptionWithName: @"Sound Error"
+										 reason: @"Can't allocate memory for Snd class"
+									   userInfo: nil] raise];
+		}
+		
+		// TODO _why_ do we still have file format specific data in Snd???? History is the only reason,
+		// it should eventually be removed now we use Sox for File I/O.
+		soundStruct->magic        = SND_MAGIC;
+		soundStruct->dataLocation = 0; 
+		soundStruct->dataSize     = 0;
+		soundStruct->dataFormat   = format;
+		soundStruct->samplingRate = (int) samplingRate;
+		soundStruct->channelCount = channels;
+		[self setDataSize: SndFramesToBytes(frames, channels, format)
+			   dataFormat: format
+			 samplingRate: (int) samplingRate
+			 channelCount: channels
+				 infoSize: 0];
+#endif
+		soundFormat.dataFormat = format;
+		soundFormat.sampleRate = samplingRate;
+		soundFormat.channelCount = channels;
+		soundFormat.frameCount = frames;
+		// info = @""; // TODO, should we just leave it nil, rather than empty?
+	}
+	return self;
 }
 
 - initWithAudioBuffer: (SndAudioBuffer*) aBuffer
@@ -261,6 +265,11 @@ static int ioTags = 1000;
     return SndFileExtensions();
 }
 
++ (NSString*) defaultFileExtension
+{
+    return @"snd"; // TODO this should probably be determined at run time based on the operating system
+}
+
 + (BOOL) isPathForSoundFile: (NSString *) path
 {
     NSArray *exts = [[self class] soundFileExtensions];
@@ -298,7 +307,7 @@ static int ioTags = 1000;
 		(soundStruct != NULL) ? SndStructDescription(soundStruct) : @""];
 }
 
-- readSoundFromStream:(NSData *)stream
+- readSoundFromData: (NSData *) stream
 {
     SndSoundStruct *s;
     int finalSize;
@@ -386,16 +395,16 @@ static int ioTags = 1000;
     return SND_ERR_NONE;
 }
 
-- (void) swapHostToSnd
+- (void) swapHostToBigEndianFormat
 {
     void *d = [self data];
-    SndSwapHostToSound(d,d,[self lengthInSampleFrames],[self channelCount],[self dataFormat]);
+    SndSwapHostToBigEndianSound(d, d, [self lengthInSampleFrames], [self channelCount], [self dataFormat]);
 }
 
-- (void) swapSndToHost
+- (void) swapBigEndianToHostFormat
 {
     void *d = [self data];
-    SndSwapSoundToHost(d,d,[self lengthInSampleFrames],[self channelCount],[self dataFormat]);
+    SndSwapBigEndianSoundToHost(d, d, [self lengthInSampleFrames], [self channelCount], [self dataFormat]);
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -562,14 +571,18 @@ static int ioTags = 1000;
 
 - (NSString *) info
 {
-    if (!soundStruct)
-	return nil;
-    return [NSString stringWithCString: (char *)(soundStruct->info)];
+    return [[info retain] autorelease];
+}
+
+- (void) setInfo: (NSString *) newInfoString
+{
+	[info release];
+	info = [newInfoString copy];
 }
 
 #if !MKPERFORMSND_USE_STREAMING
 // Since these two functions come in from the cold, they need warm and snug autorelease pools...
-int beginFun(SndSoundStruct *sound, int tag, int err)
+int beginFun(SNDStreamBuffer *sound, int tag, int err)
 {
     Snd *theSnd;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -587,7 +600,7 @@ int beginFun(SndSoundStruct *sound, int tag, int err)
     return 0;
 }
 
-int endFun(SndSoundStruct *sound, int tag, int err)
+int endFun(SNDStreamBuffer *sound, int tag, int err)
 {
     Snd *theSnd;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -615,7 +628,7 @@ int endFun(SndSoundStruct *sound, int tag, int err)
     return 0;
 }
 
-int beginRecFun(SndSoundStruct *sound, int tag, int err)
+int beginRecFun(SNDStreamBuffer *sound, int tag, int err)
 {
     Snd *theSnd;
     theSnd = [playRecTable objectForKey: [NSNumber numberWithInt: tag]];
@@ -630,7 +643,7 @@ int beginRecFun(SndSoundStruct *sound, int tag, int err)
     return 0;
 }
 
-int endRecFun(SndSoundStruct *sound, int tag, int err)
+int endRecFun(SNDStreamBuffer *sound, int tag, int err)
 {
     Snd *theSnd;
     NSNumber *tagNumber = [NSNumber numberWithInt: tag];
@@ -662,8 +675,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     if (playEnd > [self lengthInSampleFrames] || playEnd < playBegin)
         playEnd = [self lengthInSampleFrames];
 
-//    if (!soundStruct)
-//        return nil;
+	// TODO Remove status, instead derive from SndPerformance.
     status = SND_SoundPlayingPending;
     
     return [[SndPlayer defaultSndPlayer] playSnd: self 
@@ -706,7 +718,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 }
 
 // Legacy method for SoundKit compatability
-- play:(id) sender beginSample:(int) begin sampleCount: (int) count 
+- play: (id) sender beginSample: (int) begin sampleCount: (int) count 
 {
     // do something with sender?
     [self playInFuture: 0.0
@@ -716,7 +728,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 }
 
 // Legacy method for SoundKit compatability
-- play:sender
+- play: sender
 {
 #if !MKPERFORMSND_USE_STREAMING
     int err;
@@ -761,7 +773,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return SND_ERR_NONE;
 }
 
-- record:sender
+- record: sender
 {
 #if !MKPERFORMSND_USE_STREAMING
     int err;
@@ -934,6 +946,8 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
     // NSLog(@"%@\n", SndStructDescription(soundStruct));
     if (!err) {
+		// Set ivars after reading the file.
+		info = [[NSString stringWithCString: (char *)(soundStruct->info)] retain];
         soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
         // This is probably a bit kludgy but it will do for now.
         loopEndIndex = [self lengthInSampleFrames] - 1;
@@ -982,10 +996,10 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - initFromPasteboard: (NSPasteboard *) thePboard
 {
-    NSData *ts;
-    ts = [thePboard dataForType:NXSoundPboardType];
-    [self init];
-    [self readSoundFromStream:ts];
+    NSData *soundData = [thePboard dataForType: NXSoundPboardType];
+	
+    if([self init] != nil)
+		[self readSoundFromData: soundData];
 
     return self;
 }
