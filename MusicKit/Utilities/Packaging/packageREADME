@@ -7,6 +7,8 @@
 # Leigh Smith <leigh@tomandandy.com>
 #
 
+JADE=openjade
+
 # HTML_DISTRIB_DIR makes it easier to install into SourceForge.
 HTML_DISTRIB_DIR=htdocs
 HTML_TMPDIR=/tmp/$HTML_DISTRIB_DIR
@@ -21,7 +23,7 @@ MK_STYLESHEET=$MK_STYLEDIR/MusicKit_README.dsssl
 
 mkdir $HTML_TMPDIR
 cd $HTML_TMPDIR
-jade -t sgml -ihtml -d ${MK_STYLESHEET}\#html $MKSRC
+$JADE -t sgml -ihtml -d ${MK_STYLESHEET}\#html $MKSRC
 ln -s t1.html index.html
 cp $MK_STYLEDIR/Images/* .
 cd ..
@@ -36,6 +38,7 @@ cp $MK_STYLEDIR/Images/* .
 db2dvi $MKSRC
 FINAL=`basename $MKSRC .sgml`.pdf
 dvips -o intermediate.ps MusicKit_README.dvi
+# This allows us to incorporate any special postscript fonts.
 #psprepare intermediate.ps prepared.ps
 cp intermediate.ps prepared.ps
 ps2pdf prepared.ps /tmp/$FINAL
