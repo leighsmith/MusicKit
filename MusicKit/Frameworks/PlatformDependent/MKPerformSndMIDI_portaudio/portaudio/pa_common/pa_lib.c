@@ -632,7 +632,6 @@ long Pa_CallConvertInt16( internalPortAudioStream   *past,
 	if( outputBuffer != NULL )
 	{
 		unsigned int samplesPerBuffer = past->past_FramesPerUserBuffer * past->past_NumOutputChannels;
-		//printf("output format: %d\n",past->past_OutputSampleFormat);//FIXME sbrandon debug statement
 		switch(past->past_OutputSampleFormat)
 		{
 		case paFloat32:
