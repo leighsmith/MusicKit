@@ -40,6 +40,9 @@
 Modification history:
 
  $Log$
+ Revision 1.14  2002/09/24 21:48:45  leighsmith
+ Simplified combined pointer assignments and increments to remove gcc 3.1 warnings
+
  Revision 1.13  2002/04/03 03:59:41  skotmcdonald
  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -344,15 +347,18 @@ static void swapIt(short *data,int howMany)
 	}
 	if (nchans==1) {
             while (data<segend) {
-                *data++ = (short)(((int)*data * (int)amp)>>15);
+                *data = (short)(((int)*data * (int)amp)>>15);
+		data++;
                 amp += inc;
             }
 	}
 	else {
             while (data<segend) {
                 intamp = (int)amp;
-                *data++ = (short)(((int)*data * intamp)>>15);
-                *data++ = (short)(((int)*data * intamp)>>15);
+                *data = (short)(((int)*data * intamp)>>15);
+		data++;
+                *data = (short)(((int)*data * intamp)>>15);
+		data++;
                 amp += inc;
             }
 	}
