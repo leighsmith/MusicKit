@@ -178,7 +178,7 @@
   float *inp  = (float*) [inB data];
   float *outp = (float*) [outB data];
   float input[2], c, d;
-  int sampleFrames = [inB lengthInSamples];
+  int sampleFrames = [inB lengthInSampleFrames];
   int i;
   float f;
 
