@@ -29,7 +29,6 @@
     BOOL                active;
     BOOL                needsInput;
     BOOL                generatesOutput;
-    double              nowTime;
 
     SndStreamManager *manager;
     
@@ -43,9 +42,13 @@
 - setProcessFinishedCallBack: (void*)fn;
 
 - welcomeClientWithBuffer: (SndAudioBuffer*) buff manager: (SndStreamManager*) m;
-    // client welcomed with buffer showing manager format.
+
+/*!
+    @method startProcessingNextBufferWithInput:nowTime:
+    @abstract client welcomed with buffer showing manager format.
+    @discussion ignore input buffer if you don't want it.
+*/
 - startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) t;
-                               // ignore input buffer if you don't want it.
 - (void) processingThread;
 - (SndAudioBuffer*) outputBuffer;
 - (SndAudioBuffer*) synthBuffer;
@@ -53,6 +56,13 @@
 - managerIsShuttingDown;
 
 - (void) processBuffers; // The big one for the sub classes - override!.
+
+/*!
+    @method nowTime
+    @abstract Return the client's current time.
+    @discussion The clients sense of time is just the manager's sense of time, defining a common clock among clients.
+    @result Returns the time in seconds.
+*/
 - (double) nowTime;
 - (BOOL) isActive;
 // Peak detection

@@ -30,7 +30,8 @@
     SndStreamMixer *mixer;
 
     BOOL            active;
-    SndSoundStruct  format; 
+    SndSoundStruct  format;
+    double          nowTime;
 }
 
 + (void) initialize;
@@ -49,6 +50,12 @@
                       output: (SNDStreamBuffer*) outB;
 
 - setFormat: (SndSoundStruct*) f;
+
+/*!
+    @method nowTime
+    @abstract Return the current time as understood by the SndStreamManager
+*/
+- (double) nowTime;
 
 - (SndStreamMixer*) mixer;
 

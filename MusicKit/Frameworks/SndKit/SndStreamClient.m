@@ -47,7 +47,6 @@ enum {
     active           = FALSE;
     needsInput       = FALSE;
     generatesOutput  = TRUE;
-    nowTime          = 0.0;
     processFinishedCallback = NULL;
     return self;
 }
@@ -111,16 +110,16 @@ enum {
 - (NSString*) description
 {
     return [NSString stringWithFormat: @"SndStreamClient %sactive, now %f, %s",
-        active ? " " : "not ", nowTime, needsInput ? "needs input" : "doesn't need input"];
+        active ? " " : "not ", [self nowTime], needsInput ? "needs input" : "doesn't need input"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @nowTime
+// The clients sense of time is just the manager's sense of time, defining a common clock among clients.
 ////////////////////////////////////////////////////////////////////////////////
 
 - (double) nowTime
 {
-    return nowTime;
+    return [manager nowTime];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -138,23 +137,33 @@ enum {
 
 - welcomeClientWithBuffer: (SndAudioBuffer*) buff manager: (SndStreamManager*) m
 {
-    outputBuffer = buff;
-    [outputBuffer retain];
+    // The client shouldn't be active when we are welcoming it with a new manager.
+    if(!active) {
+        outputBuffer = buff;
+        [outputBuffer retain];
+        
+        if (needsInput) {
+            inputBuffer = [buff copy];
+            [inputBuffer retain];
+        }
     
-    if (needsInput) {
-      inputBuffer = [buff copy];
-      [inputBuffer retain];
-    }
-
-    if (generatesOutput) {
-      synthBuffer = [buff copy];
-      [synthBuffer retain];
-    }
-    [NSThread detachNewThreadSelector: @selector(processingThread)
-                             toTarget: self
-                           withObject: nil];
+        if (generatesOutput) {
+            synthBuffer = [buff copy];
+            [synthBuffer retain];
+        }
     
-    return self;
+        // NSLog(@"assigning manager %@\n", m);
+        manager = [m retain];
+        
+        [NSThread detachNewThreadSelector: @selector(processingThread)
+                                 toTarget: self
+                               withObject: nil];
+        return self;
+    }
+    else {
+        NSLog(@"Couldn't welcome client with buffer since it's already active!\n");
+        return nil;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -176,9 +185,9 @@ enum {
         synthBuffer     = outputBuffer;
         outputBuffer    = temp;
 
+        // printf("startProcessingNextBufferWithInput nowTime = %f\n", t);
+        
         [outputBufferLock unlock];
-
-        nowTime = t;
         
         if (needsInput)
             [inputBuffer copyData: inB];
@@ -208,7 +217,9 @@ enum {
 
         [synthThreadLock unlockWithCondition: SC_bufferReady];
     }
-    [[SndStreamManager defaultStreamManager] removeClient: self];
+    [manager removeClient: self];
+    [manager release];
+    manager = nil; // avoids double release.
     [self freeBufferMem];
     [localPool release];
     [NSThread exit];

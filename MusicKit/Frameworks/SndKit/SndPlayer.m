@@ -45,8 +45,6 @@
     if(playing == nil)
         playing    = [[NSMutableArray arrayWithCapacity: 10] retain];
 
-    nowTime = 0;
-
     return self;
 }
 
@@ -84,16 +82,17 @@
     }
 
     if (dt == 0.0) {  // play now!
-        SndPerformance *nowPerformance = [SndPerformance performanceOfSnd: s playTime: nowTime];
+        SndPerformance *nowPerformance = [SndPerformance performanceOfSnd: s playTime: [self nowTime]];
         [self startPerformance: nowPerformance];    
         return nowPerformance;
     }		
     else {            // play later!
-        double playT = nowTime + dt;
+        double playT = [self nowTime] + dt;
         int i, c = [toBePlayed count];
         int insertIndex = c;
         SndPerformance *laterPerformance = [SndPerformance performanceOfSnd: s playTime: playT];
-
+        
+        // printf("playT = %f, nowTime = %f, dt = %f\n", playT, [self nowTime], dt);        
         for (i = 0; i < c; i++) {
             SndPerformance *this = [toBePlayed objectAtIndex: i];
             if ([this playTime] > playT) {
@@ -165,7 +164,7 @@
         SndPerformance *performance = [toBePlayed objectAtIndex: i];
         if ([performance playTime] < bufferEndTime) {
             [removalArray addObject: performance];
-            [performance setPlayIndex: - [[performance snd] samplingRate] * ([performance playTime] - nowTime)];
+            [performance setPlayIndex: - [[performance snd] samplingRate] * ([performance playTime] - [self nowTime])];
             [self startPerformance: performance];
         }
     }
