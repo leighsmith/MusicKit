@@ -19,7 +19,7 @@
 
 #import <Foundation/Foundation.h>
 #import <SndKit/SndKit.h>
-#import <unistd.h>
+//#import <unistd.h>
 
 // Version info
 #define V_MAJ  1
@@ -28,17 +28,22 @@
 
 #define USE_SNDEXPT 0
 
-static int iReturnCode = 0;
+static int returnCode = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
 // printError
 ////////////////////////////////////////////////////////////////////////////////
 
-void printError(char* msg, int iPossibleReturnCode)
+void printError(int possibleReturnCode, char *format, ...)
 {
-    fprintf(stderr,"%s\n",msg);
-    if (iReturnCode == 0)
-	iReturnCode = iPossibleReturnCode;
+    va_list ap;
+    
+    va_start(ap, format);
+    vfprintf(stderr,format, ap);
+    va_end(ap);
+    
+    if (returnCode == 0)
+	returnCode = possibleReturnCode;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,14 +118,14 @@ int main (int argc, const char * argv[])
 		case 'O':
 		    i++;
 		    if (i < argc) timeOffset = atof(argv[i]);
-		    else          printError("No time offset in seconds value given after option -O",-1);
+		    else          printError(-1, "No time offset in seconds value given after option -O\n");
 		    break;
 		case 't': bTimeOutputFlag = TRUE;                       break;
 		case 'r': useReverb       = TRUE;                       break;
 		case 'R':
 		    i++;
 		    if (i < argc) deltaTime = atof(argv[i]);
-		    else          printError("No relative playback rate given after option -R",-1);
+		    else          printError(-1, "No relative playback rate given after option -R\n");
 		    break;
 		case 'v': printf("playsnd %i.%i.%i\n", V_MAJ, V_MIN, V_PATCH);
                     break;
@@ -128,12 +133,12 @@ int main (int argc, const char * argv[])
 		case 'd':
 		    i++;
 		    if (i < argc) durationInSamples = atoi(argv[i]);
-		    else          printError("No end time in samples given after option -e",-1);
+		    else          printError(-1, "No end time in samples given after option -e\n");
 		    break;
 		case 'b':
 		    i++;
 		    if (i < argc) startTimeInSamples = atoi(argv[i]);
-		    else          printError("No start time in samples given after option -b",-1);
+		    else          printError(-1, "No start time in samples given after option -b\n");
 		    break;
 		case 'S':
 		    bMP3Shoutcast = TRUE;
@@ -162,12 +167,12 @@ int main (int argc, const char * argv[])
 	}
     }
     if (soundFileName == NULL)
-	printError("No soundfile name given", -2);
+	printError(-2, "No soundfile name given");
     
     // Reason why we finally exit here instead of eariler - allow all error msgs to
     // be displayed before exit
-    if (iReturnCode != 0)
-	return iReturnCode;
+    if (returnCode != 0)
+	return returnCode;
     
     // Finally: do the actual sound playing!
 
@@ -192,7 +197,7 @@ int main (int argc, const char * argv[])
     }
 
     if (![fm fileExistsAtPath: filename]) {
-        printError("Can't find sound file",-2);
+        printError(-2, "Can't find sound file %s\n", [filename cString]);
     }
     else {
         int waitCount = 0;
@@ -203,7 +208,11 @@ int main (int argc, const char * argv[])
 //        long b1, b2;
 	
 //        b1 = clock();
-        [s readSoundfile: filename];
+        if([s readSoundfile: filename] != SND_ERR_NONE) {
+            printError(-2, "Can't read sound file %s\n", [filename cString]);
+            return returnCode;
+        }
+
 #if !USE_SNDEXPT
         [s convertToFormat: SND_FORMAT_FLOAT];
 #endif
@@ -300,7 +309,7 @@ int main (int argc, const char * argv[])
 	    [mp3enc disconnectFromShoutcastServer];
     }
     [pool release];
-    return iReturnCode;
+    return returnCode;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
