@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.5  2001/02/23 03:17:41  leigh
+// Converted times from absolute to relative
+//
 // Revision 1.4  2001/02/12 17:41:19  leigh
 // Added streaming support
 //
@@ -81,7 +84,7 @@ static AudioStreamBasicDescription outputStreamBasicDescription;
 // Stream processing data.
 static SNDStreamProcessor streamProcessor;
 static void *streamUserData;
-
+static double firstSampleTime = -1.0; // indicates this has not been assigned.
 
 // Routine to play a single sound. This could be generalised using the link-list behaviour
 // to do multiple sound channels, but instead we will adopt the stream operation within the
@@ -164,13 +167,16 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
     if(inOutputTime->mFlags & kAudioTimeStampSampleTimeValid == 0) {
         fprintf(stderr, "sample time is not valid!\n");
     }
+    if(firstSampleTime == -1.0)
+        firstSampleTime = inOutputTime->mSampleTime;
     SNDStreamNativeFormat(&inStream.streamFormat);    // to tell the client the format it is receiving.
-    inStream.streamData = inInputData;  // this will generate a warning since we use the same type for both streams.
+    inStream.streamData = (void *) inInputData;  // this will generate a warning since we use the same type for both streams.
     SNDStreamNativeFormat(&outStream.streamFormat);   // to tell the client the format it should send.
     outStream.streamData = outOutputData;
     
     // hand over the stream buffers to the processor/stream manager.
-    (*streamProcessor)(inOutputTime->mSampleTime, &inStream, &outStream, streamUserData);
+    // the output time goes out as a relative time, noted from the first sample time we first receive.
+    (*streamProcessor)(inOutputTime->mSampleTime - firstSampleTime, &inStream, &outStream, streamUserData);
     return 0; // TODO need better definition...
 }
 
@@ -270,7 +276,14 @@ static BOOL determineBasicDescription(AudioDeviceID outputDeviceID)
     UInt32 propertySize;
     Boolean propertyWritable;
 
-    propertySize = sizeof(outputStreamBasicDescription);
+    CAstatus = AudioDeviceGetPropertyInfo(outputDeviceID, 0, false,
+                                          kAudioDevicePropertyStreamFormat,
+                                          &propertySize, &propertyWritable);
+    if (CAstatus) {
+        fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyStreamFormat %d\n", (int) CAstatus);
+        return FALSE;
+    }
+
     CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
                                     kAudioDevicePropertyStreamFormat,
                                     &propertySize, &outputStreamBasicDescription);
@@ -595,7 +608,7 @@ PERFORM_API void SNDTerminate(void)
 PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat)
 {
     streamFormat->magic = SND_MAGIC;
-    // streamFormat->dataLocation;   /* Offset or pointer to the raw data */
+    streamFormat->dataLocation = 0;   /* Offset or pointer to the raw data */
     /* Number of bytes of data in a buffer */
     streamFormat->dataSize = bufferSizeInFrames * outputStreamBasicDescription.mBytesPerFrame;
     streamFormat->dataFormat = SND_FORMAT_FLOAT;
@@ -626,7 +639,9 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
         fprintf(stderr, "AudioDeviceStart returned %d\n", (int) CAstatus);
         return FALSE;
     }
-
+    // indicate the first absolute sample time received from the call back needs to be marked as a
+    // datum to use to convert subsequent absolute sample times to a relative time.
+    firstSampleTime = -1.0;  
     return TRUE;
 }
 
@@ -640,8 +655,8 @@ PERFORM_API BOOL SNDStreamStop(void)
         fprintf(stderr, "AudioDeviceStop returned %d\n", (int) CAstatus);
 	return FALSE;
     }
+    firstSampleTime = -1.0;  
     return TRUE;
-
 }
 
 #ifdef __cplusplus
