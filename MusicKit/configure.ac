@@ -11,39 +11,44 @@
 # non-commercial purposes so long as the author attribution and copyright 
 # messages remain intact and accompany all relevant code.
 #
+# TODO
+# For now we require a working MKPerformSndMIDI library, but we
+# could default to using MKPerformSndMIDI_silent for users who just want
+# to crunch notes and not play anything. Likewise, we currently
+# require libsndfile installed but eventually we should work out a
+# way of compiling Snd.m when an entire category is missing. This
+# could be really tough to do, however, since so many other SndKit
+# classes depend on Snd.m.
 
-AC_INIT(MusicKit,5.5.0,leigh@leighsmith.com)
+AC_INIT(MusicKit, 5.5.0, leigh@leighsmith.com)
 AC_REVISION($Id$)
 
 AC_CONFIG_SRCDIR([Frameworks/SndKit/Snd.h])
 AC_LANG(C)
 
-# Create configure headers to control which library headers are included.
-AC_CONFIG_HEADERS(Frameworks/SndKit/SndKitConfig.h \
-                  Frameworks/MusicKit/MusicKitConfig.h)
+# Check if xcodebuild exists, if so we need to use Makefile.in.
+# If xcodebuild does not exist, we need to use GNUmakefile.in.
+AC_CHECK_PROG(TOPLEVELBUILD, xcodebuild, Makefile, GNUmakefile)
 
-# Needs to create a GNUmakefile for GNUstep, and possibly a makefile which
-# then runs xcodebuild on MacOS X.
-AC_CONFIG_FILES(Makefile \
-                Frameworks/PlatformDependent/MKPerformSndMIDI_portaudio/GNUmakefile.preamble \
-                Frameworks/SndKit/GNUmakefile)
+# Check for an SGML translator for generating documentation.
+# Currently openjade is our only option.
+AC_CHECK_PROGS(SGMLTRANS, openjade)
 
 AC_HEADER_STDC
 
-# check openjade for generating documentation
-AC_CHECK_PROG(OPENJADE, openjade, yes, no)
-
-AC_MSG_NOTICE([checking libraries installed, determining which classes to compile])
+# Check if we have portaudio installed, if so, use MKPerformSndMIDI_portaudio
 AC_CHECK_LIB(portaudio, Pa_Initialize)
-# MKPerformSndMIDI_portaudio
 
 # These are used by lame and libshout but we check for them ourselves
 # since we will want them for Ogg I/O ourselves soon.
 AC_CHECK_LIB(ogg, ogg_stream_init)
 AC_CHECK_LIB(vorbis, vorbis_info_init)
 
-# SndAudioProcessorRecorder & SndFileIO.m
+# Ensure that libsndfile must be installed.
 AC_CHECK_LIB(sndfile, sf_open)
+if test $ac_cv_lib_sndfile_sf_open != yes; then
+   AC_MSG_ERROR([[libsndfile must be installed and isn't.]])
+fi
 
 # Will #if define out SndAudioProcessorMP3Encoder.m if LAME or
 # shoutcast libraries aren't available.
@@ -55,5 +60,16 @@ AC_CHECK_LIB(mp3lame, lame_init)
 AC_MSG_NOTICE([checking for MP3 decoding libraries])
 AC_CHECK_LIB(mp3hip, hip_decode_init)
 
+# Create configure headers to control which library headers are included.
+AC_CONFIG_HEADERS(Frameworks/SndKit/SndKitConfig.h \
+                  Frameworks/MusicKit/MusicKitConfig.h)
+
+# Configures a top-level GNUmakefile for GNUstep systems or a
+# Makefile for MacOS X which then runs xcodebuild.
+# Since only one top-level make file will be created, the appropriate
+# file is selected when make is run.
+AC_CONFIG_FILES($TOPLEVELBUILD \
+                Frameworks/PlatformDependent/MKPerformSndMIDI_portaudio/GNUmakefile.preamble \
+                Frameworks/SndKit/GNUmakefile)
 
 AC_OUTPUT
