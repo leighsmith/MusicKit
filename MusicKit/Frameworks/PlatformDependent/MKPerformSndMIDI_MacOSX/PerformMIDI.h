@@ -6,13 +6,9 @@
     MIDI driver typedefs, defines, and functions exported to other MusicKit frameworks.
     See the HeaderDoc header below.
 
-  Original Author: David Jaffe
-  Rewritten: Leigh M. Smith
+  Original Author of MacOS X version: Leigh M. Smith
 
-  Copyright (c) 1988-1992, NeXT Computer, Inc.
-  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 2000-2001 The MusicKit Project.
+  Copyright (c) 2000-2004 The MusicKit Project.
 */
 /*!
     @header PerformMIDI
@@ -33,61 +29,6 @@
     MKMD_RECEPTION_USING_PORTS defined in MKPerformSndMIDI/midi_driver.h. The alternative
     is to use a call back function. Therefore, while we do need a NSPort or NSMachPort,
     their support can be minimal and we are not enforced to run on a Mach type operating system.
-*/
-/*
-Modification history:
-
-  $Log$
-  Revision 1.16  2004/11/25 04:26:18  leighsmith
-  Added input parameter to MKMDClaimUnit, MKMDReleaseUnit, and MKMDGetAvailableDrivers
-
-  Revision 1.15  2001/05/14 21:03:09  leighsmith
-  Replaced port_t with correct MKMDReplyPort definition
-
-  Revision 1.14  2001/04/20 23:46:28  leighsmith
-  Cleaned up parameters, results and abstracts
-
-  Revision 1.13  2001/04/13 01:34:07  leighsmith
-  Corrected name of module
-
-  Revision 1.12  2001/04/06 19:24:29  leighsmith
-  Renamed to more meaningful naming
-
-  Revision 1.11  2001/04/05 19:22:19  leighsmith
-  Updated HeaderDoc entries removing extraneous whitespace, adding typedefs, definitions and a header
-
-  Revision 1.10  2001/03/30 22:35:14  leighsmith
-  Added function definitions for HeaderDoc
-
-  Revision 1.9  2001/02/03 02:32:49  leigh
-  Hid error string assignments behind MKMDErrorString
-
-  Revision 1.8  2000/12/07 18:31:11  leigh
-  Standardised to mach ports for driver handles, properly prefixed constants
-
-  Revision 1.7  2000/11/27 21:49:54  leigh
-  Added MKMDReplyPort typing to MKMDRequestAlarm
-
-  Revision 1.6  2000/11/25 23:45:16  leigh
-  Added prototype of MKMDSetReplyCallback and RECEPTION_USING_PORTS declaration
-
-  Revision 1.5  2000/11/13 23:36:57  leigh
-  Added back legacy NeXT MIDI port macros, more ports are now MKMDReplyPort, mach headers are removed
-
-  Revision 1.4  2000/11/10 23:13:33  leigh
-  Changed return and port types to be more transparent, reversed #define so that 68k code will use the MIDI versions, everyone else uses the MKMD versions.
-
-  Revision 1.3  2000/10/29 06:05:54  leigh
-  Moved to MKMDPort types for ports. Changed name prefixes to be specific to the MusicKit. Added MKMDGetMIDIDeviceOnHost.
-
-  Revision 1.2  2000/05/05 22:41:44  leigh
-  kludge around type definitions
-
-  Revision 1.1  2000/03/11 01:42:20  leigh
-  Initial Release
-
-  Revision 1.1.1.1  2000/01/14 00:14:34  leigh
-  Initial revision
 */
 #ifndef _MKMD_
 #define _MKMD_
