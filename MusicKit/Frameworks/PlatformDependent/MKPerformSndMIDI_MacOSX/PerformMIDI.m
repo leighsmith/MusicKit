@@ -120,7 +120,6 @@ PERFORM_API const char **MKMDGetAvailableDrivers(BOOL input, unsigned int *selec
 						  );
 	    }
 	     */
-	    
 	    endpointPropertyError = MIDIObjectGetStringProperty(endPoint, kMIDIPropertyName, &endPointName);
 	    if(endpointPropertyError == noErr) { // We need the entity in order to determine the device name.
 		MIDIEntityRef entityOfEndpoint; 
@@ -139,13 +138,18 @@ PERFORM_API const char **MKMDGetAvailableDrivers(BOOL input, unsigned int *selec
 		else
 		    [driverNameList addObject: (NSString *) endPointName];		
 	    }
+	    else {
+		NSLog(@"Error getting endPoint's string property\n");
+	    }
 	}
     }	
     
     // always create at least one entry for the terminating NULL pointer.
-    driverList = (const char **) calloc([driverNameList count]+1, sizeof(char *));
+    driverList = (const char **) malloc(([driverNameList count] + 1) * sizeof(char *));
+    if(driverList == NULL)
+	NSLog(@"Unable to allocate driverList of %d drivers, driverNameList %@\n", [driverNameList count] + 1, driverNameList);
     for(driverListIndex = 0; driverListIndex < [driverNameList count]; driverListIndex++) {
-        driverList[driverListIndex] = [[driverNameList objectAtIndex: driverListIndex] cString]; 
+	driverList[driverListIndex] = [[driverNameList objectAtIndex: driverListIndex] UTF8String];
     }
     driverList[driverListIndex] = NULL;
     *selectedDriver = 0;
@@ -363,7 +367,7 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
     else {
 	// find the first destination
 	destinationCount = MIDIGetNumberOfDestinations();
-	// NSLog(@"%ld destinations\n", destinationCount);
+	// NSLog(@"MKMDClaimUnit %ld destinations\n", destinationCount);
 	if (destinationCount > 0) {
 	    if(claimedDestinations == NULL) {
 		if((claimedDestinations = malloc(destinationCount * sizeof(MIDIEndpointRef))) == NULL)
@@ -380,7 +384,7 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
 		if(MIDIObjectGetStringProperty(claimedDestinations[unit], kMIDIPropertyName, &pname) != noErr)
 		    return MKMD_ERROR_UNKNOWN_ERROR;
 		NSLog(@"Output to %@\n", pname);
-		CFRelease(pname);
+		// CFRelease(pname); shouldn't need this?
 	    }
 #endif
 	}
@@ -388,7 +392,6 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
 	    NSLog(@"No MIDI destinations present\n");
 	}	
     }
-	
     return MKMD_SUCCESS;
 }
 
@@ -405,11 +408,13 @@ PERFORM_API MKMDReturn MKMDReleaseUnit(BOOL input,
 	if(MIDIPortDisconnectSource(inPort, claimedSources[unit]) != noErr)
 	    return MKMD_ERROR_UNKNOWN_ERROR;	
     }
+    else {
     // Not quite sure how to rescind destinations, or if we even need to.
     //    if(claimedDestinations != NULL) {
     //        MIDIDestination(claimedDestinations[unit]);
     //        claimedDestinations[unit] = NULL;
-    //    }
+    //    }	
+    }
     return MKMD_SUCCESS;
 }
 
@@ -585,9 +590,9 @@ PERFORM_API MKMDReturn MKMDRequestQueueNotification (
 	int size)
 {
 #if FUNCLOG
-  fprintf(debug, "MKMDRequestQueueNotification called size = %d\n", size);
+    fprintf(debug, "MKMDRequestQueueNotification called size = %d\n", size);
 #endif
-  return MKMD_SUCCESS;
+    return MKMD_SUCCESS;
 }
 
 /* Routine MKMDClearQueue */
@@ -653,9 +658,9 @@ static void replyDispatch(MKMDReplyFunctions *userFuncs)
     short incomingUnit;
     if (userFuncs->dataReply) {
         unsigned int packetIndex;
-        int dataIndex;
-    
+        int dataIndex;    
         MIDIPacket *packet = (MIDIPacket *) receivedPacketList->packet;	// remove const (!)
+	
         for (packetIndex = 0; packetIndex < receivedPacketList->numPackets; ++packetIndex) {
             MKMDRawEvent *events = (MKMDRawEvent *) malloc(sizeof(MKMDRawEvent) * packet->length);
 
