@@ -28,16 +28,16 @@
     @discussion To come
 */
 @interface SndAudioProcessor : NSObject {
-/*! @var  numParams */
+/*! @var  numParams Number of parameters in the audio processor */
     int   numParams;
-/*! @var  audioProcessorChain */
+/*! @var  audioProcessorChain The SndAudioProcessorChain hosting this processor */
     SndAudioProcessorChain *audioProcessorChain;
-    
+/*! @var  bActive */    
     BOOL  bActive;
 }
 
 /*!
-    @method   audioProcessor
+    @method     audioProcessor
     @abstract   Factory method
     @discussion
     @result     Returns a freshly initialized, autoreleased SndAudioProcessor
@@ -45,14 +45,14 @@
 + audioProcessor;
 
 /*!
-    @method   init
+    @method     init
     @abstract   Initialization method
     @result     Self.
 */
 - init;
 
 /*!
-    @method    reset
+    @method      reset
     @abstract    Message sent when host determines the SndAudioProcessor should reinitialize
                  its processing state. Eg, a delay processor would zero its z-buffers.
     @result      self
@@ -60,14 +60,14 @@
 - reset;
 
 /*!
-    @method   paramCount
+    @method     paramCount
     @abstract   Gets the number of parameters
     @result     number of parameters
 */
 - (int) paramCount;
 
 /*!
-    @method   paramValue:
+    @method     paramValue:
     @abstract   Gets the value of the indexed parameter. 
     @discussion Following the VST convention, this should be in the range [0,1]. No enforcement at the present time.
     @param      index Index of the parameter
@@ -124,15 +124,28 @@
 - (void) setAudioProcessorChain:(SndAudioProcessorChain*)inChain;
 
 /*!
-    @method audioProcessorChain
-    @abstract Returns the SndAudioProcessorChain to which the processor is
-              attached
+    @method     audioProcessorChain
+    @abstract   Returns the SndAudioProcessorChain to which the processor is
+                attached
     @discussion
     @result     id of the SndAudioProcessorChain
 */
 - (SndAudioProcessorChain*) audioProcessorChain;
 
+/*!
+    @method     isActive
+    @abstract   Processor activity status query method
+    @result     Returns TRUE if the processor is active, ie whether the host processor 
+                chain should pass the audio stream through this processor.
+*/
 - (BOOL) isActive;
+
+/*!
+    @method     setActive
+    @abstract   Sets the active status of the processor.
+    @param      b TRUE if the processor is to be made active.
+    @result     self
+*/
 - setActive: (BOOL) b;
 
 @end
