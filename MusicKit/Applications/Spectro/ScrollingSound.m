@@ -1,6 +1,16 @@
-
+/*
+ * $Id$
+ *
+ * Modifications Copyright (c) 2003 The MusicKit Project, All Rights Reserved.
+ *
+ * Legal Statement Covering Additions by The MusicKit Project:
+ *
+ *   Permission is granted to use and modify this code for commercial and
+ *   non-commercial purposes so long as the author attribution and copyright
+ *   messages remain intact and accompany all relevant code.
+ *
+ */
 #import "ScrollingSound.h"
-#import "SubSoundView.h"
 
 #import <AppKit/NSApplication.h>
 #import <AppKit/NSCursor.h>
@@ -15,7 +25,7 @@
 	int borderType = NSBezelBorder;
     
 	(tempRect.size) = [NSScrollView contentSizeForFrameSize:(theFrame.size) hasHorizontalScroller:YES hasVerticalScroller:NO borderType:borderType];
-	theSoundView = [[SubSoundView alloc] initWithFrame:tempRect];
+	theSoundView = [[SndView alloc] initWithFrame:tempRect];
 	[super initWithFrame:theFrame];
     [self setBorderType:borderType];
     [self setHasHorizontalScroller:YES];
