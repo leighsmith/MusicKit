@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		39202A5CFF87E29ECFED3B93 = {
 			buildStyles = (
 				441ED0E6005D5B5DCFED3B96,
 				441ED0E7005D5B5DCFED3B96,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 39202A5DFF87E29ECFED3B93;
 			productRefGroup = 39202A76FF87E29ECFED3B93;
@@ -42,6 +43,7 @@
 			refType = 4;
 		};
 		39202A5FFF87E29ECFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MIDIFileController.m;
 			refType = 4;
@@ -55,6 +57,7 @@
 			refType = 4;
 		};
 		39202A61FF87E29ECFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MIDIFileController.h;
 			refType = 4;
@@ -68,6 +71,7 @@
 			refType = 4;
 		};
 		39202A63FF87E29ECFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MIDIFilePlayback_main.m;
 			refType = 4;
@@ -121,31 +125,37 @@
 			refType = 4;
 		};
 		39202A6AFF87E29ECFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Makefile.preamble;
 			refType = 4;
 		};
 		39202A6BFF87E29ECFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Makefile;
 			refType = 4;
 		};
 		39202A6CFF87E29ECFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Makefile.postamble;
 			refType = 4;
 		};
 		39202A6DFF87E29ECFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = m.template;
 			refType = 4;
 		};
 		39202A6EFF87E29ECFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = h.template;
 			refType = 4;
 		};
 		39202A6FFF87E29ECFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = java.template;
 			refType = 4;
@@ -225,8 +235,8 @@
 			productName = MIDIFilePlayback;
 			productReference = 39202A77FF87E29ECFED3B93;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -280,7 +290,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		39202A79FF87E29ECFED3B93 = {
 			buildActionMask = 2147483647;
@@ -288,7 +297,7 @@
 				39202A7AFF87E29ECFED3B93,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		39202A7AFF87E29ECFED3B93 = {
 			fileRef = 39202A61FF87E29ECFED3B93;
@@ -303,7 +312,7 @@
 				39202A7DFF87E29ECFED3B93,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		39202A7CFF87E29ECFED3B93 = {
 			fileRef = 39202A65FF87E29ECFED3B93;
@@ -324,7 +333,7 @@
 				39202A80FF87E29ECFED3B93,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		39202A7FFF87E29ECFED3B93 = {
 			fileRef = 39202A5FFF87E29ECFED3B93;
@@ -351,7 +360,7 @@
 				39202A85FF87E29ECFED3B93,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		39202A82FF87E29ECFED3B93 = {
 			fileRef = 39202A71FF87E29ECFED3B93;
@@ -382,7 +391,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //390
 //391
