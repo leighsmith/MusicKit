@@ -384,12 +384,10 @@ static int bitrateLookupTable[16][6] = {
 // insertIntoAudioBuffer:
 - (int) convertToNativeFormat
 {
-    SNDStreamBuffer nativeFormat;
-
-    SNDStreamNativeFormat(&nativeFormat);
+    SndFormat nativeFormat = [Snd nativeFormat];
     
     if(nativeFormat.sampleRate != [self samplingRate] || nativeFormat.channelCount != [self channelCount]) {
-	NSLog(@"MP3 file sample rate %lf, channels %d not of native format sample rate %d, channels %d\n",
+	NSLog(@"MP3 file sample rate %lf, channels %d not of native format sample rate %lf, channels %d\n",
 	    [self samplingRate], [self channelCount], nativeFormat.sampleRate, nativeFormat.channelCount);
 	return SND_ERR_UNKNOWN;
     }
@@ -773,7 +771,6 @@ static int bitrateLookupTable[16][6] = {
 {
   SndAudioBuffer *ab  = [SndAudioBuffer alloc];
   //  int   samSize       = 4; // hardcoded for 16 bit, 2 chans
-  //  SndSoundStruct s;
 
   long endIndex = r.length + r.location;
 
