@@ -13,6 +13,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2000/06/09 03:18:06  leigh
+  Replaced objc.h with Foundation.h
+
   Revision 1.6  2000/04/16 04:26:34  leigh
   Renamed scorefileObject.h to MKScorefileObject.h
 
@@ -39,8 +42,9 @@ extern "Objective-C" {
 #ifndef MUSICKIT_H
 #define MUSICKIT_H
 
- /* Include files outside of the Music Kit. */
-#import <objc/objc.h>           /* Contains nil, etc. */
+/* Include files outside of the Music Kit. */
+#import <Foundation/Foundation.h>           /* Contains nil, etc. */
+
 // These used to be in NS3.3 ansi/math.h but are no longer
 // However they are in System.framework on Win32 which is typically #imported afterwards...sigh
 #if !defined(MAXSHORT) // && !defined(WIN32)
