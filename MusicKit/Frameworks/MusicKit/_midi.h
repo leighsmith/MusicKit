@@ -1,12 +1,24 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    Defines MIDI input and output structures, constants and functions.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /*
   Modification history:
 
   $Log$
+  Revision 1.5  2000/10/01 06:57:01  leigh
+  Made _map a NSMapTable.
+
   Revision 1.4  2000/07/22 00:26:32  leigh
   Typed _MKGetNoteOns
 
@@ -55,7 +67,7 @@ typedef struct __MKMidiOutStruct { /* Midi output structure */
     unsigned char _maxCount[MIDI_NUMCHANS][MIDI_NUMKEYS];
     unsigned char _curCount[MIDI_NUMCHANS][MIDI_NUMKEYS];
     /* Used to stack noteOns against noteOffs. */
-    id _map[MIDI_NUMCHANS];
+    NSMapTable *_map[MIDI_NUMCHANS];
     /* Implements conversion from music kit to MIDI semantics. */
     unsigned char _runningStatus;
     void *_midiFileStruct;
