@@ -13,6 +13,9 @@
   accompany all relevant code.
 */
 
+#ifndef __SND_PLAYER_H__
+#define __SND_PLAYER_H__
+
 #import <Foundation/Foundation.h>
 #import "SndKit.h"
 #import "SndStreamClient.h"
@@ -192,3 +195,5 @@
 - setRemainConnectedToManager: (BOOL) b;
 
 @end
+
+#endif
