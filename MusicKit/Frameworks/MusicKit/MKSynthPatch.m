@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/09/04 22:45:36  leigh
+  modules is now const char to stop warnings
+
   Revision 1.3  1999/08/26 19:56:56  leigh
   using new MKError prototype
 
@@ -1174,7 +1177,7 @@ static id getClassWithoutWarning(NSString *clname)
      */
     BOOL ok;
     NSString *filename;
-    char *modules[2];
+    const char *modules[2];
     id classObj;
     classObj = getClassWithoutWarning(className);
     if (classObj)
