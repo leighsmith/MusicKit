@@ -5350,6 +5350,11 @@
 				D85E27F406FA0C0100385C32,
 				D828F9C90780CC1E00215EB9,
 				D828FA5A0780D1F400215EB9,
+				D86963C007C164F000785798,
+				D844A75807C7EF320086A55B,
+				D844A7AD07C7F1EE0086A55B,
+				D844A7C907C827CD0086A55B,
+				D8E1DDFA07CA78B40018F8F3,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -5363,6 +5368,237 @@
 			path = "Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX/MKPerformSndMIDI-Info.plist";
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
+		};
+		D844A75507C7EF320086A55B = {
+			buildActionMask = 2147483647;
+			files = (
+				D844A77707C7F1790086A55B,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D844A75607C7EF320086A55B = {
+			buildActionMask = 2147483647;
+			files = (
+				D844A7A607C7F18A0086A55B,
+				D844A7A707C7F18A0086A55B,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D844A75707C7EF320086A55B = {
+			buildPhases = (
+				D844A75507C7EF320086A55B,
+				D844A75607C7EF320086A55B,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = playsnd;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = "playsnd (Tool)";
+			productName = playsnd;
+			productReference = D844A75807C7EF320086A55B;
+			productType = "com.apple.product-type.tool";
+		};
+		D844A75807C7EF320086A55B = {
+			explicitFileType = "compiled.mach-o.executable";
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = playsnd;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D844A77407C7F0E70086A55B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = main.m;
+			path = Examples/playsnd/main.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D844A77707C7F1790086A55B = {
+			fileRef = D844A77407C7F0E70086A55B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D844A7A607C7F18A0086A55B = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D844A7A707C7F18A0086A55B = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D844A7AA07C7F1EE0086A55B = {
+			buildActionMask = 2147483647;
+			files = (
+				D844A7B307C7F2360086A55B,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D844A7AB07C7F1EE0086A55B = {
+			buildActionMask = 2147483647;
+			files = (
+				D844A7B407C7F2750086A55B,
+				D844A7B507C7F2750086A55B,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D844A7AC07C7F1EE0086A55B = {
+			buildPhases = (
+				D844A7AA07C7F1EE0086A55B,
+				D844A7AB07C7F1EE0086A55B,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = recsnd;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = recsnd;
+			productName = recsnd;
+			productReference = D844A7AD07C7F1EE0086A55B;
+			productType = "com.apple.product-type.tool";
+		};
+		D844A7AD07C7F1EE0086A55B = {
+			explicitFileType = "compiled.mach-o.executable";
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = recsnd;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D844A7B207C7F2360086A55B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = main.m;
+			path = Examples/recsnd/main.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D844A7B307C7F2360086A55B = {
+			fileRef = D844A7B207C7F2360086A55B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D844A7B407C7F2750086A55B = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D844A7B507C7F2750086A55B = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D844A7B607C7F2AA0086A55B = {
+			containerPortal = D8DB4E4C059FA05500624233;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = D844A75707C7EF320086A55B;
+			remoteInfo = "playsnd (Tool)";
+		};
+		D844A7B707C7F2AA0086A55B = {
+			isa = PBXTargetDependency;
+			target = D844A75707C7EF320086A55B;
+			targetProxy = D844A7B607C7F2AA0086A55B;
+		};
+		D844A7B807C7F2AA0086A55B = {
+			containerPortal = D8DB4E4C059FA05500624233;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = D844A7AC07C7F1EE0086A55B;
+			remoteInfo = recsnd;
+		};
+		D844A7B907C7F2AA0086A55B = {
+			isa = PBXTargetDependency;
+			target = D844A7AC07C7F1EE0086A55B;
+			targetProxy = D844A7B807C7F2AA0086A55B;
+		};
+		D844A7C607C827CD0086A55B = {
+			buildActionMask = 2147483647;
+			files = (
+				D8E1DDB807CA77EE0018F8F3,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D844A7C707C827CD0086A55B = {
+			buildActionMask = 2147483647;
+			files = (
+				D8E1DDE807CA78320018F8F3,
+				D8E1DDE907CA78320018F8F3,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D844A7C807C827CD0086A55B = {
+			buildPhases = (
+				D844A7C607C827CD0086A55B,
+				D844A7C707C827CD0086A55B,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = playsndfaders;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = playsndfaders;
+			productName = playsndfaders;
+			productReference = D844A7C907C827CD0086A55B;
+			productType = "com.apple.product-type.tool";
+		};
+		D844A7C907C827CD0086A55B = {
+			explicitFileType = "compiled.mach-o.executable";
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = playsndfaders;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		D847900107A8AFD700F7C83A = {
 			fileRef = D84395E9059FAA450054BEEE;
@@ -5653,6 +5889,7 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
 			};
+			comments = "This example program takes MIDI through midi0 (serial port A on NeXT\nhardware) and generates echoes on successive MIDI channels. Note that\nyou must have a synthesizer capable of multi-channel synthesis plugged\ninto the serial port to hear the echoes. You must also be sure to\nconfigure your synthesizer to respond on MIDI channels 1-8.\n";
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
@@ -5951,6 +6188,7 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
 			};
+			comments = "This example program takes MIDI through serial port B and generates \nechoes on successive MIDI channels. Note that you must have a synthesizer \ncapable of multi-channel synthesis plugged into the serial port to hear \nthe echoes. You must also be sure to configure your synthesizer to respond\non MIDI channels 1-8.\n";
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
@@ -6227,6 +6465,7 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
 			};
+			comments = "MIXSOUNDS\n\nThis directory contains \"mixsounds\", an example program that mixes\nsoundfiles based on a scorefile description of the mix.  mixsounds\nallows you to set the amplitude scaling of each soundfile and to\nchange that scaling over time by applying an amplitude envelope. It\nallows you to resample (change the pitch of) a file.  It also allows\nyou to specify that only a portion of a file be used in the mix.\nThere is no limit to the number of soundfiles that may be mixed\ntogether. Also, the same soundfile may be mixed several times and may\noverlap with itself.  The soundfiles may have different sampling rates\nand different formats.  However, the output must be 16 bit linear.\nThe mix is done on the main CPU, rather than the DSP.  The more files\nyou mix, the longer it will take the program to run.  Note also that\nif you mix many large files, you will need a fair degree of swap\nspace--keep some room free on the disk off of which you booted.\n\nmixsounds is also an illustration of how to make your own Music Kit\nInstrument subclass to \"realize Notes\" in some novel fashion. In this\ncase, Notes are soundfile mix specifications. They are \"realized\" by\nbeing mixed into the output file.\n\nTo run the program with the file testMix.score as input and writing to the file\ntestMix.snd type the following to a shell:\n\n        mixsounds testMix.score testMix.snd\n        \nThis file mixes three of the sounds on /NextLibrary/Music/Sounds together into \na new sound.\n\nYou can then play the result, testMix.snd, with the SoundPlayer Demo or the\nsndplay command-line program.\n\n\nSCOREFILE SEMANTICS AND AN EXAMPLE\n\nMixsounds responds to only two Music Kit noteTypes, noteDur and\nnoteUpdate with no noteTag.  noteUpdates are used only to set\ndefaults.  Since many processing algorithms are applied before a mix,\nnoteUpdates in the middle of a file may not take effect until the next\nnote.\n\nMixsounds recognizes the following parameters:\n\n        soundFile      - The sound file to be read, specified as a string.\n        timeOffset     - Time offset into the file to begin reading. E.g.\n                                a time offset of 1 means begin 1 second into\n                                the file. Note that timeOffset is computed \n\t\t\t\tbefore any pitch change.\n        dur            - Duration of the file to use. E.g. a dur of .5\n                                means to use only .5 seconds of the file.\n                                Note that dur is computed before any pitch \n\t\t\t\tchange. A dur of 0 means \"the whole thing\".\n        amp            - The amplitude scaling to be applied to the file.\n\tampEnv\t       - The amplitude envelope. The X values are in seconds.\n\t\t\t\tThe Y values are scaled by the amp parameter.  \n\t\t\t\tThe resulting amplitude is the file amplitude\n\t\t\t\tmultipled by amp multiplied by ampEnv.\n\t\t\t\tNote that the way ampEnv is applied depends\n\t\t\t\ton ampEnvTimeScale.\n\tampEnvTimeScale - If this parameter is 0 or not present, ampEnv is\n\t\t\t\tapplied before any pitch change. Thus, the\n\t\t\t\ttimes in the envelope refer to the times in the\n\t\t\t\toriginal file. If this parameter is 1, ampEnv \n\t\t\t\tis applied after any pitch change.  If this \n\t\t\t\tparameter is 2, ampEnv times are scaled to \n\t\t\t\texactly fit the\tselected file segment.\n\tfreq1\t       - New assumed fundamental frequency. Must be \n\t\t\t\taccompanied by freq0.\n\tfreq0\t       - Old assumed fundamental frequency. Must be\n\t\t\t\taccompanied by freq1.\n\tbearing\t       - This parameter is relevant only when mixing a mono\n\t\t\t\tfile into a stereo mix.  It represents the\n\t\t\t\tright/left panning of the signal and is in the\n\t\t\t\trange (-45:45).\n\nAn example will help clarify how these parameters work. First let's write out\none of the example .score files as a .snd file. We use the command-line utility\nplayscore. To a shell, type the following:\n\n        playscore -w Examp1.aiff Examp1.score\n\nNow, here's the contents of testMix2.score, which mixes Examp1.aiff with itself\nand other example soundfiles.\n\n        part p1; /* We use only one part. The part is not relevant in this \n                    program because we mix all parts together in the output\n                    file. */\n\n\tenvelope aEnv = [(0,1)(1.9,1)(2,0)];\n\n        BEGIN;\n        /* First, here's an 'echo' effect. We use the first 2 seconds of \n\t   Examp1.aiff */\n        p1 (2) soundFile:\"Examp1.aiff\" amp:.1 ampEnv:aEnv;\n        t +.5;\n        p1 (2) soundFile:\"Examp1.aiff\" amp:.05 ampEnv:aEnv;\n        t +.5;\n        p1 (2) soundFile:\"Examp1.aiff\" amp:.025 ampEnv:aEnv;\n        t +.5;\n        p1 (2) soundFile:\"Examp1.aiff\" amp:.01 ampEnv:aEnv;\n        t + 4;\n        p1 (0) soundFile:\"/Next/Library/Sounds/Frog.snd\" amp:.1;\n        /* A duration of 0 means 'the whole thing' */\n\nADDING AN ENVELOPE TO A FILE\n\nEnvelopes are simple Music Kit envelopes, where the time is in seconds.\nExample:\n\n        part p1;\n        BEGIN;\n        p1 (8) soundFile:\"Examp1.aiff\" amp:.1 ampEnv:[(0,0)(1,1)(2,.1)(8,0)]\n\t\ttimeOffset:.4;\n\t/* Note that the times in the ampEnv applied BEFORE the file has\n           been adjusted as specifed in the timeOffset.  For example, in \n\t   this case, the envelope (and the sound) begin .4 seconds into\n\t   the file and the envelope goes to zero 8.4 seconds into the file.\n\t   See ampEnvTimeScale above.\n\t*/\n\tEND;\n\nCHANGING THE PITCH OF A FILE\n\nThis is a little tricky because it also changes the length of the\nfile.  The important thing to rememeber is that the duration and\ntimeOffset parameters, as well as the amplitude envelope are applied\nbefore the pitch/time change is made, by default.  For example, if a\nfile is raised an octave, it gets twice as short.\n\nExample:\n\n        part p1;\n        BEGIN;\n        p1 (8) soundFile:\"Examp1.aiff\" amp:.1 freq0:440 freq1:880; /* 8va */\n\tEND;\n\nHINTS\n\nKeep in mind that to prevent overflow distortion, the sum of the\namplitudes of all files that overlap at any one time must be less than\n1. A good rule of thumb is to set each file's amp parameter to the\nreciprocal of the total number of files that overlap at any one time.\nA simple program called \"maxamp\" is provided to check the maximum amplitude.\n\nAlso remember that you will get a click if a soundfile enters or\nleaves the mix when its amplitude is not 0. To avoid clicks, you must\nselect carefully the portion of the soundfile you use.\n\nMixsounds was written by David Jaffe, with Michael McNabb adding the\nenveloping and pitch transposition, the latter based on code provided\nby Julius Smith.  The source to the pitch transposition is not currently\navailable.\n\nEXTENDING MIXSOUNDS\n\nTo add your own processing routines and parameters, copy the mixsounds\ndirectory, open the file MixInstrument.m and search for \"###\".  Follow\ndirections in that file.  If you are using mixsounds with Common Music,\nyou must also create a Common Music \"part declaration\".  An example\nis given in this directory as cm-part.lisp.\n\nUSING MIXSOUNDS WITH COMMON MUSIC\n\nCommon Music supports Mixsounds.  However, this version of Mixsounds contains\nparameters not in the original version so a special Common Music file is \nneeded.  See cm-part.lisp on this directory.  Substitute this file for the\ncommon-music/mk/mixsounds.lisp file and make common music.  Alternatively,\nchage the name of the part in cm-part.lisp and use the new part name.\nAn example file to access mixsounds from common music is given in \ncommon-music-example.lisp.\n\nBUGS\n\nmixsounds can eat up swap space if you try to mix a large number of\nfile on top of one another or if you have very long files and are\nchanging pitch.  This is because mixsounds does its operations in\nmemory (with the exception of writing out the final mix.)  It would be\n*very* nice to fix this problem, but it's not trivial.\n\n";
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
@@ -6556,6 +6795,7 @@
 		};
 		D84E21EF05B70A88002B493F = {
 			children = (
+				D844A7B207C7F2360086A55B,
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
@@ -6564,6 +6804,7 @@
 		};
 		D84E21F705B70A91002B493F = {
 			children = (
+				D844A77407C7F0E70086A55B,
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
@@ -6572,6 +6813,7 @@
 		};
 		D84E21FF05B70A99002B493F = {
 			children = (
+				D8E1DDB707CA77EE0018F8F3,
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
@@ -6580,6 +6822,7 @@
 		};
 		D84E220705B70AA5002B493F = {
 			children = (
+				D8E1DE0507CA79950018F8F3,
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
@@ -8069,6 +8312,115 @@
 			target = D88FED7005A10EAF0024FD88;
 			targetProxy = D8673D8605A210D0009FFCAA;
 		};
+		D86963B707C164AB00785798 = {
+			children = (
+				D86963C407C1653700785798,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86963BA07C164BD00785798 = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86963BD07C164F000785798 = {
+			buildActionMask = 2147483647;
+			files = (
+				D86963C507C1653700785798,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D86963BE07C164F000785798 = {
+			buildActionMask = 2147483647;
+			files = (
+				D869644A07C1657F00785798,
+				D869644B07C1657F00785798,
+				D869644C07C1657F00785798,
+				D869644D07C1657F00785798,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D86963BF07C164F000785798 = {
+			buildPhases = (
+				D86963BD07C164F000785798,
+				D86963BE07C164F000785798,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INSTALL_PATH = /usr/local/bin;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = example1;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = "example1 (Tool)";
+			productName = example1;
+			productReference = D86963C007C164F000785798;
+			productType = "com.apple.product-type.tool";
+		};
+		D86963C007C164F000785798 = {
+			explicitFileType = "compiled.mach-o.executable";
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = example1;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D86963C407C1653700785798 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = example1.m;
+			path = Examples/example1/example1.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86963C507C1653700785798 = {
+			fileRef = D86963C407C1653700785798;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D869644A07C1657F00785798 = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D869644B07C1657F00785798 = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D869644C07C1657F00785798 = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D869644D07C1657F00785798 = {
+			fileRef = D825564A05A211B400B0192B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		D86CBB8307ADAE9A00CB06E4 = {
 			children = (
 				D86CBB8407ADAE9A00CB06E4,
@@ -8526,6 +8878,7 @@
 		};
 		D86D249B06F2AAE4003565CB = {
 			children = (
+				D86963B707C164AB00785798,
 			);
 			isa = PBXGroup;
 			name = example1;
@@ -8559,6 +8912,7 @@
 		};
 		D86D24A706F2AB12003565CB = {
 			children = (
+				D86963BA07C164BD00785798,
 			);
 			isa = PBXGroup;
 			name = example2;
@@ -9122,10 +9476,10 @@
 				D84E216405B707AA002B493F,
 				D84E20F405B70575002B493F,
 				D8708E5C05B493C20074C18D,
-				D8708EB505B494780074C18D,
 				D8708E5505B493B80074C18D,
 				D8708E4E05B493AB0074C18D,
 				D8708E8205B4941C0074C18D,
+				D8708EB505B494780074C18D,
 			);
 			isa = PBXGroup;
 			name = "Sound Examples";
@@ -9260,7 +9614,10 @@
 		};
 		D8708EB505B494780074C18D = {
 			children = (
+				D8E1DE3507CA83DE0018F8F3,
+				D8E1DDF307CA78970018F8F3,
 				D84E220705B70AA5002B493F,
+				D8E1DE0907CA79BF0018F8F3,
 			);
 			isa = PBXGroup;
 			name = MultipleSoundPlayer;
@@ -9380,6 +9737,7 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
 			};
+			comments = "This example program captures MIDI input in a scorefile.\n\nEach time you push the button a new MIDI recording session begins. The \ninput is written to the file with the name specified in the graphic interface\nfield.\n";
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
@@ -9559,6 +9917,10 @@
 				D84E21DA05B70940002B493F,
 				D84E21DC05B70940002B493F,
 				D80DA5CB0764E4250052DFAF,
+				D844A7B707C7F2AA0086A55B,
+				D844A7B907C7F2AA0086A55B,
+				D8E1DE1407CA7AAD0018F8F3,
+				D8E1DE1607CA7AAD0018F8F3,
 			);
 			isa = PBXAggregateTarget;
 			name = "Examples Only (Aggregate)";
@@ -9706,6 +10068,7 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
 			};
+			comments = "This program takes MIDI through midi0 (serial port A on NeXT hardware)\nand sends it out MIDI again. While this is a pointless application by\nitself, it does demonstrate the simplest Music Kit MIDI application.\nSee the example MidiEcho for an example of more sophisticated MIDI\nprocessing. MidiEcho also allows you to select which serial port to\nuse.\n";
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
@@ -9943,6 +10306,7 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
 			};
+			comments = "This program takes MIDI through midi0 (serial port A on NeXT hardware)\nand uses it to play the \"Pluck\" instrument (SynthPatch) on the DSP.\nThe keyboard's velocity is used to scale the brightness of the\nsynthesis. Pitch bend is handled.  No other MIDI parameters are\ncurrently supported by Pluck.\n\nNote that the SynthPatches supplied in the Music Kit SynthPatch Library\nare not optimized for keyboard performance. We hope to provide versions\nspecially-designed for keyboard performance in the near future.\n";
 			dependencies = (
 			);
 			isa = PBXNativeTarget;
@@ -15480,6 +15844,7 @@
 				D8708B4805B312A70074C18D,
 				D8708B6905B313730074C18D,
 				D8708B9905B314800074C18D,
+				D86963BF07C164F000785798,
 				D8708F5005B49A430074C18D,
 				D870920505B5D9EF0074C18D,
 				D870938C05B5DCDE0074C18D,
@@ -15490,6 +15855,10 @@
 				D84E217F05B707F2002B493F,
 				D84E21BE05B7087A002B493F,
 				D84E221205B70AED002B493F,
+				D844A75707C7EF320086A55B,
+				D844A7AC07C7F1EE0086A55B,
+				D844A7C807C827CD0086A55B,
+				D8E1DDF907CA78B40018F8F3,
 				D85A2F49061F347D0065380E,
 				D88C502806C7E37100D33D99,
 				D85E27D106FA098200385C32,
@@ -15515,9 +15884,9 @@
 		};
 		D8DB4E5E059FA0C900624233 = {
 			children = (
+				D86D239D06F2293A003565CB,
 				D8AE7A6A061A1636009D0112,
 				D88C4FF206C7E0DE00D33D99,
-				D86D239D06F2293A003565CB,
 				D880FD290780ACE000FD03CC,
 				D85E27DC06FA0B8800385C32,
 				D880FD2D0780ACF000FD03CC,
@@ -15666,6 +16035,256 @@
 			isa = PBXAggregateTarget;
 			name = "Frameworks Only (Aggregate)";
 			productName = MusicKit;
+		};
+		D8E1DDB707CA77EE0018F8F3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = main.m;
+			path = Examples/playsndfaders/main.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E1DDB807CA77EE0018F8F3 = {
+			fileRef = D8E1DDB707CA77EE0018F8F3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E1DDE807CA78320018F8F3 = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E1DDE907CA78320018F8F3 = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E1DDF307CA78970018F8F3 = {
+			children = (
+				D8E1DDFF07CA797C0018F8F3,
+				D8E1DE0007CA797C0018F8F3,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E1DDF607CA78B40018F8F3 = {
+			buildActionMask = 2147483647;
+			files = (
+				D8E1DE4507CAC0290018F8F3,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8E1DDF707CA78B40018F8F3 = {
+			buildActionMask = 2147483647;
+			files = (
+				D8E1DE0207CA797C0018F8F3,
+				D8E1DE0607CA79950018F8F3,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8E1DDF807CA78B40018F8F3 = {
+			buildActionMask = 2147483647;
+			files = (
+				D8E1DE1107CA7A880018F8F3,
+				D8E1DE1207CA7A880018F8F3,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8E1DDF907CA78B40018F8F3 = {
+			buildPhases = (
+				D8E1DDF607CA78B40018F8F3,
+				D8E1DDF707CA78B40018F8F3,
+				D8E1DDF807CA78B40018F8F3,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Examples/MultipleSoundPlayer/MultipleSoundPlayer-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = MultipleSoundPlayer;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = MultipleSoundPlayer;
+			productName = MultipleSoundPlayer;
+			productReference = D8E1DDFA07CA78B40018F8F3;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>MultipleSoundPlayer</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.yourcompany.MultipleSoundPlayer</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+			productType = "com.apple.product-type.application";
+		};
+		D8E1DDFA07CA78B40018F8F3 = {
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = MultipleSoundPlayer.app;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D8E1DDFC07CA78B40018F8F3 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.xml;
+			name = "MultipleSoundPlayer-Info.plist";
+			path = "Examples/MultipleSoundPlayer/MultipleSoundPlayer-Info.plist";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		D8E1DDFF07CA797C0018F8F3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SoundPlayerController.h;
+			path = Examples/MultipleSoundPlayer/SoundPlayerController.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E1DE0007CA797C0018F8F3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = SoundPlayerController.m;
+			path = Examples/MultipleSoundPlayer/SoundPlayerController.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E1DE0207CA797C0018F8F3 = {
+			fileRef = D8E1DE0007CA797C0018F8F3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E1DE0507CA79950018F8F3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = MultipleSoundPlayer_main.m;
+			path = Examples/MultipleSoundPlayer/MultipleSoundPlayer_main.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E1DE0607CA79950018F8F3 = {
+			fileRef = D8E1DE0507CA79950018F8F3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E1DE0907CA79BF0018F8F3 = {
+			children = (
+				D8E1DE4307CAC0290018F8F3,
+			);
+			isa = PBXGroup;
+			name = Interfaces;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E1DE1107CA7A880018F8F3 = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E1DE1207CA7A880018F8F3 = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8E1DE1307CA7AAD0018F8F3 = {
+			containerPortal = D8DB4E4C059FA05500624233;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = D844A7C807C827CD0086A55B;
+			remoteInfo = playsndfaders;
+		};
+		D8E1DE1407CA7AAD0018F8F3 = {
+			isa = PBXTargetDependency;
+			target = D844A7C807C827CD0086A55B;
+			targetProxy = D8E1DE1307CA7AAD0018F8F3;
+		};
+		D8E1DE1507CA7AAD0018F8F3 = {
+			containerPortal = D8DB4E4C059FA05500624233;
+			isa = PBXContainerItemProxy;
+			proxyType = 1;
+			remoteGlobalIDString = D8E1DDF907CA78B40018F8F3;
+			remoteInfo = MultipleSoundPlayer;
+		};
+		D8E1DE1607CA7AAD0018F8F3 = {
+			isa = PBXTargetDependency;
+			target = D8E1DDF907CA78B40018F8F3;
+			targetProxy = D8E1DE1507CA7AAD0018F8F3;
+		};
+		D8E1DE3507CA83DE0018F8F3 = {
+			children = (
+				D8E1DDFC07CA78B40018F8F3,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E1DE4307CAC0290018F8F3 = {
+			children = (
+				D8E1DE4407CAC0290018F8F3,
+			);
+			isa = PBXVariantGroup;
+			name = MultipleSoundPlayer.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E1DE4407CAC0290018F8F3 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = "Examples/MultipleSoundPlayer/English.lproj/MultipleSoundPlayer-macosx.nib";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8E1DE4507CAC0290018F8F3 = {
+			fileRef = D8E1DE4307CAC0290018F8F3;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		D8E8D5B70784628600AAE755 = {
 			containerPortal = D8DB4E4C059FA05500624233;
