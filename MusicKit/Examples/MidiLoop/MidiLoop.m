@@ -2,17 +2,17 @@
   $Id$
 
   Description:
-   MidiLoop is an example of a Music Kit performance where the interactive
-   response time needs to be as fast as possible, even if at the expense of 
-   a bit of timing indeterminacy. Therefore, the Conductor is clocked and 
-   Midi is untimed (i.e. no delays are introduced in the Midi object). 
-   The Conductor is also set to not 'finishWhenEmpty'. This ensures the 
-   performance will continue, whether or not the Conductor has 
-   any messages to send, until the user decides to terminate the 
-   performance. The Midi object is set to not 'useInputTimeStamps' because
-   we are interested in producing regular echoes (using the Conductor's notion
-   of time), rather than in recording the exact time the MIDI entered the 
-   MIDI device driver. 
+    MidiLoop is an example of a MusicKit performance where the interactive
+    response time needs to be as fast as possible, even if at the expense of 
+    a bit of timing indeterminacy. Therefore, the MKConductor is clocked and 
+    MKMidi is untimed (i.e. no delays are introduced in the MKMidi object). 
+    The MKConductor is also set to not 'finishWhenEmpty'. This ensures the 
+    performance will continue, whether or not the MKConductor has 
+    any messages to send, until the user decides to terminate the 
+    performance. The MKMidi object is set to not 'useInputTimeStamps' because
+    we are interested in producing regular echoes (using the Conductor's notion
+    of time), rather than in recording the exact time the MIDI entered the 
+    MIDI device driver. 
 */
 
 #import "MidiLoop.h"
@@ -21,8 +21,10 @@
 
 - showInfoPanel:sender
 {
-    [NSBundle loadNibNamed:@"Info.nib" owner:self];
-    [infoPanel orderFront:sender];
+    // TODO platform specific bundle searching disabled/broken on 4K46?
+    // [NSBundle loadNibNamed: @"Info" owner:self];
+    [NSBundle loadNibNamed: @"Info-macos" owner:self];
+    [infoPanel makeKeyAndOrderFront:sender];
     return self;
 }
 
@@ -36,7 +38,7 @@ static void handleMKError(NSString *msg)
 {
     int i;
     if ([MKConductor inPerformance]) /* Already started */
-      return self;
+        return self;
     if(midiObj)
         [midiObj release];
     midiObj = [[MKMidi midi] retain];
