@@ -8,60 +8,25 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-*/
-/*
-Modification history:
-
-  $Log$
-  Revision 1.2  1999/07/29 01:16:37  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
+  Portions Copyright (c) 1999-, The MusicKit Project.
 */
 #import "MusicKit.h"
 #import "MKMTCPerformer.h"
 
 /* To do:  Add user bits, NAK, full messages */
 
-@implementation MKMTCPerformer:MKPerformer
-{
-    double firstTimeTag;   /* firstTimeTag, as specified by user. */
-    double lastTimeTag;    /* lastTimeTag, as specified by user. */
-    int direction;         /* 1 for forward, -1 for reverse */
-    short format;          /* MTC format */
-    id noteSender;
-    id aNote;
-    BOOL frozen;
+@implementation MKMTCPerformer
 
-    int _cmpStat;
-
-    /* This is the stopping point, in delta-t-adjusted time */
-    short _lastHours;
-    short _lastMinutes;
-    short _lastSeconds;
-    short _lastFrames;
-    short _frameQuarter;     /* Which quarter-frame we're on */
-
-    /* These are the time in delta-t adjusted units.  Use
-     * the access methods to get their value in Conductor's time
-     * base.
-     */
-    short _hours;
-    short _minutes;
-    short _seconds;
-    short _frames;
-}
-
-
-enum {CMP_NONE,CMP_HOURS,CMP_MINUTES,CMP_SECONDS};
+enum {CMP_NONE, CMP_HOURS, CMP_MINUTES, CMP_SECONDS};
 
 - init
 {
     [super init];
-    [self addNoteSender:noteSender = [[MKNoteSender alloc] init]];
+    [self addNoteSender: noteSender = [[MKNoteSender alloc] init]];
     aNote = [[MKNote alloc] init];
     format = MK_MTC_FORMAT_24; /* default */
-    [self setFirstTimeTag:0];
-    [self setLastTimeTagMTCHours:23 minutes:59 seconds:0 frames:0];
+    [self setFirstTimeTag: 0];
+    [self setLastTimeTagMTCHours: 23 minutes: 59 seconds: 0 frames: 0];
     _cmpStat = CMP_NONE;
     direction = MK_MTC_FORWARD;
     return self;
@@ -344,7 +309,7 @@ void
     return self;
 }
 
--perform
+- perform
 {
     int data;
     if (performCount == 1)
@@ -363,7 +328,7 @@ void
 	    
 	    } else {  /* All other formats */
 		_frames += 2;
-		if (_frames >= mtcFramesPerSec[format]) {
+		if (_frames >= (signed) mtcFramesPerSec[format]) {
 		    _frames = 0;
 		    if (++_seconds == 60) {
 			_seconds = 0;
