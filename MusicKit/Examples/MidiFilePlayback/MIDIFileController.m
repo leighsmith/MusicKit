@@ -138,36 +138,11 @@
     }
 }
 
-// Generate another long sound to play over the top while the beats sound.
-// This has its own part (as it will be performed by a different instrument).
-- (MKPart *) generateDroneOfDuration: (double) duration
-{
-   MKPart *dronePart = [[MKPart alloc] init];
-   MKNote *aNote;
-
-   aNote = [[MKNote alloc] initWithTimeTag:1.333]; // 8.333 seconds corresponds to tick 4000 in the file.
-   [aNote setNoteType:MK_noteDur];
-   [aNote setNoteTag: MKNoteTag()];
-   [aNote setDur: duration];  // at least as long as the drums sound and then 3 seconds more
-   [aNote setPar:MK_velocity toInt: 127];
-   [aNote setPar:MK_keyNum toInt: 40]; // drone keyNum
-   [aNote setPar:MK_filename toString: @"Filename"];
-   NSLog([aNote description]);
-   [dronePart addNote:aNote];
-   [aNote release];
-
-   return [dronePart autorelease];
-}
-
 - (void) startPlaying
 {
     MKMsgStruct *endRequest;
     MKScore *outputScore = [MKScore score];
-    MKPart *dronePart = [self generateDroneOfDuration: 3.0];
     NSArray *instruments = [[NSArray arrayWithObject: [NSNumber numberWithUnsignedInt: 0x01]] retain];
-
-    [dronePart retain];
-    [samplePartPerformer setPart: dronePart];
 
     [MKScore setMidifilesEvaluateTempo: NO]; // this ensures timing values are not modified during reading.
     if([outputScore readMidifile: midiPathName] == nil) {
@@ -267,7 +242,7 @@
 - (void) setMIDIFilename: (id) sender
 {
     int result;
-    NSArray *fileTypes = [NSArray arrayWithObject:@"midi"];
+    NSArray *fileTypes = [NSArray arrayWithObjects:@"midi", @"", nil];
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
 
     [oPanel setAllowsMultipleSelection:NO];
