@@ -39,6 +39,9 @@
 Modification history:
 
  $Log$
+ Revision 1.6  2000/05/06 02:34:33  leigh
+ Added M_PI if it isn't there
+
  Revision 1.5  2000/04/26 01:23:19  leigh
  Renamed to more meaningful samplesToMix ivar
 
@@ -59,9 +62,12 @@ Modification history:
 #import "_musickit.h"
 #import <SndKit/SndKit.h>
 #import <SndKit/SndResample.h>
- 
-
 #import "MKMixerInstrument.h"
+
+// Dear WinNT doesn't know about PI, stolen from MacOSX-Servers math.h definition
+#ifndef M_PI
+#define M_PI            3.14159265358979323846  /* pi */
+#endif
 
 @implementation MKMixerInstrument /* See MKMixerInstrument.h for instance variables */
 
@@ -197,7 +203,7 @@ static void swapIt(short *data,int howMany)
         NSLog(@"unable to allocate the memory for mix buffer\n");
     }
     while (curOutSamp < untilSamp) {
-	bzero(samps,BUFFERSIZE * sizeof(short)); /* Clear out buffer */
+	memset(samps, 0, BUFFERSIZE * sizeof(short)); /* Clear out buffer */
 	curBufSize = MIN(untilSamp - curOutSamp,BUFFERSIZE);
 	for (fileNum = 0; fileNum < [samplesToMix count]; fileNum++) {
 	    curOutPtr = samps;
