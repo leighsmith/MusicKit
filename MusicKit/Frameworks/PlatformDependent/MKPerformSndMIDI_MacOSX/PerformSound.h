@@ -45,19 +45,18 @@ extern "C" {
 
 /*!
     @typedef SNDStreamBuffer
-    @abstract Describes the format and the data in a limited length buffer used operating a stream.
-    @field streamFormat The format describing sample rate, number of channels etc. The field offset
-                        is not used since the streamData pointer can be used to refer to non-contiguous
-                        data.
+    @abstract Describes the format and the data in a limited length buffer used for operating on a stream.
+    @field dataFormat The format describing the number of bytes for one sample and it's format, signed, float etc.
+    @field frameCount The number of sample frames (i.e channel independent) in the buffer.
+    @field channelCount The number of channels.
+    @field sampleRate The sampling rate in Hz.
     @field streamData A pointer to the data itself. 
 */
-// TODO SndSoundStruct's days are numbered, we should replace streamFormat with each of the parameters we use as indicated below.
 typedef struct SNDStreamBuffer {
-    SndSoundStruct streamFormat;
-    // SndSampleFormat dataFormat;
-    // long frameCount;
-    // int channelCount;
-    // double sampleRate;
+    SndSampleFormat dataFormat;
+    long frameCount;
+    int channelCount;
+    double sampleRate;
     void *streamData;
 } SNDStreamBuffer;
 
@@ -141,11 +140,11 @@ PERFORM_API BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes);
 
 /*!
     @function       SNDStreamNativeFormat
-    @abstract       Return in the struct the format of the sound data preferred by the operating system.
-    @param          streamFormat Pointer to an allocated block of memory into which to put the SndSoundStruct
+    @abstract       Return in the SNDStreamBuffer, the format of the sound data preferred by the operating system.
+    @param          streamFormat Pointer to an allocated block of memory into which to put the SNDStreamBuffer format parameters.
+    @discussion     Does not set streamData field of SNDStreamBuffer structure.
  */
-// TODO this should take a SNDStreamBuffer *streamFormat parameter, when SndSoundStruct goes.
-PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat);
+PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat);
 
 /*!
     @function       SNDStreamStart
