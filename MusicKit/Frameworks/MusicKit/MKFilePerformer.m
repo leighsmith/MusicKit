@@ -94,6 +94,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/04/16 04:12:58  leigh
+  removed assignment in condition warning
+
   Revision 1.4  2000/04/02 17:05:06  leigh
   Cleaned up doco
 
@@ -220,7 +223,9 @@ Modification history:
     if (status != MK_inactive) 
       return nil;
     [self setFile:nil];
-    stream = aStream;
+    if(stream != nil)
+        [stream autorelease];
+    stream = [aStream retain];
     return self;
 }
 
@@ -311,16 +316,17 @@ Modification history:
        than its time is implicitly 0. Since we don't lookahead unless 
        firstTimeTag > 0, it is guaranteed that this note will not be overlooked.
        */
-    if (firstTimeTag > 0)
-      for (; ;) {
-	  [self nextNote];
-	  if (fileTime > (MK_ENDOFTIME-1))  {
-	      [self deactivate];
-	      return nil;
-	  }
-	  if (fileTime >= firstTimeTag)
-	    break;
-      }
+    if (firstTimeTag > 0) {
+        for (; ;) {
+            [self nextNote];
+            if (fileTime > (MK_ENDOFTIME-1))  {
+                [self deactivate];
+                return nil;
+            }
+            if (fileTime >= firstTimeTag)
+                break;
+        }
+    }
     /* Insure we run for the first time on our first note. */
 //  nextPerform = fileTime - firstTimeTag;
     nextPerform = fileTime;
@@ -341,7 +347,7 @@ Modification history:
 {
     id aNote;
     double t = fileTime;
-    while (aNote = [self nextNote])
+    while ((aNote = [self nextNote]))
       [self performNote:aNote];
     if (fileTime > (MK_ENDOFTIME-1) || fileTime >= lastTimeTag) 
       [self deactivate];
