@@ -21,8 +21,11 @@
     IBOutlet id soundFileNameTextBox;
     IBOutlet id playButton;
     NSArray *filesToPlay;
+    NSMutableDictionary *currentPerformances;
+    int soundTag;
 }
 
+- init;
 - (void) chooseSoundFile: (id) sender;
 - (void) playSound: (id) sender;
 @end
