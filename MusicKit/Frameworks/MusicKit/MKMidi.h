@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.10  2000/04/04 00:16:54  leigh
+  added condition checks for OS to handle variations between FoundationKits on MacOsX and Server
+
   Revision 1.9  2000/01/27 19:06:12  leigh
   Now using NSPort replacing C Mach port API
 
@@ -78,13 +81,20 @@ typedef struct _timeVars {
     BOOL alarmPending;
 } timeVars;
 
+// Determine the MacOsX derivative being compiled on. This is a passing phase (MOXS 1.2) until the two O.S. merge API
+#define macosx (defined(__ppc__) && !defined(ppc))
+#define macosx_server (defined(__ppc__) && defined(ppc))
+#if macosx_server
+#define NSMachPort NSPort
+#endif
+
 @interface MKMidi:NSObject
 {
     NSMutableArray * noteSenders;        /* The object's collection of NoteSenders. */
     NSMutableArray * noteReceivers;      /* The object's collection of NoteReceivers */
     MKDeviceStatus deviceStatus;         /* See MKDeviceStatus.h */
     NSString *midiDevName;               /* Midi device port name. */
-    BOOL useInputTimeStamps;             /* YES if Conductor's time updated from driver's time stamps.*/
+    BOOL useInputTimeStamps;             /* YES if MKConductor's time updated from driver's time stamps.*/
     BOOL outputIsTimed;                  /* YES if the driver's clock is used for output */
     double localDeltaT;                  /* Offset added to MIDI-out time stamps.(see below)*/
 
@@ -95,10 +105,10 @@ typedef struct _timeVars {
     double _timeOffset;
     char ioMode; // should be an enumerated type. 'i' = MKMidiInputOnly 'o' = MKMidiOutputOnly 'a' = MKMidiIO
     BOOL isOwner;
-    NSPort *devicePort; // Device port
-    NSPort *ownerPort;
-    NSPort *recvPort;   // Port on which we receive midiIn messages
-    NSPort *queuePort;  // Queues.
+    NSMachPort *devicePort; // Device port
+    NSMachPort *ownerPort;
+    NSMachPort *recvPort;   // Port on which we receive midiIn messages
+    NSMachPort *queuePort;  // Queues.
     BOOL mergeInput;
     NSString *hostname;
     int unit;
