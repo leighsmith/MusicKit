@@ -26,15 +26,12 @@ TOOL_NAME = \
 
 ADDITIONAL_LIB_DIRS = 
 
-ADDITIONAL_TOOL_LIBS += -lMKPerformSndMIDI -lSndKit -lgnustep-base \
-			-lMusicKit -lMKDSP -lst
+ADDITIONAL_TOOL_LIBS += -lMusicKit
 
 ADDITIONAL_FLAGS += -g
 
 ifeq ($(GNUSTEP_TARGET_OS), mingw32)
   ADDITIONAL_FLAGS += -DSK_NO_MP3_ENCODER
-else
-  ADDITIONAL_TOOL_LIBS += -lgnustep-gui -ljpeg
 endif
 
 # The Objective-C source files to be compiled
