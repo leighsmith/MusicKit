@@ -200,7 +200,7 @@ static SndStreamManager *sm = nil;
 - (void) delegateMessageThread:(NSArray*) ports
 {
     NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
-    id controllerProxy;
+    id controllerProxy = nil;
     
     [self retain];
 
