@@ -16,12 +16,12 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #define __SNDFORMATS__
 
 #define SND_FORMAT_UNSPECIFIED          (0)
-#define SND_FORMAT_MULAW_8              (1)
-#define SND_FORMAT_LINEAR_8             (2)
-#define SND_FORMAT_LINEAR_16            (3)
-#define SND_FORMAT_LINEAR_24            (4)
-#define SND_FORMAT_LINEAR_32            (5)
-#define SND_FORMAT_FLOAT                (6)
+#define SND_FORMAT_MULAW_8              (1) /* u-law encoding */
+#define SND_FORMAT_LINEAR_8             (2) /* Linear 8 bits */
+#define SND_FORMAT_LINEAR_16            (3) /* Linear 16 bits */
+#define SND_FORMAT_LINEAR_24            (4) /* Linear 24 bits */
+#define SND_FORMAT_LINEAR_32            (5) /* Linear 32 bits */
+#define SND_FORMAT_FLOAT                (6) /* IEEE FP 32 bits */
 #define SND_FORMAT_DOUBLE               (7)
 #define SND_FORMAT_INDIRECT             (8)
 #define SND_FORMAT_NESTED               (9)
@@ -41,7 +41,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #define SND_FORMAT_ADPCM_G722           (24)
 #define SND_FORMAT_ADPCM_G723_3         (25)
 #define SND_FORMAT_ADPCM_G723_5         (26)
-#define SND_FORMAT_ALAW_8               (27)
+#define SND_FORMAT_ALAW_8               (27) /* a-law encoding */
 #define SND_FORMAT_AES                  (28)
 #define SND_FORMAT_DELTA_MULAW_8	(29)
 
