@@ -60,8 +60,28 @@
 {
     [self stopRecording];
     [writingQueue release];
+    writingQueue = nil;
     [recordFileName release];
+    recordFileName = nil;
     [super dealloc];
+}
+
+- copyWithZone: (NSZone *) zone
+{
+    SndAudioProcessorRecorder *newRecorder = [[self class] copyWithZone: zone];
+    
+    newRecorder->writingQueue = [writingQueue copy]; // This allows the copy to be independent.
+    newRecorder->fileFormat = fileFormat;
+    newRecorder->isRecording = isRecording; 
+    newRecorder->framesRecorded = framesRecorded;  
+    /* The libsndfile handle referring to the open file. We are still referring to the same open file. */
+    newRecorder->recordFile = recordFile;
+    newRecorder->recordFileName = [recordFileName copy];
+    newRecorder->startedRecording = startedRecording;
+    newRecorder->startTriggerThreshold = startTriggerThreshold;
+    newRecorder->stopSignal = stopSignal;
+    
+    return newRecorder; // no need to autorelease (by definition, "copy" is retained)
 }
 
 - (NSString *) description
@@ -136,7 +156,7 @@
     if((recordFile = sf_open([filename fileSystemRepresentation], SFM_WRITE, &sfinfo)) != NULL) {
 	[recordFileName release];
 	recordFileName = [filename copy];
-	// TODO write a comment
+
 	return YES;
     }
     else {
@@ -182,7 +202,7 @@
     error = SndWriteSampleData(recordFile, [bufferFormattedForFile bytes], recordBufferFormat);
     if(error != SND_ERR_NONE)
 	NSLog(@"SndAudioProcessorRecorder writeToFileBuffer problem writing buffer\n");
-    framesRecorded += recordBufferFormat.frameCount;    
+    framesRecorded += recordBufferFormat.frameCount;
 }
 
 - (void) fileWritingThread: (id) emptyArgument
@@ -191,11 +211,15 @@
     
     // TODO we probably need to drain the queue first once we stop.
     while(!stopSignal) {
+	// We create an inner autorelease pool since this thread can run a long time writing many buffers which otherwise are not released.
+	NSAutoreleasePool *bufferPool = [[NSAutoreleasePool alloc] init];
+
 	// This will sleep waiting for an available buffer on the queue.
 	// We have to inject a final empty buffer on the queue to finally retrieve the buffer and exit the loop.
 	SndAudioBuffer *bufferToWrite = [writingQueue popNextProcessedBuffer];
 	[self writeToFileBuffer: bufferToWrite];
 	[writingQueue addPendingBuffer: bufferToWrite];
+	[bufferPool release];
     }
     // close the file after stopSignal is set.
     [self closeRecordFile];
@@ -408,6 +432,7 @@
 	    NSRange shortenedBufferRange;
 	    SndAudioBuffer *bufferForWriting = [writingQueue popNextPendingBuffer];
 
+	    // NSLog(@"processReplacingInputBuffer: bufferForWriting retainCount %d\n", [bufferForWriting retainCount]);
 	    // work out how much of the incoming buffer we can dump in the record buffer...
 	    shortenedBufferRange.location = 0;
 	    shortenedBufferRange.length = aboveThresholdRange.length;

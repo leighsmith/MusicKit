@@ -144,6 +144,8 @@ enum SndRecorderParam {
 */
 - (void) setStartTriggerThreshold: (float) f;
 
+- copyWithZone: (NSZone *) zone;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
