@@ -59,7 +59,7 @@
   if (!snd) {
     return nil;
   }
-  return [self initWithSnd:s playingAtTime:t beginAtIndex: 0 endAtIndex:[s sampleCount]];
+  return [self initWithSnd: s playingAtTime: t beginAtIndex: 0 endAtIndex: [s sampleCount]];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -292,6 +292,10 @@ startPosition: (double) startPosition
 - pause  { paused = YES; return self; }
 - resume { paused = NO;  return self; }
 
+- (BOOL) isPlaying
+{
+    return ![self isPaused] && ![self atEndOfPerformance];
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // AudioProcessorChain stuff
@@ -347,21 +351,18 @@ startPosition: (double) startPosition
 	    int end = buffLength;
 #endif
 
-	    if (deltaTime == 1.0) {
-		// NSLog(@"bufferToFill dataFormat before processing 1 %d\n", [bufferToFill dataFormat]);
-		[snd fillAudioBuffer: bufferToFill withSamplesInRange: retrieveRegion];
-		// NSLog(@"bufferToFill dataFormat before processing 2 %d\n", [bufferToFill dataFormat]);
-	    }
-	    else {
-		SndAudioBuffer *aBuffer = [[bufferToFill copy] setLengthInSampleFrames: retrieveRegion.length];
-		double offset = playIndex - (long)playIndex;
-		[snd fillAudioBuffer: aBuffer withSamplesInRange: retrieveRegion];
+	    // NSLog(@"bufferToFill dataFormat before processing 1 %d\n", [bufferToFill dataFormat]);
+	    [snd fillAudioBuffer: bufferToFill withSamplesInRange: retrieveRegion];
+	    // NSLog(@"bufferToFill dataFormat before processing 2 %d\n", [bufferToFill dataFormat]);
 
-		[SndAudioBuffer resampleByLinearInterpolation: aBuffer
-							 dest: bufferToFill
-						       factor: deltaTime
-						       offset: offset];
-		[aBuffer release];
+	    if (deltaTime != 1.0) {
+		NSLog(@"sample rate conversion\n");
+		[bufferToFill convertToFormat: [bufferToFill dataFormat]
+				 channelCount: [bufferToFill channelCount]
+				 samplingRate: [bufferToFill samplingRate] * deltaTime
+			       useLargeFilter: NO
+			    interpolateFilter: NO
+		       useLinearInterpolation: YES];
 	    }
 
 
@@ -398,9 +399,9 @@ startPosition: (double) startPosition
 	    
 	    // if (end / deltaTime >  playIndex - endAtIndex)  end = (endAtIndex - playIndex) / deltaTime;
 		
-	    actualTime +=  [bufferToFill duration];
+	    actualTime += [bufferToFill duration];
 	    if (audioProcessorChain != nil) {
-                 // printf("time: %f\n",relativePlayTime);
+                 // NSLog(@"time: %f\n",relativePlayTime);
 		[audioProcessorChain processBuffer: bufferToFill forTime: actualTime];
 	    }
 
