@@ -4,3 +4,5 @@
 .*TheInvisiblePropertyStore
 .DS_Store
 *.pbxuser
+*~.nib
+
