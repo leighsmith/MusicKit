@@ -444,7 +444,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     int currentPixel;
     int skipFactor = 1;
     void *pcmData;
-    int lastFrameInBlock, currentFrameInBlock; /* max point and current counter in current fragmented sound data segment */
+    int fragmentLength, currentFrameInBlock; /* max point and current counter in current fragmented sound data segment */
     int frameCount = [sound lengthInSampleFrames];
     float thisMax, thisMin, maxNinety = 0, minNinety = 0, theValue, previousValue = 0;
     int directionDown = NO; /* NO for up, YES for down */
@@ -507,7 +507,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	framesOffsetFromBase = firstOfNext = actualBase; /* just initialise it for now */
 	pcmData = [sound fragmentOfFrame: actualBase
 			 indexInFragment: &currentFrameInBlock
-		     lastFrameInFragment: &lastFrameInBlock
+			  fragmentLength: &fragmentLength
 			      dataFormat: &dataFormat];
 	
 	// Cache the display data into cacheMinArray, cacheMaxArray
@@ -532,13 +532,13 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	    
 	    /* need to establish initial values for base and counter here, for fragged sounds */
 	    while (framesOffsetFromBase < firstOfNext) {
-		if (currentFrameInBlock >= lastFrameInBlock) {
+		if (currentFrameInBlock >= fragmentLength - 1) {
 		    pcmData = [sound fragmentOfFrame: actualBase
 				     indexInFragment: &currentFrameInBlock
-				 lastFrameInFragment: &lastFrameInBlock
+				      fragmentLength: &fragmentLength
 					  dataFormat: &dataFormat];
-		    // NSLog(@"actualBase %d currentFrameInBlock %d lastFrameInBlock %d dataFormat %d firstOfNext %d\n",
-		    // actualBase, currentFrameInBlock, lastFrameInBlock, dataFormat, firstOfNext);		    
+		    // NSLog(@"actualBase %d currentFrameInBlock %d fragmentLength %d dataFormat %d firstOfNext %d\n",
+		    // actualBase, currentFrameInBlock, fragmentLength, dataFormat, firstOfNext);		    
 		}
 		if (framesOffsetFromBase < frameCount)
 		    theValue = getSoundValue(pcmData, dataFormat, currentFrameInBlock, whichChannel, chanCount);
@@ -635,7 +635,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     float theValue;
     int firstFrameToDisplay, pixelX = 0;
     void *pcmData;
-    int lastFrameInBlock, currentFrameInBlock; /* max point and current counter in current fragged sound data segment */
+    int fragmentLength, currentFrameInBlock; /* max point and current counter in current fragged sound data segment */
     int frameCount = [soundToDraw lengthInSampleFrames];
     SndSampleFormat dataFormat;
     int chanCount = [soundToDraw channelCount];
@@ -648,7 +648,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     
     pcmData = [soundToDraw fragmentOfFrame: firstFrameToDisplay 
 			   indexInFragment: &currentFrameInBlock
-		       lastFrameInFragment: &lastFrameInBlock
+			    fragmentLength: &fragmentLength
 				dataFormat: &dataFormat];
 
     /* last sample */
@@ -671,10 +671,10 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 #endif
     
     while (firstFrameToDisplay <= lastFrameToDisplay) {
-        if (currentFrameInBlock >= lastFrameInBlock)
+        if (currentFrameInBlock >= fragmentLength - 1)
 	    pcmData = [soundToDraw fragmentOfFrame: firstFrameToDisplay 
 				   indexInFragment: &currentFrameInBlock 
-			       lastFrameInFragment: &lastFrameInBlock
+				    fragmentLength: &fragmentLength
 					dataFormat: &dataFormat];
 	
         theValue = getSoundValue(pcmData, dataFormat, currentFrameInBlock, whichChannel, chanCount);
@@ -1986,7 +1986,6 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 
 - (void) pasteboard: (NSPasteboard *) thePasteboard provideDataForType: (NSString *) pboardType
 {
-    
     if (![validPasteboardSendTypes containsObject: pboardType])
 	return;
     
@@ -1999,7 +1998,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	//      thePasteboard, pboardType, pasteboardSound);
 		
 	/* sound data and full header must be sent to the pasteboard here */
-	ret = [thePasteboard setData: [pasteboardSound dataEncodedAsFormat: @"au"]
+	ret = [thePasteboard setData: [pasteboardSound dataEncodedAsFormat: [Snd defaultFileExtension]]
 			     forType: pboardType];
 	
 	notProvidedData = NO;
