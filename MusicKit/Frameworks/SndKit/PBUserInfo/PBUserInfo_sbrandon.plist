@@ -1,1 +1,4 @@
-{NSWindowsNTOperatingSystem = {Archs = ""; Target = install; }; }
+{
+    NSMACHOperatingSystem = {Archs = "18 "; Target = framework; }; 
+    NSWindowsNTOperatingSystem = {Archs = ""; Target = install; }; 
+}
