@@ -70,10 +70,12 @@
 */
 - (SndPerformance *) playSnd: (Snd*) s 
               withTimeOffset: (double) inSeconds
+                beginAtIndex: (long) beginAtIndex
                   endAtIndex: (long) endIndex;
                   
 - (SndPerformance *) playSnd: (Snd *) s
              atTimeInSeconds: (double) playT
+                beginAtIndex: (long) beginAtIndex
                   endAtIndex: (long) endAtIndex;                  
 
 - (SndPerformance *) playSnd: (Snd *) s

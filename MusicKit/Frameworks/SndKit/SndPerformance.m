@@ -28,11 +28,13 @@
 
 + (SndPerformance *) performanceOfSnd: (Snd *) s
                         playingAtTime: (double) t
-			   endAtIndex: (long) endIndex;
+                         beginAtIndex: (long) beginIndex
+			                     endAtIndex: (long) endIndex;
 {
     return [[[SndPerformance alloc] initWithSnd: s
                                   playingAtTime: t
-				     endAtIndex: endIndex] autorelease];
+                                   beginAtIndex: beginIndex
+				                             endAtIndex: endIndex] autorelease];
 }
 
 - initWithSnd: (Snd *) s playingAtTime: (double) t
@@ -40,16 +42,17 @@
     if (!snd) {
         return nil;
     }
-    return [self initWithSnd:s playingAtTime:t endAtIndex:[s sampleCount]];
+    return [self initWithSnd:s playingAtTime:t beginAtIndex: 0 endAtIndex:[s sampleCount]];
 }
 
 - initWithSnd: (Snd *) s playingAtTime: (double) t 
+                          beginAtIndex: (long) beginIndex
                             endAtIndex: (long) endIndex
 {
     [super init];
     snd        = [s retain];
     playTime   = t;
-    playIndex  = 0;
+    playIndex  = beginIndex;
     endAtIndex = endIndex;
     return self;
 }

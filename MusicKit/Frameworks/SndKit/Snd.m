@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.26  2001/08/28 16:33:31  skotmcdonald
+ * Added missing beginAtIndex arguments, associated logic and methods for Snd playback
+ *
  * Revision 1.25  2001/08/27 23:49:07  skotmcdonald
  * Slight change to the clientNowTime system - it is always computed per buffer as synth-head-buffers*buffer-duration+streamTime
  *
@@ -710,7 +713,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
         return nil;
     status = SND_SoundPlayingPending;
     
-    return [sndPlayer playSnd: self withTimeOffset: inSeconds endAtIndex: playEnd];
+    return [sndPlayer playSnd: self withTimeOffset: inSeconds beginAtIndex: playBegin endAtIndex: playEnd];
 }
 
 - (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d

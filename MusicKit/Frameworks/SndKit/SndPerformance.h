@@ -60,6 +60,7 @@
 */
 + (SndPerformance *) performanceOfSnd: (Snd *) s 
                         playingAtTime: (double) seconds
+                         beginAtIndex: (long) beginIndex
                            endAtIndex: (long) endIndex;
 
 /*!
@@ -81,7 +82,7 @@
     @param      endIndex The sample index at which to stop playback
     @result     Returns self if able to initialise, nil if unable.
 */
-- initWithSnd: (Snd *) s playingAtTime: (double) t endAtIndex: (long) endIndex;
+- initWithSnd: (Snd *) s playingAtTime: (double) t beginAtIndex: (long) beginIndex endAtIndex: (long) endIndex;
 
 /*!
     @method   snd

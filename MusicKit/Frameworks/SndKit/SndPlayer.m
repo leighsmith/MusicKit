@@ -129,7 +129,7 @@
 - (SndPerformance *) playSnd: (Snd *) s withTimeOffset: (double) dt 
 {
 //    fprintf(stderr,"PlaySnd: withTimeOffset: %f\n",dt);
-    return [self playSnd: s withTimeOffset: dt endAtIndex: -1];
+    return [self playSnd: s withTimeOffset: dt beginAtIndex: 0 endAtIndex: -1];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -138,6 +138,7 @@
 
 - (SndPerformance *) playSnd: (Snd *) s
               withTimeOffset: (double) dt
+                beginAtIndex: (long) beginAtIndex
                   endAtIndex: (long) endAtIndex
 {
     double playT;
@@ -150,9 +151,12 @@
     else
         playT = [self streamTime] + dt;
      
-//    fprintf"SndPlayer: timeOffset:%f playT:%f clientNowTime: %f\n", dt, playT,clientNowTime);
-     
-    return [self playSnd: s atTimeInSeconds: playT endAtIndex: endAtIndex];
+//    fprintf(stderr,"SndPlayer: timeOffset:%f playT:%f clientNowTime:%f begin:%li end:%li\n", dt, playT,clientNowTime,beginAtIndex,endAtIndex);
+    {
+      SndPerformance *perf = [self playSnd: s atTimeInSeconds: playT beginAtIndex: beginAtIndex endAtIndex: endAtIndex]; 
+//      NSLog([perf description]);
+      return perf;
+    }
 } 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -164,39 +168,49 @@
     long endIndex = -1;
 
     if (d > 0)
-        endIndex =  d * [s samplingRate];
+        endIndex =  d * [s samplingRate]; 
  
 //    NSLog(@"SndPlayer::play:atTimeInSeconds: %f", t);
        
     return [self playSnd: s
-         atTimeInSeconds: t 
+         atTimeInSeconds: t
+            beginAtIndex: 0
               endAtIndex: endIndex];  
 }  
 
 
 - (SndPerformance *) playSnd: (Snd *) s
              atTimeInSeconds: (double) playT
+                beginAtIndex: (long) beginAtIndex
                   endAtIndex: (long) endAtIndex
 {
-//    fprintf(stderr,"PlaySnd:atStreamTime: %f endAtIndex: %li    clientTime is: %f streamTime: %f\n", playT, endAtIndex, clientNowTime, [manager nowTime]);
-    if(![self isActive]) {
-        [[SndStreamManager defaultStreamManager] addClient: self];
-    }
-    // NSLog(@"checking endAtIndex %lf exceeds sampleCount %d\n", endAtIndex, [s sampleCount]);
     if(endAtIndex > [s sampleCount]) {
         endAtIndex = [s sampleCount];	// Ensure the end of play can't exceed the sound data
     }
+    if(endAtIndex == -1) {
+        endAtIndex = [s sampleCount];	// Ensure the end of play can't exceed the sound data
+    }
+    if (beginAtIndex > endAtIndex) {
+//      NSLog(@"SndPlayer::playSnd:atTimeInSeconds:beginAtIndex:endAtIndex: - WARNING: beginAtIndex > endAtIndex - ignoring play cmd");
+      return nil;
+    }
+    if(beginAtIndex < 0) {
+        beginAtIndex = 0;	// Ensure the end of play can't exceed the sound data
+    }
+    if(![self isActive]) {
+        [[SndStreamManager defaultStreamManager] addClient: self];
+    }
+
+//    fprintf(stderr,"PlaySnd:atStreamTime:%f beginAtIndex:%li endAtIndex:%li clientTime:%f streamTime:%f\n", 
+//            playT, beginAtIndex, endAtIndex, clientNowTime, [manager nowTime]);
+
     if (playT <= clientNowTime) {  // play now!
         SndPerformance *nowPerformance;
-        if (endAtIndex >= 0) {
-            nowPerformance = [SndPerformance performanceOfSnd: s 
-                                                playingAtTime: [self streamTime]
-                                                   endAtIndex: endAtIndex];
-        }
-        else {
-            nowPerformance = [SndPerformance performanceOfSnd: s
-                                                playingAtTime: [self streamTime]];
-        }
+        nowPerformance = [SndPerformance performanceOfSnd: s 
+                                            playingAtTime: [self streamTime]
+                                             beginAtIndex: beginAtIndex
+                                               endAtIndex: endAtIndex];
+
         [playingLock lock];
         [self _startPerformance: nowPerformance];    
         [playingLock unlock];
@@ -208,14 +222,11 @@
         int insertIndex;
         SndPerformance *laterPerformance;
         
-        if (endAtIndex < 0) {
-            laterPerformance = [SndPerformance performanceOfSnd: s
-                                                  playingAtTime: playT];
-        } else {
-            laterPerformance = [SndPerformance performanceOfSnd: s
-                                                  playingAtTime: playT
-                                                     endAtIndex: endAtIndex];
-        }
+        laterPerformance = [SndPerformance performanceOfSnd: s
+                                              playingAtTime: playT
+                                               beginAtIndex: beginAtIndex
+                                                 endAtIndex: endAtIndex];
+
         [playingLock lock];
         numToBePlayed = [toBePlayed count];
         insertIndex = numToBePlayed;
