@@ -127,7 +127,11 @@
   ;; If true, a Table of Contents will be generated for each 'Article'.
   #t)
 
-;;(define %generate-part-toc% #t)
+(define %generate-part-toc% #t)
+
+(define (toc-depth nd)
+  ;; more depth (2 levels) to toc; instead of flat hierarchy
+  2)
 
 (define %shade-verbatim%
   #t)
