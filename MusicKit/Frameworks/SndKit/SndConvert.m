@@ -683,10 +683,10 @@ useLinearInterpolation: (BOOL) fastInterpolation
 				     channelCount: (int) toChannelCount
 				     samplingRate: (double) toSamplingRate
 {
-    SndAudioBuffer *newBuffer = [SndAudioBuffer audioBufferWithFormat: toDataFormat
-							 channelCount: toChannelCount
-							 samplingRate: toSamplingRate
-							     duration: [self duration]];
+    SndAudioBuffer *newBuffer = [SndAudioBuffer audioBufferWithDataFormat: toDataFormat
+							     channelCount: toChannelCount
+							     samplingRate: toSamplingRate
+							         duration: [self duration]];
     unsigned int sampleFrames = [self lengthInSampleFrames];
     long dataItems = sampleFrames * toChannelCount;
     void *fromDataPtr = [data mutableBytes];

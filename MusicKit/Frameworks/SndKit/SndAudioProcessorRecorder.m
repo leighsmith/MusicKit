@@ -200,10 +200,10 @@
     if (recordBuffer != nil)
       [recordBuffer release];
 
-    recordBuffer = [SndAudioBuffer audioBufferWithFormat: dataFormat
-                                            channelCount: chanChan
-                                            samplingRate: samRate
-                                                duration: time];
+    recordBuffer = [SndAudioBuffer audioBufferWithDataFormat: dataFormat
+                                                channelCount: chanChan
+                                                samplingRate: samRate
+                                                    duration: time];
     if (recordBuffer == nil) {
 #if SNDAUDIOPROCRECORDER_DEBUG
       fprintf(stderr,"SndAudioProcessorRecorder::prepareToRecordForDuration - Error: record buffer is nil.\n");
