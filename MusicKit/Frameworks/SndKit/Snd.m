@@ -545,7 +545,6 @@ int beginFun(SNDSoundStruct *sound, int tag, int err)
 int endFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
-        int err;
 
 	theSnd = [playRecTable valueForKey:sound];
 	[theSnd _setStatus:NX_SoundStopped];
@@ -565,6 +564,7 @@ int endFun(SNDSoundStruct *sound, int tag, int err)
 	((Snd *)theSnd)->tag = 0;
 	return 0;
 }
+
 int beginRecFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
