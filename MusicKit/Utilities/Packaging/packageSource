@@ -69,12 +69,15 @@ $CHGLOGGEN --no-wrap --separate-header --file Documentation/ChangeLog
 # copy it so it can be used for generating an announcement.
 cp Documentation/ChangeLog $TARLOC/${DISTNAME}_ChangeLog
 
+# This is a representative file, it should change more or less at the
+# end of a project.
+LASTFILETOCHANGE=Frameworks/$DISTNAME/$DISTNAME.pbproj/project.pbxproj
+
 # If a previous release was not supplied on the command line determine
 # it from the repository.
 if [ ${PREVRELEASE}_ = _ ]; then
     # Determine the previous tagged release from a representative file in
     # the repository.
-    LASTFILETOCHANGE=Frameworks/$DISTNAME/$DISTNAME.pbproj/project.pbxproj
     PREVCVSTAG=`cvs log $LASTFILETOCHANGE | grep ${DISTNAME}_ | sed -n -e "/$CVSTAG/{;n;s/[ \t]*\([^ :]*\): .*/\1/p;}"`
 else
     # Use the supplied release number to create a differential ChangeLog.
@@ -91,7 +94,7 @@ $CHGLOGGEN --no-wrap --separate-header --window 86400 --file $TARLOC/${DISTNAME}
 
 # create a readily readable PDF version of the MusicKit_README.sgml file
 if [ $DISTNAME = MusicKit ]; then
-    packageDocumentation $TARLOC/${DISTNAME}_ChangeLog $DISTCHECKEDOUTSRCLOC/$DISTNAME
+    Utilities/Packaging/packageDocumentation $TARLOC/${DISTNAME}_ChangeLog $DISTCHECKEDOUTSRCLOC/$DISTNAME
 fi
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
