@@ -14,6 +14,9 @@
 /* 
 Modification history:
   $Log$
+  Revision 1.8  2001/04/24 23:30:30  leighsmith
+  Changed to new findPatchClass method name
+
   Revision 1.7  2000/11/29 01:53:39  leigh
   Added midifile play support (since playmidifile/recordmidifile are too low level
 
@@ -571,7 +574,7 @@ int main(int argc, const char *argv[])
 		    }
 		}
 		else { /* It's a DSP part */
-		    synthPatchClass = [MKSynthPatch findSynthPatchClass: className];
+		    synthPatchClass = [MKSynthPatch findPatchClass: className];
 		    if (!synthPatchClass) {          
 			if (!quiet)
 			  fprintf(stderr,"SynthPatch %s cannot be loaded into program.\n", [className cString]);
@@ -650,7 +653,7 @@ int main(int argc, const char *argv[])
 		    }
 		}
 		else { /* dsp */
-		    synthPatchClass = [MKSynthPatch findSynthPatchClass: className];
+		    synthPatchClass = [MKSynthPatch findPatchClass: className];
 		    if (!synthPatchClass) {          
 			if (!quiet)
 			  fprintf(stderr,"Class %s cannot be loaded into program.\n",
