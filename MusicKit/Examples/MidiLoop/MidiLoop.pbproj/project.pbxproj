@@ -1,10 +1,33 @@
+// !$*UTF8*$!
 {
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 30;
+	objectVersion = 32;
 	objects = {
+		017B1EA200507160CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		017B1EA300507160CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
 		01A886ECFFC5B356CFED3B96 = {
+			buildStyles = (
+				017B1EA200507160CFED3B96,
+				017B1EA300507160CFED3B96,
+			);
 			isa = PBXProject;
 			mainGroup = 01A886EDFFC5B356CFED3B96;
 			productRefGroup = 01A88706FFC5B356CFED3B96;
@@ -201,10 +224,12 @@
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				INSTALL_PATH = "$(HOME)/Apps";
 				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = MidiLoop;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
@@ -229,7 +254,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>Example that routes MIDI through the MusicKit and out again</string>
 	<key>CFBundleIconFile</key>
-	<string>MidiLoop.tiff</string>
+	<string>MidiLoop</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.musickit.MidiLoop</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -239,7 +264,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string></string>
+	<string>V</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -267,11 +292,6 @@
 			fileRef = 01A886F1FFC5B356CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		01A8870BFFC5B356CFED3B96 = {
@@ -288,33 +308,18 @@
 			fileRef = 01A886F5FFC5B356CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		01A8870DFFC5B356CFED3B96 = {
 			fileRef = 01A886F7FFC5B356CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		01A8870EFFC5B356CFED3B96 = {
 			fileRef = 01A886FAFFC5B356CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		01A8870FFFC5B356CFED3B96 = {
@@ -331,12 +336,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -345,12 +344,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -370,44 +363,24 @@
 			fileRef = 01A88701FFC5B356CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		01A88715FFC5B356CFED3B96 = {
 			fileRef = 01A88702FFC5B356CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		01A88716FFC5B356CFED3B96 = {
 			fileRef = 01A88703FFC5B356CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		01A88717FFC5B356CFED3B96 = {
 			fileRef = 01A88704FFC5B356CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		01A88718FFC5B356CFED3B96 = {
@@ -427,11 +400,6 @@
 			fileRef = 01A8871AFFC5B3CBCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 	};

@@ -1,8 +1,9 @@
+// !$*UTF8*$!
 {
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 30;
+	objectVersion = 32;
 	objects = {
 		0134D284FFE009B6CFED3B96 = {
 			children = (
@@ -19,45 +20,82 @@
 			path = "English.lproj/Info-macosx.nib";
 			refType = 4;
 		};
-		0134D286FFE009B6CFED3B96 = {
+		0134D288FFE009B6CFED3B96 = {
+			fileRef = 0134D284FFE009B6CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		017B1EA400507164CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		017B1EA500507164CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
+		02859623002A4648CFED3B96 = {
 			children = (
-				0134D287FFE009B6CFED3B96,
+				02859624002A4648CFED3B96,
+				02859626002A467FCFED3B96,
+				02859627002A46AACFED3B96,
 			);
 			isa = PBXVariantGroup;
 			name = MidiRecord.nib;
 			path = "";
 			refType = 4;
 		};
-		0134D287FFE009B6CFED3B96 = {
+		02859624002A4648CFED3B96 = {
 			isa = PBXFileReference;
 			name = English;
+			path = English.lproj/MidiRecord.nib;
+			refType = 4;
+		};
+		02859625002A4648CFED3B96 = {
+			fileRef = 02859623002A4648CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		02859626002A467FCFED3B96 = {
+			isa = PBXFileReference;
+			name = "English - openstep";
+			path = "English.lproj/MidiRecord-openstep.nib";
+			refType = 4;
+		};
+		02859627002A46AACFED3B96 = {
+			isa = PBXFileReference;
+			name = "English - macosx";
 			path = "English.lproj/MidiRecord-macosx.nib";
 			refType = 4;
 		};
-		0134D288FFE009B6CFED3B96 = {
-			fileRef = 0134D284FFE009B6CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
-		0134D289FFE009B6CFED3B96 = {
-			fileRef = 0134D286FFE009B6CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
 		02CD290AFFB89C2FCFED3B96 = {
+			buildStyles = (
+				017B1EA400507164CFED3B96,
+				017B1EA500507164CFED3B96,
+			);
 			isa = PBXProject;
+			knownPlatforms = (
+				macos,
+				macosclassic,
+				macintosh,
+				windows,
+				solaris,
+				hpux,
+				OpenStep,
+				openstep,
+				macosx,
+			);
 			mainGroup = 02CD290BFFB89C2FCFED3B96;
 			productRefGroup = 02CD2921FFB89C2FCFED3B96;
 			projectDirPath = .;
@@ -121,7 +159,7 @@
 		02CD2912FFB89C2FCFED3B96 = {
 			children = (
 				0134D284FFE009B6CFED3B96,
-				0134D286FFE009B6CFED3B96,
+				02859623002A4648CFED3B96,
 			);
 			isa = PBXGroup;
 			name = Interfaces;
@@ -197,10 +235,12 @@
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(LOCAL_LIBRARY_DIR)/Frameworks \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
+				INSTALL_PATH = "$(HOME)/Applications";
 				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = MidiRecord;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
@@ -263,18 +303,13 @@
 			fileRef = 02CD290FFFB89C2FCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		02CD2926FFB89C2FCFED3B96 = {
 			buildActionMask = 2147483647;
 			files = (
 				0134D288FFE009B6CFED3B96,
-				0134D289FFE009B6CFED3B96,
+				02859625002A4648CFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
@@ -293,12 +328,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -307,12 +336,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -330,33 +353,18 @@
 			fileRef = 02CD291DFFB89C2FCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		02CD292FFFB89C2FCFED3B96 = {
 			fileRef = 02CD291EFFB89C2FCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		02CD2930FFB89C2FCFED3B96 = {
 			fileRef = 02CD291FFFB89C2FCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		02CD2931FFB89C2FCFED3B96 = {
