@@ -254,8 +254,10 @@ OF THIS AGREEMENT.
     return self;
 }
 
+// TODO this should removed once we can use the Snd method.
 // retrieve a sound value at the given frame, for a specified channel, or average over all channels.
 // channelNumber is 0 - channelCount to retrieve a single channel, channelCount to average all channels
+// SndSampleAtFrame()
 static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int frameNumber, int channelNumber, int channelCount)
 {
     float theValue = 0.0;
@@ -312,34 +314,6 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	}	
     }
     return (averageOverChannels > 1) ? theValue / averageOverChannels : theValue;
-}
-
-
-static double maximumAmplitude(SndSampleFormat type)
-{
-    switch (type) {
-    case SND_FORMAT_LINEAR_8:
-	return 128.0;
-    case SND_FORMAT_LINEAR_24:
-    case SND_FORMAT_DSP_DATA_24:
-	return 8388608.0;
-    case SND_FORMAT_LINEAR_32:
-    case SND_FORMAT_DSP_DATA_32:
-	return 2147483648.0;
-    case SND_FORMAT_MULAW_8:
-	return 32768.0;
-    case SND_FORMAT_LINEAR_16:
-    case SND_FORMAT_EMPHASIZED:
-    case SND_FORMAT_COMPRESSED:
-    case SND_FORMAT_COMPRESSED_EMPHASIZED:
-    case SND_FORMAT_DSP_DATA_16:
-    default:
-	return 32768.0;
-    case SND_FORMAT_FLOAT:
-	return 1.0;
-    case SND_FORMAT_DOUBLE:
-	return 1.0;
-    }
 }
 
 - (BOOL) invalidateCacheStartSample: (int) start end: (int) end
@@ -460,20 +434,20 @@ static double maximumAmplitude(SndSampleFormat type)
     /* for working through caching: */
     int currStartPoint, arrayPointer, cacheIndex;
     SndDisplayData *currentCacheObject;	
-    float actualBaseF, fONBase;
+    float actualBaseF, firstOfNextBase;
     /* for stepping through data */
     int actualBase, firstOfNext;
-    int j; // TODO needs renaming
+    int framesOffsetFromBase;
     int currentPixel;
     int skipFactor = 1;
     void *pcmData;
-    int lastFrameInBlock, currentFrame; /* max point and current counter in current fragmented sound data segment */
+    int lastFrameInBlock, currentFrameInBlock; /* max point and current counter in current fragmented sound data segment */
     int frameCount = [sound lengthInSampleFrames];
-    float thisMax, thisMin, maxNinety = 0, minNinety = 0, theValue, lastValue = 0;
+    float thisMax, thisMin, maxNinety = 0, minNinety = 0, theValue, previousValue = 0;
     int directionDown = NO; /* NO for up, YES for down */
     BOOL optimize = (!svFlags.notOptimizedForSpeed && reductionFactor > optThreshold);
     int chanCount = [sound channelCount];
-    SndSampleFormat dataFormat = [sound dataFormat];
+    SndSampleFormat dataFormat;
 
     /* STARTING MAIN CACHE LOOP HERE */
     
@@ -514,7 +488,7 @@ static double maximumAmplitude(SndSampleFormat type)
 	    continue;
 	}
 	if (nextCache != -1) {
-	    localMax = [[(NSMutableArray *) dataList objectAtIndex:nextCache] startPixel] - 1;
+	    localMax = [[(NSMutableArray *) dataList objectAtIndex: nextCache] startPixel] - 1;
 	    if (localMax > endX)
 		localMax = endX;
 	}
@@ -522,14 +496,18 @@ static double maximumAmplitude(SndSampleFormat type)
 	    localMax = endX;
 	
 	/* set up first read point in sound data */
-	actualBaseF =  (float) currStartPoint * reductionFactor;
+	actualBaseF = (float) currStartPoint * reductionFactor;
 	if ((int) actualBaseF != ceil(actualBaseF))
 	    actualBase = ceil(actualBaseF);
 	else
 	    actualBase = (int) (actualBaseF);
-	j = firstOfNext = actualBase; /* just initialise it for now */
-	pcmData = SndGetDataAddresses(actualBase, [sound soundStruct], &lastFrameInBlock, &currentFrame);
+	framesOffsetFromBase = firstOfNext = actualBase; /* just initialise it for now */
+	pcmData = [sound fragmentOfFrame: actualBase
+			 indexInFragment: &currentFrameInBlock
+		     lastFrameInFragment: &lastFrameInBlock
+			      dataFormat: &dataFormat];
 	
+	// Cache the display data into cacheMinArray, cacheMaxArray
 	for (currentPixel = currStartPoint; currentPixel <= localMax; currentPixel++) {
 	    BOOL first = YES;
 	    
@@ -538,22 +516,29 @@ static double maximumAmplitude(SndSampleFormat type)
 	    if (currentPixel * reductionFactor >= frameCount)
 		break;
 	    skipFactor = 1;
-	    fONBase = (float) (currentPixel+1) * reductionFactor;
-	    if ((int) fONBase != ceil(fONBase))
-		firstOfNext = ceil(fONBase);
+	    // determine the frame corresponding to the next pixel.
+	    firstOfNextBase = (float) (currentPixel + 1) * reductionFactor;
+	    if ((int) firstOfNextBase != ceil(firstOfNextBase))
+		firstOfNext = ceil(firstOfNextBase);
 	    else
-		firstOfNext = (int) (fONBase);
+		firstOfNext = (int) (firstOfNextBase);
 	    
-	    // have to increment currentFrame by same amount as j although we can simply assign j
-	    currentFrame += (actualBase - j); 
-	    j = actualBase;
+	    // have to increment currentFrameInBlock by same amount as framesOffsetFromBase although we can simply assign framesOffsetFromBase
+	    currentFrameInBlock += (actualBase - framesOffsetFromBase); 
+	    framesOffsetFromBase = actualBase;
 	    
 	    /* need to establish initial values for base and counter here, for fragged sounds */
-	    while (j < firstOfNext) {
-		if (currentFrame >= lastFrameInBlock) 
-		    pcmData = SndGetDataAddresses(actualBase, [sound soundStruct], &lastFrameInBlock, &currentFrame);
-		if (j < frameCount)
-		    theValue = getSoundValue(pcmData, dataFormat, currentFrame, whichChannel, chanCount);
+	    while (framesOffsetFromBase < firstOfNext) {
+		if (currentFrameInBlock >= lastFrameInBlock) {
+		    pcmData = [sound fragmentOfFrame: actualBase
+				     indexInFragment: &currentFrameInBlock
+				 lastFrameInFragment: &lastFrameInBlock
+					  dataFormat: &dataFormat];
+		    // NSLog(@"actualBase %d currentFrameInBlock %d lastFrameInBlock %d dataFormat %d firstOfNext %d\n",
+		    // actualBase, currentFrameInBlock, lastFrameInBlock, dataFormat, firstOfNext);		    
+		}
+		if (framesOffsetFromBase < frameCount)
+		    theValue = getSoundValue(pcmData, dataFormat, currentFrameInBlock, whichChannel, chanCount);
 		else 
 		    theValue = 0;
 		if (first) {
@@ -564,7 +549,8 @@ static double maximumAmplitude(SndSampleFormat type)
 		else {
 		    if (theValue < thisMin) {
 			thisMin = theValue;
-			if (optimize) minNinety = thisMin + peakFraction * abs((int) thisMin);
+			if (optimize) 
+			    minNinety = thisMin + peakFraction * abs((int) thisMin);
 		    }
 		    else if (theValue > thisMax) {
 			thisMax = theValue;
@@ -573,17 +559,18 @@ static double maximumAmplitude(SndSampleFormat type)
 		    }
 		}
 		if (optimize) {
-		    directionDown = (theValue < lastValue);
+		    directionDown = (theValue < previousValue);
 		    if ((!directionDown && (theValue > maxNinety))
 			|| (directionDown && (theValue < minNinety)))
 			skipFactor = 1;
 		    else 
 			skipFactor = optSkip;
 		}
-		lastValue = theValue;
-		j += skipFactor;
-		currentFrame += skipFactor;
+		previousValue = theValue;
+		framesOffsetFromBase += skipFactor;
+		currentFrameInBlock += skipFactor;
 	    }
+	    // NSLog(@"cache at %d thisMin %f thisMax %f\n", currentPixel - startX, thisMin, thisMax);
 	    cacheMaxArray[currentPixel - startX] = thisMax;
 	    cacheMinArray[currentPixel - startX] = thisMin;
 	    actualBase = firstOfNext;
@@ -614,10 +601,10 @@ static double maximumAmplitude(SndSampleFormat type)
 	    //	NSLog(@"setting new cache: start %d count %d\n", currStartPoint, localMax - currStartPoint + 1);
 	}
 	/* now see if we should join up to following cache */
-	cacheIndex = [dataList findObjectContaining:localMax + 1 next:&nextCache leadsOnFrom:&leadsOnFrom];
+	cacheIndex = [dataList findObjectContaining: localMax + 1 next: &nextCache leadsOnFrom: &leadsOnFrom];
 	if (cacheIndex != -1 && leadsOnFrom != -1) {
-	    [[(NSMutableArray *) dataList objectAtIndex:leadsOnFrom] addDataFrom: [(NSMutableArray *) dataList objectAtIndex:cacheIndex]];
-	    [(NSMutableArray *) dataList removeObjectAtIndex:cacheIndex];
+	    [[(NSMutableArray *) dataList objectAtIndex: leadsOnFrom] addDataFrom: [(NSMutableArray *) dataList objectAtIndex:cacheIndex]];
+	    [(NSMutableArray *) dataList removeObjectAtIndex: cacheIndex];
 	    //	NSLog(@"Compacted %d with %d. Now %d caches\n", leadsOnFrom, cacheIndex,[dataList count]);
 	}
 	
@@ -638,38 +625,41 @@ static double maximumAmplitude(SndSampleFormat type)
 #endif    
 }
 
-// draw sound amplitude plots from the supplied audio data, no reduction.
-- (void) drawSound: (Snd *) soundToDraw within: (NSRect) rects channel: (int) whichChannel
+// draw sound amplitude plots from the supplied audio data, where reduction factor is such that we must draw consecutive sample points.
+- (void) drawSound: (Snd *) soundToDraw within: (NSRect) drawWithinRectangle channel: (int) whichChannel
 {
     int lastFrameToDisplay;
     float theValue;
-    int i, pixelX = 0;
+    int firstFrameToDisplay, pixelX = 0;
     void *pcmData;
-    int lastFrameInBlock, currentFrame; /* max point and current counter in current fragged sound data segment */
+    int lastFrameInBlock, currentFrameInBlock; /* max point and current counter in current fragged sound data segment */
     int frameCount = [soundToDraw lengthInSampleFrames];
-    SndSampleFormat dataFormat = [soundToDraw dataFormat];
+    SndSampleFormat dataFormat;
     int chanCount = [soundToDraw channelCount];
     
     /* first sample */
-    i = (int) ((float) NSMinX(rects) * (float) reductionFactor);
+    firstFrameToDisplay = (int) ((float) NSMinX(drawWithinRectangle) * (float) reductionFactor);
     
-    if (i > 0)
-	i--;
+    if (firstFrameToDisplay > 0)
+        firstFrameToDisplay--;
     
-    pcmData = SndGetDataAddresses(i, [soundToDraw soundStruct], &lastFrameInBlock, &currentFrame);
-    
+    pcmData = [soundToDraw fragmentOfFrame: firstFrameToDisplay 
+			   indexInFragment: &currentFrameInBlock
+		       lastFrameInFragment: &lastFrameInBlock
+				dataFormat: &dataFormat];
+
     /* last sample */
-    lastFrameToDisplay = (int) ((float) (NSMaxX(rects)) * (float) reductionFactor) + 1;
+    lastFrameToDisplay = (int) ((float) (NSMaxX(drawWithinRectangle)) * (float) reductionFactor) + 1;
     
     if (lastFrameToDisplay >= frameCount)
-	lastFrameToDisplay = frameCount - 1;
+        lastFrameToDisplay = frameCount - 1;
     
-    theValue = getSoundValue(pcmData, dataFormat, currentFrame, whichChannel, chanCount);
+    theValue = getSoundValue(pcmData, dataFormat, currentFrameInBlock, whichChannel, chanCount);
     
     theValue = theValue * ampScaler + amplitudeDisplayHeight;
     
     /* establish initial point */
-    pixelX = (float) ((float) i / (float) reductionFactor);
+    pixelX = (float) ((float) firstFrameToDisplay / (float) reductionFactor);
     
 #ifndef QUARTZ_RENDERING
     PSmoveto((int) pixelX + 0.5, theValue);
@@ -677,26 +667,31 @@ static double maximumAmplitude(SndSampleFormat type)
     CGContextMoveToPoint(ctx, (int) pixelX + 0.5, theValue);
 #endif
     
-    while (i <= lastFrameToDisplay) {
-	if (currentFrame >= lastFrameInBlock)
-	    pcmData = SndGetDataAddresses(i, [soundToDraw soundStruct], &lastFrameInBlock, &currentFrame);
-
-	theValue = getSoundValue(pcmData, dataFormat, currentFrame, whichChannel, chanCount);
-	theValue = theValue * ampScaler + amplitudeDisplayHeight;		
+    while (firstFrameToDisplay <= lastFrameToDisplay) {
+        if (currentFrameInBlock >= lastFrameInBlock)
+	    pcmData = [soundToDraw fragmentOfFrame: firstFrameToDisplay 
+				   indexInFragment: &currentFrameInBlock 
+			       lastFrameInFragment: &lastFrameInBlock
+					dataFormat: &dataFormat];
 	
-	pixelX = (float) ((float) i / (float) reductionFactor);
+        theValue = getSoundValue(pcmData, dataFormat, currentFrameInBlock, whichChannel, chanCount);
+
+        // pixelY
+	theValue = theValue * ampScaler + amplitudeDisplayHeight;
+	
+        pixelX = (float) ((float) firstFrameToDisplay / (float) reductionFactor);
 	
 #ifndef QUARTZ_RENDERING
-	PSlineto((int) pixelX+0.5, theValue);
+        PSlineto((int) pixelX+0.5, theValue);
 #else
-	CGContextAddLineToPoint(ctx, (int) pixelX + 0.5, theValue);
+        CGContextAddLineToPoint(ctx, (int) pixelX + 0.5, theValue);
 #endif
-	// Draw crosses if we have zoomed in so far as to pass the cross threshold.
-	if (svFlags.drawsCrosses && reductionFactor <= CROSSTHRESH) {
-	    [self drawCrossAtX: pixelX andY: theValue];
-	}	    
-	i++;
-	currentFrame++;
+        // Draw crosses if we have zoomed in so far as to pass the cross threshold.
+        if (svFlags.drawsCrosses && reductionFactor <= CROSSTHRESH) {
+            [self drawCrossAtX: pixelX andY: theValue];
+        }           
+        firstFrameToDisplay++;
+        currentFrameInBlock++;
     }
     
     [foregroundColour set];
@@ -705,7 +700,7 @@ static double maximumAmplitude(SndSampleFormat type)
     PSstroke();
 #else
     CGContextStrokePath(ctx);
-#endif    
+#endif
 }
 
 - (void) drawFromCacheMax: (float *) cacheMaxArray 
@@ -715,7 +710,7 @@ static double maximumAmplitude(SndSampleFormat type)
 		  channel: (int) whichChannel
 {
     int pixelIndex;
-    // long startTime; // for some basic timing within Quartz version
+    long startTime; // for some basic timing within Quartz version
 
 #ifndef QUARTZ_RENDERING
 #ifdef USE_PS_USER_PATHS
@@ -862,9 +857,75 @@ static double maximumAmplitude(SndSampleFormat type)
     CGContextStrokePath(ctx);
     // NSLog(@"stroke time: %li (%d to %d = %d iterations)\n",clock() -startTime, startX, endX, endX-startX);
 #endif
+
+#if 0    // NSBezierPath RENDERING
+    startTime = clock();
+    NSBezierPath *soundPath = [NSBezierPath bezierPath];
+
+    if (displayMode == SND_SOUNDVIEW_WAVE) {
+	float maxY1 = cacheMaxArray[0] * ampScaler + amplitudeDisplayHeight;
+	float minY1 = cacheMinArray[0] * ampScaler + amplitudeDisplayHeight;
+	
+	if (endX >= NSWidth([self frame])) {
+	    endX = NSWidth([self frame]) - 1;
+	}
+	
+	for (pixelIndex = startX; pixelIndex < endX; pixelIndex++) {
+	    NSPoint max2 = { pixelIndex + 0.5, cacheMaxArray[pixelIndex + 1 - startX] * ampScaler + amplitudeDisplayHeight };
+	    NSPoint min2 = { pixelIndex + 0.5, cacheMinArray[pixelIndex + 1 - startX] * ampScaler + amplitudeDisplayHeight };
+	    NSPoint max1 = { pixelIndex + 0.5, maxY1 };
+	    NSPoint min1 = { pixelIndex + 0.5, minY1 };
+	    
+	    [soundPath moveToPoint: max1];
+	    [soundPath lineToPoint: min1];
+	    
+	    /* still one more cached point */
+	    
+	    if (pixelIndex < endX) {
+		/* if part of the line is outside the one before if both points encompass */
+		if ((min2.y <= maxY1 && min2.y >= minY1)
+		    || (max2.y >= minY1 && max2.y <= maxY1)
+		    || (max2.y >= maxY1 && min2.y <= minY1)) {
+		    maxY1 = max2.y; 
+		    minY1 = min2.y;
+		    continue;
+		}
+		
+		/* so we draw line from appropriate end, to start of next line */
+		if (min2.y > maxY1 && maxY1 != minY1) { /* reverse to top if necessary */
+		    [soundPath moveToPoint: pixelIndex + 0.5, maxY1);
+		}
+		
+		[soundPath lineToPoint: pixelIndex + 1 + 0.5, (min2.y > maxY1) ? min2.y : max2.y];
+		
+		maxY1 = max2.y; 
+		minY1 = min2.y;
+	    }
+	}
+    }
+    else {
+	[soundPath moveToPoint: startX + 0.5, cacheMaxArray[0] * ampScaler + amplitudeDisplayHeight];
+	
+	for (pixelIndex = startX; pixelIndex < endX; pixelIndex++) {
+	    [soundPath lineToPoint: pixelIndex + 0.5, cacheMaxArray[pixelIndex - startX] * ampScaler + amplitudeDisplayHeight);
+	}
+	
+	[soundPath moveToPoint: startX + 0.5, cacheMinArray[0] * ampScaler + amplitudeDisplayHeight];
+	
+	for (pixelIndex = startX; pixelIndex < endX; pixelIndex++) {
+	    [soundPath lineToPoint: pixelIndex + 0.5, cacheMinArray[pixelIndex - startX] * ampScaler + amplitudeDisplayHeight);
+	}
+    }
+
+    [foregroundColour set];
+
+    // NSLog(@"before stroke time: %li\n",clock() -startTime);
+    [soundPath strokePath];
+    // NSLog(@"stroke time: %li (%d to %d = %d iterations)\n",clock() -startTime, startX, endX, endX-startX);
+#endif
 }
 
-- (void) drawRect: (NSRect) rects
+- (void) drawRect: (NSRect) drawWithinRectangle
 {
     NSRect newRect, insetBounds;
     BOOL fragmentedSound = NO;
@@ -876,7 +937,7 @@ static double maximumAmplitude(SndSampleFormat type)
     int startX, endX;
     int whichChannel = 0;
     /* holds the data to be drawn. Calculated from caches, or from examining sound data */
-    float 	*cacheMaxArray, *cacheMinArray;
+    float *cacheMaxArray, *cacheMinArray;
     
 #ifdef USE_PS_USER_PATHS
     UserPath *arect; /* for DPSUser Paths, if used */
@@ -901,16 +962,22 @@ static double maximumAmplitude(SndSampleFormat type)
      [self hideCursor];
      [[self window] enableFlushWindow];
      */
+#if 0
+    { // TODO need to check that we have an enclosingScrollView and that the scroller is a SndStretchableScroller.
+	float knobProportion = [[[self enclosingScrollView] horizontalScroller] knobProportion];
+	NSLog(@"knob %f\n", knobProportion);
+	reductionFactor = ([sound lengthInSampleFrames] * knobProportion) / [self frame].size.width;
+    }
+#endif
     
     insetBounds = [self bounds];
-    // NSLog(@"from %g to %g, size %d\n", NSMinX(rects), NSMaxX(rects), (int) NSWidth(rects));
+    // NSLog(@"from %g to %g, size %d\n", NSMinX(drawWithinRectangle), NSMaxX(drawWithinRectangle), (int) NSWidth(drawWithinRectangle));
     
-    ampScaler = 1.0; /* bogus */
     amplitudeDisplayHeight = insetBounds.size.height * 0.5;
 
     [backgroundColour set];
     
-    newRect = NSIntersectionRect(insetBounds, rects);
+    newRect = NSIntersectionRect(insetBounds, drawWithinRectangle);
     
     if (firstDraw) {
 	NSRectFill([self frame]);
@@ -930,7 +997,7 @@ static double maximumAmplitude(SndSampleFormat type)
 	    NSWhite, NSDarkGray,
 	    NSDarkGray, NSLightGray, 
 	    NSDarkGray, NSLightGray };
-	insetBounds = NSDrawTiledRects([self bounds], rects, mySides, myGrays, 8);
+	insetBounds = NSDrawTiledRects([self bounds], drawWithinRectangle, mySides, myGrays, 8);
     }
     
     if (sound == nil)
@@ -948,7 +1015,7 @@ static double maximumAmplitude(SndSampleFormat type)
     pcmData = [sound data];
     fragmentedSound = [sound needsCompacting];
     
-    maxAmp = maximumAmplitude(dataFormat);
+    maxAmp = [sound maximumAmplitude];
     ampScaler = amplitudeDisplayHeight / maxAmp;
 
     // NSLog(@"ampScaler %f, amplitudeZoom %f\n", ampScaler, amplitudeZoom);
@@ -982,8 +1049,8 @@ static double maximumAmplitude(SndSampleFormat type)
      * 3. plot max and min values, and remember last ones.
      */
     
-    cacheMaxArray = (float *) malloc(sizeof(float) * (NSWidth(rects) + 3));
-    cacheMinArray = (float *) malloc(sizeof(float) * (NSWidth(rects) + 3));
+    cacheMaxArray = (float *) malloc(sizeof(float) * (NSWidth(drawWithinRectangle) + 3));
+    cacheMinArray = (float *) malloc(sizeof(float) * (NSWidth(drawWithinRectangle) + 3));
     
 #ifndef QUARTZ_RENDERING
     PSsetlinewidth(0.0);//:ps:
@@ -992,13 +1059,13 @@ static double maximumAmplitude(SndSampleFormat type)
 #endif
     
     if (reductionFactor > 1) {
-	startX = NSMinX(rects);
+	startX = NSMinX(drawWithinRectangle);
 	
 	/* we need to draw a line leading to first pixel */
-	if (NSMinX(rects) > 0.9)
+	if (NSMinX(drawWithinRectangle) > 0.9)
 	    startX--;
 	
-	endX = NSMaxX(rects);
+	endX = NSMaxX(drawWithinRectangle);
 	
 	/* we need to draw a line from last pixel */
 	if (displayMode == SND_SOUNDVIEW_MINMAX && endX < NSMaxX([self frame]))
@@ -1021,7 +1088,7 @@ static double maximumAmplitude(SndSampleFormat type)
 	
     }
     else { /* I don't bother caching here, as it's so quick to grab actual data */
-	[self drawSound: sound within: rects channel: whichChannel];
+	[self drawSound: sound within: drawWithinRectangle channel: whichChannel];
     }
 
     free(cacheMaxArray);
@@ -1033,7 +1100,7 @@ static double maximumAmplitude(SndSampleFormat type)
 	 [self showCursor];
 	 [[self window] enableFlushWindow];
 	 */
-	[self drawSelectionRectangleWithin: rects];
+	[self drawSelectionRectangleWithin: drawWithinRectangle];
     }
 }
 
@@ -1145,7 +1212,7 @@ static double maximumAmplitude(SndSampleFormat type)
     // Some platforms have their own pasteboard type that we can interact with, otherwise we just declare our own.
 #ifdef PlatformSoundPasteboardType
     validPasteboardSendTypes = [[NSArray alloc] initWithObjects: SndPasteboardType, PlatformSoundPasteboardType, nil];
-    validPasteboardReturnTypes = [validPasteboardReturnTypes copy];
+    validPasteboardReturnTypes = [validPasteboardSendTypes copy];
 #else
     validPasteboardSendTypes = [[NSArray arrayWithObject: SndPasteboardType] retain];
     validPasteboardReturnTypes = [validPasteboardSendTypes copy];
@@ -1788,8 +1855,6 @@ static double maximumAmplitude(SndSampleFormat type)
      NSLog(@"length %d\n",[sound lengthInSampleFrames]);
      */
     
-    //if (!([pboardType isEqualToString: SndPasteboardType] ||
-    // [pboardType isEqualToString: PlatformSoundPasteboardType]))
     if (![validPasteboardSendTypes containsObject: pboardType])
 	return;
     
