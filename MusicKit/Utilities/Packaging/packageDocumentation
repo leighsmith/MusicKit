@@ -19,6 +19,8 @@ PDF_TMPDIR=/tmp/mkpdf
 # Assume we are standing at the top of the source tree, since with NFS
 # it's a bit hard to be universal with paths.
 MKSRCDIR=`pwd`
+# Assume SndKit will set next to MusicKit in the directory 
+SKSRCDIR=$MKSRCDIR/../SndKit
 MKDOCDIR=$MKSRCDIR/Documentation
 MKREADMESRC=$MKDOCDIR/MusicKit_README.sgml
 MKCONCEPTS=$MKDOCDIR/Concepts/
@@ -33,6 +35,7 @@ MKTUTORIALS_STYLESHEET=$MKCONCEPTS_STYLESHEET
 #
 # Convert all SGML to HTML and package
 #
+rm -rf $HTML_TMPDIR
 mkdir $HTML_TMPDIR
 cd $HTML_TMPDIR
 $JADE -t sgml -ihtml -d ${MK_STYLESHEET}\#html $MKREADMESRC
@@ -65,10 +68,17 @@ mkdir $HTML_TMPDIR/Frameworks
 cd $MKHEADERDOC
 # The MacOS X version of the MKPerformSndMIDI framework is the definitive documentation version.
 headerdoc2html -o $HTML_TMPDIR/Frameworks/MKPerformSndMIDI $MKSRCDIR/Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX
+headerdoc2html -o $HTML_TMPDIR/Frameworks/SndKit $SKSRCDIR/Frameworks/SndKit
+# Gatherheaderdoc generates a file MasterTOC.html, that we make the
+# default file. 
+gatherheaderdoc -p "MusicKit" $HTML_TMPDIR/Frameworks
+cd $HTML_TMPDIR/Frameworks
+ln -s MasterTOC.html index.html
 
 #
 # Now create the PDF of the README
 #
+rm -rf $PDF_TMPDIR
 mkdir $PDF_TMPDIR
 cd $PDF_TMPDIR 
 cp $MK_STYLEDIR/Images/*.eps .
