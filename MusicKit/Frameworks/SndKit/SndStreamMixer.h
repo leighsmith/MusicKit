@@ -22,9 +22,9 @@
 #import "SndAudioProcessorChain.h"
 
 /*!
-    @class SndStreamMixer
-    @abstract Stream mixer and effects processor
-    @discussion To come
+@class SndStreamMixer
+@abstract Stream mixer and effects processor
+@discussion To come
 */
 @interface SndStreamMixer : NSObject {
 /*! @var streamClients */

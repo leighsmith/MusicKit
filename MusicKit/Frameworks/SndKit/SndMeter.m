@@ -84,8 +84,8 @@
 - (NSColor *)foregroundColor;
 - (void)setPeakColor:(NSColor *)color;
 - (NSColor *)peakColor;
-- (Sound *)sound;
-- (void)setSound:(Sound *)aSound;
+- (Snd *)sound;
+- (void)setSound:(Snd *)aSound;
 - (void)run:(id)sender;
 - (void)stop:(id)sender;
 - (BOOL)isRunning;
@@ -150,7 +150,7 @@ static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
 	if (!inDevice) {
 	    inDevice = [[SndStreamClient alloc] init];
 	    if (inDevice &&
-		([inDevice setDetectPeaks:YES] != SND_SoundDeviceErrorNone)) {
+		([inDevice setDetectPeaks:YES] != SND_ERROR_NONE)) {
 		 [inDevice release];
 		inDevice = nil;
 	    }
@@ -305,9 +305,8 @@ static void animate_self(id /* _NSSKTimedEntry */ timedEntry, double now,
     return peakColor;
 }
 
-- (Sound *)sound { return sound; }
-- (void)setSound:(Sound *)aSound { sound = aSound;
-}
+- (Snd *)sound { return sound; }
+- (void) setSound:(Snd*) aSound { sound = aSound; }
 
 - (void)run:sender
 {

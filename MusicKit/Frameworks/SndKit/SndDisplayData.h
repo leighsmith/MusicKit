@@ -32,34 +32,80 @@ OF THIS AGREEMENT.
 #import <AppKit/AppKit.h>
 
 /*!
-@class      SndDisplayData
+@class SndDisplayData
 @abstract
-@discussion
+@discussion For internal use of the SndView
 */
 
 @interface SndDisplayData:NSObject
 {
+/*! @var pixelCount */  
 	int pixelCount;
+/*! @var startPixel */  
 	int startPixel;
+/*! @var maxArray   */  
 	float *maxArray;
+/*! @var minArray   */  
 	float *minArray;
 }
-- (int)pixelCount;
+/*!
+ @method pixelCount
+ */
+- (int) pixelCount;
+/*!
+ @method startPixel
+ */
 - (int)startPixel;
-- (int)endPixel;
-- (float *)pixelDataMax;
-- (float *)pixelDataMin;
+/*!
+ @method
+ */
+- (int) endPixel;
+/*!
+ @method pixelDataMax
+ */
+- (float*) pixelDataMax;
+/*!
+ @method pixelDataMin
+ */
+- (float*) pixelDataMin;
 
+/*!
+ @method setPixelDataMax:min:count:start:
+ */
 - setPixelDataMax:(float *)data min:(float *)data2 count:(int)count start:(int)start;
+/*!
+ @method setPixelDataMax:count:start:
+ */
 - setPixelDataMax:(float *)data count:(int)count start:(int)start;
+/*!
+ @method setPixelDataMin:count:start:
+ */
 - setPixelDataMin:(float *)data count:(int)count start:(int)start;
 
+/*!
+ @method addPixelDataMax:min:count:from:
+ */
 - addPixelDataMax:(float *)data min:(float *)data2 count:(int)count from:(int)from;
+/*!
+ @method addPixelDataMax:count:from:
+ */
 - addPixelDataMax:(float *)data count:(int)count from:(int)from;
+/*!
+ @method addPixelDataMin:count:from:
+ */
 - addPixelDataMin:(float *)data count:(int)count from:(int)from;
 
+/*!
+ @method addDataFrom:
+ */
 - addDataFrom:(SndDisplayData *)anObject;
+/*!
+ @method truncateToLastPixel:
+ */
 - (BOOL)truncateToLastPixel:(int)pixel;
+/*!
+ @method truncateToFirstPixel:
+ */
 - (BOOL)truncateToFirstPixel:(int)pixel;
 @end
 

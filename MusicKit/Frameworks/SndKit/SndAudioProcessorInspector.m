@@ -27,6 +27,10 @@ static SndAudioProcessorInspector* defaultInspector = nil;
 
 @implementation SndAudioProcessorInspector
 
+////////////////////////////////////////////////////////////////////////////////
+// defaultAudioProcessorInspector
+////////////////////////////////////////////////////////////////////////////////
+
 + defaultAudioProcessorInspector
 {
   if (defaultInspector == nil) {
@@ -291,7 +295,6 @@ static SndAudioProcessorInspector* defaultInspector = nil;
 {
   return [[SndAudioProcessorInspector alloc] initWithAudioProcessor: self];
 }
-
 
 @end
 

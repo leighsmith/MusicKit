@@ -6,8 +6,8 @@
 //  Created by SKoT McDonald on Tue Mar 27 2001. <skot@tomandandy.com>
 //  Copyright (c) 2001 tomandandy music inc.
 //
-//  Permission is granted to use and modify this code for commercial and 
-//  non-commercial purposes so long as the author attribution and copyright 
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
 //  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 static NSMutableArray *fxClassesArray = nil;
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// registerAudioProcessorClass:
 ////////////////////////////////////////////////////////////////////////////////
 
 + (void) registerAudioProcessorClass: (id) fxclass
@@ -36,13 +36,13 @@ static NSMutableArray *fxClassesArray = nil;
       [fxClassesArray addObject: fxclass];
 #if SNDAUDIOPROCESSOR_DEBUG
       NSLog(@"registering FX class: %@",[fxclass className]);
-#endif      
+#endif
     }
   }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// fxClasses
 ////////////////////////////////////////////////////////////////////////////////
 
 + (NSArray*) fxClasses
@@ -54,54 +54,76 @@ static NSMutableArray *fxClassesArray = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// audioProcessor 
+// audioProcessor
 ////////////////////////////////////////////////////////////////////////////////
 
 + audioProcessor
 {
-   return [[SndAudioProcessor new] autorelease];
+  return [[SndAudioProcessor new] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// init 
+// init
 ////////////////////////////////////////////////////////////////////////////////
 
 - init
 {
   self = [super init];
-  [SndAudioProcessor registerAudioProcessorClass: [self class]];
-  numParams = 0;
-  bActive   = FALSE;
+  if (self) {
+    [SndAudioProcessor registerAudioProcessorClass: [self class]];
+    numParams = 0;
+    bActive   = FALSE;
+  }
   return self;
 }
 
 - initWithParamCount: (const int) count name: (NSString*) s
 {
   self = [super init];
-  [SndAudioProcessor registerAudioProcessorClass: [self class]];
-  [self setName: s];
-  numParams = count;
-  bActive   = FALSE;
+  if (self) {
+    [SndAudioProcessor registerAudioProcessorClass: [self class]];
+    [self setName: s];
+    numParams = count;
+    bActive   = FALSE;
+  }
   return self;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// dealloc
+//////////////////////////////////////////////////////////////////////////////
+
+- (void) dealloc
+{
+  [super dealloc];
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// description
+//////////////////////////////////////////////////////////////////////////////
+
+- (NSString*) description
+{
+  return [NSString stringWithFormat: @"%@ params:%i",name,numParams];
+}
+
 ////////////////////////////////////////////////////////////////////////////////
-// setNumParams 
+// setNumParams
 ////////////////////////////////////////////////////////////////////////////////
 
 - setNumParams: (const int) c
 {
-    numParams = c;
-    return self;
+  numParams = c;
+  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// reset 
+// reset
 ////////////////////////////////////////////////////////////////////////////////
 
 - reset
 {
-    return self;
+  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +132,7 @@ static NSMutableArray *fxClassesArray = nil;
 
 - (int) paramCount
 {
-    return numParams;
+  return numParams;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -119,7 +141,14 @@ static NSMutableArray *fxClassesArray = nil;
 
 - (float) paramValue: (const int) index
 {
-    return 0.0f;
+  /* Example:
+  switch (index) {
+    case kYourParamKeys:
+      return discoFunkinessAmount;
+      break;
+  }
+  */
+  return 0.0f;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,23 +157,62 @@ static NSMutableArray *fxClassesArray = nil;
 
 - (NSString*) paramName: (const int) index
 {
-    return @"<none>";
+  /* Example:
+  switch (index) {
+    case kYourParamKeys:
+      return = @"TheParameterName";
+      break;
+  }
+  */
+  return @"<unnamed>";
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// setParam:toValue: 
+// paramLabel:
+////////////////////////////////////////////////////////////////////////////////
+
+- (NSString*) paramLabel: (const int) index
+{
+  /* Example:
+  switch (index) {
+    case kYourParamKeyForAttenuation:
+      return @"deciBels";
+      break;
+  }
+  */
+  return nil;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// paramName:
+////////////////////////////////////////////////////////////////////////////////
+
+- (NSString*) paramDisplay: (const int) index
+{
+  /* Example:
+  switch (index) {
+    case kYourParamKeyForAttenuation:
+      return [NSString stringWithFormat: @"%03f", linearToDecibels(attenuation)];
+      break;
+  }
+  */
+  return nil;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// setParam:toValue:
 ////////////////////////////////////////////////////////////////////////////////
 
 - setParam: (const int) index toValue: (const float) v
 {
-/*
-    switch (index) {
-        case kYourParamKeys:
-            YourParams = v;
-            break;
-    }
-*/    
-    return self;
+  /* Example:
+  switch (index) {
+    case kYourParamKeys:
+      YourParams = v;
+      break;
+  }
+  */
+  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -154,11 +222,11 @@ static NSMutableArray *fxClassesArray = nil;
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
                         outputBuffer: (SndAudioBuffer*) outB
 {
-    // no processing? return FALSE!
-    // remember to check bActive in derived classes.
-    
-    // in derived classes, return TRUE if the output buffer has been written to
-    return FALSE;
+  // no processing? return FALSE!
+  // remember to check bActive in derived classes.
+
+  // in derived classes, return TRUE if the output buffer has been written to
+  return FALSE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -167,7 +235,7 @@ static NSMutableArray *fxClassesArray = nil;
 
 - (void) setAudioProcessorChain:(SndAudioProcessorChain*)inChain
 {
-    audioProcessorChain = inChain; /* non retained back pointer */
+  audioProcessorChain = inChain; /* non retained back pointer */
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -176,7 +244,7 @@ static NSMutableArray *fxClassesArray = nil;
 
 - (SndAudioProcessorChain*) audioProcessorChain
 {
-    return [[audioProcessorChain retain] autorelease];
+  return [[audioProcessorChain retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -211,24 +279,6 @@ static NSMutableArray *fxClassesArray = nil;
   return [[name retain] autorelease];
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// description
-//////////////////////////////////////////////////////////////////////////////
-
-- (NSString*) description
-{
-  return [NSString stringWithFormat: @"%@ params:%i",name,numParams];
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// dealloc
-//////////////////////////////////////////////////////////////////////////////
-
-- (void) dealloc
-{
-  [super dealloc];
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // paramDictionary
 ////////////////////////////////////////////////////////////////////////////////
@@ -258,11 +308,9 @@ static NSMutableArray *fxClassesArray = nil;
 
 - (id) paramObjectForIndex: (const int) i
 {
-  float    f = [self paramValue: i];
-  NSValue *v = [NSValue value: &f withObjCType: @encode(float)];
-  return   v;
+  float f = [self paramValue: i];
+  return [NSValue value: &f withObjCType: @encode(float)];
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 

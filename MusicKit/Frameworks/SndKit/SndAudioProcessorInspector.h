@@ -23,8 +23,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
-@class      SndAudioProcessorInspector
-@abstract   An inspector window for SndAudioProcessors
+@class SndAudioProcessorInspector
+@abstract An inspector window for SndAudioProcessors
 @discussion Inspector has an SndAudioArchitectureView allowing user to select
             the SndAudioProcessor of interest, whose parameters are then displayed
             in the tableview. A slider allows the user to change the Cubase VST
@@ -64,13 +64,6 @@
 + defaultAudioProcessorInspector;
 
 /*!
-  @method     init
-  @abstract
-  @discussion
-  @result     self
-*/
-- init;
-/*!
   @method     initWithAudioProcessor:
   @abstract
   @discussion
@@ -78,12 +71,6 @@
   @result     self
 */
 - initWithAudioProcessor: (SndAudioProcessor*) anAudProc;
-/*!
-  @method     dealloc
-  @abstract   destructor
-  @discussion
-*/
-- (void) dealloc;
 /*!
   @method     setAudioProcessor:
   @abstract

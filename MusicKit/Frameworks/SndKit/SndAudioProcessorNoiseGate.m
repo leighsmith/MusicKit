@@ -27,7 +27,7 @@
   self = [super initWithParamCount: noisegate_kNumParams name: @"NoiseGate"];
   if (self) {
     fThreshold  = (float) 0.1;
-    fHoldTime   = 0.050 * timeDiv; 
+    fHoldTime   = 0.050 * timeDiv;
     fAttackTime = 0.050 * timeDiv;
     fDecayTime  = 0.100 * timeDiv;
     iChanMode   = noisegate_cmodeLinked;
@@ -61,8 +61,8 @@
       break;
     case noisegate_kChanMode:
       r = (float) iChanMode / 2;
-    }
-  return r;  
+  }
+  return r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@
 - (NSString*) paramName: (const int) index
 {
   NSString *r = nil;
-  
+
   switch (index) {
     case noisegate_kThreshold:  r = @"Threshold";   break;
     case noisegate_kHoldTime:   r = @"Hold time";   break;
@@ -94,10 +94,10 @@
       fThreshold  = value;
       break;
     case noisegate_kHoldTime:
-      fHoldTime   = 10 + value * timeDiv; 
+      fHoldTime   = 10 + value * timeDiv;
       break;
     case noisegate_kAttackTime:
-      fAttackTime = 10 + value * timeDiv; 
+      fAttackTime = 10 + value * timeDiv;
       break;
     case noisegate_kDecayTime:
       fDecayTime  = 10 + value * timeDiv;
@@ -110,24 +110,80 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// paramLabel:
+////////////////////////////////////////////////////////////////////////////////
+
+- (NSString*) paramLabel: (const int) index
+{
+  NSString *r = nil;
+  switch (index) {
+    case noisegate_kThreshold:
+      r = @"dB";
+      break;
+    case noisegate_kHoldTime:
+      r = @"ms";
+      break;
+    case noisegate_kAttackTime:
+      r = @"ms";
+      break;
+    case noisegate_kDecayTime:
+      r = @"ms";
+      break;
+    case noisegate_kChanMode:
+      r = @" ";
+      break;
+  }
+  return r;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// paramDisplay:
+////////////////////////////////////////////////////////////////////////////////
+
+- (NSString*) paramDisplay: (const int) index
+{
+  NSString *r = nil;
+  switch (index) {
+    case noisegate_kThreshold:
+      r = [NSString stringWithFormat: @"%f", SndConvertLinearToDecibels(fThreshold)];
+      break;
+    case noisegate_kHoldTime:
+      r = [NSString stringWithFormat: @"%f", 1000.0 * fHoldTime];   // milliseconds
+      break;
+    case noisegate_kAttackTime:
+      r = [NSString stringWithFormat: @"%f", 1000.0 * fAttackTime]; // milliseconds
+      break;
+    case noisegate_kDecayTime:
+      r = [NSString stringWithFormat: @"%f", 1000.0 * fDecayTime];  // milliseconds
+      break;
+    case noisegate_kChanMode:
+      switch (iChanMode) {
+        case noisegate_cmodeLinked: r = @"Linked";      break;
+        case noisegate_cmodeIndep:  r = @"Independent"; break;
+        case noisegate_cmodeCross:  r = @"Cross";       break;
+      }
+      break;
+  }
+  return r;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // processReplacingInputBuffer:outputBuffer:
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
                         outputBuffer: (SndAudioBuffer*) outB
 {
-  
   float *inp  = (float*) [inB data];
   float *outp = (float*) [outB data];
-  float input[2], c, d;	
+  float input[2], c, d;
   int sampleFrames = [inB lengthInSamples];
   int i;
   float f;
 
   while(--sampleFrames >= 0) {
-    input[0] = *inp++;		// try to do load operations first...
+    input[0] = *inp++;		
     input[1] = *inp++;
-
 
     for (i = 0; i < 2; i++) {
       switch (m_iMode[i]) {
@@ -138,7 +194,7 @@
             m_iAttackCount[i] = 0;
             m_g[i] = ((float) m_iAttackCount[i]) / fAttackTime;
           }
-          break;
+            break;
         case noisegate_modeAttack:
           m_iAttackCount[i]++;
           m_g[i] = ((float) m_iAttackCount[i]) / fAttackTime;
@@ -147,19 +203,19 @@
             m_iHoldCount[i] = 0;
             m_g[i] = 1.0;
           }
-          break;
+            break;
         case noisegate_modeHold:
           m_iHoldCount[i]++;
           if (input[i] > fThreshold || input[i] < -fThreshold) { // retrigger!
             m_iMode[i] = noisegate_modeHold;
             m_iHoldCount[i] = 0;
           }
-          if (m_iHoldCount[i] >= fHoldTime) {
-            m_iMode[i] = noisegate_modeDecay;
-            m_iDecayCount[i] = 0;
-            m_t[i] = m_g[i];
-          }
-          break;
+            if (m_iHoldCount[i] >= fHoldTime) {
+              m_iMode[i] = noisegate_modeDecay;
+              m_iDecayCount[i] = 0;
+              m_t[i] = m_g[i];
+            }
+            break;
         case noisegate_modeDecay:
           m_iDecayCount[i] ++;
           if (input[i] > fThreshold || input[i] < -fThreshold) {
@@ -167,36 +223,35 @@
             m_iAttackCount[i] = 0;
             m_g[i] = m_t[i] * ((float) m_iDecayCount[i]) / fDecayTime;
           }
-          else if (m_iDecayCount[i] >= fDecayTime) {
-            m_iMode[i] = noisegate_modeGate;
-            m_g[i] = 0;
-          }
-          else {
-            m_g[i] = m_t[i] * (1 - ((float)m_iDecayCount[i]) / fDecayTime);
-          }
-          break;
-        }
+            else if (m_iDecayCount[i] >= fDecayTime) {
+              m_iMode[i] = noisegate_modeGate;
+              m_g[i] = 0;
+            }
+            else {
+              m_g[i] = m_t[i] * (1 - ((float)m_iDecayCount[i]) / fDecayTime);
+            }
+            break;
       }
-      switch (iChanMode) {
-        case noisegate_cmodeLinked: 
-          if (m_g[0] > m_g[1])
-            m_g[1] = m_g[0];
-          else
-            m_g[0] = m_g[1];
-          break;
-        case noisegate_cmodeIndep: 
-          break;
-        case noisegate_cmodeCross: 
-          f = m_g[0];
+    }
+    switch (iChanMode) {
+      case noisegate_cmodeLinked:
+        if (m_g[0] > m_g[1])
+          m_g[1] = m_g[0];
+        else
           m_g[0] = m_g[1];
-          m_g[1] = f;
-          break;
-      }
-
-    c = input[0] * m_g[0];		// accumulate to output buss
+        break;
+      case noisegate_cmodeIndep:
+        break;
+      case noisegate_cmodeCross:
+        f = m_g[0];
+        m_g[0] = m_g[1];
+        m_g[1] = f;
+        break;
+    }
+    c = input[0] * m_g[0];
     d = input[1] * m_g[1];
-    *outp++ = c;	// ...and store operations at the end,
-    *outp++ = d;	// as this uses the cache efficiently.
+    *outp++ = c;
+    *outp++ = d;
   }
   return TRUE;
 }
@@ -204,88 +259,3 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 @end
-
-////////////////////////////////////////////////////////////////////////////////
-// SKoT: unported functions from the original C++ VST plugin 
-////////////////////////////////////////////////////////////////////////////////
-
-/*
- // Not converted yet
-- (NSString*) getParameterDisplay: (const int) index
-{
-  NSString *r = nil;
-  switch (index)
-    {
-    case kThreshold:
-      dB2string(fThreshold, text);
-      break;
-    case kHoldTime:
-      ms2string(fHoldTime, text);
-      break;
-    case kAttackTime:
-      ms2string(fAttackTime, text);
-      break;
-    case kDecayTime:
-      ms2string(fDecayTime, text);
-      break;
-    case kChanMode:
-      switch (iChanMode)
-        {
-        case cmodeLinked: strcpy(text,"Linked"); break;
-        case cmodeIndep: strcpy(text,"Indep."); break;
-        case cmodeCross: strcpy(text,"Cross"); break;
-        }
-    }
-}
-
-void VGate::getParameterLabel(long index, char *label)
-{
-  switch (index)
-    {
-    case kThreshold:
-      strcpy(label, "   dB   ");
-      break;
-    case kHoldTime:
-      strcpy(label, "   ms   ");
-      break;
-    case kAttackTime:
-      strcpy(label, "   ms   ");
-      break;
-    case kDecayTime:
-      strcpy(label, "   ms   ");
-      break;
-    case kChanMode:
-      strcpy(label, "      ");
-      break;
-    }
-}
-*/
-
-/*
-void VGate::process(float **inputs, float **outputs, long sampleFrames)
-{
-  float *in1 = inputs[0];
-  float *in2 = inputs[1];
-  float *out1 = outputs[0];
-  float *out2 = outputs[1];
-  float input[2], c, d;	// use registers in sample loops!
-
-  --in1;	// pre-decrement so we can use pre-increment in the loop
-  --in2;	// this is because pre-increment is fast on power pc
-  --out1;
-  --out2;
-  while(--sampleFrames >= 0)
-    {
-    input[0] = *++in1;		// try to do load operations first...
-    input[1] = *++in2;
-    c = out1[1];	// get output, as we need to accumulate
-    d = out2[1];
-    calcGains(input);
-    c += input[0] * m_g[0];
-    d += input[1] * m_g[1];
-    *++out1 = c;	// ...and store operations at the end,
-    *++out2 = d;	// as this uses the cache efficiently.
-    }
-}
-*/
-

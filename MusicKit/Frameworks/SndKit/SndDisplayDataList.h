@@ -32,8 +32,8 @@ CONDITIONS OF THIS AGREEMENT.
 #import <AppKit/AppKit.h>
 
 /*!
-@class      SndDisplayDataList
-@abstract   Maintain a sorted list of cached display data for SndViews
+@class SndDisplayDataList
+@abstract Maintain a sorted list of cached display data for SndViews
 @discussion If it was easy to subclass NSMutableArray this would be one. However
             it was easier to simply hold an instance variable of a NSMutableArray
             and send it all messages which we outselves do not recognise. The
@@ -44,6 +44,7 @@ CONDITIONS OF THIS AGREEMENT.
 
 @interface SndDisplayDataList: NSObject
 {
+  /*! @var embeddedArray */
     NSMutableArray *embeddedArray;
 }
 

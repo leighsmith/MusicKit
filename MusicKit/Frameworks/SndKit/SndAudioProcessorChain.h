@@ -21,10 +21,10 @@
 @class SndAudioProcessor;
 @class SndAudioFader;
 
-/*! 
-    @class    SndAudioProcessorChain
-    @abstract 
-    @discussion To come
+/*!
+@class SndAudioProcessorChain
+@abstract
+@discussion To come
 */
 @interface SndAudioProcessorChain : NSObject {
 /*! @var   audioProcessorArray */

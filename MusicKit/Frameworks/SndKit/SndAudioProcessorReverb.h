@@ -25,14 +25,15 @@
 #import "SndAudioProcessor.h"
 
 /*!
-    @enum     SndReverbParam
-    @constant rvrbRoomSize  
-    @constant rvrbDamp      
-    @constant rvrbWet       
-    @constant rvrbDry       
-    @constant rvrbWidth     
-    @constant rvrbMode       
-    @constant rvrbNumParams 
+ @enum SndReverbParam
+ @abstract Parameter keys
+ @constant rvrbRoomSize   Room size
+ @constant rvrbDamp       Damping amount
+ @constant rvrbWet        Wet level
+ @constant rvrbDry        Dry level
+ @constant rvrbWidth      Width
+ @constant rvrbMode       Mode [1 = hold]
+ @constant rvrbNumParams  Number of parameters
 */
 enum {
   rvrbRoomSize  = 0,
@@ -46,10 +47,10 @@ enum {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-/*! 
-    @class      SndAudioProcessorReverb
-    @abstract   A reverb processor
-    @discussion To come.
+/*!
+@class SndAudioProcessorReverb
+@abstract A reverb processor
+@discussion To come.
 */
 @interface SndAudioProcessorReverb : SndAudioProcessor {
 @private  
@@ -57,50 +58,8 @@ enum {
   void* cppFreeReverbObj; 
 }
 
-/*!
-  @method init
-  @result self
-  @discussion Initializes the CPP reverb model.
-*/
-- init;
-/*!
-  @method dealloc
-  @discussion Destructor.
-*/
-- (void) dealloc;
-/*!
-  @method processReplacingInputBuffer:outputBuffer:
-  @param  inB  inputBuffer
-  @param  outB outputBuffer
-  @result self 
-  @discussion Main FX processing function - automatically called by the host SndAudioProcessorChain.
-              See discussion in SndAudioProcessor.
-*/
-- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
-                 outputBuffer: (SndAudioBuffer*) outB;
-/*!
-  @method paramValue:
-  @param  index Parameter index
-  @result A parameter value in the range [0..1] 
-  @discussion See discussion in SndAudioProcessor 
-*/
-- (float) paramValue: (const int) index;
-/*!
-  @method paramName:
-  @param  index Parameter index
-  @result An NSString containing the name of the parameter referred to by index. 
-  @discussion See discussion in SndAudioProcessor 
-*/
-- (NSString*) paramName: (const int) index;
-/*!
-  @method setParam:toValue:
-  @param  index Parameter index
-  @param  v     New value for the indexed parameter, in the range [0..1]
-  @result self
-  @discussion  See discussion in SndAudioProcessor
-*/
-- setParam: (const int) index toValue: (const float) v;
-
 @end
+
+////////////////////////////////////////////////////////////////////////////////
 
 #endif

@@ -15,12 +15,13 @@
 #import "SndAudioProcessor.h"
 
 /*!
- @enum     SndToneGenParam
- @constant toneGen_kFreq
- @constant toneGen_kAmp
- @constant toneGen_kPhase
- @constant toneGen_kWave
- @constant toneGen_kNumParams
+ @enum SndToneGenParam
+ @abstract Parameter keys
+ @constant toneGen_kFreq       Frequency 
+ @constant toneGen_kAmp        Amplitude
+ @constant toneGen_kPhase      Phase offset
+ @constant toneGen_kWave       Waveform 
+ @constant toneGen_kNumParams  Number of parameters
  */
 enum {
   toneGen_kFreq      = 0,
@@ -35,8 +36,8 @@ enum {
 //////////////////////////////////////////////////////////////////////////////
 
 /*!
-@class      SndAudioProcessorToneGenerator
-@abstract   A tone generator processor
+@class SndAudioProcessorToneGenerator
+@abstract A tone generator processor
 @discussion To come
 */
 @interface SndAudioProcessorToneGenerator : SndAudioProcessor {
@@ -44,59 +45,15 @@ enum {
   float freq;
 /*! @var   amp  Yuckky linear scale [0,1] for the moment - be nice to have in dB */
   float amp;
-/*! @var   phase */
+/*! @var   phase Phase offset */
   float phase;
-/*! @var   waveform */
+/*! @var   waveform  (not currently used)*/
   int   waveform;
   
 @private
 /*! @var   t */
   double t;
 }
-
-/*!
-  @method     init 
-  @abstract
-  @discussion
-  @result     
-*/
-- init;
-/*!
-  @method     description
-  @abstract
-  @discussion
-  @result
-*/
-- (NSString*) description;
-/*!
-  @method     processReplacingInputBuffer:outputBuffer:
-  @abstract   See baseclass SndAudioProcessor
-  @discussion
-  @result
-*/
-- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
-                        outputBuffer: (SndAudioBuffer*) outB;
-/*!
-  @method     setParam:toValue:
-  @abstract   See baseclass SndAudioProcessor
-  @discussion
-  @result
-*/
-- setParam: (const int) index toValue: (const float) value;
-/*!
-  @method     paramValue:
-  @abstract   See baseclass SndAudioProcessor
-  @discussion
-  @result
-*/
-- (float) paramValue: (const int) index;
-/*!
-  @method     paramName:
-  @abstract   See baseclass SndAudioProcessor
-  @discussion 
-  @result
-*/
-- (NSString*) paramName: (const int) index;
 
 @end
 

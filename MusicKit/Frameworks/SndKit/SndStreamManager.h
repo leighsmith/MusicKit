@@ -30,15 +30,22 @@
 
 #define SSM_VERSION 1 
 
-@protocol SndDelegateMessagePassing 
+/*!
+@protocol SndDelegateMessagePassing
+ */
+@protocol SndDelegateMessagePassing
+/*!
+@method _sendDelegateInvocation:
+@param mesg
+ */
 - (void) _sendDelegateInvocation:(in unsigned long) mesg;
 @end 
 
 /*!
-    @class      SndStreamManager
-    @abstract   Provides client connection and stream mixing services, and acts as 
-                the gateway to the lowlevel MKPerformSndMIDI C functions
-    @discussion To come
+@class SndStreamManager
+@abstract Provides client connection and stream mixing services, and acts as 
+              the gateway to the lowlevel MKPerformSndMIDI C functions
+@discussion To come
 */
 @interface SndStreamManager : NSObject <SndDelegateMessagePassing>
 { 

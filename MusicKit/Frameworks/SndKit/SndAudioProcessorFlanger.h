@@ -3,11 +3,14 @@
 //  SndAudioProcessorFlanger.h
 //  SndKit
 //
+//  Flanger / bi-Choruser
+//
 //  Created by SKoT McDonald on Mon Dec 17 2001.
 //
 //  Based on the 1997 C++ Vellocet VFlanger Cubase VST plugin by
 //  Vellocet / SKoT McDonald <skot@vellocet.com>
 //  http://www.vellocet.com
+//  (c) All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -19,14 +22,15 @@
 #import "SndAudioProcessor.h"
 
 /*!
- @enum     SndFlangerParam
- @constant flanger_kRate
- @constant flanger_kMin
- @constant flanger_kMax
- @constant flanger_kSwap
- @constant flanger_kPhase
- @constant flanger_kFeedback
- @constant flanger_kNumParams
+ @enum SndFlangerParam
+ @abstract Parameter keys
+ @constant flanger_kRate       Sweep rate
+ @constant flanger_kMin        Minimum z buffer extent
+ @constant flanger_kMax        Maximum z buffer extent
+ @constant flanger_kSwap       Swap the z buffer feedback between left and right channels
+ @constant flanger_kPhase      Phase difference between left and right channels
+ @constant flanger_kFeedback   Feedback
+ @constant flanger_kNumParams  Number of parameters
  */
 enum
 {
@@ -42,8 +46,8 @@ enum
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
-@class      SndAudioProcessorFlanger
-@abstract   A flanger/dual choruser processor
+@class SndAudioProcessorFlanger
+@abstract A flanger/dual choruser processor
 @discussion To come
 */
 @interface SndAudioProcessorFlanger : SndAudioProcessor {
@@ -82,77 +86,12 @@ enum
 }
 
 /*!
-  @method init
-  @abstract
-  @discussion
-  @result
-*/
-- init;
-/*!
-  @method dealloc
-  @abstract
-  @discussion
-*/
-- (void) dealloc;
-/*!
-  @method     processReplacingInputBuffer:outputBuffer:
-  @abstract
-  @discussion
-  @result
-*/
-- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
-                        outputBuffer: (SndAudioBuffer*) outB;
-/*!
   @method     processReplacing_core_inL:inR:outL:outR:sampleCount:step:
-  @abstract
-  @discussion
-  @result
+  @abstract   private method called internally to do the Flanging
 */
 - (void) processReplacing_core_inL: (float*) inL   inR: (float*) inR
                               outL: (float*) outL outR: (float*) outR
                        sampleCount: (long) sampleCount step: (int) step;
-/*!
-  @method     setParam:toValue:
-  @abstract
-  @discussion
-  @result
-*/
-- setParam: (const int) index toValue: (const float) value;
-/*!
-  @method     paramValue:
-  @abstract
-  @discussion
-  @result
-*/
-- (float) paramValue: (const int) index;
-/*!
-  @method     paramName:
-  @abstract
-  @discussion
-  @result
-*/
-- (NSString*) paramName: (const int) index;
-/*!
-  @method     paramLabel:
-  @abstract
-  @discussion
-  @result
-*/
-- (NSString*) paramLabel: (const int) index;
-/*!
-  @method     paramDisplay:
-  @abstract
-  @discussion
-  @result
-*/
-- (NSString*) paramDisplay: (const int) index;
-/*!
-  @method     setActive:
-  @abstract
-  @discussion
-  @result
-*/
-- setActive: (const BOOL) b;
 /*!
   @method     setToDefault
   @abstract

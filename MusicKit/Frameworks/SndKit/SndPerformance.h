@@ -20,11 +20,11 @@
 #import "Snd.h"
 
 /*!
-    @class      SndPerformance
-    @abstract   Holds the state associated with each sounding (or soon to be) Snd.
-    @discussion This differs from a Snd instance itself, since we can have multiple overlapping
-                performances of the same (potentially huge) Snd. We need some way of indicating
-                to the delegate exactly which performance has completed.
+@class SndPerformance
+@abstract   Holds the state associated with each sounding (or soon to be) Snd.
+@discussion This differs from a Snd instance itself, since we can have multiple overlapping
+            performances of the same (potentially huge) Snd. We need some way of indicating
+            to the delegate exactly which performance has completed.
 */
 @interface SndPerformance : NSObject
 {

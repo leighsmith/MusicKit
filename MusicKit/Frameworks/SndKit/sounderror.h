@@ -27,56 +27,97 @@
  *	Copyright 1988-89 NeXT, Inc.
  *
  */
-#ifndef __SNDERROR_H
-#define __SNDERROR_H 1
-
+#ifndef __SNDKIT_SNDERROR_H__
+#define __SNDKIT_SNDERROR_H__
 
 #if !defined(SND_ERR_NOT_SOUND)
+/*!
+ @enum SndError
+  @constant SND_ERR_NONE              No error - all is well		          
+  @constant SND_ERR_NOT_SOUND		      Not a sound
+  @constant SND_ERR_BAD_FORMAT		    Bad format
+  @constant SND_ERR_BAD_RATE		      Bad sample rate
+  @constant SND_ERR_BAD_CHANNEL		    Bad channel count
+  @constant SND_ERR_BAD_SIZE		      Bad data size
+  @constant SND_ERR_BAD_FILENAME	    Bad filename
+  @constant SND_ERR_CANNOT_OPEN		    Error opening the file
+  @constant SND_ERR_CANNOT_WRITE	    Error writing to the file
+  @constant SND_ERR_CANNOT_READ		    Error reading from the file
+  @constant SND_ERR_CANNOT_ALLOC	    Error allocating the required memory
+  @constant SND_ERR_CANNOT_FREE		    Error freeing the memory
+  @constant SND_ERR_CANNOT_COPY		    Description forthcoming
+  @constant SND_ERR_CANNOT_RESERVE    Description forthcoming
+  @constant SND_ERR_NOT_RESERVED	    Description forthcoming
+  @constant SND_ERR_CANNOT_RECORD	    Description forthcoming
+  @constant SND_ERR_ALREADY_RECORDING	Description forthcoming
+  @constant SND_ERR_NOT_RECORDING	    Description forthcoming
+  @constant SND_ERR_CANNOT_PLAY		    Description forthcoming
+  @constant SND_ERR_ALREADY_PLAYING	  Description forthcoming
+  @constant SND_ERR_NOT_PLAYING		    Description forthcoming
+  @constant SND_ERR_NOT_IMPLEMENTED	  Description forthcoming
+  @constant SND_ERR_CANNOT_FIND		    Description forthcoming
+  @constant SND_ERR_CANNOT_EDIT		    Description forthcoming
+  @constant SND_ERR_BAD_SPACE		      Description forthcoming
+  @constant SND_ERR_KERNEL		        Description forthcoming
+  @constant SND_ERR_BAD_CONFIGURATION	Description forthcoming
+  @constant SND_ERR_CANNOT_CONFIGURE	Description forthcoming
+  @constant SND_ERR_UNDERRUN		      Description forthcoming
+  @constant SND_ERR_ABORTED		        Description forthcoming
+  @constant SND_ERR_BAD_TAG		        Description forthcoming
+  @constant SND_ERR_CANNOT_ACCESS	    Description forthcoming
+  @constant SND_ERR_TIMEOUT		        Description forthcoming
+  @constant SND_ERR_BUSY		          Description forthcoming
+  @constant SND_ERR_CANNOT_ABORT	    Description forthcoming
+  @constant SND_ERR_INFO_TOO_BIG	    Description forthcoming
+  @constant SND_ERR_UNKNOWN           Unknown error.
+*/
 typedef enum {
-    SND_ERR_NONE		= 0,
-    SND_ERR_NOT_SOUND		= 1,
-    SND_ERR_BAD_FORMAT		= 2,
-    SND_ERR_BAD_RATE		= 3,
-    SND_ERR_BAD_CHANNEL		= 4,
-    SND_ERR_BAD_SIZE		= 5,
-    SND_ERR_BAD_FILENAME	= 6,
-    SND_ERR_CANNOT_OPEN		= 7,
-    SND_ERR_CANNOT_WRITE	= 8,
-    SND_ERR_CANNOT_READ		= 9,
-    SND_ERR_CANNOT_ALLOC	= 10,
-    SND_ERR_CANNOT_FREE		= 11,
-    SND_ERR_CANNOT_COPY		= 12,
-    SND_ERR_CANNOT_RESERVE	= 13,
-    SND_ERR_NOT_RESERVED	= 14,
-    SND_ERR_CANNOT_RECORD	= 15,
+    SND_ERR_NONE		          = 0,
+    SND_ERR_NOT_SOUND		      = 1,
+    SND_ERR_BAD_FORMAT		    = 2,
+    SND_ERR_BAD_RATE		      = 3,
+    SND_ERR_BAD_CHANNEL		    = 4,
+    SND_ERR_BAD_SIZE		      = 5,
+    SND_ERR_BAD_FILENAME	    = 6,
+    SND_ERR_CANNOT_OPEN		    = 7,
+    SND_ERR_CANNOT_WRITE	    = 8,
+    SND_ERR_CANNOT_READ		    = 9,
+    SND_ERR_CANNOT_ALLOC	    = 10,
+    SND_ERR_CANNOT_FREE		    = 11,
+    SND_ERR_CANNOT_COPY		    = 12,
+    SND_ERR_CANNOT_RESERVE    = 13,
+    SND_ERR_NOT_RESERVED	    = 14,
+    SND_ERR_CANNOT_RECORD	    = 15,
     SND_ERR_ALREADY_RECORDING	= 16,
-    SND_ERR_NOT_RECORDING	= 17,
-    SND_ERR_CANNOT_PLAY		= 18,
-    SND_ERR_ALREADY_PLAYING	= 19,
-    SND_ERR_NOT_PLAYING		= 20,
-    SND_ERR_NOT_IMPLEMENTED	= 21,
-    SND_ERR_CANNOT_FIND		= 22,
-    SND_ERR_CANNOT_EDIT		= 23,
-    SND_ERR_BAD_SPACE		= 24,
-    SND_ERR_KERNEL		= 25,
+    SND_ERR_NOT_RECORDING	    = 17,
+    SND_ERR_CANNOT_PLAY		    = 18,
+    SND_ERR_ALREADY_PLAYING	  = 19,
+    SND_ERR_NOT_PLAYING		    = 20,
+    SND_ERR_NOT_IMPLEMENTED	  = 21,
+    SND_ERR_CANNOT_FIND		    = 22,
+    SND_ERR_CANNOT_EDIT		    = 23,
+    SND_ERR_BAD_SPACE		      = 24,
+    SND_ERR_KERNEL		        = 25,
     SND_ERR_BAD_CONFIGURATION	= 26,
     SND_ERR_CANNOT_CONFIGURE	= 27,
-    SND_ERR_UNDERRUN		= 28,
-    SND_ERR_ABORTED		= 29,
-    SND_ERR_BAD_TAG		= 30,
-    SND_ERR_CANNOT_ACCESS	= 31,
-    SND_ERR_TIMEOUT		= 32,
-    SND_ERR_BUSY		= 33,
-    SND_ERR_CANNOT_ABORT	= 34,
-    SND_ERR_INFO_TOO_BIG	= 35,
-    SND_ERR_UNKNOWN=32767
+    SND_ERR_UNDERRUN		      = 28,
+    SND_ERR_ABORTED		        = 29,
+    SND_ERR_BAD_TAG		        = 30,
+    SND_ERR_CANNOT_ACCESS	    = 31,
+    SND_ERR_TIMEOUT		        = 32,
+    SND_ERR_BUSY		          = 33,
+    SND_ERR_CANNOT_ABORT	    = 34,
+    SND_ERR_INFO_TOO_BIG	    = 35,
+    SND_ERR_UNKNOWN           = 32767
 } SndError;
 #endif
 
-char *SndSoundError(int err);
-/*
- * This routine returns a pointer to a string that describes the
- * given error code. 
+/*!
+@function SndSoundError
+ @abstract This routine returns a pointer to a string that describes the given error code.
+ @param err The reported error number
+ @result A pointer to a string that describes the given error code.
  */
+const char *SndSoundError(int err);
 
 #endif

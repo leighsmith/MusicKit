@@ -54,7 +54,7 @@ inline float sndreverb_allpass::process(float input)
 void	sndreverb_allpass::processBufferReplacing(float *input, float *output, long bufferLength, int skip)
 {
   long i;
-  float bufout;
+//  float bufout;
   
   for (i = 0; i < bufferLength; i += skip) 
     output[i] = process(input[i]);

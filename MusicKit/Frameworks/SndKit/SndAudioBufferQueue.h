@@ -24,7 +24,7 @@
 @class SndAudioBuffer;
 
 /*!
-    @enum     AudioBufferQueueType
+    @enum AudioBufferQueueType
     @constant audioBufferQueue_typeInput  
     @constant audioBufferQueue_typeOutput  
 */
@@ -34,8 +34,8 @@ typedef enum {
 } AudioBufferQueueType;
 
 /*!
-    @class      SndAudioBufferQueue
-    @abstract   Abstraction of the producer / consumer buffer queue operation found inside
+@class SndAudioBufferQueue
+@abstract Abstraction of the producer / consumer buffer queue operation found inside
                 the SndStreamClients, which have both an input and output SndAudioBufferQueue.
                 Provides thread safe buffer exchange and blocking operations.
 */

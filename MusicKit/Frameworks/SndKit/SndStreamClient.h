@@ -38,23 +38,23 @@ enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
-    @class      SndStreamClientDelegate
-    @abstract   Informal protocol for a SndStreamClient delegate
-    @discussion To come
+@protocol SndStreamClientDelegate
+@abstract Informal protocol for a SndStreamClient delegate
+@discussion To come
 */
-@interface SndStreamClientDelegate
+@protocol SndStreamClientDelegate
 
 /*!
-    @method     inputBufferSkipped
-    @abstract   Message sent when the client was not ready to accept the 
-                next input buffer
+@method     inputBufferSkipped
+ @abstract   Message sent when the client was not ready to accept the
+ next input buffer
 */
 - inputBufferSkipped:  sender;
 
 /*!
-    @method     outputBufferSkipped
-    @abstract   Message sent when the client was not ready to provide the 
-                next outputBuffer
+ @method outputBufferSkipped
+ @abstract Message sent when the client was not ready to provide the
+           next outputBuffer
 */
 - outputBufferSkipped: sender;
 @end
@@ -64,10 +64,10 @@ enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
-    @class      SndStreamClient
-    @abstract   Audio streaming / signal processing / synthesis module 
-    @discussion Provides basic streaming services such as double buffering, thread handling,
-                automatic start up and and shut down of lower-level streaming services. 
+@class SndStreamClient
+@abstract Audio streaming / signal processing / synthesis module
+@discussion Provides basic streaming services such as double buffering, thread handling,
+automatic start up and and shut down of lower-level streaming services.
 */
 @interface SndStreamClient : NSObject
 {

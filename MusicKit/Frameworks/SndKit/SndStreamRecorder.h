@@ -21,10 +21,10 @@
 @class SndAudioBuffer;
 @class SndAudioProcessorRecorder;
 
-/*! 
-    @class SndStreamRecorder
-    @abstract 
-    @discussion
+/*!
+@class SndStreamRecorder
+@abstract
+@discussion
     
     ATTENTION!!!
       Presumptions made to get this class off the ground quickly: The incoming
@@ -122,11 +122,11 @@
 @end
 
 /*! 
-    @class      SndStreamRecorderDelegate
-    @abstract   Informal protocol for an SndStreamRecorder delegate
-    @discussion To come.
+ @protocol SndStreamRecorderDelegate
+ @abstract Protocol for an SndStreamRecorder delegate
+ @discussion To come.
 */
-@interface SndStreamRecorderDelegate : SndStreamClientDelegate
+@protocol SndStreamRecorderDelegate <SndStreamClientDelegate>
 /*! 
     @method   didStartRecording:sender
     @abstract   Message sent to delegate just before the recording thread enters

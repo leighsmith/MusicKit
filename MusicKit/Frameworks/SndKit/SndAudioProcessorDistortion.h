@@ -9,7 +9,8 @@
 //
 //  Based on the 1999 C++ Vellocet VFracDistort Cubase VST plugin by
 //  Vellocet / SKoT McDonald <skot@vellocet.com>
-//  http://www.vellocet.com 
+//  http://www.vellocet.com
+//  (c) All rights reserved.
 //
 //////////////////////////////////////////////////////////////////////////////
 
@@ -20,12 +21,13 @@
 #import "SndAudioProcessor.h"
 
 /*!
- @enum     SndDistortionParam
- @constant distort_kBoostAmount
- @constant distort_kKnee
- @constant distort_kHardness
- @constant distort_kBoostRange
- @constant distort_kNumParams
+ @enum SndDistortionParam
+ @abstract Parameter keys
+ @constant distort_kBoostAmount Pre amp boost amount
+ @constant distort_kKnee        Knee level in range [0,1]
+ @constant distort_kHardness    Degree of hard clipping
+ @constant distort_kBoostRange  Pre amp boost range
+ @constant distort_kNumParams   Number of parameters
  */
 
 enum {
@@ -39,8 +41,8 @@ enum {
 //////////////////////////////////////////////////////////////////////////////
 
 /*!
-@class      SndAudioProcessorDistortion
-@abstract   A distortion/limiter processor
+@class SndAudioProcessorDistortion
+@abstract A distortion/limiter processor
 @discussion To come
 */
 @interface SndAudioProcessorDistortion : SndAudioProcessor {
@@ -55,21 +57,6 @@ enum {
 /*! @var  m_fHardness */
   float   m_fHardness;
 }
-
-/*!
-  @method     init
-  @abstract
-  @discussion
-  @result
-*/
-- init;
-/*!
-  @method     dealloc
-  @abstract
-  @discussion
-  @result
-*/
-- (void)  dealloc;
 /*!
   @method     setToDefault
   @abstract
@@ -77,34 +64,6 @@ enum {
   @result
 */
 - (void)  setToDefault;
-/*!
-  @method     processReplacingInputBuffer:outputBuffer:
-  @abstract
-  @discussion
-  @result
-*/
-- (BOOL)  processReplacingInputBuffer: (SndAudioBuffer*) inB outputBuffer: (SndAudioBuffer*) outB;
-/*!
-  @method     setParam:toValue:
-  @abstract
-  @discussion
-  @result
-*/
-- setParam: (const int) index toValue: (const float) value;
-/*!
-  @method     paramName:
-  @abstract
-  @discussion
-  @result
-*/
-- (NSString*) paramName: (const int) index;
-/*!
-  @method     param:
-  @abstract
-  @discussion
-  @result
-*/
-- (float) param: (const int) index;
 /*!
   @method     setBoostRange:
   @abstract

@@ -34,6 +34,7 @@
 */
 /*!
   @class SndMeter
+ @abstract Not ready for operation just yet!
   @discussion
 
 A SndMeter is a view that displays the amplitude level of a sound as

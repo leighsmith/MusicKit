@@ -37,14 +37,14 @@ extern NSString *NXSoundPboardType;
 @class SndAudioBuffer;
 
 /*!
-    @class      Snd 
-    @abstract   The Snd object encapsulates a SndSoundStruct, which represents a sound.
-                It supports reading and writing to a soundfile, playback of sound,
-                recording of sampled sound, conversion among various sampled formats, 
-                basic editing of the sound, and name and storage
-		management for sounds.
+@class Snd
+@abstract The Snd object encapsulates a SndSoundStruct, which represents a sound.
+          It supports reading and writing to a soundfile, playback of sound,
+          recording of sampled sound, conversion among various sampled formats, 
+          basic editing of the sound, and name and storage
+          management for sounds.
 
-    @discussion 
+@discussion 
 
 Snd objects represent and manage sounds. A Snd object's sound can be
 recorded from a microphone, read from a sound file or NSBundle
@@ -81,13 +81,26 @@ the pasteboard sound type. Most of the methods defined in the Snd
 class are implemented so that you needn't be aware of this
 structure. However, if you wish to directly manipulate the sound data
 in a Snd object, you need to be familiar with the SndSoundStruct
-architecture, as described in the <b>SndStruct</b> header.
+architecture, as described in the <b>SndStruct</b> header. 
 */
 
 @interface Snd : NSObject
 {
  @private
-/*! @var soundStruct the sound data structure */
+/*! @var soundStruct <p>The sound data structure.</p>
+  <p>This is defined in the MKPerformSndMIDI framework as follows:</p>
+  <pre>
+  <b>typedef struct</b> {
+    int magic;
+    int dataLocation;
+    int dataSize;
+    int dataFormat;
+    int samplingRate;
+    int channelCount;
+    char info[4];
+  } SndSoundStruct;
+  </pre>
+  */
     SndSoundStruct *soundStruct;  
 /*! @var soundStructSize the length of the structure in bytes */
     int soundStructSize;	 

@@ -17,7 +17,7 @@
 #import <Foundation/Foundation.h>
 
 /*!
-@class      SndBreakpoint
+@class SndBreakpoint
 @abstract   A simple storage class allowing SndEnvelope breakpoint information to
             be stored in NSArrays
 @discussion This class is used primarily by SndEnvelope, the default envelope class

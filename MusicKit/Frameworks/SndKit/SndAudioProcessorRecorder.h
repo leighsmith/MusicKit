@@ -21,10 +21,11 @@
 @class SndAudioBuffer;
 
 /*!
-  @enum SndRecorderParam
-  @constant recorder_kStartTriggerThreshold
-  @constant recorder_kRecordFile
-  @constant recorder_kNumParams
+ @enum SndRecorderParam
+ @abstract Parameter keys
+ @constant recorder_kStartTriggerThreshold  Start trigger threshold
+ @constant recorder_kRecordFile             Record filename              
+ @constant recorder_kNumParams              Number of parameters
 */
 enum {
   recorder_kStartTriggerThreshold = 0,
@@ -35,9 +36,9 @@ enum {
 //////////////////////////////////////////////////////////////////////////////
 
 /*!
-    @class      SndAudioProcessorRecorder
-    @abstract   Records the FX audio stream to disk.
-    @discussion To come
+@class SndAudioProcessorRecorder
+@abstract Records the FX audio stream to disk.
+@discussion To come.
 */
 @interface SndAudioProcessorRecorder : SndAudioProcessor {
 
@@ -63,34 +64,12 @@ enum {
 }
 
 /*!
-    @method     init   
-    @abstract 
-    @discussion 
-    @result     self
-*/
-- init;
-/*!
-    @method     dealloc   
-    @abstract 
-    @discussion 
-*/
-- (void) dealloc;
-/*!
     @method     isRecording    
     @abstract 
     @discussion 
     @result     TRUE if currently recording
 */
 - (BOOL) isRecording;
-
-/*!
-    @method     processReplacingInputBuffer:outputBuffer:
-    @abstract 
-    @discussion 
-    @result     See SndAudioProcessor.
-*/
-- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
-                        outputBuffer: (SndAudioBuffer*) outB;                        
 /*!
     @method     prepareToRecordForDuration:withFormat:
     @abstract 
@@ -186,29 +165,6 @@ enum {
     @result     Boolean indicating success
 */
 - (BOOL) setUpRecordFile: (NSString*) filename withFormat: (SndSoundStruct*) format;
-/*!
-  @method     paramObjectForIndex:
-  @abstract
-  @discussion
-  @result
-*/
-- (id) paramObjectForIndex: (const int) i;
-/*!
-  @method     paramValue:
-  @abstract   Gets the value of the indexed parameter.
-  @discussion See superclass.
-  @param      index Index of the parameter
-  @result     parameter value
-*/
-- (float) paramValue: (const int) index;
-/*!
-  @method     paramName:
-  @abstract   Gets the name of indexed parameter.
-  @param      index Parameter index
-  @result     NSString with parameter name
-*/
-- (NSString*) paramName: (const int) index;
-
 
 @end
 

@@ -59,8 +59,8 @@ typedef float (*YForXIMP)(id, SEL, double);
 typedef float (*XForBpIMP)(id, SEL, int);
 
 /*!
-    @class      SndAudioFader
-    @abstract   An object providing basic amplitude and balance controls on
+@class SndAudioFader
+@abstract An object providing basic amplitude and balance controls on
                 incoming audio buffers. "Fader" movements can be scheduled
                 for arbitrary times in the future,
     @discussion

@@ -44,9 +44,25 @@ typedef union _SndSwappedDoubleUnion {
 	char ch[8];
 } SndSwappedDoubleUnion;
 
+/*! @function SndSwapSwappedFloatToHost
+    @param aSwappedFloat
+    @result 
+*/
 float 			     SndSwapSwappedFloatToHost  (SndSwappedFloat aSwappedFloat);
+/*! @function SndSwapHostToSwappedFloat
+    @param aFloat
+    @result
+*/
 SndSwappedFloat  SndSwapHostToSwappedFloat  (float aFloat);
+/*! @function SndSwapSwappedDoubleToHost
+    @param aSwappedDouble
+    @result
+*/
 double 			     SndSwapSwappedDoubleToHost (SndSwappedDouble aSwappedDouble);
+/*! @function SndSwapHostToSwappedDouble
+    @param aDouble
+    @result
+*/
 SndSwappedDouble SndSwapHostToSwappedDouble (double aDouble);
 
 /*! @function SndSwap_Convert16BitNative2LittleEndian

@@ -20,9 +20,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
-@class      SndStreamArchitectureView
-@abstract   View showing the current layout of Snd streaming components
-            (rudimentary)
+@class SndStreamArchitectureView
+@abstract View showing the current layout of Snd streaming components
+          (rudimentary)
 @discussion Shows the manager, mixer, clients and processors attached to each.
             User may click on any object to see their current description
             (updated every second). Object then becomes the currentObject,
@@ -46,14 +46,6 @@
 }
 
 /*!
-  @method     initWithFrame:
-  @abstract   To come
-  @discussion To come
-  @param      frameRect
-  @result     self
-*/
-- initWithFrame: (NSRect) frameRect;
-/*!
   @method     update:
   @abstract   NSTimer callback that forces a fresh of the view.
   @discussion To come
@@ -61,13 +53,6 @@
   @result     self
 */
 - update: (NSTimer*) timer;
-/*!
-  @method     drawRect:
-  @abstract   To come
-  @discussion To come
-  @param      rect
-*/
-- (void) drawRect: (NSRect) rect;
 /*!
   @method     drawStreamClient:inRect:
   @abstract   To come
@@ -155,7 +140,9 @@
 // Simple informal delegate protocol
 ////////////////////////////////////////////////////////////////////////////////
 
-@interface SndStreamArchitectureViewDelegateProtocol
+/*! @protocol SndStreamArchitectureViewDelegateProtocol
+*/
+@protocol SndStreamArchitectureViewDelegateProtocol
 /*!
   @method     didSelectObject:
   @abstract   sent to delegate when an on-screen audio object (mixer, processor

@@ -3,12 +3,14 @@
 //  SndAudioProcessorNoiseGate.h
 //  SndKit
 //
+//  Noisegate
+//
 //  Created by SKoT McDonald on Fri Jan 11 2002.
-//  Copyright (c) 2001 tomandandy. All rights reserved.
 //
 //  Based on the 1997 C++ Vellocet VNoiseGate Cubase VST plugin by
-//  Vellocet / SKoT McDonald <skot@vellocet.com>
+//  Vellocet / SKoT McDonald <skot@vellocet.com>.
 //  http://www.vellocet.com
+//  (c) All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -21,13 +23,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
-  @enum  noisegate_eKeys
-  @const noisegate_kThreshold 
-  @const noisegate_kHoldTime   
-  @const noisegate_kAttackTime 
-  @const noisegate_kDecayTime  
-  @const noisegate_kChanMode   
-  @const noisegate_kNumParams  
+  @enum noisegate_eKeys
+  @abstract Parameter keys
+  @constant noisegate_kThreshold  Threshold
+  @constant noisegate_kHoldTime   Hold time    
+  @constant noisegate_kAttackTime Attack time
+  @constant noisegate_kDecayTime  Decay time
+  @constant noisegate_kChanMode   Channel mode
+  @constant noisegate_kNumParams  Number of parameters
 */
 enum noisegate_eKeys
 {
@@ -41,11 +44,11 @@ enum noisegate_eKeys
 
 /*!
   @enum  noisegate_eMode
-  @const noisegate_kThreshold
-  @const noisegate_modeGate 
-  @const noisegate_modeHold 
-  @const noisegate_modeAttack
-  @const noisegate_modeDecay 
+  @abstract Gate modes
+  @constant noisegate_modeGate    Simple gate
+  @constant noisegate_modeHold    Gate-n-hold
+  @constant noisegate_modeAttack  Attack mode
+  @constant noisegate_modeDecay   Decay mode
 */
 enum noisegate_eMode
 {
@@ -56,10 +59,11 @@ enum noisegate_eMode
 };
 
 /*!
-  @enum  noisegate_eChanMode
-  @const noisegate_cmodeLinked
-  @const noisegate_cmodeIndep
-  @const noisegate_cmodeCross
+@enum  noisegate_eChanMode
+ @abstract Channel modes
+ @constant noisegate_cmodeLinked  Linked gating (Either channel can trigger a dual gate)
+ @constant noisegate_cmodeIndep   Independant channel gating 
+ @constant noisegate_cmodeCross   Cross-linked independant gating (Left gates right, etc)
 */
 enum noisegate_eChanMode
 {
@@ -71,8 +75,8 @@ enum noisegate_eChanMode
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
-@class      SndAudioProcessorNoiseGate
-@abstract   A Noisegate processor
+@class SndAudioProcessorNoiseGate
+@abstract A Noisegate processor
 @discussion To come 
 */
 @interface SndAudioProcessorNoiseGate : SndAudioProcessor {

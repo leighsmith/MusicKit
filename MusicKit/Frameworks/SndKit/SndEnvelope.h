@@ -20,9 +20,9 @@
 #define BP_NOT_FOUND (-1)
 
 /*!
-  @protocol   SndEnveloping
-  @abstract   declare formal protocol for objects to be used as envelopes
-  @discussion This protocol describes the minimum functionality required from
+@protocol SndEnveloping
+@abstract declare formal protocol for objects to be used as envelopes
+@discussion This protocol describes the minimum functionality required from
               a class for it to be able to function within SndAudioFader as an
               envelope storage and lookup class. The primary implementation of
               this protocol is the SndEnvelope class, but it is intended that
@@ -197,8 +197,8 @@
 @end
 
 /*!
-@class      SndEnvelope
-@abstract   Provide enveloping data for audio streams
+@class SndEnvelope
+@abstract Provide enveloping data for audio streams
 @discussion SndEnvelope is the reference implementation of the SndEnveloping protocol,
             and the default class used by SndAudioFader for the real time shaping
             of audio streams.<BR>

@@ -6,8 +6,8 @@
 //  Created by SKoT McDonald <skot@tomandandy.com> on Mon Oct 01 2001.
 //  Copyright (c) 2001 tomandandy music inc.
 //
-//  Permission is granted to use and modify this code for commercial and 
-//  non-commercial purposes so long as the author attribution and copyright 
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
 //  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,17 +37,18 @@
 // The "libshout" package provides the <shout/shout.h> header, and is the part of
 // the mechanism for sending data to the icecast server itself.
 //
-// The icecast libshout library is under the Lesser GPL license, so before 
-// using the SndKit with this facility enabled, please ensure that you 
+// The icecast libshout library is under the Lesser GPL license, so before
+// using the SndKit with this facility enabled, please ensure that you
 // understand the implications of this. The license statement can be found
 // in the README file in the libshout source directory.
 
 /*!
- @enum     SndMP3EncoderParam
- @constant mp3enc_kServerAddress
- @constant mp3enc_kServerPort
- @constant mp3enc_kServerPassword
- @constant mp3enc_kNumParams
+ @enum SndMP3EncoderParam
+ @abstract Parameter keys
+ @constant mp3enc_kServerAddress   Server address (as ip or url)
+ @constant mp3enc_kServerPort      Server port
+ @constant mp3enc_kServerPassword  Server password
+ @constant mp3enc_kNumParams       Number of parameters 
  */
 
 enum {
@@ -60,134 +61,95 @@ enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
-@class      SndAudioProcessorMP3Encoder
-@abstract   An MP3 encoding/streaming processor
+@class SndAudioProcessorMP3Encoder
+@abstract An MP3 encoding/streaming processor
 @discussion To come.
 */
 @interface SndAudioProcessorMP3Encoder : SndAudioProcessor {
-/*! @var buffer_l Left audio channel data (pre-encoding)                      */
+  /*! @var buffer_l Left audio channel data (pre-encoding)                      */
   float             *buffer_l;
-/*! @var buffer_r Right audio channel data (pre-encoding)                     */
+  /*! @var buffer_r Right audio channel data (pre-encoding)                     */
   float             *buffer_r;
-/*! @var bufferSizeInSamples Size of the audio buffers, in bytes.             */
-  long               bufferSizeInSamples; 
-/*! @var mp3buff MP3 bitstream buffer (post-encoding)                         */
+  /*! @var bufferSizeInSamples Size of the audio buffers, in bytes.             */
+  long               bufferSizeInSamples;
+  /*! @var mp3buff MP3 bitstream buffer (post-encoding)                         */
   unsigned char     *mp3buff;
-/*! @var mp3BufferSizeInBytes Size of the MP3 bitstream buffer, in bytes      */
+  /*! @var mp3BufferSizeInBytes Size of the MP3 bitstream buffer, in bytes      */
   long               mp3BufferSizeInBytes;
-/*! @var bShoutcastActive Flag determining whether streaming to an icecast 
-                          server is active or not                             */
+  /*! @var bShoutcastActive Flag determining whether streaming to an icecast
+    server is active or not                             */
   BOOL               bShoutcastActive;
-/*! @var encodeNShoutcastLock Lock controlling access to icecasting code      */
+  /*! @var encodeNShoutcastLock Lock controlling access to icecasting code      */
   NSLock            *encodeNShoutcastLock;
-/*! @var lameGlobalFlags Data structure required for LAME encoding            */
+  /*! @var lameGlobalFlags Data structure required for LAME encoding            */
 #ifndef SK_NO_MP3_ENCODER
   lame_global_flags *lameGlobalFlags;
-/*! @var conn icecast 'shout-cast' server connection data structure           */
+  /*! @var conn icecast 'shout-cast' server connection data structure           */
   shout_conn_t       conn;
 #endif
 }
-/*! 
-  @method     defaultSourcePort
-  @abstract   Returns icecast's default source/encoder connection port id.
-  @result     An int which is the default mp3 source/encoder port id on the server.
-*/
-+ (int) defaultSourcePort;
-/*! 
-  @method     defaultSourcePassword
-  @abstract   Returns the default password used to connect to the icecast server
-  @result     An NSString with the default password for the icecast server.
-*/
-+ (NSString*) defaultSourcePassword;
-/*! 
-  @method     defaultServerAddress
-  @abstract   Returns the default IP/URL address of the icecast server.
-  @result     NSString with the default IP/URL address for the icecast server.
-*/
+/*!
+ @method     defaultServerAddress
+ @abstract   Returns the default IP/URL address of the icecast server.
+ @result     NSString with the default IP/URL address for the icecast server.
+ */
 + (NSString*) defaultServerAddress;
-/*! 
-  @method     serverAddress
-  @abstract   Returns the current IP/URL of the icecast server
-  @result     NSString with the current IP/URL address of the icecast server.
-  @discussion
-*/
+/*!
+ @method     defaultSourcePort
+ @abstract   Returns icecast's default source/encoder connection port id.
+ @result     An int which is the default mp3 source/encoder port id on the server.
+ */
++ (int) defaultSourcePort;
+/*!
+ @method     defaultSourcePassword
+ @abstract   Returns the default password used to connect to the icecast server
+ @result     An NSString with the default password for the icecast server.
+ */
++ (NSString*) defaultSourcePassword;
+/*!
+ @method     serverAddress
+ @abstract   Returns the current IP/URL of the icecast server
+ @result     NSString with the current IP/URL address of the icecast server.
+ @discussion
+ */
 - (NSString*) serverAddress;
-/*! 
-  @method     serverPassword
-  @abstract   Returns the current password being used to connect to the icecast
-              server's MP3 source port.
-  @result     NSString with the current MP3 source port password.
-*/
+/*!
+ @method     serverPassword
+ @abstract   Returns the current password being used to connect to the icecast
+ server's MP3 source port.
+ @result     NSString with the current MP3 source port password.
+ */
 - (NSString*) serverPassword;
-/*! 
-  @method     serverPort
-  @abstract   Returns the current MP3 source port being used to connect to the 
-              icecast server
-  @result     The current MP3 source port number.
-*/
+/*!
+ @method     serverPort
+ @abstract   Returns the current MP3 source port being used to connect to the
+ icecast server
+ @result     The current MP3 source port number.
+ */
 - (int) serverPort;
-/*! 
-  @method     init
-  @abstract   Initializer
-  @result     self
-  @discussion Sets up the LAME and icecast data structures.
-*/
-- init;
-/*! 
-  @method     setShoutcastServerAddress:port:password:
-  @abstract   Sets the icecast server connection parameters.
-  @param      address IP/URL address of icecast server.
-  @param      port MP3 stream source connection port on the icecast server   
-  @param      password Password controlling access to MP3-source port on server
-  @result     self
-*/
+/*!
+ @method     setShoutcastServerAddress:port:password:
+ @abstract   Sets the icecast server connection parameters.
+ @param      address IP/URL address of icecast server.
+ @param      port MP3 stream source connection port on the icecast server
+ @param      password Password controlling access to MP3-source port on server
+ @result     self
+ */
 - setShoutcastServerAddress: (NSString*) address
                        port: (int) port
                    password: (NSString*) password;
-/*! 
-  @method     connectToShoutcastServer
-  @abstract   Attempts to connect to the MP3 source port of an icecast server.
-  @result     TRUE if a connection was established.
-*/
+/*!
+ @method     connectToShoutcastServer
+ @abstract   Attempts to connect to the MP3 source port of an icecast server.
+ @result     TRUE if a connection was established.
+ */
 - (BOOL) connectToShoutcastServer;
-/*! 
-  @method     disconnectFromShoutcastServer
-  @abstract   Disconnects from the icecast server's MP3 source port.
-*/
+/*!
+ @method     disconnectFromShoutcastServer
+ @abstract   Disconnects from the icecast server's MP3 source port.
+ */
 - disconnectFromShoutcastServer;
-/*! 
-  @method     dealloc
-  @abstract   Destructor
-*/
-- (void) dealloc;
-/*! 
-  @method     processReplacingInputBuffer:outputBuffer:
-  @abstract
-  @param      inB
-  @param      outB
-  @result     FALSE, since no output is produced. inB is unchanged. See discussion
-              for this method in SndStreamClient.
-  @discussion Packs audio data witin inB into the float* buffers, calls LAME to
-              encode them into an MP3 bitstream. MP3 data is then broadcast to 
-              the icecast server.
-*/
-- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
-                        outputBuffer: (SndAudioBuffer*) outB;
-/*!
- @method     paramName:
- @abstract
- @discussion
- @result
-*/
-- (NSString*) paramName: (const int) i;
-/*!
- @method     paramObjectForIndex:
- @abstract
- @discussion
- @result
-*/
-- (id) paramObjectForIndex: (const int) i;
-                 
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////

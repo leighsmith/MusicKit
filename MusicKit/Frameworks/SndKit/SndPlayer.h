@@ -24,11 +24,11 @@
 #import "SndPerformance.h"
 
 /*!
-    @class      SndPlayer
-    @abstract   SndPlayer is the basic sound playing, streaming synthesizer. It simply
-                maintains a queue of to-be-played and playing sounds, and mixes the
-                active sounds down to its output buffer.
-    @discussion For further info, see the base class: SndStreamClient
+@class SndPlayer
+@abstract   SndPlayer is the basic sound playing, streaming synthesizer. It simply
+            maintains a queue of to-be-played and playing sounds, and mixes the
+            active sounds down to its output buffer.
+@discussion For further info, see the base class: SndStreamClient
 */
 @interface SndPlayer : SndStreamClient
 {

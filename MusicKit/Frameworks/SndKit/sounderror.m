@@ -203,7 +203,7 @@ NSLocalizedStringFromTableInBundle(@"Unknown error", @"SoundLib", soundBundle, \
 @"SNDSoundError message")
 
 
-char *SndSoundError(int err)
+const char *SndSoundError(int err)
 {
     /*
      * Tell string localize routines where .strings file is.

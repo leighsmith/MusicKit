@@ -19,23 +19,24 @@
 #import "SndAudioProcessor.h"
 
 /*!
-    @enum     SndDelayParam
-    @constant dlyLength  
-    @constant dlyFeedback 
-    @constant dlyNumParams 
+@enum SndDelayParam
+@abstract Parameter keys
+ @constant dlyLength Length
+ @constant dlyFeedback Feedback amount 
+ @constant dlyNumParams Number of parameters
 */
 enum {
-  dlyLength    = 0, // in samples!
+  dlyLength    = 0, 
   dlyFeedback  = 1,
   dlyNumParams = 2
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
-/*! 
-    @class      SndAudioProcessorDelay
-    @abstract   A delay processor
-    @discussion To come
+/*!
+@class SndAudioProcessorDelay
+@abstract A delay processor
+@discussion To come - see base class.
 */
 @interface SndAudioProcessorDelay : SndAudioProcessor {
 /*! @var  chanL*/
@@ -63,7 +64,6 @@ enum {
     @discussion
 */
 + delayWithLength: (const long) nSams feedback: (const float) fFB;
-- init;
 /*!
     @method setLength:feedback:
     @abstract 
@@ -82,48 +82,6 @@ enum {
     @discussion
 */
 - freemem;
-/*!
-    @method dealloc
-    @abstract 
-    @result
-    @discussion
-*/
-- (void) dealloc;
-/*!
-    @method paramValue:
-    @abstract 
-    @param index
-    @result Parameter value in the range [0,1]
-    @discussion
-*/
-- (float) paramValue: (const int) index;
-/*!
-    @method paramName
-    @abstract 
-    @param index
-    @result parameter name
-    @discussion
-*/
-- (NSString*) paramName: (const int) index;
-/*!
-    @method setParam:toValue:
-    @abstract 
-    @param index
-    @param v
-    @result self
-    @discussion
-*/
-- setParam: (const int) index toValue: (const float) v;
-/*!
-    @method processReplacingInputBuffer:outputBuffer:
-    @abstract 
-    @discussion
-    @param      inB
-    @param      outB
-    @result     TRUE if outB contains processed data 
-*/
-- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
-                        outputBuffer: (SndAudioBuffer*) outB;
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
