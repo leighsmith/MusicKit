@@ -329,20 +329,21 @@ static int calcFormat(SndSoundStruct *s)
 
 - showSelectionTimes
 {
-	int start, size;
-	float srate;
+    int start;
+    unsigned int size;
+    float srate;
 
-/* Get the selection samples and stuff 'em into the selection display */
+    /* Get the selection samples and stuff 'em into the selection display */
 
-	srate = [self samplingRate];
-	[mySoundView getSelection:&start size:&size];
-	[sStartSamp setIntValue:start];
-	PUTVAL(sStartSec,[self sampToSec:start rate:srate]);
-	if (size > ([[mySoundView sound] lengthInSampleFrames] - start))
-		return self;
-	[sDurSamp setIntValue:size];
-	PUTVAL(sDurSec,[self sampToSec:size rate:srate]);
+    srate = [self samplingRate];
+    [mySoundView getSelection: &start size: &size];
+    [sStartSamp setIntValue: start];
+    PUTVAL(sStartSec, [self sampToSec: start rate: srate]);
+    if (size > ([[mySoundView sound] lengthInSampleFrames] - start))
 	return self;
+    [sDurSamp setIntValue: size];
+    PUTVAL(sDurSec, [self sampToSec: size rate: srate]);
+    return self;
 }
 
 - windowMatrixChanged:sender
