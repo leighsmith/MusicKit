@@ -1,18 +1,24 @@
 /*
   $Id$
   Defined In: The MusicKit
+  
   Description:
+    Defines structures and function prototypes for _MKParameter.
 
   Original Author: David A. Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.6  2000/10/01 07:00:29  leigh
+  Added full prototypes of functions, moved _MKKeyNumPrintfunc to TuningSystemPrivate.h
+
   Revision 1.5  2000/06/09 14:59:57  leigh
   Removed objc.h
 
@@ -34,8 +40,8 @@ Modification history:
 #import <Foundation/Foundation.h>
 //#import <Foundation/NSData.h> /*sb... */
 //#import <Foundation/NSArchiver.h> /*sb... */
-#import "params.h" /*sb... */
-//#import <objc/objc.h> /*sb... */
+#import "params.h"
+#import "tokens.h" // for _MKToken
 
 typedef union __MKParameterUnion {
     /* Used for Parameters and scoreFile parsing. */
@@ -59,26 +65,25 @@ _MKParameter;
 /* _MKParameter and _MKParName object 'methods' */
 extern id _MKParNameObj(int aPar);
 extern NSString *_MKParNameStr(int aPar);
-extern const char *_MKUniqueNull();
-extern BOOL _MKKeyNumPrintfunc();
-extern BOOL _MKParInit();
-extern _MKParameter *_MKNewStringPar();
-extern _MKParameter *_MKNewDoublePar();
-extern _MKParameter *_MKNewIntPar();
-extern _MKParameter *_MKNewObjPar();
-extern _MKParameter *_MKSetDoublePar();
-extern double _MKParAsDouble();
-extern _MKParameter *_MKSetIntPar();
+extern BOOL _MKParInit(void);
+extern _MKParameter *_MKNewStringPar(NSString * value, int parNum);
+extern _MKParameter *_MKNewDoublePar(double value, int parNum);
+extern _MKParameter *_MKNewIntPar(int value, int parNum);
+extern _MKParameter *_MKNewObjPar(id value, int parNum, _MKToken type);
+extern _MKParameter *_MKSetDoublePar(_MKParameter * param, double value);
+extern double _MKParAsDouble(_MKParameter *param);
+extern _MKParameter *_MKSetIntPar(_MKParameter *param, int value);
 extern int _MKParAsInt(_MKParameter *param);
-extern _MKParameter *_MKSetStringPar();
-extern NSString *_MKParAsString();
-extern _MKParameter *_MKSetObjPar();
-extern id _MKParAsObj();
-extern id _MKParAsEnv();
-extern id _MKParAsWave();
-extern _MKParameterUnion *_MKParRaw();
-extern NSString * _MKParAsStringNoCopy();
-extern BOOL _MKIsParPublic();
+extern _MKParameter *_MKSetStringPar(_MKParameter *param, NSString *value);
+extern NSString *_MKParAsString(_MKParameter *param);
+extern _MKParameter *_MKSetObjPar(_MKParameter *param, id value, _MKToken type);
+extern id _MKParAsObj(_MKParameter *param);
+// These should be statically typed
+extern id _MKParAsEnv(_MKParameter *param);
+extern id _MKParAsWave(_MKParameter *param);
+extern _MKParameterUnion *_MKParRaw(_MKParameter *param);
+extern NSString * _MKParAsStringNoCopy(_MKParameter *param);
+extern BOOL _MKIsParPublic(_MKParameter *param);
 extern _MKParameter * _MKCopyParameter(_MKParameter *aPar);
 
 #import "_scorefile.h"
