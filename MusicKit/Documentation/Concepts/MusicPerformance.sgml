@@ -3,12 +3,14 @@
   <title>Music Performance</title>
 
 <para>This chapter describes the classes and functions that you use to
-create a musical performance with the MusicKit.  The material
-presented here falls roughly into three sections: realizing music
-data, MusicKit scheduling, and guidelines for building an efficient
-application.  To fully appreciate this chapter, you should be familiar
-with the material in the preceding two chapters, <xref
-linkend="MusicData"> and <xref linkend="MusicSynthAndProc">.</para>
+create a musical performance with the
+<productname>MusicKit</productname>.  The material presented here
+falls roughly into three sections: realizing music data,
+<productname>MusicKit</productname> scheduling, and guidelines for
+building an efficient application.  To fully appreciate this chapter,
+you should be familiar with the material in the preceding two
+chapters, <xref linkend="MusicData"> and <xref
+linkend="MusicSynthAndProc">.</para>
 
   <sect1 id="PerformanceDesignPhilosophy">
     <title>Design Philosophy</title>
@@ -16,7 +18,7 @@ linkend="MusicData"> and <xref linkend="MusicSynthAndProc">.</para>
 <para>The primary task in a musical performance is to take a
 representation of music and render it in an appropriate fashion.
 Traditionally, this task is met by a performer wielding an instrument.
-Similarly, the MusicKit has its <classname>MKPerformer</classname> and
+Similarly, the <productname>MusicKit</productname> has its <classname>MKPerformer</classname> and
 <classname>MKInstrument</classname> objects: A
 <classname>MKPerformer</classname> obtains a
 <classname>MKNote</classname> object, either by reading it from a
@@ -30,7 +32,7 @@ rendering, or <emphasis>realizing</emphasis>, the
 
 <para>Of <classname>MKInstrument</classname> and
 <classname>MKPerformer</classname>, the former is the more crucial to
-a MusicKit performance.  Realization is the whole point of a
+a <productname>MusicKit</productname> performance.  Realization is the whole point of a
 performance, thus <classname>MKInstrument</classname>s are ubiquitous.
 <classname>MKPerformer</classname>s provide a convenient means for
 acquiring or generating <classname>MKNote</classname>s but they're not
@@ -65,13 +67,13 @@ interface).  For example, it's through a
 <classname>MKNote</classname>s to an
 <classname>MKInstrument</classname>.</para>
 
-<para>Because of the demands of music performance, the MusicKit
+<para>Because of the demands of music performance, the <productname>MusicKit</productname>
 provides hooks into the operating system that allow you to create
 applications that can run with heightened priority.  Well-debugged and
 fine-tuned applications will find great benefit in these enhancements.
 </para>
 
-<para><xref linkend="figurePerformance"> is a subset of the MusicKit's
+<para><xref linkend="figurePerformance"> is a subset of the <productname>MusicKit</productname>'s
 performance classes, showing their hierarchical relationship:</para>
 
     <figure id="figurePerformance">
@@ -81,13 +83,13 @@ performance classes, showing their hierarchical relationship:</para>
 	fileref="Performance.eps"></imageobject>
 	<imageobject><imagedata
 	fileref="Performance.gif"></imageobject>
-	<textobject><phrase>MusicKit Image</phrase></textobject>
+	<textobject><phrase><productname>MusicKit</productname> Image</phrase></textobject>
       </mediaobject>
     </figure>
 
   </sect1>
   <sect1 id="PerformanceOutline">
-    <title>Performance Outline</title> <para>A MusicKit performance
+    <title>Performance Outline</title> <para>A <productname>MusicKit</productname> performance
     can be divided into three phases:</para>
 
     <itemizedlist>
@@ -111,8 +113,8 @@ sending <emphasis role="bold">startPerformance</emphasis> to the
 while an application is running.  While a single application can have
 but a single performance in progress at any particular time, that
 single performance can do any number of things.  For example, if you
-want to capture MIDI input as a scorefile while playing along to a
-<classname>MKPart</classname> that's synthesized on the DSP, you
+want to capture <acronym>MIDI</acronym> input as a scorefile while playing along to a
+<classname>MKPart</classname> that's synthesized on the <acronym>DSP</acronym>, you
 perform both tasks in a single performance&horbar;you don't have to
 set up separate environments.  Obviously, the two endeavors involve
 different classes of objects, but when the
@@ -140,7 +142,7 @@ involved in a performance: <classname>MKInstrument</classname>,
 which <classname>MKNote</classname> objects are realized.  Since
 realization is the ultimate destiny of a <classname>MKNote</classname>
 object, the <classname>MKInstrument</classname> class is the ultimate
-focus of a MusicKit performance: Every performance involves at least
+focus of a <productname>MusicKit</productname> performance: Every performance involves at least
 one <classname>MKInstrument</classname>.</para>
 
     <para>At the heart of an <classname>MKInstrument</classname> is
@@ -152,11 +154,11 @@ responsibility of each <classname>MKInstrument</classname> subclass to
 provide an implementation of <emphasis
 role="bold">realizeNote:fromNoteReceiver:</emphasis>
 to establish the manner in which instances of the subclass realize
-<classname>MKNote</classname>s.  The MusicKit includes a number of
+<classname>MKNote</classname>s.  The <productname>MusicKit</productname> includes a number of
 <classname>MKInstrument</classname> subclasses (and
 pseudo-<classname>MKInstrument</classname>s) that realize
-<classname>MKNote</classname>s by synthesizing them on the DSP or an
-external MIDI synthesizer, and that store
+<classname>MKNote</classname>s by synthesizing them on the <acronym>DSP</acronym> or an
+external <acronym>MIDI</acronym> synthesizer, and that store
 <classname>MKNote</classname>s by adding them to a
 <classname>MKPart</classname> or <classname>MKScore</classname> or by
 writing them to a file.</para>
@@ -167,7 +169,7 @@ the <classname>MKNote</classname>s that it realizes.  Instead, it
 realizes <classname>MKNote</classname>s that are sent to it by another
 object or by your application.  The machinery by which an
 <classname>MKInstrument</classname> receives
-<classname>MKNote</classname>s is well defined by the MusicKit; unlike
+<classname>MKNote</classname>s is well defined by the <productname>MusicKit</productname>; unlike
 that for <classname>MKNote</classname>-realization, you don't reinvent
 the <classname>MKNote</classname>-reception mechanism for each
 <classname>MKInstrument</classname> subclass.</para>
@@ -177,7 +179,7 @@ the <classname>MKNote</classname>-reception mechanism for each
 receiving and realizing <classname>MKNote</classname>s.  The latter
 topic centers upon descriptions of the
 <classname>MKInstrument</classname> subclasses included in the
-MusicKit, followed by an example of
+<productname>MusicKit</productname>, followed by an example of
 <classname>MKInstrument</classname> subclass design.</para>
 
     <sect2 id="ReceivingMKNotes">
@@ -285,7 +287,7 @@ instance of <classname>MKSynthInstrument</classname> is created and a
 <classname>MKNote</classname> is sent to its
 <classname>MKNoteReceiver</classname>.  <classname>MKSynthInstrument</classname> is a
 subclass of <classname>MKInstrument</classname> that realizes
-<classname>MKNote</classname>s by synthesizing them on the DSP; it
+<classname>MKNote</classname>s by synthesizing them on the <acronym>DSP</acronym>; it
 creates a single <classname>MKNoteReceiver</classname> as part of its
 <emphasis role="bold">init</emphasis> method:</para>
 
@@ -359,7 +361,7 @@ returns <constant>YES</constant>, the object is squelched.</para>
 of multiple <classname>MKNoteReceiver</classname>s for a single
 <classname>MKInstrument</classname>.  For example, you can create an
 application in which <classname>MKNote</classname>s are generated from
-MIDI input and read from a <classname>MKPart</classname> object at the
+<acronym>MIDI</acronym> input and read from a <classname>MKPart</classname> object at the
 same time.  If you feed these two <classname>MKNote</classname>
 sources to the same <classname>MKInstrument</classname>, you may want
 to create and add two distinct <classname>MKNoteReceiver</classname>s,
@@ -405,11 +407,11 @@ dependent methods will have no effect).</para>
 <classname>MKNote</classname>s: You can implement <emphasis
 role="bold">realizeNote:fromNoteReceiver:</emphasis>
 to realize a <classname>MKNote</classname> in almost any arbitrary
-manner.  As mentioned earlier, the MusicKit includes
+manner.  As mentioned earlier, the <productname>MusicKit</productname> includes
 <classname>MKInstrument</classname>s that synthesize and store
 <classname>MKNote</classname>s as their forms of realization.  For
 many performance applications, the
-<classname>MKInstrument</classname>s provided by the MusicKit are
+<classname>MKInstrument</classname>s provided by the <productname>MusicKit</productname> are
 sufficient.  The following sections describe these subclasses.</para>
 
       <sect3 id="MKSynthInstrument">
@@ -418,7 +420,7 @@ sufficient.  The following sections describe these subclasses.</para>
 <para>A <classname>MKSynthInstrument</classname> is by far the most complicated
 <classname>MKInstrument</classname>; it realizes
 <classname>MKNote</classname>s by causing them to be synthesized on
-the DSP.  It operates on three basic principles:</para>
+the <acronym>DSP</acronym>.  It operates on three basic principles:</para>
 
 <itemizedlist>
 
@@ -446,21 +448,21 @@ of the <classname>MKSynthPatch</classname> subclass.</para>
 <para>You set a <classname>MKSynthInstrument</classname>'s <classname>MKSynthPatch</classname> subclass by invoking
 the <emphasis role="bold">setSynthPatchClass:</emphasis> method.  As
 the method's argument you specify one of the <classname>MKSynthPatch</classname> classes
-included in the MusicKit, or one of your own.  If you have a
-multiple-DSP system, the <classname>MKSynthInstrument</classname> will allocate its
-<classname>MKSynthPatch</classname> objects on the first DSP that has sufficient available
-resources.  You can restrict allocation to a specific DSP by invoking
+included in the <productname>MusicKit</productname>, or one of your own.  If you have a
+multiple-<acronym>DSP</acronym> system, the <classname>MKSynthInstrument</classname> will allocate its
+<classname>MKSynthPatch</classname> objects on the first <acronym>DSP</acronym> that has sufficient available
+resources.  You can restrict allocation to a specific <acronym>DSP</acronym> by invoking
 <emphasis role="bold">setSynthPatchClass:orchestra:</emphasis>,
 passing an <classname>MKOrchestra</classname> object as the second argument.</para>
 
 <para><emphasis role="bold"><classname>MKNote</classname>:</emphasis>
-If you use a <classname>MKSynthPatch</classname> class included in the MusicKit, you must
+If you use a <classname>MKSynthPatch</classname> class included in the <productname>MusicKit</productname>, you must
 import the file <emphasis
 role="bold">&lt;musickit/synthpatches/</emphasis><emphasis>ClassName</emphasis>.h&gt;,
 where <emphasis>ClassName</emphasis> is the name of the class you wish
 to use.  Alternatively, the file <emphasis
 role="bold">&lt;musickit/synthpatches/synthpatches.h&gt;</emphasis>
-will import all the MusicKit <classname>MKSynthPatch</classname> interface files.</para>
+will import all the <productname>MusicKit</productname> <classname>MKSynthPatch</classname> interface files.</para>
 
 <para>The<emphasis role="bold"> setSynthPatchClass:</emphasis> method
 (and the<emphasis role="bold"> ...orchestra:</emphasis> version)
@@ -501,7 +503,7 @@ objects are allocated all at once, before
 <classname>MKSynthPatch</classname>es to allocate is set through the method <emphasis
 role="bold">setSynthPatchCount:</emphasis>.  The number of
 <classname>MKSynthPatch</classname>es that are actually allocated may be less than the number
-requested, depending on the availability of DSP resources at the time
+requested, depending on the availability of <acronym>DSP</acronym> resources at the time
 that the message is sent.  The method returns the number of
 <classname>MKSynthPatch</classname>es that were actually allocated.</para>
 	    </listitem>
@@ -887,7 +889,7 @@ state.</para>
 	<sect4 id="PreemptingAMKSynthPatch">
 	  <title>Preempting a <classname>MKSynthPatch</classname></title>
 
-	  <para>While the DSP makes a great synthesizer, its resources
+	  <para>While the <acronym>DSP</acronym> makes a great synthesizer, its resources
 are by no means unlimited.  It's possible to ask it to synthesize, at
 the same time, more <classname>MKNote</classname>s than it can
 accommodate.  The number of <classname>MKNote</classname>s that can be
@@ -1006,15 +1008,15 @@ message, passing the channel number that you want: 0 retrieves the
 <classname>MKNoteReceiver</classname> for System and Channel Mode
 Messages; 1-16 retrieves the <classname>MKNoteReceiver</classname> for
 the corresponding Voice Channel.  You create a
-<classname>MKMidi</classname> object to correspond to a MIDI device (a
-serial port on NeXT hardware, MIDI card on Intel-based hardware, CoreMIDI
+<classname>MKMidi</classname> object to correspond to a <acronym>MIDI</acronym> device (a
+serial port on NeXT hardware, <acronym>MIDI</acronym> card on Intel-based hardware, CoreMIDI
 port on MacOS X, DirectMusic port on Windows etc.),
 specified as &ldquo;midi0&rdquo;, &ldquo;midi1,&rdquo; etc., in the
 <emphasis role="bold">midiOnDevice:</emphasis> method.</para>
 
 <para>When it receives a <classname>MKNote</classname>, the
 <classname>MKMidi</classname> object translates it into a series of
-MIDI messages, based on the <classname>MKNote</classname>'s note type
+<acronym>MIDI</acronym> messages, based on the <classname>MKNote</classname>'s note type
 and parameters that it contains.  It then sends the messages out the
 serial port.</para>
 
@@ -1030,14 +1032,11 @@ role="bold">open</emphasis> and <emphasis role="bold">run</emphasis>
 methods.</para>
 
 <para>A <classname>MKMidi</classname> object can be made to receive
-MIDI time code and provide it to a <classname>MKConductor</classname>
-so that a performance can be synchronized to MIDI time code.  For
+<acronym>MIDI</acronym> time code and provide it to a <classname>MKConductor</classname>
+so that a performance can be synchronized to <acronym>MIDI</acronym> time code.  For
 further information, see the <classname>MKMidi</classname> and
-<classname>MKConductor</classname> class descriptions, as well as the
-file</para>
-
-      <para><emphasis role="bold">
-/LocalLibrary/Documentation/MusicKit/Concepts/SpecialTopics/MIDITimeCode.rtf</emphasis></para>
+<classname>MKConductor</classname> class descriptions, as well as 
+<xref linkend="MIDITimeCode">.</para>
     </sect3>
     <sect3 id="MKPartRecorderAndMKScoreRecorder">
       <title><classname>MKPartRecorder</classname> and
@@ -1079,7 +1078,7 @@ some number of <classname>MKPartRecorder</classname>s, one for each
 
 <para>A <classname>MKScorefileWriter</classname> object realizes
 <classname>MKNote</classname>s by writing them to a scorefile.  It's
-the one <classname>MKInstrument</classname> defined by the MusicKit
+the one <classname>MKInstrument</classname> defined by the <productname>MusicKit</productname>
 that requires you to create and add
 <classname>MKNoteReceiver</classname>s from your application.  Each
 <classname>MKNoteReceiver</classname> that you add corresponds to a
@@ -1156,7 +1155,7 @@ usually in its <emphasis role="bold">init</emphasis> method.</para>
     <title>The <classname>MKConductor</classname> Class</title>
 
 <para>The <classname>MKConductor</classname> class defines the
-mechanism that controls the timing of a MusicKit performance.  This
+mechanism that controls the timing of a <productname>MusicKit</productname> performance.  This
 control is divided between the class object and instances of
 <classname>MKConductor</classname>:</para>
 
@@ -1182,9 +1181,9 @@ tempo).</para>
     </itemizedlist>
     <sect2 id="MKConductorsCreatedByTheMusicKit">
       <title><classname>MKConductor</classname>s Created by the
-      MusicKit</title>
+      <productname>MusicKit</productname></title>
 
-<para>The MusicKit automatically creates two
+<para>The <productname>MusicKit</productname> automatically creates two
 <classname>MKConductor</classname> instances for you, the
 <emphasis>clockConductor</emphasis> and the
 <emphasis>defaultConductor</emphasis>:</para>
@@ -1228,13 +1227,13 @@ according to these timestamps.  When a performance starts (through the
 message queues, sending the requested messages at the appropriate
 times.</para>
 
-<para><emphasis role="bold">Note:</emphasis> The structures in the
+<tip><para>The structures in the
 message request queues are of type MKMsgStruct.  All the fields of
 this structure are private: You can examine them, but you should never
 alter their values directly.  Detailed knowledge of the MKMsgStruct
 isn't necessary.  The structure is defined without further explanation
 in the file <filename
-class=headerfile>MusicKit/MKConductor.h</filename>.</para>
+class=headerfile>MusicKit/MKConductor.h</filename>.</para></tip>
 
       <sect3 id="CreatingAndSchedulingAMessageRequest">
 	<title>Creating and Scheduling a Message Request</title>
@@ -1347,12 +1346,12 @@ respectively.</para>
       <sect3 id="ControllingAPerformance">
 	<title>Controlling a Performance</title>
 
-	<para>As previously mentioned, a MusicKit performance starts when the
+	<para>As previously mentioned, a <productname>MusicKit</productname> performance starts when the
 <classname>MKConductor</classname> class receives the <emphasis
 role="bold">startPerformance</emphasis> message.  This starts the
 <classname>MKConductor</classname>'s clock ticking (as represented by
-the clockConductor).  If you're synthesizing music on the DSP or
-sending messages to an external MIDI synthesizer, you should send the
+the clockConductor).  If you're synthesizing music on the <acronym>DSP</acronym> or
+sending messages to an external <acronym>MIDI</acronym> synthesizer, you should send the
 <emphasis role="bold">run</emphasis> message to the
 <classname>MKOrchestra</classname> class or to your
 <classname>MKMidi</classname> object at virtually the same time that
@@ -1473,7 +1472,7 @@ beats per minute.</para>
 slider to a performance, you are better off using the Time Map
 Protocol if you want to apply a tempo track (a planned series of tempo
 changes) or if you are applying varying tempo changes in the context
-of a performance that is synchronized to MIDI time code.</para>
+of a performance that is synchronized to <acronym>MIDI</acronym> time code.</para>
 
 <para>A Time Map is a mapping from "beat time" (time as read by a
 human conductor reading a score) to "clock time" (the resulting time
@@ -1547,8 +1546,8 @@ the start, middle or end of the performance.</para>
 
 <para>Note that while the Time Map Protocol makes tempo maps possible,
 it is up to the application to apply such a map.  For example, when a
-Standard MIDI file is read into a <classname>MKScore</classname>
-object, the first part gets the tempo map.  The MusicKit does not
+Standard <acronym>MIDI</acronym> file is read into a <classname>MKScore</classname>
+object, the first part gets the tempo map.  The <productname>MusicKit</productname> does not
 apply this map by default&horbar;this responsibility belongs to the
 application.</para>
 
@@ -1637,7 +1636,7 @@ beats from the time that it's invoked.</para>
 <para>The relationship between an <classname>MKEnvelope</classname>
 and a <classname>MKConductor</classname> is as important as it is
 unique: The dispatching of an <classname>MKEnvelope</classname>'s
-breakpoints during DSP synthesis is always done through message
+breakpoints during <acronym>DSP</acronym> synthesis is always done through message
 requests with the clockConductor.  You don't have to do anything to
 obtain this behavior, it happens automatically through <emphasis
 role="bold">MKUpdateAsymp()</emphasis>, the function that you use in
@@ -1666,15 +1665,13 @@ performance.</para>
 
       </sect3>
       <sect3 id="SynchronizingToMIDITimeCode">
-	<title>Synchronizing a Performance to MIDI Time Code</title>
+	<title>Synchronizing a Performance to <acronym>MIDI</acronym> Time Code</title>
 
 <para>A <classname>MKConductor</classname> object can be made to
-synchronize to MIDI time code.  For further information, see the
-<classname>MKMidi</classname> and <classname>MKConductor</classname>
-class descriptions, as well as the file</para>
-
-<para><emphasis role="bold">
-/Local/Library/Documentation/MusicKit/Concepts/SpecialTopics/MIDITimeCode.rtf</emphasis></para>
+synchronize to <acronym>MIDI</acronym> time code.  For further
+information, see the <classname>MKMidi</classname> and
+<classname>MKConductor</classname> class descriptions, as well as
+<xref linkend="MIDITimeCode">.</para>
       </sect3>
     </sect2>
   </sect1>
@@ -1699,15 +1696,15 @@ sequentially and repeatedly requesting invocations of its own
 <para>The <classname>MKPerformer</classname> class itself is abstract;
 you create a subclass of <classname>MKPerformer</classname> to
 correspond to a unique sources of <classname>MKNote</classname>s.  The
-MusicKit includes subclasses that read <classname>MKNote</classname>s
+<productname>MusicKit</productname> includes subclasses that read <classname>MKNote</classname>s
 from a <classname>MKPart</classname>
 (<classname>MKPartPerformer</classname>) or a scorefile
 (<classname>MKScorefilePerformer</classname>)&horbar;the latter
 actually inherits from the MKFilePerformer class, a subclass of
 <classname>MKPerformer</classname> that defines methods for managing
-files.  The MusicKit also includes
+files.  The <productname>MusicKit</productname> also includes
 pseudo-<classname>MKPerformer</classname>s that fashion
-<classname>MKNote</classname>s from MIDI input
+<classname>MKNote</classname>s from <acronym>MIDI</acronym> input
 (<classname>MKMidi</classname>), and that read
 <classname>MKNote</classname>s from a <classname>MKScore</classname>
 (<classname>MKScorePerformer</classname>, which creates a
@@ -1766,7 +1763,7 @@ one of a <classname>MKPerformer</classname>'s
 <classname>MKNoteSender</classname>s, just as the <emphasis
 role="bold">noteReceiver</emphasis> method retrieves one of an
 <classname>MKInstrument</classname>'s
-<classname>MKNoteReceiver</classname>s.  If you're using a MusicKit
+<classname>MKNoteReceiver</classname>s.  If you're using a <productname>MusicKit</productname>
 <classname>MKPerformer</classname> subclass, you should refer to its
 description to determine if it creates more than one
 <classname>MKNoteSender</classname>.  If it creates only one, then the
@@ -1978,7 +1975,7 @@ role="bold">setClocked:NO</emphasis> to the
 <classname>MKConductor</classname> class.  In an unclocked
 performance, messages in the message request queues are sent one after
 another as quickly as possible, leaving it to some other
-device&horbar;the DSP or the MIDI device driver&horbar;to handle the
+device&horbar;the <acronym>DSP</acronym> or the <acronym>MIDI</acronym> device driver&horbar;to handle the
 timing of the actual realization.</para>
 
 <para>Setting the delta time further refines the responsiveness of a
@@ -1986,7 +1983,7 @@ performance.  Delta time is set through the <emphasis
 role="bold">MKSetDeltaT()</emphasis> C function; the argument defines
 an imposed time lag, in seconds, between the
 <classname>MKConductor</classname>'s notion of time and that of the
-DSP and MIDI device drivers.  It acts as a timing cushion that can
+<acronym>DSP</acronym> and <acronym>MIDI</acronym> device drivers.  It acts as a timing cushion that can
 help to maintain rhythmic integrity by granting your application a
 sort of computational head start: As you set the delta time to larger
 values, your application has more time to process
@@ -1994,7 +1991,7 @@ values, your application has more time to process
 this computational advantage is obtained at the expense of degraded
 responsiveness.  Choosing the proper delta time value depends on how
 responsive your application needs to be.  For example, if you are
-driving DSP synthesis from MIDI input, a delta time of as much as 10
+driving <acronym>DSP</acronym> synthesis from <acronym>MIDI</acronym> input, a delta time of as much as 10
 milliseconds (0.01 seconds) is generally acceptable.  If you are
 adjusting <classname>MKNote</classname> parameters by moving a
 <classname>NSSlider</classname> with the mouse, a delta time of 100
@@ -2046,9 +2043,9 @@ Sound Kit's Sound class (note, however, that you
 	<listitem><para>You can't call C functions that rely on standard
 input and output; these are functions such as <emphasis
 role="bold">printf()</emphasis> and <emphasis
-role="bold">scanf()</emphasis>.  Because of this, DSP error logging
-and MusicKit tracing can't be used.  In addition, if you need to
-handle MusicKit errors, you must provide your own error handler
+role="bold">scanf()</emphasis>.  Because of this, <acronym>DSP</acronym> error logging
+and <productname>MusicKit</productname> tracing can't be used.  In addition, if you need to
+handle <productname>MusicKit</productname> errors, you must provide your own error handler
 function through <emphasis
 role="bold">MKSetErrorProc()</emphasis>.</para>
 	</listitem>
@@ -2076,7 +2073,7 @@ thread.  This is demonstrated in the Ensemble programming example
 role="bold">/Local/Developer/Examples/MusicKit/Ensemble</emphasis>).</para>
 
 <para>An important restriction in a multi-threaded performance is that
-<emphasis>all</emphasis> messages (or groups of messages) to MusicKit
+<emphasis>all</emphasis> messages (or groups of messages) to <productname>MusicKit</productname>
 objects sent from the main thread should be bracketed with <emphasis
 role="bold">lockPerformance</emphasis> and <emphasis
 role="bold">unlockPerformance</emphasis>.</para>
@@ -2097,29 +2094,29 @@ setting it to a value larger than 0, fixed scheduling policy is
 enabled.  In this mode, your priority will not degrade.</para>
     </sect2>
     <sect2 id="PerformingWithTheDSP"> 
-    <title>Performing with the DSP</title>
+    <title>Performing with the <acronym>DSP</acronym></title>
 
 <para>You can also shape your performance's capabilities by affecting
 the <classname>MKOrchestra</classname> class, thus influencing the
-manner in which DSP resources are used.</para>
+manner in which <acronym>DSP</acronym> resources are used.</para>
 
       <sect3 id="SamplingRate">
 	<title>Sampling Rate</title>
 
-<para>The DSP can output stereo samples at two rates, 22050 samples
+<para>The <acronym>DSP</acronym> can output stereo samples at two rates, 22050 samples
 per second, or 44100 samples per second.  By default, it runs at the
 low sampling rate.  You can improve a performance's response time with
-regard to DSP synthesis by using the high sampling rate, as
+regard to <acronym>DSP</acronym> synthesis by using the high sampling rate, as
 accomplished by sending the message</para>
 
 <programlisting>
 [MKOrchestra setSamplingRate:44100.0];
 </programlisting>
 
-<para>However, by asking the DSP to run at a higher sampling rate, you
-rob it of some of its power.  In general, the DSP can be considered to
+<para>However, by asking the <acronym>DSP</acronym> to run at a higher sampling rate, you
+rob it of some of its power.  In general, the <acronym>DSP</acronym> can be considered to
 be twice as &ldquo;big&rdquo; at the low sampling rate as at the high.
-In other words, if the DSP is able to synthesize twelve simultaneous
+In other words, if the <acronym>DSP</acronym> is able to synthesize twelve simultaneous
 voices at the low sampling rate using a particular <classname>MKSynthPatch</classname>, it
 may only be able to synthesize six such voices at the high sampling
 rate.</para>
@@ -2127,7 +2124,7 @@ rate.</para>
       <sect3 id="SoundBufferSizes">
 	<title>Sound Buffer Sizes</title>
 
-<para>While the speed of the DSP makes real-time synthesis
+<para>While the speed of the <acronym>DSP</acronym> makes real-time synthesis
 approachable, there's always an imposed time delay that's equal to the
 size of the buffer used to collect computed samples before they're
 shovelled to the DAC.  To accommodate applications that require the
@@ -2136,45 +2133,45 @@ sound and its actual broadcast from the DAC), a smaller sample output
 buffer can be requested by sending the <emphasis
 role="bold">setFastResponse:<constant>YES</constant></emphasis> message to an <classname>MKOrchestra</classname>.
 However, the more frequent attention demanded by the smaller buffer
-will detract from the DSP's synthesis computation and, again, fewer
+will detract from the <acronym>DSP</acronym>'s synthesis computation and, again, fewer
 simultaneous voices may result.</para>
       </sect3>
       <sect3 id="Headroom">
 	<title>Headroom</title>
 
 <para>The <classname>MKOrchestra</classname> doesn't know, at the
-beginning of a <classname>MKNote</classname>, if the DSP can execute a
+beginning of a <classname>MKNote</classname>, if the <acronym>DSP</acronym> can execute a
 given set of <classname>MKUnitGenerator</classname>s quickly enough
 to produce a steady supply of output samples for the entire duration
 of the <classname>MKNote</classname>.  However, it makes an educated
 estimate and will deny allocation requests that it thinks will
-overload the DSP and cause it to fall out of real time.  Such a denial
+overload the <acronym>DSP</acronym> and cause it to fall out of real time.  Such a denial
 may result in a smaller number of simultaneously synthesized
 voices.</para>
 
-<para>You can adjust the <classname>MKOrchestra</classname>'s DSP
+<para>You can adjust the <classname>MKOrchestra</classname>'s <acronym>DSP</acronym>
 processing estimate, or <emphasis>headroom</emphasis>, by invoking the
 <emphasis role="bold">setHeadroom:</emphasis>
 <classname>MKOrchestra</classname> method.  This takes an argument
 between -1.0 and 1.0; a negative headroom allows a more liberal
-estimate of the DSP resources&horbar;resulting in more simultaneous
-voices&horbar;but it runs the risk of causing the DSP to fall out of
+estimate of the <acronym>DSP</acronym> resources&horbar;resulting in more simultaneous
+voices&horbar;but it runs the risk of causing the <acronym>DSP</acronym> to fall out of
 real time.  Conversely, a positive headroom is more conservative: You
-have a greater assurance that the DSP won't fall out of real time but
+have a greater assurance that the <acronym>DSP</acronym> won't fall out of real time but
 the number of simultaneous voices is decreased.  The default is a
 somewhat conservative 0.1.</para>
       </sect3>
     </sect2>
     <sect2 id="MIDIDSPMKConductorWallClock">
-      <title>The Relationships between MIDI, the DSP, the
+      <title>The Relationships between <acronym>MIDI</acronym>, the <acronym>DSP</acronym>, the
       <classname>MKConductor</classname> and the Clock on the
       Wall</title>
 
-<para>The MusicKit needs to satisfy two conflicting requirements,
+<para>The <productname>MusicKit</productname> needs to satisfy two conflicting requirements,
 timely execution of scheduled events and steady performance.  The
-MusicKit variable <emphasis>deltaT</emphasis> adjusts the trade-off
+<productname>MusicKit</productname> variable <emphasis>deltaT</emphasis> adjusts the trade-off
 between responsiveness and dependability.  <emphasis>deltaT</emphasis>
-provides the MusicKit with a "cushion" of time to absorb any bursts of
+provides the <productname>MusicKit</productname> with a "cushion" of time to absorb any bursts of
 computation that would otherwise result in unsteady performance.
 Setting <emphasis>deltaT</emphasis> to 0.0 gives the most responsive
 performance, but one that is likely to be unsteady in musically dense
@@ -2186,12 +2183,12 @@ You can set the value of <emphasis>deltaT</emphasis> with the function
 <emphasis role="bold">MKSetDeltaT</emphasis>().</para>
 
 <para>The manner in which <emphasis>deltaT</emphasis> is interpreted
-depends on the <emphasis>deltaT mode</emphasis>.  MusicKit supplies
+depends on the <emphasis>deltaT mode</emphasis>.  <productname>MusicKit</productname> supplies
 two modes, <emphasis>device lag mode</emphasis> and
 <emphasis>scheduler advance mode</emphasis>. In <emphasis>device lag
-mode</emphasis>, the MusicKit clockConductor stays in synch, as much
+mode</emphasis>, the <productname>MusicKit</productname> clockConductor stays in synch, as much
 as possible, with "wall time", the actual time since the performance
-began, while devices such as MIDI and the DSP lag behind by
+began, while devices such as <acronym>MIDI</acronym> and the <acronym>DSP</acronym> lag behind by
 <emphasis>deltaT</emphasis>.  In contrast, in <emphasis>scheduler
 advance mode</emphasis>, the devices stay in synch with wall time,
 while the clockConductor runs in advance of wall time by
@@ -2215,10 +2212,11 @@ Class Descriptions of these objects for details.</para>
 <para>The default mode is <emphasis>device lag mode</emphasis> (for
 historical reasons.)  The value returned by <emphasis
 role="bold">MKGetDeltaT</emphasis>() is added to time stamps sent to
-the MIDI driver and DSP, providing the MusicKit with its "cushion".
-The function MKGetDeltaTTime() does this addition.  The
+the <acronym>MIDI</acronym> driver and <acronym>DSP</acronym>, providing the
+<productname>MusicKit</productname> with its "cushion".  The function
+MKGetDeltaTTime() does this addition.  The
 <classname>MKConductor</classname> runs steadily from the time it is
-started, while the output of the devices, such as MIDI and the DSP,
+started, while the output of the devices, such as <acronym>MIDI</acronym> and the <acronym>DSP</acronym>,
 seems to wait <emphasis>deltaT</emphasis> seconds and then runs
 steadily.  The amount of time it waits is
 <emphasis>deltaT</emphasis>.</para>
@@ -2230,7 +2228,7 @@ to compensate for any difference of delay between these
 devices.</para>
 
 <para><emphasis>Device lag mode</emphasis> works well for many cases.
-But there are other cases, and MIDI Time Code synchronization is one
+But there are other cases, and <acronym>MIDI</acronym> Time Code synchronization is one
 of them, when we want the <emphasis>devices'</emphasis> notion of time
 to be that of wall time, while still keeping a cushion to absorb
 bursts of computation.  This is the functionality provided by
@@ -2304,10 +2302,10 @@ that undesired offset.</para>
       <sect3 id="HintsAndReminders"> 
 <title>Hints and Reminders</title>
 
-<para>To minimize delays when using the DSP, be sure to send
+<para>To minimize delays when using the <acronym>DSP</acronym>, be sure to send
 [MKOrchestra setFastResponse:YES].  Also, using a high sampling rate
 will give less of a delay when sending sound. The best response is
-obtained by taking sound from the DSP serial port.  The delay here is
+obtained by taking sound from the <acronym>DSP</acronym> serial port.  The delay here is
 on the order of a few milliseconds.</para>
       </sect3>
     </sect2>
