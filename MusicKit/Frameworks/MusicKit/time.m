@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2004/08/21 23:35:10  leighsmith
+  Formatting cleanup
+
   Revision 1.6  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -89,9 +92,8 @@ double MKGetTime(void)
     /* Returns the time in seconds. */
 {
     if (conductedPerformance && cond == nil)
-        NSLog(@"MKGetTime: conductedPerformance is true, but cond is nil!");
-    return ((conductedPerformance) ? 
-        (myTime = (*getTimeImp)(cond, @selector(timeInSeconds))): myTime);
+        NSLog(@"MKGetTime: conductedPerformance is true, but cond is nil!\n");
+    return (conductedPerformance) ? (myTime = (*getTimeImp)(cond, @selector(timeInSeconds))) : myTime;
 }
 
 double MKSetTime(double newTime)

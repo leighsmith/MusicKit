@@ -111,59 +111,58 @@ static void writePartInfo(_MKScoreOutStruct *p, MKPart *aPart, NSString *partNam
     _MKWriteParameters(info,aStream,p);
 }
 
+/* File must be open before this function is called. 
+Gets partName from global table. 
+If the partName collides with any symbols written to the
+file, a new partName of the form partName<low integer> is formed.
+If p has no name, generates a new name of the form 
+<part><low integer>.  If p is NULL, returns NULL, else p.
+*/
 _MKScoreOutStruct *
 _MKWritePartDecl(MKPart *aPart, _MKScoreOutStruct * p, MKNote *aPartInfo)
 {
-    /* File must be open before this function is called. 
-       Gets partName from global table. 
-       If the partName collides with any symbols written to the
-       file, a new partName of the form partName<low integer> is formed.
-       If p has no name, generates a new name of the form 
-       <part><low integer>.  If p is NULL, returns NULL, else p. */
     BOOL newName;
     unsigned short iTmp;
     id tmp;
     NSString *partName;
     const char *tokname;
-
+    
     if (!p)
-      return NULL;
-    partName = _MKNameTableGetObjectName(p->_nameTable,aPart,&tmp);
+	return NULL;
+    partName = _MKNameTableGetObjectName(p->_nameTable, aPart, &tmp);
     if (partName)
-      return p;                            /* Already declared */
-
+	return p;                            /* Already declared */
+    
     /* If we've come here, we already know that the object is not named in the local table. */
-    partName = (NSString *)MKGetObjectName(aPart);     /* Get object's name */
-    newName = 
-      ((partName == nil) ||       /* No name */
-       (_MKNameTableGetObjectForName(p->_nameTable,partName,nil,&iTmp) != nil)
-       /* Name exists */
-       );
-    if (newName) {      /* anonymous object or name collission */
+    partName = (NSString *) MKGetObjectName(aPart);     /* Get object's name */
+    /* No name or Name exists */
+    newName = (partName == nil) || (_MKNameTableGetObjectForName(p->_nameTable, partName, nil, &iTmp) != nil);
+    if (newName) {      /* anonymous object or name collision */
 	id hashObj;
+	
 	if (!partName) {
-          tokname = _MKTokNameNoCheck(_MK_part);
-	  partName = [NSString stringWithCString: tokname];
-        }
-        // LMS check _MKTokNameNoCheck shouldn't return nil, which will cause problems trying to make it a NSString 
+	    tokname = _MKTokNameNoCheck(_MK_part);
+	    partName = [NSString stringWithCString: tokname];
+	}
+	// LMS check _MKTokNameNoCheck shouldn't return nil, which will cause problems trying to make it a NSString 
 	/* Root of anonymous name */
-/*sb: was _MKMakeStr(partName) */
-        partName = _MKUniqueName([[partName copy] autorelease], p->_nameTable, aPart, &hashObj);
-//LMS was not autoreleased but K. Hamel had problems when it wasn't??
-//      partName = _MKUniqueName([partName copy],p->_nameTable,aPart, &hashObj); /*sb: was _MKMakeStr(partName) */ 
+	/*sb: was _MKMakeStr(partName) */
+	partName = _MKUniqueName([[partName copy] autorelease], p->_nameTable, aPart, &hashObj);
+	//LMS was not autoreleased but K. Hamel had problems when it wasn't??
+	//      partName = _MKUniqueName([partName copy],p->_nameTable,aPart, &hashObj); /*sb: was _MKMakeStr(partName) */ 
     }
     if (BINARY(p)) {
-	_MKWriteShort(p->_stream,_MK_part);
-	_MKWriteNSString(p->_stream,partName);
-        NSMapInsert(p->_binaryIndecies, aPart, (void *)(++(p->_highBinaryIndex)));
+	_MKWriteShort(p->_stream, _MK_part);
+	_MKWriteNSString(p->_stream, partName);
+	NSMapInsert(p->_binaryIndecies, aPart, (void *)(++(p->_highBinaryIndex)));
     }
     else 
-      [p->_stream appendData:[[NSString stringWithFormat:@"%s %@;\n", _MKTokNameNoCheck(_MK_part),partName]
-                  dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-    _MKNameTableAddName(p->_nameTable, partName, nil, aPart, _MK_partInstance | _MK_BACKHASHBIT,YES);
-    writePartInfo(p,aPart,partName,aPartInfo);
-//    if (newName)  // K. Hamel reports problems
-//      [partName release];
+	[p->_stream appendData: [[NSString stringWithFormat: @"%s %@;\n", _MKTokNameNoCheck(_MK_part), partName]
+	    dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+    _MKNameTableAddName(p->_nameTable, partName, nil, aPart, _MK_partInstance | _MK_BACKHASHBIT, YES);
+    writePartInfo(p, aPart, partName, aPartInfo);
+    //    if (newName)  // K. Hamel reports problems
+    //      [partName release];
     return p;
 }
 
