@@ -39,10 +39,10 @@
 	             It controls access to the toBePlayed and playing arrays.
  */
     NSRecursiveLock *playingLock;
-/*! @var             bRemainConnectedToManager Indicates the SndPlayer disconnection behaviour
+/*! @var             remainConnectedToManager Indicates the SndPlayer disconnection behaviour
 	             when no sounds remain in the pending or play arrays.
 */
-    BOOL             bRemainConnectedToManager;
+    BOOL             remainConnectedToManager;
 /*! @var             removalArray Holds those performances which will be removed after completing playback.
 	             TODO I'm guessing this is an ivar rather than just a local variable to save time creating the object,
 	             by reusing it? Strikes me it would be efficient to simply release the damn thing than to actually
@@ -55,10 +55,10 @@
  */
     SndAudioBuffer  *nativelyFormattedStreamingBuffer;
 
-/*! @var             bAutoStartManager Indicates that the SndStreamManager should be automatically
+/*! @var             autoStartManager Indicates that the SndStreamManager should be automatically
 	             started when playing of sounds first begins.
  */
-    BOOL bAutoStartManager;
+    BOOL autoStartManager;
 /*! @var	     preemptingPerformance Holds a performance that is causing preemption in the output queue.
 	             This occurs when attempting to perform a sound immediately, causing cancellation of queued
 	             streaming buffers. The cancellation of the output queue forces all currently sounding performances

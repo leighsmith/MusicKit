@@ -347,7 +347,7 @@ static SndExptAudioBufferServer *defaultServer = nil;
   SndReadSoundfileRange(theFileName, &soundStruct, range.location, range.length, TRUE);
   if (soundStruct) {
     aBuffer = [SndAudioBuffer alloc];
-    [aBuffer initWithFormat: soundStruct data: ((char*)soundStruct) + soundStruct->dataLocation];
+    [aBuffer initWithSoundStruct: soundStruct data: ((char*)soundStruct) + soundStruct->dataLocation];
     [aBuffer convertToFormat: SND_FORMAT_FLOAT];
     free(soundStruct);
     return [aBuffer autorelease];

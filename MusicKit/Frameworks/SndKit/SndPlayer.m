@@ -58,14 +58,15 @@ static SndPlayer *defaultSndPlayer;
 {
   self = [super init];
   if (self) {
-    SndSoundStruct s;
+    SNDStreamBuffer s;
       
     SNDStreamNativeFormat(&s); /* get maximum length for processing buffer */
+    s.streamData = NULL;
 
-    nativelyFormattedStreamingBuffer = [[SndAudioBuffer alloc] initWithFormat: &s data: NULL];
+    nativelyFormattedStreamingBuffer = [[SndAudioBuffer audioBufferWithSNDStreamBuffer: &s] retain];
     
-    bRemainConnectedToManager = TRUE;
-    bAutoStartManager = TRUE;
+    remainConnectedToManager = TRUE;
+    autoStartManager = TRUE;
     if (toBePlayed == nil)
       toBePlayed = [[NSMutableArray alloc] initWithCapacity: 10];
     else
@@ -383,7 +384,7 @@ static SndPlayer *defaultSndPlayer;
 
 - addPerformance: (SndPerformance*) aPerformance
 {
-    if(![self isActive] && bAutoStartManager) {
+    if(![self isActive] && autoStartManager) {
 	[[SndStreamManager defaultStreamManager] addClient: self];
     }
     [[aPerformance snd] addPerformance: aPerformance];
@@ -599,7 +600,7 @@ static SndPlayer *defaultSndPlayer;
 	if ([removalArray count] > 0) {
 	    [playing removeObjectsInArray: removalArray];
 	    if ([toBePlayed count] == 0 && [playing count] == 0) {
-		if (!bRemainConnectedToManager) {
+		if (!remainConnectedToManager) {
 		    active = FALSE;
 #if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS
 		    NSLog(@"[SndPlayer][SYNTH THREAD] Setting inactive...\n");
@@ -630,23 +631,23 @@ static SndPlayer *defaultSndPlayer;
 
 - setRemainConnectedToManager: (BOOL) b
 {
-    bRemainConnectedToManager = b;
+    remainConnectedToManager = b;
     return self;
 }
 
 - (BOOL) remainConnectedToManager
 {
-    return bRemainConnectedToManager;
+    return remainConnectedToManager;
 }
 
 - (BOOL) autoStartManager
 {
-    return bAutoStartManager;
+    return autoStartManager;
 }
 
 - setAutoStartManager: (BOOL) b
 {
-    bAutoStartManager = b;
+    autoStartManager = b;
     return self;
 }
 
