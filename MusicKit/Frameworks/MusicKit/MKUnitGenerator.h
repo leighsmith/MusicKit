@@ -58,6 +58,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2001/07/02 16:49:58  sbrandon
+  - commented out cruft after #endif
+
   Revision 1.4  2000/11/25 23:24:03  leigh
   Enforced ivar privacy
 
@@ -430,7 +433,7 @@ id MKSetUGAddressArgToInt(id self,unsigned argNum,DSPAddress addr);
 
 @end
 
-#endif _MK_UNITGENERATOR_H
+#endif /* _MK_UNITGENERATOR_H  */
 
 
 
