@@ -1,10 +1,15 @@
+// !$*UTF8*$!
 {
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 30;
+	objectVersion = 32;
 	objects = {
 		11F73AE4001E6990CFED3B96 = {
+			buildStyles = (
+				2C2216D7005C54A1CFED3B96,
+				2C2216D8005C54A1CFED3B96,
+			);
 			isa = PBXProject;
 			mainGroup = 11F73AE5001E6990CFED3B96;
 			productRefGroup = 11F73AFE001E6990CFED3B96;
@@ -159,10 +164,12 @@
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				INSTALL_PATH = /Applications;
 				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = example3;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
@@ -225,11 +232,6 @@
 			fileRef = 11F73AE9001E6990CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11F73B03001E6990CFED3B96 = {
@@ -244,11 +246,6 @@
 			fileRef = 11F73AED001E6990CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11F73B05001E6990CFED3B96 = {
@@ -265,12 +262,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -279,12 +270,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -304,55 +289,30 @@
 			fileRef = 11F73AF8001E6990CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11F73B0A001E6990CFED3B96 = {
 			fileRef = 11F73AF9001E6990CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11F73B0B001E6990CFED3B96 = {
 			fileRef = 11F73AFA001E6990CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11F73B0C001E6990CFED3B96 = {
 			fileRef = 11F73AFB001E6990CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11F73B0D001E6990CFED3B96 = {
 			fileRef = 11F73AFC001E6990CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11F73B0E001E6990CFED3B96 = {
@@ -361,6 +321,24 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
+		};
+		2C2216D7005C54A1CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		2C2216D8005C54A1CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
 		};
 	};
 	rootObject = 11F73AE4001E6990CFED3B96;
