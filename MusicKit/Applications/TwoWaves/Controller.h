@@ -1,18 +1,16 @@
 
 #import <AppKit/AppKit.h>
 #import <SndKit/SndKit.h>
-#import <SndKit/SndView.h>
-#import <SndKit/Snd.h>
 
-@interface Controller:NSObject
+@interface Controller: NSObject
 {
     id	freqNum1;
     id	freqNum2;
     id	freqSlide1;
     id	freqSlide2;
-    id	sound1;
-    id	sound2;
-    id	sound3;
+    IBOutlet SndView *soundView1;
+    IBOutlet SndView *soundView2;
+    IBOutlet SndView *soundView3;
     id	volNum1;
     id	volNum2;
     id	volSlide1;
@@ -26,8 +24,6 @@
     Snd * theSound2;
     Snd * theSound3;
     Snd * newSound;
-    id playsoundA;
-    id playsoundB;
     
     float soundLength;
     int type1,type2;

@@ -27,28 +27,29 @@ static BOOL clipping = NO;
 	return [super init];
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)notification
+- (void) applicationDidFinishLaunching: (NSNotification *) notification
 {
     float redFact;
     NSRect theFrame;
-    theFrame = [sound1 frame];
-    [sound1 setAutoscale:YES];
-    [sound2 setAutoscale:YES];
-    [sound3 setAutoscale:YES];
-    [sound1 setEditable:NO];
-    [sound2 setEditable:NO];
-    [sound3 setEditable:NO];
-    [(SndView *)sound1 setDisplayMode:NX_SOUNDVIEW_WAVE];
-    [(SndView *)sound2 setDisplayMode:NX_SOUNDVIEW_WAVE];
-    [(SndView *)sound3 setDisplayMode:NX_SOUNDVIEW_WAVE];
-    [sound1 setOptimizedForSpeed:NO];
-    [sound2 setOptimizedForSpeed:NO];
-    [sound3 setOptimizedForSpeed:NO];
+    
+    theFrame = [soundView1 frame];
+    [soundView1 setAutoscale: YES];
+    [soundView2 setAutoscale: YES];
+    [soundView3 setAutoscale: YES];
+    [soundView1 setEditable: NO];
+    [soundView2 setEditable: NO];
+    [soundView3 setEditable: NO];
+    [soundView1 setDisplayMode: SND_SOUNDVIEW_WAVE];
+    [soundView2 setDisplayMode: SND_SOUNDVIEW_WAVE];
+    [soundView3 setDisplayMode: SND_SOUNDVIEW_WAVE];
+    [soundView1 setOptimizedForSpeed: NO];
+    [soundView2 setOptimizedForSpeed: NO];
+    [soundView3 setOptimizedForSpeed: NO];
 
     soundLength = [sLength floatValue];
     if (soundLength < 0 || soundLength > 20) {
         soundLength = 6;
-        [sLength setFloatValue:soundLength];
+        [sLength setFloatValue: soundLength];
     }
     type1 = 0;
     type2 = 0;
@@ -56,39 +57,39 @@ static BOOL clipping = NO;
     theSound2 = [[Snd alloc] init] ;
     theSound3 = [[Snd alloc] init] ;
     newSound = [[Snd alloc] init] ;
-    [theSound1 setDataSize:SAMPLING_RATE * 2 * SECONDS 
-                dataFormat:SND_FORMAT_LINEAR_16
-              samplingRate:SAMPLING_RATE 
-              channelCount:1 
-                  infoSize:0];
-    [theSound2 setDataSize:SAMPLING_RATE * 2 * SECONDS 
-                dataFormat:SND_FORMAT_LINEAR_16
-              samplingRate:SAMPLING_RATE 
-              channelCount:1 
-                  infoSize:0];
-    [theSound3 setDataSize:SAMPLING_RATE * 2 * SECONDS 
-                dataFormat:SND_FORMAT_LINEAR_16
-              samplingRate:SAMPLING_RATE 
-              channelCount:1 
-                  infoSize:0];
+    [theSound1 setDataSize: SAMPLING_RATE * 2 * SECONDS 
+                dataFormat: SND_FORMAT_LINEAR_16
+              samplingRate: SAMPLING_RATE 
+              channelCount: 1 
+                  infoSize: 0];
+    [theSound2 setDataSize: SAMPLING_RATE * 2 * SECONDS 
+                dataFormat: SND_FORMAT_LINEAR_16
+              samplingRate: SAMPLING_RATE 
+              channelCount: 1 
+                  infoSize: 0];
+    [theSound3 setDataSize: SAMPLING_RATE * 2 * SECONDS 
+                dataFormat: SND_FORMAT_LINEAR_16
+              samplingRate: SAMPLING_RATE 
+              channelCount: 1 
+                  infoSize: 0];
     newSound = nil;
     redFact = SAMPLING_RATE * SECONDS / theFrame.size.width;
-    [sound1 setReductionFactor:redFact];
-    [sound2 setReductionFactor:redFact];
-    [sound3 setReductionFactor:redFact];
-    [(SndView *)sound1 setSound:theSound1];
-    [(SndView *)sound2 setSound:theSound2];
-    [(SndView *)sound3 setSound:theSound3];
+    [soundView1 setReductionFactor: redFact];
+    [soundView2 setReductionFactor: redFact];
+    [soundView3 setReductionFactor: redFact];
+    [soundView1 setSound: theSound1];
+    [soundView2 setSound: theSound2];
+    [soundView3 setSound: theSound3];
     [self calcSound1];
     [self calcSound2];
     [self calcSound3];
 
-    [sound1 invalidateCacheStartPixel:0 end:-1];
-    [sound2 invalidateCacheStartPixel:0 end:-1];
-    [sound3 invalidateCacheStartPixel:0 end:-1];
-    [sound1 display];
-    [sound2 display];
-    [sound3 display];
+    [soundView1 invalidateCacheStartPixel: 0 end: -1];
+    [soundView2 invalidateCacheStartPixel: 0 end: -1];
+    [soundView3 invalidateCacheStartPixel: 0 end: -1];
+    [soundView1 display];
+    [soundView2 display];
+    [soundView3 display];
     somethingChanged = YES;
 }
 
@@ -98,32 +99,32 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
     switch (type) {
     case 0: /*sine*/
     default:
-        for (i = 0;i<SECONDS * SAMPLING_RATE;i++) {
+        for (i = 0;i < SECONDS * SAMPLING_RATE;i++) {
             pointer[i] = SINWAVE(SAMPLING_RATE,theFreq, theAmp,i);
         }
         break;
     case 1:  /*cosine*/
-        for (i = 0;i<SECONDS * SAMPLING_RATE;i++) {
+        for (i = 0;i < SECONDS * SAMPLING_RATE;i++) {
             pointer[i] = COSWAVE(SAMPLING_RATE,theFreq, theAmp,i);
         }
         break;
     case 2:  /*square*/
-        for (i = 0;i<SECONDS * SAMPLING_RATE;i++) {
+        for (i = 0;i < SECONDS * SAMPLING_RATE;i++) {
             pointer[i] = SQUAREWAVE(SAMPLING_RATE,theFreq, theAmp,i);
         }
         break;
     case 3:  /*sawtooth*/
-        for (i = 0;i<SECONDS * SAMPLING_RATE;i++) {
+        for (i = 0;i < SECONDS * SAMPLING_RATE;i++) {
             pointer[i] = SAWTOOTH(SAMPLING_RATE,theFreq, theAmp,i);
         }
         break;
     case 4:  /*rev sawtooth*/
-        for (i = 0;i<SECONDS * SAMPLING_RATE;i++) {
+        for (i = 0;i < SECONDS * SAMPLING_RATE;i++) {
             pointer[i] = REVSAWTOOTH(SAMPLING_RATE,theFreq, theAmp,i);
         }
         break;
     case 5:  /*triangle*/
-        for (i = 0;i<SECONDS * SAMPLING_RATE;i++) {
+        for (i = 0;i < SECONDS * SAMPLING_RATE;i++) {
             pointer[i] = TRIANGLE(SAMPLING_RATE,theFreq, theAmp,i);
         }
         break;
@@ -134,7 +135,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 - calcSound1
 {
     float theFreq,theAmp;
-    short *pointer = (short *)[(Snd *)[sound1 sound] data];
+    short *pointer = (short *)[[soundView1 sound] data];
     theAmp = [volNum1 floatValue] * 32768 / 10;
     theFreq = [freqNum1 floatValue];
     doCalc(type1, pointer, theFreq, theAmp);
@@ -144,7 +145,7 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 - calcSound2
 {
     float theFreq,theAmp;
-    short *pointer = (short *)[(Snd *)[sound2 sound] data];
+    short *pointer = (short *)[[soundView2 sound] data];
     theFreq = [freqNum2 floatValue];
     theAmp = [volNum2 floatValue] * 32768 / 10;
     doCalc(type2, pointer, theFreq, theAmp);
@@ -154,10 +155,10 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 - calcSound3
 {
     int i,newVal;
-    short *pointer1 = (short *)[(Snd *)[sound1 sound] data];
-    short *pointer2 = (short *)[(Snd *)[sound2 sound] data];
-    short *pointer3 = (short *)[(Snd *)[sound3 sound] data];
-    for (i = 0;i<SECONDS * SAMPLING_RATE;i++) {
+    short *pointer1 = (short *)[[soundView1 sound] data];
+    short *pointer2 = (short *)[[soundView2 sound] data];
+    short *pointer3 = (short *)[[soundView3 sound] data];
+    for (i = 0; i < SECONDS * SAMPLING_RATE;i++) {
         newVal = (signed short)NSSwapBigShortToHost(pointer1[i]) + (signed short)NSSwapBigShortToHost(pointer2[i]);
         if (newVal > 32768 || newVal < -32767)
             clipping = YES;
@@ -328,17 +329,17 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
     [volNum2 setFloatValue:0.01 * (int)([volSlide2 floatValue] * 100)];
     if (sender == volSlide1 || sender == freqSlide1) {
         [self calcSound1];
-        [sound1 invalidateCacheStartPixel:0 end:-1];
-        [sound1 display];
+        [soundView1 invalidateCacheStartPixel:0 end:-1];
+        [soundView1 display];
     }
     else if (sender == volSlide2 || sender == freqSlide2) {
         [self calcSound2];
-        [sound2 invalidateCacheStartPixel:0 end:-1];
-        [sound2 display];
+        [soundView2 invalidateCacheStartPixel:0 end:-1];
+        [soundView2 display];
     }
     [self calcSound3];
-    [sound3 invalidateCacheStartPixel:0 end:-1];
-    [sound3 display];
+    [soundView3 invalidateCacheStartPixel:0 end:-1];
+    [soundView3 display];
     return self;
 }
 
@@ -351,17 +352,17 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
     [volSlide2 setFloatValue:[volNum2 floatValue]];
     if ([sender selectedCell] == volNum1 || [sender selectedCell] == freqNum1) {
         [self calcSound1];
-        [sound1 invalidateCacheStartPixel:0 end:-1];
-        [sound1 display];
+        [soundView1 invalidateCacheStartPixel:0 end:-1];
+        [soundView1 display];
     }
     else if ([sender selectedCell] == volNum2 || [sender selectedCell] == freqNum2) {
         [self calcSound2];
-        [sound2 invalidateCacheStartPixel:0 end:-1];
-        [sound2 display];
+        [soundView2 invalidateCacheStartPixel:0 end:-1];
+        [soundView2 display];
     }
     [self calcSound3];
-    [sound3 invalidateCacheStartPixel:0 end:-1];
-    [sound3 display];
+    [soundView3 invalidateCacheStartPixel:0 end:-1];
+    [soundView3 display];
     return self;
 }
 
@@ -371,18 +372,18 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 	if (sender == waveType1) {
 		type1 = [sender selectedRow];
 		[self calcSound1];
-                [sound1 invalidateCacheStartPixel:0 end:-1];
-		[sound1 display];
+                [soundView1 invalidateCacheStartPixel:0 end:-1];
+		[soundView1 display];
 	}
 	if (sender == waveType2) {
 		type2 = [sender selectedRow];
 		[self calcSound2];
-                [sound2 invalidateCacheStartPixel:0 end:-1];
-		[sound2 display];
+                [soundView2 invalidateCacheStartPixel:0 end:-1];
+		[soundView2 display];
 	}		
 	[self calcSound3];
-        [sound3 invalidateCacheStartPixel:0 end:-1];
-	[sound3 display];
+        [soundView3 invalidateCacheStartPixel:0 end:-1];
+	[soundView3 display];
     return self;
 }
 
