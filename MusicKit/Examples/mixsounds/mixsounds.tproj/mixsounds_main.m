@@ -87,7 +87,7 @@ int main (int argc, const char *argv[])
 #endif
     partCount = [noteSenders count];
     for (partIndex = 0; partIndex < partCount; partIndex++)
-        [[noteSenders objectAtIndex: partIndex] connect: [mixIns noteReceiver]];
+        [(MKNoteSender *)[noteSenders objectAtIndex: partIndex] connect: [mixIns noteReceiver]];
     [MKConductor setClocked: NO];     /* User process runs as fast as it can. */
     NSLog(@"mixing...\n");
 
