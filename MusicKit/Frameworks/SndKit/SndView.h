@@ -207,7 +207,6 @@ NSScrollView.
 #define __SNDVIEW_H__
 
 #import <AppKit/AppKit.h>
-#import "SndKit.h"
 
 /* The following define maps most sound I/O functions to the SoundKit counterparts,
 * for OpenStep 4.2 Intel and m68k (black NeXT) machines. You could try it on PPC
