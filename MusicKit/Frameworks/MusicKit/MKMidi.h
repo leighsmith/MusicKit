@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.4  1999/08/26 19:55:21  leigh
+  extra documentation
+
   Revision 1.3  1999/08/08 01:59:22  leigh
   Removed extraVars cruft
 
@@ -76,7 +79,7 @@ typedef struct _timeVars {
     void *_pIn;
     void *_pOut;
     double _timeOffset;
-    char _mode;
+    char _mode; // should be an enumerated type. 'i' = MKMidiInputOnly 'o' = MKMidiOutputOnly 'a' = MKMidiIO
     // the following are from the ivar thaw
     BOOL isOwner;
     // should become NSPort
