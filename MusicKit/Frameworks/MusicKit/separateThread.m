@@ -1,6 +1,6 @@
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
-  lock.m
+  separateThread.m (was lock.m)
   Responsibility: David A. Jaffe, Mike Minnick
   
   DEFINED IN: The Music Kit
@@ -48,7 +48,8 @@
 
 /* This source file should be include by MKConductor.m. It includes
    the Conductor code relevant to running the Conductor in a background 
-   thread. It should really be called "separateThread.m". */
+   thread.
+ */
 
 /* Restrictions on use of locking mechanism:
 
@@ -689,6 +690,7 @@ static void emptyAppToMKPort(void)
 
 static BOOL getThreadInfo(int *info)
 {
+#ifndef WIN32
     kern_return_t ec;
     unsigned int count = THREAD_INFO_MAX;
     ec = thread_info(thread_self(), THREAD_SCHED_INFO, (thread_info_t)info,
@@ -698,17 +700,20 @@ static BOOL getThreadInfo(int *info)
 		  mach_error_string(ec),"getThreadInfo");
 	return NO;
     }
+#endif
     return YES;
 }
 
 static BOOL setThreadPriority(int priority)
 {
+#ifndef WIN32
     kern_return_t ec = thread_priority(thread_self(), priority, 0);
     if (ec != KERN_SUCCESS) {
 	_MKErrorf(MK_machErr,[COND_ERROR cString],
 		  mach_error_string(ec),"setThreadPriority");
 	return NO;
     }
+#endif
     return YES;
 }
 
@@ -721,6 +726,7 @@ static int oldPolicy = INVALID_POLICY;
 
 static void setPriority(void)
 {
+#ifndef WIN32
     int info[THREAD_INFO_MAX];
     thread_sched_info_t sched_info;
     if (threadPriorityFactor == 0.0 || /* No change */
@@ -743,10 +749,12 @@ static void setPriority(void)
 			    sched_info->base_priority) * threadPriorityFactor) 
 			  + sched_info->base_priority);
     } else oldPriority = MAXINT; /* No priority to be set. */
+#endif
 }
 
 static void resetPriority(void)
 {
+#ifndef WIN32
     int info[THREAD_INFO_MAX];
     thread_sched_info_t sched_info;
     if (oldPolicy != INVALID_POLICY) /* Reset it only if it was set. */
@@ -757,6 +765,7 @@ static void resetPriority(void)
     sched_info = (thread_sched_info_t)info;
     setThreadPriority(oldPriority);
     oldPriority = MAXINT;
+#endif
 }
 
 #define MAXSTRESS 100
