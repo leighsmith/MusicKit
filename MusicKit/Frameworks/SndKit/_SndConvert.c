@@ -1,3 +1,16 @@
+/******************************************************************************
+LEGAL:
+This framework and all source code supplied with it, except where specified, are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use the source code for any purpose, including commercial applications, as long as you reproduce this notice on all such software.
+
+Software production is complex and we cannot warrant that the Software will be error free.  Further, we will not be liable to you if the Software is not fit for the purpose for which you acquired it, or of satisfactory quality. 
+
+WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD PARTIES RIGHTS.
+
+If a court finds that we are liable for death or personal injury caused by our negligence our liability shall be unlimited.  
+
+WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND CONDITIONS OF THIS AGREEMENT.
+
+******************************************************************************/
 #ifndef WIN32
 #import <libc.h>
 #else
@@ -115,7 +128,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
 
 	if (sr1 != sr2) {	
 		SndGetDataPointer(*toSound, (char **)(&outPtr), &inCount, &width);
-		printf("Out count: %d, oc * df: %d, alloced size: %d\n",inCount,inCount * 2, allocedSize);
+//		printf("Out count: %d, oc * df: %d, alloced size: %d\n",inCount,inCount * 2, allocedSize);
 		if (fromSound->dataFormat != SND_FORMAT_INDIRECT) {
 			SndGetDataPointer(fromSound, (char **)(&inPtr), &inCount, &width);
 			inCount /= cc1;		/* to get sample frames */
@@ -125,10 +138,10 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
 			inCount = ds1 / cc1 / width;
 			inPtr = NULL; /* because we hand the routine a SndSoundStruct */
 		}
-		printf("inCount used: %d\n",inCount);
+//		printf("inCount used: %d\n",inCount);
 //		outCount = inCount * factor + 1;
 		outCount = factor * (ds1 / (float)cc1 / (float)SndSampleWidth(df1)) + 1;
-		printf("outCount used: %d\n",outCount);
+//		printf("outCount used: %d\n",outCount);
 
 		{
 			/* (BOOL)interpFilter = interpolate within filter
@@ -143,7 +156,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
 							interpFilter, linearInterp, largeFilter, filterFile, fromSound, 0);
 			(*toSound)->dataFormat = SND_FORMAT_LINEAR_16; /* this is the output format */
 			(*toSound)->channelCount = MIN(cc1,cc2); /* channel count is reduced if nec */
-			printf("Completed resample. OutCount = %d\n", outCountReal);
+//			printf("Completed resample. OutCount = %d\n", outCountReal);
 			(*toSound)->dataSize = outCountReal * (*toSound)->channelCount 
 						* 2; /* 2 is SND_FORMAT_LINEAR_16 */
 			SndSwapHostToSound(outPtr, outPtr, outCountReal, (*toSound)->channelCount, SND_FORMAT_LINEAR_16);
@@ -640,7 +653,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
 		/* that should be all the common ones. Maybe aLaw too? */
 		(*toSound)->dataSize = outCount * SndSampleWidth(df2);
 	}
-	printf("alloced size: %d official size: %d\n", allocedSize, (*toSound)->dataSize);
+//	printf("alloced size: %d official size: %d\n", allocedSize, (*toSound)->dataSize);
 	if ((*toSound)->dataSize < allocedSize) /* only decrease space if necessary */
 		*toSound = realloc(*toSound,(*toSound)->dataSize + (*toSound)->dataLocation);
 	return SND_ERR_NONE;

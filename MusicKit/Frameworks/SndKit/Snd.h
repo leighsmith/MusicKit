@@ -4,11 +4,17 @@
 	Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
 	Additions Copyright (c) 1999 Stephen Brandon and the University of Glasgow 
 */
+
 #import <Foundation/NSObject.h>
 #import <Foundation/Foundation.h>
 #import <objc/hashtable.h>
 #import <Foundation/NSBundle.h>
 
+/* The following define maps most sound I/O functions to the SoundKit counterparts,
+ * for OpenStep 4.2 Intel and m68k (black NeXT) machines. You could try it on PPC
+ * MacOS-X machines if you wanted to, but this may then conflict with the ppc/YBWin
+ * code for using NSSound objects for sound playback.
+ */
 #if defined(NeXT) 
   #define USE_NEXTSTEP_SOUND_IO
   #define USE_PERFORM_SOUND_IO
@@ -51,13 +57,20 @@ extern NSString *NXSoundPboardType;
     int priority;		 /* the priority of the sound */
     id delegate;		 /* the target of notification messages */
     int status;			 /* what the object is currently doing */
-    NSString *name;			 /* The name of the sound */
+    NSString *name;		 /* The name of the sound */
     SndSoundStruct *_scratchSnd;
     int _scratchSize;
-	int currentError;
+    int currentError;
+    int conversionQuality;	 /* see defines below */
+#if defined(__ppc__) || defined(WIN32)
+    id plSound;			 /* NSSound object for playback */
+#endif
 @public
-	int tag;
+    int tag;
 }
+#define SND_CONVERT_LOWQ 0
+#define SND_CONVERT_MEDQ 1
+#define SND_CONVERT_HIQ  2
 
 #if !defined(USE_NEXTSTEP_SOUND_IO) && !defined(USE_PERFORM_SOUND_IO) || defined(WIN32)
 /*
@@ -88,6 +101,7 @@ typedef enum {
  */
 
 + soundNamed:(NSString *)aName;
++ findSoundFor:(NSString *)aName;
 
 + addName:(NSString *)name sound:aSnd;
 + addName:(NSString *)name fromSoundfile:(NSString *)filename;
@@ -166,8 +180,15 @@ typedef enum {
 - (SndSoundStruct *)soundStructBeingProcessed;
 - (int)processingError;
 - soundBeingProcessed;
-- tellDelegate:(SEL)theMessage;
+- (void)tellDelegate:(SEL)theMessage;
 - (void)_setStatus:(int)newStatus; /* Private! not for general use. */
+
+    /*************************
+     * these methods are unique
+     * to SndKit.
+     *************************/
+- (void)setConversionQuality:(int)quality; /* default is SND_CONVERT_LOWQ */
+- (int)conversionQuality;
 
 @end
 

@@ -1,6 +1,6 @@
 /******************************************************************************
 LEGAL:
-This example application and all source code supplied with it, are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use the source code for any purpose, including commercial applications, as long as you reproduce this notice on all such software.
+This framework and all source code supplied with it, except where specified, are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use the source code for any purpose, including commercial applications, as long as you reproduce this notice on all such software.
 
 Software production is complex and we cannot warrant that the Software will be error free.  Further, we will not be liable to you if the Software is not fit for the purpose for which you acquired it, or of satisfactory quality. 
 
@@ -13,7 +13,8 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 
 #import "SndView.h"
-#define USE_PS_USER_PATHS
+//#define USE_PS_USER_PATHS
+//:raf:
 //#define DISPLAY_SOUNDDEVICE_INFO
 //#define DO_TIMING
 /* For 250 pixels, on black m68k hardware, user paths take 1.872 s for 100 iterations.
@@ -23,10 +24,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
  */
 
 #define startTimer(timer) if (!timer)  { timer = YES; [NSEvent startPeriodicEventsAfterDelay:0.1 withPeriod:0.01];}
-#define stopTimer(timer) if (timer) { \
-    [NSEvent stopPeriodicEvents]; \
-    timer = NO; \
-}
+#define stopTimer(timer) if (timer) {[NSEvent stopPeriodicEvents];timer = NO;}
 #define MOVE_MASK NSLeftMouseUpMask|NSLeftMouseDraggedMask	
 #define NXSoundPboardTypeOld @"NeXT sound pasteboard type"
 
@@ -47,50 +45,55 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 - (void)toggleCursor
 {
-	NSRect cursorRect = [self bounds];
-	cursorRect.origin.x = (int)((float)NSMinX(selectionRect) / (float)reductionFactor);
-	cursorRect.size.width = 1;
-	[self lockFocus];
-	NSHighlightRect(cursorRect);
-	[self unlockFocus];
-	[[self window] flushWindow];
-	svFlags.cursorOn = !svFlags.cursorOn;
+    NSRect cursorRect = [self bounds];
+    cursorRect.origin.x = (int)((float)NSMinX(selectionRect) / (float)reductionFactor);
+    cursorRect.size.width = 1;
+    [self lockFocus];
+    NSHighlightRect(cursorRect);
+    [self unlockFocus];
+    [[self window] flushWindow];
+    svFlags.cursorOn = !svFlags.cursorOn;
 }
 
 - hideCursor
 {
-	if (teNum) {
-		[teNum invalidate];
-                [teNum release];
-                teNum = NULL;
-		if (svFlags.cursorOn) [self toggleCursor];
-		svFlags.cursorOn = NO;
-	}
-	return self;
+    if (teNum) {
+            [teNum invalidate];
+            [teNum release];
+            teNum = NULL;
+            if (svFlags.cursorOn) [self toggleCursor];
+            svFlags.cursorOn = NO;
+    }
+    return self;
 }
 - showCursor
 {
-	if (!teNum) {
-		if (NSWidth(selectionRect) < 0.1) {
-			if (!svFlags.cursorOn) [self toggleCursor];
+    if (!teNum) {
+        if (NSWidth(selectionRect) < 0.1) {
+            if (!svFlags.cursorOn) [self toggleCursor];
 
-                    teNum = [[NSTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(toggleCursor) userInfo:self repeats:YES] retain];
-		}
-	}
-	return self;
+            teNum = [[NSTimer scheduledTimerWithTimeInterval:0.5
+                                                      target:self
+                                                    selector:@selector(toggleCursor)
+                                                    userInfo:self
+                                                     repeats:YES] retain];
+        }
+    }
+    return self;
 }
 
 - (void)initVars
 {
-    NSArray * validSendTypes = [[[NSArray alloc] initWithObjects:NXSoundPboardType, NXSoundPboardTypeOld, nil] autorelease];
-    NSArray * validReturnTypes = [[[NSArray alloc] initWithObjects:NXSoundPboardType, NXSoundPboardTypeOld, nil] autorelease];
-    [NSApp registerServicesMenuSendTypes:validSendTypes returnTypes:validReturnTypes];
+    NSArray * validSendTypes =
+       [[[NSArray alloc] initWithObjects:NXSoundPboardType, NXSoundPboardTypeOld, nil] autorelease];
+    NSArray * validReturnTypes =
+       [[[NSArray alloc] initWithObjects:NXSoundPboardType, NXSoundPboardTypeOld, nil] autorelease];
+    [NSApp registerServicesMenuSendTypes:validSendTypes
+                             returnTypes:validReturnTypes];
     delegate = nil;
     _scratchSound = nil;
     sound = nil;
     _pasteboardSound = nil;
-    backgroundGray = NSWhite;
-    foregroundGray = NSBlack;
     backgroundColour = [[NSColor whiteColor] retain];//white
     foregroundColour = [[NSColor blueColor] retain];//black
     displayMode = NX_SOUNDVIEW_MINMAX;
@@ -98,14 +101,14 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
     reductionFactor = 4.0; /* bogus */
     dataList = [[SndDisplayDataList alloc] init];
 
-            svFlags.disabled=0;
-            svFlags.continuous=0;
-            svFlags.cursorOn=0;
-            svFlags.drawsCrosses = 0;
-            svFlags.autoscale=0;
-            svFlags.bezeled=0;
-            svFlags.notEditable=0;
-            svFlags.notOptimizedForSpeed=0;
+    svFlags.disabled=0;
+    svFlags.continuous=0;
+    svFlags.cursorOn=0;
+    svFlags.drawsCrosses = 1;
+    svFlags.autoscale=0;
+    svFlags.bezeled=0;
+    svFlags.notEditable=0;
+    svFlags.notOptimizedForSpeed=0;
     optThreshold = FASTSKIPSTART;
     optSkip = FASTSKIPAMOUNT;
     peakFraction = TENPERCENT;
@@ -132,125 +135,123 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 - (BOOL)resignFirstResponder
 {
-	return YES;
+    return YES;
 }
 - (BOOL)becomeFirstResponder;
 {
-	return YES;
+    return YES;
 }
 
 - (void)copy:(id)sender;
 {
     NSPasteboard *pboard;
     NSArray *typesList=nil;
-        pboard = [NSPasteboard generalPasteboard];
-	[self writeSelectionToPasteboardNoProvide:pboard types:typesList];
-	return;
+    pboard = [NSPasteboard generalPasteboard];
+    [self writeSelectionToPasteboardNoProvide:pboard types:typesList];
+    return;
 }
 - (void)cut:(id)sender;
 {
-	[self copy:sender];
-	[self delete:sender];
-	return;
+    [self copy:sender];
+    [self delete:sender];
+    return;
 }
 - (void)delete:(id)sender;
 {
-	if (NSWidth(selectionRect) < 0.1) return;
-	if (!sound) return;
-	if ([sound sampleCount] < NSMaxX(selectionRect)) return;
-	if (![sound isEditable]) return;
-	if (svFlags.notEditable) return;
-	[sound deleteSamplesAt:(int)((float)NSMinX(selectionRect) + 0.1)
-					 count:(int)((float)NSWidth(selectionRect) + 0.1)];
-	[self invalidateCacheStartSample:(int)((float)NSMinX(selectionRect) + 0.1)
-		 end:[sound sampleCount]];
-	selectionRect.size.width = 0.0;
-	if (!svFlags.autoscale) [self sizeToFit];
-	else { /* scaleToFit does not autodisplay, but sizeToFit does */
-		[self scaleToFit];
-                [self setNeedsDisplay:YES];
-		}
+    if (NSWidth(selectionRect) < 0.1) return;
+    if (!sound) return;
+    if ([sound sampleCount] < NSMaxX(selectionRect)) return;
+    if (![sound isEditable]) return;
+    if (svFlags.notEditable) return;
+    [sound deleteSamplesAt:(int)((float)NSMinX(selectionRect) + 0.1)
+                                          count:(int)((float)NSWidth(selectionRect) + 0.1)];
+    [self invalidateCacheStartSample:(int)((float)NSMinX(selectionRect) + 0.1)
+                  end:[sound sampleCount]];
+    selectionRect.size.width = 0.0;
+    if (!svFlags.autoscale) [self sizeToFit];
+    else { /* scaleToFit does not autodisplay, but sizeToFit does */
+            [self scaleToFit];
+            [self setNeedsDisplay:YES];
+            }
     [[self window] disableFlushWindow];
-	[self showCursor];
+    [self showCursor];
     [[self window] enableFlushWindow];
-	[self tellDelegate:@selector(soundDidChange:)];
-	return;
+    [self tellDelegate:@selector(soundDidChange:)];
+    return;
 }
 - (void)paste:(id)sender;
 {
-	NSPasteboard *pboard;
+    NSPasteboard *pboard;
 
-	pboard = [NSPasteboard generalPasteboard];
-	[self readSelectionFromPasteboard:pboard];
-
-	return;
+    pboard = [NSPasteboard generalPasteboard];
+    [self readSelectionFromPasteboard:pboard];
 }
 - (void)selectAll:(id)sender;
 {
-	if (!sound) return;
+    if (!sound) return;
     [[self window] disableFlushWindow];
-	[self hideCursor];
-        [[self window] enableFlushWindow];
-	selectionRect.origin.x = 0;
-	selectionRect.size.width = [sound sampleCount];
-        [self setNeedsDisplay:YES];
-//	printf("FINAL SELECTION %g, %g\n",NX_X(&selectionRect),NX_WIDTH(&selectionRect));
-	return;
+    [self hideCursor];
+    [[self window] enableFlushWindow];
+    selectionRect.origin.x = 0;
+    selectionRect.size.width = [sound sampleCount];
+    [self setNeedsDisplay:YES];
+//  printf("FINAL SELECTION %g, %g\n",NX_X(&selectionRect),NX_WIDTH(&selectionRect));
+    return;
 }
 - delegate;
 {
-	return delegate;
+    return delegate;
 }
 - (int)displayMode;
 {
-	return displayMode;
+    return displayMode;
 }
 - (void)setDisplayMode:(int)aMode /*NX_SOUNDVIEW_WAVE or NX_SOUNDVIEW_MINMAX*/
 {
-	if (displayMode != aMode) [self invalidateCache];
-	else return;
-	displayMode = aMode;
-        [self setNeedsDisplay:YES];
-        return;
+    if (displayMode != aMode) [self invalidateCache];
+    else return;
+    displayMode = aMode;
+    [self setNeedsDisplay:YES];
+    return;
 }
 - drawSamplesFrom:(int)first to:(int)last;
 {
-	return self;
+    return self;
 }
 int bytesFromFormat(int format)
 {
-	int numBytes;
-		switch (format) {
-			case SND_FORMAT_MULAW_8:
-			case SND_FORMAT_LINEAR_8:
-				numBytes = 1;
-				break;
-			case SND_FORMAT_EMPHASIZED:
-			case SND_FORMAT_COMPRESSED:
-			case SND_FORMAT_COMPRESSED_EMPHASIZED:
-			case SND_FORMAT_DSP_DATA_16:
-			case SND_FORMAT_LINEAR_16:
-				numBytes = 2;
-				break;
-			case SND_FORMAT_LINEAR_24:
-			case SND_FORMAT_DSP_DATA_24:
-				numBytes = 3;
-				break;
-			case SND_FORMAT_LINEAR_32:
-			case SND_FORMAT_DSP_DATA_32:
-				numBytes = 4;
-				break;
-			case SND_FORMAT_FLOAT:
-				numBytes = sizeof(float);
-				break;
-			case SND_FORMAT_DOUBLE:
-				numBytes = sizeof(double);
-				break;
-			default: /* just in case */
-				numBytes = 2;
-				break;
-		}
-	return numBytes;
+    int numBytes;
+        switch (format) {
+            case SND_FORMAT_MULAW_8:
+            case SND_FORMAT_LINEAR_8:
+                numBytes = 1;
+                break;
+            case SND_FORMAT_EMPHASIZED:
+            case SND_FORMAT_COMPRESSED:
+            case SND_FORMAT_COMPRESSED_EMPHASIZED:
+            case SND_FORMAT_DSP_DATA_16:
+            case SND_FORMAT_LINEAR_16:
+                numBytes = 2;
+                break;
+            case SND_FORMAT_LINEAR_24:
+            case SND_FORMAT_DSP_DATA_24:
+                numBytes = 3;
+                break;
+            case SND_FORMAT_LINEAR_32:
+            case SND_FORMAT_DSP_DATA_32:
+                numBytes = 4;
+                break;
+            case SND_FORMAT_FLOAT:
+                numBytes = sizeof(float);
+                break;
+            case SND_FORMAT_DOUBLE:
+                numBytes = sizeof(double);
+                break;
+            default: /* just in case */
+                numBytes = 2;
+                break;
+        }
+    return numBytes;
 }
 
 void *getDataAddresses(int sample,
@@ -261,625 +262,687 @@ void *getDataAddresses(int sample,
  * last sample the block holds. Indices count from 0 so they can be utilised directly.
  */
 {
-	int cc = theSound->channelCount;
-	int df = theSound->dataFormat;
-	int ds = theSound->dataSize;
-	int numBytes;
-        SndSoundStruct **ssList;
-        SndSoundStruct *theStruct;
-	int i=0,count=0,oldCount = 0;
-	
-        if (df == SND_FORMAT_INDIRECT) df = ((SndSoundStruct *)(*((SndSoundStruct **)(theSound->dataLocation))))->dataFormat;
+    int cc = theSound->channelCount;
+    int df = theSound->dataFormat;
+    int ds = theSound->dataSize;
+    int numBytes;
+    SndSoundStruct **ssList;
+    SndSoundStruct *theStruct;
+    int i=0,count=0,oldCount = 0;
 
-        numBytes = bytesFromFormat(df);
-	
-	if ((theSound->dataFormat) != SND_FORMAT_INDIRECT) {
-		*lastSampleInBlock = ds / cc / numBytes;
-		*currentSample = sample;
-		return (char *)theSound + theSound->dataLocation;
-	}
-        ssList = (SndSoundStruct **)theSound->dataLocation;
-	while ((theStruct = ssList[i++]) != NULL) {
-		count += ((theStruct->dataSize) / cc / numBytes);
-		if (count > sample) {
-			*lastSampleInBlock = ((theStruct->dataSize) / cc / numBytes);
-			*currentSample = sample - oldCount;
-			return (char *)theStruct + theStruct->dataLocation;
-		}
-		oldCount = count;
-	}
-	*currentSample = -1;
-	*lastSampleInBlock = -1;
-	return NULL;
+    if (df == SND_FORMAT_INDIRECT)
+        df = ((SndSoundStruct *)(*((SndSoundStruct **)(theSound->dataLocation))))->dataFormat;
+
+    numBytes = bytesFromFormat(df);
+
+    if ((theSound->dataFormat) != SND_FORMAT_INDIRECT) {
+        *lastSampleInBlock = ds / cc / numBytes;
+        *currentSample = sample;
+        return (char *)theSound + theSound->dataLocation;
+    }
+    ssList = (SndSoundStruct **)theSound->dataLocation;
+    while ((theStruct = ssList[i++]) != NULL) {
+        count += ((theStruct->dataSize) / cc / numBytes);
+        if (count > sample) {
+            *lastSampleInBlock = ((theStruct->dataSize) / cc / numBytes);
+            *currentSample = sample - oldCount;
+            return (char *)theStruct + theStruct->dataLocation;
+        }
+        oldCount = count;
+    }
+    *currentSample = -1;
+    *lastSampleInBlock = -1;
+    return NULL;
 }
 
 double getSoundValue(void *myData,int myType,int myActualSample)
 {
-	double theValue;
-			 switch (myType) {
-				case SND_FORMAT_LINEAR_8:
-					theValue = ((char *)myData)[myActualSample];
-					break;
-				case SND_FORMAT_MULAW_8:
-                                    theValue = SndiMulaw(((char *)myData)[myActualSample]);
-					break;
-				case SND_FORMAT_EMPHASIZED:
-				case SND_FORMAT_COMPRESSED:
-				case SND_FORMAT_COMPRESSED_EMPHASIZED:
-				case SND_FORMAT_DSP_DATA_16:
-				case SND_FORMAT_LINEAR_16:
-					theValue = (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]);
-					break;
-				case SND_FORMAT_LINEAR_24:
-				case SND_FORMAT_DSP_DATA_24:
-					theValue = ((short *)myData)[myActualSample];
-					break; /* don't know how to get 24 bit number! */
-				case SND_FORMAT_LINEAR_32:
-				case SND_FORMAT_DSP_DATA_32:
-					theValue = (signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample]);
-					break;
-				case SND_FORMAT_FLOAT:
+    double theValue;
+    switch (myType) {
+        case SND_FORMAT_LINEAR_8:
+            theValue = ((char *)myData)[myActualSample];
+            break;
+        case SND_FORMAT_MULAW_8:
+            theValue = SndiMulaw(((char *)myData)[myActualSample]);
+            break;
+        case SND_FORMAT_EMPHASIZED:
+        case SND_FORMAT_COMPRESSED:
+        case SND_FORMAT_COMPRESSED_EMPHASIZED:
+        case SND_FORMAT_DSP_DATA_16:
+        case SND_FORMAT_LINEAR_16:
+            theValue = (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]);
+            break;
+        case SND_FORMAT_LINEAR_24:
+        case SND_FORMAT_DSP_DATA_24:
+            theValue = ((short *)myData)[myActualSample];
+            break; /* don't know how to get 24 bit number! */
+        case SND_FORMAT_LINEAR_32:
+        case SND_FORMAT_DSP_DATA_32:
+            theValue = (signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample]);
+            break;
+        case SND_FORMAT_FLOAT:
 #ifdef __LITTLE_ENDIAN__
-					theValue = (float)NSConvertSwappedFloatToHost(((NSSwappedFloat *)myData)[myActualSample]);
+            theValue = (float)NSConvertSwappedFloatToHost(((NSSwappedFloat *)myData)[myActualSample]);
 #else
-					theValue = ((float *)myData)[myActualSample];
+            theValue = ((float *)myData)[myActualSample];
 #endif
-					break;
-				case SND_FORMAT_DOUBLE:
+            break;
+        case SND_FORMAT_DOUBLE:
 #ifdef __LITTLE_ENDIAN__
-					theValue = NSConvertSwappedDoubleToHost(((NSSwappedDouble *)myData)[myActualSample]);
+            theValue = NSConvertSwappedDoubleToHost(((NSSwappedDouble *)myData)[myActualSample]);
 #else
-					theValue = ((double *)myData)[myActualSample];
+            theValue = ((double *)myData)[myActualSample];
 #endif
-					break;
-				default: /* just in case */
-					theValue = (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]);
-					break;
-			 }
-	return theValue;
+            break;
+        default: /* just in case */
+            theValue = (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]);
+            break;
+    }
+    return theValue;
 }
 double getSoundValueStereo(void *myData,int myType,int myActualSample)
 {
-	double theValue;
-			 switch (myType) {
-				case SND_FORMAT_LINEAR_8:
-					theValue = (((char *)myData)[myActualSample] +
-						((char *)myData)[myActualSample + 1]) * 0.5;
-					break;
-				case SND_FORMAT_MULAW_8:
-                                    theValue = SndiMulaw(((char *)myData)[myActualSample]);
-					break;
-				case SND_FORMAT_EMPHASIZED:
-				case SND_FORMAT_COMPRESSED:
-				case SND_FORMAT_COMPRESSED_EMPHASIZED:
-				case SND_FORMAT_DSP_DATA_16:
-				case SND_FORMAT_LINEAR_16:
-					theValue = (int)(((signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]) + 
-						(signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample + 1])) * 0.5);
-					break;
-				case SND_FORMAT_LINEAR_24:
-				case SND_FORMAT_DSP_DATA_24:
-					theValue = ((signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample]) +
-						(signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample + 1])) * 0.5;
-					break; /* don't know how to get 24 bit number! */
-				case SND_FORMAT_LINEAR_32:
-				case SND_FORMAT_DSP_DATA_32:
-					theValue = ((signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample]) +
-						(signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample + 1])) * 0.5;
-					break;
-				case SND_FORMAT_FLOAT:
+    double theValue;
+    switch (myType) {
+        case SND_FORMAT_LINEAR_8:
+            theValue = (((char *)myData)[myActualSample] +
+                    ((char *)myData)[myActualSample + 1]) * 0.5;
+            break;
+        case SND_FORMAT_MULAW_8:
+            theValue = SndiMulaw(((char *)myData)[myActualSample]);
+            break;
+        case SND_FORMAT_EMPHASIZED:
+        case SND_FORMAT_COMPRESSED:
+        case SND_FORMAT_COMPRESSED_EMPHASIZED:
+        case SND_FORMAT_DSP_DATA_16:
+        case SND_FORMAT_LINEAR_16:
+            theValue = (int)(((signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]) + 
+                    (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample + 1])) * 0.5);
+            break;
+        case SND_FORMAT_LINEAR_24:
+        case SND_FORMAT_DSP_DATA_24:
+            theValue = ((signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample]) +
+                    (signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample + 1])) * 0.5;
+            break; /* don't know how to get 24 bit number! */
+        case SND_FORMAT_LINEAR_32:
+        case SND_FORMAT_DSP_DATA_32:
+            theValue = ((signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample]) +
+                    (signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample + 1])) * 0.5;
+            break;
+        case SND_FORMAT_FLOAT:
 #ifdef __LITTLE_ENDIAN__
-					theValue = 0.5 * (NSConvertSwappedFloatToHost(((NSSwappedFloat *)myData)[myActualSample])
-						+ NSConvertSwappedFloatToHost(((NSSwappedFloat *)myData)[myActualSample + 1]));
+            theValue = 0.5 * (NSConvertSwappedFloatToHost(((NSSwappedFloat *)myData)[myActualSample])
+                    + NSConvertSwappedFloatToHost(((NSSwappedFloat *)myData)[myActualSample + 1]));
 #else
-					theValue = 0.5 * (((float *)myData)[myActualSample] +
-						((float *)myData)[myActualSample + 1]);
+            theValue = 0.5 * (((float *)myData)[myActualSample] +
+                    ((float *)myData)[myActualSample + 1]);
 #endif
-					break;
-				case SND_FORMAT_DOUBLE:
+            break;
+        case SND_FORMAT_DOUBLE:
 #ifdef __LITTLE_ENDIAN__
-					theValue = 0.5 * (NSConvertSwappedDoubleToHost(((NSSwappedDouble *)myData)[myActualSample])
-						+ NSConvertSwappedDoubleToHost(((NSSwappedDouble *)myData)[myActualSample + 1]));
+            theValue = 0.5 * (NSConvertSwappedDoubleToHost(((NSSwappedDouble *)myData)[myActualSample])
+                    + NSConvertSwappedDoubleToHost(((NSSwappedDouble *)myData)[myActualSample + 1]));
 #else
-					theValue = 0.5 * (((double *)myData)[myActualSample] +
-						((double *)myData)[myActualSample + 1]);
+            theValue = 0.5 * (((double *)myData)[myActualSample] +
+                    ((double *)myData)[myActualSample + 1]);
 #endif
-					break;
-				default: /* just in case */
-					theValue = 0.5 * ((signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]) +
-						(signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample + 1]));
-					break;
-			 }
-	return theValue;
+            break;
+        default: /* just in case */
+            theValue = 0.5 * ((signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]) +
+                    (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample + 1]));
+            break;
+    }
+    return theValue;
 }
 
 - (BOOL)invalidateCacheStartSample:(int)start end:(int)end
 {
-	int startPixel = start/reductionFactor;
-	int endPixel = end / reductionFactor;
-	if (startPixel < 0 || endPixel < startPixel) return NO;
-	return [self invalidateCacheStartPixel:startPixel end:endPixel];
+    int startPixel = start/reductionFactor;
+    int endPixel = end / reductionFactor;
+    if (startPixel < 0 || endPixel < startPixel) return NO;
+    return [self invalidateCacheStartPixel:startPixel end:endPixel];
 }
 - (BOOL)invalidateCacheStartPixel:(int)start end:(int)end
 {
-	int startOfCache;
-	int startpix,endpix;
-	int i;
-	SndDisplayData *theObj,*newObj;
-	if (!dataList) return YES;
-	if ((end != -1 && end < start) || start < 0) return NO;
-	if (end == -1) end = NSWidth([self bounds]) - 1;
-	
-	for (i = [dataList count] - 1;i >= 0 ; i--) {
-		theObj = [dataList objectAt:i];
-		startpix = [theObj startPixel];
-		endpix = [theObj endPixel];
-		if (startpix > end) continue; /* this cache is higher than region */
-		if (endpix < start) break; /* this cache is lower than region */
-		if (startpix >= start && startpix <= end &&
-		    endpix >= start && endpix <= end) { /* cache is enclosed in region, and deleted */
-			[dataList removeObjectAt:i];
-			continue;
-		}
-		if (startpix < start && endpix >= start && endpix <= end) {
-			/* cache starts before deletion region, so we chop off the end */
-			[theObj truncateToLastPixel:start-1];
-			break; /* assume this will be the last cache to consider */
-		}
-		if (startpix >= start && startpix <= end && endpix > end) {
-			/* tail end of cache lies outside region, so we lop off the first part */
-			[theObj truncateToFirstPixel:end + 1];
-			continue;
-		}
-		/* only option left: cache encloses region, so we must create new cache
-		 * for end, and truncate the first one
-		 */
-		startOfCache = [theObj startPixel];
-		newObj = [[SndDisplayData alloc] init];
-		[newObj setPixelDataMax:&[theObj pixelDataMax][end + 1 - startOfCache]
-			min:&[theObj pixelDataMin][end + 1 - startOfCache]
-			count:[theObj endPixel] - end
-			start:end+1];
-		[dataList insertObject:newObj at:i+1];
-		[theObj truncateToLastPixel:start-1];
-	}
-	return YES;
+    int startOfCache;
+    int startpix,endpix;
+    int i;
+    SndDisplayData *theObj,*newObj;
+    if (!dataList) return YES;
+    if ((end != -1 && end < start) || start < 0) return NO;
+    if (end == -1) end = NSWidth([self bounds]) - 1;
+
+    for (i = [dataList count] - 1;i >= 0 ; i--) {
+        theObj = [dataList objectAt:i];
+        startpix = [theObj startPixel];
+        endpix = [theObj endPixel];
+        if (startpix > end) continue; /* this cache is higher than region */
+        if (endpix < start) break; /* this cache is lower than region */
+        if (startpix >= start && startpix <= end &&
+            endpix >= start && endpix <= end) { /* cache is enclosed in region, and deleted */
+                [dataList removeObjectAt:i];
+                continue;
+        }
+        if (startpix < start && endpix >= start && endpix <= end) {
+            /* cache starts before deletion region, so we chop off the end */
+            [theObj truncateToLastPixel:start-1];
+            break; /* assume this will be the last cache to consider */
+        }
+        if (startpix >= start && startpix <= end && endpix > end) {
+            /* tail end of cache lies outside region, so we lop off the first part */
+            [theObj truncateToFirstPixel:end + 1];
+            continue;
+        }
+        /* only option left: cache encloses region, so we must create new cache
+                    * for end, and truncate the first one
+                    */
+        startOfCache = [theObj startPixel];
+        newObj = [[SndDisplayData alloc] init];
+        [newObj setPixelDataMax:&[theObj pixelDataMax][end + 1 - startOfCache]
+                min:&[theObj pixelDataMin][end + 1 - startOfCache]
+                count:[theObj endPixel] - end
+                start:end+1];
+        [dataList insertObject:newObj at:i+1];
+        [theObj truncateToLastPixel:start-1];
+    }
+    return YES;
 }
 
 - (void)invalidateCache /* blast 'em all away */
 {
-	if (!dataList) return;
-	[dataList freeObjects];
+    if (!dataList) return;
+    [dataList freeObjects];
 }
--(void)lockFocus
-{	[super lockFocus];
-}
+
 - (BOOL)isOpaque
-{	return YES;	}
-- (void)drawRect:(NSRect)rects;
+{  return YES;	}
+    
+- (void)drawRect:(NSRect)rects
 {
-	NSRect newRect,insetBounds,scaledSelRect;
-	int i,j=0;
-	BOOL frag=NO;
-	float thisMax,thisMin,maxNinety=0,minNinety=0,theValue,lastValue=0;
-	int direction = 0; /* 0 for up, 1 for down */
-	float ampScaler=1;/* bogus */
-	int type;
-	double maxAmp=32767;
-	void *theData;
-	int chanCount;
-	int sampCount;
-	int sampleSize=1;
-	int skipFactor=1,startX,endX;
-	float halfHeight=[self bounds].size.height * 0.5;
-	BOOL doStereo;
-	int whichChannel=0;
-	/* for stepping through data */
-	int actualBase,firstOfNext;
-	float actualBaseF,fONBase;
-	/* for working through caching: */
-	int currStartPoint,arrayPointer,cacheIndex;
-	/* holds the data to be drawn. Calculated from caches, or from examining sound data */
-	float 	*cacheMaxArray,*cacheMinArray;
-	BOOL optimize = (!svFlags.notOptimizedForSpeed && reductionFactor > optThreshold);
-	int m1,c1; /* max point and current counter in current fragged sound data segment */
-	SndDisplayData *currentCacheObject;	
+    NSRect newRect,insetBounds,scaledSelRect;
+    int i,j=0;
+    BOOL frag=NO;
+    float thisMax,thisMin,maxNinety=0,minNinety=0,theValue,lastValue=0;
+    int direction = 0; /* 0 for up, 1 for down */
+    float ampScaler=1;/* bogus */
+    int type;
+    double maxAmp=32767;
+    void *theData;
+    int chanCount;
+    int sampCount;
+    int sampleSize=1;
+    int skipFactor=1,startX,endX;
+    float halfHeight=[self bounds].size.height * 0.5;
+    BOOL doStereo;
+    int whichChannel=0;
+    /* for stepping through data */
+    int actualBase,firstOfNext;
+    float actualBaseF,fONBase;
+    /* for working through caching: */
+    int currStartPoint,arrayPointer,cacheIndex;
+    /* holds the data to be drawn. Calculated from caches, or from examining sound data */
+    float 	*cacheMaxArray,*cacheMinArray;
+    BOOL optimize = (!svFlags.notOptimizedForSpeed && reductionFactor > optThreshold);
+    int m1,c1; /* max point and current counter in current fragged sound data segment */
+    SndDisplayData *currentCacheObject;	
 #ifdef USE_PS_USER_PATHS
-	UserPath *arect; /* for DPSUser Paths, if used */
+    UserPath *arect; /* for DPSUser Paths, if used */
 #endif
 #ifdef DO_TIMING
-	id t4 = [Timing newWithTag:4];
-	int numTimingPasses = 100;
+    id t4 = [Timing newWithTag:4];
+    int numTimingPasses = 100;
 #endif
-        [[self window] disableFlushWindow];
-	[self hideCursor];
-        [[self window] enableFlushWindow];
+#ifdef QUARTZ_RENDERING
+    NSGraphicsContext *graphicsContext;
+    CGContextRef ctx;
 
-	insetBounds = [self bounds];
+    graphicsContext = [NSGraphicsContext currentContext];
+    ctx = [graphicsContext graphicsPort];
+    CGSetRGBStrokeColor(ctx, 1,0,0,1);
+    CGSetLineWidth(ctx, 2.0);
+
+    
+#endif
+    //[super drawRect:rects];//raf
+    //return;//raf
+    [[self window] disableFlushWindow];
+    [self hideCursor];
+    [[self window] enableFlushWindow];
+
+    insetBounds = [self bounds];
 //        printf("from %g to %g, size %d\n",NSMinX(rects),NSMaxX(rects),(int)NSWidth(rects));
-//	PSsetgray(backgroundGray);
-        [backgroundColour set];
-	newRect = rects;
-	newRect = NSIntersectionRect(insetBounds , newRect);
-	NSRectFill(newRect);
-	if (svFlags.bezeled) {
-            NSRectEdge mySides[] = {NSMinYEdge, NSMaxYEdge,
-						 NSMaxXEdge, NSMaxYEdge, 
-						 NSMinXEdge, NSMinYEdge, 
-                         NSMinXEdge, NSMaxXEdge};
-		float myGrays[] = { NSWhite, NSDarkGray,
-							NSWhite, NSDarkGray,
-							NSDarkGray, NSLightGray, 
-                        	NSDarkGray, NSLightGray};
-		insetBounds = [self bounds];
-		insetBounds  = NSDrawTiledRects(insetBounds , rects , mySides, myGrays, 8);
-		}
-	if (!sound) return;
-	sampCount = [sound sampleCount];
-	if (!sampCount) return; /* do I need to do any other cleanup here? */
-	type = [sound dataFormat];
-        frag = (((SndSoundStruct *)[sound soundStruct])->dataFormat == SND_FORMAT_INDIRECT);
+    [backgroundColour set];
+    newRect = rects;
+    newRect = NSIntersectionRect(insetBounds , newRect);
+    NSRectFill(newRect);
+//        printf("filling %g , %g, w %d h %d\n",NSMinX(newRect),NSMinY(newRect),(int)NSWidth(newRect),(int)NSHeight(newRect));
+    if (svFlags.bezeled) {
+        NSRectEdge mySides[] = {NSMinYEdge, NSMaxYEdge,
+                                NSMaxXEdge, NSMaxYEdge, 
+                                NSMinXEdge, NSMinYEdge, 
+                                NSMinXEdge, NSMaxXEdge};
+            float myGrays[] = { NSWhite, NSDarkGray,
+                                NSWhite, NSDarkGray,
+                                NSDarkGray, NSLightGray, 
+                                NSDarkGray, NSLightGray};
+            insetBounds = [self bounds];
+            insetBounds  = NSDrawTiledRects(insetBounds , rects , mySides, myGrays, 8);
+            }
+    if (!sound) return;
+    sampCount = [sound sampleCount];
+    if (!sampCount) return; /* do I need to do any other cleanup here? */
+    type = [sound dataFormat];
+    frag = (((SndSoundStruct *)[sound soundStruct])->dataFormat == SND_FORMAT_INDIRECT);
 
-	if (type == SND_FORMAT_LINEAR_8) { maxAmp = 127; sampleSize = 1;}
-	else if (type == SND_FORMAT_LINEAR_24 || type == SND_FORMAT_DSP_DATA_24)
-		{ maxAmp = (2 << 23) - 1; sampleSize = 3;}
-	else if (type == SND_FORMAT_LINEAR_32 || type == SND_FORMAT_DSP_DATA_32)
-		{ maxAmp = (2 << 31) - 1; sampleSize = 4;}
-	else if (type == SND_FORMAT_MULAW_8 || 
-			type == SND_FORMAT_LINEAR_16 || 
-			type == SND_FORMAT_EMPHASIZED || 
-			type == SND_FORMAT_COMPRESSED || 
-			type == SND_FORMAT_COMPRESSED_EMPHASIZED || 
-			type == SND_FORMAT_DSP_DATA_16)
-		{ maxAmp = 32767; sampleSize = 2;}
-	else { maxAmp = 32767; sampleSize = 4;}; /* floating point: should search for max value */
-	if (type == SND_FORMAT_MULAW_8) sampleSize = 1;
-	chanCount = [sound channelCount];
-	theData = [(Snd *)sound data];
-	ampScaler = [self bounds].size.height * .5 / maxAmp;
+    if (type == SND_FORMAT_LINEAR_8) { maxAmp = 127; sampleSize = 1;}
+    else if (type == SND_FORMAT_LINEAR_24 || type == SND_FORMAT_DSP_DATA_24)
+            { maxAmp = (2 << 23) - 1; sampleSize = 3;}
+    else if (type == SND_FORMAT_LINEAR_32 || type == SND_FORMAT_DSP_DATA_32)
+            { maxAmp = (2 << 31) - 1; sampleSize = 4;}
+    else if (type == SND_FORMAT_MULAW_8 || 
+                    type == SND_FORMAT_LINEAR_16 || 
+                    type == SND_FORMAT_EMPHASIZED || 
+                    type == SND_FORMAT_COMPRESSED || 
+                    type == SND_FORMAT_COMPRESSED_EMPHASIZED || 
+                    type == SND_FORMAT_DSP_DATA_16)
+            { maxAmp = 32767; sampleSize = 2;}
+    else { maxAmp = 32767; sampleSize = 4;}; /* floating point: should search for max value */
+    if (type == SND_FORMAT_MULAW_8) sampleSize = 1;
+    chanCount = [sound channelCount];
+    theData = [(Snd *)sound data];
+    ampScaler = [self bounds].size.height * .5 / maxAmp;
 
-	/* check to see if user desires L&R channels summed.
-	 * If so, check to see if there are 2 channels to sum.
-	 * If sound is mono, just do 'left' channel
-	 */
-	doStereo = (stereoMode == SV_STEREOMODE);
-	if (!doStereo) {
-		if (stereoMode > chanCount - 1) whichChannel = chanCount-1;
-		else whichChannel = stereoMode;
-		}
-	if (doStereo) if (chanCount < 2) { doStereo = NO; whichChannel = 0;}
-	
-	/* does the following:
-	 * 1. set up loop from frame left to right, stepping 1 pixel
-	 * 2. scan sound data for time equiv to 1 pixel, finding max and min vals
-	 * 3. plot max and min values, and remember last ones.
-	 */
-	
-	cacheMaxArray = (float *)malloc(sizeof(float) * (NSWidth(rects) + 3));
-	cacheMinArray = (float *)malloc(sizeof(float) * (NSWidth(rects) + 3));
-	PSsetlinewidth(0.0);
+    /* check to see if user desires L&R channels summed.
+          * If so, check to see if there are 2 channels to sum.
+          * If sound is mono, just do 'left' channel
+          */
+    doStereo = (stereoMode == SV_STEREOMODE);
+    if (!doStereo) {
+            if (stereoMode > chanCount - 1) whichChannel = chanCount-1;
+            else whichChannel = stereoMode;
+            }
+    if (doStereo) if (chanCount < 2) { doStereo = NO; whichChannel = 0;}
 
-	if (reductionFactor > 1) {
-		startX = NSMinX(rects);
-		if (NSMinX(rects) > 0.9)
-			startX--; //we need to draw a line leading to first pixel
-		endX = NSMaxX(rects);
-		if (displayMode == NX_SOUNDVIEW_MINMAX && endX < NSMaxX([self frame]))
-			endX++; //we need to draw a line from last pixel
-	
+    /* does the following:
+          * 1. set up loop from frame left to right, stepping 1 pixel
+          * 2. scan sound data for time equiv to 1 pixel, finding max and min vals
+          * 3. plot max and min values, and remember last ones.
+          */
+
+    cacheMaxArray = (float *)malloc(sizeof(float) * (NSWidth(rects) + 3));
+    cacheMinArray = (float *)malloc(sizeof(float) * (NSWidth(rects) + 3));
+#ifndef QUARTZ_RENDERING
+    PSsetlinewidth(0.0);//:ps:
+#else
+    {
+        CGSetLineWidth(ctx, 1);
+    }
+#endif
+
+    if (reductionFactor > 1) {
+        startX = NSMinX(rects);
+        if (NSMinX(rects) > 0.9)
+                startX--; //we need to draw a line leading to first pixel
+        endX = NSMaxX(rects);
+        if (displayMode == NX_SOUNDVIEW_MINMAX && endX < NSMaxX([self frame]))
+                endX++; //we need to draw a line from last pixel
+
 /* STARTING MAIN CACHE LOOP HERE */
 
-		currStartPoint = startX;
-		arrayPointer = 0;
-	   while (currStartPoint <= endX) {
-	   	int nextCache;
-		int localMax;
-		int leadsOnFrom;
-		/* following returns leadsOn == YES iff cacheIndex == -1 && (currStartPoint - 1) is in previous cache */
-		cacheIndex = [dataList findObjectContaining:currStartPoint next:&nextCache leadsOnFrom:&leadsOnFrom];
-		if (cacheIndex != -1) {
-			int k,numToMove,cachedStart;
-			float *maxVals,*minVals;
+        currStartPoint = startX;
+        arrayPointer = 0;
+                while (currStartPoint <= endX) {
+        int nextCache;
+        int localMax;
+        int leadsOnFrom;
+        /* following returns leadsOn == YES iff cacheIndex == -1 && (currStartPoint - 1) is in previous cache */
+        cacheIndex = [dataList findObjectContaining:currStartPoint next:&nextCache leadsOnFrom:&leadsOnFrom];
+        if (cacheIndex != -1) {
+            int k,numToMove,cachedStart;
+            float *maxVals,*minVals;
 //			printf("Using cached data %d\n",cacheIndex);
-			currentCacheObject = (SndDisplayData *)[dataList objectAt:cacheIndex];
-			numToMove = [currentCacheObject endPixel];
-			cachedStart = [currentCacheObject startPixel];
-			if (numToMove > endX) numToMove = endX - currStartPoint + 1;
-			else numToMove = numToMove - currStartPoint + 1;
-			maxVals = [currentCacheObject pixelDataMax];
-			minVals = [currentCacheObject pixelDataMin];
+            currentCacheObject = (SndDisplayData *)[dataList objectAt:cacheIndex];
+            numToMove = [currentCacheObject endPixel];
+            cachedStart = [currentCacheObject startPixel];
+            if (numToMove > endX) numToMove = endX - currStartPoint + 1;
+            else numToMove = numToMove - currStartPoint + 1;
+            maxVals = [currentCacheObject pixelDataMax];
+            minVals = [currentCacheObject pixelDataMin];
 //		     printf("reading cache from %d, for %d\n", currStartPoint - cachedStart, numToMove);
-			for (k=0;k<numToMove;k++) {
-				cacheMaxArray[currStartPoint + k - startX] = maxVals[k + currStartPoint - cachedStart];
-				cacheMinArray[currStartPoint + k - startX] = minVals[k + currStartPoint - cachedStart];
-				}
-			currStartPoint += k;
-			continue;
-		}
-		if (nextCache != -1) {
-			localMax = [[dataList objectAt:nextCache] startPixel] - 1;
-			if (localMax > endX) localMax = endX;
-			}
-		else localMax = endX;
-		
-		/* set up first read point in sound data */
-		actualBaseF =  (float)currStartPoint * reductionFactor;
-		if ((int)actualBaseF != ceil(actualBaseF)) actualBase = ceil(actualBaseF);
-		else actualBase = (int)(actualBaseF);
-		j = firstOfNext = actualBase; /* just initialise it for now */
-		theData = getDataAddresses(actualBase,
-				[sound soundStruct],
-				&m1, 
-				&c1);
+            for (k=0;k<numToMove;k++) {
+                    cacheMaxArray[currStartPoint + k - startX] = maxVals[k + currStartPoint - cachedStart];
+                    cacheMinArray[currStartPoint + k - startX] = minVals[k + currStartPoint - cachedStart];
+                    }
+            currStartPoint += k;
+            continue;
+        }
+        if (nextCache != -1) {
+            localMax = [[dataList objectAt:nextCache] startPixel] - 1;
+            if (localMax > endX) localMax = endX;
+        }
+        else localMax = endX;
 
-		for (i = currStartPoint;i<=localMax;i++) {
-			BOOL first=YES;
-			thisMax = 0.0;
-			thisMin = 0.0;
-			if (i * reductionFactor >= sampCount) break;
-			skipFactor = 1;
-			fONBase = (float)(i+1) * reductionFactor;
-			if ((int)fONBase != ceil(fONBase)) firstOfNext = ceil(fONBase);
-			else firstOfNext = (int)(fONBase);
+        /* set up first read point in sound data */
+        actualBaseF =  (float)currStartPoint * reductionFactor;
+        if ((int)actualBaseF != ceil(actualBaseF)) actualBase = ceil(actualBaseF);
+        else actualBase = (int)(actualBaseF);
+        j = firstOfNext = actualBase; /* just initialise it for now */
+        theData = getDataAddresses(actualBase,
+                        [sound soundStruct],
+                        &m1, 
+                        &c1);
 
-			c1 += (actualBase - j); /* have to increment c1 by same amount as j
-									 * although we can simply assign j
-									 */
-			j = actualBase;
-			/* need to establish initial values for base and counter here, for fragged sounds */
-			while (j < firstOfNext) {
-				if (c1 >= m1) theData = getDataAddresses(actualBase,
-								[sound soundStruct],&m1,&c1);
-				if (j < sampCount)
-					theValue = doStereo ? 
-						getSoundValueStereo(theData,type,c1 * chanCount) :
-						getSoundValue(theData, type, c1 * chanCount + whichChannel);
-				else theValue = 0;
-				if (first) {
-					minNinety = thisMin = theValue;
-					maxNinety = thisMax = theValue;
-					first = NO;
-				}
-				else {
-					if (theValue < thisMin) {
-						thisMin = theValue;
-						if (optimize) minNinety = thisMin + peakFraction * abs((int)thisMin);
-					}
-					else if (theValue > thisMax) {
-						thisMax = theValue;
-						if (optimize) maxNinety = thisMax - peakFraction * abs((int) thisMax);
-					}
-				}
-				if (optimize) {
-					direction = (theValue < lastValue);
-					if ((!direction && (theValue > maxNinety))
-						|| (direction && (theValue < minNinety))) skipFactor = 1;
-					else skipFactor = optSkip;
-					}
-				lastValue = theValue;
-				j += skipFactor;
-				c1 += skipFactor;
-			}
-			cacheMaxArray[i-startX] = thisMax;
-			cacheMinArray[i-startX] = thisMin;
-			actualBase = firstOfNext;
-		} /* 'for' loop for creating new cache data */
-		/* now do the following:
-		 * if we are following on from last cache, append our data to that cache
-		 *   otherwise create new cache...
-		 * Increase currStartPoint
-		 * Continue...
-		 */
-		if (leadsOnFrom != -1) { /* we have calculated a new region which exactly appends an existing cache */
-			SndDisplayData * cacheToExtend = (SndDisplayData *)[dataList objectAt:leadsOnFrom];
-			[cacheToExtend addPixelDataMax:&cacheMaxArray[currStartPoint - startX]
-				  min:&cacheMinArray[currStartPoint - startX]
-				count:localMax - currStartPoint + 1
-				 from:[cacheToExtend endPixel] + 1];
-//			printf("adding to cache: from %d count %d\n", [cacheToExtend endPixel] + 1, localMax - currStartPoint + 1);
-		}
-		else {
-			SndDisplayData *newCache = [[SndDisplayData alloc] init];
-			[newCache setPixelDataMax:&cacheMaxArray[currStartPoint - startX]
-			 min:&cacheMinArray[currStartPoint - startX]
-			 count:localMax - currStartPoint + 1
-			 start:(int)currStartPoint];
-			[dataList addObject:newCache];
-			[dataList sort];
-//			printf("setting new cache: start %d count %d\n", currStartPoint, localMax - currStartPoint + 1);
-		}
-		/* now see if we should join up to following cache */
-		cacheIndex = [dataList findObjectContaining:localMax + 1 next:&nextCache leadsOnFrom:&leadsOnFrom];
-		if (cacheIndex != -1 && leadsOnFrom != -1) {
-			[[dataList objectAt:leadsOnFrom] addDataFrom:[dataList objectAt:cacheIndex]];
-			[dataList removeObjectAt:cacheIndex];
-//			printf("Compacted %d with %d. Now %d caches\n", leadsOnFrom, cacheIndex,[dataList count]);
-		}
-		
-		currStartPoint = localMax + 1;
-	   } /* while loop for caching */
+        for (i = currStartPoint;i<=localMax;i++) {
+            BOOL first=YES;
+            thisMax = 0.0;
+            thisMin = 0.0;
+            if (i * reductionFactor >= sampCount) break;
+            skipFactor = 1;
+            fONBase = (float)(i+1) * reductionFactor;
+            if ((int)fONBase != ceil(fONBase)) firstOfNext = ceil(fONBase);
+            else firstOfNext = (int)(fONBase);
+
+            c1 += (actualBase - j); /* have to increment c1 by same amount as j
+                                                                        * although we can simply assign j
+                                                                        */
+            j = actualBase;
+            /* need to establish initial values for base and counter here, for fragged sounds */
+            while (j < firstOfNext) {
+                if (c1 >= m1) theData = getDataAddresses(actualBase,
+                                                [sound soundStruct],&m1,&c1);
+                if (j < sampCount)
+                    theValue = doStereo ? 
+                            getSoundValueStereo(theData,type,c1 * chanCount) :
+                            getSoundValue(theData, type, c1 * chanCount + whichChannel);
+                else theValue = 0;
+                if (first) {
+                    minNinety = thisMin = theValue;
+                    maxNinety = thisMax = theValue;
+                    first = NO;
+                }
+                else {
+                    if (theValue < thisMin) {
+                        thisMin = theValue;
+                        if (optimize) minNinety = thisMin + peakFraction * abs((int)thisMin);
+                    }
+                    else if (theValue > thisMax) {
+                        thisMax = theValue;
+                        if (optimize) maxNinety = thisMax - peakFraction * abs((int) thisMax);
+                    }
+                }
+                if (optimize) {
+                    direction = (theValue < lastValue);
+                    if ((!direction && (theValue > maxNinety))
+                            || (direction && (theValue < minNinety))) skipFactor = 1;
+                    else skipFactor = optSkip;
+                    }
+                lastValue = theValue;
+                j += skipFactor;
+                c1 += skipFactor;
+            }
+            cacheMaxArray[i-startX] = thisMax;
+            cacheMinArray[i-startX] = thisMin;
+            actualBase = firstOfNext;
+        } /* 'for' loop for creating new cache data */
+        /* now do the following:
+                    * if we are following on from last cache, append our data to that cache
+                    *   otherwise create new cache...
+                    * Increase currStartPoint
+                    * Continue...
+                    */
+        if (leadsOnFrom != -1) { /* we have calculated a new region which exactly appends an existing cache */
+            SndDisplayData * cacheToExtend = (SndDisplayData *)[dataList objectAt:leadsOnFrom];
+            [cacheToExtend addPixelDataMax:&cacheMaxArray[currStartPoint - startX]
+                                       min:&cacheMinArray[currStartPoint - startX]
+                                     count:localMax - currStartPoint + 1
+                                      from:[cacheToExtend endPixel] + 1];
+//	printf("adding to cache: from %d count %d\n", [cacheToExtend endPixel] + 1, localMax - currStartPoint + 1);
+        }
+        else {
+            SndDisplayData *newCache = [[SndDisplayData alloc] init];
+            [newCache setPixelDataMax:&cacheMaxArray[currStartPoint - startX]
+                                  min:&cacheMinArray[currStartPoint - startX]
+                                count:localMax - currStartPoint + 1
+                                start:(int)currStartPoint];
+            [dataList addObject:newCache];
+            [dataList sort];
+//	printf("setting new cache: start %d count %d\n", currStartPoint, localMax - currStartPoint + 1);
+        }
+        /* now see if we should join up to following cache */
+        cacheIndex = [dataList findObjectContaining:localMax + 1 next:&nextCache leadsOnFrom:&leadsOnFrom];
+        if (cacheIndex != -1 && leadsOnFrom != -1) {
+            [[dataList objectAt:leadsOnFrom] addDataFrom:[dataList objectAt:cacheIndex]];
+            [dataList removeObjectAt:cacheIndex];
+//	printf("Compacted %d with %d. Now %d caches\n", leadsOnFrom, cacheIndex,[dataList count]);
+        }
+
+        currStartPoint = localMax + 1;
+                } /* while loop for caching */
 #ifdef DO_TIMING
-        [t4 reset];
-			for (; numTimingPasses ; numTimingPasses--) {
-            [t4 enter:PSTIME];
+    [t4 reset];
+    for (; numTimingPasses ; numTimingPasses--) {
+        [t4 enter:PSTIME];
 #endif
-#ifdef USE_PS_USER_PATHS
-		arect = newUserPath();
-		beginUserPath(arect,NO);
-		
-		 if (displayMode == NX_SOUNDVIEW_WAVE) {
-			float max1 = cacheMaxArray[0] * ampScaler + halfHeight;
-			float min1 = cacheMinArray[0] * ampScaler + halfHeight;
-		 	if (endX >= NSWidth([self frame])) endX = NSWidth([self frame]) - 1;
-			for (i = startX;i<=endX;i++) {
-				float max2 = cacheMaxArray[i + 1 - startX] * ampScaler + halfHeight;
-				float min2 = cacheMinArray[i + 1 - startX] * ampScaler + halfHeight;
-				UPmoveto(arect, i + 0.5, max1);
-				UPlineto(arect, i + 0.5, min1);
-				if (i < endX) {/* still one more cached point */
-					if ((min2 <= max1 && min2 >= min1) 			/* if part of the line          */
-					   || (max2 >= min1 && max2 <= max1) 		/*    is outside the one before */
-					   || (max2 >= max1 && min2 <= min1)) {		/* if both points encompass */
-					   		max1 = max2; min1 = min2;
-							continue;
-					}
-					/* so we draw line from appropriate end, to start of next line */
-					if (min2 > max1 && max1 != min1) UPmoveto(arect, i+0.5, max1); /*reverse to top if necessary */
-					UPlineto(arect, i+1+0.5, (min2 > max1) ? min2 : max2);
-					max1 = max2; min1 = min2;
-				}
-			}
-		}
-		else {
-			UPmoveto(arect,startX+0.5, cacheMaxArray[0] * ampScaler + halfHeight);
-			for (i = startX;i<endX;i++) {
-				UPlineto(arect, i+0.5, cacheMaxArray[i - startX]* ampScaler + halfHeight);
-			}
-			UPmoveto(arect, startX+0.5, cacheMinArray[0] * ampScaler + halfHeight);
-			for (i = startX;i<endX;i++) {
-				UPlineto(arect, i+0.5, cacheMinArray[i - startX] * ampScaler + halfHeight);
-			}
-		}
-		endUserPath(arect,dps_ustroke);
-//		PSsetgray(foregroundGray);
-                [foregroundColour set];
-		sendUserPath(arect);
-		freeUserPath(arect);
+#ifndef QUARTZ_RENDERING
+  #ifdef USE_PS_USER_PATHS
+        //:ps:
+        arect = newUserPath();
+        beginUserPath(arect,NO);
+
+        if (displayMode == NX_SOUNDVIEW_WAVE) {
+            float max1 = cacheMaxArray[0] * ampScaler + halfHeight;
+            float min1 = cacheMinArray[0] * ampScaler + halfHeight;
+            if (endX >= NSWidth([self frame])) endX = NSWidth([self frame]) - 1;
+            for (i = startX;i<=endX;i++) {
+                float max2 = cacheMaxArray[i + 1 - startX] * ampScaler + halfHeight;
+                float min2 = cacheMinArray[i + 1 - startX] * ampScaler + halfHeight;
+                UPmoveto(arect, i + 0.5, max1);
+                UPlineto(arect, i + 0.5, min1);
+                if (i < endX) {/* still one more cached point */
+                    if ((min2 <= max1 && min2 >= min1) 			/* if part of the line          */
+                        || (max2 >= min1 && max2 <= max1) 		/*    is outside the one before */
+                        || (max2 >= max1 && min2 <= min1)) {		/* if both points encompass */
+                        max1 = max2; min1 = min2;
+                        continue;
+                    }
+                    /* so we draw line from appropriate end, to start of next line */
+                    if (min2 > max1 && max1 != min1) UPmoveto(arect, i+0.5, max1); /*reverse to top if necessary */
+                    UPlineto(arect, i+1+0.5, (min2 > max1) ? min2 : max2);
+                    max1 = max2; min1 = min2;
+                }
+            }
+        }
+        else {
+            UPmoveto(arect,startX+0.5, cacheMaxArray[0] * ampScaler + halfHeight);
+            for (i = startX;i<endX;i++) {
+                UPlineto(arect, i+0.5, cacheMaxArray[i - startX]* ampScaler + halfHeight);
+            }
+            UPmoveto(arect, startX+0.5, cacheMinArray[0] * ampScaler + halfHeight);
+            for (i = startX;i<endX;i++) {
+                UPlineto(arect, i+0.5, cacheMinArray[i - startX] * ampScaler + halfHeight);
+            }
+        }
+        endUserPath(arect,dps_ustroke);
+        [foregroundColour set];
+        sendUserPath(arect);
+        freeUserPath(arect);
+  #else
+        PSnewpath();
+        if (displayMode == NX_SOUNDVIEW_WAVE) {
+            float max1 = cacheMaxArray[0] * ampScaler + halfHeight;
+            float min1 = cacheMinArray[0] * ampScaler + halfHeight;
+            if (endX >= NSWidth([self frame])) endX = NSWidth([self frame]) - 1;
+            for (i = startX;i<endX;i++) {
+                float max2 = cacheMaxArray[i + 1 - startX] * ampScaler + halfHeight;
+                float min2 = cacheMinArray[i + 1 - startX] * ampScaler + halfHeight;
+                PSmoveto(i+0.5, max1);
+                PSlineto(i+0.5, min1);
+                if (i < endX) {/* still one more cached point */
+                    if ((min2 <= max1 && min2 >= min1) 			/* if part of the line          */
+                        || (max2 >= min1 && max2 <= max1) 		/*    is outside the one before */
+                        || (max2 >= max1 && min2 <= min1)) {		/* if both points encompass */
+                        max1 = max2; min1 = min2;
+                        continue;
+                    }
+                    /* so we draw line from appropriate end, to start of next line */
+                    if (min2 > max1 && max1 != min1) PSmoveto(i+0.5, max1); /*reverse to top if necessary */
+                    PSlineto(i+1+0.5, (min2 > max1) ? min2 : max2);
+                    max1 = max2; min1 = min2;
+                }
+            }
+        }
+        else {
+            PSmoveto(startX+0.5, cacheMaxArray[0] * ampScaler + halfHeight);
+            for (i = startX;i<endX;i++) {
+                PSlineto(i+0.5, cacheMaxArray[i - startX]* ampScaler + halfHeight);
+            }
+            PSmoveto(startX+0.5, cacheMinArray[0] * ampScaler + halfHeight);
+            for (i = startX;i<endX;i++) {
+                PSlineto(i+0.5, cacheMinArray[i - startX]* ampScaler + halfHeight);
+            }
+        }
+        [foregroundColour set];
+        PSstroke();
+  #endif
 #else
-		PSnewpath();
-		if (displayMode == NX_SOUNDVIEW_WAVE) {
-			float max1 = cacheMaxArray[0] * ampScaler + halfHeight;
-			float min1 = cacheMinArray[0] * ampScaler + halfHeight;
-		 	if (endX >= NSWidth([self frame])) endX = NSWidth([self frame]) - 1;
-			for (i = startX;i<endX;i++) {
-				float max2 = cacheMaxArray[i + 1 - startX] * ampScaler + halfHeight;
-				float min2 = cacheMinArray[i + 1 - startX] * ampScaler + halfHeight;
-				PSmoveto(i+0.5, max1);
-				PSlineto(i+0.5, min1);
-				if (i < endX) {/* still one more cached point */
-					if ((min2 <= max1 && min2 >= min1) 			/* if part of the line          */
-					   || (max2 >= min1 && max2 <= max1) 		/*    is outside the one before */
-					   || (max2 >= max1 && min2 <= min1)) {		/* if both points encompass */
-					   		max1 = max2; min1 = min2;
-							continue;
-					}
-					/* so we draw line from appropriate end, to start of next line */
-					if (min2 > max1 && max1 != min1) PSmoveto(i+0.5, max1); /*reverse to top if necessary */
-					PSlineto(i+1+0.5, (min2 > max1) ? min2 : max2);
-					max1 = max2; min1 = min2;
-				}
-			}
-		}
-		else {
-			PSmoveto(startX+0.5, cacheMaxArray[0] * ampScaler + halfHeight);
-			for (i = startX;i<endX;i++) {
-				PSlineto(i+0.5, cacheMaxArray[i - startX]* ampScaler + halfHeight);
-			}
-			PSmoveto(startX+0.5, cacheMinArray[0] * ampScaler + halfHeight);
-			for (i = startX;i<endX;i++) {
-				PSlineto(i+0.5, cacheMinArray[i - startX]* ampScaler + halfHeight);
-			}
-		}
-//		PSsetgray(foregroundGray);
-		[foregroundColour set];
-		PSstroke();
+//QUARTZ_RENDERING
+    CGNewPath(ctx);
+    if (displayMode == NX_SOUNDVIEW_WAVE) {
+        float max1 = cacheMaxArray[0] * ampScaler + halfHeight;
+        float min1 = cacheMinArray[0] * ampScaler + halfHeight;
+        if (endX >= NSWidth([self frame])) endX = NSWidth([self frame]) - 1;
+        for (i = startX;i<endX;i++) {
+            float max2 = cacheMaxArray[i + 1 - startX] * ampScaler + halfHeight;
+            float min2 = cacheMinArray[i + 1 - startX] * ampScaler + halfHeight;
+            CGMoveTo(ctx,i+0.5, max1);
+            CGLineTo(ctx,i+0.5, min1);
+            if (i < endX) {/* still one more cached point */
+                if ((min2 <= max1 && min2 >= min1) 			/* if part of the line          */
+                    || (max2 >= min1 && max2 <= max1) 		/*    is outside the one before */
+                    || (max2 >= max1 && min2 <= min1)) {		/* if both points encompass */
+                    max1 = max2; min1 = min2;
+                    continue;
+                }
+                /* so we draw line from appropriate end, to start of next line */
+                if (min2 > max1 && max1 != min1) CGMoveTo(ctx,i+0.5, max1); /*reverse to top if necessary */
+                CGLineTo(ctx,i+1+0.5, (min2 > max1) ? min2 : max2);
+                max1 = max2; min1 = min2;
+            }
+        }
+    }
+    else {
+        CGMoveTo(ctx,startX+0.5, cacheMaxArray[0] * ampScaler + halfHeight);
+        for (i = startX;i<endX;i++) {
+            CGLineTo(ctx,i+0.5, cacheMaxArray[i - startX]* ampScaler + halfHeight);
+        }
+        CGMoveTo(ctx,startX+0.5, cacheMinArray[0] * ampScaler + halfHeight);
+        for (i = startX;i<endX;i++) {
+            CGLineTo(ctx,i+0.5, cacheMinArray[i - startX]* ampScaler + halfHeight);
+        }
+}
+[[NSColor redColor] set];
+CGStroke(ctx);
+
 #endif
 #ifdef DO_TIMING
-        [t4 leave];
-		}
-		printf("Timing: walltime %g apptime %g PStime %g\n",[t4 cumWallTime],[t4 cumAppTime],[t4 cumPSTime]);
+[t4 leave];
+        }
+        printf("Timing: walltime %g apptime %g PStime %g\n",[t4 cumWallTime],[t4 cumAppTime],[t4 cumPSTime]);
 #endif
-	}
-	else { /* I don't bother caching here, as it's so quick to grab actual data */
-		int myLast;
-		float theValue;
-		i = (int)((float)NSMinX(rects) * (float)reductionFactor); /*first sample*/
-		if (i > 0) i--;
-		theData = getDataAddresses(i,
-				[sound soundStruct],
-				&m1, 
-				&c1);
-		myLast = (int)((float)(NSMaxX(rects)) *
-			(float)reductionFactor) + 1; /* last sample */
-		if (myLast >= sampCount) myLast = sampCount - 1;
-		theValue = doStereo ? 
-			getSoundValueStereo(theData,type, c1 * chanCount) :
-			getSoundValue(theData, type, c1 * chanCount + whichChannel);
+    }
+    else { /* I don't bother caching here, as it's so quick to grab actual data */
+        int myLast;
+        float theValue;
+        i = (int)((float)NSMinX(rects) * (float)reductionFactor); /*first sample*/
+        if (i > 0) i--;
+        theData = getDataAddresses(i,
+                        [sound soundStruct],
+                        &m1, 
+                        &c1);
+        myLast = (int)((float)(NSMaxX(rects)) *
+                (float)reductionFactor) + 1; /* last sample */
+        if (myLast >= sampCount) myLast = sampCount - 1;
+        theValue = doStereo ? 
+            getSoundValueStereo(theData,type, c1 * chanCount) :
+            getSoundValue(theData, type, c1 * chanCount + whichChannel);
 
-		theValue = theValue * ampScaler + halfHeight;
-		/* establish initial point */
-		j = (float)((float)i / (float)reductionFactor);
-		PSmoveto((int)j + 0.5, theValue);
-		while (i <= myLast) {
-			if (c1 >= m1) theData = getDataAddresses(i,
-							[sound soundStruct],&m1,&c1);
-			theValue = doStereo ? 
-				getSoundValueStereo(theData,type,c1 * chanCount) :
-				getSoundValue(theData, type, c1 * chanCount + whichChannel);
-			theValue = theValue * ampScaler + halfHeight;		
-			j = (float)((float)i / (float)reductionFactor);
-			PSlineto((int)j+0.5, theValue);
-			if (svFlags.drawsCrosses && reductionFactor <= CROSSTHRESH) {
-				PSrmoveto(0,3);
-				PSrlineto(0,-6);
-				PSrmoveto(0,3);
-				}
-			i++;
-			c1++;
-		}
-//		PSsetgray(foregroundGray);
-                [foregroundColour set];
-		PSstroke();
-	}
-	free(cacheMaxArray);
-	free(cacheMinArray);
-	if (NSWidth(selectionRect) < 0.1) {
-                [[self window] disableFlushWindow];
-                [self showCursor];
-                [[self window] enableFlushWindow];
-		return; /* zero compare not good idea? */
-	}
-	scaledSelRect = selectionRect;
-	scaledSelRect.origin.x = (int)((float)NSMinX(selectionRect) / (float)reductionFactor);
-	scaledSelRect.size.width = (int)((NSMaxX(selectionRect) - 1) / reductionFactor)
-		 - NSMinX(scaledSelRect) + 1;
-	
-	if (!((NSMinX(scaledSelRect) >= NSMinX(rects) && NSMinX(scaledSelRect) <= NSMaxX(rects)) ||
-	    (NSMaxX(scaledSelRect) >= NSMinX(rects) && NSMaxX(scaledSelRect) <= NSMaxX(rects)) ||
-	    (NSMinX(scaledSelRect) <= NSMinX(rects) && NSMaxX(scaledSelRect) >= NSMaxX(rects))
-	    ))
-		return;
-	else {
-		NSRect highlightRect = [self bounds];
+        theValue = theValue * ampScaler + halfHeight;
+        /* establish initial point */
+        j = (float)((float)i / (float)reductionFactor);
+#ifndef QUARTZ_RENDERING
+        PSmoveto((int)j + 0.5, theValue);
+#else
+        CGMoveTo(ctx, (int)j + 0.5, theValue);
+#endif
+        while (i <= myLast) {
+            if (c1 >= m1) theData = getDataAddresses(i,
+                                    [sound soundStruct],&m1,&c1);
+            theValue = doStereo ? 
+                getSoundValueStereo(theData,type,c1 * chanCount) :
+                getSoundValue(theData, type, c1 * chanCount + whichChannel);
+            theValue = theValue * ampScaler + halfHeight;		
+            j = (float)((float)i / (float)reductionFactor);
+#ifndef QUARTZ_RENDERING
+            PSlineto((int)j+0.5, theValue);
+            if (svFlags.drawsCrosses && reductionFactor <= CROSSTHRESH) {
+                PSrmoveto(0,3);
+                PSrlineto(0,-6);
+                PSrmoveto(0,3);
+            }
+#else
+            CGLineTo(ctx,(int)j+0.5, theValue);
+            if (svFlags.drawsCrosses && reductionFactor <= CROSSTHRESH) {
+                CGRMoveTo(ctx,0,3);
+                CGRLineTo(ctx,0,-6);
+                CGRMoveTo(ctx,0,3);
+            }
+
+#endif
+            i++;
+            c1++;
+        }
+        [foregroundColour set];
+#ifndef QUARTZ_RENDERING
+        PSstroke();
+#else
+        CGStroke(ctx);
+#endif
+    }
+    free(cacheMaxArray);
+    free(cacheMinArray);
+    if (NSWidth(selectionRect) < 0.1) {
+            [[self window] disableFlushWindow];
+            [self showCursor];
+            [[self window] enableFlushWindow];
+            return; /* zero compare not good idea? */
+    }
+    scaledSelRect = selectionRect;
+    scaledSelRect.origin.x = (int)((float)NSMinX(selectionRect) / (float)reductionFactor);
+    scaledSelRect.size.width = (int)((NSMaxX(selectionRect) - 1) / reductionFactor)
+                  - NSMinX(scaledSelRect) + 1;
+
+    if (!((NSMinX(scaledSelRect) >= NSMinX(rects) && NSMinX(scaledSelRect) <= NSMaxX(rects)) ||
+        (NSMaxX(scaledSelRect) >= NSMinX(rects) && NSMaxX(scaledSelRect) <= NSMaxX(rects)) ||
+        (NSMinX(scaledSelRect) <= NSMinX(rects) && NSMaxX(scaledSelRect) >= NSMaxX(rects))
+        ))
+            return;
+    else {
+        NSRect highlightRect = [self bounds];
 //		printf("HIGHLIGHTing scaled sel rect... %g to %g\n",NX_X(&scaledSelRect),NX_MAXX(&scaledSelRect));
 //		printf("HIGHLIGHTing rects... %g to %g\n",NX_X(rects),NX_MAXX(rects));
-		highlightRect.origin.x = (int)((NSMinX(scaledSelRect) >= NSMinX(rects)) ?
-				NSMinX(scaledSelRect) : NSMinX(rects));
+        highlightRect.origin.x = (int)((NSMinX(scaledSelRect) >= NSMinX(rects)) ?
+                        NSMinX(scaledSelRect) : NSMinX(rects));
 
-		highlightRect.size.width = (int)(((NSMaxX(scaledSelRect) <= NSMaxX(rects)) ?
-				NSMaxX(scaledSelRect) :
-				NSMaxX(rects) )   - NSMinX(highlightRect) + 0.1);
+        highlightRect.size.width = (int)(((NSMaxX(scaledSelRect) <= NSMaxX(rects)) ?
+                        NSMaxX(scaledSelRect) :
+                        NSMaxX(rects) )   - NSMinX(highlightRect) + 0.1);
 
-		NSHighlightRect(highlightRect);
+        NSHighlightRect(highlightRect);
 //		printf("HIGHLIGHT %g to %g\n",NX_X(&highlightRect),NX_MAXX(&highlightRect));
-	}
-	return;
+    }
+    return;
 }
 
-- (float)backgroundGray
-{	return backgroundGray;}
-- (float)foregroundGray
-{	return foregroundGray;}
-- setForegroundGray:(float)aGray
-{
-	foregroundGray = aGray;
-	return self;
-}
-- setBackgroundGray:(float)aGray
-{
-	backgroundGray = aGray;
-	return self;
-}
 - (void)setBackgroundColor:(NSColor *)color
 {
     [backgroundColour release];
@@ -903,33 +966,35 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
 - (void)dealloc
 {
-	NSPasteboard *pboard = [NSPasteboard generalPasteboard];
-	printf("Freeing SndView\n");
-	[self tellDelegate:@selector(willFree:)];
-	[self hideCursor];
-	if ((_lastCopyCount == [pboard changeCount]) && notProvidedData) {
-	/* i.e. we were the last ones to put something on the pasteboard, but
-	 * have not provided it yet
-	 */
-            [self pasteboard:pboard provideDataForType:NXSoundPboardType];
-	}
-	if (_pasteboardSound) [_pasteboardSound release];
-	if (_scratchSound) [_scratchSound release];
-        if (backgroundColour) [backgroundColour release];
-        if (foregroundColour) [foregroundColour release];
-        if (recordingSound) SndFree(recordingSound);/* just in case */
-	if (dataList) {
-		[dataList freeObjects];
-		[dataList free];//will need to be release, when I change to NSArray
-	}
-	[super dealloc];
-        return;
+    NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+//	printf("Freeing SndView\n");
+    [self tellDelegate:@selector(willFree:)];
+    [self hideCursor];
+    if ((_lastCopyCount == [pboard changeCount]) && notProvidedData) {
+    /* i.e. we were the last ones to put something on the pasteboard, but
+          * have not provided it yet
+          */
+        [self pasteboard:pboard provideDataForType:NXSoundPboardType];
+    }
+    [_pasteboardSound release];
+    [_scratchSound release];
+    [backgroundColour release];
+    [foregroundColour release];
+    if (recordingSound) SndFree(recordingSound);/* just in case */
+    if (dataList) {
+        [dataList freeObjects];
+        [dataList free];//will need to be release, when I change to NSArray
+        //[dataList release];
+            // think the change is made... raf
+    }
+    [super dealloc];
+    return;
 }
 - getSelection:(int *)firstSample size:(int *)sampleCount
 {
-	*firstSample = (int)selectionRect.origin.x;
-	*sampleCount = (int)selectionRect.size.width;
-	return self;
+    *firstSample = (int)selectionRect.origin.x;
+    *sampleCount = (int)selectionRect.size.width;
+    return self;
 }
 - (void)setSelection:(int)firstSample size:(int)sampleCount
 {
@@ -958,61 +1023,61 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
 - initWithFrame:(NSRect)frameRect
 {
-	[self initVars];
-	return [super initWithFrame:frameRect];
+    [self initVars];
+    return [super initWithFrame:frameRect];
 }
 - (BOOL)isAutoScale
 {
-	return svFlags.autoscale;
+    return svFlags.autoscale;
 }
 - (BOOL)isBezeled
 {
-	return svFlags.bezeled;
+    return svFlags.bezeled;
 }
 - (BOOL)isContinuous
 {
-	return svFlags.continuous;
+    return svFlags.continuous;
 }
 - (BOOL)isEditable
 {
-	return !(svFlags.notEditable);
+    return !(svFlags.notEditable);
 }
 - (BOOL)isEnabled
 {
-	return !(svFlags.disabled);
+    return !(svFlags.disabled);
 }
 - (BOOL)isOptimizedForSpeed
 {
-	return !(svFlags.notOptimizedForSpeed);
+    return !(svFlags.notOptimizedForSpeed);
 }
 - (BOOL)isPlayable
 {
-	if (!sound) return NO;
-	return YES;/* hmmm. What is required here? */
+    if (!sound) return NO;
+    return YES;/* hmmm. What is required here? */
 }
 - (BOOL)drawsCrosses
 {
-	return svFlags.drawsCrosses;
+    return svFlags.drawsCrosses;
 }
 - (int)getOptThreshold
 {
-	return optThreshold;
+    return optThreshold;
 }
 - (int)getOptSkip
 {
-	return optSkip;
+    return optSkip;
 }
 - (int)getStereoMode
 {
-	return stereoMode;
+    return stereoMode;
 }
 - (float)getPeakFraction
 {
-	return peakFraction;
+    return peakFraction;
 }
 - (float)getDefaultRecordTime
 {
-	return defaultRecordSeconds;
+    return defaultRecordSeconds;
 }
 
 - (void)mouseDown:(NSEvent *)theEvent 
@@ -1243,7 +1308,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
                             * the scrolling smooth
                             */
             if (scrolled) {
-                PSWait();
+                //PSWait();
                 scrolled = NO;
             }
 
@@ -1307,54 +1372,54 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
 - (void)play:sender
 {
-	[self stop:self];
-	if (!_scratchSound) {
-		_scratchSound = [[Snd alloc] init];
-		[_scratchSound setDelegate:self];
-	}
-	if (NSWidth(selectionRect) < 0.1) {
-		[_scratchSound copySound:sound];
-		}
-	else [_scratchSound copySamples:sound at:(int)((float)NSMinX(selectionRect) + 0.1)
-		count:(int)((float)NSWidth(selectionRect) + 0.1)];
-	[_scratchSound play:self];
-	return;
+    [self stop:self];
+    if (!_scratchSound) {
+        _scratchSound = [[Snd alloc] init];
+        [_scratchSound setDelegate:self];
+    }
+    if (NSWidth(selectionRect) < 0.1) {
+        [_scratchSound copySound:sound];
+        }
+    else [_scratchSound copySamples:sound at:(int)((float)NSMinX(selectionRect) + 0.1)
+            count:(int)((float)NSWidth(selectionRect) + 0.1)];
+    [_scratchSound play:self];
+    return;
 }
 - (void)pause:sender
 {
-	int stat;
-	if (_scratchSound) {
-		stat = [_scratchSound status];
-		if (stat == NX_SoundPlaying || stat == NX_SoundPlayingPending)
-			[_scratchSound pause];
-	}
-	return;
+    int stat;
+    if (_scratchSound) {
+        stat = [_scratchSound status];
+        if (stat == NX_SoundPlaying || stat == NX_SoundPlayingPending)
+                [_scratchSound pause];
+    }
+    return;
 }
 - (void)resume:sender
 {
-	int stat;
-	if (_scratchSound)  {
-		stat = [_scratchSound status];
-		if (stat == NX_SoundPlayingPaused)
-			[_scratchSound resume];
-	}
-	return;
+    int stat;
+    if (_scratchSound)  {
+        stat = [_scratchSound status];
+        if (stat == NX_SoundPlayingPaused)
+            [_scratchSound resume];
+    }
+    return;
 }
 
 int startRecord(SndSoundStruct *sound, int tag, int err)
 {
-	id theObj = (id)*(id *)sound->info;
-//	printf("startRecord %p\n", theObj);
+    id theObj = (id)*(id *)sound->info;
+//  printf("startRecord %p\n", theObj);
     [(SndView *)theObj willRecord:theObj];
-	return 1;
+    return 1;
 }
 
 int endRecord(SndSoundStruct *sound, int tag, int err)
 {
-	id theObj = (id)*(id *)sound->info;
-//	printf("endRecord %p\n", theObj);
-	[(SndView *)theObj didRecord:theObj];
-	return 1;
+    id theObj = (id)*(id *)sound->info;
+//  printf("endRecord %p\n", theObj);
+    [(SndView *)theObj didRecord:theObj];
+    return 1;
 }
 
 - (void)record:sender
@@ -1512,24 +1577,28 @@ int endRecord(SndSoundStruct *sound, int tag, int err)
 #endif NEXT_RECORDING_ENABLED
 }
 
+#ifdef USE_NEXTSTEP_SOUND_IO
+char *SndSoundError(int err);
+#endif
+
 - (void)stop:(id)sender
 {
-	int stat;
-	int error=0;
-	if (recordingSound) {
+    int stat;
+    int error=0;
+    if (recordingSound) {
 //sb: not until we have some sound i/o routines written
 //            SndStop(1);
-            SndFree(recordingSound);
-		recordingSound = NULL;
-	}
-	if (_scratchSound) {
-	    stat = [_scratchSound status];
-	    if (stat != NX_SoundStopped && stat != NX_SoundInitialized && stat != NX_SoundFreed) {
-		    error = [_scratchSound stop];
-                if (error) printf("Error: %s stopping playback\n", SndSoundError(error));
-		    return;
-	    }
-	}
+        SndFree(recordingSound);
+        recordingSound = NULL;
+    }
+    if (_scratchSound) {
+        stat = [_scratchSound status];
+        if (stat != NX_SoundStopped && stat != NX_SoundInitialized && stat != NX_SoundFreed) {
+                error = [_scratchSound stop];
+            if (error) printf("Error: %s stopping playback\n", SndSoundError(error));
+                return;
+        }
+    }
 }
 
 - (float)reductionFactor
@@ -1538,17 +1607,17 @@ int endRecord(SndSoundStruct *sound, int tag, int err)
 }
 - (BOOL)setReductionFactor:(float)redFactor
 {
-	if (svFlags.autoscale) return NO;
-	if (!sound) return NO;
-	if (redFactor < 0.04) return NO;
-	if (reductionFactor != redFactor) [self invalidateCache];
-	reductionFactor = redFactor;
-        [[self window] disableFlushWindow];
-        [self hideCursor];
-	[self sizeToFit];
-	[self showCursor];
-        [[self window] enableFlushWindow];
-	return YES;
+    if (svFlags.autoscale) return NO;
+    if (!sound) return NO;
+    if (redFactor < 0.04) return NO;
+    if (reductionFactor != redFactor) [self invalidateCache];
+    reductionFactor = redFactor;
+    [[self window] disableFlushWindow];
+    [self hideCursor];
+    [self sizeToFit];
+    [self showCursor];
+    [[self window] enableFlushWindow];
+    return YES;
 }
 - scaleToFit
 /* here I think I must be careful about nil sounds, and 0-length sounds.
@@ -1568,7 +1637,7 @@ int endRecord(SndSoundStruct *sound, int tag, int err)
 {
     float aWidth;
     NSRect frame = [self frame];
-    NSRect zapRect = frame;
+    NSRect zapRect = [self bounds];
     
     [[self window] disableFlushWindow];
     [self hideCursor];
@@ -1585,7 +1654,20 @@ int endRecord(SndSoundStruct *sound, int tag, int err)
         zapRect = NSIntersectionRect(zapRect,[self visibleRect]);
         if (!NSEqualRects(zapRect,NSZeroRect)) {
             [self lockFocus];
+#ifndef QUARTZ_RENDERING
             PSsetgray(NSDarkGray);
+#else
+            {
+                NSGraphicsContext *graphicsContext;
+                CGContextRef ctx;
+                //CGPoint point;
+
+                graphicsContext = [NSGraphicsContext currentContext];
+                ctx = [graphicsContext graphicsPort];
+
+                CGSetGrayFillColor(ctx, 0.1, 1.0);
+            }
+#endif
             NSRectFill(zapRect);
             [self unlockFocus];
         }
@@ -1682,92 +1764,103 @@ int endRecord(SndSoundStruct *sound, int tag, int err)
 {	return sound;}
 
 - (void)setFrameSize:(NSSize)_newSize
+/*sb: complicated business here. If a SndView is not in a proper scrollview, and it is set to (for example)
+    auto-resize, I assume that it should autoscale (the redfactor should change).
+    Therefore any SndView NOT in a functioning scrollview should have the autoscale flag explicity set.
+    The complication is that if you stick a SndView inside a box in InterfaceBuilder, it is given a scrollview,
+    but not a "functional" one. hence the explicit check for autoscale below. Of course, if you have a free-standing
+    SndView in a window, it has no scrollview, and I asssume that we must autoscale whether explicitly set or not.
+*/
 {
-	[super setFrameSize:_newSize];
-//	printf("sizeTo %g\n",width);
-        [self setNeedsDisplay:YES];
-	return;
+    if (![self enclosingScrollView] || svFlags.autoscale) {
+        int sc = [sound sampleCount];
+        if (_newSize.width < 1.1) _newSize.width = 5; /* at least give a little space! */
+        if (sc && sound && (_newSize.width > 0.0)) reductionFactor = sc / _newSize.width;
+    }
+    [super setFrameSize:_newSize];
+    [self invalidateCache];
+    [self setNeedsDisplay:YES];
+    return;
 }
 - soundBeingProcessed
 { return _scratchSound; }
 
-- tellDelegate:(SEL)theMessage
+- (void)tellDelegate:(SEL)theMessage
 {
-	if (delegate)
-		if ([delegate respondsToSelector:theMessage])
-			[delegate performSelector:theMessage withObject:self];
-//	printf("SndView tellDelegate...\n");
-	return self;
+    if (delegate)
+        if ([delegate respondsToSelector:theMessage])
+                    [delegate performSelector:theMessage withObject:self];
+//  printf("SndView tellDelegate...\n");
 }
 
 - (void)willPlay:sender
 {
-//	printf("will play\n");
-	[self tellDelegate:@selector(willPlay:)];
-	return;
+//  printf("will play\n");
+    [self tellDelegate:@selector(willPlay:)];
+    return;
 }
 - (void)willRecord:sender
 {
-//	printf("will record\n");
-	[self tellDelegate:@selector(willRecord:)];
-	return;
+//  printf("will record\n");
+    [self tellDelegate:@selector(willRecord:)];
+    return;
 }
 - didPlay:sender
 {
-//	printf("did play\n");
-	[self tellDelegate:@selector(didPlay:)];
-	return self;
+//  printf("did play\n");
+    [self tellDelegate:@selector(didPlay:)];
+    return self;
 }
 - didRecord:sender
 {
-	BOOL isCompat = NO;
+    BOOL isCompat = NO;
     SndSoundStruct *convertedSound;
 	
-        [[self window] disableFlushWindow];
-	[self hideCursor];/* maybe isn't on, but just in case */
-        [[self window] enableFlushWindow];
-	if (sound && NSWidth(selectionRect) > 0.1) {
-		[sound deleteSamplesAt:(int)((float)NSMinX(selectionRect) + 0.1)
-			count:(int)((float)NSWidth(selectionRect) + 0.1)];
-	}
+    [[self window] disableFlushWindow];
+    [self hideCursor];/* maybe isn't on, but just in case */
+    [[self window] enableFlushWindow];
+    if (sound && NSWidth(selectionRect) > 0.1) {
+        [sound deleteSamplesAt:(int)((float)NSMinX(selectionRect) + 0.1)
+                count:(int)((float)NSWidth(selectionRect) + 0.1)];
+    }
 
-	if (!sound) {
-		sound = [[Snd alloc] init];
-		if (!svFlags.autoscale)
-			reductionFactor = recordingSound->samplingRate / 184;
-		if (!reductionFactor) reductionFactor = 1;
-		[sound setDataSize:0 dataFormat:recordingSound->dataFormat
-			 samplingRate:recordingSound->samplingRate
-			 channelCount:recordingSound->channelCount infoSize:4];
-		selectionRect.origin.x = 0;
-	}
-	
-	isCompat = (	recordingSound->dataFormat == [sound dataFormat] &&
-			recordingSound->samplingRate == [sound samplingRate] &&
-			recordingSound->channelCount == [sound channelCount] );
-	if (!isCompat) {
-            SndAlloc(&convertedSound, 0, [sound dataFormat],
-			[sound samplingRate], [sound channelCount], 4);
-            SndConvertSound(recordingSound,&convertedSound);
-            SndInsertSamples([sound soundStruct], convertedSound,(int)((float)NSMinX(selectionRect) + 0.1));
-            selectionRect.size.width = SndSampleCount(convertedSound);
-            SndFree(convertedSound);
-	}
-	else {
-            SndInsertSamples([sound soundStruct], recordingSound,(int)((float)NSMinX(selectionRect) + 0.1));
-            selectionRect.size.width = SndSampleCount(recordingSound);
-	}
-        SndFree(recordingSound);
-	recordingSound = NULL;
-	[self tellDelegate:@selector(didRecord:)];
-	[self invalidateCacheStartSample:(int)((float)NSMinX(selectionRect) + 0.1)
-		end:[sound sampleCount]];
-	if (!svFlags.autoscale) [self sizeToFit];
-	else { /* scaleToFit does not autodisplay, but sizeToFit does */
-		[self scaleToFit];
-            [self setNeedsDisplay:YES];
-	}
-	return self;
+    if (!sound) {
+        sound = [[Snd alloc] init];
+        if (!svFlags.autoscale)
+                reductionFactor = recordingSound->samplingRate / 184;
+        if (!reductionFactor) reductionFactor = 1;
+        [sound setDataSize:0 dataFormat:recordingSound->dataFormat
+                            samplingRate:recordingSound->samplingRate
+                            channelCount:recordingSound->channelCount infoSize:4];
+        selectionRect.origin.x = 0;
+    }
+
+    isCompat = (	recordingSound->dataFormat == [sound dataFormat] &&
+                    recordingSound->samplingRate == [sound samplingRate] &&
+                    recordingSound->channelCount == [sound channelCount] );
+    if (!isCompat) {
+        SndAlloc(&convertedSound, 0, [sound dataFormat],
+                    [sound samplingRate], [sound channelCount], 4);
+        SndConvertSound(recordingSound,&convertedSound);
+        SndInsertSamples([sound soundStruct], convertedSound,(int)((float)NSMinX(selectionRect) + 0.1));
+        selectionRect.size.width = SndSampleCount(convertedSound);
+        SndFree(convertedSound);
+    }
+    else {
+        SndInsertSamples([sound soundStruct], recordingSound,(int)((float)NSMinX(selectionRect) + 0.1));
+        selectionRect.size.width = SndSampleCount(recordingSound);
+    }
+    SndFree(recordingSound);
+    recordingSound = NULL;
+    [self tellDelegate:@selector(didRecord:)];
+    [self invalidateCacheStartSample:(int)((float)NSMinX(selectionRect) + 0.1)
+            end:[sound sampleCount]];
+    if (!svFlags.autoscale) [self sizeToFit];
+    else { /* scaleToFit does not autodisplay, but sizeToFit does */
+        [self scaleToFit];
+        [self setNeedsDisplay:YES];
+    }
+    return self;
 }
 - hadError:sender
 {
@@ -1780,8 +1873,10 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
     int df1 = sound1->dataFormat;
     int df2 = sound2->dataFormat;
     BOOL formatsOk;
-    if (df1 == SND_FORMAT_INDIRECT) df1 = ((SndSoundStruct *)(*((SndSoundStruct **)(sound1->dataLocation))))->dataFormat;
-    if (df2 == SND_FORMAT_INDIRECT) df2 = ((SndSoundStruct *)(*((SndSoundStruct **)(sound2->dataLocation))))->dataFormat;
+    if (df1 == SND_FORMAT_INDIRECT)
+        df1 = ((SndSoundStruct *)(*((SndSoundStruct **)(sound1->dataLocation))))->dataFormat;
+    if (df2 == SND_FORMAT_INDIRECT)
+        df2 = ((SndSoundStruct *)(*((SndSoundStruct **)(sound2->dataLocation))))->dataFormat;
     formatsOk = ((df1 == df2) && df1 != SND_FORMAT_INDIRECT);
 
     if (!sound1 || !sound2) return YES;
@@ -1795,7 +1890,8 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
     BOOL usedMyOwn = NO,createdSound = NO,didConversion1 = NO,didConversion2 = NO;
     const SndSoundStruct *sndDataBytes = NULL;
     SndSoundStruct *convertedPasteSound1 = NULL,*convertedPasteSound2 = NULL;
-    NSArray *acceptable = [[[NSArray alloc] initWithObjects:NXSoundPboardType,NXSoundPboardTypeOld,nil] autorelease];
+    NSArray *acceptable =
+        [[[NSArray alloc] initWithObjects:NXSoundPboardType,NXSoundPboardTypeOld,nil] autorelease];
     NSString *theType;
     if (svFlags.notEditable) return YES;
     if (sound) if (![sound isEditable]) return YES;
@@ -1862,7 +1958,7 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
         if (createdSound || SndCompatibleWith([sound soundStruct],sndDataBytes)) {
             if (!createdSound && (int)((float)NSWidth(selectionRect) + 0.1)) {
                 [sound deleteSamplesAt: (int)((float)NSMinX(selectionRect) + 0.1)
-                                                                        count:(int)((float)NSWidth(selectionRect) + 0.1)];
+                                 count:(int)((float)NSWidth(selectionRect) + 0.1)];
             }
             if (!createdSound) {
                 SndInsertSamples([sound soundStruct] ,sndDataBytes, (int)selectionRect.origin.x);
@@ -1872,10 +1968,12 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
             else {
                 SndSoundStruct *newSoundStruct;
                 SndCopySound(&newSoundStruct, sndDataBytes);
-                [sound setSoundStruct: newSoundStruct soundStructSize:sndDataBytes->dataSize + sndDataBytes->dataLocation];
+                [sound setSoundStruct: newSoundStruct
+                      soundStructSize:sndDataBytes->dataSize + sndDataBytes->dataLocation];
                 [self invalidateCache];
             }
-            selectionRect.origin.x = (int)((float)NSMinX(selectionRect) + 0.1 + SndSampleCount(sndDataBytes));
+            selectionRect.origin.x = (int)((float)NSMinX(selectionRect) + 0.1 +
+                                           SndSampleCount(sndDataBytes));
             selectionRect.size.width = 0;
             if (!svFlags.autoscale) [self sizeToFit];
             else { /* scaleToFit does not autodisplay, but sizeToFit does */
@@ -1898,27 +1996,29 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
  * I DO place it on the pasteboard immediately, but maybe should not. Oh well.
  */
 {
-	if ([self writeSelectionToPasteboardNoProvide:thePasteboard types:pboardTypes]) {
-            [self pasteboard:thePasteboard provideDataForType:NXSoundPboardType];
-		return YES;
-	}
-	else return NO;
+    if ([self writeSelectionToPasteboardNoProvide:thePasteboard types:pboardTypes]) {
+        [self pasteboard:thePasteboard provideDataForType:NXSoundPboardType];
+            return YES;
+    }
+    else return NO;
 }
 
 - (BOOL)writeSelectionToPasteboardNoProvide:thePasteboard types:(NSArray *)pboardTypes
 {
 //	printf("writeSelectionToPasteboard \n");
-	if (NSWidth(selectionRect) < 0.1) return NO;
-	if (!sound) return NO;
-	if ([sound sampleCount] < NSMaxX(selectionRect)) return NO;
-	if (!_pasteboardSound) _pasteboardSound = [[Snd alloc] init];
-	[_pasteboardSound copySamples:sound at:(int)((float)NSMinX(selectionRect) + 0.1)
-					 count:(int)((float)NSWidth(selectionRect) + 0.1)];
-	notProvidedData = YES;
-        [thePasteboard declareTypes:[NSArray arrayWithObjects:NXSoundPboardType,NXSoundPboardTypeOld,nil] owner:self];	
+    if (NSWidth(selectionRect) < 0.1) return NO;
+    if (!sound) return NO;
+    if ([sound sampleCount] < NSMaxX(selectionRect)) return NO;
+    if (!_pasteboardSound) _pasteboardSound = [[Snd alloc] init];
+    [_pasteboardSound copySamples:sound at:(int)((float)NSMinX(selectionRect) + 0.1)
+                                          count:(int)((float)NSWidth(selectionRect) + 0.1)];
+    notProvidedData = YES;
+    [thePasteboard declareTypes:
+        [NSArray arrayWithObjects:NXSoundPboardType,NXSoundPboardTypeOld,nil]
+                          owner:self];	
 
-	_lastCopyCount = [thePasteboard changeCount];
-	return YES;
+    _lastCopyCount = [thePasteboard changeCount];
+    return YES;
 }
 
 - validRequestorForSendType:(NSString *)typeSent returnType:(NSString *)typeReturned
@@ -1936,59 +2036,61 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-	int v = [aDecoder versionForClassName:@"SndView"];
-	char b1, b2, b3, b4, b5, b6, b7, b8;
-	[super initWithCoder:aDecoder];
-	if (v == 0) {
-		sound = [[aDecoder decodeObject] retain];
-		delegate = [[aDecoder decodeObject] retain];
-		selectionRect = [aDecoder decodeRect];
-		[aDecoder decodeValuesOfObjCTypes:"ifff", &displayMode, &backgroundGray, &foregroundGray, &reductionFactor];
-		[aDecoder decodeValuesOfObjCTypes:"cccccccc", &b1, &b2, &b3, &b4, &b5, &b6, &b7, &b8];
-		svFlags.disabled = b1;
-		svFlags.continuous = b2;
-		svFlags.cursorOn = b3;
-		svFlags.drawsCrosses = b4;
-		svFlags.autoscale = b5;
-		svFlags.bezeled = b6;
-		svFlags.notEditable = b7;
-		svFlags.notOptimizedForSpeed = b8;
-		
-		[aDecoder decodeValuesOfObjCTypes:"iiiifiidf", &teNum, &optThreshold, &optSkip, &stereoMode, 
-			&peakFraction, &defaultRecordFormat, &defaultRecordFormat,
-			&defaultRecordSampleRate,&defaultRecordSeconds];
-		dataList = [[aDecoder decodeObject] retain];
-		/* and initialize: */
-		_scratchSound = nil;
-		_pasteboardSound = nil;
-		recordingSound = NULL;
-		_lastPasteCount = 0;
-		_lastCopyCount = 0;
-		notProvidedData = NO;
-	}
-	return self;
+    int v = [aDecoder versionForClassName:@"SndView"];
+    char b1, b2, b3, b4, b5, b6, b7, b8;
+    [super initWithCoder:aDecoder];
+    if (v == 0) {
+        sound = [[aDecoder decodeObject] retain];
+        delegate = [[aDecoder decodeObject] retain];
+        selectionRect = [aDecoder decodeRect];
+        [aDecoder decodeValuesOfObjCTypes:"if", &displayMode, &reductionFactor];
+        [aDecoder decodeValuesOfObjCTypes:"@@", &backgroundColour, &foregroundColour];
+        [aDecoder decodeValuesOfObjCTypes:"cccccccc", &b1, &b2, &b3, &b4, &b5, &b6, &b7, &b8];
+        svFlags.disabled = b1;
+        svFlags.continuous = b2;
+        svFlags.cursorOn = b3;
+        svFlags.drawsCrosses = b4;
+        svFlags.autoscale = b5;
+        svFlags.bezeled = b6;
+        svFlags.notEditable = b7;
+        svFlags.notOptimizedForSpeed = b8;
+
+        [aDecoder decodeValuesOfObjCTypes:"iiiifiidf", &teNum, &optThreshold, &optSkip, &stereoMode, 
+                &peakFraction, &defaultRecordFormat, &defaultRecordFormat,
+                &defaultRecordSampleRate,&defaultRecordSeconds];
+        dataList = [[aDecoder decodeObject] retain];
+        /* and initialize: */
+        _scratchSound = nil;
+        _pasteboardSound = nil;
+        recordingSound = NULL;
+        _lastPasteCount = 0;
+        _lastCopyCount = 0;
+        notProvidedData = NO;
+    }
+    return self;
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-	char b1, b2, b3, b4, b5, b6, b7, b8;
-	[super encodeWithCoder:aCoder];
-	[aCoder encodeObject:sound];
-	[aCoder encodeConditionalObject:delegate];
-	[aCoder encodeRect:selectionRect];
-	[aCoder encodeValuesOfObjCTypes:"ifff", &displayMode, &backgroundGray, &foregroundGray, &reductionFactor];
-	b1 = svFlags.disabled;
-	b2 = svFlags.continuous;
-	b3 = svFlags.cursorOn;
-	b4 = svFlags.drawsCrosses;
-	b5 = svFlags.autoscale;
-	b6 = svFlags.bezeled;
-	b7 = svFlags.notEditable;
-	b8 = svFlags.notOptimizedForSpeed;
-	[aCoder encodeValuesOfObjCTypes:"cccccccc", &b1, &b2, &b3, &b4, &b5, &b6, &b7, &b8];
-	[aCoder encodeValuesOfObjCTypes:"iiiifiidf", &teNum, &optThreshold, &optSkip, &stereoMode, 
-		&peakFraction, &defaultRecordFormat, &defaultRecordFormat,
-		&defaultRecordSampleRate,&defaultRecordSeconds];
-	[aCoder encodeObject:dataList];
+    char b1, b2, b3, b4, b5, b6, b7, b8;
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:sound];
+    [aCoder encodeConditionalObject:delegate];
+    [aCoder encodeRect:selectionRect];
+    [aCoder encodeValuesOfObjCTypes:"if", &displayMode, &reductionFactor];
+    [aCoder encodeValuesOfObjCTypes:"@@", &backgroundColour, &foregroundColour];
+    b1 = svFlags.disabled;
+    b2 = svFlags.continuous;
+    b3 = svFlags.cursorOn;
+    b4 = svFlags.drawsCrosses;
+    b5 = svFlags.autoscale;
+    b6 = svFlags.bezeled;
+    b7 = svFlags.notEditable;
+    b8 = svFlags.notOptimizedForSpeed;
+    [aCoder encodeValuesOfObjCTypes:"cccccccc", &b1, &b2, &b3, &b4, &b5, &b6, &b7, &b8];
+    [aCoder encodeValuesOfObjCTypes:"iiiifiidf", &teNum, &optThreshold, &optSkip, &stereoMode, 
+            &peakFraction, &defaultRecordFormat, &defaultRecordFormat,
+            &defaultRecordSampleRate,&defaultRecordSeconds];
+    [aCoder encodeObject:dataList];
 }
 
 @end

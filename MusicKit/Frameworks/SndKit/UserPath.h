@@ -30,6 +30,16 @@
  * which reference objective C methods. 
  */
 
+// Determine the MacOsX derivative being compiled on. This is a passing phase (MOXS 1.2) until the two O.S. merge API
+#define macosx (defined(__ppc__) && !defined(ppc))
+#define macosx_server (defined(__ppc__) && defined(ppc))
+
+#if macosx
+#define QUARTZ_RENDERING
+#endif
+// this file is not used if using CoreGraphics
+#ifndef QUARTZ_RENDERING
+
 #import <AppKit/dpsclient.h>
 #import <AppKit/NSDPSContext.h>
 
@@ -70,3 +80,6 @@ void addPts(UserPath *up, float x, float y);
 void addOp(UserPath *up, int op);
 void add(UserPath *up, int op, float x, float y);
 void checkBBox(UserPath *up, float x, float y);
+
+#endif
+// QUARTZ_RENDERING

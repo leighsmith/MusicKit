@@ -8,6 +8,9 @@
  */
 
 #import "UserPath.h"
+
+#ifndef QUARTZ_RENDERING
+
 #import <mach/mach_init.h>
 #import <AppKit/NSGraphics.h>
 #import <AppKit/NSErrors.h>
@@ -382,3 +385,5 @@ void closePath(UserPath *up)
     
     return;
 }
+#endif
+// QUARTZ_RENDERING

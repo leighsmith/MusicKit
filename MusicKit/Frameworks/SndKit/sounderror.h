@@ -27,7 +27,7 @@
  *	Copyright 1988-89 NeXT, Inc.
  *
  */
-
+#if !defined(SND_ERR_NOT_SOUND)
 typedef enum {
     SND_ERR_NONE		= 0,
     SND_ERR_NOT_SOUND		= 1,
@@ -67,6 +67,7 @@ typedef enum {
     SND_ERR_INFO_TOO_BIG	= 35,
     SND_ERR_UNKNOWN=32767
 } SndError;
+#endif
 
 char *SndSoundError(int err);
 /*
