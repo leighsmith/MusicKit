@@ -42,9 +42,13 @@
 
 ******************************************************************************/
 
-#if HAVE_CONFIG_H
-# import <SndKitConfig.h>
-#endif
+/* We #import this file regardless of the setting of
+   HAVE_CONFIG_H so that other applications compiling against this
+   header don't have to define it. If you are seeing errors for
+   SndKitConfig.h not found when compiling the MusicKit, you haven't
+   run ./configure 
+ */
+#import "SndKitConfig.h"
 
 #import "SndFormat.h"
 #import "SndEndianFunctions.h"
