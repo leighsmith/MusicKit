@@ -34,24 +34,31 @@ void PrintError(char* msg, int iPossibleReturnCode)
 // ShowHelp
 ////////////////////////////////////////////////////////////////////////////////
 
-void ShowHelp(void)
+void showHelp(const char *absolutePath)
 {
-  printf("Options:\n");
-  printf(" -O N  offset playback time by N seconds (can be non-integral)\n"); 
-//  printf(" -o N  offset playback time by N samples\n"); 
-//  printf(" -E N  playback duration, in seconds\n");
-  printf(" -d N  playback duration, in samples\n");
-  printf(" -b N  playback start point, in samples\n");
-  printf(" -r    use reverb (freeverb) module\n");
-  printf(" -v    show author/version info\n");
-  printf(" -h    show this help\n");
-  printf(" -t    turn on time information output\n");
-  printf(" -S    shoutcast as MP3 stream to an icecast server running on local host\n");
-  printf(" -a A  shoutcast server address (either form: abc.com or 127.0.0.1)\n");
-  printf(" -P N  shoutcast port number\n");
-  printf(" -p A  shoutcast server password\n");
+    const char *commandLineName = rindex(absolutePath, '/');
+
+    if(commandLineName == NULL)
+        commandLineName = absolutePath;
+    else
+        commandLineName = commandLineName + 1;
+    printf("usage: %s [options] <soundfile>\n", commandLineName);
+    printf("\nOptions:\n"\
+           "  -O N  offset playback time by N seconds (can be non-integral)\n"\
+           "  -d N  playback duration, in samples\n"\
+           "  -b N  playback start point, in samples\n"\
+           "  -r    use reverb (freeverb) module\n"\
+           "  -v    show author/version info\n"\
+           "  -h    show this help\n"\
+           "  -t    turn on time information output\n"\
+           "  -S    shoutcast as MP3 stream to an icecast server running on local host\n"\
+           "  -a A  shoutcast server address (either form: abc.com or 127.0.0.1)\n"\
+           "  -P N  shoutcast port number\n"\
+           "  -p A  shoutcast server password\n");
+    //  " -o N  offset playback time by N samples\n"\
+    //  " -E N  playback duration, in seconds\n"\
 }
- 
+
 ////////////////////////////////////////////////////////////////////////////////
 // main
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,8 +79,8 @@ int main (int argc, const char * argv[])
     int       shoutcastPortNumber     = [SndAudioProcessorMP3Encoder defaultSourcePort    ];   
     
     if (argc == 1) {
-      printf("Use: playsnd [options] <soundfile>\nType playsnd -h for more help.\n");
-      return 0;
+        showHelp(argv[0]);
+        return 0;
     }
     
     for (i = 1; i < argc; i++) {
@@ -87,7 +94,7 @@ int main (int argc, const char * argv[])
         case 't': bTimeOutputFlag = TRUE;                       break;
         case 'r': useReverb       = TRUE;                       break;
         case 'v': printf("playsnd %i.%i.%i  skot@tomandandy.com  Oct 2 2001\n",V_MAJ,V_MIN,V_TINY); break;
-        case 'h': ShowHelp(); break;
+        case 'h': showHelp(argv[0]); break;
         case 'd': 
           i++;
           if (i < argc) durationInSamples = atoi(argv[i]);
