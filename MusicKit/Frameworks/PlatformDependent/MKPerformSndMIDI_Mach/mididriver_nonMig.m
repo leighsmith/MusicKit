@@ -13,27 +13,15 @@
 Modification history:
 
   $Log$
+  Revision 1.2  2000/12/07 00:05:15  leigh
+  Corrected for MKMDPort being a mach_port_t
+
   Revision 1.1  2000/12/06 18:50:44  leigh
   Added ObjC version
 
-  Revision 1.3  2000/01/27 18:15:43  leigh
-  upgraded to new typedef names for Mach
-
-  Revision 1.2  1999/11/24 17:30:12  leigh
-  Added a MDDownloadDLSInstruments stub
-
-  Revision 1.1.1.1  1999/09/12 00:20:18  leigh
-  separated out from MusicKit framework
-
-  Revision 1.2  1999/07/29 01:26:08  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
 */
-#ifdef SHLIB
-#include "shlib.h"
-#endif SHLIB
+#import <Foundation/Foundation.h>
 
-// this should get moved into MKPerformSndMIDI when we update the interface spec.
 #if openstep_i386
 #import <driverkit/IOConfigTable.h>
 #import <driverkit/IODeviceMaster.h>
@@ -46,11 +34,13 @@ Modification history:
 #import "midi_driver.h"
 #import <stdio.h>
 
+#define MKMD_NAME "Mididriver"  /* Name of driver (append unit number to use) */
+
 kern_return_t MKMDAwaitReply(mach_port_t port_set,
 			   MKMDReplyFunctions *funcs,
 			   int timeout)
 {
-    char msg_buf[MD_MAX_MSG_SIZE];
+    char msg_buf[MKMD_MAX_MSG_SIZE];
     int r;
     msg_header_t *msg = (msg_header_t *)msg_buf;
     msg->msg_local_port = port_set;  /* Port set including replyPort */
@@ -91,7 +81,7 @@ kern_return_t MKMDAlarmReply(mach_port_t reply_port,
 
 kern_return_t MKMDDataReply(mach_port_t reply_port, 
 			  int unit,
-			  MDRawEvent *events, 
+			  MKMDRawEvent *events, 
 			  int count) {
     if (userFuncs->dataReply) {
 	(*(userFuncs->dataReply))(reply_port,unit,events,count);
@@ -137,7 +127,7 @@ kern_return_t MKMDDownloadDLSInstruments(unsigned int *patches, int patchCount)
 }
 
 // need to be moved into a separate Objective C file.
-PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
+const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
 {
 #if openstep_i386
     char *s;
@@ -188,15 +178,15 @@ PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
     }
 #elif macosx_server
     // hardwire this for MOXS1.0 until tablesForInstalledDrivers gives us what we expect
-    static char *midiDriver = DRIVER_NAME;
+    static char *midiDriver = MKMD_NAME;
     *selectedDriver = 0;
     return &midiDriver;
 #endif
 }
 
-PERFORM_API MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
+MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
 {
-    MKMDPort devicePort = [[NSPortNameServer defaultPortNameServer] portForName: DRIVER_NAME
-                                                                         onHost: [NSString stringWithCString: hostname]];
+    MKMDPort devicePort = [[[NSPortNameServer defaultPortNameServer] portForName: [NSString stringWithCString: MKMD_NAME]
+                                                                         onHost: [NSString stringWithCString: hostname]] machPort];
     return devicePort;
 }
