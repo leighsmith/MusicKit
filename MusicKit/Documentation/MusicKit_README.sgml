@@ -175,9 +175,9 @@ distribution site.
 <para>
 Source code is available for everything, with the exception of the
 <productname>NeXT</productname> hardware implementation of the
-low-level sound and DSP drivers.  This means researchers and
+low-level sound and <acronym>DSP</acronym> drivers.  This means researchers and
 developers may study the source or even customize the Music Kit and
-DSP Tools to suit their needs.  Enhancements can be committed to the
+<acronym>DSP</acronym> Tools to suit their needs.  Enhancements can be committed to the
 <link linkend=fixes>CVS repository</link> to have them incorporated
 for future releases. Commercial software developers may freely
 incorporate and adapt the software to accelerate development of
@@ -187,8 +187,8 @@ software products.
     <sect2 id=features>
       <title>Feature List</title>
       <para>
-The following is a partial list of the highlights of the Music Kit
-provided by David Jaffe on his <link linkend=otherlinks>web-page</link>: 
+	The following is a partial list of the highlights of the <productname>MusicKit</productname>
+	provided by David Jaffe on his <link linkend=otherlinks>web-page</link>: 
 </para>
 
       <itemizedlist>
@@ -277,7 +277,7 @@ Suite of <link linkend=applications>applications</link>, including
 <application>Ensemble</application> &horbar; an interactive algorithmic
 composition and performance environment (including a built-in sampler),
 and <application>ScorePlayer</application> &horbar; a Scorefile and standard
-MIDI file player.
+ <acronym>MIDI</acronym> file player.
 </para>
 	</listitem>
 	<listitem>
@@ -490,7 +490,7 @@ function and <productname>Objective-C</productname> class.
 	    <entry>Platform</entry>
 	    <entry><acronym>MIDI</acronym></entry>
 	    <entry>Sound</entry>
-	    <entry>DSP</entry>
+	    <entry><acronym>DSP</acronym></entry>
 	  </row>
 	</thead>
 	<tbody>
@@ -545,11 +545,11 @@ DirectMusic. There is a fairly similar match in functionality between
 these API.
 </para>
       <para>
-The downloadable sound (DLS) capability of DirectMusic (providing a
-<acronym>MIDI</acronym> oriented sample playback API to PC soundcards)
+The downloadable sound (<acronym>DLS</acronym>) capability of DirectMusic (providing a
+<acronym>MIDI</acronym> oriented sample playback <acronym>API</acronym> to PC soundcards)
 is also supported when playing to a DirectMusic software
 synthesiser. There is minimal but usable support for downloading new
-DLS instruments to the software synthesiser.
+<acronym>DLS</acronym> instruments to the software synthesiser.
 </para>
       <para>
 While the future of Apple's OpenStep/YellowBox/Cocoa/WebObjects (!)
@@ -625,7 +625,7 @@ installed.
       <listitem>
 	<para>
 The <productname>MusicKit</productname> was designed and implemented by David
-A. Jaffe <email>david@jaffe.com</email>, and the DSP computer-music
+	  A. Jaffe <email>david@jaffe.com</email>, and the <acronym>DSP</acronym> computer-music
 and array-processing software was designed and implemented by Julius
 O. Smith III while at <productname>NeXT</productname>.
 The SoundKit (forerunner of the <productname>SndKit</productname>) was designed and implemented by
@@ -635,16 +635,16 @@ Their original design appeared in
 </para></listitem>
 
       <listitem><para>
-Michael McNabb brought wave table synthesis to the Music Kit
-and designed and built a number of UnitGenerator and SynthPatch
-subclasses and contributed the Ensemble application.</para></listitem>
+Michael McNabb brought wave table synthesis to the <productname>MusicKit</productname>
+and designed and built a number of <classname>UnitGenerator</classname> and <classname>SynthPatch</classname>
+subclasses and contributed the <application>Ensemble</application> application.</para></listitem>
 
       <listitem><para>Douglas Fulton was responsibile for the
 documentation and made substantial design improvements in clarifying
 general protocol and the identity and mechanisms of the
 classes.</para></listitem>
 
-      <listitem><para>Gregg Kellogg wrote the DSP, Sound, and
+      <listitem><para>Gregg Kellogg wrote the <acronym>DSP</acronym>, Sound, and
 <acronym>MIDI</acronym> device drivers for the <productname>NeXT</productname> which were then maintained by Doug
 Mitchell.</para></listitem>
 
@@ -658,7 +658,7 @@ conversion, and signal conditioning modules for the Sound Kit.</para></listitem>
 Keislar helped with testing, developer support, and demos.</para></listitem>
 
       <listitem><para>
-Mike Minnick helped finish the DSP array processing tools and
+Mike Minnick helped finish the <acronym>DSP</acronym> array processing tools and
 wrote most of the programming examples.</para></listitem>
 
       <listitem><para>Roger Dannenberg influenced
@@ -672,7 +672,7 @@ memory-argument scheme, and provided consultation.</para></listitem>
 
       <listitem><para>The software of William Schottstaedt and others
 at <acronym>CCRMA</acronym> (Stanford University) served as a model
-for some of the mechanisms in the Music Kit.
+for some of the mechanisms in the <productname>MusicKit</productname>.
 </para>
 </listitem>
 
@@ -711,7 +711,7 @@ contributed by SKoT McDonald
 
       <listitem>
 	<para>
-Keith Hamel tested and helped in bug fixes for the MacOS X
+Keith Hamel tested and helped in bug fixes for the <productname>MacOS X</productname>
 version.
 </para>
       </listitem>

@@ -52,7 +52,7 @@ will also be a slider that changes the frequency of the
 	<listitem>
 	  <para>
 First create a new directory where you will put your
-project. Then launch Interface Builder. (It's on /NextApps). 
+	    project. Then launch <APPLICATION>Interface Builder</APPLICATION>. (It's on /NextApps). 
 </para>
 	</listitem>
 	<listitem>
@@ -164,13 +164,14 @@ role="bold">id</emphasis>.  </para>
 
 <para>Then find the <emphasis role="bold">Outlet/Action</emphasis> button and click <emphasis role="bold">Action</emphasis>. Click in the text field and type the following.  Be sure to type the colon and a return at the end of each line.	</para>
 
-<para><emphasis>play:</emphasis>	</para>
-
-<para><emphasis>setFreqFrom:</emphasis></para>
+	<PROGRAMLISTING>
+	  play:
+	  setFreqFrom:
+	</PROGRAMLISTING>
 
 <para>Notice that the names appear in the actions list. What are you
-are doing here is "declaring" to Interface Builder the messages you
-will be sending to your custom object. In Interface Builder, all
+are doing here is "declaring" to <APPLICATION>Interface Builder</APPLICATION> the messages you
+will be sending to your custom object. In <APPLICATION>Interface Builder</APPLICATION>, all
 methods have one argument, the object that is sending the message.
 (Note that this is not always true, in general, in
 Objective-C.)</para>
@@ -179,8 +180,7 @@ Objective-C.)</para>
 	<para>
 Go back to the "Classes" window and select "Unparse" from
 the "Operations" pop-up menu.  It will ask if you want to create the
-files <emphasis role="bold">NotePlayer.m</emphasis> and <emphasis
-role="bold">NotePlayer.h</emphasis>.  Click <emphasis
+	  files <FILENAME>NotePlayer.m</FILENAME> and <FILENAME>NotePlayer.h</FILENAME>.  Click <emphasis
 role="bold">YES</emphasis>. It will ask you if you want to add these
 files to the project.  Click YES.
 </para>
@@ -240,14 +240,14 @@ Then click <emphasis role="bold">Save</emphasis> under the
 	<para>
 In the <emphasis role="bold">Classes</emphasis> window,
 click twice on the <emphasis role="bold">.h</emphasis> icon.  This
-launches Edit and brings up the file NotePlayer.h.  Notice that you
-are now no longer talking to Interface Builder.  The active
-application is now Edit, as you can see by the Menu's title in the
+	  launches <APPLICATION>Edit</APPLICATION> and brings up the file <FILENAME>NotePlayer.h</FILENAME>.  Notice that you
+are now no longer talking to <APPLICATION>Interface Builder</APPLICATION>.  The active
+	  application is now <APPLICATION>Edit</APPLICATION>, as you can see by the Menu's title in the
 upper left hand corner of the screen.  Now, click on the <emphasis
 role="bold">Open...</emphasis> menu item of the <emphasis
-role="bold">Window...</emphasis> sub-menu of the Edit application.
+	    role="bold">Window...</emphasis> sub-menu of the <APPLICATION>Edit</APPLICATION> application.
 This brings up an <emphasis role="bold">Open</emphasis> panel.  Select
-<emphasis role="bold">NotePlayer.m</emphasis>. Notice that there is a
+	  <FILENAME>NotePlayer.m</FILENAME>. Notice that there is a
 "stub" or "place-holder" method for each of the methods you
 declared.</para>
 
@@ -259,21 +259,15 @@ up the tutorial and use cut/copy/paste; alternatively, you can type in
 the code):
 </para>
 
-<programlisting>
-<para>- play:sender</para>
-
-<para>{</para>
-
-<para>  [Conductor lockPerformance];</para>
-
-<para>  [mySynthPatch noteOn:myNote];</para>
-
-<para>  [Conductor unlockPerformance];</para>
-
-<para>  return self;</para>
-
-<para>}</para>
-</programlisting>
+	<programlisting>
+- play:sender
+{
+  [Conductor lockPerformance];
+  [mySynthPatch noteOn:myNote];
+  [Conductor unlockPerformance];
+  return self;
+}
+	</programlisting>
 
     </sect1>
 
@@ -281,80 +275,56 @@ the code):
 	<listitem>
 <para>20. Similaraly, replace the <emphasis role="bold">setFreqFrom:</emphasis> method as shown:</para>
 
-<programlisting>
-<para>- setFreqFrom:sender</para>
-
-<para>{</para>
-
-<para>  [Conductor lockPerformance];</para>
-
-<para>  [myNote setPar:MK_freq toDouble:[sender doubleValue]];</para>
-
-<para>  [mySynthPatch noteUpdate:myNote];</para>
-
-<para>  [Conductor unlockPerformance];</para>
-
-<para>  return self;</para>
-
-<para>}</para>
-</programlisting>
+      <programlisting>
+- setFreqFrom:sender
+{
+  [Conductor lockPerformance];
+  [myNote setPar:MK_freq toDouble:[sender doubleValue]];
+  [mySynthPatch noteUpdate:myNote];
+  [Conductor unlockPerformance];
+  return self;
+}
+      </programlisting>
 
 	</listitem>
 	<listitem>
       <para>
 Finally, you need to add the code to start up the
-performance and allocate the Note and the SynthPatch.  To do this, we
+	performance and allocate the <CLASSNAME>Note</CLASSNAME> and the <CLASSNAME>SynthPatch</CLASSNAME>.  To do this, we
 add two methods<emphasis>.  </emphasis>The first is called <emphasis
 role="bold">+initialize</emphasis>.  It is a class method and is
 automatically invoked when the first instance of your class is
 created.  This method sets up the performance:
 </para>
 
-<programlisting>
-<para>+ initialize</para>
-
-<para>{</para>
-
-<para>  [Conductor setFinishWhenEmpty:NO];</para>
-
-<para>  [Orchestra new];</para>
-
-<para>  [Orchestra setSamplingRate:44100]; </para>
-
-<para>  [Orchestra setFastResponse:YES];</para>
-
-<para>  [Orchestra run];</para>
-
-<para>  [Conductor startPerformance];</para>
-
-<para>  return self;</para>
-
-<para>}</para>
-    </programlisting>
+      <programlisting>
++ initialize
+{
+  [Conductor setFinIshwhenempty:NO];
+  [Orchestra new];
+  [Orchestra setSamplingRate:44100]; 
+  [Orchestra setFastResponse:YES];
+  [Orchestra run];
+  [Conductor startPerformance];
+  return self;
+}
+      </programlisting>
 
       <para>
 The second method, <emphasis role="bold">init</emphasis>, is invoked
 when a new object is instantiated:</para>
 
       <programlisting>
-<para>- init</para>
-
-<para>{</para>
-
-<para>   [super init];</para>
-
-<para>   [Conductor lockPerformance];</para>
-
-<para>   myNote = [[Note alloc] init];</para>
-
-<para>   mySynthPatch = [Orchestra allocSynthPatch:[Pluck class]];</para>
-
-<para>   [Conductor unlockPerformance];</para>
-
-<para>   return self;</para>
-
-<para>}</para>
-    </programlisting>
+- init
+{
+   [super init];
+   [Conductor lockPerformance];
+   myNote = [[Note alloc] init];
+   mySynthPatch = [Orchestra allocSynthPatch:[Pluck class]];
+   [Conductor unlockPerformance];
+   return self;
+}
+      </programlisting>
 
       <para>
 You will also need to add three header file <emphasis
@@ -362,15 +332,15 @@ role="bold">#import</emphasis> statements. (<emphasis
 role="bold">#import</emphasis> is like <emphasis role="bold">#include
 </emphasis>in conventional C.)  Put them right after the <emphasis
 role="bold">NotePlayer</emphasis> <emphasis
-role="bold">#impor</emphasis>t statement. Note that you may not
+role="bold">#import</emphasis> statement. Note that you may not
 indent<emphasis role="bold"> #import</emphasis> statements because
 they are processed by the C pre-precessor. </para>
 
-<programlisting>
+      <programlisting>
 #import &lt;musickit/musickit.h&gt;
 #import &lt;musickit/synthpatches/Pluck.h&gt;
 #import &lt;appkit/appkit.h&gt;
-    </programlisting>
+      </programlisting>
 
       <para>
 Save the file, using the <emphasis role="bold">Save</emphasis> menu
@@ -381,15 +351,14 @@ item of the <emphasis role="bold">Window</emphasis> menu.</para>
 	</listitem>
     <listitem>
       <para>
-Return to Interface Builder by clicking on any of the Interface
-Builder windows or the Interface Builder icon.</para>
+	Return to <APPLICATION>Interface Builder</APPLICATION> by clicking on any of the <APPLICATION>Interface
+Builder</APPLICATION> windows or the <APPLICATION>Interface Builder</APPLICATION> icon.</para>
     </listitem>
     <listitem>
 
       <para>
 Before you compile the application, there's one more thing you need to
-do &#xB1; Interface Builder normally does not link against the Music
-Kit and DSP libraries.  To make sure it does, do the following:
+	do &#xB1; <APPLICATION>Interface Builder</APPLICATION> normally does not link against the <PRODUCTNAME>MusicKit</PRODUCTNAME> and <ACRONYM>DSP</ACRONYM> libraries.  To make sure it does, do the following:
 </para>
     </listitem>
     <listitem>
@@ -403,7 +372,7 @@ window. This brings up an Open panel.  Type:</para>
 
 <filename>/Library/Frameworks/MusicKit.framework</filename>
 
-<para>This adds the MusicKit to your library list.  You also need the
+      <para>This adds the <PRODUCTNAME>MusicKit</PRODUCTNAME> to your library list.  You also need the
 DSP library.  Click <emphasis role="bold">add </emphasis>again and
 this time type: </para>
 
@@ -419,7 +388,7 @@ places. </para>
 	</listitem>
 	<listitem>
 <para>Under the <emphasis role="bold">File</emphasis> menu of
-Interface Builder, click <emphasis role="bold">Make</emphasis>.  This
+<APPLICATION>Interface Builder</APPLICATION>, click <emphasis role="bold">Make</emphasis>.  This
 will launch a UNIX shell window to compile and link the
 program.</para>
 	</listitem>
@@ -428,9 +397,9 @@ program.</para>
 
 	<listitem>
       <para>
-Double click on the NeXT cube in the dock to get back to the
+	Double click on the <PRODUCTNAME>NeXT</PRODUCTNAME> cube in the dock to get back to the
 Workspace.  Find the program you just created. It will be called
-<emphasis role="bold">Example2.debug</emphasis>.  Double click on it
+	<FILENAME>Example2.debug</FILENAME>.  Double click on it
 to launch it and run it! See if it worked!</para>
 
 <para>EXPANDING YOUR PROGRAM -- THE POWER OF OBJECT-ORIENTED PROGRAMMING</para>
