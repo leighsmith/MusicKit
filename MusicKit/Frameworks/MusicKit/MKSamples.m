@@ -3,15 +3,15 @@
   Defined In: The MusicKit
 
   Description:
-    The MKSamples object allows you to use a NSSound as data in DSP synthesis.
+    The MKSamples object allows you to use a Snd as data in DSP synthesis.
     The most common use is as a wavetable table for an oscillator.
-    You may set the Sound from a Sound object or from a Soundfile using
+    You may set the sound from a Snd object or from a sound file using
     setSound: or readSoundfile:.
 
     Access to the data, is provided by the superclass, MKWaveTable.
     MKSamples currently does not provide resampling functionality.
     Hence, it is an error to ask for an array length other than the
-    length of the original Sound passed to the object.
+    length of the original Snd passed to the object.
 
   Original Author: David Jaffe
 
@@ -23,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2003/08/04 21:23:22  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values. Removed use of NSSound, now only uses Snd class
+
   Revision 1.9  2003/06/20 20:27:08  leighsmith
   Changed Snd -sampleCount to lengthInSampleFrames
 
@@ -66,7 +69,7 @@ Modification history:
 #import "_error.h"
 #import "MKSamples.h"
 
-@implementation  MKSamples : MKWaveTable
+@implementation MKSamples
 
 static id theSubclass = nil;
 
@@ -165,7 +168,7 @@ id MKGetSamplesClass(void)
     return newObj;
 }
 
-- (BOOL)readSoundfile:(NSString *)aSoundfile 
+- (BOOL) readSoundfile: (NSString *) aSoundfile 
 /* Creates a sound object from the specified file and initializes the
    receiver from the data in that file. Implemented in terms of 
    setSound:. This method creates a Sound object which is owned
@@ -173,40 +176,38 @@ id MKGetSamplesClass(void)
    
    Returns self or nil if there's an error. */
 {
-#if 1
     Snd *aTmpSound = [[Snd alloc] initFromSoundfile: aSoundfile];
-#else
-    NSSound *aTmpSound = [[NSSound alloc] initWithContentsOfFile: aSoundfile byReference: NO];
-#endif
 
     if (!aTmpSound)
       return NO;
-    if (![self setSound:aTmpSound]) {
+    if (![self setSound: aTmpSound]) {
 	[aTmpSound release];
-	if (soundfile) [soundfile release];
+	if (soundfile)
+	    [soundfile release];
 	return NO;
     }
-    if (soundfile) [soundfile autorelease]; /* gets rid of old one! */
+    if (soundfile)
+	[soundfile autorelease]; /* gets rid of old one! */
     soundfile = [aSoundfile copy];
     [aTmpSound release]; /* It's copied by setSound: */
     return YES; //sb: was self
 }
 
-- (BOOL)setSound:(Snd *)aSoundObj //sb: originally returned self/nil -- now BOOL.
 /* Sets the Sound of the MKSamples object to be aSoundObj.
    aSoundObj must be in 16-bit linear mono format. If not, setSound: returns
-   nil. aSoundObj is copied. 
-
- */
+   nil. aSoundObj is copied.
+*/
+- (BOOL) setSound: (Snd *) aSoundObj //sb: originally returned self/nil -- now BOOL.
 {
     if (!aSoundObj)
       return FALSE;
-    if (sound) [sound autorelease];/*sb: gets rid of old one*/
+    if (sound)
+	[sound autorelease];/*sb: gets rid of old one*/
     length = 0; /* This ensures that the superclass recomputes cached buffers. */ 
     sound = [aSoundObj copy];
-    [sound convertToFormat:SND_FORMAT_LINEAR_16
-              samplingRate:[sound samplingRate]
-              channelCount:1];
+    [sound convertToFormat: SND_FORMAT_LINEAR_16
+              samplingRate: [sound samplingRate]
+              channelCount: 1];
     curLoc = 0;
     return TRUE;
 }
@@ -251,7 +252,6 @@ id MKGetSamplesClass(void)
     return self;
 }
 
-- writeScorefileStream:(NSMutableData *)aStream
 /* This method is used by the Music Kit to reference the receiver in 
    a scorefile. There are two cases, depending whether the Sound was set
    with readSoundfile: or setSound:.
@@ -269,6 +269,7 @@ id MKGetSamplesClass(void)
    rewrite the file.
 
    */
+- writeScorefileStream:(NSMutableData *)aStream
 {
     return [self _writeScorefileStream:aStream binary:NO];
 }
@@ -278,8 +279,8 @@ id MKGetSamplesClass(void)
     return [self _writeScorefileStream:aStream binary:YES];
 }
 
-- sound
-/* Returns the Sound object. */
+- (Snd *) sound
+/* Returns the Snd object. */
 {
     return sound;
 }
@@ -551,7 +552,7 @@ of it.
     return [self _fillTableLength:aLength scale:aScaling];
 }
 
-- (DSPDatum *)dataDSPAsExcitationTableLength:(int)aLength scale:(double)aScaling
+- (DSPDatum *) dataDSPAsExcitationTableLength: (unsigned int) aLength scale: (double) aScaling
 {
    if ((tableType != MK_excitationTable) || 
        (length != aLength) || (scaling != aScaling) || (length == 0))
@@ -560,12 +561,12 @@ of it.
    if (!dataDSP && dataDouble) {
        _MK_MALLOC(dataDSP, DSPDatum, length);
        if (!dataDSP) return NULL;
-       _MKDoubleToFix24Array (dataDouble, dataDSP, length);
+       _MKDoubleToFix24Array(dataDouble, dataDSP, length);
    } 
    return dataDSP;
 }
 
-- (double *)dataDoubleAsExcitationTableLength:(int)aLength scale:(double)aScaling
+- (double *) dataDoubleAsExcitationTableLength: (unsigned int) aLength scale: (double) aScaling
 {  
    if ((tableType != MK_excitationTable) || 
        (length != aLength) || (scaling != aScaling) || (length == 0))
