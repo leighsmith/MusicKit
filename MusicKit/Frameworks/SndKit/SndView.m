@@ -253,13 +253,13 @@ OF THIS AGREEMENT.
 {
     if (NSWidth(selectionRect) < 0.1) return;
     if (!sound) return;
-    if ([sound sampleCount] < NSMaxX(selectionRect)) return;
+    if ([sound lengthInSampleFrames] < NSMaxX(selectionRect)) return;
     if (![sound isEditable]) return;
     if (svFlags.notEditable) return;
     [sound deleteSamplesAt:(int)((float)NSMinX(selectionRect) + 0.1)
                                           count:(int)((float)NSWidth(selectionRect) + 0.1)];
     [self invalidateCacheStartSample:(int)((float)NSMinX(selectionRect) + 0.1)
-                  end:[sound sampleCount]];
+                  end:[sound lengthInSampleFrames]];
     selectionRect.size.width = 0.0;
     if (!svFlags.autoscale) [self sizeToFit];
     else { /* scaleToFit does not autodisplay, but sizeToFit does */
@@ -294,7 +294,7 @@ OF THIS AGREEMENT.
 */
 
     selectionRect.origin.x = 0;
-    selectionRect.size.width = [sound sampleCount];
+    selectionRect.size.width = [sound lengthInSampleFrames];
     [self setNeedsDisplay:YES];
 //  printf("FINAL SELECTION %g, %g\n",NX_X(&selectionRect),NX_WIDTH(&selectionRect));
     return;
@@ -562,7 +562,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
     if (!sound)
       return;
 
-    sampCount = [sound sampleCount];
+    sampCount = [sound lengthInSampleFrames];
 
     if (sampCount <= 0)
       return;
@@ -1335,7 +1335,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
     if (!sound)
       return;
 
-    if ( [sound sampleCount] <= 0 )
+    if ( [sound lengthInSampleFrames] <= 0 )
       return;
 
     /* hmmmmm ..... */
@@ -1585,8 +1585,8 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
              * a figure slightly too high.
              */
 
-            if ((int)((float)NSMaxX(selectionRect) + 0.1) > [sound sampleCount]) {
-                selectionRect.size.width = [sound sampleCount] - NSMinX(selectionRect);
+            if ((int)((float)NSMaxX(selectionRect) + 0.1) > [sound lengthInSampleFrames]) {
+                selectionRect.size.width = [sound lengthInSampleFrames] - NSMinX(selectionRect);
             }
     //      printf("selection changed to %g, %g\n",NX_X(&selectionRect),NX_WIDTH(&selectionRect));
             if (svFlags.continuous) {
@@ -1735,7 +1735,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
 	/*
 	printf("provide data (SndView): %p type: %s (%s)\n",
 	thePasteboard, pboardType, NXSoundPboardType);
-	printf("length %d\n",[sound sampleCount]);
+	printf("length %d\n",[sound lengthInSampleFrames]);
 	*/
 
 	if (!([NXSoundPboardType isEqualToString:pboardType] ||
@@ -2015,7 +2015,7 @@ char *SndSoundError(int err);
  */
 {	
     NSRect newFrame = [self frame];
-    int sc = [sound sampleCount];
+    int sc = [sound lengthInSampleFrames];
     if (newFrame.size.width < 1.1) newFrame.size.width = 5; /* at least give a little space! */
     if (sc && sound) reductionFactor = sc / newFrame.size.width;
     [self setFrame:newFrame];
@@ -2040,12 +2040,12 @@ char *SndSoundError(int err);
     if (!sound)
       aWidth = 5;
 
-    if (![sound sampleCount])
+    if (![sound lengthInSampleFrames])
       aWidth = 5;
 
     else {
 
-      aWidth = ([sound sampleCount] - 1.0) / reductionFactor;
+      aWidth = ([sound lengthInSampleFrames] - 1.0) / reductionFactor;
 
       if ((int)aWidth == ceil(aWidth))
 	aWidth += 1;
@@ -2093,7 +2093,7 @@ char *SndSoundError(int err);
 - (void)sizeToFit: (BOOL) withAutoscaling
 {
 
-    int sc = [sound sampleCount];
+    int sc = [sound lengthInSampleFrames];
 
     float aWidth;
 
@@ -2107,12 +2107,12 @@ char *SndSoundError(int err);
     if (!sound)
       aWidth = 5;
 
-    if (![sound sampleCount])
+    if (![sound lengthInSampleFrames])
       aWidth = 5;
 
     else {
 
-      aWidth = ([sound sampleCount] - 1.0) / reductionFactor;
+      aWidth = ([sound lengthInSampleFrames] - 1.0) / reductionFactor;
 
       if ((int)aWidth == ceil(aWidth))
 	aWidth += 1;
@@ -2260,7 +2260,7 @@ char *SndSoundError(int err);
 	sound = aSound;
 	[self invalidateCache]; /* setSound will always invalidate cache, even if same sound */
 	if (!svFlags.autoscale) {
-		if (sound && [sound sampleCount]) reductionFactor = [sound samplingRate] / 184; /* to imitate SoundView! */
+		if (sound && [sound lengthInSampleFrames]) reductionFactor = [sound samplingRate] / 184; /* to imitate SoundView! */
 		else reductionFactor = 1;
 		[self sizeToFit];
 	}
@@ -2283,7 +2283,7 @@ char *SndSoundError(int err);
 */
 {
     if (![self enclosingScrollView] || svFlags.autoscale) {
-        int sc = [sound sampleCount];
+        int sc = [sound lengthInSampleFrames];
         if (_newSize.width < 1.1) _newSize.width = 5; /* at least give a little space! */
         if (sc && sound && (_newSize.width > 0.0)) reductionFactor = sc / _newSize.width;
     }
@@ -2365,18 +2365,18 @@ char *SndSoundError(int err);
                     [sound samplingRate], [sound channelCount], 4);
 	SndConvertSound(recordingSound, &convertedSound, YES, NO, NO, YES);
         SndInsertSamples([sound soundStruct], convertedSound,(int)((float)NSMinX(selectionRect) + 0.1));
-        selectionRect.size.width = SndSampleCount(convertedSound);
+        selectionRect.size.width = SndFrameCount(convertedSound);
         SndFree(convertedSound);
     }
     else {
         SndInsertSamples([sound soundStruct], recordingSound,(int)((float)NSMinX(selectionRect) + 0.1));
-        selectionRect.size.width = SndSampleCount(recordingSound);
+        selectionRect.size.width = SndFrameCount(recordingSound);
     }
     SndFree(recordingSound);
     recordingSound = NULL;
     [self tellDelegate:@selector(didRecord:)];
     [self invalidateCacheStartSample:(int)((float)NSMinX(selectionRect) + 0.1)
-            end:[sound sampleCount]];
+            end:[sound lengthInSampleFrames]];
     if (!svFlags.autoscale) [self sizeToFit];
     else { /* scaleToFit does not autodisplay, but sizeToFit does */
         [self scaleToFit];
@@ -2500,7 +2500,7 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
             if (!createdSound) {
                 SndInsertSamples([sound soundStruct] ,sndDataBytes, (int)selectionRect.origin.x);
                 [self invalidateCacheStartSample:(int)selectionRect.origin.x
-                                end:[sound sampleCount]];
+                                end:[sound lengthInSampleFrames]];
             }
             else {
                 SndSoundStruct *newSoundStruct;
@@ -2510,7 +2510,7 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
                 [self invalidateCache];
             }
             selectionRect.origin.x = (int)((float)NSMinX(selectionRect) + 0.1 +
-                                           SndSampleCount(sndDataBytes));
+                                           SndFrameCount(sndDataBytes));
             selectionRect.size.width = 0;
             if (!svFlags.autoscale) [self sizeToFit:YES];
             else { /* scaleToFit does not autodisplay, but sizeToFit does */
@@ -2548,7 +2548,7 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
     if (!sound)
       return NO;
 
-    if ([sound sampleCount] < NSMaxX(selectionRect))
+    if ([sound lengthInSampleFrames] < NSMaxX(selectionRect))
       return NO;
 
     if (!_pasteboardSound) 

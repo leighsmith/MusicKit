@@ -194,7 +194,7 @@ static SndPlayer *defaultSndPlayer;
       // NSLog(@"stopping at sample %ld\n", stopAtSample);
       // check stopAtSample since it could be beyond the length of the sound.
       // If so, leave it stop at the end of the sound.
-      if(stopAtSample < [[performance snd] sampleCount])
+      if(stopAtSample < [[performance snd] lengthInSampleFrames])
         [performance setEndAtIndex: stopAtSample];
     }
   }
@@ -295,11 +295,11 @@ static SndPlayer *defaultSndPlayer;
 {
     SndPerformance *thePerformance;
 
-    if(endAtIndex > [sound sampleCount]) {
-	endAtIndex = [sound sampleCount];	// Ensure the end of play can't exceed the sound data
+    if(endAtIndex > [sound lengthInSampleFrames]) {
+	endAtIndex = [sound lengthInSampleFrames];	// Ensure the end of play can't exceed the sound data
     }
     if(endAtIndex == -1) {
-	endAtIndex = [sound sampleCount];	// Ensure the end of play can't exceed the sound data
+	endAtIndex = [sound lengthInSampleFrames];	// Ensure the end of play can't exceed the sound data
     }
     if (beginAtIndex > endAtIndex) {
 #if SNDPLAYER_DEBUG
