@@ -81,6 +81,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2004/08/21 23:32:33  leighsmith
+  Improved doco
+
   Revision 1.7  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -110,11 +113,11 @@ common functionality and declares subclass responsibilities for its one
 subclass, MKScorefilePerformer.
 
 A MKFilePerformer is associated with a file either by the file's name or through
-an NXStream pointer.  If you associate a MKFilePerformer with a file name (through
+an NSMutableData instance.  If you associate a MKFilePerformer with a file name (through
 the <b>setFile:</b> method) the object opens and closes the file for you:  The
 file is opened for reading when the MKFilePerformer receives the <b>activate</b>
 message and closed when it receives <b>deactivate</b>.  The <b>setFileStream:</b>
-method associates a MKFilePerformer with an NXStream pointer.  In this case, opening
+method associates a MKFilePerformer with an NSMutableData instance.  In this case, opening
 and closing the file is the responsibility of the application.  The FilePerformer's
 stream pointer is set to NULL after each performance so you must send another
 <b>setFileStream:</b> message in order to replay the file.  Any number of FilePerformers
@@ -186,12 +189,12 @@ See also:  MKScorefilePerformer, MKPerformer
   @method setStream:
   @param  aStream is an id.
   @result Returns an id.
-  @discussion Sets the object's NXStream pointer to <i>aStream</i>.  The sender
+  @discussion Sets the object's stream to <i>aStream</i>.  The sender
               must open and close the stream himself.  If the object is active,
               this does nothing and returns <b>nil</b>, otherwise returns the
               object.
 */
-- setStream:(id)aStream; // either NSMutableData, or NSData
+- setStream:(id)aStream; // TODO either NSMutableData, or NSData
 
 /*!
   @method stream
@@ -199,7 +202,7 @@ See also:  MKScorefilePerformer, MKPerformer
   @discussion Returns the object's encoded stream object, or NULL if it isn't
               set.
 */
--(id) stream; // either NSMutableData, or NSData
+-(id) stream; // TODO either NSMutableData, or NSData
 
 /*!
   @method file
