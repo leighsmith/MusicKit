@@ -7,6 +7,8 @@
 # NeXT RTF doco file consists of:
 #  CLASS DESCRIPTION
 #  description
+#  MEMORY SPACES
+#  description
 #  INSTANCE VARIABLES
 #  CLASS METHODS
 #  name which must match first word of prototype.
@@ -99,8 +101,14 @@ if($wholeFile =~ s/Parameter Interpretation(.*?)$//i) {
     $parameterInterpretation = $1;
 }
 
+# UnitGenerators have a Memory Spaces section that needs to be
+# incorporated into the discussion
+if($wholeFile =~ s/Memory Spaces(.*?)(Instance Methods|Class Methods)/\2/i) {
+    $memorySpaces = $1;
+}
+
 # Check for class header, if so, generate a @discussion tag
-if ($wholeFile =~ s/^.*?Class Description(.*?)(Instance Variables|Method Types)/\2/i) {
+if ($wholeFile =~ s/^.*?Class Description(.*?)(Instance Variables|Method Types|Instance Methods|Class Methods)/\2/i) {
     $description = $1;
     if($sedOutput) {
 	printf("1i\\\n");
@@ -113,9 +121,12 @@ if ($wholeFile =~ s/^.*?Class Description(.*?)(Instance Variables|Method Types)/
     if(length($parameterInterpretation) != 0) {
 	$description .= "<h2>Parameter Interpretation</h2>". $parameterInterpretation;
     }
+    if(length($memorySpaces) != 0) {
+	$description .= "<h2>Memory Spaces</h2>" . $memorySpaces;
+    }
     # output the text of the description
     # compact more than two consecutive \n's to a single one.
-    $description =~ s/<br>\s*<br>\s*(<br>)+?/<br><br>/g;
+    $description =~ s/(<br>\s*){3,}/<br><br>/g;
     # convert HTML page breaks to standard EOLs (HeaderDoc generates its own).
     $description =~ s/<br>/\n/g;
     printf("%s\n*/\n", lineWrap($description, 80, ""));
@@ -268,10 +279,13 @@ while ($wholeFile =~ s/<br>\s*(<b>)*\s*([\+\-])\s*(<\/b>)*\s*(.*?)(<br>\s*){2,}(
     if (length($returnType) == 0) {
 	$returnType = "id";
     }
+    # Do MK prefixing of common classes
+    $discussion =~ s/(\W)UnitGenerator/\1MKUnitGenerator/g;
+    $discussion =~ s/(\W)SynthPatch/\1MKSynthPatch/g;
     # Attempt to make the return type slightly more readable, checking
     # if we mention returning self in the discussion, if so, replacing
     # id in the result and removing the statement in the discussion..
-    if ($discussion =~ s/Returns <b>self<\/b>.//) {
+    if ($discussion =~ s/Returns <b>self<\/b>\.//) {
 	$returnType = "<b>self</b>";
 	$indefiniteArticle = "";
     }
