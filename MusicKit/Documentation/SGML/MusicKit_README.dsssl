@@ -2,25 +2,30 @@
 <!ENTITY % html "IGNORE">
 <![%html;[
 <!ENTITY % print "IGNORE">
-<!ENTITY docbook.dsl SYSTEM "/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/html/docbook.dsl" CDATA dsssl>
+<!ENTITY docbook.dsl
+         PUBLIC "-//Norman Walsh//DOCUMENT DocBook HTML Stylesheet//EN"
+         CDATA dsssl>
 ]]>
 <!ENTITY % print "INCLUDE">
 <![%print;[
-<!ENTITY docbook.dsl SYSTEM "/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/print/docbook.dsl" CDATA dsssl>
+<!ENTITY docbook.dsl 
+         PUBLIC "-//Norman Walsh//DOCUMENT DocBook Print Stylesheet//EN" 
+         CDATA dsssl>
 ]]>
 ]>
 
 <!-- 
-  MusicKit customizations for sourceforge.
+  $Id$
+
+  MusicKit customizations for documentation to appear on www.musickit.org.
   Basically all this does is add in BODY statements and header images 
   to make the output more typically SourceForge style HTML pages.
-  by Leigh Smith <leigh@tomandandy.com>, stolen from: 
+
+  Leigh Smith <leigh@leighsmith.com>, drawing heavily on Cygnus
+  customizations by Mark Galassi and LDP customizations by Philippe Martin.
 -->
-<!-- Cygnus customizations by Mark Galassi -->
 
 <style-sheet>
-
-
 <style-specification id="print" use="docbook">
 <style-specification-body> 
 
@@ -59,7 +64,7 @@
   ;; "large-type"
   "presbyopic")
 
-(define %generate-part-toc% #t)
+;; (define %generate-part-toc% #t)
 
 ;; (define %block-start-indent% 10pt)
 
@@ -90,9 +95,9 @@
 ;; use graphics in admonitions, and have their path be "stylesheet-images"
 ;; NO: they do not yet look very good
 (define %admon-graphics-path%
-  "./stylesheet-images/")
+  "../images/")
 (define %admon-graphics%
-  #f)
+  #t)
 
 ;; make funcsynopsis look pretty
 (define %funcsynopsis-decoration%
@@ -122,7 +127,7 @@
   ;; If true, a Table of Contents will be generated for each 'Article'.
   #t)
 
-(define %generate-part-toc% #t)
+;;(define %generate-part-toc% #t)
 
 (define %shade-verbatim%
   #t)
@@ -135,6 +140,66 @@
 
 ;; TODO need inlinemediaobject managing image definition
 
+(define %root-filename%
+  ;; The filename of the root HTML document (e.g, "index").
+  "index")
+
+(element emphasis
+  ;; make role=strong equate to bold for emphasis tag
+  (if (equal? (attribute-string "role") "strong")
+     (make element gi: "STRONG" (process-children))
+     (make element gi: "EM" (process-children))))
+
+;; Redefinition of $verbatim-display$
+;; Origin: dbverb.dsl
+;; Different foreground and background colors for verbatim elements
+;; Author: Philippe Martin (feloy@free.fr) 2001-04-07
+
+(define ($verbatim-display$ indent line-numbers?)
+  (let ((verbatim-element (gi))
+        (content (make element gi: "PRE"
+                       attributes: (list
+                                    (list "CLASS" (gi)))
+                       (if (or indent line-numbers?)
+                           ($verbatim-line-by-line$ indent line-numbers?)
+                           (process-children)))))
+    (if %shade-verbatim%
+        (make element gi: "TABLE"
+              attributes: (shade-verbatim-attr-element verbatim-element)
+              (make element gi: "TR"
+                    (make element gi: "TD"
+                          (make element gi: "FONT" 
+                                attributes: (list
+                                             (list "COLOR" (car (shade-verbatim-element-colors
+                                                                 verbatim-element))))
+                                content))))
+        content)))
+
+;;
+;; Customize this function
+;; to change the foreground and background colors
+;; of the different verbatim elements
+;; Return (list "foreground color" "background color")
+;;
+(define (shade-verbatim-element-colors element)
+  (case element
+    (("SYNOPSIS") (list "#000000" "#6495ED"))
+    ;; ...
+    ;; Add your verbatim elements here
+    ;; ...
+    (("SCREEN") (list "#498650" "#000000"))
+    (else (list "#000000" "#E0E0E0"))))
+
+(define (shade-verbatim-attr-element element)
+  (list
+   (list "BORDER" 
+	(cond
+		((equal? element (normalize "SCREEN")) "1")
+		(else "0")))
+   (list "BGCOLOR" (car (cdr (shade-verbatim-element-colors element))))
+   (list "WIDTH" ($table-width$))))
+
+;; End of $verbatim-display$ redefinition
 
 </style-specification-body>
 </style-specification>
@@ -142,3 +207,4 @@
 <external-specification id="docbook" document="docbook.dsl">
 
 </style-sheet>
+
