@@ -149,7 +149,7 @@ startPosition: (double) startPosition
 //
 // We consider the performances to be equal if they are the same sound and start
 // at the same time. The reason we don't consider the playIndex is because a
-// performance would never match unless it is playing at exactly same sample.
+// performance would never match unless it is playing at exactly the same sample.
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) isEqual: (id) anotherPerformance
@@ -210,7 +210,7 @@ startPosition: (double) startPosition
 // playIndex
 ////////////////////////////////////////////////////////////////////////////////
 
-- (double) playIndex
+- (long) playIndex
 {
   return playIndex;
 }
@@ -219,7 +219,7 @@ startPosition: (double) startPosition
 // setPlayIndex:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) setPlayIndex: (double) newPlayIndex
+- (void) setPlayIndex: (long) newPlayIndex
 {
     // If we are going to move the play index after the end index, allow that,
     // but adjust the end index in order to stay legal.
@@ -232,7 +232,7 @@ startPosition: (double) startPosition
 // rewindPlayIndexBySamples:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (double) rewindPlayIndexBySamples: (long) numberOfSamplesToRewind
+- (long) rewindPlayIndexBySamples: (long) numberOfSamplesToRewind
 {
     long distanceFromLoopStart = playIndex - loopStartIndex;
     
@@ -319,102 +319,98 @@ startPosition: (double) startPosition
 // respected.
 - (long) retrievePerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength
 {
-    // deltaTime may be a misnomer, it is a multiple of buffers
-    double  stretchedBufferLength = deltaTime * buffLength;
-    // NSRange retrieveRegion = {playIndex, stretchedBufferLength + MAX(2, deltaTime)};
-    NSRange retrieveRegion = {playIndex, stretchedBufferLength};
-    BOOL atEndOfLoop = looping && retrieveRegion.length > loopEndIndex - playIndex;
+    long fillBufferToLength = buffLength;
+    long framesUntilEndOfLoop = loopEndIndex - playIndex + 1;
+    BOOL atEndOfLoop = looping && (buffLength > framesUntilEndOfLoop);
+    long numOfSamplesFilled = 0;
+#if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
+    long oldPlayIndex = playIndex;
+#endif
 
     if (atEndOfLoop) {	// retrieve up to the end of the loop
-	retrieveRegion.length = loopEndIndex - playIndex;
+	fillBufferToLength = framesUntilEndOfLoop;
     }
-    else if (retrieveRegion.length > endAtIndex - playIndex) {
-	buffLength = (endAtIndex - playIndex) / deltaTime;
-	// retrieveRegion.length = buffLength * deltaTime + MAX(2, deltaTime);
-	retrieveRegion.length = buffLength * deltaTime;
+    else if (fillBufferToLength > endAtIndex - playIndex) {  // check if at end of play region.
+	// we have reached the end of the Snd play region, the buffer length to return needs shortening
+	// TODO this could be shorter if resampling occurs, depends on what's returned by fillAudioBuffer:
+	// and insertIntoAudioBuffer:
+	fillBufferToLength = endAtIndex - playIndex;
     }
-    if (playIndex > -stretchedBufferLength) {
-	if (playIndex < 0) {
-	    retrieveRegion.length += playIndex;
-	    retrieveRegion.location = 0;
-	}
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
-	NSLog(@"[SndPerformance][SYNTH THREAD] playIndex = %.2f, endAtIndex = %ld, retrieve region location = %d, length = %d\n",
-              playIndex, endAtIndex, retrieveRegion.location, retrieveRegion.length);
+    NSLog(@"[SndPerformance][SYNTH THREAD] playIndex = %ld, endAtIndex = %ld, buffer length = %d, fill buffer to length = %d\n",
+	    playIndex, endAtIndex, buffLength, fillBufferToLength);
 #endif
-	// Negative or zero buffer length means the endAtIndex was moved before or to the current playIndex,
-	// so we should skip any mixing and stop.
-	// Nowdays, with better checking on the updates of endAtIndex and playIndex this should never occur, so this check is probably redundant.
-	if (buffLength > 0) {
-#if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
-	    int start = 0;
-	    int end = buffLength;
-#endif
+    
+    // Negative or zero buffer length means the endAtIndex was moved before or to the current playIndex,
+    // so we should skip any mixing and stop.
+    // Nowdays, with better checking on the updates of endAtIndex and playIndex this should never occur,
+    // so this check is probably redundant, but hey, it adds robustness which translates into saving someones
+    // ears from hearing noise.
+    if (playIndex >= 0 && buffLength > 0 && fillBufferToLength > 0) {
+	// NSLog(@"bufferToFill dataFormat before processing 1 %d\n", [bufferToFill dataFormat]);
+	numOfSamplesFilled = [snd fillAudioBuffer: bufferToFill
+					 toLength: fillBufferToLength
+			      samplesStartingFrom: playIndex];
+	// NSLog(@"bufferToFill dataFormat before processing 2 %d, numOfSamplesFilled = %ld\n", [bufferToFill dataFormat], numOfSamplesFilled);
 
-	    // NSLog(@"bufferToFill dataFormat before processing 1 %d\n", [bufferToFill dataFormat]);
-	    [snd fillAudioBuffer: bufferToFill withSamplesInRange: retrieveRegion];
-	    // NSLog(@"bufferToFill dataFormat before processing 2 %d\n", [bufferToFill dataFormat]);
-
-	    if (deltaTime != 1.0) {
-		NSLog(@"sample rate conversion\n");
-		[bufferToFill convertToFormat: [bufferToFill dataFormat]
-				 channelCount: [bufferToFill channelCount]
-				 samplingRate: [bufferToFill samplingRate] * deltaTime
-			       useLargeFilter: NO
-			    interpolateFilter: NO
-		       useLinearInterpolation: YES];
-	    }
-
-
-	    if(atEndOfLoop) {
-		// If we are at the end of the loop, copy in zero or more loop regions (when the loop is small)
-		// then any remaining beginning of the loop.
-		int loopLength = loopEndIndex - loopStartIndex;
-		long fillFrom = retrieveRegion.length;
-		long bufferLengthToFill = buffLength - fillFrom;
-
-		while(bufferLengthToFill > 0 && loopLength > 0) {
-		    NSRange loopRegion;
-
-		    loopRegion.location = loopStartIndex;
-		    loopRegion.length = (bufferLengthToFill > loopLength) ? loopLength : bufferLengthToFill;
-		    [snd insertIntoAudioBuffer: bufferToFill startingAt: fillFrom samplesInRange: loopRegion];
-		    playIndex = loopRegion.location + loopRegion.length;
-		    fillFrom += loopRegion.length; 
-		    bufferLengthToFill -= loopRegion.length;
-#if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
-		    NSLog(@"playIndex = %.2f, fillFrom = %d, bufferLengthToFill = %d\n", playIndex, fillFrom, bufferLengthToFill);
-#endif
-		}
-	    }
-	    else
-		playIndex += retrieveRegion.length;
-
-	    /*
-	    if (playIndex < 0) {
-		start = -playIndex;
-		start %= buffLength;
-	    }
-	    */
+	if(atEndOfLoop) {
+	    // If we are at the end of the loop, copy in zero or more (when the loop is small) loop regions 
+	    // then any remaining beginning of the loop.
+	    int loopLength = loopEndIndex - loopStartIndex + 1;
+	    long fillFrom = fillBufferToLength;
+	    long remainingLengthToFillWithLoop = buffLength - fillFrom;
 	    
-	    // if (end / deltaTime >  playIndex - endAtIndex)  end = (endAtIndex - playIndex) / deltaTime;
-		
-	    actualTime += [bufferToFill duration];
-	    if (audioProcessorChain != nil) {
-                 // NSLog(@"time: %f\n",relativePlayTime);
-		[audioProcessorChain processBuffer: bufferToFill forTime: actualTime];
-	    }
+	    while(remainingLengthToFillWithLoop > 0 && loopLength > 0) {
+		NSRange loopRegion;
+		long numOfSamplesInserted;
+
+		loopRegion.location = fillFrom;
+		loopRegion.length = MIN(remainingLengthToFillWithLoop, loopLength);
 
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
-	    NSLog(@"[SndPerformance][SYNTH THREAD] will mix buffer from %d to %d, retrieveRegion %d for %d, val at start = %f\n",
-	          start, end, retrieveRegion.location, retrieveRegion.length,
-	          (((short *) [snd data])[retrieveRegion.location]) / (float) 32768);
+		NSLog(@"after filling %@\n", bufferToFill);
+		NSLog(@"after filling buffer[%ld] = %e\n", fillBufferToLength-3, [bufferToFill sampleAtFrameIndex: fillBufferToLength-3 channel: 0]);
+		NSLog(@"after filling buffer[%ld] = %e\n", fillBufferToLength-2, [bufferToFill sampleAtFrameIndex: fillBufferToLength-2 channel: 0]);
+		NSLog(@"after filling buffer[%ld] = %e\n", fillBufferToLength-1, [bufferToFill sampleAtFrameIndex: fillBufferToLength-1 channel: 0]);
+#endif		
+		numOfSamplesInserted = [snd insertIntoAudioBuffer: bufferToFill
+							intoRange: loopRegion
+						samplesStartingAt: loopStartIndex];
+#if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
+		{
+		    long i;
+		    NSLog(@"%@ loopRegion.location = %ld, loopRegion.length = %ld, playIndex = %ld, fillFrom = %d, remainingLengthToFillWithLoop = %d\n",
+			bufferToFill, loopRegion.location, loopRegion.length, playIndex, fillFrom, remainingLengthToFillWithLoop);
+		    for (i = fillFrom - 5; i < fillFrom + 5; i++)
+			NSLog(@"buffer[%ld] = %e\n", i, [bufferToFill sampleAtFrameIndex: i channel: 0]);
+		}
 #endif
+		numOfSamplesFilled += numOfSamplesInserted;
+		playIndex = loopStartIndex + loopRegion.length;
+		fillFrom += loopRegion.length; 
+		remainingLengthToFillWithLoop -= loopRegion.length;
+	    }
 	}
+	else
+	    playIndex += numOfSamplesFilled;  // TODO this value needs to change for resampling.
+
+	actualTime += [bufferToFill duration];
+	if (audioProcessorChain != nil) {
+	    // NSLog(@"time: %f\n", relativePlayTime);
+	    [audioProcessorChain processBuffer: bufferToFill forTime: actualTime];
+	}
+
+#if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
+	NSLog(@"[SndPerformance][SYNTH THREAD] will mix buffer from %d to %d, old playIndex %d for %d, val at start = %f\n",
+		0, fillBufferToLength, oldPlayIndex, numOfSamplesFilled,
+		(((short *) [snd data])[oldPlayIndex]) / (float) 32768);
+#endif
     }
     else
-	playIndex += stretchedBufferLength;
-    return buffLength;
+	playIndex += buffLength;
+
+    //NSLog(@"retrieved numOfSamplesFilled = %ld\n", numOfSamplesFilled);
+    return numOfSamplesFilled;
 }
 
 - (BOOL) atEndOfPerformance
