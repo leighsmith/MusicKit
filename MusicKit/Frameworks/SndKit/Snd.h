@@ -48,9 +48,10 @@
 #define __SND_H__
 
 #import <Foundation/Foundation.h>
-#import <MKPerformSndMIDI/PerformSound.h>
+#import "SndFormat.h"
 
-// TODO this can probably be bumped along with the pasteboard methods to SndView.
+// TODO this can probably be bumped along with the pasteboard methods to SndView or do something
+// similar to NSAttributedString etc that extends FoundationKit class functionality in the AppKit.
 #ifndef USE_NEXTSTEP_SOUND_IO
 /* Define this for compatibility */
 #define NXSoundPboard NXSoundPboardType
