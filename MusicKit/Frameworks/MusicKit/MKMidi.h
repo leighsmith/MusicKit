@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.20  2001/05/14 21:02:13  leighsmith
+  Added description method
+
   Revision 1.19  2001/05/12 09:10:06  sbrandon
   - get around the fact that GNUstep does not have NSMachPorts, but
     NSPort does respond to -machPort and +portWithMachPort so we magically
@@ -312,8 +315,7 @@
 - allNotesOffBlast;
 -allNotesOff;
 -(double)time;
-- getMTCFormat:(short *)format hours:(short*)h min:(short *)m sec:(short *)s
- frames:(short *)f;
+- getMTCFormat:(short *)format hours:(short*)h min:(short *)m sec:(short *)s frames:(short *)f;
 -synchConductor;
 
 // Returns NSArrays of all available driver names and their unit numbers
@@ -322,6 +324,12 @@
 
 -(NSString *)driverName;
 -(int)driverUnit;
+
+/*!
+    @method description
+    @abstract Returns description of which device, the unit and the host the MKMidi object has been initialised on
+*/
+- (NSString *) description;
 
 // download MMA DownLoadable Sounds with patch numbers provided.
 - (void) downloadDLS: (NSArray *) dlsPatches;
