@@ -9,16 +9,18 @@
 
 @implementation SysExReceiver
 
-// Allocate ourselves a NoteReceiver
 - init
 {
-    [super init];
-    registeredSynths = [[[NSMutableArray alloc] init] retain];
-    lastRespondantSynths = [[[NSMutableArray alloc] init] retain];
-    sysExMsg = [[[SysExMessage alloc] init] retain];
-    [self addNoteReceiver: [[MKNoteReceiver alloc] init]];
-    enabled = FALSE;
-    delegateBank = nil;
+    self = [super init];
+    if(self != nil) {
+	registeredSynths = [[[NSMutableArray alloc] init] retain];
+	lastRespondantSynths = [[[NSMutableArray alloc] init] retain];
+	sysExMsg = [[[SysExMessage alloc] init] retain];
+	// Allocate ourselves a MKNoteReceiver
+	[self addNoteReceiver: [[MKNoteReceiver alloc] init]];
+	enabled = FALSE;
+	delegateBank = nil;	
+    }
     return self;
 }
 
