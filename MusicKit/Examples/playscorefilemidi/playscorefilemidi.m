@@ -43,7 +43,7 @@ int main(int ac, char * av[])
 	exit(1);
     }
     else {	
-	id scoreInfo;                                    
+	MKNote *scoreInfo;                                    
 	/* Read file from stdin. */
         NSFileHandle *stdinFileHandle = [NSFileHandle fileHandleWithStandardInput];
         NSData *stdinStream = [stdinFileHandle availableData];
@@ -74,7 +74,7 @@ int main(int ac, char * av[])
     midi = [MKMidi midi];
     { 
 	int partCount,chan;
-	NSMutableArray *noteSenders;
+	NSArray *noteSenders;
         MKNote *partInfo;
         MKNoteSender *aNoteSender;
 
@@ -87,10 +87,10 @@ int main(int ac, char * av[])
 	    /* Look in the partInfo for a midi channel. Default to 1. */
 	    if (!partInfo)               
 	      chan = 1;
-	    if (![partInfo isParPresent:MK_midiChan]) 
+	    if (![partInfo isParPresent: MK_midiChan]) 
 	      chan = 1;
 	    else chan = [partInfo parAsInt:MK_midiChan];
-	    [aNoteSender connect:[midi channelNoteReceiver:chan]];
+	    [aNoteSender connect: [midi channelNoteReceiver:chan]];
 	}
     }
 
