@@ -30,7 +30,7 @@ unwrap_symlink $APPNAME
 
 # build a ChangeLog
 cd $MKCHECKEDOUT_SRCLOC/$APPNAME
-cvs2cl -t -f Documentation/ChangeLog
+cvs2cl -t -S -f Documentation/ChangeLog
 # copy it so it can be used for generating an announcement.
 cp Documentation/ChangeLog $TARLOC
 
