@@ -14,9 +14,11 @@ and binary distributions. Likewise if the distribution web site changes.
 -->
 
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
-<!entity mkvers "5.3">
-<!entity mkvertuple "5.3.2">
-<!entity sndvertuple "2.0.1">
+<!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
+<!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
+<!entity mkvers "5.4">
+<!entity mkvertuple "5.4.0">
+<!entity sndvertuple "2.1.0">
 <!entity midisportvertuple "2.0.0">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://ftp.musickit.org/musickit">
@@ -759,7 +761,9 @@ versions of applications link against the correct versions of
 frameworks. However, to allow new framework with patches to be
 installed into operational sites without forcing recompiles of the
 application, the version tuple encoded in the framework is of the form
-<replaceable>V.R</replaceable>.
+<replaceable>V.R</replaceable>. Therefore a new patched framework can
+be installed over the top of the old same numbered framework with the
+knowledge it will continue to work.
 </para>
   </sect1>
 
@@ -1110,6 +1114,12 @@ the <productname class="Registered">Midiman</productname>
 Real time processing of sound from the <acronym>DSP</acronym> serial port.
 </para>
 	</listitem>
+        <listitem>
+          <para><application>PatchCord</application> (Leigh Smith)</para>
+          <para>
+A System Exclusive librarian and patch editor.
+</para>
+        </listitem>
       </itemizedlist>
     </sect2>
 
@@ -1521,48 +1531,10 @@ If you have discovered a bug, please report it via the
 </para>
   </sect1>
 
-  <bibliography>
-    <bibliomixed>
-    <bibliomset relation=article>
-      <authorgroup>
-	  <author>
-	    <firstname>David</firstname> <othername>A.</othername> <surname>Jaffe</surname>
-	  </author>
-	  <author>
-	    <firstname>Lee</firstname> <othername>R.</othername> <surname>Boynton</surname>
-	  </author>
-	</authorgroup>
-      <title role=article>An Overview of the Sound and Music Kits for the <productname>NeXT</productname> Computer</title>
-Computer Music Journal
-      <volumenum>13</volumenum>(<issuenum>2</issuenum>)
-      <pubdate>1989</pubdate>
-      <pagenums>48-55</pagenums>
-      <publishername>MIT Press</publishername>
-    </bibliomset>
-  </bibliomixed>
-
-    <bibliomixed>
-    <bibliomset relation=article>
-      <authorgroup>
-	  <author>
-	    <firstname>Eric</firstname> <othername>D.</othername>
-	    <surname>Scheirer</surname>
-	  </author>
-	  <author>
-	    <firstname>Barry</firstname> <othername>L.</othername>
-	    <surname>Vercoe</surname>
-	  </author>
-	</authorgroup>
-
-      <title role=article>SAOL: The MPEG-4 Structured Audio Orchestra Language</title>
-Computer Music Journal
-      <volumenum>23</volumenum>(<issuenum>2</issuenum>)
-      <pubdate>1999</pubdate>
-      <pagenums>31-51</pagenums>
-      <publishername>MIT Press</publishername>
-    </bibliomset>
-  </bibliomixed>
-  </bibliography>
+  <!-- all citations of documentation directly related to the MusicKit -->
+  &bibliography;
+  <!-- citations of related computer music, DSP publications -->
+  &readinglist;
 
   <ackno>
    <ulink url="http://sourceforge.net">
