@@ -19,6 +19,15 @@
 #endif
 
 //#import <sound/sound.h>
+#import <st.h>  // prototypes and structures from the Sox sound tools library
+int ausizestyleencoding(int size, int style);  // from sox au.c 
+
+#define SNDREADCHUNKSIZE 256*1024   // Number of LONG samples to read into a buffer.
+#ifdef WIN32
+#define LASTCHAR        '\\'
+#else
+#define LASTCHAR        '/'
+#endif
 
 int SndSampleWidth(int format)
 {
@@ -952,6 +961,7 @@ short SndiMulaw(unsigned char mulawValue)
 	return (short)st_ulaw_to_linear(mulawValue);
 }
 
+// TODO to convert
 int SndReadHeader(int fd, SndSoundStruct **sound)
 {
 	BOOL reverse = NO;
@@ -986,67 +996,142 @@ int SndReadHeader(int fd, SndSoundStruct **sound)
 	return SND_ERR_NONE;
 }
 
-int SndRead(int fd, SndSoundStruct **sound)
+int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
 {
-	BOOL reverse = NO;
-	SndSoundStruct *s;
-	int error;
-	int finalSize;
-	*sound = NULL;
-	if (fd == 0) return SND_ERR_CANNOT_OPEN;
-	if (!(s = malloc(sizeof(SndSoundStruct)))) return SND_ERR_CANNOT_ALLOC;
-	if ((error = read(fd, s, sizeof(SndSoundStruct))) < 0) return SND_ERR_CANNOT_READ;
-	if (error == 0) printf("Sound contained only header!\n");
-	/* now test for endianness */
-	if (s->magic != SND_MAGIC)
-		if (s->magic == (int)ntohl(SND_MAGIC))
-			reverse = YES;
-		else return SND_ERR_CANNOT_READ;
-	if (reverse) {
-		s->magic = ntohl(s->magic);
-		s->dataLocation = ntohl(s->dataLocation);
-		s->dataSize = ntohl(s->dataSize);
-		s->dataFormat = ntohl(s->dataFormat);
-		s->samplingRate = ntohl(s->samplingRate);
-		s->channelCount = ntohl(s->channelCount);
-		/* info string should be ok, if it's just chars... */
+        SndSoundStruct *s;
+        int lenRead;
+        int samplesRead;
+	int headerLen;
+        struct soundstream informat;
+        LONG *readBuffer;
+        char *storePtr;
+	int i;
+
+        *sound = NULL;
+        if (fp == NULL) 
+		return SND_ERR_CANNOT_OPEN;
+        informat.fp = fp;
+        informat.seekable = YES;
+        informat.filetype = fileTypeStr;
+        informat.info.rate = 0;
+        informat.info.size = -1;
+        informat.info.style = -1;
+        informat.info.channels = -1;
+        informat.comment = NULL;
+        informat.swap = 0;
+        informat.filename = "input";
+
+        gettype(&informat);
+
+        /* Read and write starters can change their formats. */
+        (* informat.h->startread)(&informat);
+        checkformat(&informat);
+
+        headerLen = sizeof(SndSoundStruct);
+        if (informat.comment) {
+            headerLen += strlen(informat.comment) - 4 + 1; // -4 for the 4 bytes defined with SndSoundStruct, +1 for \0
+	    // if(headerLen < sizeof(SndSoundStruct))
+	    // headerLen = sizeof(SndSoundStruct)
 	}
-	printf("Location:%d size:%d format:%d sr:%d cc:%d info:%s\n", s->dataLocation, s->dataSize, s->dataFormat, s->samplingRate, s->channelCount, s->info);
-	finalSize = s->dataSize + s->dataLocation;
-	
-	s = realloc((char *)s,finalSize);
-	if (s->dataLocation > sizeof(SndSoundStruct)) {
-		/* read off the rest of the info string */
-		error = read(fd,(char *)s + sizeof(SndSoundStruct),s->dataLocation - sizeof(SndSoundStruct));
-		if (error <= 0) return SND_ERR_CANNOT_READ;
-	}
-	error = read(fd,(char *)s + s->dataLocation,s->dataSize);
-	if (error <= 0) return SND_ERR_CANNOT_READ;
-	if (error != s->dataSize) 
-	  printf("File seems to have been truncated! Read %d data bytes, expected %d\n",error,s->dataSize);
+        if (!(s = malloc(headerLen))) return SND_ERR_CANNOT_ALLOC;
+	/* endianess is handled within startread() */
+        s->magic = SND_MAGIC; // could be extended using fileTypeStr but only when we write in all formats.
+        s->dataLocation = headerLen;
+        s->dataFormat = ausizestyleencoding(informat.info.style, informat.info.size);
+        s->samplingRate = informat.info.rate;
+        s->channelCount = informat.info.channels;
+        if (informat.comment) // because SndSoundStruct locates comments at a fixed location, we have to copy them in.
+		strcpy(s->info, informat.comment);
+
+	// There is a semantic mismatch between sox and the SndKit's process of managing data. .snd files provide an upfront
+	// indication of sound file size in bytes, whereas sox only allows reading chunks until EOF to allow for pipe
+	// operations.
+	// For now, we read separate chunks and laboriously reallocate after each read. This can be slow, so the only way to
+	// optimise is slightly overestimate the likely typical sound file size for initial allocation.
+	// The proper solution is to properly implement a dataSize value of -1 indicating the sound is streamed.
+	// Likewise, startread function should be changed to return the sound file size for the big three (aiff, wav, au)
+	// so the allocation size can be closer to the real value.
+
+        // Sox read() always returns arrays of LONG integers for each sample which the SndKit should eventually adopt
+	// to enable 24 bit operation.
+        // For now, we kludge it to 16 bit integers until we have sound drivers that will manage the extra precision.
+
+	// Unfortunately there is the assumption the SndSoundStruct is always big-endian (within the MKPerformSndMIDI
+	// framework and any soundStructs returned), which means we need to swap again. The correct solution is to relax
+	// the big-endian requirement, introduce another format code allowing for little endian encoding, and revert the
+	// MKPerformSndMIDI framework to expect native endian order.
+
+        if((readBuffer = (LONG *) malloc(SNDREADCHUNKSIZE * sizeof(LONG))) == NULL) return SND_ERR_CANNOT_ALLOC;
+        samplesRead = 0; // samplesRead represents ? excluding header.
+        do {
+            // punt on at least SNDREADCHUNKSIZE much then trim it at the end.
+            s = realloc((char *)s, headerLen + (samplesRead + SNDREADCHUNKSIZE) * informat.info.size);
+            storePtr = (char *)s + headerLen + samplesRead * informat.info.size;
+            /* Read chunk of input data. */
+            lenRead = (*informat.h->read)(&informat, readBuffer, (LONG) SNDREADCHUNKSIZE);
+            if (lenRead <= 0)
+                return SND_ERR_CANNOT_READ;
+            for(i = 0; i < lenRead; i++) {
+                int sample = RIGHT(readBuffer[i], (sizeof(LONG) - informat.info.size) * 8);
+                *((short *) storePtr) =  htons(sample); // kludged assuming 16 bits. We always adopt big-endian format.
+                storePtr += informat.info.size;
+	    }
+            samplesRead += lenRead;
+        } while(lenRead == SNDREADCHUNKSIZE); // sound files exactly modulo SNDREADCHUNKSIZE will read 0 bytes next time thru.
+        s->dataSize = samplesRead * informat.info.size;
+	s = realloc((char *)s, headerLen + s->dataSize); 
+	free(readBuffer);
+
+        printf("Input file: using sample rate %lu Hz, size %s, style %s, %d %s\n",
+               informat.info.rate, sizes[informat.info.size],
+               styles[informat.info.style], informat.info.channels,
+               (informat.info.channels > 1) ? "channels" : "channel");
+        if (informat.comment)
+            printf("Input file: comment \"%s\"\n", informat.comment);
+        printf("Location:%d size:%d format:%d sr:%d cc:%d info:%s\n", s->dataLocation, s->dataSize, s->dataFormat, 			s->samplingRate, s->channelCount, s->info);
+
 	*sound = s;
+        (* informat.h->stopread)(&informat);
 	return SND_ERR_NONE;
 }
+
+/* called from util.c:fail */
+void cleanup() 
+{
+        /* Close the input file and outputfile before exiting*/
+//        if (informat.fp)
+//                fclose(informat.fp);
+}
+
 int SndReadSoundfile(const char *path, SndSoundStruct **sound)
 {
 	int error,error2;
-	int fd;
+	FILE *fp;
 	SndSoundStruct *aSound;
-	*sound = NULL;
+	const char *filetype;
+
+        *sound = NULL;
 	if (!path) return SND_ERR_BAD_FILENAME;
 	if (!strlen(path)) return SND_ERR_BAD_FILENAME;
-#ifdef WIN32
-        fd = open(path, O_RDONLY | O_BINARY, NULL);/*sb: win32, requires 3rd argument. huh? */
-#else
-        fd = open(path, O_RDONLY);
-#endif
-	if (fd == -1) return SND_ERR_CANNOT_OPEN;
-	error = SndRead(fd, &aSound);
-	error2 = close(fd);
-	if (error2 == -1) return SND_ERR_UNKNOWN;
+        fp = fopen(path, READBINARY);
+        if (fp == NULL) return SND_ERR_CANNOT_OPEN;
+
+        if ((filetype = strrchr(path, LASTCHAR)) != NULL)
+            filetype++;
+        else
+            filetype = path;
+        if ((filetype = strrchr(filetype, '.')) != NULL)
+            filetype++;
+        else /* Default to "auto" */
+	    filetype = "auto";
+
+	error = SndRead(fp, &aSound, filetype);
+	error2 = fclose(fp);
+	if (error2 == EOF) return SND_ERR_UNKNOWN;
 	*sound = aSound;
 	return error;
 }
+
 int SndWriteSoundfile(const char *path, SndSoundStruct *sound)
 {
 	int error,error2;
@@ -1242,3 +1327,4 @@ int SndSwapHostToSound(void *dest, void *src, int sampleCount, int channelCount,
 
 #endif 
 }
+

@@ -35,10 +35,18 @@ void merror(int er)
 
 + (void)initialize
 {
+#if defined(WIN32) && defined(USE_PERFORM_SOUND_IO)
+    char **driverNames;
+#endif
 	printf("Snd class initialize\n");
 //	malloc_error(&merror);
     if ( self == [Snd class] ) {
         nameTable = [[NSMutableDictionary alloc] initWithCapacity:10];
+#if defined(WIN32) && defined(USE_PERFORM_SOUND_IO)
+        SNDInit(TRUE);
+        driverNames = SNDGetAvailableDriverNames();
+        printf("driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
+#endif
     }
     return;
 }
@@ -105,7 +113,7 @@ void merror(int er)
 {
     if ([nameTable objectForKey:aname]) return nil; /* already exists */
     if (!aSnd) return nil;
-    [aSnd setName:aname];
+    [(Snd *)aSnd setName:aname];
     [nameTable setObject:aSnd forKey:aname];
     return aSnd;
 }
@@ -175,6 +183,8 @@ void merror(int er)
 {
 #ifdef USE_NEXTSTEP_SOUND_IO
 	return [Sound isMuted];
+#elif defined(USE_PERFORM_SOUND_IO) && defined(WIN32)
+        return SNDIsMuted();
 #else
 	return NO;
 #endif
@@ -184,6 +194,9 @@ void merror(int er)
 {
 #ifdef USE_NEXTSTEP_SOUND_IO
 	return [Sound setMute:(BOOL)aFlag];
+#elif defined(USE_PERFORM_SOUND_IO) && defined(WIN32)
+	SNDSetMute(aFlag);
+	return self;
 #else
 	return self;
 #endif
@@ -200,6 +213,9 @@ void merror(int er)
 	_scratchSnd = NULL;
 	_scratchSize = 0;
 	tag = 0;
+#if 0 // disabled as this should be done in initialize
+	SNDInit(TRUE);
+#endif
 	return [super init];
 }
 
@@ -510,7 +526,7 @@ void merror(int er)
 	return strlen((char *)(soundStruct->info));
 }
 
-#ifdef USE_NEXTSTEP_SOUND_IO
+#ifdef USE_PERFORM_SOUND_IO
 int beginFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
@@ -529,6 +545,7 @@ int beginFun(SNDSoundStruct *sound, int tag, int err)
 int endFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
+
 	theSnd = [playRecTable valueForKey:sound];
 	[theSnd _setStatus:NX_SoundStopped];
 	if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
@@ -540,10 +557,14 @@ int endFun(SNDSoundStruct *sound, int tag, int err)
 	 * here, whether or not it was used. Generally it's used for real-time
 	 * rate conversion for playback. (maybe recording etc too???)
 	 */
-	printf("Unreserving error %d\n",SNDUnreserve(3));
+        err = SNDUnreserve(3);
+        if(err) {
+            NSLog(@"Unreserving error %d\n", err);
+        }
 	((Snd *)theSnd)->tag = 0;
 	return 0;
 }
+
 int beginRecFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
@@ -577,7 +598,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 - play:sender
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
+#ifdef USE_PERFORM_SOUND_IO
 	int err;
 	if (!soundStruct) return self;
 	if (!playRecTable) playRecTable = [[HashTable alloc] initKeyDesc:"!"];
@@ -585,14 +606,17 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 	[playRecTable insertKey:soundStruct value:self];
 	tag = ioTags;
 	status = NX_SoundPlayingPending;
-	printf("Unreserving error %d\n",SNDUnreserve(3));
+        err = SNDUnreserve(3);
+        if(err) {
+            NSLog(@"Unreserving error %d\n", err);
+        }
 	err = SNDStartPlaying((SNDSoundStruct *)soundStruct,
 		ioTags++ /*	int tag			*/,
 		1 /*	int priority	*/,
 		0 /*	int preempt		*/, 
 		(SNDNotificationFun) beginFun,
 		(SNDNotificationFun) endFun);
-	if (err) printf("Playback error %d\n",err);
+	if (err) NSLog(@"Playback error %d\n",err);
 	return self;
 #else
 	return self;
@@ -641,7 +665,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 - (int)samplesProcessed
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
+#ifdef USE_PERFORM_SOUND_IO
 	return (tag == 0) ? -1 : SNDSamplesProcessed(tag);
 #else
 	return -1; /* not yet implemented */
@@ -666,7 +690,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 - (void)stop:(id)sender
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
+#ifdef USE_PERFORM_SOUND_IO
 	if (tag) {
 		SNDStop(tag);
 		tag = 0;
@@ -688,7 +712,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 - (int)stop
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
+#ifdef USE_PERFORM_SOUND_IO
 	[self stop:self];
 	return SND_ERR_NONE;
 #else
@@ -723,11 +747,19 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 - (int)readSoundfile:(NSString *)filename
 {
 	int err;
+	NSDictionary *fileAttributeDictionary;
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+
 	if (soundStruct) SndFree(soundStruct);
 	if (name) {
 		free(name);
 		name = NULL;
 		}
+        // check its seekable, by checking its POSIX regular.
+        fileAttributeDictionary = [fileManager fileAttributesAtPath: filename traverseLink: YES];
+        if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular)
+	     return SND_ERR_CANNOT_OPEN;
+
 	err = SndReadSoundfile([filename cString],&soundStruct);
 	if (!err) soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
 	return err;

@@ -21,6 +21,9 @@
  *                   interval [pointer-1:pointer+2] by iteration.
  */
 
+// both sox and SndKit use Julius Smiths resampling code, logically sox should be the final version and SndKit use that.
+#define SUPERCEDED 1 
+
 #import "_Sndresample.h"
 #import "_Sndfilterkit.h"
 
@@ -93,6 +96,7 @@ static double Izero(double x)
    return(sum);
 }
 
+#ifndef SUPERCEDED
 
 void LpFilter(double c[], int N, double frq, double Beta, int Num)
 {
@@ -120,6 +124,7 @@ void LpFilter(double c[], int N, double frq, double Beta, int Num)
    }
 }
 
+#endif
 
 /* Write a filter to a file
  *    Filter file format:
@@ -165,7 +170,6 @@ int writeFilter(SND_HWORD Imp[], SND_HWORD ImpD[], SND_UHWORD LpScl, SND_UHWORD 
    return(0);
 }
 
-
 /* ERROR return codes:
  *    0 - no error
  *    1 - Nwing too large (Nwing is > MAXNWING)
@@ -177,6 +181,8 @@ int writeFilter(SND_HWORD Imp[], SND_HWORD ImpD[], SND_UHWORD LpScl, SND_UHWORD 
 
 #define MAXNWING   8192
 static double ImpR[MAXNWING];
+
+#ifndef SUPERCEDED
 
 int makeFilter(SND_HWORD Imp[], SND_HWORD ImpD[], SND_UHWORD *LpScl, SND_UHWORD Nwing,
                double Froll, double Beta)
@@ -233,6 +239,7 @@ int makeFilter(SND_HWORD Imp[], SND_HWORD ImpD[], SND_UHWORD *LpScl, SND_UHWORD 
    return(0);
 }
 
+#endif
 
 /* Read-in a filter
  *    Filter file format:
@@ -314,6 +321,7 @@ ImpD = (SND_HWORD *) malloc(*Nwing * sizeof(SND_HWORD));
     return(0);
 }
 
+#ifndef SUPERCEDED
 
 SND_WORD FilterUp(SND_HWORD Imp[], SND_HWORD ImpD[],
                   SND_UHWORD Nwing, BOOL Interp,
@@ -412,6 +420,8 @@ SND_WORD FilterUD( SND_HWORD Imp[], SND_HWORD ImpD[],
       }
     return(v);
 }
+
+#endif
 
 /*
  * double zerox(Data, Factor)

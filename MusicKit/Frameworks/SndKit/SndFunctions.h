@@ -13,6 +13,8 @@
 #import "SndEndianFunctions.h"
 #import <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
 
+#import <stdio.h> // for FILE
+
 	/*
 	 *   functions.h
 	 * A library of functions intended to be compatible with NeXTs
@@ -73,7 +75,7 @@ SndSoundStruct * _SndCopyFragBytes(SndSoundStruct *fromSoundFrag, int startByte,
 int		SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCount);
 unsigned char SndMulaw(short linearValue);
 short	SndiMulaw(unsigned char mulawValue);
-int		SndRead(int fd, SndSoundStruct **sound);
+int		SndRead(FILE *fp, SndSoundStruct **sound, const char *filetype);
 int		SndReadHeader(int fd, SndSoundStruct **sound);
 int		SndReadSoundfile(const char *path, SndSoundStruct **sound);
 int		SndWriteHeader(int fd, SndSoundStruct *sound);

@@ -1,1 +1,3 @@
-{NSMACHOperatingSystem = {Archs = "18 "; Args = ""; Target = install; }; }
+{
+    NSMACHOperatingSystem = {Archs = "18 "; Args = "STRIP_ON_INSTALL=NO"; Target = install; }; 
+}
