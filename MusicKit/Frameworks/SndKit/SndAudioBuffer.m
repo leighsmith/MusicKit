@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #import "SndAudioBuffer.h"
-
+#import "SndFunctions.h"
 // altivec support...
 #ifdef __VEC__
 #import <vecLib/vecLib.h>

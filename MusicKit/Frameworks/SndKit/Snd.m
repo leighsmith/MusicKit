@@ -52,6 +52,8 @@ CONDITIONS OF THIS AGREEMENT.
 #include <AppKit/NSApplication.h>
 
 #import "Snd.h"
+#import "sounderror.h"
+#import "SndFunctions.h"
 #import "SndPlayer.h"
 
 // TODO this needs upgrading

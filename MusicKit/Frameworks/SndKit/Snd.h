@@ -23,8 +23,6 @@
 #endif
 
 #import <MKPerformSndMIDI/PerformSound.h>
-#import "sounderror.h"
-#import "SndFunctions.h"
 
 /* Define this for compatibility */
 #define NXSoundPboard NXSoundPboardType
