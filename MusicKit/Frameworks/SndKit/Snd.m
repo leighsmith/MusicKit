@@ -29,7 +29,7 @@ static ioTags = 1000;
 
 void merror(int er)
 {
-	printf("mem error %i\n",er);
+	NSLog(@"mem error %i\n",er);
 	return;
 }
 
@@ -51,7 +51,7 @@ void merror(int er)
     return;
 }
 
-+ findSoundFor:(NSString *)aName
++ soundNamed:(NSString *)aName
 /* Does not name sound, or add to name table.
  */
 {
