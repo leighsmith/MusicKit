@@ -3,12 +3,20 @@
   Defined In: The MusicKit
 
   Description:
+    This is a command line scorefile player, with support for
+    synthpatches and DSP serial I/O. See showUsage() below for details.
+
   Original Author: David A. Jaffe.
+
   Copyright 1988-1992, NeXT Inc.  All rights reserved.
   Release 4.0 modifications copyright CCRMA, Stanford University, 1993
 */
 /* 
 Modification history:
+  $Log$
+  Revision 1.3  2000/04/27 01:55:31  leigh
+  Usage reflects search path for libraries, release bugs fixed, proper status displayed
+
 
   12/20/89/daj - Added support for optimized scorefiles.
   03/05/90/daj - Removed warning message for no synthPatch in -f mode.
@@ -70,6 +78,8 @@ static NSString *findFile(NSString *name)
 	fprintf(stderr,"No file name specified.\n");
 	exit(1);
     }
+    if([[NSFileManager defaultManager] isReadableFileAtPath: name])
+        return name;
     for(i = 0; i < [libraryDirs count]; i++) {
         NSString *directoryQualifiedName;
         directoryQualifiedName = [[[libraryDirs objectAtIndex: i] stringByAppendingPathComponent: SCORE_DIR]
@@ -84,7 +94,9 @@ static NSString *findFile(NSString *name)
     return nil;
 }
 
-const char * const help = 
+void showUsage(void)
+{
+static const char * const help = 
 "\n\n\
    The playscore program performs a scorefile by playing it on the DSP\n\
    and/or MIDI.\n\
@@ -93,9 +105,7 @@ const char * const help =
    If the specified file isn't an absolute path, the program searches for\n\
    it in the following directories, in order:\n\n\
    The current working directory\n\
-   ~/Library/Music/Scores\n\
-   /LocalLibrary/Music/Scores\n\
-   /NextLibrary/Music/Scores.\n\n\
+%s\n\
    The '.playscore' or '.score' extension, which identify a file as a \n\
    scorefile, can be omitted -- the program will append it for you. If you\n\
    leave off the extension and both a '.playscore' and a '.score' version are\n\
@@ -125,7 +135,15 @@ const char * const help =
                         the file name.\n\
     For futher details, see the playscore MAN page.\n\
        \n";
+    NSMutableString *searchedDirectories = [NSMutableString stringWithString: @""];
+    NSArray *libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
+    unsigned i;
 
+    for(i = 0; i < [libraryDirs count]; i++)
+        [searchedDirectories appendFormat: @"   %@\n", [[libraryDirs objectAtIndex: i] stringByAppendingPathComponent: SCORE_DIR]];
+
+    fprintf(stderr, help, [searchedDirectories cString]);
+}
 
 static void setSoundOutDevice(void)
 {
@@ -295,7 +313,9 @@ int main(int argc, const char *argv[])
     BOOL weGotAnOpenOrch = NO;
     BOOL allDSPs = NO;
     BOOL onTheFly = NO;
+#if SOUND_OUT_PAUSE_BUG
     BOOL weGotMidi = NO;
+#endif
     BOOL debugIt = NO;
     BOOL waitForIt = NO;
     id midis[2];
@@ -309,7 +329,7 @@ int main(int argc, const char *argv[])
     orchPar = [MKNote parTagForName: @"orchestraIndex"];
 
     if (argc == 1) {
-	fprintf(stderr,help);
+        showUsage();
 	exit(1);
     }
     [MKConductor setThreadPriority:1.0];
@@ -404,16 +424,14 @@ int main(int argc, const char *argv[])
 		"A NeXT-compatible DSP port is not supported by this hardware configuration.\n");
 	exit(1);
     }
+    inputFile = [NSString stringWithCString: argv[argc-1]];
     for (repeat = 0; repeat < repeatCount; repeat++) {
-	if (repeat == 0) {
-            inputFile = [NSString stringWithCString: argv[argc-1]];
-	}
 	if (!onTheFly) {
 	    if (repeat == 0) {
 		MKScore *aScore = [MKScore new];                  
                 aStream = [NSData dataWithContentsOfFile: findFile(inputFile)];
 		if (!quiet)
-                    if (aStream == nil)
+                    if (aStream != nil)
                         fprintf(stderr,"playscore reading %s...\n", [inputFile cString]);
                 if (![aScore readScorefileStream:aStream] && !quiet) {
                     fprintf(stderr,"Fix scorefile errors and try again.\n");
@@ -527,7 +545,7 @@ int main(int argc, const char *argv[])
 			else
                             whichMidi = 0;
 			if (midis[whichMidi] == nil)
-                            midis[whichMidi] = [MKMidi midiOnDevice:className];
+                            midis[whichMidi] = [[MKMidi midiOnDevice:className] retain];
 			[[partPerformer noteSender] connect:
                             [midis[whichMidi] channelNoteReceiver:midiChan]];
 		    }
@@ -633,7 +651,7 @@ int main(int argc, const char *argv[])
 		    if (repeat == 0 && synthPatchCount < voices) 
 		      if (!quiet)
 			fprintf(stderr, "Could only allocate %d instead of %d %ss for %s\n",
-				synthPatchCount, voices, [[synthPatchClass name] cString],
+                                synthPatchCount, voices, [[synthPatchClass name] cString],
 				[MKGetObjectName(aNoteSender) cString]);
 		}
 	    }
@@ -675,9 +693,6 @@ int main(int argc, const char *argv[])
             [(MKMidi *) midis[i] close];
 	if (!quiet)
             fprintf(stderr,"...done\n");
-	if (onTheFly || (repeat == (repeatCount - 1))) {
-	    [aStream release];
-	}
     }
     [pool release];
     exit(0);       // insure the process exit status is 0
