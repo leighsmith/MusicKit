@@ -44,15 +44,66 @@
 //#import <kern/time_stamp.h>
 //#import <objc/zone.h>
 
-#import "SoundMeter.h"
+//#import "SoundMeter.h"
 #import "Snd.h"
 #import "SndStreamClient.h"
 
 //extern int kern_timestamp();
+@interface SndMeter : NSView {
+	Snd *sound;
+	int currentSample;
+	float currentValue;
+	float currentPeak;
+    float minValue;
+    float maxValue;
+    float holdTime;
+    NSColor *backgroundColor;
+    NSColor *foregroundColor;
+    NSColor *peakColor;
+    struct {
+        unsigned int running:1;
+        unsigned int bezeled:1;
+        unsigned int shouldStop:1;
+        unsigned int _reservedFlags:13;
+    } smFlags;
+    void *_timedEntry;
+    int _valTime;
+    int _peakTime;
+    float _valOneAgo;
+    float _valTwoAgo;
+}
+- (id)initWithFrame:(NSRect)frameRect;
 
-@implementation SoundMeter
+- (id)initWithCoder:(NSCoder *)aStream;
+- (void)encodeWithCoder:(NSCoder *)aStream;
+- (float)holdTime;
+- (void)setHoldTime:(float)seconds;
+- (void)setBackgroundColor:(NSColor *)color;
+- (NSColor *)backgroundColor;
+- (void)setForegroundColor:(NSColor *)color;
+- (NSColor *)foregroundColor;
+- (void)setPeakColor:(NSColor *)color;
+- (NSColor *)peakColor;
+- (Sound *)sound;
+- (void)setSound:(Sound *)aSound;
+- (void)run:(id)sender;
+- (void)stop:(id)sender;
+- (BOOL)isRunning;
+- (BOOL)isBezeled;
+- (void)setBezeled:(BOOL)aFlag;
+- (void)setFloatValue:(float)aValue;
+- (float)floatValue;
+- (float)peakValue;
+- (float)minValue;
+- (float)maxValue;
+- (void)drawRect:(NSRect)rects;
+- (void)drawCurrentValue;                                                                         
+@end
 
-static float smoothValue(SoundMeter *self, float aValue)
+
+@implementation SndMeter
+
+static float smoothValue(SndMeter *self, float aValue)
 {
     float newValue;
     
@@ -75,7 +126,7 @@ static float prepareValueForDisplay(id self, float m)
     return result;
 }
 
-static void calcValues(SoundMeter *self, float *aveVal, float *peakVal)
+static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
 {
     static SndStreamClient *outDevice = nil;
     static SndStreamClient *inDevice = nil;
@@ -126,7 +177,7 @@ static void calcValues(SoundMeter *self, float *aveVal, float *peakVal)
     }
 }
 
-static int shouldBreak(SoundMeter *self)
+static int shouldBreak(SndMeter *self)
 {
    NSEvent *ev;
    int status = [self->sound status];
@@ -144,7 +195,7 @@ static int shouldBreak(SoundMeter *self)
 #define BREAK_DELAY (0)
 
 static void animate_self(id /* _NSSKTimedEntry */ timedEntry, double now,
-							 SoundMeter *self)
+							 SndMeter *self)
 {
     static int stopDelay = DONE_DELAY;
     int breakDelay = BREAK_DELAY;
@@ -189,8 +240,8 @@ static void animate_self(id /* _NSSKTimedEntry */ timedEntry, double now,
  */
 
 + (void)initialize {
-    if (self == [SoundMeter class]) {
-	[SoundMeter setVersion:1];
+    if (self == [SndMeter class]) {
+	[SndMeter setVersion:1];
     }
 }
 
@@ -386,7 +437,7 @@ static void animate_self(id /* _NSSKTimedEntry */ timedEntry, double now,
 - (id)initWithCoder:(NSCoder *)stream {
     int version;
     self = [super initWithCoder:stream];
-    version = [stream versionForClassName:@"SoundMeter"];
+    version = [stream versionForClassName:@"SndMeter"];
     if (version == 0) {
 	float backgroundGray, foregroundGray, peakGray;
 	[stream decodeValuesOfObjCTypes:"@ffffffffs",&sound,&currentValue,
