@@ -32,6 +32,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/11/12 01:25:43  leigh
+  Fixed error message to NSString
+
   Revision 1.3  1999/08/26 19:58:53  leigh
   DSPMemoryNames changed to be a function for Win32
 
@@ -734,8 +737,7 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
     register MKUGArgStruct *argP = &self->args[argNum];
     if (!memoryObj) {
 	if (errorChecks) 
-	    _MKErrorf(MK_musicKitErr,
-		      "nil argument passed to MKSetUGAddressArg().");
+	    _MKErrorf(MK_musicKitErr, @"nil argument passed to MKSetUGAddressArg().");
 	return nil;
     }
     memP =  [memoryObj orchAddrPtr];
