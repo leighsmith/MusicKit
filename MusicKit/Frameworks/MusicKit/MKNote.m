@@ -16,6 +16,10 @@
 Modification history:
 
   $Log$
+  Revision 1.18  2002/01/22 13:50:14  sbrandon
+  squashed a bug in -copyWithZone which prevented copies of notes from being
+  able to retrieve any user-defined parameters
+
   Revision 1.17  2002/01/09 19:49:43  leighsmith
   Clean up of doco and typed copyParsFrom: parameter
 
@@ -465,6 +469,7 @@ static int nAppBitVects(); /* forward ref */
         for (i = 0; i < vectorCount; i++)
             newObj->_appPars[i] = _appPars[i];
     }
+    newObj->_highAppPar = _highAppPar;
     return newObj;
 }
 
