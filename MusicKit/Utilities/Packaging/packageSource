@@ -9,7 +9,7 @@
 APPNAME=MusicKit
 APPCHECKEDOUT_SRCLOC=/tmp/MKSRC
 # This allows us to have a different default CVSROOT
-MKCVSROOT=leigh@cvs.tomandandy.com:/Local/Library/CVSRoot
+MKCVSROOT=leigh@anoncvs.tomandandy.com:/Local/Library/CVSRoot
 PACKAGENAME=MK
 if [ x_$1 = x_ ]; then
     echo "${APPNAME} source shipping script"
@@ -24,6 +24,11 @@ TAR=gnutar
 CHGLOGGEN=cvs2cl.pl
 TARLOC=/tmp
 CVSTAG=${APPNAME}_`echo $RELEASE | tr '.' '-'`
+
+# determine the date of the last tagged release.
+PREVCVSTAG=MusicKit_5-2-2 
+# PREVCVSTAG=${APPNAME}_`echo $PREVRELEASE | tr '.' '-'`
+PREVCVSTAGDATE=`cvs log -r$TAG | sed -n -e 's/date: \([^ ]*\) .*/\1/p' | sort -r | uniq | head -n 1`
 
 # Checkout the source tree
 echo Checking out $CVSTAG to $APPCHECKEDOUT_SRCLOC
@@ -42,12 +47,13 @@ $CHGLOGGEN --no-wrap --separate-header --window 43200 --file Documentation/Chang
 cp Documentation/ChangeLog $TARLOC
 
 # This is the means to generate what we've done since last release.
-# $CHGLOGGEN --no-wrap --separate-header --window 43200 --file /tmp/ChangeLog_$RELEASE --log-opts '-d\>2000-10-09'
+# '-d\>2000-10-09'
+# $CHGLOGGEN --no-wrap --separate-header --window 43200 --file $TARLOC/ChangeLog_$RELEASE --log-opts '-d\>$PREVCVSTAGDATE' 
 
-# create a readily readable PDF version of the MusicKit_README.sgml file
+# create a readily readable PDF version of the README.sgml file
 # packageREADME
-# Unfortunately, the SGML tools don't work on MOXS, so we suffice by copying them...
-cp ~/MusicKit_README.pdf $APPCHECKEDOUT_SRCLOC/$APPNAME
+# Unfortunately, the SGML tools don't work on MacOS X, so we suffice by copying them...
+cp ~/$APPNAME_README.pdf $APPCHECKEDOUT_SRCLOC/$APPNAME
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
 find $APPCHECKEDOUT_SRCLOC -name CVS -type d -exec rm -r {} \; -prune
@@ -61,6 +67,7 @@ $TAR czf $PACKAGEFILE ${APPNAME}-${RELEASE}
 
 echo Archive generated at $PACKAGEFILE
 echo ChangeLog generated at $TARLOC/ChangeLog
+# echo ChangeLog diff between $PREVCVSTAGDATE and now generated at $TARLOC/ChangeLog_$RELEASE
 
 # blow away the checked out source.
 rm -r $APPCHECKEDOUT_SRCLOC
