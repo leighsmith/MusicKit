@@ -8,7 +8,21 @@
 	<string>433 367 238 44 0 4 1600 1174 </string>
 	<key>IBUserGuides</key>
 	<dict>
+		<key>InfoPanel</key>
+		<dict>
+			<key>guideLocations</key>
+			<array/>
+			<key>guidesLocked</key>
+			<string>YES</string>
+		</dict>
 		<key>MainWindow</key>
+		<dict>
+			<key>guideLocations</key>
+			<array/>
+			<key>guidesLocked</key>
+			<string>NO</string>
+		</dict>
+		<key>PreferencesPanel</key>
 		<dict>
 			<key>guideLocations</key>
 			<array/>
