@@ -1,0 +1,48 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: testPerformApp - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "rc.exe /l 0x409 /fo"Debug/testPerformApp.res" /d "_DEBUG" /d "_AFXDLL" "C:\tomandandy\PublicDomain\MSWindowsMIDI\testPerformApp\testPerformApp.rc"" 
+Creating temporary file "C:\WINDOWS\TEMP\RSPF1C5.TMP" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /Fp"Debug/testPerformApp.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\tomandandy\PublicDomain\MSWindowsMIDI\testPerformApp\testPerformApp.cpp"
+"C:\tomandandy\PublicDomain\MSWindowsMIDI\testPerformApp\testPerformAppDlg.cpp"
+]
+Creating command line "cl.exe @C:\WINDOWS\TEMP\RSPF1C5.TMP" 
+Creating temporary file "C:\WINDOWS\TEMP\RSPF1C6.TMP" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /Fp"Debug/testPerformApp.pch" /Yc"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\tomandandy\PublicDomain\MSWindowsMIDI\testPerformApp\StdAfx.cpp"
+]
+Creating command line "cl.exe @C:\WINDOWS\TEMP\RSPF1C6.TMP" 
+Creating temporary file "C:\WINDOWS\TEMP\RSPF1C7.TMP" with contents
+[
+c:/Local/Developer/Frameworks/MKPerformSndMIDI.framework/MKPerformSndMIDI.lib /nologo /subsystem:windows /incremental:yes /pdb:"Debug/testPerformApp.pdb" /debug /machine:I386 /out:"Debug/testPerformApp.exe" /pdbtype:sept 
+.\Debug\StdAfx.obj
+.\Debug\testPerformApp.obj
+.\Debug\testPerformAppDlg.obj
+.\Debug\testPerformApp.res
+]
+Creating command line "link.exe @C:\WINDOWS\TEMP\RSPF1C7.TMP"
+<h3>Output Window</h3>
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+testPerformApp.cpp
+testPerformAppDlg.cpp
+Generating Code...
+Linking...
+
+
+
+<h3>Results</h3>
+testPerformApp.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
