@@ -52,6 +52,10 @@
 Modification history:
 
  $Log$
+ Revision 1.15  2002/04/15 14:32:30  sbrandon
+ changed type of "s" ivar from char* to NSString and had to change all refs
+ to it.
+
  Revision 1.14  2002/04/03 03:59:41  skotmcdonald
  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -138,12 +142,12 @@ Modification history:
 
 #define BINARY(_p) (_p && _p->_binary) /* writing a binary scorefile? */
 
-static id newParName(const char * name,int param)
+static id newParName(const NSString * name,int param)
 /* Make a new one */
 {
   register _ParName *self = [_ParName new];
-  self->s = _MKMakeStr(name);
-  _MKNameGlobal([NSString stringWithCString:name],self,_MK_param | _MK_BACKHASHBIT,YES,YES);
+  self->s = [(const id)name retain]; // no need to make copy?
+  _MKNameGlobal((const id)name,self,_MK_param | _MK_BACKHASHBIT,YES,YES);
   self->par = param;
   self->printfunc = NULL;
   return self;
@@ -169,9 +173,9 @@ int fromPar,toPar;
 {
   register unsigned i;
   register _ParName **parId = &(parIds[fromPar]);
-  const char * *parNamePtr = (const char **) &(parNames[fromPar]);
+  const NSString * *parNamePtr = (const NSString **) &(parNames[fromPar]);
   for (i=fromPar; i<toPar; i++)
-    *parId++ = newParName((char *)*parNamePtr++,i);
+    *parId++ = newParName((NSString *)*parNamePtr++,i);
 }
 
 static BOOL keywordsPrintfunc(_MKParameter *parameter, NSMutableData *aStream, _MKScoreOutStruct *p)
@@ -201,7 +205,7 @@ NSString *_MKParNameStr(int aPar)
 /* Returns _ParName object of specified parameter. aPar must be a valid
 parameter */
 {
-  return [NSString stringWithCString:parIds[aPar]->s];
+  return parIds[aPar]->s;
 }
 
 int MKHighestPar()
@@ -223,12 +227,12 @@ object by reference. */
   if (*aPar)
     return (int)_MKGetParNamePar(*aPar);
   else {
-    /* Allocates a new parameter number and sets obj's instance varaible
+    /* Allocates a new parameter number and sets obj's instance variable
 	   to that number. */
 #       define EXPANDAMT 5
     BOOL wasChanged;
     aName = _MKSymbolize(aName,&wasChanged); /* Make valid sf symbol */
-    *aPar = newParName([aName cString],++highestPar);
+    *aPar = newParName(aName,++highestPar);
     if (wasChanged) /* _MKSymbolize copied the string */
       [aName autorelease];//sb: was free(aName);
       if (highestPar >= parArrSize) {
@@ -237,7 +241,7 @@ object by reference. */
       }
       parIds[highestPar] = *aPar;
       if (MKIsTraced(MK_TRACEPARS))
-        NSLog(@"Adding new parameter %s\n",(*aPar)->s);
+        NSLog(@"Adding new parameter %@\n",(*aPar)->s);
       return highestPar;
   }
 }
@@ -246,12 +250,12 @@ static void initSyns()
 /* Install synonyms. */
 {
   register int i;
-  register const char * *parNamePtr = (const char **) &(parSynNames[0]);
+  register const NSString * *parNamePtr = (const NSString **) &(parSynNames[0]);
   register int *parSynPtr = (int *) &(parSyns[0]);
   _ParName *oldObj,*newObj;
   for (i = 0; i < SYNS; i++) {
     oldObj = _MKParNameObj(*parSynPtr);
-    newObj = newParName((char *)*parNamePtr++,*parSynPtr++);
+    newObj = newParName((NSString *)*parNamePtr++,*parSynPtr++);
     newObj->printfunc = oldObj->printfunc;
     /* Same printfunc */
   }
@@ -405,7 +409,7 @@ _MKParameter * _MKSetStringPar(_MKParameter *param, NSString *value)
 _MKParameter * _MKSetObjPar(_MKParameter *param, id value, _MKToken type)
 /* Sets obj field and type */
 {
-  param->_uVal.symbol = value;
+  param->_uVal.symbol = value; // sb: should this not be retained?
   param->_uType = type;
   return param;
 }
@@ -575,10 +579,10 @@ void _MKParWriteOn(_MKParameter *param,NSMutableData *aStream,
     else _MKWriteShort(aStream,self->par);
     parNameWriteValueOn(self,aStream,param,p);
     if (appPar)
-      _MKWriteString(aStream,self->s);
+      _MKWriteNSString(aStream,self->s);
   }
   else {
-    [aStream appendData:[[NSString stringWithFormat:@"%s:", self->s] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    [aStream appendData:[[NSString stringWithFormat:@"%@:", self->s] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     parNameWriteValueOn(self,aStream,param,p);
   }
 }
@@ -620,7 +624,7 @@ static void writeObj(id dataObj,NSMutableData *aStream,_MKToken declToken,BOOL
       else [aStream appendData:[@"]" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
       return;
     }
-    [aStream appendData:[[NSString stringWithFormat:@"%s ", [NSStringFromClass([dataObj class]) cString]] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    [aStream appendData:[[NSString stringWithFormat:@"%@ ", NSStringFromClass([dataObj class])] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     [dataObj writeASCIIStream:aStream];
   }
   else
@@ -637,7 +641,6 @@ static void writeData(NSMutableData *aStream,_MKScoreOutStruct *p, id dataObj,in
   id hashObj;
   NSString * name;
   BOOL binary = BINARY(p);
-  BOOL changedName = NO;
   unsigned short tmp;
   _MKToken declToken;
   switch (type) {
@@ -672,33 +675,31 @@ static void writeData(NSMutableData *aStream,_MKScoreOutStruct *p, id dataObj,in
   if (!name) {
     name = genAnonName(dataObj);
     MKNameObject(name,dataObj);
-    //	free(name);
     name = (NSString *)MKGetObjectName(dataObj);
   }
   /* If we've gotten here, it's named and we're writing a scorefile. */
   hashObj = _MKNameTableGetObjectForName(p->_nameTable,name,nil,&tmp);
-  if (hashObj && (hashObj != dataObj)) {     /* Resolve name collissions. */
-    changedName = YES;
-    name = _MKUniqueName([[name copy] autorelease],p->_nameTable,dataObj,&hashObj); /*sb: was _MKMakeStr(name) */
+  if (hashObj && (hashObj != dataObj)) {     /* Resolve name collisions. */
+    name = _MKUniqueName(name,p->_nameTable,dataObj,&hashObj); /*sb: was _MKMakeStr(name) */
   }
-if (hashObj == dataObj)          /* It's already declared in file. */
-[aStream appendData:[name dataUsingEncoding:NSNEXTSTEPStringEncoding]];        /* Just write name.
-(If we got here, we must be
- writing an ascii file) */
-else {                           /* It's not been declared yet. */
+  if (hashObj == dataObj)          /* It's already declared in file. */
+    [aStream appendData:[name dataUsingEncoding:NSNEXTSTEPStringEncoding]];        /* Just write name.
+      (If we got here, we must be
+      writing an ascii file) */
+  else {                           /* It's not been declared yet. */
    if (binary) {
 	    _MKWriteShort(aStream,declToken);
 	    _MKWriteNSString(aStream,name);
       NSMapInsert(p->_binaryIndecies,dataObj,(void *)(++(p->_highBinaryIndex)));
    }
-else
-[aStream appendData: [[NSString stringWithFormat:@"%s %@ = ", _MKTokName(declToken),name] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
-writeObj(dataObj,aStream,declToken,binary);
-_MKNameTableAddName(p->_nameTable,name,nil,dataObj,
-                    type | _MK_BACKHASHBIT,YES);
-}
-//    if (changedName)
-//      free(name);
+   else {
+     [aStream appendData: [[NSString stringWithFormat:@"%s %@ = ", _MKTokName(declToken),name]
+                                    dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+   }
+   writeObj(dataObj,aStream,declToken,binary);
+   _MKNameTableAddName(p->_nameTable,name,nil,dataObj,
+                     type | _MK_BACKHASHBIT,YES);
+  }
 }
 
 
@@ -724,7 +725,7 @@ it will look identical. */
       default:
         break;
     }
-      [aStream appendBytes:tmp length:str - tmp];  /* Write remainder of string. */
+  [aStream appendBytes:tmp length:str - tmp];  /* Write remainder of string. */
   WRITECHAR('"');
 }
 
@@ -737,9 +738,13 @@ _MKParWriteStdValueOn, if desired. */
 {
   switch (param->_uType) {
     case MK_double:
-      if (BINARY(p))
+      if (BINARY(p)) {
         _MKWriteDoublePar(aStream,_MKParAsDouble(param));
-      else [aStream appendData:[[NSString stringWithFormat:@"%.5f", _MKParAsDouble(param)] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+      }
+      else {
+        [aStream appendData:[[NSString stringWithFormat:@"%.5f", _MKParAsDouble(param)]
+	                              dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+      }
       break;
     case MK_string:
       if (BINARY(p))
@@ -757,7 +762,7 @@ _MKParWriteStdValueOn, if desired. */
         */
         if (BINARY(p))
           _MKWriteIntPar(aStream,0);
-      else [aStream appendData:[[NSString stringWithFormat:@"%d", 0] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+      else [aStream appendData:[@"0" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
       break;
     default:
     case MK_int:
@@ -771,13 +776,16 @@ _MKParWriteStdValueOn, if desired. */
 
 void _MKArchiveParOn(_MKParameter *param,NSCoder *aTypedStream) /*sb: originally ocnverted as NSArchiver */
 {
+// note: the parameter name was originally a cstring (type "*"). If versionning can
+// be used here then it would be good to catch this.
+
   BOOL isMKPublicPar = (param->parNum<(int)(MK_privatePars));
   /*  Version3 and earlier: (param->parNum<(int)(_MK_FIRSTAPPPAR)) */
   [aTypedStream encodeValueOfObjCType:"c" at:&isMKPublicPar];
   if (isMKPublicPar) /* Write parameter number */
     [aTypedStream encodeValueOfObjCType:"s" at:&param->parNum];
   else        /* Write parameter name */
-    [aTypedStream encodeValueOfObjCType:"*" at:&(parIds[param->parNum]->s)];
+    [aTypedStream encodeValueOfObjCType:"@" at:&(parIds[param->parNum]->s)];
   [aTypedStream encodeValueOfObjCType:"s" at:&param->_uType];
   switch (param->_uType) {
     case MK_double:
@@ -801,36 +809,36 @@ void _MKArchiveParOn(_MKParameter *param,NSCoder *aTypedStream) /*sb: originally
 void _MKUnarchiveParOn(_MKParameter *param,NSCoder *aTypedStream) /*sb: NSCoder originally converted as NSArchiver */
 {
   BOOL isMKPublicPar;
-  char *strVar;
+  NSString *strVar;
   [aTypedStream decodeValueOfObjCType:"c" at:&isMKPublicPar];
   /* See fix for bug in MKNote.m's read: method */
   if (isMKPublicPar) /* Write parameter number */
     [aTypedStream decodeValueOfObjCType:"s" at:&param->parNum];
   else {       /* Write parameter name */
     id aParNameObj;
-    [aTypedStream decodeValueOfObjCType:"*" at:&strVar];
-    param->parNum = _MKGetPar([NSString stringWithCString:strVar],&aParNameObj);
-    free(strVar);
-    strVar = NULL;
+    [aTypedStream decodeValueOfObjCType:"@" at:&strVar];
+    param->parNum = _MKGetPar(strVar,&aParNameObj);
+    [strVar release];
+    strVar = nil;
   }
-[aTypedStream decodeValueOfObjCType:"s" at:&param->_uType];
-switch (param->_uType) {
-  case MK_double:
-    [aTypedStream decodeValueOfObjCType:"d" at:&param->_uVal.rval];
-    break;
-  case MK_string:
-    [aTypedStream decodeValueOfObjCType:"@" at:&param->_uVal.sval];//sb: type was "%"
-    break;
-  case MK_envelope:
-  case MK_waveTable:
-  case MK_object:
-    [aTypedStream decodeValueOfObjCType:"@" at:&param->_uVal.symbol];
-    break;
-  default:
-  case MK_int:
-    [aTypedStream decodeValueOfObjCType:"i" at:&param->_uVal.ival];
-    break;
-}
+  [aTypedStream decodeValueOfObjCType:"s" at:&param->_uType];
+  switch (param->_uType) {
+    case MK_double:
+      [aTypedStream decodeValueOfObjCType:"d" at:&param->_uVal.rval];
+      break;
+    case MK_string:
+      [aTypedStream decodeValueOfObjCType:"@" at:&param->_uVal.sval];//sb: type was "%"
+      break;
+    case MK_envelope:
+    case MK_waveTable:
+    case MK_object:
+      [aTypedStream decodeValueOfObjCType:"@" at:&param->_uVal.symbol];
+      break;
+    default:
+    case MK_int:
+      [aTypedStream decodeValueOfObjCType:"i" at:&param->_uVal.ival];
+      break;
+  }
 }
 
 @end
