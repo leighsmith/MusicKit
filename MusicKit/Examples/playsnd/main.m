@@ -14,7 +14,7 @@
 // Version info
 #define V_MAJ  1
 #define V_MIN  0
-#define V_TINY 4
+#define V_TINY 5
 
 static int iReturnCode = 0;
 
@@ -41,6 +41,7 @@ void ShowHelp(void)
 //  printf(" -E N  playback duration, in seconds\n");
   printf(" -d N  playback duration, in samples\n");
   printf(" -b N  playback start point, in samples\n");
+  printf(" -r    use reverb (freeverb) module\n");
   printf(" -v    show author/version info\n");
   printf(" -h    show this help\n");
   printf(" -t    turn on time information output\n");
@@ -53,6 +54,7 @@ void ShowHelp(void)
 int main (int argc, const char * argv[])
 {    
     BOOL   bTimeOutputFlag    = FALSE;
+    BOOL   useReverb          = FALSE;
     long   startTimeInSamples = 0;
     double durationInSamples  = -1;
     float  timeOffset         = 0.0f;
@@ -73,6 +75,7 @@ int main (int argc, const char * argv[])
           else          PrintError("No time offset in seonds value given after option -O",-1);
           break;
         case 't': bTimeOutputFlag = TRUE;                       break;
+        case 'r': useReverb       = TRUE;                       break;
         case 'v': printf("playsnd %i.%i.%i  skot@tomandandy.com  Aug 28 2001\n",V_MAJ,V_MIN,V_TINY); break;
         case 'h': ShowHelp(); break;
         case 'd': 
@@ -137,18 +140,27 @@ int main (int argc, const char * argv[])
         int waitCount = 0;
         int maxWait;
         SndPlayer  *player = [SndPlayer defaultSndPlayer];
+        SndStreamManager *manager;
+        SndStreamMixer *mixer;
+        SndAudioProcessorChain *pchain;
 
         [s readSoundfile: filename];
         maxWait = [s duration] + 5 + timeOffset + 1;
         [player setRemainConnectedToManager: FALSE];
-        SndSwapSoundToHost([s data],[s data],[s sampleCount],[s channelCount],[s dataFormat]);
+        [s swapSndToHost];
+
+        if (useReverb) {
+            manager = [SndStreamManager defaultStreamManager];
+            mixer = [manager mixer];
+            pchain = [mixer audioProcessorChain];
+            [pchain addAudioProcessor:[[[SndAudioProcessorReverb alloc] init] autorelease]];
+        }
 
         [s playInFuture: timeOffset beginSample: startTimeInSamples sampleCount: durationInSamples];
 
         if (bTimeOutputFlag) printf("Sound duration: %.3f\n",[s duration]);
-        
-        [player setRemainConnectedToManager: FALSE];
-      
+
+
         // wait for manager to go active... man, this is dodgey and should be fixed!!!!
         while (![[SndStreamManager defaultStreamManager] isActive] && waitCount < maxWait) {
             sleep(1);
