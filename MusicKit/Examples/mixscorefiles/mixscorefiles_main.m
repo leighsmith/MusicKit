@@ -35,7 +35,7 @@ int main (int argc, const char *argv[])
     double firstTimeTag = 0;
     double lastTimeTag = MK_ENDOFTIME;
     double timeShift = 0;
-    MKScore *aScore = [[MKScore alloc] init];
+    MKScore *aScore = [MKScore score];
 
     // either getopt or better
 
@@ -48,10 +48,14 @@ int main (int argc, const char *argv[])
             if (++i == argc)
                 fprintf(stderr,"Missing input file name.\n");
             else {
-                if (inputFileName) /* Do previous file. */
-                    [aScore readScorefile:inputFileName
-                     firstTimeTag:firstTimeTag
-                     lastTimeTag:lastTimeTag timeShift:timeShift];
+                if (inputFileName) { /* Do previous file. */
+                    if ([aScore readScorefile: inputFileName
+                                firstTimeTag: firstTimeTag
+                                lastTimeTag: lastTimeTag
+                                    timeShift: timeShift] == nil) {
+                        NSLog(@"Unable to load %@\n", inputFileName);
+                    }
+		}
                 firstTimeTag = 0;  /* Reset variables for next file */
                 lastTimeTag = MK_ENDOFTIME;
                 timeShift = 0;
@@ -77,9 +81,14 @@ int main (int argc, const char *argv[])
             else timeShift = atof(argv[i]);
         else fprintf(stderr,"Unknown option :%s\n",argv[i]);
     }
-    if (inputFileName) /* Pick up trailing input file. */
-        [aScore readScorefile:inputFileName firstTimeTag:firstTimeTag
-       lastTimeTag:lastTimeTag timeShift:timeShift];
+    if (inputFileName) {/* Pick up trailing input file. */
+        if ([aScore readScorefile: inputFileName
+		     firstTimeTag: firstTimeTag
+                      lastTimeTag: lastTimeTag 
+		        timeShift: timeShift] == nil) {
+	    NSLog(@"Unable to load %@\n", inputFileName);
+        }
+    }
     if (!outputFileName) /* Default output file name. */
         outputFileName = @"mix.score";
     [aScore writeScorefile:outputFileName];

@@ -5,9 +5,9 @@
             cla_array = (
                 (
                     "-i", 
-                    ../Music/Scorefiles/Emma.score, 
+                    ../../Music/Scorefiles/Emma.score, 
                     "-i", 
-                    ../Music/Scorefiles/Emma.score, 
+                    ../../Music/Scorefiles/Emma.score, 
                     "-s", 
                     2.5, 
                     "-o", 
