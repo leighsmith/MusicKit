@@ -227,15 +227,15 @@
 	<key>CFBundleExecutable</key>
 	<string>MidiLoop</string>
 	<key>CFBundleGetInfoString</key>
-	<string></string>
+	<string>Example that routes MIDI through the MusicKit and out again</string>
 	<key>CFBundleIconFile</key>
 	<string>MidiLoop.tiff</string>
 	<key>CFBundleIdentifier</key>
-	<string></string>
+	<string>org.musickit.MidiLoop</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string></string>
+	<string>MidiLoop</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

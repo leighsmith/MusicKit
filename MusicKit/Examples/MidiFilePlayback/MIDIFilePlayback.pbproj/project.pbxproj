@@ -22,7 +22,6 @@
 				39202A67FF87E29ECFED3B93,
 				39202A69FF87E29ECFED3B93,
 				39202A70FF87E29ECFED3B93,
-				39202A75FF87E29ECFED3B93,
 				39202A76FF87E29ECFED3B93,
 			);
 			isa = PBXGroup;
@@ -181,12 +180,6 @@
 			path = /System/Library/Frameworks/Foundation.framework;
 			refType = 0;
 		};
-		39202A75FF87E29ECFED3B93 = {
-			isa = PBXFileReference;
-			name = "Import Log.rtf";
-			path = "/tanguy/Local/Users/leigh/Sources/PublicDomain/MusicKit/Examples/MIDIFilePlayback/Import Log.rtf";
-			refType = 0;
-		};
 		39202A76FF87E29ECFED3B93 = {
 			children = (
 				39202A77FF87E29ECFED3B93,
@@ -233,18 +226,33 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>midi</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>midi.tiff</string>
+			<key>CFBundleTypeName</key>
+			<string>Standard MIDI File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+	</array>
 	<key>CFBundleExecutable</key>
 	<string>MIDIFilePlayback</string>
 	<key>CFBundleGetInfoString</key>
-	<string></string>
+	<string>MIDI and Sample Player</string>
 	<key>CFBundleIconFile</key>
 	<string>midi.tiff</string>
 	<key>CFBundleIdentifier</key>
-	<string></string>
+	<string>org.musickit.MIDIFilePlayback</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string></string>
+	<string>MIDIFilePlayback</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
