@@ -897,10 +897,8 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     if (soundStruct)
         SndFree(soundStruct);
 
-    if (name) {
-        free(name);
-        name = NULL;
-    }
+    [name release];
+    name = nil;
 
     // check its seekable, by checking its POSIX regular.
     fileAttributeDictionary = [fileManager fileAttributesAtPath: filename
