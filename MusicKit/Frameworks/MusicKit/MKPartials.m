@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/10/04 07:52:05  skot
+  Improved description method for debug purposes
+
   Revision 1.4  2000/10/04 06:16:15  skot
   Added description selectors
 
@@ -103,6 +106,11 @@ static void freeArrays(MKPartials *self)
     freeArray(self,MK_freq);
     freeArray(self,MK_amp);
     freeArray(self,MK_phase);
+
+    self->_ampArrayFreeable   = NO; // SKoT 4.10.2000
+    self->_freqArrayFreeable  = NO;
+    self->_phaseArrayFreeable = NO;
+    self->partialCount        = 0;    
 }
 
 static void normalform(MKPartials *obj)
@@ -158,24 +166,37 @@ id MKGetPartialsClass(void)
 {
   [super init]; 
   freeArrays(self);
-  _ampArrayFreeable = _freqArrayFreeable = _phaseArrayFreeable = NO;
-  defaultPhase = 0.0;
-  dbMode = NO;
-  tableType = MK_oscTable;
+  defaultPhase      = 0.0;
+  dbMode            = NO;
+  tableType         = MK_oscTable;
+
   return self;
 }
 
 // SKoT: Added 4 Oct 2000
 - (NSString*) description
 {
-    int i;
     NSString *s = [NSString localizedStringWithFormat: @"MKPartial with %i partials: [", partialCount];
 
-    for (i = 0; i < partialCount; i++) 
-        s = [s stringByAppendingString:
-            [NSString localizedStringWithFormat: @"{%.2f,%.2f}",freqRatios[i], ampRatios[i]]];
-
-    [s stringByAppendingString: @"]"];
+    if (partialCount > 0) {
+        // If all is well, output partial parameter triples...
+        if (freqRatios != NULL && ampRatios != NULL) {
+            int i;
+            for (i = 0; i < partialCount; i++) {
+                float ph = phases == NULL ? 0.0f : phases[i];
+                s = [s stringByAppendingString:
+                    [NSString localizedStringWithFormat: @"{%.2f,%.2f,%.2f}",freqRatios[i], ampRatios[i], ph]];
+            }
+        }
+        // ...otherwise engage in gratuitous debug assistance.
+        else if (freqRatios == NULL && ampRatios == NULL)
+            s = [s stringByAppendingString: @"ampRatios and freqRatios are NULL"];
+        else if (freqRatios == NULL)
+            s = [s stringByAppendingString: @"freqRatios is NULL"];
+        else if (ampRatios == NULL)
+            s = [s stringByAppendingString: @"ampRatios is NULL"];
+    }
+    s = [s stringByAppendingString: @"]"];
     return s;
 }
 
@@ -419,6 +440,7 @@ static void getArray(int partialCount,NSCoder *aTypedStream,BOOL *aBool, /*sb: o
 {
     int i;
     double *aRatios,*fRatios,*phs;
+
     NORMALFORM(self);
     if ((freqRatios == NULL) || (ampRatios == NULL)) {
 	[aStream appendData:[@"{1.0,0,0}" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
@@ -427,7 +449,7 @@ static void getArray(int partialCount,NSCoder *aTypedStream,BOOL *aBool, /*sb: o
     i = 0; 
     fRatios = freqRatios;
     aRatios = ampRatios; 
-    phs = phases; 
+    phs = phases;
     while (i < partialCount) {
 	if (phs == NULL)
 	  if (i == 0)
