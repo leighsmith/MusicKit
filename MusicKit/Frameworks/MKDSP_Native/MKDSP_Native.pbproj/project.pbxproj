@@ -71,6 +71,7 @@
 				00D59F7FFED5A538CFED3B93,
 				021446B4008B4BFECFED3B96,
 				0177D6FE00A9B7FFCFED3B96,
+				7B0B0D31019A27E7002A0496,
 			);
 			isa = PBXGroup;
 			name = Headers;
@@ -278,7 +279,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LIBRARY_SEARCH_PATHS = "\"$(LOCAL_DEVELOPER_DIR)/Libraries\"";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-seg1addr 300000";
+				OTHER_LDFLAGS = "-seg1addr 800000";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRINCIPAL_CLASS = "";
@@ -360,6 +361,7 @@
 				00D59FC2FED5A538CFED3B93,
 				021446B6008B4BFECFED3B96,
 				0177D6FF00A9B7FFCFED3B96,
+				7B0B0D32019A27E7002A0496,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -835,6 +837,27 @@
 		};
 		55E6D141015C055FCFED3B96 = {
 			fileRef = 55E6D140015C055FCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//550
+//551
+//552
+//553
+//554
+//7B0
+//7B1
+//7B2
+//7B3
+//7B4
+		7B0B0D31019A27E7002A0496 = {
+			isa = PBXFileReference;
+			path = MKDSPDefines.h;
+			refType = 4;
+		};
+		7B0B0D32019A27E7002A0496 = {
+			fileRef = 7B0B0D31019A27E7002A0496;
 			isa = PBXBuildFile;
 			settings = {
 			};
