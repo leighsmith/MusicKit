@@ -67,7 +67,7 @@ static SndStreamManager *sm = nil;
   if (SNDInit(TRUE)) {
 #if SNDSTREAMMANAGER_SHOW_DRIVER_SELECTED
     char **driverNames = SNDGetAvailableDriverNames();
-    sprintf(stderr, "SndStreamManager::initialise: driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
+    NSLog(@"SndStreamManager::initialise: driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
 #endif
   }
   else {
