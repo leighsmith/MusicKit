@@ -406,7 +406,7 @@ static SndStreamManager *sm = nil;
 
     [bgdm_threadLock lock];
     bgdm_sem = BGDM_delegateMessageReady;
-    [bgdm_threadLock unlockWithCondition:BG_hasFlag];
+    [bgdm_threadLock unlockWithCondition:BGDM_hasFlag];
   }
 }
 
