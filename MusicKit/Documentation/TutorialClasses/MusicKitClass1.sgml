@@ -92,7 +92,7 @@ play(myNote1);
       <LISTITEM> 
 	<PARA>
 	  Problem: Different C structs may require different
-	  functions to provide similar behavior. Hypothetical examp: 
+	  functions to provide similar behavior. Hypothetical example: 
 	</PARA>
 	
 	<PROGRAMLISTING>
@@ -354,7 +354,10 @@ aNote = [MKNote new];                             /* Another MKNote for info */
 	</PARA>
       </LISTITEM>
       <LISTITEM>
-	<PARA> The header file defines the interface to the class, i.e. the instance variables and methods defined by the class.  Instance methods begin with "-", class methods begin with "+".  Example:
+	<PARA> The header file defines the interface to the class,
+	i.e. the instance variables and methods defined by the class.
+	Instance methods begin with "-", class methods begin with "+".
+	Example:
 	</PARA>
 	<PROGRAMLISTING>
 /* Here is an example .h file, "CircularList.h".
@@ -435,7 +438,12 @@ for example <CLASSNAME>NSArray</CLASSNAME>,
 	prose form, and describes in detail the instance variables and the
 	methods. These Class Descriptions are also given out in class.
     </PARA>
-      <PARA>The <PRODUCTNAME>Apple</PRODUCTNAME> Kit documentation for the <ULINK URL="http://www.apple.com">AppKit</ULINK> and <ULINK URL="http://www.apple.com">FoundationKit</ULINK> is available. The <ULINK URL="http://musickit.sourceforge.net">MusicKit</ULINK> and <ULINK URL="http://musickit.sourceforge.net">SndKit</ULINK> documentation will be available soon.
+      <PARA>The <PRODUCTNAME>Apple</PRODUCTNAME> Kit documentation for
+      the <ULINK URL="http://www.apple.com">AppKit</ULINK> and <ULINK
+      URL="http://www.apple.com">FoundationKit</ULINK> is available as
+      is the documentation for the <ULINK
+      URL="&MKFrameworks;">MusicKit</ULINK> and <ULINK
+      URL="&SKFrameworks;">SndKit</ULINK>.
     </PARA>
   </SECT1>
   
