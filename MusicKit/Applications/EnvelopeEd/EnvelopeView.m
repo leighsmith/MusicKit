@@ -1,43 +1,24 @@
 //////////////////////////////////////////////////////////////
 //
 // $Id$
-// Implementation for the EnvelopeView class
-// Copyright 1991-94 Fernando Lopez Lezcano All Rights Reserved
 //
+// Implementation for the EnvelopeView class
+//
+// Copyright 1991-94 Fernando Lopez Lezcano All Rights Reserved
+// Portions Copyright (c) 1998-2004, The MusicKit Project.
 //////////////////////////////////////////////////////////////
 
-// Revision History:
-// $Log$
-// Revision 1.4  2002/01/29 19:31:13  sbrandon
-// typecast theController to (Controller*)
-// removed last vestiges of PS functions and replaced with standard API
-// now use NSColor objects instead of float grayscales
+// Modification history prior to CVS committal:
 //
-// Revision 1.3  2000/04/01 01:07:44  leigh
-// Removed redundant PS include
-//
-// Revision 1.2  2000/01/11 21:57:03  leigh
-// Capitialised defaults
-//
-// 6/16/1998 Converted to OpenStep API by Leigh Smith leigh@cs.uwa.edu.au
+// 6/16/98 Converted to OpenStep API by Leigh Smith <leigh@cs.uwa.edu.au>
 // 8/25/92 Add parsing of exponential format numbers
 // 8/21/92 Memory allocation bug on allocateTemp and allocateDraw
 // 8/20/92 Added drawSegments option.
 
-#import <stdlib.h>
-#import <ctype.h>
-#import <objc/zone.h>
-#import <math.h>
-#import <Foundation/NSUserDefaults.h>
-#import <AppKit/AppKit.h>              // for PSxxx stuff
-
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 #import "Controller.h"
 #import "EnvelopeView.h"
-
-// This seems to have disappeared from Rhapsody
-//#define MAXINT LONG_MAX
-
-
 
 #define KNOBSIZE 8
 #define MAXNUMSEGS 8
@@ -285,7 +266,7 @@ void freeDraw()
     xMax  = yMax  = 1.0;
     xSnap = ySnap = 0.001;                    // initial Snap off in both directions
     
-    envColour=BLACK;
+    envColour = BLACK;
     if([envelopeDefaults objectForKey: SHOWSMOOTH] == nil)
         [envelopeDefaults setBool: YES forKey: SHOWSMOOTH];
     showSmooth = [envelopeDefaults boolForKey: SHOWSMOOTH];
@@ -312,7 +293,6 @@ void freeDraw()
 }
 
 //-------------------------------------------------------------------
-// -- Release the allocated memory when object is freed
 - (id) copyWithZone: (NSZone *) zone
 {
    NSLog(@"Danger! unimplemented copyWithZone!\n");
@@ -324,7 +304,7 @@ void freeDraw()
 
 - (void) controllerIs:sender
 {
-    theController=sender; 
+    theController = sender; 
 }
 
 //-------------------------------------------------------------------
@@ -332,7 +312,7 @@ void freeDraw()
 // Returns the point number at the insertion or -1 if an error is
 // detected. 
 
-- (int) insertPointAt:(NSPoint)p
+- (int) insertPointAt: (NSPoint) p
 {
     int point;
 
@@ -351,21 +331,21 @@ void freeDraw()
 // The boundaries of the zone are delta pixels wide. Returns the
 // number of the hit point or -1 if no hit.
 
-- (int) hitKnobAt:(NSPoint)p border:(float)delta;
+- (int) hitKnobAt: (NSPoint) p border: (float) delta;
 {
 // TODO use mouse:inRect:
     int point;
     float kx, ky, dx, dy;
     
-    dx=delta/WIDTH*(xMax-xMin);
-    dy=delta/HEIGHT*(yMax-yMin);
-    for (point=0; point<pointCount; point++) {
-        kx=xValues[point];
-        ky=yValues[point];
-        if (p.x<kx-dx)
+    dx = delta / WIDTH * (xMax - xMin);
+    dy = delta / HEIGHT * (yMax - yMin);
+    for (point = 0; point < pointCount; point++) {
+        kx = xValues[point];
+        ky = yValues[point];
+        if (p.x < kx - dx)
             break;
-        if (p.x<=kx+dx && p.x>=kx-dx &&
-            p.y<=ky+dy && p.y>=ky-dy)
+        if (p.x <= kx + dx && p.x >= kx - dx &&
+            p.y <= ky + dy && p.y >= ky - dy)
             return point;
     }
     return -1;
@@ -377,18 +357,16 @@ void freeDraw()
 // knob if necessary. The second colour argument specifies the colour
 // of the highlighted knob.
 
-- drawKnobsFrom:(int)from to:(int)to in:(NSColor *)lcolour hilighted:(NSColor *)hcolour
+- drawKnobsFrom: (int) from to: (int) to in: (NSColor *) lcolour hilighted: (NSColor *) hcolour
 {
     int point;
     
-    // PSsetgray(lcolour);
     [lcolour set];
     for (point=from; point<=to; point++) {
         if (point!=selected)
             DRAWKNOB(xToPix(xValues[point]),yToPix(yValues[point]));
     }
     if (selected>=from && selected<=to && hcolour != WHITE) {
-        //PSsetgray(hcolour);
         [hcolour set];
         DRAWKNOB(xToPix(xValues[selected]),yToPix(yValues[selected]));
     }
@@ -406,17 +384,17 @@ void freeDraw()
 {
     NSPoint point;
     
-    draw->p[draw->num]=n;
-    draw->x[draw->num]= point.x = xToPix(x);
-    draw->y[draw->num++]= point.y = yToPix(y);
-    if (state==0)
+    draw->p[draw->num] = n;
+    draw->x[draw->num] = point.x = xToPix(x);
+    draw->y[draw->num++] = point.y = yToPix(y);
+    if (state == 0)
         [userPath moveToPoint: point];
     else
         [userPath lineToPoint: point];
     return self;
 }
 
-- drawSegmentsFrom:(int)from to:(int)to in:(NSColor *)colour
+- drawSegmentsFrom: (int) from to: (int) to in: (NSColor *) colour
 {
     NSPoint pointToDraw;
     int pointIndex, seg;
@@ -430,8 +408,7 @@ void freeDraw()
     // If drawing colour is white then use erase arrays to remove 
     // the previously drawn segments
     
-    if (colour==WHITE) {
-        // PSsetgray(colour);
+    if (colour == WHITE) {
         [colour set];
 	[userPath removeAllPoints]; // reset
         for (pointIndex = 0; draw->p[pointIndex] <= from && pointIndex < draw->num; pointIndex++)
@@ -453,16 +430,16 @@ void freeDraw()
     // Else construct path for next erase and draw segments
     // first draw x and y axis if necessary
     
-    draw->num=0;
-    if (xMin!=0 || xMax!=0) {
+    draw->num = 0;
+    if (xMin != 0 || xMax != 0) {
         //PSsetgray(LTGRAY);
         [LTGRAY set];
 	[userPath removeAllPoints];
-        if (xMin!=0) {
+        if (xMin != 0) {
             [self recordMovex: 0 y: yMin p: from draw: 0];
             [self recordMovex: 0 y: yMax p: from draw: 1];    
         }
-        if (yMin!=0) {
+        if (yMin != 0) {
             [self recordMovex: xMin y: 0 p: from draw: 0];
             [self recordMovex: xMax y: 0 p: from draw: 1];
         }
@@ -474,40 +451,45 @@ void freeDraw()
     if (drawSegments == NO)
 	return self;
     
-    draw->num=0;
-    //PSsetgray(colour);
+    draw->num = 0;
     [colour set];
     [userPath removeAllPoints];
     [self recordMovex: xValues[from] y: yValues[from] p: from draw: 0];
-    yi=draw->yr[from]=yValues[from];
-    for (pointIndex=from+1; pointIndex<=to; pointIndex++) {	
-        xi=xValues[pointIndex-1];
-        xf=x=xValues[pointIndex];
-        yf=y=yValues[pointIndex];
-        deltax=xf-xi;
-        deltay=yf-yi;
-        numsegs=floor((deltax*WIDTH/(xMax-xMin))/3);        // at least 3 pixels per segment
-        if (numsegs>MAXNUMSEGS) numsegs=MAXNUMSEGS;        // but no more than MAXNUMSEGS...
-        if (numsegs<2) numsegs=2;                          // or less than 2
-        if (showSmooth != NO && deltax!=0 && deltay!=0) {
-            smooth=sValues[pointIndex];
-            incx=deltax/numsegs;                           // effective deltax is always
-            if (smooth<0.01) incx*=0.01;                   // determined by the time
-            else if (smooth<1.0) incx*=smooth;             // constant of the segment
-            incy=deltay/numsegs;
-            for (seg=0, x=xi+incx; seg<numsegs-1; seg++, x+=incx) {
-                y=yi+(deltay*(1-exp(-5.5262*(x-xi)/(deltax*smooth))));
+    yi=draw->yr[from] = yValues[from];
+    for (pointIndex = from + 1; pointIndex <= to; pointIndex++) {	
+        xi = xValues[pointIndex - 1];
+        xf = x = xValues[pointIndex];
+        yf = y = yValues[pointIndex];
+        deltax = xf - xi;
+        deltay = yf - yi;
+        numsegs = floor((deltax * WIDTH / (xMax - xMin)) / 3);        // at least 3 pixels per segment
+        if (numsegs > MAXNUMSEGS)
+	    numsegs = MAXNUMSEGS;        // but no more than MAXNUMSEGS...
+        if (numsegs < 2)
+	    numsegs = 2;                          // or less than 2
+        if (showSmooth != NO && deltax != 0 && deltay != 0) {
+            smooth = sValues[pointIndex];
+            incx = deltax / numsegs;                           // effective deltax is always
+            if (smooth < 0.01)
+		incx *= 0.01;                   // determined by the time
+            else 
+		if (smooth < 1.0)
+		    incx *= smooth;             // constant of the segment
+            incy = deltay / numsegs;
+            for (seg = 0, x = xi + incx; seg < numsegs - 1; seg++, x += incx) {
+                y = yi + (deltay * (1 - exp(-5.5262 * (x - xi) / (deltax * smooth))));
                 [self recordMovex: x y: y p: pointIndex draw: 1];
             }
-            y=yi+(deltay*(1-exp(-5.5262/smooth)));         // last segment to xf directly
+            y = yi + (deltay * (1 - exp(-5.5262 / smooth)));         // last segment to xf directly
             [self recordMovex: xf y: y p: pointIndex draw: 1];
         }
-        else [self recordMovex: x y: y p: pointIndex draw: 1];
-        if (pointIndex==stickyPoint) {
+        else 
+	    [self recordMovex: x y: y p: pointIndex draw: 1];
+        if (pointIndex == stickyPoint) {
             [self recordMovex: xValues[pointIndex] y: 0 p: pointIndex draw: 1];
             [self recordMovex: xValues[pointIndex] y: y p: pointIndex draw: 0];
         }
-        yi=draw->yr[pointIndex]=y;
+        yi = draw->yr[pointIndex] = y;
     }
     [userPath stroke];
     return self;
@@ -519,7 +501,6 @@ void freeDraw()
 - (void) drawRect: (NSRect) rect
 {
     NSEraseRect([self bounds]);                        // clear the view
-    //PSsetlinewidth(0.0);
     [NSBezierPath setDefaultLineWidth:0.0];
     if (theEnvelope != nil) {
         [self drawKnobsFrom: 0 to: pointCount-1 in: LTGRAY hilighted: envColour];
@@ -535,11 +516,10 @@ void freeDraw()
 - eraseSelectedKnob
 {
     NSEraseRect([self bounds]);                        // clear the view
-    //PSsetlinewidth(0.0);
-    [NSBezierPath setDefaultLineWidth:0.0];
+    [NSBezierPath setDefaultLineWidth: 0.0];
     if (theEnvelope != nil) {
-        [self drawKnobsFrom: 0 to: pointCount-1 in: LTGRAY hilighted: WHITE];//TRANSP
-        [self drawSegmentsFrom: 0 to: pointCount-1 in: envColour];
+        [self drawKnobsFrom: 0 to: pointCount - 1 in: LTGRAY hilighted: WHITE];//TRANSP
+        [self drawSegmentsFrom: 0 to: pointCount - 1 in: envColour];
     }
     return self;
 }
@@ -554,25 +534,25 @@ void freeDraw()
 // small portions of the segments that are lying outside of the area
 // bounded by the selected point and its two enclosing points).
 
-- (int) movePoint:(int) n to: (NSPoint) p;
+- (int) movePoint: (int) n to: (NSPoint) p;
 {
     int left, right;                               // limits for x movement of point
     int drawFrom, drawTo;                          // start and end points for drawing lines
     
-    if (n==0) {                                    // determine limits for erase and draw
-        drawFrom=0; 
-        drawTo=1;
+    if (n == 0) {                                    // determine limits for erase and draw
+        drawFrom = 0; 
+        drawTo = 1;
     } 
-    else if (n==pointCount-1) {
-        drawFrom=n-1; 
-        drawTo=n;
+    else if (n == pointCount-1) {
+        drawFrom = n - 1; 
+        drawTo = n;
     } 
     else {
-        drawFrom=n-1; 
-        drawTo=n+1;
+        drawFrom = n - 1; 
+        drawTo = n + 1;
     }
-    left=drawFrom;
-    right=drawTo;
+    left = drawFrom;
+    right = drawTo;
     
     if (showSmooth != NO) {                          // if showing smoothing draw points...
         while(drawFrom-1 >= 0 && sValues[drawFrom] > 1.0)  // ...that have smoothing greater that 1
@@ -580,39 +560,37 @@ void freeDraw()
         while(drawTo+1 < pointCount && sValues[drawTo] > 1.0)
             drawTo++;
     }
-    if (n!=0 && p.x<xValues[left])                // force selected point to be within
-        p.x=xValues[left];                        // neighbouring points
-    if (n!=pointCount-1 && p.x>xValues[right]) 
-        p.x=xValues[right];
-    if (xSnap!=0 && 
-        xValues[right]-xValues[left]>2*xSnap)
-        p.x=floor(p.x/xSnap)*xSnap;                // snap into x grid
-    if (p.y>yMax) p.y=yMax;                       // clip y values to max and min
-    if (p.y<yMin) p.y=yMin;
-    if (ySnap!=0) 
-        p.y=floor(p.y/ySnap)*ySnap;                // snap into y grid
+    if (n != 0 && p.x < xValues[left])                // force selected point to be within
+        p.x = xValues[left];                        // neighbouring points
+    if (n != pointCount - 1 && p.x > xValues[right]) 
+        p.x = xValues[right];
+    if (xSnap != 0 && xValues[right] - xValues[left] > 2 * xSnap)
+        p.x = floor(p.x / xSnap) * xSnap;                // snap into x grid
+    if (p.y > yMax)
+	p.y = yMax;                       // clip y values to max and min
+    if (p.y < yMin)
+	p.y = yMin;
+    if (ySnap != 0) 
+        p.y = floor(p.y / ySnap) * ySnap;                // snap into y grid
     
-    if (n>1)                                      // avoid 3 points with the same x value
-        if (p.x==xValues[n-1] && 
-            p.x==xValues[n-2])
-            p.x=xValues[n-1]+(1/WIDTH*(xMax-xMin));
-    if (n<(pointCount-2))
-        if (p.x==xValues[n+1] && 
-            p.x==xValues[n+2])
-            p.x=xValues[n+1]-(1/WIDTH*(xMax-xMin));
+    if (n > 1)                                      // avoid 3 points with the same x value
+        if (p.x == xValues[n - 1] && p.x == xValues[n - 2])
+            p.x = xValues[n - 1] + (1 / WIDTH * (xMax - xMin));
+    if (n < (pointCount - 2))
+        if (p.x == xValues[n + 1] && p.x == xValues[n + 2])
+            p.x = xValues[n + 1] - (1 / WIDTH * (xMax - xMin));
 
-    [self drawKnobsFrom:drawFrom                  // erase old knobs and segments
-        to:drawTo in:WHITE hilighted:WHITE];//TRANSP
-    [self drawSegmentsFrom:drawFrom 
-        to:drawTo in:WHITE];
+    [self drawKnobsFrom: drawFrom                  // erase old knobs and segments
+		     to: drawTo in: WHITE hilighted: WHITE];//TRANSP
+    [self drawSegmentsFrom: drawFrom to: drawTo in: WHITE];
 
-    xValues[n]=p.x;
-    yValues[n]=p.y;                               // update coordinates in arrays
+    xValues[n] = p.x;
+    yValues[n] = p.y;                               // update coordinates in arrays
     
-    [self drawKnobsFrom:drawFrom                  // draw new knobs and segments
-        to:drawTo in:LTGRAY hilighted:WHITE];//TRANSP
-    [self drawSegmentsFrom:drawFrom 
-        to:drawTo in:envColour];
+    [self drawKnobsFrom: drawFrom                  // draw new knobs and segments
+		     to: drawTo in: LTGRAY hilighted: WHITE];//TRANSP
+    [self drawSegmentsFrom: drawFrom 
+			to: drawTo in: envColour];
 
     [[self window] flushWindow];
     return n;
@@ -626,38 +604,38 @@ void freeDraw()
 {
     int point, newp, oldp, newpc, newSticky;
 
-    if (p.x<xMin || p.x>=xMax ||                 // check point is within bounds
-        p.y<yMin || p.y>yMax)
+    if (p.x < xMin || p.x >= xMax ||                 // check point is within bounds
+        p.y < yMin || p.y > yMax)
         return -1;
-    if (ySnap!=0) p.y=floor(p.y/ySnap)*ySnap;     // snap into y grid
+    if (ySnap != 0) p.y = floor(p.y / ySnap) * ySnap;     // snap into y grid
 
-    if ((point=[self insertPointAt:p])<0)        // and that we get a valid point number
+    if ((point = [self insertPointAt: p]) < 0)        // and that we get a valid point number
         return -1;
 
-    newpc=pointCount+1;
+    newpc = pointCount + 1;
     allocateTemp(newpc);
     allocateDraw(newpc);
 
-    draw->num=0;                                 // clear erase path
-    newSticky=[theEnvelope stickPoint];
-    if (newSticky!=MAXINT && stickyPoint>point) 
+    draw->num = 0;                                 // clear erase path
+    newSticky = [theEnvelope stickPoint];
+    if (newSticky != MAXINT && stickyPoint > point) 
         newSticky++;                             // adjust value of stick point
     
-    for (newp=oldp=0; newp<newpc; newp++) {
-        if (newp==point) {
-            temp->x[newp]=p.x;                   // set values of new point
-            temp->y[newp]=p.y;
-            temp->s[newp]=defaultSmooth;
-            draw->yr[newp]=p.y;
+    for (newp = oldp = 0; newp < newpc; newp++) {
+        if (newp == point) {
+            temp->x[newp] = p.x;                   // set values of new point
+            temp->y[newp] = p.y;
+            temp->s[newp] = defaultSmooth;
+            draw->yr[newp] = p.y;
         }
         else {
-            temp->x[newp]=xValues[oldp];         // copy old values into new arrays
-            temp->y[newp]=yValues[oldp];
-            if (sValues!=NULL)
-                temp->s[newp]=sValues[oldp];
+            temp->x[newp] = xValues[oldp];         // copy old values into new arrays
+            temp->y[newp] = yValues[oldp];
+            if (sValues != NULL)
+                temp->s[newp] = sValues[oldp];
             else
-                temp->s[newp]=defaultSmooth;
-            draw->yr[newp]=draw->yr[oldp];
+                temp->s[newp] = defaultSmooth;
+            draw->yr[newp] = draw->yr[oldp];
             oldp++;
         }
     }
@@ -677,30 +655,32 @@ void freeDraw()
 // removePoint: -- Remove a point from the envelope
 // Returns the new number of points or -1 on error
 
-- (int) removePoint:(int)n
+- (int) removePoint: (int) n
 {
     int oldp, newp, newpc, newSticky;
     
-    if (pointCount<3) return -1;                // leave always at least two breaks
+    if (pointCount < 3)
+	return -1;                // leave always at least two breaks
     
-    newpc=pointCount-1;
+    newpc = pointCount - 1;
     allocateTemp(newpc);
     allocateDraw(newpc);
     
-    draw->num=0;
-    for (oldp=newp=0; newp<newpc; newp++,oldp++) {
-        if (oldp==n) oldp++;                    // copy arrays skipping deleted element
-        temp->x[newp]=xValues[oldp];
-        temp->y[newp]=yValues[oldp];
-        draw->yr[newp]=draw->yr[oldp];
-        if (sValues!=NULL)
-            temp->s[newp]=sValues[oldp];
+    draw->num = 0;
+    for (oldp = newp = 0; newp < newpc; newp++, oldp++) {
+        if (oldp == n)
+	    oldp++;                    // copy arrays skipping deleted element
+        temp->x[newp] = xValues[oldp];
+        temp->y[newp] = yValues[oldp];
+        draw->yr[newp] = draw->yr[oldp];
+        if (sValues != NULL)
+            temp->s[newp] = sValues[oldp];
     }
-    newSticky=[theEnvelope stickPoint];
-    if (newSticky!=MAXINT) {
-        if (newSticky==n)
-            newSticky=MAXINT;                   // remove stick point with point
-        else if (newSticky>n)
+    newSticky = [theEnvelope stickPoint];
+    if (newSticky != MAXINT) {
+        if (newSticky == n)
+            newSticky = MAXINT;                   // remove stick point with point
+        else if (newSticky > n)
             newSticky--;                        // or adjust value if higher
     }
     [theEnvelope
@@ -712,7 +692,7 @@ void freeDraw()
         orDefaultSmoothing: defaultSmooth];
     [theEnvelope setStickPoint: newSticky];     // update envelope object
 
-    [self selectPoint: n-1];                    // and select previous point
+    [self selectPoint: n - 1];                    // and select previous point
     return pointCount;
 }
 
@@ -724,22 +704,22 @@ void freeDraw()
 // hit with alternate:    --> toggle sticky point at breakpoint
 // no hit with shift:    --> create a new envelope breakpoint
 
-- (void)mouseDown:(NSEvent *)event 
+- (void)mouseDown: (NSEvent *) event 
 {
     NSPoint ep, p;
     int hitpt;                // Point to move/remove
 
-    ep = [self convertPoint:[event locationInWindow] fromView:nil];
-    p.x=pixToX(ep.x);
-    p.y=pixToY(ep.y);                                    // convert from pixels to x/y
-    hitpt=[self hitKnobAt: p border: KNOBSIZE/2];        // see if it is a breakpoint    
+    ep = [self convertPoint: [event locationInWindow] fromView: nil];
+    p.x = pixToX(ep.x);
+    p.y = pixToY(ep.y);                                    // convert from pixels to x/y
+    hitpt = [self hitKnobAt: p border: KNOBSIZE/2];        // see if it is a breakpoint    
     if ([event modifierFlags] & NSShiftKeyMask) {        // with shift key down...
-        if (hitpt>=0) {
+        if (hitpt >= 0) {
             if ([self removePoint: hitpt] > 0)           // hit --> remove point
-                hitpt=-1;
+                hitpt = -1;
         }
         else 
-	    hitpt=[self addPoint: p];                   // no hit --> add point
+	    hitpt = [self addPoint: p];                   // no hit --> add point
     }
     if (([event modifierFlags] & NSAlternateKeyMask) && (hitpt >= 0)) {   // hit plus alternate...
         if (stickyPoint==hitpt)
@@ -759,15 +739,14 @@ void freeDraw()
         [theFilledCross push];                           // use cursor = cross+knob
         [self eraseSelectedKnob];
         while ([event type] != NSLeftMouseUp) {
-            ep = [self convertPoint:[event locationInWindow] fromView:nil];
+            ep = [self convertPoint: [event locationInWindow] fromView: nil];
             if ([event type] == NSLeftMouseDragged) {
-                p.x=pixToX(ep.x);
-                p.y=pixToY(ep.y);
-                [self movePoint:hitpt to:p];
+                p.x = pixToX(ep.x);
+                p.y = pixToY(ep.y);
+                [self movePoint: hitpt to: p];
                 [theController updateCoords: self at: hitpt];
-               // PSWait();
             }
-            event = [[self window] nextEventMatchingMask:DRAG_MASK];
+            event = [[self window] nextEventMatchingMask: DRAG_MASK];
         }
         [NSCursor pop];                                   // return to crosshair cursor
         [self unlockFocus];
@@ -782,18 +761,18 @@ void freeDraw()
 //-------------------------------------------------------------------
 // highlight
 
-- (void)highlight
+- (void) highlight
 {
-    envColour=BLACK;
+    envColour = BLACK;
     [self display]; 
 }
 
 //-------------------------------------------------------------------
 // dim
 
-- (void)dim
+- (void) dim
 {
-    envColour=DKGRAY;
+    envColour = DKGRAY;
     [self display]; 
 }
 
@@ -808,11 +787,11 @@ void freeDraw()
 //-------------------------------------------------------------------
 // becomeFirstResponder: 
 
-- (BOOL)becomeFirstResponder
+- (BOOL) becomeFirstResponder
 {
-    if (theController!=nil)
-        [(Controller *)theController update:self];
-    envColour=BLACK;
+    if (theController != nil)
+        [(Controller *)theController update: self];
+    envColour = BLACK;
     [self display];
     return YES;
 }
@@ -820,7 +799,7 @@ void freeDraw()
 //-------------------------------------------------------------------
 // resignFirstResponder: 
 
-- (BOOL)resignFirstResponder
+- (BOOL) resignFirstResponder
 {
     return YES;
 }
@@ -844,21 +823,21 @@ void freeDraw()
     if (theController != nil) {       // get current selected style
         style = [theController getStyle];
         if (style != nil) {
-            if ([style isEqualToString: @"MusicKit"]) selectedStyle=STYLE_MK;
-            if ([style isEqualToString: @"(x y ...)"]) selectedStyle=STYLE_pX_Yp;
-            if ([style isEqualToString: @"(x,y ...)"]) selectedStyle=STYLE_pXcYp;
-            if ([style isEqualToString: @"x y ..."]) selectedStyle=STYLE_X_Y;
-            if ([style isEqualToString: @"x,y ..."]) selectedStyle=STYLE_XcY;
-            if ([style isEqualToString: @"x,y,z ..."]) selectedStyle=STYLE_XcYcZ_;
-            if ([style isEqualToString: @"x y z,..."]) selectedStyle=STYLE_X_Y_Zc;
-            if ([style isEqualToString: @"((x y)...)"]) selectedStyle=STYLE_ppX_Yp;
+            if ([style isEqualToString: @"MusicKit"]) selectedStyle = STYLE_MK;
+            if ([style isEqualToString: @"(x y ...)"]) selectedStyle = STYLE_pX_Yp;
+            if ([style isEqualToString: @"(x,y ...)"]) selectedStyle = STYLE_pXcYp;
+            if ([style isEqualToString: @"x y ..."]) selectedStyle = STYLE_X_Y;
+            if ([style isEqualToString: @"x,y ..."]) selectedStyle = STYLE_XcY;
+            if ([style isEqualToString: @"x,y,z ..."]) selectedStyle = STYLE_XcYcZ_;
+            if ([style isEqualToString: @"x y z,..."]) selectedStyle = STYLE_X_Y_Zc;
+            if ([style isEqualToString: @"((x y)...)"]) selectedStyle = STYLE_ppX_Yp;
         }
     }
 
     switch(selectedStyle) {
     case STYLE_MK:
         [stringToCopy appendString: @"["];
-        for (point=0; point < pointCount; point++) {
+        for (point = 0; point < pointCount; point++) {
             [stringToCopy appendFormat: @"(%5.3f,%5.3f", xValues[point], yValues[point]];
             if (sValues[point] != defaultSmooth)
                 [stringToCopy appendFormat: @",%5.3f", sValues[point]];
@@ -871,45 +850,45 @@ void freeDraw()
 
     case STYLE_pX_Yp:
         [stringToCopy appendString: @"("];
-        for (point=0; point < pointCount-1; point++)
+        for (point = 0; point < pointCount - 1; point++)
             [stringToCopy appendFormat: @"%5.3f %5.3f ", xValues[point], yValues[point]];
         [stringToCopy appendFormat: @"%5.3f %5.3f)", xValues[pointCount-1], yValues[pointCount-1]]; 
         break;
 
     case STYLE_pXcYp:
         [stringToCopy appendString: @"("];
-        for (point=0; point < pointCount-1; point++)
+        for (point = 0; point < pointCount - 1; point++)
             [stringToCopy appendFormat: @"%5.3f,%5.3f,", xValues[point], yValues[point]];
         [stringToCopy appendFormat: @"%5.3f,%5.3f)", xValues[pointCount-1], yValues[pointCount-1]]; 
         break;
 
     case STYLE_X_Y:
-        for (point=0; point < pointCount-1; point++)
+        for (point = 0; point < pointCount - 1; point++)
             [stringToCopy appendFormat: @"%5.3f %5.3f ", xValues[point], yValues[point]];
         [stringToCopy appendFormat: @"%5.3f %5.3f", xValues[pointCount-1], yValues[pointCount-1]]; 
         break;
             
     case STYLE_XcY:
-        for (point=0; point < pointCount-1; point++)
+        for (point = 0; point < pointCount - 1; point++)
             [stringToCopy appendFormat: @"%5.3f,%5.3f,", xValues[point], yValues[point]];
         [stringToCopy appendFormat: @"%5.3f,%5.3f", xValues[pointCount-1], yValues[pointCount-1]];
         break;
 
     case STYLE_XcYcZ_:
-        for (point=0; point < pointCount-1; point++)
+        for (point = 0; point < pointCount - 1; point++)
             [stringToCopy appendFormat: @"%5.3f,%5.3f,%5.3f ", xValues[point], yValues[point], sValues[point]];
         [stringToCopy appendFormat: @"%5.3f,%5.3f,%5.3f", xValues[pointCount-1], yValues[pointCount-1], sValues[pointCount-1]];
         break;
 
     case STYLE_X_Y_Zc:
-        for (point=0; point < pointCount-1; point++)
+        for (point = 0; point < pointCount - 1; point++)
             [stringToCopy appendFormat: @"%5.3f %5.3f %5.3f,", xValues[point], yValues[point], sValues[point]];
         [stringToCopy appendFormat: @"%5.3f %5.3f %5.3f", xValues[pointCount-1], yValues[pointCount-1], sValues[pointCount-1]];
         break;
 
     case STYLE_ppX_Yp:
         [stringToCopy appendString: @"("];
-        for (point=0; point < pointCount-1; point++)
+        for (point = 0; point < pointCount - 1; point++)
             [stringToCopy appendFormat: @"(%5.3f %5.3f)", xValues[point], yValues[point]];
         [stringToCopy appendFormat: @"(%5.3f %5.3f))", xValues[pointCount-1], yValues[pointCount-1]];
         break;
@@ -970,7 +949,7 @@ int token(char *t)
     return NUMBER;
 }
 
-- (void)paste:(id)sender
+- (void) paste: (id) sender
 {
     char *orig, tk[1024];
     int   symb;
@@ -1245,48 +1224,48 @@ int token(char *t)
 //-------------------------------------------------------------------
 // previousPoint go to the previous point in the envelope if possible
  
-- (void)previousPoint
+- (void) previousPoint
 {
     int previous;
     
-    previous=selected-1;
-    if (previous>=pointCount) previous=selected;
-    if (previous<0) previous=0;
-    if (previous!=selected) {
-        [self selectPoint:previous];
-        [(Controller *)theController update:self];
+    previous = selected - 1;
+    if (previous >= pointCount)
+	previous = selected;
+    if (previous < 0)
+	previous = 0;
+    if (previous != selected) {
+        [self selectPoint: previous];
+        [(Controller *)theController update: self];
     } 
 }
 
 //-------------------------------------------------------------------
 // setXAt:to: changes value of x coordinate of point n
- 
-- setXAt: (int)n to: (float)coord
+- setXAt: (int) n to: (float) coord
 {
-    if (n!=0 && coord<xValues[n-1])             // force selected point to be within
-        coord=xValues[n-1];                     // enclosing points
-    if (n!=pointCount-1 && coord>xValues[n+1]) 
-        coord=xValues[n+1];
-    if (coord!=xValues[n]) {                    // if x changed update display panel
-        xValues[n]=coord;
+    if (n != 0 && coord < xValues[n - 1])             // force selected point to be within
+        coord = xValues[n - 1];                     // enclosing points
+    if (n != pointCount - 1 && coord > xValues[n + 1]) 
+        coord = xValues[n + 1];
+    if (coord != xValues[n]) {                    // if x changed update display panel
+        xValues[n] = coord;
         [self display];
-        [(Controller *)theController update:self];
+        [(Controller *)theController update: self];
     }
     return self;
 }
 
 //-------------------------------------------------------------------
 // setYAt:to: changes value of y coordinate of point n
- 
-- setYAt: (int)n to: (float)coord
+- setYAt: (int) n to: (float) coord
 {
-    if (coord>yMax) coord=yMax;                // clip y values to max and min
-    if (coord<yMin) coord=yMin;
+    if (coord > yMax) coord = yMax;                // clip y values to max and min
+    if (coord < yMin) coord = yMin;
     
-    if (coord!=yValues[n]) {                   // if y changed update display panel
-        yValues[n]=coord;
+    if (coord != yValues[n]) {                   // if y changed update display panel
+        yValues[n] = coord;
         [self display];
-        [(Controller *)theController update:self];
+        [(Controller *)theController update: self];
     }
     return self;
 }
@@ -1294,17 +1273,17 @@ int token(char *t)
 //-------------------------------------------------------------------
 // setYrAt:to: changes value of real y coordinate of point n
  
-- setYrAt: (int)n to: (float)coord
+- setYrAt: (int) n to: (float) coord
 {
     double y;
     
-    if (coord>yMax) coord=yMax;               // clip y values to max and min
-    if (coord<yMin) coord=yMin;
+    if (coord > yMax) coord=yMax;               // clip y values to max and min
+    if (coord < yMin) coord=yMin;
     
-    if (n==0) return self;                    // no sense to change this in first point
+    if (n == 0) return self;                    // no sense to change this in first point
     
-    draw->yr[n]=coord;
-    y=(coord-yValues[n-1]*exp(-5.5262/sValues[n]))/(1-exp(-5.5262/sValues[n]));
+    draw->yr[n] = coord;
+    y = (coord - yValues[n - 1] * exp(-5.5262 / sValues[n])) / (1 - exp(-5.5262 / sValues[n]));
     [self setYAt: n to: y];
     return self;
 }
@@ -1312,12 +1291,12 @@ int token(char *t)
 //-------------------------------------------------------------------
 // setSmoothAt:to: changes value of smoothing of point n
  
-- setSmoothAt: (int)n to: (float)value
+- setSmoothAt: (int) n to: (float) value
 {
-    if (value!=sValues[n]) {                  // if smoothing changed update panel
-        sValues[n]=value;
+    if (value != sValues[n]) {                  // if smoothing changed update panel
+        sValues[n] = value;
         [self display];
-        [(Controller *)theController update:self];
+        [(Controller *)theController update: self];
     }
     return self;
 }
@@ -1325,36 +1304,36 @@ int token(char *t)
 //-------------------------------------------------------------------
 // setXMinTo: changes minimum value of x component of envelope
  
-- (void)setXMinTo:(float)coord
+- (void) setXMinTo: (float) coord
 {
-    if (coord<xMax) {
-        xMin=coord;
+    if (coord < xMax) {
+        xMin = coord;
         [self display];
     }
-    else if (theController!=nil)
-        [(Controller *)theController update:self]; 
+    else if (theController != nil)
+        [(Controller *)theController update: self]; 
 }
 
 //-------------------------------------------------------------------
 // setXMaxTo: changes maximun value of x component of envelope
  
-- (void)setXMaxTo:(float)coord
+- (void) setXMaxTo: (float) coord
 {
-    if (coord>xMin) {
-        xMax=coord;
+    if (coord > xMin) {
+        xMax = coord;
         [self display];
     }
-    else if (theController!=nil)
-        [(Controller *)theController update:self]; 
+    else if (theController != nil)
+        [(Controller *)theController update: self]; 
 }
 
 //-------------------------------------------------------------------
 // setXLimitsTo:: changes max and min values of x component
  
-- setXLimitsTo: (float)min : (float)max
+- setXLimitsTo: (float) min : (float) max
 {
-    xMin=min;
-    xMax=max;
+    xMin = min;
+    xMax = max;
     [self display];
     return self;
 }
@@ -1362,66 +1341,66 @@ int token(char *t)
 //-------------------------------------------------------------------
 // setYMinTo: changes minimum value of y component of envelope
  
-- (void)setYMinTo:(float)coord
+- (void) setYMinTo: (float) coord
 {
-    if (coord<yMax) {
-        yMin=coord;
+    if (coord < yMax) {
+        yMin = coord;
         [self display];
     }
-    else if (theController!=nil)
-        [(Controller *)theController update:self]; 
+    else if (theController != nil)
+        [(Controller *)theController update: self]; 
 }
 
 //-------------------------------------------------------------------
 // setYMaxTo: changes maximun value of y component of envelope
  
-- (void)setYMaxTo:(float)coord
+- (void) setYMaxTo: (float) coord
 {
-    if (coord>yMax) {
-        yMax=coord;
+    if (coord > yMax) {
+        yMax = coord;
         [self display];
     }
-    else if (theController!=nil)
-        [(Controller *)theController update:self]; 
+    else if (theController != nil)
+        [(Controller *)theController update: self]; 
 }
 
 //-------------------------------------------------------------------
 // setXSnapTo: changes value of x Snap
  
-- (void)setXSnapTo:(float)coord
+- (void) setXSnapTo: (float) coord
 {
-    xSnap=coord;
+    xSnap = coord;
     [self display]; 
 }
 
 //-------------------------------------------------------------------
 // setYSnapTo: changes value of y Snap
  
-- (void)setYSnapTo:(float)coord
+- (void) setYSnapTo: (float) coord
 {
-    ySnap=coord;
+    ySnap = coord;
     [self display]; 
 }
 
 //-------------------------------------------------------------------
 // setStickyAt:To: sets point to be the sticky point of envelope
  
-- (void)setStickyAt:(int)point To:(int)state
+- (void) setStickyAt: (int) point To: (int) state
 {
-    if (state==0)
+    if (state == 0)
         [theEnvelope setStickPoint: MAXINT];
     else
         [theEnvelope setStickPoint: point];
-    [(Controller *)theController update:self];
+    [(Controller *)theController update: self];
     [self display]; 
 }
 
 //-------------------------------------------------------------------
 // setShowSmooth: sets type of graphics to be used
  
-- (void) setShowSmooth:(BOOL) state
+- (void) setShowSmooth: (BOOL) state
 {
-    showSmooth=state;
+    showSmooth = state;
     [self display];
     [(Controller *)theController update: self]; 
 }
@@ -1431,7 +1410,7 @@ int token(char *t)
  
 - (void) setDrawSegments: (BOOL) state
 {
-    drawSegments=state;
+    drawSegments = state;
     [self display];
     [(Controller *)theController update: self]; 
 }
@@ -1439,30 +1418,31 @@ int token(char *t)
 //-------------------------------------------------------------------
 // scaleLimits computes the max and min bounds of the view
  
-- (void)scaleLimits
+- (void) scaleLimits
 {
     double xmin, xmax, ymin, ymax;
     int point;
     
-    xmin=xmax=xValues[0];
-    ymin=ymax=yValues[0];
-    for (point=1; point<pointCount; point++) {
-        if (xValues[point]<xmin) xmin=xValues[point];
-        if (xValues[point]>xmax) xmax=xValues[point];
-        if (yValues[point]<ymin) ymin=yValues[point];
-        if (yValues[point]>ymax) ymax=yValues[point];
+    xmin = xmax = xValues[0];
+    ymin = ymax = yValues[0];
+    for (point = 1; point < pointCount; point++) {
+        if (xValues[point] < xmin) xmin = xValues[point];
+        if (xValues[point] > xmax) xmax = xValues[point];
+        if (yValues[point] < ymin) ymin = yValues[point];
+        if (yValues[point] > ymax) ymax = yValues[point];
     }
-    xMax=xmax;
-    xMin=xmin;
-    if (ymax>=0.0 && ymax<=10.0)
-        yMax=floor(ymax*10+1.0)/10;
+    xMax = xmax;
+    xMin = xmin;
+    if (ymax >= 0.0 && ymax <= 10.0)
+        yMax = floor(ymax * 10 + 1.0) / 10;
     else
-        yMax=floor(ymax+1.0);
-    if (ymin<=0.0 && ymin>=-1.0)
-        yMin=floor(ymin*10-1.0)/10;
+        yMax = floor(ymax + 1.0);
+    if (ymin <= 0.0 && ymin >= -1.0)
+        yMin = floor(ymin * 10 - 1.0) / 10;
     else
-        yMin=floor(ymin-1.0);
-    if (ymin==0) yMin=ymin;
+        yMin = floor(ymin - 1.0);
+    if (ymin == 0)
+	yMin = ymin;
     
     [self display]; 
 }
@@ -1474,7 +1454,7 @@ int token(char *t)
 //-------------------------------------------------------------------
 // (int)getPoint Return the selected point
 
-- (int)getPoint
+- (int) getPoint
 {
     return selected;
 }
@@ -1482,85 +1462,113 @@ int token(char *t)
 //-------------------------------------------------------------------
 // (float)getX:(int)i Return value of x component of point i
 
-- (float)getX:(int)i
+- (float) getX: (int) i
 {
-    if (i>=pointCount) i=pointCount-1;
-    if (i<0) i=0;
+    if (i >= pointCount) 
+	i = pointCount - 1;
+    if (i < 0)
+	i = 0;
     return xValues[i];
 }
 
 //-------------------------------------------------------------------
 // (float)getY:(int)i Return value of y component of point i
 
-- (float)getY:(int)i
+- (float) getY: (int) i
 {
-    if (i>=pointCount) i=pointCount-1;
-    if (i<0) i=0;
+    if (i >= pointCount)
+	i = pointCount - 1;
+    if (i < 0) 
+	i = 0;
     return yValues[i];
 }
 
 //-------------------------------------------------------------------
 // (float)getYr:(int)i Return value of real y component of point i
 
-- (float)getYr:(int)i
+- (float) getYr: (int) i
 {
-    if (i>=pointCount) i=pointCount-1;
-    if (i<0) i=0;
+    if (i >= pointCount) 
+	i = pointCount - 1;
+    if (i < 0) 
+	i = 0;
     return draw->yr[i];
 }
 
 //-------------------------------------------------------------------
 // (float)getSmoothing:(int)i Return value of smoothing of point i
 
-- (float)getSmoothing:(int)i
+- (float) getSmoothing: (int) i
 {
-    if (i>=pointCount) i=pointCount-1;
-    if (i<0) i=0;
+    if (i >= pointCount) 
+	i = pointCount - 1;
+    if (i < 0)
+	i = 0;
     return sValues[i];
 }
 
 //-------------------------------------------------------------------
 // (int)getSticky:(int)i Return value of stickyness of point i
 
-- (int)getSticky:(int)i
+- (int) getSticky: (int) i
 {
-    if (i>=pointCount) i=pointCount-1;
-    if (i<0) i=0;
-    if (stickyPoint==i)
+    if (i>=pointCount) 
+	i = pointCount-1;
+    if (i < 0)
+	i = 0;
+    if (stickyPoint == i)
         return 1;
     else
         return 0;
 }
 
 //-------------------------------------------------------------------
-// (float)getXMax 
+// (float) getXMax 
 
-- (float) getXMax { return xMax; }
+- (float) getXMax 
+{ 
+    return xMax;
+}
 
 //-------------------------------------------------------------------
 // (float)getXMin 
 
-- (float) getXMin { return xMin; }
+- (float) getXMin 
+{
+    return xMin;
+}
 
 //-------------------------------------------------------------------
 // (float)getYMax 
 
-- (float) getYMax { return yMax; }
+- (float) getYMax
+{
+    return yMax;
+}
 
 //-------------------------------------------------------------------
 // (float)getYMin 
 
-- (float) getYMin { return yMin; }
+- (float) getYMin
+{
+    return yMin;
+}
 
 //-------------------------------------------------------------------
 // (float)getXSnap 
 
-- (float) getXSnap { return xSnap; }
+- (float) getXSnap
+{
+    return xSnap;
+}
 
 //-------------------------------------------------------------------
 // (float)getYSnap 
 
-- (float) getYSnap { return ySnap; }
+- (float) getYSnap
+{
+    return ySnap;
+}
 
 //-------------------------------------------------------------------
 - (BOOL) getShowSmooth
