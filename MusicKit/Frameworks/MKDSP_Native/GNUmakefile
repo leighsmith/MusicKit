@@ -15,6 +15,9 @@
 
 # Modification history:
 # $Log$
+# Revision 1.5  2003/06/01 20:36:16  leighsmith
+# Added changes suggested by Matt Rice
+#
 # Revision 1.4  2002/05/09 12:01:56  sbrandon
 # added support for rpm creation
 #
@@ -36,7 +39,7 @@
 # Install into the local root by default
 GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
 
-GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
+#GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
 
 include $(GNUSTEP_MAKEFILES)/common.make
 

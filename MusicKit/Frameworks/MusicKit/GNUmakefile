@@ -15,6 +15,9 @@
 
 # Modification history:
 # $Log$
+# Revision 1.5  2003/06/01 20:36:04  leighsmith
+# Added changes suggested by Matt Rice
+#
 # Revision 1.4  2002/03/12 23:19:13  sbrandon
 # bumped up optimisation and error logging levels
 #
@@ -36,8 +39,6 @@
 
 # Install into the local root by default
 GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
-
-GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
 
 include $(GNUSTEP_MAKEFILES)/common.make
 
@@ -79,7 +80,7 @@ $(MY_NAME)_OBJC_FILES = \
           tokenNames.m utilities.m writeBinary.m writeMidi.m\
           writeScore.m MKPatch.m #ArielQP.m DSPSerialPortDevice.m 
 
-$(MY_NAME)_C_FILES = fastFFT.c sin.c
+$(MY_NAME)_C_FILES = fastFFT.c trigonometry.c
 
 # The framework installed header files
 $(MY_NAME)_HEADER_FILES = \
@@ -110,7 +111,7 @@ $(MY_NAME)_HEADER_FILES = \
          _noteRecorder.h _scorefile.h _time.h classFuncs.h dsp_types.h\
          dspwrap.h errors.h keynums.h midiTranslation.h midi_spec.h\
          midifile.h names.h noDVal.h orch.h params.h pitches.h\
-         timeunits.h tokens.h fastFFT.h MKPatch.h\
+         timeunits.h tokens.h fastFFT.h MKPatch.h MKPlugin.h\
 		 #ArielQP.h DSPSerialPortDevice.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = MusicKit
