@@ -13,7 +13,7 @@ this document refers to. Change accordingly to match the source
 and binary distributions. Likewise if the distribution web site changes.
 -->
 
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
 <!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
 <!entity mkvers "5.4">
@@ -315,7 +315,7 @@ standard audio effects such as reverb.
         <listitem>
           <para>
 <acronym>MP3</acronym> streaming of audio output to web servers using
-the <ulink url="http://www.icecast.org">icecast</url> library. The
+the <ulink url="http://www.icecast.org">icecast</ulink> library. The
 portions of the library used are <acronym>LGPL</acronym>, not
 <acronym>GPL</acronym> and so do not compromise the
 <productname>MusicKit</productname> <link
@@ -416,7 +416,7 @@ Documentation
 	<listitem>
 	  <para>
 The file 
-<ulink url=&mkweb;/ChangeLog>
+<ulink url="&mkweb;/ChangeLog">
 <filename>
 Documentation/ChangeLog
 </filename>
@@ -1019,15 +1019,15 @@ Newer versions than &lamevertuple; will probably just work.
 	    <listitem>
 	      <para>
               The libshout library (part of the
-<productname>IceS</productname> distribution) of the <ulink
-url="http://www.icecast.org">icecast</ulink> project provides the
+<productname>IceS</productname> distribution) of the 
+<ulink url="http://www.icecast.org">icecast</ulink> project provides the
 capability to stream <acronym>MP3</acronym> encoded audio to a
 <acronym>MP3</acronym> broadcast server.
 </para>
 <!-- While we still need a patch -->
 <para>
-This version requires a <ulink
-			       url="&mkurl;/libshout.patch">patch</ulink> to be applied to compile on
+This version requires a 
+<ulink url="&mkurl;/libshout.patch">patch</ulink> to be applied to compile on
 <productname>MacOS X</productname>. Apply it using the commands
 <example>
 <userinput>
@@ -1038,6 +1038,9 @@ patch -p1 < libshout.patch
 </userinput>
 <userinput>
 cd ices-&icesvertuple;/libshout
+</userinput
+<userinput>
+autoconf
 </userinput>
 <userinput>
 ./configure --without-python --disable-dependency-tracking
