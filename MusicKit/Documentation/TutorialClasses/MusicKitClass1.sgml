@@ -242,7 +242,7 @@ or      [myInstance aMessageWithArg:arg otherArg:arg2];
       <MEDIAOBJECT>
 	<IMAGEOBJECT>
 	  <IMAGEDATA FILEREF="Images/MusicKitClass1-Inheritance.eps" 
-		     FORMAT="eps">
+		     FORMAT="eps" SCALE=50>
 	</IMAGEOBJECT>
 	<IMAGEOBJECT>
 	  <IMAGEDATA FILEREF="Images/MusicKitClass1-Inheritance.gif" 

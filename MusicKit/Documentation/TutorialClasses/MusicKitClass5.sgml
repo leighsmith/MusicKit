@@ -294,7 +294,7 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/MusicKitClass5-SimpleSynthPatch.eps" 
-		       FORMAT="EPS">
+		       FORMAT="EPS" SCALE=50>
 	  </IMAGEOBJECT>
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/MusicKitClass5-SimpleSynthPatch.gif"
@@ -655,7 +655,7 @@ MKUpdateAsymp(
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/MusicKitClass5-noteTypes.eps" 
-		       FORMAT="EPS">
+		       FORMAT="EPS" SCALE=50>
 	  </IMAGEOBJECT>
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/MusicKitClass5-noteTypes.gif"

@@ -58,7 +58,8 @@
 	<TITLE> A <PRODUCTNAME>MusicKit</PRODUCTNAME> Performance</TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
-	    <IMAGEDATA FILEREF="Images/MusicKitClass3-performance.eps" FORMAT="EPS">
+	    <IMAGEDATA FILEREF="Images/MusicKitClass3-performance.eps"
+		       FORMAT="EPS" SCALE=50>
 	  </IMAGEOBJECT>
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/MusicKitClass3-performance.gif" FORMAT="GIF">

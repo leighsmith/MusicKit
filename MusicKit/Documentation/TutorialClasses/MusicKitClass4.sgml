@@ -6,14 +6,14 @@
       <TITLE>Review: Classes in the <PRODUCTNAME>MusicKit</PRODUCTNAME></TITLE>
       <VARIABLELIST>
 	<VARLISTENTRY>
-	  <TERM> Representation classes (7)	</TERM>
+	  <TERM>Representation classes (7)</TERM>
 	  <LISTITEM>
 	    <PARA><CLASSNAME>MKNote</CLASSNAME>, <CLASSNAME>MKPart</CLASSNAME>,
 	      <CLASSNAME>MKScore</CLASSNAME>, etc.</PARA>
 	  </LISTITEM>
 	</VARLISTENTRY>    
 	<VARLISTENTRY>
-	  <TERM> Performance classes (16)	</TERM>
+	  <TERM>Performance classes (16)</TERM>
 	  <LISTITEM>
 	    <PARA><CLASSNAME>MKConductor</CLASSNAME>,
 	      <CLASSNAME>MKPerformer</CLASSNAME>,
@@ -94,7 +94,7 @@
 
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/MusicKitClass4-SynthInstrument.eps"
-		       FORMAT="EPS">
+		       FORMAT="EPS" SCALE=50>
 	  </IMAGEOBJECT>
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/MusicKitClass4-SynthInstrument.gif"
