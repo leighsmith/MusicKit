@@ -221,20 +221,18 @@ int SndSampleCount(const SndSoundStruct *sound)
   return SndBytesToSamples(count, sound->channelCount, df);
 }
 
-const char *SndStructDescription(SndSoundStruct *s)
+NSString *SndStructDescription(SndSoundStruct *s)
 {
-  static char message[256];
-
-  sprintf(message, "%slocation:%d size:%d format:%d sample rate:%d channels:%d info:%s\n",
+  NSString *message = [NSString stringWithFormat: @"%slocation:%d size:%d format:%d sample rate:%d channels:%d info:%s\n",
           (s->magic != SND_MAGIC) ? "(struct lacking magic number): " : "",
           s->dataLocation, s->dataSize, s->dataFormat,
-          s->samplingRate, s->channelCount, s->info);
+          s->samplingRate, s->channelCount, s->info];
   return message;
 }
 
 void SndPrintStruct(SndSoundStruct *s)
 {
-  puts(SndStructDescription(s));
+  puts([SndStructDescription(s) cString]);
 }
 
 int SndPrintFrags(SndSoundStruct *sound)

@@ -61,7 +61,7 @@ CONDITIONS OF THIS AGREEMENT.
  @param sound A SndStructSound containing the Snd
  @result Returns a pointer to a c-string description of the sound.
  */
-SNDKIT_API const char *SndStructDescription(SndSoundStruct *sound);
+SNDKIT_API NSString *SndStructDescription(SndSoundStruct *sound);
 
 /*!
 @function SndPrintStruct
