@@ -16,7 +16,7 @@ if [ x_$MKICON = x_ ]; then
 fi
 if [ x_$1 = x_ ]; then
     echo "Usage: $0 version_number"
-    echo "where version_number = V.RRR"
+    echo "where version_number = V.R.P"
     exit 1;
 else
     appversion=$1
