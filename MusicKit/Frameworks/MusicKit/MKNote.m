@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.25  2002/04/15 14:16:59  sbrandon
+  tidied up some long lines (cosmetic)
+
   Revision 1.24  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -1486,26 +1489,37 @@ static id writeNoteAux(MKNote *self,_MKScoreOutStruct *p,
     /* The part should always have a name. This is just in case of lossage. */
     if (!partName)
       partName = @"anon";
-    [aStream appendData:[[NSString stringWithFormat:@"%@ ", partName] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+    [aStream appendData:
+       [[NSString stringWithFormat:@"%@ ", partName]
+         dataUsingEncoding: NSNEXTSTEPStringEncoding]];
     [aStream appendData:[@"(" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
     switch (self->noteType) {
       case MK_noteDur: {
-          double dur = ((p && p->_ownerIsNoteRecorder) ? _MKDurForTimeUnit(self,[p->_owner timeUnit]) : getNoteDur(self));
-          [aStream appendData: [[NSString stringWithFormat:@"%.5f", dur] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+          double dur = ((p && p->_ownerIsNoteRecorder) ?
+	      _MKDurForTimeUnit(self,[p->_owner timeUnit]) : getNoteDur(self));
+          [aStream appendData: [[NSString stringWithFormat:@"%.5f", dur]
+	       dataUsingEncoding: NSNEXTSTEPStringEncoding]];
           if (self->noteTag != MAXINT) 
-            [aStream appendData: [[NSString stringWithFormat:@" %d", self->noteTag] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+            [aStream appendData: [[NSString stringWithFormat:@" %d", self->noteTag]
+	       dataUsingEncoding: NSNEXTSTEPStringEncoding]];
           break;
       }
       case MK_noteOn:
       case MK_noteOff:
       case MK_noteUpdate:
-        [aStream appendData: [[NSString stringWithFormat: @"%s", _MKTokNameNoCheck(self->noteType)] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+        [aStream appendData:
+	  [[NSString stringWithFormat: @"%s", _MKTokNameNoCheck(self->noteType)]
+	    dataUsingEncoding: NSNEXTSTEPStringEncoding]];
         if (self->noteTag != MAXINT)
-          [aStream appendData: [[NSString stringWithFormat: @" %d", self->noteTag] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+          [aStream appendData:
+	    [[NSString stringWithFormat: @" %d", self->noteTag]
+	        dataUsingEncoding: NSNEXTSTEPStringEncoding]];
         break;
       case MK_mute:
       default:
-        [aStream appendData: [[NSString stringWithFormat: @"%s", _MKTokNameNoCheck(self->noteType)] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+        [aStream appendData:
+	  [[NSString stringWithFormat: @"%s", _MKTokNameNoCheck(self->noteType)]
+	    dataUsingEncoding: NSNEXTSTEPStringEncoding]];
         break;
     }
     [aStream appendData:[@") " dataUsingEncoding: NSNEXTSTEPStringEncoding]];
