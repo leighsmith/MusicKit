@@ -82,18 +82,28 @@ _longjmp
 #endif
 
 /* #import <servers/bootstrap.h> */
-#import <SoundKit/accesssound.h>
+#import <SndKit/SndKit.h>
+//#import <SoundKit/SoundKit.h>
 
 // #import "/LocalDeveloper/Headers/architecture/m68k/snd_dspreg.h"
 #import "dspreg.h"
 
 #import "_dsp.h"
-#import <SoundKit/sound.h>	/* For write-data output file */
+//#import <SoundKit/sound.h>	/* For write-data output file */
 
-#ifdef SHLIB
-#import <SoundKit/sounddriver.h>	/* This will fully replace the following */
+#ifndef WIN32
+//#ifdef SHLIB
+#import <SoundKit/sounddriver.h>
+//#else
+//#import "snddriver.h"		/*** FIXME ***/
+//#endif
 #else
-#import "snddriver.h"		/*** FIXME ***/
+#import <SoundKit/sounddriver.h>	/* This will be replaced someday as it is stubs anway */
+#endif
+
+#ifdef WIN32
+#include <winnt-pdo.h>
+#include <fcntl.h>   // for open() constants
 #endif
 
 /* #import <mach_init.h> */
@@ -191,7 +201,8 @@ typedef DSPMKWriteDataUserFunc *DSPMKWriteDataUserFuncArray;
 
 static DSPMKWriteDataUserFuncArray s_wd_user_func=NULL;
 static FILE **s_wd_fp=NULL;
-static SNDSoundStruct **s_wd_header=NULL;
+//static SNDSoundStruct **s_wd_header=NULL;
+static SndSoundStruct **s_wd_header=NULL;
 static int *s_wd_sample_count=NULL;
 static int *s_wd_timeout=NULL;
 static int *s_no_thread=NULL;
@@ -212,7 +223,8 @@ static int *s_read_data_running=NULL;
 static char** s_rd_fn=NULL;
 static int *s_rd_fd=NULL;
 static int *s_rd_chans=NULL;
-static SNDSoundStruct **s_rd_header=NULL;
+//static SNDSoundStruct **s_rd_header=NULL;
+static SndSoundStruct **s_rd_header=NULL;
 static int *s_rd_sample_count=NULL;
 static cthread_t *s_rd_thread=NULL;
 static int *s_rd_error=NULL;
@@ -2709,7 +2721,7 @@ int DSPMKStartWriteDataTimed(DSPTimeStamp *aTimeStampP)
     /* if file pointer is null, use file name, if any */
     if (s_wd_fd[s_idsp]< 0 && s_wd_fn[s_idsp]) {
 	/* Get header to use for the write-data output sound file */
-	ec = SNDAlloc(&s_wd_header[s_idsp],
+	ec = SndAlloc(&s_wd_header[s_idsp],
 		      0 /* data size (we'll have to fix this later) */,
 		      SND_FORMAT_LINEAR_16 /* 3 */,
 		      s_low_srate[s_idsp]? 
@@ -2720,7 +2732,7 @@ int DSPMKStartWriteDataTimed(DSPTimeStamp *aTimeStampP)
 		      );
 	if (ec)
 	  _DSPError(DSP_EMISC, 
-		    "DSPMKStartWriteData: SNDAlloc for header failed");
+		    "DSPMKStartWriteData: SndAlloc for header failed");
 	s_wd_header[s_idsp]->dataSize = 2000000000; /* 2 gigabyte limit! */
 	/* Swap it all (in case we're on a little-endian machine) */
 	s_wd_header[s_idsp]->magic = 
@@ -2737,7 +2749,6 @@ int DSPMKStartWriteDataTimed(DSPTimeStamp *aTimeStampP)
 	  NSSwapHostIntToBig(s_wd_header[s_idsp]->dataSize);
 	strcpy( s_wd_header[s_idsp]->info,
 	       "DSP write data written by Music Kit performance");
-	
 	s_wd_fd[s_idsp]= open(s_wd_fn[s_idsp],O_CREAT|O_WRONLY|O_TRUNC,0666);
 	if (_DSPVerbose)
 	  fprintf(stderr,"Opened write-data output file %s\n",s_wd_fn[s_idsp]);
@@ -3050,11 +3061,11 @@ BRIEF int DSPMKSetReadDataFile(char *fn)
     
     /* read header */
     
-    if (ec=SNDReadHeader(s_rd_fd[s_idsp],&s_rd_header[s_idsp]))
+    if (ec=SndReadHeader(s_rd_fd[s_idsp],&s_rd_header[s_idsp]))
       return 
 	_DSPMachError(ec,DSPCat("DSPMKSetReadDataFile: "
 				 "Failed reading header of read-data file. "
-				 "sound library error: ",SNDSoundError(ec)));
+				 "sound library error: ",SndSoundError(ec)));
     
 #define RD(x) s_rd_header[s_idsp]->x
     
@@ -3077,7 +3088,7 @@ int DSPMKRewindReadData(void)
       return _DSPError(DSP_EMISC,
 		       "Attempt to rewind non-existent read-data stream");
     /* move ptr past header: */
-    ec = SNDReadHeader(s_rd_fd[s_idsp],&s_rd_header[s_idsp]); 
+    ec = SndReadHeader(s_rd_fd[s_idsp],&s_rd_header[s_idsp]); 
     if (ec == SND_ERR_NONE)
       return 0;
     else
@@ -3489,8 +3500,7 @@ static int s_notifyingMsgSend(void)
  * Normally, messages to send have a null "local port" in order
  * to suppress a reply.  If there is a local port, we use it. 
  */
-    if (s_dspcmd_msg->msg_local_port && (s_dspcmd_msg->msg_local_port 
-					 != thread_reply()))
+    if (s_dspcmd_msg->msg_local_port && (s_dspcmd_msg->msg_local_port != thread_reply()))
         _DSPError(DSP_EMACH,"DSPObject.c: s_msgSend: "
 	   "Reply port in Mach message not thread_reply() "
 		  "for SEND_NOTIFY reply.");
@@ -3907,11 +3917,12 @@ int _DSPMapHostInterface(void)	/* Memory-map DSP Host Interface Registers */
 			 "DSPMapHostInterface: open /dev/dsp failed");
     }
 #endif
-    vm_allocate(task_self(),(vm_address_t *)&s_hostInterface,
-		getpagesize(),TRUE);
+#ifndef WIN32
+    vm_allocate(task_self(),(vm_address_t *)&s_hostInterface, getpagesize(),TRUE);
+#endif
     s_hostInterfaceArray[s_idsp] = s_hostInterface;
     
-#if MMAP
+#if MMAP && !defined(WIN32)
     ec = (int) mmap((caddr_t) s_hostInterface,
 	      getpagesize(),		/* Must map a full page */
 	      PROT_READ|PROT_WRITE,	/* read-write access */
@@ -4172,7 +4183,7 @@ int DSPOpenWhoFile(void)
     }
     fprintf(s_whofile_fp[s_idsp],"DSP opened in PID %d by %s on %s\n",
 	    getpid(),lname,ctime(&tloc));
-#else	   
+#else	
     fprintf(s_whofile_fp[s_idsp],"DSP opened in PID %d on %s\n",
 	    getpid(),ctime(&tloc));
 #endif
@@ -4340,7 +4351,7 @@ int DSPOpenNoBoot(void)		/* open current DSP */
 #else
     ec = KERN_SUCCESS; /* Make it so */
 #endif
-    
+  
     cthread_init(); /* used for write data, dsp errors, abort */
 
     if (ec == KERN_SUCCESS) {
@@ -5556,7 +5567,7 @@ int DSPReadNewArraySkipMode(
     if(s_simulated[s_idsp]) 
       fprintf(s_simulator_fp[s_idsp],
 	      ";; Read %d words from %s:$%X:%d:$%X:\n",
-	      wordCount,DSPMemoryNames[memorySpace],
+	      wordCount,DSPMemoryNames(memorySpace),
 	      startAddress,skipFactor,
 	      startAddress+skipFactor*wordCount-1);
 #endif SIMULATOR_POSSIBLE
@@ -5609,7 +5620,7 @@ int DSPReadArraySkipMode(
     if(s_simulated[s_idsp]) 
       fprintf(s_simulator_fp[s_idsp],
 	      ";; Read %d words from %s:$%X:%d:$%X:\n",
-	      wordCount,DSPMemoryNames[memorySpace],
+	      wordCount,DSPMemoryNames(memorySpace),
 	      startAddress,skipFactor,
 	      startAddress+skipFactor*wordCount-1);
 #endif SIMULATOR_POSSIBLE
@@ -6639,7 +6650,8 @@ typedef struct { /* Keep in sync with sound library performsound.c */
 
 int DSPOpenCommandsFile(char *fn)			
 {
-    SNDSoundStruct dummySoundHeader;
+//    SNDSoundStruct dummySoundHeader;
+    SndSoundStruct dummySoundHeader;
     commandsSubHeader dummySubHeader;
     
     if (s_saving_commands[s_idsp])
@@ -6654,8 +6666,8 @@ int DSPOpenCommandsFile(char *fn)
     /* Write dummy header and subheader to soundfile */
     if (write(s_commands_fd[s_idsp], 
 	      (void *)&dummySoundHeader, 
-	      sizeof(SNDSoundStruct))
-	!= sizeof(SNDSoundStruct))
+	      sizeof(SndSoundStruct))
+	!= sizeof(SndSoundStruct))
       return _DSPError(DSP_EUNIX, 
 		       "Could not write initial header to dsp commands file");
     if (write(s_commands_fd[s_idsp], 
@@ -6672,9 +6684,9 @@ int DSPOpenCommandsFile(char *fn)
 
 int DSPCloseCommandsFile(DSPFix48 *endTimeStamp)
 {
-    static SNDSoundStruct commandsSoundHeader = {
+    static SndSoundStruct commandsSoundHeader = {
         SND_MAGIC,			/* magic number */
-	sizeof(SNDSoundStruct),		/* offset to data */
+	sizeof(SndSoundStruct),		/* offset to data */
 	0,				/* data size (filled in) */
 	SND_FORMAT_DSP_COMMANDS,	/* data format */
 	0,			        /* sampling rate (filled in) */
@@ -6700,8 +6712,8 @@ int DSPCloseCommandsFile(DSPFix48 *endTimeStamp)
         lseek(s_commands_fd[s_idsp],0,SEEK_SET);
 	if (write(s_commands_fd[s_idsp],
 		  (void *)&commandsSoundHeader, 
-		  sizeof(SNDSoundStruct))
-	    != sizeof(SNDSoundStruct))
+		  sizeof(SndSoundStruct))
+	    != sizeof(SndSoundStruct))
 	  return _DSPError(DSP_EUNIX, 
 			   "Could not write final header "
 			   "to dsp commands file");
@@ -9181,7 +9193,7 @@ int DSPSenseMem(int *memCount)
 {
     int size, result;
     port_t dev_port = 0, owner_port = 0, cmd_port;
-    SNDSoundStruct *dspStruct;
+    SndSoundStruct *dspStruct;
     int i,*p,ec;
 #   define HEADERBYTES (128)
 #   define DSPBYTES (404)
@@ -9945,7 +9957,7 @@ int DSPMKRetValueTimed(
     default:
 	return(_DSPError1(EDOM,
 			  "DSPMKRetValueTimed: cannot send memory space: "
-			  "%s", (char *) DSPMemoryNames[(int)space]));
+			  "%s", (char *) DSPMemoryNames((int)space)));
     }
     DSP_UNTIL_ERROR(DSPMKCallTimedV(aTimeStampP,opcode,1,address));
     DSP_UNTIL_ERROR(DSPMKFlushTimedMessages());
@@ -10228,7 +10240,7 @@ int _DSPDump(
 	if (ec = DSPReadArraySkipMode(data,spc,address,skipFactor,
 				      count,DSP_MODE32))
 	  _DSPError(ec,"_DSPDump: DSP read failed");
-	spcn = (i==2? "E":(char *)DSPMemoryNames[i]);
+	spcn = (i==2? "E":(char *)DSPMemoryNames(i));
 	fn = DSPCat(name,DSPCat(spcn,".ram"));
 	fp = _DSPMyFopen(fn,"w");
 	for (j=0;j<count;j++) {
@@ -10301,7 +10313,7 @@ int DSPMKSendValueTimed(
       fprintf(DSPGetSimulatorFP(),
 	      ";; Send value 0x%X = `%d = %s to %s:$%X %s\n",
 	      value,value,DSPFix24ToStr(value),
-	      DSPMemoryNames[space],addr,
+	      DSPMemoryNames(space),addr,
 	      DSPTimeStampStr(aTimeStampP));
 #endif SIMULATOR_POSSIBLE
 
@@ -10318,7 +10330,7 @@ int DSPMKSendValueTimed(
     default:
 	return(_DSPError1(EDOM,
 			  "DSPMKSendValueTimed: cannot send memory space: "
-			  "%s", (char *) DSPMemoryNames[(int)space]));
+			  "%s", (char *) DSPMemoryNames((int)space)));
     }
     return DSPMKCallTimedV(aTimeStampP,opcode,2,value,addr);
     /* address must be atop value in arg stack */
@@ -10352,7 +10364,7 @@ BRIEF int DSPWriteValue(int value, DSPMemorySpace space, int addr)
     if (s_simulated[s_idsp]) 
       fprintf(DSPGetSimulatorFP(),
 	      ";; Send value 0x%X = `%d = %s to %s:$%X\n",
-	      value,value,DSPFix24ToStr(value), DSPMemoryNames[space],addr);
+	      value,value,DSPFix24ToStr(value), DSPMemoryNames(space),addr);
 #endif SIMULATOR_POSSIBLE
     switch(space) {
       case DSP_MS_P:	
@@ -10367,7 +10379,7 @@ BRIEF int DSPWriteValue(int value, DSPMemorySpace space, int addr)
     default:
 	return(_DSPError1(EDOM,
 			  "DSPWriteValue: cannot write memory space: "
-			  "%s", (char *) DSPMemoryNames[(int)space]));
+			  "%s", (char *) DSPMemoryNames((int)space)));
     }
     return DSPCallV(opcode,2,value,addr);
 }
@@ -10440,7 +10452,7 @@ BRIEF int DSPMKMemoryFillSkipTimed(
     if (s_simulated[s_idsp])
       fprintf(DSPGetSimulatorFP(),
 	      ";; Fill %d words %s:$%X:%d:$%X with $%X %s\n",
-	      wordCount,DSPMemoryNames[space],
+	      wordCount,DSPMemoryNames(space),
 	      address,skip,address+skip*wordCount-1,fillConstant,
 	      DSPTimeStampStr(aTimeStampP));
 #endif SIMULATOR_POSSIBLE
@@ -10459,7 +10471,7 @@ BRIEF int DSPMKMemoryFillSkipTimed(
 	return _DSPError1(EDOM,
 			  "DSPMKMemoryFillTimed: "
 			  "can't fill memory space %s",
-			  (char *) DSPMemoryNames[(int)space]);
+			  (char *) DSPMemoryNames((int)space));
     }
     /*** FIXME: Add skip factor argument to DSP routines when ready ***/
     if (skip != 1) {
@@ -10544,7 +10556,7 @@ BRIEF int DSPMKSendArraySkipModeTimed(
     if (sim = s_simulated[s_idsp])
       fprintf(DSPGetSimulatorFP(),
 	      ";; Send %d words to %s:$%X:%d:$%X %s\n",
-	      count,DSPMemoryNames[space],
+	      count,DSPMemoryNames(space),
 	      address,skipFactor,address+skipFactor*count-1,
 	      DSPTimeStampStr(aTimeStampP));
 #endif SIMULATOR_POSSIBLE
@@ -10691,7 +10703,7 @@ int _DSPMKSendUnitGeneratorWithLooperTimed(
     if (s_simulated[s_idsp])
       fprintf(DSPGetSimulatorFP(),
 	      ";; Send %d words plus 'jmp 0x%X' word to %s:$%X:$%X %s\n",
-	      count,looperWord & 0xfff,DSPMemoryNames[space],
+	      count,looperWord & 0xfff,DSPMemoryNames(space),
 	      address,address+count-1+1,
 	      DSPTimeStampStr(aTimeStampP));
 #endif SIMULATOR_POSSIBLE
@@ -10810,11 +10822,11 @@ BRIEF int DSPMKBLTSkipTimed(
 	fprintf(DSPGetSimulatorFP(),
 		";; BLT %d words from %s:$%X:%d:$%X to %s:$%X:%d:$%X\n",
 		wordCount,
-		DSPMemoryNames[memorySpace],
+		DSPMemoryNames(memorySpace),
 		srcAddr,
 		sourceSkip,
 		srcAddr+wordCount*sourceSkip-1,
-		DSPMemoryNames[memorySpace],
+		DSPMemoryNames(memorySpace),
 		dstAddr,
 		destinationSkip,
 		dstAddr+wordCount*destinationSkip-1);
@@ -10833,7 +10845,7 @@ BRIEF int DSPMKBLTSkipTimed(
       default:
 	return(_DSPError1(EDOM,
 	   "DSPMKBLTSkipTimed: cannot BLT memory space: %s",
-			  (char *)DSPMemoryNames[(int)memorySpace]));
+			  (char *)DSPMemoryNames((int)memorySpace)));
     }
 
     return (DSPMKCallTimedV(timeStamp,opcode,5,wordCount,
