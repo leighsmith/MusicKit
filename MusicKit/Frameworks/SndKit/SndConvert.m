@@ -96,15 +96,10 @@ void SndChangeSampleRate(const SndSoundStruct *fromSound,
     double fromSampleRate = fromSound->samplingRate;
     double toSampleRate = toSound->samplingRate;
 
-    if (fromDataFormat == SND_FORMAT_INDIRECT) {  // TODO this can be removed with SndSoundStruct
-        fromDataFormat = ((SndSoundStruct *)(*((SndSoundStruct **) fromDataLocation)))->dataFormat;
-        fromDataSize = SndSampleCount(fromSound) * fromChannelCount * SndSampleWidth(fromDataFormat);
-    }
-
     if (fromSampleRate != toSampleRate) {
 	double stretchFactor = toSampleRate / fromSampleRate;
-	int inSampleCount = SndBytesToSamples(fromDataSize, fromChannelCount, fromDataFormat);
-	int outSampleCount = stretchFactor * inSampleCount + 1;
+	int inFrameCount = SndBytesToFrames(fromDataSize, fromChannelCount, fromDataFormat);
+	int outFrameCount = stretchFactor * inFrameCount + 1;
 
 	/* interpolateFilter: YES = interpolate within filter.
 	 * linearInterp: YES = fast mode.
@@ -112,10 +107,10 @@ void SndChangeSampleRate(const SndSoundStruct *fromSound,
 	 * filterFile: NULL = use internal filter.
 	 */
 	char *filterFile = NULL;
-	int outCountReal = resample(stretchFactor, outPtr, inSampleCount, outSampleCount, MIN(fromChannelCount, toChannelCount),
+	int outCountReal = resample(stretchFactor, outPtr, inFrameCount, outFrameCount, MIN(fromChannelCount, toChannelCount),
 				interpolateFilter, linearInterpolation, largeFilter, filterFile, fromSound, 0, inputPtr);
 
-	// NSLog(@"Completed resample stretching by %lf. inSampleCount = %d outSampleCount = %d outCountReal = %d\n", stretchFactor, inSampleCount, outSampleCount, outCountReal);
+	//NSLog(@"Completed resample stretching by %lf. inFrameCount = %d outFrameCount = %d outCountReal = %d\n", stretchFactor, inFrameCount, outFrameCount, outCountReal);
 	toSound->dataFormat = SND_FORMAT_LINEAR_16; /* this is the output format */
 	toSound->channelCount = MIN(fromChannelCount, toChannelCount); /* channel count is reduced if nec */
 	toSound->dataSize = outCountReal * toSound->channelCount * SndSampleWidth(SND_FORMAT_LINEAR_16);
@@ -126,7 +121,7 @@ void SndChangeSampleRate(const SndSoundStruct *fromSound,
 	*/
         if (fromDataFormat != SND_FORMAT_INDIRECT)
             memmove((char *)toSound, (char *)fromSound, fromSound->dataSize + fromDataLocation);
-        else {
+        else {  // TODO this can be removed when SndSoundStruct goes
             int count = 0, i=0;
             SndSoundStruct *theStruct;
             char *startLocation = (char *)toSound + toDataLocation;
@@ -604,89 +599,112 @@ useLinearInterpolation: (BOOL) fastInterpolation
 
 	// This is just used for now until we replace SndSoundStructs with direct parameter passing to SndChangeSampleRate().
 	SndAlloc(&fromSoundStruct, 0, dataFormat, samplingRate, channelCount, 4);
+	fromSoundStruct->dataSize = sampleFrames * SndSampleWidth(dataFormat) * channelCount;
 	SndAlloc(&toSoundStruct, 0, SND_FORMAT_LINEAR_16, toSampleRate, channelCount, 4);
 
 	// We only use the fromSound, toSound parameters to transport the data formats, channel counts and sampling rates.
 	// The memory pointers are passed in the last two parameters.
 	SndChangeSampleRate(fromSoundStruct, toSoundStruct, largeFilter, interpFilter, fastInterpolation, fromDataPtr, (short *) toDataPtr);
 
-	// if we have changed rate, output format is always linear 16, otherwise we use the originally specified output format.
-	dataFormat = SND_FORMAT_LINEAR_16;
+	// assign dataFormat here in case we don't do any conversion using SndChangeSampleType() below.
+	dataFormat = toSoundStruct->dataFormat;
+
+	// assign this here in case we don't do any conversion in convertToFormat:channelCount:
+	byteCount = toSoundStruct->dataSize;  
 
 	// replace the old data with the new sample rate converted data.
 	[data release];
 	data = [toData retain];
 	samplingRate = toSampleRate;
-	byteCount = maxByteCount = [toData length];  // assign this here in case we don't do any conversion in convertToFormat:channelCount:
     }
     
     // The sample rate converted sample data is now ready for channel/format conversion
     return [self convertToFormat: toDataFormat channelCount: toChannelCount];
 }
 
-- convertBytes: (void *) fromDataPtr
-     intoRange: (NSRange) bufferByteRange
-    fromFormat: (int) fromDataFormat
-      channels: (int) fromChannelCount
-  samplingRate: (double) fromSampleRate
+- (long) convertBytes: (void *) fromDataPtr
+       intoFrameRange: (NSRange) bufferFrameRange
+           fromFormat: (int) fromDataFormat
+             channels: (int) fromChannelCount
+         samplingRate: (double) fromSampleRate
 {
     int toChannelCount = [self channelCount];
     int toDataFormat = [self dataFormat];
     double toSampleRate = [self samplingRate];
-    void *toDataPtr = [self bytes] + bufferByteRange.location;
-    long sampleFrames = bufferByteRange.length / [self frameSizeInBytes];
+    void *toDataPtr = [self bytes] + bufferFrameRange.location * [self frameSizeInBytes];
+    long toSampleFrames = bufferFrameRange.length;
+    // unless we convert sample rates we read and write the same number of frames.
+    long fromSampleFrames = toSampleFrames;
+    long lastModifiedByte;
     int error;
 
     if(fromSampleRate != toSampleRate) {
 	// do sampling rate conversion
 	BOOL largeFilter = NO, interpFilter = YES, linearInterpolation = NO;
 	double stretchFactor = toSampleRate / fromSampleRate;
-	long dataItems = (sampleFrames / stretchFactor) * channelCount;
 	SndSoundStruct *toSoundStruct;
 	SndSoundStruct *fromSoundStruct;
 
-	// NSLog(@"convertBytes: from format %d channels %d sample rate %lf, to %@\n", fromDataFormat, fromChannelCount, fromSampleRate, self);
-
-	// This is just used for now until we replace SndSoundStructs with direct parameter passing to SndChangeSampleRate().
+	fromSampleFrames = toSampleFrames / stretchFactor;  // adjust the number of frames to consume.
+	//NSLog(@"convertBytes: from format %d channels %d sample rate %lf frames %ld, to %@\n",
+	//    fromDataFormat, fromChannelCount, fromSampleRate, fromSampleFrames, self);
+	
+	// This is just used for now until we replace SndSoundStructs with direct parameter passing
+	// to SndChangeSampleRate(). We do not use the SndSoundStructs to point to the sample data itself.
 	SndAlloc(&fromSoundStruct, 0, fromDataFormat, fromSampleRate, fromChannelCount, 4);
-	fromSoundStruct->dataSize = dataItems * SndSampleWidth(fromDataFormat);
-	SndAlloc(&toSoundStruct, 0, SND_FORMAT_LINEAR_16, toSampleRate, toChannelCount, 4);
+	fromSoundStruct->dataSize = fromSampleFrames * SndSampleWidth(fromDataFormat) * fromChannelCount;
+	// If we change rate, output format is always linear 16 (due to resample()).
+	// TODO, resample needs to be modified so that conversions are in SND_FORMAT_FLOAT.
+	// We keep the channel count the same, since we will do channel conversion later.
+	// We would only benefit doing the conversion here if we converting down to a mono source (nowdays unlikely)
+	// or from multi-channel to stereo.
+	SndAlloc(&toSoundStruct, 0, SND_FORMAT_LINEAR_16, toSampleRate, fromChannelCount, 4);
 	
 	// We only use the fromSound, toSound parameters to transport the data formats, channel counts and sampling rates.
 	// The memory pointers are passed in the last two parameters.
 	// SndChangeSampleRate(fromDataPtr, (short *) toDataPtr, numSampleFrames, fromDataFormat, fromChannelCount, fromSampleRate, toSampleRate, largeFilter, interpFilter, linearInterpolation);
 	SndChangeSampleRate(fromSoundStruct, toSoundStruct, largeFilter, interpFilter, linearInterpolation, fromDataPtr, (short *) toDataPtr);
 	
-	// if we have changed rate, output format is always linear 16, otherwise we use the originally specified output format.
-	dataFormat = toSoundStruct->dataFormat;
+	// assign dataFormat here in case we don't do any conversion using SndChangeSampleType() below.
+	fromDataFormat = dataFormat = toSoundStruct->dataFormat;
 	
+	// assign this here in case we don't do any conversion using SndChangeSampleType() below.
+	byteCount = toSoundStruct->dataSize;  
 	// replace the old data with the new sample rate converted data.
-	byteCount = toSoundStruct->dataSize;  // assign this here in case we don't do any conversion in convertToFormat:channelCount:
 	fromDataPtr = toDataPtr; // This will then do the channel count conversion in place, which is ok by SndChangeChannelCount().
-	// channelCount = toSoundStruct->channelCount;
-	// NSLog(@"convertBytes: now %@\n", self);
-	// channelCount = toChannelCount;
+#if 0
+	channelCount = toSoundStruct->channelCount;  // set the channel so we can describe the modified buffer.
+	NSLog(@"convertBytes: now %@\n", self);
+	channelCount = toChannelCount;
+#endif
     }
 
     if(fromChannelCount != toChannelCount) {
-	error = SndChangeChannelCount(fromDataPtr, toDataPtr, sampleFrames, fromChannelCount, toChannelCount, fromDataFormat);
+	error = SndChangeChannelCount(fromDataPtr, toDataPtr, toSampleFrames, fromChannelCount, toChannelCount, fromDataFormat);
 
 	if(error != SND_ERR_NONE)
-	    return nil;
+	    return 0;
 	
 	fromDataPtr = toDataPtr; // This will then do the sample type conversion in place, which is ok by SndChangeSampleType().
     }
 
     if(fromDataFormat != toDataFormat) {
-	error = SndChangeSampleType(fromDataPtr, toDataPtr, fromDataFormat, toDataFormat, sampleFrames * toChannelCount);
+	// NSLog(@"convertBytes: converting from format %d to format %d frames %ld\n", fromDataFormat, toDataFormat, toSampleFrames, self);
+
+	error = SndChangeSampleType(fromDataPtr, toDataPtr, fromDataFormat, toDataFormat, toSampleFrames * toChannelCount);
 
 	if(error != SND_ERR_NONE)
-	    return nil;
+	    return 0;
+	
+	// Reassign dataFormat in case it was changed by the sample rate changing code.
+	dataFormat = toDataFormat;
     }
-    if(bufferByteRange.location + bufferByteRange.length > byteCount)
-	byteCount = bufferByteRange.location + bufferByteRange.length;
+    lastModifiedByte = (bufferFrameRange.location + bufferFrameRange.length) * [self frameSizeInBytes];
+    byteCount = MAX(lastModifiedByte, byteCount);   // extend the byte count if we modify a greater region.
+
+    // NSLog(@"Final converted buffer %@\n", self);
     
-    return self;
+    return fromSampleFrames;
 }
 
 // Create a new buffer of the same number of samples as the receiver
