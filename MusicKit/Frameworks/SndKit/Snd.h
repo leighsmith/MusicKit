@@ -82,12 +82,10 @@ class also provides an application-wide name table that lets you
 identify and locate sounds by name.
 
 Playback and recording are performed by background threads, allowing
-your application to proceed in parallel. The latency between sending a
-<b>play:</b> or <b>record:</b> message and the start of the playback
-or recording, while within the tolerance demanded by most
-applications, can be further decreased by first reserving the sound
-facilities that you wish to use. This is done by calling the
-<b>SNDReserve()</b> C function.
+your application to proceed in parallel. By using preemption of queueing,
+the latency between sending a <b>play:</b> or <b>record:</b> message and
+the start of the playback or recording, is no more than the duration of
+one hardware buffer.
 
 You can also edit a Snd object by adding and removing samples. To
 minimize data movement (and thus save time), an edited Snd may become
@@ -120,11 +118,11 @@ although the output is always 16 bit. So although you can convert sampling
 rates of float data, it has to go through an intermediate 16 bit
 stage for the rate conversion. Sorry.
 
-There are 3 different qualities of sample rate conversion, the fastest being
-the lowest quality. The Snd object uses the fastest one by default, but you
+There are 3 different qualities of sample rate conversion, described by SndConversionQuality.
+The fastest conversion is of the lowest quality. The Snd object uses the fastest one by default, but you
 can set the quality to be used with the -setConversionQuality method.
 
-The Sound Conversion routines (in general) basically convert from any
+The sound conversion routines (in general) basically convert from any
 sampling rate, any number of channels (<= 16), 8, 16 bit, float and double
 formats to any other combination of the above, in as
 few passes as possible. When changing numbers of channels, you can change
@@ -845,7 +843,7 @@ typedef enum {
 - (BOOL) isPlaying;
 
 /*!
-  @method convertToFormat:
+  @method convertToFormat:samplingRate:channelCount:
   @param  newFormat is an int.
   @param  newRate is a double.
   @param  newChannelCount is an int.
@@ -861,9 +859,9 @@ typedef enum {
               <LI>CODEC mu-law to and from linear formats.</LI>
 	      </UL>
  */
-- (int) convertToFormat: (int) aFormat
-	   samplingRate: (double) aRate
-	   channelCount: (int) aChannelCount;
+- (int) convertToFormat: (int) newFormat
+	   samplingRate: (double) newRate
+	   channelCount: (int) newChannelCount;
 
 /*!
   @method convertToFormat:
@@ -874,10 +872,10 @@ typedef enum {
               except that only the format is changed. An error code is
               returned.  
 */
-- (int) convertToFormat: (int) aFormat;
+- (int) convertToFormat: (int) newFormat;
 
 /*!
-  @method convertToFormat:
+  @method convertToNativeFormat:
   @result Returns an int.
   @discussion The Snd is converted to the format (sampling rate, resolution and channels) that
               the hardware natively uses. This should result in the fastest playback, avoiding any
