@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 #include <stdlib.h>
-#include <MusicKit/MusicKit.h>
+#import <MusicKit/MusicKit.h>
 
 int main (int argc, const char *argv[])
 {
@@ -12,7 +12,7 @@ int main (int argc, const char *argv[])
     aPart = [[MKPart alloc] init];
     /* REPEAT FROM HERE TO XXX TO ADD MULTIPLE NOTES */
     aNote = [[MKNote alloc] init];
-    [aNote setPar: MK_freq toDouble:440.0];
+    [aNote setPar: MK_freq toDouble: 440.0];
     [aNote setTimeTag: 1.0];
     [aNote setDur: 1.0];
     [aScore addPart: aPart];
@@ -21,8 +21,8 @@ int main (int argc, const char *argv[])
     partInfo = [[MKNote alloc] init];	
     [partInfo setPar: MK_synthPatch toString: @"Pluck"];
     [aPart setInfoNote: partInfo];
-    [aScore writeScorefile: @"test.score"];
-    system("playscore test.score");  /* play the thing */
+    [aScore writeScorefile: @"/tmp/test.score"];
+    system("playscore /tmp/test.score");  /* play the thing */
     [pool release];
     exit(0);       // insure the process exit status is 0
     return 0;      // ...and make main fit the ANSI spec.
