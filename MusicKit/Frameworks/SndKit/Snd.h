@@ -4,30 +4,25 @@
 	Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
 	Additions Copyright (c) 1999 Stephen Brandon and the University of Glasgow 
 */
-
-#if defined(NeXT) 
-  #define USE_NEXTSTEP_SOUND_IO
-  #define USE_PERFORM_SOUND_IO
-#elif (defined(__APPLE__) && defined(__MACH__))
-  #define USE_PERFORM_SOUND_IO  // LMS currently this causes conflicts between #defines here and the Original Sound.h
-#elif defined(WIN32)
-  #define USE_PERFORM_SOUND_IO
-#endif
-
 #import <Foundation/NSObject.h>
 #import <Foundation/Foundation.h>
 #import <objc/hashtable.h>
 #import <Foundation/NSBundle.h>
 
-#ifdef USE_PERFORM_SOUND_IO
-#import <SoundKit/Sound.h>
-#else
-#import "SndFormats.h"
-#import "sounderror.h"
+#if defined(NeXT) 
+  #define USE_NEXTSTEP_SOUND_IO
+  #define USE_PERFORM_SOUND_IO
+#elif (defined(__APPLE__) && defined(__MACH__))
+  #define USE_PERFORM_SOUND_IO
+  #import <SoundKit/Sound.h>
+#elif defined(WIN32)
+  #define USE_PERFORM_SOUND_IO
+  #import <MKPerformSndMIDI/PerformSound.h>
 #endif
 
-#ifdef WIN32
-#import <PerformSound/PerformSound.h>
+#ifdef USE_PERFORM_SOUND_IO
+#import "SndFormats.h"
+#import "sounderror.h"
 #endif
 
 #import "SndFunctions.h"
@@ -64,7 +59,7 @@ extern NSString *NXSoundPboardType;
 	int tag;
 }
 
-#if !defined(USE_NEXTSTEP_SOUND_IO) && !defined(USE_PERFORM_SOUND_IO)
+#if !defined(USE_NEXTSTEP_SOUND_IO) && !defined(USE_PERFORM_SOUND_IO) || defined(WIN32)
 /*
  * Status codes
  */
