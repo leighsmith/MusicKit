@@ -10,7 +10,7 @@
     Objective C SndKit interface rather this one...do yourself a favour, 
     learn ObjC - it's simple, its fun, its better than Java..
 
-  Original Author: Leigh M. Smith, <leigh@tomandandy.com>, tomandandy music inc.
+  Original Author: Leigh M. Smith, <leigh@leighsmith.com>
 
   10 July 1999, Copyright (c) 1999 The MusicKit Project.
 
@@ -31,19 +31,18 @@ extern "C" {
 
 
 #define SQUAREWAVE_DEBUG 0
+#define DEBUG_VENDBUFFER 0
 
-#define PA_DEFAULT_SAMPLE_RATE     (44100)
-#define PA_DEFAULT_OUT_CHANNELS    (2)
-#define PA_DEFAULT_IN_CHANNELS     (2)
+#define DEFAULT_SAMPLE_RATE     (44100)
+#define DEFAULT_OUT_CHANNELS    (2)
+#define DEFAULT_IN_CHANNELS     (2)
 /* Note: if changing the default buffer size, ensure it is exactly
- * divisible by PA_BYTES_PER_FRAME (which is 8 for stereo, 4 byte
+ * divisible by BYTES_PER_FRAME (which is 8 for stereo, 4 byte
  * floats).
  */
-#define PA_DEFAULT_BUFFERSIZE      (16384)
-#define PA_DEFAULT_DATA_FORMAT     (SND_FORMAT_FLOAT)
-#define PA_BYTES_PER_FRAME         (sizeof(float) * PA_DEFAULT_OUT_CHANNELS)
-#define PA_DEFAULT_BUFFER_SIZE_IN_FRAMES ( bufferSizeInBytes \
-        / PA_BYTES_PER_FRAME )
+#define DEFAULT_BUFFER_SIZE      (512)  // Frames
+#define DEFAULT_DATA_FORMAT      (SND_FORMAT_FLOAT)
+#define BYTES_PER_FRAME          (sizeof(float) * DEFAULT_OUT_CHANNELS)
 
 // "class variables" 
 static BOOL             initialised = FALSE;
@@ -53,16 +52,16 @@ static unsigned int     driverIndex = 0;
 static int              numOfDevices;
 static BOOL             inputInit = FALSE;
 
-// new ones for portaudio
-static int              bufferSizeInFrames;
-static long             bufferSizeInBytes = PA_DEFAULT_BUFFERSIZE;
+// portaudio specific variables
+static long             bufferSizeInFrames = DEFAULT_BUFFER_SIZE;
 static PaStream         *stream;
 static BOOL             isMuted = FALSE;
+static BOOL             useNativeBufferSize = TRUE;
 
 // Stream processing data.
 static SNDStreamProcessor streamProcessor;
 static void *streamUserData;
-static int /*should be double*/ firstSampleTime = -1.0; // indicates this has not been assigned.
+static PaTime firstSampleTime = -1.0; // indicates this has not been assigned.
 static float *lastRecvdInputBuffer = NULL;
 
 
@@ -94,17 +93,88 @@ static BOOL retrieveDriverList(void)
     return TRUE;
 }
 
-BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes)
+BOOL SNDSetBufferSizeInBytes(long newBufferSizeInBytes)
 {
-  if (Pa_IsStreamActive(stream))
-      return FALSE;
-  if ((float)liBufferSizeInBytes/(float)8 != (int)(liBufferSizeInBytes/8)) {
-      NSLog(@"output device - error setting buffer size. Buffer must be multiple of 8\n");
-      return FALSE;
-  }
-  bufferSizeInBytes = liBufferSizeInBytes;
-  return TRUE;
+    long newBufferSizeInFrames = newBufferSizeInBytes / BYTES_PER_FRAME;
+
+    if (Pa_IsStreamActive(stream))
+        return FALSE;
+    if ((float)newBufferSizeInBytes /(float) BYTES_PER_FRAME != newBufferSizeInFrames) {
+        NSLog(@"output device - error setting buffer size. Buffer must be multiple of %d\n", BYTES_PER_FRAME);
+        return FALSE;
+    }
+    bufferSizeInFrames = newBufferSizeInFrames;
+    // if we set the size, we force the streaming to use it, not the
+    // native size.
+    useNativeBufferSize = FALSE;  
+    return TRUE;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// vendBuffersToStreamManagerIOProc
+//
+// We vend the output and input buffers in their native format to avoid 
+// redundant conversions. This allows postponing the conversion to the last 
+// possible moment. The SndConvertFormat() function in the SndKit makes for an 
+// easy way to do the conversion without anyone writing their own converter.
+////////////////////////////////////////////////////////////////////////////////
+
+static int vendBuffersToStreamManagerIOProc(const void *inputBuffer,
+                                            void *outputBuffer,
+                                   unsigned long framesPerBuffer,
+				   const PaStreamCallbackTimeInfo *timeInfo,
+                                     PaStreamCallbackFlags statusFlags,
+                                            void *userData)
+{
+    SNDStreamBuffer inStream, outStream;
+    unsigned long vendBufferSizeInBytes = framesPerBuffer * BYTES_PER_FRAME;
+
+    // TODO We modify the saved buffer size here, before
+    // SNDStreamNativeFormat() is called.
+    // bufferSizeInFrames = framesPerBuffer; 
+#if DEBUG_VENDBUFFER
+    fprintf(stderr, "framesPerBuffer now %ld\n", framesPerBuffer);
+#endif
+//    if(statusFlags) {
+//        NSLog(@"Problem in callback: %x\n", statusFlags);
+//    }
+    if(firstSampleTime == -1.0) {
+        firstSampleTime = timeInfo->outputBufferDacTime; /* I assume this will be 0, but interesting to find out. */
+    }
+
+    // to tell the client the format it is receiving.
+
+    if (inputInit) {
+        memcpy(lastRecvdInputBuffer, inputBuffer, vendBufferSizeInBytes);
+    }
+
+    // to tell the client the format it should send.
+        
+    SNDStreamNativeFormat(&outStream);   
+    SNDStreamNativeFormat(&inStream);    
+
+    inStream.streamData  = lastRecvdInputBuffer;
+    outStream.streamData = outputBuffer;
+        
+    // hand over the stream buffers to the processor/stream manager.
+    // the output time goes out as a relative time, noted from the 
+    // first sample time we first receive.
+
+#ifdef GNUSTEP
+    // If we are using a GNUstep system, the thread of the callback
+    // hasn't yet been registered with GNUstep which it must be before
+    // we can create NSAutoreleasePools.
+    GSRegisterCurrentThread();
+#endif
+    (*streamProcessor)(timeInfo->outputBufferDacTime - firstSampleTime, 
+                       &inStream, &outStream, streamUserData);
+    if (isMuted) {
+        memset(outputBuffer, 0, vendBufferSizeInBytes);
+    }
+
+    return paContinue; // returning 1 stops the stream
+}
+
 
 // Takes a parameter indicating whether to guess the device to select.
 // This allows us to hard code devices or use heuristics to prevent the user
@@ -124,6 +194,40 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
         initialised = TRUE;   // SNDSetDriverIndex() needs to think we're initialised.
     inputInit = TRUE;
 
+    // If we guess the device, then we retrieve the buffer size of the 
+    // default device and use that, rather than using the buffer size
+    // defined in DEFAULT_BUFFER_SIZE.
+    if(guessTheDevice) {
+#if 0
+        const PaStreamInfo *streamInfo;
+
+        err = Pa_OpenDefaultStream(
+				   &stream,                         /* passes back stream pointer */
+				   DEFAULT_IN_CHANNELS,          /* stereo input */
+				   DEFAULT_OUT_CHANNELS,         /* stereo output */
+				   paFloat32,                       /* 32 bit floating point output paFloat32 */
+                                         /*  note: this value instructs portaudio
+                                          *  what sample size to expect, which
+                                          *  is a different constant to that used
+                                          *  to talk to the SndKit (SND_FORMAT_*)
+                                          */
+	DEFAULT_SAMPLE_RATE,          /* sample rate */
+        paFramesPerBufferUnspecified, /* frames per buffer */
+        vendBuffersToStreamManagerIOProc, /* specify our custom callback */
+        NULL);        /* pass our data through to callback */
+
+	streamInfo = Pa_GetStreamInfo(stream);
+	bufferSizeInFrames = streamInfo->outputLatency * streamInfo->sampleRate;
+
+	NSLog(@"outputLatency = %lf seconds, sample rate %lf, bufferSize in Frames = %ld\n",
+	      streamInfo->outputLatency, streamInfo->sampleRate, bufferSizeInFrames);
+
+	Pa_CloseStream(stream);
+	useNativeBufferSize = TRUE;
+#else
+	useNativeBufferSize = FALSE;
+#endif
+    }
     return TRUE;
 }
 
@@ -170,65 +274,6 @@ PERFORM_API void SNDSetMute(BOOL aFlag)
     isMuted = aFlag;
 }
 
-
-////////////////////////////////////////////////////////////////////////////////
-// vendBuffersToStreamManagerIOProc
-//
-// We vend the output and input buffers in their native format to avoid 
-// redundant conversions. This allows postponing the conversion to the last 
-// possible moment. The SndConvertFormat() function in the SndKit makes for an 
-// easy way to do the conversion without anyone writing their own converter.
-////////////////////////////////////////////////////////////////////////////////
-
-static int vendBuffersToStreamManagerIOProc(const void *inputBuffer,
-                                            void *outputBuffer,
-                                   unsigned long framesPerBuffer,
-				   const PaStreamCallbackTimeInfo *timeInfo,
-                                     PaStreamCallbackFlags statusFlags,
-                                            void *userData )
-{
-    SNDStreamBuffer inStream, outStream;
-
-//    if(inOutputTime->mFlags & kAudioTimeStampSampleTimeValid == 0) {
-//        NSLog(@"sample time is not valid!\n");
-//    }
-    if(firstSampleTime == -1.0) {
-        firstSampleTime = timeInfo->outputBufferDacTime; /* I assume this will be 0, but interesting to find out. */
-    }
-
-    // to tell the client the format it is receiving.
-
-    if (inputInit) {
-        memcpy(lastRecvdInputBuffer, inputBuffer, bufferSizeInBytes);
-    }
-
-    // to tell the client the format it should send.
-        
-    SNDStreamNativeFormat(&outStream.streamFormat);   
-    SNDStreamNativeFormat(&inStream.streamFormat);    
-
-    inStream.streamData  = lastRecvdInputBuffer;
-    outStream.streamData = outputBuffer;
-        
-    // hand over the stream buffers to the processor/stream manager.
-    // the output time goes out as a relative time, noted from the 
-    // first sample time we first receive.
-
-#ifdef GNUSTEP
-    // If we are using a GNUstep system, the thread of the callback
-    // hasn't yet been registered with GNUstep which it must be before
-    // we can create NSAutoreleasePools.
-    GSRegisterCurrentThread();
-#endif
-    (*streamProcessor)(timeInfo->outputBufferDacTime - firstSampleTime, 
-                       &inStream, &outStream, streamUserData);
-    if (isMuted) {
-        memset(outputBuffer, 0, bufferSizeInBytes);
-    }
-
-    return 0; // returning 1 stops the stream
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // SNDStreamStart
 //
@@ -245,12 +290,6 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
     if(!initialised)
         return FALSE;  // invalid sound structure.
 
-    if (inputInit) {
-        if ((lastRecvdInputBuffer = (float *) malloc(bufferSizeInBytes)) == NULL)
-            return FALSE;
-        memset(lastRecvdInputBuffer, 0, bufferSizeInBytes);
-    }
-
     // indicate the first absolute sample time received from the call back needs to be marked as a
     // datum to use to convert subsequent absolute sample times to a relative time.
     firstSampleTime = -1.0;  
@@ -260,18 +299,26 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
 
     err = Pa_OpenDefaultStream(
         &stream,                         /* passes back stream pointer */
-        PA_DEFAULT_IN_CHANNELS,          /* stereo input */
-        PA_DEFAULT_OUT_CHANNELS,         /* stereo output */
+        DEFAULT_IN_CHANNELS,          /* stereo input */
+        DEFAULT_OUT_CHANNELS,         /* stereo output */
         paFloat32,                       /* 32 bit floating point output paFloat32 */
                                          /*  note: this value instructs portaudio
                                           *  what sample size to expect, which
                                           *  is a different constant to that used
                                           *  to talk to the SndKit (SND_FORMAT_*)
                                           */
-        PA_DEFAULT_SAMPLE_RATE,          /* sample rate */
-        PA_DEFAULT_BUFFER_SIZE_IN_FRAMES,/* frames per buffer */
+        DEFAULT_SAMPLE_RATE,          /* sample rate */
+        useNativeBufferSize ? paFramesPerBufferUnspecified :
+	    bufferSizeInFrames, /* frames per buffer */
         vendBuffersToStreamManagerIOProc, /* specify our custom callback */
         &data );        /* pass our data through to callback */
+
+    if (inputInit) {
+        long bufferSizeInBytes = bufferSizeInFrames * BYTES_PER_FRAME;
+        if ((lastRecvdInputBuffer = (float *) malloc(bufferSizeInBytes)) == NULL)
+            return FALSE;
+        memset(lastRecvdInputBuffer, 0, bufferSizeInBytes);
+    }
  
     err = Pa_StartStream( stream );
     if( err != paNoError ) {
@@ -316,18 +363,18 @@ PERFORM_API BOOL SNDStreamStop(void)
 // SndStreamNativeFormat
 ////////////////////////////////////////////////////////////////////////////////
 
-// Return in the struct the format of the sound data preferred by
-// the operating system. For CoreAudio, we use the basicDescription.
-PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat)
+// Return in the stream buffer the format of the sound data preferred by
+// the operating system.
+PERFORM_API void SNDStreamNativeFormat(SNDStreamBuffer *streamFormat)
 {
-    streamFormat->magic        = SND_MAGIC;
-    streamFormat->dataLocation = 0;   /* Offset or pointer to the raw data */
-    /* Number of bytes of data in a buffer */
-    streamFormat->dataSize     = bufferSizeInBytes;
-    streamFormat->dataFormat   = PA_DEFAULT_DATA_FORMAT;
-    streamFormat->samplingRate = PA_DEFAULT_SAMPLE_RATE;
-    streamFormat->channelCount = PA_DEFAULT_OUT_CHANNELS;
-    streamFormat->info[0]      = '\0';
+    if (!initialised)
+	SNDInit(TRUE);
+
+    /* The bytes per frame is implicitly set by the dataFormat value. */
+    streamFormat->frameCount   = bufferSizeInFrames;
+    streamFormat->dataFormat   = DEFAULT_DATA_FORMAT;
+    streamFormat->sampleRate   = DEFAULT_SAMPLE_RATE;
+    streamFormat->channelCount = DEFAULT_OUT_CHANNELS;
 }
 
 PERFORM_API BOOL SNDTerminate(void)
