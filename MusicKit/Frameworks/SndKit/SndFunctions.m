@@ -1022,18 +1022,18 @@ int SndReadHeader(int fd, SndSoundStruct **sound)
 	if (error == 0) printf("Sound contained only header!\n");
 	/* now test for endianness */
 	if (s->magic != SND_MAGIC) {
-            if (s->magic == (int)ntohl(SND_MAGIC))
+            if (s->magic == (int)NSSwapBigLongToHost(SND_MAGIC))
                 reverse = YES;
             else
                 return SND_ERR_CANNOT_READ;
         }
 	if (reverse) {
-		s->magic = ntohl(s->magic);
-		s->dataLocation = ntohl(s->dataLocation);
-		s->dataSize = ntohl(s->dataSize);
-		s->dataFormat = ntohl(s->dataFormat);
-		s->samplingRate = ntohl(s->samplingRate);
-		s->channelCount = ntohl(s->channelCount);
+		s->magic = NSSwapBigLongToHost(s->magic);
+		s->dataLocation = NSSwapBigLongToHost(s->dataLocation);
+		s->dataSize = NSSwapBigLongToHost(s->dataSize);
+		s->dataFormat = NSSwapBigLongToHost(s->dataFormat);
+		s->samplingRate = NSSwapBigLongToHost(s->samplingRate);
+		s->channelCount = NSSwapBigLongToHost(s->channelCount);
 		/* info string should be ok, if it's just chars... */
 	}
         SndPrintStruct(s);
@@ -1235,12 +1235,12 @@ int SndWriteHeader(int fd, SndSoundStruct *sound)
 	}
 
 #ifdef __LITTLE_ENDIAN__
-	s->magic = ntohl(s->magic);
-	s->dataLocation = ntohl(s->dataLocation);
-	s->dataSize = ntohl(s->dataSize);
-	s->dataFormat = ntohl(s->dataFormat);
-	s->samplingRate = ntohl(s->samplingRate);
-	s->channelCount = ntohl(s->channelCount);
+	s->magic = NSSwapBigLongToHost(s->magic);
+	s->dataLocation = NSSwapBigLongToHost(s->dataLocation);
+	s->dataSize = NSSwapBigLongToHost(s->dataSize);
+	s->dataFormat = NSSwapBigLongToHost(s->dataFormat);
+	s->samplingRate = NSSwapBigLongToHost(s->samplingRate);
+	s->channelCount = NSSwapBigLongToHost(s->channelCount);
 #endif
 	if (write(fd, s, headerSize) != headerSize) { free(s); return SND_ERR_CANNOT_WRITE; }
 	free(s);
@@ -1277,12 +1277,12 @@ int SndWrite(int fd, SndSoundStruct *sound)
 	}
 
 #ifdef __LITTLE_ENDIAN__
-	s->magic = ntohl(s->magic);
-	s->dataLocation = ntohl(s->dataLocation);
-	s->dataSize = ntohl(s->dataSize);
-	s->dataFormat = ntohl(s->dataFormat);
-	s->samplingRate = ntohl(s->samplingRate);
-	s->channelCount = ntohl(s->channelCount);
+	s->magic = NSSwapBigLongToHost(s->magic);
+	s->dataLocation = NSSwapBigLongToHost(s->dataLocation);
+	s->dataSize = NSSwapBigLongToHost(s->dataSize);
+	s->dataFormat = NSSwapBigLongToHost(s->dataFormat);
+	s->samplingRate = NSSwapBigLongToHost(s->samplingRate);
+	s->channelCount = NSSwapBigLongToHost(s->channelCount);
 #endif
 	if (write(fd, s, headerSize) != headerSize) { free(s); return SND_ERR_CANNOT_WRITE;};
 
