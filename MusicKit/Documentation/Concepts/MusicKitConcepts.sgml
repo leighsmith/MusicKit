@@ -1,19 +1,28 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
-<!ENTITY IntroMusicKit     SYSTEM "IntroMusicKit.sgml">
-<!ENTITY MusicData         SYSTEM "MusicData.sgml">
-<!ENTITY MusicSynthAndProc SYSTEM "MusicSynthAndProc.sgml">
-<!ENTITY MusicPerformance  SYSTEM "MusicPerformance.sgml">
-<!ENTITY ScoreFileRef      SYSTEM "ScoreFileRef.sgml">
-<!ENTITY appendixA         SYSTEM "MusicTables.sgml">
-<!ENTITY appendixB         SYSTEM "MIDITimeCode.sgml">
+<!ENTITY SystemOverview      SYSTEM "SystemOverview.sgml">
+<!ENTITY IntroSndKit         SYSTEM "IntroSndKit.sgml">
+<!ENTITY IntroMusicKit       SYSTEM "IntroMusicKit.sgml">
+<!ENTITY MusicData           SYSTEM "MusicData.sgml">
+<!ENTITY MusicSynthAndProc   SYSTEM "MusicSynthAndProc.sgml">
+<!ENTITY MusicPerformance    SYSTEM "MusicPerformance.sgml">
+<!ENTITY ScoreFileRef        SYSTEM "ScoreFileLanguage/ScoreFileRef.sgml">
+<!ENTITY NoteListToScorefile SYSTEM "ScoreFileLanguage/NoteListToScorefile.sgml">
+<!ENTITY ScoreFileSummary    SYSTEM "ScoreFileLanguage/ScoreFileSummary.sgml">
+<!ENTITY MusicTables         SYSTEM "MusicTables.sgml">
+<!ENTITY MIDITimeCode        SYSTEM "MIDITimeCode.sgml">
 ]>
 
 <!-- 
 $Id$
-This is the main document including all others that constitute the
+This is the main document which simply provides the attribution and
+then includes all chapters that constitute the
 MusicKit and SndKit Concepts book.
 
+In SGML using DocBook DTD V3.1 and above.
+
 Edit this file, not the HTML, RTF or LaTeX output.
+
+Leigh Smith <leigh@tomandandy.com>
 
 -->
 
@@ -69,12 +78,31 @@ Edit this file, not the HTML, RTF or LaTeX output.
     </revhistory>
   </bookinfo>
 
+&SystemOverview;
+
+<part label="The SndKit">
+<title>The <productname>SndKit</productname></title>
+&IntroSndKit;
+</part>
+
+<part label="The MusicKit">
+<title>Representation, Synthesis, Processing and Performance</title>
 &IntroMusicKit;
 &MusicData;
 &MusicSynthAndProc;
 &MusicPerformance;
-&ScoreFileRef;
-&appendixA;
-&appendixB;
-</book>
+</part>
 
+<part label="Scorefiles">
+<title>A Language for MusicKit Scores</title>
+&ScoreFileRef;
+&NoteListToScorefile;
+</part>
+
+<part label="Appendices">
+<title>Reference Material</title>
+&MusicTables;
+&MIDITimeCode;
+</part>
+
+</book>
