@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.20  2001/04/13 01:02:17  leighsmith
+ * Now checking that SNDInit is working correctly
+ *
  * Revision 1.19  2001/04/12 20:46:14  leighsmith
  * Made playInFuture:beginSample:count: the fundamental play method
  *
@@ -98,10 +101,14 @@ static SndPlayer *sndPlayer;
     pool = [[NSAutoreleasePool alloc] init];
     if ( self == [Snd class] ) {
         nameTable = [[NSMutableDictionary alloc] initWithCapacity:10];
-        SNDInit(TRUE);
-        driverNames = SNDGetAvailableDriverNames();
-        NSLog(@"driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
-        sndPlayer = [[SndPlayer player] retain];
+        if(SNDInit(TRUE)) {
+            driverNames = SNDGetAvailableDriverNames();
+            NSLog(@"driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
+            sndPlayer = [[SndPlayer player] retain];
+        }
+        else {
+            NSLog(@"Unable to initialise PerformSound!\n");
+        }
     }
 }
 
