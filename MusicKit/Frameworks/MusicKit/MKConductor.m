@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2000/03/31 00:13:57  leigh
+  theTimeToWait now a shared function, using _MKAppProxy
+
   Revision 1.8  2000/03/24 16:27:25  leigh
   Removed redundant AppKit headers
 
@@ -104,6 +107,8 @@ Modification history:
 #import "_time.h"
 #import "MidiPrivate.h"
 #import "_MTCHelper.h"   // sb: moved this to here from _MTCHelper.m, since it interferred there.
+//#import "ConductorThread.h"
+#import "_MKAppProxy.h"
 
 #define MK_INLINE 1
 
@@ -188,12 +193,18 @@ static void condInit();    /* Forward decl */
     return;
 }
 
-static double theTimeToWait(double nextMsgTime);
-
 #import "separateThread.m"
 
 static MKMsgStruct *evalSpecialQueue();
 
+/*
+ LMS these SB's Notes, perhaps redundant.
+ startTime is absolute date (NSDate *)
+ nextmsgtime: maybe relative time to start of performance YES
+ clockTime: relative to start of performance
+ pauseTime is absolute
+ timeIntervalSinceDate seems to return reverse of what it should
+*/
 #if 1  /* Release 1.0 version -- old kern_timestamp didn't give us high bits */
 static NSDate * getTime(void) /*sb: was static double... */
 /* returns the time in seconds.  A 52 bit mantissa in a IEEE double gives us 
@@ -281,7 +292,7 @@ void MKSetHighDeltaTThreshold(double percentage)
     [MKConductor _adjustDeltaTThresholds];
 }
 
-static double theTimeToWait(double nextMsgTime)
+double _MKTheTimeToWait(double nextMsgTime)
 {
     double t;
 //    t = getTime();  /* Current time */
@@ -309,17 +320,19 @@ static void adjustTimedEntry(double nextMsgTime)
        we can't accumulate errors. We subtract the difference between 
        where we are and where we should be. It is assumed that time is
        already updated. */
-{    
+{
+    NSLog(@"Adjusting timed entry %lf %d, %d, %d, %d\n", nextMsgTime, !inPerformance, performanceIsPaused, musicKitHasLock(), !isClocked);
     if ((!inPerformance) || (performanceIsPaused) || (musicKitHasLock()) || (!isClocked)) 
         return;  /* No timed entry, s.v.p. */
-    if (separateThread) 
-        sendMessageIfNeeded();
+    NSLog(@"I didnt return..\n");
+    if (separateThread)
+        sendMessageToWakeUpMKThread();
     else {
 	if (timedEntry != NOTIMEDENTRY) {
             [timedEntry invalidate];
             [timedEntry release];
         }
-        timedEntry = [[NSTimer timerWithTimeInterval: theTimeToWait(nextMsgTime) 
+        timedEntry = [[NSTimer timerWithTimeInterval: _MKTheTimeToWait(nextMsgTime) 
 			       target: [MKConductor class]
 			       selector: @selector(masterConductorBody:)
 			       userInfo: nil
@@ -957,7 +970,7 @@ static void _runSetup()
     return self;
 }
 
-+ defaultConductor
++ (MKConductor *) defaultConductor
   /* TYPE: Querying; Returns the defaultConductor. 
    * Returns the defaultConductor.
    */
@@ -1060,7 +1073,7 @@ static void evalAfterQueues()
    else if (timedEntry != NOTIMEDENTRY) {
        [timedEntry invalidate];
        [timedEntry release];
-       }
+   }
    timedEntry = NOTIMEDENTRY;
    performanceIsPaused = YES;
    return self;
