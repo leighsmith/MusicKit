@@ -10,7 +10,7 @@
     A ScorefilePerformer creates
     a separate MKNoteSender object for each part name in the file
     (as given in the file's part statements).  The MKNoteSender objects
-    are maintained as an List in the inherited variable \fBnoteSenders\fR.
+    are maintained as an List in the inherited variable noteSenders.
     The MKNoteSenders are named with the names of the MKParts in the file.
     Thus, you can find out the names of the MKParts in the file by getting
     a List of the noteSenders (using -noteSenders) and using the function
@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/04/13 21:50:15  leigh
+  Fixed uninitialised readPosition index
+
   Revision 1.3  1999/09/04 22:43:23  leigh
   documentation cleanup
 
@@ -136,15 +139,16 @@ Modification history:
    * Initializes the information obtained from the scorefile header.
    * Notice that the parts representing the scorefile do not appear
    * in the ScorefilePerformer until activation.
-   * Returns the receiver, or \fBnil\fR if the file can't be read, there
+   * Returns the receiver, or nil if the file can't be read, there
    * are too many parse errors, or there is no body. 
-   * You never send the \fBinitializeFile\fR message 
+   * You never send the initializeFile message 
    * directly to a ScorefilePerformer; it's invoked by the
-   * \fBselfActivate\fR method.
+   * selfActivate method.
    */
 {
-    unsigned int pointer;//sb: initialises a file pointer. SHould only be at top level, when new file parsed...
-    _p = (void *)_MKNewScoreInStruct(stream,self,scorefilePrintStream,YES, filename,&pointer);
+    unsigned int readPosition = 0; // initialises a file pointer. Should only be at top level, when new file parsed...
+
+    _p = (void *) _MKNewScoreInStruct(stream, self, scorefilePrintStream, YES, filename, &readPosition);
     if (!_p)
       return nil;
     _MKParseScoreHeader(SCOREPTR);
@@ -158,9 +162,9 @@ Modification history:
 -finishFile
   /* TYPE: Accessing f
    * Performs file finalization and returns the receiver.
-   * You never send the \fBfinishFile\fR message 
+   * You never send the finishFile message 
    * directly to a ScorefilePerformer; it's invoked by the
-   * \fBdeactivate\fR method.
+   * deactivate method.
    */
 {
     _p = (void *)_MKFinishScoreIn(SCOREPTR);
@@ -185,11 +189,11 @@ Modification history:
    * Grabs the next entry in the body of the scorefile.
    * If the entry is a note statement, this fashions a Note
    * object and returns it.  If it's a time statement, updates
-   * the \fBfileTime\fR variable
-   * and returns \fBnil\fR.
+   * the fileTime variable
+   * and returns nil.
    *
-   * You never send \fBnextNote\fR directly to a 
-   * ScorefilePerformer; it's invoked by the \fBperform\fR method.
+   * You never send nextNote directly to a 
+   * ScorefilePerformer; it's invoked by the perform method.
    * You may override this method, e.g. to modify the note before it is 
    * performed but you must send [super nextNote].
    */
@@ -222,7 +226,7 @@ Modification history:
     n = [noteSenders count];
     for (i = 0; i < n; i++) {
         el = [noteSenders objectAtIndex:i];
-        if (aInfo = [((id)[el _getData]) infoNote])
+        if ((aInfo = [((id)[el _getData]) infoNote]))
             if ([aInfo parAsInt:MK_midiChan] == aChan)
                 return [[el retain] autorelease];
     }

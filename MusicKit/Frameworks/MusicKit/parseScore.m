@@ -32,6 +32,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/04/13 21:49:32  leigh
+  Fixed uninitialised readPosition index
+
   Revision 1.6  2000/03/31 00:05:46  leigh
   Adopted OpenStep naming of factory methods
 
@@ -3543,52 +3546,52 @@ _MKNewScoreInStruct(NSMutableData *aStream,id owner,NSMutableData *printStream,
        */
 {
     BOOL binary;
+    int c;
     unsigned int aStreamLength = [aStream length]; //sb to prevent overflow
+
     if ((!aStream) || (!owner))
       return NULL;
     initScanner();
-    {
-#define ATEOS() (*readPosition >= aStreamLength)
 #define GETCASTREAM() ((const char *)[aStream bytes])[(*readPosition)++]
 #define UNGETCASTREAM() (*readPosition)--
-	/* Decide what kind of file it is */
-//#warning StreamConversion: NXGetc should be converted to an NSData method
-        int c;
-        if (ATEOS()) return NULL;//sb
-//        int c = NXGetc(aStream);
-        c = GETCASTREAM();
-        
-//#warning StreamConversion: NXAtEOS should be converted to an NSData method
-	if (!ATEOS()) /* We got something */
-	  if (c == FIRST_CHAR_SCOREMAGIC) { /* Look like it might be binary */
-//#warning StreamConversion: NXUngetc should be converted to an NSData method
-              UNGETCASTREAM();//NXUngetc(aStream);
-	      if (!isBinaryScorefile(aStream))
-		return NULL;
-	      binary = YES;
-	  }
-	  else {
-//#warning StreamConversion: NXUngetc should be converted to an NSData method
-              UNGETCASTREAM();//NXUngetc(aStream);
-	      initExpressionParser();
-	      binary = NO;
-	  }
-	else binary = YES; /* EOS. Pretend it's binary in this case. */
+    /* Decide what kind of file it is */
+    if (*readPosition >= aStreamLength) { // check if at the end of the stream
+        return NULL;
     }
+    c = GETCASTREAM();
+        
+    if (*readPosition < aStreamLength) {   /* We got something */
+        if (c == FIRST_CHAR_SCOREMAGIC) {  /* Does it look like it might be binary? */
+            UNGETCASTREAM();//NXUngetc(aStream);
+            if (!isBinaryScorefile(aStream)) {
+		return NULL;
+            }
+            binary = YES;
+        }
+        else {
+            UNGETCASTREAM();//NXUngetc(aStream);
+            initExpressionParser();
+            binary = NO;
+        }
+    }
+    else
+        binary = YES; /* EOS. Pretend it's binary in this case. */
     _MK_MALLOC(scoreRPtr,_MKScoreInStruct,1);
     scoreRPtr->_binary = binary;
     if (!printStream) {                 /* Use stderr */
-/*sb: just create blank stream and use that FIXME I can't create NSData to go to stderr */
+          /*sb: just create blank stream and use that FIXME I can't create NSData to go to stderr */
           printStream = [[NSMutableData data] retain];
+          // scoreRPtr->_freeStream = (printStream != nil);
 /*
 #warning StreamConversion: NXOpenFile should be converted to an NSData method
 	printStream = NXOpenFile((int)stderr->_file,NX_WRITEONLY);
 	scoreRPtr->_freeStream = (printStream != NULL);
  */
     }
-    else scoreRPtr->_freeStream = NO;
-    if (binary) 
-      scoreRPtr->_binaryIndexedObjects = [[NSMutableArray array] retain];
+    else
+        scoreRPtr->_freeStream = NO;
+    if (binary)
+        scoreRPtr->_binaryIndexedObjects = [[NSMutableArray array] retain];
     scoreRPtr->printStream = printStream;
     scoreRPtr->_ranState = initRan();
     scoreRPtr->_noteTagTable = [[NSDictionary dictionary] retain];
@@ -3612,9 +3615,8 @@ _MKNewScoreInStruct(NSMutableData *aStream,id owner,NSMutableData *printStream,
 	    int el;
             id elObj;
 	    unsigned n;
-//            for (el = NX_ADDRESS(aList), n = [aList count]; n--; el++)
             for (el = 0, n = [aList count]; n--; el++)
-                if (aName = (NSString *)MKGetObjectName(elObj = [aList objectAtIndex:el]))
+                if ((aName = (NSString *)MKGetObjectName(elObj = [aList objectAtIndex:el])))
                     addLocalSymbol(aName,elObj,_MK_partInstance);
 	}
 	[aList release];
@@ -3680,7 +3682,7 @@ static double
     BOOL relativeTime;
     double val;
     MATCH(_MK_time);
-    if (relativeTime = (lookahead == '+')) 
+    if ((relativeTime = (lookahead == '+'))) 
       MATCH('+');
     val = getDouble();
     if (relativeTime) 
