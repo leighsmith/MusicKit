@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2000/04/01 23:16:44  leigh
+  removed redundant extensionPresent function
+
   Revision 1.11  2000/03/31 00:08:28  leigh
   _MKErrorf doco cleanup
 
@@ -593,15 +596,6 @@ double MKdB(double dbVal)
 
 
 /* Function to simplify file read/write of files. */
-
-static BOOL extensionPresent(char *filename,char *extension)
-    /* Similar to strstr() but looks from the back. */
-{
-    char *ext = strrchr(filename,'.');
-    if (!ext)
-      return NO;
-    return (strcmp(ext,extension) == 0);
-}
 
 BOOL _MKOpenFileStreamForWriting(NSString * fileName,NSString *defaultExtension,NSMutableData *theData,BOOL errorMsg)
 /*sb: changed as follows:
