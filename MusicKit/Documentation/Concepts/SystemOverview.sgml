@@ -134,8 +134,8 @@ used to encapsulate and organize music data.</para>
 <figure id="Figure1-2">
 <title>Music Data Representation Classes</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS0.eps"></imageobject>
-<imageobject><imagedata fileref="EPS0.png"></imageobject>
+<imageobject><imagedata fileref="Images/SystemOverview0.eps"></imageobject>
+<imageobject><imagedata fileref="Images/SystemOverview0.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -208,19 +208,19 @@ receive.</para>
 <classname>MKUnitGenerator</classname>s.  Finally, at the lowest
 level, you can design <classname>MKUnitGenerator</classname>s yourself
 by writing <hardware>MC56000</hardware> assembly language macros and
-using the <command>dspwrap</command> tool to turn the
-macros into subclasses of <classname>MKUnitGenerator</classname>.
-This last level falls below the boundary of the
-<productname>MusicKit</productname> and is described in <xref
-linkend="ProgrammingTheDSP">. The principal
+using the <command>dspwrap</command> tool to turn the macros into
+subclasses of <classname>MKUnitGenerator</classname>.  This last level
+falls below the boundary of the <productname>MusicKit</productname>
+and is described in <ulink url="ProgrammingTheDSP">Programming the
+<acronym>DSP</acronym></ulink>. The principal
 <productname>MusicKit</productname> synthesis classes are shown in
 <xref linkend="Figure1-3">.</para>
 
 <figure id="Figure1-3">
 <title>Synthesis Classes</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS3.eps"></imageobject>
-<imageobject><imagedata fileref="EPS3.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicSynthesis.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicSynthesis.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -289,8 +289,8 @@ provides a number of <classname>MKPerformer</classname> and
 <figure id="Figure1-4">
 <title>Performance Classes</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS4.eps"></imageobject>
-<imageobject><imagedata fileref="EPS4.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicPerformance.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicPerformance.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -369,15 +369,15 @@ converted to <classname>MKNote</classname> objects by a
 <sect2 id="ComponentsOfSoundAndMusic">
 <title>Components of Sound and Music</title>
 
-<para><xref linkend="Figure1-5"> shows the components for creating, playing, and
-storing music and sound with the hardware and software of a typical
-(circa 2001) computer.</para>
+<para><xref linkend="Figure1-5"> shows the components for creating,
+playing, and storing music and sound with the hardware and software of
+a typical (circa 2001) computer.</para>
 
 <figure id="Figure1-5">
 <title>Music and Sound Components</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS1.eps"></imageobject>
-<imageobject><imagedata fileref="EPS1.png"></imageobject>
+<imageobject><imagedata fileref="Images/SystemOverview1.eps"></imageobject>
+<imageobject><imagedata fileref="Images/SystemOverview1.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
