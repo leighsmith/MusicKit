@@ -466,11 +466,11 @@ to use.  Alternatively, the file <emphasis
 role="bold">&lt;musickit/synthpatches/synthpatches.h&gt;</emphasis>
 will import all the <productname>MusicKit</productname> <classname>MKSynthPatch</classname> interface files.</para>
 
-<para>The<emphasis role="bold"> setSynthPatchClass:</emphasis> method
-(and the<emphasis role="bold"> ...orchestra:</emphasis> version)
+<para>The <emphasis role="bold">setSynthPatchClass:</emphasis> method
+(and the <emphasis role="bold">...orchestra:</emphasis> version)
 checks its (first) argument to ensure that it's a class that inherits
-from <classname>MKSynthPatch</classname>, returning <emphasis role="bold">nil</emphasis> if
-it doesn't.</para>
+from <classname>MKSynthPatch</classname>, returning <emphasis
+role="bold">nil</emphasis> if it doesn't.</para>
 
 <para>You can also change the synthPatchClass by sending it a
 <emphasis role="bold">mute</emphasis> note with a parameter <emphasis
@@ -517,9 +517,10 @@ Simply sending <emphasis role="bold">setSynthPatchCount:
 mode, you send it the <emphasis role="bold">autoAlloc</emphasis>
 message.</para>
 
-<para>You can query a <classname>MKSynthInstrument</classname>'s allocation mode by invoking
-<emphasis role="bold">allocMode</emphasis>, a method that returns one
-of the following integer constants:</para>
+<para>You can query a <classname>MKSynthInstrument</classname>'s
+allocation mode by invoking <emphasis
+role="bold">allocMode</emphasis>, a method that returns one of the
+following integer constants:</para>
 
 	  <table frame=all>
 	    <title><classname>MKSynthInstrument</classname>'s allocation modes</title>
@@ -1195,40 +1196,43 @@ tempo).</para>
 <emphasis>defaultConductor</emphasis>:</para>
 
       <itemizedlist>
-	<listitem><para> As its name implies, the clockConductor acts as a
-clock: It ticks away at a steady and immutable 60.0 beats per minute.
-Any timing information that's reckoned by the other
-<classname>MKConductor</classname> instances is computed in reference
-to the clockConductor.</para>
+	<listitem><para> As its name implies, the
+<emphasis>clockConductor</emphasis> acts as a clock: It ticks away at
+a steady and immutable 60.0 beats per minute.  Any timing information
+that's reckoned by the other <classname>MKConductor</classname>
+instances is computed in reference to the <emphasis>clockConductor</emphasis>.</para>
 	</listitem>
 
 	<listitem><para>Many applications need only a single
 <classname>MKConductor</classname> instance (in addition to the
-clockConductor); the defaultConductor is created as a convenience to
-meet this need.  The defaultConductor is more pliable than the
-clockConductor in that its tempo can be altered and its activities can
-be temporarily suspended during a performance.</para>
+<emphasis>clockConductor</emphasis>); the
+<emphasis>defaultConductor</emphasis> is created as a convenience to
+meet this need.  The <emphasis>defaultConductor</emphasis> is more
+pliable than the <emphasis>clockConductor</emphasis> in that its tempo
+can be altered and its activities can be temporarily suspended during
+a performance.</para>
 	</listitem>
       </itemizedlist>
 
-<para>The clockConductor is retrieved by sending the <emphasis
+<para>The <emphasis>clockConductor</emphasis> is retrieved by sending the <emphasis
 role="bold">clockConductor</emphasis> message to the
 <classname>MKConductor</classname> class; similarly, <emphasis
 role="bold">defaultConductor</emphasis> retrieves the
-defaultConductor.</para>
+<emphasis>defaultConductor</emphasis>.</para>
 
     </sect2>
     <sect2 id="TheMessageRequestQueue">
       <title>The Message Request Queue</title>
 
 <para>Every instance of <classname>MKConductor</classname> (this
-includes the clockConductor and defaultConductor) maintains a message
-request queue.  This queue consists of a list of structures, each of
-which encapsulates a request for a message to be sent to some object.
-Every request is given a timestamp that indicates when its message
-should be sent.  The requests in a message request queue are sorted
-according to these timestamps.  When a performance starts (through the
-<emphasis role="bold">startPerformance</emphasis> class method), the
+includes the <emphasis>clockConductor</emphasis> and
+<emphasis>defaultConductor</emphasis>) maintains a message request
+queue.  This queue consists of a list of structures, each of which
+encapsulates a request for a message to be sent to some object.  Every
+request is given a timestamp that indicates when its message should be
+sent.  The requests in a message request queue are sorted according to
+these timestamps.  When a performance starts (through the <emphasis
+role="bold">startPerformance</emphasis> class method), the
 <classname>MKConductor</classname> instances begin processing their
 message queues, sending the requested messages at the appropriate
 times.</para>
@@ -1356,7 +1360,7 @@ respectively.</para>
 <classname>MKConductor</classname> class receives the <emphasis
 role="bold">startPerformance</emphasis> message.  This starts the
 <classname>MKConductor</classname>'s clock ticking (as represented by
-the clockConductor).  If you're synthesizing music on the <acronym>DSP</acronym> or
+the <emphasis>clockConductor</emphasis>).  If you're synthesizing music on the <acronym>DSP</acronym> or
 sending messages to an external <acronym>MIDI</acronym> synthesizer, you should send the
 <emphasis role="bold">run</emphasis> message to the
 <classname>MKOrchestra</classname> class or to your
@@ -1457,10 +1461,10 @@ in the following example:</para>
 double bSize;
 
 /* Sets the defaultConductor's tempo. */
-[[<classname>MKConductor</classname> defaultConductor] setTempo:240.0];
+[[MKConductor defaultConductor] setTempo: 240.0];
 
 /* Return the beat size; bSize will be 60.0/240.0, or 0.25. */
-bSize = [[<classname>MKConductor</classname> defaultConductor] beatSize];
+bSize = [[MKConductor defaultConductor] beatSize];
 </programlisting>
 
 <para>You can change a <classname>MKConductor</classname>'s tempo at
@@ -1552,12 +1556,18 @@ the start, middle or end of the performance.</para>
 
 <para>Note that while the Time Map Protocol makes tempo maps possible,
 it is up to the application to apply such a map.  For example, when a
-Standard <acronym>MIDI</acronym> file is read into a <classname>MKScore</classname>
-object, the first part gets the tempo map.  The <productname>MusicKit</productname> does not
-apply this map by default&horbar;this responsibility belongs to the
+Standard <acronym>MIDI</acronym> file is read into a
+<classname>MKScore</classname> object, the first part gets the tempo
+map.  The <productname>MusicKit</productname> does not apply this map
+by default&horbar;this responsibility belongs to the
 application.</para>
 
-<para>cf.  [MKScore setMidifilesEvaluateTempo:].</para>
+<tip>
+<para>
+See for example <emphasis role="bold">setMidifilesEvaluateTempo:</emphasis>
+of <classname>MKScore</classname>.
+</para>
+</tip>
 
       </sect3>
       <sect3 id="LockingThePerformance">
@@ -1643,7 +1653,7 @@ beats from the time that it's invoked.</para>
 and a <classname>MKConductor</classname> is as important as it is
 unique: The dispatching of an <classname>MKEnvelope</classname>'s
 breakpoints during <acronym>DSP</acronym> synthesis is always done through message
-requests with the clockConductor.  You don't have to do anything to
+requests with the <emphasis>clockConductor</emphasis>.  You don't have to do anything to
 obtain this behavior, it happens automatically through <function>MKUpdateAsymp()</function>, the function that you use in
 the design of a <classname>MKSynthPatch</classname> subclass to apply
 an <classname>MKEnvelope</classname> to a synthesis patch.</para>
@@ -1651,11 +1661,11 @@ an <classname>MKEnvelope</classname> to a synthesis patch.</para>
 <para>This association is particularly important not for the
 particular <classname>MKConductor</classname> with which the
 breakpoints are scheduled, but that they are scheduled at all.  Since
-the clockConductor handles breakpoint dispatching, this means that its
+the <emphasis>clockConductor</emphasis> handles breakpoint dispatching, this means that its
 queue may be filled with breakpoint messages without you knowing it.
 As a result, if you set the performance to finish when the queues are
 empty, the performance won't finish until all the breakpoint messages
-are sent from the clockConductor's queue.  This is generally desirable
+are sent from the <emphasis>clockConductor</emphasis>'s queue.  This is generally desirable
 behavior.  Where things can become confusing is if you pause an entire
 performance (through <classname>MKConductor</classname>'s <emphasis
 role="bold">pausePerformance</emphasis> class method) while
@@ -1833,7 +1843,7 @@ with a <classname>MKConductor</classname>.  If you don't set a
 <classname>MKPerformer</classname>'s
 <classname>MKConductor</classname> explicitly (through <emphasis
 role="bold">setConductor:</emphasis>), it will be associated with the
-defaultConductor.  The rate at which a
+<emphasis>defaultConductor</emphasis>.  The rate at which a
 <classname>MKPerformer</classname> performs its
 <classname>MKNote</classname>s is controlled by its
 <classname>MKConductor</classname>'s tempo.  In general, all the
@@ -2037,10 +2047,10 @@ role="bold">abort</emphasis>.</para>
 	<listitem><para>You can't send messages to instances of
 classes defined by the <productname>Application Kit</productname>, or
 to instances of the <productname>SndKit</productname>'s
-<classname>SoundView</classname> and <classname>SoundMeter</classname>
+<classname>SndView</classname> and <classname>SndMeter</classname>
 classes.  In addition, you can't read or write soundfiles, or play or
 record sounds through an instance of the
-<productname>SndKit</productname>'s <classname>Sound</classname> class
+<productname>SndKit</productname>'s <classname>Snd</classname> class
 (note, however, that you <emphasis>can</emphasis> use the sound
 library functions).</para>
 	</listitem>
@@ -2069,21 +2079,24 @@ the design of a <classname>MKPerformer</classname> or
 pseudo-<classname>MKPerformer</classname>s such as
 <classname>MKMidi</classname>) must follow these restrictions.  For
 example, you can't use an <classname>MKInstrument</classname> that
-sends messages to an Application Kit NSWindow object; however, you can
-send messages to the NSWindow from your application's main
+sends messages to an <productname>Application Kit</productname>
+<classname>NSWindow</classname> object; however, you can send messages
+to the <classname>NSWindow</classname> from your application's main
 thread.</para>
 
 <para>The performance thread can cause a restricted method to be
-invoked or a restricted function to be called by sending a Mach
-message to a message port.  To do this, you must first register the
-port through <function>DPSAddPort()</function> in the main
-thread.  This is demonstrated in the Ensemble programming example
-(<emphasis
-role="bold">/Local/Developer/Examples/MusicKit/Ensemble</emphasis>).</para>
+invoked or a restricted function to be called by sending a
+<productname>Mach</productname> message to a message port.  To do
+this, you must first register the port through
+<function>DPSAddPort()</function> in the main thread.  This is
+demonstrated in the <application>Ensemble</application> programming
+example (<filename
+class="directory">/Local/Developer/Examples/MusicKit/Ensemble</filename>).</para>
 
 <para>An important restriction in a multi-threaded performance is that
-<emphasis>all</emphasis> messages (or groups of messages) to <productname>MusicKit</productname>
-objects sent from the main thread should be bracketed with <emphasis
+<emphasis>all</emphasis> messages (or groups of messages) to
+<productname>MusicKit</productname> objects sent from the main thread
+should be bracketed with <emphasis
 role="bold">lockPerformance</emphasis> and <emphasis
 role="bold">unlockPerformance</emphasis>.</para>
 
@@ -2187,9 +2200,9 @@ in unsteady performance.  Setting <emphasis>deltaT</emphasis> to 0.0
 gives the most responsive performance, but one that is likely to be
 unsteady in musically dense textures.  Setting
 <emphasis>deltaT</emphasis> to a larger values gives a more dependable
-performance at the expense of a greater latency.
-<emphasis>DeltaT</emphasis> is returned by the function
-<function>MKGetDeltaT()</function>.  You can set the value of
+performance at the expense of a greater latency.  The function
+<function>MKGetDeltaT()</function> returns
+<emphasis>deltaT</emphasis>.  You can set the value of
 <emphasis>deltaT</emphasis> with the function
 <function>MKSetDeltaT()</function>.</para>
 
@@ -2198,13 +2211,13 @@ depends on the <emphasis>deltaT mode</emphasis>.
 <productname>MusicKit</productname> supplies two modes,
 <emphasis>device lag mode</emphasis> and <emphasis>scheduler advance
 mode</emphasis>. In <emphasis>device lag mode</emphasis>, the
-<productname>MusicKit</productname> clockConductor stays in synch, as
+<productname>MusicKit</productname> <emphasis>clockConductor</emphasis> stays in synch, as
 much as possible, with &ldquo;wall time&rdquo;, the actual time since
 the performance began, while devices such as <acronym>MIDI</acronym>
 and the <acronym>DSP</acronym> lag behind by
 <emphasis>deltaT</emphasis>.  In contrast, in <emphasis>scheduler
 advance mode</emphasis>, the devices stay in synch with wall time,
-while the clockConductor runs in advance of wall time by
+while the <emphasis>clockConductor</emphasis> runs in advance of wall time by
 <emphasis>deltaT</emphasis>.  You set the <emphasis>deltaT</emphasis>
 mode with the C function: <function>MKSetDeltaTMode()</function>,
 passing it an argument of either
@@ -2217,7 +2230,8 @@ synchronizing to MTC.</para>
 <emphasis>deltaT</emphasis> to have the desired effect, you must set
 the <classname>MKMidi</classname> and
 <classname>MKOrchestra</classname> objects to timed mode.  See the
-Class Descriptions of these objects for details.</para>
+<ulink url="&MKClassReferences;">Class References</ulink> of these
+objects for details.</para>
 
       <sect3 id="DeviceLagMode">
 	<title>Device Lag Mode</title>
@@ -2234,10 +2248,10 @@ steadily.  The amount of time it waits is
 <emphasis>deltaT</emphasis>.</para>
 
 <para>In addition, the <classname>MKOrchestra</classname> and
-<classname>MKMidi</classname> provide a "local deltaT" which is added
-in on top of the ordinary <emphasis>deltaT</emphasis>. This allows you
-to compensate for any difference of delay between these
-devices.</para>
+<classname>MKMidi</classname> provide a &ldquo;local deltaT&rdquo;
+which is added in on top of the ordinary
+<emphasis>deltaT</emphasis>. This allows you to compensate for any
+difference of delay between these devices.</para>
 
 <para><emphasis>Device lag mode</emphasis> works well for many cases.
 But there are other cases, and <acronym>MIDI</acronym> Time Code synchronization is one
@@ -2249,15 +2263,17 @@ bursts of computation.  This is the functionality provided by
       <sect3 id="SchedulerAdvanceMode">
 	<title>Scheduler Advance Mode</title>
 
-<para>Here, we let the clockConductor's notion of time run
-<emphasis>ahead</emphasis> of wall time by
-<emphasis>deltaT</emphasis>. That is, the clockConductor races ahead
-when started, then maintains time such that the wall time since the
-performance began is the clockConductor's time minus
+<para>Here, we let the <emphasis>clockConductor</emphasis>'s notion of
+time run <emphasis>ahead</emphasis> of wall time by
+<emphasis>deltaT</emphasis>. That is, the
+<emphasis>clockConductor</emphasis> races ahead when started, then
+maintains time such that the wall time since the performance began is
+the <emphasis>clockConductor</emphasis>'s time minus
 <emphasis>deltaT</emphasis>.  The time it reports (returned by
-<function>MKGetTime()</function> and <emphasis
-role="bold"> [[<classname>MKConductor</classname> clockConductor]
-time]</emphasis>) includes this <emphasis>deltaT</emphasis>.</para>
+<function>MKGetTime()</function> and <emphasis role="bold">
+[[<classname>MKConductor</classname>
+<emphasis>clockConductor</emphasis>] time]</emphasis>) includes this
+<emphasis>deltaT</emphasis>.</para>
 
 <para>For example, assume <emphasis>deltaT</emphasis> is 1.0.  At MTC
 time 4.0, the <classname>MKConductor</classname> runs
@@ -2285,7 +2301,7 @@ driver are adjusted by <emphasis>adding</emphasis>
 <classname>MKConductor</classname>'s time is set from them.  The makes
 sure that these stamps are in the <classname>MKConductor</classname>'s
 time base.  <classname>MKNote</classname> that it is still possible to
-add a "local deltaT" to <classname>MKMidi</classname> or the
+add a &ldquo;local deltaT&rdquo; to <classname>MKMidi</classname> or the
 <classname>MKOrchestra</classname>&horbar;these methods work the same
 way in <emphasis>scheduler advance mode</emphasis> as they do in
 <emphasis>device lag mode</emphasis>.</para>
@@ -2323,3 +2339,21 @@ on the order of a few milliseconds.</para>
     </sect2>
   </sect1>
 </chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:nil
+sgml-shorttag:t
+sgml-namecase-general:t
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document: "MusicKitConcepts.sgml"
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
