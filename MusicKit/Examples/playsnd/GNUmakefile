@@ -16,8 +16,6 @@
 # Install into the local root by default
 GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
 
-GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
-
 include $(GNUSTEP_MAKEFILES)/common.make
 
 # The tools to be compiled
@@ -36,9 +34,8 @@ ADDITIONAL_CFLAGS += -g
  
  
 ifeq (mingw32, $(GNUSTEP_HOST_OS))
-  CYG_DRIVE = $(shell cygpath -w '/' | tr '\\' '/' )
-  ADDITIONAL_LIB_DIRS = -L$(CYG_DRIVE)/usr/local/lib
-  ADDITIONAL_FLAGS += -I$(CYG_DRIVE)/usr/local/include
+  ADDITIONAL_LIB_DIRS = -L/usr/local/lib
+  ADDITIONAL_FLAGS += -I/usr/local/include
 endif
 
 ADDITIONAL_FLAGS += -g
