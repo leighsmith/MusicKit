@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.4  1999/09/10 02:47:03  leigh
+  Comments update
+
   Revision 1.3  1999/07/29 01:43:30  leigh
   Added CVS logs
 
@@ -58,7 +61,7 @@
  */
 {
     id synthPatchClass;        /* class used to create patches. */
-    unsigned short allocMode;  /* One of MK_MANUALALLOC or MK_AUTOALLOC */
+    unsigned short allocMode;  /* One of MK_MANUALALLOC, MK_AUTOALLOC, or MK_MIXEDALLOC. */
     HashTable * taggedPatches;   /* HashTable mapping noteTags to SynthPatches */
     HashTable * controllerTable; /* HashTable mapping MIDI controllers to values */
     id updates;         /* Note for storing common (no noteTag) updates. */
