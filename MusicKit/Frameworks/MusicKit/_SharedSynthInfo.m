@@ -1,54 +1,41 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
+  Defined In: The MusicKit
+
+  Description:
+    Need to document that you must never free an object that was installed
+    in the shared data table during a performance, even if its reference count 
+    has gone to 0. You may free it after the performance.
+
+    That's because I don't remove the mapping from the object (e.g partials
+    object) to the List of sharedDataInfos.
+
   Original Author: David A. Jaffe
   
-  Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/11/07 05:11:26  leigh
+  Doco cleanup and removal of redundant HashTable include
+
   Revision 1.2  1999/07/29 01:26:01  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
   11/20/89/daj - Changed to do lazy garbage collection of synth data. 
   11/17/92/daj - Minor change to shut up compiler warning
   9/25/93/daj -  Updated for new typed sharedSynthInfo
-*/
-
-/* need to document that you must never free an object that was installed
-   in the shared data table during a performance, even if its reference count 
-   has gone to 0. You may free it after the performance.
-
-   That's because I don't remove the mapping from the object (e.g partials
-   object) to the List of sharedDataInfos.
-
-*/
-   
- 
+*/ 
 #import "_musickit.h"
 #import "UnitGeneratorPrivate.h"
 #import "_SharedSynthInfo.h"
 #import "OrchestraPrivate.h"
-#import <objc/HashTable.h>
 
-@implementation _SharedSynthInfo:NSObject
-  /* Private class. */
-{
-    id synthObject;           /* The value we're interested in finding. */
-    id theList;               /* Back pointer to List. */
-    id theKeyObject;          /* Back pointer to key object. */
-    MKOrchMemSegment segment; /* Which segment or MK_noSegment for wildcard. */
-    int length;               /* Or 0 for wild card */
-    int referenceCount;       
-    MKOrchSharedType type;
-}
+@implementation _SharedSynthInfo: NSObject
 
 /* The shared object table is a NSMutableDictionary that hashes from id (e.g. MKPartials
 object) to a NSMutableArray object. The NSMutableArray is a NSMutableArray of _SharedSynthInfos.
