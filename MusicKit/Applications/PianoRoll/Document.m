@@ -7,8 +7,6 @@
 
 #import <stdlib.h>
 #import <string.h>
-#define MAXFREQ 7040
-#define DEFAULT_FREQSCALE 64
 
 // this should become part of an NSDocument approach.
 
@@ -16,34 +14,15 @@
 
 - initWithScore: (MKScore *) aScore
 {
-	NSRect aRect;
-	NSSize aSize, cSize;
-	id bigScroll;
-	
-	[super init];
-	theScore = [aScore retain];
-	
-	cSize.width = 500.0;
-	cSize.height = log(MAXFREQ)*DEFAULT_FREQSCALE/2;
-	aSize = [NSScrollView frameSizeForContentSize:cSize hasHorizontalScroller:YES hasVerticalScroller:YES borderType:NSNoBorder];
-	docWindow = [NSWindow alloc];
-	aRect = NSMakeRect(400.0, 400.0, aSize.width, aSize.height);
-	[docWindow initWithContentRect:aRect styleMask:NSResizableWindowMask|(NSMiniaturizableWindowMask |
-							NSClosableWindowMask) backing:NSBackingStoreBuffered defer:YES];
-	[docWindow setDelegate:self];
-
-	bigScroll = [[NSScrollView alloc] init];
-	[bigScroll setHasHorizontalScroller:YES];
-	[bigScroll setHasVerticalScroller:YES];
-	[docWindow setContentView:bigScroll];
-	
-	partView = [[PartView alloc] initWithScore:theScore];
-	[bigScroll setDocumentView:partView];
-	[bigScroll setBackgroundColor:[NSColor darkGrayColor]];
-	
-	[docWindow makeKeyAndOrderFront:self];
-	return self;
+    [super init];
+    theScore = [aScore retain];
+    
+    [NSBundle loadNibNamed: @"Score" owner: self];
+    [partView setScore: theScore];
+    [docWindow makeKeyAndOrderFront:self];
+    return self;
 }
+
 - (void) dealloc
 {
     [theScore release];
@@ -52,12 +31,12 @@
 
 - partView
 {
-	return partView;
+    return partView;
 }
 
 - (NSWindow *) docWindow
 {
-	return docWindow;
+    return docWindow;
 }
 
 - setName:(NSString *)theName
@@ -93,7 +72,7 @@
 }
 
 - (NSSize)windowWillResize:(NSWindow *)sender toSize:(NSSize)frameSize
-{
+{ 
 	NSSize aSize, cSize;
 	NSRect aRect, bRect;
 

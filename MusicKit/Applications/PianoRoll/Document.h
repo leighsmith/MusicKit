@@ -3,14 +3,15 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import <MusicKit/MusicKit.h>
+#import "PartView.h"
 
 @interface Document:NSObject
 {
-	NSWindow *docWindow;
-	id partView;
-	MKScore *theScore;
-	NSString *name;
-	BOOL current;
+    IBOutlet NSWindow *docWindow;
+    IBOutlet PartView *partView;
+    MKScore *theScore;
+    NSString *name;
+    BOOL current;
 }
 
 - initWithScore: (MKScore *) aScore;
