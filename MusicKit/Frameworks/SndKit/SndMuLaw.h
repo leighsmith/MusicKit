@@ -29,7 +29,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#include "SndKitDefines.h"
+#if HAVE_CONFIG_H
+# include "SndKitConfig.h"
+#endif
 
 #define MINLIN -32768
 #define MAXLIN 32767
