@@ -89,6 +89,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/04/10 18:04:01  leigh
+  Fixed overrun bug in splitNotes
+
   Revision 1.6  2000/04/04 00:12:27  leigh
   Added info note display in description
 
@@ -281,32 +284,40 @@ static void removeNote(MKPart *self,id aNote);
 {
     NSArray *aList;
     MKNote *noteOff;
-    int noteIndex,el2,elEnd; /*sb */
+    int noteIndex, matchIndex;
     BOOL matchFound;
     double timeTag;
     int noteTag;
-    IMP selfAddNote;
+    int originalNoteCount = noteCount;  // noteCount is updated by addNote:
+//    IMP selfAddNote;
     if (!noteCount)
       return self;
     aList = [self notes]; /* local copy of list (autoreleased) */
 
-    elEnd = noteCount;
-    selfAddNote = [self methodForSelector:@selector(addNote:)];
-#   define SELFADDNOTE(x) (*selfAddNote)(self, @selector(addNote:), (x))
+    // LMS This was an optimisation that nowdays seems to simply obscure the code, rather than tangibly improve throughput.
+//    selfAddNote = [self methodForSelector:@selector(addNote:)];
+//#   define SELFADDNOTE(x) (*selfAddNote)(self, @selector(addNote:), (x))
 
-    for (noteIndex = 0; noteIndex < noteCount; noteIndex++) {
-        if ([AT(noteIndex) noteType] == MK_noteDur) {
-            noteOff = [AT(noteIndex) _splitNoteDurNoCopy];    /* Split all noteDurs. */
+    for (noteIndex = 0; noteIndex < originalNoteCount; noteIndex++) {
+        MKNote *note = [aList objectAtIndex: noteIndex];
+        if ([note noteType] == MK_noteDur) {
+            noteOff = [note _splitNoteDurNoCopy];    /* Split all noteDurs. */
             noteTag = [noteOff noteTag];
-            if (noteTag == MAXINT)              /* Add noteOff if no tag. */
-                SELFADDNOTE(noteOff);
+            if (noteTag == MAXINT) {             /* Add noteOff if no tag. */
+                // SELFADDNOTE(noteOff);
+                [self addNote: noteOff];
+            }
             else {                /* Need to check for intervening Note. */
                 matchFound = NO;
                 timeTag = [noteOff timeTag];
-		// search for matching noteTag in the subsequent notes before the noteOff
-                for (el2 = noteIndex + 1; (el2 < elEnd) && ([AT(el2) timeTag] <= timeTag) && !matchFound; el2++) {
-                    if ([AT(el2) noteTag] == noteTag) {
-                        switch ([AT(el2) noteType]) {
+		// search for matching noteTag in the subsequent notes before the noteOff.
+                // since addNote: adds noteoffs at the end of the array, we can just search to the original length.
+                for (matchIndex = noteIndex + 1; (matchIndex < originalNoteCount) && !matchFound; matchIndex++) {
+                    MKNote *candidateNote = [aList objectAtIndex: matchIndex];
+                    if ([candidateNote timeTag] > timeTag)
+                        break;
+                    if ([candidateNote noteTag] == noteTag) {
+                        switch ([candidateNote noteType]) {
                         case MK_noteOn:
                         case MK_noteOff:
                         case MK_noteDur:
@@ -318,12 +329,14 @@ static void removeNote(MKPart *self,id aNote);
                         }
                     }
                 }
-                if (!matchFound)                   /* No intervening notes. */
-                    SELFADDNOTE(noteOff);
+                if (!matchFound) {                  /* No intervening notes. */
+                    // SELFADDNOTE(noteOff);
+                    [self addNote: noteOff];
+                }
             }
         }
     }
-#   undef SELFADDNOTE
+//#   undef SELFADDNOTE
     return self;
 }
 
@@ -576,12 +589,11 @@ static int findAtOrBeforeTime(MKPart *self,double lastTimeTag)
 
  /* Basic editing operations. ---------------------------------------  */
 
--addNote:aNote
-  /* TYPE: Editing
-   * Removes aNote from its present Part, if any, and adds it
-   * to the receiver.  aNote must be a Note.
-   * Returns the old Part, if any.
-   */
+-addNote: (MKNote *) aNote
+/* TYPE: Editing
+ * Removes aNote from its present MKPart, if any, and adds it to the end of the receiver.
+ * aNote must be a MKNote. Returns the old MKPart, if any.
+ */
 {
     id oldPart;
     if (!aNote)
@@ -589,15 +601,15 @@ static int findAtOrBeforeTime(MKPart *self,double lastTimeTag)
     [oldPart = [aNote part] removeNote:aNote];
     [aNote _setPartLink:self order:++_highestOrderTag];
     if ((noteCount++) && (isSorted)) {
-        id lastObj = [notes lastObject];
-        if (_MKNoteCompare(&aNote,&lastObj) == NSOrderedAscending)
+        MKNote *lastObj = [notes lastObject];
+        if (_MKNoteCompare(&aNote, &lastObj) == NSOrderedAscending)
           isSorted = NO;
     }
     [notes addObject:aNote];
     return oldPart;
 }
 
--addNoteCopy:aNote
+-addNoteCopy: (MKNote *) aNote
   /* TYPE: Editing
    * Adds a copy of aNote
    * to the receiver.  
@@ -707,7 +719,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
     return self;
 }
 
--addNotes:aList timeShift:(double) shift
+-addNotes: (NSArray *) aList timeShift:(double) shift
   /* TYPE: Editing
    * aList should contain only Notes.
    * For each Note in aList, removes the Note
@@ -997,7 +1009,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
     return [[notes retain] autorelease];
 }
 
--notes
+- (NSMutableArray *) notes
   /* TYPE: Accessing Notes
    * Returns a Array of the Notes in the receiver, in time order. 
    * The Notes *are* copied. 
@@ -1011,7 +1023,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
     return [notes mutableCopy];  // Joerg reports this is needed to produce a mutable deep copy.
 }
 
--score  
+- (MKScore *) score  
   /* TYPE: Querying
    * Returns the Score of the receiver's owner.
    */
