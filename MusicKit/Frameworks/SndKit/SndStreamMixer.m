@@ -107,10 +107,10 @@
 
     [streamClientsLock lock];
     
-    clientCount   = [streamClients count];
     clientPresent = [streamClients containsObject: client];
     if (!clientPresent) 
         [streamClients addObject: client];
+    clientCount   = [streamClients count];
     
     [streamClientsLock unlock];
     

@@ -139,7 +139,7 @@ static SndStreamManager *sm = nil;
 {
     int  clientCount = [mixer addClient: client]; 
     SndAudioBuffer *buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
-    if (clientCount == 1) // There were no clients - better start the stream...
+    if (clientCount == 1) // There were no clients previously - better start the stream...
         [self startStreaming];
     [client welcomeClientWithBuffer: buff manager: self];
 
