@@ -13400,12 +13400,18 @@
 			fileRef = D88FED9F05A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDC305A10FE80024FD88 = {
 			fileRef = D88FEDA005A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDC405A10FE80024FD88 = {
@@ -13418,12 +13424,18 @@
 			fileRef = D88FEDA405A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDC805A10FE80024FD88 = {
 			fileRef = D88FEDA505A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDC905A10FE80024FD88 = {
@@ -13442,6 +13454,9 @@
 			fileRef = D88FEDA805A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDCD05A10FE80024FD88 = {
@@ -13454,18 +13469,27 @@
 			fileRef = D88FEDAB05A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDCF05A10FE80024FD88 = {
 			fileRef = D88FEDAC05A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDD005A10FE80024FD88 = {
 			fileRef = D88FEDAD05A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDD405A110B60024FD88 = {
