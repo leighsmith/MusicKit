@@ -21,62 +21,6 @@
   purposes so long as the author attribution and this copyright message remains intact
   and accompanies all derived code.
 */
-/*
-Modification history:
-
-  $Log$
-  Revision 1.17  2002/09/18 17:48:47  leighsmith
-  Corrected warning
-
-  Revision 1.16  2001/05/30 00:35:40  leighsmith
-  Corrected MKMDAwaitReply to time waiting from clock set time
-
-  Revision 1.15  2001/04/28 21:29:03  leighsmith
-  Made packet dumping compilation controlled by a macro to avoid warnings
-
-  Revision 1.14  2001/04/20 23:42:53  leighsmith
-  Added a passable emulation of queue waiting (in absence of an Apple notification, added a packet debug function
-
-  Revision 1.13  2001/04/06 19:23:54  leighsmith
-  Renamed to more meaningful naming
-
-  Revision 1.12  2001/03/30 22:34:35  leighsmith
-  Now retrieves destinations as the driver list
-
-  Revision 1.11  2001/03/08 18:42:36  leigh
-  New include of header for new CoreAudio spec, removed Mach error use
-
-  Revision 1.10  2001/02/23 03:19:04  leigh
-  Rewrote sending data to enable timing each byte when slowing SysEx streams
-
-  Revision 1.9  2001/02/03 02:32:27  leigh
-  Prepared for checking the incoming unit, hid error string assignments behind MKMDErrorString
-
-  Revision 1.8  2000/12/14 05:00:11  leigh
-  Corrected to ensure NULL termination of the drivers returned
-
-  Revision 1.7  2000/12/12 22:59:20  leigh
-  Removed function logging to file as default
-
-  Revision 1.6  2000/12/07 18:32:29  leigh
-  Standardised to mach ports for driver handles, properly prefixed constants
-
-  Revision 1.5  2000/11/29 19:42:29  leigh
-  Checked if calling executable is actually a tool, not an app before posting the client name
-
-  Revision 1.4  2000/11/27 21:48:29  leigh
-  Added call back function for MIDI input, more MKMDReplyPort typing
-
-  Revision 1.3  2000/11/14 04:37:24  leigh
-  Further isolated mach port reliance, changing queuePort to MKMDReplyPort. Corrected quantumFactor to use the NanosecondsToAbsoluteTime converter.
-
-  Revision 1.2  2000/11/10 23:12:11  leigh
-  First stab at CoreMIDI support, changed return and port types to be more transparent.
-
-  Revision 1.1  2000/10/29 06:06:37  leigh
-  Replaced the C code with ObjC so we can pass NSPorts
-
-*/
 #include "PerformMIDI.h"
 #include <CoreMIDI/MIDIServices.h>
 
@@ -104,7 +48,7 @@ static MIDIClientRef   client = NULL;   // handle indicating we are a client of 
 static MIDIPortRef     outPort = NULL;
 static MIDIPortRef     inPort = NULL;
 static MIDIEndpointRef *claimedDestinations = NULL;
-static MIDIEndpointRef claimedSourceUnit = NULL;
+static MIDIEndpointRef *claimedSources = NULL;
 static MKMDReplyFunctions *userFuncs;   // functions to be called on reception from the driver.
 
 static MKMDReplyPort   dataReplyPort;	// mach port-like port to reply received MIDI on.
@@ -138,27 +82,51 @@ static void readProc(const MIDIPacketList *pktlist, void *refCon, void *connRefC
     }
 }
 
-// Retrieve a list of strings giving driver names and available ports, and therefore
-// (0 based) unit numbers.
-// Return the available port names and the index of the current selected port.
+// Return the available port and driver names and the index of the current selected port.
 // A NULL char * terminates the list a la argv behaviour.
+// The order in which the driver names and available ports are returned is fixed, and a unit
+// number directly references that port.
 //
-// Actually, this returns a collection of destinations rather than devices. 
-// Destinations reside within entities, which are configurations of system wide 
-// interoperating MIDI streams, including virtual streams.
-PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
+// For MacOS X, this returns a collection of endpoints (each being a 16 channel MIDI source or destination). 
+// Endpoints reside within entities, which are configurations of system wide interoperating MIDI streams,
+// including virtual streams.
+// The Apple Man sez: "The recommended way to display an endpoint's name is to ask for the endpoint name,
+// and display only that name if it is unique. If it is non-unique, prepend the device name."
+// We prepend the device name always.
+PERFORM_API const char **MKMDGetAvailableDrivers(BOOL input, unsigned int *selectedDriver)
 {
     const char **driverList = NULL;
     NSMutableArray *driverNameList = [NSMutableArray array];
-    ItemCount destinationIndex, destinationCount = MIDIGetNumberOfDestinations();
-    CFStringRef pname;
     unsigned int driverListIndex;
-        
-    for(destinationIndex = 0; destinationIndex < destinationCount; destinationIndex++) {
-        MIDIEndpointRef destEndPoint = MIDIGetDestination(destinationIndex); 
-        MIDIObjectGetStringProperty(destEndPoint, kMIDIPropertyName, &pname);
-        [driverNameList addObject: (NSString *) pname];
-    }
+    ItemCount endpointIndex;
+    ItemCount endpointCount = input ? MIDIGetNumberOfSources() : MIDIGetNumberOfDestinations();
+    
+    for(endpointIndex = 0; endpointIndex < endpointCount; endpointIndex++) {
+	MIDIEndpointRef endPoint = input ? MIDIGetSource(endpointIndex) : MIDIGetDestination(endpointIndex);
+	
+	if(endPoint != NULL) {
+	    CFStringRef endPointName;
+	    OSStatus endpointError = MIDIObjectGetStringProperty(endPoint, kMIDIPropertyName, &endPointName);
+	    
+	    if(endpointError == noErr) { // We need the entity in order to determine the device name.
+		MIDIEntityRef entityOfEndpoint; 
+		OSStatus entityError = MIDIEndpointGetEntity(endPoint, &entityOfEndpoint);
+
+		if(entityError == noErr) {
+		    CFStringRef deviceName;
+		    MIDIDeviceRef deviceOfEntity;
+		    OSStatus deviceError = MIDIEntityGetDevice(entityOfEndpoint, &deviceOfEntity);
+		    
+		    if(deviceError == noErr) {
+			MIDIObjectGetStringProperty(deviceOfEntity, kMIDIPropertyName, &deviceName);
+			[driverNameList addObject: [NSString stringWithFormat: @"%@ %@", (NSString *) deviceName, (NSString *) endPointName]];
+		    }
+		}
+		else
+		    [driverNameList addObject: (NSString *) endPointName];		
+	    }
+	}
+    }	
     
     // always create at least one entry for the terminating NULL pointer.
     driverList = (const char **) calloc([driverNameList count]+1, sizeof(char *));
@@ -346,66 +314,86 @@ PERFORM_API MKMDReturn MKMDStopClock (
 }
 
 /* Routine MKMDClaimUnit */
-PERFORM_API MKMDReturn MKMDClaimUnit (
-	MKMDPort mididriver_port,
-	MKMDOwnerPort owner_port,
-	short unit)
+PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
+				     MKMDPort mididriver_port,
+				     MKMDOwnerPort owner_port,
+				     short unit)
 {
     ItemCount destinationCount;
     ItemCount sourceCount;
+    
 #if FUNCLOG
     fprintf(debug, "MKMDClaimUnit called %d\n", unit);
 #endif
-    // find the first destination
-    destinationCount = MIDIGetNumberOfDestinations();
-    if (destinationCount > 0) {
-        if(claimedDestinations == NULL) {
-            if((claimedDestinations = malloc(destinationCount * sizeof(MIDIEndpointRef))) == NULL)
-                fprintf(stderr, "Couldn't allocated %ld destinations\n", destinationCount);
-        }
-        claimedDestinations[unit] = MIDIGetDestination(unit);
-
-        if (claimedDestinations[unit] != NULL) {
-            CFStringRef pname;
-    
-            if(MIDIObjectGetStringProperty(claimedDestinations[unit], kMIDIPropertyName, &pname) != noErr)
-                return MKMD_ERROR_UNKNOWN_ERROR;
-            NSLog(@"Output to %@\n", pname);
-            CFRelease(pname);
-        }
+    if(input) {
+	// open connections from all sources
+	sourceCount = MIDIGetNumberOfSources();
+	// NSLog(@"%ld sources\n", sourceCount);
+	if(sourceCount > 0) {
+	    if(claimedSources == NULL) {
+		if((claimedSources = malloc(sourceCount * sizeof(MIDIEndpointRef))) == NULL)
+		    fprintf(stderr, "Couldn't allocate %ld sources\n", sourceCount);
+	    }
+	    claimedSources[unit] = MIDIGetSource(unit);
+	    if(claimedSources[unit] == NULL)
+		return MKMD_ERROR_UNKNOWN_ERROR;
+	    if(MIDIPortConnectSource(inPort, claimedSources[unit], NULL) != noErr)
+		return MKMD_ERROR_UNKNOWN_ERROR;
+	}
+	else {
+	    NSLog(@"No MIDI sources present\n");
+	}
     }
     else {
-        printf("No MIDI destinations present\n");
-    }
+	// find the first destination
+	destinationCount = MIDIGetNumberOfDestinations();
+	// NSLog(@"%ld destinations\n", destinationCount);
+	if (destinationCount > 0) {
+	    if(claimedDestinations == NULL) {
+		if((claimedDestinations = malloc(destinationCount * sizeof(MIDIEndpointRef))) == NULL)
+		    fprintf(stderr, "Couldn't allocate %ld destinations\n", destinationCount);
+	    }
+	    claimedDestinations[unit] = MIDIGetDestination(unit);
+	    if (claimedDestinations[unit] == NULL)
+		return MKMD_ERROR_UNKNOWN_ERROR;
 
-    // open connections from all sources
-    sourceCount = MIDIGetNumberOfSources();
-    printf("%ld sources\n", sourceCount);
-    claimedSourceUnit = MIDIGetSource(unit);
-    if(claimedSourceUnit == NULL)
-        return MKMD_ERROR_UNKNOWN_ERROR;
-    if(MIDIPortConnectSource(inPort, claimedSourceUnit, NULL) != noErr)
-        return MKMD_ERROR_UNKNOWN_ERROR;
+#if 0
+	    {
+		CFStringRef pname;
+		
+		if(MIDIObjectGetStringProperty(claimedDestinations[unit], kMIDIPropertyName, &pname) != noErr)
+		    return MKMD_ERROR_UNKNOWN_ERROR;
+		NSLog(@"Output to %@\n", pname);
+		CFRelease(pname);
+	    }
+#endif
+	}
+	else {
+	    NSLog(@"No MIDI destinations present\n");
+	}	
+    }
 	
     return MKMD_SUCCESS;
 }
 
 /* Routine MKMDReleaseUnit */
-PERFORM_API MKMDReturn MKMDReleaseUnit (
-	MKMDPort mididriver_port,
-	MKMDOwnerPort owner_port,
-	short unit)
+PERFORM_API MKMDReturn MKMDReleaseUnit(BOOL input,
+				       MKMDPort mididriver_port,
+				       MKMDOwnerPort owner_port,
+				       short unit)
 {
 #if FUNCLOG
     fprintf(debug, "MKMDReleaseUnit %d called\n", unit);
 #endif
-    if(MIDIPortDisconnectSource(inPort, claimedSourceUnit) != noErr)
-        return MKMD_ERROR_UNKNOWN_ERROR;
-// Not quite sure how to rescind destinations, or if we even need to.
-//    if(claimedDestinations != NULL) {
-//        MIDIDestination(claimedDestinations[unit]);
-//        claimedDestinations[unit] = NULL;
-//    }
+    if(input) {
+	if(MIDIPortDisconnectSource(inPort, claimedSources[unit]) != noErr)
+	    return MKMD_ERROR_UNKNOWN_ERROR;	
+    }
+    // Not quite sure how to rescind destinations, or if we even need to.
+    //    if(claimedDestinations != NULL) {
+    //        MIDIDestination(claimedDestinations[unit]);
+    //        claimedDestinations[unit] = NULL;
+    //    }
     return MKMD_SUCCESS;
 }
 
@@ -662,7 +650,7 @@ static void replyDispatch(MKMDReplyFunctions *userFuncs)
                 events[dataIndex].time = timeStampToMKTime(packet->timeStamp);
             }
             // NSLog(@"\n");
-            // claimedSourceUnit == 0; // determine from refCon and connRefCon
+            // claimedSources[unit] == 0; // determine from refCon and connRefCon
             incomingUnit = 0; // TODO determine the unit the data was received on.
             if(dataReplyPort != MKMD_PORT_NULL)
                 (*(userFuncs->dataReply))(dataReplyPort, incomingUnit, events, packet->length);
