@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2001/02/03 02:34:30  leigh
+  Cleaned up error checking message
+
   Revision 1.12  2001/01/31 21:42:06  leigh
   Added assertion checking intermittent problem with _parameters becoming NULL
 
@@ -1941,7 +1944,7 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
     MKNote *aNoteOff;
 
     if (noteType != MK_noteDur) {
-        _MKErrorf(MK_musicKitErr, @"receiver isnt a noteDur\n");
+        _MKErrorf(MK_musicKitErr, @"receiver isn\'t a noteDur");
         return nil;
     }
     aNoteOff = [noteClass noteWithTimeTag: timeTag + getNoteDur(self)];
