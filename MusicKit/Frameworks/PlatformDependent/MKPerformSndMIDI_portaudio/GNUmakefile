@@ -22,7 +22,7 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
 include $(GNUSTEP_MAKEFILES)/common.make
 
 PACKAGE_NAME = MKPerformSndMIDI
-VERSION = 5.4.3
+VERSION = 5.5.0
 
 #include ../Version
 #include ../config.mak
