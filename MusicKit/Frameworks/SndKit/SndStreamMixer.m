@@ -53,6 +53,9 @@
 
 - (void) dealloc
 {
+  [processorChain release];
+  [streamClients release];
+  [streamClientsLock release];
   [super dealloc];
 }
 
