@@ -26,6 +26,7 @@
             MKPartials.m, 
             MKPartialsWaveshapingTable.m, 
             MKPatchConnection.m, 
+            MKPatchEntry.m, 
             MKPatchTemplate.m, 
             MKPerformer.m, 
             MKSamplerInstrument.m, 
@@ -61,12 +62,10 @@
             utilities.m, 
             writeBinary.m, 
             writeMidi.m, 
-            writeScore.m, 
-            MKPatchEntry.m
+            writeScore.m
         ); 
         DOCUMENTATION = (); 
         FRAMEWORKS = (
-            AppKit.framework, 
             Foundation.framework, 
             MKDSP.framework, 
             MKPerformSndMIDI.framework, 
@@ -74,14 +73,11 @@
             System.framework
         ); 
         FRAMEWORKSEARCH = (
-            "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework", 
-            "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework", 
-            "$(SYSTEM_LIBRARY_DIR)/Frameworks/SoundKit.framework", 
-            "$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework", 
-            "$(HOME)//Library/Frameworks", 
+            "$(SYSTEM_LIBRARY_DIR)/Frameworks", 
+            "$(HOME)/Library/Frameworks", 
             "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks", 
-            /Local/Library/Frameworks, 
-            "$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks"
+            "$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks", 
+            "$(LOCAL_LIBRARY_DIR)/Frameworks"
         ); 
         HEADERSEARCH = (
             /Local/Users/leigh/Sources/Music/MusicKit/YellowBox/Frameworks/MusicKit_3.3_Headers
@@ -111,6 +107,8 @@
             MKPartPerformer.h, 
             MKPartRecorder.h, 
             MKPartials.h, 
+            MKPatchConnection.h, 
+            MKPatchEntry.h, 
             MKPatchTemplate.h, 
             MKPerformer.h, 
             MKPerformerDelegate.h, 
@@ -181,9 +179,7 @@
             params.h, 
             pitches.h, 
             timeunits.h, 
-            tokens.h, 
-            MKPatchConnection.h, 
-            MKPatchEntry.h
+            tokens.h
         ); 
         LIBRARYSEARCH = (./); 
         OTHER_LIBS = (); 
