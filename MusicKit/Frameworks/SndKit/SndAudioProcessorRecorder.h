@@ -92,10 +92,21 @@ enum SndRecorderParam {
 - (BOOL) startRecording;
 
 /*!
-    @method     startRecordingToFile:withFormat:
-    @abstract 
+  @method setUpRecordFile:withFormat:
+  @abstract Sets up recording of the file in the given format.
+  @discussion This method is not normally called, use startRecordingToFile:withDataFormat:channelCount:samplingRate:
+	      instead. This method, setUpRecordFile:withFormat: is defined here in order to facilitate overriding
+              in subclasses.
+  @result     Returns YES if able to open the file for writing, NO if there is an error.
+ */
+- (BOOL) setUpRecordFile: (NSString *) filename
+	      withFormat: (SndFormat) format;
+
+/*!
+    @method     startRecordingToFile:withDataFormat:channelCount:samplingRate:
+    @abstract   Begins recording to the given format in the given format.
     @discussion 
-    @result     
+    @result     Returns YES if able to open the file for writing, NO if there is an error.
 */
 - (BOOL) startRecordingToFile: (NSString*) filename
                withDataFormat: (SndSampleFormat) dataFormat
