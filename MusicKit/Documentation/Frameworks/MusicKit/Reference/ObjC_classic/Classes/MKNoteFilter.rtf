@@ -1,42 +1,44 @@
-{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f3\ftech Symbol;\f1\fmodern Courier;}
-\paperw16220
-\paperh14020
-\margl120
-\margr0
-\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
-\f3 ã
-\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
-\
+{\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\ftech\fcharset2 Symbol;}
+{\colortbl;\red255\green255\blue255;}
+\paperw16220\paperh14020
+\pard
 
-\pard\tx3120\tx3620\tx4120\fc0\cf0 Release 4.0  Copyright 
-\f3 ã
+\f0\fs24 \cf0 Release 2.0  Copyright 
+\f1 ã
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\pard\tx3120\tx3620\tx4120\ql\qnatural
+\cf0 Release 4.0  Copyright 
+\f1 ã
 \f0 1993 by CCRMA, Stanford University.  All Rights Reserved.\
 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16\li2620 \
-
-\fs28 \
-
-\fs16 \
+\fs16 \cf0 \
 
 \fs28 \
 
 \fs16 \
 
-\pard\b\li1100\fc0\cf0 \
+\fs28 \
+
+\fs16 \
+\pard\li1100\ql\qnatural
+
+\b \cf0 \
 \
 \
 \
 
-\fs36 NoteFilter\
+\fs36 MKNoteFilter\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b0\fs28 \cf0 INHERITS FROM	MKInstrument : NSObject\
 
 \fs16 \
 
-\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Instrument : Object\
-
-\fs16 \
-
-\fs28 DECLARED IN	musickit.h\
+\fs28 DECLARED IN	MusicKit.h\
 
 \fs16 \
 \
@@ -45,98 +47,111 @@
 \fs28 CLASS DESCRIPTION\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 NoteFilter is an abstract class that combines the functionality it inherits from Instrument with the protocol defined in the Performer class.  NoteFilter objects can both receive and send Notes; they're interposed between Performers and Instruments to create a Note processing pipeline.  The subclass responsibility 
+\fs28 \cf0 MKNoteFilter is an abstract class that combines the functionality it inherits from MKInstrument with the protocol defined in the MKPerformer class.  MKNoteFilter objects can both receive and send MKNotes; they're interposed between MKPerformers and MKInstruments to create a MKNote processing pipeline.  The subclass responsibility 
 \b realizeNote:fromNoteReceiver:
-\b0  is passed on to NoteFilter subclasses.\
+\b0  is passed on to MKNoteFilter subclasses.\
 
 \fs16 \
-
-\pard\tx7140\li2100\fc0\cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
 \
 
 \fs28 INSTANCE VARIABLES\
 
 \fs16 \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
 
-\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i\fs28 \cf0 Inherited from NSObject
 \i0 	Class	isa;\
 
 \fs16 \
 
-\i\fs28 Inherited from Instrument
-\i0 	id	noteReceivers;\
+\i\fs28 Inherited from MKInstrument
+\i0 	NSArray	*noteReceivers;\
 
 \fs16 \
 
-\i\fs28 Declared in NoteFilter
-\i0 	id	noteSenders;\
+\i\fs28 Declared in MKNoteFilter
+\i0 	NSArray	*noteSenders;\
 
 \fs16 \
 
-\fs28 noteSenders 	Collection of NoteSenders.\
+\fs28 noteSenders 	Collection of MKNoteSenders.\
+\pard\tx7140\li2100\ql\qnatural
 
-\pard\tx7140\fs16\li2100\fc0\cf0 \
+\fs16 \cf0 \
 \
 \
 
 \fs28 METHOD TYPES\
 
 \fs16 \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
 
-\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Creating and freeing a NoteFilter	
-\f3 - 
+\fs28 \cf0 Creating and freeing a MKNoteFilter	
+\f1 - 
 \f0 copy\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
 
-\pard\tx10180\tx10680\f3\fi-520\li7660\fc0\cf0 - 
-\f0 free\
+\f1 \cf0 - 
+\f0 release\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
 
-\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+\fs16 \cf0 \
 
 \fs28 Modifying the object	
-\f3 - 
+\f1 - 
 \f0 addNoteSender: \
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
 
-\pard\tx10180\tx10680\f3\fi-520\li7660\fc0\cf0 - 
+\f1 \cf0 - 
 \f0 freeNoteSenders\
 
-\f3 - 
+\f1 - 
 \f0 removeNoteSender: \
 
-\f3 - 
+\f1 - 
 \f0 removeNoteSenders\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
 
-\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+\fs16 \cf0 \
 
 \fs28 Querying the object	
-\f3 - 
+\f1 - 
 \f0 isNoteSenderPresent: \
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
 
-\pard\tx10180\tx10680\f3\fi-520\li7660\fc0\cf0 - 
+\f1 \cf0 - 
 \f0 noteSender\
 
-\f3 - 
+\f1 - 
 \f0 noteSenders\
+\pard\tx7140\li2100\ql\qnatural
 
-\pard\tx7140\fs16\li2100\fc0\cf0 \
+\fs16 \cf0 \
 \
 \
 
 \fs28 INSTANCE METHODS\
 
 \fs16 \
+\pard\tx7140\li2100\ql\qnatural
 
-\b \
+\b \cf0 \
 
 \fs28 addNoteSender:\
+\pard\li3620\fi-1020\ql\qnatural
 
-\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f1\b0 \cf0 - 
 \f0\b addNoteSender:
-\b0\i aNoteSender\
+\i\b0 aNoteSender\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Removes 
+\i0\fs28 \cf0 Removes 
 \i aNoteSender
 \i0  from its present owner (if any) and adds it to the receiver.  Returns 
 \i aNoteSender
@@ -147,126 +162,155 @@
 \b0 .\
 
 \fs16 \
+\pard\tx7140\li2100\ql\qnatural
 
-\pard\tx7140\b\li2100\fc0\cf0 \
+\b \cf0 \
 
 \fs28 copy\
+\pard\li3620\fi-1020\ql\qnatural
 
-\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f1\b0 \cf0 - 
 \f0\b copy\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Creates and returns a MKNoteFilter as a copy of the receiver.  The new object contains copies of the receiver's MKNoteSenders and MKNoteReceivers.\
 
 \fs16 \
+\pard\tx7140\li2100\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Creates and returns a NoteFilter as a copy of the receiver.  The new object contains copies of the receiver's NoteSenders and NoteReceivers.\
+\b \cf0 \
 
-\fs16 \
+\fs28 release\
+\pard\li3620\fi-1020\ql\qnatural
 
-\pard\tx7140\b\li2100\fc0\cf0 \
+\f1\b0 \cf0 - 
+\f0\b release\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs28 free\
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
-\f0\b free\
-
-\fs16 \
-
-\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Sends 
-\b freenoteSenders
+\b0\fs28 \cf0 Sends 
+\b releaseNoteSenders
 \b0  and 
-\b freenoteReceivers
+\b releaseNoteReceivers
 \b0  to the receiver then frees the receiver.\
 
 \fs16 \
+\pard\tx7140\li2100\ql\qnatural
 
-\pard\tx7140\b\li2100\fc0\cf0 \
+\b \cf0 \
 
-\fs28 freeNoteSenders\
+\fs28 releaseNoteSenders\
+\pard\li3620\fi-1020\ql\qnatural
 
-\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
-\f0\b freeNoteSenders\
+\f1\b0 \cf0 - 
+\f0\b releaseNoteSenders\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Removes and frees the receiver's MKNoteSenders.  Returns the receiver.\
 
 \fs16 \
+\pard\tx7140\li2100\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Removes and frees the receiver's NoteSenders.  Returns the receiver.\
-
-\fs16 \
-
-\pard\tx7140\b\li2100\fc0\cf0 \
+\b \cf0 \
 
 \fs28 isNoteSenderPresent:\
+\pard\li3620\fi-1020\ql\qnatural
 
-\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f1\b0 \cf0 - 
 \f0 (BOOL)
 \b isNoteSenderPresent:
-\b0\i aNoteSender\
+\i\b0 aNoteSender\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns YES if 
+\i0\fs28 \cf0 Returns YES if 
 \i aNoteSender
-\i0  is one of the receiver's NoteSenders.  Otherwise returns NO.\
+\i0  is one of the receiver's MKNoteSenders.  Otherwise returns NO.\
 
 \fs16 \
+\pard\tx7140\li2100\ql\qnatural
 
-\pard\tx7140\b\li2100\fc0\cf0 \
+\b \cf0 \
 
 \fs28 noteSender\
+\pard\li3620\fi-1020\ql\qnatural
 
-\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f1\b0 \cf0 - 
 \f0\b noteSender\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the receiver's first NoteSender.  This is method should only by invoked if the receiver only contains one NoteSender or if you don't care which NoteSender you get.  If there are currently no NoteSenders, this method creates and adds a NoteSender.\
+\b0\fs28 \cf0 Returns the receiver's first MKNoteSender.  This is method should only by invoked if the receiver only contains one MKNoteSender or if you don't care which MKNoteSender you get.  If there are currently no MKNoteSenders, this method creates and adds a MKNoteSender.\
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+\pard\tx7140\li2100\ql\qnatural
 
-\pard\tx7140\li2100\fc0\cf0 \
-
-\b\fs16 \
+\b\fs16 \cf0 \
 
 \fs28 noteSenders\
+\pard\li3620\fi-1020\ql\qnatural
 
-\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f1\b0 \cf0 - 
 \f0\b noteSenders\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns a copy of the receiver's NSArray of MKNoteSenders.\
 
 \fs16 \
+\pard\tx7140\li2100\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a copy of the receiver's List of NoteSenders.  It is the sender's responsibility to free the List.\
-
-\fs16 \
-
-\pard\tx7140\b\li2100\fc0\cf0 \
+\b \cf0 \
 
 \fs28 removeNoteSender:\
+\pard\li3620\fi-1020\ql\qnatural
 
-\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f1\b0 \cf0 - 
 \f0\b removeNoteSender:
-\b0\i aNoteSender\
+\i\b0 aNoteSender\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Removes aNoteSender from the receiver's List of NoteSenders.  Returns 
+\i0\fs28 \cf0 Removes aNoteSender from the receiver's NSArray of MKNoteSenders.  Returns 
 \i aNoteSender
 \i0 .  If the receiver is in a performance, does nothing and returns 
 \b nil
 \b0 .\
 
 \fs16 \
+\pard\tx7140\li2100\ql\qnatural
 
-\pard\tx7140\b\li2100\fc0\cf0 \
+\b \cf0 \
 
 \fs28 removeNoteSenders\
+\pard\li3620\fi-1020\ql\qnatural
 
-\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f1\b0 \cf0 - 
 \f0\b removeNoteSenders\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Removes all the receiver's NoteSenders.  Returns the receiver.\
+\b0\fs28 \cf0 Removes all the receiver's MKNoteSenders.  Returns the receiver.\
 
 \fs16 \
 
 \fs28 \
 
 \fs16 \
-
 }
