@@ -558,13 +558,13 @@ set of <classname>MKSynthPatch</classname> and
       <title>MusicKit Functions</title>
       
       <para>
-Refer to <xref linkend="Functions"> for descriptions of the functions
-(and function-like macros) that are provided by the MusicKit. Many of
-the functions are auxiliary to the Kit's classes in that they augment
-or are superceded by one or more classes. Of the rest, some functions
-provide information or functionality that can't be gotten elsewhere,
-while some others are convenient but not necessarily the only way to
-address a particular topic.
+Refer to <xref linkend="MKFunctionReferences"> for descriptions of the
+functions (and function-like macros) that are provided by the
+MusicKit. Many of the functions are auxiliary to the Kit's classes in
+that they augment or are superceded by one or more classes. Of the
+rest, some functions provide information or functionality that can't
+be gotten elsewhere, while some others are convenient but not
+necessarily the only way to address a particular topic.
 </para>
 
       <para>
