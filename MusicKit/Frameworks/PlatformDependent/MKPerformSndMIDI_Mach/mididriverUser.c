@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/11/29 23:21:27  leigh
+  Renamed MD functions to MKMD
+
   Revision 1.2  2000/01/27 18:15:43  leigh
   upgraded to new typedef names for Mach
 
@@ -60,10 +63,8 @@ extern void mig_dealloc_reply_port();
 #define msg_reply_port		msg_local_port
 
 
-/* Routine MDBecomeOwner */
-mig_external kern_return_t MDBecomeOwner (
-	mach_port_t mididriver_port,
-	mach_port_t owner_port)
+/* Routine MKMDBecomeOwner */
+MKMKMD
 {
 	typedef struct {
 		msg_header_t Head;
@@ -180,8 +181,8 @@ mig_external kern_return_t MDBecomeOwner (
 	return OutP->RetCode;
 }
 
-/* Routine MDReleaseOwnership */
-mig_external kern_return_t MDReleaseOwnership (
+/* Routine MKMDReleaseOwnership */
+mig_external kern_return_t MKMDReleaseOwnership (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port)
 {
@@ -300,8 +301,8 @@ mig_external kern_return_t MDReleaseOwnership (
 	return OutP->RetCode;
 }
 
-/* Routine MDSetClockMode */
-mig_external kern_return_t MDSetClockMode (
+/* Routine MKMDSetClockMode */
+mig_external kern_return_t MKMDSetClockMode (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	short unit,
@@ -477,8 +478,8 @@ mig_external kern_return_t MDSetClockMode (
 	return OutP->RetCode;
 }
 
-/* Routine MDGetClockTime */
-mig_external kern_return_t MDGetClockTime (
+/* Routine MKMDGetClockTime */
+mig_external kern_return_t MKMDGetClockTime (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	int *time)
@@ -627,8 +628,8 @@ mig_external kern_return_t MDGetClockTime (
 	return OutP->RetCode;
 }
 
-/* Routine MDGetMTCTime */
-mig_external kern_return_t MDGetMTCTime (
+/* Routine MKMDGetMTCTime */
+mig_external kern_return_t MKMDGetMTCTime (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	short *format,
@@ -902,8 +903,8 @@ mig_external kern_return_t MDGetMTCTime (
 	return OutP->RetCode;
 }
 
-/* Routine MDSetClockTime */
-mig_external kern_return_t MDSetClockTime (
+/* Routine MKMDSetClockTime */
+mig_external kern_return_t MKMDSetClockTime (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	int time)
@@ -1050,8 +1051,8 @@ mig_external kern_return_t MDSetClockTime (
 	return OutP->RetCode;
 }
 
-/* SimpleRoutine MDRequestAlarm */
-mig_external kern_return_t MDRequestAlarm (
+/* SimpleRoutine MKMDRequestAlarm */
+mig_external kern_return_t MKMDRequestAlarm (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	mach_port_t reply_port,
@@ -1160,8 +1161,8 @@ mig_external kern_return_t MDRequestAlarm (
 	return msg_send(&InP->Head, SEND_SWITCH, 0);
 }
 
-/* Routine MDStartClock */
-mig_external kern_return_t MDStartClock (
+/* Routine MKMDStartClock */
+mig_external kern_return_t MKMDStartClock (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port)
 {
@@ -1280,8 +1281,8 @@ mig_external kern_return_t MDStartClock (
 	return OutP->RetCode;
 }
 
-/* Routine MDStopClock */
-mig_external kern_return_t MDStopClock (
+/* Routine MKMDStopClock */
+mig_external kern_return_t MKMDStopClock (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port)
 {
@@ -1400,8 +1401,8 @@ mig_external kern_return_t MDStopClock (
 	return OutP->RetCode;
 }
 
-/* Routine MDClaimUnit */
-mig_external kern_return_t MDClaimUnit (
+/* Routine MKMDClaimUnit */
+mig_external kern_return_t MKMDClaimUnit (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	short unit)
@@ -1549,8 +1550,8 @@ mig_external kern_return_t MDClaimUnit (
 	return OutP->RetCode;
 }
 
-/* Routine MDReleaseUnit */
-mig_external kern_return_t MDReleaseUnit (
+/* Routine MKMDReleaseUnit */
+mig_external kern_return_t MKMDReleaseUnit (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	short unit)
@@ -1698,8 +1699,8 @@ mig_external kern_return_t MDReleaseUnit (
 	return OutP->RetCode;
 }
 
-/* Routine MDRequestExceptions */
-mig_external kern_return_t MDRequestExceptions (
+/* Routine MKMDRequestExceptions */
+mig_external kern_return_t MKMDRequestExceptions (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	mach_port_t error_port)
@@ -1846,8 +1847,8 @@ mig_external kern_return_t MDRequestExceptions (
 	return OutP->RetCode;
 }
 
-/* Routine MDRequestData */
-mig_external kern_return_t MDRequestData (
+/* Routine MKMDRequestData */
+mig_external kern_return_t MKMDRequestData (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	short unit,
@@ -2023,12 +2024,12 @@ mig_external kern_return_t MDRequestData (
 	return OutP->RetCode;
 }
 
-/* Routine MDSendData */
-mig_external kern_return_t MDSendData (
+/* Routine MKMDSendData */
+mig_external kern_return_t MKMDSendData (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	short unit,
-	MDRawEventPtr data,
+	MKMDRawEventPtr data,
 	unsigned int dataCnt)
 {
 	typedef struct {
@@ -2039,7 +2040,7 @@ mig_external kern_return_t MDSendData (
 		short unit;
 		char unitPad[2];
 		msg_type_t dataType;
-		MDRawEvent data[100];
+		MKMDRawEvent data[100];
 	} Request;
 
 	typedef struct {
@@ -2209,8 +2210,8 @@ mig_external kern_return_t MDSendData (
 	return OutP->RetCode;
 }
 
-/* Routine MDGetAvailableQueueSize */
-mig_external kern_return_t MDGetAvailableQueueSize (
+/* Routine MKMDGetAvailableQueueSize */
+mig_external kern_return_t MKMDGetAvailableQueueSize (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	short unit,
@@ -2388,8 +2389,8 @@ mig_external kern_return_t MDGetAvailableQueueSize (
 	return OutP->RetCode;
 }
 
-/* Routine MDRequestQueueNotification */
-mig_external kern_return_t MDRequestQueueNotification (
+/* Routine MKMDRequestQueueNotification */
+mig_external kern_return_t MKMDRequestQueueNotification (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	short unit,
@@ -2593,8 +2594,8 @@ mig_external kern_return_t MDRequestQueueNotification (
 	return OutP->RetCode;
 }
 
-/* Routine MDClearQueue */
-mig_external kern_return_t MDClearQueue (
+/* Routine MKMDClearQueue */
+mig_external kern_return_t MKMDClearQueue (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	short unit)
@@ -2742,8 +2743,8 @@ mig_external kern_return_t MDClearQueue (
 	return OutP->RetCode;
 }
 
-/* Routine MDFlushQueue */
-mig_external kern_return_t MDFlushQueue (
+/* Routine MKMDFlushQueue */
+mig_external kern_return_t MKMDFlushQueue (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	short unit)
@@ -2891,8 +2892,8 @@ mig_external kern_return_t MDFlushQueue (
 	return OutP->RetCode;
 }
 
-/* Routine MDSetSystemIgnores */
-mig_external kern_return_t MDSetSystemIgnores (
+/* Routine MKMDSetSystemIgnores */
+mig_external kern_return_t MKMDSetSystemIgnores (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	short unit,
@@ -3068,8 +3069,8 @@ mig_external kern_return_t MDSetSystemIgnores (
 	return OutP->RetCode;
 }
 
-/* Routine MDSetClockQuantum */
-mig_external kern_return_t MDSetClockQuantum (
+/* Routine MKMDSetClockQuantum */
+mig_external kern_return_t MKMDSetClockQuantum (
 	mach_port_t mididriver_port,
 	mach_port_t owner_port,
 	int microseconds)
