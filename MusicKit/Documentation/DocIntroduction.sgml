@@ -23,80 +23,6 @@ directory is </para>
 
   <VARIABLELIST>
     <TITLE></TITLE>
-    <VARLISTENTRY>
-      <TERM>
-	<emphasis role="bold">ReleaseNotes</emphasis>
-	Subdirectory&horbar;<emphasis>This is the most up to date
-	documentation.</emphasis>
-      </TERM>
-      <LISTITEM>
-	<VARIABLELIST>
-	  <TITLE></TITLE>
-	  <VARLISTENTRY>
-	    <TERM> <emphasis role="bold">MusicKit.rtf</emphasis> </TERM>
-	    <LISTITEM>
-	      <para> Latest <PRODUCTNAME>MusicKit</PRODUCTNAME> release
-	      notes. </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM><emphasis role="bold">MusicKit-old.rtf</emphasis> </TERM>
-	    <LISTITEM>
-	      <para>Release notes from earlier
-	      <PRODUCTNAME>MusicKit</PRODUCTNAME> releases. </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM> <emphasis role="bold"> DSP.rtf</emphasis></TERM> 
-	    <LISTITEM>
-	      <para>Latest <ACRONYM>DSP</ACRONYM> release notes, as well as
-		<ACRONYM>DSP</ACRONYM> release notes from earlier releases.
-	      </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	</VARIABLELIST>
-      </LISTITEM>
-    </VARLISTENTRY>
-    <VARLISTENTRY>
-      <TERM><emphasis role="bold">General</emphasis>Subdirectory &horbar;
-	<emphasis>Some of this is a bit out of date.</emphasis>
-      </TERM>
-      <LISTITEM>
-	<VARIABLELIST>
-	  <TITLE></TITLE>
-	  <VARLISTENTRY>
-	    <TERM> <EMPHASIS ROLE="bold">Overview.rtf</EMPHASIS></TERM>
-	    <LISTITEM>
-	      <para>
-		Introduction to the Music and <ACRONYM>DSP</ACRONYM> support,
-		taken from the release 1.0 <PRODUCTNAME>NeXT</PRODUCTNAME>
-		Concepts manual. </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM><emphasis role="bold"> SoundMusicDSP.rtfd</emphasis> </TERM>
-	    <LISTITEM>
-	      <para> A detailed paper by David Jaffe, Julius Smith and Lee
-		Boynton describing the Sound, Music and <ACRONYM>DSP</ACRONYM>
-		software for the <PRODUCTNAME>NeXT</PRODUCTNAME> Computer.
-		This is somewhat out of date. </para> </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM><emphasis role="bold"> Conventions.rtf</emphasis> </TERM>
-	    <LISTITEM>
-	      <para>Notational conventions and assumptions in use of
-		<PRODUCTNAME>MusicKit</PRODUCTNAME> classes. </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM><emphasis role="bold"> ReadingList.rtf</emphasis></TERM>
-	    <LISTITEM>
-	      <para> Further readings from the literature. </para>	      
-	    </LISTITEM>
-	  </VARLISTENTRY>	
-	</VARIABLELIST>
-      </LISTITEM>
-    </VARLISTENTRY>
 
     <VARLISTENTRY>
       <TERM><emphasis role="bold"> Administration</emphasis> Subdirectory
@@ -105,42 +31,10 @@ directory is </para>
 	<VARIABLELIST>
 	  <TITLE></TITLE>
 	  <VARLISTENTRY>
-	    <TERM>
-	      <emphasis role="bold">Usage</emphasis> 
-	    </TERM>	    
-	    <LISTITEM>
-	      <PARA>Notes on allowable use and acknowledgement of use of this
-		software in music, applications and products.</PARA>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM>
-	      <emphasis role="bold"> FTP-Info</emphasis> 
-	    </TERM>
-	    <LISTITEM>
-	      <para> Information on obtaining the installation and source
-		packages and updates via anonymous 
-		<emphasis role="bold">ftp</emphasis>.</para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM><emphasis role="bold">ContributingSoftware</emphasis> </TERM>
-	    <LISTITEM>
-	      <para>How to contribute software for consideration for future
-		releases. </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
 	    <TERM> <emphasis role="bold">OtherNetSoftware</emphasis>
 	    </TERM>
 	    <LISTITEM>
 	      <para> Info on other software available on the Net. </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM> <emphasis role="bold">ReportingBugs</emphasis> </TERM>
-	    <LISTITEM>
-	      <para>How to report bugs. </para>
 	    </LISTITEM>
 	  </VARLISTENTRY>
 	  <VARLISTENTRY>
@@ -156,45 +50,6 @@ directory is </para>
       </LISTITEM>
     </VARLISTENTRY>
 
-    <VARLISTENTRY>
-      <TERM><emphasis role="bold"> Concepts</emphasis> Subdirectory </TERM>
-      <LISTITEM>
-	<para>This directory contains the "Music Concepts" portion of the
-	  "Sound, Music and <ACRONYM>DSP</ACRONYM> Concepts Manual."  Note
-	  that portions of this documentation are out of date.  Its contents
-	  are the following: </para>
-	<VARIABLELIST>
-	  <VARLISTENTRY>
-	    <TERM><emphasis role="bold">MusicData.rtfd</emphasis></TERM>
-
-	    <LISTITEM>
-	      <para> Representing Music Data: The <CLASSNAME>Note</CLASSNAME>
-		Class, Grouping Notes: <CLASSNAME>Part</CLASSNAME> and
-		<CLASSNAME>Score</CLASSNAME> Classes, etc. </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM><emphasis role="bold">MusicPerformance.rtfd</emphasis>
-	      </TERM>
-		<LISTITEM>
-		  <para> Real Time
-		    Performance. <CLASSNAME>Instrument</CLASSNAME>,
-		    <CLASSNAME>Performer</CLASSNAME> and
-		    <CLASSNAME>NoteFilter</CLASSNAME>
-		    Classes. <CLASSNAME>Conductor</CLASSNAME>
-		    Class. Midi. etc. </para>
-		</LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM>
-	      <emphasis role="bold">MusicSynthAndProc.rtfd</emphasis> 
-	    </TERM>
-	    <LISTITEM>
-	      <para> Synthesizing Music on the <ACRONYM>DSP</ACRONYM>,
-		processing live sound, Building a SynthPatch, Creating a
-		<CLASSNAME>UnitGenerator</CLASSNAME> Subclass </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
 	  <VARLISTENTRY>
 	    <TERM><emphasis role="bold">MusicFunctions.rtf</emphasis> </TERM>
 	    <LISTITEM>
@@ -209,20 +64,6 @@ directory is </para>
 	    <LISTITEM>
 	      <VARIABLELIST>
 		<TITLE></TITLE>
-		<VARLISTENTRY>
-		  <TERM>
-		    <emphasis role="bold"> OrchestraDetails.rtf</emphasis>
-		  </TERM>
-		  <LISTITEM>
-		    <para> An in depth discussion of the
-		      <PRODUCTNAME>MusicKit</PRODUCTNAME>
-		      <CLASSNAME>Orchestra</CLASSNAME>'s dynamic allocation
-		      system, <ACRONYM>DSP</ACRONYM> memory management, and
-		      multi-<ACRONYM>DSP</ACRONYM> support.  From a paper
-		      presented by David Jaffe at the 1990 International
-		      Computer Music Conference. </para>
-		  </LISTITEM>
-		</VARLISTENTRY>
 		<VARLISTENTRY>
 		  <TERM>
 		    <emphasis role="bold">MusicEnvelopes.ma</emphasis> 
@@ -241,32 +82,6 @@ directory is </para>
 		  <LISTITEM>
 		    <para> Benchmarks explaining how many of various
 		      SynthPatches can be run in real time. </para>
-		  </LISTITEM>
-		</VARLISTENTRY>
-		<VARLISTENTRY>
-		  <TERM>
-		    <emphasis role="bold"> NoteListToScorefile.rtf</emphasis> 
-		  </TERM>
-		  <LISTITEM>
-		    <para> An introduction to the Scorefile language for those
-		      with a familiarity with MusicV and similar
-		      languages. </para>
-		  </LISTITEM>
-		</VARLISTENTRY>
-		<VARLISTENTRY>
-		  <TERM>
-		    <emphasis role="bold"> MIDITimeCode.rtf</emphasis>
-		  </TERM>
-		  <LISTITEM>
-		    <para> An explanation of how to use the
-		      <PRODUCTNAME>MusicKit</PRODUCTNAME>'s
-		      <ACRONYM>MIDI</ACRONYM> Time Code support to synchronize
-		      the <PRODUCTNAME>MusicKit</PRODUCTNAME>'s
-		      <CLASSNAME>Conductor</CLASSNAME> to an external
-		      <ACRONYM>SMPTE</ACRONYM> or <ACRONYM>MIDI</ACRONYM>
-		      source.  Also explains how to use the
-		      <PRODUCTNAME>MusicKit</PRODUCTNAME> to generate
-		      <ACRONYM>MIDI</ACRONYM> Time Code.</para>
 		  </LISTITEM>
 		</VARLISTENTRY>
 	      </VARIABLELIST>
@@ -297,25 +112,21 @@ directory is </para>
 	  <TITLE></TITLE> 
 	  <VARLISTENTRY>
 	    <TERM>
-	      <emphasis role="bold">Functions</emphasis> Subdirectory 
-	    </TERM>
-	    <LISTITEM>
-	      <para> Summary of <PRODUCTNAME>MusicKit</PRODUCTNAME> C
-		functions </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM>
 	      <emphasis role="bold"> Classes</emphasis> Subdirectory  
 	    </TERM>
 	    <LISTITEM>
 	      <para> Class descriptions of the core
 		<PRODUCTNAME>MusicKit</PRODUCTNAME> classes, such as
-		<CLASSNAME>Note</CLASSNAME>, <CLASSNAME>Part</CLASSNAME>,
-		<CLASSNAME>Score</CLASSNAME>,
-		<CLASSNAME>Conductor</CLASSNAME>,
-		<CLASSNAME>Performer</CLASSNAME>, Instrument, SynthPatch,
-		UnitGenerator, Orchestra and Midi.</para>
+		<classname>MKNote</CLASSNAME>,
+		<CLASSNAME>MKPart</CLASSNAME>,
+		<classname>MKScore</CLASSNAME>,
+		<classname>MKConductor</CLASSNAME>,
+		<classname>MKPerformer</CLASSNAME>,
+		<classname>MKInstrument</classname> ,
+		<classname>MKSynthPatch</CLASSNAME>,
+		<classname>MKUnitGenerator</CLASSNAME>,
+		<classname>MKOrchestra</CLASSNAME> and
+		<classname>MKMidi</CLASSNAME>.</para>
 	    </LISTITEM>
 	  </VARLISTENTRY>
 	  <VARLISTENTRY>
@@ -343,42 +154,6 @@ directory is </para>
 	      </PARA>
 	    </LISTITEM>
 	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM>
-	      <emphasis role="bold"> MusicTables.rtf</emphasis> 
-	    </TERM>
-	    <LISTITEM>
-	      <PARA> Various tables, including: Pitches and Frequencies, FM
-		parameters, <CLASSNAME>Pluck</CLASSNAME> parameters,
-		<CLASSNAME>WaveTable</CLASSNAME> parameters, The
-		<PRODUCTNAME>MusicKit</PRODUCTNAME> Wavetable data base
-	      </PARA>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM>
-	      <emphasis role="bold"> ScoreFileLanguage</emphasis> Subdirectory 
-	    </TERM>
-	    <LISTITEM>
-	      <para> Contains documents pertaining to the ScoreFile
-		language.</para></LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM>
-	      <emphasis role="bold">ScoreFileRef.rtf</emphasis> 
-	    </TERM>
-	    <LISTITEM>
-	      <para> Reference for ScoreFile language. </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM>
-	      <emphasis role="bold"> ScoreFileSummary.rtf</emphasis>
-	    </TERM>
-	    <LISTITEM>
-	      <para> Summary of ScoreFile summary.  </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
 	</VARIABLELIST>
       </LISTITEM>
     </VARLISTENTRY>
@@ -388,38 +163,6 @@ directory is </para>
       <TERM>
 	<emphasis role="bold"> Applications </emphasis>Subdirectory 
       </TERM>
-      <LISTITEM>
-	<VARIABLELIST>
-	  <VARLISTENTRY>
-	    <TERM>
-	      <emphasis role="bold"> MusicApplications.rtf </emphasis> 
-	    </TERM>
-	    <LISTITEM>
-	      <para> Paper by David Jaffe from the 1991 International Computer
-		Music Conference describing some of the uses to which the
-		<PRODUCTNAME>MusicKit</PRODUCTNAME> has been put.
-	      </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM>
-	      <emphasis role="bold"> ScorePlayer.rtf</emphasis> 
-	    </TERM>
-	    <LISTITEM>
-	      <para> Brief documentation on the ScorePlayer
-		application. </para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM>
-	      <emphasis role="bold"> Ensemble.rtf</emphasis> 
-	    </TERM>
-	    <LISTITEM>
-	      <para> Brief documentation on the Ensemble application.</para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	</VARIABLELIST>
-      </LISTITEM>
     </VARLISTENTRY>
 
     <VARLISTENTRY>
@@ -438,15 +181,6 @@ directory is </para>
 	      <para>Paper discussing the <ACRONYM>DSP</ACRONYM> monitor
 		programs.  Only the <PRODUCTNAME>MusicKit</PRODUCTNAME>
 		monitor is used here.</para>
-	    </LISTITEM>
-	  </VARLISTENTRY>
-	  <VARLISTENTRY>
-	    <TERM>
-	      <emphasis role="bold"> DSPSoftwareDesign.rtfd</emphasis>
-	    </TERM>
-	    <LISTITEM>
-	      <para>Transparencies for a talk describing the use of the
-		DSP56001 for music synthesis. </para>
 	    </LISTITEM>
 	  </VARLISTENTRY>
 	  <VARLISTENTRY>
