@@ -184,6 +184,7 @@
     [midiInstrument run];                    /* This starts the device driver clock. */
     [MKConductor startPerformance];  /* Start sending Notes, loops until done. */
 
+NSLog(@"Completed startPerformance\n");
     /* 
     MKConductor's startPerformance method does not return until the performance is over.
     Note, however, that if the Conductor is in a different mode, startPerformance returns
@@ -191,20 +192,23 @@
     to occur in a separate thread).  See the MKConductor documentation for details.
     In this case we will return immediately.
     */
+    [pauseButton setState: NSOffState];
     [pauseButton setEnabled: YES];
 }
 
 - (void) stopPlaying
 {
-   [MKConductor lockPerformance];
-   [midiInstrument allNotesOff];
-   [midiInstrument stop];  // abort will actually close the device, whereas stop just stops it
-   [sampleInstrument stop];         // this doesn't seem right to have to stop each instrument separately,
+    [MKConductor lockPerformance];
+    [midiInstrument allNotesOff];
+    [midiInstrument stop];  // abort will actually close the device, whereas stop just stops it
+    [sampleInstrument stop];         // this doesn't seem right to have to stop each instrument separately,
                                     // this should be the job of the Conductor.
-   [MKConductor unlockPerformance]; // should unlock the performance before trying to finish it.
-   [MKConductor finishPerformance];
-   [pauseButton setEnabled: NO];    // we disable the pause button here.
-   NSLog(@"finished\n");
+    [MKConductor unlockPerformance]; // should unlock the performance before trying to finish it.
+    [MKConductor finishPerformance];
+
+    [pauseButton setState: NSOffState];
+    [pauseButton setEnabled: NO];    // we disable the pause button here.
+    NSLog(@"finished\n");
 }
 
 // read a midifile and and play it.
@@ -243,6 +247,7 @@
 {
     NSLog(@"...finished\n");
     [playButton setState: NSOffState];
+    [pauseButton setEnabled: NO];    // we disable the pause button until we begin playing again.
 }
 
 - (void) applicationWillTerminate: (NSNotification *) aNotification 
