@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.21  2004/01/06 06:14:28  leighsmith
+  Cleaned up documentation
+
   Revision 1.20  2003/08/04 21:19:36  leighsmith
   Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -462,7 +465,10 @@ extern int MKAmpToMidi(double amp);
     such that 64->0.1, 127->1.0, and 0->0. */
 extern double MKMidiToAmpAttenuation(int midiValue);
 
- /* Same as above, but uses sensitivity to control how much effect 
+/*!
+@discussion
+Maps MIDI controller values (e.g. volume pedal) onto an amplitude scaler
+ such that 64->0.1, 127->1.0, and 0->0. Uses sensitivity to control how much effect 
     midiValue has.  */
 extern double MKMidiToAmpAttenuationWithSensitivity(int midiValue, 
 						    double sensitivity);
@@ -593,12 +599,12 @@ MKDataType;
               the receiving MKNote's MKPart, if any.
               
               Keep in mind that if while this method replicates the
-	      noteDur within the noteOn/noteOff pair, it doesn't
-	      replace the former with the latter.  To do this, you
-	      must free the noteDur yourself.
+			  noteDur within the noteOn/noteOff pair, it doesn't
+			  replace the former with the latter.  To do this, you
+	          must free the noteDur yourself.
 		  
-		  The new MKNotes are returned as retained objects (ie you must
-		  release them yourself as they are not autoreleased). 
+		      The new MKNotes are returned as retained objects (ie you must
+		      release them yourself as they are not autoreleased). 
 */
 - split:(id *)aNoteOn :(id *)aNoteOff; 
  /* 
@@ -637,7 +643,6 @@ MKDataType;
   @discussion Returns the MKPart that contains the MKNote, or <b>nil</b> if none. 
               By default, a MKNote isn't contained in a MKPart.
               
-              
               See also:  -<b>addToPart:</b>, -<b>removeFromPart</b>
 */
 - part; 
@@ -653,7 +658,7 @@ MKDataType;
               split noteDurs into noteOn/noteOff pairs; performance of the noteOff
               is scheduled with the MKConductor that's returned by this method.
               
-              SEE ALSO: -<b>performer</b>
+              See also: -<b>performer</b>
 */
 - conductor; 
 
@@ -682,7 +687,7 @@ MKDataType;
               
               This method is equivalent to MKPart's <b>addNote:</b> method.
               
-              SEE ALSO: -<b>part</b>, -<b>removeFromPart</b>
+              See also: -<b>part</b>, -<b>removeFromPart</b>
 */
 - addToPart:aPart; 
 
@@ -797,7 +802,7 @@ MKDataType;
               
               See also:  -<b>setNoteType:</b>, -<b>setDur:</b>, -<b>setNoteTag:</b>
 */
--(MKNoteType ) noteType; 
+-(MKNoteType) noteType; 
 
 /*!
   @method setNoteType:
@@ -820,7 +825,7 @@ MKDataType;
               
               See also: -<b>noteType</b>, -<b>setNoteTag:</b>, -<b>setDur:</b> 
 */
-- setNoteType:(MKNoteType )newNoteType; 
+- setNoteType: (MKNoteType) newNoteType; 
 
 /*!
   @method setDur:
@@ -834,12 +839,7 @@ MKDataType;
               
               See also:  -<b>dur</b>, -<b>conductor</b>
 */
--(double)  setDur:(double) value; 
- /* 
-  * Sets the receiver's duration to value beats and sets its noteType to
-  * MK_noteDur.  If value is negative the duration isn't set (but the
-  * noteType is still set to noteDur).  Always returns value.  */
-
+-(double) setDur: (double) value;
 
 /*!
   @method dur
@@ -857,17 +857,18 @@ MKDataType;
 */
 -(double)  dur; 
 
+/*!
+  @method setEndTime:
+  @abstract Returns the receiver's old end time (duration + timeTag) and sets duration 
+		    to newEndTime - timeTag, or MK_NODVAL if not a MK_noteDur or MK_mute.
+ */
 - (double) setEndTime: (double) newEndTime;
- /*
-  * Returns the receiver's old end time (duration + timeTag) and sets duration 
-  * to newEndTime - timeTag, or MK_NODVAL if not a MK_noteDur or MK_mute.
-  */
 
+/*!
+  @method endTime
+  @abstract Returns the receiver's end time (duration + timeTag), or MK_NODVAL if not a MK_noteDur or MK_mute. 
+ */
 - (double) endTime;
- /* 
-  * Returns the receiver's end time (duration + timeTag), or MK_NODVAL if
-  * not a MK_noteDur or MK_mute. */
-
 
 /*!
   @method noteTag
@@ -875,7 +876,7 @@ MKDataType;
   @discussion Return the MKNote's note tag, or MAXINT if it isn't
               set.
               
-              See also:  -<b>setNoteTag:, MKNoteTag()</b>
+              See also:  -<b>setNoteTag:</b>, <b>MKNoteTag()</b>
 */
 -(int)  noteTag; 
 
@@ -918,23 +919,22 @@ MKDataType;
               <i>aName</i>.  If the named parameter doesn't have an identifier,
               one is created and thereafter associated with the parameter.            
               
-              SEE ALSO: -<b>setPar:toDouble:</b>(etc), -<b>isParPresent:</b>, -<b>parNameForTag:</b>  
+              See also: -<b>setPar:toDouble:</b>(etc), -<b>isParPresent:</b>, -<b>parNameForTag:</b>  
 */
-+(int)  parTagForName:(NSString *) aName; 
++ (int) parTagForName: (NSString *) aName; 
 
 /*!
   @method parNameForTag:
   @param  aTag is an int.
   @result Returns a NSString.
   @discussion Returns the name that identifies the parameter tagged <i>aTag</i>. 
-              For example [MKNote parNameForTag:MK_freq] returns
-	      "freq". If the parameter number given is not a valid parameter number,
-              returns "".  Note that the string is not copied. 
+              For example [MKNote parNameForTag:MK_freq] returns "freq".
+              If the parameter number given is not a valid parameter number, returns an empty string.
+              Note that the string is not copied. 
                             
-              SEE ALSO: -<b>setPar:toDouble:</b>(etc), -<b>
-              isParPresent:</b> , -<b>parNameForTag:</b> 
+              See also: -<b>setPar:toDouble:</b>(etc), -<b>isParPresent:</b>, -<b>parNameForTag:</b> 
 */
-+(NSString *) parNameForTag:(int)aPar;
++ (NSString *) parNameForTag: (int) aPar;
 
 /*!
   @method setPar:toDouble:
@@ -944,12 +944,10 @@ MKDataType;
   @discussion Sets the value of the parameter identified by <i>parameterTag</i> to
               <i>aDouble</i>, and sets its data type to MK_double.   If
               <i>aDouble</i> is the special value MK_NODVAL, this method is the
-              same as <b>[self removePar:</b><i>parameterTag</i><b>].</b>  Returns
-              <b>self</b>.
-              
-              See also: +<b>parTagForName:</b>, +<b>
-              parNameForTag:</b>, -<b>parType:</b>, -<b>
-              isParPresent:</b>, -<b>parAsDouble:</b> 
+              same as <b>[self removePar:</b><i>parameterTag</i><b>]</b>.
+ 
+              See also: +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>,
+			  -<b>isParPresent:</b>, -<b>parAsDouble:</b> 
 */
 - setPar:(int) par toDouble:(double) value; 
 
@@ -1199,12 +1197,12 @@ MKDataType;
   @result Returns a BOOL.
   @discussion Returns <b>YES</b> if the parameter <i>identified by
               parameterTag</i> is present in the MKNote (in other words, if its
-              value has been set), <b>and NO</b> if it isn't.
+              value has been set), and <b>NO</b> if it isn't.
               
               See also: -<b>parVector:</b>, <b>MKIsNoteParPresent()</b>, <b>MKNextParameter()</b>, +<b>parTagForName:</b>, 
               +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>setPar:toDouble:</b> (etc), -<b>parAsDouble:</b> (etc).
 */
-- (BOOL) isParPresent:(int) par;
+- (BOOL) isParPresent: (int) par;
 
 /*!
   @method parType:
