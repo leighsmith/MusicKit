@@ -375,6 +375,23 @@ static int bitrateLookupTable[16][6] = {
   return 2;
 }
 
+// We completely spoof this for now. This will cause us problems if the native format is anything other
+// than 44100 and 2 channels. However, the data format can differ and we will convert correctly in
+// insertIntoAudioBuffer:
+- (int) convertToNativeFormat
+{
+    SndSoundStruct nativeFormat;
+
+    SNDStreamNativeFormat(&nativeFormat);
+    
+    if(nativeFormat.samplingRate != [self samplingRate] || nativeFormat.channelCount != [self channelCount]) {
+	NSLog(@"MP3 file sample rate %d, channels %d not of native format sample rate %lf, channels %d\n",
+	    [self samplingRate], [self channelCount], nativeFormat.samplingRate, nativeFormat.channelCount);
+	return SND_ERR_UNKNOWN;
+    }
+    return SND_ERR_NONE;
+}
+
 - (void) dealloc
 {
   if (mp3Data) {

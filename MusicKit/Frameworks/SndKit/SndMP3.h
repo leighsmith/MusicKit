@@ -38,6 +38,12 @@
 - (int) channelCount;
 - (double) samplingRate;
 
+/*!
+  @method convertToNativeFormat
+  @discussion Actually all this does is check the MP3 is the same as the native format, if not it flags an error.
+ */
+- (int) convertToNativeFormat;
+
 - (long) insertIntoAudioBuffer: (SndAudioBuffer *) anAudioBuffer
 	        intoFrameRange: (NSRange) bufferRange
 	        samplesInRange: (NSRange) sndReadingRange;
