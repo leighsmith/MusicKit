@@ -120,16 +120,12 @@
     // TODO: make sure temp buffer is in same format and size as buff too.
 
     if (tempBuffer == nil) {
-        tempBuffer = [SndAudioBuffer audioBufferWithFormat: [buff format] data: NULL];
-        [tempBuffer retain];
+        tempBuffer = [[SndAudioBuffer alloc] initWithBuffer: buff];
     }
     {
         int i, c = [audioProcessorArray count];
-
-
-        for (i=0;i<c;i++) {
+        for (i = 0; i < c; i++) {
             SndAudioProcessor *proc = [audioProcessorArray objectAtIndex: i];
-            
             if ([proc isActive]) {
                 if ([proc processReplacingInputBuffer: buff
                                          outputBuffer: tempBuffer]) {

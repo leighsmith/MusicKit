@@ -149,7 +149,7 @@
   [lock lock];
 
     // no processing? copy data!
-  if ([outB lengthInSamples] == [inB lengthInSamples] &&
+  if ([outB lengthInSampleFrames] == [inB lengthInSampleFrames] &&
       [outB channelCount]    == [inB channelCount]    &&
       [outB dataFormat]      == [inB dataFormat]      &&
       [inB dataFormat]       == SND_FORMAT_FLOAT      &&
@@ -157,7 +157,7 @@
       
       float *inD  = (float*) [inB  data];
       float *outD = (float*) [outB data];
-      long   len  = [inB  lengthInSamples], i;
+      long   len  = [inB  lengthInSampleFrames], i;
       
       for (i=0;i<len*2;i+=2) {
         outD[i]   = inD[i]   + chanL[readPos];

@@ -245,9 +245,9 @@
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
                         outputBuffer: (SndAudioBuffer*) outB
 {
-	float *inData      = [inB data];
-  float *outData     = [outB data];
-  long  sampleFrames = [inB lengthInSamples]; 
+	float *inData      = [inB bytes];
+  float *outData     = [outB bytes];
+  long  sampleFrames = [inB lengthInSampleFrames]; 
   int   step = 2;
 
   [self processReplacing_core_inL: inData inR: inData+1

@@ -78,7 +78,10 @@ enum {
     @discussion 
     @result     BOOL indicating success when preparing for recording
 */
-- (BOOL) prepareToRecordForDuration: (double) time withFormat: (SndSoundStruct*) format;
+- (BOOL) prepareToRecordForDuration: (double) time
+                     withDataFormat: (int) dataFormat
+                       channelCount: (int) chanChan
+                       samplingRate: (int) samRate;
 /*!
     @method     startRecording
     @abstract 
@@ -92,7 +95,10 @@ enum {
     @discussion 
     @result     
 */
-- (BOOL) startRecordingToFile: (NSString*) filename withFormat: (SndSoundStruct*) format;
+- (BOOL) startRecordingToFile: (NSString*) filename
+               withDataFormat: (int) dataFormat
+                 channelCount: (int) chanChan
+                 samplingRate: (int) samRate;
 /*!
     @method     closeRecordFile 
     @abstract 
@@ -100,14 +106,6 @@ enum {
     @result     Boolean indicating success
 */
 - (BOOL) closeRecordFile;
-/*!
-    @method     prepareToRecordForDuration: 
-    @abstract 
-    @discussion 
-    @param      time
-    @result     Boolean indicating success
-*/
-- (BOOL) prepareToRecordForDuration: (double) time withFormat: (SndSoundStruct*) format;
 /*!
     @method     stopRecording
     @abstract 
@@ -166,7 +164,10 @@ enum {
     @param      format
     @result     Boolean indicating success
 */
-- (BOOL) setUpRecordFile: (NSString*) filename withFormat: (SndSoundStruct*) format;
+- (BOOL) setUpRecordFile: (NSString*) filename
+          withDataFormat: (int) dataFormat
+            channelCount: (int) chanChan
+            samplingRate: (int) samRate;
 
 @end
 

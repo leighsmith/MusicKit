@@ -43,7 +43,7 @@
                         outputBuffer: (SndAudioBuffer*) outB
 {
   int   ch, i;
-  long  dwLen = [inB lengthInSamples];
+  long  dwLen = [inB lengthInSampleFrames];
   long  chans = [inB channelCount];
   int   skip  = 2; 
   float a, c, invKnee = 1.0f - m_fKnee, invHard = 1.0f - m_fHardness, d;

@@ -103,7 +103,7 @@
     long length               = 0, i;
     
     if (bStartTrigger) { // whoop! haven't started recording - look thru buffer
-      long inBuffLengthInSams   = [inB lengthInSamples];
+      long inBuffLengthInSams   = [inB lengthInSampleFrames];
       float *finB = (float*) [inB data];
       long skip = [inB channelCount];
       
@@ -175,7 +175,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) prepareToRecordForDuration: (double) time
-                         withFormat: (SndSoundStruct*) format
+                     withDataFormat: (int) dataFormat
+                       channelCount: (int) chanChan
+                       samplingRate: (int) samRate
 {
   BOOL r = FALSE;
   
@@ -188,26 +190,21 @@
     // This ain't an optimal situation - recorder shouldn't even HAVE an output buffer.
     // However, it is the only way at present to get format info from manager 
     // Ideally, we would like the recorder to connect to the stream manager itself
-    if (format == NULL) {
-#if SNDAUDIOPROCRECORDER_DEBUG  
-      fprintf(stderr,"SndAudioProcessorRecorder::prepareToRecordForDuration - Error: format is NULL.\n");
+    if (recordBuffer != nil)
+      [recordBuffer release];
+
+    recordBuffer = [SndAudioBuffer audioBufferWithFormat: dataFormat
+                                            channelCount: chanChan
+                                            samplingRate: samRate
+                                                duration: time];
+    if (recordBuffer == nil) {
+#if SNDAUDIOPROCRECORDER_DEBUG
+      fprintf(stderr,"SndAudioProcessorRecorder::prepareToRecordForDuration - Error: record buffer is nil.\n");
 #endif
     }
-    else {  
-      if (recordBuffer != nil) 
-        [recordBuffer release];
-      
-      recordBuffer = [SndAudioBuffer audioBufferWithFormat: format 
-                                                  duration: time]; 
-      if (recordBuffer == nil) {
-#if SNDAUDIOPROCRECORDER_DEBUG  
-        fprintf(stderr,"SndAudioProcessorRecorder::prepareToRecordForDuration - Error: record buffer is nil.\n");
-#endif
-      }
-      else {
-        [recordBuffer retain];
-        r = TRUE;
-      }
+    else {
+      [recordBuffer retain];
+      r = TRUE;
     }
   }
   return r;
@@ -243,7 +240,8 @@
 // setUpRecordFile:
 ////////////////////////////////////////////////////////////////////////////////
 
-void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLengthInBytes)
+void writeWavFormatHeader(int format, int channelCount, int samplingRate,
+                          FILE* f, unsigned long dataLengthInBytes)
 {
   unsigned long dw;
   unsigned short w;
@@ -254,11 +252,11 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
   fwrite("fmt ", 4, 1, f);  
   fwrite(SndSwap_Convert32BitNative2LittleEndian(18), 4, 1, f);                    // chunk length
   fwrite(SndSwap_Convert16BitNative2LittleEndian(1),  2, 1, f);                    // file format 1 = linear wav
-  fwrite(SndSwap_Convert16BitNative2LittleEndian(format->channelCount),  2, 1, f); // channels
-  fwrite(SndSwap_Convert32BitNative2LittleEndian(format->samplingRate), 4, 1, f);  // chunk length
-  dw = format->samplingRate * format->channelCount * sizeof(short);
+  fwrite(SndSwap_Convert16BitNative2LittleEndian(channelCount),  2, 1, f); // channels
+  fwrite(SndSwap_Convert32BitNative2LittleEndian(samplingRate), 4, 1, f);  // chunk length
+  dw = samplingRate * channelCount * sizeof(short);
   fwrite(SndSwap_Convert32BitNative2LittleEndian(dw), 4, 1, f);                    // bytes per second
-  w = format->channelCount * sizeof(short);
+  w = channelCount * sizeof(short);
   fwrite(SndSwap_Convert16BitNative2LittleEndian(w),  2, 1, f);                    // frame size
   fwrite(SndSwap_Convert16BitNative2LittleEndian(16),  2, 1, f);                   // bit resolution
   fwrite(SndSwap_Convert16BitNative2LittleEndian(0),  2, 1, f);                    // extra bytes
@@ -270,7 +268,10 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 // setUpRecordFile:withFormat:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL) setUpRecordFile: (NSString*) filename withFormat: (SndSoundStruct*) format
+- (BOOL) setUpRecordFile: (NSString*) filename
+          withDataFormat: (int) dataFormat
+            channelCount: (int) channelCount
+            samplingRate: (int) samplingRate
 {
   if ((recordFile = fopen([filename fileSystemRepresentation],"wb")) == NULL) {
 #if SNDAUDIOPROCRECORDER_DEBUG  
@@ -278,18 +279,12 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 #endif
   }
   else  {
-    if (format == NULL) {
-#if SNDAUDIOPROCRECORDER_DEBUG  
-      fprintf(stderr,"SndAudioProcessorRecorder::setupRecordFile - Error: synthBuffer format is NULL.\n");
-#endif
-    }
-    else {
-      writeWavFormatHeader(format, recordFile, 0);
-      if (recordFileName != nil)
-        [recordFileName release];
-      recordFileName = [filename copy];
-      return TRUE;
-    }
+    writeWavFormatHeader(dataFormat, channelCount, samplingRate,
+                         recordFile, 0);
+    if (recordFileName != nil)
+      [recordFileName release];
+    recordFileName = [filename copy];
+    return TRUE;
   }
   return FALSE;
 }
@@ -304,7 +299,8 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
   // file header so that it contains the size of the recorded data, and the
   // file-stream format  
   fseek(recordFile, 0, SEEK_SET);
-  writeWavFormatHeader([recordBuffer format], recordFile, bytesRecorded);
+  writeWavFormatHeader([recordBuffer dataFormat], [recordBuffer channelCount],
+                       [recordBuffer samplingRate], recordFile, bytesRecorded);
   fclose(recordFile);
   recordFile    = NULL;
   bytesRecorded = 0;
@@ -323,16 +319,25 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 // Set up an snd file for storage.
 ////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL) startRecordingToFile: (NSString*) filename withFormat: (SndSoundStruct*) format
+- (BOOL) startRecordingToFile: (NSString*) filename
+               withDataFormat: (int) dataFormat
+                 channelCount: (int) channelCount
+                 samplingRate: (int) samplingRate
 {
   BOOL b = FALSE;
   
-  if (![self prepareToRecordForDuration: 1.0 withFormat: format]) {
+  if (![self prepareToRecordForDuration: 1.0
+                         withDataFormat: dataFormat
+                           channelCount: channelCount
+                           samplingRate: samplingRate]) {
 #if SNDAUDIOPROCRECORDER_DEBUG  
     fprintf(stderr,"SndAudioProcessorRecorder::startRecordingToFile - Error in prepareTorecordForDuration.\n");
 #endif
   }
-  else  if (![self setUpRecordFile: filename withFormat: format]) {
+  else  if (![self setUpRecordFile: filename
+                    withDataFormat: dataFormat
+                      channelCount: channelCount
+                      samplingRate: samplingRate]) {
 #if SNDAUDIOPROCRECORDER_DEBUG  
     fprintf(stderr,"SndAudioProcessorRecorder::startRecordingToFile - Error in setUpRecordFile\n");
 #endif
@@ -343,7 +348,7 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 #endif
   }
   else {
-    long size = sizeof(short) * [recordBuffer lengthInSamples] * [recordBuffer channelCount];
+    long size = sizeof(short) * [recordBuffer lengthInSampleFrames] * [recordBuffer channelCount];
     if ((conversionBuffer = (short*) malloc(size)) == NULL) {
 #if SNDAUDIOPROCRECORDER_DEBUG  
       fprintf(stderr,"SndAudioProcessorRecorder::startRecordingToFile - Error: bad malloc for conversionBuffer\n");

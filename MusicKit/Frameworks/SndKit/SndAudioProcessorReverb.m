@@ -56,7 +56,7 @@
       
       float *inD  = (float*) [inB  data];
       float *outD = (float*) [outB data];
-      long   len  = [inB  lengthInSamples];
+      long   len  = [inB  lengthInSampleFrames];
 
       reverbProcessReplacing(cppFreeReverbObj, inD,inD+1,outD,outD+1,len,2);
   }

@@ -52,9 +52,9 @@ double freqparam2freq(float freq)
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
                         outputBuffer: (SndAudioBuffer*) outB
 {
-  float *inData      = [inB data];
-  float *outData     = [outB data];
-  long  sampleFrames = [inB lengthInSamples];
+  float *inData      = [inB bytes];
+  float *outData     = [outB bytes];
+  long  sampleFrames = [inB lengthInSampleFrames];
   int   step = 2, i;
   double dt = 2.0 * M_PI / [inB samplingRate], y;
   double theFreq  = freqparam2freq(freq);
