@@ -52,6 +52,7 @@ OF THIS AGREEMENT.
 // debugging
 // #define DEBUG_MOUSE(x) NSLog(@"Debug mouse: %@\n", (x))
 #define DEBUG_MOUSE(x)
+// #define DEBUG_SNDVIEW
 
 #define CURSOR_TIMER_HALF_PERIOD 0.5 // in seconds.
 #define CURSOR_WIDTH 1 // in pixels
@@ -181,8 +182,7 @@ OF THIS AGREEMENT.
     if ([sound lengthInSampleFrames] < NSMaxRange(selectionRange)) return;
     if (![sound isEditable]) return;
     if (svFlags.notEditable) return;
-    [sound deleteSamplesAt: selectionRange.location
-		     count: selectionRange.length];
+    [sound deleteSamplesInRange: selectionRange];
     [self invalidateCacheStartSample: selectionRange.location
 				 end: [sound lengthInSampleFrames]];
     selectionRange.length = 0;
@@ -431,7 +431,8 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     int currentPixel;
     int skipFactor = 1;
     void *pcmData;
-    int fragmentLength, currentFrameInBlock; /* max point and current counter in current fragmented sound data segment */
+    // max point and current counter in current fragmented sound data segment
+    unsigned long fragmentLength, currentFrameInBlock; 
     int frameCount = [sound lengthInSampleFrames];
     float thisMax, thisMin, maxNinety = 0, minNinety = 0, theValue, previousValue = 0;
     int directionDown = NO; /* NO for up, YES for down */
@@ -617,7 +618,8 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     float theValue;
     int firstFrameToDisplay;
     void *pcmData;
-    int fragmentLength, currentFrameInBlock; /* max point and current counter in current fragged sound data segment */
+    // max point and current counter in current fragged sound data segment
+    unsigned long fragmentLength, currentFrameInBlock; 
     int frameCount = [soundToDraw lengthInSampleFrames];
     SndSampleFormat dataFormat;
     int chanCount = [soundToDraw channelCount];
@@ -785,7 +787,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     
     newRect = NSIntersectionRect(insetBounds, drawWithinRectangle);
 
-#if 0
+#ifdef DEBUG_SNDVIEW
     NSLog(@"drawWithinRectangle %g to %g, size %d\n", NSMinX(drawWithinRectangle), NSMaxX(drawWithinRectangle), (int) NSWidth(drawWithinRectangle));
     NSLog(@"insetBounds %g to %g, size %d\n", NSMinX(insetBounds), NSMaxX(insetBounds), (int) NSWidth(insetBounds));
     NSLog(@"newRect %g to %g, size %d\n", NSMinX(newRect), NSMaxX(newRect), (int) NSWidth(newRect));
@@ -2108,7 +2110,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     }
 }
 
-// This needs to change the frame size so that any enclosing NSScrollView's NSScroller changes.
+// This changes the frame size so that any enclosing NSScrollView's NSScroller changes.
 - (void) resizeToFit: (BOOL) withAutoscaling
 {
     unsigned long soundLength = [sound lengthInSampleFrames];
@@ -2299,14 +2301,17 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     The complication is that if you stick a SndView inside a box in InterfaceBuilder, it is given a scrollview,
     but not a "functional" one. Hence the explicit check for autoscale below. Of course, if you have a free-standing
     SndView in a window, it has no scrollview, and I assume that we must autoscale whether explicitly set or not.
+
+LMS: Nowdays we want to rescale to fit the entire sound into the view, regardless of it being a ScrollView or not.
 */
 - (void) setFrameSize: (NSSize) newSize
 {
-    if (![self enclosingScrollView] || svFlags.autoscale) {
+    // NSLog(@"reductionFactor = %f newSize = %f,%f\n", reductionFactor, newSize.width, newSize.height);
+    //if (![self enclosingScrollView] || svFlags.autoscale) {
         int soundLength = [sound lengthInSampleFrames];
         if (newSize.width < 1.1) newSize.width = 5; /* at least give a little space! */
         if (soundLength && sound && (newSize.width > 0.0)) reductionFactor = soundLength / newSize.width;
-    }
+    //}
     [super setFrameSize: newSize];
     [self invalidateCache];
     [self setNeedsDisplay: YES];
@@ -2359,8 +2364,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     // [[self window] enableFlushWindow];
     
     if (sound && selectionRange.length > 1) {
-        [sound deleteSamplesAt: selectionRange.location
-			 count: selectionRange.length];
+        [sound deleteSamplesInRange: selectionRange];
     }
 
     if (sound == nil) {
@@ -2467,8 +2471,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
         }
         if (createdSound || [sound compatibleWithSound: pastedSound]) {
             if (!createdSound && selectionRange.length > 0) {
-                [sound deleteSamplesAt: selectionRange.location
-                                 count: selectionRange.length];
+                [sound deleteSamplesInRange: selectionRange];
             }
             if (!createdSound) {
                 [sound insertSamples: pastedSound at: selectionRange.location];
