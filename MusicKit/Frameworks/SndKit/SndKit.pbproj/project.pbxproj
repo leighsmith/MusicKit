@@ -233,7 +233,7 @@
 		};
 		00D2C454FEDB2CB5CFED3B93 = {
 			children = (
-				042277920030CC78CFED3B96,
+				014F3C4700581EE9CFED3B96,
 				00D2C455FEDB2CB5CFED3B93,
 				00D2C457FEDB2CB5CFED3B93,
 				00D2C458FEDB2CB5CFED3B93,
@@ -277,7 +277,7 @@
 				FRAMEWORK_VERSION = 2.0;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LIBRARY_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = /Volumes/manray/Local/Unix/lib;
 				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "-O2 -Wall";
 				OTHER_LDFLAGS = "-O2 -Wall";
@@ -590,8 +590,8 @@
 				00D2C47DFEDB2CB5CFED3B93,
 				00D2C47EFEDB2CB5CFED3B93,
 				0B0671380034C9D6CFED3B96,
-				042277930030CC78CFED3B96,
 				055C7F3B0049CD79CFED3B96,
+				014F3C4800581EE9CFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -620,6 +620,18 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
+		};
+		014F3C4700581EE9CFED3B96 = {
+			isa = PBXFileReference;
+			name = libst.a;
+			path = /Volumes/manray/Local/Unix/lib/libst.a;
+			refType = 0;
+		};
+		014F3C4800581EE9CFED3B96 = {
+			fileRef = 014F3C4700581EE9CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		017A8C4C004DDCB1CFED3B96 = {
 			isa = PBXFileReference;
@@ -659,18 +671,6 @@
 			settings = {
 				ATTRIBUTES = (
 				);
-			};
-		};
-		042277920030CC78CFED3B96 = {
-			isa = PBXFileReference;
-			name = libst.a;
-			path = /manray/usrlocal/lib/libst.a;
-			refType = 0;
-		};
-		042277930030CC78CFED3B96 = {
-			fileRef = 042277920030CC78CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
 			};
 		};
 		055C7F3A0049CD79CFED3B96 = {
