@@ -501,24 +501,32 @@ The MusicKit is listed on the following open source portals:
 	<ulink url="http://www.freshmeat.net/projects/musickit/">
 	<inlinemediaobject>
 	      <imageobject>
+		<imagedata fileref="freshmeat.eps" width=25 depth=15
+			   scalefit=1>
+	      </imageobject>
+	      <imageobject>
 		<imagedata fileref="freshmeat.jpg">
 	      </imageobject>
 	    </inlinemediaobject>
 freshmeat.net
-</ulink>
-</para>
+      </ulink>
+      </para>
       </listitem>
       <listitem>
 	<para>
 	<ulink url="http://www.sourceforge.net/projects/musickit">
 	<inlinemediaobject>
 	      <imageobject>
+		<imagedata fileref="sourceforge.eps" width=50 depth=30
+			   scalefit=1>
+	      </imageobject>
+	      <imageobject>
 		<imagedata fileref="sourceforge.png">
 	      </imageobject>
 
 	    </inlinemediaobject>
 sourceforge.net
-</ulink>
+      </ulink>
 </para>
       </listitem>
       <listitem>
@@ -526,12 +534,15 @@ sourceforge.net
 	<ulink url="http://www.stepwise.com">
 	<inlinemediaobject>
 	      <imageobject>
+		<imagedata fileref="Stepwise.eps" width=50 depth=30 scalefit=1>
+	      </imageobject>
+	      <imageobject>
 		<imagedata fileref="Stepwise.gif">
 	      </imageobject>
 	    </inlinemediaobject>
 SoftTrak on Stepwise.com (search for MusicKit)
-</ulink>
-</para>
+      </ulink>
+      </para>
       </listitem>
     </itemizedlist>
     
@@ -955,7 +966,9 @@ Computer Music Journal
       <pagenums>48-55</pagenums>
       <publishername>MIT Press</publishername>
     </bibliomset>
+  </bibliomixed>
 
+    <bibliomixed>
     <bibliomset relation=article>
       <authorgroup>
 	  <author>
@@ -975,13 +988,16 @@ Computer Music Journal
       <pagenums>31-51</pagenums>
       <publishername>MIT Press</publishername>
     </bibliomset>
-
   </bibliomixed>
   </bibliography>
 
   <ackno>
    <ulink url="http://sourceforge.net">
-	      <inlinemediaobject>
+	<inlinemediaobject>
+	<imageobject>
+	  <imagedata fileref="sourceforge.eps" width=50 depth=30
+		     scalefit=1>
+	</imageobject>
 	<imageobject>
 	  <imagedata fileref="sourceforge.png">
 <!--
@@ -997,8 +1013,8 @@ Computer Music Journal
       </textobject>
 -->
       </inlinemediaobject>
-                SourceForge kindly hosts the MusicKit.
-             </ulink>
+SourceForge kindly hosts the MusicKit.
+   </ulink>
 </ackno>
 </article>
 
