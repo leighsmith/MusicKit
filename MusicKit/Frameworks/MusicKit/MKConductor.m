@@ -59,7 +59,7 @@
                  that were in factory methods into +initialize.
   08/20/90/daj - Added delegate methods for crossing high/low deltaT thresholds.
   08/30/90/daj - Fixed bug that caused empty performance to crash if tempo
-                 isn't 60! (Changes to _runSetup). Also changed float compares
+                 isn't 60! (Changes to initializeConductorList). Also changed float compares
 		 of MK_ENDOFTIME and ENDOFLIST to be safer.
   09/02/90/daj - Changed MAXDOUBLE references to noDVal.h way of doing things
   09/29/90/daj - Changed to coincide with new way of doing separate thread 
@@ -137,11 +137,11 @@ MKConductor *clockCond = nil;   /* clock time Conductor. */
 static NSMutableArray *allConductors = nil; /* An array of all conductors. */
 static void condInit();    /* Forward decl */
 
-+ (void)initialize
++ (void) initialize
 {
     if (self != [MKConductor class])
-      return;
-    [MKConductor setVersion:VERSION3];//sb: suggested by Stone conversion guide (replaced self)
+	return;
+    [MKConductor setVersion: VERSION3];//sb: suggested by Stone conversion guide (replaced self)
     if (!allConductors)
         condInit();
     // we assume we are being called first from the main thread - if not, we are in trouble.
@@ -242,87 +242,84 @@ BOOL checkForEndOfTime()
     return NO;
 }
 
-void repositionCond(MKConductor *cond,double nextMsgTime)
-    /* Enqueue a MKConductor (this happens every time a new message is 
-       scheduled.)
+void repositionCond(MKConductor *cond, double nextMsgTime)
+/*
+ Enqueue a MKConductor (this happens every time a new message is 
+scheduled.)
 
-       cond is the conductor to be enqueued.  nextMsgTime is the next
-       post-mapped time that the conductor wants to run.  If we're not in
-       performance, just sets cond->nextMsgTime.  Otherwise, enqueues cond at
-       the appropriate place, ordered by time. If, after adding the conductor, the head of the
-       queue is MK_ENDOFTIME and if we're not hanging, sends
-       +finishPerformance. If the newly enqueued conductor is added at the
-       head of the list, calls adjustTimedEntry().
-       Question is: where do we retain cond? I presume it is assumed cond is already retained.
-     */
+cond is the conductor to be enqueued.  nextMsgTime is the next
+post-mapped time that the conductor wants to run.  If we're not in
+performance, just sets cond->nextMsgTime.  Otherwise, enqueues cond at
+the appropriate place, ordered by time. If, after adding the conductor, the head of the
+queue is MK_ENDOFTIME and if we're not hanging, sends
++finishPerformance. If the newly enqueued conductor is added at the head of the list, calls adjustTimedEntry().
+Question is: where do we retain cond? I presume it is assumed cond is already retained.
+ */
 {
     MKConductor *tmp;
     register double t;
-    t = MIN(nextMsgTime,MK_ENDOFTIME);
-    t = MAX(t,clockTime);
+    
+    t = MIN(nextMsgTime, MK_ENDOFTIME);
+    t = MAX(t, clockTime);
     cond->nextMsgTime = t;
     if (!inPerformance)
-      return;
+	return;
     /* remove conductor from doubly-linked list. */
     if (cond == condQueue) { /* It's first */
-      if ((!cond->_condNext) || (t < ((MKConductor *)cond->_condNext)->nextMsgTime)) { 
+	if ((!cond->_condNext) || (t < ((MKConductor *)cond->_condNext)->nextMsgTime)) { 
 	    /* It's us again. */
 	    /* We use < to avoid doing an adjustTimedEntry if possible. */
 	    /* No need to reposition. */
 	    if (!curRunningCond)  /* See comment below */
-	      adjustTimedEntry(t);
+		adjustTimedEntry(t);
 	    if (!cond->_condNext)
-   	       checkForEndOfTime();
+		checkForEndOfTime();
 	    /* We only need to check for ENDOFTIME if !cond->_condNext.
-	     * If cond->_condNext != nil, then we used the second part of
- 	     * the conditional above--i.e. we know that nextMsgTime < 
-	     * ENDOFTIME.
-	     */
+		* If cond->_condNext != nil, then we used the second part of
+		* the conditional above--i.e. we know that nextMsgTime < 
+		* ENDOFTIME.
+		*/
 	    return;
 	}
 	/* Remove us from queue. No need to set pointers in cond because
-	   they're going to be set below. */
+	they're going to be set below. */
 	condQueue = cond->_condNext;
 	condQueue->_condLast = nil;
     }
     else { 
 	/* Remove cond from queue. No need to set pointers in cond because
-	   they're going to be set below. */
+	they're going to be set below. */
 	if (cond->_condLast) /* The first time, this can be nil */
-	  ((MKConductor *)cond->_condLast)->_condNext = cond->_condNext;
+	    ((MKConductor *)cond->_condLast)->_condNext = cond->_condNext;
 	if (cond->_condNext)
-	  ((MKConductor *)cond->_condNext)->_condLast = cond->_condLast;
+	    ((MKConductor *)cond->_condNext)->_condLast = cond->_condLast;
     }
     /* Now add it. */
     if ( // (!condQueue) || 
-	(t < condQueue->nextMsgTime)) { /* Add at the start of queue? */
-	/* We use < to avoid doing an adjustTimedEntry if possible. */
-	/* This can only happen if curRunningCond == self or if
-	   nobody's running. In the first case, the timed entry is 
-	   added by masterConductorBody. In the second, we add it
-	   below. */
-	tmp = condQueue;
-	condQueue = cond;
-	cond->_condNext = tmp;
-	cond->_condLast = nil;
-//	if (tmp)
-	  tmp->_condLast = cond;
-	if (!curRunningCond)
-	  adjustTimedEntry(t); /* Nobody's running and we're not in setup. */
-	return;                /* No need to check for ENDOFTIME because
-				  otherwise, t wouldn't be < nextMsgTime */
+	 (t < condQueue->nextMsgTime)) { /* Add at the start of queue? */
+	 /* We use < to avoid doing an adjustTimedEntry if possible. */
+	 /* This can only happen if curRunningCond == self or if
+	 nobody's running. In the first case, the timed entry is 
+	 added by masterConductorBody. In the second, we add it
+	 below. */
+	 tmp = condQueue;
+	 condQueue = cond;
+	 cond->_condNext = tmp;
+	 cond->_condLast = nil;
+	 //	if (tmp)
+	 tmp->_condLast = cond;
+	 if (!curRunningCond)
+	     adjustTimedEntry(t); /* Nobody's running and we're not in setup. */
+	 return;                /* No need to check for ENDOFTIME because otherwise, t wouldn't be < nextMsgTime */
     }
     else {
-	for (tmp = condQueue; 
-	     (tmp->_condNext && 
-	      (((MKConductor *)tmp->_condNext)->nextMsgTime <= t)); 
-	     tmp = tmp->_condNext)
-	  ;
+	for (tmp = condQueue; (tmp->_condNext && (((MKConductor *)tmp->_condNext)->nextMsgTime <= t)); tmp = tmp->_condNext)
+	    ;
 	/* tmp is now first one before us and tmp->_condNext is the first one
-	   after us, if any. */
+	       after us, if any. */
 	cond->_condLast = tmp;
 	if (tmp->_condNext)
-	  ((MKConductor *)tmp->_condNext)->_condLast = cond;
+	    ((MKConductor *)tmp->_condNext)->_condLast = cond;
 	cond->_condNext = tmp->_condNext;
 	tmp->_condNext = cond;
     }	
@@ -333,33 +330,35 @@ void repositionCond(MKConductor *cond,double nextMsgTime)
 #pragma CC_OPT_OFF
 #endif
 
+/* Conversion from beat time to clock time.
+   This function assumes that self has been adjusted with adjustBeat. */
 double beatToClock(MKConductor *self, double newBeat)
-    /* Conversion from beat time to clock time.
-       This function assumes that self has been adjusted with adjustBeat. */
 {
-    double x;
+    double newClockTime;
+    
     if (ISENDOFLIST(newBeat))
-      return MK_ENDOFTIME;
+	return MK_ENDOFTIME;
     /* The formula is MAX(mapFun(newBeat) + pauseOffset, clockTime) */
     if (self == clockCond)
-      return MAX(newBeat,clockTime);
-    if (DELEGATE_RESPONDS_TO(self,BEAT_TO_CLOCK)) {
-	x = [self->delegate beatToClock:newBeat from:self] + self->_pauseOffset;
-    } else { /* Use built-in version */
+	return MAX(newBeat, clockTime);
+    if (DELEGATE_RESPONDS_TO(self, BEAT_TO_CLOCK)) {
+	newClockTime = [self->delegate beatToClock: newBeat from: self] + self->_pauseOffset;
+    }
+    else { /* Use built-in version */
 	double beatDiff;
 	double adjustedBaseTime;
+	
 	/* The point of this subtracting and then adding in again is to
-	 * make sure that if pauseOffset > clockTime, the music waits
-	 * appropriately.
-	 */
+	    * make sure that if pauseOffset > clockTime, the music waits
+	    * appropriately.
+	    */
 	adjustedBaseTime = clockTime - self->_pauseOffset;
 	if (adjustedBaseTime < 0) 
-	  adjustedBaseTime = 0;
-	beatDiff = (newBeat - self->time);
-	x = (MAX(beatDiff,0.0) * self->beatSize + adjustedBaseTime + 
-	     self->_pauseOffset);
+	    adjustedBaseTime = 0;
+	beatDiff = newBeat - self->time;
+	newClockTime = (MAX(beatDiff, 0.0) * self->beatSize + adjustedBaseTime + self->_pauseOffset);
     }
-    return MAX(x,clockTime);
+    return MAX(newClockTime, clockTime);
 }
 
 #if i386 && defined(__NeXT__)
@@ -387,29 +386,30 @@ static void adjustBeat(MKConductor *self)
     }
 }
 
-static void setTime(t)
-    double t;
-    /* Adjusts beats of all conductors and resets time. */
+static void setTime(double newTime)
+/* Adjusts beats of all conductors and resets time. */
 {
     register MKConductor *cond;
+    
     oldClockTime = clockTime;
-    clockTime = t;
+    clockTime = newTime;
     // NSLog(@"Setting clockTime to %lf\n", clockTime);
     if (curRunningCond) {
-  	for (cond = curRunningCond->_condNext; cond; cond = cond->_condNext)
-	  adjustBeat(cond);
- 	for (cond = curRunningCond->_condLast; cond; cond = cond->_condLast)
-	  adjustBeat(cond);
+  	for (cond = curRunningCond->_condNext; cond != nil; cond = cond->_condNext)
+	    adjustBeat(cond);
+ 	for (cond = curRunningCond->_condLast; cond != nil; cond = cond->_condLast)
+	    adjustBeat(cond);
 	/* Need to set oldAdjustedClockTime for the running conductor */
-	if (curRunningCond != clockCond && 
-	    !DELEGATE_RESPONDS_TO(curRunningCond,CLOCK_TO_BEAT)) {
-	    double x;
-	    x = clockTime - curRunningCond->_pauseOffset;
-            curRunningCond->oldAdjustedClockTime = MAX(x,0);
+	if (curRunningCond != clockCond && !DELEGATE_RESPONDS_TO(curRunningCond, CLOCK_TO_BEAT)) {
+	    double x = clockTime - curRunningCond->_pauseOffset;
+	    
+            curRunningCond->oldAdjustedClockTime = MAX(x, 0);
 	}
     }
-    else for (cond = condQueue; cond; cond = cond->_condNext)
-      adjustBeat(cond);
+    else {
+	for (cond = condQueue; cond != nil; cond = cond->_condNext)
+	    adjustBeat(cond);
+    }
 }
 
 void adjustTime()
@@ -432,9 +432,9 @@ void adjustTime()
        omitted, whether or not preemption is used (because envelopes are
        "stepped on" out of existance). */
     // NSLog(@"adjusting Time %lf condQueue->nextMsgTime = %lf\n", time, condQueue->nextMsgTime);
-    time = MIN(time,condQueue->nextMsgTime);
+    time = MIN(time, condQueue->nextMsgTime);
     // NSLog(@"after to minimum Time %lf\n", time);
-    time = MAX(time,clockTime); /* Must be more than the previous time, otherwise we're moving time backwards */
+    time = MAX(time, clockTime); /* Must be more than the previous time, otherwise we're moving time backwards */
     // NSLog(@"after gating maximum Time %lf clockTime = %lf, oldClockTime = %lf\n", time, clockTime, oldClockTime);
     setTime(time);
 }
@@ -465,7 +465,7 @@ BOOL _MKAdjustTimeIfNotBehind(void)
 
 + (double) timeInSeconds
     /* Returns the time in seconds as viewed by the clock conductor.
-       Same as [[Conductor clockConductor] time]. 
+       Same as [[MKConductor clockConductor] time]. 
        Returns MK_NODVAL if not in
        performance. Use MKIsNoDVal() to check for this return value.  */
 {
@@ -488,10 +488,6 @@ BOOL _MKAdjustTimeIfNotBehind(void)
 /* FIXME Might want to check for events here. */
 static void unclockedLoop(void)
 {
-#if 0   // disabled by LMS as the longjmp was doing funny things to memory.
-    _jmpSet = YES;
-    setjmp(conductorJmp);
-#endif
     while(inPerformance) {
         [MKConductor masterConductorBody: nil];
     }
@@ -630,8 +626,7 @@ static void freeSp(sp)
 #endif
 
 static MKMsgStruct * 
-popMsgQueue(msgQueue)
-    register MKMsgStruct * *msgQueue;		
+popMsgQueue(MKMsgStruct **msgQueue)
     /* Pop and return first element in process queue. 
        msgQueue is a pointer to the process queue head. */
 {
@@ -646,16 +641,17 @@ popMsgQueue(msgQueue)
 static MKMsgStruct *newMsgRequest(BOOL,double,SEL,id,int,id,BOOL,id,BOOL);
 
 static void condInit()
-/*sb: changed from void to (id)callingObj because I need to tell initializeBackgroundThread which object the main conductor is, so that the conductor can be sent objC messages from the background thread.
+/*sb: changed from void to (id)callingObj because I need to tell initializeBackgroundThread()
+ which object the main conductor is, so that the conductor can be sent objC messages from the background thread.
  */
 {
-
     allConductors = [NSMutableArray new];
     defaultCond   = [MKConductor new];
     clockCond     = [MKConductor new];
     /* This actually works ok for +new. The first time +new is called,
        it creates defaultCond, clockCond and the new Cond. */
     initializeBackgroundThread();
+    // NSLog(@"condInit(): allConductors = %@, defaultCond = %@, clockCond = %@\n", allConductors, defaultCond, clockCond);
 }
 
 - (void)dealloc
@@ -683,7 +679,7 @@ static void condInit()
         _msgQueue = newMsgRequest(CONDUCTORFREES,ENDOFLIST, @selector(_error:), self,
                                 1, @"MKConductor's end-of-list was erroneously evaluated (this shouldn't happen).\n", TRUE,nil,FALSE);
     // Remove links. We don't want to leave links around because they screw up repositionCond.
-    // The links are added at the last minute in _runSetup.
+    // The links are added at the last minute in initializeConductorList.
     _condLast = _condNext = nil; 
     return self;
 }
@@ -702,12 +698,6 @@ static void condInit()
     return self;
 }
 
-+ new {
-    self = [self allocWithZone:NSDefaultMallocZone()];
-    [self init];
-    return self;
-}
-
 - init
   /* TYPE: Creating; Creates a new Conductor.
    * Creates and returns a new Conductor object with a tempo of
@@ -716,24 +706,27 @@ static void condInit()
    * and returns nil.
    */
 {
-    /* Initialize instance variables here that are only intiailized upon
-       creation. Initialize instance variables that are reinitialized for
-       each performance in the _initialize method. */
-    id oldLast = [allConductors lastObject];
-    if (oldLast == self) /* Attempt to init twice */
-      return nil;
-    if (![allConductors containsObject:self]) [allConductors addObject:self];
-//#error ListToMutableArray: lastObject raises when List equivalent returned nil //sb: not true?
-    if ([allConductors lastObject] != self)
-      return nil; /* Attempt to init twice */
-    [super init];
-    activePerformers = [[NSMutableArray allocWithZone:[self zone]] init];
-    beatSize = 1;
-    pauseFor = NULL; 
-    delegateFlags = 0;
-    inverseBeatSize = 1;
-    _msgQueue = NULL;
-    [self _initialize];
+    self = [super init];
+    if (self) {
+	/* Initialize instance variables here that are only intiailized upon
+	   creation. Initialize instance variables that are reinitialized for
+	   each performance in the _initialize method. */
+	MKConductor *oldLast = [allConductors lastObject];
+	
+	if (oldLast == self) /* Check for an attempt to init twice */
+	    return nil;
+	if (![allConductors containsObject: self])
+	    [allConductors addObject: self];
+	if ([allConductors lastObject] != self)
+	    return nil; /* Attempt to init twice */
+	activePerformers = [[NSMutableArray allocWithZone: [self zone]] init];
+	beatSize = 1;
+	pauseFor = NULL; 
+	delegateFlags = 0;
+	inverseBeatSize = 1;
+	_msgQueue = NULL;
+	[self _initialize];
+    }
     return self;
 }
 
@@ -765,13 +758,14 @@ static void condInit()
     return self;
 }
 
-static void _runSetup()
+static void initializeConductorList()
   /* Very private function. Makes the conductor list with much hackery. */
 {
     /* These hacks are to keep repositionCond() from triggering
        finishPerformance or adding timed entries while sorting list. */
     BOOL clk = isClocked;
     BOOL noHng = dontHang;
+    
     dontHang = NO;
     isClocked = YES;
     curRunningCond = clockCond;
@@ -795,11 +789,12 @@ static void _runSetup()
 {
     if (inPerformance)
         return self;
+
     _MKSetConductedPerformance(YES, self);
-    inPerformance = YES;   /* Set this before doing _runSetup so that repositionCond() works right. */
+    inPerformance = YES;   /* Set this before doing initializeConductorList() so that repositionCond() works right. */
     [self _adjustDeltaTThresholds]; /* For automatic notification */
     setTime(clockTime = 0.0);       // this forces oldClockTime to 0.0 also.
-    _runSetup();                    // Was before setTime()
+    initializeConductorList();          // Was before setTime()
     setupMTC();
     if (MKIsTraced(MK_TRACECONDUCTOR))
         NSLog(@"Evaluating the beforePerformance queue,%s separate threaded,%s clocked.\n",
@@ -886,7 +881,7 @@ static void evalAfterQueues()
     performanceIsPaused = NO;
     _MKSetConductedPerformance(NO,self);
     inPerformance = NO; /* Must be set before -emptyQueue is sent */
-    [allConductors makeObjectsPerformSelector:@selector(emptyQueue)];
+    [allConductors makeObjectsPerformSelector: @selector(emptyQueue)];
     if (separateThread)
         removeTimedEntry(exitThread);
     else if (timedEntry != NOTIMEDENTRY) {
@@ -905,19 +900,8 @@ static void evalAfterQueues()
     resetMTCTime();
     //   MKSetTime(0.0); /* Handled by _MKSetConductedPerformance now */
     oldClockTime = lastTime;
-    [allConductors makeObjectsPerformSelector:@selector(_initialize)];
+    [allConductors makeObjectsPerformSelector: @selector(_initialize)];
     evalAfterQueues();
-#if 0 // disabled as longjmp makes memory flakey.
-    if (_jmpSet) {
-	_jmpSet = NO;     
-	if (separateThreadedAndInMusicKitThread() || 
-	    (!isClocked && !separateThread)) {
-	    longjmp(conductorJmp, 0);   /* Jump out of loop now. */
-	} 
-    }
-    else
-        _jmpSet = NO;
-#endif
 
     return self;
 }
@@ -1127,7 +1111,7 @@ static void evalAfterQueues()
     return clockCond;
 }
 
--(double)setBeatSize:(double)newBeatSize
+- (double) setBeatSize: (double) newBeatSize
   /* TYPE: Tempo; Sets the tempo by resizing the beat.
    * Sets the tempo by changing the size of a beat to newBeatSize,
    * measuredin seconds.  The default beat size is 1.0 (one beat per
@@ -1136,14 +1120,14 @@ static void evalAfterQueues()
    * Returns the previous beat size.
    */
 {
-    register double oldBeatSize;
-    oldBeatSize = beatSize;
+    register double oldBeatSize = beatSize;
+    
     if (self == clockCond)
-      return oldBeatSize;
-    beatSize  = newBeatSize;
-    inverseBeatSize = 1.0/beatSize;
+	return oldBeatSize;
+    beatSize = newBeatSize;
+    inverseBeatSize = 1.0 / beatSize;
     if (curRunningCond != self && !isPaused) 
-      repositionCond(self,beatToClock(self,PEEKTIME(self->_msgQueue)));
+	repositionCond(self, beatToClock(self, PEEKTIME(self->_msgQueue)));
     return oldBeatSize;
 }
 
@@ -1185,7 +1169,7 @@ static void evalAfterQueues()
     return oldTimeOffset;
 }
 
--(double)beatSize
+- (double) beatSize
   /* TYPE: Tempo; Returns the receiver's beat size in seconds.
    * Returns the size of the receiver's beat, in seconds.
    */
@@ -1310,7 +1294,7 @@ static void evalAfterQueues()
     else {
 //	nextMsgTime = PEEKTIME(_msgQueue) * beatSize + timeOffset;
 //	nextMsgTime = MIN(nextMsgTime,MK_ENDOFTIME);    
-        nextMsgTime = beatToClock(self,PEEKTIME(_msgQueue));
+        nextMsgTime = beatToClock(self, PEEKTIME(_msgQueue));
     }
     repositionCond(self,nextMsgTime);
     return self;
@@ -1835,8 +1819,8 @@ static MKMsgStruct *evalSpecialQueue(MKMsgStruct *queue, MKMsgStruct **queueEnd)
         [super release];
         return defaultCond;
     } 
-    [allConductors addObject:self];
-    inverseBeatSize = 1.0/beatSize;
+    [allConductors addObject: self];
+    inverseBeatSize = 1.0 / beatSize;
     [self _initialize];
 
     return self;
@@ -1893,7 +1877,8 @@ static double getNextMsgTime(MKConductor *aCond)
 {
 //    MKMsgStruct *p;
     NSString *queue = [NSString stringWithFormat:
-        @"MKConductor 0x%x\n  Next conductor 0x%x, Last conductor 0x%x\n", self, _condNext, _condLast];
+        @"%@\n  Next conductor 0x%x, Last conductor 0x%x\n",
+	[super description], _condNext, _condLast];
     NSString *timeStr = [NSString stringWithFormat: @"  time %lf beats, nextMsgTime %lf, timeOffset %lf\n",
        time, nextMsgTime, timeOffset];
     NSString *beatTime = [NSString stringWithFormat:
@@ -1948,12 +1933,12 @@ static double getNextMsgTime(MKConductor *aCond)
 
     /* Here is the meat of the conductor's performance. */
     do {
-        // NSLog(@"curRunningCond %x\n", curRunningCond);
+        // NSLog(@"curRunningCond %@\n", curRunningCond);
         curProc = popMsgQueue(&(curRunningCond->_msgQueue));
         if (curProc->_timeOfMsg > curRunningCond->time) // IMPORTANT--Performers can give us negative vals
             curRunningCond->time = curProc->_timeOfMsg;
         if (MKIsTraced(MK_TRACECONDUCTOR))
-            NSLog(@"t %f\n", clockTime);
+            NSLog(@"t %g\n", clockTime);
         if (!curProc->_conductorFrees) {
             // NSLog(@"I'm not supposed to free %d, %@\n", curProc->_argCount, curProc->_toObject);
             // NSLog(@"separateThreaded %d and in MusicKit thread %d\n", separateThread, separateThreadedAndInMusicKitThread());
@@ -2010,12 +1995,15 @@ static double getNextMsgTime(MKConductor *aCond)
             // NSLog(@"Returned from method call (conductor frees)\n");
             freeSp(curProc);
         }
-        // NSLog(@"curRunningCond at end of loop %x\n", curRunningCond);
-    } while (PEEKTIME(curRunningCond->_msgQueue)  <= curRunningCond->time);
+        // NSLog(@"curRunningCond at end of loop %@\n", curRunningCond);
+    } while (PEEKTIME(curRunningCond->_msgQueue) <= curRunningCond->time);
 
     if (!curRunningCond->isPaused) {
-        double theNextTime = PEEKTIME(curRunningCond->_msgQueue);
-        repositionCond(curRunningCond,beatToClock(curRunningCond,theNextTime));
+        double theNextBeat = PEEKTIME(curRunningCond->_msgQueue);
+	double theNextClockTime = beatToClock(curRunningCond, theNextBeat);
+	
+	// NSLog(@"theNextBeat %lf theNextClockTime %lg\n", theNextBeat, theNextClockTime);
+        repositionCond(curRunningCond, theNextClockTime);
     }
 
     // If at the end, repositionCond triggers [MKConductor finishPerformance].
