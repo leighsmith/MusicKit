@@ -54,7 +54,7 @@ Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 #include <AppKit/NSApplication.h>
 
 #import "Snd.h"
-#import "sounderror.h"
+#import "SndError.h"
 #import "SndFunctions.h"
 #import "SndPlayer.h"
 

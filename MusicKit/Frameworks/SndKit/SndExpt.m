@@ -21,7 +21,7 @@
 
 #import "SndExpt.h"
 #import "SndAudioBuffer.h"
-#import "sounderror.h"
+#import "SndError.h"
 #import "SndFunctions.h"
 
 #define SERVER_DEBUG 0
