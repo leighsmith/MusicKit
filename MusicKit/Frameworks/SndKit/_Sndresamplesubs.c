@@ -1,6 +1,40 @@
 /* 
   $Id$
 
+ Original License:
+   Copyright (c) 1984, Julius Smith
+   All rights reserved.
+        
+   This is free software from the Digital Audio Resampling Home Page:
+   http://www-ccrma.stanford.edu/~jos/resample/.
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions are met:
+	      
+   Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+   Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+   Neither the name of CCRMA, Stanford University, nor the names of its
+   contributors may be used to endorse or promote products derived from this
+   software without specific prior written permission.
+    
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+   ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNERS OR CONTRIBUTORS BE
+   LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+   CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+   SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+   INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+   POSSIBILITY OF SUCH DAMAGE.
+
+ Subsequent changes:
+   Copyright (c)1999-2002 tomandandy inc.
+
  Description:
    Sampling Rate Conversion Subroutines
    Implements sampling rate conversions by (almost) arbitrary factors.
@@ -34,11 +68,14 @@
        maintained by Julius Smith (jos) and Mike Minnick (mminnick) at NeXT
    Added to the SndKit handling a variety of sound formats by Stephen Brandon
    Cleaned up by Leigh Smith
-*/
-/* 
-Modification History:
+
+ Modification History:
 
   $Log$
+  Revision 1.4  2002/01/29 22:35:02  sbrandon
+  added new BSD-style license courtesy of Julius Smith, for files derived
+  from his "resample" project. Thanks Julius.
+
   Revision 1.3  2001/05/12 16:57:03  sbrandon
   - tidied up all the imports
   - added some includes for GNUstep
