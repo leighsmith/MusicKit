@@ -28,7 +28,7 @@
 #define SND_FADER_ATTACH_RAMP_LEFT  2
 
 /* this value limits the number of envelope points that can be held
- * in the unified (amp + bearing) envelope. Unless providing for almost
+ * in the unified (amp + balance) envelope. Unless providing for almost
  * sample-level enveloping, the specified figure will be more than enough.
  */
 #define MAX_ENV_POINTS_PER_BUFFER 256
