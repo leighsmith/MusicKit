@@ -288,19 +288,12 @@ static int ioTags = 1000;
 
     [name release];
     priority = 0;
-//  name = calloc(256,1);
-//  NXScanf(stream,"%s",name);
-//  NXGetc(stream); /* read off the \n character */
-//  name = realloc(name,strlen(name) + 1);
-//  NXRead(stream,&priority,sizeof(int));
-//  priority = (int)NSSwapBigLongToHost(priority);
 
     if (soundStruct) SndFree(soundStruct);
     if (!(s = malloc(sizeof(SndSoundStruct))))
         [[NSException exceptionWithName:@"Sound Error"
                                  reason:@"Can't allocate memory for Snd class"
                                userInfo:nil] raise];
-//  NXRead(stream,s,sizeof(SndSoundStruct)); /* gets 1st 4 bytes info string */
     [stream getBytes:s length:sizeof(SndSoundStruct)];/* only gets 1st 4 bytes of info string */
 #ifdef __LITTLE_ENDIAN__
     s->magic = NSSwapBigLongToHost(s->magic);
@@ -371,11 +364,8 @@ static int ioTags = 1000;
     s->channelCount = NSSwapHostIntToBig(s->channelCount);
 #endif
 
-//  NXWrite(stream, s, headerSize);
     [stream appendBytes:s length:headerSize];
     if (df != SND_FORMAT_INDIRECT) { /* simple read/write of block of data */
-//  NXWrite(stream, (char *)soundStruct + soundStruct->dataLocation,
-//			soundStruct->dataSize );
         [stream appendBytes:(char *)soundStruct + soundStruct->dataLocation length:soundStruct->dataSize];
         free(s);
         return SND_ERR_NONE;
@@ -384,8 +374,6 @@ static int ioTags = 1000;
     ssList = (SndSoundStruct **)soundStruct->dataLocation;
     free(s);
     while ((theStruct = ssList[j++]) != NULL) {
-//		NXWrite(stream, (char *)theStruct + theStruct->dataLocation,
-//			theStruct->dataSize);
         [stream appendBytes:(char *)theStruct + theStruct->dataLocation length:theStruct->dataSize];
     }
     return SND_ERR_NONE;
@@ -404,7 +392,7 @@ static int ioTags = 1000;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
-/* Here I archive data to typed stream as CHAR rather than exact data
+/* Here I archive data to coder as CHAR rather than exact data
  * type. Why? Well, I don't want it swapping data for me! I always want the
  * internal data representation to be big endian.
  */
@@ -439,7 +427,7 @@ static int ioTags = 1000;
         s->dataSize = newCount;
     }
 
-/* no need to swap data in the header, because NXTypedStreams take care
+/* no need to swap data in the header, because coders take care
  * of endian issues for us.
  */
     [aCoder encodeValuesOfObjCTypes:"iiiiii", s->magic, s->dataLocation, s->dataSize,
@@ -1374,6 +1362,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
   [ab initWithFormat: &s data: dataPtr];
 
   return [ab autorelease];
+}
+
+- (void) fillAudioBuffer:(SndAudioBuffer*)buff withSamplesInRange: (NSRange) r
+{
+  int   samSize       = SndFrameSize(soundStruct);
+  void* dataPtr       = [self data] + samSize * r.location;
+  [buff copyBytes:dataPtr count:r.length * samSize format:soundStruct];
 }
 
 @end

@@ -9,8 +9,6 @@
 #define __SND_H__
 
 #import <Foundation/Foundation.h>
-//#import <Foundation/NSObject.h>
-//#import <Foundation/NSBundle.h>
 
 /* The following define maps most sound I/O functions to the SoundKit counterparts,
  * for OpenStep 4.2 Intel and m68k (black NeXT) machines. You could try it on PPC
@@ -1082,6 +1080,16 @@ architecture, as described in the <b>SndStruct</b> header.
   @result An SndAudioBuffer containing the samples in the range r.
 */
 - (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) r;
+
+/*!
+  @method fillAudioBuffer:withSamplesInRange:
+  @abstract  copies samples from self into the provided SndAudioBuffer
+  @discussion  The SndAudioBuffer's data object's size is increased if necessary.
+  @param buff the SndAudioBuffer object into which to copy the data
+  @param r an NSRange of sample frames to copy
+  @result
+*/
+- (void) fillAudioBuffer:(SndAudioBuffer*)buff withSamplesInRange: (NSRange) r;
 
 - initWithAudioBuffer: (SndAudioBuffer*) aBuffer;
 
