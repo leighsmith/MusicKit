@@ -9,6 +9,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/09/04 23:01:08  leigh
+  MKSetErrorProc now takes a function with a NSString parameter
+
   Revision 1.3  1999/08/26 20:00:19  leigh
   new MKError prototype
 
@@ -56,7 +59,7 @@ extern void MKSetScorefileParseErrorAbort(int cnt);
     Note that it is not guaranteed to be safe to NX_RAISE an error in any 
     performance-oriented class. 
    */
-extern void MKSetErrorProc(void (*errProc)(char *msg));
+extern void MKSetErrorProc(void (*errProc)(NSString *msg));
     /* Sets proc to be used when MKError() and _MKErrorf() are called. 
        If errProc is NULL, uses the default error proc, which writes to the 
        Music Kit error NXStream (see MKSetErrorStream()). 
