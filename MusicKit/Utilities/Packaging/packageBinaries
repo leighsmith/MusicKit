@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 # $Id$
 #
 # zsh Script to automate the packaging of binaries of the MusicKit frameworks,

@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 # $Id$
 #
 # zsh script to automate the packaging of MusicKit and SndKit source trees from
