@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2004/12/06 18:20:06  leighsmith
+  Now uses orchestraIndex. This class is slated for deletion now that MKOrchestra has begun to be rewritten
+
   Revision 1.5  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -713,7 +716,7 @@ Modification history:
     int i;
     if (!orch || ([orch deviceStatus] == MK_devClosed))
 	return nil;
-    DSPSetCurrentDSP([orch index]);
+    DSPSetCurrentDSP([orch orchestraIndex]);
     outBuff = DSP_YB_DMA_W;
     endBuff = DSP_NB_DMA + outBuff;
     i = outBuff;
