@@ -14,8 +14,6 @@
   and accompanies all derived code.
 */
 
-#include "mididriverUser.h"
-
 #include "PerformSoundPrivate.h"
 
 #include "PerformMIDI.h"
