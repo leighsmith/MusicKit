@@ -32,27 +32,27 @@
 */
 @interface SndPerformance : NSObject
 {
-/*! @var snd The sound being performed. */
+    /*! @var snd The sound being performed. */
     Snd    *snd;
-/*! @var playTime The time when to initiate playing. */
+    /*! @var playTime The time when to initiate playing. */
     double  playTime;
-/*! @var startIndex The index where the sound will begin playing from at the start of a sound performance. */
+    /*! @var startIndex The index where the sound will begin playing from at the start of a sound performance. */
     long    startAtIndex;
-/*! @var playIndex The index where the sound will next play from (using <i>retrievePerformBuffer:</i>). */
+    /*! @var playIndex The index where the sound will next play from (using <i>retrievePerformBuffer:</i>). */
     long  playIndex;
-/*! @var endAtIndex The index where the sound will stop <B>before</B>. This marks the sample after the last
-	            one to be played, the sample at endAtIndex is <B>not</B> played. */
+    /*! @var endAtIndex The index where the sound will stop <B>before</B>. This marks the sample after the last
+			one to be played, the sample at endAtIndex is <B>not</B> played. */
     long    endAtIndex;
-/*! @var paused */
+    /*! @var paused Controls whether performance of the Snd is occuring. */
     BOOL    paused;
-/*! @var audioProcessorChain */
+    /*! @var audioProcessorChain Effects applied to this particular performance. */
     SndAudioProcessorChain *audioProcessorChain;
 
-/*! @var looping Indicates whether to loop during performance. */
+    /*! @var looping Indicates whether to loop during performance. */
     BOOL looping;
-/*! @var loopStartIndex The sample the loop begins at. This sample is included in the loop. */
+    /*! @var loopStartIndex The sample the loop begins at. This sample is included in the loop. */
     long loopStartIndex;
-/*! @var loopEndIndex The sample the loop ends at. This sample is included in the loop. */
+    /*! @var loopEndIndex The sample the loop ends at. This sample is included in the loop. */
     long loopEndIndex;
 
     // ivars for variable speed playback - TODO needs fixing and documenting
@@ -317,13 +317,13 @@ startPosition: (double) startPosition
   @method audioProcessorChain
   @result The audioProcessorChain associated with this performance 
 */
-- (SndAudioProcessorChain*) audioProcessorChain;
+- (SndAudioProcessorChain *) audioProcessorChain;
 
 /*!
   @method setAudioProcessorChain:
   @param anAudioProcessorChain
 */
-- setAudioProcessorChain: (SndAudioProcessorChain*) anAudioProcessorChain;
+- setAudioProcessorChain: (SndAudioProcessorChain *) anAudioProcessorChain;
 
 /*!
   @method retrievePerformBuffer:ofLength:
