@@ -5,9 +5,9 @@
 //  Description:
 //    See the header description below.
 //
-//  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
-//  Sat 10-Feb-2001, Copyright (c) 2001 tomandandy music inc.
+//  Sat 10-Feb-2001, Copyright (c) 2001 SndKit project
 //
 //  Permission is granted to use and modify this code for commercial and 
 //  non-commercial purposes so long as the author attribution and copyright 
@@ -44,6 +44,8 @@
     NSMutableArray  *removalArray;
 /*! @var             tempBuffer; */
     SndAudioBuffer  *tempBuffer;
+
+    BOOL bAutoStartManager;
 }
 /*!
   @method     player
@@ -192,8 +194,14 @@
               streaming is started up.
 */
 - setRemainConnectedToManager: (BOOL) b;
+/*!
+ @method addPerformance:
+ @param  aPerformance
+ */
 - addPerformance: (SndPerformance*) aPerformance;
 
+- setAutoStartManager: (BOOL) b;
+- (BOOL) autoStartManager;
 
 @end
 
