@@ -18,6 +18,8 @@ and binary distributions.
 <!entity mkvertuple "5.3.0">
 <!entity sndvertuple "2.0.0">
 <!entity midisportvertuple "1.0">
+<!entity mkdownload "http://ftp1.sourceforge.net/musickit">
+<!entity soxdownload "http://ftp1.sourceforge.net/sox">
 ]>
 
 <article id="README">
@@ -754,7 +756,7 @@ The Source files consist of:
         <variablelist>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://download.sourceforge.net/musickit/MK-&mkvertuple;.s.tar.gz">MK-&mkvertuple;.s.tar.gz</ulink>
+              <ulink url="&mkdownload;/MK-&mkvertuple;.s.tar.gz">MK-&mkvertuple;.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -764,15 +766,14 @@ applications, documentation and example code.
               </para>
 		<para>
 This is the most recent revision and patch. Some older revisions are
-located at the <ulink
-url="http://download.tomandandy.com/musickit">sourceforge site</ulink>
+located at the <ulink url="&mkdownload;">sourceforge site</ulink>
 for regression testing.
               </para>
 	      </listitem>
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://download.sourceforge.net/musickit/SndKit-&sndvertuple;.s.tar.gz">SndKit-&sndvertuple;.s.tar.gz</ulink>
+              <ulink url="&mkdownload;/SndKit-&sndvertuple;.s.tar.gz">SndKit-&sndvertuple;.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -782,7 +783,7 @@ for regression testing.
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://download.sourceforge.net/musickit/ZilogSCCMIDI.s.tar.gz">ZilogSCCMIDI.s.tar.gz</ulink>
+              <ulink url="&mkdownload;/ZilogSCCMIDI.s.tar.gz">ZilogSCCMIDI.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -815,7 +816,7 @@ the MK source:
 	<variablelist>
 	  <varlistentry>
 	    <term>
-            <ulink url="http://download.sourceforge.net/sox/sox-12.17.tar.gz">sox-12.17.tar.gz</ulink>. 
+            <ulink url="&soxdownload;/sox-12.17.tar.gz">sox-12.17.tar.gz</ulink>. 
             </term>
 	    <listitem>
 	      <para>
@@ -842,7 +843,7 @@ Newer versions of will probably just work.
 	<variablelist>
 	    <varlistentry>
 	      <term>
-            <ulink url="http://download.sourceforge.net/musickit/MK-&mkvertuple;.MOX.pkg.tar">MK-&mkvertuple;.MOX.pkg.tar</ulink>
+            <ulink url="&mkdownload;/MK-&mkvertuple;.MOX.pkg.tar">MK-&mkvertuple;.MOX.pkg.tar</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -852,7 +853,7 @@ Newer versions of will probably just work.
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://download.sourceforge.net/musickit/MIDISPORT2x2-V&midisportvertuple;.b.tar.gz">MIDISPORT2x2-V&midisportvertuple;.b.tar.gz</ulink>
+              <ulink url="&mkdownload;/MIDISPORT2x2-V&midisportvertuple;.b.tar.gz">MIDISPORT2x2-V&midisportvertuple;.b.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -865,7 +866,7 @@ the <productname class="Registered">Midiman</productname>
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://download.sourceforge.net/musickit/ZilogSCCMIDI.b.tar.gz">ZilogSCCMIDI.b.tar.gz</ulink>
+              <ulink url="&mkdownload;/ZilogSCCMIDI.b.tar.gz">ZilogSCCMIDI.b.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -879,7 +880,7 @@ the <productname class="Registered">Midiman</productname>
 <!-- TODO
 	  <varlistentry>
 	    <term>
-            <ulink url="http://download.sourceforge.net/musickit/MK-&mkvertuple;.w32.pkg.tar">MK-&mkvertuple;.w32.pkg.tar</ulink>
+            <ulink url="&mkdownload;/MK-&mkvertuple;.w32.pkg.tar">MK-&mkvertuple;.w32.pkg.tar</ulink>
             </term>
 	    <listitem>
 	      <para>
@@ -889,7 +890,7 @@ the <productname class="Registered">Midiman</productname>
 	  </varlistentry>
 	  <varlistentry>
 	    <term>
-            <ulink url="http://download.sourceforge.net/musickit/MK-&mkvertuple;.linux.rpm">MK-&mkvertuple;.linux.rpm</ulink>
+            <ulink url="&mkdownload;/MK-&mkvertuple;.linux.rpm">MK-&mkvertuple;.linux.rpm</ulink>
             </term>
 	    <listitem>
 	      <para>
