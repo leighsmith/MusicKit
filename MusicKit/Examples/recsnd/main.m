@@ -16,7 +16,7 @@ static char* versionDate     = "Sept 2001";
 static char* defaultFilename = "temp.wav";
 static BOOL  bSilent         = FALSE;
 
-#define NO_ERROR     (0)
+#define RECSND_NO_ERROR     (0)
 #define BAD_DURATION (-1)
 
 /*//////////////////////////////////////////////////////////////////////////////
@@ -63,11 +63,13 @@ void DoRecord(const char* recordFilename, double recordDuration)
         printf(".");
         fflush(stdout);
         if (recordDuration > 1.0) {
-          usleep(1000000);
+          [NSThread sleepUntilDate:
+            [NSDate dateWithTimeIntervalSinceNow:1]];
           recordDuration -= 1.0;
         }
         else {
-          usleep(1000000 * recordDuration);
+          [NSThread sleepUntilDate:
+            [NSDate dateWithTimeIntervalSinceNow:recordDuration]];
           recordDuration = 0.0;
         }
       }
@@ -99,7 +101,7 @@ int main (int argc, const char * argv[])
     if (argc == 1) {
       printf("Use: recsnd [options] <filename>\n");
       printf("Type recsnd -h for more help.\n");
-      return NO_ERROR;
+      return RECSND_NO_ERROR;
     }
     
     // Process the arguments
@@ -107,8 +109,8 @@ int main (int argc, const char * argv[])
     for (i = 1; i < argc; i++) {
       if (argv[i][0] == '-') {
         switch (argv[i][1]) {
-        case 'h': ShowHelp();    return NO_ERROR; break;
-        case 'v': ShowVersion(); return NO_ERROR; break;
+        case 'h': ShowHelp();    return RECSND_NO_ERROR; break;
+        case 'v': ShowVersion(); return RECSND_NO_ERROR; break;
         case 's': bSilent = TRUE; break;
         case 'd':
           i++;
