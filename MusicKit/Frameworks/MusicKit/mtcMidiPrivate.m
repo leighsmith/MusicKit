@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2002/01/29 16:46:12  sbrandon
+  changed all uses of _MKErrorf to use NSString args.
+
   Revision 1.11  2001/05/12 09:33:51  sbrandon
   - changed KERN_SUCCESS to MKMD_SUCCESS. Need to check this is ok on MacOSX.
 
@@ -186,12 +189,12 @@ static BOOL setUpMTC(MKMidi *self)
 {
     self->exceptionPort = [[NSPort port] retain];
     if (self->exceptionPort == nil) {
-	_MKErrorf(MK_machErr,OPEN_ERROR, "Unable to open exceptionPort", "setUpMTC");
+	_MKErrorf(MK_machErr,OPEN_ERROR, @"Unable to open exceptionPort", @"setUpMTC");
 	return NO;
     }
     self->alarmPort = [[NSPort port] retain];
     if (self->alarmPort == nil) {
-        _MKErrorf(MK_machErr,OPEN_ERROR, "Unable to open alarmPort", "setUpMTC");
+        _MKErrorf(MK_machErr,OPEN_ERROR, @"Unable to open alarmPort", @"setUpMTC");
         return NO;
     }
     self->alarmTimeValid = NO;
