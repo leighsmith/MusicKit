@@ -55,58 +55,40 @@ void merror(int er)
 /* Does not name sound, or add to name table.
  */
 {
-	BOOL found;
-	id newSound;
-	NSBundle *soundLocation;
-	NSString *path;
-        id retSnd = [nameTable objectForKey:aName];
-	if (retSnd) return retSnd;
+    BOOL found;
+    Snd *newSound;
+    NSBundle *soundLocation;
+    NSString *path;
+    NSArray *libraryDirs;
+    int i;
+    id retSnd = [nameTable objectForKey:aName];
+    if (retSnd) return retSnd;
 
-        found = ((path = [[NSBundle mainBundle] pathForResource:aName ofType:@"snd"]) != nil);
-	if (found) {
-		newSound = [[Snd alloc] initFromSoundfile:path];
-		if (newSound) {
-			return newSound;
-		}
-	}
-        path = [NSHomeDirectory() stringByAppendingPathComponent:path];
-	soundLocation = [[NSBundle alloc] initWithPath:path];
-	if (soundLocation) {
+    path = [[NSBundle mainBundle] pathForResource:aName ofType:@"snd"];
+    found = (path != nil);
+    if (found) {
+        newSound = [[Snd alloc] initFromSoundfile:path];
+        if (newSound) {
+            return [newSound autorelease];
+        }
+    }
 
+    libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
+    for(i = 0; i < [libraryDirs count]; i++) {
+        path = [[[libraryDirs objectAtIndex: i] stringByAppendingPathComponent: @"Sounds"] stringByAppendingPathComponent:path];
+        soundLocation = [[NSBundle alloc] initWithPath:path];
+        if (soundLocation) {
             found = ((path = [soundLocation pathForResource:aName ofType:@"snd"]) != nil);
-		[soundLocation release];
-		if (found) {
-			newSound = [[Snd alloc] initFromSoundfile:path];
-			if (newSound) {
-				return newSound;
-			}
-		}
-	}
-	soundLocation = [[NSBundle alloc] initWithPath:@"/LocalLibrary/Sounds"];
-	if (soundLocation) {
-
-            found = ((path = [soundLocation pathForResource:aName ofType:@"snd"]) != nil);
-		[soundLocation release];
-		if (found) {
-			newSound = [[Snd alloc] initFromSoundfile:path];
-			if (newSound) {
-				return newSound;
-			}
-		}
-	}
-	soundLocation = [[NSBundle alloc] initWithPath:@"/NextLibrary/Sounds"];
-	if (soundLocation) {
-
-            found = ((path = [soundLocation pathForResource:aName ofType:@"snd"]) != nil);
-		[soundLocation release];
-		if (found) {
-                    newSound = [[Snd alloc] initFromSoundfile:path];
-			if (newSound) {
-				return newSound;
-			}
-		}
-	}
-	return nil;
+            [soundLocation release];
+            if (found) {
+                newSound = [[Snd alloc] initFromSoundfile:path];
+                if (newSound) {
+                    return [newSound autorelease];
+                }
+            }
+        }
+    }
+    return nil;
 }
 
 + addName:(NSString *)aname sound:aSnd
@@ -125,7 +107,7 @@ void merror(int er)
     newSnd = [[Snd alloc] initFromSoundfile:filename];
     if (!newSnd) return nil;
     [Snd addName:aname sound:newSnd];
-    return newSnd;
+    return [newSnd autorelease];
 }
 
 + addName:(NSString *)aname fromSection:(NSString *)sectionName
@@ -148,7 +130,7 @@ void merror(int er)
 		newSound = [[Snd alloc] initFromSoundfile:path];
 		if (newSound) {
 			[Snd addName:aName sound:newSound];
-			return newSound;
+			return [newSound autorelease];
 		}
 	}
 	return nil;
