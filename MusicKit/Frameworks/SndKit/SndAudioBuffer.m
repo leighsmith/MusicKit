@@ -50,24 +50,25 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// audioBufferWithSnd:range:
+// audioBufferWithSnd:inRange:
 ////////////////////////////////////////////////////////////////////////////////
 
 + audioBufferWithSnd: (Snd*) snd inRange: (NSRange) r
 {
-  SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
-
-  // PUT THIS IN AN INIT FN!!!!
-  ab->dataFormat   = [snd dataFormat];
-  ab->channelCount = [snd channelCount];
-  ab->samplingRate = [snd samplingRate];
-  {
-    int samSize  = [ab frameSizeInBytes];
-    ab->data     = [NSMutableData dataWithBytesNoCopy: samSize * r.location + [snd data]
-                                               length: samSize * r.length];
-    ab->maxByteCount = ab->byteCount = samSize * r.length;
-  }
-  return [ab autorelease];
+    SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
+    int frameSizeInBytes;
+    
+    // PUT THIS IN AN INIT FN!!!!
+    ab->dataFormat   = [snd dataFormat];
+    ab->channelCount = [snd channelCount];
+    ab->samplingRate = [snd samplingRate];
+    frameSizeInBytes  = [ab frameSizeInBytes];
+    if (ab->data != nil)
+	[ab->data release];
+    ab->maxByteCount = ab->byteCount = frameSizeInBytes * (r.length + r.location);
+    ab->data = [[NSMutableData dataWithBytes: [snd data] + r.location * frameSizeInBytes
+                                      length: ab->byteCount] retain];
+    return [ab autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -460,7 +461,7 @@
     dataFormat   = f->dataFormat;
     channelCount = f->channelCount;
     samplingRate = f->samplingRate;
-    byteCount    = bytesRange.length;
+    byteCount    = bytesRange.location + bytesRange.length;
     maxByteCount = [data length];
     return self;
 }
