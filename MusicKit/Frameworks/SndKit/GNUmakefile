@@ -63,6 +63,7 @@ $(MY_NAME)_OBJC_FILES = \
          SndConvert.m \
          SndDisplayData.m \
          SndDisplayDataList.m \
+         SndEditing.m \
          SndEnvelope.m \
          SndError.m \
          SndExpt.m \
