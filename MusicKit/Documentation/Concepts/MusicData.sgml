@@ -118,9 +118,10 @@ role="bold">MK_freq</emphasis>.  This promotes portability between
 that a parameter's purpose is not restricted to that arena.
 Parameters can be used in any way that your application sees fit; for
 example, a graphic notation program could use parameters to describe
-how a Note object is displayed on the screen.  However, you should
-also keep in mind that a parameter is significant only if some other
-object or your application looks for and uses it.</para>
+how a <classname>MKNote</classname> object is displayed on the screen.
+However, you should also keep in mind that a parameter is significant
+only if some other object or your application looks for and uses
+it.</para>
 
       <sect3><title>Parameter Values</title>
 
@@ -527,7 +528,7 @@ earlier:</para>
 </programlisting>
 
 <para>The conversion between frequencies or pitch variables and key
-numbers allows you to create Note objects that can be played on both
+numbers allows you to create <classname>MKNote</classname> objects that can be played on both
 the DSP and on a MIDI instrument using the same pitch
 parameter.</para>
 	</sect4>
@@ -1263,7 +1264,7 @@ role="bold">MK_ampRel</emphasis>, if present) regardless of whether
 the noteOff arrives before or after the stickpoint is reached.</para>
 	</sect4>
 	<sect4>
-	  <title>Modeling a Note without Sustain</title>
+	  <title>Modeling a <classname>MKNote</classname> without Sustain</title>
 
 <para>Not every instrument can create a sustained tone; the amplitude
 envelope of a piano tone, for example, is characterized by a sharp
@@ -1865,7 +1866,7 @@ depends on the <classname>MKSynthPatch</classname> to which the
     </sect2>
   </sect1>
   <sect1 id=GroupingNotes>
-<title>Grouping Notes</title>
+<title>Grouping <classname>MKNote</classname>s</title>
 
 <para>The <classname>MKPart</classname> and
 <classname>MKScore</classname> classes are designed to group
@@ -1885,7 +1886,7 @@ to write a <classname>MKScore</classname> as a file.  The second part,
 <xref linkend="RetrievingMKScoresMKPartsAndMKNotes">, presents methods
 and techniques for retrieving, querying, and further manipulating
 <classname>MKPart</classname>s, <classname>MKScore</classname>s, and
-the Notes they contain.  Finally, the special
+the <classname>MKNote</classname>s they contain.  Finally, the special
 <classname>MKNote</classname>s called <classname>MKPart</classname>
 info and <classname>MKScore</classname> info are described.</para>
 
@@ -2396,8 +2397,8 @@ role="bold">MK_keyNum</emphasis> is present, the <emphasis
 role="bold">MK_freq</emphasis> parameter is checked and, if it is
 present, converted to a MIDI key number using the currently installed
 <classname>MKTuningSystem</classname>.  Finally, a noteTag
-<emphasis>must</emphasis> be provided so that noteOff Notes and
-polyphonic aftertouch Notes can be properly matched.</para>
+<emphasis>must</emphasis> be provided so that noteOff <classname>MKNote</classname>s and
+polyphonic aftertouch <classname>MKNote</classname>s can be properly matched.</para>
 
 <para>Alternatively, you can send a <classname>MKNote</classname> of
 type MK_noteDur with a duration supplied, which is equivalent to a
@@ -2414,7 +2415,7 @@ MusicKit semantics are properly converted to MIDI semantics:</para>
 <classname>MKNote</classname>s have the same noteTag and the same
 <emphasis role="bold">MK_keyNum</emphasis> value, a noteOff message is
 generated on the same channel and with the same key number as those
-for the noteOn Notes.</para>
+for the noteOn <classname>MKNote</classname>s.</para>
 	  </listitem>
 
 	  <listitem><para>If two successive noteOn
@@ -2721,7 +2722,7 @@ main() {
 	</itemizedlist>
       </sect3>
     </sect2>
-    <sect2><title>Converting MIDI to MusicKit Notes</title>
+    <sect2><title>Converting MIDI to MusicKit <classname>MKNote</classname>s</title>
 
 <para>These rules deal with receiving MIDI messages from a
 <classname>MKMidi</classname> object that represents the MIDIN jack on
