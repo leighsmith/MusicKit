@@ -64,7 +64,7 @@ out of the device.</para>
       </listitem>
       <listitem>
 	<para>
-The <company>RCN</company> interface has two <acronym>MIDI</acronym> outs, a
+The <company><acronym>RCN</acronym></company> interface has two <acronym>MIDI</acronym> outs, a
 <acronym>MIDI</acronym> in and a <acronym>MIDI</acronym> thru, plus
 three <acronym>LED</acronym>'s on the front panel to indicate power and the presence of
 <acronym>MIDI</acronym> data in and out of the device.</para>
