@@ -10,11 +10,6 @@
 
 @implementation MIDIFileController
 
-#ifdef WIN32
-#define SAMPLE_LOC @"/Windows/Library/Lobe/Samples/"
-#else
-#define SAMPLE_LOC @"/Local/Users/leigh/Library/Lobe/Samples/"
-#endif
 #define KEYMAPFORMAT @"chan:%d key:%d"
 #define SOUNDFILEEXT @"wav"
 
@@ -48,14 +43,10 @@
     midiPathName = NSHomeDirectory();
     [midiPathName retain];
 
-    // rather than just loading and playing a file, we read in a plist of a keymap allowing us to overide
-    // MIDI channels and keys with sample files.
-    keymap = [NSDictionary dictionaryWithContentsOfFile: [SAMPLE_LOC stringByAppendingString: @"keymap.plist"]];
-    if(keymap == nil) {
-        NSLog(@"Couldn't load keymap file\n");
-        return nil;
-    }
-    [keymap retain];
+    // rather than just loading and playing a sound file, we read in a plist of a keymap allowing us to overide
+    // specific MIDI channels and keys with sound files.
+    keymap = nil;     // by default we don't do this until the user selects a keymap file.
+
     return self;
 }
 
@@ -79,10 +70,13 @@
 {
    NSString *chanAndKeyNum = [NSString stringWithFormat: KEYMAPFORMAT, [aNote parAsInt: MK_midiChan], [aNote parAsInt: MK_keyNum]];
    NSString *filename = [keymap objectForKey: chanAndKeyNum];
-//   NSLog(@"Testing  %@\n", chanAndKeyNum);
-  // NSLog([aNote description]);
+   NSString *sampleFilePath;
+
+   // NSLog(@"Testing  %@\n", chanAndKeyNum);
+   // NSLog([aNote description]);
    if(filename != nil) {
-       soundPathName = [[SAMPLE_LOC stringByAppendingPathComponent: filename] stringByAppendingPathExtension: SOUNDFILEEXT];
+       sampleFilePath = [keymapPathName stringByDeletingLastPathComponent];
+       soundPathName = [[sampleFilePath stringByAppendingPathComponent: filename] stringByAppendingPathExtension: SOUNDFILEEXT];
        NSLog(@"Assigning %@ to %@\n", soundPathName, chanAndKeyNum);
        [aNote setPar:MK_filename toString: soundPathName];
        return self;
@@ -119,11 +113,11 @@
     allNoteSenders = [theScorePerformer noteSenders];
     partCount = [allNoteSenders count];
     for (i = 0; i < partCount; i++) {
-        /* Connect each part to MKMidi based on its midiChan parameter */
+        // Connect each part to MKMidi based on its midiChan parameter
         aNoteSender = [allNoteSenders objectAtIndex: i];
         aPart = [[aNoteSender owner] part];
         partInfo = [aPart infoNote];
-        /* Look in the partInfo for a midi channel. Default to 1. */
+        // Look in the partInfo for a midi channel. Default to 1.
         if (!partInfo)
             chan = 1;
         if (![partInfo isParPresent:MK_midiChan])
@@ -131,8 +125,8 @@
         else
             chan = [partInfo parAsInt:MK_midiChan];
         // don't connect the sampler parts to MIDI, they need to be connected to the MKSamplerInstrument
-        if([self convertPartToSamples: aPart]) {
-//	    NSLog([aPart description]);
+        if(keymap != nil && [self convertPartToSamples: aPart]) {
+            // NSLog([aPart description]);
             [aNoteSender connect:[sampleInstrument noteReceiver]];
         }
         else
@@ -185,7 +179,7 @@
 
 
     [aScorePerformer activate];
-//    [samplePartPerformer activate]; // don't play the samplePart just now.
+    // [samplePartPerformer activate]; // don't play the samplePart just now.
 
     [MKConductor setDeltaT: 0.5];            // Run (MKConductor) at least half a second ahead of DSP
     [MKConductor setClocked: YES];           // The conductor needs to be clocked when using MIDI.
@@ -193,7 +187,7 @@
 
     NSLog(@"playing %@...\n", midiPathName);
 
-//    MKSetTrace(MK_TRACECONDUCTOR);
+    // MKSetTrace(MK_TRACECONDUCTOR);
     endRequest = [MKConductor afterPerformanceSel:@selector(haveFinishedPlaying) to: self argCount: 0];
     [MKConductor useSeparateThread: YES];
     [midiInstrument openOutputOnly];         /* No need for MKMidi input. */
@@ -201,27 +195,21 @@
     [midiInstrument run];                    /* This starts the device driver clock. */
     [MKConductor startPerformance];  /* Start sending Notes, loops until done. */
 
-    /* MKConductor's startPerformance method
-    does not return until the performance is over.  Note, however, that
-    if the Conductor is in a different mode, startPerformance returns
-    immediately (if it is in clocked mode or if you have specified that the
-    performance is to occur in a separate thread).  See the Conductor
-    documentation for details. In this case we will return immediately.
+    /* 
+    MKConductor's startPerformance method does not return until the performance is over.
+    Note, however, that if the Conductor is in a different mode, startPerformance returns
+    immediately (if it is in clocked mode or if you have specified that the performance is
+    to occur in a separate thread).  See the MKConductor documentation for details.
+    In this case we will return immediately.
     */
 }
 
 - (void) stopPlaying
 {
-   NSLog(@"...stopping\n");
-   NSLog(@"...locking\n");
    [MKConductor lockPerformance];
-   NSLog(@"allNotesOff\n");
    [midiInstrument allNotesOff];
-   NSLog(@"stop\n");
    [midiInstrument stop];  // abort will actually close the device, whereas stop just stops it
-   NSLog(@"finishPerformance\n");
    [MKConductor unlockPerformance]; // should unlock the performance before trying to finish it.
-   NSLog(@"unlockPerformance\n");
    [MKConductor finishPerformance];
    NSLog(@"finished\n");
 }
@@ -266,12 +254,35 @@
         for (i=0; i<count; i++) {
             midiPathName = [filesToOpen objectAtIndex:i];
             [midiPathNameTextBox setStringValue: midiPathName];
+            [playButton setEnabled: YES];
         }
     }   
 }
 
-- (void) setSoundfileName: (id) sender
+// Rather than just loading and playing a file, we read in a plist of a keymap allowing us to overide
+// MIDI channels and keys with sample files.
+- (void) setKeymapFilename: (id) sender
 {
+    int result;
+    NSArray *fileTypes = [NSArray arrayWithObject:@"plist"];
+    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
+
+    [oPanel setAllowsMultipleSelection:NO];
+    result = [oPanel runModalForDirectory:keymapPathName file:nil types:fileTypes];
+    if (result == NSOKButton) {
+        NSArray *filesToOpen = [oPanel filenames];
+        int i, count = [filesToOpen count];
+        for (i=0; i<count; i++) {
+            keymapPathName = [filesToOpen objectAtIndex:i];
+            keymap = [NSDictionary dictionaryWithContentsOfFile: keymapPathName];
+            if(keymap == nil) {
+                NSLog(@"Couldn't load keymap file %@.\n", keymapPathName);
+                return;
+            }
+            [keymapPathNameTextBox setStringValue: keymapPathName];
+            [keymap retain];
+        }
+    }   
 }
 
 //@implementation MIDIFileController(ConductorDelegate)
