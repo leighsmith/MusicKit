@@ -7,7 +7,7 @@
     return self;
 }
 
-- (void)chooseSoundFile1:(id)sender
+- (void)chooseSoundFile:(id)sender
 {
     int result;
     NSArray *fileTypes = [NSSound soundUnfilteredFileTypes];
@@ -17,21 +17,17 @@
     [oPanel setAllowsMultipleSelection:YES];
     result = [oPanel runModalForDirectory: NSHomeDirectory() file:nil types:fileTypes];
     if (result == NSOKButton) {
+        int i, count;
         filesToPlay = [oPanel filenames];
         [filesToPlay retain];
-//        int i, count = [filesToPlay count];
-//        for (i=0; i<count; i++) {
-//            [soundFileNameTextBox1 setStringValue: [filesToPlay objectAtIndex:i]];
-//            [playButton setEnabled: YES];
-//        }
+        count = [filesToPlay count];
+        for (i=0; i<count; i++) {
+            [soundFileNameTextBox setStringValue: [filesToPlay objectAtIndex:i]];
+            [playButton setEnabled: YES];
+        }
     }   
 
 }
-
-- (void)chooseSoundFile2:(id)sender
-{
-}
-
 
 - (void)playSoundOld:(id)sender
 {
@@ -60,7 +56,6 @@
     NSLog(@"reading %d file %@\n", [filesToPlay count], filesToPlay);
     sound1 = [[NSSound alloc] initWithContentsOfFile: soundFileName byReference:NO];
     if(sound1 != nil) {
-
         NSLog(@"playing %@\n", soundFileName);
         [sound1 setDelegate: self];
         [sound1 play];

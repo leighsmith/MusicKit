@@ -2,13 +2,12 @@
 
 @interface SoundPlayerController : NSObject
 {
-    id soundFileNameTextBox1;
-    id soundFileNameTextBox2;
+    IBOutlet id soundFileNameTextBox;
     NSArray *filesToPlay;
+    IBOutlet id playButton;
 }
 
 - init;
-- (void)chooseSoundFile1:(id)sender;
-- (void)chooseSoundFile2:(id)sender;
+- (void)chooseSoundFile:(id)sender;
 - (void)playSound:(id)sender;
 @end
