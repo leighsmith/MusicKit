@@ -3,51 +3,14 @@
   Defined In: The MusicKit
 
   Description: MIDI driver typedefs, defines, and functions
-  Original Author: David Jaffe
 
-  Copyright (c) 1988-1992, NeXT Computer, Inc.
-  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University
-*/
-/*
-Modification history:
+  Original Author: Leigh M. Smith, <leigh@tomandandy.com>, tomandandy music inc.
 
-  $Log$
-  Revision 1.3  2001/11/07 14:51:58  sbrandon
-  Import new header file which defines PERFORM_API according to what is being
-  compiled. Necesary for Win32 dlls.
+  30 July 1999, Copyright (c) 1999 tomandandy music inc.
 
-  Revision 1.2  2001/10/31 17:18:20  sbrandon
-  Now define PERFORM_API in MKPerformSndMIDIDefines.h
-
-  Revision 1.1  2001/07/02 22:03:48  sbrandon
-  - initial revision. Still a work in progress, but does allow the MusicKit
-    and SndKit to compile on GNUstep.
-
-  Revision 1.5  2001/05/12 08:46:59  sbrandon
-  - added gsdoc comments to most method declarations
-  - changed declarations from extern kern_return_t to PERFORM_API MKMDReturn,
-    as in MacOSX version of framework.
-
-  Revision 1.4  2001/04/21 22:02:29  sbrandon
-  - removed importing of Mach headers
-  - removed extraneous function declaration
-  - fixed spelling typo
-
-  Revision 1.3  2001/04/07 21:08:35  leighsmith
-  Renamed header file to suit new more descriptive name used in MusicKit framework
-
-  Revision 1.2  2000/12/15 02:02:28  leigh
-  Initial Revision
-
-  Revision 1.1.1.1  2000/01/14 00:14:34  leigh
-  Initial revision
-
-  Revision 1.1.1.1  1999/11/17 17:57:14  leigh
-  Initial working version
-
-  Revision 1.2  1999/07/29 01:26:06  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+  Permission is granted to use and modify this code for commercial and non-commercial
+  purposes so long as the author attribution and this copyright message remains intact
+  and accompanies all derived code.
 
 */
 #ifndef _MKMD_
@@ -259,6 +222,9 @@ PERFORM_API MKMDReturn
     @function       MKMDClaimUnit
     @abstract       Claiming a particular MIDI port (cable). 
                     Ownership of driver is required.
+    @param          input
+                        Indicates if the unit to release is a unit
+                        capable of input.
     @param          driver
                         Port indicating and enabling communication
 			with the MIDI driver.
@@ -271,11 +237,14 @@ PERFORM_API MKMDReturn
     @result         Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
 */
 PERFORM_API MKMDReturn 
-    MKMDClaimUnit(MKMDPort driver, MKMDOwnerPort owner, short unit);
+    MKMDClaimUnit(BOOL input, MKMDPort driver, MKMDOwnerPort owner, short unit);
 
 /*!
     @function       MKMDReleaseUnit
     @abstract       Releases ownership of a particular MIDI port (cable).
+    @param          input
+                        Indicates if the unit to release is a unit
+                        capable of input.
     @param          driver
                         Port indicating and enabling communication
 			with the MIDI driver.
@@ -288,7 +257,7 @@ PERFORM_API MKMDReturn
     @result         Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
 */
 PERFORM_API MKMDReturn 
-    MKMDReleaseUnit(MKMDPort driver, MKMDOwnerPort owner, short unit);
+    MKMDReleaseUnit(BOOL input, MKMDPort driver, MKMDOwnerPort owner, short unit);
 
 /******** Controlling the clock ****************/
 
@@ -649,7 +618,10 @@ PERFORM_API MKMDReturn
 
 /*!
     @function       MKMDGetAvailableDrivers
-    @abstract       Return the names of available drivers.    
+    @abstract       Return the names of available drivers.
+    @param          input
+                        Indicates whether the drivers listed are for input or output. 
+                       These may differ for devices which provide only output or only input.
     @param          selectedDriver
                         Receives the default driver index.
     @result         Returns a list of strings giving driver names and available ports,
@@ -657,7 +629,7 @@ PERFORM_API MKMDReturn
                     list a la argv behaviour.
 */
 PERFORM_API const char **
-    MKMDGetAvailableDrivers(unsigned int *selectedDriver);
+    MKMDGetAvailableDrivers(BOOL inputDrivers, unsigned int *selectedDriver);
 
 /********************* Controling how incoming data is formatted ***********/
 /*!
@@ -722,5 +694,5 @@ PERFORM_API MKMDReturn
     MKMDSetSystemIgnores(MKMDPort driver, MKMDOwnerPort owner, short unit, unsigned int ignoreBits);
 
 
-#endif /* _MD_ */
+#endif /* _MKMD_ */
 

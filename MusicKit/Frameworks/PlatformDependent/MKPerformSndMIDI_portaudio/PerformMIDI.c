@@ -3,43 +3,15 @@
   Defined In: The MusicKit
 
   Description:
-    Interface routines emulating the midi mach device driver of OpenStep/MacOsX
+    MusicKit Interface routines to portmusic.
 
-  Original Author: Leigh M. Smith, <leigh@tomandandy.com>, tomandandy music inc.
+  Original Author: Leigh M. Smith, <leigh@leighsmith.com>
 
-  30 July 1999, Copyright (c) 1999 tomandandy music inc.
+  Copyright (c) 2004 The MusicKit Project, All Rights Reserved.
 
   Permission is granted to use and modify this code for commercial and non-commercial
   purposes so long as the author attribution and this copyright message remains intact
   and accompanies all derived code.
-*/
-/*
-Modification history:
-
-  $Log$
-  Revision 1.1  2001/07/02 22:03:48  sbrandon
-  - initial revision. Still a work in progress, but does allow the MusicKit
-    and SndKit to compile on GNUstep.
-
-  Revision 1.2  2001/05/12 08:43:43  sbrandon
-  - added MKMDGetMIDIDeviceOnHost from MacOSX framework
-  - changed return type of appropriate methods to MKMD_SUCCESS instead of 0
-
-  Revision 1.1  2001/04/21 21:44:31  sbrandon
-  renamed mididriverUser.c to PerformMIDI.c
-
-  Revision 1.4  2000/12/15 02:02:29  leigh
-  Initial Revision
-
-  Revision 1.3  2000/11/29 19:44:38  leigh
-  Updated to new function naming
-
-  Revision 1.2  2000/03/11 01:58:55  leigh
-  Removed uncompilable references to Windows PerformMidi cruft
-
-  Revision 1.1.1.1  2000/01/14 00:14:34  leigh
-  Initial revision
- 
 */
 
 #include "mididriverUser.h"
@@ -69,7 +41,6 @@ static void *callbackParam;
 PERFORM_API MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
 {
     if(*hostname) {
-//      NSLog(@"MIDI on remote hosts not yet implemented on GNUstep\n");
         fprintf(debug, "MIDI on remote hosts not yet implemented on GNUstep\n");
         return MKMD_PORT_NULL;
     }
@@ -222,10 +193,10 @@ PERFORM_API kern_return_t MKMDStopClock (
 }
 
 /* Routine MKMDClaimUnit */
-PERFORM_API kern_return_t MKMDClaimUnit (
-	MKMDPort mididriver_port,
-	MKMDOwnerPort owner_port,
-	short unit)
+PERFORM_API kern_return_t MKMDClaimUnit (BOOL input,
+					 MKMDPort mididriver_port,
+					 MKMDOwnerPort owner_port,
+					 short unit)
 {
 #ifdef FUNCLOG
   fprintf(debug, "MKMDClaimUnit called %d\n", unit);
@@ -234,10 +205,10 @@ PERFORM_API kern_return_t MKMDClaimUnit (
 }
 
 /* Routine MKMDReleaseUnit */
-PERFORM_API kern_return_t MKMDReleaseUnit (
-	MKMDPort mididriver_port,
-	MKMDOwnerPort owner_port,
-	short unit)
+PERFORM_API kern_return_t MKMDReleaseUnit (BOOL input,
+					   MKMDPort mididriver_port,
+					   MKMDOwnerPort owner_port,
+					   short unit)
 {
 #ifdef FUNCLOG
   fprintf(debug, "MKMDReleaseUnit called\n");
@@ -445,7 +416,7 @@ PERFORM_API kern_return_t MKMDDownloadDLSInstruments(unsigned int *patchesToDown
 }
 
 // retrieve a list of strings giving driver names, and therefore (0 based) unit numbers.
-PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
+PERFORM_API const char **MKMDGetAvailableDrivers(BOOL input, unsigned int *selectedDriver)
 {
     static const char *silentDriver = "silent MIDI Driver";
     *selectedDriver = 0;
