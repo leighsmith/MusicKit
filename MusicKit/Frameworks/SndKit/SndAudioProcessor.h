@@ -26,9 +26,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
-@class SndAudioProcessor
-@abstract A VST-like audio FX processing module base class.
-@discussion To come
+  @class SndAudioProcessor
+  @abstract A VST-like audio FX processing module base class.
+  @discussion To come
 */
 @interface SndAudioProcessor : NSObject {
 /*! @var  numParams Number of parameters in the audio processor */
@@ -37,8 +37,8 @@
     SndAudioProcessorChain *audioProcessorChain;
 /*! @var name */    
     NSString *name;
-/*! @var  bActive */    
-    BOOL  bActive;
+/*! @var  active Indicates the processor instance will perform the processing. */
+    BOOL  active;
 }
 
 /*!
@@ -58,6 +58,15 @@
 + (NSArray*) fxClasses;
 
 /*!
+  @method availableAudioProcessors
+  @abstract Returns an array of names of available audio units (on MacOS X).
+  @discussion The names returned can be assumed to be human readable and reasonably formatted. They can also
+     be assumed to be unique and therefore can be used to create an instance using +processorNamed:.
+  @result Returns an autoreleased NSArray of NSStrings of audio processors.
+ */
++ (NSArray *) availableAudioProcessors;
+
+/*!
  @method     audioProcessor
  @abstract   Factory method
  @discussion To come
@@ -66,16 +75,24 @@
 + audioProcessor;
 
 /*!
+  @method audioProcessorNamed:
+  @abstract Returns an autoreleased instance of a SndProcessor subclass named <I>processorName</I>.
+  @param processorName The name of a SndAudioProcessor as returned previously by <B>availableAudioProcessors</B>.
+  @discussion Factory method.
+ */
++ (SndAudioProcessor *) audioProcessorNamed: (NSString *) processorName;
+
+/*!
   @method     init
   @abstract   Initialization method
-  @result     Self.
-*/
+  @result     Returns <B>self</B>.
+ */
 - init;
 
 /*!
   @method     initWithParamCount:name:
   @abstract   Initialization method
-  @result     Self.
+  @result     Returns <B>self</B>.
 */
 - initWithParamCount: (const int) count name: (NSString*) s;
 
@@ -86,6 +103,8 @@
   @result      self
 */
 - reset;
+
+- (void) setNumParams: (const int) c;
 
 /*!
   @method     paramCount
@@ -137,10 +156,9 @@
  @discussion By VST convention, the argument v should be in the range [0,1]. If the
              internal parameter has a different range, this should be mapped internally.
  @param      index Index of the parameter to be set 
- @param      v Value in the range [0,1]
- @result     Self.
+ @param      v Floating point value in the range [0,1]
 */
-- setParam: (const int) index toValue: (const float) v;
+- (void) setParam: (const int) index toValue: (const float) v;
 
 /*!
  @method     processReplacingInputBuffer:outputBuffer:

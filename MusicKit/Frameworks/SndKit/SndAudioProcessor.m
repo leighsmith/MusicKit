@@ -29,17 +29,17 @@ static NSMutableArray *fxClassesArray = nil;
 
 + (void) registerAudioProcessorClass: (id) fxclass
 {
-  if (!fxClassesArray)
-    fxClassesArray = [[NSMutableArray alloc] init];
-
-  if (fxclass != [SndAudioProcessor class]) {// don't want to register the base class!
-    if (![fxClassesArray containsObject: fxclass]) {
-      [fxClassesArray addObject: fxclass];
+    if (!fxClassesArray)
+	fxClassesArray = [[NSMutableArray alloc] init];
+    
+    if (fxclass != [SndAudioProcessor class]) {// don't want to register the base class!
+	if (![fxClassesArray containsObject: fxclass]) {
+	    [fxClassesArray addObject: fxclass];
 #if SNDAUDIOPROCESSOR_DEBUG
-      NSLog(@"registering FX class: %@",[fxclass className]);
+	    NSLog(@"registering FX class: %@",[fxclass className]);
 #endif
+	}
     }
-  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,10 +48,22 @@ static NSMutableArray *fxClassesArray = nil;
 
 + (NSArray*) fxClasses
 {
-  if (fxClassesArray)
-    return [[fxClassesArray retain] autorelease];
-  else
-    return nil;
+    if (fxClassesArray)
+	return [[fxClassesArray retain] autorelease];
+    else
+	return nil;
+}
+
++ (NSArray *) availableAudioProcessors
+{
+    // Return the array of names of available audio processors
+    NSArray *concreteSubclasses = [NSArray arrayWithObjects: @"Delay",
+							     @"Reverb",
+							     @"Distortion", 
+							     @"Flanger",
+							     @"NoiseGate",
+							     nil];
+    return concreteSubclasses;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +72,26 @@ static NSMutableArray *fxClassesArray = nil;
 
 + audioProcessor
 {
-  return [[SndAudioProcessor new] autorelease];
+    return [[SndAudioProcessor new] autorelease];
+}
+
++ (SndAudioProcessor *) audioProcessorNamed: (NSString *) processorName
+{
+    NSString *className = [@"SndAudioProcessor" stringByAppendingString: processorName];
+    SndAudioProcessor *processor = [NSClassFromString(className) new];
+    return [processor autorelease];
+}
+
+- initWithParamCount: (const int) count name: (NSString*) s
+{
+    self = [super init];
+    if (self) {
+	[SndAudioProcessor registerAudioProcessorClass: [self class]];
+	[self setName: s];
+	numParams = count;
+	active   = FALSE;
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -69,25 +100,7 @@ static NSMutableArray *fxClassesArray = nil;
 
 - init
 {
-  self = [super init];
-  if (self) {
-    [SndAudioProcessor registerAudioProcessorClass: [self class]];
-    numParams = 0;
-    bActive   = FALSE;
-  }
-  return self;
-}
-
-- initWithParamCount: (const int) count name: (NSString*) s
-{
-  self = [super init];
-  if (self) {
-    [SndAudioProcessor registerAudioProcessorClass: [self class]];
-    [self setName: s];
-    numParams = count;
-    bActive   = FALSE;
-  }
-  return self;
+    return [self initWithParamCount: 0 name: @""];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -106,17 +119,16 @@ static NSMutableArray *fxClassesArray = nil;
 - (NSString *) description
 {
     return [NSString stringWithFormat: @"%@ %@ %@ params:%i",
-	[super description], name, bActive ? @"(active)" : @"(inactive)", numParams];
+	[super description], name, active ? @"(active)" : @"(inactive)", numParams];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // setNumParams
 ////////////////////////////////////////////////////////////////////////////////
 
-- setNumParams: (const int) c
+- (void) setNumParams: (const int) c
 {
   numParams = c;
-  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -205,7 +217,7 @@ static NSMutableArray *fxClassesArray = nil;
 // setParam:toValue:
 ////////////////////////////////////////////////////////////////////////////////
 
-- setParam: (const int) index toValue: (const float) v
+- (void) setParam: (const int) index toValue: (const float) v
 {
   /* Example:
   switch (index) {
@@ -214,7 +226,6 @@ static NSMutableArray *fxClassesArray = nil;
       break;
   }
   */
-  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -225,7 +236,7 @@ static NSMutableArray *fxClassesArray = nil;
                         outputBuffer: (SndAudioBuffer*) outB
 {
   // no processing? return FALSE!
-  // remember to check bActive in derived classes.
+  // remember to check active in derived classes.
 
   // in derived classes, return TRUE if the output buffer has been written to
   return FALSE;
@@ -255,12 +266,12 @@ static NSMutableArray *fxClassesArray = nil;
 
 - (BOOL) isActive
 {
-  return bActive;
+  return active;
 }
 
 - setActive: (const BOOL) b
 {
-  bActive = b;
+  active = b;
   return self;
 }
 
