@@ -15,6 +15,9 @@
 
 # Modification history:
 # $Log$
+# Revision 1.20  2002/02/26 15:42:12  sbrandon
+# changed 2 x .c to .m files as per MacOSX changes
+#
 # Revision 1.19  2002/02/01 10:57:36  sbrandon
 # we now compile c++ files directly from this makefile due to advances in
 # GNUstep - no need for specially constructed subproject.
@@ -134,11 +137,10 @@ $(MY_NAME)_OBJC_FILES = \
 	  SndAudioProcessorRecorder.m SndAudioProcessorInspector.m \
           SndAudioProcessorToneGenerator.m SndAudioProcessorNoiseGate.m \
           SndStreamArchitectureView.m SndView.m SndTable.m SndExpt.m \
-	  SndFunctionsDiskIO.m #SndMeter.m
+	  SndFunctionsDiskIO.m _SndConvert.m _Sndresamplesubs.m#SndMeter.m
 
 $(MY_NAME)_C_FILES = \
-         SndEndianFunctions.c _SndConvert.c _Sndfilterkit.c _Sndlibst.c\
-         _Sndresamplesubs.c
+         SndEndianFunctions.c _Sndfilterkit.c _Sndlibst.c
 
 $(MY_NAME)_CC_FILES = allpass.cpp comb.cpp reverbBridge.cpp revmodel.cpp
 
