@@ -397,100 +397,59 @@
 
 - mixWithBuffer: (SndAudioBuffer*) buff fromStart: (long) start toEnd: (long) end
 {
-  long frameCount;
-
   // SndPrintStruct(&formatSnd); // for checking the formatSnd is valid
 
-  if (end > formatSnd.dataSize / sizeof(float))
-    end = formatSnd.dataSize / sizeof(float);
-
-  frameCount = end - start;
+  
 
   if ([self dataFormat] == SND_FORMAT_FLOAT) {
+    
+    long   frameCount;    
+    int    selfNumChannels = formatSnd.channelCount;
+    int    buffNumChannels = [buff channelCount];
+    int    i;
+    float *in = NULL;
+    float *out = (float*) data;
+    float *convertBuffer = NULL;
 
-    int selfNumChannels = formatSnd.channelCount;
-    int buffNumChannels = [buff channelCount];
-    int i;
+    if (end > formatSnd.dataSize / sizeof(float))
+      end = formatSnd.dataSize / sizeof(float);
+    frameCount = end - start;
 
-    switch ([buff dataFormat]) {
-
-      // SOURCE BUFFER IS 32-BIT FLOAT
-
-      case SND_FORMAT_FLOAT: {
-
-        float *in  = (float*) [buff data];
-        float *out = (float*) data;
-
-        if (selfNumChannels == buffNumChannels) {
-#ifdef __VEC__
-          /* FIXME need to do extra check to ensure altivec is supported at runtime */
-          vadd(in, 1,out+start,1,out+start,1,frameCount * buffNumChannels);
-#else
-          for (i = 0; i < frameCount * buffNumChannels; i++) {
-            out[i+start] += in[i]; // interleaving automatically taken care of!
-          }
-#endif
-        }
-        else if (selfNumChannels == 2) {
-          switch (buffNumChannels) {
-            case 1:
-              for (i = 0; i < frameCount; i++) {
-                register int pos = (i<<1)+start;
-                out[pos]   += in[i];
-                out[pos+1] += in[i];
-              }
-              break;
-            default:
-              NSLog(@"Mix buffer - not format handled (yet)");
-          }
-        }
-        else if (selfNumChannels == 1) {
-          switch (buffNumChannels) {
-            case 2:
-              for (i = 0; i < frameCount; i++) {
-                out[i+start] += in[i<<1]; // copy left channel into output buffer
-              }
-              break;
-            default:
-              NSLog(@"Mix buffer - not format handled (yet)");
-          }
-        }
-        break;
-      }
-
-        // SOURCE BUFFER IS 16-BIT
-
-      case SND_FORMAT_LINEAR_16: {
-
-        short *in  = (short*) [buff data];
-        float *out = (float*) data, f;
-        start = start * selfNumChannels;
-
-        if (selfNumChannels == buffNumChannels) {
-          for (i = 0; i < frameCount * buffNumChannels; i++) {
-            f = (float) in[i] / 32768.0f;
-            out[i+start] += f; // interleaving automatically taken care of!
-          }
-        }
-        else if (buffNumChannels == 1)  {
-          for (i = 0; i < frameCount; i++) {
-            register int pos = (i<<1)+start;
-            f = (float) in[i] / 32768.0f;
-            out[pos]   += f; // interleaving automatically taken care of!
-            out[pos+1] += f; // interleaving automatically taken care of!
-          }
-        }
-        else if (buffNumChannels == 2)  {
-          for (i = 0; i < frameCount; i++) {
-            f = (float) in[i<<1] / 32768.0f;
-            out[i+start] += f; // interleaving automatically taken care of!
-          }
-        }
-        break;
-      }
-      default:
-        NSLog(@"SndAudioBuffer::mixWithBuffer: WARN: unsupported format %d", [buff dataFormat]);
+    if  ([buff dataFormat] != SND_FORMAT_FLOAT) {
+      convertBuffer = (float*) malloc ([buff lengthInSamples] * [buff channelCount] * sizeof(float*));
+      [buff convertDataToFormat: SND_FORMAT_FLOAT resultBuffer: convertBuffer];
+      in  = convertBuffer;
     }
+    else
+      in = [buff data];
+
+    if (selfNumChannels > 2 || buffNumChannels > 2) {
+      NSLog(@"Mix buffer - channels > 2 not handled (yet)");
+    }
+    else if (selfNumChannels == buffNumChannels) {
+#ifdef __VEC__
+      /* FIXME need to do extra check to ensure altivec is supported at runtime */
+      vadd(in, 1,out+start,1,out+start,1,frameCount * buffNumChannels);
+#else
+      for (i = 0; i < frameCount * buffNumChannels; i++) {
+        out[i+start] += in[i]; // interleaving automatically taken care of!
+      }
+#endif
+    }
+    else if (selfNumChannels == 2) {
+      for (i = 0; i < frameCount; i++) {
+        register int pos = (i<<1)+start;
+        out[pos]   += in[i];
+        out[pos+1] += in[i];
+      }
+    }
+    else if (selfNumChannels == 1) {
+      for (i = 0; i < frameCount; i++) {
+        out[i+start] += in[i<<1]; // copy left channel into output buffer
+      }
+    }
+    if (convertBuffer)
+      free(convertBuffer);
   }
   else {
     NSLog(@"SndAudioBuffer::mixWithBuffer: WARN: miss-matched buffer formats - write converter");
