@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2001/02/03 02:32:27  leigh
+  Prepared for checking the incoming unit, hid error string assignments behind MKMDErrorString
+
   Revision 1.8  2000/12/14 05:00:11  leigh
   Corrected to ensure NULL termination of the drivers returned
 
@@ -45,6 +48,8 @@ Modification history:
 #include "midi_driver.h"
 #include <CoreMIDI/MIDIServices.h>
 #include <CarbonCore/CarbonCore.h> // needed for AbsoluteTime definitions.
+
+#include <mach/mach_error.h>  // temporary until we improve error reporting.
 
 #define FUNCLOG 0
 
@@ -141,6 +146,13 @@ PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
     *selectedDriver = 0;
     
     return driverList;
+}
+
+// Interpret the errorCode and return the appropriate error string
+PERFORM_API char *MKMDErrorString(MKMDReturn errorCode)
+{
+    // This isn't right but will suffice for now.
+    return mach_error_string(errorCode);
 }
 
 // returns NULL if unable to find the hostname, otherwise whatever value for MKMDPort
@@ -550,11 +562,12 @@ PERFORM_API MKMDReturn MKMDSetClockQuantum (
 // probably need to look at the msg to determine what to do.
 static void replyDispatch(MKMDReplyFunctions *userFuncs)
 {
+    short incomingUnit;
     if (userFuncs->dataReply) {
         unsigned int packetIndex;
         int dataIndex;
     
-        MIDIPacket *packet = (MIDIPacket *)receivedPacketList->packet;	// remove const (!)
+        MIDIPacket *packet = (MIDIPacket *) receivedPacketList->packet;	// remove const (!)
         for (packetIndex = 0; packetIndex < receivedPacketList->numPackets; ++packetIndex) {
             MKMDRawEvent *events = (MKMDRawEvent *) malloc(sizeof(MKMDRawEvent) * packet->length);
 
@@ -566,10 +579,11 @@ static void replyDispatch(MKMDReplyFunctions *userFuncs)
             }
             // NSLog(@"\n");
             // claimedSourceUnit == 0; // determine from refCon and connRefCon
+            incomingUnit = 0; // TODO determine the unit the data was received on.
             if(dataReplyPort != MKMD_PORT_NULL)
-                (*(userFuncs->dataReply))(dataReplyPort, 0, events, packet->length);
+                (*(userFuncs->dataReply))(dataReplyPort, incomingUnit, events, packet->length);
             else
-                fprintf(stderr, "not receiving stuff\n");
+                fprintf(stderr, "not receiving MIDI since dataReplyPort is null!\n");
             free(events);
             packet = MIDIPacketNext(packet);
         }
