@@ -92,7 +92,7 @@ the MusicKit are designed specifically to be used in a MKPart's info
 MKNote.  These are listed in the description of the <b>setInfo:</b>
 method, below.  The info MKNote is stored separately from the MKNotes
 in the body of the MKPart; most of the MKNote-accessing methods, such
-as <b>empty</b>,<b> nth:</b>, and <b>next:</b>, don't apply to the
+as <b>empty</b>, <b>nth:</b>, and <b>next:</b>, don't apply to the
 info MKNote.  The exceptions - the methods that <i>do</i> affect the
 info MKNote - are so noted in their descriptions below.
 
@@ -106,77 +106,83 @@ circumstances, such as when reading a MKScorefile.  The function
 of MKPart be used when MKParts are automatically created.  You
 retrieve the MKPart class with <b>MKGetPartClass()</b>.
 
-    Editing a MKPart refers generally to adding and removing MKNotes,
-    not to changing the contents of the MKNotes themselves (although
-    some methods do both; see <b>splitNotes</b> and <b>combineNotes</b>).
-    MKNotes are ordered within the MKPart by their timeTag values.
-    To move a MKNote within a MKPart, you simply change its timeTag by
-    sending it the appropriate message (see the MKNote class).
-    This effectively removes the MKNote from its MKPart, changes the timeTag,
-    and then adds it back to its MKPart.
-   
-    The MKNotes in a MKPart are stored in a NSArray object. The NSArray is only sorted
-    when necessary. In particular, the NSArray is sorted, if necessary, when an
-    access method is invoked. The access methods are:
+Editing a MKPart refers generally to adding and removing MKNotes,
+not to changing the contents of the MKNotes themselves (although
+some methods do both; see <b>splitNotes</b> and <b>combineNotes</b>).
+MKNotes are ordered within the MKPart by their timeTag values.
+To move a MKNote within a MKPart, you simply change its timeTag by
+sending it the appropriate message (see the MKNote class).
+This effectively removes the MKNote from its MKPart, changes the timeTag,
+and then adds it back to its MKPart.
+
+The MKNotes in a MKPart are stored in a NSArray object. The NSArray is only sorted
+when necessary. In particular, the NSArray is sorted, if necessary, when an
+access method is invoked. The access methods are:
    
 <ul>
-      <li>firstTimeTag:(double)firstTimeTag lastTimeTag:(double)lastTimeTag;</li>
-      <li>atTime:(double )timeTag;</li>
-      <li>atOrAfterTime:(double )timeTag;</li>
-      <li>nth:(unsigned )n;</li>
-      <li>atOrAfterTime:(double )timeTag nth:(unsigned )n;</li>
-      <li>atTime:(double )timeTag nth:(unsigned )n;</li>
-      <li>next:aNote;</li>
+<tt>
+      <li>firstTimeTag: (double) firstTimeTag lastTimeTag: (double) lastTimeTag;</li>
+      <li>atTime: (double) timeTag;</li>
+      <li>atOrAfterTime: (double) timeTag;</li>
+      <li>nth: (unsigned) n;</li>
+      <li>atOrAfterTime: (double) timeTag nth: (unsigned) n;</li>
+      <li>atTime: (double) timeTag nth: (unsigned) n;</li>
+      <li>next: (MKNote *) aNote;</li>
       <li>notes;</li>
+</tt>
 </ul>
 
     Other methods that cause a sort, if necessary, are:
    
 <ul>
+<tt>
       <li>combineNotes;</li>
-      <li>removeNotes:aList;</li>
-      <li>removeNote:aNote;</li>
+      <li>removeNotes: (NSArray *) aList;</li>
+      <li>removeNote: (MKNote *) aNote;</li>
+</tt>
 </ul>
 
     Methods that may alter the NSArray such that its MKNotes are no longer sorted are
     the following:
 
-<ul>   
-      <li>addNoteCopies:aList timeShift:(double )shift;</li>
-      <li>addNotes:aList timeShift:(double )shift;</li>
-      <li>addNote:aNote;</li>
-      <li>addNoteCopy:aNote;</li>
-      <li>splitNotes</li>
+<ul>
+<tt>
+      <li>addNoteCopies: (NSArray *) aList timeShift: (double) shift;</li>
+      <li>addNotes: (NSArray *) aList timeShift: (double) shift;</li>
+      <li>addNote: (MKNote *) aNote;</li>
+      <li>addNoteCopy: (MKNote *) aNote;</li>
+      <li>splitNotes;</li>
+</tt>
 </ul>
    
-    This scheme works well for most cases. However, there are situations where
-    it can be problematic. For example:
+This scheme works well for most cases. However, there are situations where
+it can be problematic. For example:
    
-    <tt>
-      for (i=0; i<100; i++) {<br>
-        [aPart addNote:anArray[i]];<br>
-        [aPart removeNote:anotherArray[i]];<br>
-      }
-      </tt>
+<tt>
+  for (i = 0; i < 100; i++) {<br>
+  &nbsp;&nbsp;[aPart addNote: anArray[i]];<br>
+  &nbsp;&nbsp;[aPart removeNote: anotherArray[i]];<br>
+  }
+</tt>
 
-    In this case, the MKPart will be sorted each time removeNote: is called,
-    causing N-squared behavior. You can get around this by first adding all the
-    notes using addNotes: and then removing all the notes using removeNotes:.
-   
-    In some cases, you may find it most convenient to
-    remove the MKNotes from the MKPart, modify them in your own
-    data structure, and then reinsert them into the MKPart.
-   
-    You can explicitly trigger a sort (if needed) by sending the -sort message.
-    This is useful if you ever subclass MKPart.
-   
-    To get a sorted copy of the NSArray of notes use the -notes method.
-    To get the NSArray of notes itself, use the -notesNoCopy method.
-      -notesNoCopy does not guarantee the MKNotes are sorted.
-    If you want to examine the MKNotes in-place sorted, first send -sort, then
-      -notesNoCopy.
-   
-    You can find out if the NSArray is currently sorted by the -isSorted method.
+In this case, the MKPart will be sorted each time removeNote: is called,
+causing N-squared behavior. You can get around this by first adding all the
+notes using addNotes: and then removing all the notes using removeNotes:.
+
+In some cases, you may find it most convenient to
+remove the MKNotes from the MKPart, modify them in your own
+data structure, and then reinsert them into the MKPart.
+
+You can explicitly trigger a sort (if needed) by sending the -<b>sort</b> message.
+This is useful if you ever subclass MKPart.
+
+To get a sorted copy of the NSArray of notes use the -<b>notes</b> method.
+To get the NSArray of notes itself, use the -<b>notesNoCopy</b> method.
+  -<b>notesNoCopy</b> does not guarantee the MKNotes are sorted.
+If you want to examine the MKNotes in-place sorted, first send -<b>sort</b>, then
+  -<b>notesNoCopy</b>.
+
+You can find out if the NSArray is currently sorted by the -<b>isSorted</b> method.
 */
 
 #ifndef __MK_Part_H___
@@ -204,10 +210,18 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
 }
 
 /*!
- @method part
- @result Returns a newly alloced, inited and autoreleased MKPart
+  @method part
+  @result Returns a newly allocated, initialized and autoreleased MKPart.
 */
-+ part;
++ (MKPart *) part;
+
+/*!
+  @method partWithName:
+  @abstract Returns a newly allocated, initialized and autoreleased MKPart with the given name.
+  @param partName is an NSString instance.
+  @result Returns a newly allocated, initialized and autoreleased MKPart.
+ */
++ partWithName: (NSString *) partName;
 
 /*!
   @method sort
@@ -216,7 +230,7 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               Normally, a MKPart sorts itself only when MKNotes are accessed,
               moved, or removed.  Returns <b>self</b>.
               
-              See also: - <b>isSorted</b>
+              See also: -<b>isSorted</b>
 */
 - sort;
 
@@ -226,9 +240,9 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
   @discussion Returns YES if the MKPart's MKNotes are currently guaranteed to be
               in time tag order, otherwise returns NO.   
               
-              See also: - <b>sort</b>
+              See also: -<b>sort</b>
 */
-- (BOOL)isSorted;
+- (BOOL) isSorted;
 
 /*!
   @method combineNotes
@@ -244,7 +258,7 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               MKPart, the noteOn and noteOff are removed and freed.  Returns
               <b>self</b>.
               
-              See also: -<b> splitNotes</b>
+              See also: -<b>splitNotes</b>
 */
 - combineNotes; 
 
@@ -257,21 +271,21 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               divided between the two MKNotes as described in MKNote's
               <b>split::</b> method.  Returns <b>self</b>.
               
-              See also: - <b>combineNotes:</b>, -<b> split:: </b>(MKNote)
+              See also: -<b>combineNotes:</b>, -<b>split::</b> (MKNote)
 */
 - splitNotes; 
 
 /*!
   @method addToScore:
-  @param  aScore is an id.
+  @param  aScore is an MKScore instance.
   @result Returns an id.
   @discussion Moves the MKPart from its present MKScore, if any, to <i>aScore</i>.
                Implemented in terms of MKScore's <b>addPart:</b> method.  Returns
               <b>self</b>.
               
-              See also:  - <b>removeFromScore:</b>,<b></b> - <b>score</b>
+              See also:  -<b>removeFromScore:</b>, -<b>score</b>
 */
-- addToScore:newScore; 
+- addToScore: (MKScore *) newScore; 
 
 /*!
   @method removeFromScore
@@ -280,7 +294,7 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               terms of MKScore's <b>removePart:</b> method.  Returns <b>self</b>,
               or <b>nil</b> if it isn't part of a MKScore.
               
-              See also: - <b>addToScore:</b>, - <b>score</b>
+              See also: -<b>addToScore:</b>, -<b>score</b>
 */
 - removeFromScore; 
 
@@ -290,8 +304,13 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
   @discussion Initializes the object.  This should be invoked when alloc'ing a new
               MKPart. 
 */
-- init; 
-- (void)dealloc;
+- init;
+
+/*!
+  @method dealloc
+  @abstract Deallocates ivars.
+ */
+- (void) dealloc;
 
 /*!
   @method releaseNotes
@@ -301,19 +320,20 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               active MKPartPerformer associated with it, this does nothing.  
               Returns <b>nil</b>.
               
-              See also: - <b>empty,</b> -<b>  removeNotes:</b>
+              See also: -<b>empty</b>, -<b>removeNotes:</b>
 */
 - releaseNotes;
 
 /*!
   @method releaseSelfOnly
   @result Returns an id.
-  @discussion Frees the MKPart but not its MKNotes.  The MKPart is removed from
+  @discussion THIS IS DEPRECATED. DO NOT USE. EXPECT IT TO BE REMOVED SOON.
+              Frees the MKPart but not its MKNotes.  The MKPart is removed from
               its MKScore, if any.  You <i>can</i> free a MKPart while its being
               performed by a MKPartPerformer - it's the MKPart's MKNotes, not the
               MKPart itself, that's performed.
               
-              See also: - <b>empty,</b> -<b>  removeNotes:</b>
+              See also: -<b>empty</b>, -<b>removeNotes:</b>
 */
 - releaseSelfOnly; 
 
@@ -330,76 +350,81 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               argument in methods such as <b>addNotes:</b> (sent to another
               MKPart), <b>addNotes:timeShift:</b>, and <b>removeNotes:</b>.
 */
-- firstTimeTag:(double)firstTimeTag lastTimeTag:(double)lastTimeTag;
+- firstTimeTag: (double) firstTimeTag lastTimeTag: (double) lastTimeTag;
 
 /*!
   @method addNote:
-  @param  aNote is an id.
-  @result Returns an id.
+  @param  aNote is an MKNote.
+  @result Returns an MKPart.
   @discussion Moves <i>aNote</i> from its present MKPart to the receiving MKPart. 
               Returns <i>aNote</i>'s old MKPart, or <b>nil</b> if none.
               
-              
-              See also: - <b>addNoteCopy:</b>, - <b>addNotes:timeShift:</b>, - <b>removeNote:</b>
+              See also: -<b>addNoteCopy:</b>, -<b>addNotes:timeShift:</b>, -<b>removeNote:</b>
 */
-- addNote: (MKNote *) aNote;
+- (MKPart *) addNote: (MKNote *) aNote;
 
 /*!
   @method addNoteCopy:
-  @param  aNote is an id.
-  @result Returns an id.
+  @param  aNote is an MKNote.
+  @result Returns an MKNote.
   @discussion Adds a copy of <i>aNote</i> to the MKPart.  Implemented in terms of
               <b>addNote:</b>.  Returns the new MKNote.
               
-              See also: - <b>addNote:</b>, - <b>addNoteCopies:timeShift:</b>, - <b>removeNote:</b>
+              See also: -<b>addNote:</b>, -<b>addNoteCopies:timeShift:</b>, -<b>removeNote:</b>
 */
-- addNoteCopy: (MKNote *) aNote;
+- (MKNote *) addNoteCopy: (MKNote *) aNote;
 
 /*!
   @method removeNote:
-  @param  aNote is an id.
+  @param  aNote is an MKNote.
   @result Returns an id.
   @discussion Removes <i>aNote</i> from the MKPart.  Returns the MKNote or
               <b>nil</b> if it isn't found.  You shouldn't invoke this method if
               the MKPart has an active MKPartPerformer associated with it. 
               
-              See also: - <b>removeNotes:</b>, - <b>empty</b>, - <b>addNote</b>
+              See also: -<b>removeNotes:</b>, -<b>empty</b>, -<b>addNote</b>
 */
-- removeNote: (MKNote *) aNote; 
+- (MKNote *) removeNote: (MKNote *) aNote; 
 
 /*!
   @method removeNotes:
-  @param  aList is an id.
+  @param  aNoteList is an NSArray instance.
   @result Returns an id.
-  @discussion Removes all the MKNotes the MKPart has in common with <i>aList</i>. 
+  @discussion Removes all the MKNotes the MKPart has in common with <i>aNoteList</i>. 
               Returns <b>self</b>.
               
-              See also: - <b>removeNote:</b>, - <b>empty</b>, - <b>addNote:</b>, - <b>firstTimeTag:lastTimeTag:</b>
+              See also: -<b>removeNote:</b>, -<b>empty</b>, -<b>addNote:</b>, -<b>firstTimeTag:lastTimeTag:</b>
 */
-- removeNotes: (NSArray *) aList;
+- removeNotes: (NSArray *) aNoteList;
+
+/*!
+  @method removeAllNotes
+  @abstract Deletes all MKNotes within this part.
+ */
+- (void) removeAllNotes; 
 
 /*!
   @method addNoteCopies:timeShift:
-  @param  aNoteList is an id.
+  @param  aNoteList is an NSArray instance.
   @param  shift is a double.
   @result Returns an id.
   @discussion Copies each MKNote in <i>aNoteList</i> (which should be a
               NSMutableArray object) adds <i>shift</i> to each new MKNote's time
               tag, then adds the new MKNotes to the MKPart by repeatedly invoking
-              <b>addNote:.</b>The MKNotes in <i>aNoteList</i>   are unaffected. 
+              <b>addNote:</b>. The MKNotes in <i>aNoteList</i>  are unaffected. 
               <i>aNoteList</i> is typically generated through MKPart's
               <b>notes</b> or <b>firstTimeTag:lastTimeTag:</b> method.  In this
               way, all or a portion of one MKPart can be copied into another. 
               Returns <b>self</b>, or <b>nil</b> if <i>aNoteList</i> is
               <b>nil</b>.
               
-              See also:  - <b>addNotes:timeShift:</b>,<b></b> - <b>shift</b>
+              See also:  -<b>addNotes:timeShift:</b>, -<b>shift</b>
 */
-- addNoteCopies: (NSArray *) aList timeShift:(double) shift;
+- addNoteCopies: (NSArray *) aNoteList timeShift: (double) shift;
 
 /*!
   @method addNotes:timeShift:
-  @param  aNoteList is an id.
+  @param  aNoteList is an NSArray instance.
   @param  shift is a double.
   @result Returns an id.
   @discussion Moves each MKNote in <i>aNoteList</i> from its present MKPart to the
@@ -411,11 +436,9 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               Returns <b>self</b>, or <b>nil</b> if <i>aNoteList</i> is
               <b>nil</b>.
               
-              See also:  - <b>addNoteCopies:timeShift:</b>,<b></b> - <b>shift:</b>
+              See also:  -<b>addNoteCopies:timeShift:</b>, -<b>shift:</b>
 */
-- addNotes: (NSArray *) aList timeShift:(double) shift; 
-
-- (void)removeAllObjects; 
+- addNotes: (NSArray *) aNoteList timeShift: (double) shift; 
 
 /*!
   @method shiftTime:
@@ -427,7 +450,7 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               removed and then readded to the MKPart.  Returns the
               MKPart.
 */
-- shiftTime:(double) shift; 
+- shiftTime: (double) shift; 
 
 /*!
   @method scaleTime:
@@ -457,7 +480,7 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               
               See also: -<b>  isEmpty</b>,<b></b>-<b> noteCount</b>
 */
--(BOOL) containsNote:aNote; 
+- (BOOL) containsNote: aNote; 
 
 /*!
   @method hasSoundingNotes:
@@ -474,12 +497,12 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               
               See also: - <b>noteCount</b>
 */
--(BOOL) isEmpty; 
+- (BOOL) isEmpty; 
 
 /*!
   @method atTime:
   @param  timeTag is a double.
-  @result Returns an id.
+  @result Returns an MKNote instance.
   @discussion Returns the (first) MKNote in the MKPart that has a time tag of
               <i>timeTag</i>, or <b>nil</b> if none.  Invokes MKNote's
               <b>compareNotes:</b> method if the MKPart contains more than one
@@ -487,77 +510,85 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               
               See also: -<b> atOrAfterTime:</b>,<b></b>-<b> atTime:nth:</b> ,- <b>next</b>
 */
-- atTime:(double) timeTag; 
+- (MKNote *) atTime: (double) timeTag; 
 
 /*!
   @method atOrAfterTime:
   @param  timeTag is a double.
-  @result Returns an id.
+  @result Returns an MKNote instance.
   @discussion Returns the first MKNote with a time tag equal to or greater than
               <i>timeTag</i>, or <b>nil</b> if none.
               
               See also:  -<b> atTime:</b>,<b></b>-<b> atOrAfterTime:nth:</b>,<b>  </b>- <b>next</b>
 */
-- atOrAfterTime:(double) timeTag;
+- (MKNote *) atOrAfterTime: (double) timeTag;
+
 /*!
   @method atOrBeforeTime:
   @param  timeTag is a double.
-  @result Returns an id.
+  @result Returns an MKNote instance.
   @discussion Returns the first MKNote with a time tag equal to or less than
    <i>timeTag</i>, or <b>nil</b> if none.
 */
-- atOrBeforeTime: (double) timeTag;
+- (MKNote *) atOrBeforeTime: (double) timeTag;
+
 /*!
   @method nth:
   @param  n is an unsigned.
-  @result Returns an id.
+  @result Returns an MKNote instance.
   @discussion Returns the <i>n</i>th MKNote (0-based), or <b>nil</b> if <i>n</i>
               is out of bounds (negative or greater than the MKPart's MKNote
               count).
               
               See also: - <b>notes</b>, - <b>noteCount</b>, - <b>atTime:</b>
 */
-- nth:(unsigned) n; 
+- (MKNote *) nth: (unsigned) n; 
 
 /*!
   @method atOrAfterTime:nth:
   @param  timeTag is a double.
   @param  n is an unsigned.
-  @result Returns an id.
+  @result Returns an MKNote instance.
   @discussion Returns the <i>n</i>th MKNote (zero-based) in the MKPart that has a
               time tag equal to or greater than <i>timeTag</i>, or <b>nil</b> if
               none.
               
               See also:  -<b> atTime:</b>,<b> </b>-<b> atOrAfterTime:</b>,<b></b>- <b>next</b>
 */
-- atOrAfterTime:(double) timeTag nth:(unsigned) n; 
+- (MKNote *) atOrAfterTime: (double) timeTag nth: (unsigned) n; 
 
 /*!
   @method atTime:nth:
   @param  timeTag is a double.
   @param  n is an unsigned.
-  @result Returns an id.
+  @result Returns an MKNote instance.
   @discussion Returns the <i>n</i>th MKNote (zero-based) in the MKPart that has a
               time tag of <i>timeTag</i>, or <b>nil </b>if none.
               
               See also: -<b> atTime:</b>,<b></b>-<b>   atOrAfterTime:</b>,<b></b>- <b>next</b>
 */
-- atTime:(double )timeTag nth:(unsigned )n;
+- (MKNote *) atTime: (double) timeTag nth: (unsigned) n;
 
 /*!
   @method next:
-  @param  aNote is an id.
-  @result Returns an id.
+  @param  aNote is an MKNote instance.
+  @result Returns an MKNote instance.
   @discussion Returns the MKNote immediately following <i>aNote</i>, or <b>nil</b>
               if <i>aNote</i> isn't a member of the MKPart, or if it's the last
               MKNote in the MKPart.  For greater efficiency, you should create a
               NSMutableArray from the <b>notes</b> method and then call
               <b>NX_ADDRESS()</b>.
               
-              
               See also: - <b>nth:</b>, - <b>atTime:</b>,<b></b>- <b>atOrAfterTime:</b>
 */
-- next: (MKNote *) aNote; 
+- (MKNote *) next: (MKNote *) aNote; 
+
+/*!
+  @method earliestNoteTime
+  @abstract Returns the time of the earliest note in the part.
+  @result Returns a double being the time tag of the first note.
+ */
+- (double) earliestNoteTime;
 
 /*!
   @method copyWithZone:
@@ -568,7 +599,7 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               
               See also: -<b> copy</b>
 */
-- copyWithZone:(NSZone *)zone; 
+- copyWithZone: (NSZone *) zone; 
 
 /*!
   @method copy
@@ -584,15 +615,15 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
 
 /*!
   @method notes
-  @result Returns an NSMutableArray.
-  @discussion Creates and returns a NSMutableArray of the MKPart's MKNotes in time order.
-              The MKPart is sorted before the NSMutableArray is created. The MKNotes
+  @result Returns an NSArray.
+  @discussion Creates and returns a NSArray of the MKPart's MKNotes in time order.
+              The MKPart is sorted before the NSArray is created. The MKNotes
               themselves are copied (for the moment, but ideally not).
               The NSArray is autoreleased and should be retained if required.
               
               See also: - <b>notesNoCopy</b>, - <b>noteCount</b>
 */
-- (NSMutableArray *) notes;
+- (NSArray *) notes;
 
 /*!
   @method notesNoCopy
@@ -678,16 +709,27 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               
               See also: - <b>infoNote</b>
 */
-- setInfoNote:(MKNote *) aNote;
+- setInfoNote: (MKNote *) aNote;
 
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
+/*!
+  @method partName
+  @abstract Return the name of the receiver.
+  @result Returns an NSString instance.
+ */
+- (NSString *) partName;
+
+/*!
+  @method setPartName:
+  @abstract Assigns the name of the receiver.
+  @param newPartName An NSString for the new name of the part.
+  @discussion The part name is used when reading and writing parts to a Scorefile.
+ */
+- (void) setPartName: (NSString *) newPartName;
+
+- (void) encodeWithCoder: (NSCoder *) aCoder;
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
 - (NSString *) description;
-
- /* Obsolete methods: */
-+ new; 
-//- (void)initialize;
 
 @end
 
