@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.31  2001/10/31 15:35:04  sbrandon
+ * replaced htonl() calls with equivalent NSSwap...() function
+ *
  * Revision 1.30  2001/09/12 12:06:32  sbrandon
  * changed uses of -cString to -fileSystemRepresentation to better cope with
  * unicode characters in filenames, and prepare way for Win32 implementations
@@ -98,6 +101,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
  */
 
 #ifdef WIN32
+#include <windows.h>
 #include <Winsock.h> // for htonl() functions
 #else
 # ifndef GNUSTEP
@@ -364,7 +368,7 @@ static int ioTags = 1000;
 //  NXGetc(stream); /* read off the \n character */
 //  name = realloc(name,strlen(name) + 1);
 //  NXRead(stream,&priority,sizeof(int));
-//  priority = (int)ntohl(priority);
+//  priority = (int)NSSwapBigLongToHost(priority);
 
     if (soundStruct) SndFree(soundStruct);
     if (!(s = malloc(sizeof(SndSoundStruct))))
@@ -374,12 +378,12 @@ static int ioTags = 1000;
 //  NXRead(stream,s,sizeof(SndSoundStruct)); /* gets 1st 4 bytes info string */
     [stream getBytes:s length:sizeof(SndSoundStruct)];/* only gets 1st 4 bytes of info string */
 #ifdef __LITTLE_ENDIAN__
-    s->magic = ntohl(s->magic);
-    s->dataLocation = ntohl(s->dataLocation);
-    s->dataSize = ntohl(s->dataSize);
-    s->dataFormat = ntohl(s->dataFormat);
-    s->samplingRate = ntohl(s->samplingRate);
-    s->channelCount = ntohl(s->channelCount);
+    s->magic = NSSwapBigLongToHost(s->magic);
+    s->dataLocation = NSSwapBigLongToHost(s->dataLocation);
+    s->dataSize = NSSwapBigLongToHost(s->dataSize);
+    s->dataFormat = NSSwapBigLongToHost(s->dataFormat);
+    s->samplingRate = NSSwapBigLongToHost(s->samplingRate);
+    s->channelCount = NSSwapBigLongToHost(s->channelCount);
 #endif
 
 //  SndPrintStruct(s);
@@ -434,12 +438,12 @@ static int ioTags = 1000;
     }
 
 #ifdef __LITTLE_ENDIAN__
-    s->magic = htonl(s->magic);
-    s->dataLocation = htonl(s->dataLocation);
-    s->dataSize = htonl(s->dataSize);
-    s->dataFormat = htonl(s->dataFormat);
-    s->samplingRate = htonl(s->samplingRate);
-    s->channelCount = htonl(s->channelCount);
+    s->magic = NSSwapHostIntToBig(s->magic);
+    s->dataLocation = NSSwapHostIntToBig(s->dataLocation);
+    s->dataSize = NSSwapHostIntToBig(s->dataSize);
+    s->dataFormat = NSSwapHostIntToBig(s->dataFormat);
+    s->samplingRate = NSSwapHostIntToBig(s->samplingRate);
+    s->channelCount = NSSwapHostIntToBig(s->channelCount);
 #endif
 
 //  NXWrite(stream, s, headerSize);
