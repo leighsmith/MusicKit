@@ -51,10 +51,10 @@
            startPositionInSeconds: (double) startPos
                 durationInSeconds: (double) duration
 {
-  double sr = [self samplingRate];
-  return [self playInFuture: inSeconds
-                beginSample: startPos * sr
-                sampleCount: duration * sr];
+    double sr = [self samplingRate];
+    return [self playInFuture: inSeconds
+		  beginSample: startPos * sr
+		  sampleCount: duration * sr];
 }
 
 + (BOOL) isMuted
@@ -116,6 +116,21 @@
     return SND_ERR_NONE;
 }
 
+#if 0
+// mirroring the playback 
+- (SndCapture *) recordInFuture: (double) inSeconds
+     beginSample: (unsigned long) begin
+     sampleCount: (unsigned long) count 
+{
+    
+    return [[SndRecorder defaultSndRecorder] recordSnd: self 
+                                  withTimeOffset: inSeconds 
+                                    beginAtIndex: playBegin 
+                                      endAtIndex: playEnd];
+    
+}
+#endif
+
 - record: sender
 {
     NSLog(@"Not yet implemented!\n");
@@ -172,30 +187,30 @@
 
 - pause: sender
 {
-  [performancesArrayLock lock];
-  [performancesArray makeObjectsPerformSelector: @selector(pause)];
-  [performancesArrayLock unlock];
-  return self;
+    [performancesArrayLock lock];
+    [performancesArray makeObjectsPerformSelector: @selector(pause)];
+    [performancesArrayLock unlock];
+    return self;
 }
 
 - (int) pause
 {
-  [self pause: self];
-  return SND_ERR_NONE;
+    [self pause: self];
+    return SND_ERR_NONE;
 }
 
 - resume: sender
 {
-  [performancesArrayLock lock];
-  [performancesArray makeObjectsPerformSelector: @selector(resume)];
-  [performancesArrayLock unlock];
-  return self;
+    [performancesArrayLock lock];
+    [performancesArray makeObjectsPerformSelector: @selector(resume)];
+    [performancesArrayLock unlock];
+    return self;
 }
 
 - (int) resume;
 {
-  [self resume:self];
-  return SND_ERR_NONE;
+    [self resume:self];
+    return SND_ERR_NONE;
 }
 
 - (BOOL) isPlayable

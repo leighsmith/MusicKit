@@ -77,7 +77,7 @@ static float smoothValue(SndMeter *self, float aValue)
 }
 
 // TODO this only handles muLaw encoded sound! Needs upgrading to handle all formats,
-/// especially 16 bit and float.
+// especially 16 bit and float.
 static float prepareValueForDisplay(SndMeter *self, float m)
 {
     // TODO switch([self->sound dataFormat]) {

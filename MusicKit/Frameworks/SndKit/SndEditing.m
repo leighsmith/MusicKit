@@ -979,7 +979,8 @@ static int SndCopySamples(SndSoundStruct **toSound, SndSoundStruct *fromSound,
     bufferRange.location = 0;
     bufferRange.length = fillLength; // TODO this may become [buff lengthInSamples] if we remove toLength: parameter.
     
-    // NSLog(@"fillAudioBuffer: samplesInRange %ld %ld, length of snd %ld", readFromSndSample.location, readFromSndSample.length, [self lengthInSampleFrames]);
+    // NSLog(@"fillAudioBuffer: intoFrameRange: %ld %ld samplesInRange: %ld %ld, length of snd %ld", 
+    // bufferRange.location, bufferRange.length, readFromSndSample.location, readFromSndSample.length, [self lengthInSampleFrames]);
     framesInserted = [self insertIntoAudioBuffer: buff
 				  intoFrameRange: bufferRange
 				  samplesInRange: readFromSndSample];

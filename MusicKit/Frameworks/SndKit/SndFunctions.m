@@ -59,34 +59,34 @@ CONDITIONS OF THIS AGREEMENT.
 int SndSampleWidth(SndSampleFormat format)
 {
     switch (format) {
-    case SND_FORMAT_MULAW_8:
-    case SND_FORMAT_LINEAR_8:
-        return 1;
-        break;
-    case SND_FORMAT_EMPHASIZED:
-    case SND_FORMAT_COMPRESSED:
-    case SND_FORMAT_COMPRESSED_EMPHASIZED:
-    case SND_FORMAT_DSP_DATA_16:
-    case SND_FORMAT_LINEAR_16:
-        return 2;
-        break;
-    case SND_FORMAT_LINEAR_24:
-    case SND_FORMAT_DSP_DATA_24:
-        return 3;
-        break;
-    case SND_FORMAT_LINEAR_32:
-    case SND_FORMAT_DSP_DATA_32:
-        return 4;
-        break;
-    case SND_FORMAT_FLOAT:
-        return sizeof(float);
-        break;
-    case SND_FORMAT_DOUBLE:
-        return sizeof(double);
-        break;
-    default: /* just in case */
-        return 2;
-        break;
+	case SND_FORMAT_MULAW_8:
+	case SND_FORMAT_LINEAR_8:
+	    return 1;
+	    break;
+	case SND_FORMAT_EMPHASIZED:
+	case SND_FORMAT_COMPRESSED:
+	case SND_FORMAT_COMPRESSED_EMPHASIZED:
+	case SND_FORMAT_DSP_DATA_16:
+	case SND_FORMAT_LINEAR_16:
+	    return 2;
+	    break;
+	case SND_FORMAT_LINEAR_24:
+	case SND_FORMAT_DSP_DATA_24:
+	    return 3;
+	    break;
+	case SND_FORMAT_LINEAR_32:
+	case SND_FORMAT_DSP_DATA_32:
+	    return 4;
+	    break;
+	case SND_FORMAT_FLOAT:
+	    return sizeof(float);
+	    break;
+	case SND_FORMAT_DOUBLE:
+	    return sizeof(double);
+	    break;
+	default: /* just in case */
+	    return 2;
+	    break;
     }
     /* never reaches here */
     return 2;
@@ -100,27 +100,27 @@ int SndFrameSize(SndFormat format)
 NSString *SndFormatName(SndSampleFormat dataFormat, BOOL verbose)
 {
     switch(dataFormat) {
-    case SND_FORMAT_MULAW_8:
-    case SND_FORMAT_MULAW_SQUELCH:
-	return @"8-bit muLaw";
-    case SND_FORMAT_LINEAR_8:
-	return @"8-bit Linear";
-    case SND_FORMAT_LINEAR_16:
-	return verbose ? @"16-bit Integer (2's complement, big endian)" : @"16-bit Linear";
-    case SND_FORMAT_LINEAR_24:
-	return verbose ? @"24-bit Integer (2's complement, big endian)" : @"24-bit Linear";
-    case SND_FORMAT_LINEAR_32:
-	return verbose ? @"32-bit Integer (2's complement, big endian)" : @"32-bit Linear";
-    case SND_FORMAT_FLOAT:
-	return verbose ? @"Signed 32-bit floating point" : @"32-bit Floating Point";
-    case SND_FORMAT_DOUBLE:
-	return verbose ? @"Signed 64-bit floating point" : @"64-bit Floating Point";
-    case SND_FORMAT_MP3:
-	return verbose ? @"MPEG 1 Layer 3 Compressed" : @"MP3 Compressed";
-    case SND_FORMAT_INDIRECT:
-	return @"Fragmented";
-    default:
-	return [NSString stringWithFormat: @"Unknown format %d", dataFormat];
+	case SND_FORMAT_MULAW_8:
+	case SND_FORMAT_MULAW_SQUELCH:
+	    return @"8-bit muLaw";
+	case SND_FORMAT_LINEAR_8:
+	    return @"8-bit Linear";
+	case SND_FORMAT_LINEAR_16:
+	    return verbose ? @"16-bit Integer (2's complement, big endian)" : @"16-bit Linear";
+	case SND_FORMAT_LINEAR_24:
+	    return verbose ? @"24-bit Integer (2's complement, big endian)" : @"24-bit Linear";
+	case SND_FORMAT_LINEAR_32:
+	    return verbose ? @"32-bit Integer (2's complement, big endian)" : @"32-bit Linear";
+	case SND_FORMAT_FLOAT:
+	    return verbose ? @"Signed 32-bit floating point" : @"32-bit Floating Point";
+	case SND_FORMAT_DOUBLE:
+	    return verbose ? @"Signed 64-bit floating point" : @"64-bit Floating Point";
+	case SND_FORMAT_MP3:
+	    return verbose ? @"MPEG 1 Layer 3 Compressed" : @"MP3 Compressed";
+	case SND_FORMAT_INDIRECT:
+	    return @"Fragmented";
+	default:
+	    return [NSString stringWithFormat: @"Unknown format %d", dataFormat];
     }
 }
 
@@ -189,25 +189,27 @@ float SndConvertLinearToDecibels(float lin)
     return (float) (20.0 * log10((double) lin));
 }
 
+// TODO marked for demolition. Remove when SndSoundStruct is no longer a Snd ivar.
+// Replace with the SndFormat frameCount field.
 int SndFrameCount(const SndSoundStruct *sound)
 {
-  SndSoundStruct **ssList;
-  SndSoundStruct *theStruct;
-  int count = 0, i = 0;
-  SndSampleFormat df;
-
-  if (!sound) return SND_ERR_NOT_SOUND;
-  if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-  df = sound->dataFormat;
-  if (df != SND_FORMAT_INDIRECT) /* simple case */
-    return SndBytesToFrames(sound->dataSize, sound->channelCount, df);
-  /* more complicated */
-  ssList = (SndSoundStruct **)sound->dataLocation;
-  if (ssList[0]) df = ssList[0]->dataFormat;
-  else return 0; /* fragged sound with no frags! */
-  while ((theStruct = ssList[i++]) != NULL)
-    count += theStruct->dataSize;
-  return SndBytesToFrames(count, sound->channelCount, df);
+    SndSoundStruct **ssList;
+    SndSoundStruct *theStruct;
+    int count = 0, i = 0;
+    SndSampleFormat df;
+    
+    if (!sound) return SND_ERR_NOT_SOUND;
+    if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+    df = sound->dataFormat;
+    if (df != SND_FORMAT_INDIRECT) /* simple case */
+	return SndBytesToFrames(sound->dataSize, sound->channelCount, df);
+    /* more complicated */
+    ssList = (SndSoundStruct **)sound->dataLocation;
+    if (ssList[0]) df = ssList[0]->dataFormat;
+    else return 0; /* fragged sound with no frags! */
+    while ((theStruct = ssList[i++]) != NULL)
+	count += theStruct->dataSize;
+    return SndBytesToFrames(count, sound->channelCount, df);
 }
 
 NSString *SndFormatDescription(SndFormat format)
@@ -216,7 +218,7 @@ NSString *SndFormatDescription(SndFormat format)
 	format.frameCount, format.frameCount / format.sampleRate, SndFormatName(format.dataFormat, NO), format.sampleRate, format.channelCount];
 }
 
-// TODO marked for demolition.
+// TODO marked for demolition. Remove when SndSoundStruct is no longer a Snd ivar.
 NSString *SndStructDescription(SndSoundStruct *s)
 {
     if(s != NULL) {
@@ -227,7 +229,7 @@ NSString *SndStructDescription(SndSoundStruct *s)
 	f.channelCount = s->channelCount;
 	f.frameCount = SndFrameCount(s);
         NSString *message = [NSString stringWithFormat: @"%s location:%d size:%d %@ info:%s\n",
-	    (s->magic != SND_MAGIC) ? "(no SND_MAGIC)" : "SND_MAGIC",
+	   (s->magic != SND_MAGIC) ? "(no SND_MAGIC)" : "SND_MAGIC",
 	    s->dataLocation, s->dataSize, SndFormatDescription(f), s->info];
         return message;
     }
@@ -244,172 +246,155 @@ void SndPrintStruct(SndSoundStruct *s)
 
 int SndPrintFrags(SndSoundStruct *sound)
 {
-  SndSoundStruct **ssList;
-  SndSoundStruct *theStruct;
-  int count = 0, i = 0;
-  SndSampleFormat df;
-
-  if (!sound) return SND_ERR_NOT_SOUND;
-  if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-  df = sound->dataFormat;
-  if (df != SND_FORMAT_INDIRECT) {
-    NSLog(@"not fragmented\n");
+    SndSoundStruct **ssList;
+    SndSoundStruct *theStruct;
+    int count = 0, i = 0;
+    SndSampleFormat df;
+    
+    if (!sound) return SND_ERR_NOT_SOUND;
+    if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+    df = sound->dataFormat;
+    if (df != SND_FORMAT_INDIRECT) {
+	NSLog(@"not fragmented\n");
+	return SND_ERR_NONE;
+    }
+    /* more complicated */
+    ssList = (SndSoundStruct **)sound->dataLocation;
+    df = ssList[0]->dataFormat;
+    while ((theStruct = ssList[i++]) != NULL) {
+	NSLog(@"**** Frag %d: starts at byte %d\n",i-1,count);
+	count += theStruct->dataSize;
+	NSLog(@"...ends at byte: %d\n",count-theStruct->channelCount*SndSampleWidth(df));
+	NSLog(@"channels: %d sample frames: %d samples in tot: %d\n",
+	      theStruct->channelCount, theStruct->dataSize/theStruct->channelCount/SndSampleWidth(df),
+	      theStruct->dataSize/theStruct->channelCount);
+    }
     return SND_ERR_NONE;
-  }
-  /* more complicated */
-  ssList = (SndSoundStruct **)sound->dataLocation;
-  df = ssList[0]->dataFormat;
-  while ((theStruct = ssList[i++]) != NULL) {
-    NSLog(@"**** Frag %d: starts at byte %d\n",i-1,count);
-    count += theStruct->dataSize;
-    NSLog(@"...ends at byte: %d\n",count-theStruct->channelCount*SndSampleWidth(df));
-    NSLog(@"channels: %d sample frames: %d samples in tot: %d\n",
-           theStruct->channelCount, theStruct->dataSize/theStruct->channelCount/SndSampleWidth(df),
-           theStruct->dataSize/theStruct->channelCount);
-  }
-  return SND_ERR_NONE;
 }
-
-#if 0
-// TODO this is obsolete, use it only in the process of abandoning SndSoundStructs!
-int SndGetDataPointer(const SndSoundStruct *sound, char **ptr, int *size, int *width)
-/* only useful for non-fragmented sounds */
-{
-  SndSampleFormat df;
-  if (!sound) return SND_ERR_NOT_SOUND;
-  if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-  if ((df = sound->dataFormat) == SND_FORMAT_INDIRECT)
-    return SND_ERR_BAD_FORMAT;
-  *width = SndSampleWidth(df);
-  *size = sound->dataSize / *width;
-  *ptr = (char *)sound + sound->dataLocation;
-  return SND_ERR_NONE;
-}
-#endif
 
 int SndFree(SndSoundStruct *sound)
 {
-  SndSoundStruct **ssList;
-  SndSoundStruct *theStruct;
-  int i = 0;
-
-  if (!sound) return SND_ERR_NOT_SOUND;
-  if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-  /* simple case: */
-  if (sound->dataFormat != SND_FORMAT_INDIRECT) {
+    SndSoundStruct **ssList;
+    SndSoundStruct *theStruct;
+    int i = 0;
+    
+    if (!sound) return SND_ERR_NOT_SOUND;
+    if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+    /* simple case: */
+    if (sound->dataFormat != SND_FORMAT_INDIRECT) {
+	free(sound);
+	return SND_ERR_NONE;
+    }
+    /* more complicated */
+    ssList = (SndSoundStruct **)sound->dataLocation;
+    while ((theStruct = ssList[i++]) != NULL)
+	free(theStruct);
+    free(ssList);
     free(sound);
     return SND_ERR_NONE;
-  }
-  /* more complicated */
-  ssList = (SndSoundStruct **)sound->dataLocation;
-  while ((theStruct = ssList[i++]) != NULL)
-    free(theStruct);
-  free(ssList);
-  free(sound);
-  return SND_ERR_NONE;
 }
 
 int SndAlloc(SndSoundStruct **sound, int dataSize, SndSampleFormat dataFormat,
              int samplingRate, int channelCount, int infoSize)
 {
-  int headerSize = 0;
-  int extraInfoBytes;
-
-  if (samplingRate < 0) return SND_ERR_BAD_RATE;
-  if (channelCount < 1 || channelCount > 16) return SND_ERR_BAD_CHANNEL;
-  if (dataSize < 0) return SND_ERR_BAD_SIZE;
-  if (infoSize > 16384 || infoSize < 0) return SND_ERR_INFO_TOO_BIG;
-  if (dataFormat > SND_FORMAT_DELTA_MULAW_8) return SND_ERR_BAD_FORMAT;
-
-  if (infoSize < 4) infoSize = 4;
-  extraInfoBytes = infoSize & 3;
-  if (extraInfoBytes) extraInfoBytes = 4 - extraInfoBytes;
-  headerSize = sizeof(SndSoundStruct) + infoSize + extraInfoBytes - 4;
-  /* normal size of header includes 4 info bytes, so I subtract here */
-
-  *sound = calloc(headerSize + dataSize, sizeof(char));
-  if (!*sound) return SND_ERR_CANNOT_ALLOC;
-
-  (*sound)->magic = SND_MAGIC;
-  (*sound)->dataLocation = headerSize;
-  (*sound)->dataSize = dataSize;
-  (*sound)->dataFormat = dataFormat;
-  (*sound)->samplingRate = samplingRate;
-  (*sound)->channelCount = channelCount;
-  return SND_ERR_NONE;
+    int headerSize = 0;
+    int extraInfoBytes;
+    
+    if (samplingRate < 0) return SND_ERR_BAD_RATE;
+    if (channelCount < 1 || channelCount > 16) return SND_ERR_BAD_CHANNEL;
+    if (dataSize < 0) return SND_ERR_BAD_SIZE;
+    if (infoSize > 16384 || infoSize < 0) return SND_ERR_INFO_TOO_BIG;
+    if (dataFormat > SND_FORMAT_DELTA_MULAW_8) return SND_ERR_BAD_FORMAT;
+    
+    if (infoSize < 4) infoSize = 4;
+    extraInfoBytes = infoSize & 3;
+    if (extraInfoBytes) extraInfoBytes = 4 - extraInfoBytes;
+    headerSize = sizeof(SndSoundStruct) + infoSize + extraInfoBytes - 4;
+    /* normal size of header includes 4 info bytes, so I subtract here */
+    
+    *sound = calloc(headerSize + dataSize, sizeof(char));
+    if (!*sound) return SND_ERR_CANNOT_ALLOC;
+    
+    (*sound)->magic = SND_MAGIC;
+    (*sound)->dataLocation = headerSize;
+    (*sound)->dataSize = dataSize;
+    (*sound)->dataFormat = dataFormat;
+    (*sound)->samplingRate = samplingRate;
+    (*sound)->channelCount = channelCount;
+    return SND_ERR_NONE;
 }
 
 short SndiMulaw(unsigned char mulawValue)
 {
-  return (short) SndMuLawToLinear(mulawValue);
+    return (short) SndMuLawToLinear(mulawValue);
 }
 
 int SndSwapBigEndianSoundToHost(void *dest, void *src, int sampleCount, int channelCount, SndSampleFormat dataFormat)
 {
 #ifdef __BIG_ENDIAN__
-  return SND_ERR_NONE;
+    return SND_ERR_NONE;
 #else
-  int numBytes = SndSampleWidth(dataFormat);
-  int i;
-  int samples = sampleCount * channelCount;
-  if (numBytes == 1) return SND_ERR_NONE;
-  if (numBytes == 2) {
-    for (i = 0 ; i < samples; i++) {
-      ((signed short *)dest)[i] = (signed short)ntohs(((signed short *)src)[i]);
+    int numBytes = SndSampleWidth(dataFormat);
+    int i;
+    int samples = sampleCount * channelCount;
+    if (numBytes == 1) return SND_ERR_NONE;
+    if (numBytes == 2) {
+	for (i = 0 ; i < samples; i++) {
+	    ((signed short *)dest)[i] = (signed short)ntohs(((signed short *)src)[i]);
+	}
+	return SND_ERR_NONE;
     }
-    return SND_ERR_NONE;
-  }
-  if (dataFormat == SND_FORMAT_FLOAT) {
-    for (i = 0 ; i < samples; i++) {
-      SndSwappedFloat toSwap = ((SndSwappedFloat *)src)[i];
-      ((float *)dest)[i] = (float)SndSwapSwappedFloatToHost(toSwap);
+    if (dataFormat == SND_FORMAT_FLOAT) {
+	for (i = 0 ; i < samples; i++) {
+	    SndSwappedFloat toSwap = ((SndSwappedFloat *)src)[i];
+	    ((float *)dest)[i] = (float)SndSwapSwappedFloatToHost(toSwap);
+	}
+	return SND_ERR_NONE;
     }
-    return SND_ERR_NONE;
-  }
-  if (dataFormat == SND_FORMAT_DOUBLE) {
-    for (i = 0 ; i < samples; i++) {
-      SndSwappedDouble toSwap = ((SndSwappedDouble *)src)[i];
-      ((double *)dest)[i] = (double)SndSwapSwappedDoubleToHost(toSwap);
+    if (dataFormat == SND_FORMAT_DOUBLE) {
+	for (i = 0 ; i < samples; i++) {
+	    SndSwappedDouble toSwap = ((SndSwappedDouble *)src)[i];
+	    ((double *)dest)[i] = (double)SndSwapSwappedDoubleToHost(toSwap);
+	}
+	return SND_ERR_NONE;
     }
-    return SND_ERR_NONE;
-  }
-  NSLog(@"SndSoundSwap: format not currently supported, sorry.\n");
-  return SND_ERR_BAD_FORMAT;
+    NSLog(@"SndSoundSwap: format not currently supported, sorry.\n");
+    return SND_ERR_BAD_FORMAT;
 #endif
 }
 
 int SndSwapHostToBigEndianSound(void *dest, void *src, int sampleCount, int channelCount, SndSampleFormat dataFormat)
 {
 #ifdef __BIG_ENDIAN__
-  return SND_ERR_NONE;
+    return SND_ERR_NONE;
 #else
-  int numBytes = SndSampleWidth(dataFormat);
-  int i;
-  int samples = sampleCount * channelCount;
-  if (numBytes == 1) return SND_ERR_NONE;
-  if (numBytes == 2) {
-    for (i = 0 ; i < samples; i++) {
-      ((signed short *)dest)[i] = (signed short)htons(((signed short *)src)[i]);
+    int numBytes = SndSampleWidth(dataFormat);
+    int i;
+    int samples = sampleCount * channelCount;
+    if (numBytes == 1) return SND_ERR_NONE;
+    if (numBytes == 2) {
+	for (i = 0 ; i < samples; i++) {
+	    ((signed short *)dest)[i] = (signed short)htons(((signed short *)src)[i]);
+	}
+	return SND_ERR_NONE;
     }
-    return SND_ERR_NONE;
-  }
-  if (dataFormat == SND_FORMAT_FLOAT) {
-    for (i = 0 ; i < samples; i++) {
-      ((SndSwappedFloat *)dest)[i] =
-      (SndSwappedFloat)SndSwapHostToSwappedFloat(((float *)src)[i]);
+    if (dataFormat == SND_FORMAT_FLOAT) {
+	for (i = 0 ; i < samples; i++) {
+	    ((SndSwappedFloat *)dest)[i] =
+	    (SndSwappedFloat)SndSwapHostToSwappedFloat(((float *)src)[i]);
+	}
+	return SND_ERR_NONE;
     }
-    return SND_ERR_NONE;
-  }
-  if (dataFormat == SND_FORMAT_DOUBLE) {
-    for (i = 0 ; i < samples; i++) {
-      ((SndSwappedDouble *)dest)[i] =
-      (SndSwappedDouble)SndSwapHostToSwappedDouble(((double *)src)[i]);
+    if (dataFormat == SND_FORMAT_DOUBLE) {
+	for (i = 0 ; i < samples; i++) {
+	    ((SndSwappedDouble *)dest)[i] =
+	    (SndSwappedDouble)SndSwapHostToSwappedDouble(((double *)src)[i]);
+	}
+	return SND_ERR_NONE;
     }
-    return SND_ERR_NONE;
-  }
-  NSLog(@"SndSoundSwap: format not currently supported, sorry.\n");
-  return SND_ERR_BAD_FORMAT;
-
+    NSLog(@"SndSoundSwap: format not currently supported, sorry.\n");
+    return SND_ERR_BAD_FORMAT;
+    
 #endif
-
+    
 }

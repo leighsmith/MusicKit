@@ -101,7 +101,7 @@ static int pixelCompare(id x, id y, void *context)
     int numElements = [embeddedArray count];
 
     [self sort];
-    for (i = 0;i < numElements; i++) {
+    for (i = 0; i < numElements; i++) {
         theStart = [[embeddedArray objectAtIndex: i] startPixel];
         if (theStart > pixel) {
             *next = i;

@@ -21,7 +21,7 @@
 
 #define DEBUG_MESSAGES 0
 
-#define LIBSNDFILE_AVAILABLE 1
+#define HAVE_LIBSNDFILE 1
 
 #ifndef GNUSTEP
 # ifndef WIN32
@@ -171,7 +171,7 @@
     return headerFormat;
 }
 
-#ifndef LIBSNDFILE_AVAILABLE
+#ifndef HAVE_LIBSNDFILE
 
 // Retrieve loop points
 // The AIFF loop structure is a lot richer than our simplistic single loop structure. So for now

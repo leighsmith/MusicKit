@@ -2087,7 +2087,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 				    channelCount: cc
 					  frames: defaultRecordSeconds * sr
 				    samplingRate: sr];
-    //	NSLog(@"df %d sr %d cc %d\n", (int) df, (int) sr, (int) cc);
+    //	NSLog(@"recordingSound %@\n", recordingSound);
 
     // TODO set self as recording delegate.
     [recordingSound record];
