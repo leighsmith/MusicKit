@@ -190,7 +190,7 @@ the value as a <emphasis role="bold">double</emphasis>.</para>
 the value as an <emphasis role="bold">int</emphasis>.</para>
 	  </listitem>
 <listitem><para> <emphasis role="bold">parAsString:</emphasis> returns
-a pointer (a<emphasis role="bold"> char *</emphasis>) to a copy of the
+a pointer (a <emphasis role="bold">char *</emphasis>) to a copy of the
 value.</para>
 	  </listitem>
 <listitem><para> <emphasis role="bold">parAsStringNoCopy:</emphasis>
@@ -1241,8 +1241,8 @@ Release</title>
 <para><xref linkend="figure3-9"> shows what happens when a noteOff arrives (or a
 noteDur expires) during the attack portion of the
 <classname>MKEnvelope</classname>&horbar;in other words, before the
-stickpoint is reached.  For this illustration, both<emphasis
-role="bold"> MK_ampAtt</emphasis> and <emphasis
+stickpoint is reached.  For this illustration, both <emphasis
+role="bold">MK_ampAtt</emphasis> and <emphasis
 role="bold">MK_ampRel</emphasis> are assumed to have values of
 1.0.</para>
 
@@ -2079,8 +2079,8 @@ position in the <classname>MKScore</classname> to its end:</para>
 
 <para>To write from the beginning of the
 <classname>MKScore</classname>, you specify 0.0 as the <emphasis
-role="bold">firstTimeTag:</emphasis> argument.  The<emphasis
-role="bold"> timeShift:</emphasis> takes a value that specifies the
+role="bold">firstTimeTag:</emphasis> argument.  The <emphasis
+role="bold">timeShift:</emphasis> takes a value that specifies the
 number of beats by which the <classname>MKNote</classname>s are
 time-shifted as they're represented in the file.  Only the file
 representation is affected by this value; in other words, the
@@ -2828,19 +2828,20 @@ role="bold">MK_releaseVelocity</emphasis> parameter in the
 corresponding <classname>MKNote</classname> object is omitted.</para>
 	  </listitem>
 
-<listitem><para> For each <emphasis role="bold"> polyphonic aftertouch
-</emphasis>(aka "key pressure") message for a channel/key number for
-which a noteOn was received, a <classname>MKNote</classname> object is
-created of type MK_noteUpdate, with a noteTag that matches the noteOn
-received on the same channel/key number pair.  The key number is not
-explicitly included, unless inclusive translation mode is enabled, in
-which case a <emphasis role="bold">MK_keyNum</emphasis> parameter is
-additionally included.  The key pressure is specified in the parameter
-<emphasis role="bold">MK_keyPressure</emphasis> ([0-127]).</para>
+<listitem><para> For each <emphasis role="bold">polyphonic
+aftertouch</emphasis> (aka "key pressure") message for a channel/key
+number for which a noteOn was received, a
+<classname>MKNote</classname> object is created of type MK_noteUpdate,
+with a noteTag that matches the noteOn received on the same
+channel/key number pair.  The key number is not explicitly included,
+unless inclusive translation mode is enabled, in which case a
+<emphasis role="bold">MK_keyNum</emphasis> parameter is additionally
+included.  The key pressure is specified in the parameter <emphasis
+role="bold">MK_keyPressure</emphasis> ([0-127]).</para>
 	  </listitem>
 
-<listitem><para> For each<emphasis role="bold"> controller change
-</emphasis>message, a <classname>MKNote</classname> is created with
+<listitem><para> For each <emphasis role="bold">controller
+change</emphasis> message, a <classname>MKNote</classname> is created with
 the parameter <emphasis role="bold">MK_controlChange</emphasis>,
 which specifies the value of the
 controller to be changed ([0-121]), and the parameter <emphasis
@@ -2848,8 +2849,8 @@ role="bold">MK_controlVal</emphasis>, which specifies the value of the
 controller ([0-127]).  The noteType is set to MK_noteUpdate.</para>
 	  </listitem>
 
-<listitem><para> For each<emphasis role="bold"> program change
-</emphasis>message, a <classname>MKNote</classname> is created with
+<listitem><para> For each <emphasis role="bold">program change
+</emphasis> message, a <classname>MKNote</classname> is created with
 the parameter <emphasis role="bold">MK_programChange</emphasis>, which
 provides the value of the program change ([0-127]).  The noteType is
 set to MK_noteUpdate.</para>
