@@ -115,8 +115,8 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
   /*! @var uee Unified Envelope Entry */  
   SndUnifiedEnvelopeEntry *uee;
   
-  /*! @var lock locks changes to the envelope objects (?) */
-  NSLock *lock;
+  /*! @var envelopesLock Locks changes to both the envelope objects (?) */
+  NSLock *envelopesLock;
   /*! @var balanceEnvLock */  
   NSLock *balanceEnvLock;
   /*! @var ampEnvLock */
