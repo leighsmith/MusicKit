@@ -1,19 +1,31 @@
-.TH PLAYSCORE 1 "10 Jan 1994" "NeXT Computer, Inc."
+.TH PLAYSCORE 1 "17 Jul 2000" "The MusicKit Project"
 .UC 4
 .SH NAME
-playscore \- play a scorefile
+playscore \- play a MusicKit scorefile
 .SH SYNOPSIS
-playscore [-fqdpv] [-rtcws <arg>] scorefile 
+playscore [-fqdpva] [-rtcwsn <arg>] scorefile 
 .SH DESCRIPTION
 Plays the specified scorefile on the DSP and MIDI.  If the scorefile
 isn't found in the current directory and it isn't given as a full path
-name, the following directories are searched:
+name, the following directories are searched on OpenStep 4.X machines:
 .LP
 ~/Library/Music/Scores
 .LP
 /LocalLibrary/Music/Scores 
 .LP
 /NextLibrary/Music/Scores
+
+On MacOsX machines the following directories are searched:
+.LP
+~/Library/Music/Scores
+.LP
+/Local/Library/Music/Scores 
+.LP
+/Network/Library/Music/Scores
+.LP
+/System/Library/Music/Scores
+
+The actual search list of directories used will be listed in the usage message.
 .SH OPTIONS
 .TP
 .B \-d
@@ -192,14 +204,16 @@ to determine on which DSP to play the part. The value of this parameter is
 0 for DSP0, 1 for DSP1, etc.  You set the value of these DSP variables from
 the Music Kit Preferences panel.
 .SH FILES
-Example scorefiles are found in /LocalLibrary/Music/Scores.
+Example scorefiles are found in /Local/Library/Music/Scores.
 You may copy these files to your directory and modify them with a Music Kit program
 or a text editor.
 There are two types of files. Files of the form Examp* or *Examp* are 
 tutorial examples which illustrate the use of the software instruments.
 Other files, such as Emma.playscore and Gamelan.playscore are short demo pieces.
 .SH SEE ALSO
-See the Music Kit documentation on /LocalLibrary/Documentation/MusicKit for 
+.B ScorePlayer.app
+is an application very similar to playscore. However, currently, playscore is the only one of the two that can handle multiple simultaneous DSPs.
+See the Music Kit documentation on /Local/Library/Documentation/MusicKit for 
 general information about scorefiles, DSP software instruments, and MIDI.
 .SH DIAGNOSTICS
 Exit status is 0 on success, 1 if there is a problem opening the DSP
@@ -215,6 +229,11 @@ may become unreliable if your computer is heavily loaded with other
 tasks.  For scores that are too dense or complex to play in real time,
 try using the \-c or \-w flag and then play the resulting soundfile.
 midiOffset shouldn't be necessary, but it is, for some reason.
+.SH COPYRIGHT
+Portions Copyright (c) 1992, NeXT Computer, Inc.
+Portions Copyright (c) 1994, Stanford University
+Portions Copyright (c) 2000, The MusicKit Project
+
 
 
 
