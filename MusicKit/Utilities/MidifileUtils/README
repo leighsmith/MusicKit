@@ -4,6 +4,10 @@ format is specified by the MIDI Manufacturer's Association, and is a
 machine independant format allowing the interchange of MIDI (Musical
 Instrument Digital Interface) sequence data.
 
+NOTE: As of V5.2.0, these utilities can be considered obsolete.
+Their functionality is better served by playscore (which also plays
+MIDI files) and MidiRecord.app.
+
 The program playmidifile reads a standard Level 0 midifile and plays
 it out through the MIDI driver.  This program illustrates both how to
 parse a midifile and how to use the MIDI driver in a simple
