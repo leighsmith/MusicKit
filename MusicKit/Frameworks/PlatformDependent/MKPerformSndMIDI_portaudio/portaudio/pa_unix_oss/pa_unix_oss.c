@@ -798,7 +798,7 @@ PaError PaHost_OpenStream( internalPortAudioStream   *past )
 				result = paHostError;
 				goto error;
 			} 
-			Pa_SetLatency( pahsc->pahsc_OutputHandle,
+			Pa_SetLatency( pahsc->pahsc_InputHandle,
 				past->past_NumUserBuffers, past->past_FramesPerUserBuffer,
 				past->past_NumInputChannels );
 			result = Pa_SetupDeviceFormat( pahsc->pahsc_InputHandle,
