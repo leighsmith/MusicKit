@@ -1,6 +1,6 @@
 /* $Id$ */
 #import <MusicKit/MusicKit.h>
-#import <AppKit/psopsOpenStep.h>
+//#import <AppKit/psopsOpenStep.h>
 #import <math.h>
 #import "TadPole.h"
 #import "PartView.h"

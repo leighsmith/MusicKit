@@ -1,0 +1,20 @@
+MyApp = {
+    ACTIONS = {
+	showInfoPanel:;
+	go:;
+	setMidiDev:;
+	setDelayFrom:;
+    };
+    OUTLETS = {
+	infoPanel;
+	myFilter;
+	midi;
+    };
+    SUPERCLASS = Application;
+};
+FirstResponder = {
+    ACTIONS = {
+	orderFrontNXColorPanel:;
+    };
+    SUPERCLASS = Object;
+};

@@ -1,0 +1,108 @@
+WmFractal = {
+    ACTIONS = {
+	setTimeScale:;
+	setDimension:;
+	newAmpRanSeed:;
+	setTimeOffset:;
+	setAmpRanSeed:;
+	setPhaseRanSeed:;
+	newPhaseRanSeed:;
+	setFirstTerm:;
+	show:;
+	setR:;
+	setNumTerms:;
+    };
+    OUTLETS = {
+	timeScaleDisplay;
+	phaseRanSeedDisplay;
+	dimensionDisplay;
+	window;
+	firstTermDisplay;
+	ampRanSeedDisplay;
+	lineGraph;
+	numTermsDisplay;
+	rDisplay;
+	timeOffsetDisplay;
+    };
+    SUPERCLASS = Object;
+};
+HarmonicsPerformer = {
+    OUTLETS = {
+	noteSender;
+	document;
+	fractal;
+    };
+    SUPERCLASS = Performer;
+};
+FirstResponder = {
+    ACTIONS = {
+    };
+    SUPERCLASS = Object;
+};
+NoteFilter = {
+    OUTLETS = {
+	noteSenders;
+    };
+    SUPERCLASS = Instrument;
+};
+EnsembleNoteFilter = {
+    ACTIONS = {
+	reset:;
+	toggleBypass:;
+    };
+    OUTLETS = {
+	bypassButton;
+	menuCell;
+	performer;
+	inspectorPanel;
+    };
+    SUPERCLASS = NoteFilter;
+};
+Performer = {
+    OUTLETS = {
+	conductor;
+	delegate;
+	noteSenders;
+    };
+    SUPERCLASS = Object;
+};
+ParamInterface = {
+    ACTIONS = {
+	incrementValueFrom:;
+	takeValueFrom:;
+    };
+    OUTLETS = {
+	textFields;
+	sliders;
+    };
+    SUPERCLASS = ActionCell;
+};
+Instrument = {
+    OUTLETS = {
+	noteReceivers;
+    };
+    SUPERCLASS = Object;
+};
+Harmonics = {
+    ACTIONS = {
+	toggleFractal:;
+	takeTagTypeFrom:;
+	takeNumTagsFrom:;
+	takeParamFrom:;
+	inspectFractal:;
+	toggleThru:;
+	takeControllersFrom:;
+	toggleRepeats:;
+    };
+    OUTLETS = {
+	controlInterface;
+	tagTypeButtons;
+	noRepeatsSwitch;
+	noteTagInterface;
+	paramInterface;
+	noiseTypeButtons;
+	controllerPanel;
+	thruButton;
+    };
+    SUPERCLASS = EnsembleNoteFilter;
+};

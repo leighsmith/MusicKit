@@ -1,0 +1,13 @@
+MyCustomObject = {
+    ACTIONS = {
+	setBearingFrom:;
+	setFreqFrom:;
+	setAmplitudeFrom:;
+    };
+    SUPERCLASS = Object;
+};
+FirstResponder = {
+    ACTIONS = {
+    };
+    SUPERCLASS = Object;
+};

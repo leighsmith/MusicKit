@@ -1,0 +1,46 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                appDidInit = id; 
+                playStrum = id; 
+                setBright = id; 
+                setContinuous = id; 
+                setEchoAmp = id; 
+                setEchoDur = id; 
+                setInterval = id; 
+                setPitch = id; 
+                setRate = id; 
+                setSustain = id; 
+                showInfoPanel = id; 
+                terminate = id; 
+                useNeXTDSP = id; 
+                varyBright = id; 
+                varyPitch = id; 
+                varyRate = id; 
+                varySus = id; 
+            }; 
+            CLASS = ExampApp; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                bootingPanel = id; 
+                brightSlider = id; 
+                infoPanel = id; 
+                pitchSlider = id; 
+                playButton = id; 
+                qp = id; 
+                rateSlider = id; 
+                stringTable = id; 
+                susSlider = id; 
+            }; 
+            SUPERCLASS = NSApplication; 
+        }, 
+        {
+            ACTIONS = {orderFrontNXColorPanel = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

@@ -1,0 +1,58 @@
+EdsndApp = {
+    ACTIONS = {
+	"addSil:" = "addSil:"; 
+	"hide:" = "hide:"; 
+	"newDocument:" = "newDocument:"; 
+	"open:" = "open:"; 
+	"showEnv:" = "showEnv:"; 
+	"showFFT:" = "showFFT:"; 
+	"showSpectrum:" = "showSpectrum:"; 
+	"stopwatch:" = "stopwatch:"; 
+    }; 
+    OUTLETS = {
+	addForm = addForm; 
+	addPanel = addPanel; 
+	fftAmpForm = fftAmpForm; 
+	fftFreqForm = fftFreqForm; 
+	fftPanel = fftPanel; 
+	fftSizeButton = fftSizeButton; 
+	fftView = fftView; 
+    }; 
+    SUPERCLASS = Application; 
+};
+SoundController = {
+    ACTIONS = {"newDocument:" = "newDocument:"; "open:" = "open:"; }; 
+    OUTLETS = {
+	addForm = addForm; 
+	addPanel = addPanel; 
+	addSilenceCell = addSilenceCell; 
+	closeCell = closeCell; 
+	copyCell = copyCell; 
+	cutCell = cutCell; 
+	deleteCell = deleteCell; 
+	editCell = editCell; 
+	eraseCell = eraseCell; 
+	miniaturizeCell = miniaturizeCell; 
+	revertToSavedCell = revertToSavedCell; 
+	saveAsCell = saveAsCell; 
+	saveCell = saveCell; 
+    }; 
+    SUPERCLASS = Object; 
+};
+FFTView = {
+    ACTIONS = {"advanceFrame:" = "advanceFrame:"; }; 
+    OUTLETS = {delegate = delegate; }; 
+    SUPERCLASS = View; 
+};
+UpPanel = {SUPERCLASS = Panel; };
+FFT = {SUPERCLASS = Object; };
+FirstResponder = {
+    ACTIONS = {
+	"erase:" = "erase:"; 
+	"load:" = "load:"; 
+	"save:" = "save:"; 
+	"saveAs:" = "saveAs:"; 
+	"sizeToSelection:" = "sizeToSelection:"; 
+    }; 
+    SUPERCLASS = Object; 
+};

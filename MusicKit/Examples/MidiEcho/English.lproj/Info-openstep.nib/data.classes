@@ -1,0 +1,10 @@
+"FirstResponder" = {
+    ACTIONS = {"orderFrontNXColorPanel:" = id; }; 
+    OUTLETS = {}; 
+    SUPERCLASS = NSObject; 
+};
+"MyApp" = {
+    ACTIONS = {"go:" = id; "setDelayFrom:" = id; "setMidiDev:" = id; "showInfoPanel:" = id; }; 
+    OUTLETS = {infoPanel = id; midi = id; myFilter = id; }; 
+    SUPERCLASS = NSApplication; 
+};

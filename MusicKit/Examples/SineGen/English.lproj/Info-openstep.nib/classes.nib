@@ -1,0 +1,39 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                showInfoPanel = id; 
+                start = id; 
+                sweep = id; 
+                updateAttenuation = id; 
+                updateCenter = id; 
+                updateDuration = id; 
+                updateWidth = id; 
+            }; 
+            CLASS = SineGen; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                amp = id; 
+                attenuationSlider = id; 
+                attenuationTextField = id; 
+                centerSlider = id; 
+                centerTextField = id; 
+                durationSlider = id; 
+                durationTextField = id; 
+                inc = id; 
+                infoPanel = id; 
+                myAnimator = id; 
+                orch = id; 
+                osc = id; 
+                outl = id; 
+                outr = id; 
+                stringTable = id; 
+                widthSlider = id; 
+                widthTextField = id; 
+            }; 
+            SUPERCLASS = Object; 
+        }
+    ); 
+    IBVersion = 1; 
+}

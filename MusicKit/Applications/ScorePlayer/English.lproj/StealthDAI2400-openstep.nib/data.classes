@@ -1,0 +1,34 @@
+MyApp = {
+    ACTIONS = {
+	help:;
+	selectFile:;
+	setTempoFrom:;
+	playStop:;
+	saveScoreAs:;
+	deviceSpecificSettings:;
+	setSoundOutFrom:;
+	setDAI2400CopyProhibit:;
+	setTempoAdjustment:;
+	setDAI2400Empahsis:;
+	openEditFile:;
+	showErrorLog:;
+    };
+    OUTLETS = {
+	editFileItem;
+	tooFastErrorMsg;
+	tempoTextField;
+	saveAsFileItem;
+	tempoTitle;
+	theMainWindow;
+	dspCommandsSavePanel;
+	soundSavePanel;
+	button;
+	tempoSlider;
+    };
+    SUPERCLASS = Application;
+};
+FirstResponder = {
+    ACTIONS = {
+    };
+    SUPERCLASS = Object;
+};

@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/12/15 02:01:19  leigh
+  Initial Revision
+
   Revision 1.4  2000/11/28 23:10:38  leigh
   Removed dependency on Edit.app and OpenStep directory structure
 
@@ -51,6 +54,13 @@ Modification history:
 #import <Foundation/NSBundle.h>
 #import <MusicKit/MusicKit.h>
 
+//#import <sys/types.h>
+//#import <sys/stat.h>
+//#import <mach/mach.h>
+//#import <mach/mach_error.h>
+//#import	<mach/message.h>
+
+
 @implementation ScorePlayerController
 
 static BOOL playScoreForm;
@@ -80,6 +90,7 @@ static int timeCodePort = 0;
 static unsigned capabilities;
 static double samplingRate;
 static id mySelf;
+static id tempoAnimator = nil;
 
 static NSString *outputFilePath; /* Complete output file path */
 static NSString *outputFileDir;	 /* Just the directory */
@@ -104,12 +115,15 @@ static NSString *soundFile = nil;
 
 
 #define PLAYING ([condClass inPerformance])
+#if m68k
 #define SOUND_OUT_PAUSE_BUG 1 /* Workaround for problem synching MIDI to DSP */
+#endif
 
-static int handleObjcError(const char *className)
-{
-    return 0;
-}
+// LMS disabled, the console is good enough for us to see ObjectiveC errors.
+// static int handleObjcError(const char *className)
+//{
+//    return 0;
+//}
 
 static id errorLog;
 static BOOL errorDuringPlayback = NO;
@@ -216,7 +230,7 @@ static int warnedAboutSrate = NO;
 
 #define STR_SOUNDFILE NSLocalizedStringFromTableInBundle(@"Sound File", @"ScorePlayer", MB, "This appears in the SaveAs... panel")
 
-#define STR_CANT_OPEN_MIDI NSLocalizedStringFromTableInBundle(@"Can't open serial port for MIDI. Perhaps another application has it.", @"ScorePlayer", MB, "This message appears if the serial port is busy.")
+#define STR_CANT_OPEN_MIDI NSLocalizedStringFromTableInBundle(@"Can't open MIDI driver port for MIDI. Perhaps another application has it.", @"ScorePlayer", MB, "This message appears if the serial port is busy.")
 
 static void handleMKError(NSString *msg)
 {
@@ -233,9 +247,6 @@ static void handleMKError(NSString *msg)
          argCount:1, [msg copy]];
     }
 }
-
-#import <sys/types.h>
-#import <sys/stat.h>
 
 static NSDate *lastModifyTime;
 
@@ -438,20 +449,20 @@ static NSArray *soundOutputTagToName;
 
 - (void)setNeXTDACVolume:sender
 {
-    [Sound setVolume:[sender doubleValue] :[sender doubleValue]];
+    [Snd setVolume:[sender doubleValue] :[sender doubleValue]];
 }
 
 - (void)setNeXTDACMute:sender
 {
-    [Sound setMute:[sender intValue]];
+    [Snd setMute:[sender intValue]];
 }
 
 - (void)getNeXTDACCurrentValues:sender
 {
     float l,r;
-    [Sound getVolume:&l :&r];
+    [Snd getVolume:&l :&r];
     [NeXTDacVolumeSlider setFloatValue:l];
-    [NeXTDacMuteSwitch setIntValue:[Sound isMuted]];
+    [NeXTDacMuteSwitch setIntValue:[Snd isMuted]];
 }
 
 - (void)openEditFile:sender
@@ -570,20 +581,21 @@ static id setFile(ScorePlayerController* self)
 
 static BOOL setUpFile(NSString *workspaceFileName);
 
-#import <mach/mach.h>
-#import <mach/mach_error.h>
-#import	<mach/message.h>
+// LMS disabled as it did nothing on OpenStep anyway
 
-static port_t endOfTimePort = PORT_NULL;
+// static port_t endOfTimePort = PORT_NULL;
 
 -endOfTime	// called by the musickit thread
 {
     int i;
+// LMS disabled as it did nothing on OpenStep anyway
+#if 0
     msg_header_t msg =    {0,                   /* msg_unused */
                            TRUE,                /* msg_simple */
 			   sizeof(msg_header_t),/* msg_size */
 			   MSG_TYPE_NORMAL,     /* msg_type */
 			   0};                  /* Fills in remaining fields */
+#endif
     [theOrch close]; /* This will block! */
     for (i=0; i<2; i++) {
 	[midis[i] close];
@@ -597,13 +609,31 @@ static port_t endOfTimePort = PORT_NULL;
 	[theOrch setOutputSoundfile:NULL];
     }
     [theOrch setHostSoundOut:(soundOutType == NEXT_SOUND)];
+// LMS disabled as it did nothing on OpenStep anyway
+#if 0
     msg.msg_local_port = PORT_NULL;
     msg.msg_remote_port = endOfTimePort;
     msg_send(&msg, SEND_TIMEOUT, 0);
+#else  // LMS what used to be in endOfTimeProc
+    [tempoAnimator stopEntry];
+    [button setImage:playImage];
+    [button display];
+    [tooFastErrorMsg setTextColor:[NSColor lightGrayColor]];
+    [tooFastErrorMsg setBackgroundColor:[NSColor lightGrayColor]];
+    if (errorDuringPlayback && ![errorLog isVisible])
+	NSRunAlertPanel(STR_SCOREPLAYER, STR_ERRORS, STR_OK, nil, nil);
+    messageFlashed = NO;
+    isLate = NO;
+    wasLate = NO;
+    errorDuringPlayback = NO;
+    [theMainWindow setTitle:shortFileName];
+    [theMainWindow display];
+    [(NSSavePanel *) soundSavePanel close];
+    [(NSSavePanel *) dspCommandsSavePanel close];
+    [self _enableMTCControls:YES];
+#endif
     return self;
 }
-
-static id tempoAnimator = nil;
 
 #if 0  /*sb: as this is never called */
 void *endOfTimeProc(msg_header_t *msg,ScorePlayerController *myself )
@@ -742,21 +772,21 @@ static void playIt(ScorePlayerController *self)
     if (![theOrch open]) {
         [errorLog addText:STR_CANT_OPEN_DSP];
         NSRunAlertPanel(STR_SCOREPLAYER,STR_CANT_OPEN_DSP,STR_OK,NULL,NULL);
-	return;
+//	return; // LMS disabled until MOX orchestra opening works
     }
     scorePerformer = [MKScorePerformer new];
     [scorePerformer setScore:scoreObj];
     [(MKScorePerformer *)scorePerformer activate]; 
     partPerformers = [scorePerformer partPerformers];
     partCount = [partPerformers count];
-    synthInstruments = [NSMutableArray array];
+    synthInstruments = [[NSMutableArray array] retain];
     for (i = 0; i < partCount; i++) {
 	partPerformer = [partPerformers objectAtIndex:i];
 	aPart = [partPerformer part]; 
 	partInfo = [(MKPart *)aPart infoNote];      
 	if ((!partInfo) || ![partInfo isParPresent:MK_synthPatch]) {
             [errMsg release];
-            errMsg = [[NSString stringWithFormat:STR_INFO_MISSING,MKGetObjectName(aPart)] retain];
+            errMsg = [[NSString stringWithFormat: STR_INFO_MISSING, MKGetObjectName(aPart)] retain];
             [errorLog addText:errMsg];
 #if 0
             if (!NSRunAlertPanel(STR_SCOREPLAYER, errMsg, STR_CONTINUE, STR_CANCEL, nil)) 
@@ -919,7 +949,8 @@ static void abortNow();
     [[NSRunLoop currentRunLoop] addPort:[NSPort portWithMachPort:endOfTimePort] forMode:30];
 #endif
     MKSetErrorProc(handleMKError);
-    objc_setClassHandler(handleObjcError);
+// LMS disabled, the console is good enough for us to see ObjectiveC errors.
+//    objc_setClassHandler(handleObjcError);
    
     /* Create the tempo aminmator, but don't start it yet */
     tempoAnimator = [Animator newChronon: 0.0

@@ -1,0 +1,12 @@
+MyApplication = {
+    ACTIONS = {
+	setTempoFromSlider:;
+	startStop:;
+    };
+    SUPERCLASS = Application;
+};
+FirstResponder = {
+    ACTIONS = {
+    };
+    SUPERCLASS = Object;
+};

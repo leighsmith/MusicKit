@@ -1,0 +1,31 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                closeDoc = id; 
+                newDoc = id; 
+                openDoc = id; 
+                play = id; 
+                saveDoc = id; 
+                saveDocAs = id; 
+                showHelp = id; 
+                showInfo = id; 
+                stopPlay = id; 
+            }; 
+            CLASS = Distributor; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                docList = id; 
+                helpPanel = id; 
+                infoPanel = id; 
+                openPanel = id; 
+                savePanel = id; 
+                scorePlayer = id; 
+                tadList = id; 
+            }; 
+            SUPERCLASS = Object; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}

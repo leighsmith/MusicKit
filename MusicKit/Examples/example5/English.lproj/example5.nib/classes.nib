@@ -1,0 +1,12 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {setAmplitudeFrom = id; setBearingFrom = id; setFreqFrom = id; }; 
+            CLASS = MyCustomObject; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = Object; 
+        }
+    ); 
+    IBVersion = 1; 
+}

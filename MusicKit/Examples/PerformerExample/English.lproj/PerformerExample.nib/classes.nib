@@ -1,0 +1,18 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {orderFrontNXColorPanel = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {pauseOrResume = id; setOctave = id; setSpeed = id; showInfoPanel = id; }; 
+            CLASS = PerformerController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {infoPanel = id; stringTable = id; }; 
+            SUPERCLASS = NSApplication; 
+        }
+    ); 
+    IBVersion = 1; 
+}

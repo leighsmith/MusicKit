@@ -1,0 +1,48 @@
+Clock = {
+    ACTIONS = {
+	increaseSecond:;
+	decreaseHour:;
+	decreaseSecond:;
+	increaseDay:;
+	stopClock:;
+	increaseMinute:;
+	decreaseMinute:;
+	decreaseDay:;
+	startClock:;
+	increaseHour:;
+    };
+    SUPERCLASS = View;
+};
+Layout = {
+    OUTLETS = {
+	view;
+    };
+    SUPERCLASS = Object;
+};
+FirstResponder = {
+    ACTIONS = {
+    };
+    SUPERCLASS = Object;
+};
+MusicKitPrefs = {
+    ACTIONS = {
+	setMidiNum:;
+	setDspNum:;
+	setMidiUnit:;
+	setSoundOutType:;
+    };
+    OUTLETS = {
+	midiText;
+	dspDriverPopUpButton;
+	window;
+	serialPortDevicePopUpButton;
+	midiNumSlider;
+	dspNumSlider;
+	midiNumField;
+	soundOutMatrix;
+	dspText;
+	dspNumField;
+	midiUnitNumField;
+    };
+    SUPERCLASS = Layout;
+};

@@ -4,6 +4,58 @@
 	};
 	objectVersion = 30;
 	objects = {
+		0134D284FFE009B6CFED3B96 = {
+			children = (
+				0134D285FFE009B6CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = Info.nib;
+			path = "";
+			refType = 4;
+		};
+		0134D285FFE009B6CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = "English.lproj/Info-macosx.nib";
+			refType = 4;
+		};
+		0134D286FFE009B6CFED3B96 = {
+			children = (
+				0134D287FFE009B6CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = MidiRecord.nib;
+			path = "";
+			refType = 4;
+		};
+		0134D287FFE009B6CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = "English.lproj/MidiRecord-macosx.nib";
+			refType = 4;
+		};
+		0134D288FFE009B6CFED3B96 = {
+			fileRef = 0134D284FFE009B6CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0134D289FFE009B6CFED3B96 = {
+			fileRef = 0134D286FFE009B6CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
 		02CD290AFFB89C2FCFED3B96 = {
 			isa = PBXProject;
 			mainGroup = 02CD290BFFB89C2FCFED3B96;
@@ -68,39 +120,11 @@
 		};
 		02CD2912FFB89C2FCFED3B96 = {
 			children = (
-				02CD2913FFB89C2FCFED3B96,
-				02CD2915FFB89C2FCFED3B96,
+				0134D284FFE009B6CFED3B96,
+				0134D286FFE009B6CFED3B96,
 			);
 			isa = PBXGroup;
 			name = Interfaces;
-			refType = 4;
-		};
-		02CD2913FFB89C2FCFED3B96 = {
-			children = (
-				02CD2914FFB89C2FCFED3B96,
-			);
-			isa = PBXVariantGroup;
-			name = Info.nib;
-			refType = 4;
-		};
-		02CD2914FFB89C2FCFED3B96 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/Info.nib;
-			refType = 4;
-		};
-		02CD2915FFB89C2FCFED3B96 = {
-			children = (
-				02CD2916FFB89C2FCFED3B96,
-			);
-			isa = PBXVariantGroup;
-			name = MidiRecord.nib;
-			refType = 4;
-		};
-		02CD2916FFB89C2FCFED3B96 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/MidiRecord.nib;
 			refType = 4;
 		};
 		02CD2917FFB89C2FCFED3B96 = {
@@ -249,33 +273,11 @@
 		02CD2926FFB89C2FCFED3B96 = {
 			buildActionMask = 2147483647;
 			files = (
-				02CD2927FFB89C2FCFED3B96,
-				02CD2928FFB89C2FCFED3B96,
+				0134D288FFE009B6CFED3B96,
+				0134D289FFE009B6CFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
-		};
-		02CD2927FFB89C2FCFED3B96 = {
-			fileRef = 02CD2913FFB89C2FCFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
-		02CD2928FFB89C2FCFED3B96 = {
-			fileRef = 02CD2915FFB89C2FCFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
 		};
 		02CD2929FFB89C2FCFED3B96 = {
 			buildActionMask = 2147483647;

@@ -1,0 +1,65 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                convolve = id; 
+                multiply = id; 
+                normalize = id; 
+                onOff = id; 
+                previous = id; 
+                restoreTable = id; 
+                save = id; 
+                saveAs = id; 
+                saveTable = id; 
+                setLogDisplay = id; 
+                storeCurrent = id; 
+                zoomIn = id; 
+                zoomOut = id; 
+            }; 
+            CLASS = FFTControl; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {convView = id; modView = id; phiView = id; waveView = id; }; 
+            SUPERCLASS = Object; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {draw = id; zoomIn = id; zoomOut = id; }; 
+            CLASS = FuncView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {scrollView = id; }; 
+            SUPERCLASS = NSView; 
+        }, 
+        {
+            CLASS = ModView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {FFTControler = id; }; 
+            SUPERCLASS = FuncView; 
+        }, 
+        {
+            CLASS = PhiView; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {FFTControler = id; }; 
+            SUPERCLASS = FuncView; 
+        }, 
+        {
+            ACTIONS = {
+                sawTooth = id; 
+                sendAmp = id; 
+                sendFreq = id; 
+                sendPVib = id; 
+                sendPVibFreq = id; 
+                sendRVib = id; 
+                setSound = id; 
+                sine = id; 
+                square = id; 
+                triangle = id; 
+                vibOnOff = id; 
+            }; 
+            CLASS = Wave; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {aNote = id; aSP = id; anOrch = id; fftView = id; tableLook = id; }; 
+            SUPERCLASS = FuncView; 
+        }
+    ); 
+    IBVersion = 1; 
+}

@@ -6,15 +6,8 @@
 
 #import "MKAlert.h"
 #import <AppKit/AppKit.h>
-//#import <appkit/Application.h>
-//#import <appkit/Button.h>
-//#import <appkit/Font.h>
-//#import <appkit/Panel.h>
-//#import <appkit/nextstd.h>
-///#import <appkit/errors.h>
 #import <stdarg.h>
-#import <objc/zone.h>
-#import <Foundation/NSBundle.h>
+#import <Foundation/Foundation.h>
 
 @implementation MKAlert
 
@@ -138,20 +131,23 @@ int mkRunAlertPanel(NSString *title, NSString *s, NSString *first, NSString *sec
 	if (!newAlert) return NSAlertErrorReturn;
     }
     panel = buildAlert(newAlert, title , s, first, second, third);
-    PSWait();
+// Disabled for MacOS X
+//    PSWait();
     NS_DURING {
 	exitValue = [NSApp runModalForWindow:panel];
     } NS_HANDLER {
         handler = [NSException exceptionWithName:[localException name]
                                           reason:[localException reason]
                                         userInfo:[localException userInfo]];
-        if ([[localException name] isEqualToString:DPSPostscriptErrorException]) [localException raise];
+// Disabled for MacOS X
+//        if ([[localException name] isEqualToString:DPSPostscriptErrorException]) [localException raise];
     } NS_ENDHANDLER
     [panel orderOut:panel];
     cachedAlert = [panel delegate];
-    if (handler && ![[handler name] isEqualToString:DPSPostscriptErrorException]) {
-	[handler raise];
-    }
+// Disabled for MacOS X
+//    if (handler && ![[handler name] isEqualToString:DPSPostscriptErrorException]) {
+//	[handler raise];
+//    }
     return exitValue;
 }
 

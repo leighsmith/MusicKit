@@ -50,7 +50,7 @@
     LANGUAGE = English; 
     MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles; 
     NEXTSTEP_APPICON = ScorePlayerApp.tiff; 
-    NEXTSTEP_BUILDTOOL = /bin/gnumake; 
+    NEXTSTEP_BUILDTOOL = /usr/bin/gnumake; 
     NEXTSTEP_DOCUMENTEXTENSIONS = (
         {Extension = score; Image = ScorePlayerDoc.tiff; }, 
         {Extension = playscore; Image = ScorePlayerDoc2.tiff; }

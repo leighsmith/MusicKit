@@ -1,0 +1,48 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                decreaseDay = id; 
+                decreaseHour = id; 
+                decreaseMinute = id; 
+                decreaseSecond = id; 
+                increaseDay = id; 
+                increaseHour = id; 
+                increaseMinute = id; 
+                increaseSecond = id; 
+                startClock = id; 
+                stopClock = id; 
+            }; 
+            CLASS = Clock; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSView; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            CLASS = Layout; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {view = id; }; 
+            SUPERCLASS = Object; 
+        }, 
+        {
+            ACTIONS = {setDspNum = id; setMidiNum = id; setMidiUnit = id; setSoundOutType = id; }; 
+            CLASS = MusicKitPrefs; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                dspDriverPopUpButton = id; 
+                dspNumField = id; 
+                dspNumSlider = id; 
+                dspText = id; 
+                midiNumField = id; 
+                midiNumSlider = id; 
+                midiText = id; 
+                midiUnitNumField = id; 
+                serialPortDevicePopUpButton = id; 
+                soundOutMatrix = id; 
+                window = id; 
+            }; 
+            SUPERCLASS = Layout; 
+        }
+    ); 
+    IBVersion = 1; 
+}

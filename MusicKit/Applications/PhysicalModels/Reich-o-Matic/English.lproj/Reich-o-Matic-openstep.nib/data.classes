@@ -1,0 +1,15 @@
+FirstResponder = {
+    ACTIONS = {
+    };
+    SUPERCLASS = Object;
+};
+Reicher = {
+    ACTIONS = {
+	setPhasing:;
+	setCanon:;
+	StartAndStop:;
+	setPulsing:;
+	setInterlock:;
+    };
+    SUPERCLASS = Object;
+};

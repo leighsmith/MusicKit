@@ -1,0 +1,39 @@
+MyApp = {
+    ACTIONS = {
+	setNeXTDACVolume:;
+	help:;
+	getNeXTDACCurrentValues:;
+	setAD64xProfessional:;
+	selectFile:;
+	setTempoFrom:;
+	playStop:;
+	saveScoreAs:;
+	setNeXTDACMute:;
+	setSoundOutFrom:;
+	deviceSpecificSettings:;
+	setTempoAdjustment:;
+	setAD64xConsumer:;
+	openEditFile:;
+	showErrorLog:;
+    };
+    OUTLETS = {
+	theMainWindow;
+	button;
+	saveAsFileItem;
+	dspCommandsSavePanel;
+	soundSavePanel;
+	NeXTDacMuteSwitch;
+	tempoSlider;
+	tempoTitle;
+	editFileItem;
+	tooFastErrorMsg;
+	NeXTDacVolumeSlider;
+	tempoTextField;
+    };
+    SUPERCLASS = Application;
+};
+FirstResponder = {
+    ACTIONS = {
+    };
+    SUPERCLASS = Object;
+};

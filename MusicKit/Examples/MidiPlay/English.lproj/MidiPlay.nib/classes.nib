@@ -1,0 +1,13 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {go = id; showInfoPanel = id; terminate = id; }; 
+            CLASS = MyApp; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {infoPanel = id; midiIn = id; stringTable = id; }; 
+            SUPERCLASS = NSApplication; 
+        }
+    ); 
+    IBVersion = 1; 
+}

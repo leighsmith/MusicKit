@@ -1,0 +1,19 @@
+FirstResponder = {
+    ACTIONS = {
+	orderFrontNXColorPanel:;
+    };
+    SUPERCLASS = Object;
+};
+PerformerController = {
+    ACTIONS = {
+	showInfoPanel:;
+	setOctave:;
+	pauseOrResume:;
+	setSpeed:;
+    };
+    OUTLETS = {
+	infoPanel;
+	stringTable;
+    };
+    SUPERCLASS = Application;
+};

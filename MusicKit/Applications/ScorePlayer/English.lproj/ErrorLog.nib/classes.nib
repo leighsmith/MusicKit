@@ -1,0 +1,25 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {buttonPressed = id; }; 
+            CLASS = ErrorLog; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {panel = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {performResize = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {buttonPressed = id; }; 
+            CLASS = MKAlert; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {msg = id; panel = id; }; 
+            SUPERCLASS = Object; 
+        }
+    ); 
+    IBVersion = 1; 
+}

@@ -1,0 +1,13 @@
+"Controller" = {
+    ACTIONS = {"appDidInit:" = id; "helpPanel:" = id; "infoPanel:" = id; }; 
+    OUTLETS = {
+        copiedText = id; 
+        helpPanel = id; 
+        infoPanel = id; 
+        myListener = id; 
+        myPboard = id; 
+        repScrollView = id; 
+    }; 
+    SUPERCLASS = Object; 
+};
+"FirstResponder" = {ACTIONS = {}; OUTLETS = {}; SUPERCLASS = NSObject; };

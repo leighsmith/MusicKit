@@ -1,0 +1,89 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                changeSaveType = id; 
+                clavier = id; 
+                closeDocument = id; 
+                help = id; 
+                info = id; 
+                mutePart = id; 
+                newDocument = id; 
+                newScore = id; 
+                openDocument = id; 
+                openScoreFile = id; 
+                pageLayout = id; 
+                pause = id; 
+                play = id; 
+                preferences = id; 
+                printKeyWindow = id; 
+                record = id; 
+                recordEnable = id; 
+                releaseNotes = id; 
+                reset = id; 
+                revertFromSaved = id; 
+                saveAllDocuments = id; 
+                saveDocument = id; 
+                saveDocumentAs = id; 
+                saveScore = id; 
+                saveScoreAs = id; 
+                selectPart = id; 
+                settings = id; 
+                showComments = id; 
+                stop = id; 
+                takeTempoFrom = id; 
+                terminate = id; 
+            }; 
+            CLASS = EnsembleApp; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                helpPanel = id; 
+                infoPanel = id; 
+                notesPanel = id; 
+                numPartsDisplayer = id; 
+                partSelectButtons = id; 
+                pauseButton = id; 
+                playButton = id; 
+                preferences = id; 
+                recordButton = id; 
+                recordButtons = id; 
+                scoreFileNameDisplayer = id; 
+                settings = id; 
+                stopButton = id; 
+                tempoDisplayer = id; 
+                tempoSlider = id; 
+                window = id; 
+            }; 
+            SUPERCLASS = NSApplication; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                cancel = id; 
+                ok = id; 
+                runModal = id; 
+                takeDeemphasisFrom = id; 
+                takeDspNumFrom = id; 
+                takeHeadphoneLevelFrom = id; 
+                takeHeadroomFrom = id; 
+                takeLoadScoreFrom = id; 
+                takeProgramFrom = id; 
+                takeSrateFrom = id; 
+            }; 
+            CLASS = Settings; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                deemphasisDisplayer = id; 
+                documentDisplayer = id; 
+                dspNumDisplayer = id; 
+                headroomDisplayer = id; 
+                levelDisplayer = id; 
+                loadScoreDisplayer = id; 
+                programDisplayer = id; 
+                srateDisplayer = id; 
+            }; 
+            SUPERCLASS = NSPanel; 
+        }
+    ); 
+    IBVersion = 1; 
+}

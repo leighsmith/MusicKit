@@ -1,0 +1,62 @@
+PluckInstrument = {
+    ACTIONS = {
+	takePSustainFrom:;
+	takeEnvParFrom:;
+    };
+    OUTLETS = {
+	envInterface;
+	sustainField;
+	sustainSlider;
+    };
+    SUPERCLASS = EnsembleSynthIns;
+};
+EnsembleSynthIns = {
+    ACTIONS = {
+	showInspector:;
+	takeSensitivityFrom:;
+	takeSustainFrom:;
+	takePatchCountFrom:;
+	takeAmpFrom:;
+	takeBearingFrom:;
+	takeBrightnessFrom:;
+    };
+    OUTLETS = {
+	ampSlider;
+	sustainButton;
+	ampField;
+	brightField;
+	sensitivityInterface;
+	view;
+	patchCountField;
+	inspector;
+	bearingSlider;
+	hashtable;
+	brightSlider;
+	window;
+	bearingField;
+	document;
+    };
+    SUPERCLASS = SynthInstrument;
+};
+FirstResponder = {
+    ACTIONS = {
+    };
+    SUPERCLASS = Object;
+};
+ParamInterface = {
+    ACTIONS = {
+	incrementValueFrom:;
+	takeValueFrom:;
+    };
+    OUTLETS = {
+	textFields;
+	sliders;
+    };
+    SUPERCLASS = ActionCell;
+};
+SynthInstrument = {
+    SUPERCLASS = Instrument;
+};
+Instrument = {
+    SUPERCLASS = Object;
+};

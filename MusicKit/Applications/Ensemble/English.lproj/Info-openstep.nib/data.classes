@@ -1,0 +1,63 @@
+FirstResponder = {
+    ACTIONS = {
+    };
+    SUPERCLASS = Object;
+};
+EnsembleApp = {
+    ACTIONS = {
+	pageLayout:;
+	info:;
+	newScore:;
+	recordEnable:;
+	setSoftTimed:;
+	saveScoreAs:;
+	pause:;
+	openDocument:;
+	reset:;
+	terminate:;
+	openScoreFile:;
+	printKeyWindow:;
+	newDocument:;
+	setMidiTimeStamps:;
+	takeTempoFrom:;
+	record:;
+	mutePart:;
+	showHelpWindow:;
+	saveDocumentAs:;
+	showClavier:;
+	changeSaveType:;
+	showTime:;
+	saveScore:;
+	muteScore:;
+	closeDocument:;
+	preferences:;
+	stop:;
+	settings:;
+	saveDocument:;
+	selectPart:;
+	help:;
+	play:;
+	synchDSP:;
+    };
+    OUTLETS = {
+	partSelectButtons;
+	preferences;
+	stopButton;
+	tempoSlider;
+	numPartsDisplayer;
+	playButton;
+	infoPanel;
+	soundFileNameDisplayer;
+	tempoDisplayer;
+	numChansDisplayer;
+	scoreFileNameDisplayer;
+	settings;
+	helpPanel;
+	recordButtons;
+	timeDisplayer;
+	pauseButton;
+	window;
+	recordButton;
+    };
+    SUPERCLASS = Application;
+};

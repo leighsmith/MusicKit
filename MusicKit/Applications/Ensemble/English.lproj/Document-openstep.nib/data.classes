@@ -1,0 +1,127 @@
+KeyRange = {
+    ACTIONS = {
+	takeMinKeyFrom:;
+	takeMaxKeyFrom:;
+	takeTranspositionFrom:;
+    };
+    OUTLETS = {
+	transpositionField;
+	rangeField;
+	tagTable;
+	maxKeySlider;
+	transpositionSlider;
+	minKeySlider;
+    };
+    SUPERCLASS = EnsembleNoteFilter;
+};
+FirstResponder = {
+    ACTIONS = {
+    };
+    SUPERCLASS = Object;
+};
+EnsembleNoteFilter = {
+    ACTIONS = {
+	toggleBypass:;
+	reset:;
+    };
+    OUTLETS = {
+	bypassButton;
+	menuCell;
+	performer;
+	inspectorPanel;
+    };
+    SUPERCLASS = NoteFilter;
+};
+NoteFilter = {
+    OUTLETS = {
+	noteSenders;
+    };
+    SUPERCLASS = Instrument;
+};
+EnsembleDoc = {
+    ACTIONS = {
+	takePartNumberFrom:;
+	takeNoteFilterFrom:;
+	takeMidiChannelFrom:;
+	takeInstrumentFrom:;
+	muteInstrument:;
+	mutePartInput:;
+	muteMidiInput:;
+	selectInput:;
+	selectInstrument:;
+	sendTestNote:;
+	takeInstrumentNumberFrom:;
+    };
+    OUTLETS = {
+	keyRangeSliders;
+	muteButton2;
+	muteButton1;
+	muteButton3;
+	muteButton0;
+	commentText;
+	midiButton0;
+	midiButton2;
+	midiButton1;
+	midiButton3;
+	partNumDisplayer;
+	midiChanDisplayer;
+	instrumentButton0;
+	instrumentButton1;
+	transposeFields;
+	keyRangeFields;
+	instrumentButton3;
+	instrumentButton2;
+	commentPanel;
+	insSelectButtons;
+	transposeSliders;
+	scoreButton1;
+	instrumentBox0;
+	scoreButton0;
+	scoreButton2;
+	scoreButton3;
+	instrumentBox1;
+	inputSelectButtons;
+	instrumentBox2;
+	filterButton0;
+	filterButton2;
+	instrumentBox3;
+	filterButton1;
+	filterButton3;
+	insNumButton0;
+	insNumButton1;
+	insNumButton2;
+	insNumButton3;
+	midi;
+    };
+    SUPERCLASS = GenericDocument;
+};
+Instrument = {
+    OUTLETS = {
+	noteReceivers;
+    };
+    SUPERCLASS = Object;
+};
+GenericDocumentDelegate = {
+    ACTIONS = {
+	documentDidInit:;
+	documentDidResignKey:;
+	documentWillClose:;
+	documentDidBecomeKey:;
+    };
+    OUTLETS = {
+    };
+    SUPERCLASS = Object;
+};
+GenericDocument = {
+    ACTIONS = {
+	save:;
+	revertToSaved:;
+	saveAs:;
+	saveTo:;
+    };
+    OUTLETS = {
+	window;
+	delegate;
+    };
+    SUPERCLASS = Responder;
+};

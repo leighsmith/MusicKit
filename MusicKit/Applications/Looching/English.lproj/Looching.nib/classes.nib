@@ -1,0 +1,33 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                StartAndStop = id; 
+                displaySpread = id; 
+                displayVibRate = id; 
+                displayVibWidth = id; 
+                setParams = id; 
+                terminate = id; 
+                trArnie = id; 
+                trBach = id; 
+                trDrone = id; 
+                trMorning = id; 
+                trOriginal = id; 
+            }; 
+            CLASS = Looching; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                inSpread = id; 
+                inVibRate = id; 
+                inVibWidth = id; 
+                outSpread = id; 
+                outVibRate = id; 
+                outVibWidth = id; 
+            }; 
+            SUPERCLASS = Object; 
+        }, 
+        {CLASS = Stopit; LANGUAGE = ObjC; SUPERCLASS = NSApplication; }
+    ); 
+    IBVersion = 1; 
+}

@@ -1,0 +1,19 @@
+MyApp = {
+    ACTIONS = {
+	showInfoPanel:;
+	go:;
+	terminate:;
+    };
+    OUTLETS = {
+	infoPanel;
+	midiIn;
+	stringTable;
+    };
+    SUPERCLASS = Application;
+};
+FirstResponder = {
+    ACTIONS = {
+	orderFrontNXColorPanel:;
+    };
+    SUPERCLASS = Object;
+};

@@ -1,0 +1,15 @@
+FirstResponder = {
+    ACTIONS = {"orderFrontNXColorPanel:" = "orderFrontNXColorPanel:"; }; 
+    SUPERCLASS = Object; 
+};
+ExampApp = {
+    ACTIONS = {
+	"appDidInit:" = "appDidInit:"; 
+	"bendPitch:" = "bendPitch:"; 
+	"playNote:" = "playNote:"; 
+	"showInfoPanel:" = "showInfoPanel:"; 
+	"terminate:" = "terminate:"; 
+    }; 
+    OUTLETS = {infoPanel = infoPanel; stringTable = stringTable; }; 
+    SUPERCLASS = Application; 
+};

@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/12/15 02:02:29  leigh
+  Initial Revision
+
   Revision 1.3  2000/11/29 19:44:38  leigh
   Updated to new function naming
 
@@ -27,9 +30,7 @@ Modification history:
   Initial revision
  
 */
-typedef int port_t;
-#include "mididriver_types.h"
-#include "mididriverUser.h"
+#include "midi_driver.h"
 
 #include "PerformSoundPrivate.h"
 
@@ -51,8 +52,8 @@ extern "C" {
 
 /* Routine MKMDBecomeOwner */
 PERFORM_API kern_return_t MKMDBecomeOwner (
-	port_t mididriver_port,
-	port_t owner_port)
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port)
 {
 #ifdef FUNCLOG
   if(debug == NULL) {
@@ -72,8 +73,8 @@ PERFORM_API kern_return_t MKMDBecomeOwner (
 
 /* Routine MKMDReleaseOwnership */
 PERFORM_API kern_return_t MKMDReleaseOwnership (
-	port_t mididriver_port,
-	port_t owner_port)
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port)
 {
 #ifdef FUNCLOG
   // TODO check the ports properly
@@ -89,8 +90,8 @@ PERFORM_API kern_return_t MKMDReleaseOwnership (
 
 /* Routine MKMDSetClockMode */
 PERFORM_API kern_return_t MKMDSetClockMode (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	short unit,
 	int clock_mode)
 {
@@ -102,8 +103,8 @@ PERFORM_API kern_return_t MKMDSetClockMode (
 
 /* Routine MKMDGetClockTime */
 PERFORM_API kern_return_t MKMDGetClockTime (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	int *time)
 {
   //  REFERENCE_TIME currentRefTime;
@@ -119,8 +120,8 @@ PERFORM_API kern_return_t MKMDGetClockTime (
 
 /* Routine MKMDGetMTCTime */
 PERFORM_API kern_return_t MKMDGetMTCTime (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	short *format,
 	short *hours,
 	short *minutes,
@@ -135,8 +136,8 @@ PERFORM_API kern_return_t MKMDGetMTCTime (
 
 /* Routine MKMDSetClockTime */
 PERFORM_API kern_return_t MKMDSetClockTime (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	int time)
 {
   // defines datum to associate the integer time to the nanosecond time
@@ -150,9 +151,9 @@ PERFORM_API kern_return_t MKMDSetClockTime (
 
 /* SimpleRoutine MKMDRequestAlarm */
 PERFORM_API kern_return_t MKMDRequestAlarm (
-	port_t mididriver_port,
-	port_t owner_port,
-	port_t reply_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
+	MKMDReplyPort reply_port,
 	int time)
 {
 #ifdef FUNCLOG
@@ -163,8 +164,8 @@ PERFORM_API kern_return_t MKMDRequestAlarm (
 
 /* Routine MKMDStartClock */
 PERFORM_API kern_return_t MKMDStartClock (
-	port_t mididriver_port,
-	port_t owner_port)
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port)
 {
   // TODO check the ports properly
 #ifdef FUNCLOG
@@ -175,8 +176,8 @@ PERFORM_API kern_return_t MKMDStartClock (
 
 /* Routine MKMDStopClock */
 PERFORM_API kern_return_t MKMDStopClock (
-	port_t mididriver_port,
-	port_t owner_port)
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port)
 {
   // TODO check the ports properly
 #ifdef FUNCLOG
@@ -187,8 +188,8 @@ PERFORM_API kern_return_t MKMDStopClock (
 
 /* Routine MKMDClaimUnit */
 PERFORM_API kern_return_t MKMDClaimUnit (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	short unit)
 {
 #ifdef FUNCLOG
@@ -199,8 +200,8 @@ PERFORM_API kern_return_t MKMDClaimUnit (
 
 /* Routine MKMDReleaseUnit */
 PERFORM_API kern_return_t MKMDReleaseUnit (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	short unit)
 {
 #ifdef FUNCLOG
@@ -211,9 +212,9 @@ PERFORM_API kern_return_t MKMDReleaseUnit (
 
 /* Routine MKMDRequestExceptions */
 PERFORM_API kern_return_t MKMDRequestExceptions (
-	port_t mididriver_port,
-	port_t owner_port,
-	port_t error_port)
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
+	MKMDReplyPort error_port)
 {
 #ifdef FUNCLOG
   fprintf(debug, "MKMDRequestExceptions called\n");
@@ -223,10 +224,10 @@ PERFORM_API kern_return_t MKMDRequestExceptions (
 
 /* Routine MKMDRequestData */
 PERFORM_API kern_return_t MKMDRequestData (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	short unit,
-	port_t reply_port)
+	MKMDReplyPort reply_port)
 {
 #ifdef FUNCLOG
   fprintf(debug, "MKMDRequestData called\n");
@@ -239,8 +240,8 @@ PERFORM_API kern_return_t MKMDRequestData (
 // to stop choking synths with sysex messages. Nowdays it would seem better just to specify
 // an inter-byte delay and specify the start time of the channel byte.
 PERFORM_API kern_return_t MKMDSendData (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	short unit,
 	MKMDRawEventPtr data,
 	unsigned int dataCnt)
@@ -280,8 +281,8 @@ PERFORM_API kern_return_t MKMDSendData (
 
 /* Routine MKMDGetAvailableQueueSize */
 PERFORM_API kern_return_t MKMDGetAvailableQueueSize (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	short unit,
 	int *size)
 {
@@ -297,10 +298,10 @@ PERFORM_API kern_return_t MKMDGetAvailableQueueSize (
 
 /* Routine MKMDRequestQueueNotification */
 PERFORM_API kern_return_t MKMDRequestQueueNotification (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	short unit,
-	port_t notification_port,
+	MKMDReplyPort notification_port,
 	int size)
 {
 #ifdef FUNCLOG
@@ -311,8 +312,8 @@ PERFORM_API kern_return_t MKMDRequestQueueNotification (
 
 /* Routine MKMDClearQueue */
 PERFORM_API kern_return_t MKMDClearQueue (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	short unit)
 {
 #ifdef FUNCLOG
@@ -323,8 +324,8 @@ PERFORM_API kern_return_t MKMDClearQueue (
 
 /* Routine MKMDFlushQueue */
 PERFORM_API kern_return_t MKMDFlushQueue (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	short unit)
 {
 #ifdef FUNCLOG
@@ -335,8 +336,8 @@ PERFORM_API kern_return_t MKMDFlushQueue (
 
 /* Routine MKMDSetSystemIgnores */
 PERFORM_API kern_return_t MKMDSetSystemIgnores (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	short unit,
 	int sys_ignores)
 {
@@ -348,8 +349,8 @@ PERFORM_API kern_return_t MKMDSetSystemIgnores (
 
 /* Routine MKMDSetClockQuantum */
 PERFORM_API kern_return_t MKMDSetClockQuantum (
-	port_t mididriver_port,
-	port_t owner_port,
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
 	int microseconds)
 {
   // REFERENCE_TIME measured in 100ns units, I don't understand why MS needs such accuracy as it is well beyond perception...
@@ -360,7 +361,7 @@ PERFORM_API kern_return_t MKMDSetClockQuantum (
   return 0;
 }
 
-PERFORM_API kern_return_t MKMDAwaitReply(port_t port_set, MKMDReplyFunctions *funcs, int timeout)
+PERFORM_API kern_return_t MKMDAwaitReply(MKMDPort port_set, MKMDReplyFunctions *funcs, int timeout)
 {
 #ifdef FUNCLOG
   fprintf(debug, "MKMDAwaitReply called %d timeout\n", timeout);

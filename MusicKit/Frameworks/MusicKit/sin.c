@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/12/15 02:02:28  leigh
+  Initial Revision
+
   Revision 1.2  1999/07/29 01:26:17  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -66,4 +69,3 @@ static double myCos(double x)
 {
     return mySin(x + M_PI_2);
 }
-

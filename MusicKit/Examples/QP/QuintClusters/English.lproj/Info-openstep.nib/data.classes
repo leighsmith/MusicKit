@@ -1,0 +1,20 @@
+ExampApp = {
+    ACTIONS = {
+	showInfoPanel:;
+	terminate:;
+	playNote:;
+	appDidInit:;
+	bendPitch:;
+    };
+    OUTLETS = {
+	infoPanel;
+	stringTable;
+    };
+    SUPERCLASS = Application;
+};
+FirstResponder = {
+    ACTIONS = {
+	orderFrontNXColorPanel:;
+    };
+    SUPERCLASS = Object;
+};

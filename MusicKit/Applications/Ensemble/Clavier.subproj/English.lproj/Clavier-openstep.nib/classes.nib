@@ -1,0 +1,55 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                takeControlValFrom = id; 
+                takeControllerFrom = id; 
+                takeKeyValueFrom = id; 
+                takeModWheelFrom = id; 
+                takeOctaveFrom = id; 
+                takePitchBendFrom = id; 
+                takeSostenutoFrom = id; 
+                takeSoundGroupFrom = id; 
+                takeVariationFrom = id; 
+            }; 
+            CLASS = Clavier; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                controlValSliders = id; 
+                controllerFields = id; 
+                controllerInterface = id; 
+                modWheelSlider = id; 
+                noteSender = id; 
+                octaveDisplayer = id; 
+                pianoOctave1 = id; 
+                pianoOctave2 = id; 
+                pianoOctave3 = id; 
+                pitchBendSlider = id; 
+                programChangeField = id; 
+                soundGroupDisplayer = id; 
+                soundGroupMatrix = id; 
+                variationDisplayer = id; 
+                variationMatrix = id; 
+                window = id; 
+            }; 
+            SUPERCLASS = Object; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = MySlider; LANGUAGE = ObjC; SUPERCLASS = NSSlider; }, 
+        {CLASS = MySliderCell; LANGUAGE = ObjC; SUPERCLASS = NSSliderCell; }, 
+        {
+            ACTIONS = {incrementValueFrom = id; takeValueFrom = id; }; 
+            CLASS = ParamInterface; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {sliders = id; textFields = id; }; 
+            SUPERCLASS = NSActionCell; 
+        }, 
+        {
+            CLASS = PianoOctave; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {target = id; }; 
+            SUPERCLASS = NSControl; 
+        }
+    ); 
+    IBVersion = 1; 
+}

@@ -1,0 +1,19 @@
+Stopwatch = {
+    ACTIONS = {
+	"lapPressed:" = "lapPressed:"; 
+	"performStart:" = "performStart:"; 
+	"performStop:" = "performStop:"; 
+	"startPressed:" = "startPressed:"; 
+    }; 
+    OUTLETS = {
+	delegate = delegate; 
+	lapButton = lapButton; 
+	lapTimeField = lapTimeField; 
+	panel = panel; 
+	startButton = startButton; 
+	timeField = timeField; 
+    }; 
+    SUPERCLASS = Object; 
+};
+FirstResponder = {ACTIONS = {}; SUPERCLASS = Object; };
+UpPanel = {OUTLETS = {UpObject = UpObject; }; SUPERCLASS = Panel; };

@@ -1,0 +1,107 @@
+EnvelopeView = {
+    ACTIONS = {
+	takeInputRangeFrom:;
+	takeOutputRangeFrom:;
+    };
+    OUTLETS = {
+	delegate;
+	outRangeFields;
+	inRangeFields;
+	envelope;
+	xAxisView;
+	yAxisView;
+    };
+    SUPERCLASS = View;
+};
+XAxisView = {
+    ACTIONS = {
+    };
+    OUTLETS = {
+	font;
+    };
+    SUPERCLASS = View;
+};
+FirstResponder = {
+    ACTIONS = {
+    };
+    SUPERCLASS = Object;
+};
+YAxisView = {
+    ACTIONS = {
+    };
+    OUTLETS = {
+	font;
+    };
+    SUPERCLASS = View;
+};
+EnvelopeViewDelgate = {
+    ACTIONS = {
+	envelopeModified:;
+    };
+    OUTLETS = {
+    };
+    SUPERCLASS = Object;
+};
+EnsembleNoteFilter = {
+    ACTIONS = {
+	toggleBypass:;
+	reset:;
+    };
+    OUTLETS = {
+	bypassButton;
+	menuCell;
+	performer;
+	inspectorPanel;
+    };
+    SUPERCLASS = NoteFilter;
+};
+NoteFilter = {
+    OUTLETS = {
+	noteSenders;
+    };
+    SUPERCLASS = Instrument;
+};
+ParamInterface = {
+    ACTIONS = {
+	takeValueFrom:;
+	incrementValueFrom:;
+    };
+    OUTLETS = {
+	textFields;
+	sliders;
+    };
+    SUPERCLASS = ActionCell;
+};
+Instrument = {
+    OUTLETS = {
+	noteReceivers;
+    };
+    SUPERCLASS = Object;
+};
+Mapper = {
+    ACTIONS = {
+	takeDoubleClickFrom:;
+	takeOutputFrom:;
+	enableThru:;
+	takeDoubleClickTimeFrom:;
+	enableSequentialMapping:;
+	enableMap:;
+	takeInputFrom:;
+	editEnvelope:;
+	enableFunction:;
+    };
+    OUTLETS = {
+	doubleClickTimeField;
+	envelopeView;
+	outputInterface;
+	inputInterface;
+	clickButtons;
+	sequentialSwitch;
+	newNote;
+	enabledButtons;
+	functionButtons;
+	inspectButtons;
+	thruButtons;
+    };
+    SUPERCLASS = EnsembleNoteFilter;
+};

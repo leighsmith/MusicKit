@@ -1,0 +1,32 @@
+Looching = {
+    ACTIONS = {
+	trMorning:;
+	trArnie:;
+	terminate:;
+	displaySpread:;
+	trBach:;
+	displayVibRate:;
+	displayVibWidth:;
+	setParams:;
+	trDrone:;
+	StartAndStop:;
+	trOriginal:;
+    };
+    OUTLETS = {
+	outVibRate;
+	outSpread;
+	inVibWidth;
+	outVibWidth;
+	inVibRate;
+	inSpread;
+    };
+    SUPERCLASS = Object;
+};
+Stopit = {
+    SUPERCLASS = Application;
+};
+FirstResponder = {
+    ACTIONS = {
+    };
+    SUPERCLASS = Object;
+};

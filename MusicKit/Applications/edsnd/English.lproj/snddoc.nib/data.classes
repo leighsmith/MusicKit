@@ -1,0 +1,44 @@
+ScrollingSound = {OUTLETS = {delegate = delegate; }; SUPERCLASS = ScrollView; };
+FirstResponder = {
+    ACTIONS = {
+	"addSilence:" = "addSilence:"; 
+	"erase:" = "erase:"; 
+	"revertToSaved:" = "revertToSaved:"; 
+	"save:" = "save:"; 
+	"saveAs:" = "saveAs:"; 
+    }; 
+    SUPERCLASS = Object; 
+};
+SoundDocument = {
+    ACTIONS = {
+	"newSize:" = "newSize:"; 
+	"newStart:" = "newStart:"; 
+	"pause:" = "pause:"; 
+	"play:" = "play:"; 
+	"revertToSaved:" = "revertToSaved:"; 
+	"save:" = "save:"; 
+	"saveAs:" = "saveAs:"; 
+	"setSelEnd:" = "setSelEnd:"; 
+	"setSelStart:" = "setSelStart:"; 
+	"stop:" = "stop:"; 
+	"windowWillClose:" = "windowWillClose:"; 
+    }; 
+    OUTLETS = {
+	durationForm = durationForm; 
+	endForm = endForm; 
+	formatField = formatField; 
+	meter = meter; 
+	nchansField = nchansField; 
+	pauseButton = pauseButton; 
+	playButton = playButton; 
+	scroller = scroller; 
+	selEndForm = selEndForm; 
+	selStartForm = selStartForm; 
+	sizeForm = sizeForm; 
+	srateField = srateField; 
+	startForm = startForm; 
+	stopButton = stopButton; 
+	window = window; 
+    }; 
+    SUPERCLASS = Object; 
+};

@@ -1,0 +1,32 @@
+FFTView = {SUPERCLASS = View; };
+SpectrumView = {OUTLETS = {delegate = delegate; sound = sound; }; SUPERCLASS = View; };
+FirstResponder = {ACTIONS = {}; SUPERCLASS = Object; };
+FFT = {
+    ACTIONS = {
+	"cursorMoved:" = "cursorMoved:"; 
+	"displayFFT:" = "displayFFT:"; 
+	"displaySpectrum:" = "displaySpectrum:"; 
+	"setFFTScaling:" = "setFFTScaling:"; 
+	"setFFTSize:" = "setFFTSize:"; 
+	"setSpectrum:" = "setSpectrum:"; 
+	"setSpectrumMean:" = "setSpectrumMean:"; 
+	"setSpectrumSlide:" = "setSpectrumSlide:"; 
+    }; 
+    OUTLETS = {
+	fftAmpForm = fftAmpForm; 
+	fftFreqForm = fftFreqForm; 
+	fftPanel = fftPanel; 
+	fftSizeButton = fftSizeButton; 
+	fftView = fftView; 
+	spectrumFreqForm = spectrumFreqForm; 
+	spectrumMeanButton = spectrumMeanButton; 
+	spectrumMeanForm = spectrumMeanForm; 
+	spectrumPanel = spectrumPanel; 
+	spectrumSlideButton = spectrumSlideButton; 
+	spectrumSpectButton = spectrumSpectButton; 
+	spectrumTimeForm = spectrumTimeForm; 
+	spectrumView = spectrumView; 
+    }; 
+    SUPERCLASS = Object; 
+};
+UpPanel = {SUPERCLASS = Panel; };
