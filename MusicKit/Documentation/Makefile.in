@@ -80,6 +80,8 @@ ADMONIMAGESDIR=/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/images
 
 INSTALL_DIR=$(DSTROOT)/Library/Documentation
 
+INSTALLED_CHANGELOG=$(HTML_TMPDIR)/$(basename $(CHANGELOG))
+
 # Generate the HTML tarball. The HTML tarball will create the PDF
 # before it copies it into the HTML directory.
 all: $(DOC_TARBALL)
@@ -87,28 +89,37 @@ all: $(DOC_TARBALL)
 installhdrs:
 	@echo 'No headers to install for Documentation' >/dev/null
 
+installsrc:
+	@echo 'No source to install for Documentation' >/dev/null
+
 clean:
 	-rm -r $(HTML_TMPDIR)
 	-rm -r $(PDF_TMPDIR) 
 
-installsrc:: $(SRCROOT)
-	tar cf - . | (cd $(SRCROOT); tar xfp -)
-	-chmod -R go-w $(SRCROOT)
-	-chmod -R ugo+r $(SRCROOT)
-
-install::
+install:: $(DOC_TARBALL) $(INSTALL_DIR)
 	mkdirs $(INSTALL_DIR)
-	tar cf - DSP | (cd $(INSTALL_DIR); tar xfp -)
-	tar cf - MusicKit | (cd $(INSTALL_DIR); tar xfp -)
-	cp DocIntroduction.rtf $(INSTALL_DIR)/MusicKit
+	(cd $(INSTALL_DIR); tar xzfp $(DOC_TARBALL) )
 	-chmod -R go-w $(INSTALL_DIR)
 	-chmod -R ugo+r $(INSTALL_DIR)
-	#
-	# If the user specified a location to additionally copy the README
-	# file to, we copy it there. It will typically be the source code
-	# packaging directory.
-	# 
-	if [ $(COPYREADMETO)_x != _x ]; then cp $(PDF_TMPDIR)/$(README).pdf $(COPYREADMETO); fi
+
+#
+# If the user specified a location to additionally copy the README
+# file to, we copy it there. It will typically be the source code
+# packaging directory.
+# 
+installreadme: $(COPYREADMETO)/$(README).pdf
+
+$(COPYREADMETO)/$(README).pdf: $(PDF_TMPDIR)/$(README).pdf
+	-if [ $(COPYREADMETO)_x != _x ]; then cp $< $(COPYREADMETO); fi
+
+#
+# If we specified a changelog on the command line, copy it into the web directory.
+#
+installchangelog: $(INSTALLED_CHANGELOG)
+
+$(INSTALLED_CHANGELOG): $(CHANGELOG)
+	mkdir -p $(HTML_DIR)
+	cp $(CHANGELOG) $(HTML_TMPDIR)
 
 #
 # Create HTML from the supplied DocBook SGML file.
@@ -224,10 +235,7 @@ $(HTML_TMPDIR)/Frameworks/index.html: $(FRAMEWORKS_TO_HEADERDOC) $(CSS)
 #
 # Create a tarball.
 #
-$(DOC_TARBALL): $(PDFS) $(HTMLS) Publications/*.pdf $(CHANGELOG)
-	# If we specified a changelog on the command line, copy it into the
-	# web directory.
-	if [ $(CHANGELOG)_x != _x ]; then cp $(CHANGELOG) $(HTML_TMPDIR); fi
+$(DOC_TARBALL): $(PDFS) $(HTMLS) Publications/*.pdf $(INSTALLED_CHANGELOG)
 	# Copy all PDFs to be placed on the web-site, 
 	mkdir -p $(HTML_TMPDIR)/Publications
 	# those prepared beforehand... 
@@ -236,3 +244,4 @@ $(DOC_TARBALL): $(PDFS) $(HTMLS) Publications/*.pdf $(CHANGELOG)
 	cp $(PDFS) $(HTML_TMPDIR)
 	cd $(HTML_TMPDIR)/..; tar cjf $(DOC_TARBALL) $(HTML_DISTRIB_DIR)
 	echo $(basename $(HTML_TMPDIR))
+
