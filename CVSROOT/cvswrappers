@@ -21,3 +21,64 @@
 #  and value is a single-quote delimited value.
 # For example:
 #*.gif -k 'b'
+
+# things to treat as binary files
+
+# MacOS X nibs are nowdays managed by InterfaceBuilder without needing
+# wrapping, but still need to be binary.
+*.nib			-k 'b'  -m 'COPY'
+*.class                 -k 'b'  -m 'COPY'
+
+# typical binary files
+*.compressed    	-k 'b'  -m 'COPY'
+*.DLL                   -k 'b'  -m 'COPY'
+*.dll                   -k 'b'  -m 'COPY'
+*.doc                   -k 'b'  -m 'COPY'
+*.DOC                   -k 'b'  -m 'COPY'
+*.EXE                   -k 'b'  -m 'COPY'
+*.exe                   -k 'b'  -m 'COPY'
+*.exp                   -k 'b'  -m 'COPY'
+*.EXP                   -k 'b'  -m 'COPY'
+*.bmp                   -k 'b'  -m 'COPY'
+*.BMP                   -k 'b'  -m 'COPY'
+*.ico                   -k 'b'  -m 'COPY'
+*.ICO                   -k 'b'  -m 'COPY'
+*.GIF                   -k 'b'  -m 'COPY'
+*.gif                   -k 'b'  -m 'COPY'
+*.GZ                    -k 'b'  -m 'COPY'
+*.gz                    -k 'b'  -m 'COPY'
+*.JPEG                  -k 'b'  -m 'COPY'
+*.jpeg                  -k 'b'  -m 'COPY'
+*.JPG                   -k 'b'  -m 'COPY'
+*.jpg                   -k 'b'  -m 'COPY'
+*.lib                   -k 'b'  -m 'COPY'
+*.LIB                   -k 'b'  -m 'COPY'
+*.ofile                 -k 'b'  -m 'COPY'
+*.PNG                   -k 'b'  -m 'COPY'
+*.png                   -k 'b'  -m 'COPY'
+*.PNM                   -k 'b'  -m 'COPY'
+*.pnm                   -k 'b'  -m 'COPY'
+*.PPM                   -k 'b'  -m 'COPY'
+*.ppm                   -k 'b'  -m 'COPY'
+*.TAR                   -k 'b'  -m 'COPY'
+*.tar                   -k 'b'  -m 'COPY'
+*.TIFF                  -k 'b'  -m 'COPY'
+*.tiff                  -k 'b'  -m 'COPY'
+*.Z                     -k 'b'  -m 'COPY'
+
+# Acrobat
+*.pdf			-k 'b'  -m 'COPY'
+
+# MacOSX icon files
+*.icns			-k 'b'  -m 'COPY'
+
+# MusicKit stuff
+*.midi                  -k 'b'  -m 'COPY'
+*.dsp                   -k 'b'  -m 'COPY'
+*.ens                   -k 'b'  -m 'COPY'
+
+# VC++ crap
+*.ncb			-l 'b'  -m 'COPY'
+*.opt			-l 'b'  -m 'COPY'
+*.dsw			-l 'b'  -m 'COPY'
+*.aps			-l 'b'  -m 'COPY'
