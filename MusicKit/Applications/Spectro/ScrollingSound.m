@@ -38,7 +38,7 @@
 	NSRect tframe;
 	
 	p.y = p.x = 0.0;
-	if ((samples = [[(SndView *)soundView sound] lengthInSampleFrames]) < 1) goto empty;
+	if ((samples = [[soundView sound] lengthInSampleFrames]) < 1) goto empty;
 	r = ((float) sample) / ((float) samples);
 	tframe = [soundView frame];
 	p.y = 0.0;
@@ -63,7 +63,7 @@
 	if (aRect.size.width == 0.0) return 0;
 	r = (r - aRect.origin.x) / aRect.size.width;
 	if (r > 1.0) r = 1.0;
-        return (int) (r * [[(SndView *)soundView sound] lengthInSampleFrames] + 0.5);
+        return (int) (r * [[soundView sound] lengthInSampleFrames] + 0.5);
 }
 
 - (void)setDelegate:(id)anObject
@@ -85,7 +85,7 @@
     if ([soundView sound])
         [[soundView sound] release];
     [[soundView window] makeKeyAndOrderFront:self];
-    [(SndView *)soundView setSound:aSound];
+    [soundView setSound:aSound];
     srate = [aSound samplingRate];
 }
 
@@ -198,7 +198,7 @@
 {	
 	[super reflectScrolledClipView:sender];		/* Do the default actions */
 	if (srate == 0)
-            srate = [[(SndView *)soundView sound] samplingRate];
+            srate = [[soundView sound] samplingRate];
 	if (delegate && [delegate respondsToSelector:@selector(displayChanged:)])
             [delegate performSelector:@selector(displayChanged:) withObject:self];
 }

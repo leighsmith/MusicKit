@@ -6,7 +6,7 @@
 
 @interface ScrollingSound:NSScrollView
 {
-	id soundView;
+	IBOutlet SndView *soundView;
 	id delegate;
 	float srate;
 	float reductionFactor;
