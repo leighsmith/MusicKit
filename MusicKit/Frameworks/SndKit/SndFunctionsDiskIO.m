@@ -60,14 +60,6 @@
 # define st_sample_t LONG
 #endif
 
-#define SUN_ULAW        1                       /* u-law encoding */
-#define SUN_LIN_8       2                       /* Linear 8 bits */
-#define SUN_LIN_16      3                       /* Linear 16 bits */
-#define SUN_LIN_24      4                       /* Linear 24 bits */
-#define SUN_LIN_32      5                       /* Linear 32 bits */
-#define SUN_FLOAT	6			/* IEEE FP 32 bits */
-#define SUN_ALAW        27                      /* a-law encoding */
-
 #define SNDREADCHUNKSIZE 256*1024   // Number of st_sample_t samples to read into a buffer.
 #ifdef WIN32
 #define LASTCHAR        '\\'
@@ -77,39 +69,42 @@
 
 #define DEBUG_MESSAGES 0
 
-int sk_ausunencoding(int size, int encoding) /* used to be in libst.a, but made private */
+/* converted from a similar routine in libst.a */
+static int soxEncodingToSndDataFormat(int size, int encoding)
 {
-  int sun_encoding;
+    int dataFormat;
 
-  if (encoding == ST_ENCODING_UNSIGNED && size == ST_SIZE_BYTE)
-    sun_encoding = SUN_LIN_8;
-  else if (encoding == ST_ENCODING_ULAW && size == ST_SIZE_BYTE)
-    sun_encoding = SUN_ULAW;
-  else if (encoding == ST_ENCODING_ALAW && size == ST_SIZE_BYTE)
-    sun_encoding = SUN_ALAW;
-  else if (encoding == ST_ENCODING_SIGN2 && size == ST_SIZE_BYTE)
-    sun_encoding = SUN_LIN_8;
-  else if (encoding == ST_ENCODING_SIGN2 && size == ST_SIZE_WORD)
-    sun_encoding = SUN_LIN_16;
-  else if (encoding == ST_ENCODING_SIGN2 && size == ST_SIZE_DWORD)
-    sun_encoding = SUN_LIN_32;
-  else
-    sun_encoding = -1;
-  return sun_encoding;
+    if (encoding == ST_ENCODING_UNSIGNED && size == ST_SIZE_BYTE)
+	dataFormat = SND_FORMAT_LINEAR_8;
+    else if (encoding == ST_ENCODING_ULAW && size == ST_SIZE_BYTE)
+	dataFormat = SND_FORMAT_MULAW_8;
+    else if (encoding == ST_ENCODING_ALAW && size == ST_SIZE_BYTE)
+	dataFormat = SND_FORMAT_ALAW_8;
+    else if (encoding == ST_ENCODING_SIGN2 && size == ST_SIZE_BYTE)
+	dataFormat = SND_FORMAT_LINEAR_8;
+    else if (encoding == ST_ENCODING_SIGN2 && size == ST_SIZE_WORD)
+	dataFormat = SND_FORMAT_LINEAR_16;
+    else if (encoding == ST_ENCODING_SIGN2 && size == ST_SIZE_24BIT)
+	dataFormat = SND_FORMAT_LINEAR_24;
+    else if (encoding == ST_ENCODING_SIGN2 && size == ST_SIZE_DWORD)
+	dataFormat = SND_FORMAT_LINEAR_32;
+    else
+	dataFormat = -1;
+    return dataFormat;
 }
 
-int SndFormatToSoxFormat(int sndFormatCode, int *size)
+static int SndDataFormatToSoxEncoding(int sndFormatCode, int *size)
 {
-  int r = ST_ENCODING_SIGN2;
-  switch (sndFormatCode) {
+    int r = ST_ENCODING_SIGN2;
+    switch (sndFormatCode) {
     case SND_FORMAT_LINEAR_8:  *size = 1; break;
     case SND_FORMAT_LINEAR_16: *size = 2; break;
     case SND_FORMAT_LINEAR_32: *size = 4; break;
     case SND_FORMAT_FLOAT:     *size = 4; r = ST_ENCODING_FLOAT; break;
     default:
-      NSLog(@"Argh, this sndtosox format conversion not written yet...");
-  }
-  return r;
+	NSLog(@"Argh, this sndtosox format conversion not written yet...");
+    }
+    return r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -201,7 +196,7 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
     /* endianess is handled within startread() */
     s->magic        = SND_MAGIC; // could be extended using fileTypeStr but only when we write in all formats.
     s->dataLocation = 0;
-    s->dataFormat   = sk_ausunencoding(informat.info.size, informat.info.encoding);
+    s->dataFormat   = soxEncodingToSndDataFormat(informat.info.size, informat.info.encoding);
     bUnsigned       = informat.info.encoding == ST_ENCODING_UNSIGNED;
     s->samplingRate = informat.info.rate;
     s->channelCount = informat.info.channels;
@@ -269,31 +264,39 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
 		numOfSamplesToConvert = totalNumOfSamplesToRead - samplesRead;
 
 	    switch (s->dataFormat) {
-	    case SUN_LIN_8:
+	    case SND_FORMAT_LINEAR_8:
 		for(i = 0; i < numOfSamplesToConvert; i++) {
 		    int sample = ST_SAMPLE_TO_SIGNED_BYTE(readBuffer[i]);
 		    *((char *) storePtr) =  sample; // kludged assuming 16 bits.
 		    storePtr += informat.info.size;
 		}
 		break;
-	    case SUN_LIN_16:
+	    case SND_FORMAT_LINEAR_16:
 		for(i = 0; i < numOfSamplesToConvert; i++) {
 		    int sample = ST_SAMPLE_TO_SIGNED_WORD(readBuffer[i]);
-		    *((short *) storePtr) = sample; // kludged assuming 16 bits.
+		    *((short *) storePtr) = sample;
 		    storePtr += informat.info.size;
 		}
 		break;
-	    case SUN_LIN_32:
+	    case SND_FORMAT_LINEAR_24:
+		for(i = 0; i < numOfSamplesToConvert; i++) {
+		    // long int sample = ST_SAMPLE_TO_SIGNED_24BIT(readBuffer[i]);
+		    long int sample = ((int32_t)(readBuffer[i]) << 8); // this assumes big endian
+		    *((long *) storePtr) = sample;
+		    storePtr += informat.info.size;
+		}
+		break;
+	    case SND_FORMAT_LINEAR_32:
 		for(i = 0; i < numOfSamplesToConvert; i++) {
 		    long int sample = ST_SAMPLE_TO_SIGNED_DWORD(readBuffer[i]);
-		    *((long *) storePtr) =  sample; // kludged assuming 16 bits.
+		    *((long *) storePtr) = sample;
 		    storePtr += informat.info.size;
 		}
 		break;
-	    case SUN_FLOAT:
+	    case SND_FORMAT_FLOAT:
 		for(i = 0; i < numOfSamplesToConvert; i++) {
 		    float sample = ST_SAMPLE_TO_FLOAT_DWORD(readBuffer[i]);
-		    *((float *) storePtr) =  sample; // kludged assuming 16 bits.
+		    *((float *) storePtr) = sample;
 		    storePtr += informat.info.size;
 		}
 		break;
@@ -381,7 +384,7 @@ int SndWriteSoundfile(NSString* filename, SndSoundStruct *sound)
     
   st_initformat(&ft);
   ft.info.rate     = sound->samplingRate;
-  ft.info.encoding = SndFormatToSoxFormat(sound->dataFormat, &sz);
+  ft.info.encoding = SndDataFormatToSoxEncoding(sound->dataFormat, &sz);
   ft.info.size     = sz;
   ft.info.channels = sound->channelCount;
   ft.filename      = (char *)[filename fileSystemRepresentation];
@@ -447,28 +450,28 @@ int SndWriteSoundfile(NSString* filename, SndSoundStruct *sound)
     sampleCount -= c;
     
     switch (sound->dataFormat) {
-      case SUN_LIN_8:
+      case SND_FORMAT_LINEAR_8:
         for(i = 0; i < c; i++) {
           char sample = ((char *)data)[i];
           writeBuffer[i] = ST_SIGNED_BYTE_TO_SAMPLE(sample) ; // no swap
         }
         (char *)data += c;
         break;
-      case SUN_LIN_16:
+      case SND_FORMAT_LINEAR_16:
         for(i = 0; i < c; i++) {
           short sample = ((short *)data)[i];
           writeBuffer[i] = ST_SIGNED_WORD_TO_SAMPLE(sample) ; // no swap
         }
         (short *)data += c;
         break;
-      case SUN_LIN_32:
+      case SND_FORMAT_LINEAR_32:
         for(i = 0; i < c; i++) {
           long int sample = ((long int *)data)[i];
           writeBuffer[i] = ST_SIGNED_DWORD_TO_SAMPLE(sample) ; // no swap
         }
         (long int *)data += c;
         break;
-      case SUN_FLOAT:
+      case SND_FORMAT_FLOAT:
         for(i = 0; i < c; i++) {
           float sample = ((float *)data)[i];
           writeBuffer[i] = ST_FLOAT_DWORD_TO_SAMPLE(sample) ; // no swap
