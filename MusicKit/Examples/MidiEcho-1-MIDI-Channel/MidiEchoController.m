@@ -12,6 +12,13 @@
    performance. The MKMidi object is set to not 'useInputTimeStamps' because
    we are not interested in the exact time the MIDI entered the computer, as
    we would be if we were recording the MIDI (See MidiRecord). 
+
+ Portions Copyright (c) 1999-2005, The MusicKit Project.  All rights reserved.
+ 
+   Permission is granted to use and modify this code for commercial and 
+   non-commercial purposes so long as the author attribution and copyright 
+   messages remain intact and accompany all relevant code.
+ 
  */
 
 #import "MidiEchoController.h"

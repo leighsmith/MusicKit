@@ -1,5 +1,12 @@
 /*
   $Id$
+ 
+ Portions Copyright (c) 1999-2005, The MusicKit Project.  All rights reserved.
+ 
+ Permission is granted to use and modify this code for commercial and 
+ non-commercial purposes so long as the author attribution and copyright 
+ messages remain intact and accompany all relevant code.
+  
  */
 
 #import <AppKit/AppKit.h>
@@ -10,8 +17,7 @@
 {
     EchoFilter *myFilter;
     MKMidi *midi;
-    id infoPanel;
-    id stringTable;
+    IBOutlet NSPanel *infoPanel;
 }
 
 - (IBAction) setMidiDev: (id) sender;
