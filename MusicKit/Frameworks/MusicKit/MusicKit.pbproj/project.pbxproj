@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		00D5A006FED5ABC1CFED3B93 = {
 			buildStyles = (
@@ -1289,7 +1289,6 @@
 				02CDDD30FEF166B5CFED3B93,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
 		};
 		00D5A0C7FED5ABC1CFED3B93 = {
 			fileRef = 00D5A043FED5ABC1CFED3B93;
@@ -2017,7 +2016,6 @@
 				00D5A126FED5ABC1CFED3B93,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
 		};
 		00D5A126FED5ABC1CFED3B93 = {
 			fileRef = 00D5A0A5FED5ABC1CFED3B93;
@@ -2091,7 +2089,6 @@
 				F57B950F022BB4DE01A80103,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
 		};
 		00D5A128FED5ABC1CFED3B93 = {
 			fileRef = 00D5A00BFED5ABC1CFED3B93;
@@ -2544,7 +2541,6 @@
 				2F3AE7A5012B0DB3CFED3B8B,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
 		};
 		00D5A165FED5ABC1CFED3B93 = {
 			fileRef = 00D5A0C2FED5ABC1CFED3B93;
@@ -2569,7 +2565,6 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
 		};
 //000
 //001
