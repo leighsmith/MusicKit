@@ -49,7 +49,7 @@ HDRS =
 
 DIST_FILES = $(SRCS) $(HDRS)
 
--include Makefile.preamble
+-include GNUmakefile.preamble
 
 -include GNUmakefile.local
 
