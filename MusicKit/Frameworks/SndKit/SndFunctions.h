@@ -44,6 +44,7 @@ CONDITIONS OF THIS AGREEMENT.
 #include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
 #include <stdio.h>     /* for FILE */
 
+@class NSString;
 
 	/*
 	 *   functions.h
@@ -58,7 +59,7 @@ CONDITIONS OF THIS AGREEMENT.
 @function SndStructDescription
  @abstract To come 
  @param sound A SndStructSound containing the Snd
- @result
+ @result Returns a pointer to a c-string description of the sound.
  */
 SNDKIT_API const char *SndStructDescription(SndSoundStruct *sound);
 
@@ -66,7 +67,7 @@ SNDKIT_API const char *SndStructDescription(SndSoundStruct *sound);
 @function SndPrintStruct
  @abstract To come 
  @param sound A SndStructSound containing the Snd
- @result Returns a pointer to a c-string description of the sound. 
+ @result prints a description of the sound to stderr. 
  */
 SNDKIT_API void	SndPrintStruct(SndSoundStruct *sound);
 
@@ -403,7 +404,7 @@ SNDKIT_API int SndWrite(int fd,
  @param sound
  @result
  */
-SNDKIT_API int SndWriteSoundfile(const char *path,
+SNDKIT_API int SndWriteSoundfile(NSString *path,
                              SndSoundStruct *sound);
 
 /*!
