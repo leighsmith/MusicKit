@@ -1,15 +1,26 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+
+  Description:
+    Arrays of strings of the names of parameters.
+    THIS LIST MUST MATCH PARAMS.H!!!
+    PARAMETERS MUST BE ADDED TO THE END OF THE LIST TO AVOID
+    BREAKING OLD ARCHIVE FILES!!!
+  
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/09/26 19:57:33  leigh
+  Added MK_filename parameter
+
   Revision 1.2  1999/07/29 01:26:13  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -17,10 +28,6 @@ Modification history:
   01/19/90/daj - Added instrumentName and restDur.
 */
 
-/* THIS LIST MUST MATCH PARAMS.H!!! 
- * PARAMETERS MUST BE ADDED TO THE END OF THE LIST TO AVOID
- * BREAKING OLD ARCHIVE FILES!!! 
- */
 //#import "_parameter.h" /*sb, for _MK_maxPrivPar */
 //#import "params.h" /*sb, for MK_noPar */
 
@@ -209,6 +216,7 @@ static const char *const parNames[NPARS] =
     "restDur",
     "alternativeSamplingRate",
     "orchestraIndex",
+    "filename",
     "_illegalPar",
     "_dur",
 };

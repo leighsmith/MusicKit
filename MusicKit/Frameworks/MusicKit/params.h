@@ -21,6 +21,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  1999/09/26 19:57:10  leigh
+  Added MK_filename parameter
+
   Revision 1.2  1999/07/29 01:26:13  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -361,6 +364,7 @@ typedef enum _MKPars {     /* Note Parameters. */
 				   states.)
 				 */
     MK_orchestraIndex,   /* Orchestra number for multiple DSP performances */
+    MK_filename,	 /* Name of sound file for MKSamplerInstrument */
     MK_privatePars,      /* Marker for private Music Kit parameter block */
                          /* Parameters MK_privatePars to MK_appPars are 
                             reserved. */
