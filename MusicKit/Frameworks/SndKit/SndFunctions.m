@@ -34,8 +34,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #endif
 
 //#import <sound/sound.h>
+#define HAVE_RAND 1 // this ensures Sox doesn't attempt to define its own prototype
 #import <st.h>  // prototypes and structures from the Sox sound tools library
-int ausizestyleencoding(int size, int style);  // from sox au.c 
+int st_ausunencoding(int size, int encoding);  // from sox au.c 
 
 #define SNDREADCHUNKSIZE 256*1024   // Number of LONG samples to read into a buffer.
 #ifdef WIN32
@@ -1017,7 +1018,7 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
         int lenRead;
         int samplesRead;
 	int headerLen;
-        struct soundstream informat;
+        struct st_soundstream informat;
         LONG *readBuffer;
         char *storePtr;
 	int i;
@@ -1030,17 +1031,17 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
         informat.filetype = fileTypeStr;
         informat.info.rate = 0;
         informat.info.size = -1;
-        informat.info.style = -1;
+        informat.info.encoding = -1;
         informat.info.channels = -1;
         informat.comment = NULL;
         informat.swap = 0;
         informat.filename = "input";
 
-        gettype(&informat);
+        st_gettype(&informat);
 
         /* Read and write starters can change their formats. */
         (* informat.h->startread)(&informat);
-        checkformat(&informat);
+        st_checkformat(&informat);
 
         headerLen = sizeof(SndSoundStruct);
         if (informat.comment) {
@@ -1052,7 +1053,7 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
 	/* endianess is handled within startread() */
         s->magic = SND_MAGIC; // could be extended using fileTypeStr but only when we write in all formats.
         s->dataLocation = headerLen;
-        s->dataFormat = ausizestyleencoding(informat.info.style, informat.info.size);
+        s->dataFormat = st_ausunencoding(informat.info.size, informat.info.encoding);
         s->samplingRate = informat.info.rate;
         s->channelCount = informat.info.channels;
         if (informat.comment) // because SndSoundStruct locates comments at a fixed location, we have to copy them in.
@@ -1101,8 +1102,8 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
 
 	if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowInputFileFormat"]) {
             printf("Input file: using sample rate %lu Hz, size %s, style %s, %d %s\n",
-               informat.info.rate, sizes[informat.info.size],
-               styles[informat.info.style], informat.info.channels,
+               informat.info.rate, st_sizes_str[informat.info.size],
+               st_encodings_str[informat.info.encoding], informat.info.channels,
                (informat.info.channels > 1) ? "channels" : "channel");
             if (informat.comment)
                 printf("Input file: comment \"%s\"\n", informat.comment);
