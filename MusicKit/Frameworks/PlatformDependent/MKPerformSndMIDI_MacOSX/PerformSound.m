@@ -4,7 +4,7 @@
   Description:
     Defines the C entry points to the Sound Library.
 
-    These routines emulate an internal SoundKit module.
+    These routines used to emulate an internal SoundKit module.
     This is intended to hide all the operating system evil behind a banal C function interface.
     However, it is intended that developers will use the higher level 
     Objective C SndKit interface rather this one...do yourself a favour, 
@@ -33,36 +33,13 @@ extern "C" {
 #define DEBUG_SNDPLAYIOPROC 0  // dump the channel count etc while generating the buffer.
 #define DEBUG_STARTSTOPMSG  0  // dump stream start/stop msgs
 #define DEBUG_CALLBACK      0  // dump vendOutputBuffersToStreamManagerIOProc info.
+#define DEBUG_IOPROCUSAGE   0  // dump the usage of AudioStreams by IOProcs.
 #define CHECK_DEVICE_RUNNING_STATUS 0   
 
-#define DEFAULT_BUFFERSIZE 16384
-
-#define PADFORMAT "%s: %s"
-
-// A linked list of sounds currently playing.
-typedef struct _audioStream {
-  int            playTag;    // the means to refer to this sound.
-  BOOL           isPlaying;
-
-  // We have to be careful copying a SndSoundStruct as it has allocated unsigned char data that
-  // is appended after the structure itself. The stucture doesn't actually include it.
-  SndSoundStruct *snd;
-
-  // Number of samples per frame (frame = 1 or more channels per time instant) so we
-  // can keep track of time inbetween sndPlayIOProc calls.
-  int          sampleFramesGenerated;
-  int          sampleToPlay;
-
-#if !MKPERFORMSND_USE_STREAMING
-  SNDNotificationFun finishedPlayFun;
-  SNDNotificationFun startedPlayFun;
-#endif
-  struct _audioStream *next;   // Link to other playing sounds.
-} SNDPlayingSound;
+#define DEFAULT_BUFFERSIZE 16384  // The buffer size we want if we are not guessing the device.
 
 // "class" variables
 static BOOL initialised = FALSE;
-
 static BOOL inputInit = FALSE;
 
 static char         **driverList;
@@ -73,19 +50,18 @@ static long         bufferSizeInBytes = DEFAULT_BUFFERSIZE;
 
 static AudioStreamBasicDescription outputStreamBasicDescription;
 static AudioDeviceID outputDeviceID;
+static AudioHardwareIOProcStreamUsage outputStreamIOProcUsage;
 static AudioStreamBasicDescription inputStreamBasicDescription;
 static AudioDeviceID inputDeviceID;
+static AudioHardwareIOProcStreamUsage inputStreamIOProcUsage;
 
 // Stream processing data.
 static SNDStreamProcessor streamProcessor;
 static void          *streamUserData;
 static double        firstSampleTime = -1.0; // indicates this has not been assigned.
-
 static float         *fInputBuffer = NULL;
 static BOOL          isMuted = FALSE;
-
-static NSLock* inputLock;
-
+static NSLock        *inputLock;
 
 ////////////////////////////////////////////////////////////////////////////////
 // getCoreAudioErrorString
@@ -93,19 +69,19 @@ static NSLock* inputLock;
 
 static char *getCoreAudioErrorStr(OSStatus status)
 {
-  char *r = NULL;
-  switch (status)
-  {
-    case kAudioHardwareNotRunningError:		    r = "Hardware not running error";        break;
-    case kAudioHardwareUnspecifiedError:		  r = "Hardware unspecified error";        break;
-    case kAudioHardwareUnknownPropertyError:	r = "Hardware unknown property error";   break;
-    case kAudioDeviceUnsupportedFormatError:	r = "Hardware unsupported format error"; break;
-    case kAudioHardwareBadPropertySizeError:	r = "Hardware bad property size error";  break;
-    case kAudioHardwareIllegalOperationError:	r = "Hardware illegal operation";        break;
-    case kAudioHardwareNoError:               r = "none";                              break;
-    default:                                  r = "unknown";
-  }
-  return r;
+    char *r = NULL;
+    
+    switch (status) {
+	case kAudioHardwareNotRunningError:       r = "Hardware not running error";        break;
+	case kAudioHardwareUnspecifiedError:	  r = "Hardware unspecified error";        break;
+	case kAudioHardwareUnknownPropertyError:  r = "Hardware unknown property error";   break;
+	case kAudioDeviceUnsupportedFormatError:  r = "Hardware unsupported format error"; break;
+	case kAudioHardwareBadPropertySizeError:  r = "Hardware bad property size error";  break;
+	case kAudioHardwareIllegalOperationError: r = "Hardware illegal operation";        break;
+	case kAudioHardwareNoError:               r = "none";                              break;
+	default:                                  r = "unknown";
+    }
+    return r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -115,9 +91,16 @@ static char *getCoreAudioErrorStr(OSStatus status)
 // redundant conversions. This allows postponing the conversion to the last 
 // possible moment. The SndConvertFormat() function in the SndKit makes for an 
 // easy way to do the conversion without anyone writing their own converter.
+// For CoreAudio, it's native format is floating point (the conversion to a
+// resolution is done in the driver).
+//
+// IOProc's receive all AudioBuffers (as the AudioBufferLists inInputData and outOutputData)
+// of all AudioStreams of an AudioDevice. We should only fulfill those AudioBuffers
+// that apply for AudioStreams that have been specifically opened by us.
+//
 ////////////////////////////////////////////////////////////////////////////////
 
-static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
+static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 						       const AudioTimeStamp *inNow,
 						       const AudioBufferList *inInputData,
 						       const AudioTimeStamp *inInputTime,
@@ -140,36 +123,42 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
     }
 
 #if DEBUG_CALLBACK
-    fprintf(stderr, "vendOutputBuffersToStreamManagerIOProc number of buffers = %ld\n", outOutputData->mNumberBuffers);
+    fprintf(stderr, "vendOutputBuffersToStreamManagerIOProc number of buffers = input %ld, output %ld\n",
+	    inInputData->mNumberBuffers, outOutputData->mNumberBuffers);    
 #endif
 
-    // MacOS X 4K46 occasionally sent us a wierd number of buffers. MacOS X 6L60 is hopefully cured.
-
+    // The IO Proc should receive the same number of buffers as the number of AudioStreams, although only a subset
+    // typically need to be filled.
+    if(outOutputData->mNumberBuffers != outputStreamIOProcUsage.mNumberStreams) {
+	fprintf(stderr, "assertion outOutputData->mNumberBuffers == outputStreamIOProcUsage.mNumberStreams failed %ld, %ld\n",
+	    outOutputData->mNumberBuffers, outputStreamIOProcUsage.mNumberStreams);
+    }
+    
     for(bufferIndex = 0; bufferIndex < outOutputData->mNumberBuffers; bufferIndex++) {
         // TODO we should alter inStream and outStream to be the buffer's number of channels.
 	//        int channelsPerFrame = outOutputData->mBuffers[bufferIndex].mNumberChannels;
 
-#if DEBUG_CALLBACK
-	 fprintf(stderr, "InBuffs: %li  OutBuffs: %li\n", inInputData->mNumberBuffers, outOutputData->mNumberBuffers);
-#endif
-
         // to tell the client the format it is receiving.
         if (inputInit) {
-            if (inInputData->mNumberBuffers == 0)
-                inStream.streamData = NULL;
-            else {
+            // inInputData->mNumberBuffers can differ from inputStreamIOProcUsage.mNumberStreams, since the former describes outDevices
+            // number of input buffers, whereas the latter can describe the streams on potentially a different device.
+	    // TODO The whole approach of using two vending IOProcs which initiate one stream manager callback needs rethinking.
+            if(bufferIndex < inInputData->mNumberBuffers && inputStreamIOProcUsage.mStreamIsOn[bufferIndex]) {
+		// TODO we only copy across the first buffers data to fInputBuffer.
                 memcpy(fInputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
+	    }
+            else {
+                inStream.streamData = NULL;
             }
         }
-        // to tell the client the format it should send.
 
 #if DEBUG_CALLBACK
 	fprintf(stderr,"[SND] vend middle...\n");
 #endif
 
-        if (outOutputData->mNumberBuffers == 0)
-	    outStream.streamData = NULL;
-        else {
+        if(outputStreamIOProcUsage.mStreamIsOn[bufferIndex]) {
+            // to tell the client the format it should send.
+
 	    SNDStreamNativeFormat(&outStream.streamFormat);
 	    SNDStreamNativeFormat(&inStream.streamFormat);
 
@@ -198,6 +187,9 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
 		memset(outStream.streamData, 0, bufferSizeInBytes);
 	    }
         }
+        else {
+	    outStream.streamData = NULL;
+	}
     }
 #if DEBUG_CALLBACK
     fprintf(stderr,"[SND] ending vend...\n");
@@ -384,13 +376,14 @@ static void dumpStreamDescription(AudioStreamBasicDescription *StrBasDesc)
 // We use some of the fields for filling buffers.
 ////////////////////////////////////////////////////////////////////////////////
 
-static BOOL determineBasicDescription(AudioDeviceID deviceID, 
+static BOOL determineBasicDescription(AudioDeviceID deviceID,
                                       AudioStreamBasicDescription *audioStreamBasicDescription,
                                       BOOL isInput)
 {
     OSStatus CAstatus;
     UInt32 propertySize;
     Boolean propertyWritable;
+    char    deviceName[1024];
 
     CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
                                           kAudioDevicePropertyStreamFormat,
@@ -401,8 +394,8 @@ static BOOL determineBasicDescription(AudioDeviceID deviceID,
     }
 
     CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput,
-                                    kAudioDevicePropertyStreamFormat,
-                                    &propertySize, audioStreamBasicDescription);
+				      kAudioDevicePropertyStreamFormat,
+				      &propertySize, audioStreamBasicDescription);
 
 #if DEBUG_DESCRIPTION
     fprintf(stderr, "device ID: %d\n", (unsigned int) deviceID);
@@ -410,36 +403,126 @@ static BOOL determineBasicDescription(AudioDeviceID deviceID,
 #endif
 
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceGetProperty returned %s\n", getCoreAudioErrorStr(CAstatus));
+        fprintf(stderr, "AudioDeviceGetProperty kAudioDevicePropertyStreamFormat: %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
-    
 
-// check to see if the sample rate is changeable...     
+    
+// check to see if the sample rate is changeable...
 #if 0
     CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
                                           kAudioDevicePropertyRateScalar,
                                           &propertySize, &propertyWritable);
     fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyRateScalar  CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
-        getCoreAudioErrorStr(CAstatus), propertySize, propertyWritable);
+	    getCoreAudioErrorStr(CAstatus), propertySize, propertyWritable);
 #endif
-  {
-    long    propertySize;
-    Boolean propertyWritable;
-    char    deviceName[1024];
-    
-    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
-                                          kAudioDevicePropertyDeviceName,
-                                          &propertySize, &propertyWritable);
 
+    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
+				    kAudioDevicePropertyDeviceName,
+				    &propertySize, &propertyWritable);
+
+    if (CAstatus) {
+	fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyDeviceName: %s\n", getCoreAudioErrorStr(CAstatus));
+	return FALSE;
+    }
+    
     CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput,
-                                      kAudioDevicePropertyDeviceName,
-                                      &propertySize, deviceName);
+				kAudioDevicePropertyDeviceName,
+				&propertySize, deviceName);
+    if (CAstatus) {
+	fprintf(stderr, "AudioDeviceGetProperty kAudioDevicePropertyDeviceName: %s\n", getCoreAudioErrorStr(CAstatus));
+	return FALSE;
+    }
+	
 #if DEBUG_DESCRIPTION
     fprintf(stderr, "Devicename: %s\n", deviceName);
 #endif
-  }
-  return TRUE;
+    
+    return TRUE;
+}
+
+
+// Determine which AudioStreams of the AudioDevice should be serviced by our IOProc.
+// If a stream is marked as not being used, the given IOProc will see a corresponding NULL buffer
+// pointer in the AudioBufferList passed to it's IO proc.
+static BOOL getAudioStreamsToVend(AudioDeviceID deviceID, AudioHardwareIOProcStreamUsage *ioProcStreamUsage,
+					void *ioProc, BOOL isInput)
+{
+    OSStatus CAstatus;
+    UInt32 propertySize;
+    Boolean propertyWritable;
+
+    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
+					  kAudioDevicePropertyIOProcStreamUsage,
+					  &propertySize, &propertyWritable);
+    if (CAstatus) {
+	fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
+	return FALSE;
+    }
+
+    ioProcStreamUsage->mIOProc = ioProc;
+
+    CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput,
+				      kAudioDevicePropertyIOProcStreamUsage,
+				      &propertySize, ioProcStreamUsage);
+    if (CAstatus) {
+	fprintf(stderr, "AudioDeviceGetProperty kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
+	return FALSE;
+    }
+
+#if DEBUG_IOPROCUSAGE
+    {
+	int i;
+
+	fprintf(stderr, "ioProcStreamUsage->mNumberStreams = %ld\n", ioProcStreamUsage->mNumberStreams);
+	for(i = 0; i < ioProcStreamUsage->mNumberStreams; i++) {
+	    fprintf(stderr, "ioProcStreamUsage->mStreamIsOn[%d] = %ld\n", i, ioProcStreamUsage->mStreamIsOn[i]);
+	}
+    }
+#endif
+    
+    return TRUE;
+}
+
+// Set which AudioStreams of the AudioDevice should be serviced by our IOProc.
+// If a stream is marked as not being used, the given IOProc will see a corresponding NULL buffer
+// pointer in the AudioBufferList passed to it's IO proc.
+static BOOL setAudioStreamsToVend(AudioDeviceID deviceID, AudioHardwareIOProcStreamUsage *ioProcStreamUsage,
+				  void *ioProc, BOOL isInput)
+{
+    OSStatus CAstatus;
+    UInt32 propertySize;
+    Boolean propertyWritable;
+
+    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
+					  kAudioDevicePropertyIOProcStreamUsage,
+					  &propertySize, &propertyWritable);
+    if (CAstatus) {
+	fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
+	return FALSE;
+    }
+
+#if DEBUG_IOPROCUSAGE
+    {
+	int i;
+
+	fprintf(stderr, "setting ioProcStreamUsage->mNumberStreams = %ld\n", ioProcStreamUsage->mNumberStreams);
+	for(i = 0; i < ioProcStreamUsage->mNumberStreams; i++) {
+	    fprintf(stderr, "setting ioProcStreamUsage->mStreamIsOn[%d] = %ld\n", i, ioProcStreamUsage->mStreamIsOn[i]);
+	}
+    }
+#endif
+
+    CAstatus = AudioDeviceSetProperty(deviceID, NULL, 0, isInput,
+				      kAudioDevicePropertyIOProcStreamUsage,
+				      propertySize, ioProcStreamUsage);
+    if (CAstatus) {
+	fprintf(stderr, "AudioDeviceGetProperty kAudioDevicePropertyIOProcStreamUsage: %s\n", getCoreAudioErrorStr(CAstatus));
+	return FALSE;
+    }
+
+
+    return TRUE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -757,7 +840,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
     // Even if we don't have input, we still need an input buffer to send up empty to the rest of the arch.
     if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL)
         return FALSE;
-    memset(fInputBuffer,0,bufferSizeInBytes);
+    memset(fInputBuffer, 0, bufferSizeInBytes);
     // indicate the first absolute sample time received from the call back needs to be marked as a
     // datum to use to convert subsequent absolute sample times to a relative time.
     firstSampleTime = -1.0;  
@@ -771,6 +854,22 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
                 getCoreAudioErrorStr(CAstatus));
         r = FALSE;
     }
+    if(!getAudioStreamsToVend(outputDeviceID, &outputStreamIOProcUsage, vendOutputBuffersToStreamManagerIOProc, NO))
+	return FALSE;
+
+    {
+	int streamIndex;
+
+	// TODO turn off all but the first stream. This isn't right in the general case, we should use what the
+	// the user has nominated as the default AudioStream in the default AudioDevice, but there doesn't seem to be
+	// a means to determine this. For now, we do what iTunes seems to do, use the first AudioStream.
+	for(streamIndex = 1; streamIndex < outputStreamIOProcUsage.mNumberStreams; streamIndex++)
+	    outputStreamIOProcUsage.mStreamIsOn[streamIndex] = NO;
+    }
+
+    if(!setAudioStreamsToVend(outputDeviceID, &outputStreamIOProcUsage, vendOutputBuffersToStreamManagerIOProc, NO))
+	return FALSE;
+
     if (inputInit) {
         CAstatus = AudioDeviceAddIOProc(inputDeviceID, vendInputBuffersToStreamManagerIOProc, NULL);
         if (CAstatus) {
@@ -778,6 +877,8 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
          				getCoreAudioErrorStr(CAstatus));
             r = FALSE;
         }
+	if(!getAudioStreamsToVend(inputDeviceID, &inputStreamIOProcUsage, vendInputBuffersToStreamManagerIOProc, YES))
+	    return FALSE;
     }
     if (r) { // all is well so far...
         CAstatus = AudioDeviceStart(outputDeviceID, vendOutputBuffersToStreamManagerIOProc);
@@ -844,6 +945,26 @@ PERFORM_API BOOL SNDStreamStop(void)
 ////////////////////////////////////////////////////////////////////////////////
 
 #if !MKPERFORMSND_USE_STREAMING
+
+// A linked list of sounds currently playing.
+typedef struct _audioStream {
+    int            playTag;    // the means to refer to this sound.
+    BOOL           isPlaying;
+    
+  // We have to be careful copying a SndSoundStruct as it has allocated unsigned char data that
+  // is appended after the structure itself. The stucture doesn't actually include it.
+    SndSoundStruct *snd;
+    
+  // Number of samples per frame (frame = 1 or more channels per time instant) so we
+  // can keep track of time inbetween sndPlayIOProc calls.
+    int          sampleFramesGenerated;
+    int          sampleToPlay;
+
+    SNDNotificationFun finishedPlayFun;
+    SNDNotificationFun startedPlayFun;
+
+    struct _audioStream *next;   // Link to other playing sounds.
+} SNDPlayingSound;
 
 static SNDPlayingSound singlePlayingSound;
 
