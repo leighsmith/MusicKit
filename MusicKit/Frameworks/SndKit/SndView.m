@@ -1624,10 +1624,10 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	
 	// Invalidate previous selection rect if the mouse is clicked outside the previous selection. 
         clickedWithinPreviousSelection = NSPointInRect(mouseDownLocation, adjustableSelectionRect);
-	// NSLog(@"clicked within previous selection %d mouseDownLocation %f adjustableSelectionRect %f %f\n", 
+	//NSLog(@"clicked within previous selection %d mouseDownLocation %f adjustableSelectionRect %f %f\n", 
 	//      clickedWithinPreviousSelection, mouseDownLocation.x, adjustableSelectionRect.origin.x, adjustableSelectionRect.size.width);
 	// If it's clicked within a selection, not a cursor, we don't update until after the release of the drag.
-	if (cachedSelectionRect.size.width > 1) {
+	if (selectionRange.length > 0) {
 	    //NSLog(@"cachedSelectionRect.origin.x = %f cachedSelectionRect.size.width = %f selection.location = %d selection.length = %d\n",
 	    //      cachedSelectionRect.origin.x, cachedSelectionRect.size.width, selectionRange.location, selectionRange.length);
 	    if(!clickedWithinPreviousSelection) {
