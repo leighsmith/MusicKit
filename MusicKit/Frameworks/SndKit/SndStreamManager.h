@@ -30,8 +30,6 @@
 #define NSConditionLock SndConditionLock
 #endif
 
-#define SSM_VERSION 1 
-
 /*!
 @protocol SndDelegateMessagePassing
  */
@@ -52,7 +50,7 @@
 */
 @interface SndStreamManager : NSObject <SndDelegateMessagePassing>
 { 
-/*! @var            mixer A stream client mixer*/
+/*! @var            mixer A stream client mixer. */
     SndStreamMixer *mixer;
 /*! @var            active Stores the streaming state of the manager. */
     BOOL            active;
@@ -98,15 +96,15 @@
 + (SndStreamManager *) defaultStreamManager;
 
 /*!
-    @method   dealloc
-    @abstract   Destructor
+  @method getDriverNames
+  @abstract Returns an NSArray of NSStrings listing the sound drivers available.
+  @discussion The format of the names is dependent on the underlying operating system.
 */
-- (void) dealloc;
++ (NSArray *) getDriverNames;
 
 /*!
     @method   description
     @abstract   Returns an NSString with description of SndStreamManager
-    @discussion 
     @result     Returns an NSString with description of SndStreamManager
 */
 - (NSString *) description;
@@ -202,7 +200,6 @@
 */
 - setFormat: (SndFormat) newFormat;
 
-
 /*!
   @method   format
   @abstract Returns the format to be used during streaming.
@@ -223,7 +220,7 @@
     @abstract   Mixer member accessor method
     @result     The internal SndStreamMixer
 */
-- (SndStreamMixer*) mixer;
+- (SndStreamMixer *) mixer;
 
 /*!
     @method   isActive
