@@ -178,7 +178,9 @@ int main (int argc, const char * argv[])
         [player setRemainConnectedToManager: FALSE];
 
         if (useReverb) {
-            [[player audioProcessorChain] addAudioProcessor:[[[SndAudioProcessorReverb alloc] init] autorelease]];
+            SndAudioProcessorReverb *rv = [[[SndAudioProcessorReverb alloc] init] autorelease];
+            [rv setActive: TRUE];
+            [[player audioProcessorChain] addAudioProcessor:rv];
         }
 
         if (bMP3Shoutcast) {
@@ -186,8 +188,10 @@ int main (int argc, const char * argv[])
           [mp3enc setShoutcastServerAddress: shoutcastServerAddress
                                        port: shoutcastPortNumber
                                    password: shoutcastSourcePassword];
-          if ([mp3enc connectToShoutcastServer])
+          if ([mp3enc connectToShoutcastServer]) {
             [[player audioProcessorChain] addAudioProcessor: [mp3enc autorelease]];
+            [mp3enc setActive: TRUE];
+          }
           else {
             bMP3Shoutcast = FALSE;
             printf("Couldn't connect to MP3 reflection server on %s:%i with password [%s]\n", [[mp3enc serverAddress] cString],
