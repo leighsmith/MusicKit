@@ -26,18 +26,112 @@
     SndAudioBuffer    *tempBuffer; 
 }
 
+/*!
+    @method audioProcessorChain
+    @abstract Factory method
+    @discussion
+    @result
+*/
 + audioProcessorChain;
+
+/*!
+    @method init
+    @abstract Initializer
+    @discussion
+    @result self
+*/
 - init;
+
+/*!
+    @method dealloc
+    @abstract Destructor
+    @discussion
+*/
 - (void) dealloc;
+
+/*!
+    @method bypassProcessors:
+    @abstract
+    @discussion
+    @param (BOOL) b
+    @result self.
+*/
 - bypassProcessors: (BOOL) b; 
+
+/*!
+    @method addAudioProcessor:
+    @abstract
+    @discussion
+    @param (SndAudioProcessor*) proc
+    @result
+*/
 - addAudioProcessor: (SndAudioProcessor*) proc;
+
+/*!
+    @method removeAudioProcessor:
+    @abstract
+    @discussion
+    @param (SndAudioProcessor*) proc
+    @result self
+*/
 - removeAudioProcessor: (SndAudioProcessor*) proc;
+
+/*!
+    @method processorAtIndex:
+    @abstract
+    @discussion
+    @param (int) index
+    @result Reference to an SndAudioProcessor
+*/
 - (SndAudioProcessor*) processorAtIndex: (int) index;
+
+/*!
+    @method removeAllProcessors
+    @abstract
+    @discussion
+    @result self
+*/
 - removeAllProcessors;
+
+/*!
+    @method processBuffer:
+    @abstract
+    @discussion
+    @param (SndAudioBuffer*) buff
+    @result self.
+*/
 - processBuffer: (SndAudioBuffer*) buff;
+
+/*!
+    @method processorCount
+    @abstract
+    @discussion
+    @result (int) number of processors in the processor chain.
+*/
 - (int) processorCount; 
+
+/*!
+    @method processorArray
+    @abstract Accessor to the internal processor array
+    @discussion provided for speed
+    @result NSArray containing the processors (in order)
+*/
 - (NSArray*) processorArray;
+
+/*!
+    @method isBypassingFX
+    @abstract
+    @discussion
+    @result Boolean indicating whether FX are being bypassed
+*/
 - (BOOL) isBypassingFX;
+
+/*!
+    @method setBypass:
+    @abstract
+    @discussion
+    @param (BOOL) b
+*/
 - (void) setBypass: (BOOL) b;
 
 @end

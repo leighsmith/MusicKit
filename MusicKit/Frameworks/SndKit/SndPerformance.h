@@ -114,8 +114,24 @@
 */
 - (void) stopInFuture: (double) inSeconds;
 
+/*!
+    @method stopInFuture:
+    @abstract Stop the currently playing performance at some time in the future.
+    @param inSeconds The time interval when to stop the performance.
+*/
 - (BOOL) isEqual: (id) anotherPerformance;
+/*!
+    @method stopInFuture:
+    @abstract Stop the currently playing performance at some time in the future.
+    @param inSeconds The time interval when to stop the performance.
+*/
 - (void) dealloc;
+
+/*!
+    @method description
+    @abstract 
+    @result
+*/
 - (NSString *) description;
 
 @end

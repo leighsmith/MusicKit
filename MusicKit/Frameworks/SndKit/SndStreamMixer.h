@@ -27,18 +27,82 @@
     SndAudioProcessorChain *processorChain;
 }
 
+/*!
+    @method sndStreamMixer
+    @abstract Factory method
+    @discussion
+    @result A freshly initialized and autoreleased SndStreamMixer object
+*/
 + sndStreamMixer;
+
+/*!
+    @method init
+    @abstract Initializor
+    @discussion
+    @result self.
+*/
 - init;
+
+/*!
+    @method dealloc
+    @abstract Destructor
+    @discussion
+*/
 - (void) dealloc;
+
+/*!
+    @method processInBuffer:outBuffer:nowTime:
+    @abstract
+    @discussion
+    @param (SndAudioBuffer*) inB
+    @param (SndAudioBuffer*) outB
+    @param (double) t
+    @result self.
+*/
 - processInBuffer: (SndAudioBuffer*) inB 
         outBuffer: (SndAudioBuffer*) outB 
           nowTime: (double) t;
 
+/*!
+    @method removeClient:
+    @abstract
+    @discussion
+    @param (SndStreamClient*) client
+    @result Boolean indicating success
+*/
 - (BOOL) removeClient: (SndStreamClient*) client;
+
+/*!
+    @method addClient:
+    @abstract
+    @discussion
+    @param (SndStreamClient*) client
+    @result 
+*/
 - (int) addClient: (SndStreamClient*) client;
+
+/*!
+    @method managerIsShuttingDown
+    @abstract
+    @discussion
+    @result self
+*/
 - managerIsShuttingDown;
+
+/*!
+    @method clientCount
+    @abstract
+    @discussion
+    @result integer client count
+*/
 - (int) clientCount;
 
+/*!
+    @method audioProcessorChain
+    @abstract Accessor
+    @discussion
+    @result Reference to the data member audioprocessorChain
+*/
 - (SndAudioProcessorChain*) audioProcessorChain;
 
 @end
