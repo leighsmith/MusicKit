@@ -369,7 +369,7 @@ See also:  MKWaveTable, MKPartials
     Same as corresponding superclass methods.
 */
 /*!
-  @method dataDSPAsOscTableLength:
+  @method dataDSPAsOscTable
   @result Returns a DSPDatum *.
   @discussion These methods provide data in <b>MK_oscTable</b> format.   They are
               identical to the superclass versions (without the "OscTable" in
@@ -379,7 +379,7 @@ See also:  MKWaveTable, MKPartials
 - (DSPDatum *) dataDSPAsOscTable;
 
 /*!
-  @method dataDoubleAsOscTableLength:
+  @method dataDoubleAsOscTable
   @result Returns a double *.
   @discussion These methods provide data in <b>MK_oscTable</b> format.   They are
               identical to the superclass versions (without the "OscTable" in
@@ -394,20 +394,16 @@ See also:  MKWaveTable, MKPartials
   @param  aLength is an int.
   @param  aScaling is a double.
   @result Returns an id.
-  @discussion Same as <b>fillTableLength:scale:</b>.   Provided for
-              symmetry.
+  @discussion Computes the wavetable by copying the samples from the Snd.
+              If scaling is 0.0, the waveform is normalized. This method is sent
+              automatically if necessary by the various data-retreival methods 
+              (inherited from the MKWaveTable class).  If aLength is not the
+              same as the length of the data, sees if the length of the data
+              is evenly divided by aLength.  If so, downsamples the data.
+              Otherwise, generates a MusicKit error: MK_samplesNoResampleErr.
+              Same as <b>fillTableLength:scale:</b>. Provided for symmetry.
 */
 - fillOscTableLength: (int) aLength scale: (double) aScaling;
- /* 
-   Computes the wavetable by copying the samples from the Snd.
-   If scaling is 0.0, the waveform is normalized. This method is sent
-   automatically if necessary by the various data-retreival methods 
-   (inherited from the MKWaveTable class).  If aLength is not the
-   same as the length of the data, sees if the length of the data
-   is evenly divided by aLength.  If so, downsamples the data.
-   Otherwise, generates a Music Kit error: MK_samplesNoResampleErr.
-*/
-
 
 /*!
   @method fillTableLength:scale:
