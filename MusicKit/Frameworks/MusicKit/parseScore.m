@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2001/09/12 13:59:29  sbrandon
+  changed -cString to -fileSystemRepresentation
+
   Revision 1.16  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -3612,7 +3615,7 @@ _MKNewScoreInStruct(NSData *aStream,id owner,NSMutableData *printStream,
     scoreRPtr->_binary = binary;
     if (!printStream) {                 /* Use stderr */
           /*sb: just create blank stream and use that FIXME I can't create NSData to go to stderr */
-          printStream = [[NSMutableData data] retain];
+          printStream = [[NSMutableData alloc] init];
           // scoreRPtr->_freeStream = (printStream != nil);
 /*
 #warning StreamConversion: NXOpenFile should be converted to an NSData method
@@ -4162,7 +4165,7 @@ NSMutableData * MKFindScorefile(NSString *name) /*sb: used to return int (fd) */
 	    siz += strlen(p);
 	    _MK_REALLOC(fileName,char,siz); 
 	    strcpy(fileName,p);
-	    strcat(fileName,[HOMESCOREDIR cString]);
+	    strcat(fileName,[HOMESCOREDIR fileSystemRepresentation]);
 	    strcat(fileName,name);
 	    if (addExt)
 	      strcat(fileName,".score");
@@ -4173,7 +4176,7 @@ NSMutableData * MKFindScorefile(NSString *name) /*sb: used to return int (fd) */
 	    }
 	}
 	
-	strcpy(fileName,[LOCALSCOREDIR cString]);
+	strcpy(fileName,[LOCALSCOREDIR fileSystemRepresentation]);
 	strcat(fileName,name);
 	if (addExt)
 	  strcat(fileName,".score");
@@ -4182,7 +4185,7 @@ NSMutableData * MKFindScorefile(NSString *name) /*sb: used to return int (fd) */
 	    free(fileName);
 	    return fd;
 	}
-	strcpy(fileName,[SYSTEMSCOREDIR cString]);
+	strcpy(fileName,[SYSTEMSCOREDIR fileSystemRepresentation]);
 	strcat(fileName,name);
 	if (addExt)
 	  strcat(fileName,".score");

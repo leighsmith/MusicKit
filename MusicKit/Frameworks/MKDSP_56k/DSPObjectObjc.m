@@ -116,7 +116,7 @@ void _DSPInitDefaults(void)
     if (!s)
       return;
     if (![s length]) return;
-    if (DSPEnableErrorFile([s cString]))
+    if (DSPEnableErrorFile([s fileSystemRepresentation]))
       return;
 //    s = NXGetDefaultValue("MusicKit","DSPTrace");
     s = [ourDefaults objectForKey:@"DSPTrace"];

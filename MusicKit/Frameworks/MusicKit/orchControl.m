@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2001/09/12 14:00:44  sbrandon
+  changed -cString to -fileSystemRepresentation
+
   Revision 1.12  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -301,7 +304,7 @@ static int myDSPMKInit(MKOrchestra *self)
                     }
 //sprintf(foundFile,"%s%s","/usr/local/lib/dsp/monitor/",searchDSP);
 	  }
-	  ec = DSPReadFile(&self->mkSys,[*foundFile cString]);
+	  ec = DSPReadFile(&self->mkSys,[*foundFile fileSystemRepresentation]);
 	  if(ec)                            /* Can't open file */
 	    return _DSPError1(ec,"DSPMKInit: Could not read music system '%s' "
 			      "for booting the DSP", (const char *)[s cString]);
@@ -477,7 +480,7 @@ static void
         if (fastResponse)
           DSPMKEnableSmallBuffers();
         if (outputSoundfile) 
-	  DSPMKSetWriteDataFile([outputSoundfile cString]); /* Must be before enable */
+	  DSPMKSetWriteDataFile([outputSoundfile fileSystemRepresentation]); /* Must be before enable */
 	if (outputSoundDelegate) {
 #if 0
 	    if (!vmMsgPort) { /* One vmMsgPort for all orchestras */
@@ -494,11 +497,11 @@ static void
 	if (outputSoundfile || outputSoundDelegate)
 	  DSPMKEnableWriteData();
         if (inputSoundfile) { /* READ DATA */
-            DSPMKSetReadDataFile([inputSoundfile cString]); /* Must be before enable */
+            DSPMKSetReadDataFile([inputSoundfile fileSystemRepresentation]); /* Must be before enable */
             DSPMKEnableReadData();
         }
         if (outputCommandsFile)
-          DSPOpenCommandsFile([outputCommandsFile cString]);
+          DSPOpenCommandsFile([outputCommandsFile fileSystemRepresentation]);
         if (useDSP) {
             if (myDSPMKInit(self)) {
                 DSPClose();

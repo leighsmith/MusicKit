@@ -28,7 +28,7 @@ int main (int argc, const char *argv[])
     [aPart setInfoNote: partInfo];
     [aScore writeScorefile: @"/tmp/test.score"];
     if ([fm fileExistsAtPath:@"/usr/local/bin/playscore"] || [fm fileExistsAtPath:@"/usr/bin/playscore"]) {
-        system([playString cString]);  /* play the thing */
+        system([playString fileSystemRepresentation]);  /* play the thing */
     } else {
         fprintf(stderr,"Could not find playscore in /usr/bin or /usr/local/bin.\n");
         fprintf(stderr,"Look for the test score in %s\n",[testPath cString]);
