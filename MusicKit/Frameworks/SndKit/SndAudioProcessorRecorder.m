@@ -84,11 +84,11 @@
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
                         outputBuffer: (SndAudioBuffer*) outB;
 {
-#if SNDAUDIOPROCRECORDER_DEBUG
+#if SNDAUDIOPROCRECORDER_DEBUG > 1
   fprintf(stderr,"SndAudioProcessor::processReplacing: Entering...\n");
 #endif
   if (stopSignal) {
-#if SNDAUDIOPROCRECORDER_DEBUG  
+#if SNDAUDIOPROCRECORDER_DEBUG > 1
     fprintf(stderr,"SndAudioProcessor::processReplacing: Finished recording BBB\n");        
 #endif    
     if (bytesRecorded == 0 && position == 0)
@@ -136,8 +136,8 @@
     
         if (recordFile != NULL) { // we are streaming to a file, and need to write to disk!
           [self streamToDiskData: recData length: recBuffLengthInBytes];
-#if SNDAUDIOPROCRECORDER_DEBUG  
-          fprintf(stderr,"SndAudioProcessor::processReplacing: Processing... (pos: %li / %li  length: %li)\n",position,recBuffLengthInBytes,bytesRecorded);
+#if SNDAUDIOPROCRECORDER_DEBUG
+          fprintf(stderr,"SndAudioProcessor::processReplacing: Processing... (pos: %li / %li  length: %li inlength: %li)\n",position,recBuffLengthInBytes,bytesRecorded,[inB lengthInBytes]);
 #endif
         }
         else {
@@ -147,7 +147,11 @@
         position = 0;
       }        
       if (remainder) {
-        memcpy(recData, inputData + length, remainder);
+#if SNDAUDIOPROCRECORDER_DEBUG
+        fprintf(stderr,"SndAudioProcessor::processReplacing: memcpy... (position: %li length: %li remainder: %li recData: %p inputData:%p inLength:%li)\n",
+                position, length, remainder,recData,inputData,[inB lengthInBytes]);
+#endif
+        memcpy(recData, ((void*)inputData) + length, remainder);
         position += remainder;
       }    
     
@@ -164,7 +168,7 @@
       }
     }
   } // end of isRecording
-#if SNDAUDIOPROCRECORDER_DEBUG
+#if SNDAUDIOPROCRECORDER_DEBUG > 1
   fprintf(stderr,"SndAudioProcessor::processReplacing: Leaving...\n");
 #endif
   return FALSE;
