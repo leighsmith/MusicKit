@@ -19,11 +19,15 @@
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /* Modification history:
 
    $Log$
+   Revision 1.6  2000/10/01 06:31:12  leigh
+   Statically typed noteSenders
+
    Revision 1.5  2000/04/25 02:08:40  leigh
    Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -474,10 +478,10 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return _MKLightweightArrayCopy(partPerformers);
 }
 
--noteSenders
+- (NSArray *) noteSenders
   /* TYPE: Processing
-     Returns an auto-released array of the sender's PartPerformers' NoteSenders. 
-     It's NOT the caller's responsibility to free the List. */
+     Returns an auto-released array of the sender's MKPartPerformers' MKNoteSenders. 
+     It's NOT the caller's responsibility to free the array. */
 {
     unsigned n = [partPerformers count], i;
     id anArray = [[NSMutableArray alloc] init];
