@@ -3,10 +3,16 @@
   Defined In: The MusicKit
 
   Description:
-    MKScorefilePerformers are used to perform scorefiles.  When the object
-    is activated, it reads the file's header and creates a MKNoteSender for
-    each (unique) member of the part statement.  A MKNoteSender is given the
-    same name as the Parts for which it was created.
+    MKScorefilePerformers are used to perform scorefiles.  
+    Instances of this class are used directly in an application;
+    you don't have to design your own subclass.
+   
+    When the object is activated, it reads the file's header and creates a
+    MKNoteSender for each (unique) member of the part statement.
+    A MKNoteSender is given the same name as the MKParts for which it was created.
+    Thus, you can find out the names of the MKParts in the file by getting
+    an NSArray of the noteSenders (using -noteSenders) and using the function
+    MKGetObjectName(noteSender).
 
     A MKScorefilePerformer also has an info MKNote which it fashions from the
     info statement in the file and defines a stream on which scorefile
@@ -15,6 +21,9 @@
     During a performance, a MKScorefilePerformer reads successive MKNote and
     time statements from the file.  When it reaches the end of the file,
     the MKScorefilePerformer is deactivated.
+
+    Much of MKScorefilePeformer's functionality is documented under MKFilePerformer,
+    and MKPerformer.
 
   Original Author: David A. Jaffe
 
@@ -25,6 +34,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2000/11/28 19:15:13  leigh
+  Doco cleanup
+
   Revision 1.4  2000/11/25 23:03:09  leigh
   Corrected typing of ivars and enforced their privacy
 
@@ -62,14 +74,14 @@
   */
 
 +(NSArray *)fileExtensions;
- /* Returns a null-terminated array of the default file extensions
-  * recognized by ScorefilePerformer instances. This array consists of
-  * "score" and "playscore".  This method is used by the FilePerformer
+ /* Returns a NSArray of the default file extensions
+  * recognized by MKScorefilePerformer instances. This array consists of
+  * "score" and "playscore".  This method is used by the MKFilePerformer
   * class.  The string is not copied. */
 
 - infoNote;
  /* 
-  * Returns the receiver's info Note, fashioned from an info statement
+  * Returns the receiver's info MKNote, fashioned from an info statement
   * in the header of the scorefile.
   */
 
@@ -78,8 +90,8 @@
   * You never invoke this method; it's invoked automatically by
   * selfActivate (just before the file is performed).  It reads the
   * scorefile header and creates MKNoteSender objects for each member of the
-  * file's part statements.  It also creates info Notes from the file's
-  * Score and Part info statements and adds them to itself and its Parts.
+  * file's part statements.  It also creates info MKNotes from the file's
+  * MKScore and MKPart info statements and adds them to itself and its MKParts.
   * If the file can't be read, or the scorefile parser encounters too many
   * errors, the receiver is deactivated.
   */
@@ -98,8 +110,8 @@
 
 - nextNote; 
  /* 
-  * Reads the next Note or time statement from the body of the scorefile.
-  * Note statements are turned into Note objects and returned.  If its a
+  * Reads the next MKNote or time statement from the body of the scorefile.
+  * Note statements are turned into MKNote objects and returned.  If its a
   * time statement that's read, fileTime is set to the statement's value
   * and nil is returned.
   * 
@@ -110,7 +122,7 @@
 
 - infoNoteForNoteSender:aNoteSender; 
  /* 
-  * Returns the info Note of the Part associated with the 
+  * Returns the info MKNote of the MKPart associated with the 
   * MKNoteSender aNoteSender.  If aNoteSender isn't 
   * a contained in the receiver, returns nil.
   */
@@ -123,39 +135,37 @@
   */
 
 -midiNoteSender:(int)aChan;
- /* Returns the first MKNoteSender whose corresponding Part has 
+ /* Returns the first MKNoteSender whose corresponding MKPart has 
   * a MK_midiChan info parameter equal to
-  * aChan, if any. aChan equal to 0 corresponds to the Part representing
+  * aChan, if any. aChan equal to 0 corresponds to the MKPart representing
   * MIDI system and channel mode messages. */
 
 - (void)dealloc;
  /* 
-  * Frees the receiver, its NoteSenders, and its info Note.  If the
+  * Frees the receiver, its MKNoteSenders, and its info MKNote.  If the
   * receiver is active, this does nothing and returns self. Otherwise,
-  * returns nil
+  * returns nil. You never call this directly, it is called by the release
+  * mechanism of NSObject.
   */
 
 - copyWithZone:(NSZone *)zone;
  /* 
-  * Creates and returns a new ScorefilePerformer as a copy of the
-  * receiver.  The info receiver's info Note is also copied.
+  * Creates and returns a new MKScorefilePerformer as a copy of the
+  * receiver.  The info receiver's info MKNote is also copied.
   */
 
 - (void)encodeWithCoder:(NSCoder *)aCoder;
   /* 
      You never send this message directly.  
-     Should be invoked with NXWriteRootObject(). 
-     Invokes superclass write:, which archives NoteSenders.
+     Should be invoked via NSArchiver. 
+     Invokes superclass write:, which archives MKNoteSenders.
      Then archives info and part infos gleaned from the Scorefile. */
 - (id)initWithCoder:(NSCoder *)aDecoder;
   /* 
      You never send this message directly.  
-     Should be invoked via NXReadObject(). 
-     Note that -init is not sent to newly unarchived objects.
-     See write:. */
+     Should be invoked via NSArchiver. 
+     Note that -init is not sent to newly unarchived objects. */
 
 @end
-
-
 
 #endif
