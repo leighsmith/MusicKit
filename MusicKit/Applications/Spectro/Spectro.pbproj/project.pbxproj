@@ -75,6 +75,17 @@
 			settings = {
 			};
 		};
+		071719DE0156540D7F000001 = {
+			isa = PBXFileReference;
+			path = WaterfallView.m;
+			refType = 4;
+		};
+		071719DF0156540D7F000001 = {
+			fileRef = 071719DE0156540D7F000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		0F183AF20035F7AECFED3B96 = {
 			buildStyles = (
 				06C97E270056EE8CCFED3B96,
@@ -117,7 +128,7 @@
 				0F183AFD0035F7AECFED3B96,
 				0F183AFE0035F7AECFED3B96,
 				0F183AFF0035F7AECFED3B96,
-				0F183B000035F7AECFED3B96,
+				071719DE0156540D7F000001,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -176,11 +187,6 @@
 		0F183AFF0035F7AECFED3B96 = {
 			isa = PBXFileReference;
 			path = SubSoundView.m;
-			refType = 4;
-		};
-		0F183B000035F7AECFED3B96 = {
-			isa = PBXFileReference;
-			path = WaterfallView.m;
 			refType = 4;
 		};
 		0F183B010035F7AECFED3B96 = {
@@ -695,8 +701,8 @@
 				0F183B520035F7AECFED3B96,
 				0F183B530035F7AECFED3B96,
 				0F183B540035F7AECFED3B96,
-				0F183B550035F7AECFED3B96,
 				0F183B560035F7AECFED3B96,
+				071719DF0156540D7F000001,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -783,14 +789,6 @@
 		};
 		0F183B540035F7AECFED3B96 = {
 			fileRef = 0F183AFF0035F7AECFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-				);
-			};
-		};
-		0F183B550035F7AECFED3B96 = {
-			fileRef = 0F183B000035F7AECFED3B96;
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
