@@ -12,7 +12,10 @@ NAME = MIDIFilePlayback
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Application
 NEXTSTEP_APPICON = midi.tiff
-ICONSECTIONS =	-sectcreate __ICON app midi.tiff
+NEXTSTEP_DOCICONS = midi.tiff
+
+ICONSECTIONS =	-sectcreate __ICON app midi.tiff \
+		-sectcreate __ICON midi midi.tiff
 
 English_RESOURCES = MIDIFilePlayback.nib
 

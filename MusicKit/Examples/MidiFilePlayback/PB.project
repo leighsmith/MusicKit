@@ -37,7 +37,7 @@
     MAKEFILEDIR = "$(MAKEFILEPATH)/pb_makefiles"; 
     NEXTSTEP_APPICON = midi.tiff; 
     NEXTSTEP_BUILDTOOL = /bin/gnumake; 
-    NEXTSTEP_DOCUMENTEXTENSIONS = (); 
+    NEXTSTEP_DOCUMENTEXTENSIONS = ({Extension = midi; Image = midi.tiff; }); 
     NEXTSTEP_INSTALLDIR = /Applications; 
     NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 
     NEXTSTEP_MAINNIB = MIDIFilePlayback; 
@@ -49,6 +49,7 @@
     PROJECTNAME = MIDIFilePlayback; 
     PROJECTTYPE = Application; 
     PROJECTVERSION = 2.8; 
+    SYSTEMEXTENSIONS = (); 
     WINDOWS_BUILDTOOL = $NEXT_ROOT/Developer/Executables/make; 
     WINDOWS_DOCUMENTEXTENSIONS = (); 
     WINDOWS_INSTALLDIR = /Applications; 
