@@ -3,6 +3,9 @@
 */
 /*
   $Log$
+  Revision 1.3  2000/03/31 00:16:44  leigh
+  TODOs have become more standard FIXMEs
+
   Revision 1.2  1999/07/29 01:25:41  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -51,7 +54,7 @@
  * This SynthPatch needs only to be allocated to work.   Be sure to deallocate it 
  * before closing the Orchestra.
  * 
- * TODO: DRAM allocation
+ * FIXME: DRAM allocation
  */
 
 +new;
