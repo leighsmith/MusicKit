@@ -1,10 +1,13 @@
 #import <InterfaceBuilder/InterfaceBuilder.h>
+#import <SndKit/SndKit.h>
 
-@interface SndViewP : IBPalette {
-    id view1;
-    id view2;
-    id view3;
+@interface SndViewP : IBPalette
+{
+    IBOutlet SndView *view1;
+    IBOutlet SndView *view2;
+    IBOutlet SndView *view3;
 }
-- (void)finishInstantiate;
+
+- (void) finishInstantiate;
 
 @end
