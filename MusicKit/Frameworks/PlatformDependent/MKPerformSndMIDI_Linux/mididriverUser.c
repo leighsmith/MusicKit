@@ -12,25 +12,23 @@
   Permission is granted to use and modify this code for commercial and non-commercial
   purposes so long as the author attribution and this copyright message remains intact
   and accompanies all derived code.
-
-  Just to cover my ass: DirectMusic, DirectSound and DirectX are registered trademarks
-  of Microsoft Corp and they can have them.
 */
 /*
 Modification history:
 
   $Log$
-  Revision 1.1  2000/01/14 00:14:34  leigh
+  Revision 1.2  2000/03/11 01:58:55  leigh
+  Removed uncompilable references to Windows PerformMidi cruft
+
+  Revision 1.1.1.1  2000/01/14 00:14:34  leigh
   Initial revision
-
-  Revision 1.1.1.1  1999/11/17 17:57:14  leigh
-  Initial working version
-
-
+ 
 */
 typedef int port_t;
 #include "mididriver_types.h"
 #include "mididriverUser.h"
+
+#include "PerformSoundPrivate.h"
 
 #define FUNCLOG 1
 
@@ -142,7 +140,7 @@ PERFORM_API kern_return_t MDSetClockTime (
   //datumRefTime = PMGetCurrentTime();
   //datumMSecTime = time;
 #ifdef FUNCLOG
-  fprintf(debug, "MDSetClockTime called %d, datumRefTime = %I64d\n", time, 0);
+  fprintf(debug, "MDSetClockTime called %d, datumRefTime = %d\n", time, 0);
 #endif
   return 0;
 }
@@ -169,7 +167,7 @@ PERFORM_API kern_return_t MDStartClock (
 #ifdef FUNCLOG
   fprintf(debug, "MDStartClock called\n");
 #endif
-  return !PMactivate();
+  return TRUE;
 }
 
 /* Routine MDStopClock */
@@ -181,7 +179,7 @@ PERFORM_API kern_return_t MDStopClock (
 #ifdef FUNCLOG
   fprintf(debug, "MDStopClock called\n");
 #endif
-  return !PMdeactivate();
+  return TRUE;
 }
 
 /* Routine MDClaimUnit */
@@ -193,7 +191,7 @@ PERFORM_API kern_return_t MDClaimUnit (
 #ifdef FUNCLOG
   fprintf(debug, "MDClaimUnit called %d\n", unit);
 #endif
-  return !PMSetMIDIPortNum(unit);
+  return TRUE;
 }
 
 /* Routine MDReleaseUnit */
@@ -205,7 +203,7 @@ PERFORM_API kern_return_t MDReleaseUnit (
 #ifdef FUNCLOG
   fprintf(debug, "MDReleaseUnit called\n");
 #endif
-  return !PMReleaseMIDIPortNum(unit);
+  return TRUE;
 }
 
 /* Routine MDRequestExceptions */
@@ -354,7 +352,7 @@ PERFORM_API kern_return_t MDSetClockQuantum (
   // REFERENCE_TIME measured in 100ns units, I don't understand why MS needs such accuracy as it is well beyond perception...
   //quantumFactor = microseconds * 10;
 #ifdef FUNCLOG
-  fprintf(debug, "MDSetClockQuantum called %d microseconds, %I64d 100ns units\n", microseconds, 0);
+  fprintf(debug, "MDSetClockQuantum called %d microseconds, %d 100ns units\n", microseconds, 0);
 #endif
   return 0;
 }
@@ -362,7 +360,7 @@ PERFORM_API kern_return_t MDSetClockQuantum (
 PERFORM_API kern_return_t MDAwaitReply(port_t port_set, MDReplyFunctions *funcs, int timeout)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDAwaitReply called %d timeout\n");
+  fprintf(debug, "MDAwaitReply called %d timeout\n", timeout);
 #endif
   return 0;
 }
@@ -386,13 +384,15 @@ PERFORM_API kern_return_t MDHandleReply(msg_header_t *msg, MDReplyFunctions *fun
  */
 PERFORM_API kern_return_t MIDIDownloadDLSInstruments(unsigned int *patchesToDownload, int patchesUsed)
 {
-    return PMDownloadDLSInstruments(patchesToDownload, patchesUsed);
+    return TRUE;
 }
 
 // retrieve a list of strings giving driver names, and therefore (0 based) unit numbers.
 PERFORM_API const char **MIDIGetAvailableDrivers(unsigned int *selectedDriver)
 {
-    return PMGetAvailableMIDIPorts(selectedDriver);
+    static char *silentDriver = "silent MIDI Driver";
+    *selectedDriver = 0;
+    return &silentDriver;
 }
 
 

@@ -2,9 +2,10 @@
 }
 {\colortbl;\red255\green255\blue255;}
 \paperw16220\paperh12580
-\pard
+\pard\ql\qnatural
 
-\f0\fs24 \cf0 Release 4.0  Copyright 
+\f0\fs24 \cf0 $Id$ \
+Copyright 
 \f1 ã
 \f0 1993 by CCRMA, Stanford University.  All Rights Reserved.\
 \
@@ -34,22 +35,22 @@
 \pard\tx5640\li5640\fi-3540\ql\qnatural
 
 \f2\i0\b\fs28 \cf0 Library:	
-\f0\b0 MusicKit.framework, dsp.framework, MKPerformMIDI.framework.  \
-	Also, optionally unitgenerators.framework, synthpatches.framework\
+\f0\b0 MusicKit.framework, MKDSP.framework, MKPerformSndMIDI.framework.  \
+	Also, optionally MKUnitGenerators.framework, MKSynthPatches.framework\
 
 \fs16 \
 
 \f2\b\fs28 Header File Directory:	
 \f0\b0 /Local/Library/Frameworks/MusicKit.framework/Headers/  \
-	/Local/Library/Frameworks/synthpatches.framework/Headers/\
-	/Local/Library/Frameworks/unitgenerators.framework/Headers/\
-	/Local/Library/Frameworks/dsp.framework/Headers/\
+	/Local/Library/Frameworks/MKSynthPatches.framework/Headers/\
+	/Local/Library/Frameworks/MKUnitGenerators.framework/Headers/\
+	/Local/Library/Frameworks/MKDSP.framework/Headers/\
 
 \fs16 	\
 
-\f2\b\fs28 Import:	
-\f0\b0 MusicKit/MusicKit.h.  \
-	Also, optionally, synthpatches/synthpatches.h and unitgenerators/unitgenerators.h\
+\f2\b\fs28 Import:	<
+\f0\b0 MusicKit/MusicKit.h>  \
+	Also, optionally, <MKSynthPatches/synthpatches.h> and <MKUnitGenerators/unitgenerators.h>\
 
 \fs16 \
 \pard\li100\ql\qnatural
@@ -66,7 +67,7 @@
 \
 \pard\tx2480\tx2860\tx3240\li2100\ql\qnatural
 
-\f0\b0\fs28 \cf0 The Music Kit defines a set of Objective C classes and informal protocols, C functions, and assorted constants and data types that are useful for creating music, sound, DSP and MIDI applications under NeXTSTEP. \
+\f0\b0\fs28 \cf0 The Music Kit defines a set of Objective C classes and informal protocols, C functions, and assorted constants and data types that are useful for creating music, sound, DSP and MIDI applications under NeXTSTEP, OpenStep, Windows9X, MacOsX and MacOsX-Server. \
 
 \fs16 \
 \pard\tx2480\tx2860\tx3240\li2480\fi-380\ql\qnatural
@@ -148,7 +149,7 @@
 \pard\li2100\ql\qnatural
 
 \f2\b\fs48 \cf0 \
-Music Kit Classes\
+MusicKit Classes\
 
 \fs16 \
 \pard\tx2480\tx2860\tx3240\li2100\ql\qnatural
@@ -373,7 +374,9 @@ The
 \
 ·	 
 \b MKSynthInstrument
-\b0  objects realize Notes by synthesizing them on the DSP.\
+\b0  objects realize 
+\b MKNote
+\b0 s by synthesizing them on the DSP.\
 \
 ·	 
 \b MKMidi
@@ -451,7 +454,7 @@ The
 \b MKSynthPatch 
 \b0 and 
 \b MKUnitGenerator 
-\b0 libraries, respectively.\
+\b0 frameworks, respectively.\
 \pard\li2100\ql\qnatural
 
 \f2\b\fs36 \cf0 \
@@ -459,12 +462,12 @@ The
 
 \fs16 \cf0 \
 
-\fs48 Music Kit Functions\
+\fs48 MusicKit Functions\
 
 \fs16 \
 \pard\tx2480\tx2860\tx3240\li2100\ql\qnatural
 
-\f0\b0\fs28 \cf0 The ªFunctionsº section, later in this chapter, describes the functions (and function-like macros) that are provided by the Music Kit.  Many of the functions are auxiliary to the Kit's classes in that they augment or are superceded by one or more classes.  Of the rest, some functions provide information or functionality that can't be gotten elsewhere, while some others are convenient but not necessarily the only way to address a particular topic.  \
+\f0\b0\fs28 \cf0 The ªFunctionsº section, later in this chapter, describes the functions (and function-like macros) that are provided by the MusicKit.  Many of the functions are auxiliary to the Kit's classes in that they augment or are superceded by one or more classes.  Of the rest, some functions provide information or functionality that can't be gotten elsewhere, while some others are convenient but not necessarily the only way to address a particular topic.  \
 
 \fs16 \
 
@@ -483,7 +486,9 @@ The
 \fs16 \cf0 \
 \pard\tx2480\tx2860\tx3240\li2100\ql\qnatural
 
-\f0\b0\fs28 \cf0 These functions convert between MIDI and Note amplitude representations:\
+\f0\b0\fs28 \cf0 These functions convert between MIDI and 
+\b MKNote
+\b0  amplitude representations:\
 
 \fs16 \
 
@@ -498,7 +503,9 @@ The
 \fs16 \cf0 \
 \pard\tx2480\tx2860\tx3240\li2100\ql\qnatural
 
-\f0\b0\fs28 \cf0 These functions convert between MIDI and Note frequency representations:\
+\f0\b0\fs28 \cf0 These functions convert between MIDI and 
+\b MKNote
+\b0  frequency representations:\
 
 \fs16 \
 
@@ -548,8 +555,9 @@ The
 \pard\li2100\ql\qnatural
 \cf0 MKSetNoteParToDouble(), MKSetNoteParToInt(), MKSetNoteParToString(),  MKSetNoteParToEnvelope(), MKSetNoteParToWaveTable(), MKSetNoteParToObject(), MKGetNoteParAsDouble(),  MKGetNoteParAsInt(), MKGetNoteParAsString(),  MKGetNoteParAsStringNoCopy(), MKGetNoteParAsEnvelope(), MKGetNoteParAsWaveTable(), MKGetNoteParAsObject()\
 \
+\pard\li2100\ql\qnatural
 
-\f2\b\fs36 Named Objects\
+\f2\b\fs36 \cf0 Named Objects\
 \pard\li2100\ql\qnatural
 
 \fs16 \cf0 \

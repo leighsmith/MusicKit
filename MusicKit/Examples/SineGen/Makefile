@@ -31,7 +31,7 @@ MFILES = SoundTest_main.m
 OTHERSRCS = Makefile Makefile.preamble README SoundTest.iconheader
 
 
-MAKEFILEDIR = $(MAKEFILEPATH)/pb_makefiles
+MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles
 CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = app.make
 NEXTSTEP_INSTALLDIR = $(HOME)/Apps
