@@ -118,7 +118,28 @@ the pasteboard sound type. Most of the methods defined in the Snd
 class are implemented so that you needn't be aware of this
 structure. However, if you wish to directly manipulate the sound data
 in a Snd object, you need to be familiar with the SndSoundStruct
-architecture, as described in the <b>SndStruct</b> header. 
+architecture, as described in the <b>SndStruct</b> header.
+
+<H3>Sound Conversion Features</H3>
+
+The sample rate conversion routines (in particular) come from Julius Smith
+(resample-1.2), but have been modified to not require compacting of fragmented
+sound files. Additionally, they will accept 8 bit, float and double input,
+although the output is always 16 bit. So although you can convert sampling
+rates of float data, it has to go through an intermediate 16 bit
+stage for the rate conversion. Sorry.
+
+There are 3 different qualities of sample rate conversion, the fastest being
+the lowest quality. The Snd object uses the fastest one by default, but you
+can set the quality to be used with the -setConversionQuality method.
+
+The Sound Conversion routines (in general) basically convert from any
+sampling rate, any number of channels (<= 16), 8, 16 bit, float and double
+formats to any other combination of the above, in as
+few passes as possible. When changing numbers of channels, you can change
+from 1 to many, many to 1, or any power of 2 to any other power of 2
+(eg 2 to 8, 4 to 2, 2 to 16 etc).
+
 */
 
 @interface Snd : NSObject
