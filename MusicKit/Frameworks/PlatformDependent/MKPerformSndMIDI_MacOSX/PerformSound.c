@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.7  2001/03/12 19:15:58  leigh
+// Cleaned up debugging info
+//
 // Revision 1.6  2001/03/08 18:48:30  leigh
 // controlled debugging info, adopted 4K46 CoreAudio buffer use
 //
@@ -55,7 +58,7 @@ extern "C" {
 
 #define DEBUG_SQUAREWAVE  0  // generate a square wave, rather than the real audio data
 #define DEBUG_DESCRIPTION 0  // dump the description of the audio device.
-#define DEBUG_BUFFERSIZE  1  // dump the check of the audio buffer size.
+#define DEBUG_BUFFERSIZE  0  // dump the check of the audio buffer size.
 #define DEBUG_SNDPLAYIOPROC 0 // dump the channel count etc while generating the buffer.
 
 #define PADDING 3          // make sure this matches PADFORMAT changes below (including \0)
@@ -356,13 +359,13 @@ static BOOL setBufferSize(long int bufferSizeToSetInBytes)
     UInt32 bufferSizeInBytes;
 
     /* fetch the buffer size for informational purposes */
-#if DEBUG_BUFFERSIZE // only needed for debugging
     CAstatus = AudioDeviceGetPropertyInfo(outputDeviceID, 0, false, kAudioDevicePropertyBufferSize,
                                           &propertySize, &propertyWritable);
     if (CAstatus) {
         fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyBufferSize returned %d\n", (int) CAstatus);
         return FALSE;
     }
+#if DEBUG_BUFFERSIZE // only needed for debugging
     CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false, kAudioDevicePropertyBufferSize,
                                     &propertySize, &bufferSizeInBytes);
     
@@ -378,9 +381,6 @@ static BOOL setBufferSize(long int bufferSizeToSetInBytes)
     CAstatus = AudioDeviceSetProperty(outputDeviceID, NULL, 0, false,
                                     kAudioDevicePropertyBufferSize,
                                     propertySize, &bufferSizeToSetInBytes);
-    
-//    fprintf(stderr, "set buffer size CAstatus:%s\n", (char *) &CAstatus);
-    
     if (CAstatus) {
         fprintf(stderr, "AudioDeviceSetProperty returned %d\n", (int) CAstatus);
         return FALSE;
@@ -394,13 +394,15 @@ static BOOL setBufferSize(long int bufferSizeToSetInBytes)
         fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyBufferSize returned %d\n", (int) CAstatus);
         return FALSE;
     }
-//    fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyBufferSize CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
-//        (char *) &CAstatus, propertySize, propertyWritable);
+    // fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyBufferSize CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
+    //    (char *) &CAstatus, propertySize, propertyWritable);
 
     CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false, kAudioDevicePropertyBufferSize,
                                     &propertySize, &bufferSizeInBytes);
 
-//    fprintf(stderr, "get buffer size CAstatus:%s, bufferSizeInBytes = %ld\n", (char *) &CAstatus, bufferSizeInBytes);
+#if DEBUG_BUFFERSIZE // only needed for debugging
+    fprintf(stderr, "get buffer size CAstatus:%s, bufferSizeInBytes = %ld\n", (char *) &CAstatus, bufferSizeInBytes);
+#endif
     
     if (bufferSizeInBytes != bufferSizeToSetInBytes) {
         fprintf(stderr, "device did not set desired buffer size\n");
