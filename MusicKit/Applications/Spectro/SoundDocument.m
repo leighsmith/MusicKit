@@ -1,7 +1,15 @@
 /*	$Id$
  *	Originally from SoundEditor3.0.
  *	Modified for Spectro3.0 by Gary Scavone.
- *	Last modified: 1/94
+ *
+ * Modifications Copyright (c) 2003 The MusicKit Project, All Rights Reserved.
+ *
+ * Legal Statement Covering Additions by The MusicKit Project:
+ *
+ *   Permission is granted to use and modify this code for commercial and
+ *   non-commercial purposes so long as the author attribution and copyright
+ *   messages remain intact and accompany all relevant code.
+ *
  */
 
 #import <AppKit/AppKit.h>
@@ -9,7 +17,6 @@
 
 #import "SoundDocument.h"
 #import "SoundController.h"
-#import "SubSoundView.h"
 #import "ScrollingSound.h"
 #import "SoundInfo.h"
 #import "SpectrumDocument.h"

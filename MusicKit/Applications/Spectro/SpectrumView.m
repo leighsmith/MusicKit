@@ -1,8 +1,20 @@
+/*	$Id$
+ *
+ * Modifications Copyright (c) 2003 The MusicKit Project, All Rights Reserved.
+ *
+ * Legal Statement Covering Additions by The MusicKit Project:
+ *
+ *   Permission is granted to use and modify this code for commercial and
+ *   non-commercial purposes so long as the author attribution and copyright
+ *   messages remain intact and accompany all relevant code.
+ *
+ */
+
+#import <AppKit/AppKit.h>
+#import <AppKit/NSColor.h>
 #import "SpectrumView.h"
 #import "SpectrumDocument.h"
 #import "SoundController.h"
-#import <AppKit/AppKit.h>
-#import <AppKit/NSColor.h>
 
 #define SPECTRUM_WIDTH [self bounds].size.width		/* Width of view in pixels */
 #define VERT_GRID_VIEWABLE 4				/* number of vertical grid lines we want in the window */

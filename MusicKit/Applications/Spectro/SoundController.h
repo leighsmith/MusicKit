@@ -1,7 +1,19 @@
+/*
+  $Id$
+  
+  Part of Spectro.app
+  Modifications Copyright (c) 2003 The MusicKit Project, All Rights Reserved.
 
-#import <Foundation/NSObject.h>
-#import <AppKit/NSColor.h>
-#import <Foundation/NSArray.h>
+  Legal Statement Covering Additions by The MusicKit Project:
+
+    Permission is granted to use and modify this code for commercial and
+    non-commercial purposes so long as the author attribution and copyright
+    messages remain intact and accompany all relevant code.
+
+*/
+
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 #import "PrefController.h"
 
 NSString *colorToString(NSColor  *color);
@@ -11,14 +23,14 @@ NSColor  *StringToColor(NSString *buf);
 
 @interface SoundController:NSObject
 {
-	id currentDocument;
-	NSMutableArray *documentList;
-	id infoPanel;
-	id saveToAccessoryView;
-	SaveToController *saveToController;
-	PrefController *prefController;
-	int counter;
-        id currentDir;
+    id currentDocument;
+    NSMutableArray *documentList;
+    id infoPanel;
+    id saveToAccessoryView;
+    SaveToController *saveToController;
+    PrefController *prefController;
+    int counter;
+    id currentDir;
 }
 
 - init;
