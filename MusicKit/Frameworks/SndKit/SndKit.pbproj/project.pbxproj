@@ -20,6 +20,7 @@
 		};
 		00D2C428FEDB2CB5CFED3B93 = {
 			children = (
+				0109B284014D0BC3CFED3B94,
 				00D2C42BFEDB2CB5CFED3B93,
 				00D2C432FEDB2CB5CFED3B93,
 				00D2C444FEDB2CB5CFED3B93,
@@ -48,6 +49,7 @@
 				0224068700713935CFED3B8B,
 				0224068600713935CFED3B8B,
 				02240692007269D2CFED3B8B,
+				0109B28F014D0BC3CFED3B94,
 				4E8FE8660122ECB1CFED3B8B,
 				00D2C42DFEDB2CB5CFED3B93,
 				00D2C42EFEDB2CB5CFED3B93,
@@ -92,6 +94,7 @@
 		};
 		00D2C432FEDB2CB5CFED3B93 = {
 			children = (
+				0109B290014D0BC3CFED3B94,
 				00D2C433FEDB2CB5CFED3B93,
 				36C5C1C40039F18CCFED3B96,
 				07986ABF013D43C8CFED3B94,
@@ -368,6 +371,13 @@
 				4E8FE86C0122ECB1CFED3B8B,
 				4E8FE86D0122ECB1CFED3B8B,
 				07986AC1013D43C8CFED3B94,
+				0109B291014D0BC3CFED3B94,
+				0109B292014D0BC3CFED3B94,
+				0109B293014D0BC3CFED3B94,
+				0109B294014D0BC3CFED3B94,
+				0109B295014D0BC3CFED3B94,
+				0109B296014D0BC3CFED3B94,
+				0109B297014D0BC3CFED3B94,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -506,6 +516,11 @@
 				4E8FE86F0122ECB1CFED3B8B,
 				4E8FE8700122ECB1CFED3B8B,
 				07986AC2013D43C8CFED3B94,
+				0109B298014D0BC3CFED3B94,
+				0109B299014D0BC3CFED3B94,
+				0109B29A014D0BC3CFED3B94,
+				0109B29B014D0BC3CFED3B94,
+				0109B29C014D0BC3CFED3B94,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -628,6 +643,155 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
+		};
+		0109B284014D0BC3CFED3B94 = {
+			children = (
+				0109B285014D0BC3CFED3B94,
+				0109B286014D0BC3CFED3B94,
+				0109B287014D0BC3CFED3B94,
+				0109B288014D0BC3CFED3B94,
+				0109B289014D0BC3CFED3B94,
+				0109B28A014D0BC3CFED3B94,
+				0109B28B014D0BC3CFED3B94,
+				0109B28C014D0BC3CFED3B94,
+				0109B28D014D0BC3CFED3B94,
+				0109B28E014D0BC3CFED3B94,
+			);
+			isa = PBXGroup;
+			name = ReverbCPPFiles;
+			refType = 4;
+		};
+		0109B285014D0BC3CFED3B94 = {
+			isa = PBXFileReference;
+			path = allpass.cpp;
+			refType = 2;
+		};
+		0109B286014D0BC3CFED3B94 = {
+			isa = PBXFileReference;
+			path = comb.cpp;
+			refType = 2;
+		};
+		0109B287014D0BC3CFED3B94 = {
+			isa = PBXFileReference;
+			path = reverbBridge.cpp;
+			refType = 2;
+		};
+		0109B288014D0BC3CFED3B94 = {
+			isa = PBXFileReference;
+			path = revmodel.cpp;
+			refType = 2;
+		};
+		0109B289014D0BC3CFED3B94 = {
+			isa = PBXFileReference;
+			path = allpass.h;
+			refType = 2;
+		};
+		0109B28A014D0BC3CFED3B94 = {
+			isa = PBXFileReference;
+			path = comb.h;
+			refType = 2;
+		};
+		0109B28B014D0BC3CFED3B94 = {
+			isa = PBXFileReference;
+			path = denormals.h;
+			refType = 2;
+		};
+		0109B28C014D0BC3CFED3B94 = {
+			isa = PBXFileReference;
+			path = reverbBridge.h;
+			refType = 2;
+		};
+		0109B28D014D0BC3CFED3B94 = {
+			isa = PBXFileReference;
+			path = revmodel.h;
+			refType = 2;
+		};
+		0109B28E014D0BC3CFED3B94 = {
+			isa = PBXFileReference;
+			path = tuning.h;
+			refType = 2;
+		};
+		0109B28F014D0BC3CFED3B94 = {
+			isa = PBXFileReference;
+			path = SndAudioProcessorReverb.m;
+			refType = 2;
+		};
+		0109B290014D0BC3CFED3B94 = {
+			isa = PBXFileReference;
+			path = SndAudioProcessorReverb.h;
+			refType = 2;
+		};
+		0109B291014D0BC3CFED3B94 = {
+			fileRef = 0109B289014D0BC3CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0109B292014D0BC3CFED3B94 = {
+			fileRef = 0109B28A014D0BC3CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0109B293014D0BC3CFED3B94 = {
+			fileRef = 0109B28B014D0BC3CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0109B294014D0BC3CFED3B94 = {
+			fileRef = 0109B28C014D0BC3CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0109B295014D0BC3CFED3B94 = {
+			fileRef = 0109B28D014D0BC3CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0109B296014D0BC3CFED3B94 = {
+			fileRef = 0109B290014D0BC3CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0109B297014D0BC3CFED3B94 = {
+			fileRef = 0109B28E014D0BC3CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0109B298014D0BC3CFED3B94 = {
+			fileRef = 0109B285014D0BC3CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0109B299014D0BC3CFED3B94 = {
+			fileRef = 0109B286014D0BC3CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0109B29A014D0BC3CFED3B94 = {
+			fileRef = 0109B287014D0BC3CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0109B29B014D0BC3CFED3B94 = {
+			fileRef = 0109B288014D0BC3CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0109B29C014D0BC3CFED3B94 = {
+			fileRef = 0109B28F014D0BC3CFED3B94;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		017A8C4C004DDCB1CFED3B96 = {
 			isa = PBXFileReference;

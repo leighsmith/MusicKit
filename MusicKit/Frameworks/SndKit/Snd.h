@@ -362,7 +362,7 @@ architecture, as described in the <b>SndStruct</b> header.
     @method play
     @abstract Play the entire sound now.
     @result Returns SND_ERR_NONE if the sound played correctly.
-  @discussion Initiates playback of the Snd. The method returns immediately
+    @discussion Initiates playback of the Snd. The method returns immediately
               while the playback continues asynchronously in the background. The
               playback ends when the Snd receives the <b>stop</b> message, or
               when its data is exhausted.
