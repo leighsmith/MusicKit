@@ -16,6 +16,10 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2001/02/06 20:23:04  leigh
+  Retained MKMidi instances which were preventing second play of score\
+  Now using a single sound saving panel and updating the message
+
   Revision 1.6  2001/02/06 02:28:31  leigh
   Removed unnecessary retains, fixed rereading files, replacing the prompt with a log message
 
@@ -81,7 +85,7 @@ static BOOL messageFlashed = NO;
 static BOOL isLate = NO;
 static BOOL wasLate = NO;
 static id stopImage,playImage,playHImage;
-static MKMidi* midis[MAX_MIDIS] = {0};
+static MKMidi *midis[MAX_MIDIS] = {nil, nil};
 static int midiOffset;
 static BOOL synchToTimeCode = NO;
 static int timeCodePort = 0;
@@ -584,57 +588,39 @@ static id setFile(ScorePlayerController* self)
 
 static BOOL setUpFile(NSString *workspaceFileName);
 
-// LMS disabled as it did nothing on OpenStep anyway
-
-// static port_t endOfTimePort = PORT_NULL;
-
--endOfTime	// called by the musickit thread
+- endOfTime	// called by the musickit thread
 {
     int i;
-// LMS disabled as it did nothing on OpenStep anyway
-#if 0
-    msg_header_t msg =    {0,                   /* msg_unused */
-                           TRUE,                /* msg_simple */
-			   sizeof(msg_header_t),/* msg_size */
-			   MSG_TYPE_NORMAL,     /* msg_type */
-			   0};                  /* Fills in remaining fields */
-#endif
     [theOrch close]; /* This will block! */
-    for (i=0; i<MAX_MIDIS; i++) {
+    for (i = 0; i < MAX_MIDIS; i++) {
 	[midis[i] close];
+        [midis[i] release];
 	midis[i] = nil;
     }
     if (DSPCommands) {
 	DSPCommands = NO;
 	[theOrch setOutputCommandsFile:NULL];
-    } else if (writeData) {
+    }
+    else if (writeData) {
 	writeData = NO;
 	[theOrch setOutputSoundfile:NULL];
     }
     [theOrch setHostSoundOut:(soundOutType == NEXT_SOUND)];
-// LMS disabled as it did nothing on OpenStep anyway
-#if 0
-    msg.msg_local_port = PORT_NULL;
-    msg.msg_remote_port = endOfTimePort;
-    msg_send(&msg, SEND_TIMEOUT, 0);
-#else  // LMS what used to be in endOfTimeProc
     [tempoAnimator stopEntry];
     [button setImage:playImage];
     [button display];
-    [tooFastErrorMsg setTextColor:[NSColor lightGrayColor]];
-    [tooFastErrorMsg setBackgroundColor:[NSColor lightGrayColor]];
+    [tooFastErrorMsg setTextColor: [NSColor lightGrayColor]];
+    [tooFastErrorMsg setBackgroundColor: [NSColor lightGrayColor]];
     if (errorDuringPlayback && ![errorLog isVisible])
 	NSRunAlertPanel(STR_SCOREPLAYER, STR_ERRORS, STR_OK, nil, nil);
     messageFlashed = NO;
     isLate = NO;
     wasLate = NO;
     errorDuringPlayback = NO;
-    [theMainWindow setTitle:shortFileName];
+    [theMainWindow setTitle: shortFileName];
     [theMainWindow display];
-    [(NSSavePanel *) soundSavePanel close];
-    [(NSSavePanel *) dspCommandsSavePanel close];
+    [soundSavePanel close];
     [self _enableMTCControls:YES];
-#endif
     return self;
 }
 
@@ -720,6 +706,7 @@ static void playIt(ScorePlayerController *self)
     MKSynthInstrument *anIns;
     MKNote *partInfo;
     MKPart *aPart;
+    NSString *writeMsg;
 
     /* Could keep these around, in repeat-play cases: */ 
     [scorePerformer release];
@@ -728,7 +715,7 @@ static void playIt(ScorePlayerController *self)
     [self _enableMTCControls:NO];
 
     if (synchToTimeCode) {
-	midis[timeCodePort] = [MKMidi midiOnDevice: (timeCodePort) ? @"midi1" : @"midi0"];
+	midis[timeCodePort] = [[MKMidi midiOnDevice: (timeCodePort) ? @"midi1" : @"midi0"] retain];
 	[[MKConductor defaultConductor] setMTCSynch: midis[timeCodePort]];
     }
     else
@@ -813,7 +800,7 @@ static void playIt(ScorePlayerController *self)
 		whichMidi = 1;
 	    else whichMidi = 0;
 	    if (midis[whichMidi] == nil)
-		midis[whichMidi] = [MKMidi midiOnDevice:className];
+		midis[whichMidi] = [[MKMidi midiOnDevice:className] retain];
 	    [[partPerformer noteSender] connect:
 	     [midis[whichMidi] channelNoteReceiver:midiChan]];
 	}
@@ -835,9 +822,8 @@ static void playIt(ScorePlayerController *self)
 	    if (![partInfo isParPresent:MK_synthPatchCount])
 		continue;         
 	    voices = [partInfo parAsInt:MK_synthPatchCount];
-	    synthPatchCount = 
-		[anIns setSynthPatchCount:voices patchTemplate:
-		 [synthPatchClass patchTemplateFor:partInfo]];
+	    synthPatchCount = [anIns setSynthPatchCount: voices
+                                          patchTemplate: [synthPatchClass patchTemplateFor:partInfo]];
 	    if (synthPatchCount < voices) {
                 errMsg = [NSString stringWithFormat: STR_TOO_MANY_SYNTHPATCHES,
                     synthPatchCount, voices, className, MKGetObjectName(aPart)];
@@ -853,26 +839,32 @@ static void playIt(ScorePlayerController *self)
     [self->theMainWindow setTitle: [NSString stringWithFormat: STR_PLAYING, shortFileName]];
     [self->theMainWindow display];
     MKSetDeltaT(.75);
-    [MKOrchestra setTimed:YES];
-    [condClass afterPerformanceSel:@selector(endOfTime) to:self argCount:0];
-    [self->button setImage:stopImage];
+    [MKOrchestra setTimed: YES];
+    [condClass afterPerformanceSel: @selector(endOfTime) to: self argCount: 0];
+    [self->button setImage: stopImage];
     [self->button display];
     if (synchToTimeCode)
         [self showConductorDidPause];
-    if (writeData)
-	[self->soundSavePanel orderFront:self];
-    else if (DSPCommands)
-	[self->dspCommandsSavePanel orderFront:self];
-    [tempoAnimator setIncrement:ANIMATE_INCREMENT];
+    if (writeData) {
+        writeMsg = @"Writing sound file (silently) ...";
+    }
+    else if (DSPCommands) {
+        writeMsg = @"Writing DSP Commands format soundfile.";
+    }
+    if (writeData || DSPCommands) {
+        [self->soundWriteMsg setStringValue: writeMsg];
+	[self->soundSavePanel orderFront: self];
+    }
+    [tempoAnimator setIncrement: ANIMATE_INCREMENT];
     [tempoAnimator startEntry];
-    for (i=0; i<MAX_MIDIS; i++) 
+    for (i = 0; i < MAX_MIDIS; i++) 
         if (midis[i] && ![midis[i] openOutputOnly]) /* midis[i] is nil if not in use */
             mkRunAlertPanel(STR_SCOREPLAYER_ERROR, STR_CANT_OPEN_MIDI, STR_OK, STR_CANCEL, NULL);
-    for (i=0; i<MAX_MIDIS; i++) {
+    for (i = 0; i < MAX_MIDIS; i++) {
         if (midiOffset > 0) 
-	    [midis[i] setLocalDeltaT:midiOffset];
+	    [midis[i] setLocalDeltaT: midiOffset];
 	else if (midiOffset < 0)
-	    [theOrch setLocalDeltaT:-midiOffset];
+	    [theOrch setLocalDeltaT: -midiOffset];
     }
     for (i=0; i<MAX_MIDIS; i++) 
 	[midis[i] run];
@@ -1048,11 +1040,12 @@ static void abortNow()
     int i;
     if (PLAYING) {
 	[condClass lockPerformance];
-	for (i=0; i<MAX_MIDIS; i++) 
-	  if (midis[i]) {
-	      [midis[i] allNotesOff];
-	      [midis[i] abort];
-	  }
+	for (i=0; i<MAX_MIDIS; i++) {
+            if (midis[i]) {
+                [midis[i] allNotesOff];
+                [midis[i] abort];
+            }
+        }
 	[theOrch abort];
 	[condClass finishPerformance];
 	[condClass unlockPerformance];
@@ -1218,18 +1211,17 @@ static void adjustTempo(double slowDown)
 - conductorDidPause:sender
 {
     int i;
-    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidPause)
-     to:self argCount:0];
-    [synthInstruments makeObjectsPerformSelector:@selector(allNotesOff)];
-    for (i=0; i<MAX_MIDIS; i++) 
-      [midis[i] allNotesOff];
+    [MKConductor sendMsgToApplicationThreadSel: @selector(showConductorDidPause) to: self argCount: 0];
+    [synthInstruments makeObjectsPerformSelector: @selector(allNotesOff)];
+    for (i=0; i<MAX_MIDIS; i++) {
+        [midis[i] allNotesOff];
+    }
     return self;
 }
 
 - conductorDidResume:sender
 {
-    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidResume)
-     to:self argCount:0];
+    [MKConductor sendMsgToApplicationThreadSel: @selector(showConductorDidResume) to: self argCount: 0];
     return self;
 }
 
@@ -1237,8 +1229,6 @@ static void adjustTempo(double slowDown)
 {
     abortNow();
 }
-
-
 
 BOOL getSavePath(NSString **returnBuf, NSString *dir, NSString *name, NSString *theType)
      /* Set up and run the Save panel for the given type.  The accessory view
@@ -1258,13 +1248,9 @@ BOOL getSavePath(NSString **returnBuf, NSString *dir, NSString *name, NSString *
     [savePanel setAccessoryView:accessoryView];
     if (theType && [theType length])
         [savePanel setRequiredFileType:theType];
-//#error ApplicationConversion: 'setAutoupdate:' is obsolete ; autoupdate is always on at the application level
-//    [NSApp setAutoupdate:NO];
     flag = [savePanel runModalForDirectory:@"" file:@""];
     if (flag) *returnBuf = [savePanel filename];
     soundFile = (saveType==SAVE_SOUND) ? *returnBuf : NULL;
-//#error ApplicationConversion: 'setAutoupdate:' is obsolete ; autoupdate is always on at the application level
-//    [NSApp setAutoupdate:YES];
 
     return flag;
 }
