@@ -180,21 +180,21 @@
   @param      end The sample frame to end mixing at.
   @param      exp If TRUE, receiver is allowed to expand <i>buff</i> in place
                   if required to change data format before mixing, (not sample rate).
-  @result     Returns self.
+  @result     Returns the number of frames mixed.
 */
-- mixWithBuffer: (SndAudioBuffer*) buff
-      fromStart: (unsigned long) start
-          toEnd: (unsigned long) end
-      canExpand: (BOOL) exp;
+- (long) mixWithBuffer: (SndAudioBuffer*) buff
+	     fromStart: (unsigned long) start
+		 toEnd: (unsigned long) end
+	     canExpand: (BOOL) exp;
 
 /*!
   @method   mixWithBuffer:
   @abstract Mixes supplied SndAudioBuffer instance with the receiving instance, modifying it.
   @discussion Mixes the entire buffer onto the original buffer.
   @param      buff The SndAudioBuffer instance to mix.
-  @result     Returns self.
+  @result     Returns the number of frames mixed.
 */
-- mixWithBuffer: (SndAudioBuffer *) buff;
+- (long) mixWithBuffer: (SndAudioBuffer *) buff;
 
 /*!
   @method     copy

@@ -108,8 +108,12 @@
 #if SNDSTREAMMIXER_DEBUG
 	    NSLog(@"[mixer] mixing buffer %@\n", currentlyExposedOutputBuffer);
 #endif
-	    if (currentlyExposedOutputBuffer != nil)
-		[outB mixWithBuffer: currentlyExposedOutputBuffer];
+	    if (currentlyExposedOutputBuffer != nil) {
+		long framesMixed = [outB mixWithBuffer: currentlyExposedOutputBuffer];
+#if SNDSTREAMMIXER_DEBUG
+		NSLog(@"[mixer] Mixed %ld frames\n", framesMixed);
+#endif
+	    }
 	    else {
 		NSLog(@"[mixer] ERROR - tried to mix a nil output buffer!\n");
 	    }

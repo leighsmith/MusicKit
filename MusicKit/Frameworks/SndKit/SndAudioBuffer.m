@@ -289,13 +289,14 @@
 // description
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) description
+- (NSString *) description
 {
     float sampleMin, sampleMax;
     
     [self findMin: &sampleMin max: &sampleMax];
-    return [NSString stringWithFormat: @"%@ (dataLength: %i reservedDataLength: %i duration: %f dataFormat: %i samplingRate: %.2f channels: %i min: %.2f, max: %.2f)",
-      [super description], byteCount, maxByteCount, [self duration], dataFormat, samplingRate, channelCount, sampleMin, sampleMax];
+    return [NSString stringWithFormat: @"%@ (dataLength: %i reservedDataLength: %i duration: %f dataFormat: %@ samplingRate: %.2f channels: %i min: %.2f, max: %.2f)",
+        [super description], byteCount, maxByteCount, [self duration],
+        SndFormatName(dataFormat, NO), samplingRate, channelCount, sampleMin, sampleMax];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -368,10 +369,10 @@
 //  (SndConvertSound() currently allocates them itself).
 ////////////////////////////////////////////////////////////////////////////////
 
-- mixWithBuffer: (SndAudioBuffer*) buff
-      fromStart: (unsigned long) start
-          toEnd: (unsigned long) end
-      canExpand: (BOOL) canExpandInPlace
+- (long) mixWithBuffer: (SndAudioBuffer*) buff
+	     fromStart: (unsigned long) startFrame
+		 toEnd: (unsigned long) endFrame
+	     canExpand: (BOOL) canExpandInPlace
 {
     unsigned long lengthInSampleFrames = [self lengthInSampleFrames];
     unsigned long incomingLengthInSampleFrames = [buff lengthInSampleFrames];
@@ -385,16 +386,16 @@
     float *out = (float *) [data bytes];
     SndAudioBuffer *convertedBuffer = nil;
     
-    if (start > lengthInSampleFrames)
-	NSLog(@"mixWithBuffer: start %i is > length %i", start, lengthInSampleFrames);
-    else if (end > lengthInSampleFrames) {
-	NSLog(@"mixWithBuffer: end %i is > length %i - truncating", end, lengthInSampleFrames);
-	end = lengthInSampleFrames;
+    if (startFrame > lengthInSampleFrames)
+	NSLog(@"mixWithBuffer: startFrame %i is > length %i", startFrame, lengthInSampleFrames);
+    else if (endFrame > lengthInSampleFrames) {
+	NSLog(@"mixWithBuffer: endFrame %i is > length %i - truncating", endFrame, lengthInSampleFrames);
+	endFrame = lengthInSampleFrames;
     }
 
-    if (end > byteCount / sizeof(float))
-	end = byteCount / sizeof(float);
-    frameCount = MIN(incomingLengthInSampleFrames, end - start);
+    if (endFrame > byteCount / sizeof(float))
+	endFrame = byteCount / sizeof(float);
+    frameCount = MIN(incomingLengthInSampleFrames, endFrame - startFrame);
     lengthInSamples = frameCount * buffNumChannels; // number of samples for all channels.
 
     if (buffDataFormat != selfDataFormat) {
@@ -418,7 +419,7 @@
 	NSLog(@"mixWithBuffer: no conversion mixing.");
 #endif
     }
-    out += start * buffNumChannels;
+    out += startFrame * buffNumChannels;
     // TODO we need a universal altivec mixer for all sample formats.
     if(selfDataFormat == SND_FORMAT_FLOAT) {
 #ifdef __VEC__
@@ -441,20 +442,21 @@
     if (convertedBuffer)
 	[convertedBuffer release];
 
-    return self;
+    return frameCount;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // mixWithBuffer:
 ////////////////////////////////////////////////////////////////////////////////
 
-- mixWithBuffer: (SndAudioBuffer*) buff
+- (long) mixWithBuffer: (SndAudioBuffer *) buff
 {
-  // NSLog(@"buffer = %x\n", buff);
-  // NSLog(@"buffer to mix: %s", SndStructDescription(&(buff->formatSnd)));
+    // NSLog(@"mix %@ with new buffer: %@\n", self, buff);
 
-  [self mixWithBuffer: buff fromStart: 0 toEnd: [self lengthInSampleFrames] canExpand:NO];
-  return self;
+    return [self mixWithBuffer: buff 
+	             fromStart: 0 
+                         toEnd: [self lengthInSampleFrames]
+                     canExpand: NO];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
