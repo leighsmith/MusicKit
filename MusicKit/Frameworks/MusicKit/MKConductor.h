@@ -15,6 +15,12 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2002/03/20 17:05:11  sbrandon
+  New delegate message passing system, between any thread and the
+  appkit thread. This is basically the same as that in the SndKit
+  for passing delegate messages back from background thread, so
+  it works quite well.
+
   Revision 1.16  2001/09/07 18:44:12  leighsmith
   Moved @class before headerdoc declaration, corrected URL reference
 
@@ -309,6 +315,15 @@ See also: MKPerformer, MKOrchestra, MKMidi */
 #import <Foundation/NSObject.h>
 #import <Foundation/NSArray.h>
 #import <Foundation/NSThread.h>
+#import <SndKit/SndKit.h>
+
+@class NSLock;
+@class NSConditionLock;
+@class NSConnection;
+
+#ifdef __MINGW32__
+  @class SndConditionLock;
+#endif
 
 // Enforce C name mangling to allow linking MusicKit functions to C++ code
 #ifdef __cplusplus
@@ -912,7 +927,7 @@ Appendix B. entitled MIDI Time Code in the MusicKit
 
 @end
 
-@interface MKConductor(SeparateThread)
+@interface MKConductor(SeparateThread)  <SndDelegateMessagePassing>
 
 
 /*!
@@ -1042,6 +1057,35 @@ Appendix B. entitled MIDI Time Code in the MusicKit
 + sendMsgToApplicationThreadSel:(SEL) aSelector to:(id) toObject argCount:(int)argCount, ...;
 
 /*!
+  @method detachDelegateMessageThread
+  @result
+  @discussion Called by +initialize to detach a thread to handle messaging between
+              any background thread and the application thread. It is imperative that
+              +initialize is called from the application thread. In effect, this means
+              that the very first use of [MKConductor ...] must be done in the
+              application thread.
+*/
++ (void)detachDelegateMessageThread;
+
+/*!              
+  @method sendMessageInMainThreadToTarget:sel:arg1:arg2:count:
+  @result none
+  @param  target is an id.
+  @param  aSelector is a SEL.
+  @param  arg1 is any 4-byte argument.
+  @param  arg2 is any 4-byte argument.
+  @param  count is an integer.
+  @discussion This is the back end to sendMsgToApplicationThreadSel, above.
+              It relies on the delegate message thread having been set up
+              which is done from +initialize.
+*/
++ (void) sendMessageInMainThreadToTarget:(id)target 
+                                     sel:(SEL)aSelecto
+                                    arg1:(id)arg1
+                                    arg2:(id)arg2
+                                   count:(int)count;
+
+/*!
   @method setInterThreadThreshold:
   @param  newThreshold is an NSString.
   @result Returns an id.
@@ -1050,6 +1094,18 @@ Appendix B. entitled MIDI Time Code in the MusicKit
               thread.  Otherwise, it is ignored.
 */
 + setInterThreadThreshold:(NSString *) newThreshold;
+
+/*!
+  @method _sendDelegateInvocation:
+  @param  mesg is an NSInvocation, but cast as an unsigned long so the runtime does
+          not interpret it as an object, and mangle it (yes the casting has an
+          effect at runtime in this situation!).
+  @result void.
+  @discussion This is the method called in the application thread to actually deliver
+              the message sent through form the background thread (eg background
+              MKConductor thread).
+*/
++ (void) _sendDelegateInvocation:(in unsigned long) mesg;
 
 @end
 
