@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2000/01/20 17:13:45  leigh
+  Fixed ancient bug which incorrectly checked the MKNote class instead of MKMidi class
+
   Revision 1.8  1999/11/12 01:29:16  leigh
   Fixed general MK error messages from %s to %@
 
@@ -112,7 +115,7 @@ static id checkClass(_MKClassLoaded *cl,NSString *className)
 
 id _MKCheckClassMidi() 
 {
-    return checkClass(&_MKNoteClass,@"MKMidi");
+    return checkClass(&_MKMidiClass,@"MKMidi");
 }
 
 id _MKCheckClassNote() 
