@@ -3,7 +3,7 @@
  *  SndKit
  *
  *  Created by SKoT McDonald on Thu Jan 10 2002.
- *  Copyright (c) 2001 __MyCompanyName__. All rights reserved.
+ *  Copyright (c) 2002 tomandandy Inc. All rights reserved.
  *
  */
 
@@ -47,9 +47,6 @@
 #define HAVE_STDINT_H 1
 #define HAVE_SYS_TYPES 1
 #import <st.h> /* prototypes and structures from the Sox sound tools library */
-#ifndef RIGHT  /* used to be in old version of libst.h */
-# define RIGHT(datum, bits)      ((datum) >> bits)
-#endif
 
 /* up to 12.17.2, libst.a used LONG. Then it uses st_sample_t */
 #if (ST_LIB_VERSION_CODE <= 0x0c1102)
@@ -61,9 +58,10 @@
 #define SUN_LIN_16      3                       /* Linear 16 bits */
 #define SUN_LIN_24      4                       /* Linear 24 bits */
 #define SUN_LIN_32      5                       /* Linear 32 bits */
+#define SUN_FLOAT	6			/* IEEE FP 32 bits */
 #define SUN_ALAW        27                      /* a-law encoding */
 
-#define SNDREADCHUNKSIZE 256*1024   // Number of st_sample_t samples to read into a buffer.
+#define SNDREADCHUNKSIZE 128*1024   // Number of st_sample_t samples to read into a buffer.
 #ifdef WIN32
 #define LASTCHAR        '\\'
 #else
@@ -181,11 +179,6 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
   // to enable 24 bit operation.
   // For now, we kludge it to 16 bit integers until we have sound drivers that will manage the extra precision.
 
-  // Unfortunately there is the assumption the SndSoundStruct is always big-endian (within the MKPerformSndMIDI
-  // framework and any soundStructs returned), which means we need to swap again. The correct solution is to relax
-  // the big-endian requirement, introduce another format code allowing for little endian encoding, and revert the
-  // MKPerformSndMIDI framework to expect native endian order.
-
   // SKoT: slight update here - let's use the informat.length estimate as the canonical length of the sound!
   //       saves much reallocing.
 
@@ -232,26 +225,32 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
       if (samplesRead + lenRead > samplesToReadCount)
         c = samplesToReadCount - samplesRead;
 
-
       switch (s->dataFormat) {
         case SUN_LIN_8:
           for(i = 0; i < c; i++) {
-            int sample = RIGHT(readBuffer[i], (sizeof(st_sample_t) - informat.info.size) * 8);
-            *((char *) storePtr) =  htons(sample); // kludged assuming 16 bits. We always adopt big-endian format.
+            int sample = ST_SAMPLE_TO_SIGNED_BYTE(readBuffer[i]);
+            *((char *) storePtr) =  sample; // kludged assuming 16 bits.
             storePtr += informat.info.size;
           }
           break;
         case SUN_LIN_16:
           for(i = 0; i < c; i++) {
-            int sample = RIGHT(readBuffer[i], (sizeof(st_sample_t) - informat.info.size) * 8);
-            *((short *) storePtr) =  htons(sample); // kludged assuming 16 bits. We always adopt big-endian format.
+            int sample = ST_SAMPLE_TO_SIGNED_WORD(readBuffer[i]);
+            *((short *) storePtr) =  sample; // kludged assuming 16 bits.
             storePtr += informat.info.size;
           }
           break;
         case SUN_LIN_32:
           for(i = 0; i < c; i++) {
-            long sample = RIGHT(readBuffer[i], (sizeof(st_sample_t) - informat.info.size) * 8);
-            *((long *) storePtr) =  htons(sample); // kludged assuming 16 bits. We always adopt big-endian format.
+            long int sample = ST_SAMPLE_TO_SIGNED_DWORD(readBuffer[i]);
+            *((long *) storePtr) =  sample; // kludged assuming 16 bits.
+            storePtr += informat.info.size;
+          }
+          break;
+        case SUN_FLOAT:
+          for(i = 0; i < c; i++) {
+            float sample = ST_SAMPLE_TO_FLOAT_DWORD(readBuffer[i]);
+            *((float *) storePtr) =  sample; // kludged assuming 16 bits.
             storePtr += informat.info.size;
           }
           break;
@@ -326,30 +325,129 @@ int SndReadSoundfile(const char *path, SndSoundStruct **sound)
   return SndReadSoundfileRange(path, sound, 0, -1, TRUE);
 }
 
+//
+// Expects the sound to not be fragmented, and to be in host order.
+// SOX will look after endian issues.
+//
+// used to be named SndWriteWithSOX
 
-// TODO - Work In Progress... SKoT
-
-int SndWriteWithSOX(NSString* filename, SndSoundStruct *sound)
+int SndWriteSoundfile(NSString* filename, SndSoundStruct *sound)
 {
   int sz;
   struct st_soundstream ft;
+  int i;
+    
   st_initformat(&ft);
-  
   ft.info.rate     = sound->samplingRate;
   ft.info.encoding = SndFormatToSoxFormat(sound->dataFormat, &sz);
   ft.info.size     = sz;
   ft.info.channels = sound->channelCount;
+  ft.filename      = (char *)[filename fileSystemRepresentation];
+  ft.filetype      = (char *)[[filename pathExtension] cString] ;
+  ft.comment       = sound->info;
+  ft.instr.MIDInote= 0;
+  ft.instr.MIDIlow = 0;
+  ft.instr.MIDIhi  = 0;
+  ft.instr.loopmode= 0;
+  ft.instr.nloops  = 0;
+  for (i = 0 ; i < ST_MAX_NLOOPS ; i++) {
+    ft.loops[i].start = ft.loops[i].length = 0;
+    ft.loops[i].count = ft.loops[i].type = 0;
+  }
+  ft.seekable = 1; // so the original header length can be rewritten in aiff etc.
+  // don't need ft.length
+  // don't need ft.st_errno or st_errstr
   
-  ft.filename      = (char*) [[filename lastPathComponent] cString];
-  ft.filetype      = (char*) [[filename pathExtension] cString];
+  if (st_gettype(&ft)) {
+    NSLog(@"SOX reports save format error: %s\n",ft.st_errstr);
+    return SND_ERR_UNKNOWN;
+  }
 
+  if (st_checkformat(&ft)) {
+    NSLog(@"SOX reports bad output format: %s\n",ft.st_errstr);
+    return SND_ERR_UNKNOWN;
+  }
 
   ft.fp            = fopen(ft.filename,"wb");
+  if ((*ft.h->startwrite)(&ft) == ST_EOF)
+  {
+    NSLog(@"SOX reports header write error: %s\n",ft.st_errstr);
+    return SND_ERR_UNKNOWN;
+  }
 
-  return SND_ERR_UNKNOWN;
+  if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowOutputFileFormat"]) {
+    fprintf(stderr,"Output file %s: using sample rate %lu\n\tsize %s, encoding %s, %d %s",
+             ft.filename, (long unsigned int)ft.info.rate,
+             st_sizes_str[(unsigned char)ft.info.size],
+             st_encodings_str[(unsigned char)ft.info.encoding],
+             ft.info.channels,
+             (ft.info.channels > 1) ? "channels" : "channel");
+
+    if (ft.comment) {
+      fprintf(stderr,"Output file: comment \"%s\"\n", ft.comment);
+    }
+  }
+  
+  {
+  int i;
+  long readChunkSize = SNDREADCHUNKSIZE * sizeof(st_sample_t);
+  long sampleCount = SndSampleCount(sound) * sound->channelCount;
+  void *data = (char *)sound + sound->dataLocation;
+  st_sample_t *writeBuffer = malloc(readChunkSize);
+  
+  if (!writeBuffer) {
+    fprintf(stderr,"Malloc failed in writeSOXsound\n");
+    return SND_ERR_UNKNOWN;
+  }
+  while (sampleCount > 0) {
+    int c = MIN(sampleCount, SNDREADCHUNKSIZE);
+    sampleCount -= c;
+    
+    switch (sound->dataFormat) {
+      case SUN_LIN_8:
+        for(i = 0; i < c; i++) {
+          char sample = ((char *)data)[i];
+          writeBuffer[i] = ST_SIGNED_BYTE_TO_SAMPLE(sample) ; // no swap
+        }
+        (char *)data += c;
+        break;
+      case SUN_LIN_16:
+        for(i = 0; i < c; i++) {
+          short sample = ((short *)data)[i];
+          writeBuffer[i] = ST_SIGNED_WORD_TO_SAMPLE(sample) ; // no swap
+        }
+        (short *)data += c;
+        break;
+      case SUN_LIN_32:
+        for(i = 0; i < c; i++) {
+          long int sample = ((long int *)data)[i];
+          writeBuffer[i] = ST_SIGNED_DWORD_TO_SAMPLE(sample) ; // no swap
+        }
+        (long int *)data += c;
+        break;
+      case SUN_FLOAT:
+        for(i = 0; i < c; i++) {
+          float sample = ((float *)data)[i];
+          writeBuffer[i] = ST_FLOAT_DWORD_TO_SAMPLE(sample) ; // no swap
+        }
+        (float *)data += c;
+        break;
+      default:
+        NSLog(@"SndFunctionsDiskIO: Argh! Can't convert this stuff I'm writing!");
+    }
+    (* ft.h->write)(&ft, writeBuffer, (st_ssize_t) c);
+  }
+  free(writeBuffer);
+  if ((* ft.h->stopwrite)(&ft) == ST_EOF)
+    NSLog(@"%s\n",ft.st_errstr);
+    return SND_ERR_UNKNOWN;
+  }
+
+  return SND_ERR_NONE;
 }
 
-int SndWriteSoundfile(const char *path, SndSoundStruct *sound)
+// This is the original Sun/NeXT sound savig routine.
+int SndWriteSoundfileClassic(const char *path, SndSoundStruct *sound)
 {
   int error,error2;
   int fd;
@@ -410,70 +508,39 @@ int SndWriteHeader(int fd, SndSoundStruct *sound)
 
 int SndWrite(int fd, SndSoundStruct *sound)
 {
-  SndSoundStruct *s;
   SndSoundStruct **ssList;
   SndSoundStruct *theStruct;
   int error;
-  int headerSize;
-  int df;
-  int i,j=0;
+  int j=0;
 
-  if (fd == 0) return SND_ERR_CANNOT_OPEN;
-  df = sound->dataFormat;
-  if (df == SND_FORMAT_INDIRECT) headerSize = sound->dataSize;
-  else headerSize = sound->dataLocation;
-  /* make new header with swapped bytes if nec */
-  if (!(s = malloc(headerSize))) return SND_ERR_CANNOT_ALLOC;
-  memmove(s,sound,headerSize);
-  if (df == SND_FORMAT_INDIRECT) {
-    int newCount = 0;
-    i = 0;
-    s->dataFormat = ((SndSoundStruct *)(*((SndSoundStruct **)
-                                          (sound->dataLocation))))->dataFormat;
-    ssList = (SndSoundStruct **)sound->dataLocation;
-    while ((theStruct = ssList[i++]) != NULL)
-      newCount += theStruct->dataSize;
-    s->dataLocation = s->dataSize;
-    s->dataSize = newCount;
+  error = SndWriteHeader(fd, sound);
+  if (error) {
+    return error;
   }
-
-#ifdef __LITTLE_ENDIAN__
-  s->magic        = NSSwapBigLongToHost(s->magic);
-  s->dataLocation = NSSwapBigLongToHost(s->dataLocation);
-  s->dataSize     = NSSwapBigLongToHost(s->dataSize);
-  s->dataFormat   = NSSwapBigLongToHost(s->dataFormat);
-  s->samplingRate = NSSwapBigLongToHost(s->samplingRate);
-  s->channelCount = NSSwapBigLongToHost(s->channelCount);
-#endif
-  if (write(fd, s, headerSize) != headerSize) { free(s); return SND_ERR_CANNOT_WRITE;};
-
-  if (df != SND_FORMAT_INDIRECT) { /* simple read/write of block of data */
-    error = write(fd,(char *)sound + sound->dataLocation,sound->dataSize);
+  if (sound->dataFormat != SND_FORMAT_INDIRECT) { /* simple read/write of block of data */
+    error = write(fd, (char *)sound + sound->dataLocation, sound->dataSize);
     if (error <= 0) {
-      free(s);
       return SND_ERR_CANNOT_WRITE;
     }
     if (error != sound->dataSize) {
-      printf("File write seems to have been truncated!"
-             " Wrote %d data bytes, tried %d\n",error, sound->dataSize);
+      fprintf(stderr, "File write seems to have been truncated! Wrote %d data bytes, tried %d\n",
+               error, sound->dataSize);
     }
-    free(s);
     return SND_ERR_NONE;
   }
 /* more difficult -- fragged data */
 
-ssList = (SndSoundStruct **)sound->dataLocation;
-free(s);
-while ((theStruct = ssList[j++]) != NULL) {
-		error = write(fd,(char *)theStruct + theStruct->dataLocation, theStruct->dataSize);
-		if (error <= 0) {
+  ssList = (SndSoundStruct **)sound->dataLocation;
+  while ((theStruct = ssList[j++]) != NULL) {
+    error = write(fd,(char *)theStruct + theStruct->dataLocation, theStruct->dataSize);
+    if (error <= 0) {
       return SND_ERR_CANNOT_WRITE;
     }
     if (error != theStruct->dataSize) {
       printf("File write seems to have been truncated! Wrote %d data bytes, tried %d\n",
              error, theStruct->dataSize);
     }
-}
-return SND_ERR_NONE;
+  }
+  return SND_ERR_NONE;
 }
 
