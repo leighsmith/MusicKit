@@ -70,6 +70,7 @@
 #define LASTCHAR        '/'
 #endif
 
+#define DEBUG_MESSAGES 0
 
 int sk_ausunencoding(int size, int encoding) /* used to be in libst.a, but made private */
 {
@@ -170,10 +171,11 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
   //       saves much reallocing.
 
   if (bReadData) {
+    long readChunkSize = SNDREADCHUNKSIZE * sizeof(st_sample_t);
     s->dataLocation = headerLen;
-    if((readBuffer = (st_sample_t *) malloc(SNDREADCHUNKSIZE * sizeof(st_sample_t))) == NULL)
+    if ((readBuffer = (st_sample_t *) malloc(readChunkSize)) == NULL)
       return SND_ERR_CANNOT_ALLOC;
-
+//    memset(readBuffer, 0, readChunkSize);
     //        printf("Samples: %li samplesize:%i\n",informat.length,informat.info.size);
 
     samplesRead = 0; // samplesRead represents ? excluding header.
@@ -186,20 +188,25 @@ int SndReadRange(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr, int 
     }
     oldFrameCount = frameCount;
     if (startFrame + frameCount > informat.length) {
-//      printf("SndRead: startFrame + frameCount > length (%i + %i vs %i) - truncating\n", startFrame, frameCount, informat.length);
+#if DEBUG_MESSAGES      
+      printf("SndRead: startFrame + frameCount > length (%i + %i vs %i) - truncating\n",
+             startFrame, frameCount, informat.length);
+#endif      
       frameCount = informat.length - startFrame;
     }
 
     samplesToReadCount = frameCount * informat.info.channels; 
     s = realloc((char *)s, headerLen + samplesToReadCount * informat.info.size);
-    memset(((char*)s) + headerLen, 0, samplesToReadCount * informat.info.size);
+//    memset(((char*)s) + headerLen, 0, samplesToReadCount * informat.info.size);
 //    printf("Allocating: %li\n", samplesToReadCount * informat.info.size);
-    (*informat.h->seek)(&informat, startFrame * informat.info.size);
+    (*informat.h->seek)(&informat, startFrame * informat.info.channels);
     do {
-      int c;
-      storePtr = (char *)s + headerLen + samplesRead * informat.info.size;
+      int c, samsToRead = SNDREADCHUNKSIZE;
+      storePtr = (char *)s + headerLen + samplesRead * informat.info.channels;
       /* Read chunk of input data. */
-      lenRead = (*informat.h->read)(&informat, readBuffer, (st_sample_t) SNDREADCHUNKSIZE);
+      if (samsToRead > frameCount * informat.info.channels)
+        samsToRead = frameCount * informat.info.channels;
+      lenRead = (*informat.h->read)(&informat, readBuffer, (st_sample_t) samsToRead);
       if (lenRead <= 0)
         return SND_ERR_CANNOT_READ;
       c = lenRead;
