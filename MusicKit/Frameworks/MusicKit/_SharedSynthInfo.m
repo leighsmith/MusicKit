@@ -15,11 +15,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000 The MusicKit Project
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.5  2000/10/01 06:37:16  leigh
+  Changed NXHashTable functions to FoundationKit NSHashTable functions.
+
   Revision 1.4  2000/06/09 03:16:09  leigh
   Typed ivars
 
@@ -66,7 +70,7 @@ static void freeObject (void *aList)
 static void noFree (void *item) {};
 #endif
 
-id _MKFreeSharedSet(id sharedSet,NXHashTable **garbageTable)
+id _MKFreeSharedSet(id sharedSet,NSHashTable **garbageTable)
 {
     NSEnumerator *enumerator = [sharedSet objectEnumerator];
     id myList;
@@ -80,17 +84,17 @@ id _MKFreeSharedSet(id sharedSet,NXHashTable **garbageTable)
     }
     [sharedSet removeAllObjects];
 //    [sharedSet freeKeys:noFree values:freeObject];
-    NXFreeHashTable(*garbageTable);
+    NSFreeHashTable(*garbageTable);
     *garbageTable = NULL;
     [sharedSet release];
     return nil; /* sb: nil for compatibility with old -free method */
 }
 
-NSMutableDictionary* _MKNewSharedSet(NXHashTable **garbageTable)
+NSMutableDictionary* _MKNewSharedSet(NSHashTable **garbageTable)
 {
-    static NXHashTablePrototype proto = {0};
-    proto.free = NXNoEffectFree;
-    *garbageTable = NXCreateHashTable(proto,0,NULL);
+    static NSHashTableCallBacks proto = {NULL, NULL, NULL, NULL, NULL};
+    // proto.free = NXNoEffectFree
+    *garbageTable = NSCreateHashTable(proto, 0);
     return [[NSMutableDictionary alloc] initWithCapacity:4];
 }
 
@@ -105,10 +109,10 @@ BOOL _MKReleaseSharedSynthClaim(_SharedSynthInfo *aSharedSynthInfo,BOOL lazy)
        Returns NO if it can be deallocated now. */
 {
     if (--aSharedSynthInfo->referenceCount > 0)
-      return YES; /* Still in use */
+        return YES; /* Still in use */
 #   define ORCH [aSharedSynthInfo->synthObject orchestra]
     if (lazy) {
-	NXHashInsert(_MKGetSharedSynthGarbage(ORCH),
+	NSHashInsert(_MKGetSharedSynthGarbage(ORCH),
 		     (const void *)aSharedSynthInfo); 
 	return YES;
     }
@@ -153,7 +157,7 @@ static id findSharedSynthInfo(id aList,MKOrchMemSegment whichSegment,int howLong
     return nil;
 }
 
-id _MKFindSharedSynthObj(NSMutableDictionary* sharedSet,NXHashTable *garbageTable,id aKeyObj,
+id _MKFindSharedSynthObj(NSMutableDictionary* sharedSet,NSHashTable *garbageTable,id aKeyObj,
 			 MKOrchMemSegment whichSegment,int howLong,
 			 MKOrchSharedType type)
 {
@@ -167,24 +171,24 @@ id _MKFindSharedSynthObj(NSMutableDictionary* sharedSet,NXHashTable *garbageTabl
       return nil;
     rtnVal = aSharedSynthInfo->synthObject;
     if (aSharedSynthInfo->referenceCount == 0)   /* Was lazily deallocated */
-      NXHashRemove(garbageTable,(const void *)aSharedSynthInfo);
+      NSHashRemove(garbageTable,(const void *)aSharedSynthInfo);
     [rtnVal _addSharedSynthClaim];
     return rtnVal;
 }	
 
-BOOL _MKCollectSharedDataGarbage(id orch,NXHashTable *garbageTable)
+BOOL _MKCollectSharedDataGarbage(id orch,NSHashTable *garbageTable)
     /* Deallocates all garbage and empties the table. */
 {
     id dataObj;
     BOOL gotOne = NO;
     _SharedSynthInfo *infoObj;
-    NXHashState	state = NXInitHashState(garbageTable);
-    if (_MK_ORCHTRACE(orch,MK_TRACEORCHALLOC)) {
-        printf("MK OK\n");
-        _MKOrchTrace(orch,MK_TRACEORCHALLOC,
+    NSHashEnumerator state = NSEnumerateHashTable(garbageTable);
+    if (_MK_ORCHTRACE(orch, MK_TRACEORCHALLOC)) {
+        NSLog(@"MK OK\n");
+        _MKOrchTrace(orch, MK_TRACEORCHALLOC,
 		   "Garbage collecting unreferenced shared data.");
-        }
-    while (NXNextHashState (garbageTable, &state, (void **)&infoObj)) {
+    }
+    while ((infoObj = (_SharedSynthInfo *) NSNextHashEnumeratorItem(&state))) {
 	gotOne = YES;
 	dataObj = infoObj->synthObject;
 	[dataObj _setShared:nil];
@@ -194,9 +198,9 @@ BOOL _MKCollectSharedDataGarbage(id orch,NXHashTable *garbageTable)
             		   * we don't release the dataObj in a -dealloc method, we do it here */
     }
     if (gotOne)
-      NXEmptyHashTable(garbageTable);
+        NSResetHashTable(garbageTable);
     else if (_MK_ORCHTRACE(orch,MK_TRACEORCHALLOC))
-      _MKOrchTrace(orch,MK_TRACEORCHALLOC,"No unreferenced shared data found.");
+        _MKOrchTrace(orch,MK_TRACEORCHALLOC,"No unreferenced shared data found.");
     return gotOne;
 }	
 
