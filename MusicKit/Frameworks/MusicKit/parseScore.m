@@ -32,6 +32,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/04/26 01:18:11  leigh
+  Corrected readScorefileStream to take a NSData instead of NSMutableData instance
+
   Revision 1.7  2000/04/13 21:49:32  leigh
   Fixed uninitialised readPosition index
 
@@ -135,16 +138,15 @@ warning(MKErrno errCode,...);
 typedef struct _parseStateStruct {  
     /* Private structure for storing parse state of a given file. */
     struct _parseStateStruct *_backwardsLink;  /* For file stack. */
-    short _lookahead;                   /* Next token.*/
-    int _lineNo;                        /* Line number in file. */
-    int _pageNo;                        /* Page number in file. */
+    short _lookahead;                          /* Next token.*/
+    int _lineNo;                               /* Line number in file. */
+    int _pageNo;                               /* Page number in file. */
     NSString * _name;                          /* Name of file, if any */
-    _MKParameterUnion _tokenVal;        /* Value. */
-    NSMutableData * _stream;                 /* Stream pointer */
-    unsigned int _pointer;		/*sb: to keep track of position in NSMutableData _stream */
-    unsigned int _length;		/*sb: initialised at opening of file to give length, so _pointer does not overrun */
+    _MKParameterUnion _tokenVal;               /* Value. */
+    NSData * _stream;                          /* Stream pointer */
+    unsigned int _pointer;		       /* To keep track of position in NSData _stream */
+    unsigned int _length;		       /* Initialised at opening of file to give length, so _pointer does not overrun */
     STRTYPE * _buf_base;
-//    int _fd;                            /* File descriptor, LMS: now redundant */
 } parseStateStruct;
 
 /* All of the following are global for speed -- to avoid indirection and
@@ -154,7 +156,7 @@ static _MKScoreInStruct * scoreRPtr = NULL; /* Main structure */
 static parseStateStruct * parsePtr = {NULL}; 
 /* Current file parse state -- one for each included file. */
 
-static NSMutableData *scoreStream = nil;    /* Stream ptr of current included file.*/
+static NSData *scoreStream = nil;           /* Stream ptr of current included file.*/
 static unsigned int scoreStreamPointer = 0; /*sb: new variable to track current position within stream */
 static STRTYPE *scoreStreamBuf_Base = 0;    /*sb: holds pointer to start of scoreStream (convenience) */
 static unsigned int scoreStreamLength = 0;  /*sb: new variable to track current position within stream */
@@ -782,7 +784,7 @@ static id samples(void)
 {
     _MKParameterUnion tmpUnion;
     tmpUnion.symbol = [MKGetSamplesClass() new];
-    if (![tmpUnion.symbol readSoundfile:tokenVal->sval])
+    if (![(MKSamples *) tmpUnion.symbol readSoundfile:tokenVal->sval])
       error(MK_cantOpenFileErr,[tokenVal->sval cString]);
     match(lookahead); /* Matches file name */
     emitVar(MK_waveTable,&tmpUnion);
@@ -2015,14 +2017,13 @@ static void storeInStruct(register _MKScoreInStruct * scoreP,
     return;
 }
 
-#define TOPLEVELFILE -1
-
+/* aStream shouldn't be NSMutableData */
 static parseStateStruct *
-initParsePtr(id aStream,int fd,NSString *name) /*sb: aStream could be NSData or NSMutableData */
+initParsePtr(NSData *aStream, BOOL TopLevelFile, NSString *name)
 {
 #define ATEOS() (parsePtr->_pointer >= parsePtr->_length)
-#define GETCASTREAM() ((const char *)[aStream bytes])[parsePtr->_pointer++]
-#define UNGETCASTREAM() (parsePtr->_pointer)--
+#define GETC_FROM_STREAM() ((const char *)[aStream bytes])[parsePtr->_pointer++]
+#define UNGETC_FROM_STREAM() (parsePtr->_pointer)--
     /* Do all kinds of things to get ready for the first parse. */
     int c; /* ungetc takes an int */
 
@@ -2032,33 +2033,32 @@ initParsePtr(id aStream,int fd,NSString *name) /*sb: aStream could be NSData or 
     tokenVal = &(parsePtr->_tokenVal);
     parsePtr->_lineNo = 1;
     parsePtr->_pageNo = 1;
-    // [parsePtr->_name autorelease]; no point autoreleasing it before it is assigned LMS
     parsePtr->_name = [name copy];//sb: was _MKMakeStr(name);
     scoreStreamPointer = parsePtr->_pointer = 0;                //sb
     scoreStreamLength = parsePtr->_length = [aStream length];  //sb
     scoreStreamBuf_Base = parsePtr->_buf_base = [aStream bytes]; //sb
     scoreStream = aStream;
     if (ATEOS())
-        return NULL;/* sb... */
-    c = GETCASTREAM();/* NXGetc(aStream); */
-    if ((fd != TOPLEVELFILE) && ((char)c == FIRST_CHAR_SCOREMAGIC)) { //sb: FIXME we don't use fd any more I don't think
+        return NULL; /* sb... */
+    c = GETC_FROM_STREAM(); /* NXGetc(aStream); */
+    if ((!TopLevelFile) && ((char)c == FIRST_CHAR_SCOREMAGIC)) {
 	errorMsg(MK_sfNotHereErr,".playscore file");
 	/* Can't mix ASCII and binary formats */
-        UNGETCASTREAM();//NXUngetc(aStream);
-//	free(parsePtr->_name);
+        UNGETC_FROM_STREAM();
         [parsePtr->_name autorelease];
+        [parsePtr->_stream autorelease]; // LMS: I assume we need to do this.
 	free(parsePtr);
 	return NULL;
     }
     /* Note: even if we didn't need to check the first char, we'd need
        to do a getc/ungetc to initialize the stream for error reporting. */
-    UNGETCASTREAM();//NXUngetc(aStream);
+    UNGETC_FROM_STREAM();//NXUngetc(aStream);
     lookahead = ';';   /* So that first statement is gobbled correctly */
     tokenPtr = NULL;
     return parsePtr;
 #undef ATEOS()
-#undef GETCASTREAM()
-#undef UNGETCASTREAM()
+#undef GETC_FROM_STREAM()
+#undef UNGETC_FROM_STREAM()
 }
 
 #define ISINCLUDEFILE(_parseP) (_parseP->_backwardsLink)
@@ -2068,7 +2068,6 @@ initScoreParsePtr(NSString * scorefilePath)
 {
     /* Used for include files */
     NSData *aStream;
-    int fd=0;
     /* FIXME Or do something smart with dates here */
     aStream = _MKOpenFileStreamForReading(scorefilePath,
 			       _MK_BINARYSCOREFILEEXT, NO);
@@ -2077,7 +2076,7 @@ initScoreParsePtr(NSString * scorefilePath)
 				  _MK_SCOREFILEEXT, NO);
     if (!aStream)
       return NULL;
-    parsePtr = initParsePtr(aStream,fd,scorefilePath);
+    parsePtr = initParsePtr(aStream, NO, scorefilePath);
     if (!parsePtr)
       return NULL;
     return parsePtr;
@@ -2324,7 +2323,7 @@ static id getBinaryWaveTableDecl(void)
     }
     else { /* Samples */
 	rtn = [MKGetSamplesClass() new];
-	[rtn readSoundfile:getBinaryString(NO)];
+	[(MKSamples *) rtn readSoundfile:getBinaryString(NO)];
     }
     return rtn;
 }
@@ -3508,7 +3507,7 @@ binaryHeaderStmt(void)
     return;
 }
 
-static BOOL isBinaryScorefile(NSMutableData *aStream)
+static BOOL isBinaryScorefile(NSData *aStream)
 {
     static parseStateStruct foo;
     parsePtr = &foo;
@@ -3522,7 +3521,7 @@ static BOOL isBinaryScorefile(NSMutableData *aStream)
 }
 
 _MKScoreInStruct *
-_MKNewScoreInStruct(NSMutableData *aStream,id owner,NSMutableData *printStream,
+_MKNewScoreInStruct(NSData *aStream,id owner,NSMutableData *printStream,
 		    BOOL mergeParts,NSString *name,unsigned int *readPosition)
     /* Assumes aStream is a pointer to a stream open for read.
        Creates a _MKScoreInStruct and parses the file's header. 
@@ -3552,24 +3551,24 @@ _MKNewScoreInStruct(NSMutableData *aStream,id owner,NSMutableData *printStream,
     if ((!aStream) || (!owner))
       return NULL;
     initScanner();
-#define GETCASTREAM() ((const char *)[aStream bytes])[(*readPosition)++]
-#define UNGETCASTREAM() (*readPosition)--
+#define GETC_FROM_STREAM() ((const char *)[aStream bytes])[(*readPosition)++]
+#define UNGETC_FROM_STREAM() (*readPosition)--
     /* Decide what kind of file it is */
     if (*readPosition >= aStreamLength) { // check if at the end of the stream
         return NULL;
     }
-    c = GETCASTREAM();
+    c = GETC_FROM_STREAM();
         
     if (*readPosition < aStreamLength) {   /* We got something */
         if (c == FIRST_CHAR_SCOREMAGIC) {  /* Does it look like it might be binary? */
-            UNGETCASTREAM();//NXUngetc(aStream);
+            UNGETC_FROM_STREAM();//NXUngetc(aStream);
             if (!isBinaryScorefile(aStream)) {
 		return NULL;
             }
             binary = YES;
         }
         else {
-            UNGETCASTREAM();//NXUngetc(aStream);
+            UNGETC_FROM_STREAM();//NXUngetc(aStream);
             initExpressionParser();
             binary = NO;
         }
@@ -3601,7 +3600,7 @@ _MKNewScoreInStruct(NSMutableData *aStream,id owner,NSMutableData *printStream,
     scoreRPtr->_errCount = 0;
     scoreRPtr->_symbolTable = _MKNewScorefileParseTable();
     scoreRPtr->_aNote = (id) nil;
-    parsePtr = initParsePtr(aStream, TOPLEVELFILE, ((name) ? name : @"Scorefile"));
+    parsePtr = initParsePtr(aStream, YES, ((name) ? name : @"Scorefile"));
     /* We decided NOT to merge the same Part name when you read a scorefile 
        into a Score. For ScorefilePerformer, we currently are merging Parts.
        But this is maybe the wrong thing. It might be better to 'clean up'

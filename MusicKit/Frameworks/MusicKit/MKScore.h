@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2000/04/26 01:20:43  leigh
+  Corrected readScorefileStream to take a NSData instead of NSMutableData instance
+
   Revision 1.7  2000/04/25 02:08:40  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -115,7 +118,7 @@
  Returns the receiver or nil if the file couldn't be read.
  */
 
-- readScorefileStream:(NSMutableData *)stream; 
+- readScorefileStream:(NSData *)stream; 
  /* 
  Reads the scorefile pointed to by stream into the receiver.
  The file must be open for reading; the sender is responsible
@@ -131,7 +134,7 @@
  Returns the receiver or nil if the file couldn't be read.
  */
 
-- readScorefileStream:(NSMutableData *)stream firstTimeTag:(double )firstTimeTag lastTimeTag:(double )lastTimeTag timeShift:(double)timeShift; 
+- readScorefileStream:(NSData *)stream firstTimeTag:(double )firstTimeTag lastTimeTag:(double )lastTimeTag timeShift:(double)timeShift; 
  /* 
  The same as readScorefileStream:, but only those Notes with timeTags
  in the specified range are added to the receiver.  The

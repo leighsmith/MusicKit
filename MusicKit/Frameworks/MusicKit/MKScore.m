@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2000/04/26 01:20:27  leigh
+  Corrected readScorefileStream to take a NSData instead of NSMutableData instance
+
   Revision 1.14  2000/04/25 02:08:40  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -221,21 +224,9 @@ Modification history:
 
 /* Reading Scorefiles ------------------------------------------------ */
 
-static id readScorefile(); /* forward ref */
-
-#if 0
--readScorefileIncrementalStream:(NSMutableData *)aStream
-  /* Read and execute the next statement from the specified scorefile stream.
-     You may repeatedly send this message until the stream reaches EOF or 
-     an END statement is parsed.
-     */
-{
-    /* Need to keep a table mapping streams to _MKScorefileInStructs or could
-       have this method return a 'handle' */
-    /* FIXME */
-    [NSException raise:NSInvalidArgumentException format:@"*** Method not implemented: %s", sel_getName(_cmd)];
-}
-#endif
+/* forward ref */
+static id readScorefile(MKScore *self, NSData *stream,
+    double firstTimeTag, double lastTimeTag, double timeShift, NSString *fileName);
 
 -readScorefile:(NSString *)fileName 
  firstTimeTag:(double)firstTimeTag 
@@ -266,7 +257,7 @@ static id readScorefile(); /* forward ref */
     return rtnVal;
  }
 
--readScorefileStream:(NSMutableData *)stream 
+-readScorefileStream:(NSData *)stream 
  firstTimeTag:(double)firstTimeTag 
  lastTimeTag:(double)lastTimeTag 
  timeShift:(double)timeShift
@@ -286,8 +277,10 @@ static id readScorefile(); /* forward ref */
 {
     return readScorefile(self,stream,firstTimeTag,lastTimeTag,timeShift,NULL);
 }
--(oneway void)release
-{[super release];}
+
+// LMS redundant
+//-(oneway void)release
+//{[super release];}
 /* Scorefile reading "convenience" methods  --------------------------- */
 
 -readScorefile:(NSString *)fileName     
@@ -298,7 +291,7 @@ static id readScorefile(); /* forward ref */
 	  lastTimeTag:lastTimeTag timeShift:0.0];
 }
 
--readScorefileStream:(NSMutableData *)stream
+-readScorefileStream:(NSData *)stream
  firstTimeTag:(double)firstTimeTag 
  lastTimeTag:(double)lastTimeTag 
 {
@@ -312,7 +305,7 @@ static id readScorefile(); /* forward ref */
 	  lastTimeTag:MK_ENDOFTIME timeShift:0.0];
 }
 
--readScorefileStream:(NSMutableData *)stream     
+-readScorefileStream:(NSData *)stream     
 {
     return [self readScorefileStream:stream firstTimeTag:0.0 
 	  lastTimeTag:MK_ENDOFTIME timeShift:0.0];
@@ -1350,7 +1343,7 @@ static void writeNotes(NSMutableData *aStream, MKScore *aScore, _MKScoreOutStruc
 
 static id
 readScorefile(MKScore *self,
-    NSMutableData *stream,
+    NSData *stream,
     double firstTimeTag, double lastTimeTag, double timeShift,
     NSString *fileName)
  {
