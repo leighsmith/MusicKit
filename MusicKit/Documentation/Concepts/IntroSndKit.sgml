@@ -1,0 +1,1316 @@
+<chapter id="IntroSndKit">
+<title>Sound and the <productname>SndKit</productname></title>
+
+<para>This chapter describes the hardware and software provided for
+recording, manipulating, playing back, and displaying sounds.  The
+chapter is divided into three parts:</para>
+
+<itemizedlist>
+<listitem><para>Typical sound hardware</para>
+</listitem>
+
+<listitem><para>A brief tutorial on sound and how it's represented on a computer</para>
+</listitem>
+
+<listitem><para>The <productname>SndKit</productname></para>
+</listitem>
+</itemizedlist>
+
+<sect1 id="DesignPhilosopy">
+<title>Design Philosophy</title>
+
+<para>NeXT computers provide a sound recording and playback system
+with powerful tools to aid in analyzing and manipulating acoustical
+data.  Designed to satisfy the needs of the research scientist, this
+system is nevertheless extremely easy to use.</para>
+
+<para>At the heart of the NeXT sound facilities are the Objective-C
+language classes provided by the <productname>SndKit</productname>.  The <productname>SndKit</productname> manages the
+details of operating system communication, data access, and data
+buffering that are necessary for recording and playing sounds.</para>
+
+<para>A number of system beep-type sounds are provided in files on the
+disk.  You can easily incorporate these sounds into your application;
+the playback of an effect can be made to correspond to user actions or
+application events, such as the completion of a background
+process.</para>
+
+<para>The sound software gives you full access to the data that makes
+up a sound.  With some simple programming you can manipulate this
+data.  For instance, you can alter the pitch of a sound or affect its
+playback speed.  A sound can be played backwards, looped end to end,
+or chopped into pieces and reassembled in a different order.  You can
+digitally splice and mix together any number of different sounds: A
+dog bark can be spliced into the middle of a doorbell; a clarinet tone
+can turn into a snore.</para>
+
+<para>The digital hardware for sound recording and playback is ideal
+for research fields such as speech recognition, speech synthesis, and
+data compression.  To ensure high-fidelity sound playback, NeXT
+computers use the same digital playback hardware found in commercial
+compact disc (CD) players.</para>
+
+</sect1>
+<sect1 id="SoundHardware">
+<title>Sound Hardware</title>
+
+<para>Before you can process a sound, you must first get it into your
+NeXT computer.  A microphone is provided on the front of the display,
+as well as a microphone jack on the back of the display that accepts a
+high-impedance microphone signal.  The
+<productname>SndKit</productname> recording methods, described later
+in this chapter, automatically record and store sounds introduced
+through the microphone or the microphone jack.</para>
+
+<para>For sound playback, the computer contains a speaker built into
+the display as well as stereo headphone and stereo line-out jacks.
+The keyboard volume and mute keys affect the built-in speaker and the
+headphone jack; the line-out jacks are provided to allow you to
+connect your NeXT computer to your own stereo for greater playback
+fidelity.</para>
+
+<para>NeXT computers provide equipment to convert analog signals to
+digital and digital signals to analog.  The following sections
+describe the NeXT digital sound hardware.</para>
+
+<sect2 id="VoiceQualityInput">
+<title>Voice-Quality Input</title>
+
+<para>The microphone and microphone jack are connected to an
+<emphasis>analog-to-digital converter</emphasis> (ADC), known as the
+<emphasis>CODEC </emphasis>(&ldquo;COder-DECoder&rdquo;).  The CODEC
+converter uses an 8-bit mu-law encoded quantization and a sampling
+rate of 8012.8 Hz.  This is generally considered to be fast and
+accurate enough for telephone-quality speech input.  The samples from
+this converter can be stored on the disk or they can be forwarded to
+the DAC, described below, to reproduce the sound.</para>
+
+<para>The CODEC's mu-law encoding allows a 12-bit dynamic range to be
+stored in eight bits.  In other words, an 8-bit sound with mu-law
+encoding will yield the same amplitude resolution as an unencoded
+12-bit sound.  With this compression algorithm, the CODEC saves
+storage space.  For example, one second of 8-bit mu-law audio takes
+8012 bytes of storage.  By comparison, one second of CD-quality sound
+occupies 88200 bytes, or about 11 times more storage space.</para>
+
+<para>While 8-bit mu-law encoding provides only moderate fidelity, the
+CODEC is sufficient and useful in a number of sound application areas.
+For instance, all the elements necessary to implement voice
+mail&horbar;sending spoken mail messages through the
+network&horbar;are present.  In such an application, compact data
+storage is more desirable than high fidelity.</para>
+
+<para>The CODEC is available as a standard UNIX&reg; device.  It does
+have a special constraint in that once conversion starts, a new byte
+will come from the device every 124.8 microseconds.  The program
+reading the CODEC must be prompt in absorbing this data or it will be
+lost.  The operating system does some buffering of CODEC input data,
+but it's by no means unlimited.  In most applications, the
+<productname>SndKit</productname> management of input data is
+sufficient.</para>
+
+</sect2>
+<sect2 id="HighQualitySoundOutput">
+<title>High-Quality Sound Output</title>
+
+<para>The high-quality stereo <emphasis>digital-to-analog
+converter</emphasis> (DAC) operates at 44100 samples per second (in each
+channel) with a 16-bit quantization, the same as in CD players.</para>
+
+<para>A 1 kHz maximum-amplitude sinusoid played through the DAC will
+generate a 2-volt RMS signal at the audio output.  The converter has
+full de-glitching and anti-aliasing filters built in, so no external
+hardware is necessary for basic operation.</para>
+
+<para>Like the CODEC, the DAC is available as a standard UNIX device.
+It's somewhat different from most devices in that it requires a great
+deal of data (176400 bytes per second at the high sampling rate).  Any
+interruption in sending this data causes an interruption in the sound
+that will result in a pop in the audio output.  Utilities are provided
+that ensure continuous data flow when sending sound data directly from
+the disk to the DAC.</para>
+</sect2>
+</sect1>
+<sect1 id="BasicSoundConcepts">
+<title>Basic Sound Concepts</title>
+
+<para>You don't need to know anything about sound or acoustics to use
+the NeXT sound facilities for simple recording and playback.  However,
+to access and manipulate sound data intelligently, you should be
+familiar with a few basic terms and concepts.  This section presents a
+brief tutorial on the basic concepts of sound and its digital
+representation, followed by an in-depth examination of SNDSoundStruct,
+the structure that's used by the NeXT sound software to represent
+sound.</para>
+
+<sect2 id="WhatIsSound">
+<title>What is Sound?</title>
+
+<para>Sound is a physical phenomenon produced by the vibration of
+matter.  The matter can be almost anything: a violin string or a block
+of wood, for example.  As the matter vibrates, pressure variations are
+created in the air surrounding it.  This alternation of high and low
+pressure is propagated through the air in a wave-like motion.  When
+the wave reaches our ears, we hear a sound.</para>
+
+<para><xref linkend="Figure2-1"> graphs the oscillation of a pressure wave over time.</para>
+
+<figure id="Figure2-1">
+<title>Air Pressure Wave</title>
+<mediaobject>
+<imageobject><imagedata fileref="EPS0.eps"></imageobject>
+<imageobject><imagedata fileref="EPS0.png"></imageobject>
+<textobject><phrase>MusicKit Image</phrase></textobject>
+</mediaobject>
+</figure>
+
+<para>The pattern of the pressure oscillation is called a
+<emphasis>waveform</emphasis>.  Notice that the waveform in <xref linkend="Figure2-1">
+repeats the same shape at regular intervals; the gray area shows one
+complete shape.  This portion of the waveform is called a
+<emphasis>period</emphasis>.  A waveform with a clearly defined period
+occurring at regular intervals is called a<emphasis> periodic
+waveform</emphasis>.</para>
+
+<para>Since they occur naturally, sound waveforms are never as
+perfectly smooth nor as uniformly periodic as the waveform shown in
+<xref linkend="Figure2-1">.  However, sounds that display a recognizable periodicity
+tend to be more musical than those that are nonperiodic.  Here are
+some sources of periodic and nonperiodic sounds:</para>
+
+<para><emphasis role="bold">Periodic</emphasis> </para>
+
+<para>Musical instruments other than unpitched percussion </para>
+
+<para>Vowel sounds </para>
+
+<para>Bird songs </para>
+
+<para>Whistling wind</para>
+
+<para><emphasis role="bold">Nonperiodic</emphasis></para>
+
+<para>Unpitched percussion instruments</para>
+
+<para>Consonants, such as &ldquo;t,&rdquo; &ldquo;f,&rdquo; and &ldquo;s&rdquo; </para>
+
+<para>Coughs and sneezes</para>
+
+<para>Rushing water</para>
+
+<sect3 id="Frequency">
+<title>Frequency</title>
+
+<para>The <emphasis>frequency</emphasis> of a sound&horbar;the number
+of times the pressure rises and falls, or oscillates, in a
+second&horbar;is measured in <emphasis>hertz</emphasis> (Hz).  A
+frequency of 100 Hz means 100 oscillations per second.  A convenient
+abbreviation, kHz for <emphasis>kilohertz</emphasis>, is used to
+indicate thousands of oscillations per second: 1 kHz equals 1000
+Hz.</para>
+
+<para>The frequency range of normal human hearing extends from around
+20 Hz up to about 20 kHz.</para>
+
+<para>The frequency axis is logarithmic, not linear: To traverse the
+audio range from low to high by equal-sounding steps, each successive
+frequency increment must be greater than the last.  For example, the
+frequency difference between the lowest note on a piano and the note
+an octave above it is about 27 Hz.  Compare this to the piano's top
+octave, where the frequency difference is over 2000 Hz.  Yet,
+subjectively, the two intervals sound the same.</para>
+</sect3>
+<sect3 id="Amplitude">
+<title>Amplitude</title>
+
+<para>A sound also has an <emphasis>amplitude</emphasis>, a property
+subjectively heard as loudness.  The amplitude of a sound is the
+measure of the displacement of air pressure from its mean, or
+quiescent state.  The greater the amplitude, the louder the
+sound.</para>
+</sect3>
+</sect2>
+<sect2 id="HowTheComputerRepresentsSound">
+<title>How the Computer Represents Sound</title>
+
+<para>The smooth, continuous curve of a sound waveform isn't directly
+represented in a computer.  A computer measures the amplitude of the
+waveform at regular time intervals to produce a series of numbers.
+Each of these measurements is called a <emphasis>sample</emphasis>.
+<xref linkend="Figure2-2"> illustrates one period of a digitally
+sampled waveform.</para>
+
+<figure id="Figure2-2">
+<title>Sampled Waveform</title>
+<mediaobject>
+<imageobject><imagedata fileref="EPS1.eps"></imageobject>
+<imageobject><imagedata fileref="EPS1.png"></imageobject>
+<textobject><phrase>MusicKit Image</phrase></textobject>
+</mediaobject>
+</figure>
+
+<para>Each vertical bar in <xref linkend="Figure2-2"> represents a single sample.  The height of a bar indicates the value of that sample.</para>
+
+<para>The mechanism that converts an audio signal into digital samples
+is called an <emphasis>analog-to-digital converter</emphasis>, or
+<emphasis>ADC</emphasis>.  To convert a digital signal back to analog,
+you need a <emphasis>digital-to-analog converter</emphasis>, or
+<emphasis>DAC</emphasis> (pronounced &ldquo;dack&rdquo;).</para>
+
+<sect3 id="SamplingRateDefinition">
+<title>Sampling Rate</title>
+
+<para>The rate at which a waveform is sampled is called the
+<emphasis>sampling rate</emphasis>.  Like frequencies, sampling rates
+are measured in hertz.  The CD standard sampling rate of 44100 Hz
+means that the waveform is sampled 44100 times per second.  This may
+seem a bit excessive, considering that we can't hear frequencies above
+20 kHz; however, the highest frequency that a digitally sampled signal
+can represent is equal to half the sampling rate.  So a sampling rate
+of 44100 Hz can only represent frequencies up to 22050 Hz, a boundary
+much closer to that of human hearing.</para>
+</sect3>
+<sect3 id="Quantization">
+<title>Quantization</title>
+
+<para>Just as a waveform is sampled at discrete times, the value of
+the sample is also discrete.  The <emphasis>quantization</emphasis> of
+a sample value depends on the number of bits used in measuring the
+height of the waveform.  An 8-bit quantization yields 256 possible
+values; 16-bit CD-quality quantization results in over 65000 values.
+As an extreme example, <xref linkend="Figure2-3"> shows the waveform used in the
+previous example sampled with a 3-bit quantization.  This results in
+only eight possible values: .75, .5, .25, 0, -.25, -.5, -.75, and
+-1.</para>
+
+<figure id="Figure2-3">
+<title>Three-Bit Quantization</title>
+<mediaobject>
+<imageobject><imagedata fileref="EPS2.eps"></imageobject>
+<imageobject><imagedata fileref="EPS2.png"></imageobject>
+<textobject><phrase>MusicKit Image</phrase></textobject>
+</mediaobject>
+</figure>
+
+<para>As you can see, the shape of the waveform becomes less
+discernible with a coarser quantization.  The coarser the
+quantization, the &ldquo;buzzier&rdquo; the sound.</para>
+</sect3>
+<sect3 id="StoringSampledData">
+<title>Storing Sampled Data</title>
+
+<para>An increased sampling rate and refined quantization improves the
+fidelity of a digitally sampled waveform; however, the sound will also
+take up more storage space.  Five seconds of sound sampled at 44.1 kHz
+with a 16-bit quantization uses more than 400,000 bytes of
+storage&horbar;a minute will consume more than five megabytes.  A
+number of data compression schemes have been devised to decrease
+storage while sacrificing some fidelity.</para>
+</sect3>
+</sect2>
+<sect2 id="SNDSoundStruct">
+<title>SNDSoundStruct: How a NeXT Computer Represents Sound</title>
+
+<para>The NeXT sound software defines the SNDSoundStruct structure to
+represent sound.  This structure defines the soundfile and Mach-O
+sound segment formats and the sound pasteboard type.  It's also used
+to describe sounds in Interface Builder.  In addition, each instance
+of the <productname>SndKit</productname>'s Sound class encapsulates a
+SNDSoundStruct and provides methods to access and modify its
+attributes.</para>
+
+<para>Basic sound operations, such as playing, recording, and
+cut-and-paste editing, are most easily performed by a Sound object.
+In many cases, the <productname>SndKit</productname> obviates the need
+for in-depth understanding of the SNDSoundStruct architecture.  For
+example, if you simply want to incorporate sound effects into an
+application, or to provide a simple graphic sound editor (such as the
+one in the Mail application), you needn't be aware of the details of
+the SNDSoundStruct.  However, if you want to closely examine or
+manipulate sound data you should be familiar with this
+structure.</para>
+
+<para>The SNDSoundStruct contains a header, information that describes
+the attributes of a sound, followed by the data (usually samples) that
+represents the sound.  The structure is defined (in <emphasis
+role="bold">sound/soundstruct.h</emphasis>) as:</para>
+
+<programlisting>
+typedef struct {
+    int magic                /* magic number SND_MAGIC */
+    int dataLocation;        /* offset or pointer to the data */
+    int dataSize;            /* number of bytes of data */
+    int dataFormat;          /* the data format code */
+    int samplingRate;        /* the sampling rate */
+    int channelCount;        /* the number of channels */
+    char info[4];            /* optional text information */
+} SNDSoundStruct;
+</programlisting>
+
+<sect3 id="SNDSoundStructFields">
+<title>SNDSoundStruct Fields</title>
+
+<sect4 id="magic">
+<title>magic</title>
+
+<para>magic is a magic number that's used to identify the structure as
+a SNDSoundStruct.  Keep in mind that the structure also defines the
+soundfile and Mach-O sound segment formats, so the magic number is
+also used to identify these entities as containing a sound.</para>
+
+</sect4>
+<sect4 id="dataLocation">
+<title>dataLocation</title>
+
+<para>It was mentioned above that the SNDSoundStruct contains a header
+followed by sound data.  In reality, the structure
+<emphasis>only</emphasis> contains the header; the data itself is
+external to, although usually contiguous with, the structure.
+(Nonetheless, it's often useful to speak of the SNDSoundStruct as the
+header and the data.)  <emphasis role="bold">dataLocation</emphasis>
+is used to point to the data.  Usually, this value is an offset (in
+bytes) from the beginning of the SNDSoundStruct to the first byte of
+sound data.  The data, in this case, immediately follows the
+structure, so <emphasis role="bold">dataLocation</emphasis> can also
+be thought of as the size of the structure's header.  The other use of
+<emphasis role="bold">dataLocation</emphasis>, as an address that
+locates data that isn't contiguous with the structure, is described in
+&ldquo;Format Codes,&rdquo; below.</para>
+
+</sect4>
+<sect4 id="dataSizeEtc">
+<title>dataSize, dataFormat, samplingRate, and channelCount</title>
+
+<para>These fields describe the sound data.</para>
+
+<para><emphasis role="bold">dataSize</emphasis> is its size in bytes (not including the size of the SNDSoundStruct).</para>
+
+<para><emphasis role="bold">dataFormat</emphasis> is a code that
+identifies the type of sound.  For sampled sounds, this is the
+quantization format.  However, the data can also be instructions for
+synthesizing a sound on the DSP.  The codes are listed and explained
+in &ldquo;Format Codes,&rdquo; below.</para>
+
+<para><emphasis role="bold">samplingRate</emphasis> is the sampling
+rate (if the data is samples).  Three sampling rates, represented as
+integer constants, are supported by the hardware:</para>
+
+<para><emphasis role="bold">Constant	Sampling Rate (Hz)</emphasis> </para>
+
+<para>SND_RATE_CODEC	8012.821	(CODEC input)</para>
+
+<para>SND_RATE_LOW	22050.0	(low sampling rate output)</para>
+
+<para>SND_RATE_HIGH	44100.0	(high sampling rate output)</para>
+
+<para><emphasis role="bold">channelCount</emphasis> is the number of channels of sampled sound.</para>
+</sect4>
+<sect4 id="info">
+<title>info</title>
+
+<para>info is a NULL-terminated string that you can supply to provide
+a textual description of the sound.  The size of the <emphasis
+role="bold">info</emphasis> field is set when the structure is created
+and thereafter can't be enlarged.  It's at least four bytes long (even
+if it's unused).</para>
+</sect4>
+</sect3>
+<sect3 id="FormatCodes">
+<title>Format Codes</title>
+
+<para>A sound's format is represented as a positive 32-bit integer.
+NeXT reserves the integers 0 through 255; you can define your own
+format and represent it with an integer greater than 255.  Most of the
+formats defined by NeXT describe the amplitude quantization of sampled
+sound data:</para>
+
+<para><emphasis role="bold">Code	Format</emphasis> </para>
+
+<para>SND_FORMAT_MULAW_8	8-bit mu-law samples</para>
+
+<para>SND_FORMAT_LINEAR_8	8-bit linear samples</para>
+
+<para>SND_FORMAT_LINEAR_16	16-bit linear samples</para>
+
+<para>SND_FORMAT_EMPHASIZED	16-bit linear with emphasis</para>
+
+<para>SND_FORMAT_COMPRESSED	16-bit linear with compression</para>
+
+<para>SND_FORMAT_COMPRESSED_EMPHASIZED	A combination of the two above</para>
+
+<para>SND_FORMAT_LINEAR_24	24-bit linear samples</para>
+
+<para>SND_FORMAT_LINEAR_32	32-bit linear samples</para>
+
+<para>SND_FORMAT_FLOAT	floating-point samples</para>
+
+<para>SND_FORMAT_DOUBLE	double-precision float samples</para>
+
+<para>SND_FORMAT_DSP_DATA_8	8-bit fixed-point samples</para>
+
+<para>SND_FORMAT_DSP_DATA_16	16-bit fixed-point samples</para>
+
+<para>SND_FORMAT_DSP_DATA_24	24-bit fixed-point samples</para>
+
+<para>SND_FORMAT_DSP_DATA_32	32-bit fixed-point samples</para>
+
+<para>SND_FORMAT_DSP_CORE	DSP program</para>
+
+<para>SND_FORMAT_DSP_COMMANDS	Music Kit DSP commands</para>
+
+<para>SND_FORMAT_DISPLAY	non-audio display data</para>
+
+<para>SND_FORMAT_INDIRECT	fragmented sampled data</para>
+
+<para>SND_FORMAT_UNSPECIFIED	unspecified format </para>
+
+<para>All but the last five formats identify different sizes and types
+of sampled data.  The others deserve special note: </para>
+
+<itemizedlist>
+<listitem><para>SND_FORMAT_DSP_CORE format contains data that
+represents a loadable DSP core program.  Sounds in this format are
+required by the <emphasis role="bold">SNDBootDSP()</emphasis> and
+<emphasis role="bold">SNDRunDSP()</emphasis> functions.  You create a
+SND_FORMAT_DSP_CORE sound by reading a DSP load file (extension
+&ldquo;.lod&rdquo;) with the <emphasis role="bold">SNDReadDSPfile()
+</emphasis>function.</para>
+</listitem>
+
+<listitem><para>SND_FORMAT_DSP_COMMANDS is used to distinguish sounds
+that contain DSP commands created by the Music Kit.  Sounds in this
+format can only be created through the Music Kit's Orchestra class,
+but can be played back through the <emphasis
+role="bold">SNDStartPlaying()</emphasis> function.</para>
+</listitem>
+
+<listitem><para>SND_FORMAT_DISPLAY format is used by the
+<productname>SndKit</productname>'s SoundView class.  Such sounds
+can't be played.  </para>
+</listitem>
+
+<listitem><para>SND_FORMAT_INDIRECT indicates data that has become
+<emphasis>fragmented</emphasis>, as described in a separate section,
+below.  </para>
+</listitem>
+
+<listitem><para>SND_FORMAT_UNSPECIFIED is used for unrecognized formats.</para>
+</listitem>
+</itemizedlist>
+</sect3>
+<sect3 id="FragmentedSoundData">
+<title>Fragmented Sound Data</title>
+
+<para>Sound data is usually stored in a contiguous block of memory.
+However, when sampled sound data is edited (such that a portion of the
+sound is deleted or a portion inserted), the data may become
+discontiguous, or <emphasis>fragmented</emphasis>.  Each fragment of
+data is given its own SNDSoundStruct header; thus, each fragment
+becomes a separate SNDSoundStruct structure.  The addresses of these
+new structures are collected into a contiguous, NULL-terminated block;
+the <emphasis role="bold">dataLocation</emphasis> field of the
+original SNDSoundStruct is set to the address of this block, while the
+original format, sampling rate, and channel count are copied into the
+new SNDSoundStructs.  </para>
+
+<para>Fragmentation serves one purpose: It avoids the high cost of
+moving data when the sound is edited.  Playback of a fragmented sound
+is transparent&horbar;you never need to know whether the sound is
+fragmented before playing it.  However, playback of a heavily
+fragmented sound is less efficient than that of a contiguous sound.
+The <emphasis role="bold">SNDCompactSamples()</emphasis> C function
+can be used to compact fragmented sound data.</para>
+
+<para>Sampled sound data is naturally unfragmented.  A sound that's
+freshly recorded or retrieved from a soundfile, the Mach-O segment, or
+the pasteboard won't be fragmented.  Keep in mind that only sampled
+data can become fragmented.</para>
+</sect3>
+<sect3 id="SoundCFunctions">
+<title>Sound C Functions</title>
+
+<para>A number of C functions are provided that let you record,
+manipulate, and play sounds.  These C functions operate on
+SNDSoundStructs and demand a familiarity with the structure.  It's
+expected that most sound operations will be performed through the
+<productname>SndKit</productname>, where knowledge of the
+SNDSoundStruct isn't necessary.  Nonetheless, the C functions are
+provided for generality and to allow sound manipulation without the
+<productname>SndKit</productname>.  The functions are fully described
+in <emphasis>Reference</emphasis>.</para>
+</sect3>
+</sect2>
+</sect1>
+<sect1 id="TheSndKit">
+<title>The <productname>SndKit</productname></title>
+
+<para>The <productname>SndKit</productname> lets you access the
+sound hardware with a minimum of effort.  Recording and playback of
+sound are particularly easy; the software manages data buffering,
+communication with the UNIX devices, synchronization with the
+operating system, and other such necessities.  It's designed to
+accommodate both casual use of sound effects as well as detailed
+examination and manipulation of sound data.</para>
+
+<para>The <productname>SndKit</productname> consists of three classes:
+Sound, SoundView, and SoundMeter.</para>
+
+<sect2 id="TheSoundClass">
+<title>The Sound Class</title>
+
+<para>The Sound class provides a number of methods that let you
+access, modify, and perform sound data.  The methods fall into four
+categories:</para>
+
+<itemizedlist>
+<listitem><para>Locating and storing sounds </para>
+</listitem>
+
+<listitem><para>Recording and playback </para>
+</listitem>
+
+<listitem><para>Editing </para>
+</listitem>
+
+<listitem><para>Sound data manipulation</para>
+</listitem>
+</itemizedlist>
+
+<para>While a Sound object uses the SNDSoundStruct structure to
+represent its sound, you only need to be familiar with this structure
+if you're directly manipulating sound data.</para>
+
+<sect3 id="LocatingAndStoringSounds">
+<title>Locating and Storing Sounds</title>
+
+<para>Each Sound object represents a single sound.  The Sound class
+provides four ways to install a sound in a Sound object.  You
+can:</para>
+
+<itemizedlist>
+<listitem><para>Record a sound using the CODEC microphone input.</para>
+</listitem>
+
+<listitem><para>Read sound data from a soundfile or Mach-O sound segment.</para>
+</listitem>
+
+<listitem><para>Retrieve a sound from the pasteboard.</para>
+</listitem>
+</itemizedlist>
+
+<para>Sound recording (and playback) is described in the next section.
+Described here are the methods that let you read sounds from a
+soundfile or Mach-O segment and retrieve them from the pasteboard.  As
+a shortcut to finding sounds, the Sound class provides a global naming
+mechanism that lets you identify and locate sounds by name.  </para>
+
+<para>Also described here are methods that let you store your sound by writing it to a soundfile or placing it on the pasteboard.</para>
+
+<sect4 id="Soundfiles">
+<title>Soundfiles</title>
+
+<para>Soundfiles are files on a disk that contain sound data.  By
+convention, soundfile names are given a &ldquo;.snd&rdquo; extension.
+To read a soundfile into a Sound object, simply create the object and
+send it the <emphasis role="bold">readSoundfile:</emphasis>
+message:</para>
+
+<programlisting>
+#import &lt;sound/sound.h&gt;               /* you must import this file */
+
+. . .
+
+id  aSound = [[Sound alloc] init];     /* create a Sound object */
+int = [aSound readSoundfile:"KneeSqueak.snd"];   /* read a file */
+</programlisting>
+
+<para>The data in the named soundfile is read into the Sound object.
+The given file name is a complete UNIX pathname and must include the
+extension; in the example, the soundfile is searched for in the
+current working directory.  Like many of the Sound methods, <emphasis
+role="bold">readSoundfile: </emphasis>returns an error code; the
+complete list of errors codes is given in the description of the
+<emphasis role="bold">SNDSoundError()</emphasis> C function in
+<emphasis>Reference</emphasis>.  Success is indicated by the code
+SND_ERR_NONE.</para>
+
+<para>These two operations, initializing a Sound object and reading a
+soundfile, are combined in the <emphasis
+role="bold">initFromSoundfile:</emphasis> method:</para>
+
+<programlisting>
+id  aSound = [[Sound alloc] initFromSoundfile:"KneeSqueak.snd"];
+</programlisting>
+
+<para>The method returns <emphasis role="bold">nil</emphasis> if the
+soundfile isn't found or if it can't be read.  You can read a new
+soundfile into an existing Sound object at any time; the object's old
+sound is discarded.</para>
+
+<para>NeXT provides a number of short sound effects (useful as system
+beeps) that are stored in the directory <filename 
+role=directory>/NextLibrary/Sounds</filename>.  These are:</para>
+
+<para>Basso.snd</para>
+
+<para>Bonk.snd</para>
+
+<para>Frog.snd</para>
+
+<para>Funk.snd</para>
+
+<para>Pop.snd</para>
+
+<para>SystemBeep.snd</para>
+
+<para>Tink.snd</para>
+
+<para>You can audition a soundfile by running the <emphasis role="bold">sndplay</emphasis> program from a Terminal or Shell window.  For example:</para>
+
+<para>sndplay /NextLibrary/Sounds/Frog.snd</para>
+
+<para>Writing a soundfile from the data in a sound object is done by invoking the <emphasis role="bold">writeSoundfile:</emphasis> method:</para>
+
+<programlisting>
+[mySound writeSoundfile:"FleaSigh.snd"];
+</programlisting>
+
+<para>Even if the Sound object contains fragmented data, the data in
+the soundfile will be compact.  However, the Sound object's data will
+remain fragmented.</para>
+</sect4>
+<sect4 id="MachO">
+<title>The Mach-O Sound Segment</title>
+
+<para>Reading a sound from the Mach-O sound segment is much like
+reading a soundfile: Like soundfiles, Mach-O sounds have a
+&ldquo;.snd&rdquo; extension.  To read a Mach-0 sound, you invoke the
+<emphasis role="bold">initFromMach0:</emphasis> method:</para>
+
+<programlisting>
+id  mySound = [[Sound alloc] initFromMachO:"SonicBoom.snd"];
+</programlisting>
+
+<para>The Mach-O sound segment of your application is searched for the
+named sound.  If it isn't found, the method returns <emphasis
+role="bold">nil</emphasis>.</para>
+
+<para>You can install a sound (from a soundfile) into the Mach-O
+segment by supplying the <emphasis role="bold">-segcreate</emphasis>
+option when loading your application.  For example:</para>
+
+<para>cc ... -segcreate __SND SonicBoom.snd SonicBoom.snd </para>
+
+<para><emphasis role="bold">__SND</emphasis> is the name of the Mach-O
+sound segment.  The first instance of <emphasis
+role="bold">SonicBoom.snd</emphasis> names the section of the Mach-O
+segment into which the soundfile is loaded.  This is followed by the
+name of the soundfile (which must already exist).  If you add a
+soundfile to your application through the Projects window in Interface
+Builder, the sound will automatically be included in the <emphasis
+role="bold">make</emphasis> script.  Compiling a soundfile into your
+application lets you transport the application without regard for the
+original location of the file in the file system.</para>
+</sect4>
+<sect4 id="Pasteboard">
+<title>The Pasteboard</title>
+
+<para>Placing a Sound object on the pasteboard lets you copy its data
+between running applications.  To place a Sound on the pasteboard,
+invoke the <emphasis role="bold">writeToPasteboard</emphasis>
+method:</para>
+
+<programlisting>
+[mySound writeToPasteboard];
+</programlisting>
+
+<para>The object's data is compacted (if it's fragmented) and copied.
+The copy is then placed on the pasteboard.</para>
+
+<para>To read data from the pasteboard into a Sound, invoke the
+<emphasis role="bold">initFromPasteboard:</emphasis> method:</para>
+
+<programlisting>
+id  mySound = [[Sound alloc] initFromPasteboard];
+</programlisting>
+
+<para>The sound data currently on the pasteboard is copied into the
+receiver of the message.  Since the pasteboard can contain only one
+sound at a time, the method doesn't require an argument to further
+identify the sound.  If there isn't a sound on the pasteboard,
+<emphasis role="bold">initFromPasteboard</emphasis> returns <emphasis
+role="bold">nil</emphasis>.</para>
+
+</sect4>
+<sect4 id="NamedSoundList">
+<title>The Named Sound List</title>
+
+<para>The Sound class maintains an application-wide list of named
+Sound objects called the <emphasis>named Sound list</emphasis>.  The
+<emphasis role="bold">addName:Sound:</emphasis> class method lets you
+name a Sound object and add it to the named Sound list:</para>
+
+<programlisting>
+/* Add a Sound to the named Sound list. */
+id namedSound = [Sound addName:"PopTop" sound:mySound];
+
+/* Check for failure. */
+if (namedSound == nil)
+    . . .
+</programlisting>
+
+<para>The names in the named Sound list are unique; if you try to add
+a Sound by a name that's already in use, the effort is denied and
+<emphasis role="bold">nil</emphasis> is returned.</para>
+
+<para>You can also name a Sound and place it on the named Sound list
+by sending <emphasis role="bold">setName:</emphasis> to the
+object:</para>
+
+<programlisting>
+id  namedSound = [mySound setName:"RedRover"];
+</programlisting>
+
+<para><emphasis role="bold">setName:</emphasis> can be used to change
+the name of a Sound that's already on the named Sound list.</para>
+
+<para>The <emphasis role="bold">name</emphasis> method retrieves a
+Sound object's name, whether given in a <emphasis
+role="bold">setName:</emphasis> message or through the <emphasis
+role="bold">addName:sound:</emphasis> method.</para>
+
+<para>Named Sounds are visible to your entire application.  To
+retrieve a named Sound and load a copy of its data into a new Sound
+object, invoke the <emphasis role="bold">findSoundFor:
+</emphasis>method:</para>
+
+<programlisting>
+id  newRedButton = [Sound findSoundFor:"RedButton"];
+</programlisting>
+
+<para>If <emphasis role="bold">findSoundFor:</emphasis> fails to find
+the Sound in the named Sound list, it gives its argument (the Sound
+name) a &ldquo;.snd&rdquo; suffix and looks for a named section in the
+Mach-O sound segment.  If it's not found in the Mach-O segment, a
+soundfile (again, with the &ldquo;.snd&rdquo; extension) is searched
+for in these directories (in order):</para>
+
+<para>1.	~/Library/Sounds/ </para>
+
+<para>2.	/LocalLibrary/Sounds/ </para>
+
+<para>3.	/NextLibrary/Sounds/</para>
+
+<para>(<emphasis role="bold">~</emphasis> represents the user's home directory.)</para>
+
+<para>A Sound found through <emphasis role="bold">findSoundFor:
+</emphasis>is automatically added to the named Sound list.</para>
+
+<para>To remove a named Sound from the named Sound list, invoke
+<emphasis role="bold">removeSoundForName:</emphasis>, passing the name
+of the object that you want to remove.  Removing a named Sound neither
+frees the Sound nor changes the object's notion of its name (which it
+stores as an instance variable).</para>
+
+<para>Identifying and locating Sounds through the named Sound list is
+generally the most efficient way to access sound data.  The data in a
+named Sound is shared by all the objects that retrieve it.</para>
+
+</sect4>
+</sect3>
+<sect3 id="RecordingAndPlaying">
+<title>Recording and Playing</title>
+
+<para>To record a sound into a Sound object, simply create the object
+and send it the <emphasis role="bold">record</emphasis>
+message:</para>
+
+<programlisting>
+id  mySound = [[Sound alloc] init];
+int errorCode = [mySound record];
+</programlisting>
+
+<para>Currently, the <emphasis role="bold">record</emphasis> method
+always records from the CODEC microphone input.  The method returns
+immediately while the recording is performed by a background thread.
+</para>
+
+<para>The value returned by <emphasis role="bold">record
+</emphasis>indicates the success or failure of the attempt to begin
+recording; SND_ERR_NONE indicates success.</para>
+
+<para>The recording continues until the Sound object receives the
+<emphasis role="bold">stop</emphasis> message or until the Sound
+object can accommodate no more data.  By default, the receiver of the
+<emphasis role="bold">record</emphasis> message is always set to
+accommodate ten minutes of 8 kHz mu-law sound (the type of sound data
+sent from the CODEC).  You can set the size of the Sound object, prior
+to recording, to specify a different recording length.  This is done
+through the <emphasis
+role="bold">setDataSize:dataFormat:samplingRate:channelCount:infoSize:</emphasis>
+method.</para>
+
+<para>To play a sound, send the <emphasis role="bold">play</emphasis>
+message to the Sound object:</para>
+
+<programlisting>
+int errorCode = [mySound play];
+</programlisting>
+
+<para>Like recording, playback is performed by a background thread and
+the <emphasis role="bold">play</emphasis> method returns an error
+code.  Playback continues until the entire sound is played or until
+the Sound object that initiated the playback receives the <emphasis
+role="bold">stop</emphasis> message.</para>
+
+<para>A single Sound object can only perform one recording or playback
+operation at a time, thus the function of the <emphasis
+role="bold">stop</emphasis> method is never ambiguous: If the Sound is
+playing, <emphasis role="bold">stop</emphasis> stops the playback; if
+it's recording, it stops the recording.</para>
+
+<para>You can temporarily suspend a playback or recording by sending
+the <emphasis role="bold">pause</emphasis> message to a Sound object.
+Like <emphasis role="bold">stop</emphasis>, the <emphasis
+role="bold">pause</emphasis> message halts whatever activity the Sound
+is currently engaged in; however, unlike <emphasis
+role="bold">stop</emphasis>, the Sound doesn't forget where it was.
+This allows the <emphasis role="bold">resume </emphasis>message to
+cause the Sound to continue its activity from the place at which it
+was paused.</para>
+
+<para>The <emphasis role="bold">record</emphasis>, <emphasis
+role="bold">play</emphasis>, <emphasis role="bold">pause</emphasis>,
+<emphasis role="bold">resume</emphasis>, and <emphasis
+role="bold">stop</emphasis> methods (and the analogous action methods
+described in the next section) should only be used if you have a
+running Application object.  To create a command-line program (similar
+to <emphasis role="bold">sndrecord</emphasis> or <emphasis
+role="bold">sndplay</emphasis>), you can use methods to create Sound
+objects and read sound data, but you should use the C functions
+<emphasis role="bold">SNDStartRecording()</emphasis>, <emphasis
+role="bold">SNDStartPlaying()</emphasis>, and <emphasis
+role="bold">SNDStop() </emphasis>to perform the Sound.</para>
+
+<sect4 id="ActionMethods">
+<title>Action Methods</title>
+
+<para>The Sound class methods <emphasis
+role="bold">record:</emphasis>, <emphasis
+role="bold">play:</emphasis>,<emphasis role="bold">
+pause:</emphasis>,<emphasis role="bold"> resume:</emphasis>, and
+<emphasis role="bold">stop:</emphasis> are designed to be used as part
+of the target/action mechanism described in the <emphasis>NeXTstep
+Concepts</emphasis> manual.  Briefly, this mechanism lets you assign a
+selected message (the action) and an object <emphasis
+role="bold">id</emphasis> (the target) to a Control object such that
+when the user acts on the Control, the action message is sent to the
+target object.  In the following example, the three methods are
+assigned as action messages to three different Control objects&horbar;in
+this case, Buttons.  The same Sound object is assigned as the Buttons'
+target:</para>
+
+<programlisting>
+/* Create a Sound object ... */
+id  mySound = [[Sound alloc] init];
+
+/* ...  and three Buttons.  */
+id  recordButton = [[Button alloc] init],
+    playButton = [[Button alloc] init],
+    stopButton = [[Button alloc] init];
+
+/* Set the action messages.  */
+[recordButton setAction:@selector(record:)];
+[playButton setAction:@selector(play:)];
+[stopButton setAction:@selector(stop:)];
+
+/* Set the targets.  */
+[recordButton setTarget:mySound];
+[playButton setTarget:mySound];
+[stopButton setTarget:mySound];
+</programlisting>
+
+<para>In response to the user's clicking the different Buttons, the
+Sound object starts recording, starts playing, or stops one of these
+operations.</para>
+
+</sect4>
+<sect4 id="Delegate">
+<title>The Delegate</title>
+
+<para>A Sound can have a delegate object.  A Sound's delegate
+receives, asynchronously, the following messages as the Sound records
+or plays:</para>
+
+<itemizedlist>
+<listitem><para><emphasis role="bold">willPlay:</emphasis> is sent
+just before the Sound begins playing.</para>
+</listitem>
+
+<listitem><para><emphasis role="bold">didPlay:</emphasis> is sent when
+the Sound finishes playing.  </para>
+</listitem>
+
+<listitem><para><emphasis role="bold">willRecord:</emphasis> is sent
+just before recording.  </para>
+</listitem>
+
+<listitem><para><emphasis role="bold">didRecord:</emphasis> is sent
+after recording.  </para>
+</listitem>
+
+<listitem><para><emphasis role="bold">hadError:</emphasis> is sent if
+playback or recording generates an error.</para>
+</listitem>
+</itemizedlist>
+
+<para>To set a Sound's delegate object, invoke the <emphasis
+role="bold">setDelegate:</emphasis> method:</para>
+
+<programlisting>
+[mySound setDelegate:SoundDelegate];
+</programlisting>
+
+<para>A message is sent to the delegate only if the delegate
+implements the method that the message invokes.</para>
+</sect4>
+</sect3>
+<sect3 id="Editing">
+<title>Editing</title>
+
+<para>The Sound class defines methods that support cut, copy, and
+paste operations for sampled sound data:</para>
+
+<itemizedlist>
+<listitem><para><emphasis role="bold">copySamples:at:count:</emphasis>
+replaces the Sound's data with a copy of a portion of the data in its
+first argument, which must also be a Sound object.</para>
+</listitem>
+
+<listitem><para><emphasis role="bold">insertSamples:at:</emphasis>
+inserts a copy of the first argument's sound data into the receiving
+Sound object.</para>
+</listitem>
+
+<listitem><para><emphasis
+role="bold">deleteSamplesAt:count:</emphasis> deletes a portion of the
+Sound's data.</para>
+</listitem>
+</itemizedlist>
+
+<para>These methods all return <emphasis role="bold">SNDSoundError()
+</emphasis>type error codes (recall that SND_ERROR_NONE indicates
+success).</para>
+
+<para><emphasis role="bold">Note: </emphasis>The operations described
+here are also implemented in a more convenient form in the SoundView
+class; for example, replacing a portion of a Sound object with a
+portion of another Sound object requires all three methods listed
+above.  By operating on a user-defined selection and using the
+pasteboard, the SoundView implements this operation in a single
+<emphasis role="bold">paste:</emphasis> method.  The SoundView methods
+are less general than those in Sound, but if you want to include a
+simple graphic sound editor in your application, you should use the
+SoundView methods rather than these.</para>
+
+<sect4 id="Delete">
+<title>Delete</title>
+
+<para>Deleting a portion of a Sound's data is direct; you simply
+invoke <emphasis role="bold">deleteSamplesAt:count:</emphasis>.  For
+example:</para>
+
+<programlisting>
+/* Delete the beginning of mySound. */
+int eCode = [mySound deleteSamplesAt:0 count:1000];
+</programlisting>
+
+<para>The first 1000 samples are deleted from the receiver of the
+message.  The first argument specifies the beginning of the deletion
+in samples from the beginning of the data (counting from sample 0);
+the second argument is the number of samples to delete.</para>
+
+</sect4>
+<sect4 id="CopyAndPaste">
+<title>Copy and Paste</title>
+
+<para>Copying a portion of one Sound and pasting it into
+another&horbar;or into itself, for that matter&horbar;requires the use
+of both <emphasis role="bold">copySamples:at:count</emphasis> and
+<emphasis role="bold">insertSamples:at:</emphasis>.  In the following
+example, the beginning of <emphasis role="bold">mySound</emphasis> is
+repeated:</para>
+
+<programlisting>
+/* Create a stutter at the beginning of mySound. */
+id tmpSound = [[Sound alloc] init];
+int errorCode = [tmpSound copySamples:mySound at:0 count:1000];
+
+if (errorCode == SND_ERROR_NONE)
+    errorCode = [mySound insertSamples:tmpSound at:0];
+[tmpSound free];
+</programlisting>
+
+<para>First, the data in <emphasis role="bold">tmpSound</emphasis> is
+completely replaced by a copy of the first 1000 samples in <emphasis
+role="bold">mySound</emphasis>.  Note that the <emphasis
+role="bold">copySamples:at:count</emphasis> method doesn't remove any
+data from its first argument, it simply copies the specified range of
+samples from the first argument into the receiver.  Next, <emphasis
+role="bold">tmpSound</emphasis> is prepended to <emphasis
+role="bold">mySound</emphasis>, creating a repetition of the first
+1000 samples in <emphasis role="bold">mySound</emphasis>.  The
+<emphasis role="bold">insertSamples:</emphasis> method inserts a copy
+of the argument into the receiver.  Thus, the argument can be freed
+after inserting.</para>
+
+<para>The two Sound objects involved in the <emphasis
+role="bold">insertSamples:at:</emphasis> method (the receiver and the
+first argument) must be compatible: They must have the same format,
+sampling rate, and channel count.  If possible, the data that's
+inserted into the receiver of <emphasis role="bold">insertSamples:at:
+</emphasis>is automatically converted to be compatible with the data
+already in the receiver (see the description of the <emphasis
+role="bold">SNDConvertSound()</emphasis> C function in
+<emphasis>Reference</emphasis> for a list of the conversions that are
+supported).  An error code indicating that the insertion failed is
+returned if the two Sounds aren't compatible or if the inserted data
+can't be converted.</para>
+
+</sect4>
+<sect4 id="Replace">
+<title>Replace</title>
+
+<para>Replacing is like copying and pasting, except that a region of
+the pasted-into Sound is destroyed to accommodate the new data.  In
+the following example, the beginning of <emphasis
+role="bold">oneSound</emphasis> is replaced with a copy of the
+beginning of <emphasis role="bold">twoSound</emphasis>:</para>
+
+<programlisting>
+/* Replace the beginning of oneSound with that of twoSound.  */
+int tmpCode = [tmpSound copySamples:twoSound at:0 count:1000];
+int inCode;
+
+if (tmpCode == SND_ERROR_NONE) {
+    int oneCode = [oneSound deleteSamplesAt:0 count:1000];
+    if (oneCode == SND_ERROR_NONE)
+        inCode = [oneSound insertSamples:tmpSound at:0]; }
+[tmpSound free];
+
+/* Check inCode before performing further manipulations. */
+. . .
+</programlisting>
+
+</sect4>
+<sect4 id="UtilityMethods">
+<title>Utility Methods</title>
+
+<para>The editing methods described above only work on Sounds that
+contain sampled data.  The <emphasis role="bold">isEditable</emphasis>
+method is provided to quickly determine whether a Sound object can be
+edited.  The method returns YES if the object can be edited, NO if it
+can't.</para>
+
+<para>The <emphasis role="bold">compatibleWith:</emphasis> method
+takes a Sound object as its argument and returns YES if the argument
+and the receiver are compatible.  (The method also returns YES if one
+of the objects is empty; in other words, it's OK to insert samples
+into an empty object.)  This method is useful prior to invoking the
+<emphasis role="bold">insertSound:at: </emphasis>method.  </para>
+
+<para>Another handy method is <emphasis
+role="bold">sampleCount</emphasis>, which returns the number of
+<emphasis>sample frames</emphasis> contained in the receiver.  A
+sample frame is a channel-independent count of the samples in a Sound.
+For example, sending <emphasis role="bold">sampleCount</emphasis> to a
+two-channel Sound that contains three seconds worth of data returns
+the same value as sending it to a one-channel Sound that also contains
+three seconds of data (given that the two Sounds have the same
+sampling rate), even though the two-channel Sound actually contains
+twice as much data.</para>
+
+</sect4>
+<sect4 id="OtherEditingMethods">
+<title>Other Editing Methods</title>
+
+<para>The Sound class defines three more editing methods:</para>
+
+<itemizedlist>
+<listitem><para><emphasis role="bold">copy</emphasis> returns a new
+Sound object that's a copy of the receiver.</para></listitem>
+
+<listitem><para><emphasis role="bold">copySound:</emphasis> takes a
+Sound object as an argument and replaces the data in the receiver with
+the data in its argument.  Since the entire range of data in the
+receiver is replaced, it needn't be editable, nor must the two Sounds
+be compatible.</para></listitem>
+
+<listitem><para><emphasis role="bold">deleteSamples</emphasis> can
+only be sent to an editable Sound.  It deletes the receiver's sound
+data.</para></listitem>
+</itemizedlist>
+
+</sect4>
+<sect4 id="Fragmentation">
+<title>Fragmentation</title>
+
+<para>A Sound's data is normally contiguous in memory.  However, when
+you edit a Sound object, its data can become fragmented, or
+discontiguous.  Fragmentation is explained in the description of the
+SNDSoundStruct, earlier in this chapter.  Briefly, fragmentation lets
+you edit Sounds without incurring the cost of moving large sections of
+data in memory.  However, fragmented Sounds can be less efficient to
+play.  The <emphasis role="bold">needsCompacting</emphasis> and
+<emphasis role="bold">compactSamples</emphasis> methods are provided
+to determine if a Sound is fragmented and to compact it.  Note that
+compacting a large Sound that has been mercilessly fragmented can take
+a noticeably long time.</para>
+</sect4>
+</sect3>
+</sect2>
+<sect2 id="TheSoundViewClass">
+<title>The SoundView Class</title>
+
+<para>The SoundView class provides a mechanism for displaying the
+sound data contained in a Sound object.  While SoundView inherits from
+the Application Kit's View class, it implements a number of methods
+that are also defined in Sound, such as <emphasis
+role="bold">play:</emphasis>, <emphasis
+role="bold">record:</emphasis>, and <emphasis
+role="bold">stop:</emphasis>.  In addition, it implements editing
+methods such as <emphasis role="bold">cut:</emphasis>, <emphasis
+role="bold">copy:</emphasis>, and <emphasis
+role="bold">paste:</emphasis>.</para>
+
+<para>SoundViews are designed to be used within a ScrollView.  While
+you can create a SoundView without placing it in a ScrollView, its
+utility&horbar;particularly as it's used to display a large
+Sound&horbar;is limited.  </para>
+
+<sect3 id="CreatingAndDisplayingASoundView">
+<title>Creating and Displaying a SoundView</title>
+
+<para>To display a sound, you create a new SoundView with a particular
+frame, give it a Sound object to display (through <emphasis
+role="bold">setSound:</emphasis>), and then send the <emphasis
+role="bold">display</emphasis> message to the SoundView:</para>
+
+<programlisting>
+/* Create a new SoundView object. */
+id  mySoundView = [[SoundView alloc] initFrame:&amp;svRect];
+
+/* Set its Sound object.  */
+[mySoundView setSound:mySound];
+
+/* Display the Sound object's sound data. */
+[mySoundView display];
+</programlisting>
+
+<para>In the example, <emphasis role="bold">svRect </emphasis>is a
+previously defined NXRect.  If autodisplaying is turned on (as set
+through View's <emphasis role="bold">setAutodisplay:</emphasis>
+method), you needn't send the <emphasis role="bold">display</emphasis>
+message; simply setting the Sound will cause the SoundView to be
+displayed.</para>
+
+<para>For most complete sounds, the length of the Sound's data in
+samples is greater than the horizontal length of the SoundView in
+display units.  The SoundView employs a reduction factor to determine
+the ratio of samples to display units and plots the minimum and
+maximum amplitude values of the samples within that ratio.  For
+example, a reduction factor of 10.0 means that the minimum and maximum
+values among the first ten samples are plotted in the first display
+unit, the minimum and maximum values of the next ten samples are
+displayed in the second display unit and so on.  You can set the
+reduction factor through the <emphasis
+role="bold">setReductionFactor:</emphasis> method.  </para>
+
+<para>Changing the reduction factor<emphasis role="bold">
+</emphasis>changes the time scale of the object.  As you increase the
+reduction factor, more &ldquo;sound-per-inch&rdquo; is displayed.  Of
+course, since more samples are used in computing the average
+amplitude, the resolution in a SoundView with a heightened reduction
+factor<emphasis role="bold"> </emphasis>is degraded.  Conversely,
+reducing the reduction factor<emphasis role="bold">
+</emphasis>displays fewer samples per display unit but with an
+improved resolution.  You should be aware that changing the reduction
+factor on a large sound can take a noticeably long time.</para>
+
+</sect3>
+<sect3 id="SoundViewDimensions">
+<title>SoundView Dimensions</title>
+
+<para>In a SoundView, time runs from left to right; amplitude is
+represented on the y-axis, with 0.0 amplitude in the (vertical)
+center.  When you set a SoundView's Sound, the amplitude data that's
+displayed is automatically scaled to fit within the given height of
+the SoundView.</para>
+
+<para>The manner in which a SoundView's horizontal dimension is
+computed depends on the object's <emphasis
+role="bold">autoscale</emphasis> flag.  If autoscaling is turned off,
+the length of a SoundView's frame is resized to fit the length of the
+Sound object's data while maintaining a constant reduction factor.  In
+other words, a SoundView that's displaying a Sound that contains 10000
+samples will be twice as long as one with a Sound that contains 5000
+samples, given the same reduction factor in either SoundView.  </para>
+
+<para>Whenever the displayed data changes, due to editing or
+recording, the SoundView is resized to fit the length of the new data.
+This is particularly useful in a SoundView that's inside a ScrollView:
+The ScrollView determines the portion of data that's actually
+displayed, while the SoundView maintains a constant time scale.
+Changing the reduction factor with autoscaling turned off causes the
+SoundView to zoom in or out on the displayed data.</para>
+
+<para>You can enable autoscaling by sending the message:</para>
+
+<programlisting>
+/* Enable autoscale. */
+[mySoundView setAutoscale:YES];
+</programlisting>
+
+<para>With <emphasis role="bold">autoscale</emphasis> enabled, the
+SoundView's frame size is maintained regardless of the length of the
+SoundView's Sound data.  Instead, the reduction factor<emphasis
+role="bold"> </emphasis>is recomputed so the length of the data will
+fit within the frame.  When autoscaling is on, invoking <emphasis
+role="bold">setReductionFactor:</emphasis> has no effect.  </para>
+
+</sect3>
+<sect3 id="DisplayModes">
+<title>Display Modes</title>
+
+<para>A SoundView can display a sound as a continuous waveform, such
+as you would see on an oscilloscope, or as an outline of its maximum
+and minimum amplitudes.  You set a SoundView's display mode by sending
+it the <emphasis role="bold">setDisplayMode:</emphasis> message with
+one of the following <productname>SndKit</productname> constants as an
+argument:</para>
+
+<para><emphasis role="bold">Constant	Meaning </emphasis></para>
+
+<para>SK_DISPLAY_WAVE	Waveform display</para>
+
+<para>SK_DISPLAY_MINMAX	Amplitude outline display</para>
+
+<para>Waveform display is the default.</para>
+
+</sect3>
+<sect3 id="TheSoundViewSelection">
+<title>The SoundView Selection</title>
+
+<para>The SoundView class provides a selection mechanism.  You can
+selectively enable the selection mechanism for each SoundView object
+by sending the <emphasis role="bold">setEnabled:YES</emphasis>
+message.  When you drag in an enabled SoundView display, the selected
+region is highlighted.  The method <emphasis
+role="bold">getSelection:size:</emphasis> returns, by reference, the
+number of the first sample and the number of samples in the
+selection.</para>
+</sect3>
+</sect2>
+</sect1>
+</chapter>
+
