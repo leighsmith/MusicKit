@@ -15,6 +15,8 @@
   purposes so long as the author attribution and copyright messages remain intact and
   accompany all relevant code.
 */
+#ifndef __SND_PERFORMANCE_H__
+#define __SND_PERFORMANCE_H__
 
 #import <Foundation/Foundation.h>
 #import "Snd.h"
@@ -97,3 +99,5 @@
 - (NSString *) description;
 
 @end
+
+#endif
