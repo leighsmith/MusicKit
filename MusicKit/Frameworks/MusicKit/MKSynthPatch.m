@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2002/04/08 17:35:25  sbrandon
+  changed _rescheduleMsgRequest reference to _rescheduleMsgRequestWithObjectArgs
+
   Revision 1.15  2002/01/29 16:52:01  sbrandon
   changed format string from %s to %@ (missed in last checkin)
 
@@ -583,11 +586,13 @@ id _MKSynthPatchPreempt(MKSynthPatch *aPatch,id aNote,id controllers)
     cancelMsgs(aPatch);
     if ((preemptDur > 0) && [(condClass = _MKClassConductor()) inPerformance]) {
         aPatch->_notePreemptMsgPtr = [[condClass clockConductor] 
-              _rescheduleMsgRequest:aPatch->_notePreemptMsgPtr 
+              _rescheduleMsgRequestWithObjectArgs:aPatch->_notePreemptMsgPtr 
               atTime:preemptTime
               sel:@selector(_preemptNoteOn:controllers:) 
               to:aPatch
-              argCount:2, aNote,controllers]; 
+              argCount:2
+	      arg1: aNote       retain:TRUE
+	      arg2: controllers retain:TRUE]; 
         return aPatch;
     }
     else 
@@ -793,9 +798,10 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
        convinced me that this is less objectionable than having new notes
        cut off. */
     synthP->_noteDurMsgPtr = 
-      [cond _rescheduleMsgRequest:synthP->_noteDurMsgPtr atTime:
-       (time - _MK_TINYTIME) sel:aSel to:msgReceiver argCount:
-       1,noteDurOff];
+      [cond _rescheduleMsgRequestWithObjectArgs:synthP->_noteDurMsgPtr atTime:
+       (time - _MK_TINYTIME) sel:aSel to:msgReceiver argCount: 1
+       arg1: noteDurOff retain: TRUE
+       arg2: nil        retain: FALSE];
     return noteDurOff;
 }
 
