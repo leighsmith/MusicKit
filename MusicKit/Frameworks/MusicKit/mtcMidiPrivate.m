@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2000/12/07 00:23:46  leigh
+  Standardised on machPorts as the mechanism for MKMD routines, now checking ports are the reception mechanism before adding them.
+
   Revision 1.9  2000/11/26 00:23:27  leigh
   Removed redundant functions midiAlarm and midiException
 
@@ -101,13 +104,13 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
     int r; 
     double t;
     if (deviceStatus == MK_devClosed)
-      return 0;
-    r = MKMDGetClockTime(devicePort, ownerPort, &theTime);
-    if (r != KERN_SUCCESS) 
-      _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), "_time");
+        return 0;
+    r = MKMDGetClockTime((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], &theTime);
+    if (r != KERN_SUCCESS)
+        _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), "_time");
     t = theTime * _MK_MIDI_QUANTUM_PERIOD;
     if (self->synchConductor)
-      t -= mtcTimeOffset;
+        t -= mtcTimeOffset;
     return t;
 }
 
@@ -116,8 +119,8 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
     int newIntTime;
     #define ISENDOFTIME(_x) (_x > (MK_ENDOFTIME - 1.0))
     if (ISENDOFTIME(requestedTime)) {
-	if (deviceStatus == MK_devRunning) 
-            MKMDRequestAlarm(devicePort, ownerPort, PORT_NULL, 0);
+	if (deviceStatus == MK_devRunning)
+            MKMDRequestAlarm((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], MKMD_PORT_NULL, 0);
 	self->alarmTimeValid = NO;
 	self->alarmPending = NO;
 	return self;
@@ -126,7 +129,9 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
     if (deviceStatus == MK_devRunning) {
 	if (!self->alarmPending || 
 	    self->intAlarmTime != newIntTime) {
-	    MKMDRequestAlarm(devicePort, ownerPort, alarmPort, newIntTime);
+            MKMDRequestAlarm((MKMDPort) [devicePort machPort], 
+			     (MKMDOwnerPort) [ownerPort machPort],
+			     (MKMDReplyPort) [alarmPort machPort], newIntTime);
 	    self->alarmPending = YES;
 	}
     }
@@ -151,13 +156,13 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
 {
     /* References to mtcMidi below will change if we ever support more than one synch */
     if (aCond) {
-	self->mtcMidiObj = self;
-	self->synchConductor = aCond;
+	mtcMidiObj = self;
+	synchConductor = aCond;
 	mtcMidi = self;
     } else {
 	if (mtcMidi == self) { 
-	    self->mtcMidiObj = nil;
-	    self->synchConductor = aCond;
+	    mtcMidiObj = nil;
+	    synchConductor = aCond;
 	    mtcMidi = nil;
 	}
     }
@@ -189,24 +194,30 @@ static BOOL setUpMTC(MKMidi *self)
     self->alarmTimeValid = NO;
     self->alarmPending = NO;
     // 2nd arg was midiAlarm, changed to self as it handleMachMessage - LMS
+#if MKMD_RECEPTION_USING_PORTS
     _MKAddPort(self->alarmPort, self, 0, self, _MK_DPSPRIORITY);
     // 2nd arg was midiException, changed to self as it handleMachMessage - LMS
     _MKAddPort(self->exceptionPort, self, 0, self, _MK_DPSPRIORITY);
+#endif
     addedPortsCount += 2;
     return YES;
 }
 
 static BOOL tearDownMTC(MKMidi *self)
 {
-    MKMDRequestExceptions(self->devicePort, self->ownerPort, PORT_NULL);
+    MKMDRequestExceptions((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], MKMD_PORT_NULL);
+#if MKMD_RECEPTION_USING_PORTS
     _MKRemovePort(self->exceptionPort);
+#endif
     [self->exceptionPort release];
     /* Could call MKMDStopClock here? */
-    MKMDRequestAlarm(self->devicePort, self->ownerPort, PORT_NULL, 0);
+    MKMDRequestAlarm((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], MKMD_PORT_NULL, 0);
     self->alarmPending = NO;
     self->alarmTimeValid = NO;
+#if MKMD_RECEPTION_USING_PORTS
     _MKRemovePort(self->alarmPort);
     addedPortsCount -= 2;
+#endif
     [self->alarmPort release];
     return YES;
 }
