@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2002/01/24 17:01:43  sbrandon
+  fixed a number of release problems (mainly pathnames)
+
   Revision 1.16  2001/09/19 23:43:34  leighsmith
   Upgraded to more descriptive parTagForName: and parNameForTag: methods
 
@@ -840,7 +843,7 @@ static void playIt(ScorePlayerController *self)
     for (i = 0; i < partCount; i++) {
 	partPerformer = [partPerformers objectAtIndex:i];
 	aPart = [partPerformer part]; 
-	partInfo = [aPart infoNote];      
+	partInfo = [aPart infoNote];
 	if (!partInfo) {
             errMsg = [NSString stringWithFormat: STR_INFO_MISSING, MKGetObjectName(aPart)];
             [errorLog addText: errMsg];
@@ -901,7 +904,6 @@ static void playIt(ScorePlayerController *self)
 	    }
 	}
     }
-    [partPerformers release];
     errorDuringPlayback = NO;
     [self->theMainWindow setTitle: [NSString stringWithFormat: STR_PLAYING, shortFileName]];
     [self->theMainWindow display];
@@ -1351,7 +1353,7 @@ BOOL getSavePath(NSString **returnBuf, NSString *dir, NSString *name, NSString *
 NSString *getPath(NSString *dir, NSString *name, NSString *ext)
      /* Construct a path given a file name, directory, and type */
 {
-    if (!dir || ![dir length]) dir = NSHomeDirectory();
+    if (!dir || ![dir length]) dir = [NSHomeDirectory() retain];
     if (!name ) name=@"";
     if (!ext ) ext=@"";
     if ([[name pathExtension] isEqualToString:ext])
@@ -1399,11 +1401,13 @@ NSString *getPath(NSString *dir, NSString *name, NSString *ext)
     if (!getSavePath(&outputFilePath,outputFileDir, outputFileName,
                      [saveFileExtensions objectAtIndex: saveType]))
 	return;
-    outputFileDir = [outputFilePath stringByDeletingLastPathComponent];
-    outputFileName = [outputFilePath lastPathComponent];
+    [outputFilePath retain];
+    outputFileDir = [[outputFilePath stringByDeletingLastPathComponent] retain];
+    outputFileName = [[outputFilePath lastPathComponent] retain];
     [self setSaveType: fileType(outputFilePath)];
-    outputFilePath = getPath(outputFileDir, outputFileName,
-                             [saveFileExtensions objectAtIndex: saveType]);
+    [outputFilePath release];
+    outputFilePath = [getPath(outputFileDir, outputFileName,
+                             [saveFileExtensions objectAtIndex: saveType]) retain];
     switch (saveType) {
     case SCORE_FILE: 
         [scoreObj writeScorefile:outputFilePath];
