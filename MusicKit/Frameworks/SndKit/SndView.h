@@ -37,7 +37,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #define DEFAULT_RECORD_SECONDS 5
 @interface SndView:NSView
 {
-	id 		sound;
+	Snd* 		sound;
 	Snd* 		_scratchSound;
         Snd*		_pasteboardSound;
 	id 		delegate;
