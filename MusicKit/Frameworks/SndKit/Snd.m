@@ -530,7 +530,7 @@ void merror(int er)
 int beginFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
-	theSnd = [playRecTable valueForKey:sound];
+	theSnd = [playRecTable valueForKey: (void *) tag];
 	if (err) {
 		[theSnd _setStatus:NX_SoundStopped];
 		[theSnd tellDelegate:@selector(hadError:)];
@@ -546,12 +546,12 @@ int endFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
 
-	theSnd = [playRecTable valueForKey:sound];
+	theSnd = [playRecTable valueForKey: (void *) tag];
 	[theSnd _setStatus:NX_SoundStopped];
 	if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
 	if (err) [theSnd tellDelegate:@selector(hadError:)];
 	else [theSnd tellDelegate:@selector(didPlay:)];
-	[playRecTable removeKey:sound];
+	[playRecTable removeKey: (void *) tag];
 	/* bug fix for SoundKit: if DSP was used, its access is not
 	 * released as it should be. So I just automatically release it
 	 * here, whether or not it was used. Generally it's used for real-time
@@ -568,7 +568,7 @@ int endFun(SNDSoundStruct *sound, int tag, int err)
 int beginRecFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
-	theSnd = [playRecTable valueForKey:sound];
+	theSnd = [playRecTable valueForKey: (void *) tag];
 	if (err) {
 		[theSnd _setStatus:NX_SoundStopped];
 		[theSnd tellDelegate:@selector(hadError:)];
@@ -583,13 +583,13 @@ int beginRecFun(SNDSoundStruct *sound, int tag, int err)
 int endRecFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
-	theSnd = [playRecTable valueForKey:sound];
+	theSnd = [playRecTable valueForKey: (void *) tag];
 	[theSnd _setStatus:NX_SoundStopped];
 	printf("End recording error: %d\n",err);
 	if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
 	if (err) [theSnd tellDelegate:@selector(hadError:)];
 	else [theSnd tellDelegate:@selector(didRecord:)];
-	[playRecTable removeKey:sound];
+	[playRecTable removeKey: (void *) tag];
 	((Snd *)theSnd)->tag = 0;
 	return 0;
 }
@@ -601,10 +601,10 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 #ifdef USE_PERFORM_SOUND_IO
 	int err;
 	if (!soundStruct) return self;
-	if (!playRecTable) playRecTable = [[HashTable alloc] initKeyDesc:"!"];
+	if (!playRecTable) playRecTable = [[HashTable alloc] initKeyDesc:"i"];
 	
-	[playRecTable insertKey:soundStruct value:self];
 	tag = ioTags;
+        [playRecTable insertKey: (void *) tag value:self];
 	status = NX_SoundPlayingPending;
         err = SNDUnreserve(3);
         if(err) {
@@ -633,7 +633,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 {
 #ifdef USE_NEXTSTEP_SOUND_IO
 	int err;
-	if (!playRecTable) playRecTable = [[HashTable alloc] initKeyDesc:"!"];
+	if (!playRecTable) playRecTable = [[HashTable alloc] initKeyDesc:"i"];
 
 	if (soundStruct) {
 		err = SndAlloc(&soundStruct,
@@ -642,8 +642,8 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 			SND_RATE_CODEC,1,4);
 		if (err) return nil;
 	}
-	[playRecTable insertKey:soundStruct value:self];
 	tag = ioTags;
+        [playRecTable insertKey: (void *) tag value:self];
 	status = NX_SoundRecordingPending;
 	err = SNDStartRecording((SNDSoundStruct *)soundStruct,
 		ioTags++, /*	int tag			*/
@@ -693,19 +693,21 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 #ifdef USE_PERFORM_SOUND_IO
 	if (tag) {
 		SNDStop(tag);
-		tag = 0;
 	}
 	if (status == NX_SoundRecording || status == NX_SoundRecordingPaused) {
-		if ([playRecTable isKey:soundStruct])
-			[playRecTable removeKey:soundStruct];
+		if ([playRecTable isKey: (void *) tag])
+                	[playRecTable removeKey:(void *) tag];
 		status = NX_SoundStopped;
 		[self tellDelegate:@selector(didRecord:)];	
 	}
 	if (status == NX_SoundPlaying || status == NX_SoundPlayingPaused) {
-		if ([playRecTable isKey:soundStruct])
-			[playRecTable removeKey:soundStruct];
+        	if ([playRecTable isKey:(void *) tag])
+       			[playRecTable removeKey:(void *) tag];
 		status = NX_SoundStopped;
 		[self tellDelegate:@selector(didPlay:)];	
+	}
+	if(tag) {
+		tag = 0;
 	}
 #endif
 }
