@@ -5,8 +5,8 @@
 
   Description: 
     This file makes it possible to do a non-conducted performance. It 
-    implements a "loose link" to Condutor and provides defaults when there's
-    no Conducted performance. It also insures that the "after performance
+    implements a "loose link" to MKConductor and provides defaults when there's
+    no MKConducted performance. It also insures that the "after performance
     queues" get implemented in a non-conducted performance.
 
   Original Author: David Jaffe
@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/09/04 23:02:34  leigh
+  Source cleanup
+
   Revision 1.3  1999/08/06 17:27:53  leigh
   cleaned copyright and comments
 
@@ -133,7 +136,7 @@ double MKGetDeltaT(void)
 }
 
 double MKGetDeltaTTime(void)
-    /* Returns deltaT time, in seconds. */
+    /* Returns deltaT + time, in seconds. */
 {
     if (deltaTMode == MK_DELTAT_DEVICE_LAG)
       return deltaT + MKGetTime();
@@ -149,7 +152,7 @@ void MKSetDeltaT(double val)
 
 void MKFinishPerformance(void)
     /* If the performance is conducted, this is the same as 
-       [Conductor finishPerformance]. Otherwise, it tells
+       [MKConductor finishPerformance]. Otherwise, it tells
        Performers and Instruments the performance is over. (Precisely,
        it evaluates the "after performance" queue.) 
        */
