@@ -7,7 +7,6 @@
 #import <MusicKit/MusicKit.h>
 #import "PlayScore.h"
 
-
 @implementation PlayScore:NSObject
 
 static NSMutableArray *synthInstruments;
@@ -16,26 +15,19 @@ static MKOrchestra *theOrch;
 static double samplingRate = 22050;
 static double headroom = .1;
 static double initialTempo;
-static char errMsg[200];
-
-static int handleObjcError(char *className)
-{
-    return 0;
-}
-
 
 static BOOL userCancelFileRead = NO;
 
-static void handleMKError(char *msg)
+static void handleMKError(NSString *msg)
 {
     if (![MKConductor inPerformance]) {
-	if (!NSRunAlertPanel(@"PianoRoll", [NSString stringWithCString:msg], @"OK", @"Cancel", nil, NULL)) {
+	if (!NSRunAlertPanel(@"PianoRoll", msg, @"OK", @"Cancel", nil, NULL)) {
 	  MKSetScorefileParseErrorAbort(0);
 	  userCancelFileRead = YES;         /* A kludge for now. */
       }
     }
     else {
-	NSLog([NSString stringWithCString: msg]);
+	NSLog(msg);
     }
 }
 
@@ -101,9 +93,8 @@ static void handleMKError(char *msg)
 	aPart = [partPerformer part]; 
 	partInfo = [aPart infoNote];      
 	if ((!partInfo) || ![partInfo isParPresent:MK_synthPatch]) {
-	    sprintf(errMsg,"%s info missing.\n",
-		    (char *)[MKGetObjectName(aPart) cString]);
-	    if (!NSRunAlertPanel(@"ScorePlayer", [NSString stringWithCString:errMsg], @"Continue", @"Cancel", nil)) 
+	    if (!NSRunAlertPanel(@"ScorePlayer", 
+                [NSString stringWithFormat: @"%@ info missing.\n", MKGetObjectName(aPart)], @"Continue", @"Cancel", nil)) 
 	      return NO;
 	    continue;
 	}		
@@ -111,10 +102,9 @@ static void handleMKError(char *msg)
         synthPatchClass = [MKSynthPatch findSynthPatchClass:className];
         
 	if (!synthPatchClass) {         /* Class not loaded in program? */ 
-	    sprintf(errMsg,
-		    "This scorefile calls for a synthesis instrument (%s) that "
-		    "isn't available in this application.\n", [className cString]);
-	    if (!NSRunAlertPanel(@"ScorePlayer", [NSString stringWithCString:errMsg], @"Continue", @"Cancel", nil))
+	    if (!NSRunAlertPanel(@"ScorePlayer", 
+                [NSString stringWithFormat: @"This scorefile calls for a synthesis instrument (%@) that isn't available in this application.\n", className],
+                     @"Continue", @"Cancel", nil))
 	      return NO;
 	    /* We would prefer to do dynamic loading here. */
 	    continue;
@@ -131,10 +121,10 @@ static void handleMKError(char *msg)
 	   [synthPatchClass patchTemplateFor:partInfo]];
         [anIns release]; /* since retain is now held in synthInstruments array! */
 	if (synthPatchCount < voices) {
-	    sprintf(errMsg,"Could only allocate %d instead of %d %ss for %s\n",
-		    synthPatchCount,voices,[className cString],
-		    [MKGetObjectName(aPart) cString]);
-	    if (!NSRunAlertPanel(@"ScorePlayer", [NSString stringWithCString:errMsg], @"Continue", @"Cancel", nil))
+	    if (!NSRunAlertPanel(@"ScorePlayer", 
+                [NSString stringWithFormat: @"Could only allocate %d instead of %d %@s for %@\n",
+		    synthPatchCount, voices, className, MKGetObjectName(aPart)], 
+                    @"Continue", @"Cancel", nil))
 	      return NO;
 	}
     }
@@ -145,8 +135,8 @@ static void handleMKError(char *msg)
     [MKConductor afterPerformanceSel:@selector(close) to:theOrch argCount:0];
 //    [MKConductor afterPerformanceSel:@selector(hello) to:self argCount:0];
 
-[theOrch run];
-[MKConductor startPerformance];
+    [theOrch run];
+    [MKConductor startPerformance];
     return YES; 
 }
 
@@ -157,8 +147,8 @@ static void handleMKError(char *msg)
     if (inited++)
         return self;
     [MKConductor setThreadPriority:1.0];
-//    [MKConductor useSeparateThread:YES];
-//    MKSetErrorProc(handleMKError);
+    [MKConductor useSeparateThread:YES];
+    MKSetErrorProc(handleMKError);
 
     return self;
 }
