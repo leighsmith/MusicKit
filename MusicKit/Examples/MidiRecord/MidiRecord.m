@@ -88,6 +88,7 @@ static void handleMKError(char *msg) {
 					   has no more scheduled events.
 					   Instead, tell it to wait until 
 					   finishPerformance is received */
+    [MKConductor useSeparateThread: YES];
     [midiIn run];                  /* Start midi clock */
     [MKConductor startPerformance];  /* Start the performance */
     return self;
