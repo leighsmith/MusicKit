@@ -11,11 +11,15 @@
 
   Copyright (c) Pinnacle Research, 1993
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.7  2000/11/13 23:23:03  leigh
+  Replaced exception macros with more explicit MKMD versions
+
   Revision 1.6  2000/04/07 18:41:45  leigh
   Upgraded logging to NSLog
 
@@ -46,12 +50,12 @@ Modification history:
       return self;
     if (MKIsTraced(MK_TRACEMIDI))
       NSLog(@"Midi time code exception: %s\n",
-	      (exception == MIDI_EXCEPTION_MTC_STARTED_FORWARD) ? "time code started" :
-	      (exception == MIDI_EXCEPTION_MTC_STOPPED) ? "time code stopped" :
-	      (exception == MIDI_EXCEPTION_MTC_STARTED_REVERSE) ? "reverse time code started" :
+	      (exception == MKMD_EXCEPTION_MTC_STARTED_FORWARD) ? "time code started" :
+	      (exception == MKMD_EXCEPTION_MTC_STOPPED) ? "time code stopped" :
+	      (exception == MKMD_EXCEPTION_MTC_STARTED_REVERSE) ? "reverse time code started" :
 	      "unknown exception");
     switch (exception) {
-      case MIDI_EXCEPTION_MTC_STARTED_FORWARD:  
+      case MKMD_EXCEPTION_MTC_STARTED_FORWARD:  
 	switch (mtcStatus) {
 	  case MTC_UNDEFINED: 
 	    if (!startMTC(self,YES))
@@ -71,10 +75,10 @@ Modification history:
 	    break;  /* Should never happen */
 	}
 	break;
-      case MIDI_EXCEPTION_MTC_STOPPED:
+      case MKMD_EXCEPTION_MTC_STOPPED:
 	stopMTC(self);
 	break;
-      case MIDI_EXCEPTION_MTC_STARTED_REVERSE:
+      case MKMD_EXCEPTION_MTC_STARTED_REVERSE:
 	reverseMTC(self);
 	break;
       default:
