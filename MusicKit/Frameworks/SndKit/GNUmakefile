@@ -15,6 +15,9 @@
 
 #Modification history:
 # $Log$
+# Revision 1.3  2001/08/08 19:29:19  sbrandon
+# - added new classes SndAudioFader, SndEnvelope, SndBreakpoint
+#
 # Revision 1.2  2001/07/02 20:03:29  sbrandon
 # - added -g flag for debugging
 #
@@ -52,8 +55,9 @@ $(FRAMEWORK_NAME)_OBJC_FILES = \
           Snd.m SndAudioBuffer.m SndDisplayData.m SndDisplayDataList.m\
           SndStreamClient.m SndStreamManager.m SndView.m sounderror.m\
           SndFunctions.m SndStreamRecorder.m SndStreamMixer.m SndPlayer.m\
-		  SndPerformance.m SndAudioProcessorChain.m\
-		  SndAudioProcessor.m  SndAudioProcessorDelay.m #SndMeter.m 
+          SndPerformance.m SndAudioProcessorChain.m\
+          SndAudioProcessor.m  SndAudioProcessorDelay.m SndEnvelope.m\
+          SndAudioFader.m SndBreakpoint.m #SndMeter.m
 
 $(FRAMEWORK_NAME)_C_FILES = \
          SndEndianFunctions.c _SndConvert.c _Sndfilterkit.c _Sndlibst.c\
@@ -66,9 +70,10 @@ $(FRAMEWORK_NAME)_HEADER_FILES = \
          SndStdefs.h SndStreamClient.h SndStreamManager.h SndView.h\
          Sound.h sounderror.h _Sndfilterkit.h\
          _Sndlargefilter.h _Sndlibst.h _Sndsmallfilter.h\
-		 SndStreamRecorder.h SndStreamMixer.h\
-		 SndPlayer.h SndPerformance.h\
-		 SndAudioProcessorChain.h SndAudioProcessor.h SndAudioProcessorDelay.h
+         SndStreamRecorder.h SndStreamMixer.h\
+         SndPlayer.h SndPerformance.h\
+         SndAudioProcessorChain.h SndAudioProcessor.h SndAudioProcessorDelay.h\
+         SndAudioFader.h SndEnvelope.h SndBreakpoint.h
 
 
 SRCS = $(LIBRARY_NAME:=.m)
