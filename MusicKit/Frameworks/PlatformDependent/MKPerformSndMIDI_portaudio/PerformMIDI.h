@@ -13,6 +13,10 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/11/07 14:51:58  sbrandon
+  Import new header file which defines PERFORM_API according to what is being
+  compiled. Necesary for Win32 dlls.
+
   Revision 1.2  2001/10/31 17:18:20  sbrandon
   Now define PERFORM_API in MKPerformSndMIDIDefines.h
 
@@ -50,6 +54,7 @@ Modification history:
 #define _MKMD_
 
 /* for defines: */
+#include "MKPerformSndMIDIDefines.h"
 #include "mididriverUser.h"
 
 /*!
