@@ -218,15 +218,14 @@
 {
   self = [super init];
   if (self) {
-    long lengthInBytes = (SndSampleWidth(_dataFormat) * _channelCount) * (int)(time * _samplingRate);
+    byteCount = (SndSampleWidth(_dataFormat) * _channelCount) * (int)(time * _samplingRate);
     samplingRate = _samplingRate;
     channelCount = _channelCount;
     dataFormat   = _dataFormat;
     if (data != nil)
       [data release];
-    data = [[NSMutableData alloc] initWithLength: lengthInBytes];
-    byteCount = 0;
-    maxByteCount = lengthInBytes;
+    data = [[NSMutableData alloc] initWithLength: byteCount];
+    maxByteCount = byteCount;
   }
   return self;
 }
@@ -639,7 +638,7 @@ return self;
 - copy
 {
   SndAudioBuffer *dest = [[SndAudioBuffer alloc] initWithBuffer: self];
-  return [dest autorelease];
+  return dest; // copy returns a retained object according to NSObject spec
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -711,15 +710,18 @@ return self;
   if (newSampleFrameCount < 0) {
     NSLog(@"SndAudioBuffer::setLengthInSampleFrames: newSampleFrameCount (%ld) < 0!", newSampleFrameCount);
   }
-  
-  if (byteCount > newLengthInBytes)
-    byteCount = newLengthInBytes;
   else {
-    [data setLength: newLengthInBytes];
-    memset([data mutableBytes] + oldLengthInBytes, 0, newLengthInBytes - oldLengthInBytes);
-    byteCount = maxByteCount = newLengthInBytes;
+    if (byteCount > newLengthInBytes)
+      byteCount = newLengthInBytes;
+    else {
+      [data setLength: newLengthInBytes];
+      if (oldLengthInBytes < newLengthInBytes) {
+        NSRange r = {oldLengthInBytes, newLengthInBytes - oldLengthInBytes};
+        [data resetBytesInRange: r];
+      }
+      byteCount = maxByteCount = newLengthInBytes;
+    }
   }
-
   return self;
 }
 
@@ -733,5 +735,53 @@ return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
++ (void) resampleByLinearInterpolation: (SndAudioBuffer*) aBuffer
+                           dest: (SndAudioBuffer*) tempBuffer
+                         factor: (double) deltaTime
+                         offset: (double) offset
+{
+  int i, chan;
+  int inchans  = [aBuffer channelCount];
+  int outchans = [tempBuffer channelCount];
+  int lengthInSampleFrames = [tempBuffer lengthInSampleFrames];
+  float *inB  = [aBuffer bytes];
+  float *outB = [tempBuffer bytes];
+  double time = offset;
+
+  for (i = 0; i < lengthInSampleFrames; i++) {
+    long   prePosition  = time;
+    long   postPosition = prePosition + 1;
+    double postFraction = time - (double) prePosition;
+    double preFraction  = 1.0 - postFraction;
+    float L,R;
+
+    prePosition  *= inchans;
+    postPosition *= inchans;
+
+    L = preFraction  * inB[prePosition] +
+        postFraction * inB[postPosition];
+
+    if (inchans > 1) 
+      R = preFraction  * inB[prePosition+1] +
+          postFraction * inB[postPosition+1];
+    else
+      R = L;
+    
+
+    if (outchans == 2) {
+      outB[i*outchans]   = L;
+      outB[i*outchans+1] = R;
+    }
+    time += deltaTime;
+
+//    printf("%05i  L:%.3f  R:%.3f\n",i,L,R);
+//    if (i == lengthInSampleFrames - 1) {
+//      printf("**\n");
+//    }
+    
+  }
+}
+
 
 @end

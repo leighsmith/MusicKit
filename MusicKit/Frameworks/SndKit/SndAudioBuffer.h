@@ -313,6 +313,12 @@
 */
 - (NSString*) description;
 
+
++ (void) resampleByLinearInterpolation: (SndAudioBuffer*) aBuffer
+                                  dest: (SndAudioBuffer*) tempBuffer
+                                factor: (double) deltaTime
+                                offset: (double) offset;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
