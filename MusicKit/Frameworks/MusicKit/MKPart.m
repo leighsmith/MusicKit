@@ -89,6 +89,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2000/05/27 19:15:10  leigh
+  Code cleanup
+
   Revision 1.10  2000/05/06 01:12:14  leigh
   Typed parameters to reduce warnings
 
@@ -298,25 +301,19 @@ static void removeNote(MKPart *self,id aNote);
     double timeTag;
     int noteTag;
     int originalNoteCount = noteCount;  // noteCount is updated by addNote:
-//    IMP selfAddNote;
     if (!noteCount)
-      return self;
+        return self;
     aList = [self notes]; /* local copy of list (autoreleased) */
-
-    // LMS This was an optimisation that nowdays seems to simply obscure the code, rather than tangibly improve throughput.
-//    selfAddNote = [self methodForSelector:@selector(addNote:)];
-//#   define SELFADDNOTE(x) (*selfAddNote)(self, @selector(addNote:), (x))
 
     for (noteIndex = 0; noteIndex < originalNoteCount; noteIndex++) {
         MKNote *note = [aList objectAtIndex: noteIndex];
         if ([note noteType] == MK_noteDur) {
-            noteOff = [note _splitNoteDurNoCopy];    /* Split all noteDurs. */
+            noteOff = [note _splitNoteDurNoCopy];  // Split all noteDurs.
             noteTag = [noteOff noteTag];
-            if (noteTag == MAXINT) {             /* Add noteOff if no tag. */
-                // SELFADDNOTE(noteOff);
+            if (noteTag == MAXINT) {               // Add noteOff if no tag.
                 [self addNote: noteOff];
             }
-            else {                /* Need to check for intervening Note. */
+            else {                                 // Need to check for intervening Note.
                 matchFound = NO;
                 timeTag = [noteOff timeTag];
 		// search for matching noteTag in the subsequent notes before the noteOff.
@@ -328,10 +325,14 @@ static void removeNote(MKPart *self,id aNote);
                     if ([candidateNote noteTag] == noteTag) {
                         switch ([candidateNote noteType]) {
                         case MK_noteOn:
+                            // we treat noteOns as a special case. An intervening noteOn with a matching noteTag is
+                            // a rearticulation of the current sounding note which can have an acoustic outcome different
+                            // from a noteOff, then noteOn. Therefore we simply let this one go past and keep searching.
+                            break;
                         case MK_noteOff:
                         case MK_noteDur:
                             [noteOff release];
-                            matchFound = YES;          /* Forget it. */
+                            matchFound = YES;          // Forget it.
                             break;
                         default:
                             break;
@@ -339,13 +340,11 @@ static void removeNote(MKPart *self,id aNote);
                     }
                 }
                 if (!matchFound) {                  /* No intervening notes. */
-                    // SELFADDNOTE(noteOff);
                     [self addNote: noteOff];
                 }
             }
         }
     }
-//#   undef SELFADDNOTE
     return self;
 }
 

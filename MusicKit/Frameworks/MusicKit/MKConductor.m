@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.19  2000/05/27 19:16:08  leigh
+  Code cleanup
+
   Revision 1.18  2000/05/06 00:57:16  leigh
   Parenthetised to remove warnings
 
@@ -130,7 +133,6 @@ Modification history:
 		 archiving. (Sigh.)
 */
 #import <AppKit/NSApplication.h>
-//#import <setjmp.h>
 #import "_musickit.h"
 #import "_time.h"
 #import "MidiPrivate.h"
@@ -154,14 +156,12 @@ Modification history:
 #define CONDUCTORFREES YES
 
 #define NOTIMEDENTRY nil
-// static jmp_buf conductorJmp;       /* For long jump. */ //sb: moved to here
 
 static BOOL separateThread = NO;
 static NSTimer *timedEntry = NOTIMEDENTRY; /* Only used for DPS client mode */
 					   /* sb: now NSTimer instead of void*. Not DPS. */
 static BOOL inPerformance = NO;   /* YES if we're currently in performance. */
 static BOOL dontHang = YES;       /* NO if we are expecting asynchronous input, e.g. MIDI or mouse */
-//static BOOL _jmpSet;            /* YES if setjmp has been called. */
 static BOOL isClocked = YES;      /* YES if we should stay synced up to the clock.
 				     NO if we can run as fast as possible. */
 static NSDate * startTime = nil;  /* Start of performance time. */
@@ -474,6 +474,7 @@ static void setTime(t)
     register MKConductor *cond;
     oldClockTime = clockTime;
     clockTime = t;
+    // NSLog(@"Setting clockTime to %lf\n", clockTime);
     if (curRunningCond) {
   	for (cond = curRunningCond->_condNext; cond; cond = cond->_condNext)
 	  adjustBeat(cond);
@@ -495,8 +496,10 @@ static void adjustTime()
 /* Normally, the variable time jumps in discrete amounts. However,
    sometimes, as, for example, when an asynchronous event such as
    MIDI or a mouse-click is received, it is desirable to adjust time 
-   to reflect the current time.  AdjustTime serves this function.
-   Returns the current value of clockTime. */
+   to reflect the current time. 
+   This function adjustTime() attempts to serve this need. It will set
+   the conductors clockTime to either the current system time or the current clockTime.
+   The current value of clockTime is set. */
 {
     double time;
 //    time = getTime() - startTime;
@@ -508,8 +511,11 @@ static void adjustTime()
        shown that it's better to do this clip. Otherwise notes are completely
        omitted, whether or not preemption is used (because envelopes are
        "stepped on" out of existance). */
+    // NSLog(@"adjusting Time %lf condQueue->nextMsgTime = %lf\n", time, condQueue->nextMsgTime);
     time = MIN(time,condQueue->nextMsgTime);
-    time = MAX(time,clockTime); /* Must be more than previous time. */
+    // NSLog(@"after to minimum Time %lf\n", time);
+    time = MAX(time,clockTime); /* Must be more than the previous time, otherwise we're moving time backwards */
+    // NSLog(@"after gating maximum Time %lf clockTime = %lf, oldClockTime = %lf\n", time, clockTime, oldClockTime);
     setTime(time);
 }
 
@@ -898,7 +904,7 @@ static void _runSetup()
     _MKSetConductedPerformance(YES, self);
     inPerformance = YES;   /* Set this before doing _runSetup so that repositionCond() works right. */
     [self _adjustDeltaTThresholds]; /* For automatic notification */
-    setTime(clockTime = 0); 
+    setTime(clockTime = 0.0); // this forces oldClockTime to 0.0 also.
     _runSetup(); // Was before setTime()
     setupMTC();
     if (MKIsTraced(MK_TRACECONDUCTOR))
@@ -1002,7 +1008,7 @@ static void evalAfterQueues()
     // masterConductorBody doing anything harmful.
     condQueue = nil;
     lastTime = clockTime;
-    setTime(clockTime = 0.0);
+    setTime(clockTime = 0.0);  // this forces oldClockTime to 0.0 also.
     resetMTCTime();
     //   MKSetTime(0.0); /* Handled by _MKSetConductedPerformance now */
     oldClockTime = lastTime;
@@ -1829,7 +1835,7 @@ static double getNextMsgTime(MKConductor *aCond)
 // for debugging
 - (NSString *) description
 {
-    MKMsgStruct *p;
+//    MKMsgStruct *p;
     NSString *queue = [NSString stringWithFormat:
         @"MKConductor 0x%x\n  Next conductor 0x%x, Last conductor 0x%x\n", self, _condNext, _condLast];
     NSString *timeStr = [NSString stringWithFormat: @"  time %lf beats, nextMsgTime %lf, timeOffset %lf\n",
@@ -1865,7 +1871,7 @@ static double getNextMsgTime(MKConductor *aCond)
 
 + (void) masterConductorBody:(NSTimer *) unusedTimer
 /*sb: created for the change from DPS timers to OS-style timers. The timer performs a method, not
- * a function. It's a class method because we want only 1 object to look after these messages.
+ * a function. It's a class method because we want only one object to look after these messages.
  */
 {
     MKMsgStruct  *curProc;
@@ -1883,6 +1889,7 @@ static double getNextMsgTime(MKConductor *aCond)
 
     /* Preamble */
     curRunningCond = condQueue;
+    // NSLog(@"Setting time via masterConductorBody\n");
     setTime(condQueue->nextMsgTime);
 
     /* Here is the meat of the conductor's performance. */
