@@ -65,7 +65,7 @@
     
     // Do deep copy of all elements of the array
     for(processorIndex = 0; processorIndex < [audioProcessorArray count]; processorIndex++)
-	[newSAPC->audioProcessorArray addObject: [[audioProcessorArray objectAtIndex: processorIndex] copy]];
+	[newSAPC->audioProcessorArray addObject: [[[audioProcessorArray objectAtIndex: processorIndex] copy] autorelease]];
     [newSAPC->postFader release];
     newSAPC->postFader = [postFader copy];
 
