@@ -4,8 +4,10 @@
         CLASSES = (playmidifile.m); 
         FRAMEWORKS = (Foundation.framework, MKPerformSndMIDI.framework, MusicKit.framework); 
         FRAMEWORKSEARCH = (/Local/Library/Frameworks); 
+        H_FILES = (); 
         OTHER_LINKED = (); 
         OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble, m.template, h.template); 
+        SUBPROJECTS = (); 
     }; 
     LANGUAGE = English; 
     MAKEFILEDIR = "$(MAKEFILEPATH)/pb_makefiles"; 
