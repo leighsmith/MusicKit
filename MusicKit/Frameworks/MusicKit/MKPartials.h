@@ -24,6 +24,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2001/09/07 18:38:20  leighsmith
+  adopted symbolic entity naming
+
   Revision 1.5  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -111,7 +114,7 @@ statements:
 <tt>partName (1.0) ... waveform:simpleSound ...;</tt>
 
 When this scorefile is read into an application, the MKPartials object will be
-given the string name &#170;simpleSound&#186;.  The object itself can be
+given the string name &ldquo;simpleSound&rdquo;.  The object itself can be
 retrieved by passing this string to the <b>MKGetNamedObject()</b> C
 function.
 
