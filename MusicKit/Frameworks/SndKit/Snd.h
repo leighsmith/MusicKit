@@ -498,7 +498,7 @@ architecture, as described in the <b>SndStruct</b> header.
                 durationInSeconds: (double) d; 
 /*!
     @method   playAtTimeInSeconds:withDurationInSeconds:
-    @abstract Begin playback at a cerain absolute stream time, for a certain duration.
+    @abstract Begin playback at a certain absolute stream time, for a certain duration.
     @param    t Start time in seconds
     @param    d Duration in seconds
     @result   Returns the performance that represents the sound playing.
