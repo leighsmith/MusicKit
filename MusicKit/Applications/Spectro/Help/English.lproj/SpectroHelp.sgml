@@ -1,7 +1,7 @@
-<!-- Documentation for Spectro in sgml format. Converted from rtfd -->
+<!-- Documentation for Spectro in DocBook SGML format. Converted from rtfd -->
 <!-- by Denis Crowdy (dcrowdy@pip.hmn.mq.edu.au) Mar, 2001 -->
 
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
 <!entity spectroVer "4.1">
 ]>
 <article>
@@ -15,15 +15,22 @@
       
       <para>
 	Welcome to Spectro V&spectroVer;, a spectrum analysis tool for use in the
-	NeXTStep environment.  This application was originally created by
-	Perry R. Cook (version 2.497) at the Center for Computer Research in
-	Music and Acoustics (CCRMA), Stanford University.  
-	Version 3, created by Gary P. Scavone, represents a total overhaul of
-	the original application and is compatible with Intel based computer
-	systems running the NeXTStep operating system.  Version 4 is an update
-	and port to OpenStep by Stephen Brandon, Leigh Smith and other MusicKit
-	project developers and is therefore operational with Apple's Cocoa and
-	GnuStep APIs. Direct bugs/suggestions to musickit-dev@lists.sourceforge.net.
+	<productname>NeXTStep</productname> environment.  This
+	application was originally created by Perry R. Cook (version
+	2.497) at the Center for Computer Research in Music and
+	Acoustics (<acronym>CCRMA</acronym>), Stanford University.
+	Version 3, created by Gary P. Scavone, represents a total
+	overhaul of the original application and is compatible with
+	Intel based computer systems running the
+	<productname>NeXTStep</productname> operating system.  Version
+	4 is an update and port to <productname>OpenStep</productname>
+	by Stephen Brandon, Leigh Smith and other
+	<productname>MusicKit</productname> project developers and is
+	therefore operational with <corpname>Apple</corpname>'s
+	<productname>Cocoa</productname> and
+	<productname>GnuStep</productname>
+	<acronym>API</acronym>s. Direct bugs/suggestions to
+        <email>musickit-developer@lists.sourceforge.net</email>.
       </para>
 
       <para>
@@ -44,7 +51,7 @@
 	<listitem>
 	  <para>
 	The sound file window is entirely new (though it may look similar to
-	Pete Yadlowski's version of SoundEditor - thanks Pete!).
+	Pete Yadlowski's version of <application>SoundEditor</application> - thanks Pete!).
       </para>
 	</listitem>
 	<listitem>
@@ -96,7 +103,7 @@
 	</listitem>
 	<listitem>
 	  <para>
-	An RMS measure of frequency lobe error can be obtained with respect to
+	An <acronym>RMS</acronym> measure of frequency lobe error can be obtained with respect to
 	the main lobe of the window transform.
       </para>
 	</listitem>
@@ -166,7 +173,7 @@
 	</listitem>
 	<listitem>
 	  <para>
-	Add some more accuracy to the RMS Error at Peak calculation!
+	Add some more accuracy to the <acronym>RMS</acronym> Error at Peak calculation!
       </para>
 	</listitem>
 	<listitem>
@@ -718,7 +725,7 @@ Read the interpolated frequency
       </orderedlist>
 
 	<para>
-	  The RMS Error of Peak field provides a relative measure for
+	  The <acronym>RMS</acronym> Error of Peak field provides a relative measure for
 	  determining whether the frequency "hump" or lobe being
 	  analyzed is representative of a single frequency or biased
 	  by other spurious frequencies.  The error is calculated with
@@ -747,7 +754,7 @@ Read the interpolated frequency
 
 	<para><emphasis role="bold">See also</emphasis></para>
 	<para>	Peak button</para>
-	<para>	RMS Error of Peak</para>
+	<para>	<acronym>RMS</acronym> Error of Peak</para>
 	
 
 
