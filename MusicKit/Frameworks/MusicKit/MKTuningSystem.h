@@ -52,6 +52,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2001/09/07 18:28:57  leighsmith
+  Made Music Tables a URL reference
+
   Revision 1.6  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -95,7 +98,10 @@ installed tuning system.  The frequency value of a pitch variable is also taken
 from the installed system. The difference between key numbers and pitch
 variables is explained in Volume 1, Chapter 3.  The entire map of key numbers,
 pitch variables, and frequency values in the default 12-tone equal-tempered
-system is given in Appendix D, &#170;Music Tables.&#186;
+system is given in
+<a href=http://www.musickit.org/MusicKitConcepts/musictables.html>
+the section entitled Music Tables
+</a>.
 
 You can install a tuning system by sending the <b>install</b> message to a
 MKTuningSystem object.  Keep in mind that this doesn't install the object itself,
