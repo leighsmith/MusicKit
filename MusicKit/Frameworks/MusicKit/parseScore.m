@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.18  2001/10/12 23:14:53  leighsmith
+  Corrected warning created by two slightly different prototypes between SndEnvelopes and MKEnvelopes
+
   Revision 1.17  2001/09/12 13:59:29  sbrandon
   changed -cString to -fileSystemRepresentation
 
@@ -1158,7 +1161,7 @@ static void lookupEnv(_MKParameterUnion *theEnv,short theEnvType,
 	error(MK_sfNumberErr);
 	lookupVal = 0; /* This stmt can never be reached but it makes compiler happy */
     }
-    rtnVal->rval = [theEnv->symbol lookupYForX:lookupVal];
+    rtnVal->rval = [((MKEnvelope *) theEnv->symbol) lookupYForX:lookupVal];
     if (MKIsNoDVal(rtnVal->rval))
       error(MK_sfBoundsErr);
 }
