@@ -4,7 +4,7 @@
 //  SndKit
 //
 //  Created by SKoT McDonald <skot@tomandandy.com> on Mon Oct 01 2001.
-//  Copyright (c) 2001 tomandandy music inc.
+//  Copyright (c) 2001 SndKit project
 //
 //  Permission is granted to use and modify this code for commercial and
 //  non-commercial purposes so long as the author attribution and copyright

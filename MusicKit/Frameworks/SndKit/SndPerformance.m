@@ -8,9 +8,9 @@
 //    performances of the same Snd. We need some way of indicating to the delegate
 //    exactly which performance has completed.
 //
-//  Original Author: Leigh Smith, <leigh@tomandandy.com>, tomandandy music inc.
+//  Original Author: Leigh Smith, <leigh@tomandandy.com>
 //
-//  Sat 28-Feb-2001, Copyright (c) 2001 tomandandy music inc. All rights reserved.
+//  Sat 28-Feb-2001, Copyright (c) 2001 SndKit project All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and
 //  non-commercial purposes so long as the author attribution and copyright

@@ -4,9 +4,9 @@
 //
 //  Description:
 //
-//  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
-//  12 Feb 2001, Copyright (c) 2001 tomandandy music inc.
+//  12 Feb 2001, Copyright (c) 2001 SndKit project
 //
 //  Permission is granted to use and modify this code for commercial and
 //  non-commercial purposes so long as the author attribution and copyright

@@ -4,7 +4,7 @@
 //  SndKit
 //
 //  Created by skot on Tues Mar 27 2001. <skot@tomandandy.com>
-//  Copyright (c) 2001 tomandandy music inc.
+//  Copyright (c) 2001 SndKit project
 //
 //  Permission is granted to use and modify this code for commercial and 
 //  non-commercial purposes so long as the author attribution and copyright 
