@@ -153,8 +153,7 @@ static BOOL fastActivation = NO;
 {
   if (status != MK_inactive)
     return nil;
-  if (part)
-    [part release];
+  [part release];
   part = [aPart retain];
   return self;
 }
