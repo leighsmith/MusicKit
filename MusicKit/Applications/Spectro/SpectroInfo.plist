@@ -1,0 +1,21 @@
+{
+  ApplicationName = "Spectro";
+  ApplicationDescription = "A Spectrum Analysis Tool";
+  ApplicationRelease = "4.1";
+  FullVersionID = "4.1";
+  Authors = ("Perry R. Cook & Gary P. Scavone");
+  Copyright = "Unknown";
+  CopyrightDescription = "Copyright (c) The MusicKit Project. All Rights Reserved";
+
+  NSTypes = (
+  {
+    NSName = "sound";
+    NSHumanReadableName = "Sound File";
+    NSUnixExtensions = ("snd","wav","aif");
+    NSDOSExtensions = ("snd","wav","aif");
+    NSRole = Viewer;
+    NSDocumentClass = SoundDocument;
+    NSIcon = "FileIcon_txt.tiff"; 
+  }
+  );
+}
