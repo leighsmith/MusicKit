@@ -1,9 +1,6 @@
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook V3.1//EN">
-  <chapter id="MusicPerformance">
-    <title>Music Performance</title>
-
-    <sect1 id="PerformanceDesignPhilosophy">
-      <title>Design Philosophy</title>
+<!-- $Id$ -->
+<chapter id="MusicPerformance">
+  <title>Music Performance</title>
 
 <para>This chapter describes the classes and functions that you use to
 create a musical performance with the MusicKit.  The material
@@ -11,7 +8,10 @@ presented here falls roughly into three sections: realizing music
 data, MusicKit scheduling, and guidelines for building an efficient
 application.  To fully appreciate this chapter, you should be familiar
 with the material in the preceding two chapters, <xref
-linkend="MusicData"> and <xref linkend="MusicSynthesis">.</para>
+linkend="MusicData"> and <xref linkend="MusicSynthAndProc">.</para>
+
+  <sect1 id="PerformanceDesignPhilosophy">
+    <title>Design Philosophy</title>
 
 <para>The primary task in a musical performance is to take a
 representation of music and render it in an appropriate fashion.
@@ -124,8 +124,8 @@ wheezing.</para>
 setting it up; in fact, many of the methods that are defined by the
 classes that are involved in a performance can only be invoked before
 the performance starts (or between performances).  As you design your
-own application, you should consult the class descriptions in Chapter
-2 of <emphasis>Reference</emphasis> to check for the conditions under
+own application, you should consult the class descriptions in 
+<xref linkend="ClassReferences"> to check for the conditions under
 which a method may be invoked.</para>
 
 <para>The following sections examine the three primary classes
@@ -144,13 +144,13 @@ focus of a MusicKit performance: Every performance involves at least
 one <classname>MKInstrument</classname>.</para>
 
     <para>At the heart of an <classname>MKInstrument</classname> is
-its<emphasis role="bold">
-realize<classname>MKNote</classname>:from<classname>MKNoteReceiver</classname>:
+its <emphasis role="bold">
+realizeNote:fromNoteReceiver:
 </emphasis> method.  The <classname>MKInstrument</classname> class
 itself is abstract and doesn't implement this method; it's the
 responsibility of each <classname>MKInstrument</classname> subclass to
 provide an implementation of <emphasis
-role="bold">realize<classname>MKNote</classname>:fromNoteReceiver:</emphasis>
+role="bold">realizeNote:fromNoteReceiver:</emphasis>
 to establish the manner in which instances of the subclass realize
 <classname>MKNote</classname>s.  The MusicKit includes a number of
 <classname>MKInstrument</classname> subclasses (and
@@ -186,14 +186,14 @@ MusicKit, followed by an example of
       <para>An <classname>MKInstrument</classname> receives
 <classname>MKNote</classname>s through the same method that defines
 their realization, <emphasis
-role="bold">realize<classname>MKNote</classname>:fromNoteReceiver:</emphasis>.
+role="bold">realizeNote:fromNoteReceiver:</emphasis>.
 However, you don't send <classname>MKNote</classname>s to an
 <classname>MKInstrument</classname> by invoking this method directly;
 instead, you send the <classname>MKNote</classname>s to one of the
 <classname>MKInstrument</classname>'s
 <classname>MKNoteReceiver</classname> objects which, in turn, invokes
 <emphasis
-role="bold">realize<classname>MKNote</classname>:fromNoteReceiver:</emphasis>
+role="bold">realizeNote:fromNoteReceiver:</emphasis>
 for you.</para>
 
       <para><classname>MKNoteReceiver</classname> is an auxiliary
@@ -207,7 +207,7 @@ an <classname>MKInstrument</classname>:</para>
 <classname>MKInstrument</classname> receives
 <classname>MKNote</classname>s (in other words, methods that invoke
 <classname>MKInstrument</classname>'s <emphasis
-role="bold">realize<classname>MKNote</classname>:from<classname>MKNoteReceiver</classname>:</emphasis>).</para>
+role="bold">realizeNote:fromNoteReceiver:</emphasis>).</para>
 	</listitem>
 
 	<listitem><para> It lets you control the stream of
@@ -241,12 +241,12 @@ subclass, although some subclasses require you to create and add
 method by which a <classname>MKNoteReceiver</classname> is added to an
 <classname>MKInstrument</classname> is the same:
 <classname>MKInstrument</classname>'s <emphasis
-role="bold">add<classname>MKNoteReceiver</classname>:</emphasis>.
+role="bold">addNoteReceiver:</emphasis>.
 While an <classname>MKInstrument</classname> can own more than one
 <classname>MKNoteReceiver</classname>, a single
 <classname>MKNoteReceiver</classname> can belong to only one
 <classname>MKInstrument</classname>: An invocation of <emphasis
-role="bold">add<classname>MKNoteReceiver</classname>:</emphasis>
+role="bold">addNoteReceiver:</emphasis>
 removes the argument (the <classname>MKNoteReceiver</classname>) from
 its current owner.</para>
 
@@ -290,7 +290,7 @@ creates a single <classname>MKNoteReceiver</classname> as part of its
 <emphasis role="bold">init</emphasis> method:</para>
 
 <programlisting>
-/* Create a MKSynthInstrument and send it aNote (assumed to exist). */
+/* Create a MKSynthInstrument and send it a MKNote (assumed to exist). */
 aSynthIns = [[MKSynthInstrument alloc] init];
 
 [MKConductor lockPerformance];
@@ -310,7 +310,7 @@ these methods ensure that your cast of characters are in synch and
 primed for timely <classname>MKNote</classname> realization.  A fuller
 explanation of <emphasis role="bold">lockPerformance</emphasis> and
 <emphasis role="bold">unlockPerformance</emphasis> is given in
-&ldquo;Locking the Performance,&rdquo; later in this chapter.</para>
+<xref linkend="LockingThePerformance"> later in this chapter.</para>
 
 <para>You can create and add any number of
 <classname>MKNoteReceiver</classname>s to the
@@ -335,7 +335,7 @@ it bigger.</para>
 
 <para>You can throttle a <classname>MKNoteReceiver</classname>'s
 ability to invoke <emphasis
-role="bold">realize<classname>MKNote</classname>:from<classname>MKNoteReceiver</classname>:</emphasis>
+role="bold">realizeNote:fromNoteReceiver:</emphasis>
 by sending it the <emphasis role="bold">squelch</emphasis> message.
 To release this clench, you invoke <emphasis
 role="bold">unsquelch</emphasis>.  Through this simple feature, you
@@ -398,12 +398,12 @@ to be performing (and thus the aforementioned performance-status
 dependent methods will have no effect).</para>
       </sect3>
     </sect2>
-    <sect2 id="Realizing<classname>MKNote</classname>s">
+    <sect2 id="RealizingMKNotes">
       <title>Realizing <classname>MKNote</classname>s</title>
 
 <para>There are very few rules when it comes to realizing
 <classname>MKNote</classname>s: You can implement <emphasis
-role="bold">realize<classname>MKNote</classname>:from<classname>MKNoteReceiver</classname>:</emphasis>
+role="bold">realizeNote:fromNoteReceiver:</emphasis>
 to realize a <classname>MKNote</classname> in almost any arbitrary
 manner.  As mentioned earlier, the MusicKit includes
 <classname>MKInstrument</classname>s that synthesize and store
@@ -517,7 +517,8 @@ message.</para>
 <emphasis role="bold">allocMode</emphasis>, a method that returns one
 of the following integer constants:</para>
 
-	  <table frame=all><title><classname>MKSynthInstrument</classname>'s allocation modes</title>
+	  <table frame=all>
+	    <title><classname>MKSynthInstrument</classname>'s allocation modes</title>
 	    <tgroup cols=2 colsep=1 rowsep=1>
 	      <colspec colnum=1 align=left>
 	      <colspec colnum=2 align=left>
@@ -755,28 +756,36 @@ role="bold">noteOff:</emphasis> methods also set a
 status</emphasis>.  This describes the object's current synthesis
 state as one of the following MKSynthStatus constants:</para>
 
-<table>
-<thead>
-<para><emphasis role="bold">Constant Meaning</emphasis></para>
-</thead>
-<tbody>
-<row>
-<entry>MK_idle</entry>
-<entry>The <classname>MKSynthPatch</classname> is currently inactive.</entry>
-</row>
-<row>
-<entry>MK_running</entry> 
-<entry>The <classname>MKSynthPatch</classname> is synthesizing the body of a
-musical note.</entry>
-</row>
-<row>
-<entry>MK_finishing</entry>
-<entry>The <classname>MKSynthPatch</classname> is in the release portions of its
-<classname>MKEnvelope</classname>s.</entry>
-</row>
-</tbody>
-</table>
-
+	  <table frame=all>
+	    <title><classname>MKSynthInstrument</classname>'s synthesis states</title>
+	    <tgroup cols=2 colsep=1 rowsep=1>
+	      <colspec colnum=1 align=left>
+	      <colspec colnum=2 align=left>
+	      <thead>
+		<row>
+		  <entry>Constant</entry> <entry>Meaning</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+		  <entry>MK_idle</entry>
+		  <entry>The <classname>MKSynthPatch</classname> is currently inactive.</entry>
+		</row>
+		<row>
+		  <entry>MK_running</entry> <entry>The
+		  <classname>MKSynthPatch</classname> is synthesizing
+		  the body of a musical note.</entry>
+		</row>
+		<row>
+		  <entry>MK_finishing</entry> <entry>The
+		  <classname>MKSynthPatch</classname> is in the
+		  release portions of its
+		  <classname>MKEnvelope</classname>s.</entry>
+		</row>
+	      </tbody>
+	    </tgroup>
+	  </table>
+	  
 <para>The <emphasis role="bold">noteOn:</emphasis> message sets the
 synthesis status to MK_running; <emphasis
 role="bold">noteOff:</emphasis> sets it to MK_finishing.  In either of
@@ -977,7 +986,7 @@ in the list, you send <emphasis role="bold">next</emphasis> to the
 <classname>MKSynthPatch</classname> at hand.</para>
 	</sect4>
       </sect3>
-    <sect2 id="MKMidi">
+      <sect3 id="MKMidi">
       <title><classname>MKMidi</classname></title>
 
 <para>The <classname>MKMidi</classname> class isn't a true
@@ -1011,7 +1020,8 @@ serial port.</para>
 
 <para>A <classname>MKMidi</classname> object has a device status
 that's much like the device status of the
-<classname>MKOrchestra</classname> object, as described in Chapter 4.
+<classname>MKOrchestra</classname> object, as described in 
+<xref linkend="MusicSynthAndProc">
 Before you can send <classname>MKNote</classname>s to a
 <classname>MKMidi</classname> object (more accurately, before the
 object will do anything with these <classname>MKNote</classname>s),
@@ -1026,7 +1036,7 @@ further information, see the <classname>MKMidi</classname> and
 <classname>MKConductor</classname> class descriptions, as well as the
 file</para>
 
-<para><emphasis role="bold">
+      <para><emphasis role="bold">
 /LocalLibrary/Documentation/MusicKit/Concepts/SpecialTopics/MIDITimeCode.rtf</emphasis></para>
     </sect3>
     <sect3 id="MKPartRecorderAndMKScoreRecorder">
@@ -1099,31 +1109,32 @@ MKNameObject("Quickly", quicklyReceiver);
 /* Set the MKScorefileWriter's file by name. */
 [aSFWriter setFile: "Falstaff.score"];
 </programlisting>
+      </sect3>
+    </sect2>
+    <sect2 id="MKInstrumentSubclass">
+      <title>Creating an <classname>MKInstrument</classname> Subclass</title>
 
-<sectx id="">
-<title>Creating an <classname>MKInstrument</classname> Subclass</title>
-
-<para>While there are no strict rules governing realization,
+      <para>While there are no strict rules governing realization,
 intelligent <classname>MKInstrument</classname> design should follow
 these guidelines:</para>
 
-<itemizedlist>
-<listitem><para>An <classname>MKInstrument</classname> should realize
+      <itemizedlist>
+	<listitem><para>An <classname>MKInstrument</classname> should realize
 <classname>MKNote</classname>s as it receives them.  It's possible to
 design an <classname>MKInstrument</classname> that, for instance,
 reschedules its <classname>MKNote</classname>s to be realized later,
 but for the sake of generality, an <classname>MKInstrument</classname>
 should act immediately upon the <classname>MKNote</classname>s it
 receives.</para>
-</listitem>
+	</listitem>
 
-<listitem><para>If an <classname>MKInstrument</classname> needs to
+	<listitem><para>If an <classname>MKInstrument</classname> needs to
 alter or store a <classname>MKNote</classname>, it should create a
 copy of the <classname>MKNote</classname> and act upon the
 copy.</para>
-</listitem>
+	</listitem>
 
-<listitem><para> An <classname>MKInstrument</classname> shouldn't be a
+	<listitem><para>An <classname>MKInstrument</classname> shouldn't be a
 source of <classname>MKNote</classname>s.  The task of generating new
 <classname>MKNote</classname>s belongs to a
 <classname>MKPerformer</classname> or to your application.  The role
@@ -1132,16 +1143,16 @@ conceive.  This doesn't mean that an
 <classname>MKInstrument</classname> can't create
 <classname>MKNote</classname>s, but it should only do so in response
 to receiving a <classname>MKNote</classname>.</para>
-</listitem>
-</itemizedlist>
+	</listitem>
+      </itemizedlist>
 
-<para>Along with these guidelines, keep in mind that an
+      <para>Along with these guidelines, keep in mind that an
 <classname>MKInstrument</classname> should, if possible, create and
 add to itself some number of <classname>MKNoteReceiver</classname>s,
 usually in its <emphasis role="bold">init</emphasis> method.</para>
-
+    </sect2>
   </sect1>
-  <sect1 id="<classname>MKConductor</classname>Class">
+  <sect1 id="MKConductorClass">
     <title>The <classname>MKConductor</classname> Class</title>
 
 <para>The <classname>MKConductor</classname> class defines the
@@ -1178,22 +1189,22 @@ tempo).</para>
 <emphasis>clockConductor</emphasis> and the
 <emphasis>defaultConductor</emphasis>:</para>
 
-<itemizedlist>
-<listitem><para> As its name implies, the clockConductor acts as a
+      <itemizedlist>
+	<listitem><para> As its name implies, the clockConductor acts as a
 clock: It ticks away at a steady and immutable 60.0 beats per minute.
 Any timing information that's reckoned by the other
 <classname>MKConductor</classname> instances is computed in reference
 to the clockConductor.</para>
-</listitem>
+	</listitem>
 
-<listitem><para>Many applications need only a single
+	<listitem><para>Many applications need only a single
 <classname>MKConductor</classname> instance (in addition to the
 clockConductor); the defaultConductor is created as a convenience to
 meet this need.  The defaultConductor is more pliable than the
 clockConductor in that its tempo can be altered and its activities can
 be temporarily suspended during a performance.</para>
-</listitem>
-</itemizedlist>
+	</listitem>
+      </itemizedlist>
 
 <para>The clockConductor is retrieved by sending the <emphasis
 role="bold">clockConductor</emphasis> message to the
@@ -1225,39 +1236,47 @@ isn't necessary.  The structure is defined without further explanation
 in the file <filename
 class=headerfile>MusicKit/MKConductor.h</filename>.</para>
 
-<sectx id="">
-<title>Creating and Scheduling a Message Request</title>
+      <sect3 id="CreatingAndSchedulingAMessageRequest">
+	<title>Creating and Scheduling a Message Request</title>
 
-<para>To enqueue a message request with a
+	<para>To enqueue a message request with a
 <classname>MKConductor</classname>, you invoke the <emphasis
 role="bold">sel:to:atTime:argCount:</emphasis> or <emphasis
 role="bold">sel:to:withDelay:argCount:</emphasis> method.  The
 arguments to these methods are similar:</para>
 
-<table>
-<thead>
- <entry>Keyword</entry> <entry>Argument</entry>
-</thead>
-<tbody>
-<row>
-<entry>sel:</entry> 
-<entry>Selector that identifies the method you wish to
+	<table frame=all>
+	  <title><classname>MKConductor</classname>'s message request arguments</title>
+	  <tgroup cols=2 colsep=1 rowsep=1>
+	    <colspec colnum=1 align=left>
+	    <colspec colnum=2 align=left>
+	    <thead>
+	      <row>
+		<entry>Keyword</entry> <entry>Argument</entry>
+	      </row>
+	    </thead>
+	    <tbody>
+	      <row>
+		<entry>sel:</entry> 
+		<entry>Selector that identifies the method you wish to
 invoke.</entry>
-</row>
-<row>
-<entry>to:</entry> 
-<entry>The object that implements the desired method.</entry>
-</row>
-<row>
-<entry>atTime: <emphasis>or</emphasis> withDelay:</entry>
-<entry>The time at which you wish the method to be invoked.</entry>
-</row>
-<row>
-<entry>argCount:</entry>
-<entry>The number of method arguments, followed by the
+	      </row>
+	      <row>
+		<entry>to:</entry> 
+		<entry>The object that implements the desired method.</entry>
+	      </row>
+	      <row>
+		<entry>atTime: <emphasis>or</emphasis> withDelay:</entry>
+		<entry>The time at which you wish the method to be invoked.</entry>
+	      </row>
+	      <row>
+		<entry>argCount:</entry>
+		<entry>The number of method arguments, followed by the
 arguments themselves, separated by commas.</entry>
-</row>
-</tbody>
+	      </row>
+	    </tbody>
+	  </tgroup>
+	</table>
 
 <para>The difference between the two methods is the manner in which
 the time argument is interpreted.  A message request enqueued through
@@ -1276,8 +1295,8 @@ requests&horbar;for example, if you need to be able to reschedule or
 to remove a request&horbar;you should use the following C
 functions:</para>
 
-<itemizedlist>
-<listitem><para> <emphasis role="bold">MKNewMsgRequest(double
+	  <itemizedlist>
+	    <listitem><para><emphasis role="bold">MKNewMsgRequest(double
 </emphasis><emphasis>time</emphasis>,<emphasis role="bold"> SEL
 </emphasis><emphasis>selector</emphasis>,<emphasis role="bold"> id
 </emphasis><emphasis>receiver</emphasis>,<emphasis role="bold"> int
@@ -1288,7 +1307,7 @@ different order, to those of the <emphasis
 role="bold">sel:to:atTime:argCount:</emphasis> method.</para>
 </listitem>
 
-<listitem><para> <emphasis
+	    <listitem><para><emphasis
 role="bold">MKScheduleMsgRequest(MKMsgStruct
 </emphasis>*<emphasis>aMsgStructPtr</emphasis>,<emphasis role="bold">
 id </emphasis><emphasis>conductor</emphasis><emphasis
@@ -1298,7 +1317,7 @@ through <emphasis role="bold">MKNewMsgRequest()</emphasis>, in
 <emphasis>conductor</emphasis>'s message request queue.</para>
 </listitem>
 
-<listitem><para> <emphasis
+	    <listitem><para><emphasis
 role="bold">MKRepositionMsgRequest(MKMsgStruct
 </emphasis>*<emphasis>aMsgStructPtr</emphasis>, <emphasis
 role="bold">double </emphasis><emphasis>time</emphasis><emphasis
@@ -1307,15 +1326,15 @@ role="bold">)</emphasis> repositions a message request within a
 <emphasis>time</emphasis> argument is absolute: It indicates the
 request's new position as the number of beats since the beginning of
 the performance.</para>
-</listitem>
+	    </listitem>
 
-<listitem><para> <emphasis role="bold">MKCancelMsgRequest(MKMsgStruct
+	    <listitem><para> <emphasis role="bold">MKCancelMsgRequest(MKMsgStruct
 </emphasis>*<emphasis>aMsgStructPtr</emphasis><emphasis
 role="bold">)</emphasis> removes a message request.</para>
-</listitem>
-</itemizedlist>
+	    </listitem>
+	  </itemizedlist>
 
-<para>The <classname>MKConductor</classname> class provides two
+	  <para>The <classname>MKConductor</classname> class provides two
 special message request queues, one that contains messages that are
 sent at the beginning of a performance and another for messages that
 are sent after a performance ends.  The class methods <emphasis
@@ -1324,10 +1343,11 @@ role="bold">afterPerformanceSel:to:argCount:</emphasis> enqueue
 message requests in the before- and after-performance queues,
 respectively.</para>
 
-<sectx id="">
-<title>Controlling a Performance</title>
+      </sect3>
+      <sect3 id="ControllingAPerformance">
+	<title>Controlling a Performance</title>
 
-<para>As previously mentioned, a MusicKit performance starts when the
+	<para>As previously mentioned, a MusicKit performance starts when the
 <classname>MKConductor</classname> class receives the <emphasis
 role="bold">startPerformance</emphasis> message.  This starts the
 <classname>MKConductor</classname>'s clock ticking (as represented by
@@ -1346,7 +1366,7 @@ you invoke <emphasis role="bold">startPerformance</emphasis>:</para>
 [MKConductor startPerformance];
 </programlisting>
 
-<para>When it receives <emphasis
+	<para>When it receives <emphasis
 role="bold">startPerformance</emphasis>, the
 <classname>MKConductor</classname> class sends the messages in its
 before-performance queue and then the
@@ -1388,7 +1408,9 @@ method.  Individual <classname>MKConductor</classname> objects can be
 paused and resumed through the <emphasis role="bold">pause</emphasis>
 and <emphasis role="bold">resume</emphasis> methods.</para>
 
-<sectX id=""> <title>Setting the Tempo</title>
+      </sect3>
+      <sect3 id="SettingTheTempo">
+	<title>Setting the Tempo</title>
 
 <para>The <classname>MKConductor</classname> supports two alternative
 protocols for tempo-management.  The simpler of the two is called the
@@ -1399,26 +1421,28 @@ delegate implements <emphasis role="bold">beatToClock:from:</emphasis>
 and <emphasis role="bold">clockToBeat:from:</emphasis> then the Time
 Map Protocol is used.  Otherwise, the Tempo Protocol is used.</para>
 
-<sectX id=""> <title>Tempo Protocol</title>
+      </sect3>
+      <sect3 id="TempoProtocol"> 
+	<title>Tempo Protocol</title>
 
-<para>With this protocol, a <classname>MKConductor</classname>'s tempo
+	<para>With this protocol, a <classname>MKConductor</classname>'s tempo
 controls the rate with which it processes the requests in its message
 request queue.  Two methods are provided for setting a
 <classname>MKConductor</classname> object's tempo:</para>
 
-<itemizedlist>
-<listitem><para> <emphasis role="bold">setTempo:</emphasis>, which
+	<itemizedlist>
+	  <listitem><para><emphasis role="bold">setTempo:</emphasis>, which
 takes a <emphasis role="bold">double</emphasis> argument, sets the
 tempo in beats-per-minute.</para>
-</listitem>
+	  </listitem>
 
-<listitem><para> <emphasis role="bold">setBeatSize:</emphasis> also
+	  <listitem><para> <emphasis role="bold">setBeatSize:</emphasis> also
 takes a <emphasis role="bold">double</emphasis>, but it sets the tempo
 by defining the duration, in seconds, of a single beat.</para>
-</listitem>
-</itemizedlist>
+	  </listitem>
+	</itemizedlist>
 
-<para>Regardless of which method you use to set the tempo, the values
+	<para>Regardless of which method you use to set the tempo, the values
 returned by the retrieval methods <emphasis
 role="bold">tempo</emphasis> and <emphasis
 role="bold">beatSize</emphasis> are computed appropriately, as shown
@@ -1441,7 +1465,9 @@ multiple simultaneous tempi, you need to create more than one
 <classname>MKConductor</classname>'s tempo is initialized to 60.0
 beats per minute.</para>
 
-<sectX id=""> <title>Time Map Protocol</title>
+      </sect3>
+      <sect3 id="TimeMapProtocol">
+	<title>Time Map Protocol</title>
 
 <para>While the Tempo Protocol is fine for simply adding a tempo
 slider to a performance, you are better off using the Time Map
@@ -1455,13 +1481,13 @@ as performed by the conductor, after he has made any tempo
 modifications.)  A few examples will help clarify this:</para>
 
 <programlisting>
-f(t) = t /* steady tempo of 60 bpm. */
-f(t) = 2 * t /* steady tempo of 30 bpm.</para>
-f(t) = 0.5 * t /* steady tempo of 120 bpm.</para>
-f(t) = t ^ 2 /* tempo that continually slows down</para>
-f(t) = t ^ 0.5 /* tempo that continually speeds up</para>
-f(t) = t + sin(t) * .01 /* tempo that cyclically speeds up
-and slows down</para>
+f(t) = t                 /* steady tempo of 60 bpm. */
+f(t) = 2 * t             /* steady tempo of 30 bpm. */
+f(t) = 0.5 * t           /* steady tempo of 120 bpm. */
+f(t) = t ^ 2             /* tempo that continually slows down. */
+f(t) = t ^ 0.5           /* tempo that continually speeds up. */
+f(t) = t + sin(t) * .01  /* tempo that cyclically speeds up and slows down. */
+</programlisting>
 
 <para>For more information on Time Maps see the following
 reference:</para>
@@ -1474,8 +1500,9 @@ A. Jaffe.</para>
 <para>To implement the Time Map Protocol (an informal protocol), the
 delegate must implement two methods:</para>
 
-<itemizedlist>
-<listitem><para> <emphasis role="bold">beatToClock:from:</emphasis>
+	<itemizedlist>
+	  <listitem><para>
+<emphasis role="bold">beatToClock:from:</emphasis>
 takes two arguments.  The first is a <emphasis
 role="bold">double</emphasis> that represents the current beat number.
 The second argument is the <classname>MKConductor</classname> that
@@ -1483,40 +1510,40 @@ sends the message.  This delegate's implementation should return the
 corresponding "clock time", the time after the tempo adjustments have
 been made.  In other words, this method implements the time
 map.</para>
-<listitem>
+	  </listitem>
 
-<listitem><para> <emphasis role="bold">clockToBeat:from:</emphasis> is
+	  <listitem><para> <emphasis role="bold">clockToBeat:from:</emphasis> is
 the opposite of <emphasis role="bold">beatToClock:from:</emphasis>.
 It maps a "clock time" value to a beat number.  In other words, this
 method implements the inverse time map.</para>
-</listitem>
-</itemizedlist>
+	  </listitem>
+	</itemizedlist>
 
 <para>There are a number of restrictions these methods must
 follow:</para>
 
-<orderedlist>
-<listitem><para>It is essential that these two methods are complementary.  In
+	<orderedlist>
+	  <listitem><para>It is essential that these two methods are complementary.  In
 particular, the following must be true:</para>
 
 <programlisting>
 t == [delegate beatToClock: [delegate clockToBeat: t from:aCond] from: aCond]
 </programlisting>
-</listitem>
+	  </listitem>
 
-<listitem><para>Neither method should cause time to go backwards.  That is,
+	  <listitem><para>Neither method should cause time to go backwards.  That is,
 if t1 is less than t2, then [delegate beatToClock:t1 from:aCond] must
 be less than [delegate beatToClock:t2 from:aCond].  The same applies
 to <emphasis role="bold">clockToBeat:</emphasis>.  In other words,
 both functions must be monotonically increasing.</para>
-</listitem>
+	  </listitem>
 
-<listitem><para>These methods must not change over the course of a
+	  <listitem><para>These methods must not change over the course of a
 performance.  For example, if the message [delegate beatToClock: 3. 1
 from:aCond] returns 2.8, it must always return 2.8, whether invoked at
 the start, middle or end of the performance.</para>
-</listitem>
-</orderedlist>
+	  </listitem>
+	</orderedlist>
 
 <para>Note that while the Time Map Protocol makes tempo maps possible,
 it is up to the application to apply such a map.  For example, when a
@@ -1527,7 +1554,9 @@ application.</para>
 
 <para>cf.  [MKScore setMidifilesEvaluateTempo:].</para>
 
-<sectX id=""> <title>Locking the Performance</title>
+      </sect3>
+      <sect3 id="LockingThePerformance">
+	<title>Locking the Performance</title>
 
 <para>Every <classname>MKConductor</classname> instance has a notion
 of the current time, measured in beats.  This notion is updated by the
@@ -1552,10 +1581,11 @@ role="bold"></emphasis> requested through a
 <classname>MKConductor</classname>'s messge request queue shouldn't be
 bracketed by these methods.)</para>
 
-<sectX id=""> <title><classname>MKConductor</classname>s and
-<classname>MKNote</classname>s</title>
+      </sect3>
+      <sect3 id="MKConductorsAndMKNotes">
+	<title><classname>MKConductor</classname>s and <classname>MKNote</classname>s</title>
 
-<para>Every <classname>MKNote</classname> is associated with a
+	<para>Every <classname>MKNote</classname> is associated with a
 <classname>MKConductor</classname> object.  A
 <classname>MKNote</classname>'s <classname>MKConductor</classname> is
 determined as follows: If the <classname>MKNote</classname> is being
@@ -1600,18 +1630,19 @@ the beginning of the performance, while the latter measures the
 <emphasis role="bold">withDelay:</emphasis> argument as some number of
 beats from the time that it's invoked.</para>
 
-<sectx id="">
-<title><classname>MKConductor</classname>s and <classname>MKEnvelope</classname>s</title>
+      </sect3>
+      <sect3 id="MKConductorsAndMKEnvelopes">
+	<title><classname>MKConductor</classname>s and <classname>MKEnvelope</classname>s</title>
 
-<para>The relationship between an <classname>MKEnvelope</classname> and a
-<classname>MKConductor</classname> is as important as it is unique:
-The dispatching of an <classname>MKEnvelope</classname>'s breakpoints during DSP synthesis is
-always done through message requests with the clockConductor.  You
-don't have to do anything to obtain this behavior, it happens
-automatically through <emphasis
+<para>The relationship between an <classname>MKEnvelope</classname>
+and a <classname>MKConductor</classname> is as important as it is
+unique: The dispatching of an <classname>MKEnvelope</classname>'s
+breakpoints during DSP synthesis is always done through message
+requests with the clockConductor.  You don't have to do anything to
+obtain this behavior, it happens automatically through <emphasis
 role="bold">MKUpdateAsymp()</emphasis>, the function that you use in
-the design of a <classname>MKSynthPatch</classname> subclass to apply an <classname>MKEnvelope</classname> to a
-synthesis patch.</para>
+the design of a <classname>MKSynthPatch</classname> subclass to apply
+an <classname>MKEnvelope</classname> to a synthesis patch.</para>
 
 <para>This association is particularly important not for the
 particular <classname>MKConductor</classname> with which the
@@ -1633,8 +1664,9 @@ freeze as well.  This usually isn't pleasant.</para>
 role="bold">pause</emphasis> method, rather than pause the entire
 performance.</para>
 
-<sectx id="">
-<title>Synchronizing a Performance to MIDI Time Code</title>
+      </sect3>
+      <sect3 id="SynchronizingToMIDITimeCode">
+	<title>Synchronizing a Performance to MIDI Time Code</title>
 
 <para>A <classname>MKConductor</classname> object can be made to
 synchronize to MIDI time code.  For further information, see the
@@ -1643,7 +1675,8 @@ class descriptions, as well as the file</para>
 
 <para><emphasis role="bold">
 /Local/Library/Documentation/MusicKit/Concepts/SpecialTopics/MIDITimeCode.rtf</emphasis></para>
-
+      </sect3>
+    </sect2>
   </sect1>
   <sect1 id="MKPerformerClass">
     <title>The <classname>MKPerformer</classname> Class</title>
@@ -1669,18 +1702,19 @@ correspond to a unique sources of <classname>MKNote</classname>s.  The
 MusicKit includes subclasses that read <classname>MKNote</classname>s
 from a <classname>MKPart</classname>
 (<classname>MKPartPerformer</classname>) or a scorefile
-(<classname>MKScorefilePerformer</classname>)&horbar;the latter actually inherits from the
-MKFilePerformer class, a subclass of
+(<classname>MKScorefilePerformer</classname>)&horbar;the latter
+actually inherits from the MKFilePerformer class, a subclass of
 <classname>MKPerformer</classname> that defines methods for managing
 files.  The MusicKit also includes
 pseudo-<classname>MKPerformer</classname>s that fashion
 <classname>MKNote</classname>s from MIDI input
 (<classname>MKMidi</classname>), and that read
-<classname>MKNote</classname>s from a <classname>MKScore</classname> (<classname>MKScorePerformer, which
-creates a <classname>MKPartPerformer</classname> for each
-<classname>MKPart</classname> in the <classname>MKScore</classname>).  Consult Chapter 2 of
-<emphasis>Reference</emphasis> for further descriptions of these
-classes.</para>
+<classname>MKNote</classname>s from a <classname>MKScore</classname>
+(<classname>MKScorePerformer</classname>, which creates a
+<classname>MKPartPerformer</classname> for each
+<classname>MKPart</classname> in the <classname>MKScore</classname>).
+Consult <xref linkend="ClassReferences"> for further
+descriptions of these classes.</para>
 
 <para>Using a <classname>MKPerformer</classname> object is quite
 simple; creating your own subclass is a bit more complicated and
@@ -1962,14 +1996,13 @@ responsiveness.  Choosing the proper delta time value depends on how
 responsive your application needs to be.  For example, if you are
 driving DSP synthesis from MIDI input, a delta time of as much as 10
 milliseconds (0.01 seconds) is generally acceptable.  If you are
-adjusting <classname>MKNote</classname> parameters by moving a Slider
-with the mouse, a delta time of 100 milliseconds or more can be
-tolerated.  Finding the right delta time for your application is
-largely a matter of experimentation.</para>
+adjusting <classname>MKNote</classname> parameters by moving a
+<classname>NSSlider</classname> with the mouse, a delta time of 100
+milliseconds or more can be tolerated.  Finding the right delta time
+for your application is largely a matter of experimentation.</para>
 
-<para>For further information, see <xref
-linkend="MIDIDSP<classname>MKConductor</classname>WallClock">
-below.</para>
+<para>For further information, see
+<xref linkend="MIDIDSPMKConductorWallClock"> below.</para>
 
     </sect2>
     <sect2 id="SeparateThreadedPerformance">
@@ -1984,32 +2017,33 @@ music to play with greater independence from your application's other
 computations.  However, certain restrictions must be adhered to when
 running a performance in its own thread:</para>
 
-<listitem><para> You can't use <classname>MKScorefileWriter</classname> or
+      <itemizedlist>
+	<listitem><para>You can't use <classname>MKScorefileWriter</classname> or
 <classname>MKScorefilePerformer</classname> objects in the performance.</para>
-</listitem>
+	</listitem>
 
-<listitem><para> You can't invoke an
+	<listitem><para>You can't invoke an
 <classname>MKOrchestra</classname> method that changes the
 <classname>MKOrchestra</classname>'s status; these are <emphasis
 role="bold">open</emphasis>, <emphasis role="bold">run</emphasis>,
 <emphasis role="bold">stop</emphasis>, <emphasis
 role="bold">close</emphasis>, and <emphasis
 role="bold">abort</emphasis>.</para>
-</listitem>
+	</listitem>
 
-<listitem><para> You can't send messages to instances of classes
+	<listitem><para>You can't send messages to instances of classes
 defined by the Application Kit, or to instances of the Sound Kit's
 SoundView and SoundMeter classes.  In addition, you can't read or
 write soundfiles, or play or record sounds through an instance of the
 Sound Kit's Sound class (note, however, that you
 <emphasis>can</emphasis> use the sound library functions).</para>
-</listitem>
+	</listitem>
 
-<listitem><para> You can't call DPS client functions.</para></listitem>
+	<listitem><para>You can't call DPS client functions.</para></listitem>
 
-<listitem><para> You can't call NXStreams functions.</para></listitem>
+	<listitem><para>You can't call NXStreams functions.</para></listitem>
 
-<listitem><para> You can't call C functions that rely on standard
+	<listitem><para>You can't call C functions that rely on standard
 input and output; these are functions such as <emphasis
 role="bold">printf()</emphasis> and <emphasis
 role="bold">scanf()</emphasis>.  Because of this, DSP error logging
@@ -2017,8 +2051,8 @@ and MusicKit tracing can't be used.  In addition, if you need to
 handle MusicKit errors, you must provide your own error handler
 function through <emphasis
 role="bold">MKSetErrorProc()</emphasis>.</para>
-</listitem>
-</itemizedlist>
+	</listitem>
+      </itemizedlist>
 
 <para>These restrictions apply only to that part of your application
 that's running in the performance thread; specifically, messages sent
@@ -2110,7 +2144,7 @@ simultaneous voices may result.</para>
 
 <para>The <classname>MKOrchestra</classname> doesn't know, at the
 beginning of a <classname>MKNote</classname>, if the DSP can execute a
-given set of <classname>MKUnitGenerator</classnames>s quickly enough
+given set of <classname>MKUnitGenerator</classname>s quickly enough
 to produce a steady supply of output samples for the entire duration
 of the <classname>MKNote</classname>.  However, it makes an educated
 estimate and will deny allocation requests that it thinks will
@@ -2131,7 +2165,7 @@ the number of simultaneous voices is decreased.  The default is a
 somewhat conservative 0.1.</para>
       </sect3>
     </sect2>
-    <sect2 id="MIDIDSP<classname>MKConductor</classname>WallClock">
+    <sect2 id="MIDIDSPMKConductorWallClock">
       <title>The Relationships between MIDI, the DSP, the
       <classname>MKConductor</classname> and the Clock on the
       Wall</title>
@@ -2250,7 +2284,7 @@ The makes sure that these stamps are in the
 	<title>Sequencer Overdubbing</title>
 
 <para>To simplify the task of overdubbing,
-<classname><classname>MKPart</classname>Recorder</classname> and
+<classname>MKPartRecorder</classname> and
 <classname>MKFileRecorder</classname> provide a method that makes sure
 that recorded time tags match wall time:</para>
 
