@@ -17,6 +17,9 @@
 #Modification history:
 #
 #  $Log$
+#  Revision 1.2  2001/05/12 08:41:27  sbrandon
+#  Added SndFormats.h from other frameworks
+#
 #  Revision 1.1  2001/04/21 21:57:45  sbrandon
 #  First commit of makefile for GNUstep systems. Note that you need a very recent
 #  version of GNUstep (I use the CVS version) in order to get support for frameworks.
@@ -27,7 +30,7 @@
 #
 
 
-# Install into the system root by default
+# Install into the local root by default
 GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
 
 GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
@@ -62,7 +65,7 @@ MKPerformSndMIDI_C_FILES = PerformMIDI.c PerformSound.c
 # The framework installed header files
 MKPerformSndMIDI_HEADER_FILES = PerformSound.h PerformMIDI.h \
          mididriver_types.h PerformSoundPrivate.h sounderror.h\
-         soundstruct.h mididriverUser.h
+         SndStruct.h mididriverUser.h SndFormats.h
 
 
 SRCS = $(LIBRARY_NAME:=.m)
