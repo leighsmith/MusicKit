@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2000/04/03 23:45:42  leigh
+  Added description method
+
   Revision 1.11  2000/03/31 00:09:31  leigh
   Adopted OpenStep naming of factory methods
 
@@ -1485,22 +1488,40 @@ static BOOL isUnarchiving = NO;
     return self;
 }
 
-//- awake
+#if 0
+- awake
   /* Maps noteTags as represented in the archive file onto a set that is
      unused in the current application. This insures that the integrity
      of the noteTag is maintained. */
-//{
+{
 /*    id tagTable; */
-//#warning DONE ArchiverConversion: put the contents of your 'awake' method at the end of your 'initWithCoder:' method instead
-//    [super awake];
+#warning DONE ArchiverConversion: put the contents of your 'awake' method at the end of your 'initWithCoder:' method instead
+    [super awake];
 /*
     tagTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
     [parts makeObjectsPerformSelector:@selector(_mapTags:) withObject:tagTable];
     [tagTable release];
     isUnarchiving = NO;
  */
-//    return self;
-//}
+    return self;
+}
+#endif
+
+- (NSString *) description
+{
+    int i;
+    NSMutableString *scoreDescription = [[NSMutableString alloc] initWithString: @"MKScore containing MKParts:\n"];
+    NSMutableArray *partList = [self parts];
+    MKPart *aPart;
+
+    for(i = 0; i < [partList count]; i++) {
+        aPart = [partList objectAtIndex: i];
+        [scoreDescription appendString: [aPart description]];
+    }
+    [scoreDescription appendFormat: @"With MKScore info note:\n%@", [[self infoNote] description]];
+
+    return scoreDescription;
+}
 
 @end
 
