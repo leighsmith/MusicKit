@@ -76,7 +76,8 @@ enum {
 @class SndStreamClient
 @abstract A stream client is responsible for audio streaming, signal processing and synthesis.
 @discussion A SndStreamClient provides basic streaming services such as double buffering, thread handling,
-automatic start up and and shut down of lower-level streaming services. Each SndStreamClient instance has a SndAudioProcessorChain instance, so each client can be part of a signal processing chain.
+automatic start up and and shut down of lower-level streaming services. 
+Each SndStreamClient instance has a SndAudioProcessorChain instance, so each client can be part of a signal processing chain.
 */
 @interface SndStreamClient : NSObject
 {
@@ -102,16 +103,20 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
     BOOL       needsInput;
     /*! @var generatesOutput Indicates this client generates audio output data, retrieved from this client using - */
     BOOL       generatesOutput;
-    /*! @var processorChain */
+    /*! @var processorChain A chain of SndAudioProcessors processing this stream clients output. */
     SndAudioProcessorChain *processorChain;
     /*! @var manager */
     SndStreamManager *manager;
     /*! @var delegate; */
     id         delegate;    
-    /*! @var clientNowTime */
+    /*! @var clientNowTime The clients sense of time as used by subclasses for synthesis. */
     double     clientNowTime;
+    /*! @var lastManagerTime The last time received from the calling SndStreamManager.
+	When streaming to non-interleaved buffers time does not monotonically advance. We check that using this.
+     */
+    double     lastManagerTime;
     
-    /*! @var clientName */
+    /*! @var clientName The descriptive name of the client. */
     NSString  *clientName;
     
 @private
@@ -127,18 +132,11 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
 
 /*!
     @method   streamClient
-    @abstract   Factory method
-    @discussion Creates and initializes an SndStreamObject
-    @result     An autoreleased SndStreamClient object
+    @abstract Factory method to creates and initializes an autoreleased SndStreamClient instance.
+    @result   An autoreleased SndStreamClient object.
 */
 + streamClient;
 
-/*!
-    @method     dealloc 
-    @abstract   Destructor
-    @discussion Releases SndAudioBuffers, NSLocks, and SndStreamManager
-*/
-- (void) dealloc;
 /*!
     @method     freeBufferMem 
     @abstract   Frees buffer memory
@@ -152,7 +150,7 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
     @discussion Describes SndStreamClient 
     @result     Returns an NSString describing the SndStreamClient.
 */
-- (NSString*) description;
+- (NSString *) description;
 
 /*!
     @method     welcomeClientWithBuffer:manager:
@@ -183,7 +181,7 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
     @param      t The current now time.
     @result     Returns self.
 */
-- startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) t;
+- startProcessingNextBufferWithInput: (SndAudioBuffer *) inB nowTime: (double) t;
 
 /*!
   @method     preemptQueuedStream
@@ -208,7 +206,7 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
     @discussion Don't store the object returned, as the output buffer swaps to the synthesis buffer each processing cycle.
     @result     Returns the output buffer as a SndAudioBuffer instance.
 */
-- (SndAudioBuffer*) outputBuffer;
+- (SndAudioBuffer *) outputBuffer;
 
 /*!
     @method     synthOutputBuffer
@@ -216,7 +214,7 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
     @discussion This is typically used internally in a SndStreamClient subclass to retrieve the current buffer to be processed.
     @result     Returns the buffer to be synthesized as a SndAudioBuffer instance.
 */
-- (SndAudioBuffer*) synthOutputBuffer;
+- (SndAudioBuffer *) synthOutputBuffer;
 
 /*!
     @method     synthInputBuffer
@@ -224,7 +222,7 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
     @discussion 
     @result     Returns the input buffer member
 */
-- (SndAudioBuffer*) synthInputBuffer;
+- (SndAudioBuffer *) synthInputBuffer;
 
 /*!
     @method   managerIsShuttingDown
@@ -359,10 +357,10 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
     @abstract   Sets the SndStreamManager for this client.
     @discussion Should never be called explicitly, it is invoked as part of the 
                 process of a manager welcoming a client into the fray.
-    @param      m
+    @param      m The new SndStreamManager instance.
     @result     Returns self.
 */
-- setManager: (SndStreamManager*) m;
+- setManager: (SndStreamManager *) m;
 
 /*!
     @method   lockOutputBuffer
@@ -379,6 +377,7 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
     @result     Returns self.
 */
 - unlockOutputBuffer;
+
 /*!
     @method   prepareToStreamWithBuffer: 
     @abstract   Prepare to stream with buffers that look like the supplied buffer.
@@ -387,7 +386,7 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
     @param      buff
     @result     Returns self.
 */
-- prepareToStreamWithBuffer: (SndAudioBuffer*) buff;
+- prepareToStreamWithBuffer: (SndAudioBuffer *) buff;
 
 /*!
     @method     didFinishStreaming
@@ -404,7 +403,7 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
     @discussion
     @result     Reference to the data member audioProcessorChain
 */
-- (SndAudioProcessorChain*) audioProcessorChain;
+- (SndAudioProcessorChain *) audioProcessorChain;
 
 /*!
     @method   setDelegate:
@@ -449,7 +448,6 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
 */
 - (BOOL) setOutputBufferCount: (int) n;
 
-
 /*!
     @method    outputLatencyInSeconds
     @abstract  Calculates the stream latency of the client 
@@ -471,7 +469,7 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
     @abstract  Accessor to the client name 
     @result    Returns the NSString with the client's name.
 */
-- (NSString*) clientName;
+- (NSString *) clientName;
 
 /*!
     @method    setClientName:
@@ -481,7 +479,7 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
                 warning and error messages will display the name of the client reporting the error.
     @result    Returns self.
 */
-- setClientName: (NSString*) name;
+- setClientName: (NSString *) name;
 
 /*!
   @method offlineProcessBuffer:nowTime:
@@ -489,7 +487,7 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
   @param anAudioBuffer the audio buffer to process
   @param t nowTime
  */
-- offlineProcessBuffer: (SndAudioBuffer*) anAudioBuffer nowTime: (double) t;
+- offlineProcessBuffer: (SndAudioBuffer *) anAudioBuffer nowTime: (double) t;
 
 @end
 

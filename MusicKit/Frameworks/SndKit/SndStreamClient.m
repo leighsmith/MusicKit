@@ -42,6 +42,8 @@
 #import "SndAudioBufferQueue.h"
 
 #define SNDSTREAMCLIENT_DEBUG 0
+// This works ok on 667Mhz G4 processors. Slower hardware should require more. YMMV. 
+#define DEFAULT_NUMBER_OF_BUFFERS 8
 
 enum {
     SC_noData,
@@ -56,7 +58,7 @@ enum {
 
 + streamClient
 {
-    return [SndStreamClient new];
+    return [[[SndStreamClient alloc] init] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,37 +67,42 @@ enum {
 
 - init
 {
+    // TODO is this even necessary anymore?
+#if 1
     Snd *s = [Snd new];
     [s release];
-
-    [super init];
-
-    // Modern audio hardware can have quite small buffers (i.e 4096 bytes), yet we want to do
-    // increasingly more complex processing, so we settle for many small buffers, given we now have a preemption
-    // mechanism.
-    outputQueue = [[SndAudioBufferQueue audioBufferQueueWithLength: 8] retain];
-    inputQueue  = [[SndAudioBufferQueue audioBufferQueueWithLength: 8] retain];
-
-    if (synthThreadLock == nil) {
-      synthThreadLock = [[NSConditionLock alloc] init];
+#endif
+    
+    self = [super init];
+    if(self != nil) {
+	// Modern audio hardware can have quite small buffers (i.e 4096 bytes), yet we want to do
+	// increasingly more complex processing, so we settle for many small buffers, given we now have a preemption
+	// mechanism.
+	outputQueue = [[SndAudioBufferQueue audioBufferQueueWithLength: DEFAULT_NUMBER_OF_BUFFERS] retain];
+	inputQueue  = [[SndAudioBufferQueue audioBufferQueueWithLength: DEFAULT_NUMBER_OF_BUFFERS] retain];
+	
+	if (synthThreadLock == nil) {
+	    synthThreadLock = [[NSConditionLock alloc] init];
+	}
+	if (outputBufferLock == nil) {
+	    outputBufferLock = [[NSConditionLock alloc] initWithCondition: OB_notInit];
+	}
+	if (processorChain == nil)
+	    processorChain = [[SndAudioProcessorChain audioProcessorChain] retain];
+	
+	exposedOutputBuffer     = nil;
+	synthOutputBuffer       = nil;
+	active                  = FALSE;
+	needsInput              = FALSE;
+	generatesOutput         = TRUE;
+	manager                 = nil;
+	clientName              = nil;
+	lastManagerTime         = -1.0; // So the first received manager time is always the same.
+	
+	delegateRespondsToDidProcessBufferSelector = FALSE;
+	delegateRespondsToOutputBufferSkipSelector = FALSE;
+	delegateRespondsToInputBufferSkipSelector  = FALSE;	
     }
-    if (outputBufferLock == nil) {
-      outputBufferLock = [[NSConditionLock alloc] initWithCondition: OB_notInit];
-    }
-    if (processorChain == nil)
-      processorChain = [[SndAudioProcessorChain audioProcessorChain] retain];
-      
-    exposedOutputBuffer     = nil;
-    synthOutputBuffer       = nil;
-    active                  = FALSE;
-    needsInput              = FALSE;
-    generatesOutput         = TRUE;
-    manager                 = nil;
-    clientName              = nil; 
-
-    delegateRespondsToDidProcessBufferSelector = FALSE;
-    delegateRespondsToOutputBufferSkipSelector = FALSE;
-    delegateRespondsToInputBufferSkipSelector  = FALSE;
 
     return self;
 }
@@ -104,17 +111,17 @@ enum {
 // clientName
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) clientName
+- (NSString *) clientName
 {
-  return clientName;
+    return clientName;
 }
 
-- setClientName: (NSString*) name
+- setClientName: (NSString *) name
 {
-  if (clientName != nil)
-    [clientName release];
-  clientName = [name retain];
-  return self;
+    if (clientName != nil)
+	[clientName release];
+    clientName = [name retain];
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -169,20 +176,18 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @freeBufferMem
+// freeBufferMem
 ////////////////////////////////////////////////////////////////////////////////
 
 - freeBufferMem
 {
     [outputQueue freeBuffers];
-    if (synthOutputBuffer)
-        [synthOutputBuffer release];
-    synthOutputBuffer   = nil;
+    [synthOutputBuffer release];
+    synthOutputBuffer = nil;
 
     [inputQueue freeBuffers];
-    if (synthInputBuffer)
-        [synthInputBuffer  release];
-    synthInputBuffer    = nil;
+    [synthInputBuffer release];
+    synthInputBuffer = nil;
             
     return self;
 }
@@ -196,7 +201,7 @@ enum {
     if (!active)
         needsInput = b;
     else
-        NSLog(@"SndStreamClient::setNeedsInput - Warn: Can't change needsInput whilst streaming!");
+        NSLog(@"SndStreamClient -setNeedsInput: Can't change needsInput whilst streaming!");
     return self;
 }
 
@@ -205,17 +210,17 @@ enum {
     if (!active)
         generatesOutput = b;
     else
-        NSLog(@"SndStreamClient::setGeneratesOutput - Warn: Can't change generatesOutput whilst streaming!");
+        NSLog(@"SndStreamClient -:setGeneratesOutput: Can't change generatesOutput whilst streaming!");
   return self; 
 }
 
-- setManager: (SndStreamManager*) m
+- setManager: (SndStreamManager *) m
 {
     if (!active) {
         manager = m;
     }
     else
-        NSLog(@"SndStreamClient::setManager - Warn: Can't setManager whilst streaming!");
+        NSLog(@"SndStreamClient -setManager: Can't setManager whilst streaming!");
     return self;
 }
 
@@ -253,32 +258,32 @@ enum {
 - (double) streamTime
 {
     if (manager == nil) {
-      NSLog(@"SndStreamClient::streamTime - ERROR: Trying to access manager when not connected (nil)\n");
-      return 0.0;
+	NSLog(@"SndStreamClient -streamTime: Trying to access manager when not connected (nil)\n");
+	return 0.0;
     }
     else
-      return [manager nowTime];
+	return [manager nowTime];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // manager
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndStreamManager*) manager
+- (SndStreamManager *) manager
 {
     if (manager == nil) {
-      NSLog(@"SndStreamClient::manager - WARNING: Trying to access manager when not connected (nil)\n");
-      return nil;
+	NSLog(@"SndStreamClient -manager: Trying to access manager when not connected (nil)\n");
+	return nil;
     }
     else
-      return [[manager retain] autorelease];
+	return [[manager retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // welcomeClientWithBuffer:manager:
 ////////////////////////////////////////////////////////////////////////////////
 
-- welcomeClientWithBuffer: (SndAudioBuffer*) buff manager: (SndStreamManager*) m
+- welcomeClientWithBuffer: (SndAudioBuffer *) buff manager: (SndStreamManager *) m
 {
     // The client shouldn't be active when we are welcoming it with a new manager.
     if(!active) {
@@ -303,20 +308,21 @@ enum {
         return self;
     }
     else {
-        NSLog(@"SndStreamClient::welcomeClientWithBuffer - Warn: Couldn't welcome client with buffer since it's already active!\n");
+        NSLog(@"SndStreamClient -welcomeClientWithBuffer: Couldn't welcome client with buffer since it's already active!\n");
         return nil;
     }
 }
 
-- offlineProcessBuffer: (SndAudioBuffer*) anAudioBuffer nowTime: (double) t
+- offlineProcessBuffer: (SndAudioBuffer *) anAudioBuffer nowTime: (double) t
 {
-  SndAudioBuffer *tempBuffer = synthOutputBuffer;
-  clientNowTime = t;
-  synthOutputBuffer = anAudioBuffer;
-  [self processBuffers];
-  [processorChain processBuffer: anAudioBuffer forTime: clientNowTime];
-  synthOutputBuffer = tempBuffer;
-  return self;
+    SndAudioBuffer *tempBuffer = synthOutputBuffer;
+    
+    clientNowTime = t;
+    synthOutputBuffer = anAudioBuffer;
+    [self processBuffers];
+    [processorChain processBuffer: anAudioBuffer forTime: clientNowTime];
+    synthOutputBuffer = tempBuffer;
+    return self;
 }
 
 // Retire exposedOutputBuffer to the pending section of the queue, expose the next processed buffer.
@@ -373,7 +379,7 @@ enum {
 
 ////////////////////////////////////////////////////////////////////////////////
 // startProcessingNextBufferWithInput:
-// Swap the synth and output buffers, fire off next round of synthing.  
+// Swap the synth and output buffers, fire off next round of synthesis (in subclasses).  
 //
 // If input isn't needed, just ignore it (eg, if this isn't an FX unit).
 //
@@ -381,7 +387,7 @@ enum {
 // possibly behind-the-synthesis-time-front manager.
 ////////////////////////////////////////////////////////////////////////////////
 
-- startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) t
+- startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) managerTime
 {
     int processedInputBuffersCount = 0, processedOutputBuffersCount = 0;
 
@@ -389,36 +395,40 @@ enum {
     if (generatesOutput) {
         processedOutputBuffersCount = [outputQueue processedBuffersCount];
 #if SNDSTREAMCLIENT_DEBUG
-	NSLog(@"[%@] time: %3.3f outputQueue %@\n", clientName, t, outputQueue);
+	NSLog(@"[%@] time: %3.3f outputQueue %@\n", clientName, managerTime, outputQueue);
 #endif
 
 	if (processedOutputBuffersCount > 0) {
 	    // Retire exposedOutputBuffer to the pending section of the queue, expose the next
-	    // processed buffer to retrieval (using the method outputBuffer).
+	    // processed buffer to retrieval (using the method -outputBuffer).
+#if SNDSTREAMCLIENT_DEBUG
+	    NSLog(@"Rotating output buffer lastManagerTime %lf managerTime %lf\n", lastManagerTime, managerTime);
+#endif
 	    [self lockOutputBuffer];
 	    [self rotateOutputBuffer];
 	    [self unlockOutputBuffer];
 	}
 	else if (delegateRespondsToOutputBufferSkipSelector) {
 #if SNDSTREAMCLIENT_DEBUG
-	    NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked? delegating\n", clientName);
+	    NSLog(@"[%@] -startProcessingNextBuffer - Error: Skipped output buffer - CPU choked? delegating\n", clientName);
 #endif
 	    [delegate outputBufferSkipped: self];
 	}
 	else if (active) {
 #if SNDSTREAMCLIENT_DEBUG
-	    NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked?\n", clientName);
+	    NSLog(@"[%@] -startProcessingNextBuffer - Error: Skipped output buffer - CPU choked?\n", clientName);
 #endif
 	}
+	lastManagerTime = managerTime;
     }
 
 #if SNDSTREAMCLIENT_DEBUG                  
-    NSLog(@"startProcessingNextBufferWithInput nowTime = %f\n", t);
+    NSLog(@"startProcessingNextBufferWithInput nowTime = %f\n", managerTime);
 #endif
     // If this client processes received input audio, copy the newly received audio buffer into the exposed buffer of the input queue.
     if (needsInput) {
 	if (inB == nil)
-	    NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil yet client needs input!\n", clientName);
+	    NSLog(@"[%@] -startProcessingNextBuffer - Error: inBuffer is nil yet client needs input!\n", clientName);
 	else {
 	    processedInputBuffersCount = [inputQueue processedBuffersCount];
 
@@ -427,6 +437,7 @@ enum {
 		SndAudioBuffer *exposedInputBuffer = [[inputQueue popNextProcessedBuffer] retain];
 
 		// TODO perhaps we could eventually just add the inB into the inputQueue, rather than copying it.
+		// This requires looking at the persistence of inB.
 		[exposedInputBuffer copyDataFromBuffer: inB];
 		// Add the exposed input buffer with the new audio data back into the queue.
 		[inputQueue addPendingBuffer: exposedInputBuffer];
@@ -436,7 +447,7 @@ enum {
 		[delegate inputBufferSkipped: self];
 	    else if (active) {
 #if SNDSTREAMCLIENT_DEBUG
-		NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?", clientName);
+		NSLog(@"[%@] -startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?", clientName);
 #endif
 	    }
 	}
@@ -450,7 +461,7 @@ enum {
 	    [self didFinishStreaming];
 	    bDisconnect = FALSE;
 #if SNDSTREAMCLIENT_DEBUG
-	    NSLog(@"[%@] SndStreamClient: disconnected\n", clientName);
+	    NSLog(@"[%@] disconnected\n", clientName);
 #endif
 	}
     }
