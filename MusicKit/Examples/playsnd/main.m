@@ -193,7 +193,9 @@ int main (int argc, const char * argv[])
 
 //        b1 = clock();
         [s readSoundfile: filename];
-
+#if !USE_SNDEXPT
+        [s convertToFormat: SND_FORMAT_FLOAT];
+#endif
 /*        
         s = [[Snd alloc] initWithFormat: SND_FORMAT_FLOAT
                                channels: 2
