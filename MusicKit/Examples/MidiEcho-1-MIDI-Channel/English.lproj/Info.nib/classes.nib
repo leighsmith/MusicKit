@@ -8,7 +8,7 @@
         }, 
         {
             ACTIONS = {go = id; setDelayFrom = id; setMidiDev = id; showInfoPanel = id; }; 
-            CLASS = MidiEcho; 
+            CLASS = MidiEchoController; 
             LANGUAGE = ObjC; 
             OUTLETS = {infoPanel = NSPanel; }; 
             SUPERCLASS = NSObject; 
