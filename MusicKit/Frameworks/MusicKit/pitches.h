@@ -13,6 +13,10 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/10/15 11:30:56  sbrandon
+  changed import statements to use "" instead of <MusicKit/...> for MusicKit
+  headers
+
   Revision 1.3  2001/07/02 17:52:23  sbrandon
   - commented out cruft after endif
 
@@ -23,8 +27,8 @@ Modification history:
 #ifndef __MK_pitches_H___
 #define __MK_pitches_H___
 
-#import <MusicKit/keynums.h>
-#import <MusicKit/MKTuningSystem.h>
+#import "keynums.h"
+#import "MKTuningSystem.h"
 
 #ifndef PITCHES_H
 #define PITCHES_H
