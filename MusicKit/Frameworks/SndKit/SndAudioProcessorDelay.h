@@ -27,7 +27,7 @@
   @constant dlyFeedback Feedback amount 
   @constant dlyNumParams Number of parameters
 */
-enum {
+enum SndDelayParam {
   dlyLength    = 0, 
   dlyFeedback  = 1,
   dlyNumParams = 2
