@@ -82,9 +82,9 @@
 // stopRecordingWait:disconnectFromStream:
 ////////////////////////////////////////////////////////////////////////////////
 
-- stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream
+- stopRecordingWait: (BOOL) bWaitUntilSaved disconnectFromStream: (BOOL) bDisconnectFromStream
 {
-  [recorder stopRecordingWait: bWait disconnectFromStream: bDisconnectFromStream];
+  [recorder stopRecordingWait: bWaitUntilSaved];
   active = !bDisconnectFromStream;
   return self;
 }
