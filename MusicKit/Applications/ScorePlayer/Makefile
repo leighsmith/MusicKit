@@ -25,7 +25,7 @@ LANGUAGES = English
 
 GLOBAL_RESOURCES = Midi.tiff play.tiff playH.tiff Sound.tiff stop.tiff\
                    ScorePlayerDoc.tiff ScorePlayerDoc2.tiff\
-                   ScorePlayer.strings
+                   ScorePlayerApp.tiff help.rtfd ScorePlayer.strings
 
 CLASSES = Animator.m ErrorLog.m MKAlert.m ScorePlayerController.m
 
@@ -33,13 +33,13 @@ HFILES = Animator.h ErrorLog.h MKAlert.h ScorePlayerController.h
 
 MFILES = ScorePlayer_main.m
 
-OTHERSRCS = help.rtfd Makefile
+OTHERSRCS = Makefile
 
 
 MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles
 CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = app.make
-NEXTSTEP_INSTALLDIR = /Local/Applications
+NEXTSTEP_INSTALLDIR = $(LOCAL_APPLICATIONS_DIR)
 WINDOWS_INSTALLDIR = /LocalApps
 PDO_UNIX_INSTALLDIR = /LocalApps
 LIBS = 
@@ -47,7 +47,8 @@ DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
 
-FRAMEWORK_PATHS = -F/Local/Library/Frameworks
+FRAMEWORK_PATHS = -F$(LOCAL_LIBRARY_DIR)/Frameworks\
+                  -F$(LOCAL_DEVELOPER_DIR)/Frameworks
 FRAMEWORKS = -framework AppKit -framework Foundation -framework MKDSP\
              -framework MKPerformSndMIDI -framework MusicKit
 

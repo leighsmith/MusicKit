@@ -19,7 +19,7 @@
             MKPerformSndMIDI.framework, 
             MusicKit.framework
         ); 
-        FRAMEWORKSEARCH = (/Local/Library/Frameworks); 
+        FRAMEWORKSEARCH = ("$(LOCAL_LIBRARY_DIR)/Frameworks", "$(LOCAL_DEVELOPER_DIR)/Frameworks"); 
         H_FILES = (Animator.h, ErrorLog.h, MKAlert.h, ScorePlayerController.h); 
         IMAGES = (
             Midi.tiff, 
@@ -28,14 +28,15 @@
             Sound.tiff, 
             stop.tiff, 
             ScorePlayerDoc.tiff, 
-            ScorePlayerDoc2.tiff
+            ScorePlayerDoc2.tiff, 
+            ScorePlayerApp.tiff
         ); 
         INTERFACES = (); 
         M_FILES = (); 
         OTHER_LIBS = (); 
         OTHER_LINKED = (ScorePlayer_main.m); 
-        OTHER_RESOURCES = (ScorePlayer.strings); 
-        OTHER_SOURCES = (help.rtfd, Makefile); 
+        OTHER_RESOURCES = (help.rtfd, ScorePlayer.strings); 
+        OTHER_SOURCES = (Makefile); 
         PRECOMPILED_HEADERS = (); 
         PROJECT_HEADERS = (); 
         PSWM_FILES = (); 
@@ -54,7 +55,7 @@
         {Extension = score; Image = ScorePlayerDoc.tiff; }, 
         {Extension = playscore; Image = ScorePlayerDoc2.tiff; }
     ); 
-    NEXTSTEP_INSTALLDIR = /Local/Applications; 
+    NEXTSTEP_INSTALLDIR = "$(LOCAL_APPLICATIONS_DIR)"; 
     NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 
     NEXTSTEP_MAINNIB = ScorePlayer; 
     NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc; 
