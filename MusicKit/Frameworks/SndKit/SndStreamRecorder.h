@@ -5,10 +5,13 @@
 //  Created by skot on Thu Apr 05 2001.
 //  Copyright (c) 2001 __CompanyName__. All rights reserved.
 //
+#ifndef __SNDSTREAMRECORDER_H__
+#define __SNDSTREAMRECORDER_H__
 
 #import <Foundation/Foundation.h>
 
 #import "SndAudioBuffer.h"
+#import "SndStreamClient.h"
 
 @interface SndStreamRecorder : SndStreamClient {
 
@@ -42,3 +45,4 @@
 - didFinishRecording: sender;
 @end
 
+#endif
