@@ -12,53 +12,14 @@
 #  message remains intact and accompanies all derived code.
 
 #  Modification history:
-#
-#  $Log$
-#  Revision 1.8  2003/06/01 17:24:50  leighsmith
-#  Corrected files built per Matt Rice's diffs
-#
-#  Revision 1.7  2002/05/09 11:24:55  sbrandon
-#  Added support for new sox config script (libst-config), available in cvs
-#  of sox, which provides the dynamic libraries that sox was linked against.
-#  This means that end-user binaries no longer have to explicitly link against
-#  these, since SndKit does this by itself. (changes affect GNUstep only)
-#
-#  Revision 1.6  2002/02/01 12:22:17  sbrandon
-#  Tidied path situation for Win32 by using "cygpath" utility to decide which
-#  drive the external libraries would have been installed in. Added libmm as
-#  well for Win32/MinGW. Note the lame and shout headers and libs should be
-#  installed in /usr/local/[include|lib], which usually translates to something
-#  like /cygdrive/d/cygwin/usr/local/lib, aka d:/cygwin/usr/local/lib
-#
-#  Revision 1.5  2002/01/15 16:59:50  sbrandon
-#  tidied up for mingw32/win32
-#
-#  Revision 1.4  2001/11/28 23:35:20  sbrandon
-#  Made SndFunctions.m backward compatible with sox 12.17.2, and newer CVS versions.
-#  If you want to use more recent CVS versions of sox/libst.a, please configure
-#  them with --disable-gsm so that they don't depend on a non-existant library
-#  which will not be imported into your project automatically.
-#
-#  Revision 1.3  2001/11/28 16:00:40  sbrandon
-#  For all platforms, have to include the additional sox library (libgsm.a)
-#  in the makefile. Also removed the dependency on libshould and libmp3lame
-#  for Win32 (haven't got them to work yet)
-#
-#  Revision 1.2  2001/11/27 17:41:02  sbrandon
-#  now do prelinking of libraries on all platforms, so SndKit projects don't
-#  need to know the ins and outs of which libraries are being used. They just
-#  have to say they're using SndKit and it looks after everything.
-#
-#  Revision 1.1  2001/10/31 16:05:45  sbrandon
-#  added some dependencies required for Windows GNUstep compilation
-#
+#    See the CVS repository for the log i.e cvs log GNUmakefile.preamble
 #
 
 # for all platforms, attempt to pre-link to libraries so that individual
 # binaries don't have to.
 
 LIBRARIES_DEPEND_UPON += -lMKPerformSndMIDI \
-                         -lobjc -lst -lvorbis -lvorbisenc -lvorbisfile -logg -lstdc++ -lgsm
+                         -lobjc -lst -lstdc++ -lgsm
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   LIBRARIES_DEPEND_UPON += -lobjc -l$(FOUNDATION_LIBRARY_NAME) -lgnustep-gui \
