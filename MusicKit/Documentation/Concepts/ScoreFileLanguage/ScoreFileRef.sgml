@@ -1,0 +1,916 @@
+<!-- $Id$ -->
+<chapter id="ScoreFileRef">
+<title><productname>ScoreFile</productname> Language Reference</title>
+
+<para><productname>ScoreFile</productname> is a language designed to
+represent, create, and manipulate music data.  The code for a
+<productname>ScoreFile</productname> program is maintained in a file,
+called a <emphasis>scorefile</emphasis>, on the disk.  A scorefile
+represents a <productname>MusicKit</productname>
+<classname>MKScore</classname> object and its contents in
+<acronym>ASCII</acronym> form.  Scorefiles can be created from a text
+editor or generated automatically by a <classname>MKScore</classname>
+or <classname>MKScorefileWriter</classname> object.  A scorefile is
+interpreted when it's read by a <classname>MKScore</classname> object
+or performed by a <classname>MKScorefilePerformer</classname> object.
+</para>
+
+<para>There is also a binary format scorefile.  The binary format is
+more than twice as fast to read as the <acronym>ASCII</acronym> form.
+The utility <command>convertscore</command> converts from one to the
+other.  Binary format scorefiles are called &ldquo;Optimized
+scorefiles&rdquo; and have the <filename>.playscore</filename> file
+extension.</para>
+
+<para>This chapter describes the syntax and conventions of the
+<productname>ScoreFile</productname> language.  The presentation in
+this chapter assumes a familiarity with <xref linkend="MusicData">.  A
+concise outline of <productname>ScoreFile</productname> syntax can be
+found in <xref linkend="ScoreFileSummary">. A comparison to other
+note-list formats is presented in <xref
+linkend="NoteListToScoreFile">.</para>
+
+<sect1 id="ProgramStructure">
+<title>Program Structure</title>
+
+<para>A <productname>ScoreFile</productname> program is divided into
+two sections, the header and the body.  The header always precedes the
+body; the two sections are separated by a <emphasis
+role="bold">BEGIN</emphasis> statement.  The end of the scorefile can
+be marked by an optional <emphasis role="bold">END</emphasis>
+statement:</para>
+
+<programlisting>
+<replaceable>header</replaceable>
+<emphasis role="bold">BEGIN;</emphasis>
+<replaceable>body</replaceable>
+[ <emphasis role="bold">END;</emphasis> ]
+</programlisting>
+
+<para>Either section can be empty.  If the body is empty, the
+<emphasis role="bold">BEGIN</emphasis> statement can be
+omitted.</para>
+
+<para>Both the header and the body are made up of
+<productname>ScoreFile</productname> statements.  The header contains
+statements that establish the context in which the body is
+interpreted.  The following statements can appear only in the
+header:</para>
+
+<itemizedlist>
+<listitem><para>Score info statements</para>
+</listitem>
+<listitem><para><emphasis role="bold">part</emphasis> statements</para>
+</listitem>
+<listitem><para>Part info statements</para>
+</listitem>
+<listitem><para><emphasis role="bold">noteTagRange</emphasis> statements</para>
+</listitem>
+</itemizedlist>
+
+<para>The body consists of a time-ordered series of statements that
+represent <classname>MKNote</classname> objects.  This information is
+found only in the body:</para>
+
+<itemizedlist>
+<listitem><para>Time statements</para>
+</listitem>
+<listitem><para>Note statements</para>
+</listitem>
+</itemizedlist>
+
+<para>A number of other statements can appear in either the header or the body:</para>
+
+<itemizedlist>
+<listitem><para>Variable declarations</para>
+</listitem>
+<listitem><para>Assignment statements</para>
+</listitem>
+<listitem><para><emphasis role="bold">envelope</emphasis> statements</para>
+</listitem>
+<listitem><para><emphasis role="bold">waveTable</emphasis> statements</para>
+</listitem>
+<listitem><para><emphasis role="bold">object</emphasis> statements</para>
+</listitem>
+<listitem><para><emphasis role="bold">include</emphasis> statements</para> 
+</listitem>
+<listitem><para><emphasis role="bold">print</emphasis> statements</para> 
+</listitem>
+<listitem><para><emphasis role="bold">tune</emphasis> statements</para> 
+</listitem>
+<listitem><para><emphasis role="bold">comment</emphasis> and <emphasis role="bold">endComment</emphasis> statements</para>
+</listitem>
+</itemizedlist>
+</sect1>
+<sect1 id="HeaderStatements">
+<title>Header Statements</title>
+
+<sect2 id="ScoreInfoStatements">
+<title>Score Info Statements</title>
+
+<para>A scorefile can have a <classname>MKScore</classname> info
+statement that consists of the keyword <emphasis
+role="bold">info</emphasis> followed by one or more parameters:</para>
+
+<programlisting>
+<emphasis role="bold">info</emphasis> <replaceable>parameter</replaceable>[ <emphasis role="bold">,</emphasis> <replaceable>parameter</replaceable> ] ... <emphasis role="bold">;</emphasis>
+</programlisting>
+
+<para>The Score info statement represents a
+<classname>MKScore</classname> object's info
+<classname>MKNote</classname>; it can contain any amount and type of
+information.  Typically, the <classname>MKScore</classname> info
+statement contains one or more of the following parameters:</para>
+
+	  <table frame=all>
+	    <title><classname>MKScore</classname> info parameters</title>
+	    <tgroup cols=2 colsep=1 rowsep=1>
+	      <colspec colnum=1 align=left>
+	      <colspec colnum=2 align=left>
+	      <thead>
+		<row>
+<entry>Parameter</entry>
+<entry>Meaning</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry>tempo</entry>
+<entry>The tempo that should be used when performing the Score</entry>
+</row>
+<row>
+<entry>samplingRate</entry>
+<entry>The performance sampling rate</entry>
+</row>
+<row>
+<entry>headroom</entry>
+<entry>The <classname>MKOrchestra</classname>'s headroom setting; a value between -1.0 and 1.0</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+
+<para>A scorefile can have more than one
+<classname>MKScore</classname> info statement; if a parameter
+conflicts with a parameter set in a previous <emphasis
+role="bold">info</emphasis> statement, the subsequent setting takes
+precedence.  Parameters are similarly merged if a scorefile is read
+into a <classname>MKScore</classname> object that already has an info
+<classname>MKNote</classname> (a <classname>MKScore</classname> object
+can have only one info <classname>MKNote</classname>).  Parameter
+syntax is described in <xref linkend="NoteStatements">, below.</para>
+
+<para>The parameters in the <emphasis role="bold">info</emphasis>
+statement aren't explicitly used when the scorefile is read by a
+<classname>MKScore</classname> or
+<classname>MKScorefilePerformer</classname>.  It's left to the
+application designer to provide an implementation that acts on the
+<emphasis role="bold">info</emphasis> statement's parameters.</para>
+
+</sect2>
+<sect2 id="PartStatements">
+<title>part Statements</title>
+
+<para>The names of all the <classname>MKPart</classname> objects that
+are represented in a scorefile must be declared in a <emphasis
+role="bold">part</emphasis> statement in the header:</para>
+
+<programlisting>
+<emphasis role="bold">part</emphasis> <replaceable>partName</replaceable> [ <emphasis role="bold">,</emphasis> <replaceable>partName</replaceable> ] ... <emphasis role="bold">;</emphasis></programlisting>
+
+<para>partName is an identifier that must not have been previously
+declared.  A scorefile can contain more than one <emphasis
+role="bold">part</emphasis> statement.  When the scorefile is read by
+an application, a <classname>MKPart</classname> object is created and
+named for each partName in the file's <emphasis
+role="bold">part</emphasis> statements.  If a name conflict results
+from reading a scorefile into a <classname>MKScore</classname>, the
+<classname>MKPart</classname> represented in the scorefile is merged
+into the similarly named <classname>MKPart</classname> in the
+<classname>MKScore</classname>.</para>
+
+</sect2>
+<sect2 id="PartInfoStatements">
+<title>Part Info Statements</title>
+
+<para>Each <classname>MKPart</classname> represented in the scorefile
+can have a <classname>MKPart</classname> info statement that consists
+of the <classname>MKPart</classname>'s <replaceable>partName
+</replaceable>as it appears in the <emphasis role="bold">part</emphasis>
+statement followed by one or more parameters:</para>
+
+<programlisting>
+<replaceable>partName</replaceable> <replaceable>parameter</replaceable> [ <emphasis role="bold">,</emphasis> <replaceable>parameter</replaceable> ] ... <emphasis role="bold">;</emphasis>
+</programlisting>
+
+<para>The <classname>MKPart</classname> info statement represents a
+<classname>MKPart</classname> object's info
+<classname>MKNote</classname>; it can contain any amount and type of
+information.  The following parameters are typically used in a part
+info statement:</para>
+
+	  <table frame=all>
+	    <title><classname>MKScore</classname> info parameters</title>
+	    <tgroup cols=2 colsep=1 rowsep=1>
+	      <colspec colnum=1 align=left>
+	      <colspec colnum=2 align=left>
+	      <thead>
+		<row>
+<entry>Parameter</entry>
+<entry>Meaning</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry>synthPatch</entry>
+<entry>The name of the <classname>MKSynthPatch</classname> class used to realize the <classname>MKPart</classname></entry>
+</row>
+<row>
+<entry>synthPatchCount</entry>
+<entry>The number of manually allocated <classname>MKSynthPatch</classname> objects</entry>
+</row>
+<row>
+<entry>midiChan</entry>
+<entry>The <acronym>MIDI</acronym> channel on which the <classname>MKPart</classname> appears</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+
+<para>Each <classname>MKPart</classname> represented in a scorefile
+can have only one <classname>MKPart</classname> info statement.  Like
+the scorefile's <emphasis role="bold">info</emphasis> statement,
+interpretation and use of a <classname>MKPart</classname> info's
+parameters is left to the application designer.</para>
+
+<sect3 id="NoteTagRangeStatement">
+<title>noteTagRange Statement</title>
+
+<para>The <emphasis role="bold">noteTagRange</emphasis> statement
+declares the range of noteTags used in the body of the
+scorefile:</para>
+
+<programlisting>
+<emphasis role="bold">noteTagRange</emphasis> <replaceable>anInteger</replaceable> <emphasis role="bold">to</emphasis> <replaceable>aHigherInteger</replaceable> <emphasis role="bold">;</emphasis>
+</programlisting>
+
+<para>This is an optional statement that optimizes the noteTag
+renumbering that occurs when you mix two or more scorefiles together
+or when you merge a scorefile into an existing
+<classname>MKScore</classname> object.</para>
+
+<para>It isn't an error to use a tag that's outside the range
+specified by a <emphasis role="bold">noteTagRange</emphasis>
+statement, but the renumbering optimization applies only to tags that
+are within the declared range.  A scorefile can have more than one
+<emphasis role="bold">noteTagRange</emphasis> statement although each
+subsequent statement cancels the previous one.</para>
+</sect3>
+</sect2>
+</sect1>
+<sect1 id="HeaderOrBodyStatements">
+<title>Header or Body Statements</title>
+
+<sect2 id="VariableDeclarationsAndAssignments">
+<title>Variable Declarations and Assignments</title>
+
+<para>Variable declaration is the same as in C:</para>
+
+<itemizedlist>
+<listitem><para>When you declare a variable you must specify its type.</para>
+</listitem>
+
+<listitem><para>More than one variable of the same type can be
+declared in the same declaration.</para>
+</listitem>
+
+<listitem><para>A variable's value may be set when it's declared.</para>
+</listitem>
+</itemizedlist>
+
+<para>The variable declaration statement takes the following form:</para>
+
+<programlisting>
+<replaceable>dataType</replaceable> <replaceable>identifier</replaceable> [ <emphasis role="bold">=</emphasis> <replaceable>expression</replaceable> ] [<emphasis role="bold"> ,</emphasis> <replaceable>identifier</replaceable> [ <emphasis role="bold">=</emphasis> <replaceable>expression</replaceable> ] ] ... <emphasis role="bold">;</emphasis>
+</programlisting>
+
+<para>Assignment is also like C:</para>
+
+<programlisting>
+<replaceable>identifier</replaceable> <emphasis role="bold">=</emphasis> <replaceable>expression</replaceable>
+</programlisting>
+
+<para>Variable assignments can be nested and can appear in parameter
+value expressions.</para>
+
+<para><productname>ScoreFile</productname> provides seven data types:</para>
+
+<orderedlist>
+<listitem><para>double</para></listitem>
+<listitem><para>int</para></listitem>
+<listitem><para>string</para></listitem>
+<listitem><para>env</para></listitem>
+<listitem><para>wave</para></listitem>
+<listitem><para>object</para></listitem>
+<listitem><para>var</para></listitem>
+</orderedlist>
+
+<para>The <emphasis role="bold">double</emphasis> and<emphasis
+role="bold"> int</emphasis> types<emphasis role="bold"></emphasis> are
+the same as in C; <emphasis role="bold">string</emphasis> takes a
+string value:</para>
+
+<programlisting>
+<emphasis role="bold">string = "</emphasis><replaceable>text</replaceable><emphasis role="bold">";</emphasis></programlisting>
+
+<para><emphasis role="bold">env</emphasis>, <emphasis
+role="bold">wave</emphasis>,<emphasis role="bold"></emphasis> and
+<emphasis role="bold">object</emphasis> take
+<classname>MKEnvelope</classname>, <classname>MKWaveTable</classname>,
+and object values, respectively, as described in the following
+sections.  <emphasis role="bold">var</emphasis> is a wild card: A
+variable so declared automatically matches the type of its assigned
+data.  In general, <emphasis role="bold">var</emphasis> obviates the
+need for the other six types; however, the others can be used for
+clarity, or to cast a value to a particular type.</para>
+</sect2>
+<sect2 id="EnvelopeStatements">
+<title>envelope Statements</title>
+
+<para>You can create an <classname>MKEnvelope</classname> in a
+scorefile by using an <emphasis role="bold">envelope</emphasis>
+statement:</para>
+
+<programlisting>
+<emphasis role="bold">envelope</emphasis> <replaceable>envelopeName</replaceable> = <replaceable>envelopeConstant</replaceable> 
+<emphasis role="bold">;</emphasis>
+</programlisting>
+
+<para>When the scorefile is read, an <classname>MKEnvelope</classname>
+object is created and named for each <emphasis
+role="bold">envelope</emphasis> statement in the file.
+<replaceable>envelopeName</replaceable> can be any previously
+undeclared identifier and can be used as the value in a variable
+assignment (the variable's type must be <emphasis
+role="bold">env</emphasis> or <emphasis
+role="bold">var</emphasis>):</para>
+
+<programlisting>
+<emphasis role="bold">env</emphasis> = <replaceable>envelopeName</replaceable> <emphasis role="bold">;</emphasis>
+</programlisting>
+
+<para><replaceable>envelopeConstant</replaceable> contains a list of
+the <classname>MKEnvelope</classname>'s breakpoints.  Each breakpoint
+is described by its x, y, and (optional) smoothing values.  Breakpoint
+descriptions are in parentheses and the entire
+<classname>MKEnvelope</classname> is delimited by brackets:</para>
+
+<programlisting>
+<emphasis role="bold">[ (</emphasis> <replaceable>xValue</replaceable> <emphasis role="bold">,</emphasis> <replaceable>yValue</replaceable> [<emphasis role="bold"> ,</emphasis> <replaceable>smoothingValue</replaceable> ] <emphasis role="bold">) ,</emphasis> ... <emphasis role="bold">]</emphasis> </programlisting>
+
+<para>A scorefile can contain any number of <classname>MKEnvelope</classname>s.</para>
+
+</sect2>
+<sect2 id="WaveTableStatements">
+<title>waveTable Statements</title>
+
+<para><classname>MKWaveTable</classname>s are created with the <emphasis
+role="bold">waveTable</emphasis> statement:</para>
+
+<programlisting>
+<emphasis role="bold">waveTable</emphasis> <replaceable>waveTableName</replaceable> = <replaceable>waveTableConstant</replaceable> <emphasis role="bold">;</emphasis></programlisting>
+
+<para>Similar to the <emphasis role="bold">envelope</emphasis>
+statement, an object is created and named for each <emphasis
+role="bold">waveTable</emphasis> statement in a scorefile when the
+file is read.  The created object is either a
+<classname>MKPartials</classname> or a
+<classname>MKSamples</classname> object, depending on the
+specification in <replaceable>waveTableConstant</replaceable>.  A
+<classname>MKPartials</classname> object is described as a series
+frequency ratio, amplitude ratio, and (optional) phase values.</para>
+
+<para>Each specification defines a single partial and is surrounded by
+braces; like an <classname>MKEnvelope</classname>, the entire object
+is delimited by brackets:</para>
+
+<programlisting>
+<emphasis role="bold">[ {</emphasis> <replaceable>frequencyRatio</replaceable> <emphasis role="bold">,</emphasis> <replaceable>amplitudeRatio</replaceable> [<emphasis role="bold"> ,</emphasis> <replaceable>phase</replaceable> ] <emphasis role="bold">} ,</emphasis> ... <emphasis role="bold">]</emphasis> </programlisting>
+
+<para>A <classname>MKSamples</classname> object is defined by a soundfile:</para>
+
+<programlisting>
+<emphasis role="bold">[ { "</emphasis><replaceable>soundfileName</replaceable><emphasis role="bold">"</emphasis> <emphasis role="bold">} ]</emphasis> </programlisting>
+
+<para><replaceable>waveTableName</replaceable>
+can<emphasis></emphasis> be used in a <emphasis
+role="bold">wave</emphasis> or <emphasis role="bold">var</emphasis>
+assignment.</para>
+</sect2>
+
+<sect2 id="ObjectStatements">
+<title>object Statements</title>
+
+<para>You can use an <emphasis role="bold">object</emphasis> statement
+to add your own objects to a scorefile:</para>
+
+<programlisting>
+<emphasis role="bold">object</emphasis> <replaceable>objectName</replaceable> = <replaceable>objectConstant</replaceable> <emphasis role="bold">;</emphasis></programlisting>
+
+<para><replaceable>objectConstant</replaceable> contains, in brackets,
+the name of the object's class followed by a description of the
+object:</para>
+
+<programlisting>
+<emphasis role="bold">[</emphasis> <replaceable>className</replaceable> <replaceable>objectDescription</replaceable><emphasis role="bold"> ]</emphasis> </programlisting>
+
+<para><replaceable>objectDescription</replaceable> can be any text
+except &ldquo;]&rdquo;.  <replaceable>className</replaceable> must
+implement the methods <emphasis
+role="bold">readASCIIStream:</emphasis>, and <emphasis
+role="bold">writeASCIIStream:</emphasis> to define how to read and
+write the object description.</para>
+
+</sect2>
+<sect2 id="IncludeStatements">
+<title>include Statements</title>
+
+<para>When an <emphasis role="bold">include</emphasis> statement is
+encountered, the specified file is immediately read and
+interpreted:</para>
+
+<programlisting>
+<emphasis role="bold">include</emphasis> <emphasis role="bold">"</emphasis><replaceable>scorefileName</replaceable><emphasis role="bold">";</emphasis></programlisting>
+
+</sect2>
+<sect2 id="PrintStatements">
+<title>print Statements</title>
+
+<para>A <emphasis role="bold">print</emphasis> statement is used to
+print information to a stream pointer (NXStream *):</para>
+
+<programlisting>
+<emphasis role="bold">print</emphasis> <replaceable>expression</replaceable> [ <emphasis role="bold">,</emphasis> <replaceable>expression</replaceable> ] ... <emphasis role="bold">;</emphasis></programlisting>
+
+<para>The information is displayed when the scorefile is interpreted.
+The <emphasis role="bold">setScorefilePrintStream:</emphasis> method,
+defined by <classname>MKScore</classname> and
+<classname>MKScorefilePerformer</classname>, lets you set the stream
+to which a scorefile's messages are printed.  By default, they're
+printed to standard error.</para>
+
+</sect2>
+<sect2 id="TuneStatements">
+<title>tune Statements</title>
+
+<para>The <emphasis role="bold">tune</emphasis> statement lets you
+create a tuning system other than the default twelve-tone
+equal-temperament:</para>
+
+<programlisting>
+<emphasis role="bold">tune</emphasis> <replaceable>pitchVariable</replaceable> <emphasis role="bold">=</emphasis> <replaceable>expression</replaceable> <emphasis role="bold">;</emphasis></programlisting>
+
+<programlisting>
+<emphasis role="bold">tune</emphasis> <replaceable>expression</replaceable> <emphasis role="bold">;</emphasis></programlisting>
+
+<para>The first form of the statement tunes
+<replaceable>pitchVariable</replaceable>, a predeclared
+<productname>ScoreFile</productname> variable, to
+<replaceable>expression</replaceable>, taken as a frequency in hertz.  All
+pitch variables of the same pitch class as
+<replaceable>pitchVariable</replaceable> are tuned to the appropriate octave
+transposition of <replaceable>expression</replaceable>.  Pitch variables are
+described in <xref linkend="PredeclaredVariables">. The second
+form transposes all pitch variables by <replaceable>expression</replaceable>
+half-steps.  A negative value transposes down; a fractional value
+transposes by less than a half step.</para>
+
+</sect2>
+<sect2 id="CommentAndEndCommentStatements">
+<title>comment and endComment Statements</title>
+
+<para>In addition to supporting the C and Objective-C comment syntax,
+<productname>ScoreFile</productname> supplies its own comment
+construction:</para>
+
+<programlisting>
+<emphasis role="bold">comment;</emphasis>
+<replaceable>commentedCode</replaceable>
+<emphasis role="bold">endComment;</emphasis>
+</programlisting>
+</sect2>
+</sect1>
+<sect1 id="BodyStatements">
+<title>Body Statements</title>
+
+<sect2 id="NoteStatements">
+<title>Note Statements</title>
+
+<para>When a scorefile is read by an application, a single
+<classname>MKNote</classname> object is created for each note
+statement in the file.  <classname>MKNote</classname> statements take
+the following form:</para>
+
+<programlisting>
+<replaceable>partName</replaceable> <emphasis role="bold">,</emphasis> <emphasis role="bold">(</emphasis> <replaceable>typeAndTag</replaceable> <emphasis role="bold">)</emphasis> [ <emphasis role="bold">,</emphasis> <replaceable>parameters</replaceable> ] <emphasis role="bold">;</emphasis></programlisting>
+
+<para><replaceable>partName</replaceable> is the name of the
+<classname>MKPart</classname> to which the
+<classname>MKNote</classname> belongs.  It must be declared in a
+<emphasis role="bold">part</emphasis> statement in the header.</para>
+
+<para><replaceable>typeAndTag</replaceable> provides noteType and
+noteTag information; its form depends on the noteType:</para>
+
+<itemizedlist>
+<listitem><para>For a noteDur, it takes the form:</para>
+
+<programlisting>
+<emphasis role="bold">(</emphasis> <replaceable>duration</replaceable> [ <replaceable>noteTag</replaceable> ] <emphasis role="bold">)</emphasis></programlisting>
+
+<para><replaceable>duration</replaceable> is a <emphasis
+role="bold">double</emphasis> expression that specifies the duration
+of the <classname>MKNote</classname> in beats;
+<replaceable>noteTag</replaceable> is an integer expression that
+assigns the <classname>MKNote</classname>'s noteTag.</para>
+</listitem>
+
+<listitem><para>For a noteOn or noteOff, the noteTag is required:</para>
+
+<programlisting>
+<emphasis role="bold">(</emphasis> <emphasis role="bold">noteOn</emphasis> <replaceable>noteTag</replaceable> <emphasis role="bold">)</emphasis>
+</programlisting>
+
+<programlisting>
+<emphasis role="bold">(</emphasis> <emphasis role="bold">noteOff</emphasis> <replaceable>noteTag</replaceable> <emphasis role="bold">)</emphasis> 
+</programlisting>
+</listitem>
+<listitem><para>The noteTag is optional for a noteUpdate:</para>
+
+<programlisting>
+<emphasis role="bold">( noteUpdate</emphasis> [ <replaceable>noteTag</replaceable> ] <emphasis role="bold">)</emphasis>
+</programlisting>
+
+<para>A noteUpdate with a noteTag is applied to the specified noteTag
+stream.  Without a noteTag, it's applied to all noteTag streams that
+are currently being realized on the same
+<classname>MKInstrument</classname> as the noteUpdate.</para>
+</listitem>
+
+<listitem><para>Finally, a mute never takes a noteTag:	</para>
+
+<programlisting>
+<emphasis role="bold">( mute )</emphasis>
+</programlisting>
+</listitem>
+</itemizedlist>
+
+<para><replaceable>parameters</replaceable> is a list of parameters
+separated by commas.  A parameter takes the form:</para>
+
+<programlisting>
+<replaceable>parameterName</replaceable> <emphasis role="bold">:</emphasis> <replaceable>expression</replaceable>
+</programlisting>
+
+<para><replaceable>parameterName</replaceable> is the name of the parameter.
+Its form is that of a <productname>MusicKit</productname> parameter
+identifier minus the &ldquo;MK_&rdquo; prefix.  For example, MK_freq
+becomes, in a scorefile, <emphasis role="bold">freq</emphasis>.  In a
+scorefile you can create your own parameters simply by including them
+in a note statement.  When the scorefile is read by an application, a
+parameter identifier is automatically created and named for each of
+your invented parameters.</para>
+
+<para><replaceable>expression</replaceable> is computed as the value
+assigned to the parameter.  An expression can include variable
+assignments:</para>
+
+<programlisting>
+<replaceable>parameterName</replaceable> <emphasis role="bold">: (</emphasis> <replaceable>variable</replaceable> <emphasis role="bold">=</emphasis> <replaceable>expression</replaceable> <emphasis role="bold">)</emphasis>
+</programlisting>
+</sect2>
+<sect2 id="TimeStatements">
+<title>Time Statements</title>
+
+<para>A time statement specifies the performance time in beats for all
+subsequent <classname>MKNote</classname> statements until another time
+statement is encountered.  A time statement takes the form:</para>
+
+<programlisting>
+<emphasis role="bold">t</emphasis> [ <emphasis role="bold">+</emphasis> ] <replaceable>expression</replaceable> <emphasis role="bold">;</emphasis>
+</programlisting>
+
+<para>The keyword <emphasis role="bold">t</emphasis> is a special
+symbol; its value is the current time, in beats, in the scorefile.  At
+the start of the scorefile, the value of <emphasis
+role="bold">t</emphasis> is 0.0.  If
+<replaceable>expression</replaceable> is preceded by <emphasis
+role="bold">+</emphasis>, <emphasis role="bold">t</emphasis> is
+incremented by the value of <replaceable>expression</replaceable>.
+Otherwise, <emphasis role="bold">t</emphasis> takes the value of
+<replaceable>expression </replaceable>directly.  Time always moves
+forward in a scorefile&horbar;the value of <emphasis
+role="bold">t</emphasis> must never decrease.</para>
+
+<para><emphasis role="bold">t</emphasis> can be used as a read-only
+variable in an expression.</para>
+
+</sect2>
+</sect1>
+<sect1 id="Operators">
+<title>Operators</title>
+
+<para><productname>ScoreFile</productname> provides its own set of
+operators in addition to supporting a subset of C arithmetic
+operators.  The following table shows all the available operators in
+order of decreasing priority.  The operators unique to
+<productname>ScoreFile</productname> are discussed below.</para>
+
+	  <table frame=all>
+	    <title>Summary of Operators</title>
+	    <tgroup cols=2 colsep=1 rowsep=1>
+	      <colspec colnum=1 align=left>
+	      <colspec colnum=2 align=left>
+	      <thead>
+		<row>
+<entry>Operator</entry>
+<entry>Operation</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry>( )</entry>
+<entry>Grouping</entry>
+</row>
+<row>
+
+<entry>-</entry> <entry>Unary minus</entry> 
+</row>
+<row>
+
+<entry>dB</entry> <entry>Decibel computation</entry> 
+</row>
+<row>
+
+<entry>^, ~</entry> <entry>Exponentiation, pitch transposition</entry> 
+</row>
+<row>
+
+<entry>*, /, %</entry> <entry>Multiplication, division, modulus</entry> 
+</row>
+<row>
+
+<entry>+, -</entry> <entry>Addition, subtraction</entry> 
+</row>
+<row>
+
+<entry>@</entry> <entry>Envelope lookup</entry>
+</row>
+<row>
+
+<entry>&amp;</entry> <entry>String concatenation</entry>
+</row>
+<row>
+
+<entry>=</entry> <entry>Assignment</entry> 
+</row>
+<row>
+
+<entry>,</entry> <entry>Sequence separator</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+
+<important><para>The modulus operator doesn't work in Release 1.0.</para></important>
+
+<sect2 id="DecibelComputationOperator">
+<title>Decibel Computation Operator</title>
+
+<para>The postfix decibel operator <emphasis role="bold">dB</emphasis>
+is used to specify an amplitude value in units of decibels:</para>
+
+<programlisting><replaceable>expression</replaceable> <emphasis role="bold">dB</emphasis></programlisting>
+
+<para>The computation used by the <emphasis role="bold">dB</emphasis>
+operator is:</para>
+
+<para>10(<replaceable>expression</replaceable> /20)</para>
+
+<para><emphasis role="bold">0 dB</emphasis> is the maximum amplitude.</para>
+</sect2>
+<sect2 id="ExponentiationOperator">
+<title>Exponentiation Operator</title>
+
+<para>In <productname>ScoreFile</productname>, the expression:</para>
+
+<programlisting>
+<replaceable>expression</replaceable> <emphasis role="bold">^</emphasis> <replaceable>expression</replaceable>
+</programlisting>
+
+<para>calculates the left expression raised to the power of the right
+expression.</para>
+</sect2>
+<sect2 id="PitchTranspositionOperator">
+<title>Pitch Transposition Operator</title>
+
+<para>The pitch transposition operator <emphasis
+role="bold">~</emphasis> is designed to transpose a pitch
+variable:</para>
+
+<programlisting>
+<replaceable>pitchVariable</replaceable> <emphasis role="bold">~</emphasis> <replaceable>expression</replaceable>
+</programlisting>
+
+<para>The computed value is the frequency of
+<replaceable>pitchVariable</replaceable> raised or lowered by
+<replaceable>expression</replaceable> half-steps (a negative value lowers
+the pitch). The pitch variable's value isn't affected.</para>
+
+</sect2>
+<sect2 id="EnvelopeLookupOperator">
+<title>Envelope Lookup Operator</title>
+
+<para>The Envelope lookup operator <emphasis role="bold">@</emphasis>
+retrieves a discrete value from an envelope:</para>
+
+<programlisting>
+<replaceable>envelopeName</replaceable> <emphasis role="bold">@</emphasis> <replaceable>xValue</replaceable>
+</programlisting>
+
+<para>The calculation returns the y value in
+<replaceable>envelopeName</replaceable> that corresponds to
+<replaceable>xValue</replaceable>. The operation performs a linear
+interpolation between breakpoints, if necessary.</para>  
+</sect2>
+<sect2 id="StringConcatenationOperator">
+<title>String Concatenation Operator</title>
+
+<para>The string concatenation operation takes the form:</para>
+
+<programlisting>
+<replaceable>expression</replaceable> <emphasis role="bold">&amp;</emphasis> <replaceable>expression</replaceable>
+</programlisting>
+
+<para>The two expressions are converted to text and concatenated to
+produce a new string, regardless of the data types of the original
+expressions.</para>
+</sect2>
+</sect1>
+<sect1 id="PredeclaredVariables">
+<title>Predeclared Variables, Constants, and Special Symbols</title>
+
+<sect2 id="PitchVariables">
+<title>Pitch Variables</title>
+
+<para><productname>ScoreFile</productname> reserves a number of words
+as predefined pitch variables.  Pitch variables represent the
+frequencies of pitches over a ten and a half octave range.  A pitch
+variable name takes the following form (spaces between components
+aren't allowed):</para>
+
+<programlisting>
+<replaceable>pitchLetter</replaceable>[<replaceable>sharpOrFlat</replaceable>]<replaceable>octave</replaceable>
+</programlisting>
+
+<para><replaceable>pitchLetter</replaceable> is a lowercase letter
+from <emphasis role="bold">a</emphasis> to <emphasis
+role="bold">g</emphasis>.</para>
+
+<para><replaceable>sharpOrFlat</replaceable> is <emphasis
+role="bold">s</emphasis> for sharp and <emphasis
+role="bold">f</emphasis> for flat.  (Double sharps and double flats
+aren't supported.)</para>
+
+<para><replaceable>octave</replaceable> is <emphasis
+role="bold">00</emphasis> or an integer from <emphasis
+role="bold">0</emphasis> to <emphasis role="bold">9</emphasis>.
+Octaves are placed such that <emphasis role="bold">c4</emphasis> is
+middle C.  <emphasis role="bold">c00</emphasis> is the lowest pitch,
+<emphasis role="bold">g9</emphasis> is the highest.</para>
+
+<para>The &ldquo;break&rdquo; is at C.  That is, <emphasis
+role="bold">b4</emphasis> is B above middle C.  <emphasis
+role="bold">b3</emphasis> is a half-step below <emphasis
+role="bold">c4</emphasis>. <emphasis role="bold">bf4</emphasis> is
+<emphasis role="bold">bf4</emphasis> above middle C.  <emphasis
+role="bold">cf4</emphasis> is the same as <emphasis
+role="bold">b3</emphasis>.  <emphasis role="bold">bs3</emphasis> is
+the same as <emphasis role="bold">c4</emphasis>.</para>  
+
+<para>A pitch variable can be assigned an arbitrary value in an
+assignment statement or assignment expression.  The value assigned to
+a pitch variable is taken as a frequency in hertz:</para>
+
+<programlisting>
+<replaceable>pitchVariable</replaceable> <emphasis role="bold">=</emphasis> <replaceable>expression</replaceable> <emphasis role="bold">;</emphasis></programlisting>
+
+<para>By assigning a value to a pitch variable, only the value of that
+pitch variable is changed; this is different from using a pitch
+variable in a <emphasis role="bold">tune</emphasis> statement, where
+all pitch variables of the same pitch class are affected.</para>
+</sect2>
+<sect2 id="KeyNumberConstants">
+<title>Key Number Constants</title>
+
+<para>Key numbers are similar in appearance to pitch variables, but
+have an appended <emphasis role="bold">k</emphasis> (again, embedded
+spaces aren't allowed):</para>
+
+<programlisting><replaceable>pitchLetter</replaceable>[<replaceable>sharpOrFlat</replaceable>]<replaceable>octave</replaceable><emphasis role="bold">k</emphasis></programlisting>
+
+<para>Unlike a pitch variable, which represents a frequency, a key
+number is an integer that represents the ordinal number of a key on a
+<acronym>MIDI</acronym> synthesizer.</para>
+
+</sect2>
+<sect2 id="MIDIConstants">
+<title><acronym>MIDI</acronym> Constants</title>
+
+<para>A number of <acronym>MIDI</acronym> constants defined as values
+for <acronym>MIDI</acronym> parameters are provided by
+<productname>ScoreFile</productname>:</para>
+
+<itemizedlist>
+<listitem><para>resetControllers</para></listitem>
+<listitem><para>localControlModeOn</para></listitem>
+<listitem><para>localControlModeOff</para></listitem>
+<listitem><para>allNotesOff</para></listitem>
+<listitem><para>omniModeOff</para></listitem>
+<listitem><para>omniModeOn</para></listitem>
+<listitem><para>monoMode</para></listitem>
+<listitem><para>polyMode</para></listitem>
+<listitem><para>sysClock</para></listitem>
+<listitem><para>sysStart</para></listitem>
+<listitem><para>sysContinue</para></listitem>
+<listitem><para>sysStop</para></listitem>
+<listitem><para>sysUndefined0xf9</para></listitem>
+<listitem><para>sysUndefined0xfd</para></listitem>
+<listitem><para>sysActiveSensing</para></listitem>
+<listitem><para>sysReset</para></listitem>
+</itemizedlist>
+
+</sect2>
+<sect2 id="OtherConstants">
+<title>Other Constants</title>
+
+<para><productname>ScoreFile</productname> also defines the integer
+constants <constant>YES</constant> (1) and <constant>NO</constant> (2).</para>
+
+</sect2>
+<sect2 id="SpecialSymbols">
+<title>Special Symbols</title>
+
+<para><productname>ScoreFile</productname> defines two special
+symbols, <emphasis role="bold">t</emphasis> and <emphasis
+role="bold">ran</emphasis>.  These are read-only variables that should
+never be assigned a value in an assignment statement.  The <emphasis
+role="bold">t</emphasis> symbol was described in <xref
+linkend="TimeStatements">, earlier in this chapter.</para>
+
+<para><emphasis role="bold">ran</emphasis> is a random number (a
+<emphasis role="bold">double</emphasis>) between 0 and 1.  The seed
+for the random number generator is randomly set to produce a different
+series of random numbers every time the file is read.</para>  
+</sect2>
+</sect1>
+<sect1 id="ProceduralStatements">
+<title>Procedural Statements</title>
+
+<para><productname>ScoreFile</productname> supports simple loop
+constructs, boolean expressions, and conditional statements.  These
+are legal in both the header and the body of the scorefile.  These
+constructs are:</para>
+
+<programlisting>
+<emphasis role="bold">if (</emphasis>&lt;<replaceable>boolean expression</replaceable>&gt;<emphasis role="bold">) {</emphasis> &lt;<replaceable>anything</replaceable>&gt; <emphasis role="bold">}</emphasis>
+
+<emphasis role="bold">else if {</emphasis> &lt;<replaceable>anything</replaceable>&gt; <emphasis role="bold">}</emphasis> /* optional */
+
+<emphasis role="bold">else {</emphasis> &lt;<replaceable>anything</replaceable>&gt; <emphasis role="bold">}</emphasis>    /* optional */
+
+<emphasis role="bold">repeat</emphasis> &lt;<replaceable>integer expression</replaceable>&gt; <emphasis role="bold">{</emphasis> &lt;<replaceable>anything</replaceable>&gt; <emphasis role="bold">}</emphasis>
+
+<emphasis role="bold">while (</emphasis>&lt;<replaceable>boolean expression</replaceable>&gt;<emphasis role="bold">) {</emphasis> &lt;<replaceable>anything</replaceable>&gt; <emphasis role="bold">}</emphasis>
+
+<emphasis role="bold">do {</emphasis>
+&lt;<replaceable>anything</replaceable>&gt; <emphasis role="bold">}
+while (</emphasis>&lt;<replaceable>boolean
+expression</replaceable>&gt;<emphasis role="bold">)</emphasis>;
+</programlisting>
+
+<para>Note that in all cases, the braces and parenthesis are not
+optional.  Also, if you are using included files, the start and end of
+the loop or conditional block must be in the same file.</para>
+
+<example>
+<title>repeating block</title>
+<programlisting>
+repeat 3 { t +.1
+          if (t &gt; 3) {aPart (2) keyNum:c4k;}
+          else          {bPart (1) keyNum:c2k;}
+}
+</programlisting>
+</example>
+</sect1>
+</chapter>
