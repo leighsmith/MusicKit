@@ -1115,14 +1115,15 @@ class=directory>Examples</filename> respectively.
 </para>
 	</listitem>
         <listitem>
-          <para>Compile and install an appropriate <acronym>MIDI</acronym> driver.</para>
-
+          <para>
+Compile and install an appropriate <acronym>MIDI</acronym> driver.
+</para>
       <para>
-To compile the <productname>MacOS X-Server</productname> <companyname>Zilog</companyname>
-<acronym>SCC</acronym> <acronym>MIDI</acronym> driver, some header
-files are missing.  You can get them from the
-<productname>Darwin</productname> distribution of the
-<productname>SoundKit</productname> or just copy them from a
+To compile the <productname>MacOS X-Server</productname>
+Zilog <acronym>SCC</acronym>
+<acronym>MIDI</acronym> driver, some header files are missing.  You
+can get them from the <productname>Darwin</productname> distribution
+of the <productname>SoundKit</productname> or just copy them from a
 <productname>NeXTStep 3.3</productname>/<productname>OpenStep
 4.2</productname> system.
 </para>
@@ -1132,6 +1133,7 @@ MacOS X Public Beta Developer release includes source for a generic
 <acronym>USB</acronym> <acronym>MIDI</acronym> driver at
 <filename>/Developer/Examples/CoreAudio/MIDI/SampleUSBDriver</filename>.
 </para>
+	</listitem>
       </orderedlist>
 
     </sect2>
