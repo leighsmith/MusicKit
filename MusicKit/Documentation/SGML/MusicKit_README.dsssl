@@ -103,7 +103,7 @@
 (define %body-attr%
   ;; Incorporate BODY attributes coloring the text
   (list
-   (list "BGCOLOR" "#553355")
+   (list "BGCOLOR" "#442643")
    (list "TEXT" "#FFFFFF")
    (list "LINK" "#C7DE1E")
    (list "ALINK" "#969FF4")
