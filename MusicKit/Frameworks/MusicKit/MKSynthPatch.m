@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2002/01/29 16:52:01  sbrandon
+  changed format string from %s to %@ (missed in last checkin)
+
   Revision 1.14  2002/01/29 16:34:27  sbrandon
   changed to use NSString args for _MKOrchTrace calls
 
@@ -1197,7 +1200,7 @@ id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tail
     _MKOrchResetPreviousLosingTemplate(orchestra);
     if (_MK_ORCHTRACE(orchestra,MK_TRACEORCHALLOC))
       _MKOrchTrace(orchestra,MK_TRACEORCHALLOC,
-                   @"Returning %s_%p to avail pool.",NSStringFromClass([self class]),self);
+                   @"Returning %@_%p to avail pool.",NSStringFromClass([self class]),self);
     return self;
 }
 
