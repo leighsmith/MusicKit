@@ -1,50 +1,59 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
-*/
 
-/* This file has the parameter-representation mechanism.
+  Description:
+    This file has the parameter-representation mechanism and is a private
+    MusicKit class used for parameter names.
 
-   The term "parameter" is, unfortunately, used loosely for several things.
-   This could be cleaned up, but it's all private functions, so it's just
-   an annoyance to the maintainer:
+    Each parameter is represented by a unique instance of _ParName. 
+    They have an optional function which is called when the parameter value is written and
+    they have a low integer value, the particular parameter.
+    The printfunc allows particular parameters to write in
+    special ways. For example, keyNum writes using the keyNum constants.
+    You never instantiate instances of this class directly.
+ 
+    The term "parameter" is, unfortunately, used loosely for several things.
+    This could be cleaned up, but it's all private functions, so it's just
+    an annoyance to the maintainer:
 
-   1) An object, of class _ParName, that represents the parameter name. E.g.
-   there is only one instance of this object for all frequency parameters.
+    1) An object, of class _ParName, that represents the parameter name. E.g.
+    there is only one instance of this object for all frequency parameters.
 
-   2) A low integer that corresponds to the _ParName object. E.g. the constant
-   MK_freq is a low integer that represents all frequency parameters.
+    2) A low integer that corresponds to the _ParName object. E.g. the constant
+    MK_freq is a low integer that represents all frequency parameters.
 
-   3) A string name that corresponds to the _ParName object. E.g. "freq".
+    3) A string name that corresponds to the _ParName object. E.g. "freq".
 
-   4) A struct called _MKParameter, that represents the particular parameter 
-   value.  E.g. there is one _MKParameter for each note containing a frequency.
+    4) A struct called _MKParameter, that represents the particular parameter 
+    value.  E.g. there is one _MKParameter for each note containing a frequency.
 
-   The _ParName contains the string name, the low integer, and a function
-   (optional) for printing the parameter values in a special way.
+    The _ParName contains the string name, the low integer, and a function
+    (optional) for printing the parameter values in a special way.
 
-   The _MKParameter contains the data, the type of the data, and the
-   low integer. There's an array that maps low integers to _ParNames.
+    The _MKParameter contains the data, the type of the data, and the
+    low integer. There's an array that maps low integers to _ParNames.
    
-   Note objects contain an NXHashTable of _MKParameters. CF: Note.m 
+    MKNote objects contain an NXHashTable of _MKParameters. CF: MKNote.m 
 
-   Note that the code for writing scorefiles is spread between writeScore.m,
-   Note.m, and _ParName.m. This is for reasons of avoiding inter-module
-   communication (i.e. minimizing globals). Perhaps the scorefile-writing
-   should be more cleanly isolated.
+    Note that the code for writing scorefiles is spread between writeScore.m,
+    MKNote.m, and _ParName.m. This is for reasons of avoiding inter-module
+    communication (i.e. minimizing globals). Perhaps the scorefile-writing
+    should be more cleanly isolated.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/09/26 19:58:33  leigh
+  Cleanup of documentation
+
   Revision 1.2  1999/07/29 01:26:00  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -92,29 +101,11 @@ Modification history:
 #import "MKEnvelope.h"
 #import "_ParName.h"
 
+#import <objc/hashtable.h>
 
 /* First, here's how parameter names are represented: */
 
 @implementation _ParName:NSObject
-/* This class is used for parameter names.   Each parameter is
-   represented by a unique instance of _ParName. They have an optioal
-   function which is called when the parameter value is written and
-   they have a low integer value, the particular parameter.
-   The printfunc allows particular parameters to write in 
-   special ways. For example, keyNum writes using the keyNum constants.
-   You never instantiate instances of this class directly. 
-
-   This is a private Musickit class.
-*/
-{
-    BOOL (*printfunc)(_MKParameter *param,NSMutableData *aStream,
-		      _MKScoreOutStruct *p);
-    /* printfunc is a function for writing the value of the 
-       par. See below for details.
-       */
-    int par;    /* What parameter this is. */
-    char *s;   /* Name of parameter */
-}
 
 #define BINARY(_p) (_p && _p->_binary) /* writing a binary scorefile? */
 
@@ -252,7 +243,6 @@ const char *_MKUniqueNull()
     return uniqueNull;
 }
 
-#import <objc/hashtable.h>
 
 #define INT(_x) ((int)_x)
 
