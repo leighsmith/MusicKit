@@ -231,6 +231,9 @@ static SndStreamManager *sm = nil;
     if (bgdm_sem == BGDM_delegateMessageReady)  {
       NSInvocation *delegateMessage = nil;
       int count;
+      // quickly release the lock so we don't deadlock if the queued messages take
+      // a while to go through.
+      [bgdm_threadLock unlockWithCondition: bgdm_sem];
       while (1) {
         [delegateMessageArrayLock lock];
         count = [delegateMessageArray count];
@@ -258,6 +261,7 @@ static SndStreamManager *sm = nil;
         /* cast to unsigned long to prevent compiler warnings */
         [controllerProxy _sendDelegateInvocation:(unsigned long)delegateMessage];
       }
+      continue;
     }
     else if (bgdm_sem == BGDM_abortNow) {
 #if SNDSTREAMMANAGER_DEBUG
