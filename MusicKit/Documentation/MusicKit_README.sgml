@@ -1,4 +1,7 @@
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN">
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+<!entity mkvers "5.2">
+<!entity mkvertuple "5.2.0">
+]>
 
 <!--
 The MusicKit README file, in the original DocBook SGML source.
@@ -8,10 +11,14 @@ Edit this file, not the HTML, RTF or LaTeX output.
 $Id$
 -->
 
+<!-- The preceding entities in doctype describe the revision tuple and the  -->
+<!-- exact version tuple of the source code (as a CVS version tag) -->
+<!-- this document refers to. -->
+
 <article>
 
   <artheader>
-    <title>The MusicKit V5.1</title>
+    <title>The MusicKit V&mkvers;</title>
 
 <!-- TODO
    Add in the MusicKit icon
@@ -283,40 +290,6 @@ ScoreFile, a textual scripting language for music.
 	</listitem>
       </itemizedlist>
     </sect2>
-
-    <sect2 id="furtherdoco">
-      <title>Further Documentation</title>
-
-      <itemizedlist>
-	<listitem>
-	  <para>
-Release notes can be found in
-<filename class=directory>
-./Documentation/Frameworks/MusicKit/ReleaseNotes
-</filename>.
-</para>
-	</listitem>
-
-	<listitem>
-	  <para>
-What needs to be done is in
-<filename>
-./Documentation/Frameworks/MusicKit/ReleaseNotes/TODO.rtf
-</filename>
-</para>
-	</listitem>
-
-	<listitem>
-	  <para>
-The file 
-<filename>
-./Documentation/ChangeLog
-</filename>
-lists changes and is generated from the CVS logs.
-</para>
-	</listitem>
-      </itemizedlist>
-    </sect2>
     
     <sect2 id=maillist>
       <title>MusicKit Mail-lists</title>
@@ -359,6 +332,38 @@ less frequent. The <link linkend=fixes>CVS repository</link> can be made availab
 </para>
     </sect2>
 
+  </sect1>
+<sect1 id="furtherdoco">
+    <title>Further Documentation</title>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+Thorough documentation of classes, applications, usage and concepts are found under the directory
+<filename class=directory>
+./Documentation
+</filename>.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Release notes can be found in
+<filename class=directory>
+./Documentation/Frameworks/MusicKit/ReleaseNotes
+</filename>.
+</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+The file 
+<filename>
+./Documentation/ChangeLog
+</filename>
+lists changes and is generated from the CVS logs.
+</para>
+</listitem>
+    </itemizedlist>
   </sect1>
 
   <sect1 id="platforms">
@@ -446,7 +451,7 @@ preparation for porting the MusicKit to Linux using the GnuStep
 libraries. Further work is needed on this, please help!
 </para>
     </sect2>
-  </sect1>
+</sect1>
 
 <sect1 id="history">
     <title>Contributors and History</title>
@@ -519,6 +524,35 @@ usage file is found in
 </para>
   </sect1>
 
+  <sect1 id="VersionNumbering">
+    <title>Version numbering of the MusicKit</title>
+
+    <para>
+Version numbering of the MusicKit is as follows.
+</para>
+
+    <para>
+All versions are numbered in the popular standard GNU nomenclature
+<replaceable>V.R.P</replaceable>, referred here as a <emphasis>version
+tuple</emphasis>, referring to <replaceable>Version</replaceable>,
+<replaceable>Revision</replaceable> and
+<replaceable>Patch</replaceable>
+respectively. <replaceable>Version</replaceable> refers to major
+milestones in a project, such as a complete rewrite or major internal
+conversion, major functional improvement etc.
+<replaceable>Revision</replaceable>, refers to a minor milestone that
+can include new functionality that may break external interfacing
+software, forcing them to be updated (minimally a recompile).
+<replaceable>Patch</replaceable>, refers to a singular bug fix to
+correct operation which does not cause an incompatible change or
+introduce new behaviour.
+</para>
+
+    <para>
+Each framework has it's own version tuple. This is encoded in the framework and is used by the dynamic loader to verify the correct versions of applications link against the correct versions of frameworks. However, to allow new framework with patches to be installed into operational sites without forcing recompiles of the application, the version tuple encoded in the framework is of the form <TODO>V.R</TODO>.
+</para>
+  </sect1>
+
   <sect1 id=availability>
     <title>Availability</title>
     <para>
@@ -570,7 +604,7 @@ sourceforge.net
 		<imagedata fileref="Stepwise.gif">
 	      </imageobject>
 	    </inlinemediaobject>
-SoftTrak on Stepwise.com
+SoftTrak on <systemitem class="systemname">stepwise.com</systemitem>
       </ulink>
       </para>
       </listitem>
@@ -589,7 +623,7 @@ The Source files consist of:
         <variablelist>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://download.sourceforge.net/musickit/MK_V5.1.10.s.tar.gz">MK_V5.1.10.s.tar.gz</ulink>
+              <ulink url="http://download.sourceforge.net/musickit/MK_V&mkvertuple;.s.tar.gz">MK_V&mkvertuple;.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -677,7 +711,7 @@ Newer versions of will probably just work.
 	<variablelist>
 	    <varlistentry>
 	      <term>
-            <ulink url="http://download.sourceforge.net/musickit/MK-5.1.10.MOX.pkg.tar">MK-5.1.10.MOX.pkg.tar</ulink>
+            <ulink url="http://download.sourceforge.net/musickit/MK-&mkvertuple;.MOX.pkg.tar">MK-&mkvertuple;.MOX.pkg.tar</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -687,7 +721,7 @@ Newer versions of will probably just work.
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-            <ulink url="http://download.sourceforge.net/musickit/MK-5.1.10.MOXS.pkg.tar">MK-5.1.10.MOXS.pkg.tar</ulink>
+            <ulink url="http://download.sourceforge.net/musickit/MK-&mkvertuple;.MOXS.pkg.tar">MK-&mkvertuple;.MOXS.pkg.tar</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -705,10 +739,10 @@ Newer versions of will probably just work.
               </para>
 	      </listitem>
 	    </varlistentry>
-<!--
+<!-- TODO
 	  <varlistentry>
 	    <term>
-            <ulink url="http://download.sourceforge.net/musickit/MK-5.1.9.w32.pkg.tar">MK-5.1.9.pkg.tar</ulink>
+            <ulink url="http://download.sourceforge.net/musickit/MK-&mkvertuple;.w32.pkg.tar">MK-&mkvertuple;.w32.pkg.tar</ulink>
             </term>
 	    <listitem>
 	      <para>
@@ -718,7 +752,7 @@ Newer versions of will probably just work.
 	  </varlistentry>
 	  <varlistentry>
 	    <term>
-            <ulink url="http://download.sourceforge.net/musickit/MK-5.1.9.linux.rpm">MK-5.1.9.linux.rpm</ulink>
+            <ulink url="http://download.sourceforge.net/musickit/MK-&mkvertuple;.linux.rpm">MK-&mkvertuple;.linux.rpm</ulink>
             </term>
 	    <listitem>
 	      <para>
@@ -1005,6 +1039,11 @@ compatibility issue.
 	<para>
 Creating a set of bindings to Java is planned using the Java bridge
 and Apple's <application>WrapIt.app</application> utility.
+</para>
+	</listitem>
+      <listitem>
+	<para>
+Translating the MusicKit framework's Localized.strings file to languages other than English.
 </para>
 	</listitem>
     </itemizedlist>
