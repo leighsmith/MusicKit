@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2000/04/01 01:19:27  leigh
+  Removed redundant getTime function
+
   Revision 1.9  2000/03/31 00:13:57  leigh
   theTimeToWait now a shared function, using _MKAppProxy
 
@@ -198,76 +201,13 @@ static void condInit();    /* Forward decl */
 static MKMsgStruct *evalSpecialQueue();
 
 /*
- LMS these SB's Notes, perhaps redundant.
+ LMS these are SB's Notes, perhaps redundant.
  startTime is absolute date (NSDate *)
  nextmsgtime: maybe relative time to start of performance YES
  clockTime: relative to start of performance
  pauseTime is absolute
  timeIntervalSinceDate seems to return reverse of what it should
 */
-#if 1  /* Release 1.0 version -- old kern_timestamp didn't give us high bits */
-static NSDate * getTime(void) /*sb: was static double... */
-/* returns the time in seconds.  A 52 bit mantissa in a IEEE double gives us 
-   16-17 digits of accuracy.  Taking off six digits for the microseconds in a 
-   struct timeval, this leaves 10 digits of seconds,  which is ~300 years.
-
-   The only catch is that this routine must be called at least every 72 min.
-   FIXME
-*/
-{
-/*
-    struct tsval ts;
-    static unsigned int lastStamp = 0;
-    static double accumulatedTime = 0.0;
-#   define MICRO ((double)0.000001)
-#   define WRAP_TIME (((double)0xffffffff) * MICRO)
-    kern_timestamp(&ts);
-    if (ts.low_val < lastStamp)
-	accumulatedTime += WRAP_TIME;
-    lastStamp = ts.low_val;
-    return accumulatedTime + ((double)ts.low_val) * MICRO;
- */
-    /*sb: replaced all of above with new class, NSDate.
-     * There's really not much point in keeping this function, as it can be replaced in all instances
-     * by the NSDate call.
-     */
-       return [NSDate date];
-
-}
-#endif
-
-#if 0
-#ifndef NX_BLOCKASSERTS
-
-static double
-getTime()
-{
-    struct tsval ts;
-    static double oldD = 0;
-    double d;
-#   define MAX_TIME ((double)0xffffffff)
-#   define MICRO ((double)0.000001)
-    kern_timestamp(&ts);
-    d = (((double)ts.high_val) * MAX_TIME + ((double)ts.low_val)) * MICRO;
-    if (d < oldD) 
-	fprintf(stderr,"Time goes backwards!\n");
-    oldD = d;
-    return d;
-}
-#else
-
-static double
-getTime()
-{
-    struct tsval ts;
-#   define MAX_TIME ((double)0xffffffff)
-#   define MICRO ((double)0.000001)
-    kern_timestamp(&ts);
-    return (((double)ts.high_val) * MAX_TIME + ((double)ts.low_val)) * MICRO;
-}
-
-#endif
-#endif
 
 /* The following implements the delta T high water/low water notification */
 static double deltaTThresholdLowPC = .25; /* User sets this */
