@@ -16,6 +16,10 @@
 Modification history:
 
   $Log$
+  Revision 1.20  2002/01/24 13:26:57  sbrandon
+  return NSOrderedAscending instead of int from _MKNoteCompare, removed some
+  needless comments.
+
   Revision 1.19  2002/01/23 15:33:02  sbrandon
   The start of a major cleanup of memory management within the MK. This set of
   changes revolves around MKNote allocation/retain/release/autorelease.
@@ -641,7 +645,7 @@ static int nAppBitVects(); /* forward ref */
 void _MKMakePlaceHolder(MKNote *aNote)
 {
     if (aNote->_orderTag > 0)
-      aNote->_orderTag = -aNote->_orderTag;
+      aNote->_orderTag = -(aNote->_orderTag);
 }
 
 BOOL _MKNoteIsPlaceHolder(MKNote *aNote)
@@ -668,8 +672,8 @@ int _MKNoteCompare(const void *el1,const void *el2)
     t1 = id1->timeTag;
     t2 = id2->timeTag;
     if (t2 == t1)   /* Same time */
-        return ((ABS(id1->_orderTag)) < (ABS(id2->_orderTag))) ? NSOrderedAscending : NSOrderedDescending; /*-1 : 1;*/
-    return (t1 < t2) ? NSOrderedAscending : NSOrderedDescending; /*-1 : 1;*/
+        return ((ABS(id1->_orderTag)) < (ABS(id2->_orderTag))) ? NSOrderedAscending : NSOrderedDescending;
+    return (t1 < t2) ? NSOrderedAscending : NSOrderedDescending;
 }
 
 - (int)compare:aNote  
@@ -686,10 +690,8 @@ int _MKNoteCompare(const void *el1,const void *el2)
    * two MKNotes would be stored if they were members of the same MKPart.
    */
 { 
-    /* We must only return 0 in one case: when aNote == the receiver.
-       This insures that the binary tree will be correctly maintained. */
     if (![aNote isKindOfClass:noteClass])
-      return -1;
+      return NSOrderedAscending;
     return _MKNoteCompare(&self,&aNote);
 }
 
