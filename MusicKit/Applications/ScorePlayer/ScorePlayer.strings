@@ -88,6 +88,6 @@
 /* This appears in the SaveAs... panel */
 "Sound File";
 
-/* This message appears if the serial port is busy. */
-"Can't open serial port for MIDI. Perhaps another application has it.";
+/* This message appears if the MIDI driver port is busy. */
+"Can't open MIDI driver port for MIDI. Perhaps another application has it.";
 
