@@ -26,7 +26,7 @@ int main (int argc, const char *argv[])
 	    NSLog(@"Input file must be in 16-bit linear format.\n");
 	    exit(1);
         }
-        data = (short *)[snd bytes];
+        data = (short *) [snd data];
         dataEnd = (short *)(((char *) data) + [snd dataSize]);
         dataStart = data;
         maxAmp = 0;
