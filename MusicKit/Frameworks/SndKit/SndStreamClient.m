@@ -68,9 +68,12 @@ enum {
     [s release];
 
     [super init];
-    
-    outputQueue = [[SndAudioBufferQueue audioBufferQueueWithLength: 4] retain];
-    inputQueue  = [[SndAudioBufferQueue audioBufferQueueWithLength: 4] retain];
+
+    // Modern audio hardware can have quite small buffers (i.e 4096 bytes), yet we want to do
+    // increasing more complex processing, so we settle for many small buffers, given we now have a preemption
+    // mechanism.
+    outputQueue = [[SndAudioBufferQueue audioBufferQueueWithLength: 8] retain];
+    inputQueue  = [[SndAudioBufferQueue audioBufferQueueWithLength: 8] retain];
 
     if (synthThreadLock == nil) {
       synthThreadLock = [[NSConditionLock alloc] init];
