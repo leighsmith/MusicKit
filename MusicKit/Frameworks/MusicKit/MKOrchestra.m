@@ -35,6 +35,9 @@
 Modification history:
 
   $Log$
+  Revision 1.20  2001/05/14 21:44:56  leighsmith
+  Now uses the separateThreadedAndInMusicKitThread class method
+
   Revision 1.19  2001/05/12 09:25:01  sbrandon
   - GNUSTEP: removed reference to TurtleBeach class
 
@@ -4022,21 +4025,18 @@ static BOOL driverPresent(unsigned short index)
        The reason I jump through hoops in this case and no other is that
        this is the only case where we call DPSClient functions from within
        the Music Kit in a separate threaded performance. */
-    NSThread *perfThread = [MKConductor performanceThread];
-    if (perfThread) {
-	if (perfThread == [NSThread currentThread]) 
-	    /* Forward msg to right thread */
-	    [MKConductor sendMsgToApplicationThreadSel:@selector(_adjustOrchTE:reset:)
-	   to:self argCount:2, yesOrNo, reset];
-	else { 
-	    /* DAJ: Commented out lock/unlock here.  It's not needed */
-//	    [MKConductor lockPerformance];
-	    adjustOrchTE(self, yesOrNo, reset);
-//	    [MKConductor unlockPerformance];
-	}
-    } 
-    else
-        adjustOrchTE(self, yesOrNo, reset);
+    if ([MKConductor separateThreadedAndInMusicKitThread]) {
+        /* Forward msg to right thread */
+        [MKConductor sendMsgToApplicationThreadSel:@selector(_adjustOrchTE:reset:)
+	                                        to:self
+                                          argCount:2, yesOrNo, reset];
+    }
+    else {
+        /* DAJ: Commented out lock/unlock here.  It's not needed */
+//	[MKConductor lockPerformance];
+	adjustOrchTE(self, yesOrNo, reset);
+//	[MKConductor unlockPerformance];
+    }
     return self;
 }
 
