@@ -1,0 +1,105 @@
+/*
+ *   $Id$
+ *   Defined In: The MusicKit
+ *
+ *  Description:
+ *    Defines for SndKit to facilitate platform specific configuration.
+ *    This includes DLL definitions for Win32 and autoconf derived definitions.
+ *
+ *  Original Author: Leigh Smith <leigh@leighsmith.com>
+ *
+ *  Copyright (c) 2005, The MusicKit Project.  All rights reserved.
+ *
+ *  Permission is granted to use and modify this code for commercial and non-
+ *  commercial purposes so long as the author attribution and this copyright
+ *  message remains intact and accompanies all derived code.
+ *
+ */
+
+#ifndef _SNDKITCONFIG_H_
+#define _SNDKITCONFIG_H_
+
+/* autoconf generated definitions */
+#undef HAVE_LIBOGG
+
+#undef HAVE_LIBVORBIS
+
+#undef HAVE_LIBSNDFILE
+
+#undef HAVE_LIBMP3HIP
+
+#undef HAVE_LIBMP3LAME
+
+#undef HAVE_LIBSHOUT
+
+#undef HAVE_PORTAUDIO
+
+#if BUILD_libSndKit_DLL
+#  define SNDKIT_API  __declspec(dllexport)
+#  define SNDKIT_DECLARE __declspec(dllexport)
+#elif libSndKit_ISDLL
+#  define SNDKIT_API  extern __declspec(dllimport)
+#  define SNDKIT_DECLARE __declspec(dllimport)
+#else
+#  define SNDKIT_API extern
+#  define SNDKIT_DECLARE
+#endif
+
+#ifdef GNUSTEP
+#include <objc/objc.h>
+#else
+#import <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
+#endif
+
+//typedef char BOOL;
+
+//#ifndef TRUE
+//#define TRUE  1
+//#endif
+
+//#ifndef FALSE
+//#define FALSE 0
+//#endif
+
+#ifndef PI
+#define PI (3.14159265358979232846)
+#endif
+
+#ifndef PI2
+#define PI2 (6.28318530717958465692)
+#endif
+
+#define D2R (0.01745329348)          /* (2*pi)/360 */
+#define R2D (57.29577951)            /* 360/(2*pi) */
+
+#ifndef MAX
+#define MAX(x,y) ((x)>(y) ?(x):(y))
+#endif
+
+#ifndef MIN
+#define MIN(x,y) ((x)<(y) ?(x):(y))
+#endif
+
+#ifndef ABS
+#define ABS(x)   ((x)<0   ?(-(x)):(x))
+#endif
+
+#ifndef SGN
+#define SGN(x)   ((x)<0   ?(-1):((x)==0?(0):(1)))
+#endif
+
+typedef short          SND_HWORD;
+typedef unsigned short SND_UHWORD;
+typedef int            SND_WORD;
+typedef unsigned int   SND_UWORD;
+
+#define MAX_HWORD (32767)
+#define MIN_HWORD (-32768)
+
+#ifdef DEBUG
+#define INLINE
+#else
+#define INLINE inline
+#endif
+
+#endif /* _SNDKITCONFIG_H_ */
