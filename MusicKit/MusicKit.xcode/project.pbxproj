@@ -7736,20 +7736,6 @@
 			settings = {
 			};
 		};
-		D85E277406F7F1FB00385C32 = {
-			isa = PBXFileReference;
-			lastKnownFileType = folder;
-			name = SysExSynths;
-			path = Applications/PatchCord/SysExSynths;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D85E277606F7F1FB00385C32 = {
-			fileRef = D85E277406F7F1FB00385C32;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D85E27CD06FA098200385C32 = {
 			buildActionMask = 2147483647;
 			files = (
@@ -11466,7 +11452,6 @@
 		};
 		D88C500A06C7E2C100D33D99 = {
 			children = (
-				D85E277406F7F1FB00385C32,
 				D88C509306C7E8AF00D33D99,
 				D88C508C06C7E8A200D33D99,
 				D88C508506C7E89000D33D99,
@@ -11534,7 +11519,6 @@
 				D837AC4706C8199300A6CFEB,
 				D837AC4B06C819AA00A6CFEB,
 				D837AC6506C81A9300A6CFEB,
-				D85E277606F7F1FB00385C32,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -16112,7 +16096,6 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Examples/MultipleSoundPlayer/MultipleSoundPlayer-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
 				OTHER_REZFLAGS = "";
