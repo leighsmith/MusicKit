@@ -1191,7 +1191,7 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
 
 	if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowInputFileFormat"]) {
             printf("Input file: using sample rate %lu Hz, size %s, style %s, %d %s\n",
-               informat.info.rate, st_sizes_str[(int)(informat.info.size)],
+               (unsigned long)(informat.info.rate), st_sizes_str[(int)(informat.info.size)],
                st_encodings_str[(int)(informat.info.encoding)], informat.info.channels,
                (informat.info.channels > 1) ? "channels" : "channel");
             if (informat.comment)
