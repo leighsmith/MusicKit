@@ -128,8 +128,26 @@ Modification history before commit to CVS:
 - (void) dealloc
 {
     if(noteSenders != nil) {
-	[self disconnect];
+	// We have a retain cycle between MKNoteSenders and MKNoteReceivers since instances of both classes hold
+	// (retaining) NSArrays of an arbitary number of the other class. The traditional way of dealing with such
+	// a retain cycle is to assign one object as subordinated to the other, with the subordinate holding a
+	// non-retained weak reference to the "superior" (retaining) object.
+	// However storing the references in NSArrays themselves create retention. We therefore have a modified
+        // policy: MKNoteReceivers are subordinated to MKNoteSenders, and they should inform the noteSenders here,
+	// in dealloc, that they are no longer valid.
+	// However, we can't just disconnect them since that would cause the noteSenders to each
+	// attempt to remove their MKNoteReceivers from their noteReceivers NSArray, causing this dealloc method
+	// to be called recursively and endlessly.
+	// Two options seem possible: we temporarily retain our note receivers held by each of the note senders (!)
+	// or reset the noteSenders connections to this receiver nil. Unfortunately that can't be done without NSArray
+	// releasing the MKNoteReceiver element. 
+	// The best option is to leave noteSenders connected to this note receiver and then release noteSenders and
+	// require that any MKNoteReceivers explictly connected to an MKNoteSender must be disconnected from that
+	// MKNoteSender.
+	// [self disconnect];
+	// NSLog(@"In MKNoteReceiver dealloc of %p, have disconnected, releasing %p\n", self, noteSenders);
 	[noteSenders release];
+	// NSLog(@"Released noteSenders %p\n", noteSenders);
 	noteSenders = nil;	
     }
     [dataObject release];
@@ -138,8 +156,8 @@ Modification history before commit to CVS:
     [super dealloc];
 }
 
-/* TYPE: Creating; Creates a new NoteReceiver as a copy of the receiver.
-* Creates, initializes, and returns a new NoteReceiver with the same noteSenders as the receiver.
+/* TYPE: Creating; Creates a new MKNoteReceiver as a copy of the receiver.
+* Creates, initializes, and returns a new MKNoteReceiver with the same noteSenders as the receiver.
 */
 - copyWithZone: (NSZone *) zone
 {
@@ -299,7 +317,7 @@ only the owner itself sends this message.
 {
     if ([noteSenders indexOfObject: aNoteSender] != NSNotFound)  /* Already there. */
 	return nil;
-    /*aNoteSender = */ [noteSenders addObject: aNoteSender];
+    [noteSenders addObject: aNoteSender];
     return self;
 }
 
