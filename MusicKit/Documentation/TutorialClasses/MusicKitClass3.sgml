@@ -1,12 +1,9 @@
 <!-- $Id$ -->
 
   <CHAPTER ID="class3">
-    <TITLE> <PRODUCTNAME>MusicKit</PRODUCTNAME> Class</TITLE> 
+    <TITLE>Class 3 &horbar; Performance Classes</TITLE> 
     <SECT1>
-      <TITLE> Class 3 - Performance Classes</TITLE> 
-      <para>Review&horbar;There	are three catagories of classes in the
-	<PRODUCTNAME>MusicKit</PRODUCTNAME>:
-      </PARA>
+      <TITLE>Review: Classes in the <PRODUCTNAME>MusicKit</PRODUCTNAME></TITLE>
       <VARIABLELIST>
 	<VARLISTENTRY>
 	  <TERM> Representation classes (7) </TERM>

@@ -1,10 +1,10 @@
 <!-- $Id$ -->
 
   <CHAPTER ID="class5">
-      <TITLE>Class 5 - Synthpatches</TITLE>
+      <TITLE>Class 5 &horbar; SynthPatches</TITLE>
 
     <SECT1 ID="Review">
-      <TITLE>Review: classes in the <PRODUCTNAME>MusicKit</PRODUCTNAME></TITLE>
+      <TITLE>Review: Classes in the <PRODUCTNAME>MusicKit</PRODUCTNAME></TITLE>
       <VARIABLELIST>
 	<VARLISTENTRY>
 	  <TERM>Representation classes (7)</TERM>

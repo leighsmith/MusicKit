@@ -1,67 +1,69 @@
 <!-- $Id$ -->
 
-<chapter id="class1">
-    <TITLE> <productname>MusicKit</productname> Class </TITLE>
+  <chapter id="class1">
+    <TITLE><PRODUCTNAME>MusicKit</PRODUCTNAME> Class 1 &horbar; Object Oriented
+      Programming in Objective-C</TITLE>
     <SECT1>
-      <TITLE> <PRODUCTNAME>MusicKit</PRODUCTNAME> Class 1 - Object Oriented
-	Programming in Objective-C</TITLE>
+      <TITLE>Objective-C</TITLE>
   
-  <PARA>Objective-C is a language that expands the C programming
-    language by incorporating three object-oriented concepts:</PARA>
+      <PARA>
+	Objective-C is a language that expands the C programming
+	language by incorporating three object-oriented concepts:</PARA>
   
-  <ITEMIZEDLIST>
-    <LISTITEM>
-      <PARA>Encapsulation</PARA>
-    </LISTITEM>
-    <LISTITEM>
-      <PARA>Messaging (with dynamic binding)</PARA>
-    </LISTITEM>
-    <LISTITEM>
-      <PARA>Inheritance</PARA>
-    </LISTITEM>
-  </ITEMIZEDLIST>
+      <ITEMIZEDLIST>
+	<LISTITEM>
+	  <PARA>Encapsulation</PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>Messaging (with dynamic binding)</PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>Inheritance</PARA>
+	</LISTITEM>
+      </ITEMIZEDLIST>
   
-  <PARA>These serve to maximize:	
-  </PARA>
-  <ITEMIZEDLIST>
-    <LISTITEM>
-      <PARA>Program modularity	
+      <PARA>These serve to maximize:	
       </PARA>
-    </LISTITEM>
-    <LISTITEM>
-      <PARA>Program clarity and readability	
-      </PARA>
-    </LISTITEM>
-    <LISTITEM>
-      <PARA>Program maintainability
-      </PARA>
-    </LISTITEM>
-  </ITEMIZEDLIST>
-</SECT1>  
-  <SECT1 id="Encapsulation">
-    <title>Encapsulation (motivation)</title>
+      <ITEMIZEDLIST>
+	<LISTITEM>
+	  <PARA>Program modularity	
+	  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>Program clarity and readability	
+	  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>Program maintainability
+	  </PARA>
+	</LISTITEM>
+      </ITEMIZEDLIST>
+    </SECT1>  
+    <SECT1 id="Encapsulation">
+      <title>Encapsulation (motivation)</title>
     
-    <ITEMIZEDLIST>
-      <LISTITEM>
-	<PARA>Lets  you create complex data types.</PARA>
-      </LISTITEM>
-      <LISTITEM>
-	<PARA>Makes code easier to read.	</PARA>
-      </LISTITEM>
-      <LISTITEM>
-	<PARA>Makes function calls simpler.  </PARA>
-      </LISTITEM>
-    </ITEMIZEDLIST>
+      <ITEMIZEDLIST>
+	<LISTITEM>
+	  <PARA>Lets  you create complex data types.</PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>Makes code easier to read.	</PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>Makes function calls simpler.  </PARA>
+	</LISTITEM>
+      </ITEMIZEDLIST>
     
-    <PARA>C structures and typedefs already provide this
-    functionality. Hypothetical example:
-    </PARA>
-    <PROGRAMLISTING>
+      <PARA>C structures and typedefs already provide this
+	functionality. Hypothetical example:
+      </PARA>
+
+<PROGRAMLISTING>
 typedef struct {
 	double freq;	
 	int keyNum; 	
 } Note;	
-    </PROGRAMLISTING>	
+</PROGRAMLISTING>	
     
       <PARA>Note is now a convenient package.  To create a new
 	<CLASSNAME>MKNote</CLASSNAME>, you just call
