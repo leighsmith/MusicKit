@@ -1,25 +1,24 @@
 /*
   $Id$
   Defined In: The MusicKit
-  HEADER FILES: MusicKit.h
 
   Description:
-    A PartRecorder is an Instrument that realizes Notes by adding copies
-    of them to a Part.  A PartRecorder's Part is set through the setPart:
-    method.  If the Part already contains Notes, the old Notes aren't
-    removed or otherwise affected by recording into the Part -- the
-    recorded Notes are merged in.
+    A MKPartRecorder is an MKInstrument that realizes MKNotes by adding copies
+    of them to a MKPart.  A MKPartRecorder's MKPart is set through the setPart:
+    method.  If the MKPart already contains MKNotes, the old MKNotes aren't
+    removed or otherwise affected by recording into the MKPart -- the
+    recorded MKNotes are merged in.
   
-    Each PartRecorder contains a single NoteReceiver object.  During a
-    performance, a PartPerformer receives Notes from its NoteReceiver,
-    copies them, and then adds them to its Part object.  The PartRecorder
-    gives each Note a new timeTag and, if it's a noteDur, a new duration.
-    The new timeTag reflects the time in the performance that the Note was
+    Each MKPartRecorder contains a single MKNoteReceiver object.  During a
+    performance, a MKPartPerformer receives MKNotes from its MKNoteReceiver,
+    copies them, and then adds them to its MKPart object.  The MKPartRecorder
+    gives each MKNote a new timeTag and, if it's a noteDur, a new duration.
+    The new timeTag reflects the time in the performance that the MKNote was
     received by the object.  The timeTag and the duration are computed
     as beats or seconds.  (Additionally, if the timeunit is "MK_timeTag",
-    the Note's timeTag is used verbatim.)
+    the MKNote's timeTag is used verbatim.)
   
-    You can create PartRecorders yourself, or you can use a ScoreRecorder
+    You can create MKPartRecorders yourself, or you can use a MKScoreRecorder
     object to create a group of them for you.
   
     CF: MKScoreRecorder, MKPart
@@ -29,9 +28,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.4  2000/11/25 22:56:48  leigh
+  Enforced ivar privacy
+
   Revision 1.3  2000/03/29 02:57:04  leigh
   Cleaned up doco and ivar declarations
 
@@ -52,7 +55,7 @@
     MKPart *part;                       /* The object's Part. */
     BOOL compensatesDeltaT;
 
-    /* The following for internal use only */
+@private
     id _scoreRecorder;
 }
 

@@ -49,9 +49,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.6  2000/11/25 22:54:46  leigh
+  Enforced ivar privacy
+
   Revision 1.5  2000/05/06 01:15:25  leigh
   Typed ivars to reduce warnings
 
@@ -77,8 +81,8 @@
     NSMutableArray *noteSenders;      /* Array of connected MKNoteSenders. */
     BOOL isSquelched;                 /* YES if the object is currently squelched. */
     MKInstrument *owner;              /* MKInstrument that owns MKNoteReceiver. */
-    /* NoteFilter or Performer owning this PerfLink. */
-    /* The following is for internal use only.  */
+
+@private
     void *_myData;
 }
  

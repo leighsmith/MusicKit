@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.11  2000/11/25 22:54:14  leigh
+  Enforced ivar privacy
+
   Revision 1.10  2000/10/11 16:56:50  leigh
   Removed unnecessary _parameters redefinition
 
@@ -215,7 +218,7 @@ MKDataType;
     MKConductor *conductor;  // Conductor to use if performer is nil.
                              // If performer is not nil, uses [performer conductor]
 
-    /* The following are for internal use only.  */
+@private
     NSHashTable *_parameters;       /* Set of parameter values. */
     unsigned _mkPars[MK_MKPARBITVECTS]; /* Bit vectors specifying presence of Music Kit parameters. */
     unsigned *_appPars; /* Bit-vector for application-defined parameters. */

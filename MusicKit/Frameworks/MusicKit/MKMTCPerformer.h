@@ -1,9 +1,23 @@
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    Forthcoming.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 CCRMA, Stanford University
+  Portions (Time code extensions) Copyright (c) 1993 Pinnacle Research
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.3  2000/11/25 22:53:25  leigh
+  Enforced ivar privacy
+
   Revision 1.2  1999/07/29 01:25:45  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -42,7 +56,7 @@ extern void
     id aNote;
     BOOL frozen;
 
-    /* The following are for internal use only.  Do not access them directly */
+@private
     int _cmpStat;          
     short _lastHours;
     short _lastMinutes;

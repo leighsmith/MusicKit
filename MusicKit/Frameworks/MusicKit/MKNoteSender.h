@@ -48,9 +48,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.4  2000/11/25 22:55:19  leigh
+  Enforced ivar privacy
+
   Revision 1.3  2000/02/07 23:43:03  leigh
   Comment corrections
 
@@ -65,11 +69,11 @@
 
 @interface MKNoteSender : NSObject 
 {
-    NSMutableArray *noteReceivers;   /* Array of connected NoteReceivers. */
-    BOOL isSquelched;    /* YES if the object is squelched. */
-    id owner;            /* Performer (or NoteFilter) that owns this object. */
+    NSMutableArray *noteReceivers;   /* Array of connected MKNoteReceivers. */
+    BOOL isSquelched;                /* YES if the object is squelched. */
+    id owner;                        /* MKPerformer (or MKNoteFilter) that owns this object. */
 
-    /* The following are for internal use only */
+@private
     void *_myData;
     BOOL _ownerIsAPerformer;
     short isSending;
@@ -77,7 +81,7 @@
 
 - owner; 
  /* 
- * Returns the Performer (or NoteFilter) that owns the receiver.
+ * Returns the MKPerformer (or MKNoteFilter) that owns the receiver.
  */
 
 - disconnect:aNoteReceiver; 

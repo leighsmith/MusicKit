@@ -1,10 +1,32 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    A MKPartials object contains arrays that specify the amplitudes,
+    frequency ratios, and initial phases of a set of partials.  This
+    information is used to synthesize a waveform.  The synthesized data is
+    referenced by the methods inherited from MKWaveTable.
+    
+    Ordinarily, the frequency ratios are multiplied by the base frequency
+    of the MKUnitGenerator that uses the MKPartials object.  Similarly, the
+    amplitude ratios defined in the MKPartials object are multiplied by the
+    MKUnitGenerator's amplitude term.
+    
+    MKPartials objects can also deliver their data as Waveshaping tables.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 CCRMA, Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.4  2000/11/25 22:57:21  leigh
+  Enforced ivar privacy
+
   Revision 1.3  2000/10/04 06:16:15  skot
   Added description selectors
 
@@ -22,20 +44,6 @@
 #import "MKSamples.h"
 
 @interface MKPartials : MKWaveTable 
-/* 
- * 
- * A Partials object contains arrays that specify the amplitudes,
- * frequency ratios, and initial phases of a set of partials.  This
- * information is used to synthesize a waveform.  The synthesized data is
- * referenced by the methods inherited from WaveTable.
- * 
- * Ordinarily, the frequency ratios are multiplied by the base frequency
- * of the UnitGenerator that uses the Partials object.  Similarly, the
- * amplitude ratios defined in the Partials object are multiplied by the
- * UnitGenerator's amplitude term.
- * 
- * Partials objects can also deliver their data as Waveshaping tables.
- */
 {
     double *ampRatios;   /* Array of amplitudes. */
     double *freqRatios;  /* Array of frequencies. */
@@ -44,7 +52,8 @@
     double defaultPhase; /* Default phase. If no phase-array, this is phase */
     double minFreq;      /* Obsolete. See Timbre. */
     double maxFreq;      /* Obsolete. See Timbre. */
-    /* The following for internal use only */
+
+@private
     BOOL _ampArrayFreeable,_freqArrayFreeable,_phaseArrayFreeable;
     BOOL dbMode;
     int tableType;

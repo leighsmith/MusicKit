@@ -40,11 +40,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
  Modification history:
 
   $Log$
+  Revision 1.8  2000/11/25 23:05:09  leigh
+  Enforced ivar privacy
+
   Revision 1.7  2000/07/22 00:33:37  leigh
   Minor doco and typing cleanups.
 
@@ -81,7 +85,7 @@
     BOOL retainUpdates;                   /* NO if updates and controllerTable are cleared after each performance. */
     MKOrchestra *orchestra;               /* MKOrchestra to allocate MKSynthPatches from */
 
-    /* The following for internal use only */
+@private
     NSMutableArray *_patchLists;
 }
  

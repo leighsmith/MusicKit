@@ -36,9 +36,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.4  2000/11/25 22:56:48  leigh
+  Enforced ivar privacy
+
   Revision 1.3  2000/04/25 02:09:53  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -60,7 +64,7 @@
     double firstTimeTag;         /* The smallest timeTag value considered for performance.  */
     double lastTimeTag;          /* The greatest timeTag value considered for performance.  */
 
-    /* The following are for internal use only */
+@private
     /*  id *_loc;
         id *_endLoc;
      */

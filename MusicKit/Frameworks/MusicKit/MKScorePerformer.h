@@ -35,6 +35,9 @@
 /*
 Modification history:
   $Log$
+  Revision 1.7  2000/11/25 22:59:47  leigh
+  Enforced ivar privacy
+
   Revision 1.6  2000/10/01 06:55:01  leigh
   Typed noteSenders.
 
@@ -68,12 +71,13 @@ Modification history:
                                        performance, as last broadcast to the MKPartPerformers. */
     double lastTimeTag;   /* The greatest timeTag value considered for
                              performance, as last broadcast to the MKPartPerformers. */
-    double timeShift;	  /* The Performance offset time for the object in beats, as last broadcast to the MKPartPerformers. */
-    double duration;      /* The Maximum performance duration in beats, as last broadcast to the MKPartPerformers. */
+    double timeShift;	  /* The performance offset time for the object in beats, as last broadcast to the MKPartPerformers. */
+    double duration;      /* The maximum performance duration in beats, as last broadcast to the MKPartPerformers. */
     MKConductor *conductor; /* The object's MKConductor (its MKPartPerformers' MKConductor) as last broadcast to MKPartPerformers.*/
     id delegate;            /* The object's delegate. */
     id partPerformerClass;  /* The PartPerformer subclass used. */
-    /* The following is for internal use only */
+
+@private
     MKMsgStruct * _deactivateMsgPtr;
 }
 

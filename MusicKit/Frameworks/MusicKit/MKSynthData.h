@@ -50,9 +50,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.4  2000/11/25 23:04:40  leigh
+  Enforced ivar privacy
+
   Revision 1.3  2000/03/29 03:35:41  leigh
   Cleaned up doco and ivar declarations
 
@@ -71,7 +75,7 @@
     id synthPatch;      /* The SynthPatch that owns this object (if any). */
     id orchestra;       /* The orchestra on which the SynthElement object is allocated. */
 
-    /* The following for internal use only */
+@private
     unsigned short _orchIndex;
     unsigned short _synthPatchLoc;
     id _sharedKey;
@@ -83,7 +87,6 @@
     MKOrchAddrStruct orchAddr; /* Structure that directly represents DSP memory. Contains size, space, etc.*/
     BOOL readOnly;             /* YES if the object's data is read-only. */
 
-    /* The following for internal use ony */
     MKOrchMemStruct _reso;     /* Each instance has its own here */
     BOOL isModulus;
 }

@@ -35,9 +35,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.7  2000/11/25 22:52:14  leigh
+  Enforced ivar privacy
+
   Revision 1.6  2000/05/13 17:22:09  leigh
   Added indexOfNoteReciever method
 
@@ -66,7 +70,7 @@
 {
     NSMutableArray *noteReceivers; /* The object's array of MKNoteReceivers. */
 
-    /* The following for internal use only */
+@protected
     BOOL _noteSeen;
     void *_afterPerfMsgPtr;
 }

@@ -71,9 +71,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.5  2000/11/25 22:58:01  leigh
+  Enforced ivar privacy
+
   Revision 1.4  2000/06/09 17:17:51  leigh
   Added MKPatchEntry replacing deprecated Storage class
 
@@ -92,6 +96,7 @@
 @interface MKPatchTemplate : NSObject
 {    
     /* All MKPatchTemplate instance variables are for internal use only */
+@private
     NSMutableArray *_elementStorage;         /* Array of template entries */
     NSMutableArray *_connectionStorage;      /* Array of MKPatchConnection objects of connection info */
     /* If Orchestra is loaded, this is an array of NSMutableArrays of deallocated patches, one per DSP. */

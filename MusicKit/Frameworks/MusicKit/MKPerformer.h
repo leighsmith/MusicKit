@@ -77,6 +77,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2000/11/25 22:58:02  leigh
+  Enforced ivar privacy
+
   Revision 1.5  2000/10/01 06:54:32  leigh
   Typed noteSenders.
 
@@ -118,7 +121,7 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
     NSMutableArray *noteSenders;  /* The object's collection of MKNoteSenders. */
     id delegate;                  /* The object's delegate, if any. */
 
-    /* The following for internal use only */
+@private
     double _pauseOffset;          // Difference between the beat when a performer is paused and its time.
     double _endTime;              // End time for the object. Subclass should not set _endTime.
     MKMsgStruct *_performMsgPtr;
