@@ -11,6 +11,7 @@ NAME = dsp
 
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Framework
+LANGUAGE = English
 
 CLASSES = DSPObjectObjc.m
 
@@ -26,11 +27,11 @@ HFILES = dsp.h DSPControl.h DSPConversion.h dspdriver.h\
          _DSPMachAccessMacros.h _DSPMessage.h _DSPObject.h\
          _DSPTransfer.h _dsp_message_names.h _libdsp.h _MachMessages.h
 
-MFILES = DSPStructMisc.m DSPObject.m
+MFILES = DSPStructMisc.m DSPObject.m DSPError.m DSPGlobals.m
 
-CFILES = DSPSymbols.c DSPReadFile.c DSPError.c DSPLoad.c DSPBoot.c\
-         _DSPCV.c _DSPMach.c _DSPString.c gdbHelp.c _DSPUtilities.c\
-         DSPConversion.c DSPGlobals.c dspdriverAccess.c _DSPRelocate.c
+CFILES = DSPSymbols.c DSPReadFile.c DSPLoad.c DSPBoot.c _DSPCV.c\
+         _DSPMach.c _DSPString.c gdbHelp.c _DSPUtilities.c\
+         DSPConversion.c dspdriverAccess.c _DSPRelocate.c
 
 OTHERSRCS = Makefile.preamble Makefile Makefile.postamble m.template\
             h.template dspdriverUser.c DSPQuintSupport.c
@@ -48,8 +49,10 @@ DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
 
-FRAMEWORK_PATHS = -F$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks
-FRAMEWORKS = -framework Foundation -framework SoundKit -framework System
+LIBRARY_PATHS = -L$(LOCAL_DEVELOPER_DIR)/Libraries
+FRAMEWORK_PATHS = -F$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\
+                  -F$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks
+FRAMEWORKS = -framework Foundation -framework SndKit -framework System
 PUBLIC_HEADERS = dsp.h DSPControl.h DSPConversion.h dspdriverAccess.h\
                  DSPError.h DSPMessage.h DSPObject.h dspreg.h\
                  DSPStructMisc.h DSPSymbols.h DSPTransfer.h dsp_errno.h\
