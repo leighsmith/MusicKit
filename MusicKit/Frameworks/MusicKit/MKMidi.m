@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.18  2000/04/16 04:19:42  leigh
+  Removed assignment in condition warning
+
   Revision 1.17  2000/04/07 18:15:14  leigh
   Fixed incoming MIDI distribution
 
@@ -489,7 +492,7 @@ static timeVars *getTimeInfoFromHost(NSString *hostname)
     timeVars *p;
     if (!timeInfoTable) /* Mapping from hostname to tvs pointer */
       timeInfoTable = [HashTable newKeyDesc:"*" valueDesc:"!"];  // FIXME convert to NSDictionary LMS
-    if (p = [timeInfoTable valueForKey:(void *) [hostname cString]])
+    if ((p = [timeInfoTable valueForKey:(void *) [hostname cString]]))
       return p;
     _MK_CALLOC(p,timeVars,1);
     return p;
@@ -909,7 +912,7 @@ static void my_data_reply(mach_port_t reply_port, short unit, MIDIRawEvent *even
     }
     ptr = MIDIINPTR(receivingMidi);
     for (incomingDataCount = count; incomingDataCount--; events++) {
-	if (statusByte = parseMidiByte(events->byte, ptr)) {
+	if ((statusByte = parseMidiByte(events->byte, ptr))) {
 	    if (statusByte == MIDI_SYSEXCL)
                 aNote = handleSysExclbyte(ptr, events->byte);
 	    else

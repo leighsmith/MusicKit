@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/04/16 04:24:28  leigh
+  Removed assignment in condition warning
+
   Revision 1.5  2000/03/24 21:11:35  leigh
   Cleanups of doco, removed the objc_loadmodules include causing compilation probs on MOXS 1.2
 
@@ -1107,7 +1110,7 @@ static BOOL findClass(NSString *name, NSString **filename)
     if (ok) 
       return ok;
     if (![name isAbsolutePath]) { /* There's hope */
-        if (p = NSHomeDirectory()) {
+        if ((p = NSHomeDirectory())) {
             ok = tryIt(filename,SYNTHPATCH_EXTENSION,name,addExt,p,HOME_SYNTHPATCH_DIR);
 	    if (ok) 
 	      return ok;

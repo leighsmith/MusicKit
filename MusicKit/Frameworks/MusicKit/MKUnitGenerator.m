@@ -32,6 +32,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/04/16 04:25:11  leigh
+  Removed assignment in condition warning
+
   Revision 1.5  2000/01/13 06:38:27  leigh
   Corrected _MKErrorf to take NSString error message, kludging the second parameter to be assumed as a char *, this needs further work
 
@@ -119,11 +122,10 @@ static int sendUGTimed(DSPFix48 *aTimeStamp,MKLeafUGStruct *classInfo,
     setLoadAddrs(loadAddresses,relocation);     
     data = &classInfo->data[(int)DSP_LC_P];  
     for (i = 0; i < (int)DSP_LC_NUM_P; i++, data++) 
-      if (*data)       /* Do fix ups */
-	DSP_UNTIL_ERROR(_DSPReloc(*data,fixups[i],fixupCount[i],
-				  loadAddresses));
+      if ((*data))       /* Do fix ups */
+	DSP_UNTIL_ERROR(_DSPReloc(*data,fixups[i],fixupCount[i], loadAddresses));
     data = classInfo->data;        /* Now send code */
-    if (d = data[(int)DSP_LC_P]) { /* ploop */
+    if ((d = data[(int)DSP_LC_P])) { /* ploop */
 	DSP_UNTIL_ERROR
 	  (_DSPMKSendUnitGeneratorWithLooperTimed(aTimeStamp,
 						  DSPLCtoMS[(int)DSP_LC_P],
@@ -131,7 +133,7 @@ static int sendUGTimed(DSPFix48 *aTimeStamp,MKLeafUGStruct *classInfo,
 						  d->data,d->wordCount,
 						  looper));
     }
-#   define SENDDATA(_lc) if (d = data[(int)_lc]) \
+#   define SENDDATA(_lc) if ((d = data[(int)_lc])) \
     DSP_UNTIL_ERROR(DSPMKSendArraySkipTimed(aTimeStamp,d->data, \
 					    DSPLCtoMS[(int)_lc],\
 					    loadAddresses[(int)_lc],\
@@ -413,7 +415,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
 
 -runSelf
 /* TYPE: Modifying; Tells the receiver to start running.
- * Starts the receiver by sending \fB[self\ runSelf]\fR
+ * Starts the receiver by sending [self\ runSelf]
  * and then sets its status to MK_running.  You never subclass 
  * this method. 
  */

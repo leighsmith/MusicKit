@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2000/04/16 04:21:03  leigh
+  Removed assignment in condition warning
+
   Revision 1.10  2000/04/07 18:46:10  leigh
   Upgraded logging to NSLog
 
@@ -1031,8 +1034,8 @@ static id broadcastAndRtn(MKOrchestra *self,SEL sel)
 {
     id rtnVal;
     register unsigned short i;
-    FOREACHORCH(i)
-      if (rtnVal = [orchs[i] allocUnitGenerator:classObj])
+    FOREACHORCH(i);
+    if ((rtnVal = [orchs[i] allocUnitGenerator:classObj]))
         return rtnVal;
     return nil;
 }
@@ -1042,8 +1045,8 @@ static id broadcastAndRtn(MKOrchestra *self,SEL sel)
 {
     id rtnVal;
     register unsigned short i;
-    FOREACHORCH(i)
-      if (rtnVal = [orchs[i] allocSynthData:segment length:size])
+    FOREACHORCH(i);
+    if ((rtnVal = [orchs[i] allocSynthData:segment length:size]))
         return rtnVal;
     return nil;
 }
@@ -1053,8 +1056,8 @@ static id broadcastAndRtn(MKOrchestra *self,SEL sel)
 {
     id rtnVal;
     register unsigned short i;
-    FOREACHORCH(i)
-      if (rtnVal = [orchs[i] allocModulusSynthData:segment length:size]) 
+    FOREACHORCH(i);
+    if ((rtnVal = [orchs[i] allocModulusSynthData:segment length:size]))
         return rtnVal;
     return nil;
 }
@@ -1063,8 +1066,8 @@ static id broadcastAndRtn(MKOrchestra *self,SEL sel)
 {
     id rtnVal;
     register unsigned short i;
-    FOREACHORCH(i)
-      if (rtnVal = [orchs[i] allocModulusPatchpoint:segment]) 
+    FOREACHORCH(i);
+    if ((rtnVal = [orchs[i] allocModulusPatchpoint:segment]))
         return rtnVal;
     return nil;
 }
@@ -1075,8 +1078,8 @@ static id broadcastAndRtn(MKOrchestra *self,SEL sel)
 {
     id rtnVal;
     register unsigned short i;
-    FOREACHORCH(i)
-      if (rtnVal = [orchs[i] allocPatchpoint:segment])
+    FOREACHORCH(i);
+    if ((rtnVal = [orchs[i] allocPatchpoint:segment]))
         return rtnVal;
     return nil;
 }
@@ -1095,9 +1098,8 @@ static id broadcastAndRtn(MKOrchestra *self,SEL sel)
 {
     id rtnVal;
     register int i;
-    FOREACHORCH(i)
-      if (rtnVal = [orchs[i] allocSynthPatch:aSynthPatchClass
-                  patchTemplate:p])
+    FOREACHORCH(i);
+    if ((rtnVal = [orchs[i] allocSynthPatch:aSynthPatchClass patchTemplate:p]))
         return rtnVal;
     return nil;
 }
@@ -3032,8 +3034,8 @@ static BOOL compactResourceStack(MKOrchestra *self)
 //        [self->stack removeObject:aUG];  /* First we free up aUG. */
         [aUG retain]; //so we won't lose it after removal. Must release later.
         [self->stack removeObjectAtIndex:(elNum - 1)];  //sb. removes from ORIGINAL array not copy.
-        if (sp = [aUG synthPatch])
-          [sp _prepareToFree:&spHead :&spTail]; /* won't add twice */
+        if ((sp = [aUG synthPatch]))
+            [sp _prepareToFree:&spHead :&spTail]; /* won't add twice */
         DSPSetCurrentDSP(self->orchIndex);
         if (_MK_ORCHTRACE(self,MK_TRACEORCHALLOC)) {
             _MKOrchTrace(self,MK_TRACEORCHALLOC,
@@ -3056,7 +3058,7 @@ static BOOL compactResourceStack(MKOrchestra *self)
                 if (pendingArgBLT != -1)
                     bltArgs(self,&fromBLT,&toBLT,&resoToBLT,&pendingArgBLT,elNum,aList);//sb: FIXME! what does blt do? Uses address of el
                 [self->stack removeObject:aUG]; /* Same routine as above.*/ 
-                if (sp = [aUG synthPatch])
+                if ((sp = [aUG synthPatch]))
                     [sp _prepareToFree:&spHead :&spTail]; 
                 if (_MK_ORCHTRACE(self,MK_TRACEORCHALLOC))
                     _MKOrchTrace(self,MK_TRACEORCHALLOC,garbageMsg,[NSStringFromClass([aUG class]) cString],
@@ -3775,11 +3777,7 @@ id factObj,beforeObj,afterObj;
         templPtr++;  /* Try next template. */
     }
     {   /* Make a new one. */
-#   if _MK_MAKECOMPILERHAPPY
         int allocErr = 0;
-#   else
-        int allocErr;
-#   endif
         MKOrchMemStruct reloc;
         popResoAndSetLooper(self);
         if (!beforeObj) 
