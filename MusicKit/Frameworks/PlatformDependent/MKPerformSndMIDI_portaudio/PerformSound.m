@@ -12,7 +12,7 @@
 
   Original Author: Leigh M. Smith, <leigh@tomandandy.com>, tomandandy music inc.
 
-  10 July 1999, Copyright (c) 1999 tomandandy music inc.
+  10 July 1999, Copyright (c) 1999 The MusicKit Project.
 
   Permission is granted to use and modify this code for commercial and non-commercial
   purposes so long as the author attribution and copyright messages remain intact and
@@ -31,8 +31,6 @@ extern "C" {
 
 
 #define SQUAREWAVE_DEBUG 0
-#define PADDING 3          // make sure this matches PADFORMAT changes below (including \0)
-#define PADFORMAT "%s: %s"
 
 #define PA_DEFAULT_SAMPLE_RATE     (44100)
 #define PA_DEFAULT_OUT_CHANNELS    (2)
@@ -47,28 +45,6 @@ extern "C" {
 #define PA_DEFAULT_BUFFER_SIZE_IN_FRAMES ( bufferSizeInBytes \
         / PA_BYTES_PER_FRAME )
 
-// A linked list of sounds currently playing.
-typedef struct _audioStream {
-  int            playTag;    // the means to refer to this sound.
-  BOOL           isPlaying;
-
-  // We have to be careful copying a SndSoundStruct as it has allocated unsigned char data that
-  // is appended after the structure itself. The stucture doesn't actually include it.
-  SndSoundStruct *snd;
-
-  // Number of samples per frame (frame = 1 or more channels per time instant) so we
-  // can keep track of time inbetween GenAudio calls.
-  int          sampleFramesGenerated; 
-  int          sampleToPlay;
-
-#if !MKPERFORMSND_USE_STREAMING
-  SNDNotificationFun finishedPlayFun;
-  SNDNotificationFun startedPlayFun;
-#endif
-  struct _audioStream *next;   // Link to other playing sounds.
-} SNDPlayingSound;
-
-
 // "class variables" 
 static BOOL             initialised = FALSE;
 static char             **driverList;
@@ -80,45 +56,50 @@ static BOOL             inputInit = FALSE;
 // new ones for portaudio
 static int              bufferSizeInFrames;
 static long             bufferSizeInBytes = PA_DEFAULT_BUFFERSIZE;
-static PortAudioStream  *stream;
+static PaStream         *stream;
 static BOOL             isMuted = FALSE;
 
 // Stream processing data.
 static SNDStreamProcessor streamProcessor;
 static void *streamUserData;
 static int /*should be double*/ firstSampleTime = -1.0; // indicates this has not been assigned.
-static float *fInputBuffer = NULL;
+static float *lastRecvdInputBuffer = NULL;
 
 
 static BOOL retrieveDriverList(void)
 {
     int driverIndex = 0;
-    numOfDevices = Pa_CountDevices();
+    numOfDevices = Pa_GetDeviceCount();
 
-    if((driverList = (char **) malloc(sizeof(char *) * (numOfDevices + 1))) == NULL) {
-        fprintf(stderr, "Unable to malloc driver list\n");
+    if(numOfDevices < 0) { // Error getting devices.
+        NSLog(@"PortAudio Error retrieving number of devices %s\n", Pa_GetErrorText(numOfDevices));
         return FALSE;
+    }
+    if((driverList = (char **) malloc(sizeof(char *) * (numOfDevices + 1))) == NULL) {
+          NSLog(@"Unable to malloc driver list for %d devices\n", numOfDevices);
+          return FALSE;
     }
     for (driverIndex = 0 ; driverIndex < numOfDevices ; driverIndex++) {
         const char *name = Pa_GetDeviceInfo(driverIndex)->name;
         char *deviceName;
+
         if((deviceName = (char *) malloc((strlen(name) + 1) * sizeof(char))) == NULL) {
             NSLog(@"Unable to malloc deviceName string\n");
             return FALSE;
         }
-        strcpy(deviceName,name);
+        strcpy(deviceName, name);
         driverList[driverIndex] = deviceName;
     }
-    driverList[driverIndex]=NULL;
+    driverList[driverIndex] = NULL;
     return TRUE;
 }
 
 BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes)
 {
-  if (Pa_StreamActive(stream))
+  if (Pa_IsStreamActive(stream))
       return FALSE;
   if ((float)liBufferSizeInBytes/(float)8 != (int)(liBufferSizeInBytes/8)) {
-      fprintf(stderr, "output device - error setting buffer size. Buffer must be multiple of 8\n");
+      NSLog(@"output device - error setting buffer size. Buffer must be multiple of 8\n");
       return FALSE;
   }
   bufferSizeInBytes = liBufferSizeInBytes;
@@ -131,6 +112,12 @@ BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes)
 // If we guess or not, we still do get a driver initialised.
 PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 {
+    PaError err = Pa_Initialize();
+
+    if (err != paNoError) {
+        NSLog(@"PortAudio error: %s\n", Pa_GetErrorText(err));
+        return FALSE;
+    }
     if(!retrieveDriverList())
         return FALSE;
     if(!initialised)
@@ -139,7 +126,6 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 
     return TRUE;
 }
-
 
 // Returns an array of strings listing the available drivers.
 // Returns NULL if the driver names were unobtainable.
@@ -184,190 +170,6 @@ PERFORM_API void SNDSetMute(BOOL aFlag)
     isMuted = aFlag;
 }
 
-#if !MKPERFORMSND_USE_STREAMING
-
-static SNDPlayingSound  singlePlayingSound;
-
-////////////////////////////////////////////////////////////////////////////////
-// paSKCallback
-//
-// Routine to play a single sound. This could be generalised using the link-list 
-// behaviour to do multiple sound channels, but instead we will adopt the stream 
-// operation within the SndKit itself.
-// The basis of this was snaffled from MKPerformSndMIDI_MacOSX, then modded for
-// portaudio semantics.
-/////////////////////////////////////////////////////////////////////////////////
-
-static int paSKCallback( void *inputBuffer,
-                         void *outputBuffer,
-                unsigned long framesPerBuffer,
-                  PaTimestamp outTime,
-                         void *userData )
-
-//need to ascertain nmber of channels,
-
-{
-    int deviceChannel;
-    int frameIndex;
-    unsigned int sampleToPlay;
-    SndSoundStruct *snd = singlePlayingSound.snd;
-    int bytesPerSample = 2;// TODO assume its a short (2 byte / WORD format) needs checking dataFormat.
-    int bytesPerFrame = bytesPerSample * snd->channelCount;
-
-    int channelsPerFrame = snd->channelCount; // FIXME is this right?
-
-    for (frameIndex = 0; frameIndex < framesPerBuffer; frameIndex++) {
-        unsigned int byteToPlayFrom = singlePlayingSound.sampleFramesGenerated * bytesPerFrame;
-        sampleToPlay = frameIndex * channelsPerFrame;
-            
-        // check if the sound has been played to the end.
-        if(byteToPlayFrom < (unsigned) snd->dataSize && singlePlayingSound.isPlaying) {
-            for(deviceChannel = 0; deviceChannel < channelsPerFrame; deviceChannel++) {
-#if SQUAREWAVE_DEBUG
-                if (singlePlayingSound.sampleFramesGenerated % 500 > 250) {
-                    ((float *)outputBuffer)[sampleToPlay] = 0.4f;
-                }
-                else {
-                    ((float *)outputBuffer)[sampleToPlay] = -0.4f;
-                }
-#else
-                unsigned char *grabDataFrom;
-                signed short sampleWord;
-    
-                grabDataFrom = (unsigned char *) snd + snd->dataLocation + byteToPlayFrom;
-                // obtain data from big-endian ordered words
-                sampleWord = (((signed short) grabDataFrom[0]) << 8) + (grabDataFrom[1] & 0xff);
-                // make a float, do any other sounds, normalize and then write it.
-                if (!isMuted) {
-                    ((float *)outputBuffer)[sampleToPlay] = sampleWord / 32768.0f;
-                }
-                else ((float *)outputBuffer)[sampleToPlay] = 0.0f;
-
-                if(snd->channelCount != 1)	// play mono by sending same sample to all channels
-                    byteToPlayFrom += bytesPerSample;
-#endif
-                sampleToPlay++;
-            }
-            singlePlayingSound.sampleFramesGenerated++;
-        }
-        else {
-            for(deviceChannel = 0; deviceChannel < channelsPerFrame; deviceChannel++) {
-                // if at end of sound, play silence on all channels
-                ((float *)outputBuffer)[sampleToPlay] = 0.0f;
-                sampleToPlay++;
-            }
-            // Signal back to the rest of the world that we've finished playing the sound.
-            if(singlePlayingSound.finishedPlayFun != NULL && singlePlayingSound.isPlaying) {
-                // Mark this sound as finished, but it is up to the delegate to stop things?
-                (*(singlePlayingSound.finishedPlayFun))(snd, singlePlayingSound.playTag, 0);
-            }
-            singlePlayingSound.isPlaying = FALSE;
-        }
-    }
-    return 0; // TODO need better definition...
-}
-
-// Routine to begin playback
-PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct, 
-                                           int tag,
-                                           int priority,
-                                           int preempt, 
-                            SNDNotificationFun beginFun,
-                            SNDNotificationFun endFun)
-{
-    PaError err;
-    int data = 0;
-
-    if(!initialised)
-        return SND_ERR_NOT_RESERVED;  // invalid sound structure.
- 
-    if(soundStruct->magic != SND_MAGIC) {
-        // probably SND_ERROR_NOT_SOUND is more descriptive, but this matches SoundKit specs.
-        return SND_ERR_CANNOT_PLAY;
-    }
-    singlePlayingSound.playTag = tag;
-    singlePlayingSound.snd = soundStruct;
-    singlePlayingSound.sampleFramesGenerated = 0;
-    singlePlayingSound.sampleToPlay = 0;
-    singlePlayingSound.startedPlayFun = beginFun;
-    singlePlayingSound.finishedPlayFun = endFun;
-    singlePlayingSound.isPlaying = TRUE;
-    singlePlayingSound.next = NULL;
-
-    err = Pa_Initialize();
-    if( err != paNoError ) {
-        NSLog(@"PortAudio error: %s\n", Pa_GetErrorText( err ) );
-        return SND_ERR_CANNOT_CONFIGURE;
-    }
-
-    err = Pa_OpenDefaultStream(
-        &stream,                         /* passes back stream pointer */
-        PA_DEFAULT_IN_CHANNELS,          /* stereo input */
-        PA_DEFAULT_OUT_CHANNELS,         /* stereo output */
-        paFloat32,                       /* 32 bit floating point output */
-        PA_DEFAULT_SAMPLE_RATE,          /* sample rate */
-        PA_DEFAULT_BUFFER_SIZE_IN_FRAMES,/* frames per buffer */
-        0,              /* number of buffers, if zero then use default minimum */
-        paSKCallback,                    /* specify our custom callback */
-        &data );                         /* pass our data through to callback */
-    if( err != paNoError ) {
-        NSLog(@"PortAudio Pa_OpenDefaultStream error: %s\n", Pa_GetErrorText( err ) );
-        return SND_ERR_CANNOT_CONFIGURE;
-    }
-    err = Pa_StartStream( stream );
-    if( err != paNoError ) {
-        NSLog(@"PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText( err ) );
-        return SND_ERR_CANNOT_CONFIGURE;
-    }
-    Pa_Sleep(2) ; /* seconds */
-    return SND_ERR_NONE;
-}
-
-
-PERFORM_API int SNDStartRecording(SndSoundStruct *soundStruct, 
-                                             int tag,
-                                             int priority,
-                                             int preempt, 
-                              SNDNotificationFun beginRecFun,
-                              SNDNotificationFun endRecFun)
-{
-    return FALSE; // TODO
-}
-
- 
-PERFORM_API int SNDSamplesProcessed(int tag)
-{
-    return -1;
-}
-
-// Routine to stop
-PERFORM_API void SNDStop(int tag)
-{
-}
-
-PERFORM_API void SNDPause(int tag)
-{
-}
-
-PERFORM_API void SNDResume(int tag)
-{
-// TODO - surely there is a AudOut equivalent?
-}
-
-PERFORM_API int SNDUnreserve(int dunno)
-{
-	return 0;
-}
-
-PERFORM_API void SNDTerminate(void)
-{
-    PaError err;
-    err = Pa_Terminate();
-    if( err != paNoError ) {
-        NSLog(@"PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText( err ) );
-    }
-}
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // vendBuffersToStreamManagerIOProc
@@ -378,26 +180,26 @@ PERFORM_API void SNDTerminate(void)
 // easy way to do the conversion without anyone writing their own converter.
 ////////////////////////////////////////////////////////////////////////////////
 
-
-static int vendBuffersToStreamManagerIOProc(void *inputBuffer,
+static int vendBuffersToStreamManagerIOProc(const void *inputBuffer,
                                             void *outputBuffer,
                                    unsigned long framesPerBuffer,
-                                     PaTimestamp outTime,
+				   const PaStreamCallbackTimeInfo *timeInfo,
+                                     PaStreamCallbackFlags statusFlags,
                                             void *userData )
 {
     SNDStreamBuffer inStream, outStream;
 
 //    if(inOutputTime->mFlags & kAudioTimeStampSampleTimeValid == 0) {
-//        fprintf(stderr, "sample time is not valid!\n");
+//        NSLog(@"sample time is not valid!\n");
 //    }
     if(firstSampleTime == -1.0) {
-        firstSampleTime = outTime; /* I assume this will be 0, but interesting to find out. */
+        firstSampleTime = timeInfo->outputBufferDacTime; /* I assume this will be 0, but interesting to find out. */
     }
 
     // to tell the client the format it is receiving.
 
     if (inputInit) {
-        memcpy(fInputBuffer, inputBuffer, bufferSizeInBytes);
+        memcpy(lastRecvdInputBuffer, inputBuffer, bufferSizeInBytes);
     }
 
     // to tell the client the format it should send.
@@ -405,17 +207,23 @@ static int vendBuffersToStreamManagerIOProc(void *inputBuffer,
     SNDStreamNativeFormat(&outStream.streamFormat);   
     SNDStreamNativeFormat(&inStream.streamFormat);    
 
-    inStream.streamData  = fInputBuffer;  
+    inStream.streamData  = lastRecvdInputBuffer;
     outStream.streamData = outputBuffer;
         
     // hand over the stream buffers to the processor/stream manager.
     // the output time goes out as a relative time, noted from the 
     // first sample time we first receive.
 
-    (*streamProcessor)(outTime - firstSampleTime, 
+#ifdef GNUSTEP
+    // If we are using a GNUstep system, the thread of the callback
+    // hasn't yet been registered with GNUstep which it must be before
+    // we can create NSAutoreleasePools.
+    GSRegisterCurrentThread();
+#endif
+    (*streamProcessor)(timeInfo->outputBufferDacTime - firstSampleTime, 
                        &inStream, &outStream, streamUserData);
     if (isMuted) {
-        memset(outputBuffer,0,bufferSizeInBytes);
+        memset(outputBuffer, 0, bufferSizeInBytes);
     }
 
     return 0; // returning 1 stops the stream
@@ -438,9 +246,9 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
         return FALSE;  // invalid sound structure.
 
     if (inputInit) {
-        if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL)
+        if ((lastRecvdInputBuffer = (float *) malloc(bufferSizeInBytes)) == NULL)
             return FALSE;
-        memset(fInputBuffer,0,bufferSizeInBytes);
+        memset(lastRecvdInputBuffer, 0, bufferSizeInBytes);
     }
 
     // indicate the first absolute sample time received from the call back needs to be marked as a
@@ -450,11 +258,6 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
     streamProcessor = newStreamProcessor;
     streamUserData  = newUserData;
 
-    err = Pa_Initialize();
-    if( err != paNoError ) {
-        NSLog(@"PortAudio error: %s\n", Pa_GetErrorText( err ) );
-        r = FALSE;
-    }
     err = Pa_OpenDefaultStream(
         &stream,                         /* passes back stream pointer */
         PA_DEFAULT_IN_CHANNELS,          /* stereo input */
@@ -467,9 +270,9 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
                                           */
         PA_DEFAULT_SAMPLE_RATE,          /* sample rate */
         PA_DEFAULT_BUFFER_SIZE_IN_FRAMES,/* frames per buffer */
-        0,              /* number of buffers, if zero then use default minimum */
         vendBuffersToStreamManagerIOProc, /* specify our custom callback */
         &data );        /* pass our data through to callback */
+ 
     err = Pa_StartStream( stream );
     if( err != paNoError ) {
         NSLog(@"PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText( err ) );
@@ -501,10 +304,10 @@ PERFORM_API BOOL SNDStreamStop(void)
 
 //    SNDTerminate();
     if (inputInit) {
-        free(fInputBuffer);
-        fInputBuffer = NULL;
+        free(lastRecvdInputBuffer);
+        lastRecvdInputBuffer = NULL;
     }
-    NSLog(@"SNDStreamStopped\n" );
+    // NSLog(@"SNDStreamStopped\n" );
     return r;
 }
 
@@ -527,7 +330,16 @@ PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat)
     streamFormat->info[0]      = '\0';
 }
 
-////////////////////////////////////////////////////////////////////////////////
+PERFORM_API BOOL SNDTerminate(void)
+{
+    PaError err = Pa_Terminate();
+
+    if (err != paNoError) {
+        NSLog(@"PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText(err));
+	return FALSE;
+    }
+    return TRUE;
+}
 
 #ifdef __cplusplus
 }
