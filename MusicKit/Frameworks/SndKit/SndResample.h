@@ -6,13 +6,9 @@
  * number of bits to the right of the binary-point for fixed-point math, etc.
  *
  */
-#ifdef GNUSTEP
 #include "SndStdefs.h"
 #include "SndFunctions.h"
-#else
-#import "SndStdefs.h"
-#import "SndFunctions.h"
-#endif
+#include "SndKitDefines.h"
 
 /* Conversion constants */
 #define Nhc       8
@@ -75,7 +71,7 @@
  */
 
 
-int resample(			/* number of output sample returned */
+SNDKIT_API int resample(	/* number of output sample returned */
     double factor,		/* factor = Sndout/Sndin */
     SND_HWORD *outPtr,		/* output data pointer */
     int inCount,		/* number of input samples to convert */
