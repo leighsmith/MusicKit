@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  1999/09/28 03:05:29  leigh
+  Cleaned up warnings
+
   Revision 1.6  1999/09/24 17:05:36  leigh
   downloadDLS method added, MKPerformSndMIDI framework now used
 
@@ -1032,13 +1035,13 @@ static int midiDriverCount = 0;
 // NO if there was no MIDI driver found. 
 static BOOL initDriverKitBasedMIDIs(void)
 {
+#if  i386  && !WIN32
     char *s;
     const char *familyStr;
-#ifndef WIN32
     List *installedDrivers;
-#endif
     NSMutableArray *midiDriverList;
     id aConfigTable;
+#endif
     int i;
     static BOOL driverInfoInitialized = NO;
 
