@@ -4,13 +4,13 @@ This is the main document which simply provides the attribution
 and preface and then includes all chapters that constitute the
 MusicKit Tutorials book.
 
-In SGML using DocBook DTD V3.1 and above.
+In SGML using DocBook DTD V4.1 and above.
 
 Edit this file, not the HTML, RTF or LaTeX output.
 
 -->
 
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
 <!ENTITY class1 SYSTEM "MusicKitClass1.sgml">
 <!ENTITY class2 SYSTEM "MusicKitClass2.sgml">
 <!ENTITY class3 SYSTEM "MusicKitClass3.sgml">
