@@ -25,6 +25,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/11/25 23:45:16  leigh
+  Added prototype of MKMDSetReplyCallback and RECEPTION_USING_PORTS declaration
+
   Revision 1.5  2000/11/13 23:36:57  leigh
   Added back legacy NeXT MIDI port macros, more ports are now MKMDReplyPort, mach headers are removed
 
@@ -56,12 +59,11 @@ Modification history:
 typedef int msg_header_t;  // mach_msg_header_t
 
 #define PORTS_ARE_NSOBJECTS 1
+#define RECEPTION_USING_PORTS 0
 #define MKMDPort NSMachPort *
 #define MKMDOwnerPort NSMachPort *
 #define MKMDReplyPort NSMachPort *
 typedef int MKMDReturn;
-
-#define MKMD_NAME @"Mididriver"  /* Name of driver (append unit number to use) */
 
 /* Each event consists of a byte and a time stamp. */
 typedef struct {
@@ -187,6 +189,15 @@ PERFORM_API MKMDReturn
 PERFORM_API MKMDReturn 
     MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions *funcs);
 
+/* Routine MKMDSetReplyCallback - this is called to nominate a function to be called on reception of events
+instead of sending a message to a Mach port */
+PERFORM_API MKMDReturn MKMDSetReplyCallback (
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
+	short unit,
+	void (*newCallbackFn)(void *),
+        void *newCallbackParam);
+
 /****************** Writing MKMD data to the driver *********************/
 PERFORM_API MKMDReturn 
     MKMDSendData(MKMDPort driver, MKMDOwnerPort owner, short unit, MKMDRawEvent *data, unsigned int count);
@@ -212,62 +223,6 @@ PERFORM_API MKMDReturn
 /* This will be obsolete soon: */
 PERFORM_API MKMDReturn 
     MKMDSetSystemIgnores(MKMDPort driver, MKMDOwnerPort owner, short unit, unsigned int ignoreBits);
-
-#if m68k
-/* These macros make the musickit functions and macros look like those in libdsp. */
-#define MKMDRawEvent                       MIDIRawEvent
-#define MKMD_MAX_EVENT                     MIDI_MAX_EVENT
-#define MKMD_MAX_MSG_SIZE                  MIDI_MAX_MSG_SIZE
-#define MKMD_CLOCK_MODE_INTERNAL           MIDI_CLOCK_MODE_INTERNAL
-#define MKMD_CLOCK_MODE_MTC_SYNC           MIDI_CLOCK_MODE_MTC_SYNC
-#define MKMD_ERROR_BUSY                    MIDI_ERROR_BUSY
-#define MKMD_ERROR_NOT_OWNER               MIDI_ERROR_NOT_OWNER
-#define MKMD_ERROR_QUEUE_FULL              MIDI_ERROR_QUEUE_FULL
-#define MKMD_ERROR_BAD_MODE                MIDI_ERROR_BAD_MODE
-#define MKMD_ERROR_UNIT_UNAVAILABLE        MIDI_ERROR_UNIT_UNAVAILABLE
-#define MKMD_ERROR_ILLEGAL_OPERATION       MIDI_ERROR_ILLEGAL_OPERATION
-#define MKMD_ERROR_UNKNOWN_ERROR           MIDI_ERROR_UNKNOWN_ERROR
-#define MKMD_EXCEPTION_MTC_STOPPED         MIDI_EXCEPTION_MTC_STOPPED
-#define MKMD_EXCEPTION_MTC_STARTED_FORWARD MIDI_EXCEPTION_MTC_STARTED_FORWARD
-#define MKMD_EXCEPTION_MTC_STARTED_REVERSE MIDI_EXCEPTION_MTC_STARTED_REVERSE
-#define MKMD_IGNORE_CLOCK                  MIDI_IGNORE_CLOCK
-#define MKMD_IGNORE_START                  MIDI_IGNORE_START
-#define MKMD_IGNORE_CONTINUE               MIDI_IGNORE_CONTINUE
-#define MKMD_IGNORE_STOP                   MIDI_IGNORE_STOP
-#define MKMD_IGNORE_ACTIVE                 MIDI_IGNORE_ACTIVE
-#define MKMD_IGNORE_RESET                  MIDI_IGNORE_RESET
-#define MKMD_IGNORE_REAL_TIME              MIDI_IGNORE_REAL_TIME
-#define MKMDDataReplyFunction              MIDIDataReplyFunction
-#define MKMDAlarmReplyFunction             MIDIAlarmReplyFunction
-#define MKMDExceptionReplyFunction         MIDIExceptionReplyFunction
-#define MKMDQueueReplyFunction             MIDIQueueReplyFunction
-#define MKMDReplyFunctions                 MIDIReplyFunctions
-#define MKMDBecomeOwner                    MIDIBecomeOwner
-#define MKMDReleaseOwnership               MIDIReleaseOwnership
-#define MKMDClaimUnit                      MIDIClaimUnit
-#define MKMDReleaseUnit                    MIDIReleaseUnit
-#define MKMDSetClockMode                   MIDISetClockMode
-#define MKMDSetClockQuantum                MIDISetClockQuantum
-#define MKMDSetClockTime                   MIDISetClockTime
-#define MKMDGetClockTime                   MIDIGetClockTime
-#define MKMDGetMTCTime                     MIDIGetMTCTime
-#define MKMDStartClock                     MIDIStartClock
-#define MKMDStopClock                      MIDIStopClock
-#define MKMDSetSystemIgnores               MIDISetSystemIgnores
-#define MKMDRequestData                    MIDIRequestData
-#define MKMDRequestAlarm                   MIDIRequestAlarm
-#define MKMDRequestExceptions              MIDIRequestExceptions
-#define MKMDRequestQueueNotification       MIDIRequestQueueNotification
-#define MKMDAwaitReply                     MIDIAwaitReply
-#define MKMD_NO_TIMEOUT                    MIDI_NO_TIMEOUT
-#define MKMDHandleReply                    MIDIHandleReply
-#define MKMDSendData                       MIDISendData
-#define MKMDGetAvailableQueueSize          MIDIGetAvailableQueueSize
-#define MKMDClearQueue                     MIDIClearQueue
-#define MKMDFlushQueue                     MIDIFlushQueue
-#define MKMDFilterMessage                  MIDIFilterMessage
-#define MKMDParseInput                     MIDIParseInput
-#endif // m68K compatability
 
 #endif _MKMD_
 
