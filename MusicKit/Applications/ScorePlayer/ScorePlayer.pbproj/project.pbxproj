@@ -5,50 +5,6 @@
 	};
 	objectVersion = 32;
 	objects = {
-		013F475AFFD5AEFDCFED3B96 = {
-			isa = PBXFileReference;
-			path = ScorePlayerApp.icns;
-			refType = 4;
-		};
-		013F475BFFD5AEFDCFED3B96 = {
-			fileRef = 013F475AFFD5AEFDCFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		013F475CFFD5AF5CCFED3B96 = {
-			isa = PBXFileReference;
-			path = Midi.icns;
-			refType = 4;
-		};
-		013F475DFFD5AF5CCFED3B96 = {
-			isa = PBXFileReference;
-			path = ScorePlayerDoc2.icns;
-			refType = 4;
-		};
-		013F475EFFD5AF5CCFED3B96 = {
-			isa = PBXFileReference;
-			path = ScorePlayerDoc.icns;
-			refType = 4;
-		};
-		013F475FFFD5AF5CCFED3B96 = {
-			fileRef = 013F475EFFD5AF5CCFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		013F4760FFD5AF5CCFED3B96 = {
-			fileRef = 013F475DFFD5AF5CCFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		013F4761FFD5AF5CCFED3B96 = {
-			fileRef = 013F475CFFD5AF5CCFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		018584A1004EBFCCCFED3B96 = {
 			children = (
 				11E07F01FFA3719CCFED3B93,
@@ -59,6 +15,191 @@
 		};
 		018584A2004EBFCCCFED3B96 = {
 			fileRef = 018584A1004EBFCCCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F04A006A803ACFED3B96 = {
+			isa = PBXFileReference;
+			name = Score.icns;
+			path = Images/Score.icns;
+			refType = 4;
+		};
+		01B5F04B006A803ACFED3B96 = {
+			isa = PBXFileReference;
+			name = Score.tiff;
+			path = Images/Score.tiff;
+			refType = 4;
+		};
+		01B5F04C006A803ACFED3B96 = {
+			fileRef = 01B5F04A006A803ACFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F04D006A803ACFED3B96 = {
+			fileRef = 01B5F04B006A803ACFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F04E006A81A1CFED3B96 = {
+			isa = PBXFileReference;
+			name = Midi.icns;
+			path = Images/Midi.icns;
+			refType = 4;
+		};
+		01B5F04F006A81A1CFED3B96 = {
+			isa = PBXFileReference;
+			name = Midi.tiff;
+			path = Images/Midi.tiff;
+			refType = 4;
+		};
+		01B5F050006A81A1CFED3B96 = {
+			isa = PBXFileReference;
+			name = Sound.icns;
+			path = Images/Sound.icns;
+			refType = 4;
+		};
+		01B5F051006A81A1CFED3B96 = {
+			isa = PBXFileReference;
+			name = Sound.tiff;
+			path = Images/Sound.tiff;
+			refType = 4;
+		};
+		01B5F052006A81A1CFED3B96 = {
+			fileRef = 01B5F04E006A81A1CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F053006A81A1CFED3B96 = {
+			fileRef = 01B5F04F006A81A1CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F054006A81A1CFED3B96 = {
+			fileRef = 01B5F050006A81A1CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F055006A81A1CFED3B96 = {
+			fileRef = 01B5F051006A81A1CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F056006A8229CFED3B96 = {
+			isa = PBXFileReference;
+			name = PlayScore.icns;
+			path = Images/PlayScore.icns;
+			refType = 4;
+		};
+		01B5F057006A8229CFED3B96 = {
+			isa = PBXFileReference;
+			name = PlayScore.tiff;
+			path = Images/PlayScore.tiff;
+			refType = 4;
+		};
+		01B5F058006A8229CFED3B96 = {
+			fileRef = 01B5F056006A8229CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F059006A8229CFED3B96 = {
+			fileRef = 01B5F057006A8229CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F05A006A82D5CFED3B96 = {
+			isa = PBXFileReference;
+			name = play.tiff;
+			path = Images/play.tiff;
+			refType = 4;
+		};
+		01B5F05B006A82D5CFED3B96 = {
+			isa = PBXFileReference;
+			name = playH.tiff;
+			path = Images/playH.tiff;
+			refType = 4;
+		};
+		01B5F05C006A82D5CFED3B96 = {
+			isa = PBXFileReference;
+			name = ScorePlayerApp.icns;
+			path = Images/ScorePlayerApp.icns;
+			refType = 4;
+		};
+		01B5F05D006A82D5CFED3B96 = {
+			isa = PBXFileReference;
+			name = ScorePlayerApp.tiff;
+			path = Images/ScorePlayerApp.tiff;
+			refType = 4;
+		};
+		01B5F05E006A82D5CFED3B96 = {
+			isa = PBXFileReference;
+			name = stop.tiff;
+			path = Images/stop.tiff;
+			refType = 4;
+		};
+		01B5F05F006A82D5CFED3B96 = {
+			fileRef = 01B5F05A006A82D5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F060006A82D5CFED3B96 = {
+			fileRef = 01B5F05B006A82D5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F061006A82D5CFED3B96 = {
+			fileRef = 01B5F05C006A82D5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F062006A82D5CFED3B96 = {
+			fileRef = 01B5F05D006A82D5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F063006A82D5CFED3B96 = {
+			fileRef = 01B5F05E006A82D5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01B5F064006A8FD1CFED3B96 = {
+			children = (
+				01B5F065006A9033CFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+		};
+		01B5F065006A9033CFED3B96 = {
+			children = (
+				01B5F066006A9033CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = ScorePlayer.sgml;
+			path = "";
+			refType = 4;
+		};
+		01B5F066006A9033CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = Help/English.lproj/ScorePlayer.sgml;
+			refType = 4;
+		};
+		01B5F067006A9033CFED3B96 = {
+			fileRef = 01B5F065006A9033CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -96,6 +237,7 @@
 		};
 		11E07EDCFFA3719CCFED3B93 = {
 			children = (
+				01B5F064006A8FD1CFED3B96,
 				11E07EDDFFA3719CCFED3B93,
 				11E07EE2FFA3719CCFED3B93,
 				11E07EE7FFA3719CCFED3B93,
@@ -187,10 +329,10 @@
 		11E07EE9FFA3719CCFED3B93 = {
 			children = (
 				11E07EEAFFA3719CCFED3B93,
-				11E07EECFFA3719CCFED3B93,
-				11E07EEEFFA3719CCFED3B93,
 				11E07EF0FFA3719CCFED3B93,
 				11E07EF2FFA3719CCFED3B93,
+				11E07EECFFA3719CCFED3B93,
+				11E07EEEFFA3719CCFED3B93,
 				11E07EF4FFA3719CCFED3B93,
 			);
 			isa = PBXGroup;
@@ -283,75 +425,30 @@
 		};
 		11E07EF6FFA3719CCFED3B93 = {
 			children = (
-				11E07EF8FFA3719CCFED3B93,
-				013F475CFFD5AF5CCFED3B96,
-				11E07EF9FFA3719CCFED3B93,
-				013F475AFFD5AEFDCFED3B96,
-				11E07EFBFFA3719CCFED3B93,
-				013F475DFFD5AF5CCFED3B96,
-				11E07EFCFFA3719CCFED3B93,
-				013F475EFFD5AF5CCFED3B96,
-				11E07EFDFFA3719CCFED3B93,
-				11E07EF7FFA3719CCFED3B93,
-				11E07EFEFFA3719CCFED3B93,
-				11E07EFAFFA3719CCFED3B93,
+				01B5F04A006A803ACFED3B96,
+				01B5F04B006A803ACFED3B96,
+				01B5F04E006A81A1CFED3B96,
+				01B5F04F006A81A1CFED3B96,
+				01B5F050006A81A1CFED3B96,
+				01B5F051006A81A1CFED3B96,
+				01B5F056006A8229CFED3B96,
+				01B5F057006A8229CFED3B96,
+				01B5F05A006A82D5CFED3B96,
+				01B5F05B006A82D5CFED3B96,
+				01B5F05C006A82D5CFED3B96,
+				01B5F05D006A82D5CFED3B96,
+				01B5F05E006A82D5CFED3B96,
 			);
 			isa = PBXGroup;
 			name = Images;
 			refType = 4;
 		};
-		11E07EF7FFA3719CCFED3B93 = {
-			isa = PBXFileReference;
-			path = play.tiff;
-			refType = 4;
-		};
-		11E07EF8FFA3719CCFED3B93 = {
-			isa = PBXFileReference;
-			path = Midi.tiff;
-			refType = 4;
-		};
-		11E07EF9FFA3719CCFED3B93 = {
-			isa = PBXFileReference;
-			path = ScorePlayerApp.tiff;
-			refType = 4;
-		};
-		11E07EFAFFA3719CCFED3B93 = {
-			isa = PBXFileReference;
-			path = stop.tiff;
-			refType = 4;
-		};
-		11E07EFBFFA3719CCFED3B93 = {
-			isa = PBXFileReference;
-			path = ScorePlayerDoc2.tiff;
-			refType = 4;
-		};
-		11E07EFCFFA3719CCFED3B93 = {
-			isa = PBXFileReference;
-			path = ScorePlayerDoc.tiff;
-			refType = 4;
-		};
-		11E07EFDFFA3719CCFED3B93 = {
-			isa = PBXFileReference;
-			path = Sound.tiff;
-			refType = 4;
-		};
-		11E07EFEFFA3719CCFED3B93 = {
-			isa = PBXFileReference;
-			path = playH.tiff;
-			refType = 4;
-		};
 		11E07EFFFFA3719CCFED3B93 = {
 			children = (
-				11E07F00FFA3719CCFED3B93,
 				018584A1004EBFCCCFED3B96,
 			);
 			isa = PBXGroup;
 			name = Resources;
-			refType = 4;
-		};
-		11E07F00FFA3719CCFED3B93 = {
-			isa = PBXFileReference;
-			path = help.rtfd;
 			refType = 4;
 		};
 		11E07F01FFA3719CCFED3B93 = {
@@ -458,7 +555,7 @@
 				<string>score</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>ScorePlayerDoc.icns</string>
+			<string>Score.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>MusicKit ScoreFiles</string>
 			<key>CFBundleTypeRole</key>
@@ -470,7 +567,7 @@
 				<string>playscore</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>ScorePlayerDoc2.icns</string>
+			<string>PlayScore.icns</string>
 			<key>CFBundleTypeName</key>
 			<string>MusicKit playscore (binary) ScoreFiles</string>
 			<key>CFBundleTypeRole</key>
@@ -587,20 +684,21 @@
 				11E07F17FFA3719CCFED3B93,
 				11E07F18FFA3719CCFED3B93,
 				11E07F19FFA3719CCFED3B93,
-				11E07F1AFFA3719CCFED3B93,
-				11E07F1BFFA3719CCFED3B93,
-				11E07F1CFFA3719CCFED3B93,
-				11E07F1DFFA3719CCFED3B93,
-				11E07F1EFFA3719CCFED3B93,
-				11E07F1FFFA3719CCFED3B93,
-				11E07F20FFA3719CCFED3B93,
-				11E07F21FFA3719CCFED3B93,
-				11E07F22FFA3719CCFED3B93,
 				018584A2004EBFCCCFED3B96,
-				013F475BFFD5AEFDCFED3B96,
-				013F475FFFD5AF5CCFED3B96,
-				013F4760FFD5AF5CCFED3B96,
-				013F4761FFD5AF5CCFED3B96,
+				01B5F04C006A803ACFED3B96,
+				01B5F04D006A803ACFED3B96,
+				01B5F052006A81A1CFED3B96,
+				01B5F053006A81A1CFED3B96,
+				01B5F054006A81A1CFED3B96,
+				01B5F055006A81A1CFED3B96,
+				01B5F058006A8229CFED3B96,
+				01B5F059006A8229CFED3B96,
+				01B5F05F006A82D5CFED3B96,
+				01B5F060006A82D5CFED3B96,
+				01B5F061006A82D5CFED3B96,
+				01B5F062006A82D5CFED3B96,
+				01B5F063006A82D5CFED3B96,
+				01B5F067006A9033CFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
@@ -637,60 +735,6 @@
 		};
 		11E07F19FFA3719CCFED3B93 = {
 			fileRef = 11E07EF4FFA3719CCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		11E07F1AFFA3719CCFED3B93 = {
-			fileRef = 11E07EF7FFA3719CCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		11E07F1BFFA3719CCFED3B93 = {
-			fileRef = 11E07EF8FFA3719CCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		11E07F1CFFA3719CCFED3B93 = {
-			fileRef = 11E07EF9FFA3719CCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		11E07F1DFFA3719CCFED3B93 = {
-			fileRef = 11E07EFAFFA3719CCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		11E07F1EFFA3719CCFED3B93 = {
-			fileRef = 11E07EFBFFA3719CCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		11E07F1FFFA3719CCFED3B93 = {
-			fileRef = 11E07EFCFFA3719CCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		11E07F20FFA3719CCFED3B93 = {
-			fileRef = 11E07EFDFFA3719CCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		11E07F21FFA3719CCFED3B93 = {
-			fileRef = 11E07EFEFFA3719CCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		11E07F22FFA3719CCFED3B93 = {
-			fileRef = 11E07F00FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
 			};
