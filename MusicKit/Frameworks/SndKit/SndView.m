@@ -582,9 +582,10 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     CGContextRef ctx;
 
     graphicsContext = [NSGraphicsContext currentContext];
+    [graphicsContext setShouldAntialias:FALSE];
     ctx = [graphicsContext graphicsPort];
     CGContextSetRGBStrokeColor(ctx, 1,0,0,1);
-    CGContextSetLineWidth(ctx, 2.0);
+    CGContextSetLineWidth(ctx, 1.0);
 
     
 #endif
@@ -1136,8 +1137,8 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
 	  if (svFlags.drawsCrosses && reductionFactor <= CROSSTHRESH) {
 	    
-	    CGContextMoveToPoint(ctx, (int) j + 0.5, theValue+3);
-	    CGContextAddLineToPoint(ctx, (int) j + 0.5, theValue-3);
+	    CGContextMoveToPoint(ctx, (int) j + 0.5, theValue+4);
+	    CGContextAddLineToPoint(ctx, (int) j + 0.5, theValue-4);
 	    CGContextMoveToPoint(ctx, (int) j + 0.5, theValue);
 	  }
 
@@ -1213,12 +1214,12 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
       [selectionColour set];
 
-//      NSRectFillUsingOperation(highlightRect, NSCompositeDestinationOver);
+      NSRectFillUsingOperation(highlightRect, NSCompositeDestinationOver);
 
       //      NSHighlightRect(highlightRect);
 
-//		printf("HIGHLIGHT %g to %g\n",NX_X(&highlightRect),
-//			NX_MAXX(&highlightRect));
+		printf("HIGHLIGHT %g to %g\n",NSMinX(highlightRect),
+			NSMaxX(highlightRect));
     }
 
     return;
@@ -1468,23 +1469,13 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 	/* to zap current selection */
 
         if (NSWidth(selectionRect) > 0.1) {
-
 	  //	  NSHighlightRect(adjSelRect);
-
 	  //	  [self setNeedsDisplay:YES];
-
-
 	  /* remember our rect for future erasure */
-
 	  selCacheRect = adjSelRect;
-
 	  [selectionColour set];
-
-//	  NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
-
-
-	  //			printf("zapping %g to %g\n",NX_X(&adjSelRect),NX_MAXX(&adjSelRect));
-
+	  // NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
+          //			printf("zapping %g to %g\n",NX_X(&adjSelRect),NX_MAXX(&adjSelRect));
 	  selectionRect = NSMakeRect(mouseDownLocation.x, 0.0, 0.0, 0.0);
 	}
     }
@@ -1492,33 +1483,25 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     /* if zero selection, (insertion point) what do we do? */
 
     else {
-
       if (NSWidth(selectionRect) > 0.1) {
 
 	hilStart = ((int)((float)NSMinX(selectionRect) + 0.01) /
 		    reductionFactor);
-
 	hilEnd = (((int)((float)NSMaxX(selectionRect) + 0.01) - 1) /
 		  reductionFactor);
-
 	if (oldx < (hilStart + hilEnd) / 2)
 	  oldx = hilStart;
-
 	else
 	  oldx = hilEnd + 1;
-
 //			printf("extending selection\n");
-
       }
-
       else {
-
-	if (oldx < ((float)NSMinX(selectionRect) / (float)reductionFactor))
-	  oldx = (int)((float)NSMinX(selectionRect) /
-		       (float)reductionFactor) + 1;
-
-	else
-	  oldx = (int)((float)NSMinX(selectionRect) / (float)reductionFactor);
+	if (oldx < ((float)NSMinX(selectionRect) / (float)reductionFactor)) {
+            oldx = (int)((float)NSMinX(selectionRect) /
+                        (float)reductionFactor) + 1;
+        } else {
+            oldx = (int)((float)NSMinX(selectionRect) / (float)reductionFactor);
+        }
 
 	//			printf("zero selection, extending\n");
 
@@ -1527,382 +1510,298 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
     event = theEvent;
 
+/***************************************/
+/******** START MAIN MOUSE LOOP ********/
+/***************************************/
     while ([event type] != NSLeftMouseUp) {
-      visibleRect = [self visibleRect];
-
-      if (!useTimerLocation)
-	mouseLocation = [event locationInWindow];
-	  
-      else
-	mouseLocation = timerMouseLocation;
-
-      mouseLocation = [self convertPoint:mouseLocation fromView:nil];
-
-      selPoint = mouseLocation;
+        visibleRect = [self visibleRect];
+        if (!useTimerLocation)
+            mouseLocation = [event locationInWindow];
+        else
+            mouseLocation = timerMouseLocation;
+        mouseLocation = [self convertPoint:mouseLocation fromView:nil];
+        selPoint = mouseLocation;
 
 /* selFrame needs to be 'correct' for scrolling but actual selection is -1 */
+        mouseLocation.x--;
 
-      mouseLocation.x--;
-
-      if (mouseLocation.x < -1) {
-	mouseLocation.x = -1;
-	selPoint.x = 0;
-      }
-
-      if (selPoint.x >= NSMaxX([self bounds])) {
-	selPoint.x = (int)NSMaxX([self bounds]);
-	mouseLocation.x = selPoint.x - 1;
-
+        if (mouseLocation.x < -1) {
+            mouseLocation.x = -1;
+            selPoint.x = 0;
+        }
+        if (selPoint.x >= NSMaxX([self bounds])) {
+            selPoint.x = (int)NSMaxX([self bounds]);
+            mouseLocation.x = selPoint.x - 1;
     //			printf("max'd mouseLocation: %g\n",mouseLocation.x);
-      }
+        }
 
-      /* make sure the selection will be entirely visible */
-          
-      if (!NSPointInRect(selPoint , visibleRect) &&
-	  (selPoint.x != NSMaxX(visibleRect))) {
+        /* make sure the selection will be entirely visible */
+        if (!NSPointInRect(selPoint , visibleRect) &&
+                (selPoint.x != NSMaxX(visibleRect))) {
+            [[self window] disableFlushWindow];
+            [self scrollPointToVisible:selPoint];
+            [[self window] enableFlushWindow];
+            /*
+              printf("scrolled to: %g %g\n",selPoint.x, selPoint.y);
+              printf("visibleRect: %g %g %g %g\n",NX_X(&visibleRect),
+                    NX_Y(&visibleRect), NX_WIDTH(&visibleRect),
+                    NX_HEIGHT(&visibleRect));
+            */
+            /* note that we scrolled and start generating timer events for
+               autoscrolling */
+            scrolled = YES;
+            startTimer(timer);
+        }
+        else { /* no scrolling, so stop any timer */
+            stopTimer(timer);
+        }
 
-	[[self window] disableFlushWindow];
-	[self scrollPointToVisible:selPoint];
-
+        dx = mouseLocation.x - oldx + 1;
+        direction = (dx > 0);
+        adjSelRect.origin.x = mouseLocation.x - dx + 1;
+      
+        if (dx < 0) {
+            dx = -dx;
+            adjSelRect.origin.x -= dx;
+        }
+        adjSelRect.size.width = dx;
+      
+        /* HMMMMMM ...... */
+        if (dx) {   
 	    /*
-	      printf("scrolled to: %g %g\n",selPoint.x, selPoint.y);
-	      printf("visibleRect: %g %g %g %g\n",NX_X(&visibleRect),
-			NX_Y(&visibleRect), NX_WIDTH(&visibleRect),
-			NX_HEIGHT(&visibleRect));
+	    [selectionColour set];
+	    NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
 	    */
 
-	[[self window] enableFlushWindow];
+	    //	      NSHighlightRect(adjSelRect);
+	    //	      [self setNeedsDisplay:YES];
 
-	/* note that we scrolled and start generating timer events for
-	   autoscrolling */
+	    /* adjust the size of selCacheRect to be the size of the union
+	       of selCacheRect and adjSelRect */
 
-	scrolled = YES;
-	startTimer(timer);
-      }
+	    //	      selCacheRect = NSUnionRect( selCacheRect, adjSelRect);
+        }
 
-      else {
+        if (NSMinX(adjSelRect) < 0) {
+            adjSelRect.size.width += NSMinX(adjSelRect);
+            adjSelRect.origin.x = 0;
+        }
 
-	/* no scrolling, so stop any timer */
-
-	stopTimer(timer);
-      }
-
-      dx = mouseLocation.x - oldx + 1;
-      direction = (dx > 0);
-      adjSelRect.origin.x = mouseLocation.x - dx + 1;
-      
-      if (dx < 0) {
-	dx = -dx;
-	adjSelRect.origin.x -= dx;
-      }
-      
-      adjSelRect.size.width = dx;
-      
-      /* HMMMMMM ...... */
-      
-      if (dx) {
-	      
-	/*
-	  [selectionColour set];
-	      
-	  NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
-	*/
-
-	//	      NSHighlightRect(adjSelRect);
-	//	      [self setNeedsDisplay:YES];
-
-	/* adjust the size of selCacheRect to be the size of the union
-	   of selCacheRect and adjSelRect */
-
-	//	      selCacheRect = NSUnionRect( selCacheRect, adjSelRect);
-      }
-
-      if (NSMinX(adjSelRect) < 0) {
-	adjSelRect.size.width += NSMinX(adjSelRect);
-	adjSelRect.origin.x = 0;
-      }
-
-      if (dx) {
-
-	if (hilStart == -1) {
-	  //				printf("(0)");
-	  hilStart = NSMinX(adjSelRect);
-	  hilEnd = (float)NSMaxX(adjSelRect) - 1.0;
-	}
-
-	else
-
-	  /* new start point. need to adjust end? */
-
-	  if (NSMinX(adjSelRect) < hilStart) {
-		  
-/* if endpoint of selection is within current sel, we must have
-   backtracked right over the current selection, highlighting a new portion,
-   but unhighlighting the latter parts of the old selection. */
-
+        if (dx) {
+            if (hilStart == -1) {
+                hilStart = NSMinX(adjSelRect);  //				printf("(0)");
+                hilEnd = (float)NSMaxX(adjSelRect) - 1.0;
+            }
+	    else if (NSMinX(adjSelRect) < hilStart) {/* new start point. need to adjust end? */
+                /* if endpoint of selection is within current sel, we must have
+                   backtracked right over the current selection, highlighting a new portion,
+                   but unhighlighting the latter parts of the old selection.
+                 */
     //				printf("(1)");
-	    
-	    if (NSMaxX(adjSelRect) - 1 >= hilStart)
-	      hilEnd = hilStart - 1;
-	    
-	    hilStart = NSMinX(adjSelRect);
-	  }
-	
-	  else
-
-	    /* tack on new addition to selection */
-	    
-	    if (NSMaxX(adjSelRect) > hilEnd + 1) {
+                if (NSMaxX(adjSelRect) - 1 >= hilStart) {
+                    hilEnd = hilStart - 1;
+                }
+                hilStart = NSMinX(adjSelRect);
+                
+            } else if (NSMaxX(adjSelRect) > hilEnd + 1) {
+                /* tack on new addition to selection */
+                if (NSMinX(adjSelRect) <= hilEnd)
+                    hilStart = hilEnd + 1;
+                hilEnd = NSMaxX(adjSelRect) -1;//					printf("(2)");
+                
+            } else if (NSMinX(adjSelRect) <= hilEnd &&
+                    NSMinX(adjSelRect) >= hilStart) {
+                /* we have shortened selection, by backtracking from end */
+                if (!direction) {
+                    hilEnd = NSMinX(adjSelRect) - 1;  //				printf("(3)");
+                }
+                /* shorten selection by forward tracking from start */
+                else { 
+                    hilStart = NSMaxX(adjSelRect);  //					printf("(4)");
+                }
+                /* empty selection */
+                if (hilEnd < hilStart) {
+                    hilStart = hilEnd = -1;  //						printf("(5)");
+                }
+            }
 	      
-	      //				printf("(2)");
-	      
-	      if (NSMinX(adjSelRect) <= hilEnd)
-		hilStart = hilEnd + 1;
-	      
-	      hilEnd = NSMaxX(adjSelRect) -1;
-	    }
-	
-	    else
-	      
-	      /* we have shortened selection, by backtracking from end */
-	      
-	      if (NSMinX(adjSelRect) <= hilEnd &&
-		  NSMinX(adjSelRect) >= hilStart) {
-		
-		if (!direction) {
-		  
-		  //					printf("(3)");
-		  
-		  hilEnd = NSMinX(adjSelRect) - 1;
-		}
-		
-/* shorten selection by forward tracking from start */
+    //				else printf("(6)");
+            if (hilStart != -1) {  //							printf("(7)");
+                selectionRect.origin.x = ceil((float)hilStart * (float)reductionFactor);
+                selectionRect.size.width = (float)reductionFactor * (float)(hilEnd + 1);
 
-		else { 
+                if ((int)selectionRect.size.width == 
+                    ceil(selectionRect.size.width)) {
+                    selectionRect.size.width -= 1;
+                }
 
-    //					printf("(4)");
+                else {
+                    selectionRect.size.width = (int)selectionRect.size.width;
+                }
+                selectionRect.size.width -= (ceil(reductionFactor * hilStart) - 1);
+            }
 
-		  hilStart = NSMaxX(adjSelRect);
-		}
-		
-		/* empty selection */
-		
-		if (hilEnd < hilStart) {
+            else {//				printf("(8)");
+                selectionRect.origin.x = ceil((float)NSMinX(adjSelRect) * (float)reductionFactor);
+                selectionRect.size.width = 0;
+            }
 
-		  /* printf("(5)"); */
+            /* now check to see if we need to adjust to original values.
+	     * First, check to see if initial point has changed. If not, set
+	     * original start, and adjust length. If so, discard 'original' point
+	     */
+    //				printf("rs %d re %d ",realStart,realEnd);
 
-		  hilStart = hilEnd = -1;
-		}
-	      }
-	      
-	      //				else printf("(6)");
-	if (hilStart != -1) {
-    //				printf("(7)");
-	  selectionRect.origin.x = ceil((float)hilStart * (float)reductionFactor);
-
-	  selectionRect.size.width = (float)reductionFactor * (float)(hilEnd + 1);
-
-	  if ((int)selectionRect.size.width == 
-	      ceil(selectionRect.size.width))
-
-	    selectionRect.size.width -= 1;
-
-	  else
-	    selectionRect.size.width = (int)selectionRect.size.width;
-	  selectionRect.size.width -= (ceil(reductionFactor * hilStart) - 1);
-	  
-	}
-
-	else {
-//				printf("(8)");
-	  selectionRect.origin.x = ceil((float)NSMinX(adjSelRect) * (float)reductionFactor);
-	  selectionRect.size.width = 0;
-	}
-
-	/* now check to see if we need to adjust to original values.
-	 * First, check to see if initial point has changed. If not, set
-	 * original start, and adjust length. If so, discard 'original' point
-	 */
-
-    //			printf("rs %d re %d ",realStart,realEnd);
-
-	if ((realStart != -1) && hilStart == (int)(realStart / reductionFactor)) {
+            if ((realStart != -1) && hilStart == (int)(realStart / reductionFactor)) {
     //				printf("(9)");
-	  selectionRect.size.width = ceil((hilEnd + 1) * reductionFactor) - realStart;
-	  selectionRect.origin.x = realStart;
-	}
+                selectionRect.size.width = ceil((hilEnd + 1) * reductionFactor) - realStart;
+                selectionRect.origin.x = realStart;
+            }
+            else realStart = -1;
+            if ((realEnd != -1) && hilEnd == (int)(realEnd / reductionFactor)) {
+    //				printf("(a)");
+                selectionRect.size.width = (int)(realEnd - NSMinX(selectionRect)) + 1;
+	    }
+            else realEnd = -1;
 
-	else realStart = -1;
-	if ((realEnd != -1) && hilEnd == (int)(realEnd / reductionFactor)) {
-//				printf("(a)");
-	  selectionRect.size.width = (int)(realEnd - NSMinX(selectionRect)) + 1;
-	}
+            /* Finally, adjust selection width down to sound size, if it ends on last pixel.
+             * When the num of pixels is not a direct multiple of redfact, the calculation
+             * for selectionRect, based on the last pixel highlighted, will come out with
+             * a figure slightly too high.
+             */
 
-	else
-	  realEnd = -1;
+            if ((int)((float)NSMaxX(selectionRect) + 0.1) > [sound sampleCount]) {
+                selectionRect.size.width = [sound sampleCount] - NSMinX(selectionRect);
+            }
+    //      printf("selection changed to %g, %g\n",NX_X(&selectionRect),NX_WIDTH(&selectionRect));
+            if (svFlags.continuous) {
+                [self tellDelegate:@selector(selectionChanged:)];
+            }
+        }
 
-                            /* Finally, adjust selection width down to sound size, if it ends on last pixel.
-                            * When the num of pixels is not a direct multiple of redfact, the calculation
-                            * for selectionRect, based on the last pixel highlighted, will come out with
-                            * a figure slightly too high.
-                            */
+    //  printf("adjselrect start,end %g %g, dx %g, hs %d he %d oldx1 %g ",
+    //      NX_X(&adjSelRect), NX_MAXX(&adjSelRect), dx, hilStart, hilEnd, oldx);
 
-	if ((int)((float)NSMaxX(selectionRect) + 0.1) > [sound sampleCount]) {
-	  
-	  selectionRect.size.width = [sound sampleCount] - NSMinX(selectionRect);
-	}
-    //			printf("selection changed to %g, %g\n",NX_X(&selectionRect),NX_WIDTH(&selectionRect));
-        
-        if (svFlags.continuous)
-	  [self tellDelegate:@selector(selectionChanged:)];
-      }
-
-    //		printf("adjselrect start,end %g %g, dx %g, hs %d he %d oldx1 %g ", NX_X(&adjSelRect),NX_MAXX(&adjSelRect),dx,hilStart,hilEnd,oldx);
-
-      [selectionColour set];
-	      
-//      NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
-
+        [selectionColour set];
+        NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
 	      //	      NSHighlightRect(adjSelRect);
 	      //	      [self setNeedsDisplay:YES];
+        /* adjust the size of selCacheRect to be the size of the union
+           of selCacheRect and adjSelRect */
+        selCacheRect = NSUnionRect( selCacheRect, adjSelRect);
 
-      /* adjust the size of selCacheRect to be the size of the union
-	 of selCacheRect and adjSelRect */
+        /* if we have backtracked, invalidate rects that have been selected
+           during this drag */
+        if ( !firstDragEvent &&
+            selectionRect.size.width < lastRect.size.width ) {
+            NSRect	selectDiff;
 
-      selCacheRect = NSUnionRect( selCacheRect, adjSelRect);
+            /*
+            fprintf(stderr,"selectionRect:	%5.f:%5.f	%5.f,%5.f\n",
+                    (selectionRect.origin.x), (selectionRect.origin.y),
+                    (selectionRect.size.width), (selectionRect.size.height));
+    
+            fprintf(stderr,"adjSelRect:	%5.f:%5.f	%5.f,%5.f\n",
+                    adjSelRect.origin.x, adjSelRect.origin.y,
+                    adjSelRect.size.width, adjSelRect.size.height);
+    
+            fprintf(stderr,"lastRect:	%5.f:%5.f	%5.f,%5.f\n",
+                    lastRect.origin.x, lastRect.origin.y,
+                    lastRect.size.width, lastRect.size.height);
+    
+            fprintf(stderr,"lastAdjRect:	%5.f:%5.f	%5.f,%5.f\n",
+                    lastAdjRect.origin.x, lastAdjRect.origin.y,
+                    lastAdjRect.size.width, lastAdjRect.size.height);
+            */
 
-      /* if we have backtracked, invalidate rects that have been selected
-	 during this drag */
+            if ( selectionRect.origin.x == lastRect.origin.x ) {//	  fprintf(stderr,"above\n");
+                selectDiff.size.width = (lastAdjRect.origin.x -
+                                adjSelRect.origin.x) + 
+                                lastAdjRect.size.width + 1;
 
-      if ( !firstDragEvent &&
-	   selectionRect.size.width < lastRect.size.width ) {
-
-	NSRect	selectDiff;
-
+                selectDiff.size.height = adjSelRect.size.height;
+                selectDiff.origin.x = adjSelRect.origin.x;
+                selectDiff.origin.y = adjSelRect.origin.y;
+            }
+            else {//	  fprintf(stderr,"below\n");
+                selectDiff.size.width = (adjSelRect.origin.x - 
+                                lastAdjRect.origin.x) + 2;
+                selectDiff.size.height = adjSelRect.size.height;
+                selectDiff.origin.x = lastAdjRect.origin.x - 1;
+                selectDiff.origin.y = adjSelRect.origin.y;
+            }
 	/*
-	fprintf(stderr,"selectionRect:	%5.f:%5.f	%5.f,%5.f\n",
-		(selectionRect.origin.x), (selectionRect.origin.y),
-		(selectionRect.size.width), (selectionRect.size.height));
-
-	fprintf(stderr,"adjSelRect:	%5.f:%5.f	%5.f,%5.f\n",
-		adjSelRect.origin.x, adjSelRect.origin.y,
-		adjSelRect.size.width, adjSelRect.size.height);
-
-	fprintf(stderr,"lastRect:	%5.f:%5.f	%5.f,%5.f\n",
-		lastRect.origin.x, lastRect.origin.y,
-		lastRect.size.width, lastRect.size.height);
-
-	fprintf(stderr,"lastAdjRect:	%5.f:%5.f	%5.f,%5.f\n",
-		lastAdjRect.origin.x, lastAdjRect.origin.y,
-		lastAdjRect.size.width, lastAdjRect.size.height);
-	*/
-
-	if ( selectionRect.origin.x == lastRect.origin.x ) {
-
-	  //	  fprintf(stderr,"above\n");
-
-	  selectDiff.size.width = (lastAdjRect.origin.x -
-				adjSelRect.origin.x) + 
-				lastAdjRect.size.width + 1;
-
-	  selectDiff.size.height = adjSelRect.size.height;
-
-	  selectDiff.origin.x = adjSelRect.origin.x;
-	  selectDiff.origin.y = adjSelRect.origin.y;
-	}
-
-	else {
-
-	  //	  fprintf(stderr,"below\n");
-
-	  selectDiff.size.width = (adjSelRect.origin.x - 
-				   lastAdjRect.origin.x) + 2;
-
-	  selectDiff.size.height = adjSelRect.size.height;
-
-	  selectDiff.origin.x = lastAdjRect.origin.x - 1;
-	  selectDiff.origin.y = adjSelRect.origin.y;
-	}
-
-	/*
-	fprintf(stderr,"selectDiff:	%5.f:%5.f	%5.f,%5.f\n\n",
+            fprintf(stderr,"selectDiff:	%5.f:%5.f	%5.f,%5.f\n\n",
 		selectDiff.origin.x, selectDiff.origin.y,
 		selectDiff.size.width, selectDiff.size.height);
 	*/
+            selectDiff = NSIntersectionRect( selectDiff, [self bounds] );
+            noSelectionDraw=YES;
+            [self setNeedsDisplayInRect:selectDiff];
+            noSelectionDraw=NO;
+        }
 
-	selectDiff = NSIntersectionRect( selectDiff, [self bounds] );
-
-	noSelectionDraw=YES;
-	[self setNeedsDisplayInRect:selectDiff];
-	noSelectionDraw=NO;
-      }
-
-      /* now show what we've done */
-	    
-      [[self window] flushWindow];
-
-      /*
-        if we autoscrolled, flush any lingering window server events to make
-        the scrolling smooth
-      */
-      if (scrolled) {
+        /* now show what we've done */
+        [[self window] flushWindow];
+        /*
+          if we autoscrolled, flush any lingering window server events to make
+          the scrolling smooth
+        */
+        if (scrolled) {
 	// PSWait();
-	scrolled = NO;
-      }
+            scrolled = NO;
+        }
       
-      /* save the current mouse location, just in case we need it again */
+        /* save the current mouse location, just in case we need it again */
+        oldx = mouseLocation.x + 1;//		printf(" oldx2: %g\n",oldx);
+        lastRect = selectionRect;
+        lastAdjRect = adjSelRect;
+        firstDragEvent = NO;
 
-      oldx = mouseLocation.x + 1;
-//		printf(" oldx2: %g\n",oldx);
+        if (!useTimerLocation) {
+            mouseLocation = [event locationInWindow];
+        }
+        else {
+            mouseLocation = timerMouseLocation;
+        }
 
-
-      lastRect = selectionRect;
-      lastAdjRect = adjSelRect;
-      firstDragEvent = NO;
-
-      if (!useTimerLocation)
-	mouseLocation = [event locationInWindow];
-
-      else
-	mouseLocation = timerMouseLocation;
-
-            if (![[self window] nextEventMatchingMask:MOVE_MASK
-				untilDate:[NSDate date]
-				inMode:NSEventTrackingRunLoopMode
-				dequeue:NO]) {
+        if (![[self window] nextEventMatchingMask:MOVE_MASK
+                                        untilDate:[NSDate date]
+                                           inMode:NSEventTrackingRunLoopMode
+                                          dequeue:NO]) {
 
 /* no mouseMoved or mouseUp event immediately available, so take mouseMoved,
    mouseUp, or timer */
 
-	      event = [[self window]
-			nextEventMatchingMask:MOVE_MASK|NSPeriodicMask];
-            }
+            event = [[self window] nextEventMatchingMask:MOVE_MASK|NSPeriodicMask];
+        }
 
-	    else {
+        else { /* get the mouseMoved or mouseUp event in the queue */
+            event = [[self window] nextEventMatchingMask:MOVE_MASK];
+        }
 
-	      /* get the mouseMoved or mouseUp event in the queue */
+        /* if a timer event, mouse location isn't valid, so we'll set it */
+        if ([event type] == NSPeriodic) {
+            timerMouseLocation = mouseLocation;
+            useTimerLocation = YES;
+        }
+        else {
+            useTimerLocation = NO;
+        }
+    } /* while ([event type] != NSLeftMouseUp) */
 
-                event = [[self window] nextEventMatchingMask:MOVE_MASK];
-            }
-
-	    /* if a timer event, mouse location isn't valid, so we'll set it */
-	    
-            if ([event type] == NSPeriodic) {
-	      timerMouseLocation = mouseLocation;
-	      useTimerLocation = YES;
-            }
-	    
-            else
-	      useTimerLocation = NO;
-    }
+/*************************************/
+/******** END MAIN MOUSE LOOP ********/
+/*************************************/
     
-  /* mouseUp, so stop any timer and unlock focus */
+    /* mouseUp, so stop any timer and unlock focus */
     stopTimer(timer);
     [self unlockFocus];
 
-    if (NSWidth(selectionRect) < 0.1) {  /* if we weren't left with a selection,
-                                          * stick insertion point in new place
-                                          */
+    /* if we weren't left with a selection,
+     * stick insertion point in new place
+     */
+    if (NSWidth(selectionRect) < 0.1) {  
         selectionRect.origin.x = ceil(mouseDownLocation.x * (float)reductionFactor);
         selectionRect.size.width = 0;
     }
@@ -1911,7 +1810,6 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     if (reductionFactor < 1) [self setNeedsDisplay:YES]; /* to align to sample boundaries! */
 
     //    if (NSWidth(selectionRect) < 0.1)  [self showCursor];
-
     [self tellDelegate:@selector(selectionChanged:)];
 }
 
