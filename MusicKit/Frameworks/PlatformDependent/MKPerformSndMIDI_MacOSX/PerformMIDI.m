@@ -106,9 +106,23 @@ PERFORM_API const char **MKMDGetAvailableDrivers(BOOL input, unsigned int *selec
 	
 	if(endPoint != NULL) {
 	    CFStringRef endPointName;
-	    OSStatus endpointError = MIDIObjectGetStringProperty(endPoint, kMIDIPropertyName, &endPointName);
+	    /* CFDataRef connectionUniqueID; */
+	    OSStatus endpointPropertyError;
 	    
-	    if(endpointError == noErr) { // We need the entity in order to determine the device name.
+	    /*
+	    endpointPropertyError = MIDIObjectGetDataProperty(endPoint, kMIDIPropertyConnectionUniqueID, &connectionUniqueID);
+	    if(endpointPropertyError == noErr) {
+		fprintf(stderr, "endPointIndex %ld has %d uniqueIDs\n", endpointIndex, [(NSData *) connectionUniqueID length]);
+		OSStatus MIDIObjectFindByUniqueID(
+						  MIDIUniqueID      inUniqueID,
+						  MIDIObjectRef *   outObject,
+						  MIDIObjectType *  outObjectType
+						  );
+	    }
+	     */
+	    
+	    endpointPropertyError = MIDIObjectGetStringProperty(endPoint, kMIDIPropertyName, &endPointName);
+	    if(endpointPropertyError == noErr) { // We need the entity in order to determine the device name.
 		MIDIEntityRef entityOfEndpoint; 
 		OSStatus entityError = MIDIEndpointGetEntity(endPoint, &entityOfEndpoint);
 
@@ -166,6 +180,7 @@ PERFORM_API MKMDReturn MKMDBecomeOwner (
 {
     // create client and ports
     NSString *executable;
+    OSStatus result;
 
 #if FUNCLOG
     if(debug == NULL) {
@@ -182,9 +197,12 @@ PERFORM_API MKMDReturn MKMDBecomeOwner (
 #if FUNCLOG
     fprintf(debug, "MKMDBecomeOwner called, appname: %s\n", [executable cString]);
 #endif
-    MIDIClientCreate((CFStringRef) executable, NULL, NULL, &client);	
-    MIDIInputPortCreate(client, CFSTR("Input port"), readProc, NULL, &inPort);
-    MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort);
+    if((result = MIDIClientCreate((CFStringRef) executable, NULL, NULL, &client)) != noErr)
+	return MKMD_ERROR_UNKNOWN_ERROR;
+    if((result = MIDIInputPortCreate(client, CFSTR("Input port"), readProc, NULL, &inPort)) != noErr)
+	return MKMD_ERROR_UNKNOWN_ERROR;
+    if((result = MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort)) != noErr)
+       return MKMD_ERROR_UNKNOWN_ERROR;
 
     return MKMD_SUCCESS;
 }
@@ -302,9 +320,7 @@ PERFORM_API MKMDReturn MKMDStartClock (
 }
 
 /* Routine MKMDStopClock */
-PERFORM_API MKMDReturn MKMDStopClock (
-	MKMDPort mididriver_port,
-	MKMDOwnerPort owner_port)
+PERFORM_API MKMDReturn MKMDStopClock(MKMDPort mididriver_port, MKMDOwnerPort owner_port)
 {
     // TODO check the ports properly
 #if FUNCLOG
@@ -323,16 +339,16 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
     ItemCount sourceCount;
     
 #if FUNCLOG
-    fprintf(debug, "MKMDClaimUnit called %d\n", unit);
+    fprintf(debug, "MKMDClaimUnit called unit %d\n", unit);
 #endif
     if(input) {
 	// open connections from all sources
 	sourceCount = MIDIGetNumberOfSources();
-	// NSLog(@"%ld sources\n", sourceCount);
+	// NSLog(@"MKMDClaimUnit %ld sources\n", sourceCount);
 	if(sourceCount > 0) {
 	    if(claimedSources == NULL) {
 		if((claimedSources = malloc(sourceCount * sizeof(MIDIEndpointRef))) == NULL)
-		    fprintf(stderr, "Couldn't allocate %ld sources\n", sourceCount);
+		    NSLog(@"Couldn't allocate %ld sources\n", sourceCount);
 	    }
 	    claimedSources[unit] = MIDIGetSource(unit);
 	    if(claimedSources[unit] == NULL)
@@ -351,7 +367,7 @@ PERFORM_API MKMDReturn MKMDClaimUnit(BOOL input,
 	if (destinationCount > 0) {
 	    if(claimedDestinations == NULL) {
 		if((claimedDestinations = malloc(destinationCount * sizeof(MIDIEndpointRef))) == NULL)
-		    fprintf(stderr, "Couldn't allocate %ld destinations\n", destinationCount);
+		    NSLog(@"Couldn't allocate %ld destinations\n", destinationCount);
 	    }
 	    claimedDestinations[unit] = MIDIGetDestination(unit);
 	    if (claimedDestinations[unit] == NULL)
