@@ -62,6 +62,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2001/04/23 21:17:29  leighsmith
+  Corrected _MKEvalTamplateConnections
+
   Revision 1.6  2000/06/09 17:17:51  leigh
   Added MKPatchEntry replacing deprecated Storage class
 
@@ -292,14 +295,16 @@ BOOL _MKIsClassInTemplate(MKPatchTemplate *templ,id factObj)
 
 void _MKEvalTemplateConnections(MKPatchTemplate *templ,id synthElements)
 {
-    register MKPatchConnection *conn;
     register unsigned n;
 //    int arr=0; //arr[conn->_toObjectOffset], arr[conn->_argObjectOffset]
 //    id *arr = NX_ADDRESS(synthElements);
-    conn = (MKPatchConnection *)([templ->_connectionStorage objectAtIndex:0]);
-    for (n = [templ->_connectionStorage count]; n--; conn++)
-        (*conn->_methodImp)([synthElements objectAtIndex:conn->_toObjectOffset],conn->_aSelector,
-                            [synthElements objectAtIndex:conn->_argObjectOffset]);
+    NSArray *connectionStorage = templ->_connectionStorage;
+
+    for (n = 0; n < [connectionStorage count]; n++) {
+        register MKPatchConnection *conn = (MKPatchConnection *)([connectionStorage objectAtIndex: n]);
+        (*conn->_methodImp)([synthElements objectAtIndex: conn->_toObjectOffset], conn->_aSelector,
+                            [synthElements objectAtIndex: conn->_argObjectOffset]);
+    }
 }
 
 unsigned _MKGetTemplateEMemUsage(MKPatchTemplate *templ)
