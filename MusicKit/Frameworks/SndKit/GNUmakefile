@@ -15,6 +15,9 @@
 
 # Modification history:
 # $Log$
+# Revision 1.14  2002/01/02 13:35:03  skotmcdonald
+# Added new files to GNU makefile
+#
 # Revision 1.13  2001/11/27 17:41:01  sbrandon
 # now do prelinking of libraries on all platforms, so SndKit projects don't
 # need to know the ins and outs of which libraries are being used. They just
@@ -107,7 +110,9 @@ $(MY_NAME)_OBJC_FILES = \
           SndAudioProcessor.m  SndAudioProcessorDelay.m SndEnvelope.m\
           SndAudioFader.m SndBreakpoint.m\
           SndAudioBufferQueue.m SndAudioProcessorReverb.m \
-          #SndMeter.m
+	  SndAudioProcessorDistortion.m	SndAudioProcessorFlanger.m \
+	  SndAudioProcessorRecorder.m SndAudioProcessorInspector.m
+	  #SndMeter.m
 
 $(MY_NAME)_C_FILES = \
          SndEndianFunctions.c _SndConvert.c _Sndfilterkit.c _Sndlibst.c\
@@ -124,8 +129,9 @@ $(MY_NAME)_HEADER_FILES = \
          SndPlayer.h SndPerformance.h\
          SndAudioProcessorChain.h SndAudioProcessor.h SndAudioProcessorDelay.h\
          SndAudioFader.h SndEnvelope.h SndBreakpoint.h SndAudioBufferQueue.h\
-         SndAudioProcessorReverb.h SndKitDefines.h
-
+         SndAudioProcessorReverb.h SndKitDefines.h \
+	 SndAudioProcessorDistortion.h	SndAudioProcessorFlanger.h \
+	 SndAudioProcessorRecorder.h SndAudioProcessorInspector.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
 
