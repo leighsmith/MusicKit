@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/11/14 21:30:49  leigh
+  Corrected _MKErrorf arguments to be NSStrings
+
   Revision 1.3  1999/08/08 01:59:22  leigh
   Removed extraVars cruft
 
@@ -70,8 +73,7 @@ static void midiAlarm(msg_header_t *msg,void *self)
     MIDIReplyFunctions recvStruct = {0,my_alarm_reply,0,0};
     r = MIDIHandleReply(msg,&recvStruct); 
     if (r != KERN_SUCCESS) 
-      _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r),
-		"midiAlarm");
+      _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"midiAlarm");
 } 
 
 static void midiException(msg_header_t *msg,void *self)
@@ -81,8 +83,7 @@ static void midiException(msg_header_t *msg,void *self)
     MIDIReplyFunctions recvStruct = {0,0,my_exception_reply,0};
     r = MIDIHandleReply(msg,&recvStruct); 
     if (r != KERN_SUCCESS) 
-      _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r),
-		"midiException");
+      _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"midiException");
 } 
 #endif
 

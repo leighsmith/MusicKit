@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/11/14 21:31:03  leigh
+  Corrected _MKErrorf arguments to be NSStrings
+
   Revision 1.3  1999/08/08 01:59:22  leigh
   Removed extraVars cruft
 
@@ -46,8 +49,7 @@ static double mangleTime(MKMidi *self,double driverTime)
     int r = MIDIGetMTCTime(self->devicePort,self->ownerPort,format,h,m,s,f);
     double seconds;
     if (r != KERN_SUCCESS) 
-      _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r),
-		"getMTCFormat:");
+      _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"getMTCFormat:");
     seconds = MKConvertMTCToSeconds(*format,*h,*m,*s,*f);
     seconds = mangleTime(self,seconds);
     MKConvertSecondsToMTC(seconds,*format,h,m,s,f);
@@ -68,8 +70,7 @@ static double mangleTime(MKMidi *self,double driverTime)
       return 0;
     r = MIDIGetClockTime(self->devicePort,self->ownerPort,&theTime);
     if (r != KERN_SUCCESS) 
-      _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r),
-		"time");
+      _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"time");
     t = theTime * _MK_MIDI_QUANTUM_PERIOD;
     return mangleTime(self,t);
 }
