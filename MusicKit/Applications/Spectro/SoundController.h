@@ -2,9 +2,12 @@
 #import <Foundation/NSObject.h>
 #import <AppKit/NSColor.h>
 #import <Foundation/NSArray.h>
+#import "PrefController.h"
 
 NSString *colorToString(NSColor  *color);
 NSColor  *StringToColor(NSString *buf);
+
+@class SaveToController;
 
 @interface SoundController:NSObject
 {
@@ -13,8 +16,8 @@ NSColor  *StringToColor(NSString *buf);
 	id infoPanel;
 	id stringTable;
 	id saveToAccessoryView;
-	id saveToController;
-	id prefController;
+	SaveToController *saveToController;
+	PrefController *prefController;
 	int counter;
         id currentDir;
 }
