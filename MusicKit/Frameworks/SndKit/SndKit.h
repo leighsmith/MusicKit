@@ -38,13 +38,19 @@ OF THIS AGREEMENT.
 #import "SndStreamClient.h"
 #import "SndStreamRecorder.h"
 #import "SndStreamMixer.h"
+
 #ifndef SK_NO_MP3_ENCODER
 # import "SndAudioProcessorMP3Encoder.h"
 #endif
+
+#import "SndAudioProcessor.h"
 #import "SndAudioProcessorChain.h"
+#import "SndAudioProcessorDelay.h"
+#import "SndAudioProcessorDistortion.h"
+#import "SndAudioProcessorFlanger.h"
 #import "SndAudioProcessorReverb.h"
 #import "SndAudioProcessorRecorder.h"
-#import "SndAudioProcessor.h"
+#import "SndAudioProcessorInspector.h"
 #import "SndPerformance.h"
 #import "SndPlayer.h"
 #import "SndAudioFader.h"
