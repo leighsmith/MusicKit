@@ -49,9 +49,18 @@
 - initWithAudioProcessor: (SndAudioUnitProcessor *) processor;
 
 /*!
+  @method audioUnitProcessor
+  @abstract Returns the audio unit processor this SndAudioUnitController is controlling.
+  @result Returns an autoreleased SndAudioUnitProcessor instance.
+ */
+- (SndAudioUnitProcessor *) audioUnitProcessor;
+
+/*!
   @method window
   @abstract Returns the window displaying and managing the window.
  */
  - (NSWindow *) window;
+
+- (void) reinitializeController;
 
 @end

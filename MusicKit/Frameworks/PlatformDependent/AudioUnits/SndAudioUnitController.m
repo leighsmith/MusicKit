@@ -17,6 +17,9 @@
 #import <AudioUnit/AudioUnitCarbonView.h>
 #import "SndAudioUnitController.h"
 
+// TODO there currently isn't much point trapping modification of parameters since no mouse drag events are messaged.
+#define EVENT_LISTENING 0
+
 @implementation SndAudioUnitController
 
 /*
@@ -75,12 +78,37 @@ static const float kOffsetForAUView_Y = 0;
     return YES;
 }
 
-static void eventListener(void *inUserData, AudioUnitCarbonView inView, 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ of Audio Unit %@ and window %@", 
+	[super description], audioUnitProcessor, cocoaAUWindow];
+}
+
+#if EVENT_LISTENING
+static void eventListener(void *controller, AudioUnitCarbonView inView, 
 			  const AudioUnitParameter *inParameter, AudioUnitCarbonViewEventID inEvent, 
 			  const void *inEventParam)
 {
-    // NSLog(@"message %ld\n", inEvent);
+    SndAudioUnitController *audioUnitController = (SndAudioUnitController *) controller;
+    ComponentResult error;
+    Float32 outValue;
+    
+    if(inEvent == kAudioUnitCarbonViewEvent_MouseDownInControl) {
+	NSLog(@"eventListener message mouse down\n");
+    }
+    else if(inEvent == kAudioUnitCarbonViewEvent_MouseUpInControl) {
+	NSLog(@"eventListener message mouse up\n");
+    }
+    NSLog(@"audioUnitProcessor %@ parameterID %d\n", [audioUnitController audioUnitProcessor], inParameter->mParameterID);
+    // [[audioUnitController audioUnitProcessor] describeParameters];
+    
+    error = AudioUnitGetParameter(inParameter->mAudioUnit, inParameter->mParameterID, inParameter->mScope, inParameter->mElement, &outValue);
+    if(error != noErr) {
+	NSLog(@"Unable to get parameter %d\n", inParameter->mParameterID);
+    }
+    NSLog(@"parameter value %f\n", outValue); 	
 }
+#endif
 
 - (BOOL) loadCarbonWindowEntitled: (NSString *) windowTitle inNibNamed: (NSString *) nibName
 {
@@ -101,7 +129,7 @@ static void eventListener(void *inUserData, AudioUnitCarbonView inView,
 	return NO;
     }
     
-    // Call the IB Services function CreateWindowFromNib to unarchive the Carbon window from the nib file.
+    // Call the IB Services function CreateWindowFromNib to unarchive the named Carbon window from the nib file.
     err = CreateWindowFromNib(nibRef, (CFStringRef) windowTitle, &auWindow); 
     
     if (err != noErr) {
@@ -115,7 +143,6 @@ static void eventListener(void *inUserData, AudioUnitCarbonView inView,
 
     // wrap the Carbon AU window in a NSWindow instance, since it's easier to manage.
     cocoaAUWindow = [[NSWindow alloc] initWithWindowRef: auWindow];
-    // NSLog(@"cocoaAUWindow %@\n", cocoaAUWindow);
     
     return YES;
 }
@@ -127,6 +154,7 @@ static void eventListener(void *inUserData, AudioUnitCarbonView inView,
     Rect viewPaneControlBounds;
     ControlRef rootControl;
     Rect rootControlBounds;
+    NSString *windowTitle;
     Component editComp = FindNextComponent(NULL, inDesc);
     
     if(editComp == NULL) {
@@ -159,7 +187,9 @@ static void eventListener(void *inUserData, AudioUnitCarbonView inView,
 	return NO;
     }    
     
+#if EVENT_LISTENING
     AudioUnitCarbonViewSetEventListener(carbonView, eventListener, self);
+#endif
     
     GetControlBounds(viewPane, &viewPaneControlBounds);
     // NSLog(@"viewPane %p viewPaneControlBounds.top %d, viewPaneControlBounds.right %d, viewPaneControlBounds.left %d, viewPaneControlBounds.bottom %d\n",
@@ -172,8 +202,14 @@ static void eventListener(void *inUserData, AudioUnitCarbonView inView,
     
     // We have to do this with Carbon, since resizing using Cocoa methods doesn't seem to update the window in entirety.
     SizeWindow(auWindow, windowSize.width, windowSize.height, YES);    
+    
+    // NSLog(@"auWindow %p\n", auWindow);
+    
+    windowTitle = [NSString stringWithFormat: @"%@ inspector", [audioUnitProcessor name]];
+    [cocoaAUWindow setTitle: windowTitle];
+    [cocoaAUWindow setReleasedWhenClosed: NO];
 
-    [cocoaAUWindow setTitle: [NSString stringWithFormat: @"%@ inspector", [audioUnitProcessor name]]]; 
+    // NSLog(@"cocoaAUWindow %@ backingType %d\n", cocoaAUWindow, [cocoaAUWindow backingType]);
     
     return YES;
 }
@@ -265,6 +301,19 @@ static void eventListener(void *inUserData, AudioUnitCarbonView inView,
     return YES;
 }
 
+// This is totally bogus. We need to fix the cause of the problem which is Carbon windows 
+// always releasing whenever closed, effectively ignoring the setReleaseWhenClosed: method
+- (void) reinitializeController
+{
+    // Basically clicking on the close button of a SndAudioUnitController window, being a Carbon window, seems to release
+    // the window, not hide it. Therefore we need to check if the window is inactive (closed) or not. If inactive,
+    // We need to recreate the object.
+    if (!IsWindowActive(auWindow)) {	
+	[self createCarbonWindowFromAudioUnit: [audioUnitProcessor audioUnit]];
+	// NSLog(@"window not active, title %@ windowRef %p\n", [cocoaAUWindow title], auWindow);
+    }
+}
+
 - initWithAudioProcessor: (SndAudioUnitProcessor *) processor;
 {
     UInt32 dataSize;
@@ -309,6 +358,11 @@ static void eventListener(void *inUserData, AudioUnitCarbonView inView,
 	return createdCocoaWindow ? self : nil;
     }
     return self;
+}
+
+- (SndAudioUnitProcessor *) audioUnitProcessor
+{
+    return [[audioUnitProcessor retain] autorelease];
 }
 
 - (void) dealloc
