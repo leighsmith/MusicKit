@@ -10,7 +10,7 @@
 #import <math.h>
 
 #import "SndFunctions.h"
-#import "_Sndresample.h"
+#import "SndResample.h"
 #import <objc/zone.h>
 
 #ifdef USE_MACH_MEMORY_ALLOCATION
