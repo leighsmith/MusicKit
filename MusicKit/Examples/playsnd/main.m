@@ -5,6 +5,8 @@
 // Original Author: SKoT McDonald <skot@tomandandy.com>
 // Aug 2001
 //
+// Contributos: Stephen Brandon
+//
 ////////////////////////////////////////////////////////////////////////////////
 
 #import <Foundation/Foundation.h>
@@ -13,8 +15,8 @@
 
 // Version info
 #define V_MAJ  1
-#define V_MIN  0
-#define V_TINY 5
+#define V_MIN  1
+#define V_TINY 1
 
 static int iReturnCode = 0;
 
@@ -45,6 +47,7 @@ void ShowHelp(void)
   printf(" -v    show author/version info\n");
   printf(" -h    show this help\n");
   printf(" -t    turn on time information output\n");
+  printf(" -S    shoutcast as MP3 stream to an icecast server running on local host\n");
 }
  
 ////////////////////////////////////////////////////////////////////////////////
@@ -54,6 +57,7 @@ void ShowHelp(void)
 int main (int argc, const char * argv[])
 {    
     BOOL   bTimeOutputFlag    = FALSE;
+    BOOL   bMP3Shoutcast      = FALSE;
     BOOL   useReverb          = FALSE;
     long   startTimeInSamples = 0;
     double durationInSamples  = -1;
@@ -76,7 +80,7 @@ int main (int argc, const char * argv[])
           break;
         case 't': bTimeOutputFlag = TRUE;                       break;
         case 'r': useReverb       = TRUE;                       break;
-        case 'v': printf("playsnd %i.%i.%i  skot@tomandandy.com  Aug 28 2001\n",V_MAJ,V_MIN,V_TINY); break;
+        case 'v': printf("playsnd %i.%i.%i  skot@tomandandy.com  Oct 2 2001\n",V_MAJ,V_MIN,V_TINY); break;
         case 'h': ShowHelp(); break;
         case 'd': 
           i++;
@@ -87,6 +91,10 @@ int main (int argc, const char * argv[])
           i++;
           if (i < argc) startTimeInSamples = atoi(argv[i]);
           else          PrintError("No start time in samples given after option -b",-1);
+          break;
+        case 'S':
+          bMP3Shoutcast = TRUE;
+          printf("Shoutcasting as MP3 stream to server on localhost!\n");
           break;
         default: fprintf(stderr, "Ignoring unrecognized option -%c\n",argv[i][1]);
         }
@@ -135,30 +143,40 @@ int main (int argc, const char * argv[])
       }
 
       if (![fm fileExistsAtPath: filename]) {
-        PrintError("Can't find sound file",-2);
+        PrintError("Can't find sound file",-2); 
       }
       else {
         int waitCount = 0;
         int maxWait;
         SndPlayer  *player = [SndPlayer defaultSndPlayer];
-        SndStreamManager *manager;
-        SndStreamMixer *mixer;
+        SndAudioProcessorMP3Encoder *mp3enc = nil;
         SndAudioProcessorChain *pchain;
-
+        SndStreamMixer *mixer;
+        
         [s readSoundfile: filename];
         maxWait = [s duration] + 5 + timeOffset + 1;
+
         [player setRemainConnectedToManager: FALSE];
         [s swapSndToHost];
 
+
         if (useReverb) {
-            manager = [SndStreamManager defaultStreamManager];
-            mixer = [manager mixer];
-            pchain = [mixer audioProcessorChain];
-            [pchain addAudioProcessor:[[[SndAudioProcessorReverb alloc] init] autorelease]];
+            [[player audioProcessorChain] addAudioProcessor:[[[SndAudioProcessorReverb alloc] init] autorelease]];
+        }
+
+        if (bMP3Shoutcast) {
+          mp3enc = [[SndAudioProcessorMP3Encoder alloc] init];
+          if ([mp3enc connectToShoutcastServer])
+            [[player audioProcessorChain] addAudioProcessor: [mp3enc autorelease]];
+          else {
+            bMP3Shoutcast = FALSE;
+            printf("Couldn't connect to MP3 reflection server on localhost.\n");
+            [mp3enc release];
+            mp3enc = nil;
+          }
         }
 
         [s playInFuture: timeOffset beginSample: startTimeInSamples sampleCount: durationInSamples];
-
         if (bTimeOutputFlag) printf("Sound duration: %.3f\n",[s duration]);
 
 
@@ -172,6 +190,8 @@ int main (int argc, const char * argv[])
           fprintf(stderr,"Aborting wait for stream manager shutdown - taking too long.\n");
           fprintf(stderr,"(snd dur:%.3f, maxwait:%i)\n",[s duration],maxWait);
         }
+        if (bMP3Shoutcast)
+          [mp3enc disconnectFromShoutcastServer];        
       }
       [pool release];
     }
