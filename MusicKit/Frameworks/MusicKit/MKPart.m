@@ -89,6 +89,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/04/04 00:12:27  leigh
+  Added info note display in description
+
   Revision 1.5  2000/03/31 00:10:33  leigh
   Cleaned up splitNotes
 
@@ -1078,7 +1081,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
     }
 }
 
-// for debugging, just return the contatentation of the note descriptions (which have newlines).
+// for debugging, just return the concatenation of the note descriptions (which have newlines).
 - (NSString *) description
 {
     int i;
@@ -1086,11 +1089,12 @@ static void removeNote(MKPart *self, MKNote *aNote)
     NSMutableArray *noteList = [self notes];
     MKNote *aNote;
 
-    // add appendString [infoNote description]
     for(i = 0; i < [noteList count]; i++) {
         aNote = [noteList objectAtIndex: i];
         [partDescription appendString: [aNote description]];
     }
+    [partDescription appendFormat: @"With MKPart info note:\n%@", [[self infoNote] description]];
+
     return partDescription;
 }
 
