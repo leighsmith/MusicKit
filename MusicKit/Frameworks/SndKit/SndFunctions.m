@@ -69,6 +69,11 @@ CONDITIONS OF THIS AGREEMENT.
 # define RIGHT(datum, bits)      ((datum) >> bits)
 #endif
 
+/* up to 12.17.2, libst.a used LONG. Then it uses st_sample_t */
+#if (ST_LIB_VERSION_CODE <= 0x0c1102)
+# define st_sample_t LONG
+#endif
+
 #define SUN_ULAW        1                       /* u-law encoding */
 #define SUN_LIN_8       2                       /* Linear 8 bits */
 #define SUN_LIN_16      3                       /* Linear 16 bits */
@@ -76,7 +81,7 @@ CONDITIONS OF THIS AGREEMENT.
 #define SUN_LIN_32      5                       /* Linear 32 bits */
 #define SUN_ALAW        27                      /* a-law encoding */
 
-int st_ausunencoding(int size, int encoding) /* used to be in libst.a, but made private */
+int sk_ausunencoding(int size, int encoding) /* used to be in libst.a, but made private */
 {
         int sun_encoding;
  
@@ -1137,7 +1142,7 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
 	/* endianess is handled within startread() */
         s->magic = SND_MAGIC; // could be extended using fileTypeStr but only when we write in all formats.
         s->dataLocation = headerLen;
-        s->dataFormat = st_ausunencoding(informat.info.size, informat.info.encoding);
+        s->dataFormat = sk_ausunencoding(informat.info.size, informat.info.encoding);
         s->samplingRate = informat.info.rate;
         s->channelCount = informat.info.channels;
         if (informat.comment) // because SndSoundStruct locates comments at a fixed location, we have to copy them in.
