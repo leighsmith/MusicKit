@@ -1993,7 +1993,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     int stat;
     if (_scratchSound) {
         stat = [_scratchSound status];
-        if (stat == NX_SoundPlaying || stat == NX_SoundPlayingPending)
+        if (stat == SND_SoundPlaying || stat == SND_SoundPlayingPending)
                 [_scratchSound pause];
     }
     return;
@@ -2003,7 +2003,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     int stat;
     if (_scratchSound)  {
         stat = [_scratchSound status];
-        if (stat == NX_SoundPlayingPaused)
+        if (stat == SND_SoundPlayingPaused)
             [_scratchSound resume];
     }
     return;
@@ -2200,7 +2200,7 @@ char *SndSoundError(int err);
     }
     if (_scratchSound) {
         stat = [_scratchSound status];
-        if (stat != NX_SoundStopped && stat != NX_SoundInitialized && stat != NX_SoundFreed) {
+        if (stat != SND_SoundStopped && stat != SND_SoundInitialized && stat != SND_SoundFreed) {
                 error = [_scratchSound stop];
             if (error) printf("Error: %s stopping playback\n", SndSoundError(error));
                 return;

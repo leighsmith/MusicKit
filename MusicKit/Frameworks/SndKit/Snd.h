@@ -22,8 +22,6 @@
 
 #import <MKPerformSndMIDI/PerformSound.h>
 #import "sounderror.h"
-#import "SndFormats.h"
-
 #import "SndFunctions.h"
 
 @class NSPasteboard;
@@ -36,8 +34,6 @@ extern NSString *NXSoundPboardType;
 /*
  * This is the sound pasteboard type.
  */
- 
- 
 @interface Snd : NSObject
 /*
  * The Snd object encapsulates a SndSoundStruct, which represents a sound.
@@ -66,22 +62,36 @@ extern NSString *NXSoundPboardType;
 #define SND_CONVERT_MEDQ 1
 #define SND_CONVERT_HIQ  2
 
-#if !defined(USE_NEXTSTEP_SOUND_IO) && !defined(USE_PERFORM_SOUND_IO) || defined(WIN32)
 /*
  * Status codes
  */
 typedef enum {
-    NX_SoundStopped = 0,
-    NX_SoundRecording,
-    NX_SoundPlaying,
-    NX_SoundInitialized,
-    NX_SoundRecordingPaused,
-    NX_SoundPlayingPaused,
-    NX_SoundRecordingPending,
-    NX_SoundPlayingPending,
-    NX_SoundFreed = -1,
+    SND_SoundStopped = 0,
+    SND_SoundRecording,
+    SND_SoundPlaying,
+    SND_SoundInitialized,
+    SND_SoundRecordingPaused,
+    SND_SoundPlayingPaused,
+    SND_SoundRecordingPending,
+    SND_SoundPlayingPending,
+    SND_SoundFreed = -1,
+} SNDSoundStatus;
+
+// legacy compatible
+#if !defined(USE_NEXTSTEP_SOUND_IO) && !defined(USE_PERFORM_SOUND_IO) || defined(WIN32)
+typedef enum {
+    NX_SoundStopped = SND_SoundStopped,
+    NX_SoundRecording = SND_SoundRecording,
+    NX_SoundPlaying = SND_SoundPlaying,
+    NX_SoundInitialized = SND_SoundInitialized,
+    NX_SoundRecordingPaused = SND_SoundRecordingPaused,
+    NX_SoundPlayingPaused = SND_SoundPlayingPaused,
+    NX_SoundRecordingPending = SND_SoundRecordingPending,
+    NX_SoundPlayingPending = SND_SoundPlayingPending,
+    NX_SoundFreed = SND_SoundFreed,
 } NXSoundStatus;
 #endif
+
 
 /*
  * Macho segment name where sounds may be.

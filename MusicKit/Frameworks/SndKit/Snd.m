@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.13  2001/02/14 17:54:28  leigh
+ * Renamed status messages to SND prefixes
+ *
  * Revision 1.12  2001/02/12 18:30:45  leigh
  * Added autorelease pools for begin and end functions for play
  *
@@ -199,7 +202,7 @@ static int ioTags = 1000;
     name = nil;
     conversionQuality = SND_CONVERT_LOWQ;
     delegate = nil;
-    status = NX_SoundInitialized;
+    status = SND_SoundInitialized;
 
     currentError = 0;
     _scratchSnd = NULL;
@@ -298,7 +301,7 @@ void soundStructDescription(SndSoundStruct *s)
 //  NXRead(stream, (char *)s + s->dataLocation, s->dataSize);
 
     soundStruct = s;
-    status = NX_SoundInitialized;
+    status = SND_SoundInitialized;
     return SND_ERR_NONE;
 }
 
@@ -461,7 +464,7 @@ void soundStructDescription(SndSoundStruct *s)
 
 - awakeAfterUsingCoder:(NSCoder *)aDecoder
 {
-    status = NX_SoundInitialized;
+    status = SND_SoundInitialized;
     conversionQuality = SND_CONVERT_LOWQ;
     return self;/* what to do here??? Doesn't seem to be anything pressing... */
 }
@@ -547,11 +550,11 @@ int beginFun(SndSoundStruct *sound, int tag, int err)
     theSnd = [playRecTable objectForKey: [NSNumber numberWithInt: tag]];
     NSLog(@"beginFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
     if (err) {
-        [theSnd _setStatus:NX_SoundStopped];
+        [theSnd _setStatus:SND_SoundStopped];
         [theSnd tellDelegate:@selector(hadError:)];
     }
     else {
-        [theSnd _setStatus:NX_SoundPlaying];
+        [theSnd _setStatus:SND_SoundPlaying];
         [theSnd tellDelegate:@selector(willPlay:)];
     }
     [pool release];
@@ -566,7 +569,7 @@ int endFun(SndSoundStruct *sound, int tag, int err)
 
     theSnd = [playRecTable objectForKey: tagNumber];
     NSLog(@"endFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
-    [theSnd _setStatus:NX_SoundStopped];
+    [theSnd _setStatus:SND_SoundStopped];
     if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
     if (err) [theSnd tellDelegate:@selector(hadError:)];
     else [theSnd tellDelegate:@selector(didPlay:)];
@@ -591,11 +594,11 @@ int beginRecFun(SndSoundStruct *sound, int tag, int err)
     Snd *theSnd;
     theSnd = [playRecTable objectForKey: [NSNumber numberWithInt: tag]];
     if (err) {
-        [theSnd _setStatus:NX_SoundStopped];
+        [theSnd _setStatus:SND_SoundStopped];
         [theSnd tellDelegate:@selector(hadError:)];
     }
     else {
-        [theSnd _setStatus:NX_SoundRecording];
+        [theSnd _setStatus:SND_SoundRecording];
         [theSnd tellDelegate:@selector(willRecord:)];
     }
     return 0;
@@ -607,7 +610,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     NSNumber *tagNumber = [NSNumber numberWithInt: tag];
 
     theSnd = [playRecTable objectForKey: tagNumber];
-    [theSnd _setStatus:NX_SoundStopped];
+    [theSnd _setStatus:SND_SoundStopped];
     printf("End recording error: %d\n",err);
     if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
     if (err) [theSnd tellDelegate:@selector(hadError:)];
@@ -644,7 +647,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     // the same soundStruct is used every time the sound is played, so we use the tag to differentiate.
     // We use an NSDictionary rather than a HashTable for strict OpenStep support.
     [playRecTable setObject: self forKey: [NSNumber numberWithInt: tag]];
-    status = NX_SoundPlayingPending;
+    status = SND_SoundPlayingPending;
     err = SNDUnreserve(3);
     if(err) {
         NSLog(@"Unreserving error %d\n", err);
@@ -682,7 +685,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     }
     tag = ioTags;
     [playRecTable setObject: self forKey: [NSNumber numberWithInt: tag]];
-    status = NX_SoundRecordingPending;
+    status = SND_SoundRecordingPending;
     err = SNDStartRecording((SndSoundStruct *)soundStruct,
             ioTags++, /*	int tag			*/
             9, /*	int priority	*/
@@ -726,14 +729,14 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     if (tag) {
         SNDStop(tag);
     }
-    if (status == NX_SoundRecording || status == NX_SoundRecordingPaused) {
+    if (status == SND_SoundRecording || status == SND_SoundRecordingPaused) {
         [playRecTable removeObjectForKey: tagNumber];
-        status = NX_SoundStopped;
+        status = SND_SoundStopped;
         [self tellDelegate:@selector(didRecord:)];	
     }
-    if (status == NX_SoundPlaying || status == NX_SoundPlayingPaused) {
+    if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
         [playRecTable removeObjectForKey: tagNumber];
-        status = NX_SoundStopped;
+        status = SND_SoundStopped;
         [self tellDelegate:@selector(didPlay:)];	
     }
     if(tag) {
@@ -988,7 +991,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 {
     int err;
     SndSoundStruct *fromSound;
-    status = NX_SoundInitialized;
+    status = SND_SoundInitialized;
     if (aSnd)
         if (soundStruct == [aSnd soundStruct]) return SND_ERR_NONE;
     if (soundStruct) {
@@ -1016,7 +1019,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 - (int)copySamples:(Snd *)aSnd at:(int)startSample count:(int)sampleCount
 {
     int err;
-    status = NX_SoundInitialized;
+    status = SND_SoundInitialized;
     if (!aSnd) {
         if (soundStruct) {
             err = SndFree(soundStruct);
@@ -1121,7 +1124,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - setSoundStruct:(SndSoundStruct *)aStruct soundStructSize:(int)aSize
 {
-    if (status != NX_SoundInitialized && status != NX_SoundStopped)
+    if (status != SND_SoundInitialized && status != SND_SoundStopped)
             return nil;
     if (soundStruct && soundStruct != aStruct) SndFree(soundStruct);
     soundStruct = aStruct;
