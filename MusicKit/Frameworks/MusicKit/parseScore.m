@@ -1,19 +1,40 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
   HEADER FILES: musickit.h
+
+  Description:
+    The ASCII parser is split into three levels: lexical analysis, 
+    recursive descent expressions, and top-level statements and 
+    declarations. Object type, Envelopes and WaveTables declarations 
+    are handled by the recursive descent portion of the parser. This is because 
+    they are the only declarations that can occur within expressions. 
+    All other declarations are handled by the top-level. 
+
+    There is also a binary scorefile format. For the most part, it
+    uses its own set of routines. For the binary format, we chose NOT
+    to use object archiving. The reason is that this would require the
+    entire Score, Part and Notes to be read in as objects. We want to 
+    reserve the right to read it in one Note at a time, thus avoiding 
+    building the entire object structure. E.g. this is how ScorefilePerformer
+    works.
+
+    See binaryScorefile.doc on the musickit source directory for explanation
+    of binary scorefile format. 
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University 
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/08/07 23:59:30  leigh
+  Enabled reading MS-DOS format scorefiles \r\n and replaced HashTable use with NSDictionary
+
   Revision 1.2  1999/07/29 01:26:14  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -68,32 +89,6 @@ Modification history:
                   Score read.
    1/28/96/daj -  Minor optimization to getBinaryDataDecl 
 */
-/* The ASCII parser is split into three levels: lexical analysis, 
-   recursive descent expressions, and top-level statements and 
-   declarations. Object type, Envelopes and WaveTables declarations 
-   are handled by the recursive descent portion of the parser. This is because 
-   they are the only declarations that can occur within expressions. 
-   All other declarations are handled by the top-level. 
-
-   There is also a binary scorefile format. For the most part, it
-   uses its own set of routines. For the binary format, we chose NOT
-   to use object archiving. The reason is that this would require the
-   entire Score, Part and Notes to be read in as objects. We want to 
-   reserve the right to read it in one Note at a time, thus avoiding 
-   building the entire object structure. E.g. this is how ScorefilePerformer
-   works.
-
-   See binaryScorefile.doc on the musickit source directory for explanation
-   of binary scorefile format. 
-
-   */
-
-//#import <stdio.h>               /* Contains FILE, etc. */
-//#import <signal.h>
-//#import <setjmp.h>
-//#import <sys/time.h>
-//#import <string.h>
-//#import <ctype.h>
 
 #import "_musickit.h"
 #import "_MKNameTable.h"
@@ -109,8 +104,6 @@ Modification history:
 #define INT(x) (short) x
 
 #define FIRST_CHAR_SCOREMAGIC '.'
-
-#import <objc/HashTable.h>
 
 static jmp_buf begin;       /* For long jump. */
 
@@ -239,7 +232,7 @@ static short
     char *transcharloc;
 
     errorLoc = scoreStreamBuf_Base + scoreStreamPointer; /* Save location before current token. */
-    while ((c=NEXTCHAR()) == ' ' || c == TAB)
+    while ((c=NEXTCHAR()) == ' ' || c == TAB || c == '\r')
       ;
     if ((char)c == (char)EOF) 
       longjmp(begin,eofLongjmp);
@@ -321,9 +314,10 @@ static short
 	if (c != '"')
 	  do {
 	      if (c == BACKSLASH) { /* Line continuation or escape char */
-		  if ((c=NEXTTCHAR()) == '\n') {
+                  c = NEXTTCHAR();
+		  if (c == '\n' || c == '\r') {
 		      parsePtr->_lineNo++;
-		      c = '\0';           /* Just to fool test below */
+		      c = '\0';           /* Just to fool test below */  // LMS may need to fix this for '\r\n' combos
 		      tokenPtr -= 2;      /* Line continuation. */
 		  }
 		  else {
@@ -336,7 +330,7 @@ static short
 		     would ever need to do that. (Famous last words.) */
 		  }
 	      }
-	      if (c == EOF || c == '\n')
+	      if (c == EOF || c == '\n' || c == '\r')
 		error(MK_sfMissingStringErr,"\"");
 	  } while ( (c=NEXTTCHAR()) != '"'); 
 	tokenPtr--;   /* Don't include final " in string but advance input. */
@@ -359,8 +353,9 @@ static short
       case '\n':
 	parsePtr->_lineNo++;
 	return lexan();
-      case BACKSLASH:  
-	if ((c=NEXTCHAR()) == '\n')    
+      case BACKSLASH:
+        c = NEXTCHAR();  
+	if (c == '\n' || c == '\r')    
 	  return lexan();
 	else error(MK_sfMissingBackslashErr);
       case '<':
@@ -1891,37 +1886,39 @@ static NSString *_warning(BOOL potentiallyFatal,MKErrno errCode,va_list ap)
       return errMsg;
     strcpy(s, [errMsg cString]);  // LMS: eventually redo this function using NSString
     errS = s;                /* Keep pointer to buffer */
-    msgLen = strlen(errS);
+    msgLen = strlen(errS);  // [errMsg length]
     errS = errS + msgLen;
 //  *errS++ = '\n';
     /* Search backwards for most recent 'newline'. */
     for (p = errorLoc; p > scoreStreamBuf_Base;) /* sb: was scoreStream->buf_base */
       if (*p-- == '\n') 
-	break;
+        break;
     if (p < scoreStreamBuf_Base) /* sb: was scoreStream->buf_base */
-        p = scoreStreamBuf_Base; /* sb: was scoreStream->buf_base */
+      p = scoreStreamBuf_Base; /* sb: was scoreStream->buf_base */
 #   define LOOKAHEAD 10 
 #   define ABORTSIZE 34 /* In case this error puts us over threshold. */
 #   define EXTRA (8 + ABORTSIZE) /* 3 '/n's, one NULL and 4 for good luck */
-    if (((scoreStreamBuf_Base + scoreStreamPointer - p) * 2 + msgLen + LOOKAHEAD + EXTRA) >=
-        _MK_ERRLEN) /*sb: scoreStreamPointer was scoreStream->buf_ptr */
-        p = scoreStreamBuf_Base + scoreStreamPointer +
-        (msgLen + LOOKAHEAD + EXTRA - _MK_ERRLEN)/2;//sb: scoreStreamPointer was scoreStream->buf_ptr
-        if ((p == scoreStreamBuf_Base) && (*p != '\n')) /* sb: was scoreStream->buf_base */
-      sprintf(errS++,"%c",'\n');
-    else ++p; /* We're one behind (see above loop) */
+    if (((scoreStreamBuf_Base + scoreStreamPointer - p) * 2 + msgLen + LOOKAHEAD + EXTRA) >= _MK_ERRLEN) 
+      p = scoreStreamBuf_Base + scoreStreamPointer + (msgLen + LOOKAHEAD + EXTRA - _MK_ERRLEN)/2;
+    //sb: scoreStreamPointer was scoreStream->buf_ptr
+    if ((p == scoreStreamBuf_Base) && (*p != '\n')) /* sb: was scoreStream->buf_base */
+      sprintf(errS++,"\n");
+    else
+      ++p; /* We're one behind (see above loop) */
     q = p;
-    while (p < errorLoc)
+    // [s appendString: [NSString stringWithCString: p length: errorLoc - p]];
+    while (p < errorLoc)  
       sprintf(errS++,"%c",*p++);
+    // [s appendString: "\n"];
     sprintf(errS++,"\n");
+    // [s appendString: padString(' ', errorLoc - p)]
     for (p = q; p < errorLoc; p++)    /* Formating. */
-      sprintf(errS++,"%c",' ');
+      sprintf(errS++," ");
     /* Write next LOOKAHEAD characters of buffer */
-    for (i = MIN(scoreStreamBuf_Base + scoreStreamPointer - errorLoc + (scoreStreamLength - scoreStreamPointer),
-                 LOOKAHEAD); //sb: scoreStreamPointer was scoreStream->buf_ptr
-                             //sb: (scoreStreamLength - scoreStreamPointer) was scoreStream->buf_left
-	 ((i > 0) && (*p != '\n')); 
-	 i--) 
+    //sb: scoreStreamPointer was scoreStream->buf_ptr
+    //sb: (scoreStreamLength - scoreStreamPointer) was scoreStream->buf_left
+    for (i = MIN(scoreStreamBuf_Base + scoreStreamPointer - errorLoc + (scoreStreamLength - scoreStreamPointer), LOOKAHEAD);
+ 	 ((i > 0) && (*p != '\n')); i--) 
       sprintf(errS++,"%c",*p++);
     if (potentiallyFatal)
       if (scoreRPtr->_errCount != MAXINT)
@@ -3587,7 +3584,7 @@ _MKNewScoreInStruct(NSMutableData *aStream,id owner,NSMutableData *printStream,
       scoreRPtr->_binaryIndexedObjects = [[NSMutableArray alloc] init];
     scoreRPtr->printStream = printStream;
     scoreRPtr->_ranState = initRan();
-    scoreRPtr->_noteTagTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
+    scoreRPtr->_noteTagTable = [NSDictionary dictionary];
     scoreRPtr->timeTag = 0;
     scoreRPtr->_fileHighTag = -1;
     scoreRPtr->_fileLowTag = 0;
@@ -3704,18 +3701,17 @@ static int
     /* Lookup noteTag. If found, use mapping. Otherwise, if noteOff
        or noteOn generate error. */
     {
-	int newTag = (int)[scoreRPtr->_noteTagTable valueForKey:
-			   (void *)fileTag]; 
-	if (newTag)
-	  return newTag;
+        int newTag;
+	NSNumber *newTagNumber = [scoreRPtr->_noteTagTable objectForKey: [NSNumber numberWithInt: fileTag]]; 
+
+	if (newTagNumber != nil)
+           return [newTagNumber intValue];
 #if 0
-	else if (!binary && 
-		 (noteType == MK_noteUpdate || noteType == MK_noteOff)) 
+	else if (!binary && (noteType == MK_noteUpdate || noteType == MK_noteOff)) 
 	  error(MK_sfInactiveNoteTagErr,_MKTokNameNoCheck(noteType));
 #endif
 	newTag = MKNoteTag();
-	[scoreRPtr->_noteTagTable insertKey:(const void *)fileTag value:
-	 (void *)newTag];
+        [scoreRPtr->_noteTagTable setObject: [NSNumber numberWithInt: newTag] forKey: [NSNumber numberWithInt: fileTag]];
 	return newTag;
     }
 }
@@ -3968,7 +3964,7 @@ _MKParseScoreNote(_MKScoreInStruct * scorefileRPtr)
    time setting. If EOF is reached, the timeTag field of scorefileRPtr is 
    set to MK_ENDOFTIME and _MKParseScoreNote returns nil. 
    Otherwise, the timeTag field is set to the current time. The part
-   field of scorefileRPtr is set to the Part of the current note.
+   field of scorefileRPtr is set to the MKPart of the current note.
    The note returned should be copied on memory. 
    It is 'owned' by the _MKScoreInStruct pointer. */
 {
