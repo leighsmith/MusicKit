@@ -318,6 +318,7 @@ OF THIS AGREEMENT.
 {
     return self;
 }
+/*
 int bytesFromFormat(int format)
 {
     int numBytes;
@@ -347,13 +348,13 @@ int bytesFromFormat(int format)
             case SND_FORMAT_DOUBLE:
                 numBytes = sizeof(double);
                 break;
-            default: /* just in case */
+            default: // just in case 
                 numBytes = 2;
                 break;
         }
     return numBytes;
 }
-
+*/
 void *getDataAddresses(int sample,
 		SndSoundStruct *theSound,
 		int *lastSampleInBlock,
@@ -373,7 +374,7 @@ void *getDataAddresses(int sample,
     if (df == SND_FORMAT_INDIRECT)
         df = ((SndSoundStruct *)(*((SndSoundStruct **)(theSound->dataLocation))))->dataFormat;
 
-    numBytes = bytesFromFormat(df);
+    numBytes = SndSampleWidth(df);
 
     if ((theSound->dataFormat) != SND_FORMAT_INDIRECT) {
         *lastSampleInBlock = ds / cc / numBytes;
