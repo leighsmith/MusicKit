@@ -1,12 +1,11 @@
-#ifdef SHLIB
-#include "shlib.h"
-#endif
 /*
   $Id$
   Defined In: The MusicKit
 
   Description:
-  Original Author: David Jaffe
+    See MKTimbre.h
+
+  Original Author: David A. Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
@@ -16,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/04/25 22:07:25  leigh
+  Doco cleanup
+
   Revision 1.2  1999/07/29 01:16:43  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -61,12 +63,7 @@ Modification history:
 #import <stdlib.h>
 #import <ctype.h>
 
-@implementation MKTimbre : NSObject
-{
-    NSString *timbreName;
-    NSMutableArray *freqs; //sb: was Storage. Now array of NSValues.
-    NSMutableArray *waveTables;
-}
+@implementation MKTimbre
 
 #define VERSION3 3
 
