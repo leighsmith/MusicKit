@@ -8,6 +8,9 @@
 
 // Revision History:
 // $Log$
+// Revision 1.3  2000/04/01 01:07:44  leigh
+// Removed redundant PS include
+//
 // Revision 1.2  2000/01/11 21:57:03  leigh
 // Capitialised defaults
 //
@@ -21,7 +24,7 @@
 #import <objc/zone.h>
 #import <math.h>
 #import <Foundation/NSUserDefaults.h>
-#import <AppKit/psopsOpenStep.h>              // for PSxxx stuff
+#import <AppKit/AppKit.h>              // for PSxxx stuff
 
 #import "Controller.h"
 #import "EnvelopeView.h"
