@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2000/04/08 01:01:33  leigh
+  Fixed bug when inPerformance set during final pending masterConductorBody
+
   Revision 1.11  2000/04/02 17:22:13  leigh
   Cleaned doco
 
@@ -264,10 +267,9 @@ static void adjustTimedEntry(double nextMsgTime)
        where we are and where we should be. It is assumed that time is
        already updated. */
 {
-    NSLog(@"Adjusting timed entry %lf %d, %d, %d, %d\n", nextMsgTime, !inPerformance, performanceIsPaused, musicKitHasLock(), !isClocked);
+    // NSLog(@"Adjusting timed entry %lf %d, %d, %d, %d\n", nextMsgTime, !inPerformance, performanceIsPaused, musicKitHasLock(), !isClocked);
     if ((!inPerformance) || (performanceIsPaused) || (musicKitHasLock()) || (!isClocked)) 
         return;  /* No timed entry, s.v.p. */
-    NSLog(@"I didnt return..\n");
     if (separateThread)
         sendMessageToWakeUpMKThread();
     else {
@@ -310,9 +312,11 @@ repositionCond(MKConductor *cond,double nextMsgTime)
        the appropriate place. If, after adding the conductor, the head of the
        queue is MK_ENDOFTIME and if we're not hanging, sends
        +finishPerformance. If the newly enqueued conductor is added at the
-       head of the list, calls adjustTimedEntry(). */
+       head of the list, calls adjustTimedEntry().
+       Question is: where do we retain cond? I presume it is assumed cond is already retained.
+     */
 {
-    register MKConductor *tmp;
+    MKConductor *tmp;
     register double t;
     t = MIN(nextMsgTime,MK_ENDOFTIME);
     t = MAX(t,clockTime);
@@ -649,7 +653,7 @@ insertMsgQueue(sp,self)
 	int i;
 	for (i = 0, tmp = self->_msgQueue; tmp; tmp = tmp->_next, i++)
 	  if (i > maxQueueLen) {
-	      fprintf(stderr,"MaxQLen == %d\n",i);
+	      NSLog(@"MaxQLen == %d\n",i);
 	      maxQueueLen = i;
 	  }
     }
@@ -843,18 +847,20 @@ static void condInit()
 static void _runSetup()
   /* Very private function. Makes the conductor list with much hackery. */
 {
-#   define HACKDECL() BOOL clk = isClocked;BOOL noHng = dontHang
-#   define HACK()     dontHang=NO; isClocked=YES; curRunningCond = clockCond
-#   define UNHACK() dontHang = noHng; isClocked = clk; curRunningCond = nil
-    /* These hacks are to keep repositionCond() from triggering 
-       finishPerformance or adding timed entries while sorting list. */ 
-    HACKDECL();
-    HACK();
+    /* These hacks are to keep repositionCond() from triggering
+       finishPerformance or adding timed entries while sorting list. */
+    BOOL clk = isClocked;
+    BOOL noHng = dontHang;
+    dontHang=NO;
+    isClocked=YES;
+    curRunningCond = clockCond;
     condQueue = clockCond; 
     /* Set head of queue to an arbitrary conductor. Sorting is done by 
        _runSetup. */
     [allConductors makeObjectsPerformSelector:@selector(_runSetup)];
-    UNHACK();
+    dontHang = noHng;
+    isClocked = clk;
+    curRunningCond = nil;
 }
 
 + startPerformance
@@ -867,11 +873,9 @@ static void _runSetup()
    * NSApp has not been created, startPerformance does nothing and return nil.
    */
 {
-    if (isClocked && (!separateThread && ((!NSApp) || (![NSApp isRunning]))))
-      return nil;
     if (inPerformance) 
       return self;
-    _MKSetConductedPerformance(YES,self);
+    _MKSetConductedPerformance(YES, self);
     inPerformance = YES;   /* Set this before doing _runSetup so that repositionCond() works right. */
     [self _adjustDeltaTThresholds]; /* For automatic notification */
     setTime(clockTime = 0); 
@@ -936,10 +940,8 @@ static void evalAfterQueues()
 {
     if (MKIsTraced(MK_TRACECONDUCTOR))
       NSLog(@"Evaluating afterPerformance queue.\n");
-   _afterPerformanceQueue = evalSpecialQueue(_afterPerformanceQueue,
-					     &_afterPerformanceQueueEnd);
-   afterPerformanceQueue = evalSpecialQueue(afterPerformanceQueue,
-					    &afterPerformanceQueueEnd);
+   _afterPerformanceQueue = evalSpecialQueue(_afterPerformanceQueue, &_afterPerformanceQueueEnd);
+   afterPerformanceQueue = evalSpecialQueue(afterPerformanceQueue, &afterPerformanceQueueEnd);
 }
 
 +finishPerformance
@@ -966,13 +968,16 @@ static void evalAfterQueues()
     inPerformance = NO; /* Must be set before -emptyQueue is sent */
     [allConductors makeObjectsPerformSelector:@selector(emptyQueue)];
     if (separateThread)
-      removeTimedEntry(exitThread);
+        removeTimedEntry(exitThread);
     else if (timedEntry != NOTIMEDENTRY) {
-      [timedEntry invalidate]; [timedEntry release];
-      }
+        [timedEntry invalidate]; [timedEntry release];
+    }
     if (!separateThread)
-      resetPriority();
+        resetPriority();
     timedEntry = NOTIMEDENTRY;
+    // condQueue is being set to nil, before the MusicKit thread has finished up.
+    // however this is not that tragic as the inPerformance = NO will stop
+    // masterConductorBody doing anything harmful.
     condQueue = nil;
     lastTime = clockTime;
     setTime(clockTime = 0.0);
@@ -988,7 +993,8 @@ static void evalAfterQueues()
 	    longjmp(conductorJmp, 0);   /* Jump out of loop now. */
 	} 
     }
-    else _jmpSet = NO;
+    else
+        _jmpSet = NO;
     return self;
 }
 
@@ -1810,15 +1816,19 @@ static double getNextMsgTime(MKConductor *aCond)
  * a function. It's a class method because we want only 1 object to look after these messages.
  */
 {
-//    MKConductor *self;
     MKMsgStruct  *curProc;
+
+    // Since masterConductorBody can be called from a NSTimer in a separate thread NSRunLoop without being
+    // able to check the performance status, it's possible for the performance to end while waiting, 
+    // such that by the time we arrive here, we don't want to perform anything, so we split this crazy scene...
+    if(!inPerformance)
+        return;
+
     /* Preamble */
     curRunningCond = condQueue;
     setTime(condQueue->nextMsgTime);
 
-//    NSLog(@"Made it into masterConductorBody\n");
     /* Here is the meat of the conductor's performance. */
-//    self = curRunningCond;
     do {
         curProc = popMsgQueue(&(curRunningCond->_msgQueue));
         if (curProc->_timeOfMsg > curRunningCond->time) // IMPORTANT--Performers can give us negative vals
@@ -1829,13 +1839,13 @@ static double getNextMsgTime(MKConductor *aCond)
             curProc->_onQueue = NO;
             switch (curProc->_argCount) {
               case 0:
-                (*curProc->_methodImp)(curProc->_toObject,curProc->_aSelector);
+                (*curProc->_methodImp)(curProc->_toObject, curProc->_aSelector);
                 break;
               case 1:
-                (*curProc->_methodImp)(curProc->_toObject,curProc->_aSelector, curProc->_arg1);
+                (*curProc->_methodImp)(curProc->_toObject, curProc->_aSelector, curProc->_arg1);
                 break;
               case 2:
-                (*curProc->_methodImp)(curProc->_toObject,curProc->_aSelector, curProc->_arg1,curProc->_arg2);
+                (*curProc->_methodImp)(curProc->_toObject, curProc->_aSelector, curProc->_arg1, curProc->_arg2);
                 break;
             }
         }
