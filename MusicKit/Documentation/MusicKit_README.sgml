@@ -81,7 +81,7 @@ have used the MusicKit in a host of areas, including music
 performance, scientific experiments, computer-aided instruction, and
 physical modeling.  The MusicKit was the first to unify the MIDI and
 Music V paradigms, thus combining interaction with generality.  (Music
-V, written by Max Mathews and others at Bell Labs three decades ago,
+V, written by Max Mathews and others at Bell Labs four decades ago,
 was the first widely available "computer music compiler".)
    </para>
 
@@ -443,13 +443,13 @@ OpenStep port in early 1998 and the majority of the conversion
 work. Leigh M. Smith <email>leigh@cs.uwa.edu.au</email>, now
 <email>leigh@tomandandy.com</email> fixed bugs and ported the MusicKit
 and MIDI drivers to Intel and PowerPC Rhapsody in late 1998 and
-reorganised the packages and documentation for MacOsX Server. The port
-from Rhapsody to MacOsX Server was trivial.  The frameworks were then
+reorganised the packages and documentation for MacOS X-Server. The port
+from Rhapsody to MacOS X-Server was trivial.  The frameworks were then
 ported to Windows 98/NT using DirectMusic, with DirectSound interface
 code contributed by SKoT McDonald <email>skot@tomandandy.com</email>. The
 MusicKit now uses the SndKit, written by Stephen Brandon, rather than
 the SoundKit for its sound processing. Keith Hamel tested and helped
-in bug fixes for the MacOsX Server version.
+in bug fixes for the MacOS X-Server version.
 </para>
   </sect1>
 
@@ -559,7 +559,7 @@ The Source files consist of:
         <variablelist>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://www.sourceforge.net/projects/musickit">MusicKit</ulink>
+              <ulink url="http://download.sourceforge.net/musickit/MK_V5.1.10.s.tar.gz">MK_V5.1.10.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -577,7 +577,7 @@ for regression testing.
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://www.sourceforge.net/projects/musickit/">SndKit</ulink>
+              <ulink url="http://download.sourceforge.net/musickit/SndKit_V1.3.0.s.tar.gz">SndKit_V1.3.0.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -587,11 +587,13 @@ for regression testing.
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://www.sourceforge.net/projects/musickit/">ZilogSCCMIDI.s.tar.gz</ulink>
+              <ulink url="http://download.sourceforge.net/musickit/ZilogSCCMIDI.s.tar.gz">ZilogSCCMIDI.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
-                The MacOS X-Server V1.0-1.2 MIDI driver source.
+                The MacOS X-Server V1.0-1.2 MIDI driver
+                source. Probably versions of MacOS X-Server later than
+                1.2 will use MacOS X MIDI plugins.
               </para>
 	      </listitem>
 	    </varlistentry>
@@ -601,7 +603,7 @@ for regression testing.
             </term>
 	      <listitem>
 		<para>
-                NS3.3 headers required to compile a driver on MacOsX-Server. 
+                NS3.3 headers required to compile a driver on MacOS X-Server. 
               </para>
 	      </listitem>
 	    </varlistentry>
@@ -612,17 +614,20 @@ for regression testing.
       <sect3 id=support>
 	<title>Supporting Libraries</title>
 	<para>
-The following libraries need to be installed to compile the source:
+The following libraries need to be compiled and installed to compile
+the MK source:
 </para>
 	<variablelist>
 	  <varlistentry>
 	    <term>
-            <ulink url="http://www.sourceforge.net/projects/sox">
-SoX</ulink>
+            <ulink url="http://download.sourceforge.net/sox/sox-12.17.tar.gz">sox-12.17.tar.gz</ulink>. 
             </term>
 	    <listitem>
 	      <para>
-              The SoX sound tools library provides sound file format conversion.
+              The 
+<ulink url="http://www.sourceforge.net/projects/sox">SoX</ulink>
+sound tools library provides sound file format conversion.
+Newer versions of will probably just work.
               </para>
 	    </listitem>
 	  </varlistentry>
@@ -633,14 +638,26 @@ SoX</ulink>
 	<title>Binaries</title>
 	<para>
           Binaries for the compiled frameworks for various operating
-          systems reside:
+          systems reside on sourceforge as tar'ed .pkg (Apple/NeXT)
+          packages. The files include the version number, choose the
+          most recent release.:
         </para>
 
         <para>
 	<variablelist>
 	    <varlistentry>
 	      <term>
-            <ulink url="http://www.tomandandy.com/MusicKit/binaries/MacOsX-Server/MK-5.1.9.pkg.tar">MK-5.1.9.pkg.tar</ulink>
+            <ulink url="http://download.sourceforge.net/musickit/MK-5.1.10.MOX.pkg.tar">MK-5.1.10.MOX.pkg.tar</ulink>
+            </term>
+	      <listitem>
+		<para>
+              The MacOS X frameworks (including the SndKit).
+              </para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term>
+            <ulink url="http://download.sourceforge.net/musickit/MK-5.1.10.MOXS.pkg.tar">MK-5.1.10.MOXS.pkg.tar</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -650,7 +667,7 @@ SoX</ulink>
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://www.sourceforge.net/projects/musickit">ZilogSCCMIDI.b.tar.gz</ulink>
+              <ulink url="http://download.sourceforge.net/musickit/ZilogSCCMIDI.b.tar.gz">ZilogSCCMIDI.b.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -658,30 +675,20 @@ SoX</ulink>
               </para>
 	      </listitem>
 	    </varlistentry>
-	    <varlistentry>
-	      <term>
-            <ulink url="http://www.tomandandy.com/MusicKit/binaries/MacOsX/MK-5.1.9.pkg.tar">MK-5.1.9.pkg.tar</ulink>
-            </term>
-	      <listitem>
-		<para>
-              The MacOS X frameworks (including the SndKit).
-              </para>
-	      </listitem>
-	    </varlistentry>
 <!--
 	  <varlistentry>
 	    <term>
-            <ulink url="http://www.tomandandy.com/MusicKit/binaries/Windows9X/MK-5.1.9.pkg.tar">MK-5.1.9.pkg.tar</ulink>
+            <ulink url="http://download.sourceforge.net/musickit/MK-5.1.9.w32.pkg.tar">MK-5.1.9.pkg.tar</ulink>
             </term>
 	    <listitem>
 	      <para>
-              The Windows9X frameworks (including the SndKit).
+              The Windows9X/2000 frameworks (including the SndKit).
               </para>
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry>
 	    <term>
-            <ulink url="http://www.tomandandy.com/MusicKit/binaries/Linux/MK-5.1.9.pkg.tar">MK-5.1.9.pkg.tar</ulink>
+            <ulink url="http://download.sourceforge.net/musickit/MK-5.1.9.linux.rpm">MK-5.1.9.linux.rpm</ulink>
             </term>
 	    <listitem>
 	      <para>
@@ -709,37 +716,37 @@ SoX</ulink>
 	  <para><application>WaveEdit</application> (David Jaffe)</para>
 	</listitem>
 	<listitem>
-	  <para><application>	Ensemble</application> (Michael McNabb)</para>
+	  <para><application>Ensemble</application> (Michael McNabb)</para>
 	</listitem>
 	<listitem>
-	  <para><application>	EnvelopeEd</application> (Fernando Lopez Lezcano)</para>
+	  <para><application>EnvelopeEd</application> (Fernando Lopez Lezcano)</para>
 	</listitem>
 	<listitem>
-	  <para><application>	PianoRoll</application> (Jonathan Knudsen)</para>
+	  <para><application>PianoRoll</application> (Jonathan Knudsen)</para>
 	</listitem>
 	<listitem>
-	  <para><application>	HosePlayer</application> (Perry Cook)</para>
+	  <para><application>HosePlayer</application> (Perry Cook)</para>
 	</listitem>
 	<listitem>
-	  <para><application>	SlideFlute</application> (Perry Cook)</para>
+	  <para><application>SlideFlute</application> (Perry Cook)</para>
 	</listitem>
 	<listitem>
-	  <para><application>	edsnd</application> (Lee Boynton)</para>
+	  <para><application>edsnd</application> (Lee Boynton)</para>
 	</listitem>
 	<listitem>
-	  <para><application>	Reich-o-Matic</application> (Brad Garton)</para>
+	  <para><application>Reich-o-Matic</application> (Brad Garton)</para>
 	</listitem>
 	<listitem>
-	  <para><application>	Looching</application> (Brad Garton)</para>
+	  <para><application>Looching</application> (Brad Garton)</para>
 	</listitem>
 	<listitem>
-	  <para><application>	ResoLab</application> (Perry Cook)</para>
+	  <para><application>ResoLab</application> (Perry Cook)</para>
 	</listitem>
 	<listitem>
-	  <para><application>	ClariNot</application> (Perry Cook)</para>
+	  <para><application>ClariNot</application> (Perry Cook)</para>
 	</listitem>
 	<listitem>
-	  <para><application>	ResonSound</application> (David Jaffe)</para>
+	  <para><application>ResonSound</application> (David Jaffe)</para>
 	</listitem>
       </itemizedlist>
     </sect2>
@@ -778,49 +785,49 @@ SoX</ulink>
 	  <para><application>SineGen</application></para>
 	</listitem>
 	<listitem>
-	  <para>	playpart</para>
+	  <para>playpart</para>
 	</listitem>
 	<listitem>
-	  <para>	playscorefile2</para>
+	  <para>playscorefile2</para>
 	</listitem>
 	<listitem>
-	  <para>	process_soundfiles_dsp</para>
+	  <para>process_soundfiles_dsp</para>
 	</listitem>
 	<listitem>
-	  <para>	mixscorefiles</para>
+	  <para>mixscorefiles</para>
 	</listitem>
 	<listitem>
-	  <para>	mixsounds</para>
+	  <para>mixsounds</para>
 	</listitem>
 	<listitem>
-	  <para>	playscorefile</para>
+	  <para>playscorefile</para>
 	</listitem>
 	<listitem>
-	  <para>	playscorefilemidi</para>
+	  <para>playscorefilemidi</para>
 	</listitem>
 	<listitem>
-	  <para>	example1</para>
+	  <para>example1</para>
 	</listitem>
 	<listitem>
-	  <para>	example3</para>
+	  <para>example3</para>
 	</listitem>
 	<listitem>
-	  <para>	example4</para>
+	  <para>example4</para>
 	</listitem>
 	<listitem>
-	  <para>	example5</para>
+	  <para>example5</para>
 	</listitem>
 	<listitem>
-	  <para>	exampleSynthPatch</para>
+	  <para>exampleSynthPatch</para>
 	</listitem>
 	<listitem>
-	  <para>	exampsynthpatch</para>
+	  <para>exampsynthpatch</para>
 	</listitem>
 	<listitem>
-	  <para>	exampunitgenerator</para>
+	  <para>exampunitgenerator</para>
 	</listitem>
 	<listitem>
-	  <para>	metronome</para>
+	  <para>metronome</para>
 	</listitem>
       </itemizedlist>
     </sect2>
