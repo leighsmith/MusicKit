@@ -8,18 +8,18 @@
     incoming MKNotes.
 
     A MKSynthInstrument can be in one of two modes, 'manual mode' or 'automatic mode'.
-    If the MKSynthInstrument is in automatic mode, Patches are allocated directly
+    If the MKSynthInstrument is in automatic mode, MKPatches are allocated directly
     from the MKOrchestra as needed, then returned to the available pool, to be
     shared among all MKSynthInstruments. This is the default.
     If more MKNotes arrive than there are synthesizer resources,
-    the oldest running Patch of this MKSynthInstrument is preempted
+    the oldest running MKPatch of this MKSynthInstrument is preempted
     (the MKSynthPatch is sent the preemptFor:aNote message)
     and used for the new MKNote. This behavior can be over-ridden for
     an alternative "grab" strategy.
 
-    If it is in manual mode, a fixed number of Patches are used over and over
-    and you set the number of Patches managed. If more MKNotes arrive than there
-    are Patches set aside, the oldest running Patch is preempted (the MKSynthPatch is
+    If it is in manual mode, a fixed number of MKPatches are used over and over
+    and you set the number of MKPatches managed. If more MKNotes arrive than there
+    are MKPatches set aside, the oldest running MKPatch is preempted (the MKSynthPatch is
     sent the preemptFor:aNote message) and used for the new MKNote. As above,
     this behavior can be over-ridden for an alternative "grab" strategy.
     You can set the number of patches for each template.
@@ -44,6 +44,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2001/08/27 19:57:16  leighsmith
+  Comment cleanup
+
   Revision 1.11  2001/05/14 17:26:51  leighsmith
   Correctly typed orchestra to respond to _MKClassOrchestra()
 
@@ -120,7 +123,7 @@ Modification history:
 
 #import "SynthInstrumentPrivate.h"
 #import "InstrumentPrivate.h"
-/* Set of active SynthPatches but not including those 
+/* Set of active MKSynthPatches but not including those 
    which had no noteTag. Hash from noteTag to patch. */
 
 typedef struct {
