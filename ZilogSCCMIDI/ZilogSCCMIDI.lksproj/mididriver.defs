@@ -1,0 +1,125 @@
+/*
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under
+  license from NeXT
+*/
+
+subsystem mididriver 400;
+
+waittime 5000;
+
+#include <mach/std_types.defs>
+import "mididriver_types.h";
+
+#include "mididriver_common.defs"
+
+routine MDBecomeOwner(
+		mididriver_port	: port_t;
+		owner_port	: port_t);
+
+routine MDReleaseOwnership(	
+		mididriver_port	: port_t;
+		owner_port	: port_t);
+
+routine MDSetClockMode(
+		mididriver_port	: port_t;
+		owner_port	: port_t;
+		unit		: short;
+		clock_mode	: int);
+
+routine MDGetClockTime(
+		mididriver_port	: port_t;
+		owner_port	: port_t;
+	out	time		: int);
+
+routine MDGetMTCTime(
+                mididriver_port     : port_t;
+                owner_port      : port_t;
+        out     format          : short;
+	out     hours           : short;
+	out     minutes         : short;
+	out     seconds         : short;
+	out     frames          : short);
+
+routine MDSetClockTime(
+		mididriver_port	: port_t;
+		owner_port	: port_t;
+		time		: int);
+
+simpleroutine MDRequestAlarm(
+		mididriver_port	: port_t;
+		owner_port	: port_t;
+		reply_port	: port_t;
+		time		: int);
+
+routine MDStartClock(
+		mididriver_port	: port_t;
+		owner_port	: port_t);
+
+routine MDStopClock(
+		mididriver_port	: port_t;
+		owner_port	: port_t);
+
+routine MDClaimUnit(
+		mididriver_port	: port_t;
+		owner_port	: port_t;
+		unit		: short);
+
+routine MDReleaseUnit(
+		mididriver_port	: port_t;
+		owner_port	: port_t;
+		unit		: short);
+
+routine MDRequestExceptions(
+		mididriver_port	: port_t;
+		owner_port	: port_t;
+		error_port	: port_t);
+
+routine MDRequestData(
+		mididriver_port	: port_t;
+		owner_port	: port_t;
+		unit		: short;
+		reply_port	: port_t);
+
+routine MDSendData(
+		mididriver_port	: port_t;
+		owner_port	: port_t;
+		unit		: short;
+		data		: MDRawEventPtr);
+
+routine MDGetAvailableQueueSize(
+	        mididriver_port : port_t;
+                owner_port      : port_t;
+                unit            : short;
+	   out  size            : int);
+
+routine MDRequestQueueNotification(
+	        mididriver_port : port_t;
+                owner_port      : port_t;
+                unit            : short;
+		notification_port : port_t;
+	   	size            : int);
+
+routine MDClearQueue(
+	        mididriver_port : port_t;
+                owner_port      : port_t;
+                unit            : short);
+
+routine MDFlushQueue(
+	        mididriver_port : port_t;
+                owner_port      : port_t;
+                unit            : short);
+
+routine MDSetSystemIgnores (
+		mididriver_port	: port_t;
+		owner_port	: port_t;
+		unit		: short;
+		sys_ignores	: int);
+
+routine MDSetClockQuantum(
+		mididriver_port : port_t;
+		owner_port	: port_t;
+	        microseconds    : int);
+
+				
+
+

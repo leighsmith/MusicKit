@@ -1,0 +1,38 @@
+/*
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under
+  license from NeXT
+*/
+
+
+subsystem mididriver_reply 400;
+
+waittime 5000;
+
+#include <mach/std_types.defs>
+import "mididriver_types.h";
+
+#include "mididriver_common.defs"
+
+simpleroutine MDAlarmReply(
+		reply_port	: port_t;
+		requestedTime	: int;
+		actualTime	: int);
+
+simpleroutine MDDataReply(
+		reply_port	: port_t;
+		unit		: short;
+		data		: MDRawEventPtr);
+
+simpleroutine MDExceptionReply(
+		reply_port	: port_t;
+		exception_code	: int);
+
+simpleroutine MDQueueReply(
+		reply_port	: port_t;
+		unit		: short);
+
+
+
+
+
+

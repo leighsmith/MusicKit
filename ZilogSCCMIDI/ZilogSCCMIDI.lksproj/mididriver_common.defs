@@ -1,0 +1,14 @@
+/*
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under
+  license from NeXT
+*/
+type byte = MSG_TYPE_BYTE;
+type MDRawEvent = struct [8] of byte;  // Beware! Architecture-dependent
+
+type MDRawEventPtr = array[*:100] of MDRawEvent;
+// Beware!  The number 100 must match the constant in midi_types.h
+
+type mididriver_time_t = int;
+
+
+
