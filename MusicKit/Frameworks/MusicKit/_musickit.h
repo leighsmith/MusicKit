@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2002/01/24 13:26:09  sbrandon
+  added function prototype for _MKDeepMutableArrayCopy (new in utilities.m)
+
   Revision 1.7  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -200,6 +203,7 @@ extern void _MKFix24ToDoubleArray (DSPDatum *fix24Arr, double *doubleArr, int le
 
 // array duplication
 NSMutableArray *_MKLightweightArrayCopy(NSMutableArray *oldArray);
+NSMutableArray *_MKDeepMutableArrayCopy(NSMutableArray *oldArray);
 
 /* Files */
 /*
