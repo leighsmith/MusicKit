@@ -17,5 +17,23 @@
 
 CONFIG = OTHER_CFLAGS="@DEFS@" CONFIGURED_LIBS="@LIBS@" SGMLTRANS="@SGMLTRANS@"
 
-all:
-	echo "Yet to implement top-level build process"
+# palettes utilities examples applications
+all: frameworks 
+
+frameworks:
+	$(MAKE) -C Frameworks
+
+palettes:
+	$(MAKE) -C Palettes
+
+utilities:
+	$(MAKE) -C Utilities
+
+examples:
+	$(MAKE) -C Examples
+
+applications:
+	$(MAKE) -C Applications
+
+documentation:
+	$(MAKE) -C Documentation
