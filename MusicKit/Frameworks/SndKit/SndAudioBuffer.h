@@ -223,12 +223,12 @@ typedef enum {
 - (long) mixWithBuffer: (SndAudioBuffer *) buff;
 
 /*!
-  @method     copy
-  @abstract
+  @method     copyWithZone:
+  @abstract   SndAudioBuffer object copying.
   @discussion
   @result     A duplicate SndAudioBuffer with its own, identical data.
 */
-- copy;
+- (id) copyWithZone: (NSZone *) zone;
 
 /*!
   @method     copyData:

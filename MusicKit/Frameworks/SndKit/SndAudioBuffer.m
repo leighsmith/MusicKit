@@ -29,16 +29,6 @@
 @implementation SndAudioBuffer
 
 ////////////////////////////////////////////////////////////////////////////////
-// audioBufferWithFormat:data:
-////////////////////////////////////////////////////////////////////////////////
-
-+ audioBufferWithFormat: (SndFormat *) newFormat data: (void *) sampleData
-{
-    SndAudioBuffer *ab = [[SndAudioBuffer alloc] initWithFormat: newFormat data: sampleData];
-    return [ab autorelease];
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // audioBufferWrapperAroundSNDStreamBuffer:
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -80,18 +70,24 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// audioBufferWithFormat:data:
+////////////////////////////////////////////////////////////////////////////////
+
++ audioBufferWithFormat: (SndFormat *) newFormat data: (void *) sampleData
+{
+    SndAudioBuffer *ab = [[SndAudioBuffer alloc] initWithFormat: newFormat data: sampleData];
+    return [ab autorelease];
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // audioBufferWithFormat:duration:
 ////////////////////////////////////////////////////////////////////////////////
 
-+ audioBufferWithFormat: (SndFormat) f
++ audioBufferWithFormat: (SndFormat) newFormat
 {
     SndAudioBuffer *ab = [SndAudioBuffer alloc];
 
-    [ab initWithDataFormat: f.dataFormat
-	      channelCount: f.channelCount
-              samplingRate: f.sampleRate
-		frameCount: f.frameCount];
-
+    [ab initWithFormat: &newFormat data: NULL];
     return [ab autorelease];
 }
 
@@ -126,7 +122,7 @@
     SndAudioBuffer *ab = [SndAudioBuffer alloc];
     
     [ab initWithDataFormat: newDataFormat
-		  channelCount: newChannelCount
+	      channelCount: newChannelCount
               samplingRate: newSamplingRate
                 frameCount: newFrameCount];
     
@@ -514,12 +510,12 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// copy
+// copyWithZone:
 ////////////////////////////////////////////////////////////////////////////////
 
-- copy
+- (id) copyWithZone: (NSZone *) zone
 {
-    SndAudioBuffer *dest = [[SndAudioBuffer alloc] initWithBuffer: self];
+    SndAudioBuffer *dest = [[[self class] allocWithZone: zone] initWithBuffer: self];
     return dest; // copy returns a retained object according to NSObject spec
 }
 
