@@ -1,0 +1,125 @@
+{
+    CURRENTLY_ACTIVE_VERSION = YES; 
+    DEPLOY_WITH_VERSION_NAME = A; 
+    DYNAMIC_CODE_GEN = YES; 
+    FILESTABLE = {
+        CLASSES = (DSPObjectObjc.m); 
+        FRAMEWORKS = (Foundation.framework, SndKit.framework, System.framework); 
+        FRAMEWORKSEARCH = (
+            "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks", 
+            "$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks"
+        ); 
+        H_FILES = (
+            dsp.h, 
+            DSPControl.h, 
+            DSPConversion.h, 
+            dspdriver.h, 
+            dspdriverAccess.h, 
+            dspdriver_types.h, 
+            DSPError.h, 
+            DSPMessage.h, 
+            DSPObject.h, 
+            dspreg.h, 
+            DSPStructMisc.h, 
+            DSPSymbols.h, 
+            DSPTransfer.h, 
+            dsp_errno.h, 
+            dsp_memory_map.h, 
+            dsp_memory_map_ap.h, 
+            dsp_memory_map_ap_1.0.h, 
+            dsp_memory_map_mk.h, 
+            dsp_memory_map_mk_1.0.h, 
+            dsp_messages.h, 
+            dsp_messages_1.0.h, 
+            dsp_structs.h, 
+            dsp_types.h, 
+            libdsp.h, 
+            monitor_independent.h, 
+            smsrc_dependencies.h, 
+            snddriver.h, 
+            _dsp.h, 
+            _DSPMach.h, 
+            _DSPMachAccessMacros.h, 
+            _DSPMessage.h, 
+            _DSPObject.h, 
+            _DSPTransfer.h, 
+            _dsp_message_names.h, 
+            _libdsp.h, 
+            _MachMessages.h
+        ); 
+        LIBRARYSEARCH = ("$(LOCAL_DEVELOPER_DIR)/Libraries"); 
+        OTHER_LIBS = (Driver); 
+        OTHER_LINKED = (
+            DSPSymbols.c, 
+            DSPReadFile.c, 
+            DSPLoad.c, 
+            DSPBoot.c, 
+            _DSPCV.c, 
+            _DSPMach.c, 
+            _DSPString.c, 
+            gdbHelp.c, 
+            _DSPUtilities.c, 
+            DSPConversion.c, 
+            dspdriverAccess.c, 
+            _DSPRelocate.c, 
+            DSPStructMisc.m, 
+            DSPObject.m, 
+            DSPGlobals.m, 
+            DSPError.m
+        ); 
+        OTHER_RESOURCES = (); 
+        OTHER_SOURCES = (
+            Makefile.preamble, 
+            Makefile, 
+            Makefile.postamble, 
+            m.template, 
+            h.template, 
+            dspdriverUser.c, 
+            DSPQuintSupport.c
+        ); 
+        PRECOMPILED_HEADERS = (); 
+        PROJECT_HEADERS = (); 
+        PUBLIC_HEADERS = (
+            dsp.h, 
+            DSPControl.h, 
+            DSPConversion.h, 
+            dspdriverAccess.h, 
+            DSPError.h, 
+            DSPMessage.h, 
+            DSPObject.h, 
+            dspreg.h, 
+            DSPStructMisc.h, 
+            DSPSymbols.h, 
+            DSPTransfer.h, 
+            dsp_errno.h, 
+            dsp_memory_map.h, 
+            dsp_memory_map_ap.h, 
+            dsp_memory_map_ap_1.0.h, 
+            dsp_memory_map_mk.h, 
+            dsp_memory_map_mk_1.0.h, 
+            dsp_messages.h, 
+            dsp_messages_1.0.h, 
+            dsp_structs.h, 
+            dsp_types.h, 
+            libdsp.h, 
+            monitor_independent.h
+        ); 
+    }; 
+    LANGUAGE = English; 
+    LOCALIZABLE_FILES = {}; 
+    MAKEFILEDIR = .; 
+    NEXTSTEP_BUILDTOOL = /bin/gnumake; 
+    NEXTSTEP_INSTALLDIR = "$(LOCAL_LIBRARY_DIR)/Frameworks"; 
+    NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 
+    NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc; 
+    PDO_UNIX_BUILDTOOL = $NEXT_ROOT/Developer/bin/make; 
+    PDO_UNIX_JAVA_COMPILER = "$(NEXTDEV_BIN)/javac"; 
+    PDO_UNIX_OBJCPLUS_COMPILER = "$(NEXTDEV_BIN)/gcc"; 
+    PROJECTNAME = MKDSP; 
+    PROJECTTYPE = Framework; 
+    PROJECTVERSION = 2.8; 
+    WINDOWS_BUILDTOOL = ./make.sh; 
+    WINDOWS_INSTALLDIR = "$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks"; 
+    WINDOWS_JAVA_COMPILER = "$(JDKBINDIR)/javac.exe"; 
+    WINDOWS_OBJCPLUS_COMPILER = "$(DEVDIR)/gcc"; 
+}

@@ -1,0 +1,22 @@
+{
+    NSMACHOperatingSystem = {
+        Archs = "18 "; 
+        "Executable-$[PBProject projectName]$[PBProjectType executableExtension]" = {
+            cla_array = (
+                (
+                    "-i", 
+                    ../../Music/Scorefiles/Emma.score, 
+                    "-i", 
+                    ../../Music/Scorefiles/Emma.score, 
+                    "-s", 
+                    2.5, 
+                    "-o", 
+                    round.score
+                )
+            ); 
+            cla_array_index = 0; 
+        }; 
+        LauncherSelectedExec = ("$[PBProject projectName]$[PBProjectType executableExtension]"); 
+        Target = tool; 
+    }; 
+}

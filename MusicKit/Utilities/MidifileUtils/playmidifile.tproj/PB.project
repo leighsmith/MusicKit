@@ -2,7 +2,7 @@
     DYNAMIC_CODE_GEN = YES; 
     FILESTABLE = {
         CLASSES = (playmidifile.m); 
-        FRAMEWORKS = (Foundation.framework, MKPerformMIDI.framework, MusicKit.framework); 
+        FRAMEWORKS = (Foundation.framework, MKPerformSndMIDI.framework, MusicKit.framework); 
         FRAMEWORKSEARCH = (/Local/Library/Frameworks); 
         OTHER_LINKED = (); 
         OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble, m.template, h.template); 

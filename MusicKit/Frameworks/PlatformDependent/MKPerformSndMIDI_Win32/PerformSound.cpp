@@ -33,8 +33,14 @@
 */
 /*
 // $Log$
-// Revision 1.1  1999/11/17 17:57:14  leigh
-// Initial revision
+// Revision 1.3  2000/01/03 20:33:26  leigh
+// initialises the SND API before attempting to retrieve the DirectSound object
+//
+// Revision 1.2  1999/11/17 22:10:51  leigh
+// Added the VS-1 audio routines into project
+//
+// Revision 1.1.1.1  1999/11/17 17:57:14  leigh
+// Initial working version
 //
 // Revision 1.5  1999/07/24 23:20:17  leigh
 // multiple channel DirectSound Playback
@@ -51,8 +57,8 @@
 #include "dsound.h"
 #include "PerformSoundPrivate.h"
 // SKoT's combined WaveOut and DirectX routines.
-#include "../CAudOut/AudOutWO.h" // these should be in a standard place
-#include "../CAudOut/AudOutDX.h"
+#include "AudOutWO.h" // these should be in a standard place
+#include "AudOutDX.h"
 #include "sounderror.h"
 
 #ifdef __cplusplus
@@ -241,12 +247,12 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 
     // WaveOut initialisation
 		if (!audioOutWO.Initialise(GenAudio,0)) {
-      AfxMessageBox("Error initialising WO: " + audioOutWO.GetErrMsg());
+      AfxMessageBox("Error initialising WaveOut: " + audioOutWO.GetErrMsg());
 			return FALSE;
 		}
     // DirectSound initialisation
 		if (!audioOutDX.Initialise(GenAudio,0)) {
-			AfxMessageBox("Error initialising DX: " + audioOutDX.GetErrMsg());
+			AfxMessageBox("Error initialising DirectSound: " + audioOutDX.GetErrMsg());
 			return FALSE;
 		}
     retrieveDriverList();
@@ -281,10 +287,10 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 // to begin playing. Really we should check If we are not using DirectSound, NULL is returned.
 LPDIRECTSOUND SNDGetDirectSound(void)
 {
-  if(initialised)
-    return audioOutDX.GetDirectSound();
-  else
-    return (LPDIRECTSOUND) 7; // just so we can tell where this came from, should be NULL.
+  if(!initialised) {
+    SNDInit(TRUE);
+  }
+  return audioOutDX.GetDirectSound();
 }
 
 // Returns an array of strings listing the available drivers.

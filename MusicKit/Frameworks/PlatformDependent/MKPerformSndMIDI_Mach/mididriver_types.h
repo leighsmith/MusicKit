@@ -10,8 +10,11 @@
 Modification history:
 
   $Log$
-  Revision 1.1  1999/09/12 00:20:18  leigh
-  Initial revision
+  Revision 1.2  2000/01/27 18:15:43  leigh
+  upgraded to new typedef names for Mach
+
+  Revision 1.1.1.1  1999/09/12 00:20:18  leigh
+  separated out from MusicKit framework
 
   Revision 1.2  1999/07/29 01:26:08  leigh
   Added Win32 compatibility, CVS logs, SBs changes
@@ -76,10 +79,10 @@ typedef struct {
 #define MD_PORT_B_UNIT 1
 
 /* Reply function types. */
-typedef void (*MDDataReplyFunction)(port_t replyPort, short unit, MDRawEvent *events, unsigned int count);
-typedef void (*MDAlarmReplyFunction)(port_t replyPort, int requestedTime, int actualTime);
-typedef void (*MDExceptionReplyFunction)(port_t replyPort, int exception);
-typedef void (*MDQueueReplyFunction)(port_t replyPort, short unit);
+typedef void (*MDDataReplyFunction)(mach_port_t replyPort, short unit, MDRawEvent *events, unsigned int count);
+typedef void (*MDAlarmReplyFunction)(mach_port_t replyPort, int requestedTime, int actualTime);
+typedef void (*MDExceptionReplyFunction)(mach_port_t replyPort, int exception);
+typedef void (*MDQueueReplyFunction)(mach_port_t replyPort, short unit);
 
 /* Struct for passing reply functions to mididriver library. */
 typedef struct MDReplyFunctions {
