@@ -1,10 +1,22 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
-<!ENTITY chap2 SYSTEM "MusicData.sgml">
-<!ENTITY chap3 SYSTEM "MusicProcAndSynth.sgml">
-<!ENTITY chap4 SYSTEM "MusicPerformance.sgml">
-<!ENTITY appendixA SYSTEM "MusicTables.sgml">
-<!ENTITY appendixB SYSTEM "MIDITimeCode.sgml">
+<!ENTITY IntroMusicKit     SYSTEM "IntroMusicKit.sgml">
+<!ENTITY MusicData         SYSTEM "MusicData.sgml">
+<!ENTITY MusicSynthAndProc SYSTEM "MusicSynthAndProc.sgml">
+<!ENTITY MusicPerformance  SYSTEM "MusicPerformance.sgml">
+<!ENTITY ScoreFileRef      SYSTEM "ScoreFileRef.sgml">
+<!ENTITY appendixA         SYSTEM "MusicTables.sgml">
+<!ENTITY appendixB         SYSTEM "MIDITimeCode.sgml">
 ]>
+
+<!-- 
+$Id$
+This is the main document including all others that constitute the
+MusicKit and SndKit Concepts book.
+
+Edit this file, not the HTML, RTF or LaTeX output.
+
+-->
+
 <book id="MusicKitConcepts">
   <title>MusicKit and SndKit Concepts</title>
   <bookinfo>
@@ -57,8 +69,11 @@
     </revhistory>
   </bookinfo>
 
-&chap2;
-&chap4;
+&IntroMusicKit;
+&MusicData;
+&MusicSynthAndProc;
+&MusicPerformance;
+&ScoreFileRef;
 &appendixA;
 &appendixB;
 </book>
