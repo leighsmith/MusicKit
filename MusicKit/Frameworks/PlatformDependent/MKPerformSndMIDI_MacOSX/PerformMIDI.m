@@ -25,6 +25,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2001/04/28 21:29:03  leighsmith
+  Made packet dumping compilation controlled by a macro to avoid warnings
+
   Revision 1.14  2001/04/20 23:42:53  leighsmith
   Added a passable emulation of queue waiting (in absence of an Apple notification, added a packet debug function
 
@@ -71,7 +74,8 @@ Modification history:
 #include "PerformMIDI.h"
 #include <CoreMIDI/MIDIServices.h>
 
-#define FUNCLOG 0  // 1 = write a log to disk whenever a function in this API is called.
+#define FUNCLOG 0      // 1 == write a log to disk whenever a function in this API is called.
+#define DUMPPACKETS 0  // 1 == print out each packet sent to the driver.
 
 #if FUNCLOG
 #include <stdio.h> // for fprintf and debug
@@ -422,6 +426,7 @@ PERFORM_API MKMDReturn MKMDRequestData (
     return MKMD_SUCCESS;
 }
 
+#if DUMPPACKETS
 static void dumpPackets(MIDIPacketList *pktlist)
 {
     unsigned int i, j;
@@ -438,6 +443,7 @@ static void dumpPackets(MIDIPacketList *pktlist)
         packet = MIDIPacketNext(packet);
     }
 }
+#endif
 
 /* Routine MKMDSendData */
 // Each event consists of a time stamp per byte. This was done to allow slowing byte output
@@ -514,7 +520,9 @@ PERFORM_API MKMDReturn MKMDSendData (
             return MKMD_ERROR_QUEUE_FULL;
         }
     }
-    // dumpPackets(pktlist);
+#if DUMPPACKETS
+    dumpPackets(pktlist);
+#endif
 
     if((errCode = MIDISend(outPort, claimedDestinations[unit], pktlist)) != noErr) {
 #if FUNCLOG
