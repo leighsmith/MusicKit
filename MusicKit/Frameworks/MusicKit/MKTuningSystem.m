@@ -20,6 +20,11 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2002/01/29 16:42:19  sbrandon
+  changed several uses of NSMutableArray arrayWithArray/retain to
+  NSMutableArray initWithCapacity to avoid autoreleases
+  changed insertObject:atIndex: to simply addObject: for speed
+
   Revision 1.9  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -405,8 +410,7 @@ void _MKTuningSystemInit(void)
     [super init];
     if (!tuningInited)
       _MKCheckInit();
-    frequencies = [NSMutableArray arrayWithCapacity: MIDI_NUMKEYS];
-    [frequencies retain];
+    frequencies = [[NSMutableArray alloc] initWithCapacity: MIDI_NUMKEYS];
     [self setTo12ToneTempered];
     return self;
 }
@@ -460,7 +464,7 @@ void _MKTuningSystemInit(void)
 //    MKTuningSystem *newObj = [super copyWithZone:zone];
     MKTuningSystem *newObj = NSCopyObject(self, 0, zone);//sb: must check for deep copying
     
-    newObj->frequencies = [[NSMutableArray arrayWithArray: frequencies] retain];
+    newObj->frequencies = [[NSMutableArray alloc] initWithArray: frequencies];
     return newObj;
 }
 
@@ -486,9 +490,9 @@ void _MKTuningSystemInit(void)
     [super init];
     if (!tuningInited)
       _MKCheckInit();
-    frequencies = [[NSMutableArray arrayWithCapacity: MIDI_NUMKEYS] retain];
+    frequencies = [[NSMutableArray alloc] initWithCapacity: MIDI_NUMKEYS];
     for (i=0, pit = pitchVars; i<MIDI_NUMKEYS; i++)
-        [frequencies insertObject: [NSNumber numberWithDouble: _MKParAsDouble(_MKSFVarGetParameter(*pit++))] atIndex: i];
+        [frequencies addObject: [NSNumber numberWithDouble: _MKParAsDouble(_MKSFVarGetParameter(*pit++))]];
     return self;
 }
 
