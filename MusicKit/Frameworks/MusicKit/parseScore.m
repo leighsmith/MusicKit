@@ -32,6 +32,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2000/05/05 01:56:18  leigh
+  Fixed errant use of immutable NSDictionary for _noteTagTable
+
   Revision 1.8  2000/04/26 01:18:11  leigh
   Corrected readScorefileStream to take a NSData instead of NSMutableData instance
 
@@ -3593,7 +3596,7 @@ _MKNewScoreInStruct(NSData *aStream,id owner,NSMutableData *printStream,
         scoreRPtr->_binaryIndexedObjects = [[NSMutableArray array] retain];
     scoreRPtr->printStream = printStream;
     scoreRPtr->_ranState = initRan();
-    scoreRPtr->_noteTagTable = [[NSDictionary dictionary] retain];
+    scoreRPtr->_noteTagTable = [[NSMutableDictionary dictionary] retain];
     scoreRPtr->timeTag = 0;
     scoreRPtr->_fileHighTag = -1;
     scoreRPtr->_fileLowTag = 0;
