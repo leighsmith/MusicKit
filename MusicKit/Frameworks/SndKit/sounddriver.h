@@ -7,7 +7,7 @@
 #import <mach/mach.h>
 #import <mach/mach_init.h>
 #import <mach/message.h>
-#import <bsd/sys/types.h>
+//#import <bsd/sys/types.h>
 
 /*
  * Valid sources and destination codes for stream setup
@@ -90,7 +90,7 @@
 #define SNDDRIVER_ISR_RXDF      (0x00000100)    // readable status bit
 
 
-#include "snddriver_client.h"
+//#include "snddriver_client.h"
 
 /*
  * Asynchronous return message parsing and callout (the reply server).
