@@ -87,6 +87,7 @@
 #import "ConductorPrivate.h"
 
 #define MK_INLINE 1
+#define COUNT_MSG_QUEUE_LENGTH 0
 
 static BOOL separateThread = NO;
 static NSTimer *timedEntry = NOTIMEDENTRY; /* Only used for DPS client mode */
@@ -563,17 +564,17 @@ static id insertMsgQueue(register MKMsgStruct *sp, MKConductor *self)
 	sp->_prev->_next = sp;
     }	
     sp->_conductor = self;
-#   if COUNT_MSG_QUEUE_LENGTH
+#if COUNT_MSG_QUEUE_LENGTH
     {
 	static int maxQueueLen = 0;
 	int i;
-	for (i = 0, tmp = self->_msgQueue; tmp; tmp = tmp->_next, i++)
+	for (i = 0, tmp = self->_msgQueue; tmp != NULL; tmp = tmp->_next, i++)
 	  if (i > maxQueueLen) {
-	      NSLog(@"MaxQLen == %d\n",i);
+	      NSLog(@"Message max queue length == %d\n",i);
 	      maxQueueLen = i;
 	  }
     }
-#   endif
+#endif
     return self;
 }
 
@@ -1188,8 +1189,11 @@ static void evalAfterQueues()
     return timeOffset;
 }
 
--sel:(SEL)aSelector to:(id)toObject withDelay:(double)deltaT 
- argCount:(int)argCount, ...;
+// sendSelector:
+- sel: (SEL) aSelector
+   to: (id) toObject 
+withDelay: (double) deltaT 
+ argCount: (int) argCount, ...;
 /* TYPE: Requesting; Requests aSelector to be sent to toObject.
  * Schedules a request for the receiver
  * to send the message aSelector to the
@@ -1205,7 +1209,7 @@ static void evalAfterQueues()
     va_start(ap,argCount); 
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
-    va_end(ap);	
+    va_end(ap);
     return insertMsgQueue(
         newMsgRequest(CONDUCTORFREES, self->time + deltaT, aSelector, toObject, argCount, arg1, FALSE, arg2, FALSE), self);
 }
@@ -1908,8 +1912,8 @@ static double getNextMsgTime(MKConductor *aCond)
 + (void) masterConductorBody: (NSTimer *) unusedTimer
 /*sb: created for the change from DPS timers to OS-style timers. The timer performs a method, not
  * a function. It's a class method because we want only one object to look after these messages.
- * When called from a separate thread, it will not actually be called from a NSTimer, but after a timed condition lock.
- * Therefore we should never do anything with unusedTimer.
+ * When called from a separate thread, it will not actually be called from a NSTimer,
+ * but after a timed condition lock. Therefore we should never do anything with unusedTimer.
  */
 {
     MKMsgStruct  *curProc;

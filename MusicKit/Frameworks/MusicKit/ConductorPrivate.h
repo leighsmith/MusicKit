@@ -40,15 +40,13 @@
 
 #define PEEKTIME(pq) (pq)->_timeOfMsg
 
-#define COUNT_MSG_QUEUE_LENGTH 0
-
 typedef enum _backgroundThreadAction {
     exitThread,
     pauseThread
 } backgroundThreadAction;
 
 extern void _MKLock(void) ;
-    /* Waits for Music Kit to become available for messaging. */
+    /* Waits for MusicKit to become available for messaging. */
 extern void _MKUnlock(void) ;
     /* Gives up lock so that Music Kit can run again. */
 
