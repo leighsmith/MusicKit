@@ -40,14 +40,14 @@
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> The <CLASSNAME>MKInstrument</CLASSNAME> class
-	    (abstract) realizes <CLASSNAME>MKNotes</CLASSNAME> in some manner.
+	    (abstract) realizes <CLASSNAME>MKNote</CLASSNAME>s in some manner.
 	    E.g. <CLASSNAME>MKSynthInstrument</CLASSNAME>realizes
-	    <CLASSNAME>MKNotes</CLASSNAME> on the <ACRONYM>DSP</ACRONYM>.</PARA> 
+	    <CLASSNAME>MKNote</CLASSNAME>s on the <ACRONYM>DSP</ACRONYM>.</PARA> 
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> The <CLASSNAME>MKPerformer</CLASSNAME> class
 	    (abstract) dispatches a time-ordered stream of
-	    <CLASSNAME>MKNotes</CLASSNAME>.  For example to perform a
+	    <CLASSNAME>MKNote</CLASSNAME>s.  For example to perform a
 	    <CLASSNAME>MKScore</CLASSNAME>, you use a
 	    <CLASSNAME>MKPartPerformer</CLASSNAME> for each
 	    <CLASSNAME>MKPart</CLASSNAME> in the <CLASSNAME>MKScore</CLASSNAME>.
@@ -71,7 +71,7 @@
       <TITLE>The <CLASSNAME>MKConductor</CLASSNAME> Class</TITLE> 
       <ITEMIZEDLIST>
 	<LISTITEM>
-	  <PARA> The<CLASSNAME>MKConductor</CLASSNAME> class is the primary
+	  <PARA> The <CLASSNAME>MKConductor</CLASSNAME> class is the primary
 	    performance class. </PARA> 
 	</LISTITEM>
 	<LISTITEM>
@@ -90,7 +90,7 @@
 	  <PARA>
 	    A <PRODUCTNAME>MusicKit</PRODUCTNAME> performance requires a
 	    <CLASSNAME>MKConductor</CLASSNAME>.  You need not create a
-	    <CLASSNAME>MKConductor</CLASSNAME> explicitly.  A "defaultConductor"
+	    <CLASSNAME>MKConductor</CLASSNAME> explicitly.  A &ldquo;defaultConductor&rdquo;
 	    is created for you and is obtained by:
 	  </PARA>
 	  <PROGRAMLISTING>
@@ -98,7 +98,7 @@
 	  </PROGRAMLISTING>
 	</LISTITEM>  
 	<LISTITEM>
-	  <PARA>Multiple <CLASSNAME>MKConductors</CLASSNAME> may be used. Each
+	  <PARA>Multiple <CLASSNAME>MKConductor</CLASSNAME>s may be used. Each
 	    may have its own tempo and may be paused/resumed independently.
 	    However, the entire performance is controlled by the
 	    <CLASSNAME>MKConductor</CLASSNAME> class.  E.g., to start a
@@ -150,12 +150,12 @@
 	  </LISTITEM>
 	</VARLISTENTRY>
       </VARIABLELIST>
-      <PARA> <emphasis role="bold">MKSetDeltaT(double </emphasis>val<emphasis
-	role="bold">) </emphasis>sets "scheduler advance" over
+      <PARA> <emphasis role="bold">MKSetDeltaT(double</emphasis> val<emphasis
+	role="bold">)</emphasis> sets &ldquo;scheduler advance&rdquo; over
 	<ACRONYM>MIDI</ACRONYM> and <ACRONYM>DSP</ACRONYM>.  The larger the
 	argument, the more dependable the performance and the greater the
 	latency.  E.g. <emphasis role="bold">MKSetDeltaT</emphasis>(0.1) sets
-	a "delta time" of 100 ms.
+	a &ldquo;delta time&rdquo; of 100 ms.
       </PARA>
     </SECT1>
 
@@ -163,10 +163,10 @@
       <TITLE>The <CLASSNAME>MKInstrument</CLASSNAME> Class</TITLE> 
       <ITEMIZEDLIST>
 	<LISTITEM>
-	  <PARA> An abstract class that realizes <CLASSNAME>MKNotes</CLASSNAME>
+	  <PARA> An abstract class that realizes <CLASSNAME>MKNote</CLASSNAME>s
 	    in a manner defined by the subclass.
-	    <CLASSNAME>MKInstruments</CLASSNAME> are passive, they respond to
-	    <CLASSNAME>MKNotes</CLASSNAME> sent to them by the user interface or
+	    <CLASSNAME>MKInstrument</CLASSNAME>s are passive, they respond to
+	    <CLASSNAME>MKNote</CLASSNAME>s sent to them by the user interface or
 	    a <CLASSNAME>MKPerformer</CLASSNAME>.
 	  </PARA>
 	</LISTITEM>
@@ -193,25 +193,25 @@
 	      <TBODY>
 		<ROW>
 		  <ENTRY><CLASSNAME>MKPartRecorder</CLASSNAME></ENTRY> 
-		  <ENTRY> adds <CLASSNAME>MKNotes</CLASSNAME> to a
+		  <ENTRY> adds <CLASSNAME>MKNote</CLASSNAME>s to a
 		    <CLASSNAME>MKPart</CLASSNAME>.
 		  </ENTRY>
 		</ROW>
 		<ROW>
 		  <ENTRY> <CLASSNAME>MKSynthInstrument</CLASSNAME></ENTRY>  
-		  <ENTRY> realizes <CLASSNAME>MKNotes</CLASSNAME> on
+		  <ENTRY> realizes <CLASSNAME>MKNote</CLASSNAME>s on
 		    <ACRONYM>DSP</ACRONYM>. 	
 		  </ENTRY>
 		</ROW>
 		<ROW>
 		  <ENTRY><CLASSNAME>MKFileWriter</CLASSNAME></ENTRY> 
-		  <ENTRY> (abstract) writes <CLASSNAME>MKNotes</CLASSNAME> to a
+		  <ENTRY> (abstract) writes <CLASSNAME>MKNote</CLASSNAME>s to a
 		    file. 
 		  </ENTRY>
 		</ROW>
 		<ROW>
 		  <ENTRY> <CLASSNAME>MKScorefileWriter</CLASSNAME></ENTRY>   
-		  <ENTRY>writes <CLASSNAME>MKNotes</CLASSNAME> to a scorefile.
+		  <ENTRY>writes <CLASSNAME>MKNote</CLASSNAME>s to a scorefile.
 		  </ENTRY>
 		</ROW>
 	      </TBODY>
@@ -236,13 +236,13 @@
 	      <TBODY>
 		<ROW>
 		  <ENTRY> <CLASSNAME>MKMidi</CLASSNAME></ENTRY> 
-		  <ENTRY> sends <CLASSNAME>MKNotes</CLASSNAME> to 
+		  <ENTRY> sends <CLASSNAME>MKNote</CLASSNAME>s to 
 		    <ACRONYM>MIDI</ACRONYM> via serial port
 		  </ENTRY> 
 		</ROW>
 		<ROW>
 		  <ENTRY> <CLASSNAME>MKScoreRecorder</CLASSNAME></ENTRY>
-		  <ENTRY> manages set of <CLASSNAME>MKPartRecorders</CLASSNAME>
+		  <ENTRY> manages set of <CLASSNAME>MKPartRecorder</CLASSNAME>s
 		  </ENTRY>
 		</ROW>
 	      </TBODY>
@@ -251,17 +251,18 @@
 	</LISTITEM>  
 	<LISTITEM>
 	  <PARA> <CLASSNAME>MKNoteFilter</CLASSNAME> is a special (abstract)
-	    subclass of Instrument that processes <CLASSNAME>MKNotes</CLASSNAME>
+	    subclass of Instrument that processes <CLASSNAME>MKNote</CLASSNAME>s
 	    it will be described later. </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> <CLASSNAME>MKInstruments</CLASSNAME> receive
-	    <CLASSNAME>MKNotes</CLASSNAME> via their "inputs", which are small
-	    objects called <CLASSNAME>MKNoteReceivers</CLASSNAME>.  You can send
-	    <CLASSNAME>MKNotes</CLASSNAME> directly to a
+	  <PARA> <CLASSNAME>MKInstrument</CLASSNAME>s receive
+	    <CLASSNAME>MKNote</CLASSNAME>s via their
+	    &ldquo;inputs&rdquo;, which are small objects called
+	    <CLASSNAME>MKNoteReceiver</CLASSNAME>s.  You can send
+	    <CLASSNAME>MKNote</CLASSNAME>s directly to a
 	    <CLASSNAME>MKNoteReceiver</CLASSNAME> or use a
 	    <CLASSNAME>MKPerformer</CLASSNAME> to dispatch the
-	    <CLASSNAME>MKNotes</CLASSNAME> (e.g. when playing a
+	    <CLASSNAME>MKNote</CLASSNAME>s (e.g. when playing a
 	    <CLASSNAME>MKScore</CLASSNAME>).
 	  </PARA>
 	  <TABLE>
@@ -272,7 +273,7 @@
 	      <THEAD>
 		<ROW>
 		  <ENTRY> Class</ENTRY> 
-		  <ENTRY> Number of <CLASSNAME>MKNoteReceivers</CLASSNAME></ENTRY>
+		  <ENTRY> Number of <CLASSNAME>MKNoteReceiver</CLASSNAME>s</ENTRY>
 		</ROW>
 	  </THEAD>
 	      <TBODY>
@@ -294,7 +295,7 @@
 		  </ENTRY>
 		</ROW>
 		<ROW>
-		  <ENTRY><CLASSNAME>MKMidi</CLASSNAME> </ENTRY>
+		  <ENTRY><CLASSNAME>MKMidi</CLASSNAME></ENTRY>
 		  <ENTRY>1 per <ACRONYM>MIDI</ACRONYM> channel + 1 extra</ENTRY>
 		</ROW>
 	      </TBODY>
@@ -304,21 +305,22 @@
 	<LISTITEM>
 	  <PARA> You can tell an <CLASSNAME>MKInstrument</CLASSNAME> to realize
 	    a <CLASSNAME>MKNote</CLASSNAME> by sending <emphasis
-	    role="bold">receiveNote: </emphasis>to one of its
-	    <CLASSNAME>MKNoteReceivers</CLASSNAME>.  You can obtain the
+	    role="bold">receiveNote:</emphasis> to one of its
+	    <CLASSNAME>MKNoteReceiver</CLASSNAME>s.  You can obtain the
 	    <CLASSNAME>MKNoteReceiver</CLASSNAME> in various ways.  To get its
 	    first <CLASSNAME>MKNoteReceiver</CLASSNAME>, send <emphasis
-	    role="bold">noteReceiver </emphasis>to the
+	    role="bold">noteReceiver</emphasis> to the
 	    <CLASSNAME>MKInstrument</CLASSNAME>.
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> When sending <CLASSNAME>MKNotes</CLASSNAME>
+	  <PARA> When sending <CLASSNAME>MKNote</CLASSNAME>s
 	    <EMPHASIS>directly</EMPHASIS> to an
-	    <CLASSNAME>MKInstrument's</CLASSNAME> NoteReceiver, you must update
-	    time.  Afterwards (if using the <ACRONYM>DSP</ACRONYM>) you must
-	    make sure that the <ACRONYM>DSP</ACRONYM> command buffers are
-	    properly emptied.  Example:
+	    <CLASSNAME>MKInstrument</CLASSNAME>'s
+	    <CLASSNAME>MKNoteReceiver</CLASSNAME>, you must update
+	    time.  Afterwards (if using the <ACRONYM>DSP</ACRONYM>)
+	    you must make sure that the <ACRONYM>DSP</ACRONYM> command
+	    buffers are properly emptied.  Example:
 	  </PARA>
 	  <PROGRAMLISTING>
 [MKConductor lockPerformance];  	/*  (2.0 version) */	
@@ -334,16 +336,16 @@
       <ITEMIZEDLIST>
 	<LISTITEM>
 	  <PARA> An abstract class that dispatches
-	    <CLASSNAME>MKNotes</CLASSNAME> in a time-ordered fashion.
-	    <CLASSNAME>MKPerformers</CLASSNAME> are active; they are
+	    <CLASSNAME>MKNote</CLASSNAME>s in a time-ordered fashion.
+	    <CLASSNAME>MKPerformer</CLASSNAME>s are active; they are
 	    <CLASSNAME>MKNote</CLASSNAME> dispatchers.
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> Subclass implements <emphasis role="bold">perform</emphasis>,
 	    invoked periodically by its <CLASSNAME>MKConductor</CLASSNAME>, as
-	    determined by the instance var <emphasis>nextPerform.,</emphasis>
-	    reset within <emphasis role="bold">perform </emphasis>to specify
+	    determined by the instance var <emphasis>nextPerform</emphasis>,
+	    reset within <emphasis role="bold">perform</emphasis> to specify
 	    when next <CLASSNAME>MKNote</CLASSNAME> is to occur.
 	  </PARA>
 	</LISTITEM>
@@ -364,28 +366,28 @@
 	      <TBODY>
 		<ROW>
 		  <ENTRY><CLASSNAME>MKPartPerformer</CLASSNAME></ENTRY> 
-		  <ENTRY> performs <CLASSNAME>MKNotes</CLASSNAME> from a
+		  <ENTRY> performs <CLASSNAME>MKNote</CLASSNAME>s from a
 		    <CLASSNAME>MKPart</CLASSNAME>.</ENTRY> 
 		</ROW>
 		<ROW>
 		  <ENTRY> <CLASSNAME>MKFilePerformer</CLASSNAME></ENTRY>
 		  <ENTRY> (abstract)
-		    performs <CLASSNAME>MKNotes</CLASSNAME> from a file.</ENTRY>  
+		    performs <CLASSNAME>MKNote</CLASSNAME>s from a file.</ENTRY>  
 		</ROW>
 		<ROW>
 		  <ENTRY> <CLASSNAME>MKScorefilePerformer</CLASSNAME> </ENTRY>
-		  <ENTRY> performs <CLASSNAME>MKNotes</CLASSNAME> from a
+		  <ENTRY> performs <CLASSNAME>MKNote</CLASSNAME>s from a
 		    scorefile.</ENTRY>
 		</ROW>
 		<ROW>
 		  <ENTRY> <CLASSNAME>MKScorePerformer</CLASSNAME> </ENTRY>
-		  <ENTRY> manages a set of <CLASSNAME>MKPartPerformers</CLASSNAME>
+		  <ENTRY> manages a set of <CLASSNAME>MKPartPerformer</CLASSNAME>s
 		  </ENTRY>
 		</ROW>
 		<ROW>
 		  <ENTRY> <CLASSNAME>MKMidi</CLASSNAME> </ENTRY> 
 		  <ENTRY> (abstract)
-		    performs <CLASSNAME>MKNotes</CLASSNAME> it receives via
+		    performs <CLASSNAME>MKNote</CLASSNAME>s it receives via
 		    <ACRONYM>MIDI</ACRONYM></ENTRY>
 		</ROW>
 	      </TBODY>
@@ -393,12 +395,12 @@
 	  </TABLE>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> <CLASSNAME>MKPerformers</CLASSNAME> send
-	    <CLASSNAME>MKNotes</CLASSNAME> via their "outputs", small objects
-	    called <CLASSNAME>MKNoteSenders</CLASSNAME>.  A
+	  <PARA> <CLASSNAME>MKPerformer</CLASSNAME>s send
+	    <CLASSNAME>MKNote</CLASSNAME>s via their &ldquo;outputs&rdquo;, small objects
+	    called <CLASSNAME>MKNoteSender</CLASSNAME>s.  A
 	    <CLASSNAME>MKPerformer</CLASSNAME> sends a
 	    <CLASSNAME>MKNote</CLASSNAME> to one of its
-	    <CLASSNAME>MKNoteSenders</CLASSNAME>: [aNoteSender <emphasis
+	    <CLASSNAME>MKNoteSender</CLASSNAME>s: [aNoteSender <emphasis
 	    role="bold">sendNote:</emphasis>aNote];
 	  </PARA>
 	  <TABLE>
@@ -409,7 +411,7 @@
 	      <THEAD>
 		<ROW> 
 		  <ENTRY> Class</ENTRY>
-		  <ENTRY> Number of <CLASSNAME>MKNoteSenders</CLASSNAME></ENTRY>
+		  <ENTRY> Number of <CLASSNAME>MKNoteSender</CLASSNAME>s</ENTRY>
 		</ROW>
 	      </THEAD>
 	      <TBODY>
@@ -437,21 +439,21 @@
 	  </TABLE>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> <CLASSNAME>MKPerformers</CLASSNAME> may be paused, resumed,
-	    delayed, &amp; created dynamically.  Similar to Pla "voices" or
-	    <PRODUCTNAME>Common Music</PRODUCTNAME> "parts".</PARA>
+	  <PARA> <CLASSNAME>MKPerformer</CLASSNAME>s may be paused, resumed,
+	    delayed, &amp; created dynamically.  Similar to <PRODUCTNAME>Pla</PRODUCTNAME> &ldquo;voices&rdquo; or
+	    <PRODUCTNAME>Common Music</PRODUCTNAME> &ldquo;parts&rdquo;.</PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
     </SECT1>
 
     <SECT1 ID="CONNECTINGPERFORMERS">
-      <TITLE>Connecting <CLASSNAME>MKPerformers</CLASSNAME> to
-	<CLASSNAME>MKInstruments</CLASSNAME></TITLE>
+      <TITLE>Connecting <CLASSNAME>MKPerformer</CLASSNAME>s to
+	<CLASSNAME>MKInstrument</CLASSNAME>s</TITLE>
       <ITEMIZEDLIST>
 	<LISTITEM>
 	  <PARA> To connect a <CLASSNAME>MKPerformer</CLASSNAME> to an
 	    <CLASSNAME>MKInstrument</CLASSNAME>, you send the message <emphasis
-	    role="bold">connect: </emphasis>to a
+	    role="bold">connect:</emphasis> to a
 	    <CLASSNAME>MKNoteSender</CLASSNAME> of a
 	    <CLASSNAME>MKPerformer</CLASSNAME> with a
 	    <CLASSNAME>MKNoteReceiver</CLASSNAME> of an
@@ -460,29 +462,29 @@
 	  <PROGRAMLISTING>
 [[aPerf noteSender] connect:[anIns noteReceiver]]; 
 	  </PROGRAMLISTING>
-	  <PARA>Or, equivalently:	</PARA>
+	  <PARA>Or, equivalently:</PARA>
 	  <PROGRAMLISTING>
 [[anIns noteReceiver] connect:[aPerf noteSender]]; 
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> Any number of <CLASSNAME>MKNoteReceivers</CLASSNAME> may be
+	  <PARA> Any number of <CLASSNAME>MKNoteReceiver</CLASSNAME>s may be
 	    connected to a <CLASSNAME>MKNoteSender</CLASSNAME> and vica
-	    versa. Any number of <CLASSNAME>MKPerformers</CLASSNAME> and
-	    <CLASSNAME>MKInstruments</CLASSNAME> may be involved in a single
-	    performance.  Any number of <CLASSNAME>MKPerformers</CLASSNAME> may
+	    versa. Any number of <CLASSNAME>MKPerformer</CLASSNAME>s and
+	    <CLASSNAME>MKInstrument</CLASSNAME>s may be involved in a single
+	    performance.  Any number of <CLASSNAME>MKPerformer</CLASSNAME>s may
 	    be governed by one <CLASSNAME>MKConductor</CLASSNAME></PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
     </SECT1>
 
     <SECT1 ID="NOTEFILTERCLASS">
-      <TITLE>The <CLASSNAME>MKNoteFilter</CLASSNAME> Class </TITLE>
+      <TITLE>The <CLASSNAME>MKNoteFilter</CLASSNAME> Class</TITLE>
       <ITEMIZEDLIST>
 	<LISTITEM>
 	  <PARA> A <CLASSNAME>MKNoteFilter</CLASSNAME> (subclass of
 	    <CLASSNAME>MKInstrument</CLASSNAME>) is an abstract class that
-	    processes <CLASSNAME>MKNotes</CLASSNAME> in some manner.  </PARA>
+	    processes <CLASSNAME>MKNote</CLASSNAME>s in some manner.</PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> <CLASSNAME>MKNoteFilter</CLASSNAME> inherits the
@@ -494,9 +496,9 @@
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> Like any other <CLASSNAME>MKInstrument</CLASSNAME>,
-	    <CLASSNAME>MKNoteFilters</CLASSNAME> implement <emphasis
-	    role="bold">realizeNote:fromNoteReceiver: </emphasis>to process
-	    <CLASSNAME>MKNotes</CLASSNAME> it receives.  Example: MidiEcho.
+	    <CLASSNAME>MKNoteFilter</CLASSNAME>s implement <emphasis
+	    role="bold">realizeNote:fromNoteReceiver:</emphasis> to process
+	    <CLASSNAME>MKNote</CLASSNAME>s it receives.  Example: MidiEcho.
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
@@ -507,7 +509,7 @@
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> <APPLICATION>Ensemble</APPLICATION> is a 2.0 Application
-	    based on <CLASSNAME>MKNoteFilters</CLASSNAME>.</PARA>
+	    based on <CLASSNAME>MKNoteFilter</CLASSNAME>s.</PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
     </SECT1>
@@ -559,8 +561,8 @@
 	<LISTITEM>
 	  <PARA> To use <CLASSNAME>MKMidi</CLASSNAME> (or
 	    <CLASSNAME>MKOrchestra</CLASSNAME>), you must send <emphasis
-	    role="bold">run </emphasis>when you send <emphasis
-	    role="bold">startPerformance </emphasis>to the
+	    role="bold">run</emphasis> when you send <emphasis
+	    role="bold">startPerformance</emphasis> to the
 	    <CLASSNAME>MKConductor</CLASSNAME>. Example:
 	  </PARA>
 	  <PROGRAMLISTING>
