@@ -1,0 +1,14 @@
+{
+    NSMACHOperatingSystem = {
+        "Executable-$[PBProject projectName]$[PBProjectType executableExtension]" = {
+            asrc_array = (/Local/Users/leigh/Sources/Music/MusicKit/YellowBox/Frameworks/MusicKit); 
+            cla_array = (
+                (
+                    "-f", 
+                    "~/Sources/Music/MusicKit/YellowBox/Examples/MidifileUtils/DoomInTheBathroom.midi"
+                )
+            ); 
+            cla_array_index = 0; 
+        }; 
+    }; 
+}
