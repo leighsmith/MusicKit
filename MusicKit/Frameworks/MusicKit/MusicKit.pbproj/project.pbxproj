@@ -1173,11 +1173,11 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>MusicKit V5.4.0</string>
+	<string>MusicKit V5.4.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>5.4.0</string>
+	<string>5.4.1</string>
 </dict>
 </plist>
 ";
