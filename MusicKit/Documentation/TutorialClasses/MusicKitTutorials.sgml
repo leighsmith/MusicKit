@@ -16,8 +16,10 @@ Edit this file, not the HTML, RTF or LaTeX output.
 <!ENTITY class3 SYSTEM "MusicKitClass3.sgml">
 <!ENTITY class4 SYSTEM "MusicKitClass4.sgml">
 <!ENTITY class5 SYSTEM "MusicKitClass5.sgml">
-<!ENTITY MKWebDoco     "http://musickit.sourceforge.net">
+<!ENTITY MKWebDoco     "http://www.musickit.org">
 <!ENTITY MKConcepts    "&MKWebDoco;/MusicKitConcepts">
+<!ENTITY MKFrameworks  "&MKWebDoco;/Frameworks/MusicKit">
+<!ENTITY SKFrameworks  "&MKWebDoco;/Frameworks/SndKit">
 ]>
 
 <book id="MusicKitTutorials">
