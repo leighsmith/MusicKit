@@ -4,8 +4,11 @@
 */
 /*
   $Log$
+  Revision 1.6  2000/01/27 19:06:28  leigh
+  Now using NSPort replacing C Mach port API
+
   Revision 1.5  2000/01/20 17:15:36  leigh
-  Moved the backgroundThreadAction enum to properly be in a header
+  Replaced sleepMs with OpenStep NSThread delay
 
   Revision 1.4  2000/01/13 06:54:04  leigh
   Added a missing (pre-OpenStep conversion!) _error: method
@@ -40,11 +43,12 @@ extern void _MKLock(void) ;
 extern void _MKUnlock(void) ;
     /* Gives up lock so that Music Kit can run again. */
 
-extern void _MKAddPort(port_name_t aPort, 
-		       /*DPSPortProc aHandler,*/ id handlerObj,
+extern void _MKAddPort(NSPort *aPort, 
+		       id handlerObj,
 		       unsigned max_msg_size, 
-		       void *anArg,NSString *priority);
-extern void _MKRemovePort(port_name_t aPort);
+		       void *anArg,
+		       NSString *priority);
+extern void _MKRemovePort(NSPort *aPort);
 
 extern void _MKSendVMMsgToApplicationThread(id self,
 					    short *data,

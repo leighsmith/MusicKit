@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.9  2000/01/27 19:06:12  leigh
+  Now using NSPort replacing C Mach port API
+
   Revision 1.8  2000/01/24 22:31:28  leigh
   Comment improvements
 
@@ -66,8 +69,8 @@
 
 typedef struct _timeVars {
     id synchConductor;         /* If non-nil, time mode is MTC Synch */
-    port_name_t exceptionPort; /* Exception port.  Only one unit per device may have one */
-    port_name_t alarmPort;     /* Alarm port.  Only one unit per device may have one */
+    NSPort *exceptionPort; /* Exception port.  Only one unit per device may have one */
+    NSPort *alarmPort;     /* Alarm port.  Only one unit per device may have one */
     id midiObj;                /* Which unit is receiving MTC. */
     double alarmTime;
     int intAlarmTime;
@@ -91,20 +94,17 @@ typedef struct _timeVars {
     void *_pOut; // should be _MKMidiOutStruct *
     double _timeOffset;
     char ioMode; // should be an enumerated type. 'i' = MKMidiInputOnly 'o' = MKMidiOutputOnly 'a' = MKMidiIO
-    // the following are from the ivar thaw
     BOOL isOwner;
-    // should become NSPort
-    port_name_t devicePort; /* Device port */
-    port_name_t ownerPort;  
-    port_name_t recvPort;   /* Port on which we receive midiIn messages */
-    port_name_t queuePort; /* Queues.  */
+    NSPort *devicePort; // Device port
+    NSPort *ownerPort;
+    NSPort *recvPort;   // Port on which we receive midiIn messages
+    NSPort *queuePort;  // Queues.
     BOOL mergeInput;
     NSString *hostname;
     int unit;
     int queueSize;
-    id conductor;             /* Used by conductor and setConductor: methods */
-    /* MTC additions */
-    timeVars *tvs;
+    id conductor;       // Used by conductor and setConductor: methods
+    timeVars *tvs;      // MIDI Time Code (MTC) additions
 }
 
 #define MK_MAXMIDIS 16  /* Maximum number of Intel-based Midi objects */

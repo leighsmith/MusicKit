@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/01/27 19:04:07  leigh
+  Now using NSPort replacing C Mach port API
+
   Revision 1.4  1999/11/14 21:31:03  leigh
   Corrected _MKErrorf arguments to be NSStrings
 
@@ -46,7 +49,7 @@ static double mangleTime(MKMidi *self,double driverTime)
 	 * has been set, this time has deltaT added to it. 
 	 */
 {
-    int r = MIDIGetMTCTime(self->devicePort,self->ownerPort,format,h,m,s,f);
+    int r = MIDIGetMTCTime([self->devicePort machPort], [self->ownerPort machPort],format,h,m,s,f);
     double seconds;
     if (r != KERN_SUCCESS) 
       _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"getMTCFormat:");
@@ -68,7 +71,7 @@ static double mangleTime(MKMidi *self,double driverTime)
     double t;
     if (deviceStatus == MK_devClosed)
       return 0;
-    r = MIDIGetClockTime(self->devicePort,self->ownerPort,&theTime);
+    r = MIDIGetClockTime([self->devicePort machPort], [self->ownerPort machPort], &theTime);
     if (r != KERN_SUCCESS) 
       _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"time");
     t = theTime * _MK_MIDI_QUANTUM_PERIOD;
