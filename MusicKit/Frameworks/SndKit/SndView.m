@@ -2398,7 +2398,7 @@ char *SndSoundError(int err);
     if (!isCompat) {
         SndAlloc(&convertedSound, 0, [sound dataFormat],
                     [sound samplingRate], [sound channelCount], 4);
-        SndConvertSound(recordingSound,&convertedSound);
+	SndConvertSound(recordingSound, &convertedSound, YES, NO, NO, YES);
         SndInsertSamples([sound soundStruct], convertedSound,(int)((float)NSMinX(selectionRect) + 0.1));
         selectionRect.size.width = SndSampleCount(convertedSound);
         SndFree(convertedSound);
@@ -2492,7 +2492,7 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
                                 [sound dataFormat],(int)[sound samplingRate],
                                 [sound channelCount],4);
                 didConversion1 = YES;
-                if (SndConvertSound(sndDataBytes, &convertedPasteSound1) != SND_ERR_NONE ) {
+                if (SndConvertSound(sndDataBytes, &convertedPasteSound1, YES, NO, NO, YES) != SND_ERR_NONE ) {
                     [self tellDelegate:@selector(hadError:)];
 		    //                    [self showCursor];
                     if (convertedPasteSound1) SndFree(convertedPasteSound1);
@@ -2509,7 +2509,7 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
                                 [sound dataFormat],(int)[sound samplingRate],
                                 [sound channelCount],4);
                 didConversion2 = YES;
-                if (SndConvertSound(sndDataBytes, &convertedPasteSound2) != SND_ERR_NONE ) {
+                if (SndConvertSound(sndDataBytes, &convertedPasteSound2, YES, NO, NO, YES) != SND_ERR_NONE ) {
                     [self tellDelegate:@selector(hadError:)];
 		    //                    [self showCursor];
                     if (convertedPasteSound1) SndFree(convertedPasteSound1);
