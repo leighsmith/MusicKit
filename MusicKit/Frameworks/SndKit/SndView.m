@@ -170,11 +170,10 @@ OF THIS AGREEMENT.
     //    backgroundColour = [[NSColor blackColor] retain];
     //    backgroundColour = [[NSColor clearColor] retain];
 
-        backgroundColour = [[NSColor colorWithCalibratedWhite:1.0 alpha:1]
-    		 retain];
+    backgroundColour = [[NSColor colorWithCalibratedWhite:1.0 alpha:1] retain];
 
-//    backgroundColour = [[NSColor colorWithCalibratedRed:.25 green:0 blue:0.
-//    			alpha:.1] retain];
+    //    backgroundColour = [[NSColor colorWithCalibratedRed:.25 green:0 blue:0.
+    //    			alpha:.1] retain];
 
     //    foregroundColour = [[NSColor blueColor] retain];//black
 
@@ -182,7 +181,7 @@ OF THIS AGREEMENT.
     			alpha:.7] retain];
 
 
-    displayMode = NX_SOUNDVIEW_MINMAX;
+    displayMode = SND_SOUNDVIEW_MINMAX;
     selectionRect = NSMakeRect(0.0, 0.0, 0.0, 0.0);
     reductionFactor = 4.0; /* bogus */
     dataList = [[SndDisplayDataList alloc] init];
@@ -307,56 +306,59 @@ OF THIS AGREEMENT.
 {
     return displayMode;
 }
-- (void)setDisplayMode:(int)aMode /*NX_SOUNDVIEW_WAVE or NX_SOUNDVIEW_MINMAX*/
+
+- (void) setDisplayMode: (int) aMode /*SND_SOUNDVIEW_WAVE or SND_SOUNDVIEW_MINMAX*/
 {
-    if (displayMode != aMode) [self invalidateCache];
-    else return;
+    if (displayMode != aMode)
+	[self invalidateCache];
+    else
+	return;
     displayMode = aMode;
     [self setNeedsDisplay:YES];
-    return;
 }
+
 - drawSamplesFrom:(int)first to:(int)last;
 {
     return self;
 }
 
-double getSoundValue(void *myData,int myType,int myActualSample)
+double getSoundValue(void *myData, int myType, int myActualSample)
 {
     double theValue;
     
     switch (myType) {
-        case SND_FORMAT_LINEAR_8:
-            theValue = ((char *)myData)[myActualSample];
-            break;
-        case SND_FORMAT_MULAW_8:
-            theValue = SndMuLawToLinear(((char *)myData)[myActualSample]);
-            break;
-        case SND_FORMAT_EMPHASIZED:
-        case SND_FORMAT_COMPRESSED:
-        case SND_FORMAT_COMPRESSED_EMPHASIZED:
-        case SND_FORMAT_DSP_DATA_16:
-        case SND_FORMAT_LINEAR_16:
-            theValue = ((short *)myData)[myActualSample];
-            break;
-        case SND_FORMAT_LINEAR_24:
-        case SND_FORMAT_DSP_DATA_24:
-            // theValue = ((short *)myData)[myActualSample];
-            theValue = *((int *)((char *) myData + myActualSample * 3)) >> 8;
-            break;
-        case SND_FORMAT_LINEAR_32:
-        case SND_FORMAT_DSP_DATA_32:
-            theValue = ((int *)myData)[myActualSample];
-            break;
-        case SND_FORMAT_FLOAT:
-            theValue = ((float *)myData)[myActualSample];
-            break;
-        case SND_FORMAT_DOUBLE:
-            theValue = ((double *)myData)[myActualSample];
-            break;
-        default: /* just in case */
-            theValue = ((short *)myData)[myActualSample];
-	    NSLog(@"SndView getSoundValue: unhandled format %d\n", myType);
-            break;
+    case SND_FORMAT_LINEAR_8:
+	theValue = ((char *)myData)[myActualSample];
+	break;
+    case SND_FORMAT_MULAW_8:
+	theValue = SndMuLawToLinear(((char *)myData)[myActualSample]);
+	break;
+    case SND_FORMAT_EMPHASIZED:
+    case SND_FORMAT_COMPRESSED:
+    case SND_FORMAT_COMPRESSED_EMPHASIZED:
+    case SND_FORMAT_DSP_DATA_16:
+    case SND_FORMAT_LINEAR_16:
+	theValue = ((short *)myData)[myActualSample];
+	break;
+    case SND_FORMAT_LINEAR_24:
+    case SND_FORMAT_DSP_DATA_24:
+	// theValue = ((short *)myData)[myActualSample];
+	theValue = *((int *)((char *) myData + myActualSample * 3)) >> 8;
+	break;
+    case SND_FORMAT_LINEAR_32:
+    case SND_FORMAT_DSP_DATA_32:
+	theValue = ((int *)myData)[myActualSample];
+	break;
+    case SND_FORMAT_FLOAT:
+	theValue = ((float *)myData)[myActualSample];
+	break;
+    case SND_FORMAT_DOUBLE:
+	theValue = ((double *)myData)[myActualSample];
+	break;
+    default: /* just in case */
+	theValue = ((short *)myData)[myActualSample];
+	NSLog(@"SndView getSoundValue: unhandled format %d\n", myType);
+	break;
     }
     return theValue;
 }
@@ -366,59 +368,60 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
     double theValue;
     
     switch (myType) {
-        case SND_FORMAT_LINEAR_8:
-            theValue = (((char *)myData)[myActualSample] +
-                    ((char *)myData)[myActualSample + 1]) >> 1;
-            break;
-        case SND_FORMAT_MULAW_8:
-            theValue = SndMuLawToLinear(((char *)myData)[myActualSample]);
-            break;
-        case SND_FORMAT_EMPHASIZED:
-        case SND_FORMAT_COMPRESSED:
-        case SND_FORMAT_COMPRESSED_EMPHASIZED:
-        case SND_FORMAT_DSP_DATA_16:
-        case SND_FORMAT_LINEAR_16:
-            theValue = (int)( (((short *)myData)[myActualSample] + 
-                               ((short *)myData)[myActualSample + 1]) >> 1);
-            break;
-        case SND_FORMAT_LINEAR_24:
-        case SND_FORMAT_DSP_DATA_24:
-            theValue = ((*((int *)((char *) myData + myActualSample * 3)) >> 8) +
-		        (*((int *)((char *) myData + (myActualSample + 1) * 3)) >> 8)) * 0.5;
-            break;
-        case SND_FORMAT_LINEAR_32:
-        case SND_FORMAT_DSP_DATA_32:
-            theValue = (long int)( ((int *)myData)[myActualSample] +
-                         ((int *)myData)[myActualSample + 1] ) >> 1;
-            break;
-        case SND_FORMAT_FLOAT:
-            theValue = 0.5 * ( ((float *)myData)[myActualSample] +
-                               ((float *)myData)[myActualSample + 1] );
-            break;
-        case SND_FORMAT_DOUBLE:
-            theValue = 0.5 * ( ((double *)myData)[myActualSample] +
-                               ((double *)myData)[myActualSample + 1] );
-            break;
-        default: /* just in case */
-            theValue = 0.5 * ( ((short *)myData)[myActualSample] +
-                               ((short *)myData)[myActualSample + 1] );
-	    NSLog(@"SndView getSoundValueStereo: unhandled format %d\n", myType);
-            break;
+    case SND_FORMAT_LINEAR_8:
+	theValue = (((char *)myData)[myActualSample] +
+		((char *)myData)[myActualSample + 1]) >> 1;
+	break;
+    case SND_FORMAT_MULAW_8:
+	theValue = SndMuLawToLinear(((char *)myData)[myActualSample]);
+	break;
+    case SND_FORMAT_EMPHASIZED:
+    case SND_FORMAT_COMPRESSED:
+    case SND_FORMAT_COMPRESSED_EMPHASIZED:
+    case SND_FORMAT_DSP_DATA_16:
+    case SND_FORMAT_LINEAR_16:
+	theValue = (int)( (((short *)myData)[myActualSample] + 
+			    ((short *)myData)[myActualSample + 1]) >> 1);
+	break;
+    case SND_FORMAT_LINEAR_24:
+    case SND_FORMAT_DSP_DATA_24:
+	theValue = ((*((int *)((char *) myData + myActualSample * 3)) >> 8) +
+		    (*((int *)((char *) myData + (myActualSample + 1) * 3)) >> 8)) * 0.5;
+	break;
+    case SND_FORMAT_LINEAR_32:
+    case SND_FORMAT_DSP_DATA_32:
+	theValue = (long int)( ((int *)myData)[myActualSample] +
+			((int *)myData)[myActualSample + 1] ) >> 1;
+	break;
+    case SND_FORMAT_FLOAT:
+	theValue = 0.5 * ( ((float *)myData)[myActualSample] +
+			    ((float *)myData)[myActualSample + 1] );
+	break;
+    case SND_FORMAT_DOUBLE:
+	theValue = 0.5 * ( ((double *)myData)[myActualSample] +
+			    ((double *)myData)[myActualSample + 1] );
+	break;
+    default: /* just in case */
+	theValue = 0.5 * ( ((short *)myData)[myActualSample] +
+			    ((short *)myData)[myActualSample + 1] );
+	NSLog(@"SndView getSoundValueStereo: unhandled format %d\n", myType);
+	break;
     }
     return theValue;
 }
 
-- (BOOL)invalidateCacheStartSample:(int)start end:(int)end
+- (BOOL) invalidateCacheStartSample: (int) start end: (int) end
 {
     int startPixel = start/reductionFactor;
     int endPixel = end / reductionFactor;
     if (startPixel < 0 || endPixel < startPixel) return NO;
     return [self invalidateCacheStartPixel:startPixel end:endPixel];
 }
-- (BOOL)invalidateCacheStartPixel:(int)start end:(int)end
+
+- (BOOL) invalidateCacheStartPixel: (int) start end: (int) end
 {
     int startOfCache;
-    int startpix,endpix;
+    int startpix, endpix;
     int i;
     SndDisplayData *theObj,*newObj;
     if (!dataList) return YES;
@@ -461,41 +464,43 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
     return YES;
 }
 
-- (void)invalidateCache /* blast 'em all away */
+- (void) invalidateCache /* blast 'em all away */
 {
     if (!dataList) return;
     [(NSMutableArray *)dataList removeAllObjects];
 }
 
-- (BOOL)isOpaque
-{  return YES;	}
-    
-- (void)drawRect:(NSRect)rects
+- (BOOL) isOpaque
 {
-    NSRect newRect,insetBounds,scaledSelRect;
-    int i,j=0;
-    BOOL frag=NO;
-    float thisMax,thisMin,maxNinety=0,minNinety=0,theValue,lastValue=0;
-    int direction = 0; /* 0 for up, 1 for down */
-    float ampScaler=1;/* bogus */
+    return YES;
+}
+    
+- (void) drawRect: (NSRect) rects
+{
+    NSRect newRect, insetBounds, scaledSelRect;
+    int i, j = 0;
+    BOOL fragmentedSound = NO;
+    float thisMax, thisMin, maxNinety = 0, minNinety = 0, theValue, lastValue = 0;
+    int directionDown = NO; /* NO for up, YES for down */
+    float ampScaler = 1;/* bogus */
     int type;
-    double maxAmp=32767.0;
+    double maxAmp = 32767.0;
     void *theData;
     int chanCount;
     int sampCount;
-    int skipFactor=1,startX,endX;
-    float halfHeight=[self bounds].size.height * 0.5;
+    int skipFactor = 1, startX, endX;
+    float halfHeight = [self bounds].size.height * 0.5;
     BOOL doStereo;
-    int whichChannel=0;
+    int whichChannel = 0;
     /* for stepping through data */
-    int actualBase,firstOfNext;
-    float actualBaseF,fONBase;
+    int actualBase, firstOfNext;
+    float actualBaseF, fONBase;
     /* for working through caching: */
-    int currStartPoint,arrayPointer,cacheIndex;
+    int currStartPoint, arrayPointer, cacheIndex;
     /* holds the data to be drawn. Calculated from caches, or from examining sound data */
     float 	*cacheMaxArray,*cacheMinArray;
     BOOL optimize = (!svFlags.notOptimizedForSpeed && reductionFactor > optThreshold);
-    int m1,c1; /* max point and current counter in current fragged sound data segment */
+    int m1, c1; /* max point and current counter in current fragged sound data segment */
     SndDisplayData *currentCacheObject;	
     long b1; // for some basic timing
 
@@ -567,8 +572,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
     if (sampCount <= 0)
       return;
 
-
- /* do I need to do any other cleanup here? */
+    /* do I need to do any other cleanup here? */
 
     if (!sampCount)
       return;
@@ -577,7 +581,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
     type = [sound dataFormat];
 
-    frag = (((SndSoundStruct *) [sound soundStruct])->dataFormat == SND_FORMAT_INDIRECT);
+    fragmentedSound = (((SndSoundStruct *) [sound soundStruct])->dataFormat == SND_FORMAT_INDIRECT);
 
     switch (type) {
         case SND_FORMAT_LINEAR_8:
@@ -664,7 +668,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
       /* we need to draw a line from last pixel */
 
-      if (displayMode == NX_SOUNDVIEW_MINMAX && endX < NSMaxX([self frame]))
+      if (displayMode == SND_SOUNDVIEW_MINMAX && endX < NSMaxX([self frame]))
 	endX++;
 
 /* STARTING MAIN CACHE LOOP HERE */
@@ -755,9 +759,9 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
                     }
                 }
                 if (optimize) {
-                    direction = (theValue < lastValue);
-                    if ((!direction && (theValue > maxNinety))
-                            || (direction && (theValue < minNinety))) skipFactor = 1;
+                    directionDown = (theValue < lastValue);
+                    if ((!directionDown && (theValue > maxNinety))
+                            || (directionDown && (theValue < minNinety))) skipFactor = 1;
                     else skipFactor = optSkip;
 		}
                 lastValue = theValue;
@@ -815,7 +819,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
         arect = newUserPath();
         beginUserPath(arect,NO);
 
-        if (displayMode == NX_SOUNDVIEW_WAVE) {
+        if (displayMode == SND_SOUNDVIEW_WAVE) {
             float max1 = cacheMaxArray[0] * ampScaler + halfHeight;
             float min1 = cacheMinArray[0] * ampScaler + halfHeight;
             if (endX >= NSWidth([self frame])) endX = NSWidth([self frame]) - 1;
@@ -854,7 +858,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
         freeUserPath(arect);
   #else
         PSnewpath();
-        if (displayMode == NX_SOUNDVIEW_WAVE) {
+        if (displayMode == SND_SOUNDVIEW_WAVE) {
             float max1 = cacheMaxArray[0] * ampScaler + halfHeight;
             float min1 = cacheMinArray[0] * ampScaler + halfHeight;
             if (endX >= NSWidth([self frame])) endX = NSWidth([self frame]) - 1;
@@ -896,7 +900,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
     CGContextBeginPath(ctx);
 
-    if (displayMode == NX_SOUNDVIEW_WAVE) {
+    if (displayMode == SND_SOUNDVIEW_WAVE) {
 
         float max1 = cacheMaxArray[0] * ampScaler + halfHeight;
         float min1 = cacheMinArray[0] * ampScaler + halfHeight;
@@ -1138,18 +1142,19 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
     return;
 }
 
-- (void)setBackgroundColor:(NSColor *)color
+- (void) setBackgroundColor: (NSColor *) color
 {
     [backgroundColour release];
     backgroundColour = [color copy];
     [self setNeedsDisplay:YES];
 }
-- (NSColor *)backgroundColor;
+
+- (NSColor *) backgroundColor;
 {
     return backgroundColour;
 }
 
-- (void) setSelectionColor : (NSColor *) color
+- (void) setSelectionColor: (NSColor *) color
 {
     [selectionColour release];
     selectionColour = [color copy];
@@ -1162,13 +1167,14 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
     return selectionColour;
 }
 
-- (void)setForegroundColor:(NSColor *)color
+- (void) setForegroundColor: (NSColor *) color
 {
     [foregroundColour release];
     foregroundColour = [color copy];
     [self setNeedsDisplay:YES];
 }
-- (NSColor *)foregroundColor
+
+- (NSColor *) foregroundColor
 {
     return foregroundColour;
 }
