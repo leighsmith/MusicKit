@@ -15,6 +15,12 @@
 Modification history:
 
   $Log$
+  Revision 1.18  2002/04/08 17:26:04  sbrandon
+  added new BOOL flags to message struct to signal whether or not to retain
+  /release any object arguments.
+  added *MKNewMsgRequestWithObjectArgs() function similar to MKNewMsgRequest
+  except you can tell it to retain its (object) arguments.
+
   Revision 1.17  2002/03/20 17:05:11  sbrandon
   New delegate message passing system, between any thread and the
   appkit thread. This is basically the same as that in the SndKit
@@ -339,6 +345,8 @@ typedef struct _MKMsgStruct {
     SEL _aSelector;       
     id _toObject;	       
     int _argCount;             
+    BOOL _retainArg1;
+    BOOL _retainArg2;
     id _arg1;
     id _arg2;
     struct _MKMsgStruct *_next;	
@@ -369,6 +377,10 @@ extern double MKSetTime(double newTime); /* Rarely used */
 extern MKMsgStruct 
   *MKNewMsgRequest(double timeOfMsg,SEL whichSelector,id destinationObject,
 		   int argCount,...);
+
+extern MKMsgStruct 
+  *MKNewMsgRequestWithObjectArgs(double timeOfMsg,SEL whichSelector,id destinationObject,
+		   int argCount,id arg1, BOOL, id arg2, BOOL);
 
 extern void 
   MKScheduleMsgRequest(MKMsgStruct *aMsgStructPtr, id conductor);
