@@ -225,7 +225,7 @@
   @discussion
   @result     pointer to NSData object contaiing the audio data
 */
-- (NSMutableData*) data;
+//- (NSMutableData*) data;
 
 /*!
   @method     bytes

@@ -144,8 +144,8 @@
     if (data != nil)
       [data release];
 
-    if (offset+length > [[b data] length]) 
-      dataLength = [[b data] length] - offset;
+    if (offset+length > [b->data length]) 
+      dataLength = [b->data length] - offset;
     else
       dataLength = length;
 
@@ -168,7 +168,7 @@
     dataFormat   = b->dataFormat;
     if (data)
       [data release];
-    data = [[NSMutableData alloc] initWithData: [b data]];
+    data = [[NSMutableData alloc] initWithData: b->data];
   }
   return self;
 }
@@ -234,8 +234,8 @@
 
 - (NSString*) description
 {
-  return [NSString stringWithFormat: @"SndAudioBuffer [dataSize: %i dataFormat: %i samplingRate: %i channels: %i]",
-    [data length], dataFormat, samplingRate, channelCount];
+  return [NSString stringWithFormat: @"SndAudioBuffer [dataLength: %i duration: %f dataFormat: %i samplingRate: %f channels: %i]",
+    [data length], [self duration], dataFormat, samplingRate, channelCount];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -475,8 +475,8 @@
 
 - convertToFormat: (int) sndFormatCode
 {
-  if (dataFormat != SND_FORMAT_FLOAT) {
-    NSMutableData *newData = [self convertDataToFormat: SND_FORMAT_FLOAT];
+  if (dataFormat != sndFormatCode) {
+    NSMutableData *newData = [self convertDataToFormat: sndFormatCode];
     [data release];
     data = [newData retain];
     dataFormat = sndFormatCode;
@@ -498,8 +498,17 @@
 - mixWithBuffer: (SndAudioBuffer*) buff fromStart: (long) start toEnd: (long) end
 {
   // SndPrintStruct(&formatSnd); // for checking the formatSnd is valid
-
+  long lengthInSampleFrames = [self lengthInSampleFrames];
+  long incomingLengthInSampleFrames = [buff lengthInSampleFrames];
   
+  if (start > lengthInSampleFrames) 
+    NSLog(@"mixWithBuffer: start %i is > length %i",start,lengthInSampleFrames);
+  else if (end > lengthInSampleFrames) {
+    NSLog(@"mixWithBuffer: end %i is > length %i - truncating",end,lengthInSampleFrames);
+    end = lengthInSampleFrames;
+  }
+  else if (incomingLengthInSampleFrames < (end - start))
+    NSLog(@"mixWithBuffer: incoming buffer too short %i for mix length %i",incomingLengthInSampleFrames,end-start);
 
   if ([self dataFormat] == SND_FORMAT_FLOAT) {
     
@@ -529,16 +538,17 @@
       NSLog(@"Mix buffer - channels > 2 not handled (yet)");
     }
     else if (selfNumChannels == buffNumChannels) {
+      out += start*buffNumChannels;
 #ifdef __VEC__
       /* FIXME need to do extra check to ensure altivec is supported at runtime */
-      vadd(in, 1,out+start,1,out+start,1,frameCount * buffNumChannels);
+      vadd(in, 1,out,1,out,1,frameCount * buffNumChannels);
 #else
       for (i = 0; i < frameCount * buffNumChannels; i++) {
-        out[i+start] += in[i]; // interleaving automatically taken care of!
+        out[i] += in[i]; // interleaving automatically taken care of!
       }
 #if DEBUG_MIXING
       {
-        printf("out[0]: %f   maxpos:%li\n",out[start],frameCount * buffNumChannels);
+        printf("out[0]: %f   maxpos:%li\n",out[0],frameCount * buffNumChannels);
       }
 #endif     
 #endif
@@ -605,10 +615,10 @@
   if (from != nil) {
     if ([from->data length] == [data length])
       [data setData: from->data];
-    else {
-      NSLog(@"Buffers are different lengths - need code to handle this case!");
+//    else {
+//      NSLog(@"Buffers are different lengths - need code to handle this case!");
       // TO DO!
-    }
+//    }
   }
   else
     NSLog(@"AudioBuffer::copyData: ERR: param 'from' is nil!");
