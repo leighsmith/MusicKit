@@ -15,6 +15,9 @@
 
 #Modification history:
 # $Log$
+# Revision 1.6  2001/09/03 10:36:17  sbrandon
+# fixed typo in last commit
+#
 # Revision 1.5  2001/09/03 09:37:43  sbrandon
 # added new SndAudioBufferQueue class and header file
 #
@@ -80,7 +83,7 @@ $(FRAMEWORK_NAME)_HEADER_FILES = \
          SndStreamRecorder.h SndStreamMixer.h\
          SndPlayer.h SndPerformance.h\
          SndAudioProcessorChain.h SndAudioProcessor.h SndAudioProcessorDelay.h\
-         SndAudioFader.h SndEnvelope.h SndBreakpoint.h SndAudioBufferQueue.m
+         SndAudioFader.h SndEnvelope.h SndBreakpoint.h SndAudioBufferQueue.h
 
 
 SRCS = $(LIBRARY_NAME:=.m)
