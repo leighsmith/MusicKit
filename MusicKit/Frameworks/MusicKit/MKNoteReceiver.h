@@ -115,12 +115,16 @@ their assumption of the role of MKInstrument.
 
 @interface MKNoteReceiver: NSObject <NSCoding>
 {
-    NSMutableArray *noteSenders;      /*! @var noteSenders Array of connected MKNoteSenders. */
-    BOOL isSquelched;                 /*! @var isSquelched YES if the object is currently squelched. */
-    MKInstrument *owner;              /*! @var owner MKInstrument that owns MKNoteReceiver. */
+    /*! @var noteSenders Array of connected MKNoteSenders. */
+    NSMutableArray *noteSenders;
+    /*! @var isSquelched YES if the object is currently squelched. */
+    BOOL isSquelched;
+    /*! @var owner MKInstrument that owns MKNoteReceiver. */
+    MKInstrument *owner;
 
 @private
-    void *_myData;
+    /*! dataObject An arbitrary datum to be associated with this instance. */
+    id dataObject;
 }
  
 /*!
@@ -166,7 +170,7 @@ their assumption of the role of MKInstrument.
   @discussion Severs the connections between the MKNoteReceiver and all the
               MKNoteSenders it's connected to.
               
-              See also: - <b>disconnect:</b>, - <b>connect:</b>, - <b>isConnected:</b>, - <b>connections</b> 
+              See also: -<b>disconnect:</b>, -<b>connect:</b>, -<b>isConnected:</b>, -<b>connections</b> 
 */
 - disconnect; 
 
@@ -326,6 +330,17 @@ their assumption of the role of MKInstrument.
     See write:. 
 */
 - (id) initWithCoder: (NSCoder *) aDecoder;
+
+@end
+
+@interface MKNoteReceiver(Private)
+
+- _setOwner: obj;
+- (void) _setData: (id) anObj;
+- (id) _getData;
+
+- _connect: (MKNoteSender *) aNoteSender;
+- _disconnect: (MKNoteSender *) aNoteSender;
 
 @end
 
