@@ -10,7 +10,6 @@
 #ifndef __MK__Instrument_H___
 #define __MK__Instrument_H___
 
-#import "NoteReceiverPrivate.h"
 #import "MKInstrument.h"
 
 @interface MKInstrument(Private)
