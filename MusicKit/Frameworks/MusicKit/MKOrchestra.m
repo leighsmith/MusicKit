@@ -35,6 +35,9 @@
 Modification history:
 
   $Log$
+  Revision 1.25  2002/01/29 16:36:22  skotmcdonald
+  Fixed small character combination / * in log causing log comment block to be prematurely ended
+
   Revision 1.24  2002/01/29 16:03:47  sbrandon
   _MKOrchTrace argument types changed to NSString
   Got rid of redundent _errBuff
@@ -42,7 +45,7 @@ Modification history:
   -segmentName now returns NSString
   New function, _traceNSStringMsg, to help deal with logging of "va"
    style NSString/format log messages
-  General tidy-up of char*/NSString* methods
+  General tidy-up of char* / NSString* methods
 
   Revision 1.23  2002/01/15 12:15:50  sbrandon
   replaced [NSMutableData data] with alloc:initWithCapacity: so as to prevent

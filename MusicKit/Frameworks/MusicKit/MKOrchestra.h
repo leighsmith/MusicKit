@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.12  2002/01/29 16:36:22  skotmcdonald
+  Fixed small character combination / * in log causing log comment block to be prematurely ended
+
   Revision 1.11  2002/01/29 16:03:47  sbrandon
   _MKOrchTrace argument types changed to NSString
   Got rid of redundent _errBuff
@@ -40,7 +43,7 @@
   -segmentName now returns NSString
   New function, _traceNSStringMsg, to help deal with logging of "va"
    style NSString/format log messages
-  General tidy-up of char*/NSString* methods
+  General tidy-up of char* / NSString* methods
 
   Revision 1.10  2001/09/08 21:53:16  leighsmith
   Prefixed MK for UnitGenerators and SynthPatches
