@@ -36,12 +36,12 @@
 {
     if(streamClients == nil) {
       streamClients = [NSMutableArray arrayWithCapacity: 10];
-      [streamClients retain]; 
+      [streamClients retain];
     }
     if(streamClientsLock == nil) {
       streamClientsLock = [[NSLock alloc] init];
       [streamClientsLock retain];
-    }    
+    }
     if (processorChain == nil) {
       processorChain = [SndAudioProcessorChain audioProcessorChain];
       [processorChain retain];
@@ -62,12 +62,14 @@
 // processInBuffer:outBuffer:nowTime:
 ////////////////////////////////////////////////////////////////////////////////
 
-- processInBuffer: (SndAudioBuffer*) inB 
-        outBuffer: (SndAudioBuffer*) outB 
+- processInBuffer: (SndAudioBuffer*) inB
+        outBuffer: (SndAudioBuffer*) outB
           nowTime: (double) t
 {
     int clientCount, i;
-    
+
+    lastNowTime = nowTime;
+    nowTime = t;
     [streamClientsLock lock];
     clientCount = [streamClients count];
 
@@ -75,7 +77,7 @@
     [outB zeroForeignBuffer];
     if (clientCount > 0) {
         for (i = 0; i < clientCount; i++) {
-        
+
             SndStreamClient *client = [streamClients objectAtIndex: i];
             if ([client generatesOutput]) {
               // Look at each client's currently exposed output buffer, and add  to mix.
@@ -85,12 +87,12 @@
               [client unlockOutputBuffer];
             }
             // Each client should have a second synthing buffer, and a synth thread
-            [client startProcessingNextBufferWithInput: inB nowTime: t];
+            [client startProcessingNextBufferWithInput: inB nowTime: nowTime];
             
             // Do any audio processing on the mix
         }
     }
-    [processorChain processBuffer: outB];
+    [processorChain processBuffer: outB forTime:lastNowTime];
     [streamClientsLock unlock];
     return self;
 }
