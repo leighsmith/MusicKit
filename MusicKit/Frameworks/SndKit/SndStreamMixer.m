@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndStreamMixer.m
-//  SndKit
+//  $Id$
 //
-//  Created by SKoT McDonald on Tues Mar 27 2001. <skot@tomandandy.com>
-//  Copyright (c) 2001 SndKit project
+//  Original Author: SKoT McDonald <skot@tomandandy.com>
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and 
 //  non-commercial purposes so long as the author attribution and copyright 
@@ -70,7 +70,7 @@
 - (NSString*) description
 {
   int c = [self clientCount];
-  return [NSString stringWithFormat: @"SndStreamMixer with %i client%s", c, c>1?"s":""];
+  return [NSString stringWithFormat: @"%@ with %i client%s", [super description], c, c > 1 ? "s" : ""];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,55 +81,51 @@
         outBuffer: (SndAudioBuffer*) outB
           nowTime: (double) t
 {
-    int clientCount, i;
+    int clientCount, clientIndex;
 
     lastNowTime = nowTime;
     nowTime = t;
     [streamClientsLock lock];
 
     clientCount = [streamClients count];
-
+    
 //    [outB mixWithBuffer: inB];
 
-#if SNDSTREAMMIXER_DEBUG    
-    fprintf(stderr, "[mixer] Entering processInBuffer at time: %f **********\n",t);
+#if SNDSTREAMMIXER_DEBUG
+    NSLog(@"[mixer] Entering processInBuffer at time: %f **********\n",t);
 #endif
 
     [outB zeroForeignBuffer];
-    
-    if (clientCount > 0) {
-        for (i = 0; i < clientCount; i++) {
 
-            SndStreamClient *client = [streamClients objectAtIndex: i];
-            if ([client generatesOutput]) {
-              
-              SndAudioBuffer *pB;
-              
-              // Look at each client's currently exposed output buffer, and add  to mix.
+    for (clientIndex = 0; clientIndex < clientCount; clientIndex++) {
+	SndStreamClient *client = [streamClients objectAtIndex: clientIndex];
 
-              [client lockOutputBuffer];
-              pB = [client outputBuffer];
-              if (pB != nil)
-                [outB mixWithBuffer: pB];
-              else {
-#if SNDSTREAMMIXER_DEBUG    
-    fprintf(stderr, "[mixer] ERROR - tried to mix a nil output buffer!\n");
+	if ([client generatesOutput]) {
+	    SndAudioBuffer *currentlyExposedOutputBuffer;
+	    
+	    // Look at each client's currently exposed output buffer, and add to mix.
+	    [client lockOutputBuffer];
+	    currentlyExposedOutputBuffer = [client outputBuffer];
+#if SNDSTREAMMIXER_DEBUG
+	    NSLog(@"[mixer] mixing buffer %@\n", currentlyExposedOutputBuffer);
 #endif
-              }
-              [client unlockOutputBuffer];
-            }
-            // Each client should have a second synthing buffer, and a synth thread
-
-            [client startProcessingNextBufferWithInput: inB nowTime: nowTime];
-            
-            // Do any audio processing on the mix
-        }
+	    if (currentlyExposedOutputBuffer != nil)
+		[outB mixWithBuffer: currentlyExposedOutputBuffer];
+	    else {
+		NSLog(@"[mixer] ERROR - tried to mix a nil output buffer!\n");
+	    }
+	    [client unlockOutputBuffer];
+	}
+	
+	// Each client should have a second synthing buffer, and a synth thread.
+	[client startProcessingNextBufferWithInput: inB nowTime: nowTime];	
     }
+    // Do any audio processing on the mix
     [processorChain processBuffer: outB forTime:lastNowTime];
 
     [streamClientsLock unlock];
 
-#if SNDSTREAMMIXER_DEBUG    
+#if SNDSTREAMMIXER_DEBUG
     fprintf(stderr, "[mixer] Leaving processInBuffer\n");
 #endif
     return self;
@@ -222,12 +218,12 @@
 
 - (void) resetTime: (double) originTimeInSeconds
 {
-    int clientCount, i;
+    int clientCount, clientIndex;
     [streamClientsLock lock];   
     clientCount = [streamClients count];
     if (clientCount > 0) {
-        for (i = 0; i < clientCount; i++) {
-            SndStreamClient *client = [streamClients objectAtIndex: i];
+        for (clientIndex = 0; clientIndex < clientCount; clientIndex++) {
+            SndStreamClient *client = [streamClients objectAtIndex: clientIndex];
             [client resetTime: originTimeInSeconds];
         }
     }
@@ -238,11 +234,11 @@
 // clientAtIndex:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndStreamClient*) clientAtIndex: (int) ndx
+- (SndStreamClient*) clientAtIndex: (int) clientIndex
 {
   SndStreamClient *client;
   [streamClientsLock lock];
-  client = [[[streamClients objectAtIndex: ndx] retain] autorelease];
+  client = [[[streamClients objectAtIndex: clientIndex] retain] autorelease];
   [streamClientsLock unlock];
   return client;
 }
