@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2002/01/29 16:05:59  sbrandon
+  re-typed _MKOrchTrace calls to use NSString
+
   Revision 1.3  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -45,7 +48,7 @@ Modification history:
 -(oneway void)dealloc
 {
     if (_MK_ORCHTRACE(orchestra,MK_TRACEORCHALLOC))
-        _MKOrchTrace(orchestra,MK_TRACEORCHALLOC,"Really deallocating object %s_%p",[NSStringFromClass([self class]) cString],
+        _MKOrchTrace(orchestra,MK_TRACEORCHALLOC,@"Really deallocating object %@_%p",NSStringFromClass([self class]),
                      self);
 
     [super dealloc];

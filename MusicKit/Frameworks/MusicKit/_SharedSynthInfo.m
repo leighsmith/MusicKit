@@ -21,6 +21,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2002/01/29 16:05:59  sbrandon
+  re-typed _MKOrchTrace calls to use NSString
+
   Revision 1.5  2000/10/01 06:37:16  leigh
   Changed NXHashTable functions to FoundationKit NSHashTable functions.
 
@@ -186,7 +189,7 @@ BOOL _MKCollectSharedDataGarbage(id orch,NSHashTable *garbageTable)
     if (_MK_ORCHTRACE(orch, MK_TRACEORCHALLOC)) {
         NSLog(@"MK OK\n");
         _MKOrchTrace(orch, MK_TRACEORCHALLOC,
-		   "Garbage collecting unreferenced shared data.");
+		   @"Garbage collecting unreferenced shared data.");
     }
     while ((infoObj = (_SharedSynthInfo *) NSNextHashEnumeratorItem(&state))) {
 	gotOne = YES;
@@ -200,7 +203,7 @@ BOOL _MKCollectSharedDataGarbage(id orch,NSHashTable *garbageTable)
     if (gotOne)
         NSResetHashTable(garbageTable);
     else if (_MK_ORCHTRACE(orch,MK_TRACEORCHALLOC))
-        _MKOrchTrace(orch,MK_TRACEORCHALLOC,"No unreferenced shared data found.");
+        _MKOrchTrace(orch,MK_TRACEORCHALLOC,@"No unreferenced shared data found.");
     return gotOne;
 }	
 
