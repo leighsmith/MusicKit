@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.25  2001/11/26 22:40:13  leighsmith
+  Cleaned up headerdoc items
+
   Revision 1.24  2001/09/07 18:45:08  leighsmith
   Replaced HTML numeric entity with correct symbolic entity for double quotes, moved @class before headerdoc declaration
 
@@ -112,8 +115,10 @@
   @discussion
 
 A MKMidi object lets you communicate with a MIDI synthesizer (attached
-to a serial port at the back of a NeXT computer or to a MPU-401
-compatible card installed in a P.C.) by providing a simple interface
+to a serial port at the back of a NeXT computer, to a MPU-401
+compatible card installed in a P.C., to a MIDI device defined within 
+Microsoft Windows DirectMusic or to a MIDI device defined within Apple
+MacOS CoreMIDI) by providing a simple interface
 to the MIDI device driver.  The MKMidi class also provides a mechanism
 that automatically converts MIDI messages into MKNote objects and vice
 versa, allowing you to incorporate MIDI data into a MusicKit
@@ -134,21 +139,27 @@ Before a MKMidi object can receive messages from or send messages to
 an external synthesizer, it must be sent the <b>open</b> and
 <b>run</b> messages:
 
-&#183;	<b>open</b> establishes communication between the object and the MIDI driver. 
-&#183;	<b>run</b> starts the driver's clock ticking.  
+<ul>
+<li>	<b>open</b> establishes communication between the object and the MIDI driver. 
+<li>	<b>run</b> starts the driver's clock ticking.  
+</ul>
 
 Balancing these two methods are <b>stop</b> and <b>close</b>:
 
-&#183;	<b>stop</b> stops the driver's clock.
-&#183;	<b>close</b> breaks communication between the object and the MIDI driver.
+<ul>
+<li>	<b>stop</b> stops the driver's clock.
+<li>	<b>close</b> breaks communication between the object and the MIDI driver.
+</ul>
 
 The state of a MKMidi object with respect to the foregoing methods is
 described in its <b>deviceStatus</b> instance variable:
 
-&#183;	MK_devOpen.  The MKMidi object is open but not running.  
-&#183;	MK_devRunning.  The object is open and running.  
-&#183;	MK_devStopped.  The object has been running, but is now stopped.  
-&#183;	MK_devClosed.  The object is closed.
+<ul>
+<li>	MK_devOpen.  The MKMidi object is open but not running.  
+<li>	MK_devRunning.  The object is open and running.  
+<li>	MK_devStopped.  The object has been running, but is now stopped.  
+<li>	MK_devClosed.  The object is closed.
+</ul>
 
 (Note that these are the same methods and MKDeviceStatus values used
 to control and describe the status of an MKOrchestra object.)
@@ -173,32 +184,40 @@ Note that in all cases the MKConductor that's overseeing the MusicKit performanc
 
 As MKMidi receives MIDI messages it creates MKNote objects following these rules:
 
-&#183;	For each MIDI message that has a Note Number, a MKNote object is created and given a noteTag that corresponds to the combination of the message's Channel Number and Note Number.
+<ul>
+<li>	For each MIDI message that has a Note Number, a MKNote object is created and given a noteTag that corresponds to the combination of the message's Channel Number and Note Number.
 
-&#183;	If multiple Note Offs are received (for a particular Channel/Note number) without intervening Note Ons, only the first Note Off is converted into a MKNote object. The others are suppressed.
+<li>	If multiple Note Offs are received (for a particular Channel/Note number) without intervening Note Ons, only the first Note Off is converted into a MKNote object. The others are suppressed.
 
-&#183;	A Note On message with a MIDI Velocity of 0 is turned into a MKNote object of type noteOff.
+<li>	A Note On message with a MIDI Velocity of 0 is turned into a MKNote object of type noteOff.
 
-&#183;	If a Note Off message has a MIDI Release Velocity of 0, the MK_releaseVelocity parameter in the corresponding MKNote object is omitted.
+<li>	If a Note Off message has a MIDI Release Velocity of 0, the MK_releaseVelocity parameter in the corresponding MKNote object is omitted.
 
 In sending messages to an external synthesizer, MKMidi converts MKNote objects to MIDI messages:
 
-&#183;	If two successive noteOns have the same noteTag and the same MK_keyNum value, a Note Off is generated on the same channel and with the same Key Number as those for the Note Ons.
+<li>	If two successive noteOns have the same noteTag and the same MK_keyNum value, a Note Off is generated on the same channel and with the same Key Number as those for the Note Ons.
 
-&#183;	If two successive noteOns have the same noteTag but different MK_keyNum values, the second Note On message is followed by a Note Off with the Key Number of the first Note On.  This is to accommodate MIDI Mono Mode.
+<li>	If two successive noteOns have the same noteTag but different MK_keyNum values, the second Note On message is followed by a Note Off with the Key Number of the first Note On.  This is to accommodate MIDI Mono Mode.
 
-&#183;	A noteOff with no MK_relVelocity parameter is converted to a Note On with a Velocity of 0.
+<li>	A noteOff with no MK_relVelocity parameter is converted to a Note On with a Velocity of 0.
+</ul>
 
-A number of parameters are provided to accommodate MIDI messages.  These are described in <b>MIDITranslation.rtf</b>.
+A number of parameters are provided to accommodate MIDI messages.  These are described in
+<a href=http://www.musickit.org/MusicKitConcepts/representationofmidi.html>
+the section titled Representation of MIDI in the MusicKit
+</a>.
 
 A MKMidi object can be used to synchronize a performance to incoming
 MIDI time code.  To do so, send a MKConductor the message
 <b>setMTCSynch:</b>, with a MKMidi object as the argument.  For
-further information on MIDI time code, see <b> MIDITimeCode.rtfd</b>.
+further information on MIDI time code, see 
+<a href=http://www.musickit.org/MusicKitConcepts/miditimecode.html>
+the appendix titled MIDI Time Code in the MusicKit
+</a>.
 
 USING MIDI ON NeXT HARDWARE
 
-See<b> ../Administration/MidiHardwareInfo.rtf</b>
+See <b>../Administration/MidiHardwareInfo.rtf</b>
 
 
 */
@@ -696,9 +715,7 @@ See<b> ../Administration/MidiHardwareInfo.rtf</b>
 /*!
   @method getDriverNames
   @result Returns a NSArray *.
-  @discussion &lt;&lt;Non-NeXT hardware only.&gt;&gt; 
-
-              Returns the array all available driver names and their
+  @discussion Returns the array all available driver names and their
               unit numbers added to the system.  The arrays and
               strings are copied and autoreleased.
               
@@ -728,25 +745,22 @@ See<b> ../Administration/MidiHardwareInfo.rtf</b>
 /*!
   @method getDriverUnits
   @result Returns a NSArray *.
-  @discussion &lt;&lt;Non-NeXT hardware only.&gt;&gt; 
-              Returns the array of driver unit numbers added to the system.
+  @discussion Returns the array of driver unit numbers added to the system.
 */
 + (NSArray *) getDriverUnits;
 
 /*!
   @method driverName
   @result Returns an NSString *.
-  @discussion  &lt;&lt;Non-NeXT hardware only&gt;&gt; Returns the name of the
-              MIDI driver associated with this instance of MKMidi.  The string is
-              not copied and should not be freed.
+  @discussion Returns the name of the MIDI driver associated with this instance of MKMidi.
+              The string is not copied and should not be freed.
 */
 - (NSString *) driverName;
 
 /*!
   @method driverUnit
   @result Returns an int.
-  @discussion  &lt;&lt;Non-NeXT hardware only&gt;&gt; Returns the unit
-              associated with this instance of MKMidi.
+  @discussion Returns the unit associated with this instance of MKMidi.
 */
 -(int)driverUnit;
 
