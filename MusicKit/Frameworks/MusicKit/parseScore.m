@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.19  2002/01/15 10:49:53  sbrandon
+  removed unecessary tokens appended to undef statements
+
   Revision 1.18  2001/10/12 23:14:53  leighsmith
   Corrected warning created by two slightly different prototypes between SndEnvelopes and MKEnvelopes
 
@@ -2090,9 +2093,9 @@ initParsePtr(NSData *aStream, BOOL TopLevelFile, NSString *name)
     lookahead = ';';   /* So that first statement is gobbled correctly */
     tokenPtr = NULL;
     return parsePtr;
-#undef ATEOS()
-#undef GETC_FROM_STREAM()
-#undef UNGETC_FROM_STREAM()
+#undef ATEOS
+#undef GETC_FROM_STREAM
+#undef UNGETC_FROM_STREAM
 }
 
 #define ISINCLUDEFILE(_parseP) (_parseP->_backwardsLink)
