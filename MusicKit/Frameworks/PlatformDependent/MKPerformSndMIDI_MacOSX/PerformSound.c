@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.13  2001/05/18 20:35:44  skotmcdonald
+// Added inputInit flag to gate input-handling routines when no input device is present
+//
 // Revision 1.12  2001/04/28 21:27:56  leighsmith
 // Added Guillaume Outters patch for retrieving the driver list, now returns the full driver list, albeit potentially two drivers are named the same, e.g for input and for output
 //
@@ -104,6 +107,8 @@ typedef struct _audioStream {
 
 // "class" variables
 static BOOL         initialised = FALSE;
+
+static BOOL inputInit = FALSE;
 
 static char         **driverList;
 static unsigned int driverIndex = 0;
@@ -269,10 +274,12 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
         
         // to tell the client the format it is receiving.
         
-        if (inInputData->mNumberBuffers == 0)
-          inStream.streamData = NULL;
-        else {
-          memcpy(fInputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
+        if (inputInit) {
+            if (inInputData->mNumberBuffers == 0)
+                inStream.streamData = NULL;
+            else {
+                memcpy(fInputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
+            }
         }
         // to tell the client the format it should send.
         
@@ -282,7 +289,7 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
         
           SNDStreamNativeFormat(&outStream.streamFormat);   
           SNDStreamNativeFormat(&inStream.streamFormat);    
-        
+
           inStream.streamData  = fInputBuffer;  
           outStream.streamData = outOutputData->mBuffers[bufferIndex].mData;
         
@@ -613,8 +620,14 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
         fprintf(stderr, "output device is already running\n");
         return FALSE;
     }
-    if(!determineBasicDescription(outputDeviceID, &outputStreamBasicDescription, false))
+    if(!determineBasicDescription(outputDeviceID, &outputStreamBasicDescription, false)) {
+        fprintf(stderr, "output device - error determining basic description\n");
         return FALSE;
+    }
+    if(!setBufferSize(outputDeviceID, bufferSizeInBytes, false)) {
+        fprintf(stderr, "output device - error setting buffer size\n");
+        return FALSE;
+    }
 
 #if DEBUG_DESCRIPTION
 //    fprintf(stderr,"INPUT ===========\n");
@@ -622,20 +635,19 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 
     if (inputDeviceID == kAudioDeviceUnknown) {
         fprintf(stderr, "inputDeviceID is kAudioDeviceUnknown\n");
-        return FALSE;
     }
-    if(isDeviceRunning(inputDeviceID, true)) {
+    else if(isDeviceRunning(inputDeviceID, true)) {
         fprintf(stderr, "input device is already running\n");
-        return FALSE;
     }
-    if(!determineBasicDescription(inputDeviceID, &inputStreamBasicDescription, true))
-        return FALSE;
-
-    if(!setBufferSize(outputDeviceID, bufferSizeInBytes, false))
-        return FALSE;
-    if(!setBufferSize(inputDeviceID, bufferSizeInBytes, true))
-        return FALSE;
-        
+    else if(!determineBasicDescription(inputDeviceID, &inputStreamBasicDescription, true)) {
+        fprintf(stderr, "input device - error determining basic setup\n");
+    }
+    else if(!setBufferSize(inputDeviceID, bufferSizeInBytes, true)) {
+        fprintf(stderr, "input device - error setting buffer size\n");
+    }
+    else {
+        inputInit = TRUE;
+    }
     return TRUE;
 }
 
@@ -817,10 +829,11 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
     if(!initialised)
         return FALSE;  // invalid sound structure.
 
-    if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL)
-        return FALSE;
-    
-    memset(fInputBuffer,0,bufferSizeInBytes);
+    if (inputInit) {
+        if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL)
+            return FALSE;
+        memset(fInputBuffer,0,bufferSizeInBytes);
+    }
     // indicate the first absolute sample time received from the call back needs to be marked as a
     // datum to use to convert subsequent absolute sample times to a relative time.
     firstSampleTime = -1.0;  
@@ -834,11 +847,13 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
                 getCoreAudioErrorStr(CAstatus));
         r = FALSE;
     }
-    CAstatus = AudioDeviceAddIOProc(inputDeviceID, vendBuffersToStreamManagerIOProc, NULL);
-    if (CAstatus) {
-        fprintf(stderr, "SNDStartStreaming: AudioDeviceAddIOProc returned %s\n",
+    if (inputInit) {
+        CAstatus = AudioDeviceAddIOProc(inputDeviceID, vendBuffersToStreamManagerIOProc, NULL);
+        if (CAstatus) {
+            fprintf(stderr, "SNDStartStreaming: AudioDeviceAddIOProc returned %s\n",
          				getCoreAudioErrorStr(CAstatus));
-        r = FALSE;
+            r = FALSE;
+        }
     }
     if (r) { // all is well so far...
         CAstatus = AudioDeviceStart(outputDeviceID, vendBuffersToStreamManagerIOProc);
@@ -847,11 +862,13 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
                     getCoreAudioErrorStr(CAstatus));
             r = FALSE;
         }
-        CAstatus = AudioDeviceStart(inputDeviceID, vendBuffersToStreamManagerIOProc);
-        if (CAstatus) {
-            fprintf(stderr, "SNDStartStreaming: AudioDeviceStart returned %s\n", 
-                    getCoreAudioErrorStr(CAstatus));
-            r = FALSE;
+        if (inputInit) {
+            CAstatus = AudioDeviceStart(inputDeviceID, vendBuffersToStreamManagerIOProc);
+            if (CAstatus) {
+                fprintf(stderr, "SNDStartStreaming: AudioDeviceStart returned %s\n", 
+                        getCoreAudioErrorStr(CAstatus));
+                r = FALSE;
+            }
         }
     }
     // printf("initialised stream start %d\n", r);
@@ -869,18 +886,21 @@ PERFORM_API BOOL SNDStreamStop(void)
     OSStatus CAstatus;
     
     firstSampleTime = -1.0;  
-    free(fInputBuffer);
-    fInputBuffer = NULL;
-
+    if (inputInit) {
+        free(fInputBuffer);
+        fInputBuffer = NULL;
+    }
     CAstatus = AudioDeviceStop(outputDeviceID, vendBuffersToStreamManagerIOProc);
     if (CAstatus) {
         fprintf(stderr, "SNDStreamStop: output dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
         r =  FALSE;
     }
-    CAstatus = AudioDeviceStop(inputDeviceID, vendBuffersToStreamManagerIOProc);
-    if (CAstatus) {
-        fprintf(stderr, "SNDStreamStop: input dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
-        r = FALSE;
+    if (inputInit) {
+        CAstatus = AudioDeviceStop(inputDeviceID, vendBuffersToStreamManagerIOProc);
+        if (CAstatus) {
+            fprintf(stderr, "SNDStreamStop: input dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
+            r = FALSE;
+        }
     }
     return r;
 }
