@@ -1,38 +1,39 @@
 <!-- $Id$ -->
 
-  <CHAPTER>
-    <TITLE><PRODUCTNAME>MusicKit</PRODUCTNAME> Class</TITLE>
-
-    <SECT1 ID="CLASS5">
+  <CHAPTER ID="class5">
       <TITLE>Class 5 - Synthpatches</TITLE>
 
-      <PARA>Review: classes in the <PRODUCTNAME>MusicKit</PRODUCTNAME>:</PARA>
+    <SECT1 ID="Review">
+      <TITLE>Review: classes in the <PRODUCTNAME>MusicKit</PRODUCTNAME></TITLE>
       <VARIABLELIST>
-	<TITLE>	</TITLE>
 	<VARLISTENTRY>
-	  <TERM> Representation classes (7)	</TERM>
+	  <TERM>Representation classes (7)</TERM>
 	  <LISTITEM>
-	    <PARA><CLASSNAME>Note</CLASSNAME>, <CLASSNAME>Part</CLASSNAME>,
-	      <CLASSNAME>Score</CLASSNAME>, etc.</PARA>
+	    <PARA>
+	      <CLASSNAME>MKNote</CLASSNAME>, 
+	      <CLASSNAME>MKPart</CLASSNAME>,
+	      <CLASSNAME>MKScore</CLASSNAME>, etc.</PARA>
 	  </LISTITEM>
 	</VARLISTENTRY>
 	<VARLISTENTRY>
-	  <TERM> Performance classes (16)	</TERM>
+	  <TERM>Performance classes (16)</TERM>
 	  <LISTITEM>
-	    <PARA><CLASSNAME>Conductor</CLASSNAME>,
-	      <CLASSNAME>Performer</CLASSNAME>,
-	      <CLASSNAME>Instrument</CLASSNAME>, etc.</PARA>
+	    <PARA>
+	      <CLASSNAME>MKConductor</CLASSNAME>,
+	      <CLASSNAME>MKPerformer</CLASSNAME>,
+	      <CLASSNAME>MKInstrument</CLASSNAME>, etc.</PARA>
 	  </LISTITEM>
 	</VARLISTENTRY>
 	<VARLISTENTRY>
-	  <TERM> <ACRONYM>DSP</ACRONYM> Synthesis classes (5) 	</TERM>
+	  <TERM><ACRONYM>DSP</ACRONYM> Synthesis classes (5)</TERM>
 	  <LISTITEM>
-	    <PARA> <CLASSNAME>Orchestra</CLASSNAME>,
-	      <CLASSNAME>UnitGenerator</CLASSNAME>,
-	      <CLASSNAME>SynthPatch</CLASSNAME>,
-	      <CLASSNAME>SynthData</CLASSNAME>,
-	      <CLASSNAME>PatchTemplate</CLASSNAME> (also
-	      <CLASSNAME>SynthInstrument</CLASSNAME>)
+	    <PARA> 
+	      <CLASSNAME>MKOrchestra</CLASSNAME>,
+	      <CLASSNAME>MKUnitGenerator</CLASSNAME>,
+	      <CLASSNAME>MKSynthPatch</CLASSNAME>,
+	      <CLASSNAME>MKSynthData</CLASSNAME>,
+	      <CLASSNAME>MKPatchTemplate</CLASSNAME> (also
+	      <CLASSNAME>MKSynthInstrument</CLASSNAME>)
 	    </PARA>
 	  </LISTITEM>
 	</VARLISTENTRY>
@@ -245,7 +246,7 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
       <PARA> In release 3.0 the data base is user-extendable.</PARA>
     </SECT1>
     
-    <SECT1>
+    <SECT1 ID="MakingYourOwnSynthPatchClass">
       <TITLE>Making Your Own <CLASSNAME>SynthPatch</CLASSNAME> Class</TITLE> 
 
       <PARA>A <CLASSNAME>SynthPatch</CLASSNAME> subclass consists of three
@@ -313,7 +314,7 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 +patchTemplateFor: aNote	
       </PROGRAMLISTING>
       <PARA> This method creates the <CLASSNAME>PatchTemplate</CLASSNAME> used
-	to represent the connections.  The <CLASSNAME>Note</CLASSNAME> passed
+	to represent the connections.  The <CLASSNAME>MKNote</CLASSNAME> passed
 	to the method may be used to choose between various "flavors".</PARA>
       <PARA> The <CLASSNAME>PatchTemplate</CLASSNAME> consists of a list of
 	the <CLASSNAME>UnitGenerator</CLASSNAME> <emphasis>classes</emphasis>
