@@ -62,7 +62,7 @@ static NSMutableArray *fxClassesArray;
     int i, c = [fxClassesArray count];
     [fxChooser removeAllItems];
     for (i = 0; i < c; i++) {
-      [fxChooser addItemWithObjectValue: [[fxClassesArray objectAtIndex: i] className]];
+      [fxChooser addItemWithObjectValue: NSStringFromClass([[fxClassesArray objectAtIndex: i] class])];
     }
     [fxChooser selectItemAtIndex: 0];
   }
