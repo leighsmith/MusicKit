@@ -11,6 +11,15 @@ If a court finds that we are liable for death or personal injury caused by our n
 WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND CONDITIONS OF THIS AGREEMENT.
 
 ******************************************************************************/
+#ifdef GNUSTEP
+//#include <libc.h>
+#include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
+#include "sounderror.h"
+#include "SndFunctions.h"
+#include "SndResample.h"
+
+#else
+
 #ifndef WIN32
 #import <libc.h>
 #else
@@ -26,8 +35,8 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #import "sounderror.h"
 #endif
 //#import <MKPerformSndMIDI/SndFormats.h>
-#import "SndFunctions.h"
-#import "SndResample.h"
+
+#endif /* GNUSTEP */
 
 /* forward decl */
 int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **toSound,BOOL largeFilter, BOOL interpFilter, BOOL fast);
