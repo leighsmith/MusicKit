@@ -95,7 +95,7 @@
     NSLog(@"[mixer] Entering processInBuffer at time: %f **********\n",t);
 #endif
 
-    [outB zeroForeignBuffer];
+    [outB zero];
 
     for (clientIndex = 0; clientIndex < clientCount; clientIndex++) {
 	SndStreamClient *client = [streamClients objectAtIndex: clientIndex];
@@ -121,7 +121,7 @@
 	[client startProcessingNextBufferWithInput: inB nowTime: nowTime];	
     }
     // Do any audio processing on the mix
-    [processorChain processBuffer: outB forTime:lastNowTime];
+    [processorChain processBuffer: outB forTime: lastNowTime];
 
     [streamClientsLock unlock];
 
