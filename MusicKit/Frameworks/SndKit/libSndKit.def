@@ -1,13 +1,17 @@
 ;
-;   libSndKit.def
+;   $Id$
 ;
 ;   Exports for libSndKit DLL
 ;   Specific to WIN32 operating systems
 ;
-;   Copyright (C) 2001 tomandandy music inc.
-;
 ;   Author:  Stephen Brandon <stephen@brandonitconsulting.co.uk>
 ;   Date: October 2001
+;
+;  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
+;
+;  Permission is granted to use and modify this code for commercial and 
+;  non-commercial purposes so long as the author attribution and copyright
+;  messages remain intact and accompany all relevant code.
 ;
 ;
 LIBRARY libSndKit
@@ -43,3 +47,4 @@ __objc_class_name_SndStreamMixer
 __objc_class_name_SndStreamRecorder
 __objc_class_name_SndTable
 __objc_class_name_SndView
+__objc_class_name_SndMP3
