@@ -13,7 +13,7 @@ Modification history:
 */
 #import <MusicKit/MusicKit.h>
 #import "_exportedPrivateMusickit.h"
-#import <SoundKit/Sound.h>
+#import <SoundKit/SoundKit.h>
 #import "OscgafUG.h"
 
 @implementation OscgafUG:OscgafUGs

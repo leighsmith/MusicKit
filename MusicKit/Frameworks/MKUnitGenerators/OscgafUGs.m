@@ -33,7 +33,7 @@
 #import <MusicKit/MusicKit.h>
 #import "_exportedPrivateMusickit.h"
 #import "_unitGeneratorInclude.h"
-#import <SoundKit/Sound.h>
+#import <SoundKit/SoundKit.h>
 #import "OscgafUGs.h"
 
 @implementation OscgafUGs:MKUnitGenerator
@@ -318,6 +318,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
 	         length:aLength offset:0];
 		  [orchestra installSharedSynthDataWithSegmentAndLength:
 		   synthData for:anObj type:MK_oscTable];
+                  [synthData release];/* added to shared table, above */
 	      }
 	      else if (MKIsTraced(MK_TRACEUNITGENERATOR)) /* daj */
 		fprintf(stderr,"Insufficient wavetable memory at time %.3f. \n",MKGetTime());
@@ -334,7 +335,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
 	if (!_MKUGIsPowerOf2(aLength)) {
 	    /* The following statement added by DAJ */
 	    if (anObj != synthData) /* If user alloced, let it be */
-	      [synthData dealloc];  /* Release our claim on it. */
+	      [synthData mkdealloc];  /* Release our claim on it. */
             _MKErrorf(MK_ugsPowerOf2Err,[NSStringFromClass([self class]) cString]);
 	    return nil;
 	}

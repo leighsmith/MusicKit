@@ -11,7 +11,7 @@ Modification history:
 */
 #import <MusicKit/MusicKit.h>
 #import "_exportedPrivateMusickit.h"
-#import <SoundKit/Sound.h>
+#import <SoundKit/SoundKit.h>
 #import "OscgafiUG.h"
 
 @implementation OscgafiUG:OscgafUGs

@@ -53,8 +53,11 @@
 #------------------------------------------------------------------------------
 # $Id$
 # $Log$
-# Revision 1.1  1999/06/28 23:51:25  leigh
-# Initial revision
+# Revision 1.2  1999/07/28 17:50:53  leigh
+# Used mkdealloc and now includes the SoundKit header
+#
+# Revision 1.1.1.1  1999/06/28 23:51:25  leigh
+# MusicKit Frameworks
 #
 #------------------------------------------------------------------------------
 ARGS=""

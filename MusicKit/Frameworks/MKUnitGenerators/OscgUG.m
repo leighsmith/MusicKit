@@ -33,7 +33,7 @@
 #import <MusicKit/MusicKit.h>
 #import "_exportedPrivateMusickit.h"
 #import "_unitGeneratorInclude.h"
-#import <SoundKit/Sound.h>
+#import <SoundKit/SoundKit.h>
 #import "OscgUG.h"
 
 @implementation OscgUG:MKUnitGenerator
@@ -303,7 +303,7 @@ enum _args { atab, mtab, amp, aout, inc, phs};
 	if (!_MKUGIsPowerOf2(aLength)) {
 	    /* The following statement added by DAJ */
 	    if (anObj != synthData) /* If user alloced, let it be */
-	      [synthData dealloc];  /* Release our claim on it. */
+	      [synthData mkdealloc];  /* Release our claim on it. */
             _MKErrorf(MK_ugsPowerOf2Err,[NSStringFromClass([self class]) cString]);
 	    return nil;
 	}
