@@ -1,8 +1,8 @@
 info channelCount:2;
 part p1;
 
-print "\nNote: You must first create Examp1.snd using playscore,\n as described in the README file.\n\n";
+print "\nNote: You must first create Examp1.aiff using playscore,\n as described in the README file.\n\n";
 
 BEGIN;
-p1 (0) filename:"Examp1.snd" freq0:c4 freq1:g4;
+p1 (0) filename:"Examp1.aiff" freq0:c4 freq1:g4;
 END;

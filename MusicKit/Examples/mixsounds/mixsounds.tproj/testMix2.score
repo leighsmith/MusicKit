@@ -1,4 +1,4 @@
-print "\nNote: You must first create Examp1.snd using playscore,\n as described in the README file.\n\n";
+print "\nNote: You must first create Examp1.aiff using playscore,\n as described in the README file.\n\n";
 	
 envelope aEnv = [(0,1)(1.9,1)(2,0)];
 
@@ -6,18 +6,17 @@ part p1; /* We use only one part. The part is not relevant in this
             program because we mix all parts together in the output
             file. */
 BEGIN;
-/* First, here's an 'echo' effect. We use the first 2 seconds of 
-p1.snd */
-p1 (2) filename:"Examp1.snd" amp:.1 ampEnv:aEnv;
+/* First, here's an 'echo' effect. We use the first 2 seconds of Examp1.aiff */
+p1 (2) filename:"Examp1.aiff" amp:.1 ampEnv:aEnv;
 t +.5;
-p1 (2) filename:"Examp1.snd" amp:.05 ampEnv:aEnv;
+p1 (2) filename:"Examp1.aiff" amp:.05 ampEnv:aEnv;
 t +.5;
-p1 (2) filename:"Examp1.snd" amp:.025 ampEnv:aEnv;
+p1 (2) filename:"Examp1.aiff" amp:.025 ampEnv:aEnv;
 t +.5;
-p1 (2) filename:"Examp1.snd" amp:.01 ampEnv:aEnv;
+p1 (2) filename:"Examp1.aiff" amp:.01 ampEnv:aEnv;
 
 t + 4;
-p1 (0) filename:"/System/Library/Sounds/Frog.snd" amp:.1;
+p1 (0) filename:"/System/Library/Sounds/Frog.aiff" amp:.1;
 /* An amplitude of 0 means 'the whole thing' */
 
 

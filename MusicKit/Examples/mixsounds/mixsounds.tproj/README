@@ -78,9 +78,9 @@ An example will help clarify how these parameters work. First let's write out
 one of the example .score files as a .snd file. We use the command-line utility
 playscore. To a shell, type the following:
 
-        playscore -w Examp1.snd Examp1.score
+        playscore -w Examp1.aiff Examp1.score
 
-Now, here's the contents of testMix2.score, which mixes Examp1.snd with itself
+Now, here's the contents of testMix2.score, which mixes Examp1.aiff with itself
 and other example soundfiles.
 
         part p1; /* We use only one part. The part is not relevant in this 
@@ -91,14 +91,14 @@ and other example soundfiles.
 
         BEGIN;
         /* First, here's an 'echo' effect. We use the first 2 seconds of 
-	   Examp1.snd */
-        p1 (2) soundFile:"Examp1.snd" amp:.1 ampEnv:aEnv;
+	   Examp1.aiff */
+        p1 (2) soundFile:"Examp1.aiff" amp:.1 ampEnv:aEnv;
         t +.5;
-        p1 (2) soundFile:"Examp1.snd" amp:.05 ampEnv:aEnv;
+        p1 (2) soundFile:"Examp1.aiff" amp:.05 ampEnv:aEnv;
         t +.5;
-        p1 (2) soundFile:"Examp1.snd" amp:.025 ampEnv:aEnv;
+        p1 (2) soundFile:"Examp1.aiff" amp:.025 ampEnv:aEnv;
         t +.5;
-        p1 (2) soundFile:"Examp1.snd" amp:.01 ampEnv:aEnv;
+        p1 (2) soundFile:"Examp1.aiff" amp:.01 ampEnv:aEnv;
         t + 4;
         p1 (0) soundFile:"/Next/Library/Sounds/Frog.snd" amp:.1;
         /* A duration of 0 means 'the whole thing' */
@@ -110,7 +110,7 @@ Example:
 
         part p1;
         BEGIN;
-        p1 (8) soundFile:"Examp1.snd" amp:.1 ampEnv:[(0,0)(1,1)(2,.1)(8,0)]
+        p1 (8) soundFile:"Examp1.aiff" amp:.1 ampEnv:[(0,0)(1,1)(2,.1)(8,0)]
 		timeOffset:.4;
 	/* Note that the times in the ampEnv applied BEFORE the file has
            been adjusted as specifed in the timeOffset.  For example, in 
@@ -132,7 +132,7 @@ Example:
 
         part p1;
         BEGIN;
-        p1 (8) soundFile:"Examp1.snd" amp:.1 freq0:440 freq1:880; /* 8va */
+        p1 (8) soundFile:"Examp1.aiff" amp:.1 freq0:440 freq1:880; /* 8va */
 	END;
 
 HINTS
