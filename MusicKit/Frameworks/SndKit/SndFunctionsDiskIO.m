@@ -345,6 +345,7 @@ int SndWriteSoundfile(NSString* filename, SndSoundStruct *sound)
   ft.filename      = (char *)[filename fileSystemRepresentation];
   ft.filetype      = (char *)[[filename pathExtension] cString] ;
   ft.comment       = sound->info;
+  ft.swap          = 0;
   ft.instr.MIDInote= 0;
   ft.instr.MIDIlow = 0;
   ft.instr.MIDIhi  = 0;
@@ -438,9 +439,12 @@ int SndWriteSoundfile(NSString* filename, SndSoundStruct *sound)
     (* ft.h->write)(&ft, writeBuffer, (st_ssize_t) c);
   }
   free(writeBuffer);
-  if ((* ft.h->stopwrite)(&ft) == ST_EOF)
-    NSLog(@"%s\n",ft.st_errstr);
+  if ((* ft.h->stopwrite)(&ft) != ST_SUCCESS) {
+    NSLog(@"writing error:%s\n",ft.st_errstr);
     return SND_ERR_UNKNOWN;
+  }
+  fclose(ft.fp);
+
   }
 
   return SND_ERR_NONE;
