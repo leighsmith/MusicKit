@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2004/12/13 02:24:41  leighsmith
+  New typing for MKNoteReceiver _setData: and _getData
+
   Revision 1.10  2004/10/25 16:22:50  leighsmith
   Updated for new ivar name
 
@@ -84,7 +87,7 @@ Modification history:
 @implementation MKScorefileWriter
 
 #define SCOREPTR ((_MKScoreOutStruct *)_p)
-#define PARTINFO(_aNR) ((id)[_aNR _getData])
+#define PARTINFO(_aNR) ([_aNR _getData])
 
 #define VERSION2 2
 
@@ -105,7 +108,7 @@ Modification history:
 
     [aCoder encodeValuesOfObjCTypes: "@ci", &info, &_isOptimized, &n];
     for (i = 0; i < n; i++)
-        [aCoder encodeObject: PARTINFO([noteReceivers objectAtIndex:i])];
+        [aCoder encodeObject: PARTINFO([noteReceivers objectAtIndex: i])];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -174,7 +177,7 @@ Modification history:
     /* Write declarations in header. */
     for (i = 0; i < n; i++) {
         el = [noteReceivers objectAtIndex:i];
-        _MKWritePartDecl(el,SCOREPTR,PARTINFO(el));
+        _MKWritePartDecl(el, SCOREPTR, PARTINFO(el));
     }
 
 //#error StreamConversion: NXTell should be converted to an NSData method
@@ -236,17 +239,17 @@ Modification history:
 {
     if (noteSeen || (![self isNoteReceiverPresent: aNR]))
       return nil;
-    [PARTINFO(aNR) release]; 
-    [aNR _setData: (void *) [aNote copy]];
+    // TODO this will leak. We need to recheck if we need to copy the note.
+    [aNR _setData: [aNote copy]];
     return self;
 }
 
-- infoNoteForNoteReceiver:aNoteReceiver
+- (MKNote *) infoNoteForNoteReceiver: (MKNoteReceiver *) aNoteReceiver
 {
     return PARTINFO(aNoteReceiver);
 } 
 
-- copyWithZone:(NSZone *)zone 
+- copyWithZone: (NSZone *) zone 
     /* Copies object and set of parts. The copy has a copy of 
        the noteReceivers and info notes. */
 {

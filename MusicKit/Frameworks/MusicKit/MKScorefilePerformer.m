@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2004/12/13 02:25:44  leighsmith
+  New typing for MKNoteReceiver _setData: and _getData
+
   Revision 1.11  2004/08/21 23:20:56  leighsmith
   Better typing of results
 
@@ -221,23 +224,24 @@ Modification history:
     return (owner == self) ? [((id)[aNoteSender _getData]) infoNote] : nil;
 }
 
--midiNoteSender:(int)aChan
-  /* Returns the first MKNoteSender whose corresponding MKPart has 
-     a MK_midiChan info parameter equal to
-     aChan, if any. aChan equal to 0 corresponds to the MKPart representing
-     MIDI system and channel mode messages. */
+/* Returns the first MKNoteSender whose corresponding MKPart has 
+ a MK_midiChan info parameter equal to
+ aChan, if any. aChan equal to 0 corresponds to the MKPart representing
+ MIDI system and channel mode messages. */
+- midiNoteSender: (int) aChan
 {
-    MKNoteSender *el;
+    MKNoteSender *noteSender;
     id aInfo;
     unsigned n,i;
+    
     if (aChan == MAXINT)
       return nil;
     n = [noteSenders count];
     for (i = 0; i < n; i++) {
-        el = [noteSenders objectAtIndex:i];
-        if ((aInfo = [((id)[el _getData]) infoNote]))
-            if ([aInfo parAsInt:MK_midiChan] == aChan)
-                return [[el retain] autorelease];
+        noteSender = [noteSenders objectAtIndex: i];
+        if ((aInfo = [((MKPart *) [noteSender _getData]) infoNote]))
+            if ([aInfo parAsInt: MK_midiChan] == aChan)
+                return [[noteSender retain] autorelease];
     }
     return nil;
 }
