@@ -4,7 +4,7 @@
     English_RESOURCES = {}; 
     FILESTABLE = {
         CLASSES = (MyCustomObject.m); 
-        English_INTERFACES = ("example5-windows.nib", example5.nib, example5_new.nib); 
+        English_INTERFACES = ("example5-windows.nib", example5.nib); 
         FRAMEWORKS = (
             AppKit.framework, 
             dsp.framework, 
