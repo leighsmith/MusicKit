@@ -102,11 +102,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.7  2001/07/10 17:07:48  leighsmith
+  Removed redundant #import
+
   Revision 1.6  2001/07/02 16:40:00  sbrandon
   - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
     compliant)
@@ -158,8 +162,6 @@ Modification history:
 #import "PerformerPrivate.h"
 
 @implementation MKPerformer
-
-#import "PerformerPrivate.h"
 
 #define VERSION2 2
 
@@ -214,19 +216,6 @@ Modification history:
 /*****/
     return self;
 }
-
-//- awake
-//{
-//#warning DONE ArchiverConversion: put the contents of your 'awake' method at the end of your 'initWithCoder:' method instead
-    /*[super awake]; */ /*sb: hmmm. NSObject does not respond to this. */
-/***
-    if (!conductor)
-      conductor=[Conductor defaultConductor];
-    status = MK_inactive;
-    _performMsgPtr= MKNewMsgRequest(0.0,@selector(_performerBody),self,0);
-***/
-//    return self;
-//}
 
 #import "noteDispatcherMethods.m"
 
