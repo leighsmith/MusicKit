@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/05/12 09:37:37  sbrandon
+  - GNUSTEP: include headers, don't import them
+
   Revision 1.3  2000/12/15 02:02:28  leigh
   Initial Revision
 
@@ -24,7 +27,12 @@ Modification history:
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
-#import <math.h>
+#ifdef GNUSTEP
+# include <math.h>
+#else
+# import <math.h>
+#endif
+
 #define SINTABLEN 1024
 
 // Dear WinNT doesn't know about PI, stolen from MacOSX-Servers math.h definition
