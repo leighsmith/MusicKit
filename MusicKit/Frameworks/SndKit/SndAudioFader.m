@@ -29,14 +29,14 @@ static SEL xForBpSel;
 
 @interface SndAudioFader (SKPrivate)
 
-- (BOOL)_rampEnvelope:(id <SndEnveloping, NSObject>) theEnv
-                 from:(float)startRampLevel
-                   to:(float)endRampLevel
-            startTime:(double)startRampTime
-              endTime:(double)endRampTime;
-- (void)_setStaticPointInEnvelope:(id <SndEnveloping, NSObject>) theEnv
-                             yVal:(float)yVal
-                             xVal:(double)atTime;
+- (BOOL) _rampEnvelope: (id <SndEnveloping, NSObject>) theEnv
+                  from: (float) startRampLevel
+                    to: (float) endRampLevel
+             startTime: (double) startRampTime
+               endTime: (double) endRampTime;
+- (void) _setStaticPointInEnvelope: (id <SndEnveloping, NSObject>) theEnv
+                              yVal: (float) yVal
+                              xVal: (double) atTime;
 @end
 
 
@@ -50,28 +50,28 @@ static float lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEn
   ENVCLASS = aClass;
 }
 
-+ (id)envelopeClass
++ (id) envelopeClass
 {
   return ENVCLASS;
 }
 
-- (void)setEnvelopeClass:(id)aClass
+- (void) setEnvelopeClass: (id) aClass
 {
   envClass = aClass;
-  bpBeforeOrEqual = (BpBeforeOrEqualIMP)[envClass instanceMethodForSelector:bpBeforeOrEqualSel];
-  bpAfter = (BpAfterIMP)[envClass instanceMethodForSelector:bpAfterSel];
-  flagsForBp = (FlagsForBpIMP)[envClass instanceMethodForSelector:flagsForBpSel];
-  yForBp = (YForBpIMP)[envClass instanceMethodForSelector:yForBpSel];
-  yForX = (YForXIMP)[envClass instanceMethodForSelector:yForXSel];
-  xForBp = (XForBpIMP)[envClass instanceMethodForSelector:xForBpSel];
+  bpBeforeOrEqual = (BpBeforeOrEqualIMP) [envClass instanceMethodForSelector: bpBeforeOrEqualSel];
+  bpAfter = (BpAfterIMP) [envClass instanceMethodForSelector: bpAfterSel];
+  flagsForBp = (FlagsForBpIMP) [envClass instanceMethodForSelector: flagsForBpSel];
+  yForBp = (YForBpIMP) [envClass instanceMethodForSelector: yForBpSel];
+  yForX = (YForXIMP) [envClass instanceMethodForSelector: yForXSel];
+  xForBp = (XForBpIMP) [envClass instanceMethodForSelector: xForBpSel];
 }
 
-- (id)envelopeClass
+- (id) envelopeClass
 {
   return envClass;
 }
 
-+ (void)initialize
++ (void) initialize
 {
   if (self == [SndAudioFader class]) {
     [SndAudioFader setVersion:1];
@@ -86,9 +86,10 @@ static float lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEn
   xForBpSel = @selector(lookupXForBreakpoint:);
 }
 
-- init
+// initWithParamCount:name: is the designated initializer for SndAudioProcessor.
+- initWithParamCount: (const int) paramCount name: (NSString *) faderName
 {
-    self = [super initWithParamCount: 0 name: @"Fader"];
+    self = [super initWithParamCount: faderNumParams name: @"Fader"];
     if (self) {
 	envelopesLock  = [NSLock new];
 	balanceEnvLock = [NSLock new];
@@ -106,7 +107,7 @@ static float lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEn
 /*
  * "instantaneous" getting and setting; applies from start of buffer
  */
-- setBalance:(float)balance clearingEnvelope:(BOOL)clear
+- setBalance: (float) balance clearingEnvelope: (BOOL) clear
 {
   double nowTime;
   if (clear) {
@@ -122,13 +123,13 @@ static float lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEn
   /* if there's an envelope there, keep it and insert new value */
   if (balanceEnv) {
     nowTime = [(SndStreamManager *) [SndStreamManager defaultStreamManager] nowTime];
-    [self setBalance:balance atTime:nowTime];
+    [self setBalance: balance atTime: nowTime];
   }
   staticBalance = balance;
   return self;
 }
 
-- (float)getBalance
+- (float) getBalance
 {
   double nowTime;
   float yVal;
@@ -137,12 +138,12 @@ static float lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEn
   }
   nowTime = [(SndStreamManager *)[SndStreamManager defaultStreamManager] nowTime];
   [balanceEnvLock lock];
-  yVal = lookupEnvForX(self,balanceEnv,nowTime);
+  yVal = lookupEnvForX(self, balanceEnv, nowTime);
   [balanceEnvLock unlock];
   return yVal;
 }
 
-- setAmp:(float)amp clearingEnvelope:(BOOL)clear
+- setAmp: (float) amp clearingEnvelope: (BOOL) clear
 {
   double nowTime;
   if (clear) {
@@ -158,13 +159,13 @@ static float lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEn
   /* if there's an envelope there, keep it and insert new value */
   if (ampEnv) {
     nowTime = [(SndStreamManager *)[SndStreamManager defaultStreamManager] nowTime];
-    [self setAmp:amp atTime:nowTime];
+    [self setAmp: amp atTime: nowTime];
   }
   staticAmp = amp;
   return self;
 }
 
-- (float)getAmp
+- (float) getAmp
 {
   double nowTime;
   float yVal;
@@ -173,18 +174,18 @@ static float lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEn
   }
   nowTime = [(SndStreamManager *)[SndStreamManager defaultStreamManager] nowTime];
   [ampEnvLock lock];
-  yVal = lookupEnvForX(self,ampEnv,nowTime);
+  yVal = lookupEnvForX(self, ampEnv, nowTime);
   [ampEnvLock unlock];
   return yVal;
 }
 
 BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObject> anEnvelope)
 {
-  int prevBreakpoint = saf->bpBeforeOrEqual(anEnvelope,bpBeforeOrEqualSel,xVal);
+  int prevBreakpoint = saf->bpBeforeOrEqual(anEnvelope, bpBeforeOrEqualSel, xVal);
   if (prevBreakpoint == BP_NOT_FOUND) {
     return NO;
   }
-  if (saf->flagsForBp(anEnvelope,flagsForBpSel,prevBreakpoint) &
+  if (saf->flagsForBp(anEnvelope, flagsForBpSel, prevBreakpoint) &
       SND_FADER_ATTACH_RAMP_RIGHT) {
     return YES;
   }
@@ -194,11 +195,11 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
 /* Official "future movement" API - moves faders about at arbitrary times in
 * the future.
 */
-- (BOOL)_rampEnvelope:(id <SndEnveloping, NSObject>) theEnv
-                 from:(float)startRampLevel
-                   to:(float)endRampLevel
-            startTime:(double)startRampTime
-              endTime:(double)endRampTime
+- (BOOL) _rampEnvelope: (id <SndEnveloping, NSObject>) theEnv
+                  from: (float) startRampLevel
+                    to: (float) endRampLevel
+             startTime: (double) startRampTime
+               endTime: (double) endRampTime
 {
   /* Need to watch for the following problems:
   * 1 locking
@@ -209,19 +210,19 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
   *     by calculating the point where they would have bisected our new ramp,
   *     and inserting a new end point/start point as necessary.
   */
-  BOOL dissectsAtStart,dissectsAtEnd;
+  BOOL dissectsAtStart, dissectsAtEnd;
   int newStartIndex;
 
-  dissectsAtStart = middleOfMovement(self,startRampTime,theEnv);
-  dissectsAtEnd = middleOfMovement(self,endRampTime,theEnv);
+  dissectsAtStart = middleOfMovement(self, startRampTime, theEnv);
+  dissectsAtEnd = middleOfMovement(self, endRampTime, theEnv);
 
   if (dissectsAtStart || dissectsAtEnd) {
     float   endPrecedingRampLevel    = 0.0f;
     float   startSucceedingRampLevel = 0.0f;
     int i;
     // do we span any breakpoints, which we will need to delete?
-    int index1 = [theEnv breakpointIndexBeforeOrEqualToX:startRampTime];
-    int index2 = [theEnv breakpointIndexAfterX:endRampTime];
+    int index1 = [theEnv breakpointIndexBeforeOrEqualToX: startRampTime];
+    int index2 = [theEnv breakpointIndexAfterX: endRampTime];
     // If index1 == BP_NOT_FOUND, that means that there must be an end dissection,
     // and bp[0] is definitely to be deleted
     // If index2 == BP_NOT_FOUND, that means that our new end point lies beyond the
@@ -233,81 +234,81 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
     // and SND_FADER_ATTACH_RAMP_RIGHT, respectively.
 
     if (dissectsAtStart) {
-      endPrecedingRampLevel = lookupEnvForX(self,theEnv,startRampTime);
+      endPrecedingRampLevel = lookupEnvForX(self, theEnv, startRampTime);
     }
     if (dissectsAtEnd) {
-      startSucceedingRampLevel = lookupEnvForX(self,theEnv,endRampTime);
+      startSucceedingRampLevel = lookupEnvForX(self, theEnv, endRampTime);
     }
 
     // do the deletion, backwards
-    for (i = index2 - 1 ; i > index1 ; i-- ) {
-      [theEnv removeBreakpoint:i];
+    for (i = index2 - 1; i > index1; i--) {
+      [theEnv removeBreakpoint: i];
     }
     // stick in our new preceding/succeeding ramps, if necessary
     if (dissectsAtStart) {
       // we know at which bp this should be inserted
-      [theEnv insertXValue:startRampTime
-                    yValue:endPrecedingRampLevel
-                     flags:SND_FADER_ATTACH_RAMP_LEFT
-              atBreakpoint:index1 + 1];
+      [theEnv insertXValue: startRampTime
+                    yValue: endPrecedingRampLevel
+                     flags: SND_FADER_ATTACH_RAMP_LEFT
+              atBreakpoint: index1 + 1];
     }
     if (dissectsAtEnd) {
-      [theEnv insertXValue:endRampTime
-                    yValue:endPrecedingRampLevel
-                     flags:SND_FADER_ATTACH_RAMP_RIGHT
-              atBreakpoint:index1 + dissectsAtStart ? 2 : 1];
+      [theEnv insertXValue: endRampTime
+                    yValue: endPrecedingRampLevel
+                     flags: SND_FADER_ATTACH_RAMP_RIGHT
+              atBreakpoint: index1 + dissectsAtStart ? 2 : 1];
     }
   }
   // finally, put in new ramp.
   // Note that if there are already breakpoints at the same X value,
   // the new bp is inserted after the last one.
-  newStartIndex = [theEnv insertXValue:startRampTime
-                                yValue:startRampLevel
-                                 flags:SND_FADER_ATTACH_RAMP_RIGHT];
+  newStartIndex = [theEnv insertXValue: startRampTime
+                                yValue: startRampLevel
+                                 flags: SND_FADER_ATTACH_RAMP_RIGHT];
   //    NSLog(@"newStartIndex %d, startramptime %f, startRampLevel %f\n",
   //         newStartIndex,startRampTime,startRampLevel);
-  [theEnv insertXValue:endRampTime
-                yValue:endRampLevel
-                 flags:SND_FADER_ATTACH_RAMP_LEFT
-          atBreakpoint:newStartIndex + 1];
+  [theEnv insertXValue: endRampTime
+                yValue: endRampLevel
+                 flags: SND_FADER_ATTACH_RAMP_LEFT
+          atBreakpoint: newStartIndex + 1];
 
   return YES;
 }
 
-- (BOOL)rampAmpFrom:(float)startRampLevel
-                 to:(float)endRampLevel
-          startTime:(double)startRampTime
-            endTime:(double)endRampTime
+- (BOOL) rampAmpFrom: (float) startRampLevel
+                  to: (float) endRampLevel
+           startTime: (double) startRampTime
+             endTime: (double) endRampTime
 {
   BOOL ret;
   [ampEnvLock lock];
   if (!ampEnv) {
     ampEnv = [[envClass alloc] init];
   }
-  ret = [self _rampEnvelope:ampEnv
-                       from:startRampLevel
-                         to:endRampLevel
-                  startTime:startRampTime
-                    endTime:endRampTime];
+  ret = [self _rampEnvelope: ampEnv
+                       from: startRampLevel
+                         to: endRampLevel
+                  startTime: startRampTime
+                    endTime: endRampTime];
   [ampEnvLock unlock];
   return ret;
 }
 
-- (BOOL)rampBalanceFrom:(float)startRampLevel
-                     to:(float)endRampLevel
-              startTime:(double)startRampTime
-                endTime:(double)endRampTime;
+- (BOOL) rampBalanceFrom: (float) startRampLevel
+                      to: (float) endRampLevel
+               startTime: (double) startRampTime
+                 endTime: (double) endRampTime;
 {
   BOOL ret;
   [balanceEnvLock lock];
   if (!balanceEnv) {
     balanceEnv = [[envClass alloc] init];
   }
-  ret = [self _rampEnvelope:balanceEnv
-                       from:startRampLevel
-                         to:endRampLevel
-                  startTime:startRampTime
-                    endTime:endRampTime];
+  ret = [self _rampEnvelope: balanceEnv
+                       from: startRampLevel
+                         to: endRampLevel
+                  startTime: startRampTime
+                    endTime: endRampTime];
   [balanceEnvLock unlock];
   return ret;
 }
@@ -316,36 +317,36 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
  * "future" getting and setting; transparently reads and writes
  * from/to the envelope object(s)
  */
-- (void)_setStaticPointInEnvelope:(id <SndEnveloping, NSObject>) theEnv
-                             yVal:(float)yVal
-                             xVal:(double)atTime
+- (void) _setStaticPointInEnvelope: (id <SndEnveloping, NSObject>) theEnv
+                              yVal: (float) yVal
+                              xVal: (double) atTime
 {
   BOOL isRamping;
   /* if there's a following ramp end, delete it.
   * also give the new point an end-of-ramp status
   */
-  isRamping = middleOfMovement(self,atTime,theEnv);
+  isRamping = middleOfMovement(self, atTime, theEnv);
   if (!isRamping) {
-    [theEnv insertXValue:atTime yValue:yVal flags:0];
+    [theEnv insertXValue:atTime yValue: yVal flags: 0];
   }
   else {
-    int endBp = [theEnv breakpointIndexAfterX:atTime];
+    int endBp = [theEnv breakpointIndexAfterX: atTime];
     if (endBp == BP_NOT_FOUND) {
       /* A ramp was started but not finished. Just set the
       * new bp, and change the status of the previous bp
       * to static (flag 0)
       */
       int precedingBpIndex =
-      [theEnv breakpointIndexBeforeOrEqualToX:atTime];
-      double newX  = [theEnv lookupXForBreakpoint:precedingBpIndex];
-      float  newY  = [theEnv lookupYForBreakpoint:precedingBpIndex];
-      int    flags = [theEnv lookupFlagsForBreakpoint:precedingBpIndex];
+      [theEnv breakpointIndexBeforeOrEqualToX: atTime];
+      double newX  = [theEnv lookupXForBreakpoint: precedingBpIndex];
+      float  newY  = [theEnv lookupYForBreakpoint: precedingBpIndex];
+      int    flags = [theEnv lookupFlagsForBreakpoint: precedingBpIndex];
       flags = flags & SND_FADER_ATTACH_RAMP_LEFT;
-      [theEnv replaceXValue:newX
-                     yValue:newY
-                      flags:flags
-               atBreakpoint:precedingBpIndex];
-      [theEnv insertXValue:atTime yValue:yVal flags:0];
+      [theEnv replaceXValue: newX
+                     yValue: newY
+                      flags: flags
+               atBreakpoint: precedingBpIndex];
+      [theEnv insertXValue: atTime yValue: yVal flags: 0];
     }
     else {
       /* We need to create a new end-of-ramp along the same trajectory
@@ -354,20 +355,20 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
       */
       float newEndY = [theEnv lookupYForX:atTime];
       [theEnv removeBreakpoint:endBp];
-      [theEnv insertXValue:atTime
-                    yValue:yVal
-                     flags:0
-              atBreakpoint:endBp];
-      [theEnv insertXValue:atTime
-                    yValue:newEndY
-                     flags:SND_FADER_ATTACH_RAMP_LEFT
-              atBreakpoint:endBp];
+      [theEnv insertXValue: atTime
+                    yValue: yVal
+                     flags: 0
+              atBreakpoint: endBp];
+      [theEnv insertXValue: atTime
+                    yValue: newEndY
+                     flags: SND_FADER_ATTACH_RAMP_LEFT
+              atBreakpoint: endBp];
 
     }
   }
 }
 
-- setBalance:(float)balance atTime:(double)atTime
+- setBalance: (float) balance atTime: (double) atTime
 {
   [balanceEnvLock lock];
   if (!balanceEnv) {
@@ -381,7 +382,7 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
   return self;
 }
 
-- (float)getBalanceAtTime:(double)atTime
+- (float) getBalanceAtTime: (double) atTime
 {
   double yVal;
   if (!balanceEnv) return staticBalance;
@@ -391,7 +392,7 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
   return yVal;
 }
 
-- setAmp:(float)amp atTime:(double)atTime
+- setAmp: (float) amp atTime: (double) atTime
 {
   [ampEnvLock lock];
   if (!ampEnv) {
@@ -404,7 +405,7 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
   return self;
 }
 
-- (float)getAmpAtTime:(double)atTime
+- (float) getAmpAtTime: (double) atTime
 {
   double yVal;
   if (!ampEnv) return staticAmp;
@@ -424,24 +425,47 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
   [super dealloc];
 }
 
-- (int) paramCount
+- (float) paramValue: (const int) paramIndex
 {
-  return 0;
+    float r = 0.0f;
+    
+    switch (paramIndex) {
+    case faderAmp:
+	r = [self getAmp];
+	break;
+    case faderBalance:
+	r = [self getBalance];
+	break;
+    }
+    return r;
 }
 
-- (float) paramValue: (const int) index
+- (NSString *) paramName: (const int) paramIndex
 {
-  return 0;
+    NSString *paramName = nil;
+    
+    switch (paramIndex) {
+    case faderAmp:
+	paramName = @"Amplitude";
+	break;
+    case faderBalance:
+	paramName = @"Balance";
+	break;
+    }
+    return paramName;  
 }
 
-- (NSString*) paramName: (const int) index
+- (void) setParam: (const int) paramIndex toValue: (const float) v
 {
-  return nil;
+    switch (paramIndex) {
+    case faderAmp:   
+	[self setAmp: v > 1.0 ? 1.0 : (v < 0.0 ? 0.0 : v) clearingEnvelope: NO];
+	break;
+    case faderBalance: 
+	[self setBalance: v > 1.0 ? 1.0 : (v < -1.0 ? -1.0 : v) clearingEnvelope: NO];
+	break;
+    }
 }
-
-//- (void) setParam: (const int) index toValue: (const float) v
-//{
-//}
 
 static float lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope, double theX)
 {

@@ -19,6 +19,7 @@
 
 #import "SndEnvelope.h"
 #import "SndAudioProcessor.h"
+
 @class SndStreamManager;
 @class SndStreamMixer;
 @class SndAudioProcessor;
@@ -42,6 +43,19 @@ typedef struct _UEE {
     float           balanceL;
     float           balanceR;
 } SndUnifiedEnvelopeEntry;
+
+/*!
+ @enum SndFaderParam
+ @abstract Parameter keys
+ @constant faderAmp Amplitude
+ @constant faderBalance Stereo balance
+ @constant faderNumParams Number of parameters
+ */
+enum SndFaderParam {
+    faderAmp       = 0, 
+    faderBalance   = 1,
+    faderNumParams = 2
+};
 
 /* Squeeze the last drop of performance out of this class by caching IMPs.
  * See also +initialize and -init for the initialization of selectors, which
@@ -317,10 +331,30 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
                startTime:(double)startRampTime
                  endTime:(double)endRampTime;
 
-- (int) paramCount;
+/*!
+  @method paramValue:
+  @abstract Retrieve the value of the indexed parameter.
+  @param index enumerated index for parameters.
+  @result Returns a floating point value.
+  @discussion This is just the standardised SndAudioProcessor protocol for retrieving the amplitude and balance.
+ */
 - (float) paramValue: (const int) index;
-- (NSString*) paramName: (const int) index;
-//- (void) setParam: (const int) index toValue: (const float) v;
+
+/*!
+  @method paramName:
+  @abstract Retrieve the name of the indexed parameter.
+  @param index enumerated index for parameters.
+  @result Returns an NSString instance.
+ */
+- (NSString *) paramName: (const int) index;
+
+/*!
+  @method setParam:toValue:
+  @abstract Assigns the indexed parameter a value.
+  @param index enumerated index for parameters.
+  @discussion This is just the standardised SndAudioProcessor protocol for assigning the amplitude and balance.
+  */
+- (void) setParam: (const int) index toValue: (const float) v;
 
 /*!
     @method processReplacingInputBuffer:outputBuffer:
