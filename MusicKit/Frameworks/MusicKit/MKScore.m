@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2000/03/11 01:11:24  leigh
+  Reading instrument and track names in level 1 MIDI files now are stored in the MKPart infoNote
+
   Revision 1.8  2000/02/11 22:52:39  leigh
   Fixed memory leak reading scorefiles
 
@@ -908,31 +911,39 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 	    /* First handle meta-events that are Part or Score info
 	       parameters. We never want to skip these. */
 	    switch (DATA[0]) { 
-	      case MKMIDI_sequenceNumber:
+	    case MKMIDI_sequenceNumber:
 		MKSetNoteParToInt(LEVEL2 ? [CURPART infoNote] : info,
 				  MK_sequence,SHORTDATA);
 		break;
-	      case MKMIDI_smpteOffset: 
+	    case MKMIDI_smpteOffset: 
 		writeDataAsNumString(LEVEL2 ? [CURPART infoNote] : info,
 				     MK_smpteOffset,DATA,5);
 		break;
-	      case MKMIDI_sequenceOrTrackName:
-		if ((curPart == midiParts) /* First part */
-		    && !LEVEL2)  /* No MK_title in level 2 files, since
-				    the title is merely the name of the first
-				    sequence. */
-		  MKSetNoteParToString(info,MK_title,[NSString stringWithCString:STRINGDATA]); 
+	    case MKMIDI_sequenceOrTrackName:
+                /* Check if it is the first part. There is no MK_title in level 2 files, since
+                   the title is merely the name of the first sequence. */
+		if ((curPart == midiParts) && !LEVEL2) 
+                   MKSetNoteParToString(info, MK_title, [NSString stringWithCString:STRINGDATA]);
 		/* In level 1 files, we name the current part with the
 		   title. Note that we do this even if the name is a 
 		   sequence name rather than a track name. In level 0 
 		   files, we do not name the part. */
+                if(LEVEL1)
+                    MKSetNoteParToString([CURPART infoNote], MK_title, [NSString stringWithCString:STRINGDATA]);
 		if (fileFormatLevel != 0)
-                    MKNameObject([NSString stringWithCString:STRINGDATA],*curPart);
+                    MKNameObject([NSString stringWithCString:STRINGDATA], *curPart);
 		break;
-	      case MKMIDI_copyright:
-                  MKSetNoteParToString(info,MK_copyright,[NSString stringWithCString:STRINGDATA]);
+	    case MKMIDI_copyright:
+                MKSetNoteParToString(info,MK_copyright,[NSString stringWithCString:STRINGDATA]);
 		break;
-	      default:
+            case MKMIDI_instrumentName:
+		/* An instrument name is the sort of thing you need in a part info note, but the strict definition of
+                   the SMF spec allows you to rename the track at different time points, why? It would have been better
+                   to define more tracks, each with a separate instrument. In that rather wierd case,
+                   this code is wrong as it will take the last instrument name used as the info note. */
+                MKSetNoteParToString(LEVEL1 ? [CURPART infoNote] : info,
+                                     MK_instrumentName, [NSString stringWithCString:STRINGDATA]);
+	    default:
 		break;
 	    }
 	}
@@ -1001,13 +1012,10 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 	      case MKMIDI_text:
 	      case MKMIDI_cuePoint:
 	      case MKMIDI_lyric: 
-	      case MKMIDI_instrumentName: 
 		MKSetNoteParToString(aNote,
 				     ((DATA[0] == MKMIDI_text) ? MK_text :
-				      (DATA[0] == MKMIDI_lyric) ? MK_lyric :
-				      (DATA[0] == MKMIDI_cuePoint) ? MK_cuePoint :
-				      MK_instrumentName),
-                       [NSString stringWithCString:STRINGDATA]);
+				      (DATA[0] == MKMIDI_lyric) ? MK_lyric : MK_cuePoint),
+                                     [NSString stringWithCString:STRINGDATA]);
 		[CURPART addNote:aNote];
 		break;
 	      case MKMIDI_marker:
