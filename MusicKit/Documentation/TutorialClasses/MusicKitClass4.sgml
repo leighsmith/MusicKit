@@ -8,26 +8,26 @@
 	<VARLISTENTRY>
 	  <TERM> Representation classes (7)	</TERM>
 	  <LISTITEM>
-	    <PARA><CLASSNAME>Note</CLASSNAME>, <CLASSNAME>Part</CLASSNAME>,
-	      <CLASSNAME>Score</CLASSNAME>, etc.</PARA>
+	    <PARA><CLASSNAME>MKNote</CLASSNAME>, <CLASSNAME>MKPart</CLASSNAME>,
+	      <CLASSNAME>MKScore</CLASSNAME>, etc.</PARA>
 	  </LISTITEM>
 	</VARLISTENTRY>    
 	<VARLISTENTRY>
 	  <TERM> Performance classes (16)	</TERM>
 	  <LISTITEM>
-	    <PARA><CLASSNAME>Conductor</CLASSNAME>,
-	      <CLASSNAME>Performer</CLASSNAME>,
-	      <CLASSNAME>Instrument</CLASSNAME>, etc.</PARA>
+	    <PARA><CLASSNAME>MKConductor</CLASSNAME>,
+	      <CLASSNAME>MKPerformer</CLASSNAME>,
+	      <CLASSNAME>MKInstrument</CLASSNAME>, etc.</PARA>
 	  </LISTITEM>
 	</VARLISTENTRY>
 	<VARLISTENTRY>
 	  <TERM> <ACRONYM>DSP</ACRONYM> Synthesis classes (4)	</TERM>
 	  <LISTITEM>
-	    <PARA><CLASSNAME>Orchestra</CLASSNAME>,
-	      <CLASSNAME>UnitGenerator</CLASSNAME>,
-	      <CLASSNAME>SynthPatch</CLASSNAME>,
-	      <CLASSNAME>SynthData</CLASSNAME> </PARA> 
-	    <PARA>(also <CLASSNAME>SynthInstrument</CLASSNAME>)</PARA>
+	    <PARA><CLASSNAME>MKOrchestra</CLASSNAME>,
+	      <CLASSNAME>MKUnitGenerator</CLASSNAME>,
+	      <CLASSNAME>MKSynthPatch</CLASSNAME>,
+	      <CLASSNAME>MKSynthData</CLASSNAME> </PARA> 
+	    <PARA>(also <CLASSNAME>MKSynthInstrument</CLASSNAME>)</PARA>
 	  </LISTITEM>
 	</VARLISTENTRY>
       </VARIABLELIST>
@@ -38,30 +38,30 @@
 
       <ITEMIZEDLIST>
 	<LISTITEM>
-	  <PARA> The <CLASSNAME>Orchestra</CLASSNAME> class manages the
+	  <PARA> The <CLASSNAME>MKOrchestra</CLASSNAME> class manages the
 	    <ACRONYM>DSP</ACRONYM> as a whole. </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> The <CLASSNAME>UnitGenerator</CLASSNAME> class (abstract)
+	  <PARA> The <CLASSNAME>MKUnitGenerator</CLASSNAME> class (abstract)
 	    represents a <ACRONYM>DSP</ACRONYM> processing or generating
 	    module, such as an oscillator or a filter.</PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> The <CLASSNAME>SynthData</CLASSNAME> class represents a piece
+	  <PARA> The <CLASSNAME>MKSynthData</CLASSNAME> class represents a piece
 	    of <ACRONYM>DSP</ACRONYM> memory.  A special type of
-	    <CLASSNAME>SynthData</CLASSNAME> called a "patchpoint" is used to
-	    connect <CLASSNAME>UnitGenerators</CLASSNAME>.</PARA>
+	    <CLASSNAME>MKSynthData</CLASSNAME> called a "patchpoint" is used to
+	    connect <CLASSNAME>MKUnitGenerator</CLASSNAME>s.</PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> The <CLASSNAME>SynthPatch</CLASSNAME> class (abstract)
-	    contains a list of <CLASSNAME>UnitGenerators</CLASSNAME> that make
+	  <PARA> The <CLASSNAME>MKSynthPatch</CLASSNAME> class (abstract)
+	    contains a list of <CLASSNAME>MKUnitGenerator</CLASSNAME>s that make
 	    up a single sound-producing entity.  To produce a chord, multiple
-	    instances of a <CLASSNAME>SynthPatch</CLASSNAME> subclass are
+	    instances of a <CLASSNAME>MKSynthPatch</CLASSNAME> subclass are
 	    required.  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> The <CLASSNAME>SynthInstrument</CLASSNAME> class manages a
-	    set of <CLASSNAME>SynthPatches</CLASSNAME> (voice allocation).
+	  <PARA> The <CLASSNAME>MKSynthInstrument</CLASSNAME> class manages a
+	    set of <CLASSNAME>MKSynthPatches</CLASSNAME> (voice allocation).
 	</PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
@@ -71,25 +71,25 @@
 	<LISTITEM>
 	  <PARA>
 	    Look at the system from a high level, focusing on the
-	    <CLASSNAME>SynthInstrument</CLASSNAME> and
-	    <CLASSNAME>Orchestra</CLASSNAME> classes.
+	    <CLASSNAME>MKSynthInstrument</CLASSNAME> and
+	    <CLASSNAME>MKOrchestra</CLASSNAME> classes.
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA>
-	    Look in detail at the <CLASSNAME>Orchestra</CLASSNAME>,
-             <CLASSNAME>UnitGenerator</CLASSNAME> and
-             <CLASSNAME>SynthData</CLASSNAME> classes.	
+	    Look in detail at the <CLASSNAME>MKOrchestra</CLASSNAME>,
+             <CLASSNAME>MKUnitGenerator</CLASSNAME> and
+             <CLASSNAME>MKSynthData</CLASSNAME> classes.	
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA>3. Look at the <CLASSNAME>SynthPatch</CLASSNAME> class. (next
+	  <PARA>3. Look at the <CLASSNAME>MKSynthPatch</CLASSNAME> class. (next
 	    time) </PARA>
 	</LISTITEM>
       </ORDEREDLIST>
 
       <FIGURE>
-	<TITLE>	SynthInstrument</TITLE>
+	<TITLE>	<CLASSNAME>MKSynthInstrument</CLASSNAME></TITLE>
 	<MEDIAOBJECT>
 
 	  <IMAGEOBJECT>
@@ -110,58 +110,59 @@
       <ITEMIZEDLIST>
 	<LISTITEM>
 	  <PARA> The easiest way to do <ACRONYM>DSP</ACRONYM> synthesis is to
-	    use one of the <CLASSNAME>SynthPatches</CLASSNAME> in the
-	    <CLASSNAME>SynthPatch</CLASSNAME> Library.  These are general and
+	    use one of the <CLASSNAME>MKSynthPatches</CLASSNAME> in the
+	    <CLASSNAME>MKSynthPatch</CLASSNAME> Library.  These are general and
 	    implement standard synthesis techniques.</PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> <CLASSNAME>Orchestra</CLASSNAME> uses the same protocol as
-	    <CLASSNAME>Midi</CLASSNAME>: (<emphasis role="bold">open, run,
+	  <PARA> <CLASSNAME>MKOrchestra</CLASSNAME> uses the same protocol as
+	    <CLASSNAME>MKMidi</CLASSNAME>: (<emphasis role="bold">open, run,
 	    stop, close, abort</emphasis>).  First, you create and open the
-	    <CLASSNAME>Orchestra</CLASSNAME>.</PARA>
+	    <CLASSNAME>MKOrchestra</CLASSNAME>.</PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> Then you create a <CLASSNAME>SynthInstrument</CLASSNAME> and
-	    set its <CLASSNAME>SynthPatch</CLASSNAME> class (and, optionally,
+	  <PARA> Then you create a <CLASSNAME>MKSynthInstrument</CLASSNAME> and
+	    set its <CLASSNAME>MKSynthPatch</CLASSNAME> class (and, optionally,
 	    synthPatchCount).  Finally, you start the performance and run the
-	    <CLASSNAME>Orchestra</CLASSNAME>: </PARA>
+	    <CLASSNAME>MKOrchestra</CLASSNAME>: </PARA>
 	  <PROGRAMLISTING>
-SynthInstrument *synthIns;	
-Orchestra *orch = [Orchestra newOnDSP:0];	
-synthIns = [[SynthInstrument alloc] init];	
+MKSynthInstrument *synthIns;	
+MKOrchestra *orch = [MKOrchestra newOnDSP: 0];	
+synthIns = [[MKSynthInstrument alloc] init];	
 [orch open];	
 [synthIns setSynthPatchClass:[Pluck class]];	
 [orch run];	
-[Conductor startPerformance];	
+[MKConductor startPerformance];	
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> You can then send <CLASSNAME>Notes</CLASSNAME> (as explained
+	  <PARA> You can then send <CLASSNAME>MKNote</CLASSNAME>s (as explained
 	    last class), from your user interface,
-	    <CLASSNAME>Midi</CLASSNAME>, or a
-	    <CLASSNAME>Performer</CLASSNAME>.  E.g.: </PARA>
+	    <CLASSNAME>MKMidi</CLASSNAME>, or a
+	    <CLASSNAME>MKPerformer</CLASSNAME>.  E.g.: </PARA>
 	  <PROGRAMLISTING>
-Note *aNote = [[Note alloc] init];	
+MKNote *aNote = [[MKNote alloc] init];	
 [aNote setDur:1.0]; 	
-[Conductor lockPerformance];	
+[MKConductor lockPerformance];	
 [[synthIns noteReceiver] receiveNote:aNote];	
-[Conductor unlockPerformance];
+[MKConductor unlockPerformance];
 	  </PROGRAMLISTING>
 	</LISTITEM>
       </ITEMIZEDLIST>
     </SECT1>
     
     <SECT1 ID="ORCHESTRACLASS">
-      <TITLE>The Orchestra Class</TITLE>
+      <TITLE>The <CLASSNAME>MKOrchestra</CLASSNAME> Class</TITLE>
 
       <ITEMIZEDLIST>
 	<LISTITEM>
-	  <PARA> Manages control of <ACRONYM>DSP</ACRONYM>:	</PARA>
+	  <PARA> Manages control of <ACRONYM>DSP</ACRONYM>:</PARA>
 	  <PARA><emphasis role="bold">new</emphasis> or <emphasis role="bold">
 	      newOnDSP:</emphasis>, <emphasis role="bold"> open</emphasis>,
 	      <emphasis role="bold"> run</emphasis>, <emphasis role="bold">
-	      stop</emphasis>, <emphasis role="bold"> close</emphasis>,
-	      <emphasis role="bold"> abort </emphasis></PARA>
+	      stop</emphasis>, <emphasis role="bold">
+	  close</emphasis>, 
+	      <emphasis role="bold">abort</emphasis></PARA>
 	</LISTITEM>
 	<LISTITEM>
       <PARA> Manages allocation of <ACRONYM>DSP</ACRONYM> resources: </PARA>
@@ -173,30 +174,30 @@ Note *aNote = [[Note alloc] init];
 	<LISTITEM>
 	  <PARA> Class object manages a collection of
 	    <ACRONYM>DSPs</ACRONYM>:</PARA> <PARA><emphasis role="bold">
-	    +open</emphasis>, <emphasis role="bold"> +run</emphasis>,
+	    +open</emphasis>, <emphasis role="bold">+run</emphasis>,
 	    <emphasis role="bold">+allocSynthPatch:</emphasis>, etc.</PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> All allocation of <ACRONYM>DSP</ACRONYM> resources is done
-	    through the <CLASSNAME>Orchestra</CLASSNAME>.  You don't send
-	    <emphasis role="bold">alloc </emphasis>directly to a
-	    <CLASSNAME>UnitGenerator</CLASSNAME> or
-	    <CLASSNAME>SynthPatch</CLASSNAME>.</PARA>
+	    through the <CLASSNAME>MKOrchestra</CLASSNAME>.  You don't send
+	    <emphasis role="bold">alloc</emphasis> directly to a
+	    <CLASSNAME>MKUnitGenerator</CLASSNAME> or
+	    <CLASSNAME>MKSynthPatch</CLASSNAME>.</PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> You only need to specify allocation requests directly to the
-	    <CLASSNAME>Orchestra</CLASSNAME> when working at a low level.  If
-	    you use a <CLASSNAME>SynthInstrument</CLASSNAME>, it takes care of
+	    <CLASSNAME>MKOrchestra</CLASSNAME> when working at a low level.  If
+	    you use a <CLASSNAME>MKSynthInstrument</CLASSNAME>, it takes care of
 	    the allocation for you (as in the previous example.)  Similarly,
-	    if you make your own <CLASSNAME>SynthPatch</CLASSNAME>, the actual
-	    allocation of <CLASSNAME>UnitGenerators</CLASSNAME> from the
-	    <CLASSNAME>Orchestra</CLASSNAME> is done behind the scenes.</PARA>
+	    if you make your own <CLASSNAME>MKSynthPatch</CLASSNAME>, the actual
+	    allocation of <CLASSNAME>MKUnitGenerator</CLASSNAME>s from the
+	    <CLASSNAME>MKOrchestra</CLASSNAME> is done behind the scenes.</PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
     </SECT1>
 
     <SECT1 ID="ORCHESTRASETTINGS">
-      <TITLE><CLASSNAME>Orchestra</CLASSNAME> Settings</TITLE>
+      <TITLE><CLASSNAME>MKOrchestra</CLASSNAME> Settings</TITLE>
 
       <VARIABLELIST>
 	<TITLE>	</TITLE>
@@ -211,7 +212,7 @@ Note *aNote = [[Note alloc] init];
 	  </LISTITEM>
 	</VARLISTENTRY>
 	<VARLISTENTRY>
-	  <TERM> <emphasis role="bold">+setFastResponse: </emphasis>(before
+	  <TERM> <emphasis role="bold">+setFastResponse:</emphasis> (before
 	    <emphasis role="bold">open</emphasis>)</TERM>
 	  <LISTITEM>
 	    <PARA>YES &horbar; Use small sound-out buffers to minimize
@@ -222,7 +223,8 @@ Note *aNote = [[Note alloc] init];
 	  </LISTITEM>
 	</VARLISTENTRY>
 	<VARLISTENTRY>
-	  <TERM> <emphasis role="bold">+setOutputSoundfile: </emphasis>(before
+	  <TERM> <emphasis role="bold">+setOutputSoundfile:</emphasis>
+	    (before
 	    <emphasis role="bold">open</emphasis>)</TERM>
 	  <LISTITEM>
 	    <PARA>Sets the name of a file to which samples are
@@ -235,45 +237,46 @@ Note *aNote = [[Note alloc] init];
 	    </emphasis>(before <emphasis role="bold">open</emphasis>)</TERM>
 	  <LISTITEM>
 	    <PARA>Sets the name of a file to which <ACRONYM>DSP</ACRONYM>
-	      commands are written. <ACRONYM>DACs</ACRONYM> are used in this
+	      commands are written. <ACRONYM>DAC</ACRONYM>s are used in this
 	      mode.  </PARA>
 	  </LISTITEM>
 	</VARLISTENTRY>
 	<VARLISTENTRY>
-	  <TERM> <emphasis role="bold">+setSamplingRate: </emphasis>(before
+	  <TERM> <emphasis role="bold">+setSamplingRate:</emphasis> (before
 	    <emphasis role="bold">open</emphasis>)</TERM>
 	  <LISTITEM>
-	    <PARA>Sets the sampling rate to 44100 or 22050.  </PARA>
+	    <PARA>Sets the sampling rate to 44100 or 22050.</PARA>
 	  </LISTITEM>
 	</VARLISTENTRY>
       </VARIABLELIST>
     </SECT1>
 
     <SECT1 ID="SYNTHINSTRUMENTCLASS">
-      <TITLE>The <CLASSNAME>SynthInstrument</CLASSNAME> Class</TITLE>
+      <TITLE>The <CLASSNAME>MKSynthInstrument</CLASSNAME> Class</TITLE>
 
       <ITEMIZEDLIST>
 	<LISTITEM>
-	  <PARA> An <CLASSNAME>Instrument</CLASSNAME> subclass that realizes
-	<CLASSNAME>Notes</CLASSNAME> on the <ACRONYM>DSP</ACRONYM>.</PARA>
+	  <PARA> An <CLASSNAME>MKInstrument</CLASSNAME> subclass that realizes
+	<CLASSNAME>MKNote</CLASSNAME>s on the <ACRONYM>DSP</ACRONYM>.</PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> You specify which <CLASSNAME>SynthPatch</CLASSNAME> subclass
-	    to use with <emphasis role="bold">
-	    setSynthPatchClass:</emphasis>.</PARA>
+	  <PARA> You specify which <CLASSNAME>MKSynthPatch</CLASSNAME>
+	    subclass to use with <emphasis
+	    role="bold">setSynthPatchClass:</emphasis>.</PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> Allocates patches based on <CONSTANT>noteTags</CONSTANT> of
-	    incoming <CLASSNAME>Notes</CLASSNAME>.  Allocation can be done
-	    from a global or a local pool.  If you send <emphasis role="bold">
-	    setSynthPatchCount:</emphasis>, the pool is local
-	    (<CONSTANT>MK_MANUALALLOC</CONSTANT>) and contains the number of
-	    patches specified.  Otherwise, pool is global
-	    (<CONSTANT>MK_AUTOALLOC</CONSTANT>).</PARA>
+	  <PARA> Allocates patches based on
+	    <CONSTANT>noteTags</CONSTANT> of incoming
+	    <CLASSNAME>MKNote</CLASSNAME>s.  Allocation can be done
+	    from a global or a local pool.  If you send <emphasis
+	    role="bold">setSynthPatchCount:</emphasis>, the pool is
+	    local (<CONSTANT>MK_MANUALALLOC</CONSTANT>) and contains
+	    the number of patches specified.  Otherwise, pool is
+	    global (<CONSTANT>MK_AUTOALLOC</CONSTANT>).</PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> Supports automatic preemption of the oldest running patch.
-	    You can subclass <CLASSNAME>SynthInstrument</CLASSNAME> and
+	    You can subclass <CLASSNAME>MKSynthInstrument</CLASSNAME> and
 	    override one method to provide an alternative preemption strategy.
 	  </PARA>
 	</LISTITEM>
@@ -288,10 +291,11 @@ Note *aNote = [[Note alloc] init];
 	    melody.)</PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> In Scorefiles, the <CLASSNAME>SynthPatch</CLASSNAME> is
-	    specified in the part info's <emphasis role="bold">synthPatch:
-	    </emphasis>parameter.  Manual mode is specified in the part info's
-	    <emphasis role="bold">synthPatchCount:</emphasis> parameter.
+	  <PARA> In Scorefiles, the <CLASSNAME>MKSynthPatch</CLASSNAME>
+	    is specified in the part info's <emphasis
+	    role="bold">synthPatch:</emphasis> parameter.  Manual mode
+	    is specified in the part info's <emphasis
+	    role="bold">synthPatchCount:</emphasis> parameter.
 	    Example:
 	  </PARA>
 	  <PROGRAMLISTING>
@@ -303,14 +307,14 @@ p1 synthPatch:"Pluck" synthPatchCount:2;
     </SECT1>
     
     <SECT1 ID="INTROTOUNITGENERATORS">
-      <TITLE>Intro to <CLASSNAME>UnitGenerators</CLASSNAME></TITLE>
+      <TITLE>Intro to <CLASSNAME>MKUnitGenerator</CLASSNAME>s</TITLE>
 
       <ITEMIZEDLIST>
 	<LISTITEM>
-	  <PARA> <CLASSNAME>UnitGenerator</CLASSNAME> is abstract.  It is an
+	  <PARA> <CLASSNAME>MKUnitGenerator</CLASSNAME> is abstract.  It is an
 	    Objective-C class that represents a <ACRONYM>DSP</ACRONYM> module.
 	    The <PRODUCTNAME>MusicKit</PRODUCTNAME> supplies a library of
-	    <CLASSNAME>UnitGenerator</CLASSNAME> subclases.  Each has the
+	    <CLASSNAME>MKUnitGenerator</CLASSNAME> subclases.  Each has the
 	    letters UG in its name.  The library is sufficient for most common
 	    uses.</PARA>
 	</LISTITEM>
@@ -322,9 +326,9 @@ p1 synthPatch:"Pluck" synthPatchCount:2;
 	    56001 usage we have seen.</PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> Each <CLASSNAME>UnitGenerator</CLASSNAME> has some number of
+	  <PARA> Each <CLASSNAME>MKUnitGenerator</CLASSNAME> has some number of
 	    inputs and outputs.  For each configuration, a
-	    <CLASSNAME>UnitGenerator</CLASSNAME> subclass exists.  Example:
+	    <CLASSNAME>MKUnitGenerator</CLASSNAME> subclass exists.  Example:
 	  </PARA>
 
 	  <ITEMIZEDLIST>
@@ -347,18 +351,18 @@ p1 synthPatch:"Pluck" synthPatchCount:2;
 	  </ITEMIZEDLIST>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> When creating your own <CLASSNAME>UnitGenerator</CLASSNAME>,
+	  <PARA> When creating your own <CLASSNAME>MKUnitGenerator</CLASSNAME>,
 	    you only have to write the <ACRONYM>DSP</ACRONYM> code and run the
-	    command-line program <emphasis role="bold">dspwrap</emphasis>,
+	    command-line program <command>dspwrap</COMMAND>,
 	    which automatically writes all the classes for you.  You
-	    <emphasis>never </emphasis>have to edit the leaf classes.  You may
-	    <emphasis>optionally </emphasis>edit the master class.</PARA>
+	    <emphasis>never</emphasis> have to edit the leaf classes.  You may
+	    <emphasis>optionally</emphasis> edit the master class.</PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
     </SECT1>
     
     <SECT1 ID="UNITGENERATORLIBRARY">
-      <TITLE>The <CLASSNAME>UnitGenerator</CLASSNAME> Library</TITLE>
+      <TITLE>The <CLASSNAME>MKUnitGenerator</CLASSNAME> Library</TITLE>
       <TABLE FRAME="ALL">
 	<TITLE>	</TITLE>
 	<TGROUP COLS="2" ALIGN="LEFT">
@@ -408,44 +412,46 @@ p1 synthPatch:"Pluck" synthPatchCount:2;
       <ITEMIZEDLIST>
 	<LISTITEM>
 	  <PARA> Header files for all the
-	    <CLASSNAME>UnitGenerators</CLASSNAME> are referenced from: </PARA>
+	    <CLASSNAME>MKUnitGenerator</CLASSNAME>s are referenced from: </PARA>
 	  <PROGRAMLISTING>
-#import &lt;musickit/unitgenerators/unitgenerators.h&gt;
+#import &lt;MKUnitGenerators/MKUnitGenerators.h&gt;
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> <CLASSNAME>DSP</CLASSNAME> source code is provided for all
-	    the unit generators on <emphasis role="bold">/usr/lib/dsp/ugsrc/*
-	    </emphasis>.  You can copy the <CLASSNAME>DSP</CLASSNAME> source
-	    code to a unit generator and modify it to create a new unit
-	    generator.  You can then run it through <emphasis role="bold">
-	    dspwrap</emphasis> to produce the classes.  This is considered
-	    "advanced", since it requires knowledge of 56001 assembly and will
-	    not be covered in this class.</PARA>
+	  <PARA> <ACRONYM>DSP</ACRONYM> source code is provided for
+	    all the unit generators on <emphasis
+	    role="bold">/usr/lib/dsp/ugsrc/* </emphasis>.  You can
+	    copy the <ACRONYM>DSP</ACRONYM> source code to a unit
+	    generator and modify it to create a new unit generator.
+	    You can then run it through <emphasis role="bold">
+	    dspwrap</emphasis> to produce the classes.  This is
+	    considered &ldquo;advanced&rdquo;, since it requires
+	    knowledge of 56001 assembly and will not be covered in
+	    this class.</PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
     </SECT1>
     
     <SECT1 ID="UNITGENERATORCLASS">
-      <TITLE>The <CLASSNAME>UnitGenerator</CLASSNAME> Class</TITLE>
+      <TITLE>The <CLASSNAME>MKUnitGenerator</CLASSNAME> Class</TITLE>
 
       <ITEMIZEDLIST>
 	<LISTITEM>
-      <PARA> You can allocate a <CLASSNAME>UnitGenerator</CLASSNAME> from an
-	open <CLASSNAME>Orchestra</CLASSNAME>.  </PARA>
+      <PARA> You can allocate a <CLASSNAME>MKUnitGenerator</CLASSNAME> from an
+	open <CLASSNAME>MKOrchestra</CLASSNAME>.  </PARA>
       <PROGRAMLISTING>
 [orch allocUnitGenerator:[Out2sumUGx class]];
       </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
       <PARA> An allocated UnitGenerator is, by definition, running on the DSP.
-	You can deallocate a UnitGenerator by sending </PARA>
+	You can deallocate a UnitGenerator by sending: </PARA>
       <PROGRAMLISTING>
 [aUnitGenerator dealloc];
       </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> <CLASSNAME>UnitGenerators</CLASSNAME> are in one of three
+	  <PARA> <CLASSNAME>MKUnitGenerator</CLASSNAME>s are in one of three
 	    possible states: </PARA>
 	  <TABLE>
 	    <TITLE>	</TITLE>
@@ -475,7 +481,7 @@ p1 synthPatch:"Pluck" synthPatchCount:2;
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> These invoke the following methods, which you may implement
-	    if you make your own <CLASSNAME>UnitGenerator</CLASSNAME> class:
+	    if you make your own <CLASSNAME>MKUnitGenerator</CLASSNAME> class:
 	    </PARA> 
 	  <PARA> <emphasis role="bold"> idleSelf</emphasis>,
 	    <emphasis role="bold"> runSelf</emphasis>, <emphasis role="bold">
@@ -485,12 +491,12 @@ p1 synthPatch:"Pluck" synthPatchCount:2;
 	  <PARA> The return value of <emphasis role="bold">finish
 	    </emphasis>(and <emphasis role="bold">finishSelf</emphasis>) is a
 	    double that indicates the time until the
-	    <CLASSNAME>UnitGenerator</CLASSNAME> will be finished.
+	    <CLASSNAME>MKUnitGenerator</CLASSNAME> will be finished.
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> In addition to these standard methods, individual
-	    <CLASSNAME>UnitGenerator</CLASSNAME> classes implement methods
+	    <CLASSNAME>MKUnitGenerator</CLASSNAME> classes implement methods
 	    particular to their operation.  Common methods include <emphasis
 	    role="bold"> setInput:</emphasis> and <emphasis role="bold">
 	    setOutput:</emphasis>.  E.g. oscillators implement <emphasis
@@ -501,14 +507,14 @@ p1 synthPatch:"Pluck" synthPatchCount:2;
     </SECT1>
 
     <SECT1 ID="CONNECTINGUNITGENERATORS">
-      <TITLE>Connecting <CLASSNAME>UnitGenerators</CLASSNAME></TITLE>
+      <TITLE>Connecting <CLASSNAME>MKUnitGenerator</CLASSNAME>s</TITLE>
 
-      <PARA> To connect two <CLASSNAME>UnitGenerators</CLASSNAME>, you use a
-	"patchpoint", a kind of <CLASSNAME>SynthData</CLASSNAME>, which you
-	can allocate from the <CLASSNAME>Orchestra</CLASSNAME>.  You must be
+      <PARA> To connect two <CLASSNAME>MKUnitGenerator</CLASSNAME>s, you use a
+	"patchpoint", a kind of <CLASSNAME>MKSynthData</CLASSNAME>, which you
+	can allocate from the <CLASSNAME>MKOrchestra</CLASSNAME>.  You must be
 	sure to specify the memory space corresponding to the memory space of
-	the input/output that the <CLASSNAME>UnitGenerators</CLASSNAME> will
-	be reading/writing.  Example: </PARA>
+	the input/output that the <CLASSNAME>MKUnitGenerator</CLASSNAME>s will
+	be reading/writing.  Example:</PARA>
 
       <PROGRAMLISTING>
 SynthData *pp;	
@@ -529,29 +535,29 @@ out = [orch allocUnitGenerator:[Out1aUGx class]];
 /* You now hear a full-amplitude sine wave at 440 hz */	
       </PROGRAMLISTING>
       <PARA> Patchpoints may be reused, if you're careful about the order in
-	which <CLASSNAME>UnitGenerators</CLASSNAME> run.  (More on this
+	which <CLASSNAME>MKUnitGeneratos</CLASSNAME>s run.  (More on this
 	later.)</PARA>
     </SECT1>
 
     <SECT1 ID="SYNTHDATACLASS">
-      <TITLE>The <CLASSNAME>SynthData</CLASSNAME> Class</TITLE>
+      <TITLE>The <CLASSNAME>MKSynthData</CLASSNAME> Class</TITLE>
 
       <ITEMIZEDLIST>
 	<LISTITEM>
 	  <PARA> In addition to patchpoints, you may need other
 	    <ACRONYM>DSP</ACRONYM> memory.  For example, you may want to load
 	    a wave table.  To do this, you allocate a
-	    <CLASSNAME>SynthData</CLASSNAME> object.</PARA>
+	    <CLASSNAME>MKSynthData</CLASSNAME> object.</PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> To allocate a <CLASSNAME>SynthData</CLASSNAME>, you specify
+	  <PARA> To allocate a <CLASSNAME>MKSynthData</CLASSNAME>, you specify
 	    the length and the space: </PARA>
 	  <PROGRAMLISTING>
 SynthData *sd  = [orch allocSynthData:MK_xData length:256];	
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> To load the <CLASSNAME>SynthData</CLASSNAME> with an array:
+	  <PARA> To load the <CLASSNAME>MKSynthData</CLASSNAME> with an array:
 	  </PARA>
 	  <PROGRAMLISTING>
 DSPDatum someData[256] = {0,1,2,3,...};	
@@ -559,7 +565,7 @@ DSPDatum someData[256] = {0,1,2,3,...};
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> To load the <CLASSNAME>SynthData</CLASSNAME> with a constant:
+	  <PARA> To load the <CLASSNAME>MKSynthData</CLASSNAME> with a constant:
 	  </PARA>
 
 	  <PROGRAMLISTING>
@@ -567,11 +573,11 @@ DSPDatum someData[256] = {0,1,2,3,...};
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> Since patchponts are actually <CLASSNAME>SynthData</CLASSNAME>,
+	  <PARA> Since patchponts are actually <CLASSNAME>MKSynthData</CLASSNAME>,
 	    you can use these methods for them as well.</PARA> 
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> For convenience, <CLASSNAME>WaveTables</CLASSNAME> have a
+	  <PARA> For convenience, <CLASSNAME>MKWaveTables</CLASSNAME> have a
 	    <emphasis role="bold">dataDSPLength:</emphasis> method: </PARA>
 	  <PROGRAMLISTING>
 [sd setData:[aWaveTable dataDSPLength:256]];
@@ -581,20 +587,20 @@ DSPDatum someData[256] = {0,1,2,3,...};
     </SECT1>
 
     <SECT1 ID="EXAMPLE">
-      <TITLE>Simple Example of a Collection of UnitGenerators, Operated from a
+      <TITLE>Simple Example of a Collection of <CLASSNAME>MKUnitGenerator</CLASSNAME>s, Operated from a
 	User Interface</TITLE>
       <PROGRAMLISTING>
-#import &lt;musickit/musickit.h&gt;
-#import &lt;musickit/unitgenerators/unitgenerators.h&gt;
+#import &lt;MusicKit/MusicKit.h&gt;
+#import &lt;MKUnitGenerators/MKUnitGenerators.h&gt;
 #import "MyCustomObject.h"
 @implementation MyCustomObject
 
-SynthData *pp;
-UnitGenerator *osc,*out; 	
+MKSynthData *pp;
+MKUnitGenerator *osc,*out; 	
 
 +init
-{	Orchestra *orch = [Orchestra new];	
-	[UnitGenerator enableErrorChecking:YES];	
+{	MKOrchestra *orch = [MKOrchestra new];	
+	[MKUnitGenerator enableErrorChecking:YES];	
 	[orch open];	
 	pp = [orch allocPatchpoint:MK_xData];	
 	osc = [orch allocUnitGenerator:[OscgUGxy class]];	
@@ -607,25 +613,25 @@ UnitGenerator *osc,*out;
 	[osc run];	
 	[out run];	
 	[orch run];	
-	[Conductor startPerformance];
+	[MKConductor startPerformance];
 }
 
 +setFreqFrom:sender
-{	[Conductor lockPerformance];	
+{	[MKConductor lockPerformance];	
 	[osc setFreq:[sender doubleValue]];	
-	[Conductor unlockPerformance];
+	[MKConductor unlockPerformance];
 }
 
 +setBearingFrom:sender
-{	[Conductor lockPerformance];	
+{	[MKConductor lockPerformance];	
 	[out setBearing:[sender doubleValue]];	
-	[Conductor unlockPerformance];
+	[MKConductor unlockPerformance];
 }
 
 +setAmplitudeFrom:sender
-{	[Conductor lockPerformance];	
+{	[MKConductor lockPerformance];	
 	[osc setAmp:[sender doubleValue]];	
-	[Conductor unlockPerformance];
+	[MKConductor unlockPerformance];
 }
 
 @end
@@ -635,13 +641,13 @@ UnitGenerator *osc,*out;
     <SECT1 ID="ASSIGNMENT4">
       <TITLE>Assignment - Week 4</TITLE> 
 
-      <PARA>Modify <EMPHASIS ROLE="bold">MusicKitClass/example4 </EMPHASIS>to
+      <PARA>Modify <filename>Examples/example4</FILENAME> to
 	make a different sound.  Try using some other
-	<CLASSNAME>UnitGenerators</CLASSNAME>.  </PARA> 
+	<CLASSNAME>MKUnitGenerator</CLASSNAME>s.  </PARA> 
       
       <PARA>Read the documentation on <ACRONYM>DSP</ACRONYM> synthesis in the
-	<PRODUCTNAME>NeXT</PRODUCTNAME> Concepts Sound/Music/DSP Manual.  Next
-	week we'll cover <CLASSNAME>SynthPatches</CLASSNAME>.</para>
+	<ULINK URL="&MKConcepts;">MusicKit Concepts Manual</ULINK>.  Next
+	week we'll cover <CLASSNAME>MKSynthPatches</CLASSNAME>.</para>
     </SECT1>
   </CHAPTER>
 

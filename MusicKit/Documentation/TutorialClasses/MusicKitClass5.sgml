@@ -1,7 +1,7 @@
 <!-- $Id$ -->
 
   <CHAPTER ID="class5">
-      <TITLE>Class 5 &horbar; SynthPatches</TITLE>
+      <TITLE>Class 5 &horbar; <CLASSNAME>MKSynthPatch</CLASSNAME>es</TITLE>
 
     <SECT1 ID="Review">
       <TITLE>Review: Classes in the <PRODUCTNAME>MusicKit</PRODUCTNAME></TITLE>
@@ -46,52 +46,53 @@
       
       <ITEMIZEDLIST>
 	<LISTITEM>
-	  <PARA> The <CLASSNAME>Orchestra</CLASSNAME> class manages the
-	    <CLASSNAME>DSP</CLASSNAME> as a whole. 
+	  <PARA> The <CLASSNAME>MKOrchestra</CLASSNAME> class manages the
+	    <ACRONYM>DSP</ACRONYM> as a whole. 
 	  </PARA> 
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> The <CLASSNAME>UnitGenerator</CLASSNAME> class (abstract)
+	  <PARA> The <CLASSNAME>MKUnitGenerator</CLASSNAME> class (abstract)
 	    represents a <ACRONYM>DSP</ACRONYM> processing or generating module,
 	    such as an oscillator or a filter.
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> The <CLASSNAME>SynthData</CLASSNAME> class represents a piece
-	    of <ACRONYM>DSP</ACRONYM> memory.  A special type of
-	    <CLASSNAME>SynthData</CLASSNAME> called a "patchpoint" is used to
-	    connect <CLASSNAME>UnitGenerators</CLASSNAME>.
+	  <PARA> The <CLASSNAME>MKSynthData</CLASSNAME> class
+	    represents a piece of <ACRONYM>DSP</ACRONYM> memory.  A
+	    special type of <CLASSNAME>MKSynthData</CLASSNAME> called
+	    a &ldquo;patchpoint&rdquo; is used to connect
+	    <CLASSNAME>MKUnitGenerator</CLASSNAME>s.
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> The <CLASSNAME>SynthPatch</CLASSNAME> class (abstract)
-	    contains a list of <CLASSNAME>UnitGenerators</CLASSNAME> that make
+	  <PARA> The <CLASSNAME>MKSynthPatch</CLASSNAME> class (abstract)
+	    contains a list of <CLASSNAME>MKUnitGenerator</CLASSNAME>s that make
 	    up a single sound-producing entity.  To produce a chord, multiple
-	    instances of a <CLASSNAME>SynthPatch</CLASSNAME> subclass are
+	    instances of a <CLASSNAME>MKSynthPatch</CLASSNAME> subclass are
 	    required.
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> The <CLASSNAME>SynthInstrument</CLASSNAME> class manages a
-	    set of <CLASSNAME>SynthPatches</CLASSNAME> (voice allocation).
+	  <PARA> The <CLASSNAME>MKSynthInstrument</CLASSNAME> class manages a
+	    set of <CLASSNAME>MKSynthPatch</CLASSNAME>es (voice allocation).
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> The <CLASSNAME>PatchTemplate</CLASSNAME> class is an auxiliary
-	    class used to define the <CLASSNAME>UnitGenerators</CLASSNAME> that
-	    make up a <CLASSNAME>SynthPatch</CLASSNAME>. 
+	  <PARA> The <CLASSNAME>MKPatchTemplate</CLASSNAME> class is an auxiliary
+	    class used to define the <CLASSNAME>MKUnitGenerator</CLASSNAME>s that
+	    make up a <CLASSNAME>MKSynthPatch</CLASSNAME>. 
 	  </PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
     </SECT1>
 
     <SECT1 ID="SYNTHPATCHCLASS">
-    <TITLE>The <CLASSNAME>SynthPatch</CLASSNAME> Class</TITLE>
+    <TITLE>The <CLASSNAME>MKSynthPatch</CLASSNAME> Class</TITLE>
 
       <ITEMIZEDLIST>
 	<LISTITEM>
 	  <PARA> Abstract class.  You never directly instantiate an instance of
-	    the <CLASSNAME>SynthPatch</CLASSNAME> class.  You instantiate its
+	    the <CLASSNAME>MKSynthPatch</CLASSNAME> class.  You instantiate its
 	    subclasses. </PARA>
 	</LISTITEM>
 	<LISTITEM>
@@ -103,22 +104,22 @@
 	    ordinarily produce chords.  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> A collections of <CLASSNAME>SynthPatch</CLASSNAME> instances
+	  <PARA> A collections of <CLASSNAME>MKSynthPatch</CLASSNAME> instances
 	    of a particular class are most conveniently managed by a
-	    <CLASSNAME>SynthInstrument</CLASSNAME>.  Multiple collections of
+	    <CLASSNAME>MKSynthInstrument</CLASSNAME>.  Multiple collections of
 	    instances of different classes may be managed by multiple
-	    <CLASSNAME>SynthInstruments</CLASSNAME>. </PARA>
+	    <CLASSNAME>MKSynthInstruments</CLASSNAME>. </PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> Alternatively you can allocate and manage a collection of
-	    <CLASSNAME>SynthPatches</CLASSNAME> yourself: </PARA>
+	    <CLASSNAME>MKSynthPatch</CLASSNAME>es yourself: </PARA>
 	  <PROGRAMLISTING>
 id  sp = [orch allocSynthPatch: [Pluck class ]];	
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> The <PRODUCTNAME>MusicKit</PRODUCTNAME> provides a library of
-	    <CLASSNAME>SynthPatches</CLASSNAME>.</PARA>
+	    <CLASSNAME>MKSynthPatch</CLASSNAME>es.</PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
     </SECT1>
@@ -132,16 +133,16 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 	  <TBODY>
 	    <ROW>
 	      <ENTRY>Wave1</ENTRY>
-	      <ENTRY>"1" stands for one oscillator	</ENTRY>
+	      <ENTRY>&ldquo;1&rdquo; stands for one oscillator	</ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>Wave1i</ENTRY>
-	      <ENTRY>"i" stands for interpolating oscillator
+	      <ENTRY>&ldquo;i&rdquo; stands for interpolating oscillator
 	      </ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>Wave1v</ENTRY>
-	      <ENTRY>"v" stands for vibrato (random,periodic)</ENTRY>
+	      <ENTRY>&ldquo;v&rdquo; stands for vibrato (random,periodic)</ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>Wave1vi</ENTRY>
@@ -149,12 +150,12 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 	    </ROW>
 	    <ROW>
 	      <ENTRY>DBWave1vi</ENTRY>
-	      <ENTRY>"DB" stands for "data base of timbres"
+	      <ENTRY>&ldquo;DB&rdquo; stands for &ldquo;data base of timbres&rdquo;
 	      </ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>DBWave2vi</ENTRY>
-	      <ENTRY> "2" stands for two oscillators</ENTRY>
+	      <ENTRY> &ldquo;2&rdquo; stands for two oscillators</ENTRY>
 	    </ROW>
 	  </TBODY>
 	</TGROUP>
@@ -165,15 +166,15 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 	  <TBODY>
 	    <ROW>
 	      <ENTRY>Fm1</ENTRY>
-	      <ENTRY>"1" stands for one modulator	</ENTRY>
+	      <ENTRY>&ldquo;1&rdquo; stands for one modulator	</ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>Fm1i</ENTRY>
-	      <ENTRY>"i" stands for interpolating carrier	</ENTRY>
+	      <ENTRY>&ldquo;i&rdquo; stands for interpolating carrier	</ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>Fm1v</ENTRY>
-	      <ENTRY>"v" stands for vibrato (random,periodic)</ENTRY>
+	      <ENTRY>&ldquo;v&rdquo; stands for vibrato (random,periodic)</ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>Fm1vi</ENTRY>
@@ -181,19 +182,19 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 	    </ROW>
 	    <ROW>
 	      <ENTRY>DBFm1vi</ENTRY>
-	      <ENTRY>"DB" stands for "data base of timbres"   </ENTRY>
+	      <ENTRY>&ldquo;DB&rdquo; stands for &ldquo;data base of timbres&rdquo;   </ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>Fm2pvi</ENTRY>
-	      <ENTRY>  "2p" stands for 2 modulators in parallel    </ENTRY>
+	      <ENTRY>  &ldquo;2p&rdquo; stands for 2 modulators in parallel    </ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>Fm2cvi</ENTRY>
-	      <ENTRY>  "2c" stands for 2 modulators in cascade  </ENTRY>
+	      <ENTRY>  &ldquo;2c&rdquo; stands for 2 modulators in cascade  </ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>Fm2pnvi</ENTRY>
-	      <ENTRY>  "n" stands for a noise modulator	</ENTRY>
+	      <ENTRY>  &ldquo;n&rdquo; stands for a noise modulator	</ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>Fm2cnvi</ENTRY>
@@ -213,25 +214,25 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 	  </TBODY>
 	</TGROUP>
       </TABLE>
-      <PARA>All Wave and Fm <CLASSNAME>SynthPatches</CLASSNAME> have separate
+      <PARA>All Wave and Fm <CLASSNAME>MKSynthPatch</CLASSNAME>es have separate
 	envelopes with arbitrarily many points on amplitude, frequency, and
 	the various FM indecies.  Vibrato may run at audio rates.  Both
 	carrier and modulators may have any periodic waveform.</PARA>
     </SECT1>
     
     <SECT1 ID="TIMBREDATABASE">
-      <TITLE>The <CLASSNAME>SynthPatch</CLASSNAME> Library Timbre Data
+      <TITLE>The <CLASSNAME>MKSynthPatch</CLASSNAME> Library Timbre Data
 	Base</TITLE>
 
-      <PARA> You specify a "timbre" as a string to the <emphasis role="bold">
+      <PARA> You specify a &ldquo;timbre&rdquo; as a string to the <emphasis role="bold">
 	  waveform</emphasis> parameter.  For the
 	  <CLASSNAME>DBFm1vi</CLASSNAME>, you can also specify the modulating
 	  wave as a timbre.</PARA>
 
-      <PARA> Each "timbre" represents a family of
-	<CLASSNAME>WaveTables</CLASSNAME>, one for each frequency range.  This
+      <PARA> Each &ldquo;timbre&rdquo; represents a family of
+	<CLASSNAME>MKWaveTables</CLASSNAME>, one for each frequency range.  This
 	is very similar to how samplers work.  By changing waveforms as the
-	pitch changes, the "munchkin" effect is avoided.  Also, the waveforms
+	pitch changes, the &ldquo;munchkin&rdquo; effect is avoided.  Also, the waveforms
 	are band-limited, preventing aliasing.</PARA>
       
       <PARA> List of timbres, derived from analysis of recorded data,
@@ -242,28 +243,28 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
       <PARA>piano 	</PARA>
       <PARA>various electronic waveforms such as square wave</PARA>
       <PARA> Interpolation from one timbre to another is supported in some of
-	the <CLASSNAME>SynthPatches</CLASSNAME>.</PARA>
+	the <CLASSNAME>MKSynthPatch</CLASSNAME>es.</PARA>
       <PARA> In release 3.0 the data base is user-extendable.</PARA>
     </SECT1>
     
     <SECT1 ID="MakingYourOwnSynthPatchClass">
-      <TITLE>Making Your Own <CLASSNAME>SynthPatch</CLASSNAME> Class</TITLE> 
+      <TITLE>Making Your Own <CLASSNAME>MKSynthPatch</CLASSNAME> Class</TITLE> 
 
-      <PARA>A <CLASSNAME>SynthPatch</CLASSNAME> subclass consists of three
+      <PARA>A <CLASSNAME>MKSynthPatch</CLASSNAME> subclass consists of three
 	fundamental parts: </PARA>
       <ORDEREDLIST>
 	<LISTITEM>
 	  <PARA>A specification of <emphasis>a collection of
-	      <CLASSNAME>UnitGenerators</CLASSNAME> Classes</emphasis>
+	      <CLASSNAME>MKUnitGenerator</CLASSNAME>s Classes</emphasis>
 	      instances of which comprise each
-	      <CLASSNAME>SynthPatch</CLASSNAME> instance.  This is done using
+	      <CLASSNAME>MKSynthPatch</CLASSNAME> instance.  This is done using
 	      an auxiliary object called a
-	      "<CLASSNAME>PatchTemplate</CLASSNAME>."  A single
-	      <CLASSNAME>SynthPatch</CLASSNAME> class may supply various
-	      <CLASSNAME>PatchTemplates</CLASSNAME> representing various
-	      "flavors" of the <CLASSNAME>SynthPatch</CLASSNAME>.  For
+	      &ldquo;<CLASSNAME>MKPatchTemplate</CLASSNAME>.&rdquo;  A single
+	      <CLASSNAME>MKSynthPatch</CLASSNAME> class may supply various
+	      <CLASSNAME>MKPatchTemplates</CLASSNAME> representing various
+	      &ldquo;flavors&rdquo; of the <CLASSNAME>MKSynthPatch</CLASSNAME>.  For
 	      example, there may be an additive synthesis
-	      <CLASSNAME>SynthPatch</CLASSNAME> with an 8-oscillator flavor
+	      <CLASSNAME>MKSynthPatch</CLASSNAME> with an 8-oscillator flavor
 	      and a 16-oscillator flavor.  This is done by supplying the class
 	      method: </PARA>
 	  <PROGRAMLISTING>
@@ -272,14 +273,14 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA>A description of the <emphasis>interconnections</emphasis> of
-	  the <CLASSNAME>UnitGenerator</CLASSNAME> instances.  This may be
-	  done in the <CLASSNAME>PatchTemplate</CLASSNAME> or in the
-	  <CLASSNAME>SynthPatch</CLASSNAME> <emphasis role="bold">init
+	  the <CLASSNAME>MKUnitGenerator</CLASSNAME> instances.  This may be
+	  done in the <CLASSNAME>MKPatchTemplate</CLASSNAME> or in the
+	  <CLASSNAME>MKSynthPatch</CLASSNAME> <emphasis role="bold">init
 	  </emphasis> instance method.  </PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA>A description of the <emphasis>behavior </emphasis> of the
-	    <CLASSNAME>SynthPatch</CLASSNAME> when sent notes.  This is done
+	    <CLASSNAME>MKSynthPatch</CLASSNAME> when sent notes.  This is done
 	    by supplying the instance methods: </PARA>
 	  <PARA><emphasis role="bold">noteOnSelf:</emphasis> </PARA> 
 	  <PARA><emphasis role="bold">noteOffSelf:</emphasis> </PARA>
@@ -306,50 +307,50 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
     
     <SECT1 ID="SPECCOLLECTIONOFUNITGENERATORS">
       <TITLE>1. Specifying a Collection of
-	<CLASSNAME>UnitGenerators</CLASSNAME></TITLE>
+	<CLASSNAME>MKUnitGenerator</CLASSNAME>s</TITLE>
       
-      <PARA> To specify the collection, the <CLASSNAME>SynthPatch</CLASSNAME>
+      <PARA> To specify the collection, the <CLASSNAME>MKSynthPatch</CLASSNAME>
 	subclass implements a single class method: </PARA>
       <PROGRAMLISTING>
 +patchTemplateFor: aNote	
       </PROGRAMLISTING>
-      <PARA> This method creates the <CLASSNAME>PatchTemplate</CLASSNAME> used
+      <PARA> This method creates the <CLASSNAME>MKPatchTemplate</CLASSNAME> used
 	to represent the connections.  The <CLASSNAME>MKNote</CLASSNAME> passed
-	to the method may be used to choose between various "flavors".</PARA>
-      <PARA> The <CLASSNAME>PatchTemplate</CLASSNAME> consists of a list of
-	the <CLASSNAME>UnitGenerator</CLASSNAME> <emphasis>classes</emphasis>
-	and <CLASSNAME>SynthData</CLASSNAME> <emphasis>requests</emphasis>
-	needed to build an instance of the <CLASSNAME>SynthPatch</CLASSNAME>.
+	to the method may be used to choose between various &ldquo;flavors&rdquo;.</PARA>
+      <PARA> The <CLASSNAME>MKPatchTemplate</CLASSNAME> consists of a list of
+	the <CLASSNAME>MKUnitGenerator</CLASSNAME> <emphasis>classes</emphasis>
+	and <CLASSNAME>MKSynthData</CLASSNAME> <emphasis>requests</emphasis>
+	needed to build an instance of the <CLASSNAME>MKSynthPatch</CLASSNAME>.
       </PARA>
-      <PARA> The <CLASSNAME>Orchestra</CLASSNAME> uses the
-	<CLASSNAME>PatchTemplate</CLASSNAME> to build an instance of the
-	<CLASSNAME>SynthPatch</CLASSNAME>.  For each entry in the
-	<CLASSNAME>PatchTemplate</CLASSNAME>, it allocates an appropriate
-	<CLASSNAME>UnitGenerator</CLASSNAME> or
-	<CLASSNAME>SynthData</CLASSNAME> <emphasis>instance</emphasis>. The
-	collection of <CLASSNAME>UnitGenerators</CLASSNAME> appears in the
-	<CLASSNAME>SynthPatch</CLASSNAME> instance as a
+      <PARA> The <CLASSNAME>MKOrchestra</CLASSNAME> uses the
+	<CLASSNAME>MKPatchTemplate</CLASSNAME> to build an instance of the
+	<CLASSNAME>MKSynthPatch</CLASSNAME>.  For each entry in the
+	<CLASSNAME>MKPatchTemplate</CLASSNAME>, it allocates an appropriate
+	<CLASSNAME>MKUnitGenerator</CLASSNAME> or
+	<CLASSNAME>MKSynthData</CLASSNAME> <emphasis>instance</emphasis>. The
+	collection of <CLASSNAME>MKUnitGenerator</CLASSNAME>s appears in the
+	<CLASSNAME>MKSynthPatch</CLASSNAME> instance as a
 	<CLASSNAME>List</CLASSNAME> object in the instance variable
 	<emphasis>synthElements.  </emphasis> The instance can retrieve a
-	particular <CLASSNAME>UnitGenerator</CLASSNAME> or
-	<CLASSNAME>SynthData</CLASSNAME> instance by sending itself the
+	particular <CLASSNAME>MKUnitGenerator</CLASSNAME> or
+	<CLASSNAME>MKSynthData</CLASSNAME> instance by sending itself the
 	message:
       </PARA>
       <PROGRAMLISTING>
 +synthElementAt: (int)index
       </PROGRAMLISTING>
-      <PARA> The <CLASSNAME>UnitGenerators</CLASSNAME> appear in the order
-	they were specified in the <CLASSNAME>PatchTemplate</CLASSNAME>.  For
-	convenience, the <CLASSNAME>PatchTemplate</CLASSNAME> specification
+      <PARA> The <CLASSNAME>MKUnitGenerator</CLASSNAME>s appear in the order
+	they were specified in the <CLASSNAME>MKPatchTemplate</CLASSNAME>.  For
+	convenience, the <CLASSNAME>MKPatchTemplate</CLASSNAME> specification
 	methods return the integer used to later access the particular
-	element.  By convention a <CLASSNAME>SynthPatch</CLASSNAME> stores
+	element.  By convention a <CLASSNAME>MKSynthPatch</CLASSNAME> stores
 	this integer in a static int variable.  </PARA>
-      <PARA> <CLASSNAME>UnitGenerators</CLASSNAME> may be specified as ordered
+      <PARA> <CLASSNAME>MKUnitGenerator</CLASSNAME>s may be specified as ordered
 	or unordered.  By default, they are ordered.  Note that you must specify
-	the particular <CLASSNAME>UnitGenerator</CLASSNAME> leaf class.</PARA>
-      <PARA> <CLASSNAME>SynthData</CLASSNAME> are specified by supplying a
+	the particular <CLASSNAME>MKUnitGenerator</CLASSNAME> leaf class.</PARA>
+      <PARA> <CLASSNAME>MKSynthData</CLASSNAME> are specified by supplying a
 	memory space and a length.</PARA>
-      <PARA>   Example for simple <CLASSNAME>SynthPatch</CLASSNAME>:</PARA>
+      <PARA>   Example for simple <CLASSNAME>MKSynthPatch</CLASSNAME>:</PARA>
       <PROGRAMLISTING>
 static int  sc, patchPoint, out;
 
@@ -367,21 +368,21 @@ static int  sc, patchPoint, out;
 }
       </PROGRAMLISTING>
       <PARA> <emphasis role="bold">Alternative to
-	<CLASSNAME>PatchTemplate</CLASSNAME>: </emphasis>. Just allocate
-	directly from <CLASSNAME>Orchestra</CLASSNAME> in <emphasis
+	<CLASSNAME>MKPatchTemplate</CLASSNAME>: </emphasis>. Just allocate
+	directly from <CLASSNAME>MKOrchestra</CLASSNAME> in <emphasis
 	role="bold">-init </emphasis> method.  Advantage of using a
-	<CLASSNAME>PatchTemplate</CLASSNAME> is that patch is stored as data
+	<CLASSNAME>MKPatchTemplate</CLASSNAME> is that patch is stored as data
 	and aborting on allocation failure is handled automatically. </PARA>
     </SECT1>
     
     <SECT1 ID="SPECCONNECTIONS">
       <TITLE>2. Specifying the Connections</TITLE> 
 
-      <PARA> Two <CLASSNAME>UnitGenerator</CLASSNAME> instances communicate
+      <PARA> Two <CLASSNAME>MKUnitGenerator</CLASSNAME> instances communicate
 	via a patchPoint.  The patchPoint's memory space must match the space
 	of the input or output to which it is connected. Connections are made
 	by sending an appropriate message to the
-	<CLASSNAME>UnitGenerators</CLASSNAME> with the patchPoint as an
+	<CLASSNAME>MKUnitGenerator</CLASSNAME>s with the patchPoint as an
 	argument.</PARA>
       <PARA> There are two ways to specify the connections:	</PARA>
       <ORDEREDLIST>
@@ -390,13 +391,13 @@ static int  sc, patchPoint, out;
 	    method. </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA>2. In the <CLASSNAME>PatchTemplate</CLASSNAME> itself.</PARA>
+	  <PARA>2. In the <CLASSNAME>MKPatchTemplate</CLASSNAME> itself.</PARA>
 	</LISTITEM>
       </ORDEREDLIST>
       <PARA> It is a bit easier to specify the connections in the <emphasis
 	role="bold"> init</emphasis> method.  The only advantage of using the
-	<CLASSNAME>PatchTemplate</CLASSNAME> is that it allows
-	<CLASSNAME>SynthPatches</CLASSNAME> to be more easily edited using a
+	<CLASSNAME>MKPatchTemplate</CLASSNAME> is that it allows
+	<CLASSNAME>MKSynthPatch</CLASSNAME>es to be more easily edited using a
 	patch editor, since the connections can be stored as data using the
 	NXTypedStream mechanism.  For now, we will address only the <emphasis
 	role="bold">init </emphasis> approach.</PARA> <PARA> Let's continue
@@ -455,8 +456,8 @@ static int  sc, patchPoint, out;
 	    noteEndSelf</emphasis> </PARA>
 	</LISTITEM>
       </ORDEREDLIST>
-      <PARA> Like a <CLASSNAME>UnitGenerator</CLASSNAME>, a
-	<CLASSNAME>SynthPatch</CLASSNAME> may be in one of three states: </PARA>
+      <PARA> Like a <CLASSNAME>MKUnitGenerator</CLASSNAME>, a
+	<CLASSNAME>MKSynthPatch</CLASSNAME> may be in one of three states: </PARA>
       <TABLE>
 	<TITLE>	</TITLE>
 	<TGROUP COLS="2" ALIGN="LEFT">
@@ -469,33 +470,33 @@ static int  sc, patchPoint, out;
 	      <ENTRY> Running.</ENTRY> </ROW> 
 	    <ROW>
 	      <ENTRY><CONSTANT>MK_finishing</CONSTANT></ENTRY>
-	      <ENTRY><CLASSNAME>Envelope</CLASSNAME> release. </ENTRY></ROW>
+	      <ENTRY><CLASSNAME>MKEnvelope</CLASSNAME> release. </ENTRY></ROW>
 	  </TBODY>
 	</TGROUP>
       </TABLE>
       <ITEMIZEDLIST>
 	<LISTITEM>
-	  <PARA> A <CLASSNAME>SynthPatch</CLASSNAME> is in the idle state when
+	  <PARA> A <CLASSNAME>MKSynthPatch</CLASSNAME> is in the idle state when
 	    it is first created or after it has received
 	    <CONSTANT>noteEnd</CONSTANT> </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> A <CLASSNAME>SynthPatch</CLASSNAME> is in the running state
+	  <PARA> A <CLASSNAME>MKSynthPatch</CLASSNAME> is in the running state
 	    when it has received a <CONSTANT>noteOn</CONSTANT> or
 	    <CONSTANT>noteDur</CONSTANT>.</PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> A <CLASSNAME>SynthPatch</CLASSNAME> is in the finishing state
+	  <PARA> A <CLASSNAME>MKSynthPatch</CLASSNAME> is in the finishing state
 	    when it has received a <CONSTANT>noteOff</CONSTANT> or its duration
 	    has elapsed.</PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA><emphasis> The only requirement for the behavior of a
-	      <CLASSNAME>SynthPatch</CLASSNAME> is that it be left "safe" and
-	      "quiet" when idle.</emphasis> </PARA>
+	      <CLASSNAME>MKSynthPatch</CLASSNAME> is that it be left &ldquo;safe&rdquo; and
+	      &ldquo;quiet&rdquo; when idle.</emphasis> </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> An easy way to make a <CLASSNAME>SynthPatch</CLASSNAME> quiet
+	  <PARA> An easy way to make a <CLASSNAME>MKSynthPatch</CLASSNAME> quiet
 	    is to set its amplitude to 0.  </PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
@@ -599,13 +600,15 @@ static int osc, patchPoint, out;  /* Used as indexes into synthElements array */
  	 return self;
 }
       </PROGRAMLISTING>
-      <PARA> To relax the restriction that all Notes need to have every
-	parameter present, you can set the parameter in <emphasis role="bold">
-	noteOnSelf: </emphasis> and <emphasis role="bold">noteUpdateSelf:
-	</emphasis> only when it is present, store its value in an instance
-	variable, and set it back to a default value in
-	<CLASSNAME>noteEnd</CLASSNAME>.  E.g., if there is an instance
-	variable<emphasis> freq</emphasis>. </PARA>
+      <PARA> To relax the restriction that all
+	<CLASSNAME>MKNote</CLASSNAME>s need to have every parameter
+	present, you can set the parameter in <emphasis
+	role="bold">noteOnSelf:</emphasis> and <emphasis
+	role="bold">noteUpdateSelf:</emphasis> only when it is
+	present, store its value in an instance variable, and set it
+	back to a default value in <CONSTANT>noteEnd</CONSTANT>.
+	E.g., if there is an instance variable
+	<emphasis>freq</emphasis>. </PARA>
       <PROGRAMLISTING>
 +noteOnSelf:aNote
 {	if ([aNote isParPresent:MK_freq]) 	
@@ -619,7 +622,7 @@ static int osc, patchPoint, out;  /* Used as indexes into synthElements array */
 }
       </PROGRAMLISTING>
       <PARA> To add an amplitude envelope, we need to use an
-	<CLASSNAME>AsympUG</CLASSNAME> <CLASSNAME>UnitGenerator</CLASSNAME> to
+	<CLASSNAME>AsympUG</CLASSNAME> <CLASSNAME>MKUnitGenerator</CLASSNAME> to
 	create the envelope, write it to a patch point and use an oscillator
 	that is capable of reading its amplitude from a patchpoint.  The
 	<CLASSNAME>OscgafiUG </CLASSNAME>supports reading both its amplitude
@@ -630,7 +633,7 @@ static int osc, patchPoint, out;  /* Used as indexes into synthElements array */
       <PROGRAMLISTING>
 MKUpdateAsymp(	
 	AsympUG *anAsymp,	// asymp instance	
-	Envelope *ampEnv,	// the envelope	
+	MKEnvelope *ampEnv,	// the envelope	
 	double amp0,	// value when env at 0 	
 	double amp1,	// value when env at 1	
 	double ampAtt,	// attack time	
@@ -638,10 +641,11 @@ MKUpdateAsymp(
 	double portamento, 	// transition time on rearticulation	
 	MKPhraseStatus phraseStatus);  	// see below
       </PROGRAMLISTING>
+
       <PARA>Any argument may be omitted.  For double arguments, omitting the
 	argument means supplying the special value
-	<CONSTANT>MK_NODVAL</CONSTANT> (which stands for "No Double
-	Value").</PARA>
+	<CONSTANT>MK_NODVAL</CONSTANT> (which stands for &ldquo;No Double
+	Value&rdquo;).</PARA>
 
       <PARA>Phrase status is obtained by sending [<emphasis role="bold">self
 	  phraseStatus</emphasis> ]; </PARA>
@@ -665,7 +669,7 @@ MKUpdateAsymp(
       <TITLE>The Complete Story About Phrase Status</TITLE>
 
       <PARA> Phrase status defines, within a
-	<CLASSNAME>SynthPatch</CLASSNAME>, all the possible places we can be
+	<CLASSNAME>MKSynthPatch</CLASSNAME>, all the possible places we can be
 	in a <PRODUCTNAME>MusicKit</PRODUCTNAME> phrase: </PARA>
       
       <TABLE>
@@ -705,8 +709,8 @@ MKUpdateAsymp(
       </TABLE>
       <PARA> Preemption occurs when there is not enough <ACRONYM>DSP</ACRONYM>
 	resources to support the requested number of simultaneous notes.  It
-	is controlled by the <CLASSNAME>SynthInstrument</CLASSNAME>.  The
-	<CLASSNAME>SynthPatch</CLASSNAME> designer need only implement a
+	is controlled by the <CLASSNAME>MKSynthInstrument</CLASSNAME>.  The
+	<CLASSNAME>MKSynthPatch</CLASSNAME> designer need only implement a
 	method:
       </PARA>
       <PROGRAMLISTING>
@@ -724,13 +728,11 @@ return self;
     
     <SECT1 ID="ASSIGNMENT5">
       <TITLE>Assignment - Week 5</TITLE>
-      <PARA>Study <emphasis role="bold">MusicKitClass/exampsynthpatch
-	</emphasis> also available in <emphasis role="bold">
-	/NextDeveloper/Examples/MusicKit</emphasis> directory).
+      <PARA>Study <filename>Examples/exampleSynthPatch</FILENAME>.
       </PARA>
-      <PARA>Modify <emphasis role="bold">Envy.m</emphasis> to set the
-	<CLASSNAME>WaveTable</CLASSNAME> of the synthesis.  Then recompile it,
-	create a scorefile that specifies a <CLASSNAME>WaveTable</CLASSNAME>,
+      <PARA>Modify <filename>Envy.m</FILENAME> to set the
+	<CLASSNAME>MKWaveTable</CLASSNAME> of the synthesis.  Then recompile it,
+	create a scorefile that specifies a <CLASSNAME>MKWaveTable</CLASSNAME>,
 	and test it. </PARA>
       <PARA>Modify any one of the example synthpatches on that directory to do
 	some other sort of synthesis, such as amplitude modulation.</para>
