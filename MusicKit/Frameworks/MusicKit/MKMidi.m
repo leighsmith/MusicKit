@@ -66,6 +66,9 @@
 Modification history:
 
   $Log$
+  Revision 1.21  2000/05/06 02:36:42  leigh
+  Made Win32 declare regression class types also
+
   Revision 1.20  2000/04/26 01:24:25  leigh
   Removed use of HashTable, fixed memory leak in factory methods
 
@@ -1776,7 +1779,7 @@ static void cancelQueueReq(MKMidi *self)
     return self;
 }
 
-// Download the patch numbers supplied in the array as Downloadable Sounds (DLS).
+// Download the patch numbers (NSNumbers) supplied in the NSArray as Downloadable Sounds (DLS).
 // The patch format per integer follows the Microsoft convention:
 // X0000000MMMMMMM0LLLLLLL0PPPPPPP
 // X bit 31     = Patch is a DrumKit

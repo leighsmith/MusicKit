@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.18  2000/05/06 02:35:41  leigh
+  Made Win32 declare regression class types also
+
   Revision 1.17  2000/05/06 00:28:57  leigh
   removed redundant setjmp include
 
@@ -142,7 +145,7 @@ static int oldPriority = MAXINT;
 static int oldPolicy = INVALID_POLICY;
 #endif
 
-#if defined(__ppc__) && defined(ppc)
+#if (defined(__ppc__) && defined(ppc)) || WIN32
 #define NSMessagePort NSPort  // fudge around MacOsX-Server old concrete NSPort for MacOsX-Server or OpenStep
 #endif
 

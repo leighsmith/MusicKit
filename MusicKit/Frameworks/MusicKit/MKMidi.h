@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.11  2000/05/06 02:36:41  leigh
+  Made Win32 declare regression class types also
+
   Revision 1.10  2000/04/04 00:16:54  leigh
   added condition checks for OS to handle variations between FoundationKits on MacOsX and Server
 
@@ -84,7 +87,7 @@ typedef struct _timeVars {
 // Determine the MacOsX derivative being compiled on. This is a passing phase (MOXS 1.2) until the two O.S. merge API
 #define macosx (defined(__ppc__) && !defined(ppc))
 #define macosx_server (defined(__ppc__) && defined(ppc))
-#if macosx_server
+#if macosx_server || WIN32
 #define NSMachPort NSPort
 #endif
 
