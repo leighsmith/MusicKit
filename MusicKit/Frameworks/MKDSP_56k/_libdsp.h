@@ -1,7 +1,8 @@
 #ifndef __MK__libdsp_H___
 #define __MK__libdsp_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* _libdsp.h - private functions in libdsp_s.a
+/* $Id$
+ private functions in libdsp_s.a
 
 	01/13/90/jos - Replaced _DSPMessage.h expansion by explicit import.
 */

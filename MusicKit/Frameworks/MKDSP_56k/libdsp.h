@@ -1,6 +1,7 @@
 #ifndef __MK_libdsp_H___
 #define __MK_libdsp_H___
-/* libdsp.h - external declarations for functions in libdsp_s.a 
+/* $Id$
+ * External declarations for functions in libdsp_s.a 
  * Copyright 1988-1992, NeXT Inc.  All rights reserved.
  * Author: Julius O. Smith III
  *

@@ -1,4 +1,5 @@
-/* DSPConversion.c - numerical conversion between host and DSP data formats.
+/* $Id$
+   Numerical conversion between host and DSP data formats.
    Copyright 1988-1992, NeXT Inc.  All rights reserved.
    Modification history:
        05/01/88/jos - created.

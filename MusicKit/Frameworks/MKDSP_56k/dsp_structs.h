@@ -1,6 +1,7 @@
 #ifndef __MK_dsp_structs_H___
 #define __MK_dsp_structs_H___
-/* DSP DATA STRUCTURES
+/* $Id$
+ * DSP DATA STRUCTURES
  * Copyright 1988-1992, NeXT Inc.  All rights reserved.
  * Author: Julius O. Smith III
  */

@@ -1,6 +1,7 @@
 #ifndef __MK_dsp_memory_map_ap_1.0_H___
 #define __MK_dsp_memory_map_ap_1.0_H___
-/* dsp_memory_map_ap.h - written by dspmsg from system symbols.
+/* $Id$
+Written by dspmsg from system symbols.
 
 This include file contains definitions for Array Processing memory
 addresses.  These definitions depend heavily on

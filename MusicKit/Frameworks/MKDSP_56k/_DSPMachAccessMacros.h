@@ -1,4 +1,4 @@
-/* 
+/* $Id$
  * This file contains macros intended to hide the differences between the
  * m68k and i386 Mach message structures 
  */

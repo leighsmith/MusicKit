@@ -66,8 +66,8 @@
             _DSPRelocate.c, 
             DSPStructMisc.m, 
             DSPObject.m, 
-            DSPError.m, 
-            DSPGlobals.m
+            DSPGlobals.m, 
+            DSPError.m
         ); 
         OTHER_RESOURCES = (); 
         OTHER_SOURCES = (
@@ -117,7 +117,7 @@
     PDO_UNIX_BUILDTOOL = $NEXT_ROOT/Developer/bin/make; 
     PDO_UNIX_JAVA_COMPILER = "$(NEXTDEV_BIN)/javac"; 
     PDO_UNIX_OBJCPLUS_COMPILER = "$(NEXTDEV_BIN)/gcc"; 
-    PROJECTNAME = dsp; 
+    PROJECTNAME = MKDSP; 
     PROJECTTYPE = Framework; 
     PROJECTVERSION = 2.8; 
     WINDOWS_BUILDTOOL = ./make.sh; 

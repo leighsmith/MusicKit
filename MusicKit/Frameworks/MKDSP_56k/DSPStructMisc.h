@@ -1,6 +1,7 @@
 #ifndef __MK_DSPStructMisc_H___
 #define __MK_DSPStructMisc_H___
-/* DSPStrucMisc.h - Functions having to do with DSP assembly data structures.
+/* $Id$
+ * Functions having to do with DSP assembly data structures.
  * Copyright 1988-1992, NeXT Inc.  All rights reserved.
  * Author: Julius O. Smith III
  */

@@ -1,6 +1,7 @@
 #ifndef __MK_DSPError_H___
 #define __MK_DSPError_H___
-/* DSPError.h - Functions in libdsp_s.a having to do with error handling
+/* $Id$
+ * Functions in libdsp_s.a having to do with error handling
  * Copyright 1988-1992, NeXT Inc.  All rights reserved.
  * Author: Julius O. Smith III
  */

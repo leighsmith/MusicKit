@@ -1,6 +1,7 @@
 #ifndef __MK_DSPConversion_H___
 #define __MK_DSPConversion_H___
-/* DSPConversion.h - Functions having to do with data type conversion
+/* $Id$
+ * Functions having to do with data type conversion
  * Copyright 1988-1992, NeXT Inc.  All rights reserved.
  * Author: Julius O. Smith III
  */

@@ -1,7 +1,7 @@
 #ifndef	_dspdriver
 #define	_dspdriver
 
-/* Module dspdriver */
+/* $Id$ */
 
 #include <mach/kern_return.h>
 #include <mach/port.h>

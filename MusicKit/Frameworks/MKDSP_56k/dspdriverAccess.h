@@ -1,7 +1,7 @@
 #ifndef __MK_dspdriverAccess_H___
 #define __MK_dspdriverAccess_H___
 /*
-  dspdriverAccess.h.
+  $Id$
   David Jaffe, CCRMA, Stanford University.
   Feb. 1994
 
@@ -247,13 +247,13 @@ typedef struct {
 } DSPDRIVEROutputQueueMessage;
 
 typedef struct {
-    mach_msg_header_t  h;
+    msg_header_t  h;
     msg_type_t    t;
     int           regionTag; /* Also used for dsperror and dspmsg codes */
 } DSPDRIVERSimpleMessage;
 
 typedef struct {
-    mach_msg_header_t  h;
+    msg_header_t  h;
     msg_type_t    t1;
     int           regionTag;
     int           nbytes;

@@ -1,3 +1,5 @@
+/* $Id$
+ */
 // While gdb is also present on Windows, the mach headers aren't.
 #ifndef WIN32
 
@@ -21,8 +23,8 @@ static any_t exc_thread(ports_t *port_p)
 {
     kern_return_t r;
     char *msg_data[2][64];
-    mach_msg_header_t *imsg = (mach_msg_header_t *)msg_data[0],
-    *omsg = (mach_msg_header_t *)msg_data[1];
+    msg_header_t *imsg = (msg_header_t *)msg_data[0],
+    *omsg = (msg_header_t *)msg_data[1];
     
     /* Wait for exceptions */
     while(1) {

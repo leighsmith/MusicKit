@@ -1,8 +1,7 @@
 #ifndef __MK_dsp_errno_H___
 #define __MK_dsp_errno_H___
 /*
-	dsperrno.h
-
+	$Id$
 	Copyright 1988-1992, NeXT Inc.  All rights reserved.
   
 	This file contains globally unique error codes for the DSP C library.

@@ -1,6 +1,7 @@
 #ifndef __MK_DSPObject.ReaderThreadForAll_H___
 #define __MK_DSPObject.ReaderThreadForAll_H___
-/* DSPObject.h - Low level DSP access and control functions.
+/* $Id$
+ * Low level DSP access and control functions.
  * Copyright 1988-1992, NeXT Inc.  All rights reserved.
  * Author: Julius O. Smith III
  */

@@ -1,6 +1,7 @@
 #ifndef __MK_dsp_memory_map_H___
 #define __MK_dsp_memory_map_H___
-/* dsp_memory_map.h - written by dspmsg from system symbols.
+/* $Id$
+Written by dspmsg from system symbols.
 
 This include file contains definitions for DSP memory addresses.
 The values depend heavily on /usr/lib/dsp/smsrc/config.asm, and they

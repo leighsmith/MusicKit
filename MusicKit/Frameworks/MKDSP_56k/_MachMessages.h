@@ -1,6 +1,8 @@
 #ifndef __MK__MachMessages_H___
 #define __MK__MachMessages_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/* $Id$
+ * Copyright 1988-1992, NeXT Inc.  All rights reserved. 
+ */
 /*
  * HISTORY
  * 23-Aug-90  Gregg Kellogg (gk) at NeXT
@@ -43,7 +45,7 @@ typedef struct {
  * Messages sent from the kernel
  */
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	data_tagType;
 	int		data_tag;
 	msg_type_long_t	dataType;
@@ -51,19 +53,19 @@ typedef struct {
 } snd_recorded_data_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	data_tagType;
 	int		data_tag;
 } snd_taged_reply_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	dataType;
 	int		nsamples;
 } snd_ret_samples_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	dataType;
 	unsigned int	parms;
 #define SND_PARM_LOWPASS	0x1
@@ -72,7 +74,7 @@ typedef struct {
 } snd_ret_parms_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	dataType;
 	unsigned int	volume;
 #define SND_VOLUME_RCHAN_MASK	0xff
@@ -82,13 +84,13 @@ typedef struct {
 } snd_ret_volume_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	dataType;
 	int		dsp_regs;
 } snd_ret_dsp_regs_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	dataType;
 	unsigned int	ill_msgid;	// message id of bad message.
 	unsigned int	ill_error;	// error returned
@@ -108,10 +110,10 @@ typedef struct {
 #define SND_BAD_PROTO 	113	// can't do requested operation given protocol
 } snd_illegal_msg_t;
 
-typedef struct {mach_msg_header_t header;} snd_ret_mach_port_t;
+typedef struct {msg_header_t header;} snd_ret_mach_port_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	dataType;
 	unsigned int	mask;
 	unsigned int	flags;
@@ -122,7 +124,7 @@ typedef struct {
  * Messages sent from the user to the device
  */
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	Type;
 	unsigned int	stream;
 	msg_type_t	ownerType;
@@ -147,19 +149,19 @@ typedef struct {
 #define SND_GD_DSP_IN	snd_gd_bitmap(DSP_SI_CHAN, FALSE) // sound in to dsp
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	Type;
 	unsigned int	parms;
 } snd_set_parms_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	Type;
 	unsigned int	volume;
 } snd_set_volume_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	Type;
 	unsigned int	proto;
 	msg_type_t	ownerType;
@@ -178,17 +180,17 @@ typedef struct {
 #define SND_DSP_PROTO_RAW	0x200	// DSP messages enabled
 #define SND_DSP_PROTO_TXD	0x400	// DSP txd interrupt enable (040 only)
 
-typedef mach_msg_header_t	snd_get_parms_t;
-typedef mach_msg_header_t	snd_get_volume_t;
+typedef msg_header_t	snd_get_parms_t;
+typedef msg_header_t	snd_get_volume_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	ownerType;
 	mach_port_t		owner;		// owner port
 } snd_get_dsp_cmd_mach_port_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	negType;
 	mach_port_t		negotiation;	// negotiation port
 	msg_type_t	ownerType;
@@ -196,7 +198,7 @@ typedef struct {
 } snd_set_owner_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	old_ownerType;
 	mach_port_t		old_owner;
 	msg_type_t	new_ownerType;
@@ -206,20 +208,20 @@ typedef struct {
 } snd_reset_owner_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	privType;
 	mach_port_t		priv;
 } snd_new_device_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_long_t	dataType;
 #define DSP_DEF_BUFSIZE	512			// default #words in each buf
 	unsigned int	data[DSP_DEF_BUFSIZE];
 } snd_dsp_msg_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_long_t	dataType;
 #define DSP_DEF_EBUFSIZE 32			// default #words in each buf
 	unsigned int	data[DSP_DEF_EBUFSIZE];
@@ -231,7 +233,7 @@ typedef struct {
  * of several different sub-messages.
  */
 typedef struct snd_stream_msg {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	data_tagType;
 	int		data_tag;		// tag for this request, 0 def
 } snd_stream_msg_t;
@@ -294,14 +296,14 @@ typedef struct {
  * Nsamples is another message on a stream port.
  */
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 } snd_stream_nsamples_t;
 
 /*
  * Messages sent by user to dsp command port.
  */
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	reg_maskType;
 	unsigned int	mask;		// mask of flags to inspect
 	unsigned int	flags;		// set of flags that must be on
@@ -312,11 +314,11 @@ typedef struct {
 	 * follows is the body of the (simple) message to send
 	 * either to msg_remote_port, or to snd_var.dsp  (if PORT_NULL).
 	 */
-	mach_msg_header_t	ret_msg;	// possibly longer than this.
+	msg_header_t	ret_msg;	// possibly longer than this.
 } snd_dspcmd_event_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	dataType;
 	int		addr;		// .. of dsp buffer
 	int		size;		// .. of dsp buffer
@@ -350,7 +352,7 @@ typedef struct {
 } snd_dspcmd_chandata_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	chandataType;
 	int		addr;		// .. of dsp buffer
 	int		size;		// .. of dsp buffer
@@ -361,9 +363,9 @@ typedef struct {
 	pointer_t	data;		// data to output
 } snd_dspcmd_dma_t;
 
-typedef mach_msg_header_t	snd_dspcmd_abortdma_t;
-typedef mach_msg_header_t	snd_dspcmd_req_err_t;
-typedef mach_msg_header_t	snd_dspcmd_req_msg_t;
+typedef msg_header_t	snd_dspcmd_abortdma_t;
+typedef msg_header_t	snd_dspcmd_req_err_t;
+typedef msg_header_t	snd_dspcmd_req_msg_t;
 
 /*
  * Multi-part dspcmd_msg.
@@ -386,7 +388,7 @@ typedef struct {
 } snd_dsp_type_t;
 
 typedef struct {
-	mach_msg_header_t	header;
+	msg_header_t	header;
 	msg_type_t	priType;
 	int		pri;		// Priority of message group
 #define DSP_MSG_HIGH		0
@@ -438,7 +440,7 @@ typedef struct {
 	 * follows is the body of the (simple) message to send
 	 * either to msg_remote_port, or to snd_var.dspowner (if PORT_NULL).
 	 */
-	mach_msg_header_t	ret_msg;	// possibly longer than this.
+	msg_header_t	ret_msg;	// possibly longer than this.
 } snd_dsp_ret_msg_t;
 
 typedef struct {

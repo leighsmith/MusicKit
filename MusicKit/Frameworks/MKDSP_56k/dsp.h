@@ -1,7 +1,8 @@
 #ifndef __MK_dsp_H___
 #define __MK_dsp_H___
 /*
-	dsp.h - master include file for the DSP library (-ldsp -lsys_s)
+	$Id$
+        Master include file for the DSP library (-ldsp -lsys_s)
 
 	Copyright 1988-1992, NeXT Inc.  All rights reserved.
  

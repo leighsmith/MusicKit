@@ -1,6 +1,8 @@
 #ifndef __MK_dsp_types_H___
 #define __MK_dsp_types_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/* $Id$
+ * Copyright 1988-1992, NeXT Inc.  All rights reserved.
+ */
 /* Numeric typedefs */
 typedef int DSPMuLaw;
 typedef int DSPFix8;

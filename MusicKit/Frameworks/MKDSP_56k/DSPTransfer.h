@@ -1,6 +1,7 @@
 #ifndef __MK_DSPTransfer_H___
 #define __MK_DSPTransfer_H___
-/* DSPTransfer.h - Functions in libdsp_s.a having to do with data transfer.
+/* $Id$
+ * Functions in libdsp_s.a having to do with data transfer.
  * Copyright 1988-1992, NeXT Inc.  All rights reserved.
  * Author: Julius O. Smith III
  */

@@ -1,6 +1,7 @@
 #ifndef __MK_dsp_memory_map_ap_H___
 #define __MK_dsp_memory_map_ap_H___
-/* dsp_memory_map_ap.h -  1.0 compatibility include file
+/* $Id$
+1.0 compatibility include file
 
 The "DSPAP_" defined constants here have been replaced by the more generic
 "DSP_" defines.  Instead of importing this file, you should change your

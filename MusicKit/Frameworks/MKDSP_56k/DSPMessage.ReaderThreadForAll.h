@@ -1,6 +1,7 @@
 #ifndef __MK_DSPMessage.ReaderThreadForAll_H___
 #define __MK_DSPMessage.ReaderThreadForAll_H___
-/* DSPMessage.h - procedure prototypes having to do with DSP messages.
+/* $Id$
+ * Procedure prototypes having to do with DSP messages.
  * Copyright 1988-1992, NeXT Inc.  All rights reserved.
  * Author: Julius O. Smith III
  */

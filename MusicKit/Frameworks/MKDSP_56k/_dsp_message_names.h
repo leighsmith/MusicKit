@@ -1,6 +1,7 @@
 #ifndef __MK__dsp_message_names_H___
 #define __MK__dsp_message_names_H___
-/* _dsp_message_names.h - written by dspmsg from system symbols.
+/* $Id$
+ * Written by dspmsg from system symbols.
 
 This private include file provides two string arrays useful for decoding 
 DSP-message and DSP-error-message opcodes.

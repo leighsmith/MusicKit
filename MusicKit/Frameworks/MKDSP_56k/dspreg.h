@@ -1,6 +1,8 @@
 #ifndef __MK_dspreg_H___
 #define __MK_dspreg_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/* $Id$
+ * Copyright 1988-1992, NeXT Inc.  All rights reserved. 
+ */
 
 /* structure view of dsp registers */
 struct dsp_regs {

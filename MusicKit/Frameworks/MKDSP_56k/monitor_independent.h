@@ -1,6 +1,7 @@
 #ifndef __MK_monitor_independent_H___
 #define __MK_monitor_independent_H___
-/* monitor_independent.h - libdsp functions independent of the DSP monitor used
+/* $Id$
+ * libdsp functions independent of the DSP monitor used
  * Copyright 1988-1992, NeXT Inc.  All rights reserved.
  * Author: Julius O. Smith III
  */

@@ -1,6 +1,8 @@
 #ifndef __MK__DSPMessage_H___
 #define __MK__DSPMessage_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/* $Id$
+ * Copyright 1988-1992, NeXT Inc.  All rights reserved. 
+ */
 
 int _DSPHostMessageTimed(DSPFix48 *aTimeStampP, int msg);
 /* 

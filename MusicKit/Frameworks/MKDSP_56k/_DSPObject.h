@@ -1,8 +1,10 @@
 #ifndef __MK__DSPObject_H___
 #define __MK__DSPObject_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/* $Id$
+ * Private functions in DSPObject.c
+ * Copyright 1988-1992, NeXT Inc.  All rights reserved. 
+ */
 
-/* Private functions in DSPObject.c */
 
 extern int _DSPSetNumber(int i);
 /* 
@@ -10,7 +12,7 @@ extern int _DSPSetNumber(int i);
  */
 
 
-extern int _DSPAwaitMsgSendAck(mach_msg_header_t *msg);
+extern int _DSPAwaitMsgSendAck(msg_header_t *msg);
 /*
  * Read ack message sent to msg->local_port by Mach kernel in response to a 
  * msg_snd. Returns 0 if all is well.
@@ -46,7 +48,7 @@ extern int _DSPAwaitBit(
  *
  */
 extern int _DSPAwaitMsgSendAck(
-    mach_msg_header_t *msg);
+    msg_header_t *msg);
 /*
  * Read ack message sent to msg->local_port by Mach kernel in response to a 
  * msg_snd. Returns 0 if all is well.

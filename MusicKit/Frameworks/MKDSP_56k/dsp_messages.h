@@ -1,6 +1,7 @@
 #ifndef __MK_dsp_messages_H___
 #define __MK_dsp_messages_H___
-/* dsp_messages.h - written by dspmsg from Music Kit DSP monitor system symbols.
+/* $Id$
+Written by dspmsg from Music Kit DSP monitor system symbols.
 
 This include file contains definitions for "host-message" and 
 "DSP message" opcodes used by the Music Kit (MK) and Array Processing (AP)

@@ -1,6 +1,7 @@
 #ifndef __MK_DSPControl_H___
 #define __MK_DSPControl_H___
-/* DSPControl.h - Functions in libdsp_s.a having to do with DSP control.
+/* $Id$
+ * Functions in libdsp_s.a having to do with DSP control.
  * Copyright 1988-1992, NeXT Inc.  All rights reserved.
  * Author: Julius O. Smith III
  */

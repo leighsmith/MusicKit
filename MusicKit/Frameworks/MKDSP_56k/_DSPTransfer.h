@@ -1,6 +1,8 @@
 #ifndef __MK__DSPTransfer_H___
 #define __MK__DSPTransfer_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/* $Id$
+ * Copyright 1988-1992, NeXT Inc.  All rights reserved.
+ */
 
 int _DSPPrintDatum(
     FILE *fp,

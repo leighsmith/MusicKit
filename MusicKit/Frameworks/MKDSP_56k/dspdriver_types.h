@@ -1,7 +1,7 @@
 #ifndef __MK_dspdriver_types_H___
 #define __MK_dspdriver_types_H___
 /*
- *	File:	<dsp/dspdriver_types.h>
+ *	$Id$
  *	Author:	David Jaffe
  *      DSP driver typedefs, defines, etc.
  */

@@ -7,11 +7,10 @@
 # and Makefile.postamble (both optional), and Makefile will include them.
 #
 
-NAME = dsp
+NAME = MKDSP
 
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Framework
-LANGUAGE = English
 
 CLASSES = DSPObjectObjc.m
 
@@ -27,7 +26,7 @@ HFILES = dsp.h DSPControl.h DSPConversion.h dspdriver.h\
          _DSPMachAccessMacros.h _DSPMessage.h _DSPObject.h\
          _DSPTransfer.h _dsp_message_names.h _libdsp.h _MachMessages.h
 
-MFILES = DSPStructMisc.m DSPObject.m DSPError.m DSPGlobals.m
+MFILES = DSPStructMisc.m DSPObject.m DSPGlobals.m DSPError.m
 
 CFILES = DSPSymbols.c DSPReadFile.c DSPLoad.c DSPBoot.c _DSPCV.c\
          _DSPMach.c _DSPString.c gdbHelp.c _DSPUtilities.c\
