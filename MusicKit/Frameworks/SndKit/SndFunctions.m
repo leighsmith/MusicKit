@@ -160,13 +160,19 @@ NSString *SndFormatName(int dataFormat, BOOL verbose)
 // Given the data size in bytes, the number of channels and the data format, return the number of samples.
 int SndBytesToFrames(int byteCount, int channelCount, int dataFormat)
 {
-  return (int)(byteCount / (channelCount * SndSampleWidth(dataFormat)));
+    return (int)(byteCount / (channelCount * SndSampleWidth(dataFormat)));
 }
 
-int SndSamplesToBytes(int sampleCount, int channelCount, int dataFormat)
+long SndFramesToBytes(long frameCount, int channelCount, int dataFormat)
 {
-  return (int)(sampleCount * channelCount * SndSampleWidth(dataFormat));
+    return (int)(frameCount * channelCount * SndSampleWidth(dataFormat));
 }
+
+long SndDataSize(SndFormat format)
+{
+    return SndFramesToBytes(format.frameCount, format.channelCount, format.dataFormat);
+}
+
 float SndConvertDecibelsToLinear(float db)
 {
   return (float)pow(10.0, (double)db/20.0);
@@ -370,7 +376,7 @@ int SndCompactSamples(SndSoundStruct **s1, SndSoundStruct *s2)
     nchan = oldSound->channelCount;
     rate = oldSound->samplingRate;
     infoSize = oldSound->dataSize - sizeof(SndSoundStruct) + 4;
-    newSize = SndSamplesToBytes(SndFrameCount(oldSound),nchan,format);
+    newSize = SndFramesToBytes(SndFrameCount(oldSound),nchan,format);
     err = SndAlloc(&newSound,newSize,format,rate,nchan,infoSize);
     if (err)
       return SND_ERR_CANNOT_ALLOC;

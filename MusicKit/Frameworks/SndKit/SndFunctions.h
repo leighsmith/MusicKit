@@ -40,12 +40,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
-  @abstract A library of functions intended to be compatible with NeXTs now defunct SoundKit.
+  @abstract A library of functions originally intended to be compatible with NeXTs now defunct SoundKit.
  */
 
 //#define USE_MACH_MEMORY_ALLOCATION
 #import <MKPerformSndMIDI/PerformSound.h>
 #import "SndKitDefines.h"
+#import "SndFormat.h"
 
 #ifdef GNUSTEP
 # import <Foundation/NSArray.h>
@@ -122,16 +123,25 @@ SNDKIT_API int  SndBytesToFrames(int byteCount,
                                   int dataFormat);
 
 /*!
-@function SndSamplesToBytes
+@function SndFramesToBytes
  @abstract Calculates the number of bytes needed to store the data specified by the parameters
  @param sampleCount
  @param channelCount
  @param dataFormat
- @result A number of bytes
+ @result The size of the sample data in bytes.
  */
-SNDKIT_API int  SndSamplesToBytes(int sampleCount,
+SNDKIT_API long  SndFramesToBytes(long sampleCount,
                                   int channelCount,
                                   int dataFormat);
+
+
+/*!
+  @function SndDataSize
+  @abstract Calculates the number of bytes needed to store the sample data specified by the format.
+  @param format A SndFormat structure holding valid frame and channel counts and the data format.
+  @result The size of the sample data in bytes.
+ */
+SNDKIT_API long SndDataSize(SndFormat format);
 
 /*!
 @function SndConvertDecibelsToLinear
