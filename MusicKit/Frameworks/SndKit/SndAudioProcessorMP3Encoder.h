@@ -2,8 +2,7 @@
 //  SndAudioProcessorMP3Encoder.h
 //  SndKit
 //
-//  Created by skot on Mon Oct 01 2001.
-//  Copyright (c) 2001 tomandandy music inc All rights reserved.
+//  Created by SKoT McDonald <skot@tomandandy.com> on Mon Oct 01 2001.
 //
 
 #import <Foundation/Foundation.h>
