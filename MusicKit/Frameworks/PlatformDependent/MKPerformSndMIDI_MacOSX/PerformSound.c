@@ -20,6 +20,19 @@
 */
 /*
 // $Log$
+// Revision 1.9  2001/04/06 18:16:06  skotmcdonald
+// Added input stream functionality to SndStreaming system. Note that as
+// MacOSX reports the default audio in as a separate device to the audio out,
+// CoreAudio generates two callbacks to the vendBuffersToStreamManagerIOProc
+// function. To achieve synchronous IO in this case, the input buffer is
+// stored in a local buffer until the next output buffer callback occurs, at
+// which time both the local input and the core audio output buffers are sent
+// upward together. Note this assumes the input and output buffers have been
+// sent to the same size!!! (have to add some enforcing code later...)
+//
+// Many coreaudio interfacing functions made in/out dual purpose, some extra
+// feedback fns added too.
+//
 // Revision 1.8  2001/03/21 02:59:43  leigh
 // Removed old debugging info
 //
@@ -59,13 +72,15 @@
 extern "C" {
 #endif 
 
-#define DEBUG_SQUAREWAVE  0  // generate a square wave, rather than the real audio data
-#define DEBUG_DESCRIPTION 0  // dump the description of the audio device.
-#define DEBUG_BUFFERSIZE  0  // dump the check of the audio buffer size.
-#define DEBUG_SNDPLAYIOPROC 0 // dump the channel count etc while generating the buffer.
+#define DEBUG_SQUAREWAVE    0  // generate a square wave, rather than the real audio data
+#define DEBUG_DESCRIPTION   0  // dump the description of the audio device.
+#define DEBUG_BUFFERSIZE    0  // dump the check of the audio buffer size.
+#define DEBUG_SNDPLAYIOPROC 0  // dump the channel count etc while generating the buffer.
 
 #define PADDING 3          // make sure this matches PADFORMAT changes below (including \0)
 #define PADFORMAT "%s: %s"
+
+#define ENABLE_INPUT
 
 // A linked list of sounds currently playing.
 typedef struct _audioStream {
@@ -88,21 +103,54 @@ typedef struct _audioStream {
 
 // "class" variables
 static BOOL         initialised = FALSE;
-static AudioDeviceID outputDeviceID;
+
 static char         **driverList;
 static unsigned int driverIndex = 0;
 static int          numOfDevices;
 static SNDPlayingSound singlePlayingSound;
 static int          bufferSizeInFrames;
+
 static AudioStreamBasicDescription outputStreamBasicDescription;
+static AudioDeviceID outputDeviceID;
+#ifdef ENABLE_INPUT
+static AudioStreamBasicDescription inputStreamBasicDescription;
+static AudioDeviceID inputDeviceID;
+#endif
+
 // Stream processing data.
 static SNDStreamProcessor streamProcessor;
 static void *streamUserData;
 static double firstSampleTime = -1.0; // indicates this has not been assigned.
 
-// Routine to play a single sound. This could be generalised using the link-list behaviour
-// to do multiple sound channels, but instead we will adopt the stream operation within the
-// SndKit itself.
+////////////////////////////////////////////////////////////////////////////////
+// getCoreAudioErrorString
+////////////////////////////////////////////////////////////////////////////////
+
+static char *getCoreAudioErrorStr(OSStatus status)
+{
+  char *r = NULL;
+  switch (status)
+  {
+    case kAudioHardwareNotRunningError:		    r = "Hardware not running error";        break;
+    case kAudioHardwareUnspecifiedError:		  r = "Hardware unspecified error";        break;
+    case kAudioHardwareUnknownPropertyError:	r = "Hardware unknown property error";   break;
+    case kAudioDeviceUnsupportedFormatError:	r = "Hardware unsupported format error"; break;
+    case kAudioHardwareBadPropertySizeError:	r = "Hardware bad property size error";  break;
+    case kAudioHardwareIllegalOperationError:	r = "Hardware illegal operation";        break;
+    case kAudioHardwareNoError:               r = "none";                              break;
+    default:                                  r = "unknown";
+  }
+  return r;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// sndPlayIOProc
+//
+// Routine to play a single sound. This could be generalised using the link-list 
+// behaviour to do multiple sound channels, but instead we will adopt the stream 
+// operation within the SndKit itself.
+/////////////////////////////////////////////////////////////////////////////////
+
 static OSStatus sndPlayIOProc(AudioDeviceID inDevice,
                          const AudioTimeStamp *inNow,
                          const AudioBufferList *inInputData,
@@ -127,6 +175,7 @@ static OSStatus sndPlayIOProc(AudioDeviceID inDevice,
         fprintf(stderr, "bufferSizeInFrames = %d, mDataByteSize = %ld\n", bufferSizeInFrames, outOutputData->mBuffers[bufferIndex].mDataByteSize);
         fprintf(stderr, "sampleFramesGenerated = %d\n", singlePlayingSound.sampleFramesGenerated);
 #endif
+
         for (frameIndex = 0; frameIndex < bufferSizeInFrames; frameIndex++) {
             int bytesPerFrame = bytesPerSample * snd->channelCount;
             unsigned int byteToPlayFrom = singlePlayingSound.sampleFramesGenerated * bytesPerFrame;
@@ -174,17 +223,24 @@ static OSStatus sndPlayIOProc(AudioDeviceID inDevice,
     return 0; // TODO need better definition...
 }
 
-// We vend the output and input buffers in their native format to avoid redundant conversions.
-// This allows postponing the conversion to the last possible moment. The SndConvertFormat()
-// function in the SndKit makes for an easy way to do the conversion without anyone writing their
-// own converter.
+////////////////////////////////////////////////////////////////////////////////
+// vendBuffersToStreamManagerIOProc
+//
+// We vend the output and input buffers in their native format to avoid 
+// redundant conversions. This allows postponing the conversion to the last 
+// possible moment. The SndConvertFormat() function in the SndKit makes for an 
+// easy way to do the conversion without anyone writing their own converter.
+////////////////////////////////////////////////////////////////////////////////
+
+float fBlatantHackBuffer[10000];
+
 static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
-                         const AudioTimeStamp *inNow,
-                         const AudioBufferList *inInputData,
-			 const AudioTimeStamp *inInputTime,
-                         AudioBufferList *outOutputData,
-                         const AudioTimeStamp *inOutputTime,
-			 void *inClientData)
+                          const AudioTimeStamp *inNow,
+                          const AudioBufferList *inInputData,
+                          const AudioTimeStamp *inInputTime,
+                          AudioBufferList *outOutputData,
+                          const AudioTimeStamp *inOutputTime,
+                          void *inClientData)
 {
     SNDStreamBuffer inStream, outStream;
     int bufferIndex;
@@ -198,23 +254,52 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
 
     // fprintf(stderr, "vendBuffersToStreamManagerIOProc number of buffers = %ld\n", outOutputData->mNumberBuffers);
     // 4K46 occasionally sends us a wierd number of buffers
+    
     for(bufferIndex = 0; bufferIndex < 1 /* outOutputData->mNumberBuffers */ ; bufferIndex++) {
         // TODO we should alter inStream and outStream to be the buffer's number of channels.
-        int channelsPerFrame = outOutputData->mBuffers[bufferIndex].mNumberChannels;
-        SNDStreamNativeFormat(&inStream.streamFormat);    // to tell the client the format it is receiving.
-        inStream.streamData = (void *) inInputData;  // this will generate a warning since we use the same type for both streams.
-        SNDStreamNativeFormat(&outStream.streamFormat);   // to tell the client the format it should send.
-        outStream.streamData = outOutputData->mBuffers[bufferIndex].mData;
+//        int channelsPerFrame = outOutputData->mBuffers[bufferIndex].mNumberChannels;
         
-        // hand over the stream buffers to the processor/stream manager.
-        // the output time goes out as a relative time, noted from the first sample time we first receive.
-        (*streamProcessor)(inOutputTime->mSampleTime - firstSampleTime, &inStream, &outStream, streamUserData);
+        /*
+        fprintf(stderr, "InBuffs: %li  OutBuffs: %li\n",
+                inInputData->mNumberBuffers,outOutputData->mNumberBuffers);  
+        */
+        
+        // to tell the client the format it is receiving.
+        
+        if (inInputData->mNumberBuffers == NULL)
+          inStream.streamData = NULL;
+        else {
+          memcpy(fBlatantHackBuffer, inInputData->mBuffers[0].mData, 32768);
+        }
+        // to tell the client the format it should send.
+        
+        if (outOutputData->mNumberBuffers == 0)
+          outStream.streamData = NULL;
+        else {
+        
+          SNDStreamNativeFormat(&outStream.streamFormat);   
+          SNDStreamNativeFormat(&inStream.streamFormat);    
+        
+          inStream.streamData  = fBlatantHackBuffer;  
+          outStream.streamData = outOutputData->mBuffers[bufferIndex].mData;
+        
+          // hand over the stream buffers to the processor/stream manager.
+          // the output time goes out as a relative time, noted from the 
+          // first sample time we first receive.
+          (*streamProcessor)(inOutputTime->mSampleTime - firstSampleTime, 
+                             &inStream, &outStream, streamUserData);
+        }
     }
     return 0; // TODO need better definition...
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// retrieveDriverList
+//
 // Iterate through the possible devices and build a formatted list.
 // A NULL char * terminates the list a la argv behaviour.
+////////////////////////////////////////////////////////////////////////////////
+
 static BOOL retrieveDriverList(void)
 {
     OSStatus CAstatus;
@@ -231,7 +316,7 @@ static BOOL retrieveDriverList(void)
     //    (char *) &CAstatus, propertySize, propertyWritable);
 
     if (CAstatus) {
-        fprintf(stderr, "AudioHardwareGetPropertyInfo kAudioHardwarePropertyDevices returned %s\n", (char *) &CAstatus);
+        fprintf(stderr, "AudioHardwareGetPropertyInfo kAudioHardwarePropertyDevices returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
 
@@ -239,7 +324,7 @@ static BOOL retrieveDriverList(void)
                     &propertySize, &allDeviceIDs);
     // fprintf(stderr, "AudioHardwareGetProperty kAudioHardwarePropertyDevices CAstatus:%s, propertySize = %ld\n", (char *) &CAstatus, propertySize);
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceGetProperty returned %s\n", (char *) &CAstatus);
+        fprintf(stderr, "AudioDeviceGetProperty 1 returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
 
@@ -250,13 +335,15 @@ static BOOL retrieveDriverList(void)
         fprintf(stderr, "Unable to malloc driver list\n");
         return FALSE;
     }
-    for(driverIndex = 0; driverIndex < numOfDevices; driverIndex++) {
+    
 #if 0
+    for(driverIndex = 0; driverIndex < numOfDevices; driverIndex++) {
+        char* deviceName;
         CAstatus = AudioDeviceGetPropertyInfo(allDeviceIDs[driverIndex], 0, false,
                                             kAudioDevicePropertyDeviceName,
                                             &propertySize, &propertyWritable);
         fprintf(stderr, "output device CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
-            (char *) &CAstatus, propertySize, propertyWritable);
+            getCoreAudioErrorStr(CAstatus), propertySize, propertyWritable);
             
         // malloc up enough memory for the name.
         if((deviceName = (char *) malloc(propertySize * sizeof(char))) == NULL) {
@@ -269,18 +356,25 @@ static BOOL retrieveDriverList(void)
                                         kAudioDevicePropertyDeviceName,
                                         &propertySize, deviceName);
         if (CAstatus) {
-            fprintf(stderr, "AudioDeviceGetProperty returned %s\n", (char *) &CAstatus);
+            fprintf(stderr, "AudioDeviceGetProperty 2 returned %s\n", getCoreAudioErrorStr(CAstatus));
             return FALSE;
         }
+        else
+          fprintf(stderr,"DevID: %p   name: %s\n", allDeviceIDs[driverIndex], deviceName);
     
         driverList[driverIndex] = deviceName;
-#endif
     }
+#endif
+
     driverList[driverIndex] = NULL; // NULL terminate the list
     return TRUE;
 }
 
-static BOOL isDeviceRunning(AudioDeviceID outputDeviceID)
+////////////////////////////////////////////////////////////////////////////////
+// isDeviceRunning
+////////////////////////////////////////////////////////////////////////////////
+
+static BOOL isDeviceRunning(AudioDeviceID deviceID, bool isInput)
 {
     UInt32 running;
     OSStatus CAstatus;
@@ -288,73 +382,114 @@ static BOOL isDeviceRunning(AudioDeviceID outputDeviceID)
     Boolean propertyWritable;
 
     /* check the device is running */    
-    CAstatus = AudioDeviceGetPropertyInfo(outputDeviceID, 0, false,
+    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
                                           kAudioDevicePropertyDeviceIsRunning,
                                           &propertySize, &propertyWritable);
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceGetPropertyInfo returned %d\n", (int) CAstatus);
+        fprintf(stderr, "AudioDeviceGetPropertyInfo returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
 
-    CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
+    CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput,
                                     kAudioDevicePropertyDeviceIsRunning,
                                     &propertySize, &running);
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceGetProperty returned %d\n", (int) CAstatus);
+        fprintf(stderr, "AudioDeviceGetProperty 3 returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
     return running != 0;
 }
 
-// determine basic description, we use some of the fields for filling buffers.
-static BOOL determineBasicDescription(AudioDeviceID outputDeviceID)
+////////////////////////////////////////////////////////////////////////////////
+// dumpStreamDescription
+////////////////////////////////////////////////////////////////////////////////
+
+void dumpStreamDescription(AudioStreamBasicDescription *StrBasDesc)
+{
+  fprintf(stderr,"samplerate:      %f\nformat:           %li\nFormatflags:     %X\n",
+  StrBasDesc->mSampleRate,		    //	the native sample rate of the audio stream
+  StrBasDesc->mFormatID,		  	  //	the specific encoding type of audio stream
+  (unsigned int)StrBasDesc->mFormatFlags);		  //	flags specific to each format
+  fprintf(stderr,"bytesPerPacket:  %li\nframesPerPacket: %li\nBytesPerFrame:   %li\n",
+  StrBasDesc->mBytesPerPacket,	  //	the number of bytes in a packet
+  StrBasDesc->mFramesPerPacket,  	//	the number of frames in each packet
+  StrBasDesc->mBytesPerFrame);	  //	the number of bytes in a frame
+  fprintf(stderr,"ChannelsPerFrame:%li\nBitsPerChannel:  %li\n",
+  StrBasDesc->mChannelsPerFrame,	//	the number of channels in each frame
+  StrBasDesc->mBitsPerChannel);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// determineBasicDescription
+//
+// We use some of the fields for filling buffers.
+////////////////////////////////////////////////////////////////////////////////
+
+static BOOL determineBasicDescription(AudioDeviceID deviceID, 
+                                      AudioStreamBasicDescription* audStrBasDesc,
+                                      BOOL isInput)
 {
     OSStatus CAstatus;
     UInt32 propertySize;
     Boolean propertyWritable;
 
-    CAstatus = AudioDeviceGetPropertyInfo(outputDeviceID, 0, false,
+    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
                                           kAudioDevicePropertyStreamFormat,
                                           &propertySize, &propertyWritable);
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyStreamFormat %d\n", (int) CAstatus);
+        fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyStreamFormat: %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
 
-    CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
+    CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput,
                                     kAudioDevicePropertyStreamFormat,
-                                    &propertySize, &outputStreamBasicDescription);
-
-//    fprintf(stderr, "get stream format CAstatus:%s\n", (char *) &CAstatus);
-
-    if (CAstatus) {
-        fprintf(stderr, "AudioDeviceGetProperty returned %d\n", (int) CAstatus);
-        return FALSE;
-    }
+                                    &propertySize, audStrBasDesc);
 
 #if DEBUG_DESCRIPTION
-    fprintf(stderr, "device channels: %d\n", 
-                            (int) outputStreamBasicDescription.mChannelsPerFrame);
-    fprintf(stderr, "native sample rate: %f\n", outputStreamBasicDescription.mSampleRate);
-    fprintf(stderr, "encoding type of audio stream %x\n", (int) outputStreamBasicDescription.mFormatID);
-    fprintf(stderr, "bytes in a packet %d\n", (int) outputStreamBasicDescription.mBytesPerPacket);
-    fprintf(stderr, "number of frames in each packet %d\n", (int) outputStreamBasicDescription.mFramesPerPacket);
-    fprintf(stderr, "number of bytes in a frame %d\n", (int) outputStreamBasicDescription.mBytesPerFrame);
-    fprintf(stderr, "number of bits in each channel %d\n", (int) outputStreamBasicDescription.mBitsPerChannel);
+    fprintf(stderr,"device ID: %p\n", deviceID);
+    dumpStreamDescription(audStrBasDesc);
 #endif
 
-    /* check the sample rate is changeable */    
+    if (CAstatus) {
+        fprintf(stderr, "AudioDeviceGetProperty returned %s\n", getCoreAudioErrorStr(CAstatus));
+        return FALSE;
+    }
+    
+
+// check to see if the sample rate is changeable...     
 #if 0
-    CAstatus = AudioDeviceGetPropertyInfo(outputDeviceID, 0, false,
+    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
                                           kAudioDevicePropertyRateScalar,
                                           &propertySize, &propertyWritable);
     fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyRateScalar  CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
-        (char *) &CAstatus, propertySize, propertyWritable);
+        getCoreAudioErrorStr(CAstatus), propertySize, propertyWritable);
 #endif
-    return TRUE;
+  {
+    long    propertySize;
+    Boolean propertyWritable;
+    char    deviceName[1024];
+    
+    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
+                                          kAudioDevicePropertyDeviceName,
+                                          &propertySize, &propertyWritable);
+
+    CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput,
+                                      kAudioDevicePropertyDeviceName,
+                                      &propertySize, deviceName);
+#if DEBUG_DESCRIPTION
+    fprintf("Devicename: %s\n",deviceName);
+#endif
+  }
+  return TRUE;
 }
 
-static BOOL setBufferSize(long int bufferSizeToSetInBytes)
+////////////////////////////////////////////////////////////////////////////////
+// setBufferSize
+////////////////////////////////////////////////////////////////////////////////
+
+static BOOL setBufferSize(AudioDeviceID deviceID, 
+                          long bufferSizeToSetInBytes, 
+                          BOOL isInput)
 {
     OSStatus CAstatus;
     UInt32 propertySize;
@@ -362,49 +497,50 @@ static BOOL setBufferSize(long int bufferSizeToSetInBytes)
     UInt32 bufferSizeInBytes;
 
     /* fetch the buffer size for informational purposes */
-    CAstatus = AudioDeviceGetPropertyInfo(outputDeviceID, 0, false, kAudioDevicePropertyBufferSize,
+    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput, kAudioDevicePropertyBufferSize,
                                           &propertySize, &propertyWritable);
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyBufferSize returned %d\n", (int) CAstatus);
+        fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyBufferSize returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
 #if DEBUG_BUFFERSIZE // only needed for debugging
-    CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false, kAudioDevicePropertyBufferSize,
+    CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput, kAudioDevicePropertyBufferSize,
                                     &propertySize, &bufferSizeInBytes);
     
-    fprintf(stderr, "get buffer size CAstatus:%s, bufferSizeInBytes = %ld\n", (char *) &CAstatus, bufferSizeInBytes);
+    fprintf(stderr, "get buffer size CAstatus:%s, bufferSizeInBytes = %ld\n", getCoreAudioErrorStr(CAstatus), bufferSizeInBytes);
     
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceGetProperty returned %d\n", (int) CAstatus);
+        fprintf(stderr, "AudioDeviceGetProperty 5 returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
 #endif
     
     /* set the buffer size of the device */
-    CAstatus = AudioDeviceSetProperty(outputDeviceID, NULL, 0, false,
+    CAstatus = AudioDeviceSetProperty(deviceID, NULL, 0, isInput,
                                     kAudioDevicePropertyBufferSize,
                                     propertySize, &bufferSizeToSetInBytes);
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceSetProperty returned %d\n", (int) CAstatus);
+        fprintf(stderr, "AudioDeviceSetProperty (output) returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
-    
     /* fetch the buffer size to check */
-    CAstatus = AudioDeviceGetPropertyInfo(outputDeviceID, 0, false,
+    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
                                           kAudioDevicePropertyBufferSize,
                                           &propertySize, &propertyWritable);
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyBufferSize returned %d\n", (int) CAstatus);
+        fprintf(stderr, "AudioDeviceGetPropertyInfo (output) kAudioDevicePropertyBufferSize returned %d\n", (int) CAstatus);
         return FALSE;
     }
-    // fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyBufferSize CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
-    //    (char *) &CAstatus, propertySize, propertyWritable);
-
-    CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false, kAudioDevicePropertyBufferSize,
+        
+    CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput, kAudioDevicePropertyBufferSize,
                                     &propertySize, &bufferSizeInBytes);
+    if (CAstatus) {
+        fprintf(stderr, "AudioDeviceGetProperty (output) BufferSize returned %d\n", (int) CAstatus);
+        return FALSE;
+    }
 
 #if DEBUG_BUFFERSIZE // only needed for debugging
-    fprintf(stderr, "get buffer size CAstatus:%s, bufferSizeInBytes = %ld\n", (char *) &CAstatus, bufferSizeInBytes);
+    fprintf(stderr, "get buffer size CAstatus:%s, bufferSizeInBytes = %ld\n", getCoreAudioErrorStr(CAstatus), bufferSizeInBytes);
 #endif
     
     if (bufferSizeInBytes != bufferSizeToSetInBytes) {
@@ -418,15 +554,22 @@ static BOOL setBufferSize(long int bufferSizeToSetInBytes)
     return TRUE;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// SNDInit
+//
 // Takes a parameter indicating whether to guess the device to select.
 // This allows us to hard code devices or use heuristics to prevent the user
 // having to always select the best device to use.
 // If we guess or not, we still do get a driver initialised.
+////////////////////////////////////////////////////////////////////////////////
+
 PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 {
     OSStatus CAstatus;
     UInt32 propertySize;
     Boolean propertyWritable;
+    
+    memset(fBlatantHackBuffer, 0, sizeof(float)*10000);
 
     if(!retrieveDriverList())
         return FALSE;
@@ -437,12 +580,21 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     /* initialize CoreAudio device */
     if(guessTheDevice) {
         /* Get the default sound output device */    
-        CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDefaultOutputDevice, &propertySize, &propertyWritable);
+        CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDefaultOutputDevice, 
+                                                &propertySize, &propertyWritable);
         CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-                        &propertySize, &outputDeviceID);
-    
+                                            &propertySize, &outputDeviceID);
         if (CAstatus) {
-            fprintf(stderr, "AudioHardwareGetProperty returned %d\n", (int) CAstatus);
+            fprintf(stderr, "Output: AudioHardwareGetProperty returned %s\n",
+                    getCoreAudioErrorStr(CAstatus));
+            return FALSE;
+        }
+        CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDefaultInputDevice, 
+                                                &propertySize, &propertyWritable);
+        CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultInputDevice,
+                                                &propertySize, &inputDeviceID);
+        if (CAstatus) {
+            fprintf(stderr, "Input: AudioHardwareGetProperty returned %s\n", getCoreAudioErrorStr(CAstatus));
             return FALSE;
         }
         driverIndex = 0;  // TODO must find the default output device ID in the driver list and return its index
@@ -452,19 +604,40 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
         driverIndex = 0;
     }
     
+#if DEBUG_DESCRIPTION
+//    fprintf(stderr,"OUTPUT ===========\n");
+#endif
+    
     /* check the returned device */    
     if (outputDeviceID == kAudioDeviceUnknown) {
         fprintf(stderr, "outputDeviceID is kAudioDeviceUnknown\n");
         return FALSE;
     }
-    
-    if(isDeviceRunning(outputDeviceID)) {
-        fprintf(stderr, "device is already running\n");
+    if(isDeviceRunning(outputDeviceID, false)) {
+        fprintf(stderr, "output device is already running\n");
         return FALSE;
     }
-    if(!determineBasicDescription(outputDeviceID))
+    if(!determineBasicDescription(outputDeviceID, &outputStreamBasicDescription, false))
         return FALSE;
-    if(!setBufferSize(32768))
+
+#if DEBUG_DESCRIPTION
+//    fprintf(stderr,"INPUT ===========\n");
+#endif
+
+    if (inputDeviceID == kAudioDeviceUnknown) {
+        fprintf(stderr, "inputDeviceID is kAudioDeviceUnknown\n");
+        return FALSE;
+    }
+    if(isDeviceRunning(inputDeviceID, true)) {
+        fprintf(stderr, "input device is already running\n");
+        return FALSE;
+    }
+    if(!determineBasicDescription(inputDeviceID, &inputStreamBasicDescription, true))
+        return FALSE;
+
+    if(!setBufferSize(outputDeviceID, 16384, false))
+        return FALSE;
+    if(!setBufferSize(inputDeviceID, 16384, true))
         return FALSE;
         
     return TRUE;
@@ -493,7 +666,7 @@ PERFORM_API char **SNDGetAvailableDriverNames(void)
                                     kAudioDevicePropertyDeviceName,
                                     &propertySize, deviceName);
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceGetProperty returned %s\n", (char *) &CAstatus);
+        fprintf(stderr, "AudioDeviceGetProperty 7 returned %s\n", getCoreAudioErrorStr(CAstatus));
         return NULL;
     }
 
@@ -560,7 +733,7 @@ PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct,
             
     CAstatus = AudioDeviceAddIOProc(outputDeviceID, sndPlayIOProc, NULL);
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceAddIOProc returned %d\n", (int) CAstatus);
+        fprintf(stderr, "AudioDeviceAddIOProc returned %s\n", getCoreAudioErrorStr(CAstatus));
         return 0;
     }
 
@@ -575,7 +748,7 @@ PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct,
 
     CAstatus = AudioDeviceStart(outputDeviceID, sndPlayIOProc);
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceStart returned %d\n", (int) CAstatus);
+        fprintf(stderr, "AudioDeviceStart returned %s\n", getCoreAudioErrorStr(CAstatus));
         return 0;
     }
 
@@ -611,11 +784,10 @@ PERFORM_API void SNDStop(int tag)
         CAstatus = AudioDeviceStop(outputDeviceID, sndPlayIOProc);
         
         if (CAstatus) {
-            fprintf(stderr, "AudioDeviceStop returned %d\n", (int) CAstatus);
+            fprintf(stderr, "AudioDeviceStop returned %s\n", getCoreAudioErrorStr(CAstatus));
             return;  // Doesn't have an error code return ability
         }
     }
-        
     singlePlayingSound.isPlaying = FALSE;
 }
 
@@ -637,63 +809,98 @@ PERFORM_API void SNDTerminate(void)
 {
 }
 
-// 
+////////////////////////////////////////////////////////////////////////////////
+// SndStreamNativeFormat
+////////////////////////////////////////////////////////////////////////////////
 
 // Return in the struct the format of the sound data preferred by
 // the operating system. For CoreAudio, we use the basicDescription.
 PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat)
 {
-    streamFormat->magic = SND_MAGIC;
+    streamFormat->magic        = SND_MAGIC;
     streamFormat->dataLocation = 0;   /* Offset or pointer to the raw data */
     /* Number of bytes of data in a buffer */
-    streamFormat->dataSize = bufferSizeInFrames * outputStreamBasicDescription.mBytesPerFrame;
-    streamFormat->dataFormat = SND_FORMAT_FLOAT;
+    streamFormat->dataSize     = bufferSizeInFrames * outputStreamBasicDescription.mBytesPerFrame;
+    streamFormat->dataFormat   = SND_FORMAT_FLOAT;
     streamFormat->samplingRate = outputStreamBasicDescription.mSampleRate;
     streamFormat->channelCount = outputStreamBasicDescription.mChannelsPerFrame;
-    streamFormat->info[0] = '\0';
+    streamFormat->info[0]      = '\0';
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// SNDStreamStart
+//
 // Routine to begin playback/recording of a stream.
+////////////////////////////////////////////////////////////////////////////////
+
 PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *newUserData)
 {
+    BOOL r = TRUE;
     OSStatus CAstatus;
 
     if(!initialised)
         return FALSE;  // invalid sound structure.
  
     streamProcessor = newStreamProcessor;
-    streamUserData = newUserData;
+    streamUserData  = newUserData;
     
     CAstatus = AudioDeviceAddIOProc(outputDeviceID, vendBuffersToStreamManagerIOProc, NULL);
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceAddIOProc returned %d\n", (int) CAstatus);
-        return FALSE;
+        fprintf(stderr, "SNDStartStreaming: AudioDeviceAddIOProc returned %s\n",
+                getCoreAudioErrorStr(CAstatus));
+        r = FALSE;
     }
-
-    CAstatus = AudioDeviceStart(outputDeviceID, vendBuffersToStreamManagerIOProc);
+    CAstatus = AudioDeviceAddIOProc(inputDeviceID, vendBuffersToStreamManagerIOProc, NULL);
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceStart returned %d\n", (int) CAstatus);
-        return FALSE;
+        fprintf(stderr, "SNDStartStreaming: AudioDeviceAddIOProc returned %s\n",
+         				getCoreAudioErrorStr(CAstatus));
+        r = FALSE;
+    }
+    if (r) { // all is well so far...
+      CAstatus = AudioDeviceStart(outputDeviceID, vendBuffersToStreamManagerIOProc);
+      if (CAstatus) {
+          fprintf(stderr, "SNDStartStreaming: AudioDeviceStart returned %s\n",
+                  getCoreAudioErrorStr(CAstatus));
+          r = FALSE;
+      }
+      CAstatus = AudioDeviceStart(inputDeviceID, vendBuffersToStreamManagerIOProc);
+      if (CAstatus) {
+          fprintf(stderr, "SNDStartStreaming: AudioDeviceStart returned %s\n", 
+                  getCoreAudioErrorStr(CAstatus));
+          r = FALSE;
+      }
+
     }
     // indicate the first absolute sample time received from the call back needs to be marked as a
     // datum to use to convert subsequent absolute sample times to a relative time.
     firstSampleTime = -1.0;  
-    return TRUE;
+    return r;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// SNDStreamStop
+////////////////////////////////////////////////////////////////////////////////
 
 PERFORM_API BOOL SNDStreamStop(void)
 {
+    BOOL r = TRUE;
     OSStatus CAstatus;
 
     CAstatus = AudioDeviceStop(outputDeviceID, vendBuffersToStreamManagerIOProc);
-    
     if (CAstatus) {
-        fprintf(stderr, "AudioDeviceStop returned %d\n", (int) CAstatus);
-	return FALSE;
+        fprintf(stderr, "SNDStreamStop: output dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
+        r =  FALSE;
+    }
+    CAstatus = AudioDeviceStop(inputDeviceID, vendBuffersToStreamManagerIOProc);
+    if (CAstatus) {
+        fprintf(stderr, "SNDStreamStop: input dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
+        r = FALSE;
     }
     firstSampleTime = -1.0;  
-    return TRUE;
+    return r;
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 }
