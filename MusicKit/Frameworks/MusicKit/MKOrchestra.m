@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/03/24 21:13:07  leigh
+  Cleaned up numeric representation of booleans
+
   Revision 1.7  2000/03/24 16:26:54  leigh
   Removed redundant AppKit headers
 
@@ -3906,7 +3909,7 @@ if (serialPortDevice && serialSoundOut)
 
 /* May want to make this on a per-DSP basis */
 static id abortNotificationDelegate = nil;
-static BOOL notificationSent = 0;
+static BOOL notificationSent = NO;
 
 +setAbortNotification:aDelegate
 {
@@ -3925,13 +3928,13 @@ static BOOL notificationSent = 0;
     if (abortNotificationDelegate && !notificationSent)
       [MKConductor sendMsgToApplicationThreadSel:@selector(orchestraDidAbort:)
        to:abortNotificationDelegate argCount:1, self];
-    notificationSent = 1;
+    notificationSent = YES;
     return self;
 }
 
 -_clearNotification
 {
-    notificationSent = 0;
+    notificationSent = NO;
     return self;
 }
 
@@ -4002,10 +4005,12 @@ static BOOL driverPresent(unsigned short index)
 	else { 
 	    /* DAJ: Commented out lock/unlock here.  It's not needed */
 //	    [MKConductor lockPerformance];
-	    adjustOrchTE(self,yesOrNo,reset);
+	    adjustOrchTE(self, yesOrNo, reset);
 //	    [MKConductor unlockPerformance];
 	}
-    } else adjustOrchTE(self,yesOrNo,reset);
+    } 
+    else
+        adjustOrchTE(self, yesOrNo, reset);
     return self;
 }
 
