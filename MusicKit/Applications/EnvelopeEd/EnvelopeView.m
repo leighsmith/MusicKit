@@ -8,6 +8,11 @@
 
 // Revision History:
 // $Log$
+// Revision 1.4  2002/01/29 19:31:13  sbrandon
+// typecast theController to (Controller*)
+// removed last vestiges of PS functions and replaced with standard API
+// now use NSColor objects instead of float grayscales
+//
 // Revision 1.3  2000/04/01 01:07:44  leigh
 // Removed redundant PS include
 //
@@ -41,10 +46,10 @@
 #define WIDTH ([self bounds].size.width)
 #define HEIGHT ([self bounds].size.height)
 
-#define WHITE 1.0
-#define BLACK 0.0
-#define DKGRAY (1.0/3.0)
-#define LTGRAY (2.0/3.0)
+#define WHITE [NSColor whiteColor] /* 1.0 */
+#define BLACK [NSColor blackColor] /* was 0.0 */
+#define DKGRAY [NSColor darkGrayColor] /* was (1.0/3.0) */
+#define LTGRAY [NSColor lightGrayColor] /* was LTGRAY (2.0/3.0) */
 #define TRANSP 2.0
 
 #define DRAG_MASK (NSLeftMouseUpMask|NSLeftMouseDraggedMask)
@@ -56,7 +61,7 @@
 //-------------------------------------------------------------------
 // Draw a knob in the display
 
-#define DRAWKNOB(x,y) PScompositerect(x-KNOBSIZE/2,y-KNOBSIZE/2,KNOBSIZE, KNOBSIZE,NSCompositeSourceOver)
+#define DRAWKNOB(x,y) NSRectFillUsingOperation(NSMakeRect(x-KNOBSIZE/2,y-KNOBSIZE/2,KNOBSIZE, KNOBSIZE),NSCompositeSourceOver)
 
 //-------------------------------------------------------------------
 // Translate from x/y envelope values to display pixel coordinates
@@ -236,7 +241,7 @@ void freeDraw()
 {
     selected=n;
     [self display];
-    [theController update:self];
+    [(Controller *)theController update:self];
     return self;
 }
 
@@ -372,17 +377,19 @@ void freeDraw()
 // knob if necessary. The second colour argument specifies the colour
 // of the highlighted knob.
 
-- drawKnobsFrom:(int)from to:(int)to in:(float)lcolour hilighted:(float)hcolour
+- drawKnobsFrom:(int)from to:(int)to in:(NSColor *)lcolour hilighted:(NSColor *)hcolour
 {
     int point;
     
-    PSsetgray(lcolour);
+    // PSsetgray(lcolour);
+    [lcolour set];
     for (point=from; point<=to; point++) {
         if (point!=selected)
             DRAWKNOB(xToPix(xValues[point]),yToPix(yValues[point]));
     }
-    if (selected>=from && selected<=to && hcolour<=WHITE) {
-        PSsetgray(hcolour);
+    if (selected>=from && selected<=to && hcolour != WHITE) {
+        //PSsetgray(hcolour);
+        [hcolour set];
         DRAWKNOB(xToPix(xValues[selected]),yToPix(yValues[selected]));
     }
     return self;
@@ -409,7 +416,7 @@ void freeDraw()
     return self;
 }
 
-- drawSegmentsFrom:(int)from to:(int)to in:(float)colour
+- drawSegmentsFrom:(int)from to:(int)to in:(NSColor *)colour
 {
     NSPoint pointToDraw;
     int pointIndex, seg;
@@ -424,7 +431,8 @@ void freeDraw()
     // the previously drawn segments
     
     if (colour==WHITE) {
-        PSsetgray(colour);
+        // PSsetgray(colour);
+        [colour set];
 	[userPath removeAllPoints]; // reset
         for (pointIndex = 0; draw->p[pointIndex] <= from && pointIndex < draw->num; pointIndex++)
 	    ;
@@ -447,7 +455,8 @@ void freeDraw()
     
     draw->num=0;
     if (xMin!=0 || xMax!=0) {
-        PSsetgray(LTGRAY);
+        //PSsetgray(LTGRAY);
+        [LTGRAY set];
 	[userPath removeAllPoints];
         if (xMin!=0) {
             [self recordMovex: 0 y: yMin p: from draw: 0];
@@ -466,7 +475,8 @@ void freeDraw()
 	return self;
     
     draw->num=0;
-    PSsetgray(colour);
+    //PSsetgray(colour);
+    [colour set];
     [userPath removeAllPoints];
     [self recordMovex: xValues[from] y: yValues[from] p: from draw: 0];
     yi=draw->yr[from]=yValues[from];
@@ -509,7 +519,8 @@ void freeDraw()
 - (void) drawRect: (NSRect) rect
 {
     NSEraseRect([self bounds]);                        // clear the view
-    PSsetlinewidth(0.0);
+    //PSsetlinewidth(0.0);
+    [NSBezierPath setDefaultLineWidth:0.0];
     if (theEnvelope != nil) {
         [self drawKnobsFrom: 0 to: pointCount-1 in: LTGRAY hilighted: envColour];
         [self drawSegmentsFrom: 0 to: pointCount-1 in: envColour];
@@ -524,9 +535,10 @@ void freeDraw()
 - eraseSelectedKnob
 {
     NSEraseRect([self bounds]);                        // clear the view
-    PSsetlinewidth(0.0);
+    //PSsetlinewidth(0.0);
+    [NSBezierPath setDefaultLineWidth:0.0];
     if (theEnvelope != nil) {
-        [self drawKnobsFrom: 0 to: pointCount-1 in: LTGRAY hilighted: TRANSP];
+        [self drawKnobsFrom: 0 to: pointCount-1 in: LTGRAY hilighted: WHITE];//TRANSP
         [self drawSegmentsFrom: 0 to: pointCount-1 in: envColour];
     }
     return self;
@@ -590,7 +602,7 @@ void freeDraw()
             p.x=xValues[n+1]-(1/WIDTH*(xMax-xMin));
 
     [self drawKnobsFrom:drawFrom                  // erase old knobs and segments
-        to:drawTo in:WHITE hilighted:TRANSP];
+        to:drawTo in:WHITE hilighted:WHITE];//TRANSP
     [self drawSegmentsFrom:drawFrom 
         to:drawTo in:WHITE];
 
@@ -598,7 +610,7 @@ void freeDraw()
     yValues[n]=p.y;                               // update coordinates in arrays
     
     [self drawKnobsFrom:drawFrom                  // draw new knobs and segments
-        to:drawTo in:LTGRAY hilighted:TRANSP];
+        to:drawTo in:LTGRAY hilighted:WHITE];//TRANSP
     [self drawSegmentsFrom:drawFrom 
         to:drawTo in:envColour];
 
@@ -753,7 +765,7 @@ void freeDraw()
                 p.y=pixToY(ep.y);
                 [self movePoint:hitpt to:p];
                 [theController updateCoords: self at: hitpt];
-                PSWait();
+               // PSWait();
             }
             event = [[self window] nextEventMatchingMask:DRAG_MASK];
         }
@@ -799,7 +811,7 @@ void freeDraw()
 - (BOOL)becomeFirstResponder
 {
     if (theController!=nil)
-        [theController update:self];
+        [(Controller *)theController update:self];
     envColour=BLACK;
     [self display];
     return YES;
@@ -1211,7 +1223,7 @@ int token(char *t)
     if (point < 0)
         point = 0;
     [self selectPoint: point];
-    [theController update:self]; 
+    [(Controller *)theController update:self]; 
 }
 
 //-------------------------------------------------------------------
@@ -1226,7 +1238,7 @@ int token(char *t)
     if (next<0) next=0;
     if (next!=selected) {
         [self selectPoint:next];
-        [theController update:self];
+        [(Controller *)theController update:self];
     } 
 }
 
@@ -1242,7 +1254,7 @@ int token(char *t)
     if (previous<0) previous=0;
     if (previous!=selected) {
         [self selectPoint:previous];
-        [theController update:self];
+        [(Controller *)theController update:self];
     } 
 }
 
@@ -1258,7 +1270,7 @@ int token(char *t)
     if (coord!=xValues[n]) {                    // if x changed update display panel
         xValues[n]=coord;
         [self display];
-        [theController update:self];
+        [(Controller *)theController update:self];
     }
     return self;
 }
@@ -1274,7 +1286,7 @@ int token(char *t)
     if (coord!=yValues[n]) {                   // if y changed update display panel
         yValues[n]=coord;
         [self display];
-        [theController update:self];
+        [(Controller *)theController update:self];
     }
     return self;
 }
@@ -1305,7 +1317,7 @@ int token(char *t)
     if (value!=sValues[n]) {                  // if smoothing changed update panel
         sValues[n]=value;
         [self display];
-        [theController update:self];
+        [(Controller *)theController update:self];
     }
     return self;
 }
@@ -1320,7 +1332,7 @@ int token(char *t)
         [self display];
     }
     else if (theController!=nil)
-        [theController update:self]; 
+        [(Controller *)theController update:self]; 
 }
 
 //-------------------------------------------------------------------
@@ -1333,7 +1345,7 @@ int token(char *t)
         [self display];
     }
     else if (theController!=nil)
-        [theController update:self]; 
+        [(Controller *)theController update:self]; 
 }
 
 //-------------------------------------------------------------------
@@ -1357,7 +1369,7 @@ int token(char *t)
         [self display];
     }
     else if (theController!=nil)
-        [theController update:self]; 
+        [(Controller *)theController update:self]; 
 }
 
 //-------------------------------------------------------------------
@@ -1370,7 +1382,7 @@ int token(char *t)
         [self display];
     }
     else if (theController!=nil)
-        [theController update:self]; 
+        [(Controller *)theController update:self]; 
 }
 
 //-------------------------------------------------------------------
@@ -1400,7 +1412,7 @@ int token(char *t)
         [theEnvelope setStickPoint: MAXINT];
     else
         [theEnvelope setStickPoint: point];
-    [theController update:self];
+    [(Controller *)theController update:self];
     [self display]; 
 }
 
@@ -1411,7 +1423,7 @@ int token(char *t)
 {
     showSmooth=state;
     [self display];
-    [theController update: self]; 
+    [(Controller *)theController update: self]; 
 }
 
 //-------------------------------------------------------------------
@@ -1421,7 +1433,7 @@ int token(char *t)
 {
     drawSegments=state;
     [self display];
-    [theController update: self]; 
+    [(Controller *)theController update: self]; 
 }
 
 //-------------------------------------------------------------------
