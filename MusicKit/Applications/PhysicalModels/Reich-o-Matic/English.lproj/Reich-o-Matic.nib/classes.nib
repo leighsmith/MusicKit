@@ -11,7 +11,7 @@
             }; 
             CLASS = Reicher; 
             LANGUAGE = ObjC; 
-            SUPERCLASS = Object; 
+            SUPERCLASS = NSObject; 
         }
     ); 
     IBVersion = 1; 

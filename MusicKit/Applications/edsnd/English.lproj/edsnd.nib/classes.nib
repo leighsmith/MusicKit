@@ -24,7 +24,7 @@
             }; 
             SUPERCLASS = NSApplication; 
         }, 
-        {CLASS = FFT; LANGUAGE = ObjC; SUPERCLASS = Object; }, 
+        {CLASS = FFT; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
             ACTIONS = {advanceFrame = id; }; 
             CLASS = FFTView; 
@@ -57,7 +57,7 @@
                 saveAsCell = id; 
                 saveCell = id; 
             }; 
-            SUPERCLASS = Object; 
+            SUPERCLASS = NSObject; 
         }, 
         {CLASS = UpPanel; LANGUAGE = ObjC; SUPERCLASS = NSPanel; }
     ); 

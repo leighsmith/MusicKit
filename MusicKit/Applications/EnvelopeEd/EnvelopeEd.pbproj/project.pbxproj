@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		0134D679FFD4B570CFED3B96 = {
 			buildStyles = (
 				441ED0EE005D5BA5CFED3B96,
 				441ED0EF005D5BA5CFED3B96,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 0134D67AFFD4B570CFED3B96;
 			productRefGroup = 0134D698FFD4B570CFED3B96;
@@ -27,7 +28,6 @@
 				0134D688FFD4B570CFED3B96,
 				0134D690FFD4B570CFED3B96,
 				0134D693FFD4B570CFED3B96,
-				0134D697FFD4B570CFED3B96,
 				0134D698FFD4B570CFED3B96,
 			);
 			isa = PBXGroup;
@@ -44,11 +44,13 @@
 			refType = 4;
 		};
 		0134D67CFFD4B570CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Controller.m;
 			refType = 4;
 		};
 		0134D67DFFD4B570CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = EnvelopeView.m;
 			refType = 4;
@@ -63,11 +65,13 @@
 			refType = 4;
 		};
 		0134D67FFFD4B570CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Controller.h;
 			refType = 4;
 		};
 		0134D680FFD4B570CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = EnvelopeView.h;
 			refType = 4;
@@ -81,6 +85,7 @@
 			refType = 4;
 		};
 		0134D682FFD4B570CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = EnvelopeEd_main.m;
 			refType = 4;
@@ -186,6 +191,7 @@
 			refType = 4;
 		};
 		0134D692FFD4B570CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = TODO;
 			refType = 4;
@@ -216,12 +222,6 @@
 			isa = PBXFrameworkReference;
 			name = MusicKit.framework;
 			path = /Library/Frameworks/MusicKit.framework;
-			refType = 0;
-		};
-		0134D697FFD4B570CFED3B96 = {
-			isa = PBXFileReference;
-			name = "Import Log.rtf";
-			path = "/manray/Local/Users/leigh/Sources/PublicDomain/MusicKit/Applications/EnvelopeEd/Import Log.rtf";
 			refType = 0;
 		};
 		0134D698FFD4B570CFED3B96 = {
@@ -264,8 +264,8 @@
 			productName = EnvelopeEd;
 			productReference = 0134D699FFD4B570CFED3B96;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -298,7 +298,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		0134D69BFFD4B570CFED3B96 = {
 			buildActionMask = 2147483647;
@@ -307,7 +306,7 @@
 				0134D69DFFD4B570CFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0134D69CFFD4B570CFED3B96 = {
 			fileRef = 0134D67FFFD4B570CFED3B96;
@@ -335,7 +334,7 @@
 				0134D6A7FFD4B570CFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0134D69FFFD4B570CFED3B96 = {
 			fileRef = 0134D684FFD4B570CFED3B96;
@@ -399,7 +398,7 @@
 				0134D6ABFFD4B570CFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0134D6A9FFD4B570CFED3B96 = {
 			fileRef = 0134D67CFFD4B570CFED3B96;
@@ -433,7 +432,7 @@
 				0134D6AFFFD4B570CFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0134D6ADFFD4B570CFED3B96 = {
 			fileRef = 0134D694FFD4B570CFED3B96;
@@ -458,7 +457,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //010
 //011

@@ -144,7 +144,7 @@ easy loading of new values from the filterFields
 
 - makeVowel:sender
 {
-    NSDictionary *shapesAndFormants = [NSDictionary dictionaryWithKeys: 
+    NSDictionary *shapesAndFormants = [NSDictionary dictionaryWithKeys: nil ]; // TODO this needs fixing
     char shapes[10][3] = 	{{"ee"},
     			 	{"ih"},
     			 	{"eh"},

@@ -83,13 +83,13 @@
             }; 
             CLASS = GenericDocumentDelegate; 
             LANGUAGE = ObjC; 
-            SUPERCLASS = Object; 
+            SUPERCLASS = NSObject; 
         }, 
         {
             CLASS = Instrument; 
             LANGUAGE = ObjC; 
             OUTLETS = {noteReceivers = id; }; 
-            SUPERCLASS = Object; 
+            SUPERCLASS = NSObject; 
         }, 
         {
             ACTIONS = {takeMaxKeyFrom = id; takeMinKeyFrom = id; takeTranspositionFrom = id; }; 

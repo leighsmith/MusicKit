@@ -25,7 +25,7 @@
                 resGainFieldBank = id; 
                 resGainSliderBank = id; 
             }; 
-            SUPERCLASS = Object; 
+            SUPERCLASS = NSObject; 
         }
     ); 
     IBVersion = 1; 

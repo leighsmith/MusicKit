@@ -3,7 +3,7 @@
 
 #import <appkit/appkit.h>
 
-@interface ResonController:Object
+@interface ResonController: NSObject
 {
     id	ampFieldBank;
     id	ampSliderBank;

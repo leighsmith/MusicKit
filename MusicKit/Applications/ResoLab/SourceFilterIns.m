@@ -1,6 +1,5 @@
 /* The following files must be imported. */
 #import <MusicKit/MusicKit.h>    
-#import <MKUnitGenerators/UnitGenerators.h>
 #import <math.h>
 #import <stdio.h>
 
@@ -53,7 +52,7 @@ static int		ampAsymp,   	/* amplitude envelope UG */
     static id theTemplate = nil;
     if (theTemplate)
       return theTemplate;
-    theTemplate = [PatchTemplate new];
+    theTemplate = [MKPatchTemplate new];
 
     /* Step 2:  Add the SynthElement specifications. */	
     ampAsymp = [theTemplate addUnitGenerator:[AsympUGy class]];
@@ -429,7 +428,7 @@ static int		ampAsymp,   	/* amplitude envelope UG */
     
     if (myNumHarmonics!=MAXINT) {
         numHarmonics = myNumHarmonics;	
-        waveTable = [Partials new];
+        waveTable = [MKPartials new];
         if (numHarmonics>199) numHarmonics = 199;
         if (numHarmonics<1) numHarmonics = 1;
         for (i=0;i<numHarmonics;i++)	{

@@ -21,7 +21,7 @@
             OUTLETS = {ampEnv = id; freq2Env = id; freqEnv = id; }; 
             SUPERCLASS = SynthPatch; 
         }, 
-        {CLASS = Instrument; LANGUAGE = ObjC; SUPERCLASS = Object; }, 
+        {CLASS = Instrument; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
             ACTIONS = {
                 center = id; 
@@ -51,7 +51,7 @@
             SUPERCLASS = NoteFilter; 
         }, 
         {CLASS = NoteFilter; LANGUAGE = ObjC; SUPERCLASS = Instrument; }, 
-        {CLASS = SynthPatch; LANGUAGE = ObjC; SUPERCLASS = Object; }
+        {CLASS = SynthPatch; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
     ); 
     IBVersion = 1; 
 }

@@ -63,7 +63,7 @@
             CLASS = Instrument; 
             LANGUAGE = ObjC; 
             OUTLETS = {noteReceivers = id; }; 
-            SUPERCLASS = Object; 
+            SUPERCLASS = NSObject; 
         }, 
         {CLASS = ProgramChanger; LANGUAGE = ObjC; SUPERCLASS = Instrument; }
     ); 

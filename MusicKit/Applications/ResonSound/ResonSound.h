@@ -1,10 +1,10 @@
 #ifndef __MK_ResonSound_H___
 #define __MK_ResonSound_H___
 /* Copyright CCRMA, 1992.  All rights reserved. */
-#import <musickit/SynthPatch.h>
+#import <MusicKit/MKSynthPatch.h>
 
-/* Interface for example SynthPatch ResonSound. */
-@interface ResonSound:SynthPatch
+/* Interface for example MKSynthPatch ResonSound. */
+@interface ResonSound: MKSynthPatch
 {
     /* Parameters to which this patch responds */
     double bearing;

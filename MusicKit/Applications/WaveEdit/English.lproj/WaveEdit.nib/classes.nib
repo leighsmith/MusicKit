@@ -19,7 +19,7 @@
             CLASS = FFTControl; 
             LANGUAGE = ObjC; 
             OUTLETS = {convView = id; modView = id; phiView = id; waveView = id; }; 
-            SUPERCLASS = Object; 
+            SUPERCLASS = NSObject; 
         }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {

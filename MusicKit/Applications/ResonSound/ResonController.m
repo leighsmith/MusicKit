@@ -17,9 +17,9 @@ static id serialPortDevice = nil;
 
 + initialize
 {
-    feedbackGainPar = [Note parName:"feedbackGain"];
-    chanPar = [Note parName:"chan"];
-    anOrch = [Orchestra new];        
+    feedbackGainPar = [MKNote parName:"feedbackGain"];
+    chanPar = [MKNote parName:"chan"];
+    anOrch = [MKOrchestra new];        
     return self;
 }
 
@@ -110,7 +110,7 @@ static double sliderToPan(float val)
     int i;
     if (!notes[0])
       for (i=0; i<VOICE_COUNT; i++) {
-	  notes[i] = [[Note alloc] init];
+	  notes[i] = [[MKNote alloc] init];
 	  [notes[i] setNoteTag:MKNoteTag()];
 	  [notes[i] setPar:chanPar toInt:(i < FIRST_B) ? 0 : 1];
 	  [[ampFieldBank cellAt:i :0] setFloatValue:
@@ -177,16 +177,16 @@ static double sliderToPan(float val)
 - _startNotes
 {
     int i;
-    [Conductor lockPerformance];
+    [MKConductor lockPerformance];
     for (i=0; i<VOICE_COUNT; i++) 
       [self _startNote:i];
-    [Conductor unlockPerformance];
+    [MKConductor unlockPerformance];
     return self;
 }
 
 -_stop {
     [anOrch abort];
-    [Conductor finishPerformance];
+    [MKConductor finishPerformance];
     anIns = [anIns free];
     aNoteSender = [aNoteSender free];
     if (([anOrch capabilities] & MK_hostSoundOut))
@@ -265,10 +265,10 @@ static double sliderToPan(float val)
      [ResonSound patchTemplateFor:notes[FIRST_B]]];
     aNoteSender = [[NoteSender alloc] init];
     [aNoteSender connect:[anIns noteReceiver]];
-    [Conductor setClocked:YES];
-    [Conductor setFinishWhenEmpty:NO];
+    [MKConductor setClocked:YES];
+    [MKConductor setFinishWhenEmpty:NO];
     [anOrch run];                  /* Start the DSP. */
-    [Conductor startPerformance];  /* Start sending Notes, loops till done.*/
+    [MKConductor startPerformance];  /* Start sending Notes, loops till done.*/
     [self _startNotes];
     return self;
 }
@@ -288,12 +288,12 @@ static double sliderToPan(float val)
     id cell = [sender selectedCell];
     int row = [sender selectedRow];
     float amp = sliderToAmp([cell floatValue]);
-    [Conductor lockPerformance];
+    [MKConductor lockPerformance];
     [notes[row] setNoteType:MK_noteUpdate];
     [notes[row] setPar:MK_amp toDouble:amp];
     [aNoteSender sendNote:notes[row]];
     [notes[row] removePar:MK_amp];
-    [Conductor unlockPerformance];
+    [MKConductor unlockPerformance];
     [[ampFieldBank cellAt:row :0] setFloatValue:amp];
     return self;
 }
@@ -303,12 +303,12 @@ static double sliderToPan(float val)
     id cell = [sender selectedCell];
     int row = [sender selectedRow];
     int keyNum = sliderToKeyNum([cell floatValue]);
-    [Conductor lockPerformance];
+    [MKConductor lockPerformance];
     [notes[row] setNoteType:MK_noteUpdate];
     [notes[row] setPar:MK_keyNum toInt:keyNum];
     [aNoteSender sendNote:notes[row]];
     [notes[row] removePar:MK_keyNum];
-    [Conductor unlockPerformance];
+    [MKConductor unlockPerformance];
     [[freqFieldBank cellAt:row :0] setStringValue:keyNumToName(keyNum)];
     return self;
 }
@@ -318,12 +318,12 @@ static double sliderToPan(float val)
     id cell = [sender selectedCell];
     int row = [sender selectedRow];
     float bearing = sliderToPan([cell floatValue]);
-    [Conductor lockPerformance];
+    [MKConductor lockPerformance];
     [notes[row] setNoteType:MK_noteUpdate];
     [notes[row] setPar:MK_bearing toDouble:bearing];
     [aNoteSender sendNote:notes[row]];
     [notes[row] removePar:MK_bearing];
-    [Conductor unlockPerformance];
+    [MKConductor unlockPerformance];
     [[panFieldBank cellAt:row :0] setFloatValue:bearing];
     return self;
 }
@@ -333,12 +333,12 @@ static double sliderToPan(float val)
     id cell = [sender selectedCell];
     int row = [sender selectedRow];
     float feedbackGain = sliderToFBG([cell floatValue]);
-    [Conductor lockPerformance];
+    [MKConductor lockPerformance];
     [notes[row] setNoteType:MK_noteUpdate];
     [notes[row] setPar:feedbackGainPar toDouble:feedbackGain];
     [aNoteSender sendNote:notes[row]];
     [notes[row] removePar:feedbackGainPar];
-    [Conductor unlockPerformance];
+    [MKConductor unlockPerformance];
     [[resGainFieldBank cellAt:row :0] setFloatValue:feedbackGain];
     return self;
 }

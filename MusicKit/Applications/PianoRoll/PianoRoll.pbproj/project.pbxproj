@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		014780A1FFC46F29CFED3B96 = {
 			buildStyles = (
 				26063802005AEBA3CFED3B96,
 				26063803005AEBA3CFED3B96,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 014780A2FFC46F29CFED3B96;
 			productRefGroup = 014780BFFFC46F29CFED3B96;
@@ -45,26 +46,31 @@
 			refType = 4;
 		};
 		014780A4FFC46F29CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Distributor.m;
 			refType = 4;
 		};
 		014780A5FFC46F29CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Document.m;
 			refType = 4;
 		};
 		014780A6FFC46F29CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PartView.m;
 			refType = 4;
 		};
 		014780A7FFC46F29CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PlayScore.m;
 			refType = 4;
 		};
 		014780A8FFC46F29CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = TadPole.m;
 			refType = 4;
@@ -82,26 +88,31 @@
 			refType = 4;
 		};
 		014780AAFFC46F29CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Distributor.h;
 			refType = 4;
 		};
 		014780ABFFC46F29CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Document.h;
 			refType = 4;
 		};
 		014780ACFFC46F29CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PartView.h;
 			refType = 4;
 		};
 		014780ADFFC46F29CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PlayScore.h;
 			refType = 4;
 		};
 		014780AEFFC46F29CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = TadPole.h;
 			refType = 4;
@@ -115,6 +126,7 @@
 			refType = 4;
 		};
 		014780B0FFC46F29CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PianoRoll_main.m;
 			refType = 4;
@@ -213,8 +225,8 @@
 			productName = PianoRoll;
 			productReference = 014780C0FFC46F29CFED3B96;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -247,7 +259,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		014780C2FFC46F29CFED3B96 = {
 			buildActionMask = 2147483647;
@@ -259,7 +270,7 @@
 				014780C7FFC46F29CFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		014780C3FFC46F29CFED3B96 = {
 			fileRef = 014780AAFFC46F29CFED3B96;
@@ -302,7 +313,7 @@
 				26063805005AEC78CFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		014780CCFFC46F29CFED3B96 = {
 			fileRef = 014780B9FFC46F29CFED3B96;
@@ -321,7 +332,7 @@
 				014780D3FFC46F29CFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		014780CEFFC46F29CFED3B96 = {
 			fileRef = 014780A4FFC46F29CFED3B96;
@@ -380,7 +391,7 @@
 				014780DBFFC4726BCFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		014780D5FFC46F29CFED3B96 = {
 			fileRef = 014780BBFFC46F29CFED3B96;
@@ -405,7 +416,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		014780DAFFC4726BCFED3B96 = {
 			isa = PBXFrameworkReference;

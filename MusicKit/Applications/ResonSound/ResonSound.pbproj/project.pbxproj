@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 38;
 	objects = {
 		0348D9CA00711DEDCFED3B96 = {
 			buildPhases = (
@@ -14,8 +14,8 @@
 				0348D9FB00711DEDCFED3B96,
 			);
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = /Local/Library/Frameworks;
 				INSTALL_PATH = "$(HOME)/Apps";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -23,8 +23,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -34,8 +32,8 @@
 			productName = "Reson (Application)";
 			productReference = 0348D9E800711DEDCFED3B96;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -68,15 +66,17 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		0348D9CB00711DEDCFED3B96 = {
 			buildStyles = (
+				D853732904055D4600DC8C05,
+				D853732A04055D4600DC8C05,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 0348D9CC00711DEDCFED3B96;
 			productRefGroup = 0348D9E700711DEDCFED3B96;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				0348D9CA00711DEDCFED3B96,
 			);
@@ -91,7 +91,6 @@
 				0348D9DC00711DEDCFED3B96,
 				0348D9DE00711DEDCFED3B96,
 				0348D9E000711DEDCFED3B96,
-				0348D9E600711DEDCFED3B96,
 				0348D9E700711DEDCFED3B96,
 			);
 			isa = PBXGroup;
@@ -108,11 +107,13 @@
 			refType = 4;
 		};
 		0348D9CE00711DEDCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ResonController.m;
 			refType = 4;
 		};
 		0348D9CF00711DEDCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ResonSound.m;
 			refType = 4;
@@ -127,11 +128,13 @@
 			refType = 4;
 		};
 		0348D9D100711DEDCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ResonController.h;
 			refType = 4;
 		};
 		0348D9D200711DEDCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ResonSound.h;
 			refType = 4;
@@ -145,6 +148,7 @@
 			refType = 4;
 		};
 		0348D9D400711DEDCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Reson_main.m;
 			refType = 4;
@@ -201,15 +205,9 @@
 		};
 		0348D9DC00711DEDCFED3B96 = {
 			children = (
-				0348D9DD00711DEDCFED3B96,
 			);
 			isa = PBXGroup;
 			name = Resources;
-			refType = 4;
-		};
-		0348D9DD00711DEDCFED3B96 = {
-			isa = PBXFileReference;
-			path = help.rtfd;
 			refType = 4;
 		};
 		0348D9DE00711DEDCFED3B96 = {
@@ -221,57 +219,19 @@
 			refType = 4;
 		};
 		0348D9DF00711DEDCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Makefile;
 			refType = 4;
 		};
 		0348D9E000711DEDCFED3B96 = {
 			children = (
-				0348D9E100711DEDCFED3B96,
-				0348D9E200711DEDCFED3B96,
-				0348D9E300711DEDCFED3B96,
-				0348D9E400711DEDCFED3B96,
-				0348D9E500711DEDCFED3B96,
+				D853732C04055D9100DC8C05,
+				D853732E04055DAB00DC8C05,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
 			refType = 4;
-		};
-		0348D9E100711DEDCFED3B96 = {
-			isa = PBXLibraryReference;
-			name = libNeXT_s.a;
-			path = /usr/lib/libNeXT_s.a;
-			refType = 0;
-		};
-		0348D9E200711DEDCFED3B96 = {
-			isa = PBXLibraryReference;
-			name = libunitgenerators.a;
-			path = /usr/lib/libunitgenerators.a;
-			refType = 0;
-		};
-		0348D9E300711DEDCFED3B96 = {
-			isa = PBXLibraryReference;
-			name = libmusickit.a;
-			path = /usr/lib/libmusickit.a;
-			refType = 0;
-		};
-		0348D9E400711DEDCFED3B96 = {
-			isa = PBXLibraryReference;
-			name = libdsp.a;
-			path = /usr/lib/libdsp.a;
-			refType = 0;
-		};
-		0348D9E500711DEDCFED3B96 = {
-			isa = PBXLibraryReference;
-			name = libDriver.a;
-			path = /usr/lib/libDriver.a;
-			refType = 0;
-		};
-		0348D9E600711DEDCFED3B96 = {
-			isa = PBXFileReference;
-			name = "Import Log.rtf";
-			path = "/Volumes/manray/Local/Users/leigh/Sources/Music/PublicDomain/MusicKit/Applications/ResonSound/Import Log.rtf";
-			refType = 0;
 		};
 		0348D9E700711DEDCFED3B96 = {
 			children = (
@@ -293,7 +253,7 @@
 				0348D9EB00711DEDCFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0348D9EA00711DEDCFED3B96 = {
 			fileRef = 0348D9D100711DEDCFED3B96;
@@ -313,10 +273,9 @@
 				0348D9ED00711DEDCFED3B96,
 				0348D9EE00711DEDCFED3B96,
 				0348D9EF00711DEDCFED3B96,
-				0348D9F000711DEDCFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0348D9ED00711DEDCFED3B96 = {
 			fileRef = 0348D9D600711DEDCFED3B96;
@@ -336,12 +295,6 @@
 			settings = {
 			};
 		};
-		0348D9F000711DEDCFED3B96 = {
-			fileRef = 0348D9DD00711DEDCFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		0348D9F100711DEDCFED3B96 = {
 			buildActionMask = 2147483647;
 			files = (
@@ -350,14 +303,13 @@
 				0348D9F400711DEDCFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0348D9F200711DEDCFED3B96 = {
 			fileRef = 0348D9CE00711DEDCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -366,7 +318,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -375,58 +326,77 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
 		0348D9F500711DEDCFED3B96 = {
 			buildActionMask = 2147483647;
 			files = (
-				0348D9F600711DEDCFED3B96,
-				0348D9F700711DEDCFED3B96,
-				0348D9F800711DEDCFED3B96,
-				0348D9F900711DEDCFED3B96,
-				0348D9FA00711DEDCFED3B96,
+				D853732D04055D9100DC8C05,
+				D853732F04055DAB00DC8C05,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
-		};
-		0348D9F600711DEDCFED3B96 = {
-			fileRef = 0348D9E100711DEDCFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		0348D9F700711DEDCFED3B96 = {
-			fileRef = 0348D9E200711DEDCFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		0348D9F800711DEDCFED3B96 = {
-			fileRef = 0348D9E300711DEDCFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		0348D9F900711DEDCFED3B96 = {
-			fileRef = 0348D9E400711DEDCFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		0348D9FA00711DEDCFED3B96 = {
-			fileRef = 0348D9E500711DEDCFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0348D9FB00711DEDCFED3B96 = {
 			buildActionMask = 2147483647;
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+//030
+//031
+//032
+//033
+//034
+//D80
+//D81
+//D82
+//D83
+//D84
+		D853732904055D4600DC8C05 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		D853732A04055D4600DC8C05 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
+		D853732C04055D9100DC8C05 = {
+			isa = PBXFrameworkReference;
+			name = Cocoa.framework;
+			path = /System/Library/Frameworks/Cocoa.framework;
+			refType = 0;
+		};
+		D853732D04055D9100DC8C05 = {
+			fileRef = D853732C04055D9100DC8C05;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D853732E04055DAB00DC8C05 = {
+			isa = PBXFrameworkReference;
+			name = MusicKit.framework;
+			path = /Local/Library/Frameworks/MusicKit.framework;
+			refType = 0;
+		};
+		D853732F04055DAB00DC8C05 = {
+			fileRef = D853732E04055DAB00DC8C05;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 	};
 	rootObject = 0348D9CB00711DEDCFED3B96;

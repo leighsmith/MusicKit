@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		024133C30044ABF8CFED3B96 = {
 			buildStyles = (
 				441ED0E2005D5AFBCFED3B96,
 				441ED0E3005D5AFBCFED3B96,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 024133C40044ABF8CFED3B96;
 			productRefGroup = 024133F80044ABF8CFED3B96;
@@ -26,7 +27,6 @@
 				024133E70044ABF8CFED3B96,
 				024133F20044ABF8CFED3B96,
 				024133F40044ABF8CFED3B96,
-				024133F70044ABF8CFED3B96,
 				024133F80044ABF8CFED3B96,
 			);
 			isa = PBXGroup;
@@ -53,61 +53,73 @@
 			refType = 4;
 		};
 		024133C60044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Animator.m;
 			refType = 4;
 		};
 		024133C70044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = EdsndApp.m;
 			refType = 4;
 		};
 		024133C80044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = EdSoundView.m;
 			refType = 4;
 		};
 		024133C90044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Envelope.m;
 			refType = 4;
 		};
 		024133CA0044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = EnvelopeView.m;
 			refType = 4;
 		};
 		024133CB0044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = FFT.m;
 			refType = 4;
 		};
 		024133CC0044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = FFTView.m;
 			refType = 4;
 		};
 		024133CD0044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ScrollingSound.m;
 			refType = 4;
 		};
 		024133CE0044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SoundDocument.m;
 			refType = 4;
 		};
 		024133CF0044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SpectrumView.m;
 			refType = 4;
 		};
 		024133D00044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Stopwatch.m;
 			refType = 4;
 		};
 		024133D10044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = UpPanel.m;
 			refType = 4;
@@ -132,61 +144,73 @@
 			refType = 4;
 		};
 		024133D30044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Animator.h;
 			refType = 4;
 		};
 		024133D40044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = EdsndApp.h;
 			refType = 4;
 		};
 		024133D50044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = EdSoundView.h;
 			refType = 4;
 		};
 		024133D60044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Envelope.h;
 			refType = 4;
 		};
 		024133D70044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = EnvelopeView.h;
 			refType = 4;
 		};
 		024133D80044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = FFT.h;
 			refType = 4;
 		};
 		024133D90044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = FFTView.h;
 			refType = 4;
 		};
 		024133DA0044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ScrollingSound.h;
 			refType = 4;
 		};
 		024133DB0044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SoundDocument.h;
 			refType = 4;
 		};
 		024133DC0044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SpectrumView.h;
 			refType = 4;
 		};
 		024133DD0044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Stopwatch.h;
 			refType = 4;
 		};
 		024133DE0044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = UpPanel.h;
 			refType = 4;
@@ -206,36 +230,43 @@
 			refType = 4;
 		};
 		024133E00044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PWenv.psw;
 			refType = 4;
 		};
 		024133E10044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PWfft.psw;
 			refType = 4;
 		};
 		024133E20044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PWSpectrum.psw;
 			refType = 4;
 		};
 		024133E30044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = fft_net.c;
 			refType = 4;
 		};
 		024133E40044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = edsnd_main.m;
 			refType = 4;
 		};
 		024133E50044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = fft.m;
 			refType = 4;
 		};
 		024133E60044ABF8CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SNDindirect.m;
 			refType = 4;
@@ -337,30 +368,10 @@
 		};
 		024133F40044ABF8CFED3B96 = {
 			children = (
-				024133F50044ABF8CFED3B96,
-				024133F60044ABF8CFED3B96,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
 			refType = 4;
-		};
-		024133F50044ABF8CFED3B96 = {
-			isa = PBXLibraryReference;
-			name = libMedia_s.a;
-			path = /usr/lib/libMedia_s.a;
-			refType = 0;
-		};
-		024133F60044ABF8CFED3B96 = {
-			isa = PBXLibraryReference;
-			name = libNeXT_s.a;
-			path = /usr/lib/libNeXT_s.a;
-			refType = 0;
-		};
-		024133F70044ABF8CFED3B96 = {
-			isa = PBXFileReference;
-			name = "Import Log.rtf";
-			path = "/manray/Local/Users/leigh/Sources/PublicDomain/MusicKit/Applications/edsnd/Import Log.rtf";
-			refType = 0;
 		};
 		024133F80044ABF8CFED3B96 = {
 			children = (
@@ -401,8 +412,8 @@
 			productName = edsnd;
 			productReference = 024133F90044ABF8CFED3B96;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -435,7 +446,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		024133FB0044ABF8CFED3B96 = {
 			buildActionMask = 2147483647;
@@ -454,7 +464,7 @@
 				024134070044ABF8CFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		024133FC0044ABF8CFED3B96 = {
 			fileRef = 024133D30044ABF8CFED3B96;
@@ -539,7 +549,7 @@
 				0241340E0044ABF8CFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		024134090044ABF8CFED3B96 = {
 			fileRef = 024133E80044ABF8CFED3B96;
@@ -597,11 +607,10 @@
 				0241341E0044ABF8CFED3B96,
 				0241341F0044ABF8CFED3B96,
 				024134200044ABF8CFED3B96,
-				024134210044ABF8CFED3B96,
 				024134220044ABF8CFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		024134100044ABF8CFED3B96 = {
 			fileRef = 024133C60044ABF8CFED3B96;
@@ -739,14 +748,6 @@
 				);
 			};
 		};
-		024134210044ABF8CFED3B96 = {
-			fileRef = 024133E50044ABF8CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-				);
-			};
-		};
 		024134220044ABF8CFED3B96 = {
 			fileRef = 024133E60044ABF8CFED3B96;
 			isa = PBXBuildFile;
@@ -758,30 +759,16 @@
 		024134230044ABF8CFED3B96 = {
 			buildActionMask = 2147483647;
 			files = (
-				024134240044ABF8CFED3B96,
-				024134250044ABF8CFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
-		};
-		024134240044ABF8CFED3B96 = {
-			fileRef = 024133F50044ABF8CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		024134250044ABF8CFED3B96 = {
-			fileRef = 024133F60044ABF8CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		024134260044ABF8CFED3B96 = {
 			buildActionMask = 2147483647;
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //020
 //021

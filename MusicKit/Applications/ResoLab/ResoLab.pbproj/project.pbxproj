@@ -3,15 +3,18 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 38;
 	objects = {
 		0348D98D0071186ECFED3B96 = {
 			buildStyles = (
+				D8537325040559E000DC8C05,
+				D8537326040559E000DC8C05,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 0348D98E0071186ECFED3B96;
 			productRefGroup = 0348D9AD0071186ECFED3B96;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				0348D9AF0071186ECFED3B96,
 			);
@@ -24,7 +27,6 @@
 				0348D99F0071186ECFED3B96,
 				0348D9A20071186ECFED3B96,
 				0348D9A50071186ECFED3B96,
-				0348D9AC0071186ECFED3B96,
 				0348D9AD0071186ECFED3B96,
 			);
 			isa = PBXGroup;
@@ -45,31 +47,37 @@
 			refType = 4;
 		};
 		0348D9900071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ResoController.m;
 			refType = 4;
 		};
 		0348D9910071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SourceFilterIns.m;
 			refType = 4;
 		};
 		0348D9920071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SpectrumView.m;
 			refType = 4;
 		};
 		0348D9930071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Xforms.m;
 			refType = 4;
 		};
 		0348D9940071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Z3DPlaneView.m;
 			refType = 4;
 		};
 		0348D9950071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ZPlaneView.m;
 			refType = 4;
@@ -88,31 +96,37 @@
 			refType = 4;
 		};
 		0348D9970071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ResoController.h;
 			refType = 4;
 		};
 		0348D9980071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SourceFilterIns.h;
 			refType = 4;
 		};
 		0348D9990071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SpectrumView.h;
 			refType = 4;
 		};
 		0348D99A0071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Xforms.h;
 			refType = 4;
 		};
 		0348D99B0071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Z3DPlaneView.h;
 			refType = 4;
 		};
 		0348D99C0071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ZPlaneView.h;
 			refType = 4;
@@ -126,6 +140,7 @@
 			refType = 4;
 		};
 		0348D99E0071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = ResoLab_main.m;
 			refType = 4;
@@ -162,6 +177,7 @@
 			refType = 4;
 		};
 		0348D9A30071186ECFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Overview.txt;
 			refType = 4;
@@ -220,12 +236,6 @@
 			path = /System/Library/Frameworks/Foundation.framework;
 			refType = 0;
 		};
-		0348D9AC0071186ECFED3B96 = {
-			isa = PBXFileReference;
-			name = "Import Log.rtf";
-			path = "/Volumes/manray/Local/Users/leigh/Sources/Music/PublicDomain/MusicKit/Applications/ResoLab/Import Log.rtf";
-			refType = 0;
-		};
 		0348D9AD0071186ECFED3B96 = {
 			children = (
 				0348D9AE0071186ECFED3B96,
@@ -250,7 +260,6 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" /Network/Servers/whiteley/lauren/Local/Library/Frameworks";
 				INSTALL_PATH = "$(HOME)/Apps";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -258,8 +267,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -269,8 +276,8 @@
 			productName = "ResoLab (Application)";
 			productReference = 0348D9AE0071186ECFED3B96;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -303,7 +310,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		0348D9B00071186ECFED3B96 = {
 			buildActionMask = 2147483647;
@@ -316,7 +322,7 @@
 				0348D9B60071186ECFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0348D9B10071186ECFED3B96 = {
 			fileRef = 0348D9970071186ECFED3B96;
@@ -360,7 +366,7 @@
 				0348D9B80071186ECFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0348D9B80071186ECFED3B96 = {
 			fileRef = 0348D9A00071186ECFED3B96;
@@ -380,14 +386,13 @@
 				0348D9C00071186ECFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0348D9BA0071186ECFED3B96 = {
 			fileRef = 0348D9900071186ECFED3B96;
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -396,7 +401,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -405,7 +409,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -414,7 +417,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -423,7 +425,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -432,7 +433,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -441,7 +441,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -456,7 +455,7 @@
 				0348D9C70071186ECFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0348D9C20071186ECFED3B96 = {
 			fileRef = 0348D9A60071186ECFED3B96;
@@ -499,7 +498,36 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+//030
+//031
+//032
+//033
+//034
+//D80
+//D81
+//D82
+//D83
+//D84
+		D8537325040559E000DC8C05 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		D8537326040559E000DC8C05 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
 		};
 	};
 	rootObject = 0348D98D0071186ECFED3B96;
