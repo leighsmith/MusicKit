@@ -25,7 +25,7 @@
             }; 
             SUPERCLASS = NSObject; 
         }, 
-        {CLASS = Document; LANGUAGE = ObjC; SUPERCLASS = Object; }, 
+        {CLASS = Document; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {CLASS = PartView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
         {CLASS = TadPole; LANGUAGE = ObjC; SUPERCLASS = NSView; }
