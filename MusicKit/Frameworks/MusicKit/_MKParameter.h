@@ -1,12 +1,21 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+  Description:
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.5  2000/06/09 14:59:57  leigh
+  Removed objc.h
+
   Revision 1.4  2000/05/06 00:30:48  leigh
   Better typing of _MKParAsInt()
 
@@ -22,17 +31,18 @@ Modification history:
 #ifndef __MK__parameter_H___
 #define __MK__parameter_H___
 
-#import <Foundation/NSData.h> /*sb... */
-#import <Foundation/NSArchiver.h> /*sb... */
+#import <Foundation/Foundation.h>
+//#import <Foundation/NSData.h> /*sb... */
+//#import <Foundation/NSArchiver.h> /*sb... */
 #import "params.h" /*sb... */
-#import <objc/objc.h> /*sb... */
+//#import <objc/objc.h> /*sb... */
 
 typedef union __MKParameterUnion {
     /* Used for Parameters and scoreFile parsing. */
     id symbol;        /* This type is needed for scorefile parsing.
 			 Also used for storing envelopes and wavetables. */
     double rval;
-    NSString * sval;
+    NSString *sval;
     int ival;
 } _MKParameterUnion;
 
