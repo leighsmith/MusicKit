@@ -2,7 +2,7 @@
 //  SndAudioBufferQueue.m
 //  SndKit
 //
-//  Created by skot on Wed Aug 29 2001.
+//  Created by SKoT McDonald on Wed Aug 29 2001.
 //  Copyright (c) 2001 __CompanyName__. All rights reserved.
 //
 

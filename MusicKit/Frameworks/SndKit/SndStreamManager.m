@@ -67,7 +67,7 @@ static SndStreamManager *sm = nil;
 {
     [super init];
 
-    mixer         = [SndStreamMixer sndStreamMixer];
+    mixer         = [[SndStreamMixer sndStreamMixer] retain];
     bg_threadLock = [[NSConditionLock alloc] initWithCondition: BG_ready];
     active        = FALSE;
     bg_active     = FALSE;
@@ -309,7 +309,10 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
       outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
       
       // set our current notion of time.
-      nowTime += [outB duration];
+      if (outB != nil)
+          nowTime += [outB duration];
+      else if (inB != nil)
+          nowTime += [inB duration];
     
 #if SNDSTREAMMANAGER_DEBUG
       fprintf(stderr,"[Manager] nowTime: %.3f sampleCount: %.3f\n",nowTime,sampleCount);

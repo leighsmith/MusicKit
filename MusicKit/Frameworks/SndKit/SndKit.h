@@ -24,6 +24,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #import "SndStreamClient.h"
 #import "SndStreamRecorder.h"
 #import "SndStreamMixer.h"
+#import "SndAudioProcessorMP3Encoder.h"
 #import "SndAudioProcessorChain.h"
 #import "SndAudioProcessorReverb.h"
 #import "SndAudioProcessor.h"

@@ -3,7 +3,7 @@
 //  SndStreamRecorder.m
 //  SndKit
 //
-//  Created by skot on Thu Apr 05 2001.
+//  Created by SKoT McDonald on Thu Apr 05 2001.
 //  Copyright (c) 2001 tomandandy. All rights reserved.
 //
 ////////////////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 //  SndStreamMixer.m
 //  SndKit
 //
-//  Created by skot on Tues Mar 27 2001. <skot@tomandandy.com>
+//  Created by SKoT McDonald on Tues Mar 27 2001. <skot@tomandandy.com>
 //  Copyright (c) 2001 tomandandy music inc.
 //
 //  Permission is granted to use and modify this code for commercial and non-commercial

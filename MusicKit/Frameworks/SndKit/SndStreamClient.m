@@ -69,7 +69,7 @@ enum {
     }
 */
     if (synthThreadLock == nil)
-      synthThreadLock = [NSLock new];    
+      synthThreadLock = [NSLock new];     
 
     if (processorChain == nil)
       processorChain = [[SndAudioProcessorChain audioProcessorChain] retain];
@@ -81,7 +81,7 @@ enum {
     generatesOutput         = TRUE;
     processFinishedCallback = NULL;
     manager                 = nil;
-    clientName              = @"streamClient";
+    clientName              = nil; // [NSString stringWithString: @"streamClient"];
     
     bDelegateRespondsToOutputBufferSkipSelector = FALSE;
     bDelegateRespondsToInputBufferSkipSelector  = FALSE;
@@ -103,7 +103,8 @@ enum {
 
 - setClientName: (NSString*) name
 {
-  [clientName release];
+  if (clientName != nil)
+    [clientName release];
   clientName = [name retain];
   return self;
 }
