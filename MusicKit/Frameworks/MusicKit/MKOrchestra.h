@@ -9,6 +9,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2000/04/26 01:22:32  leigh
+  outputCommandsFile now an NSString
+
   Revision 1.4  1999/09/20 02:51:38  leigh
   trace: now takes msg of NSString type
 
@@ -54,7 +57,7 @@ extern void MKSetPreemptDuration(double seconds);
     NSString *outputSoundfile; /* For output sound samples. */
     id outputSoundDelegate;
     NSString *inputSoundfile; /* For output sound samples. */ /* READ DATA */
-    char *outputCommandsFile; /* For output DSP commands. */
+    NSString *outputCommandsFile; /* For output DSP commands. */
     id xZero;         /* Special pre-allocated x patch-point that always holds
                          0 and to which nobody ever writes, by convention.  */
     id yZero;         /* Special pre-allocated y patch-point that always holds
@@ -188,8 +191,8 @@ extern void MKSetPreemptDuration(double seconds);
 -(NSString *)outputSoundfile;
 -setOutputSoundDelegate:aDelegate;
 -outputSoundDelegate;
--setOutputCommandsFile:(char *)fileName;
--(char *)outputCommandsFile;
+-setOutputCommandsFile:(NSString *)fileName;
+-(NSString *)outputCommandsFile;
 + allocUnitGenerator:classObj; 
 + allocSynthData:(MKOrchMemSegment )segment length:(unsigned )size; 
 +allocModulusSynthData:(MKOrchMemSegment)segment length:(unsigned )size;

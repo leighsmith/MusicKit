@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2000/04/26 01:19:24  leigh
+  outputCommandsFile now an NSString
+
   Revision 1.9  2000/04/07 18:44:51  leigh
   Upgraded logging to NSLog
 
@@ -487,7 +490,7 @@ static void
             DSPMKEnableReadData();
         }
         if (outputCommandsFile)
-          DSPOpenCommandsFile(outputCommandsFile);
+          DSPOpenCommandsFile([outputCommandsFile cString]);
         if (useDSP) {
             if (myDSPMKInit(self)) {
                 DSPClose();

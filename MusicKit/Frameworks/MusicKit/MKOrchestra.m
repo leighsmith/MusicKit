@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2000/04/26 01:22:26  leigh
+  outputCommandsFile now an NSString
+
   Revision 1.12  2000/04/22 20:13:21  leigh
   user defaults standardised to MK prefix
 
@@ -1512,27 +1515,27 @@ static id installSharedObject(MKOrchestra *self,
     return outputSoundDelegate;
 }
 
--setOutputCommandsFile:(char *)file
+- setOutputCommandsFile: (NSString *) file
   /* Sets a file name to which DSP commands are to be written as a DSPCommands
      format soundfile.  A copy of the fileName is stored in the instance variable
      outputCommandsFile.
      This message is currently ignored if the receiver is not closed.
      */
 {
-    if (deviceStatus != MK_devClosed) 
-      return nil;
-    if (outputCommandsFile) {
-        free(outputCommandsFile);
-        outputCommandsFile = NULL;
-    }
+    if (deviceStatus != MK_devClosed)
+        return nil;
     if (!file)
-      return self;
-    outputCommandsFile = _MKMakeStr(file);
+        return self;
+    if (outputCommandsFile) {
+        [outputCommandsFile release];
+    }
+    outputCommandsFile = [file copy];
+    [outputCommandsFile retain];
     [self useDSP:YES];
     return self;
 }
 
--(char *)outputCommandsFile
+- (NSString *) outputCommandsFile
   /* Returns the output soundfile or NULL if none. */
 {
     return outputCommandsFile;
