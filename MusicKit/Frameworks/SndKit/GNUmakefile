@@ -121,7 +121,7 @@ $(MY_NAME)_HEADER_FILES = \
          SndExpt.h \
          SndFormat.h \
          SndFunctions.h \
-         SndKitDefines.h \
+         SndKitConfig.h \
          SndKit.h \
          SndMuLaw.h \
          SndMeter.h \
@@ -130,7 +130,6 @@ $(MY_NAME)_HEADER_FILES = \
          SndPerformance.h \
          SndPlayer.h \
          SndResample.h \
-         SndStdefs.h \
          SndStreamArchitectureView.h \
          SndStreamClient.h \
          SndStreamManager.h \
