@@ -14,7 +14,25 @@
 
 #import "SndEnvelope.h"
 
+typedef double (*GetXValIMP)(id, SEL);
+typedef id (*ObjAtIndexIMP)(id, SEL,int);
+
+static SEL objAtIndexSel;
+static SEL getXValSel;
+static GetXValIMP    getXVal;
+
 @implementation SndEnvelope
+
++ (void)initialize
+{
+    if (self == [SndEnvelope class]) {
+        [SndEnvelope setVersion:1];
+    }
+    objAtIndexSel = @selector(objectAtIndex:);
+    getXValSel = @selector(getXVal);
+    getXVal = (GetXValIMP)[SndBreakpoint instanceMethodForSelector:getXValSel];
+}
+
 - init
 {
     [super init];
@@ -26,8 +44,11 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
 {
     int i,count;
     count = [inArray count];
+    SndBreakpoint *sb;
+    ObjAtIndexIMP objAtIndex = (ObjAtIndexIMP)[inArray methodForSelector:objAtIndexSel];
     for (i = 0 ; i < count ; i++) {
-        if ([(SndBreakpoint *)[inArray objectAtIndex:i] getXVal] > inVal)
+        sb = objAtIndex(inArray,objAtIndexSel,i);
+        if (getXVal(sb,getXValSel) > inVal)
             return i;
     }
     return -1;
@@ -105,20 +126,25 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
     return justBeforeOrEqualYVal + proportion *
         (justAfterYVal - justBeforeOrEqualYVal);
 }
+
 /* returns new breakpoint index */
 - (int) insertXValue:(double)xVal yValue:(float)yVal flags:(int)flags;
 {
     int i,count;
     double max=0.0;
     double tempMax;
+    SndBreakpoint *sb;
+    ObjAtIndexIMP objAtIndex;
 
     if (!breakpoints) {
         breakpoints = [[NSMutableArray alloc] init];
     }
+    objAtIndex = (ObjAtIndexIMP)[breakpoints methodForSelector:objAtIndexSel];
     count = [breakpoints count];
     for (i = 0 ; i < count ; i++) {
-        tempMax = [(SndBreakpoint *)[breakpoints objectAtIndex:i] getXVal];
-        /* if there are other breakpoints at same x location, place this one after the others */
+        sb = objAtIndex(breakpoints,objAtIndexSel,i);
+        tempMax = getXVal(sb,getXValSel);
+        /* if there are other breakpoints with same x value, place this one after them */
         if (tempMax > xVal) {
             break;
         }
