@@ -393,7 +393,8 @@ usage file is found in
     <title>What works?</title>
     <para>
 The frameworks have been exercised fairly extensively and seem quite
-stable. MIDI playback of scores and computed parts works. The examples
+stable. MIDI recording and playback of scores and computed parts works
+on all supported platforms. The examples
 <application>MIDIFilePlayback</application> and
 <command>playscorefilemidi</command> and the utility
 <command>playscore</command> demonstrate these capabilities.
@@ -453,7 +454,7 @@ using the native processor).
 There are several programs in the <filename
 class=directory>Examples</filename> and <filename
 class=directory>Applications</filename> directories which have yet to
-be converted to the OpenStep version. Please feel free to dive in and
+be fully converted to the OpenStep version. Please feel free to dive in and
 upgrade them!
 </para>
       </listitem>
