@@ -536,7 +536,7 @@ inline int _processBalance( int xPtr,
 
       float *inD  = (float*) [inB data];
       long i;
-      long len  = [inB lengthInSamples];
+      long len  = [inB lengthInSampleFrames];
 
       if (!ampEnv && !balanceEnv) {
         if (staticBalance == 0) {
