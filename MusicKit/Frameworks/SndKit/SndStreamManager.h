@@ -3,10 +3,11 @@
 //  $Id$
 //
 //  Description:
+//    See headerdoc description below.
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
-//  Sat 10-Feb-2001, Copyright (c) 2001 SndKit project
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and 
 //  non-commercial purposes so long as the author attribution and copyright 
@@ -25,7 +26,8 @@
 @class SndStreamMixer;
 
 #ifdef __MINGW32__
-@class SndConditionLock;
+#import "SndConditionLock.h"
+#define NSConditionLock SndConditionLock
 #endif
 
 #define SSM_VERSION 1 
@@ -42,10 +44,11 @@
 @end 
 
 /*!
-@class SndStreamManager
-@abstract Provides client connection and stream mixing services, and acts as 
-              the gateway to the lowlevel MKPerformSndMIDI C functions
-@discussion To come
+  @class SndStreamManager
+  @abstract Provides client connection and stream mixing services, and acts as 
+            the gateway to the lowlevel MKPerformSndMIDI C functions
+  @discussion Each SndStreamManager has a SndStreamMixer which has a SndAudioProcessorChain which has a SndAudioFader.
+              Adding clients to a manager adds them to the underlying mixer.
 */
 @interface SndStreamManager : NSObject <SndDelegateMessagePassing>
 { 
@@ -59,20 +62,16 @@
     SndSoundStruct  format;
 /*! @var            nowTime Manager's conception of time, in seconds. */
     double          nowTime;
-/*! @var            bg_sem Semaphore to background thread to start/stop streaming. */
+/*! @var            bg_sem Semaphore to the background thread to start/stop streaming. */
     char            bg_sem;
-/*! @var            bgdm_sem Semaphore to background delegate messaging thread to notify it of data
+/*! @var            bgdm_sem Semaphore to the background delegate messaging thread to notify it of data
                              being ready for it. */
     char            bgdm_sem;
 /*! @var            bg_threadLock used for signalling to background thread to start streaming,
                     stop streaming, or abort itself. */
-#ifndef __MINGW32__
     NSConditionLock *bg_threadLock;
+    /*! @var            bgdm_threadLock used for ? */
     NSConditionLock *bgdm_threadLock;
-#else
-    SndConditionLock *bg_threadLock;
-    SndConditionLock *bgdm_threadLock;
-#endif
     NSLock          *delegateMessageArrayLock;
     NSMutableArray  *delegateMessageArray;
     NSConnection    *threadConnection;
@@ -158,13 +157,14 @@
 - (void) delegateMessageThread:(NSArray*)ports;
 
 /*!
-    @method   addClient: 
-    @abstract   Adds an SndStreamClient to the manager's mixer
+    @method     addClient: 
+    @abstract   Adds an SndStreamClient to the manager's mixer.
     @discussion If the SndStreamClient is already a client of the mixer, it 
                 is NOT added again. If the client is the first connected to
                 the manager, the manager will automatically start streaming.
-    @param      client
-    @result     TRUE if client was successfully added
+    @param      client The SndStreamClient instance to begin managing and mixing.
+    @result     TRUE if client was successfully added, FALSE if the client is
+                already registered, or the audio device couldn't start streaming.
 */
 - (BOOL) addClient: (SndStreamClient*) client;
 
@@ -180,7 +180,7 @@
 
 /*!
     @method   processStreamAtTime:input:output:
-    @abstract   Passes new input and output buffers from the underlaying API to the
+    @abstract   Passes new input and output buffers from the underlying API to the
                 mixer.
     @discussion Do not call this method - it is part of the audio callback handler.
     @param      sampleCount Time in samples
