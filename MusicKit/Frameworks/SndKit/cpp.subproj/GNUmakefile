@@ -1,7 +1,26 @@
-#          allpass.cpp comb.cpp reverbBridge.cpp revmodel.cpp #SndMeter.m
-#.SUFFIXES: .cpp
+#
+#   $Id$
+#   Defined In: The MusicKit
+#
+#  Description:
+#    Makefile for GNUstep, in subproject created for C++ files in the SndKit
+#    Any other cpp files added to the SndKit should be mentioned in here
+#    so that they can be compiled into it.
+#
+#  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
+#
+#  11 September 2001, Copyright (c) 2001 Stephen Brandon.
+#
+#  Permission is granted to use and modify this code for commercial and non-commercial
+#  purposes so long as the author attribution and this copyright message remains intact
+#  and accompanies all derived code.
 
-#shared_obj/ix86/linux-gnu/gnu-gnu-gnu/%.o : ../%.cpp
+# Modification history:
+# $Log$
+# Revision 1.2  2001/09/11 20:04:39  sbrandon
+# added header, tidied up code
+#
+
 %.o : ../%.cpp
 	$(CC) -c $(ALL_CPPFLAGS) $(ALL_OBJCFLAGS) -o $(GNUSTEP_OBJ_DIR)/$@ $<
 
