@@ -55,7 +55,7 @@ static SndStreamManager *sm = nil;
 
 + (SndStreamManager *) defaultStreamManager
 {
-    return sm;
+    return [[sm retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,16 +65,13 @@ static SndStreamManager *sm = nil;
 - init
 {
     [super init];
-    // How many clients? 10 for now - can always auto-grow...
 
-    mixer = [SndStreamMixer sndStreamMixer];
-    [mixer retain];
-
-    active = FALSE;
-    bg_threadLock  = [[NSConditionLock alloc] initWithCondition: BG_ready];
-    bg_active = FALSE;
+    mixer         = [SndStreamMixer sndStreamMixer];
+    bg_threadLock = [[NSConditionLock alloc] initWithCondition: BG_ready];
+    active        = FALSE;
+    bg_active     = FALSE;
+    nowTime       = 0;
     SNDStreamNativeFormat(&format);
-    nowTime = 0;
 
     return self;
 }
@@ -85,11 +82,19 @@ static SndStreamManager *sm = nil;
 
 - (void) dealloc
 {
+#if SNDSTREAMMANAGER_DEBUG
+    fprintf(stderr,"[manager] starting dealloc\n");
+#endif
+
     if (active)
         NSLog(@"SndStreamManager::dealloc - Error: stream is still active!!!");
 
     [mixer release];
 //    NSLog(@"Manager version: MIXER");
+
+#if SNDSTREAMMANAGER_DEBUG
+    fprintf(stderr,"[manager] ending dealloc\n");
+#endif
 
     [super dealloc];
 }
@@ -201,10 +206,19 @@ static SndStreamManager *sm = nil;
 - (void) stopStreaming
 {
     if (active) {
+#if SNDSTREAMMANAGER_DEBUG
+    fprintf(stderr,"[manager] sending shutdown to mixer...\n");
+#endif
         [mixer managerIsShuttingDown];
+#if SNDSTREAMMANAGER_DEBUG
+    fprintf(stderr,"[manager] about to send shutdown to stream...\n");
+#endif
         [bg_threadLock lock];
         bg_sem = BG_stopNow;
         [bg_threadLock unlockWithCondition:BG_hasFlag];
+#if SNDSTREAMMANAGER_DEBUG
+    fprintf(stderr,"[manager] shutdown sent.\n");
+#endif
     }
     else {
         NSLog(@"SndManager::stopStreaming - Error: stopStreaming called when not streaming!\n");
@@ -262,9 +276,13 @@ static SndStreamManager *sm = nil;
 
 void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj)
 {
-    //NSLog(@"--> processAudio sampleCount = %d\n", (int)sampleCount);
+#if SNDSTREAMMANAGER_DEBUG
+      fprintf(stderr,"[Manager] --> processAudio sampleCount = %d\n", (int)sampleCount);
+#endif
     [(SndStreamManager *) obj processStreamAtTime: sampleCount input: cInB output: cOutB];
-    //NSLog(@" <--processAudio\n");
+#if SNDSTREAMMANAGER_DEBUG
+      fprintf(stderr,"[Manager] <-- processAudio\n");
+#endif
 }
 
 
@@ -273,6 +291,9 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
                        input: (SNDStreamBuffer*) cInB
                       output: (SNDStreamBuffer*) cOutB
 {
+#if SNDSTREAMMANAGER_DEBUG
+      fprintf(stderr,"[Manager] Entering...\n");
+#endif
     if (active) {
       NSAutoreleasePool *localPool = [NSAutoreleasePool new];
       // Eventually these must be made instance variables which you just wrap
@@ -289,10 +310,18 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
       fprintf(stderr,"[Manager] nowTime: %.3f sampleCount: %.3f\n",nowTime,sampleCount);
 #endif
       [mixer processInBuffer: inB outBuffer: outB nowTime: nowTime];
+#if SNDSTREAMMANAGER_DEBUG
+      fprintf(stderr,"[Manager] post mixer\n");
+#endif
 
-      if ([mixer clientCount] == 0) // Hmm, no clients hey? Shut down the Stream.
-        [self stopStreaming];
+      if ([mixer clientCount] == 0) {// Hmm, no clients hey? Shut down the Stream.
+        [self stopStreaming]; 
 
+#if SNDSTREAMMANAGER_DEBUG
+      fprintf(stderr,"[Manager] signalling a stop stream...\n");
+#endif
+        
+      }
 #if SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START 
       {
         float *pF =  [outB data];
@@ -300,10 +329,17 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
         pF[1] = 1.0f;
       }
 #endif
+
+#if SNDSTREAMMANAGER_DEBUG
+      fprintf(stderr,"[Manager] About to release pool...\n");
+#endif
       [localPool release];
     }
     else
       NSLog(@"SndStreamManager::processStreamAtTime - called when not active...?");
+#if SNDSTREAMMANAGER_DEBUG
+      fprintf(stderr,"[Manager] Leaving...\n");
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////

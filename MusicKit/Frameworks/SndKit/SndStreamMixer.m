@@ -26,7 +26,7 @@
 
 + sndStreamMixer
 {
-  return [[SndStreamMixer new] autorelease];
+  return [SndStreamMixer new];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -36,13 +36,13 @@
 - init
 {
     if(streamClients == nil) 
-      streamClients = [[NSMutableArray arrayWithCapacity: 10] retain];
+      streamClients = [NSMutableArray arrayWithCapacity: 10];
       
     if(streamClientsLock == nil) 
-      streamClientsLock = [[NSRecursiveLock new] retain];
+      streamClientsLock = [NSRecursiveLock new];
       
     if (processorChain == nil) 
-      processorChain = [[SndAudioProcessorChain audioProcessorChain] retain];
+      processorChain = [SndAudioProcessorChain audioProcessorChain];
       
     return self;
 }
@@ -73,7 +73,9 @@
 
 //    [outB mixWithBuffer: inB];
 
-//    fprintf(stderr,"[Mixer] time: %f *********************\n",t);
+#if SNDSTREAMMIXER_DEBUG    
+    fprintf(stderr, "[mixer] Entering processInBuffer at time: %f *********************\n",t);
+#endif
 
     [outB zeroForeignBuffer];
     if (clientCount > 0) {
@@ -81,10 +83,20 @@
 
             SndStreamClient *client = [streamClients objectAtIndex: i];
             if ([client generatesOutput]) {
+              
+              SndAudioBuffer *pB;
+              
               // Look at each client's currently exposed output buffer, and add  to mix.
 
               [client lockOutputBuffer];
-              [outB mixWithBuffer: [client outputBuffer]];
+              pB = [client outputBuffer];
+              if (pB != nil)
+                [outB mixWithBuffer: pB];
+              else {
+#if SNDSTREAMMIXER_DEBUG    
+    fprintf(stderr, "[mixer] ERROR - tried to mix a nil output buffer!\n");
+#endif
+              }
               [client unlockOutputBuffer];
             }
             // Each client should have a second synthing buffer, and a synth thread
@@ -95,6 +107,10 @@
     }
     [processorChain processBuffer: outB forTime:lastNowTime];
     [streamClientsLock unlock];
+
+#if SNDSTREAMMIXER_DEBUG    
+    fprintf(stderr, "[mixer] Leaving processInBuffer\n");
+#endif
     return self;
 }
 
@@ -118,7 +134,7 @@
     clientCount   = [streamClients count];
 
 #if SNDSTREAMMIXER_DEBUG    
-    NSLog(@"SndStreamManager::addClient - client added.");
+    fprintf(stderr, "[mixer] SndStreamManager::addClient - client added.");
 #endif
     
     [streamClientsLock unlock];
@@ -137,12 +153,12 @@
         [streamClientsLock lock];
         [streamClients removeObject: client];        
 #if SNDSTREAMMIXER_DEBUG    
-        NSLog(@"SndStreamManager::removeClient - Removing client");
+        fprintf(stderr, "[mixer] SndStreamManager::removeClient - Removing client");
 #endif
         [streamClientsLock unlock];
     }
     else
-        NSLog(@"SndStreamManager::removeClient - Error: client was not present.");
+        fprintf(stderr, "[mixer] SndStreamManager::removeClient - Error: client was not present.");
     
     return clientPresent;
 }

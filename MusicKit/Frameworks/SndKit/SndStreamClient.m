@@ -117,10 +117,19 @@ enum {
 
 - (void) dealloc
 {
+#if SNDSTREAMCLIENT_DEBUG            
+      fprintf(stderr,"[%s] dealloc: 1\n", [clientName cString]);
+#endif          
+
     [self freeBufferMem];
     
     [outputQueue release];
     [inputQueue  release];
+
+#if SNDSTREAMCLIENT_DEBUG            
+      fprintf(stderr,"[%s] dealloc: 2\n", [clientName cString]);
+#endif          
+
 /*
     if (pendingOutputBuffersLock) {
         [pendingOutputBuffersLock   release];
@@ -141,6 +150,11 @@ enum {
     if (synthThreadLock)
         [synthThreadLock release];    
     
+#if SNDSTREAMCLIENT_DEBUG            
+      fprintf(stderr,"[%s] dealloc: 3\n", [clientName cString]);
+#endif          
+    [clientName release];
+
 //    if (manager)
 //        [manager release];
 
@@ -180,7 +194,6 @@ enum {
         [synthInputBuffer  release];
     synthInputBuffer    = nil;
         
-    exposedOutputBuffer = nil;
     
     return self;
 }
@@ -435,6 +448,10 @@ enum {
         [self freeBufferMem];
         [self didFinishStreaming];
         bDisconnect = FALSE;
+#if SNDSTREAMCLIENT_DEBUG            
+    fprintf(stderr,"SndStreamClient: disconnected\n");                       
+#endif
+        
       }
     }
 /*
@@ -452,6 +469,8 @@ enum {
 - (void) processingThread
 {
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
+    
+    [self retain];
     active = TRUE;
     // NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
     while (active) {
@@ -519,8 +538,11 @@ enum {
         [synthThreadLock unlock];
     }
     bDisconnect = TRUE;
+    [self release];
     [localPool release];
-//    fprintf(stderr,"SndStreamClient: processing thread stopped\n");                       
+#if SNDSTREAMCLIENT_DEBUG            
+    fprintf(stderr,"SndStreamClient: processing thread stopped\n");                       
+#endif
     [NSThread exit];
 }
 
@@ -589,7 +611,7 @@ enum {
 
 - (SndAudioBuffer*) outputBuffer
 {
-  return exposedOutputBuffer;
+  return [[exposedOutputBuffer retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -598,7 +620,7 @@ enum {
 
 - (SndAudioBuffer*) synthOutputBuffer
 {
-  return synthOutputBuffer;
+  return [[synthOutputBuffer retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -607,7 +629,7 @@ enum {
 
 - (SndAudioBuffer*) synthInputBuffer
 {
-  return synthInputBuffer;
+  return [[synthInputBuffer retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
