@@ -139,7 +139,7 @@ int main (int argc, const char * argv[])
         SndPlayer  *player = [SndPlayer defaultSndPlayer];
 
         [s readSoundfile: filename];
-        maxWait = [s duration] + 5 + timeOffset;
+        maxWait = [s duration] + 5 + timeOffset + 1;
         [player setRemainConnectedToManager: FALSE];
         SndSwapSoundToHost([s data],[s data],[s sampleCount],[s channelCount],[s dataFormat]);
 
@@ -149,11 +149,17 @@ int main (int argc, const char * argv[])
         
         [player setRemainConnectedToManager: FALSE];
       
+        // wait for manager to go active... man, this is dodgey and should be fixed!!!!
+        while (![[SndStreamManager defaultStreamManager] isActive] && waitCount < maxWait) {
+            sleep(1);
+            waitCount++;
+            if (bTimeOutputFlag)  printf("Time: %i\n",waitCount);
+        }
         // Wait for stream manager to go inactive, signalling the sound has finished playing
         while ([[SndStreamManager defaultStreamManager] isActive] && waitCount < maxWait) {
           sleep(1); 
-          if (bTimeOutputFlag)  printf("Time: %i\n",i+1);
           waitCount++;
+          if (bTimeOutputFlag)  printf("Time: %i\n",waitCount);
         }
         if (waitCount >= maxWait) {
           fprintf(stderr,"Aborting wait for stream manager shutdown - taking too long.\n");
