@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2002/04/16 15:07:38  sbrandon
+  removed a couple of defunct imports
+
   Revision 1.7  2000/10/11 02:55:13  leigh
   added import of MKNote.h to fix tokens.h import
 
@@ -41,8 +44,6 @@ Modification history:
 #define __MK__parameter_H___
 
 #import <Foundation/Foundation.h>
-//#import <Foundation/NSData.h> /*sb... */
-//#import <Foundation/NSArchiver.h> /*sb... */
 #import "params.h"
 #import "MKNote.h"
 #import "tokens.h" // for _MKToken
