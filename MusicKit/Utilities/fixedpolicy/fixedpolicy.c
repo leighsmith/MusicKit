@@ -1,11 +1,37 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/*
+  $Id$
+  Defined In: The MusicKit
+  HEADER FILES: MusicKit.h
+
+  Description: 
+    This program must run as root. This means it must be owned by root and
+    have the u+s (setuid) bit set in its permission.
+
+    It needs to be run only once after each reboot (assuming no program 
+    DISables the fixed policy.  No NeXT programs do this). 
+
+    I suggest you invoke this program from yours using system().
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT.
+  Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
+*/
+/*
+  $Log$
+  Revision 1.2  2002/09/24 16:57:02  leighsmith
+  Cleaned up source, moved comments
+
+*/
 #import <mach/mach.h>
 #import <mach/mach_init.h>
 #import <mach/mach_error.h>
 #import	<mach/message.h>
-#import <mach/cthreads.h>
-#include <sys/types.h> /*sb: for geteuid */
-#include <bsd/libc.h> /*sb: for geteuid */
+/* #import <mach/cthreads.h> */
+#include <sys/types.h> /* for geteuid */
+#include <unistd.h>    /* for geteuid */
 #import <stdio.h>
 
 int main(int ac,char *av[])
@@ -18,13 +44,13 @@ int main(int ac,char *av[])
     int i;
     /* Fix default processor set to take a fixed priority thread. */
     for (i=1; i<=(ac-1); i++) {
-	if ((strcmp(av[i],"-q") == 0)) 
+	if ((strcmp(av[i], "-q") == 0)) 
 	    quiet = 1;
-	else if ((strcmp(av[i],"-d") == 0)) {
+	else if ((strcmp(av[i], "-d") == 0)) {
 	    disable = 1;
 	    enable = 0;
 	}
-	else if ((strcmp(av[i],"-e") == 0)) {
+	else if ((strcmp(av[i], "-e") == 0)) {
 	    disable = 0;
 	    enable = 1;
 	}
@@ -50,24 +76,18 @@ int main(int ac,char *av[])
 	exit(1);
     }
     if (disable)
-	ec = processor_set_policy_disable(dpset_priv, POLICY_FIXEDPRI,0);
-    else ec = processor_set_policy_enable(dpset_priv, POLICY_FIXEDPRI);
+	ec = processor_set_policy_disable(dpset_priv, POLICY_FIXEDPRI, 0);
+    else
+        ec = processor_set_policy_enable(dpset_priv, POLICY_FIXEDPRI);
     if (ec != KERN_SUCCESS && !quiet) {
 	fprintf(stderr,"fixedpolicy: can't %s fixed policy.\n",
 		disable ? "disable" : "enable");
 	exit(1);
     }
     if (!quiet)
-	fprintf(stderr,"fixedpolicy: %s fixed scheduling policy.\n",
+	fprintf(stderr, "fixedpolicy: %s fixed scheduling policy.\n",
 		disable ? "disabling" : "enabling");
     exit(0);
 }
 
-/* This program must run as root. This means it must be owned by root and
-   have the u+s bit set in its permission.
-
-   It needs to be run only once after each reboot (assuming no program 
-   DISables the fixed policy.  No NeXT programs do this.) 
-
-   I suggest you invoke this program from yours using system(). */
 
