@@ -151,17 +151,19 @@ NSColor *StringToColor(NSString *buffer)
 	return self;
 }
 
-- save:sender
+- (void) save: (id) sender
 {
     if (currentDocument) {
-        id thename = [currentDocument fileName];
-        if (thename) if ([thename isEqualToString:@"/UNTITLED"]) {
-            [self saveAs:sender];
-            return self;
-        }
-            else [currentDocument save:sender];
+        NSString *thename = [currentDocument fileName];
+	
+        if (thename)
+	    if ([thename isEqualToString:@"/UNTITLED"]) {
+		[self saveAs:sender];
+		return;
+	    }
+	    else
+		[currentDocument save:sender];
     }
-    return self;
 }
 
 - saveAs:sender

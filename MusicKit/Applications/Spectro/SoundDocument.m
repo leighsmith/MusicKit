@@ -37,21 +37,6 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
 	return s;
 }
 
-static int calcFormat(SndSoundStruct *s)
-{
-    if (s->dataFormat == SND_FORMAT_MULAW_8)
-		return SND_FORMAT_MULAW_8;
-    else if (s->dataFormat == SND_FORMAT_INDIRECT) {
-		SndSoundStruct **iBlock = (SndSoundStruct **)s->dataLocation;
-
-	if (*iBlock)
-	    return (*iBlock)->dataFormat;
-	else
-	    return SND_FORMAT_UNSPECIFIED;
-    } else
-	return s->dataFormat;
-}
-
 @implementation SoundDocument
 
 - init
@@ -186,24 +171,25 @@ static int calcFormat(SndSoundStruct *s)
 {
     if (fn) if ([fn length]) {
 	int err;
-	id theSound = [[mySoundView sound] copy];
+	Snd *theSound = [[mySoundView sound] copy];
+        
 	if (templateSound && theSound) {
-	    [theSound copySound:theSound];
-	    err = [theSound convertToFormat:[templateSound dataFormat]
-			    samplingRate:[templateSound samplingRate]
-			    channelCount:[templateSound channelCount]];
+	    // [theSound copySound:theSound];
+	    err = [theSound convertToSampleFormat: [templateSound dataFormat]
+			       samplingRate: [templateSound samplingRate]
+			       channelCount: [templateSound channelCount]];
 	    if (err) {
 		/* The DSP is required for compression or decompression */
 		return [self saveError: 
 			@"Cannot do format conversion %@ (DSP busy?)" arg:@""];
 	    }
 	}
-        if ([[NSFileManager defaultManager] fileExistsAtPath:fn])
-            [[NSFileManager defaultManager] movePath:fn toPath:[fn stringByAppendingString:@"~"] handler:nil];
+        if ([[NSFileManager defaultManager] fileExistsAtPath: fn])
+            [[NSFileManager defaultManager] movePath: fn toPath: [fn stringByAppendingString: @"~"] handler: nil];
 
-        err = [theSound writeSoundfile:fn];
+        err = [theSound writeSoundfile: fn];
 	if (err) {
-	    return [self saveError:@"Cannot write %@" arg:fn];
+	    return [self saveError: @"Cannot write %@" arg: fn];
 	}
 	else 
 	  [soundWindow setDocumentEdited:NO];
@@ -212,9 +198,9 @@ static int calcFormat(SndSoundStruct *s)
     return self;
 }
 
-- save:sender
+- (void) save: (id) sender
 {
-    return [self saveToFormat:nil fileName:fileName];
+    [self saveToFormat: nil fileName: fileName];
 }
 
 - revertToSaved:sender
@@ -544,33 +530,32 @@ static int calcFormat(SndSoundStruct *s)
 	return self;
 }
 
-- zoomAll:sender
+- zoomAll: sender
 {
-	NSSize size;
-	int count;
-	float width;
-	
-	size = [scrollSound contentSize];
-	width = size.width;
-	count = [[mySoundView sound] lengthInSampleFrames];
-	[self zoom:(((float) count) / width) center:(count / 2)];
-	return self;
+    NSSize size;
+    int count;
+    float width;
+    
+    size = [scrollSound contentSize];
+    width = size.width;
+    count = [[mySoundView sound] lengthInSampleFrames];
+    [self zoom: (((float) count) / width) center: (count / 2)];
+    return self;
 }
 
-- (BOOL)isRecordable
+- (BOOL) isRecordable
 {
-    int format;
-    id theSound = [mySoundView sound];
-    SndSoundStruct *soundStruct = [theSound soundStruct];
-
-    if (!soundStruct) return YES;
-    format = calcFormat(soundStruct);
+    SndSampleFormat format;
+    Snd *theSound = [mySoundView sound];
+    
+    if (!theSound) return YES;
+    format = [theSound dataFormat];
     if (format == SND_FORMAT_MULAW_8 &&
-    		soundStruct->samplingRate == (int)SND_RATE_CODEC &&
-			soundStruct->channelCount == 1 )
-		return YES;
+	[theSound samplingRate] == (int) SND_RATE_CODEC &&
+	[theSound channelCount] == 1 )
+	return YES;
     else
-		return NO;
+	return NO;
 }
 
 @end
