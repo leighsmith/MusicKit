@@ -470,10 +470,10 @@ int get_bus_speed()
     int retval;
     size_t len;
 
-    mib[0]=CTL_HW;
-    mib[1]=HW_BUS_FREQ;
-    miblen=2;
-    len=4;
+    mib[0] = CTL_HW;
+    mib[1] = HW_BUS_FREQ;
+    miblen = 2;
+    len = 4;
     retval = sysctl(mib, miblen, &busSpeed, &len, NULL, 0);
 
     /* check retval to ensure we got a valid bus speed, see man 3 sysctl for info */
@@ -537,14 +537,10 @@ static void inline setThreadPriority()
     theError = sched_setscheduler(0, SCHED_RR, &sp);
     if (theError == -1)
 	NSLog(@"Can't get real-time priority, errno = %d, min priority = %d\n",errno,sp.sched_priority);
-#if SNDSTREAMCLIENT_DEBUG
-#endif
 #else
     int theError = sched_setscheduler(getpid(), SCHED_RR);
     if (theError == -1)
 	NSLog(@"Can't get real-time priority, errno = %d, min priority = %d\n",errno,sp.sched_priority);
-#if SNDSTREAMCLIENT_DEBUG
-#endif
 #endif
 #endif
 }
