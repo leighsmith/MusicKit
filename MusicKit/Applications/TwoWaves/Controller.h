@@ -20,22 +20,18 @@
     id	waveType1;
     id	waveType2;
     id  mesgBox;
-	id  sLength;
-	
-	Snd * theSound1;
-        Snd * theSound2;
-        Snd * theSound3;
-        Snd * newSound;
-        id playsoundA;
-        id playsoundB;
-	
-	float soundLength;
-	int type1,type2;
-	BOOL somethingChanged;
-#ifdef WIN32
-        id tempfile;
-        id playsound;
-#endif
+    id  sLength;
+    
+    Snd * theSound1;
+    Snd * theSound2;
+    Snd * theSound3;
+    Snd * newSound;
+    id playsoundA;
+    id playsoundB;
+    
+    float soundLength;
+    int type1,type2;
+    BOOL somethingChanged;
 }
 
 - play:sender;
