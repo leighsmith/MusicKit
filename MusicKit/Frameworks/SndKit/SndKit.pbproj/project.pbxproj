@@ -296,7 +296,6 @@
 				00D2C46DFEDB2CB5CFED3B93,
 				00D2C47AFEDB2CB5CFED3B93,
 				00D2C47FFEDB2CB5CFED3B93,
-				D84D9F64040ECEA600A80103,
 				D88C18010432955600A80103,
 			);
 			buildSettings = {
@@ -1933,12 +1932,6 @@
 			settings = {
 			};
 		};
-		D836450A04F53DAF00A80103 = {
-			fileRef = D836450604F53D1900A80103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D836450B04F53E0F00A80103 = {
 			isa = PBXFileReference;
 			name = libvorbis.a;
@@ -1946,12 +1939,6 @@
 			refType = 0;
 		};
 		D836450C04F53E0F00A80103 = {
-			fileRef = D836450B04F53E0F00A80103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D836450D04F53E1A00A80103 = {
 			fileRef = D836450B04F53E0F00A80103;
 			isa = PBXBuildFile;
 			settings = {
@@ -1977,32 +1964,6 @@
 		};
 		D836455604F5ED7400A80103 = {
 			fileRef = D836455404F5ED7400A80103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D84D9F64040ECEA600A80103 = {
-			buildActionMask = 8;
-			dstPath = "";
-			dstSubfolderSpec = 1;
-			files = (
-				D8A248FC048CFB4100A80165,
-				D84D9F67040ECEAF00A80103,
-				D84D9F68040ECEAF00A80103,
-				D836450A04F53DAF00A80103,
-				D836450D04F53E1A00A80103,
-			);
-			isa = PBXCopyFilesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-		D84D9F67040ECEAF00A80103 = {
-			fileRef = 011279890169158CCFED3B94;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D84D9F68040ECEAF00A80103 = {
-			fileRef = 011279830168CEA1CFED3B94;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2070,12 +2031,6 @@
 			};
 			isa = PBXBuildStyle;
 			name = Embedded;
-		};
-		D8A248FC048CFB4100A80165 = {
-			fileRef = D8CC46AE048BEDBA00A80164;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		D8A2C5D304A0C26E00A80165 = {
 			fileEncoding = 4;
