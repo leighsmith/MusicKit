@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2002/01/29 16:45:53  sbrandon
+  changed all uses of _MKOrchTrace to use NSString args.
+
   Revision 1.15  2001/12/07 20:13:04  skotmcdonald
   Dealt with a minor typing warning
 
@@ -160,7 +163,7 @@ static char *msgs[TSTAMPS];
 static int tstampCnt = 0;
 
 void TSTAMP(char *msg) {
-    if (tstamps[tstampCnt] != nil) [tstamps[tstampCnt] autorelease];
+    [tstamps[tstampCnt] autorelease];
     tstamps[tstampCnt] = [[NSDate date] retain]; //sb: was getTime();
     msgs[tstampCnt++] = msg;
     if (tstampCnt == TSTAMPS)
@@ -1006,8 +1009,7 @@ static void
             doubleIntToFix48UseArg(endTime * samplingRate, &endTimeStamp);
             if (_simFP) 
               if (_MK_ORCHTRACE(self,MK_TRACEDSP))
-                _MKOrchTrace(self,MK_TRACEDSP,"End of timed messages queue."
-                             "Do timed read of clips.\n");
+                _MKOrchTrace(self,MK_TRACEDSP,@"End of timed messages queue. Do timed read of clips.\n");
             DSPSetCurrentDSP(orchIndex);
             DSPMKDisableBlockingOnTMQEmptyTimed(&endTimeStamp);
 	    DSPMKStopMsgReader(); /* Stop msg reader thread.  We're going 
@@ -1016,17 +1018,17 @@ static void
             if (![self awaitEndOfTime:endTime timeStamp:&endTimeStamp ])
               if (_MK_ORCHTRACE(self,MK_TRACEDSP))
                 _MKOrchTrace(self,MK_TRACEDSP,
-                             "Could not send timed peek to orchestra.");
+                             @"Could not send timed peek to orchestra.");
             if (nclip)
               if (_MK_ORCHTRACE(self,MK_TRACEDSP))
                 _MKOrchTrace(self,MK_TRACEDSP,
-                             "Clipping detected for %d ticks.\n",nclip);
+                             @"Clipping detected for %d ticks.\n",nclip);
             
             if (outputCommandsFile) {
                 if (DSPMKCallTimedV(&endTimeStamp,DSP_HM_HOST_WD_OFF,1,1))
                   if (_MK_ORCHTRACE(self,MK_TRACEDSP))
                     _MKOrchTrace(self,MK_TRACEDSP,
-                                 "Could not send timed write data off to orchestra.");
+                                 @"Could not send timed write data off to orchestra.");
                 DSPMKFlushTimedMessages();
                 DSPCloseCommandsFile(&endTimeStamp);
             }

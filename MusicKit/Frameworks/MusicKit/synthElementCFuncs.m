@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2002/01/29 16:45:53  sbrandon
+  changed all uses of _MKOrchTrace to use NSString args.
+
   Revision 1.4  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -56,7 +59,9 @@ static void doDealloc(SynthElement *synthEl,BOOL shouldIdle)
       [synthEl idle];
     synthEl->synthPatch = nil;
     if (_MK_ORCHTRACE(synthEl->orchestra,MK_TRACEORCHALLOC))
-        _MKOrchTrace(synthEl->orchestra,MK_TRACEORCHALLOC,"Deallocating %s", [[NSStringFromClass([synthEl class]) stringByAppendingFormat:@" 0x%x",synthEl] cString]);
+        _MKOrchTrace(synthEl->orchestra,MK_TRACEORCHALLOC,
+                     @"Deallocating %@",
+                     [NSStringFromClass([synthEl class]) stringByAppendingFormat:@" 0x%x",synthEl]);
 		    /* [[synthEl name] cString]); */
     _MKOrchResetPreviousLosingTemplate(synthEl->orchestra);
     [synthEl _deallocAndAddToList];
