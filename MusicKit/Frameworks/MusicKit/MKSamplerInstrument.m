@@ -21,6 +21,9 @@
 */
 /*
   $Log$
+  Revision 1.9  2000/04/22 20:12:42  leigh
+  Now correctly checks the notes conductor for tempo
+
   Revision 1.8  2000/04/20 21:36:51  leigh
   Added removePreparedSounds to stop sound names growing unchecked
 
@@ -51,6 +54,7 @@
 #define USE_SNDKIT 1  
 #import "_musickit.h"
 #import "MKSamplerInstrument.h"
+#import "MKConductor.h"
 
 #define UNASSIGNED_SAMPLE_KEYNUM (-1)
 
@@ -97,7 +101,6 @@ static float uglySamplerTimingHack = 0.0;
     uglySamplerTimingHack = [[NSUserDefaults standardUserDefaults] floatForKey: @"MKUglySamplerTimingHack"];
     [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
 
-    conductor = [[MKConductor defaultConductor] retain];
     playingNotes = [[NSMutableArray arrayWithCapacity: 20] retain]; 
     nameTable = [[NSMutableArray arrayWithCapacity: 40] retain];
 
@@ -113,11 +116,10 @@ static float uglySamplerTimingHack = 0.0;
     }
 }
 
-/* Free the playnotes list, the conductor and remove the named sounds */
+/* Free the playnotes list and remove the named sounds */
 - (void) dealloc
 {
     [playingNotes release];
-    [conductor release];
     [self removePreparedSounds];
     [nameTable release];
 }
@@ -158,7 +160,9 @@ static float uglySamplerTimingHack = 0.0;
         _MKErrorf(MK_cantOpenFileErr, filePath);
         return nil;
     }
+#if !USE_SNDKIT
     [newSound setName: filePath];
+#endif
     [nameTable addObject: filePath];
     velocity = [aNote parAsInt: MK_velocity];
     return self;
@@ -191,7 +195,7 @@ static float uglySamplerTimingHack = 0.0;
     WorkingSoundClass *existingSound;
     NSString *filePath;
 
-    NSLog(@"stopping sample note %@\n", aNote);
+    // NSLog(@"stopping sample note %@ at time %@\n", aNote, [NSDate date]);
 
     // only stop playing those notes which are samples.
     if(![aNote isParPresent: MK_filename]) {
@@ -207,11 +211,9 @@ static float uglySamplerTimingHack = 0.0;
     // locking playback
     // NSLog(@"sound is playing %d\n", [existingSound isPlaying]);
     [playingNotes removeObject: aNote];
-    // For some reason, times are skewed and this ends playback prematurely. I dunno.
-    // [existingSound stop];
+    [existingSound stop];
     return self;
 }
-
 
 - stop
 {
@@ -373,7 +375,7 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
 }
 #endif
 
-#define TIMEDSENDTO(receiver,selector,dt,arg) \
+#define TIMEDSENDTO(conductor,receiver,selector,dt,arg) \
   { /* NSLog(@"dt=%lf\n",dt); */ \
     if (dt) [conductor sel:selector to:receiver withDelay:(dt) argCount:1,arg]; \
     else objc_msgSend(receiver,selector,arg); \
@@ -389,28 +391,31 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
 {
     MKNoteType type = [aNote noteType];
     int     noteTag = [aNote noteTag];
+    MKConductor *conductor = [aNote conductor];
+
     // [MKConductor sel:to:withDelay:argCount:] takes delay parameters in beats.
     double  deltaT = (MKGetDeltaT() + uglySamplerTimingHack) / [conductor beatSize]; 
 
     // NSLog(@"deltaT = %lf beatSize = %lf tempo = %lf\n", deltaT, [conductor beatSize], [conductor tempo]);
     if ((type == MK_noteOn) || (type == MK_noteDur)) {
         [self prepareSoundWithNote: aNote];
-        TIMEDSENDTO(self, @selector(playSampleNote:), deltaT, aNote);
+        TIMEDSENDTO(conductor, self, @selector(playSampleNote:), deltaT, aNote);
         if (type == MK_noteDur) {
-            TIMEDSENDTO(self, @selector(stopSampleNote:), deltaT+[aNote dur], aNote);
+            // NSLog(@"Date: %@\n", [NSDate date]);
+            TIMEDSENDTO(conductor, self, @selector(stopSampleNote:), deltaT+[aNote dur], aNote);
         }
     }
     else if ((type == MK_noteOff) && !damperOn) {
-        TIMEDSENDTO(self, @selector(stopSampleNote:), deltaT, aNote);
+        TIMEDSENDTO(conductor, self, @selector(stopSampleNote:), deltaT, aNote);
     }
 
     if (MKIsNoteParPresent(aNote, MK_amp)) {
         linearAmp = MKGetNoteParAsDouble(aNote, MK_amp);
-        TIMEDSENDTO(self, @selector(setAmp:), deltaT, noteTag);
+        TIMEDSENDTO(conductor, self, @selector(setAmp:), deltaT, noteTag);
     }
     if (MKIsNoteParPresent(aNote, MK_bearing)) {
         bearing = MKGetNoteParAsDouble(aNote, MK_bearing);
-        TIMEDSENDTO(self, @selector(setBearing:), deltaT, noteTag);
+        TIMEDSENDTO(conductor, self, @selector(setBearing:), deltaT, noteTag);
     }
     if (MKIsNoteParPresent(aNote, MK_pitchBendSensitivity)) {
         pitchbendSensitivity = MKGetNoteParAsDouble(aNote, MK_pitchBendSensitivity);
@@ -419,7 +424,7 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
     if (MKIsNoteParPresent(aNote, MK_pitchBend)) {
         double bend = MKGetNoteParAsDouble(aNote, MK_pitchBend);
         pitchBend = pow(2.0, (bend - 8192.0) * pbSensitivity);
-        TIMEDSENDTO(self, @selector(setPitchBend:), deltaT, noteTag);
+        TIMEDSENDTO(conductor, self, @selector(setPitchBend:), deltaT, noteTag);
     }
     // control value to perform recording. Needs updating
     //if (isControlPresent(aNote, recordModeController))
@@ -431,15 +436,15 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
         if (controller == MIDI_DAMPER) {
         damperOn = (MKGetNoteParAsInt(aNote, MK_controlVal) >= 64);
         if (!damperOn)
-            TIMEDSENDTO(self, @selector(stopSampleNote:), deltaT, aNote);
+            TIMEDSENDTO(conductor, self, @selector(stopSampleNote:), deltaT, aNote);
         }
         else if (controller == MIDI_MAINVOLUME) {
             volume = (float)MKGetNoteParAsInt(aNote, MK_controlVal) / 127.0;
-            TIMEDSENDTO(self, @selector(setVolume:), deltaT, noteTag);
+            TIMEDSENDTO(conductor, self, @selector(setVolume:), deltaT, noteTag);
         }
         else if (controller == MIDI_PAN) {
             bearing = -45 + 90.0 * (MKGetNoteParAsInt(aNote, MK_controlVal)/127.0);
-            TIMEDSENDTO(self,@selector(setBearing:), deltaT, noteTag);
+            TIMEDSENDTO(conductor, self,@selector(setBearing:), deltaT, noteTag);
         }
         else if (controller == 14) {
             /* Mostly for 2.1 compatibility */
@@ -451,13 +456,13 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
     }
 
     if (((type == MK_noteOn) || (type == MK_noteDur)) && !recordMode) {
-        //TIMEDSENDTO(self, @selector(activate:), deltaT, noteTag);
+        //TIMEDSENDTO(conductor, self, @selector(activate:), deltaT, noteTag);
     }
     else if (type == MK_mute) {
         if (MKGetNoteParAsInt(aNote, MK_sysRealTime) == MK_sysReset)
             [self reset];
         else if (MKGetNoteParAsInt(aNote, MK_sysRealTime) == MK_sysStop)
-            TIMEDSENDTO(self, @selector(stopSampleNote:), 0.0, aNote);
+            TIMEDSENDTO(conductor, self, @selector(stopSampleNote:), 0.0, aNote);
     }
 
     return self;

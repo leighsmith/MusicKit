@@ -18,6 +18,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2000/04/22 20:12:42  leigh
+  Now correctly checks the notes conductor for tempo
+
   Revision 1.6  2000/04/20 21:36:50  leigh
   Added removePreparedSounds to stop sound names growing unchecked
 
@@ -50,11 +53,9 @@
 #define WorkingSoundClass NSSound
 #endif
 #import "MKInstrument.h"
-#import "MKConductor.h"
 
 @interface MKSamplerInstrument: MKInstrument
 {
-    MKConductor *conductor;
     double volume;
     double pitchBend;
     double pbSensitivity;
