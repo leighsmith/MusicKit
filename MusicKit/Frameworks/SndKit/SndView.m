@@ -2564,7 +2564,7 @@ char *SndSoundError(int err);
 }
 - hadError:sender
 {
-    printf("SoundView HAD ERROR %d: %s\n",[sender processingError], SndSoundError([sender processingError]));
+    printf("SndView HAD ERROR %d: %s\n",[sender processingError], SndSoundError([sender processingError]));
 	return self;
 }
 
@@ -2698,7 +2698,7 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
             [self tellDelegate:@selector(soundDidChange:)];
         }
     }
-    else NSRunAlertPanel(@"SoundView", @"Could not paste sound", @"", nil, nil);
+    else NSRunAlertPanel(@"SndView", @"Could not paste sound", @"", nil, nil);
     if (convertedPasteSound1) SndFree(convertedPasteSound1);
     if (convertedPasteSound2) SndFree(convertedPasteSound2);
     return YES;
