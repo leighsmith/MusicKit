@@ -1,10 +1,19 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// playsnd - a simple SndKit streaming architecture exerciser / sound player
+//  $Id$
 //
-// Original Author: SKoT McDonald <skot@tomandandy.com>
+//  Description:
+//    playsnd - a simple SndKit streaming architecture exerciser / sound player
 //
-// Contributors: Stephen Brandon
+//  Original Author: SKoT McDonald <skot@tomandandy.com>
+//
+//  Contributors: Stephen Brandon
+//
+//  Copyright (c) 2001-2002, The MusicKit Project.  All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
+//  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
