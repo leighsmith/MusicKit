@@ -85,7 +85,6 @@
 				11E07EE9FFA3719CCFED3B93,
 				11E07EF6FFA3719CCFED3B93,
 				11E07EFFFFA3719CCFED3B93,
-				11E07F02FFA3719CCFED3B93,
 				11E07F04FFA3719CCFED3B93,
 				11E07F0BFFA3719CCFED3B93,
 			);
@@ -341,19 +340,6 @@
 		11E07F01FFA3719CCFED3B93 = {
 			isa = PBXFileReference;
 			path = ScorePlayer.strings;
-			refType = 4;
-		};
-		11E07F02FFA3719CCFED3B93 = {
-			children = (
-				11E07F03FFA3719CCFED3B93,
-			);
-			isa = PBXGroup;
-			name = "Supporting Files";
-			refType = 4;
-		};
-		11E07F03FFA3719CCFED3B93 = {
-			isa = PBXFileReference;
-			path = Makefile;
 			refType = 4;
 		};
 		11E07F04FFA3719CCFED3B93 = {
