@@ -135,7 +135,6 @@ Modification history prior to commit to CVS:
 #import "_midi.h"
 #import "_time.h"
 #import "ConductorPrivate.h"
-#import "NoteReceiverPrivate.h"
 #import "MidiPrivate.h"
 
 @implementation MKMidi
@@ -1162,36 +1161,45 @@ static unsigned ignoreBit(unsigned param)
 // Returns NO if there was no MIDI driver found. 
 + (BOOL) getAllAvailableMidiDevices
 {
-    const char **systemDriverNames;
-    unsigned int inputDriverIndex, outputDriverIndex;
+    int systemInputDriverIndex = 0;
+    int systemOutputDriverIndex = 0;
+    const char **systemInputDriverNames;
+    const char **systemOutputDriverNames;
 
     [inputDriverNames release];
     inputDriverNames = [[NSMutableArray array] retain];
     // Use the cross-platform means to obtain the available input drivers.
-    systemDriverNames = MKMDGetAvailableDrivers(YES, &systemDefaultDriverNum);
-    for(inputDriverIndex = 0; systemDriverNames[inputDriverIndex] != NULL; inputDriverIndex++) {
-        [inputDriverNames addObject: [NSString stringWithCString: systemDriverNames[inputDriverIndex]]];
+    systemInputDriverNames = MKMDGetAvailableDrivers(YES, &systemDefaultDriverNum);
+    for(systemInputDriverIndex = 0; systemInputDriverNames[systemInputDriverIndex] != NULL; systemInputDriverIndex++) {
+        [inputDriverNames addObject: [NSString stringWithUTF8String: systemInputDriverNames[systemInputDriverIndex]]];
+	// NSLog(@"getAllAvailableMidiDevices input[%d] = %s\n", systemInputDriverIndex, systemInputDriverNames[systemInputDriverIndex]);
     }
     
     [outputDriverNames release];
     outputDriverNames = [[NSMutableArray array] retain];
     // Use the cross-platform means to obtain the available output drivers.
-    systemDriverNames = MKMDGetAvailableDrivers(NO, &systemDefaultDriverNum);
-    for(outputDriverIndex = 0; systemDriverNames[outputDriverIndex] != NULL; outputDriverIndex++) {
-        [outputDriverNames addObject: [NSString stringWithCString: systemDriverNames[outputDriverIndex]]];
+    systemOutputDriverNames = MKMDGetAvailableDrivers(NO, &systemDefaultDriverNum);
+    for(systemOutputDriverIndex = 0; systemOutputDriverNames[systemOutputDriverIndex] != NULL; systemOutputDriverIndex++) {
+        [outputDriverNames addObject: [NSString stringWithUTF8String: systemOutputDriverNames[systemOutputDriverIndex]]];
+	// NSLog(@"getAllAvailableMidiDevices output[%d] = %s\n", systemOutputDriverIndex, systemOutputDriverNames[systemOutputDriverIndex]);
     }
     
     [bidirectionalDriverNames release];
     bidirectionalDriverNames = [NSMutableArray array];
     
-    // Ideally we should be eliminating chosen names from a copy of the outputDriverNames list to reduce the
-    // search from O(n^2), but the lists are usually very small n typically < 8. 
-    for(inputDriverIndex = 0; inputDriverIndex < [inputDriverNames count]; inputDriverIndex++) {
-	for(outputDriverIndex = 0; outputDriverIndex < [outputDriverNames count]; outputDriverIndex++) {
-	    NSString *inputDriverName = [inputDriverNames objectAtIndex: inputDriverIndex];
-	    
-	    if([inputDriverName isEqualToString: [outputDriverNames objectAtIndex: outputDriverIndex]]) {
-		[bidirectionalDriverNames addObject: inputDriverName];
+    {
+	int inputDriverIndex = 0;
+	int outputDriverIndex = 0;
+	
+	// Ideally we should be eliminating chosen names from a copy of the outputDriverNames list to reduce the
+	// search from O(n^2), but the lists are usually very small n typically < 8. 
+	for(inputDriverIndex = 0; inputDriverIndex < [inputDriverNames count]; inputDriverIndex++) {
+	    for(outputDriverIndex = 0; outputDriverIndex < [outputDriverNames count]; outputDriverIndex++) {
+		NSString *inputDriverName = [inputDriverNames objectAtIndex: inputDriverIndex];
+		
+		if([inputDriverName isEqualToString: [outputDriverNames objectAtIndex: outputDriverIndex]]) {
+		    [bidirectionalDriverNames addObject: inputDriverName];
+		}
 	    }
 	}
     }
@@ -1374,15 +1382,13 @@ static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
 	noteReceivers = [NSMutableArray arrayWithCapacity: _MK_MIDINOTEPORTS];
 	[noteReceivers retain];
 	for (notePortIndex = 0; notePortIndex < _MK_MIDINOTEPORTS; notePortIndex++) {
-	    MKNoteSender *aNoteSender;
+	    MKNoteSender *aNoteSender = [MKNoteSender new];
 	    MKNoteReceiver *aNoteReceiver = [MKNoteReceiver new];
-	    _MKParameter *aParam;
 	    
 	    [noteReceivers addObject: aNoteReceiver];
 	    [aNoteReceiver _setOwner: self];
-	    [aNoteReceiver _setData: aParam = _MKNewIntPar(0, MK_noPar)];
-	    _MKSetIntPar(aParam, notePortIndex);
-	    aNoteSender = [MKNoteSender new];
+	    [aNoteReceiver _setData: [NSNumber numberWithInt: notePortIndex]]; // Encode the note channel.
+
 	    [noteSenders addObject: aNoteSender];
 	    [aNoteSender _setPerformer: self];
 	    [aNoteReceiver release];
@@ -1443,22 +1449,18 @@ static BOOL isSoftDevice(NSString *deviceName, int *unitNum)
 
 /* Aborts and frees the receiver. */
 - (void) dealloc
-{
-    int noteReceiverIndex;
-    int size = [noteReceivers count];
-    
+{    
     [self abort];
     if ([self unitHasMTC]) 
         [synchConductor _setMTCSynch: nil];
     [self _setSynchConductor: nil];
-    for (noteReceiverIndex = 0; noteReceiverIndex < size; noteReceiverIndex++)
-        _MKFreeParameter([[noteReceivers objectAtIndex: noteReceiverIndex] _getData]);
     [noteReceivers makeObjectsPerformSelector: @selector(disconnect)];
-    [noteReceivers removeAllObjects];  
+    // NSLog(@"noteSenders remaining after disconnecting noteReceivers %@\n", noteSenders);
+    [noteSenders makeObjectsPerformSelector: @selector(disconnectAllReceivers)];
+
+    // Now we can release in the usual fashion.
     [noteReceivers release];
     noteReceivers = nil;
-    [noteSenders makeObjectsPerformSelector: @selector(disconnect)];
-    [noteSenders removeAllObjects];  
     [noteSenders release];
     noteSenders = nil;
     [super dealloc];
@@ -1810,7 +1812,7 @@ int _MKAllNotesOffPause = 500; /* mSec between MIDI channel blasts
     }
     else
         t = 0;
-    chan = _MKParAsInt([aNoteReceiver _getData]);
+    chan = [[aNoteReceiver _getData] intValue];
     _MKWriteMidiOut(aNote, t, chan, MIDIOUTPTR(self), aNoteReceiver);
     return self;
 }
@@ -1839,7 +1841,7 @@ int _MKAllNotesOffPause = 500; /* mSec between MIDI channel blasts
    */
 {
     return _MKLightweightArrayCopy(noteSenders);
-//    return [[noteSenders copy] autorelease];  // Cause of problem?? LMS
+    // return [_MKLightweightArrayCopy(noteSenders) autorelease];
 }
 
 - (MKNoteSender *) noteSender
@@ -1856,6 +1858,7 @@ int _MKAllNotesOffPause = 500; /* mSec between MIDI channel blasts
    */
 {
     return _MKLightweightArrayCopy(noteReceivers);
+    // return [_MKLightweightArrayCopy(noteReceivers) autorelease];
 }
 
 - (MKNoteReceiver *) noteReceiver
