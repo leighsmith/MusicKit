@@ -17,6 +17,9 @@
 #Modification history:
 #
 #  $Log$
+#  Revision 1.2  2001/07/18 12:49:38  sbrandon
+#  - renamed PerformSound.c to PerformSound.m and included as ObjC source file.
+#
 #  Revision 1.1  2001/07/02 22:03:48  sbrandon
 #  - initial revision. Still a work in progress, but does allow the MusicKit
 #    and SndKit to compile on GNUstep.
@@ -48,9 +51,9 @@ MKPerformSndMIDI_RESOURCE_DIRS =
 #MKPerformSndMIDIBUNDLE_LIBS = 
 
 # The Bundle Objective-C source files to be compiled
-MKPerformSndMIDI_OBJC_FILES = 
+MKPerformSndMIDI_OBJC_FILES = PerformSound.m
 
-MKPerformSndMIDI_C_FILES = PerformMIDI.c PerformSound.c \
+MKPerformSndMIDI_C_FILES = PerformMIDI.c \
 		portaudio/pa_common/pa_lib.c portaudio/pa_linux_oss/pa_linux_oss.c \
                 portaudio/pa_common/pa_trace.c
 		
