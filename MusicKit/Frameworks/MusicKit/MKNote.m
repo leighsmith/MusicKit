@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2002/01/09 19:49:43  leighsmith
+  Clean up of doco and typed copyParsFrom: parameter
+
   Revision 1.16  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -1271,7 +1274,7 @@ BOOL MKIsNoteParPresent(MKNote *aNote,int par)
 
 static void copyPars(); /* forward ref */
 
--copyParsFrom:aNote
+-copyParsFrom: (MKNote *) aNote
   /* TYPE: Copying; Copies parameters and dur (if any) from aNote to receiver.
    * Copies aNote's parameters and duration into
    * the receiver (MKEnvelope and WaveTables and other objects are shared rather than copied).

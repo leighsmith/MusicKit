@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.18  2002/01/09 19:49:43  leighsmith
+  Clean up of doco and typed copyParsFrom: parameter
+
   Revision 1.17  2001/09/07 18:42:25  leighsmith
   Generates lists and moved @class before headerdoc declaration, formatted table and correctly formatted code example, made Music Tables a URL reference, replaced HTML numeric entity with correct symbolic entity for double quotes
 
@@ -158,6 +161,7 @@
 
 /*!
   @class MKNote
+  @abstract A MKNote object represents a musical sound or event by describing its attributes. 
   @discussion
 
 MKNote objects are containers of musical information.  The amount and
@@ -193,12 +197,13 @@ Most of the methods defined by the MKNote class are designed to let
 you set and retrieve information in the form of <i>parameters</i>.  A
 parameter consists of a tag, a name, a value, and a data type:
 
-&#183; A parameter tag is a unique integer used to catalog the
+<ul>
+<li> A parameter tag is a unique integer used to catalog the
 parameter within the MKNote; the MusicKit defines a number of
 parameter tags such as MK_freq (for frequency) and MK_amp (for
 amplitude).
 
-&#183; The parameter's name is used primarily to identify the
+<li> The parameter's name is used primarily to identify the
 parameter in a scorefile.  The names of the MusicKit parameters are
 the same as the tag constants, but without the "MK_" prefix.
 You can also use a parameter's name to retrieve its tag, by passing
@@ -207,7 +212,7 @@ explained in its descriptions below, it's through this method that you
 create your own parameter tags.)  Similarly, you can get a name from a
 tag with MKNote's <b>parNameForTag:</b>class method.
 
-&#183; A parameter's value can be a <b>double</b>, <b>int</b>, string
+<li> A parameter's value can be a <b>double</b>, <b>int</b>, string
 (<b>char *</b>), or an object (<b>id</b>).  The method you invoke to
 set a parameter value depends on the type of the value.  To set a
 <b>double</b> value, for example, you would invoke the
@@ -238,22 +243,24 @@ None of the MusicKit classes implement these methods and so their instances
 can't be written to a scorefile as parameter values (MKEnvelopes and
 MKWaveTables are written and read through a different mechanism).
 
-&#183; The parameter's data type is set when the parameter's value is
+<li> The parameter's data type is set when the parameter's value is
 set; thus the data type is either a <b>double</b>, <b>int</b>, string,
 MKEnvelope, MKWaveTable, or (other) object.  These are represented by
 constants, as given in the description of <b>parType:</b>, the method
 that retrieves a parameter's data type.
+</ul>
 
 A parameter is said to be present within a MKNote once its value has
 been set.  You can determine whether a parameter is present in one of
 four ways:
 
-&#183; The easiest way is to invoke the boolean<b></b>method<b>
+<ul>
+<li> The easiest way is to invoke the boolean<b></b>method<b>
 isParPresent:</b>, passing the parameter tag as the argument.  An
 equivalent C function, <b>MKIsNoteParPresent()</b> is also provided
 for greater efficiency.
 
-&#183; At a lower lever, you can invoke the <b>parVector:</b> method
+<li> At a lower lever, you can invoke the <b>parVector:</b> method
 to retrieve one of a MKNote's &ldquo;parameter bit vectors,"
 integers that the MKNote uses internally to indicate which parameters
 are present.  You query a parameter bit vector by masking it with the
@@ -269,7 +276,7 @@ int parVector = [aNote parVector:(MK_amp/32)];
 if (parVector &amp; (1 &lt;&lt; (MK_amp % 32)))
 </tt>
 
-&#183; If you plan on retrieving the value of the parameter after
+<li> If you plan on retrieving the value of the parameter after
 you've checked for the parameter's presence, then it's generally more
 efficient to go ahead and retrieve the value and <i>then</i> determine
 if the parameter is actually set by comparing its value to the
@@ -316,11 +323,12 @@ if (!MKIsNoDVal(amp))<br>
    ... // do something with the parameter<br>
 </tt>
 
-&#183; If you're looking for and processing a large number of
+<li> If you're looking for and processing a large number of
 parameters in one block, then you should make calls to the
 <b>MKNextParameter()</b> C function, which returns the values of a
 MKNote's extant parameters only.  See the function's description in
 Chapter 2 for more details.
+</ul>
 
 A MKNote has two special timing attributes:  A MKNote's time tag
 corresponds, conceptually, to the time during a performance that the
@@ -518,7 +526,7 @@ MKDataType;
               Subclasses should send [super initWithTimeTag:aTimeTag] if it overrides 
               this method. 
 */ 
-- initWithTimeTag:(double )aTimeTag;
+- initWithTimeTag:(double) aTimeTag;
 
 /*!
   @method init
@@ -532,7 +540,7 @@ MKDataType;
               A newly initialized MKNote's note type is mute.  Returns <b>self</b>.
 
               Same as [self initWithTimeTag:MK_ENDOFTIME].
-              See also:  -<b> init:</b>
+              See also:  -<b>init:</b>
 */
 - init;
 
@@ -609,7 +617,7 @@ MKDataType;
               This is provided, primarily, as part of the implementation of the
               <b>conductor</b> method. 
               
-              See also:  -<b> conductor</b>
+              See also:  -<b>conductor</b>
 */
 - performer; 
 
@@ -620,7 +628,7 @@ MKDataType;
               By default, a MKNote isn't contained in a MKPart.
               
               
-              See also:  -<b> addToPart:</b>, -<b> removeFromPart</b>
+              See also:  -<b>addToPart:</b>, -<b>removeFromPart</b>
 */
 - part; 
 
@@ -635,7 +643,7 @@ MKDataType;
               split noteDurs into noteOn/noteOff pairs; performance of the noteOff
               is scheduled with the MKConductor that's returned by this method.
               
-              SEE ALSO: - <b>performer</b>
+              SEE ALSO: -<b>performer</b>
 */
 - conductor; 
 
@@ -650,7 +658,7 @@ MKDataType;
               method.   Be careful not to free a MKConductor while leaving a
               dangling reference to it in a MKNote!
               
-              See also:  -<b> conductor</b>
+              See also:  -<b>conductor</b>
 */
 -setConductor:aConductor; 
 
@@ -664,7 +672,7 @@ MKDataType;
               
               This method is equivalent to MKPart's <b>addNote:</b> method.
               
-              SEE ALSO: -<b>part</b>, -<b> removeFromPart</b>
+              SEE ALSO: -<b>part</b>, -<b>removeFromPart</b>
 */
 - addToPart:aPart; 
 
@@ -675,9 +683,9 @@ MKDataType;
               MK_ENDOFTIME is returned.  Time tag values are used to sort the
               MKNotes within a MKPart.
               
-              See also:   -<b> setTimeTag:</b>
+              See also:   -<b>setTimeTag:</b>
 */
--(double ) timeTag; 
+-(double)  timeTag; 
 
 /*!
   @method setTimeTag:
@@ -690,9 +698,9 @@ MKDataType;
               MKPart; if you change the time tag of a MKNote that's been added to
               a MKPart, the MKNote is automatically resorted.
               
-              See also:   -<b> timeTag,</b>-<b> addToPart:</b>, -<b> sort </b>(MKPart)
+              See also:   -<b>timeTag</b>, -<b>addToPart:</b>, -<b>sort </b>(MKPart)
 */
--(double ) setTimeTag:(double )newTimeTag; 
+-(double)  setTimeTag:(double) newTimeTag; 
  /* 
   * Sets the receiver's timeTag to newTimeTag and returns the old timeTag,
   * or MK_ENDOFTIME if none.  If newTimeTag is negative, it is clipped to
@@ -703,7 +711,7 @@ MKDataType;
   * ensures that the receiver's position within its MKPart is correct.  
   */
 
--(double ) setTimeTagPreserveEndTime:(double )newTimeTag;
+-(double)  setTimeTagPreserveEndTime:(double) newTimeTag;
 /*
  * Sets the receiver's timeTag to newTimeTag and returns the old timeTag,
  * or MK_ENDOFTIME if none.  If newTimeTag is negative, it's clipped to
@@ -725,7 +733,7 @@ MKDataType;
   @discussion Removes the MKNote from its MKPart.  Returns the MKPart, or
               <b>nil</b> if none.
               
-              See also:  -<b> addToPart:</b>, -<b> part</b>
+              See also:  -<b>addToPart:</b>, -<b>part</b>
 */
 - removeFromPart; 
 
@@ -737,9 +745,11 @@ MKDataType;
               argument MKNote would appear first if the two MKNotes were sorted
               into the same MKPart:
               
-              &#183;	-1 indicates that the receiving MKNote is first.
-              &#183;	1 means that the argument, <i>aNote</i>, is first.
-              &#183;	0 is returned if the receiving MKNote and <i>aNote</i> are the same object.
+              <ul>
+              <li>	-1 indicates that the receiving MKNote is first.
+              <li>	1 means that the argument, <i>aNote</i>, is first.
+              <li>	0 is returned if the receiving MKNote and <i>aNote</i> are the same object.
+              </ul>
               
               Keep in mind that the two MKNotes needn't actually be
               members of the same MKPart, nor must they be members of
@@ -749,7 +759,7 @@ MKDataType;
               invalidates the result of a previous invocation of this
               method.
 */
--(int ) compare:aNote; 
+-(int)  compare:aNote; 
  /* 
   * Compares the receiver with aNote and returns a value as follows:
   * 
@@ -775,31 +785,30 @@ MKDataType;
               can be set through <b>setNoteType:</b>, although <b>setDur:</b> and
               <b>setNoteTag:</b> may also change it as a side effect.
               
-              See also:  -<b> setNoteType:</b>,<b></b>-<b>  setDur:,</b>-<b> setNoteTag:</b>
+              See also:  -<b>setNoteType:</b>, -<b>setDur:</b>, -<b>setNoteTag:</b>
 */
 -(MKNoteType ) noteType; 
 
 /*!
   @method setNoteType:
   @param  newNoteType is a MKNoteType.
-  @result Returns an id.
+  @result Returns <b>self</b>, or <b>nil</b> if <i>newNoteType</i> isn't a valid note type.
   @discussion Sets the MKNote's note type to <i>newNoteType</i>, one
               of:
               
-              &#183;	MK_noteDur; represents an entire musical note.
-              &#183;	MK_noteOn; represents the beginning of a note. 
-              &#183;	MK_noteOff; represents the end of a note. 
-              &#183;	MK_noteUpdate; represents the middle of a note. 
-              &#183;	MK_mute; makes no sound.
-              
-              Returns <b>self</b>, or <b>nil</b> if <i>newNoteType</i> isn't a valid note type.
+              <ul>
+              <li>	MK_noteDur; represents an entire musical note.
+              <li>	MK_noteOn; represents the beginning of a note. 
+              <li>	MK_noteOff; represents the end of a note. 
+              <li>	MK_noteUpdate; represents the middle of a note. 
+              <li>	MK_mute; makes no sound.
+              </ul>
               
               You should keep in mind that the <b>setDur:</b> method
               automatically sets a MKNote's note type to MK_noteDur;
               <b>setNoteTag:</b> changes mutes into noteUpdates.
               
-              See also: -<b> noteType,</b>-<b> setNoteTag:</b>, -<b>
-	      setDur:</b> 
+              See also: -<b>noteType</b>, -<b>setNoteTag:</b>, -<b>setDur:</b> 
 */
 - setNoteType:(MKNoteType )newNoteType; 
 
@@ -813,9 +822,9 @@ MKDataType;
               function <b>MKIsNoDVal()</b> to check for MK_NODVAL); otherwise
               returns <i>value</i>.
               
-              See also:  -<b> dur,</b>-<b>  conductor</b>
+              See also:  -<b>dur</b>, -<b>conductor</b>
 */
--(double ) setDur:(double )value; 
+-(double)  setDur:(double) value; 
  /* 
   * Sets the receiver's duration to value beats and sets its noteType to
   * MK_noteDur.  If value is negative the duration isn't set (but the
@@ -834,9 +843,9 @@ MKDataType;
               returns MK_NODVAL.  This allows you to specify rests with
               durations.
               
-              See also:  -<b> setDur:</b>
+              See also:  -<b>setDur:</b>
 */
--(double ) dur; 
+-(double)  dur; 
 
 - (double) setEndTime: (double) newEndTime;
  /*
@@ -856,9 +865,9 @@ MKDataType;
   @discussion Return the MKNote's note tag, or MAXINT if it isn't
               set.
               
-              See also:  -<b> setNoteTag:, MKNoteTag()</b>
+              See also:  -<b>setNoteTag:, MKNoteTag()</b>
 */
--(int ) noteTag; 
+-(int)  noteTag; 
 
 /*!
   @method setNoteTag:
@@ -880,9 +889,9 @@ MKDataType;
               you should never create noteTag values but through the
               <b>MKNoteTag()</b> C function.
               
-              See also: -<b> noteTag, MKNoteTag()</b> 
+              See also: -<b>noteTag, MKNoteTag()</b> 
 */
-- setNoteTag:(int )newTag; 
+- setNoteTag:(int) newTag; 
 
 /*!
   @method removeNoteTag
@@ -899,9 +908,9 @@ MKDataType;
               <i>aName</i>.  If the named parameter doesn't have an identifier,
               one is created and thereafter associated with the parameter.            
               
-              SEE ALSO: -<b> setPar:toDouble:</b>(etc), -<b> isParPresent:</b>, - <b>parNameForTag:</b>  
+              SEE ALSO: -<b>setPar:toDouble:</b>(etc), -<b>isParPresent:</b>, -<b>parNameForTag:</b>  
 */
-+(int ) parTagForName:(NSString * )aName; 
++(int)  parTagForName:(NSString *) aName; 
 
 /*!
   @method parNameForTag:
@@ -912,8 +921,8 @@ MKDataType;
 	      "freq". If the parameter number given is not a valid parameter number,
               returns "".  Note that the string is not copied. 
                             
-              SEE ALSO: -<b> setPar:toDouble:</b>(etc), -<b>
-              isParPresent:</b> , - <b>parNameForTag:</b> 
+              SEE ALSO: -<b>setPar:toDouble:</b>(etc), -<b>
+              isParPresent:</b> , -<b>parNameForTag:</b> 
 */
 +(NSString *) parNameForTag:(int)aPar;
 
@@ -928,11 +937,11 @@ MKDataType;
               same as <b>[self removePar:</b><i>parameterTag</i><b>].</b>  Returns
               <b>self</b>.
               
-              See also: +<b> parTagForName:</b>, +<b>
-              parNameForTag:</b>,-<b> parType:,</b>-<b>
-              isParPresent:</b>, -<b> parAsDouble:</b> 
+              See also: +<b>parTagForName:</b>, +<b>
+              parNameForTag:</b>, -<b>parType:</b>, -<b>
+              isParPresent:</b>, -<b>parAsDouble:</b> 
 */
-- setPar:(int )par toDouble:(double )value; 
+- setPar:(int) par toDouble:(double) value; 
 
 /*!
   @method setPar:toInt:
@@ -941,15 +950,15 @@ MKDataType;
   @result Returns an id.
   @discussion Sets the value of the parameter identified by <i>parameterTag</i> to
               <i>anInteger</i>, and sets its data type to MK_int.  If
-              <i>anInteger</i>is MAXINT, this method is the same as <b> [self
+              <i>anInteger</i>is MAXINT, this method is the same as  <b>[self
               removePar:</b><i>parameterTag</i><b>].</b>  Returns
               <b>self</b>.
               
-              See also:   +<b> parTagForName:</b>, +<b>
-	      parNameForTag:</b>,-<b> parType:,</b>-<b>
-	      isParPresent:</b>, -<b> parAsInteger:</b> 
+              See also:   +<b>parTagForName:</b>, +<b>
+	      parNameForTag:</b>, -<b>parType:</b>, -<b>
+	      isParPresent:</b>, -<b>parAsInteger:</b> 
 */
-- setPar:(int )par toInt:(int )value; 
+- setPar:(int) par toInt:(int) value; 
 
 /*!
   @method setPar:toString:
@@ -961,9 +970,10 @@ MKDataType;
               <i>aString</i>is NULL or "", this method is the same as 
               <b>[self removePar:</b><i>parameterTag</i><b>].</b>
               
-              See also: +<b> parTagForName:</b>, +<b> parNameForTag:</b>,-<b> parType:,</b>-<b>  isParPresent:</b>, -<b> parAsString:</b>
+              See also: +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>,
+                        -<b>parAsString:</b>
 */
-- setPar:(int )par toString:(NSString * )value; 
+- setPar:(int) par toString:(NSString *) value; 
 
 /*!
   @method setPar:toEnvelope:
@@ -975,9 +985,10 @@ MKDataType;
               <i>anEnvelope</i>is <b>nil</b> , this method is the same as <b>[self
               removePar:</b><i>parameterTag</i><b>].</b>  Returns <b>self</b>.
               
-              See also:   +<b> parTagForName:</b>, +<b> parNameForTag:</b>,-<b> parType:,</b>-<b> isParPresent:</b>, -<b>  parAsEnvelope:</b>
+              See also: +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>,
+                        -<b>parAsEnvelope:</b>
 */
-- setPar:(int )par toEnvelope:envObj; 
+- setPar:(int) par toEnvelope:envObj; 
 
 /*!
   @method setPar:toWaveTable:
@@ -990,9 +1001,9 @@ MKDataType;
               removePar:</b><i>parameterTag</i><b>].</b> Returns
               <b>self</b>.
               
-              See also:   +<b> parTagForName:</b>, +<b> parNameForTag:</b>,-<b> parType:,</b>-<b> isParPresent:</b>, -<b>  parAsWaveTable:</b>
+              See also:   +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsWaveTable:</b>
 */
-- setPar:(int )par toWaveTable:waveObj; 
+- setPar:(int) par toWaveTable:waveObj; 
  /* 
   * Sets the parameter par to waveObj, a MKWaveTable object.
   * Returns the receiver.  
@@ -1005,7 +1016,7 @@ MKDataType;
   @result Returns an id.
   @discussion Sets the value of the parameter identified by <i>parameterTag</i> to
               <i>anObject</i>, and sets its data type to MK_object.  If
-              <i>anObject</i>is <b>nil,</b>  this method is the same as <b>[self
+              <i>anObject</i>is <b>nil</b>,  this method is the same as <b>[self
               removePar:</b><i>parameterTag</i><b>].</b>  Returns
               <b>self</b>.
               
@@ -1029,8 +1040,9 @@ MKDataType;
               object, you should use the <b>setPar:toEnvelope:</b> or
               <b>setPar:toWaveTable:</b> method, respectively.
               
-              See also: +<b> parTagForName:</b>, +<b> parNameForTag:</b>,-<b> parType:,</b>-<b> isParPresent:</b>, -<b> parAsObject:</b> */
-- setPar:(int )par toObject:anObj; 
+              See also: +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsObject:</b> 
+*/
+- setPar:(int) par toObject:anObj; 
  /* 
   * Sets the parameter par to the object anObj.  The object's class must
   * implement the methods writeASCIIStream: and readASCIIStream: (in order
@@ -1058,10 +1070,10 @@ MKDataType;
               the MKNote.
               
               See also: <b>MKGetNoteParAsDouble()</b>, -<b>
-              setPar:toDouble:</b> (etc), -<b> parType:</b>, -<b>
+              setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>
               isParPresent:</b> 
 */
--(double ) parAsDouble:(int )par; 
+-(double)  parAsDouble:(int) par; 
  /* 
   * Returns a double value converted from the value of the parameter par.
   * If the parameter isn't present, returns MK_NODVAL. 
@@ -1078,9 +1090,9 @@ MKDataType;
               isn't present, or if its value is an object, returns
               MAXINT.
               
-              See also:  <b>MKGetNoteParAsInt()</b>, -<b> setPar:toDouble:</b> (etc), -<b> parType:</b>, <b>isParPresent:</b>
+              See also:  <b>MKGetNoteParAsInt()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, <b>isParPresent:</b>
 */
--(int ) parAsInt:(int )par; 
+-(int)  parAsInt:(int) par; 
  /* 
   * Returns an int value converted from the value of the parameter par.
   * If the parameter isn't present, returns MAXINT.  */
@@ -1094,10 +1106,10 @@ MKDataType;
               isn't present, or if its value is an object, returns an empty
               string.
               
-              See also:  <b>MKGetNoteParAsString()</b>, -<b>
-              setPar:toDouble:</b> (etc), -<b> parType:</b>, <b>isParPresent:</b>
+              See also: <b>MKGetNoteParAsString()</b>, -<b>setPar:toDouble:</b> (etc),
+                        -<b>parType:</b>, <b>isParPresent:</b>
 */
--(NSString * ) parAsString:(int )par; 
+-(NSString *)  parAsString:(int) par; 
  /* 
   * Returns a char * converted from a copy of the value of the parameter
   * par.  If the parameter isn't present, returns a copy of "".  */
@@ -1114,10 +1126,10 @@ MKDataType;
               object, returns an empty string.
               
               See also:  <b>MKGetNoteParAsStringNoCopy()</b>, -<b>
-              setPar:toDouble:</b> (etc), -<b> parType:</b>, -<b>
+              setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>
               isParPresent:</b>
 */
--(NSString * ) parAsStringNoCopy:(int )par; 
+-(NSString *)  parAsStringNoCopy:(int) par; 
  /* 
   * Returns a char * to the value of the parameter par.  You shouldn't
   * delete or alter the value returned by this method.  If the parameter
@@ -1131,9 +1143,9 @@ MKDataType;
               isn't present or if its value isn't an MKEnvelope, returns
               <b>nil</b>.
               
-              See also:  <b>MKGetNoteParAsEnvelope()</b>, -<b> setPar:toDouble:</b> (etc), -<b> parType:</b>, -<b> isParPresent:</b>
+              See also:  <b>MKGetNoteParAsEnvelope()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>isParPresent:</b>
 */
-- parAsEnvelope:(int )par; 
+- parAsEnvelope:(int) par; 
  /* 
   * Returns the MKEnvelope value of par.  If par isn't present or if its
   * value wasn't set as envelope type, returns nil.  */
@@ -1146,7 +1158,7 @@ MKDataType;
               <i>parameterTag</i>.  If the parameter isn't present, or if it's
               value isn't a MKWaveTable, returns <b>nil</b>.
 */
-- parAsWaveTable:(int )par; 
+- parAsWaveTable:(int) par; 
  /* 
   * Returns the MKWaveTable value of par.  If par isn't present or if it's
   * value wasn't set as waveTable type, returns nil.  */
@@ -1162,9 +1174,9 @@ MKDataType;
               return MKEnvelope and MKWaveTable objects, in addition to non-MusicKit
               objects.
               
-              See also:  <b>MKGetNoteParAsObject()</b>, -<b> setPar:toDouble:</b> (etc), -<b> parType:</b>, -<b> isParPresent:</b>
+              See also:  <b>MKGetNoteParAsObject()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>isParPresent:</b>
 */
-- parAsObject:(int )par; 
+- parAsObject:(int) par; 
  /* 
   * Returns the object value of par.  If par isn't present or if its value
   * isn't an object, returns nil.  (This method will return MKEnvelope and
@@ -1179,14 +1191,10 @@ MKDataType;
               parameterTag</i> is present in the MKNote (in other words, if its
               value has been set), <b>and NO</b> if it isn't.
               
-              See also: -<b> parVector:, MKIsNoteParPresent(), MKNextParameter(), + parTagForName:</b>, 
-              <b>+ parNameForTag:</b>-<b> parType:</b>, -<b> setPar:toDouble:</b>(etc), -<b>  parAsDouble: </b>(etc)
+              See also: -<b>parVector:</b>, <b>MKIsNoteParPresent()</b>, <b>MKNextParameter()</b>, +<b>parTagForName:</b>, 
+              +<b>parNameForTag:</b>, -<b>parType:</b>, -<b>setPar:toDouble:</b> (etc), -<b>parAsDouble:</b> (etc).
 */
--(BOOL ) isParPresent:(int )par; 
- /* 
-  * Returns YES if the parameter par is present in the receiver, NO if it
-  * isn't.  */
-
+- (BOOL) isParPresent:(int) par;
 
 /*!
   @method parType:
@@ -1208,47 +1216,33 @@ MKDataType;
               
               If the parameter's value hasn't been set, MK_noType is returned.
               
-              See also:  <b>MKGetNoteParAsWaveTable()</b>, -<b> setPar:toDouble:</b> (etc), -<b> parType:</b>, -<b> isParPresent:</b>
+              See also:  <b>MKGetNoteParAsWaveTable()</b>, -<b>setPar:toDouble:</b> (etc), -<b>parType:</b>, -<b>isParPresent:</b>
 */
--(MKDataType ) parType:(int )par; 
- /* 
-  * Returns the parameter data type of par as one of the six MKDataTypes
-  * listed in the class description above.  If the parameter isn't
-  * present, returns MK_noType.  */
-
+-(MKDataType ) parType:(int) par; 
 
 /*!
   @method removePar:
   @param  parameterTag is an int.
   @result Returns an id.
-  @discussion Removes the parameter identified by  <i>parameterTag</i> from the
+  @discussion Removes the parameter identified by <i>parameterTag</i> from the
               MKNote; in other words, this sets the parameter's value to indicate
               that the parameter isn't set.  If the parameter was present, then
               the MKNote is returned; if not, <b>nil</b> is returned.
               
-              See also:  +<b> parTagForName:</b>, +<b> parNameForTag:</b>, -<b> isParPresent:,</b>-<b>  setPar:toDouble: </b>(etc)
+              See also:  +<b>parTagForName:</b>, +<b>parNameForTag:</b>, -<b>isParPresent:</b>, -<b>setPar:toDouble:</b> (etc).
 */
-- removePar:(int )par; 
- /* 
-  * Removes the parameter par from the receiver.  Returns the receiver if
-  * the parameter is present, otherwise returns nil.  */
-
+- removePar:(int) par; 
 
 /*!
   @method copyParsFrom:
-  @param  aNote is an id.
-  @result Returns an id.
+  @param  aNote is an MKNote *.
+  @result Returns <b>self</b>.
   @discussion Copies <i>aNote</i>'s parameters into the receiving MKNote. 
-              Object-valued parameters are shared by the two MKNotes.  Returns
-              <b>self</b>.
+              Object-valued parameters are shared by the two MKNotes.  
               
-              See also:  -<b> copy</b>, -<b> copyFromZone:,</b> - <b>split::</b>
+              See also:  -<b>copy</b>, -<b>copyFromZone:</b>, -<b>split::</b>
 */
-- copyParsFrom:aNote; 
- /* 
-  * Copies aNote's parameters into the receiver.  Object-valued parameters
-  * are shared by the two MKNotes.  Returns the receiver.  */
-
+- copyParsFrom: (MKNote *) aNote; 
 
 /*!
   @method freq
@@ -1266,9 +1260,9 @@ the section entitled Music Tables
               
               Frequency and key number are the only two parameters whose values are retrieved through specialized methods.  All other parameter values should be retrieved through one of the <b>parAs</b><i>Type</i><b>:</b> methods.
               
-              See also:  -<b> keyNum,</b>-<b>  setPar:toDouble:</b>
+              See also:  -<b>keyNum</b>, -<b>setPar:toDouble:</b>
 */
--(double ) freq; 
+-(double)  freq; 
  /* 
   * If MK_freq is present, returns its value.  Otherwise, gets the
   * frequency that correponds to MK_keyNum according to the installed
@@ -1293,9 +1287,9 @@ the section entitled Music Tables
               
               Frequency and key number are the only two parameters whose values are retrieved through specialized methods.  All other parameter values should be retrieved through one of the <b>parAs</b><i>Type</i><b>:</b> methods.
               
-              See also:  - <b>freq,</b> - <b>setPar:toInt:</b>
+              See also:  -<b>freq</b>, -<b>setPar:toInt:</b>
 */
--(int ) keyNum; 
+-(int)  keyNum; 
  /* 
   * If MK_keyNum is present, returns its value.  Otherwise, gets the
   * frequency that correponds to MK_freq according to the installed tuning
@@ -1305,18 +1299,13 @@ the section entitled Music Tables
 
 /*!
   @method writeScorefileStream:
-  @param  aStream is a NXStream *.
-  @result Returns an id.
-  @discussion Writes the MKNote, in scorefile format, to the stream
-              <b><i>aStream</i></b>.  The stream must be open for writing.  You
-              rarely invoke this method yourself; it's invoked from the
-              scorefile-writing methods defined by MKScore and MKScorefileWriter. 
-              Returns self.
+  @param  aStream is a NSMutableData *.
+  @result Returns self.
+  @discussion Writes the MKNote, in scorefile format, to the stream, that is, the data object
+              <b><i>aStream</i></b>.  You rarely invoke this method yourself; it's invoked from the
+              scorefile-writing methods defined by MKScore and MKScorefileWriter.
 */
 - writeScorefileStream:(NSMutableData *)aStream; 
- /* 
-  * Writes the receiver to the (open) stream aStream using scorefile
-  * format.  Returns the receiver.  */
 
 - (void)encodeWithCoder:(NSCoder *)aCoder;
   /* 
@@ -1344,9 +1333,9 @@ the section entitled Music Tables
               need to know this if you're iterating over the parameter
               vectors.
               
-              See also:  -<b> parVector</b>
+              See also:  -<b>parVector</b>
 */
--(int)parVectorCount;
+-(int) parVectorCount;
 
 /*!
   @method parVector:
@@ -1365,7 +1354,7 @@ the section entitled Music Tables
               
               In this formula, <i>parameterTag </i>identifies the parameter that you're interested in.<i></i>Keep in mind<i>   </i>that the parameter bit vectors only indicate the presence of a parameter, not its value.
               
-              See also:  -<b> parVectorCount</b>, -<b> isParPresent:</b>
+              See also:  -<b>parVectorCount</b>, -<b>isParPresent:</b>
 */
 -(unsigned)parVector:(unsigned)index;
  /* 
@@ -1402,7 +1391,7 @@ the section entitled Music Tables
               Sets timeTag as specified and sets type to mute.
               If aTimeTag is MK_ENDOFTIME, the timeTag isn't set.
 */
-+ noteWithTimeTag:(double )aTimeTag; 
++ noteWithTimeTag:(double) aTimeTag; 
 
 @end
 
