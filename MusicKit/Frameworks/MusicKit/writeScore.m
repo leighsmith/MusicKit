@@ -20,36 +20,7 @@
   Portions Copyright (c) 1999-2000 The MusicKit Project.  
 */ 
 /* 
-Modification history:
-
-  $Log$
-  Revision 1.10  2002/04/03 03:59:42  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.9  2002/03/12 23:02:24  sbrandon
-  Cleaned up some formatting and typos.
-  Changed _binaryIndecies from NSMutableDictionary to NSMapTable.
-
-  Revision 1.8  2002/01/29 16:47:33  sbrandon
-  ensured we retain and release stream (NSMutableData) and _binaryIndecies variables (fixed leak)
-
-  Revision 1.7  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.6  2000/10/01 06:50:53  leigh
-  Doco Cleanup
-
-  Revision 1.5  2000/06/09 03:20:33  leigh
-  removed redundant HashTable import
-
-  Revision 1.4  2000/05/06 00:26:29  leigh
-  Converted _binaryIndecies to NSMutableDictionary
-
-  Revision 1.3  1999/09/04 22:53:15  leigh
-  tokname now const char to stop warnings
-
-  Revision 1.2  1999/07/29 01:26:19  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history before commital to the CVS repository.
 
   09/22/89/daj - Added _MK_BACKHASH bit or'ed in with type when adding name,
                  to accommodate new way of handling back-hashing. Fixed bug
