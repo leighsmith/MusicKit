@@ -30,12 +30,16 @@
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2001 The MusicKit Project.
 */
 /*
 Modification history:
 
  $Log$
+ Revision 1.5  2001/09/20 01:41:55  leighsmith
+ Typed parameters and added headerdoc comments
+
  Revision 1.4  2001/09/06 21:27:47  leighsmith
  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -48,6 +52,29 @@ Modification history:
  Revision 1.1  2000/04/16 21:18:36  leigh
  First version using SndKit incorporated into the MusicKit framework
 
+*/
+/*!
+  @class MKMixerInstrument
+  @abstract MKMixerInstrument mixes soundfiles based on a score description of the mix.
+  @discussion
+    MKMixerInstrument mixes soundfiles based on a score description of the mix. 
+    It allows setting the amplitude scaling of each soundfile and to
+    change that scaling over time by applying an amplitude envelope. It
+    allows resampling (change the pitch of) a file.  It also allows
+    you to specify that only a portion of a file be used in the mix.
+    There is no limit to the number of soundfiles that may be mixed
+    together. Also, the same soundfile may be mixed several times and may
+    overlap with itself.  The soundfiles may have different sampling rates
+    and different formats.  However, the output must be 16 bit linear.
+    The mix is done on the main CPU, rather than the DSP.  The more files
+    you mix, the longer it will take the program to run.  Note also that
+    if you mix many large files, you will need a fair degree of swap
+    space--keep some room free on the disk off of which you booted.
+
+    MKMixerInstrument is also an illustration of how to make your own MusicKit
+    MKInstrument subclass to "realize MKNotes" in some novel fashion. In this
+    case, MKNotes are soundfile mix specifications. They are "realized" by
+    being mixed into the output file.
 */
 #ifndef __MK_MixerInstrument_H___
 #define __MK_MixerInstrument_H___
@@ -71,7 +98,15 @@ Modification history:
     int defaultTimeScale;             /* See README */
 }
 
-/* To be invoked once before performance. */
+/*!
+  @method setSamplingRate:channelCount:writingToStream:
+  @param  aSrate is a double.
+  @param  chans is an int.
+  @param  aStream is an NSMutableData.
+  @result Returns <b>self</b>.
+  @discussion This method sets the sampling rate, number of audio channels and destination NSMutableData object
+              to be used when mixing sounds. It should be invoked once before performance is started. 
+*/
 -setSamplingRate: (double) aSrate
     channelCount: (int) chans
  writingToStream: (NSMutableData *) aStream;
@@ -80,14 +115,31 @@ Modification history:
 
 - (void) dealloc;
 
--firstNote:aNote;
-  /* This is invoked when first note is received during performance */
+/*!
+  @method firstNote:
+  @param  aNote is an MKNote.
+  @result Returns <b>self</b>.
+  @discussion You do not normally call this method explictly. 
+              It is invoked when first note is received during performance.
+*/
+-firstNote: (MKNote *) aNote;
 
--realizeNote:aNote fromNoteReceiver:aNoteReceiver;
-  /* This is invoked when a new MKNote is received during performance */
+/*!
+  @method realizeNote:fromNoteReceiver:
+  @param  aNote is an MKNote.
+  @param  aNoteReceiver is an MKNoteReceiver.
+  @discussion This is invoked when a new MKNote is received during performance to perform the mixing.
+              You do not normally call this method explictly.
+*/
+-realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 
+/*!
+  @method afterPerformance
+  @result Returns <b>self</b>.
+  @discussion You do not normally call this method explictly. 
+              It is invoked when performance is over. 
+*/
 -afterPerformance;
-  /* This is invoked when performance is over. */
 
 /* All other methods are private */
 
