@@ -23,8 +23,9 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
 
 @implementation Snd
 
+static NSAutoreleasePool *pool;
 static NSMutableDictionary* nameTable = nil;
-static HashTable* playRecTable = nil;
+static NSMutableDictionary* playRecTable = nil;
 static ioTags = 1000;
 
 void merror(int er)
@@ -38,8 +39,9 @@ void merror(int er)
 #if defined(WIN32) && defined(USE_PERFORM_SOUND_IO)
     char **driverNames;
 #endif
-	printf("Snd class initialize\n");
+    printf("Snd class initialize\n");
 //	malloc_error(&merror);
+    pool = [[NSAutoreleasePool alloc] init];
     if ( self == [Snd class] ) {
         nameTable = [[NSMutableDictionary alloc] initWithCapacity:10];
 #if defined(WIN32) && defined(USE_PERFORM_SOUND_IO)
@@ -530,7 +532,7 @@ void merror(int er)
 int beginFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
-	theSnd = [playRecTable valueForKey:sound];
+	theSnd = [playRecTable objectForKey: [NSNumber numberWithInt: tag]];
 	if (err) {
 		[theSnd _setStatus:NX_SoundStopped];
 		[theSnd tellDelegate:@selector(hadError:)];
@@ -545,13 +547,15 @@ int beginFun(SNDSoundStruct *sound, int tag, int err)
 int endFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
+	NSNumber *tagNumber = [NSNumber numberWithInt: tag];
 
-	theSnd = [playRecTable valueForKey:sound];
+        theSnd = [playRecTable objectForKey: tagNumber];
+	printf("endFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
 	[theSnd _setStatus:NX_SoundStopped];
 	if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
 	if (err) [theSnd tellDelegate:@selector(hadError:)];
 	else [theSnd tellDelegate:@selector(didPlay:)];
-	[playRecTable removeKey:sound];
+        [playRecTable removeObjectForKey: tagNumber];
 	/* bug fix for SoundKit: if DSP was used, its access is not
 	 * released as it should be. So I just automatically release it
 	 * here, whether or not it was used. Generally it's used for real-time
@@ -561,6 +565,7 @@ int endFun(SNDSoundStruct *sound, int tag, int err)
         if(err) {
             NSLog(@"Unreserving error %d\n", err);
         }
+        printf("theSnd = %x, err = %d\n", theSnd, err);
 	((Snd *)theSnd)->tag = 0;
 	return 0;
 }
@@ -568,7 +573,7 @@ int endFun(SNDSoundStruct *sound, int tag, int err)
 int beginRecFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
-	theSnd = [playRecTable valueForKey:sound];
+	theSnd = [playRecTable objectForKey: [NSNumber numberWithInt: tag]];
 	if (err) {
 		[theSnd _setStatus:NX_SoundStopped];
 		[theSnd tellDelegate:@selector(hadError:)];
@@ -583,13 +588,15 @@ int beginRecFun(SNDSoundStruct *sound, int tag, int err)
 int endRecFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
-	theSnd = [playRecTable valueForKey:sound];
+	NSNumber *tagNumber = [NSNumber numberWithInt: tag];
+
+        theSnd = [playRecTable objectForKey: tagNumber];
 	[theSnd _setStatus:NX_SoundStopped];
 	printf("End recording error: %d\n",err);
 	if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
 	if (err) [theSnd tellDelegate:@selector(hadError:)];
-	else [theSnd tellDelegate:@selector(didRecord:)];
-	[playRecTable removeKey:sound];
+        else [(Snd *)theSnd tellDelegate:@selector(didRecord:)];
+        [playRecTable removeObjectForKey: tagNumber];
 	((Snd *)theSnd)->tag = 0;
 	return 0;
 }
@@ -601,10 +608,15 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 #ifdef USE_PERFORM_SOUND_IO
 	int err;
 	if (!soundStruct) return self;
-	if (!playRecTable) playRecTable = [[HashTable alloc] initKeyDesc:"!"];
+	if (!playRecTable) {
+		playRecTable = [NSMutableDictionary dictionaryWithCapacity: 20];
+		[playRecTable retain];
+	}
 	
-	[playRecTable insertKey:soundStruct value:self];
 	tag = ioTags;
+        // the same soundStruct is used every time the sound is played, so we use the tag to differentiate.
+        // We use an NSDictionary rather than a HashTable for strict OpenStep support.
+        [playRecTable setObject: self forKey: [NSNumber numberWithInt: tag]];
 	status = NX_SoundPlayingPending;
         err = SNDUnreserve(3);
         if(err) {
@@ -633,7 +645,10 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 {
 #ifdef USE_NEXTSTEP_SOUND_IO
 	int err;
-	if (!playRecTable) playRecTable = [[HashTable alloc] initKeyDesc:"!"];
+	if (!playRecTable) {
+		playRecTable = [NSMutableDictionary dictionaryWithCapacity: 20];
+		[playRecTable retain];
+	}
 
 	if (soundStruct) {
 		err = SndAlloc(&soundStruct,
@@ -642,8 +657,8 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 			SND_RATE_CODEC,1,4);
 		if (err) return nil;
 	}
-	[playRecTable insertKey:soundStruct value:self];
-	tag = ioTags;
+        tag = ioTags;
+        [playRecTable setObject: self forKey: [NSNumber numberWithInt: tag]];
 	status = NX_SoundRecordingPending;
 	err = SNDStartRecording((SNDSoundStruct *)soundStruct,
 		ioTags++, /*	int tag			*/
@@ -691,21 +706,23 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 - (void)stop:(id)sender
 {
 #ifdef USE_PERFORM_SOUND_IO
+	NSNumber *tagNumber = [NSNumber numberWithInt: tag];
+
 	if (tag) {
 		SNDStop(tag);
-		tag = 0;
 	}
 	if (status == NX_SoundRecording || status == NX_SoundRecordingPaused) {
-		if ([playRecTable isKey:soundStruct])
-			[playRecTable removeKey:soundStruct];
+		[playRecTable removeObjectForKey: tagNumber];
 		status = NX_SoundStopped;
 		[self tellDelegate:@selector(didRecord:)];	
 	}
 	if (status == NX_SoundPlaying || status == NX_SoundPlayingPaused) {
-		if ([playRecTable isKey:soundStruct])
-			[playRecTable removeKey:soundStruct];
+	        [playRecTable removeObjectForKey: tagNumber];
 		status = NX_SoundStopped;
 		[self tellDelegate:@selector(didPlay:)];	
+	}
+	if(tag) {
+		tag = 0;
 	}
 #endif
 }
