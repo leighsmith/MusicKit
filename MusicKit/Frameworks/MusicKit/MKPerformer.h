@@ -3,70 +3,7 @@
   Defined In: The MusicKit
 
   Description:
-    MKPerformer is an abstract class that defines the general mechanism for
-    performing MKNotes during a MusicKit performance.  Each subclass of
-    MKPerformer implements the perform method to define how it obtains and
-    performs MKNotes.
-   
-    During a performance, a MKPerformer receives a series of perform
-    messages.  In its implementation of perform, a MKPerformer subclass must
-    set the nextPerform variable.  nextPerform indicates the amount of
-    time (in beats) to wait before the next perform message arrives.  The
-    messages are sent by the MKPerformer's MKConductor.  Every MKPerformer is
-    managed by a MKConductor; unless you set its MKConductor explicitly,
-    through the setConductor: method, a MKPerformer is managed by the
-    defaultConductor.
-   
-    A MKPerformer contains a List of MKNoteSenders, objects that send MKNotes
-    (to MKNoteReceivers) during a performance.  MKPerformer subclasses should
-    implement the init method to create and add some number of
-    MKNoteSenders to a newly created instance.  As part of its perform
-    method, a MKPerformer typically creates or othewise obtains a MKNote (for
-    example, by reading it from a MKPart or a scorefile) and sends it by
-    invoking MKNoteSender's sendNote: method.
-   
-    To use a MKPerformer in a performance, you must first send it the
-    activate message.  activate invokes the activateSelf method and then
-    schedules the first perform message request with the MKConductor.
-    activateSelf can be overridden in a subclass to provide further
-    initialization of the MKPerformer.  The performance begins when the
-    MKConductor class receives the startPerformance message.  It's legal to
-    activate a MKPerformer after the performance has started.
-   
-    Sending the deactivate message removes the MKPerformer from the
-    performance and invokes the deactivate method.  This method can be
-    overridden to implement any necessary finalization, such as freeing
-    contained objects.
-   
-    During a performance, a MKPerformer can be stopped and restarted by
-    sending it the pause and resume messages, respectively.  perform
-    messages destined for a paused MKPerformer are delayed until the object
-    is resumed.
-   
-    You can shift a MKPerformer's performance timing by setting its
-    timeShift variable.  timeShift, measured in beats, is added to the
-    initial setting of nextPerform.  If the value of timeShift is
-    negative, the MKPerformer's MKNotes are sent earlier than otherwise
-    expected; this is particularly useful for a MKPerformer that's
-    performing MKNotes starting from the middle of a MKPart or MKScore.  A
-    positive timeShift delays the performance of a MKNote.
-   
-    You can also set a MKPerformer's maximum duration.  A MKPerformer is
-    automatically deactivated if its performance extends beyond duration
-    beats.
-   
-    A MKPerformer has a status, represented as one of the following
-    MKPerformerStatus values:
-   
-    * Status       Meaning
-    * MK_inactive  A deactivated or not-yet-activated MKPerformer.
-    * MK_active    An activated, unpaused MKPerformer.
-    * MK_paused    The MKPerformer is activated but currently paused.
-   
-    Some messages can only be sent to an inactive (MK_inactive) MKPerformer.
-    A MKPerformer's status can be queried with the status message.
-   
-    CF: MKConductor, MKNoteSender
+    Full description is in the headerdoc below.  
 
   Original Author: David A. Jaffe
 
@@ -74,39 +11,6 @@
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
   Portions Copyright (c) 1999-2001, The MusicKit Project.
-*/
-/*
-  $Log$
-  Revision 1.11  2003/12/31 00:35:18  leighsmith
-  Now imports the entire Foundation Kit
-
-  Revision 1.10  2001/09/07 18:35:48  leighsmith
-  Formatted table and correctly formatted code example
-
-  Revision 1.9  2001/09/07 00:13:42  leighsmith
-  Reformatted discussion
-
-  Revision 1.8  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.7  2001/07/10 17:07:07  leighsmith
-  Prefixed class names in doco
-
-  Revision 1.6  2000/11/25 22:58:02  leigh
-  Enforced ivar privacy
-
-  Revision 1.5  2000/10/01 06:54:32  leigh
-  Typed noteSenders.
-
-  Revision 1.4  2000/04/25 02:09:53  leigh
-  Renamed free methods to release methods to reflect OpenStep behaviour
-
-  Revision 1.3  2000/03/29 03:17:07  leigh
-  Cleaned up doco and ivar declarations
-
-  Revision 1.2  1999/07/29 01:25:48  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
 */
 /*!
   @class MKPerformer
@@ -124,8 +28,8 @@ MKPerformer subclass must set the <b>nextPerform</b> variable.
 next <b>perform</b> message is sent.  The messages are sent by the
 MKPerformer's MKConductor.  Every MKPerformer is managed by a
 MKConductor; unless you set its MKConductor explicitly, through the
-<b>setConductor:</b> method, a MKPerformer is managed by the the
-defaultConductor.
+<b>setConductor:</b> method, a MKPerformer is managed by the 
+<i>defaultConductor</i>.
 
 A MKPerformer contains a NSArray of MKNoteSenders, objects that send
 MKNotes (to MKNoteReceivers) during a performance.  MKPerformer
@@ -210,15 +114,19 @@ MKPerformer subclass is to synchronize correctly with incoming MIDI
 time code.
 
 There are three parts to this protocol.   	
-	
-1. A Time Code-conforming MKPerformer must implement a
+
+<UL>
+<LI>
+A Time Code-conforming MKPerformer must implement a
 method <b>setFirstTimeTag:</b>, which takes a <i>double</i>
 argument, represnting the starting value of MIDI time code in
 seconds.  A common implementation of this method stores the value it
 is passed in an instance variable.  The MKPerformer class provides a
 default implementation, which does nothing.	
+</LI>
 	
-2.  A Time Code-conforming MKPerformer's
+<LI>
+A Time Code-conforming MKPerformer's
 <b>activateSelf</b> method must position itself at the MKNote it
 wants to send at  <i>firstTimeTag</i>.   If there is no MKNote for
 that time, it should position itself at the first MKNote
@@ -228,8 +136,10 @@ time (which will be greater than or equal to <i>firstTimeTag.</i>)
 In other words, it sets <i>nextPerform</i> to the first time it
 wants to run.  Finally, it returns <b>self</b>.   If there are no
 MKNotes to send after the specified time,  it returns <b>nil</b>.  
+</LI>
 	
-3.  The first invocation of a Time Code-conforming
+<LI>
+The first invocation of a Time Code-conforming
 MKPerformer's <b>perform</b> method should send the selected MKNote,
 then choose the next MKNote and set <i>nextPerform</i> to the time
 until that MKNote, as usual.   You can identify the first invocation
@@ -239,7 +149,8 @@ any <b>noteUpdates</b> that preceed <i>firstTimeTag</i>.  This makes
 sure that all MKSynthInstrument  and MIDI controllers are up to
 date.  (This is sometimes called "chasing controller values" in MIDI
 parlance.)	
-
+</LI>
+ 
 Here is an example of a simple, but complete, Time
 Code-conforming MKPerfomer.  This example is a simplified version of
 the MusicKit MKPartPerformer:
