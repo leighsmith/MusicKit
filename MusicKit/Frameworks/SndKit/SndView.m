@@ -988,7 +988,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 {
     NSPasteboard *pboard = [NSPasteboard generalPasteboard];
     
-//  NSLog(@"Freeing SndView\n");
+    // NSLog(@"Dealloc'ing SndView\n");
     [self tellDelegate: @selector(willFree:)];
     [self hideCursor];
 
@@ -996,11 +996,16 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
         /* i.e. we were the last ones to put something on the pasteboard, but
          * have not provided it yet
          */
-        [self pasteboard: pboard provideDataForType: SndPasteboardType];
+	// This can cause an infinite loop since the NSPasteboard attempts to remove self
+	// from it's dictionary of sources which releases, causing a call to dealloc...
+        // [self pasteboard: pboard provideDataForType: SndPasteboardType];
     }
     [pasteboardSound release];
+    pasteboardSound = nil;
     [backgroundColour release];
+    backgroundColour = nil;
     [foregroundColour release];
+    foregroundColour = nil;
     [recordingSound release];
     recordingSound = nil;
     [validPasteboardSendTypes release];
