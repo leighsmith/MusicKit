@@ -33,9 +33,9 @@
     For convenience in supporting this functionality in your own MKSynthPatch
     subclasses, we provide the function MKWaveTableForTimbreKey().
 
-    The Data Base is stored in a HashTable object that maps names to
-    MKTimbre objects.  This HashTable can be retrieved by the +timbres method.
-    See <objc/HashTable.h> for how to enumerate the objects in a HashTable.
+    The Data Base is stored in a NSDictionary object that maps names to
+    MKTimbre objects.  This NSDictionary can be retrieved by the +timbres method.
+    See <Foundation/NSDictionary.h> for how to enumerate the objects in a NSDictionary.
 
     An individual timbre can be written to an archive file.  Alternatively, the
     entire Data Base can be saved to an archive file using the +timbres method
@@ -49,6 +49,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2000/06/27 18:08:41  leigh
+  Converted hashtable into a NSDictionary timbreDictionary
+
   Revision 1.3  2000/04/25 22:07:46  leigh
   Doco cleanup and redundant headers removed
 
@@ -59,8 +62,7 @@
 #ifndef __MK_Timbre_H___
 #define __MK_Timbre_H___
 
-#import <Foundation/NSArray.h>
-#import <objc/HashTable.h>
+#import <Foundation/Foundation.h>
 
 @interface MKTimbre : NSObject
 {
@@ -107,8 +109,8 @@
   /* Returns the freq corresponding to the specified index, if any.  Otherwise,
      returns MK_NODVAL. Index is zero-based.  */
 
-+(HashTable *)timbres; 
-  /* Returns the timbre data base, a HashTable mapping names to Timbres. */
++(NSDictionary *)timbres;
+  /* Returns the timbre data base, a NSDictionary mapping names to MKTimbres. */
 
 -setTimbreName:(NSString *)newName;
   /* Returns self if successful or nil if newName is already in use. */

@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/06/27 18:08:41  leigh
+  Converted hashtable into a NSDictionary timbreDictionary
+
   Revision 1.3  2000/04/25 22:07:25  leigh
   Doco cleanup
 
@@ -56,7 +59,6 @@ Modification history:
  */
 
 #import <Foundation/NSArray.h>
-#import <objc/HashTable.h>
 #import "_musickit.h"
 #import "_error.h"
 #import <string.h>
@@ -67,7 +69,7 @@ Modification history:
 
 #define VERSION3 3
 
-static id hashtable = nil;
+static NSMutableDictionary *timbreDictionary = nil;
 
 struct synth {
     const double frq;
@@ -91,8 +93,8 @@ static MKTimbre *newNeXTTimbre(NSString *newName,int count)
     timbre->freqs = [[NSMutableArray arrayWithCapacity:count] retain];
     [timbre->freqs removeAllObjects];  /* Necessary! */
     /* No need to make the timbreName kosher -- we know it's ok. */
-    timbre->timbreName = [newName retain]; 
-    [hashtable insertKey:timbre->timbreName value:timbre];
+    timbre->timbreName = [newName retain];
+    [timbreDictionary setObject: timbre forKey: timbre->timbreName];
     return (MKTimbre *)timbre;
 }
 
@@ -131,14 +133,13 @@ static void initNeXTTimbres(void)
 
 static void initHashTable(void)
 {
-    hashtable = [[HashTable alloc] init];
-    [hashtable initKeyDesc:"@" valueDesc:"@" capacity:NUMTIMBRES];
+    timbreDictionary = [[NSMutableDictionary dictionaryWithCapacity: NUMTIMBRES] retain];
     initNeXTTimbres();
 }
 
 + (void)initialize
 {
-    if (!hashtable)
+    if (!timbreDictionary)
 	initHashTable();
     return;
 }
@@ -274,7 +275,7 @@ static MKWaveTable *waveTableForFreq(MKTimbre *timbre,
 
 -freeSelfOnly
 {
-    [hashtable removeKey:(const void *)timbreName];
+    [timbreDictionary removeObjectForKey: timbreName];
     [waveTables release];
     [freqs release];
     [super release];
@@ -282,10 +283,13 @@ static MKWaveTable *waveTableForFreq(MKTimbre *timbre,
 
 }    
 -(void)release
-{[super release];}
+{
+    [super release];
+}
+
 - (void)dealloc
 {
-    [hashtable removeKey:(const void *)timbreName];
+    [timbreDictionary removeObjectForKey: timbreName];
     [waveTables removeAllObjects];
     [waveTables release];
     [freqs release];
@@ -310,7 +314,7 @@ static MKWaveTable *waveTableForFreq(MKTimbre *timbre,
 -init
 {
     if (timbreName)
-	[hashtable removeKey:(const void *)timbreName];
+        [timbreDictionary removeObjectForKey: timbreName];
     [waveTables release];
     [freqs release];
     waveTables = [[NSMutableArray allocWithZone:[self zone]] init];
@@ -327,18 +331,18 @@ static MKWaveTable *waveTableForFreq(MKTimbre *timbre,
     int suffixVal,prefixVal;
     NSString *pureName;
     MKTimbre *obj;
-    if (!hashtable)
+    if (!timbreDictionary)
       initHashTable();
     if (!newTimbreName)
 	return [[self alloc] init];
     if (getPureName(newTimbreName,&pureName,&prefixVal,&suffixVal) == BAD)
 	return nil;                                  /* No hope */
-    obj = (MKTimbre *)[hashtable valueForKey:pureName];
+    obj = (MKTimbre *) [timbreDictionary objectForKey: pureName];
     if (obj)
 	return obj;
     obj = [[self alloc] init];
     obj->timbreName = [pureName retain];
-    [hashtable insertKey:obj->timbreName value:obj];
+    [timbreDictionary setObject: obj forKey: obj->timbreName];
     return obj;
 }
 
@@ -381,15 +385,15 @@ static MKWaveTable *waveTableForFreq(MKTimbre *timbre,
     return nil;
 }
 
-+(HashTable *)timbres
-  /* Returns the HashTable object containing all timbres. Each timbre is  
-     represented as a HashTable entry mapping an NXAtom to a List of 
-     waveTables.  The HashTable is not copied and should not be freed.
-     It may be altered providing that a performance is not in progress. */
++ (NSDictionary *) timbres
+  /* Returns the NSDictionary object containing all timbres. Each timbre is  
+     represented as a NSDictionary entry mapping an NSString to a NSArray of
+     waveTables.  The NSDictionary is not copied and should not be freed (since it
+     is autoreleased). It may be altered providing that a performance is not in progress. */
 {
-    if (!hashtable)
+    if (!timbreDictionary)
       initHashTable();
-    return hashtable;
+    return [timbreDictionary autorelease];
 }
 
 -setTimbreName:(NSString *)newName
@@ -399,7 +403,7 @@ static MKWaveTable *waveTableForFreq(MKTimbre *timbre,
     NSString *pureName;
     NSString *uniqueStr;
     if (timbreName)
-	[hashtable removeKey:(const void *)timbreName];
+	[timbreDictionary removeObjectForKey: timbreName];
     if (!newName) {
 	timbreName = NULL;
 	return self;
@@ -407,10 +411,10 @@ static MKWaveTable *waveTableForFreq(MKTimbre *timbre,
     if (getPureName(newName,&pureName,&prefixVal,&suffixVal) == BAD)
 	return nil;                                  /* No hope */
     uniqueStr = [pureName retain];
-    obj = (MKTimbre *)[hashtable valueForKey:uniqueStr];
+    obj = (MKTimbre *)[timbreDictionary objectForKey:uniqueStr];
     if (obj)
 	return nil;
-    [hashtable insertKey:uniqueStr value:self];
+    [timbreDictionary setObject: self forKey: uniqueStr];
     obj->timbreName = (NSString *)uniqueStr;
     return self;
 }
@@ -487,15 +491,14 @@ MKWaveTable *MKWaveTableForTimbreKey(NSString *key,
     MKTimbre *timbre;
     int i;
     MKWaveTable *rtn;
-    if (!hashtable)
+    if (!timbreDictionary)
       return nil;
     i = getPureName(key,&pureName,&prefixVal,&suffixVal);
     if (i == BAD) {
 	_MKErrorf(MK_spsInvalidPartialsDatabaseKeywordErr,key);
 	return nil;
     }
-    timbre = (MKTimbre *)[hashtable valueForKey:(const void *)
-			  ((i == NONE) ? key : pureName)];
+    timbre = (MKTimbre *) [timbreDictionary objectForKey: ((i == NONE) ? key : pureName)];
     if (!timbre) {
 	_MKErrorf(MK_spsInvalidPartialsDatabaseKeywordErr,key);
 	return nil;
@@ -536,7 +539,7 @@ MKWaveTable *MKWaveTableForTimbreKey(NSString *key,
 - awakeAfterUsingCoder:(NSCoder *)aDecoder
 {
     id obj;
-    if (timbreName && (obj = (id)[hashtable valueForKey:timbreName])) {
+    if (timbreName && (obj = (id)[timbreDictionary objectForKey: timbreName])) {
 	[waveTables release];
 	[freqs release];
 	[super release];
