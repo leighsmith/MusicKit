@@ -119,6 +119,7 @@ typedef enum {
 + setVolume:(float)left :(float)right;
 + (BOOL)isMuted;
 + setMute:(BOOL)aFlag;
++ (NSArray *) soundFileExtensions;
 
 - (NSString *) description;
 

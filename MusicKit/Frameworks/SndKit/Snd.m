@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.16  2001/02/28 20:26:10  leigh
+ * Added soundfileExtensions method and didPlay/willPlay delegation for streaming
+ *
  * Revision 1.15  2001/02/22 22:49:18  leigh
  * Removed crufty stopping code, maintained status
  *
@@ -47,7 +50,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
  */
 
 #ifdef WIN32
-#include <Winsock.h>
+#include <Winsock.h> // for htonl() functions
 #else
 #include <libc.h>
 #endif
@@ -65,6 +68,12 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #ifndef USE_NEXTSTEP_SOUND_IO
 NSString *NXSoundPboardType = @"NXSoundPboardType";
 #endif
+
+#define HAVE_RAND 1 // this ensures Sox doesn't attempt to define its own prototype
+#import <st.h>  // prototypes and structures from the Sox sound tools library
+
+#define DEFAULT_SOUNDFILE_EXTENSION @"snd" // this should probably be determined at run time.
+#define USE_STREAMING 1  // 0 will use the older monophonic sound API, 1 uses the newer SndPlayer API
 
 @implementation Snd
 
@@ -100,7 +109,7 @@ static SndPlayer *sndPlayer;
     id retSnd = [nameTable objectForKey:aName];
     if (retSnd) return retSnd;
 
-    path = [[NSBundle mainBundle] pathForResource:aName ofType:@"snd"];
+    path = [[NSBundle mainBundle] pathForResource:aName ofType: DEFAULT_SOUNDFILE_EXTENSION];
     found = (path != nil);
     if (found) {
         newSound = [[Snd alloc] initFromSoundfile:path];
@@ -114,7 +123,7 @@ static SndPlayer *sndPlayer;
         path = [[[libraryDirs objectAtIndex: i] stringByAppendingPathComponent: @"Sounds"] stringByAppendingPathComponent:path];
         soundLocation = [[NSBundle alloc] initWithPath:path];
         if (soundLocation) {
-            found = ((path = [soundLocation pathForResource:aName ofType:@"snd"]) != nil);
+            found = ((path = [soundLocation pathForResource:aName ofType: DEFAULT_SOUNDFILE_EXTENSION]) != nil);
             [soundLocation release];
             if (found) {
                 newSound = [[Snd alloc] initFromSoundfile:path];
@@ -166,7 +175,7 @@ static SndPlayer *sndPlayer;
     if (!aName) return nil;
     if (![aName length]) return nil;
     if ([nameTable objectForKey:aName]) return nil; /* already exists */
-    found = ((path = [aBundle pathForResource:aName ofType:@"snd"]) != nil);
+    found = ((path = [aBundle pathForResource:aName ofType: DEFAULT_SOUNDFILE_EXTENSION]) != nil);
     if (found) {
         newSound = [[Snd alloc] initFromSoundfile: path];
         if (newSound) {
@@ -243,6 +252,21 @@ static SndPlayer *sndPlayer;
 {
     printf("Snd: -initFromSection:(NSString *)sectionName  obsolete\n");
     return nil;
+}
+
+// return the file extensions supported by sox.
++ (NSArray *) soundFileExtensions
+{
+    NSMutableArray *fileTypes = [NSMutableArray array];
+    int formatIndex, aliasIndex;
+    
+    for (formatIndex = 0; st_formats[formatIndex].names != NULL; formatIndex++) {
+        // include all the alternative namings.
+	for(aliasIndex = 0; st_formats[formatIndex].names[aliasIndex] != NULL; aliasIndex++) {
+            [fileTypes addObject: [NSString stringWithCString: st_formats[formatIndex].names[aliasIndex]]];
+        }
+    }
+    return [NSArray arrayWithArray: fileTypes]; // make it immutable
 }
 
 - (void)dealloc
@@ -485,7 +509,7 @@ static SndPlayer *sndPlayer;
  * to identify sounds by name. At the moment multiple sound
  * objects may share the same name, which is not right.
  * Second Thoughts: many sounds MAY share the same name, as
- * they do not have do register with the central name table.
+ * they do not have to register with the central name table.
  * The central name table though can only register one sound
  * with any unique name.
  */
@@ -548,6 +572,7 @@ static SndPlayer *sndPlayer;
     return strlen((char *)(soundStruct->info));
 }
 
+#if !USE_STREAMING
 // Since these two functions come in from the cold, they warm and snug autorelease pools...
 int beginFun(SndSoundStruct *sound, int tag, int err)
 {
@@ -594,6 +619,7 @@ int endFun(SndSoundStruct *sound, int tag, int err)
     [pool release];
     return 0;
 }
+#endif
 
 int beginRecFun(SndSoundStruct *sound, int tag, int err)
 {
@@ -626,17 +652,14 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return 0;
 }
 
-// [sndPlayer playSnd: self];
-// 
-
 // Begin the playback of the sound at some future time, specified in seconds.
 - play: (id) sender inFuture: (double) inSeconds 
 {
-    // int err;
+#if !USE_STREAMING
+    int err;
     if (!soundStruct)
         return self;
     status = SND_SoundPlayingPending;
-#if 0 // disabled for playing using SndStreams instead.
     if (!playRecTable) {
         playRecTable = [NSMutableDictionary dictionaryWithCapacity: 20];
         [playRecTable retain];
@@ -658,6 +681,10 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
             (SNDNotificationFun) endFun);
     if (err) NSLog(@"Playback error %d\n",err);
 #else
+    if (!soundStruct)
+        return self;
+    status = SND_SoundPlayingPending;
+    
     [sndPlayer playSnd: self withTimeOffset: inSeconds];
 #endif
     return self;
@@ -685,6 +712,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     if (playEnd > [self sampleCount] || playEnd < playBegin)
         playEnd = [self sampleCount];
     
+    // TODO must pass playBegin, playEnd in
     return [self play: sender];
 }
 
@@ -737,7 +765,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 }
 
 - (void)_setStatus:(int)newStatus
-/* for use in the beginFunc and endFunc routines */
+/* for use in the beginFunc and endFunc routines and the SndPlayer */
 {
     status = newStatus;
 }
@@ -749,14 +777,36 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (void)stop:(id)sender
 {
+#if !USE_STREAMING
+    NSNumber *tagNumber = [NSNumber numberWithInt: tag];
+
+    if (tag) {
+        SNDStop(tag);
+    }
+    if (status == SND_SoundRecording || status == SND_SoundRecordingPaused) {
+        [playRecTable removeObjectForKey: tagNumber];
+        status = SND_SoundStopped;
+        [self tellDelegate:@selector(didRecord:)];      
+    }
+    if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
+        [playRecTable removeObjectForKey: tagNumber];
+        status = SND_SoundStopped;
+        [self tellDelegate:@selector(didPlay:)];        
+    }
+    if(tag) {
+        tag = 0;
+    }
+#else
     if (status == SND_SoundRecording || status == SND_SoundRecordingPaused) {
         status = SND_SoundStopped;
         [self tellDelegate:@selector(didRecord:)];	
     }
     if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
+        [sndPlayer stopSnd: self withTimeOffset: 0.0];
         status = SND_SoundStopped;
         [self tellDelegate:@selector(didPlay:)];	
     }
+#endif
 }
 
 - (int)stop
