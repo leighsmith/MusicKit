@@ -141,7 +141,7 @@ int mcheck()
 }
 
 // Given the data size in bytes, the number of channels and the data format, return the number of samples.
-int SndBytesToSamples(int byteCount, int channelCount, int dataFormat)
+int SndBytesToFrames(int byteCount, int channelCount, int dataFormat)
 {
   return (int)(byteCount / (channelCount * SndSampleWidth(dataFormat)));
 }
@@ -203,7 +203,7 @@ void *SndGetDataAddresses(int sample,
   return NULL;
 }
 
-int SndSampleCount(const SndSoundStruct *sound)
+int SndFrameCount(const SndSoundStruct *sound)
 {
   SndSoundStruct **ssList;
   SndSoundStruct *theStruct;
@@ -213,14 +213,14 @@ int SndSampleCount(const SndSoundStruct *sound)
   if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
   df = sound->dataFormat;
   if (df != SND_FORMAT_INDIRECT) /* simple case */
-    return SndBytesToSamples(sound->dataSize, sound->channelCount, df);
+    return SndBytesToFrames(sound->dataSize, sound->channelCount, df);
   /* more complicated */
   ssList = (SndSoundStruct **)sound->dataLocation;
   if (ssList[0]) df = ssList[0]->dataFormat;
   else return 0; /* fragged sound with no frags! */
   while ((theStruct = ssList[i++]) != NULL)
     count += theStruct->dataSize;
-  return SndBytesToSamples(count, sound->channelCount, df);
+  return SndBytesToFrames(count, sound->channelCount, df);
 }
 
 NSString *SndStructDescription(SndSoundStruct *s)
@@ -353,7 +353,7 @@ int SndCompactSamples(SndSoundStruct **s1, SndSoundStruct *s2)
     nchan = oldSound->channelCount;
     rate = oldSound->samplingRate;
     infoSize = oldSound->dataSize - sizeof(SndSoundStruct) + 4;
-    newSize = SndSamplesToBytes(SndSampleCount(oldSound),nchan,format);
+    newSize = SndSamplesToBytes(SndFrameCount(oldSound),nchan,format);
     err = SndAlloc(&newSound,newSize,format,rate,nchan,infoSize);
     if (err)
       return SND_ERR_CANNOT_ALLOC;
@@ -468,7 +468,7 @@ int SndCopySamples(SndSoundStruct **toSound, SndSoundStruct *fromSound,
 
   if (!fromSound) return SND_ERR_NOT_SOUND;
   if (fromSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-  if (lastSample > SndSampleCount(fromSound)) return SND_ERR_BAD_SIZE;
+  if (lastSample > SndFrameCount(fromSound)) return SND_ERR_BAD_SIZE;
   if (sampleCount < 1) return SND_ERR_BAD_SIZE;
 
   cc = fromSound->channelCount;
@@ -593,7 +593,7 @@ int SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromSound, i
   if (fromSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
   if (!toSound) return SND_ERR_NOT_SOUND;
   if (toSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-  if (startSample < 0 || startSample > SndSampleCount(toSound)) return SND_ERR_BAD_SIZE;
+  if (startSample < 0 || startSample > SndFrameCount(toSound)) return SND_ERR_BAD_SIZE;
 
   cc = fromSound->channelCount;
   df = fromSound->dataFormat;
@@ -639,7 +639,7 @@ int SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromSound, i
     if (startSample == 0) {
       numFrags = numFromFrags ? numFromFrags + 1 : 2;
     }
-    else if (startSample == SndSampleCount(toSound) + 1) {
+    else if (startSample == SndFrameCount(toSound) + 1) {
         numFrags = numFromFrags ? numFromFrags + 1 : 2;
     }
     else numFrags = numFromFrags ? numFromFrags + 2 : 3;
@@ -648,7 +648,7 @@ int SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromSound, i
   /* now add number of frags in toSound */
   if (ndf == SND_FORMAT_INDIRECT) {
       numFrags = numFromFrags ? numFromFrags : 1;
-      if (insertFragOffset == 0 || startSample == SndSampleCount(toSound) + 1) {
+      if (insertFragOffset == 0 || startSample == SndFrameCount(toSound) + 1) {
           numFrags += numToFrags;
       }
       else numFrags += (numToFrags + 1);
@@ -712,7 +712,7 @@ int SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromSound, i
 
   /* now copy last bit of original sound into last frag */
 
-  if ((startSample < SndSampleCount(toSound) + 1) && ndf != SND_FORMAT_INDIRECT) {
+  if ((startSample < SndFrameCount(toSound) + 1) && ndf != SND_FORMAT_INDIRECT) {
       if (!(newStruct = _SndCopyFragBytes(toSound, startSample * cc * numBytes,-1))) {
           for(i = 0;i<ssPointer;i++) {
               free (newssList[i]);
@@ -777,8 +777,8 @@ int SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCount)
 
   if (!sound) return SND_ERR_NOT_SOUND;
   if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-  if (startSample < 0 || startSample > SndSampleCount(sound)
-      || startSample + sampleCount > SndSampleCount(sound)) return SND_ERR_BAD_SIZE;
+  if (startSample < 0 || startSample > SndFrameCount(sound)
+      || startSample + sampleCount > SndFrameCount(sound)) return SND_ERR_BAD_SIZE;
   if (!sampleCount) return SND_ERR_NONE;
 
   cc = sound->channelCount;

@@ -102,14 +102,14 @@ SNDKIT_API int SndFrameSize(SndSoundStruct* sound);
 SNDKIT_API int  SndSampleWidth(int format);
 
 /*!
- @function SndBytesToSamples
+ @function SndBytesToFrames
  @abstract Given the data size in bytes, the number of channels and the data format, return the number of samples.
  @param byteCount The size of sample data in bytes.
  @param channelCount The number of audio channels.
  @param dataFormat The sample data encoding format.
  @result Return the number of samples
 */
-SNDKIT_API int  SndBytesToSamples(int byteCount,
+SNDKIT_API int  SndBytesToFrames(int byteCount,
                                   int channelCount,
                                   int dataFormat);
 
@@ -165,12 +165,12 @@ SNDKIT_API void   *SndGetDataAddresses(int sample,
                                      int *currentSample);
 
 /*!
-@function SndSampleCount
+@function SndFrameCount
  @abstract returns the number of samples in the Snd
  @param sound A SndStructSound containing the Snd
  @result
  */
-SNDKIT_API int SndSampleCount(const SndSoundStruct *sound);
+SNDKIT_API int SndFrameCount(const SndSoundStruct *sound);
 
 /*!
 @function SndGetDataPointer
