@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/05/06 00:26:29  leigh
+  Converted _binaryIndecies to NSMutableDictionary
+
   Revision 1.3  1999/09/04 22:53:15  leigh
   tokname now const char to stop warnings
 
@@ -86,10 +89,11 @@ _MKInitScoreOut(NSMutableData *fileStream,id owner,id anInfoNote,double timeShif
 #   define DEFAULTINDECIES 8
     p->_binary = binary;
     if (binary) {
-	p->_binaryIndecies = [HashTable newKeyDesc:"@" valueDesc:"i"
-			    capacity:DEFAULTINDECIES];
+	p->_binaryIndecies = [[NSMutableDictionary dictionaryWithCapacity: DEFAULTINDECIES] retain];
 	p->_highBinaryIndex = 0;
-    } else p->_binaryIndecies = nil;
+    }
+    else
+        p->_binaryIndecies = nil;
     if (binary)
       _MKWriteInt(p->_stream,MK_SCOREMAGIC);
     writeScoreInfo(p,anInfoNote);
@@ -105,9 +109,8 @@ static void writePartInfo(_MKScoreOutStruct *p, MKPart *aPart, NSString *partNam
     if (!info)
       return;
     if (BINARY(p)) {
-	_MKWriteShort(aStream,_MK_partInstance);
-	_MKWriteShort(aStream,
-		      (int)[p->_binaryIndecies valueForKey:(const void *)aPart]);
+	_MKWriteShort(aStream, _MK_partInstance);
+	_MKWriteShort(aStream, [[p->_binaryIndecies objectForKey: aPart] intValue]);
     }
     else [aStream appendData:[[NSString stringWithFormat:@"%@ ", partName] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     _MKWriteParameters(info,aStream,p);
@@ -157,8 +160,7 @@ _MKWritePartDecl(MKPart *aPart, _MKScoreOutStruct * p, MKNote *aPartInfo)
     if (BINARY(p)) {
 	_MKWriteShort(p->_stream,_MK_part);
 	_MKWriteNSString(p->_stream,partName);
-	[p->_binaryIndecies insertKey:(const void *)aPart
-       value:(void *)(++(p->_highBinaryIndex))];
+        [p->_binaryIndecies setObject: [NSNumber numberWithInt: (++(p->_highBinaryIndex))] forKey: aPart];
     }
     else 
       [p->_stream appendData:[[NSString stringWithFormat:@"%s %@;\n", _MKTokNameNoCheck(_MK_part),partName]

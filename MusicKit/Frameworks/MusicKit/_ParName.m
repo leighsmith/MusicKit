@@ -51,6 +51,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/05/06 00:27:49  leigh
+  Converted _binaryIndecies to NSMutableDictionary
+
   Revision 1.7  2000/04/07 18:32:20  leigh
   Upgraded logging to NSLog
 
@@ -155,8 +158,7 @@ static void intParNames(fromPar,toPar)
       *parId++ = newParName((char *)*parNamePtr++,i);
 }
 
-static BOOL keywordsPrintfunc(_MKParameter *parameter,NSMutableData *aStream,
-			      _MKScoreOutStruct *p)
+static BOOL keywordsPrintfunc(_MKParameter *parameter, NSMutableData *aStream, _MKScoreOutStruct *p)
     /* Used to write parameters with keyword-valued arguments. */
 {
     int i = _MKParAsInt(parameter);
@@ -435,8 +437,7 @@ static double firstEnvValue(param)
     return rtn;
 }
 
-int _MKParAsInt(param)
-    _MKParameter *param;
+int _MKParAsInt(_MKParameter *param)
     /* Get the current value as an integer. If the receiver is envelope-valued,
        returns truncated firstEnvValue(param). If the receiver is
        waveTable-valued, returns MAXINT.
@@ -647,8 +648,7 @@ static void writeObj(id dataObj,NSMutableData *aStream,_MKToken declToken,BOOL
       }
 }
 
-static void writeData(NSMutableData *aStream,_MKScoreOutStruct *p,
-		      id dataObj,int type)
+static void writeData(NSMutableData *aStream,_MKScoreOutStruct *p, id dataObj,int type)
 {
     id hashObj;
     NSString * name;
@@ -668,7 +668,7 @@ static void writeData(NSMutableData *aStream,_MKScoreOutStruct *p,
 	break;
     }
     if (binary) {
-	int val = (int)[p->_binaryIndecies valueForKey:(void *)dataObj];
+	int val = [[p->_binaryIndecies objectForKey: dataObj] intValue];
 	if (val) {
 	    _MKWriteShort(aStream,type);
 	    _MKWriteShort(aStream,val);
@@ -705,11 +705,10 @@ static void writeData(NSMutableData *aStream,_MKScoreOutStruct *p,
 	if (binary) {
 	    _MKWriteShort(aStream,declToken);
 	    _MKWriteNSString(aStream,name);
-	    [p->_binaryIndecies insertKey:(const void *)dataObj 
-	   value:(void *)(++(p->_highBinaryIndex))];
+	    [p->_binaryIndecies setObject: [NSNumber numberWithInt: (++(p->_highBinaryIndex))] forKey: dataObj];
 	}
 	else
-	  [aStream appendData:[[NSString stringWithFormat:@"%s %@ = ", _MKTokName(declToken),name] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+	    [aStream appendData: [[NSString stringWithFormat:@"%s %@ = ", _MKTokName(declToken),name] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
 	writeObj(dataObj,aStream,declToken,binary);
 	_MKNameTableAddName(p->_nameTable,name,nil,dataObj,
 			    type | _MK_BACKHASHBIT,YES);

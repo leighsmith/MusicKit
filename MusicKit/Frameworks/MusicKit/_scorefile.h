@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/05/06 00:26:59  leigh
+  Converted _binaryIndecies to NSMutableDictionary
+
   Revision 1.3  2000/04/26 01:19:03  leigh
   Corrected _MKNewScoreInStruct to take a NSData instead of NSMutableData instance
 
@@ -55,8 +58,7 @@ typedef struct __MKScoreOutStruct {
     BOOL _ownerIsNoteRecorder;       /* Private. */
     double _timeShift;               /* Added to time tags before writing. */ 
     long _tagRangePos;
-    id _binaryIndecies;              /* For encoding objects in binary files.
-				        (mapping from object to index) */
+    NSMutableDictionary *_binaryIndecies;  /* For encoding objects in binary files. (mapping from object to index) */
     int _highBinaryIndex;            /* Currently highest index. */
     BOOL _binary;
 } _MKScoreOutStruct;
