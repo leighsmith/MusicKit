@@ -31,13 +31,19 @@
   if (self) {
     bImageInMemory = FALSE;
     cachedBuffer = [SndAudioBuffer new];
+    cacheLock    = [NSLock new];
   }
   return self;
 }
+
 - (void) dealloc
 {
   if (cachedBuffer)
     [cachedBuffer release];
+  if (cacheLock)
+    [cacheLock release];
+  if (cacheStruct)
+    free(cacheStruct);
   [super dealloc];
 }
 
@@ -111,53 +117,72 @@
 
 - (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) playRegion
 {
-  SndAudioBuffer *ab = [SndAudioBuffer alloc];
-  SndSoundStruct *s;
-  if (bImageInMemory) {
+  SndAudioBuffer *ab = nil;
+  [cacheLock lock];
+  {
     int samSize = SndFrameSize(soundStruct);
-    void* dataPtr     = [self data] + samSize * playRegion.location;
     int lengthInBytes = playRegion.length * samSize;
-    memcpy(&s,soundStruct,sizeof(SndSoundStruct));
-    s->dataSize = lengthInBytes;
-    [ab initWithFormat: s data: dataPtr];
-  }
-  else {
+    void* dataPtr = NULL;
+    ab = [SndAudioBuffer new];
 
-    int err;
-    int cStart = cachedBufferRange.location;
-    int cEnd   = cachedBufferRange.location + cachedBufferRange.length;
-
-    if (cachedBuffer == nil ||
-        !(cStart <= playRegion.location &&
-          cEnd   >= playRegion.location + playRegion.length)) {
-      // OK, ve must read in der cache...
-      int readLength = (4096*16);
-      int bufferMultiplier = (playRegion.length/4096);
-      bufferMultiplier = bufferMultiplier == 0 ? 1 : bufferMultiplier; 
-      cachedBufferRange.location = (playRegion.location/4096)*4096;
-      cachedBufferRange.length   = (bufferMultiplier)*readLength;
-//      printf("read: %i %i\n", cachedBufferRange.location, cachedBufferRange.length);
-      err = SndReadSoundfileRange([theFileName fileSystemRepresentation], &s,
-                                  cachedBufferRange.location,
-                                  cachedBufferRange.length, TRUE);
-      [cachedBuffer initWithFormat: s data: ((char*)s) + s->dataLocation];
+    if (bImageInMemory) {
+      SndSoundStruct *s;
+      dataPtr = [self data] + samSize * playRegion.location;
+      memcpy(&s,soundStruct,sizeof(SndSoundStruct));
+      s->dataSize = lengthInBytes;
+      [ab initWithFormat: s data: nil];
+      memcpy([ab data], dataPtr, lengthInBytes);
     }
     else {
-//      printf("Hit the cache!\n");
-    }
-    {
-      // woohoo! we are inside the cache...
-      int   samSize = SndFrameSize(soundStruct);
-      void* dataPtr     = [cachedBuffer data] + samSize * (playRegion.location - cachedBufferRange.location);
-      int lengthInBytes = playRegion.length * samSize;
-      SndSoundStruct theStruct;
-      memcpy(&theStruct,soundStruct,sizeof(SndSoundStruct));
-      theStruct.dataSize = lengthInBytes;
-      [ab initWithFormat: &theStruct data: dataPtr];
-    }
 
+      int err;
+      int cStart = cachedBufferRange.location;
+      int cEnd   = cachedBufferRange.location + cachedBufferRange.length;
+
+      if (cachedBuffer == nil ||
+          !(cStart <= playRegion.location &&
+            cEnd   >= playRegion.location + playRegion.length)) {
+        // OK, ve must read in der cache...
+        int readLength = (4096*16);
+        int bufferMultiplier = (playRegion.length/4096);
+        bufferMultiplier = bufferMultiplier == 0 ? 1 : bufferMultiplier;
+        cachedBufferRange.location = (playRegion.location/4096)*4096;
+        cachedBufferRange.length   = (bufferMultiplier)*readLength;
+        //      printf("read: %i %i\n", cachedBufferRange.location, cachedBufferRange.length);
+
+
+        // Argh, the stoopid things we have to do because of the SndSoundStruct....
+        
+        if (cacheStruct)
+          free(cacheStruct);
+        cacheStruct = NULL; 
+        
+        err = SndReadSoundfileRange([theFileName fileSystemRepresentation], &cacheStruct,
+                                    cachedBufferRange.location,
+                                    cachedBufferRange.length, TRUE);
+        [cachedBuffer initWithFormat: cacheStruct data: ((char*)cacheStruct) + cacheStruct->dataLocation];
+      }
+      else {
+        //      printf("Hit the cache!\n");
+      }
+      {
+        // woohoo! we are inside the cache...
+        SndSoundStruct theStruct;
+        dataPtr = [cachedBuffer data] + samSize * (playRegion.location - cachedBufferRange.location);
+        memcpy(&theStruct,soundStruct,sizeof(SndSoundStruct));
+        theStruct.dataSize = lengthInBytes;
+        [ab initWithFormat: &theStruct data: nil];
+        memcpy([ab data], dataPtr, lengthInBytes);
+      }
+    }
   }
+  [cacheLock unlock];
   return [ab autorelease];
+}
+
+- (NSString*) filename
+{
+  return [[theFileName retain] autorelease];
 }
 
 @end
