@@ -3,14 +3,15 @@
 #import <AppKit/NSView.h>
 #import <MusicKit/MusicKit.h>
 #import <Foundation/Foundation.h>
+#define MAXFREQ 7040
 
-@interface PartView:NSView
+@interface PartView: NSView
 {
     double beatScale, freqScale;
     NSMutableArray *selectedList;
 }
 
-- initWithScore: (MKScore *) aScore;
+- setScore: (MKScore *) aScore;
 - (void)gotClicked:sender with:(NSEvent *)theEvent;
 - (void)setBeatScale:(double)bscale;
 - (void)setFreqScale:(double)fscale;

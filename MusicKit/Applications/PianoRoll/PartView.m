@@ -7,16 +7,18 @@
 #import "PartView.h"
 #import "TadPole.h"
 
-#define MAXFREQ 7040
 #define DEFAULT_BEATSCALE 32
-#define DEFAULT_FREQSCALE 64
+#define DEFAULT_FREQSCALE 16
 
 @implementation PartView
 
-- initWithScore: (MKScore *) aScore
+- setScore: (MKScore *) aScore
 {
-    id theParts, thePart, theNote, newTad;
-    int i, j, k, partCount;
+    NSArray *theParts;
+    MKPart *thePart;
+    MKNote *theNote;
+    TadPole *newTad;
+    int i, j, k, scoreDuration, partCount;
     NSRect aRect;
     
     beatScale = DEFAULT_BEATSCALE;
@@ -26,44 +28,44 @@
     theParts = [aScore parts];
     partCount = [theParts count];
     
-    k = 0;			/* find the length of the score */
+    scoreDuration = 0;			/* find the length of the score */
     for (i = 0; i < [theParts count]; i++) {
         thePart = [theParts objectAtIndex:i];
         for (j = 0; j < [thePart noteCount]; j++) {
             theNote = [thePart nth:j];
             if ([theNote noteType] == MK_noteDur) {
-                if ([theNote timeTag] + [theNote dur] > k)
-                    k = [theNote timeTag] + [theNote dur];
+                if ([theNote timeTag] + [theNote dur] > scoreDuration)
+                    scoreDuration = [theNote timeTag] + [theNote dur];
             }
-            else if ([theNote timeTag] > k)
-                k = [theNote timeTag];
+            else if ([theNote timeTag] > scoreDuration)
+                scoreDuration = [theNote timeTag];
         }
     }
-    if(k*beatScale > 400) {  // LMS this is hardwired and needs to be wrt the view dimensions
-        beatScale = 400 / k;
+    if(scoreDuration * beatScale > [self bounds].size.width) {  
+        beatScale = [self bounds].size.width / scoreDuration;
     }
-    aRect = NSMakeRect(0.0, 0.0, k*beatScale, log(MAXFREQ)*freqScale);
-    [self initWithFrame:aRect];
+    aRect = NSMakeRect(0.0, 0.0, scoreDuration*beatScale, log(MAXFREQ)*freqScale);
+//    [self initWithFrame:aRect];
 
     for (i = 0; i < partCount; i++) {
         thePart = [theParts objectAtIndex:i];
         for (j = 0; j < [thePart noteCount]; j++) {
-            theNote = [thePart nth:j];
+            theNote = [thePart nth: j];
             switch ([theNote noteType]) {
             case MK_mute:
             case MK_noteOff:
                 break;
             case MK_noteDur:
-                newTad = [[TadPole alloc] initNote:theNote
-                                            second:nil
-                                            partNum:i
-                                            beatscale:beatScale
-                                            freqscale:freqScale];
+                newTad = [[TadPole alloc] initNote: theNote
+                                            second: nil
+                                           partNum: i
+                                         beatscale: beatScale
+                                         freqscale: freqScale];
                 [self addSubview:newTad];
                 break;
             case MK_noteUpdate:
                 if ([theNote noteTag] == MAXINT)  /* no note tag! */
-                        break;
+                    break;
             case MK_noteOn:
                 if (MKIsNoDVal([theNote freq])) /* no frequency - not quite kosher */
                     break;
@@ -71,13 +73,13 @@
                     if ([[thePart nth:k] noteTag] == [theNote noteTag])
                         break;
                 if (k < [thePart noteCount]) {
-                        newTad = [[TadPole alloc] initNote:theNote
-                                                    second:[thePart nth:k]
-                                                    partNum:i
-                                                    beatscale:beatScale
-                                                    freqscale:freqScale];
-                        [self addSubview:newTad];
-                        break;
+                    newTad = [[TadPole alloc] initNote:theNote
+                                                second:[thePart nth:k]
+                                                partNum:i
+                                                beatscale:beatScale
+                                                freqscale:freqScale];
+                    [self addSubview:newTad];
+                    break;
                 }
             }
         }
