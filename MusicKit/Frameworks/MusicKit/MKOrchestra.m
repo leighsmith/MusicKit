@@ -29,99 +29,11 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2000 The MusicKit Project.
+  Portions Copyright (c) 1999-2003 The MusicKit Project.
 */
-/* 
-Modification history:
-
-  $Log$
-  Revision 1.28  2003/08/04 21:14:33  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
-  Revision 1.27  2002/09/19 18:16:26  leighsmith
-  Replaced [super factoryMethod] with [[self superclass] factoryMethod]
-
-  Revision 1.26  2002/04/03 03:59:41  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.25  2002/01/29 16:36:22  skotmcdonald
-  Fixed small character combination / * in log causing log comment block to be prematurely ended
-
-  Revision 1.24  2002/01/29 16:03:47  sbrandon
-  _MKOrchTrace argument types changed to NSString
-  Got rid of redundent _errBuff
-  Changed type of lastAllocFailStr to NSString
-  -segmentName now returns NSString
-  New function, _traceNSStringMsg, to help deal with logging of "va"
-   style NSString/format log messages
-  General tidy-up of char* / NSString* methods
-
-  Revision 1.23  2002/01/15 12:15:50  sbrandon
-  replaced [NSMutableData data] with alloc:initWithCapacity: so as to prevent
-  auto-released data - we release it manually when finished with it.
-
-  Revision 1.22  2001/09/08 21:53:16  leighsmith
-  Prefixed MK for UnitGenerators and SynthPatches
-
-  Revision 1.21  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.20  2001/05/14 21:44:56  leighsmith
-  Now uses the separateThreadedAndInMusicKitThread class method
-
-  Revision 1.19  2001/05/12 09:25:01  sbrandon
-  - GNUSTEP: removed reference to TurtleBeach class
-
-  Revision 1.18  2000/11/28 18:57:51  leigh
-  replaced malloc with _MKMalloc (which does error checking)
-
-  Revision 1.17  2000/10/01 00:49:03  leigh
-  Prototyped Factory methods, better naming of ivars.
-
-  Revision 1.16  2000/06/16 23:22:10  leigh
-  Removed extraneous AppKit import
-
-  Revision 1.15  2000/06/09 03:27:54  leigh
-  Typing of parameters passed to installSharedSynthDataWithSegmentAndLength methods
-
-  Revision 1.14  2000/05/06 01:13:21  leigh
-  Typed parameters to reduce warnings and Parenthetised to remove warnings
-
-  Revision 1.13  2000/04/26 01:22:26  leigh
-  outputCommandsFile now an NSString
-
-  Revision 1.12  2000/04/22 20:13:21  leigh
-  user defaults standardised to MK prefix
-
-  Revision 1.11  2000/04/16 04:21:03  leigh
-  Removed assignment in condition warning
-
-  Revision 1.10  2000/04/07 18:46:10  leigh
-  Upgraded logging to NSLog
-
-  Revision 1.9  2000/04/01 22:11:01  leigh
-  Fixed warnings from finicky compilers
-
-  Revision 1.8  2000/03/24 21:13:07  leigh
-  Cleaned up numeric representation of booleans
-
-  Revision 1.7  2000/03/24 16:26:54  leigh
-  Removed redundant AppKit headers
-
-  Revision 1.6  2000/01/13 06:39:08  leigh
-  Corrected _MKErrorf to take NSString error message
-
-  Revision 1.5  1999/09/28 03:06:52  leigh
-  trace: now takes NSString fmt argument
-
-  Revision 1.4  1999/09/04 22:02:18  leigh
-  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
-
-  Revision 1.3  1999/08/06 16:55:09  leigh
-  removed strcasecmp use (non-OpenStep)
-
-  Revision 1.2  1999/07/29 01:16:39  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+/*
+  Original pre MusicKit.org project modification history. For current history, 
+  check the CVS log on musickit.org.
 
   11/10/89/daj - Moved StartSoundOut from -run to -open. The idea is to
                  let soundout fill up the buffers so we don't get random
@@ -235,7 +147,7 @@ Modification history:
 #import "_time.h"
 #import "PatchTemplatePrivate.h"
 #import "ConductorPrivate.h"
-
+#import "DSPSerialPortDevice.h"
 #import <stdio.h>               /* Contains FILE, etc. */
 
 /* FIXME Consider changing patch List and unitGeneratorStack to non-objc linked lists. */
@@ -1464,7 +1376,7 @@ static id installSharedObject(MKOrchestra *self,
 
 -_compensateForDSPClockRate
 {
-#if i386
+#if i386 && defined(__NeXT__)
 #define DEFAULT_CLOCK_RATE 25  /* Mhz. */
     NSString *s = [self driverParameter:[NSString stringWithCString:DSPDRIVER_PAR_CLOCKRATE]];
     int clockRate;
@@ -2377,7 +2289,7 @@ DSPFix48 *_MKCurSample(MKOrchestra *self)
   /* Returns name of the specified OrchMemSegment. */
 {
     return ((whichSegment < 0 || whichSegment >= (int)MK_numOrchMemSegments)) ?
-    @"invalid" : (NSString *) (orchMemSegmentNames[whichSegment]);
+        [NSString stringWithString: @"invalid"] : (NSString *) (orchMemSegmentNames[whichSegment]);
 }
 
 /* Instance methods for UnitGenerator's resource allocation. ------------  */
@@ -3980,7 +3892,7 @@ if (serialPortDevice && serialSoundOut)
 
 -(BOOL)prefersAlternativeSamplingRate
 {
-#if i386
+#if i386 && defined(__NeXT__)
     return ([self _waitStates] == 3);
 #else
     return NO;
@@ -4019,7 +3931,7 @@ static BOOL notificationSent = NO;
     return self;
 }
 
-#if i386
+#if i386 && defined(__NeXT__)
 static BOOL driverPresent(unsigned short index)
 {
     return (DSPGetInUseDriverNames()[index] != NULL);
@@ -4033,7 +3945,7 @@ static BOOL driverPresent(unsigned short index)
       classInit();
     if (index >= nDSPs)
       return nil;
-#if i386
+#if i386 && defined(__NeXT__)
     if (!driverPresent(index))
       return nil;
 #endif
