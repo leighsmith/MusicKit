@@ -1,9 +1,14 @@
 {
     APPCLASS = NSApplication; 
     DYNAMIC_CODE_GEN = YES; 
+    English_RESOURCES = {}; 
     FILESTABLE = {
         CLASSES = (SoundPlayerController.m); 
-        English_INTERFACES = (MultipleSoundPlayer.nib, "MultipleSoundPlayer-windows.nib"); 
+        English_INTERFACES = (
+            "MultipleSoundPlayer-windows.nib", 
+            "MultipleSoundPlayer-macos.nib", 
+            "MultipleSoundPlayer-macintosh.nib"
+        ); 
         FRAMEWORKS = (AppKit.framework, Foundation.framework); 
         H_FILES = (SoundPlayerController.h); 
         INTERFACES = (); 
@@ -16,6 +21,9 @@
             h.template, 
             java.template
         ); 
+        PRECOMPILED_HEADERS = (); 
+        PROJECT_HEADERS = (); 
+        PUBLIC_HEADERS = (); 
     }; 
     LANGUAGE = English; 
     MAKEFILEDIR = "$(MAKEFILEPATH)/pb_makefiles"; 
@@ -23,7 +31,7 @@
     NEXTSTEP_DOCUMENTEXTENSIONS = (); 
     NEXTSTEP_INSTALLDIR = /Applications; 
     NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 
-    NEXTSTEP_MAINNIB = MultipleSoundPlayer.nib; 
+    NEXTSTEP_MAINNIB = MultipleSoundPlayer; 
     NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc; 
     PDO_UNIX_BUILDTOOL = $NEXT_ROOT/Developer/bin/make; 
     PDO_UNIX_INSTALLDIR = /Applications; 
