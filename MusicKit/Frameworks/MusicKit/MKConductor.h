@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2001/09/07 00:14:46  leighsmith
+  Corrected @discussion
+
   Revision 1.14  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -370,7 +373,7 @@ extern void MKFinishPerformance(void);
 {
   /*! @var time Current Time in beats, updated (for all instances) after timed entry fires off. */
     double time;       
-  /*! var nextMsgTime Time, in seconds, when next message is scheduled to be sent by this MKConductor. */
+  /*! @var nextMsgTime Time, in seconds, when next message is scheduled to be sent by this MKConductor. */
     double nextMsgTime;           // sb: relative to start of performance, I think.
   /*! @var beatSize The duration of a single beat in seconds. */
     double beatSize;    
@@ -927,13 +930,13 @@ Appendix B. entitled MIDI Time Code in the MusicKit
 
 /*!
     @function separateThreaded
-    @description Returns YES if the MKConductor is separate threaded, NO if it runs in the application thread.
+    @discussion Returns YES if the MKConductor is separate threaded, NO if it runs in the application thread.
 */
 + (BOOL) separateThreaded;
 
 /*!
     @function separateThreadedAndInMusicKitThread
-    @description Returns YES if the MKConductor is separate threaded and the calling code is running
+    @discussion Returns YES if the MKConductor is separate threaded and the calling code is running
         in the separate thread, NO if the code is running in the application thread.
 */
 + (BOOL) separateThreadedAndInMusicKitThread;

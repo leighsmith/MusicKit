@@ -39,6 +39,9 @@
 */
 /*
   $Log$
+  Revision 1.10  2001/09/07 00:14:46  leighsmith
+  Corrected @discussion
+
   Revision 1.9  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -358,8 +361,9 @@ realize MKNotes on an external MIDI synthesizer.
 
 /*!
     @method allNotesOff
-    @description Immeditately stops playing any sounding notes. The default behaviour is to do nothing.
-                 Subclasses may implement specific behaviour appropriate to the synthesis method.
+    @discussion Immediately stops playing any sounding notes. The default
+                behaviour is to do nothing.
+                Subclasses may implement specific behaviour appropriate to the synthesis method.
 */
 - allNotesOff;
 
