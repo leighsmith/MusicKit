@@ -35,6 +35,9 @@
 Modification history:
 
   $Log$
+  Revision 1.19  2001/05/12 09:25:01  sbrandon
+  - GNUSTEP: removed reference to TurtleBeach class
+
   Revision 1.18  2000/11/28 18:57:51  leigh
   replaced malloc with _MKMalloc (which does error checking)
 
@@ -542,9 +545,14 @@ static char * orchMemSegmentNames[(int)MK_numOrchMemSegments] =
     if ((self != [MKOrchestra class]) || (beenHere))
       return;
     beenHere = YES;
+#ifndef GNUSTEP
     _MKLinkUnreferencedClasses([MKUnitGenerator class],[MKSynthData class],
                                [_OrchloopbeginUG class],
 			       [TurtleBeachMS class]);
+#else
+    _MKLinkUnreferencedClasses([MKUnitGenerator class],[MKSynthData class],
+                               [_OrchloopbeginUG class]);
+#endif
     NSAssert(((DSP_SINE_SPACE == 2) && (DSP_MULAW_SPACE == 1)), @"Need to change SINTABLESPACE or MULAWTABLESPACE.");
     defaultOrchloopClass = [_OrchloopbeginUG class];
     nDSPs = (unsigned short)DSPGetDSPCount();
