@@ -246,8 +246,8 @@
 
 - (NSString*) description
 {
-  return [NSString stringWithFormat: @"SndAudioBuffer [dataLength: %i reservedDataLength: %i duration: %f dataFormat: %i samplingRate: %f channels: %i]",
-    byteCount, maxByteCount, [self duration], dataFormat, samplingRate, channelCount];
+  return [NSString stringWithFormat: @"%@ (dataLength: %i reservedDataLength: %i duration: %f dataFormat: %i samplingRate: %f channels: %i)",
+      [super description], byteCount, maxByteCount, [self duration], dataFormat, samplingRate, channelCount];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -513,109 +513,107 @@
 //
 // Note: This is only an interim proof of concept implementation and doesn't
 // manage all combinations of formats. Instead of adding extra formats, this
-// code should be changed to use a version of SndConvertSoundInternal() that
+// code should be changed to use a version of SndConvertSound() that
 // has been suitably modified to accept presupplied buffers.
-//  (SndConvertSoundInternal currently allocates them itself).
+//  (SndConvertSound() currently allocates them itself).
 ////////////////////////////////////////////////////////////////////////////////
 
 - mixWithBuffer: (SndAudioBuffer*) buff
       fromStart: (long) start
           toEnd: (long) end
-      canExpand: (BOOL) exp
+      canExpand: (BOOL) canExpandInPlace
 {
-  long lengthInSampleFrames = [self lengthInSampleFrames];
-  long incomingLengthInSampleFrames = [buff lengthInSampleFrames];
+    long lengthInSampleFrames = [self lengthInSampleFrames];
+    long incomingLengthInSampleFrames = [buff lengthInSampleFrames];
 
-  if (start > lengthInSampleFrames)
-    NSLog(@"mixWithBuffer: start %i is > length %i",start,lengthInSampleFrames);
-  else if (end > lengthInSampleFrames) {
-    NSLog(@"mixWithBuffer: end %i is > length %i - truncating",end,lengthInSampleFrames);
-    end = lengthInSampleFrames;
-  }
-  if ([self dataFormat] == SND_FORMAT_FLOAT) {
+    if (start > lengthInSampleFrames)
+	NSLog(@"mixWithBuffer: start %i is > length %i",start,lengthInSampleFrames);
+    else if (end > lengthInSampleFrames) {
+	NSLog(@"mixWithBuffer: end %i is > length %i - truncating",end,lengthInSampleFrames);
+	end = lengthInSampleFrames;
+    }
+    if ([self dataFormat] == SND_FORMAT_FLOAT) {
 
-    long   frameCount;
-    int    selfNumChannels = channelCount;
-    int    buffNumChannels = [buff channelCount];
-    int    i;
-    float *in = NULL;
-    float *out = (float*) [data bytes];
-    NSMutableData *convertData = nil;
-    float *convertBuffer = NULL;
+	long   frameCount;
+	int    selfNumChannels = channelCount;
+	int    buffNumChannels = [buff channelCount];
+	int    i;
+	float *in = NULL;
+	float *out = (float*) [data bytes];
+	NSMutableData *convertData = nil;
+	float *convertBuffer = NULL;
 
-    if (end > byteCount / sizeof(float))
-      end = byteCount / sizeof(float);
-    frameCount = MIN(incomingLengthInSampleFrames, end - start);
+	if (end > byteCount / sizeof(float))
+	    end = byteCount / sizeof(float);
+	frameCount = MIN(incomingLengthInSampleFrames, end - start);
 
-    if  ([buff dataFormat] != SND_FORMAT_FLOAT) {
-      if (exp) { /* expand in place - saves allocating new buffer/data object */
-        SndChangeSampleType([buff bytes], [buff dataFormat],
-                            SND_FORMAT_FLOAT, buffNumChannels * frameCount);
-        in = [buff bytes];
-      } else {
-        convertData = [[buff convertDataToFormat: SND_FORMAT_FLOAT] retain];
-        convertBuffer = [convertData mutableBytes];
-        in  = convertBuffer;
-      }
+	if  ([buff dataFormat] != SND_FORMAT_FLOAT) {
+	    if (canExpandInPlace) { /* expand in place - saves allocating new buffer/data object */
+		SndChangeSampleType([buff bytes], [buff bytes], [buff dataFormat], SND_FORMAT_FLOAT, buffNumChannels * frameCount);
+		in = [buff bytes];
+	    }
+	    else {
+		convertData = [[buff convertDataToFormat: SND_FORMAT_FLOAT] retain];
+		convertBuffer = [convertData mutableBytes];
+		in = convertBuffer;
+	    }
 #if DEBUG_MIXING
-      {
-        printf("mixbuffer: had to convert to float, nChannels = %d\n",buffNumChannels);
-      }
+	    printf("mixbuffer: had to convert to float, nChannels = %d\n",buffNumChannels);
 #endif
+	}
+	else {
+	    in = [buff bytes];
+            // NSLog(@"no conversion");
+	}
+
+	if (selfNumChannels > 2 || buffNumChannels > 2) {
+	    NSLog(@"Mix buffer - channels > 2 not handled (yet)");
+	}
+	else if (selfNumChannels == buffNumChannels) {
+	    unsigned maxI = frameCount * buffNumChannels;
+	    out += start*buffNumChannels;
+#ifdef __VEC__
+	    /* FIXME need to do extra check to ensure altivec is supported at runtime */
+	    vadd(in, 1,out,1,out,1,maxI);
+#else
+	    for (i = 0; i < maxI; i++) {
+		out[i] += in[i]; // interleaving automatically taken care of!
+	    }
+#if DEBUG_MIXING
+	    {
+		printf("out[0]: %f   maxpos:%li\n",out[0],frameCount * buffNumChannels);
+	    }
+#endif
+#endif
+	}
+	else if (selfNumChannels == 2) {
+#ifdef __VEC__
+	    vadd(in, 1,out+start,2,out+start,2,frameCount);     // LEFT
+	    vadd(in, 1,out+start+1,2,out+start+1,2,frameCount); // RIGHT
+#else
+	    for (i = 0; i < frameCount; i++) {
+		register int pos = (i<<1)+start;
+		out[pos]   += in[i];
+		out[pos+1] += in[i];
+	    }
+#endif
+	}
+	else if (selfNumChannels == 1) {
+#ifdef __VEC__
+	    vadd(in, 2,out+start,1,out+start,1,frameCount);     // LEFT
+#else
+	    for (i = 0; i < frameCount; i++) {
+		out[i+start] += in[i<<1]; // copy left channel into output buffer
+	    }
+#endif
+	}
+	if (convertData)
+	    [convertData release];
     }
     else {
-      in = [buff bytes];
-      //      NSLog(@"no conversion");
+	NSLog(@"SndAudioBuffer::mixWithBuffer: WARN: miss-matched buffer formats - write converter");
     }
-
-    if (selfNumChannels > 2 || buffNumChannels > 2) {
-      NSLog(@"Mix buffer - channels > 2 not handled (yet)");
-    }
-    else if (selfNumChannels == buffNumChannels) {
-      unsigned maxI = frameCount * buffNumChannels;
-      out += start*buffNumChannels;
-#ifdef __VEC__
-      /* FIXME need to do extra check to ensure altivec is supported at runtime */
-      vadd(in, 1,out,1,out,1,maxI);
-#else
-      for (i = 0; i < maxI; i++) {
-        out[i] += in[i]; // interleaving automatically taken care of!
-      }
-#if DEBUG_MIXING
-      {
-        printf("out[0]: %f   maxpos:%li\n",out[0],frameCount * buffNumChannels);
-      }
-#endif
-#endif
-    }
-    else if (selfNumChannels == 2) {
-#ifdef __VEC__
-      vadd(in, 1,out+start,2,out+start,2,frameCount);     // LEFT
-      vadd(in, 1,out+start+1,2,out+start+1,2,frameCount); // RIGHT
-#else
-      for (i = 0; i < frameCount; i++) {
-        register int pos = (i<<1)+start;
-        out[pos]   += in[i];
-        out[pos+1] += in[i];
-      }
-#endif
-    }
-    else if (selfNumChannels == 1) {
-#ifdef __VEC__
-      vadd(in, 2,out+start,1,out+start,1,frameCount);     // LEFT
-#else
-      for (i = 0; i < frameCount; i++) {
-        out[i+start] += in[i<<1]; // copy left channel into output buffer
-      }
-#endif
-    }
-    if (convertData)
-      [convertData release];
-  }
-  else {
-    NSLog(@"SndAudioBuffer::mixWithBuffer: WARN: miss-matched buffer formats - write converter");
-}
-return self;
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -674,7 +672,7 @@ return self;
 	NSLog(@"AudioBuffer::copyBytes:intoRange:format: ERR: param 'bytesRange' invalid location");
 	return nil;
     }
-    [data replaceBytesInRange: bytesRange withBytes: (const void *)bytes];
+    [data replaceBytesInRange: bytesRange withBytes: (const void *) bytes];
     dataFormat   = f->dataFormat;
     channelCount = f->channelCount;
     samplingRate = f->samplingRate;

@@ -21,10 +21,11 @@
 #import <Foundation/Foundation.h>
 #import <MKPerformSndMIDI/PerformSound.h>
 #import "Snd.h"
+
 /*!
-@class SndAudioBuffer
-@abstract   Audio Buffer
-@discussion To come
+  @class SndAudioBuffer
+  @abstract   Audio Buffer
+  @discussion To come
 */
 @interface SndAudioBuffer : NSObject
 {
