@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.28  2001/09/04 19:26:10  skotmcdonald
+ * Shifted default SndPlayer var to SndPlayer, added accessor, updated Snd.
+ *
  * Revision 1.27  2001/09/03 12:16:37  sbrandon
  * added +sndPlayer method to return the internal (class variable) SndPlayer
  * object, the one used for all [snd play...] methods. It needs to be able to
@@ -117,7 +120,6 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
 
 static NSAutoreleasePool *pool;
 static NSMutableDictionary *nameTable = nil;
-static SndPlayer *sndPlayer;
 #if !USE_STREAMING
 static NSMutableDictionary *playRecTable = nil;
 static int ioTags = 1000;
@@ -132,7 +134,7 @@ static int ioTags = 1000;
         if(SNDInit(TRUE)) {
             driverNames = SNDGetAvailableDriverNames();
             NSLog(@"driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
-            sndPlayer = [[SndPlayer player] retain];
+//            sndPlayer = [[SndPlayer player] retain];
         }
         else {
             NSLog(@"Unable to initialise PerformSound!\n");
@@ -142,7 +144,7 @@ static int ioTags = 1000;
 
 + (SndPlayer *)sndPlayer
 {
-    return [[sndPlayer retain] autorelease];
+    return [SndPlayer defaultSndPlayer];
 }
 
 + soundNamed:(NSString *)aName
@@ -723,13 +725,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
         return nil;
     status = SND_SoundPlayingPending;
     
-    return [sndPlayer playSnd: self withTimeOffset: inSeconds beginAtIndex: playBegin endAtIndex: playEnd];
+    return [[SndPlayer defaultSndPlayer] playSnd: self withTimeOffset: inSeconds beginAtIndex: playBegin endAtIndex: playEnd];
 }
 
 - (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d
 {
 //  NSLog(@"Snd::playAtTimeInSeconds: %f", t);
-    return [sndPlayer playSnd: self atTimeInSeconds: t withDurationInSeconds: d];  
+    return [[SndPlayer defaultSndPlayer] playSnd: self atTimeInSeconds: t withDurationInSeconds: d];  
 }
 
 - (SndPerformance *) playInFuture: (double) inSeconds 
@@ -838,7 +840,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 #if !USE_STREAMING
     return (tag == 0) ? -1 : SNDSamplesProcessed(tag);
 #else
-    NSArray *performances = [sndPlayer performancesOfSnd: self];
+    NSArray *performances = [[SndPlayer defaultSndPlayer] performancesOfSnd: self];
     // what to do, when samplesProcessed only makes sense if you know only one performance of this
     // snd is occuring? For now, we erroneously return the first.
     return [[performances objectAtIndex: 0] playIndex];
@@ -864,7 +866,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 // stop the performance
 + (void) stopPerformance: (SndPerformance *) performance inFuture: (double) inSeconds
 {
-    [sndPlayer stopPerformance: performance inFuture: inSeconds];
+    [[SndPlayer defaultSndPlayer] stopPerformance: performance inFuture: inSeconds];
 }
 
 - (void) stopInFuture: (double) inSeconds
@@ -874,7 +876,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
         [self tellDelegate: @selector(didRecord:)];	
     }
     if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
-        [sndPlayer stopSnd: self withTimeOffset: inSeconds];
+        [[SndPlayer defaultSndPlayer] stopSnd: self withTimeOffset: inSeconds];
     }
 }
 

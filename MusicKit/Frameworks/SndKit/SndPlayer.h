@@ -45,6 +45,8 @@
 */
 + player;
 
++ (SndPlayer*) defaultSndPlayer;
+
 /*!
     @method   playSnd:withTimeOffset:
     @abstract   Begin playing a Snd instance immediately.

@@ -21,6 +21,9 @@
 //  SndPlayer
 ////////////////////////////////////////////////////////////////////////////////
 
+static SndPlayer *defaultSndPlayer;
+
+
 @implementation SndPlayer
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -31,6 +34,16 @@
 {
     SndPlayer *sp = [SndPlayer new];
     return [sp autorelease];
+}
+
++ (SndPlayer*) defaultSndPlayer
+{
+  if (defaultSndPlayer == nil) {
+    Snd *s = [Snd new];
+    defaultSndPlayer = [SndPlayer new]; 
+    [s release];
+  }
+  return [[defaultSndPlayer retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
