@@ -169,29 +169,39 @@ enum {
 ////////////////////////////////////////////////////////////////////////////////
 // startProcessingNextBufferWithInput:
 //
-// If input isn't needed, ignore!!! (ie, if this isn't an FX unit
+// If input isn't needed, ignore!!! (ie, if this isn't an FX unit)
 ////////////////////////////////////////////////////////////////////////////////
 
 - startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) t 
 {
     SndAudioBuffer *temp = nil;
-        
-    if([synthThreadLock tryLockWhenCondition: SC_bufferReady]) {
+    BOOL gotLock = NO;
+    
+    NS_DURING
+    gotLock = [synthThreadLock tryLockWhenCondition: SC_bufferReady];
+    NS_HANDLER
+    {
+        NSLog(@"SndStreamClient: mutex bug workaround\n");
+        gotLock = FALSE;
+    }
+    NS_ENDHANDLER
+    
+    if( gotLock ) {
         // swap the synth and output buffers, fire off next round of synthing
-        
+
         [outputBufferLock lock];
 
         temp            = synthBuffer;
         synthBuffer     = outputBuffer;
         outputBuffer    = temp;
 
-        // printf("startProcessingNextBufferWithInput nowTime = %f\n", t);
+        // NSLog(@"Got SC_bufferReady: startProcessingNextBufferWithInput nowTime = %f\n", t);
         
         [outputBufferLock unlock];
-        
+	
         if (needsInput)
             [inputBuffer copyData: inB];
-        
+	    
         [synthThreadLock unlockWithCondition: SC_processBuffer];
     }
     return self;
@@ -205,22 +215,24 @@ enum {
 {
     NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
     active = TRUE;
-    
+    // NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
     while (active) {
         [synthThreadLock lockWhenCondition: SC_processBuffer];
-
         [synthBuffer zero];
+        //NSLog(@"SYNTH THREAD: going to processBuffers\n");
         [self processBuffers];
+        //NSLog(@"SYNTH THREAD: ... done processBuffers\n");
 
         if (processFinishedCallback != NULL)
             processFinishedCallback();
-
+	    
         [synthThreadLock unlockWithCondition: SC_bufferReady];
     }
     [manager removeClient: self];
     [manager release];
     manager = nil; // avoids double release.
     [self freeBufferMem];
+    // NSLog(@"SYNTH THREAD: EXITING\n");
     [localPool release];
     [NSThread exit];
 }
