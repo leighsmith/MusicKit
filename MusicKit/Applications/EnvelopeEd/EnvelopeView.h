@@ -19,7 +19,7 @@
 	
     int selected;				// current highlighted point in envelope
     float defaultSmooth;			// default smoothing read from the defaults database
-    float envColour;				// colour to draw envelope with
+    NSColor *envColour;				// colour to draw envelope with
     int defaultFormat;				// which copy format to begin popup menu on.
 
     float xMax;					// coordinate system limits
