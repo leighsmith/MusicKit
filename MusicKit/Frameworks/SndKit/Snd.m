@@ -38,7 +38,7 @@ void merror(int er)
 #if defined(WIN32) && defined(USE_PERFORM_SOUND_IO)
     char **driverNames;
 #endif
-	printf("Snd class initialize\n");
+//	printf("Snd class initialize\n");
 //	malloc_error(&merror);
     if ( self == [Snd class] ) {
         nameTable = [[NSMutableDictionary alloc] initWithCapacity:10];
