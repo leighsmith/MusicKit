@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		11F73AE4001E6990CFED3B96 = {
 			buildStyles = (
 				2C2216D7005C54A1CFED3B96,
 				2C2216D8005C54A1CFED3B96,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 11F73AE5001E6990CFED3B96;
 			productRefGroup = 11F73AFE001E6990CFED3B96;
@@ -40,6 +41,7 @@
 			refType = 4;
 		};
 		11F73AE7001E6990CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyObject.m;
 			refType = 4;
@@ -53,6 +55,7 @@
 			refType = 4;
 		};
 		11F73AE9001E6990CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyObject.h;
 			refType = 4;
@@ -66,6 +69,7 @@
 			refType = 4;
 		};
 		11F73AEB001E6990CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = example3_main.m;
 			refType = 4;
@@ -163,7 +167,10 @@
 				11F73B0E001E6990CFED3B96,
 			);
 			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				GCC_VERSION = 3.x;
 				INSTALL_PATH = /Applications;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
@@ -181,8 +188,8 @@
 			productName = example3;
 			productReference = 11F73AFF001E6990CFED3B96;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -215,7 +222,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		11F73B01001E6990CFED3B96 = {
 			buildActionMask = 2147483647;
@@ -223,7 +229,7 @@
 				11F73B02001E6990CFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		11F73B02001E6990CFED3B96 = {
 			fileRef = 11F73AE9001E6990CFED3B96;
@@ -237,7 +243,7 @@
 				11F73B04001E6990CFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		11F73B04001E6990CFED3B96 = {
 			fileRef = 11F73AED001E6990CFED3B96;
@@ -252,7 +258,7 @@
 				11F73B07001E6990CFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		11F73B06001E6990CFED3B96 = {
 			fileRef = 11F73AE7001E6990CFED3B96;
@@ -280,7 +286,7 @@
 				11F73B0D001E6990CFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		11F73B09001E6990CFED3B96 = {
 			fileRef = 11F73AF8001E6990CFED3B96;
@@ -317,7 +323,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //110
 //111

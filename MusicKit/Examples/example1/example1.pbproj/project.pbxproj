@@ -3,17 +3,18 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 38;
 	objects = {
 		11F73ACB001E6890CFED3B96 = {
 			buildStyles = (
 				441ED0E4005D5B1ECFED3B96,
 				441ED0E5005D5B1ECFED3B96,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 11F73ACC001E6890CFED3B96;
 			productRefGroup = 11F73AD9001E6890CFED3B96;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				11F73ADB001E6890CFED3B96,
 			);
@@ -37,6 +38,7 @@
 			refType = 4;
 		};
 		11F73ACE001E6890CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = example1.m;
 			refType = 4;
@@ -83,9 +85,11 @@
 				11F73AE2001E6890CFED3B96,
 			);
 			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
+				GCC_VERSION = 3.x;
 				INSTALL_PATH = /bin;
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -94,8 +98,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 			};
-			conditionalBuildSettings = {
-			};
 			dependencies = (
 			);
 			isa = PBXToolTarget;
@@ -103,14 +105,13 @@
 			productInstallPath = /bin;
 			productName = example1;
 			productReference = 11F73ADA001E6890CFED3B96;
-			shouldUseHeadermap = 0;
 		};
 		11F73ADC001E6890CFED3B96 = {
 			buildActionMask = 2147483647;
 			files = (
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		11F73ADD001E6890CFED3B96 = {
 			buildActionMask = 2147483647;
@@ -118,7 +119,7 @@
 				11F73ADE001E6890CFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		11F73ADE001E6890CFED3B96 = {
 			fileRef = 11F73ACE001E6890CFED3B96;
@@ -135,7 +136,7 @@
 				11F73AE1001E6890CFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		11F73AE0001E6890CFED3B96 = {
 			fileRef = 11F73AD6001E6890CFED3B96;
@@ -154,13 +155,24 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
+//110
+//111
+//112
+//113
+//114
+//440
+//441
+//442
+//443
+//444
 		441ED0E4005D5B1ECFED3B96 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
