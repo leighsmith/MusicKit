@@ -22,7 +22,6 @@
 		0141A52EFFE98C9ACFED3B96 = {
 			children = (
 				0141A52FFFE98C9ACFED3B96,
-				0141A531FFE98C9ACFED3B96,
 				0141A533FFE98C9ACFED3B96,
 				0141A535FFE98C9ACFED3B96,
 				0141A539FFE98C9ACFED3B96,
@@ -36,6 +35,7 @@
 		0141A52FFFE98C9ACFED3B96 = {
 			children = (
 				0141A530FFE98C9ACFED3B96,
+				0141A532FFE98C9ACFED3B96,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -45,14 +45,6 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Controller.m;
-			refType = 4;
-		};
-		0141A531FFE98C9ACFED3B96 = {
-			children = (
-				0141A532FFE98C9ACFED3B96,
-			);
-			isa = PBXGroup;
-			name = Headers;
 			refType = 4;
 		};
 		0141A532FFE98C9ACFED3B96 = {
@@ -182,7 +174,10 @@
 				0141A550FFE98C9ACFED3B96,
 			);
 			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				GCC_VERSION = 3.x;
 				INSTALL_PATH = "$(HOME)/Apps";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
