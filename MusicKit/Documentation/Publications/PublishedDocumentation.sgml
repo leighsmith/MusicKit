@@ -13,7 +13,7 @@ biblioentry (database) format.
 
 -->
 
-<bibliography>
+<bibliography id=bibliography>
 
   <title>Published Documentation</title>
   <abstract>
@@ -105,10 +105,10 @@ biblioentry (database) format.
   </bibliomset>
   <abstract>
     <para>
-An in depth discussion of the <PRODUCTNAME>MusicKit</PRODUCTNAME>
-<CLASSNAME>Orchestra</CLASSNAME>'s dynamic allocation system,
-<ACRONYM>DSP</ACRONYM> memory management, and
-multi-<ACRONYM>DSP</ACRONYM> support.
+An in depth discussion of the <productname>MusicKit</productname>
+<classname>MKOrchestra</classname>'s dynamic allocation system,
+<acronym>DSP</acronym> memory management, and
+multi-<acronym>DSP</acronym> support.
 </para>
   </abstract>
 </bibliomixed>
@@ -144,9 +144,11 @@ multi-<ACRONYM>DSP</ACRONYM> support.
     </bibliomisc>
   </bibliomset>
   <abstract>
+    <para>
 Paper by David Jaffe from the 1991 International Computer
 Music Conference describing some of the uses to which the
 <productname>MusicKit</productname> has been put.
+    </para>
   </abstract>
 </bibliomixed>
 
@@ -180,7 +182,9 @@ the Music Kit and the Ariel QuintProcessor</title>
     </bibliomisc>
   </bibliomset>
   <abstract>
+    <para>
 Documents multiple DSP operation.
+    </para>
   </abstract>
 </bibliomixed>
 
@@ -255,9 +259,11 @@ Reprinted in book form in
         </bibliomisc>
       </bibliomset>
       <abstract>
+        <para>
 Most recent publication describing the OpenStep conversion
 and cross-platform approach.
-</abstract>
+        </para>
+      </abstract>
     </bibliomixed>
 
 <bibliomixed>
@@ -320,7 +326,9 @@ and cross-platform approach.
     </bibliomisc>
   </bibliomset>
   <abstract>
+    <para>
 A general (if dated) overview.
+    </para>
   </abstract>
 </bibliomixed>
 
@@ -357,7 +365,7 @@ A general (if dated) overview.
     <para>
 Transparencies for a talk describing the use of the
 <productname>DSP56001</productname> for music synthesis. 
-</para>
+    </para>
   </abstract>
 </bibliomixed>
 
