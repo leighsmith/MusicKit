@@ -15,7 +15,6 @@
             AppKit.framework, 
             Foundation.framework, 
             MKPerformSndMIDI.framework, 
-            SoundKit.framework, 
             System.framework
         ); 
         FRAMEWORKSEARCH = (
