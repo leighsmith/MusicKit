@@ -2195,14 +2195,16 @@ const char *DSPGetDSPDirectory(void)
 
     CHECK_INIT;
     dspdirenv = getenv("DSP"); // LMS FIXME: getenv should be replaced with access from NSUserDefaults
-    dspdir = (dspdirenv == NULL) ? DSP_SYSTEM_DIRECTORY : [NSString stringWithCString: dspdirenv];
+    dspdir = (dspdirenv == NULL) ? 
+	    DSP_SYSTEM_DIRECTORY :
+		[manager stringWithFileSystemRepresentation:dspdirenv length:strlen(dspdirenv)];
     // here is the potential to do path grooming appropriate to the Operating system.
 //    if(stat(dspdir,&sbuf)) LMS
     if([manager fileExistsAtPath: dspdir isDirectory: &isDir] != YES || !isDir) {
       [dspdir release];
       dspdir = DSP_FALLBACK_SYSTEM_DIRECTORY;
     }
-    return [dspdir cString];
+    return [dspdir fileSystemRepresentation];
 }
 
 char *DSPGetImgDirectory(void) 
