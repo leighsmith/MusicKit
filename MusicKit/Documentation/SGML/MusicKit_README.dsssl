@@ -2,11 +2,11 @@
 <!ENTITY % html "IGNORE">
 <![%html;[
 <!ENTITY % print "IGNORE">
-<!ENTITY docbook.dsl SYSTEM "/usr/lib/sgml/stylesheets/nwalsh-modular/html/docbook.dsl" CDATA dsssl>
+<!ENTITY docbook.dsl SYSTEM "/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/html/docbook.dsl" CDATA dsssl>
 ]]>
 <!ENTITY % print "INCLUDE">
 <![%print;[
-<!ENTITY docbook.dsl SYSTEM "/usr/lib/sgml/stylesheets/nwalsh-modular/print/docbook.dsl" CDATA dsssl>
+<!ENTITY docbook.dsl SYSTEM "/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/print/docbook.dsl" CDATA dsssl>
 ]]>
 ]>
 
@@ -109,6 +109,13 @@
    (list "ALINK" "#969FF4")
    (list "VLINK" "#80C2E2")))
 
+(define ($shade-verbatim-attr$)
+  ;; Make the background color darker than the standard so it is
+  ;; easier to see against white text. 
+  (list
+   (list "BORDER" "0")
+   (list "BGCOLOR" "#202020")
+   (list "WIDTH" ($table-width$))))
 
 (define %generate-article-toc% 
   ;; Should a Table of Contents be produced for Articles?
