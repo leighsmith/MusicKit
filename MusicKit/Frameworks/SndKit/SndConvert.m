@@ -53,6 +53,8 @@ OF THIS AGREEMENT.
 #import "SndResample.h"
 #import "SndAudioBuffer.h"
 
+#define DEBUG_CHANNEL_MAPPING 0  // 1 to dump out the channel map.
+
 @implementation SndAudioBuffer(SampleConversion)
 
 int SndConvertSound(const SndSoundStruct *fromSound,
@@ -119,7 +121,7 @@ void SndChangeSampleRate(const SndFormat fromSound,
 // dataFormat is the same going in and going out.
 // This is capable of in place conversion if inPtr and outPtr are the same.
 // TODO This is a good candidate for Altivec optimisation
-void SndChannelDecrease(void *inPtr, void *outPtr, unsigned int numberOfSampleFrames, int oldNumChannels, int newNumChannels, int dataFormat)
+void SndChannelDecrease(void *inPtr, void *outPtr, unsigned int numberOfSampleFrames, int oldNumChannels, int newNumChannels, SndSampleFormat dataFormat)
 {
     int chansToSum = oldNumChannels / newNumChannels;
     int passes = newNumChannels; /* convenience name */
@@ -197,40 +199,83 @@ void SndChannelDecrease(void *inPtr, void *outPtr, unsigned int numberOfSampleFr
 // endian-agnostic, as all formats are cast to memory pointers and duplicated as memory regions.
 // dataFormat is the same going in and going out.
 // This is capable of in place conversion if inPtr and outPtr are the same.
-void SndChannelIncrease(void *inPtr, void *outPtr, int numberOfSampleFrames, int oldNumChannels, int newNumChannels, int dataFormat)
+// TODO Perhaps a good candidate for AltiVec optimisation
+void SndChannelMap(void *inPtr, void *outPtr, int numberOfSampleFrames, int oldNumChannels, int newNumChannels, SndSampleFormat dataFormat, short *map)
 {
-    int oldChanIndex, newChanIndex;
+    int newChanIndex;
     int frame;
-    int newChansPerOld = newNumChannels / oldNumChannels; /* multiply factor - number of new channels per original one */
     int sampleWidth = SndSampleWidth(dataFormat);
 
+#if DEBUG_CHANNEL_MAPPING
+    for(newChanIndex = 0; newChanIndex < newNumChannels; newChanIndex++)
+        NSLog(@"map[%d] = %d\n", newChanIndex, map[newChanIndex]);
+#endif
+        
     for (frame = numberOfSampleFrames - 1; frame >= 0; frame--) { /* main slog backwards through the sound */
-	for (oldChanIndex = oldNumChannels - 1; oldChanIndex >= 0; oldChanIndex--) { /* the origin channel */
-	    unsigned baseIndex = frame * newNumChannels + oldChanIndex * newChansPerOld;
-	    // copy the sampleWidth number of bytes into the new location, this avoid endian decisions.
-	    char *samplePtr = (char *) inPtr + (frame * oldNumChannels + oldChanIndex) * sampleWidth;
+        /* the number of new channels to create */
+        for (newChanIndex = newNumChannels - 1; newChanIndex >= 0; newChanIndex--) {
+            char *outFramePtr = (char *) outPtr + (frame * newNumChannels + newChanIndex) * sampleWidth;
+                
+            if(map[newChanIndex] < 0)
+                memset(outFramePtr, 0, sampleWidth);
+            else {
+                char *samplePtr = (char *) inPtr + (frame * oldNumChannels + map[newChanIndex]) * sampleWidth;
 
-	    /* the number of new channels to create */
-	    for (newChanIndex = newChansPerOld - 1; newChanIndex >= 0; newChanIndex--) {
-		memcpy((char *) outPtr + (baseIndex + newChanIndex) * sampleWidth, samplePtr, sampleWidth);
-	    }
-	}
+                // copy the sampleWidth number of bytes into the new location, this avoids endian decisions.
+                memcpy(outFramePtr, samplePtr, sampleWidth);
+            }
+        }
     }
 }
 
-int SndChangeChannelCount(void *inPtr, void *outPtr, unsigned int numberOfSampleFrames, int oldNumChannels, int newNumChannels, int dataFormat)
+// TODO change to method
+- (int) changeFromChannelCount: (int) oldNumChannels
+                fromSampleData: (void *) inPtr
+                toChannelCount: (int) newNumChannels
+                  toSampleData: (void *) outPtr
+                    frameCount: (unsigned int) numberOfSampleFrames
+                    dataFormat: (SndSampleFormat) theDataFormat
 {
     /* now check channel count -- if we need to increase the number of channels from 1 to
     * 2, or 4, we have hopefully got enough data malloced in *toSound to duplicate pairs
     * of samples.
-    * Endian-wise, I simply avoid floats and doubles, re-casting as longs and long longs
-    * which should side step the issue nicely.
     */
-    if ((newNumChannels > oldNumChannels) && (newNumChannels % oldNumChannels == 0))
-	SndChannelIncrease(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, dataFormat);
+    if ((newNumChannels > oldNumChannels) && (newNumChannels % oldNumChannels == 0)) {
+        short *map;
+
+        if((map = malloc(newNumChannels * sizeof(short))) == NULL)
+            NSLog(@"Unable to malloc map for %d channels\n", newNumChannels);
+
+	if(oldNumChannels == 2 && newNumChannels > 2) {
+            unsigned int chanIndex;
+                
+            // TODO this is totally KLUDGED! CHANGE CHANGE!
+            // We should check if we have a ivar indicating a specific speaker configuration/channel arrangement.
+            // TODO Mapping onto a center channel should be done by mixing L+R down to the channel before all others.
+            // Perhaps SndChannelMap should replace SndChannelIncrease/Decrease decision with a map derivation 
+            // and use SndChannelDecrease as a means to decrease during mapping.
+            map[0] = 0;
+            map[1] = 1;
+            // Silence the remaining channels.
+            for(chanIndex = 2; chanIndex < newNumChannels; chanIndex++)
+                map[chanIndex] = -1;
+        }
+        else {
+            unsigned int oldChanIndex, newChanIndex;
+            unsigned int newChansPerOld = newNumChannels / oldNumChannels; /* multiply factor - number of new channels per original one */
+            // short map[128]; // If malloc proves to be too processor heavy 
+
+            // create the map duplicating the old index every newChansPerOld 
+            for (oldChanIndex = 0; oldChanIndex < oldNumChannels; oldChanIndex++)
+                for (newChanIndex = 0; newChanIndex < newChansPerOld; newChanIndex++)
+                    map[oldChanIndex * newChansPerOld + newChanIndex] = oldChanIndex;
+        }
+        SndChannelMap(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, dataFormat, map);
+        free(map);
+    }
     else if ((oldNumChannels > newNumChannels) && (oldNumChannels % newNumChannels == 0))
 	/* channel reduction will have already been done by resample routine if the sampling rate was changed */
-	SndChannelDecrease(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, dataFormat);
+	SndChannelDecrease(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, theDataFormat);
     else {
 	NSLog(@"Can't convert from %d to %d channels (output must be %s of input)\n", oldNumChannels, newNumChannels,
 	    newNumChannels > oldNumChannels ? "multiple" : "divisor");
@@ -252,7 +297,7 @@ int SndChangeChannelCount(void *inPtr, void *outPtr, unsigned int numberOfSample
 // TODO this is probably a good candidate for Altivec optimisation.
 //////////////////////////////////////////////////////////////
 
-int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDataFormat, long sampleCount)
+int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataFormat, SndSampleFormat toDataFormat, long sampleCount)
 {
     long i;
     static double ONE_OVER_TWO_THIRTYONE   = 1.0/2147483647.0f; /* 1/((2 ^ 31) - 1) */
@@ -297,6 +342,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 		    ((double *)toPtr)[i] = (double)SndMuLawToLinear(((unsigned char *)fromPtr)[i]) * ONE_OVER_TWO_FIFTEEN;
 		}
 		break;
+            default:
+                /* that should be all the common ones. Maybe aLaw too? */
+                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+                return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 	    
@@ -322,6 +371,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 		    ((double *) toPtr)[i] = (double)(((char *) fromPtr)[i]) * ONE_OVER_TWO_SEVEN;
 		}
 		break;
+            default:
+                /* that should be all the common ones. Maybe aLaw too? */
+                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+                return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 
@@ -342,6 +395,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 		    ((double *)toPtr)[i] = (double)((signed short *) fromPtr)[i] * ONE_OVER_TWO_FIFTEEN;
 		}
 		break;
+            default:
+                /* that should be all the common ones. Maybe aLaw too? */
+                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+                return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 
@@ -363,6 +420,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 		    ((double *)toPtr)[i] = (double)((*((signed int *)((char *) fromPtr + i * 3)) >> 8) * ONE_OVER_TWO_TWENTYTHREE);
 		}
 		break;
+            default:
+                /* that should be all the common ones. Maybe aLaw too? */
+                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+                return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 	    
@@ -378,6 +439,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 		    ((double *)toPtr)[i] = (double)(((signed int *) fromPtr)[i] * ONE_OVER_TWO_THIRTYONE);
 		}
 		break;
+            default:
+                /* that should be all the common ones. Maybe aLaw too? */
+                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+                return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 
@@ -388,6 +453,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 		    ((double *)toPtr)[i] = (double)(((float *) fromPtr)[i]);
 		}
 		break;
+            default:
+                /* that should be all the common ones. Maybe aLaw too? */
+                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+                return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 	    
@@ -436,6 +505,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 		    ((unsigned char *)toPtr)[i] = (unsigned char) SndMuLawToLinear(((double *) fromPtr)[i] * 32767.0f);
 		}
 		break;
+            default:
+                /* that should be all the common ones. Maybe aLaw too? */
+                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+                return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 
@@ -461,6 +534,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 		    ((unsigned char *) toPtr)[i] = (unsigned char)((((double *) fromPtr)[i]) * 127.0f);
 		}
 		break;
+            default:
+                /* that should be all the common ones. Maybe aLaw too? */
+                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+                return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 
@@ -481,6 +558,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 		    ((signed short *) toPtr)[i] = ((double *) fromPtr)[i] * 32767;
 		}
 		break;
+            default:
+                /* that should be all the common ones. Maybe aLaw too? */
+                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+                return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 
@@ -496,6 +577,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 		    ((signed int *) toPtr)[i] = ((double *) fromPtr)[i] * 2147483647; /* (2 ^ 31 - 1) */
 		}
 		break;
+            default:
+                /* that should be all the common ones. Maybe aLaw too? */
+                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+                return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 
@@ -506,6 +591,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 		    ((float *) toPtr)[i] = ((double *) fromPtr)[i];
 		}
 		break;
+            default:
+                /* that should be all the common ones. Maybe aLaw too? */
+                NSLog(@"Sorry, conversion from format %d unsupported, in attempting to convert to %d format.\n", fromDataFormat, toDataFormat);
+                return SND_ERR_BAD_FORMAT;
 	    }
 	    break;
 
@@ -517,7 +606,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
     return SND_ERR_NONE;
 }
 
-- convertToFormat: (int) toDataFormat
+- convertToFormat: (SndSampleFormat) toDataFormat
 {
     if (dataFormat != toDataFormat) {
 	long dataItems = [self lengthInSampleFrames] * [self channelCount];
@@ -538,7 +627,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
     return self;
 }
 
-- convertToFormat: (int) toDataFormat
+- convertToFormat: (SndSampleFormat) toDataFormat
      channelCount: (int) toChannelCount
 {
     if(channelCount != toChannelCount) {
@@ -547,7 +636,12 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
 	NSMutableData *toData = [NSMutableData dataWithLength: dataItems * SndSampleWidth(dataFormat)];
 	void *fromDataPtr = [data mutableBytes];
 	void *toDataPtr = [toData mutableBytes];
-	int error = SndChangeChannelCount(fromDataPtr, toDataPtr, sampleFrames, channelCount, toChannelCount, dataFormat);
+        int error = [self changeFromChannelCount: channelCount
+                                  fromSampleData: fromDataPtr
+                                  toChannelCount: toChannelCount
+                                    toSampleData: toDataPtr
+                                      frameCount: sampleFrames
+                                      dataFormat: dataFormat];
 
 	if(error != SND_ERR_NONE)
 	    return nil;
@@ -560,7 +654,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
     return [self convertToFormat: toDataFormat];
 }
 
-- convertToFormat: (int) toDataFormat
+- convertToFormat: (SndSampleFormat) toDataFormat
      channelCount: (int) toChannelCount
      samplingRate: (double) toSampleRate
    useLargeFilter: (BOOL) largeFilter
@@ -597,7 +691,7 @@ useLinearInterpolation: (BOOL) fastInterpolation
 
 - (long) convertBytes: (void *) fromDataPtr
        intoFrameRange: (NSRange) bufferFrameRange
-           fromFormat: (int) fromDataFormat
+           fromFormat: (SndSampleFormat) fromDataFormat
              channels: (int) fromChannelCount
          samplingRate: (double) fromSampleRate
 {
@@ -640,7 +734,7 @@ useLinearInterpolation: (BOOL) fastInterpolation
 	// assign this here in case we don't do any conversion using SndChangeSampleType() below.
 	byteCount = SndDataSize(toSoundFormat);  
 	// replace the old data with the new sample rate converted data.
-	fromDataPtr = toDataPtr; // This will then do the channel count conversion in place, which is ok by SndChangeChannelCount().
+	fromDataPtr = toDataPtr; // This will then do the channel count conversion in place, which is ok by -changeFromChannelCount:.
 #if 0
 	channelCount = toSoundFormat.channelCount;  // set the channel so we can describe the modified buffer.
 	NSLog(@"convertBytes: now %@\n", self);
@@ -649,7 +743,12 @@ useLinearInterpolation: (BOOL) fastInterpolation
     }
 
     if(fromChannelCount != toChannelCount) {
-	error = SndChangeChannelCount(fromDataPtr, toDataPtr, toSampleFrames, fromChannelCount, toChannelCount, fromDataFormat);
+        error = [self changeFromChannelCount: fromChannelCount
+                              fromSampleData: fromDataPtr
+                              toChannelCount: toChannelCount
+                                toSampleData: toDataPtr
+                                  frameCount: toSampleFrames
+                                  dataFormat: fromDataFormat];
 
 	if(error != SND_ERR_NONE)
 	    return 0;
@@ -679,7 +778,7 @@ useLinearInterpolation: (BOOL) fastInterpolation
 // Create a new buffer of the same number of samples as the receiver
 // converted to the new format, sampling rate and channel count.
 // returns the new buffer instance.
-- (SndAudioBuffer *) audioBufferConvertedToFormat: (int) toDataFormat
+- (SndAudioBuffer *) audioBufferConvertedToFormat: (SndSampleFormat) toDataFormat
 				     channelCount: (int) toChannelCount
 				     samplingRate: (double) toSamplingRate
 {
@@ -701,7 +800,12 @@ useLinearInterpolation: (BOOL) fastInterpolation
     
     // do conversion into the new data buffer.
     if(channelCount != toChannelCount) {
-	error = SndChangeChannelCount(fromDataPtr, toDataPtr, sampleFrames, channelCount, toChannelCount, dataFormat);
+	error = [self changeFromChannelCount: channelCount
+                              fromSampleData: fromDataPtr
+                              toChannelCount: toChannelCount
+                                toSampleData: toDataPtr
+                                  frameCount: sampleFrames
+                                  dataFormat: dataFormat];
 
 	if(error != SND_ERR_NONE)
 	    return nil;
