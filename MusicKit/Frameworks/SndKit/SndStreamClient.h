@@ -50,16 +50,26 @@
 */
 @interface SndStreamClient : NSObject
 {
-/*! @var       outputBuffer */
-    SndAudioBuffer *outputBuffer;
-/*! @var       synthBuffer */
-    SndAudioBuffer *synthBuffer;
-/*! @var       inputBuffer */
-    SndAudioBuffer *inputBuffer;
-/*! @var       outputBufferLock */
-    NSLock    *outputBufferLock;
-/*! @var       inputBufferLock */
-    NSLock    *inputBufferLock;
+/*! @var             exposedOutputBuffer */
+    SndAudioBuffer  *exposedOutputBuffer;
+/*! @var             synthOutputBuffer */
+    SndAudioBuffer  *synthOutputBuffer;
+/*! @var             synthInputBuffer */
+    SndAudioBuffer  *synthInputBuffer;
+
+    NSMutableArray  *pendingOutputBuffers;
+    NSMutableArray  *processedOutputBuffers;
+    NSConditionLock *pendingOutputBuffersLock;
+    NSConditionLock *processedOutputBuffersLock;
+    int              numOutputBuffers;
+
+    NSMutableArray  *pendingInputBuffers;
+    NSMutableArray  *processedInputBuffers;
+    NSConditionLock *pendingInputBuffersLock;
+    NSConditionLock *processedInputBuffersLock;
+    int              numInputBuffers;
+
+    
 /*! @var       synthThreadLock */
     NSConditionLock *synthThreadLock;
 /*! @var       active */
@@ -78,6 +88,10 @@
     id         delegate;    
 /*! @var       nowTime */
     double     nowTime;
+    
+@private
+    BOOL       bDelegateRespondsToOutputBufferSkipSelector;
+    BOOL       bDelegateRespondsToInputBufferSkipSelector;
 }
 
 /*!
@@ -89,11 +103,17 @@
 + streamClient;
 
 /*!
-    @method   dealloc 
+    @method     dealloc 
     @abstract   Destructor
     @discussion Releases SndAudioBuffers, NSLocks, and SndStreamManager
 */
 - (void) dealloc;
+/*!
+    @method     freeBufferMem 
+    @abstract   Frees buffer memory
+    @discussion For internal use only.
+*/
+- freeBufferMem;
 
 /*!
     @method   description
@@ -147,20 +167,20 @@
 - (SndAudioBuffer*) outputBuffer;
 
 /*!
-    @method   synthBuffer
+    @method     synthOutputBuffer
     @abstract   Accessor for the current synthesis buffer
     @discussion 
     @result     Returns the synthBuffer member
 */
-- (SndAudioBuffer*) synthBuffer;
+- (SndAudioBuffer*) synthOutputBuffer;
 
 /*!
-    @method   inputBuffer
+    @method     synthinputBuffer
     @abstract   Accessor for the current input buffer
     @discussion 
     @result     Returns the inputBuffer member
 */
-- (SndAudioBuffer*) inputBuffer;
+- (SndAudioBuffer*) synthInputBuffer;
 
 /*!
     @method   managerIsShuttingDown
@@ -333,6 +353,11 @@
     @result     The stream client's delegate object
 */
 - (id) delegate;
+
+- (int) inputBufferCount;
+- (int) outputBufferCount;
+- (BOOL) setInputBufferCount: (int) n;
+- (BOOL) setOutputBufferCount: (int) n;
 
 @end
 

@@ -18,8 +18,8 @@
 #import "SndStreamClient.h" 
 
 enum {
-    SC_processBuffer,
-    SC_bufferReady
+    SC_noData,
+    SC_hasData
 };
 
 @implementation SndStreamClient
@@ -40,18 +40,84 @@ enum {
 - init
 {
     [super init];
-    outputBufferLock = [NSLock new];
-    inputBufferLock  = [NSLock new];
-    synthThreadLock  = [[[NSConditionLock alloc] initWithCondition: SC_processBuffer] retain];    
-    outputBuffer     = nil;
-    synthBuffer      = nil;
-    active           = FALSE;
-    needsInput       = FALSE;
-    generatesOutput  = TRUE;
+
+    numOutputBuffers = 3;
+    numInputBuffers  = 3;
+    
+    if (pendingOutputBuffersLock == nil) {
+      pendingOutputBuffersLock   = [[[NSConditionLock alloc] initWithCondition: SC_noData] retain];
+      processedOutputBuffersLock = [[[NSConditionLock alloc] initWithCondition: SC_noData] retain];
+      pendingOutputBuffers       = [[NSMutableArray arrayWithCapacity: numOutputBuffers] retain];
+      processedOutputBuffers     = [[NSMutableArray arrayWithCapacity: numOutputBuffers] retain];
+    }
+    if (pendingInputBuffers == nil) {
+      pendingInputBuffersLock    = [[[NSConditionLock alloc] initWithCondition: SC_noData] retain];
+      processedInputBuffersLock  = [[[NSConditionLock alloc] initWithCondition: SC_noData] retain];
+      pendingInputBuffers        = [[NSMutableArray arrayWithCapacity: numInputBuffers] retain];
+      processedInputBuffers      = [[NSMutableArray arrayWithCapacity: numInputBuffers] retain];
+    }
+
+    if (synthThreadLock == nil)
+      synthThreadLock = [[NSLock new] retain];    
+
+    if (processorChain == nil)
+      processorChain = [[SndAudioProcessorChain audioProcessorChain] retain];
+      
+    exposedOutputBuffer     = nil;
+    synthOutputBuffer       = nil;
+    active                  = FALSE;
+    needsInput              = FALSE;
+    generatesOutput         = TRUE;
     processFinishedCallback = NULL;
-    processorChain   = [[SndAudioProcessorChain audioProcessorChain] retain];
-    manager          = nil;
+    manager                 = nil;
+    
+    bDelegateRespondsToOutputBufferSkipSelector = FALSE;
+    bDelegateRespondsToInputBufferSkipSelector  = FALSE;
+    
     return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// dealloc
+////////////////////////////////////////////////////////////////////////////////
+
+- (void) dealloc
+{
+    [self freeBufferMem];
+
+    if (pendingOutputBuffersLock) {
+        [pendingOutputBuffersLock   release];
+        [pendingOutputBuffers       release];
+        [processedOutputBuffersLock release];
+        [processedOutputBuffers     release];
+    }
+    if (pendingInputBuffersLock) {
+        [pendingInputBuffersLock    release];
+        [pendingInputBuffers        release];
+        [processedInputBuffersLock  release];
+        [processedInputBuffers      release];
+    }
+    
+    if (processorChain)
+        [processorChain release];
+        
+    if (synthThreadLock)
+        [synthThreadLock release];    
+    
+    if (manager)
+        [manager release];
+
+    [super dealloc];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// description
+////////////////////////////////////////////////////////////////////////////////
+
+- (NSString*) description
+{
+    return [NSString stringWithFormat: @"SndStreamClient %sactive, now %f, %s",
+        active ? " " : "not ", [self nowTime], needsInput ? "needs input" : "doesn't need input"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,16 +126,22 @@ enum {
 
 - freeBufferMem
 {
-    if (outputBuffer)
-        [outputBuffer release];
-    if (synthBuffer)
-        [synthBuffer  release];
-    if (inputBuffer)
-        [inputBuffer  release];
+    [pendingOutputBuffers removeAllObjects];
+    [processedOutputBuffers removeAllObjects];
+    if (synthOutputBuffer)
+        [synthOutputBuffer release];
+    
+    [pendingInputBuffers removeAllObjects];
+    [processedInputBuffers removeAllObjects];
+    if (synthInputBuffer)
+        [synthInputBuffer  release];
         
-    outputBuffer = nil;
-    synthBuffer  = nil;
-    inputBuffer  = nil;
+    if (exposedOutputBuffer)
+        [exposedOutputBuffer  release];
+        
+    exposedOutputBuffer = nil;
+    synthOutputBuffer   = nil;
+    synthInputBuffer    = nil;
     
     return self;
 }
@@ -99,11 +171,11 @@ enum {
 - setManager: (SndStreamManager*) m
 {
     if (!active) {
-        if (manager)
-            [manager release];
+//        if (manager)
+//            [manager release];
         manager = m;
-        if (manager != nil)
-            [manager retain];
+//        if (manager != nil)
+//            [manager retain];
     }
     else
         NSLog(@"SndStreamClient::setManager - Warn: Can't setManager whilst streaming!");
@@ -122,38 +194,6 @@ enum {
 - (BOOL) generatesOutput
 {
   return generatesOutput;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// dealloc
-////////////////////////////////////////////////////////////////////////////////
-
-- (void) dealloc
-{
-    [self freeBufferMem];
-
-    if (outputBufferLock)
-        [outputBufferLock release];
-    if (inputBufferLock)
-        [inputBufferLock release];
-    if (synthThreadLock)  
-        [synthThreadLock release];    
-    if (manager)
-        [manager release];
-    if (processorChain)
-        [processorChain release];
-
-    [super dealloc];
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// description
-////////////////////////////////////////////////////////////////////////////////
-
-- (NSString*) description
-{
-    return [NSString stringWithFormat: @"SndStreamClient %sactive, now %f, %s",
-        active ? " " : "not ", [self nowTime], needsInput ? "needs input" : "doesn't need input"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -184,17 +224,33 @@ enum {
 {
     // The client shouldn't be active when we are welcoming it with a new manager.
     if(!active) {
-        outputBuffer = buff;
-        [outputBuffer retain];
+        exposedOutputBuffer = buff;
+        [exposedOutputBuffer retain];
 
         if (needsInput) {
-            inputBuffer = [buff copy];
-            [inputBuffer retain];
+            int i;
+            [pendingOutputBuffersLock lock];
+            [pendingOutputBuffersLock unlockWithCondition: SC_noData];
+
+            [processedInputBuffersLock lock];
+            for (i = 0; i < numInputBuffers; i++) 
+              [processedInputBuffers addObject: [buff copy]];
+            [processedInputBuffersLock unlockWithCondition: SC_hasData];
+            
+            NSLog(@"Allocated %i input buffers",[processedInputBuffers count]);
         }
+
         if (generatesOutput) {
-            synthBuffer = [buff copy];
-            [synthBuffer retain];
+            int i;
+            [pendingOutputBuffersLock lock];
+            for (i = 0; i < numOutputBuffers - 1; i++)  
+              [pendingOutputBuffers addObject: [buff copy]];
+            [pendingOutputBuffersLock unlockWithCondition: SC_hasData];
+            
+            [processedOutputBuffersLock lock];
+            [processedOutputBuffersLock unlockWithCondition: SC_noData];
         }
+        
         [self prepareToStreamWithBuffer: buff];
         [self setManager: m];
 
@@ -217,9 +273,10 @@ enum {
 
 - startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) t
 {
-    BOOL gotLock = NO;
+//    BOOL gotLock = NO;
     nowTime = t;
 
+/*
     NS_DURING
     gotLock = [synthThreadLock tryLockWhenCondition: SC_bufferReady];
     NS_HANDLER
@@ -230,39 +287,87 @@ enum {
     }
     NS_ENDHANDLER
 
-    if( gotLock ) {
+    if(gotLock) {
+*/
         // swap the synth and output buffers, fire off next round of synthing
-        [outputBufferLock lock];
+        
+        if (generatesOutput)
         {
-            SndAudioBuffer *temp = synthBuffer;
-            synthBuffer          = outputBuffer;
-            outputBuffer         = temp;
+          int oc;
+//        NSLog(@"startprocessing: stage1");
+          [processedOutputBuffersLock lock];
+          oc = [processedOutputBuffers count];
+          [processedOutputBuffersLock unlock];
+          
+//          fprintf(stderr,"Got %i buffers in reserve\n",oc);
+          
+          if (oc > 0) {
+            [pendingOutputBuffersLock lock];
+            [pendingOutputBuffers addObject: exposedOutputBuffer];            
+            [exposedOutputBuffer release];
+            [pendingOutputBuffersLock unlockWithCondition: SC_hasData];
+              
+            [processedOutputBuffersLock lock];
+            exposedOutputBuffer = [[processedOutputBuffers objectAtIndex: 0] retain];
+            [processedOutputBuffers removeObjectAtIndex: 0];
+            [processedOutputBuffersLock unlock];
+//              NSLog(@"swapped buffers");
+          }
+          else if (bDelegateRespondsToOutputBufferSkipSelector)
+            [delegate outputBufferSkipped: self];
+          else {
+//            NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked?");
+          }    
+//          NSLog(@"startprocessing: stage2");
         }
-        [outputBufferLock unlock];
 
         // printf("startProcessingNextBufferWithInput nowTime = %f\n", t);
         if (needsInput) {
-            if (inB) {
-                if ([inputBufferLock tryLock]) {
-                    [inputBuffer copyData: inB];
-                    [inputBufferLock unlock];
-                }
-                else if ( delegate != nil && [delegate respondsToSelector: @selector(outputBufferSkipped)] )
-                    [delegate inputBufferSkipped: self];
-                else
-                    NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?");
-            }
-            else
-                NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n");
-        }
+          if (inB == nil)
+            NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n");
+          else {
+            int ic;          
+            [processedInputBuffersLock lock];
+            ic = [processedInputBuffers count];
+            [processedInputBuffersLock unlock];
+            
+            if (ic) {
+              SndAudioBuffer *inBloc = nil;
+              [processedInputBuffersLock lock];
+              inBloc = [[processedInputBuffers objectAtIndex: 0] retain];
+              [processedInputBuffers removeObjectAtIndex: 0];
+              [processedInputBuffersLock unlock];
 
+              [inBloc copyData: inB];
+                
+              [pendingInputBuffersLock lock];
+              [pendingInputBuffers addObject: inBloc];
+              [inBloc release];
+              [pendingInputBuffersLock unlockWithCondition: SC_hasData];
+            }
+            else if (bDelegateRespondsToInputBufferSkipSelector)
+              [delegate inputBufferSkipped: self];
+            else {
+//              NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?");
+            }
+          }
+        }
+/*
         [synthThreadLock unlockWithCondition: SC_processBuffer];
     }
+    
     else if ( delegate != nil && [delegate respondsToSelector: @selector(outputBufferSkipped)] )
         [delegate outputBufferSkipped: self];
-    else
+    else {
         NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked?");
-        
+    }    
+*/
+
+/*
+    fprintf(stderr,"Input: pending:%i processed:%i  Output: pending:%i processed:%i\n",
+            [pendingInputBuffers count],  [processedInputBuffers count],
+            [pendingOutputBuffers count], [processedOutputBuffers count]);
+*/
     return self;
 }
 
@@ -276,19 +381,46 @@ enum {
     active = TRUE;
     // NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
     while (active) {
-        [synthThreadLock lockWhenCondition: SC_processBuffer];
 
-        [synthBuffer zero];
-        //NSLog(@"SYNTH THREAD: going to processBuffers\n");
+        [synthThreadLock lock];
+
+        if (generatesOutput) {
+          [pendingOutputBuffersLock lockWhenCondition: SC_hasData];
+          synthOutputBuffer = [[[pendingOutputBuffers objectAtIndex: 0] retain] zero];
+          [pendingOutputBuffers removeObjectAtIndex: 0];
+          [pendingOutputBuffersLock unlockWithCondition: ([pendingOutputBuffers count] > 0 ? SC_hasData : SC_noData)];
+        }
+        if (needsInput) {
+          [pendingInputBuffersLock lockWhenCondition: SC_hasData];
+          synthInputBuffer = [[pendingInputBuffers objectAtIndex: 0] retain];
+          [pendingInputBuffers removeObjectAtIndex: 0];
+          [pendingInputBuffersLock unlockWithCondition: ([pendingInputBuffers count] > 0 ? SC_hasData : SC_noData)];
+        }
+//      NSLog(@"SYNTH THREAD: going to processBuffers\n");
+
         [self processBuffers];
-        //NSLog(@"SYNTH THREAD: ... done processBuffers\n");
-        [processorChain processBuffer: synthBuffer forTime:nowTime];
+
+//        NSLog(@"SYNTH THREAD: ... done processBuffers\n");
+        if (synthOutputBuffer != nil)
+          [processorChain processBuffer: synthOutputBuffer forTime: nowTime];
 
         if (processFinishedCallback != NULL)
-
             processFinishedCallback(); // SKoT: should this be a selector, hmm hmm...?
-
-        [synthThreadLock unlockWithCondition: SC_bufferReady];
+            
+        if (generatesOutput) {
+          [processedOutputBuffersLock lock];
+          [processedOutputBuffers addObject: synthOutputBuffer];
+          [synthOutputBuffer release];    
+          [processedOutputBuffersLock unlockWithCondition: SC_hasData];
+        }
+        if (needsInput) {
+          [processedInputBuffersLock lock];
+          [processedInputBuffers addObject: synthInputBuffer];
+          [synthInputBuffer release];    
+          [processedInputBuffersLock unlockWithCondition: SC_hasData];
+        }
+        
+        [synthThreadLock unlock];
     }
     [manager removeClient: self];
     [self setManager: nil];
@@ -364,25 +496,25 @@ enum {
 
 - (SndAudioBuffer*) outputBuffer
 {
-  return outputBuffer;
+  return exposedOutputBuffer;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // synthBuffer
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndAudioBuffer*) synthBuffer
+- (SndAudioBuffer*) synthOutputBuffer
 {
-  return synthBuffer;
+  return synthOutputBuffer;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // inputBuffer
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndAudioBuffer*) inputBuffer
+- (SndAudioBuffer*) synthInputBuffer
 {
-  return inputBuffer;
+  return synthInputBuffer;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -392,9 +524,9 @@ enum {
 - managerIsShuttingDown
 {
     // Need lock to make sure the synthesis thread is paused before shutting down!
-    [synthThreadLock lockWhenCondition:   SC_bufferReady ];
+    [synthThreadLock lock];
     active = FALSE;
-    [synthThreadLock unlockWithCondition: SC_processBuffer];
+    [synthThreadLock unlock];
     
     return self;
 }
@@ -432,29 +564,29 @@ enum {
 
 - lockOutputBuffer
 {
-  [outputBufferLock lock];
+  //[outputBufferLock lock];
   return self;
 }
 
 - unlockOutputBuffer
 {
-  [outputBufferLock unlock];
+  //[outputBufferLock unlock];
   return self;
 }
 
-////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 // Input buffer lock / unlock
 ////////////////////////////////////////////////////////////////////////////////
 
 - lockInputBuffer
 {
-  [inputBufferLock lock];
+//  [inputBufferLock lock];
   return self;
 }
 
 - unlockInputBuffer
 {
-  [inputBufferLock unlock];
+//  [inputBufferLock unlock];
   return self;
 }
 
@@ -474,12 +606,49 @@ enum {
 - setDelegate: (id) d
 {
   delegate = d;
+  bDelegateRespondsToOutputBufferSkipSelector = ( delegate != nil && 
+      [delegate respondsToSelector: @selector(outputBufferSkipped)] );
+  bDelegateRespondsToInputBufferSkipSelector  = ( delegate != nil &&
+      [delegate respondsToSelector: @selector(inputBufferSkipped)] );
+
   return self;
 }
 
 - (id) delegate
 {
   return delegate;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+- (int) inputBufferCount
+{
+  return numInputBuffers;
+}
+
+- (int) outputBufferCount
+{
+  return numOutputBuffers;
+}
+
+- (BOOL) setInputBufferCount: (int) n
+{
+  if (active)
+    return FALSE;
+  if (n < 2)
+    return FALSE;
+  numInputBuffers = n;
+  return TRUE;
+}
+
+- (BOOL) setOutputBufferCount: (int) n
+{
+  if (active)
+    return FALSE;
+  if (n < 2)
+    return FALSE;
+  numOutputBuffers = n;
+  return TRUE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

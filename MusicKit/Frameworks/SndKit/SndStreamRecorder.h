@@ -178,6 +178,9 @@
     @result     self
 */
 - didFinishRecording: sender;
+
+- (void) streamToDiskData: (void*) recData length: (long) bytesToRecord;
+
 @end
 
 #endif

@@ -92,6 +92,11 @@
 /*!
     @method stopPerformance:inFuture:
     @abstract Stop the given performance at some time in the future.
+    @discussion Stop the given performance at some time in the future by adjusting it's playback ending
+     (i.e sample accurate stopping for those into buzz-words). When the playback reaches the
+     new endAtTime, the stop delegate message will be fired off then and the performance removed from
+     the playing queue. If the request to stop precedes the start time, the performance is removed
+     from the toBePlayed queue.
     @param performance The SndPerformance instance to stop.
     @param inSeconds The future time interval when to stop playing.
     @result

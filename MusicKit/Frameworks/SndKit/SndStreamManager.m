@@ -29,7 +29,7 @@ static SndStreamManager *sm = nil;
 
 + (void) initialize
 {
-    sm = [SndStreamManager new];  // create our default
+    sm = [[SndStreamManager new] retain];  // create our default
 }
 
 ////////////////////////////////////////////////////////////////////////////////

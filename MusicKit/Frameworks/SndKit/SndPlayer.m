@@ -29,7 +29,7 @@
 
 + player
 {
-    SndPlayer *sp = [[SndPlayer alloc] init];
+    SndPlayer *sp = [SndPlayer new];
     return [sp autorelease];
 }
 
@@ -44,7 +44,7 @@
         toBePlayed = [[NSMutableArray arrayWithCapacity: 10] retain];
     if(playing == nil)
         playing    = [[NSMutableArray arrayWithCapacity: 10] retain];
-    playingLock = [[NSLock alloc] init];  // controls adding and removing sounds from the playing list.
+    playingLock = [NSLock new];  // controls adding and removing sounds from the playing list.
     return self;
 }
 
@@ -89,11 +89,6 @@
     return self;
 }
 
-// stop the given performance at some time in the future by adjusting it's playback ending
-// (i.e sample accurate stopping for those into buzz-words). When the playback reaches the
-// new endAtTime, the stop delegate message will be fired off then and the performance removed from
-// the playing queue. If the request to stop precedes the start time, the performance is removed
-// from the toBePlayed queue.
 - stopPerformance: (SndPerformance *) performance inFuture: (double) inSeconds
 {
     double whenToStop;
@@ -244,7 +239,7 @@
  
 - (void) processBuffers  
 {
-    SndAudioBuffer* ab   = [self synthBuffer];
+    SndAudioBuffer* ab   = [self synthOutputBuffer];
     double       bufferDur     = [ab duration];
 //    double       sampleRate    = [ab samplingRate];
     double       bufferEndTime = [self nowTime] + bufferDur;

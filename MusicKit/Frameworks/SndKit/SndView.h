@@ -105,6 +105,7 @@ NSScrollView.  */
 
 /*!
   @class SndView 
+  @discussion Test test
 */
 @interface SndView:NSView
 {

@@ -33,7 +33,7 @@
 {
   [super init];
   [self setNeedsInput: TRUE];
-  [self setGeneratesOutput: TRUE];  
+  [self setGeneratesOutput: FALSE];  
   
   return self;
 }
@@ -154,12 +154,12 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
   if ((recordFile = fopen([filename cString],"wb")) == NULL) 
     fprintf(stderr,"SndStreamRecorder::setupRecordFile - Error opening file '%s' for recording.\n",[filename cString]);
 
-  else if ([self synthBuffer] == nil)
+  else if ([self outputBuffer] == nil)
     fprintf(stderr,"SndStreamRecorder::setupRecordFile - Error: synthBuffer is nil.\n");
 
   else
   {
-    SndSoundStruct *format = [[self synthBuffer] format];
+    SndSoundStruct *format = [[self outputBuffer] format];
     if (format == nil) 
       fprintf(stderr,"SndStreamRecorder::setupRecordFile - Error: synthBuffer format is NULL.\n");
     
@@ -245,18 +245,19 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 ////////////////////////////////////////////////////////////////////////////////
 
 
-void streamToDisk(FILE *recordFile, void* recData, short* convBuffer, long bytesToRecord)
+- (void) streamToDiskData: (void*) recData length: (long) bytesToRecord
 {
     float *f = (float*) recData; 
     int    i, samsToConvert = bytesToRecord / sizeof(float);
 
     for (i = 0; i < samsToConvert; i++) {
-        char *p = (char*)(convBuffer + i); 
+        char *p = (char*)(conversionBuffer + i); 
         short s = (short)(f[i] * 32767.0f);
         p[0] = (char) (s & 0x00FF);
         p[1] = (char) ((s & 0xFF00) >> 8);
     }              
-    fwrite(convBuffer, samsToConvert, sizeof(short), recordFile);
+    fwrite(conversionBuffer, samsToConvert, sizeof(short), recordFile);
+    bytesRecorded += samsToConvert * sizeof(short);    
 }
 
 //static long buffCount = 0; 
@@ -267,11 +268,10 @@ void streamToDisk(FILE *recordFile, void* recData, short* convBuffer, long bytes
     if (bytesRecorded == 0 && position == 0)
       return;
   }
-  
-  [inputBufferLock lock];
+
   {
+    SndAudioBuffer *inB       = [self synthInputBuffer];  
     void *recData             = [recordBuffer data];
-    SndAudioBuffer *inB       = [self inputBuffer];
     void *inputData           = [inB data]; 
     long inBuffLengthInBytes  = [inB lengthInBytes];
     long recBuffLengthInBytes = [recordBuffer lengthInBytes];
@@ -297,16 +297,14 @@ void streamToDisk(FILE *recordFile, void* recData, short* convBuffer, long bytes
 
     position += length;
     
-    
-//    fprintf(stderr,"Processing... (pos: %li / %li  length: %li)\n",position,recBuffLengthInBytes,length);
-    
+      
     // have we filled a record buffer?
     if (position == recBuffLengthInBytes) {      
     
       if (recordFile != NULL) { // we are streaming to a file, and need to write to disk!
-        streamToDisk(recordFile, recData, conversionBuffer, recBuffLengthInBytes);
-        bytesRecorded += recBuffLengthInBytes * sizeof(short) / sizeof(float);
-      }
+        [self streamToDiskData: recData length: recBuffLengthInBytes];
+//        fprintf(stderr,"Processing... (pos: %li / %li  length: %li)\n",position,recBuffLengthInBytes,bytesRecorded);
+     }
       else {
         bytesRecorded += length;
         isRecording = FALSE;
@@ -317,20 +315,18 @@ void streamToDisk(FILE *recordFile, void* recData, short* convBuffer, long bytes
       memcpy(recData, inputData + length, remainder);
       position += remainder;
     }    
-  } // end of isRecording
-  [inputBufferLock unlock];
     
-  if (!isRecording) { // has record state changed? If so, shut down stuff.
-    if (recordFile != NULL) {
-      if (position > 0) { // flush out partial record buffer to disk
-        streamToDisk(recordFile, [recordBuffer data], conversionBuffer, position);
-        bytesRecorded += position; // final size calc - will be written into file.
-      }  
-      [self closeRecordFile];
-    }      
-    if (delegate != nil && [delegate respondsToSelector: @selector(didFinishRecording)]) 
-      [delegate didFinishRecording: self];
-  }
+    if (!isRecording) { // has record state changed? If so, shut down stuff.
+      if (recordFile != NULL) {
+        if (position > 0)  // flush out partial record buffer to disk
+          [self streamToDiskData: recData length: position];
+        
+        [self closeRecordFile];
+      }      
+      if (delegate != nil && [delegate respondsToSelector: @selector(didFinishRecording)]) 
+        [delegate didFinishRecording: self];
+    }
+  } // end of isRecording
 }
 
 ////////////////////////////////////////////////////////////////////////////////
