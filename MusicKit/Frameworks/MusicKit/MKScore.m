@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/09/04 22:02:18  leigh
+  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
+
   Revision 1.3  1999/08/06 00:38:10  leigh
   converted strtols to NSScanners
 
@@ -847,7 +850,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 	aNote = [MKGetNoteClass() new];
 	if ((fileFormatLevel == 0) && (i != 0))
 	  [aNote setPar:MK_midiChan toInt:i];
-	[aPart setInfo:aNote];
+	[aPart setInfoNote:aNote];
 	[self addPart:aPart];
 	*curPart++ = aPart;
     }
@@ -1363,7 +1366,7 @@ readScorefile(self,stream,firstTimeTag,lastTimeTag,timeShift,fileName)
     return self;
 }
 
--setInfo:aNote
+-setInfoNote:(MKNote *) aNote
   /* Sets info, overwriting any previous info. aNote is copied. The old info,
      if any, is freed. */
 {
@@ -1372,7 +1375,7 @@ readScorefile(self,stream,firstTimeTag,lastTimeTag,timeShift,fileName)
     return self;
 }
 
--infoNote
+- (MKNote *) infoNote
 {
     return info;
 }

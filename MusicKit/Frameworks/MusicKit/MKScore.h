@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.3  1999/09/04 22:02:18  leigh
+  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
+
   Revision 1.2  1999/07/29 01:25:49  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -246,13 +249,13 @@
 - copy;
  /* Returns [self copyFromZone:[self zone]] */
 
--setInfo:aNote;
+-setInfoNote:(MKNote *) aNote;
  /* 
    Sets the receiver's info Note to a copy of aNote.  The receiver's
    previous info Note is removed and freed.
    */
 
--infoNote;
+-(MKNote *) infoNote;
  /* 
    Returns the receiver's info Note.
    */

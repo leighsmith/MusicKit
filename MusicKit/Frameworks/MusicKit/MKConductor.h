@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.4  1999/09/04 22:02:17  leigh
+  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
+
   Revision 1.3  1999/08/06 16:31:12  leigh
   Removed extraInstances and implementation ivar cruft
 
@@ -16,7 +19,13 @@
 #define __MK_Conductor_H___
 
 #import <Foundation/NSObject.h>
-#import <mach/cthreads.h>
+#import <Foundation/NSArray.h>
+#import <Foundation/NSThread.h>  // LMS to be replaced with NSThread
+
+// Enforce C name mangling to allow linking MusicKit functions to C++ code
+#ifdef __cplusplus
+extern "C" {
+#endif
 
  /* The Conductor message structure.  All fields are private and
   * shouldn't be altered directly from an application. 
@@ -40,12 +49,12 @@ typedef struct _MKMsgStruct {
 #define MK_ENDOFTIME (6000000000.0) /* A long time, but not as long as NX_FOREVER */
 
 /* Time functions */
-extern double MKGetTime(void) ;
-extern double MKGetDeltaT(void);
-extern void MKSetDeltaT(double val);
-extern double MKGetDeltaTTime(void);
+extern double MKGetTime(void);           /* Returns the time in seconds. */
+extern double MKGetDeltaT(void);         /* Returns deltaT, in seconds. */
+extern void MKSetDeltaT(double val);     /* Sets deltaT, in seconds. */
+extern double MKGetDeltaTTime(void);     /* Returns deltaT + time, in seconds. */
 
-/* The following determines how deltaT is interpreted. */
+/* The following modes determine how deltaT is interpreted. */
 #define MK_DELTAT_DEVICE_LAG 0
 #define MK_DELTAT_SCHEDULER_ADVANCE 1
  
@@ -84,8 +93,8 @@ extern void MKFinishPerformance(void);
     BOOL isPaused;      /* YES if this instance is paused. 
                          * Note that pausing all Conductors through the pause factory
                          * method doesn't set this to YES. */
-    id delegate;       
-    id activePerformers;
+    id delegate;
+    NSMutableArray *activePerformers;
     id MTCSynch;
 
     /* Internal use only */
@@ -118,11 +127,13 @@ extern void MKFinishPerformance(void);
 + setFinishWhenEmpty:(BOOL)yesOrNo; 
 +(BOOL) isEmpty;
 +(BOOL) finishWhenEmpty;
++(void) setDeltaT: (double) newDeltaT;
++(double) deltaT;
 - copy;
 - copyWithZone:(NSZone *)zone;
 -(BOOL) isPaused; 
 - pause; 
--pauseFor:(double)seconds;
+- pauseFor:(double)seconds;
 - resume; 
 -(double) setBeatSize:(double)newBeatSize; 
 -(double) beatSize; 
@@ -151,7 +162,7 @@ extern void MKFinishPerformance(void);
 + unlockPerformance;
 + (BOOL)lockPerformanceNoBlock;
 + setThreadPriority:(float)priorityFactor;
-+ (cthread_t) performanceThread;
++ (NSThread *) performanceThread;
 +sendMsgToApplicationThreadSel:(SEL)aSelector 
   to:(id)toObject
   argCount:(int)argCount, ...;
@@ -166,5 +177,9 @@ extern void MKFinishPerformance(void);
 @end
 
 #import "MKConductorDelegate.h"
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

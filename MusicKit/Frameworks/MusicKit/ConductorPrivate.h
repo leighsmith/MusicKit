@@ -4,6 +4,9 @@
 */
 /*
   $Log$
+  Revision 1.3  1999/09/04 22:02:16  leigh
+  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
+
   Revision 1.2  1999/07/29 01:25:42  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -54,6 +57,7 @@ extern void _MKSendVMMsgToApplicationThread(id self,
 -(MKMsgStruct *)_rescheduleMsgRequest:(MKMsgStruct *)aMsgStructPtr
   atTime:(double)timeOfNewMsg sel:(SEL)whichSelector
   to:(id)destinationObject argCount:(int)argCount, ...;
++ (void) masterConductorBody:(NSTimer *) unusedTimer;
 
 @end
 

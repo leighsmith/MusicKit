@@ -1,25 +1,24 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. 
- * Intel support Copyright 1993-1995 CCRMA. 
- */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
-  */
 
-/* This is the allocater and manager of DSP resources. CF: UnitGenerator.m,
-   SynthPatch.m, SynthData.m and PatchTemplate.m. */ 
-   
+  Description:
+    This is the allocater and manager of DSP resources. 
+    CF: MKUnitGenerator.m, MKSynthPatch.m, MKSynthData.m and MKPatchTemplate.m.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
 /* 
 Modification history:
 
   $Log$
+  Revision 1.4  1999/09/04 22:02:18  leigh
+  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
+
   Revision 1.3  1999/08/06 16:55:09  leigh
   removed strcasecmp use (non-OpenStep)
 
@@ -768,7 +767,6 @@ static id synthInstruments = nil;
 
 -init
 {
-    NSString *s;
     int i;
     if (dspNumToOrch[orchIndex] == self) /* Already initialized */
       return self;
@@ -3989,9 +3987,9 @@ static BOOL driverPresent(unsigned short index)
        The reason I jump through hoops in this case and no other is that
        this is the only case where we call DPSClient functions from within
        the Music Kit in a separate threaded performance. */
-    cthread_t perfThread = [MKConductor performanceThread];
+    NSThread *perfThread = [MKConductor performanceThread];
     if (perfThread) {
-	if (perfThread == cthread_self()) 
+	if (perfThread == [NSThread currentThread]) 
 	    /* Forward msg to right thread */
 	    [MKConductor sendMsgToApplicationThreadSel:@selector(_adjustOrchTE:reset:)
 	   to:self argCount:2, yesOrNo, reset];

@@ -9,6 +9,9 @@
 */
 /*
   $Log$
+  Revision 1.3  1999/09/04 22:02:18  leigh
+  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
+
   Revision 1.2  1999/07/29 01:25:47  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -233,10 +236,10 @@ extern void MKSetPreemptDuration(double seconds);
 -(double ) computeTime; 
 - allocSynthPatch:aSynthPatchClass; 
 - allocSynthPatch:aSynthPatchClass patchTemplate:p; 
-- allocUnitGenerator:class; 
-- allocUnitGenerator:class before:aUnitGeneratorInstance; 
-- allocUnitGenerator:class after:aUnitGeneratorInstance; 
-- allocUnitGenerator:class between:aUnitGeneratorInstance :anotherUnitGeneratorInstance; 
+- allocUnitGenerator:aClass; 
+- allocUnitGenerator:aClass before:aUnitGeneratorInstance; 
+- allocUnitGenerator:aClass after:aUnitGeneratorInstance; 
+- allocUnitGenerator:aClass between:aUnitGeneratorInstance :anotherUnitGeneratorInstance; 
 - (char *)lastAllocationFailureString;
 - allocSynthData:(MKOrchMemSegment )segment length:(unsigned )size; 
 - allocModulusPatchpoint:(MKOrchMemSegment )segment;

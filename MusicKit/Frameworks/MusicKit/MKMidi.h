@@ -4,18 +4,18 @@
 
   Description: 
     The MKMidi object provides Midi input/output access. It emulates some of the
-    behavior of a Performer: It contains a List of NoteSenders, one per MIDI
+    behavior of a Performer: It contains a NSMutableArray of MKNoteSenders, one per MIDI
     channel (as well as an extra one for MIDI system and channel mode messages).
-    You can receive Notes derived from MIDI input by connecting an Instrument's
-    NoteReceivers to the NoteSenders of a Midi instance.
+    You can receive MKNotes derived from MIDI input by connecting an Instrument's
+    MKNoteReceivers to the MKNoteSenders of a MKMidi instance.
    
-    Similarly, Midi emulates some of the behavior of an Instrument: It contains
-    an array of NoteReceivers, one per MIDI channel (as well as the extra one).
-    You can send Notes to MIDI output by connecting a Performer's NoteSenders
-    to the NoteReceivers of a Midi instance.
+    Similarly, MKMidi emulates some of the behavior of an MKInstrument: It contains
+    an array of MKNoteReceivers, one per MIDI channel (as well as the extra one).
+    You can send MKNotes to MIDI output by connecting a MKPerformer's MKNoteSenders
+    to the MKNoteReceivers of a MKMidi instance.
    
-    However, the Midi object is unlike a Performer in that it represents a 
-    real-time  device. In this manner, Midi is somewhat like Orchestra, 
+    However, the MKMidi object is unlike a MKPerformer in that it represents a 
+    real-time  device. In this manner, MKMidi is somewhat like MKOrchestra, 
     which represents the DSP. The protocol for controlling Midi is the same 
     as that for the Orchestra. This protocol is described in the file 
     <MusicKit/MKDeviceStatus.h>.
@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.5  1999/09/04 22:02:17  leigh
+  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
+
   Revision 1.4  1999/08/26 19:55:21  leigh
   extra documentation
 

@@ -8,7 +8,7 @@
     performer, however, in that it responds not to messages sent by a
     conductor, but by midi input which arives through the serial port.
 
-    Note that the Conductor must be clocked to use MKMidi.
+    Note that the MKConductor must be clocked to use MKMidi.
 
   Original Author: David A. Jaffe
 
@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  1999/09/04 22:02:17  leigh
+  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
+
   Revision 1.4  1999/08/26 19:54:54  leigh
   Code cleanup, Win32 clock support
 
@@ -81,7 +84,7 @@ Modification history:
   09/7/94/daj -  Updated to not use libsys functions.
   10/31/98/lms - Major reorganization for OpenStep conventions, allocation and classes.
 */
-/*sb: moved these to here from inside Midi class definition */
+/*sb: moved these to here from inside MKMidi class definition */
 #import <objc/HashTable.h>
 #import <mach/mach_error.h>
 #import <servers/netname.h>
@@ -97,7 +100,7 @@ Modification history:
 
 #import <mach/mach_init.h>
 // #import <midi_driver_compatability.h> // LMS obsolete
-#import "midi_driver.h"   
+#import <MKPerformMIDI/midi_driver.h>
 #import <AppKit/dpsclient.h>
 #import <AppKit/NSDPSContext.h>
 
@@ -226,7 +229,7 @@ static double mtcTimeOffset = 0;
 static int tearDownMTC(MKMidi *self);
 static int setUpMTC(MKMidi *self);
 
-+ (NSMutableArray *) midisOnHost: (NSString *) hostname otherThanUnit: (int) unit
++ (NSMutableArray *) midisOnHost: (NSString *) midiHostname otherThanUnit: (int) midiUnit
     /* This method searches for any other Midi objects on hostname
      * NOT matching the specified unit.
      */
@@ -237,7 +240,7 @@ static int setUpMTC(MKMidi *self);
     // which has the port as the key
     NSEnumerator *enumerator = [portTable objectEnumerator];
     while ((midiObj = [enumerator nextObject])) {
-        if ([midiObj->hostname isEqualToString: hostname] && (midiObj->unit != unit))
+        if ([midiObj->hostname isEqualToString: midiHostname] && (midiObj->unit != midiUnit))
             [aList addObject:midiObj];
     }
     return aList;
@@ -1056,7 +1059,7 @@ static BOOL initDriverKitBasedMIDIs(void)
     for (i = 0; i < [installedDrivers count]; i++) {
         aConfigTable = [installedDrivers objectAt:i]; 	/* Each driver */
         familyStr = [aConfigTable valueForStringKey:"Family"];
-//        fprintf(stderr, "%s\n", [aConfigTable valueForStringKey: "Driver Name"]);
+//        NSLog(@"%s\n", [aConfigTable valueForStringKey: "Driver Name"]);
         if(familyStr != NULL) {
           if (!strcmp(familyStr,"MIDI"))
 	    [midiDriverList addObject:aConfigTable];
@@ -1222,7 +1225,6 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName,NSString **midiDevS
 #endif
     hostAndDevName = [hostName stringByAppendingString: devName];
     if ((obj = [portTable objectForKey: hostAndDevName]) == nil) {         // Doesn't already exist
-//        _MK_CALLOC(self->_extraVars,extraInstanceVars,1);
         self->hostname = [hostName copy];
         self->tvs = getTimeInfoFromHost(hostName);
         self->midiDev = [devName retain];

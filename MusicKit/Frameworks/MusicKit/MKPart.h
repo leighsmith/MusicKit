@@ -6,6 +6,9 @@
 */
 /*
   $Log$
+  Revision 1.3  1999/09/04 22:02:18  leigh
+  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
+
   Revision 1.2  1999/07/29 01:25:47  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -66,7 +69,7 @@
 - notes;
 - score; 
 - (MKNote *) infoNote; 
-- setInfo:aNote; 
+- setInfoNote:(MKNote *) aNote;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 //- awake;

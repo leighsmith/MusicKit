@@ -1,19 +1,97 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
+  Defined In: The MusicKit
+
+  Description:
+    A MKPart is a time-ordered collection of MKNotes that can be edited,
+    performed, and realized.
+   
+    One or more MKParts can be grouped together in a MKScore.
+   
+    Editing a MKPart refers generally to adding and removing MKNotes,
+    not to changing the contents of the MKNotes themselves (although
+    some methods do both; see splitNotes and combineNotes).
+    MKNotes are ordered within the MKPart by their timeTag values.
+    To move a MKNote within
+    a MKPart, you simply change its timeTag by sending it the appropriate
+    message (see the Note class).  This effectively removes the MKNote
+    from its MKPart, changes the timeTag, and then adds it back to its MKPart.
+   
+    A MKPart can be performed using a MKPartPerformer and can 'record' notes
+    by using a MKPartRecorder. You must not free a MKPart or any of the MKNotes
+    in a MKPart while there are any MKPartPerformers using the MKPart. It is ok
+    to record to a part and perform that part at the same time because the
+    MKPartPerformer takes a snap-shot of the MKPart when the MKPartPerformer
+    is activated.
+
+    The MKNotes in a MKPart are stored in a List object. The List is only sorted
+    when necessary. In particular, the List is sorted, if necessary, when an
+    access method is invoked. The access methods are:
+   
+      - firstTimeTag:(double)firstTimeTag lastTimeTag:(double)lastTimeTag;
+      - atTime:(double )timeTag;
+      - atOrAfterTime:(double )timeTag;
+      - nth:(unsigned )n;
+      - atOrAfterTime:(double )timeTag nth:(unsigned )n;
+      - atTime:(double )timeTag nth:(unsigned )n;
+      - next:aNote;
+      - notes;
+   
+    Other methods that cause a sort, if necessary, are:
+   
+      - combineNotes;
+      - removeNotes:aList;
+      - removeNote:aNote;
+
+    Methods that may alter the List such that its MKNotes are no longer sorted are
+    the following:
+   
+      - addNoteCopies:aList timeShift:(double )shift;
+      - addNotes:aList timeShift:(double )shift;
+      - addNote:aNote;
+      - addNoteCopy:aNote;
+      - splitNotes
+   
+    This scheme works well for most cases. However, there are situations where
+    it can be problematic. For example:
+   
+      for (i=0; i<100; i++) {
+        [aPart addNote:anArray[i]];
+        [aPart removeNote:anotherArray[i]];
+      }
+
+    In this case, the MKPart will be sorted each time removeNote: is called,
+    causing N-squared behavior. You can get around this by first adding all the
+    notes using addNotes: and then removing all the notes using removeNotes:.
+   
+    In some cases, you may find it most convenient to
+    remove the MKNotes from the MKPart, modify them in your own
+    data structure, and then reinsert them into the MKPart.
+   
+    You can explicitly trigger a sort (if needed) by sending the -sort message.
+    This is useful if you ever subclass MKPart.
+   
+    To get a sorted copy of the List of notes use the -notes method.
+    To get the List of notes itself, use the -notesNoCopy method.
+      -notesNoCopy does not guarantee the MKNotes are sorted.
+    If you want to examine the MKNotes in-place sorted, first send -sort, then
+      -notesNoCopy.
+   
+    You can find out if the List is currently sorted by the -isSorted method.
+   
   Original Author: David A. Jaffe
   
-  Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/09/04 22:02:18  leigh
+  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
+
   Revision 1.2  1999/07/29 01:16:39  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -35,84 +113,6 @@ Modification history:
 
 
 @implementation MKPart: NSObject
-/* A Part is a time-ordered collection of Notes that can be edited,
- * performed, and realized.
- *
- * One or more Parts can be grouped together in a Score.  
- *
- * Editing a Part refers generally to adding and removing Notes, 
- * not to changing
- * the contents of the Notes themselves (although some methods
- * do both; see \fBsplitNotes\fR and \fBcombineNotes\fR).
- * Notes are ordered within the Part by their timeTag values.  
- * To move a Note within
- * a Part, you simply change its timeTag by sending it the appropriate
- * message (see the Note class).  This effectively removes the Note
- * from its Part, changes the timeTag, and then adds it back to its Part.
- * 
- * A Part can be performed using a PartPerformer and can 'record' notes
- * by using a PartRecorder. You must not free a Part or any of the Notes 
- * in a Part while there are any PartPerformers using the Part. It is ok
- * to record to a part and perform that part at the same time because the 
- * PartPerformer takes a snap-shot of the Part when the PartPerformer 
- * is activated.
- *
- * The Notes in a Part are stored in a List object. The List is only sorted
- * when necessary. In particular, the List is sorted, if necessary, when an 
- * access method is invoked. The access methods are:
- * 
- * * - firstTimeTag:(double)firstTimeTag lastTimeTag:(double)lastTimeTag;
- * * - atTime:(double )timeTag; 
- * * - atOrAfterTime:(double )timeTag; 
- * * - nth:(unsigned )n; 
- * * - atOrAfterTime:(double )timeTag nth:(unsigned )n; 
- * * - atTime:(double )timeTag nth:(unsigned )n; 
- * * - next:aNote; 
- * * - notes;
- * 
- * Other methods that cause a sort, if necessary, are:
- * 
- * * - combineNotes;
- * * - removeNotes:aList;
- * * - removeNote:aNote; 
- * 
- * Methods that may alter the List such that its Notes are no longer sorted are
- * the following:
- * 
- * * - addNoteCopies:aList timeShift:(double )shift; 
- * * - addNotes:aList timeShift:(double )shift; 
- * * - addNote:aNote; 
- * * - addNoteCopy:aNote; 
- * * - splitNotes
- * 
- * This scheme works well for most cases. However, there are situations where
- * it can be problematic. For example:
- *
- * * for (i=0; i<100; i++) {
- * * [aPart addNote:anArray[i]];
- * * [aPart removeNote:anotherArray[i]];
- * * }
- *
- * In this case, the Part will be sorted each time removeNote: is called, 
- * causing N-squared behavior. You can get around this by first adding all the 
- * notes using addNotes: and then removing all the notes using removeNotes:.  
- * 
- * In some cases, you may find it most convenient to 
- * remove the Notes from the Part, modify them in your own 
- * data structure, and then reinsert them into the Part. 
- * 
- * You can explicitly trigger a sort (if needed) by sending the -sort message.
- * This is useful if you ever subclass Part.
- * 
- * To get a sorted copy of the List of notes use the -notes method.
- * To get the List of notes itself, use the -notesNoCopy method. 
- * -notesNoCopy does not guarantee the Notes are sorted.
- * If you want to examine the Notes in-place sorted, first send -sort, then
- * -notesNoCopy.
- * 
- * You can find out if the List is currently sorted by the -isSorted method.
- * 
- */
 
 #define VERSION2 2
 
@@ -120,7 +120,6 @@ Modification history:
 {
     if (self != [MKPart class])
       return;
-//    [self setVersion:VERSION2];
     [MKPart setVersion:VERSION2];//sb: suggested by Stone conversion guide
     return;
 }
@@ -999,7 +998,8 @@ static void removeNote(MKPart *self, MKNote *aNote)
 {
     sortIfNeeded(self);
 //    return [notes copy];  // LMS at the moment this stops problems with overly freed objects.
-    return _MKLightweightArrayCopy(notes); // LMS this should be (I think) the final version.
+//    return _MKLightweightArrayCopy(notes); // LMS this should be (I think) the final version.
+    return [notes mutableCopy];  // Joerg reports this is needed to produce a mutable deep copy.
 }
 
 -score  
@@ -1019,7 +1019,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
     return info;
 }
 
--setInfo:aNote
+-setInfoNote:(MKNote *) aNote
   /* Sets 'header note', a collection of info associated with each Part,
      which may be used by the App in any way it wants. aNote is copied. 
      The old info, if any, is freed. */ 
@@ -1069,7 +1069,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
         tagTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
         [self _mapTags:tagTable];
         [tagTable release];
-	}
+    }
 }
 
 //- awake
