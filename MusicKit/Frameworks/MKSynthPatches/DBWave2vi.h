@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2001/09/09 00:26:50  leighsmith
+  Removed crufty reference to TimbreDataBase.rtf
+
   Revision 1.3  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -22,8 +25,7 @@
   @class DBWave2vi
   @discussion
 
-<b>DBWave2vi</b> is a double interpolating oscillator wavetable synthesis SynthPatch with dynamic envelope-driven interpolation between the two oscillators, amplitude and frequency envelopes.    It supports the Timbre Data Base (see <b>TimbreDataBase.rtf.</b>)
-
+<b>DBWave2vi</b> is a double interpolating oscillator wavetable synthesis MKSynthPatch with dynamic envelope-driven interpolation between the two oscillators, amplitude and frequency envelopes.
 Although <b>DBWave2vi</b> does not inherit from any other wavetable synthesis class, it is similar to <b>DBWave1vi</b>, except that there are two oscillators doing the synthesis.  
 
 The Timbre Data Base is a set of spectra derived from recordings of
@@ -67,7 +69,7 @@ appropriate envelopes, attack/decay values and vibrato must be used.
 
 <img src="Images/Wave2vi.gif">
 
-When using this SynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the SynthPatch.
+When using this MKSynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the MKSynthPatch.
 
 <h2>Parameter Interpretation</h2>
 
