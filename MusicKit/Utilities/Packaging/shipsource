@@ -40,10 +40,6 @@ cp Documentation/ChangeLog $TARLOC
 
 # create a readily reable copy of the MusicKit_README.sgml file
 # Unfortunately, the SGML tools don't work on MOXS, so we suffice by copying them...
-#cd 
-#db2dvi MusicKit_README.sgml
-#dvips -o MusicKit_README_intermediate.ps MusicKit_README.dvi
-#psprepare MusicKit_README_intermediate.ps MusicKit_README.ps
 cp ~/MusicKit_README.pdf $APPCHECKEDOUT_SRCLOC/$APPNAME
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
