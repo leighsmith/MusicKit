@@ -77,6 +77,11 @@
 Modification history:
 
   $Log$
+  Revision 1.37  2001/05/12 09:13:45  sbrandon
+  - changed mach_port_t to MKMDReplyPort, as this fits in with the types used
+    on GNUSTEP. This may break MacOSX.
+  - changed KERN_SUCCESS to MKMD_SUCCESS. Need to check this is ok on MacOSX.
+
   Revision 1.36  2001/03/30 23:05:43  leighsmith
   Enabled multiple ports (midi1, midi2 etc) to connect to the MKMD routines
 
@@ -956,7 +961,11 @@ static int incomingDataCount = 0; /* We use a static here to allow us to
 
 // my_data_reply manages the incoming MIDI events. It is called from MKMDHandleReply.
 // It may be called multiple times successively with events from the MKMDHandleReply mechanism.
-static void my_data_reply(mach_port_t reply_port, short unit, MKMDRawEvent *events, unsigned int count) {
+/* MOD: sbrandon, 10/05/2001
+ * changed mach_port_t to MKMDReplyPort, as this fits in with the types used
+ * on GNUSTEP. This may break MacOSX.
+ */
+static void my_data_reply(MKMDReplyPort reply_port, short unit, MKMDRawEvent *events, unsigned int count) {
     _MKMidiInStruct *ptr;
     MKNote *aNote;
     unsigned char statusByte;
@@ -1398,7 +1407,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
 
 static id openMidi(MKMidi *self)
 {
-    if (openMidiDev(self) != KERN_SUCCESS)
+    if (openMidiDev(self) != MKMD_SUCCESS)
         return nil;
     if (INPUTENABLED(self->ioMode)) {
         if (!(self->_pIn = (void *)_MKInitMidiIn()))
