@@ -1953,36 +1953,18 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
 - (void)play:sender
 {
-
-#ifdef macosx
-
-  int beginSample = (int)((float)NSMinX(selectionRect) + 0.1);
-  int sampleCount = (int)((float)NSWidth(selectionRect) + 0.1);
-
-  if (NSWidth(selectionRect) < 0.1)
-    [sound play:self];
-
-  else
-    [sound play:self beginSample:beginSample sampleCount:sampleCount];
-
-  return;
-
-#else
+    int beginSample = (int)((float)NSMinX(selectionRect) + 0.1);
+    int sampleCount = (int)((float)NSWidth(selectionRect) + 0.1);
 
     [self stop:self];
-    if (!_scratchSound) {
-        _scratchSound = [[Snd alloc] init];
-        [_scratchSound setDelegate:self];
-    }
-    if (NSWidth(selectionRect) < 0.1) {
-        [_scratchSound copySound:sound];
-        }
-    else [_scratchSound copySamples:sound at:(int)((float)NSMinX(selectionRect) + 0.1)
-            count:(int)((float)NSWidth(selectionRect) + 0.1)];
-    [_scratchSound play:self];
-    return;
-#endif
+    [sound setDelegate:self];
+
+    if (NSWidth(selectionRect) < 0.1)
+        [sound play:self];    
+    else
+        [sound play:self beginSample:beginSample sampleCount:sampleCount];
 }
+
 - (void)pause:sender
 {
     int stat;
