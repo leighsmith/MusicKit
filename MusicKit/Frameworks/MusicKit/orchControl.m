@@ -2,7 +2,9 @@
   $Id$
   Defined In: The MusicKit
 
-  Description: This is imported as source by Orchestra.m.
+  Description:
+    This is imported as source by MKOrchestra.m.
+    It contains the methods -open, -stop, -run, -close and -abort:
 
   Original Author: David Jaffe
 
@@ -14,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/01/19 19:55:07  leigh
+  Replaced mach port based millisecond timing with NSThread approach
+
   Revision 1.2  1999/07/29 01:26:13  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -92,9 +97,8 @@ Modification history:
 #import <mach/message.h>
 #import <mach/mach_error.h>
 #import <dsp/dsp_memory_map.h>
-#import "MKOrchestra.h" /*these 2 added by sb */
-//#import <objc/objc.h> //sb removed ...?
 #import <Foundation/NSDate.h>
+#import "MKOrchestra.h" /*these 2 added by sb */
 
 
 #define SOFTREOPEN 0  /* Set to 1 to NOT do a DSPClose/MKInit on re-open. */
@@ -197,10 +201,6 @@ static void startSoundAndFillBuffers(MKOrchestra *self)
 #   define TIMETOWAIT 100 /* milliseconds */
     /* Copied from sleep.c. */
     enum {before,after,notAtAll} doSerialSetup;
-    port_t aPort;
-    struct {
-        msg_header_t header;
-    } null_msg;
 #if USEFREEZE
     DSPMKPauseSoundOut();
 #endif
@@ -236,12 +236,7 @@ static void startSoundAndFillBuffers(MKOrchestra *self)
 	    [self->serialPortDevice unMuteSerialPort: self]; 
     }
     if (self->hostSoundOut) {
-	if (port_allocate(task_self(),&aPort) != KERN_SUCCESS)
-	  return;
-	null_msg.header.msg_local_port = aPort;
-	null_msg.header.msg_size = sizeof(null_msg);
-	(void)msg_receive((msg_header_t *)&null_msg, RCV_TIMEOUT, TIMETOWAIT);
-	(void)port_deallocate(task_self(),aPort);
+        [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:(TIMETOWAIT)/1000.0]];
     }
 }
 

@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/01/19 19:56:42  leigh
+  Replaced mach port based millisecond timing with NSThread approach
+
   Revision 1.2  1999/07/29 01:26:09  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -97,34 +100,20 @@ static BOOL mtcEndOfTime(void)
     return ISENDOFTIME(theMTCCond->nextMsgTime);
 }
 
-static void msWait(int ms)
-    
-{
-    port_t aPort;
-    struct {
-        msg_header_t header;
-    } null_msg;
-    if (port_allocate(task_self(),&aPort) != KERN_SUCCESS)
-      return;
-    null_msg.header.msg_local_port = aPort;
-    null_msg.header.msg_size = sizeof(null_msg);
-    (void)msg_receive((msg_header_t *)&null_msg, RCV_TIMEOUT, ms);
-    (void)port_deallocate(task_self(),aPort);
-}
-
 static BOOL startMTC(MKConductor *self,BOOL shouldSeek)
 {
-    msWait(1000 * 2/24.0);  /* This gross hack is to work around a bug in the MIDI
-			     * driver.  There's NO WAY to know when time is valid.
-			     * And in the case where there's no full message, the
-			     * exception can come when time is still bogus.
-			     * So we wait for 2 frames to go by at the slowest
-			     * frame rate (since it takes 8 quarter frame messages
-			     * to set the time.)  This is about 83 ms. 
-			     * Maybe a better way would be to queue up a message
-			     * with the conductor.  But then we'd have to worry
-			     * about MTC stopping in the interim.
-			     */
+    /* This gross hack is to work around a bug in the MIDI
+     * driver.  There's NO WAY to know when time is valid.
+     * And in the case where there's no full message, the
+     * exception can come when time is still bogus.
+     * So we wait for 2 frames to go by at the slowest
+     * frame rate (since it takes 8 quarter frame messages
+     * to set the time.)  This is about 83 ms.
+     * Maybe a better way would be to queue up a message
+     * with the conductor.  But then we'd have to worry
+     * about MTC stopping in the interim.
+     */
+    [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:(1000 * 2/24.0)/1000.0]];
     adjustTime();
     sysTime = getTime();
     MTCTime = [self->MTCSynch _time];
