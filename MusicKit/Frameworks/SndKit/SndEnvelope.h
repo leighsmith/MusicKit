@@ -17,6 +17,8 @@
 #import <Foundation/Foundation.h>
 #import "SndBreakpoint.h"
 
+#define BP_NOT_FOUND (-1)
+
 /*!
   @protocol   SndEnveloping
   @abstract   declare formal protocol for objects to be used as envelopes
