@@ -182,11 +182,12 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
     double localDeltaT;                  /*! @var localDeltaT Offset added to MIDI-out time stamps.(see below) */
 
 @private
-    unsigned _ignoreBits;
+    /* systemIgnoreBits A bit map indicating which MIDI system messages to ignore from input */
+    unsigned int systemIgnoreBits;
     _MKMidiInStruct *_pIn;               // determines input source
     _MKMidiOutStruct *_pOut;             // determines output sink
-    double _timeOffset;
-    enum {MKMidiInputOnly, MKMidiOutputOnly, MKMidiInputOutput} ioMode; 
+    double timeOffset;
+    enum MKMidiDirection {MKMidiInputOnly, MKMidiOutputOnly, MKMidiInputOutput} ioMode; 
     BOOL isOwner;
     // These are handles used to identify the MIDI communication channel.
     // We pretend they are Mach ports even though they function only as references.
@@ -196,7 +197,10 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
     NSMachPort *queuePort;       // Port on which we notify when there is space on the playback queue.
     BOOL mergeInput;
     NSString *hostname;          // for MIDI communicated across hosts.
-    int unit;
+    /* inputUnit The index into the input drivers list */
+    int inputUnit;
+    /* outputUnit The index into the output drivers list */
+    int outputUnit;
     int queueSize;
     MKConductor *conductor;      // Used by conductor and setConductor: methods
     // MIDI Time Code (MTC):
@@ -669,39 +673,28 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
 /*!
   @method getDriverNames
   @result Returns an NSArray instance.
-  @discussion Returns the array all available driver names and their
-              unit numbers added to the system.  The arrays and
-              strings are copied and autoreleased.
-              
-              Note that the ordering in the array bears no
-              relationship to the ordering of the Mididriver units.
-              Similarly, there may be more elements in the arrays than
-              there are MIDI cards enabled in the user's defaults data
-              base.  To find out which MIDI cards are actually
-              enabled, do the following:
-              	
- <tt>
- int i;
- id obj;	
- char s[10];	
- for (i=0; i&lt;MK_MAXMIDIS; i++) { 	
- 	  sprintf(s,"midi%d",i);	
- 	  obj = [MKMidi newOnDevice:s];	
- 	  if (!obj)	
-  	     fprintf(stderr,"No Midi driver for unit %dn",i);	
- 	  else	
- 	     fprintf(stderr,"MIDI%d == %s%dn",i,[obj driverName],[obj driverUnit]);	
- }
-</tt>
+  @abstract Returns an array of all available bidirectional driver names added to the system.
+  @discussion The arrays and strings are copied and autoreleased. Only those drivers which support
+              both output and input are returned. To return additional drivers which may support only
+              input or output, use +<b>getDriverNamesForInput:</b>.
 */
 + (NSArray *) getDriverNames;
 
 /*!
-  @method getDriverUnits
-  @result Returns a NSArray instance.
-  @discussion Returns the array of driver unit numbers added to the system.
-*/
-+ (NSArray *) getDriverUnits;
+  @method getDriverNamesForInput
+  @result Returns an NSArray instance.
+  @abstract Returns an array of all available driver names for input.
+  @discussion This list may include drivers that are also available for output and those drivers which are for input only.
+ */
++ (NSArray *) getDriverNamesForInput;
+
+/*!
+  @method getDriverNamesForOutput
+  @result Returns an NSArray instance.
+  @abstract Returns an array of all available driver names for output.
+  @discussion This list may include drivers that are also available for input and those drivers which are for output only.
+ */
++ (NSArray *) getDriverNamesForOutput;
 
 /*!
   @method driverName
@@ -709,13 +702,6 @@ See <b>Administration/MidiHardwareInfo.rtf</b>
   @discussion Returns the name of the MIDI driver associated with this instance of MKMidi.
 */
 - (NSString *) driverName;
-
-/*!
-  @method driverUnit
-  @result Returns an int.
-  @discussion Returns the unit associated with this instance of MKMidi.
-*/
-- (int) driverUnit;
 
 /*!
     @method description
