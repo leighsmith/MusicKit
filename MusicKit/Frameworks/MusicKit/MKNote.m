@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2001/01/31 21:42:06  leigh
+  Added assertion checking intermittent problem with _parameters becoming NULL
+
   Revision 1.11  2001/01/24 21:58:51  skot
   Added note adjustment methods setEndTime, setTimeTagPreserveEndTime
 
@@ -283,6 +286,7 @@ static NSHashTable *freeHashTable(NSHashTable *tab)
 }
 
 static _MKParameter *dummyPar = NULL;
+static void *parHashResult;
 static id noteClass = nil;
 
 #define VERSION2 2
@@ -477,8 +481,6 @@ static int nAppBitVects(); /* forward ref */
       return self;
     return nil;
 }
-
-static double getNoteDur(MKNote *aNote);
 
 
 
@@ -710,24 +712,24 @@ int _MKNoteCompare(const void *el1,const void *el2)
     if (value < 0)
       return MK_NODVAL;
     noteType = MK_noteDur;
-    setDoublePar(self,_MK_dur,value);
+    setDoublePar(self, _MK_dur, value);
     return value;
 }
 
 void _MKSetNoteDur(MKNote *aNote, double dur)
 {
     aNote->noteType = MK_noteDur;
-    setDoublePar(aNote,_MK_dur,dur);
+    setDoublePar(aNote, _MK_dur, dur);
 }
 
 static double getNoteDur(MKNote *aNote)
 {
     switch (aNote->noteType) {
-      case MK_mute:
-	return MKGetNoteParAsDouble(aNote,MK_restDur);
-      case MK_noteDur:
-	return MKGetNoteParAsDouble(aNote,_MK_dur);
-      default:
+    case MK_mute:
+	return MKGetNoteParAsDouble(aNote, MK_restDur);
+    case MK_noteDur:
+	return MKGetNoteParAsDouble(aNote, _MK_dur);
+    default:
 	break;
     }
     return MK_NODVAL;
@@ -749,40 +751,37 @@ static double getNoteDur(MKNote *aNote)
   */
 {
     switch (noteType) {
-        case MK_noteDur: {
-            double oldEndTime = getNoteEndTime(self);
-            if (newEndTime > timeTag) {
-                [self setDur: newEndTime - timeTag];
-            }
-            return oldEndTime;
+    case MK_noteDur: {
+        double oldEndTime = getNoteEndTime(self);
+        if (newEndTime > timeTag) {
+            [self setDur: newEndTime - timeTag];
         }
-        default:
-            break;
+        return oldEndTime;
+    }
+    default:
+        break;
     }
     return MK_NODVAL;
 }
-
-
-// getNoteEndTime
-// SKoT: Added 4 Oct 2000
 
 static double getNoteEndTime(MKNote *aNote)
 {
     switch (aNote->noteType) {
-        case MK_mute:
-            return MKGetNoteParAsDouble(aNote,MK_restDur) + aNote->timeTag;
-        case MK_noteDur:
-            return MKGetNoteParAsDouble(aNote,_MK_dur) + aNote->timeTag;
-        default:
-            break;
+    case MK_mute:
+        return MKGetNoteParAsDouble(aNote,MK_restDur) + aNote->timeTag;
+    case MK_noteDur:
+        return MKGetNoteParAsDouble(aNote,_MK_dur) + aNote->timeTag;
+    default:
+        break;
     }
     return MK_NODVAL;
 }
 
-// endTime
-// SKoT: Added 4 Oct 2000
-
 - (double) endTime
+   /* TYPE: Timing; Returns the receivers time of conclusion (determined from duration).
+    * Returns the receiver's end time, or MK_NODVAL if
+    * it isn't set or if the receiver noteType isn't MK_noteDur.
+    */
 {
     return getNoteEndTime(self);
 }
@@ -870,17 +869,18 @@ BOOL _MKIsPrivatePar(unsigned aPar)
 static BOOL isParPresent(MKNote *aNote, unsigned aPar)
     /* Returns whether or not param is present. ANote is assumed to be a MKNote object. */
 {
-    if (aPar <= MK_noPar) return NO; /* Added by Nick 3/8/95 to stop a SB bug */
-
+    if (aPar <= MK_noPar)
+        return NO; /* Added by Nick 3/8/95 to stop a SB bug */
     if (!aNote->_parameters)
-      return NO;
+        return NO;
     if (_ISMKPAR(aPar))
-      return ((aNote->_mkPars[aPar / BITS_PER_INT] & (1 << (aPar % BITS_PER_INT))) != 0);
+        return ((aNote->_mkPars[aPar / BITS_PER_INT] & (1 << (aPar % BITS_PER_INT))) != 0);
     else if (aNote->_highAppPar != 0)
-      return ((aPar <= aNote->_highAppPar) && 
+        return ((aPar <= aNote->_highAppPar) && 
             ((aNote->_appPars[aPar / BITS_PER_INT - MK_MKPARBITVECTS] &
-             (1 << (aPar % BITS_PER_INT))) != 0));
-    else return NO;    
+            (1 << (aPar % BITS_PER_INT))) != 0));
+    else
+        return NO;    
 }
 
 static int nAppBitVects(self)
@@ -1014,7 +1014,7 @@ id MKSetNoteParToEnvelope(MKNote *aNote,int par,id envObj)
 id MKSetNoteParToWaveTable(MKNote *aNote,int par,id waveObj)
 {
     if (!_MKIsPar(par))
-      return nil;
+        return nil;
     return setObjPar(aNote,par,waveObj,MK_waveTable);
 }
 
@@ -1032,7 +1032,7 @@ id MKSetNoteParToWaveTable(MKNote *aNote,int par,id waveObj)
 id MKSetNoteParToObject(MKNote *aNote,int par,id anObj)
 {
     if (!_MKIsPar(par))
-      return nil;
+        return nil;
     return setObjPar(aNote,par,anObj,MK_object);
 }
 
@@ -1061,17 +1061,17 @@ id MKSetNoteParToObject(MKNote *aNote,int par,id anObj)
 
 // While it might be faster to just do the hash here, rather than calling isParPresent,
 // isParPresent simply checks for a bit set, NSHashGet probably needs to do more than that.
-// Add this in below SETDUMMYPAR for debugging GETPAR.
-// NSLog(@"parNum = %d, parameters = %x\n", dummyPar->parNum, self->_parameters); \
-
-#define GETPAR(self,_getFun,_noVal) \
-if (!self || !isParPresent(self,par)) return _noVal; \
+// To improve performance, disable assertion checks (at your peril).
+#define GETPAR(_note, _getFun, _noVal) \
+if (!(_note) || !isParPresent((_note), par)) return _noVal; \
 SETDUMMYPAR(par); \
-return _getFun(NSHashGet((NSHashTable *)self->_parameters, (const void *)dummyPar))
+parHashResult = NSHashGet((NSHashTable *)(_note)->_parameters, (const void *) dummyPar); \
+NSCAssert(parHashResult != NULL, ([NSString stringWithFormat: @"GETPAR failed finding parameter %u, note %@, parameters = %x", par, (_note), (_note)->_parameters])); \
+return _getFun(parHashResult)
 
-double MKGetNoteParAsDouble(MKNote *aNote,int par)
+double MKGetNoteParAsDouble(MKNote *aNote, int par)
 {
-    GETPAR(aNote,_MKParAsDouble,MK_NODVAL);
+    GETPAR(aNote, _MKParAsDouble, MK_NODVAL);
 }
 
 -(double)parAsDouble:(int)par
@@ -1081,16 +1081,12 @@ double MKGetNoteParAsDouble(MKNote *aNote,int par)
   * If the parameter isn't present, returns MK_NODVAL.
   */
 {
-    return MKGetNoteParAsDouble(self,par);
+    return MKGetNoteParAsDouble(self, par);
 }
 
 int MKGetNoteParAsInt(MKNote *aNote,int par)
 {
-//    GETPAR(aNote,_MKParAsInt,MAXINT);
-if (!aNote || !isParPresent(aNote,par)) return MAXINT;
-SETDUMMYPAR(par);
-return _MKParAsInt(NSHashGet((NSHashTable *)aNote->_parameters, (const void *)dummyPar));
-
+    GETPAR(aNote,_MKParAsInt,MAXINT);
 }
 
 -(int)parAsInt:(int)par
@@ -1108,13 +1104,13 @@ NSString *MKGetNoteParAsString(MKNote *aNote,int par)
     GETPAR(aNote,_MKParAsString,@"");//sb: was _MKMakeStr("")
 }
 
--(NSString *)parAsString:(int)par
+- (NSString *) parAsString: (int) par
   /* Returns a NSString converted from a copy of the value
    * of the parameter par. 
    * If the parameter isn't present, returns a copy of "". 
    */
 {
-    return MKGetNoteParAsString(self,par);
+    return MKGetNoteParAsString(self, par);
 }
 
 NSString *MKGetNoteParAsStringNoCopy(MKNote *aNote,int par)
@@ -1142,7 +1138,7 @@ NSString *MKGetNoteParAsStringNoCopy(MKNote *aNote,int par)
 
 id MKGetNoteParAsEnvelope(MKNote *aNote,int par)
 {
-    GETPAR(aNote,_MKParAsEnv,nil);
+    GETPAR(aNote, _MKParAsEnv, nil);
 }
 
 -parAsEnvelope:(int)par
@@ -1156,7 +1152,7 @@ id MKGetNoteParAsEnvelope(MKNote *aNote,int par)
 
 id MKGetNoteParAsWaveTable(MKNote *aNote,int par)
 {
-    GETPAR(aNote,_MKParAsWave,nil);
+    GETPAR(aNote, _MKParAsWave, nil);
 }
 
 -parAsWaveTable:(int)par
@@ -1433,33 +1429,30 @@ static id writeNoteAux(MKNote *self,_MKScoreOutStruct *p,
     /* The part should always have a name. This is just in case of lossage. */
     if (!partName)
       partName = @"anon";
-    [aStream appendData:[[NSString stringWithFormat:@"%@ ", partName] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-    [aStream appendData:[@"(" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    [aStream appendData:[[NSString stringWithFormat:@"%@ ", partName] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+    [aStream appendData:[@"(" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
     switch (self->noteType) {
       case MK_noteDur: {
-          double dur = 
-            ((p && p->_ownerIsNoteRecorder) ? 
-	     _MKDurForTimeUnit(self,[p->_owner timeUnit]) :
-	     getNoteDur(self));
-          [aStream appendData:[[NSString stringWithFormat:@"%.5f", dur] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+          double dur = ((p && p->_ownerIsNoteRecorder) ? _MKDurForTimeUnit(self,[p->_owner timeUnit]) : getNoteDur(self));
+          [aStream appendData: [[NSString stringWithFormat:@"%.5f", dur] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
           if (self->noteTag != MAXINT) 
-            [aStream appendData:[[NSString stringWithFormat:@" %d", self->noteTag] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+            [aStream appendData: [[NSString stringWithFormat:@" %d", self->noteTag] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
           break;
       }
       case MK_noteOn:
       case MK_noteOff:
       case MK_noteUpdate:
-        [aStream appendData:[[NSString stringWithFormat:@"%s", _MKTokNameNoCheck(self->noteType)] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+        [aStream appendData: [[NSString stringWithFormat: @"%s", _MKTokNameNoCheck(self->noteType)] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
         if (self->noteTag != MAXINT)
-          [aStream appendData:[[NSString stringWithFormat:@" %d", self->noteTag] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+          [aStream appendData: [[NSString stringWithFormat: @" %d", self->noteTag] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
         break;
       case MK_mute:
       default:
-        [aStream appendData:[[NSString stringWithFormat:@"%s", _MKTokNameNoCheck(self->noteType)] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+        [aStream appendData: [[NSString stringWithFormat: @"%s", _MKTokNameNoCheck(self->noteType)] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
         break;
     }
-    [aStream appendData:[@") " dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-    _MKWriteParameters(self,aStream,p);
+    [aStream appendData:[@") " dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+    _MKWriteParameters(self, aStream, p);
     return self;
 }
 
@@ -1556,26 +1549,22 @@ static id _removePar(MKNote *self, _MKParameter *aPar)
     return self;
 }
 
-static id setPar(self,parNum,value,type)
-    MKNote *self;
-    int parNum;
-    void *value;
-    MKDataType type;
+static id setPar(MKNote *self, int parNum, void *value, MKDataType type)
 {
     register _MKParameter *aPar;
     if (!self)
-      return nil;
-    if (setParBit(self,parNum)) { /* Parameter is already present */
+        return nil;
+    if (setParBit(self, parNum)) { /* Parameter is already present */
         SETDUMMYPAR(parNum);
-        aPar = (_MKParameter *)NSHashGet((NSHashTable *)self->_parameters,
-                                         (const void *)dummyPar);
+        aPar = (_MKParameter *) NSHashGet(self->_parameters, (const void *) dummyPar);
         switch (type) {
         case MK_double:
-	    if (MKIsNoDVal(*((double *)value))) {
-		_removePar(self,aPar);
-		clearParBit(self,parNum);
+	    if (MKIsNoDVal(*((double *) value))) {
+		_removePar(self, aPar);
+		clearParBit(self, parNum);
 	    }
-	    else _MKSetDoublePar(aPar,*((double *)value));
+	    else
+                _MKSetDoublePar(aPar, *((double *) value));
             break;
         case MK_string:
 	    if ((NSString *) value == nil) { //sb: separated the nil and the zero-length tests
@@ -1587,39 +1576,39 @@ static id setPar(self,parNum,value,type)
                 clearParBit(self, parNum);
             }
             else
-                _MKSetStringPar(aPar, (NSString *)value);
+                _MKSetStringPar(aPar, (NSString *) value);
             break;
         case MK_int:
 	    if (*((int *)value) == MAXINT) {
-		_removePar(self,aPar);
-		clearParBit(self,parNum);
+		_removePar(self, aPar);
+		clearParBit(self, parNum);
 	    }
-	    else _MKSetIntPar(aPar,*((int *)value));
+	    else _MKSetIntPar(aPar, *((int *) value));
             break;
           default:
 	    if (!(id)value) {
-		_removePar(self,aPar);
-		clearParBit(self,parNum);
+		_removePar(self, aPar);
+		clearParBit(self, parNum);
 	    }
-	    else _MKSetObjPar(aPar,(id)value,type);
+	    else _MKSetObjPar(aPar, (id) value, type);
             break;
         }
     }
     else { /* New parameter */
         switch (type) {
         case MK_int:
-	    if (*((int *)value) == MAXINT) {
-		clearParBit(self,parNum);
+	    if (*((int *) value) == MAXINT) {
+		clearParBit(self, parNum);
 		return self;
 	    }
-            aPar = _MKNewIntPar(*((int *)value),parNum); 
+            aPar = _MKNewIntPar(*((int *) value), parNum); 
             break;
         case MK_double:
-	    if (MKIsNoDVal(*((double *)value))) {
+	    if (MKIsNoDVal(*((double *) value))) {
 		clearParBit(self,parNum);
 		return self;
 	    }
-            aPar = _MKNewDoublePar(*((double *)value),parNum); 
+            aPar = _MKNewDoublePar(*((double *) value), parNum); 
             break;
         case MK_string:
             if ((NSString *) value == nil || ![(NSString *) value length]) {
@@ -1629,14 +1618,14 @@ static id setPar(self,parNum,value,type)
             aPar = _MKNewStringPar((NSString *) value, parNum); 
             break;
         default:
-	    if (!(id)value) {
-		clearParBit(self,parNum);
+	    if (!(id) value) {
+		clearParBit(self, parNum);
 		return self;
 	    }
-	    aPar = _MKNewObjPar((id)value,parNum,type); 
+	    aPar = _MKNewObjPar((id) value, parNum, type); 
             break;
         }
-        NSHashInsert((NSHashTable *)self->_parameters,(void *)aPar);
+        NSHashInsert(self->_parameters, (void *) aPar);
     }
     return self;
 }
@@ -1654,14 +1643,14 @@ static void copyPars(toObj,fromObj,override)
     _MKParameter *aPar;
     NSHashEnumerator state;
     if ((!fromObj) || (!toObj) || (![fromObj isKindOfClass:noteClass]))
-      return;
+        return;
     if (!fromObj->_parameters)
-      return;
+        return;
     state = NSEnumerateHashTable((NSHashTable *)fromObj->_parameters);
     while ((aPar = (_MKParameter *) NSNextHashEnumeratorItem(&state)))
-      if (PARNUM(aPar) != _MK_dur)
-        if (override || !isParPresent(toObj,PARNUM(aPar)))
-          addParameter(toObj,aPar);
+        if (PARNUM(aPar) != _MK_dur)
+            if (override || !isParPresent(toObj,PARNUM(aPar)))
+                addParameter(toObj,aPar);
 }
 
 -(unsigned)hash
