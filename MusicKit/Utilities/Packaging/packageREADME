@@ -1,0 +1,9 @@
+#!/bin/sh
+# $Id$
+# create a set of HTML pictures suitable for distribution on the web-site.
+# Leigh Smith <leigh@tomandandy.com>
+#
+
+db2html MusicKit_README.sgml
+mv MusicKit_README MusicKit
+tar czf MusicKitREADME.tar.gz MusicKit
