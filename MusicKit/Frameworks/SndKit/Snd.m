@@ -111,7 +111,7 @@
 
 - initWithFormat: (SndSampleFormat) format
     channelCount: (int) channels
-	  frames: (int) frames
+	  frames: (unsigned long) frames
     samplingRate: (float) samplingRate
 {
     self = [super init];
@@ -868,6 +868,8 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 
 - (SndFormat) format
 {
+    // TODO this should eventually be held in this structure field, not calculated.
+    soundFormat.frameCount = [self lengthInSampleFrames];
     return soundFormat;
 }
 
