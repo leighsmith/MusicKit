@@ -23,114 +23,112 @@
 @class SndAudioProcessorChain;
 
 /*!
-    @class
-    @abstract 
+    @class      SndAudioProcessor
+    @abstract   A VST-like audio FX processing module base class.
     @discussion To come
-    @var
-    @var
-    @var
 */
 @interface SndAudioProcessor : NSObject {
+/*! @var  numParams */
     int   numParams;
+/*! @var  audioProcessorChain */
     SndAudioProcessorChain *audioProcessorChain;
 }
 
 /*!
-    @method audioProcessor
-    @abstract Factory method
+    @function   audioProcessor
+    @abstract   Factory method
     @discussion
-    @result
+    @result     Returns a freshly initialized, autoreleased SndAudioProcessor
 */
 + audioProcessor;
 
 /*!
-    @method init
-    @abstract Initialization method
-    @discussion
-    @result self.
+    @function   init
+    @abstract   Initialization method
+    @result     Self.
 */
 - init;
 
 /*!
-    @method reset
-    @abstract
-    @discussion
-    @result self.
+    @function    reset
+    @abstract    Message sent when host determines the SndAudioProcessor should reinitialize
+                 its processing state. Eg, a delay processor would zero its z-buffers.
+    @result      self
 */
 - reset;
 
 /*!
-    @method paramCount
-    @abstract
-    @discussion
-    @result (int) number of parameters
+    @function   paramCount
+    @abstract   Gets the number of parameters
+    @result     number of parameters
 */
 - (int) paramCount;
 
 /*!
-    @method paramValue:
-    @abstract
-    @discussion
-    @param (int) index
-    @result (float) parameter value
+    @function   paramValue:
+    @abstract   Gets the value of the indexed parameter. 
+    @discussion Following the VST convention, this should be in the range [0,1]. No enforcement at the present time.
+    @param      index Index of the parameter
+    @result     parameter value
 */
 - (float) paramValue: (int) index;
 
 /*!
-    @method paramName:
-    @abstract
-    @discussion
-    @param (int) index
-    @result NSString with parameter name
+    @function   paramName:
+    @abstract   Gets the name of indexed parameter.
+    @param      index Parameter index
+    @result     NSString with parameter name
 */
 - (NSString*) paramName: (int) index;
 
 /*!
-    @method setParam:toValue:
-    @abstract
-    @discussion
-    @param (int) index
-    @param (float) v
-    @result self.
+    @function   setParam:toValue:
+    @abstract   Sets the indexed parameter to the value v.
+    @discussion By VST convention, the argument v should be in the range [0,1]. If the
+                internal parameter has a different range, this should be mapped internally.
+    @param      index Index of the parameter to be set 
+    @param      v Value in the range [0,1]
+    @result     Self.
 */
 - setParam: (int) index toValue: (float) v;
 
 /*!
-    @method processReplacingInputBuffer:outputBuffer:
-    @abstract
-    @discussion The returned BOOL indicates whether the output is
-            held in outB (TRUE), or inB (false). Means that processors
-            that decide not to touch their data at all don't need to
-            spend time copying between buffers
-    @param (SndAudioBuffer*) inB
-    @param (SndAudioBuffer*) outB
-    @result BOOL
+    @function   processReplacingInputBuffer:outputBuffer:
+    @abstract   process the inputBuffer, and replace the results in the output buffer
+    @discussion Overide this method with your own FX processing routines.
+                There is nothing to stop inB and outB referring to the same buffer -  
+                be warned that replacing the output values in outB may change inB in 
+                these cases.
+    @param      inB The input buffer
+    @param      outB The output buffer
+    @result     BOOL indicates whether the output is held in outB (TRUE), or inB (false). 
+                Means that processors that decide not to touch their data at all don't 
+                need to spend time copying between buffers.
 */
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
                         outputBuffer: (SndAudioBuffer*) outB;
 
 /*!
-    @method setAudioProcessorChain:
+    @function    setAudioProcessorChain:
     @abstract
     @discussion (Internal SndKit use only) Individual processors may want
                 to query their enclosing processor chain, for example to
                 get the time at the start of the buffer (nowTime). This
                 method gets called when a processor gets added to the chain,
                 with the id of the chain.
-    @param (SndAudioProcessorChain*) inChain
+    @param  inChain
     @result void.
 */
 - (void) setAudioProcessorChain:(SndAudioProcessorChain*)inChain;
 
 /*!
-    @method audioProcessorChain
+    @function audioProcessorChain
     @abstract Returns the SndAudioProcessorChain to which the processor is
               attached
     @discussion
-    @result SndAudioProcessorChain*
+    @result     id of the SndAudioProcessorChain
 */
 - (SndAudioProcessorChain*) audioProcessorChain;
-
 
 @end
 

@@ -2,6 +2,7 @@
   $Id$
     
   Original Author: Leigh Smith, <leigh@tomandandy.com>, tomandandy music inc.
+  Further work: SKoT McDonald, <skot@tomandandy.com>
 
   Sat 28-Feb-2001, Copyright (c) 2001 tomandandy music inc. All rights reserved.
 
@@ -22,22 +23,23 @@
     @discussion This differs from a Snd instance itself, since we can have multiple overlapping
                 performances of the same (potentially huge) Snd. We need some way of indicating
                 to the delegate exactly which performance has completed.
-    @var 				snd
-    @var 				playTime
-    @var 				playIndex
-    @var 				endAtIndex
 */
 @interface SndPerformance : NSObject
 {
+/*! @var 				snd */
     Snd    *snd;
+/*! @var 				playTime */
     double  playTime;
+/*! @var 				playIndex */
     long    playIndex;
+/*! @var 				endAtIndex */
     long    endAtIndex;
+
     // TODO playState should be here, not Snd.
 }
 
 /*!
-    @method     performanceOfSnd:playingAtTime:
+    @function   performanceOfSnd:playingAtTime:
     @abstract   Create and return an autoreleased instance of SndPerformance with a sound
                 and a time to begin playing. Convenience method to
                 performanceOfSnd:playingAtTime:endAtIndex
@@ -48,7 +50,7 @@
 + (SndPerformance *) performanceOfSnd: (Snd *) s playingAtTime: (double) seconds;
 
 /*!
-    @method     performanceOfSnd:playingAtTime:endAtIndex:
+    @function   performanceOfSnd:playingAtTime:endAtIndex:
     @abstract   Create and return an autoreleased instance of SndPerformance with a sound
                 and a time to begin playing.
     @param      s
@@ -61,7 +63,7 @@
                            endAtIndex: (long) endIndex;
 
 /*!
-    @method     initWithSnd:playingAtTime:
+    @function   initWithSnd:playingAtTime:
     @abstract   Initialise a performance with a sound and a time to begin playing.
     @discussion Convenience method to initWithSnd:playingAtTime:endAtIndex:
     @param      s The sound to be played
@@ -72,7 +74,7 @@
 - initWithSnd: (Snd *) s playingAtTime: (double) t;
 
 /*!
-    @method     initWithSnd:playingAtTime:endAtIndex:
+    @function   initWithSnd:playingAtTime:endAtIndex:
     @abstract   Initialise a performance with a sound and a time to begin playing,
                 and the index of the last sample of the sound to play.
     @param      t The time to begin playback
@@ -82,69 +84,69 @@
 - initWithSnd: (Snd *) s playingAtTime: (double) t endAtIndex: (long) endIndex;
 
 /*!
-    @method     snd
+    @function   snd
     @abstract   Returns the Snd instance being played in this performance.
     @result     Returns the Snd instance being played in this performance.
 */
 - (Snd *) snd;
 
 /*!
-    @method     playTime
+    @function   playTime
     @abstract   Returns the time the sound is to begin playing.
     @result     Returns the time interval in seconds from the current time the sound is to begin playing.
 */
 - (double) playTime;
 
 /*!
-    @method     playIndex
+    @function   playIndex
     @abstract   Returns the sample to start playing from.
     @result     Returns the sample index to start playing from.
 */
 - (long) playIndex;
 
 /*!
-    @method     setPlayIndex:
+    @function   setPlayIndex:
     @abstract   Sets the sample to start playing from.
     @param      newPlayIndex The sample index that playing should begin from.
 */
 - (void) setPlayIndex: (long) newPlayIndex;
 
 /*!
-    @method     endAtIndex
+    @function   endAtIndex
     @abstract   Returns the sample to stop playing at.
     @result     Returns the sample index to stop playing at.
 */
 - (long) endAtIndex;
 
 /*!
-    @method     setEndAtIndex:
+    @function   setEndAtIndex:
     @abstract   Sets the sample to stop playing at.
     @param      newEndAtIndex The sample index that playing should stop after.
 */
 - (void) setEndAtIndex: (long) newEndAtIndex;
 
 /*!
-    @method     stopInFuture:
+    @function   stopInFuture:
     @abstract   Stop the currently playing performance at some time in the future.
     @param      inSeconds The time interval when to stop the performance.
 */
 - (void) stopInFuture: (double) inSeconds;
 
 /*!
-    @method     isEqual:
+    @function   isEqual:
     @abstract 
     @param      anotherPerformance
 */
 - (BOOL) isEqual: (id) anotherPerformance;
 
 /*!
-    @method     dealloc
+    @function   dealloc
     @abstract   Destructor
 */
 - (void) dealloc;
 
 /*!
-    @method     description
+    @function   description
     @abstract 
     @result     A string containing a brief description of the performance object
 */

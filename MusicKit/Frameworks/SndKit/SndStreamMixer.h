@@ -25,74 +25,74 @@
     @class SndStreamMixer
     @abstract Stream mixer and effects processor
     @discussion To come
-    @var streamClients
-    @var streamClientsLock
-    @var processorChain
 */
 @interface SndStreamMixer : NSObject {
+/*! @var streamClients */
     NSMutableArray         *streamClients;
+/*! @var streamClientsLock */
     NSLock                 *streamClientsLock;
+/*! @var processorChain */
     SndAudioProcessorChain *processorChain;
     double                 nowTime;
     double                 lastNowTime;
 }
 
 /*!
-    @method sndStreamMixer
-    @abstract Factory method
+    @function   sndStreamMixer
+    @abstract   Factory method
     @discussion
-    @result A freshly initialized and autoreleased SndStreamMixer object
+    @result     A freshly initialized and autoreleased SndStreamMixer object
 */
 + sndStreamMixer;
 
 /*!
-    @method init
-    @abstract Initializor
+    @function   init
+    @abstract   Initializer method
     @discussion
-    @result self.
+    @result     self.
 */
 - init;
 
 /*!
-    @method dealloc
-    @abstract Destructor
+    @function   dealloc
+    @abstract   Destructor method
     @discussion
 */
 - (void) dealloc;
 
 /*!
-    @method processInBuffer:outBuffer:nowTime:
+    @function   processInBuffer:outBuffer:nowTime:
     @abstract
     @discussion
-    @param (SndAudioBuffer*) inB
-    @param (SndAudioBuffer*) outB
-    @param (double) t
-    @result self.
+    @param      inB
+    @param      outB
+    @param      t
+    @result     self.
 */
 - processInBuffer: (SndAudioBuffer*) inB
         outBuffer: (SndAudioBuffer*) outB
           nowTime: (double) t;
 
 /*!
-    @method removeClient:
+    @function   removeClient:
     @abstract
     @discussion
-    @param (SndStreamClient*) client
-    @result Boolean indicating success
+    @param      client
+    @result     TRUE if client was successfully removed
 */
 - (BOOL) removeClient: (SndStreamClient*) client;
 
 /*!
-    @method addClient:
+    @function   addClient:
     @abstract
     @discussion
-    @param (SndStreamClient*) client
+    @param      client
     @result 
 */
 - (int) addClient: (SndStreamClient*) client;
 
 /*!
-    @method managerIsShuttingDown
+    @function managerIsShuttingDown
     @abstract
     @discussion
     @result self
@@ -100,18 +100,18 @@
 - managerIsShuttingDown;
 
 /*!
-    @method clientCount
+    @function clientCount
     @abstract
     @discussion
-    @result integer client count
+    @result     Number of stream clients currently connected to the mixer
 */
 - (int) clientCount;
 
 /*!
-    @method audioProcessorChain
-    @abstract Accessor
+    @function   audioProcessorChain
+    @abstract   Accessor
     @discussion
-    @result Reference to the data member audioprocessorChain
+    @result     Reference to the data member audioprocessorChain
 */
 - (SndAudioProcessorChain*) audioProcessorChain;
 

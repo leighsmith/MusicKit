@@ -20,186 +20,184 @@
 
 
 /*!
-    @class SndAudioBuffer 
-    @abstract Audio Buffer
+    @class      SndAudioBuffer 
+    @abstract   Audio Buffer
     @discussion To come
-    @var formatSnd
-    @var data
-    @var bOwnsData
 */
 @interface SndAudioBuffer : NSObject
 {
+/*! @var            formatSnd */
     SndSoundStruct  formatSnd;
+/*! @var            data      */
     void           *data;
-    
-@private
+/*! @var            bOwnsData */    
     BOOL            bOwnsData;
 }
 
 /*!
-    @method audioBufferWithFormat:duration:
-    @abstract Factory method
+    @function   audioBufferWithFormat:duration:
+    @abstract   Factory method
     @discussion
-    @param (SndSoundStruct*) format
-    @param (double) timeInSec
-    @result An SndAudioBuffer
+    @param      format
+    @param      timeInSec
+    @result     An SndAudioBuffer
 */
 + audioBufferWithFormat: (SndSoundStruct*) format duration: (double) timeInSec;
 
 /*!
-    @method audioBufferWithFormat:data:
-    @abstract Factory method
+    @function   audioBufferWithFormat:data:
+    @abstract   Factory method
     @discussion The dataLength member of format MUST be set to the length of d (in bytes)!
-    @param (SndSoundStruct*) format
-    @param (void*) d
-    @result An SndAudioBuffer
+    @param      format
+    @param      d
+    @result     An SndAudioBuffer
 */
 + audioBufferWithFormat: (SndSoundStruct*) format data: (void*) d;
 
 /*!
-    @method audioBufferWrapperAroundSNDStreamBuffer:
-    @abstract Factory method
+    @function   audioBufferWrapperAroundSNDStreamBuffer:
+    @abstract   Factory method
     @discussion
-    @param (SNDStreamBuffer*) cBuff
-    @result An SndAudioBuffer
+    @param      cBuff
+    @result     An SndAudioBuffer
 */
 + audioBufferWrapperAroundSNDStreamBuffer: (SNDStreamBuffer*) cBuff;
 
 /*!
-    @method audioBufferWithSndSeg:range:
-    @abstract Factory method
+    @function   audioBufferWithSndSeg:range:
+    @abstract   Factory method
     @discussion
-    @param (Snd*) snd 
-    @param (NSRange) r
-    @result An SndAudioBuffer 
+    @param      snd 
+    @param      r
+    @result     An SndAudioBuffer 
 */
 + audioBufferWithSndSeg: (Snd*) snd range: (NSRange) r;
 
 /*!
-    @method initWithFormat:data:
-    @abstract Initialization method
+    @function   initWithFormat:data:
+    @abstract   Initialization method
     @discussion
-    @param (SndSoundStruct*) f
-    @param (void*) d
-    @result self.
+    @param      f
+    @param      d
+    @result     self.
 */
 - initWithFormat: (SndSoundStruct*) f data: (void*) d;
 
 /*!
-    @method mixWithBuffer:fromStart:toEnd:
-    @abstract Initialization method
+    @function   mixWithBuffer:fromStart:toEnd:
+    @abstract   Initialization method
     @discussion
-    @param (SndAudioBuffer*) buff
-    @param (long) start
-    @param (long) end
-    @result self.
+    @param      buff
+    @param      start
+    @param      end
+    @result     self.
 */
 - mixWithBuffer: (SndAudioBuffer*) buff fromStart: (long) start toEnd: (long) end;
 
 /*!
-    @method mixWithBuffer:
+    @function   mixWithBuffer:
     @abstract
     @discussion
-    @param (SndAudioBuffer*) buff
-    @result self.
+    @param      buff
+    @result     self.
 */
 - mixWithBuffer: (SndAudioBuffer*) buff;
 
 /*!
-    @method copy
+    @function   copy
     @abstract
     @discussion
-    @result A duplicate SndAudioBuffer with its own, identical data.
+    @result     A duplicate SndAudioBuffer with its own, identical data.
 */
 - copy;
 
 /*!
-    @method copyData:
+    @function   copyData:
     @abstract
     @discussion
-    @param (SndAudioBuffer*) ab
-    @result self.
+    @param      ab
+    @result     self.
 */
 - copyData: (SndAudioBuffer*) ab;
 
 /*!
-    @method lengthInSamples
+    @function   lengthInSamples
     @abstract
     @discussion
-    @result (long) buffer length in sample frames
+    @result     buffer length in sample frames
 */
 - (long) lengthInSamples;
 
 /*!
-    @method lengthInBytes
+    @function lengthInBytes
     @abstract
     @discussion
-    @result (long) buffer length in bytes
+    @result     buffer length in bytes
 */
 - (long) lengthInBytes;
 
 /*!
-    @method duration
+    @function   duration
     @abstract
     @discussion
-    @result Duration in seconds (as determined by format sampling rate)
+    @result     Duration in seconds (as determined by format sampling rate)
 */
 - (double) duration;
 
 /*!
-    @method samplingRate
+    @function   samplingRate
     @abstract
     @discussion
-    @result sampling rate
+    @result     sampling rate
 */
 - (double) samplingRate;
 
 /*!
-    @method channelCount
+    @function   channelCount
     @abstract
     @discussion
-    @result Number of channels
+    @result     Number of channels
 */
 - (int) channelCount;
 
 /*!
-    @method dataFormat
+    @function   dataFormat
     @abstract
     @discussion
-    @result Data format identifier
+    @result     Data format identifier
 */
 - (int) dataFormat;
 
 /*!
-    @method data
+    @function   data
     @abstract
     @discussion
-    @result pointer to raw data bytes
+    @result     pointer to raw data bytes
 */
 - (void*) data;
 
 /*!
-    @method format
+    @function   format
     @abstract
     @discussion
-    @result Pointer to SndSoundStruct format description
+    @result     Pointer to SndSoundStruct format description
 */
 - (SndSoundStruct*) format;
 
 /*!
-    @method zero
-    @abstract Sets data to zero
+    @function   zero
+    @abstract   Sets data to zero
     @discussion
-    @result self
+    @result     self
 */
 - zero;
 - (void) zeroForeignBuffer;
 
 /*!
-    @method multiChannelSampleSizeInBytes
+    @function   multiChannelSampleSizeInBytes
     @abstract
     @discussion
-    @result Integer size of sample frame (channels * sample size in bytes)
+    @result     Integer size of sample frame (channels * sample size in bytes)
 */
 - (int) multiChannelSampleSizeInBytes;
 

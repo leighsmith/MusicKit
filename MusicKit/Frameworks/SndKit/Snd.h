@@ -35,39 +35,70 @@ extern NSString *NXSoundPboardType;
 @class SndPlayer;
 @class SndPerformance;
 
-/*
- * This is the sound pasteboard type.
- */
+/*!
+    @class      Snd 
+    @abstract   Sound
+    @discussion The Snd object encapsulates a SndSoundStruct, which represents a sound.
+                It supports reading and writing to a soundfile, playback of sound,
+                recording of sampled sound, conversion among various sampled formats, 
+                basic editing of the sound, and name and storage management for sounds.
+
+*/
 @interface Snd : NSObject
-/*
- * The Snd object encapsulates a SndSoundStruct, which represents a sound.
- * It supports reading and writing to a soundfile, playback of sound,
- * recording of sampled sound, conversion among various sampled formats, 
- * basic editing of the sound, and name and storage management for sounds.
- */
- {
+{
  @private
-    SndSoundStruct *soundStruct; /* the sound data structure */
-    int soundStructSize;	 /* the length of the structure in bytes */
-    int priority;		 /* the priority of the sound */
-    id delegate;		 /* the target of notification messages */
-    int status;			 /* what the object is currently doing */
-    NSString *name;		 /* The name of the sound */
+/*! @var the sound data structure */
+    SndSoundStruct *soundStruct;  
+/*! @var the length of the structure in bytes */
+    int soundStructSize;	 
+/*! @var the priority of the sound */
+    int priority;		 
+/*! @var the target of notification messages */
+    id delegate;		 
+/*! @var status what the object is currently doing */
+    int status;			 
+/*! @var name The name of the sound */
+    NSString *name;
+/*! @var _scratchSnd */
     SndSoundStruct *_scratchSnd;
+/*! @var _scratchSize */
     int _scratchSize;
+/*! @var currentError */
     int currentError;
-    int conversionQuality;	 /* see defines below */
+/*! @var conversionQuality Determines quality of sampling rate conversion - see quality defines */
+    int conversionQuality;	 
     
 @public
+/*! @var tag */
     int tag;
 }
-#define SND_CONVERT_LOWQ 0
-#define SND_CONVERT_MEDQ 1
-#define SND_CONVERT_HIQ  2
 
-/*
- * Status codes
- */
+/*!
+  @enum       SNDSoundConversion 
+  @abstract   Sound conversion quality codes
+  @constant   SND_CONVERT_LOWQ Low quality
+  @constant   SND_CONVERT_MEDQ Medium quality
+  @constant   SND_CONVERT_HIQ  High quality
+*/
+typedef enum {
+    SND_CONVERT_LOWQ = 0,
+    SND_CONVERT_MEDQ = 1,
+    SND_CONVERT_HIQ  = 2
+} SNDSoundConversionQuality;
+
+/*!
+  @enum       SNDSoundStatus
+  @abstract   Status Codes
+  @discussion Categorizes beverages into groups of similar types.
+  @constant   SND_SoundStopped
+  @constant   SND_SoundRecording
+  @constant   SND_SoundPlaying
+  @constant   SND_SoundInitialized
+  @constant   SND_SoundRecordingPaused
+  @constant   SND_SoundRecordingPending
+  @constant   SND_SoundPlayingPending
+  @constant   SND_SoundFreed
+*/
 typedef enum {
     SND_SoundStopped = 0,
     SND_SoundRecording,
@@ -118,7 +149,7 @@ typedef enum {
 + (void) removeSoundForName:(NSString *)name;
 
 /*!
-    @method removeAllSounds
+    @function removeAllSounds
     @abstract Remove all named sounds in the name table.
 */
 + (void) removeAllSounds;
@@ -153,14 +184,14 @@ typedef enum {
 - (int)infoSize;
 
 /*!
-    @method play
+    @function play
     @abstract Play the entire sound now.
     @result Returns SND_ERR_NONE if the sound played correctly.
 */
 - (int) play;
 
 /*!
-    @method play:
+    @function play:
     @abstract Play the entire sound now, for use as an action method.
     @param sender The sending object.
     @result Returns self if play occured correctly, nil if there was an error.
@@ -168,7 +199,7 @@ typedef enum {
 - play:sender;
 
 /*!
-    @method playInFuture:beginSample:sampleCount:
+    @function playInFuture:beginSample:sampleCount:
     @abstract Begin playback at some time in the future, over a region of the sound.
     @param inSeconds The number of seconds beyond the current time point to begin playback.
     @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
@@ -178,7 +209,7 @@ typedef enum {
 - (SndPerformance *) playInFuture: (double) inSeconds beginSample: (int) begin sampleCount: (int) count;
 
 /*!
-    @method play:beginSample:sampleCount:
+    @function play:beginSample:sampleCount:
     @abstract Begin playback now, over a region of the sound.
     @discussion This is a deprecated method for SoundKit compatability. 
                 You should use playInFuture:beginSample:sampleCount: instead.
@@ -189,7 +220,7 @@ typedef enum {
 - play:(id) sender beginSample:(int) begin sampleCount:(int) count;
 
 /*!
-    @method playInFuture:
+    @function playInFuture:
     @abstract Begin the playback of the sound at some future time, specified in seconds.
     @param inSeconds The number of seconds beyond the current time point to begin playback.
     @result Returns the performance that represents the sound playing.
@@ -197,7 +228,7 @@ typedef enum {
 - (SndPerformance *) playInFuture: (double) inSeconds;
 
 /*!
-    @method playAtDate:
+    @function playAtDate:
     @abstract Begin the playback of the sound at a specified date.
     @param date The date to begin playback.
     @result Returns the performance that represents the sound playing.
@@ -211,7 +242,7 @@ typedef enum {
 - (int)waitUntilStopped;
 
 /*!
-    @method stopPerformance:inFuture:
+    @function stopPerformance:inFuture:
     @abstract Stop the given playback of the sound at some future time, specified in seconds.
     @param inSeconds The number of seconds beyond the current time point to begin playback.
     @param performance The performance that represents the sound playing. 
@@ -261,7 +292,6 @@ typedef enum {
 // delegations which are nominated per performance.
 - (void) tellDelegate:(SEL)theMessage duringPerformance: (SndPerformance *) performance;
 
-- (void)_setStatus:(int)newStatus; /* Private! not for general use. */
 
     /*************************
      * these methods are unique
@@ -269,6 +299,9 @@ typedef enum {
      *************************/
 - (void)setConversionQuality:(int)quality; /* default is SND_CONVERT_LOWQ */
 - (int)conversionQuality;
+
+
+- (void)_setStatus:(int)newStatus; /* Private! not for general use. */
 
 @end
 

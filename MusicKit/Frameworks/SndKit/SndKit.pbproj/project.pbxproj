@@ -43,9 +43,12 @@
 			children = (
 				00D2C42CFEDB2CB5CFED3B93,
 				36C5C1C10039F18CCFED3B96,
+				4E8FE8650122ECB1CFED3B8B,
 				0224068600713935CFED3B8B,
+				4E8FE8660122ECB1CFED3B8B,
 				00D2C42DFEDB2CB5CFED3B93,
 				00D2C42EFEDB2CB5CFED3B93,
+				4E8FE8670122ECB1CFED3B8B,
 				00D2C42FFEDB2CB5CFED3B93,
 				00D2C430FEDB2CB5CFED3B93,
 				00D2C431FEDB2CB5CFED3B93,
@@ -96,11 +99,14 @@
 			children = (
 				00D2C433FEDB2CB5CFED3B93,
 				36C5C1C40039F18CCFED3B96,
+				4E8FE8680122ECB1CFED3B8B,
 				0224068800713935CFED3B8B,
 				0224068900713935CFED3B8B,
 				02240693007269D2CFED3B8B,
+				4E8FE8690122ECB1CFED3B8B,
 				00D2C434FEDB2CB5CFED3B93,
 				00D2C435FEDB2CB5CFED3B93,
+				4E8FE86A0122ECB1CFED3B8B,
 				02240683007138A9CFED3B8B,
 				36C5C1C90039F2E2CFED3B96,
 				36C5C1CA0039F2E2CFED3B96,
@@ -248,8 +254,8 @@
 				00D2C458FEDB2CB5CFED3B93,
 				055C7F3A0049CD79CFED3B96,
 				3AE3B96C007931DBCFED3B8B,
-				47FCF5D900CBCFEACFED3B8B,
 				04F0C04C00EA6A89CFED3B8B,
+				0A690FA40121859FCFED3B8B,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -284,7 +290,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Network/Servers/whiteley/lauren/Local/Library/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Network/Servers/whiteley/lauren/Local/Library/Frameworks /Local/Library/Frameworks";
 				FRAMEWORK_VERSION = 2.0;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -369,6 +375,9 @@
 				0224068B00713935CFED3B8B,
 				02240694007269D2CFED3B8B,
 				06C30563007CD69BCFED3B8B,
+				4E8FE86B0122ECB1CFED3B8B,
+				4E8FE86C0122ECB1CFED3B8B,
+				4E8FE86D0122ECB1CFED3B8B,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -512,6 +521,9 @@
 				0224068D00713935CFED3B8B,
 				02240695007269D2CFED3B8B,
 				06C30564007CD69BCFED3B8B,
+				4E8FE86E0122ECB1CFED3B8B,
+				4E8FE86F0122ECB1CFED3B8B,
+				4E8FE8700122ECB1CFED3B8B,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -612,8 +624,8 @@
 				00D2C47EFEDB2CB5CFED3B93,
 				055C7F3B0049CD79CFED3B96,
 				3AE3B96D007931DBCFED3B8B,
-				47FCF5DA00CBCFEACFED3B8B,
 				04F0C04D00EA6A89CFED3B8B,
+				0A690FA50121859FCFED3B8B,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -881,6 +893,18 @@
 				);
 			};
 		};
+		0A690FA40121859FCFED3B8B = {
+			isa = PBXFrameworkReference;
+			name = MKPerformSndMIDI.framework;
+			path = /Local/Library/Frameworks/MKPerformSndMIDI.framework;
+			refType = 0;
+		};
+		0A690FA50121859FCFED3B8B = {
+			fileRef = 0A690FA40121859FCFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		36C5C1C10039F18CCFED3B96 = {
 			isa = PBXFileReference;
 			path = SndAudioBuffer.m;
@@ -974,14 +998,77 @@
 			settings = {
 			};
 		};
-		47FCF5D900CBCFEACFED3B8B = {
-			isa = PBXFrameworkReference;
-			name = MKPerformSndMIDI.framework;
-			path = /Network/Servers/whiteley/lauren/Local/Library/Frameworks/MKPerformSndMIDI.framework;
-			refType = 0;
+		4E8FE8650122ECB1CFED3B8B = {
+			isa = PBXFileReference;
+			path = SndAudioFader.m;
+			refType = 2;
 		};
-		47FCF5DA00CBCFEACFED3B8B = {
-			fileRef = 47FCF5D900CBCFEACFED3B8B;
+		4E8FE8660122ECB1CFED3B8B = {
+			isa = PBXFileReference;
+			path = SndBreakpoint.m;
+			refType = 2;
+		};
+		4E8FE8670122ECB1CFED3B8B = {
+			isa = PBXFileReference;
+			path = SndEnvelope.m;
+			refType = 2;
+		};
+		4E8FE8680122ECB1CFED3B8B = {
+			isa = PBXFileReference;
+			path = SndAudioFader.h;
+			refType = 2;
+		};
+		4E8FE8690122ECB1CFED3B8B = {
+			isa = PBXFileReference;
+			path = SndBreakpoint.h;
+			refType = 2;
+		};
+		4E8FE86A0122ECB1CFED3B8B = {
+			isa = PBXFileReference;
+			path = SndEnvelope.h;
+			refType = 2;
+		};
+		4E8FE86B0122ECB1CFED3B8B = {
+			fileRef = 4E8FE8680122ECB1CFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		4E8FE86C0122ECB1CFED3B8B = {
+			fileRef = 4E8FE8690122ECB1CFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		4E8FE86D0122ECB1CFED3B8B = {
+			fileRef = 4E8FE86A0122ECB1CFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		4E8FE86E0122ECB1CFED3B8B = {
+			fileRef = 4E8FE8650122ECB1CFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		4E8FE86F0122ECB1CFED3B8B = {
+			fileRef = 4E8FE8660122ECB1CFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		4E8FE8700122ECB1CFED3B8B = {
+			fileRef = 4E8FE8670122ECB1CFED3B8B;
 			isa = PBXBuildFile;
 			settings = {
 			};

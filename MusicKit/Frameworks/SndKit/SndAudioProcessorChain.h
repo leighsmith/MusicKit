@@ -22,147 +22,143 @@
 @class SndAudioFader;
 
 /*!
-    @class
+    @class    SndAudioProcessorChain
     @abstract 
     @discussion To come
-    @var
-    @var
-    @var
 */
 @interface SndAudioProcessorChain : NSObject {
-    NSMutableArray    *audioProcessorArray;
-    BOOL               bBypass;
-    SndAudioBuffer    *tempBuffer;
-    SndAudioFader     *postFader;
-    double             nowTime;
+/*! @var   audioProcessorArray */
+    NSMutableArray *audioProcessorArray;
+/*! @var   bBypass */
+    BOOL   bBypass;
+/*! @var   tempBuffer */
+    SndAudioBuffer *tempBuffer; 
+/*! @var   postFader */
+    SndAudioFader *postFader;
+/*! @var   nowTime */
+    double nowTime;
 }
 
 /*!
-    @method audioProcessorChain
-    @abstract Factory method
-    @discussion
-    @result
+    @function   audioProcessorChain
+    @abstract   Factory method
+    @result     A freshly initialized, autoreleased SndAudioProcessorChain.
 */
 + audioProcessorChain;
 
 /*!
-    @method init
-    @abstract Initializer
-    @discussion
-    @result self
+    @function   init
+    @abstract   Initializer
+    @result     Self
 */
 - init;
 
 /*!
-    @method dealloc
-    @abstract Destructor
-    @discussion
+    @function   dealloc
+    @abstract   Destructor
 */
 - (void) dealloc;
 
 /*!
-    @method bypassProcessors:
-    @abstract
-    @discussion
-    @param (BOOL) b
-    @result self.
+    @function   bypassProcessors:
+    @abstract   Sets the internal FX bypass flag
+    @param      b Bypass flag - TRUE if bypass is to be enabled
+    @result     self.
 */
 - bypassProcessors: (BOOL) b; 
 
 /*!
-    @method addAudioProcessor:
-    @abstract
+    @function   addAudioProcessor:
+    @abstract   Adds an SndAudioProcessor to the FX chain
     @discussion
-    @param (SndAudioProcessor*) proc
-    @result
+    @param      proc The SndAudioProcessor to be added to the FX chain
+    @result     Self
 */
 - addAudioProcessor: (SndAudioProcessor*) proc;
 
 /*!
-    @method removeAudioProcessor:
-    @abstract
+    @function   removeAudioProcessor:
+    @abstract   Removes an SndAudioProcesor from the FX chain
     @discussion
-    @param (SndAudioProcessor*) proc
-    @result self
+    @param      proc SndAudioProcessor to be removed from the FX chain
+    @result     self
 */
 - removeAudioProcessor: (SndAudioProcessor*) proc;
 
 /*!
-    @method processorAtIndex:
-    @abstract
+    @function   processorAtIndex:
+    @abstract   Get the processor at a certain index
     @discussion
-    @param (int) index
-    @result Reference to an SndAudioProcessor
+    @param      index
+    @result     Reference to an SndAudioProcessor
 */
 - (SndAudioProcessor*) processorAtIndex: (int) index;
 
 /*!
-    @method removeAllProcessors
-    @abstract
-    @discussion
-    @result self
+    @function   removeAllProcessors
+    @abstract   Removes all processors from the processor chain.
+    @result     self
 */
 - removeAllProcessors;
 
 /*!
-    @method processBuffer:forTime:
+    @function   processBuffer:
     @abstract
     @discussion The t parameter tells the processor chain at what time
                 the buffer is destined to start to be played. This
                 matches up with the time the SndStreamClients were given
                 for generating this same buffer.
-    @param (SndAudioBuffer*) buff
-    @param (double) t
-    @result self.
+    @param      buff
+    @result     self.
 */
 - processBuffer: (SndAudioBuffer*) buff forTime:(double) t;
 
 /*!
-    @method processorCount
+    @function   processorCount
     @abstract
     @discussion
-    @result (int) number of processors in the processor chain.
+    @result     number of processors in the processor chain.
 */
 - (int) processorCount; 
 
 /*!
-    @method processorArray
-    @abstract Accessor to the internal processor array
-    @discussion provided for speed
-    @result NSArray containing the processors (in order)
+    @function   processorArray
+    @abstract   Accessor to the internal processor array
+    @discussion Provided for speed
+    @result     NSArray containing the processors (in order)
 */
 - (NSArray*) processorArray;
 
 /*!
-    @method isBypassingFX
+    @function   isBypassingFX
     @abstract
     @discussion
-    @result Boolean indicating whether FX are being bypassed
+    @result     TRUE is FX chain is being bypassed
 */
 - (BOOL) isBypassingFX;
 
 /*!
-    @method setBypass:
+    @function   setBypass:
     @abstract
     @discussion
-    @param (BOOL) b
+    @param      b Bypass flag - TRUE to enable bypass 
 */
 - (void) setBypass: (BOOL) b;
 
 /*!
-    @method postFader
+    @function   postFader
     @abstract
     @discussion
-    @result id of the postFader object at the end of the chain
+    @result     id of the postFader object at the end of the chain
 */
 - (SndAudioFader *) postFader;
 
 /*!
-    @method nowTime
+    @function   nowTime
     @abstract
     @discussion
-    @result double indicating the start time of the buffer being
-            processed.
+    @result     double indicating the start time of the buffer being
+                processed.
 */
 - (double) nowTime;
 

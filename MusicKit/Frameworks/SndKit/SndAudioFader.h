@@ -16,10 +16,11 @@
 #define __SNDAUDIOFADER_H__
 
 #import <Foundation/Foundation.h>
+
 #import "SndEnvelope.h"
-#import "SndAudioProcessor.h"
-#import "SndStreamManager.h"
-#import "SndStreamMixer.h"
+#import "SndAudioProcessor.h";
+@class SndStreamManager;
+@class SndStreamMixer;
 @class SndAudioProcessor;
 @class SndAudioBuffer;
 
@@ -29,7 +30,7 @@
 @interface SndAudioFader : SndAudioProcessor
 {
   id     envClass; /* Class object used in initialising new envelopes */
-  id     <SndEnveloping,NSObject> ampEnv;
+  id     <SndEnveloping, NSObject> ampEnv;
   float  staticAmp;
   id     <SndEnveloping,NSObject> bearingEnv;
   float  staticBearing;

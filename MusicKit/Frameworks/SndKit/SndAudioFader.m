@@ -12,6 +12,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#import "SndStreamManager.h"
 #import "SndAudioFader.h"
 #ifndef M_PI
 #define M_PI            3.14159265358979323846  /* pi */
@@ -116,7 +117,7 @@ static id ENVCLASS=nil;
 /*
  * "instantaneous" getting and setting; applies from start of buffer
  */
-- setBearing:(float)bearing clearingEnvelope:(BOOL)clear
+- setBearing:(float)bearing clearingEnvelope:(BOOL)clear 
 {
     double nowTime;
     if (clear) {
@@ -131,7 +132,7 @@ static id ENVCLASS=nil;
     }
     /* if there's an envelope there, keep it and insert new value */
     if (bearingEnv) {
-        nowTime = [(SndStreamManager *)[SndStreamManager defaultManager] nowTime];
+        nowTime = [(SndStreamManager *) [SndStreamManager defaultStreamManager] nowTime];
         [self setBearing:bearing atTime:nowTime];
     }
     staticBearing = bearing;
@@ -145,7 +146,7 @@ static id ENVCLASS=nil;
     if (bearingEnv == nil) {
         return staticBearing;
     }
-    nowTime = [(SndStreamManager *)[SndStreamManager defaultManager] nowTime];
+    nowTime = [(SndStreamManager *)[SndStreamManager defaultStreamManager] nowTime];
     [bearingEnvLock lock];
     yVal = [bearingEnv lookupYForX:nowTime];
     [bearingEnvLock unlock];
@@ -167,7 +168,7 @@ static id ENVCLASS=nil;
     }
     /* if there's an envelope there, keep it and insert new value */
     if (ampEnv) {
-        nowTime = [(SndStreamManager *)[SndStreamManager defaultManager] nowTime];
+        nowTime = [(SndStreamManager *)[SndStreamManager defaultStreamManager] nowTime];
         [self setAmp:amp atTime:nowTime];
     }
     staticAmp = amp;
@@ -181,7 +182,7 @@ static id ENVCLASS=nil;
     if (!ampEnv) {
         return staticAmp;
     }
-    nowTime = [(SndStreamManager *)[SndStreamManager defaultManager] nowTime];
+    nowTime = [(SndStreamManager *)[SndStreamManager defaultStreamManager] nowTime];
     [ampEnvLock lock];
     yVal = [ampEnv lookupYForX:nowTime];
     [ampEnvLock unlock];
@@ -190,7 +191,7 @@ static id ENVCLASS=nil;
 
 BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
 {
-    BOOL afterRampStart,beforeRampEnd;
+//    BOOL afterRampStart,beforeRampEnd;
     int prevBreakpoint = [anEnvelope breakpointIndexBeforeOrEqualToX:xVal];
     if (prevBreakpoint == -1) {
         return NO;
@@ -380,7 +381,7 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
 
 - setBearing:(float)bearing atTime:(double)atTime
 {
-    BOOL isRamping;
+//    BOOL isRamping;
     [bearingEnvLock lock];
     if (!bearingEnv) {
         bearingEnv = [[envClass alloc] init];
@@ -390,6 +391,7 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
                                yVal:bearing
                                xVal:atTime];
     [bearingEnvLock unlock];
+    return self;
 }
 
 - (float)getBearingAtTime:(double)atTime
@@ -412,6 +414,7 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
                                yVal:amp
                                xVal:atTime];
     [ampEnvLock unlock];
+    return self;
 }
 
 - (float)getAmpAtTime:(double)atTime
@@ -516,14 +519,14 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
             /* these are our new derived envelopes for each channel */
             NSMutableArray *store = [[NSMutableArray alloc] initWithCapacity:10];
             int i,count;
-            int lindx, rindx;
+ //           int lindx, rindx;
             int ampIndx,bearingIndx;
             int nextAmpIndx,nextBearingIndx;
-            float tempL,tempR;
+//            float tempL,tempR;
             int tempAmpFlags,tempBearingFlags;
-            double tempAmpX,tempBearingX;
+//            double tempAmpX,tempBearingX;
             float tempAmpY,tempBearingY;
-            BOOL hasAmp=NO,hasBearing=NO;
+//            BOOL hasAmp=NO,hasBearing=NO;
             double x=nowTime;
             double maxX = x + [outB duration];
             NSLog(@"x %f, maxX %f\n",x,maxX);
@@ -533,12 +536,12 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
              */
 
             if (!bearingEnv) bearingEnv = [[envClass alloc] init];
-            if (!ampEnv) ampEnv = [[envClass alloc] init];
+            if (!ampEnv)     ampEnv     = [[envClass alloc] init];
             /************************************************************/
             #define AMP_FIRST 1
             #define BEARING_FIRST 2
-
-            float amp,bearing;
+            {
+//            float amp,bearing;
             int maxAmpBps = [ampEnv breakpointCount] - 1;
             int maxBearingBps = [bearingEnv breakpointCount] - 1;
             int lowest = 0;
@@ -549,10 +552,10 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
 
             do {
                 if (!lowest) { /* first time around */
-                    tempAmpY = [ampEnv lookupYForX:x];
+                    tempAmpY     = [ampEnv lookupYForX:x];
                     tempBearingY = [bearingEnv lookupYForX:x];
-                    ampIndx = [ampEnv breakpointIndexBeforeOrEqualToX:x];
-                    bearingIndx = [bearingEnv breakpointIndexBeforeOrEqualToX:x];
+                    ampIndx      = [ampEnv breakpointIndexBeforeOrEqualToX:x];
+                    bearingIndx  = [bearingEnv breakpointIndexBeforeOrEqualToX:x];
                 }
                 else {
                     tempAmpY = nextAmpY;
@@ -615,6 +618,7 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
                     nextAmpY : tempAmpY);
                 bearingMult = ((tempBearingFlags & SND_FADER_ATTACH_RAMP_RIGHT) ?
                     nextBearingY : tempBearingY);
+                    
                 [_SndFaderStorage addToArray:store
                     x1:x
                     x2:nextX
@@ -623,11 +627,13 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
                     r1:ampMult * (bearingMult - 45) / -90
                     r2:ampMult * (bearingMult + 45) / 90
                     ];
-
+                
                 x = nextX;
 
 
             } while (x <= maxX);
+            
+            }
             /* go and do loop again */
 
             /* now do the processing based on the line segs in store */

@@ -14,7 +14,7 @@
 @class SndStreamClient;
 
 /*!
-    @class
+    @class SndStreamRecorder
     @abstract 
     @discussion
     
@@ -32,7 +32,7 @@
  
     then either...
  
-    [rec startRecordingToFile: @"/tmp/incomingsound.snd"];
+    [rec startRecordingToFile: "/tmp/incomingsound.snd"];
     (time passes)
     [rec stopRecording];
  
@@ -47,31 +47,28 @@
     - Also, output is currently buffered + written (in stream-to-file mode) in
       44100-frame chunks; this should be more general.
     - delegate call-backs to say recording has started / ended, what incoming
-      levels are like, etc
-  
-    @var recordBuffer
-    @var conversionBuffer
-    @var position
-    @var isRecording
-    @var delegate 
-    @var bytesrecorded
-    @var recordFile
-    @var recordFileName
+      levels are like, etc  
 */
 @interface SndStreamRecorder : SndStreamClient {
 
+/*! @var recordBuffer */
   SndAudioBuffer *recordBuffer;
+/*! @var conversionBuffer */
   short          *conversionBuffer;
+/*! @var position */
   long            position;
+/*! @var isRecording */
   BOOL            isRecording; 
-  long            bytesRecorded;
-  
+/*! @var bytesrecorded */
+  long            bytesRecorded;  
+/*! @var recordFile */
   FILE           *recordFile;
+/*! @var recordFileName */
   NSString       *recordFileName;
 }
 
 /*!
-    @method     streamRecorder
+    @function   streamRecorder
     @abstract   Factory method
     @discussion 
     @result     An SndStreamRecorder
@@ -79,7 +76,7 @@
 + streamRecorder;
 
 /*!
-    @method     init
+    @function   init
     @abstract   Initializor
     @discussion 
     @result     self
@@ -87,21 +84,21 @@
 - init;
 
 /*!
-    @method     dealloc
+    @function   dealloc
     @abstract   Destructor
     @discussion 
 */
 - (void) dealloc;
 
 /*!
-    @method     description
+    @function   description
     @abstract 
     @result     NSString with description
 */
 - (NSString*) description;
 
 /*!
-    @method     prepareToRecordForDuration: 
+    @function   prepareToRecordForDuration: 
     @abstract 
     @discussion 
     @param      time
@@ -110,7 +107,7 @@
 - (BOOL) prepareToRecordForDuration: (double) time;
 
 /*!
-    @method     startRecording 
+    @function   startRecording 
     @abstract 
     @discussion 
     @param      time
@@ -119,7 +116,7 @@
 - (BOOL) startRecording;
 
 /*!
-    @method     startRecordingToFile:
+    @function   startRecordingToFile:
     @abstract 
     @discussion 
     @param      filename
@@ -128,7 +125,7 @@
 - (BOOL) startRecordingToFile: (NSString*) filename;
 
 /*!
-    @method     setUpRecordFile:
+    @function     setUpRecordFile:
     @abstract 
     @discussion 
     @param      filename
@@ -137,7 +134,7 @@
 - (BOOL) setUpRecordFile: (NSString*) filename;
 
 /*!
-    @method     closeRecordFile 
+    @function   closeRecordFile 
     @abstract 
     @discussion 
     @result     Boolean indicating success
@@ -145,7 +142,7 @@
 - (BOOL) closeRecordFile;
 
 /*!
-    @method     stopRecording
+    @function   stopRecording
     @abstract 
     @discussion 
     @result     self.
@@ -154,19 +151,29 @@
 
 @end
 
+/*!
+    @class      SndStreamRecorderDelegate
+    @abstract   Protocol for an SndStreamRecorder delegate
+    @discussion To come.
+*/
 @interface SndStreamRecorderDelegate : SndStreamClientDelegate
 
 /*!
-    @method     didStartRecording:sender
-    @abstract 
+    @function   didStartRecording:sender
+    @abstract   Message sent to delegate just before the recording thread enters its
+                processBuffers loop, indicating it is waiting for the first buffer to
+                arrive.
     @discussion Protocol method for SndStreamRecorderDelegate
     @result     self.
 */
 - didStartRecording:  sender;
 
 /*!
-    @method     didFinishRecording:sender
-    @abstract 
+    @function   didFinishRecording:sender
+    @abstract   Message sent to delegate when recording has completed. This is caused
+                by either a user event stopping streaming to disk, or the recording
+                thread reaching the limit of a record-to-memory buffer, and is sent 
+                after the final bytes have been delivered to their destination.
     @discussion Protocol method for SndStreamRecorderDelegate
     @result     self
 */
