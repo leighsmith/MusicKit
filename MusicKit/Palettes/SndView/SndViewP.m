@@ -4,8 +4,8 @@
 @implementation SndViewP
 - (void)finishInstantiate
 {	
-    [view2 setDisplayMode: NX_SOUNDVIEW_WAVE];
-    [view3 setDisplayMode: NX_SOUNDVIEW_MINMAX];
+    [(SndView *)view2 setDisplayMode: NX_SOUNDVIEW_WAVE];
+    [(SndView *)view3 setDisplayMode: NX_SOUNDVIEW_MINMAX];
 }
 
 
