@@ -1,6 +1,6 @@
-#import <musickit/musickit.h>
+#import <MusicKit/MusicKit.h>
 
-@interface RandomIzer:Object
+@interface RandomIzer: NSObject
 {
     char *ranState;
 }

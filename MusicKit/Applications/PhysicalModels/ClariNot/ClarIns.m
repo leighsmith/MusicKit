@@ -1,6 +1,6 @@
 /* The following files must be imported. */
-#import <musickit/musickit.h>    
-#import <musickit/unitgenerators/unitgenerators.h> 
+#import <MusicKit/MusicKit.h>    
+#import <MKUnitGenerators/UnitGenerators.h> 
 
 #import "ClarIns.h"
 
@@ -182,19 +182,19 @@ static int		ampAsymp,   /* amplitude envelope UG */
     double	myAmpRel = [aNote parAsDouble:MK_ampAtt];
 
 
-    int		MY_envelopeSlew = [[Note class] parName: "MY_envelopeSlew"];
+    int		MY_envelopeSlew = [[MKNote class] parName: "MY_envelopeSlew"];
     double	myEnvelopeSlew   = [aNote parAsDouble:MY_envelopeSlew];
 
-    int		MY_noiseVolume = [[Note class] parName: "MY_noiseVolume"];
+    int		MY_noiseVolume = [[MKNote class] parName: "MY_noiseVolume"];
     double	myNoiseVolume   = [aNote parAsDouble:MY_noiseVolume];
 
-    int		MY_outAmp = [[Note class] parName: "MY_outAmp"];
+    int		MY_outAmp = [[MKNote class] parName: "MY_outAmp"];
     double	myOutAmp   = [aNote parAsDouble:MY_outAmp];
-    int		MY_dLineLength = [[Note class] parName: "MY_dLineLength"];
+    int		MY_dLineLength = [[MKNote class] parName: "MY_dLineLength"];
     double	myDLineLength   = [aNote parAsDouble:MY_dLineLength];
-    int		MY_dLineLength2 = [[Note class] parName: "MY_dLineLength2"];
+    int		MY_dLineLength2 = [[MKNote class] parName: "MY_dLineLength2"];
     double	myDLineLength2   = [aNote parAsDouble:MY_dLineLength2];
-    int		MY_dLine2Gain = [[Note class] parName: "MY_dLine2Gain"];
+    int		MY_dLine2Gain = [[MKNote class] parName: "MY_dLine2Gain"];
     double	myDLine2Gain   = [aNote parAsDouble:MY_dLine2Gain];
 
     double	myPortamento = [aNote parAsDouble:MK_portamento];
