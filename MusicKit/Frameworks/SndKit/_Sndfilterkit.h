@@ -37,7 +37,9 @@
 
 */
 
-#include	"SndStdefs.h"
+#if HAVE_CONFIG_H
+# include "SndKitConfig.h"
+#endif
 
 /*
  * LpFilter() - Calculates the filter coeffs for a Kaiser-windowed low-pass
