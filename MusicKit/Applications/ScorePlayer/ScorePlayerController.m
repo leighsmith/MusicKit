@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/02/06 02:28:31  leigh
+  Removed unnecessary retains, fixed rereading files, replacing the prompt with a log message
+
   Revision 1.5  2000/12/15 02:01:19  leigh
   Initial Revision
 
@@ -54,14 +57,9 @@ Modification history:
 #import <Foundation/NSBundle.h>
 #import <MusicKit/MusicKit.h>
 
-//#import <sys/types.h>
-//#import <sys/stat.h>
-//#import <mach/mach.h>
-//#import <mach/mach_error.h>
-//#import	<mach/message.h>
-
-
 @implementation ScorePlayerController
+
+#define MAX_MIDIS 2
 
 static BOOL playScoreForm;
 static NSMutableArray *synthInstruments;
@@ -83,7 +81,7 @@ static BOOL messageFlashed = NO;
 static BOOL isLate = NO;
 static BOOL wasLate = NO;
 static id stopImage,playImage,playHImage;
-static MKMidi* midis[2] = {0};
+static MKMidi* midis[MAX_MIDIS] = {0};
 static int midiOffset;
 static BOOL synchToTimeCode = NO;
 static int timeCodePort = 0;
@@ -260,22 +258,22 @@ static void setFileTime(void)
     lastModifyTime = [[fattrs objectForKey:NSFileModificationDate] retain];
 }
 
+// Return YES if we should re-read the score file.
 static BOOL needToReread(void)
 {
     NSDictionary *fattrs;
-    BOOL rtnVal;
+    NSDate *fileModifyTime;
+    BOOL reread;
+    
     if (playScoreForm)
-      return NO;
-//    stat(fileName,&info);
+        return NO;
     fattrs = [[NSFileManager defaultManager] fileAttributesAtPath:fileName
                                                      traverseLink:YES];
-//    rtnVal = (info.st_mtime > lastModifyTime);
-    rtnVal = ([[fattrs objectForKey:NSFileModificationDate] earlierDate:lastModifyTime] == lastModifyTime);
-    if (rtnVal)
-      rtnVal = NSRunAlertPanel(STR_SCOREPLAYER, STR_FILE_CHANGED, STR_YES, STR_NO, STR_CANCEL);
-    if (rtnVal != NSAlertOtherReturn)
-        lastModifyTime = [[fattrs objectForKey:NSFileModificationDate] retain];
-    return rtnVal;
+    fileModifyTime = [fattrs objectForKey: NSFileModificationDate];
+    reread = ([fileModifyTime compare: lastModifyTime] == NSOrderedDescending);
+    [lastModifyTime release];
+    lastModifyTime = [fileModifyTime retain];
+    return reread;
 }
 
 #define  NEXT_SOUND 0
@@ -345,7 +343,7 @@ static NSArray *soundOutputTagToName;
 
 + scoreFileEditorAppName
 {
-    return @"Edit";
+    return @"TextEdit";
 }
 
 - (void)setSoundOutFrom:sender
@@ -467,14 +465,21 @@ static NSArray *soundOutputTagToName;
 
 - (void)openEditFile:sender
 {
-
+    NSString *editor;
+    
     if (!fileName) {
 	NSRunAlertPanel(STR_SCOREPLAYER, STR_NO_FILE_OPEN, STR_OK, nil, nil);
 	return;
     }
-
-    if (![[NSWorkspace sharedWorkspace] openFile:fileName])
-        NSRunAlertPanel(STR_SCOREPLAYER, STR_EDIT_CANT_OPEN_FILE, STR_OK, nil, nil);
+    editor = [ScorePlayerController scoreFileEditorAppName];
+    if ([editor length] == 0) {
+        if (![[NSWorkspace sharedWorkspace] openFile: fileName])
+            NSRunAlertPanel(STR_SCOREPLAYER, STR_EDIT_CANT_OPEN_FILE, STR_OK, nil, nil);
+    }
+    else {
+        if (![[NSWorkspace sharedWorkspace] openFile: fileName withApplication: editor])
+            NSRunAlertPanel(STR_SCOREPLAYER, STR_EDIT_CANT_OPEN_FILE, STR_OK, nil, nil);
+    }
 
 }
 
@@ -495,10 +500,8 @@ static id setFile(ScorePlayerController* self)
     [self->editFileItem setEnabled:!playScoreForm];
     [self->saveAsFileItem setEnabled:YES];
     scoreObj = [MKScore score];
-    [errMsg release];
-    errMsg = [[NSString stringWithFormat:STR_READING,shortFileName] retain];
 //    [theMainWindow makeKeyAndOrderFront:NXApp]; /* Probably not needed */
-    [self->theMainWindow setTitle:errMsg];
+    [self->theMainWindow setTitle: [NSString stringWithFormat:STR_READING, shortFileName]];
     [self->theMainWindow display];
     [self->button setEnabled:NO];
     userCancelFileRead = NO;
@@ -597,7 +600,7 @@ static BOOL setUpFile(NSString *workspaceFileName);
 			   0};                  /* Fills in remaining fields */
 #endif
     [theOrch close]; /* This will block! */
-    for (i=0; i<2; i++) {
+    for (i=0; i<MAX_MIDIS; i++) {
 	[midis[i] close];
 	midis[i] = nil;
     }
@@ -707,12 +710,16 @@ static double getUntempo(float tempoVal)
 
 static void playIt(ScorePlayerController *self)
 {
-    int partCount,synthPatchCount,voices,i,whichMidi,midiChan;
+    int partCount, synthPatchCount, voices, i, whichMidi, midiChan;
     NSString *className;
     NSString *msg = nil;
     double actualSrate;  
     NSArray *partPerformers;
-    id synthPatchClass,partPerformer,partInfo,anIns,aPart;
+    MKPartPerformer *partPerformer;
+    Class synthPatchClass;
+    MKSynthInstrument *anIns;
+    MKNote *partInfo;
+    MKPart *aPart;
 
     /* Could keep these around, in repeat-play cases: */ 
     [scorePerformer release];
@@ -721,9 +728,11 @@ static void playIt(ScorePlayerController *self)
     [self _enableMTCControls:NO];
 
     if (synchToTimeCode) {
-	midis[timeCodePort] = [MKMidi midiOnDevice:(timeCodePort) ? @"midi1" : @"midi0"];
-	[[MKConductor defaultConductor] setMTCSynch:midis[timeCodePort]];
-    } else [[MKConductor defaultConductor] setMTCSynch:nil];
+	midis[timeCodePort] = [MKMidi midiOnDevice: (timeCodePort) ? @"midi1" : @"midi0"];
+	[[MKConductor defaultConductor] setMTCSynch: midis[timeCodePort]];
+    }
+    else
+        [[MKConductor defaultConductor] setMTCSynch:nil];
 
     theOrch = [MKOrchestra newOnDSP:0]; /* A noop if it exists */
 
@@ -770,8 +779,8 @@ static void playIt(ScorePlayerController *self)
     [theOrch setSerialSoundOut:(soundOutType != NEXT_SOUND) && !writeData];
 
     if (![theOrch open]) {
-        [errorLog addText:STR_CANT_OPEN_DSP];
-        NSRunAlertPanel(STR_SCOREPLAYER,STR_CANT_OPEN_DSP,STR_OK,NULL,NULL);
+        [errorLog addText: STR_CANT_OPEN_DSP];
+        NSRunAlertPanel(STR_SCOREPLAYER, STR_CANT_OPEN_DSP, STR_OK, NULL, NULL);
 //	return; // LMS disabled until MOX orchestra opening works
     }
     scorePerformer = [MKScorePerformer new];
@@ -783,14 +792,13 @@ static void playIt(ScorePlayerController *self)
     for (i = 0; i < partCount; i++) {
 	partPerformer = [partPerformers objectAtIndex:i];
 	aPart = [partPerformer part]; 
-	partInfo = [(MKPart *)aPart infoNote];      
+	partInfo = [aPart infoNote];      
 	if ((!partInfo) || ![partInfo isParPresent:MK_synthPatch]) {
-            [errMsg release];
-            errMsg = [[NSString stringWithFormat: STR_INFO_MISSING, MKGetObjectName(aPart)] retain];
-            [errorLog addText:errMsg];
+            errMsg = [NSString stringWithFormat: STR_INFO_MISSING, MKGetObjectName(aPart)];
+            [errorLog addText: errMsg];
 #if 0
             if (!NSRunAlertPanel(STR_SCOREPLAYER, errMsg, STR_CONTINUE, STR_CANCEL, nil)) 
-	      return;
+                return;
 #endif
 	    continue;
 	}		
@@ -813,9 +821,8 @@ static void playIt(ScorePlayerController *self)
 	    synthPatchClass = ([className length]) ? 
 			       [MKSynthPatch findSynthPatchClass:className] : nil;
 	    if (!synthPatchClass) {         /* Class not loaded in program? */
-                [errMsg release];
-                errMsg = [[NSString stringWithFormat:STR_NO_SYNTHPATCH,className] retain];
-                [errorLog addText:errMsg];
+                errMsg = [NSString stringWithFormat: STR_NO_SYNTHPATCH, className];
+                [errorLog addText: errMsg];
 		if (!NSRunAlertPanel(STR_SCOREPLAYER, errMsg, STR_CONTINUE, STR_CANCEL, nil))
 		    return;
 		/* We would prefer to do dynamic loading here. */
@@ -832,13 +839,10 @@ static void playIt(ScorePlayerController *self)
 		[anIns setSynthPatchCount:voices patchTemplate:
 		 [synthPatchClass patchTemplateFor:partInfo]];
 	    if (synthPatchCount < voices) {
-                [errMsg release];
-                errMsg = [[NSString stringWithFormat:
-                    STR_TOO_MANY_SYNTHPATCHES,synthPatchCount,
-                    voices, className, MKGetObjectName(aPart)]
-                    retain];
+                errMsg = [NSString stringWithFormat: STR_TOO_MANY_SYNTHPATCHES,
+                    synthPatchCount, voices, className, MKGetObjectName(aPart)];
 
-                [errorLog addText:errMsg];
+                [errorLog addText: errMsg];
 		if (!NSRunAlertPanel(STR_SCOREPLAYER, errMsg, STR_CONTINUE, STR_CANCEL, NULL))
 		    return;
 	    }
@@ -846,9 +850,7 @@ static void playIt(ScorePlayerController *self)
     }
     [partPerformers release];
     errorDuringPlayback = NO;
-    [errMsg release];
-    errMsg = [[NSString stringWithFormat:STR_PLAYING,shortFileName] retain];
-    [self->theMainWindow setTitle:errMsg];
+    [self->theMainWindow setTitle: [NSString stringWithFormat: STR_PLAYING, shortFileName]];
     [self->theMainWindow display];
     MKSetDeltaT(.75);
     [MKOrchestra setTimed:YES];
@@ -856,22 +858,23 @@ static void playIt(ScorePlayerController *self)
     [self->button setImage:stopImage];
     [self->button display];
     if (synchToTimeCode)
-      [self showConductorDidPause];
+        [self showConductorDidPause];
     if (writeData)
 	[self->soundSavePanel orderFront:self];
     else if (DSPCommands)
 	[self->dspCommandsSavePanel orderFront:self];
     [tempoAnimator setIncrement:ANIMATE_INCREMENT];
     [tempoAnimator startEntry];
-    for (i=0; i<2; i++) 
-      if (midis[i] && ![midis[i] openOutputOnly]) /* midis[i] is nil if not in use */
-	mkRunAlertPanel(STR_SCOREPLAYER_ERROR,STR_CANT_OPEN_MIDI,STR_OK,STR_CANCEL,NULL);
-    for (i=0; i<2; i++) 
+    for (i=0; i<MAX_MIDIS; i++) 
+        if (midis[i] && ![midis[i] openOutputOnly]) /* midis[i] is nil if not in use */
+            mkRunAlertPanel(STR_SCOREPLAYER_ERROR, STR_CANT_OPEN_MIDI, STR_OK, STR_CANCEL, NULL);
+    for (i=0; i<MAX_MIDIS; i++) {
         if (midiOffset > 0) 
 	    [midis[i] setLocalDeltaT:midiOffset];
 	else if (midiOffset < 0)
 	    [theOrch setLocalDeltaT:-midiOffset];
-    for (i=0; i<2; i++) 
+    }
+    for (i=0; i<MAX_MIDIS; i++) 
 	[midis[i] run];
     [theOrch run];
     [condClass startPerformance];     
@@ -1045,7 +1048,7 @@ static void abortNow()
     int i;
     if (PLAYING) {
 	[condClass lockPerformance];
-	for (i=0; i<2; i++) 
+	for (i=0; i<MAX_MIDIS; i++) 
 	  if (midis[i]) {
 	      [midis[i] allNotesOff];
 	      [midis[i] abort];
@@ -1067,12 +1070,7 @@ static void abortNow()
     }
     setFile(self); 
 }
-#if 0
-#error Application Conversion: 'appAcceptsAnotherFile:' is obsolete
-- (BOOL)appAcceptsAnotherFile:sender {
-    return YES;
-}
-#endif
+
 - (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
 {
     NSString *aType = [fileName pathExtension];
@@ -1087,22 +1085,20 @@ static void abortNow()
 }
 
 
-- (void)playStop:sender
+- (void) playStop:sender
 {
     if (!fileName || ![fileName length])
-      [self selectFile:self];
+        [self selectFile:self];
     if (!fileName || ![fileName length])
-      return;
+        return;
     if (PLAYING)
-      abortNow();
+        abortNow();
     else {
-	int i = needToReread();
-	if (i == NSAlertDefaultReturn) {
+	if (needToReread()) {
+            NSLog(@"File has changed, re-reading\n");
 	    setFile(self);
-	    playIt(self);
 	}
-	else if (i == NSAlertAlternateReturn)
-	  playIt(self);
+        playIt(self);
     }
     return;
 }
@@ -1225,7 +1221,7 @@ static void adjustTempo(double slowDown)
     [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidPause)
      to:self argCount:0];
     [synthInstruments makeObjectsPerformSelector:@selector(allNotesOff)];
-    for (i=0; i<2; i++) 
+    for (i=0; i<MAX_MIDIS; i++) 
       [midis[i] allNotesOff];
     return self;
 }
