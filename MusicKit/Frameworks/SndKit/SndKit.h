@@ -17,14 +17,16 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #import "Snd.h"
 #import "SndView.h"
 #ifndef USE_NEXTSTEP_SOUND_IO
-#import "sounderror.h"
+# import "sounderror.h"
 #endif
 #import "SndStreamManager.h"
 #import "SndAudioBuffer.h"
 #import "SndStreamClient.h"
 #import "SndStreamRecorder.h"
 #import "SndStreamMixer.h"
-#import "SndAudioProcessorMP3Encoder.h"
+#ifndef SK_NO_MP3_ENCODER
+# import "SndAudioProcessorMP3Encoder.h"
+#endif
 #import "SndAudioProcessorChain.h"
 #import "SndAudioProcessorReverb.h"
 #import "SndAudioProcessor.h"
