@@ -36,10 +36,6 @@
  * (See DSPError.h for error log enabling functions.)
  */
 
-#ifndef GNUSTEP
-#import <mach/mach.h>
-#endif
-
 #import "DSPControl.h"
 #import "DSPMessage.h"
 #import "DSPTransfer.h"
