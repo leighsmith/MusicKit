@@ -118,7 +118,6 @@
 				095E1FC50030E3C7CFED3B96,
 				00D2C43FFEDB2CB5CFED3B93,
 				00D2C442FEDB2CB5CFED3B93,
-				0266378F01998D477F000001,
 			);
 			isa = PBXGroup;
 			name = Headers;
@@ -243,7 +242,7 @@
 		00D2C44AFEDB2CB5CFED3B93 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = _Sndresamplesubs.m;
+			path = SndResample.m;
 			refType = 4;
 		};
 		00D2C44BFEDB2CB5CFED3B93 = {
@@ -393,7 +392,6 @@
 				0109B294014D0BC3CFED3B94,
 				0109B295014D0BC3CFED3B94,
 				0109B297014D0BC3CFED3B94,
-				0266379001998D477F000001,
 				B5B040BC01BEC4B2002A0494,
 				B5E433C001CE8A53002A0494,
 				B526060401CFC639002A0494,
@@ -1049,21 +1047,6 @@
 			fileRef = 02240692007269D2CFED3B8B;
 			isa = PBXBuildFile;
 			settings = {
-			};
-		};
-		0266378F01998D477F000001 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SndKitDefines.h;
-			refType = 4;
-		};
-		0266379001998D477F000001 = {
-			fileRef = 0266378F01998D477F000001;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
 			};
 		};
 //020
