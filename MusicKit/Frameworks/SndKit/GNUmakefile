@@ -15,6 +15,10 @@
 
 # Modification history:
 # $Log$
+# Revision 1.18  2002/01/21 10:10:01  sbrandon
+# added new files from MacOSX additions to GNUstep project (SndExpt,
+# SndFunctionsDiskIO, SndTable)
+#
 # Revision 1.17  2002/01/15 16:55:25  sbrandon
 # added new additions to project, also re-instated appkit-based classes for
 # mingw32 compilation since recent changes to gnustep now allow gnustep-gui
@@ -125,8 +129,8 @@ $(MY_NAME)_OBJC_FILES = \
 	  SndAudioProcessorDistortion.m	SndAudioProcessorFlanger.m \
 	  SndAudioProcessorRecorder.m SndAudioProcessorInspector.m \
           SndAudioProcessorToneGenerator.m SndAudioProcessorNoiseGate.m \
-          SndStreamArchitectureView.m SndView.m
-	  #SndMeter.m
+          SndStreamArchitectureView.m SndView.m SndTable.m SndExpt.m \
+	  SndFunctionsDiskIO.m #SndMeter.m
 
 $(MY_NAME)_C_FILES = \
          SndEndianFunctions.c _SndConvert.c _Sndfilterkit.c _Sndlibst.c\
@@ -147,7 +151,7 @@ $(MY_NAME)_HEADER_FILES = \
 	 SndAudioProcessorDistortion.h SndAudioProcessorFlanger.h \
 	 SndAudioProcessorRecorder.h SndAudioProcessorInspector.h \
          SndAudioProcessorToneGenerator.h SndAudioProcessorNoiseGate.h \
-         SndStreamArchitectureView.h
+         SndStreamArchitectureView.h SndTable.h SndExpt.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
 
