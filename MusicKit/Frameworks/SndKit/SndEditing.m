@@ -1,18 +1,30 @@
+////////////////////////////////////////////////////////////////////////////////
 //
-//  SndEditing.m
-//  MusicKit
+//  $Id$
 //
-//  Created by Leigh Smith on Fri Apr 16 2004.
-//  Copyright (c) 2004 Oz Music Code LLC. All rights reserved.
+//  Description:
+//    Snd methods concerned with editing (cut/paste/insertion/compacting etc).
 //
-
-// TODO All static functions used to reside in SndFunctions as public functions and take SndSoundStruct parameters. They eventually
-// need to be merged into the methods that use them, removing SndSoundStruct use entirely. This needs to be done
-// in the context of an array of SndAudioBuffers replacing fragmented SndSoundStructs.
+//    TODO All static functions used to reside in SndFunctions as public functions and take SndSoundStruct parameters. They eventually
+//    need to be merged into the methods that use them, removing SndSoundStruct use entirely. This needs to be done
+//    in the context of an array of SndAudioBuffers replacing fragmented SndSoundStructs.
+//
+//  Original Author: Leigh Smith
+//
+//  Copyright (c) 2004, The MusicKit Project.  All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
 #import "Snd.h"
 #import "SndAudioBuffer.h"
 #import "SndFunctions.h"
+
+// Turn on for debugging output.
+#define SND_DEBUG_LOOPING 0
 
 @implementation Snd(Editing)
 
@@ -806,7 +818,7 @@ static int SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCo
     samplesToReadRange.length = isLooping ? framesUntilEndOfLoop : sndFrameRange.length;
     
 #if SND_DEBUG_LOOPING
-    NSLog(@"[SndPerformance][SYNTH THREAD] sndFrameRange.location = %ld, sndFrameRange.length = %ld, buffer length = %d, fill buffer to length = %d, framesUntilEndOfLoop = %ld\n",
+    NSLog(@"[Snd][SYNTH THREAD] sndFrameRange.location = %ld, sndFrameRange.length = %ld, buffer length = %d, fill buffer to length = %d, framesUntilEndOfLoop = %ld\n",
 	  sndFrameRange.location, sndFrameRange.length, bufferFrameRange.length, fillBufferToLength, framesUntilEndOfLoop);
 #endif
     
@@ -875,7 +887,7 @@ static int SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCo
 	    sndFrameRange.location += numOfSamplesRead;  // Update the read index accounting for change from resampling.
 		
 #if SND_DEBUG_LOOPING
-	NSLog(@"[SndPerformance][SYNTH THREAD] will mix buffer from %d to %d, old sndFrameRange.location %d for %d, val at start = %f\n",
+	NSLog(@"[Snd][SYNTH THREAD] will mix buffer from %d to %d, old sndFrameRange.location %d for %d, val at start = %f\n",
 	      0, fillBufferToLength, samplesToReadRange.location, numOfSamplesFilled,
 	      (((short *) [self data])[samplesToReadRange.location]) / (float) 32768);
 #endif
