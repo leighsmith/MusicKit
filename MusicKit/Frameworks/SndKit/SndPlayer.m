@@ -14,6 +14,7 @@
 
 #import "SndAudioBuffer.h"
 #import "SndPlayer.h"
+#import "SndStreamManager.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // SndPlayerData
@@ -24,8 +25,7 @@
 + soundPlayerDataWithSnd: (Snd*) s playTime: (double) t 
 {
     SndPlayerData *spd = [[SndPlayerData alloc] init];
-    spd->snd = s;
-    [spd->snd retain];
+    spd->snd = [s retain];
     spd->playTime = t;
     spd->playIndex = 0;
     return [spd autorelease];
@@ -70,10 +70,7 @@
 
 + player
 {
-    SndPlayer *sp = [SndPlayer alloc];
-    sp->toBePlayed = nil;
-    sp->playing    = nil;
-    [sp init];
+    SndPlayer *sp = [[SndPlayer alloc] init];
     return [sp autorelease];
 }
 
@@ -84,11 +81,10 @@
 - init
 {
     [super init];
-    toBePlayed = [NSMutableArray arrayWithCapacity: 10];
-    playing    = [NSMutableArray arrayWithCapacity: 10];
-
-    [toBePlayed retain];
-    [playing    retain];
+    if(toBePlayed == nil)
+        toBePlayed = [[NSMutableArray arrayWithCapacity: 10] retain];
+    if(playing == nil)
+        playing    = [[NSMutableArray arrayWithCapacity: 10] retain];
 
     nowTime = 0;
 
@@ -114,7 +110,7 @@
 
 - (NSString*) description
 {
-    return @"SndPlayer object";
+    return [NSString stringWithFormat: @"SndPlayer to be played %@, playing %@", toBePlayed, playing];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -134,20 +130,28 @@
 
 - playSnd: (Snd*) s withTimeOffset: (double) dt
 {
-    double playT = nowTime+dt;
-    int i, c = [toBePlayed count];
-    SndPlayerData *spd = [SndPlayerData soundPlayerDataWithSnd: s playTime: playT];
-    int insertIndex = c;
+    if(![self isActive])
+         [[SndStreamManager defaultStreamManager] addClient: self];
 
-    for (i = 0; i < c; i++) {
-        SndPlayerData *this = [toBePlayed objectAtIndex: i];
-        if ([this playTime] > playT) {
-            insertIndex = i;
-            break;
+    if (dt == 0.0) {
+        SndPlayerData *spd = [SndPlayerData soundPlayerDataWithSnd: s playTime: nowTime];
+        [playing addObject: spd];    
+    }		
+    else {
+        double playT = nowTime+dt;
+        int i, c = [toBePlayed count];
+        SndPlayerData *spd = [SndPlayerData soundPlayerDataWithSnd: s playTime: playT];
+        int insertIndex = c;
+
+        for (i = 0; i < c; i++) {
+            SndPlayerData *this = [toBePlayed objectAtIndex: i];
+            if ([this playTime] > playT) {
+                insertIndex = i;
+                break;
+            }
         }
+        [toBePlayed insertObject: spd atIndex: i];
     }
-    [toBePlayed insertObject: spd atIndex: i];
-
     return self;
 }
 
@@ -166,8 +170,7 @@
     int i;
     NSMutableArray *removalArray = [NSMutableArray arrayWithCapacity: 10];
 
-
-    // Are any of the 'TobePlayed' samples gonna fire off during this buffer?
+    // Are any of the 'toBePlayed' samples gonna fire off during this buffer?
     // If so, add 'em to the play array
     c = [toBePlayed count];
     for (i = 0; i < c; i++) {
@@ -178,10 +181,7 @@
             [playing addObject: spd];
         }
     }
-    c = [removalArray count];
-    for (i = 0; i < c; i++) {
-        [toBePlayed removeObject: [removalArray objectAtIndex: i]];
-    }
+    [toBePlayed removeObjectsInArray: removalArray];
     [removalArray removeAllObjects];
     
     //*The plan*
@@ -197,6 +197,8 @@
         SndAudioBuffer *temp = nil;
         NSRange r = {startIndex, buffLength};
 
+        // NSLog(@"location = %d, length = %d\n", r.location, r.length);
+        
         if (buffLength + startIndex > sndLength)
             buffLength = sndLength - startIndex;
         r.length = buffLength;
@@ -206,11 +208,7 @@
             r.location = 0;
         }
         
-        // TO DO trick: audio buffer must be sensitive to setting up segments
-        // with start times/end times inside the buffer...?
-
-        temp = [SndAudioBuffer audioBufferWithSndSeg: snd
-                                            range: r];
+        temp = [SndAudioBuffer audioBufferWithSndSeg: snd range: r];
 
         {
             int start = 0, end = buffLength;
@@ -219,16 +217,20 @@
             if (end + startIndex > sndLength)
                 end = sndLength - startIndex;
 
-            [outputBuffer mixWithBuffer: temp fromStart: start toEnd: end];
+            [ab mixWithBuffer: temp fromStart: start toEnd: end];
         }
         [spd setPlayIndex: startIndex + buffLength];
-        if (r.location + buffLength > sndLength)
-            [removalArray addObject: snd];
+        if ([spd playIndex] >= sndLength)
+            [removalArray addObject: spd];
     }
 
-    c = [removalArray count];
-    for (i = 0; i < c; i++) {
-        [playing removeObject: [removalArray objectAtIndex: i]];
+    // NSLog(@"playing %i sounds",[playing count]);
+    if ([removalArray count] == 1) {
+        [playing removeObjectsInArray: removalArray];
+        if([toBePlayed count] == 0 && [playing count] == 0) {
+            active = FALSE;
+            // NSLog(@"Setting active false\n");
+        }
     }
 }
 
