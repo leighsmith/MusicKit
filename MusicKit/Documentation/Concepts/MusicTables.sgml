@@ -880,7 +880,7 @@ DB (&ldquo;DB&rdquo; stands for &ldquo;Data Base&rdquo;) family of
 <classname>DBWave2vi</classname>.  Note that the use of the Data Base
 is strictly optional in these instruments.  For example, if the Data
 Base is not used, <classname>DBWave1vi</classname> acts just like
-<classname>Wave1vi</classname>.  That is, the <b>waveform</b>
+<classname>Wave1vi</classname>.  That is, the <emphasis role="bold">waveform</emphasis>
 parameter may be passed either an ordinary
 <classname>MKWaveTable</classname> (as in
 <classname>Wave1vi</classname>) or a timbre string (as defined below).
@@ -960,143 +960,182 @@ used from about <constant>c2</constant> to about <constant>d4</constant>.
 	    </row>
 	  </thead>
 	  <tbody>
-<row><entry>&ldquo;BA&rdquo;</entry>
+<row>
+<entry>&ldquo;BA&rdquo;</entry>
 <entry>Bass voice &ldquo;ah&rdquo;</entry>
-<entry>15</entry></row>
+<entry>15</entry>
+</row>
 
-<row><entry>&ldquo;BE&rdquo;</entry>
+<row>
+<entry>&ldquo;BE&rdquo;</entry>
 <entry>Bass voice &ldquo;eh&rdquo;</entry>
-<entry>14</entry></row>
+<entry>14</entry>
+</row>
 
-<row><entry>&ldquo;BO&rdquo;</entry>
+<row>
+<entry>&ldquo;BO&rdquo;</entry>
 <entry>Bass voice &ldquo;oh&rdquo;</entry>
-<entry>15</entry></row>
+<entry>15</entry>
+</row>
 
-<row><entry>&ldquo;BU&rdquo;</entry>
+<row>
+<entry>&ldquo;BU&rdquo;</entry>
 <entry>Bass voice &ldquo;oo&rdquo;</entry>
-<entry>15</entry></row>
+<entry>15</entry>
+</row>
 
-<row><entry>&ldquo;TA&rdquo;</entry>
+<row>
+<entry>&ldquo;TA&rdquo;</entry>
 <entry>Tenor voice &ldquo;ah&rdquo;</entry>
-<entry>12</entry></row>
+<entry>12</entry>
+</row>
 
-<row><entry>&ldquo;TE&rdquo;</entry>
+<row>
+<entry>&ldquo;TE&rdquo;</entry>
 <entry>Tenor voice &ldquo;eh&rdquo;</entry>
-<entry>12</entry></row>
+<entry>12</entry>
+</row>
 
-<row><entry>&ldquo;TI&rdquo;</entry>
+<row>
+<entry>&ldquo;TI&rdquo;</entry>
 <entry>Tenor voice &ldquo;ee&rdquo;</entry>
-<entry>12</entry></row>
+<entry>12</entry>
+</row>
 
-<row><entry>&ldquo;TO&rdquo;</entry>
+<row>
+<entry>&ldquo;TO&rdquo;</entry>
 <entry>Tenor voice &ldquo;oh&rdquo;</entry>
-<entry>12</entry></row>
+<entry>12</entry>
+</row>
 
-<row><entry>&ldquo;TU&rdquo;</entry>
+<row>
+<entry>&ldquo;TU&rdquo;</entry>
 <entry>Tenor voice &ldquo;oo&rdquo;</entry>
-<entry>12</row>
+<entry>12</entry>
+</row>
 
-<row><entry>&ldquo;SA&rdquo;</entry>
+<row>
+<entry>&ldquo;SA&rdquo;</entry>
 <entry>Soprano voice &ldquo;ah&rdquo;</entry>
 <entry>13</entry>
 </row>
 
-<row><entry>&ldquo;SE&rdquo;</entry>
+<row>
+<entry>&ldquo;SE&rdquo;</entry>
 <entry>Soprano voice &ldquo;eh&rdquo;</entry>
 <entry>13</entry>
 </row>
 
-<row><entry>&ldquo;SI&rdquo;</entry>
+<row>
+<entry>&ldquo;SI&rdquo;</entry>
 <entry>Soprano voice &ldquo;ee&rdquo;</entry>
 <entry>13</entry>
 </row>
 
-<row><entry>&ldquo;SO&rdquo;</entry>
+<row>
+<entry>&ldquo;SO&rdquo;</entry>
 <entry>Soprano voice &ldquo;oh&rdquo;</entry>
 <entry>13</entry>
 </row>
 
-<row><entry>&ldquo;SU&rdquo;</entry>
+<row>
+<entry>&ldquo;SU&rdquo;</entry>
 <entry>Soprano voice &ldquo;oo&rdquo;</entry>
 <entry>13</entry>
 </row>
 
-<row><entry>&ldquo;VCA&rdquo;</entry>
+<row>
+<entry>&ldquo;VCA&rdquo;</entry>
 <entry>Cello attack</entry>
 <entry>53</entry>
 </row>
 
-<row><entry>&ldquo;VCS&rdquo;</entry>
+<row>
+<entry>&ldquo;VCS&rdquo;</entry>
 <entry>Cello sustain</entry>
 <entry>53</entry>
 </row>
 
-<row><entry>&ldquo;VNA&rdquo;</entry>
+<row>
+<entry>&ldquo;VNA&rdquo;</entry>
 <entry>Violin attack</entry>
 <entry>56</entry>
 </row>
 
-<row><entry>&ldquo;VNS&rdquo;</entry>
+<row>
+<entry>&ldquo;VNS&rdquo;</entry>
 <entry>Violin sustain</entry>
 <entry>56</entry>
 </row>
 
-<row><entry>&ldquo;TR&rdquo;</entry>
+<row>
+<entry>&ldquo;TR&rdquo;</entry>
 <entry>Trumpet</entry>
 <entry>31</entry>
 </row>
 
-<row><entry>&ldquo;BN&rdquo;</entry>
+<row>
+<entry>&ldquo;BN&rdquo;</entry>
 <entry>Bassoon</entry>
 <entry>41</entry>
 </row>
 
-<row><entry>&ldquo;AS&rdquo;</entry>
+<row>
+<entry>&ldquo;AS&rdquo;</entry>
 <entry>Alto saxophone</entry>
 <entry>31</entry>
 </row>
 
-<row><entry>&ldquo;SS&rdquo;</entry>
+<row>
+<entry>&ldquo;SS&rdquo;</entry>
 <entry>Soprano saxophone</entry>
 <entry>31</entry>
 </row>
 
-<row><entry>&ldquo;BC&rdquo;</entry>
+<row>
+<entry>&ldquo;BC&rdquo;</entry>
 <entry>Bass clarinet</entry>
 <entry>47</entry>
 </row>
 
-<row><entry>&ldquo;CL&rdquo;</entry>
+<row>
+<entry>&ldquo;CL&rdquo;</entry>
 <entry>Clarinet</entry>
 <entry>45</entry>
 </row>
 
-<row><entry>&ldquo;EH&rdquo;</entry>
+<row>
+<entry>&ldquo;EH&rdquo;</entry>
 <entry>English horn</entry>
 <entry>32</entry>
 </row>
 
-<row><entry>&ldquo;OB&rdquo;</entry>
+<row>
+<entry>&ldquo;OB&rdquo;</entry>
 <entry>Oboe</entry>
 <entry>33</entry>
 </row>
 
-<row><entry>&ldquo;PN&rdquo;</entry>
+<row>
+<entry>&ldquo;PN&rdquo;</entry>
 <entry>Piano</entry>
 <entry>62</entry>
 </row>
 
-<row><entry>&ldquo;TW&rdquo;</entry>
+<row>
+<entry>&ldquo;TW&rdquo;</entry>
 <entry>Triangle wave</entry>
 <entry>31</entry>
 </row>
 
-<row><entry>&ldquo;SW&rdquo;</entry>
+<row>
+<entry>&ldquo;SW&rdquo;</entry>
 <entry>Sawtooth wave</entry>
 <entry>35</entry>
 </row>
 
-<row><entry>&ldquo;IW&rdquo;</entry>
+<row>
+<entry>&ldquo;IW&rdquo;</entry>
 <entry>Impulse wave</entry>
 <entry>29</entry>
 </row>
