@@ -228,7 +228,9 @@ void SndChannelMap(void *inPtr, void *outPtr, int numberOfSampleFrames, int oldN
     }
 }
 
-// TODO change to method
+// Check channel count -- if we need to increase the number of channels from 1 to
+// 2, or 4, we have hopefully got enough data malloced in *toSound to duplicate pairs
+// of samples.
 - (int) changeFromChannelCount: (int) oldNumChannels
                 fromSampleData: (void *) inPtr
                 toChannelCount: (int) newNumChannels
@@ -236,10 +238,6 @@ void SndChannelMap(void *inPtr, void *outPtr, int numberOfSampleFrames, int oldN
                     frameCount: (unsigned int) numberOfSampleFrames
                     dataFormat: (SndSampleFormat) theDataFormat
 {
-    /* now check channel count -- if we need to increase the number of channels from 1 to
-    * 2, or 4, we have hopefully got enough data malloced in *toSound to duplicate pairs
-    * of samples.
-    */
     if ((newNumChannels > oldNumChannels) && (newNumChannels % oldNumChannels == 0)) {
         short *map;
 
@@ -270,7 +268,7 @@ void SndChannelMap(void *inPtr, void *outPtr, int numberOfSampleFrames, int oldN
                 for (newChanIndex = 0; newChanIndex < newChansPerOld; newChanIndex++)
                     map[oldChanIndex * newChansPerOld + newChanIndex] = oldChanIndex;
         }
-        SndChannelMap(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, dataFormat, map);
+        SndChannelMap(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, format.dataFormat, map);
         free(map);
     }
     else if ((oldNumChannels > newNumChannels) && (oldNumChannels % newNumChannels == 0))
@@ -608,20 +606,20 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 
 - convertToFormat: (SndSampleFormat) toDataFormat
 {
-    if (dataFormat != toDataFormat) {
+    if (format.dataFormat != toDataFormat) {
 	long dataItems = [self lengthInSampleFrames] * [self channelCount];
 	NSMutableData *toData = [NSMutableData dataWithLength: dataItems * SndSampleWidth(toDataFormat)];
 	void *fromDataPtr = [data mutableBytes];
 	void *toDataPtr = [toData mutableBytes];
-	int error = SndChangeSampleType(fromDataPtr, toDataPtr, dataFormat, toDataFormat, dataItems);
+	int error = SndChangeSampleType(fromDataPtr, toDataPtr, format.dataFormat, toDataFormat, dataItems);
 
 	if (error == SND_ERR_BAD_FORMAT)
 	    return nil;
 	
 	[data release];
 	data = [toData retain];
-	byteCount = maxByteCount = [toData length];
-	dataFormat = toDataFormat;
+	byteCount = [toData length];
+	format.dataFormat = toDataFormat;
 	// NSLog(@"convert: %@", self);
     }
     return self;
@@ -630,26 +628,26 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 - convertToFormat: (SndSampleFormat) toDataFormat
      channelCount: (int) toChannelCount
 {
-    if(channelCount != toChannelCount) {
+    if(format.channelCount != toChannelCount) {
 	unsigned int sampleFrames = [self lengthInSampleFrames];
 	long dataItems = sampleFrames * toChannelCount;
-	NSMutableData *toData = [NSMutableData dataWithLength: dataItems * SndSampleWidth(dataFormat)];
+	NSMutableData *toData = [NSMutableData dataWithLength: dataItems * SndSampleWidth(format.dataFormat)];
 	void *fromDataPtr = [data mutableBytes];
 	void *toDataPtr = [toData mutableBytes];
-        int error = [self changeFromChannelCount: channelCount
+        int error = [self changeFromChannelCount: format.channelCount
                                   fromSampleData: fromDataPtr
                                   toChannelCount: toChannelCount
                                     toSampleData: toDataPtr
                                       frameCount: sampleFrames
-                                      dataFormat: dataFormat];
+                                      dataFormat: format.dataFormat];
 
 	if(error != SND_ERR_NONE)
 	    return nil;
 	
 	[data release];
 	data = [toData retain];
-	byteCount = maxByteCount = [toData length];
-	channelCount = toChannelCount;
+	byteCount = [toData length];
+	format.channelCount = toChannelCount;
     }    
     return [self convertToFormat: toDataFormat];
 }
@@ -661,20 +659,20 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 interpolateFilter: (BOOL) interpFilter
 useLinearInterpolation: (BOOL) fastInterpolation
 {
-    if (samplingRate != toSampleRate) {
-	double stretchFactor = toSampleRate / samplingRate;
+    if (format.sampleRate != toSampleRate) {
+	double stretchFactor = toSampleRate / format.sampleRate;
 	long sampleFrames = [self lengthInSampleFrames];
-	long dataItems = sampleFrames * channelCount;
+	long dataItems = sampleFrames * format.channelCount;
 	NSMutableData *toData = [NSMutableData dataWithLength: dataItems * stretchFactor * SndSampleWidth(SND_FORMAT_LINEAR_16)];
 	void *fromDataPtr = [data mutableBytes];
 	void *toDataPtr = [toData mutableBytes];
-	SndFormat toSoundFormat = { SND_FORMAT_LINEAR_16, 0, channelCount, toSampleRate };
-	SndFormat fromSoundFormat = { dataFormat, sampleFrames, channelCount, samplingRate }; 
+	SndFormat toSoundFormat = { SND_FORMAT_LINEAR_16, 0, format.channelCount, toSampleRate };
+	SndFormat fromSoundFormat = { format.dataFormat, sampleFrames, format.channelCount, format.sampleRate }; 
 
 	SndChangeSampleRate(fromSoundFormat, fromDataPtr, &toSoundFormat, (short *) toDataPtr, largeFilter, interpFilter, fastInterpolation);
 
 	// assign dataFormat here in case we don't do any conversion using SndChangeSampleType() below.
-	dataFormat = toSoundFormat.dataFormat;
+	format.dataFormat = toSoundFormat.dataFormat;
 
 	// assign this here in case we don't do any conversion in convertToFormat:channelCount:
 	byteCount = SndDataSize(toSoundFormat);  
@@ -682,7 +680,7 @@ useLinearInterpolation: (BOOL) fastInterpolation
 	// replace the old data with the new sample rate converted data.
 	[data release];
 	data = [toData retain];
-	samplingRate = toSampleRate;
+	format.sampleRate = toSampleRate;
     }
     
     // The sample rate converted sample data is now ready for channel/format conversion
@@ -729,7 +727,7 @@ useLinearInterpolation: (BOOL) fastInterpolation
 	SndChangeSampleRate(fromSoundFormat, fromDataPtr, &toSoundFormat, (short *) toDataPtr, largeFilter, interpFilter, linearInterpolation);
 	
 	// assign dataFormat here in case we don't do any conversion using SndChangeSampleType() below.
-	fromDataFormat = dataFormat = toSoundFormat.dataFormat;
+	fromDataFormat = format.dataFormat = toSoundFormat.dataFormat;
 	
 	// assign this here in case we don't do any conversion using SndChangeSampleType() below.
 	byteCount = SndDataSize(toSoundFormat);  
@@ -765,7 +763,7 @@ useLinearInterpolation: (BOOL) fastInterpolation
 	    return 0;
 	
 	// Reassign dataFormat in case it was changed by the sample rate changing code.
-	dataFormat = toDataFormat;
+	format.dataFormat = toDataFormat;
     }
     lastModifiedByte = (bufferFrameRange.location + bufferFrameRange.length) * [self frameSizeInBytes];
     byteCount = MAX(lastModifiedByte, byteCount);   // extend the byte count if we modify a greater region.
@@ -793,19 +791,19 @@ useLinearInterpolation: (BOOL) fastInterpolation
     int error;
 
     // TODO need to do sample conversion.
-    if(samplingRate != toSamplingRate) {
+    if(format.sampleRate != toSamplingRate) {
 	// TODO should do sampling rate conversion
-	NSLog(@"Sampling rate conversion %lf to %lf not done! Needs implementation.\n", samplingRate, toSamplingRate);
+	NSLog(@"Sampling rate conversion %lf to %lf not done! Needs implementation.\n", format.sampleRate, toSamplingRate);
     }
     
     // do conversion into the new data buffer.
-    if(channelCount != toChannelCount) {
-	error = [self changeFromChannelCount: channelCount
+    if(format.channelCount != toChannelCount) {
+	error = [self changeFromChannelCount: format.channelCount
                               fromSampleData: fromDataPtr
                               toChannelCount: toChannelCount
                                 toSampleData: toDataPtr
                                   frameCount: sampleFrames
-                                  dataFormat: dataFormat];
+                                  dataFormat: format.dataFormat];
 
 	if(error != SND_ERR_NONE)
 	    return nil;
@@ -813,8 +811,8 @@ useLinearInterpolation: (BOOL) fastInterpolation
 	fromDataPtr = toDataPtr; // This will then do the sample type conversion in place, which is ok by SndChangeSampleType.
     }
 
-    if(dataFormat != toDataFormat) {
-	error = SndChangeSampleType(fromDataPtr, toDataPtr, dataFormat, toDataFormat, dataItems);
+    if(format.dataFormat != toDataFormat) {
+	error = SndChangeSampleType(fromDataPtr, toDataPtr, format.dataFormat, toDataFormat, dataItems);
 
 	if(error != SND_ERR_NONE)
 	    return nil;
