@@ -26,10 +26,6 @@
 
 #import "Animator.h"
 
-#import <appkit/Application.h>
-#import <sys/time.h>
-#import <objc/vectors.h>
-
 @implementation Animator
 
 void TimerFunc(teNum,now,self)

@@ -1,9 +1,7 @@
-
-#import <objc/Object.h>
+#import <AppKit/AppKit.h>
 #import <sys/time.h>
-#import <dpsclient/dpsclient.h>
 
-@interface Animator : Object
+@interface Animator : NSObject
 {
 	int mask;
 	DPSTimedEntry teNum;
