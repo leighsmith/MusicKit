@@ -17,6 +17,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+// Only compile this class if the HIP library has been installed.
+#if HAVE_CONFIG_H
+# import "SndKitConfig.h"
+#endif
+#if HAVE_LIBMP3LAME && HAVE_LIBSHOUT
+
 #import "SndAudioProcessorMP3Encoder.h"
 
 #define DEFAULT_MP3SERVER_PASSWORD     "letmein"
@@ -294,3 +300,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 @end
+
+#else
+#warning Did not compile SndAudioProcessorMP3Encoder class since LAME and shoutcast libraries were not installed.
+#endif

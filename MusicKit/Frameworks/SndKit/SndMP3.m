@@ -17,6 +17,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+// Only compile this class if the HIP library has been installed.
+#if HAVE_CONFIG_H
+# import "SndKitConfig.h"
+#endif
+#if HAVE_LIBMP3HIP
+
 #import "SndMP3.h"
 #import "SndError.h"
 #import "SndAudioBuffer.h"
@@ -1294,3 +1300,7 @@ static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
 }
 
 @end
+
+#else
+#warning Did not compile SndMP3 class since HIP library was not installed.
+#endif
