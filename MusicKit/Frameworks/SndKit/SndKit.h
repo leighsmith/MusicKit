@@ -12,15 +12,12 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 ******************************************************************************/
 
-// Determine the MacOsX derivative being compiled on. This is a passing phase (MOXS 1.2) until the two O.S. merge API
-#define macosx (defined(__ppc__) && !defined(ppc))
-#define macosx_server (defined(__ppc__) && defined(ppc))
-
-#import "SndFormats.h"
+#import <MKPerformSndMIDI/PerformSound.h>
 #import "SndEndianFunctions.h"
-#import "SndStruct.h"
 #import "Snd.h"
 #import "SndView.h"
 #ifndef USE_NEXTSTEP_SOUND_IO
 #import "sounderror.h"
 #endif
+#import "SndAudioBuffer.h"
+#import "SndStreamClient.h"
