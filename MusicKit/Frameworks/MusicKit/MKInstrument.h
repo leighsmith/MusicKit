@@ -35,40 +35,7 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
-*/
-/*
-  $Log$
-  Revision 1.11  2004/08/21 23:28:50  leighsmith
-  Cleaned up copying and support for subclasses
-
-  Revision 1.10  2001/09/07 00:14:46  leighsmith
-  Corrected @discussion
-
-  Revision 1.9  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.8  2001/08/27 19:59:09  leighsmith
-  Added allNotesOff as a abstract instance method (since nearly all instruments implemented this anyway) and this provides a mechanism to shut off any sounding notes when a MKNoteReceiver is squelched
-
-  Revision 1.7  2000/11/25 22:52:14  leigh
-  Enforced ivar privacy
-
-  Revision 1.6  2000/05/13 17:22:09  leigh
-  Added indexOfNoteReciever method
-
-  Revision 1.5  2000/04/25 02:11:02  leigh
-  Renamed free methods to release methods to reflect OpenStep behaviour
-
-  Revision 1.4  2000/04/16 04:16:53  leigh
-  class typing
-
-  Revision 1.3  1999/09/20 03:06:50  leigh
-  Cleaned up documentation.
-
-  Revision 1.2  1999/07/29 01:25:45  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
+  Portions Copyright (c) 1999-2004, The MusicKit Project.
 */
 /*!
   @class MKInstrument
@@ -89,14 +56,16 @@ the MKConductor class receives the <b>finishPerformance</b> message.  There are
 two implications regarding an MKInstrument's involvement in a
 performance:
 
-&#183;	An MKInstrument's <b>firstNote:</b> and <b>afterPerformance</b> methods
+<ul>
+<li>An MKInstrument's <b>firstNote:</b> and <b>afterPerformance</b> methods
 are invoked as the MKInstrument begins and finishes its performance,
 respectively.  These methods can be implemented in a subclass to provide
-specialized initialization and post-performance cleanup.
+specialized initialization and post-performance cleanup.</li>
 
-&#183;	Some MKInstrument methods can't be invoked during a performance.  For
+<li>Some MKInstrument methods can't be invoked during a performance.  For
 example, you can't add or remove MKNoteReceivers while the MKInstrument is
-performing.
+performing.</li>
+</ul>
 
 Creating and adding MKNoteReceivers to an MKInstrument object is generally the
 obligation of the MKInstrument subclass; most subclasses dispose of this duty in
@@ -116,17 +85,18 @@ realize MKNotes on an external MIDI synthesizer.
 #ifndef __MK_Instrument_H___
 #define __MK_Instrument_H___
 
-#import <Foundation/NSObject.h>
-#import <Foundation/NSArray.h>
+#import <Foundation/Foundation.h>
+//#import <Foundation/NSObject.h>
+//#import <Foundation/NSArray.h>
 #import "MKNote.h"
 #import "MKNoteReceiver.h"
 
-@interface MKInstrument: NSObject
+@interface MKInstrument: NSObject <NSCoding>
 {
     NSMutableArray *noteReceivers; /* The object's array of MKNoteReceivers. */
 
 @protected
-    BOOL _noteSeen;
+    BOOL noteSeen;
     void *_afterPerfMsgPtr;
 }
 
@@ -204,8 +174,7 @@ realize MKNotes on an external MIDI synthesizer.
   @discussion Returns YES if <i>aNoteReceiver</i> is in the MKInstrument's
               MKNoteReceiver NSArray.  Otherwise returns NO.
               
-              See also: - <b>noteReceiver</b>,<b></b> -
-              <b>noteReceivers</b>
+              See also: - <b>noteReceiver</b>, - <b>noteReceivers</b>
 */
 - (BOOL) isNoteReceiverPresent: (MKNoteReceiver *) aNoteReceiver; 
 
@@ -218,7 +187,7 @@ realize MKNotes on an external MIDI synthesizer.
               MKInstrument is in performance, this does nothing and returns
               <b>nil</b>, otherwise returns <i>aNoteReceiver</i>.
               
-              See also: - <b>removeNoteReceiver:</b>,<b></b>- <b>noteReceivers</b>,<b> </b> - <b>isNoteReceiverPresent:</b>
+              See also: - <b>removeNoteReceiver:</b>, - <b>noteReceivers</b>, - <b>isNoteReceiverPresent:</b>
 */
 - addNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 
@@ -232,22 +201,24 @@ realize MKNotes on an external MIDI synthesizer.
               the MKInstrument is in performance, this does nothing and returns
               <b>nil</b>, otherwise returns <i>aNoteReceiver</i>.
               
-              See also: - <b>removeNoteReceivers</b>, - <b>addNoteReceiver</b>, - <b>noteReceivers</b>,<b></b> - <b>isNoteReceiverPresent</b>
+              See also: - <b>removeNoteReceivers</b>, - <b>addNoteReceiver</b>, - <b>noteReceivers</b>, - <b>isNoteReceiverPresent</b>
 */
 - removeNoteReceiver: (MKNoteReceiver *) aNoteReceiver; 
 
- /* 
-  * Sends freeNoteReceivers to self and then frees the receiver.  If the
-  * receiver is in performance, does nothing and returns the receiver,
-  * otherwise returns nil.  */
-- (void)dealloc; 
+/*!
+  @method dealloc
+  @discussion Disconnects, removes, and releases ivars. If the receiver is in performance, does not release the MKInstrument's MKNoteReceivers. 
+ 
+   See also: - <b>removeNoteReceivers:</b>
+ */
+- (void) dealloc; 
 
 /*!
   @method disconnectNoteReceivers
   @result Returns an id.
   @discussion Disconnects the object's MKNoteReceivers.
 */
--disconnectNoteReceivers;
+- disconnectNoteReceivers;
 
 /*!
   @method removeFromPerformance
@@ -258,18 +229,7 @@ realize MKNotes on an external MIDI synthesizer.
               MKInstrument during a performance. If the receiver is not in performance,
               does nothing and returns <b>nil</b>.
 */
--removeFromPerformance;
-
-/*!
-  @method releaseNoteReceivers
-  @result Returns <b>self</b>.
-  @discussion Disconnects, removes, and frees the MKInstrument's MKNoteReceivers. 
-              No checking is done to determine if the MKInstrument is in
-              performance.  
-              
-              See also: - <b>removeNoteReceivers:</b>
-*/
-- releaseNoteReceivers;
+- removeFromPerformance;
 
 /*!
   @method removeNoteReceivers
@@ -277,7 +237,7 @@ realize MKNotes on an external MIDI synthesizer.
   @discussion Removes all the MKInstrument's MKNoteReceivers but neither
               disconnects nor frees them. 
               
-              See also: - <b>removeNoteReceiver</b>, - <b>addNoteReceiver</b>, - <b>noteReceivers</b>,<b> </b>- <b>isNoteReceiverPresent</b>
+              See also: - <b>removeNoteReceiver</b>, - <b>addNoteReceiver</b>, - <b>noteReceivers</b>, - <b>isNoteReceiverPresent</b>
 */
 - removeNoteReceivers; 
 
@@ -292,7 +252,7 @@ realize MKNotes on an external MIDI synthesizer.
                             
               See also: - <b>firstNote:</b>, - <b>afterPerformance</b>
 */
--(BOOL) inPerformance;
+- (BOOL) inPerformance;
 
 /*!
   @method afterPerformance
@@ -311,10 +271,11 @@ realize MKNotes on an external MIDI synthesizer.
   @param  zone is a NSZone.
   @result Returns an id.
   @discussion Creates and returns a new MKInstrument as a copy of the receiving
-              MKInstrument allocated from <i>zone</i>.  The new object has its own MKNoteReceiver collection
-              that contains copies of the MKInstrument's MKNoteReceivers.  The new
-              MKNoteReceivers' connections (see the MKNoteReceiver class) are
-              copied from the MKNoteReceivers in the receiving MKInstrument.
+              MKInstrument allocated from <i>zone</i>.  The new object has its own
+              MKNoteReceiver collection that contains copies of the MKInstrument's
+              MKNoteReceivers. The new MKNoteReceivers' connections (see the 
+	      MKNoteReceiver class) are copied from the MKNoteReceivers in the receiving
+              MKInstrument.
 */
 - copyWithZone: (NSZone *) zone; 
 
@@ -326,28 +287,26 @@ realize MKNotes on an external MIDI synthesizer.
               directly to an MKInstrument, but you don't care which MKNoteReceiver
               does the receiving:
               	
-              <tt>[[anInstrument noteReceiver] receiveNote:aNote]
-              </tt>
+              <tt>[[anInstrument noteReceiver] receiveNote: aNote]</tt>
               
               If there are currently no MKNoteReceivers, this method
               creates and adds a MKNoteReceiver.
               
-              See also: - <b>addNoteReceiver</b>, -
-              <b>noteReceivers</b>,<b></b> - <b>isNoteReceiverPresent</b>
+              See also: - <b>addNoteReceiver</b>, - <b>noteReceivers</b>, - <b>isNoteReceiverPresent</b>
 */
 - (MKNoteReceiver *) noteReceiver; 
 
  /* 
-  * You never send this message directly.  Should be invoked with
-  * NXWriteRootObject().  Archives noteReceiver List. */
-- (void)encodeWithCoder: (NSCoder *) aCoder;
+  * You never send this message directly.  Archives noteReceiver Array.
+  */
+- (void) encodeWithCoder: (NSCoder *) aCoder;
 
  /* 
   * You never send this message directly.  
-  * Should be invoked via NXReadObject(). 
   * Note that -init is not sent to newly unarchived objects.
-  * See write:. */
-- (id)initWithCoder: (NSCoder *) aDecoder;
+  * See write:. 
+  */
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
 /*!
     @method allNotesOff
