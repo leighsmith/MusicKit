@@ -1154,8 +1154,8 @@
 			productName = MusicKit;
 			productReference = 016EB772FF8071FFCFED3B93;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -1289,6 +1289,7 @@
 				02CDDD30FEF166B5CFED3B93,
 			);
 			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		00D5A0C7FED5ABC1CFED3B93 = {
 			fileRef = 00D5A043FED5ABC1CFED3B93;
@@ -2016,6 +2017,7 @@
 				00D5A126FED5ABC1CFED3B93,
 			);
 			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		00D5A126FED5ABC1CFED3B93 = {
 			fileRef = 00D5A0A5FED5ABC1CFED3B93;
@@ -2089,6 +2091,7 @@
 				F57B950F022BB4DE01A80103,
 			);
 			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		00D5A128FED5ABC1CFED3B93 = {
 			fileRef = 00D5A00BFED5ABC1CFED3B93;
@@ -2541,6 +2544,7 @@
 				2F3AE7A5012B0DB3CFED3B8B,
 			);
 			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		00D5A165FED5ABC1CFED3B93 = {
 			fileRef = 00D5A0C2FED5ABC1CFED3B93;
@@ -2565,6 +2569,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //000
 //001
