@@ -174,7 +174,7 @@ static MKMsgStruct *evalSpecialQueue();
 /*
  LMS these are SB's notes, perhaps redundant.
  startTime is absolute date (NSDate *)
- nextmsgtime: maybe relative time to start of performance YES
+ nextmsgtime: relative time to start of performance
  clockTime: relative to start of performance
  pauseTime is absolute
 */
@@ -498,35 +498,29 @@ BOOL _MKAdjustTimeIfNotBehind(void)
     return MK_NODVAL;
 }
 
-/* Convience class methods to set the delta time using the MKConductor class */
-+(void) setDeltaT: (double) newDeltaT
+/* Convenience class methods to set the delta time using the MKConductor class */
++ (void) setDeltaT: (double) newDeltaT
 {
     MKSetDeltaT(newDeltaT);
 }
 
-/* Convience class methods to return the delta time using the MKConductor class */
-+(double) deltaT
+/* Convenience class methods to return the delta time using the MKConductor class */
++ (double) deltaT
 {
     return MKGetDeltaT();
 }
 
-static void
-unclockedLoop()
-    /* FIXME Might want to check for events here. */
-    /* Run until done. */
+/* Run until done. */
+/* FIXME Might want to check for events here. */
+static void unclockedLoop(void)
 {
 #if 0   // disabled by LMS as the longjmp was doing funny things to memory.
     _jmpSet = YES;
     setjmp(conductorJmp);
-    if (inPerformance)
-      for (; ;) {
-        [MKConductor masterConductorBody: nil];
-      }
-#else
+#endif
     while(inPerformance) {
         [MKConductor masterConductorBody: nil];
     }
-#endif
 }
 
 /* In addition to the regular message queues, there are several special 
@@ -808,12 +802,12 @@ static void _runSetup()
        finishPerformance or adding timed entries while sorting list. */
     BOOL clk = isClocked;
     BOOL noHng = dontHang;
-    dontHang=NO;
-    isClocked=YES;
+    dontHang = NO;
+    isClocked = YES;
     curRunningCond = clockCond;
     condQueue = clockCond; 
     /* Set head of queue to an arbitrary conductor. Sorting is done by _runSetup. */
-    [allConductors makeObjectsPerformSelector:@selector(_runSetup)];
+    [allConductors makeObjectsPerformSelector: @selector(_runSetup)];
     dontHang = noHng;
     isClocked = clk;
     curRunningCond = nil;
@@ -823,10 +817,10 @@ static void _runSetup()
   /* TYPE: Managing; Starts a performance.
    * Starts a Music Kit performance.  All Conductor objects
    * begin at the same time.
-   * In clocked mode, the Conductor assumes the use of the Application 
-   * object's event loop.
+   * In clocked mode, the Conductor assumes the use of the AppKit's 
+   * default NSRunLoop is running.
    * If you have not yet sent the -run message to your application, or if 
-   * NSApp has not been created, startPerformance does nothing and return nil.
+   * NSApp has not been created, startPerformance does nothing and returns nil.
    */
 {
     if (inPerformance)
@@ -834,37 +828,36 @@ static void _runSetup()
     _MKSetConductedPerformance(YES, self);
     inPerformance = YES;   /* Set this before doing _runSetup so that repositionCond() works right. */
     [self _adjustDeltaTThresholds]; /* For automatic notification */
-    setTime(clockTime = 0.0); // this forces oldClockTime to 0.0 also.
-    _runSetup(); // Was before setTime()
+    setTime(clockTime = 0.0);       // this forces oldClockTime to 0.0 also.
+    _runSetup();                    // Was before setTime()
     setupMTC();
     if (MKIsTraced(MK_TRACECONDUCTOR))
-        NSLog(@"Evaluating the beforePerformance queue,%s separate threaded.\n", separateThread ? "" : " not");
+        NSLog(@"Evaluating the beforePerformance queue,%s separate threaded,%s clocked.\n",
+	      separateThread ? "" : " not", isClocked ? "" : " not");
     beforePerformanceQueue = evalSpecialQueue(beforePerformanceQueue, &beforePerformanceQueueEnd);
-    if (checkForEndOfTime()) {
-	[self finishPerformance];
-	return self;
-    }
-    if (!separateThread) 
-        setPriority();
     if (!isClocked && !separateThread) {
 	timedEntry = NOTIMEDENTRY;
 	unclockedLoop();
 	return self;
     }
+    if (checkForEndOfTime()) {
+	return self;
+    }
     if (!separateThread) {
+        setPriority();
         /*sb: I am assuming that self, in a class method, equals the class method. */
         timedEntry = [[NSTimer timerWithTimeInterval: condQueue->nextMsgTime
-			       target: [self class]
-			       selector: @selector(masterConductorBody:)
-			       userInfo: nil
-			       repeats: YES] retain];
+					      target: [self class]
+					    selector: @selector(masterConductorBody:)
+					    userInfo: nil
+					     repeats: YES] retain];
         [[NSRunLoop currentRunLoop] addTimer: timedEntry forMode: _MK_DPSPRIORITY];
     }
     [startTime autorelease];
     startTime = [[NSDate date] retain];
     if (MKGetDeltaTMode() == MK_DELTAT_SCHEDULER_ADVANCE) {
         [startTime autorelease];
-        startTime = [[startTime addTimeInterval:(0 - MKGetDeltaT())] retain];
+        startTime = [[startTime addTimeInterval: (0 - MKGetDeltaT())] retain];
     }
     if (separateThread) {
 	launchThread();
@@ -1987,7 +1980,7 @@ static double getNextMsgTime(MKConductor *aCond)
 
 @implementation MKConductor(Private)
 
-+ (void) masterConductorBody:(NSTimer *) unusedTimer
++ (void) masterConductorBody: (NSTimer *) unusedTimer
 /*sb: created for the change from DPS timers to OS-style timers. The timer performs a method, not
  * a function. It's a class method because we want only one object to look after these messages.
  * When called from a separate thread, it will not actually be called from a NSTimer, but after a timed condition lock.
@@ -2030,13 +2023,16 @@ static double getNextMsgTime(MKConductor *aCond)
                 break;
             case 1:
                 (*curProc->_methodImp)(curProc->_toObject, curProc->_aSelector, curProc->_arg1);
-		if (curProc->_retainArg1) [curProc->_arg1 release];
+		if (curProc->_retainArg1)
+		    [curProc->_arg1 release];
 		curProc->_arg1 = nil;
                 break;
             case 2:
                 (*curProc->_methodImp)(curProc->_toObject, curProc->_aSelector, curProc->_arg1, curProc->_arg2);
-		if (curProc->_retainArg1) [curProc->_arg1 release];
-		if (curProc->_retainArg2) [curProc->_arg2 release];
+		if (curProc->_retainArg1)
+		    [curProc->_arg1 release];
+		if (curProc->_retainArg2)
+		    [curProc->_arg2 release];
 		curProc->_arg1 = nil;
 		curProc->_arg2 = nil;
                 break;
@@ -2048,17 +2044,22 @@ static double getNextMsgTime(MKConductor *aCond)
             // NSLog(@"I'm supposed to free %@\n", curProc->_toObject);
             switch (curProc->_argCount) {
             case 0:
-                [curProc->_toObject performSelector:curProc->_aSelector];
+                [curProc->_toObject performSelector: curProc->_aSelector];
                 break;
             case 1:
-                [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1];
-		if (curProc->_retainArg1) [curProc->_arg1 release];
+                [curProc->_toObject performSelector: curProc->_aSelector withObject: curProc->_arg1];
+		if (curProc->_retainArg1)
+		    [curProc->_arg1 release];
 		curProc->_arg1 = nil;
                 break;
             case 2:
-                [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1 withObject:curProc->_arg2];
-		if (curProc->_retainArg1) [curProc->_arg1 release];
-		if (curProc->_retainArg2) [curProc->_arg2 release];
+                [curProc->_toObject performSelector: curProc->_aSelector
+					 withObject: curProc->_arg1
+					 withObject: curProc->_arg2];
+		if (curProc->_retainArg1)
+		    [curProc->_arg1 release];
+		if (curProc->_retainArg2)
+		    [curProc->_arg2 release];
 		curProc->_arg1 = nil;
 		curProc->_arg2 = nil;
                 break;
@@ -2071,11 +2072,11 @@ static double getNextMsgTime(MKConductor *aCond)
         // NSLog(@"curRunningCond at end of loop %x\n", curRunningCond);
     } while (PEEKTIME(curRunningCond->_msgQueue)  <= curRunningCond->time);
 
-
     if (!curRunningCond->isPaused) {
         double theNextTime = PEEKTIME(curRunningCond->_msgQueue);
         repositionCond(curRunningCond,beatToClock(curRunningCond,theNextTime));
     }
+
     // If at the end, repositionCond triggers [MKConductor finishPerformance].
     // If this occurs, adjustTimedEntry is a noop (see masterConductorBody:).
     [_MKClassOrchestra() flushTimedMessages];
@@ -2089,9 +2090,9 @@ static double getNextMsgTime(MKConductor *aCond)
     _MKUnlock();
 }
 
-+(MKMsgStruct *)_afterPerformanceSel:(SEL)aSelector 
- to:(id)toObject 
- argCount:(int)argCount, ...;
++ (MKMsgStruct *) _afterPerformanceSel: (SEL) aSelector 
+				    to: (id) toObject 
+			      argCount: (int) argCount, ...;
 /* 
   Same as afterPerformanceSel:to:argCount: but ensures that message will
   be sent before any of the messages enqueued with that method. Private
@@ -2101,14 +2102,14 @@ static double getNextMsgTime(MKConductor *aCond)
     MKMsgStruct *sp;
     id arg1,arg2;
     va_list ap;
+    
     va_start(ap,argCount); 
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
-    _afterPerformanceQueue = 
-      insertSpecialQueue(sp = newMsgRequest(CONDUCTORFREES,MK_ENDOFTIME,
-					    aSelector,toObject,argCount,
-					    arg1, FALSE, arg2, FALSE),
-			 _afterPerformanceQueue,&_afterPerformanceQueueEnd);
+    sp = newMsgRequest(CONDUCTORFREES, MK_ENDOFTIME,
+		       aSelector, toObject, argCount,
+		       arg1, FALSE, arg2, FALSE);
+    _afterPerformanceQueue = insertSpecialQueue(sp, _afterPerformanceQueue, &_afterPerformanceQueueEnd);
     va_end(ap);
     return(sp);
 }
