@@ -4,8 +4,8 @@
 
   Description:
     Rewritten from original code by Michael McNabb as part of the Ensemble open source program.
-    Each MKSamplerInstrument holds a collection of sound files indexed by noteTag.
-    There is a PlayingSound for each sound file.
+    Each MKSamplerInstrument holds a collection of performances of sound files indexed by noteTag.
+    There is a SndPerformance for each note which indicates which sound file to play and when.
     A MKNote has a MK_filename parameter which is the soundfile to be played, together with any
     particular tuning deviation to be applied to it using a keynumber or frequency which forms a ratio
     from the unity key number located in the (AIFF or RIFF (.wav)). That does imply being able to load the file
@@ -21,6 +21,9 @@
 */
 /*
   $Log$
+  Revision 1.13  2001/04/20 02:53:25  leighsmith
+  Revised to use stopInFuture: and SndPerformances for correct stopping and performance management
+
   Revision 1.12  2001/04/06 19:36:31  leighsmith
   Moved to use the SndKits playInFuture: method
 
@@ -102,19 +105,16 @@
     [super init];
     [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
 
-    playingNotes = [[NSMutableArray arrayWithCapacity: 20] retain]; 
-    nameTable = [[NSMutableArray arrayWithCapacity: 40] retain];
-
+    playingNotes = [[NSMutableDictionary dictionaryWithCapacity: 20] retain]; 
+    // since we update the playingNotes queue (actually a dictionary) via an abort/stop routine from
+    // the application and from the asynchronous didPlay: delegate message, we protect it with a lock.
     [self reset];
     return self;
 }
 
 - (void) removePreparedSounds
 {
-    unsigned int i;
-    for(i = 0; i < [nameTable count]; i++) {
-        [Snd removeSoundForName: [nameTable objectAtIndex: i]];
-    }
+    [Snd removeAllSounds];
 }
 
 /* Free the playnotes list and remove the named sounds */
@@ -122,16 +122,14 @@
 {
     [playingNotes release];
     [self removePreparedSounds];
-    [nameTable release];
+    [super dealloc];
 }
 
 // Prepare by preparing the PlayingSound instance
 - prepareSoundWithNote: (MKNote *) aNote
 {
-    int velocity;
     int key;
     int baseKey;
-    int noteTag;
     Snd *newSound;
     NSString *filePath;
 
@@ -142,7 +140,6 @@
 
     key = [aNote keyNum];
     baseKey = key;   // should be baseKey = [sound unityKeyNum];
-    noteTag = [aNote noteTag];
 
     filePath = [aNote parAsString: MK_filename];
     // either retrieve playingSample from the table of playing sounds according to the filename or create afresh.
@@ -151,75 +148,72 @@
         return nil;
     }
 
-    // not loaded, load it now.
-    // read soundfile, for now loading it into a Snd object, eventually priming the buffers for play direct from disk.
+    // Not loaded, load it now. Read soundfile, for now loading it into a Snd object, eventually 
+    // priming the buffers for play direct from disk.
     if ((newSound = [Snd addName: filePath fromSoundfile: filePath]) == nil) {
         _MKErrorf(MK_cantOpenFileErr, filePath);
         return nil;
     }
-    [nameTable addObject: filePath];
-    velocity = [aNote parAsInt: MK_velocity];
     return self;
 }
 
-- playSampleNote: aNote inFuture: (double) inSeconds
+- playSampleNote: (MKNote *) aNote inFuture: (double) inSeconds
 {
     Snd *existingSound;
     NSString *filePath;
+    SndPerformance *newPerformance;
 
     // only play those notes which are samples.
     if(![aNote isParPresent: MK_filename])
         return nil;
     filePath = [aNote parAsString: MK_filename];
-    NSLog(@"playing file %@\n", filePath);
+    // NSLog(@"playing file %@\n", filePath);
 
     if ((existingSound = [Snd soundNamed: filePath]) == nil) {
         _MKErrorf(MK_cantOpenFileErr, filePath);
         return nil;
     }
-    [existingSound setDelegate:self];
-    [playingNotes addObject: aNote];    // keep a list (ordered oldest to youngest) of playing notes.
-    [existingSound playInFuture: inSeconds]; // just do it.
+    // needed to remove notes when sounds complete playing.
+    [existingSound setDelegate: self];
+    newPerformance = [existingSound playInFuture: inSeconds];
+    // keep a dictionary of playing notes (keyed by note instance, added in time order) and their performances.
+    [playingNotes setObject: newPerformance forKey: aNote];
     return self;
 }
 
-- playSampleNote: aNote
+- playSampleNote: (MKNote *) aNote
 {
     return [self playSampleNote: aNote inFuture: 0.0];
 }
 
-// Probably should revamp this to determine the playingSound instance to send the stop to.
-- stopSampleNote: aNote
+// schedule stopping a sample at some time in the future.
+- stopSampleNote: (MKNote *) aNote inFuture: (double) inSeconds
 {
-    Snd *existingSound;
-    NSString *filePath;
+    SndPerformance *performingSound;
 
-    // NSLog(@"stopping sample note %@ at time %@\n", aNote, [NSDate date]);
+    // NSLog(@"stopping sample note %@ at time %f\n", aNote, inSeconds);
 
-    // only stop playing those notes which are samples.
-    if(![aNote isParPresent: MK_filename]) {
-        // NSLog(@"Not a sample note, can't stop!\n");
-        return nil;
+    // only stop playing those sounds which are currently in the playing note dictionary.
+    performingSound = [playingNotes objectForKey: aNote];
+
+    if(performingSound) {
+        // NSLog(@"sound is playing %@\n", performingSound);
+        [performingSound stopInFuture: inSeconds];
+        // We don't remove the note from the playingNotes dictionary now, since we are only scheduling a stop.
+        // We preserve the dictionary of performances until the didPlay: delegate message. 
     }
-    filePath = [aNote parAsString: MK_filename];
-
-    if ((existingSound = [Snd soundNamed: filePath]) == nil) {
-        _MKErrorf(MK_cantOpenFileErr, filePath);
-        return nil;
-    }
-    // locking playback
-    // NSLog(@"sound is playing %d\n", [existingSound isPlaying]);
-    [playingNotes removeObject: aNote];
-    [existingSound stop];
     return self;
 }
 
 - stop
 {
-    unsigned int noteIndex;
+    MKNote *note;
+    NSEnumerator *noteEnumerator;
 
-    for(noteIndex = 0; noteIndex < [playingNotes count]; noteIndex++)
-	[self stopSampleNote: [playingNotes objectAtIndex: noteIndex]];
+    noteEnumerator = [playingNotes keyEnumerator];
+    while ((note = [noteEnumerator nextObject])) {
+	[self stopSampleNote: note inFuture: 0.0];
+    }
     // [ stopRecording];
     return self;
 }
@@ -242,18 +236,6 @@
 {
     NSLog(@"Got playingSample delegate deactivation notice\n");
     return self;
-}
-
-// set the limit of voices to simultaneously play
-// FIXME needs a value to prevent limiting.
-- (void) setVoiceCount:(int) newVoiceCount
-{
-    voiceCount = newVoiceCount;
-}
-
-- (int) voiceCount
-{
-    return voiceCount;
 }
 
 - setAmp: (int) noteTag
@@ -346,22 +328,14 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
   return self;
 }
 
+// Early out, no different from just stopping all playing samples.
 - abort
 {
-//  int i;
-#if 0
-  if ([recorder isActive])
-    [recorder stopRecording];
-#endif
-//  for (i = 0; i < MAX_PERFORMERS; i++) {
-//    [playingSamples[i] abort];
-//    sustained[i] = NO;
-//  }
-  return self;
+    return [self stop];
 }
 
 #if 0 // antiquated
-- recordSound:note
+- recordSound: (MKNote *) note
 {
   if (!recorder)
     recorder = [[SoundRecorder allocFromZone:[self zone]] init];
@@ -395,17 +369,16 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
     // [MKConductor sel:to:withDelay:argCount:] takes delay parameters in beats.
     double  deltaT = MKGetDeltaT() / [conductor beatSize]; 
 
-    NSLog(@"deltaT = %lf beatSize = %lf tempo = %lf\n", deltaT, [conductor beatSize], [conductor tempo]);
+    // NSLog(@"deltaT = %lf beatSize = %lf tempo = %lf\n", deltaT, [conductor beatSize], [conductor tempo]);
     if ((type == MK_noteOn) || (type == MK_noteDur)) {
         [self prepareSoundWithNote: aNote];
         [self playSampleNote: aNote inFuture: deltaT];
         if (type == MK_noteDur) {
-            // NSLog(@"Date: %@\n", [NSDate date]);
-            TIMEDSENDTO(conductor, self, @selector(stopSampleNote:), deltaT+[aNote dur], aNote);
+            [self stopSampleNote: aNote inFuture: deltaT+[aNote dur]];
         }
     }
     else if ((type == MK_noteOff) && !damperOn) {
-        TIMEDSENDTO(conductor, self, @selector(stopSampleNote:), deltaT, aNote);
+        [self stopSampleNote: aNote inFuture: deltaT];
     }
 
     if (MKIsNoteParPresent(aNote, MK_amp)) {
@@ -429,13 +402,12 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
     //if (isControlPresent(aNote, recordModeController))
     //	recordMode = getControlValAsInt(aNote, recordModeController) > 0;
     if (MKIsNoteParPresent(aNote, MK_controlChange)) {
-#if 0
         int controller = MKGetNoteParAsInt(aNote, MK_controlChange);
 
         if (controller == MIDI_DAMPER) {
-        damperOn = (MKGetNoteParAsInt(aNote, MK_controlVal) >= 64);
-        if (!damperOn)
-            TIMEDSENDTO(conductor, self, @selector(stopSampleNote:), deltaT, aNote);
+            damperOn = (MKGetNoteParAsInt(aNote, MK_controlVal) >= 64);
+            if (!damperOn)
+                [self stopSampleNote: aNote inFuture: deltaT];
         }
         else if (controller == MIDI_MAINVOLUME) {
             volume = (float)MKGetNoteParAsInt(aNote, MK_controlVal) / 127.0;
@@ -443,35 +415,35 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
         }
         else if (controller == MIDI_PAN) {
             bearing = -45 + 90.0 * (MKGetNoteParAsInt(aNote, MK_controlVal)/127.0);
-            TIMEDSENDTO(conductor, self,@selector(setBearing:), deltaT, noteTag);
+            TIMEDSENDTO(conductor, self, @selector(setBearing:), deltaT, noteTag);
         }
-        else if (controller == 14) {
-            /* Mostly for 2.1 compatibility */
-            int headphoneLevel =
-                (int)(-84.0 + MKGetNoteParAsDouble(aNote, MK_controlVal)*.66142);
-            [soundOutDevice setAttenuationLeft: headphoneLevel right: headphoneLevel];
-        }
-#endif
     }
 
-    if (((type == MK_noteOn) || (type == MK_noteDur)) && !recordMode) {
-        //TIMEDSENDTO(conductor, self, @selector(activate:), deltaT, noteTag);
-    }
-    else if (type == MK_mute) {
+    if (type == MK_mute) {
         if (MKGetNoteParAsInt(aNote, MK_sysRealTime) == MK_sysReset)
             [self reset];
         else if (MKGetNoteParAsInt(aNote, MK_sysRealTime) == MK_sysStop)
-            TIMEDSENDTO(conductor, self, @selector(stopSampleNote:), 0.0, aNote);
+            [self stopSampleNote: aNote inFuture: 0.0];
     }
 
     return self;
 }
 
-// Snd delegate
+// When the sound completes playing, either through premature stopping or coming to the end of the sound,
+// we need to remove the note and the performance it points to from the playingNotes dictionary.
+// Ideally we need a double linked dictionary, that allows us to find a key given it's object, but for now
+// we can be inefficient and use an exhaustive search.
 - (void) didPlay: (Snd *) sound duringPerformance: (SndPerformance *) performance
 {
-    NSLog(@"did finish playing sound named %@, performance %@\n", [sound name], performance);
-    // unlock playback??
+    NSArray *notesPlayingPerformance;
+
+    // NSLog(@"did finish playing sound named %@, performance %@\n", [sound name], performance);
+    notesPlayingPerformance = [playingNotes allKeysForObject: performance];
+    // NSLog(@"playingNotes %@, notesPlayingPerformance = %@\n", playingNotes, notesPlayingPerformance);
+    
+    // since each performance is unique, there will only be one note playing that performance,
+    // so we could skip iterating.
+    [playingNotes removeObjectForKey: [notesPlayingPerformance objectAtIndex: 0]];
 }
 
 - (void) encodeWithCoder:(NSCoder *) coder

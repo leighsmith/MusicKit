@@ -18,6 +18,9 @@
 */
 /*
   $Log$
+  Revision 1.11  2001/04/20 02:53:25  leighsmith
+  Revised to use stopInFuture: and SndPerformances for correct stopping and performance management
+
   Revision 1.10  2001/04/06 19:38:01  leighsmith
   Moved to use the SndKits playInFuture: method
 
@@ -66,8 +69,7 @@
     MKMsgStruct *startMessage, *stopMessage;
     char *directory;
 
-    NSMutableDictionary *soundTable;
-    NSMutableArray *playingNotes;
+    NSMutableDictionary *playingNotes;
     NSMutableArray *nameTable;
     BOOL sustained[128];
     int activeVoices;
@@ -98,8 +100,6 @@
 - abort;
 - stop;
 - reset;
-- (int) voiceCount;
-- (void) setVoiceCount: (int) newVoiceCount;
 - prepareSoundWithNote: (MKNote *) aNote;
 - (void) removePreparedSounds;
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
