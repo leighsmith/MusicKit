@@ -31,75 +31,6 @@
   Portions Copyright (c) 1994 Stanford University  
   Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.23  2003/01/29 03:13:28  leighsmith
-  Comment fix
-
-  Revision 1.22  2002/08/20 23:26:02  leighsmith
-  Removed warning of undeclared method class in bundleExtensions, added setAlternativeScorefileExtensions: to allow alternative names for scorefiles
-
-  Revision 1.21  2002/05/01 14:34:12  sbrandon
-  Added doco and declaration of +bundleExtensions:
-
-  Revision 1.20  2002/03/06 07:54:33  skotmcdonald
-  Added method partNamed which returns the MKPart with a given info-note title
-
-  Revision 1.19  2002/01/09 18:08:52  leighsmith
-  Cleaned up headerdoc doco
-
-  Revision 1.18  2001/11/16 19:56:45  skotmcdonald
-  Added scaleTime method to MKPart and MKScore, which adjusts the timeTags and durations of notes by a scaling factor (useful for compensating for changes in score tempo). Note: parameters inside individual MKNotes (apart from MK_dur) will need to receive scaling msgs, eg envelopes that match physical sample or synthesis parameters that should(n't) be scaled... a conundrum for discussion at present.
-
-  Revision 1.17  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.16  2001/08/28 23:38:24  leighsmith
-  Merged RTF Class reference documentation into headerdoc
-
-  Revision 1.15  2001/03/12 02:14:41  leigh
-  Cleaned up prototype formatting
-
-  Revision 1.14  2001/02/23 03:29:44  leigh
-  Removed redundant and dangerous releasePartsOnly method
-
-  Revision 1.13  2000/11/28 19:05:49  leigh
-  Added -fileExtensions, -scorefileExtensions, changed -midiExtensions to produce a NSArray of possible midifile extensions
-
-  Revision 1.12  2000/11/25 22:59:17  leigh
-  Removed -releaseParts and renamed -removeAllObjects to the more meaningful -removeAllParts
-
-  Revision 1.11  2000/11/21 19:48:56  leigh
-  Improved release methods description
-
-  Revision 1.10  2000/06/09 15:01:03  leigh
-  typed the parameter returned by -parts
-
-  Revision 1.9  2000/05/26 21:03:19  leigh
-  Added combineNotes to do the combination over all MKParts
-
-  Revision 1.8  2000/04/26 01:20:43  leigh
-  Corrected readScorefileStream to take a NSData instead of NSMutableData instance
-
-  Revision 1.7  2000/04/25 02:08:40  leigh
-  Renamed free methods to release methods to reflect OpenStep behaviour
-
-  Revision 1.6  2000/03/29 03:17:47  leigh
-  Cleaned up doco and ivar declarations
-
-  Revision 1.5  2000/03/07 18:19:57  leigh
-  Fixed misleading doco
-
-  Revision 1.4  2000/02/08 04:15:18  leigh
-  Added +midifileExtension
-
-  Revision 1.3  1999/09/04 22:02:18  leigh
-  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
-
-  Revision 1.2  1999/07/29 01:25:49  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
 @class MKScore
 
@@ -137,6 +68,26 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 
 #import <Foundation/NSObject.h>
 
+@class MKNote;
+
+/*!
+  @enum       MKScoreFormat
+  @abstract   Formats that MKScore can read or write.
+  @constant   MK_UNRECOGNIZEDFORMAT
+  @constant   MK_MIDIFILE  MIDI Manufacturers Association Standard MIDI File V1.0.
+  @constant   MK_SCOREFILE Text format version of Scorefile format, described in
+              <A href=http://www.musickit.org/MusicKitConcepts/scorefilesummary.html>this syntax description</A>.
+  @constant   MK_PLAYSCORE Binary format version of Scorefile format.
+  @constant   MK_MUSICXML  XML based MusicXML format.
+ */
+ typedef enum {
+    MK_UNRECOGNIZEDFORMAT,
+    MK_MIDIFILE,
+    MK_SCOREFILE,
+    MK_PLAYSCORE,
+    MK_MUSICXML
+} MKScoreFormat;
+
 @interface MKScore : NSObject
 {
 /*! @var parts The object's collection of MKParts. */
@@ -156,10 +107,11 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 */
 - init;
 
- /* 
- Frees the receiver and its contents.
+/*! 
+   @method dealloc
+   @abstract Releases the receiver and its contents.
  */
-- (void)dealloc;
+- (void) dealloc;
 
  /* 
  Removes and releases the MKNotes contained in the receiver's MKParts.
@@ -167,12 +119,11 @@ printed by invoking <b>setScorefilePrintStream:</b>.
  */
 - releaseNotes; 
 
- /* 
- Removes the receiver's MKParts.
- Returns the receiver.
-  */
-- (void)removeAllParts; 
-
+/*! 
+  @method removeAllParts
+  @abstract Removes the receiver's MKParts.
+ */
+- (void) removeAllParts; 
 
 /*!
   @method readScorefile:
@@ -213,7 +164,6 @@ printed by invoking <b>setScorefilePrintStream:</b>.
    firstTimeTag: (double) firstTimeTag
     lastTimeTag: (double) lastTimeTag
       timeShift: (double) timeShift; 
-
 
 /*!
   @method readScorefileStream:firstTimeTag:lastTimeTag:timeShift:
@@ -300,7 +250,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               closed.  Returns the receiver or <b>nil</b> if the file couldn't be
               written.
 */
--writeOptimizedScorefile:(NSString *)aFileName;
+- writeOptimizedScorefile: (NSString *) aFileName;
 
 /*!
   @method writeOptimizedScorefileStream:
@@ -311,7 +261,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               responsible for closing the file.  Returns the receiver or
               <b>nil</b> if the file couldn't be written.
 */
--writeOptimizedScorefileStream:(NSMutableData *)aStream;
+- writeOptimizedScorefileStream: (NSMutableData *) aStream;
 
 /*!
   @method writeOptimizedScorefile:firstTimeTag:lastTimeTag:timeShift:
@@ -326,10 +276,10 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               shifted by <i>timeShift</i> beats.  Returns the receiver
 	      or <b>nil</b> if the file couldn't be written.
 */
--writeOptimizedScorefile:(NSString *)aFileName
-            firstTimeTag:(double)firstTimeTag 
-             lastTimeTag:(double)lastTimeTag
-               timeShift:(double)timeShift;
+- writeOptimizedScorefile: (NSString *)aFileName
+             firstTimeTag: (double)firstTimeTag 
+              lastTimeTag: (double)lastTimeTag
+                timeShift: (double)timeShift;
 
 /*!
   @method writeOptimizedScorefileStream:firstTimeTag:lastTimeTag:
@@ -342,9 +292,9 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               to the file. Returns the receiver or <b>nil</b> if the
               file couldn't be written.
 */
-- writeOptimizedScorefileStream:(NSMutableData *) aStream 
-                   firstTimeTag:(double) firstTimeTag 
-                    lastTimeTag:(double) lastTimeTag ;
+- writeOptimizedScorefileStream: (NSMutableData *) aStream 
+                   firstTimeTag: (double) firstTimeTag 
+                    lastTimeTag: (double) lastTimeTag ;
 
 /*!
   @method writeOptimizedScorefileStream:firstTimeTag:lastTimeTag:timeShift:
@@ -359,10 +309,10 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 	      are shifted by <i>timeShift</i> beats.  Returns the
 	      receiver or <b>nil</b> if the file couldn't be written.
 */
-- writeOptimizedScorefileStream:(NSMutableData *) aStream 
-                   firstTimeTag:(double) firstTimeTag 
-                    lastTimeTag:(double) lastTimeTag 
-                      timeShift:(double) timeShift; 
+- writeOptimizedScorefileStream: (NSMutableData *) aStream 
+                   firstTimeTag: (double) firstTimeTag 
+                    lastTimeTag: (double) lastTimeTag 
+                      timeShift: (double) timeShift; 
  
 /*!
   @method readMidifile:firstTimeTag:lastTimeTag:timeShift:
@@ -379,10 +329,10 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               See the <b>readMidiFileStream</b>: method for a
               discussion of MIDI to MKNote conversion.
 */
-- readMidifile:(NSString *) aFileName
-  firstTimeTag:(double) firstTimeTag
-   lastTimeTag:(double) lastTimeTag
-     timeShift:(double) timeShift;
+- readMidifile: (NSString *) aFileName
+  firstTimeTag: (double) firstTimeTag
+   lastTimeTag: (double) lastTimeTag
+     timeShift: (double) timeShift;
 
 /*!
   @method readMidifileStream:firstTimeTag:lastTimeTag:timeShift:
@@ -397,10 +347,10 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 	      <i>timeShift<b></b></i> is added to each MKNote's
 	      timeTag.
 */
-- readMidifileStream:(NSMutableData *) aStream
-        firstTimeTag:(double) firstTimeTag
-         lastTimeTag:(double) lastTimeTag
-           timeShift:(double) timeShift;
+- readMidifileStream: (NSMutableData *) aStream
+        firstTimeTag: (double) firstTimeTag
+         lastTimeTag: (double) lastTimeTag
+           timeShift: (double) timeShift;
 
 /*!
   @method readMidifile:
@@ -411,7 +361,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               for each MIDI message.  See the <b>readMidifileStream</b>: method
               for a discussion of MIDI to MKNote conversion.
 */
--readMidifile:(NSString *)fileName;
+- readMidifile: (NSString *) fileName;
 
 /*!
   @method readMidifileStream:
@@ -454,7 +404,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               contents.  Instead, new MKParts are added to the
               MKScore.  
 */
--readMidifileStream:(NSMutableData *)aStream;
+- readMidifileStream: (NSMutableData *) aStream;
 
 /*!
   @method writeMidifile:firstTimeTag:lastTimeTag:timeShift:
@@ -468,10 +418,10 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               <b>writeMidifile</b>: for conversion details.  <i>timeShift</i> is
               added to each MKNote's timeTag.
 */
--writeMidifile:(NSString *) aFileName
-  firstTimeTag:(double) firstTimeTag
-   lastTimeTag:(double) lastTimeTag
-     timeShift:(double) timeShift;
+- writeMidifile: (NSString *) aFileName
+   firstTimeTag: (double) firstTimeTag
+    lastTimeTag: (double) lastTimeTag
+      timeShift: (double) timeShift;
 
 /*!
   @method writeMidifileStream:firstTimeTag:lastTimeTag:timeShift:
@@ -484,10 +434,10 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               Only the MKNotes within the given timeTag boundaries are written. 
               <i>timeShift</i> is added to each MKNote's timeTag.
 */
--writeMidifileStream:(NSMutableData *) aStream
-        firstTimeTag:(double) firstTimeTag
-         lastTimeTag:(double) lastTimeTag
-           timeShift:(double) timeShift;
+- writeMidifileStream: (NSMutableData *) aStream
+         firstTimeTag: (double) firstTimeTag
+          lastTimeTag: (double) lastTimeTag
+            timeShift: (double) timeShift;
 
 /*!
   @method writeMidifileStream:
@@ -495,7 +445,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @result Returns an id.
   @discussion Write the receiver, as a midifile, to <i>aStream</i>.
 */
--writeMidifileStream:(NSMutableData *) aStream;
+- writeMidifileStream: (NSMutableData *) aStream;
 
 /*!
   @method writeMidifile:
@@ -514,7 +464,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               If the receiver's info has a title or tempo parameter,
 	      these are written to the midifile.  
 */
--writeMidifile:(NSString *) aFileName;
+- writeMidifile: (NSString *) aFileName;
 
 /*!
   @method noteCount
@@ -522,7 +472,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @discussion Returns the number of MKNotes in all the receiver's
               MKParts.
 */
--(unsigned ) noteCount; 
+- (unsigned) noteCount; 
 
 /*!
   @method replacePart:with:
@@ -536,27 +486,27 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               member of this score, or if <i>oldPart</i> is not a kind of MKPart,
               returns <b>nil</b>.
 */
--replacePart:(id)oldPart with:(id)newPart;
+- (MKPart *) replacePart: (MKPart *) oldPart with: (MKPart *) newPart;
 
 /*!
   @method addPart:
-  @param  aPart is an id.
+  @param  aPart is an MKPart instance.
   @result Returns an id.
   @discussion Adds <i>aPart</i> to the receiver.  The MKPart is first removed from
               the MKScore that it's presently a member of, if any.  Returns
               <i>aPart</i>, or <b>nil</b> if it's already a member of the
               receiver.
 */
-- addPart:aPart; 
+- (MKPart *) addPart: (MKPart *) aPart; 
 
 /*!
   @method removePart:
-  @param  aPart is an id.
+  @param  aPart is an MKPart instance.
   @result Returns an id.
   @discussion Removes <i>aPart</i> from the receiver.  Returns <i>aPart</i> or
               <b>nil</b> if it wasn't a member of the receiver.
 */
-- removePart:aPart;
+- (MKPart *) removePart: (MKPart *) aPart;
 
 /*!
   @method shiftTime:
@@ -565,7 +515,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @discussion Shifts the timeTags of all receiver's MKNotes by <i>shift</i> beats.
               Returns the receiver.
 */
-- shiftTime:(double) shift; 
+- shiftTime: (double) shift; 
 
 /*!
   @method scaleTime:
@@ -574,28 +524,35 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @discussion Scales the timeTags and durations of all receiver's MKNotes by 
               <i>scale</i> beats. Returns the receiver.
 */
-- scaleTime:(double)scale;
+- scaleTime: (double) scale;
 
+/*!
+  @method earliestNoteTime
+  @abstract Returns the time tag of the earliest note in the score.
+  @result Returns an double of time in seconds.
+  @discussion This can be useful to determine how much silence precedes the first note.
+ */
+- (double) earliestNoteTime;
 
 /*!
   @method isPartPresent:
-  @param  aPart is an id.
+  @param  aPart is an MKPart instance.
   @result Returns a BOOL.
   @discussion Returns <b>YES</b> if <i>aPart</i> has been added to the receiver,
               otherwise returns <b>NO</b>.
 */
--(BOOL) isPartPresent:aPart; 
+- (BOOL) isPartPresent: (MKPart *) aPart; 
 
 /*!
   @method midiPart:
   @param  aChan is an int.
-  @result Returns an id.
+  @result Returns an MKPart instance.
   @discussion Returns the MKPart object that represents MIDI Channel <i>aChan.</i>
               There are 17 MIDI Channels:  0 represents the channel for MIDI
               System and Channel Mode messages and 1 through 16 represent the
               Voice Channels.
 */
-- midiPart:(int) aChan; 
+- (MKPart *) midiPart: (int) aChan; 
   /* 
      Returns the first MKPart with a MK_midiChan info parameter equal to
      aChan, if any. aChan equal to 0 corresponds to the MKPart representing
@@ -607,7 +564,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @result Returns an unsigned.
   @discussion Returns the number of MKPart contained in the receiver.
 */
--(unsigned) partCount;
+- (unsigned) partCount;
 
 /*!
   @method parts
@@ -627,8 +584,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
    nominated NSZone..
    The receiver's MKPart, MKNotes, and info MKNote are all copied.
    */
-- copyWithZone:(NSZone *)zone; 
-
+- copyWithZone: (NSZone *) zone;
 
 /*!
   @method copy
@@ -641,7 +597,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 
 /*!
   @method setInfoNote:
-  @param  aNote is an id.
+  @param  aNote is an MKNote.
   @result Returns an id.
   @discussion Sets the receiver's info MKNote to a copy of <i>aNote</i>.  The
               receiver's previous info MKNote is removed and freed.
@@ -662,7 +618,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @discussion Sets the stream used by ScoreFile <b>print</b> statements to
               <b>aStream</b>.  Returns the receiver.
 */
-- setScorefilePrintStream:(NSMutableData *) aStream;
+- setScorefilePrintStream: (NSMutableData *) aStream;
 
 /*!
   @method scorefilePrintStream
@@ -783,7 +739,23 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @result Returns a newly allocated MKScore instance.
   @discussion Creates and returns an allocated, initialised and autoreleased MKScore instance.
 */
-+ score;
++ (MKScore *) score;
+
+/*!
+  @method scoreFormatOfData:
+  @abstract Determines the format of the scorefile data.
+  @param data An NSData object containing score data, it should be a MIDI file, Scorefile or playscore format.
+  @result Returns whether the data is a MIDI file (MK_MIDIFILE), Scorefile (MK_SCOREFILE), playscore (MK_PLAYSCORE).
+ */
++ (MKScoreFormat) scoreFormatOfData: (NSData *) fileData;
+
+/*!
+  @method scoreFormatOfFile:
+  @abstract Determines the format of the named scorefile.
+  @param filename The name of the file to be inspected.
+  @result Returns the format of the files data.
+ */
++ (MKScoreFormat) scoreFormatOfFile: (NSString *) filename;
 
 /*!
   @method writeScorefile:firstTimeTag:lastTimeTag:
@@ -796,9 +768,9 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               to the file.  Returns the receiver or <b>nil</b> if the
               file couldn't be written.
 */
-- writeScorefile:(NSString *) aFileName 
-    firstTimeTag:(double) firstTimeTag 
-     lastTimeTag:(double) lastTimeTag;
+- writeScorefile: (NSString *) aFileName 
+    firstTimeTag: (double) firstTimeTag 
+     lastTimeTag: (double) lastTimeTag;
 
 /*!
   @method writeScorefileStream:firstTimeTag:lastTimeTag:
@@ -811,9 +783,9 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 	      to the file. Returns the receiver or <b>nil</b> if the
 	      file couldn't be written.
 */
-- writeScorefileStream:(NSMutableData *) aStream 
-          firstTimeTag:(double) firstTimeTag 
-           lastTimeTag:(double) lastTimeTag;
+- writeScorefileStream: (NSMutableData *) aStream 
+          firstTimeTag: (double) firstTimeTag 
+           lastTimeTag: (double) lastTimeTag;
 
 /*!
   @method readScorefile:firstTimeTag:lastTimeTag:
@@ -826,9 +798,9 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 	      to the receiver.  Returns the receiver or <b>nil</b> if
 	      the file couldn't be read.
 */
-- readScorefile:(NSString *) fileName 
-   firstTimeTag:(double) firstTimeTag 
-    lastTimeTag:(double) lastTimeTag;
+- readScorefile: (NSString *) fileName 
+   firstTimeTag: (double) firstTimeTag 
+    lastTimeTag: (double) lastTimeTag;
 
 /*!
   @method readScorefileStream:firstTimeTag:lastTimeTag:
@@ -841,9 +813,9 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 	      to the receiver.   Returns the receiver or <b>nil</b> if
 	      the file couldn't be read.
 */
-- readScorefileStream:(NSMutableData *) stream 
-         firstTimeTag:(double) firstTimeTag 
-          lastTimeTag:(double) lastTimeTag;
+- readScorefileStream: (NSMutableData *) stream 
+         firstTimeTag: (double) firstTimeTag 
+          lastTimeTag: (double) lastTimeTag;
 
 /*!
   @method writeOptimizedScorefile:firstTimeTag:lastTimeTag:
@@ -856,9 +828,9 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 	      written to the file. Returns the receiver or <b>nil</b>
 	      if the file couldn't be written.
 */
--writeOptimizedScorefile:(NSString *) aFileName 
-            firstTimeTag:(double) firstTimeTag 
-             lastTimeTag:(double) lastTimeTag;
+- writeOptimizedScorefile: (NSString *) aFileName 
+             firstTimeTag: (double) firstTimeTag 
+              lastTimeTag: (double) lastTimeTag;
 
 /*!
   @method readMidifile:firstTimeTag:lastTimeTag:
@@ -874,9 +846,9 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               See the <b>readMidiFileStream</b>: method for a
 	      discussion of MIDI to MKNote conversion.  
 */
-- readMidifile:(NSString *) aFileName 
-  firstTimeTag:(double) firstTimeTag
-   lastTimeTag:(double) lastTimeTag;
+- readMidifile: (NSString *) aFileName 
+  firstTimeTag: (double) firstTimeTag
+   lastTimeTag: (double) lastTimeTag;
 
 /*!
   @method readMidifileStream:firstTimeTag:lastTimeTag:
@@ -888,9 +860,9 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               receiver.  Only the MKNote objects that have timeTags within the
               given boundaries are retained in the receiver.
 */
-- readMidifileStream:(NSMutableData *) aStream 
-        firstTimeTag:(double) firstTimeTag
-         lastTimeTag:(double) lastTimeTag;
+- readMidifileStream: (NSMutableData *) aStream 
+        firstTimeTag: (double) firstTimeTag
+         lastTimeTag: (double) lastTimeTag;
 
 /*!
   @method writeMidifile:firstTimeTag:lastTimeTag:
@@ -902,9 +874,9 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               timeTag range,  as a midifile named <i>aFileName</i>.  See
               <b>writeMidifile</b>: for conversion details.
 */
--writeMidifile:(NSString *) aFileName
-  firstTimeTag:(double) firstTimeTag
-   lastTimeTag:(double) lastTimeTag;
+- writeMidifile: (NSString *) aFileName
+   firstTimeTag: (double) firstTimeTag
+    lastTimeTag: (double) lastTimeTag;
 
 /*!
   @method writeMidifileStream:firstTimeTag:lastTimeTag:
@@ -915,17 +887,25 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @discussion Write the receiver, as a midifile, to <i>aStream</i>. 
               Only the MKNotes within the given timeTag boundaries are written. 
 */
--writeMidifileStream:(NSMutableData *) aStream 
-        firstTimeTag:(double) firstTimeTag
-         lastTimeTag:(double) lastTimeTag;
+- writeMidifileStream: (NSMutableData *) aStream 
+         firstTimeTag: (double) firstTimeTag
+          lastTimeTag: (double) lastTimeTag;
+
+/*!
+  @method partTitled:
+  @param  partTitleToFind
+  @discussion Returns the MKPart whose info note has an MK_title parameter
+              equal to partTitleToFind, nil if it couldn't be found.
+  @result Returns the MKPart, nil if it couldn't be found.
+*/
+- (MKPart *) partTitled: (NSString *) partTitleToFind;
 
 /*!
   @method partNamed:
-  @param  partName
-  @result Returns an id to the part whose info note has an MK_title parameter
-   equal to partName, nil if it couldn't be found.
-*/
-- (MKPart*) partNamed: (NSString*) partTitle;
+  @param  partNameToFind
+  @result Returns the MKPart named partNameToFind, nil if it couldn't be found.
+ */
+- (MKPart *) partNamed: (NSString *) partNameToFind;
 
 @end
 

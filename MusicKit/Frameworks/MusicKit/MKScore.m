@@ -20,6 +20,9 @@
  Modification history:
 
  $Log$
+ Revision 1.37  2004/01/21 22:17:40  leighsmith
+ Corrected typing of several parameters, added MKScoreFormat enum, earliestNoteTime, scoreFormatOfFile:, renamed partNamed: to partTitled: and added a new partNamed: distinguishing a MKParts name from it's MK_title
+
  Revision 1.36  2003/12/31 00:32:53  leighsmith
  Cleaned up naming of methods, removing underscores
 
@@ -211,6 +214,30 @@ static NSArray *scoreFileExtensions = nil;
   return [self autorelease];
 }
 
++ (MKScoreFormat) scoreFormatOfData: (NSData *) fileData;
+{
+    int firstWord;
+    
+    firstWord = NSSwapBigIntToHost(*((int *)[fileData bytes]));
+    if (firstWord == MK_SCOREMAGIC)
+        return MK_PLAYSCORE;
+    else if (firstWord == MK_MIDIMAGIC)
+        return MK_MIDIFILE;
+    else
+        return MK_SCOREFILE;
+}
+
++ (MKScoreFormat) scoreFormatOfFile: (NSString *) filename
+{
+    NSData *firstWordData;
+    NSFileHandle *fh = [NSFileHandle fileHandleForReadingAtPath: filename];
+
+    if (fh == nil)
+	return MK_UNRECOGNIZEDFORMAT;
+    firstWordData = [fh readDataOfLength: 4];
+    return [MKScore scoreFormatOfData: firstWordData];
+}    
+    
 -init
   /* TYPE: Creating and freeing a MKPart
 * Initializes the receiver:
@@ -378,11 +405,11 @@ static id readScorefile(MKScore *self, NSData *stream,
 {
   int noteTag,ht,lt;
   id notes;
-  unsigned n = [parts count],m,i,j;
+  unsigned numOfParts = [parts count],m,partIndex,j;
   ht = 0;
   lt = MAXINT;
-  for (i = 0; i < n; i++) {
-    notes = [[parts objectAtIndex:i] notesNoCopy];
+  for (partIndex = 0; partIndex < numOfParts; partIndex++) {
+    notes = [[parts objectAtIndex:partIndex] notesNoCopy];
     m = [notes count];
     for (j = 0; j < m; j++) {
       noteTag = [[notes objectAtIndex:j] noteTag];
@@ -800,7 +827,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
   MKPart *aPart, *curPart;
   NSArray *notes;
   MKNote *curNote;
-  unsigned i,j, numOfParts, numOfNotes;
+  unsigned partIndex,j, numOfParts, numOfNotes;
 
   NSAssert((INRANGE(MK_tempo) && INRANGE(MK_lyric) &&
             INRANGE(MK_cuePoint) && INRANGE(MK_marker) &&
@@ -868,8 +895,8 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
   }
   MKMIDIFileEndWritingTrack(fileStructP, lastTimeTag < MK_ENDOFTIME ? lastTimeTag : 0); // 0 end time is a little kludgy
 
-  for (i = 0; i < numOfParts; i++) {
-    curPart = [parts objectAtIndex:i];
+  for (partIndex = 0; partIndex < numOfParts; partIndex++) {
+    curPart = [parts objectAtIndex:partIndex];
     if ([curPart noteCount] == 0)
       continue;
     MKMIDIFileBeginWritingTrack(fileStructP, (NSString *) MKGetObjectName(curPart));
@@ -1305,25 +1332,25 @@ return self;
 
 /* Number of notes and parts ------------------------------------------ */
 
--(unsigned)partCount
+- (unsigned) partCount
 {
-  return [parts count];
+    return [parts count];
 }
 
--(unsigned)noteCount
-  /* Returns the total number of notes in all the contained MKParts. */
+- (unsigned) noteCount
+    /* Returns the total number of notes in all the contained MKParts. */
 {
-  unsigned n = [parts count], i;
-  unsigned numNotes = 0;
-  for (i = 0; i < n; i++)
-    numNotes += [[parts objectAtIndex:i] noteCount];
-
-  return numNotes;
+    unsigned numOfParts = [parts count], partIndex;
+    unsigned numNotes = 0;
+    for (partIndex = 0; partIndex < numOfParts; partIndex++)
+	numNotes += [[parts objectAtIndex:partIndex] noteCount];
+    
+    return numNotes;
 }
 
 /* Modifying the set of MKParts. ------------------------------- */
 
--replacePart:(id)oldPart with:(id)newPart
+- replacePart: (id) oldPart with: (id) newPart
   /* Removes oldPart from self and replaces it with newPart.
   * Returns newPart.
   * If oldPart is not a member of this score, returns nil
@@ -1365,26 +1392,43 @@ return self;
   return self; //sb: assume self is correct. Arrays return void...
 }
 
--shiftTime:(double)shift
-   /* TYPE: Editing
-  * Shift is added to the timeTags of all notes in the MKPart.
-  */
+- shiftTime: (double) shift
+    /* TYPE: Editing
+    * Shift is added to the timeTags of all notes in the MKPart.
+    */
 {
-  unsigned n = [parts count], i;
-  for (i = 0; i < n; i++)
-    [[parts objectAtIndex:i] shiftTime:shift];
-  return self;
+    unsigned numOfParts = [parts count], partIndex;
+    
+    for (partIndex = 0; partIndex < numOfParts; partIndex++)
+	[[parts objectAtIndex: partIndex] shiftTime: shift];
+    return self;
 }
 
--scaleTime:(double)scale
-   /* TYPE: Editing
-  * Scale factor is applied to the timeTags and durations of all notes in the MKPart.
-  */
+- scaleTime: (double) scale
+    /* TYPE: Editing
+    * Scale factor is applied to the timeTags and durations of all notes in the MKPart.
+    */
 {
-  unsigned n = [parts count], i;
-  for (i = 0; i < n; i++)
-    [[parts objectAtIndex:i] scaleTime: scale];
-  return self;
+    unsigned numOfParts = [parts count], partIndex;
+    
+    for (partIndex = 0; partIndex < numOfParts; partIndex++)
+	[[parts objectAtIndex:partIndex] scaleTime: scale];
+    return self;
+}
+
+// Returns the time of the first note in the score.
+- (double) earliestNoteTime
+{
+    unsigned numOfParts = [parts count], partIndex;
+    double earliestNoteTime = MK_ENDOFTIME;
+    
+    for (partIndex = 0; partIndex < numOfParts; partIndex++) {
+	double earliestNoteTimeInPart = [(MKPart *) [parts objectAtIndex: partIndex] earliestNoteTime];
+
+	if(earliestNoteTime > earliestNoteTimeInPart)
+	    earliestNoteTime = earliestNoteTimeInPart;
+    }
+    return earliestNoteTime;    
 }
 
 /* Finding a Part ----------------------------------------------- */
@@ -1401,12 +1445,12 @@ return self;
   MIDI system and channel mode messages. */
 {
   id el, aInfo;
-  unsigned n, i;
+  unsigned numOfParts, partIndex;
   if (aChan == MAXINT)
     return nil;
-  n = [parts count];
-  for (i = 0; i < n; i++) {
-    el = [parts objectAtIndex:i];
+  numOfParts = [parts count];
+  for (partIndex = 0; partIndex < numOfParts; partIndex++) {
+    el = [parts objectAtIndex:partIndex];
     if ((aInfo = [el infoNote]))
       if ([aInfo parAsInt:MK_midiChan] == aChan)
         return [[el retain] autorelease];
@@ -1418,9 +1462,9 @@ return self;
 /* Manipulating notes. ------------------------------- */
 
 
-static void merge(NSMutableArray *listOfLists,NSMutableArray *allNotes)
-/* ListOfLists is an Array containing List objects, one per MKPart.
-AllNotes is an empty List big enough to hold all the MKNotes of all the
+static void merge(NSMutableArray *listOfLists, NSMutableArray *allNotes)
+/* ListOfLists is an NSArray containing NSArray objects, one per MKPart.
+AllNotes is an empty NSArray big enough to hold all the MKNotes of all the
 MKParts.
 */
 {
@@ -1481,35 +1525,37 @@ MKParts.
 static void writeNotes(NSMutableData *aStream, MKScore *aScore, _MKScoreOutStruct *p,
                        double firstTimeTag, double lastTimeTag, double timeShift)
 {
-  /* Write score body on aStream. Assumes p is a valid _MKScoreOutStruct. */
-  MKPart *currentPart;
-  unsigned n = [aScore->parts count], i;
-  BOOL timeBounds = ((firstTimeTag != 0) || (lastTimeTag != MK_ENDOFTIME));
-  NSMutableArray *allNotes = [NSMutableArray arrayWithCapacity: [aScore noteCount]];
-  NSMutableArray *listOfLists = [NSMutableArray arrayWithCapacity: [aScore->parts count]];
-  id aPart,aList;
-  MKNote *currentNote;
-  for (i = 0; i < n; i++) {
-    currentPart = [aScore->parts objectAtIndex:i];
-    if (timeBounds)
-      aList = [currentPart firstTimeTag:firstTimeTag lastTimeTag:lastTimeTag];
-    else {
-      [currentPart sort];
-      aList = [currentPart notesNoCopy];
+    /* Write score body on aStream. Assumes p is a valid _MKScoreOutStruct. */
+    MKPart *currentPart;
+    unsigned numOfParts = [aScore->parts count], partIndex;
+    unsigned numOfNotes, noteIndex; 
+    BOOL timeBounds = ((firstTimeTag != 0) || (lastTimeTag != MK_ENDOFTIME));
+    NSMutableArray *allNotes = [NSMutableArray arrayWithCapacity: [aScore noteCount]];
+    NSMutableArray *notesInEachPart = [NSMutableArray arrayWithCapacity: numOfParts];
+    NSArray *notes;
+    MKNote *currentNote;
+    
+    for (partIndex = 0; partIndex < numOfParts; partIndex++) {
+	currentPart = [aScore->parts objectAtIndex: partIndex];
+	if (timeBounds)
+	    notes = [currentPart firstTimeTag: firstTimeTag lastTimeTag: lastTimeTag];
+	else {
+	    [currentPart sort];
+	    notes = [currentPart notesNoCopy];
+	}
+	if (notes)
+	    [notesInEachPart addObject: notes];
+	_MKWritePartDecl(currentPart, p, [currentPart infoNote]);
     }
-    if (aList)
-      [listOfLists addObject:aList];
-    _MKWritePartDecl(currentPart,p,[currentPart infoNote]);
-  }
-  merge(listOfLists,allNotes);
-
-  n = [allNotes count];
-  p->_timeShift = timeShift;
-
-  for (i = 0; i < n; i++) {
-    currentNote = [allNotes objectAtIndex:i];
-    _MKWriteNote(currentNote,aPart = [currentNote part],p);
-  }
+    merge(notesInEachPart, allNotes);
+    
+    numOfNotes = [allNotes count];
+    p->_timeShift = timeShift;
+    
+    for (noteIndex = 0; noteIndex < numOfNotes; noteIndex++) {
+	currentNote = [allNotes objectAtIndex: noteIndex];
+	_MKWriteNote(currentNote, [currentNote part], p);
+    }
 }
 
 static id
@@ -1603,49 +1649,50 @@ readScorefile(MKScore *self,
   return self;
 }
 
--setInfoNote:(MKNote *) aNote
-  /* Sets info, overwriting any previous info. aNote is copied. The old info,
-  if any, is freed. */
+- setInfoNote: (MKNote *) aNote
+    /* Sets info, overwriting any previous info. aNote is copied. The old info,
+    if any, is freed. */
 {
-  [info release];
-  info = [aNote copy];
-  return self;
+    [info release];
+    info = [aNote copy];
+    return self;
 }
 
 - (MKNote *) infoNote
 {
-  return info;
+    return info;
 }
 
 - combineNotes
-  /* combine notes into noteDurs for all MKParts */
+    /* combine notes into noteDurs for all MKParts */
 {
-  unsigned n = [parts count], i;
-  for (i = 0; i < n; i++)
-    [(MKPart *) [parts objectAtIndex:i] combineNotes];
-
-  return self;
+    unsigned numOfParts = [parts count], partIndex;
+    
+    for (partIndex = 0; partIndex < numOfParts; partIndex++)
+	[(MKPart *) [parts objectAtIndex: partIndex] combineNotes];
+    
+    return self;
 }
 
 - (NSMutableArray *) parts;
-  /* Returns a copy of the List of MKParts in the receiver. The MKParts themselves are not copied.
-  Now that we use NSArrays, a [List copyWithZone] did a shallow copy, whereas
-  [NSMutableArray copyWithZone] does a deep copy, so we emulate the List operation.  */
+    /* Returns a copy of the List of MKParts in the receiver. The MKParts themselves are not copied.
+    Now that we use NSArrays, a [List copyWithZone] did a shallow copy, whereas
+    [NSMutableArray copyWithZone] does a deep copy, so we emulate the List operation.  */
 {
-  return _MKLightweightArrayCopy(parts);
+    return _MKLightweightArrayCopy(parts);
 }
 
-- copyWithZone:(NSZone *)zone
-  /* Copies receiver, including its MKParts, MKNotes and info. */
+- copyWithZone: (NSZone *)zone
+    /* Copies receiver, including its MKParts, MKNotes and info. */
 {
-  unsigned n = [parts count], i;
-  MKScore *newScore = [MKScore allocWithZone:zone];
-  [newScore init];
-  for (i = 0; i < n; i++)
-    [newScore addPart:[[parts objectAtIndex:i] copyWithZone:zone]];
-
-  newScore->info = [info copyWithZone:zone];
-  return newScore;
+    unsigned numOfParts = [parts count], partIndex;
+    MKScore *newScore = [MKScore allocWithZone:zone];
+    [newScore init];
+    for (partIndex = 0; partIndex < numOfParts; partIndex++)
+	[newScore addPart:[[parts objectAtIndex:partIndex] copyWithZone:zone]];
+    
+    newScore->info = [info copyWithZone:zone];
+    return newScore;
 }
 
 -copy
@@ -1684,57 +1731,72 @@ static BOOL isUnarchiving = NO;
 
 - (NSString *) description
 {
-  unsigned int i;
-  NSMutableString *scoreDescription = [[NSMutableString alloc] initWithString: @"MKScore containing MKParts:\n"];
-  NSMutableArray *partList = [self parts];
-  MKPart *aPart;
-
-  for(i = 0; i < [partList count]; i++) {
-    aPart = [partList objectAtIndex: i];
-    [scoreDescription appendString: [aPart description]];
-  }
-  [scoreDescription appendFormat: @"With MKScore info note:\n%@", [[self infoNote] description]];
-
-  return scoreDescription;
+    unsigned int partIndex;
+    NSMutableString *scoreDescription = [[NSMutableString alloc] initWithFormat: @"%@ containing MKParts:\n", [super description]];
+    NSMutableArray *partList = [self parts];
+    
+    for(partIndex = 0; partIndex < [partList count]; partIndex++) {
+	MKPart *aPart = [partList objectAtIndex: partIndex];
+	[scoreDescription appendString: [aPart description]];
+    }
+    [scoreDescription appendFormat: @"With MKScore info note:\n%@", [[self infoNote] description]];
+    
+    return scoreDescription;
 }
 
-- (MKPart*) partNamed: (NSString*) partName
+- (MKPart *) partTitled: (NSString *) partTitleToFind
 {
-  int i, c = [parts count];
-  for (i = 0; i < c; i++) {
-    MKPart *mkp = [parts objectAtIndex: i];
-    MKNote *infoNote = [mkp infoNote];
-    if ([infoNote isParPresent: MK_title]) {
-      NSString *s = [infoNote parAsString: MK_title];
-      if ([s isEqualToString: partName])
-        return mkp;
+    int partIndex, numOfParts = [parts count];
+    
+    for (partIndex = 0; partIndex < numOfParts; partIndex++) {
+	MKPart *mkp = [parts objectAtIndex: partIndex];
+	MKNote *infoNote = [mkp infoNote];
+	
+	if ([infoNote isParPresent: MK_title]) {
+	    NSString *s = [infoNote parAsString: MK_title];
+	    
+	    if ([s isEqualToString: partTitleToFind])
+		return mkp;
+	}
     }
-  }
-  return nil;
+    return nil;
+}
+
+- (MKPart *) partNamed: (NSString *) partNameToFind
+{
+    int partIndex, numOfParts = [parts count];
+    
+    for (partIndex = 0; partIndex < numOfParts; partIndex++) {
+	MKPart *mkp = [parts objectAtIndex: partIndex];
+	NSString *candidatePartName = [mkp partName];
+	
+	if ([candidatePartName isEqualToString: partNameToFind])
+	    return mkp;
+    }
+    return nil;
 }
 
 @end
 
 @implementation MKScore(Private)
 
-+(BOOL)_isUnarchiving
++ (BOOL) _isUnarchiving
 {
-  return isUnarchiving;
+    return isUnarchiving;
 }
 
--_newFilePartWithName:(NSString *)name
-  /* You never send this message. It is used only by the Scorefile parser
-  to add a MKPart to the receiver when a part is declared in the
-  scorefile.
-  It is a method rather than a C function to hide from the parser
-  the differences between MKScore and MKScorefilePerformer.
-  */
+- _newFilePartWithName: (NSString *) name
+    /* You never send this message. It is used only by the Scorefile parser
+    to add a MKPart to the receiver when a part is declared in the
+    scorefile.
+    It is a method rather than a C function to hide from the parser
+    the differences between MKScore and MKScorefilePerformer.
+    */
 {
-  id aPart = [MKGetPartClass() new];
-  MKNameObject(name,aPart);
-  [self addPart:aPart];
-  [aPart autorelease];
-  return aPart; /* sb: I have checked, and it's ok to return "reference" here rather than retained object */
+    MKPart *aPart = [MKPart partWithName: name];
+    
+    [self addPart: aPart];
+    return aPart; /* sb: I have checked, and it's ok to return "reference" here rather than retained object */
 }
 
 @end
