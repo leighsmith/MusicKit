@@ -1432,22 +1432,16 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     int   buffFrameSize = [buff frameSizeInBytes];
     NSRange bufferByteRange = { bufferStartIndex * buffFrameSize, sndSampleRange.length * buffFrameSize };
 
-    // TODO this test is insufficient, we need to check channels, should use something similar to: [buff hasSameFormatAsBuffer: [self nativeFormatBuffer]]
-    // Alternatively check the audio buffer sample frame size against the SndFrameSize()
-    if([buff dataFormat] != [self dataFormat]) {
+    // TODO this test is insufficient, should use something similar to: [buff hasSameFormatAsBuffer: [self nativeFormatBuffer]]
+    if([buff dataFormat] != [self dataFormat] || [buff channelCount] != [self channelCount]) {
 	// If not the same, do a data conversion.
-	// NSLog(@"buffer to fill and sound mismatched in data formats %d vs. %d, converting", [buff dataFormat], [self dataFormat]);
-	// TODO should be:
-	// SndConvertSound
-	/*
-	 int SndConvertSound(const SndSoundStruct *fromSound,
-		      SndSoundStruct **toSound,
-		      BOOL allocate,
-		      BOOL largeFilter,
-		      BOOL interpFilter,
-		      BOOL fast)
-*/	 
-	SndChangeSampleType(sndDataPtr, [buff bytes] + bufferByteRange.location, [self dataFormat], [buff dataFormat], sndSampleRange.length * soundStruct->channelCount);
+	//NSLog(@"buffer to fill and sound mismatched in data formats %d vs. %d or channels %d vs. %d, converting",
+	//[buff dataFormat], [self dataFormat], [buff channelCount], [self channelCount]);
+	[buff convertBytes: sndDataPtr
+		 intoRange: bufferByteRange
+		fromFormat: [self dataFormat]
+		  channels: [self channelCount]
+              samplingRate: [self samplingRate]]; 
     }
     else {
 	// Matching sound buffer formats, so we can just do a copy.
@@ -1514,6 +1508,21 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 - (float) getAllChannelsVolume
 {
     return allChannelsVolume;
+}
+
+- (BOOL) isPlaying
+{
+    // if any performances are currently playing, return YES.
+    int performanceIndex;
+    int performanceCount = [performancesArray count];
+
+    for(performanceIndex = 0; performanceIndex < performanceCount; performanceIndex++) {
+	if([[performancesArray objectAtIndex: performanceIndex] isPlaying])
+	    return YES;
+    }
+    // 
+    // performancesArrayLock
+    return NO;
 }
 
 - setAllChannelsVolume: (float) newAllChannelsVolume
