@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2001/04/06 19:29:51  leighsmith
+  Renamed to more meaningful MIDI API include file naming
+
   Revision 1.7  2000/11/13 23:23:03  leigh
   Replaced exception macros with more explicit MKMD versions
 
@@ -37,7 +40,7 @@ Modification history:
 
 */
 #import "_musickit.h"
-#import <MKPerformSndMIDI/midi_driver.h>
+#import <MKPerformSndMIDI/PerformMIDI.h>
 
 @implementation MKConductor(MTCPrivate)
 

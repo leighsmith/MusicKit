@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.18  2001/04/06 19:30:39  leighsmith
+  Renamed to more meaningful MIDI API include file naming
+
   Revision 1.17  2001/01/31 21:43:50  leigh
   Typed note parameters
 
@@ -86,7 +89,7 @@
 #define __MK_Midi_H___
 
 #import <Foundation/NSObject.h>
-#import <MKPerformSndMIDI/midi_driver.h>
+#import <MKPerformSndMIDI/PerformMIDI.h>
 #import "MKDeviceStatus.h"
 #import "params.h"
 
