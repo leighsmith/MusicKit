@@ -69,16 +69,16 @@ $CHGLOGGEN --no-wrap --separate-header --file Documentation/ChangeLog
 # copy it so it can be used for generating an announcement.
 cp Documentation/ChangeLog $TARLOC/${DISTNAME}_ChangeLog
 
-# Determine the previous tagged release from a representative file in
-# the repository.
-LASTFILETOCHANGE=Frameworks/$DISTNAME/$DISTNAME.pbproj/project.pbxproj
-PREVCVSTAG=`cvs log $LASTFILETOCHANGE | grep ${DISTNAME}_ | sed -n -e "/$CVSTAG/{;n;s/[ \t]*\([^ :]*\): .*/\1/p;}"`
-# echo $PREVCVSTAG
-
-# catch all if the automatic method fails.
-if [ ${PREVCVSTAG}_ = _ ]; then
+# If a previous release was not supplied on the command line determine
+# it from the repository.
+if [ ${PREVRELEASE}_ = _ ]; then
+    # Determine the previous tagged release from a representative file in
+    # the repository.
+    LASTFILETOCHANGE=Frameworks/$DISTNAME/$DISTNAME.pbproj/project.pbxproj
+    PREVCVSTAG=`cvs log $LASTFILETOCHANGE | grep ${DISTNAME}_ | sed -n -e "/$CVSTAG/{;n;s/[ \t]*\([^ :]*\): .*/\1/p;}"`
+else
+    # Use the supplied release number to create a differential ChangeLog.
     PREVCVSTAG=${DISTNAME}_`echo $PREVRELEASE | tr '.' '-'`
-    echo Using user supplied tag $PREVRELEASE
 fi
 
 # Determine the date of the previous tagged release.
@@ -91,9 +91,7 @@ $CHGLOGGEN --no-wrap --separate-header --window 86400 --file $TARLOC/${DISTNAME}
 
 # create a readily readable PDF version of the MusicKit_README.sgml file
 if [ $DISTNAME = MusicKit ]; then
-    packageDocumentation $TARLOC/${DISTNAME}_ChangeLog $DISTCHECKOUTSRCLOC/$DISTNAME/${DISTNAME}_README.pdf
-    # the SGML tools didn't work on MacOS X, so we copied them...
-    # cp /tmp/${DISTNAME}_README.pdf $DISTCHECKEDOUTSRCLOC/$DISTNAME
+    packageDocumentation $TARLOC/${DISTNAME}_ChangeLog $DISTCHECKEDOUTSRCLOC/$DISTNAME
 fi
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
