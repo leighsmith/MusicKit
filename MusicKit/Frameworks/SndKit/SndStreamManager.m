@@ -31,7 +31,8 @@ enum {
     BG_hasFlag,
     BG_stopNow,
     BG_startNow,
-    BG_abortNow
+    BG_abortNow,
+    BG_hasStarted
 };
 
 @implementation SndStreamManager
@@ -138,6 +139,8 @@ static SndStreamManager *sm = nil;
     [bg_threadLock lock];
     bg_sem = BG_startNow;
     [bg_threadLock unlockWithCondition:BG_hasFlag];
+    [bg_threadLock lockWhenCondition:BG_hasStarted];
+    [bg_threadLock unlockWithCondition:BG_ready];
 }
 
 
@@ -167,6 +170,8 @@ static SndStreamManager *sm = nil;
 #if SNDSTREAMMANAGER_DEBUG
             NSLog(@"SndManager::startStreaming - Stream starting!\n");
 #endif
+            [bg_threadLock unlockWithCondition:BG_hasStarted];
+            continue;
         }
         else if (bg_sem == BG_stopNow) {
             SNDStreamStop();
