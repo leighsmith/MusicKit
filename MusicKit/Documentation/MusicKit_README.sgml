@@ -38,8 +38,8 @@ Add in the MusicKit icon and colour the web pages (perhaps not these below):
     <author>
       <firstname>Leigh</firstname> <othername>M.</othername> <surname>Smith</surname>
       <affiliation>
+        <orgname>tomandandy</orgname>
 	<address>
-          tomandandy
           <street>89 Greene Street</street>
           <city>New York</city>, <state>NY</state> <postcode>10012</postcode>
           <country>USA</country>
@@ -49,10 +49,14 @@ Add in the MusicKit icon and colour the web pages (perhaps not these below):
         </address>
       </affiliation>
     </author>
+    <copyright>
+      <year>2000</year>
+      <holder>The MusicKit Project</holder>
+    </copyright>
     <revhistory>
       <revision>
-	<revnumber>V1.3</revnumber>
-	<date>31 July 2000</date>
+	<revnumber>$Revision$</revnumber>
+	<date>$Date$</date>
       </revision>
     </revhistory>
 
