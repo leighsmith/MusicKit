@@ -13,32 +13,38 @@
     we are interested in producing regular echoes (using the Conductor's notion
     of time), rather than in recording the exact time the MIDI entered the 
     MIDI device driver. 
+
+  Portions Copyright (c) 1999-2005, The MusicKit Project.  All rights reserved.
+  
+    Permission is granted to use and modify this code for commercial and 
+    non-commercial purposes so long as the author attribution and copyright 
+    messages remain intact and accompany all relevant code.
 */
 
 #import "MidiLoop.h"
 
 @implementation MidiLoop
 
-- showInfoPanel:sender
+- (IBAction) showInfoPanel: (id) sender
 {
     // TODO platform specific bundle searching disabled/broken on 4K46?
-    // [NSBundle loadNibNamed: @"Info" owner:self];
-    [NSBundle loadNibNamed: @"Info-macos" owner:self];
-    [infoPanel makeKeyAndOrderFront:sender];
-    return self;
+    // [NSBundle loadNibNamed: @"Info" owner: self];
+    [NSBundle loadNibNamed: @"Info-macos" owner: self];
+    [infoPanel makeKeyAndOrderFront: sender];
 }
 
 static void handleMKError(NSString *msg)
 {
     if (!NSRunAlertPanel(@"MidiLoop", msg, @"OK", @"Quit", nil, NULL))
-	[NSApp terminate:NSApp];
+	[NSApp terminate: NSApp];
 }
 
-- go: sender
+- (IBAction) go: (id) sender
 {
     int i;
+    
     if ([MKConductor inPerformance]) /* Already started */
-        return self;
+        return;
     if(midiObj)
         [midiObj release];
     midiObj = [[MKMidi midi] retain];
@@ -48,23 +54,22 @@ static void handleMKError(NSString *msg)
     /* 16 midi channels plus one for system messages */
     for (i = 0; i <= 16; i++) 
 	/* Connect them up */
-	[[midiObj channelNoteSender:i] connect: [midiObj channelNoteReceiver:i]];
+	[[midiObj channelNoteSender: i] connect: [midiObj channelNoteReceiver: i]];
 
     /* No delay in sending out midi out events */
-    [midiObj setOutputTimed:NO];  
+    [midiObj setOutputTimed: NO];  
 
     /* Just wait until terminate */
-    [MKConductor setFinishWhenEmpty:NO];  
+    [MKConductor setFinishWhenEmpty: NO];  
 
     /* Boost priority of performance. */ 
-    [MKConductor setThreadPriority:1.0];
+    [MKConductor setThreadPriority: 1.0];
 
     /* Start MIDI clock */
     [midiObj run];                
 
     /* Start the Performance */
     [MKConductor startPerformance];
-    return self;
 }
 
 - (void) applicationWillTerminate: (NSNotification *) aNotification
