@@ -1,7 +1,7 @@
 /*
   $Id$
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
 
   Description:
     MKMidi is made to look somewhat like a MKPerformer. It differs from a
@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2000/03/31 00:15:33  leigh
+  Removed redundant include files
+
   Revision 1.14  2000/02/08 04:37:48  leigh
   Added check to downloadDLS: to ensure the MIDI device is open
 
@@ -116,9 +119,9 @@ Modification history:
 #import <Foundation/NSUserDefaults.h>
 
 #if !m68k && !WIN32
-#import <driverkit/IOConfigTable.h>
-#import <driverkit/IODeviceMaster.h>
-#import <driverkit/IODevice.h>
+//#import <driverkit/IOConfigTable.h> // MacOsX-Server V1.2 lost these.
+//#import <driverkit/IODeviceMaster.h>
+//#import <driverkit/IODevice.h>
 #endif
 
 // #import <midi_driver_compatability.h> // LMS obsoleted by the following include 
@@ -178,7 +181,7 @@ NSLocalizedStringFromTableInBundle(@"Problem communicating with MIDI device driv
 #define IGNORE_RESET	 0x8000
 #define IGNORE_REAL_TIME 0xdd00  /* All of the above */
 
-#define FCC_DID_NOT_APPROVE_DRIVER_CHANGE 1 // TODO LMS
+#define FCC_DID_NOT_APPROVE_DRIVER_CHANGE 1 // FIXME LMS
 
 /* Mach stuff */
 
@@ -399,7 +402,7 @@ static int openMidiDev(MKMidi *self)
 #else
     self->devicePort = [[NSPort port] retain]; // kludge it so it seems initialised
     self->ownerPort = nil;
-    self->unit = [[midiDriverUnits objectAtIndex: [midiDriverNames indexOfObject: self->midiDevName]] intValue]; // kludged TODO midiDriverUnits
+    self->unit = [[midiDriverUnits objectAtIndex: [midiDriverNames indexOfObject: self->midiDevName]] intValue]; // kludged FIXME midiDriverUnits
 #endif
     if (!self->ownerPort) {
         self->ownerPort = [[NSPort port] retain];
@@ -446,8 +449,6 @@ static int openMidiDev(MKMidi *self)
 	}
         /* sb: first self was midiIn. Changed to self because 'self' responds to -handleMachMessage */
         _MKAddPort(self->recvPort,self,MSG_SIZE_MAX,self, _MK_DPSPRIORITY);
-//sb: if this is in main thread, NSRunLoop looks after incoming messages (see _MKAddPort). If it is not in the main thread, the port is added to the port set. From there, messages are caught by separateThreadLoop() (in separateThread.m). From there, they are sent as plain old objC messages. After all, we assume that if both this function AND the conductor are in the other thread, it's ok to send normal objC messages between them.
-
 	addedPortsCount++;
     }
     if (OUTPUTENABLED(self->ioMode)) {
@@ -477,7 +478,7 @@ static timeVars *getTimeInfoFromHost(NSString *hostname)
     static id timeInfoTable = nil;
     timeVars *p;
     if (!timeInfoTable) /* Mapping from hostname to tvs pointer */
-      timeInfoTable = [HashTable newKeyDesc:"*" valueDesc:"!"];  // TODO convert to NSDictionary LMS
+      timeInfoTable = [HashTable newKeyDesc:"*" valueDesc:"!"];  // FIXME convert to NSDictionary LMS
     if (p = [timeInfoTable valueForKey:(void *) [hostname cString]])
       return p;
     _MK_CALLOC(p,timeVars,1);
