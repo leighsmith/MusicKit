@@ -119,16 +119,14 @@ static SndStreamManager *sm = nil;
 - (BOOL) stopStreaming
 {
     [streamClientsLock lock];    // wait for current processBuffers to finish.
-
-    [streamClients makeObjectsPerformSelector: @selector(managerIsShuttingDown)];
+    if(active) {
+        [streamClients makeObjectsPerformSelector: @selector(managerIsShuttingDown)];
     
-    // TO DO:
-    // Tell MKPerformSndAndMidi to stop sending us buffers
-
-    SNDStreamStop();
-
-    active = FALSE;
-
+        // Tell MKPerformSndMidi to stop sending us buffers
+        SNDStreamStop();
+    
+        active = FALSE;
+    }
     [streamClientsLock unlock];
     
     return active;
@@ -228,6 +226,7 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
             SndStreamClient *client = [streamClients objectAtIndex: i];
 
             // Look at each client's currently exposed output buffer, and add to mix
+            // NSLog(@"calling mixWithBuffer from processStreamAtTime\n");
             [outB mixWithBuffer: [client outputBuffer]];
 
             // Each client should have a second synthing buffer, and a synth thread
