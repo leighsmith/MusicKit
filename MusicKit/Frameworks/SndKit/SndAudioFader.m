@@ -20,6 +20,13 @@
 
 static id ENVCLASS=nil;
 
+static SEL bpBeforeOrEqualSel;
+static SEL bpAfterSel;
+static SEL flagsForBpSel;
+static SEL yForBpSel;
+static SEL yForXSel;
+static SEL xForBpSel;
+
 @interface SndAudioFader (SKPrivate)
 
 - (BOOL)_rampEnvelope:(id <SndEnveloping, NSObject>) theEnv
@@ -30,51 +37,13 @@ static id ENVCLASS=nil;
 - (void)_setStaticPointInEnvelope:(id <SndEnveloping, NSObject>) theEnv
                              yVal:(float)yVal
                              xVal:(double)atTime;
-/* this internal method takes account of the flags associated with the bps
- * surrounding the lookup point.
- */
-- (float)_lookupEnv:(id <SndEnveloping, NSObject>)anEnvelope forX:(double)theX;
 @end
 
-@interface _SndFaderStorage : NSObject
-{
-@public
-    double x1,x2;
-    float l1,l2;
-    float r1,r2;
-}
-+ (void) addToArray:(NSMutableArray *)store
-                 x1:(double)newX1
-                 x2:(double)newX2
-                 l1:(float)newL1
-                 l2:(float)newL2
-                 r1:(float)newR1
-                 r2:(float)newR2;
-@end
-
-@implementation _SndFaderStorage
-+ (void) addToArray:(NSMutableArray *)store
-                 x1:(double)newX1
-                 x2:(double)newX2
-                 l1:(float)newL1
-                 l2:(float)newL2
-                 r1:(float)newR1
-                 r2:(float)newR2
-{
-    _SndFaderStorage *s = [[_SndFaderStorage alloc] init];
-    s->x1=newX1;
-    s->x2=newX2;
-    s->l1=newL1;
-    s->l2=newL2;
-    s->r1=newR1;
-    s->r2=newR2;
-    [store addObject:s];
-    [s release];
-}
-
-@end
 
 @implementation SndAudioFader
+
+/* forward decl */
+float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope, double theX);
 
 + (void)setEnvelopeClass:(id)aClass
 {
@@ -89,6 +58,12 @@ static id ENVCLASS=nil;
 - (void)setEnvelopeClass:(id)aClass
 {
     envClass = aClass;
+    bpBeforeOrEqual = (BpBeforeOrEqualIMP)[envClass instanceMethodFor:bpBeforeOrEqualSel];
+    bpAfter = (BpAfterIMP)[envClass instanceMethodFor:bpAfterSel];
+    flagsForBp = (FlagsForBpIMP)[envClass instanceMethodFor:flagsForBpSel];
+    yForBp = (YForBpIMP)[envClass instanceMethodFor:yForBpSel];
+    yForX = (YForXIMP)[envClass instanceMethodFor:yForXSel];
+    xForBp = (XForBpIMP)[envClass instanceMethodFor:xForBpSel];
 }
 
 - (id)envelopeClass
@@ -102,6 +77,13 @@ static id ENVCLASS=nil;
         [SndAudioFader setVersion:1];
     }
     ENVCLASS = [SndEnvelope class]; /* default envelope */
+
+    bpBeforeOrEqualSel = @selector(breakpointIndexBeforeOrEqualToX:);
+    bpAfterSel = @selector(breakpointIndexAfterX:);
+    flagsForBpSel = @selector(lookupFlagsForBreakpoint:);
+    yForBpSel = @selector(lookupYForBreakpoint:);
+    yForXSel = @selector(lookupYForX:);
+    xForBpSel = @selector(lookupXForBreakpoint:);
 }
 
 - init
@@ -114,7 +96,7 @@ static id ENVCLASS=nil;
     staticAmp = 1;
     bearingEnv = nil;
     staticBearing = 0;
-    envClass = ENVCLASS;
+    [self setEnvelopeClass:ENVCLASS];
     uee = NULL;
     return self;
 }
@@ -153,7 +135,7 @@ static id ENVCLASS=nil;
     }
     nowTime = [(SndStreamManager *)[SndStreamManager defaultStreamManager] nowTime];
     [bearingEnvLock lock];
-    yVal = [bearingEnv lookupYForX:nowTime];
+    yVal = _lookupEnvForX(self,bearingEnv,nowTime);
     [bearingEnvLock unlock];
     return yVal;
 }
@@ -189,7 +171,7 @@ static id ENVCLASS=nil;
     }
     nowTime = [(SndStreamManager *)[SndStreamManager defaultStreamManager] nowTime];
     [ampEnvLock lock];
-    yVal = [ampEnv lookupYForX:nowTime];
+    yVal = _lookupEnvForX(self,ampEnv,nowTime);
     [ampEnvLock unlock];
     return yVal;
 }
@@ -250,10 +232,10 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
     // and SND_FADER_ATTACH_RAMP_RIGHT, respectively.
 
         if (dissectsAtStart) {
-            endPrecedingRampLevel = [theEnv lookupYForX:startRampTime];
+            endPrecedingRampLevel = _lookupEnvForX(self,theEnv,startRampTime);
         }
         if (dissectsAtEnd) {
-            startSucceedingRampLevel = [theEnv lookupYForX:endRampTime];
+            startSucceedingRampLevel = _lookupEnvForX(self,theEnv,endRampTime);
         }
 
     // do the deletion, backwards
@@ -281,8 +263,8 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
     newStartIndex = [theEnv insertXValue:startRampTime
                                   yValue:startRampLevel
                                    flags:SND_FADER_ATTACH_RAMP_RIGHT];
-    NSLog(@"newStartIndex %d, startramptime %f, startRampLevel %f\n",
-         newStartIndex,startRampTime,startRampLevel);
+//    NSLog(@"newStartIndex %d, startramptime %f, startRampLevel %f\n",
+//         newStartIndex,startRampTime,startRampLevel);
     [theEnv insertXValue:endRampTime
                   yValue:endRampLevel
                    flags:SND_FADER_ATTACH_RAMP_LEFT
@@ -386,7 +368,6 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
 
 - setBearing:(float)bearing atTime:(double)atTime
 {
-//    BOOL isRamping;
     [bearingEnvLock lock];
     if (!bearingEnv) {
         bearingEnv = [[envClass alloc] init];
@@ -404,7 +385,7 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
     double yVal;
     if (!bearingEnv) return staticBearing;
     [bearingEnvLock lock];
-    yVal = [bearingEnv lookupYForX:atTime];
+    yVal = _lookupEnvForX(self,bearingEnv, atTime);
     [bearingEnvLock unlock];
     return yVal;
 }
@@ -427,7 +408,7 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
     double yVal;
     if (!ampEnv) return staticAmp;
     [ampEnvLock lock];
-    yVal = [ampEnv lookupYForX:atTime];
+    _lookupEnvForX(self,ampEnv, atTime);
     [ampEnvLock unlock];
     return yVal;
 }
@@ -462,19 +443,23 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
     return self;
 }
 
-- (float)_lookupEnv:(id <SndEnveloping, NSObject>)anEnvelope forX:(double)theX
+float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope, double theX)
 {
-    int prevBreakpoint = [anEnvelope breakpointIndexBeforeOrEqualToX:theX];
+//    int prevBreakpoint = [anEnvelope breakpointIndexBeforeOrEqualToX:theX];
+    int prevBreakpoint = saf->bpBeforeOrEqual(anEnvelope,bpBeforeOrEqualSel,theX);
     if (prevBreakpoint == -1) {
         return 0;
     }
     /* it was a static breakpoint: take last y val and don't interpolate */
-    if (!([anEnvelope lookupFlagsForBreakpoint:prevBreakpoint] &
-        SND_FADER_ATTACH_RAMP_RIGHT)) {
-        return [anEnvelope lookupYForBreakpoint:prevBreakpoint];
+//    if (!([anEnvelope lookupFlagsForBreakpoint:prevBreakpoint] & SND_FADER_ATTACH_RAMP_RIGHT))
+    if (!(saf->flagsForBp(anEnvelope,flagsForBpSel,prevBreakpoint) &
+         SND_FADER_ATTACH_RAMP_RIGHT)) {
+//        return [anEnvelope lookupYForBreakpoint:prevBreakpoint];
+        return saf->yForBp(anEnvelope,yForBpSel,prevBreakpoint);
     }
     /* let the envelope object do its interpolation */
-    return [anEnvelope lookupYForX:theX];
+//    return [anEnvelope lookupYForX:theX];
+    return saf->yForX(anEnvelope,yForXSel,theX);
 
 }
 
@@ -491,7 +476,6 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
 
 #define bearingFun1(theta)    fabs(cos(theta))
 #define bearingFun2(theta)    fabs(sin(theta))
-//  return NO;
 
   [lock lock];
 
@@ -547,20 +531,27 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
         countBearing = [bearingEnv breakpointCount];
 
         if (!uee) uee = calloc(256,sizeof(SndUnifiedEnvelopeEntry));
+        if (!uee) [[NSException exceptionWithName:NSMallocException
+                                           reason:@"SndAudioFader envelope"
+                                         userInfo:nil] raise];
 
         /* prime the loop */
         nextAmpIndx = [ampEnv breakpointIndexAfterX:nowTime];
         nextBearingIndx = [bearingEnv breakpointIndexAfterX:nowTime];
         if (nextAmpIndx != -1) {
-            nextAmpX = [ampEnv lookupXForBreakpoint:nextAmpIndx];
-            nextAmpFlags = [ampEnv lookupFlagsForBreakpoint:nextAmpIndx];
+//            nextAmpX = [ampEnv lookupXForBreakpoint:nextAmpIndx];
+//            nextAmpFlags = [ampEnv lookupFlagsForBreakpoint:nextAmpIndx];
+            nextAmpX = xForBp(ampEnv,xForBpSel,nextAmpIndx);
+            nextAmpFlags = flagsForBp(ampEnv,flagsForBpSel,nextAmpIndx);
         }
         else {
             nextAmpX = maxX + 1;
         }
         if (nextBearingIndx != -1) {
-            nextBearingX = [bearingEnv lookupXForBreakpoint:nextBearingIndx];
-            nextBearingFlags = [bearingEnv lookupFlagsForBreakpoint:nextBearingIndx];
+//            nextBearingX = [bearingEnv lookupXForBreakpoint:nextBearingIndx];
+//            nextBearingFlags = [bearingEnv lookupFlagsForBreakpoint:nextBearingIndx];
+            nextBearingX = xForBp(bearingEnv,xForBpSel,nextBearingIndx);
+            nextBearingFlags = flagsForBp(bearingEnv,flagsForBpSel,nextBearingIndx);
         }
         else {
             nextBearingX = maxX + 1;
@@ -574,21 +565,25 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
             [lock unlock];
             return NO;
         }
-        /* always put in start of buffer */
+        /* always include start of buffer as 1st bp*/
         /* grab some values pertaining to start of envelope */
         {
-            int b4AmpIndx = [ampEnv breakpointIndexBeforeOrEqualToX:nowTime];
-            int b4BearingIndx = [bearingEnv breakpointIndexBeforeOrEqualToX:nowTime];
+//            int b4AmpIndx = [ampEnv breakpointIndexBeforeOrEqualToX:nowTime];
+//            int b4BearingIndx = [bearingEnv breakpointIndexBeforeOrEqualToX:nowTime];
+            int b4AmpIndx = bpBeforeOrEqual(ampEnv,bpBeforeOrEqualSel,nowTime);
+            int b4BearingIndx = bpBeforeOrEqual(bearingEnv,bpBeforeOrEqualSel,nowTime);
             if (b4AmpIndx != -1) {
-                uee[xPtr].ampFlags = [ampEnv lookupFlagsForBreakpoint:b4AmpIndx];
-                uee[xPtr].ampY = [self _lookupEnv:ampEnv forX:ampX];
+//                uee[xPtr].ampFlags = [ampEnv lookupFlagsForBreakpoint:b4AmpIndx];
+                uee[xPtr].ampFlags = flagsForBp(ampEnv,flagsForBpSel,b4AmpIndx);
+                uee[xPtr].ampY = _lookupEnvForX(self, ampEnv, ampX);
             } else {
                 uee[xPtr].ampFlags = 0;
                 uee[xPtr].ampY = 1; /* FIXME what about static amp??? */
             }
             if (b4BearingIndx != -1) {
-                uee[xPtr].bearingFlags = [bearingEnv lookupFlagsForBreakpoint:b4BearingIndx];
-                uee[xPtr].bearingY = [self _lookupEnv:bearingEnv forX:ampX];
+//                uee[xPtr].bearingFlags = [bearingEnv lookupFlagsForBreakpoint:b4BearingIndx];
+                uee[xPtr].bearingFlags = flagsForBp(bearingEnv,flagsForBpSel,b4BearingIndx);
+                uee[xPtr].bearingY = _lookupEnvForX(self, bearingEnv, ampX);
             } else {
                 uee[xPtr].bearingFlags = 0;
                 uee[xPtr].bearingY = 0; /* FIXME what about static bearing??? */
@@ -601,12 +596,12 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
          * time period
          */
         while ((nextAmpX < maxX) || (nextBearingX < maxX)) {
-//            NSLog(@"nextAmpX %f, nextBearingX %f\n",nextAmpX, nextBearingX);
             if (nextAmpX <= nextBearingX) {
                 uee[xPtr].xVal = nextAmpX;
                 uee[xPtr].ampFlags = nextAmpFlags;
-                uee[xPtr].ampY = [ampEnv lookupYForBreakpoint:nextAmpIndx];
-                uee[xPtr].bearingY = [self _lookupEnv:bearingEnv forX:nextAmpX];
+//                uee[xPtr].ampY = [ampEnv lookupYForBreakpoint:nextAmpIndx];
+                uee[xPtr].ampY = yForBp(ampEnv,yForBpSel,nextAmpIndx);
+                uee[xPtr].bearingY = _lookupEnvForX(self, bearingEnv, nextAmpX);
                 /* since we're slotting in an unexpected bp as far as the bearing env
                  * is concerned, make sure we tell the new bp to ramp on both sides,
                  * if it needs to
@@ -621,9 +616,11 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
                 xPtr++;
                 nextAmpIndx++;
                 if (nextAmpIndx < countAmp) {
-                    nextAmpX = [ampEnv lookupXForBreakpoint:nextAmpIndx];
+//                    nextAmpX = [ampEnv lookupXForBreakpoint:nextAmpIndx];
+                    nextAmpX = xForBp(ampEnv,xForBpSel,nextAmpIndx);
                     currentAmpFlags = nextAmpFlags;
-                    nextAmpFlags = [ampEnv lookupFlagsForBreakpoint:nextAmpIndx];
+//                    nextAmpFlags = [ampEnv lookupFlagsForBreakpoint:nextAmpIndx];
+                    nextAmpFlags = flagsForBp(ampEnv,flagsForBpSel,nextAmpIndx);
                 }
                 else {
                     nextAmpX = maxX + 1;
@@ -634,8 +631,9 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
             else {
                 uee[xPtr].xVal = nextBearingX;
                 uee[xPtr].bearingFlags = nextBearingFlags;
-                uee[xPtr].ampY = [self _lookupEnv:ampEnv forX:nextBearingX];
-                uee[xPtr].bearingY = [bearingEnv lookupYForBreakpoint:nextBearingIndx];
+                uee[xPtr].ampY = _lookupEnvForX(self, ampEnv,nextBearingX);
+//                uee[xPtr].bearingY = [bearingEnv lookupYForBreakpoint:nextBearingIndx];
+                uee[xPtr].bearingY = yForBp(bearingEnv,yForBpSel,nextBearingIndx);
                 /* since we're slotting in an unexpected bp as far as the amp env
                  * is concerned, make sure we tell the new bp to ramp on both sides,
                  * if it needs to
@@ -650,9 +648,11 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
                 xPtr++;
                 nextBearingIndx++;
                 if (nextBearingIndx < countBearing) {
-                    nextBearingX = [bearingEnv lookupXForBreakpoint:nextBearingIndx];
+//                    nextBearingX = [bearingEnv lookupXForBreakpoint:nextBearingIndx];
+                    nextBearingX = xForBp(bearingEnv,xForBpSel,nextBearingIndx);
                     currentBearingFlags = nextBearingFlags;
-                    nextBearingFlags = [bearingEnv lookupFlagsForBreakpoint:nextBearingIndx];
+//                    nextBearingFlags = [bearingEnv lookupFlagsForBreakpoint:nextBearingIndx];
+                    nextBearingFlags = flagsForBp(bearingEnv,flagsForBpSel,nextBearingIndx);
                 }
                 else {
                     nextBearingX = maxX + 1;
@@ -662,12 +662,12 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
             }
 
         } /* end while */
-        /* always put in end of buffer */
+        /* always include end of buffer as last bp*/
         uee[xPtr].xVal = maxX;
         uee[xPtr].ampFlags = nextAmpFlags;
         uee[xPtr].bearingFlags = nextBearingFlags;
-        uee[xPtr].ampY = [self _lookupEnv:ampEnv forX:maxX];
-        uee[xPtr].bearingY = [self _lookupEnv:bearingEnv forX:maxX];
+        uee[xPtr].ampY = _lookupEnvForX(self, ampEnv, maxX);
+        uee[xPtr].bearingY = _lookupEnvForX(self, bearingEnv,maxX);
         xPtr++;
 
         /* log 'em */
@@ -691,13 +691,15 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
         { /* new block so I can define variables */
         SndUnifiedEnvelopeEntry *startUee;
         SndUnifiedEnvelopeEntry *endUee;
-        float *inD  = (float*) [inB  data];
+        float *inD  = (float*) [inB data];
         int currSample,lastSample;
         int timeDiff;
         float lDiff,rDiff;
         float lEndAmp, rEndAmp, lStartAmp, rStartAmp;
         float lScaler, rScaler;
         float ampMult, bearingMult;
+        float ll,rr;
+        double srxchan = [outB samplingRate] * 2;
 
         for (i = 0 ; i < xPtr - 1 ; i++) {
             startUee = &(uee[i]);
@@ -707,8 +709,8 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
             bearingMult = ((startUee->bearingFlags & SND_FADER_ATTACH_RAMP_RIGHT) ?
                     endUee->bearingY : startUee->bearingY);
 
-            currSample = (startUee->xVal - nowTime) * [outB samplingRate] * 2;
-            lastSample = (endUee->xVal - nowTime) * [outB samplingRate] * 2;
+            currSample = (startUee->xVal - nowTime) * srxchan;
+            lastSample = (endUee->xVal - nowTime) * srxchan;
             timeDiff = lastSample - currSample;
             lStartAmp = startUee->ampY * (startUee->bearingY - 45.0) / -90.0;
             rStartAmp = startUee->ampY * (startUee->bearingY + 45.0) / 90.0;
@@ -716,11 +718,10 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
             rEndAmp = ampMult * (bearingMult + 45.0) / 90.0;
             lDiff = lEndAmp - lStartAmp; /* how much we have to scale l from start to end */
             rDiff = rEndAmp - rStartAmp;
-
-
+//printf("i %d, last sample %d\n",i,lastSample);
             for (j = currSample ; j < lastSample ; j+=2) {
-                float ll = inD[j];
-                float rr = inD[j+1];
+                ll = inD[j];
+                rr = inD[j+1];
                 lScaler = lStartAmp + lDiff * j/timeDiff;
                 rScaler = rStartAmp + rDiff * j/timeDiff;
                 inD[j] *= lScaler;
@@ -735,7 +736,7 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
 
   [lock unlock];
 
-  return NO; /* change to YES when I actually write the changes */
+  return NO; /* we've written the results in place */
 }
 
 @end
