@@ -6,12 +6,11 @@
 @interface MidiLoop : NSObject
 {
     MKMidi *midiObj;
-    id infoPanel;
-    id stringTable;
+    IBOutlet NSPanel *infoPanel;
 }
 
 - (void) applicationWillTerminate: (NSNotification *) aNotification;
-- go:sender;
-- showInfoPanel:sender;
+- go: sender;
+- showInfoPanel: sender;
 
 @end
