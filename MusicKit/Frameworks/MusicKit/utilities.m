@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  1999/09/22 16:03:13  leigh
+  Allocation error messages more meaningful and standard
+
   Revision 1.5  1999/09/04 22:57:11  leigh
   _MKLightweightArrayCopy now addsObjectsFromArray so that the array is mutable
 
@@ -147,7 +150,7 @@ char *_MKCalloc(nelem, elsize)
     void *rtn;
     rtn = calloc(nelem, elsize);
     if (!rtn) {
-	fprintf(stderr,"NeXT memory exausted.\n");
+	NSLog(@"MusicKit memory exausted.\n");
 	exit(1);
     }
     return rtn;
@@ -159,7 +162,7 @@ char *_MKMalloc(size)
     void *rtn;
     rtn = malloc(size);
     if (!rtn) {
-	fprintf(stderr,"NeXT memory exausted.\n");
+	NSLog(@"MusicKit memory exausted.\n");
 	exit(1);
     }
     return rtn;
@@ -172,7 +175,7 @@ char *_MKRealloc(ptr,size)
     char *rtn;
     rtn = realloc(ptr,size);
     if (!rtn) {
-	fprintf(stderr,"NeXT memory exausted.\n");
+	NSLog(@"MusicKit memory exausted.\n");
 	exit(1);
     }
     return rtn;
@@ -251,7 +254,7 @@ void MKSetErrorStream(NSMutableData *aStream)
 // LMS we should replace the whole thing with a notification approach
         {
 //      aStream = (stderrStream = NXOpenFile((int)stderr->_file,NX_WRITEONLY));
-        fprintf(stderr,"MusicKit Error: tried to set stderr to new stream. Needs fixing in the MusicKit.\n");
+        NSLog(@"MusicKit Error: tried to set stderr to new stream. Needs fixing in the MusicKit.\n");
         }
     errorStream = aStream;
 }
