@@ -19,9 +19,9 @@
 #define __SNDAUDIOBUFFER_H__
 
 #import <Foundation/Foundation.h>
-#import <MKPerformSndMIDI/PerformSound.h>
 #import "Snd.h"
 #import "SndFunctions.h"
+#import "SndFormat.h"
 
 /*!
   @class SndAudioBuffer
@@ -44,6 +44,7 @@
   int    dataFormat;
 /*! @var channelCount  */
   int    channelCount;
+  // TODO SndFormat format; // Will hold sound parameters and frame count rather than byteCount.
 /*! @var data */
   NSMutableData *data;
 }
