@@ -48,8 +48,8 @@ DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
 
-FRAMEWORK_PATHS = -F/System/Library/PrivateFrameworks
-FRAMEWORKS = -framework dsp -framework Foundation -framework MusicKit\
+FRAMEWORK_PATHS = -F/Local/Library/Frameworks
+FRAMEWORKS = -framework Foundation -framework MKDSP -framework MusicKit\
              -framework SoundKit
 PUBLIC_HEADERS = unitgenerators.h
 
