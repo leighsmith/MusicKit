@@ -44,6 +44,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2001/05/14 17:26:51  leighsmith
+  Correctly typed orchestra to respond to _MKClassOrchestra()
+
   Revision 1.10  2001/03/06 21:50:23  leigh
   Uses new method name for loading Patches
 
@@ -670,7 +673,7 @@ static void alternatePatchMsg(void)
     return self; /* This can never happen */
 }
 
--orchestra
+- (Class) orchestra
 {
     return orchestra ? orchestra : _MKClassOrchestra();
 }

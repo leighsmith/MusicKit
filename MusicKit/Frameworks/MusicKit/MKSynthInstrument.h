@@ -46,6 +46,9 @@
  Modification history:
 
   $Log$
+  Revision 1.9  2001/05/14 17:26:51  leighsmith
+  Correctly typed orchestra to respond to _MKClassOrchestra()
+
   Revision 1.8  2000/11/25 23:05:09  leigh
   Enforced ivar privacy
 
@@ -83,7 +86,7 @@
     NSMutableDictionary *controllerTable; /* Dictionary mapping MIDI controllers to values */
     MKNote *updates;                      /* MKNote for storing common (no noteTag) updates. */
     BOOL retainUpdates;                   /* NO if updates and controllerTable are cleared after each performance. */
-    MKOrchestra *orchestra;               /* MKOrchestra to allocate MKSynthPatches from */
+    Class orchestra;               	  /* MKOrchestra class to allocate MKSynthPatches from */
 
 @private
     NSMutableArray *_patchLists;
@@ -154,7 +157,7 @@
    than allocating from the Orchestra class. If anOrch is nil, the orchestra 
    used is the value returned by [aSynthPatchClass orchestraClass]. */
 
-- orchestra;
+- (Class) orchestra;
 /* Returns the value set with setSynthPatchClass:orchestra:, if any.
    Otherwise returns [Orchestra class].
   */
