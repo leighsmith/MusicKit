@@ -1,0 +1,874 @@
+%!PS-Adobe-2.0
+%%Title: /me/Pubs/Illustrations/Wave2vi.frame
+%%Creator: FrameMaker
+%%CreationDate: Wed Jul 11 08:06:28 1990
+%%For: me
+%%DocumentFonts: (atend)
+%%Pages: 1 1
+%%BoundingBox: (atend)
+%%DocumentPaperSizes: Letter
+%%Orientation: Portrait
+%%EndComments
+
+%%BeginFile: /usr/lib/NextStep//printPackage1.0.ps
+%!PSNext-1.0
+%%Title: Printing Package
+%%Copyright 1988, NeXT, Inc.
+%%CreationDate: 23Feb88
+%%PackageName: printPackage0.8.37
+%%PackageDescription: Routines to support printing
+%%EndComments
+
+%debugging aids
+%/clip {gsave 0.9 setgray 0.5 setlinewidth stroke grestore} def
+
+% simulations of DPS ops
+/__NXbdef {1 index where {pop pop pop} {bind def} ifelse} bind def
+/__NXUserObjectList 10 array __NXbdef
+/defineuserobject {
+    exch
+    dup 1 add
+    dup __NXUserObjectList length gt {
+	array dup 0 __NXUserObjectList putinterval
+	/__NXUserObjectList exch def
+    }
+    { pop }
+    ifelse
+    __NXUserObjectList exch 3 -1 roll put
+} __NXbdef
+/execuserobject {
+    __NXUserObjectList exch get exec
+} __NXbdef
+/__NXDoRectOp {
+    1 index type /arraytype eq {
+	exch aload length
+	dup 2 add -1 roll exch
+	4 idiv
+    }
+    { 1 }
+    ifelse
+    {
+	5 1 roll
+	newpath 4 2 roll moveto 1 index 0 rlineto
+		0 exch rlineto neg 0 rlineto closepath
+	dup cvx exec
+    } repeat pop
+} __NXbdef
+/rectclip {/clip __NXDoRectOp newpath} __NXbdef
+/rectfill {gsave /fill __NXDoRectOp grestore} __NXbdef
+/rectstroke {gsave /stroke __NXDoRectOp grestore} __NXbdef
+/arct {arcto pop pop pop pop} __NXbdef
+/setbbox {pop pop pop pop} __NXbdef
+/ucache {} __NXbdef
+/ucachestatus {mark 0 0 0 0 0} __NXbdef
+/setucacheparams {cleartomark} __NXbdef
+/uappend {systemdict begin cvx exec end} __NXbdef
+/ueofill {gsave newpath uappend eofill grestore} __NXbdef
+/ufill {gsave newpath uappend fill grestore} __NXbdef
+/ustroke {
+    gsave newpath
+    dup length 6 eq {
+	exch uappend concat 
+    } {
+	uappend
+    } ifelse
+    stroke grestore
+} __NXbdef
+/__NXustrokepathMatrix dup where {pop pop} {matrix def} ifelse
+/ustrokepath {
+    newpath
+    dup length 6 eq {
+	exch uappend
+	__NXustrokepathMatrix currentmatrix exch concat
+	strokepath setmatrix
+    } {
+	uappend strokepath
+    } ifelse
+} __NXbdef
+/upath {
+    [
+	exch {/ucache cvx} if
+	pathbbox /setbbox cvx
+	{/moveto cvx} {/lineto cvx} {/curveto cvx} {/closepath cvx} pathforall
+    ] cvx
+} __NXbdef
+/setstrokeadjust {pop} __NXbdef
+/currentstrokeadjust {false} __NXbdef
+/selectfont {
+    exch findfont exch
+    dup type /arraytype eq {
+	makefont
+    } {
+	scalefont
+    } ifelse setfont
+} __NXbdef
+/_NXCombineArrays {
+    counttomark dup 2 add index
+    dup length 3 -1 roll {
+	2 index length sub
+	dup 4 1 roll
+	1 index exch 4 -1 roll
+	putinterval exch
+    } repeat
+    pop pop pop
+} __NXbdef
+
+% simulations of NeXT additions to DPS
+/flushgraphics {} def
+/hidecursor {} def
+/obscurecursor {} def
+/revealcursor {} def
+/setcursor {4 {pop} repeat} bind def
+/showcursor {} def
+
+
+%%EndFile
+
+
+
+/FMdict 300 dict def 
+FMdict begin
+
+/t300 [0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.10 0.10 0.10 0.10 0.10 0.10 0.10 0.10 0.10 0.10 0.10 0.10 0.10 0.20 0.20 0.20 0.20 0.20 0.20 0.30 0.30 0.30 0.30 0.30 0.30 0.30 0.40 0.40 0.40 0.40 0.40 0.40 0.50 0.50 0.50 0.50 0.50 0.50 0.50 0.60 0.60 0.60 0.60 0.60 0.70 0.70 0.70 0.70 0.70 0.80 0.80 0.80 0.90 0.90 1.00 1.00 ] def
+
+/t400 [0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.00 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.10 0.10 0.10 0.10 0.10 0.15 0.15 0.15 0.15 0.20 0.20 0.25 0.25 0.25 0.25 0.30 0.30 0.30 0.35 0.35 0.35 0.40 0.40 0.40 0.40 0.45 0.45 0.45 0.50 0.50 0.55 0.55 0.60 0.60 0.65 0.65 0.65 0.70 0.75 0.75 0.80 0.85 0.90 1.00 ] def
+
+/tlinear [0.00 0.02 0.03 0.05 0.06 0.08 0.09 0.11 0.12 0.14 0.16 0.17 0.19 0.20 0.22 0.23 0.25 0.27 0.28 0.30 0.31 0.33 0.34 0.36 0.38 0.39 0.41 0.42 0.44 0.45 0.47 0.48 0.50 0.52 0.53 0.55 0.56 0.58 0.59 0.61 0.62 0.64 0.66 0.67 0.69 0.70 0.72 0.73 0.75 0.77 0.78 0.80 0.81 0.83 0.84 0.86 0.88 0.89 0.91 0.92 0.94 0.95 0.97 0.98 1.00 ] def
+
+/dmatrix matrix def
+/desiredpat 0 def
+/dpi    72 0 dmatrix defaultmatrix dtransform
+    dup mul exch   dup mul add   sqrt
+def
+/freq dpi 18.75 div 8 div round dup 0 eq { pop 1 } if 8 mul dpi exch div def
+/sangle 1 0 dmatrix defaultmatrix dtransform exch atan def
+/graymode true def
+/pats 16 array def
+/mymatrix matrix def
+/smat { mymatrix currentmatrix pop } bind def
+/rmat { mymatrix setmatrix } bind def
+
+systemdict /setshared known 
+	{ 300 dpi eq { /tran t300 def } { /tran t400 def } ifelse }
+	{ /tran tlinear def }
+	ifelse
+
+systemdict /xshow known not {
+	/xhow {
+		/pts exch def /str exch def
+		0 1 str length 1 sub 
+			{ currentpoint 3 -1 roll str 1 index 1 getinterval show
+			 3 1 roll moveto
+		     pts exch get 0 rmoveto } for
+		} bind def
+	} 
+	{ /xhow { checkink xshow } bind def }
+	ifelse
+
+systemdict /xyshow known not {
+	/xyhow {
+		/pts exch def /str exch def
+		0 1 str length 1 sub 
+			{ currentpoint 3 -1 roll str 1 index 1 getinterval show
+			 3 1 roll moveto 2 mul
+		     pts 1 index get pts 3 -1 roll 1 add get rmoveto } for
+		} bind def
+	} 
+	{ /xyhow { checkink xyshow } bind def }
+	ifelse
+
+/setpattern { 
+/landscape false def   
+     /bwidth  exch def
+     /bpside  exch def
+     /bstring exch def
+     /onbits 0 def  /offbits 0 def
+     freq sangle landscape {90 add} if
+        {/y exch def
+         /x exch def
+         /xindex x 1 add 2 div bpside mul cvi def
+         /yindex y 1 add 2 div bpside mul cvi def
+         bstring yindex bwidth mul xindex 8 idiv add get
+         1 7 xindex 8 mod sub bitshift and 0 ne
+         {/onbits  onbits  1 add def 1}
+         {/offbits offbits 1 add def 0}
+         ifelse
+        }
+        setscreen
+     tran offbits 64 mul offbits onbits add div cvi get setgray
+    } bind def
+
+
+/myfonts 120 array def
+/procarray 30 array def
+3.86 setmiterlimit
+
+currentscreen cvlit 
+/orgproc exch def
+/organgle exch def /orgfreq exch def
+/currentpat -1 def
+
+
+
+
+
+/checkpat {
+	graymode currentpat desiredpat ne or
+		{ pats desiredpat get exec 
+		  /graymode false store 
+		  /currentpat desiredpat store
+		newpath  
+ 		} if
+    } bind def
+
+/pat { checkpat fill } bind def
+
+
+
+
+/checkink { 
+  graymode not 
+	{ orgfreq organgle orgproc cvx setscreen
+	  /graymode true store 
+      savedgray setgray
+	} if
+  } bind def
+
+
+/dofill {     
+   checkink fill
+   } bind def
+
+/dorectfill {     
+   checkink rectfill
+   } bind def
+
+/dorectstroke {     
+   checkink rectstroke
+   } bind def
+
+/dostroke {     
+   checkink stroke
+   } bind def
+
+
+
+
+
+/mysetgray { /savedgray exch def savedgray setgray } def
+
+/makecontextpattern { 
+	exch pop
+	[null 8 1 /setpattern cvx] 4 array copy  dup 
+	0 5 -1 roll put cvx                         
+    pats 3 1 roll put 
+	} def
+
+
+
+
+
+/P [ 0 1 15 { [ /desiredpat 3 -1 roll /store cvx ] cvx } for ] def
+
+/patoffsetx 0 def
+/patoffsety 0 def
+/currentpat null def
+
+/DiacriticEncoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /space /exclam /quotedbl
+/numbersign /dollar /percent /ampersand /quotesingle /parenleft
+/parenright /asterisk /plus /comma /hyphen /period /slash /zero /one
+/two /three /four /five /six /seven /eight /nine /colon /semicolon
+/less /equal /greater /question /at /A /B /C /D /E /F /G /H /I /J /K
+/L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z /bracketleft /backslash
+/bracketright /asciicircum /underscore /grave /a /b /c /d /e /f /g /h
+/i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z /braceleft /bar
+/braceright /asciitilde /.notdef /Adieresis /Aring /Ccedilla /Eacute
+/Ntilde /Odieresis /Udieresis /aacute /agrave /acircumflex /adieresis
+/atilde /aring /ccedilla /eacute /egrave /ecircumflex /edieresis
+/iacute /igrave /icircumflex /idieresis /ntilde /oacute /ograve
+/ocircumflex /odieresis /otilde /uacute /ugrave /ucircumflex
+/udieresis /dagger /.notdef /cent /sterling /section /bullet
+/paragraph /germandbls /registered /copyright /trademark /acute
+/dieresis /.notdef /AE /Oslash /.notdef /.notdef /.notdef /.notdef
+/yen /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/ordfeminine /ordmasculine /.notdef /ae /oslash /questiondown
+/exclamdown /logicalnot /.notdef /florin /.notdef /.notdef
+/guillemotleft /guillemotright /ellipsis /.notdef /Agrave /Atilde
+/Otilde /OE /oe /endash /emdash /quotedblleft /quotedblright
+/quoteleft /quoteright /.notdef /.notdef /ydieresis /Ydieresis
+/fraction /currency /guilsinglleft /guilsinglright /fi /fl /daggerdbl
+/periodcentered /quotesinglbase /quotedblbase /perthousand
+/Acircumflex /Ecircumflex /Aacute /Edieresis /Egrave /Iacute
+/Icircumflex /Idieresis /Igrave /Oacute /Ocircumflex /.notdef /Ograve
+/Uacute /Ucircumflex /Ugrave /dotlessi /circumflex /tilde /macron
+/breve /dotaccent /ring /cedilla /hungarumlaut /ogonek /caron
+] def
+
+/DiacriticEncode {
+	/basefontdict exch def
+
+	/newfontdict basefontdict maxlength 2 add dict def
+	basefontdict
+	{exch dup 
+	/FID ne
+		{dup /Encoding eq
+			{exch pop DiacriticEncoding }
+			{exch}
+			ifelse
+			newfontdict 3 1 roll put
+			}
+		{pop pop}
+		ifelse
+		} forall
+	newfontdict
+	} def
+
+/NonDiacriticEncode {
+	/basefontdict exch def
+	/newfontdict basefontdict maxlength 2 add dict def
+	basefontdict
+	{exch dup /FID ne
+		{exch newfontdict 3 1 roll put}
+		{pop pop}
+		ifelse
+		} forall
+	newfontdict
+	} def
+
+
+/line { 
+	pop pop pop pop
+	} def
+ 
+/rrectpath { 
+    smat
+    4 2 roll translate			
+	/h exch def /w exch def /r exch def
+	mark
+	    r 0 moveto
+	    w 0 w h r arcto w h 0 h r arcto
+	    0 h 0 0 r arcto 0 0 w 0 r arcto closepath
+	cleartomark
+    rmat
+} def
+
+/fillroundrect { 
+	rrectpath dofill
+	} bind def
+/fillroundrectpat { 
+	checkpat rrectpath fill
+	} bind def
+
+/penroundrect { 
+	rrectpath dostroke
+	} bind def
+
+/penroundrectpat { 
+	checkpat rrectpath strokepath fill
+	} bind def
+
+/fillbox { 
+	dorectfill
+	} bind def 
+
+/fillboxpat { 
+	checkpat
+	4 2 roll
+	rectfill
+	} bind def 
+	
+/whitebox { 
+	pop pop pop pop } def
+
+/invertbox { 
+pop pop pop pop } def
+
+/highbox { 
+pop pop pop pop } def
+
+/polypath { 
+	newpath
+	3 1 roll moveto 1 sub
+	{ lineto } repeat
+	} bind def
+
+/smoothpath { 
+	3 1 roll moveto 3 div cvi
+	{ curveto } repeat
+	} bind def
+
+/rectpath  { 
+	moveto dup 0 exch rlineto exch 0 rlineto neg 0 exch rlineto closepath
+	} def
+
+/penbox { 
+	dorectstroke
+	} bind def
+
+/penboxpat { 
+	checkpat 
+	4 2 roll
+	rectstroke
+	} bind def
+
+/penroundrect { 
+	rrectpath dostroke
+	} bind def
+
+/penroundrectpat { 
+	checkpat rrectpath strokepath 
+	} bind def
+
+/fillroundrect { 
+	rrectpath dofill
+	} bind def
+
+/fillroundrectpat { 
+	checkpat rrectpath fill
+	} bind def
+
+/drawip { 
+	pop pop pop
+	} bind def
+
+/eraseip  { 
+	pop pop pop
+	} bind def
+
+/highip { pop pop pop pop } def
+/insideedgebox { pop pop pop pop pop } def
+
+
+/replbox { pop pop pop pop pop pop } def
+/pop4 { pop pop pop pop } def
+/graybox { pop4 } def
+/darkgraybox { pop4 } def
+
+/arcpath { 
+	newpath
+	translate
+	/h exch def
+	/w exch def
+	/dth exch def
+	/th exch def
+	90 th dth add sub 90 th sub       
+	dth 0 lt 
+		{ exch } if
+	1 h w div neg scale 
+	0 0 w 2 div 5 -2 roll arc
+	} def
+ 
+/penarc { 
+	smat
+	arcpath
+	rmat
+	dostroke
+	} bind def
+
+/penarcpat { 
+	checkpat
+	smat
+	arcpath
+	rmat
+	strokepath fill
+	} bind def
+
+/fillarc { 
+	smat
+	arcpath
+	0 0 lineto
+	rmat
+	dofill
+	} bind def
+
+/fillarcpat { 
+	checkpat
+	smat
+	arcpath
+	0 0 lineto
+	rmat
+	fill
+	} bind def
+
+/mymakefont { 
+	/size exch def
+	/name exch def
+	/i exch def
+	/myfontdict name cvn findfont def
+	myfontdict /Encoding get StandardEncoding eq
+	{
+		myfontdict DiacriticEncode
+		/gfontdict exch def
+	}
+	{
+		myfontdict NonDiacriticEncode
+		/gfontdict exch def
+	}
+	ifelse
+
+	/gfontdict (F   ) dup 1 i (   ) cvs putinterval cvn gfontdict definefont def
+ 	myfonts i  gfontdict  [size 0 0 size neg 0 0 ] makefont put
+	} def
+
+/mysetfont { 
+	myfonts exch get setfont
+ } bind def
+
+
+/cliptorect { 
+
+
+
+initclip
+newpath
+4 2 roll moveto dup 0 exch rlineto exch 0 rlineto 0 exch neg rlineto 
+closepath clip newpath
+	} bind def
+
+/cliptowindow {
+	initclip
+	} def
+
+/beginprintcode { 
+	gsave
+	newpath 1 setlinewidth 0 setlinecap 0 setlinejoin
+	[] 0 setdash 0 setgray 10 setmiterlimit
+	/FMdicttop countdictstack 1 add def 
+	/FMoptop count 7 sub def 
+	100 dict begin 
+
+	translate      				
+	dup neg scale                
+	0.0 0.0 moveto
+	} def
+
+/endprintcode {
+	count -1 FMoptop {pop pop} for 
+	countdictstack -1 FMdicttop {pop end} for 
+
+	grestore
+} def
+
+/beginPSInsetprintcode {
+	/FMdicttop countdictstack 1 add def 
+	/FMoptop count def 
+	100 dict begin 
+} def
+
+/endPSInsetprintcode {
+	count -1 FMoptop {pop pop} for 
+	countdictstack -1 FMdicttop {pop end} for 
+} def
+
+/cacheimage { 
+/flip exch def
+/theta exch def
+/bps exch def
+/h exch def
+/w exch def
+/destHeight exch def
+/destWidth exch def
+/destY exch def
+/destX exch def
+/rowbytes w bps mul 7 add 8 idiv def
+/buffer rowbytes string def
+
+	gsave
+	destX destY translate
+	theta rotate
+	flip
+		{destWidth neg destHeight scale}
+		{destWidth destHeight scale}
+		ifelse
+	w h bps
+
+    	[w 0 0 h 0 h ]
+	{ currentfile buffer readhexstring pop } bind
+	image
+	grestore
+	} def
+
+<0f1e3c78f0e1c387> (I1aec48) 8 makecontextpattern
+<0f87c3e1f0783c1e> (I1aec68) 9 makecontextpattern
+<cccccccccccccccc> (I1aec88) 10 makecontextpattern
+<ffff0000ffff0000> (I1aeca8) 11 makecontextpattern
+<8142241818244281> (I1aecc8) 12 makecontextpattern
+<03060c183060c081> (I1aece8) 13 makecontextpattern
+<8040201008040201> (I1aed08) 14 makecontextpattern
+%%EndProlog
+%%BeginSetup
+%%PaperSize: Letter
+%%Feature: *ManualFeed False
+%%Feature: *Resolution 400
+%%EndSetup
+
+%%Page: 1 1
+%%PageBoundingBox: 0.000000 0.000000 612.000000 792.000000
+%%PageFonts: (atend)
+%%BeginPageSetup
+%%PaperSize: Letter
+/__NXsheetsavetoken save def
+0 0 translate
+gsave
+0 0 612 792 rectclip
+[1 0 0 -1 0 792] concat
+0 0 translate
+%%EndPageSetup
+gsave
+0 0 612 792 rectclip
+gsave
+0 0 612 792 rectclip
+0 0 612 792 whitebox
+1 mysetgray
+72 36 468 10 fillbox
+0 mysetgray
+0 (Helvetica) 12 mymakefont
+0 mysetfont
+72 43.999969 moveto ( ) [6.612156e-39] xhow
+1 mysetgray
+72 749.333374 468 10 fillbox
+0 mysetgray
+72 757.333374 moveto ( ) [6.612156e-39] xhow
+0.95 mysetgray
+72 53.743195 320 551 fillbox
+3 setlinewidth
+0 mysetgray
+72 53.743195 320 551 penbox
+1 mysetgray
+180 90 72 71.999451 243.000137 299.743347 fillarc
+0 mysetgray
+180 90 72 71.999451 243.000137 299.743347 penarc
+1 mysetgray
+90 90 72 71.999451 243.000137 299.743347 fillarc
+0 mysetgray
+90 90 72 71.999451 243.000137 299.743347 penarc
+206 299.743195
+278 299.743195
+2 polypath
+dostroke
+224 323.743195
+231 305.743195
+235 316.743195
+254 316.743195
+260 325.743195
+5 polypath
+dostroke
+240 334.743195
+241 362.743195
+2 polypath
+dostroke
+0 90 34 20 252 360.743195 penarc
+259 350.743195
+241 351.743195
+2 polypath
+dostroke
+1 mysetgray
+180 90 72 71.999451 165.000137 359.743347 fillarc
+0 mysetgray
+180 90 72 71.999451 165.000137 359.743347 penarc
+1 mysetgray
+90 90 72 71.999451 165.000137 359.743347 fillarc
+0 mysetgray
+90 90 72 71.999451 165.000137 359.743347 penarc
+128 359.743195
+200 359.743195
+2 polypath
+dostroke
+146 383.743195
+153 365.743195
+157 376.743195
+176 376.743195
+182 385.743195
+5 polypath
+dostroke
+1 mysetgray
+231 361.743195 65 35 fillbox
+0 mysetgray
+231 361.743195 65 35 penbox
+1 (Helvetica) 18 mymakefont
+1 mysetfont
+244 384.743195 moveto (+ \( x \)) [10.506226 5.001251 5.990707 5.001251 8.995056 5.001251 5.990707] xhow
+0.85 mysetgray
+188 94.743195 182 193 fillbox
+0 mysetgray
+188 94.743195 182 193 penbox
+0.95 mysetgray
+180 90 72 71.999451 234.000137 122.743332 fillarc
+0 mysetgray
+180 90 72 71.999451 234.000137 122.743332 penarc
+0.95 mysetgray
+90 90 72 71.999451 234.000137 122.743332 fillarc
+0 mysetgray
+90 90 72 71.999451 234.000137 122.743332 penarc
+197 122.743195
+269 122.743195
+2 polypath
+dostroke
+0 mysetfont
+208 139.743195 moveto (tick noise) [3.334167 2.662537 5.996704 5.996704 3.334167 6.668335 6.668335 2.662537 5.996704 0] xhow
+236 159.743195
+235 182.743195
+2 polypath
+dostroke
+0.95 mysetgray
+201 181.743195 65 35 fillbox
+0 mysetgray
+201 181.743195 65 35 penbox
+0 mysetfont
+210 202.743195 moveto (one-pole) [6.668335 6.668335 6.668335 3.993805 6.668335 6.668335 2.662537 0] xhow
+0.95 mysetgray
+180 90 72 71.999451 329.000122 123.743332 fillarc
+0 mysetgray
+180 90 72 71.999451 329.000122 123.743332 penarc
+0.95 mysetgray
+90 90 72 71.999451 329.000122 123.743332 fillarc
+0 mysetgray
+90 90 72 71.999451 329.000122 123.743332 penarc
+292 123.743195
+364 123.743195
+2 polypath
+dostroke
+302 139.743195 moveto (sine wave) [5.996704 2.662537 6.668335 6.668335 3.334167 8.659241 6.668335 5.996704 6.668335] xhow
+0.95 mysetgray
+253 243.743195 65 35 fillbox
+0 mysetgray
+253 243.743195 65 35 penbox
+1 mysetfont
+282 265.743195 moveto (+) [2.828533e-38] xhow
+0.85 mysetgray
+180 90 25.999634 30 249.999817 218.743195 fillarc
+0 mysetgray
+180 90 25.999634 30 249.999817 218.743195 penarc
+0.85 mysetgray
+0 90 34 20 251 243.743195 fillarc
+0 mysetgray
+0 90 34 20 251 243.743195 penarc
+330 157.743195
+330 218.743195
+2 polypath
+dostroke
+0.85 mysetgray
+90 90 25.999634 30 317.000183 217.743195 fillarc
+0 mysetgray
+90 90 25.999634 30 317.000183 217.743195 penarc
+0.85 mysetgray
+270 90 34 20 316 242.743195 fillarc
+0 mysetgray
+270 90 34 20 316 242.743195 penarc
+252 115.743195 moveto (vibrato) [8.995056 3.993805 10.002502 5.990707 10.002502 5.001251 10.002502] xhow
+287 363.743195
+287 280.743195
+2 polypath
+dostroke
+0 mysetfont
+166 44.743195 moveto ( ) [1.524469e-38] xhow
+2 (Helvetica) 24 mymakefont
+2 mysetfont
+169 80.743195 moveto ( ) [1.55202e-38] xhow
+1 mysetfont
+175.668335 80.743195 moveto (DBWave2vi) [12.988861 11.999405 16.982666 10.002502 8.995056 10.002502 10.002502 8.995056 10.002502] xhow
+1 mysetgray
+180 90 72 71.999451 267.000122 440.743347 fillarc
+0 mysetgray
+180 90 72 71.999451 267.000122 440.743347 penarc
+1 mysetgray
+90 90 72 71.999451 267.000122 440.743347 fillarc
+0 mysetgray
+90 90 72 71.999451 267.000122 440.743347 penarc
+230 440.743195
+302 440.743195
+2 polypath
+dostroke
+0 mysetfont
+238 458.743195 moveto (wave table) [8.659241 6.668335 5.996704 6.668335 3.334167 3.334167 6.668335 6.668335 2.662537 0] xhow
+251 438.743195 moveto (a) [2.305071e-38] xhow
+272 438.743195 moveto (f) [2.644862e-38] xhow
+1 mysetgray
+180 90 72 71.999451 186.000137 440.743347 fillarc
+0 mysetgray
+180 90 72 71.999451 186.000137 440.743347 penarc
+1 mysetgray
+90 90 72 71.999451 186.000137 440.743347 fillarc
+0 mysetgray
+90 90 72 71.999451 186.000137 440.743347 penarc
+149 440.743195
+221 440.743195
+2 polypath
+dostroke
+157 458.743195 moveto (wave table) [8.659241 6.668335 5.996704 6.668335 3.334167 3.334167 6.668335 6.668335 2.662537 0] xhow
+170 438.743195 moveto (a) [1.561203e-38] xhow
+191 438.743195 moveto (f) [1.754058e-38] xhow
+165 396.743195
+164 440.743195
+2 polypath
+dostroke
+281 398.743195
+282 440.743195
+2 polypath
+dostroke
+270 90 162 66 280 440.743195 penarc
+0 90 162 66 164 438.743195 penarc
+1 mysetgray
+180 90 72 71.999451 225.000137 485.743347 fillarc
+0 mysetgray
+180 90 72 71.999451 225.000137 485.743347 penarc
+1 mysetgray
+90 90 72 71.999451 225.000137 485.743347 fillarc
+0 mysetgray
+90 90 72 71.999451 225.000137 485.743347 penarc
+188 485.743195
+260 485.743195
+2 polypath
+dostroke
+206 509.743195
+213 491.743195
+217 502.743195
+236 502.743195
+242 511.743195
+5 polypath
+dostroke
+1 mysetgray
+192 538.743164 65 35 fillbox
+0 mysetgray
+192 538.743164 65 35 penbox
+226 522.743164
+227 538.743164
+2 polypath
+dostroke
+184 476.743195
+183 514.743164
+2 polypath
+dostroke
+180 90 25.999634 30 195.999817 511.743195 penarc
+0 90 34 20 197 536.743164 penarc
+268 477.743195
+269 515.743164
+2 polypath
+dostroke
+90 90 25.999634 30 256.000183 512.743164 penarc
+270 90 34 20 255 537.743164 penarc
+211 560.743164 moveto (mixer) [9.990509 2.662537 5.996704 6.668335 2.662537] xhow
+231.790604 588.337952
+227.115738 595.734497
+223.046738 587.988098
+3 polypath
+dostroke
+228 573.743164
+227.079956 596.744812
+2 polypath
+dostroke
+0 0 10000 10000 cliptorect
+grestore
+grestore
+grestore
+showpage
+__NXsheetsavetoken restore
+%PageTrailer
+%%Trailer
+%%BoundingBox:0.000000 0.000000 612.000000 792.000000
+
