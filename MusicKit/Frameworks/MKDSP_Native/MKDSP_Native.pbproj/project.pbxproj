@@ -296,8 +296,8 @@
 			productName = MKDSP;
 			productReference = 06D6961EFF81A5A1CFED3B93;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -364,6 +364,7 @@
 				7B0B0D32019A27E7002A0496,
 			);
 			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		00D59F9EFED5A538CFED3B93 = {
 			fileRef = 00D59F5BFED5A538CFED3B93;
@@ -613,6 +614,7 @@
 			files = (
 			);
 			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		00D59FC5FED5A538CFED3B93 = {
 			buildActionMask = 2147483647;
@@ -626,6 +628,7 @@
 				55E6D141015C055FCFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		00D59FD6FED5A538CFED3B93 = {
 			buildActionMask = 2147483647;
@@ -634,6 +637,7 @@
 				00D59FD8FED5A538CFED3B93,
 			);
 			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		00D59FD7FED5A538CFED3B93 = {
 			fileRef = 00D59F9AFED5A538CFED3B93;
@@ -652,6 +656,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //000
 //001
