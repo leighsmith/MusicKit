@@ -27,7 +27,6 @@
 extern "C" {
 #endif
 
-#define DEBUG_SQUAREWAVE    0  // generate a square wave, rather than the real audio data
 #define DEBUG_DESCRIPTION   0  // dump the description of the audio device.
 #define DEBUG_BUFFERSIZE    0  // dump the check of the audio buffer size.
 #define DEBUG_SNDPLAYIOPROC 0  // dump the channel count etc while generating the buffer.
@@ -322,6 +321,50 @@ static BOOL retrieveDriverList(void)
 
     driverList[driverIndex] = NULL; // NULL terminate the list
     return TRUE;
+}
+
+
+// Find the output device ID in the driver list and return the driver list index.
+// TODO we make the reasonably safe assumption that the sequence of deviceIDs and 
+// driver names will be in the same order.
+unsigned int findDeviceIDInDriverList(AudioDeviceID deviceIDToFind)
+{
+    OSStatus CAstatus;
+    UInt32 propertySize;
+    Boolean propertyWritable;
+    unsigned int driverIndex = 0;
+    AudioDeviceID *allDeviceIDs;
+
+    CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDevices, &propertySize, &propertyWritable);
+    // NSLog(@"AudioHardwareGetPropertyInfo kAudioHardwarePropertyDevices CAstatus:%s, propertySize = %ld, propertyWritable = %d\n",
+    //    (char *) &CAstatus, propertySize, propertyWritable);
+
+    if (CAstatus) {
+        NSLog(@"AudioHardwareGetPropertyInfo kAudioHardwarePropertyDevices returned %s\n", getCoreAudioErrorStr(CAstatus));
+        return FALSE;
+    }
+
+    if((allDeviceIDs = (AudioDeviceID *) malloc(propertySize)) == NULL) {
+        NSLog(@"Unable to malloc device ids\n");
+        return FALSE;
+    }
+
+    CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDevices, &propertySize, allDeviceIDs);
+    // NSLog(@"AudioHardwareGetProperty kAudioHardwarePropertyDevices CAstatus:%s, propertySize = %ld\n", (char *) &CAstatus, propertySize);
+    if (CAstatus) {
+        NSLog(@"AudioDeviceGetProperty 1 returned %s\n", getCoreAudioErrorStr(CAstatus));
+        return FALSE;
+    }
+
+    if(numOfDevices != propertySize / sizeof(AudioDeviceID))
+        NSLog(@"findDeviceIDInDriverList assertion failed! numOfDevices = %d vs. %d\n", numOfDevices, propertySize / sizeof(AudioDeviceID));
+
+    for(driverIndex = 0; driverIndex < numOfDevices; driverIndex++) {
+        if(allDeviceIDs[driverIndex] == deviceIDToFind)
+            return driverIndex;
+    }
+    NSLog(@"Couldn't find the driver ID %x out of %d devices\n", deviceIDToFind, numOfDevices);
+    return 0; // Couldn't find it, default to the first
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -701,7 +744,8 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 #if DEBUG_BUFFERSIZE
 	NSLog(@"get buffer size bufferSizeInBytes = %ld\n", bufferSizeInBytes);
 #endif
-        driverIndex = 0;  // TODO must find the default output device ID in the driver list and return its index
+        // find the default output device ID in the driver list and return its index
+        driverIndex = findDeviceIDInDriverList(outputDeviceID);  
     }
     else {
         NSLog(@"SNDInit() Didn't guess the device\n");
