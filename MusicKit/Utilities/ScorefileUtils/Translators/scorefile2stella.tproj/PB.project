@@ -3,8 +3,10 @@
     FILESTABLE = {
         FRAMEWORKS = (Foundation.framework, MusicKit.framework); 
         FRAMEWORKSEARCH = ("$(LOCAL_LIBRARY_DIR)/Frameworks", "$(LOCAL_DEVELOPER_DIR)/Frameworks"); 
+        H_FILES = (); 
         OTHER_LINKED = (scorefile2stella_main.m); 
         OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble, m.template, h.template); 
+        SUBPROJECTS = (); 
     }; 
     LANGUAGE = English; 
     LOCALIZABLE_FILES = {}; 
