@@ -100,10 +100,7 @@
 	NSEvent *nEvent;
         int i;
 	id theTad;
-	
-//#error EventConversion: addToEventMask:NX_LMOUSEDRAGGEDMASK: is obsolete; you no longer need to use the eventMask methods; for mouse moved events, see 'setAcceptsMouseMovedEvents:'
-//	oldMask = [[self window] addToEventMask:NSLeftMouseDraggedMask];
-	
+		
 	if (![sender isSelected]) {
 		wasSelected = NO;
 		[sender setMoving:YES];
@@ -152,13 +149,13 @@
 			ePoint.x = thePoint.x;
 			ePoint.y = thePoint.y;
 			break;
+                default:        // Makes explicit to the compiler we do nothing with other events.
+                        break;
 		}
 	}
-//#error EventConversion: setEventMask:oldMask: is obsolete; you no longer need to use the eventMask methods; for mouse moved events, see 'setAcceptsMouseMovedEvents:'
-// 	[[self window] setEventMask:oldMask]; 
 }
 
-- (double)beatScale
+- (double) beatScale
 {
 	return beatScale;
 }
