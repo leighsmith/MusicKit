@@ -113,7 +113,7 @@ their assumption of the role of MKInstrument.
 
 #import <Foundation/NSObject.h>
 
-@interface MKNoteReceiver: NSObject
+@interface MKNoteReceiver: NSObject <NSCoding>
 {
     NSMutableArray *noteSenders;      /*! @var noteSenders Array of connected MKNoteSenders. */
     BOOL isSquelched;                 /*! @var isSquelched YES if the object is currently squelched. */
