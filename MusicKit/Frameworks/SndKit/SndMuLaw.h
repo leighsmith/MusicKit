@@ -29,9 +29,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#if HAVE_CONFIG_H
-# include "SndKitConfig.h"
-#endif
+/* We #include this file regardless of the setting of
+   HAVE_CONFIG_H so that other applications compiling against this
+   header don't have to define it. If you are seeing errors for
+   SndKitConfig.h not found when compiling the MusicKit, you haven't
+   run ./configure 
+*/
+#include "SndKitConfig.h"
 
 #define MINLIN -32768
 #define MAXLIN 32767
