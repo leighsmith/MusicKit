@@ -77,6 +77,10 @@
 Modification history:
 
   $Log$
+  Revision 1.34  2001/02/03 02:28:09  leigh
+  Moved mach error string dependency to MKMDErrorString,
+  fixed overly cautious check that receivedMidi was not being set properly, allowing for multiple calls of my_data_reply
+
   Revision 1.33  2001/01/31 21:36:45  leigh
   Typed note parameters
 
@@ -226,7 +230,6 @@ Modification history:
   09/7/94/daj -  Updated to not use libsys functions.
   10/31/98/lms - Major reorganization for OpenStep conventions, allocation and classes.
 */
-#import <mach/mach_error.h>
 #import <Foundation/NSUserDefaults.h>
 
 /* MusicKit include files */
@@ -305,7 +308,7 @@ void handleCallBack(void *midiObj);
 
 NSString *midiDriverErrorString(int errorCode)
 {
-    return [NSString stringWithCString: mach_error_string(errorCode)];
+    return [NSString stringWithCString: MKMDErrorString(errorCode)];
 }
 
 - (BOOL) unitHasMTC
@@ -941,14 +944,16 @@ static int incomingDataCount = 0; /* We use a static here to allow us to
 				   * this. 
 				   */
 
-// my_data_reply manages the incoming MIDI events. It is called from MKMDHandleReply
+// my_data_reply manages the incoming MIDI events. It is called from MKMDHandleReply.
+// It may be called multiple times successively with events from the MKMDHandleReply mechanism.
 static void my_data_reply(mach_port_t reply_port, short unit, MKMDRawEvent *events, unsigned int count) {
     _MKMidiInStruct *ptr;
     MKNote *aNote;
     unsigned char statusByte;
 
-    if(receivingMidi == nil) { // check we assigned this in handleMachMessage/handleCallback
-        _MKErrorf(MK_musicKitErr, @"Internal error, receiving MKMidi has not been assigned\n");
+    // check we assigned this in handleMachMessage/handleCallback and it survives the driver.
+    if(receivingMidi == nil) { 
+        _MKErrorf(MK_musicKitErr, @"Internal error, receiving MKMidi has not been assigned");
         return;
     }
     ptr = MIDIINPTR(receivingMidi);
@@ -968,8 +973,8 @@ static void my_data_reply(mach_port_t reply_port, short unit, MKMDRawEvent *even
 	    }
 	}
     }
-    // to rigorously check handleMachMessage/handleCallBack do their job, prevents spurious wrong messages being sent.
-    receivingMidi = nil; 
+    // since my_data_reply can be called several times successively, we let the 
+    // handleMachMessage/handleCallback routines reset receivingMidi to nil.
 }
 
 /*sb: added the following method to handle mach messages. This replaces the earlier function
@@ -1003,6 +1008,9 @@ static void my_data_reply(mach_port_t reply_port, short unit, MKMDRawEvent *even
     if (r != MKMD_SUCCESS) {
       _MKErrorf(MK_machErr, errorMessage, midiDriverErrorString(r), @"midiIn");
     }
+
+    // to rigorously check handleMachMessage does its job, detects spurious wrong messages being sent.
+    receivingMidi = nil; 
 }
 
 // The alternative to using a Mach message is to use a call back function to receive the MIDI data.
@@ -1026,6 +1034,9 @@ void handleCallBack(void *midiObj)
     if (r != MKMD_SUCCESS) {
       _MKErrorf(MK_machErr, errorMessage, midiDriverErrorString(r), @"midiIn");
     }
+    
+    // to rigorously check handleCallBack does its job, detects spurious wrong messages being sent.
+    receivingMidi = nil; 
     [handlerPool release];
 }
 /* Input configuration */
