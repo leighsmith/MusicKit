@@ -1,10 +1,57 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    The MusicKit supports a Timbre Data Base.  Each element in the data base
+    is an MKTimbre.  MKTimbres map a timbre name to an NSArray of MKWaveTable objects
+    and a parallel list of frequencies for those MKWaveTables.  The Data Base
+    is initialized with an extensive set of timbres.  These timbres may be
+    removed or modified, additional timbres may be added, etc.
+
+    The waveTables list is a NSArray of MKWaveTables sorted according to
+    freq, with the table corresponding to the lowest frequency first.
+    freqs is a NSArray containing the frequencies corresponding to
+    each MKWaveTable.  The name may be any string, but should not have a number
+    in it and should not be longer than MK_MAXTIMBRENAMELEN.
+
+    You normally create or retrieve an MKTimbre with +newTimbre:, passing the
+    name of the timbre you want.  If that timbre exists, it is retrieved,
+    otherwise it is created and installed in the Data Base.  Alternatively,
+    you can create a new anonymous timbre with +alloc and init.  In this case,
+    the timbre is not put in the Data Base until its name is set with
+    -setTimbreName:.  -setTimbreName: can also be used to change the name of a
+    timbre that is already in the Data Base.  -timbreName may be used to
+    retrieve the name of an MKTimbre.  An anonymous timbre has a name field of
+    NULL.
+
+    The Music Kit MKSynthPatches use the Data Base by passing it a "timbre key".
+    A timbre key is a timbre name with an optional integer appended to it and
+    an optional 0 or 1 prepended to it. The trailing number in a timbre key
+    specifies a particular table (1-based).  A leading 0 or 1 specifies use of
+    freq0 or freq1 respectively to determine the appropriate MKWaveTable.
+    For convenience in supporting this functionality in your own MKSynthPatch
+    subclasses, we provide the function MKWaveTableForTimbreKey().
+
+    The Data Base is stored in a HashTable object that maps names to
+    MKTimbre objects.  This HashTable can be retrieved by the +timbres method.
+    See <objc/HashTable.h> for how to enumerate the objects in a HashTable.
+
+    An individual timbre can be written to an archive file.  Alternatively, the
+    entire Data Base can be saved to an archive file using the +timbres method
+    to retrieve the Data Base and then archiving that object.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University  
 */
 /*
   $Log$
+  Revision 1.3  2000/04/25 22:07:46  leigh
+  Doco cleanup and redundant headers removed
+
   Revision 1.2  1999/07/29 01:25:51  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -12,56 +59,15 @@
 #ifndef __MK_Timbre_H___
 #define __MK_Timbre_H___
 
-#import <objc/Storage.h>
 #import <Foundation/NSArray.h>
 #import <objc/HashTable.h>
 
 @interface MKTimbre : NSObject
 {
-    NSString *timbreName;         /* Name of this timbre */
-    NSMutableArray *freqs;           /* Storage object of frequencies */ /*sb: not Storage any more. */
-    NSMutableArray *waveTables;         /* List object of WaveTables */
+    NSString *timbreName;               /* Name of this timbre */
+    NSMutableArray *freqs;              /* Array object of frequencies */
+    NSMutableArray *waveTables;         /* Array object of WaveTables */
 }
-/* The Music Kit supports a Timbre Data Base.  Each element in the data base
-   is an Timbre.  Timbres map a timbre name to a List of WaveTable objects
-   and a parallel list of frequencies for those WaveTables.  The Data Base 
-   is initialized with an extensive set of timbres.  These timbres may be 
-   removed or modified, additional timbres may be added, etc. 
-
-   The waveTables List is a List object of WaveTables sorted according to 
-   freq, with the table corresponding to the lowest frequency first. 
-   freqs is a Storage object containing the frequencies corresponding to
-   each WaveTable.  The name may be any string, but should not have a number 
-   in it and should not be longer than MK_MAXTIMBRENAMELEN.
-   
-   You normally create or retrieve an Timbre with +newTimbre:, passing the
-   name of the timbre you want.  If that timbre exists, it is retrieved, 
-   otherwise it is created and installed in the Data Base.  Alternatively,
-   you can create a new anonymous timbre with +alloc and init.  In this case,
-   the timbre is not put in the Data Base until its name is set with 
-   -setTimbreName:.  -setTimbreName: can also be used to change the name of a 
-   timbre that is already in the Data Base.  -timbreName may be used to 
-   retrieve the name of an Timbre.  An anonymous timbre has a name field of 
-   NULL.
-
-   The Music Kit SynthPatches use the Data Base by passing it a "timbre key".
-   A timbre key is a timbre name with an optional integer appended to it and
-   an optional 0 or 1 prepended to it. The trailing number in a timbre key 
-   specifies a particular table (1-based).  A leading 0 or 1 specifies use of 
-   freq0 or freq1 respectively to determine the appropriate WaveTable.
-   For convenience in supporting this functionality in your own SynthPatch
-   subclasses, we provide the function MKWaveTableForTimbreKey(). 
-
-   The Data Base is stored in a HashTable object that maps names to 
-   Timbre objects.  This HashTable can be retrieved by the +timbres method.
-   See <objc/HashTable.h> for how to enumerate the objects in a HashTable.
-
-   An individual timbre can be written to an archive file.  Alternatively, the
-   entire Data Base can be saved to an archive file using the +timbres method
-   to retrieve the Data Base and then archiving that object.
-
-*/
-
 
 #define MK_MAXTIMBRENAMELEN 64
 
@@ -115,11 +121,11 @@
      Does not free the WaveTables. */
 
 - (void)removeAllObjects;
- /* Empties the WaveTable Lits and freqs Storage. */
+ /* Empties the WaveTable Lits and freqs NSArray. */
 
 -(NSString *)timbreName;  /* String is not copied */
 -(NSMutableArray *)waveTables; /* WaveTable List is not copied */
--(NSMutableArray *)freqs;  /* freqs Storage is not copied. */
+-(NSMutableArray *)freqs;  /* freqs NSArray is not copied. */
 
 - (id)initWithCoder:(NSCoder *)aDecoder;
   /* Reads object from archive file. */
