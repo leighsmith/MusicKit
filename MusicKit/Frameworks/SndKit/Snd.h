@@ -230,7 +230,7 @@ typedef enum {
  * --------------- Factory Methods
  */
 
-+ soundNamed:(NSString *)aName;
++ soundNamed: (NSString *) aName;
 
 /*!
   @method findSoundFor:
@@ -251,7 +251,7 @@ typedef enum {
               where <b>~</b> represents the user's home directory.
               If the Snd eludes the search, <b>nil</b> is returned.
 */
-+ findSoundFor:(NSString *)aName;
++ findSoundFor: (NSString *) aName;
 
 /*!
   @method     addName:sound:
@@ -261,7 +261,7 @@ typedef enum {
   @result
   @discussion
 */
-+ addName:(NSString *)name sound:aSnd;
++ addName: (NSString *) name sound: (Snd *) aSnd;
 /*!
   @method     addName:fromSoundfile:
   @abstract
@@ -270,7 +270,7 @@ typedef enum {
   @result
   @discussion
 */
-+ addName:(NSString *)name fromSoundfile:(NSString *)filename;
++ addName: (NSString *) name fromSoundfile: (NSString *) filename;
 /*!
   @method     addName:fromSection:
   @abstract
@@ -279,7 +279,7 @@ typedef enum {
   @result
   @discussion
 */
-+ addName:(NSString *)name fromSection:(NSString *)sectionName;
++ addName: (NSString *) name fromSection: (NSString *) sectionName;
 /*!
   @method     addName:fromBundle:
   @abstract
@@ -288,7 +288,7 @@ typedef enum {
   @result
   @discussion
 */
-+ addName:(NSString *)aName fromBundle:(NSBundle *)aBundle;
++ addName: (NSString *) aName fromBundle: (NSBundle *) aBundle;
 
 /*!
   @method     removeSoundForName: 
@@ -297,7 +297,7 @@ typedef enum {
   @result
   @discussion
 */
-+ (void) removeSoundForName:(NSString *)name;
++ (void) removeSoundForName: (NSString *) name;
 
 /*!
     @method removeAllSounds
@@ -311,7 +311,7 @@ typedef enum {
   @discussion Returns YES if the sound output of all playing sounds is currently
               muted.
 */
-+ (BOOL)isMuted;
++ (BOOL) isMuted;
 
 /*!
   @method setMute:
@@ -321,7 +321,7 @@ typedef enum {
               NO, respectively. If successful, returns <b>self</b>; otherwise
               returns <b>nil</b>.
 */
-+ setMute:(BOOL)aFlag;
++ setMute: (BOOL) aFlag;
 
 /*!
   @method soundFileExtensions
@@ -343,7 +343,7 @@ typedef enum {
 /*!
   @method defaultFileExtension
 */
-+ (NSString*) defaultFileExtension;
++ (NSString *) defaultFileExtension;
 
 - (NSString *) description;
 
@@ -358,7 +358,7 @@ typedef enum {
               
               See also:	+<b>alloc</b> (NSObject), +<b>allocWithZone:</b> (NSObject)
 */
-- initFromSoundfile:(NSString *)filename;
+- initFromSoundfile: (NSString *) filename;
 
 /*!
   @method initFromSection:
@@ -375,7 +375,7 @@ typedef enum {
               
               See also:	+<b>alloc</b> (NSObject), +<b>allocWithZone:</b> (NSObject)
 */
-- initFromSection:(NSString *)sectionName;
+- initFromSection: (NSString *) sectionName;
 
 /*!
   @method initFromPasteboard:
@@ -390,7 +390,7 @@ typedef enum {
               
               See also:	+<b>alloc</b> (NSObject), +<b>allocWithZone:</b> (NSObject)
 */
-- initFromPasteboard:(NSPasteboard *)thePboard;
+- initFromPasteboard: (NSPasteboard *) thePboard;
 
 /*!
   @method initFromSoundURL:
@@ -412,9 +412,12 @@ typedef enum {
   @param  frames
   @param  samplingRate
 */
-- initWithFormat: (int) format channels: (int) channels frames: (int) frames samplingRate: (float) samplingRate;
+- initWithFormat: (SndSampleFormat) format
+        channels: (int) channels
+          frames: (int) frames
+    samplingRate: (float) samplingRate;
 
-- (void)dealloc;
+- (void) dealloc;
 
 /*!
   @method readSoundFromStream:
@@ -426,15 +429,15 @@ typedef enum {
               the new name. Returns YES if the sound was read successfully, NO
               otherwise.
 */
-- readSoundFromStream:(NSData *)stream;
+- readSoundFromStream: (NSData *) stream;
 
 /*!
   @method writeSoundToStream:
-  @param  stream is a NXStream *.
+  @param  stream is an NSMutableData instance.
   @discussion Writes the Snd's name (if any), priority, SndSoundStruct, and
-              sound data (if any) to the NXStream <i>stream</i>.
+              sound data (if any) to the NSMutableData <i>stream</i>.
 */
-- writeSoundToStream:(NSMutableData *)stream;
+- writeSoundToStream: (NSMutableData *) stream;
 
 /*!
   @method      swapSndToHost
@@ -472,9 +475,9 @@ typedef enum {
  */
 - (void) swapHostToSnd;
 
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
-- awakeAfterUsingCoder:(NSCoder *)aDecoder;
+- (void) encodeWithCoder: (NSCoder *) aCoder;
+- (id) initWithCoder: (NSCoder *) aDecoder;
+- awakeAfterUsingCoder: (NSCoder *) aDecoder;
 
 /*!
   @method name
@@ -566,7 +569,7 @@ typedef enum {
     @param sender The sending object.
     @result Returns self if play occured correctly, nil if there was an error.
 */
-- play:sender;
+- play: (id) sender;
 
 /*!
     @method playInFuture:beginSample:sampleCount:
@@ -610,7 +613,7 @@ typedef enum {
    @param count The number of samples to play. Use sampleCount to play the entire sound.
    @result Returns self
 */
-- play:(id) sender beginSample:(int) begin sampleCount:(int) count;
+- play: (id) sender beginSample: (int) begin sampleCount: (int) count;
 
 /*!
     @method playInFuture:
@@ -628,7 +631,7 @@ typedef enum {
 */
 - (SndPerformance *) playAtDate: (NSDate *) date;
 
-- record:sender;
+- record: (id) sender;
 
 /*!
   @method record
@@ -658,7 +661,7 @@ typedef enum {
               
               <b>Warning:</b> For this method to work properly, the main event loop must not be blocked.
 */
-- (int)record;
+- (int) record;
 
 /*!
   @method samplesProcessed
@@ -669,25 +672,26 @@ typedef enum {
               the sample frame count can't be determined, -1 is
               returned.
 */
-- (int)samplesProcessed;
+- (int) samplesProcessed;
 
 /*!
   @method status
   @result Returns an int.
   @discussion Return the Snd's current status, one of the following integer
               constants:
-              
-              &#183;	NX_SoundStopped
-              &#183;	NX_SoundRecording
-              &#183;	NX_SoundPlaying
-              &#183;	NX_SoundInitialized
-              &#183;	NX_SoundRecordingPaused
-              &#183;	NX_SoundPlayingPaused
-              &#183;	NX_SoundRecordingPending
-              &#183;	NX_SoundPlayingPending
-              &#183;	NX_SoundFreed
+              <UL>
+              <LI>	SND_SoundStopped</LI>
+              <LI>	SND_SoundRecording</LI>
+              <LI>	SND_SoundPlaying</LI>
+              <LI>	SND_SoundInitialized</LI>
+              <LI>	SND_SoundRecordingPaused</LI>
+              <LI>	SND_SoundPlayingPaused</LI>
+              <LI>	SND_SoundRecordingPending</LI>
+              <LI>	SND_SoundPlayingPending</LI>
+              <LI>	SND_SoundFreed</LI>
+              </UL>
 */
-- (int)status;
+- (int) status;
 
 /*!
   @method waitUntilStopped
@@ -698,7 +702,7 @@ typedef enum {
               playing or recording when <b>waitUntilStopped</b> is invoked, it
               returns SND_ERROR_NONE.
 */
-- (int)waitUntilStopped;
+- (int) waitUntilStopped;
 
 /*!
     @method stopPerformance:inFuture:
@@ -715,7 +719,7 @@ typedef enum {
               than the argument and the return type, this is the same as the
               <b>stop</b> method.
 */
-- (void)stop:(id)sender;
+- (void) stop: (id) sender;
 
 /*!
   @method stop
@@ -725,7 +729,7 @@ typedef enum {
               playing, <b>didPlay:duringPerformance:</b> is sent. An error code is
               returned.
 */
-- (int)stop;
+- (int) stop;
 
 /*!
   @method pause:
@@ -734,7 +738,7 @@ typedef enum {
               return type, this is the same as the <b>pause</b>
               method.
 */
-- pause:sender;
+- pause: (id) sender;
 
 /*!
   @method pause
@@ -742,14 +746,14 @@ typedef enum {
   @discussion Pauses the Snd during recording or playback. An error code is
               returned.
 */
-- (int)pause;
+- (int) pause;
 
 /*!
   @method resume:
   @param  sender is an id.
   @discussion Action method that resumes the paused Snd.
 */
-- resume:sender;
+- resume: (id) sender;
 
 /*!
   @method resume
@@ -757,7 +761,7 @@ typedef enum {
   @discussion Resumes the paused Snd's activity. An error code is
               returned.
 */
-- (int)resume;
+- (int) resume;
 
 /*!
   @method readSoundfile:
@@ -767,7 +771,7 @@ typedef enum {
               <i>filename</i>. The Snd loses its current name, if any. An error
               code is returned.
 */
-- (int)readSoundfile:(NSString *)filename;
+- (int) readSoundfile: (NSString *) filename;
 
 /*!
   @method writeSoundfile:
@@ -777,7 +781,7 @@ typedef enum {
               the sound file <i>filename</i>. An error code is
               returned.
 */
-- (int)writeSoundfile:(NSString *)filename;
+- (int) writeSoundfile: (NSString *) filename;
 
 /*!
   @method writeToPasteboard:
@@ -788,7 +792,7 @@ typedef enum {
               <i>thePboard</i>. If the Snd is fragmented, it's compacted before
               the copy is created. An error code is returned.
 */
-- (void)writeToPasteboard:(NSPasteboard *)thePboard;
+- (void) writeToPasteboard: (NSPasteboard *) thePboard;
 
 /*!
   @method isEmpty
@@ -798,7 +802,7 @@ typedef enum {
               Snd isn't editable (as determined by sending it the
               <b>isEditable</b> message).
 */
-- (BOOL)isEmpty;
+- (BOOL) isEmpty;
 
 /*!
   @method isEditable
@@ -806,7 +810,7 @@ typedef enum {
   @discussion Returns <b>YES</b> if the Snd's format indicates that it can be
               edited, otherwise returns <b>NO</b>.
 */
-- (BOOL)isEditable;
+- (BOOL) isEditable;
 
 /*!
   @method compatibleWith:
@@ -819,7 +823,7 @@ typedef enum {
               objects are declared compatible and <b>YES</b> is returned.
               
 */
-- (BOOL)compatibleWith:(Snd *)aSound;
+- (BOOL) compatibleWith: (Snd *) aSound;
 
 /*!
   @method isPlayable
@@ -832,7 +836,7 @@ typedef enum {
               the DSP, you must change its format from SND_FORMAT_DSP_DATA_16 to
               SND_FORMAT_LINEAR_16. 
 */
-- (BOOL)isPlayable;
+- (BOOL) isPlayable;
 
 /*!
   @method isPlaying
@@ -844,7 +848,7 @@ typedef enum {
 
 /*!
   @method convertToFormat:samplingRate:channelCount:
-  @param  newFormat is an int.
+  @param  newFormat is an SndSampleFormat.
   @param  newRate is a double.
   @param  newChannelCount is an int.
   @result Returns an error code or SND_ERR_NONE if the conversion was performed correctly.
@@ -859,20 +863,30 @@ typedef enum {
               <LI>CODEC mu-law to and from linear formats.</LI>
 	      </UL>
  */
-- (int) convertToFormat: (int) newFormat
+- (int) convertToFormat: (SndSampleFormat) newFormat
 	   samplingRate: (double) newRate
 	   channelCount: (int) newChannelCount;
 
 /*!
   @method convertToFormat:
-  @param  newFormat is an int.
+  @param  newFormat is an SndSampleFormat.
   @result Returns an integer indicating any error or SND_ERR_NONE if the conversion worked.
   @discussion This is the same as
               <b>convertToFormat:samplingRate:channelCount:</b>,
               except that only the format is changed. An error code is
               returned.  
 */
-- (int) convertToFormat: (int) newFormat;
+- (int) convertToFormat: (SndSampleFormat) newFormat;
+
+/*!
+  @method nativeFormat
+  @abstract Returns the native format (sampling rate, resolution and channels) used by the sound
+            playback hardware in streaming audio.
+  @discussion The native format is the format sounds loaded and audio buffers created in which
+              will incur the least processing overhead in order to play. Recording could be in a different format.
+  @result Returns a SndFormat structure.
+ */
++ (SndFormat) nativeFormat;
 
 /*!
   @method convertToNativeFormat:
@@ -889,7 +903,7 @@ typedef enum {
   @discussion Deletes all the samples in the Snd's data. The Snd must be
               editable. An error code is returned.
 */
-- (int)deleteSamples;
+- (int) deleteSamples;
 
 /*!
   @method deleteSamplesAt:count:
@@ -901,7 +915,7 @@ typedef enum {
               (zero-based). The Snd must be editable and may become fragmented.
               An error code is returned.
 */
-- (int)deleteSamplesAt:(int)startSample count:(int)sampleCount;
+- (int) deleteSamplesAt: (int) startSample count: (int) sampleCount;
 
 /*!
   @method insertSamples:at:
@@ -914,7 +928,7 @@ typedef enum {
               or equal to <i>startSample</i> are moved to accommodate the inserted sound data. The receiving
               Snd must be editable and the two Snds must be compatible (as determined by <b>isCompatible:</b>). If the method is successful, the receiving Snd is fragmented. An error code is returned.
 */
-- (int)insertSamples:(Snd *)aSnd at:(int)startSample;
+- (int) insertSamples: (Snd *) aSnd at: (int) startSample;
 
 - (id) copyWithZone: (NSZone *) zone;
 
@@ -926,7 +940,7 @@ typedef enum {
               Snd receiving this message needn't be editable, nor must the two
               Snds be compatible. An error code is returned.
 */
-- (int)copySound:(Snd *)aSnd;
+- (int) copySound: (Snd *) aSnd;
 
 /*!
   @method copySamples:
@@ -944,7 +958,7 @@ typedef enum {
               receiving this message will also be fragmented. An error code is
               returned.
 */
-- (int)copySamples:(Snd *)aSnd at:(int)startSample count:(int)sampleCount;
+- (int) copySamples: (Snd *) aSnd at: (int) startSample count: (int) sampleCount;
 
 /*!
   @method compactSamples
@@ -963,7 +977,7 @@ typedef enum {
               that the file representation will be compact. An error
               code is returned.  
 */
-- (int)compactSamples;
+- (int) compactSamples;
 
 /*!
   @method needsCompacting
@@ -971,7 +985,7 @@ typedef enum {
   @discussion Returns <b>YES</b> if the Snd's data is fragmented. Otherwise
               returns <b>NO</b>.
 */
-- (BOOL)needsCompacting;
+- (BOOL) needsCompacting;
 
 /*!
   @method data
@@ -997,7 +1011,7 @@ typedef enum {
               examine or manipulate the samples in a fragmented sound,
               you must understand the SndSoundStruct structure.  
 */
-- (unsigned char *)data;
+- (unsigned char *) data;
 
 /*!
   @method dataSize
@@ -1009,16 +1023,16 @@ typedef enum {
               Snd's <b>soundStruct</b> and doesn't include the actual data
               itself.
 */
-- (int)dataSize;
+- (int) dataSize;
 
 /*!
   @method dataFormat
-  @result Returns an int.
+  @result Returns an SndSampleFormat.
   @discussion Returns the format of the Snd's data. If the data is fragmented,
               the format of the samples is returned (in other words,
               SND_FORMAT_INDIRECT is never returned by this method).
 */
-- (int)dataFormat;
+- (SndSampleFormat) dataFormat;
 
 /*!
   @method hasSameFormatAsBuffer:
@@ -1027,12 +1041,12 @@ typedef enum {
   @discussion Returns YES if the Snd's dataFormat, channelCount and sampling rate match the given SndAudioBuffer instance.
               The number of samples are not compared.
  */
-- (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer*) buff;
+- (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer *) buff;
 
 /*!
   @method setDataSize:dataFormat:samplingRate:channelCount:infoSize:
   @param  newDataSize is an int.
-  @param  newDataFormat is an int.
+  @param  newDataFormat is an SndSampleFormat.
   @param  newSamplingRate is a double.
   @param  newChannelCount is an int.
   @param  newInfoSize is an int.
@@ -1043,11 +1057,11 @@ typedef enum {
               for creating a scratch pad for algorithmic sound creation. An error
               code is returned.
 */
-- (int)setDataSize:(int)newDataSize
-     dataFormat:(int)newDataFormat
-     samplingRate:(double)newSamplingRate
-     channelCount:(int)newChannelCount
-     infoSize:(int)newInfoSize;
+- (int) setDataSize: (int) newDataSize
+         dataFormat: (SndSampleFormat) newDataFormat
+       samplingRate: (double) newSamplingRate
+       channelCount: (int) newChannelCount
+           infoSize: (int) newInfoSize;
 
 /*!
   @method soundStruct
@@ -1055,7 +1069,7 @@ typedef enum {
   @discussion Returns a pointer to the Snd's SndSoundStruct structure that holds
               the object's sound data.
 */
-- (SndSoundStruct *)soundStruct;
+- (SndSoundStruct *) soundStruct;
 
 /*!
   @method soundStructSize
@@ -1064,7 +1078,7 @@ typedef enum {
               to by <b>soundStruct</b>). Use of this value requires a knowledge of
               the SndSoundStruct architecture.
 */
-- (int)soundStructSize;
+- (int) soundStructSize;
 
 /*!
   @method setSoundStruct:soundStructSize:
@@ -1079,10 +1093,10 @@ typedef enum {
               ten minutes of CODEC sound.) The method is also useful in cases
               where <i>aStruct</i> already has sound data but isn't encapsulated
               in a Snd object yet. The Snd's status must be
-              NX_SoundInitialized or NX_SoundStopped for this method to do
+              SND_SoundInitialized or SND_SoundStopped for this method to do
               anything.
 */
-- setSoundStruct:(SndSoundStruct *)aStruct soundStructSize:(int)aSize;
+- setSoundStruct: (SndSoundStruct *) aStruct soundStructSize: (int) aSize;
 
 /*!
   @method soundStructBeingProcessed
@@ -1094,7 +1108,7 @@ typedef enum {
               currently playing or recording, then this will return the public
               structure.
 */
-- (SndSoundStruct *)soundStructBeingProcessed;
+- (SndSoundStruct *) soundStructBeingProcessed;
 
 /*!
   @method processingError
@@ -1103,7 +1117,7 @@ typedef enum {
               generated. The sound error codes are listed in &#ldquo;Types and
               Constants.&#rdquo;
 */
-- (int)processingError;
+- (int) processingError;
 
 /*!
   @method soundBeingProcessed
@@ -1111,7 +1125,7 @@ typedef enum {
   @discussion Returns the Snd object that's being performed. The default
               implementation always returns <b>self</b>.
 */
-- soundBeingProcessed;
+- (Snd *) soundBeingProcessed;
 
 // delegations which are not nominated per performance.
 
@@ -1124,7 +1138,7 @@ typedef enum {
               such as recording and playing. However, you can use it in designing
               a subclass of Snd.
 */
-- (void)tellDelegate:(SEL)theMessage;
+- (void) tellDelegate: (SEL) theMessage;
 
 // delegations which are nominated per performance.
 
@@ -1137,7 +1151,7 @@ typedef enum {
               such as recording and playing. However, you can use it in designing
               a subclass of Snd.
 */
-- (void) tellDelegate:(SEL)theMessage duringPerformance: (SndPerformance *) performance;
+- (void) tellDelegate: (SEL) theMessage duringPerformance: (SndPerformance *) performance;
 
 /*!
   @method tellDelegateString:
@@ -1148,7 +1162,7 @@ typedef enum {
               such as recording and playing. However, you can use it in designing
               a subclass of Snd.
 */
-- (void) tellDelegateString:(NSString *)theMessage duringPerformance: (SndPerformance *) performance;
+- (void) tellDelegateString: (NSString *) theMessage duringPerformance: (SndPerformance *) performance;
 
 
 /*!
@@ -1166,7 +1180,7 @@ typedef enum {
 */
 - (SndConversionQuality) conversionQuality;
 
-- (void)_setStatus:(int)newStatus; /* Private! not for general use. */
+- (void) _setStatus: (int) newStatus; /* Private! not for general use. */
 
 /*!
   @method     performances
@@ -1182,7 +1196,7 @@ typedef enum {
   @result     self
   @discussion Mainly for use by SndPlayer
 */
-- addPerformance: (SndPerformance*) p;
+- addPerformance: (SndPerformance *) p;
 /*!
   @method     removePerformance:
   @abstract   Removes a performance from the performance array.
@@ -1190,7 +1204,7 @@ typedef enum {
   @result     self
   @discussion Mainly for use by SndPlayer
 */
-- removePerformance: (SndPerformance*) p;
+- removePerformance: (SndPerformance *) p;
 /*!
   @method     performanceCount
   @abstract   returns the number of active AND pending performances 
@@ -1251,7 +1265,7 @@ typedef enum {
   @param aBuffer the SndAudioBuffer object from which to copy the data
   @result self
  */
-- initWithAudioBuffer: (SndAudioBuffer*) aBuffer;
+- initWithAudioBuffer: (SndAudioBuffer *) aBuffer;
 
 
 /*!
@@ -1454,21 +1468,5 @@ typedef enum {
     SND_SoundPlayingPending,
     SND_SoundFreed = -1,
 } SNDSoundStatus;
-
-// legacy compatible
-#if !defined(USE_NEXTSTEP_SOUND_IO) && !defined(USE_PERFORM_SOUND_IO) || defined(WIN32)
-typedef enum {
-    NX_SoundStopped = SND_SoundStopped,
-    NX_SoundRecording = SND_SoundRecording,
-    NX_SoundPlaying = SND_SoundPlaying,
-    NX_SoundInitialized = SND_SoundInitialized,
-    NX_SoundRecordingPaused = SND_SoundRecordingPaused,
-    NX_SoundPlayingPaused = SND_SoundPlayingPaused,
-    NX_SoundRecordingPending = SND_SoundRecordingPending,
-    NX_SoundPlayingPending = SND_SoundPlayingPending,
-    NX_SoundFreed = SND_SoundFreed,
-} NXSoundStatus;
-#endif
-
 
 #endif
