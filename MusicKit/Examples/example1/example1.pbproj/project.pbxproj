@@ -1,0 +1,170 @@
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 30;
+	objects = {
+		11F73ACB001E6890CFED3B96 = {
+			isa = PBXProject;
+			mainGroup = 11F73ACC001E6890CFED3B96;
+			productRefGroup = 11F73AD9001E6890CFED3B96;
+			projectDirPath = .;
+			targets = (
+				11F73ADB001E6890CFED3B96,
+			);
+		};
+		11F73ACC001E6890CFED3B96 = {
+			children = (
+				11F73ACD001E6890CFED3B96,
+				11F73AD5001E6890CFED3B96,
+				11F73AD9001E6890CFED3B96,
+			);
+			isa = PBXGroup;
+			name = example1;
+			refType = 4;
+		};
+		11F73ACD001E6890CFED3B96 = {
+			children = (
+				11F73ACE001E6890CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+		};
+		11F73ACE001E6890CFED3B96 = {
+			isa = PBXFileReference;
+			path = example1.m;
+			refType = 4;
+		};
+		11F73AD5001E6890CFED3B96 = {
+			children = (
+				11F73AD6001E6890CFED3B96,
+				11F73AD7001E6890CFED3B96,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+		};
+		11F73AD6001E6890CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+		};
+		11F73AD7001E6890CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = MusicKit.framework;
+			path = /Library/Frameworks/MusicKit.framework;
+			refType = 0;
+		};
+		11F73AD9001E6890CFED3B96 = {
+			children = (
+				11F73ADA001E6890CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		11F73ADA001E6890CFED3B96 = {
+			isa = PBXExecutableFileReference;
+			path = example1;
+			refType = 3;
+		};
+		11F73ADB001E6890CFED3B96 = {
+			buildPhases = (
+				11F73ADC001E6890CFED3B96,
+				11F73ADD001E6890CFED3B96,
+				11F73ADF001E6890CFED3B96,
+				11F73AE2001E6890CFED3B96,
+			);
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXToolTarget;
+			name = "example1 (Tool)";
+			productInstallPath = /bin;
+			productName = example1;
+			productReference = 11F73ADA001E6890CFED3B96;
+			shouldUseHeadermap = 0;
+		};
+		11F73ADC001E6890CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		11F73ADD001E6890CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				11F73ADE001E6890CFED3B96,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		11F73ADE001E6890CFED3B96 = {
+			fileRef = 11F73ACE001E6890CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		11F73ADF001E6890CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				11F73AE0001E6890CFED3B96,
+				11F73AE1001E6890CFED3B96,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		11F73AE0001E6890CFED3B96 = {
+			fileRef = 11F73AD6001E6890CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		11F73AE1001E6890CFED3B96 = {
+			fileRef = 11F73AD7001E6890CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		11F73AE2001E6890CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+	};
+	rootObject = 11F73ACB001E6890CFED3B96;
+}
