@@ -42,8 +42,7 @@ static GetXValIMP    getXVal;
 
 int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
 {
-    int i,count;
-    count = [inArray count];
+    int i, count = [inArray count];
     SndBreakpoint *sb;
     ObjAtIndexIMP objAtIndex = (ObjAtIndexIMP)[inArray methodForSelector:objAtIndexSel];
     for (i = 0 ; i < count ; i++) {
@@ -94,7 +93,7 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
 
 - (float)lookupYForX:(double)xVal
 {
-    int justAfterIndex,justBeforeOrEqualIndex;
+    int justAfterIndex; //,justBeforeOrEqualIndex;
     float justAfterYVal,justBeforeOrEqualYVal;
     double justAfterXVal,justBeforeOrEqualXVal;
     int count = [breakpoints count];
@@ -131,7 +130,7 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
 - (int) insertXValue:(double)xVal yValue:(float)yVal flags:(int)flags;
 {
     int i,count;
-    double max=0.0;
+//    double max=0.0;
     double tempMax;
     SndBreakpoint *sb;
     ObjAtIndexIMP objAtIndex;
@@ -157,7 +156,7 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
 /* returns new breakpoint index */
 - (int) insertXValue:(double)xVal yValue:(float)yVal flags:(int)flags atBreakpoint:(int)bp
 {
-    int i;
+//    int i;
     int count;
     SndBreakpoint *newBreakpoint;
 
@@ -188,7 +187,8 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
 
 - (BOOL) removeBreakpointsBefore:(int)aBreakpoint
 {
-    int i,count;
+//    int i;
+    int count;
     NSRange delRange;
     /* no point removing all breakpoints before breakpoint 0 */
     if (!breakpoints || aBreakpoint < 1) return NO;
@@ -206,7 +206,8 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
 
 - (BOOL) removeBreakpointsAfter:(int)aBreakpoint
 {
-    int i,count;
+//    int i;
+    int count;
     NSRange delRange;
     if (!breakpoints) return NO;
     count = [breakpoints count];
