@@ -1,0 +1,23 @@
+#  $Id$
+#  Defined In: The MusicKit
+#  Description:
+#    Makefile preamble for GNUstep
+#
+#  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
+#
+#  2 June 2001, Copyright (c) 2001 Stephen Brandon.
+#
+#  Permission is granted to use and modify this code for commercial and non-commercial
+#  purposes so long as the author attribution and this copyright message remains intact
+#  and accompanies all derived code.
+
+#Modification history:
+#
+#  $Log$
+#  Revision 1.1  2001/07/02 22:03:48  sbrandon
+#  - initial revision. Still a work in progress, but does allow the MusicKit
+#    and SndKit to compile on GNUstep.
+#
+#
+
+ADDITIONAL_FLAGS = -Iportaudio/pa_common -g
