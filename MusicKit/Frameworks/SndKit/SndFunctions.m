@@ -54,33 +54,6 @@ CONDITIONS OF THIS AGREEMENT.
 #import <mach/mach_init.h>
 #endif
 
-/* the following ensures Sox doesn't attempt to define its own
-* prototype
-*/
-#define HAVE_RAND 1
-/* the following defines are to fool st.h into importing the right
-* headers.
-*/
-#define HAVE_UNISTD_H 1
-#define HAVE_STDINT_H 1
-#define HAVE_SYS_TYPES 1
-#import <st.h> /* prototypes and structures from the Sox sound tools library */
-#ifndef RIGHT  /* used to be in old version of libst.h */
-# define RIGHT(datum, bits)      ((datum) >> bits)
-#endif
-
-/* up to 12.17.2, libst.a used LONG. Then it uses st_sample_t */
-#if (ST_LIB_VERSION_CODE <= 0x0c1102)
-# define st_sample_t LONG
-#endif
-
-#define SUN_ULAW        1                       /* u-law encoding */
-#define SUN_LIN_8       2                       /* Linear 8 bits */
-#define SUN_LIN_16      3                       /* Linear 16 bits */
-#define SUN_LIN_24      4                       /* Linear 24 bits */
-#define SUN_LIN_32      5                       /* Linear 32 bits */
-#define SUN_ALAW        27                      /* a-law encoding */
-
 #define SNDREADCHUNKSIZE 256*1024   // Number of st_sample_t samples to read into a buffer.
 #ifdef WIN32
 #define LASTCHAR        '\\'
