@@ -35,6 +35,9 @@
 Modification history:
 
  $Log$
+ Revision 1.10  2002/04/04 23:08:08  leighsmith
+ Corrected bug in binary search exceeding number of points, corrected check for xVal being too big
+
  Revision 1.9  2002/04/03 03:47:25  skotmcdonald
  Disabled MKRemoveObjectName in dealloc - we have a serious problem here, in that an envelope is supposed to remove itself on dealloc, but the name table has a retain via its NSDictionary - can lead to recursive deallocs or memory problems (I think - bit sleepy here). Made x and yArray mem management safer with explicit set-to-NULL-after-free as part of the bug catching paranoia
 
@@ -568,34 +571,33 @@ Writes itself in the form:
     }
   }
   else {
-    double *xTmp; //,*xEnd,*xStart;
+    double *xTmp = xArray; //,*xEnd,*xStart;
 
-    // goodness me yuck - let's do a binary search
-
+    // Do a binary search to find the value.
     {
-      int hi = pointCount - 1, lo = 0, mid = (hi + lo + 1) / 2;
+      int high = pointCount, low = 0, mid;
 
-      for (lo = (-1), hi = pointCount; hi - lo > 1;  ) {
-        mid = (hi+lo) / 2;
+      while (high - low > 1) {
+        mid = (high + low) >> 1;
         if (xVal <= xArray[mid])
-          hi = mid;
+          high = mid;
         else
-          lo = mid;
+          low = mid;
       }
-      xTmp = &(xArray[hi]);
+      xTmp = xArray + low;
     }
-    /*
+    /* Used to be a linear search:
     for (xTmp = xArray, xEnd = xArray + pointCount - 1;
          *xTmp < xVal && xTmp < xEnd;
          xTmp++)
       ;
      */
     
-    if (xTmp == xArray)             /* xVal too small */
+    if (xTmp == xArray && pointCount != 1)             /* xVal too small */
       return *yArray;
-    if (*xTmp < xVal) /* xVal too big */
+    if (xVal > xArray[pointCount - 1])                 /* xVal too big */
       return yArray[pointCount - 1];
-    else {                     /* xVal just right */
+    else {                                             /* xVal just right */
       int i = xTmp - xArray;
       double nextX,prevX,nextY,prevY;
       nextX = *xTmp;
