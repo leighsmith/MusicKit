@@ -431,7 +431,7 @@
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = MusicKit;
 				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost";
+				WARNING_CFLAGS = "-Wall";
 			};
 			dependencies = (
 			);
@@ -1383,12 +1383,18 @@
 			fileRef = D825566905A2142800B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D82556B805A2142800B0192B = {
 			fileRef = D825566A05A2142800B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D82556B905A2142800B0192B = {
@@ -1716,12 +1722,18 @@
 			fileRef = D825569605A2142800B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D82556E505A2142800B0192B = {
 			fileRef = D825569705A2142800B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D82556E605A2142800B0192B = {
@@ -1773,6 +1785,9 @@
 			fileRef = D825569E05A2142800B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D82556ED05A2142800B0192B = {
@@ -2280,12 +2295,18 @@
 			fileRef = D825571505A2163400B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825573305A2163400B0192B = {
 			fileRef = D825571605A2163400B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825573405A2163400B0192B = {
@@ -2304,6 +2325,9 @@
 			fileRef = D825571905A2163400B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825573705A2163400B0192B = {
@@ -2322,6 +2346,9 @@
 			fileRef = D825571C05A2163400B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825573A05A2163400B0192B = {
@@ -2418,6 +2445,9 @@
 			fileRef = D825572C05A2163400B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825574A05A2163400B0192B = {
@@ -2727,6 +2757,9 @@
 			fileRef = D825575505A216CA00B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825577305A216CA00B0192B = {
@@ -2805,6 +2838,9 @@
 			fileRef = D825576205A216CA00B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825578005A216CB00B0192B = {
@@ -2817,12 +2853,18 @@
 			fileRef = D825576405A216CA00B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825578205A216CB00B0192B = {
 			fileRef = D825576505A216CA00B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825578305A216CB00B0192B = {
@@ -2835,12 +2877,18 @@
 			fileRef = D825576705A216CA00B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825578505A216CB00B0192B = {
 			fileRef = D825576805A216CA00B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825578605A216CB00B0192B = {
@@ -2853,12 +2901,18 @@
 			fileRef = D825576A05A216CA00B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825578805A216CB00B0192B = {
 			fileRef = D825576B05A216CA00B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825578905A216CB00B0192B = {
@@ -2877,16 +2931,19 @@
 			fileRef = D825576E05A216CA00B0192B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D825578F05A2185700B0192B = {
 			children = (
 				D825575E05A216CA00B0192B,
+				D82557B405A2198200B0192B,
 				D82557E705A21B5900B0192B,
 				D825576E05A216CA00B0192B,
 				D825576B05A216CA00B0192B,
 				D825576C05A216CA00B0192B,
-				D82557B405A2198200B0192B,
 				D82557A305A2191600B0192B,
 				D82557A405A2191600B0192B,
 				D82557A505A2191600B0192B,
@@ -6195,7 +6252,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
-				INSTALL_PATH = "@executable/../Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
