@@ -7,6 +7,10 @@
 */
 /*
   $Log$
+  Revision 1.3  2001/11/07 13:07:50  sbrandon
+  This file is a kludge. We should be fixing up the headers at source (in
+  MKDSP) rather than defining MKDSP export headers in this framework. Oh well.
+
   Revision 1.2  1999/07/29 01:25:58  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -14,9 +18,25 @@
 #ifndef __MK__DSPMK_H___
 #define __MK__DSPMK_H___
 
-extern int _DSPError(int errorcode, char *msg);
+/* sbrandon Nov 2001: 
+ * these really need a header file of their own in MKDSP. The only reason
+ * why we don't just import the headers like we should is that the headers
+ * in question include things like Mach headers, which don't go down well
+ * on Windows and other platforms. FIXME at source.
+ */
 
-extern int _DSPMKSendUnitGeneratorWithLooperTimed(
+//#include <MKDSP/_libdsp.h>
+//#include <MKDSP/_DSPTransfer.h>
+#include <MKDSP/MKDSPDefines.h>
+
+MKDSP_API int _DSPError(int errorcode, char *msg);
+
+MKDSP_API int _DSPError1(
+    int errorcode,
+    char *msg,
+    char *arg);
+
+MKDSP_API int _DSPMKSendUnitGeneratorWithLooperTimed(
     DSPFix48 *aTimeStampP, 
     DSPMemorySpace space,
     DSPAddress address,
@@ -29,7 +49,7 @@ extern int _DSPMKSendUnitGeneratorWithLooperTimed(
  * code was copied from	 DSPMKSendArraySkipTimed().
  */
 
-extern int _DSPReloc(DSPDataRecord *data, DSPFixup *fixups,
+MKDSP_API int _DSPReloc(DSPDataRecord *data, DSPFixup *fixups,
     int fixupCount, int *loadAddresses);
 /* 
  * dataRec is assumed to be a P data space. Fixes it up in place. 
