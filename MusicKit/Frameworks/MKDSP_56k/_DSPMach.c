@@ -49,6 +49,10 @@ typedef struct {
 /* #import <ansi/stdlib.h> */
 #import <stdlib.h>
 
+#if WIN32
+#import <winnt-pdo.h> // for bcopy definition
+#endif
+
 /* unprototyped procedures which trigger -Wimplicit warnings */
 #if 0
 extern int thread_reply();
@@ -56,7 +60,7 @@ extern void *malloc();
 extern char *strcpy();
 // extern int strlen();
 #endif
-extern int bcopy();
+//extern int bcopy();
 
 /*
  * Messages are of three types: those sent to an stream port, those
@@ -677,7 +681,7 @@ msg_header_t *_DSP_dsp_read_data(msg_header_t *msg, // message frame
 	return(msg);
 }
 
-#if !m68k && (defined(NeXT) || (defined(__APPLE__) && defined(__MACH__)))
+#if !m68k && (defined(NeXT) || (defined(__APPLE__) && defined(__MACH__)) || defined(WIN32))
 /* Maybe move this somewhere else */
 
 msg_header_t *_DSP_data_request_msg (
