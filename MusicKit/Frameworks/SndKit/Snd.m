@@ -262,6 +262,7 @@
 }
 
 // TODO Assumes all data is formatted as .au only.
+// TODO We should move this inside -initWithData and remove.
 - (BOOL) readSoundFromData: (NSData *) soundData
 {
     SndSoundStruct *s;
@@ -697,7 +698,7 @@
 {
     SNDStreamBuffer nativeStreamBufferFormat;
 
-    SNDStreamNativeFormat(&nativeStreamBufferFormat);
+    SNDStreamNativeFormat(&nativeStreamBufferFormat, YES); // check output only.
     return SndFormatOfSNDStreamBuffer(&nativeStreamBufferFormat);
 }
 

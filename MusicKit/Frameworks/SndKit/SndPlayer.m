@@ -60,7 +60,7 @@ static SndPlayer *defaultSndPlayer;
   if (self) {
     SNDStreamBuffer s;
       
-    SNDStreamNativeFormat(&s); /* get maximum length for processing buffer */
+    SNDStreamNativeFormat(&s, YES); /* get maximum length for processing buffer of output stream. */
     s.streamData = NULL;
 
     nativelyFormattedStreamingBuffer = [[SndAudioBuffer audioBufferWithSNDStreamBuffer: &s] retain];
