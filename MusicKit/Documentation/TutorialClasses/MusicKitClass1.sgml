@@ -308,7 +308,7 @@ aNote = [MKNote alloc];
     <TITLE>Example &horbar; Using Objective-C Classes </TITLE>
     
     <PROGRAMLISTING>
-      #include &lt;MusicKit/MusicKit.h&gt;
+#include &lt;MusicKit/MusicKit.h&gt;
       
 main()
 {	
