@@ -86,7 +86,7 @@ RS-422. Then you can have cables that transmit RS-422 to RS-423 for
 NeXT '040 and other cables that transmit the full RS-422 for Macintosh
 or 030 NeXT.</para>
 
-<para>Pierre Dutilleux contributed the cable wiring in <xref id="NeXTcable">.
+<para>Pierre Dutilleux contributed the cable wiring in <xref linkend="NeXTcable">.
 He notes that the <hardware>Opcode Studio Plus 2</hardware> receives and sends
 only the + signal, which might be fine for RS-422 such as Macintosh,
 but is totally incompatible with RS-423 such as NeXT '040.</para>
@@ -104,9 +104,11 @@ but is totally incompatible with RS-423 such as NeXT '040.</para>
 <para>We built therefore <acronym>MIDI</acronym> interfaces according to RS-422. We have
 cables that wire this RS-422 to RS-423 for NeXT '040 and other cables
 that transmitt the full RS-422 for Macintosh and ISPW.</para>
-
-<sect1 id="UsingMidiOnIntelBasedHardware">
-<title>Using <acronym>MIDI</acronym> On <productname>Intel</productname>-Based Hardware</title>
+      </listitem>
+    </orderedlist>
+  </sect1>
+  <sect1 id="UsingMidiOnIntelBasedHardware">
+    <title>Using <acronym>MIDI</acronym> On <productname>Intel</productname>-Based Hardware</title>
 
 <para>To use <acronym>MIDI</acronym> on <productname>NeXTStep 3.X/OpenStep 4.X for
 Intel Processors</productname>, you must first install the drivers on your machine
@@ -131,7 +133,7 @@ configuration.  From Menu/Configuration, select Save.  You've now
       <listitem>
 	<para>
 If you have multiple <acronym>MIDI</acronym> cards, repeat <xref
-id="step2">, making sure to assign a different I/O address to each
+linkend="step2">, making sure to assign a different I/O address to each
 instance of the driver.  The first will be given the name
 Mididriver0. The second will be given the name Mididriver1, etc.  The
 trailing number is called the &ldquo;unit&rdquo;.
