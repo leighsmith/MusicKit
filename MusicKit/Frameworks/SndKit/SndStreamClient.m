@@ -11,6 +11,7 @@
   purposes so long as the author attribution and copyright messages remain intact and
   accompany all relevant code.
 */
+#import "SndStreamManager.h"
 #import "SndStreamClient.h"
 #import "SndAudioBuffer.h"
 
@@ -27,18 +28,23 @@ enum {
 
 + streamClient
 {
-    SndStreamClient *sc = [SndStreamClient alloc];
+    SndStreamClient *sc = [[SndStreamClient alloc] init];
     
-    sc->outputBufferLock = [[NSLock alloc] init];
-    sc->outputBuffer     = nil;
-    sc->synthBuffer      = nil;
-    sc->synthThreadLock  = nil;
-    sc->active           = FALSE;
-    sc->needsInput       = FALSE;
-    sc->nowTime          = 0.0;
-    sc->processFinishedCallback = NULL;
-    sc->manager          = nil;
     return [sc autorelease];
+}
+
+- init
+{
+    [super init];
+    outputBufferLock = [[NSLock alloc] init];
+    synthThreadLock  = [[[NSConditionLock alloc] initWithCondition: SC_processBuffer] retain];    
+    outputBuffer     = nil;
+    synthBuffer      = nil;
+    active           = FALSE;
+    needsInput       = FALSE;
+    nowTime          = 0.0;
+    processFinishedCallback = NULL;
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -106,8 +112,6 @@ enum {
 
 - welcomeClientWithBuffer: (SndAudioBuffer*) buff manager: (SndStreamManager*) m
 {
-    [self freeBufferMem];
-
     outputBuffer = buff;
     [outputBuffer retain];
     synthBuffer = [outputBuffer copy];
@@ -115,12 +119,6 @@ enum {
     inputBuffer = [outputBuffer copy];
     [inputBuffer retain];
 
-    synthThreadLock = [[NSConditionLock alloc] initWithCondition: SC_processBuffer];
-    [synthThreadLock retain];
-
-    manager = m;
-    [manager retain];
-    
     [NSThread detachNewThreadSelector: @selector(processingThread)
                              toTarget: self
                            withObject: nil];
@@ -138,7 +136,7 @@ enum {
 {
     SndAudioBuffer *temp = nil;
         
-    if ([synthThreadLock tryLockWhenCondition: SC_bufferReady]) {
+    if([synthThreadLock tryLockWhenCondition: SC_bufferReady]) {
         // swap the synth and output buffers, fire off next round of synthing
         temp            = synthBuffer;
         synthBuffer     = outputBuffer;
@@ -174,9 +172,8 @@ enum {
 
         [synthThreadLock unlockWithCondition: SC_bufferReady];
     }
-    [synthThreadLock release];    
-    [[self manager] removeClient: self];
-    [manager release];
+    [[SndStreamManager defaultStreamManager] removeClient: self];
+    [self freeBufferMem];
     [localPool release];
     [NSThread exit];
 }
@@ -213,6 +210,7 @@ enum {
 {
     return outputBuffer;
 }
+
 - (SndAudioBuffer*) synthBuffer;
 {
     return synthBuffer;
@@ -229,6 +227,11 @@ enum {
     active = FALSE;
     [synthThreadLock unlockWithCondition: SC_processBuffer];
     return self;
+}
+
+- (BOOL) isActive;
+{
+    return active;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
