@@ -14,11 +14,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.22  2000/11/25 22:27:55  leigh
+  Removed redundant and potentially bug inducing releaseParts
+
   Revision 1.21  2000/11/21 19:34:27  leigh
   *** empty log message ***
 
@@ -152,7 +156,6 @@ Modification history:
 {
     self = [self allocWithZone:NSDefaultMallocZone()];
     [self init];
-//    [self initialize]; /* Avoid breaking pre-2.0 apps. */ //sb: removed
     return [self autorelease];
 }
 
@@ -185,18 +188,6 @@ Modification history:
     return self;
 }
 
--releaseParts
-    /* Releases contained parts and their notes. Does not release the
-       receiver. Use -release to release, all at once,
-       parts, receiver and notes. Does not free MKScore's info note. */
-{
-    [parts makeObjectsPerformSelector:@selector(_unsetScore)];
-    // [parts removeAllObjects];          // LMS redundant
-    [parts release];
-    parts = nil;
-    return self;
-}
-
 -releasePartsOnly
 // LMS this is highly suspect since we now are concernedwith retain counts, not actual freeing.
     /* Releases contained MKParts, but not their notes. It is illegal
@@ -215,13 +206,16 @@ Modification history:
 - (void)dealloc
   /* Frees receiver, parts and MKNotes, including info note. */
 {
-    [self releaseParts];
+    [parts makeObjectsPerformSelector:@selector(_unsetScore)];
+//    [parts removeAllObjects];          // LMS redundant
+    [parts release];
+    parts = nil;
     [info release];
     info = nil;
     [super dealloc];
 }
 
-- (void)removeAllObjects
+- (void)removeAllParts
   /* TYPE: Modifying; Removes the receiver's MKParts.
    * Removes the receiver's MKParts.
    * Returns the receiver.
@@ -285,13 +279,10 @@ static id readScorefile(MKScore *self, NSData *stream,
        this method.
        */
 {
-    return readScorefile(self,stream,firstTimeTag,lastTimeTag,timeShift,NULL);
+    return readScorefile(self, stream, firstTimeTag, lastTimeTag, timeShift, NULL);
 }
 
-// LMS redundant
-//-(oneway void)release
-//{[super release];}
-/* Scorefile reading "convenience" methods  --------------------------- */
+/* Scorefile reading "convenience" methods  --------------------------- */
 
 -readScorefile:(NSString *)fileName     
  firstTimeTag:(double)firstTimeTag 
@@ -927,7 +918,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
       MKSetNoteParToInt([FIRSTTRACK infoNote],MK_sequence,0);
     while (MKMIDIFileReadEvent(fileStructP)) {
 	if (*metaevent) {
-	    /* First handle meta-events that are Part or Score info
+	    /* First handle meta-events that are MKPart or MKScore info
 	       parameters. We never want to skip these. */
 	    switch (DATA[0]) { 
 	    case MKMIDI_sequenceNumber:
@@ -1424,8 +1415,9 @@ readScorefile(MKScore *self,
   /* Needed by scorefile parser  */
 {
     if (!info)
-      info = [aInfo copy];
-    else [info copyParsFrom:aInfo];
+        info = [aInfo copy];
+    else
+        [info copyParsFrom: aInfo];
     return self;
 }
 
