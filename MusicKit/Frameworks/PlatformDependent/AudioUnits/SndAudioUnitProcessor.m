@@ -150,34 +150,36 @@ static OSStatus auInputCallback(void *inRefCon,
 {
     SndAudioUnitProcessor *audioUnitProcessor = inRefCon;
 
-    // Deinterleave the buffers in order to process them, then reassemble.
+    if(audioUnitProcessor->auIsNonInterleaved) {
+	// Deinterleave the buffers in order to process them, then reassemble in processReplacingInputBuffer:.
 #if ALTIVEC
-    // TODO Use Altivec permute instruction to do this.
+	// TODO Use Altivec permute instruction to do this.
 #else
-    unsigned int channelIndex;
-    
-    for (channelIndex = 0; channelIndex < audioUnitProcessor->inputChannelCount; channelIndex++) {
-	unsigned int frameIndex;
+	unsigned int channelIndex;
+	// If there is a mismatch in channels, we take a subset of channels from the interleaved input samples.
+	// If there are more channels processed by an AudioUnit than interleaved input samples, we just supply whatever we have,
+	// erroneously leaving some channels unfilled.
+	// The AudioBufferList has a number of buffers, each to hold one channel, so the number of buffers matches the number of
+	// expected AudioUnit channels.
+	// TODO we should expand to match the number of AU channels with duplicated data.
+	// TODO We really should take the appropriate stereo channels, rather than just the first minimum number,
+	// but we probably need a smarter channel remapping algorithm, i.e stereo->5.1, 5.1->stereo etc.
+	unsigned int channelCount = MIN(theAudioData->mNumberBuffers, audioUnitProcessor->inputChannelCount);
+	
+	for (channelIndex = 0; channelIndex < channelCount; channelIndex++) {
+	    unsigned int frameIndex;
 
-	for(frameIndex = 0; frameIndex < inNumFrames; frameIndex++) {
-	    ((float *) theAudioData->mBuffers[channelIndex].mData)[frameIndex] = audioUnitProcessor->interleavedInputSamples[frameIndex * audioUnitProcessor->inputChannelCount + channelIndex];
+	    for(frameIndex = 0; frameIndex < inNumFrames; frameIndex++) {
+		((float *) theAudioData->mBuffers[channelIndex].mData)[frameIndex] = audioUnitProcessor->interleavedInputSamples[frameIndex * audioUnitProcessor->inputChannelCount + channelIndex];
+	    }
 	}
-    }
 #endif
-
-    return noErr;
-}
-
-- init
-{
-    self = [super init];
-    if (self) {
-	// Fairly typical input and output bus defaults for the majority of AudioUnits.
-	inputBusNumber = 0;
-	inputChannelCount = 2;
-	outputBusNumber = 0;
     }
-    return self;
+    else {
+	NSLog(@"unimplemented non-interleaved audio unit!\n");
+    }
+    
+    return noErr;
 }
 
 // We need to retrieve the parameterID list and retain it, for mapping monotonic SndAudioProcessor parameter indexes
@@ -332,7 +334,8 @@ static OSStatus auInputCallback(void *inRefCon,
     OSErr result;
     AURenderCallbackStruct auRenderCallback;
     
-    if ([self init] != nil) {
+    self = [super init];
+    if (self != nil) {
 	ComponentDescription desc;
 	AudioStreamBasicDescription auFormatDescription;
 
@@ -342,6 +345,11 @@ static OSStatus auInputCallback(void *inRefCon,
 	desc.componentFlags = 0;
 	desc.componentFlagsMask = 0;
 
+	// Fairly typical input and output bus defaults for the majority of AudioUnits.
+	inputBusNumber = 0;
+	inputChannelCount = 2;
+	outputBusNumber = 0;
+	
 	//NSLog(@"initialising %4.4s - %4.4s - %4.4s\n", 
 	//      (char *) &(desc.componentType), (char *) &(desc.componentSubType), (char *) &(desc.componentManufacturer));
 
@@ -380,9 +388,10 @@ static OSStatus auInputCallback(void *inRefCon,
 	if(!getAudioUnitProperty(audioUnit, kAudioUnitProperty_StreamFormat, kAudioUnitScope_Output, 0, &auFormatDescription, sizeof(auFormatDescription)))
 	    return nil;
 	
+	auIsNonInterleaved = (auFormatDescription.mFormatFlags & kAudioFormatFlagIsNonInterleaved) == kAudioFormatFlagIsNonInterleaved;
 	NSLog(@"native format number of channels %d\n", ([Snd nativeFormat]).channelCount);
 	NSLog(@"Number of channels for Audio Unit %d\n", auFormatDescription.mChannelsPerFrame);
-	NSLog(@"non-interleaved %d\n", (auFormatDescription.mFormatFlags & kAudioFormatFlagIsNonInterleaved) == kAudioFormatFlagIsNonInterleaved);
+	NSLog(@"non-interleaved %d\n", auIsNonInterleaved);
 	
 #if 1
 	{  // TODO this should probably be inside the processReplacingInputBuffer: method.
@@ -437,10 +446,17 @@ static OSStatus auInputCallback(void *inRefCon,
     // Run through the list of audio units [SndAudioUnitProcessor availableAudioUnits] cached into class ivar.
     NSArray *componentArray = [namedComponents valueForKey: audioUnitName];
     
+    self = [self initWithManufacturer: [[componentArray objectAtIndex: 0] unsignedIntValue] 
+			   andSubType: [[componentArray objectAtIndex: 1] unsignedIntValue]];
     [self setName: audioUnitName];
     // When found, call 
-    return [self initWithManufacturer: [[componentArray objectAtIndex: 0] unsignedIntValue] 
-			   andSubType: [[componentArray objectAtIndex: 1] unsignedIntValue]];
+    return self;
+}
+
+- init
+{
+    // Choose a default AU
+    return [self initWithAudioUnitNamed: @"AUDelay"];
 }
 
 + (SndAudioProcessor *) audioProcessorNamed: (NSString *) processorName
@@ -476,6 +492,7 @@ static OSStatus auInputCallback(void *inRefCon,
     ComponentResult result;
     int channelIndex;
     int channelCount = [outputAudioBuffer channelCount];
+    int minimumChannelCount;
     int bufferLengthInFrames = [outputAudioBuffer lengthInSampleFrames];
     float *interleavedOutputSamples = [outputAudioBuffer bytes];
     AudioUnitRenderActionFlags actionFlags = 0;
@@ -512,22 +529,30 @@ static OSStatus auInputCallback(void *inRefCon,
     
     // now we have the rendered audio data in theAudioData,
     // interleave the audio unit result into the output buffer.
-#if 0 // ALTIVEC
-    // TODO
+    if(auIsNonInterleaved) {
+#if ALTIVEC
+	// TODO
 #else
-    for (channelIndex = 0; channelIndex < channelCount; channelIndex++) {
-	unsigned int frameIndex;
-	for(frameIndex = 0; frameIndex < bufferLengthInFrames; frameIndex++) {
-	    interleavedOutputSamples[frameIndex * channelCount + channelIndex] = ((float *) theAudioData->mBuffers[channelIndex].mData)[frameIndex];
+	// Only retrieve the minimum number of channels if the AudioUnit processes a different number than the output audio buffer.
+	// TODO We should be using speaker configuration to map channels.
+	minimumChannelCount = MIN(theAudioData->mNumberBuffers, channelCount);
+	for (channelIndex = 0; channelIndex < minimumChannelCount; channelIndex++) {
+	    unsigned int frameIndex;
+	    
+	    for(frameIndex = 0; frameIndex < bufferLengthInFrames; frameIndex++) {
+		interleavedOutputSamples[frameIndex * channelCount + channelIndex] = ((float *) theAudioData->mBuffers[channelIndex].mData)[frameIndex];
+	    }
 	}
+#endif	
     }
-#endif
+    else {
+	NSLog(@"unimplemented non-interleaved audio unit!\n");
+    }
     
     // we're done - remember to free!!!
     free (theAudioData);
     
-    // TODO this should change depending on whether the audio unit modifies the output. Most audio units produce output in the nominated output buffer. In theory we shouldn't need
-
+    // TODO this should change depending on whether the audio unit modifies the output. Most audio units produce output in the nominated output buffer.
     return YES;
 }
 
