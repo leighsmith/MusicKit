@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2001/12/07 20:13:04  skotmcdonald
+  Dealt with a minor typing warning
+
   Revision 1.14  2001/11/07 13:02:47  sbrandon
   removed unnecessary prototype for _DSPError1
 
@@ -308,7 +311,7 @@ static int myDSPMKInit(MKOrchestra *self)
 	  ec = DSPReadFile(&self->mkSys,[*foundFile fileSystemRepresentation]);
 	  if(ec)                            /* Can't open file */
 	    return _DSPError1(ec,"DSPMKInit: Could not read music system '%s' "
-			      "for booting the DSP", (const char *)[s cString]);
+			      "for booting the DSP", (char *)[s cString]);
 	  if (_MK_ORCHTRACE(self,MK_TRACEDSP))
 	    NSLog(@"Music Kit: Loaded DSP monitor %s\n",	
 		    [*foundFile cString]);
