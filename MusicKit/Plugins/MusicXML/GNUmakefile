@@ -13,8 +13,12 @@
 #  commercial purposes so long as the author attribution and this copyright
 #  message remains intact and accompanies all derived code.
 
+GNUSTEP_INSTALLATION_DIR=$(GNUSTEP_LOCAL_ROOT)
+
 include $(GNUSTEP_MAKEFILES)/common.make
 
+PACKAGE_NAME = MusicXML_MKplugin
+VERSION = 5.4.1
 
 #
 # Subprojects
@@ -26,8 +30,6 @@ include $(GNUSTEP_MAKEFILES)/common.make
 # Main application
 #
 
-BUNDLE_NAME=MusicXML
-BUNDLE_INSTALL_DIR=$(GNUSTEP_LOCAL_ROOT)/Library/MusicKitPlugins
 BUNDLE_NAME = \
         MusicXML
 BUNDLE_EXTENSION = .mkplugin
