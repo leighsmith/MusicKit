@@ -29,7 +29,6 @@
 
 static SndPlayer *defaultSndPlayer;
 
-
 @implementation SndPlayer
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,6 +56,10 @@ static SndPlayer *defaultSndPlayer;
 {
   self = [super init];
   if (self) {
+    SndSoundStruct s;
+    SNDStreamNativeFormat(&s); /* get maximum length for processing buffer */
+    tempBuffer = [[SndAudioBuffer alloc] initWithFormat:&s data:NULL];
+
     bRemainConnectedToManager = TRUE;
     if (toBePlayed  == nil)
       toBePlayed   = [[NSMutableArray alloc] initWithCapacity: 10];
@@ -81,6 +84,7 @@ static SndPlayer *defaultSndPlayer;
     [playing      release];
     [playingLock  release];
     [removalArray release];
+    [tempBuffer   release];
     [super dealloc];
 }
 
@@ -307,7 +311,7 @@ static SndPlayer *defaultSndPlayer;
 #if SNDPLAYER_DEBUG
         fprintf(stderr,"SndPlayer::playSnd(4) playing unlock...\n");
 #endif
-    }		
+    }
     else {            // play later - we must insert the performance in Time Order
         int i, numToBePlayed, insertIndex;
       double playT = [aPerformance playTime];
@@ -465,28 +469,26 @@ static SndPlayer *defaultSndPlayer;
         }
 #if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS            
         NSLog(@"[SndPlayer][SYNTH THREAD] startIndex = %ld, endAtIndex = %ld,  location = %d, length = %d\n", 
-        			startIndex, endAtIndex, playRegion.location, playRegion.length);
+            startIndex, endAtIndex, playRegion.location, playRegion.length);
 #endif        
         // Negative buffer length means the endAtIndex was moved before the current playIndex, so we should skip any mixing and stop.
         if (buffLength > 0) {      
           int start = 0, end = buffLength;
-          SndAudioBuffer *temp = [[snd audioBufferForSamplesInRange: playRegion] retain];
-    
+          [snd fillAudioBuffer:tempBuffer withSamplesInRange: playRegion];
           if (startIndex < 0)                 start = -startIndex;
           if (end + startIndex > endAtIndex)  end   = endAtIndex - startIndex;
 
 #if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS            
           NSLog(@"[SndPlayer][SYNTH THREAD] calling mixWithBuffer from SndPlayer processBuffers start = %ld, end = %ld\n", start, end);
 #endif
-          [performance processBuffer: temp];
-          [ab mixWithBuffer: temp fromStart: start toEnd: end];
+          [performance processBuffer: tempBuffer];
+          [ab mixWithBuffer: tempBuffer fromStart: start toEnd: end canExpand:YES];
 #if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS            
-	        NSLog(@"[SndPlayer][SYNTH THREAD] mixing buffer from %d to %d, playregion %d for %d, val at start = %f\n",
-	              start, end, playRegion.location, playRegion.length, 
+                NSLog(@"[SndPlayer][SYNTH THREAD] mixing buffer from %d to %d, playregion %d for %d, val at start = %f\n",
+                      start, end, playRegion.location, playRegion.length, 
                 (((short *)[snd data])[playRegion.location])/(float)32768);
 #endif
           [performance setPlayIndex: startIndex + buffLength];
-          [temp release];
         }
         // When at the end of sounds, signal the delegate and remove the performance.
         if ([performance playIndex] >= endAtIndex) {

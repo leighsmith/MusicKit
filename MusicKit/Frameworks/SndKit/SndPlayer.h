@@ -42,6 +42,8 @@
     BOOL             bRemainConnectedToManager;
 /*! @var             removalArray */
     NSMutableArray  *removalArray;
+/*! @var             tempBuffer; */
+    SndAudioBuffer  *tempBuffer;
 }
 /*!
   @method     player
