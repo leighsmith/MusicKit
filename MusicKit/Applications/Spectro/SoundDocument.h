@@ -1,3 +1,5 @@
+// $Id$
+
 #import "SubSoundView.h"
 #import "SpectrumDocument.h"
 #import "ScrollingSound.h"
@@ -6,25 +8,25 @@
 
 char *doFloat(float f, int a, int r);
 
-@interface SoundDocument:NSObject
+@interface SoundDocument : NSDocument
 {
-    id soundWindow;
+    IBOutlet id soundWindow;
     ScrollingSound *scrollSound;
-    id playButton;
-    id recordButton;
-    id stopButton;
-    id pauseButton;
-    id spectrumButton;
-    id wStartSamp;
-    id wStartSec;
-    id wDurSamp;
-    id wDurSec;
-    id sStartSamp;
-    id sStartSec;
-    id sDurSamp;
-    id sDurSec;
-    id soundInfo;
-    id spectrumDocument;
+    IBOutlet id playButton;
+    IBOutlet id recordButton;
+    IBOutlet id stopButton;
+    IBOutlet id pauseButton;
+    IBOutlet id spectrumButton;
+    IBOutlet id wStartSamp;
+    IBOutlet id wStartSec;
+    IBOutlet id wDurSamp;
+    IBOutlet id wDurSec;
+    IBOutlet id sStartSamp;
+    IBOutlet id sStartSec;
+    IBOutlet id sDurSamp;
+    IBOutlet id sDurSec;
+    IBOutlet id soundInfo;
+    IBOutlet id spectrumDocument;
     NSString *fileName;
     SubSoundView *mySoundView;
     SpectrumDocument *mySpectrumDocument;
@@ -33,6 +35,21 @@ char *doFloat(float f, int a, int r);
 
 - init;
 - newSoundLocation:(NSPoint *)p;
+
+/*!
+  @method loadDataRepresentation:ofType:
+  @discussion Loads a file of the type given by aType from the NSData instance data.
+  @result 
+*/
+- (BOOL) loadDataRepresentation: (NSData *) data ofType: (NSString *) aType;
+
+/*!
+  @method dataRepresentationOfType:
+  @discussion Writes a file of the type given by aType.
+  @result
+*/
+- (NSData *) dataRepresentationOfType: (NSString *) aType;
+
 - setFileName:(NSString *)aName;
 - (NSString *)fileName;
 - setWindowTitle;
