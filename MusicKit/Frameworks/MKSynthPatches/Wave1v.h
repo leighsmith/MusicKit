@@ -14,12 +14,18 @@
 */
 /*
   $Log$
+  Revision 1.3  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.2  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup WaveTable Synthesis
 /*!
-  @class Wave1i
+  @class Wave1v
+  @abstract Wavetable synthesis with 1 non-interpolating (drop-sample) oscillator and
+            random and periodic vibrato.
   @discussion
 
    This class is just like Wave1vi but overrides the interpolating osc

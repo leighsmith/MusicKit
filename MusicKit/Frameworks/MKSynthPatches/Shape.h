@@ -14,12 +14,17 @@
 */
 /*
   $Log$
+  Revision 1.4  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.3  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup Waveshaping (a.k.a. Nonlinear Distortion) Synthesis
 /*!
   @class Shape
+  @abstract Waveshaping synthesis, with index control and amplitude envelope.
   @discussion
 
 <b>Shape</b> is a single-lookup table non-linear distortion (waveshaping) SynthPatch.  It has an interpolating-oscillator for a "carrier" (oscillator driving the lookup) with an arbitrary waveform, an interpolating lookup table, and envelopes on amplitude (scaler on output), frequency, and waveshaping index (amplitude of carrier).  Additionally, 

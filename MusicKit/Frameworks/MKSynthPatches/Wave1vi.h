@@ -14,18 +14,21 @@
 */
 /*
   $Log$
+  Revision 1.4  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.3  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup WaveTable Synthesis
 /*!
   @class Wave1vi
-  @abstract Wave1vi is like Wave1i but adds periodic and random vibrato.
-            See Wave1i.h for a description of the non-vibrato parameters.
+  @abstract Wavetable synthesis with 1 interpolating osc. and random and periodic vibrato.
   @discussion
 
 <b>Wave1vi</b> is like <b>Wave1i</b>, but it includes periodic and random vibrato.
-<b>Wave1v</b>(a subclass of <b>Wave1vi</b> ) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.).   
+<b>Wave1v</b>(a subclass of <b>Wave1vi</b> ) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.). See Wave1i.h for a description of the non-vibrato parameters.
 
 When using this MKSynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the MKSynthPatch.
 

@@ -16,9 +16,11 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.2  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
 
   09/19/89/daj - Changed macros to use Note C-function parameter access.
   10/3/93/daj -  Got rid of some unused macros (FREQ_SCALE, TWO_TO_M_23)

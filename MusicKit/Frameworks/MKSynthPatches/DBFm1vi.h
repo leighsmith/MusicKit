@@ -14,12 +14,17 @@
 */
 /*
   $Log$
+  Revision 1.3  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.2  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup Frequency Modulation Synthesis
 /*!
   @class DBFm1vi
+  @abstract Like <b>Fm1vi</b>, but supports the Timbre Data Base.
   @discussion
 
 <b>DBFm1vi</b> is like <b>Fm1vi</b>, but it includes support for the Music Kit

@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.4  2001/09/09 00:26:50  leighsmith
   Removed crufty reference to TimbreDataBase.rtf
 
@@ -21,8 +24,10 @@
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup WaveTable Synthesis
 /*!
   @class DBWave2vi
+  @abstract Like <b>Wave1vi</b>, but with two wavetables and interpolation between them.
   @discussion
 
 <b>DBWave2vi</b> is a double interpolating oscillator wavetable synthesis MKSynthPatch with dynamic envelope-driven interpolation between the two oscillators, amplitude and frequency envelopes.

@@ -14,12 +14,17 @@
 */
 /*
   $Log$
+  Revision 1.3  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.2  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup WaveTable Synthesis
 /*!
-  @class DBWave1vi
+  @class DBWave1v
+  @abstract Like <b>Wave1v</b>, but with access to the Timbre Data Base.
   @discussion
 
 <b>DBWave1vi</b> is like <b>Wave1vi</b>, but it includes support for the Music
@@ -29,12 +34,12 @@ The Timbre Data Base is a set of spectra derived from recordings of
 musical instruments and voices in various ranges.  The Data Base was
 created by Michael McNabb.
 
-The MKSynthPatches that support the Data Base are DBWave1vi,
+The MKSynthPatches that support the Data Base are DBWave1v, DBWave1vi,
 DBWave2vi, and DBFm1vi.  ("DB" stands for "Data Base".)  Note that the
 use of the Data Base is strictly optional in these instruments.  For
-example, if the Data Base is not used, DBWave1vi acts just like
-Wave1vi.  That is, the <b>waveform</b> parameter may be passed either
-an ordinary MKWaveTable (as in Wave1vi) or a timbre string (as defined
+example, if the Data Base is not used, DBWave1v acts just like
+Wave1v.  That is, the <b>waveform</b> parameter may be passed either
+an ordinary MKWaveTable (as in Wave1v) or a timbre string (as defined
 below).
 
 To use the Data Base, you specify a timbre as a string (such as "SA",

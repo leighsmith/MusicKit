@@ -14,12 +14,17 @@
 */
 /*
   $Log$
+  Revision 1.3  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.2  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup Frequency Modulation Synthesis
 /*!
   @class Fm2pvi
+  @abstract Like <b>Fm1vi</b>, but has 2 modulators in parallel, vibrato, and interpolating carrier.
   @discussion
 
 <b>Fm2pvi</b> is a parallel-modulator frequency modulation MKSynthPatch, with an

@@ -16,12 +16,17 @@
 */
 /*
   $Log$
+  Revision 1.4  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.3  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup WaveTable Synthesis
 /*!
   @class Wave1
+  @abstract Wavetable synthesis with 1 non-interpolating (drop-sample) oscillator.
   @discussion
 
 <b>Wave1i</b> is a single-interpolating-oscillator wavetable MKSynthPatch with an amplitude and frequency envelope.  

@@ -14,16 +14,19 @@
 */
 /*
   $Log$
+  Revision 1.3  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.2  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup Frequency Modulation Synthesis
 /*!
   @class Fm1i
-  @abstract Fm1i is a frequency modulation MKSynthPatch with arbitrary waveforms for
-            carrier and modulator and an interpolating oscillator for the carrier. 
+  @abstract FM with arbitrary waveforms for carrier and modulator and an interpolating
+            oscillator for the carrier. 
   @discussion
-
 
 <b>Fm1i</b> is an FM (frequency modulation) MKSynthPatch that uses an
 arbitrary-wavetable oscillator to modulate the frequency of another
@@ -136,7 +139,7 @@ is m1Ratio multiplied by the freq parameter.  Default is 1.0.
 needed.  Default is 0.0.
 
 <b>m1Waveform</b> - Modulator wave table. Default produces a sine wave.   If you
-specify a Samples object to an FM SynthPatch, the length may be any power of
+specify a MKSamples object to an FM MKSynthPatch, the length may be any power of
 2.
 
 <b>phase</b> - Initial phase of wavetable in degrees.  Rarely needed.  Default
@@ -145,7 +148,7 @@ is 0.0.
 <b>pitchBend</b> - Modifies frequency (or keyNum) as a 14 bit integer.  A value
 of MIDI_ZEROBEND (defined as 0x2000 in &lt;mididriver/midi_spec.h&gt;) gives no 
 bend.  0 is maximum negative bend.  0x3fff is maximum positive bend.  See
-TuningSystem class for details.  May give unexpected results when combined with
+MKTuningSystem class for details.  May give unexpected results when combined with
 frequency envelopes.  Default is MIDI_ZEROBEND.
 
 <b>portamento</b> - Portamento time.  In a phrase, the transition time to a note

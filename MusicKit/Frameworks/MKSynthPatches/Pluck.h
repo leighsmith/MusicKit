@@ -14,12 +14,17 @@
 */
 /*
   $Log$
+  Revision 1.4  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.3  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup Virtual Acoustics (a.k.a. Physical Modeling or Waveguide) Synthesis
 /*!
   @class Pluck
+  @abstract Plucked string synthesis.
   @discussion
 
 Pluck implements a Plucked string with fine-tuning of pitch and dynamics, as described in Jaffe/Smith, and Karplus/Strong, "The Music Machine", MIT Press, 1989.  This is a type of "virtual acoustic" synthesis (also called "physical modeling" or "waveguide synthesis".)

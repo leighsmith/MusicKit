@@ -14,16 +14,22 @@
 */
 /*
   $Log$
+  Revision 1.3  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.2  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup WaveTable Synthesis
 /*!
   @class Simp
+  @abstract Single-oscillator wavetable producing periodic waveforms using a non-interpolating
+            oscillator.   
   @discussion
 
-<b>Simp</b> is a single-oscillator wavetable SynthPatch, capable of producing
-any periodic waveform.   It is the simplest of the Music Kit SynthPatches.    It
+<b>Simp</b> is a single-oscillator wavetable MKSynthPatch, capable of producing
+any periodic waveform.   It is the simplest of the Music Kit MKSynthPatches.    It
 uses a non-interpolating oscillator, which means it is not particularly high
 quality.   
 
@@ -31,9 +37,9 @@ For most musical applications, it is preferable to use <b>Wave1</b> or
 <b>Wave1i</b>, both of which feature amplitude and frequency
 envelopes.
 
-When using this SynthPatch in an interactive real-time context, such as playing
+When using this MKSynthPatch in an interactive real-time context, such as playing
 from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the
-SynthPatch.
+MKSynthPatch.
 
 <h2>Parameter Interpretation</h2>
 
@@ -45,7 +51,7 @@ far left.  Default is 0.0.
 
 <b>controlChange</b> - This parameter is the MIDI controller number to be
 affected.  It is used in conjunction with the parameter controlVal, which
-provides the value the controller is set to.  This SynthPatch uses MIDI volume
+provides the value the controller is set to.  This MKSynthPatch uses MIDI volume
 (controller 7) to adjust output volume as an attenuation of the final output
 signal.  The default for MIDI volume is 127.
 

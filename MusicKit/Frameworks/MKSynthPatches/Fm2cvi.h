@@ -14,12 +14,17 @@
 */
 /*
   $Log$
+  Revision 1.4  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.3  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup Frequency Modulation Synthesis
 /*!
   @class Fm2cvi
+  @abstract Like <b>Fm1vi</b>, but has 2 modulators in cascade, vibrato, and interpolating carrier.
   @discussion
 
 <b>Fm2cvi</b> is a cascade-modulator frequency modulation MKSynthPatch, with an interpolating-oscillator as a carrier.  It provides for envelopes on amplitude, frequency, and a separate envelope on each modulator's FM index.  It also supports vibrato.   Although it does not inherit from <b>Fm1vi</b>, it implements the same parameters, plus some of its own. 

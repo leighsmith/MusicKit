@@ -16,12 +16,18 @@
 */
 /*
   $Log$
+  Revision 1.4  2001/09/10 17:38:28  leighsmith
+  Added abstracts from IntroSynthPatches.rtf
+
   Revision 1.3  2001/09/08 20:22:09  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
 */
+//  classgroup Frequency Modulation Synthesis
 /*!
   @class Fm1vi
+  @abstract FM synthesis with 1 modulator, vibrato, interpolating carrier and arbitrary waveforms
+            for carrier and modulator.
   @discussion
 
 <b>Fm1vi</b> is like <b>Fm1i</b>, but it includes periodic and random vibrato.
