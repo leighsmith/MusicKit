@@ -33,6 +33,14 @@
 Modification history:
 
   $Log$
+  Revision 1.21  2002/03/12 23:17:41  sbrandon
+  Major overhaul of binary scorefile handling, fixes some longstanding bugs.
+  Most internal functions dealing with binary IO now take an extra argument
+  indicating whether the IO is in the header or body of the file. This is
+  because the pointer structures used in the 2 cases are different.
+  Lots of debugging printf statements, gated with DEBUG_PARSE_SCORE
+  macro (off by default).
+
   Revision 1.20  2002/01/23 15:33:02  sbrandon
   The start of a major cleanup of memory management within the MK. This set of
   changes revolves around MKNote allocation/retain/release/autorelease.
@@ -98,8 +106,8 @@ Modification history:
 
   09/22/89/daj - Flushed _MKNameTableAddGlobalNameNoCopy() in light of the 
                  decision to make name table bits
-		 globally defined. Other changes corresponding to changes
-		 in _MKNameTable.
+                 globally defined. Other changes corresponding to changes
+                 in _MKNameTable.
 
   10/06/89/daj - Changed to use hashtable.h version of _MKNameTable table.
   10/20/89/daj - Added binary scorefile support.
@@ -110,19 +118,19 @@ Modification history:
    1/2/90/daj  - Added break; on line 3029. 
    1/8/90/daj  - Changed longjmp to set status to 1.
                  Changed setjmp logic in binaryHeaderStmt() and
-		 parseBinaryNote(). 
-		 Changed _MKNewScoreInStruct() to not return NULL when the
-		 file is empty.
+                 parseBinaryNote(). 
+                 Changed _MKNewScoreInStruct() to not return NULL when the
+                 file is empty.
    1/11/90/daj - Changed ascii parser to match lookahead at the start, rather
                  than the end of statements. This makes it possible to have
-		 C functions for reading a single note statement.
-		 Removed _MK_begin cases in parseScoreNote and 
-		 parseBinaryScoreNote.
+                 C functions for reading a single note statement.
+                 Removed _MK_begin cases in parseScoreNote and 
+                 parseBinaryScoreNote.
    3/05/90/daj - Clarified transtab backslash translation. Added translation
                  of backslash, single quote and double quote. Removed 
-		 unnecessary binary translation. Made transtab be a function
-		 (to allow _ParName.m to access it for backward translation).
-   3/06/90/daj - Added "repeat" ScoreFile language extension.		 
+                 unnecessary binary translation. Made transtab be a function
+                 (to allow _ParName.m to access it for backward translation).
+   3/06/90/daj - Added "repeat" ScoreFile language extension.                 
    3/10/90/daj - Fixed bug in error reporting for mutes.
    3/10/90/daj - Added "if/else and boolean operators".
    4/21/90/daj - Removed extra MATCH('}') in then clause of endStmt
@@ -157,6 +165,8 @@ Modification history:
 #import <stdlib.h>
 #import <string.h>    // for strchr typing
 
+//#define DEBUG_PARSE_SCORE
+
 #define INT(x) (short) x
 
 #define FIRST_CHAR_SCOREMAGIC '.'
@@ -185,8 +195,8 @@ typedef struct _parseStateStruct {
     NSString * _name;                          /* Name of file, if any */
     _MKParameterUnion _tokenVal;               /* Value. */
     NSData * _stream;                          /* Stream pointer */
-    unsigned int _pointer;		       /* To keep track of position in NSData _stream */
-    unsigned int _length;		       /* Initialised at opening of file to give length, so _pointer does not overrun */
+    unsigned int _pointer;                       /* To keep track of position in NSData _stream */
+    unsigned int _length;                       /* Initialised at opening of file to give length, so _pointer does not overrun */
     STRTYPE * _buf_base;
 } parseStateStruct;
 
@@ -202,7 +212,7 @@ static unsigned int scoreStreamPointer = 0; /*sb: new variable to track current 
 static STRTYPE *scoreStreamBuf_Base = 0;    /*sb: holds pointer to start of scoreStream (convenience) */
 static unsigned int scoreStreamLength = 0;  /*sb: new variable to track current position within stream */
 static short lookahead = 0;         /* Next token */
-static	_MKParameterUnion *tokenVal = NULL;/* Current token (union type) */
+static        _MKParameterUnion *tokenVal = NULL;/* Current token (union type) */
     
 /* The following are for the current token scan. */
 static char * tokenBuf = NULL;   /* start of name field */
@@ -224,9 +234,9 @@ char c;
 }
 
 //#define NEXTCHAR() NXGetc(scoreStream)
-#define NEXTCHAR() (scoreStreamPointer >= scoreStreamLength) ? EOF : ((const char *)[scoreStream bytes])[scoreStreamPointer++]
+#define NEXTCHAR() (scoreStreamPointer >= scoreStreamLength) ? EOF : ((const char *)scoreStreamBuf_Base)[scoreStreamPointer++]
 #define NEXTTCHAR() ((++tokenPtr > tokenEndBuf) ? expandTok(NEXTCHAR()) : \
-		     (*tokenPtr = NEXTCHAR()))
+                     (*tokenPtr = NEXTCHAR()))
 #define NEWTOKEN(_c) tokenPtr = tokenBuf; *tokenPtr = _c
 #define ENDTOKEN() *(tokenPtr+1) = '\0'; tokenPtr = NULL
 //#define BACKUP(_c) if (_c != -1) NXUngetc(scoreStream)
@@ -236,21 +246,21 @@ char c;
 
 #define addLocalSymbol(_name,_obj,_type) \
   _MKNameTableAddName(scoreRPtr->_symbolTable,_name,nil,_obj, \
-		      (_type | _MK_BACKHASHBIT),YES)
+                      (_type | _MK_BACKHASHBIT),YES)
 /* We need backhash bit because we may have to find it later to remove it,
    if it becomes "exported" as a global. */
 
 static STRTYPE *errorLoc = NULL;
 
 static const char transtab[][2] = {{'b',BACKSPACE}, 
-				   {'f',FORMFEED},
-				   {'n','\n'}, 
-				   {'r',CR}, /* carriage return */
-				   {'t',TAB},
-				   {'v',VT}, /* vertical tab (vt) */
-				   {BACKSLASH,BACKSLASH},
+                                   {'f',FORMFEED},
+                                   {'n','\n'}, 
+                                   {'r',CR}, /* carriage return */
+                                   {'t',TAB},
+                                   {'v',VT}, /* vertical tab (vt) */
+                                   {BACKSLASH,BACKSLASH},
                                    {QUOTE,QUOTE}, /* single quote */
-				   {'"','"'}}; /* double quote */
+                                   {'"','"'}}; /* double quote */
 
 const char *_MKTranstab()
 {
@@ -279,7 +289,7 @@ enum {noLongjmp = 0,errorLongjmp,fatalErrorLongjmp,eofLongjmp};
 
 static short
   lexan(void)
-{	
+{        
     /* lexan is the lexical analyzer. Time spent optimizing this function
        is well-spent, as this is where the bulk of the compute time goes
        in parsing a file. */
@@ -297,192 +307,192 @@ static short
        consisting only of an exponent is not allowed. */
     
     if (c == '.') {                  /* Get double number. */
-	NEWTOKEN(c);                  
-	while (isdigit(c=NEXTTCHAR()))
-	  ;
-	if (c == 'e' || c == 'E')   
-	  if (isdigit(c=NEXTTCHAR()) || c =='+' || c == '-') 
-	    while (isdigit(c=NEXTTCHAR())) 
-	      ;
-	BACKUPENDTOKEN(c);
-	tokenVal->rval = atof(tokenBuf);
-	return INT(MK_double);
-    }			
+        NEWTOKEN(c);                  
+        while (isdigit(c=NEXTTCHAR()))
+          ;
+        if (c == 'e' || c == 'E')   
+          if (isdigit(c=NEXTTCHAR()) || c =='+' || c == '-') 
+            while (isdigit(c=NEXTTCHAR())) 
+              ;
+        BACKUPENDTOKEN(c);
+        tokenVal->rval = atof(tokenBuf);
+        return INT(MK_double);
+    }                        
     if (isdigit(c)) {                 /* Get int or double number. */
-	BOOL weGotDouble;
-	NEWTOKEN(c);
-	if ((c=NEXTTCHAR()) == 'x' || c == 'X') { /* hex */
-	    c = NEXTTCHAR();
-	    NEWTOKEN(c);               /* Flush 0x */
-	    while (isxdigit(c=NEXTTCHAR()))
-	      ;
-	    BACKUPENDTOKEN(c);
-	    sscanf(tokenBuf,"%x",(unsigned *)&tokenVal->ival);
-	    return INT(MK_int);
-	}
-	weGotDouble = NO;
-	if (isdigit(c))
-	  while (isdigit(c=NEXTTCHAR()))
-	    ;
-	if (c == '.') {  
-	    weGotDouble = YES;
-	    while (isdigit(c=NEXTTCHAR()))
-	      ;
-	}
-	if (c == 'e' || c == 'E') {  
-	    weGotDouble = YES;
-	    if (isdigit(c=NEXTTCHAR()) || c =='+' || c == '-') 
-	      while (isdigit(c=NEXTTCHAR())) 
-		;
-	}
-	BACKUPENDTOKEN(c);
-	if (weGotDouble) { 
-	    tokenVal->rval = atof(tokenBuf);
-	    return INT(MK_double);
-	}
-	if (tokenBuf[0] == '0')       /* Octal */
-	  sscanf(tokenBuf,"%o",(unsigned *)&tokenVal->ival);
-	else tokenVal->ival = atoi(tokenBuf);
-	return INT(MK_int);
+        BOOL weGotDouble;
+        NEWTOKEN(c);
+        if ((c=NEXTTCHAR()) == 'x' || c == 'X') { /* hex */
+            c = NEXTTCHAR();
+            NEWTOKEN(c);               /* Flush 0x */
+            while (isxdigit(c=NEXTTCHAR()))
+              ;
+            BACKUPENDTOKEN(c);
+            sscanf(tokenBuf,"%x",(unsigned *)&tokenVal->ival);
+            return INT(MK_int);
+        }
+        weGotDouble = NO;
+        if (isdigit(c))
+          while (isdigit(c=NEXTTCHAR()))
+            ;
+        if (c == '.') {  
+            weGotDouble = YES;
+            while (isdigit(c=NEXTTCHAR()))
+              ;
+        }
+        if (c == 'e' || c == 'E') {  
+            weGotDouble = YES;
+            if (isdigit(c=NEXTTCHAR()) || c =='+' || c == '-') 
+              while (isdigit(c=NEXTTCHAR())) 
+                ;
+        }
+        BACKUPENDTOKEN(c);
+        if (weGotDouble) { 
+            tokenVal->rval = atof(tokenBuf);
+            return INT(MK_double);
+        }
+        if (tokenBuf[0] == '0')       /* Octal */
+          sscanf(tokenBuf,"%o",(unsigned *)&tokenVal->ival);
+        else tokenVal->ival = atoi(tokenBuf);
+        return INT(MK_int);
     }                     /* End of number scanner. */
     if (isalpha(c) || c == '_') {     /* Symbol scanner. */
-	unsigned short tok;
-	NEWTOKEN(c);
-	while (isalnum(c = NEXTTCHAR()) || c == '_')
-	  ;
-	BACKUPENDTOKEN(c);
-	tokenVal->symbol =
+        unsigned short tok;
+        NEWTOKEN(c);
+        while (isalnum(c = NEXTTCHAR()) || c == '_')
+          ;
+        BACKUPENDTOKEN(c);
+        tokenVal->symbol =
         _MKNameTableGetObjectForName(scoreRPtr->_symbolTable,[NSString stringWithCString:tokenBuf],nil,
-				       &tok);
-	if (tokenVal->symbol /* It's an object */
-	    || tok)          /* It's a keyword. */
-	  return INT(tok);
-	return INT(_MK_undef);
+                                       &tok);
+        if (tokenVal->symbol /* It's an object */
+            || tok)          /* It's a keyword. */
+          return INT(tok);
+        return INT(_MK_undef);
     }                    
     switch (c) {
       case '':
-	parsePtr->_pageNo++;
-	return lexan();
+        parsePtr->_pageNo++;
+        return lexan();
       case '"':
-	c = NEXTCHAR(); /* Don't include leading " in the string. */
-	NEWTOKEN(c);
-	if (c != '"')
-	  do {
-	      if (c == BACKSLASH) { /* Line continuation or escape char */
+        c = NEXTCHAR(); /* Don't include leading " in the string. */
+        NEWTOKEN(c);
+        if (c != '"')
+          do {
+              if (c == BACKSLASH) { /* Line continuation or escape char */
                   c = NEXTTCHAR();
-		  if (c == '\n' || c == '\r') {
-		      parsePtr->_lineNo++;
-		      c = '\0';           /* Just to fool test below */  // LMS may need to fix this for '\r\n' combos
-		      tokenPtr -= 2;      /* Line continuation. */
-		  }
-		  else {
+                  if (c == '\n' || c == '\r') {
+                      parsePtr->_lineNo++;
+                      c = '\0';           /* Just to fool test below */  // LMS may need to fix this for '\r\n' combos
+                      tokenPtr -= 2;      /* Line continuation. */
+                  }
+                  else {
                       transcharloc = strchr((char *)transtab, c);
-		      if (transcharloc != NULL)  /* see string.h */
-		          *(--tokenPtr) = transcharloc[1];
-		  /* Otherwise we pass along the back-slash and its associated 
-		     character as string text. We do not bother to convert
-		     ASCII numeric escape codes. I can't believe anybody
-		     would ever need to do that. (Famous last words.) */
-		  }
-	      }
-	      if (c == EOF || c == '\n' || c == '\r')
-		error(MK_sfMissingStringErr,"\"");
-	  } while ( (c=NEXTTCHAR()) != '"'); 
-	tokenPtr--;   /* Don't include final " in string but advance input. */
-	ENDTOKEN();
-	tokenVal->sval = [[NSString stringWithCString:tokenBuf] retain];//sb: was (char *)NXUniqueString(tokenBuf); 
-	/* We can't anticipate where the damn thing will end up so we can't
-	   do garbage collection. So we make it unique to avoid accumulating
-	   garbage. At some point in the future, might want to really move
-	   to unique strings system-wide. This makes string compares faster,
-	   for example. */
-	return INT(MK_string);
+                      if (transcharloc != NULL)  /* see string.h */
+                          *(--tokenPtr) = transcharloc[1];
+                  /* Otherwise we pass along the back-slash and its associated 
+                     character as string text. We do not bother to convert
+                     ASCII numeric escape codes. I can't believe anybody
+                     would ever need to do that. (Famous last words.) */
+                  }
+              }
+              if (c == EOF || c == '\n' || c == '\r')
+                error(MK_sfMissingStringErr,"\"");
+          } while ( (c=NEXTTCHAR()) != '"'); 
+        tokenPtr--;   /* Don't include final " in string but advance input. */
+        ENDTOKEN();
+        tokenVal->sval = [[NSString stringWithCString:tokenBuf] retain];//sb: was (char *)NXUniqueString(tokenBuf); 
+        /* We can't anticipate where the damn thing will end up so we can't
+           do garbage collection. So we make it unique to avoid accumulating
+           garbage. At some point in the future, might want to really move
+           to unique strings system-wide. This makes string compares faster,
+           for example. */
+        return INT(MK_string);
       case '$':                         /* Dsp format hex */
-	c = NEXTCHAR();                 /* Gobble the $. */
-	NEWTOKEN(c);
-	while (isxdigit(c=NEXTTCHAR()))
-	  ;
-	BACKUPENDTOKEN(c);
-	sscanf(tokenBuf,"%x",(unsigned *)&tokenVal->ival);
-	return INT(MK_int);
+        c = NEXTCHAR();                 /* Gobble the $. */
+        NEWTOKEN(c);
+        while (isxdigit(c=NEXTTCHAR()))
+          ;
+        BACKUPENDTOKEN(c);
+        sscanf(tokenBuf,"%x",(unsigned *)&tokenVal->ival);
+        return INT(MK_int);
       case '\n':
-	parsePtr->_lineNo++;
-	return lexan();
+        parsePtr->_lineNo++;
+        return lexan();
       case BACKSLASH:
         c = NEXTCHAR();  
-	if (c == '\n' || c == '\r')    
-	  return lexan();
-	else error(MK_sfMissingBackslashErr);
+        if (c == '\n' || c == '\r')    
+          return lexan();
+        else error(MK_sfMissingBackslashErr);
       case '<':
-	if ((c=NEXTCHAR()) == '=')
-	  return _MK_LEQ;
-	else {
-	    BACKUP(c);
-	    return '<';
-	}
+        if ((c=NEXTCHAR()) == '=')
+          return _MK_LEQ;
+        else {
+            BACKUP(c);
+            return '<';
+        }
       case '>':
-	if ((c=NEXTCHAR()) == '=')
-	  return _MK_GEQ;
-	else {
-	    BACKUP(c);
-	    return '>';
-	}
+        if ((c=NEXTCHAR()) == '=')
+          return _MK_GEQ;
+        else {
+            BACKUP(c);
+            return '>';
+        }
       case '=':
-	if ((c=NEXTCHAR()) == '=')
-	  return _MK_EQU;
-	else {
-	    BACKUP(c);
-	    return '=';
-	}
+        if ((c=NEXTCHAR()) == '=')
+          return _MK_EQU;
+        else {
+            BACKUP(c);
+            return '=';
+        }
       case '!':
-	if ((c=NEXTCHAR()) == '=')
-	  return _MK_NEQ;
-	else {
-	    BACKUP(c);
-	    return '!';
-	}
+        if ((c=NEXTCHAR()) == '=')
+          return _MK_NEQ;
+        else {
+            BACKUP(c);
+            return '!';
+        }
       case '&':
-	if ((c=NEXTCHAR()) == '&')
-	  return _MK_AND;
-	else {
-	    BACKUP(c);
-	    return '&';
-	}
+        if ((c=NEXTCHAR()) == '&')
+          return _MK_AND;
+        else {
+            BACKUP(c);
+            return '&';
+        }
       case '|':
-	if ((c=NEXTCHAR()) == '|')
-	  return _MK_OR;
-	else {
-	    BACKUP(c);
-	    return '|';
-	}
-      case '/': 			/* strip out comments. */
-	if ((c=NEXTCHAR()) == '/') {	/* objective C style */
-	    while (((c=NEXTCHAR()) != '\n') && (c != EOF))
-	      ;
-	    parsePtr->_lineNo++;
-	}
-	else if (c == '*') {	        /* C style */
-	    register short nextC = 0;
-	    c = NEXTCHAR();             /* Don't count star twice. */
-	    while ((c != EOF) && (((c=NEXTCHAR()) != '/') || (nextC != '*'))) {
-		nextC = c;
-		if (c == '\n') 
-		  parsePtr->_lineNo++;
-	    }
-	}
-	else {
-	    BACKUP(c);                 /* We've read too far. */
-	    return '/';                   /* It's a division. */
-	}
-	return lexan();
+        if ((c=NEXTCHAR()) == '|')
+          return _MK_OR;
+        else {
+            BACKUP(c);
+            return '|';
+        }
+      case '/':                         /* strip out comments. */
+        if ((c=NEXTCHAR()) == '/') {        /* objective C style */
+            while (((c=NEXTCHAR()) != '\n') && (c != EOF))
+              ;
+            parsePtr->_lineNo++;
+        }
+        else if (c == '*') {                /* C style */
+            register short nextC = 0;
+            c = NEXTCHAR();             /* Don't count star twice. */
+            while ((c != EOF) && (((c=NEXTCHAR()) != '/') || (nextC != '*'))) {
+                nextC = c;
+                if (c == '\n') 
+                  parsePtr->_lineNo++;
+            }
+        }
+        else {
+            BACKUP(c);                 /* We've read too far. */
+            return '/';                   /* It's a division. */
+        }
+        return lexan();
       default:                      /* Single-character operator. */
-	if (iscntrl(c)) {
-	    warning(MK_sfNonScorefileErr);
-	    longjmp(begin,eofLongjmp);
-	}
-	return c;
+        if (iscntrl(c)) {
+            warning(MK_sfNonScorefileErr);
+            longjmp(begin,eofLongjmp);
+        }
+        return c;
     }
-}		
+}                
 
 #define MATCH(_dummy) lookahead = lexan()
   
@@ -502,8 +512,8 @@ static char *
     /* Used for error reporting. */
     static char charS[2] = {'\0','\0'};
     if (lookahead < INT(_MK_undef)) {
-	charS[0] = lookahead;
-	return charS;
+        charS[0] = lookahead;
+        return charS;
     }
     if (tokenBuf)   /* This check probably not needed. */ 
       return tokenBuf; 
@@ -529,7 +539,7 @@ static void matchInsert(short token)
 static void matchSemicolon(void)
 {
     if (!match(';'))
-    	error(MK_sfMissingSemicolonErr);
+            error(MK_sfMissingSemicolonErr);
 }
 
 
@@ -558,11 +568,11 @@ static void matchSemicolon(void)
    namedEnvelopeDecl:= envDecl name = segEnvelopeConstant |
                        envDecl name = fileEnvelopeConstant
    envDecl:= ENVELOPE
-   segEnvelopeConstant:= [ pointlist ]		  
+   segEnvelopeConstant:= [ pointlist ]                  
    namedWaveTableDecl:= waveDecl name = WaveTableConstant 
    waveDecl:= WAVETABLE
-   WaveTableConstant:= [ valueslist ] | [ {soundfileName} ]		  
-   namedObjectDecl:= objDecl name = objConstant 		      
+   WaveTableConstant:= [ valueslist ] | [ {soundfileName} ]                  
+   namedObjectDecl:= objDecl name = objConstant                       
    objDecl:= OBJECT
    objConstant:=[<ClassName> anything]
    pointList:= | (expr,expr) pointList | (expr,expr,expr) pointList 
@@ -595,7 +605,7 @@ static double *dataCurY = NULL;
 static double *dataCurZ = NULL;
 
 static void expandEnvBuf(double **startPtrPtr,double **curPtrPtr,
-			 double **endPtrPtr)
+                         double **endPtrPtr)
 {
 #   define EXPANDAMOUNT 10    
     int newSize,curOffset;
@@ -664,11 +674,11 @@ rvalue(_MKParameterUnion **valAddr,short type)
     switch (type) {
       case _MK_typedVar:
       case _MK_untypedVar: 
-	resultType = _MKSFVarInternalType((*valAddr)->symbol);
-	*valAddr  = _MKSFVarRaw((*valAddr)->symbol);
-	break;
+        resultType = _MKSFVarInternalType((*valAddr)->symbol);
+        *valAddr  = _MKSFVarRaw((*valAddr)->symbol);
+        break;
       default:
-	resultType = type;
+        resultType = type;
     }
     return resultType;
 }
@@ -738,7 +748,7 @@ enum restrictions {noRestriction,noWaveTab,noRecursiveDefines};
 static enum restrictions restriction;
 
 static void 
-assign(void);	 /* Forward reference needed. */
+assign(void);         /* Forward reference needed. */
 
 static void
 emit(short t);
@@ -771,49 +781,49 @@ static id env(void)
     INITPTR(dataCurY,dataY); /* Y point */
     INITPTR(dataCurZ,dataZ); /* Smoothing point */
     while (!match(']')) {
-	if (match('(')) {
-	    curPoint++;
-	    assign();
-	    emit(_MK_xEnvValue); 
-	    if (!match(','))
-	      error(MK_sfMissingStringErr,",");
-	    assign();
-	    emit(_MK_yEnvValue); 
-	    if (lookahead != ')') { /* Smoothing, optional, is present. */
-		if (!match(','))
-		  error(MK_sfMissingStringErr,",");
-		assign();
-		emit(_MK_smoothingEnvValue); 
-		if (FIRSTSMOOTHING())
-		  defaultSmoothing = *dataCurZ;
-		else varyingSmoothing = YES;
-	    }
-	    else {             /* Smoothing not present */
-		if (FIRSTSMOOTHING()) {
-		    SETDATAVAL(dataCurZ,defaultSmoothing); 
-		}
-		/* The first point is ignored but must be set in case
-		   it's copied below. */
-		else {
-		    double x = *dataCurZ; 
-		    SETDATAVAL(dataCurZ,x); /* Use previous value. */
-		}
-	    }
-	    if (!match(')'))
-	      error(MK_sfMissingStringErr,")");
-	    match(',');       /* Optional comma. */
-	}
-	else if (match('|'))
-	  stickPoint = curPoint;
-	else error(MK_sfNotHereErr,curToken());
+        if (match('(')) {
+            curPoint++;
+            assign();
+            emit(_MK_xEnvValue); 
+            if (!match(','))
+              error(MK_sfMissingStringErr,",");
+            assign();
+            emit(_MK_yEnvValue); 
+            if (lookahead != ')') { /* Smoothing, optional, is present. */
+                if (!match(','))
+                  error(MK_sfMissingStringErr,",");
+                assign();
+                emit(_MK_smoothingEnvValue); 
+                if (FIRSTSMOOTHING())
+                  defaultSmoothing = *dataCurZ;
+                else varyingSmoothing = YES;
+            }
+            else {             /* Smoothing not present */
+                if (FIRSTSMOOTHING()) {
+                    SETDATAVAL(dataCurZ,defaultSmoothing); 
+                }
+                /* The first point is ignored but must be set in case
+                   it's copied below. */
+                else {
+                    double x = *dataCurZ; 
+                    SETDATAVAL(dataCurZ,x); /* Use previous value. */
+                }
+            }
+            if (!match(')'))
+              error(MK_sfMissingStringErr,")");
+            match(',');       /* Optional comma. */
+        }
+        else if (match('|'))
+          stickPoint = curPoint;
+        else error(MK_sfNotHereErr,curToken());
     }
     tmpUnion.symbol = [MKGetEnvelopeClass() new];
     [tmpUnion.symbol setPointCount:NPTS()
-		     xArray:dataX
-		     orSamplingPeriod:0.0 
-		     yArray:dataY 
-		     smoothingArray:(varyingSmoothing) ? dataZ : NULL 
-		     orDefaultSmoothing:defaultSmoothing];
+                     xArray:dataX
+                     orSamplingPeriod:0.0 
+                     yArray:dataY 
+                     smoothingArray:(varyingSmoothing) ? dataZ : NULL 
+                     orDefaultSmoothing:defaultSmoothing];
     if (stickPoint != NOSTICK)
       [tmpUnion.symbol setStickPoint:stickPoint];
     emitVar(MK_envelope,&tmpUnion);
@@ -855,45 +865,45 @@ static id partials(void)
     INITPTR(dataCurY,dataY); /* Amp */
     INITPTR(dataCurZ,dataZ); /* Phase */
     while (!match(']')) {
-	if (firstTime || match('{')) {
-	    firstTime = NO;
-	    assign();
-	    curPoint++;
-	    emit(_MK_hNumWaveValue); 
-	    if (!match(','))
-	      error(MK_sfMissingStringErr,",");
-	    assign();
-	    emit(_MK_ampWaveValue); 
-	    if (lookahead != '}') { /* Phase, optional, is present. */
-		if (!match(','))
-		  error(MK_sfMissingStringErr,",");
-		assign();
-		emit(_MK_phaseWaveValue); 
-		if (FIRSTPHASE())
-		  phaseConstant = *dataCurZ;
-		else varyingPhase = YES;
-	    }
-	    else {             /* Phase not present */
-		if (FIRSTPHASE()) {
-		    SETDATAVAL(dataCurZ,phaseConstant);
-		}
-		else {
-		    double x = *dataCurZ;
-		    SETDATAVAL(dataCurZ,x); /* Use previous value. */
-		}
-	    }
-	    if (!match('}'))
-	      error(MK_sfMissingStringErr,"}");
-	    match(',');       /* Optional comma. */
-	}
-	else error(MK_sfNotHereErr,curToken());
+        if (firstTime || match('{')) {
+            firstTime = NO;
+            assign();
+            curPoint++;
+            emit(_MK_hNumWaveValue); 
+            if (!match(','))
+              error(MK_sfMissingStringErr,",");
+            assign();
+            emit(_MK_ampWaveValue); 
+            if (lookahead != '}') { /* Phase, optional, is present. */
+                if (!match(','))
+                  error(MK_sfMissingStringErr,",");
+                assign();
+                emit(_MK_phaseWaveValue); 
+                if (FIRSTPHASE())
+                  phaseConstant = *dataCurZ;
+                else varyingPhase = YES;
+            }
+            else {             /* Phase not present */
+                if (FIRSTPHASE()) {
+                    SETDATAVAL(dataCurZ,phaseConstant);
+                }
+                else {
+                    double x = *dataCurZ;
+                    SETDATAVAL(dataCurZ,x); /* Use previous value. */
+                }
+            }
+            if (!match('}'))
+              error(MK_sfMissingStringErr,"}");
+            match(',');       /* Optional comma. */
+        }
+        else error(MK_sfNotHereErr,curToken());
     }
     tmpUnion.symbol = [MKGetPartialsClass() new];
     [tmpUnion.symbol setPartialCount:NPTS()
-		     freqRatios:dataX
-		     ampRatios:dataY
-		     phases:(varyingPhase) ? dataZ : NULL 
-		     orDefaultPhase:phaseConstant];
+                     freqRatios:dataX
+                     ampRatios:dataY
+                     phases:(varyingPhase) ? dataZ : NULL 
+                     orDefaultPhase:phaseConstant];
     emitVar(MK_waveTable,&tmpUnion);
     restriction = noRestriction;
     return tmpUnion.symbol;
@@ -933,23 +943,23 @@ static id obj(void)
       since these may use ']' in their description.
       */
     if (!strcmp("Envelope",tokenBuf)) {
-	MATCH(_MK_undef);
-	return env();
+        MATCH(_MK_undef);
+        return env();
     }
     if ((!strcmp("MKPartials",tokenBuf)) ||
-	(!strcmp("Samples",tokenBuf))) {
-	MATCH(_MK_undef);
-	return wave();
+        (!strcmp("Samples",tokenBuf))) {
+        MATCH(_MK_undef);
+        return wave();
     }
     tmpUnion.symbol = [aClass new];
     /* No MATCH here, because we don't want to read it yet. */
     if (![tmpUnion.symbol respondsToSelector:@selector(readASCIIStream:)]) {
-	for (; ;) {
-	    lookahead = NEXTCHAR();
-	    if (lookahead == ']')
-	      break;
-	}
-	error(MK_notScorefileObjectTypeErr,tokenBuf);
+        for (; ;) {
+            lookahead = NEXTCHAR();
+            if (lookahead == ']')
+              break;
+        }
+        error(MK_notScorefileObjectTypeErr,tokenBuf);
     }
     [tmpUnion.symbol readASCIIStream:scoreStream];
     MATCH(WILD);                          /* Needed to init parser again */
@@ -975,35 +985,35 @@ static void namedDataDecl(_MKToken type)
     _MKParameterUnion *tmpUnion;
     _MKToken dataToken = 
       (type == _MK_envelopeDecl) ? MK_envelope : 
-	(type == _MK_waveTableDecl) ? MK_waveTable :
-	  MK_object;
+        (type == _MK_waveTableDecl) ? MK_waveTable :
+          MK_object;
     declErrCheck(_MKTokName(dataToken),dataToken);
     name = _MKMakeStr(tokenBuf); /* Save name away. */
     MATCH(_MK_undef);         /* Name */
     matchInsert('=');
     switch (type) { 
       case _MK_envelopeDecl: 
-	if (lookahead == '[') {
-	    MATCH('[');
-	    dataObj = env();
-	    break;
-	}
-	else error(MK_sfBadInitErr,_MKTokNameNoCheck(_MK_envelopeDecl));
+        if (lookahead == '[') {
+            MATCH('[');
+            dataObj = env();
+            break;
+        }
+        else error(MK_sfBadInitErr,_MKTokNameNoCheck(_MK_envelopeDecl));
       case _MK_waveTableDecl:
-	if (lookahead == '[') {
-	    MATCH('[');
-	    dataObj = wave();
-	    break;
-	}
-	else error(MK_sfBadInitErr,_MKTokNameNoCheck(_MK_waveTableDecl));
+        if (lookahead == '[') {
+            MATCH('[');
+            dataObj = wave();
+            break;
+        }
+        else error(MK_sfBadInitErr,_MKTokNameNoCheck(_MK_waveTableDecl));
       default:
-	if (lookahead == _MK_objDefStart) {
-//	    MATCH('['); /* We've already taken '[' from stream. */
-	    dataObj = obj();
-	    break;
-	}
-	else error(MK_sfBadInitErr,_MKTokNameNoCheck(_MK_objectDecl));
-	dataObj = nil; /* Make compiler happy--this statement can never be reached! */
+        if (lookahead == _MK_objDefStart) {
+//            MATCH('['); /* We've already taken '[' from stream. */
+            dataObj = obj();
+            break;
+        }
+        else error(MK_sfBadInitErr,_MKTokNameNoCheck(_MK_objectDecl));
+        dataObj = nil; /* Make compiler happy--this statement can never be reached! */
     }
     tmpUnion = stackPop(&tmpType);
     tmpType = rvalue(&tmpUnion,tmpType);
@@ -1016,14 +1026,14 @@ static void namedDataDecl(_MKToken type)
        resolved when its written out. */
     free(name); 
     emitVar(tmpType,tmpUnion);               /* Put data itself 
-						back on stack. */
+                                                back on stack. */
 }
 
 /* Expression parsing: Evaluation. */
 
 static void
   unaryEval(_MKParameterUnion * val,short type,short *resultTypeAddr,
-	    _MKParameterUnion * rtnVal,short op)
+            _MKParameterUnion * rtnVal,short op)
 {
     *resultTypeAddr = rvalue(&val,type);
     switch (op) {
@@ -1033,78 +1043,78 @@ static void
       case _MK_hNumWaveValue:
       case _MK_ampWaveValue:
       case _MK_phaseWaveValue:
-	switch (*resultTypeAddr) {
-	  case MK_int:
-	    rtnVal->rval = (double)val->ival;
-	    break;
-	  case MK_string: {
-	      rtnVal->rval = _MKStringToDouble(val->sval);
-	      break;
-	  }
-	  case MK_double:
-	    rtnVal->rval = val->rval;
-	    break;
-	  default:
-	    error(MK_sfBadExprErr);
-	}
-	switch (op) {
-	  case _MK_xEnvValue:
+        switch (*resultTypeAddr) {
+          case MK_int:
+            rtnVal->rval = (double)val->ival;
+            break;
+          case MK_string: {
+              rtnVal->rval = _MKStringToDouble(val->sval);
+              break;
+          }
+          case MK_double:
+            rtnVal->rval = val->rval;
+            break;
+          default:
+            error(MK_sfBadExprErr);
+        }
+        switch (op) {
+          case _MK_xEnvValue:
 #           define FIRSTDATAX() (dataCurX < dataX) 
-	    if ((!FIRSTDATAX()) && (*dataCurX >= rtnVal->rval))
-	      error(MK_sfOutOfOrderErr,_MKTokNameNoCheck(_MK_xEnvValue));
-	    /* no break here */
-	  case _MK_hNumWaveValue:
-	    if (dataCurX >= dataXEnd) {
-		expandEnvBuf(&dataX,&dataCurX,&dataXEnd);
-		expandEnvBuf(&dataY,&dataCurY,&dataYEnd);
-		expandEnvBuf(&dataZ,&dataCurZ,&dataZEnd);
-	    }
-	    SETDATAVAL(dataCurX,rtnVal->rval);
-	    break;
-	  case _MK_ampWaveValue:
-	  case _MK_yEnvValue:
-	    SETDATAVAL(dataCurY,rtnVal->rval);
-	    break;
-	  case _MK_phaseWaveValue:
-	  case _MK_smoothingEnvValue:
-	    SETDATAVAL(dataCurZ,rtnVal->rval);
-	    break;
-	}
-	break;
+            if ((!FIRSTDATAX()) && (*dataCurX >= rtnVal->rval))
+              error(MK_sfOutOfOrderErr,_MKTokNameNoCheck(_MK_xEnvValue));
+            /* no break here */
+          case _MK_hNumWaveValue:
+            if (dataCurX >= dataXEnd) {
+                expandEnvBuf(&dataX,&dataCurX,&dataXEnd);
+                expandEnvBuf(&dataY,&dataCurY,&dataYEnd);
+                expandEnvBuf(&dataZ,&dataCurZ,&dataZEnd);
+            }
+            SETDATAVAL(dataCurX,rtnVal->rval);
+            break;
+          case _MK_ampWaveValue:
+          case _MK_yEnvValue:
+            SETDATAVAL(dataCurY,rtnVal->rval);
+            break;
+          case _MK_phaseWaveValue:
+          case _MK_smoothingEnvValue:
+            SETDATAVAL(dataCurZ,rtnVal->rval);
+            break;
+        }
+        break;
       case _MK_uMinus:   
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = -val->rval;
-	    break;
-	  case MK_int:
-	    rtnVal->ival = -val->ival;
-	    break;
-	  default:
-	    error(MK_sfNumberErr);
-	}
-	break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = -val->rval;
+            break;
+          case MK_int:
+            rtnVal->ival = -val->ival;
+            break;
+          default:
+            error(MK_sfNumberErr);
+        }
+        break;
       case _MK_dB:
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = MKdB(val->rval);
-	    break;
-	  case MK_int: {
-	      double x;
-	      *resultTypeAddr = INT(MK_double);
-	      x = (double) val->ival; /* This was needed due to gcc bug. */
-	      rtnVal->rval = MKdB(x);
-	      break;
-	  }
-	  default:
-	    error(MK_sfNumberErr);
-	}
-	break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = MKdB(val->rval);
+            break;
+          case MK_int: {
+              double x;
+              *resultTypeAddr = INT(MK_double);
+              x = (double) val->ival; /* This was needed due to gcc bug. */
+              rtnVal->rval = MKdB(x);
+              break;
+          }
+          default:
+            error(MK_sfNumberErr);
+        }
+        break;
     }
 }
  
 static void evalAssign(_MKParameterUnion *val1,_MKParameterUnion *val2,
-		       short type1,short type2,short *resultTypeAddr,short op,
-		       _MKParameterUnion *rtnVal)
+                       short type1,short type2,short *resultTypeAddr,short op,
+                       _MKParameterUnion *rtnVal)
 {
     short err;
     type2 = rvalue(&val2,type2);        /* Dereference if needed. */
@@ -1115,39 +1125,39 @@ static void evalAssign(_MKParameterUnion *val1,_MKParameterUnion *val2,
     else error(MK_sfBadAssignErr,_MKTokName(type1));
     switch (type2) {
       case MK_envelope:
-	err = _MKSetEnvSFVar(val1->symbol,val2->symbol);
-	break;
+        err = _MKSetEnvSFVar(val1->symbol,val2->symbol);
+        break;
       case MK_object:
-	err = _MKSetObjSFVar(val1->symbol,val2->symbol);
-	break;
+        err = _MKSetObjSFVar(val1->symbol,val2->symbol);
+        break;
       case MK_waveTable:
-	err = _MKSetWaveSFVar(val1->symbol,val2->symbol);
-	break;
+        err = _MKSetWaveSFVar(val1->symbol,val2->symbol);
+        break;
       case MK_double:
-	err = _MKSetDoubleSFVar(val1->symbol,val2->rval);
-	break;
+        err = _MKSetDoubleSFVar(val1->symbol,val2->rval);
+        break;
       case MK_int:
-	err = _MKSetIntSFVar(val1->symbol,val2->ival);
-	break;
+        err = _MKSetIntSFVar(val1->symbol,val2->ival);
+        break;
       case MK_string:
-	err = _MKSetStringSFVar(val1->symbol,val2->sval); 
-	break;
+        err = _MKSetStringSFVar(val1->symbol,val2->sval); 
+        break;
       default:
-	err = NO;
-	break;
+        err = NO;
+        break;
     }
     if (err) {
-	if (err == (short)MK_sfReadOnlyErr)
-	  error(MK_sfReadOnlyErr,[[val1->symbol varName] cString]);
-	else
-	  error(MK_sfTypeConversionErr);
+        if (err == (short)MK_sfReadOnlyErr)
+          error(MK_sfReadOnlyErr,[[val1->symbol varName] cString]);
+        else
+          error(MK_sfTypeConversionErr);
     }
     *rtnVal = *(_MKSFVarRaw(val1->symbol));
 }
 
 static void lookupEnv(_MKParameterUnion *theEnv,short theEnvType,
-		      _MKParameterUnion *lookup,short lookupType,short op,
-		      _MKParameterUnion *rtnVal)
+                      _MKParameterUnion *lookup,short lookupType,short op,
+                      _MKParameterUnion *rtnVal)
 { 
     double lookupVal;
     lookupType = rvalue(&lookup,lookupType);  /* Dereference if needed. */
@@ -1156,17 +1166,17 @@ static void lookupEnv(_MKParameterUnion *theEnv,short theEnvType,
       error(MK_sfBadExprErr);
     switch (lookupType) {
       case MK_double:
-	lookupVal = lookup->rval;
-	break;
+        lookupVal = lookup->rval;
+        break;
       case MK_int:
-	lookupVal = (double)lookup->ival;
-	break;
+        lookupVal = (double)lookup->ival;
+        break;
       case MK_string:
-	lookupVal = (double)_MKStringToDouble(lookup->sval);
-	break;
+        lookupVal = (double)_MKStringToDouble(lookup->sval);
+        break;
       default:
-	error(MK_sfNumberErr);
-	lookupVal = 0; /* This stmt can never be reached but it makes compiler happy */
+        error(MK_sfNumberErr);
+        lookupVal = 0; /* This stmt can never be reached but it makes compiler happy */
     }
     rtnVal->rval = [((MKEnvelope *) theEnv->symbol) lookupYForX:lookupVal];
     if (MKIsNoDVal(rtnVal->rval))
@@ -1186,290 +1196,290 @@ eval(_MKParameterUnion *val1,_MKParameterUnion *val2,short type1,short type2,
     if (type1 == type2)
       *resultTypeAddr = type1;
     else if (type1 == INT(MK_double) && type2 == INT(MK_int)) {
-	*resultTypeAddr = INT(MK_double);
-	v2.rval = (double) v2.ival;
+        *resultTypeAddr = INT(MK_double);
+        v2.rval = (double) v2.ival;
     }
     else if (type2 == INT(MK_double) && type1 == INT(MK_int)) {
-	*resultTypeAddr = INT(MK_double);
-	v1.rval = (double) v1.ival;
+        *resultTypeAddr = INT(MK_double);
+        v1.rval = (double) v1.ival;
     }
     switch (op) {
       case '&':
       case _MK_substring:
-	break;
+        break;
       case _MK_EQU:
       case _MK_NEQ:
-	if (type2 == INT(MK_string) && type1 == INT(MK_string))
-	  break;
-	/* else no break. I.e. for equality between strings, we just 
-	   compare characters. Otherwise, we do the "usual conversion"
-	   of strings to numbers */
+        if (type2 == INT(MK_string) && type1 == INT(MK_string))
+          break;
+        /* else no break. I.e. for equality between strings, we just 
+           compare characters. Otherwise, we do the "usual conversion"
+           of strings to numbers */
       default:
-	if (type2 == INT(MK_string)) {
-	    if (type1 == INT(MK_double)) {
-		*resultTypeAddr = INT(MK_double);
-		v2.rval =  _MKStringToDouble(v2.sval);
-		if (MKIsNoDVal(v2.rval))
-		  error(MK_sfNumberErr);
-	    }
-	    else if (type1 == INT(MK_int)) {
-		*resultTypeAddr = INT(MK_int);
-		v2.ival =  _MKStringToInt(v2.sval);
-		if (v2.ival == MAXINT)
-		  error(MK_sfNumberErr);
-	    }
-	    else if (type1 != INT(MK_string))
- 	      error(MK_sfStringErr,_MKTokName(type1));
-	}
-	else if (type1 == INT(MK_string)) {
-	    if (type2 == INT(MK_double)) {
-		*resultTypeAddr = INT(MK_double);
-		v1.rval =  _MKStringToDouble(v1.sval);
-		if (MKIsNoDVal(v1.rval))
-		  error(MK_sfNumberErr);
-	    }
-	    else if (type2 == INT(MK_int)) {
-		*resultTypeAddr = INT(MK_int);
-		v1.ival =  _MKStringToInt(v1.sval);
-		if (v1.ival == MAXINT)
-		  error(MK_sfNumberErr);
-	    }
-	    else if (type2!= INT(MK_string))
-	      error(MK_sfStringErr,_MKTokName(type2));
-	}
+        if (type2 == INT(MK_string)) {
+            if (type1 == INT(MK_double)) {
+                *resultTypeAddr = INT(MK_double);
+                v2.rval =  _MKStringToDouble(v2.sval);
+                if (MKIsNoDVal(v2.rval))
+                  error(MK_sfNumberErr);
+            }
+            else if (type1 == INT(MK_int)) {
+                *resultTypeAddr = INT(MK_int);
+                v2.ival =  _MKStringToInt(v2.sval);
+                if (v2.ival == MAXINT)
+                  error(MK_sfNumberErr);
+            }
+            else if (type1 != INT(MK_string))
+               error(MK_sfStringErr,_MKTokName(type1));
+        }
+        else if (type1 == INT(MK_string)) {
+            if (type2 == INT(MK_double)) {
+                *resultTypeAddr = INT(MK_double);
+                v1.rval =  _MKStringToDouble(v1.sval);
+                if (MKIsNoDVal(v1.rval))
+                  error(MK_sfNumberErr);
+            }
+            else if (type2 == INT(MK_int)) {
+                *resultTypeAddr = INT(MK_int);
+                v1.ival =  _MKStringToInt(v1.sval);
+                if (v1.ival == MAXINT)
+                  error(MK_sfNumberErr);
+            }
+            else if (type2!= INT(MK_string))
+              error(MK_sfStringErr,_MKTokName(type2));
+        }
     }         /* End of strings to numbers block. */
     switch (op) {
       case '+':
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = v1.rval + v2.rval;
-	    break;
-	  case MK_int:
-	    rtnVal->ival = v1.ival + v2.ival;
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = v1.rval + v2.rval;
+            break;
+          case MK_int:
+            rtnVal->ival = v1.ival + v2.ival;
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case _MK_GEQ:
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = v1.rval >= v2.rval;
-	    break;
-	  case MK_int:
-	    rtnVal->ival = v1.ival >= v2.ival;
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = v1.rval >= v2.rval;
+            break;
+          case MK_int:
+            rtnVal->ival = v1.ival >= v2.ival;
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case _MK_LEQ:
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = v1.rval <= v2.rval;
-	    break;
-	  case MK_int:
-	    rtnVal->ival = v1.ival <= v2.ival;
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = v1.rval <= v2.rval;
+            break;
+          case MK_int:
+            rtnVal->ival = v1.ival <= v2.ival;
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case '>':
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = v1.rval > v2.rval;
-	    break;
-	  case MK_int:
-	    rtnVal->ival = v1.ival > v2.ival;
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = v1.rval > v2.rval;
+            break;
+          case MK_int:
+            rtnVal->ival = v1.ival > v2.ival;
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case '<':
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = v1.rval < v2.rval;
-	    break;
-	  case MK_int:
-	    rtnVal->ival = v1.ival < v2.ival;
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = v1.rval < v2.rval;
+            break;
+          case MK_int:
+            rtnVal->ival = v1.ival < v2.ival;
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case _MK_EQU:
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = v1.rval == v2.rval;
-	    break;
-	  case MK_int:
-	    rtnVal->ival = v1.ival == v2.ival;
-	    break;
-	  case MK_string:
-	    *resultTypeAddr = INT(MK_int);
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = v1.rval == v2.rval;
+            break;
+          case MK_int:
+            rtnVal->ival = v1.ival == v2.ival;
+            break;
+          case MK_string:
+            *resultTypeAddr = INT(MK_int);
               rtnVal->ival = [v1.sval isEqualToString:v2.sval] ? 1 : 0;//sb: was (strcmp(v1.sval,v2.sval) == 0)
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case _MK_NEQ:
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = v1.rval != v2.rval;
-	    break;
-	  case MK_int:
-	    rtnVal->ival = v1.ival != v2.ival;
-	    break;
-	  case MK_string:
-	    *resultTypeAddr = INT(MK_int);
-	    rtnVal->ival = [v1.sval isEqualToString:v2.sval] ? 0 : 1;//sb: was (strcmp(v1.sval,v2.sval) == 0)
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = v1.rval != v2.rval;
+            break;
+          case MK_int:
+            rtnVal->ival = v1.ival != v2.ival;
+            break;
+          case MK_string:
+            *resultTypeAddr = INT(MK_int);
+            rtnVal->ival = [v1.sval isEqualToString:v2.sval] ? 0 : 1;//sb: was (strcmp(v1.sval,v2.sval) == 0)
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case _MK_AND:
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = v1.rval && v2.rval;
-	    break;
-	  case MK_int:
-	    rtnVal->ival = v1.ival && v2.ival;
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = v1.rval && v2.rval;
+            break;
+          case MK_int:
+            rtnVal->ival = v1.ival && v2.ival;
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case _MK_OR:
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = v1.rval || v2.rval;
-	    break;
-	  case MK_int:
-	    rtnVal->ival = v1.ival || v2.ival;
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = v1.rval || v2.rval;
+            break;
+          case MK_int:
+            rtnVal->ival = v1.ival || v2.ival;
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case '^':
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = pow((double)v1.rval,(double)v2.rval);
-	    break;
-	  case MK_int:
-	    rtnVal->ival = (int) pow((double)v1.ival ,(double) v2.ival);
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = pow((double)v1.rval,(double)v2.rval);
+            break;
+          case MK_int:
+            rtnVal->ival = (int) pow((double)v1.ival ,(double) v2.ival);
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case SEMITONEOP:
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = v1.rval * pow(2.0,v2.rval/12.0);
-	    break;
-	  case MK_int:
-	    rtnVal->ival = (int)((double)v1.ival * 
-				 pow(2.0,((double)v2.ival)/12.0));
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = v1.rval * pow(2.0,v2.rval/12.0);
+            break;
+          case MK_int:
+            rtnVal->ival = (int)((double)v1.ival * 
+                                 pow(2.0,((double)v2.ival)/12.0));
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case '-':
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = v1.rval - v2.rval;
-	    break;
-	  case MK_int:
-	    rtnVal->ival = v1.ival - v2.ival;
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = v1.rval - v2.rval;
+            break;
+          case MK_int:
+            rtnVal->ival = v1.ival - v2.ival;
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case '*':
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    rtnVal->rval = v1.rval * v2.rval;
-	    break;
-	  case MK_int:
-	    rtnVal->ival = v1.ival * v2.ival;
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            rtnVal->rval = v1.rval * v2.rval;
+            break;
+          case MK_int:
+            rtnVal->ival = v1.ival * v2.ival;
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case '/':
-	switch (*resultTypeAddr) {
-	  case MK_double:
-	    if (v2.rval == 0.0) 
-	      error(MK_sfArithErr);
-	    rtnVal->rval = v1.rval / v2.rval;
-	    break;
-	  case MK_int:            
-	    if (v2.ival == 0) 
-	      error(MK_sfArithErr);
-	    if (v1.ival % v2.ival) {
-		rtnVal->rval = ((double) v1.ival) / ((double)v2.ival);
-		*resultTypeAddr = INT(MK_double);
-	    }
-	    else rtnVal->ival = v1.ival / v2.ival;
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:
+            if (v2.rval == 0.0) 
+              error(MK_sfArithErr);
+            rtnVal->rval = v1.rval / v2.rval;
+            break;
+          case MK_int:            
+            if (v2.ival == 0) 
+              error(MK_sfArithErr);
+            if (v1.ival % v2.ival) {
+                rtnVal->rval = ((double) v1.ival) / ((double)v2.ival);
+                *resultTypeAddr = INT(MK_double);
+            }
+            else rtnVal->ival = v1.ival / v2.ival;
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case '%':
-	switch (*resultTypeAddr) {
-	  case MK_double:           /* All mod of doubles returns integer. */
-	    if (v2.rval == 0.0) 
-	      error(MK_sfArithErr);
-	    rtnVal->ival = ((int)v1.rval) % ((int)v2.rval);
-	    *resultTypeAddr = INT(MK_int);
-	    break;
-	  case MK_int:            
-	    if (v2.ival == 0) 
-	      error(MK_sfArithErr);
-	    rtnVal->ival = v1.ival % v2.ival;
-	    break;
-	  default:
- 	    error(MK_sfNumberErr);
-	} break;
+        switch (*resultTypeAddr) {
+          case MK_double:           /* All mod of doubles returns integer. */
+            if (v2.rval == 0.0) 
+              error(MK_sfArithErr);
+            rtnVal->ival = ((int)v1.rval) % ((int)v2.rval);
+            *resultTypeAddr = INT(MK_int);
+            break;
+          case MK_int:            
+            if (v2.ival == 0) 
+              error(MK_sfArithErr);
+            rtnVal->ival = v1.ival % v2.ival;
+            break;
+          default:
+             error(MK_sfNumberErr);
+        } break;
       case '&': {
-	  if (type1 == INT(MK_int))
-	    v1.sval = _MKIntToStringNoCopy(v1.ival);
-	  else if (type1 == INT(MK_double))
-	    v1.sval = _MKDoubleToStringNoCopy(v1.rval);
-	  else if (type1 != INT(MK_string))
-	    error(MK_sfStringErr);
-	  if (type2 == INT(MK_int))
-	    v2.sval = _MKIntToStringNoCopy(v2.ival);
-	  else if (type2 == INT(MK_double))
-	    v2.sval = _MKDoubleToStringNoCopy(v2.rval);
-	  else if (type2 != INT(MK_string))
-	    error(MK_sfStringErr,_MKTokName(type2));
-	  *resultTypeAddr = INT(MK_string);
-	  rtnVal->sval = [[v1.sval stringByAppendingString:v2.sval] retain];//sb: was _MKMakeStrcat(v1.sval,v2.sval);
-	  break;
+          if (type1 == INT(MK_int))
+            v1.sval = _MKIntToStringNoCopy(v1.ival);
+          else if (type1 == INT(MK_double))
+            v1.sval = _MKDoubleToStringNoCopy(v1.rval);
+          else if (type1 != INT(MK_string))
+            error(MK_sfStringErr);
+          if (type2 == INT(MK_int))
+            v2.sval = _MKIntToStringNoCopy(v2.ival);
+          else if (type2 == INT(MK_double))
+            v2.sval = _MKDoubleToStringNoCopy(v2.rval);
+          else if (type2 != INT(MK_string))
+            error(MK_sfStringErr,_MKTokName(type2));
+          *resultTypeAddr = INT(MK_string);
+          rtnVal->sval = [[v1.sval stringByAppendingString:v2.sval] retain];//sb: was _MKMakeStrcat(v1.sval,v2.sval);
+          break;
       }
       case _MK_substring: {
-	  if (type1 == INT(MK_int))
-	    v1.sval = _MKIntToStringNoCopy(v1.ival);
-	  else if (type1 == INT(MK_double))
-	    v1.sval = _MKDoubleToStringNoCopy(v1.rval);
-	  else if (type1 != INT(MK_string))
-	    error(MK_sfStringErr);
-	  if (type2 == INT(MK_string))
-	      v2.ival =  _MKStringToInt(v2.sval);
-	  else if (type2 == INT(MK_double))
-	      v2.ival = v2.rval;
-	  else if (type2 != INT(MK_int))
-	      error(MK_sfNumberErr);
+          if (type1 == INT(MK_int))
+            v1.sval = _MKIntToStringNoCopy(v1.ival);
+          else if (type1 == INT(MK_double))
+            v1.sval = _MKDoubleToStringNoCopy(v1.rval);
+          else if (type1 != INT(MK_string))
+            error(MK_sfStringErr);
+          if (type2 == INT(MK_string))
+              v2.ival =  _MKStringToInt(v2.sval);
+          else if (type2 == INT(MK_double))
+              v2.ival = v2.rval;
+          else if (type2 != INT(MK_int))
+              error(MK_sfNumberErr);
           if (v2.ival >= [v1.sval length])//sb: was strlen(v1.sval)
-	      rtnVal->sval = @"";//sb: was _MKMakeStr("");
-	  else {
+              rtnVal->sval = @"";//sb: was _MKMakeStr("");
+          else {
               rtnVal->sval = [[v1.sval substringWithRange:NSMakeRange(v2.ival,1)] retain];
 /*
-	      char *s;
-	      _MK_MALLOC(s,char,2);
-	      s[0] = ((const unsigned char *)[v1.sval cString])[v2.ival];
-	      s[1] = '\0';
-	      rtnVal->sval = s;
+              char *s;
+              _MK_MALLOC(s,char,2);
+              s[0] = ((const unsigned char *)[v1.sval cString])[v2.ival];
+              s[1] = '\0';
+              rtnVal->sval = s;
  */
-	  }
-	  *resultTypeAddr = INT(MK_string);
-	  break;
+          }
+          *resultTypeAddr = INT(MK_string);
+          break;
       }
     }
 }
@@ -1483,11 +1493,11 @@ emitVar(short t,_MKParameterUnion * tokenVal)
       case MK_double: case MK_string: case MK_int: case MK_envelope:
       case _MK_typedVar: case _MK_untypedVar:  case MK_object:
       case MK_waveTable:
-	stackPush(tokenVal,t);
-	break;
+        stackPush(tokenVal,t);
+        break;
       default:
-	error(MK_sfBadExprErr);
-	break;
+        error(MK_sfBadExprErr);
+        break;
     }
 }
 
@@ -1505,38 +1515,38 @@ emit(short t)
       case _MK_AND: case _MK_OR:
       case SEMITONEOP:
       case _MK_substring:
-	val1 = stackPop(&type1);
-	eval(val1,val2,type1,type2,&resultType,t,&valResult);
-	stackPush(&valResult, resultType);
-	break;
+        val1 = stackPop(&type1);
+        eval(val1,val2,type1,type2,&resultType,t,&valResult);
+        stackPush(&valResult, resultType);
+        break;
       case '=':
-	val1 = stackPop(&type1);
-	evalAssign(val1,val2,type1,type2,&resultType,t,&valResult);
-	stackPush(&valResult, resultType);
-	break;
+        val1 = stackPop(&type1);
+        evalAssign(val1,val2,type1,type2,&resultType,t,&valResult);
+        stackPush(&valResult, resultType);
+        break;
       case _MK_lookupEnv:
-	val1 = stackPop(&type1);
-	lookupEnv(val1,type1,val2,type2,t,&valResult);
-	stackPush(&valResult, MK_double);
-	break;
+        val1 = stackPop(&type1);
+        lookupEnv(val1,type1,val2,type2,t,&valResult);
+        stackPush(&valResult, MK_double);
+        break;
       case _MK_hNumWaveValue:
       case _MK_ampWaveValue:
       case _MK_phaseWaveValue:
       case _MK_xEnvValue:
       case _MK_yEnvValue:
       case _MK_smoothingEnvValue:
-	unaryEval(val2,type2,&resultType,&valResult,t);
-	/* These represent 'end of expression' so we don't push the 
-	   value back on the stack. */
-	break;
+        unaryEval(val2,type2,&resultType,&valResult,t);
+        /* These represent 'end of expression' so we don't push the 
+           value back on the stack. */
+        break;
       case _MK_uMinus:   
       case _MK_dB:
-	unaryEval(val2,type2,&resultType,&valResult,t);
-	stackPush(&valResult,resultType);
-	break;
+        unaryEval(val2,type2,&resultType,&valResult,t);
+        stackPush(&valResult,resultType);
+        break;
       default:
-	error(MK_sfBadExprErr,_MKTokName(t));
-	break;
+        error(MK_sfBadExprErr,_MKTokName(t));
+        break;
     }
 }
 
@@ -1546,28 +1556,28 @@ static void
 factor(void) 
 { 
     switch(lookahead) {
-      case '(': 	
-	MATCH('('); assign(); 
-	if (!match(')'))
-	  error(MK_sfMissingStringErr,")");
-	break; 	
+      case '(':         
+        MATCH('('); assign(); 
+        if (!match(')'))
+          error(MK_sfMissingStringErr,")");
+        break;         
       case '[':                  
-	MATCH('[');
-	if (lookahead == '(')   /* unnamed seg envelope constant */
-	  env();
-	else if (lookahead == '{') /* unnamed wave table constant */
-	  wave();
-	else 
-	  obj();
-	break;
+        MATCH('[');
+        if (lookahead == '(')   /* unnamed seg envelope constant */
+          env();
+        else if (lookahead == '{') /* unnamed wave table constant */
+          wave();
+        else 
+          obj();
+        break;
       case _MK_waveTableDecl:     
       case _MK_objectDecl:     
       case _MK_envelopeDecl:  {
-	  short type;
-	  type = lookahead;
-	  MATCH(lookahead);
-	  namedDataDecl(type);
-	  break;
+          short type;
+          type = lookahead;
+          MATCH(lookahead);
+          namedDataDecl(type);
+          break;
       }
       case MK_double: 
       case MK_string: 
@@ -1577,26 +1587,26 @@ factor(void)
       case MK_object:
       case MK_envelope:               
       case MK_waveTable:
-	emitVar(lookahead, tokenVal); 
-	MATCH(lookahead);       
-	if (lookahead == '[') { /* Substring? */
-	    MATCH(lookahead);
-	    assign();
-	    if (!match(']'))
-		error(MK_sfMissingStringErr,"]");
-	    emit(_MK_substring);
-	}
-	break;
+        emitVar(lookahead, tokenVal); 
+        MATCH(lookahead);       
+        if (lookahead == '[') { /* Substring? */
+            MATCH(lookahead);
+            assign();
+            if (!match(']'))
+                error(MK_sfMissingStringErr,"]");
+            emit(_MK_substring);
+        }
+        break;
       case _MK_time:                 /* Time is special. */
-	tokenVal->rval = scoreRPtr->timeTag; 
-	emitVar(MK_double, tokenVal);
-	MATCH(lookahead);
-	break;
+        tokenVal->rval = scoreRPtr->timeTag; 
+        emitVar(MK_double, tokenVal);
+        MATCH(lookahead);
+        break;
       case _MK_ran:               /* Ran is treated like a constant */
-	tokenVal->rval = ran();
-	emitVar(MK_double, tokenVal);
-	MATCH(lookahead);
-	break;
+        tokenVal->rval = ran();
+        emitVar(MK_double, tokenVal);
+        MATCH(lookahead);
+        break;
       case MK_resetControllers:
       case MK_localControlModeOn:
       case MK_localControlModeOff:
@@ -1612,14 +1622,14 @@ factor(void)
       case MK_sysStop:
       case MK_sysActiveSensing:
       case MK_sysReset:
-	tokenVal->ival = INT(lookahead);
-	emitVar(MK_int,tokenVal); 
-	MATCH(lookahead);
-	break;
+        tokenVal->ival = INT(lookahead);
+        emitVar(MK_int,tokenVal); 
+        MATCH(lookahead);
+        break;
       case _MK_undef:
-	error(MK_sfUndeclaredErr,_MKTokNameNoCheck(_MK_typedVar),tokenBuf);
-      default: 	 
-	error(MK_sfBadExprErr);
+        error(MK_sfUndeclaredErr,_MKTokNameNoCheck(_MK_typedVar),tokenBuf);
+      default:          
+        error(MK_sfBadExprErr);
     } 
 }
 
@@ -1635,27 +1645,27 @@ unary(void)
 {  
     switch (lookahead) {
       case '-': {
-	  MATCH('-');
-	  if (lookahead != '-') {
-	      factor();
-	      emit(_MK_uMinus);
-	  }
-	  else {
-	      int minusCount;    /* Handle multiple '-' */
-	      for (minusCount = 1; match('-'); minusCount++)
-		;
-	      factor();
-	      if (minusCount % 2) 
-		emit(_MK_uMinus);
-	  }
-	  break;
+          MATCH('-');
+          if (lookahead != '-') {
+              factor();
+              emit(_MK_uMinus);
+          }
+          else {
+              int minusCount;    /* Handle multiple '-' */
+              for (minusCount = 1; match('-'); minusCount++)
+                ;
+              factor();
+              if (minusCount % 2) 
+                emit(_MK_uMinus);
+          }
+          break;
       }
       case '+':
-	while (match('+'))
-	  ;
+        while (match('+'))
+          ;
       default:
-	factor();
-	break;
+        factor();
+        break;
     }
     while (match(_MK_dB))
       emit(_MK_dB);
@@ -1668,13 +1678,13 @@ expon(void)
     unary();     
     for (; ;)
       switch (lookahead) {
-	case SEMITONEOP:
-	case '^': 
-	  t = lookahead;
-	  MATCH(lookahead); unary(); emit(t);
-	  continue;
-	default:
-	  return;
+        case SEMITONEOP:
+        case '^': 
+          t = lookahead;
+          MATCH(lookahead); unary(); emit(t);
+          continue;
+        default:
+          return;
       }
 }
 
@@ -1685,12 +1695,12 @@ term(void)
     expon();
     for (; ;)
       switch (lookahead) {
-	case '*': case '/': case '%':
-	  t = lookahead;
-	  MATCH(lookahead); expon(); emit(t);
-	  continue;
-	default:
-	  return;
+        case '*': case '/': case '%':
+          t = lookahead;
+          MATCH(lookahead); expon(); emit(t);
+          continue;
+        default:
+          return;
       }
 }
 
@@ -1701,12 +1711,12 @@ expr(void)
     term();
     for(; ;) 
       switch (lookahead) {
-	case '+': case '-':
-	  t = lookahead;
-	  MATCH(lookahead); term(); emit(t);
-	  continue;
-	default: 
-	  return;
+        case '+': case '-':
+          t = lookahead;
+          MATCH(lookahead); term(); emit(t);
+          continue;
+        default: 
+          return;
       }
 }
 
@@ -1717,16 +1727,16 @@ catOrFun(void)
     expr();
     for(; ;) 
       switch (lookahead) {
-	case '&': 
-	  t = lookahead;
-	  MATCH(lookahead); expr(); emit('&');
-	  continue;
-	case '@': 
-	  t = lookahead;
-	  MATCH(lookahead); expr(); emit(_MK_lookupEnv);
-	  continue;
-	default: 
-	  return;
+        case '&': 
+          t = lookahead;
+          MATCH(lookahead); expr(); emit('&');
+          continue;
+        case '@': 
+          t = lookahead;
+          MATCH(lookahead); expr(); emit(_MK_lookupEnv);
+          continue;
+        default: 
+          return;
       }
 }
 
@@ -1737,13 +1747,13 @@ comparisonEval(void)
     catOrFun();
     for(; ;) 
       switch (lookahead) {
-	case _MK_LEQ: case _MK_GEQ: case _MK_EQU: case _MK_NEQ: 
-	case '<': case '>':
-	  t = lookahead;
-	  MATCH(lookahead); catOrFun(); emit(t);
-	  continue;
-	default: 
-	  return;
+        case _MK_LEQ: case _MK_GEQ: case _MK_EQU: case _MK_NEQ: 
+        case '<': case '>':
+          t = lookahead;
+          MATCH(lookahead); catOrFun(); emit(t);
+          continue;
+        default: 
+          return;
       }
 }
 
@@ -1754,12 +1764,12 @@ booleanEval(void)
     comparisonEval();
     for(; ;) 
       switch (lookahead) {
-	case _MK_AND: case _MK_OR: 
-	  t = lookahead;
-	  MATCH(lookahead); comparisonEval(); emit(t);
-	  continue;
-	default: 
-	  return;
+        case _MK_AND: case _MK_OR: 
+          t = lookahead;
+          MATCH(lookahead); comparisonEval(); emit(t);
+          continue;
+        default: 
+          return;
       }
 }
 
@@ -1767,12 +1777,12 @@ static void
 assign(void)
 {
     booleanEval();                /* This matches assign to expr
-				     and relies on eval to catch it. */
+                                     and relies on eval to catch it. */
     if (lookahead == '=')
     {
-	MATCH('=');
-	assign();      /* Right associativity.*/
-	emit('=');
+        MATCH('=');
+        assign();      /* Right associativity.*/
+        emit('=');
     }
 }
 
@@ -1804,16 +1814,16 @@ getDouble(void)
     _MKParameterUnion val;
     switch (expression(&val)) {
       case MK_int:
-	val.rval = val.ival;
-	break;
+        val.rval = val.ival;
+        break;
       case MK_string: {
-	  val.rval = _MKStringToDouble(val.sval);
-	  break;
+          val.rval = _MKStringToDouble(val.sval);
+          break;
       }
       case MK_double:
-	break;
+        break;
       default:
-	error(MK_sfNumberErr);
+        error(MK_sfNumberErr);
     }
     return val.rval;
 }
@@ -1825,16 +1835,16 @@ getInt(void)
     _MKParameterUnion val;
     switch (expression(&val)) {
       case MK_double:
-	val.ival = val.rval;
-	break;
+        val.ival = val.rval;
+        break;
       case MK_string: {
-	  val.ival = _MKStringToInt(val.sval);
-	  break;
+          val.ival = _MKStringToInt(val.sval);
+          break;
       }
       case MK_int:
-	break;
+        break;
       default:
-	error(MK_sfNumberErr);
+        error(MK_sfNumberErr);
     }
     return val.ival;
 }
@@ -1846,17 +1856,17 @@ getBOOL(void)
     _MKParameterUnion val;
     switch (expression(&val)) {
       case MK_double:
-	val.ival = (val.rval == 0) ? 0 : 1;
-	break;
+        val.ival = (val.rval == 0) ? 0 : 1;
+        break;
       case MK_string: {
-	  val.ival = (_MKStringToInt(val.sval) == 0) ? 0 : 1;
-	  break;
+          val.ival = (_MKStringToInt(val.sval) == 0) ? 0 : 1;
+          break;
       }
       case MK_int:
-	val.ival = (val.ival == 0) ? 0 : 1;
-	break;
+        val.ival = (val.ival == 0) ? 0 : 1;
+        break;
       default:
-	error(MK_sfNumberErr);
+        error(MK_sfNumberErr);
     }
     return val.ival;
 }
@@ -1885,7 +1895,7 @@ _errorMsg(MKErrno errCode,char *ap)
       sprintf(s,"%s: ",[parsePtr->_name cString]);
     else
         sprintf(s,"%s, pg %d, line %d: ", [parsePtr->_name cString],
-	      parsePtr->_pageNo, parsePtr->_lineNo);
+              parsePtr->_pageNo, parsePtr->_lineNo);
     vsprintf(s + strlen(s),fmt,ap);
     return s;
 }
@@ -1973,13 +1983,13 @@ static NSString *_warning(BOOL potentiallyFatal,MKErrno errCode,va_list ap)
     //sb: scoreStreamPointer was scoreStream->buf_ptr
     //sb: (scoreStreamLength - scoreStreamPointer) was scoreStream->buf_left
     for (i = MIN(scoreStreamBuf_Base + scoreStreamPointer - errorLoc + (scoreStreamLength - scoreStreamPointer), LOOKAHEAD);
- 	 ((i > 0) && (*p != '\n')); i--) 
+          ((i > 0) && (*p != '\n')); i--) 
       sprintf(errS++,"%c",*p++);
     if (potentiallyFatal)
       if (scoreRPtr->_errCount != MAXINT)
-	if (++scoreRPtr->_errCount >= errAbort) {
-	    sprintf(errS,"\n%s",[_MKGetErrStr(MK_sfTooManyErrorsErr) cString]);
-	}
+        if (++scoreRPtr->_errCount >= errAbort) {
+            sprintf(errS,"\n%s",[_MKGetErrStr(MK_sfTooManyErrorsErr) cString]);
+        }
     return [NSString stringWithCString: s];
 }
 
@@ -2029,9 +2039,12 @@ static void loadFromStruct(register _MKScoreInStruct * scoreP)
 {
     register parseStateStruct * parseP;
     parseP = (parseStateStruct *) scoreP->_parsePtr;
+#ifdef DEBUG_PARSE_SCORE
+    printf("loadFromStruct\n");
+#endif
     if (!parseP) {
-	parsePtr = NULL;
-	return;
+        parsePtr = NULL;
+        return;
     }
     parsePtr = parseP;
     scoreStream = parseP->_stream;
@@ -2044,13 +2057,17 @@ static void loadFromStruct(register _MKScoreInStruct * scoreP)
 }
 
 static void storeInStruct(register _MKScoreInStruct * scoreP,
-			  register parseStateStruct * parseP)
+                          register parseStateStruct * parseP)
 {
     scoreP->_parsePtr = (void *) parseP;
+#ifdef DEBUG_PARSE_SCORE
+    printf("storeInStruct\n");
+#endif
     if (!parseP)
       return;
     parseP->_lookahead = lookahead;
     parseP->_stream = scoreStream;
+
     parseP->_pointer = scoreStreamPointer; //sb to help restore stream position
     parseP->_length = scoreStreamLength;//sb
     parseP->_buf_base = scoreStreamBuf_Base;//sb
@@ -2063,11 +2080,13 @@ static parseStateStruct *
 initParsePtr(NSData *aStream, BOOL TopLevelFile, NSString *name)
 {
 #define ATEOS() (parsePtr->_pointer >= parsePtr->_length)
-#define GETC_FROM_STREAM() ((const char *)[aStream bytes])[parsePtr->_pointer++]
+#define GETC_FROM_STREAM() (ATEOS()? EOF : ((const char *)[aStream bytes])[parsePtr->_pointer++])
 #define UNGETC_FROM_STREAM() (parsePtr->_pointer)--
     /* Do all kinds of things to get ready for the first parse. */
     int c; /* ungetc takes an int */
-
+#ifdef DEBUG_PARSE_SCORE
+    printf("initParsePtr\n");
+#endif
     _MK_MALLOC(parsePtr,parseStateStruct,1);
     parsePtr->_stream = aStream;
     parsePtr->_backwardsLink = NULL;
@@ -2079,17 +2098,15 @@ initParsePtr(NSData *aStream, BOOL TopLevelFile, NSString *name)
     scoreStreamLength = parsePtr->_length = [aStream length];  //sb
     scoreStreamBuf_Base = parsePtr->_buf_base = [aStream bytes]; //sb
     scoreStream = aStream;
-    if (ATEOS())
-        return NULL; /* sb... */
     c = GETC_FROM_STREAM(); /* NXGetc(aStream); */
     if ((!TopLevelFile) && ((char)c == FIRST_CHAR_SCOREMAGIC)) {
-	errorMsg(MK_sfNotHereErr,".playscore file");
-	/* Can't mix ASCII and binary formats */
+        errorMsg(MK_sfNotHereErr,".playscore file");
+        /* Can't mix ASCII and binary formats */
         UNGETC_FROM_STREAM();
         [parsePtr->_name autorelease];
         [parsePtr->_stream autorelease]; // LMS: I assume we need to do this.
-	free(parsePtr);
-	return NULL;
+        free(parsePtr);
+        return NULL;
     }
     /* Note: even if we didn't need to check the first char, we'd need
        to do a getc/ungetc to initialize the stream for error reporting. */
@@ -2109,15 +2126,25 @@ initScoreParsePtr(NSString * scorefilePath)
 {
     /* Used for include files */
     NSData *aStream;
+    BOOL binary = NO;
     /* FIXME Or do something smart with dates here */
+#ifdef DEBUG_PARSE_SCORE
+    printf("initScoreParsePtr\n");
+#endif
     aStream = _MKOpenFileStreamForReading(scorefilePath,
-			       _MK_BINARYSCOREFILEEXT, NO);
+                               _MK_BINARYSCOREFILEEXT, NO);
+    if (aStream) {
+        binary = YES;
+    }
     if (!aStream)
       aStream = _MKOpenFileStreamForReading(scorefilePath,
-				  _MK_SCOREFILEEXT, NO);
+                                  _MK_SCOREFILEEXT, NO);
     if (!aStream)
       return NULL;
     parsePtr = initParsePtr(aStream, NO, scorefilePath);
+    if (binary) {
+        scoreStreamPointer = parsePtr->_pointer = 4;
+    }
     if (!parsePtr)
       return NULL;
     return parsePtr;
@@ -2126,12 +2153,15 @@ initScoreParsePtr(NSString * scorefilePath)
 static parseStateStruct * 
 popFileStack(void)
 {
+#ifdef DEBUG_PARSE_SCORE
+    printf("popFileStack\n");
+#endif
     /* Close file, free this parsePtr record and pop file stack. */
     if (!parsePtr)
       return NULL;
     if (ISINCLUDEFILE(parsePtr)) { /* Don't close top level file. */
-	[parsePtr->_stream release];
-//	close(parsePtr->);
+        [parsePtr->_stream release];
+//        close(parsePtr->);
     }
 //    free(parsePtr->_name);
     [parsePtr->_name autorelease];
@@ -2151,7 +2181,7 @@ _MKScoreInStruct * _MKFinishScoreIn(_MKScoreInStruct *scorefileRPtr)
     if (!scoreRPtr) 
       return NULL;
     if (scoreRPtr->_binary)
-	[scoreRPtr->_binaryIndexedObjects release];
+        [scoreRPtr->_binaryIndexedObjects release];
     parsePtr = (parseStateStruct *) scoreRPtr->_parsePtr;
     while (parsePtr)
       parsePtr = popFileStack();
@@ -2159,7 +2189,7 @@ _MKScoreInStruct * _MKFinishScoreIn(_MKScoreInStruct *scorefileRPtr)
     [scoreRPtr->_noteTagTable release];
     [scoreRPtr->_aNote release];
     if (scoreRPtr->_freeStream) {
-	[scoreRPtr->printStream release];
+        [scoreRPtr->printStream release];
     }
 #ifndef WIN32
     setstate(defaultStateArr); /* Make libc forget our ranState */
@@ -2174,74 +2204,124 @@ _MKScoreInStruct * _MKFinishScoreIn(_MKScoreInStruct *scorefileRPtr)
 #define abortBinary() longjmp(begin,eofLongjmp)
 
 #define CHECKEOS() if (parsePtr->_pointer >= parsePtr->_length) abortBinary() /* NXAtEOS(parsePtr->_stream) */
+#define CHECKEOS_INHEADER() if (scoreStreamPointer >= scoreStreamLength) abortBinary() /* NXAtEOS(parsePtr->_stream) */
 
-static short getBinaryShort(void)
+static short getBinaryShort(BOOL inHeader)
 {
     short rtn;
-    if (parsePtr->_pointer + sizeof(short) > parsePtr->_length) abortBinary(); //sb
-    [parsePtr->_stream getBytes: &rtn range: NSMakeRange(parsePtr->_pointer,sizeof(short))];
-    parsePtr->_pointer += sizeof(short);
+    if (inHeader) {
+        if (scoreStreamPointer + sizeof(short) > scoreStreamLength) abortBinary(); //sb
+        [parsePtr->_stream getBytes: &rtn range: NSMakeRange(scoreStreamPointer,sizeof(short))];
+        scoreStreamPointer += sizeof(short);
+        rtn = NSSwapBigShortToHost(rtn);
+        CHECKEOS_INHEADER();
+    }
+    else {
+        if (parsePtr->_pointer + sizeof(short) > parsePtr->_length) abortBinary(); //sb
+        [parsePtr->_stream getBytes: &rtn range: NSMakeRange(parsePtr->_pointer,sizeof(short))];
+        parsePtr->_pointer += sizeof(short);
 //    NXRead(parsePtr->_stream, &rtn, sizeof(short));
-    rtn = NSSwapBigShortToHost(rtn);
-    CHECKEOS();
+        rtn = NSSwapBigShortToHost(rtn);
+        CHECKEOS();
+    }
     return rtn;
 }
 
-static int getBinaryInt(void)
+static int getBinaryInt(BOOL inHeader)
 {
     int rtn;
-    if (parsePtr->_pointer + sizeof(int) > parsePtr->_length)
-        abortBinary(); //sb
-    [parsePtr->_stream getBytes: &rtn range: NSMakeRange(parsePtr->_pointer,sizeof(int))];
-    parsePtr->_pointer += sizeof(int);
+    if (inHeader) {
+        if (scoreStreamPointer + sizeof(int) > scoreStreamLength)
+            abortBinary(); //sb
+        [parsePtr->_stream getBytes: &rtn range: NSMakeRange(scoreStreamPointer,sizeof(int))];
+        scoreStreamPointer += sizeof(int);
+        rtn = NSSwapBigIntToHost(rtn);
+        CHECKEOS_INHEADER();
+    }
+    else {
+        if (parsePtr->_pointer + sizeof(int) > parsePtr->_length)
+            abortBinary(); //sb
+        [parsePtr->_stream getBytes: &rtn range: NSMakeRange(parsePtr->_pointer,sizeof(int))];
+        parsePtr->_pointer += sizeof(int);
 //    NXRead(parsePtr->_stream, &rtn, sizeof(int));
-    rtn = NSSwapBigIntToHost(rtn);
-    CHECKEOS();
+        rtn = NSSwapBigIntToHost(rtn);
+        CHECKEOS();
+    }
     return rtn;
 }
 
-static double getBinaryDouble(void)
+static double getBinaryDouble(BOOL inHeader)
 {
     double rtn;
     NSSwappedDouble sdbl; // was NSSwappedFloat
-
-    if (parsePtr->_pointer + sizeof(sdbl) > parsePtr->_length)
-        abortBinary(); //sb
-    [parsePtr->_stream getBytes: &sdbl range: NSMakeRange(parsePtr->_pointer,sizeof(sdbl))];
-    parsePtr->_pointer += sizeof(sdbl);
+    if (inHeader) {
+        if (scoreStreamPointer + sizeof(sdbl) > scoreStreamLength)
+            abortBinary(); //sb
+        [parsePtr->_stream getBytes: &sdbl range: NSMakeRange(scoreStreamPointer,sizeof(sdbl))];
+        scoreStreamPointer += sizeof(sdbl);
+        rtn = NSSwapBigDoubleToHost(sdbl);
+        CHECKEOS_INHEADER();
+    }
+    else {
+        if (parsePtr->_pointer + sizeof(sdbl) > parsePtr->_length)
+            abortBinary(); //sb
+        [parsePtr->_stream getBytes: &sdbl range: NSMakeRange(parsePtr->_pointer,sizeof(sdbl))];
+        parsePtr->_pointer += sizeof(sdbl);
 //    NXRead(parsePtr->_stream, &sdbl, sizeof(sdbl));
-    rtn = NSSwapBigDoubleToHost(sdbl);
-    CHECKEOS();
+        rtn = NSSwapBigDoubleToHost(sdbl);
+        CHECKEOS();
+    }
     return rtn;
 }
 
-static float getBinaryFloat(void)
+static float getBinaryFloat(BOOL inHeader)
 {
     float rtn;
     NSSwappedFloat sfl;
-    if (parsePtr->_pointer + sizeof(sfl) > parsePtr->_length) abortBinary(); //sb
-    [parsePtr->_stream getBytes: &sfl range: NSMakeRange(parsePtr->_pointer,sizeof(sfl))];
-    parsePtr->_pointer += sizeof(sfl);
+    if (inHeader) {
+        if (scoreStreamPointer + sizeof(sfl) > scoreStreamLength) abortBinary();
+        [parsePtr->_stream getBytes: &sfl range: NSMakeRange(scoreStreamPointer,sizeof(sfl))];
+        scoreStreamPointer += sizeof(sfl);
+        rtn = NSSwapBigFloatToHost(sfl);
+        CHECKEOS_INHEADER();
+    }
+    else {
+        if (parsePtr->_pointer + sizeof(sfl) > parsePtr->_length) abortBinary(); //sb
+        [parsePtr->_stream getBytes: &sfl range: NSMakeRange(parsePtr->_pointer,sizeof(sfl))];
+        parsePtr->_pointer += sizeof(sfl);
 //    NXRead(parsePtr->_stream, &sfl, sizeof(sfl));
-    rtn = NSSwapBigFloatToHost(sfl);
-    CHECKEOS();
+        rtn = NSSwapBigFloatToHost(sfl);
+        CHECKEOS();
+    }
     return rtn;
 }
 
-static NSString *getBinaryString(BOOL install)
+static NSString *getBinaryString(BOOL install, BOOL inHeader)
     /* If install is NO, we're running "fast and dangerous" */
 {
     register int c;
-    if (parsePtr->_pointer >= parsePtr->_length) abortBinary(); //sb: we can't afford to run off end
-    c = ((char *)[parsePtr->_stream bytes])[parsePtr->_pointer++]; //sb: should get character, I hope!
+    if (inHeader) {
+        if (scoreStreamPointer >= scoreStreamLength) abortBinary();
+        c = ((char *)[parsePtr->_stream bytes])[scoreStreamPointer++];
+        NEWTOKEN(c);
+        do {
+            CHECKEOS_INHEADER();
+        } while ( (c=NEXTTCHAR()) != '\0'); 
+        ENDTOKEN();
+    }
+    else {
+        if (parsePtr->_pointer >= parsePtr->_length) abortBinary(); //sb: we can't afford to run off end
+        c = ((char *)[parsePtr->_stream bytes])[parsePtr->_pointer++]; //sb: should get character, I hope!
 //    c = (int)NXGetc(parsePtr->_stream);
-    NEWTOKEN(c);
-    do {
-	CHECKEOS();
-    } while ( (c=NEXTTCHAR()) != '\0'); 
-    ENDTOKEN();
-    if (install)
-        tokenVal->sval = [[NSString stringWithCString:tokenBuf] retain];//sb: was (char *)NXUniqueString(tokenBuf); 
+        NEWTOKEN(c);
+        do {
+            CHECKEOS();
+        } while ( (c=NEXTTCHAR()) != '\0'); 
+        ENDTOKEN();
+    }
+    if (install) {
+        tokenVal->sval = [[NSString stringWithCString:tokenBuf] retain];//sb: was (char *)NXUniqueString(tokenBuf);
+    }
     /* We can't anticipate where the damn thing will end up so we can't
        do garbage collection. So we make it unique to avoid accumulating
        garbage. At some point in the future, might want to really move
@@ -2260,10 +2340,13 @@ static id getNullObject(void)
     return nullObject;
 }
 
-static id getBinaryIndexedObject(void)
+static id getBinaryIndexedObject(BOOL inHeader)
     /* Get index and indexed object */
 {
-    register short index = getBinaryShort();
+    register short index = getBinaryShort(inHeader);
+#ifdef DEBUG_PARSE_SCORE
+    printf("getBinaryIndexedObject - number of objs = %d, index = %d\n",[scoreRPtr->_binaryIndexedObjects count],index);
+#endif
     tokenVal->symbol = [scoreRPtr->_binaryIndexedObjects objectAtIndex:index-1];
 //      NX_ADDRESS(scoreRPtr->_binaryIndexedObjects)[index-1];
     if (tokenVal->symbol == nullObject)
@@ -2283,94 +2366,123 @@ static id getBinaryIndexedObjectForIndex(short index)
 }
 #endif
 
-static short getBinarySymbol(void)
+static short getBinarySymbol(BOOL inHeader)
     /* Read token and do lookup in symbol table. Set tokenVal as 
        a side-effect */
 {
     unsigned short tok;
-#define PPSTREAMGETC() (parsePtr->_pointer >= parsePtr->_length)? EOF : ((char *)[parsePtr->_stream bytes])[parsePtr->_pointer++]
+#define PPSTREAMGETC() \
+        ((parsePtr->_pointer >= parsePtr->_length) ? \
+        EOF : ((char *)[parsePtr->_stream bytes])[parsePtr->_pointer++])
+#define PPSTREAMGETC_INHEADER() \
+        ((scoreStreamPointer >= scoreStreamLength) ? \
+        EOF : ((char *)[parsePtr->_stream bytes])[scoreStreamPointer++])
     register int c;
-    c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
-    CHECKEOS();
-    NEWTOKEN(c);
-    while ((c = NEXTTCHAR()) != '\0')
-      CHECKEOS();
+    if (inHeader) {
+        c = (int)PPSTREAMGETC_INHEADER();
+        CHECKEOS_INHEADER();
+        NEWTOKEN(c);
+        while ((c = NEXTTCHAR()) != '\0')
+          CHECKEOS_INHEADER();
+    }
+    else {
+        c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
+        CHECKEOS();
+        NEWTOKEN(c);
+        while ((c = NEXTTCHAR()) != '\0')
+          CHECKEOS();
+    }
     ENDTOKEN();
     tokenVal->symbol = 
       _MKNameTableGetObjectForName(scoreRPtr->_symbolTable,[NSString stringWithCString:tokenBuf],nil,
-				   &tok);
+                                   &tok);
+#ifdef DEBUG_PARSE_SCORE
+    printf("token found is %s\n",tokenBuf);
+#endif
     if (tokenVal->symbol || tok)        /* It's an object or keyword */
       lookahead = INT(tok);
     else lookahead = INT(_MK_undef);
     return lookahead;
 }
 
-static double getBinaryVarValue(void)
+static double getBinaryVarValue(BOOL inHeader)
 {
     register _MKParameter *par;
-    getBinarySymbol();
+    getBinarySymbol(inHeader);
     par = _MKSFVarGetParameter(tokenVal->symbol);
     return _MKParAsDouble(par);
 }
 
-static id getBinaryWaveTableDecl(void)
+static id getBinaryWaveTableDecl(BOOL inHeader)
 {
     register int c;
     id rtn;
-    c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
-    CHECKEOS();
+    if (inHeader) {
+        c = (int)PPSTREAMGETC_INHEADER();
+        CHECKEOS_INHEADER();
+    }
+    else {
+        c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
+        CHECKEOS();
+    }
     if (c == '\0') { /* MKPartials */
 #       define INITPTR(_cur,_base) _cur = _base - 1
 #       define FIRSTPHASE() (curPoint == 0)
 #       define NPTS() (((int)(dataCurX - dataX)) + 1)
-	int curPoint = NOPOINT;
-	BOOL varyingPhase = NO;
-	double phaseConstant = 0;
-	/* Pointers are incremented before assignment. */
-	INITPTR(dataCurX,dataX); /* HNum */
-	INITPTR(dataCurY,dataY); /* Amp */
-	INITPTR(dataCurZ,dataZ); /* Phase */
-	for (; ;) {
-	    curPoint++;
-            c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
-	    CHECKEOS();
-	    if (c == '\0')
-	      break;
-	    if (dataCurX >= dataXEnd) {
-		expandEnvBuf(&dataX,&dataCurX,&dataXEnd);
-		expandEnvBuf(&dataY,&dataCurY,&dataYEnd);
-		expandEnvBuf(&dataZ,&dataCurZ,&dataZEnd);
-	    }
-	    SETDATAVAL(dataCurX,getBinaryDouble());
-	    SETDATAVAL(dataCurY,getBinaryDouble());
-	    if (c == '\3') {
-		SETDATAVAL(dataCurZ,getBinaryDouble());
-		if (FIRSTPHASE())
-		  phaseConstant = *dataCurZ;
-		else varyingPhase = YES;
-	    }
-	    else if (FIRSTPHASE())
-	      SETDATAVAL(dataCurZ,phaseConstant);
-	    else {
-		double x = *dataCurZ;
-		SETDATAVAL(dataCurZ,x); /* Use previous value. */
-	    }
-	}
-	rtn = [MKGetPartialsClass() new];
-	[rtn setPartialCount:NPTS()
-       freqRatios:dataX
-       ampRatios:dataY
-       phases:(varyingPhase) ? dataZ : NULL 
-       orDefaultPhase:phaseConstant];
+        int curPoint = NOPOINT;
+        BOOL varyingPhase = NO;
+        double phaseConstant = 0;
+        /* Pointers are incremented before assignment. */
+        INITPTR(dataCurX,dataX); /* HNum */
+        INITPTR(dataCurY,dataY); /* Amp */
+        INITPTR(dataCurZ,dataZ); /* Phase */
+        for (; ;) {
+            curPoint++;
+            if (inHeader) {
+                c = (int)PPSTREAMGETC_INHEADER();//sb: was NXGetc(parsePtr->_stream);
+                CHECKEOS_INHEADER();
+            }
+            else {
+                c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
+                CHECKEOS();
+            }
+            if (c == '\0')
+              break;
+            if (dataCurX >= dataXEnd) {
+                expandEnvBuf(&dataX,&dataCurX,&dataXEnd);
+                expandEnvBuf(&dataY,&dataCurY,&dataYEnd);
+                expandEnvBuf(&dataZ,&dataCurZ,&dataZEnd);
+            }
+            SETDATAVAL(dataCurX,getBinaryDouble(inHeader));
+            SETDATAVAL(dataCurY,getBinaryDouble(inHeader));
+            if (c == '\3') {
+                SETDATAVAL(dataCurZ,getBinaryDouble(inHeader));
+                if (FIRSTPHASE())
+                  phaseConstant = *dataCurZ;
+                else varyingPhase = YES;
+            }
+            else if (FIRSTPHASE())
+              SETDATAVAL(dataCurZ,phaseConstant);
+            else {
+                double x = *dataCurZ;
+                SETDATAVAL(dataCurZ,x); /* Use previous value. */
+            }
+        }
+        rtn = [MKGetPartialsClass() new];
+        [rtn setPartialCount:NPTS()
+            freqRatios:dataX
+            ampRatios:dataY
+            phases:(varyingPhase) ? dataZ : NULL 
+            orDefaultPhase:phaseConstant];
     }
     else { /* MKSamples */
-	rtn = [MKGetSamplesClass() new];
-	[(MKSamples *) rtn readSoundfile:getBinaryString(NO)];
+        rtn = [MKGetSamplesClass() new];
+        [(MKSamples *) rtn readSoundfile:getBinaryString(NO, inHeader)];
     }
     return rtn;
 }
 
-static id getBinaryEnvelopeDecl(void)
+static id getBinaryEnvelopeDecl(BOOL inHeader)
 {
     register int c;
     id rtn;
@@ -2388,34 +2500,40 @@ static id getBinaryEnvelopeDecl(void)
     INITPTR(dataCurY,dataY); /* Amp */
     INITPTR(dataCurZ,dataZ); /* Phase */
     for (; ;) {
-        c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
-	CHECKEOS();
-	if (c == '\1') {
-	    stickPoint = curPoint;
-	    continue;
-	}
-	if (c == '\0')
-	  break;
-	curPoint++;
-	if (dataCurX >= dataXEnd) {
-	    expandEnvBuf(&dataX,&dataCurX,&dataXEnd);
-	    expandEnvBuf(&dataY,&dataCurY,&dataYEnd);
-	    expandEnvBuf(&dataZ,&dataCurZ,&dataZEnd);
-	}
-	SETDATAVAL(dataCurX,getBinaryDouble());
-	SETDATAVAL(dataCurY,getBinaryDouble());
-	if (c == '\3') {
-	    SETDATAVAL(dataCurZ,getBinaryDouble());
-	    if (FIRSTSMOOTHING())
-	      defaultSmoothing = *dataCurZ;
-	    else varyingSmoothing = YES;
-	}
-	else if (FIRSTSMOOTHING())
-	  SETDATAVAL(dataCurZ,defaultSmoothing);
-	else {
-	    double x = *dataCurZ;
-	    SETDATAVAL(dataCurZ,x); /* Use previous value. */
-	}
+        if (inHeader) {
+            c = (int)PPSTREAMGETC_INHEADER();//sb: was NXGetc(parsePtr->_stream);
+            CHECKEOS_INHEADER();
+        }
+        else {
+            c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
+            CHECKEOS();
+        }
+        if (c == '\1') {
+            stickPoint = curPoint;
+            continue;
+        }
+        if (c == '\0')
+          break;
+        curPoint++;
+        if (dataCurX >= dataXEnd) {
+            expandEnvBuf(&dataX,&dataCurX,&dataXEnd);
+            expandEnvBuf(&dataY,&dataCurY,&dataYEnd);
+            expandEnvBuf(&dataZ,&dataCurZ,&dataZEnd);
+        }
+        SETDATAVAL(dataCurX,getBinaryDouble(inHeader));
+        SETDATAVAL(dataCurY,getBinaryDouble(inHeader));
+        if (c == '\3') {
+            SETDATAVAL(dataCurZ,getBinaryDouble(inHeader));
+            if (FIRSTSMOOTHING())
+              defaultSmoothing = *dataCurZ;
+            else varyingSmoothing = YES;
+        }
+        else if (FIRSTSMOOTHING())
+          SETDATAVAL(dataCurZ,defaultSmoothing);
+        else {
+            double x = *dataCurZ;
+            SETDATAVAL(dataCurZ,x); /* Use previous value. */
+        }
     }
     rtn = [MKGetEnvelopeClass() new];
     [rtn setPointCount:curPoint + 1
@@ -2429,13 +2547,13 @@ static id getBinaryEnvelopeDecl(void)
     return rtn;
 }
 
-static id getBinaryObjectDecl(void)
+static id getBinaryObjectDecl(BOOL inHeader)
 {
 #   define WILD 0    
     id rtn;
     id aClass;
     register int c;
-    if (!(aClass = _MK_FINDCLASS(getBinaryString(NO))))
+    if (!(aClass = _MK_FINDCLASS(getBinaryString(NO, inHeader))))
       errorMsg(MK_sfCantFindClass,tokenBuf);
     /* The following cases are in case the guy wrote an env or wave out
        as a normal object. SPECIAL-WAVE-ENV-CASE. */
@@ -2445,24 +2563,30 @@ static id getBinaryObjectDecl(void)
       since these may use ']' in their description.
       */
     if (!strcmp("Envelope",tokenBuf)) {
-	return getBinaryEnvelopeDecl();
+        return getBinaryEnvelopeDecl(inHeader);
     }
     if ((!strcmp("MKPartials",tokenBuf)) ||
-	(!strcmp("Samples",tokenBuf))) {
-	return getBinaryWaveTableDecl();
+        (!strcmp("Samples",tokenBuf))) {
+        return getBinaryWaveTableDecl(inHeader);
     }
     if (aClass) {
-	rtn = [aClass new];
+        rtn = [aClass new];
     }
     if (!aClass || ![rtn respondsToSelector:@selector(readASCIIStream:)]) {
-	do {
-            c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
-	    CHECKEOS();
-	    if (lookahead == ']')
-	      break;
-	} while (lookahead != ']');
-	errorMsg(MK_notScorefileObjectTypeErr,tokenBuf);
-	return getNullObject();
+        do {
+            if (inHeader) {
+                c = (int)PPSTREAMGETC_INHEADER();
+                CHECKEOS_INHEADER();
+            }
+            else {
+                c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
+                CHECKEOS();
+            }
+            if (lookahead == ']')
+              break;
+        } while (lookahead != ']');
+        errorMsg(MK_notScorefileObjectTypeErr,tokenBuf);
+        return getNullObject();
     }
     [rtn readASCIIStream:scoreStream];
     c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
@@ -2477,9 +2601,9 @@ static void addIndexedObject(id obj)
     [scoreRPtr->_binaryIndexedObjects addObject:obj];
 }
 
-static id getBinaryDataDecl(_MKToken declType)
+static id getBinaryDataDecl(_MKToken declType, BOOL inHeader)
 {
-    NSString *nameString = getBinaryString(NO);
+    NSString *nameString = getBinaryString(NO, inHeader);
 //    register char *name;
     register id obj;
 /*sb: removed following 2 lines, as I think they try to duplicate the string
@@ -2489,124 +2613,144 @@ static id getBinaryDataDecl(_MKToken declType)
 //      name = _MKMakeStr(name);
     switch (declType) {
       case _MK_waveTableDecl:
-	obj = getBinaryWaveTableDecl();
-	break;
+        obj = getBinaryWaveTableDecl(inHeader);
+        break;
       case _MK_envelopeDecl:
-	obj = getBinaryEnvelopeDecl();
-	break;
+        obj = getBinaryEnvelopeDecl(inHeader);
+        break;
       default:
-	obj = getBinaryObjectDecl();
-	break;
+        obj = getBinaryObjectDecl(inHeader);
+        break;
     }
     if ([nameString length]) { //sb: was *name != '\0'
-	addLocalSymbol(nameString,obj,MK_waveTable);
-	MKNameObject(nameString,obj);
-	addIndexedObject(obj);
+        addLocalSymbol(nameString,obj,MK_waveTable);
+        MKNameObject(nameString,obj);
+        addIndexedObject(obj);
         [obj release];/*sb: retained by scoreRPtr->_binaryIndexedObjects array */
-//	free(name);
+//        free(name);
     }
     return obj;
 }
 
 static short addParameter(NSString *name);
 
-static short getAppPar(void)
+static short getAppPar(BOOL inHeader)
 {
-    getBinarySymbol();
+    getBinarySymbol(inHeader);
     if (lookahead == INT(_MK_undef))
       return addParameter([NSString stringWithCString:tokenBuf]);
     else return _MKGetParNamePar(tokenVal->symbol);
     /*** FIXME BINARY Need to check for non-params here. ***/ 
 }
 
-static void getBinaryParameters(id aNote)
+static void getBinaryParameters(id aNote, BOOL inHeader)
 {
     unsigned short parHdr[2];
 #   define PARAM parHdr[0]
 #   define TYPE  parHdr[1]
-#   define HANDLEAPPPAR() if (PARAM == MK_appPars) PARAM = getAppPar()
-    for (; ;) {
-//	NXRead(parsePtr->_stream, parHdr, sizeof(unsigned short) * 2);
-        if (parsePtr->_pointer + sizeof(unsigned short) * 2 > parsePtr->_length) {
-            [parsePtr->_stream getBytes:parHdr range:NSMakeRange(parsePtr->_pointer,sizeof(unsigned short) * 2)];
-            }
-        parsePtr->_pointer += sizeof(unsigned short) * 2;//sb: may increment past end of stream, but this is caught later
+#   define HANDLEAPPPAR() if (PARAM == MK_appPars) PARAM = getAppPar(inHeader)
 
+#ifdef DEBUG_PARSE_SCORE
+    printf("getBinaryParameters\n");
+#endif
+
+    for (; ;) {
+//        NXRead(parsePtr->_stream, parHdr, sizeof(unsigned short) * 2);
+        if (inHeader) {
+            if (scoreStreamPointer + sizeof(unsigned short) * 2 <= scoreStreamLength) {
+                [parsePtr->_stream getBytes:parHdr 
+                                      range:NSMakeRange(scoreStreamPointer,sizeof(unsigned short) * 2)];
+            }
+            scoreStreamPointer += sizeof(unsigned short) * 2;
+        }
+        else {
+            if (parsePtr->_pointer + sizeof(unsigned short) * 2 <= parsePtr->_length) {
+                [parsePtr->_stream getBytes:parHdr
+                                      range:NSMakeRange(parsePtr->_pointer,sizeof(unsigned short) * 2)];
+            }
+            parsePtr->_pointer += sizeof(unsigned short) * 2;//sb: may inc past end of stream, but this is caught later
+        }
         PARAM = NSSwapBigShortToHost(PARAM);
-	TYPE = NSSwapBigShortToHost(TYPE);
-	if (PARAM == MAXSHORT) /* High order bits of MAXINT */
-	  break;
-	CHECKEOS();
-	switch (TYPE) {
-	  case MK_string: {
-	      register NSString *str = getBinaryString(YES);
-	      HANDLEAPPPAR();
-	      MKSetNoteParToString(aNote,PARAM,str);
-	      break;
-	  }
-	  case _MK_typedVar: {
-	      register double dbl = getBinaryVarValue();
-	      HANDLEAPPPAR();
-	      MKSetNoteParToDouble(aNote,PARAM,dbl);
-	      break;
-	  }
-	  case MK_int: {
-	      register int i = getBinaryInt();
-	      HANDLEAPPPAR();
-	      MKSetNoteParToInt(aNote,PARAM,i);
-	      break;
-	  }
-	  case MK_double: {
-	      register double dbl = getBinaryDouble();
-	      HANDLEAPPPAR();
-	      MKSetNoteParToDouble(aNote,PARAM,dbl);
-	      break;
-	  }
-	  case MK_waveTable: 
-	    getBinaryIndexedObject();
-	    HANDLEAPPPAR();
-	    if (tokenVal->symbol)
-	      MKSetNoteParToWaveTable(aNote,PARAM,tokenVal->symbol);
-	    break;
-	  case MK_object:
-	    getBinaryIndexedObject();
-	    HANDLEAPPPAR();
-	    if (tokenVal->symbol)
-	      MKSetNoteParToObject(aNote,PARAM,tokenVal->symbol);
-	    break;
-	  case MK_envelope:
-	    getBinaryIndexedObject();
-	    HANDLEAPPPAR();
-	    if (tokenVal->symbol)
-	      MKSetNoteParToEnvelope(aNote,PARAM,tokenVal->symbol);
-	    break;
-	  case _MK_waveTableDecl:
-	    {
-		register id tmp = getBinaryDataDecl(_MK_waveTableDecl);
-		HANDLEAPPPAR();
-		if (tmp)
-		  MKSetNoteParToWaveTable(aNote,PARAM,tmp);
-		break;
-	    }
-	  case _MK_objectDecl:
-	    {
-		register id tmp = getBinaryDataDecl(_MK_objectDecl);
-		HANDLEAPPPAR();
-		if (tmp)
-		  MKSetNoteParToObject(aNote,PARAM,tmp);
-		break;
-	    }
-	  case _MK_envelopeDecl:
-	    {
-		register id tmp = getBinaryDataDecl(_MK_envelopeDecl);
-		HANDLEAPPPAR();
-		if (tmp)
-		  MKSetNoteParToEnvelope(aNote,PARAM,tmp);
-		break;
-	    }
-	  default:
-	    break;
-	}
+        TYPE = NSSwapBigShortToHost(TYPE);
+        if (PARAM == MAXSHORT) {/* High order bits of MAXINT */
+          break;
+        }
+        if (inHeader) {
+            CHECKEOS();
+        }
+        else {
+            CHECKEOS_INHEADER();
+        }
+        switch (TYPE) {
+          case MK_string: { 
+              register NSString *str = getBinaryString(YES, inHeader);
+              HANDLEAPPPAR();
+              MKSetNoteParToString(aNote,PARAM,str);
+              break;
+          }
+          case _MK_typedVar: {
+              register double dbl = getBinaryVarValue(inHeader);
+              HANDLEAPPPAR();
+              MKSetNoteParToDouble(aNote,PARAM,dbl);
+              break;
+          }
+          case MK_int: {
+              register int i = getBinaryInt(inHeader);
+              HANDLEAPPPAR();
+              MKSetNoteParToInt(aNote,PARAM,i);
+              break;
+          }
+          case MK_double: {
+              register double dbl = getBinaryDouble(inHeader);
+              HANDLEAPPPAR();
+              MKSetNoteParToDouble(aNote,PARAM,dbl);
+              break;
+          }
+          case MK_waveTable:
+            getBinaryIndexedObject(inHeader);
+            HANDLEAPPPAR();
+            if (tokenVal->symbol)
+              MKSetNoteParToWaveTable(aNote,PARAM,tokenVal->symbol);
+            break;
+          case MK_object:
+            getBinaryIndexedObject(inHeader);
+            HANDLEAPPPAR();
+            if (tokenVal->symbol)
+              MKSetNoteParToObject(aNote,PARAM,tokenVal->symbol);
+            break;
+          case MK_envelope:
+            getBinaryIndexedObject(inHeader);
+            HANDLEAPPPAR();
+            if (tokenVal->symbol)
+              MKSetNoteParToEnvelope(aNote,PARAM,tokenVal->symbol);
+            break;
+          case _MK_waveTableDecl:
+            {
+                register id tmp = getBinaryDataDecl(_MK_waveTableDecl,inHeader);
+                HANDLEAPPPAR();
+                if (tmp)
+                  MKSetNoteParToWaveTable(aNote,PARAM,tmp);
+                break;
+            }
+          case _MK_objectDecl:
+            {
+                register id tmp = getBinaryDataDecl(_MK_objectDecl, inHeader);
+                HANDLEAPPPAR();
+                if (tmp)
+                  MKSetNoteParToObject(aNote,PARAM,tmp);
+                break;
+            }
+          case _MK_envelopeDecl:
+            {
+                register id tmp = getBinaryDataDecl(_MK_envelopeDecl, inHeader);
+                HANDLEAPPPAR();
+                if (tmp)
+                  MKSetNoteParToEnvelope(aNote,PARAM,tmp);
+                break;
+            }
+          default:
+            break;
+        }
     }
 }
 
@@ -2623,7 +2767,7 @@ static void
 declErrCheck(const char *typeS,short declaredType)
 {
     if (lookahead == INT(_MK_undef))
-	return;
+        return;
     else if (lookahead == INT(declaredType))
       warning(MK_sfDuplicateDeclErr,tokenBuf);
     else if (lookahead > INT(_MK_undef))
@@ -2641,27 +2785,33 @@ static id installPart(NSString *name)
 
 static void
 partDecl(void)
-{	
+{        
+#ifdef DEBUG_PARSE_SCORE
+    printf("partDecl - scoreStreamPointer = %d, parsePtr->_pointer = %d\n",scoreStreamPointer,parsePtr->_pointer);
+#endif
     MATCH(_MK_part);
     do {    
-	if (lookahead == INT(_MK_partInstance)) {
-	    MATCH(_MK_partInstance);
-	    /* We allow duplicate declarations here.*/
-	    continue;   
-	}
-	declErrCheck(_MKTokNameNoCheck(_MK_part),0);
-	installPart([NSString stringWithCString:tokenBuf]);
-	MATCH(lookahead);
+        if (lookahead == INT(_MK_partInstance)) {
+            MATCH(_MK_partInstance);
+            /* We allow duplicate declarations here.*/
+            continue;   
+        }
+        declErrCheck(_MKTokNameNoCheck(_MK_part),0);
+        installPart([NSString stringWithCString:tokenBuf]);
+        MATCH(lookahead);
     }  while (match(','));
 }
 
 static void
-binaryPartDecl(void)
-{	
-    getBinarySymbol();
+binaryPartDecl(BOOL inHeader)
+{        
+#ifdef DEBUG_PARSE_SCORE
+    printf("binaryPartDecl\n");
+#endif
+    getBinarySymbol(inHeader);
     if (lookahead == INT(_MK_partInstance)) {  /* Already declared */
-	/* I think this is ok -- it's a merge of existing parts. */
-	return;
+        /* I think this is ok -- it's a merge of existing parts. */
+        return;
     }
     /* We don't need a declErrCheck here. It actually doesn't matter what
        we call the part. The collissions are resolved when it's written to
@@ -2682,8 +2832,8 @@ static void installGlobalLocally(id obj,unsigned short type)
 {
     NSString *s = _MKGetGlobalName(obj);
     _MKNameTableAddName(scoreRPtr->_symbolTable,(NSString *)s,
-			nil,obj,
-			type | (_MK_NOFREESTRINGBIT | _MK_BACKHASHBIT), NO);
+                        nil,obj,
+                        type | (_MK_NOFREESTRINGBIT | _MK_BACKHASHBIT), NO);
     /* Probably don't really need backhash here, but can't hurt. */
 }
 
@@ -2707,23 +2857,23 @@ static void putGlobal()
     unsigned short tok;
     MATCH(lookahead);
     do {
-	if (lookahead == _MK_undef)
-	  error(MK_sfUndeclaredErr,"symbol",curToken());
-	if (_MKGetNamedGlobal([NSString stringWithCString:tokenBuf],&tok))
-	  error(MK_sfMulDefErr,curToken(),_MKTokName((int)tok));
-	switch (lookahead) { 
-	  case _MK_typedVar:
-	  case _MK_untypedVar:
-	  case MK_object:
-	  case MK_waveTable:
-	  case MK_envelope:
-	    break;
-	  default:
-	    error(MK_sfGlobalErr,_MKTokName(lookahead));
-	}
-	installLocalGlobally([NSString stringWithCString:tokenBuf],tokenVal->symbol,
-			     (unsigned short)lookahead);
-	MATCH(lookahead);
+        if (lookahead == _MK_undef)
+          error(MK_sfUndeclaredErr,"symbol",curToken());
+        if (_MKGetNamedGlobal([NSString stringWithCString:tokenBuf],&tok))
+          error(MK_sfMulDefErr,curToken(),_MKTokName((int)tok));
+        switch (lookahead) { 
+          case _MK_typedVar:
+          case _MK_untypedVar:
+          case MK_object:
+          case MK_waveTable:
+          case MK_envelope:
+            break;
+          default:
+            error(MK_sfGlobalErr,_MKTokName(lookahead));
+        }
+        installLocalGlobally([NSString stringWithCString:tokenBuf],tokenVal->symbol,
+                             (unsigned short)lookahead);
+        MATCH(lookahead);
     } while (match(','));
 }
 
@@ -2734,51 +2884,51 @@ static void getGlobal()
     short type;
     MATCH(lookahead);
     do {
-	switch (lookahead) { 
-	  case _MK_doubleVarDecl: /* Optional decl type */
-	  case _MK_stringVarDecl: 
-	  case _MK_intVarDecl:  
-	  case _MK_waveVarDecl:
-	  case _MK_envVarDecl:
-	  case _MK_objVarDecl:
-	    type = _MK_typedVar;
-	    MATCH(lookahead);
-	    break;
-	  case _MK_varDecl:       
-	    type = _MK_untypedVar;
-	    MATCH(lookahead);
-	    break;
-	  case _MK_objectDecl:
-	    type = MK_object;
-	    MATCH(lookahead);
-	    break;
-	  case _MK_waveTableDecl:
-	    type = MK_waveTable;
-	    MATCH(lookahead);
-	    break;
-	  case _MK_envelopeDecl:
-	    type = MK_envelope; 
-	    MATCH(lookahead);
-	    break;
-	  case _MK_typedVar:     /* Otherwise, it's the global itself. */
-	  case _MK_untypedVar:
-	  case MK_object:
-	  case MK_waveTable:
-	  case MK_envelope:
-	    type = lookahead;
-	    break;
-	  default:
-	    error(MK_sfGlobalErr,curToken());
-	    type = 0; /* This stmt can never be reached, but makes compiler happy */
-	}
-	if (lookahead != _MK_undef)
-	  error(MK_sfMulDefErr,curToken(),_MKTokName(lookahead));
-	if (!(obj = _MKGetNamedGlobal([NSString stringWithCString:tokenBuf],&tok)))
-	  error(MK_sfCantFindGlobalErr,tokenBuf);
-	if (tok != (unsigned short) type)
-	  error(MK_sfMulDefErr,tokenBuf,_MKTokName((int)tok));
-	installGlobalLocally(obj,(unsigned short)type);
-	MATCH(lookahead);       
+        switch (lookahead) { 
+          case _MK_doubleVarDecl: /* Optional decl type */
+          case _MK_stringVarDecl: 
+          case _MK_intVarDecl:  
+          case _MK_waveVarDecl:
+          case _MK_envVarDecl:
+          case _MK_objVarDecl:
+            type = _MK_typedVar;
+            MATCH(lookahead);
+            break;
+          case _MK_varDecl:       
+            type = _MK_untypedVar;
+            MATCH(lookahead);
+            break;
+          case _MK_objectDecl:
+            type = MK_object;
+            MATCH(lookahead);
+            break;
+          case _MK_waveTableDecl:
+            type = MK_waveTable;
+            MATCH(lookahead);
+            break;
+          case _MK_envelopeDecl:
+            type = MK_envelope; 
+            MATCH(lookahead);
+            break;
+          case _MK_typedVar:     /* Otherwise, it's the global itself. */
+          case _MK_untypedVar:
+          case MK_object:
+          case MK_waveTable:
+          case MK_envelope:
+            type = lookahead;
+            break;
+          default:
+            error(MK_sfGlobalErr,curToken());
+            type = 0; /* This stmt can never be reached, but makes compiler happy */
+        }
+        if (lookahead != _MK_undef)
+          error(MK_sfMulDefErr,curToken(),_MKTokName(lookahead));
+        if (!(obj = _MKGetNamedGlobal([NSString stringWithCString:tokenBuf],&tok)))
+          error(MK_sfCantFindGlobalErr,tokenBuf);
+        if (tok != (unsigned short) type)
+          error(MK_sfMulDefErr,tokenBuf,_MKTokName((int)tok));
+        installGlobalLocally(obj,(unsigned short)type);
+        MATCH(lookahead);       
     } while (match(','));
 }
 
@@ -2795,34 +2945,34 @@ varDecl(void)
     _MKParameterUnion tmpUnion;
     MATCH(lookahead);
     do {
-	declErrCheck(_MKTokNameNoCheck(_MK_typedVar),_MK_typedVar);
-	declErrCheck(_MKTokNameNoCheck(_MK_untypedVar),_MK_untypedVar);
-	switch (varType) {
-	  case _MK_doubleVarDecl:
-	    aPar = _MKNewDoublePar(0.0,MK_noPar);
-	    break;
-	  case _MK_stringVarDecl:
-	    aPar = _MKNewStringPar(@"",MK_noPar);
-	    break;
-	  case _MK_varDecl:
-	    isUntyped = YES;
-	    /* No break here */
-	  case _MK_intVarDecl: 
-	    aPar = _MKNewIntPar(0,MK_noPar);
-	    break;
-	  default:
-	    if (dataType == MK_noType)
-	      dataType = ((varType == _MK_envVarDecl) ? MK_envelope :
-			  (varType == _MK_waveVarDecl) ? MK_waveTable:
-			  MK_object);
-	    aPar = _MKNewObjPar(nil,MK_noPar,dataType);
-	    break;
-	}
-	aScorefileVar = _MKNewScorefileVar(aPar,[NSString stringWithCString:tokenBuf],isUntyped,NO);
-	lookahead = (isUntyped) ? _MK_untypedVar : _MK_typedVar;
+        declErrCheck(_MKTokNameNoCheck(_MK_typedVar),_MK_typedVar);
+        declErrCheck(_MKTokNameNoCheck(_MK_untypedVar),_MK_untypedVar);
+        switch (varType) {
+          case _MK_doubleVarDecl:
+            aPar = _MKNewDoublePar(0.0,MK_noPar);
+            break;
+          case _MK_stringVarDecl:
+            aPar = _MKNewStringPar(@"",MK_noPar);
+            break;
+          case _MK_varDecl:
+            isUntyped = YES;
+            /* No break here */
+          case _MK_intVarDecl: 
+            aPar = _MKNewIntPar(0,MK_noPar);
+            break;
+          default:
+            if (dataType == MK_noType)
+              dataType = ((varType == _MK_envVarDecl) ? MK_envelope :
+                          (varType == _MK_waveVarDecl) ? MK_waveTable:
+                          MK_object);
+            aPar = _MKNewObjPar(nil,MK_noPar,dataType);
+            break;
+        }
+        aScorefileVar = _MKNewScorefileVar(aPar,[NSString stringWithCString:tokenBuf],isUntyped,NO);
+        lookahead = (isUntyped) ? _MK_untypedVar : _MK_typedVar;
         addLocalSymbol([NSString stringWithCString:tokenBuf],aScorefileVar,lookahead);
-	tokenVal->symbol = aScorefileVar;
-	expression(&tmpUnion); /* Possible initialization value */
+        tokenVal->symbol = aScorefileVar;
+        expression(&tmpUnion); /* Possible initialization value */
     }  while (match(','));
 }  
 
@@ -2833,34 +2983,34 @@ tune(void)
     MATCH(_MK_tune);
     /* There are two forms of the tune statement. */
     if (lookahead != INT(_MK_typedVar)) { 
-	_MKParameterUnion tmpUnion;
-	switch (expression(&tmpUnion)) {  /* Arg is semitones to retune all */
-	  case MK_double:
-	    val = tmpUnion.rval;
-	    break;
-	  case MK_int:
-	    val = (double)tmpUnion.ival;
-	    break;
-	  default:
-	    error(MK_sfNoTuneErr,curToken());
-	    val = 0; /* This stmt can never be reached, but makes compiler happy */
-	}
+        _MKParameterUnion tmpUnion;
+        switch (expression(&tmpUnion)) {  /* Arg is semitones to retune all */
+          case MK_double:
+            val = tmpUnion.rval;
+            break;
+          case MK_int:
+            val = (double)tmpUnion.ival;
+            break;
+          default:
+            error(MK_sfNoTuneErr,curToken());
+            val = 0; /* This stmt can never be reached, but makes compiler happy */
+        }
 #ifdef GNUSTEP
-	[MKTuningSystem _transpose:val]; /* GNUSTEP silliness: can't call transpose because it conflicts with NSResponder:-transpose */
+        [MKTuningSystem _transpose:val]; /* GNUSTEP silliness: can't call transpose because it conflicts with NSResponder:-transpose */
 #else
         [MKTuningSystem transpose:val];
 #endif
     }
     else {
-	id var = tokenVal->symbol;
-	short keyNum;
-	MATCH(lookahead);                 /* Arg is pitch to retune */
-	keyNum = _MKFindPitchVar(var);
-	if (keyNum >= MIDI_NUMKEYS)
-	  error(MK_sfNoTuneErr);
-	match('=');
-	val = getDouble();
-	[MKTuningSystem setKeyNumAndOctaves:keyNum toFreq:val];
+        id var = tokenVal->symbol;
+        short keyNum;
+        MATCH(lookahead);                 /* Arg is pitch to retune */
+        keyNum = _MKFindPitchVar(var);
+        if (keyNum >= MIDI_NUMKEYS)
+          error(MK_sfNoTuneErr);
+        match('=');
+        val = getDouble();
+        [MKTuningSystem setKeyNumAndOctaves:keyNum toFreq:val];
     }
 }
 
@@ -2913,9 +3063,11 @@ static progStructure *addProgStruct(void)
 
 static void saveLoc(progStructure *p)
 {
+#ifdef DEBUG_PARSE_SCORE
+    printf("saveLoc\n");
+#endif
     p->lineNo = parsePtr->_lineNo;
     p->pageNo = parsePtr->_pageNo;
-//#warning StreamConversion: NXTell should be converted to an NSData method
     p->location = scoreStreamPointer;//sb: was NXTell(scoreStream);
     p->parseState = parsePtr; /* We save this for error checking. */
     p->lookahead = lookahead;
@@ -2923,6 +3075,9 @@ static void saveLoc(progStructure *p)
 
 static void restoreLoc(progStructure *p)
 {
+#ifdef DEBUG_PARSE_SCORE
+    printf("restoreLoc\n");
+#endif
     if (p->parseState != parsePtr)
       error(MK_sfBadIncludeErr,"}","{");
 //#warning StreamConversion: NXSeek should be converted to an NSData method
@@ -2940,13 +3095,13 @@ static void skipBlock(char openChar,char closeChar)
        loop by arranging to store location in file.  */
     int braceCount = 1;
     do {
-	if (openChar == lookahead) {
-	    braceCount++; 
-	} 
-	else if (closeChar == lookahead) {
-	    --braceCount;
-	} 
-	MATCH(lookahead);
+        if (openChar == lookahead) {
+            braceCount++; 
+        } 
+        else if (closeChar == lookahead) {
+            --braceCount;
+        } 
+        MATCH(lookahead);
     } while (braceCount);
 }
 
@@ -2954,71 +3109,74 @@ static BOOL
   endBlock(void)
 {
     progStructure *head = (progStructure *)scoreRPtr->_repeatStack;
+#ifdef DEBUG_PARSE_SCORE
+    printf("endBlock\n");
+#endif
     if (!head) {          /* Unmatched } */
-	lookahead = ';';  /* Help error recovery */
-	error(MK_sfMissingStringErr,"{");
+        lookahead = ';';  /* Help error recovery */
+        error(MK_sfMissingStringErr,"{");
     }
     switch (head->clause) {
       case elseClause: /* End of a taken else block */
-	popStructureStack();
-	break;
+        popStructureStack();
+        break;
       case thenClause: /* End of a taken 'if' or 'else if' block */
-	MATCH('}');
-	while (match(_MK_else) && (head->clause != elseClause)) {
-	    if (match(_MK_if)) {
-		if (!match('(')) 
-		  warning(MK_sfMissingStringErr,"(");
-		skipBlock('(',')');
-	    } 
-	    else head->clause = elseClause;
-	    if (!match('{')) 
-	      warning(MK_sfMissingStringErr,"{");
-	    skipBlock('{','}');
-	}
-	popStructureStack();
-	return NO;
+        MATCH('}');
+        while (match(_MK_else) && (head->clause != elseClause)) {
+            if (match(_MK_if)) {
+                if (!match('(')) 
+                  warning(MK_sfMissingStringErr,"(");
+                skipBlock('(',')');
+            } 
+            else head->clause = elseClause;
+            if (!match('{')) 
+              warning(MK_sfMissingStringErr,"{");
+            skipBlock('{','}');
+        }
+        popStructureStack();
+        return NO;
       case repeatClause:  /* End of a repeat block */
-	if (--head->count > 0) {          /* More iteration */
-	    /* This puts us back at the '{' */
-	    restoreLoc(head);
-	    match('{');  /* Use lower-case match because { may be missing */
-	    return NO;
-	}
-	else 
-	  popStructureStack();
-	break;
+        if (--head->count > 0) {          /* More iteration */
+            /* This puts us back at the '{' */
+            restoreLoc(head);
+            match('{');  /* Use lower-case match because { may be missing */
+            return NO;
+        }
+        else 
+          popStructureStack();
+        break;
       case doClause:
-	MATCH('}');
-	if (!match(_MK_while))
-	  error(MK_sfMissingStringErr,"while");
-	if (getBOOL()) {   /* Go back */
-	    restoreLoc(head);
-	    match('{');
-	    return NO;
-	}
-	else {
-	    popStructureStack();
-	    return YES;
-	}
-	break;
+        MATCH('}');
+        if (!match(_MK_while))
+          error(MK_sfMissingStringErr,"while");
+        if (getBOOL()) {   /* Go back */
+            restoreLoc(head);
+            match('{');
+            return NO;
+        }
+        else {
+            popStructureStack();
+            return YES;
+        }
+        break;
       case whileClause: {  /* End of a while block */
-	  progStructure temp;
-	  saveLoc(&temp);
-	  restoreLoc(head);
-	  if (!getBOOL()) {
-	      restoreLoc(&temp);
-	      popStructureStack();
-	  } 
-	  else {
-	      match('{');
-	      return NO;
-	  }
-	  break;
+          progStructure temp;
+          saveLoc(&temp);
+          restoreLoc(head);
+          if (!getBOOL()) {
+              restoreLoc(&temp);
+              popStructureStack();
+          } 
+          else {
+              match('{');
+              return NO;
+          }
+          break;
       }
       default:
-	lookahead = ';';  /* Help error recovery */
-	error(MK_sfMissingStringErr,"'if' or 'repeat'");
-	/* error never returns */
+        lookahead = ';';  /* Help error recovery */
+        error(MK_sfMissingStringErr,"'if' or 'repeat'");
+        /* error never returns */
     }
     MATCH('}');
     return NO;
@@ -3038,8 +3196,8 @@ static void
     if (!match('{'))
       warning(MK_sfMissingStringErr,"{");
     if (!doIt) {
-	skipBlock('{','}');  /* Skip false while block */
-	popStructureStack();
+        skipBlock('{','}');  /* Skip false while block */
+        popStructureStack();
     }
 }
 
@@ -3065,8 +3223,8 @@ static void
     if (!match('{')) 
       warning(MK_sfMissingStringErr,"{");
     if (newHead->count < 1) {
-	skipBlock('{','}');  /* Skip false repeat block */
-	popStructureStack();
+        skipBlock('{','}');  /* Skip false repeat block */
+        popStructureStack();
     }
 }
 
@@ -3083,21 +3241,21 @@ static void
     if (doIt)
       head->clause = thenClause;
     else {
-	/* Skip to else portion, if any. */
-	skipBlock('{','}');
-	if (lookahead == _MK_else) { /* else or else if */
-	    MATCH(_MK_else);
-	    if (lookahead == _MK_if) {
-		ifStmtAux(head);
-		return;
-	    }
-	    else if (!match('{'))    /* Missing '{' */
-	      warning(MK_sfMissingStringErr,"{");
-	    head->clause = elseClause;
-	} 
-	else { /* No else clause */
-	    popStructureStack(); /* Get rid of this if/then struct */
-	}
+        /* Skip to else portion, if any. */
+        skipBlock('{','}');
+        if (lookahead == _MK_else) { /* else or else if */
+            MATCH(_MK_else);
+            if (lookahead == _MK_if) {
+                ifStmtAux(head);
+                return;
+            }
+            else if (!match('{'))    /* Missing '{' */
+              warning(MK_sfMissingStringErr,"{");
+            head->clause = elseClause;
+        } 
+        else { /* No else clause */
+            popStructureStack(); /* Get rid of this if/then struct */
+        }
     }
 }
 
@@ -3136,15 +3294,15 @@ dataDecl(_MKToken type)
     short rtnType;
     MATCH(type);
     do {
-	/* Named objects, envelopes and waveTables are the only declarations 
-	   that are handled
-	   by the recursive descent portion of the parser. This is because
-	   they are the only declarations that can occur within expressions. 
-	   */
-	EMPTYSTACK();           
-	namedDataDecl(type);
-	stackPop(&rtnType);   /* namedDataDecl pushes the env on the stack */
-	STACKERRORCHECK();
+        /* Named objects, envelopes and waveTables are the only declarations 
+           that are handled
+           by the recursive descent portion of the parser. This is because
+           they are the only declarations that can occur within expressions. 
+           */
+        EMPTYSTACK();           
+        namedDataDecl(type);
+        stackPop(&rtnType);   /* namedDataDecl pushes the env on the stack */
+        STACKERRORCHECK();
     }
     while (match(','));
 }
@@ -3176,44 +3334,44 @@ parListDecl(void)
     MATCH(_MK_undef);
     matchInsert('=');
     while (lookahead == INT(_MK_param) || lookahead == INT(_MK_undef)) {
-	if (lookahead == INT(_MK_undef))
-	  param = addParameter([NSString stringWithCString:tokenBuf]);
-	else param = _MKGetParNamePar(tokenVal->symbol);
-	MATCH(lookahead);
-	if (lookahead == ':') {
-	    MATCH(':');
-	    switch (t = expression(&tmpUnion)) {
-	      case MK_double:
-		skipped = ([aParList setPar:param toDouble:tmpUnion.rval] == 
-			  nil);
-		break;
-	      case MK_int:
-		skipped = ([aParList setPar:param toInt:tmpUnion.ival] == nil);
-		break;
-	      case MK_string: 
-		skipped = ([aParList setPar:param toString:tmpUnion.sval]
-			   == nil);
-		break;
-	      case MK_envelope:
-		skipped = ([aParList setPar:param toEnvelope:tmpUnion.symbol]
-			   == nil);
-		break;
-	      case MK_waveTable:
-		skipped = ([aParList setPar:param toWaveTable:tmpUnion.symbol]
-			   == nil);
-		break;
-	      case MK_object:
-		skipped = ([aParList setPar:param toObject:tmpUnion.symbol]
-			   == nil);
-		break;
-	      default:
-		error(MK_sfBadParValErr);
-	    }
-	}
-	else skipped = ([aParList setPar:param toInt:0] == nil);
-	if (skipped)
-	  warning(MK_sfOmittingDupParErr);
-	match(',');
+        if (lookahead == INT(_MK_undef))
+          param = addParameter([NSString stringWithCString:tokenBuf]);
+        else param = _MKGetParNamePar(tokenVal->symbol);
+        MATCH(lookahead);
+        if (lookahead == ':') {
+            MATCH(':');
+            switch (t = expression(&tmpUnion)) {
+              case MK_double:
+                skipped = ([aParList setPar:param toDouble:tmpUnion.rval] == 
+                          nil);
+                break;
+              case MK_int:
+                skipped = ([aParList setPar:param toInt:tmpUnion.ival] == nil);
+                break;
+              case MK_string: 
+                skipped = ([aParList setPar:param toString:tmpUnion.sval]
+                           == nil);
+                break;
+              case MK_envelope:
+                skipped = ([aParList setPar:param toEnvelope:tmpUnion.symbol]
+                           == nil);
+                break;
+              case MK_waveTable:
+                skipped = ([aParList setPar:param toWaveTable:tmpUnion.symbol]
+                           == nil);
+                break;
+              case MK_object:
+                skipped = ([aParList setPar:param toObject:tmpUnion.symbol]
+                           == nil);
+                break;
+              default:
+                error(MK_sfBadParValErr);
+            }
+        }
+        else skipped = ([aParList setPar:param toInt:0] == nil);
+        if (skipped)
+          warning(MK_sfOmittingDupParErr);
+        match(',');
     }
 }
 
@@ -3224,7 +3382,7 @@ apply(void)
     MATCH(_MK_apply);
     if (lookahead != INT(_MK_parListInstance))
       error(MK_sfUndeclaredErr,_MKTokNameNoCheck(_MK_parListInstance),
-	    curToken());
+            curToken());
     aList = tokenVal->symbol;
     MATCH(lookahead);
     if (!match(_MK_to))
@@ -3234,15 +3392,15 @@ apply(void)
     aPart = tokenVal->symbol;
     MATCH(_MK_partInstance);
     if (lookahead == ';') { /* This is the default case. */
-	[aPart _setReadParList: aList noteType:MK_noteOn];
-	[aPart _setReadParList: aList noteType:MK_noteDur];
+        [aPart _setReadParList: aList noteType:MK_noteOn];
+        [aPart _setReadParList: aList noteType:MK_noteDur];
     }
     while (match('(')) {    /* He specified a type. */
-	[aPart _setReadParList: aList noteType:lookahead];
-	MATCH(lookahead);
-	if (match(')')) 
-	  break;
-	match(',');         /* Can have multiple types. */
+        [aPart _setReadParList: aList noteType:lookahead];
+        MATCH(lookahead);
+        if (match(')')) 
+          break;
+        match(',');         /* Can have multiple types. */
     }
 }  
 #endif
@@ -3261,10 +3419,10 @@ include(void)
     storeInStruct(scoreRPtr,parsePtr);
     backwardsLink = parsePtr;     /* Save value in case of error below */
     if (!initScoreParsePtr(s = tmpUnion.sval)) {
-	parsePtr = backwardsLink; /* Restore value. */
-	scoreRPtr->_parsePtr = (void *)parsePtr;
-	loadFromStruct(scoreRPtr);
-	errorMsg(MK_sfCantFindFileErr,[s cString]);
+        parsePtr = backwardsLink; /* Restore value. */
+        scoreRPtr->_parsePtr = (void *)parsePtr;
+        loadFromStruct(scoreRPtr);
+        errorMsg(MK_sfCantFindFileErr,[s cString]);
     }
     else 
       parsePtr->_backwardsLink = backwardsLink; /* Stack link. */
@@ -3277,32 +3435,32 @@ print(void)
     _MKParameterUnion tmpUnion;
     MATCH(_MK_print);
     while (lookahead != ';') {
-	t = expression(&tmpUnion);
-	if (scoreRPtr->printStream)
-	  switch (t) {
-	    case MK_double: 
-	      [scoreRPtr->printStream appendData:[[NSString stringWithFormat:@"%f", tmpUnion.rval] dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
-	      break;
-	    case MK_int:
-	      [scoreRPtr->printStream appendData:[[NSString stringWithFormat:@"%d", tmpUnion.ival] dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
-	      break;
-	    case MK_string:
+        t = expression(&tmpUnion);
+        if (scoreRPtr->printStream)
+          switch (t) {
+            case MK_double: 
+              [scoreRPtr->printStream appendData:[[NSString stringWithFormat:@"%f", tmpUnion.rval] dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
+              break;
+            case MK_int:
+              [scoreRPtr->printStream appendData:[[NSString stringWithFormat:@"%d", tmpUnion.ival] dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
+              break;
+            case MK_string:
                 [scoreRPtr->printStream appendData:[tmpUnion.sval dataUsingEncoding:NSNEXTSTEPStringEncoding]]; 
-	      break;
-	    case MK_object:
-	    case MK_waveTable:
-	    case MK_envelope: {
-		NSString * s = MKGetObjectName(tmpUnion.symbol);
-		if (s != nil)
+              break;
+            case MK_object:
+            case MK_waveTable:
+            case MK_envelope: {
+                NSString * s = MKGetObjectName(tmpUnion.symbol);
+                if (s != nil)
                     if ([s cStringLength])
                         [scoreRPtr->printStream appendData:[[NSString stringWithFormat:@"%s %@ = ", _MKTokNameNoCheck(t),s] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
                 [tmpUnion.symbol writeScorefileStream:scoreRPtr->printStream];
-		break;
-	    }
-	    default:
-	      error(MK_sfCantWriteErr,curToken());
-	  }
-	match(',');
+                break;
+            }
+            default:
+              error(MK_sfCantWriteErr,curToken());
+          }
+        match(',');
     }
 //    if (scoreRPtr->printStream)
 //#error StreamConversion: NXFlush should be converted to an NSData method
@@ -3318,10 +3476,10 @@ static void clipTagRange(void)
       scoreRPtr->_fileHighTag = scoreRPtr->_fileLowTag + MAXRANGE;
 }
 
-static void binaryNoteTagRange(void)
+static void binaryNoteTagRange(BOOL inHeader)
 {
-    scoreRPtr->_fileLowTag = getBinaryInt();
-    scoreRPtr->_fileHighTag = getBinaryInt();
+    scoreRPtr->_fileLowTag = getBinaryInt(inHeader);
+    scoreRPtr->_fileHighTag = getBinaryInt(inHeader);
     clipTagRange();
 }
 
@@ -3342,6 +3500,9 @@ static void
 body(void)
 {
     int i = scoreRPtr->_fileHighTag - scoreRPtr->_fileLowTag + 1;
+#ifdef DEBUG_PARSE_SCORE
+    printf("body\n");
+#endif
     scoreRPtr->isInBody = YES;
     if (i > 0)
       scoreRPtr->_newLowTag = MKNoteTags(i);
@@ -3354,23 +3515,23 @@ static void setPar(id aNote,short aPar)
     _MKParameterUnion tmpUnion;
     switch (expression(&tmpUnion)) {
       case MK_string: 
-	MKSetNoteParToString(aNote,aPar,tmpUnion.sval);
-	break;
+        MKSetNoteParToString(aNote,aPar,tmpUnion.sval);
+        break;
       case MK_int: 
-	MKSetNoteParToInt(aNote,aPar,tmpUnion.ival);
-	break;
+        MKSetNoteParToInt(aNote,aPar,tmpUnion.ival);
+        break;
       case MK_double: 
-	MKSetNoteParToDouble(aNote,aPar,tmpUnion.rval);
-	break;
+        MKSetNoteParToDouble(aNote,aPar,tmpUnion.rval);
+        break;
       case MK_waveTable:
-	MKSetNoteParToWaveTable(aNote,aPar,tmpUnion.symbol);
-	break;
+        MKSetNoteParToWaveTable(aNote,aPar,tmpUnion.symbol);
+        break;
       case MK_object:
-	MKSetNoteParToObject(aNote,aPar,tmpUnion.symbol);
-	break;
+        MKSetNoteParToObject(aNote,aPar,tmpUnion.symbol);
+        break;
       case MK_envelope:
-	MKSetNoteParToEnvelope(aNote,aPar,tmpUnion.symbol);
-	break;
+        MKSetNoteParToEnvelope(aNote,aPar,tmpUnion.symbol);
+        break;
       default: error(MK_sfBadParValErr);
     }
 }
@@ -3387,168 +3548,183 @@ static void
     register id aNote;
     id target;
     short j = 0; /* init to make compiler happy */
+#ifdef DEBUG_PARSE_SCORE
+    printf("partOrScoreInfo\n");
+#endif
     target = (isPartInfo) ? tokenVal->symbol : scoreRPtr->_owner;
     aNote = [MKGetNoteClass() new];
     MATCH(declarator);
     snarfCommas();
     if (lookahead == '(') {
-	while ((lookahead != ')') && (lookahead != ';'))
-	  MATCH(lookahead); /* Snarf notetype if any. (Not really 
-			       allowed, but
-			       we'll be lenient here. */
-	match(')');
+        while ((lookahead != ')') && (lookahead != ';'))
+          MATCH(lookahead); /* Snarf notetype if any. (Not really 
+                               allowed, but
+                               we'll be lenient here. */
+        match(')');
     }
     snarfCommas();
     while (lookahead != ';') {
-	if (lookahead != INT(_MK_param))
-	  if (lookahead == INT(_MK_undef))
+        if (lookahead != INT(_MK_param))
+          if (lookahead == INT(_MK_undef))
               j = addParameter([NSString stringWithCString:tokenBuf]);
-	  else error(MK_sfBadParamErr);
-	else 
-	  j = _MKGetParNamePar(tokenVal->symbol);
-	MATCH(lookahead);
-	if (lookahead != ':') 
-	  error(MK_sfMissingStringErr,":");
-	MATCH(':');         
-	setPar(aNote,j);
-	snarfCommas();
+          else error(MK_sfBadParamErr);
+        else 
+          j = _MKGetParNamePar(tokenVal->symbol);
+        MATCH(lookahead);
+        if (lookahead != ':') 
+          error(MK_sfMissingStringErr,":");
+        MATCH(':');         
+        setPar(aNote,j);
+        snarfCommas();
     }
     setInfo(aNote,target);
 }
 
 static void
-  binaryPartOrScoreInfo(BOOL isPartInfo)
+  binaryPartOrScoreInfo(BOOL isPartInfo, BOOL inHeader)
 {
     register id aNote;
     id target;
+#ifdef DEBUG_PARSE_SCORE
+    printf("binaryPartOrScoreInfo\n");
+#endif
     if (isPartInfo) 
-      getBinaryIndexedObject();
+      getBinaryIndexedObject(inHeader);
     target = (isPartInfo) ? tokenVal->symbol : scoreRPtr->_owner;
     aNote = [MKGetNoteClass() new];
-    getBinaryParameters(aNote);
+    getBinaryParameters(aNote, inHeader);    
     setInfo(aNote,target);
 }
 
 static void
 headerStmt(void)
-{	
+{        
+#ifdef DEBUG_PARSE_SCORE
+    printf("headerStmt\n");
+#endif
     matchSemicolon();
     for (; ;)
       switch (lookahead) {
-	case _MK_noteTagRange: 
-	  noteTagRange(); 
-	  return;
-	case _MK_part:
-	  partDecl(); 
-	  return;
-	case _MK_partInstance:
-	  partOrScoreInfo(YES);
-	  return;
-	case _MK_info:
-	  partOrScoreInfo(NO);
-	  return;
-	case _MK_doubleVarDecl: 
-	case _MK_stringVarDecl: 
-	case _MK_intVarDecl:  
-	case _MK_waveVarDecl:
-	case _MK_objVarDecl:
-	case _MK_envVarDecl:
-	case _MK_varDecl:
-	  varDecl(); 
-	  return;
-	case _MK_objectDecl:
-	case _MK_envelopeDecl:
-	case _MK_waveTableDecl:
-	  dataDecl(lookahead); 
-	  return;
-	case _MK_begin:
-	  MATCH(_MK_begin); 
-	  body();
-	  return;
-	case _MK_comment: 
-	  comment(); 
-	  return;
-	case _MK_include:	
-	  include(); 
-	  return;
-	case _MK_putGlobal:
-	  putGlobal();
-	  return;
-	case _MK_getGlobal:
-	  getGlobal();
-	  return;
-	case _MK_seed:
-	  setSeed();
-	  return;
-	case _MK_ranSeed:
-	  ranSeed();
-	  return;
-	case _MK_tune:
-	  tune(); 
-	  return;
-	case _MK_print:
-	  print(); 
-	  return;
-	case _MK_typedVar:
-	case _MK_untypedVar: {
-	    _MKParameterUnion tmpUnion;
-	    expression(&tmpUnion); 
-	    return;
-	}
-	  /* The following 5 cases break rather than return */
-	case _MK_repeat:
-	  repeat();
-	  break;
-	case _MK_if:
-	  ifStmt();
-	  break;
-	case '}':
-	  if (endBlock())    /* returns YES if we should match semicolon */
-	    return;
-	  break;
-	case _MK_while:
-	  whileStmt();
-	  break;
-	case _MK_do:
-	  doStmt();
-	  break;
-	case _MK_else:
-	  elseStmt(); /* This triggers an error */
-	  return;
-	case 0:              /* Eof. */
-	  return;
-	case _MK_endComment:
-	  error(MK_sfUnmatchedCommentErr);
-	default:
-	  error(MK_sfBadHeaderStmtErr,curToken());
+        case _MK_noteTagRange: 
+          noteTagRange(); 
+          return;
+        case _MK_part:
+          partDecl(); 
+          return;
+        case _MK_partInstance:
+          partOrScoreInfo(YES);
+          return;
+        case _MK_info:
+          partOrScoreInfo(NO);
+          return;
+        case _MK_doubleVarDecl: 
+        case _MK_stringVarDecl: 
+        case _MK_intVarDecl:  
+        case _MK_waveVarDecl:
+        case _MK_objVarDecl:
+        case _MK_envVarDecl:
+        case _MK_varDecl:
+          varDecl(); 
+          return;
+        case _MK_objectDecl:
+        case _MK_envelopeDecl:
+        case _MK_waveTableDecl:
+          dataDecl(lookahead); 
+          return;
+        case _MK_begin:
+          MATCH(_MK_begin); 
+          body();
+          return;
+        case _MK_comment: 
+          comment(); 
+          return;
+        case _MK_include:        
+          include(); 
+          return;
+        case _MK_putGlobal:
+          putGlobal();
+          return;
+        case _MK_getGlobal:
+          getGlobal();
+          return;
+        case _MK_seed:
+          setSeed();
+          return;
+        case _MK_ranSeed:
+          ranSeed();
+          return;
+        case _MK_tune:
+          tune(); 
+          return;
+        case _MK_print:
+          print(); 
+          return;
+        case _MK_typedVar:
+        case _MK_untypedVar: {
+            _MKParameterUnion tmpUnion;
+            expression(&tmpUnion); 
+            return;
+        }
+          /* The following 5 cases break rather than return */
+        case _MK_repeat:
+          repeat();
+          break;
+        case _MK_if:
+          ifStmt();
+          break;
+        case '}':
+          if (endBlock())    /* returns YES if we should match semicolon */
+            return;
+          break;
+        case _MK_while:
+          whileStmt();
+          break;
+        case _MK_do:
+          doStmt();
+          break;
+        case _MK_else:
+          elseStmt(); /* This triggers an error */
+          return;
+        case 0:              /* Eof. */
+          return;
+        case _MK_endComment:
+          error(MK_sfUnmatchedCommentErr);
+        default:
+          error(MK_sfBadHeaderStmtErr,curToken());
       }
 }
 
 static void
 binaryHeaderStmt(void)
-{	
-    lookahead = getBinaryShort();
+{
+#ifdef DEBUG_PARSE_SCORE
+    printf("binaryHeaderStmt\n");
+#endif
+    lookahead = getBinaryShort(YES);
+#ifdef DEBUG_PARSE_SCORE
+    printf("... binHdrSt, pointer = %d, lookahead = %d\n",scoreStreamPointer,lookahead);
+#endif
     switch (lookahead) {
       case _MK_noteTagRange: 
-	binaryNoteTagRange(); 
-	break;
+        binaryNoteTagRange(YES); 
+        break;
       case _MK_part:
-	binaryPartDecl(); 
-	break;
+        binaryPartDecl(YES); 
+        break;
       case _MK_partInstance:
-	binaryPartOrScoreInfo(YES);
-	break;
+        binaryPartOrScoreInfo(YES, YES);
+        break;
       case _MK_info:
-	binaryPartOrScoreInfo(NO);
-	break;
+        binaryPartOrScoreInfo(NO, YES);
+        break;
       case _MK_begin:
-	body();
-	return;
+        body();
+        return;
       case 0:
-	return;
+        return;
       default:
-	error(MK_sfNonScorefileErr,""); /* Fatal error */
-	return;
+        error(MK_sfNonScorefileErr,""); /* Fatal error */
+        return;
     }
     return;
 }
@@ -3556,11 +3732,15 @@ binaryHeaderStmt(void)
 static BOOL isBinaryScorefile(NSData *aStream)
 {
     static parseStateStruct foo;
+    foo._length = [aStream length];
+    foo._pointer = 0;
     parsePtr = &foo;
     parsePtr->_stream = aStream;
-    if (getBinaryInt() != MK_SCOREMAGIC) {
-	errorMsg(MK_sfNonScorefileErr);
-	return NO;
+    // we say NO here because the scoreStreamPointer and length
+    // has not yet been initialised
+    if (getBinaryInt(NO) != MK_SCOREMAGIC) {
+        errorMsg(MK_sfNonScorefileErr);
+        return NO;
     }
     parsePtr = NULL;
     return YES;
@@ -3568,7 +3748,7 @@ static BOOL isBinaryScorefile(NSData *aStream)
 
 _MKScoreInStruct *
 _MKNewScoreInStruct(NSData *aStream,id owner,NSMutableData *printStream,
-		    BOOL mergeParts,NSString *name,unsigned int *readPosition)
+                    BOOL mergeParts,NSString *name,unsigned int *readPosition)
     /* Assumes aStream is a pointer to a stream open for read.
        Creates a _MKScoreInStruct and parses the file's header. 
        Returns a pointer to the new _MKScoreInStruct. 
@@ -3590,10 +3770,12 @@ _MKNewScoreInStruct(NSData *aStream,id owner,NSMutableData *printStream,
        Make mergeParts be private or change _elements to ??.
        */
 {
-    BOOL binary;
+    BOOL binary = NO;
     int c;
     unsigned int aStreamLength = [aStream length]; //sb to prevent overflow
-
+#ifdef DEBUG_PARSE_SCORE
+    printf("_MKNewScoreInStruct\n");
+#endif
     if ((!aStream) || (!owner))
       return NULL;
     initScanner();
@@ -3609,7 +3791,7 @@ _MKNewScoreInStruct(NSData *aStream,id owner,NSMutableData *printStream,
         if (c == FIRST_CHAR_SCOREMAGIC) {  /* Does it look like it might be binary? */
             UNGETC_FROM_STREAM();//NXUngetc(aStream);
             if (!isBinaryScorefile(aStream)) {
-		return NULL;
+                return NULL;
             }
             binary = YES;
         }
@@ -3629,8 +3811,8 @@ _MKNewScoreInStruct(NSData *aStream,id owner,NSMutableData *printStream,
           // scoreRPtr->_freeStream = (printStream != nil);
 /*
 #warning StreamConversion: NXOpenFile should be converted to an NSData method
-	printStream = NXOpenFile((int)stderr->_file,NX_WRITEONLY);
-	scoreRPtr->_freeStream = (printStream != NULL);
+        printStream = NXOpenFile((int)stderr->_file,NX_WRITEONLY);
+        scoreRPtr->_freeStream = (printStream != NULL);
  */
     }
     else
@@ -3647,37 +3829,59 @@ _MKNewScoreInStruct(NSData *aStream,id owner,NSMutableData *printStream,
     scoreRPtr->_symbolTable = _MKNewScorefileParseTable();
     scoreRPtr->_aNote = (id) nil;
     parsePtr = initParsePtr(aStream, YES, ((name) ? name : @"Scorefile"));
+    if (binary) {
+#ifdef DEBUG_PARSE_SCORE
+    printf(" in _MKNewScoreInStruct, scoreStreamPointer = %d and parsePtr->_pointer = %d\n",scoreStreamPointer,parsePtr->_pointer);
+#endif
+        scoreStreamPointer = parsePtr->_pointer = 4;
+    }
     /* We decided NOT to merge the same MKPart name when you read a scorefile 
        into a MKScore. For MKScorefilePerformer, we currently are merging MKParts.
        But this is maybe the wrong thing. It might be better to 'clean up'
        the MKScorefilePerformer after performing. FIXME. */
     if (mergeParts)
     {       
-	id aList;
-	NSString * aName;
-	aList = [owner _elements];
-	if (aList) {
-	    int el;
+        id aList;
+        NSString * aName;
+        aList = [owner _elements];
+        if (aList) {
+            int el;
             id elObj;
-	    unsigned n;
+            unsigned n;
             for (el = 0, n = [aList count]; n--; el++)
                 if ((aName = (NSString *)MKGetObjectName(elObj = [aList objectAtIndex:el])))
                     addLocalSymbol(aName,elObj,_MK_partInstance);
-	}
-	[aList release];
+        }
+        [aList release];
     }
     storeInStruct(scoreRPtr,parsePtr);
     scoreRPtr->isInBody = NO;
     scoreRPtr->_owner = owner;
+#ifdef DEBUG_PARSE_SCORE
+    printf("_MKNewScoreInStruct OUT\n");
+#endif
     return scoreRPtr;
 }
 
 void _MKParseScoreHeader(_MKScoreInStruct *scorefileRPtr)
     /* Parse entire header */
 {
+#ifdef DEBUG_PARSE_SCORE
+    printf("_MKParseScoreHeader\n");
+#endif
+
     while ((!_MKParseScoreHeaderStmt(scorefileRPtr)) && 
-	   (scorefileRPtr->timeTag != MK_ENDOFTIME))
-      ;
+           (scorefileRPtr->timeTag != MK_ENDOFTIME)) {
+
+#ifdef DEBUG_PARSE_SCORE
+        printf("_MKParseScoreHeader rpt\n");
+#endif
+
+    }
+
+#ifdef DEBUG_PARSE_SCORE
+    printf("_MKParseScoreHeader OUT\n");
+#endif
 }
 
 BOOL _MKParseScoreHeaderStmt(_MKScoreInStruct *scorefileRPtr)
@@ -3686,6 +3890,9 @@ BOOL _MKParseScoreHeaderStmt(_MKScoreInStruct *scorefileRPtr)
        some other reason.
      */
 {
+#ifdef DEBUG_PARSE_SCORE
+    printf("_MKParseScoreHeaderStmt\n");
+#endif
     scoreRPtr = scorefileRPtr;
     switch (setjmp(begin)) {
         case errorLongjmp:         /* Non-fatal error */
@@ -3701,7 +3908,7 @@ BOOL _MKParseScoreHeaderStmt(_MKScoreInStruct *scorefileRPtr)
         case eofLongjmp:            /* EOF */
             if(ISINCLUDEFILE(parsePtr))
                 popFileStack();
-	    else {
+            else {
                 scoreRPtr->timeTag = MK_ENDOFTIME;
                 storeInStruct(scoreRPtr,parsePtr);
                 shutUp = NO;
@@ -3715,6 +3922,11 @@ BOOL _MKParseScoreHeaderStmt(_MKScoreInStruct *scorefileRPtr)
         binaryHeaderStmt();
     else headerStmt();
     storeInStruct(scoreRPtr,parsePtr);
+#ifdef DEBUG_PARSE_SCORE
+    if (scoreRPtr->isInBody)
+        printf("_MKParseScoreHeaderStmt returning YES\n");
+    else printf("_MKParseScoreHeaderStmt returning NO\n");
+#endif
     return scoreRPtr->isInBody;
 }
 
@@ -3723,7 +3935,7 @@ BOOL _MKParseScoreHeaderStmt(_MKScoreInStruct *scorefileRPtr)
 
 static double
   getTime(double curT)
-{	
+{        
     BOOL relativeTime;
     double val;
     MATCH(_MK_time);
@@ -3742,31 +3954,31 @@ static int
 {
     int fileTag;
     if (binary) {
-	fileTag = getBinaryInt();
-	if (fileTag == MAXINT)
-	  return MAXINT;
+        fileTag = getBinaryInt(NO);// I assume this is not in the header
+        if (fileTag == MAXINT)
+          return MAXINT;
     } else {
-	match(',');
-	fileTag = getInt();
+        match(',');
+        fileTag = getInt();
     }
     if ((fileTag <= scoreRPtr->_fileHighTag) &&
-	(fileTag >= scoreRPtr->_fileLowTag)) 
+        (fileTag >= scoreRPtr->_fileLowTag)) 
       return fileTag + scoreRPtr->_newLowTag - scoreRPtr->_fileLowTag;
     /* Lookup noteTag. If found, use mapping. Otherwise, if noteOff
        or noteOn generate error. */
     {
         int newTag;
-	NSNumber *newTagNumber = [scoreRPtr->_noteTagTable objectForKey: [NSNumber numberWithInt: fileTag]]; 
+        NSNumber *newTagNumber = [scoreRPtr->_noteTagTable objectForKey: [NSNumber numberWithInt: fileTag]]; 
 
-	if (newTagNumber != nil)
+        if (newTagNumber != nil)
            return [newTagNumber intValue];
 #if 0 // LMS I don't know why this is disabled...
-	else if (!binary && (noteType == MK_noteUpdate || noteType == MK_noteOff)) 
-	  error(MK_sfInactiveNoteTagErr,_MKTokNameNoCheck(noteType));
+        else if (!binary && (noteType == MK_noteUpdate || noteType == MK_noteOff)) 
+          error(MK_sfInactiveNoteTagErr,_MKTokNameNoCheck(noteType));
 #endif
-	newTag = MKNoteTag();
+        newTag = MKNoteTag();
         [scoreRPtr->_noteTagTable setObject: [NSNumber numberWithInt: newTag] forKey: [NSNumber numberWithInt: fileTag]];
-	return newTag;
+        return newTag;
     }
 }
 
@@ -3775,186 +3987,189 @@ static id parseScoreNote(void)
     register id aNote;
     id aPart;
     short j;
+#ifdef DEBUG_PARSE_SCORE
+    printf("parseScoreNote\n");
+#endif
     matchSemicolon();
     for (; ;) {
- 	switch (lookahead) {
-	  case _MK_end:
-	    MATCH(_MK_end);
-	    if (ISINCLUDEFILE(parsePtr))
-	      popFileStack();
-	    else {
-		storeInStruct(scoreRPtr,parsePtr);
-		scoreRPtr->timeTag = MK_ENDOFTIME;
-		return nil;
-	    }
-	    break;
-	  case _MK_doubleVarDecl: 
-	  case _MK_stringVarDecl: 
-	  case _MK_intVarDecl:  
-	  case _MK_waveVarDecl:
-	  case _MK_envVarDecl:
-	  case _MK_objVarDecl:
-	  case _MK_varDecl:
-	    varDecl();
-	    break;
-	  case _MK_objectDecl:
-	  case _MK_waveTableDecl:
-	  case _MK_envelopeDecl:
-	    dataDecl(lookahead);
-	    break;
-	  case _MK_seed:
-	    setSeed();
-	    break;
-	  case _MK_ranSeed:
-	    ranSeed();
-	    break;
-	  case _MK_include:
-	    include(); 
-	    break;
-	  case _MK_print:
-	    print(); 		/* See note above. */
-	    break;
-	  case _MK_tune:
-	    tune(); 
-	    break;
-	  case _MK_comment:	  
-	    comment();
-	    break;
-	    /* The following three cases continue rather than break */
-	  case _MK_repeat:
-	    repeat();
-	    continue;
-	  case _MK_if:
-	    ifStmt();
-	    continue;
-	  case '}':
-	    if (endBlock())    /* returns YES if we should match semicolon */
-	      break;
-	    continue;
-	  case _MK_while:
-	    whileStmt();
-	    continue;
-	  case _MK_do:
-	    doStmt();
-	    continue;
-	  case _MK_else:
-	    elseStmt(); /* This is an error */
-	    break;
-	  case _MK_time:
-	    scoreRPtr->timeTag = getTime(scoreRPtr->timeTag);
-	    storeInStruct(scoreRPtr,parsePtr);
-	    return (id )nil;
-	  case _MK_putGlobal:
-	    putGlobal();
-	    break;
-	  case _MK_getGlobal:
-	    getGlobal();
-	    break;
-	  case _MK_typedVar:
-	  case _MK_untypedVar:
-	    assign();
-	    break;
-	  case _MK_undef:
-	    error(MK_sfUndeclaredErr,_MKTokNameNoCheck(_MK_part),tokenBuf);
-	    break;
-	  case _MK_endComment:
-	    error(MK_sfUnmatchedCommentErr);
-	    break;
-	  case _MK_partInstance:
-	    aPart = tokenVal->symbol;
-	    MATCH(_MK_partInstance);
-	    [scoreRPtr->_aNote release];
-	    scoreRPtr->_aNote = aNote = 
-	      [[MKGetNoteClass() alloc] initWithTimeTag:scoreRPtr->timeTag];
-	    snarfCommas();
-	    if (lookahead != '(') 
-	      error(MK_sfBadNoteTypeErr);
-	    MATCH('(');
-	    j = lookahead;
-	    switch (lookahead) {
-	      case MK_noteOn:
-	      case MK_noteOff:
-		MATCH(lookahead);
-		if (lookahead == ')')
-		  error(MK_sfBadNoteTagErr);
-		_MKSetNoteType(aNote,j);
-		_MKSetNoteTag(aNote,getNoteTag(NO,j));
-		break;
-	      case MK_noteUpdate:
-		_MKSetNoteType(aNote,j);
-		MATCH(lookahead);
-		if (lookahead != ')') /* Tags are optional here. */
-		  _MKSetNoteTag(aNote,getNoteTag(NO,j));
-		break;
-	      case MK_mute:
-		/* Note type is, by default, mute */
-		MATCH(lookahead);
-		if (lookahead != ')')
-		  error(MK_sfMissingStringErr,")");
-		break;
-	      default: 
-		{
-		    double x;
-		    x =  getDouble();
-		    _MKSetNoteDur(aNote,MAX(x,0));
-		    if (lookahead != ')')
-		      _MKSetNoteTag(aNote,getNoteTag(NO,MK_noteDur));
-		}
-		break;
-	    }
-	    MATCH(')');             /* Closing paren of noteType */
-	    snarfCommas();
+         switch (lookahead) {
+          case _MK_end:
+            MATCH(_MK_end);
+            if (ISINCLUDEFILE(parsePtr))
+              popFileStack();
+            else {
+                storeInStruct(scoreRPtr,parsePtr);
+                scoreRPtr->timeTag = MK_ENDOFTIME;
+                return nil;
+            }
+            break;
+          case _MK_doubleVarDecl: 
+          case _MK_stringVarDecl: 
+          case _MK_intVarDecl:  
+          case _MK_waveVarDecl:
+          case _MK_envVarDecl:
+          case _MK_objVarDecl:
+          case _MK_varDecl:
+            varDecl();
+            break;
+          case _MK_objectDecl:
+          case _MK_waveTableDecl:
+          case _MK_envelopeDecl:
+            dataDecl(lookahead);
+            break;
+          case _MK_seed:
+            setSeed();
+            break;
+          case _MK_ranSeed:
+            ranSeed();
+            break;
+          case _MK_include:
+            include(); 
+            break;
+          case _MK_print:
+            print();                 /* See note above. */
+            break;
+          case _MK_tune:
+            tune(); 
+            break;
+          case _MK_comment:          
+            comment();
+            break;
+            /* The following three cases continue rather than break */
+          case _MK_repeat:
+            repeat();
+            continue;
+          case _MK_if:
+            ifStmt();
+            continue;
+          case '}':
+            if (endBlock())    /* returns YES if we should match semicolon */
+              break;
+            continue;
+          case _MK_while:
+            whileStmt();
+            continue;
+          case _MK_do:
+            doStmt();
+            continue;
+          case _MK_else:
+            elseStmt(); /* This is an error */
+            break;
+          case _MK_time:
+            scoreRPtr->timeTag = getTime(scoreRPtr->timeTag);
+            storeInStruct(scoreRPtr,parsePtr);
+            return (id )nil;
+          case _MK_putGlobal:
+            putGlobal();
+            break;
+          case _MK_getGlobal:
+            getGlobal();
+            break;
+          case _MK_typedVar:
+          case _MK_untypedVar:
+            assign();
+            break;
+          case _MK_undef:
+            error(MK_sfUndeclaredErr,_MKTokNameNoCheck(_MK_part),tokenBuf);
+            break;
+          case _MK_endComment:
+            error(MK_sfUnmatchedCommentErr);
+            break;
+          case _MK_partInstance:
+            aPart = tokenVal->symbol;
+            MATCH(_MK_partInstance);
+            [scoreRPtr->_aNote release];
+            scoreRPtr->_aNote = aNote = 
+              [[MKGetNoteClass() alloc] initWithTimeTag:scoreRPtr->timeTag];
+            snarfCommas();
+            if (lookahead != '(') 
+              error(MK_sfBadNoteTypeErr);
+            MATCH('(');
+            j = lookahead;
+            switch (lookahead) {
+              case MK_noteOn:
+              case MK_noteOff:
+                MATCH(lookahead);
+                if (lookahead == ')')
+                  error(MK_sfBadNoteTagErr);
+                _MKSetNoteType(aNote,j);
+                _MKSetNoteTag(aNote,getNoteTag(NO,j));
+                break;
+              case MK_noteUpdate:
+                _MKSetNoteType(aNote,j);
+                MATCH(lookahead);
+                if (lookahead != ')') /* Tags are optional here. */
+                  _MKSetNoteTag(aNote,getNoteTag(NO,j));
+                break;
+              case MK_mute:
+                /* Note type is, by default, mute */
+                MATCH(lookahead);
+                if (lookahead != ')')
+                  error(MK_sfMissingStringErr,")");
+                break;
+              default: 
+                {
+                    double x;
+                    x =  getDouble();
+                    _MKSetNoteDur(aNote,MAX(x,0));
+                    if (lookahead != ')')
+                      _MKSetNoteTag(aNote,getNoteTag(NO,MK_noteDur));
+                }
+                break;
+            }
+            MATCH(')');             /* Closing paren of noteType */
+            snarfCommas();
 #if 0
-	    aList = [aPart _getReadParList:j]; /* j is notetype */
-	    if (aList) {
-		register id aPar;
-		unsigned i = [aList count];
+            aList = [aPart _getReadParList:j]; /* j is notetype */
+            if (aList) {
+                register id aPar;
+                unsigned i = [aList count];
                 int j;
-		BOOL defaults = NO;
-		defaults = NO;
-		for (j=0;j<i;j++) { //aPar = NX_ADDRESS(aList); i--; aPar++) {
+                BOOL defaults = NO;
+                defaults = NO;
+                for (j=0;j<i;j++) { //aPar = NX_ADDRESS(aList); i--; aPar++) {
                     aPar = [aList objectAtIndex:j];
-		    switch (lookahead) {
-		      case _MK_param:
-		      case ';':
-		      case 0:
-		      case _MK_undef:
-			defaults = YES; /* file list shorter than parlist */
-			break;
-		      default:
-			break;
-		    }
-		    if (defaults)                 /* Parameter was omitted */
-		      _MKNoteAddParameter((id)aNote,aPar); /* copies *aPar */
-		    else setPar(aNote,(aPar)->parNum);/* Uses file value */
-		    if (!match(','))
-		      break;
-		    snarfCommas();
-		}
-	    }
+                    switch (lookahead) {
+                      case _MK_param:
+                      case ';':
+                      case 0:
+                      case _MK_undef:
+                        defaults = YES; /* file list shorter than parlist */
+                        break;
+                      default:
+                        break;
+                    }
+                    if (defaults)                 /* Parameter was omitted */
+                      _MKNoteAddParameter((id)aNote,aPar); /* copies *aPar */
+                    else setPar(aNote,(aPar)->parNum);/* Uses file value */
+                    if (!match(','))
+                      break;
+                    snarfCommas();
+                }
+            }
 #endif
-	    while (lookahead != ';') {
-		if (lookahead != INT(_MK_param))
-		  if (lookahead == INT(_MK_undef))
+            while (lookahead != ';') {
+                if (lookahead != INT(_MK_param))
+                  if (lookahead == INT(_MK_undef))
                       j = addParameter([NSString stringWithCString:tokenBuf]);
-		  else error(MK_sfBadParamErr);
-		else 
-		  j = _MKGetParNamePar(tokenVal->symbol);
-		MATCH(lookahead);
-		if (lookahead != ':') 
-		  error(MK_sfMissingStringErr,":");
-		MATCH(':');         
-		setPar(aNote,j);
-		snarfCommas();
-	    }
-	    storeInStruct(scoreRPtr,parsePtr);
-	    scoreRPtr->part = aPart;  /* return these by reference*/
-	    return aNote;
-	  default: 
-	    error(MK_sfBadStmtErr,curToken());
-	    break;
-	}
-	matchSemicolon();
+                  else error(MK_sfBadParamErr);
+                else 
+                  j = _MKGetParNamePar(tokenVal->symbol);
+                MATCH(lookahead);
+                if (lookahead != ':') 
+                  error(MK_sfMissingStringErr,":");
+                MATCH(':');         
+                setPar(aNote,j);
+                snarfCommas();
+            }
+            storeInStruct(scoreRPtr,parsePtr);
+            scoreRPtr->part = aPart;  /* return these by reference*/
+            return aNote;
+          default: 
+            error(MK_sfBadStmtErr,curToken());
+            break;
+        }
+        matchSemicolon();
     }
 }
 
@@ -3968,47 +4183,49 @@ static id
    field of scorefileRPtr is set to the MKPart of the current note.
    The note returned should be retained if it is to be kept. as it
    is returned autoreleased.
+   The notes are never in the header - so the argument to getBinaryFloat etc
+   is always NO.
  */
 {
     register id aNote;
     id aPart;
-    lookahead = getBinaryShort();
+    lookahead = getBinaryShort(NO);
     switch (lookahead) {
       case _MK_end:
-	scoreRPtr->timeTag = MK_ENDOFTIME;
-	/*** FIXME Or set a flag here and don't clobber timeTag. ***/ 
-	return nil;
+        scoreRPtr->timeTag = MK_ENDOFTIME;
+        /*** FIXME Or set a flag here and don't clobber timeTag. ***/ 
+        return nil;
       case _MK_time:
-	scoreRPtr->timeTag += ((double)getBinaryFloat());
-	return nil;
+        scoreRPtr->timeTag += ((double)getBinaryFloat(NO));
+        return nil;
       case _MK_partInstance: {
-	  unsigned short tok;
-	  getBinaryIndexedObject();      /* Sets tokenVal->symbol */
-	  aPart = tokenVal->symbol;
-	  [scoreRPtr->_aNote release]; 
-	  scoreRPtr->_aNote = aNote = 
-	    [[MKGetNoteClass() alloc] initWithTimeTag:scoreRPtr->timeTag];
-	  tok = getBinaryShort();
-	  switch (tok) {
-	    case MK_noteOn:
-	    case MK_noteOff:
-	    case MK_noteUpdate:
-	      _MKSetNoteType(aNote,tok);
-	      _MKSetNoteTag(aNote,getNoteTag(YES,tok));
-	      break;
-	    case MK_mute: /* MKNotes are type mute by default. */
-	      break;
-	    case MK_noteDur:
-	      _MKSetNoteDur(aNote,getBinaryDouble()); /* Also sets type */
-	      _MKSetNoteTag(aNote,getNoteTag(YES,MK_noteDur));
-	      break;
-	  }
-	  getBinaryParameters(aNote);
-	  scoreRPtr->part = aPart;  /* return part by reference*/
-	  return aNote;
+          unsigned short tok;
+          getBinaryIndexedObject(NO);      /* Sets tokenVal->symbol */
+          aPart = tokenVal->symbol;
+          [scoreRPtr->_aNote release]; 
+          scoreRPtr->_aNote = aNote = 
+            [[MKGetNoteClass() alloc] initWithTimeTag:scoreRPtr->timeTag];
+          tok = getBinaryShort(NO);
+          switch (tok) {
+            case MK_noteOn:
+            case MK_noteOff:
+            case MK_noteUpdate:
+              _MKSetNoteType(aNote,tok);
+              _MKSetNoteTag(aNote,getNoteTag(YES,tok));
+              break;
+            case MK_mute: /* MKNotes are type mute by default. */
+              break;
+            case MK_noteDur:
+              _MKSetNoteDur(aNote,getBinaryDouble(NO)); /* Also sets type */
+              _MKSetNoteTag(aNote,getNoteTag(YES,MK_noteDur));
+              break;
+          }
+          getBinaryParameters(aNote, NO);
+          scoreRPtr->part = aPart;  /* return part by reference*/
+          return aNote;
       }
       default:
-	error(MK_sfNonScorefileErr,"");
+        error(MK_sfNonScorefileErr,"");
     }
     return nil; /* This stmt can never be reached but makes compiler happy */
 }    
@@ -4027,31 +4244,31 @@ _MKParseScoreNote(_MKScoreInStruct * scorefileRPtr)
       return nil;
     if (scorefileRPtr->timeTag == MK_ENDOFTIME)
       return nil; /* This check is just for safety. It can only happen if the
-		     caller doesn't quit after seeing the first ENDOFTIME. */
+                     caller doesn't quit after seeing the first ENDOFTIME. */
 
     scoreRPtr = scorefileRPtr;
     loadFromStruct(scoreRPtr);
     switch (setjmp(begin)) {
       case errorLongjmp:         /* Non-fatal error */
       case noLongjmp:
-	break;
+        break;
       case fatalErrorLongjmp:   /* Too many errors or binary error */
-	scoreRPtr->_errCount = MAXINT; /* Signal app. */
-	while (ISINCLUDEFILE(parsePtr))
-	  popFileStack();
-	scoreRPtr->timeTag = MK_ENDOFTIME;
-	storeInStruct(scoreRPtr,parsePtr);
-	return nil;
+        scoreRPtr->_errCount = MAXINT; /* Signal app. */
+        while (ISINCLUDEFILE(parsePtr))
+          popFileStack();
+        scoreRPtr->timeTag = MK_ENDOFTIME;
+        storeInStruct(scoreRPtr,parsePtr);
+        return nil;
       case eofLongjmp:            /* EOF */
-	if (ISINCLUDEFILE(parsePtr))
-	  popFileStack();
-	else {
-	    scoreRPtr->timeTag = MK_ENDOFTIME;
-	    storeInStruct(scoreRPtr,parsePtr);
-	    shutUp = NO;
-	    return nil;
-	}
-	break;
+        if (ISINCLUDEFILE(parsePtr))
+          popFileStack();
+        else {
+            scoreRPtr->timeTag = MK_ENDOFTIME;
+            storeInStruct(scoreRPtr,parsePtr);
+            shutUp = NO;
+            return nil;
+        }
+        break;
     }
     if (BINARY(scoreRPtr)) 
       return parseBinaryScoreNote();
@@ -4075,11 +4292,11 @@ static char *getHomeDirectory()
     static char *homeDirectory = NULL;
     struct passwd  *pw;
     if (!homeDirectory) {  /* Only do it the first time. It's expensive. */
-	pw = getpwuid(getuid());
-	if (pw && (pw->pw_dir) && (*pw->pw_dir)) {
-	    _MK_MALLOC(homeDirectory,char,strlen(pw->pw_dir)+1);
-	    strcpy(homeDirectory,pw->pw_dir);
-	}
+        pw = getpwuid(getuid());
+        if (pw && (pw->pw_dir) && (*pw->pw_dir)) {
+            _MK_MALLOC(homeDirectory,char,strlen(pw->pw_dir)+1);
+            strcpy(homeDirectory,pw->pw_dir);
+        }
     }
     return homeDirectory;
 }
@@ -4168,39 +4385,39 @@ NSMutableData * MKFindScorefile(NSString *name) /*sb: used to return int (fd) */
       strcat(fileName,".score");
     fd = open(fileName,O_RDONLY,_MK_PERMS); 
     if (fd != -1) {
-	free(fileName);
-	return fd;
+        free(fileName);
+        return fd;
     }
     if (name[0]!='/') { /* There's hope */
-	if (p = getHomeDirectory()) {
-	    siz += strlen(p);
-	    _MK_REALLOC(fileName,char,siz); 
-	    strcpy(fileName,p);
-	    strcat(fileName,[HOMESCOREDIR fileSystemRepresentation]);
-	    strcat(fileName,name);
-	    if (addExt)
-	      strcat(fileName,".score");
-	    fd = open(fileName,O_RDONLY,_MK_PERMS);
-	    if (fd != -1) {
-		free(fileName);
-		return fd;
-	    }
-	}
-	
-	strcpy(fileName,[LOCALSCOREDIR fileSystemRepresentation]);
-	strcat(fileName,name);
-	if (addExt)
-	  strcat(fileName,".score");
-	fd = open(fileName,O_RDONLY,_MK_PERMS); 
-	if (fd != -1) {
-	    free(fileName);
-	    return fd;
-	}
-	strcpy(fileName,[SYSTEMSCOREDIR fileSystemRepresentation]);
-	strcat(fileName,name);
-	if (addExt)
-	  strcat(fileName,".score");
-	fd = open(fileName,O_RDONLY,_MK_PERMS); 
+        if (p = getHomeDirectory()) {
+            siz += strlen(p);
+            _MK_REALLOC(fileName,char,siz); 
+            strcpy(fileName,p);
+            strcat(fileName,[HOMESCOREDIR fileSystemRepresentation]);
+            strcat(fileName,name);
+            if (addExt)
+              strcat(fileName,".score");
+            fd = open(fileName,O_RDONLY,_MK_PERMS);
+            if (fd != -1) {
+                free(fileName);
+                return fd;
+            }
+        }
+        
+        strcpy(fileName,[LOCALSCOREDIR fileSystemRepresentation]);
+        strcat(fileName,name);
+        if (addExt)
+          strcat(fileName,".score");
+        fd = open(fileName,O_RDONLY,_MK_PERMS); 
+        if (fd != -1) {
+            free(fileName);
+            return fd;
+        }
+        strcpy(fileName,[SYSTEMSCOREDIR fileSystemRepresentation]);
+        strcat(fileName,name);
+        if (addExt)
+          strcat(fileName,".score");
+        fd = open(fileName,O_RDONLY,_MK_PERMS); 
     }
     free(fileName);
     return fd;
