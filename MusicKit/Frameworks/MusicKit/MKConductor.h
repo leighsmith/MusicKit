@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/01/20 17:15:36  leigh
+  Moved separateThread methods into separate category
+
   Revision 1.5  2000/01/13 06:53:17  leigh
   doco cleanup
 
@@ -170,6 +173,17 @@ extern void MKFinishPerformance(void);
 -(void) encodeWithCoder:(NSCoder *) aCoder;
 -(id) initWithCoder:(NSCoder *) aDecoder;
 - awakeAfterUsingCoder:(NSCoder *) aDecoder;
+- setMTCSynch:aMidiObj;
+- MTCSynch;
+-(double) clockTime;
+/* Obsolete methods */
++ new; 
+-(double) predictTime:(double)beatTime; 
+
+@end
+
+@interface MKConductor(SeparateThread)
+
 + useSeparateThread:(BOOL) yesOrNo;
 + lockPerformance;
 + unlockPerformance;
@@ -178,12 +192,6 @@ extern void MKFinishPerformance(void);
 +(NSThread *) performanceThread;
 + sendMsgToApplicationThreadSel:(SEL) aSelector to:(id) toObject argCount:(int)argCount, ...;
 + setInterThreadThreshold:(NSString *) newThreshold;
-- setMTCSynch:aMidiObj;
-- MTCSynch;
--(double) clockTime;
-/* Obsolete methods */
-+ new; 
--(double) predictTime:(double)beatTime; 
 
 @end
 
