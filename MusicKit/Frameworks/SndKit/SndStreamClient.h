@@ -88,7 +88,7 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
     SndAudioBuffer  *synthInputBuffer;
     /*! @var outputQueue A FIFO queue of SndAudioBuffers holding those pending output and those processed. */
     SndAudioBufferQueue *outputQueue;
-    /*! @var inputQueue */
+    /*! @var inputQueue  A FIFO queue of SndAudioBuffers holding those pending input and those processed. */
     SndAudioBufferQueue *inputQueue;
     
     /*! @var synthThreadLock */
