@@ -77,6 +77,9 @@
  Modification History:
 
   $Log$
+  Revision 1.4  2003/06/18 18:50:01  leighsmith
+  Fixed readData always reading from the start of the buffer. Replaced SndSoundStruct with SndFormat
+
   Revision 1.3  2003/06/13 03:33:15  leighsmith
   Big cleanup of code, stripped copious cruft from readData as part of the great purge of SndSoundStruct
 
@@ -138,7 +141,7 @@
 #else
 # import "SndResample.h"
 # ifndef WIN32
-#  import <libc.h>
+//#  import <libc.h>
 # else
 #  import <stdio.h>
 #  import <malloc.h>
@@ -151,32 +154,35 @@
 # import "SndMuLaw.h"
 #endif
 
-/* return: 0 - notDone */
-/*        >0 - index of last sample */
+/* Read sound data inData of format inSndFormat, starting from beginFrom into a resampling buffer outPtrs
+ * of nChans channels upto sampleArraySizeInFrames number of frames long, but store data between Xoff and
+ * sampleArraySizeInFrames - Xoff with zero'd samples of Xoff length preceding and following the buffer.
+ * return: 0 - notDone 
+ *        >0 - index of last sample
+ */
 static int readData(
-    int *beginFrom,
-    int inCount,	  /* specifies the number of frames */
+    int *beginFromFrame,  /* which frame to begin reading from in inData. */
+    int inCount,	  /* specifies the total number of frames in the input data wanted retrieved. Could differ from the number of frames specified in inSndFormat. */
     SND_HWORD **outPtrs,  /* array of channels of sound samples, each sampleArraySizeInFrames long. */
-    int sampleArraySizeInFrames,  /* specifies the number of frames (SND_HWORDS) */
+    int sampleArraySizeInFrames,  /* specifies the number of frames (SND_HWORDS) to retrieve. */
     int nChans,           /* number of channels for input and output which must match, no averaging occurs */
     int Xoff,		  /* read into input array starting at this index */
-    const SndSoundStruct *inSnd, /* take account of data format */
-    void *inData) /* use this address for contiguous memory instead of the SndSoundStruct */
+    const SndFormat inSndFormat, /* take account of data format */
+    void *inData) /* use this address for contiguous sample data to read from */
 {
-    int origNsamps, Nsamps;  // The number of frames to read into the output buffer. Two versions for debugging.
+    int origFramesToOutput, framesToOutput;  // The number of frames to read into the output buffer. Two versions for debugging.
     int lastFrameIndex = 0;
     SND_HWORD *dataStart;    // where the first channel starts. Helps calculate the number of samples read.
     int channelIndex;
     SND_HWORD *shiftedOutPtrs[16]; // Maximum of 16 channels (change at will, or make dynamic if need be).
     int numOfFramesInInputBlock, currentFrameInInputBlock;
-    int inEndAtIndex = *beginFrom + inCount;  // The input sample index to end at.
-    int inDataFormat = inSnd->dataFormat;
+    int inDataFormat = inSndFormat.dataFormat;
     
     if (!inData) {
 	NSLog(@"readData now only works with inData, no more SndSoundStructs.\n");
 	return 0;
     }
-    numOfFramesInInputBlock = inSnd->dataSize / inSnd->channelCount / SndSampleWidth(inSnd->dataFormat);
+    numOfFramesInInputBlock = inSndFormat.frameCount;
     currentFrameInInputBlock = 0;
     
     dataStart = outPtrs[0];
@@ -185,14 +191,14 @@ static int readData(
         shiftedOutPtrs[channelIndex] = outPtrs[channelIndex] + Xoff;
     }
 
-    /* Calculate number of samples to get */
-    origNsamps = Nsamps = sampleArraySizeInFrames - Xoff;
-    // NSLog(@"Nsamps = %d\n", Nsamps);
+    /* Calculate number of samples to retreive and store into the output buffer. */
+    origFramesToOutput = framesToOutput = sampleArraySizeInFrames - Xoff;
+    // NSLog(@"framesToOutput = %d\n", framesToOutput);
 
     if (numOfFramesInInputBlock != -1) {
-        for (; Nsamps > 0 && *beginFrom < inEndAtIndex; Nsamps--) {
+        for (; framesToOutput > 0 && *beginFromFrame < inCount; framesToOutput--) {
 	    for (channelIndex = 0; channelIndex < nChans; channelIndex++) {
-		int sampleIndex = currentFrameInInputBlock * nChans + channelIndex;
+		int sampleIndex = *beginFromFrame * nChans + channelIndex;
 		
 		switch(inDataFormat) {
 		case SND_FORMAT_LINEAR_8:
@@ -217,17 +223,17 @@ static int readData(
 		}
 	    }
             currentFrameInInputBlock++;
-            (*beginFrom)++;
+            (*beginFromFrame)++;
             if (currentFrameInInputBlock > numOfFramesInInputBlock) {
-                NSLog(@"Error in resample - overreading data - should not happen, currentFrameInInputBlock = %d, numOfFramesInInputBlock = %d, origNsamps = %d\n",
-			currentFrameInInputBlock, numOfFramesInInputBlock, origNsamps);
+                NSLog(@"Error in resample - overreading data - should not happen, currentFrameInInputBlock = %d, numOfFramesInInputBlock = %d, origFramesToOutput = %d\n",
+			currentFrameInInputBlock, numOfFramesInInputBlock, origFramesToOutput);
                 break;
             }
         }
     }
-    if (Nsamps > 0) {
+    if (framesToOutput > 0) {
         lastFrameIndex = shiftedOutPtrs[0] - dataStart; /* (Calc return value) */
-        while (--Nsamps > 0) {	/*   fill unread spaces with 0's */
+        while (--framesToOutput > 0) {	/*   fill unread spaces with 0's */
             for (channelIndex = 0; channelIndex < nChans; channelIndex++) {
 		*(shiftedOutPtrs[channelIndex]++) = 0;
             }
@@ -395,7 +401,7 @@ static int resampleFast(  /* number of output samples returned */
     int inCount,		/* number of input samples to convert */
     int outCount,		/* number of output samples to compute */
     int nChans,			/* number of sound channels (1 to n) */
-    const SndSoundStruct *inSnd, /* to pick up formats and frags*/
+    const SndFormat inSndFormat, /* to pick up formats and frags*/
     int beginFrom,
     void *inData)               /* if non-null, gives an alternative
                                    source of contiguous audio data */
@@ -434,7 +440,7 @@ static int resampleFast(  /* number of output samples returned */
     do {
         if (!last) {		/* If haven't read last sample yet */
             last = readData(&inPtrRun, inCount, X1S, IBUFFSIZE,
-                            nChans, (int)Xread, inSnd, inData);
+                            nChans, (int)Xread, inSndFormat, inData);
             if (last && (last-Xoff<Nx)) { /* If last sample has been read... */
             Nx = last-Xoff;	/* ...calc last sample affected by filter */
             if (Nx <= 0)
@@ -514,10 +520,9 @@ static int resampleWithFilter(  /* number of output samples returned */
     BOOL interpFilt,		/* TRUE means interpolate filter coeffs */
     SND_HWORD Imp[], SND_HWORD ImpD[],
     SND_UHWORD LpScl, SND_UHWORD Nmult, SND_UHWORD Nwing,
-    const SndSoundStruct *inSnd, /* to pick up formats and frags*/
+    const SndFormat inSndFormat, /* to pick up format */
     int beginFrom,
-    void *inData)               /* if non-null, gives an alternative
-                                   source of contiguous audio data */
+    void *inData)               /* source of contiguous audio data */
 {
     SND_UWORD Time, Times[16];		/* Current time/pos in input sample */
     SND_UHWORD Xp, Ncreep, Xoff, Xread;
@@ -555,7 +560,7 @@ static int resampleWithFilter(  /* number of output samples returned */
     }
     do {
         if (!last) {		/* If haven't read last sample yet */
-            last = readData(&inPtrRun, inCount, X1S, IBUFFSIZE, nChans, (int) Xread, inSnd, inData);
+            last = readData(&inPtrRun, inCount, X1S, IBUFFSIZE, nChans, (int) Xread, inSndFormat, inData);
             if (last && (last - Xoff < Nx)) { /* If last sample has been read... */
                 Nx = last - Xoff;	/* ...calc last sample affected by filter */
                 if (Nx <= 0)
@@ -645,7 +650,7 @@ int resample(			/* number of output samples returned */
     int fastMode,		/* 0 = highest quality, slowest speed */
     BOOL largeFilter,		/* TRUE means use 65-tap FIR filter */
     char *filterFile,		/* NULL for internal filter, else filename */
-    const SndSoundStruct *inSnd, /* for data format etc */
+    const SndFormat inSndFormat, /* for data format, channel and frame count, sample rate */
     int beginFrom,		/* The sample number within the sound to begin the resampling from */
     void *inData)               /* if non-null, gives an alternative source of contiguous audio data */
 {
@@ -656,7 +661,7 @@ int resample(			/* number of output samples returned */
     SND_HWORD *ImpD=0;		/* ImpD[n] = Imp[n+1]-Imp[n] */
 
     if (fastMode)
-        return resampleFast(factor, outPtr, inCount, outCount, nChans, inSnd, beginFrom, inData);
+        return resampleFast(factor, outPtr, inCount, outCount, nChans, inSndFormat, beginFrom, inData);
 
 #ifdef DEBUG  // turn this on only when SndResample.h is modified.
     /* Check for illegal constants */
@@ -692,5 +697,5 @@ int resample(			/* number of output samples returned */
 #endif
     LpScl *= 0.95;
     return resampleWithFilter(factor, outPtr, inCount, outCount, nChans,
-                              interpFilt, Imp, ImpD, LpScl, Nmult, Nwing, inSnd, beginFrom, inData);
+                              interpFilt, Imp, ImpD, LpScl, Nmult, Nwing, inSndFormat, beginFrom, inData);
 }
