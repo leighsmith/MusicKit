@@ -11,14 +11,12 @@
 #  commercial purposes so long as the author attribution and this copyright
 #  message remains intact and accompanies all derived code.
 
-ADDITIONAL_FLAGS = -g -O2 -Wall
-
-LIBRARIES_DEPEND_UPON += -lMKPerformSndMIDI -lMusicKit \
-                         -lobjc 
+LIBRARIES_DEPEND_UPON += -lMusicKit \
+                         -lobjc -l$(FOUNDATION_LIBRARY_NAME) 
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
-  LIBRARIES_DEPEND_UPON += -lobjc -l$(FOUNDATION_LIBRARY_NAME) \
-                           -lwinmm
+  LIBRARIES_DEPEND_UPON += \
+                         -lMKPerformSndMIDI -lwinmm -lSndKit -lDSP 
 
   CYG_PREFIX = $(shell cygpath -w '/' | tr '\\' '/')
 
@@ -31,7 +29,5 @@ ifeq (mingw32, $(GNUSTEP_TARGET_OS))
 
   SHARED_LD_POSTFLAGS += -L$(CYG_PREFIX)/usr/local/lib
 
-else
-  LIBRARIES_DEPEND_UPON += 
 endif
 
