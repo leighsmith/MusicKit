@@ -30,6 +30,80 @@
 
 static NSLock *decoderLock;
 
+static const char *const genre_names[] =
+{
+  /*
+   * NOTE: The spelling of these genre names is identical to those found in
+   * Winamp and mp3info.
+   */
+  "Blues", "Classic Rock", "Country", "Dance", "Disco", "Funk", "Grunge",
+  "Hip-Hop", "Jazz", "Metal", "New Age", "Oldies", "Other", "Pop", "R&B",
+  "Rap", "Reggae", "Rock", "Techno", "Industrial", "Alternative", "Ska",
+  "Death Metal", "Pranks", "Soundtrack", "Euro-Techno", "Ambient", "Trip-Hop",
+  "Vocal", "Jazz+Funk", "Fusion", "Trance", "Classical", "Instrumental",
+  "Acid", "House", "Game", "Sound Clip", "Gospel", "Noise", "Alt. Rock",
+  "Bass", "Soul", "Punk", "Space", "Meditative", "Instrumental Pop",
+  "Instrumental Rock", "Ethnic", "Gothic", "Darkwave", "Techno-Industrial",
+  "Electronic", "Pop-Folk", "Eurodance", "Dream", "Southern Rock", "Comedy",
+  "Cult", "Gangsta Rap", "Top 40", "Christian Rap", "Pop/Funk", "Jungle",
+  "Native American", "Cabaret", "New Wave", "Psychedelic", "Rave",
+  "Showtunes", "Trailer", "Lo-Fi", "Tribal", "Acid Punk", "Acid Jazz",
+  "Polka", "Retro", "Musical", "Rock & Roll", "Hard Rock", "Folk",
+  "Folk/Rock", "National Folk", "Swing", "Fast-Fusion", "Bebob", "Latin",
+  "Revival", "Celtic", "Bluegrass", "Avantgarde", "Gothic Rock",
+  "Progressive Rock", "Psychedelic Rock", "Symphonic Rock", "Slow Rock",
+  "Big Band", "Chorus", "Easy Listening", "Acoustic", "Humour", "Speech",
+  "Chanson", "Opera", "Chamber Music", "Sonata", "Symphony", "Booty Bass",
+  "Primus", "Porn Groove", "Satire", "Slow Jam", "Club", "Tango", "Samba",
+  "Folklore", "Ballad", "Power Ballad", "Rhythmic Soul", "Freestyle", "Duet",
+  "Punk Rock", "Drum Solo", "A Cappella", "Euro-House", "Dance Hall",
+  "Goa", "Drum & Bass", "Club-House", "Hardcore", "Terror", "Indie",
+  "BritPop", "Negerpunk", "Polsk Punk", "Beat", "Christian Gangsta Rap",
+  "Heavy Metal", "Black Metal", "Crossover", "Contemporary Christian",
+  "Christian Rock", "Merengue", "Salsa", "Thrash Metal", "Anime", "JPop",
+  "Synthpop"
+};
+
+#define GENRE_NAME_COUNT \
+((int)(sizeof genre_names / sizeof (const char *const)))
+
+////////////////////////////////////////////////////////////////////////////////
+// SndMP3DecodeJob
+////////////////////////////////////////////////////////////////////////////////
+
+@interface SndMP3DecodeJob : NSObject {
+  double startTime;
+  double duration;
+}
+
+- initWithStartTime: (double) _startTime duration: (double) _duration;
+- (double) startTime;
+- (double) duration;
+
+@end
+
+@implementation SndMP3DecodeJob
+
+- initWithStartTime: (double) _startTime duration: (double) _duration
+{
+  self = [super init];
+  if (self) {
+    startTime = _startTime;
+    duration  = _duration;
+  }
+  return self;
+}
+
+- (double) startTime { return startTime; }
+- (double) duration  { return duration;  }
+- (double) endTime   { return startTime + duration;   }
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+// SndMP3
+////////////////////////////////////////////////////////////////////////////////
+
 @implementation SndMP3
 
 + (NSArray *) soundFileExtensions
@@ -55,6 +129,37 @@ static int bitrateLookupTable[16][6] = {
   { 448, 384, 320, 256, 160, 160 },
   { MP3_BITRATE_FREE, MP3_BITRATE_FREE, MP3_BITRATE_FREE, MP3_BITRATE_FREE, MP3_BITRATE_FREE, MP3_BITRATE_FREE }
 };
+
+- (void) checkID3Tag: (NSData*) _mp3Data
+{
+  const unsigned char *pData = [_mp3Data bytes];
+  long length = [_mp3Data length];
+
+  if (length >= 128 &&
+      strcmp(pData + length - 128, "TAG") == 0) {
+    const char *id3base = pData + length - 128;
+    const char *title   = id3base + 3;
+    const char *artist  = title  + 30;
+    const char *album   = artist + 30;
+    const char *year    = album  + 30;
+    const char *comment = year   + 4;
+    const char *trackNumber = id3base + 126;
+    const char *genre   = id3base + 127;
+
+    printf("ID3 tag\n");
+    printf("Title:       %30s\n", title);
+    printf("Artist:      %30s\n", artist);
+    printf("Album:       %30s\n", album);
+    printf("year:        %4s\n", year);
+    printf("Comment:     %30s\n", comment);
+    printf("TrackNumber: %d\n", trackNumber[0]);
+    printf("Genre:       %d\n", genre[0]);
+  }
+  else {
+//    printf("No ID3 tag found\n");
+  }
+}
+
 
 
 int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frameLocationsCount)
@@ -187,6 +292,15 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
   }
   // condense allocated memory to just the frame locations found...
   *ppFrameLocations = (long*) realloc((*ppFrameLocations), sizeof(long) * (*frameLocationsCount));
+
+  /*
+  {
+    long i;
+    for (i = 0; i < *frameLocationsCount; i++) {
+      printf("frame: %04li location: %07li\n", i, (*ppFrameLocations)[i]);
+    }
+  }
+   */
   return 0;
 }
 
@@ -257,7 +371,7 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 // decodeThread
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) decodeThread
+- (void) decodeThread: (SndMP3DecodeJob*) job
 {
   NSAutoreleasePool *localPool = [NSAutoreleasePool new];
 
@@ -270,59 +384,80 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
   long sams_created = 0;
   long sams_created_total = 0;
   unsigned char* mp3DataBytes = (unsigned char*) [mp3Data bytes];
+  long requestedStartSample = 0, requestedSampleCount = 0, iterations = 0;
+  long samplesToStartIndex = 0;
+  long samplesRecovered = 0;
   //    long frameID = 0;
+
+  bDecoding = TRUE;
+
+  requestedStartSample = [job startTime] * 44100;
+  requestedSampleCount = [job duration]  * 44100;
+
+  samplesToStartIndex = requestedStartSample;
 
   [decoderLock lock]; 
   lame_decode_init();
 
-  [pcmDataLock lock];
   pcmData = [[NSMutableData alloc] initWithLength: pcmSize * sizeof(short) * 2];
   [pcmDataLock unlock];
 
   while (mp3DataPos < mp3DataLength || sams_created > 0) {
-    int mp3FeedAmount = 417;
+    int mp3FeedAmount = 417; // a frame
     if (mp3DataPos + mp3FeedAmount > mp3DataLength)
       mp3FeedAmount = mp3DataLength - mp3DataPos;
 
     sams_created = lame_decode1(mp3DataBytes + mp3DataPos, mp3FeedAmount, pcm_l, pcm_r);
     mp3DataPos += mp3FeedAmount;
 
-    [pcmDataLock lock];
     if (sams_created > 0) {
-      while (sams_created_total + sams_created > pcmSize) {
-        pcmSize += growSize;
-        [pcmData setLength: pcmSize * sizeof(short) * 2];
-      }
-      {
-        short *pData = [pcmData mutableBytes]; // get fresh pointer in case resize moved our data
-        long i, pos = sams_created_total * 2;
+      long i, offset = 0, pos = samplesRecovered * 2;
+      long sams_to_unpack = sams_created;
 
-        for (i = 0; i < sams_created; i++) {
+      if (sams_created_total + sams_created > requestedStartSample) {
+        short *pData = NULL;
+        offset = requestedStartSample - sams_created_total;
+
+        if (offset < 0)
+          offset = 0;
+
+        if (sams_to_unpack + samplesRecovered > requestedSampleCount)
+          sams_to_unpack = requestedSampleCount - samplesRecovered;
+
+        [pcmDataLock lock];
+        while (samplesRecovered + sams_to_unpack > pcmSize) {
+          pcmSize += growSize;
+          [pcmData setLength: pcmSize * sizeof(short) * 2];
+        }
+        pData = [pcmData mutableBytes]; // get fresh pointer in case resize moved our data
+        for (i = offset; i < sams_to_unpack; i++) {
           pData[pos++] = pcm_l[i];
           pData[pos++] = pcm_r[i];
+          samplesRecovered++;
         }
+        [pcmDataLock unlock];
       }
     }
-    [pcmDataLock unlock];
     sams_created_total  += sams_created;
     decodedSampledCount += sams_created;
+    iterations++;
 #if SNDMP3_DEBUG_READING
-    printf("Decoded: %li/%li\n",decodedSampledCount,sampleCount);
+    printf("[%04li] Decoded: %li/%li\n",iterations,decodedSampledCount,sampleCount);
 #endif
+    if (samplesRecovered >= requestedSampleCount)
+      break;
   }
-  sampleCount = decodedSampledCount;
+  sampleCount = samplesRecovered;
+  duration    = sampleCount / 44100.0;
   [pcmDataLock lock];
-  [pcmData setLength: sams_created_total * sizeof(short) * 2];
-  duration = sams_created_total / 44100.0;
+  [pcmData setLength: sampleCount * sizeof(short) * 2];
+  duration = sampleCount / 44100.0;
   [pcmDataLock unlock];
-#if SNDMP3_DEBUG_READING
-  printf("Translated %li samples   pcmdata length: %i  time: %f\n",
-         sams_created_total, [pcmData length], -[startDate timeIntervalSinceNow]);
-#endif
 
   [decoderLock unlock];
   bDecoding = FALSE;
   [localPool release];
+//  printf("Finished decoding...\n");
   [NSThread exit];
 }
 
@@ -330,10 +465,9 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 // readSoundfile:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (int) readSoundURL: (NSURL*) soundURL
+- (void) loadMP3DataWithURL: (NSURL*) soundURL
 {
   NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-
   if (mp3Data) {
     [mp3Data release];
     mp3Data = nil;
@@ -345,25 +479,81 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
   }
   [pcmDataLock unlock];
   mp3Data = [[NSData alloc] initWithContentsOfURL: soundURL];
-
+  [self checkID3Tag: mp3Data];
   find_mp3_frame_headers(mp3Data, &frameLocations, &frameLocationsCount);
-
+  
   sampleCount = frameLocationsCount * 1152.0;
   duration    = sampleCount / 44100.0;
   
+  [localPool release];
+}
 
+////////////////////////////////////////////////////////////////////////////////
+// readSoundURL:
+////////////////////////////////////////////////////////////////////////////////
+
+- (int) readSoundURL: (NSURL*) soundURL
+{
+  SndMP3DecodeJob *job = nil;
+  
+  [self loadMP3DataWithURL: soundURL];
 #if SNDMP3_DEBUG_READING
   printf("Found %li frames\n", frameLocationsCount);
 #endif
 
-  bDecoding = TRUE;
-  [NSThread detachNewThreadSelector: @selector(decodeThread)
-                           toTarget: self
-                         withObject: nil];
+  job = [[SndMP3DecodeJob alloc] initWithStartTime: 0.0
+                                          duration: duration];
 
-  [localPool release];
+  [pcmDataLock lock];
+  [NSThread detachNewThreadSelector: @selector(decodeThread:)
+                           toTarget: self
+                         withObject: job];
+  [pcmDataLock lock];
+  [pcmDataLock unlock];
+  [job autorelease];
   return SND_ERR_NONE;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// readSoundURL:startTimePosition:duration:
+////////////////////////////////////////////////////////////////////////////////
+
+- (int) readSoundURL: (NSURL*) soundURL
+   startTimePosition: (double) segmentStartTime
+            duration: (double) segmentDuration
+{
+  SndMP3DecodeJob *job = nil;
+  
+  [self loadMP3DataWithURL: soundURL];
+
+  if (segmentDuration == -1.0)
+    segmentDuration = duration;
+    
+
+  if (segmentStartTime > duration) 
+    return SND_ERR_BAD_STARTTIME;
+  else if (segmentStartTime + segmentDuration > duration)
+    return SND_ERR_BAD_DURATION;
+
+  duration = segmentDuration;
+
+  job = [[SndMP3DecodeJob alloc] initWithStartTime: segmentStartTime
+                                          duration: segmentDuration];
+
+  [pcmDataLock lock];
+  [NSThread detachNewThreadSelector: @selector(decodeThread:)
+                           toTarget: self
+                         withObject: job];
+  [pcmDataLock lock];
+  [pcmDataLock unlock];
+  duration = segmentDuration;
+  [job autorelease];
+  return SND_ERR_NONE;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// initFromSoundURL:
+////////////////////////////////////////////////////////////////////////////////
 
 - initFromSoundURL: (NSURL *) url
 {

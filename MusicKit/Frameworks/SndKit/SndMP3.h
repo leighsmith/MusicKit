@@ -40,6 +40,10 @@
 - (int) readSoundfile: (NSString*) filename;
 - (void) fillAudioBuffer: (SndAudioBuffer*) anAudioBuffer withSamplesInRange: (NSRange) playRegion;
 
+- (int) readSoundURL: (NSURL*) soundURL
+   startTimePosition: (double) segmentStartTime
+            duration: (double) segmentDuration;
+
 /*!
   @method soundFileExtensions
   @result Returns an array of file extensions available for reading and writing.
