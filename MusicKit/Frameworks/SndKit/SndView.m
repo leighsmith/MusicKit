@@ -420,49 +420,146 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     }    
 }
 
+// Cache the display data into cacheMinArray, cacheMaxArray.
+// We iterate through the pixels and for each, we iterate through a subsampling of the sound data
+// in order to determine the maximum and minimum value for each pixel. We access the initial fragment
+// of sound data we need to from the first pixel and then we access the subsequent fragments on demand
+// since retrieving a fragment may be an expensive operation.
+- (void) storeIntoCacheMax: (float *) cacheMaxArray
+		  cacheMin: (float *) cacheMinArray
+		 fromPixel: (int) startPixel
+		   toPixel: (int) endPixel // endPixel
+		   channel: (int) whichChannel
+{
+    int currentPixel;
+    int frameCount = [sound lengthInSampleFrames];
+    float maxNinety = 0, minNinety = 0, theValue, previousValue = 0;
+    float actualBaseF;
+    /* for stepping through sound data */
+    unsigned long baseFrameOfReductionRegion;
+    unsigned long currentFrameWithinReductionRegion;
+    BOOL optimize = (!svFlags.notOptimizedForSpeed && reductionFactor > optThreshold);
+    int chanCount = [sound channelCount];
+    // max point and current counter in current fragmented sound data segment
+    unsigned long fragmentLength, currentFrameInFragment; 
+    SndSampleFormat dataFormat;
+    void *pcmData;
+    
+    /* set up first read point in sound data from the current pixel */
+    actualBaseF = (float) startPixel * reductionFactor;
+    if ((int) actualBaseF != ceil(actualBaseF))
+	baseFrameOfReductionRegion = ceil(actualBaseF);
+    else
+	baseFrameOfReductionRegion = (int) (actualBaseF);
+    
+    currentFrameWithinReductionRegion = baseFrameOfReductionRegion; /* just initialise it for now */
+    pcmData = [sound fragmentOfFrame: baseFrameOfReductionRegion
+		     indexInFragment: &currentFrameInFragment
+		      fragmentLength: &fragmentLength
+			  dataFormat: &dataFormat];
+    
+    // NSLog(@"initial baseFrameOfReductionRegion %d currentFrameInFragment %d fragmentLength %d dataFormat %d\n",
+    //   baseFrameOfReductionRegion, currentFrameInFragment, fragmentLength, dataFormat);		    
+    // NSLog(@"creating cache from startPixel %d to endPixel %d, pcmData %p\n", startPixel, endPixel, pcmData);
+
+    for (currentPixel = startPixel; currentPixel <= endPixel; currentPixel++) {
+	BOOL firstPixel = YES;
+	float thisMax = 0.0, thisMin = 0.0;
+	
+	baseFrameOfReductionRegion = currentPixel * reductionFactor;
+		    
+	// Check if we've hit the end of the sound, if so, skip retrieving sound data to zero out the remainder of the cache.
+	if (baseFrameOfReductionRegion < frameCount) {
+	    int skipFrames = 1; // default to examining each sample.
+	    // determine the frame corresponding to the sound region to be reduced to a value for the next pixel.
+	    unsigned long baseFrameOfNextReductionRegion = baseFrameOfReductionRegion + reductionFactor;
+	    
+	    // iterate across the reduction region of the sound, determing the extrema. 
+	    // We skip skipFrames frames on each iteration to limit the retrieval (i.e display) time.
+	    currentFrameWithinReductionRegion = baseFrameOfReductionRegion;
+	    while (currentFrameWithinReductionRegion < baseFrameOfNextReductionRegion) {
+		if (currentFrameInFragment >= fragmentLength - 1) {
+		    pcmData = [sound fragmentOfFrame: currentFrameWithinReductionRegion
+				     indexInFragment: &currentFrameInFragment
+				      fragmentLength: &fragmentLength
+					  dataFormat: &dataFormat];
+		    // NSLog(@"currentPixel %d baseFrameOfReductionRegion %d currentFrameWithinReductionRegion %d  baseFrameOfNextReductionRegion %d currentFrameInFragment %d fragmentLength %d dataFormat %d\n",
+		    //  currentPixel, baseFrameOfReductionRegion, currentFrameWithinReductionRegion, baseFrameOfNextReductionRegion, currentFrameInFragment, fragmentLength, dataFormat);
+		    // NSLog(@"skipFrames = %d\n", skipFrames);
+		}
+		if (currentFrameWithinReductionRegion < frameCount)
+		    theValue = getSoundValue(pcmData, dataFormat, currentFrameInFragment, whichChannel, chanCount);
+		else 
+		    theValue = 0;
+		if (firstPixel) {
+		    minNinety = thisMin = theValue;
+		    maxNinety = thisMax = theValue;
+		    firstPixel = NO;
+		}
+		else {
+		    // determine extrema
+		    if (theValue < thisMin) {
+			thisMin = theValue;
+			if (optimize) 
+			    minNinety = thisMin + peakFraction * abs((int) thisMin);
+		    }
+		    else if (theValue > thisMax) {
+			thisMax = theValue;
+			if (optimize)
+			    maxNinety = thisMax - peakFraction * abs((int) thisMax);
+		    }
+		}
+		// This should be able to be factored outside the loop
+		if (optimize) {
+		    BOOL directionDown = (theValue < previousValue); /* NO for up, YES for down */
+
+		    if ((!directionDown && (theValue > maxNinety)) || (directionDown && (theValue < minNinety))) {
+			skipFrames = 1;			
+		    }
+		    else {
+			// skipFrames = optSkip;
+			// Modify skipFrames to keep the number of samples visited constant
+			skipFrames = reductionFactor / 20; // 20 = Number of samples per reduction region to sample.
+			if(skipFrames < 1) // catch if reductionFactor is less than 20.
+			    skipFrames = 1;
+		    }
+		}
+		previousValue = theValue;
+		currentFrameInFragment += skipFrames;
+		currentFrameWithinReductionRegion += skipFrames;
+	    }
+	}
+	// NSLog(@"cache at %d thisMin %f thisMax %f\n", currentPixel - startPixel, thisMin, thisMax);
+	cacheMaxArray[currentPixel - startPixel] = thisMax;
+	cacheMinArray[currentPixel - startPixel] = thisMin;
+    }     /* 'for' loop over the pixels to be cached. */
+}
+
 - (void) retrieveFromCacheIntoMax: (float *) cacheMaxArray 
 			      min: (float *) cacheMinArray
 			fromStart: (int) startX
 			    toEnd: (int) endX
 			  channel: (int) whichChannel
 {
-    /* for working through caching: */
-    int currStartPoint, arrayPointer, cacheIndex;
     SndDisplayData *currentCacheObject;	
-    float actualBaseF, firstOfNextBase;
-    /* for stepping through sound data */
-    int actualBase, firstOfNext;
-    int framesOffsetFromBase;
-    int currentPixel;
-    int skipFactor = 1;
-    void *pcmData;
-    // max point and current counter in current fragmented sound data segment
-    unsigned long fragmentLength, currentFrameInBlock; 
-    int frameCount = [sound lengthInSampleFrames];
-    float thisMax, thisMin, maxNinety = 0, minNinety = 0, theValue, previousValue = 0;
-    int directionDown = NO; /* NO for up, YES for down */
-    BOOL optimize = (!svFlags.notOptimizedForSpeed && reductionFactor > optThreshold);
-    int chanCount = [sound channelCount];
-    SndSampleFormat dataFormat;
-
-    /* STARTING MAIN CACHE LOOP HERE */
+    /* for working through caching: */
+    int cacheIndex;
+    int currStartPoint = startX;
     
-    currStartPoint = startX;
-    arrayPointer = 0;
-    
+    // Main cache loop
     while (currStartPoint <= endX) {
 	int nextCache;
 	int localMax;
 	int leadsOnFrom;
 	
 	/* following returns leadsOnFrom == YES iff cacheIndex == -1 && (currStartPoint - 1) is in previous cache */
-	
 	cacheIndex = [dataList findObjectContaining: currStartPoint
 					       next: &nextCache 
 					leadsOnFrom: &leadsOnFrom];
 	
 	if (cacheIndex != -1) { // Copy the dataList cached pixel data into the current cache
-	    int frameIndex, numToMove, cachedStart;
+	    // int frameIndex;
+	    int numToMove, cachedStart;
 	    float *maxVals, *minVals;
 	    
 	    // NSLog(@"Using cached data %d\n", cacheIndex);
@@ -476,155 +573,83 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	    maxVals = [currentCacheObject pixelDataMax];
 	    minVals = [currentCacheObject pixelDataMin];
 	    // NSLog(@"reading cache from %d, for %d\n", currStartPoint - cachedStart, numToMove);
+#if 0
 	    for (frameIndex = 0; frameIndex < numToMove; frameIndex++) {
 		cacheMaxArray[currStartPoint + frameIndex - startX] = maxVals[frameIndex + currStartPoint - cachedStart];
 		cacheMinArray[currStartPoint + frameIndex - startX] = minVals[frameIndex + currStartPoint - cachedStart];
 	    }
+#else
+	    memcpy(cacheMaxArray + currStartPoint - startX, maxVals + currStartPoint - cachedStart, numToMove * sizeof(float));
+	    memcpy(cacheMinArray + currStartPoint - startX, minVals + currStartPoint - cachedStart, numToMove * sizeof(float));
+#endif	    
 	    currStartPoint += numToMove;
-	    continue;
 	}
 	else {
 	    // NSLog(@"couldn't find cached data at currStartPoint %d, endX = %d\n", currStartPoint, endX);
-	}
-	if (nextCache != -1) {
-	    localMax = [[(NSMutableArray *) dataList objectAtIndex: nextCache] startPixel] - 1;
-	    if (localMax > endX)
-		localMax = endX;
-	}
-	else
-	    localMax = endX;
-	
-	/* set up first read point in sound data from the current pixel */
-	actualBaseF = (float) currStartPoint * reductionFactor;
-	if ((int) actualBaseF != ceil(actualBaseF))
-	    actualBase = ceil(actualBaseF);
-	else
-	    actualBase = (int) (actualBaseF);
-	framesOffsetFromBase = firstOfNext = actualBase; /* just initialise it for now */
-	pcmData = [sound fragmentOfFrame: actualBase
-			 indexInFragment: &currentFrameInBlock
-			  fragmentLength: &fragmentLength
-			      dataFormat: &dataFormat];
-	
-	// NSLog(@"creating cache from currStartPoint %d to localMax %d, pcmData %p\n", currStartPoint, localMax, pcmData);
-	
-	// Cache the display data into cacheMinArray, cacheMaxArray
-	for (currentPixel = currStartPoint; currentPixel <= localMax; currentPixel++) {
-	    BOOL firstPixel = YES;
-	    
-	    thisMax = 0.0;
-	    thisMin = 0.0;
-	    
-	    // Check if we've hit the end of the sound, if so, skip retrieving sound data to zero out the remainder of the cache.
-	    if (currentPixel * reductionFactor < frameCount) {
-		skipFactor = 1;
-		// determine the frame corresponding to the next pixel.
-		firstOfNextBase = (float) (currentPixel + 1) * reductionFactor;
-		if ((int) firstOfNextBase != ceil(firstOfNextBase))
-		    firstOfNext = ceil(firstOfNextBase);
-		else
-		    firstOfNext = (int) (firstOfNextBase);
-		
-		// have to increment currentFrameInBlock by same amount as framesOffsetFromBase although we can simply assign framesOffsetFromBase
-		currentFrameInBlock += (actualBase - framesOffsetFromBase); 
-		framesOffsetFromBase = actualBase;
-		
-		/* need to establish initial values for base and counter here, for fragged sounds */
-		while (framesOffsetFromBase < firstOfNext) {
-		    if (currentFrameInBlock >= fragmentLength - 1) {
-			pcmData = [sound fragmentOfFrame: actualBase
-					 indexInFragment: &currentFrameInBlock
-					  fragmentLength: &fragmentLength
-					      dataFormat: &dataFormat];
-			// NSLog(@"actualBase %d currentFrameInBlock %d fragmentLength %d dataFormat %d firstOfNext %d\n",
-			// actualBase, currentFrameInBlock, fragmentLength, dataFormat, firstOfNext);		    
-		    }
-		    if (framesOffsetFromBase < frameCount)
-			theValue = getSoundValue(pcmData, dataFormat, currentFrameInBlock, whichChannel, chanCount);
-		    else 
-			theValue = 0;
-		    if (firstPixel) {
-			minNinety = thisMin = theValue;
-			maxNinety = thisMax = theValue;
-			firstPixel = NO;
-		    }
-		    else {
-			if (theValue < thisMin) {
-			    thisMin = theValue;
-			    if (optimize) 
-				minNinety = thisMin + peakFraction * abs((int) thisMin);
-			}
-			else if (theValue > thisMax) {
-			    thisMax = theValue;
-			    if (optimize)
-				maxNinety = thisMax - peakFraction * abs((int) thisMax);
-			}
-		    }
-		    if (optimize) {
-			directionDown = (theValue < previousValue);
-			if ((!directionDown && (theValue > maxNinety)) || (directionDown && (theValue < minNinety)))
-			    skipFactor = 1;
-			else 
-			    skipFactor = optSkip;
-		    }
-		    previousValue = theValue;
-		    framesOffsetFromBase += skipFactor;
-		    currentFrameInBlock += skipFactor;
-		}
+	    if (nextCache != -1) {
+		localMax = [[(NSMutableArray *) dataList objectAtIndex: nextCache] startPixel] - 1;
+		if (localMax > endX)
+		    localMax = endX;
 	    }
-	    // NSLog(@"cache at %d thisMin %f thisMax %f\n", currentPixel - startX, thisMin, thisMax);
-	    cacheMaxArray[currentPixel - startX] = thisMax;
-	    cacheMinArray[currentPixel - startX] = thisMin;
-	    actualBase = firstOfNext;
-	} /* 'for' loop for creating new cache data */
-
-        // now do the following:
-        // if we are following on from last cache, append our data to that cache
-        //   otherwise create new cache...
-        // Increase currStartPoint
-        // Continue...
-
-        if (leadsOnFrom != -1) { /* we have calculated a new region which exactly appends an existing cache */
-            SndDisplayData *cacheToExtend = (SndDisplayData *) [(NSMutableArray *) dataList objectAtIndex: leadsOnFrom];
+	    else
+		localMax = endX;
 	    
-            [cacheToExtend addPixelDataMax: &cacheMaxArray[currStartPoint - startX]
-                                       min: &cacheMinArray[currStartPoint - startX]
-                                     count: localMax - currStartPoint + 1
-                                      from: [cacheToExtend endPixel] + 1];
-	    //	NSLog(@"adding to cache: from %d count %d\n", [cacheToExtend endPixel] + 1, localMax - currStartPoint + 1);
-        }
-	else {
-	    SndDisplayData *newCache = [[SndDisplayData alloc] init];
+	    [self storeIntoCacheMax: cacheMaxArray + (currStartPoint - startX)
+			   cacheMin: cacheMinArray + (currStartPoint - startX)
+			  fromPixel: currStartPoint
+			    toPixel: localMax
+			    channel: whichChannel];
+
+	    // now do the following:
+	    // if we are following on from last cache, append our data to that cache
+	    //   otherwise create new cache...
+	    // Increase currStartPoint
+	    // Continue...
+
+	    if (leadsOnFrom != -1) { /* we have calculated a new region which exactly appends an existing cache */
+		SndDisplayData *cacheToExtend = (SndDisplayData *) [(NSMutableArray *) dataList objectAtIndex: leadsOnFrom];
+		
+		[cacheToExtend addPixelDataMax: &cacheMaxArray[currStartPoint - startX]
+					   min: &cacheMinArray[currStartPoint - startX]
+					 count: localMax - currStartPoint + 1
+					  from: [cacheToExtend endPixel] + 1];
+		// NSLog(@"adding to cache: from %d count %d\n", [cacheToExtend endPixel] + 1, localMax - currStartPoint + 1);
+	    }
+	    else {
+		SndDisplayData *newCache = [[SndDisplayData alloc] init];
+		
+		[newCache setPixelDataMax: &cacheMaxArray[currStartPoint - startX]
+				      min: &cacheMinArray[currStartPoint - startX]
+				    count: localMax - currStartPoint + 1
+				    start: (int) currStartPoint];
+		[(NSMutableArray *) dataList addObject: newCache];
+		[dataList sort];
+		// NSLog(@"setting new cache: start %d count %d\n", currStartPoint, localMax - currStartPoint + 1);
+	    }
+	    /* now see if we should join up to following cache */
+	    cacheIndex = [dataList findObjectContaining: localMax + 1 next: &nextCache leadsOnFrom: &leadsOnFrom];
+	    if (cacheIndex != -1 && leadsOnFrom != -1) {
+		[[(NSMutableArray *) dataList objectAtIndex: leadsOnFrom] addDataFrom: [(NSMutableArray *) dataList objectAtIndex:cacheIndex]];
+		[(NSMutableArray *) dataList removeObjectAtIndex: cacheIndex];
+		// NSLog(@"Compacted %d with %d. Now %d caches\n", leadsOnFrom, cacheIndex,[dataList count]);
+	    }
 	    
-	    [newCache setPixelDataMax: &cacheMaxArray[currStartPoint - startX]
-				  min: &cacheMinArray[currStartPoint - startX]
-				count: localMax - currStartPoint + 1
-				start: (int) currStartPoint];
-	    [(NSMutableArray *) dataList addObject: newCache];
-	    [dataList sort];
-	    //	NSLog(@"setting new cache: start %d count %d\n", currStartPoint, localMax - currStartPoint + 1);
+	    currStartPoint = localMax + 1;
 	}
-	/* now see if we should join up to following cache */
-	cacheIndex = [dataList findObjectContaining: localMax + 1 next: &nextCache leadsOnFrom: &leadsOnFrom];
-	if (cacheIndex != -1 && leadsOnFrom != -1) {
-	    [[(NSMutableArray *) dataList objectAtIndex: leadsOnFrom] addDataFrom: [(NSMutableArray *) dataList objectAtIndex:cacheIndex]];
-	    [(NSMutableArray *) dataList removeObjectAtIndex: cacheIndex];
-	    //	NSLog(@"Compacted %d with %d. Now %d caches\n", leadsOnFrom, cacheIndex,[dataList count]);
-	}
-	
-	currStartPoint = localMax + 1;
     } /* while loop for caching */
 }
 
 // draw sound amplitude plots from the supplied audio data, where reduction factor is such that we must draw consecutive sample points.
-- (void) drawSound: (Snd *) soundToDraw within: (NSRect) drawWithinRectangle channel: (int) whichChannel
+- (void) drawSound: (Snd *) soundToDraw 
+	    within: (NSRect) drawWithinRectangle 
+	   channel: (int) whichChannel
 {
     int lastFrameToDisplay;
     float theValue;
     int firstFrameToDisplay;
     void *pcmData;
     // max point and current counter in current fragged sound data segment
-    unsigned long fragmentLength, currentFrameInBlock; 
+    unsigned long fragmentLength, currentFrameInFragment; 
     int frameCount = [soundToDraw lengthInSampleFrames];
     SndSampleFormat dataFormat;
     int chanCount = [soundToDraw channelCount];
@@ -638,7 +663,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
         firstFrameToDisplay--;
     
     pcmData = [soundToDraw fragmentOfFrame: firstFrameToDisplay 
-			   indexInFragment: &currentFrameInBlock
+			   indexInFragment: &currentFrameInFragment
 			    fragmentLength: &fragmentLength
 				dataFormat: &dataFormat];
 
@@ -648,7 +673,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     if (lastFrameToDisplay >= frameCount)
         lastFrameToDisplay = frameCount - 1;
     
-    theValue = getSoundValue(pcmData, dataFormat, currentFrameInBlock, whichChannel, chanCount);
+    theValue = getSoundValue(pcmData, dataFormat, currentFrameInFragment, whichChannel, chanCount);
     
     /* establish initial point */
     nextSoundPixel.y = theValue * ampScaler + amplitudeDisplayHeight;    
@@ -657,13 +682,13 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
     [soundPath moveToPoint: nextSoundPixel];
     
     while (firstFrameToDisplay <= lastFrameToDisplay) {
-        if (currentFrameInBlock >= fragmentLength - 1)
+        if (currentFrameInFragment >= fragmentLength - 1)
 	    pcmData = [soundToDraw fragmentOfFrame: firstFrameToDisplay 
-				   indexInFragment: &currentFrameInBlock 
+				   indexInFragment: &currentFrameInFragment 
 				    fragmentLength: &fragmentLength
 					dataFormat: &dataFormat];
 	
-        theValue = getSoundValue(pcmData, dataFormat, currentFrameInBlock, whichChannel, chanCount);
+        theValue = getSoundValue(pcmData, dataFormat, currentFrameInFragment, whichChannel, chanCount);
 
 	nextSoundPixel.y = theValue * ampScaler + amplitudeDisplayHeight;
 	nextSoundPixel.x = (float) ((float) firstFrameToDisplay / (float) reductionFactor) + 0.5;
@@ -680,7 +705,7 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	    [soundPath moveToPoint: nextSoundPixel];
         }           
         firstFrameToDisplay++;
-        currentFrameInBlock++;
+        currentFrameInFragment++;
     }
     
     [foregroundColour set];
