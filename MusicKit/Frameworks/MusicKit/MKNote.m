@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/05/06 00:32:59  leigh
+  Converted _binaryIndecies to NSMutableDictionary
+
   Revision 1.7  2000/04/04 00:13:21  leigh
   Made class reference clear in description
 
@@ -1301,9 +1304,8 @@ void _MKWriteParameters(MKNote *self,NSMutableData *aStream,_MKScoreOutStruct *p
 static id writeBinaryNoteAux(MKNote *self,id aPart,_MKScoreOutStruct *p)
 {
     NSMutableData *aStream = p->_stream;
-    _MKWriteShort(aStream,_MK_partInstance);
-    _MKWriteShort(aStream,
-                  (int)[p->_binaryIndecies valueForKey:(const void *)aPart]);
+    _MKWriteShort(aStream, _MK_partInstance);
+    _MKWriteShort(aStream, [[p->_binaryIndecies objectForKey: aPart] intValue]);
     switch (self->noteType) {
       case MK_noteDur: {
           double dur = ((p->_ownerIsNoteRecorder) ? 

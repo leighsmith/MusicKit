@@ -2,30 +2,29 @@
   $Id$
   Defined In: The MusicKit
 
-  Description:
-   
-    A Note object represents a musical sound or event by describing its
+  Description:   
+    A MKNote object represents a musical sound or event by describing its
     attributes.  This information falls into three categories:
    
     * parameters
     * timing information
     * type information.
    
-    Most of the information in a Note is in its parameters; a Note can
+    Most of the information in a MKNote is in its parameters; a MKNote can
     have any number of parameters.  A parameter consists of an identifier,
     a string name, and a value.  The identifier is a unique integer used
-    to catalog the parameter within the Note; the Music Kit defines a
+    to catalog the parameter within the MKNote; the MusicKit defines a
     number of parameter identifiers such as MK_freq (for frequency) and
     MK_amp (for amplitude).  The string name is used to identify the
-    parameter in a scorefile.  The string names for the Music Kit
+    parameter in a scorefile.  The string names for the MusicKit
     parameters are the same as the identifier names, but without the "MK_"
     prefix.  You can create your own parameter identifiers by passing a
     name to the parTagForName: class method.  This method returns the identifier
     associated with the parameter name, creating it if it doesn't already
     exit.
    
-    A parameter's value can be a double, int, NSString object, an Envelope object,
-    WaveTable object, or other (non-Music Kit) object.  These six
+    A parameter's value can be a double, int, NSString object, an MKEnvelope object,
+    MKWaveTable object, or other (non-Music Kit) object.  These six
     parameter value types are represented by the following MKDataType
     constants:
    
@@ -48,19 +47,19 @@
     and parAsObject: messages return nil if the parameter value isn't the
     specified type.
    
-    A Note's parameters are significant only if an object that processes
-    the Note (such as an instance of a subclass of MKPerformer, MKNoteFilter,
+    A MKNote's parameters are significant only if an object that processes
+    the MKNote (such as an instance of a subclass of MKPerformer, MKNoteFilter,
     MKInstrument, or MKSynthPatch) accesses and uses the information.
    
-    Timing information is used to perform the Note at the proper time and
-    for the proper duration.  This information is called the Note's
-    timeTag and duration, respectively.  A single Note can have only one
-    timeTag and one duration.  Setting a Note's duration automatically
+    Timing information is used to perform the MKNote at the proper time and
+    for the proper duration.  This information is called the MKNote's
+    timeTag and duration, respectively.  A single MKNote can have only one
+    timeTag and one duration.  Setting a MKNote's duration automatically
     changes its noteType to MK_noteDur, as described below.  TimeTag and
     duration are measured in beats.
    
-    A Note has two pieces of type information, a noteType and a noteTag.
-    A Note's noteType establishes its nature; there are six noteTypes:
+    A MKNote has two pieces of type information, a noteType and a noteTag.
+    A MKNote's noteType establishes its nature; there are six noteTypes:
    
     * A noteDur represents an entire musical note (a note with a duration).
     * A noteOn establishes the beginning of a note.
@@ -78,11 +77,11 @@
    
     The default is MK_mute.
    
-    NoteTags are integers used to identify Note objects that are part of
+    NoteTags are integers used to identify MKNote objects that are part of
     the same musical sound or event; in particular, matching noteTags are
     used to create noteOn/noteOff pairs and to associate noteUpdates with
-    other Notes.  (A noteUpdate without a noteTag updates all the Notes in
-    its Part.)
+    other MKNotes.  (A noteUpdate without a noteTag updates all the MKNotes in
+    its MKPart.)
   
     The C function MKNoteTag() is provided to generate noteTag values that
     are guaranteed to be unique across your entire application -- you
@@ -90,11 +89,11 @@
     actual integer value of a noteTag has no significance (the range of
     noteTag values extends from 0 to 2^BITS_PER_INT).
    
-    Mutes can't have noteTags; if you set the noteTag of such a Note, it
+    Mutes can't have noteTags; if you set the noteTag of such a MKNote, it
     automatically becomes a noteUpdate.
    
-    Notes are typically added to Part objects.  A Part is a time-ordered
-    collection of Notes.
+    MKNotes are typically added to MKPart objects.  A MKPart is a time-ordered
+    collection of MKNotes.
   
   Original Author: David Jaffe
 
@@ -104,6 +103,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2000/05/06 00:32:59  leigh
+  Converted _binaryIndecies to NSMutableDictionary
+
   Revision 1.5  2000/04/16 04:20:36  leigh
   Comment cleanup
 
@@ -186,16 +188,17 @@ typedef enum _MKDataType {     /* Data types supported by Notes */
     MK_waveTable}
 MKDataType;
 
+@class MKPart;
+
 @interface MKNote : NSObject
 {
-    MKNoteType noteType;    /* The Note's noteType. */
-    int noteTag;         /* The Note's noteTag. */
-    id performer;        /* Performer object that's currently sending the Note
-                          * in performance, if any. */
-    id part;            /* The Part that this Note is a member of, if any. */
-    double timeTag;     /* Time tag, if any, else MK_ENDOFTIME. */
-    id conductor;       /* Conductor to use if performer is nil.  If performer
-                         * is not nil, uses [performer conductor] */
+    MKNoteType noteType;     /* The Note's noteType. */
+    int noteTag;             /* The Note's noteTag. */
+    id performer;            /* Performer object that's currently sending the Note in performance, if any. */
+    MKPart *part;            /* The Part that this Note is a member of, if any. */
+    double timeTag;          /* Time tag, if any, else MK_ENDOFTIME. */
+    MKConductor *conductor;  // Conductor to use if performer is nil.
+                             // If performer is not nil, uses [performer conductor]
 
     /* The following are for internal use only.  */
 #if 0
