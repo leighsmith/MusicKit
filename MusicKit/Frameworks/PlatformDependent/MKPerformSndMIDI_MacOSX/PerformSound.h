@@ -15,6 +15,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2001/02/11 22:51:00  leigh
+  First draft of simplistic working sound playing using CoreAudio
+
   Revision 1.3  2000/10/29 06:07:51  leigh
   Made BOOL typedef compatible with the standard.
 
@@ -38,20 +41,22 @@
 
 // these don't seem to be defined anywhere standard - probably they
 // are in GnuStep
-typedef char BOOL;
 #ifndef FALSE
+typedef char BOOL;
 #define FALSE 0
 #define TRUE !(FALSE)
 #endif
 
+// TODO either include objc/objc.h for FALSE etc or Foundation.h if PerformSound is a .m
+
 #include <stdlib.h> // for NULL definition
-#include "soundstruct.h"
+#include "SndStruct.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif 
 
-typedef int (*SNDNotificationFun)(SNDSoundStruct *s, int tag, int err);
+typedef int (*SNDNotificationFun)(SndSoundStruct *s, int tag, int err);
 
 #define SND_NULL_FUN ((SNDNotificationFun)0)
 
@@ -74,10 +79,10 @@ PERFORM_API BOOL SNDIsMuted(void);
 
 PERFORM_API void SNDSetMute(BOOL aFlag);
 
-PERFORM_API int SNDStartPlaying(SNDSoundStruct *soundStruct, int tag, int priority,  int preempt, 
+PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct, int tag, int priority,  int preempt, 
   SNDNotificationFun beginFun, SNDNotificationFun endFun);
 
-PERFORM_API int SNDStartRecording(SNDSoundStruct *soundStruct, int tag, int priority, int preempt, 
+PERFORM_API int SNDStartRecording(SndSoundStruct *soundStruct, int tag, int priority, int preempt, 
   SNDNotificationFun beginRecFun, SNDNotificationFun endRecFun);
  
 PERFORM_API int SNDSamplesProcessed(int tag);

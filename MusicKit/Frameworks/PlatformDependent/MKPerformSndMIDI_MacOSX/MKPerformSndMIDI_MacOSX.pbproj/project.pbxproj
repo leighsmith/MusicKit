@@ -37,8 +37,7 @@
 				016D5A29FED483BBCFED3B93,
 				016D5A27FED483BBCFED3B93,
 				016D5A2BFED483BBCFED3B93,
-				016D5A2CFED483BBCFED3B93,
-				016D5A2DFED483BBCFED3B93,
+				07B2BE640034BFE6CFED3B96,
 			);
 			isa = PBXGroup;
 			name = Headers;
@@ -57,16 +56,6 @@
 		016D5A2BFED483BBCFED3B93 = {
 			isa = PBXFileReference;
 			path = PerformSoundPrivate.h;
-			refType = 4;
-		};
-		016D5A2CFED483BBCFED3B93 = {
-			isa = PBXFileReference;
-			path = sounderror.h;
-			refType = 4;
-		};
-		016D5A2DFED483BBCFED3B93 = {
-			isa = PBXFileReference;
-			path = soundstruct.h;
 			refType = 4;
 		};
 		016D5A2EFED483BBCFED3B93 = {
@@ -93,6 +82,7 @@
 				1001C128FFAE92E2CFED3B93,
 				1001C124FFAE54A5CFED3B93,
 				016D5A39FED483BBCFED3B93,
+				07B2BE620034ACD5CFED3B96,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -147,7 +137,7 @@
 	<key>CFBundleExecutable</key>
 	<string>MKPerformSndMIDI</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Functions to interface to the operating system MIDI and Sound API</string>
+	<string>Functions to interface the MusicKit and SndKit to the operating system MIDI and Sound API</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -159,11 +149,11 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>V5.2.0</string>
+	<string>V5.2.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>5.2.0</string>
+	<string>5.2.3</string>
 </dict>
 </plist>
 ";
@@ -175,8 +165,7 @@
 				016D5A3CFED483BBCFED3B93,
 				016D5A3EFED483BBCFED3B93,
 				016D5A40FED483BBCFED3B93,
-				016D5A41FED483BBCFED3B93,
-				016D5A42FED483BBCFED3B93,
+				07B2BE650034BFE6CFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -185,6 +174,9 @@
 			fileRef = 016D5A27FED483BBCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 				INCLUDED_OSS = (
 					MACOS,
 					WINDOWS,
@@ -208,28 +200,6 @@
 		};
 		016D5A40FED483BBCFED3B93 = {
 			fileRef = 016D5A2BFED483BBCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
-		016D5A41FED483BBCFED3B93 = {
-			fileRef = 016D5A2CFED483BBCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
-		016D5A42FED483BBCFED3B93 = {
-			fileRef = 016D5A2DFED483BBCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
 				INCLUDED_OSS = (
@@ -275,6 +245,7 @@
 				016D5A48FED483BBCFED3B93,
 				1001C125FFAE54A5CFED3B93,
 				1001C129FFAE92E2CFED3B93,
+				07B2BE630034ACD5CFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -315,6 +286,42 @@
 			isa = PBXFrameworkReference;
 			path = MKPerformSndMIDI.framework;
 			refType = 3;
+		};
+		07B2BE620034ACD5CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = CoreAudio.framework;
+			path = /System/Library/Frameworks/CoreAudio.framework;
+			refType = 0;
+		};
+		07B2BE630034ACD5CFED3B96 = {
+			fileRef = 07B2BE620034ACD5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		07B2BE640034BFE6CFED3B96 = {
+			isa = PBXFileReference;
+			path = SndStruct.h;
+			refType = 4;
+		};
+		07B2BE650034BFE6CFED3B96 = {
+			fileRef = 07B2BE640034BFE6CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
 		};
 		1001C124FFAE54A5CFED3B93 = {
 			isa = PBXFrameworkReference;
