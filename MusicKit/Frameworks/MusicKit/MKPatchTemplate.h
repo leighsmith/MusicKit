@@ -74,6 +74,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2000/06/09 17:17:51  leigh
+  Added MKPatchEntry replacing deprecated Storage class
+
   Revision 1.3  2000/06/09 03:32:36  leigh
   Comment cleanup and typed ivars to reduce warnings
 
@@ -89,8 +92,8 @@
 @interface MKPatchTemplate : NSObject
 {    
     /* All MKPatchTemplate instance variables are for internal use only */
-    id _elementStorage;         /* Storage class object of template entries */
-    NSMutableArray *_connectionStorage;      /* MKPatchConnection object of connection info */
+    NSMutableArray *_elementStorage;         /* Array of template entries */
+    NSMutableArray *_connectionStorage;      /* Array of MKPatchConnection objects of connection info */
     /* If Orchestra is loaded, this is an array of NSMutableArrays of deallocated patches, one per DSP. */
     NSMutableArray **_deallocatedPatches;
     unsigned int _eMemSegments; /* External memory segment bit vector */

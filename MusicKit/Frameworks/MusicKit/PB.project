@@ -61,7 +61,8 @@
             utilities.m, 
             writeBinary.m, 
             writeMidi.m, 
-            writeScore.m
+            writeScore.m, 
+            MKPatchEntry.m
         ); 
         DOCUMENTATION = (); 
         FRAMEWORKS = (
@@ -181,7 +182,8 @@
             pitches.h, 
             timeunits.h, 
             tokens.h, 
-            MKPatchConnection.h
+            MKPatchConnection.h, 
+            MKPatchEntry.h
         ); 
         LIBRARYSEARCH = (./); 
         OTHER_LIBS = (); 

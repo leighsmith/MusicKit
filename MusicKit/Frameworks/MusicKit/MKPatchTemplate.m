@@ -62,6 +62,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/06/09 17:17:51  leigh
+  Added MKPatchEntry replacing deprecated Storage class
+
   Revision 1.5  2000/06/09 03:31:31  leigh
   Added MKPatchConnection to remove a struct which required Storage
 
@@ -88,25 +91,16 @@ Modification history:
 */
 #import "_musickit.h"
 
-#import <objc/Storage.h>
 #import "OrchestraPrivate.h"
 #import "SynthPatchPrivate.h"
 #import "UnitGeneratorPrivate.h"
+#import "MKPatchEntry.h"
 #import "MKPatchConnection.h"
 
 #import "PatchTemplatePrivate.h"
 
 @implementation MKPatchTemplate:NSObject
 
-typedef struct _templateEntry {
-    id class;             /* Which class. */
-    unsigned short type;  /* See above */
-    unsigned short seg;   /* Used only for data memory. MKOrchMemSegment. */
-    unsigned length;      /* " Length of data. */ 
-    } templateEntry;
-
-
-#define ENTRYSIZE	(sizeof(templateEntry))
 #define ENTRYDESCR @"{#SSI}"
 
 +new
@@ -122,8 +116,7 @@ typedef struct _templateEntry {
     [super init];
     _deallocatedPatches = [_MKClassOrchestra() _addTemplate:self];
     _connectionStorage = [[NSMutableArray array] retain];
-    _elementStorage = 
-      [Storage newCount:0 elementSize:ENTRYSIZE description:[ENTRYDESCR cString]];
+    _elementStorage = [[NSMutableArray array] retain];
     return self;
 }
 
@@ -152,25 +145,24 @@ typedef struct _templateEntry {
      Should be invoked via NXReadObject(). 
      See write:. */
 {
-   /* [super initWithCoder:aDecoder]; */ /*sb: unnecessary */
+    /* [super initWithCoder:aDecoder]; */ /*sb: unnecessary */
     if ([aDecoder versionForClassName:@"MKPatchTemplate"] == VERSION2) 
-      [aDecoder decodeValuesOfObjCTypes:"@@i",&_elementStorage,&_connectionStorage,
-		  &_eMemSegments];
+        [aDecoder decodeValuesOfObjCTypes:"@@i",&_elementStorage,&_connectionStorage, &_eMemSegments];
     /* from awake (sb) */
-	{
-            int i,count;
-            MKPatchConnection *conn;
-            templateEntry *templ;
+    {
+        int i,count;
+        MKPatchConnection *conn;
+        MKPatchEntry *templ;
 
-            _deallocatedPatches = [_MKClassOrchestra() _addTemplate:self];
-            /* Update IMP pointers */
-            count = [_connectionStorage count];
-            for (i=0; i<count; i++) {
-                conn = [_connectionStorage objectAtIndex:i];
-                templ = [_elementStorage elementAt:conn->_toObjectOffset];
-                conn->_methodImp = [templ->class instanceMethodForSelector:conn->_aSelector];
-            }
-          }
+        _deallocatedPatches = [_MKClassOrchestra() _addTemplate:self];
+        /* Update IMP pointers */
+        count = [_connectionStorage count];
+        for (i=0; i<count; i++) {
+            conn = [_connectionStorage objectAtIndex:i];
+            templ = [_elementStorage objectAtIndex:conn->_toObjectOffset];
+            conn->_methodImp = [[templ entryClass] instanceMethodForSelector:conn->_aSelector];
+        }
+    }
     return self;
 }
 
@@ -184,16 +176,10 @@ typedef struct _templateEntry {
      the same connections and entries. */
 {
     MKPatchTemplate *newObj = NSCopyObject(self, 0, zone);
-    int elements;
 
     _deallocatedPatches = [_MKClassOrchestra() _addTemplate:newObj];
-    elements = [_elementStorage count];
     newObj->_connectionStorage = [_connectionStorage copy];
-    newObj->_elementStorage = [Storage newCount:elements
-			     elementSize:ENTRYSIZE description:[ENTRYDESCR cString]];
-    memcpy((templateEntry *)[newObj->_elementStorage elementAt:0],
-	   (templateEntry *)[_elementStorage elementAt:0],
-	   ENTRYSIZE * elements);
+    newObj->_elementStorage = [_elementStorage copy];
     return newObj;
 }
 
@@ -222,13 +208,11 @@ typedef struct _templateEntry {
     MKPatchConnection *conn = [[MKPatchConnection alloc] initWithTargetObjectOffset: toObjInt
                                                                            selector: aSelector
                                                                            argument: withObjInt];
-    int i;
-    i = [_elementStorage count];
+    int i = [_elementStorage count];
     if ((toObjInt < i) && (withObjInt < i))
-// This implies that rather than keeping the instance method for the selector, we should retain the selector
+      // This implies that rather than keeping the instance method for the selector, we should retain the selector
       conn->_methodImp =
-          [((templateEntry *)[_elementStorage elementAt:toObjInt])->
-	 class instanceMethodForSelector: aSelector];
+          [[(MKPatchEntry *)[_elementStorage objectAtIndex:toObjInt] entryClass] instanceMethodForSelector: aSelector];
     else 
       return nil;
     [_connectionStorage addObject: conn];
@@ -240,11 +224,12 @@ typedef struct _templateEntry {
 #define SYNTHDATA ((short)3)
 #define PATCHPOINT ((short)4)
 
-static unsigned addEl(MKPatchTemplate *self,templateEntry *newEntry)
+static unsigned addEl(MKPatchTemplate *self, MKPatchEntry *newEntry)
 {
     unsigned curIndex = [self->_elementStorage count];
     /* Count is num elements. But we pass an index so need to subtract 1. */ 
-    [self->_elementStorage insertElement:(char *)newEntry at:curIndex];
+    [self->_elementStorage addObject: newEntry];
+    // LMS: I'm not quite sure if we should be returning curIndex before the addObject or after.
     return curIndex; 
 }
 
@@ -256,10 +241,9 @@ static unsigned addEl(MKPatchTemplate *self,templateEntry *newEntry)
      writing SynthPatches tricker, since the designer may need to ask each
      UnitGenerator if it runs after or before the others. */
 {
-    templateEntry newEntry;
-    newEntry.class = aUGClass;
-    newEntry.type = (isOrdered) ? ORDERED : UNORDERED;
-    return addEl(self,&newEntry);
+    MKPatchEntry *newEntry = [[MKPatchEntry alloc] initWithClass: aUGClass
+                                                            type: (isOrdered) ? ORDERED : UNORDERED];
+    return addEl(self, newEntry);
 }
 
 -(unsigned)addUnitGenerator:aUGClass
@@ -272,23 +256,20 @@ static unsigned addEl(MKPatchTemplate *self,templateEntry *newEntry)
   /* Adds a request for a data memory segment of the specified segment type
      and length. */
 {
-    templateEntry newEntry;
-    newEntry.class = [MKSynthData class];
-    newEntry.type = SYNTHDATA;
-    newEntry.seg = (unsigned short)segment;
-    newEntry.length = len;
-    return addEl(self,&newEntry);
+    MKPatchEntry *newEntry = [[MKPatchEntry alloc] initWithClass: [MKSynthData class]
+                                                            type: SYNTHDATA
+                                                         segment: (unsigned short) segment
+                                                          length: len];
+    return addEl(self, newEntry);
 }
 
 -(unsigned)addPatchpoint:(MKOrchMemSegment)segment
-  /* Adds a request for a data memory segment of the specified segment type
-     and length. */
+  /* Adds a request for a data memory segment of the specified segment type */
 {
-    templateEntry newEntry;
-    newEntry.class = [MKSynthData class];
-    newEntry.type = PATCHPOINT;
-    newEntry.seg = (unsigned short)segment;
-    return addEl(self,&newEntry);
+    MKPatchEntry *newEntry = [[MKPatchEntry alloc] initWithClass: [MKSynthData class]
+                                                            type: PATCHPOINT 
+                                                         segment: (unsigned short) segment]; 
+    return addEl(self, newEntry);
 }
 
 NSMutableArray *_MKDeallocatedSynthPatches(MKPatchTemplate *templ,int orchIndex)
@@ -298,13 +279,14 @@ NSMutableArray *_MKDeallocatedSynthPatches(MKPatchTemplate *templ,int orchIndex)
 
 BOOL _MKIsClassInTemplate(MKPatchTemplate *templ,id factObj)
 {
-   /* Returns YES if factObj is present in templ as a unit generator,
-      ordered or unordered. */
-   register templateEntry *arrEnd,*el;
-   el = (templateEntry *)([templ->_elementStorage elementAt:0]);
-   for (arrEnd = el + [templ->_elementStorage count]; el < arrEnd; el++) 
-     if ((el->class) == factObj) 
-       return YES;
+    /* Returns YES if factObj is present in templ as a unit generator,
+       ordered or unordered. */
+    int i;
+    for (i = 0; i < [templ->_elementStorage count]; i++) {
+        MKPatchEntry *el = [templ->_elementStorage objectAtIndex: i];
+        if ([el entryClass] == factObj) 
+            return YES;
+   }
    return NO;
 }
 
@@ -393,35 +375,31 @@ id _MKAllocSynthPatch(MKPatchTemplate *templ,id synthPatchClass,id anOrch,
                    [NSStringFromClass([synthPatchClass class]) cString],aPatch);
     
     {
-	register templateEntry *arrEnd,*el;
+        int entryIndex;
 	id anOrderedUG = nil;
 	id aSE = nil;
-	BOOL firstOrdered;
+        BOOL firstOrdered = YES;
 	
-	firstOrdered = YES;
-	el = (templateEntry *)([templ->_elementStorage elementAt:0]);
-	for (arrEnd = el + [templ->_elementStorage count]; 
-	     el < arrEnd; 
-	     el++) {
-	    switch (el->type) {
-	      case ORDERED:
+        for (entryIndex = 0; entryIndex < [templ->_elementStorage count]; entryIndex++) {
+            MKPatchEntry *el = [templ->_elementStorage objectAtIndex: entryIndex];
+	    switch ([el type]) {
+	    case ORDERED:
 		if (firstOrdered) {
-		    anOrderedUG = [anOrch allocUnitGenerator:el->class]; 
+                    anOrderedUG = [anOrch allocUnitGenerator: [el entryClass]]; 
 		    firstOrdered = NO;
 		}
-		else 
-		  anOrderedUG = [anOrch allocUnitGenerator:el->class 
-			       after:anOrderedUG];
+		else
+                    anOrderedUG = [anOrch allocUnitGenerator: [el entryClass] after: anOrderedUG];
 		aSE = anOrderedUG;
 		break;
-	      case UNORDERED:
-		aSE = [anOrch allocUnitGenerator:el->class]; 
+	    case UNORDERED:
+                aSE = [anOrch allocUnitGenerator: [el entryClass]]; 
 		break;
-	      case PATCHPOINT:
-		aSE = [anOrch allocPatchpoint:el->seg];
+	    case PATCHPOINT:
+		aSE = [anOrch allocPatchpoint: [el segment]];
 		break;
-	      case SYNTHDATA:
-		aSE = [anOrch allocSynthData:el->seg length:el->length];
+	    case SYNTHDATA:
+		aSE = [anOrch allocSynthData: [el segment] length: [el length]];
 		break;
 	    }
             if (aSE) {
