@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.2  2001/11/07 17:55:10  sbrandon
+// changed bool to BOOL in method declaration. How did this work before?
+//
 // Revision 1.1  2001/10/31 19:37:29  skotmcdonald
 // Changed PerformSound from .c to objC .m file to allow use of NSLock to support slightly hacky work around 10.1 core audios apparent dislike of having the same callback function for input and output devices, even tho the API clearly has buffers for both. hmm. Added second lightweight input callback which copies input data into local buffer for simultaneous presentation with output data from inside the output callback.
 //
@@ -484,7 +487,7 @@ static BOOL retrieveDriverList(void)
 // isDeviceRunning
 ////////////////////////////////////////////////////////////////////////////////
 
-static BOOL isDeviceRunning(AudioDeviceID deviceID, bool isInput)
+static BOOL isDeviceRunning(AudioDeviceID deviceID, BOOL isInput)
 {
     UInt32 running;
     OSStatus CAstatus;
