@@ -64,7 +64,7 @@
 {
     SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
     long oldLength = f->dataSize;
-    long samWidth = SndSampleWidth(f);
+    long samWidth = SndSampleWidth(f->dataFormat);
     f->dataSize = (f->channelCount) * 
                   samWidth *
                   (long)((f->samplingRate) * timeInSec);
