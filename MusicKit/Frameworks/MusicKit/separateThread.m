@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.13  2000/04/02 17:21:22  leigh
+  set receive port of waking MKThread to nil, fixing crash
+
   Revision 1.12  2000/04/01 01:17:23  leigh
   made timeToWait checks use method interface in prep for moving separateThread to its own category. Properly defined NSPort workaround
 
@@ -259,7 +262,7 @@ static void sendMessageToWakeUpMKThread(void)
 {
     // Create a valid but empty message.
     NSPortMessage *msg = [[NSPortMessage alloc] initWithSendPort: appToMKPortObj
-						     receivePort: MKToAppPortObj // this might be breaking the rules.
+						     receivePort: nil   // I think this is the correct way to have no reply.
                                                       components: [NSArray arrayWithObject: [NSData data]]];
 
     NSLog(@"sendMessageToWakeUpMKThread\n");
