@@ -159,9 +159,9 @@ static void handleMKError(NSString *msg) {
     needsUpdate = NO; 
 }
 
-- (void)save:sender
+- (void) save: sender
 {
-    return [self saveAs: ([scoreFilePath length] > 0) ? self : nil];
+    [self saveAs: ([scoreFilePath length] > 0) ? self : nil];
 }
 
 - (void)showInfoPanel:sender
