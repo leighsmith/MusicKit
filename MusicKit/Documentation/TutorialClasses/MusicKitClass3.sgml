@@ -61,10 +61,10 @@
 	<TITLE> A <PRODUCTNAME>MusicKit</PRODUCTNAME> Performance</TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
-	    <IMAGEDATA FILEREF="MusicKitClass3-performance.eps" FORMAT="EPS">
+	    <IMAGEDATA FILEREF="Images/MusicKitClass3-performance.eps" FORMAT="EPS">
 	  </IMAGEOBJECT>
 	  <IMAGEOBJECT>
-	    <IMAGEDATA FILEREF="MusicKitClass3-performance.gif" FORMAT="GIF">
+	    <IMAGEDATA FILEREF="Images/MusicKitClass3-performance.gif" FORMAT="GIF">
 	  </IMAGEOBJECT>
 	</MEDIAOBJECT>
       </FIGURE>

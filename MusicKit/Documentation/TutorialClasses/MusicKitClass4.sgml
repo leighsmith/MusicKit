@@ -95,11 +95,11 @@
 	<MEDIAOBJECT>
 
 	  <IMAGEOBJECT>
-	    <IMAGEDATA FILEREF="MusicKitClass4-SynthInstrument.eps"
+	    <IMAGEDATA FILEREF="Images/MusicKitClass4-SynthInstrument.eps"
 		       FORMAT="EPS">
 	  </IMAGEOBJECT>
 	  <IMAGEOBJECT>
-	    <IMAGEDATA FILEREF="MusicKitClass4-SynthInstrument.gif"
+	    <IMAGEDATA FILEREF="Images/MusicKitClass4-SynthInstrument.gif"
 		       FORMAT="GIF">
 	  </IMAGEOBJECT>
 	</MEDIAOBJECT>

@@ -291,11 +291,11 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 	<TITLE>	A Simple Synth Patch</TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
-	    <IMAGEDATA FILEREF="MusicKitClass5-SimpleSynthPatch.eps" 
+	    <IMAGEDATA FILEREF="Images/MusicKitClass5-SimpleSynthPatch.eps" 
 		       FORMAT="EPS">
 	  </IMAGEOBJECT>
 	  <IMAGEOBJECT>
-	    <IMAGEDATA FILEREF="MusicKitClass5-SimpleSynthPatch.gif"
+	    <IMAGEDATA FILEREF="Images/MusicKitClass5-SimpleSynthPatch.gif"
 		       FORMAT="GIF">
 	  </IMAGEOBJECT>
 	</MEDIAOBJECT>
@@ -649,11 +649,11 @@ MKUpdateAsymp(
 	<TITLE>	noteTypes Time Line</TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
-	    <IMAGEDATA FILEREF="MusicKitClass5-noteTypes.eps" 
+	    <IMAGEDATA FILEREF="Images/MusicKitClass5-noteTypes.eps" 
 		       FORMAT="EPS">
 	  </IMAGEOBJECT>
 	  <IMAGEOBJECT>
-	    <IMAGEDATA FILEREF="MusicKitClass5-noteTypes.gif"
+	    <IMAGEDATA FILEREF="Images/MusicKitClass5-noteTypes.gif"
 		       FORMAT="GIF">
 	  </IMAGEOBJECT>
 	</MEDIAOBJECT>
