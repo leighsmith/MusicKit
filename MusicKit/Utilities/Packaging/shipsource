@@ -8,6 +8,8 @@
 #
 APPNAME=MusicKit
 APPCHECKEDOUT_SRCLOC=/tmp/MKSRC
+# This allows us to have a different default CVSROOT
+MKCVSROOT=leigh@cvs.tomandandy.com:/Local/Library/CVSRoot
 PACKAGENAME=MK
 if [ x_$1 = x_ ]; then
     echo "${APPNAME} source shipping script"
@@ -19,6 +21,7 @@ else
 fi
 # Salt to taste:
 TAR=gnutar
+CHGLOGGEN=cvs2cl.pl
 TARLOC=/tmp
 CVSTAG=${APPNAME}_`echo $RELEASE | tr '.' '-'`
 
@@ -26,7 +29,7 @@ CVSTAG=${APPNAME}_`echo $RELEASE | tr '.' '-'`
 echo Checking out $CVSTAG to $APPCHECKEDOUT_SRCLOC
 mkdir -p $APPCHECKEDOUT_SRCLOC
 cd $APPCHECKEDOUT_SRCLOC
-cvs -Q checkout -r $CVSTAG $APPNAME
+cvs -d $MKCVSROOT -Q checkout -r $CVSTAG $APPNAME
 
 # unwrap the symbolic links, this will remove the symbolic links wrap file.
 unwrap_symlink $APPNAME
@@ -34,11 +37,15 @@ unwrap_symlink $APPNAME
 # build a ChangeLog with spaces between filenames and comments, 
 # collected to half-day window, incorporating tags.
 cd $APPCHECKEDOUT_SRCLOC/$APPNAME
-cvs2cl --tags --no-wrap --separate-header --window 43200 --file Documentation/ChangeLog
+$CHGLOGGEN --no-wrap --separate-header --window 43200 --file Documentation/ChangeLog
 # copy it so it can be used for generating an announcement.
 cp Documentation/ChangeLog $TARLOC
 
-# create a readily reable copy of the MusicKit_README.sgml file
+# This is the means to generate what we've done since last release.
+# $CHGLOGGEN --no-wrap --separate-header --window 43200 --file /tmp/ChangeLog_$RELEASE --log-opts '-d\>2000-10-09'
+
+# create a readily readable PDF version of the MusicKit_README.sgml file
+# packageREADME
 # Unfortunately, the SGML tools don't work on MOXS, so we suffice by copying them...
 cp ~/MusicKit_README.pdf $APPCHECKEDOUT_SRCLOC/$APPNAME
 
@@ -56,3 +63,5 @@ echo ChangeLog generated at $TARLOC/ChangeLog
 
 # blow away the checked out source.
 rm -r $APPCHECKEDOUT_SRCLOC
+
+# upload to upload.sourceforge.net/incoming
