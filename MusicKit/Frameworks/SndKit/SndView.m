@@ -163,23 +163,23 @@ OF THIS AGREEMENT.
     //    selectionColour = [[NSColor controlHighlightColor] retain];
     //    selectionColour = [[NSColor purpleColor] retain];
 
-    selectionColour = [[NSColor colorWithCalibratedRed:1. green:.875 blue:.875
-    			alpha:1.] retain];
+    selectionColour = [[NSColor colorWithCalibratedRed:.8 green:.8 blue:.8
+    			alpha:0.8] retain];
 
     //    backgroundColour = [[NSColor controlBackgroundColor] retain];
     //    backgroundColour = [[NSColor blackColor] retain];
     //    backgroundColour = [[NSColor clearColor] retain];
 
-    //    backgroundColour = [[NSColor colorWithCalibratedWhite:0.0 alpha:0.1]
-    //		 retain];
+        backgroundColour = [[NSColor colorWithCalibratedWhite:1.0 alpha:1]
+    		 retain];
 
-    backgroundColour = [[NSColor colorWithCalibratedRed:.25 green:0 blue:0.
-    			alpha:.1] retain];
+//    backgroundColour = [[NSColor colorWithCalibratedRed:.25 green:0 blue:0.
+//    			alpha:.1] retain];
 
     //    foregroundColour = [[NSColor blueColor] retain];//black
 
     foregroundColour = [[NSColor colorWithCalibratedRed:.6 green:.25 blue:1.
-    			alpha:1.] retain];
+    			alpha:.7] retain];
 
 
     displayMode = NX_SOUNDVIEW_MINMAX;
@@ -212,7 +212,7 @@ OF THIS AGREEMENT.
     firstDraw = YES;
 
     selectionRect.origin.x = selectionRect.size.width = 0;
-    
+    [self allocateGState]; // attempt speed increase!
     return;
 }
 
@@ -522,6 +522,8 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
     BOOL optimize = (!svFlags.notOptimizedForSpeed && reductionFactor > optThreshold);
     int m1,c1; /* max point and current counter in current fragged sound data segment */
     SndDisplayData *currentCacheObject;	
+    long b1; // for some basic timing
+
 #ifdef USE_PS_USER_PATHS
     UserPath *arect; /* for DPSUser Paths, if used */
 #endif
@@ -534,10 +536,10 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
     CGContextRef ctx;
 
     graphicsContext = [NSGraphicsContext currentContext];
-    [graphicsContext setShouldAntialias:FALSE];
+//    [graphicsContext setShouldAntialias:FALSE];
     ctx = [graphicsContext graphicsPort];
     CGContextSetRGBStrokeColor(ctx, 1,0,0,1);
-    CGContextSetLineWidth(ctx, 1.0);
+//    CGContextSetLineWidth(ctx, 1.0);
 
     
 #endif
@@ -925,6 +927,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
   #endif
 #else
 //QUARTZ_RENDERING
+        b1 = clock();
 
     CGContextBeginPath(ctx);
 
@@ -995,7 +998,9 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
     [foregroundColour set];
 
+//    printf("before stroke time: %li\n",clock()-b1);
     CGContextStrokePath(ctx);
+//    printf("stroke time: %li (%d to %d = %d iterations)\n",clock()-b1, startX, endX, endX-startX);
 
 #endif
 
@@ -1157,7 +1162,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
       [selectionColour set];
 
-      NSRectFillUsingOperation(highlightRect, NSCompositeDestinationOver);
+      NSRectFillUsingOperation(highlightRect, NSCompositeDestinationIn /* NSCompositeSourceOver */);
 
       //      NSHighlightRect(highlightRect);
 
@@ -1266,8 +1271,9 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
 - initWithFrame:(NSRect)frameRect
 {
-    [self initVars];
-    return [super initWithFrame:frameRect];
+    id ret = [super initWithFrame:frameRect];
+    if (ret) [self initVars];
+    return ret;
 }
 - (BOOL)isAutoScale
 {
@@ -1377,6 +1383,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
     if ([theEvent clickCount] == 3) {
             [self selectAll:self];
+            selCacheRect = [self bounds];
             return;
     }
 
@@ -1626,7 +1633,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
     //      NX_X(&adjSelRect), NX_MAXX(&adjSelRect), dx, hilStart, hilEnd, oldx);
 
         [selectionColour set];
-        NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
+        NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationIn/*NSCompositeSourceOver*/);
 	      //	      NSHighlightRect(adjSelRect);
 	      //	      [self setNeedsDisplay:YES];
         /* adjust the size of selCacheRect to be the size of the union
