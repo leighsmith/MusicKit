@@ -1,17 +1,118 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+   
+    A Note object represents a musical sound or event by describing its
+    attributes.  This information falls into three categories:
+   
+    * parameters
+    * timing information
+    * type information.
+   
+    Most of the information in a Note is in its parameters; a Note can
+    have any number of parameters.  A parameter consists of an identifier,
+    a string name, and a value.  The identifier is a unique integer used
+    to catalog the parameter within the Note; the Music Kit defines a
+    number of parameter identifiers such as MK_freq (for frequency) and
+    MK_amp (for amplitude).  The string name is used to identify the
+    parameter in a scorefile.  The string names for the Music Kit
+    parameters are the same as the identifier names, but without the "MK_"
+    prefix.  You can create your own parameter identifiers by passing a
+    name to the parTagForName: class method.  This method returns the identifier
+    associated with the parameter name, creating it if it doesn't already
+    exit.
+   
+    A parameter's value can be a double, int, NSString object, an Envelope object,
+    WaveTable object, or other (non-Music Kit) object.  These six
+    parameter value types are represented by the following MKDataType
+    constants:
+   
+    * MK_double
+    * MK_int
+    * MK_string
+    * MK_envelope
+    * MK_waveTable
+    * MK_object
+   
+    The method you invoke to set a parameter value depends on the type of
+    the value.  To set a double value, for example, you would invoke the
+    setPar:toDouble: method.  Analogous methods exist for the other data
+    types.
+   
+    You can retrieve the value of a parameter as any of the parameter data
+    types.  For instance, the parAsInt: method returns an integer
+    regardless of the parameter value's actual type.  The exceptions are
+    in retrieving object information: The parAsEnvelope:, parAsWaveTable:,
+    and parAsObject: messages return nil if the parameter value isn't the
+    specified type.
+   
+    A Note's parameters are significant only if an object that processes
+    the Note (such as an instance of a subclass of MKPerformer, MKNoteFilter,
+    MKInstrument, or MKSynthPatch) accesses and uses the information.
+   
+    Timing information is used to perform the Note at the proper time and
+    for the proper duration.  This information is called the Note's
+    timeTag and duration, respectively.  A single Note can have only one
+    timeTag and one duration.  Setting a Note's duration automatically
+    changes its noteType to MK_noteDur, as described below.  TimeTag and
+    duration are measured in beats.
+   
+    A Note has two pieces of type information, a noteType and a noteTag.
+    A Note's noteType establishes its nature; there are six noteTypes:
+   
+    * A noteDur represents an entire musical note (a note with a duration).
+    * A noteOn establishes the beginning of a note.
+    * A noteOff establishes the end of a note.
+    * A noteUpdate represents the middle of a note (it updates a sounding note).
+    * A mute makes no sound.
+   
+    These are represented by MKNoteType constants:
+   
+    * MK_noteDur
+    * MK_noteOn
+    * MK_noteOff
+    * MK_noteUpdate
+    * MK_mute
+   
+    The default is MK_mute.
+   
+    NoteTags are integers used to identify Note objects that are part of
+    the same musical sound or event; in particular, matching noteTags are
+    used to create noteOn/noteOff pairs and to associate noteUpdates with
+    other Notes.  (A noteUpdate without a noteTag updates all the Notes in
+    its Part.)
+  
+    The C function MKNoteTag() is provided to generate noteTag values that
+    are guaranteed to be unique across your entire application -- you
+    should never create a new noteTag except through this function.  The
+    actual integer value of a noteTag has no significance (the range of
+    noteTag values extends from 0 to 2^BITS_PER_INT).
+   
+    Mutes can't have noteTags; if you set the noteTag of such a Note, it
+    automatically becomes a noteUpdate.
+   
+    Notes are typically added to Part objects.  A Part is a time-ordered
+    collection of Notes.
+  
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
   $Log$
+  Revision 1.3  1999/09/24 05:50:27  leigh
+  cleaned up documentation.
+
   Revision 1.2  1999/07/29 01:25:46  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
 #ifndef __MK_Note_H___
 #define __MK_Note_H___
-//sb:
 #import <Foundation/Foundation.h>
 
 #import <Foundation/NSObject.h>
@@ -80,101 +181,6 @@ typedef enum _MKDataType {     /* Data types supported by Notes */
 MKDataType;
 
 @interface MKNote : NSObject
-/*
- * 
- * A Note object represents a musical sound or event by describing its 
- * attributes.  This information falls into three categories: 
- * 
- * * parameters 
- * * timing information
- * * type information.
- * 
- * Most of the information in a Note is in its parameters; a Note can
- * have any number of parameters.  A parameter consists of an identifier,
- * a string name, and a value.  The identifier is a unique integer used
- * to catalog the parameter within the Note; the Music Kit defines a
- * number of parameter identifiers such as MK_freq (for frequency) and
- * MK_amp (for amplitude).  The string name is used to identify the
- * parameter in a scorefile.  The string names for the Music Kit
- * parameters are the same as the identifier names, but without the "MK_"
- * prefix.  You can create your own parameter identifiers by passing a
- * name to the parTagForName: class method.  This method returns the identifier
- * associated with the parameter name, creating it if it doesn't already
- * exit.
- * 
- * A parameter's value can be a double, int, char *, an Envelope object,
- * WaveTable object, or other (non-Music Kit) object.  These six
- * parameter value types are represented by the following MKDataType
- * constants:
- * 
- * * MK_double
- * * MK_int
- * * MK_string
- * * MK_envelope
- * * MK_waveTable
- * * MK_object
- * 
- * The method you invoke to set a parameter value depends on the type of
- * the value.  To set a double value, for example, you would invoke the
- * setPar:toDouble: method.  Analogous methods exist for the other data
- * types.
- * 
- * You can retrieve the value of a parameter as any of the parameter data
- * types.  For instance, the parAsInt: method returns an integer
- * regardless of the parameter value's actual type.  The exceptions are
- * in retrieving object information: The parAsEnvelope:, parAsWaveTable:,
- * and parAsObject: messages return nil if the parameter value isn't the
- * specified type.
- * 
- * A Note's parameters are significant only if an object that processes
- * the Note (such as an instance of a subclass of Performer, NoteFilter,
- * Instrument, or SynthPatch) accesses and uses the information.
- * 
- * Timing information is used to perform the Note at the proper time and
- * for the proper duration.  This information is called the Note's
- * timeTag and duration, respectively.  A single Note can have only one
- * timeTag and one duration.  Setting a Note's duration automatically
- * changes its noteType to MK_noteDur, as described below.  TimeTag and
- * duration are measured in beats.
- * 
- * A Note has two pieces of type information, a noteType and a noteTag.
- * A Note's noteType establishes its nature; there are six noteTypes:
- * 
- * * A noteDur represents an entire musical note (a note with a duration).
- * * A noteOn establishes the beginning of a note.
- * * A noteOff establishes the end of a note.
- * * A noteUpdate represents the middle of a note (it updates a sounding note).
- * * A mute makes no sound. 
- * 
- * These are represented by MKNoteType constants:  
- * 
- * * MK_noteDur
- * * MK_noteOn 
- * * MK_noteOff
- * * MK_noteUpdate
- * * MK_mute
- * 
- * The default is MK_mute.
- * 
- * NoteTags are integers used to identify Note objects that are part of
- * the same musical sound or event; in particular, matching noteTags are
- * used to create noteOn/noteOff pairs and to associate noteUpdates with
- * other Notes.  (A noteUpdate without a noteTag updates all the Notes in
- * its Part.)
- * 
- * The C function MKNoteTag() is provided to generate noteTag values that
- * are guaranteed to be unique across your entire application -- you
- * should never create a new noteTag except through this function.  The
- * actual integer value of a noteTag has no significance (the range of
- * noteTag values extends from 0 to 2^BITS_PER_INT).
- * 
- * Mutes can't have noteTags; if you set the noteTag of such a Note, it
- * automatically becomes a noteUpdate.
- * 
- * Notes are typically added to Part objects.  A Part is a time-ordered
- * collection of Notes.
- * 
- */
 {
     MKNoteType noteType;    /* The Note's noteType. */
     int noteTag;         /* The Note's noteTag. */
