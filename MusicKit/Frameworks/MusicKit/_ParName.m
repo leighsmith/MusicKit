@@ -52,6 +52,17 @@
 Modification history:
 
  $Log$
+ Revision 1.16  2002/04/16 15:15:26  sbrandon
+ - brand new _MKParameters are calloced instead of malloced so any object
+   pointers are sure to be nil
+ - setting any parameter to any value first checks to see if it used to
+   hold an object, and releases before setting to the new value
+ - setting a parameter to an object just adds a retain to the object
+ - copying a parameter copies object params instead of extra retain.
+ - _MKParAsString now returns descriptions of envelopes, wavetables and
+   other strings.
+ - several clumsy string-appending calls were simplified for speed
+
  Revision 1.15  2002/04/15 14:32:30  sbrandon
  changed type of "s" ivar from char* to NSString and had to change all refs
  to it.
@@ -186,7 +197,7 @@ static BOOL keywordsPrintfunc(_MKParameter *parameter, NSMutableData *aStream, _
     _MKWriteIntPar(aStream,i);
   else if (!_MK_VALIDTOKEN(i))
     [aStream appendData:[[NSString stringWithFormat:@"%d", i] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-  else [aStream appendData:[[NSString stringWithFormat:@"%s", _MKTokName(i)] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+  else [aStream appendBytes:_MKTokName(i) length:strlen(_MKTokName(i))];
   return YES;
 }
 
@@ -292,11 +303,25 @@ int parNum;
 /* Returns new _MKParameter struct */
 {
   register _MKParameter *param;
+  // we assume that the cached param has been previously nullified
   if (_cachePtr > 0)
     param = _cache[--_cachePtr];
-  else _MK_MALLOC(param,_MKParameter,1);
+  else _MK_CALLOC(param,_MKParameter,1);
   param->parNum = parNum;
   return param;
+}
+
+static inline void releaseParIfNecessary(_MKParameter *param)
+{
+  switch (param->_uType) {
+      case MK_string:
+      case MK_envelope:
+      case MK_waveTable:
+      case MK_object:
+        [param->_uVal.symbol release];
+      default:
+      ;
+  }
 }
 
 #define DEBUG_CACHE 0
@@ -316,6 +341,8 @@ _MKParameter *_MKFreeParameter(_MKParameter *param)
       }
   }
 #   endif
+    releaseParIfNecessary(param);
+    param->_uVal.symbol = nil; // it's a union, so this does the int and double too.
     if (_cachePtr < CACHESIZE)
       _cache[_cachePtr++] = param;
     else {
@@ -340,7 +367,16 @@ _MKParameter *_MKCopyParameter(_MKParameter *param)
   newOne = newPar(param->parNum);
   newOne->_uVal = param->_uVal;
   newOne->_uType = param->_uType;
-  return newOne;
+  switch (param->_uType) {
+      case MK_string:
+      case MK_envelope:
+      case MK_waveTable:
+      case MK_object:
+        [newOne->_uVal.symbol retain];
+      default:
+      ;
+  }
+return newOne;
 }
 
 
@@ -359,7 +395,7 @@ _MKParameter * _MKNewStringPar(NSString * value, int parNum)
 {
   register _MKParameter *param = newPar(parNum);
   param->_uType = MK_string;
-  param->_uVal.sval = [value copy];//sb: was (char *)NXUniqueString(value);
+  param->_uVal.sval = [value retain]; // no need to release old val as we assume nil
     return param;
 }
 
@@ -375,7 +411,7 @@ _MKParameter * _MKNewObjPar(id value, int parNum, _MKToken type)
 {
   register _MKParameter *param = newPar(parNum);
   param->_uType = type;
-  param->_uVal.symbol = value;
+  param->_uVal.symbol = [value retain]; // no need to release old val as we assume nil
   return param;
 }
 
@@ -385,6 +421,7 @@ _MKParameter * _MKNewObjPar(id value, int parNum, _MKToken type)
 _MKParameter * _MKSetDoublePar(_MKParameter * param, double value)
 /* Set the Parameter to type and double and assign doubleVal. */
 {
+  releaseParIfNecessary(param);
   param->_uType = MK_double;
   param->_uVal.rval = value;
   return param;
@@ -393,15 +430,17 @@ _MKParameter * _MKSetDoublePar(_MKParameter * param, double value)
 _MKParameter * _MKSetIntPar(_MKParameter *param, int value)
 /* Set the Parameter to type int and assign intVal. */
 {
+  releaseParIfNecessary(param);
   param->_uType = MK_int;
   param->_uVal.ival = value;
   return param;
 }
 
 _MKParameter * _MKSetStringPar(_MKParameter *param, NSString *value)
-/* Set the Parameter to type string and assign a copy of stringVal. */
+/* Set the Parameter to type string and add a reference to stringVal. */
 {
-  param->_uVal.sval = [value copy];//sb was: (char *)NXUniqueString(value);
+  releaseParIfNecessary(param);
+  param->_uVal.sval = [value retain];
   param->_uType = MK_string;
   return param;
 }
@@ -409,7 +448,8 @@ _MKParameter * _MKSetStringPar(_MKParameter *param, NSString *value)
 _MKParameter * _MKSetObjPar(_MKParameter *param, id value, _MKToken type)
 /* Sets obj field and type */
 {
-  param->_uVal.symbol = value; // sb: should this not be retained?
+  releaseParIfNecessary(param);
+  param->_uVal.symbol = [value retain];
   param->_uType = type;
   return param;
 }
@@ -485,11 +525,11 @@ valued, returns a description of the envelope. */
     case MK_string:
       return param->_uVal.sval;//sb: was _MKMakeStr(param->_uVal.sval);
     case MK_envelope:
-      return @" (envelope) ";//sb: was _MKMakeStr(" (envelope) "); /*** FIXME ***/
+      return [param->_uVal.symbol description];//@" (envelope) ";//sb: was _MKMakeStr(" (envelope) "); /*** FIXME ***/
     case MK_waveTable:
-      return @" (waveTable) ";//sb: was _MKMakeStr(" (waveTable) ");  /*** FIXME ***/
+      return [param->_uVal.symbol description];//@" (waveTable) ";//sb: was _MKMakeStr(" (waveTable) ");  /*** FIXME ***/
     default:
-      return NSStringFromClass([param->_uVal.symbol class]);//sb: was _MKMakeStr([NSStringFromClass([param->_uVal.symbol class]) cString]); /*** FIXME ***/
+      return [param->_uVal.symbol description];// NSStringFromClass([param->_uVal.symbol class]);//sb: was _MKMakeStr([NSStringFromClass([param->_uVal.symbol class]) cString]); /*** FIXME ***/
   }
   return @"";//sb: was _MKMakeStr("");
 }
@@ -510,11 +550,11 @@ This method is provided as a speed optimzation.
     case MK_string:
       return param->_uVal.sval;
     case MK_envelope:
-      return @" (envelope) ";   /*** FIXME ***/
+      return [param->_uVal.symbol description];//@" (envelope) ";   /*** FIXME ***/
     case MK_waveTable:
-      return @" (waveTable) ";  /*** FIXME ***/
+      return [param->_uVal.symbol description];//@" (waveTable) ";  /*** FIXME ***/
     default:
-      return (NSString *)NSStringFromClass([param->_uVal.symbol class]); /*** FIXME ***/
+      return [param->_uVal.symbol description];//(NSString *)NSStringFromClass([param->_uVal.symbol class]); /*** FIXME ***/
   }
   return @"";
 }
@@ -615,13 +655,13 @@ static void writeObj(id dataObj,NSMutableData *aStream,_MKToken declToken,BOOL
                      binary)
 {
   if (!binary)
-    [aStream appendData:[@"[" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    [aStream appendBytes:"[" length:1];
   if (declToken == MK_object) {
     if (![dataObj respondsToSelector:@selector(writeASCIIStream:)]) {
       _MKErrorf(MK_notScorefileObjectTypeErr, NSStringFromClass([dataObj class]));
       if (binary)
         _MKWriteChar(aStream,'\0');
-      else [aStream appendData:[@"]" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+      else [aStream appendBytes:"]" length:1];
       return;
     }
     [aStream appendData:[[NSString stringWithFormat:@"%@ ", NSStringFromClass([dataObj class])] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
@@ -632,7 +672,7 @@ static void writeObj(id dataObj,NSMutableData *aStream,_MKToken declToken,BOOL
       [dataObj _writeBinaryScorefileStream:aStream];
   else {
     [dataObj writeScorefileStream:aStream];
-    [aStream appendData:[@"]" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    [aStream appendBytes:"]" length:1];
   }
 }
 
@@ -762,7 +802,7 @@ _MKParWriteStdValueOn, if desired. */
         */
         if (BINARY(p))
           _MKWriteIntPar(aStream,0);
-      else [aStream appendData:[@"0" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+      else [aStream appendBytes:"0" length:1];
       break;
     default:
     case MK_int:
