@@ -154,7 +154,7 @@ static void writeParts(MKScore *aScore)
 		name = [MKGetObjectName(aPart) cString];
 		info = [aPart infoNote];
 		/* if user specified freqNames:YES, print freqnames */
-		par=[MKNote parName: @"freqNames"];
+		par=[MKNote parTagForName: @"freqNames"];
 		if ([info isParPresent:par] == YES)
 			mode=writeParLisp | writeParFreqName;
 		else
@@ -258,14 +258,14 @@ static void writeParameters(MKNote *aNote, unsigned modes)
 	aState = MKInitParameterIteration(aNote);
 	while ((par = MKNextParameter(aNote,aState)) != MK_noPar) 
 	{
-		name = [MKNote nameOfPar:par];
+		name = [MKNote parNameForTag:par];
 		if ([name length] == 0)
 			continue;	/* skip private pars */
 		fprintf(fp,format, [name cString]);
 
 		if (((modes & writeParFreqName) == writeParFreqName) &&
-		    (([[MKNote nameOfPar:par] compare: @"freq"] == NSOrderedSame) ||
-		     ([[MKNote nameOfPar:par] compare: @"freq0"] == NSOrderedSame)))
+		    (([[MKNote parNameForTag:par] compare: @"freq"] == NSOrderedSame) ||
+		     ([[MKNote parNameForTag:par] compare: @"freq0"] == NSOrderedSame)))
 		{
 			int keyNum = MKFreqToKeyNum([aNote parAsDouble:par], NULL,1.0);
 			char *pitchNames[128] = {

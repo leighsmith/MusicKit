@@ -14,6 +14,9 @@
 /* 
 Modification history:
   $Log$
+  Revision 1.9  2001/09/19 23:43:34  leighsmith
+  Upgraded to more descriptive parTagForName: and parNameForTag: methods
+
   Revision 1.8  2001/04/24 23:30:30  leighsmith
   Changed to new findPatchClass method name
 
@@ -223,7 +226,7 @@ double setUpFromScoreInfo(id scoreInfo,double *midiOffset)
 	    double tempo = [scoreInfo parAsDouble: MK_tempo];
 	    [[MKConductor defaultConductor] setTempo: tempo];
 	}
-	midiOffsetPar = [MKNote parName: @"midiOffset"];
+	midiOffsetPar = [MKNote parTagForName: @"midiOffset"];
 	if ([scoreInfo isParPresent: midiOffsetPar])
 	  *midiOffset = [scoreInfo parAsDouble: midiOffsetPar];
     }

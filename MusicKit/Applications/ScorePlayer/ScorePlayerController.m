@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2001/09/19 23:43:34  leighsmith
+  Upgraded to more descriptive parTagForName: and parNameForTag: methods
+
   Revision 1.15  2001/04/19 14:57:55  leighsmith
   Now allocate MIDI devices dynamically, added abort to MKSamplerInstrument, help file is now HTML
 
@@ -585,7 +588,7 @@ static BOOL setFile(ScorePlayerController *self)
     if (scoreInfo) { /* Configure performance as specified in info. */ 
 	int midiOffsetPar;
 	midiOffset = 0;
-	midiOffsetPar = [MKNote parName: @"midiOffset"];
+	midiOffsetPar = [MKNote parTagForName: @"midiOffset"];
 	if ([scoreInfo isParPresent: midiOffsetPar])
 	    midiOffset = [scoreInfo parAsDouble: midiOffsetPar];
 	if ([scoreInfo isParPresent: MK_headroom])

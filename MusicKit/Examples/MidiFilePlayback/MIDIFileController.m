@@ -201,8 +201,6 @@ NSLog(@"Completed startPerformance\n");
     [MKConductor lockPerformance];
     [midiInstrument allNotesOff];
     [midiInstrument stop];  // abort will actually close the device, whereas stop just stops it
-    [sampleInstrument stop];         // this doesn't seem right to have to stop each instrument separately,
-                                    // this should be the job of the Conductor.
     [MKConductor unlockPerformance]; // should unlock the performance before trying to finish it.
     [MKConductor finishPerformance];
 
