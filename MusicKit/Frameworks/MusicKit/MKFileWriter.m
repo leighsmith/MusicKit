@@ -49,6 +49,10 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2002/01/15 12:17:33  sbrandon
+  Fixed up autorelease/release errors with stream and filename. Potential
+  crashers.
+
   Revision 1.4  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -128,7 +132,7 @@ Modification history:
     [super init];
     timeUnit = MK_second;
     stream = nil;
-    filename = [NSMutableString string];//sb: was NULL;
+    filename = nil;
     return self;
 }
 
@@ -152,8 +156,7 @@ Modification history:
 
 - (void)dealloc
 {
-    if (filename)
-      [filename release];
+    [filename release];
     [super dealloc];
 }
 
@@ -174,11 +177,11 @@ Modification history:
     if (_noteSeen)
       return nil;
     [filename autorelease];
-    filename = [aName copy];
+    filename = [aName retain];
     if (stream) {
         [stream autorelease];
         stream = nil;
-        }
+    }
     return self;
 }
 
@@ -219,8 +222,9 @@ Modification history:
      and stream set to NULL. */
 {
     MKFileWriter *newObj = [super copyWithZone:zone];
-    if (filename)
-      newObj->filename = [filename copy];
+    if (filename) {
+      newObj->filename = [filename retain];
+    }
     newObj->stream = nil;
     return newObj;
 }
@@ -294,8 +298,8 @@ Modification history:
 {
     if (filename) {
         [stream autorelease]; /* get rid of old one */
-        stream = [NSMutableData data];
-        }
+        stream = [[NSMutableData alloc] initWithCapacity:0];
+    }
 /* sb: now defers writing and opening until finished */
 /*      _MKOpenFileStream(filename,&_fd,NX_WRITEONLY,
 				 [self fileExtension],YES);
@@ -311,16 +315,14 @@ Modification history:
 {
     [self finishFile];
     if (filename) {
-//#error StreamConversion: NXFlush should be converted to an NSData method
-//	NXFlush(stream);
         if (![stream writeToFile:[filename stringByAppendingPathExtension:[self fileExtension]] atomically:YES])
             _MKErrorf(MK_cantCloseFileErr,filename);
-        [stream autorelease];
 /*
 	if (close(_fd) == -1)
 	  _MKErrorf(MK_cantCloseFileErr,filename);
  */
     }
+    [stream release];
     stream = nil;
     return self;
 }
