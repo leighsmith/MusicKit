@@ -642,7 +642,7 @@ static int bitrateLookupTable[16][6] = {
   // into memory. We also assume the buffer sample rate matches the MP3 sample rate
 #if DECODE_ENTIRE_INTO_MEMORY
     int buffChans = [anAudioBuffer channelCount];
-    const short *pData = nil;
+    const short *pData = NULL;
 
     [pcmDataLock lock];
     pData = [pcmData bytes];
