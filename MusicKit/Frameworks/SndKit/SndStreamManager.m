@@ -94,7 +94,7 @@ static SndStreamManager *sm = nil;
 
 - (BOOL) startStreaming
 {
-    // Tell MKPerformSndAndMidi to start sending us buffers, register the
+    // Tell MKPerformSndMidi to start sending us buffers, register the
     // processAudioAtTime selector as the callback for it to use.
     // keep a copy of the format we decided to open to build the initial
     // buffers for each Client. (Recall: Buffers have format info, hence
@@ -138,12 +138,17 @@ static SndStreamManager *sm = nil;
 
 - (BOOL) addClient: (SndStreamClient*) client
 {
-    int  clientCount = [mixer addClient: client]; 
-    SndAudioBuffer *buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
-    if (clientCount == 1) // There were no clients previously - better start the stream...
-        [self startStreaming];
-    [client welcomeClientWithBuffer: buff manager: self];
+    int  oldClientCount = [mixer clientCount]; 
+    int  clientCount = [mixer addClient: client];
+    BOOL alreadyRegistered = (oldClientCount == clientCount);
+    SndAudioBuffer *buff;
 
+    if (!alreadyRegistered) {
+        buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
+        if (oldClientCount == 0) // There were no clients previously - better start the stream...
+            [self startStreaming];
+        [client welcomeClientWithBuffer: buff manager: self];
+    }
     return active;
 }
 
@@ -176,8 +181,9 @@ static SndStreamManager *sm = nil;
 
 void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj)
 {
-    // printf("processAudio sampleCount = %f\n", sampleCount);
+    //NSLog(@"--> processAudio sampleCount = %d\n", (int)sampleCount);
     [(SndStreamManager *) obj processStreamAtTime: sampleCount input: cInB output: cOutB];
+    //NSLog(@" <--processAudio\n");
 }
 
 
@@ -185,7 +191,6 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
                        input: (SNDStreamBuffer*) cInB
                       output: (SNDStreamBuffer*) cOutB
 {
-
     NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
     // Eventually these must be made instance variables which you just wrap
     // around each of the C-side buffers, to avoid allocation costs.
@@ -195,6 +200,7 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
     nowTime = sampleCount / [outB samplingRate];
 
     [mixer processInBuffer: inB outBuffer: outB nowTime: nowTime];
+
     if ([mixer clientCount] == 0) // Hmm, no clients hey? Shut down the Stream.
         [self stopStreaming];
 
