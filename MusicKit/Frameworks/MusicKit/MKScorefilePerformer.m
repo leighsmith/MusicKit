@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/11/28 19:05:00  leigh
+  Replaced fileExtensions with whatever MKScore deems valid
+
   Revision 1.5  2000/04/22 20:11:09  leigh
   Changed fileExtensions to less error-prone NSArray of NSStrings
 
@@ -55,23 +58,15 @@ Modification history:
 #import "PartPrivate.h"
 
 #import "ScorefilePerformerPrivate.h"
-@implementation MKScorefilePerformer:MKFilePerformer  
-{
-    NSMutableData *scorefilePrintStream; /* NXStream used for scorefile print 
-				       statements output */
-    id info;
-    void *_p;
-    NSMutableArray *_partStubs;
-}
+@implementation MKScorefilePerformer
 
 #define VERSION2 2
 
 + (void)initialize
 {
     if (self != [MKScorefilePerformer class])
-      return;
-    [MKScorefilePerformer setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
-    return;
+        return;
+    [MKScorefilePerformer setVersion:VERSION2]; //sb: suggested by Stone conversion guide (replaced self)
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -111,19 +106,19 @@ Modification history:
 
 +(NSString *)fileExtension
   /* Returns "score", the default file extension for score files.
-     This method is used by the FilePerformer class. The string is not
+     This method is used by the MKFilePerformer class. The string is not
      copied. */
 {
-    return _MK_SCOREFILEEXT;
+    return [[_MK_SCOREFILEEXT retain] autorelease];
 }
 
 +(NSArray *)fileExtensions
   /* Returns a NSArray of the default file extensions 
-     recognized by ScorefilePerformer instances. This array consists of
-     "score" and "scoreO".
-     This method is used by the FilePerformer class. */
+     recognized by MKScorefilePerformer instances. This array typically consists of
+     "score" and "playscore".
+     This method is used by the MKFilePerformer class. */
 {
-    return [NSArray arrayWithObjects: _MK_BINARYSCOREFILEEXT, _MK_SCOREFILEEXT, nil];
+    return [MKScore scorefileExtensions];
 }
 
 -infoNote
