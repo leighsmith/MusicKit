@@ -12,13 +12,14 @@ you should be familiar with the material in the preceding two
 chapters, <xref linkend="MusicData"> and <xref
 linkend="MusicSynthAndProc">.</para>
 
-  <sect1 id="PerformanceDesignPhilosophy">
-    <title>Design Philosophy</title>
+    <sect1 id="PerformanceDesignPhilosophy">
+      <title>Design Philosophy</title>
 
-<para>The primary task in a musical performance is to take a
+      <para>The primary task in a musical performance is to take a
 representation of music and render it in an appropriate fashion.
 Traditionally, this task is met by a performer wielding an instrument.
-Similarly, the <productname>MusicKit</productname> has its <classname>MKPerformer</classname> and
+Similarly, the <productname>MusicKit</productname> has its
+<classname>MKPerformer</classname> and
 <classname>MKInstrument</classname> objects: A
 <classname>MKPerformer</classname> obtains a
 <classname>MKNote</classname> object, either by reading it from a
@@ -30,10 +31,11 @@ improvising the <classname>MKNote</classname> itself.  The
 rendering, or <emphasis>realizing</emphasis>, the
 <classname>MKNote</classname>.</para>
 
-<para>Of <classname>MKInstrument</classname> and
+      <para>Of <classname>MKInstrument</classname> and
 <classname>MKPerformer</classname>, the former is the more crucial to
-a <productname>MusicKit</productname> performance.  Realization is the whole point of a
-performance, thus <classname>MKInstrument</classname>s are ubiquitous.
+a <productname>MusicKit</productname> performance.  Realization is the
+whole point of a performance, thus
+<classname>MKInstrument</classname>s are ubiquitous.
 <classname>MKPerformer</classname>s provide a convenient means for
 acquiring or generating <classname>MKNote</classname>s but they're not
 essential to a performance application; in fact, some applications
@@ -50,7 +52,7 @@ be created and severed dynamically, allowing you to create a
 kaleidoscopic network of <classname>MKNote</classname> sources and
 destinations.</para>
 
-<para>With <classname>MKPerformer</classname> and
+      <para>With <classname>MKPerformer</classname> and
 <classname>MKInstrument</classname>, the
 <classname>MKConductor</classname> class completes the triumvirate of
 preeminent performance classes.  A <classname>MKConductor</classname>
@@ -67,63 +69,74 @@ interface).  For example, it's through a
 <classname>MKNote</classname>s to an
 <classname>MKInstrument</classname>.</para>
 
-<para>Because of the demands of music performance, the <productname>MusicKit</productname>
-provides hooks into the operating system that allow you to create
-applications that can run with heightened priority.  Well-debugged and
-fine-tuned applications will find great benefit in these enhancements.
-</para>
+      <para>Because of the demands of music performance, the
+<productname>MusicKit</productname> provides hooks into the operating
+system that allow you to create applications that can run with
+heightened priority.  Well-debugged and fine-tuned applications will
+find great benefit in these enhancements.
+      </para>
 
-<para><xref linkend="figurePerformance"> is a subset of the <productname>MusicKit</productname>'s
-performance classes, showing their hierarchical relationship:</para>
+      <para><xref linkend="figurePerformance"> is a subset of the <productname>MusicKit</productname>'s
+performance classes, showing their hierarchical relationship:
+      </para>
 
-    <figure id="figurePerformance">
-      <title>Performance Classes</title>
-      <mediaobject>
-	<imageobject>
-	  <imagedata fileref="Images/MusicPerformance.eps" scalefit=1>
-        </imageobject>
-	<imageobject><imagedata
-	fileref="Images/MusicPerformance.gif"></imageobject>
-	<textobject><phrase><productname>MusicKit</productname> Image</phrase></textobject>
-      </mediaobject>
-    </figure>
+      <figure id="figurePerformance">
+	<title>Performance Classes</title>
+	<mediaobject>
+	  <imageobject>
+	    <imagedata fileref="Images/MusicPerformance.eps" scalefit=1>
+	  </imageobject>
+	  <imageobject>
+	    <imagedata fileref="Images/MusicPerformance.gif">
+	  </imageobject>
+	  <textobject><phrase><productname>MusicKit</productname> Image</phrase></textobject>
+	</mediaobject>
+      </figure>
 
-  </sect1>
-  <sect1 id="PerformanceOutline">
-    <title>Performance Outline</title> <para>A <productname>MusicKit</productname> performance
-    can be divided into three phases:</para>
+    </sect1>
+    <sect1 id="PerformanceOutline">
+      <title>Performance Outline</title>
+      <para>A <productname>MusicKit</productname> performance
+	can be divided into three phases:
+      </para>
 
-    <itemizedlist>
-      <listitem><para> Preparation: You must determine the sources and
+      <itemizedlist>
+	<listitem>
+	  <para>Preparation: You must determine the sources and
 destinations of the <classname>MKNote</classname>s that you wish to
-perform and establish other characteristics of the performance.</para>
-      </listitem>
+perform and establish other characteristics of the performance.
+	  </para>
+	</listitem>
 
-      <listitem><para> Commencement: This is always accomplished by
-sending <emphasis role="bold">startPerformance</emphasis> to the
-<classname>MKConductor</classname> class.</para>
-      </listitem>
+	<listitem>
+	  <para>Commencement: This is always accomplished by
+	    sending <emphasis role="bold">startPerformance</emphasis> to the
+<classname>MKConductor</classname> class.
+	  </para>
+	</listitem>
 
-      <listitem><para> Termination: This is achieved by sending
-<emphasis role="bold">finishPerformance</emphasis> to the
-<classname>MKConductor</classname> class.</para>
-      </listitem>
-    </itemizedlist>
+      <listitem>
+	  <para>Termination: This is achieved by sending <emphasis
+role="bold">finishPerformance</emphasis> to the
+<classname>MKConductor</classname> class.
+	  </para>
+	</listitem>
+      </itemizedlist>
 
-<para>This sequence of activities can be repeated any number of times
-while an application is running.  While a single application can have
-but a single performance in progress at any particular time, that
+      <para>This sequence of activities can be repeated any number of
+times while an application is running.  While a single application can
+have but a single performance in progress at any particular time, that
 single performance can do any number of things.  For example, if you
-want to capture <acronym>MIDI</acronym> input as a scorefile while playing along to a
-<classname>MKPart</classname> that's synthesized on the <acronym>DSP</acronym>, you
-perform both tasks in a single performance&horbar;you don't have to
-set up separate environments.  Obviously, the two endeavors involve
-different classes of objects, but when the
-<classname>MKConductor</classname> class receives the <emphasis
-role="bold">startPerformance</emphasis> message, everybody starts
-wheezing.</para>
+want to capture <acronym>MIDI</acronym> input as a scorefile while
+playing along to a <classname>MKPart</classname> that's synthesized on
+the <acronym>DSP</acronym>, you perform both tasks in a single
+performance&horbar;you don't have to set up separate environments.
+Obviously, the two endeavors involve different classes of objects, but
+when the <classname>MKConductor</classname> class receives the
+<emphasis role="bold">startPerformance</emphasis> message, everybody
+starts wheezing.</para>
 
-<para>Much of the work that goes into a performance is involved in
+      <para>Much of the work that goes into a performance is involved in
 setting it up; in fact, many of the methods that are defined by the
 classes that are involved in a performance can only be invoked before
 the performance starts (or between performances).  As you design your

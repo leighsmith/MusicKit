@@ -1,22 +1,24 @@
 <!-- $Id$ -->
-<chapter id="MusicSynthAndProc">
-  <title>Music Synthesis and Processing</title>
+  <chapter id="MusicSynthAndProc">
+    <title>Music Synthesis and Processing</title>
 
-<sect1 id="MusicSynthesisAndProcessing">
-  <title>Music Synthesis and Processing</title>
+    <sect1 id="MusicSynthesisAndProcessing">
+      <title>Music Synthesis and Processing</title>
 
-<para>In this document &ldquo;synthesis&rdquo; refers to creating
-sound from scratch, while &ldquo;processing&rdquo; refers to modifying
-sound from elsewhere.  However, the
+      <para>In this document &ldquo;synthesis&rdquo; refers to
+creating sound from scratch, while &ldquo;processing&rdquo; refers to
+modifying sound from elsewhere.  However, the
 <productname>MusicKit</productname> provides a unified model of
 synthesis and processing.  Thus, nearly all operations that apply to
 synthesis can also be used in sound processing.</para>
 
-<para>There are four levels of <productname>MusicKit</productname> classes involved in
-synthesizing and processing music on the <acronym>DSP</acronym>:</para>
+      <para>There are four levels of
+<productname>MusicKit</productname> classes involved in synthesizing
+and processing music on the <acronym>DSP</acronym>:</para>
 
-<itemizedlist>
-<listitem><para>At the top level is the
+      <itemizedlist>
+	<listitem>
+	  <para>At the top level is the
 <classname>MKSynthInstrument</classname> class; an inheritor from
 <classname>MKInstrument</classname>, it provides an interface between
 the <productname>MusicKit</productname> performance mechanism and
@@ -24,17 +26,23 @@ the <productname>MusicKit</productname> performance mechanism and
 <classname>MKSynthInstrument</classname> distributes
 <classname>MKNote</classname>s that it receives during a performance
 to individual <classname>MKSynthPatch</classname> objects that control
-the actual synthesis/processing.</para></listitem>
+the actual synthesis/processing.
+	  </para>
+	</listitem>
 
-<listitem><para><classname>MKSynthPatch</classname>, an abstract
+	<listitem>
+	  <para><classname>MKSynthPatch</classname>, an abstract
 class, embodies the principles of music synthesis.  Each subclass of
 <classname>MKSynthPatch</classname> represents a particular
 synthesis/processing strategy; each
 <classname>MKSynthPatch</classname> object synthesizes one
 <classname>MKNote</classname> at a time, using the strategy defined by
-its class.</para></listitem>
+its class.
+	  </para>
+	</listitem>
 
-<listitem><para>The <classname>MKUnitGenerator</classname> class is
+	<listitem>
+	  <para>The <classname>MKUnitGenerator</classname> class is
 also abstract; each of its subclasses represents a signal processing
 function that runs on the <acronym>DSP</acronym>.  These are the basic building blocks of
 music synthesis/processing that a <classname>MKSynthPatch</classname>
@@ -45,9 +53,12 @@ the same level as <classname>MKUnitGenerator</classname> is the
 that hold synthesis/processing data such as wavetables and delay
 memory.  In addition, <classname>MKSynthData</classname> objects are
 used to transmit data between <classname>MKUnitGenerator</classname>
-objects.</para></listitem>
+objects.
+	  </para>
+	</listitem>
 
-<listitem><para>The <classname>MKOrchestra</classname> represents the
+	<listitem>
+	  <para>The <classname>MKOrchestra</classname> represents the
 <acronym>DSP</acronym> itself.  It manages the allocation of <acronym>DSP</acronym> resources and controls
 communication between the <acronym>DSP</acronym> and the host.  Requests for use of the
 <acronym>DSP</acronym> are always made through messages to the
@@ -56,55 +67,58 @@ communication between the <acronym>DSP</acronym> and the host.  Requests for use
 <classname>MKSynthPatch</classname>es, and those of a
 <classname>MKSynthPatch</classname> for
 <classname>MKUnitGenerator</classname>s and
-<classname>MKSynthData</classname> objects.</para></listitem>
-</itemizedlist>
+<classname>MKSynthData</classname> objects.
+	  </para>
+	</listitem>
+      </itemizedlist>
 
-<figure id="synthesis">
-<title>Synthesis classes</title>
-<mediaobject>
-<imageobject><imagedata fileref="Images/MusicSynthesis.eps"></imageobject>
-<imageobject><imagedata fileref="Images/MusicSynthesis.gif"></imageobject>
-<textobject><phrase>MusicKit Image</phrase></textobject>
-</mediaobject>
-</figure>
+      <figure id="synthesis">
+	<title>Synthesis classes</title>
+	<mediaobject>
+	  <imageobject><imagedata fileref="Images/MusicSynthesis.eps"></imageobject>
+	  <imageobject><imagedata fileref="Images/MusicSynthesis.gif"></imageobject>
+	  <textobject><phrase>MusicKit Image</phrase></textobject>
+	</mediaobject>
+      </figure>
 
-<para>The <classname>MKSynthInstrument</classname> class is described in <xref
-linkend="MusicPerformance">. The rest of this chapter is devoted to
-the other classes listed above.</para>
-</sect1>
-<sect1 id="TheMKOrchestraClass">
-<title>The <classname>MKOrchestra</classname> Class</title>
+      <para>The <classname>MKSynthInstrument</classname> class is described in <xref
+	  linkend="MusicPerformance">. The rest of this chapter is devoted to
+	the other classes listed above.</para>
+    </sect1>
+    <sect1 id="TheMKOrchestraClass">
+      <title>The <classname>MKOrchestra</classname> Class</title>
 
-<para>The <classname>MKOrchestra</classname> class manages <acronym>DSP</acronym>
-resources used in music synthesis/processing.  Each instance of
-<classname>MKOrchestra</classname> represents a single <acronym>DSP</acronym>; in the
-basic NeXT configuration, there's only one <acronym>DSP</acronym> so you create only one
-<classname>MKOrchestra</classname> object.</para>
+      <para>The <classname>MKOrchestra</classname> class manages <acronym>DSP</acronym>
+	resources used in music synthesis/processing.  Each instance of
+	<classname>MKOrchestra</classname> represents a single <acronym>DSP</acronym>; in the
+	basic NeXT configuration, there's only one <acronym>DSP</acronym> so you create only one
+	<classname>MKOrchestra</classname> object.
+      </para>
 
-<para>The methods defined by the <classname>MKOrchestra</classname>
+      <para>The methods defined by the <classname>MKOrchestra</classname>
 class let you manage a <acronym>DSP</acronym> by allocating portions of its memory for
 specific synthesis/processing modules and by setting its processing
 characteristics.</para>
 
-<para>You can allocate entire <classname>MKSynthPatch</classname>es or
+      <para>You can allocate entire <classname>MKSynthPatch</classname>es or
 individual <classname>MKUnitGenerator</classname> and
 <classname>MKSynthData</classname> objects through
 <classname>MKOrchestra</classname> methods.  Primary among these
 are:</para>
 
-<itemizedlist>
-<listitem><para><emphasis role="bold">allocSynthPatch:</emphasis>
+      <itemizedlist>
+	<listitem><para><emphasis role="bold">allocSynthPatch:</emphasis>
 allocates an instance of the given <classname>MKSynthPatch</classname>
 subclass.</para></listitem>
 
-<listitem><para><emphasis role="bold">allocUnitGenerator:</emphasis>
-does the same for a <classname>MKUnitGenerator</classname>
-subclass.</para></listitem>
+	<listitem><para><emphasis role="bold">allocUnitGenerator:</emphasis>
+	    does the same for a <classname>MKUnitGenerator</classname>
+	    subclass.</para></listitem>
 
-<listitem><para><emphasis
-role="bold">allocSynthData:length:</emphasis> allocates a portion of
-<acronym>DSP</acronym> memory of a given length.</para></listitem>
-</itemizedlist>
+	<listitem><para><emphasis
+	      role="bold">allocSynthData:length:</emphasis> allocates a portion of
+	    <acronym>DSP</acronym> memory of a given length.</para></listitem>
+      </itemizedlist>
 
 <para>Keep in mind, however, that similar methods defined in other
 classes&horbar;specifically, the <classname>MKSynthPatch</classname>
@@ -118,8 +132,8 @@ to usurp the allocation methods defined by
 synthesis/processing objects directly if you want to assemble
 sound-making modules at a low level.</para>
 
-<sect2 id="InteractivityVersusDependability">
-<title>Interactivity versus Dependability</title>
+      <sect2 id="InteractivityVersusDependability">
+	<title>Interactivity versus Dependability</title>
 
 <para>Different applications have different needs. When playing a
 sequence or scorefile, it is essential that the timing of the notes be
@@ -2348,3 +2362,20 @@ location that, by convention, is never read:</para>
 </sect1>
 </chapter>
 
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:nil
+sgml-shorttag:t
+sgml-namecase-general:t
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document: "MusicKitConcepts.sgml"
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

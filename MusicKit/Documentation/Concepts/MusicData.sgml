@@ -1,13 +1,13 @@
 <!-- $Id$ -->
 
-<chapter id=MusicData>
-<title>Representing Music Data</title>
+  <chapter id=MusicData>
+    <title>Representing Music Data</title>
 
-<para>This chapter describes the classes, methods, and C Functions
+    <para>This chapter describes the classes, methods, and C Functions
 that the MusicKit defines to represent music data.</para>
 
-  <sect1 id=MKNoteClass>
-    <title>The <classname>MKNote</classname> Class</title>
+    <sect1 id=MKNoteClass>
+      <title>The <classname>MKNote</classname> Class</title>
 
     <para>Whether you are composing music, designing a performance
 scheme, or building software instruments, you need a thorough
@@ -68,19 +68,19 @@ application.</para>
 <listitem><para> The print name identifies the parameter in a
 scorefile.</para>
 	</listitem>
-      </itemizedlist>
-<para>Thus, the tag and the name are simply two ways of identifying
+	</itemizedlist>
+	<para>Thus, the tag and the name are simply two ways of identifying
 the same parameter.  To create a new parameter, you pass a print name
 (that you make up yourself) to the <emphasis
 role="bold">parTagForName:</emphasis> class method.  The method returns a
 unique tag for the parameter:</para>
 
-<programlisting>
+	<programlisting>
 /* Create a new parameter tag (an int). */
-int myPar = [MKNote parTagForName:"myPar"];
-</programlisting>
+int myPar = [MKNote parTagForName: @"myPar"];
+	</programlisting>
 
-<para>The name of the variable that represents the tag needn't be the
+	<para>The name of the variable that represents the tag needn't be the
 same as the string name, although in the interest of clarity this is
 regarded as good form.  The <emphasis role="bold">parTagForName:</emphasis>
 method can also be used to retrieve the tag of a parameter that's
@@ -89,12 +89,12 @@ creates a new tag for each unique argument that's passed to it;
 subsequent invocations with the same argument will return the
 already-created tag.</para>
 
-<para>Since the MusicKit <classname>MKSynthPatch</classname>es look
+	<para>Since the MusicKit <classname>MKSynthPatch</classname>es look
 for particular parameters during synthesis, it follows that the
 MusicKit must also supply some number of parameter tags.  These are
 listed and described in <xref linkend="MusicTables">.</para>
 
-<para>MusicKit parameter tags are represented by integer constants
+	<para>MusicKit parameter tags are represented by integer constants
 such as <emphasis role="bold">MK_freq</emphasis> (for frequency) and
 <emphasis role="bold">MK_amp</emphasis> (for amplitude).  The print
 names are formed by dropping the &ldquo;MK_&rdquo; prefix.  Thus,
@@ -102,7 +102,7 @@ names are formed by dropping the &ldquo;MK_&rdquo; prefix.  Thus,
 as &ldquo;freq&rdquo; and <emphasis role="bold">MK_amp</emphasis> is
 &ldquo;amp&rdquo;.</para>
 
-<para>By definition, the parameter tags supplied by the MusicKit are
+	<para>By definition, the parameter tags supplied by the MusicKit are
 sufficient for all uses of its <classname>MKSynthPatch</classname>es
 and <classname>MKMidi</classname>.  If you create your own
 <classname>MKSynthPatch</classname> subclass, you can create
@@ -114,7 +114,7 @@ frequency parameter tag, you should use <emphasis
 role="bold">MK_freq</emphasis>.  This promotes portability between
 <classname>MKSynthPatch</classname>es.</para>
 
-<para>Lest the emphasis on synthesis be misconstrued, keep in mind
+	<para>Lest the emphasis on synthesis be misconstrued, keep in mind
 that a parameter's purpose is not restricted to that arena.
 Parameters can be used in any way that your application sees fit; for
 example, a graphic notation program could use parameters to describe
@@ -123,29 +123,32 @@ However, you should also keep in mind that a parameter is significant
 only if some other object or your application looks for and uses
 it.</para>
 
-      <sect3><title>Parameter Values</title>
+	<sect3><title>Parameter Values</title>
 
-<para>The method you use to set a parameter's value depends on the
-data type of the value.  The <classname>MKNote</classname> class
-provides six value-setting methods.  The first three of these
-are:</para>
+	  <para>The method you use to set a parameter's value depends on the
+	    data type of the value.  The <classname>MKNote</classname> class
+	    provides six value-setting methods.  The first three of these
+	    are:</para>
 
-      <itemizedlist>
+	  <itemizedlist>
 
-<listitem><para> <emphasis role="bold">setPar:toDouble:</emphasis>
+	    <listitem>
+	      <para><emphasis role="bold">setPar:toDouble:</emphasis>
 sets the parameter value as a <emphasis
 role="bold">double</emphasis>.</para>
-	  </listitem>
-<listitem><para> <emphasis role="bold">setPar:toInt:</emphasis> sets
+	    </listitem>
+	    <listitem>
+	      <para><emphasis role="bold">setPar:toInt:</emphasis> sets
 the value as an <emphasis role="bold">int</emphasis>.</para>
-	  </listitem>
-<listitem><para> <emphasis role="bold">setPar:toString:</emphasis>
+	    </listitem>
+	    <listitem>
+	      <para><emphasis role="bold">setPar:toString:</emphasis>
 sets the value as a pointer to a string.</para>
-	  </listitem>
-	</itemizedlist>
-<para>The other three methods will be examined later.</para>
+	    </listitem>
+	  </itemizedlist>
+	  <para>The other three methods will be examined later.</para>
 
-<para>The argument to the <emphasis role="bold">setPar:</emphasis>
+	  <para>The argument to the <emphasis role="bold">setPar:</emphasis>
 keyword is a parameter tag; the second argument is the value that
 you're setting.  For example, to set the value of the bearing
 parameter (stereophonic location of a DSP synthesized sound) to 45.0
@@ -183,46 +186,54 @@ regardless of which of the three methods you used to set the value.
 The retrieval methods include:</para>
 	<itemizedlist>
 
-<listitem><para> <emphasis role="bold">parAsDouble:</emphasis> returns
+	    <listitem>
+	      <para><emphasis role="bold">parAsDouble:</emphasis> returns
 the value as a <emphasis role="bold">double</emphasis>.</para>
-	  </listitem>
-<listitem><para> <emphasis role="bold">parAsInt:</emphasis> returns
+	    </listitem>
+	    <listitem>
+	      <para><emphasis role="bold">parAsInt:</emphasis> returns
 the value as an <emphasis role="bold">int</emphasis>.</para>
-	  </listitem>
-<listitem><para> <emphasis role="bold">parAsString:</emphasis> returns
+	    </listitem>
+	    <listitem>
+	      <para><emphasis role="bold">parAsString:</emphasis> returns
 a pointer (a <emphasis role="bold">char *</emphasis>) to a copy of the
 value.</para>
-	  </listitem>
-<listitem><para> <emphasis role="bold">parAsStringNoCopy:</emphasis>
+	    </listitem>
+	    <listitem>
+	      <para><emphasis role="bold">parAsStringNoCopy:</emphasis>
 returns a pointer to the value itself.</para>
-	  </listitem>
-	</itemizedlist>
-<tip><para>You shouldn't alter the
-string returned by <emphasis
+	    </listitem>
+	  </itemizedlist>
+	  <tip>
+	    <para>You shouldn't alter the string returned by <emphasis
 role="bold">parAsStringNoCopy:</emphasis>.  It's owned by the
-<classname>MKNote</classname> object.</para></tip>
+<classname>MKNote</classname> object.</para>
+	  </tip>
 
-<para>If the parameter hasn't been set, the retrieval methods return
-values as follows:</para>
-      <itemizedlist>
+	  <para>If the parameter hasn't been set, the retrieval methods return
+	    values as follows:</para>
+	  <itemizedlist>
 
-<listitem><para> <emphasis role="bold">parAsDouble:</emphasis> returns
+	    <listitem>
+	      <para><emphasis role="bold">parAsDouble:</emphasis> returns
 <constant>MK_NODVAL</constant>.</para>
-	  </listitem>
+	    </listitem>
 
-<listitem><para> <emphasis role="bold">parAsInt:</emphasis> returns
+	    <listitem>
+	      <para><emphasis role="bold">parAsInt:</emphasis> returns
 <constant>MAXINT</constant>.</para>
-	  </listitem>
+	    </listitem>
 
-<listitem><para> The string retrieval methods return an empty
+	    <listitem>
+	      <para>The string retrieval methods return an empty
 string.</para>
-	  </listitem>
-	</itemizedlist>
-<para>Unfortunately, you can't use <constant>MK_NODVAL</constant> in a
-simple comparison predicate.  To check for this return value, you must
-call the in-line function <function>MKIsNoDVal()</function>; the
-function returns 0 if its argument is <constant>MK_NODVAL</constant>
-and nonzero if not:</para>
+	    </listitem>
+	  </itemizedlist>
+	  <para>Unfortunately, you can't use
+<constant>MK_NODVAL</constant> in a simple comparison predicate.  To
+check for this return value, you must call the in-line function
+<function>MKIsNoDVal()</function>; the function returns 0 if its
+argument is <constant>MK_NODVAL</constant> and nonzero if not:</para>
 
 <programlisting>
 /* Retrieve the value of the amplitude parameter. */
@@ -248,7 +259,8 @@ if ([aNote parIsPresent: MK_bearing])
     double theBearing = [aNote parAsDouble: MK_bearing];
 </programlisting>
       
-      <sect4><title>Choosing a Value</title>
+	  <sect4>
+	    <title>Choosing a Value</title>
 
 <para>To properly set a parameter's value, you need to know the range
 of values that are meaningful to the object that applies it.  The
@@ -264,35 +276,39 @@ begin time, and duration, are special.  See
 <xref linkend="BasicParameters">, later in this chapter, for a discussion of
 alternative ways to set and retrieve the values of these
 parameters.</para>
-      </sect4>
+	  </sect4>
 
-      <sect4><title>Object-Valued Parameters</title>
+	  <sect4>
+	    <title>Object-Valued Parameters</title>
 
-<para>Some parameters take objects as their values.  The methods for
-setting an object-valued parameter are:</para>
-      <itemizedlist>
+	    <para>Some parameters take objects as their values.  The
+methods for setting an object-valued parameter are:</para>
+	    <itemizedlist>
 
-<listitem><para> <emphasis role="bold">setPar:toEnvelope:</emphasis>
+	      <listitem>
+		<para><emphasis role="bold">setPar:toEnvelope:</emphasis>
 sets the value as an <classname>MKEnvelope</classname> object.
 </para>
-	    </listitem>
+	      </listitem>
 
-<listitem><para> <emphasis role="bold">setPar:toWaveTable:</emphasis>
+	      <listitem>
+		<para><emphasis role="bold">setPar:toWaveTable:</emphasis>
 sets the value as a <classname>MKWaveTable</classname> object.</para>
-	    </listitem>
-<listitem><para> <emphasis role="bold">setPar:toObject:</emphasis>
+	      </listitem>
+	      <listitem>
+		<para><emphasis role="bold">setPar:toObject:</emphasis>
 sets the value as a non-MusicKit object.</para>
-	    </listitem>
-      </itemizedlist>
+	      </listitem>
+	    </itemizedlist>
 
-<para><classname>MKEnvelope</classname>s and <classname>MKWaveTable</classname>s are
+	    <para><classname>MKEnvelope</classname>s and <classname>MKWaveTable</classname>s are
 described later in this chapter.  The <emphasis
 role="bold">setPar:toObject:</emphasis> method is provided so you can
 set a parameter to an instance of one of your own classes.  The class
 that you define should implement the following methods so its
 instances can be written to and read from a scorefile:</para>
 
-      <itemizedlist>
+	    <itemizedlist>
 
 <listitem><para> <emphasis role="bold">writeASCIIStream:</emphasis>
 provides instructions for writing the object as
@@ -892,15 +908,18 @@ are typical of those used to control amplitude.  The bottom one,
 applied to frequency, would introduce some warble at the beginning and
 end of a note.</para>
 
-<figure id="figure3-2">
-<title>Typical Envelopes</title>
-<mediaobject>
-<imageobject><imagedata fileref="Images/MusicData2.eps" scalefit=1></imageobject>
-<imageobject><imagedata fileref="Images/MusicData2.gif"></imageobject>
-<textobject><phrase>MusicKit Image</phrase></textobject>
-</mediaobject>
-</figure>
-
+	<figure id="figure3-2">
+	  <title>Typical Envelopes</title>
+	  <mediaobject>
+	    <imageobject>
+	      <imagedata fileref="Images/MusicData2.eps" scalefit=1>
+	    </imageobject>
+	    <imageobject>
+	      <imagedata fileref="Images/MusicData2.gif">
+	    </imageobject>
+	    <textobject><phrase>MusicKit Image</phrase></textobject>
+	  </mediaobject>
+	</figure>
 
 <para>Instances of the MusicKit's <classname>MKEnvelope</classname>
 class are used to represent envelope functions.  An
@@ -910,14 +929,18 @@ in an envelope's direction or trajectory.  <xref linkend="figure3-3"> superimpos
 breakpoints on the previously illustrated envelope shapes (an open
 circle denotes the location of a breakpoint).</para>
 
-<figure id="figure3-3">
-<title>Breakpoint Envelopes</title>
-<mediaobject>
-<imageobject><imagedata fileref="Images/MusicData5.eps" scalefit=1></imageobject>
-<imageobject><imagedata fileref="Images/MusicData5.gif"></imageobject>
-<textobject><phrase>MusicKit Image</phrase></textobject>
-</mediaobject>
-</figure>
+	<figure id="figure3-3">
+	  <title>Breakpoint Envelopes</title>
+	  <mediaobject>
+	    <imageobject>
+	      <imagedata fileref="Images/MusicData5.eps" scalefit=1>
+	    </imageobject>
+	    <imageobject>
+	      <imagedata fileref="Images/MusicData5.gif">
+	    </imageobject>
+	    <textobject><phrase>MusicKit Image</phrase></textobject>
+	  </mediaobject>
+	</figure>
 
 <para>An <classname>MKEnvelope</classname> object can have any number
 of breakpoints, allowing you to create arbitrarily complex
@@ -1512,14 +1535,19 @@ double interpY = [anEnvelope lookupYForX: 0.5];
 
 <para>returns 1.0.  The computation is illustrated in <xref linkend="figure3-13"></para>
 
-<figure id="figure3-13">
-<title>Linear Interpolation</title>
-<mediaobject>
-<imageobject><imagedata fileref="Images/MusicData21.eps" scalefit=1></imageobject>
-<imageobject><imagedata fileref="Images/MusicData21.gif"></imageobject>
-<textobject><phrase>MusicKit Image</phrase></textobject>
-</mediaobject>
-</figure>
+	  <figure id="figure3-13">
+	    <title>Linear Interpolation</title>
+	    <mediaobject>
+	      <imageobject>
+		<imagedata fileref="Images/MusicData21.eps"
+		  scalefit=1>
+	      </imageobject>
+	      <imageobject>
+		<imagedata fileref="Images/MusicData21.gif">
+	      </imageobject>
+	      <textobject><phrase>MusicKit Image</phrase></textobject>
+	    </mediaobject>
+	  </figure>
 
 
 <para>With discrete-value lookup, the
@@ -3089,3 +3117,21 @@ values.</para>
     </sect2>
   </sect1>
 </chapter>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:nil
+sgml-shorttag:t
+sgml-namecase-general:t
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document: "MusicKitConcepts.sgml"
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
