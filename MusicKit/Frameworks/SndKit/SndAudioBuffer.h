@@ -383,11 +383,10 @@ typedef enum {
 
 /*!
     @method     description
-    @abstract    
-    @discussion 
+    @abstract   Returns a description of the instance as an NSString. 
     @result     NSString describing the audio buffer.
 */
-- (NSString*) description;
+- (NSString *) description;
 
 /*!
   @method findMin:max:
@@ -398,12 +397,21 @@ typedef enum {
 - (void) findMin: (float *) pMin max: (float *) pMax;
 
 /*!
+    @method normalise
+    @abstract Scale signal to maximum dynamic range of data format.
+    @discussion Manages both signals below the dynamic range and in the case of floating point format,
+                exceeding the normalised dynamic range (-1.0 to 1.0). Scales such that no D.C shift occurs
+                across all channels.
+ */
+- (void) normalise;
+
+/*!
   @method sampleAtFrameIndex:channel:
-  @abstract Retrieves a normalized sample given the frame number (time position) and channel number.
+  @abstract Retrieves a normalised sample given the frame number (time position) and channel number.
   @param frameIndex The frame index, between 0 and the value returned by <B>lengthInSampleFrames</B>
                     less one, inclusive.
   @param channel The channel index, between 0 and the number of channels in the sound.
-  @result Returns a normalized sample value as a float regardless of the data format.
+  @result Returns a normalised sample value as a float regardless of the data format.
  */
 - (float) sampleAtFrameIndex: (unsigned long) frameIndex channel: (int) channel;
 
