@@ -22,7 +22,8 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #endif
 
 #ifdef QUARTZ_RENDERING
-#import <CoreGraphics/CoreGraphics.h>
+#import <ApplicationServices/ApplicationServices.h>
+//#import <CoreGraphics/CoreGraphics.h> // redundant as of MacOS X 4K46.
 #endif
 
 #import "SndDisplayDataList.h"
