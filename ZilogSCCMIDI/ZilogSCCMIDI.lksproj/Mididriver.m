@@ -1,5 +1,5 @@
 /*
-  $Id Mididriver.m$
+  $Id$
 
   Copyright (C) 1991, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc.
@@ -81,8 +81,11 @@
   12/21/98/lms - Port to Rhapsody PowerPC architecture, major reorganization,
                  separated into architecture-specific source files.
   $Log$
-  Revision 1.1  1999/12/01 04:53:01  leigh
-  Initial revision
+  Revision 1.2  2000/02/29 01:03:39  leigh
+  Now generates useful Id entry
+
+  Revision 1.1.1.1  1999/12/01 04:53:01  leigh
+  Initial check in, works reliably with ch-a output only
 
 */
 
@@ -250,7 +253,6 @@ static Mididriver *driverObjects[MAX_UNITS] = {nil};
 #define DEBUG_DDM 2
 #define DEBUG_IOLOG 3
 
-//#define DEBUG_METHOD DEBUG_IOLOG /* Set Debug mode here */
 #define DEBUG_METHOD DEBUG_NONE /* Set Debug mode here */
 
 #define PRINTF IOLog

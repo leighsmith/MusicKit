@@ -19,7 +19,8 @@ HFILES = Mididriver.h mididriver.h mididriver_reply.h\
 
 OTHERSRCS = Makefile.preamble Makefile Makefile.postamble\
             Load_Commands.sect Unload_Commands.sect mididriver.defs\
-            mididriver_reply.defs
+            mididriver_reply.defs zs8530.m zs85C30.h zsreg.h mpu401.m\
+            mididriver_common.defs
 
 
 MAKEFILEDIR = $(MAKEFILEPATH)/pb_makefiles

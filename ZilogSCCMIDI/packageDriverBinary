@@ -7,11 +7,10 @@
 #
 # Leigh Smith <leigh@tomandandy.com> 1999/11/29
 #
-frameworkname=MK
-packagetitle="MusicKit"
-
-if [ x_$MKICON = x_ ]; then
-    echo "Error: Environment variable MKICON must be set to point to the .tiff file used for the $packagetitle frameworks icon."
+drivername=ZilogSCCMIDI
+packagetitle="Zilog SCC MIDI Driver"
+if [ x_$MDBIN = x_ ]; then
+    echo "Error: Environment variable MDBIN must be set to point to the .tiff file used for the $packagetitle icon."
     exit 1;
 fi
 if [ x_$1 = x_ ]; then
@@ -21,17 +20,16 @@ if [ x_$1 = x_ ]; then
 else
     appversion=$1
 fi
-packagefrom=/Local/Library/Frameworks
-# TODO unitgenerators synthpatches
-packages=(MusicKit MKPerformSndMIDI dsp SndKit)
+packagefrom=$MDBIN
+packages=(ZilogSCCMIDI)
 workingdir=/tmp
-install_file_directory=${frameworkname}Install
+install_file_directory=${drivername}Install
 
 mkdir -p $workingdir/$install_file_directory
 cd $workingdir
 
 foreach f ($packages)
-  cp -r $packagefrom/$f.framework $install_file_directory/
+  cp -r $packagefrom/$f.config $install_file_directory/
 end
 
 # This is the point where you'll want to make sure that the permissions and ownership of
@@ -54,7 +52,7 @@ end
 echo "Changing ownership to root.wheel, log in as root."
 echo "/usr/sbin/chown -R root.wheel $workingdir/$install_file_directory/" | su root -s
 
-cp $MKICON ./$frameworkname.tiff
+cp $MDBIN/.dir.tiff ./$drivername.tiff
 
 
 #  The .info file is in a basic key/value format. The keys that are
@@ -83,14 +81,14 @@ cp $MKICON ./$frameworkname.tiff
 #  for example), and in those cases you'll want to set the DisableStop
 #  to YES, otherwise it should be set to NO.
 
-cat > $frameworkname.info << EOF
+cat > $drivername.info << EOF
 Title                $packagetitle
 Version              $appversion
-Description          This package contains frameworks for the $packagetitle.
-DefaultLocation      /Local/Library/Frameworks
-Relocatable          YES
+Description          This package contains the $packagetitle. Install it only on computers running MacOs X Server.
+DefaultLocation      /private/Drivers/ppc
+Relocatable          NO
 
-Diskname             $frameworkname #%d
+Diskname             $drivername #%d
 
 NeedsAuthorization   NO
 Application          NO
@@ -101,15 +99,15 @@ EOF
 # DeleteWarning
 
 
-package $install_file_directory $frameworkname.info $frameworkname.tiff
+package $install_file_directory $drivername.info $drivername.tiff
 
 # just tar the file ready for transmission, no point compressing.
-shipfile=$workingdir/$frameworkname-$appversion.pkg.tar
-tar cf $shipfile $frameworkname.pkg
+shipfile=$workingdir/$drivername-$appversion.pkg.tar
+tar cf $shipfile $drivername.pkg
 
 echo "Deleting temporary files, log in as root."
 echo "/bin/rm -r -f $workingdir/$install_file_directory" | su root -s
 
-rm -r -f $workingdir/$frameworkname.pkg
+rm -r -f $workingdir/$drivername.pkg
 
 echo "Finished. Final package is located at $shipfile"
