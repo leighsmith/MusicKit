@@ -21,9 +21,11 @@ PDF_TMPDIR=/tmp/mkpdf
 MKSRCDIR=`pwd`
 MKREADMESRC=$MKSRCDIR/Documentation/MusicKit_README.sgml
 MKCONCEPTS=$MKSRCDIR/Documentation/Concepts/
+MKTUTORIALS=$MKSRCDIR/Documentation/TutorialClasses/
 MK_STYLEDIR=$MKSRCDIR/Documentation/SGML
 MK_STYLESHEET=$MK_STYLEDIR/MusicKit_README.dsssl
 MKCONCEPTS_STYLESHEET=/usr/lib/sgml/stylesheets/cygnus-both.dsl
+MKTUTORIALS_STYLESHEET=$MKCONCEPTS_STYLESHEET
 
 #
 # Convert all SGML to HTML and package
@@ -45,8 +47,13 @@ cp -r $MKCONCEPTS/Images/*.gif Images
 ln -s musickitconcepts.html index.html
 
 #
-# Generate The Tutorials
+# Generate the tutorials and also place them under the README directory.
 #
+mkdir -p $HTML_TMPDIR/TutorialClasses/Images
+cd $HTML_TMPDIR/TutorialClasses
+$JADE -t sgml -ihtml -d ${MKTUTORIALS_STYLESHEET}\#html $MKTUTORIALS/MusicKitTutorials.sgml
+cp -r $MKTUTORIALS/Images/*.gif Images
+ln -s musickittutorials.html index.html
 
 #
 # Run HeaderDoc over the frameworks
