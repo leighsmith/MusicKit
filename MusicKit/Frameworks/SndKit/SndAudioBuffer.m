@@ -205,6 +205,187 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// convertDataToFormat:
+////////////////////////////////////////////////////////////////////////////////
+
+- (BOOL) convertDataToFormat: (int) newDataFormat resultBuffer: (void*) newData
+{
+//  void *newData = NULL;
+//  long  newDataSize;
+  long  dataItems, i;
+  
+  if (newDataFormat == formatSnd.dataFormat)
+    return TRUE;
+
+  dataItems   = formatSnd.dataSize / SndSampleWidth(formatSnd.dataFormat);
+//  newDataSize = dataItems * SndSampleWidth(newDataFormat);
+//  newData = (char*) malloc(newDataSize);
+
+  switch (formatSnd.dataFormat) {
+    
+    case SND_FORMAT_LINEAR_8:
+      
+      switch (newDataFormat) {
+        case SND_FORMAT_LINEAR_16:
+          for (i=0;i<dataItems;i++) {
+            short v = ((char*)data)[i];
+            ((short*)newData)[i] = v << 8;
+          }
+          break;
+        case SND_FORMAT_LINEAR_32:
+          for (i=0;i<dataItems;i++) {
+            long v = ((char*)data)[i];
+            ((long*)newData)[i] = v << 24;
+          }
+          break;
+        case SND_FORMAT_FLOAT:
+          for (i = 0;i<dataItems;i++) {
+            float v = ((char*)data)[i];
+            ((float*)newData)[i] = v / 128.0;
+          }
+          break;
+        case SND_FORMAT_DOUBLE:
+          for (i = 0;i<dataItems;i++) {
+            double v = ((char*)data)[i];
+            ((double*)newData)[i] = v / 128.0;
+          }
+          break;
+      }
+      break;
+
+    case SND_FORMAT_LINEAR_16: 
+
+      switch (newDataFormat) {
+        case SND_FORMAT_LINEAR_8:
+          for (i=0;i<dataItems;i++) {
+            short v = ((short*)data)[i];
+            ((char*)newData)[i] = v >> 8;
+          }
+          break;
+        case SND_FORMAT_LINEAR_32:
+          for (i=0;i<dataItems;i++) {
+            long v = ((short*)data)[i];
+            ((long*)newData)[i] = v >> 24;
+          }
+          break;
+        case SND_FORMAT_FLOAT:
+          for (i=0;i<dataItems;i++) {
+            float v = ((short*)data)[i];
+            ((float*)newData)[i] = (float)(v / (128.0 * 256.0));
+          }
+          break;
+        case SND_FORMAT_DOUBLE:
+          for (i = 0; i < dataItems;i++) {
+            double v = ((short*)data)[i];
+            ((double*)newData)[i] = (double)(v / (128.0 * 256.0));
+          }
+          break;
+      }
+      break;
+      
+    case SND_FORMAT_LINEAR_32:
+      
+      switch (newDataFormat) {
+        case SND_FORMAT_LINEAR_8:
+          for (i=0;i<dataItems;i++) {
+            long v = ((long*)data)[i];
+            ((char*)newData)[i] = (char)(v >> 24);
+          }
+          break;
+        case SND_FORMAT_LINEAR_16:
+          for (i=0;i<dataItems;i++) {
+            long v = ((long*)data)[i];
+            ((short*)newData)[i] = (short)(v >> 8);
+          }
+          break;
+        case SND_FORMAT_FLOAT:
+          for (i=0;i<dataItems;i++) {
+            double v = ((long*)data)[i];
+            ((float*)newData)[i] = (float)(v / (128.0 * 256.0 * 256.0 * 256.0));
+          }
+          break;
+        case SND_FORMAT_DOUBLE:
+          for (i=0;i<dataItems;i++) {
+            double v = ((long*)data)[i];
+            ((double*)newData)[i] = (double)(v / (128.0 * 256.0 * 256.0 * 256.0));
+          }
+          break;
+      }
+      break;
+      
+    case SND_FORMAT_FLOAT:
+      
+      switch (newDataFormat) {
+        case SND_FORMAT_LINEAR_8:
+          for (i=0;i<dataItems;i++) {
+            float v = ((float*)data)[i];
+            ((char*)newData)[i] = (char)(v * 128.0);
+          }          
+          break;
+        case SND_FORMAT_LINEAR_16:
+          for (i=0;i<dataItems;i++) {
+            float v = ((float*)data)[i];
+            ((short*)newData)[i] = (short)(v * 128.0 * 256.0);
+          }
+          break;
+        case SND_FORMAT_LINEAR_32:
+          for (i=0;i<dataItems;i++) {
+            float v = ((float*)data)[i];
+            ((long*)newData)[i] = (long)(v * 128.0 * 256.0 * 256.0 * 256.0);
+          }          
+          break;
+        case SND_FORMAT_DOUBLE:
+          for (i=0;i<dataItems;i++) {
+            float v = ((float*)data)[i];
+            ((double*)newData)[i] = (double) v;
+          }
+          break;
+      }
+      break;
+      
+    case SND_FORMAT_DOUBLE:
+      
+      switch (newDataFormat) {
+        case SND_FORMAT_LINEAR_8:
+          for (i = 0; i < dataItems; i++) {
+            double v = ((double*)data)[i];
+            ((char*)newData)[i] = (char)(v * 128.0);
+          }
+          break;
+        case SND_FORMAT_LINEAR_16:
+          for (i = 0; i < dataItems; i++) {
+            double v = ((double*)data)[i];
+            ((short*)newData)[i] = (short)(v * (128.0 * 256.0));
+          }
+          break;
+        case SND_FORMAT_LINEAR_32:
+          for (i = 0; i < dataItems; i++) {
+            double v = ((double*)data)[i];
+            ((long*)newData)[i] = (long)(v * (128.0 * 256.0 * 256.0 * 256.0));
+          }
+          break;
+        case SND_FORMAT_FLOAT:
+          for (i = 0; i < dataItems; i++) {
+            double v = ((double*)data)[i];
+            ((float*)newData)[i] = (float)(v);
+          }
+          break;
+      }
+      break;
+  }
+
+//  if (bOwnsData)
+//    free(data);
+//  data = newData;
+//  bOwnsData = TRUE;
+//  formatSnd.dataFormat = newDataFormat;
+//  formatSnd.dataSize   = newDataSize;
+  
+  return TRUE;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 // mixWithBuffer:fromStart:toEnd:
 //
 // Note: This is only an interim proof of concept implementation and doesn't

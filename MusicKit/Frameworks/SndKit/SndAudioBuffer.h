@@ -194,6 +194,8 @@
 */
 - (SndSoundStruct*) format;
 
+- (BOOL) convertDataToFormat: (int) newDataFormat resultBuffer: (void*) newData;
+
 /*!
     @method     zero
     @abstract   Sets data to zero
