@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/06/09 03:16:09  leigh
+  Typed ivars
+
   Revision 1.3  1999/11/07 05:11:26  leigh
   Doco cleanup and removal of redundant HashTable include
 
@@ -203,7 +206,7 @@ BOOL _MKInstallSharedObject(NSMutableDictionary* sharedSet,id aSynthObj,
     /* Returns NO if object is already in Set */
 {
     _SharedSynthInfo *aSharedSynthInfo;
-    id aList = nil;
+    NSMutableArray *aList = nil;
     id idKey = [NSValue valueWithNonretainedObject:aKeyObj];
     aList = [sharedSet objectForKey:idKey];
     if (!aList) {

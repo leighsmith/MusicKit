@@ -13,6 +13,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2000/06/09 03:16:09  leigh
+  Typed ivars
+
   Revision 1.3  1999/11/07 05:10:45  leigh
   Doco cleanup
 
@@ -43,7 +46,7 @@ extern int _MKGetSharedSynthReferenceCount(id sharedSynthKey);
 @interface _SharedSynthInfo : NSObject
 {
     id synthObject;           /* The value we're interested in finding. */
-    id theList;               /* Back pointer to the NSMutableArray of values that match the keyObj. */
+    NSMutableArray *theList;  /* Back pointer to the NSMutableArray of values that match the keyObj. */
     id theKeyObject;          /* Back pointer to key object. */
     MKOrchMemSegment segment; /* Which segment or MK_noSegment for wildcard. */
     int length;               /* Or 0 for wild card */
