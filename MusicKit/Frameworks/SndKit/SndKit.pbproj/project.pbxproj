@@ -376,6 +376,7 @@
 				B526060401CFC639002A0494,
 				B512F13B01D3D819002A0494,
 				B5799B9301D76E11002A0494,
+				B5B66B0001E0EF45002A0494,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -526,6 +527,7 @@
 				B526060501CFC639002A0494,
 				B512F13C01D3D819002A0494,
 				B5799B9401D76E11002A0494,
+				B5B66B0101E0EF45002A0494,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -1591,6 +1593,9 @@
 			fileRef = B5799B9101D76E11002A0494;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		B5799B9401D76E11002A0494 = {
@@ -1666,6 +1671,7 @@
 				0109B290014D0BC3CFED3B94,
 				011279860168CEFCCFED3B94,
 				B5B040B901BEC4B2002A0494,
+				B5B66AFE01E0EF45002A0494,
 			);
 			isa = PBXGroup;
 			name = Headers;
@@ -1686,6 +1692,7 @@
 				0109B28F014D0BC3CFED3B94,
 				011279850168CEFCCFED3B94,
 				B5B040BB01BEC4B2002A0494,
+				B5B66AFF01E0EF45002A0494,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -1707,6 +1714,31 @@
 		};
 		B5B040BD01BEC4B2002A0494 = {
 			fileRef = B5B040BB01BEC4B2002A0494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B5B66AFE01E0EF45002A0494 = {
+			isa = PBXFileReference;
+			path = SndAudioProcessorToneGenerator.h;
+			refType = 4;
+		};
+		B5B66AFF01E0EF45002A0494 = {
+			isa = PBXFileReference;
+			path = SndAudioProcessorToneGenerator.m;
+			refType = 4;
+		};
+		B5B66B0001E0EF45002A0494 = {
+			fileRef = B5B66AFE01E0EF45002A0494;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		B5B66B0101E0EF45002A0494 = {
+			fileRef = B5B66AFF01E0EF45002A0494;
 			isa = PBXBuildFile;
 			settings = {
 			};
