@@ -19,7 +19,7 @@ PDF_TMPDIR=/tmp/mkpdf
 # Assume we are standing at the top of the source tree, since with NFS
 # it's a bit hard to be universal with paths.
 MKSRCDIR=`pwd`
-# Assume SndKit will set next to MusicKit in the directory 
+# Assume SndKit will sit next to MusicKit in the directory 
 SKSRCDIR=$MKSRCDIR/../SndKit
 MKDOCDIR=$MKSRCDIR/Documentation
 MKREADMESRC=$MKDOCDIR/MusicKit_README.sgml
@@ -75,7 +75,7 @@ EOF
 cd $MKHEADERDOC
 # The MacOS X version of the MKPerformSndMIDI framework is the 
 # definitive documentation version.
-FRAMEWORKS_TO_HEADERDOC="$MKSRCDIR/Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX $SKSRCDIR/Frameworks/SndKit $MKSRCDIR/Frameworks/MusicKit $MKSRCDIR/Frameworks/MKSynthPatches"
+FRAMEWORKS_TO_HEADERDOC="$MKSRCDIR/Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX $SKSRCDIR/Frameworks/SndKit $MKSRCDIR/Frameworks/MusicKit $MKSRCDIR/Frameworks/MKSynthPatches $MKSRCDIR/Frameworks/MKUnitGenerators"
 
 for frameworkDir in $FRAMEWORKS_TO_HEADERDOC; do (
     # We get a bit sneaky here and assume any part of the framework name
@@ -95,6 +95,7 @@ done
 
 cat >> $HTML_TMPDIR/Frameworks/index.html <<EOF
 <p>
+<a href=..>Back to main documentation page</a>
 </body>
 </html>
 EOF
