@@ -19,7 +19,13 @@
 Modification history:
 
   $Log$
-  Revision 1.1  2000/01/14 00:14:34  leigh
+  Revision 1.2  2001/04/21 22:05:47  sbrandon
+  - renamed MIDIDownloadDLSInstruments to MKMDDownloadDLSInstruments
+  - renamed MIDIGetAvailableDrivers to MKMDGetAvailableDrivers
+  - put in typedefs for port_t and boolean_t, and MDRawEventPtr and MDReplyFunctions
+   (the latter 2 were there, but commented out)
+
+  Revision 1.1.1.1  2000/01/14 00:14:34  leigh
   Initial revision
 
   Revision 1.1.1.1  1999/11/17 17:57:14  leigh
@@ -40,8 +46,11 @@ extern "C" {
 #endif 
 
 typedef int kern_return_t;
-//typedef void *MDRawEventPtr;
-//typedef int *MDReplyFunctions;
+typedef int port_t;
+typedef int boolean_t;
+
+typedef void *MDRawEventPtr;
+typedef int *MDReplyFunctions;
 typedef int msg_header_t;
 
 /* Routine MDBecomeOwner */
@@ -183,12 +192,12 @@ PERFORM_API kern_return_t MDHandleReply(
   MDReplyFunctions *funcs);
 
 /* download the patch numbers (MSB,LSB,patch) to the sound card */
-PERFORM_API kern_return_t MIDIDownloadDLSInstruments(
+PERFORM_API kern_return_t MKMDDownloadDLSInstruments(
   unsigned int *instruments,
   int instrCount);
 
 /* return the available drivers */
-PERFORM_API const char **MIDIGetAvailableDrivers(
+PERFORM_API const char **MKMDGetAvailableDrivers(
   unsigned int *selectedDriver);
 
 #ifdef __cplusplus
