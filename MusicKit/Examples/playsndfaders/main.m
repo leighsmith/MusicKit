@@ -17,7 +17,7 @@
 // Version info
 #define V_MAJ  1
 #define V_MIN  0
-#define V_TINY 1
+#define V_TINY 2
 
 static int iReturnCode = 0;
 
@@ -44,6 +44,7 @@ void ShowHelp(void)
   printf(" -A N  set constant amplitude of sound to N (usually 0 to 1)\n");
   printf(" -B N  set constant balance of sound to N (-1.0 to 1.0)\n");
   printf(" -z N  zig-zag the balance from left to right and back, N times over the duration of the sound, starting in the left channel\n");
+  printf(" -r    use reverb (freeverb) module\n");
   printf(" -O N  offset playback time by N seconds (can be non-integral)\n");
 //  printf(" -o N  offset playback time by N samples\n");
 //  printf(" -E N  playback duration, in seconds\n");
@@ -61,6 +62,7 @@ void ShowHelp(void)
 int main (int argc, const char * argv[])
 {    
     BOOL   bTimeOutputFlag    = FALSE;
+    BOOL   useReverb          = FALSE;
     long   startTimeInSamples = 0;
     double durationInSamples  = -1;
     float  timeOffset         = 0.0f;
@@ -87,6 +89,7 @@ int main (int argc, const char * argv[])
           else          PrintError("No time offset in seonds value given after option -O",-1);
           break;
         case 't': bTimeOutputFlag = TRUE;                       break;
+        case 'r': useReverb       = TRUE;                       break;
         case 'v': printf("playsndfaders %i.%i.%i  skot@tomandandy.com/stephen@brandonitconsulting.co.uk  Sep 2001\n",V_MAJ,V_MIN,V_TINY); break;
         case 'h': ShowHelp(); break;
         case 'd': 
@@ -222,8 +225,12 @@ int main (int argc, const char * argv[])
          * always remember to put it in to preserve platform independence (eg for
          * folks on Win32/Intel or Linux/Intel).
          */
-        SndSwapSoundToHost([s data],[s data],[s sampleCount],[s channelCount],[s dataFormat]);
+        [s swapSndToHost];
 
+        if (useReverb) {
+            [pchain addAudioProcessor:[[[SndAudioProcessorReverb alloc] init] autorelease]];
+        }
+        
         [s playInFuture: timeOffset beginSample: startTimeInSamples sampleCount: durationInSamples];
 
         if (bTimeOutputFlag) printf("Sound duration: %.3f\n",[s duration]);
