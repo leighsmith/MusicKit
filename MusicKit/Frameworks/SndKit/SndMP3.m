@@ -649,13 +649,13 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 		pBuff[i]   = 0.0;
 		pBuff[i+1] = 0.0;
 	    }
-//#if SNDMP3_DEBUG
+#if SNDMP3_DEBUG
 	    {
 		float min, max;
 		[anAudioBuffer findMin: &min max: &max];
 		printf("  SndMP3: min: %5.3f max: %5.3f [dataLen:%li buffLen:%li loc:%i len:%i]\n",MAX(-1, min), MIN(1,max), dataLength, bufferLength, playRegion.location,playRegion.length);
 	    }
-//#endif
+#endif
 	}
 	else
 	    NSLog(@"SndMP3 -insertIntoAudioBuffer: %@ - Unhandled number of channels %d of SND_FORMAT_LINEAR_16 data", anAudioBuffer, buffChans);
