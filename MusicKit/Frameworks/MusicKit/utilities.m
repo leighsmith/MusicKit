@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  1999/11/12 01:29:16  leigh
+  Fixed general MK error messages from %s to %@
+
   Revision 1.7  1999/11/09 00:16:28  leigh
   dummy error message printout to NSLog
 
@@ -284,10 +287,10 @@ NSString * _MKGetErrStr(int errCode)
 #endif
     switch (errCode) {
       case MK_musicKitErr:   /* Generic Music Kit error. */
-          msg = NSLocalizedStringFromTableInBundle(@"Music Kit: %s.", _MK_ERRTAB, _MKErrorBundle(), "This error is used as a way of specifying Music Kit errors not otherwise defined in this list.");
+          msg = NSLocalizedStringFromTableInBundle(@"Music Kit: %@.", _MK_ERRTAB, _MKErrorBundle(), "This error is used as a way of specifying Music Kit errors not otherwise defined in this list.");
 	break;
       case MK_machErr:
-          msg = NSLocalizedStringFromTableInBundle(@"Music Kit: %s. Mach Error: %s in '%s'", _MK_ERRTAB, _MKErrorBundle(), "This error is used for errors from the operating system.  For example, the MIDI object uses this error to report problems gaining access to the MIDI device.  There are two arguments which must be in the order indicated.  The first argument is the Music Kit explanation of what's wrong.  The second is the Mach explanation (as returned by mach_error_string).  The third is the offending function.");
+          msg = NSLocalizedStringFromTableInBundle(@"Music Kit: %@. Mach Error: %@ in '%@'", _MK_ERRTAB, _MKErrorBundle(), "This error is used for errors from the operating system.  For example, the MIDI object uses this error to report problems gaining access to the MIDI device.  There are two arguments which must be in the order indicated.  The first argument is the Music Kit explanation of what's wrong.  The second is the Mach explanation (as returned by mach_error_string).  The third is the offending function.");
 	break;
       case MK_cantOpenFileErr:
           msg = NSLocalizedStringFromTableInBundle(@"Music Kit: Can't open file %@.", _MK_ERRTAB, _MKErrorBundle(), "This error warns that a file can't be opened.");
