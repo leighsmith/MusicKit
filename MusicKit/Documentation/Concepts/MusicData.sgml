@@ -206,11 +206,11 @@ values as follows:</para>
       <itemizedlist>
 
 <listitem><para> <emphasis role="bold">parAsDouble:</emphasis> returns
-MK_NODVAL.</para>
+<constant>MK_NODVAL</constant>.</para>
 	  </listitem>
 
 <listitem><para> <emphasis role="bold">parAsInt:</emphasis> returns
-MAXINT.</para>
+<constant>MAXINT</constant>.</para>
 	  </listitem>
 
 <listitem><para> The string retrieval methods return an empty
@@ -2064,7 +2064,8 @@ example:</para>
 
 <para>Here, only those <classname>MKNote</classname>s with time tag
 values between 3.5 and 10.2, inclusive, are written to the file.  As a
-convenience, you can use the constant MK_ENDOFTIME as the <emphasis
+convenience, you can use the constant
+<constant>MK_ENDOFTIME</constant> as the <emphasis
 role="bold">lastTimeTag:</emphasis> argument to write from some
 position in the <classname>MKScore</classname> to its end:</para>
 
@@ -2394,9 +2395,9 @@ parameter provides the velocity ([0-127]).  If no <emphasis
 role="bold">MK_keyNum</emphasis> is present, the <emphasis
 role="bold">MK_freq</emphasis> parameter is checked and, if it is
 present, converted to a MIDI key number using the currently installed
-TuningSystem.  Finally, a noteTag <emphasis>must</emphasis> be provided
-so that noteOff Notes and polyphonic aftertouch Notes can be properly
-matched.</para>
+<classname>MKTuningSystem</classname>.  Finally, a noteTag
+<emphasis>must</emphasis> be provided so that noteOff Notes and
+polyphonic aftertouch Notes can be properly matched.</para>
 
 <para>Alternatively, you can send a <classname>MKNote</classname> of
 type MK_noteDur with a duration supplied, which is equivalent to a
@@ -2596,8 +2597,7 @@ class=headerfile>MusicKit/params.h</filename>):</para>
 
       <itemizedlist>
 
-<listitem><para> <emphasis role="bold">MK_resetControllers
-</emphasis>
+<listitem><para> <emphasis role="bold">MK_resetControllers</emphasis>
 </para>
 	  </listitem>
 <listitem><para> <emphasis
@@ -2639,9 +2639,9 @@ a value as defined in the MIDI Time Code Specification
 	  </listitem>
 <listitem><para> A <emphasis role="bold">song position pointer
 </emphasis>message is represented by a <classname>MKNote</classname>
-with the parameter <emphasis role="bold">MK_songPosition,
-</emphasis>which is a 14-bit integer ([0-0x3ff]).  See the MIDI
-Specification for details.</para>
+with the parameter <emphasis role="bold">MK_songPosition</emphasis>,
+which is a 14-bit integer ([0-0x3ff]).  See the MIDI Specification for
+details.</para>
 	  </listitem>
 <listitem><para> A <emphasis role="bold">song select
 </emphasis>message is represented by a <classname>MKNote</classname>
@@ -2854,20 +2854,17 @@ provides the value of the program change ([0-127]).  The noteType is
 set to MK_noteUpdate.</para>
 	  </listitem>
 
-<listitem><para> For each<emphasis role="bold"> channel pressure
-</emphasis>(aka "after touch") <emphasis role="bold">
-</emphasis>message, a <classname>MKNote</classname> is created with
-the parameter <emphasis role="bold">MK_afterTouch,
-</emphasis>which provides the value
-of the afterTouch ([0-127]).  The noteType is set to
-MK_noteUpdate.</para>
+<listitem><para> For each <emphasis role="bold">channel
+pressure</emphasis> (aka "after touch") message, a
+<classname>MKNote</classname> is created with the parameter <emphasis
+role="bold">MK_afterTouch</emphasis>, which provides the value of the
+afterTouch ([0-127]).  The noteType is set to MK_noteUpdate.</para>
 	  </listitem>
 
-<listitem><para> For each<emphasis role="bold"> pitch bend
-</emphasis>message, a <classname>MKNote</classname> is created with
-the parameter <emphasis role="bold">MK_pitchBend,
-</emphasis>which provides the value
-of the afterTouch ([0-0x3fff]).  The noteType is set to
+<listitem><para> For each <emphasis role="bold">pitch bend</emphasis>
+message, a <classname>MKNote</classname> is created with the parameter
+<emphasis role="bold">MK_pitchBend</emphasis>, which provides the
+value of the afterTouch ([0-0x3fff]).  The noteType is set to
 MK_noteUpdate.</para>
 	  </listitem>
 	</itemizedlist>
@@ -2893,8 +2890,7 @@ following int values (defined in
 
       <itemizedlist>
 
-<listitem><para> <emphasis role="bold">MK_resetControllers
-</emphasis></para>
+<listitem><para> <emphasis role="bold">MK_resetControllers</emphasis></para>
 	  </listitem>
 <listitem><para> <emphasis
 role="bold">MK_localControlModeOn</emphasis></para>
@@ -2944,11 +2940,11 @@ a value as defined in the MIDI Time Code Specification
 ([0-127)].</para>
 	  </listitem>
 
-<listitem><para> A <emphasis role="bold">song position pointer
-</emphasis>message is represented by a <classname>MKNote</classname>
-with the parameter <emphasis role="bold">MK_songPosition,
-</emphasis>which is a 14-bit integer ([0-0x3ff]).  See the MIDI
-Specification for details.</para>
+<listitem><para> A <emphasis role="bold">song position
+pointer</emphasis> message is represented by a
+<classname>MKNote</classname> with the parameter <emphasis
+role="bold">MK_songPosition</emphasis>, which is a 14-bit integer
+([0-0x3ff]).  See the MIDI Specification for details.</para>
 	  </listitem>
 
 <listitem><para> A <emphasis role="bold">song select
