@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.15  2001/03/12 02:14:41  leigh
+  Cleaned up prototype formatting
+
   Revision 1.14  2001/02/23 03:29:44  leigh
   Removed redundant and dangerous releasePartsOnly method
 
@@ -109,14 +112,14 @@
  Returns the receiver.
   */
 
-- readScorefile:(NSString * )fileName; 
+- readScorefile: (NSString *) fileName; 
  /* 
  Opens the scorefile named fileName and merges its contents
  with the receiver.  The file is automatically closed.
  Returns the receiver or nil if the file couldn't be read.
  */
 
-- readScorefileStream:(NSData *)stream; 
+- readScorefileStream: (NSData *) stream; 
  /* 
  Reads the scorefile pointed to by stream into the receiver.
  The file must be open for reading; the sender is responsible
@@ -124,7 +127,10 @@
  Returns the receiver or nil if the file couldn't be read.
  */
 
-- readScorefile:(NSString * )fileName firstTimeTag:(double )firstTimeTag lastTimeTag:(double )lastTimeTag timeShift:(double)timeShift; 
+- readScorefile: (NSString *) fileName 
+   firstTimeTag: (double) firstTimeTag
+    lastTimeTag: (double) lastTimeTag
+      timeShift: (double) timeShift; 
  /*
  The same as readScorefile:, but only those Notes with timeTags
  in the specified range are added to the receiver.  The
@@ -132,7 +138,10 @@
  Returns the receiver or nil if the file couldn't be read.
  */
 
-- readScorefileStream:(NSData *)stream firstTimeTag:(double )firstTimeTag lastTimeTag:(double )lastTimeTag timeShift:(double)timeShift; 
+- readScorefileStream: (NSData *) stream
+         firstTimeTag: (double) firstTimeTag
+          lastTimeTag: (double) lastTimeTag
+            timeShift: (double) timeShift; 
  /* 
  The same as readScorefileStream:, but only those Notes with timeTags
  in the specified range are added to the receiver.  The
@@ -140,14 +149,14 @@
  Returns the receiver or nil if the file couldn't be read.
  */
 
-- writeScorefile:(NSString * )aFileName; 
+- writeScorefile: (NSString *) aFileName; 
  /* 
  Opens the scorefile named fileName and writes the receiver
  to it (the file is overwritten).  The file is automatically closed.
  Returns the receiver or nil if the file couldn't be written.
  */
 
-- writeScorefileStream:(NSMutableData *)aStream; 
+- writeScorefileStream: (NSMutableData *) aStream; 
  /* 
  Writes the receiver into the scorefile pointed to by stream.
  The file must be open for reading; the sender is responsible for
@@ -155,7 +164,10 @@
  written.  
  */
 
-- writeScorefile:(NSString * )aFileName firstTimeTag:(double )firstTimeTag lastTimeTag:(double )lastTimeTag timeShift:(double)timeShift; 
+- writeScorefile: (NSString *) aFileName
+    firstTimeTag: (double) firstTimeTag
+     lastTimeTag: (double) lastTimeTag
+       timeShift: (double) timeShift; 
  /* 
  The same as writeScorefile:, but only those Notes with timeTags
  in the specified range are written to the file.  The
@@ -163,7 +175,10 @@
  Returns the receiver or nil if the file couldn't be written.
  */
 
-- writeScorefileStream:(NSMutableData *)aStream firstTimeTag:(double )firstTimeTag lastTimeTag:(double )lastTimeTag timeShift:(double)timeShift; 
+- writeScorefileStream: (NSMutableData *) aStream
+          firstTimeTag: (double) firstTimeTag
+           lastTimeTag: (double) lastTimeTag
+             timeShift: (double) timeShift; 
  /* 
  The same as writeScorefileStream:, but only those Notes with timeTags
  in the specified range are written to the file.  The
@@ -227,25 +242,25 @@
    or nil if it wasn't a member of the receiver.
    */
 
-- shiftTime:(double )shift; 
+- shiftTime:(double) shift; 
  /* 
    Shifts the timeTags of all receiver's Notes by shift beats.
    Returns the receiver.
    */
 
--(BOOL ) isPartPresent:aPart; 
+-(BOOL) isPartPresent:aPart; 
  /* 
    Returns YES if aPart has been added to the receiver,
    otherwise returns NO.
    */
 
-- midiPart:(int )aChan; 
+- midiPart:(int) aChan; 
   /* 
      Returns the first Part with a MK_midiChan info parameter equal to
      aChan, if any. aChan equal to 0 corresponds to the Part representing
      MIDI system and channel mode messages. */
 
--(unsigned )partCount;
+-(unsigned) partCount;
  /* 
    Returns the number of Part contained in the receiver.
    */
@@ -269,35 +284,35 @@
 - copy;
  /* Returns [self copyFromZone:[self zone]] */
 
--setInfoNote:(MKNote *) aNote;
+- setInfoNote: (MKNote *) aNote;
  /* 
    Sets the receiver's info Note to a copy of aNote.  The receiver's
    previous info Note is removed and freed.
    */
 
--(MKNote *) infoNote;
+- (MKNote *) infoNote;
  /* 
    Returns the receiver's info Note.
    */
 
--setScorefilePrintStream:(NSMutableData *)aStream;
+- setScorefilePrintStream:(NSMutableData *) aStream;
  /* 
    Sets the stream used by ScoreFile print statements to
    aStream.  Returns the receiver.
    */  
 
--(NSMutableData *)scorefilePrintStream;
+- (NSMutableData *) scorefilePrintStream;
  /* 
    Returns the receiver's ScoreFile print statement stream.
    */
 
-- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (void) encodeWithCoder: (NSCoder *) aCoder;
  /* 
    You never send this message directly.  
    Should be invoked with NXWriteRootObject(). 
    Archives Notes and info. Also archives Score using 
    NXWriteObjectReference(). */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+- (id) initWithCoder: (NSCoder *) aDecoder;
  /* 
    You never send this message directly.  
    Should be invoked via NXReadObject(). 
@@ -310,12 +325,12 @@
    of the noteTag is maintained. The noteTags of all Parts in the Score are 
    considered part of a single noteTag space. */ 
 
-+setMidifilesEvaluateTempo:(BOOL)yesOrNo;
++setMidifilesEvaluateTempo: (BOOL) yesOrNo;
  /* By default, when writing to a MIDIfile, tempo is factored into the timestamps. 
   * Disable this factoring, send [Score setMidifilesEvaluateTempo:NO] 
   */
 
-+(BOOL)midifilesEvaluateTempo;
++ (BOOL) midifilesEvaluateTempo;
   /* Returns value set with setMidifilesEvaluateTempo: */
 
 + (NSArray *) midifileExtensions;
