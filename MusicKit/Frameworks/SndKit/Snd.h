@@ -794,6 +794,13 @@ architecture, as described in the <b>SndStruct</b> header.
 */
 - (BOOL)isPlayable;
 
+/*!
+  @method isPlaying
+  @result Returns a BOOL, YES if a sound has playing performances, NO if not.
+  @discussion Returns <b>YES</b> if the Snd is currently playing one or more performances,
+              otherwise returns <b>NO</b>.
+ */
+- (BOOL) isPlaying;
 
 /*!
   @method convertToFormat:
@@ -1169,6 +1176,7 @@ architecture, as described in the <b>SndStruct</b> header.
   @result self
  */
 - initWithAudioBuffer: (SndAudioBuffer*) aBuffer;
+
 
 /*!
   @method     setUseVolumeWhenPlaying:
