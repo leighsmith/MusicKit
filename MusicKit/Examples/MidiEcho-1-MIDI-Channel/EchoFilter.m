@@ -1,14 +1,8 @@
-
-#import <musickit/musickit.h>
-#import <objc/List.h>
+// $Id$
+#import <MusicKit/MusicKit.h>
 #import "EchoFilter.h"
   
-@implementation EchoFilter : NoteFilter
-  /* A simple note filter that does MIDI echo */
-{
-    double delay;		    
-    NXHashTable *h;  /* See below */
-}
+@implementation EchoFilter
 
 /* We generate echoes for each note that comes in.  We give
    the echoes a new noteTag. To keep track of which noteTag to give
@@ -39,12 +33,11 @@ static int myIsEqual(const void *info, const void *data1, const void *data2)
 -init
   /* Called automatically when an instance is created. */
 {    
-     static NXHashTablePrototype htPrototype = {myHash,myIsEqual,noFree,0};
      [super init]; 
      delay = .1;
-     [self addNoteSender:[[NoteSender alloc] init]];
-     [self addNoteReceiver:[[NoteReceiver alloc] init]];
-     h = NXCreateHashTable(htPrototype,HASHSIZE,NULL);
+     [self addNoteSender:[[MKNoteSender alloc] init]];
+     [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
+     echoingNotes = [[NSMutableDictionary dictionaryWithCapacity: HASHSIZE] retain];
      return self;
  }
 
@@ -118,13 +111,13 @@ static int *addMapping(EchoFilter *self,int noteTag)
   int *array;
   array = (int *)malloc(sizeof(int) * ECHOS);
   array[0] = noteTag;
-  NXHashInsert(self->h,(const void *)array);
+  [self->echoingNotes addObject: (const void *)array forKey: noteTag];
   return array;
 }
 
 static int getMapping(EchoFilter *self,int noteTag,int echoNumber)
 {
-  int *array = NXHashGet(self->h,(const void *)&noteTag);
+  int *array = [self->echoingNotes objectForKey: (const void *)&noteTag];
   if (!array) 
     return BOGUS_TAG;
   else return array[echoNumber];
@@ -132,7 +125,8 @@ static int getMapping(EchoFilter *self,int noteTag,int echoNumber)
 
 static void removeMapping(EchoFilter *self,int noteTag)
 {
-  int *array = NXHashRemove(self->h,(const void *)&noteTag);
+  int *array = [self->echoingNotes objectForKey: (const void *)&noteTag];
+  [self->echoingNotes removeObjectForKey: noteTag];
   if (array)
     free((void *)array);
 }
