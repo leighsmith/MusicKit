@@ -59,6 +59,8 @@
 				00D2C447FEDB2CB5CFED3B93,
 				4E8FE86A0122ECB1CFED3B8B,
 				4E8FE8670122ECB1CFED3B8B,
+				D836455304F5ED7400A80103,
+				D836455404F5ED7400A80103,
 				017A8C4C004DDCB1CFED3B96,
 				017A8C4D004DDCB1CFED3B96,
 				508F93C5003C7F23CFED3B96,
@@ -298,13 +300,16 @@
 				D88C18010432955600A80103,
 			);
 			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Local/Library/Frameworks \"$(LOCAL_LIBRARY_DIR)/EmbeddedFrameworks\"";
 				FRAMEWORK_VERSION = 2.3;
+				GCC_VERSION = 3.x;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LIBRARY_SEARCH_PATHS = /Local/Unix/lib;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OPTIMIZATION_CFLAGS = "-O3";
 				OTHER_CFLAGS = "-Wall -faltivec";
 				OTHER_LDFLAGS = "-Wall -seg1addr 180000";
@@ -404,6 +409,7 @@
 				0109B294014D0BC3CFED3B94,
 				0109B295014D0BC3CFED3B94,
 				0109B297014D0BC3CFED3B94,
+				D836455504F5ED7400A80103,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -522,8 +528,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				00D2C46EFEDB2CB5CFED3B93,
-				00D2C46FFEDB2CB5CFED3B93,
-				00D2C470FEDB2CB5CFED3B93,
 				00D2C472FEDB2CB5CFED3B93,
 				00D2C474FEDB2CB5CFED3B93,
 				00D2C476FEDB2CB5CFED3B93,
@@ -550,7 +554,6 @@
 				0109B299014D0BC3CFED3B94,
 				0109B29A014D0BC3CFED3B94,
 				0109B29B014D0BC3CFED3B94,
-				0BDB7E070156573D7F000001,
 				B5B040BD01BEC4B2002A0494,
 				B5E433C101CE8A53002A0494,
 				B526060501CFC639002A0494,
@@ -562,6 +565,10 @@
 				B52BE0FD01F8D0AD002A0494,
 				B508535F01F8D71C002A0494,
 				B5405226026DE7B1002A0494,
+				0BDB7E070156573D7F000001,
+				00D2C46FFEDB2CB5CFED3B93,
+				00D2C470FEDB2CB5CFED3B93,
+				D836455604F5ED7400A80103,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -650,6 +657,8 @@
 				0112798A0169158CCFED3B94,
 				D87070F4040CA58D00A80103,
 				D8CC46AF048BEDBA00A80164,
+				D836450704F53D1A00A80103,
+				D836450C04F53E0F00A80103,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1911,6 +1920,66 @@
 //D82
 //D83
 //D84
+		D836450604F53D1900A80103 = {
+			isa = PBXFileReference;
+			name = libogg.a;
+			path = /usr/local/lib/libogg.a;
+			refType = 0;
+		};
+		D836450704F53D1A00A80103 = {
+			fileRef = D836450604F53D1900A80103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D836450A04F53DAF00A80103 = {
+			fileRef = D836450604F53D1900A80103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D836450B04F53E0F00A80103 = {
+			isa = PBXFileReference;
+			name = libvorbis.a;
+			path = /usr/local/lib/libvorbis.a;
+			refType = 0;
+		};
+		D836450C04F53E0F00A80103 = {
+			fileRef = D836450B04F53E0F00A80103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D836450D04F53E1A00A80103 = {
+			fileRef = D836450B04F53E0F00A80103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D836455304F5ED7400A80103 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SndMeter.h;
+			refType = 4;
+		};
+		D836455404F5ED7400A80103 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SndMeter.m;
+			refType = 4;
+		};
+		D836455504F5ED7400A80103 = {
+			fileRef = D836455304F5ED7400A80103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D836455604F5ED7400A80103 = {
+			fileRef = D836455404F5ED7400A80103;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		D84D9F64040ECEA600A80103 = {
 			buildActionMask = 8;
 			dstPath = "";
@@ -1919,6 +1988,8 @@
 				D8A248FC048CFB4100A80165,
 				D84D9F67040ECEAF00A80103,
 				D84D9F68040ECEAF00A80103,
+				D836450A04F53DAF00A80103,
+				D836450D04F53E1A00A80103,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 1;
@@ -1980,6 +2051,8 @@
 				D8CC46AE048BEDBA00A80164,
 				011279890169158CCFED3B94,
 				011279830168CEA1CFED3B94,
+				D836450604F53D1900A80103,
+				D836450B04F53E0F00A80103,
 			);
 			isa = PBXGroup;
 			name = Libraries;
