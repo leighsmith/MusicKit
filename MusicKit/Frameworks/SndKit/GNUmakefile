@@ -15,6 +15,11 @@
 
 # Modification history:
 # $Log$
+# Revision 1.12  2001/11/21 23:19:49  sbrandon
+# made makefile distinguish between MinGW and 'other' targets when deciding
+# whether or not to include the SndAudioProcessorMP3Encoder.h header (fix
+# for non-Windows GNUstep targets).
+#
 # Revision 1.11  2001/11/07 12:38:18  sbrandon
 # added SndKitDefines.h header which contains Win32-specific SNDKIT_API
 # declarations.
@@ -63,12 +68,12 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 srcdir = .
 
-SK_COMPILE_MP3_ENCODER = no
-
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   SK_COMPILE_APPKIT_CLASSES = no
+  SK_COMPILE_MP3_ENCODER = no
 else
   SK_COMPILE_APPKIT_CLASSES = yes
+  SK_COMPILE_MP3_ENCODER = yes
 endif
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
