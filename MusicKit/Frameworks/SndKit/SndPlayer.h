@@ -190,6 +190,8 @@
               streaming is started up.
 */
 - setRemainConnectedToManager: (BOOL) b;
+- addPerformance: (SndPerformance*) aPerformance;
+
 
 @end
 

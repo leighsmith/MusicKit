@@ -260,6 +260,8 @@ static SndPlayer *defaultSndPlayer;
                 beginAtIndex: (long) beginAtIndex
                   endAtIndex: (long) endAtIndex
 {
+  SndPerformance *thePerformance;
+  
     if(endAtIndex > [s sampleCount]) {
         endAtIndex = [s sampleCount];	// Ensure the end of play can't exceed the sound data
     }
@@ -282,34 +284,34 @@ static SndPlayer *defaultSndPlayer;
   fprintf(stderr,"SndPlayer::PlaySnd (4) - atStreamTime:%f beginAtIndex:%li endAtIndex:%li clientTime:%f streamTime:%f\n", 
             playT, beginAtIndex, endAtIndex, clientNowTime, [manager nowTime]);
 #endif
-    if (playT <= clientNowTime) {  // play now!
-        SndPerformance *nowPerformance;
-        nowPerformance = [SndPerformance performanceOfSnd: s 
-                                            playingAtTime: [self streamTime]
-                                             beginAtIndex: beginAtIndex
-                                               endAtIndex: endAtIndex];
+    thePerformance = [SndPerformance performanceOfSnd: s
+                                        playingAtTime: playT
+                                         beginAtIndex: beginAtIndex
+                                           endAtIndex: endAtIndex];
+    [self addPerformance: thePerformance];
+    [s addPerformance: thePerformance];
+    return thePerformance;
+}
+
+- addPerformance: (SndPerformance*) aPerformance
+{
+    if ([aPerformance playTime] <= clientNowTime) {  // play now!
+      [aPerformance setPlayTime: [self streamTime]];
 
         [playingLock lock];
 #if SNDPLAYER_DEBUG
         fprintf(stderr,"SndPlayer::playSnd(4) playing lock...\n");
 #endif
-        [self _startPerformance: nowPerformance];    
+        [self _startPerformance: aPerformance];    
         [playingLock unlock];
 #if SNDPLAYER_DEBUG
         fprintf(stderr,"SndPlayer::playSnd(4) playing unlock...\n");
 #endif
-        [s addPerformance: nowPerformance];
-        return nowPerformance;
     }		
     else {            // play later - we must insert the performance in Time Order
         int i, numToBePlayed, insertIndex;
-        SndPerformance *laterPerformance;
-        
-        laterPerformance = [SndPerformance performanceOfSnd: s
-                                              playingAtTime: playT
-                                               beginAtIndex: beginAtIndex
-                                                 endAtIndex: endAtIndex];
-
+      double playT = [aPerformance playTime];
+       
         [playingLock lock];
 #if SNDPLAYER_DEBUG
         fprintf(stderr,"SndPlayer::playSnd(4) playing lock...\n");
@@ -323,14 +325,13 @@ static SndPlayer *defaultSndPlayer;
                 break;
             }
         }
-        [toBePlayed insertObject: laterPerformance atIndex: i];
+        [toBePlayed insertObject: aPerformance atIndex: i];
         [playingLock unlock];
 #if SNDPLAYER_DEBUG
         fprintf(stderr,"SndPlayer::playSnd(4) playing unlock...\n");
 #endif
-        [s addPerformance: laterPerformance];
-        return laterPerformance;
     }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -459,7 +460,7 @@ static SndPlayer *defaultSndPlayer;
         playRegion.length = buffLength;
 
         if (startIndex < 0) {
-            playRegion.length += startIndex;
+            playRegion.length += startIndex; 
             playRegion.location = 0;
         }
 #if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS            
@@ -476,7 +477,8 @@ static SndPlayer *defaultSndPlayer;
 
 #if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS            
           NSLog(@"[SndPlayer][SYNTH THREAD] calling mixWithBuffer from SndPlayer processBuffers start = %ld, end = %ld\n", start, end);
-#endif          
+#endif
+          [performance processBuffer: temp];
           [ab mixWithBuffer: temp fromStart: start toEnd: end];
 #if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS            
 	        NSLog(@"[SndPlayer][SYNTH THREAD] mixing buffer from %d to %d, playregion %d for %d, val at start = %f\n",
