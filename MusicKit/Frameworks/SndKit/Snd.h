@@ -478,17 +478,10 @@ architecture, as described in the <b>SndStruct</b> header.
 
 /*!
   @method info
-  @result Returns a char *.
+  @result Returns an NSString.
   @discussion Returns a pointer to the Snd's info string.
 */
-- (char *)info;
-
-/*!
-  @method infoSize
-  @result Returns an int.
-  @discussion Returns the size (in bytes) of the Snd's info string.
-*/
-- (int)infoSize;
+- (NSString *) info;
 
 /*!
     @method play
@@ -658,7 +651,7 @@ architecture, as described in the <b>SndStruct</b> header.
   @result Returns an int.
   @discussion Terminates the Snd's playback or recording. If the Snd was
               recording, the <b>didRecord:</b> message is sent to the delegate; if
-              playing, <b>didPlay:</b> is sent. An error code is
+              playing, <b>didPlay:duringPerformance:</b> is sent. An error code is
               returned.
 */
 - (int)stop;
@@ -1111,7 +1104,7 @@ architecture, as described in the <b>SndStruct</b> header.
           channel samples) to stick into the audioBuffer
   @result An SndAudioBuffer containing the samples in the range r.
 */
-- (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) r;
+- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) r;
 
 /*!
   @method fillAudioBuffer:withSamplesInRange:
@@ -1121,19 +1114,22 @@ architecture, as described in the <b>SndStruct</b> header.
   @param r an NSRange of sample frames to copy
   @result
 */
-- (void) fillAudioBuffer:(SndAudioBuffer*)buff withSamplesInRange: (NSRange) r;
+- (void) fillAudioBuffer: (SndAudioBuffer *) buff withSamplesInRange: (NSRange) r;
 
 /*!
-  @method insertSamplesInRange:intoAudioBuffer:withinRange:
+  @method insertIntoAudioBuffer:startingAt:samplesInRange:
   @abstract Copies samples from self into a sub region of the provided SndAudioBuffer.
-  @discussion The ranges sndSampleRange and bufferSampleRange must both have the same size.
-  @param sndSampleRange An NSRange of sample frames in the sound to copy.
+  @discussion If the buffer and the Snd instance have different formats, a format
+              conversion will be performed to the buffers format, including resampling
+              if necessary (TODO this is currently disabled).
   @param buff The SndAudioBuffer object into which to copy the data.
-  @param bufferStartIndex The position within the buffer to start writing data at.
+  @param bufferStartIndex The frame position (i.e the time position in samples) within the
+                          buffer to start writing data at.
+  @param sndSampleRange An NSRange of sample frames in the sound to copy.
  */
-- (void) insertSamplesInRange: (NSRange) sndSampleRange
-	      intoAudioBuffer: (SndAudioBuffer*) buff
-		   startingAt: (long) bufferStartIndex;
+- (void) insertIntoAudioBuffer: (SndAudioBuffer *) buff
+		    startingAt: (long) bufferStartIndex
+	        samplesInRange: (NSRange) sndSampleRange;
 
 /*!
   @method initWithAudioBuffer:
