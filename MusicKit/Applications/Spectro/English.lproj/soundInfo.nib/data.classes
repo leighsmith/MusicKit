@@ -1,0 +1,14 @@
+"FirstResponder" = {ACTIONS = {}; OUTLETS = {}; SUPERCLASS = NSObject; };
+"SoundInfo" = {
+    ACTIONS = {}; 
+    OUTLETS = {
+        siChannels = id; 
+        siFormat = id; 
+        siFrames = id; 
+        siPanel = id; 
+        siRate = id; 
+        siSize = id; 
+        siTime = id; 
+    }; 
+    SUPERCLASS = Object; 
+};

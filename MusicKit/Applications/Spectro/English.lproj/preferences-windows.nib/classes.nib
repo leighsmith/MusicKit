@@ -1,0 +1,60 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {defaults = id; okay = id; setPref = id; }; 
+            CLASS = PrefController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                colorView = id; 
+                cursorColorWell = id; 
+                dBLimitCell = id; 
+                displayMode = id; 
+                fftView = id; 
+                gridColorWell = id; 
+                hopRatioCell = id; 
+                multiView = id; 
+                soundDisplayView = id; 
+                spectrumColorWell = id; 
+                spectrumDisplayView = id; 
+                spectrumMaxFreqCell = id; 
+                wfMaxFreqCell = id; 
+                wfPlotHeightCell = id; 
+                window = id; 
+                windowSizeCell = id; 
+                windowTypeMatrix = id; 
+                zpFactorCell = id; 
+            }; 
+            SUPERCLASS = Object; 
+        }, 
+        {
+            ACTIONS = {
+                appDidHide = id; 
+                appDidInit = id; 
+                appWillTerminate = id; 
+                newSoundDoc = id; 
+                open = id; 
+                revertToSaved = id; 
+                save = id; 
+                saveAs = id; 
+                saveTo = id; 
+                showInfoPanel = id; 
+                showPreferences = id; 
+                sndInfo = id; 
+            }; 
+            CLASS = SoundController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                currentDocument = id; 
+                documentList = id; 
+                infoPanel = id; 
+                prefController = id; 
+                saveToAccessoryView = id; 
+                saveToController = id; 
+                stringTable = id; 
+            }; 
+            SUPERCLASS = Object; 
+        }
+    ); 
+    IBVersion = 1; 
+}
