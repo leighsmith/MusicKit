@@ -12,7 +12,6 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 ******************************************************************************/
 #ifdef GNUSTEP
-//#include <libc.h>
 #include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
 #include "sounderror.h"
 #include "SndFunctions.h"
@@ -20,7 +19,8 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #include <Foundation/NSByteOrder.h>
 
 #else
-#import <Foundation/Foundation.h>
+
+#include <Foundation/NSByteOrder.h>
 #include "SndFunctions.h"
 #include "SndResample.h"
 
@@ -38,7 +38,6 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #ifndef USE_NEXTSTEP_SOUND_IO
 #import "sounderror.h"
 #endif
-//#import <MKPerformSndMIDI/SndFormats.h>
 
 #endif /* GNUSTEP */
 

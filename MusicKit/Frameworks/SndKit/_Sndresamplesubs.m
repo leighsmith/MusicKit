@@ -72,6 +72,10 @@
  Modification History:
 
   $Log$
+  Revision 1.1  2002/02/26 13:07:39  sbrandon
+  recent changes in compiler tools on MacOSX refuse to compile these
+  functions as "c" files since they contain ObjC code. Renamed as .m.
+
   Revision 1.4  2002/01/29 22:35:02  sbrandon
   added new BSD-style license courtesy of Julius Smith, for files derived
   from his "resample" project. Thanks Julius.
