@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.16  2001/09/07 00:15:36  leighsmith
+  Made var headerdoc layout conform to the standard
+
   Revision 1.15  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -457,12 +460,16 @@ MKDataType;
 
 @interface MKNote : NSObject
 {
-    MKNoteType noteType;     /*! @var noteType The MKNote's noteType. */
-    int noteTag;             /*! @var noteTag The MKNote's noteTag. */
+/*! @var noteType The MKNote's noteType. */
+    MKNoteType noteType;
+/*! @var noteTag The MKNote's noteTag. */
+    int noteTag;
 /*! @var performer MKPerformer object that's currently sending the MKNote in performance, if any. */
     MKPerformer *performer;   
-    MKPart *part;            /*! @var part The MKPart that this MKNote is a member of, if any. */
-    double timeTag;          /*! @var timeTag Time tag, if any, else MK_ENDOFTIME. */
+/*! @var part The MKPart that this MKNote is a member of, if any. */
+    MKPart *part;
+/*! @var timeTag Time tag, if any, else MK_ENDOFTIME. */
+    double timeTag;
 /*! @var conductor MKConductor to use if performer is nil. If performer is not nil, uses [performer conductor]. */
     MKConductor *conductor;  
 
