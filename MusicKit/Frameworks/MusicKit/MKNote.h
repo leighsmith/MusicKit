@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.17  2001/09/07 18:42:25  leighsmith
+  Generates lists and moved @class before headerdoc declaration, formatted table and correctly formatted code example, made Music Tables a URL reference, replaced HTML numeric entity with correct symbolic entity for double quotes
+
   Revision 1.16  2001/09/07 00:15:36  leighsmith
   Made var headerdoc layout conform to the standard
 
@@ -150,6 +153,9 @@
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
+@class MKPart;
+@class MKPerformer;
+
 /*!
   @class MKNote
   @discussion
@@ -194,7 +200,7 @@ amplitude).
 
 &#183; The parameter's name is used primarily to identify the
 parameter in a scorefile.  The names of the MusicKit parameters are
-the same as the tag constants, but without the &#170;MK_&#186; prefix.
+the same as the tag constants, but without the "MK_" prefix.
 You can also use a parameter's name to retrieve its tag, by passing
 the name to MKNote's <b>parTagForName:</b> class method.  (As
 explained in its descriptions below, it's through this method that you
@@ -248,18 +254,18 @@ equivalent C function, <b>MKIsNoteParPresent()</b> is also provided
 for greater efficiency.
 
 &#183; At a lower lever, you can invoke the <b>parVector:</b> method
-to retrieve one of a MKNote's &#170;parameter bit vectors,&#186;
+to retrieve one of a MKNote's &ldquo;parameter bit vectors,"
 integers that the MKNote uses internally to indicate which parameters
 are present.  You query a parameter bit vector by masking it with the
 parameter's tag:
 	
 <tt>
-// A MKNote may have more then one bit vector to accommodate all
-//  its parameters.
+// A MKNote may have more then one bit vector to accommodate all<br>
+// its parameters.<br>
 
 int parVector = [aNote parVector:(MK_amp/32)];
 	
-// If MK_amp is present, the predicate will be true.
+// If MK_amp is present, the predicate will be true.<br>
 if (parVector &amp; (1 &lt;&lt; (MK_amp % 32)))
 </tt>
 
@@ -269,24 +275,45 @@ efficient to go ahead and retrieve the value and <i>then</i> determine
 if the parameter is actually set by comparing its value to the
 appropriate parameter-not-set value, as given below:
 	
-<b>Retrieval type	No-set value</b>	
-int		MAXINT	
-double		MK_NODVAL (but see below)	
-NSString <tt>	"" (LMS this needs checking)</tt>	
-id	<b>	nil</b>
-	
+<table border=1 cellspacing=2 cellpadding=0 align=center>
+<thead>
+<tr>
+<th align=left>Retrieval type</th>
+<th align=left>No-set value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align=left>int</td>
+<td align=left>MAXINT</td>
+</tr>
+<tr>
+<td align=left>double</td>
+<td align=left>MK_NODVAL (but see below)</td>
+</tr>
+<tr>
+<td align=left>NSString</td>
+<td align=left>&#64;"" (this needs checking - LMS)</td>
+</tr>
+<tr>
+<td align=left>id</td>
+<td align=left><b>nil</b></td>
+</tr>
+</tbody>
+</table>
+
 Unfortunately, you can't use MK_NODVAL in a simple comparison
 predicate. To check for this return value, you must call the 
 in-line function <b>MKIsNoDVal()</b>; the function returns 0 if
 its argument is MK_NODVAL and nonzero if not:
 	
 <tt>
-// Retrieve the value of the amplitude parameter.
-double amp = [aNote parAsDouble:MK_amp];
+// Retrieve the value of the amplitude parameter.<br>
+double amp = [aNote parAsDouble:MK_amp];<br>
 	
-// Test for the parameter's existence.	
-if (!MKIsNoDVal(amp))
-   ... // do something with the parameter
+// Test for the parameter's existence.<br>
+if (!MKIsNoDVal(amp))<br>
+   ... // do something with the parameter<br>
 </tt>
 
 &#183; If you're looking for and processing a large number of
@@ -333,11 +360,13 @@ its duration may be considered and employed by the MKInstrument.
 
 A MKNote has a <i>note type</i> that casts it into one of five roles: 
 
-&#183;	A noteDur represents an entire musical note (a note with a duration).
-&#183;	A noteOn establishes the beginning of a note.  
-&#183;	A noteOff establishes the end of a note.  
-&#183;	A noteUpdate represents the middle of a note (it updates a sounding note).  
-&#183;	A mute makes no sound.
+<ul>
+<li>	A noteDur represents an entire musical note (a note with a duration).</li>
+<li>	A noteOn establishes the beginning of a note.</li>
+<li>	A noteOff establishes the end of a note.</li>
+<li>	A noteUpdate represents the middle of a note (it updates a sounding note).</li>
+<li>	A mute makes no sound.</li>
+</ul>
 
 Only noteDurs may have duration values; the very act of setting a
 MKNote's duration changes it to a noteDur.
@@ -360,7 +389,7 @@ automatically removes it from its previous MKPart.  Within a MKPart
 object, MKNotes are sorted according to their time tag values.
 
 For long-term storage, MKNotes can be written to a scorefile.  There
-are two &#170;safe&#186; ways to write a scorefile: You can add a
+are two "safe" ways to write a scorefile: You can add a
 MKNote-filled MKPart to a MKScore and then write the MKScore to a
 scorefile, or you can send MKNotes during a performance to a
 MKScorefileWriter MKInstrument.  The former of these two methods is
@@ -374,8 +403,8 @@ stream by sending <b>writeScorefileStream:</b> to the MKNotes.  This
 can be convenient while debugging, but keep in mind, however, that the
 method is designed primarily for use by MKScore and MKScorefileWriter
 objects; if you write MKNotes directly to a stream that's open to a
- file, the  file isn't guaranteed to be recognized by methods that
- read scorefiles, such as MKScore's <b>readScorefile:</b>.
+file, the  file isn't guaranteed to be recognized by methods that
+read scorefiles, such as MKScore's <b>readScorefile:</b>.
 
 MKNote are automatically created by the MusicKit in a number of
 circumstances, such as when reading a MKScorefile.  The function
@@ -454,9 +483,6 @@ typedef enum _MKDataType {     /* Data types supported by MKNotes */
     MK_envelope, 
     MK_waveTable}
 MKDataType;
-
-@class MKPart;
-@class MKPerformer;
 
 @interface MKNote : NSObject
 {
@@ -844,7 +870,7 @@ MKDataType;
               
               MKNote tags are used to associate different MKNotes with
               each other, thus creating an identifiable (by the note
-              tag value) &#170;Note stream.&#186; For example, you
+              tag value) "Note stream." For example, you
               create a noteOn/noteOff pair by giving the two MKNotes
               identical note tag values.  Also, you can associate any
               number of noteUpdates with a single noteDur, or with a
@@ -1234,7 +1260,9 @@ MKDataType;
               absence of both MK_freq and MK_keyNum, MK_NODVAL is returned (use
               the function <b>MKIsNoDVal()</b> to check for MK_NODVAL).  The
               correspondence between key numbers and frequencies is given in
-              Appendix A, &#170;Music Tables.&#186;  
+<a href=http://www.musickit.org/MusicKitConcepts/musictables.html>
+the section entitled Music Tables
+</a>.
               
               Frequency and key number are the only two parameters whose values are retrieved through specialized methods.  All other parameter values should be retrieved through one of the <b>parAs</b><i>Type</i><b>:</b> methods.
               
@@ -1246,9 +1274,6 @@ MKDataType;
   * frequency that correponds to MK_keyNum according to the installed
   * tuning system (see the MKTuningSystem class).  If MK_keyNum isn't
   * present, returns MK_NODVAL. (Use MKIsNoDVal() to check for MK_NODVAL.)
-  * The correpondence between key numbers and
-  * frequencies for the default tuning system is given in Appendix F,
-  * "Music Tables." 
   */
 
 
@@ -1262,20 +1287,20 @@ MKDataType;
               value of the MK_freq parameter, if present, is returned. In the
               absence of both MK_keyNum and MK_freq, MAXINT is returned.  The
               correspondence between key numbers and frequencies is given in
-              Appendix A, &#170;Music Tables.&#186;
+<a href=http://www.musickit.org/MusicKitConcepts/musictables.html>
+the section entitled Music Tables
+</a>.
               
               Frequency and key number are the only two parameters whose values are retrieved through specialized methods.  All other parameter values should be retrieved through one of the <b>parAs</b><i>Type</i><b>:</b> methods.
               
-              See also:  -<b> freq,</b>-<b>  setPar:toInt:</b>
+              See also:  - <b>freq,</b> - <b>setPar:toInt:</b>
 */
 -(int ) keyNum; 
  /* 
   * If MK_keyNum is present, returns its value.  Otherwise, gets the
   * frequency that correponds to MK_freq according to the installed tuning
   * system (see the MKTuningSystem class).  If MK_freq isn't present,
-  * returns MAXINT.  The correpondence between key numbers and
-  * frequencies for the default tuning system is given in Appendix F,
-  * "Music Tables."  */
+  * returns MAXINT. */
 
 
 /*!
