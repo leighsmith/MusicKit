@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndAudioBufferQueue.h
-//  SndKit
+//  $Id$
 //
-//  Created by skot on Wed Aug 29 2001.
-//  Copyright (c) 2001 tomandandy.com. All rights reserved.
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and 
 //  non-commercial purposes so long as the author attribution and copyright 
@@ -19,19 +19,20 @@
 
 #ifdef __MINGW32__
 # import "SndConditionLock.h"
+# define NSConditionLock SndConditionLock
 #endif
 
 @class SndAudioBuffer;
 
 /*!
-    @enum AudioBufferQueueType
+    @enum SndAudioBufferQueueType
     @constant audioBufferQueue_typeInput  
     @constant audioBufferQueue_typeOutput  
 */
 typedef enum {
   audioBufferQueue_typeInput,
   audioBufferQueue_typeOutput
-} AudioBufferQueueType;
+} SndAudioBufferQueueType;
 
 /*!
 @class SndAudioBufferQueue
@@ -44,16 +45,10 @@ typedef enum {
     NSMutableArray  *pendingBuffers;
 /*! @var processedBuffers Array of processed buffers (post consumption) */
     NSMutableArray  *processedBuffers;
-#ifndef __MINGW32__
 /*! @var pendingBuffersLock Lock for thread safety around pending buffers array */
     NSConditionLock *pendingBuffersLock;
+    /*! @var processedBuffersLock Lock for thread safety around processed buffers array */
     NSConditionLock *processedBuffersLock;
-#else
-/*! @var pendingBuffersLock Lock for thread safety around pending buffers array */
-    SndConditionLock *pendingBuffersLock;
-/*! @var processedBuffersLock Lock for thread safety around processed buffers array */
-    SndConditionLock *processedBuffersLock;
-#endif
 /*! @var numBuffers Total number of buffers in the queue, both pending and processed */
     int              numBuffers;
 }
@@ -73,9 +68,13 @@ typedef enum {
 
 /*!
   @method     initQueueWithLength:
-  @abstract   Initializes queue for operation with n buffers
-  @param      n Number of buffers 
-  @result     self
+  @abstract   Initializes queue for operation with a total of pending+processed buffers.
+  @discussion Since we add and pop buffers in separate methods, if we try to add before popping, we will
+	      need to use one less than the full number of buffers initialized with, such that we never
+	      exceed the maximum. For example, if we initialize with 4 buffers, at best we can hold only
+              3 processed buffers so we can add a pending buffer, before then popping a processed buffer.
+  @param      n Number of buffers.
+  @result     Returns self.
 */
 - initQueueWithLength: (int) n;
 
@@ -101,7 +100,7 @@ typedef enum {
   @method addPendingBuffer:
   @abstract Adds buffer to the pending queue.
   @param audioBuffer Buffer to be added
-  @result self
+  @result Returns self.
 */
 - addPendingBuffer: (SndAudioBuffer*) audioBuffer;
 
@@ -109,9 +108,15 @@ typedef enum {
   @method addProcessedBuffer:
   @abstract Adds a buffer to the processed queue.
   @param audioBuffer Buffer to be added
-  @result self
+  @result Returns self.
 */
 - addProcessedBuffer: (SndAudioBuffer*) audioBuffer;
+
+/*!
+  @method cancelProcessedBuffers
+  @abstract Moves all processed buffers onto the pending queue.
+ */
+- (void) cancelProcessedBuffers;
 
 /*!
   @method pendingBuffersCount
@@ -128,7 +133,7 @@ typedef enum {
 /*!
   @method     freeBuffers
   @abstract   Frees the SndAudioBuffers within the queues.
-  @result     self
+  @result     Returns self
 */
 - freeBuffers;
 
@@ -141,11 +146,11 @@ typedef enum {
   @discussion If prepared as an input queue, the buffers are initially placed in the processed queue; 
               otherwise the fresh buffers are placed in the pending queue. The former ensures that
               any input buffer consumers do not get empty buffers, and the latter allows buffer
-              producers (eg synthesizers) to process several buffers ahead, giving them some  processing
+              producers (eg synthesizers) to process several buffers ahead, giving them some processing
               head room in a multi-threaded environment.
-  @result     Self.
+  @result     Returns self.
 */
-- prepareQueueAsType: (AudioBufferQueueType) type withBufferPrototype: (SndAudioBuffer*) buff;
+- prepareQueueAsType: (SndAudioBufferQueueType) type withBufferPrototype: (SndAudioBuffer*) buff;
 
 /*!
   @method bufferCount
