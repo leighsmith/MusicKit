@@ -36,10 +36,9 @@ ADDITIONAL_CFLAGS += -g
  
  
 ifeq (mingw32, $(GNUSTEP_HOST_OS))
-  ADDITIONAL_LIB_DIRS = -Ld:/cygwin/usr/local/lib
-  ADDITIONAL_FLAGS += -Id:/cygwin/usr/local/include
-#check the following: could be wrong
-  playsnd_LIBRARIES_DEPEND_UPON += -Ld:/cygwin/usr/local/lib
+  CYG_DRIVE = $(shell cygpath -w '/' | tr '\\' '/' )
+  ADDITIONAL_LIB_DIRS = -L$(CYG_DRIVE)/usr/local/lib
+  ADDITIONAL_FLAGS += -I$(CYG_DRIVE)/usr/local/include
 endif
 
 ADDITIONAL_FLAGS += -g
