@@ -53,12 +53,12 @@ MAKEFILE = app.make
 NEXTSTEP_INSTALLDIR = $(HOME)/Apps
 WINDOWS_INSTALLDIR = /LocalApps
 PDO_UNIX_INSTALLDIR = /LocalApps
-LIBS = -lsynthpatches -lunitgenerators -lmusickit -ldsp -lIndexing_s\
-       -lNeXT_s -lDriver
+LIBS = 
 DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
 
+FRAMEWORKS = -framework AppKit -framework Foundation
 
 
 NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc
