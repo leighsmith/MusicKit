@@ -14,6 +14,9 @@
 /* 
 Modification history:
   $Log$
+  Revision 1.6  2000/10/11 18:13:41  leigh
+  Further typing of parameters, removed erroneous free of noteSenders
+
   Revision 1.5  2000/09/30 20:04:46  leigh
   Adopted getopt operation for extra command line operation
 
@@ -282,7 +285,7 @@ static void nullErrorHandler(NSString *msg)
 
 static int openOrch(int orchIndex,BOOL waitForIt, BOOL quiet, BOOL allDSPs) {
     static int warnedAlready[16] = {0};
-    id theOrch = [MKOrchestra nthOrchestra:orchIndex];
+    MKOrchestra *theOrch = [MKOrchestra nthOrchestra:orchIndex];
     if (!theOrch)
       return -1;
     if (warnedAlready[orchIndex])
@@ -655,7 +658,10 @@ int main(int argc, const char *argv[])
 	else {  /* on the fly */
 	    int partCount,synthPatchCount,voices,midiChan,whichMidi;
 	    NSString *className;
-	    id noteSenders,partInfo,anIns,aNoteSender;
+            NSArray *noteSenders;
+            MKNote *partInfo;
+            MKSynthInstrument *anIns;
+            MKNoteSender *aNoteSender;
 	    id synthPatchClass;
 	    noteSenders = [aPerformer noteSenders];
 	    partCount = [noteSenders count];
@@ -706,7 +712,7 @@ int main(int argc, const char *argv[])
                         instruments = [NSMutableArray arrayWithCapacity: partCount];
 			[instruments insertObject: [MKSynthInstrument new] atIndex: i];      
 		    }
-		    anIns = [instruments objectAtIndex: i];
+		    anIns = (MKSynthInstrument *) [instruments objectAtIndex: i];
 		    [aNoteSender connect:[anIns noteReceiver]];
 		    [anIns setSynthPatchClass:synthPatchClass 
 		     orchestra:[MKOrchestra nthOrchestra:orchIndex]];
@@ -723,7 +729,6 @@ int main(int argc, const char *argv[])
 				[MKGetObjectName(aNoteSender) cString]);
 		}
 	    }
-	    [noteSenders free];
 	}
 	MKSetDeltaT(1.0);              
 	[MKConductor setClocked:NO];     
