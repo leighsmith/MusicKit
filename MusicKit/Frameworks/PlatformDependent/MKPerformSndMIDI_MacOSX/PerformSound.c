@@ -20,6 +20,10 @@
 */
 /*
 // $Log$
+// Revision 1.19  2001/09/17 09:12:52  sbrandon
+// - repaired SndMute code to use the right variable for the start of the
+//   buffer to zero out (compiles properly now!)
+//
 // Revision 1.18  2001/09/12 11:26:44  sbrandon
 // added snd muting functions (output only)
 //
@@ -334,7 +338,7 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
                              &inStream, &outStream, streamUserData);
 
           if (isMuted) {
-              memset(outputBuffer,0,bufferSizeInBytes);
+              memset(outStream.streamData,0,bufferSizeInBytes);
           }
         }
     }
