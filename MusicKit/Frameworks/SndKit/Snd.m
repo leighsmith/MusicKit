@@ -19,6 +19,10 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.30  2001/09/12 12:06:32  sbrandon
+ * changed uses of -cString to -fileSystemRepresentation to better cope with
+ * unicode characters in filenames, and prepare way for Win32 implementations
+ *
  * Revision 1.29  2001/09/11 20:36:00  sbrandon
  * Added methods to Snd object for data endian swapping - swapHostToSnd and
  * swapSndToHost. These methods wrap the corresponding Snd functions. To swap
@@ -970,7 +974,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular)
         return SND_ERR_CANNOT_OPEN;
 
-    err = SndReadSoundfile([filename cString], &soundStruct);
+    err = SndReadSoundfile([filename fileSystemRepresentation], &soundStruct);
 
     // SndPrintStruct(soundStruct);
     if (!err)
@@ -981,7 +985,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (int)writeSoundfile:(NSString *)filename
 {
-    return SndWriteSoundfile([filename cString], soundStruct);
+    return SndWriteSoundfile([filename fileSystemRepresentation], soundStruct);
 }
 
 - (void)writeToPasteboard:(NSPasteboard *)thePboard

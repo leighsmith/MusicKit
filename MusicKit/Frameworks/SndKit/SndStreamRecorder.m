@@ -151,7 +151,7 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 
 - (BOOL) setUpRecordFile: (NSString*) filename
 {
-  if ((recordFile = fopen([filename cString],"wb")) == NULL) 
+  if ((recordFile = fopen([filename fileSystemRepresentation],"wb")) == NULL) 
     fprintf(stderr,"SndStreamRecorder::setupRecordFile - Error opening file '%s' for recording.\n",[filename cString]);
 
   else if ([self outputBuffer] == nil)
