@@ -133,7 +133,7 @@ void _DSPInitDefaults(void)
  */
 #import <objc/objc.h>
 //#import <objc/NXBundle.h>
-#import <bsd/sys/param.h>
+//#import <bsd/sys/param.h>
 
 /* Arrays indexed by driver number (arbitary).  
    Size is dspDriverCount */
