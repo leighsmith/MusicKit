@@ -302,8 +302,6 @@
 				D82556FD05A2142800B0192B,
 				D82556FF05A2142800B0192B,
 				D825570105A2142800B0192B,
-				D825570B05A214EC00B0192B,
-				D825570D05A214EC00B0192B,
 				D825573105A2163400B0192B,
 				D825573205A2163400B0192B,
 				D825573305A2163400B0192B,
@@ -378,6 +376,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D82556B605A2142800B0192B,
+				D882794507008F510060CAFE,
 				D82556BA05A2142800B0192B,
 				D82556BC05A2142800B0192B,
 				D82556BE05A2142800B0192B,
@@ -389,7 +388,6 @@
 				D82556CA05A2142800B0192B,
 				D82556CC05A2142800B0192B,
 				D82556CE05A2142800B0192B,
-				D82556D005A2142800B0192B,
 				D82556D205A2142800B0192B,
 				D82556D405A2142800B0192B,
 				D82556D505A2142800B0192B,
@@ -414,8 +412,6 @@
 				D82556FE05A2142800B0192B,
 				D825570005A2142800B0192B,
 				D825570205A2142800B0192B,
-				D825570C05A214EC00B0192B,
-				D825570E05A214EC00B0192B,
 				D825579D05A218C500B0192B,
 				D825579E05A218C500B0192B,
 				D82557A905A2191600B0192B,
@@ -532,10 +528,6 @@
 		};
 		D825565805A212FD00B0192B = {
 			children = (
-				D825570705A214EC00B0192B,
-				D825570805A214EC00B0192B,
-				D825570905A214EC00B0192B,
-				D825570A05A214EC00B0192B,
 				D825566705A2142800B0192B,
 				D825566805A2142800B0192B,
 				D825566B05A2142800B0192B,
@@ -561,14 +553,14 @@
 				D825567F05A2142800B0192B,
 				D825568005A2142800B0192B,
 				D825568105A2142800B0192B,
-				D825568205A2142800B0192B,
+				D882794407008F510060CAFE,
 				D825568305A2142800B0192B,
 				D825568405A2142800B0192B,
 				D825568805A2142800B0192B,
 				D825568905A2142800B0192B,
 				D825568A05A2142800B0192B,
-				D825568B05A2142800B0192B,
 				D825568505A2142800B0192B,
+				D825568B05A2142800B0192B,
 				D825568605A2142800B0192B,
 				D825568705A2142800B0192B,
 				D825568C05A2142800B0192B,
@@ -950,15 +942,6 @@
 			lastKnownFileType = sourcecode.c.h;
 			name = MKOrchestra.h;
 			path = Frameworks/MusicKit/MKOrchestra.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D825568205A2142800B0192B = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.objc;
-			name = MKOrchestra.m;
-			path = Frameworks/MusicKit/MKOrchestra.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -1619,12 +1602,6 @@
 				);
 			};
 		};
-		D82556D005A2142800B0192B = {
-			fileRef = D825568205A2142800B0192B;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		D82556D105A2142800B0192B = {
 			fileRef = D825568305A2142800B0192B;
 			isa = PBXBuildFile;
@@ -1999,72 +1976,6 @@
 		};
 		D825570205A2142800B0192B = {
 			fileRef = D82556B405A2142800B0192B;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D825570705A214EC00B0192B = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = ArielQP.h;
-			path = Frameworks/MusicKit/ArielQP.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D825570805A214EC00B0192B = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.objc;
-			name = ArielQP.m;
-			path = Frameworks/MusicKit/ArielQP.m;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D825570905A214EC00B0192B = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = DSPSerialPortDevice.h;
-			path = Frameworks/MusicKit/DSPSerialPortDevice.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D825570A05A214EC00B0192B = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.objc;
-			name = DSPSerialPortDevice.m;
-			path = Frameworks/MusicKit/DSPSerialPortDevice.m;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D825570B05A214EC00B0192B = {
-			fileRef = D825570705A214EC00B0192B;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		D825570C05A214EC00B0192B = {
-			fileRef = D825570805A214EC00B0192B;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D825570D05A214EC00B0192B = {
-			fileRef = D825570905A214EC00B0192B;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		D825570E05A214EC00B0192B = {
-			fileRef = D825570A05A214EC00B0192B;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3625,8 +3536,6 @@
 				D88FE29005A0F8430024FD88,
 				D88FE29105A0F8430024FD88,
 				D88FE29205A0F8430024FD88,
-				D88FE29305A0F8430024FD88,
-				D88FE29405A0F8430024FD88,
 				D88FE2AB05A0F8430024FD88,
 				D88FE2AC05A0F8430024FD88,
 				D88FE2AF05A0F8430024FD88,
@@ -4705,6 +4614,8 @@
 				D85A2F4A061F347D0065380E,
 				D88C502906C7E37100D33D99,
 				D86D23B506F229E6003565CB,
+				D85E27D206FA098200385C32,
+				D85E27F406FA0C0100385C32,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -6835,6 +6746,553 @@
 			settings = {
 			};
 		};
+		D85E277406F7F1FB00385C32 = {
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
+			name = SysExSynths;
+			path = Applications/PatchCord/SysExSynths;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E277606F7F1FB00385C32 = {
+			fileRef = D85E277406F7F1FB00385C32;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E27CD06FA098200385C32 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85E27CE06FA098200385C32 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85E27CF06FA098200385C32 = {
+			buildActionMask = 2147483647;
+			files = (
+				D85E282306FA0FAF00385C32,
+				D85E282406FA0FAF00385C32,
+				D85E282506FA0FAF00385C32,
+				D85E282606FA0FAF00385C32,
+				D85E282706FA0FC100385C32,
+				D85E282806FA0FC100385C32,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85E27D006FA098200385C32 = {
+			buildActionMask = 2147483647;
+			files = (
+				D85E282E06FA105B00385C32,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85E27D106FA098200385C32 = {
+			buildPhases = (
+				D85E27CD06FA098200385C32,
+				D85E27CE06FA098200385C32,
+				D85E27CF06FA098200385C32,
+				D85E27D006FA098200385C32,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "PatchCordFramework-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = PatchCord;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = "PatchCord (Framework)";
+			productName = "PatchCord (Framework)";
+			productReference = D85E27D206FA098200385C32;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>PatchCord (Framework)</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.yourcompany.PatchCord__Framework_</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+</dict>
+</plist>
+";
+			productType = "com.apple.product-type.framework";
+		};
+		D85E27D206FA098200385C32 = {
+			explicitFileType = wrapper.framework;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = PatchCord.framework;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D85E27D306FA098A00385C32 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.xml;
+			name = "PatchCordFramework-Info.plist";
+			path = "/Local/Users/leigh/Sources/Music/MusicKit/PatchCordFramework-Info.plist";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		D85E27DC06FA0B8800385C32 = {
+			children = (
+				D85E27EB06FA0BC000385C32,
+				D85E27E806FA0BB800385C32,
+				D85E27E506FA0BAF00385C32,
+				D85E27E206FA0BA300385C32,
+				D85E27DF06FA0B9500385C32,
+			);
+			isa = PBXGroup;
+			name = ScorePlayer;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E27DF06FA0B9500385C32 = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E27E206FA0BA300385C32 = {
+			children = (
+				D85E27F606FA0C0300385C32,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E27E506FA0BAF00385C32 = {
+			children = (
+				D85E281D06FA0E1200385C32,
+				D85E280606FA0DBD00385C32,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E27E806FA0BB800385C32 = {
+			children = (
+				D85E27FB06FA0D0800385C32,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E27EB06FA0BC000385C32 = {
+			children = (
+				D85E280006FA0D2E00385C32,
+				D85E280106FA0D2E00385C32,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E27F006FA0C0100385C32 = {
+			buildActionMask = 2147483647;
+			files = (
+				D85E280206FA0D2E00385C32,
+				D85E281506FA0DF000385C32,
+				D85E281606FA0DF000385C32,
+				D85E281706FA0DF000385C32,
+				D85E281806FA0DF000385C32,
+				D85E281906FA0DF000385C32,
+				D85E281A06FA0DF000385C32,
+				D85E281F06FA0E1200385C32,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85E27F106FA0C0100385C32 = {
+			buildActionMask = 2147483647;
+			files = (
+				D85E27FC06FA0D0800385C32,
+				D85E280306FA0D2E00385C32,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85E27F206FA0C0100385C32 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85E27F306FA0C0100385C32 = {
+			buildPhases = (
+				D85E27F006FA0C0100385C32,
+				D85E27F106FA0C0100385C32,
+				D85E27F206FA0C0100385C32,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "ScorePlayer-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ScorePlayer;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = "ScorePlayer (Application)";
+			productName = "ScorePlayer (Application)";
+			productReference = D85E27F406FA0C0100385C32;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>ScorePlayer (Application)</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.yourcompany.ScorePlayer__Application_</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+			productType = "com.apple.product-type.application";
+		};
+		D85E27F406FA0C0100385C32 = {
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = ScorePlayer.app;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D85E27F606FA0C0300385C32 = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.xml;
+			name = "ScorePlayer-Info.plist";
+			path = "/Local/Users/leigh/Sources/Music/MusicKit/ScorePlayer-Info.plist";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		D85E27FB06FA0D0800385C32 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = ScorePlayer_main.m;
+			path = Applications/ScorePlayer/ScorePlayer_main.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E27FC06FA0D0800385C32 = {
+			fileRef = D85E27FB06FA0D0800385C32;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E280006FA0D2E00385C32 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScorePlayerController.h;
+			path = Applications/ScorePlayer/ScorePlayerController.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E280106FA0D2E00385C32 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = ScorePlayerController.m;
+			path = Applications/ScorePlayer/ScorePlayerController.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E280206FA0D2E00385C32 = {
+			fileRef = D85E280006FA0D2E00385C32;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E280306FA0D2E00385C32 = {
+			fileRef = D85E280106FA0D2E00385C32;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E280606FA0DBD00385C32 = {
+			children = (
+				D85E280906FA0DF000385C32,
+				D85E280B06FA0DF000385C32,
+				D85E280D06FA0DF000385C32,
+				D85E280F06FA0DF000385C32,
+				D85E281106FA0DF000385C32,
+				D85E281306FA0DF000385C32,
+			);
+			isa = PBXGroup;
+			name = Interfaces;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E280906FA0DF000385C32 = {
+			children = (
+				D85E280A06FA0DF000385C32,
+			);
+			isa = PBXVariantGroup;
+			name = ErrorLog.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E280A06FA0DF000385C32 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/ScorePlayer/English.lproj/ErrorLog.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E280B06FA0DF000385C32 = {
+			children = (
+				D85E280C06FA0DF000385C32,
+			);
+			isa = PBXVariantGroup;
+			name = MKAlertPanel.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E280C06FA0DF000385C32 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/ScorePlayer/English.lproj/MKAlertPanel.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E280D06FA0DF000385C32 = {
+			children = (
+				D85E280E06FA0DF000385C32,
+			);
+			isa = PBXVariantGroup;
+			name = NextDACs.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E280E06FA0DF000385C32 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/ScorePlayer/English.lproj/NextDACs.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E280F06FA0DF000385C32 = {
+			children = (
+				D85E281006FA0DF000385C32,
+			);
+			isa = PBXVariantGroup;
+			name = ScorePlayer.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E281006FA0DF000385C32 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/ScorePlayer/English.lproj/ScorePlayer.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E281106FA0DF000385C32 = {
+			children = (
+				D85E281206FA0DF000385C32,
+			);
+			isa = PBXVariantGroup;
+			name = SSAD64x.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E281206FA0DF000385C32 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/ScorePlayer/English.lproj/SSAD64x.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E281306FA0DF000385C32 = {
+			children = (
+				D85E281406FA0DF000385C32,
+			);
+			isa = PBXVariantGroup;
+			name = StealthDAI2400.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E281406FA0DF000385C32 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/ScorePlayer/English.lproj/StealthDAI2400.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E281506FA0DF000385C32 = {
+			fileRef = D85E280906FA0DF000385C32;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E281606FA0DF000385C32 = {
+			fileRef = D85E280B06FA0DF000385C32;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E281706FA0DF000385C32 = {
+			fileRef = D85E280D06FA0DF000385C32;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E281806FA0DF000385C32 = {
+			fileRef = D85E280F06FA0DF000385C32;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E281906FA0DF000385C32 = {
+			fileRef = D85E281106FA0DF000385C32;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E281A06FA0DF000385C32 = {
+			fileRef = D85E281306FA0DF000385C32;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E281D06FA0E1200385C32 = {
+			children = (
+				D85E281E06FA0E1200385C32,
+			);
+			isa = PBXVariantGroup;
+			name = ScorePlayer.strings;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E281E06FA0E1200385C32 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
+			name = English;
+			path = Applications/ScorePlayer/English.lproj/ScorePlayer.strings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85E281F06FA0E1200385C32 = {
+			fileRef = D85E281D06FA0E1200385C32;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E282306FA0FAF00385C32 = {
+			fileRef = D88C504B06C7E4C900D33D99;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E282406FA0FAF00385C32 = {
+			fileRef = D88C504C06C7E4C900D33D99;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E282506FA0FAF00385C32 = {
+			fileRef = D88C504D06C7E4C900D33D99;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E282606FA0FAF00385C32 = {
+			fileRef = D88C504E06C7E4C900D33D99;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E282706FA0FC100385C32 = {
+			fileRef = D88C504306C7E4C800D33D99;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E282806FA0FC100385C32 = {
+			fileRef = D88C504406C7E4C800D33D99;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85E282E06FA105B00385C32 = {
+			fileRef = D8160DC805BB57CC00A1BB23;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		D863A037059FAB1D00339D3B = {
 			containerPortal = D8DB4E4C059FA05500624233;
 			isa = PBXContainerItemProxy;
@@ -6958,7 +7416,6 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				INFOPLIST_FILE = "Applications/TwoWaves/TwoWaves-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
 				OTHER_REZFLAGS = "";
@@ -7110,6 +7567,128 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		D86D248906F2AA4C003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = mixscorefiles;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D248E06F2AA7E003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = metronome;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D249306F2AA99003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = exampleSynthPatch;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D249606F2AAAD003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = exampleUnitGenerator;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D249B06F2AAE4003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = example1;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D249E06F2AAF2003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = example5;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D24A106F2AAFD003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = example4;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D24A406F2AB04003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = example3;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D24A706F2AB12003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = example2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D24AC06F2AB34003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = PerformerExample;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D24AF06F2AB43003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = PlayNote;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D24B206F2AB53003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = playpart;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D24B506F2AB63003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = playscorefile;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D24BA06F2AB74003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = playscorefile2;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D86D24BD06F2AB83003565CB = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = playscorefilemidi;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		D8708ADA05B310560074C18D = {
 			children = (
@@ -7682,6 +8261,12 @@
 		};
 		D8708E6C05B493D90074C18D = {
 			children = (
+				D86D249B06F2AAE4003565CB,
+				D86D24A706F2AB12003565CB,
+				D86D24A406F2AB04003565CB,
+				D86D24A106F2AAFD003565CB,
+				D86D249E06F2AAF2003565CB,
+				D86D248906F2AA4C003565CB,
 			);
 			isa = PBXGroup;
 			name = "Score Examples";
@@ -7690,6 +8275,8 @@
 		};
 		D8708E7305B493E50074C18D = {
 			children = (
+				D86D249306F2AA99003565CB,
+				D86D249606F2AAAD003565CB,
 			);
 			isa = PBXGroup;
 			name = "Synthesis Examples";
@@ -7815,6 +8402,13 @@
 		};
 		D8708EBC05B4948C0074C18D = {
 			children = (
+				D86D24BD06F2AB83003565CB,
+				D86D24BA06F2AB74003565CB,
+				D86D24B506F2AB63003565CB,
+				D86D24B206F2AB53003565CB,
+				D86D24AF06F2AB43003565CB,
+				D86D24AC06F2AB34003565CB,
+				D86D248E06F2AA7E003565CB,
 			);
 			isa = PBXGroup;
 			name = "Performance Examples";
@@ -9549,6 +10143,21 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		D882794407008F510060CAFE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = MKOrchestra.m;
+			path = Frameworks/MusicKit/MKOrchestra.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D882794507008F510060CAFE = {
+			fileRef = D882794407008F510060CAFE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		D88C4FF206C7E0DE00D33D99 = {
 			children = (
 				D88C4FFA06C7E0F700D33D99,
@@ -9600,6 +10209,7 @@
 		};
 		D88C500A06C7E2C100D33D99 = {
 			children = (
+				D85E277406F7F1FB00385C32,
 				D88C509306C7E8AF00D33D99,
 				D88C508C06C7E8A200D33D99,
 				D88C508506C7E89000D33D99,
@@ -9611,6 +10221,7 @@
 		};
 		D88C501106C7E2CB00D33D99 = {
 			children = (
+				D85E27D306FA098A00385C32,
 				D88C502B06C7E37200D33D99,
 			);
 			isa = PBXGroup;
@@ -9675,6 +10286,7 @@
 				D837AC4706C8199300A6CFEB,
 				D837AC4B06C819AA00A6CFEB,
 				D837AC6506C81A9300A6CFEB,
+				D85E277606F7F1FB00385C32,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11683,6 +12295,8 @@
 		};
 		D88FE36A05A0FD100024FD88 = {
 			children = (
+				D88FE29305A0F8430024FD88,
+				D88FE29405A0F8430024FD88,
 				D88FE29505A0F8430024FD88,
 				D88FE29605A0F8430024FD88,
 				D88FE29705A0F8430024FD88,
@@ -12702,6 +13316,9 @@
 			fileRef = D88FED9405A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDB805A10FE80024FD88 = {
@@ -12732,6 +13349,9 @@
 			fileRef = D88FED9905A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDBD05A10FE80024FD88 = {
@@ -12744,24 +13364,36 @@
 			fileRef = D88FED9B05A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDBF05A10FE80024FD88 = {
 			fileRef = D88FED9C05A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDC005A10FE80024FD88 = {
 			fileRef = D88FED9D05A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDC105A10FE80024FD88 = {
 			fileRef = D88FED9E05A10FE80024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDC205A10FE80024FD88 = {
@@ -12849,6 +13481,9 @@
 			fileRef = D88FEDD405A110B60024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D88FEDD905A110D20024FD88 = {
@@ -12879,6 +13514,9 @@
 			fileRef = D88FEDF005A112CF0024FD88;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		D8AE7A4306194279009D0112 = {
@@ -13431,7 +14069,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				INFOPLIST_FILE = "Frameworks/MKSynthPathces/MKSynthPatches-Info.plist";
+				INFOPLIST_FILE = "Frameworks/MKSynthPatches/MKSynthPatches-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-framework Foundation";
@@ -14013,9 +14651,9 @@
 				D879C35F05A2B0BC005DB251,
 				D8DB4E8A059FA2A700624233,
 				D879C56905A2B8F1005DB251,
-				D8708B7705B313F60074C18D,
 				D8708F7F05B49AFD0074C18D,
 				D84AE06A0623249200A477FA,
+				D8708B7705B313F60074C18D,
 				D84395E8059FAA450054BEEE,
 				D82AC3B805A0F6DA00780F57,
 				D88FED7005A10EAF0024FD88,
@@ -14037,7 +14675,9 @@
 				D84E221205B70AED002B493F,
 				D85A2F49061F347D0065380E,
 				D88C502806C7E37100D33D99,
+				D85E27D106FA098200385C32,
 				D86D23B406F229E6003565CB,
+				D85E27F306FA0C0100385C32,
 			);
 		};
 		D8DB4E5B059FA0AA00624233 = {
@@ -14046,8 +14686,8 @@
 				D8DB4E77059FA17D00624233,
 				D8DB4E7C059FA18600624233,
 				D8DB4E7F059FA19300624233,
-				D8DB4E82059FA1B700624233,
 				D8DB4E85059FA1C100624233,
+				D8DB4E82059FA1B700624233,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
@@ -14056,6 +14696,7 @@
 		};
 		D8DB4E5E059FA0C900624233 = {
 			children = (
+				D85E27DC06FA0B8800385C32,
 				D8AE7A6A061A1636009D0112,
 				D88C4FF206C7E0DE00D33D99,
 				D86D239D06F2293A003565CB,
@@ -14169,6 +14810,7 @@
 			);
 			isa = PBXGroup;
 			name = MKUnitGenerators;
+			path = "";
 			refType = 4;
 			sourceTree = "<group>";
 		};
