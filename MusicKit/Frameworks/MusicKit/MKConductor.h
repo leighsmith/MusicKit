@@ -15,8 +15,11 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/03/31 00:14:43  leigh
+  typed defaultConductor
+
   Revision 1.6  2000/01/20 17:15:36  leigh
-  Moved separateThread methods into separate category
+  Replaced sleepMs with OpenStep NSThread delay
 
   Revision 1.5  2000/01/13 06:53:17  leigh
   doco cleanup
@@ -130,7 +133,7 @@ extern void MKFinishPerformance(void);
 - init;
 + adjustTime; 
 + startPerformance;
-+ defaultConductor; 
++ (MKConductor *) defaultConductor; 
 +(BOOL) inPerformance; 
 + finishPerformance; 
 + pausePerformance; 
