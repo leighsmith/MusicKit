@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2000/05/06 00:29:58  leigh
+  removed redundant setjmp include
+
   Revision 1.16  2000/04/25 02:14:05  leigh
   Moved separate thread locking into masterConductorBody since
   it was being locked before being called, which under NSRunLoop dispatching was not possible.
@@ -124,7 +127,7 @@ Modification history:
 		 archiving. (Sigh.)
 */
 #import <AppKit/NSApplication.h>
-#import <setjmp.h>
+//#import <setjmp.h>
 #import "_musickit.h"
 #import "_time.h"
 #import "MidiPrivate.h"

@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.17  2000/05/06 00:28:57  leigh
+  removed redundant setjmp include
+
   Revision 1.16  2000/04/25 01:48:41  leigh
   Properly retain the thread instance and check it
 
@@ -104,7 +107,7 @@
 
 //#import <mach/mach.h>
 //#import <mach/mach_error.h>
-#import <setjmp.h>
+//#import <setjmp.h>
 #import "ConductorPrivate.h"
 #import "_musickit.h"
 #import "_error.h"
