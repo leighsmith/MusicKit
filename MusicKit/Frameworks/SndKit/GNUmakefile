@@ -15,6 +15,9 @@
 
 # Modification history:
 # $Log$
+# Revision 1.9  2001/10/03 10:45:05  sbrandon
+# added SndAudioProcessorMP3Encoder.h and SndAudioProcessorMP3Encoder.m
+#
 # Revision 1.8  2001/09/12 14:10:02  sbrandon
 # changed my e-mail address, added additional LDFLAG
 #
@@ -76,7 +79,7 @@ $(FRAMEWORK_NAME)_OBJC_FILES = \
           SndAudioProcessor.m  SndAudioProcessorDelay.m SndEnvelope.m\
           SndAudioFader.m SndBreakpoint.m\
           SndAudioBufferQueue.m SndAudioProcessorReverb.m \
-          #SndMeter.m
+          SndAudioProcessorMP3Encoder.m #SndMeter.m
 
 $(FRAMEWORK_NAME)_C_FILES = \
          SndEndianFunctions.c _SndConvert.c _Sndfilterkit.c _Sndlibst.c\
@@ -93,7 +96,7 @@ $(FRAMEWORK_NAME)_HEADER_FILES = \
          SndPlayer.h SndPerformance.h\
          SndAudioProcessorChain.h SndAudioProcessor.h SndAudioProcessorDelay.h\
          SndAudioFader.h SndEnvelope.h SndBreakpoint.h SndAudioBufferQueue.h\
-         SndAudioProcessorReverb.h
+         SndAudioProcessorReverb.h SndAudioProcessorMP3Encoder.h
 
 $(FRAMEWORK_NAME)_SUBPROJECTS = cpp.subproj
 
