@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  1999/09/24 17:05:36  leigh
+  downloadDLS method added, MKPerformSndMIDI framework now used
+
   Revision 1.5  1999/09/04 22:02:17  leigh
   Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
 
@@ -100,7 +103,7 @@ Modification history:
 
 #import <mach/mach_init.h>
 // #import <midi_driver_compatability.h> // LMS obsolete
-#import <MKPerformMIDI/midi_driver.h>
+#import <MKPerformSndMIDI/midi_driver.h>
 #import <AppKit/dpsclient.h>
 #import <AppKit/NSDPSContext.h>
 
@@ -1741,10 +1744,10 @@ static void cancelQueueReq(MKMidi *self)
 }
 
 -noteReceiver
-  /* TYPE: Querying; Returns the receiver's first NoteReceiver.
-   * Returns the first NoteReceiver in the receiver's List.
-   * This is particularly useful for Instruments that have only
-   * one NoteReceiver.
+  /* TYPE: Querying; Returns the receiver's first MKNoteReceiver.
+   * Returns the first MKNoteReceiver in the receiver's NSArray.
+   * This is particularly useful for MKInstruments that have only
+   * one MKNoteReceiver.
    */
 {
     return [noteReceivers objectAtIndex:0];
@@ -1754,6 +1757,23 @@ static void cancelQueueReq(MKMidi *self)
 {
     self->mergeInput = yesOrNo;
     return self;
+}
+
+// Download the patch numbers supplied in the array as Downloadable Sounds (DLS).
+// The patch format per integer follows the Microsoft convention:
+// X0000000MMMMMMM0LLLLLLL0PPPPPPP
+// bit 31 = Patch is a DrumKit, bitsbits 24-16=MSB Bank Select(cc=0), bits 15-8 = LSB bank select(cc=32)
+// bit 7 = 0, bits 6-0=Program Change number 
+- (void) downloadDLS: (NSArray *) dlsPatches
+{
+    unsigned int *dlsPatchArray;
+    int i;
+
+    _MK_MALLOC(dlsPatchArray, unsigned int, [dlsPatches count]);
+    for(i = 0; i < [dlsPatches count]; i++)
+        dlsPatchArray[i] = [[dlsPatches objectAtIndex: i] unsignedIntValue];
+    MIDIDownloadDLSInstruments(dlsPatchArray, [dlsPatches count]);
+    free(dlsPatchArray);
 }
 
 #import "mtcMidi.m"
