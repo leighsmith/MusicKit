@@ -114,6 +114,37 @@ int SndReadHeader(const char* path, SndSoundStruct **sound, const char *fileType
   return SndReadSoundfileRange(path, sound, 0, 0, FALSE);
 }
 
+// Retrieve loop points
+// The AIFF loop structure is a lot richer than our simplistic single loop structure. So for now
+// we just use the first AIFF loop.
+// Returns YES if we could find a set of loop points, NO if not.
+BOOL SndReadLoopPoints(struct st_soundstream *ft, long *loopStartIndex, long *loopEndIndex)
+{
+    if(ft->instr.nloops > 0) {
+	int loopNum;
+	
+	for(loopNum = 0; loopNum < ft->instr.nloops; loopNum++) {
+	    if (ft->loops[loopNum].count > 0) {
+		switch(ft->loops[loopNum].type & ~ST_LOOP_SUSTAIN_DECAY) {
+		    case 0:
+			// Loop is off
+			break;
+		    case 1:
+			// Loop forward only.
+			break;
+		    case 2:
+			// Loop forward and backward
+			break;
+		}
+	        *loopStartIndex = ft->loops[loopNum].start;
+		*loopEndIndex   = ft->loops[loopNum].start + ft->loops[loopNum].length;
+		return YES;
+	    }
+	}
+    }
+    return NO;
+ }
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////
