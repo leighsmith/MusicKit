@@ -161,7 +161,7 @@ static int ioTags = 1000;
     return [super init];
 }
 
-- initWithFormat: (int) format
+- initWithFormat: (SndSampleFormat) format
 	channels: (int) channels
 	  frames: (int) frames
     samplingRate: (float) samplingRate
@@ -1068,7 +1068,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return NO;
 }
 	
-- (int) convertToFormat: (int) toFormat
+- (int) convertToFormat: (SndSampleFormat) toFormat
 	   samplingRate: (double) toRate
 	   channelCount: (int) toChannelCount
 {
@@ -1131,18 +1131,25 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return SND_ERR_UNKNOWN;
 }
 
-- (int) convertToFormat: (int) aFormat
+- (int) convertToFormat: (SndSampleFormat) aFormat
 {
     return [self convertToFormat: aFormat
                     samplingRate: soundStruct->samplingRate
                     channelCount: soundStruct->channelCount];
 }
 
++ (SndFormat) nativeFormat
+{
+    SNDStreamBuffer nativeStreamBufferFormat;
+
+    SNDStreamNativeFormat(&nativeStreamBufferFormat);
+    return SndFormatOfSNDStreamBuffer(&nativeStreamBufferFormat);
+}
+
 - (int) convertToNativeFormat
 {
-    SNDStreamBuffer nativeFormat;
+    SndFormat nativeFormat = [Snd nativeFormat];
 
-    SNDStreamNativeFormat(&nativeFormat);
     return [self convertToFormat: nativeFormat.dataFormat
                     samplingRate: nativeFormat.sampleRate
                     channelCount: nativeFormat.channelCount];
@@ -1296,10 +1303,12 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return soundStruct->dataSize; 
 }
 
-- (int) dataFormat
+- (SndSampleFormat) dataFormat
 {
     int df;
-    if (!soundStruct) return 0;
+    
+    if (!soundStruct)
+        return 0;
     if ((df = soundStruct->dataFormat) == SND_FORMAT_INDIRECT)
         return ((SndSoundStruct *)(*((SndSoundStruct **)
                     (soundStruct->dataLocation))))->dataFormat;
@@ -1317,12 +1326,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 }
 
 - (int) setDataSize: (int) newDataSize
-         dataFormat: (int) newDataFormat
+         dataFormat: (SndSampleFormat) newDataFormat
        samplingRate: (double) newSamplingRate
        channelCount: (int) newChannelCount
            infoSize: (int) newInfoSize
 {
-    if (soundStruct) SndFree(soundStruct);
+    if (soundStruct)
+        SndFree(soundStruct);
     return SndAlloc(&soundStruct, newDataSize, newDataFormat,
             newSamplingRate, newChannelCount, newInfoSize);
 }
