@@ -12,6 +12,12 @@
 
 @implementation PartView
 
+/* used to quickly identify PartView in a NSWindow */
+- (int) tag
+{
+    return 1;
+}
+
 - setScore: (MKScore *) aScore
 {
     NSArray *theParts;
