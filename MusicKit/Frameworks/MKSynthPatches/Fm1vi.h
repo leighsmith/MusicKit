@@ -1,3 +1,34 @@
+/*!
+  @header Fm1vi
+
+
+<b>Fm1vi</b> is like <b>Fm1i</b>, but it includes periodic and random vibrato.
+<b>Fm1v</b>(a subclass of <b>Fm1vi</b> ) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.).   
+
+<img src="Images/Fm1vi.gif"> 
+When using this SynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the SynthPatch.
+
+<h2>Parameter Interpretation</h2>
+
+In addition to the parameters described in <b>Fm1i.rtf</b>, the following parameters are supported:
+
+<b>controlChange</b> - MIDI modulation wheel (controller 1) interpolates simultaneously between <b>svibAmp0</b> and <b>svibAmp</b>, and <b>svibFreq0</b> and <b>svibFreq</b>.  The default value (127) results in svibFreq and svibAmp.  The value is given by the companion parameter controlVal. In the range 0:127.
+
+<b>controlVal</b> - See controlChange.
+
+<b>svibFreq</b> - Sinusoidal vibrato rate in hz.  Default is 0.0.
+
+<b>svibAmp-</b> Sinusoidal vibrato amplitude as a percentage of the fundamental frequency.  In the range 0.0:1.0.  Default is 0.0.
+
+<b>svibFreq0</b> - See <b>controlChange</b>.  Default is 0.0.
+
+<b>svibAmp0</b> - See <b>controlChange.</b>  Default is 0.0.
+
+<b>rvibAmp</b> - Random vibrato amplitude as roughly a percentage of the fundamental frequency.  In the range 0.0:1.0.  Default is 0.0.
+
+<b>vibWaveform</b> - WaveTable object that specifies shape of vibrato.
+
+*/
 #ifndef __MK_Fm1vi_H___
 #define __MK_Fm1vi_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
