@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.10.2.1  2001/02/11 06:18:07  leigh
+ * Handled playing mono files
+ *
  * Revision 1.10  2001/02/08 00:17:56  leigh
  * Added Christopher Penroses additions for MacOS X Public Beta CoreAudio
  *
@@ -816,6 +819,9 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 			finished = NO;
 
   OSStatus              CAstatus;
+  
+  int			deviceChannels;
+  int duplicateAcrossChannels;
 
 
   /* our playback buffer size in bytes */
@@ -872,7 +878,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 				    kAudioDevicePropertyDeviceName,
 				    &propertySize, deviceName);
 
-        NSLog(@"%s\n", deviceName);
+       // NSLog(@"%s\n", deviceName);
 
     //    NSLog(@"get device name CAstatus:%s\n", (char *) &CAstatus);
 
@@ -916,7 +922,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
                                   kAudioDevicePropertyRateScalar,
 				  propertySize, &deviceSampleRate);
 
-  NSLog(@"set sampling rate CAstatus:%s deviceSampleRate = %lf\n", (char *) &CAstatus, deviceSampleRate);
+ // NSLog(@"set sampling rate CAstatus:%s deviceSampleRate = %lf\n", (char *) &CAstatus, deviceSampleRate);
 
   /*
   if (CAstatus) {
@@ -1007,9 +1013,8 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
   */
 
   /* channel management */
-
-  NSLog(@"device channels:      %d\n", 
-                        (int) outputStreamBasicDescription.mChannelsPerFrame);
+  deviceChannels = outputStreamBasicDescription.mChannelsPerFrame;
+  // NSLog(@"device channels:      %d\n", deviceChannels);
 
 
   outputStreamBasicDescription.mChannelsPerFrame = 1;
@@ -1018,7 +1023,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
                                   kAudioDevicePropertyStreamFormat,
                                   propertySize, &outputStreamBasicDescription);
 
-    fprintf(stderr, "get stream format CAstatus:%s\n", (char *) &CAstatus);
+    // fprintf(stderr, "get stream format CAstatus:%s\n", (char *) &CAstatus);
 
   if (CAstatus) {
     fprintf(stderr, "384AudioDeviceGetProperty returned %d\n", (int) CAstatus);
@@ -1133,44 +1138,51 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
       else {
 
+        duplicateAcrossChannels = deviceChannels - [self channelCount];
 	for ( index=0; index < bufferFrameSize; index++ ) {
 
-	  if ( currentSample >= playEnd * [self channelCount] ) {
-	      
-	    finished = YES;
-	    break;
-	  }
-
-	  switch ([self dataFormat]) {
-
-	  case SND_FORMAT_FLOAT:
-
-	    *(soundBuffer+index) = *((float *) data+currentSample);
-	    break;
-	    
-	  case SND_FORMAT_LINEAR_16:
-
-	    *(soundBuffer+index) = *((short *) data + currentSample) /
-								32767.;
-	    break;
-	      
-	  case SND_FORMAT_DOUBLE:
-	    
-	    *(soundBuffer+index) = *((double *) data+currentSample);
-	    break;
-
-	  case SND_FORMAT_MULAW_8:
-
-	    *(soundBuffer+index) = 
-		    SndiMulaw( *((char *) data + currentSample) ) / 32767.;
-	    break;
-	  
-	  default:
-	    break;
-	  }
-
-	  currentSample++;
-	}
+            if ( currentSample >= playEnd * [self channelCount] ) {
+                
+                finished = YES;
+                break;
+            }
+    
+            switch ([self dataFormat]) {
+    
+            case SND_FORMAT_FLOAT:
+    
+                *(soundBuffer+index) = *((float *) data+currentSample);
+                break;
+                
+            case SND_FORMAT_LINEAR_16:
+    
+                *(soundBuffer+index) = *((short *) data + currentSample) /
+                                                                    32767.;
+                break;
+                
+            case SND_FORMAT_DOUBLE:
+                
+                *(soundBuffer+index) = *((double *) data+currentSample);
+                break;
+    
+            case SND_FORMAT_MULAW_8:
+    
+                *(soundBuffer+index) = 
+                        SndiMulaw( *((char *) data + currentSample) ) / 32767.;
+                break;
+            
+            default:
+                break;
+            }
+            // when playing more device channels than the sound channels 
+            // i.e playing a mono file on stereo, since this loop iterates across the bufferFrameSize,
+            // we delay the advance of the currentSampleIndex until all device Channels have received
+            // a copy of the sample.
+            if (duplicateAcrossChannels-- == 0) {
+                currentSample++;
+                duplicateAcrossChannels = deviceChannels - [self channelCount];
+            }
+        }
       }
     }
 
