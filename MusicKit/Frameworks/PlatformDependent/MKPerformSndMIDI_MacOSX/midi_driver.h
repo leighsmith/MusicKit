@@ -25,6 +25,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/11/13 23:36:57  leigh
+  Added back legacy NeXT MIDI port macros, more ports are now MKMDReplyPort, mach headers are removed
+
   Revision 1.4  2000/11/10 23:13:33  leigh
   Changed return and port types to be more transparent, reversed #define so that 68k code will use the MIDI versions, everyone else uses the MKMD versions.
 
@@ -45,15 +48,14 @@ Modification history:
 
 #import <Foundation/Foundation.h>
 #import <mach/kern_return.h>
-//#import <mach/message.h>
-//#import <mach/port.h>
-//#import <mach/boolean.h>
 
 // This allows us to introduce anything necessary for library declarations, namely for Windows. Unused in MacOS X.
 #define PERFORM_API
 
 // kludge around type definitions. This should be replaced.
 typedef int msg_header_t;  // mach_msg_header_t
+
+#define PORTS_ARE_NSOBJECTS 1
 #define MKMDPort NSMachPort *
 #define MKMDOwnerPort NSMachPort *
 #define MKMDReplyPort NSMachPort *
@@ -106,6 +108,10 @@ typedef struct {
 #define MKMD_IGNORE_RESET	 0x8000
 #define MKMD_IGNORE_REAL_TIME    0xdd00  /* All of the above */
 
+// legacy MIDI port definitions referring to NeXT serial ports
+#define MKMD_PORT_A_UNIT 0
+#define MKMD_PORT_B_UNIT 1
+
 /* Reply function types. */
 typedef void (*MKMDDataReplyFunction)
     (port_t replyPort, short unit, MKMDRawEvent *events, unsigned int count);
@@ -147,6 +153,7 @@ PERFORM_API MKMDReturn
 /******** Controlling the clock ****************/
 PERFORM_API MKMDReturn 
     MKMDSetClockMode(MKMDPort driver, MKMDOwnerPort owner, short synchUnit, int mode);
+// set the period of each clock tick in microseconds.
 PERFORM_API MKMDReturn 
     MKMDSetClockQuantum(MKMDPort driver, MKMDOwnerPort owner, int microseconds);
 PERFORM_API MKMDReturn 
@@ -168,12 +175,12 @@ PERFORM_API MKMDReturn
 PERFORM_API MKMDReturn 
     MKMDRequestExceptions(MKMDPort driver, MKMDOwnerPort owner, port_t exceptionPort);
 PERFORM_API MKMDReturn 
-    MKMDRequestQueueNotification(MKMDPort driver, MKMDOwnerPort owner, short unit, port_t notificationPort, int size);
+    MKMDRequestQueueNotification(MKMDPort driver, MKMDOwnerPort owner, short unit, MKMDReplyPort notificationPort, int size);
 
 /****************** Receiving asynchronous messages *******************/
 // This waits until a reply is received on port_set
 PERFORM_API MKMDReturn 
-    MKMDAwaitReply(port_t ports, MKMDReplyFunctions *funcs, int timeout);
+    MKMDAwaitReply(MKMDReplyPort ports, MKMDReplyFunctions *funcs, int timeout);
 
 #define MKMD_NO_TIMEOUT (-1)
 
@@ -223,8 +230,6 @@ PERFORM_API MKMDReturn
 #define MKMD_EXCEPTION_MTC_STOPPED         MIDI_EXCEPTION_MTC_STOPPED
 #define MKMD_EXCEPTION_MTC_STARTED_FORWARD MIDI_EXCEPTION_MTC_STARTED_FORWARD
 #define MKMD_EXCEPTION_MTC_STARTED_REVERSE MIDI_EXCEPTION_MTC_STARTED_REVERSE
-//#define MKMD_PORT_A_UNIT                   MIDI_PORT_A_UNIT
-//#define MKMD_PORT_B_UNIT                   MIDI_PORT_B_UNIT
 #define MKMD_IGNORE_CLOCK                  MIDI_IGNORE_CLOCK
 #define MKMD_IGNORE_START                  MIDI_IGNORE_START
 #define MKMD_IGNORE_CONTINUE               MIDI_IGNORE_CONTINUE
