@@ -30,12 +30,16 @@
 */
 
 @interface SndExpt : Snd {
-  BOOL            bImageInMemory;
-  NSString       *theFileName;
-  SndAudioBuffer *cachedBuffer;
-  NSRange         cachedBufferRange;
-  NSLock         *cacheLock;
-  SndSoundStruct *cacheStruct;
+  BOOL             bImageInMemory;
+  NSString        *theFileName;
+  
+  SndAudioBuffer  *cachedBuffer;
+  NSRange          cachedBufferRange;
+  NSLock          *cacheLock;
+
+  NSConditionLock *readAheadLock;
+  SndAudioBuffer  *readAheadBuffer;
+  NSRange          readAheadRange;
 }
 
 - init;
@@ -48,6 +52,36 @@
 - (void) fillAudioBuffer: (SndAudioBuffer*) anAudioBuffer withSamplesInRange: (NSRange) playRegion;
 - (NSString*) filename;
 
+- requestNextBufferWithRange: (NSRange) range;
+- receiveRequestedBuffer: (SndAudioBuffer*) aBuffer;
+
+@end
+
+@interface SndExptAudioBufferServerJob : NSObject {
+  SndExpt        *clientSndExpt;
+  NSRange         audioBufferRange;
+  SndAudioBuffer *audioBuffer;
+}
+
+- initWithSndExpt: (SndExpt*) sndExpt bufferRange: (NSRange) range;
+- (SndExpt*) snd;
+- (NSRange) range;
+- (SndAudioBuffer*) buffer;
+
+@end
+
+@interface SndExptAudioBufferServer : NSObject {
+  NSMutableArray  *pendingJobsArray;
+  NSConditionLock *pendingJobsArrayLock;
+  BOOL bGo;
+  SndExptAudioBufferServerJob *activeJob;
+}
+
++ (void) initialize;
++ defaultServer;
++ (SndAudioBuffer*) readRange: (NSRange) range ofSoundFile: (NSString*) theFileName;
+- addJob: (SndExptAudioBufferServerJob*) aJob;
+- (void) serverThread;
 @end
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -19,6 +19,8 @@
 #import "sounderror.h"
 #import "SndFunctions.h"
 
+#define SERVER_DEBUG 0
+
 @implementation SndExpt
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -29,9 +31,11 @@
 {
   self = [super init];
   if (self) {
-    bImageInMemory = FALSE;
-    cachedBuffer = [SndAudioBuffer new];
-    cacheLock    = [NSLock new];
+    bImageInMemory  = FALSE;
+    cachedBuffer    = [SndAudioBuffer new];
+    cacheLock       = [NSLock new];
+    readAheadLock   = [NSConditionLock new];
+    readAheadBuffer = nil;
   }
   return self;
 }
@@ -42,8 +46,10 @@
     [cachedBuffer release];
   if (cacheLock)
     [cacheLock release];
-  if (cacheStruct)
-    free(cacheStruct);
+  if (readAheadBuffer)
+    [readAheadBuffer release];
+  if (readAheadLock)
+    [readAheadLock release];
   [super dealloc];
 }
 
@@ -123,40 +129,65 @@
     [super fillAudioBuffer: anAudioBuffer withSamplesInRange: playRegion];
   }
   else {
-    int err;
-    int cStart = cachedBufferRange.location;
-    int cEnd   = cachedBufferRange.location + cachedBufferRange.length;
+    long sampleCount = [self sampleCount];
+    int readLength = (4096*16);
+    int bufferMultiplier = ((playRegion.length + 4095)/4096);
+    bufferMultiplier = bufferMultiplier == 0 ? 1 : bufferMultiplier;
 
-    if (cachedBuffer == nil ||
-        !(cStart <= playRegion.location &&
-          cEnd   >= playRegion.location + playRegion.length)) {
-      // OK, ve must read in der cache...
-      int readLength = (4096*16);
-      int bufferMultiplier = ((playRegion.length + 4095)/4096);
-      bufferMultiplier = bufferMultiplier == 0 ? 1 : bufferMultiplier;
-      cachedBufferRange.location = (playRegion.location/4096)*4096;
-      cachedBufferRange.length   = (bufferMultiplier)*readLength;
-      //      printf("read: %i %i\n", cachedBufferRange.location, cachedBufferRange.length);
-      // Argh, the stoopid things we have to do because of the SndSoundStruct....
-
-      if (cacheStruct)
-        free(cacheStruct);
-      cacheStruct = NULL;
-
-      err = SndReadSoundfileRange([theFileName fileSystemRepresentation], &cacheStruct,
-                                  cachedBufferRange.location,
-                                  cachedBufferRange.length, TRUE);
-      if (cacheStruct) {
-        if (cachedBuffer == nil)
-          cachedBuffer = [SndAudioBuffer alloc];
-        [cachedBuffer initWithFormat: cacheStruct data: ((char*)cacheStruct) + cacheStruct->dataLocation];
-        [cachedBuffer convertToFormat: SND_FORMAT_FLOAT];
-      }
+    if (cachedBufferRange.location >= playRegion.location ||
+        readAheadRange.location + readAheadRange.length <= playRegion.location + playRegion.length) {
+      // damn, our play region is outside our cache zone. Throw ze buffers away!
+      if (cachedBuffer != nil)
+        [cachedBuffer release];
+      cachedBuffer = nil;
+      if (readAheadBuffer != nil)
+        [readAheadBuffer release];
+      readAheadBuffer = nil;
     }
-    else {
-      //      printf("Hit the cache!\n");
+
+    if (cachedBuffer == nil) {
+      cachedBufferRange.location = (playRegion.location / 4096) * 4096;
+      cachedBufferRange.length   = (bufferMultiplier) * readLength;
+            
+      cachedBuffer = [[SndExptAudioBufferServer readRange: cachedBufferRange
+                                              ofSoundFile: theFileName] retain];
+      if (readAheadBuffer != nil)
+        [readAheadBuffer release];
+      readAheadBuffer = nil;
+      
+      readAheadRange           = cachedBufferRange;
+      readAheadRange.location += cachedBufferRange.length - playRegion.length * 4;
+      if (readAheadRange.location + readAheadRange.length > sampleCount)
+        readAheadRange.length = sampleCount - readAheadRange.location;
+      
+      [self requestNextBufferWithRange: readAheadRange];
+#if SERVER_DEBUG      
+      NSLog(@"Requesting (1) Buffer with range: [%i, %i]",readAheadRange.location, readAheadRange.length);
+#endif      
     }
-    if (cacheStruct) {
+    
+    if (playRegion.location >= readAheadRange.location &&
+        playRegion.location + playRegion.length <= readAheadRange.location + readAheadRange.length) {
+      // we have moved into the readAheadCache - swap the buffers and request the next...
+      [readAheadLock lock];
+      if (cachedBuffer != nil)
+        [cachedBuffer release];
+      cachedBuffer = readAheadBuffer;
+      cachedBufferRange = readAheadRange;
+
+      readAheadRange.location += readAheadRange.length - playRegion.length * 4;
+      if (readAheadRange.location + readAheadRange.length > sampleCount)
+        readAheadRange.length = sampleCount - readAheadRange.location;
+      
+      readAheadBuffer = nil;
+      [self requestNextBufferWithRange: readAheadRange];      
+      [readAheadLock unlock];
+#if SERVER_DEBUG            
+      NSLog(@"Requesting (2) Buffer with range: [%i, %i]",readAheadRange.location, readAheadRange.length);
+      NSLog(@"Swapped in Buffer with range: [%i, %i]",cachedBufferRange.location, cachedBufferRange.length);
+#endif
+    }
+    if (cachedBuffer != nil) {
       // woohoo! we are inside the cache...
       NSRange relativeRange = playRegion;
       relativeRange.location = playRegion.location - cachedBufferRange.location;
@@ -182,4 +213,179 @@
   return [[theFileName retain] autorelease];
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+
+- requestNextBufferWithRange: (NSRange) range
+{
+  SndExptAudioBufferServerJob *aJob;
+  aJob = [SndExptAudioBufferServerJob alloc];
+  [aJob initWithSndExpt: self bufferRange: range];
+  [[SndExptAudioBufferServer defaultServer] addJob: aJob];
+  return self;
+}
+
+- receiveRequestedBuffer: (SndAudioBuffer*) aBuffer
+{
+  [readAheadLock lock];
+  if (readAheadBuffer != nil)
+    [readAheadBuffer release];
+  readAheadBuffer = [aBuffer retain];
+  [readAheadLock unlock];
+#if SERVER_DEBUG              
+  NSLog(@"Received Buffer with range: [%i, %i]",readAheadRange.location, readAheadRange.length);
+#endif      
+  return self;
+}
+
 @end
+
+////////////////////////////////////////////////////////////////////////////////
+// SndExptAudioBufferServer
+////////////////////////////////////////////////////////////////////////////////
+
+#define SERVER_NO_JOBS  0
+#define SERVER_HAS_JOBS 1
+
+static SndExptAudioBufferServer *defaultServer = nil;
+
+@implementation SndExptAudioBufferServer
+
++ (void) initialize
+{
+  defaultServer = [SndExptAudioBufferServer new];
+}
+
++ defaultServer
+{
+  return defaultServer;
+}
+
++ (SndAudioBuffer*) readRange: (NSRange) range ofSoundFile: (NSString*) theFileName
+{
+  SndAudioBuffer *aBuffer = nil;
+  SndSoundStruct *soundStruct = NULL;
+
+  SndReadSoundfileRange([theFileName fileSystemRepresentation], &soundStruct,
+                        range.location,
+                        range.length, TRUE);
+  if (soundStruct) {
+    aBuffer = [SndAudioBuffer alloc];
+    [aBuffer initWithFormat: soundStruct data: ((char*)soundStruct) + soundStruct->dataLocation];
+    [aBuffer convertToFormat: SND_FORMAT_FLOAT];
+    free(soundStruct);
+    return [aBuffer autorelease];
+  }
+  else
+    return nil;
+}
+
+- init
+{
+  self = [super init];
+  if (self) {
+    bGo = TRUE;
+    pendingJobsArrayLock = [NSConditionLock new];
+    pendingJobsArray     = [NSMutableArray  new];
+    [NSThread detachNewThreadSelector: @selector(serverThread)
+                             toTarget: self
+                           withObject: nil];
+  }
+  return self;
+}
+
+- (void) dealloc
+{
+  if (pendingJobsArrayLock != nil)
+    [pendingJobsArrayLock release];
+  if (pendingJobsArray != nil)
+    [pendingJobsArray release];
+}
+
+
+- addJob: (SndExptAudioBufferServerJob*) aJob
+{
+  [pendingJobsArrayLock lock];
+  [pendingJobsArray addObject: aJob];
+  [pendingJobsArrayLock unlockWithCondition: SERVER_HAS_JOBS];
+#if SERVER_DEBUG              
+  NSLog(@"Added job");
+#endif  
+  return self;
+}
+
+- (void) doJob: (SndExptAudioBufferServerJob*) aJob
+{
+  SndExpt *snd = [aJob snd];
+  SndAudioBuffer *aBuffer = [SndExptAudioBufferServer readRange: [aJob range]
+                                                    ofSoundFile: [snd filename]];
+
+  [snd receiveRequestedBuffer: aBuffer];
+  [aJob release];
+#if SERVER_DEBUG              
+  NSLog(@"Completed job");
+#endif  
+}
+
+- (void) serverThread
+{
+  while (bGo) {
+    NSAutoreleasePool *pool = [NSAutoreleasePool new];
+    NSDate *date = [NSDate dateWithTimeIntervalSinceNow: 1.0];
+    
+    if (![pendingJobsArrayLock lockWhenCondition: SERVER_HAS_JOBS beforeDate: date])
+      continue;
+
+    if ([pendingJobsArray count] == 0)
+      continue;
+    
+    activeJob = [[pendingJobsArray objectAtIndex: 0] retain];
+    [pendingJobsArray removeObject: activeJob];
+
+    if ([pendingJobsArray count] > 0)
+      [pendingJobsArrayLock unlockWithCondition: SERVER_HAS_JOBS];
+    else
+      [pendingJobsArrayLock unlockWithCondition: SERVER_NO_JOBS];
+
+    if (activeJob != nil)
+      [self doJob: activeJob];
+    [pool release];
+  }
+  [NSThread exit];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
+// SndExptAudioBufferServerJob
+////////////////////////////////////////////////////////////////////////////////
+
+@implementation SndExptAudioBufferServerJob 
+
+- initWithSndExpt: (SndExpt*) sndExpt bufferRange: (NSRange) range
+{
+  self = [super init];
+  if (self) {
+    clientSndExpt    = [sndExpt retain];
+    audioBufferRange = range;
+    audioBuffer      = nil;
+  }
+  return self;
+}
+
+- (void) dealloc
+{
+  if (clientSndExpt)
+    [clientSndExpt release];
+  if (audioBuffer)
+    [audioBuffer release];
+}
+
+- (SndExpt*) snd            {  return [[clientSndExpt retain] autorelease];    }
+- (NSRange) range           {  return audioBufferRange;                        }
+- (SndAudioBuffer*) buffer  {  return [[audioBuffer retain] autorelease];  }
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////
