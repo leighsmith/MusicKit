@@ -54,15 +54,17 @@
 	<LISTITEM>
 	  <PARA>
 	    <CLASSNAME>MKParts</CLASSNAME> are grouped into
-	    <CLASSNAME>MKScores</CLASSNAME>.  A <CLASSNAME>MKScore</CLASSNAME>
-	    may be written out as an <ACRONYM>ASCII</ACRONYM> note list called a
-	    "Scorefile".  ScoreFile is actually a simple language.  There is
-	    also a binary format of the scorefile (in release 2.0).
-	    <CLASSNAME>MKScores</CLASSNAME> can also read/write Standard
-	    <ACRONYM>MIDI</ACRONYM> files. Finally,
+	    <CLASSNAME>MKScores</CLASSNAME>.  A
+	    <CLASSNAME>MKScore</CLASSNAME> may be written out as an
+	    <ACRONYM>ASCII</ACRONYM> note list called a &ldquo;Scorefile&rdquo;.
+	    ScoreFile is actually a simple language.  There is also a
+	    binary format of the scorefile (in release 2.0).
+	    <CLASSNAME>MKScores</CLASSNAME> can also read/write
+	    Standard <ACRONYM>MIDI</ACRONYM> files. Finally,
 	    <CLASSNAME>MKScores</CLASSNAME>, as well as all
-	    <PRODUCTNAME>MusicKit</PRODUCTNAME> objects, can be "archived" to an
-	    NXTypedStream, as defined in the Application Kit.
+	    <PRODUCTNAME>MusicKit</PRODUCTNAME> objects, can be
+	    &ldquo;archived&rdquo; using an <CLASSNAME>NSArchiver</CLASSNAME>, as
+	    defined in the Application Kit.
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
@@ -140,7 +142,7 @@
 		musical phrase(s) </PARA>
 	    </LISTITEM>
 	    <LISTITEM>
-	      <PARA> mute - none of the above</PARA>
+	      <PARA> <CONSTANT>mute</CONSTANT> - none of the above</PARA>
 	    </LISTITEM>
 	  </ITEMIZEDLIST>
 	  <PARA>
@@ -162,13 +164,14 @@
 	    <CONSTANT>noteTag</CONSTANT> is optional for
 	    <CONSTANT>noteDur</CONSTANT> and <CONSTANT>noteUpdate</CONSTANT>
 	  </PARA>
-	  <PARA><CONSTANT>noteTag</CONSTANT> is not used for mute</PARA>
+	  <PARA><CONSTANT>noteTag</CONSTANT> is not used for
+	  <CONSTANT>mute</CONSTANT></PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA>
 	    A <CONSTANT>noteUpdate</CONSTANT> without a
 	    <CONSTANT>noteTag</CONSTANT> applies to all running patches and is
-	    "sticky".
+	    &ldquo;sticky&rdquo;.
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
@@ -225,7 +228,7 @@
 		  <ROW>
 		    <ENTRY></ENTRY>
 		    <ENTRY><CONSTANT>MK_waveform</CONSTANT></ENTRY>
-		    <ENTRY>"SA"</ENTRY>
+		    <ENTRY>&ldquo;SA&rdquo;</ENTRY>
 		  </ROW>
 		</TBODY>	
 	      </TGROUP>	
@@ -236,9 +239,9 @@
 	<LISTITEM>
 	  <PARA>
 	    The <PRODUCTNAME>MusicKit</PRODUCTNAME> defines a number of
-	    parameters.  These begin with the MK_ prefix.  In addition, you can
+	    parameters.  These begin with the &ldquo;MK_&rdquo; prefix.  In addition, you can
 	    define your own with [<CLASSNAME>MKNote</CLASSNAME>
-	    parName:"myParameter"]
+	    parTagForName: @"myParameter"]
 	  </PARA>
 	</LISTITEM>
 	
@@ -309,7 +312,7 @@
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA>
-	    An envelope may have a "stickpoint".  The envelopes stops at the
+	    An envelope may have a &ldquo;stickpoint&rdquo;.  The envelopes stops at the
 	    stickpoint until the <CONSTANT>noteOff</CONSTANT> or the end of its
 	    duration.
 	  </PARA>
