@@ -20,6 +20,10 @@
 Modification history:
 
   $Log$
+  Revision 1.28  2002/01/15 12:14:35  sbrandon
+  replaced [NSMutableData data] with alloc:initWithCapacity: so as to prevent
+  auto-released data - we release it manually when finished with it.
+
   Revision 1.27  2001/11/16 19:56:45  skotmcdonald
   Added scaleTime method to MKPart and MKScore, which adjusts the timeTags and durations of notes by a scaling factor (useful for compensating for changes in score tempo). Note: parameters inside individual MKNotes (apart from MK_dur) will need to receive scaling msgs, eg envelopes that match physical sample or synthesis parameters that should(n't) be scaled... a conundrum for discussion at present.
 
@@ -372,7 +376,7 @@ static void writeNotes();
  lastTimeTag:(double)lastTimeTag timeShift:(double)timeShift 
  binary:(BOOL)isBinary
 {
-    NSMutableData *stream = [NSMutableData data];
+    NSMutableData *stream = [[NSMutableData alloc] initWithCapacity:0];
     BOOL success;
 
     [self _writeScorefileStream:stream firstTimeTag:firstTimeTag 
@@ -381,7 +385,7 @@ static void writeNotes();
     success = _MKOpenFileStreamForWriting(aFileName,
                                (isBinary) ? _MK_BINARYSCOREFILEEXT : _MK_SCOREFILEEXT,
                                stream, YES);
-    // [stream release]; // this should be ok to do, but somehow isn't - indicative of a bigger leak elsewhere.
+    [stream release];
     if (!success) {
         _MKErrorf(MK_cantCloseFileErr, aFileName);
         return nil;
@@ -787,7 +791,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
  lastTimeTag:(double)lastTimeTag timeShift:(double)timeShift
    	/* Write midi to file with specified name. */
 {
-    NSMutableData *stream = [NSMutableData data];
+    NSMutableData *stream = [[NSMutableData alloc] initWithCapacity:0];
     BOOL success;
 
     [self writeMidifileStream: stream
@@ -795,6 +799,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
                   lastTimeTag: lastTimeTag
                     timeShift: timeShift];
     success = _MKOpenFileStreamForWriting(aFileName, [[MKScore midifileExtensions] objectAtIndex: 0], stream, YES);
+    [stream release];
 
     if (!success) {
         _MKErrorf(MK_cantCloseFileErr, aFileName);

@@ -35,6 +35,10 @@
 Modification history:
 
   $Log$
+  Revision 1.23  2002/01/15 12:15:50  sbrandon
+  replaced [NSMutableData data] with alloc:initWithCapacity: so as to prevent
+  auto-released data - we release it manually when finished with it.
+
   Revision 1.22  2001/09/08 21:53:16  leighsmith
   Prefixed MK for UnitGenerators and SynthPatches
 
@@ -3872,7 +3876,7 @@ id factObj,beforeObj,afterObj;
 -writeSymbolTable:(NSString *)fileName
 {
     int i=0,cnt;//sb: fd
-    NSMutableData *s = [NSMutableData data];
+    NSMutableData *s = [[NSMutableData alloc] initWithCapacity:100];
     DSPAddress looperAddr = (isLoopOffChip) ?
       ((dataMemBlockStruct *)_eMemList[P_IND(self)])->next->baseAddr - LOOPERSIZE : 
         _piLoop;
@@ -3881,7 +3885,8 @@ id factObj,beforeObj,afterObj;
     for (cnt=[unitGeneratorStack count], i=0; i<cnt; i++)
         [[unitGeneratorStack objectAtIndex:i] writeSymbolsToStream:s];
 //    [NX_ADDRESS(unitGeneratorStack)[i] writeSymbolsToStream:s];
-    [s appendData:[[NSString stringWithFormat:@"_SYMBOL P\nLOOPER I %06X\n_END %06X\n", looperAddr,ORCHLOOPLOC] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    [s appendData:[[NSString stringWithFormat:@"_SYMBOL P\nLOOPER I %06X\n_END %06X\n", looperAddr,ORCHLOOPLOC]
+                    dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 
     /* _MKOpenFileStream(fileName,&fd,NX_WRITEONLY,
 				    "lod",YES);*/
@@ -3889,7 +3894,7 @@ id factObj,beforeObj,afterObj;
         [s writeToFile:fileName atomically:YES];
     else [s writeToFile:[fileName stringByAppendingPathExtension:@"lod"] atomically:YES];
  */
-//    [s release];//sb: unnec I think... */
+    [s release];
     _MKOpenFileStreamForWriting(fileName,@"lod",s, YES);
 
     return self;
