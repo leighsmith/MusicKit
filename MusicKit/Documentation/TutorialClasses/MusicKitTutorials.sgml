@@ -1,12 +1,85 @@
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+<!-- 
+$Id$
+This is the main document which simply provides the attribution
+and preface and then includes all chapters that constitute the
+MusicKit Tutorials book.
+
+In SGML using DocBook DTD V3.1 and above.
+
+Edit this file, not the HTML, RTF or LaTeX output.
+
+-->
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
 <!ENTITY class1 SYSTEM "MusicKitClass1.sgml">
+<!ENTITY class2 SYSTEM "MusicKitClass2.sgml">
+<!ENTITY class3 SYSTEM "MusicKitClass3.sgml">
+<!ENTITY class4 SYSTEM "MusicKitClass4.sgml">
+<!ENTITY class5 SYSTEM "MusicKitClass5.sgml">
 ]>
 
 <book id="MusicKitTutorials">
   <bookinfo>
     <title><productname>MusicKit</productname> Tutorials</title>
+    <authorgroup>
+      <author>
+	<firstname>David</firstname>
+	<othername role=mi>A.</othername>
+	<surname>Jaffe</surname>
+      </author>
+    </authorgroup>
+    <editor>
+      <firstname>Hans-Christoph</firstname>
+      <surname>Steiner</surname>
+    </editor>
+    <editor>
+      <firstname>Leigh</firstname>
+      <othername role=mi>M.</othername>
+      <surname>Smith</surname>
+    </editor>
+    <releaseinfo>Current for MusicKit V5.2.2</releaseinfo>
+    <printhistory>
+      <para>February 1992: Original RTF version</para>
+      <para>February 2001: First SGML version</para>
+    </printhistory>
+    <copyright>
+      <year>1991-1992</year> 
+      <holder>David A. Jaffe, CCRMA, Stanford University.  All Rights Reserved.</holder>
+    </copyright>
+    <copyright>
+      <year>1999-2001</year>
+      <holder>The MusicKit Project (Updates). All Rights Reserved.</holder>
+    </copyright>
   </bookinfo>
 
+  <preface id="EditorsPreface">
+    <title>Editors Preface</title>
+    <para>
+This book contains teaching materials for the <acronym>CCRMA</acronym>
+<productname>MusicKit</productname> class taught by David A. Jaffe in
+Jan-Feb 1991.  This is an intensive class for programmers who already
+know the C Programming Language.  The materials in this book may be
+distributed and used for teaching purposes.  However, any publication
+is forbidden without the written consent of David A.  Jaffe (reachable
+as <email>daj@ccrma.stanford.edu</email>).
+</para>
+
+    <para>
+The students should have access to the 
+<ulink url="http://musickit.sourceforge.net/MusicKitConcepts">
+MusicKit and SndKit Concepts</ulink> Documentation. The students
+should be running V5.2.2 frameworks or later and should refer to the
+on-line documentation for the Reference section of the
+<productname>MusicKit</productname> and
+<productname>SndKit</productname> and the appropriate
+<productname>OpenStep</productname> system documentation.
+</para>
+  </preface>
+
 &class1;
+&class2;
+&class3;
+&class4;
+&class5;
 
 </book>
