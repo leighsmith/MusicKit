@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.12  2001/02/12 18:30:45  leigh
+ * Added autorelease pools for begin and end functions for play
+ *
  * Revision 1.11  2001/02/11 03:15:22  leigh
  * Factored all platform specific code for playback and recording into MKPerformSndMIDI.framework
  *
@@ -38,10 +41,6 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #include <Winsock.h>
 #else
 #include <libc.h>
-#endif
-#if defined(__ppc__) || defined(WIN32)
-# import <Foundation/NSPathUtilities.h>
-# import <AppKit/NSSound.h>
 #endif
 
 #include <stdlib.h>
@@ -540,9 +539,11 @@ void soundStructDescription(SndSoundStruct *s)
     return strlen((char *)(soundStruct->info));
 }
 
+// Since these two functions come in from the cold, they warm and snug autorelease pools...
 int beginFun(SndSoundStruct *sound, int tag, int err)
 {
     Snd *theSnd;
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     theSnd = [playRecTable objectForKey: [NSNumber numberWithInt: tag]];
     NSLog(@"beginFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
     if (err) {
@@ -553,12 +554,14 @@ int beginFun(SndSoundStruct *sound, int tag, int err)
         [theSnd _setStatus:NX_SoundPlaying];
         [theSnd tellDelegate:@selector(willPlay:)];
     }
+    [pool release];
     return 0;
 }
 
 int endFun(SndSoundStruct *sound, int tag, int err)
 {
     Snd *theSnd;
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSNumber *tagNumber = [NSNumber numberWithInt: tag];
 
     theSnd = [playRecTable objectForKey: tagNumber];
@@ -579,6 +582,7 @@ int endFun(SndSoundStruct *sound, int tag, int err)
     }
     // NSLog(@"theSnd = %x, err = %d\n", theSnd, err);
     ((Snd *)theSnd)->tag = 0;
+    [pool release];
     return 0;
 }
 
@@ -653,12 +657,6 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
             (SNDNotificationFun) endFun);
     if (err) NSLog(@"Playback error %d\n",err);
     return self;
-}
-
-
-- (void)sound:(NSSound *)sound didFinishPlaying:(BOOL)aBool;
-{
-    [self tellDelegate:@selector(didPlay:)];
 }
 
 - (int)play
@@ -756,11 +754,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (int)pause
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
     return SND_ERR_NOT_IMPLEMENTED;
-#else
-    return SND_ERR_NOT_IMPLEMENTED;
-#endif
 }
 
 - resume:sender
