@@ -5329,6 +5329,7 @@
 				D88FED7105A10EAF0024FD88,
 				D825564A05A211B400B0192B,
 				D8C274E105A739E6008ABA16,
+				D85F905207DFE7D4009DC57B,
 				D879C3C005A2B47F005DB251,
 				D8708B6A05B313730074C18D,
 				D8708B4905B312A70074C18D,
@@ -8267,6 +8268,1311 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		D85F904D07DFE7D4009DC57B = {
+			buildActionMask = 2147483647;
+			files = (
+				D85F909F07DFE883009DC57B,
+				D85F90A107DFE883009DC57B,
+				D85F90A307DFE883009DC57B,
+				D85F90A507DFE883009DC57B,
+				D85F90A707DFE883009DC57B,
+				D85F90A907DFE883009DC57B,
+				D85F90AB07DFE883009DC57B,
+				D85F90AD07DFE883009DC57B,
+				D85F90AF07DFE883009DC57B,
+				D85F90B107DFE883009DC57B,
+				D85F90B307DFE883009DC57B,
+				D85F90B507DFE883009DC57B,
+				D85F90B707DFE883009DC57B,
+				D85F90B907DFE883009DC57B,
+				D85F90BB07DFE883009DC57B,
+				D85F90BD07DFE883009DC57B,
+				D85F90BF07DFE883009DC57B,
+				D85F90C007DFE883009DC57B,
+				D85F90C207DFE883009DC57B,
+				D85F90C407DFE883009DC57B,
+				D85F90C607DFE883009DC57B,
+				D85F90C807DFE883009DC57B,
+				D85F90CA07DFE883009DC57B,
+				D85F90CC07DFE883009DC57B,
+				D85F90CE07DFE883009DC57B,
+				D85F90D007DFE883009DC57B,
+				D85F90D207DFE883009DC57B,
+				D85F90D407DFE883009DC57B,
+				D85F90D607DFE883009DC57B,
+				D85F90D807DFE883009DC57B,
+				D85F90DA07DFE883009DC57B,
+				D85F90DC07DFE883009DC57B,
+				D85F90DE07DFE884009DC57B,
+				D85F90E007DFE884009DC57B,
+				D85F90E207DFE884009DC57B,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85F904E07DFE7D4009DC57B = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85F904F07DFE7D4009DC57B = {
+			buildActionMask = 2147483647;
+			files = (
+				D85F90A007DFE883009DC57B,
+				D85F90A207DFE883009DC57B,
+				D85F90A407DFE883009DC57B,
+				D85F90A607DFE883009DC57B,
+				D85F90A807DFE883009DC57B,
+				D85F90AA07DFE883009DC57B,
+				D85F90AC07DFE883009DC57B,
+				D85F90AE07DFE883009DC57B,
+				D85F90B007DFE883009DC57B,
+				D85F90B207DFE883009DC57B,
+				D85F90B407DFE883009DC57B,
+				D85F90B607DFE883009DC57B,
+				D85F90B807DFE883009DC57B,
+				D85F90BA07DFE883009DC57B,
+				D85F90BC07DFE883009DC57B,
+				D85F90BE07DFE883009DC57B,
+				D85F90C107DFE883009DC57B,
+				D85F90C307DFE883009DC57B,
+				D85F90C507DFE883009DC57B,
+				D85F90C707DFE883009DC57B,
+				D85F90C907DFE883009DC57B,
+				D85F90CB07DFE883009DC57B,
+				D85F90CD07DFE883009DC57B,
+				D85F90CF07DFE883009DC57B,
+				D85F90D107DFE883009DC57B,
+				D85F90D307DFE883009DC57B,
+				D85F90D507DFE883009DC57B,
+				D85F90D707DFE883009DC57B,
+				D85F90D907DFE883009DC57B,
+				D85F90DB07DFE883009DC57B,
+				D85F90DD07DFE883009DC57B,
+				D85F90DF07DFE884009DC57B,
+				D85F90E107DFE884009DC57B,
+				D85F90E307DFE884009DC57B,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85F905007DFE7D4009DC57B = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85F905107DFE7D4009DC57B = {
+			buildPhases = (
+				D85F904D07DFE7D4009DC57B,
+				D85F904E07DFE7D4009DC57B,
+				D85F904F07DFE7D4009DC57B,
+				D85F905007DFE7D4009DC57B,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				INFOPLIST_FILE = "Frameworks/MKUnitGenerators/MKUnitGenerators-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = MKUnitGenerators;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = "MKUnitGenerators (Framework)";
+			productName = MKUnitGenerators;
+			productReference = D85F905207DFE7D4009DC57B;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>MKUnitGenerators</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.yourcompany.MKUnitGenerators</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0</string>
+</dict>
+</plist>
+";
+			productType = "com.apple.product-type.framework";
+		};
+		D85F905207DFE7D4009DC57B = {
+			explicitFileType = wrapper.framework;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = MKUnitGenerators.framework;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D85F905307DFE7D7009DC57B = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.xml;
+			name = "MKUnitGenerators-Info.plist";
+			path = "Frameworks/MKUnitGenerators/MKUnitGenerators-Info.plist";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		D85F905707DFE815009DC57B = {
+			children = (
+				D85F905A07DFE882009DC57B,
+				D85F905B07DFE882009DC57B,
+				D85F905C07DFE882009DC57B,
+				D85F905D07DFE882009DC57B,
+				D85F905E07DFE882009DC57B,
+				D85F905F07DFE882009DC57B,
+				D85F906007DFE882009DC57B,
+				D85F906107DFE882009DC57B,
+				D85F906207DFE882009DC57B,
+				D85F906307DFE882009DC57B,
+				D85F906407DFE882009DC57B,
+				D85F906507DFE882009DC57B,
+				D85F906607DFE882009DC57B,
+				D85F906707DFE882009DC57B,
+				D85F906807DFE882009DC57B,
+				D85F906907DFE882009DC57B,
+				D85F906A07DFE882009DC57B,
+				D85F906B07DFE883009DC57B,
+				D85F906C07DFE883009DC57B,
+				D85F906D07DFE883009DC57B,
+				D85F906E07DFE883009DC57B,
+				D85F906F07DFE883009DC57B,
+				D85F907007DFE883009DC57B,
+				D85F907107DFE883009DC57B,
+				D85F907207DFE883009DC57B,
+				D85F907307DFE883009DC57B,
+				D85F907407DFE883009DC57B,
+				D85F907507DFE883009DC57B,
+				D85F907607DFE883009DC57B,
+				D85F907707DFE883009DC57B,
+				D85F907807DFE883009DC57B,
+				D85F907907DFE883009DC57B,
+				D85F907A07DFE883009DC57B,
+				D85F907B07DFE883009DC57B,
+				D85F907C07DFE883009DC57B,
+				D85F907D07DFE883009DC57B,
+				D85F907E07DFE883009DC57B,
+				D85F907F07DFE883009DC57B,
+				D85F908007DFE883009DC57B,
+				D85F908107DFE883009DC57B,
+				D85F908207DFE883009DC57B,
+				D85F908307DFE883009DC57B,
+				D85F908407DFE883009DC57B,
+				D85F908507DFE883009DC57B,
+				D85F908607DFE883009DC57B,
+				D85F908707DFE883009DC57B,
+				D85F908807DFE883009DC57B,
+				D85F908907DFE883009DC57B,
+				D85F908A07DFE883009DC57B,
+				D85F908B07DFE883009DC57B,
+				D85F908C07DFE883009DC57B,
+				D85F908D07DFE883009DC57B,
+				D85F908E07DFE883009DC57B,
+				D85F908F07DFE883009DC57B,
+				D85F909007DFE883009DC57B,
+				D85F909107DFE883009DC57B,
+				D85F909207DFE883009DC57B,
+				D85F909307DFE883009DC57B,
+				D85F909407DFE883009DC57B,
+				D85F909507DFE883009DC57B,
+				D85F909607DFE883009DC57B,
+				D85F909707DFE883009DC57B,
+				D85F909807DFE883009DC57B,
+				D85F909907DFE883009DC57B,
+				D85F909A07DFE883009DC57B,
+				D85F909B07DFE883009DC57B,
+				D85F909C07DFE883009DC57B,
+				D85F909D07DFE883009DC57B,
+				D85F909E07DFE883009DC57B,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F905A07DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Add2UG.h;
+			path = Frameworks/MKUnitGenerators/Add2UG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F905B07DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Add2UG.m;
+			path = Frameworks/MKUnitGenerators/Add2UG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F905C07DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Allpass1UG.h;
+			path = Frameworks/MKUnitGenerators/Allpass1UG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F905D07DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Allpass1UG.m;
+			path = Frameworks/MKUnitGenerators/Allpass1UG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F905E07DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = AsympenvUG.h;
+			path = Frameworks/MKUnitGenerators/AsympenvUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F905F07DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = AsympenvUG.m;
+			path = Frameworks/MKUnitGenerators/AsympenvUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906007DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = AsympUG.h;
+			path = Frameworks/MKUnitGenerators/AsympUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906107DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = AsympUG.m;
+			path = Frameworks/MKUnitGenerators/AsympUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906207DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = BiquadUG.h;
+			path = Frameworks/MKUnitGenerators/BiquadUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906307DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = BiquadUG.m;
+			path = Frameworks/MKUnitGenerators/BiquadUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906407DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ConstantUG.h;
+			path = Frameworks/MKUnitGenerators/ConstantUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906507DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = ConstantUG.m;
+			path = Frameworks/MKUnitGenerators/ConstantUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906607DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DelaymUG.h;
+			path = Frameworks/MKUnitGenerators/DelaymUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906707DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = DelaymUG.m;
+			path = Frameworks/MKUnitGenerators/DelaymUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906807DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DelayqpUG.h;
+			path = Frameworks/MKUnitGenerators/DelayqpUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906907DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = DelayqpUG.m;
+			path = Frameworks/MKUnitGenerators/DelayqpUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906A07DFE882009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DelayUG.h;
+			path = Frameworks/MKUnitGenerators/DelayUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906B07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = DelayUG.m;
+			path = Frameworks/MKUnitGenerators/DelayUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906C07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DswitchtUG.h;
+			path = Frameworks/MKUnitGenerators/DswitchtUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906D07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = DswitchtUG.m;
+			path = Frameworks/MKUnitGenerators/DswitchtUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906E07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = DswitchUG.h;
+			path = Frameworks/MKUnitGenerators/DswitchUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F906F07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = DswitchUG.m;
+			path = Frameworks/MKUnitGenerators/DswitchUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907007DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = EnvFollowUG.h;
+			path = Frameworks/MKUnitGenerators/EnvFollowUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907107DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = EnvFollowUG.m;
+			path = Frameworks/MKUnitGenerators/EnvFollowUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907207DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = In1aUG.h;
+			path = Frameworks/MKUnitGenerators/In1aUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907307DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = In1aUG.m;
+			path = Frameworks/MKUnitGenerators/In1aUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907407DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = In1bUG.h;
+			path = Frameworks/MKUnitGenerators/In1bUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907507DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = In1bUG.m;
+			path = Frameworks/MKUnitGenerators/In1bUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907607DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = In1qpUG.h;
+			path = Frameworks/MKUnitGenerators/In1qpUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907707DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = In1qpUG.m;
+			path = Frameworks/MKUnitGenerators/In1qpUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907807DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = InterpUG.h;
+			path = Frameworks/MKUnitGenerators/InterpUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907907DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = InterpUG.m;
+			path = Frameworks/MKUnitGenerators/InterpUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907A07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = MKUnitGenerators.h;
+			path = Frameworks/MKUnitGenerators/MKUnitGenerators.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907B07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Mul1add2UG.h;
+			path = Frameworks/MKUnitGenerators/Mul1add2UG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907C07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Mul1add2UG.m;
+			path = Frameworks/MKUnitGenerators/Mul1add2UG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907D07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Mul2UG.h;
+			path = Frameworks/MKUnitGenerators/Mul2UG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907E07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Mul2UG.m;
+			path = Frameworks/MKUnitGenerators/Mul2UG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F907F07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = OnepoleUG.h;
+			path = Frameworks/MKUnitGenerators/OnepoleUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908007DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = OnepoleUG.m;
+			path = Frameworks/MKUnitGenerators/OnepoleUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908107DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = OnezeroUG.h;
+			path = Frameworks/MKUnitGenerators/OnezeroUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908207DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = OnezeroUG.m;
+			path = Frameworks/MKUnitGenerators/OnezeroUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908307DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = OscgafiUG.h;
+			path = Frameworks/MKUnitGenerators/OscgafiUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908407DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = OscgafiUG.m;
+			path = Frameworks/MKUnitGenerators/OscgafiUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908507DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = OscgafUG.h;
+			path = Frameworks/MKUnitGenerators/OscgafUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908607DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = OscgafUG.m;
+			path = Frameworks/MKUnitGenerators/OscgafUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908707DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = OscgafUGs.h;
+			path = Frameworks/MKUnitGenerators/OscgafUGs.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908807DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = OscgafUGs.m;
+			path = Frameworks/MKUnitGenerators/OscgafUGs.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908907DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = OscgUG.h;
+			path = Frameworks/MKUnitGenerators/OscgUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908A07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = OscgUG.m;
+			path = Frameworks/MKUnitGenerators/OscgUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908B07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Out1aUG.h;
+			path = Frameworks/MKUnitGenerators/Out1aUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908C07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Out1aUG.m;
+			path = Frameworks/MKUnitGenerators/Out1aUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908D07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Out1bUG.h;
+			path = Frameworks/MKUnitGenerators/Out1bUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908E07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Out1bUG.m;
+			path = Frameworks/MKUnitGenerators/Out1bUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F908F07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Out1nUG.h;
+			path = Frameworks/MKUnitGenerators/Out1nUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909007DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Out1nUG.m;
+			path = Frameworks/MKUnitGenerators/Out1nUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909107DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Out2sumUG.h;
+			path = Frameworks/MKUnitGenerators/Out2sumUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909207DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Out2sumUG.m;
+			path = Frameworks/MKUnitGenerators/Out2sumUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909307DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScaleUG.h;
+			path = Frameworks/MKUnitGenerators/ScaleUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909407DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = ScaleUG.m;
+			path = Frameworks/MKUnitGenerators/ScaleUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909507DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Scl1add2UG.h;
+			path = Frameworks/MKUnitGenerators/Scl1add2UG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909607DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Scl1add2UG.m;
+			path = Frameworks/MKUnitGenerators/Scl1add2UG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909707DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = Scl2add2UG.h;
+			path = Frameworks/MKUnitGenerators/Scl2add2UG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909807DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Scl2add2UG.m;
+			path = Frameworks/MKUnitGenerators/Scl2add2UG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909907DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SnoiseUG.h;
+			path = Frameworks/MKUnitGenerators/SnoiseUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909A07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = SnoiseUG.m;
+			path = Frameworks/MKUnitGenerators/SnoiseUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909B07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = TablookiUG.h;
+			path = Frameworks/MKUnitGenerators/TablookiUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909C07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = TablookiUG.m;
+			path = Frameworks/MKUnitGenerators/TablookiUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909D07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = UnoiseUG.h;
+			path = Frameworks/MKUnitGenerators/UnoiseUG.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909E07DFE883009DC57B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = UnoiseUG.m;
+			path = Frameworks/MKUnitGenerators/UnoiseUG.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F909F07DFE883009DC57B = {
+			fileRef = D85F905A07DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90A007DFE883009DC57B = {
+			fileRef = D85F905B07DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90A107DFE883009DC57B = {
+			fileRef = D85F905C07DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90A207DFE883009DC57B = {
+			fileRef = D85F905D07DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90A307DFE883009DC57B = {
+			fileRef = D85F905E07DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90A407DFE883009DC57B = {
+			fileRef = D85F905F07DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90A507DFE883009DC57B = {
+			fileRef = D85F906007DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90A607DFE883009DC57B = {
+			fileRef = D85F906107DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90A707DFE883009DC57B = {
+			fileRef = D85F906207DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90A807DFE883009DC57B = {
+			fileRef = D85F906307DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90A907DFE883009DC57B = {
+			fileRef = D85F906407DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90AA07DFE883009DC57B = {
+			fileRef = D85F906507DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90AB07DFE883009DC57B = {
+			fileRef = D85F906607DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90AC07DFE883009DC57B = {
+			fileRef = D85F906707DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90AD07DFE883009DC57B = {
+			fileRef = D85F906807DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90AE07DFE883009DC57B = {
+			fileRef = D85F906907DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90AF07DFE883009DC57B = {
+			fileRef = D85F906A07DFE882009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90B007DFE883009DC57B = {
+			fileRef = D85F906B07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90B107DFE883009DC57B = {
+			fileRef = D85F906C07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90B207DFE883009DC57B = {
+			fileRef = D85F906D07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90B307DFE883009DC57B = {
+			fileRef = D85F906E07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90B407DFE883009DC57B = {
+			fileRef = D85F906F07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90B507DFE883009DC57B = {
+			fileRef = D85F907007DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90B607DFE883009DC57B = {
+			fileRef = D85F907107DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90B707DFE883009DC57B = {
+			fileRef = D85F907207DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90B807DFE883009DC57B = {
+			fileRef = D85F907307DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90B907DFE883009DC57B = {
+			fileRef = D85F907407DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90BA07DFE883009DC57B = {
+			fileRef = D85F907507DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90BB07DFE883009DC57B = {
+			fileRef = D85F907607DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90BC07DFE883009DC57B = {
+			fileRef = D85F907707DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90BD07DFE883009DC57B = {
+			fileRef = D85F907807DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90BE07DFE883009DC57B = {
+			fileRef = D85F907907DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90BF07DFE883009DC57B = {
+			fileRef = D85F907A07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90C007DFE883009DC57B = {
+			fileRef = D85F907B07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90C107DFE883009DC57B = {
+			fileRef = D85F907C07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90C207DFE883009DC57B = {
+			fileRef = D85F907D07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90C307DFE883009DC57B = {
+			fileRef = D85F907E07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90C407DFE883009DC57B = {
+			fileRef = D85F907F07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90C507DFE883009DC57B = {
+			fileRef = D85F908007DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90C607DFE883009DC57B = {
+			fileRef = D85F908107DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90C707DFE883009DC57B = {
+			fileRef = D85F908207DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90C807DFE883009DC57B = {
+			fileRef = D85F908307DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90C907DFE883009DC57B = {
+			fileRef = D85F908407DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90CA07DFE883009DC57B = {
+			fileRef = D85F908507DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90CB07DFE883009DC57B = {
+			fileRef = D85F908607DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90CC07DFE883009DC57B = {
+			fileRef = D85F908707DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90CD07DFE883009DC57B = {
+			fileRef = D85F908807DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90CE07DFE883009DC57B = {
+			fileRef = D85F908907DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90CF07DFE883009DC57B = {
+			fileRef = D85F908A07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90D007DFE883009DC57B = {
+			fileRef = D85F908B07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90D107DFE883009DC57B = {
+			fileRef = D85F908C07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90D207DFE883009DC57B = {
+			fileRef = D85F908D07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90D307DFE883009DC57B = {
+			fileRef = D85F908E07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90D407DFE883009DC57B = {
+			fileRef = D85F908F07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90D507DFE883009DC57B = {
+			fileRef = D85F909007DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90D607DFE883009DC57B = {
+			fileRef = D85F909107DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90D707DFE883009DC57B = {
+			fileRef = D85F909207DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90D807DFE883009DC57B = {
+			fileRef = D85F909307DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90D907DFE883009DC57B = {
+			fileRef = D85F909407DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90DA07DFE883009DC57B = {
+			fileRef = D85F909507DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90DB07DFE883009DC57B = {
+			fileRef = D85F909607DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90DC07DFE883009DC57B = {
+			fileRef = D85F909707DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90DD07DFE883009DC57B = {
+			fileRef = D85F909807DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90DE07DFE884009DC57B = {
+			fileRef = D85F909907DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90DF07DFE884009DC57B = {
+			fileRef = D85F909A07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90E007DFE884009DC57B = {
+			fileRef = D85F909B07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90E107DFE884009DC57B = {
+			fileRef = D85F909C07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90E207DFE884009DC57B = {
+			fileRef = D85F909D07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90E307DFE884009DC57B = {
+			fileRef = D85F909E07DFE883009DC57B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85F90E607DFE8A9009DC57B = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = Headers;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F90E907DFE8B1009DC57B = {
+			children = (
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85F90EC07DFE8D2009DC57B = {
+			children = (
+				D85F905307DFE7D7009DC57B,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+			sourceTree = "<group>";
 		};
 		D863A037059FAB1D00339D3B = {
 			containerPortal = D8DB4E4C059FA05500624233;
@@ -15824,6 +17130,7 @@
 				D88FED7005A10EAF0024FD88,
 				D825564905A211B400B0192B,
 				D8C274E005A739E6008ABA16,
+				D85F905107DFE7D4009DC57B,
 				D879C3BF05A2B47F005DB251,
 				D8708B4805B312A70074C18D,
 				D8708B6905B313730074C18D,
@@ -15980,6 +17287,10 @@
 		};
 		D8DB4E82059FA1B700624233 = {
 			children = (
+				D85F905707DFE815009DC57B,
+				D85F90E607DFE8A9009DC57B,
+				D85F90E907DFE8B1009DC57B,
+				D85F90EC07DFE8D2009DC57B,
 			);
 			isa = PBXGroup;
 			name = MKUnitGenerators;
