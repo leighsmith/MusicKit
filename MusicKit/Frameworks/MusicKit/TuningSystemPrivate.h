@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2004/11/16 18:13:21  leighsmith
+  Removed _MKTuningSystemInit() and _MKFindPitchVar() functions since they are now handled via class initialisation and +findPitchVar: methods. The remaining functions call MKTuningSystem methods and thus ensure initialisation.
+
   Revision 1.3  2000/10/01 06:55:48  leigh
   Properly typed function prototypes, added _MKKeyNumPrintfunc prototype.
 
@@ -17,10 +20,6 @@ Modification history:
 */
 #ifndef __MK__TuningSystem_H___
 #define __MK__TuningSystem_H___
-
-/* Tuning system functions */
-extern void _MKTuningSystemInit(void);
-extern int _MKFindPitchVar(id aVar);
 
 /* Writing frequencies */
 extern BOOL _MKFreqPrintfunc(_MKParameter *param, NSMutableData *aStream, _MKScoreOutStruct *p);
