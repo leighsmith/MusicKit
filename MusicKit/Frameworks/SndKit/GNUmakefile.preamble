@@ -1,0 +1,44 @@
+#  $Id$
+#  Defined In: The MusicKit
+#  Description:
+#    Makefile preamble for GNUstep
+#
+#  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
+#
+#  17 October 2001, Copyright (c) 2001 Stephen Brandon.
+#
+#  Permission is granted to use and modify this code for commercial and non-
+#  commercial purposes so long as the author attribution and this copyright
+#  message remains intact and accompanies all derived code.
+
+#  Modification history:
+#
+#  $Log$
+#  Revision 1.1  2001/10/31 16:05:45  sbrandon
+#  added some dependencies required for Windows GNUstep compilation
+#
+#
+
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
+  FRAMEWORK_LIBS += -lMKPerformSndMIDI -l$(FOUNDATION_LIBRARY_NAME) -lobjc
+  ADDITIONAL_FLAGS += -Ic:/DXVCSDK/include -Id:/cygwin/usr/local/include \
+           -L$(GNUSTEP_SYSTEM_ROOT)/Libraries/$(GNUSTEP_TARGET_LDIR)
+endif
+
+# What are the libraries this library depends upon. This is needed for some
+# systems where building a shared library requires to pass to the linker
+# all the libraries the target library depends upon.
+
+ifeq ($(GNUSTEP_TARGET_OS),mingw32)
+$(MY_NAME)_LIBRARIES_DEPEND_UPON += -lMKPerformSndMIDI \
+           -l$(FOUNDATION_LIBRARY_NAME) -lst -lobjc \
+           $(ADDITIONAL_DEPENDS) \
+           -Ld:/cygwin/usr/local/lib
+endif
+ifeq ($(GNUSTEP_TARGET_OS),cygwin)
+$(MY_NAME)_LIBRARIES_DEPEND_UPON += -lMKPerformSndMIDI \
+           -l$(FOUNDATION_LIBRARY_NAME) -lst -lobjc \
+           $(ADDITIONAL_DEPENDS) \
+           -Ld:/cygwin/usr/local/lib
+endif
+
