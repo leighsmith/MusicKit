@@ -35,7 +35,24 @@ $Id$
     <author>
       <firstname>Leigh</firstname> <othername>M.</othername> <surname>Smith</surname>
       <affiliation>
-        <orgname>tomandandy</orgname>
+        <orgname>
+<ulink url="http://www.tomandandy.com">
+	<inlinemediaobject>
+	<imageobject>
+	  <imagedata fileref="tomandandy_logo.eps" width=50 depth=30
+		     scalefit=1>
+	</imageobject>
+	<imageobject>
+	  <imagedata fileref="tomandandy_logo.jpg">
+	</imageobject>
+	<textobject>
+	  <phrase>
+tomandandy music inc.
+</phrase>
+        </textobject>
+      </inlinemediaobject>
+</ulink>
+</orgname>
 	<address>
           <street>89 Greene Street</street>
           <city>New York</city>, <state>NY</state>
