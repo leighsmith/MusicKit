@@ -13,6 +13,9 @@
 */
 /*
   $Log$
+  Revision 1.4  1999/10/08 19:53:43  leigh
+  MAXSHORT defined irrespective of WIN32, MKSamplerInstrument.h included
+
   Revision 1.3  1999/09/20 17:30:01  leigh
   Added midi_spec.h, cleaned up documentation.
 
@@ -30,7 +33,7 @@
 #import <objc/objc.h>           /* Contains nil, etc. */
 // These used to be in NS3.3 ansi/math.h but are no longer
 // However they are in System.framework on Win32 which is typically #imported afterwards...sigh
-#if !defined(MAXSHORT) && !defined(WIN32)
+#if !defined(MAXSHORT) // && !defined(WIN32)
 #define MAXSHORT ((short)0x7fff)
 #endif
 #if !defined(MAXINT)
@@ -74,6 +77,7 @@
 #import "MKPartials.h"
 #import "MKPerformer.h"
 #import "MKTimbre.h"
+#import "MKSamplerInstrument.h"
 #import "MKSamples.h"
 #import "MKScore.h"
 #import "MKScorePerformer.h"
@@ -88,9 +92,6 @@
 #import "MKWaveTable.h"
 #import "scorefileObject.h"
 
-
 #endif MUSICKIT_H
 
-
-
-#endif
+#endif __MK_musickit_H___
