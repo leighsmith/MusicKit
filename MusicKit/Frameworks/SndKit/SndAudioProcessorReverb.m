@@ -54,8 +54,8 @@
       [inB dataFormat]   == SND_FORMAT_FLOAT &&
       [inB channelCount] == 2) {
       
-      float *inD  = (float*) [inB  data];
-      float *outD = (float*) [outB data];
+      float *inD  = (float*) [inB  bytes];
+      float *outD = (float*) [outB bytes];
       long   len  = [inB  lengthInSampleFrames];
 
       reverbProcessReplacing(cppFreeReverbObj, inD,inD+1,outD,outD+1,len,2);

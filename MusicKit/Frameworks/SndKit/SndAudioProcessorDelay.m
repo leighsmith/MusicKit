@@ -155,8 +155,8 @@
       [inB dataFormat]       == SND_FORMAT_FLOAT      &&
       [inB channelCount]     == 2) {
       
-      float *inD  = (float*) [inB  data];
-      float *outD = (float*) [outB data];
+      float *inD  = (float*) [inB  bytes];
+      float *outD = (float*) [outB bytes];
       long   len  = [inB  lengthInSampleFrames], i;
       
       for (i=0;i<len*2;i+=2) {

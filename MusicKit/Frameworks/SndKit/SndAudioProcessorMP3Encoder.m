@@ -199,7 +199,7 @@
 {
 
   if (bShoutcastActive) {
-    float *buff = (float*) [inB data];
+    float *buff = (float*) [inB bytes];
     int retval, i, l = [inB lengthInSampleFrames], c = [inB channelCount];
     [encodeNShoutcastLock lock];
     if (l != bufferSizeInSamples) {

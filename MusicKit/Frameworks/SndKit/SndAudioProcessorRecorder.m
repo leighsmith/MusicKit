@@ -95,8 +95,8 @@
       return FALSE;
   }
   {
-    float *recData             = (float*) [recordBuffer data];
-    float *inputData           = (float*) [inB data]; 
+    float *recData             = (float*) [recordBuffer bytes];
+    float *inputData           = (float*) [inB bytes]; 
     long inBuffLengthInBytes  = [inB lengthInBytes];
     long recBuffLengthInBytes = [recordBuffer lengthInBytes];
     long remainder            = 0;
@@ -104,7 +104,7 @@
     
     if (bStartTrigger) { // whoop! haven't started recording - look thru buffer
       long inBuffLengthInSams   = [inB lengthInSampleFrames];
-      float *finB = (float*) [inB data];
+      float *finB = (float*) [inB bytes];
       long skip = [inB channelCount];
       
       for (i = skip ; i < inBuffLengthInSams; i += skip) {

@@ -175,8 +175,8 @@
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
                         outputBuffer: (SndAudioBuffer*) outB
 {
-  float *inp  = (float*) [inB data];
-  float *outp = (float*) [outB data];
+  float *inp  = (float*) [inB bytes];
+  float *outp = (float*) [outB bytes];
   float input[2], c, d;
   int sampleFrames = [inB lengthInSampleFrames];
   int i;

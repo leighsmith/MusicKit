@@ -26,23 +26,23 @@
 - init
 {
   self = [super initWithParamCount: flanger_kNumParams name: @"Flanger"];
-
-  [self setToDefault];
-
-  m_liBuffSize   = 2048;
-
-  m_pfBuff[0]  = (float*) malloc(sizeof(float) * m_liBuffSize);
-  m_pfBuff[1]  = (float*) malloc(sizeof(float) * m_liBuffSize);
-  memset(m_pfBuff[0],0,sizeof(float) * m_liBuffSize);
-  memset(m_pfBuff[1],0,sizeof(float) * m_liBuffSize);
-
-  m_fOsc[0]    = fMin;
-  m_fOsc[1]    = fMin;
-  m_oscSign[0] = 1.0;
-  m_oscSign[1] = 1.0;
   
-  m_liPtr = 0;
-  
+  if (self) {
+    [self setToDefault];
+    m_liBuffSize   = 2048;
+
+    m_pfBuff[0]  = (float*) malloc(sizeof(float) * m_liBuffSize);
+    m_pfBuff[1]  = (float*) malloc(sizeof(float) * m_liBuffSize);
+    memset(m_pfBuff[0],0,sizeof(float) * m_liBuffSize);
+    memset(m_pfBuff[1],0,sizeof(float) * m_liBuffSize);
+
+    m_fOsc[0]    = fMin;
+    m_fOsc[1]    = fMin;
+    m_oscSign[0] = 1.0;
+    m_oscSign[1] = 1.0;
+
+    m_liPtr = 0;
+  }    
   return self;
 }
 
@@ -279,7 +279,7 @@
 	fMax        = 0.22f;			
   fSwapStereo = 0.0f;
   fPhaseDiff  = 0.2f;
-  fFeedback   = 0.6f;
+  fFeedback   = 0.8f;
 }
 
 //////////////////////////////////////////////////////////////////////////////

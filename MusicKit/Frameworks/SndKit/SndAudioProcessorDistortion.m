@@ -50,8 +50,8 @@
 
   for (ch = 0; ch < chans; ch++) {
     
-    float *inp   = (float*) [inB  data];
-    float *outp  = (float*) [outB data];
+    float *inp   = (float*) [inB  bytes];
+    float *outp  = (float*) [outB bytes];
 
     // take care of interleaving initial offsets...
     inp  += ch;
