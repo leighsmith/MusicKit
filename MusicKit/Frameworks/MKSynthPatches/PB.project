@@ -29,10 +29,9 @@
             _MKList.m
         ); 
         FRAMEWORKS = (
-            dsp.framework, 
             Foundation.framework, 
+            MKDSP.framework, 
             MusicKit.framework, 
-            SoundKit.framework, 
             unitgenerators.framework
         ); 
         FRAMEWORKSEARCH = (

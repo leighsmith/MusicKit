@@ -41,8 +41,8 @@ PROF_LIBS = $(LIBS)
 FRAMEWORK_PATHS = -F$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\
                   -F$(HOME)/Library/Frameworks\
                   -F$(LOCAL_LIBRARY_DIR)/Frameworks
-FRAMEWORKS = -framework dsp -framework Foundation -framework MusicKit\
-             -framework SoundKit -framework unitgenerators
+FRAMEWORKS = -framework Foundation -framework MKDSP -framework MusicKit\
+             -framework unitgenerators
 PUBLIC_HEADERS = synthpatches.h Wave1vi.h DBWave1v.h Wave1v.h\
                  Fm2cnvi.h DBFm1vi.h Fm2pnvi.h Wave1.h DBWave2vi.h\
                  DBWave1vi.h Fm1i.h Fm1vi.h Fm1.h Fm2pvi.h Shape.h\
