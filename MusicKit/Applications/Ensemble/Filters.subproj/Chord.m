@@ -1,9 +1,8 @@
 /* A NoteFilter subclass which maps chords to single notes */
 
-#import <appkit/appkit.h>
-#import <musickit/musickit.h>
+#import <AppKit/AppKit.h>
+#import <MusicKit/MusicKit.h>
 #import <objc/HashTable.h>
-#import <mididriver/midi_spec.h>
 #import "Chord.h"
 #import "EnsembleApp.h"
 #import "Preferences.h"

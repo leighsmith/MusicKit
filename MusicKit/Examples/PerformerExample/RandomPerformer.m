@@ -2,17 +2,10 @@
 #import <musickit/musickit.h>
 #import "RandomPerformer.h"
 
-@implementation RandomPerformer:Performer
-{
-    id noteOn,noteOff;
-    double rhythmicValue;
-    int octaveOffset;
-    BOOL on;
-    double oldRanValue;
-}
+@implementation RandomPerformer
 
 static transposition = 0; /* To keep it from getting TOO boring, we slowly
-			     change the scale from which notes are choosen */
+			     change the scale from which notes are chosen */
 
 static double ranNum(RandomPerformer *self)
     /* Returns a random number between 0 and 1. */
@@ -35,7 +28,8 @@ static int
 
 static id ampEnvelope, freqEnvelope;
 
-+initialize {
++initialize 
+{
     /* arrays are copied below so auto vars are ok*/
     double xAmpArray[] = {0,1.0,2.0,2.5}; 
     double yAmpArray[] = {0,1.0,.015,0};

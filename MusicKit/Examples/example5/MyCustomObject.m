@@ -1,26 +1,25 @@
-#import <musickit/musickit.h>
+#import <MusicKit/MusicKit.h>
 #import <musickit/unitgenerators/Out2sumUGx.h>
 #import <musickit/unitgenerators/OscgUGxy.h>
-#import <appkit/Slider.h>
-#import <appkit/Panel.h>
+#import <AppKit/AppKit.h>
 
 #import "MyCustomObject.h"
 
 @implementation MyCustomObject
 
-static SynthData *pp;
+static MKSynthData *pp;
 static OscgUGxy *osc;
 static Out2sumUGx *out; 
 	
 -init
-{	Orchestra *orch = [Orchestra new];
+{	MKOrchestra *orch = [MKOrchestra new];
 	MKSetDeltaT(.1);
-	[Conductor setFinishWhenEmpty:NO];
-	[UnitGenerator enableErrorChecking:YES];
+	[MKConductor setFinishWhenEmpty:NO];
+	[MKUnitGenerator enableErrorChecking:YES];
 	[orch setFastResponse:YES];
 	[orch setSamplingRate:44100];
 	if (![orch open]) {
-	    NXRunAlertPanel("examp5","Can't open DSP.","OK",NULL,NULL);
+	    NSRunAlertPanel(@"examp5",@"Can't open DSP.",@"OK",NULL,NULL);
 	    return nil;
 	}
 	pp = [orch allocPatchpoint:MK_xPatch];
@@ -33,31 +32,31 @@ static Out2sumUGx *out;
 	[osc run];
 	[out run];
 	[orch run];
-	[Conductor startPerformance];
+	[MKConductor startPerformance];
 	return self;
 }
 
 -setFreqFrom:sender
 {	
-	[Conductor lockPerformance];
+	[MKConductor lockPerformance];
 	[osc setFreq:[sender doubleValue]];
-	[Conductor unlockPerformance];
+	[MKConductor unlockPerformance];
 	return self;
 }
 
 -setBearingFrom:sender
 {	
-	[Conductor lockPerformance];
+	[MKConductor lockPerformance];
 	[out setBearing:[sender doubleValue]];
-	[Conductor unlockPerformance];
+	[MKConductor unlockPerformance];
 	return self;
 }
 
 -setAmplitudeFrom:sender
 {	
-	[Conductor lockPerformance];
+	[MKConductor lockPerformance];
 	[osc setAmp:[sender doubleValue]];
-	[Conductor unlockPerformance];
+	[MKConductor unlockPerformance];
 	return self;
 }
 

@@ -5,8 +5,6 @@
 	Alert.h
 */
 
-//#import <objc/Object.h>
-//#import <appkit/graphics.h>
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 

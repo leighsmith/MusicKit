@@ -1,7 +1,7 @@
 #ifndef __MK_ParamInterface_H___
 #define __MK_ParamInterface_H___
-#import <appkit/appkit.h>
-#import <musickit/musickit.h>
+#import <AppKit/AppKit.h>
+#import <MusicKit/MusicKit.h>
 
 #define NUM_MIDI_NAMES 136
 #define MK_PAR_START NUM_MIDI_NAMES
@@ -28,7 +28,7 @@ extern int beatIndexForTime(float time);
 #define BEATS		4
 #define DB			5
 
-@interface ParamInterface:ActionCell
+@interface ParamInterface:NSActionCell
 {
 	id textFields;
 	id sliders;

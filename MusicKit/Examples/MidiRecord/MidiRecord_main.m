@@ -2,14 +2,9 @@
    NOTE: Do NOT change this file -- Project Builder maintains it.
 */
 
-#import "MyApp.h"
+#import <AppKit/AppKit.h>
 
-void main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 
-    [MyApp sharedApplication];
-    if ([NSBundle loadNibNamed:@"MidiRecord.nib" owner:NSApp])
-	    [NSApp run];
-	    
-    [NSApp release];
-    exit(0);
+    return NSApplicationMain(argc, argv);
 }

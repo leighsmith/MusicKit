@@ -1,0 +1,115 @@
+{
+    CURRENTLY_ACTIVE_VERSION = YES; 
+    DEPLOY_WITH_VERSION_NAME = A; 
+    DYNAMIC_CODE_GEN = YES; 
+    FILESTABLE = {
+        CLASSES = (
+            AsympUG.m, 
+            AsympenvUG.m, 
+            Allpass1UG.m, 
+            BiquadUG.m, 
+            Add2UG.m, 
+            ConstantUG.m, 
+            DelaymUG.m, 
+            EnvFollowUG.m, 
+            DelayUG.m, 
+            DelayqpUG.m, 
+            InterpUG.m, 
+            In1aUG.m, 
+            DswitchtUG.m, 
+            DswitchUG.m, 
+            In1qpUG.m, 
+            In1bUG.m, 
+            OscgUG.m, 
+            Out2sumUG.m, 
+            OnepoleUG.m, 
+            Out1nUG.m, 
+            Mul1add2UG.m, 
+            OscgafiUG.m, 
+            OnezeroUG.m, 
+            Out1bUG.m, 
+            OscgafUGs.m, 
+            Out1aUG.m, 
+            OscgafUG.m, 
+            Mul2UG.m, 
+            ScaleUG.m, 
+            TablookiUG.m, 
+            Scl2add2UG.m, 
+            SnoiseUG.m, 
+            Scl1add2UG.m, 
+            ugUtilities.m, 
+            UnoiseUG.m
+        ); 
+        DOCUMENTATION = (biquad.l, constant.l, UG_MACROS_SUMMARY); 
+        FRAMEWORKS = (Foundation.framework, MKDSP.framework, MusicKit.framework, SoundKit.framework); 
+        FRAMEWORKSEARCH = (/Local/Library/Frameworks); 
+        H_FILES = (
+            AsympUG.h, 
+            AsympenvUG.h, 
+            Allpass1UG.h, 
+            BiquadUG.h, 
+            Add2UG.h, 
+            ConstantUG.h, 
+            DelaymUG.h, 
+            EnvFollowUG.h, 
+            DelayUG.h, 
+            DelayqpUG.h, 
+            InterpUG.h, 
+            In1aUG.h, 
+            DswitchtUG.h, 
+            DswitchUG.h, 
+            In1qpUG.h, 
+            In1bUG.h, 
+            OscgUG.h, 
+            Out2sumUG.h, 
+            OnepoleUG.h, 
+            Out1nUG.h, 
+            Mul1add2UG.h, 
+            OscgafiUG.h, 
+            OnezeroUG.h, 
+            Out1bUG.h, 
+            OscgafUGs.h, 
+            Out1aUG.h, 
+            OscgafUG.h, 
+            Mul2UG.h, 
+            ScaleUG.h, 
+            TablookiUG.h, 
+            Scl2add2UG.h, 
+            SnoiseUG.h, 
+            Scl1add2UG.h, 
+            timings.h, 
+            UnoiseUG.h, 
+            unitgenerators.h, 
+            _exportedPrivateMusickit.h, 
+            _unitGeneratorInclude.h
+        ); 
+        OTHER_RESOURCES = (RealityFailure); 
+        OTHER_SOURCES = (
+            Makefile.preamble, 
+            Makefile, 
+            Makefile.postamble, 
+            m.template, 
+            h.template, 
+            Makefile.extradependencies
+        ); 
+        PUBLIC_HEADERS = (unitgenerators.h); 
+    }; 
+    LANGUAGE = English; 
+    LOCALIZABLE_FILES = {}; 
+    MAKEFILEDIR = .; 
+    NEXTSTEP_BUILDTOOL = /bin/gnumake; 
+    NEXTSTEP_INSTALLDIR = "$(LOCAL_LIBRARY_DIR)/Frameworks"; 
+    NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 
+    NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc; 
+    PDO_UNIX_BUILDTOOL = $NEXT_ROOT/Developer/bin/make; 
+    PDO_UNIX_JAVA_COMPILER = "$(NEXTDEV_BIN)/javac"; 
+    PDO_UNIX_OBJCPLUS_COMPILER = "$(NEXTDEV_BIN)/gcc"; 
+    PROJECTNAME = unitgenerators; 
+    PROJECTTYPE = Framework; 
+    PROJECTVERSION = 2.8; 
+    TARGETS = (); 
+    WINDOWS_BUILDTOOL = ./make.sh; 
+    WINDOWS_INSTALLDIR = "$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks"; 
+    WINDOWS_JAVA_COMPILER = "$(JDKBINDIR)/javac.exe"; 
+    WINDOWS_OBJCPLUS_COMPILER = "$(DEVDIR)/gcc"; 
+}

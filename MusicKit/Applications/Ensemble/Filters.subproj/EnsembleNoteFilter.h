@@ -1,6 +1,6 @@
 #ifndef __MK_EnsembleNoteFilter_H___
 #define __MK_EnsembleNoteFilter_H___
-#import <musickit/musickit.h>
+#import <MusicKit/MusicKit.h>
 #import <appkit/Window.h>
 #import "EnsembleDoc.h"
 

@@ -1,0 +1,41 @@
+print "\nNote: You must first create Examp1.snd using playscore, as described in the README file.";
+
+part p1; /* We use only one part. 
+	The part is not relevant in this program
+	because we mix all parts together in the output
+	file. */
+BEGIN;
+/* First, here's an 'echo' effect. */
+p1 (2) filename:"Examp1.snd" amp:.1;
+t +.1;
+p1 (0) filename:"/System/Library/Sounds/Frog.snd" amp:.4;
+/* An amplitude of 0 means 'the whole thing' */
+t +.9;
+p1 (2) filename:"Examp1.snd" amp:.075;
+t +.3;
+p1 (0) filename:"/System/Library/Sounds/Frog.snd" amp:.4;
+t +.7;
+p1 (2) filename:"Examp1.snd" amp:.05;
+t +.5;
+p1 (0) filename:"/System/Library/Sounds/Frog.snd" amp:.4;
+t +.5;
+p1 (2) filename:"Examp1.snd" amp:.0333;
+t +.5;
+p1 (0) filename:"/System/Library/Sounds/Frog.snd" amp:.4;
+
+t + 2;
+p1 (0) filename:"/System/Library/Sounds/Frog.snd" amp:.1;
+t + .05;
+p1 (0) filename:"/System/Library/Sounds/Frog.snd" amp:.1;
+t + .05;
+p1 (0) filename:"/System/Library/Sounds/Frog.snd" amp:.1;
+t + .05;
+p1 (0) filename:"/System/Library/Sounds/Frog.snd" amp:.1;
+t + .05;
+p1 (0) filename:"/System/Library/Sounds/Frog.snd" amp:.1;
+t + .05;
+p1 (0) filename:"/System/Library/Sounds/Frog.snd" amp:.1;
+t + .05;
+p1 (0) filename:"/System/Library/Sounds/Frog.snd" amp:.1;
+t + .05;
+

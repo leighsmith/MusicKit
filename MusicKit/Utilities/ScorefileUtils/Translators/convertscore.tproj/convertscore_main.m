@@ -10,6 +10,13 @@
 #import <sys/types.h>
 #import <sys/file.h>
 
+#define PERMS 0660 /* RW for owner and group. */
+#define HOME_SCORE_DIR "/Library/Music/Scores/"
+#define LOCAL_SCORE_DIR "/Local/Library/Music/Scores/"
+#define SYSTEM_SCORE_DIR "/System/Library/Music/Scores/"
+
+#import <stdio.h>
+
 static char *getHomeDirectory()
 {
     static char *homeDirectory;
@@ -23,14 +30,6 @@ static char *getHomeDirectory()
     }
     return homeDirectory;
 }
-
-#define PERMS 0660 /* RW for owner and group. */ 
-#define HOME_SCORE_DIR "/Library/Music/Scores/"
-#define LOCAL_SCORE_DIR "/Local/Library/Music/Scores/"
-#define SYSTEM_SCORE_DIR "/System/Library/Music/Scores/"
-
-#import <stdio.h>
-
 
 static int tryIt(char *filename,char *extension,char *name,int addExt,
                  char *dir1,char *dir2)
@@ -199,7 +198,7 @@ int main (int argc, const char *argv[])
 
     inFormat = determineInputFormat(inputFile);
     [MKScore setMidifilesEvaluateTempo: absoluteTempo];
-    aScore = [MKScore new];
+    aScore = [MKScore score];
 
     if (outFormat == none)
         outFormat = (inFormat == playscore) ? score : playscore;
@@ -252,8 +251,7 @@ int main (int argc, const char *argv[])
 	fprintf(stderr,"Can't write %s.\n", [outputFile cString]);
 	exit(1);
     }
-
-   [pool release];
-   exit(0);       // insure the process exit status is 0
-   return 0;      // ...and make main fit the ANSI spec.
+    [pool release];
+    exit(0);       // insure the process exit status is 0
+    return 0;      // ...and make main fit the ANSI spec.
 }

@@ -1,25 +1,27 @@
-{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Ohlfs;}
-\paperw16220
-\paperh13540
-\margl120
-\margr0
-{\colortbl;\red0\green0\blue0;}
-\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+{\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\ftech\fcharset2 Symbol;\f2\fmodern Courier;
+}
+{\colortbl;\red255\green255\blue255;}
+\paperw16220\paperh13540
+\pard\ql\qnatural
+
+\f0\fs24 \cf0 Release 2.0  Copyright 
 \f1 ã
 \f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs16\li2100\fc0\cf0 \
-
-\fs28 \
-
-\fs16 \
+\fs16 \cf0 \
 
 \fs28 \
 
 \fs16 \
 
-\pard\fs56\li2100\fc0\cf0 ScoreFile Language Reference\
+\fs28 \
+
+\fs16 \
+\pard\li2100\ql\qnatural
+
+\fs56 \cf0 ScoreFile Language Reference\
 
 \fs16 \
 \
@@ -30,10 +32,11 @@
 \
 \
 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 ScoreFile is a language designed to represent, create, and manipulate music data.  The code for a ScoreFile program is maintained in a file, called a 
+\fs28 \cf0 ScoreFile is a language designed to represent, create, and manipulate music data.  The code for a ScoreFile program is maintained in a file, called a 
 \i scorefile
-\i0 , on the disk.  A scorefile represents a Music Kit Score object and its contents in ASCII form.  Scorefiles can be created from a text editor or generated automatically by a Score or ScorefileWriter object.  A scorefile is interpreted when it's read by a Score object or performed by a ScorefilePerformer object.  \
+\i0 , on the disk.  A scorefile represents a MusicKit MKScore object and its contents in ASCII form.  Scorefiles can be created from a text editor or generated automatically by a MKScore or MKScorefileWriter object.  A scorefile is interpreted when it's read by a MKScore object or performed by a MKScorefilePerformer object.  \
 \
 There is also a binary format scorefile.  The binary format is more than twice as fast to read as the ASCII form.  The utility 
 \b convertscore
@@ -43,7 +46,7 @@ There is also a binary format scorefile.  The binary format is more than twice a
 
 \fs16 \
 
-\fs28 This chapter describes the syntax and conventions of the ScoreFile language.  The presentation in this chapter assumes a familiarity with Chapter 3 in the 
+\fs28 This chapter describes the syntax and conventions of the MKScoreFile language.  The presentation in this chapter assumes a familiarity with Chapter 3 in the 
 \i Concepts
 \i0  manual.  A concise outline of ScoreFile syntax can be found in 
 \b ScoreFileSummary.rtf
@@ -52,37 +55,41 @@ There is also a binary format scorefile.  The binary format is more than twice a
 \b0  for recent additions to the language.\
 
 \fs16 \
+\pard\li100\ql\qnatural
 
-\pard\b\li100\fc0\cf0 \
+\b \cf0 \
 \
 \
 
 \fs36 Program Structure\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 A ScoreFile program is divided into two sections, the header and the body.  The header always precedes the body; the two sections are separated by a 
+\b0\fs28 \cf0 A ScoreFile program is divided into two sections, the header and the body.  The header always precedes the body; the two sections are separated by a 
 \b BEGIN
 \b0  statement.  The end of the scorefile can be marked by an optional 
 \b END
 \b0  statement:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 header
+\i\fs28 \cf0 header
 \i0  \
 
 \b BEGIN;\
 
-\b0\i body
+\i\b0 body
 \i0  \
 [ 
 \b END; 
 \b0 ]\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 Either section can be empty.  If the body is empty, the 
+\fs28 \cf0 Either section can be empty.  If the body is empty, the 
 \b BEGIN
 \b0  statement can be omitted.\
 
@@ -91,32 +98,37 @@ There is also a binary format scorefile.  The binary format is more than twice a
 \fs28 Both the header and the body are made up of ScoreFile statements.  The header contains statements that establish the context in which the body is interpreted.  The following statements can appear only in the header:\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\tx4120\fs28\fi-520\li2620\fc0\cf0 ·	Score info statements \
+\fs28 \cf0 ·	Score info statements \
 ·	
 \b part
 \b0  statements \
 ·	Part info statements\
 ·	
-\b tagRange
+\b noteTagRange
 \b0  statements\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs16\li2100\fc0\cf0 \
+\fs16 \cf0 \
 
-\fs28 The body consists of a time-ordered series of statements that represent Note objects.  This information is found only in the body:\
+\fs28 The body consists of a time-ordered series of statements that represent MKNote objects.  This information is found only in the body:\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\tx4120\fs28\fi-520\li2620\fc0\cf0 ·	Time statements \
+\fs28 \cf0 ·	Time statements \
 ·	Note statements\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs16\li2100\fc0\cf0 \
+\fs16 \cf0 \
 
 \fs28 A number of other statements can appear in either the header or the body:\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\tx4120\fs28\fi-520\li2620\fc0\cf0 ·	Variable declarations\
+\fs28 \cf0 ·	Variable declarations\
 ·	Assignment statements\
 ·	
 \b envelope
@@ -141,8 +153,9 @@ There is also a binary format scorefile.  The binary format is more than twice a
 \b0  and 
 \b endComment
 \b0  statements\
+\pard\li100\ql\qnatural
 
-\pard\b\fs16\li100\fc0\cf0 \
+\b\fs16 \cf0 \
 \
 \
 \
@@ -151,62 +164,70 @@ There is also a binary format scorefile.  The binary format is more than twice a
 \fs36 Header Statements\
 
 \fs16 \
-
-\li1100 \
+\pard\li1100\ql\qnatural
+\cf0 \
 \
 
 \fs36 Score Info Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 A scorefile can have a Score info statement that consists of the keyword 
+\b0\fs28 \cf0 A scorefile can have a MKScore info statement that consists of the keyword 
 \b info
 \b0  followed by one or more parameters:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 info
-\b0\i  parameter 
+\b\fs28 \cf0 info
+\i\b0  parameter 
 \i0 [ 
 \b ,
 \b0  
 \i parameter
 \i0  ] ... 
 \b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The
+\b0\fs28 \cf0 The
 \b\fs36  
-\b0\fs28 Score info statement represents a Score object's info Note; it can contain any amount and type of information.  Typically, the Score info statement contains one or more of the following parameters:\
+\b0\fs28 Score info statement represents a MKScore object's info MKNote; it can contain any amount and type of information.  Typically, the MKScore info statement contains one or more of the following parameters:\
 
 \fs16 \
+\pard\tx5140\tx6640\tx8660\tx10680\li2620\ql\qnatural
 
-\pard\tx5140\tx6640\tx8660\tx10680\b\fs28\li2620\fc0\cf0 Parameter	Meaning\
+\b\fs28 \cf0 Parameter	Meaning\
+\pard\tx5140\tx5140\tx6640\tx6640\tx8660\tx8660\tx10680\tx10680\li2620\ql\qnatural
 
-\pard\tx5140\tx5140\tx6640\tx6640\tx8660\tx8660\tx10680\tx10680\b0\li2620\fc0\cf0 tempo	The tempo that should be used when performing the Score\
+\b0 \cf0 tempo	The tempo that should be used when performing the Score\
 samplingRate	The performance sampling rate\
 headroom	The Orchestra's headroom setting; a value between 
 \f1 -
 \f0 1.0 and 1.0\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 A scorefile can have more than one Score info statement; if a parameter conflicts with a parameter set in a previous 
+\fs28 \cf0 A scorefile can have more than one MKScore info statement; if a parameter conflicts with a parameter set in a previous 
 \b info
-\b0  statement, the subsequent setting takes precedence.  Parameters are similarly merged if a scorefile is read into a Score object that already has an info Note (a Score object can have only one info Note).  Parameter syntax is described in the section ªNote Statements,º below.\
+\b0  statement, the subsequent setting takes precedence.  Parameters are similarly merged if a scorefile is read into a MKScore object that already has an info MKNote (a MKScore object can have only one info MKNote).  Parameter syntax is described in the section ªNote Statements,º below.\
 
 \fs16 \
 
 \fs28 The parameters in the 
 \b info
-\b0  statement aren't explicitly used when the scorefile is read by a Score or ScorefilePerformer.  It's left to the application designer to provide an implementation that acts on the 
+\b0  statement aren't explicitly used when the scorefile is read by a MKScore or MKScorefilePerformer.  It's left to the application designer to provide an implementation that acts on the 
 \b info 
 \b0 statement's parameters.\
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -214,14 +235,16 @@ headroom	The Orchestra's headroom setting; a value between
 \fs36 part Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The names of all the Part objects that are represented in a scorefile must be declared in a 
+\b0\fs28 \cf0 The names of all the MKPart objects that are represented in a scorefile must be declared in a 
 \b part
 \b0  statement in the header:\
 
 \fs16 \
+\pard\tx4620\tx6640\tx8660\tx10680\li2620\ql\qnatural
 
-\pard\tx4620\tx6640\tx8660\tx10680\b\fs28\li2620\fc0\cf0 part
+\b\fs28 \cf0 part
 \b0  
 \i partName
 \i0  [ 
@@ -232,16 +255,18 @@ headroom	The Orchestra's headroom setting; a value between
 \b ;\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 partName is an identifier that must not have been previously declared.  A scorefile can contain more than one 
+\b0\fs28 \cf0 partName is an identifier that must not have been previously declared.  A scorefile can contain more than one 
 \b part
-\b0  statement.  When the scorefile is read by an application, a Part object is created and named for each partName in the file's 
+\b0  statement.  When the scorefile is read by an application, a MKPart object is created and named for each partName in the file's 
 \b part
-\b0  statements.  If a name conflict results from reading a scorefile into a Score, the Part represented in the scorefile is merged into the similarly named Part in the Score.\
+\b0  statements.  If a name conflict results from reading a scorefile into a MKScore, the MKPart represented in the scorefile is merged into the similarly named MKPart in the MKScore.\
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -249,59 +274,70 @@ headroom	The Orchestra's headroom setting; a value between
 \fs36 Part Info Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 Each Part represented in the scorefile can have a Part info statement that consists of the Part's 
+\b0\fs28 \cf0 Each MKPart represented in the scorefile can have a MKPart info statement that consists of the MKPart's 
 \i partName 
 \i0 as it appears in the 
 \b part
 \b0  statement followed by one or more parameters:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 partName parameter 
+\i\fs28 \cf0 partName parameter 
 \i0 [ 
 \b ,
 \b0  
 \i parameter
 \i0  ] ... 
 \b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\b0\fs28 \cf0 The MKPart info statement represents a MKPart object's info MKNote; it can contain any amount and type of information.  The following parameters are typically used in a part info statement:\
 
 \fs16 \
+\pard\tx5140\tx6640\tx8660\tx10680\li2620\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The Part info statement represents a Part object's info Note; it can contain any amount and type of information.  The following parameters are typically used in a part info statement:\
+\b\fs28 \cf0 Parameter	Meaning\
+\pard\tx5140\tx5140\tx6640\tx6640\tx8660\tx8660\tx10680\tx10680\li2620\ql\qnatural
 
-\fs16 \
-
-\pard\tx5140\tx6640\tx8660\tx10680\b\fs28\li2620\fc0\cf0 Parameter	Meaning\
-
-\pard\tx5140\tx5140\tx6640\tx6640\tx8660\tx8660\tx10680\tx10680\b0\li2620\fc0\cf0 synthPatch	The name of the SynthPatch class used to realize the Part\
+\b0 \cf0 synthPatch	The name of the SynthPatch class used to realize the MKPart\
 synthPatchCount	The number of manually allocated SynthPatch objects\
-midiChan	The MIDI channel on which the Part appears\
+midiChan	The MIDI channel on which the MKPart appears\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 Each Part represented in a scorefile can have only one Part info statement.  Like the scorefile's 
+\fs28 \cf0 Each MKPart represented in a scorefile can have only one MKPart info statement.  Like the scorefile's 
 \b info
-\b0  statement, interpretation and use of a Part info's parameters is left to the application designer.\
+\b0  statement, interpretation and use of a MKPart info's parameters is left to the application designer.\
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
-\
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\fs36 tagRange Statement\
+\fs36 \cf0 noteTagRange Statement\
+\pard\li1100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The 
-\b tagRange
+\b0\fs28 \cf0 The 
+\b noteTagRange
 \b0  statement declares the range of noteTags used in the body of the scorefile:\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 tagRange
+\b\fs28 \cf0 	noteTagRange
 \b0  
 \i anInteger
 \i0  
@@ -310,22 +346,25 @@ midiChan	The MIDI channel on which the Part appears\
 \i aHigherInteger
 \i0  
 \b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 This is an optional statement that optimizes the noteTag renumbering that occurs when you mix two or more scorefiles together or when you merge a scorefile into an existing Score object.\
+\b0\fs28 \cf0 This is an optional statement that optimizes the noteTag renumbering that occurs when you mix two or more scorefiles together or when you merge a scorefile into an existing Score object.\
 
 \fs16 \
 
 \fs28 It isn't an error to use a tag that's outside the range specified by a 
-\b tagRange
+\b noteTagRange
 \b0  statement, but the renumbering optimization applies only to tags that are within the declared range.  A scorefile can have more than one 
-\b tagRange
+\b noteTagRange
 \b0  statement although each subsequent statement cancels the previous one.\
 
 \fs16 \
+\pard\li100\ql\qnatural
 
-\pard\b\li100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -333,29 +372,33 @@ midiChan	The MIDI channel on which the Part appears\
 \fs36 Header or Body Statements\
 
 \fs16 \
-
-\li1100 \
+\pard\li1100\ql\qnatural
+\cf0 \
 \
 
 \fs36 Variable Declarations and Assignments\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 Variable declaration is the same as in C:\
+\b0\fs28 \cf0 Variable declaration is the same as in C:\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\tx4120\fs28\fi-520\li2620\fc0\cf0 ·	When you declare a variable you must specify its type.  \
+\fs28 \cf0 ·	When you declare a variable you must specify its type.  \
 ·	More than one variable of the same type can be declared in the same declaration.  \
 ·	A variable's value may be set when it's declared.\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs16\li2100\fc0\cf0 \
+\fs16 \cf0 \
 
 \fs28 The variable declaration statement takes the following form:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 dataType
+\i\fs28 \cf0 dataType
 \i0  
 \i identifier
 \i0  [ 
@@ -372,39 +415,47 @@ midiChan	The MIDI channel on which the Part appears\
 \i expression
 \i0  ] ] ... 
 \b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\b0\fs28 \cf0 Assignment is also like C:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 Assignment is also like C:\
-
-\fs16 \
-
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 identifier
+\i\fs28 \cf0 identifier
 \i0  
 \b = 
-\b0\i expression\
+\i\b0 expression\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\i0\fs28\li2100\fc0\cf0 Variable assignments can be nested and can appear in parameter value expressions.\
+\i0\fs28 \cf0 Variable assignments can be nested and can appear in parameter value expressions.\
 
 \fs16 \
 
 \fs28 ScoreFile provides seven data types:\
 
 \fs16 \
+\pard\tx4620\tx6640\tx8660\tx10680\li2620\ql\qnatural
 
-\pard\tx4620\tx6640\tx8660\tx10680\fs28\li2620\fc0\cf0 double\
+\fs28 \cf0 double\
 int\
 string\
 env\
 wave\
 object\
 var\
+\pard\tx4620\tx6640\tx8660\tx10680\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 The 
+\fs28 \cf0 The 
 \b double
 \b0  and
 \b  int
@@ -415,29 +466,34 @@ var\
 \b0 takes a string value:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 string = "
-\b0\i text
-\b\i0 ";\
+\b\fs28 \cf0 string = "
+\i\b0 text
+\i0\b ";\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 env
+\fs28 \cf0 env
 \b0 , 
 \b wave
 \b0 ,
 \b  
 \b0 and 
 \b object 
-\b0 take Envelope, WaveTable, and object values, respectively, as described in the following sections.  
+\b0 take MKEnvelope, MKWaveTable, and object values, respectively, as described in the following sections.  
 \b var
 \b0  is a wild card:  A variable so declared automatically matches the type of its assigned data.  In general, 
 \b var
 \b0  obviates the need for the other six types; however, the others can be used for clarity, or to cast a value to a particular type.\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -445,22 +501,26 @@ var\
 \fs36 envelope Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 You can create an Envelope in a scorefile by using an 
+\b0\fs28 \cf0 You can create an MKEnvelope in a scorefile by using an 
 \b envelope
 \b0  statement:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 envelope 
-\b0\i envelopeName 
+\b\fs28 \cf0 envelope 
+\i\b0 envelopeName 
 \i0 = 
 \i envelopeConstant 
-\b\i0 ;\
+\i0\b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 When the scorefile is read, an Envelope object is created and named for each 
+\b0\fs28 \cf0 When the scorefile is read, an MKEnvelope object is created and named for each 
 \b envelope 
 \b0 statement in the file.  
 \i envelopeName 
@@ -471,23 +531,28 @@ var\
 \b0 ):\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 env 
+\b\fs28 \cf0 env 
 \b0 = 
 \i envelopeName 
-\b\i0 ;\
+\i0\b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\i\fs28\li2100\fc0\cf0 envelopeConstant 
-\i0 contains a list of the Envelope's breakpoints.  Each breakpoint is described by its x, y, and (optional) smoothing values.  Breakpoint descriptions are in parentheses and the entire Envelope is delimited by brackets:\
+\i\b0\fs28 \cf0 envelopeConstant 
+\i0 contains a list of the MKEnvelope's breakpoints.  Each breakpoint is described by its x, y, and (optional) smoothing values.  Breakpoint descriptions are in parentheses and the entire MKEnvelope is delimited by brackets:\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs36\li2620\fc0\cf0 [ ( 
-\b0\i\fs28 xValue 
-\b\i0 , 
-\b0\i yValue 
+\b\fs36 \cf0 [ ( 
+\i\b0\fs28 xValue 
+\i0\b , 
+\i\b0 yValue 
 \i0 [
 \b  ,
 \b0  
@@ -497,14 +562,17 @@ var\
 \fs28 , 
 \b0 ... 
 \b\fs36 ] \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\b0\fs28 \cf0 A scorefile can contain any number of Envelopes.\
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 A scorefile can contain any number of Envelopes.\
-
-\fs16 \
-
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -512,41 +580,46 @@ var\
 \fs36 waveTable Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 WaveTables are created with the 
+\b0\fs28 \cf0 MKWaveTables are created with the 
 \b waveTable
 \b0  statement:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 waveTable 
-\b0\i waveTableName 
+\b\fs28 \cf0 waveTable 
+\i\b0 waveTableName 
 \i0 = 
 \i waveTableConstant 
-\b\i0 ;\
+\i0\b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 Similar to the 
+\b0\fs28 \cf0 Similar to the 
 \b envelope
 \b0  statement, an object is created and named for each 
 \b waveTable
-\b0  statement in a scorefile when the file is read.  The created object is either a Partials or a Samples object, depending on the specification in 
+\b0  statement in a scorefile when the file is read.  The created object is either a MKPartials or a MKSamples object, depending on the specification in 
 \i waveTableConstant
-\i0 .  A Partials object is described as a series frequency ratio, amplitude ratio, and (optional) phase values.\
+\i0 .  A MKPartials object is described as a series frequency ratio, amplitude ratio, and (optional) phase values.\
 
 \fs16 \
 
-\fs28 Each specification defines a single partial and is surrounded by braces; like an Envelope, the entire object is delimited by brackets:\
+\fs28 Each specification defines a single partial and is surrounded by braces; like an MKEnvelope, the entire object is delimited by brackets:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs36\li2620\fc0\cf0 [ \{ 
-\b0\i\fs28 frequencyRatio 
-\b\i0 , 
-\b0\i amplitudeRatio
+\b\fs36 \cf0 [ \{ 
+\i\b0\fs28 frequencyRatio 
+\i0\b , 
+\i\b0 amplitudeRatio
 \b  
-\b0\i0 [
+\i0\b0 [
 \b  ,
 \b0  
 \i phase 
@@ -555,23 +628,28 @@ var\
 \fs28 , 
 \b0 ... 
 \b\fs36 ] \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\b0\fs28 \cf0 A Samples object is defined by a soundfile:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 A Samples object is defined by a soundfile:\
-
-\fs16 \
-
-\pard\tx3120\tx3620\tx4120\b\fs36\li2620\fc0\cf0 [ \{ 
+\b\fs36 \cf0 [ \{ 
 \fs28 "
-\b0\i soundfileName
-\b\i0 "
+\i\b0 soundfileName
+\i0\b "
 \b0  
 \b\fs36 \} ] \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\i\fs28\li2100\fc0\cf0 waveTableName 
+\i\b0\fs28 \cf0 waveTableName 
 \i0 can
 \i  
 \i0 be used in a 
@@ -579,10 +657,12 @@ var\
 \b0  or 
 \b var 
 \b0 assignment.\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -590,33 +670,41 @@ var\
 \fs36 object Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 You can use an 
+\b0\fs28 \cf0 You can use an 
 \b object 
 \b0 statement to add your own objects to a scorefile:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 object 
-\b0\i objectName 
+\b\fs28 \cf0 object 
+\i\b0 objectName 
 \i0 = 
 \i objectConstant 
-\b\i0 ;\
+\i0\b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\i\fs28\li2100\fc0\cf0 objectConstant 
+\i\b0\fs28 \cf0 objectConstant 
 \i0 contains, in brackets, the name of the object's class followed by a description of the object:\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs36\li2620\fc0\cf0 [ 
-\b0\i\fs28 className objectDescription
-\b\i0\fs36  ] \
+\b\fs36 \cf0 [ 
+\i\b0\fs28 className objectDescription
+\i0\b\fs36  ] \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\i\fs28\li2100\fc0\cf0 objectDescription 
+\i\b0\fs28 \cf0 objectDescription 
 \i0 can be any text except ª]º.  
 \i className 
 \i0 must implement the methods 
@@ -624,10 +712,12 @@ var\
 \b0 , and 
 \b writeASCIIStream:
 \b0  to define how to read and write the object description.  \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -635,22 +725,25 @@ var\
 \fs36 include Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 When an 
+\b0\fs28 \cf0 When an 
 \b include
 \b0  statement is encountered, the specified file is immediately read and interpreted:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 include
+\b\fs28 \cf0 include
 \b0  
 \b "
-\b0\i scorefileName
-\b\i0 ";\
+\i\b0 scorefileName
+\i0\b ";\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
-
-\pard\li1100\fc0\cf0 \
+\fs16 \cf0 \
+\pard\li1100\ql\qnatural
+\cf0 \
 \
 \
 \
@@ -658,14 +751,16 @@ var\
 \fs36 print Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 A 
+\b0\fs28 \cf0 A 
 \b print
 \b0  statement is used to print information to a stream pointer (NXStream *):\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 print
+\b\fs28 \cf0 print
 \b0  
 \i expression
 \i0  [ 
@@ -674,16 +769,19 @@ var\
 \i expression
 \i0  ] ... 
 \b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The information is displayed when the scorefile is interpreted.  The 
+\b0\fs28 \cf0 The information is displayed when the scorefile is interpreted.  The 
 \b setScorefilePrintStream: 
-\b0 method, defined by Score and ScorefilePerformer, lets you set the stream to which a scorefile's messages are printed.  By default, they're printed to standard error.\
+\b0 method, defined by MKScore and MKScorefilePerformer, lets you set the stream to which a scorefile's messages are printed.  By default, they're printed to standard error.\
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -691,14 +789,16 @@ var\
 \fs36 tune Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The 
+\b0\fs28 \cf0 The 
 \b tune
 \b0  statement lets you create a tuning system other than the default twelve-tone equal-temperament:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 tune
+\b\fs28 \cf0 tune
 \b0  
 \i pitchVariable
 \i0  
@@ -712,12 +812,14 @@ tune
 \i expression
 \i0  
 \b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The first form of the statement tunes 
+\b0\fs28 \cf0 The first form of the statement tunes 
 \i pitchVariable
-\i0 , a predeclared ScoreFile variable, to 
+\i0 , a predeclared MKScoreFile variable, to 
 \i expression, 
 \i0 taken as a frequency in hertz.  All pitch variables of the same pitch class as 
 \i pitchVariable
@@ -728,8 +830,9 @@ tune
 \i0  half-steps.  A negative value transposes down; a fractional value transposes by less than a half step.\
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -737,39 +840,44 @@ tune
 \fs36 comment and endComment Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 In addition to supporting the C and Objective-C comment syntax, ScoreFile supplies its own comment construction:\
-
-\fs16 \
-
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 comment;\
-
-\b0\i commentedCode\
-
-\b\i0 endComment;\
+\b0\fs28 \cf0 In addition to supporting the C and Objective-C comment syntax, ScoreFile supplies its own comment construction:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\li100\fc0\cf0 \
+\b\fs28 \cf0 comment;\
+
+\i\b0 commentedCode\
+
+\i0\b endComment;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\li100\ql\qnatural
+\cf0 \
 \
 
 \fs36 Body Statements\
 
 \fs16 \
-
-\li1100 \
+\pard\li1100\ql\qnatural
+\cf0 \
 \
 
 \fs36 Note Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 When a scorefile is read by an application, a single Note object is created for each note statement in the file.  Note statements take the following form:\
+\b0\fs28 \cf0 When a scorefile is read by an application, a single MKNote object is created for each note statement in the file.  Note statements take the following form:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 partName 
-\b\i0 ,
+\i\fs28 \cf0 partName 
+\i0\b ,
 \b0  
 \b (
 \b0  
@@ -782,36 +890,46 @@ tune
 \i parameters
 \i0  ] 
 \b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\i\fs28\li2100\fc0\cf0 partName
-\i0  is the name of the Part to which the Note belongs.  It must be declared in a 
+\i\b0\fs28 \cf0 partName
+\i0  is the name of the MKPart to which the MKNote belongs.  It must be declared in a 
 \b part
 \b0  statement in the header.\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 typeAndTag
+\i\fs28 \cf0 typeAndTag
 \i0  provides noteType and noteTag information; its form depends on the noteType:\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\tx4120\fs28\fi-520\li2620\fc0\cf0 ·	For a noteDur, it takes the form\
+\fs28 \cf0 ·	For a noteDur, it takes the form\
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 	(
+\b\fs28 \cf0 	(
 \b0  
 \i duration
 \i0  [ 
 \i noteTag
 \i0  ] 
 \b )\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\b0\i\fs28 duration
+\i\b0\fs28 \cf0 duration
 \i0  is a 
 \b double
 \b0  expression that specifies the duration of the Note in beats; 
@@ -819,12 +937,15 @@ tune
 \i0 is an integer expression that assigns the Note's noteTag.\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\tx4120\fs28\fi-520\li2620\fc0\cf0 ·	For a noteOn or noteOff, the noteTag is required:\
+\fs28 \cf0 ·	For a noteOn or noteOff, the noteTag is required:\
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 	(
+\b\fs28 \cf0 	(
 \b0  
 \b noteOn
 \b0  
@@ -843,12 +964,15 @@ tune
 \b0  \
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\tx4120\fs28\fi-520\li2620\fc0\cf0 ·	The noteTag is optional for a noteUpdate:\
+\fs28 \cf0 ·	The noteTag is optional for a noteUpdate:\
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 	( noteUpdate 
+\b\fs28 \cf0 	( noteUpdate 
 \b0 [ 
 \i noteTag 
 \i0 ] 
@@ -856,53 +980,68 @@ tune
 \b0  \
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 A noteUpdate with a noteTag is applied to the specified noteTag stream.  Without a noteTag, it's applied to all noteTag streams that are currently being realized on the same Instrument as the noteUpdate.\
-
-\fs16 \
-
-\pard\tx2620\tx3120\tx3620\tx4120\fs28\fi-520\li2620\fc0\cf0 ·	Finally, a mute never takes a noteTag:\
+\fs28 \cf0 A noteUpdate with a noteTag is applied to the specified noteTag stream.  Without a noteTag, it's applied to all noteTag streams that are currently being realized on the same MKInstrument as the noteUpdate.\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 	( mute )\
+\fs28 \cf0 ·	Finally, a mute never takes a noteTag:\
+\pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\i\fs28\li2100\fc0\cf0 parameters
+\b\fs28 \cf0 	( mute )\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\i\b0\fs28 \cf0 parameters
 \i0  is a list of parameters separated by commas.  A parameter takes the form:\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 parameterName 
-\b\i0 :
+\i\fs28 \cf0 parameterName 
+\i0\b :
 \b0  
 \i expression\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 parameterName 
-\i0 is the name of the parameter.  Its form is that of a Music Kit parameter identifier minus the ªMK_º prefix.  For example, MK_freq becomes, in a scorefile, 
+\fs28 \cf0 parameterName 
+\i0 is the name of the parameter.  Its form is that of a MusicKit parameter identifier minus the ªMK_º prefix.  For example, MK_freq becomes, in a scorefile, 
 \b freq
 \b0 .  In a scorefile you can create your own parameters simply by including them in a note statement.  When the scorefile is read by an application, a parameter identifier is automatically created and named for each of your invented parameters.\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 expression
+\i\fs28 \cf0 expression
 \i0  is computed as the value assigned to the parameter.  An expression can include variable assignments:\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 parameterName 
-\b\i0 : ( 
-\b0\i variable 
-\b\i0 = 
-\b0\i expression 
-\b\i0 )\
+\i\fs28 \cf0 parameterName 
+\i0\b : ( 
+\i\b0 variable 
+\i0\b = 
+\i\b0 expression 
+\i0\b )\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
-
-\pard\li1100\fc0\cf0 \
+\fs16 \cf0 \
+\pard\li1100\ql\qnatural
+\cf0 \
 \
 \
 \
@@ -910,21 +1049,25 @@ tune
 \fs36 Time Statements\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 A time statement specifies the performance time in beats for all subsequent Note statements until another time statement is encountered.  A time statement takes the form:\
+\b0\fs28 \cf0 A time statement specifies the performance time in beats for all subsequent Note statements until another time statement is encountered.  A time statement takes the form:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 t
+\b\fs28 \cf0 t
 \b0  [ 
 \b +
 \b0  ] 
 \i expression 
-\b\i0 ;\
+\i0\b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The keyword 
+\b0\fs28 \cf0 The keyword 
 \b t
 \b0  is a special symbol; its value is the current time, in beats, in the scorefile.  At the start of the scorefile, the value of 
 \b t
@@ -945,29 +1088,31 @@ tune
 \b0  must never decrease.\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b\fs28 t
+\b\fs28 \cf0 t
 \b0  can be used as a read-only variable in an expression.\
+\pard\li100\ql\qnatural
 
-\fs16 \
-
-\pard\b\li100\fc0\cf0 \
-\
+\b\fs16 \cf0 \
 \
 
 \fs36 Operators\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 ScoreFile provides its own set of operators in addition to supporting a subset of C arithmetic operators.  The following table shows all the available operators in order of decreasing priority.  The operators unique to ScoreFile are discussed below.\
+\b0\fs28 \cf0 ScoreFile provides its own set of operators in addition to supporting a subset of C arithmetic operators.  The following table shows all the available operators in order of decreasing priority.  The operators unique to ScoreFile are discussed below.\
 
 \fs16 \
+\pard\tx4620\tx6640\tx8660\tx10680\li2620\ql\qnatural
 
-\pard\tx4620\tx6640\tx8660\tx10680\b\fs28\li2620\fc0\cf0 Operator	Operation\
+\b\fs28 \cf0 Operator	Operation\
 
 \b0 ( )	Grouping \
+\pard\tx4620\tx6640\tx8660\tx10680\li2620\ql\qnatural
 
-\f1 -
+\f1 \cf0 -
 \f0 	Unary minus \
 dB	Decibel computation \
 ^, ~	Exponentiation, pitch transposition \
@@ -979,16 +1124,19 @@ dB	Decibel computation \
 &	String concatenation\
 =	Assignment \
 ,	Sequence separator\
+\pard\tx4620\tx6640\tx8660\tx10680\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 <<
+\fs28 \cf0 <<
 \i The modulus operator doesn't work in Release 1.0.
 \i0 >>\
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -996,37 +1144,45 @@ dB	Decibel computation \
 \fs36 Decibel Computation Operator\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The postfix decibel operator 
+\b0\fs28 \cf0 The postfix decibel operator 
 \b dB
 \b0  is used to specify an amplitude value in units of decibels:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 expression
+\i\fs28 \cf0 expression
 \i0  
 \b dB\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The computation used by the 
+\b0\fs28 \cf0 The computation used by the 
 \b dB
 \b0  operator is:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 10(
+\fs28 \cf0 10(
 \i expression
 \i0  /20)\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b\fs28\li2100\fc0\cf0 0 dB
+\b\fs28 \cf0 0 dB
 \b0  is the maximum amplitude.\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -1034,24 +1190,29 @@ dB	Decibel computation \
 \fs36 Exponentiation Operator\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 In ScoreFile, the expression\
+\b0\fs28 \cf0 In ScoreFile, the expression\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 expression
+\i\fs28 \cf0 expression
 \i0  
 \b ^
 \b0  
 \i expression\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\i0\fs28 \cf0 calculates the left expression raised to the power of the right expression.\
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\i0\fs28\li2100\fc0\cf0 calculates the left expression raised to the power of the right expression.\
-
-\fs16 \
-
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -1059,29 +1220,34 @@ dB	Decibel computation \
 \fs36 Pitch Transposition Operator\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The pitch transposition operator 
+\b0\fs28 \cf0 The pitch transposition operator 
 \b ~
 \b0  is designed to transpose a pitch variable:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 pitchVariable
+\i\fs28 \cf0 pitchVariable
 \i0  
 \b ~ 
-\b0\i expression\
+\i\b0 expression\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\i0\fs28\li2100\fc0\cf0 The computed value is the frequency of 
+\i0\fs28 \cf0 The computed value is the frequency of 
 \i pitchVariable
 \i0  raised or lowered by 
 \i expression
 \i0  half-steps (a negative value lowers the pitch).  The pitch variable's value isn't affected.\
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -1089,29 +1255,34 @@ dB	Decibel computation \
 \fs36 Envelope Lookup Operator\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The Envelope lookup operator 
+\b0\fs28 \cf0 The Envelope lookup operator 
 \b @
 \b0  retrieves a discrete value from an envelope:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 envelopeName
+\i\fs28 \cf0 envelopeName
 \i0  
 \b @
-\b0\i  xValue\
+\i\b0  xValue\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\i0\fs28\li2100\fc0\cf0 The calculation returns the y value in 
+\i0\fs28 \cf0 The calculation returns the y value in 
 \i envelopeName
 \i0  that corresponds to 
 \i xValue.  
 \i0 The operation performs a linear interpolation between breakpoints, if necessary.  \
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -1119,69 +1290,82 @@ dB	Decibel computation \
 \fs36 String Concatenation Operator\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The string concatenation operation takes the form:\
+\b0\fs28 \cf0 The string concatenation operation takes the form:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 expression
+\i\fs28 \cf0 expression
 \i0  
 \b &
 \b0  
 \i expression\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\i0\fs28\li2100\fc0\cf0 The two expressions are converted to text and concatenated to produce a new string, regardless of the data types of the original expressions.\
+\i0\fs28 \cf0 The two expressions are converted to text and concatenated to produce a new string, regardless of the data types of the original expressions.\
 
 \fs16 \
 
 \fs28 \
 
 \fs16 \
+\pard\li100\ql\qnatural
 
-\pard\b\fs36\li100\fc0\cf0 Predeclared Variables, Constants, and Special Symbols\
+\b\fs36 \cf0 Predeclared Variables, Constants, and Special Symbols\
 
 \fs16 \
-
-\li1100 \
+\pard\li1100\ql\qnatural
+\cf0 \
 \
 
 \fs36 Pitch Variables\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 ScoreFile reserves a number of words as predefined pitch variables.  Pitch variables represent the frequencies of pitches over a ten and a half octave range.  A pitch variable name takes the following form (spaces between components aren't allowed):\
+\b0\fs28 \cf0 ScoreFile reserves a number of words as predefined pitch variables.  Pitch variables represent the frequencies of pitches over a ten and a half octave range.  A pitch variable name takes the following form (spaces between components aren't allowed):\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 pitchLetter
+\i\fs28 \cf0 pitchLetter
 \i0 [
 \i sharpOrFlat
 \i0 ]
 \i octave\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 pitchLetter
+\fs28 \cf0 pitchLetter
 \i0  is a lowercase letter from 
 \b a
 \b0  to 
 \b g
 \b0 .\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 sharpOrFlat
+\i\fs28 \cf0 sharpOrFlat
 \i0  is 
 \b s
 \b0  for sharp and 
 \b f
 \b0  for flat.  (Double sharps and double flats aren't supported.)\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\i\fs28 octave
+\i\fs28 \cf0 octave
 \i0  is
 \b  00
 \b0  or an integer from 
@@ -1195,10 +1379,11 @@ dB	Decibel computation \
 \b0  is the lowest pitch, 
 \b g9
 \b0  is the highest.\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 
-\fs28\fc1\cf1 The "break" is at C.  That is, 
+\fs28 The "break" is at C.  That is, 
 \b b4
 \b0  is B above middle C.  
 \b b3
@@ -1217,56 +1402,67 @@ dB	Decibel computation \
 \b0  is the same as 
 \b c4
 \b0 .  \
+\pard\li1100\ql\qnatural
 
-\pard\b\fs16\li1100\fc0\cf0 \
+\b\fs16 \cf0 \
 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 A pitch variable can be assigned an arbitrary value in an assignment statement or assignment expression.  The value assigned to a pitch variable is taken as a frequency in hertz:\
+\b0\fs28 \cf0 A pitch variable can be assigned an arbitrary value in an assignment statement or assignment expression.  The value assigned to a pitch variable is taken as a frequency in hertz:\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 pitchVariable
+\i\fs28 \cf0 pitchVariable
 \i0  
 \b =
 \b0  
 \i expression
 \i0  
 \b ;\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 By assigning a value to a pitch variable, only the value of that pitch variable is changed; this is different from using a pitch variable in a 
+\b0\fs28 \cf0 By assigning a value to a pitch variable, only the value of that pitch variable is changed; this is different from using a pitch variable in a 
 \b tune
 \b0  statement, where all pitch variables of the same pitch class are affected.\
+\pard\li1100\ql\qnatural
 
-\pard\b\fs16\li1100\fc0\cf0 \
+\b\fs16 \cf0 \
 \
 \
 
 \fs36 Key Number Constants\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 Key numbers are similar in appearance to pitch variables, but have an appended 
+\b0\fs28 \cf0 Key numbers are similar in appearance to pitch variables, but have an appended 
 \b k 
 \b0 (again, embedded spaces aren't allowed):\
 
 \fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\pard\tx3120\tx3620\tx4120\i\fs28\li2620\fc0\cf0 pitchLetter
+\i\fs28 \cf0 pitchLetter
 \i0 [
 \i sharpOrFlat
 \i0 ]
 \i octave
-\b\i0 k\
+\i0\b k\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\b0\fs28 \cf0 Unlike a pitch variable, which represents a frequency, a key number is an integer that represents the ordinal number of a key on a MIDI synthesizer.\
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 Unlike a pitch variable, which represents a frequency, a key number is an integer that represents the ordinal number of a key on a MIDI synthesizer.\
-
-\fs16 \
-
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -1274,12 +1470,14 @@ dB	Decibel computation \
 \fs36 MIDI Constants\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 A number of MIDI constants defined as values for MIDI parameters are provided by ScoreFile:\
+\b0\fs28 \cf0 A number of MIDI constants defined as values for MIDI parameters are provided by ScoreFile:\
 
 \fs16 \
+\pard\tx6400\tx8920\tx10680\li2620\ql\qnatural
 
-\pard\tx6400\tx8920\tx10680\fs28\li2620\fc0\cf0 resetControllers	monoMode	sysActiveSensing\
+\fs28 \cf0 resetControllers	monoMode	sysActiveSensing\
 localControlModeOn	polyMode	sysReset\
 localControlModeOff	sysClock	sysUndefined0xf9\
 allNotesOff	sysStart	sysUndefined0xfd\
@@ -1287,8 +1485,9 @@ omniModeOff	sysContinue\
 omniModeOn	sysStop\
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -1296,16 +1495,18 @@ omniModeOn	sysStop\
 \fs36 Other Constants\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 ScoreFile also defines the integer constants 
+\b0\fs28 \cf0 ScoreFile also defines the integer constants 
 \b YES 
 \b0 (1) and 
 \b NO
 \b0  (2).\
 
 \fs16 \
+\pard\li1100\ql\qnatural
 
-\pard\b\li1100\fc0\cf0 \
+\b \cf0 \
 \
 \
 \
@@ -1313,8 +1514,9 @@ omniModeOn	sysStop\
 \fs36 Special Symbols\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 ScoreFile defines two special symbols, 
+\b0\fs28 \cf0 ScoreFile defines two special symbols, 
 \b t
 \b0  and 
 \b ran
@@ -1323,18 +1525,105 @@ omniModeOn	sysStop\
 \b0  symbol was described in the section ªTime Statements,º earlier in this chapter.\
 
 \fs16 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b\fs28 ran
+\b\fs28 \cf0 ran
 \b0  is a random number (a 
 \b double
 \b0 ) between 0 and 1.  The seed for the random number generator is randomly set to produce a different series of random numbers every time the file is read.  \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\li100\ql\qnatural
 
-\pard\b\li100\fc0\cf0 \
-\
-\
-\
+\b \cf0 \
 \
 
+\fs36 Procedural Statements\
+\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\b0\fs28 \cf0 ScoreFile supports simple loop constructs, boolean expressions, and conditional statements.  These are legal in both the header and the body of the scorefile.  These constructs are:\
+\pard\tx1800\tx2160\tx2520\tx2880\li1800\fi-360\ql\qnatural
+\cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\b \cf0 	if (
+\b0 <
+\i boolean expression
+\i0 >
+\b ) \{
+\b0  <
+\i anything
+\i0 > 
+\b \} 
+\b0 \
+
+\b 	else if \{ 
+\b0 <
+\i anything
+\i0 > 
+\b \} 
+\b0 /* optional */\
+
+\b 	else \{
+\b0  <
+\i anything
+\i0 > 
+\b \} 
+\b0    /* optional */\
+\
+
+\b 	repeat 
+\b0 <
+\i integer expression
+\i0 > 
+\b \{ 
+\b0 <
+\i anything
+\i0 > 
+\b \}
+\b0 \
+	\
+	
+\b while (
+\b0 <
+\i boolean expression
+\i0 >
+\b ) \{
+\b0  <
+\i anything
+\i0 > 
+\b \} 
+\b0 \
+	\
+
+\b 	do \{
+\b0  <
+\i anything
+\i0 > 
+\b \} while (
+\b0 <
+\i boolean expression
+\i0 >
+\b )
+\b0 ; \
+	\
+Note that in all cases, the braces and parenthesis are not optional.  Also, if you are using included files, the start and end of the loop or conditional block must be in the same file.  \
+\
+	Example:\
+	\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\f2\fs26 \cf0 	repeat 3 \{ 	  t +.1	  if (t > 3) \{aPart (2) keyNum:c4k;\} 	  else       \{bPart (1) keyNum:c2k;\}\
+	\}\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\f0\b\fs28 \cf0 			\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\fs16 \cf0 \
+\pard\li100\ql\qnatural
+\cf0 \
+\
 }

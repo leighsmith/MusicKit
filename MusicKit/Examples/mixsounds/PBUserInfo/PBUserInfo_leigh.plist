@@ -1,0 +1,7 @@
+{
+    NSMACHOperatingSystem = {
+        Archs = "18 "; 
+        ContinueAfterError = YES; 
+        LauncherSelectedExec = ("$[PBProject projectName]$[PBProjectType executableExtension]"); 
+    }; 
+}

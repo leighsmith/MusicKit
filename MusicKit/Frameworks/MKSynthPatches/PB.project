@@ -1,0 +1,116 @@
+{
+    CURRENTLY_ACTIVE_VERSION = YES; 
+    DEPLOY_WITH_VERSION_NAME = A; 
+    DYNAMIC_CODE_GEN = YES; 
+    FILESTABLE = {
+        CLASSES = (
+            Wave1vi.m, 
+            DBWave1v.m, 
+            Wave1v.m, 
+            Fm2cnvi.m, 
+            DBFm1vi.m, 
+            Fm2pnvi.m, 
+            Wave1.m, 
+            DBWave2vi.m, 
+            DBWave1vi.m, 
+            Fm1i.m, 
+            Fm1vi.m, 
+            Fm1.m, 
+            Fm2pvi.m, 
+            Shape.m, 
+            Fm2cvi.m, 
+            Pluck.m, 
+            Simp.m, 
+            Fm1v.m, 
+            Wave1i.m, 
+            ArielQPMix.m, 
+            Shapev.m, 
+            globals.m, 
+            _MKList.m
+        ); 
+        FRAMEWORKS = (
+            dsp.framework, 
+            Foundation.framework, 
+            MusicKit.framework, 
+            SoundKit.framework, 
+            unitgenerators.framework
+        ); 
+        FRAMEWORKSEARCH = (
+            "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks", 
+            "$(HOME)/Library/Frameworks", 
+            "$(LOCAL_LIBRARY_DIR)/Frameworks"
+        ); 
+        H_FILES = (
+            Wave1vi.h, 
+            DBWave1v.h, 
+            Wave1v.h, 
+            Fm2cnvi.h, 
+            DBFm1vi.h, 
+            Fm2pnvi.h, 
+            Wave1.h, 
+            DBWave2vi.h, 
+            DBWave1vi.h, 
+            Fm1i.h, 
+            Fm1vi.h, 
+            Fm1.h, 
+            Fm2pvi.h, 
+            Shape.h, 
+            Fm2cvi.h, 
+            Pluck.h, 
+            Simp.h, 
+            Fm1v.h, 
+            Wave1i.h, 
+            ArielQPMix.h, 
+            Shapev.h, 
+            partialsDB.h, 
+            _Wave1i.h, 
+            _synthPatchInclude.h, 
+            synthpatches.h, 
+            _Fm1i.h, 
+            _MKList.h
+        ); 
+        OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble, m.template, h.template); 
+        PUBLIC_HEADERS = (
+            synthpatches.h, 
+            Wave1vi.h, 
+            DBWave1v.h, 
+            Wave1v.h, 
+            Fm2cnvi.h, 
+            DBFm1vi.h, 
+            Fm2pnvi.h, 
+            Wave1.h, 
+            DBWave2vi.h, 
+            DBWave1vi.h, 
+            Fm1i.h, 
+            Fm1vi.h, 
+            Fm1.h, 
+            Fm2pvi.h, 
+            Shape.h, 
+            Fm2cvi.h, 
+            Pluck.h, 
+            Simp.h, 
+            Fm1v.h, 
+            Wave1i.h, 
+            ArielQPMix.h, 
+            Shapev.h, 
+            partialsDB.h
+        ); 
+    }; 
+    LANGUAGE = English; 
+    LOCALIZABLE_FILES = {}; 
+    MAKEFILEDIR = .; 
+    NEXTSTEP_BUILDTOOL = /bin/gnumake; 
+    NEXTSTEP_INSTALLDIR = "$(LOCAL_LIBRARY_DIR)/Frameworks"; 
+    NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 
+    NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc; 
+    PDO_UNIX_BUILDTOOL = $NEXT_ROOT/Developer/bin/make; 
+    PDO_UNIX_JAVA_COMPILER = "$(NEXTDEV_BIN)/javac"; 
+    PDO_UNIX_OBJCPLUS_COMPILER = "$(NEXTDEV_BIN)/gcc"; 
+    PROJECTNAME = synthpatches; 
+    PROJECTTYPE = Framework; 
+    PROJECTVERSION = 2.8; 
+    WINDOWS_BUILDTOOL = ./make.sh; 
+    WINDOWS_INSTALLDIR = "$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks"; 
+    WINDOWS_JAVA_COMPILER = "$(JDKBINDIR)/javac.exe"; 
+    WINDOWS_OBJCPLUS_COMPILER = "$(DEVDIR)/gcc"; 
+}
