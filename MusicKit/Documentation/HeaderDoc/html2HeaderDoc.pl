@@ -52,6 +52,10 @@ while ($ARGV[0] =~ /^-/) {
 	$sedOutput++;
 	next;
     }
+    elsif (/^-d/) {
+	$debug++;
+	next;
+    }
     die "I don't recognize this switch: $_\\n";
 }
 
@@ -137,7 +141,8 @@ $wholeFile =~ s/Instance Methods//i;
 #
 # We rewrite this as a <br> to ensure we don't break other prototype
 # boundaries.
-while ($wholeFile =~ s/<br>\s*(<b>)*\s*([\+\-])\s*(<\/b>)*\s*(.*?)(<br>\s*){2,}(.*?)(<br>\s*)+(<br>\S+<br>|<br>\s|<br>$)/<br>/) {
+while ($wholeFile =~ s/<br>\s*(<b>)*\s*([\+\-])\s*(<\/b>)*\s*(.*?)(<br>\s*){2,}(.*?)(<br>\s*)+(<br>\S+<br>|<br>\s|<br><b>\s|<br>$)/<br>/) {
+    $leadingBold = $1;
     $classOrInstanceMethod = $2;
     $prototype = $4;
     $lineBreaksBetweenPrototypeAndDiscussion = $5;
@@ -147,11 +152,19 @@ while ($wholeFile =~ s/<br>\s*(<b>)*\s*([\+\-])\s*(<\/b>)*\s*(.*?)(<br>\s*){2,}(
     # give ourselves a clean description
     # $formattedPrototype =~ s/<\/*[bi]>//g;
 
-    #print "method type = $classOrInstanceMethod prototype for matching = $prototype\n";
-    #print "line breaks between prototype and discussion = $lineBreaksBetweenPrototypeAndDiscussion\n";
-    #print "discussion = $discussion\n";
-    #print "line breaks between discussion and next prototype = $lineBreaksBetweenDiscussionAndNextPrototype\n";
-
+    if($debug) {
+	print "leading bold attribute = \"$leadingBold\"";
+	print "method type = $classOrInstanceMethod prototype for matching = $prototype\n";
+	print "line breaks between prototype and discussion = $lineBreaksBetweenPrototypeAndDiscussion\n";
+	print "discussion = $discussion\n";
+	print "line breaks between discussion and next prototype = $lineBreaksBetweenDiscussionAndNextPrototype\n";
+    }
+    # If we had a leading bold attribute case, we need to prepend it
+    # to the prototype so that it is parseable.
+    if($leadingBold =~ m/<b>\s*/) {
+	# print "prepending leading bold attribute\n";
+	$prototype = "<b>" . $prototype;
+    }
     # Format the prototype for HeaderDoc.
     # Match the return type and the method name prior to parameters.
     if ($prototype =~ s/\s*(\(.*?\)|[^\s<]*?)\s*<b>\s*(.*?)\s*<\/b>//) {
@@ -165,7 +178,9 @@ while ($wholeFile =~ s/<br>\s*(<b>)*\s*([\+\-])\s*(<\/b>)*\s*(.*?)(<br>\s*){2,}(
 	# Keep sucking out parameters, or until we obviously have
 	# something we can't digest, spit it out.
 	while(($prototype !~ /^\s*$/) && ($paramCount != 15)) {
-	    #print "methodName = $methodName\nprototype remaining: $prototype";
+	    if($debug) {
+		print "methodName = $methodName\nprototype remaining: $prototype";
+	    }
 	    # Match on parameter type (some won't be static)...
 	    # Ensure an italicized parameter doesn't precede the type
 	    # (indicating we have missed an untyped (i.e id) parameter).
