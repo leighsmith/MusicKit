@@ -89,6 +89,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/09/20 03:15:48  leigh
+  Added description method, removed disabled awake method
+
   Revision 1.3  1999/09/04 22:02:18  leigh
   Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
 
@@ -1072,23 +1075,21 @@ static void removeNote(MKPart *self, MKNote *aNote)
     }
 }
 
-//- awake
-  /* Maps noteTags as represented in the archive file onto a set that is
-     unused in the current application. This insures that the integrity
-     of the noteTag is maintained. */
-//{
-//    id tagTable;
-//#warning DONE ArchiverConversion: put the contents of your 'awake' method at the end of your 'initWithCoder:' method instead
-//    [super awake]; //NSObject does not respond to awake...
-/*
-    if ([Score _isUnarchiving])
-      return self;
-    tagTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
-    [self _mapTags:tagTable];
-    [tagTable release];
- */
-//    return self;
-//}
+// for debugging, just return the contatentation of the note descriptions (which have newlines).
+- (NSString *) description
+{
+    int i;
+    NSMutableString *partDescription = [[NSMutableString alloc] initWithString: @"MKPart containing MKNotes:\n"];
+    NSMutableArray *noteList = [self notes];
+    MKNote *aNote;
+
+    // add appendString [infoNote description]
+    for(i = 0; i < [noteList count]; i++) {
+        aNote = [noteList objectAtIndex: i];
+        [partDescription appendString: [aNote description]];
+    }
+    return partDescription;
+}
 
 @end
 
