@@ -59,13 +59,13 @@
                     Textual information relating to the sound.
 */
 typedef struct {
-    int magic;          /* must be equal to SND_MAGIC */
-    int dataLocation;   /* Offset or pointer to the raw data */
-    int dataSize;       /* Number of bytes of data in the raw data */
-    int dataFormat;     /* The data format code */
-    int samplingRate;   /* The sampling rate */
-    int channelCount;   /* The number of channels */
-    char info[4];       /* Textual information relating to the sound. */
+    int magic;
+    int dataLocation;
+    int dataSize;
+    int dataFormat;
+    int samplingRate;
+    int channelCount;
+    char info[4];
 } SndSoundStruct;
 
 /* ensure we don't conflict with SoundKit defs */
@@ -90,8 +90,8 @@ typedef struct {
 #define SND_CFORMAT_ATC                 (2)
 
 /*!
-    @defined SND_RATE_CODEC
-    @discussion Sampling rate for voice quality CODECs.
+    @defined ATC_FRAME_SIZE
+    @discussion Size in samples of each frame used during ATC compression.
 */
 #define ATC_FRAME_SIZE (256)
 
