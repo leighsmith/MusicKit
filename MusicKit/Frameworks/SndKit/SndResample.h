@@ -7,7 +7,7 @@
  *
  */
 
-#import "_Sndstdefs.h"
+#import "SndStdefs.h"
 #import "SndFunctions.h"
 
 /* Conversion constants */
@@ -81,5 +81,6 @@ int resample(			/* number of output sample returned */
     int fastMode,		/* 0 = highest quality, slowest speed */
     BOOL largeFilter,		/* TRUE means use 65-tap FIR filter */
     char *filterFile,		/* NULL for internal filter, else filename */
-    const SndSoundStruct *inSnd		/* for data format etc */
+    const SndSoundStruct *inSnd,	/* for data format etc */
+    int resampleFrom		/* The sample number within the sound to begin the resampling from */
 );
