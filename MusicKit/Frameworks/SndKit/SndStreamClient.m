@@ -16,6 +16,7 @@
 #import "SndAudioBuffer.h"
 #import "SndStreamManager.h"
 #import "SndStreamClient.h" 
+#import "SndAudioBufferQueue.h"
 
 #define SNDSTREAMCLIENT_DEBUG 0
 
@@ -32,7 +33,7 @@ enum {
 
 + streamClient
 {
-    return [[SndStreamClient new] autorelease];
+    return [SndStreamClient new];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +43,12 @@ enum {
 - init
 {
     [super init];
+    
+    outputQueue = [SndAudioBufferQueue audioBufferQueueWithLength: 4];
+    inputQueue  = [SndAudioBufferQueue audioBufferQueueWithLength: 4];
 
+
+/*
     numOutputBuffers = 4;
     numInputBuffers  = 4;
     
@@ -58,7 +64,7 @@ enum {
       pendingInputBuffers        = [[NSMutableArray arrayWithCapacity: numInputBuffers] retain];
       processedInputBuffers      = [[NSMutableArray arrayWithCapacity: numInputBuffers] retain];
     }
-
+*/
     if (synthThreadLock == nil)
       synthThreadLock = [[NSLock new] retain];    
 
@@ -76,10 +82,10 @@ enum {
     
     bDelegateRespondsToOutputBufferSkipSelector = FALSE;
     bDelegateRespondsToInputBufferSkipSelector  = FALSE;
-    
+/*    
     [processedOutputBuffersLock lock];
     [processedOutputBuffersLock unlockWithCondition: SC_noData];
-    
+*/    
     return self;
 }
 
@@ -109,7 +115,10 @@ enum {
 - (void) dealloc
 {
     [self freeBufferMem];
-
+    
+    [outputQueue release];
+    [inputQueue  release];
+/*
     if (pendingOutputBuffersLock) {
         [pendingOutputBuffersLock   release];
         [pendingOutputBuffers       release];
@@ -122,7 +131,7 @@ enum {
         [processedInputBuffersLock  release];
         [processedInputBuffers      release];
     }
-    
+*/    
     if (processorChain)
         [processorChain release];
         
@@ -151,19 +160,24 @@ enum {
 
 - freeBufferMem
 {
+/*
     [pendingOutputBuffers removeAllObjects];
     [processedOutputBuffers removeAllObjects];
+*/ 
+    [outputQueue freeBuffers];
     if (synthOutputBuffer)
         [synthOutputBuffer release];
-    
+    synthOutputBuffer   = nil;
+/*    
     [pendingInputBuffers removeAllObjects];
     [processedInputBuffers removeAllObjects];
+*/
+    [inputQueue freeBuffers];
     if (synthInputBuffer)
         [synthInputBuffer  release];
+    synthInputBuffer    = nil;
         
     exposedOutputBuffer = nil;
-    synthOutputBuffer   = nil;
-    synthInputBuffer    = nil;
     
     return self;
 }
@@ -271,28 +285,32 @@ enum {
         [exposedOutputBuffer retain];
 
         if (needsInput) {
+            [inputQueue prepareQueueAsType: audioBufferQueue_typeInput withBufferPrototype: buff];
+/*
             int i;
-            [pendingOutputBuffersLock lock];
-            [pendingOutputBuffersLock unlockWithCondition: SC_noData];
-
+            [pendingInputBuffersLock lock];
+            [pendingInputBuffersLock unlockWithCondition: SC_noData];            
             [processedInputBuffersLock lock];
             for (i = 0; i < numInputBuffers; i++) 
               [processedInputBuffers addObject: [buff copy]];
             [processedInputBuffersLock unlockWithCondition: SC_hasData];
-
-#if SNDSTREAMCLIENT_DEBUG            
-            NSLog(@"Allocated %i input buffers",[processedInputBuffers count]);
-#endif            
+*/
         }
 
         if (generatesOutput) {
+            [outputQueue prepareQueueAsType: audioBufferQueue_typeOutput withBufferPrototype: buff];
+/*
             int i;
+            [processedOutputBuffersLock lock];
+            [processedOutputBuffersLock unlockWithCondition: SC_noData];            
             [pendingOutputBuffersLock lock];
             for (i = 0; i < numOutputBuffers - 1; i++)  
               [pendingOutputBuffers addObject: [buff copy]];
             [pendingOutputBuffersLock unlockWithCondition: SC_hasData];
-            
+*/            
         }
+        
+//        NSLog(@"OUTPUTQUEUE: %@",[outputQueue description]);
         
         [self prepareToStreamWithBuffer: buff];
         [self setManager: m];
@@ -327,14 +345,19 @@ enum {
     if (generatesOutput)
     {
 //        NSLog(@"startprocessing: stage1");
-      [processedOutputBuffersLock lock];
-      oc = [processedOutputBuffers count];
-      [processedOutputBuffersLock unlock];
-          
+
+        oc = [outputQueue processedBuffersCount];
+/*        
+        [processedOutputBuffersLock lock];
+        oc = [processedOutputBuffers count];
+        [processedOutputBuffersLock unlock];
+*/          
 #if SNDSTREAMCLIENT_DEBUG            
       fprintf(stderr,"[%s] time: %f Processed: %i Pending: %i \n", [clientName cString], t, oc, [pendingOutputBuffers count]);
 #endif          
+
       if (oc > 0) {
+/*
         [pendingOutputBuffersLock lock];
         [pendingOutputBuffers addObject: exposedOutputBuffer];            
         [exposedOutputBuffer release];
@@ -344,6 +367,12 @@ enum {
         exposedOutputBuffer = [[processedOutputBuffers objectAtIndex: 0] retain];
         [processedOutputBuffers removeObjectAtIndex: 0];
         [processedOutputBuffersLock unlock];
+*/
+
+        [outputQueue addPendingBuffer: exposedOutputBuffer];
+        [exposedOutputBuffer release];        
+        exposedOutputBuffer = [[outputQueue popNextProcessedBuffer] retain];
+
 //              NSLog(@"swapped buffers");
       }
       else if (bDelegateRespondsToOutputBufferSkipSelector)
@@ -359,12 +388,17 @@ enum {
       if (inB == nil)
         NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n");
       else {
+      /*
         [processedInputBuffersLock lock];
         ic = [processedInputBuffers count];
         [processedInputBuffersLock unlock];
-            
+      */
+        ic = [inputQueue processedBuffersCount];
+        
         if (ic) {
+/*
           SndAudioBuffer *inBloc = nil;
+
           [processedInputBuffersLock lock];
           inBloc = [[processedInputBuffers objectAtIndex: 0] retain];
           [processedInputBuffers removeObjectAtIndex: 0];
@@ -376,6 +410,12 @@ enum {
           [pendingInputBuffers addObject: inBloc];
           [inBloc release];
           [pendingInputBuffersLock unlockWithCondition: SC_hasData];
+*/
+
+          SndAudioBuffer *inBloc = [[inputQueue popNextProcessedBuffer] retain];
+          [inBloc copyData: inB];
+          [inputQueue addPendingBuffer: inBloc];                      
+          [inBloc release];
         }
         else if (bDelegateRespondsToInputBufferSkipSelector)
           [delegate inputBufferSkipped: self];
@@ -416,16 +456,22 @@ enum {
         [synthThreadLock lock];
 
         if (generatesOutput) {
+        /*
           [pendingOutputBuffersLock lockWhenCondition: SC_hasData];
           synthOutputBuffer = [[[pendingOutputBuffers objectAtIndex: 0] retain] zero];
           [pendingOutputBuffers removeObjectAtIndex: 0];
           [pendingOutputBuffersLock unlockWithCondition: ([pendingOutputBuffers count] > 0 ? SC_hasData : SC_noData)];
+        */
+          synthOutputBuffer = [[[outputQueue popNextPendingBuffer] retain] zero];
         }
         if (needsInput) {
+        /*
           [pendingInputBuffersLock lockWhenCondition: SC_hasData];
           synthInputBuffer = [[pendingInputBuffers objectAtIndex: 0] retain];
           [pendingInputBuffers removeObjectAtIndex: 0];
           [pendingInputBuffersLock unlockWithCondition: ([pendingInputBuffers count] > 0 ? SC_hasData : SC_noData)];
+        */
+          synthInputBuffer = [[inputQueue popNextPendingBuffer] retain];
         }
 //      NSLog(@"SYNTH THREAD: going to processBuffers\n");
                         
@@ -439,20 +485,29 @@ enum {
             processFinishedCallback(); // SKoT: should this be a selector, hmm hmm...?
             
         if (generatesOutput) {
+/*
           [processedOutputBuffersLock lock];
           [processedOutputBuffers addObject: synthOutputBuffer];
           clientNowTime = [self streamTime]  + [synthOutputBuffer duration] * [processedOutputBuffers count];
           [synthOutputBuffer release];    
           [processedOutputBuffersLock unlockWithCondition: SC_hasData];
+*/
+          clientNowTime = [self streamTime]  + [synthOutputBuffer duration] * [outputQueue processedBuffersCount];
+          [outputQueue addProcessedBuffer: synthOutputBuffer];
+          [synthOutputBuffer release];    
         }
         else
           clientNowTime += [synthOutputBuffer duration];
           
         if (needsInput) {
+/*        
           [processedInputBuffersLock lock];
           [processedInputBuffers addObject: synthInputBuffer];
           [synthInputBuffer release];    
           [processedInputBuffersLock unlockWithCondition: SC_hasData];
+*/          
+          [inputQueue addProcessedBuffer: synthInputBuffer];
+          [synthInputBuffer release];    
 
 //        fprintf(stderr,"[%s] time: %f Processed: %i Pending: %i \n", [clientName cString], clientNowTime, 
 //                        [processedOutputBuffers count], [pendingOutputBuffers count]);
@@ -658,12 +713,12 @@ enum {
 
 - (int) inputBufferCount
 {
-  return numInputBuffers;
+  return [inputQueue bufferCount];
 }
 
 - (int) outputBufferCount
 {
-  return numOutputBuffers;
+  return [outputQueue bufferCount];
 }
 
 - (BOOL) setInputBufferCount: (int) n
@@ -672,7 +727,7 @@ enum {
     return FALSE;
   if (n < 2)
     return FALSE;
-  numInputBuffers = n;
+  [inputQueue initQueueWithLength: n];
   return TRUE;
 }
 
@@ -682,7 +737,7 @@ enum {
     return FALSE;
   if (n < 2)
     return FALSE;
-  numOutputBuffers = n;
+  [outputQueue initQueueWithLength: n];
   return TRUE;
 }
 

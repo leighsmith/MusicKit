@@ -17,7 +17,8 @@
 
 #import <Foundation/Foundation.h>
 
-@class SndAudioBuffer;
+@class SndAudioBuffer; 
+@class SndAudioBufferQueue;
 @class SndStreamManager;
 @class SndAudioProcessorChain;
 
@@ -57,6 +58,7 @@
 /*! @var             synthInputBuffer */
     SndAudioBuffer  *synthInputBuffer;
 
+/*
     NSMutableArray  *pendingOutputBuffers;
     NSMutableArray  *processedOutputBuffers;
     NSConditionLock *pendingOutputBuffersLock;
@@ -68,7 +70,9 @@
     NSConditionLock *pendingInputBuffersLock;
     NSConditionLock *processedInputBuffersLock;
     int              numInputBuffers;
-
+*/
+    SndAudioBufferQueue *outputQueue;
+    SndAudioBufferQueue *inputQueue;
     
 /*! @var       synthThreadLock */
     NSConditionLock *synthThreadLock;
@@ -89,11 +93,15 @@
 /*! @var       nowTime */
     double     clientNowTime;
     
+/*! @var       clientName */
     NSString  *clientName;
     
 @private
+/*! @var       bDelegateRespondsToOutputBufferSkipSelector */
     BOOL       bDelegateRespondsToOutputBufferSkipSelector;
+/*! @var       bDelegateRespondsToInputBufferSkipSelector */
     BOOL       bDelegateRespondsToInputBufferSkipSelector;
+/*! @var       bDisconnect */
     BOOL       bDisconnect;
 }
 
