@@ -13,7 +13,7 @@
 @implementation SndAudioProcessorInspector
  
 ////////////////////////////////////////////////////////////////////////////////
-//
+// init
 ////////////////////////////////////////////////////////////////////////////////
 
 - init
@@ -21,30 +21,25 @@
   id w;
   self = [super init];
 
-//  if ( !heapSizeField ) {
-    [NSBundle loadNibNamed:@"SndAudioProcessorInspector" owner:self];
-    w = [processorName window];
-    [w makeKeyAndOrderFront:self];
-//    [parameterBrowser setDelegate: self];
-    
-//  }
-//  [self setHeapSize:[[NSUserDefaults standardUserDefaults] integerForKey:@"HeapSize"]];
-//  [objcFlag setIntValue:[[NSUserDefaults standardUserDefaults] boolForKey:@"UseObjcInterpreter"]];
-
-//  [[heapSizeField window] makeKeyAndOrderFront:self];
-
-    {
-      NSArray *tableColumns = [parameterTableView tableColumns];
-      id tcN = [tableColumns objectAtIndex: 0];
-      id tcV = [tableColumns objectAtIndex: 1];
-      [tcN setIdentifier: @"Name"];
-      [tcN setEditable: FALSE];
-      [tcV setIdentifier: @"Value"];
-      [tcV setEditable: FALSE];
-    }
-    [sndArchView setDelegate: self];
-    return self;
+  [NSBundle loadNibNamed:@"SndAudioProcessorInspector" owner:self];
+  w = [processorName window];
+  [w makeKeyAndOrderFront:self];
+  {
+    NSArray *tableColumns = [parameterTableView tableColumns];
+    id tcN = [tableColumns objectAtIndex: 0];
+    id tcV = [tableColumns objectAtIndex: 1];
+    [tcN setIdentifier: @"Name"];
+    [tcN setEditable: FALSE];
+    [tcV setIdentifier: @"Value"];
+    [tcV setEditable: FALSE];
+  }
+  [sndArchView setDelegate: self];
+  return self;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// initWithAudioProcessor:
+////////////////////////////////////////////////////////////////////////////////
 
 - initWithAudioProcessor: (SndAudioProcessor*) anAudProc
 {
@@ -54,20 +49,18 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// dealloc
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) dealloc
 {
   if (theAudProc != nil)
     [theAudProc release];
-  if (paramDictionary != nil)
-    [paramDictionary release];
   [super dealloc];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// setAudioProcessor:
 ////////////////////////////////////////////////////////////////////////////////
 
 - setAudioProcessor: (SndAudioProcessor*) anAudProc
@@ -81,16 +74,13 @@
   [parameterValueSilder setFloatValue: [theAudProc paramValue: 0]];
   [parameterTableView setDataSource: self];
 
-  if (paramDictionary != nil)
-    [paramDictionary release];
-  paramDictionary = nil;
   [parameterTableView reloadData];
   [processorActive setIntValue: [theAudProc isActive]];
   return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// onProcessorActive:
 ////////////////////////////////////////////////////////////////////////////////
 
 - onProcessorActive: (id) sender
@@ -100,7 +90,7 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// onParameterValueSlider:
 ////////////////////////////////////////////////////////////////////////////////
 
 - onParameterValueSlider: (id) sender
@@ -109,12 +99,13 @@
   [theAudProc setParam: r toValue: [sender doubleValue]];
   [parameterValueSilder setDoubleValue: [theAudProc paramValue: r]];
 
-  if (paramDictionary != nil)
-    [paramDictionary release];
-  paramDictionary = nil;
   [parameterTableView reloadData];
   return self;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// tableView:didClickTableColumn:
+////////////////////////////////////////////////////////////////////////////////
 
 - (void)tableView:(NSTableView*)tableView didClickTableColumn:(NSTableColumn *)tableColumn
 {
@@ -125,9 +116,14 @@
   }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// parameterTableAction:
+////////////////////////////////////////////////////////////////////////////////
+
 - parameterTableAction: (id) sender
 {
   int r = [parameterTableView clickedRow];
+  printf("row: %i\n",r);
   if (theAudProc != nil) {
     [parameterValueSilder setFloatValue:  [theAudProc paramValue: r]];
     [parameterValueSilder setNeedsDisplay: TRUE];
@@ -135,7 +131,11 @@
   return self;
 }
 
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView
+////////////////////////////////////////////////////////////////////////////////
+// numberOfRowsInTableView:
+////////////////////////////////////////////////////////////////////////////////
+
+- (int) numberOfRowsInTableView: (NSTableView *) aTableView
 {
   if (theAudProc != nil)
     return [theAudProc paramCount];
@@ -143,18 +143,19 @@
     return 0;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// tableView:objectValueForTableColumn:row:
+////////////////////////////////////////////////////////////////////////////////
+
 - (id) tableView: (NSTableView*) aTableView objectValueForTableColumn: (NSTableColumn*) aTableColumn
              row: (int) rowIndex
 {
-  if (paramDictionary == nil) {
-    paramDictionary = [[theAudProc paramDictionary] retain];
-  }
   if ([[aTableColumn identifier] isEqualToString: @"Name"]) {
     
-      return [[paramDictionary allKeys] objectAtIndex: rowIndex];
+      return [theAudProc paramName: rowIndex];
   }
   else {
-    id obj = [paramDictionary objectForKey: [[paramDictionary allKeys] objectAtIndex: rowIndex]];
+    id obj = [theAudProc paramObjectForIndex: rowIndex];
 
     if ([obj isKindOfClass: [NSString class]]) {
       return obj;
@@ -178,6 +179,10 @@
   NSLog(@"SndAudioProcessor param type not supported yet - code it!\n");
   return nil;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
 
 - didSelectObject: (id) sndAudioArchObject
 {

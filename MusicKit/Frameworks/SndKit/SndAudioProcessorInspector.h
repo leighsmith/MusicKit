@@ -18,8 +18,6 @@
   id processorActive;
   id processorName;
   id sndArchView;
-  NSDictionary *paramDictionary;
-  
   SndAudioProcessor *theAudProc; 
 }
 

@@ -227,11 +227,15 @@
   return self;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// paramObjectForIndex:
+////////////////////////////////////////////////////////////////////////////////
+
 - (id) paramObjectForIndex: (int) i
 {
   float    f = [self paramValue: i];
   NSValue *v = [NSValue value: &f withObjCType: @encode(float)];
-  return  v;
+  return   v;
 }
 
 
