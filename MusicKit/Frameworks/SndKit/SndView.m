@@ -605,21 +605,21 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
     switch (type) {
         case SND_FORMAT_LINEAR_8:
-            maxAmp = 127;
+            maxAmp = 128;
             sampleSize = 1;
             break;
         case SND_FORMAT_LINEAR_24:
         case SND_FORMAT_DSP_DATA_24:
-            maxAmp = (1 << 23) - 1;
+            maxAmp = 2 ^ 23;
             sampleSize = 3;
             break;
         case SND_FORMAT_LINEAR_32:
         case SND_FORMAT_DSP_DATA_32:
-            maxAmp = (1 << 31) - 1;
+            maxAmp = 2 ^ 31;
             sampleSize = 4;
 	    break;
         case SND_FORMAT_MULAW_8:
-            maxAmp = 32767;
+            maxAmp = 32768;
             sampleSize = 1;
 	    break;
         case SND_FORMAT_LINEAR_16:
@@ -628,7 +628,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
         case SND_FORMAT_COMPRESSED_EMPHASIZED:
         case SND_FORMAT_DSP_DATA_16:
         default:
-            maxAmp = 32767;
+            maxAmp = 32768;
             sampleSize = 2;
             break;
         case SND_FORMAT_FLOAT:
