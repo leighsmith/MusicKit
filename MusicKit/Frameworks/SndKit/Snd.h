@@ -109,6 +109,8 @@ architecture, as described in the <b>SndStruct</b> header.
 
 /*! @var performancesArray An array of all active AND pending performances of this Snd */
     NSMutableArray *performancesArray;
+/*! @var performancesArrayLock An NSLock to protect the performancesArray */
+    NSLock *performancesArrayLock;
     
 @public
 /*! @var tag A unique identifier tag for the Snd */
@@ -300,6 +302,8 @@ architecture, as described in the <b>SndStruct</b> header.
 */
 - initFromPasteboard:(NSPasteboard *)thePboard;
 
+- initWithFormat: (int) format channels: (int) channels frames: (int) frames samplingRate: (int) samplingRate;
+
 - (void)dealloc;
 
 /*!
@@ -471,6 +475,9 @@ architecture, as described in the <b>SndStruct</b> header.
 */
 - (SndPerformance *) playInFuture: (double) inSeconds beginSample: (int) begin sampleCount: (int) count;
 
+- (SndPerformance *) playInFuture: (double) inSeconds
+           startPositionInSeconds: (double) startPos
+                durationInSeconds: (double) d; 
 /*!
     @method   playAtTimeInSeconds:withDurationInSeconds:
     @abstract Begin playback at a cerain absolute stream time, for a certain duration.
@@ -481,13 +488,13 @@ architecture, as described in the <b>SndStruct</b> header.
 - (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d;
 
 /*!
-    @method play:beginSample:sampleCount:
-    @abstract Begin playback now, over a region of the sound.
-    @discussion This is a deprecated method for SoundKit compatability. 
-                You should use playInFuture:beginSample:sampleCount: instead.
-    @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
-    @param count The number of samples to play. Use sampleCount to play the entire sound.
-    @result Returns self
+   @method play:beginSample:sampleCount:
+   @abstract Begin playback now, over a region of the sound.
+   @discussion This is a deprecated method for SoundKit compatability.
+   You should use playInFuture:beginSample:sampleCount: instead.
+   @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
+   @param count The number of samples to play. Use sampleCount to play the entire sound.
+   @result Returns self
 */
 - play:(id) sender beginSample:(int) begin sampleCount:(int) count;
 

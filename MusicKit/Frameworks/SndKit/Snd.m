@@ -240,8 +240,40 @@ static int ioTags = 1000;
     _scratchSize = 0;
     tag = 0;
 
-    performancesArray = [[NSMutableArray alloc] init];
+    if (performancesArray == nil) {
+      performancesArray     = [[NSMutableArray alloc] init];
+      performancesArrayLock = [[NSLock alloc] init];
+    }
+    else
+      [performancesArray removeAllObjects];
+    
     return [super init];
+}
+
+- initWithFormat: (int) format channels: (int) channels frames: (int) frames samplingRate: (int) samplingRate
+{
+  self = [self init];
+  if (soundStruct == NULL)
+    if (!(soundStruct = malloc(sizeof(SndSoundStruct))))
+      [[NSException exceptionWithName:@"Sound Error"
+                               reason:@"Can't allocate memory for Snd class"
+                             userInfo:nil] raise];
+
+  soundStruct->magic        = SND_MAGIC; // _why_ do we still have bloody file format specific data in Snd???? Grrrr.
+  soundStruct->dataLocation = NULL; 
+  soundStruct->dataSize     = 0;
+  soundStruct->dataFormat   = format;
+  soundStruct->samplingRate = samplingRate;
+  soundStruct->channelCount = channels;
+
+  [self setDataSize: SndSamplesToBytes(frames, channels, format)
+         dataFormat: format
+       samplingRate: samplingRate
+       channelCount: channels
+           infoSize: 0];
+    
+  
+  return self;
 }
 
 - initFromSoundfile:(NSString *)filename
@@ -284,7 +316,8 @@ static int ioTags = 1000;
     }
     if (soundStruct) SndFree(soundStruct);
     if (_scratchSnd) SndFree(_scratchSnd);
-    [performancesArray release];
+    [performancesArray     release];
+    [performancesArrayLock release];
     [super dealloc];
 }
 
@@ -696,12 +729,24 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
                                       endAtIndex: playEnd];
 }
 
+- (SndPerformance *) playInFuture: (double) inSeconds
+           startPositionInSeconds: (double) startPos
+                durationInSeconds: (double) d
+{
+  double sr = [self samplingRate];
+  return [self playInFuture: inSeconds
+                beginSample: startPos * sr
+                sampleCount: d * sr];
+}
+
+
 - (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d
 {
 //  NSLog(@"Snd::playAtTimeInSeconds: %f", t);
-    return [[SndPlayer defaultSndPlayer] playSnd: self
-                                 atTimeInSeconds: t
-                           withDurationInSeconds: d];  
+  return [[SndPlayer defaultSndPlayer] playSnd: self
+                               atTimeInSeconds: t
+                        startPositionInSeconds: 0
+                             durationInSeconds: d];  
 }
 
 - (SndPerformance *) playInFuture: (double) inSeconds 
@@ -848,9 +893,12 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
         status = SND_SoundStopped;
         [self tellDelegate: @selector(didRecord:)];	
     }
-    if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
+  // SKoT: I commented this out as the player may have PENDING performances to
+  // deal with as well - in wich case the SND won't have a playing status.
+  // Basically yet another reason to move playing status stuff out of the snd obj.
+//    if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
         [[SndPlayer defaultSndPlayer] stopSnd: self withTimeOffset: inSeconds];
-    }
+//    }
 }
 
 - (void)stop:(id)sender
@@ -887,22 +935,30 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - pause:sender
 {
-    return self;
+  [performancesArrayLock lock];
+  [performancesArray makeObjectsPerformSelector: @selector(pause)];
+  [performancesArrayLock unlock];
+  return self;
 }
 
 - (int)pause
 {
-    return SND_ERR_NOT_IMPLEMENTED;
+  [self pause: self];
+  return SND_ERR_NONE;
 }
 
 - resume:sender
 {
-    return self;
+  [performancesArrayLock lock];
+  [performancesArray makeObjectsPerformSelector: @selector(resume)];
+  [performancesArrayLock unlock];
+  return self;
 }
 
 - (int)resume;
 {
-    return SND_ERR_NOT_IMPLEMENTED;
+  [self resume:self];
+  return SND_ERR_NONE;
 }
 
 - (int)readSoundfile:(NSString *)filename
@@ -1331,13 +1387,17 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - addPerformance: (SndPerformance*) p
 {
+  [performancesArrayLock lock];
   [performancesArray addObject: p];
+  [performancesArrayLock unlock];
   return self;
 }
 
 - removePerformance: (SndPerformance*) p
 {
+  [performancesArrayLock lock];
   [performancesArray removeObject: p];
+  [performancesArrayLock unlock];
   return self;
 }
 
