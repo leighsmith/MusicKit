@@ -32,8 +32,10 @@
 
 #define SNDMP3_DEBUG_READING 0
 #define SNDMP3_DEBUG 0
+#define SNDMP3_DEBUG_FRAME_COUNTING 0
+
 // This defines that we decode the entire MP3 into memory (yikes!) then fetch from there.
-#define DECODE_ENTIRE_INTO_MEMORY 1
+#define DECODE_ENTIRE_INTO_MEMORY 0
 
 #define MP3_BITRATE_BAD  -1
 #define MP3_BITRATE_FREE -2
@@ -120,10 +122,9 @@ static const char *const genre_names[] =
 
 @implementation SndMP3
 
-+ (NSArray *) soundFileExtensions
-{
-  return [[super soundFileExtensions] arrayByAddingObject: @"mp3"];
-}
+// YES to use separate threaded predecoder (more memory hungry), NO to decode on the fly (more processor hungry)
+//static BOOL preDecode = YES; 
+static BOOL preDecode = DECODE_ENTIRE_INTO_MEMORY;
 
 static int bitrateLookupTable[16][6] = {
   { MP3_BITRATE_BAD, MP3_BITRATE_BAD, MP3_BITRATE_BAD, MP3_BITRATE_BAD, MP3_BITRATE_BAD, MP3_BITRATE_BAD },
@@ -144,13 +145,28 @@ static int bitrateLookupTable[16][6] = {
   { MP3_BITRATE_FREE, MP3_BITRATE_FREE, MP3_BITRATE_FREE, MP3_BITRATE_FREE, MP3_BITRATE_FREE, MP3_BITRATE_FREE }
 };
 
++ (NSArray *) soundFileExtensions
+{
+    return [[super soundFileExtensions] arrayByAddingObject: @"mp3"];
+}
+
++ (void) setPreDecode: (BOOL) yesOrNo
+{
+    // Set the class to use a separate threaded predecoder if YES, if NO, decode MP3 data when reading it.
+    preDecode = yesOrNo;
+}
+
++ (BOOL) preDecode
+{
+    return preDecode;
+}
+
 - (void) checkID3Tag: (NSData*) _mp3Data
 {
   const unsigned char *pData = [_mp3Data bytes];
   long length = [_mp3Data length];
 
-  if (length >= 128 &&
-      strcmp(pData + length - 128, "TAG") == 0) {
+  if (length >= 128 && strcmp(pData + length - 128, "TAG") == 0) {
     const char *id3base = pData + length - 128;
     const char *title   = id3base + 3;
     const char *artist  = title  + 30;
@@ -174,11 +190,46 @@ static int bitrateLookupTable[16][6] = {
   }
 }
 
+static unsigned long getFrameHeaderAt(const unsigned char *bitstream)
+{
+    return (unsigned long) (bitstream[0] << 24) + (bitstream[1] << 16) + (bitstream[2] << 8) + bitstream[3];
+}
+
+// Return -1 on error, otherwise size of frame in bytes.
+- (int) frameSizeOfHeader:  (unsigned long) frameHeader
+{
+    int frameSize, samplingRate = [self samplingRate];
+    float framesPerSecond;
+    int layer, bitrateIndex, version = 0, bitrate, samplesPerFrame = SND_MPEGV1_SAMPLES_PER_FRAME;
+
+    if (!((frameHeader >> 21) & 0x07FF))
+        return -1;
+
+    switch ((frameHeader >> 19) & 0x03) {
+	case 0: 
+	case 1: break;
+	case 2: version = 2; samplesPerFrame = SND_MPEGV2_SAMPLES_PER_FRAME; break;
+	case 3: version = 1; break;
+    }
+    layer =  4 - ((frameHeader >> 17) & 0x03);
+
+    bitrateIndex = (frameHeader >> 12) & 0xF;
+    bitrate = bitrateLookupTable[bitrateIndex][(version - 1) * 3 + layer - 1];
+    //NSLog(@"Samples per frame: %i\n",samplesPerFrame);
+    framesPerSecond = (float) samplingRate / (float) samplesPerFrame;
+    //NSLog(@"FramesPerSecond: %f\n", framesPerSecond);
+
+    // 125 = 100 / 8, rounded up.
+    frameSize = (bitrate * 125 / framesPerSecond) + 0.5;
+    NSLog(@"FrameSize: %i\n", frameSize);
+    return frameSize;
+}
+
 - (void) dumpFrameHeader: (unsigned long) frameHeader
 {
-    int frameSize, samplingRate = 44100;
+    int frameSize, samplingRate = [self samplingRate];
     float framesPerSecond;
-    int layer, bitrateIndex, version = 0, bitrate, samplesPerFrame = 1152;
+    int layer, bitrateIndex, version = 0, bitrate, samplesPerFrame = SND_MPEGV1_SAMPLES_PER_FRAME;
 
     if ((frameHeader >> 21) & 0x07FF)
 	NSLog(@"frame sync is ok\n");
@@ -189,7 +240,7 @@ static int bitrateLookupTable[16][6] = {
     switch ((frameHeader >> 19) & 0x03) {
 	case 0: NSLog(@"MPEG 2.5\n"); break;
 	case 1: NSLog(@"reserved\n"); break;
-	case 2: NSLog(@"MPEG v2\n"); version = 2; samplesPerFrame = 576; break;
+	case 2: NSLog(@"MPEG v2\n"); version = 2; samplesPerFrame = SND_MPEGV2_SAMPLES_PER_FRAME; break;
 	case 3: NSLog(@"MPEG v1\n"); version = 1; break;
     }
     layer =  4 - ((frameHeader >> 17) & 0x03);
@@ -204,7 +255,7 @@ static int bitrateLookupTable[16][6] = {
     NSLog(@"Protected by CRC: %s\n", (frameHeader >> 16) & 0x1 ? "no" : "yes");
 
     bitrateIndex = (frameHeader >> 12) & 0xF;
-    bitrate = bitrateLookupTable[bitrateIndex][(version-1)*3 + layer-1];
+    bitrate = bitrateLookupTable[bitrateIndex][(version - 1) * 3 + layer - 1];
     NSLog(@"Bitrate: %i (index: %i)\n", bitrate, bitrateIndex);
 
     NSLog(@"Sampling frequency index: %li\n", (frameHeader >> 10) & 0x3);
@@ -222,38 +273,38 @@ static int bitrateLookupTable[16][6] = {
     NSLog(@"FrameSize: %i\n", frameSize);
 }    
 
-- (int) findMP3FrameHeadersInData: (NSData *) mp3DataToSearch
-	    storeFrameLocationsAt: (long **) ppFrameLocations
-			    count: (long *) numOfFrameLocations
+// Creates the encodedFrameLocations array and it's count.
+- (int) findFrameHeadersInBitstream: (NSData *) mp3DataToSearch
 {
-    int layer, bitrateIndex, version = 0, bitrate = 0, samplesPerFrame = 1152;
-    int frameSize, samplingRate = 44100;
+    int layer, bitrateIndex, version = 0, bitrate = 0, samplesPerFrame = SND_MPEGV1_SAMPLES_PER_FRAME;
+    int frameSize, samplingRate = [self samplingRate];
     float framesPerSecond;
-    const unsigned char *pData = [mp3DataToSearch bytes];
-    long mp3Length = [mp3DataToSearch length];
-    long maxFrameLocationsCount = 512;
+    const unsigned char *bitstream = [mp3DataToSearch bytes];
+    long mp3LengthInBytes = [mp3DataToSearch length];
+    long maxencodedFrameLocationsCount = 512;  // mp3LengthInBytes/ length
     long  position = 0;
 
-    *numOfFrameLocations = 0;
+    encodedFrameLocationsCount = 0;
 
-    if (*ppFrameLocations)
-	free(*ppFrameLocations);
+    if (encodedFrameLocations)
+	free(encodedFrameLocations);
 
-    if((*ppFrameLocations = (long*) malloc(sizeof(long) * maxFrameLocationsCount)) == NULL) {
+    if((encodedFrameLocations = (long *) malloc(sizeof(long) * maxencodedFrameLocationsCount)) == NULL) {
 	NSLog(@"Unable to allocate memory for frame locations\n");
 	return -1;
     }
 	
     // ok, we are going looking for frame headers:
-    // float time;
     // unsigned char *pCh = (unsigned char*) &frameHeader;
 
-    while (position < mp3Length) {
-	while (pData[position] != (unsigned char) 0xFF && (position < mp3Length)) {
+    while (position < mp3LengthInBytes) {
+        // Scan until we find a 0xFF, followed by the top three bits (0xE0) of the following byte set.
+	while (bitstream[position] != (unsigned char) 0xFF && (position < mp3LengthInBytes)) {
 	    position++;
 	}
-	if (position < mp3Length-1 && (pData[position+1] & 0xE0) == 0xE0) {
-	    unsigned long frameHeader = (pData[position] << 24) + (pData[position+1] << 16) + (pData[position+2] << 8) + pData[position+3];
+	if (position < mp3LengthInBytes - 1 && (bitstream[position+1] & 0xE0) == 0xE0) {
+            unsigned long frameHeader = getFrameHeaderAt(bitstream + position);
+
 	    if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowInputFileFormat"]) {
 		[self dumpFrameHeader: frameHeader];
 	    }
@@ -261,20 +312,23 @@ static int bitrateLookupTable[16][6] = {
 	    position += 4;
 
 	    if (((frameHeader >> 24) & 0xE0) == 0xE0) {
-		// if (frameCount == 0) { //
 
 		switch ((frameHeader >> 19) & 0x03) {
-		    case 0: //NSLog(@"MPEG 2.5\n");
+		    case 0:
+                        //NSLog(@"MPEG 2.5\n");
 			break;
-		    case 1: //NSLog(@"reserved\n");
+		    case 1:
+                        //NSLog(@"reserved\n");
 			break;
-		    case 2: //NSLog(@"MPEG v2\n");
+		    case 2:
+                        //NSLog(@"MPEG v2\n");
 			version = 2;
-			samplesPerFrame = 576;
+			samplesPerFrame = SND_MPEGV2_SAMPLES_PER_FRAME;
 			break;
-		    case 3: // NSLog(@"MPEG v1\n");
+		    case 3:
+                        //NSLog(@"MPEG v1\n");
 			version = 1;
-			samplesPerFrame = 1152;
+			samplesPerFrame = SND_MPEGV1_SAMPLES_PER_FRAME;
 			break;
 		}
 		layer =  4 - ((frameHeader >> 17) & 0x03);
@@ -288,48 +342,52 @@ static int bitrateLookupTable[16][6] = {
 			continue;
 		    }
 		    if (bitrateIndex != MP3_BITRATEINDEX_FREE) { // free
-			int formatIndex = (version-1)*3 + layer-1;
+			int formatIndex = (version - 1) * 3 + layer - 1;
 			bitrate = bitrateLookupTable[bitrateIndex][formatIndex];
 		    }
 		    framesPerSecond = (float) samplingRate / (float) samplesPerFrame;
 		    frameSize = bitrate * 125 / framesPerSecond; // 125 = 100 / 8
-		    // time = (float) (*numOfFrameLocations) * samplesPerFrame / (float) samplingRate;
-	            // NSLog(@"[Frame: %li] Header found at: %li  (t:%.2f sam:%li)\n",
-                    //        (*numOfFrameLocations), position - 4, time, ((*numOfFrameLocations) - 1) * samplesPerFrame);
-
-		    if ((*numOfFrameLocations) == maxFrameLocationsCount) {
-			maxFrameLocationsCount <<= 1;
-			(*ppFrameLocations) = (long*) realloc((*ppFrameLocations), sizeof(long) * maxFrameLocationsCount);
-			if(*ppFrameLocations == NULL) {
-			    NSLog(@"Unable to reallocate frame location memory to %ld longs\n", maxFrameLocationsCount);
+#if SNDMP3_DEBUG_FRAME_COUNTING
+                    {
+                        float time = (float) encodedFrameLocationsCount * samplesPerFrame / (float) samplingRate;
+                        NSLog(@"[Frame: %li] Header found at: %li  (t:%.2f sample:%li)\n",
+                                encodedFrameLocationsCount, position - 4, time, (encodedFrameLocationsCount - 1) * samplesPerFrame);
+                    }
+#endif
+                    // Each time we exceed the maximum frame locations count, we double that number and reallocate.
+		    if (encodedFrameLocationsCount == maxencodedFrameLocationsCount) {
+			maxencodedFrameLocationsCount <<= 1;
+			encodedFrameLocations = (long *) realloc(encodedFrameLocations, sizeof(long) * maxencodedFrameLocationsCount);
+			if(encodedFrameLocations == NULL) {
+			    NSLog(@"Unable to reallocate frame location memory to %ld longs\n", maxencodedFrameLocationsCount);
 			    return -1;
 			}
 		    }
-		    (*ppFrameLocations)[(*numOfFrameLocations)] = position;
-		    (*numOfFrameLocations)++;
+		    encodedFrameLocations[encodedFrameLocationsCount] = position - 4;
+		    encodedFrameLocationsCount++;
 		    position += frameSize - 4;
 		}
 	    }
 	}
 	else {
-	    position++;
+	    position++;  // byte following 0xFF didn't have it's top three bits set, skip over and continue.
 	}
     }
     // condense allocated memory to just the frame locations found...
-    *ppFrameLocations = (long*) realloc((*ppFrameLocations), sizeof(long) * (*numOfFrameLocations));
-    if(*ppFrameLocations == NULL) {
-	NSLog(@"Unable to reallocate frame location memory to %ld longs\n", *numOfFrameLocations);
+    encodedFrameLocations = (long *) realloc(encodedFrameLocations, sizeof(long) * encodedFrameLocationsCount);
+    if(encodedFrameLocations == NULL) {
+	NSLog(@"Unable to reallocate frame location memory to %ld longs\n", encodedFrameLocationsCount);
 	return -1;
     }
     
-    /*
+#if SNDMP3_DEBUG_FRAME_COUNTING
      {
 	 long i;
-	 for (i = 0; i < *numOfFrameLocations; i++) {
-	     NSLog(@"frame: %04li location: %07li\n", i, (*ppFrameLocations)[i]);
+	 for (i = 0; i < encodedFrameLocationsCount; i++) {
+	     NSLog(@"frame: %04li location: %07li\n", i, encodedFrameLocations[i]);
 	 }
      }
-     */
+#endif
     return 0;
 }
 
@@ -337,46 +395,49 @@ static int bitrateLookupTable[16][6] = {
 // Snd overrides required for simple playback operation
 ////////////////////////////////////////////////////////////////////////////////
 
++ (void) initialize
+{
+    decoderLock = [NSLock new];
+}
+
 - init
 {
-  self = [super init];
-  if (self) {
-    frameLocations = NULL;
-    frameLocationsCount = 0;
-    if (decoderLock == nil)
-      decoderLock = [NSLock new];
-    pcmDataLock = [NSLock new];
-
-  }
-  return self;
+    self = [super init];
+    if (self) {
+        encodedFrameLocations = NULL;
+        encodedFrameLocationsCount = 0;
+        currentMP3FrameID = -1;
+        pcmDataLock = [NSLock new];
+    }
+    return self;
 }
 
 - (long) lengthInSampleFrames
 {
-  // [pcmData length] / (sizeof(short) * 2);
-  return lengthInSampleFrames;
+    // [pcmData length] / (sizeof(short) * 2);
+    return lengthInSampleFrames;
 }
 
 - (double) duration
 {
-  return duration;
-  //  return [self lengthInSampleFrames] / [self samplingRate];
+    return duration;
+    //  return [self lengthInSampleFrames] / [self samplingRate];
 }
 
 - (NSString*) description
 {
-  return [NSString stringWithFormat: @"%@ with duration: %.2f samples: %i sampleRate: %.2f channels: %i",
-    [super description], [self duration], [self lengthInSampleFrames], [self samplingRate], [self channelCount]];
+    return [NSString stringWithFormat: @"%@ with duration: %.2f samples: %i sampleRate: %.2f channels: %i",
+        [super description], [self duration], [self lengthInSampleFrames], [self samplingRate], [self channelCount]];
 }
 
 - (double) samplingRate
 {
-  return 44100.0;
+    return 44100.0;
 }
 
 - (int) channelCount
 {
-  return 2;
+    return 2;
 }
 
 // We completely spoof this for now. This will cause us problems if the native format is anything other
@@ -385,30 +446,35 @@ static int bitrateLookupTable[16][6] = {
 - (int) convertToNativeFormat
 {
     SndFormat nativeFormat = [Snd nativeFormat];
-    
+
+#if 0    
     if(nativeFormat.sampleRate != [self samplingRate] || nativeFormat.channelCount != [self channelCount]) {
 	NSLog(@"MP3 file sample rate %lf, channels %d not of native format sample rate %lf, channels %d\n",
 	    [self samplingRate], [self channelCount], nativeFormat.sampleRate, nativeFormat.channelCount);
 	return SND_ERR_UNKNOWN;
     }
+#else
+    if(nativeFormat.sampleRate != [self samplingRate]) {
+	NSLog(@"MP3 file sample rate %lf not native format sample rate %lf\n", [self samplingRate], nativeFormat.sampleRate);
+	return SND_ERR_UNKNOWN;
+    }
+    else {
+        return [super convertToNativeFormat];
+    }
+#endif
+    
     return SND_ERR_NONE;
 }
 
 - (void) dealloc
 {
-  if (mp3Data) {
     [mp3Data release];
     mp3Data = nil;
-  }
-  if (pcmData) {
     [pcmData release];
     pcmData = nil;
-  }
-  if (pcmDataLock) {
     [pcmDataLock release];
     pcmDataLock = nil;
-  }
-  [super dealloc];
+    [super dealloc];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -419,7 +485,7 @@ static int bitrateLookupTable[16][6] = {
 {
   NSAutoreleasePool *localPool = [NSAutoreleasePool new];
 
-  int growSize = 44100 * 4;
+  int growSize = [self samplingRate] * 4;
   int pcmSize  = growSize;
   short pcm_l[10000], pcm_r[10000]; // conversion buffers
   long mp3DataPos    = 0;
@@ -435,8 +501,8 @@ static int bitrateLookupTable[16][6] = {
 
   bDecoding = TRUE;
 
-  requestedStartSample = [job startTime] * 44100;
-  requestedSampleCount = [job duration]  * 44100;
+  requestedStartSample = [job startTime] * [self samplingRate];
+  requestedSampleCount = [job duration]  * [self samplingRate];
 
   samplesToStartIndex = requestedStartSample;
 
@@ -452,6 +518,7 @@ static int bitrateLookupTable[16][6] = {
       mp3FeedAmount = mp3DataLength - mp3DataPos;
 
     sams_created = lame_decode1(mp3DataBytes + mp3DataPos, mp3FeedAmount, pcm_l, pcm_r);
+    // NSLog(@"sams_created = %d\n", sams_created);
     mp3DataPos += mp3FeedAmount;
 
     if (sams_created > 0) {
@@ -486,16 +553,16 @@ static int bitrateLookupTable[16][6] = {
     decodedSampledCount += sams_created;
     iterations++;
 #if SNDMP3_DEBUG_READING
-    NSLog(@"[%04li] Decoded: %li/%li\n",iterations,decodedSampledCount,lengthInSampleFrames);
+    NSLog(@"[%04li] Decoded: %li/%li\n", iterations, decodedSampledCount, lengthInSampleFrames);
 #endif
     if (samplesRecovered >= requestedSampleCount)
       break;
   }
   lengthInSampleFrames = samplesRecovered;
-  duration    = lengthInSampleFrames / 44100.0;
+  duration    = lengthInSampleFrames / [self samplingRate];
   [pcmDataLock lock];
   [pcmData setLength: lengthInSampleFrames * sizeof(short) * 2];
-  duration = lengthInSampleFrames / 44100.0;
+  duration = lengthInSampleFrames / [self samplingRate];
   [pcmDataLock unlock];
 
   [decoderLock unlock];
@@ -526,12 +593,10 @@ static int bitrateLookupTable[16][6] = {
     mp3Data = [[NSData alloc] initWithContentsOfURL: soundURL];
     if(mp3Data != nil) {
         [self checkID3Tag: mp3Data];
-        [self findMP3FrameHeadersInData: mp3Data
-                  storeFrameLocationsAt: &frameLocations
-                                  count: &frameLocationsCount];
+        [self findFrameHeadersInBitstream: mp3Data];
       
-        lengthInSampleFrames = frameLocationsCount * 1152.0;
-        duration    = lengthInSampleFrames / 44100.0;
+        lengthInSampleFrames = encodedFrameLocationsCount * SND_MPEGV1_SAMPLES_PER_FRAME;
+        duration = lengthInSampleFrames / [self samplingRate];
     }
     [localPool release];
     return mp3Data != nil;
@@ -541,26 +606,31 @@ static int bitrateLookupTable[16][6] = {
 // readSoundURL:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (int) readSoundURL: (NSURL*) soundURL
+- (int) readSoundURL: (NSURL *) soundURL
 {
     SndMP3DecodeJob *job = nil;
   
     if(![self loadMP3DataWithURL: soundURL])
         return SND_ERR_CANNOT_OPEN;
 #if SNDMP3_DEBUG_READING
-    NSLog(@"Found %li frames\n", frameLocationsCount);
+    NSLog(@"Found %li frames\n", encodedFrameLocationsCount);
 #endif
 
-    job = [[SndMP3DecodeJob alloc] initWithStartTime: 0.0
-                                            duration: duration];
-
-    [pcmDataLock lock];
-    [NSThread detachNewThreadSelector: @selector(decodeThread:)
-                             toTarget: self
-                           withObject: job];
-    [pcmDataLock lock];
-    [pcmDataLock unlock];
-    [job autorelease];
+    if(preDecode) {
+        job = [[SndMP3DecodeJob alloc] initWithStartTime: 0.0
+                                                duration: duration];
+    
+        [pcmDataLock lock];
+        [NSThread detachNewThreadSelector: @selector(decodeThread:)
+                                 toTarget: self
+                               withObject: job];
+        [pcmDataLock lock];
+        [pcmDataLock unlock];
+        [job autorelease];
+    }
+    else { // initialise LAME now since it is otherwise initialised in the decodeThread:
+        lame_decode_init();
+    }
     // This is probably a bit kludgy but it will do for now.
     loopEndIndex = [self lengthInSampleFrames] - 1;
     return SND_ERR_NONE;
@@ -589,17 +659,22 @@ static int bitrateLookupTable[16][6] = {
 
     duration = segmentDuration;
 
-    job = [[SndMP3DecodeJob alloc] initWithStartTime: segmentStartTime
-                                            duration: segmentDuration];
-
-    [pcmDataLock lock];
-    [NSThread detachNewThreadSelector: @selector(decodeThread:)
-                             toTarget: self
-                           withObject: job];
-    [pcmDataLock lock];
-    [pcmDataLock unlock];
-    duration = segmentDuration;
-    [job autorelease];
+    if(preDecode) {
+        job = [[SndMP3DecodeJob alloc] initWithStartTime: segmentStartTime
+                                                duration: segmentDuration];
+    
+        [pcmDataLock lock];
+        [NSThread detachNewThreadSelector: @selector(decodeThread:)
+                                 toTarget: self
+                               withObject: job];
+        [pcmDataLock lock];
+        [pcmDataLock unlock];
+        duration = segmentDuration;
+        [job autorelease];
+    }
+    else { // initialise LAME now since it is otherwise initialised in the decodeThread:
+        lame_decode_init();
+    }
     return SND_ERR_NONE;
 }
 
@@ -632,17 +707,144 @@ static int bitrateLookupTable[16][6] = {
   }
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// insertIntoAudioBuffer:intoFrameRange:samplesInRange:
-////////////////////////////////////////////////////////////////////////////////
-
 - (long) insertIntoAudioBuffer: (SndAudioBuffer *) anAudioBuffer
-		intoFrameRange: (NSRange) bufferRange
-	        samplesInRange: (NSRange) sndReadingRange;
+                intoFrameRange: (NSRange) bufferRange
+           fromDecodedMP3Frame: (NSRange) decodedFrameRange
 {
-  // This version of insertIntoAudioBuffer: assumes that the entire MP3 has been decoded
-  // into memory. We also assume the buffer sample rate matches the MP3 sample rate
-#if DECODE_ENTIRE_INTO_MEMORY
+    int numOfChannelsInBuffer = [anAudioBuffer channelCount];
+    // We could simply store all pcm data into a 2 channel (stereo) buffer and then do the conversion to larger
+    // number of channels later, but in the interests of efficiency and the mess of not properly filling our given
+    // buffer, we move the pcm channels into the stereo channels of the audio buffer.
+    // Left channel in 0th element, Right channel in 1st element.
+    // [anAudioBuffer stereoChannels]
+    short stereoChannels[2] = { 0, 1 };
+
+    switch ([anAudioBuffer dataFormat]) {
+    case SND_FORMAT_FLOAT: {
+        // Our buffer is in an array of floats, numOfChannelsInBuffer per frame.
+        // TODO we should rewrite this to manipulate the audio data as array of bytes until we need to actually do the conversion.
+        // This is preferable to having duplicated code with just a couple of changes for type definitions and arithmetic.
+        // So the switch statement should be moved inside the loops.
+        float *buff = [anAudioBuffer bytes];  
+        unsigned long frameIndex;
+        unsigned long sampleIndex;
+        unsigned short channelIndex;
+
+        for (frameIndex = 0; frameIndex < decodedFrameRange.length; frameIndex++) {
+            long currentBufferSample = (bufferRange.location + frameIndex) * numOfChannelsInBuffer;
+            // LAME always produces stereo data in two separate buffers
+            long currentDecodedSample = decodedFrameRange.location + frameIndex;
+
+            buff[currentBufferSample + stereoChannels[0]] = decodedLeftPCM[currentDecodedSample] / 32768.0;
+            buff[currentBufferSample + stereoChannels[1]] = decodedRightPCM[currentDecodedSample] / 32768.0;
+            // buff[currentBufferSample + stereoChannels[1]] = 0.0;
+            // Silence any other (neither L or R) channels in the buffer.
+            for(channelIndex = 0; channelIndex < numOfChannelsInBuffer; channelIndex++) {
+                if(channelIndex != stereoChannels[0] && channelIndex != stereoChannels[1]) {
+                    // we use integer values for zero so they will cast appropriate to the size of buff[x].
+                    buff[currentBufferSample + channelIndex] = 0;
+                }
+            }
+        }
+        // Silence the rest of the buffer, all channels
+        for (sampleIndex = (bufferRange.location + frameIndex) * numOfChannelsInBuffer; sampleIndex < (bufferRange.location + bufferRange.length) * numOfChannelsInBuffer; sampleIndex++) {
+            buff[sampleIndex] = 0;
+        }
+
+        break;
+    }
+    default:
+        NSLog(@"SndMP3 -insertIntoAudioBuffer: - unhandled data format %d", [anAudioBuffer dataFormat]);
+    }
+    return decodedFrameRange.length;
+}
+
+// Decode on the fly.
+- (long) decodeIntoAudioBuffer: (SndAudioBuffer *) anAudioBuffer
+		intoFrameRange: (NSRange) bufferRange
+                samplesInRange: (NSRange) sndReadingRange;
+{
+    // Since we do no resampling, we can use bufferRange.length here
+    unsigned int numOfFramesToCopy = MIN(bufferRange.length, sndReadingRange.length);
+    // Note we distinguish encoded (MP3 data) frames from our typical use of the term frame.
+    int samplesPerMP3Frame = SND_MPEGV1_SAMPLES_PER_FRAME;
+    //
+    // sndReadingRange.length = numOfFramesToCopy
+    // NSRange bitstreamFrames = [self findInBitstreamSamplesInRange: sndReadingRange];
+    int startMP3FrameID = floor(sndReadingRange.location / samplesPerMP3Frame);
+    int endMP3FrameID   = floor((sndReadingRange.location + numOfFramesToCopy) / samplesPerMP3Frame);
+
+    long framesCreated = 0;
+    long totalFramesCreated = 0;
+    unsigned char *mp3DataBytes = (unsigned char *) [mp3Data bytes];
+    
+    // Use a combination of cached and newly decoded MP3 frames to fill the buffer.
+    // Typically however, the buffer to fill will be less than one MP3 decoded frame.
+    while (totalFramesCreated < numOfFramesToCopy) {
+        NSRange decodedFrameRange;
+
+        // Check if we can use the cached PCM data.
+        if(currentMP3FrameID != startMP3FrameID) {  // No, we need to decode the data
+            long decodeFeedAmount;
+            long decodeFrom = encodedFrameLocations[startMP3FrameID];
+            
+            currentMP3FrameID = startMP3FrameID;  // retain the current bitstream frame ID.
+
+            // decodeFeedAmount = [self frameSizeOfHeader: getFrameHeaderAt(mp3DataBytes + encodedFrameLocations[startMP3FrameID])];
+            if(currentMP3FrameID < encodedFrameLocationsCount - 1)
+                decodeFeedAmount = encodedFrameLocations[currentMP3FrameID + 1] - encodedFrameLocations[currentMP3FrameID];
+            else
+                decodeFeedAmount = [mp3Data length] - encodedFrameLocations[currentMP3FrameID];
+
+            // LAME only gives us back stereo data. The decoded data is cached.
+            framesCreated = lame_decode1(mp3DataBytes + decodeFrom, decodeFeedAmount, decodedLeftPCM, decodedRightPCM);
+            // NSLog(@"framesCreated = %d, decodeFrom = %d, decodeFeedAmount = %d\n", framesCreated, decodeFrom, decodeFeedAmount);
+            /* framesCreated = 0:  need more data to decode */
+            /* framesCreated = -1:  error.  Lets assume 0 pcm output */
+            /* framesCreated = number of samples output */
+            if(framesCreated < 0) {
+                NSLog(@"Error: lame decode error framesCreated = %d, decodeFrom = %d, decodeFeedAmount = %d\n", framesCreated, decodeFrom, decodeFeedAmount);
+                return 0;
+            }
+            if(framesCreated == 0) {
+                NSLog(@"Need more data, framesCreated == 0\n");
+            }
+        }
+        decodedFrameRange.location = (sndReadingRange.location + totalFramesCreated) % samplesPerMP3Frame;
+        // We copy the number of frames remaining in the decoded MP3 frame or the number of frames remaining to copy, whichever is less.
+        decodedFrameRange.length = MIN((samplesPerMP3Frame - decodedFrameRange.location), (numOfFramesToCopy - totalFramesCreated));
+        // update the buffer range to copy into, based on any frames copied in a previous iteration.
+        bufferRange.location += totalFramesCreated;
+        bufferRange.length -= totalFramesCreated;
+        
+#if SNDMP3_DEBUG
+        NSLog(@"inserting intoFrameRange: [%d,%d] from decoded MP3 frame %d in the range [%d,%d]\n", 
+            bufferRange.location, bufferRange.length, startMP3FrameID, decodedFrameRange.location, decodedFrameRange.length);
+#endif
+        totalFramesCreated += [self insertIntoAudioBuffer: anAudioBuffer 
+                                           intoFrameRange: bufferRange
+                                      fromDecodedMP3Frame: decodedFrameRange];
+
+        // decodeFrom += decodeFeedAmount;
+        startMP3FrameID++;
+    }
+#if SNDMP3_DEBUG
+    {
+        float min, max;
+        [anAudioBuffer findMin: &min max: &max];
+        NSLog(@"SndMP3: min: %5.3f max: %5.3f [buffLoc:%li buffLen:%i loc:%li len:%i]\n",
+            MAX(-1, min), MIN(1,max), bufferRange.location, bufferRange.length, sndReadingRange.location, sndReadingRange.length);
+    }
+#endif
+    return totalFramesCreated;    
+}
+
+// This version of insertIntoAudioBuffer: assumes that the entire MP3 has been decoded into memory.
+// We also assume the buffer sample rate matches the MP3 sample rate.
+- (long) insertPreDecodedIntoAudioBuffer: (SndAudioBuffer *) anAudioBuffer
+		          intoFrameRange: (NSRange) bufferRange
+	                  samplesInRange: (NSRange) sndReadingRange;
+{
     int buffChans = [anAudioBuffer channelCount];
     const short *pData = NULL;
 
@@ -717,78 +919,65 @@ static int bitrateLookupTable[16][6] = {
 	    {
 		float min, max;
 		[anAudioBuffer findMin: &min max: &max];
-		NSLog(@"s SndMP3: min: %5.3f max: %5.3f [dataLen:%li buffLen:%i loc:%li len:%i]\n",MAX(-1, min), MIN(1,max), sndDataLength, bufferRange.length, sndReadingRange.location, bufferRange.length);
+		NSLog(@"SndMP3: min: %5.3f max: %5.3f [dataLen:%li buffLen:%i loc:%li len:%i]\n",MAX(-1, min), MIN(1,max), sndDataLength, bufferRange.length, sndReadingRange.location, bufferRange.length);
 	    }
 #endif
 	}
 	else
 	    NSLog(@"SndMP3 -insertIntoAudioBuffer: %@ - Unhandled number of channels %d of SND_FORMAT_LINEAR_16 data", anAudioBuffer, buffChans);
-    }
 	break;
-	
+    }
     default:
 	NSLog(@"SndMP3 -insertIntoAudioBuffer: - unhandled data format %d", [anAudioBuffer dataFormat]);
     }
     [pcmDataLock unlock];
 
-#else
-    
-    /* TODO Decode on the fly */
-
-    int startFrameID = floor(sndReadingRange.location / 1152.0);
-    int startSamplePosition = startFrameID * 1152;
-    int endFrameID   = floor(sndReadingRange.location + bufferRange.length / 1152.0);
-    int endSamplePosition = (endFrameID + 1) * 1152;
-    int currentFrameID = startFrameID;
-
-    short decode_pcm_l[10000];
-    short decode_pcm_r[10000];
-
-    const short *pData = [pcmData bytes];
-    float *pBuff = [anAudioBuffer bytes];
-    long   samsCreated      = 0;
-    long   totalSamsCreated = 0;
-
-    /*
-     while (totalSamsCreated < playRegion.length) {
-	 long decodePos        = frameLocations[currentFrameID];
-	 long decodeFeedAmount = frameLocations[currentFrameID + 1] - frameLocations[currentFrameID];
-
-	 sams_created = lame_decode1(mp3DataBytes + decodePos, decodeFeedAmount, pcm_l, pcm_r);
-
-	 if (sams_created > 0) {
-	     totalSamsCreated ;
-	 }
-	 currentFrameID++;
-     }
-     */
-
-#endif
     return bufferRange.length;
 }
 
-- (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) r
+////////////////////////////////////////////////////////////////////////////////
+// insertIntoAudioBuffer:intoFrameRange:samplesInRange:
+////////////////////////////////////////////////////////////////////////////////
+
+- (long) insertIntoAudioBuffer: (SndAudioBuffer *) anAudioBuffer
+		intoFrameRange: (NSRange) bufferRange
+	        samplesInRange: (NSRange) sndReadingRange;
 {
-  SndAudioBuffer *ab  = [SndAudioBuffer alloc];
-  //  int   samSize       = 4; // hardcoded for 16 bit, 2 chans
+    if(preDecode)
+        return [self insertPreDecodedIntoAudioBuffer: anAudioBuffer 
+                                      intoFrameRange: bufferRange
+                                      samplesInRange: sndReadingRange];
 
-  long endIndex = r.length + r.location;
+    else
+        return [self decodeIntoAudioBuffer: anAudioBuffer
+                            intoFrameRange: bufferRange
+                            samplesInRange: sndReadingRange];
+}
 
-  while (bDecoding && decodedSampledCount < endIndex)
-    [NSThread sleepUntilDate: [NSDate dateWithTimeIntervalSinceNow: 0.25]];
+- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) r
+{
+    SndAudioBuffer *ab  = [SndAudioBuffer alloc];
+
+    if(preDecode) {
+        long endIndex = r.length + r.location;
+
+        while (bDecoding && decodedSampledCount < endIndex)
+            [NSThread sleepUntilDate: [NSDate dateWithTimeIntervalSinceNow: 0.25]];
+    }
 
 #if SNDMP3_DEBUG_READING
-  NSLog(@"requested: [%li, %li] decoded: %li  %s\n",
-         r.location, endIndex, decodedSampledCount, decodedSampledCount > endIndex?"":"***");
+    NSLog(@"requested: [%li, %li] decoded: %li  %s\n",
+          r.location, endIndex, decodedSampledCount, decodedSampledCount > endIndex ? "" : "***");
 #endif
-  [ab initWithDataFormat: SND_FORMAT_FLOAT
-            channelCount: 2
-            samplingRate: 44100
-                duration: r.length / 44100.0];
+    // TODO Should initialize this with the native data format?
+    [ab initWithDataFormat: SND_FORMAT_FLOAT
+              channelCount: 2
+              samplingRate: [self samplingRate]
+                  duration: r.length / [self samplingRate]];
 
-  [self fillAudioBuffer: ab toLength: r.length samplesInRange: r];
+    [self fillAudioBuffer: ab toLength: r.length samplesInRange: r];
 
-  return [ab autorelease];
+    return [ab autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
