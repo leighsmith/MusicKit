@@ -747,11 +747,19 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 - (int)readSoundfile:(NSString *)filename
 {
 	int err;
+	NSDictionary *fileAttributeDictionary;
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+
 	if (soundStruct) SndFree(soundStruct);
 	if (name) {
 		free(name);
 		name = NULL;
 		}
+        // check its seekable, by checking its POSIX regular.
+        fileAttributeDictionary = [fileManager fileAttributesAtPath: filename traverseLink: YES];
+        if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular)
+	     return SND_ERR_CANNOT_OPEN;
+
 	err = SndReadSoundfile([filename cString],&soundStruct);
 	if (!err) soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
 	return err;
