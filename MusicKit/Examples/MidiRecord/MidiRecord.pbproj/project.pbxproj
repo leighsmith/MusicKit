@@ -199,15 +199,15 @@
 	<key>CFBundleExecutable</key>
 	<string>MidiRecord</string>
 	<key>CFBundleGetInfoString</key>
-	<string></string>
+	<string>Records MIDI to a MusicKit scorefile.</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string></string>
+	<string>org.musickit.MidiRecord</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string></string>
+	<string>MidiRecord</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
