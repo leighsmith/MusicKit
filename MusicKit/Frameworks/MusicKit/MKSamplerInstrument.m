@@ -21,6 +21,10 @@
 */
 /*
   $Log$
+  Revision 1.10  2000/04/26 01:21:52  leigh
+  Moved uglySamplerTimingHack to firstNote in the dreadful scenario
+  that the default must change during the run of the program :-(
+
   Revision 1.9  2000/04/22 20:12:42  leigh
   Now correctly checks the notes conductor for tempo
 
@@ -98,7 +102,6 @@ static float uglySamplerTimingHack = 0.0;
 - init
 {
     [super init];
-    uglySamplerTimingHack = [[NSUserDefaults standardUserDefaults] floatForKey: @"MKUglySamplerTimingHack"];
     [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
 
     playingNotes = [[NSMutableArray arrayWithCapacity: 20] retain]; 
@@ -229,6 +232,8 @@ static float uglySamplerTimingHack = 0.0;
 - firstNote: (MKNote *) aNote
 {
     [super firstNote: aNote];
+    // if you thought this was bad, it probably isn't thread safe either! Erase Me Erase Me soon!
+    uglySamplerTimingHack = [[NSUserDefaults standardUserDefaults] floatForKey: @"MKUglySamplerTimingHack"];
     [self prepareSoundWithNote: aNote];
     return self;
 }
