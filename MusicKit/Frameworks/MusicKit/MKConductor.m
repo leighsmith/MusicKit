@@ -19,6 +19,25 @@
 Modification history:
 
   $Log$
+  Revision 1.26  2002/04/08 17:34:29  sbrandon
+  Changed newMsgRequest() definition to include a couple of BOOL flags saying
+  whether or not to retain arg1 and arg2 (to be used if they are objects).
+  Changed all references to this function
+  Added -sel:to:withDelay:argCount:arg1:retain:arg2:retain
+  Added -del:to:atTime:argCount:arg1:retain:arg2:retain
+  Now selectively retain and release arg1 and arg2 based on flags passed in
+  with the arguments
+  New function MKNewMsgRequestWithObjectArgs similar to MKNewMsgRequest
+  except with boolean retain flags as above
+  New function MKRescheduleMsgRequestWithObjectArgs similar to MKRescheduleMsgRequest
+  except with boolean retain flags as above
+  New method -afterPerformanceSel:to:argCount:arg1:retain:arg2:retain as above
+  New method -beforePerformanceSel:to:argCount:arg1:retain:arg2:retain as above
+  New method +_afterPerformanceSel:to:argCount:arg1:retain:arg2:retain as above
+  New method +_newMsgRequestAtTime:sel:to:argCount:arg1:retain:arg2:retain as above
+  New method -_rescheduleMsgRequestWithObjectArgs:atTime:sel:to:argCount:arg1...
+  as above
+
   Revision 1.25  2002/03/20 17:02:58  sbrandon
   call detachDelegateMessageThread in +initialize to set up background delegate message passing thread.
 
@@ -766,7 +785,7 @@ popMsgQueue(msgQueue)
 }
 
 // forward declaration
-static MKMsgStruct *newMsgRequest(BOOL,double,SEL,id,int,id,id);
+static MKMsgStruct *newMsgRequest(BOOL,double,SEL,id,int,id,BOOL,id,BOOL);
 
 static void condInit()
 /*sb: changed from void to (id)callingObj because I need to tell initializeBackgroundThread which object the main conductor is, so that the conductor can be sent objC messages from the background thread.
@@ -804,7 +823,7 @@ static void condInit()
     /* If the end-of-list marker is ever sent, it will print an error. (It's a bug if this ever happens.) */
     if (!_msgQueue)
         _msgQueue = newMsgRequest(CONDUCTORFREES,ENDOFLIST, @selector(_error:), self,
-                                1, @"MKConductor's end-of-list was erroneously evaluated (this shouldn't happen).\n", nil);
+                                1, @"MKConductor's end-of-list was erroneously evaluated (this shouldn't happen).\n", TRUE,nil,FALSE);
     // Remove links. We don't want to leave links around because they screw up repositionCond.
     // The links are added at the last minute in _runSetup.
     _condLast = _condNext = nil; 
@@ -1261,7 +1280,8 @@ static void evalAfterQueues()
     if (pauseFor)	/* Already doing a "pauseFor"? */
       MKRepositionMsgRequest(pauseFor,clockTime + seconds);
     else {             /* New "pauseFor". */
-	pauseFor = MKNewMsgRequest(clockTime + seconds, @selector(resume),self,0);
+	pauseFor = MKNewMsgRequest(
+	            clockTime + seconds, @selector(resume),self,0);
 	MKScheduleMsgRequest(pauseFor, clockCond); 
     }
     return self;
@@ -1375,8 +1395,30 @@ static void evalAfterQueues()
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
     va_end(ap);	
-    return insertMsgQueue(newMsgRequest(CONDUCTORFREES, self->time + deltaT,
-					aSelector, toObject, argCount, arg1, arg2), self);
+    return insertMsgQueue(
+        newMsgRequest(CONDUCTORFREES, self->time + deltaT,
+		aSelector, toObject, argCount, arg1, FALSE, arg2, FALSE), self);
+}
+
+-sel:(SEL)aSelector to:(id)toObject withDelay:(double)deltaT 
+ argCount:(int)argCount
+ arg1:(id)arg1 retain:(BOOL)retainArg1
+ arg2:(id)arg2 retain:(BOOL)retainArg2;
+
+/* TYPE: Requesting; Requests aSelector to be sent to toObject.
+ * Schedules a request for the receiver
+ * to send the message aSelector to the
+ * object toObject at time deltaT beats from now.
+ * argCount specifies the number of arguments to 
+ * aSelector followed by the arguments themselves,
+ * separated by commas (up to two arguments are allowed).
+ * Returns the receiver unless argCount is too high, in which case returns nil.
+ */
+{
+    return
+      insertMsgQueue(
+        newMsgRequest(CONDUCTORFREES, self->time + deltaT,
+		aSelector, toObject, argCount, arg1, retainArg1, arg2, retainArg2), self);
 }
 
 -sel:(SEL)aSelector to:(id)toObject atTime:(double)t
@@ -1399,7 +1441,29 @@ static void evalAfterQueues()
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
     va_end(ap);	
-    return insertMsgQueue(newMsgRequest(CONDUCTORFREES, t, aSelector, toObject, argCount, arg1, arg2), self);
+    return insertMsgQueue(
+        newMsgRequest(CONDUCTORFREES, t, aSelector, toObject, argCount, arg1, FALSE, arg2, FALSE), self);
+}
+
+-sel:(SEL)aSelector to:(id)toObject atTime:(double)t
+ argCount:(int)argCount
+ arg1:(id)arg1 retain:(BOOL)retainArg1
+ arg2:(id)arg2 retain:(BOOL)retainArg2;
+/* TYPE: Requesting; Requests aSelector to be sent to toObject.
+ * Schedules a request for the receiver to send 
+ * the message aSelector to the object toObject at
+ * time t beats into the performance (offset by the
+ * receiver's timeOffset).
+ * argCount specifies the number of arguments to 
+ * aSelector followed by the arguments themselves,
+ * seperated by commas (up to two arguments are allowed).
+ * Returns the receiver unless argCount is too high, in which case returns 
+ * nil. 
+ */
+{
+    return insertMsgQueue(
+       newMsgRequest(
+         CONDUCTORFREES, t, aSelector, toObject, argCount, arg1, retainArg1, arg2, retainArg2), self);
 }
 
 - _runSetup
@@ -1504,8 +1568,8 @@ MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr)
 	if (!aMsgStructPtr->_toObject) /* Already canceled? */
 	  return NULL;
         [aMsgStructPtr->_toObject release];
-        [aMsgStructPtr->_arg1 release];
-        [aMsgStructPtr->_arg2 release];
+        if (aMsgStructPtr->_retainArg1) [aMsgStructPtr->_arg1 release];
+        if (aMsgStructPtr->_retainArg2) [aMsgStructPtr->_arg2 release];
 	aMsgStructPtr->_toObject = nil;
 	aMsgStructPtr->_arg1 = nil;
 	aMsgStructPtr->_arg2 = nil;
@@ -1543,8 +1607,8 @@ MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr)
 	}
     }
     [aMsgStructPtr->_toObject release];
-    [aMsgStructPtr->_arg1 release];
-    [aMsgStructPtr->_arg2 release];
+    if (aMsgStructPtr->_retainArg1) [aMsgStructPtr->_arg1 release];
+    if (aMsgStructPtr->_retainArg2) [aMsgStructPtr->_arg2 release];
     freeSp(aMsgStructPtr);
     return NULL;
 }
@@ -1563,7 +1627,27 @@ MKNewMsgRequest(double timeOfMsg,SEL whichSelector,id destinationObject,
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
     va_end(ap);
-    return newMsgRequest(TARGETFREES, timeOfMsg, whichSelector, destinationObject, argCount, arg1, arg2);
+    return 
+        newMsgRequest(
+	    TARGETFREES, timeOfMsg, whichSelector, destinationObject,
+	    argCount, arg1, FALSE, arg2, FALSE);
+}	
+
+MKMsgStruct *
+MKNewMsgRequestWithObjectArgs(double timeOfMsg,SEL whichSelector,id destinationObject,
+		int argCount, id arg1, BOOL retainArg1, id arg2, BOOL retainArg2)
+    /* Creates a new msgStruct to be used with MKScheduleMsgRequest. 
+       args may be ids or ints. If objects, specify TRUE as the "isObj" field
+       next to each object, so that the conductor will retain the arguments until
+       after they have been used.
+       The struct returned by MKNewMsgRequest
+       should not be altered in any way. Its only use is to pass to
+       MKCancelMsgRequest() and MKScheduleMsgRequest(). */
+{
+    return 
+        newMsgRequest(
+	    TARGETFREES, timeOfMsg, whichSelector, 
+	    destinationObject, argCount, arg1, retainArg1, arg2, retainArg2);
 }	
 
 
@@ -1598,7 +1682,39 @@ MKMsgStruct *MKRescheduleMsgRequest(MKMsgStruct *aMsgStructPtr,id conductor,
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
     va_end(ap);
-    newMsgStructPtr = newMsgRequest(TARGETFREES, timeOfNewMsg, whichSelector, destinationObject, argCount, arg1, arg2);
+    newMsgStructPtr = 
+        newMsgRequest(
+	    TARGETFREES, timeOfNewMsg, whichSelector, destinationObject,
+	    argCount, arg1, FALSE, arg2, FALSE);
+    MKScheduleMsgRequest(newMsgStructPtr,conductor);
+    MKCancelMsgRequest(aMsgStructPtr); /* A noop if already canceled. */
+    return aMsgStructPtr = newMsgStructPtr;
+}
+
+MKMsgStruct *MKRescheduleMsgRequestWithObjectArgs(MKMsgStruct *aMsgStructPtr,id conductor,
+				    double timeOfNewMsg,SEL whichSelector,
+				    id destinationObject,int argCount,
+				    id arg1, BOOL retainArg1,
+				    id arg2, BOOL retainArg2)
+    /* Reschedules the MKMsgStruct pointed to by aMsgStructPtr as indicated.
+       If aMsgStructPtr is non-NULL and points to a message request currently
+       in the queue, first cancels that request. Returns a pointer to the
+       new MKMsgStruct. This function is equivalent to the following
+       three function calls:
+       MKNewMsgRequest() // New one
+       MKScheduleMsgRequest() // New one 
+       MKCancelMsgRequest() // Old one
+
+       Note that aMsgStructPtr may be rescheduled with a different conductor,
+       destinationObject and arguments, 
+       than those used when it was previously scheduled.
+       */
+{
+    MKMsgStruct *newMsgStructPtr;
+    newMsgStructPtr = 
+        newMsgRequest(
+	    TARGETFREES, timeOfNewMsg, whichSelector, destinationObject,
+	    argCount, arg1, retainArg1, arg2, retainArg2);
     MKScheduleMsgRequest(newMsgStructPtr,conductor);
     MKCancelMsgRequest(aMsgStructPtr); /* A noop if already canceled. */
     return aMsgStructPtr = newMsgStructPtr;
@@ -1612,7 +1728,9 @@ MKMsgStruct *MKRepositionMsgRequest(MKMsgStruct *aMsgStructPtr,
 						    aMsgStructPtr->_toObject,
 						    aMsgStructPtr->_argCount,
 						    aMsgStructPtr->_arg1,
-						    aMsgStructPtr->_arg2);
+						    aMsgStructPtr->_retainArg1,
+						    aMsgStructPtr->_arg2,
+						    aMsgStructPtr->_retainArg2);
     MKScheduleMsgRequest(newMsgStructPtr,aMsgStructPtr->_conductor);
     MKCancelMsgRequest(aMsgStructPtr);
     return aMsgStructPtr = newMsgStructPtr;
@@ -1625,7 +1743,9 @@ static MKMsgStruct *newMsgRequest(
     id destinationObject,
     int argCount,
     id arg1,
-    id arg2)
+    BOOL retainArg1,
+    id arg2,
+    BOOL retainArg2)
     /* Create a new msg struct */
 {
     MKMsgStruct * sp;
@@ -1640,14 +1760,18 @@ static MKMsgStruct *newMsgRequest(
     sp->_prev = NULL;
     sp->_conductor = nil;
     sp->_onQueue = NO;
+    sp->_retainArg1 = retainArg1;
+    sp->_retainArg2 = retainArg2;
     switch (argCount) {
     default: 
 	freeSp(sp);
 	return NULL;
     case 2:
-        sp->_arg2 = [arg2 retain];
+        sp->_arg2 = arg2;
+	if (retainArg2) [arg2 retain];
     case 1:
-        sp->_arg1 = [arg1 retain];
+        sp->_arg1 = arg1;
+	if (retainArg1) [arg1 retain];
     case 0:
         break;
     }
@@ -1680,9 +1804,40 @@ static MKMsgStruct *newMsgRequest(
     arg2 = va_arg(ap,id);
     afterPerformanceQueue = 
       insertSpecialQueue(sp = newMsgRequest(CONDUCTORFREES, MK_ENDOFTIME,
-					    aSelector, toObject, argCount, arg1, arg2),
+					    aSelector, toObject, argCount,
+					    arg1, FALSE, arg2, FALSE),
 			 afterPerformanceQueue,&afterPerformanceQueueEnd);
     va_end(ap);
+
+    return(sp);
+}
+
++(MKMsgStruct *)afterPerformanceSel:(SEL)aSelector 
+ to:(id)toObject 
+ argCount:(int)argCount
+ arg1:(id)arg1 retain:(BOOL)retainArg1
+ arg2:(id)arg2 retain:(BOOL)retainArg2
+/* TYPE: Requesting; Sends aSelector to toObject after performance.
+ * Schedules a request for the factory object
+ * to send the message aSelector to the object
+ * toObject immediately after the performance ends, regardless
+ * of how it ends.
+ * argCount specifies the number of arguments to 
+ * aSelector followed by the arguments themselves, and
+ * a flag to say whether or not they should be retained/released.
+ * Up to two arguments are allowed.
+ * AfterPerfomance messages are sent in the order they were enqueued.
+ * Returns a pointer to an MKMsgStruct that can be
+ * passed to cancelMsgRequest:.
+ */
+{
+    MKMsgStruct *sp;
+    afterPerformanceQueue = 
+      insertSpecialQueue(sp = newMsgRequest(CONDUCTORFREES, MK_ENDOFTIME,
+					    aSelector, toObject, argCount,
+					    arg1, retainArg1,
+					    arg2, retainArg2),
+			 afterPerformanceQueue,&afterPerformanceQueueEnd);
 
     return(sp);
 }
@@ -1714,9 +1869,41 @@ static MKMsgStruct *newMsgRequest(
     beforePerformanceQueue = 
       insertSpecialQueue(sp = newMsgRequest(CONDUCTORFREES,0.0,
 					    aSelector,toObject,argCount,
-					    arg1,arg2),
+					    arg1,FALSE, arg2, FALSE),
 			 beforePerformanceQueue,&beforePerformanceQueueEnd);
     va_end(ap);
+    return(sp);
+}
+
++(MKMsgStruct *)beforePerformanceSel:(SEL)aSelector 
+ to:(id)toObject 
+ argCount:(int)argCount
+ arg1:(id)arg1 retain:(BOOL)retainArg1
+ arg2:(id)arg2 retain:(BOOL)retainArg2;
+/* TYPE: Requesting; Sends aSelector to toObject before performance.
+ * Schedules a request for the factory object
+ * to send the message aSelector to the object
+ * toObject immediately before performance begins.
+ * argCount specifies the number of arguments to 
+ * aSelector. the "retain" arguments specify whether or not
+ * the conductor will attempt to retain the (object) arguments
+ * before use, and release them afterwards. This is highly recommended
+ * for object arguments, but will CRASH is used for other numeric or
+ * pointer types.
+ * Messages requested through this method will be sent
+ * before any other messages. beforePerformance messages are sent in the
+ * order they were enqueued.
+ * Returns a pointer to an MKMsgStruct that can be
+ * passed to cancelMsgRequest:.
+ */
+{
+    MKMsgStruct *sp;
+    beforePerformanceQueue = 
+      insertSpecialQueue(sp = newMsgRequest(CONDUCTORFREES, 0.0,
+					    aSelector, toObject, argCount,
+					    arg1, retainArg1,
+					    arg2, retainArg2),
+			 beforePerformanceQueue, &beforePerformanceQueueEnd);
     return(sp);
 }
 
@@ -1737,9 +1924,15 @@ static MKMsgStruct *evalSpecialQueue(MKMsgStruct *queue, MKMsgStruct **queueEnd)
                 break;
             case 1:
                 [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1];
+		if (curProc->_retainArg1) [curProc->_arg1 release];
+		curProc->_arg1 = nil;
                 break;
             case 2:
                 [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1 withObject:curProc->_arg2];
+		if (curProc->_retainArg1) [curProc->_arg1 release];
+		if (curProc->_retainArg2) [curProc->_arg2 release];
+		curProc->_arg1 = nil;
+		curProc->_arg2 = nil;
                 break;
             default:
                 break;
@@ -1943,9 +2136,15 @@ static double getNextMsgTime(MKConductor *aCond)
                 break;
             case 1:
                 (*curProc->_methodImp)(curProc->_toObject, curProc->_aSelector, curProc->_arg1);
+		if (curProc->_retainArg1) [curProc->_arg1 release];
+		curProc->_arg1 = nil;
                 break;
             case 2:
                 (*curProc->_methodImp)(curProc->_toObject, curProc->_aSelector, curProc->_arg1, curProc->_arg2);
+		if (curProc->_retainArg1) [curProc->_arg1 release];
+		if (curProc->_retainArg2) [curProc->_arg2 release];
+		curProc->_arg1 = nil;
+		curProc->_arg2 = nil;
                 break;
             }
             // NSLog(@"Returned from method call (conductor doesnt free) %@ sepThreadMK %d\n", 
@@ -1959,9 +2158,15 @@ static double getNextMsgTime(MKConductor *aCond)
                 break;
             case 1:
                 [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1];
+		if (curProc->_retainArg1) [curProc->_arg1 release];
+		curProc->_arg1 = nil;
                 break;
             case 2:
                 [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1 withObject:curProc->_arg2];
+		if (curProc->_retainArg1) [curProc->_arg1 release];
+		if (curProc->_retainArg2) [curProc->_arg2 release];
+		curProc->_arg1 = nil;
+		curProc->_arg2 = nil;
                 break;
             default:
                 break;
@@ -2008,9 +2213,30 @@ static double getNextMsgTime(MKConductor *aCond)
     _afterPerformanceQueue = 
       insertSpecialQueue(sp = newMsgRequest(CONDUCTORFREES,MK_ENDOFTIME,
 					    aSelector,toObject,argCount,
-					    arg1,arg2),
+					    arg1, FALSE, arg2, FALSE),
 			 _afterPerformanceQueue,&_afterPerformanceQueueEnd);
     va_end(ap);
+    return(sp);
+}
+
++(MKMsgStruct *)_afterPerformanceSel:(SEL)aSelector 
+ to:(id)toObject 
+ argCount:(int)argCount
+ arg1:(id)arg1 retain:(BOOL)retainArg1
+ arg2:(id)arg2 retain:(BOOL)retainArg2;
+/* 
+  Same as afterPerformanceSel:to:argCount: but ensures that message will
+  be sent before any of the messages enqueued with that method. Private
+  to the musickit.
+*/
+{
+    MKMsgStruct *sp;
+    _afterPerformanceQueue = 
+      insertSpecialQueue(sp = newMsgRequest(CONDUCTORFREES,MK_ENDOFTIME,
+					    aSelector,toObject,argCount,
+					    arg1, retainArg1,
+					    arg2, retainArg2),
+			 _afterPerformanceQueue,&_afterPerformanceQueueEnd);
     return(sp);
 }
 
@@ -2034,7 +2260,30 @@ static double getNextMsgTime(MKConductor *aCond)
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
     va_end(ap);
-    return newMsgRequest(TARGETFREES, timeOfMsg, whichSelector, destinationObject, argCount, arg1, arg2);
+    return newMsgRequest(
+        TARGETFREES, timeOfMsg, whichSelector, destinationObject, argCount, arg1, FALSE, arg2, FALSE);
+}
+
++(MKMsgStruct *)_newMsgRequestAtTime:(double)timeOfMsg
+  sel:(SEL)whichSelector to:(id)destinationObject
+  argCount:(int)argCount
+  arg1:(id)arg1 retain:(BOOL)retainArg1
+  arg2:(id)arg2 retain:(BOOL)retainArg2
+/* TYPE: Requesting; Creates and returns a new message request.
+ * Creates and returns message request but doesn't schedule it.
+ * The return value can be passed as an argument to the
+ * _scheduleMsgRequest: and _cancelMsgRequest: methods.
+ *
+ * You should only invoke this method if you need greater control
+ * over scheduling (for instance if you need to cancel a message request)
+ * than that afforded by the sel:to:atTime:argCount: and
+ * sel:to:withDelay:argCount: methods.
+ */
+{
+    return 
+        newMsgRequest(
+	    TARGETFREES, timeOfMsg, whichSelector, destinationObject,
+	    argCount, arg1, retainArg1, arg2, retainArg2);
 }
 
 -(void)_scheduleMsgRequest:(MKMsgStruct *)aMsgStructPtr
@@ -2077,9 +2326,21 @@ static double getNextMsgTime(MKConductor *aCond)
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
     return MKRescheduleMsgRequest(aMsgStructPtr,self,timeOfNewMsg,
-    		whichSelector,destinationObject,argCount,arg1,
-				  arg2);
+    		whichSelector,destinationObject,argCount,arg1,FALSE,
+				  arg2, FALSE);
     va_end(ap);
+}
+
+-(MKMsgStruct *)_rescheduleMsgRequestWithObjectArgs:(MKMsgStruct *)aMsgStructPtr
+  atTime:(double)timeOfNewMsg sel:(SEL)whichSelector
+  to:(id)destinationObject argCount:(int)argCount
+  arg1:(id)arg1 retain:(BOOL)retainArg1
+  arg2:(id)arg2 retain:(BOOL)retainArg2
+/* Same as MKReschedule */
+{
+    return MKRescheduleMsgRequest(aMsgStructPtr,self,timeOfNewMsg,
+    		whichSelector,destinationObject,argCount,arg1,retainArg1,
+				  arg2, retainArg2);
 }
 
 
