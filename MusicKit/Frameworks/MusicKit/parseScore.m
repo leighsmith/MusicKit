@@ -19,19 +19,23 @@
     building the entire object structure. E.g. this is how ScorefilePerformer
     works.
 
-    See binaryScorefile.doc on the musickit source directory for explanation
+    See binaryScorefile.doc on the MusicKit source directory for explanation
     of binary scorefile format. 
 
   Original Author: David A. Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University 
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.11  2000/10/01 06:45:42  leigh
+  Corrected parameter passed to _MKNewStringPar.
+
   Revision 1.10  2000/08/11 16:44:51  leigh
   Added notice of bugginess of jmp_buf, cleaned up typing
 
@@ -2767,7 +2771,7 @@ varDecl(void)
 	    aPar = _MKNewDoublePar(0.0,MK_noPar);
 	    break;
 	  case _MK_stringVarDecl:
-	    aPar = _MKNewStringPar("",MK_noPar);
+	    aPar = _MKNewStringPar(@"",MK_noPar);
 	    break;
 	  case _MK_varDecl:
 	    isUntyped = YES;
