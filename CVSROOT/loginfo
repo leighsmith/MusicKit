@@ -24,3 +24,24 @@
 #DEFAULT (echo ""; id; echo %s; date; cat) >> $CVSROOT/CVSROOT/commitlog
 # or
 #DEFAULT (echo ""; id; echo %{sVv}; date; cat) >> $CVSROOT/CVSROOT/commitlog
+
+#
+# Changes to CVSROOT go to the Admins
+#
+CVSROOT (echo ""; id; echo %{sv}; date; cat) | mail -s "updates to MusicKit CVSROOT" leigh@tomandandy.com
+
+# The syncmail way of doing things.
+#CVSROOT $CVSROOT/CVSROOT/syncmail %{sv} leigh@tomandandy.com 
+
+#
+# Changes to MusicKit or SndKit are mailled to the musickit-developers list
+# This is how I have done things traditionally without syncmail
+#
+MusicKit (echo ""; id; echo %{sv}; date; cat) | mail -s "updates to MusicKit" musickit-developers@lists.sourceforge.net
+SndKit (echo ""; id; echo %{sv}; date; cat) | mail -s "updates to SndKit" musickit-developers@lists.sourceforge.net
+
+#
+# This is the syncmail way of doing things
+#
+#MusicKit $CVSROOT/CVSROOT/syncmail %{sv} musickit-developers@lists.sourceforge.net
+#SndKit $CVSROOT/CVSROOT/syncmail %{sv} musickit-developers@lists.sourceforge.net
