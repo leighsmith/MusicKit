@@ -60,6 +60,8 @@ SNDKIT_API void	SndPrintStruct(SndSoundStruct *sound);
 
 SNDKIT_API int	SndPrintFrags(SndSoundStruct *sound);
 
+SNDKIT_API int SndFrameSize(SndSoundStruct* format);
+
 SNDKIT_API int	SndSampleWidth(int format);
 
 /*!
