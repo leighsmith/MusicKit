@@ -89,22 +89,19 @@ static void eventListener(void *inUserData, AudioUnitCarbonView inView,
     OSStatus    err;
     
     // Calls the Core Foundation Bundle Services function CFBundleGetMainBundle to obtain an instance
-    // of the application's main bundle. You need this reference for the next call.
+    // of the application's main bundle (autoreleased). You need this reference for the next call.
     bundleRef = CFBundleGetMainBundle();
     
     // Create a reference to the Carbon window's nib file.
-    // The Core Foundation string you provide must be the name of the nib file, without the .nib extension.
+    // The Core Foundation string you provide must be the name of the nib file, without the .nib extension.    
     err = CreateNibReferenceWithCFBundle(bundleRef, (CFStringRef) nibName, &nibRef); 
-    
+
     if (err != noErr) {
 	NSLog(@"failed to create carbon nib reference to %@", nibName);
 	return NO;
     }
     
-    // Releases the bundle reference, as it is no longer needed.
-    CFRelease(bundleRef); 
-        
-    // Calls the IB Services function CreateWindowFromNib to unarchive the Carbon window from the nib file.
+    // Call the IB Services function CreateWindowFromNib to unarchive the Carbon window from the nib file.
     err = CreateWindowFromNib(nibRef, (CFStringRef) windowTitle, &auWindow); 
     
     if (err != noErr) {
