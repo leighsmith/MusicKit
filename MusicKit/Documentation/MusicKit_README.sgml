@@ -21,10 +21,10 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity mkvertuple "5.4.3">
 <!entity sndvertuple "2.3.2">
 <!entity mkurl "http://www.musickit.org">
-<!entity mkdownload "http://prdownloads.sourceforge.net/musickit/">
+<!entity mkdownload "http://prdownloads.sourceforge.net/musickit">
 <!entity mkcvsweb "http://cvs.musickit.org">
 <!entity mksfweb "http://www.sourceforge.net/projects/musickit">
-<!-- GnuStep Libraries used -->
+<!-- GNUstep Libraries used -->
 <!entity gnustepdownload "http://www.gnustep.org">
 <!entity gsmakevertuple "1.6.0">
 <!entity gsbasevertuple "1.6.0">
@@ -471,9 +471,10 @@ function and <productname>Objective-C</productname> class.
   <sect1 id="platforms">
     <title>Supported Platforms</title>
     <para>
-        The <productname>MusicKit</productname> currently runs on:
+        The <productname>MusicKit</productname> currently runs on the
+        platforms described in <xref linkend=supportedplatforms>:
 </para>
-    <table frame=all><title><productname>MusicKit</productname> Supported Platforms</title>
+    <table id=supportedplatforms frame=all><title><productname>MusicKit</productname> Supported Platforms</title>
       <tgroup cols=4 colsep=1 rowsep=1>
 	<colspec colnum=1 align=left>
 	<colspec colnum=2 align=center>
@@ -520,7 +521,9 @@ function and <productname>Objective-C</productname> class.
 	    <entry>N</entry>
 	  </row>
 	  <row>
-	    <entry>Linux/Unix (Using GnuStep, PortAudio/PortMusic)</entry>
+	    <entry>Linux/Unix (Using
+ <productname>GNUstep</productname>,
+ <productname>PortAudio</productname>/<productname>PortMusic</productname>)</entry>
 	    <entry>N</entry>
 	    <entry>Y</entry>
 	    <entry>N</entry>
@@ -603,7 +606,7 @@ this depends on Apple.
 
       <para>
 Linux/Unix support using the <ulink
-url="http://www.gnustep.org">GnuStep</ulink> library is partially
+url="http://www.gnustep.org">GNUstep</ulink> library is partially
 completed and looking for more volunteers. A performance framework
 (<filename>MKPerformSndMIDI_portaudio.framework</filename>) using the
 <ulink url="http://www.cs.cmu.edu/~music/portmusic/">PortAudio</ulink>
@@ -616,10 +619,10 @@ other <productname>Unix</productname> platforms will work
 (<productname>Solaris</productname>,
 <productname>FreeBSD</productname>, <productname>AIX</productname>
 etc) if they are supported in the <productname>PortAudio</productname>
-library and <productname>GnuStep</productname>.
+library and <productname>GNUstep</productname>.
 </para>
     <sect3 id=installinggnustep>
-      <title>Installing GNUStep</title>
+      <title>Installing <productname>GNUStep</productname></title>
       <para>
         Install <productname>GNUStep</productname> on your system in
         the usual fashion, according to the build guide. The following
@@ -722,13 +725,16 @@ While the future of Apple's
 <productname>OpenStep/YellowBox/Cocoa/WebObjects</productname> (!)
 for <productname>Windows</productname> support is far from clear, the
 combination of Gnu technologies of <ulink
-url="http://www.gnustep.org">GnuStep</ulink> and <ulink
+url="http://www.gnustep.org">GNUstep</ulink> and <ulink
 url="http://www.cygnus.com/cygwin">cygwin</ulink> have ensured that
 Apple's corporate interests don't prevent deploying applications on
 the platform. Currently the <productname>AppKit</productname> support
-on Windows is incomplete, so it is unlikely that GUI applications will
-run. As GnuStep on Windows matures, MusicKit applications will compile
-and run correctly.
+on <productname>Windows</productname> is incomplete, so it is unlikely
+that <acronym>GUI</acronym> applications will run. As
+<productname>GNUstep</productname> on
+<productname>Windows</productname> matures,
+<productname>MusicKit</productname> applications will compile and run
+correctly.
 </para>
     </sect2>
   </sect1>
@@ -897,18 +903,22 @@ than the SoundKit for its sound processing.
 Leigh M. Smith <email>leigh@cs.uwa.edu.au</email>, now
 <email>&maintaineremail;</email> fixed bugs and ported the
 <productname>MusicKit</productname> and <acronym>MIDI</acronym>
-drivers to Intel and PowerPC Rhapsody in late 1998 and reorganised the
-packages and documentation for MacOS X-Server and in 2000, to various
-developer previews of MacOS X.  The frameworks were ported to Windows
-98/NT using DirectMusic in 1999. A <ulink url="&mksfweb;">sourceforge
-project</ulink> was created in 2000.
+drivers to <productname>Intel</productname> and
+<productname>PowerPC</productname> <productname>Rhapsody</productname>
+in late 1998 and reorganised the packages and documentation for
+<productname>MacOS X-Server V1.2</productname> and in 2000, to various
+developer previews of <productname>MacOS X</productname>.  The
+frameworks were ported to <productname>Windows 98/NT</productname>
+using <productname>DirectMusic</productname> in 1999. A <ulink
+url="&mksfweb;">sourceforge project</ulink> was created in 2000.
         </para>
       </listitem>
       <listitem>
         <para>
-DirectSound interface code for Windows, MP3
-encoding and FX architecture was contributed by SKoT McDonald
-<email>skot@vellocet.com</email>.
+<productname>DirectSound</productname> interface code for
+<productname>Windows</productname>, <acronym>MP3</acronym> encoding
+and <acronym>FX</acronym> architecture was contributed by SKoT
+McDonald <email>skot@vellocet.com</email>.
         </para>
       </listitem>
 
@@ -927,7 +937,7 @@ port.
       </listitem>
       <listitem>
         <para>
-Kim Shrier added FreeBSD support.
+Kim Shrier added <productname>FreeBSD</productname> support.
         </para>
       </listitem>
     </itemizedlist>
@@ -1123,14 +1133,14 @@ opensourcedirectory.org
       <sect3 id=sources>
 	<title>Source tarballs</title>
 	<para>
-The Source files consist of:
+The source files consist of:
 </para>
 	
 	<para>
         <variablelist>
 	    <varlistentry>
 	      <term>
-              <ulink url="&mkdownload;/MK-&mkvertuple;.s.tar.gz">MK-&mkvertuple;.s.tar.gz</ulink>
+              <ulink url="&mkdownload;/MK-&mkvertuple;.s.tar.gz?download">MK-&mkvertuple;.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -1149,36 +1159,48 @@ for regression testing.
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="&mkdownload;/SndKit-&sndvertuple;.s.tar.gz">SndKit-&sndvertuple;.s.tar.gz</ulink>
+              <ulink url="&mkdownload;/SndKit-&sndvertuple;.s.tar.gz?download">SndKit-&sndvertuple;.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
-                The version of the <productname>SndKit</productname> which matches the <productname>MusicKit</productname>.
+                The version of the <productname>SndKit</productname>
+                which matches the <productname>MusicKit</productname>.
               </para>
 	    </listitem>
 	    </varlistentry>
-	    <varlistentry>
+	    <varlistentry id=ZilogDriverSource>
 	      <term>
-              <ulink url="&mkdownload;/ZilogSCCMIDI.s.tar.gz">ZilogSCCMIDI.s.tar.gz</ulink>
+              <ulink url="&mkdownload;/ZilogSCCMIDI.s.tar.gz?download">ZilogSCCMIDI.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
-                The <productname>MacOS X-Server</productname> V1.0-1.2
-                <acronym>MIDI</acronym> driver source.  Versions of
-                <productname>MacOS X-Server</productname> later than
-                1.2 will use <productname>MacOS X</productname>
-                <acronym>MIDI</acronym> plugins.
-              </para>
+                  The <productname>MacOS X-Server V1.0-1.2</productname>
+                  <acronym>MIDI</acronym> driver source.
+                </para>
+                <note>
+                  <para>
+                    This is not needed for <productname>MacOS
+                    X</productname>.
+                  </para>
+                </note>
 	      </listitem>
 	    </varlistentry>
-	    <varlistentry>
+	    <varlistentry id=DriverKitHeaders>
 	      <term>
-               <ulink url="http://&mkdownload;/DriverKitHeaders.tar.gz">DriverKitHeaders.tar.gz</ulink>
+               <ulink url="&mkdownload;/DriverKitHeadersForMOXS_V1.2.tar.gz?download">DriverKitHeadersForMOXS_V1.2.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
-                NS3.3 headers required to compile a driver on MacOS X-Server. 
-              </para>
+                  <productname>NeXTStep V3.3</productname> headers
+                  required to compile the <link
+                  linkend=ZilogDriverSource>driver</link> on
+                  <productname>MacOS X-Server V1.2</productname>.
+                </para>
+                <note>
+                  <para>
+                    This is not needed for <productname>MacOS X</productname>.
+                  </para>
+                </note>
 	      </listitem>
 	    </varlistentry>
 	  </variablelist>
@@ -1188,9 +1210,22 @@ for regression testing.
       <sect3 id=support>
 	<title>Supporting Libraries</title>
 	<para>
-The following libraries need to be compiled and installed prior to compiling
-the MK source. These may be installable using <ulink url="http://www.sourceforge.net/projects/fink">fink</ulink>:
-</para>
+The following libraries need to be compiled and installed prior to
+compiling the MK source. These may be installable using <ulink
+url="http://www.sourceforge.net/projects/fink">fink</ulink>.
+        </para>
+        <note>
+          <para>
+If installing on <productname>GNUstep</productname>, be sure that
+<constant>PKG_CONFIG_PATH</constant> is set to point to whereever you
+install the libraries listed below. For example, if you do install
+these in <filename class=directory>/usr/local/lib</filename>,
+<constant>PKG_CONFIG_PATH</constant> should be set to <filename
+class=directory>/usr/local/lib/pkgconfig</filename>. See
+<command>pkg-config</command> for details.
+          </para>
+        </note>
+
 	<variablelist>
 	  <varlistentry id=libsndfile>
 	    <term>
@@ -1221,7 +1256,7 @@ sudo make install
 	  </varlistentry>
 	  <varlistentry id=sox>
 	    <term>
-            <ulink url="&soxdownload;/sox-&soxvertuple;.tar.gz">sox-&soxvertuple;.tar.gz</ulink>. 
+            <ulink url="&soxdownload;/sox-&soxvertuple;.tar.gz?download">sox-&soxvertuple;.tar.gz</ulink>. 
             </term>
 	    <listitem>
 	      <para>
@@ -1251,7 +1286,7 @@ sudo make install-lib
 	  </varlistentry>
 	  <varlistentry id=lame>
 	    <term>
-            <ulink url="&lamedownload;/lame-&lamevertuple;.tar.gz">lame-&lamevertuple;.tar.gz</ulink>. 
+            <ulink url="&lamedownload;/lame-&lamevertuple;.tar.gz?download">lame-&lamevertuple;.tar.gz</ulink>. 
             </term>
 	    <listitem>
 	      <para>
@@ -1282,8 +1317,9 @@ sudo make install
 	    <listitem>
 	      <para>
               The <ulink url="&oggvorbisweb;">Ogg/Vorbis</ulink> libraries
-provide patent-free <productname>Ogg</productname> encoding/decoding
-capability of <productname>Vorbis</productname> format data for use by
+provide patent-free <productname>Vorbis</productname>
+encoding/decoding of <acronym>PCM</acronym> audio
+to and from <productname>Ogg</productname> format bitstreams for use by
 <link linkend=libshout>libshout</link>.  Newer versions than
 &oggvertuple; for <productname>Ogg</productname> and &vorbisvertuple;
 for <productname>Vorbis</productname> will probably just work.
@@ -1324,7 +1360,7 @@ Install the library using:
                   <screen>
 tar xzvf libshout-&libshoutvertuple;
 cd libshout-&libshoutvertuple;
-./configure --without-python --disable-dependency-tracking
+sh ./configure --without-python --disable-dependency-tracking
 make
 sudo make install
 </screen>
@@ -1350,7 +1386,7 @@ sudo make install
 	<variablelist>
 	    <varlistentry>
 	      <term>
-            <ulink url="&mkdownload;/MK-&mkvertuple;.b.MOX.pkg.tar">MK-&mkvertuple;.b.MOX.pkg.tar</ulink>
+            <ulink url="&mkdownload;/MK-&mkvertuple;.b.MOX.pkg.tar?download">MK-&mkvertuple;.b.MOX.pkg.tar</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -1362,25 +1398,31 @@ sudo make install
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="&mkdownload;/ZilogSCCMIDI.b.tar.gz">ZilogSCCMIDI.b.tar.gz</ulink>
+              <ulink url="&mkdownload;/ZilogSCCMIDI.b.tar.gz?download">ZilogSCCMIDI.b.tar.gz</ulink>
               </term>
 	      <listitem>
 		<para>
-                The MacOS X-Server <acronym>MIDI</acronym> driver
-                binary for SCC UARTs in 8500/8600/9500/9600/G3/G4
-                PowerMacs. Note that this driver will not work on
-                MacOS X.
-              </para>
+                  The <productname>MacOS X-Server V1.2</productname>
+                  <acronym>MIDI</acronym> driver binary for
+                  <acronym>SCC</acronym> <acronym>UART</acronym>s in
+                  <hardware>8500/8600/9500/9600/G3/G4
+                  PowerMacs</hardware>.
+                </para>
+                <note>
+                  <para>
+                    This driver is not needed and will not work on <productname>MacOS X</productname>.
+                  </para>
+                </note>
 	      </listitem>
 	    </varlistentry>
 <!-- TODO
 	    <varlistentry>
 	      <term>
-            <ulink url="&mkdownload;/MK-&mkvertuple;.b.linux-i386.rpm">MK-&mkvertuple;.b.linux-i386.rpm</ulink>
+            <ulink url="&mkdownload;/MK-&mkvertuple;.b.linux-i386.rpm?download">MK-&mkvertuple;.b.linux-i386.rpm</ulink>
             </term>
 	    <listitem>
 	      <para>
-              The Intel Linux frameworks (including the
+              The Intel <productname>Linux</variablelist> frameworks (including the
               <productname>SndKit</productname>).
               </para>
 	    </listitem>
@@ -1389,11 +1431,11 @@ sudo make install
 <!-- TODO
 	  <varlistentry>
 	    <term>
-            <ulink url="&mkdownload;/MK-&mkvertuple;.b.w32.pkg.tar">MK-&mkvertuple;.b.w32.pkg.tar</ulink>
+            <ulink url="&mkdownload;/MK-&mkvertuple;.b.w32.pkg.tar?download">MK-&mkvertuple;.b.w32.pkg.tar</ulink>
             </term>
 	    <listitem>
 	      <para>
-              The Windows9X/2000 frameworks (including the <productname>SndKit</productname>).
+              The <productname>Windows9X/2000</productname> frameworks (including the <productname>SndKit</productname>).
               </para>
 	    </listitem>
 	  </varlistentry>
@@ -1724,10 +1766,10 @@ installation directory (the default).
 
       <para>
 The the frameworks and applications are installed into the appropriate
-platform locations given in the table below.
+platform locations given in <xref linkend=installlocations>.
 </para>
 
-    <table frame=all><title><productname>MusicKit</productname> Install locations</title>
+    <table id=installlocations frame=all><title><productname>MusicKit</productname> Install locations</title>
       <tgroup cols=3 colsep=1 rowsep=1>
 	<colspec colnum=1 align=left>
 	<colspec colnum=2 align=center>
@@ -1870,9 +1912,10 @@ To compile the <productname>MacOS X-Server V1.2</productname>
 Zilog <acronym>SCC</acronym>
 <acronym>MIDI</acronym> driver, some header files are missing.  You
 can get them from the <productname>Darwin</productname> distribution
-of the <productname>SoundKit</productname> or just copy them from a
+of the <productname>SoundKit</productname>, copy them from a
 <productname>NeXTStep 3.3</productname>/<productname>OpenStep
-4.2</productname> system.
+4.2</productname> system, or as a convience, they are made available
+for <link linkend=DriverKitHeaders>download</link>.
 </para>
 
 <para>
