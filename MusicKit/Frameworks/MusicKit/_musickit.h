@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2001/05/12 09:31:44  sbrandon
+  - changed from "id aClass" to Class aClass to avoid compiler warnings on GNUSTEP
+
   Revision 1.4  2000/10/11 16:56:10  leigh
   Removed objc-runtime.h since it is included by FoundationKit.h
 
@@ -75,9 +78,11 @@ Modification history:
 
 /* These are used to see if a class is loaded */ 
 /* These are used to avoid going through the findClass hash every time */
-
+/* MOD stephen@pyrusmalus.com, 11/05/2001
+ * changed from "id aClass" to Class aClass to avoid compiler warnings.
+ */
 typedef struct __MKClassLoaded { 
-    id aClass;
+    Class aClass;
     BOOL alreadyChecked;
 } _MKClassLoaded;
 
