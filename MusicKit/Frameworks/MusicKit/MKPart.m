@@ -15,6 +15,9 @@ Modification history:
  Now in CVS - musickit.sourceforge.net
 
  $Log$
+ Revision 1.22  2002/03/06 09:48:58  skotmcdonald
+ Added not-nil checks around ivar releases in dealloc
+
  Revision 1.21  2002/01/24 14:49:43  sbrandon
  fixed typo in addNotes:timeShift:, and removed unused variable in
  -combineNotes
@@ -358,8 +361,10 @@ static void removeNote(MKPart *self,id aNote);
     //return;
   }
   MKRemoveObjectName(self);
-  [score removePart:self];  // moved over from releaseSelfOnly
-  [notes release];
+  if (score)
+    [score removePart:self];  // moved over from releaseSelfOnly
+  if (notes)
+    [notes release];
   [super dealloc];
   // Changed on K. Hamels suggestion, used to message to releaseSelfOnly but this would cause a dealloc loop.
 }
