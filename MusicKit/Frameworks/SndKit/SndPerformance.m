@@ -172,8 +172,8 @@ startPosition: (double) startPosition
     NSString *loopDescription = looping ? [NSString stringWithFormat: @"looping between %ld and %ld",
 	loopStartIndex, loopEndIndex] : @"";
 
-    return [NSString stringWithFormat: @"%@, playing at %f, from %ld, to %ld  %@", snd, playTime,
-	startAtIndex, endAtIndex, loopDescription];
+    return [NSString stringWithFormat: @"%@ playing (%@) at %f, from %ld, to %ld %@", [super description],
+	snd, playTime, startAtIndex, endAtIndex, loopDescription];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
