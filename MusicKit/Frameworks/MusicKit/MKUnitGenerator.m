@@ -33,6 +33,10 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2001/07/02 16:51:38  sbrandon
+  - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
+    compliant)
+
   Revision 1.9  2000/11/25 22:40:48  leigh
   Doco cleanup
 
@@ -329,7 +333,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
     /* This method is a subclass responsibility. It is automatically
        provided by the UnitGenerator creation utility, dspwrap. */
 {
-    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", sel_getName(_cmd)];
+    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
     return NULL;
 }
 
@@ -337,7 +341,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
     /* This method is a subclass responsibility. It is automatically
        provided by the UnitGenerator creation utility, dspwrap. */
 {
-    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", sel_getName(_cmd)];
+    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
     return NULL;
 }
 

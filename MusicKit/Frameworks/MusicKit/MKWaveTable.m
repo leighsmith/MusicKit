@@ -17,6 +17,10 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/07/02 16:52:20  sbrandon
+  - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
+    compliant)
+
   Revision 1.2  1999/07/29 01:16:44  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -221,7 +225,7 @@ Modification history:
    NULL. 
 */
 {
-    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", sel_getName(_cmd)]; return nil;
+    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)]; return nil;
 }
 
 - (DSPDatum *)dataDSP
