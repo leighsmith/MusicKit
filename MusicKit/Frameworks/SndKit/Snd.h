@@ -168,7 +168,7 @@ typedef enum {
     id delegate;		 
     /*! @var status what the object is currently doing */
     int status;			 
-    /*! @var name The name of the sound */
+    /*! @var name The name of the sound, typically less verbose than the info string which can be descriptive. */
     NSString *name;
     /*! @var currentError */
     int currentError;
@@ -362,14 +362,6 @@ typedef enum {
 			  <B>Currently only reads Sun/NeXT .au format files</B>.
 */
 - readSoundFromData: (NSData *) stream;
-
-/*!
-  @method writeSoundToData:
-  @param  stream is an NSMutableData instance.
-  @discussion Writes the Snd's name (if any), priority, sample format, and
-              sound data (if any) to the NSMutableData <i>stream</i>.
-*/
-- writeSoundToData: (NSMutableData *) stream;
 
 /*!
   @method      swapBigEndianToHostFormat
@@ -614,6 +606,16 @@ typedef enum {
   @result Returns a new retained instance with duplicated data, or nil if unable to copy.
 */
 - (id) copyWithZone: (NSZone *) zone;
+
+/*!
+  @method dataEncodedAsFormat:
+  @abstract Writes the Snd's name (if any), sample format, and sound data (if any).
+  @param  dataFormat is an NSString describing the data format.
+  @result Returns an autoreleased NSData instance, or nil if unable to encode.
+  @discussion The dataFormat parameter matches sound file extensions. Currently however,
+	      all data is encoded as .au format, dataFormat is ignored.
+ */
+- (NSData *) dataEncodedAsFormat: (NSString *) dataFormat;
 
 /*!
   @method data
@@ -1219,21 +1221,16 @@ typedef enum {
 - (int) insertSamples: (Snd *) aSnd at: (int) startSample;
 
 /*!
-  @method copySamples:
-  @param  aSound is an id.
-  @param startSamplein an int.
-  @param sampleCount is an int.
-  @result Returns an int.
-  @discussion Replaces the Snd's sampled data with a copy of a
-              portion of <i>aSound</i>'s data. The copied portion starts at
-              <i>aSound</i>'s <i>startSample</i>'th sample (zero-based) and
-              extends over <i>sampleCount</i> samples. The Snd receiving this
-              message must be editable and the two Snds must be compatible. If
-              the specified portion of <i>aSound</i> is fragmented, the Snd
-              receiving this message will also be fragmented. An error code is
-              returned.
+  @method soundFromSamplesInRange:
+  @param frameRange is an NSRange of sample frames.
+  @result Returns an autoreleased Snd instance.
+  @discussion Returns a new Snd instance of the same format with a copy of a
+              portion of receivers sound data. The copied portion is given by 
+              <i>frameRange</i> frames (zero-based). If
+              the specified portion of the Snd receiving this message is fragmented,
+	      the Snd returned will also be fragmented.
  */
-- (int) copySamples: (Snd *) aSnd at: (int) startSample count: (int) sampleCount;
+- (Snd *) soundFromSamplesInRange: (NSRange) frameRange;
 
 /*!
   @method compactSamples
