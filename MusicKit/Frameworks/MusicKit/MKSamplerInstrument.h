@@ -1,9 +1,32 @@
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description:
+    Each MKSamplerInstrument holds a collection of sound files indexed by noteTag.
+    A MKNote has a MK_filename parameter which is the soundfile to be played, together with any
+    particular tuning deviation to be applied to it using a keynumber or frequency which forms a ratio
+    from the unity key number located in the (AIFF or ?WAV?). That does imply being able to load the file
+    immediately (within the Delta) for playback. But then, we should be spooling from disk anyway.
+
+  Original Author: Leigh M. Smith <leigh@tomandandy.com>
+
+  Copyright (c) 1999 tomandandy, Inc.
+  Permission is granted to use and modify this code for commercial and non-commercial
+  purposes so long as the author attribution and this copyright message remains intact
+  and accompanies all derived code.
+*/
+/*
+  $Log$
+  Revision 1.2  1999/09/24 17:03:05  leigh
+  Added documentation
+
+*/
 #ifndef __MK_SamplerInstrument_H___
 #define __MK_SamplerInstrument_H___
 #import <MusicKit/MKInstrument.h>
 #import <MusicKit/MKConductor.h>
 #import <SndKit/Snd.h>
-// #import "PlayingSound.h"
 
 @interface MKSamplerInstrument: MKInstrument
     /* Plays sound files according to MIDI key numbers. */
