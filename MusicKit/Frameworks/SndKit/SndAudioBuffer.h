@@ -379,12 +379,12 @@
   @method audioBufferConvertedToFormat:channelCount:samplingRate:
   @discussion Creates a new autoreleased buffer of the same number of samples as the receiver
               converted to the new format, sampling rate and channel count.
-  @param toDataFormat An integer representing different sample data formats.
-  @param toChannelCount
+  @param toDataFormat A SndSampleFormat representing different sample data formats.
+  @param toChannelCount The new number of channels in the raw sample data.
   @param toSamplingRate
   @result returns the new buffer instance.
  */
-- (SndAudioBuffer *) audioBufferConvertedToFormat: (int) toDataFormat
+- (SndAudioBuffer *) audioBufferConvertedToFormat: (SndSampleFormat) toDataFormat
 				     channelCount: (int) toChannelCount
 				     samplingRate: (double) toSamplingRate;
 
@@ -392,10 +392,10 @@
   @method convertToFormat:
   @abstract Converts the sample data to the given format.
   @discussion Only the format is changed, the number of channels and sampling rate are preserved.
-  @param  newDataFormat  An integer representing different sample data formats.
+  @param  newDataFormat  A SndSampleFormat representing different sample data formats.
   @result Returns self if conversion was successful, nil if conversion was not possible, such as due to incompatible channel counts.
  */
-- convertToFormat: (int) newDataFormat;
+- convertToFormat: (SndSampleFormat) newDataFormat;
 
 /*!
   @method convertBytes:intoFrameRange:fromFormat:channels:samplingRate:
@@ -408,7 +408,7 @@
   @param fromDataPtr      A pointer to raw sample data.
   @param bufferFrameRange Indicates the region of the buffer which will be converted, specified
                           in channel independent samples.
-  @param fromDataFormat   An integer representing different sample data formats.
+  @param fromDataFormat   A SndSampleFormat representing different sample data formats.
   @param fromChannelCount The old number of channels in the raw sample data.
   @param fromSamplingRate The old sampling rate in the raw sample data.
   @result Returns the number of frames that were read if conversion was successful, 0 if conversion was not
@@ -416,7 +416,7 @@
  */
 - (long) convertBytes: (void *) fromDataPtr
        intoFrameRange: (NSRange) bufferFrameRange
-           fromFormat: (int) fromDataFormat
+           fromFormat: (SndSampleFormat) fromDataFormat
              channels: (int) fromChannelCount
          samplingRate: (double) fromSamplingRate;
 
@@ -424,12 +424,12 @@
   @method convertToFormat:channelCount:
   @abstract Converts the sample data to the given format and channel count.
   @discussion Reallocates sample data if necessary for channel count changes.
-  @param toDataFormat   An integer representing different sample data formats.
+  @param toDataFormat   A SndSampleFormat representing different sample data formats.
   @param toChannelCount Number of channels for the new sound. If less than the current number, channels are averaged,
                         if more, channels are duplicated.
   @result Returns self if conversion was successful, nil if conversion was not possible, such as due to incompatible channel counts.
  */
-- convertToFormat: (int) toDataFormat
+- convertToFormat: (SndSampleFormat) toDataFormat
      channelCount: (int) toChannelCount;
 
 /*!
@@ -437,7 +437,7 @@
   @abstract Converts the sample data to the given format, channel count and sampling rate.
   @discussion The parameter fields useLargeFilter: interpolateFilter:  and useLinearInterpolation: control the
               particular resampling methods used.
-  @param toDataFormat    An integer representing different sample data formats.
+  @param toDataFormat    A SndSampleFormat representing different sample data formats.
   @param toChannelCount  The new number of channels. Reallocation occurs if expanding buffers.
   @param toSampleRate    The new sampling rate.
   @param largeFilter     TRUE means use 65tap FIR filter, with higher quality.
@@ -446,7 +446,7 @@
   @param linearInterpolation If TRUE, linear interpolation uses a fast, noninterpolating resample routine but is relatively noisy.
   @result Returns self if conversion was successful, nil if conversion was not possible, such as due to incompatible channel counts.
  */
-- convertToFormat: (int) toDataFormat
+- convertToFormat: (SndSampleFormat) toDataFormat
      channelCount: (int) toChannelCount
      samplingRate: (double) toSampleRate
    useLargeFilter: (BOOL) largeFilter
@@ -491,7 +491,7 @@ SNDKIT_API int SndConvertSound(const SndSoundStruct *fromSound,
   @param outCount Length in samples of the original buffer, counting number of channels, that is duration in samples * number of channels.
   @result Returns error code.
  */
-SNDKIT_API int SndChangeSampleType (void *fromPtr, void *toPtr, int dfFrom, int dfTo, long outCount);
+SNDKIT_API int SndChangeSampleType (void *fromPtr, void *toPtr, SndSampleFormat dfFrom, SndSampleFormat dfTo, long outCount);
 
 /*!
   @function SndChangeSampleRate
@@ -523,26 +523,31 @@ SNDKIT_API void SndChangeSampleRate(const SndFormat fromSound,
 				    BOOL largeFilter, BOOL interpFilter, BOOL fast);
 
 /*!
-  @function    SndChannelIncrease
-  @abstract   Increases the number of channels in the buffer, in place.
-  @discussion Endian-agnostic. Only sensible conversions are accepted (1
- 	      to anything, 2 to 4, 8 etc, 4 to 8, 16 etc). Buffer must have
-              enough memory allocated to hold the increased data.
+  @function   SndChannelMap
+  @abstract   Maps old channels to the new number of channels in the buffer, in place.
+  @discussion Endian-agnostic. Buffer must have enough memory allocated to hold the increased data.
+              Remaps channels in an arbitary fashion, either increasing or decreasing the channels or rearranging them.
+              The channel map determines which old channels are to be copied to the new channel arrangement. This is an
+              array of newNumChannels length containing the indexes of the old channels.
+              Channel indexes are zero based. If an index in the map is negative, that channel is zeroed in the output.
+              For example, to map a stereo file to hexaphonic where the even numbered channels project to the left,
+              odd numbered channels to the right, the map would be 0 1 0 1 0 1.
   @param inPtr
   @param outPtr
   @param frames
-  @param oldNumChannels
+  @param oldNumChannels 
   @param newNumChannels
-  @param df   data format of buffer
-  @result does not return error code.
+  @param df A SndSampleFormat giving the data format of buffer.
+  @param map An array newNumChannels long indicating which oldNumChannel to use in the new channel. 
+             A channel index of -1 indicates zeroing (silencing) that channel.
  */
-
-SNDKIT_API void SndChannelIncrease (void *inPtr,
-				    void *outPtr,
-				    int frames,
-				    int oldNumChannels,
-				    int newNumChannels,
-				    int df );
+SNDKIT_API void SndChannelMap (void *inPtr,
+                               void *outPtr,
+                               int frames,
+                               int oldNumChannels,
+                               int newNumChannels,
+                               SndSampleFormat df,
+                               short *map);
 
 
 /*!
@@ -564,7 +569,7 @@ SNDKIT_API void SndChannelDecrease (void *inPtr,
 				    unsigned int frames,
 				    int oldNumChannels,
 				    int newNumChannels,
-				    int df );
+				    SndSampleFormat df);
 
 @end
 
