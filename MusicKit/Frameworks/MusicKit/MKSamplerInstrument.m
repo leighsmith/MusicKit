@@ -13,10 +13,17 @@
 
   Original Author: Leigh M. Smith <leigh@tomandandy.com>
 
-  Copyright (c) 1999 tomandandy, Inc.
+  Copyright (c) 1999 tomandandy music inc.
+
+  Permission is granted to use and modify this code for commercial and non-commercial
+  purposes so long as the author attribution and this copyright message remains intact
+  and accompanies all derived code.
 */
 /*
   $Log$
+  Revision 1.8  2000/04/20 21:36:51  leigh
+  Added removePreparedSounds to stop sound names growing unchecked
+
   Revision 1.7  2000/04/17 22:51:54  leigh
   Cleaned out some redundant stuff, added debugging tests
 
@@ -92,19 +99,27 @@ static float uglySamplerTimingHack = 0.0;
 
     conductor = [[MKConductor defaultConductor] retain];
     playingNotes = [[NSMutableArray arrayWithCapacity: 20] retain]; 
+    nameTable = [[NSMutableArray arrayWithCapacity: 40] retain];
 
     [self reset];
     return self;
 }
 
+- (void) removePreparedSounds
+{
+    unsigned int i;
+    for(i = 0; i < [nameTable count]; i++) {
+        [WorkingSoundClass removeSoundForName: [nameTable objectAtIndex: i]];
+    }
+}
+
+/* Free the playnotes list, the conductor and remove the named sounds */
 - (void) dealloc
-  /*
-  * Free the sound structs, the filename strings, the hash tables, and the
-  * window.
-  */
 {
     [playingNotes release];
     [conductor release];
+    [self removePreparedSounds];
+    [nameTable release];
 }
 
 // Prepare by preparing the PlayingSound instance
@@ -144,6 +159,7 @@ static float uglySamplerTimingHack = 0.0;
         return nil;
     }
     [newSound setName: filePath];
+    [nameTable addObject: filePath];
     velocity = [aNote parAsInt: MK_velocity];
     return self;
 }
@@ -192,7 +208,7 @@ static float uglySamplerTimingHack = 0.0;
     // NSLog(@"sound is playing %d\n", [existingSound isPlaying]);
     [playingNotes removeObject: aNote];
     // For some reason, times are skewed and this ends playback prematurely. I dunno.
-    [existingSound stop];
+    // [existingSound stop];
     return self;
 }
 
@@ -299,6 +315,7 @@ static float uglySamplerTimingHack = 0.0;
 {
 //  int i;
 
+NSLog(@"in MKSamplerInstrument deactivate:\n");
 #if 0 // only needed when we are recording.
   if (noteTag == recordTag) {
     WorkingSoundClass *newSound, *oldSound;
@@ -474,7 +491,6 @@ static float uglySamplerTimingHack = 0.0;
   }
   /* Initialize certain non-archived data */
   linearAmp = MKdB(amp);
-  [self reset];
   [self init];
   return self;
 }

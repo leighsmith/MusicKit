@@ -18,6 +18,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2000/04/20 21:36:50  leigh
+  Added removePreparedSounds to stop sound names growing unchecked
+
   Revision 1.5  2000/04/17 22:52:23  leigh
   Cleaned out some redundant stuff
 
@@ -50,7 +53,6 @@
 #import "MKConductor.h"
 
 @interface MKSamplerInstrument: MKInstrument
-    /* Plays sound files according to MIDI key numbers. */
 {
     MKConductor *conductor;
     double volume;
@@ -65,7 +67,7 @@
 
     NSMutableDictionary *soundTable;
     NSMutableArray *playingNotes;
-//    PlayingSound *playingSample;
+    NSMutableArray *nameTable;
     BOOL sustained[128];
     int activeVoices;
     double amp;
@@ -88,7 +90,7 @@
     id recordModeInterface;
     int recordKey;
     int recordTag;
-    NSSound *recorder;
+    WorkingSoundClass *recorder;
 }
 
 - init;
@@ -98,6 +100,7 @@
 - (int) voiceCount;
 - (void) setVoiceCount: (int) newVoiceCount;
 - prepareSoundWithNote: (MKNote *) aNote;
+- (void) removePreparedSounds;
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 - (void) sound: (WorkingSoundClass *) sound didFinishPlaying:(BOOL)aBool;
 - (void) encodeWithCoder:(NSCoder *) coder;
