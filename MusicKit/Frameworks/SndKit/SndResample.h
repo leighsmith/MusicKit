@@ -6,9 +6,13 @@
  * number of bits to the right of the binary-point for fixed-point math, etc.
  *
  */
-
+#ifdef GNUSTEP
+#include "SndStdefs.h"
+#include "SndFunctions.h"
+#else
 #import "SndStdefs.h"
 #import "SndFunctions.h"
+#endif
 
 /* Conversion constants */
 #define Nhc       8
