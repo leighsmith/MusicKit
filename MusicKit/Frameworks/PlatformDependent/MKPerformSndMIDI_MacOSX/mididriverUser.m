@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/12/14 05:00:11  leigh
+  Corrected to ensure NULL termination of the drivers returned
+
   Revision 1.7  2000/12/12 22:59:20  leigh
   Removed function logging to file as default
 
@@ -95,7 +98,9 @@ static void readProc(const MIDIPacketList *pktlist, void *refCon, void *connRefC
     }
 }
 
-// retrieve a list of strings giving driver names, and therefore (0 based) unit numbers.
+// Retrieve a list of strings giving driver names, and therefore (0 based) unit numbers.
+// Return the available port names and the index of the current selected port.
+// A NULL char * terminates the list a la argv behaviour.
 PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
 {
     const char **driverList = NULL;
@@ -106,8 +111,8 @@ PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
 #if 1 // USE_DEVICES
     // enumerate devices 
     n = MIDIGetNumberOfDevices();
-    if(n > 0)
-        driverList = (char **) calloc(n, sizeof(char *));
+    // always create at least one entry for the terminating NULL pointer.
+    driverList = (char **) calloc(n+1, sizeof(char *));
     for (i = 0; i < n; ++i) {
         MIDIDeviceRef dev = MIDIGetDevice(i);
         
@@ -125,8 +130,9 @@ PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
 
         // printf("driver[%ld] = %s\n", i, driverList[i]);
     }
+    driverList[i] = NULL;
 #else
-    // Actually, this should return a collection of entities rather than devices, which are configurations
+    // TODO Actually, this should return a collection of entities rather than devices, which are configurations
     // of system wide interoperating MIDI streams.
     n = MIDIDeviceGetNumberOfEntities(MIDIDeviceRef device);
 
