@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/12/07 00:08:03  leigh
+  Corrected typo
+
   Revision 1.3  2000/11/29 23:21:27  leigh
   Renamed MD functions to MKMD
 
@@ -64,7 +67,9 @@ extern void mig_dealloc_reply_port();
 
 
 /* Routine MKMDBecomeOwner */
-MKMKMD
+mig_external kern_return_t MKMDBecomeOwner (
+        mach_port_t mididriver_port,
+        mach_port_t owner_port)
 {
 	typedef struct {
 		msg_header_t Head;
