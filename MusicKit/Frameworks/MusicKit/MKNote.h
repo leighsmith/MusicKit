@@ -103,6 +103,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2000/06/16 23:25:34  leigh
+  MKConductor imported for typing of ivars
+
   Revision 1.6  2000/05/06 00:32:59  leigh
   Converted _binaryIndecies to NSMutableDictionary
 
@@ -124,6 +127,8 @@
 #import <Foundation/Foundation.h>
 
 #import <Foundation/NSObject.h>
+
+#import "MKConductor.h"
 
  /* NoteTag allocation. */
 extern unsigned MKNoteTag(void);
