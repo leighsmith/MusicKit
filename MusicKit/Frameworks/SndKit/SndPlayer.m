@@ -469,8 +469,7 @@ static SndPlayer *defaultSndPlayer;
         // Negative buffer length means the endAtIndex was moved before the current playIndex, so we should skip any mixing and stop.
         if (buffLength > 0) {      
           int start = 0, end = buffLength;
-          
-          SndAudioBuffer *temp = [snd audioBufferForSamplesInRange: playRegion];
+          SndAudioBuffer *temp = [[snd audioBufferForSamplesInRange: playRegion] retain];
     
           if (startIndex < 0)                 start = -startIndex;
           if (end + startIndex > endAtIndex)  end   = endAtIndex - startIndex;
@@ -485,6 +484,7 @@ static SndPlayer *defaultSndPlayer;
                 (((short *)[snd data])[playRegion.location])/(float)32768);
 #endif
           [performance setPlayIndex: startIndex + buffLength];
+          [temp release];
         }
         // When at the end of sounds, signal the delegate and remove the performance.
         if ([performance playIndex] >= endAtIndex) {
