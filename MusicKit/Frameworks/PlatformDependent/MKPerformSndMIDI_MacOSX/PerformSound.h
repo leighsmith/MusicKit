@@ -15,6 +15,9 @@
 */
 /*
   $Log$
+  Revision 1.10  2001/11/07 17:54:18  sbrandon
+  put #ifndefs around file to protect from using "include" instead of import.
+
   Revision 1.9  2001/09/03 15:04:28  sbrandon
   added a couple of headerdoc comments
 
@@ -51,6 +54,9 @@
     operation (where the operating system lacks streaming buffers).
     It draws inspiration (only) from Steinberg's ASIO.
 */
+
+#ifndef __MKPERF_SND_MIDI_PERFORM_SOUND_H__
+#define __MKPERF_SND_MIDI_PERFORM_SOUND_H__
 
 /*!
     @defined PERFORM_API
@@ -296,3 +302,4 @@ PERFORM_API BOOL SNDStreamStop(void);
 }
 #endif
 
+#endif /*__MKPERF_SND_MIDI_PERFORM_SOUND_H__*/
