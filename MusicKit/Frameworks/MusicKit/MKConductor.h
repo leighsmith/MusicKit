@@ -1,10 +1,23 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    This is the header for the MusicKit scheduler. See documentation for details.
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
+Modification history:
+
   $Log$
+  Revision 1.5  2000/01/13 06:53:17  leigh
+  doco cleanup
+
   Revision 1.4  1999/09/04 22:02:17  leigh
   Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
 
@@ -20,7 +33,7 @@
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSArray.h>
-#import <Foundation/NSThread.h>  // LMS to be replaced with NSThread
+#import <Foundation/NSThread.h>
 
 // Enforce C name mangling to allow linking MusicKit functions to C++ code
 #ifdef __cplusplus
@@ -91,7 +104,7 @@ extern void MKFinishPerformance(void);
     double beatSize;    // The size of a single beat in seconds.
     double timeOffset;  // Performance timeOffset in seconds.
     BOOL isPaused;      /* YES if this instance is paused. 
-                         * Note that pausing all Conductors through the pause factory
+                         * Note that pausing all MKConductors through the pause factory
                          * method doesn't set this to YES. */
     id delegate;
     NSMutableArray *activePerformers;
@@ -110,7 +123,7 @@ extern void MKFinishPerformance(void);
 }
  
 + allocWithZone:(NSZone *)zone;
-+alloc;
++ alloc;
 - init;
 + adjustTime; 
 + startPerformance;
@@ -122,9 +135,9 @@ extern void MKFinishPerformance(void);
 + resumePerformance; 
 + currentConductor; 
 + clockConductor;
-+ setClocked:(BOOL)yesOrNo; 
++ setClocked:(BOOL) yesOrNo; 
 +(BOOL) isClocked; 
-+ setFinishWhenEmpty:(BOOL)yesOrNo; 
++ setFinishWhenEmpty:(BOOL) yesOrNo; 
 +(BOOL) isEmpty;
 +(BOOL) finishWhenEmpty;
 +(void) setDeltaT: (double) newDeltaT;
@@ -133,43 +146,41 @@ extern void MKFinishPerformance(void);
 - copyWithZone:(NSZone *)zone;
 -(BOOL) isPaused; 
 - pause; 
-- pauseFor:(double)seconds;
+- pauseFor:(double) seconds;
 - resume; 
--(double) setBeatSize:(double)newBeatSize; 
+-(double) setBeatSize:(double) newBeatSize; 
 -(double) beatSize; 
--(double) setTempo:(double)newTempo; 
+-(double) setTempo:(double) newTempo; 
 -(double) tempo; 
--(double) setTimeOffset:(double)newTimeOffset; 
+-(double) setTimeOffset:(double) newTimeOffset; 
 -(double) timeOffset; 
-- sel:(SEL)aSelector to:toObject withDelay:(double)beats argCount:(int)argCount,...;
-- sel:(SEL)aSelector to:toObject atTime:(double)time argCount:(int)argCount,...;
+- sel:(SEL) aSelector to: toObject withDelay:(double) beats argCount:(int) argCount, ...;
+- sel:(SEL) aSelector to: toObject atTime:(double) time argCount:(int) argCount, ...;
 +(double) time; 
 -(double) time; 
 - emptyQueue; 
 -(BOOL) isCurrentConductor;
-+(MKMsgStruct *) afterPerformanceSel:(SEL)aSelector to:toObject argCount:(int)argCount,...; 
-+(MKMsgStruct *) beforePerformanceSel:(SEL)aSelector to:toObject argCount:(int)argCount,...; 
-- (void)setDelegate:(id)object;
++(MKMsgStruct *) afterPerformanceSel:(SEL) aSelector to: toObject argCount:(int) argCount, ...; 
++(MKMsgStruct *) beforePerformanceSel:(SEL) aSelector to: toObject argCount:(int) argCount, ...; 
+-(void) setDelegate:(id) object;
 - delegate;
-+ (void)setDelegate:object;
++(void) setDelegate: object;
 + delegate;
 - activePerformers;
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
-- awakeAfterUsingCoder:(NSCoder *)aDecoder;
-+ useSeparateThread:(BOOL)yesOrNo;
+-(void) encodeWithCoder:(NSCoder *) aCoder;
+-(id) initWithCoder:(NSCoder *) aDecoder;
+- awakeAfterUsingCoder:(NSCoder *) aDecoder;
++ useSeparateThread:(BOOL) yesOrNo;
 + lockPerformance;
 + unlockPerformance;
-+ (BOOL)lockPerformanceNoBlock;
-+ setThreadPriority:(float)priorityFactor;
-+ (NSThread *) performanceThread;
-+sendMsgToApplicationThreadSel:(SEL)aSelector 
-  to:(id)toObject
-  argCount:(int)argCount, ...;
-+setInterThreadThreshold:(NSString *)newThreshold;
--setMTCSynch:aMidiObj;
--MTCSynch;
--(double)clockTime;
++(BOOL) lockPerformanceNoBlock;
++ setThreadPriority:(float) priorityFactor;
++(NSThread *) performanceThread;
++ sendMsgToApplicationThreadSel:(SEL) aSelector to:(id) toObject argCount:(int)argCount, ...;
++ setInterThreadThreshold:(NSString *) newThreshold;
+- setMTCSynch:aMidiObj;
+- MTCSynch;
+-(double) clockTime;
 /* Obsolete methods */
 + new; 
 -(double) predictTime:(double)beatTime; 
