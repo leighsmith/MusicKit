@@ -29,6 +29,10 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2002/01/23 15:33:02  sbrandon
+  The start of a major cleanup of memory management within the MK. This set of
+  changes revolves around MKNote allocation/retain/release/autorelease.
+
   Revision 1.12  2002/01/15 10:50:55  sbrandon
   tightened up type casting on NSNextMapEnumeratorPair() to prevent compiler
   warning
@@ -93,7 +97,8 @@ Modification history:
 
 /* midiOutNode is a struct that maps a noteTag onto a keyNumber (key). It
    also contains a noteDurOff and noteDurMsgPtr. These are use for 
-   enqueing a noteOff that was derived from a noteDur. */
+   enqueueing a noteOff that was derived from a noteDur. */
+   
 typedef struct _midiOutNode {
     unsigned key;
     MKMsgStruct *noteDurMsgPtr;
@@ -112,8 +117,10 @@ _MKMidiOutStruct *_MKInitMidiOut()
     static BOOL beenHere = NO;
     int i;
     _MKMidiOutStruct *rtn;
-    NSMapTableValueCallBacks valueCallBacks = {NULL, freeMidiOutNode, NULL};
-    NSMapTableKeyCallBacks keyCallBacks = {NULL, NULL, NULL, NULL, NULL, NULL};
+    NSMapTableValueCallBacks valueCallBacks = {NSOwnedPointerMapValueCallBacks.retain, 
+                                               freeMidiOutNode,
+					       NSOwnedPointerMapValueCallBacks.describe};
+    NSMapTableKeyCallBacks keyCallBacks = NSIntMapKeyCallBacks;//{NULL, NULL, NULL, NULL, NULL, NULL};
 
     if (!beenHere) {
 	beenHere = YES;
@@ -177,9 +184,8 @@ static void midiOutNodeNoteDur(midiOutNode *node,id aNoteDur,id msgReceiver)
     id cond;
     double time;
     cond = [aNoteDur conductor];
-    if (node->noteDurOff) 
-      [node->noteDurOff release];
-    node->noteDurOff = [aNoteDur _noteOffForNoteDur];      
+    [node->noteDurOff release];
+    node->noteDurOff = [[aNoteDur _noteOffForNoteDur] retain];      
     time = [cond timeInBeats] + [aNoteDur dur]; 
     /* Always do beat time here. When the note eventually happens, it will
        be written in beats or seconds depending on how the caller of 
@@ -203,13 +209,15 @@ static void cancelMidiOutNoteDurMsg(midiOutNode *node)
 }
 
 NSMutableArray *_MKGetNoteOns(_MKMidiOutStruct *ptr,int chan)
-    /* Returns List of noteOffs MKNote object for specified channel.
-     * Caller must free the List and the objects. chan is 1-based
+    /* Returns NSMutableArray of noteOff MKNote objects for specified channel,
+     * each matching one of the MKNotes in that channel, regardless of what
+     * noteType it was already.
+     * Caller must free the NSMutableArray and the objects. chan is 1-based.
      */
 {
     NSMapTable *map = ptr->_map[chan-1]; 
     int noteTag;
-    NSMutableArray *aList = [[NSMutableArray alloc] init];
+    NSMutableArray *anArray = [[NSMutableArray alloc] init];
     MKNote *aNote;
     midiOutNode *value;
     NSMapEnumerator state = NSEnumerateMapTable(map);
@@ -219,9 +227,10 @@ NSMutableArray *_MKGetNoteOns(_MKMidiOutStruct *ptr,int chan)
 	[aNote setNoteType:MK_noteOff];
 	[aNote setPar:MK_keyNum toInt:value->key];
 	[aNote setNoteTag:noteTag];
-	[aList addObject:aNote];
+	[anArray addObject:aNote];
+	[aNote release]; /* since the NSArray holds the retain on the note */
     }
-    return aList;
+    return anArray;
 }
 
 
@@ -292,7 +301,7 @@ void  _MKWriteMidiOut(MKNote *aNote, double timeTag, unsigned chan, /* 1 based *
      * A timeTag with no note may be inserted by setting aNote
      * to nil. The timeTag is in seconds. 
 
-     See the Midi documentation (or ~david/doc/Midi.doc) for details about
+     See the Midi documentation for details about
      MusicKit-to-MIDI semantic conversion. 
 
      chan is the channel to write the note on, for channel

@@ -77,6 +77,10 @@
 Modification history:
 
   $Log$
+  Revision 1.44  2002/01/23 15:33:02  sbrandon
+  The start of a major cleanup of memory management within the MK. This set of
+  changes revolves around MKNote allocation/retain/release/autorelease.
+
   Revision 1.43  2002/01/15 11:25:35  sbrandon
   fixed casting problem which caused compiler warnings and may have led to
   errors in reading sysex strings (thanks Nerijus Baliunas)
@@ -421,7 +425,7 @@ NSString *midiDriverErrorString(int errorCode)
         if ([midiObj->hostname isEqualToString: midiHostname] && (midiObj->unit != midiUnit))
             [aList addObject:midiObj];
     }
-    return aList;
+    return [aList autorelease];
 }
 
 // Returns YES if we closed the MIDI device correctly
@@ -463,7 +467,6 @@ static int closeMidiDev(MKMidi *self)
 	[self->ownerPort release];
     } 
     self->ownerPort = nil;
-    [otherUnits release];
     /* Just being paranoid: */
     self->devicePort = nil;
     self->recvPort = nil;
@@ -535,7 +538,6 @@ static MKMDReturn openMidiDev(MKMidi *self)
             }
         }
     }
-    [otherUnits release];
     if (!self->ownerPort) {
         self->ownerPort = [[NSPort port] retain];
         if (self->ownerPort == nil) {
@@ -967,7 +969,11 @@ static unsigned char parseMidiByte(unsigned char aByte, _MKMidiInStruct *ptr)
 }
 
 static id handleSysExclbyte(_MKMidiInStruct *ptr,unsigned char midiByte)
-    /* Paresing routine for incoming system exclusive */
+    /* Parsing routine for incoming system exclusive */
+    /* We don't return an autoreleased object - just the raw
+     * MKNote because there's only one place where this is called
+     * and we know we don't need the autorelease
+     */
 {
 #   define DEFAULTLEN 256
     if (midiByte == MIDI_SYSEXCL) {  /* It's a new one. */
@@ -1060,9 +1066,9 @@ static void my_data_reply(MKMDReplyPort reply_port, short unit, MKMDRawEvent *ev
     for (incomingDataCount = count; incomingDataCount--; events++) {
 	if ((statusByte = parseMidiByte(events->byte, ptr))) {
 	    if (statusByte == MIDI_SYSEXCL)
-                aNote = handleSysExclbyte(ptr, events->byte);
+                aNote = handleSysExclbyte(ptr, events->byte); /* not retained or autoreleased */
 	    else
-                aNote = _MKMidiToMusicKit(ptr, statusByte);
+                aNote = _MKMidiToMusicKit(ptr, statusByte); /* autoreleased */
 	    if (aNote) {
                 sendIncomingNote(ptr->chan, aNote, receivingMidi, events->time);
 		/* sending the MKNote can have unknown side-effects, since the

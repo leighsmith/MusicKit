@@ -104,6 +104,10 @@
 */
 /*
   $Log$
+  Revision 1.19  2002/01/23 15:33:02  sbrandon
+  The start of a major cleanup of memory management within the MK. This set of
+  changes revolves around MKNote allocation/retain/release/autorelease.
+
   Revision 1.18  2002/01/09 19:49:43  leighsmith
   Clean up of doco and typed copyParsFrom: parameter
 
@@ -588,7 +592,10 @@ MKDataType;
               Keep in mind that if while this method replicates the
 	      noteDur within the noteOn/noteOff pair, it doesn't
 	      replace the former with the latter.  To do this, you
-	      must free the noteDur yourself.  
+	      must free the noteDur yourself.
+		  
+		  The new MKNotes are returned as retained objects (ie you must
+		  release them yourself as they are not autoreleased). 
 */
 - split:(id *)aNoteOn :(id *)aNoteOff; 
  /* 

@@ -92,6 +92,10 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2002/01/23 15:33:02  sbrandon
+  The start of a major cleanup of memory management within the MK. This set of
+  changes revolves around MKNote allocation/retain/release/autorelease.
+
   Revision 1.9  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -286,7 +290,7 @@ Modification history:
 /* Methods required by superclasses. ------------------------------- */
 
 -activateSelf
-  /* TYPE: Performing; Prepares the reciever for a performance.
+  /* TYPE: Performing; Prepares the receiver for a performance.
    * Invoked by the activate method, this prepares the receiver 
    * for a performance by opening the associated file (if necessary)
    * and invoking nextNote until it returns 
@@ -356,8 +360,11 @@ Modification history:
 {
     id aNote;
     double t = fileTime;
-    while ((aNote = [self nextNote]))
+    while ((aNote = [self nextNote])) {
+      [aNote retain]; /* to be on the safe side */
       [self performNote:aNote];
+      [aNote release];
+    }
     if (fileTime > (MK_ENDOFTIME-1) || fileTime >= lastTimeTag) 
       [self deactivate];
     else 

@@ -16,6 +16,10 @@
 Modification history:
 
   $Log$
+  Revision 1.19  2002/01/23 15:33:02  sbrandon
+  The start of a major cleanup of memory management within the MK. This set of
+  changes revolves around MKNote allocation/retain/release/autorelease.
+
   Revision 1.18  2002/01/22 13:50:14  sbrandon
   squashed a bug in -copyWithZone which prevented copies of notes from being
   able to retrieve any user-defined parameters
@@ -372,7 +376,7 @@ static unsigned noteCachePtr = 0;
     else 
       newObj = [super allocWithZone:NSDefaultMallocZone()];
     [newObj initWithTimeTag:aTimeTag];
-    return newObj; // LMS: we should be autoreleasing here...and one day will when I trust we have the correct num of retains...
+    return [newObj autorelease];
 }
 
 + note 
@@ -497,6 +501,8 @@ static int nAppBitVects(); /* forward ref */
    */
 {
     *aNoteOff = [(*aNoteOn = [self copyWithZone:NSDefaultMallocZone()]) _splitNoteDurNoCopy];
+    [*aNoteOff retain];
+    [*aNoteOn retain];
     if (*aNoteOff)
       return self;
     return nil;
@@ -1972,7 +1978,7 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
         MKSetNoteParToInt(aNoteOff, MK_relVelocity, MKGetNoteParAsInt(self, MK_relVelocity));
     if ([self isParPresent: MK_midiChan])   /* This is needed by _MKWriteMidiOut */
         MKSetNoteParToInt(aNoteOff, MK_midiChan, MKGetNoteParAsInt(self, MK_midiChan));
-    return aNoteOff;
+    return aNoteOff; /* is autoreleased */
 }
 
 -_splitNoteDurNoCopy

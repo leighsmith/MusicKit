@@ -20,6 +20,10 @@
 Modification history:
 
   $Log$
+  Revision 1.29  2002/01/23 15:33:02  sbrandon
+  The start of a major cleanup of memory management within the MK. This set of
+  changes revolves around MKNote allocation/retain/release/autorelease.
+
   Revision 1.28  2002/01/15 12:14:35  sbrandon
   replaced [NSMutableData data] with alloc:initWithCapacity: so as to prevent
   auto-released data - we release it manually when finished with it.
@@ -912,6 +916,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 	if ((fileFormatLevel == 0) && (i != 0))
 	  [aNote setPar:MK_midiChan toInt:i];
 	[aPart setInfoNote:aNote];
+	[aNote release];
 	[self addPart:aPart];
 	*curPart++ = aPart;
     }
@@ -988,7 +993,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 	    /* Now handle meta-events that can be in regular notes. These
 	       are skipped when out of the time window, as are regular 
 	       MIDI messages. */
-	    aNote = [MKGetNoteClass() noteWithTimeTag:t+timeShift];
+	    aNote = [[MKGetNoteClass() alloc] initWithTimeTag:t+timeShift]; /* retained */
 	    switch (DATA[0]) { 
 	      case MKMIDI_trackChange: 
 		/* Sent at the end of every track. May be missing from the
@@ -999,7 +1004,6 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 					 @"end");
 		    [CURPART addNote:aNote];    /* Put an end-of-track mark */
 		}
-		else [aNote release];
 		curPart++;
 		if (curPart >= midiParts + trackCount)
 		  goto outOfLoop;
@@ -1014,6 +1018,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 		}
 		lastTempoTime = -1;
 		prevT = -1;
+		[aNote release];
 		continue; /* Don't clobber prevT below */
 	      case MKMIDI_tempoChange: 
 		/* For MK-compatibility, tempo is duplicated in info
@@ -1021,8 +1026,8 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 		if (t == 0) {
 		  if (lastTempoTime == 0) {
 		      /* Supress duplicate tempi, which can arise because of 
-			 the way we duplicate tempo in info */
-		      [aNote release];
+			 the way we duplicate tempo in info (do it by
+			 bypassing the addNote, below) */
 		      break;
 		  }
 		  else { /* First setting of tempo for current track. */
@@ -1068,11 +1073,12 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 		  break;
 	      }
 	      default:
-		[aNote release];
 		break;
 	    }
+	    [aNote release];
 	} 
 	else { /* Standard MIDI, not sys excl */
+	    id arp;
 	    switch (*nData) {
 	      case 3:
 		midiInPtr->_dataByte2 = DATA[2];
@@ -1096,21 +1102,27 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 		      ptr += 3;
 		  }
 		  *ptr = '\0';
-		  aNote = [MKGetNoteClass() noteWithTimeTag:t+timeShift];
+		  aNote = [[MKGetNoteClass() alloc] initWithTimeTag:t+timeShift];
                   MKSetNoteParToString(aNote,MK_sysExclusive,[NSString stringWithCString:str]); /* copy */
 		  [CURPART addNote:aNote];
+		  [aNote release];
 		  continue;
 	      }
 	    }
-	    aNote = _MKMidiToMusicKit(midiInPtr,DATA[0]);
+	    arp = [NSAutoreleasePool new];
+	    aNote = _MKMidiToMusicKit(midiInPtr,DATA[0]); /* autoreleased */
 	    if (aNote) { /* _MKMidiToMusicKit can omit MKNotes sometimes. */
 		[aNote setTimeTag:t+timeShift];
-		/* Need to copy MKNote because it's "owned" by midiInPtr. */
+		/* Need to copy MKNote because it's "owned" by midiInPtr (pre-
+		 * OpenStep).
+		 * Now we just add to the part as-is, and it will retain or copy
+		 * it as necessary. */
 		if (LEVEL0) {
 		  // LMS even if aNote has come from a Level0 file it should retain midiChannels from mode messages.
-                  if (midiInPtr->chan != _MK_MIDISYS)   
+                  if (midiInPtr->chan != _MK_MIDISYS) {
                     MKSetNoteParToInt(aNote, MK_midiChan, midiInPtr->chan);
-		  [midiParts[midiInPtr->chan] addNoteCopy:aNote];
+		  }
+		  [midiParts[midiInPtr->chan] addNote:aNote];
 		}
 		else {
 		    if (!trackInfoMidiChanWritten && midiInPtr->chan != _MK_MIDISYS) {
@@ -1118,12 +1130,13 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 			MKSetNoteParToInt([CURPART infoNote], MK_midiChan, midiInPtr->chan);
 			/* Set Part's chan to chan of first note in track. */
 		    }
-		    aNote = [CURPART addNoteCopy:aNote];
-		    /* aNote is new one */
-		    if (midiInPtr->chan != _MK_MIDISYS)
+		    if (midiInPtr->chan != _MK_MIDISYS) {
 		      MKSetNoteParToInt(aNote,MK_midiChan,midiInPtr->chan);
+		    }
+		    [CURPART addNote:aNote];
 		}
 	    }
+	    [arp release]; /* take care of autoreleased notes one at a time */
 	} /* End of standard MIDI block */
 	prevT = t;	 
     } /* End of while loop */
@@ -1405,9 +1418,14 @@ readScorefile(MKScore *self,
     lastTimeTag = MIN(lastTimeTag, MK_ENDOFTIME);
     firstTimeTag = MIN(firstTimeTag, MK_ENDOFTIME);
     do {
-      aNote = _MKParseScoreNote(p);
+      aNote = _MKParseScoreNote(p); /* not retained or autoreleased - so go careful */
     } while (p->timeTag < firstTimeTag);
-    /* Believe it or not, is actually better to copy the note here!
+    
+#if 0
+/* sbrandon, 22/01/2002
+ * this warning is ancient - I'm going to risk adding the MKNotes as they are.
+ */
+     /* Believe it or not, is actually better to copy the note here!
        I'm not sure why.  Maybe the hashtable has some hysteresis and
        it gets reallocated each time. */
     while (p->timeTag <= lastTimeTag) {
@@ -1420,6 +1438,18 @@ readScorefile(MKScore *self,
 	if ((!aNote) && (p->timeTag > (MK_ENDOFTIME-1)))
 	  break;
     }
+#endif
+    while (p->timeTag <= lastTimeTag) {
+	if (aNote) {
+	    _MKNoteShiftTimeTag(aNote, timeShift);
+	    (*partAddNote)(p->part, @selector(addNote:), aNote);
+	}
+	aNote = _MKParseScoreNote(p);/* not retained or autoreleased - so go careful */
+	if ((!aNote) && (p->timeTag > (MK_ENDOFTIME-1)))
+	  break;
+    }
+
+
     rtnVal = (p->_errCount == MAXINT) ? nil : self;
     _MKFinishScoreIn(p);
     return rtnVal;

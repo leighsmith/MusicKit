@@ -233,7 +233,6 @@ static void removeNote(MKPart *self,id aNote);
                 break;
               case MK_noteOff:
               case MK_noteDur:
-                [noteOff release];
                 matchFound = YES;          // Forget it.
                 break;
               default:

@@ -16,6 +16,10 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2002/01/23 15:33:02  sbrandon
+  The start of a major cleanup of memory management within the MK. This set of
+  changes revolves around MKNote allocation/retain/release/autorelease.
+
   Revision 1.5  2000/04/16 04:05:57  leigh
   improved typing
 
@@ -196,7 +200,7 @@ static int removeHeadOfList(midiInList *l,_MKMidiInStruct *ptr,short keyNum)
 id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte) 
     /* You call this with the _dataByte fields set appropriately. 
        Returns a note or nil.  The note which is
-       returned is owned by the struct. It should be copied on memory.
+       returned is autoreleased - just retain it is you want to keep it.
 
        ptr->chan is set as follows: If the note represents a
        midi 'channel voice message', ptr->chan is the channel.
@@ -438,6 +442,6 @@ id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte)
 
 #endif
 
-    return (id)aNote;
+    return (id)[aNote autorelease];
 }
 

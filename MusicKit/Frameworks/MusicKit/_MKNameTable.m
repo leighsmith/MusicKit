@@ -36,6 +36,10 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2002/01/23 15:33:02  sbrandon
+  The start of a major cleanup of memory management within the MK. This set of
+  changes revolves around MKNote allocation/retain/release/autorelease.
+
   Revision 1.8  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -541,7 +545,7 @@ void _MKCheckInit(void)
 //  NXRegisterErrorReporter( MK_ERRORBASE, MK_ERRORBASE+1000,_MKWriteError);
     globalParseNameTable = [[_MKNameTable alloc] initWithCapacity: GLOBALTABLESIZE];
     mkNameTable = [[_MKNameTable alloc] initWithCapacity: 0];
-    [[MKNote note] release]; /* Force initialization. Must be after table creation.*/
+    [[[MKNote alloc] init] release]; /* Force initialization. Must be after table creation.*/
     _MKTuningSystemInit();
 }
 
