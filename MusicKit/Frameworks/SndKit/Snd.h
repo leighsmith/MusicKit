@@ -962,6 +962,17 @@ architecture, as described in the <b>SndStruct</b> header.
 */
 - (void) tellDelegate:(SEL)theMessage duringPerformance: (SndPerformance *) performance;
 
+/*!
+  @method tellDelegateString:
+  @param  theMessage is an NSString, which will be converted to a SEL.
+  @discussion Sends <i>theMessage</i> to the Snd's delegate (only sent if the
+              delegate implements <i>theMessage</i>). You never invoke this method
+              directly; it's invoked automatically as the result of activities
+              such as recording and playing. However, you can use it in designing
+              a subclass of Snd.
+*/
+- (void) tellDelegateString:(NSString *)theMessage duringPerformance: (SndPerformance *) performance;
+
 
     /*************************
      * these methods are unique
