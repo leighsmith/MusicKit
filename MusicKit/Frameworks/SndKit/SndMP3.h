@@ -23,7 +23,7 @@
   long          *frameLocations;
   long           frameLocationsCount;
   double         duration;
-  long           sampleCount;
+  long           lengthInSampleFrames;
   long           decodedSampledCount;
   BOOL           bDecoding;
 
@@ -34,13 +34,13 @@
 - initFromSoundURL: (NSURL *) url;
 - (void) dealloc;
 - (double) duration;
-- (int) sampleCount;
+- (long) lengthInSampleFrames;
 - (int) channelCount;
 - (double) samplingRate;
 
-- (long) insertIntoAudioBuffer: (SndAudioBuffer *) buff
-		     intoRange: (NSRange) bufferRange
-	     samplesStartingAt: (long) sndStartIndex;
+- (long) insertIntoAudioBuffer: (SndAudioBuffer *) anAudioBuffer
+	        intoFrameRange: (NSRange) bufferRange
+	        samplesInRange: (NSRange) sndReadingRange;
 
 - (int) readSoundfile: (NSString*) filename;
 - (int) readSoundURL: (NSURL*) soundURL
