@@ -15,6 +15,9 @@
 Modification history:
 
    $Log$
+   Revision 1.5  2001/05/12 09:32:55  sbrandon
+   - GNUSTEP: changed imports to includes
+
    Revision 1.4  2001/01/24 22:00:10  skot
    Optimized fft algs, in particular sin/cos look up tables, for approx ~40% speedup
 
@@ -54,8 +57,14 @@ Modification history:
   * and x is the pure-real cyclic convolution of x and y.
   */
  
-#import <math.h>
-#import <stdlib.h> /*sb, for free and malloc */
+#ifdef GNUSTEP
+# include <math.h>
+# include <stdlib.h>
+#else
+# import <math.h>
+# import <stdlib.h> /*sb, for free and malloc */
+#endif
+
 #define TWOPI (double)(2*3.14159265358979323846264338327950)
 
 static int cur_run = 0;
