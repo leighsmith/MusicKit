@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2001/04/24 23:37:26  leighsmith
+  Added _MKWakeThread prototype for separate threading
+
   Revision 1.9  2000/04/20 21:39:00  leigh
   Removed flakey longjmp for unclocked MKConductors, improved description
 
@@ -204,6 +207,7 @@ extern void MKFinishPerformance(void);
 +(NSThread *) performanceThread;
 + sendMsgToApplicationThreadSel:(SEL) aSelector to:(id) toObject argCount:(int)argCount, ...;
 + setInterThreadThreshold:(NSString *) newThreshold;
++ (void) _wakeUpMKThread;
 
 @end
 
