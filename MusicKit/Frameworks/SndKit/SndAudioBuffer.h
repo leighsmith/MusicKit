@@ -50,6 +50,7 @@
 - (SndSoundStruct*) format;
 
 - zero;
+- (void) zeroForeignBuffer;
 
 - (int) multiChannelSampleSizeInBytes;
 
