@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/03/24 16:26:54  leigh
+  Removed redundant AppKit headers
+
   Revision 1.6  2000/01/13 06:39:08  leigh
   Corrected _MKErrorf to take NSString error message
 
@@ -137,11 +140,8 @@ Modification history:
   7/12/97/daj -  Added MONITOR_4_2 driver parameter for release 4.2
 */
 
-#import <AppKit/NSApplication.h>
-#import <AppKit/dpsOpenStep.h>
-#import <AppKit/NSDPSContext.h> /* Contains NX_FOREVER */
+//#import <AppKit/AppKit.h>
 #import <Foundation/NSUserDefaults.h>
-#import <mach/cthreads.h>
 #import "_musickit.h"
 #import "_error.h"
 #import "_time.h"

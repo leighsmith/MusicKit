@@ -4,6 +4,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2000/03/24 16:25:16  leigh
+  Removed redundant AppKit headers
+
   Revision 1.6  2000/01/27 19:06:28  leigh
   Now using NSPort replacing C Mach port API
 
@@ -24,11 +27,8 @@
 #define __MK__Conductor_H___
 #import "MKConductor.h"
 
-#import	<mach/message.h>
-#import <AppKit/dpsclient.h>
-#import <AppKit/NSDPSContext.h>
-#import <AppKit/dpsOpenStep.h>
-#import <AppKit/NSDPSContext.h>
+//#import	<mach/message.h>
+#import <Foundation/Foundation.h>
 
 #define _MK_ONLY_ONE_MTC_SUPPORTED 1 /* Do we ever need more than one? */
 #define _MK_DEFAULT_MTC_POLL_PERIOD (1/30.0)

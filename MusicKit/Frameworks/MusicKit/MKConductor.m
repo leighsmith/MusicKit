@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/03/24 16:27:25  leigh
+  Removed redundant AppKit headers
+
   Revision 1.7  2000/01/24 22:32:02  leigh
   Comment improvements
 
@@ -96,7 +99,6 @@ Modification history:
 		 archiving. (Sigh.)
 */
 #import <AppKit/NSApplication.h>
-#import <AppKit/dpsOpenStep.h>
 #import <setjmp.h>
 #import "_musickit.h"
 #import "_time.h"
