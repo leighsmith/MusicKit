@@ -348,8 +348,8 @@ enum {
       }
       else if (bDelegateRespondsToOutputBufferSkipSelector)
         [delegate outputBufferSkipped: self];
-      else {
-            NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked?", clientName);
+      else if (active) {
+        NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked? [%s]", clientName);
       }    
 //          NSLog(@"startprocessing: stage2");
     }
@@ -379,8 +379,8 @@ enum {
         }
         else if (bDelegateRespondsToInputBufferSkipSelector)
           [delegate inputBufferSkipped: self];
-        else {
-//              NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?", clientName);
+        else if (active) {
+          NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?", clientName);
         }
       }
     }
