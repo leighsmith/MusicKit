@@ -2518,10 +2518,20 @@ char *SndSoundError(int err);
 //  printf("SndView tellDelegate...\n");
 }
 
-- (void)willPlay:sender
+// delegations which are nominated per performance.
+- (void) tellDelegate:(SEL)theMessage duringPerformance: (SndPerformance *) performance
+{
+    if (delegate) {
+        if ([delegate respondsToSelector:theMessage]) {
+            [delegate performSelector:theMessage withObject: self withObject: performance];
+        }
+    }
+}
+
+- (void)willPlay:sender duringPerformance: performance
 {
 //  printf("will play\n");
-    [self tellDelegate:@selector(willPlay:)];
+    [self tellDelegate:@selector(willPlay:duringPerformance:) duringPerformance: performance];
     return;
 }
 - (void)willRecord:sender
@@ -2530,10 +2540,10 @@ char *SndSoundError(int err);
     [self tellDelegate:@selector(willRecord:)];
     return;
 }
-- didPlay:sender
+- didPlay:sender duringPerformance: performance
 {
 //  printf("did play\n");
-    [self tellDelegate:@selector(didPlay:)];
+    [self tellDelegate:@selector(didPlay:duringPerformance:) duringPerformance: performance];
     return self;
 }
 - didRecord:sender

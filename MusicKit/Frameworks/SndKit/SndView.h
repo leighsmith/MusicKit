@@ -23,7 +23,6 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 #ifdef QUARTZ_RENDERING
 #import <ApplicationServices/ApplicationServices.h>
-//#import <CoreGraphics/CoreGraphics.h> // redundant as of MacOS X 4K46.
 #endif
 
 #import "SndDisplayDataList.h"
@@ -108,7 +107,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 - (void)paste:(id)sender;
 - (void)selectAll:(id)sender;
 - delegate;
-- didPlay:sender;
+- didPlay:sender duringPerformance: performance;
 - didRecord:sender;
 - (int)displayMode;
 - drawSamplesFrom:(int)first to:(int)last;
@@ -153,8 +152,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 - (void)setFrameSize:(NSSize)_newSize;
 - soundBeingProcessed;
 - (void)tellDelegate:(SEL)theMessage;
+- (void)tellDelegate:(SEL)theMessage duringPerformance: performance;
 - validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType;
-- (void)willPlay:sender;
+- (void)willPlay:sender duringPerformance: performance;
 - (void)willRecord:sender;
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)thePasteboard types:(NSArray *)pboardTypes;
 - (BOOL)writeSelectionToPasteboardNoProvide:thePasteboard types:(NSArray *)pboardTypes;
@@ -196,7 +196,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 /********************************************
     Methods Implemented by the Delegate
 
-    - didPlay:sender
+    - didPlay:sender duringPerformance: (SndPerformance *) performance
     Sent to the delegate just after the SoundView's sound is played.
 
     - didRecord:sender
@@ -215,7 +215,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
     - willFree:sender
     Sent to the delegate when the SoundView is freed.
 
-    - willPlay:sender
+    - willPlay:sender duringPerformance: (SndPerformance *) performance
     Sent to the delegate just before the SoundView's sound is played.
 
     - willRecord:sender
