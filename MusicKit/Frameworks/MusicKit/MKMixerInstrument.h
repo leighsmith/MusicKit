@@ -37,6 +37,9 @@
 Modification history:
 
  $Log$
+ Revision 1.6  2003/08/04 21:21:24  leighsmith
+ Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values. Removed call of resample(), replaced with Snd convertFormat:sampleRate:channelCount method.
+
  Revision 1.5  2001/09/20 01:41:55  leighsmith
  Typed parameters and added headerdoc comments
 
@@ -66,9 +69,8 @@ Modification history:
     together. Also, the same soundfile may be mixed several times and may
     overlap with itself.  The soundfiles may have different sampling rates
     and different formats.  However, the output must be 16 bit linear.
-    The mix is done on the main CPU, rather than the DSP.  The more files
-    you mix, the longer it will take the program to run.  Note also that
-    if you mix many large files, you will need a fair degree of swap
+    The more files you mix, the longer it will take the program to run.
+    Note also that if you mix many large files, you will need a fair degree of swap
     space--keep some room free on the disk off of which you booted.
 
     MKMixerInstrument is also an illustration of how to make your own MusicKit

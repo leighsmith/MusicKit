@@ -36,60 +36,9 @@
   Portions Copyright (c) 1994 Stanford University.
   Portions Copyright (c) 1999-2001 The MusicKit Project.
 */
-/*
-Modification history:
-
- $Log$
- Revision 1.15  2003/06/20 20:27:08  leighsmith
- Changed Snd -sampleCount to lengthInSampleFrames
-
- Revision 1.14  2002/09/24 21:48:45  leighsmith
- Simplified combined pointer assignments and increments to remove gcc 3.1 warnings
-
- Revision 1.13  2002/04/03 03:59:41  skotmcdonald
- Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
- Revision 1.12  2002/03/06 19:02:05  leighsmith
- Added extra NULL parameter to match new prototype for resample()
-
- Revision 1.11  2002/01/29 16:21:49  sbrandon
- fixed small retain/release problem (theoretical crasher)
-
- Revision 1.10  2001/09/20 01:41:37  leighsmith
- Typed parameters
-
- Revision 1.9  2001/09/06 21:27:47  leighsmith
- Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
- Revision 1.8  2001/08/30 19:07:17  leighsmith
- upgraded parName to parTagForName methods
-
- Revision 1.7  2000/05/13 17:21:11  leigh
- Better variable naming
-
- Revision 1.6  2000/05/06 02:34:33  leigh
- Added M_PI if it isn't there
-
- Revision 1.5  2000/04/26 01:23:19  leigh
- Renamed to more meaningful samplesToMix ivar
-
- Revision 1.4  2000/04/22 20:14:58  leigh
- Verified sound was non-nil before releasing...duh
-
- Revision 1.3  2000/04/20 21:34:53  leigh
- Replaced SFInfoStruct with expanded MKSamples, plugged memory leaks
-
- Revision 1.2  2000/04/17 22:55:32  leigh
- Added debugging information attempting to find malloc problem
-
- Revision 1.1  2000/04/16 21:18:36  leigh
- First version using SndKit incorporated into the MusicKit framework
-
-*/
 
 #import "_musickit.h"
 #import <SndKit/SndKit.h>
-#import <SndKit/SndResample.h>
 #import "MKMixerInstrument.h"
 
 // Dear WinNT doesn't know about PI, stolen from MacOSX-Servers math.h definition
@@ -99,7 +48,7 @@ Modification history:
 
 @implementation MKMixerInstrument /* See MKMixerInstrument.h for instance variables */
 
-#define BUFFERSIZE (BUFSIZ * 8)   /* size (in samples per frame) of temporary mixing buffer */
+#define BUFFERSIZE (unsigned) (BUFSIZ * 8)   /* size (in samples per frame) of temporary mixing buffer */
 
 static int timeScalePar = 0,timeOffsetPar = 0;
 /* ### If you add a parameter, put in a declaration here */
@@ -203,9 +152,9 @@ static void swapIt(short *data,int howMany)
 {
     /* Private method used to mix up to the current time (untilTime) */
     MKSamples *aSFInfo;           /* Pointer to current file's SFInfo */
-    int fileNum;               /* SFInfo index */
+    unsigned int fileNum;      /* SFInfo index */
     int curBufSize;            /* Number of samples we're computing */
-    int untilSamp;             /* We're mixing until this output sample */
+    unsigned int untilSamp;    /* We're mixing until this output sample */
     BOOL inFileLastBuf;        /* Is this the last buffer for current file? */
     int inDataLastLoc;         /* Index of last usable sample in cur file */
     int inDataRemaining;       /* Size of remaining input data */
@@ -266,10 +215,10 @@ static void swapIt(short *data,int howMany)
         [stream appendBytes: (void *) samps length: curBufSize * sizeof(short)];
 	curOutSamp += curBufSize;
     }
-  if (samps) {
-    free(samps);
-    samps = NULL;
-}
+    if (samps) {
+	free(samps);
+	samps = NULL;
+    }
     return self;
 }
 
@@ -397,16 +346,17 @@ static int timeToSamp(Snd *s,double time)
 {
     MKNoteType type;
     double amp = defaultAmp;
-    int timeScale= defaultTimeScale;
-    [self _mixToTime:MKGetTime()]; /* Update mix. */
+    int timeScale = defaultTimeScale;
+    
+    [self _mixToTime: MKGetTime()]; /* Update mix. */
     if (!aNote)
 	return self;
     switch (type = [aNote noteType]) {
     case MK_noteDur: {/* NoteDur means new file with duration */
 	MKSamples *newSoundFileSamples = [[MKSamples alloc] init];
-	double dur,timeOffset;
-	NSString *file;
-	file = [aNote parAsStringNoCopy: MK_filename];
+	double dur, timeOffset;
+	NSString *file = [aNote parAsStringNoCopy: MK_filename];
+	
 	if (!file || ![file length])  /* Parameter not present? */
 	    file = defaultFile;
         if (!file || ![file length]) {  /* Parameter not present? */	
@@ -419,29 +369,29 @@ static int timeToSamp(Snd *s,double time)
 	    break;
 	}
 	else if([[newSoundFileSamples sound] dataFormat] != SND_FORMAT_LINEAR_16) {
-	    [[newSoundFileSamples sound] convertToFormat:SND_FORMAT_LINEAR_16
-                samplingRate:[[newSoundFileSamples sound] samplingRate]
-	        channelCount:[[newSoundFileSamples sound] channelCount]];
+	    [[newSoundFileSamples sound] convertToFormat: SND_FORMAT_LINEAR_16
+                samplingRate: [[newSoundFileSamples sound] samplingRate]
+	        channelCount: [[newSoundFileSamples sound] channelCount]];
 	    if([[newSoundFileSamples sound] dataFormat] != SND_FORMAT_LINEAR_16) {
 	        NSLog(@"Error: mixsounds input files must be in 16-bit linear or Mu Law format.\n");
 		break;
 	    }
 	}
-	NSLog(@"%f ",MKGetTime()); /* Give user feedback */
-	if ([aNote isParPresent:MK_amp])
-	    amp = [aNote parAsDouble:MK_amp];
-	if ([aNote isParPresent:MK_velocity])
-	    amp *= MKMidiToAmpAttenuation([aNote parAsInt:MK_velocity]);
-	[newSoundFileSamples setProcessingEndSample: [[newSoundFileSamples sound] dataSize]/sizeof(short)]; // LMS Redundant
-	if ([aNote isParPresent:timeOffsetPar]) {
-	    timeOffset = [aNote parAsDouble:timeOffsetPar];
-            [newSoundFileSamples setCurrentSample: timeToSamp([newSoundFileSamples sound],timeOffset)];
+	NSLog(@"%f ", MKGetTime()); /* Give user feedback */
+	if ([aNote isParPresent: MK_amp])
+	    amp = [aNote parAsDouble: MK_amp];
+	if ([aNote isParPresent: MK_velocity])
+	    amp *= MKMidiToAmpAttenuation([aNote parAsInt: MK_velocity]);
+	[newSoundFileSamples setProcessingEndSample: [[newSoundFileSamples sound] dataSize] / sizeof(short)]; // LMS Redundant
+	if ([aNote isParPresent: timeOffsetPar]) {
+	    timeOffset = [aNote parAsDouble: timeOffsetPar];
+            [newSoundFileSamples setCurrentSample: timeToSamp([newSoundFileSamples sound], timeOffset)];
 	}
 	else
 	    [newSoundFileSamples setCurrentSample: 0];
 	dur = [aNote dur];
 	if (!MKIsNoDVal(dur) && dur != 0) {
-	    int lastLoc = timeToSamp([newSoundFileSamples sound],dur) + [newSoundFileSamples currentSample];
+	    unsigned int lastLoc = timeToSamp([newSoundFileSamples sound], dur) + [newSoundFileSamples currentSample];
             [newSoundFileSamples setProcessingEndSample: MIN([newSoundFileSamples processingEndSample], lastLoc)];
 	}
 	if ([newSoundFileSamples currentSample] > [newSoundFileSamples processingEndSample] || dur < 0 ) {
@@ -457,16 +407,19 @@ static int timeToSamp(Snd *s,double time)
                 Snd *outSound = [[[Snd alloc] init] autorelease];
 	        int bearing = (MKIsNoteParPresent(aNote, MK_bearing) ? MKGetNoteParAsInt(aNote, MK_bearing) : 0);
 	        int sampCount = ([newSoundFileSamples processingEndSample] - [newSoundFileSamples currentSample]);
-	        [outSound
-                     setDataSize:sampCount*sizeof(short)*2
-		     dataFormat:[inSound dataFormat]
-		     samplingRate:[inSound samplingRate]
-		     channelCount:2
-		     infoSize:4];
-	        [self _position:bearing inSound:inSound outSound:outSound
-                     startSamp:[newSoundFileSamples currentSample] sampCount:sampCount
-                     amp:([aNote isParPresent:MK_amp])?amp:defaultAmp
-                     alreadySwapped:NO];
+		
+	        [outSound setDataSize: sampCount * sizeof(short) * 2
+		           dataFormat: [inSound dataFormat]
+		         samplingRate: [inSound samplingRate]
+		         channelCount: 2
+		             infoSize: 4];
+	        [self _position: bearing
+			inSound: inSound
+		       outSound: outSound
+                      startSamp: [newSoundFileSamples currentSample]
+		      sampCount: sampCount
+                            amp: ([aNote isParPresent:MK_amp]) ? amp : defaultAmp
+                 alreadySwapped: NO];
                 // outSound is copied by setSound, inSound is released before being assigned.
                 [newSoundFileSamples setSound: outSound];     
                 [newSoundFileSamples setProcessingEndSample: sampCount * 2]; /* Stereo */
@@ -479,19 +432,19 @@ static int timeToSamp(Snd *s,double time)
 	    }
 	}
         else {
-	    if ([aNote isParPresent:MK_amp])
+	    if ([aNote isParPresent: MK_amp])
 		[newSoundFileSamples setAmplitude: amp];
 	    else
                 [newSoundFileSamples setAmplitude: defaultAmp];
 	}
-	if ([aNote isParPresent:timeScalePar])
-	    timeScale = [aNote parAsInt:timeScalePar];
+	if ([aNote isParPresent: timeScalePar])
+	    timeScale = [aNote parAsInt: timeScalePar];
 	if (timeScale == applyEnvBefore || timeScale == scaleEnvToFit) {
-	    if ([aNote isParPresent:MK_ampEnv] || defaultEnvelope) {
-		MKEnvelope *ampEnv = [aNote parAsEnvelope:MK_ampEnv];
+	    if ([aNote isParPresent: MK_ampEnv] || defaultEnvelope) {
+		MKEnvelope *ampEnv = [aNote parAsEnvelope: MK_ampEnv];
 		if (!ampEnv) 
 	            ampEnv = defaultEnvelope;
-		[self _applyEnvelope:ampEnv to:newSoundFileSamples scaleToFit:timeScale == 2];
+		[self _applyEnvelope: ampEnv to: newSoundFileSamples scaleToFit: timeScale == 2];
 	    }
         }
 
@@ -500,63 +453,41 @@ static int timeToSamp(Snd *s,double time)
          */
 
         /* freq0 is assumed old freq. freq1 is new freq. */
-        if ([aNote isParPresent:MK_freq1] || [aNote isParPresent:MK_freq0] ||
-	    [aNote isParPresent:MK_keyNum] || defaultFreq1 || defaultFreq0 ||
-	    ((int)[[newSoundFileSamples sound] samplingRate]!=(int)samplingRate)) {
+        if ([aNote isParPresent: MK_freq1] || [aNote isParPresent: MK_freq0] ||
+	    [aNote isParPresent: MK_keyNum] || defaultFreq1 || defaultFreq0 ||
+	    ((int) [[newSoundFileSamples sound] samplingRate] != (int) samplingRate)) {
 	    /* Sound is going to change length, so we have to allocate
 	     * a new sound here.
 	     */
-	    double f0 = (([aNote isParPresent:MK_freq0])?
-			   [aNote parAsDouble:MK_freq0]:defaultFreq0);
-	    double f1 = (([aNote isParPresent:MK_freq1])?
-			   [aNote parAsDouble:MK_freq1]:
-			   (([aNote isParPresent:MK_keyNum])?[aNote freq]:
-			    defaultFreq1));
+	    double f0 = (([aNote isParPresent: MK_freq0]) ? [aNote parAsDouble:MK_freq0] : defaultFreq0);
+	    double f1 = (([aNote isParPresent: MK_freq1]) ? [aNote parAsDouble: MK_freq1] :
+			    (([aNote isParPresent: MK_keyNum]) ? [aNote freq] : defaultFreq1));
 	    double factor;
-	    if ((f0 && !f1) || (f1 && !f0))
+	    
+	    if ((f0 != 0.0 && f1 == 0.0) || (f1 != 0.0 && f0 == 0.0))
 		NSLog(@"Warning: Must specify both Freq0 and Freq1 if either are specified.\n");
-	    factor = ((f1 && f0)?(f0 / f1):1.0) *
-		(samplingRate / [[newSoundFileSamples sound] samplingRate]);
-	    if ((factor>32) || (factor<.03125))
+	    factor = ((f1 && f0) ? (f0 / f1) : 1.0) * (samplingRate / [[newSoundFileSamples sound] samplingRate]);
+	    if ((factor > 32) || (factor < .03125))
 		NSLog(@"Warning: resampling more than 5 octaves.\n");
-	    if (fabs(factor-1.0)>.0001) {
-		// TODO resample can be removed and replaced with Snd convertToFormat:sampleRate:
-		// As this is it will probably break using resample
-		Snd *inSound = [newSoundFileSamples sound];
-		Snd *outSound = [[[Snd alloc] init] autorelease];
-		int inSampleFrames, outSampleFrames;
-		inSampleFrames = 
-		    (MIN([newSoundFileSamples processingEndSample],
-			 [inSound lengthInSampleFrames] * [inSound channelCount])
-		     - [newSoundFileSamples currentSample])/[inSound channelCount];
-		outSampleFrames = inSampleFrames * factor;
-		[outSound
-		    setDataSize:(outSampleFrames * sizeof(short) * [inSound channelCount])
-		    dataFormat:[inSound dataFormat]
-		    samplingRate:[inSound samplingRate]
-		    channelCount:[inSound channelCount]
-		    infoSize:4];
-		resample(factor,
-			 (short *)[outSound data],
-			 inSampleFrames,outSampleFrames,
-			 [inSound channelCount], NO, /* No interp filter. */
-		         0,         /* 0 = highest quality, slowest speed */
-			 NO, 	      /* Not large filter */
-			 NULL,     /* No filter file supplied */
-                         [inSound soundStruct],
-                         [newSoundFileSamples currentSample],
-                         NULL);
 
-		[newSoundFileSamples setSound: outSound];
-		[newSoundFileSamples setProcessingEndSample: outSampleFrames * [inSound channelCount]];
+	    if (fabs(factor - 1.0) > 0.0001) {
+		Snd *inSound = [newSoundFileSamples sound];
+
+		[inSound setConversionQuality: SndConvertHighQuality];
+		[inSound convertToFormat: [inSound dataFormat]
+			    samplingRate: [inSound samplingRate] * factor
+			    channelCount: [inSound channelCount]];
+
+		[newSoundFileSamples setProcessingEndSample: [inSound lengthInSampleFrames] * [inSound channelCount]];
 	    }
 	}
 	if (timeScale == applyEnvAfter)
-	    if ([aNote isParPresent:MK_ampEnv] || defaultEnvelope) {
-		MKEnvelope *ampEnv = [aNote parAsEnvelope:MK_ampEnv];
+	    if ([aNote isParPresent: MK_ampEnv] || defaultEnvelope) {
+		MKEnvelope *ampEnv = [aNote parAsEnvelope: MK_ampEnv];
+		
 		if (!ampEnv) 
 		  ampEnv = defaultEnvelope;
-		[self _applyEnvelope:ampEnv to:newSoundFileSamples scaleToFit:0];
+		[self _applyEnvelope: ampEnv to: newSoundFileSamples scaleToFit: 0];
 	    }
 
 	  /* ### Add your processing modules here, if you want them to apply
@@ -569,18 +500,18 @@ static int timeToSamp(Snd *s,double time)
     case MK_noteUpdate: { /* Only no-tag NoteUpdates are recognized */
 	if ([aNote noteTag] != MAXINT)
 	    break;        /* Ignore noteUpdates with note tags */
-	if ([aNote isParPresent:MK_amp]) 
-	    defaultAmp = [aNote parAsDouble:MK_amp]; 
-	if ([aNote isParPresent:MK_filename])
-            defaultFile = [aNote parAsStringNoCopy:MK_filename];
-	if ([aNote isParPresent:MK_freq1])
-	    defaultFreq1 =[aNote parAsDouble:MK_freq1];
-	if ([aNote isParPresent:MK_freq0])
-	    defaultFreq0 =[aNote parAsDouble:MK_freq0];
-	if ([aNote isParPresent:MK_ampEnv])
-	    defaultEnvelope =[aNote parAsEnvelope:MK_ampEnv];
-	if ([aNote isParPresent:timeScalePar])
-	    defaultTimeScale =[aNote parAsInt:timeScalePar];
+	if ([aNote isParPresent: MK_amp]) 
+	    defaultAmp = [aNote parAsDouble: MK_amp]; 
+	if ([aNote isParPresent: MK_filename])
+            defaultFile = [aNote parAsStringNoCopy: MK_filename];
+	if ([aNote isParPresent: MK_freq1])
+	    defaultFreq1 =[aNote parAsDouble: MK_freq1];
+	if ([aNote isParPresent: MK_freq0])
+	    defaultFreq0 =[aNote parAsDouble: MK_freq0];
+	if ([aNote isParPresent: MK_ampEnv])
+	    defaultEnvelope =[aNote parAsEnvelope: MK_ampEnv];
+	if ([aNote isParPresent: timeScalePar])
+	    defaultTimeScale =[aNote parAsInt: timeScalePar];
 	break;
     }
     default: /* Ignore all other notes */
