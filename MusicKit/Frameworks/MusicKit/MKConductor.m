@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2000/04/20 21:39:00  leigh
+  Removed flakey longjmp for unclocked MKConductors, improved description
+
   Revision 1.13  2000/04/16 04:28:17  leigh
   Class typing and added description method
 
@@ -312,7 +315,7 @@ repositionCond(MKConductor *cond,double nextMsgTime)
        cond is the conductor to be enqueued.  nextMsgTime is the next
        post-mapped time that the conductor wants to run.  If we're not in
        performance, just sets cond->nextMsgTime.  Otherwise, enqueues cond at
-       the appropriate place. If, after adding the conductor, the head of the
+       the appropriate place, ordered by time. If, after adding the conductor, the head of the
        queue is MK_ENDOFTIME and if we're not hanging, sends
        +finishPerformance. If the newly enqueued conductor is added at the
        head of the list, calls adjustTimedEntry().
@@ -561,12 +564,18 @@ unclockedLoop()
     /* FIXME Might want to check for events here. */
     /* Run until done. */
 {
+#if 0   // disabled by LMS as the longjmp was doing funny things to memory.
     _jmpSet = YES;
     setjmp(conductorJmp);
     if (inPerformance)
       for (; ;) {
 	  [MKConductor masterConductorBody: nil];
       }
+#else
+    while(inPerformance) {
+        [MKConductor masterConductorBody: nil];
+    }
+#endif
 }
 
 /* In addition to the regular message queues, there are several special 
@@ -984,6 +993,7 @@ static void evalAfterQueues()
     oldClockTime = lastTime;
     [allConductors makeObjectsPerformSelector:@selector(_initialize)];
     evalAfterQueues();
+#if 0 // disabled as longjmp makes memory flakey.
     if (_jmpSet) {
 	_jmpSet = NO;     
 	if (separateThreadedAndInMusicKitThread() || 
@@ -993,6 +1003,7 @@ static void evalAfterQueues()
     }
     else
         _jmpSet = NO;
+#endif
     return self;
 }
 
@@ -1326,9 +1337,8 @@ static void evalAfterQueues()
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
     va_end(ap);	
-    return insertMsgQueue(newMsgRequest(CONDUCTORFREES,self->time + deltaT,
-					aSelector,toObject,argCount,arg1,arg2),
-			  self);
+    return insertMsgQueue(newMsgRequest(CONDUCTORFREES, self->time + deltaT,
+					aSelector, toObject, argCount, arg1, arg2), self);
 }
 
 -sel:(SEL)aSelector to:(id)toObject atTime:(double)t
@@ -1450,9 +1460,10 @@ MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr)
       return NULL;
     if (!aMsgStructPtr->_conductor) { /* Special queue */
 	/* Special queue messages are cancelled differently. Here we just
-	   se the _toObject field to nil and leave the struct in the list. */
+	   set the _toObject field to nil and leave the struct in the list. */
 	if (!aMsgStructPtr->_toObject) /* Already canceled? */
 	  return NULL;
+        // [aMsgStructPtr->_toObject release];  // LMS decrement the retainCount
 	aMsgStructPtr->_toObject = nil;
 	if (aMsgStructPtr->_onQueue) 
 	  aMsgStructPtr->_conductorFrees = YES;
@@ -1505,8 +1516,7 @@ MKNewMsgRequest(double timeOfMsg,SEL whichSelector,id destinationObject,
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
     va_end(ap);
-    return newMsgRequest(TARGETFREES,timeOfMsg,whichSelector,destinationObject,
-			 argCount,arg1,arg2);
+    return newMsgRequest(TARGETFREES, timeOfMsg, whichSelector, destinationObject, argCount, arg1, arg2);
 }	
 
 
@@ -1541,9 +1551,7 @@ MKMsgStruct *MKRescheduleMsgRequest(MKMsgStruct *aMsgStructPtr,id conductor,
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
     va_end(ap);
-    newMsgStructPtr = newMsgRequest(TARGETFREES,timeOfNewMsg,
-				    whichSelector,destinationObject,
-				    argCount,arg1,arg2);
+    newMsgStructPtr = newMsgRequest(TARGETFREES, timeOfNewMsg, whichSelector, destinationObject, argCount, arg1, arg2);
     MKScheduleMsgRequest(newMsgStructPtr,conductor);
     MKCancelMsgRequest(aMsgStructPtr); /* A noop if already canceled. */
     return aMsgStructPtr = newMsgStructPtr;
@@ -1563,15 +1571,14 @@ MKMsgStruct *MKRepositionMsgRequest(MKMsgStruct *aMsgStructPtr,
     return aMsgStructPtr = newMsgStructPtr;
 }
 
-static MKMsgStruct *
-newMsgRequest(doesConductorFree,timeOfMsg,whichSelector,destinationObject,
-		argCount,arg1,arg2)
-    BOOL doesConductorFree;
-    double timeOfMsg;
-    SEL whichSelector;
-    id destinationObject;
-    int argCount;
-    id arg1,arg2;
+static MKMsgStruct *newMsgRequest(
+    BOOL doesConductorFree,
+    double timeOfMsg,
+    SEL whichSelector,
+    id destinationObject,
+    int argCount,
+    id arg1,
+    id arg2)
     /* Create a new msg struct */
 {
     MKMsgStruct * sp;
@@ -1580,22 +1587,22 @@ newMsgRequest(doesConductorFree,timeOfMsg,whichSelector,destinationObject,
       sp->_methodImp = [destinationObject methodForSelector:whichSelector];
     sp->_timeOfMsg = timeOfMsg;
     sp->_aSelector = whichSelector;
-    sp->_toObject = destinationObject;
+    sp->_toObject = destinationObject;  // LMS: we should probably retain this.
     sp->_argCount = argCount;
     sp->_next = NULL;
     sp->_prev = NULL;
     sp->_conductor = nil;
     sp->_onQueue = NO;
     switch (argCount) {
-      default: 
+    default: 
 	freeSp(sp);
 	return NULL;
-      case 2: 
-	sp->_arg2 = arg2;
-      case 1: 
-	sp->_arg1 = arg1;
-      case 0:
-	break;
+    case 2:
+        sp->_arg2 = arg2;    // LMS: we should probably retain this.
+    case 1:
+        sp->_arg1 = arg1;    // LMS: we should probably retain this.
+    case 0:
+        break;
     }
     return(sp);
 }	
@@ -1623,9 +1630,8 @@ newMsgRequest(doesConductorFree,timeOfMsg,whichSelector,destinationObject,
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
     afterPerformanceQueue = 
-      insertSpecialQueue(sp = newMsgRequest(CONDUCTORFREES,MK_ENDOFTIME,
-					    aSelector,toObject,argCount,
-					    arg1,arg2),
+      insertSpecialQueue(sp = newMsgRequest(CONDUCTORFREES, MK_ENDOFTIME,
+					    aSelector, toObject, argCount, arg1, arg2),
 			 afterPerformanceQueue,&afterPerformanceQueueEnd);
     va_end(ap);
     return(sp);
@@ -1663,9 +1669,7 @@ newMsgRequest(doesConductorFree,timeOfMsg,whichSelector,destinationObject,
     return(sp);
 }
 
-static MKMsgStruct *evalSpecialQueue(queue,queueEnd)
-    MKMsgStruct *queue;
-    MKMsgStruct **queueEnd;
+static MKMsgStruct *evalSpecialQueue(MKMsgStruct *queue, MKMsgStruct **queueEnd)
     /* Sends all messages in the special queue, e.g. afterPerformanceQueue.
      */
 {
@@ -1674,22 +1678,27 @@ static MKMsgStruct *evalSpecialQueue(queue,queueEnd)
     while (queue) {
 	curProc = popMsgQueue(&(queue));
 	if (curProc == *queueEnd)
-	  *queueEnd = NULL;
-	switch (curProc->_argCount) {
-	  case 0:
-              [curProc->_toObject performSelector:curProc->_aSelector];
-	    break;
-	  case 1:
-              [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1];
-	    break;
-	  case 2:
-              [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1 withObject:curProc->_arg2];
-	    break;
-	  default: 
-	    break;
+            *queueEnd = NULL;
+        if(curProc->_toObject) {  // ensure we have a valid object to perform a selector
+            switch (curProc->_argCount) {
+            case 0:
+                [curProc->_toObject performSelector:curProc->_aSelector];
+                break;
+            case 1:
+                [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1];
+                break;
+            case 2:
+                [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1 withObject:curProc->_arg2];
+                break;
+            default:
+                break;
+            }
 	}
+//	else {
+//            NSLog(@"Warning, nil object on special queue\n");
+//      }
 	if (curProc->_conductorFrees)
-	  freeSp(curProc);
+            freeSp(curProc);
     }
     return NULL;
 }
@@ -1804,12 +1813,18 @@ static double getNextMsgTime(MKConductor *aCond)
 - (NSString *) description
 {
     MKMsgStruct *p;
-    NSString *timeStr = [NSString stringWithFormat:
-        @"MKConductor time %lf beats, nextMsgTime %lf, beatSize %lf Secs, timeOffset %lf\n", time, nextMsgTime, beatSize, timeOffset];
+    NSString *queue = [NSString stringWithFormat:
+        @"MKConductor <0x%x>\n  Next conductor <0x%x>, Last conductor <0x%x>\n", self, _condNext, _condLast];
+    NSString *timeStr = [NSString stringWithFormat: @"  time %lf beats, nextMsgTime %lf, timeOffset %lf\n",
+       time, nextMsgTime, timeOffset];
+    NSString *beatTime = [NSString stringWithFormat:
+        @"  beatSize %lf Secs, inverseBeatSize %lf, oldAdjustedClockTime %lf\n",
+        beatSize, inverseBeatSize, oldAdjustedClockTime];
     NSString *misc = [NSString stringWithFormat:
-        @"%sPaused, archivingFlags %x, delegateFlags %x\ndelegate %@, activePerformers %@\n",
-            isPaused ? "" : "not ", archivingFlags, delegateFlags, delegate, activePerformers];
-    NSString *msgs = [NSString stringWithFormat: @"msgQueue = %x: ", _msgQueue];
+        @"  %s, archivingFlags %x, delegateFlags %x, delegate %@, activePerformers %@\n",
+        isPaused ? "Paused" : "Not paused", archivingFlags, delegateFlags, delegate, activePerformers];
+    NSString *msgs = [NSString stringWithFormat: @"  msgQueue = %x: ", _msgQueue];
+
 //    for(p = _msgQueue; p != NULL; p = p->_next) {
 //        [msgs stringByAppendingFormat: @"t %lf [%@ arg1:%@ arg2:%@] conductor %s \n",
 //            p->_timeOfMsg, p->_toObject, p->_arg1, p->_arg2, p->_conductorFrees ? "frees" : "doesn't free"];
@@ -1817,19 +1832,13 @@ static double getNextMsgTime(MKConductor *aCond)
 //           p->_timeOfMsg];
 //    }
 
-    
 #if 0
 id MTCSynch;
-
-MKConductor *_condNext;
-MKConductor *_condLast;
 double _pauseOffset;
-double inverseBeatSize;
-double oldAdjustedClockTime;
 MKMsgStruct *pauseFor;
 #endif
 
-    return [timeStr stringByAppendingFormat: @"%@%@", msgs, misc];
+    return [queue stringByAppendingFormat: @"%@%@%@\n%@", timeStr, beatTime, msgs, misc];
 }
 
 #import "mtcConductor.m"
@@ -1864,43 +1873,43 @@ MKMsgStruct *pauseFor;
     do {
         curProc = popMsgQueue(&(curRunningCond->_msgQueue));
         if (curProc->_timeOfMsg > curRunningCond->time) // IMPORTANT--Performers can give us negative vals
-          curRunningCond->time = curProc->_timeOfMsg;
+            curRunningCond->time = curProc->_timeOfMsg;
         if (MKIsTraced(MK_TRACECONDUCTOR))
-          NSLog(@"t %f\n", clockTime);
+            NSLog(@"t %f\n", clockTime);
         if (!curProc->_conductorFrees) {
             curProc->_onQueue = NO;
             switch (curProc->_argCount) {
-              case 0:
+            case 0:
                 (*curProc->_methodImp)(curProc->_toObject, curProc->_aSelector);
                 break;
-              case 1:
+            case 1:
                 (*curProc->_methodImp)(curProc->_toObject, curProc->_aSelector, curProc->_arg1);
                 break;
-              case 2:
+            case 2:
                 (*curProc->_methodImp)(curProc->_toObject, curProc->_aSelector, curProc->_arg1, curProc->_arg2);
                 break;
             }
         }
         else {
             switch (curProc->_argCount) {
-              case 0:
+            case 0:
                 [curProc->_toObject performSelector:curProc->_aSelector];
                 break;
-              case 1:
+            case 1:
                 [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1];
                 break;
-              case 2:
+            case 2:
                   [curProc->_toObject performSelector:curProc->_aSelector withObject:curProc->_arg1 withObject:curProc->_arg2];
                 break;
-              default:
+            default:
                 break;
             }
             freeSp(curProc);
         }
     } while (PEEKTIME(curRunningCond->_msgQueue)  <= curRunningCond->time);
     if (!curRunningCond->isPaused) {
-      double theNextTime = PEEKTIME(curRunningCond->_msgQueue);
-      repositionCond(curRunningCond,beatToClock(curRunningCond,theNextTime));
+        double theNextTime = PEEKTIME(curRunningCond->_msgQueue);
+        repositionCond(curRunningCond,beatToClock(curRunningCond,theNextTime));
     }
     /* If at the end, repositionCond triggers [MKConductor finishPerformance].
        If this occurs, adjustTimedEntry is a noop (see masterConductorBody:).
@@ -1910,7 +1919,7 @@ MKMsgStruct *pauseFor;
     /* Postamble */
     curRunningCond = nil;
     if (inPerformance)     /* Performance can be ended by repositionCond(). */
-      adjustTimedEntry(condQueue->nextMsgTime);
+        adjustTimedEntry(condQueue->nextMsgTime);
 }
 
 +(MKMsgStruct *)_afterPerformanceSel:(SEL)aSelector 
@@ -1957,8 +1966,7 @@ MKMsgStruct *pauseFor;
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
     va_end(ap);
-    return newMsgRequest(TARGETFREES,timeOfMsg,whichSelector,destinationObject,
-			 argCount,arg1,arg2);
+    return newMsgRequest(TARGETFREES, timeOfMsg, whichSelector, destinationObject, argCount, arg1, arg2);
 }
 
 -(void)_scheduleMsgRequest:(MKMsgStruct *)aMsgStructPtr

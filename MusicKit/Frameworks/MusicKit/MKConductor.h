@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2000/04/20 21:39:00  leigh
+  Removed flakey longjmp for unclocked MKConductors, improved description
+
   Revision 1.8  2000/04/16 04:28:17  leigh
   Class typing and added description method
 
@@ -50,7 +53,8 @@ extern "C" {
 #endif
 
  /* The Conductor message structure.  All fields are private and
-  * shouldn't be altered directly from an application. 
+  * shouldn't be altered directly from an application.
+  * LMS: should become an object named MKConductorMsg
   */
 @class MKConductor;
 
