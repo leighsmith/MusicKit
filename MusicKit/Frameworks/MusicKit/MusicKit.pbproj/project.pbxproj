@@ -1090,28 +1090,16 @@
 		};
 		00D5A0BEFED5ABC1CFED3B93 = {
 			children = (
-				00D5A0BFFED5ABC1CFED3B93,
-				00D5A0C1FED5ABC1CFED3B93,
 				00D5A0C2FED5ABC1CFED3B93,
 				00D5A0C3FED5ABC1CFED3B93,
 				00D5A0C4FED5ABC1CFED3B93,
-				021446BC008BE07ACFED3B96,
+				2F3AE7A0012B0DB3CFED3B8B,
+				2F3AE7A1012B0DB3CFED3B8B,
+				2F3AE7A2012B0DB3CFED3B8B,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
 			refType = 4;
-		};
-		00D5A0BFFED5ABC1CFED3B93 = {
-			isa = PBXFrameworkReference;
-			name = MKPerformSndMIDI.framework;
-			path = /Local/Library/Frameworks/MKPerformSndMIDI.framework;
-			refType = 0;
-		};
-		00D5A0C1FED5ABC1CFED3B93 = {
-			isa = PBXFrameworkReference;
-			name = MKDSP.framework;
-			path = /Local/Library/Frameworks/MKDSP.framework;
-			refType = 0;
 		};
 		00D5A0C2FED5ABC1CFED3B93 = {
 			isa = PBXFrameworkReference;
@@ -1142,7 +1130,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)//Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
 				FRAMEWORK_VERSION = 5.3;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -1863,6 +1851,9 @@
 			fileRef = 00D5A08DFED5ABC1CFED3B93;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		00D5A112FED5ABC1CFED3B93 = {
@@ -2545,27 +2536,15 @@
 		00D5A161FED5ABC1CFED3B93 = {
 			buildActionMask = 2147483647;
 			files = (
-				00D5A162FED5ABC1CFED3B93,
-				00D5A164FED5ABC1CFED3B93,
 				00D5A165FED5ABC1CFED3B93,
 				00D5A166FED5ABC1CFED3B93,
 				00D5A167FED5ABC1CFED3B93,
-				021446BD008BE07ACFED3B96,
+				2F3AE7A3012B0DB3CFED3B8B,
+				2F3AE7A4012B0DB3CFED3B8B,
+				2F3AE7A5012B0DB3CFED3B8B,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
-		};
-		00D5A162FED5ABC1CFED3B93 = {
-			fileRef = 00D5A0BFFED5ABC1CFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		00D5A164FED5ABC1CFED3B93 = {
-			fileRef = 00D5A0C1FED5ABC1CFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		00D5A165FED5ABC1CFED3B93 = {
 			fileRef = 00D5A0C2FED5ABC1CFED3B93;
@@ -2619,18 +2598,6 @@
 			isa = PBXFrameworkReference;
 			path = MusicKit.framework;
 			refType = 3;
-		};
-		021446BC008BE07ACFED3B96 = {
-			isa = PBXFrameworkReference;
-			name = SndKit.framework;
-			path = /Volumes/manray/Local/Library/Frameworks/SndKit.framework;
-			refType = 0;
-		};
-		021446BD008BE07ACFED3B96 = {
-			fileRef = 021446BC008BE07ACFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		02CDDD26FEF14087CFED3B93 = {
 			isa = PBXFileReference;
@@ -2759,6 +2726,42 @@
 			isa = PBXFileReference;
 			path = separateThread.m;
 			refType = 4;
+		};
+		2F3AE7A0012B0DB3CFED3B8B = {
+			isa = PBXFrameworkReference;
+			name = MKDSP.framework;
+			path = /Library/Frameworks/MKDSP.framework;
+			refType = 0;
+		};
+		2F3AE7A1012B0DB3CFED3B8B = {
+			isa = PBXFrameworkReference;
+			name = MKPerformSndMIDI.framework;
+			path = /Library/Frameworks/MKPerformSndMIDI.framework;
+			refType = 0;
+		};
+		2F3AE7A2012B0DB3CFED3B8B = {
+			isa = PBXFrameworkReference;
+			name = SndKit.framework;
+			path = /Library/Frameworks/SndKit.framework;
+			refType = 0;
+		};
+		2F3AE7A3012B0DB3CFED3B8B = {
+			fileRef = 2F3AE7A0012B0DB3CFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2F3AE7A4012B0DB3CFED3B8B = {
+			fileRef = 2F3AE7A1012B0DB3CFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		2F3AE7A5012B0DB3CFED3B8B = {
+			fileRef = 2F3AE7A2012B0DB3CFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 	};
 	rootObject = 00D5A006FED5ABC1CFED3B93;
