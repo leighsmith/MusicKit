@@ -35,6 +35,9 @@
 /*
 Modification history:
   $Log$
+  Revision 1.10  2001/09/07 18:35:13  leighsmith
+  Moved @class declarations to not clash with headerdoc - really headerdoc should only be looking for @class declarations within /*! */ comments
+
   Revision 1.9  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -60,6 +63,8 @@ Modification history:
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
+@class MKScore;
+
 /*!
   @class MKScorePerformer
   @discussion
@@ -91,8 +96,6 @@ be seen by the MKScorePerformer.
 
 #import <Foundation/NSObject.h>
 #import "MKPerformer.h"
-
-@class MKScore;
 
 @interface MKScorePerformer : NSObject
 {
