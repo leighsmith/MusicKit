@@ -177,7 +177,7 @@ FILE *DSPGetErrorFP(void)
 }
 
 int DSPSetErrorFile(
-    char *fn)
+    const char *fn)
 {
     s_err_fn = fn;
     s_err_fp = 0;
@@ -275,7 +275,7 @@ int _DSPErrorV(int errorcode,char *fmt,...)
     va_list args;
 
     extern int errno;
-    extern int sys_nerr;
+/*    extern int sys_nerr; */
 /*    extern char *sys_errlist[]; */
 
     if (s_error_log_disabled)
