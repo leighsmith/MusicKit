@@ -38,6 +38,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2000/04/16 04:16:53  leigh
+  class typing
+
   Revision 1.3  1999/09/20 03:06:50  leigh
   Cleaned up documentation.
 
@@ -50,6 +53,7 @@
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSArray.h>
+#import "MKNote.h"
 #import "MKNoteReceiver.h"
 
 @interface MKInstrument: NSObject
@@ -67,7 +71,7 @@
   * subclass implementation should send [super init] before
   * performing its own initialization.  The return value is ignored.  */
 
-- realizeNote:aNote fromNoteReceiver:aNoteReceiver; 
+- realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
  /* 
   * Realizes aNote in the manner defined by the subclass.  aNoteReceiver
   * is the NoteReceiver that received aNote.  The default implementation
@@ -75,8 +79,8 @@
   * invoked as the receiver's NoteReceivers receive Notes.  The return
   * value is ignored.  Keep in mind that notes must be copied on write or
   * store.  */
- 
-- firstNote:aNote; 
+
+- firstNote: (MKNote *) aNote;
  /* 
   * You never invoke this method; it's invoked just before the receiver
   * realizes its first Note.  A subclass can implement this method to
@@ -86,24 +90,24 @@
   * to be in performance after this method returns.  The return value is
   * ignored.  */
 
-- noteReceivers; 
+- (NSArray *) noteReceivers;
  /* 
   * Returns a copy of the receiver's List of NoteReceivers.  The
   * NoteReceivers themselves aren't copied.  It's the sender's
   * responsibility to free the List.  */
 
--(BOOL) isNoteReceiverPresent:aNoteReceiver; 
+- (BOOL) isNoteReceiverPresent: (MKNoteReceiver *) aNoteReceiver; 
  /* 
   * Returns YES if aNoteReceiver is in the receiver's NoteReceiver List.
   * Otherwise returns NO.  */
 
-- addNoteReceiver:aNoteReceiver; 
+- addNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
  /* 
   * Adds aNoteReceiver to the receiver, first removing it from it's
   * current Instrument, if any.  If the receiver is in performance, does
   * nothing and returns nil, otherwise returns aNoteReceiver.  */
 
-- removeNoteReceiver:aNoteReceiver; 
+- removeNoteReceiver: (MKNoteReceiver *) aNoteReceiver; 
  /* 
   * Removes aNoteReceiver from the receiver's NoteReceiver List.  If the
   * receiver is in performance, does nothing and returns nil, otherwise
@@ -165,7 +169,7 @@
   * the NoteReceiver class) are copied from the NoteReceivers in the
   * receiver.  */
 
-- noteReceiver; 
+- (MKNoteReceiver *) noteReceiver; 
  /* 
   * Returns the first NoteReceiver in the receiver's List.  This is useful
   * for Instruments that have only one NoteReceiver.  */
