@@ -47,6 +47,7 @@ extern "C" {
 static BOOL             initialised = FALSE;
 static char             **driverList;
 static unsigned int     driverIndex = 0;
+static char             **speakerConfigurationList;
 
 static int              numOfDevices;
 static BOOL             inputInit = FALSE;
@@ -385,6 +386,19 @@ PERFORM_API BOOL SNDTerminate(void)
 	return FALSE;
     }
     return TRUE;
+}
+
+// Returns an array of character pointers listing the names of each channel.
+// There will be channel count number of strings returned, with a NULL terminated
+// The naming is system dependent, but is guaranteed to have two
+// channels named "Left" and "Right" to ensure that stereo can always be used.
+PERFORM_API const char **SNDSpeakerConfiguration(void)
+{
+    speakerConfigurationList[0] = "Left";
+    speakerConfigurationList[1] = "Right";
+    speakerConfigurationList[2] = NULL;
+
+    return (const char **) speakerConfigurationList;
 }
 
 #ifdef __cplusplus
