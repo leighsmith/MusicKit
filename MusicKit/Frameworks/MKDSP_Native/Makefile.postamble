@@ -125,3 +125,14 @@ OPTIMIZATION_CFLAG = -O2
 ifeq "WINDOWS" "$(OS)"
 GENFORCELOAD=echo //
 endif
+
+libMKDSP.def.new: $(GNUSTEP_OBJ_DIR)/*.o
+	rm -f $@
+	rm -f _tmp.def
+	cat win32-def.top > $@
+	nm $^ | grep '^........ [T] _' | sed 's/[^_]*_//' > _tmp.def
+	if [ ! "" = "`cat _tmp.def | grep "_class_name_"`" ]; then \
+	cat _tmp.def | grep "_class_name_" >> $@ ; \
+	fi
+	rm -rf _tmp.def
+
