@@ -231,7 +231,7 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 /*!
   @method disconnectNoteSenders
   @result Returns an id.
-  @discussion Sends <b>disconnect</b> to each of the object's MKNoteSenders.
+  @discussion Sends -<b>disconnectAllReceivers</b> to each of the object's MKNoteSenders.
 */
 - disconnectNoteSenders;
 
