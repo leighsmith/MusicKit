@@ -23,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/11/26 00:22:11  leigh
+  Updated to reflect the multi-platform operation
+
   Revision 1.3  2000/01/13 06:39:59  leigh
   Matched the error message to the MKConductor version
 
@@ -440,10 +443,10 @@ Modification history:
 "MKConductor encountered problem.";
 
 /* This error occurs when an error is received from the Mach MIDI driver when receiving MIDI data. */
-"Problem receiving MIDI from serial port";
+"Problem receiving MIDI from the MIDI device driver port";
 
 /* This error occurs when an error is received from the Mach MIDI driver when sending MIDI data. */
-"Problem sending MIDI to serial port";
+"Problem sending MIDI to the MIDI device driver port";
 
 "MIDI serial port is unavailable. Perhaps another application is using the serial port";
 
