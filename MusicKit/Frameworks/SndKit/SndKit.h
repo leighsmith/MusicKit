@@ -50,6 +50,7 @@ OF THIS AGREEMENT.
 #import "SndAudioProcessorFlanger.h"
 #import "SndAudioProcessorReverb.h"
 #import "SndAudioProcessorRecorder.h"
+#import "SndAudioProcessorToneGenerator.h"
 #import "SndAudioProcessorInspector.h"
 #import "SndPerformance.h"
 #import "SndPlayer.h"
