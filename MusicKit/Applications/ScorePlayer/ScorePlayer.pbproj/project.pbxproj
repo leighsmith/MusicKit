@@ -504,11 +504,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>V10.0</string>
+	<string>V10.0.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>10.0</string>
+	<string>10.0.0</string>
 	<key>NSExtensions</key>
 	<dict>
 		<key>playscore</key>
