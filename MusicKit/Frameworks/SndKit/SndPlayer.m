@@ -92,27 +92,19 @@ static SndPlayer *defaultSndPlayer;
 
 - (void) dealloc
 {
-  if (toBePlayed != nil) {
-    [toBePlayed   release];
+    [toBePlayed release];
     toBePlayed = nil;
-  }
-  if (playing != nil) {
-    [playing      release];
+    [playing release];
     playing = nil;
-  }
-  if (playingLock != nil) {
     [playingLock release];
     playingLock = nil;
-  }
-  if (removalArray != nil) {
     [removalArray release];
     removalArray = nil;
-  }
-  if (nativelyFormattedStreamingBuffer != nil) {
     [nativelyFormattedStreamingBuffer release];
     nativelyFormattedStreamingBuffer = nil;
-  }
-  [super dealloc];
+    [preemptingPerformance release];
+    preemptingPerformance = nil;
+    [super dealloc];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -335,7 +327,8 @@ static SndPlayer *defaultSndPlayer;
 	    [performanceAudioFader setBalance: [sound balance] clearingEnvelope: NO];
     }
 
-    // save the performance so we know which performance not to reset playIndexes for.
+    // Save the performance so we know which performance not to reset playIndexes for.
+    // All other performances have their playIndexes reset when preempted.
     [preemptingPerformance release];
     preemptingPerformance = [thePerformance retain];
     
