@@ -154,13 +154,18 @@ startPosition: (double) startPosition
 
 - (BOOL) isEqual: (id) anotherPerformance
 {
-  BOOL equal = ((SndPerformance *) anotherPerformance)->snd == snd &&
+  BOOL equal = ((SndPerformance *) anotherPerformance)->snd == snd && // TODO [((SndPerformance *) anotherPerformance)->snd isEqual: snd]
   ((SndPerformance *) anotherPerformance)->playTime == playTime &&
   ((SndPerformance *) anotherPerformance)->startAtIndex == startAtIndex &&
   ((SndPerformance *) anotherPerformance)->endAtIndex == endAtIndex &&
   ((SndPerformance *) anotherPerformance)->deltaTime == deltaTime ;
   // NSLog(@"checking if equal %@ vs. %@ = %s\n", self, anotherPerformance, equal ? "YES" : "NO");
   return equal;
+}
+
+- (unsigned) hash
+{
+    return [snd hash] + (unsigned) playTime * 256 + (unsigned) startAtIndex * 512 + (unsigned) endAtIndex * 1024 + (unsigned) deltaTime * 2048;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -228,7 +233,7 @@ startPosition: (double) startPosition
     // If we are going to move the play index after the end index, allow that,
     // but adjust the end index in order to stay legal.
     if(newPlayIndex > endAtIndex)
-	endAtIndex = newPlayIndex;
+		endAtIndex = newPlayIndex;
     playIndex = newPlayIndex;
 }
 
@@ -242,9 +247,9 @@ startPosition: (double) startPosition
     
     // check if we need to wrap around the loop start index if we are looping and we have entered the loop.
     if(looping && distanceFromLoopStart > 0 && distanceFromLoopStart < numberOfSamplesToRewind)
-	playIndex = loopEndIndex - (numberOfSamplesToRewind - distanceFromLoopStart);
+		playIndex = loopEndIndex - (numberOfSamplesToRewind - distanceFromLoopStart);
     else
-	playIndex -= numberOfSamplesToRewind;
+		playIndex -= numberOfSamplesToRewind;
     return playIndex;
 }
 
@@ -305,17 +310,17 @@ startPosition: (double) startPosition
 // AudioProcessorChain stuff
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndAudioProcessorChain*) audioProcessorChain
+- (SndAudioProcessorChain *) audioProcessorChain
 {
-  return [[audioProcessorChain retain] autorelease];
+    return [[audioProcessorChain retain] autorelease];
 }
 
-- setAudioProcessorChain: (SndAudioProcessorChain*) anAudioProcessorChain
+- setAudioProcessorChain: (SndAudioProcessorChain *) anAudioProcessorChain
 {
-  if (audioProcessorChain)
-    [audioProcessorChain release];
-  audioProcessorChain = [anAudioProcessorChain retain];
-  return self;
+    if (audioProcessorChain)
+	[audioProcessorChain release];
+    audioProcessorChain = [anAudioProcessorChain retain];
+    return self;
 }
 
 // Fills the given buffer with sound data, reading from the playIndex up until endAtIndex
@@ -334,17 +339,17 @@ startPosition: (double) startPosition
     long numOfSamplesRead = 0;
     // specifies to fillAudioBuffer: and insertIntoAudioBuffer: the range of Snd samples permissible to read from.
     NSRange samplesToReadRange;
-
+    
     if (atEndOfLoop) {	// retrieve up to the end of the loop
 	fillBufferToLength = framesUntilEndOfLoop;
     }
     // specify the final boundary in the Snd fillAudioBuffer: can not read beyond.
     samplesToReadRange.location = playIndex;
     samplesToReadRange.length = looping ? framesUntilEndOfLoop : endAtIndex - playIndex;
-
+    
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
     NSLog(@"[SndPerformance][SYNTH THREAD] playIndex = %ld, endAtIndex = %ld, buffer length = %d, fill buffer to length = %d, framesUntilEndOfLoop = %ld\n",
-	    playIndex, endAtIndex, buffLength, fillBufferToLength, framesUntilEndOfLoop);
+	  playIndex, endAtIndex, buffLength, fillBufferToLength, framesUntilEndOfLoop);
 #endif
     
     // Negative or zero buffer length means the endAtIndex was moved before or to the current playIndex,
@@ -356,15 +361,15 @@ startPosition: (double) startPosition
 	// NSLog(@"bufferToFill dataFormat before processing 1 %d\n", [bufferToFill dataFormat]);
 	numOfSamplesRead = [snd fillAudioBuffer: bufferToFill
 				       toLength: fillBufferToLength
-			         samplesInRange: samplesToReadRange];
+				 samplesInRange: samplesToReadRange];
 	numOfSamplesFilled = fillBufferToLength;
-	//NSLog(@"bufferToFill %@, numOfSamplesFilled = %ld, numOfSamplesRead = %ld\n",
-	//    bufferToFill, numOfSamplesFilled, numOfSamplesRead);
 #if 0
 	{
+	    //NSLog(@"bufferToFill %@, numOfSamplesFilled = %ld, numOfSamplesRead = %ld\n",
+	    //    bufferToFill, numOfSamplesFilled, numOfSamplesRead);
 	    long i;
 	    for (i = 0; i < numOfSamplesFilled; i++)
-		printf("%f\n", [bufferToFill sampleAtFrameIndex: i channel: 0]);
+		NSLog(@"%f\n", [bufferToFill sampleAtFrameIndex: i channel: 0]);
 	}
 #endif
 	
@@ -374,7 +379,7 @@ startPosition: (double) startPosition
 	    int loopLength = loopEndIndex - loopStartIndex + 1;
 	    long fillBufferFrom = fillBufferToLength;
 	    long remainingLengthToFillWithLoop = buffLength - fillBufferFrom;
-
+	    
 	    // Reset playIndex to the start of the loop. We do this before the loop in case we do no loops,
 	    // in the singular case that the loop ends at the end of a buffer, requiring no insertion of loop
 	    // regions for this buffer.
@@ -388,15 +393,16 @@ startPosition: (double) startPosition
 		// give the range to fill in the buffer
 		loopRegion.location = fillBufferFrom;
 		loopRegion.length = MIN(remainingLengthToFillWithLoop, loopLength);
-
+		
 		numOfSamplesRead = [snd insertIntoAudioBuffer: bufferToFill
 					       intoFrameRange: loopRegion
 					       samplesInRange: samplesToReadRange];
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
 		{
 		    long i;
+		    
 		    NSLog(@"%@ loopRegion.location = %ld, loopRegion.length = %ld, playIndex = %ld, fillBufferFrom = %d, remainingLengthToFillWithLoop = %d\n",
-			bufferToFill, loopRegion.location, loopRegion.length, playIndex, fillBufferFrom, remainingLengthToFillWithLoop);
+			  bufferToFill, loopRegion.location, loopRegion.length, playIndex, fillBufferFrom, remainingLengthToFillWithLoop);
 		    for (i = fillBufferFrom - 5; i < fillBufferFrom + 5; i++)
 			NSLog(@"buffer[%ld] = %e\n", i, [bufferToFill sampleAtFrameIndex: i channel: 0]);
 		}
@@ -409,22 +415,22 @@ startPosition: (double) startPosition
 	}
 	else
 	    playIndex += numOfSamplesRead;  // Update the read index accounting for change from resampling.
-
+	
 	actualTime += [bufferToFill duration];
 	if (audioProcessorChain != nil) {
 	    // NSLog(@"time: %f\n", relativePlayTime);
 	    [audioProcessorChain processBuffer: bufferToFill forTime: actualTime];
 	}
-
+	
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
 	NSLog(@"[SndPerformance][SYNTH THREAD] will mix buffer from %d to %d, old playIndex %d for %d, val at start = %f\n",
-		0, fillBufferToLength, samplesToReadRange.location, numOfSamplesFilled,
-		(((short *) [snd data])[samplesToReadRange.location]) / (float) 32768);
+	      0, fillBufferToLength, samplesToReadRange.location, numOfSamplesFilled,
+	      (((short *) [snd data])[samplesToReadRange.location]) / (float) 32768);
 #endif
     }
     else
 	playIndex += buffLength;  // If there is a problem, push the playIndex forward, we may improve...somehow...
-
+    
     //NSLog(@"retrieved numOfSamplesFilled = %ld\n", numOfSamplesFilled);
     return numOfSamplesFilled;
 }
