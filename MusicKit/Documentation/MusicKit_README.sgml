@@ -7,13 +7,13 @@ $Id$
 
 (Author attribution below)
 
-The folling entities in DOCTYPE describe the revision tuple and the
+The following entities in DOCTYPE describe the revision tuple and the
 exact version tuple of the source code (as a CVS version tag)
 this document refers to. Change accordingly to match the source
 and binary distributions. Likewise if the distribution web site changes.
 -->
 
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
 <!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
 <!entity maintaineremail "leigh@leighsmith.com">
