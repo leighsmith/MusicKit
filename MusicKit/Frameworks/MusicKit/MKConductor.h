@@ -577,12 +577,10 @@ extern void MKFinishPerformance(void);
 + (double) deltaT;
 
 /*!
-  @method copy
+  @method copyWithZone
   @result Returns an id.
-  @discussion Returns a new MKConductor created through <b>[MKConductor
-              new]</b>.
+  @discussion Returns a new MKConductor created through <b>[MKConductor new]</b>.
 */
-- copy;
 - copyWithZone: (NSZone *) zone;
 
 /*!
@@ -682,8 +680,7 @@ extern void MKFinishPerformance(void);
 /*!
   @method timeOffset
   @result Returns a double.
-  @discussion Returns the receiver's performance time offset in
-              seconds.
+  @discussion Returns the receiver's performance time offset in seconds.
 */
 - (double) timeOffset; 
 
@@ -773,9 +770,12 @@ extern void MKFinishPerformance(void);
 	      the object from any chance of deallocation between this method being
 	      called, and the message being dispatched.
 */
-- sel: (SEL) aSelector to: (id) toObject atTime: (double) t argCount: (int) argCount
-           arg1: (id) arg1 retain: (BOOL) retainArg1
-           arg2: (id) arg2 retain: (BOOL) retainArg2;
+-    sel: (SEL) aSelector 
+      to: (id) toObject 
+  atTime: (double) t 
+argCount: (int) argCount
+    arg1: (id) arg1 retain: (BOOL) retainArg1
+    arg2: (id) arg2 retain: (BOOL) retainArg2;
 /*!
   @method timeInSeconds
   @result Returns a double.
@@ -829,7 +829,7 @@ extern void MKFinishPerformance(void);
               can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
 */
 + (MKMsgStruct *) afterPerformanceSel: (SEL) aSelector
-				   to: toObject
+				   to: (id) toObject
 			     argCount: (int) argCount, ...; 
 
 /*!
