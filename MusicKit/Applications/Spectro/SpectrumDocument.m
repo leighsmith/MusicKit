@@ -5,16 +5,16 @@
 #import "SpectrumDocument.h"
 #import "SpectrumView.h"
 #import "WaterfallView.h"
-#import "SubSoundView.h"
 #import "ScrollingSpectrum.h"
 #import "SignalProcessor.h"
 
 #import <AppKit/AppKit.h>
-#import <string.h>
-#import <Foundation/NSUserDefaults.h>
-#import <math.h>
-#import <stdlib.h>
-#import <Foundation/NSByteOrder.h>
+//#import <string.h>
+#import <Foundation/Foundation.h>
+//#import <Foundation/NSUserDefaults.h>
+//#import <math.h>
+//#import <stdlib.h>
+//#import <Foundation/NSByteOrder.h>
 #import <SndKit/SndKit.h>
 
 #define SWAP(int) NSSwapBigShortToHost(int)
