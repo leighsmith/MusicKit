@@ -19,68 +19,7 @@
   purposes so long as the author attribution and this copyright message remains intact
   and accompanies all derived code.
 */
-/*
-  $Log$
-  Revision 1.19  2001/08/31 20:54:25  skotmcdonald
-  Removed addition of deltaT to sound play times; this now requires the API user to play scores in sequence-ahead mode with a conductor deltaT greater than stream client latency to ensure sample-accurate notes
 
-  Revision 1.18  2001/08/27 23:51:47  skotmcdonald
-  deltaT fetched from conductor, took out accidently left behind debug messages (MKSampler). Conductor: renamed time methods to timeInBeat, timeInSamples to be more explicit
-
-  Revision 1.17  2001/08/27 21:03:23  skotmcdonald
-  Added playNote method which plays the Snd at the absolute audio stream time. Calls new Snd play:atTime:withDuration method. Needed for sample accurate timing as we can't guarantee relative dts to be accurate enough
-
-  Revision 1.16  2001/08/27 20:04:52  leighsmith
-  Renamed the stop method to allNotesOff since this gives a clearer understanding of its function, better matches the behaviour of other MKInstruments and doesn't confuse against the stop method of MKMidi or MKOrchestra
-
-  Revision 1.15  2001/08/07 17:20:35  leighsmith
-  Corrected initWithCoder to MK prefixed class name
-
-  Revision 1.14  2001/07/02 16:42:38  sbrandon
-  - GNUSTEP does not have objc_msgSend. I replaced objc_msgSend with a couple
-    of other functions which do the same job on GNUSTEP (ifdef'd the code)
-
-  Revision 1.13  2001/04/20 02:53:25  leighsmith
-  Revised to use stopInFuture: and SndPerformances for correct stopping and performance management
-
-  Revision 1.12  2001/04/06 19:36:31  leighsmith
-  Moved to use the SndKits playInFuture: method
-
-  Revision 1.11  2000/07/22 00:31:17  leigh
-  Reassert Snd as the one true way to deal with sound.
-
-  Revision 1.10  2000/04/26 01:21:52  leigh
-  Moved uglySamplerTimingHack to firstNote in the dreadful scenario
-  that the default must change during the run of the program :-(
-
-  Revision 1.9  2000/04/22 20:12:42  leigh
-  Now correctly checks the notes conductor for tempo
-
-  Revision 1.8  2000/04/20 21:36:51  leigh
-  Added removePreparedSounds to stop sound names growing unchecked
-
-  Revision 1.7  2000/04/17 22:51:54  leigh
-  Cleaned out some redundant stuff, added debugging tests
-
-  Revision 1.6  2000/04/12 00:36:28  leigh
-  Hacked to use either SndKit or NSSound, depending on which is more complete on each platform, added uglySamplerTimingHack, hopefully this is only a momentary lapse of reason
-
-  Revision 1.5  2000/03/31 00:11:31  leigh
-  Cleaned up cruft
-
-  Revision 1.4  2000/03/11 01:16:21  leigh
-  Now using NSSound to replace Snd
-
-  Revision 1.3  1999/09/26 20:05:31  leigh
-  Removed definition of MK_filename
-
-  Revision 1.2  1999/09/24 16:47:20  leigh
-  Ensures only stopping a note with a filename
-
-  Revision 1.1  1999/09/22 16:06:31  leigh
-  Added sample playback support
-
-*/
 #import "_musickit.h"
 #import "MKSamplerInstrument.h"
 #import "MKConductor.h"
@@ -359,36 +298,36 @@
 
 - deactivate:(int)noteTag
 {
-//  int i;
-
-NSLog(@"in MKSamplerInstrument deactivate:\n");
+    
+    NSLog(@"in MKSamplerInstrument deactivate:\n");
 #if 0 // only needed when we are recording.
-  if (noteTag == recordTag) {
-    Snd *newSound, *oldSound;
-
-    [recorder stopRecording];
-    newSound = [recorder soundStruct];
-    [self clearAtKey:recordKey];
-    if (!playingSamples[recordKey]) {
-    playingSamples[recordKey] = [[Snd alloc] initWithSound:newSound];
-      [playingSamples[recordKey] setDelegate:self];
-      [playingSamples[recordKey] enablePreloading:preloadingEnabled];
+    if (noteTag == recordTag) {	
+	[recorder stopRecording];
+	[self clearAtKey: recordKey];
+	if (!playingSamples[recordKey]) {
+	    playingSamples[recordKey] = [[Snd alloc] initWithSound: recorder];
+	    [playingSamples[recordKey] setDelegate: self];
+	    [playingSamples[recordKey] enablePreloading: preloadingEnabled];
+	}
+	else
+	    [playingSamples[recordKey] setSound: recorder];
+	recordTag = recordKey = UNASSIGNED_SAMPLE_KEYNUM; // TODO not the right definition.
     }
-    else
-      [playingSamples[recordKey] setSoundStruct:newSound];
-    recordTag = recordKey = UNASSIGNED_SAMPLE_KEYNUM; // LMS not the right definition.
-  }
 #endif
 #if 0
-  if (noteTag >= 0)
-    for (i = 0; i < MAX_PERFORMERS; i++)
-      if (playingSamples[i] && ((noteTag == MAXINT) || (noteTag == [playingSamples[i] noteTag]))) {
-	[playingSamples[i] deactivate];
-	sustained[i] = NO;
-      }
+    if (noteTag >= 0) {
+	int i;
+	
+	for (i = 0; i < MAX_PERFORMERS; i++) {
+	    if (playingSamples[i] && ((noteTag == MAXINT) || (noteTag == [playingSamples[i] noteTag]))) {
+		[playingSamples[i] deactivate];
+		sustained[i] = NO;
+	    }	    
+	}	
+    }
 #endif
-  
-  return self;
+		
+    return self;
 }
 
 // Early out, no different from just stopping all playing samples.
@@ -419,18 +358,25 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
   }
 
 #else
-#define TIMEDSENDTO(conductor,receiver,selector,dt,arg) \
+#define TIMEDSENDTO(conductor,receiver,selector,dt,notetag_arg) \
   { /* NSLog(@"dt=%lf\n",dt); */ \
-    if (dt) [conductor sel:selector to:receiver withDelay:(dt) argCount:1,arg]; \
-    else objc_msgSend(receiver,selector,arg); \
+    if (dt) [conductor sel:selector to:receiver withDelay:(dt) argCount:1,notetag_arg]; \
+    else [receiver performSelector: selector withObject: (id) notetag_arg]; \
   }
 #endif
+
+/*
+NSInvocation *untimedMessage = [NSInvocation invocationWithMethodSignature:(NSMethodSignature *)signature
+    [untimedMessage setSelector: selector];
+    [untimedMessage setArgument: notetag_arg atIndex: 1];
+    [untimedMessage invokeWithTarget: receiver];
+*/
 
 // The problem is currently we can't request a Snd instance to play at some future moment in time
 // with respect to the playback clock like we can with the MIDI driver used within MKMidi.
 // Therefore we use the conductor to time sending a message in the future to play the sound file at the
 // deltaT offset and pray there isn't too much overhead playing the sound.
-// Future playback methods should be introduced into NSSound to take advantage of any 
+// Future playback methods should be introduced into Snd to take advantage of any 
 // operating system support for playback scheduling.
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
 {
