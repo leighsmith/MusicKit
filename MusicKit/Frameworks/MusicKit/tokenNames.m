@@ -4,14 +4,18 @@
 #endif
 
 /*
-  tokenNames.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:18  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   12/3/89/daj - Added seed and ranSeed.
   12/22/89/daj - Removed uPlus

@@ -1,28 +1,30 @@
-#ifndef __MK_lock_primitives_H___
-#define __MK_lock_primitives_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* Modification history:
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description: Mutex locks which allow recursive locks and unlocks by the same thread.
+
+  Original Author: Michael B. Jones
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:05  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
    daj/july 25, 1990 - Created file and changed extern to static.
    daj/july 22, 1991 - Added arg to rec_mutex_unlock. Flushed C_ARG_DECLS crap.
-
- */
-
-/*
- * rec_mutex.h
- *
- * Mutex locks which allow recursive locks and unlocks by the same thread.
- *
- * Michael B. Jones
- *
- * 24-Jun-1987
- */
-
+*/
 /*
  * HISTORY:
  * $Log$
- * Revision 1.1  1999/06/28 23:51:32  leigh
- * Initial revision
+ * Revision 1.2  1999/07/29 01:26:05  leigh
+ * Added Win32 compatibility, CVS logs, SBs changes
  *
  * Revision 2.1.1.1  89/07/28  14:49:15  mbj
  *     Check parallel libc and file mapping changes into source tree branch.
@@ -34,6 +36,8 @@
  * 24-Jun-87  Michael Jones (mbj) at Carnegie-Mellon University
  *    Started from scratch.
  */
+#ifndef __MK_lock_primitives_H___
+#define __MK_lock_primitives_H___
 
 #ifndef _REC_MUTEX_
 #define _REC_MUTEX_ 1

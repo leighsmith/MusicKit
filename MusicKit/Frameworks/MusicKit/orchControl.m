@@ -1,11 +1,22 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* This is imported as source by Orchestra.m.
-   
-   See /usr/include/musickit/devstatus.h */
+/*
+  $Id$
+  Defined In: The MusicKit
 
-/* 
-  Modification history:
-  
+  Description: This is imported as source by Orchestra.m.
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:13  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
   01/30/90/daj - Created from Orchestra.m.
   01/31/90/daj - Changed select() to msg_receive() for uniformity with 
                  the rest of the Music Kit.

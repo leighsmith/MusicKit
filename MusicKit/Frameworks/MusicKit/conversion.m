@@ -4,14 +4,18 @@
 #endif
 
 /*
-  conversion.c
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: objc.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:03  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   01/08/90/daj - Added comments.
   07/24/90/daj - Changed to use _MKSprintf and _MKVsprintf for thread-safety
@@ -22,7 +26,7 @@ Modification history:
 #import <ctype.h>
 #define MK_INLINE 1
 #import "_musickit.h"
-#import "_MKSprintf.h"
+//#import "_MKSprintf.h"
 
 int
 _MKStringToInt(NSString * s)

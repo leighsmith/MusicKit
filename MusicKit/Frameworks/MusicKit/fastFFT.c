@@ -1,45 +1,55 @@
 /*
- * fft_real.c
- * Routines for split-radix, real-only transforms.
- * R. E. Crandall, NeXT Scientific Computation Group
- * Copyright 1988-1992, NeXT Inc.  All rights reserved.
- *
- * These routines are adapted from 
- * Sorenson, et. al., (1987)
- * I.E.E.E. Trans. Acous. Sp. and Sig. Proc., ASSP-35, 6, 849-863
- * 
- * When all x[j] are real the standard DFT of (x[0],x[1],...,x[N-1]), 
- * call it x^, has the property of Hermitian symmetry: x^[j] = x^[N-j]*.
- * Thus we only need to find the set
- * (x^[0].re, x^[1].re,..., x^[N/2].re, x^[N/2-1].im, ..., x^[1].im)
- * which, like the original signal x, has N elements.
- * The two key routines perform forward (real-to-Hermitian) FFT,
- * and backward (Hermitian-to-real) FFT, respectively.
- * For example, the sequence:
- * 
- * fft_real_to_hermitian(x, N);
- * fftinv_hermitian_to_real(x, N);
- *
- * is an identity operation on the signal x.
- * To convolve two pure-real signals x and y, one goes:
- *
- * fft_real_to_hermitian(x, N);
- * fft_real_to_hermitian(y, N);
- * mul_hermitian(y, x, N);
- * fftinv_hermitian_to_real(x, N);
- *
- * and x is the pure-real cyclic convolution of x and y.
- */
- 
-/* Modifiation history:
-   
+  $Id$
+  Defined In: The MusicKit
+
+  Description: 
+    Routines for split-radix, real-only transforms.
+
+  Original Author: R. E. Crandall, NeXT Scientific Computation Group
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+   $Log$
+   Revision 1.2  1999/07/29 01:26:04  leigh
+   Added Win32 compatibility, CVS logs, SBs changes
+
    16/April/1991 - Reverted back to Richard's version.  Added "static".
    22/Aug/1991 -   Changes due to new compiler. (id -> i_d)
-
- */
+*/
+ /* These routines are adapted from
+  * Sorenson, et. al., (1987)
+  * I.E.E.E. Trans. Acous. Sp. and Sig. Proc., ASSP-35, 6, 849-863
+  *
+  * When all x[j] are real the standard DFT of (x[0],x[1],...,x[N-1]),
+  * call it x^, has the property of Hermitian symmetry: x^[j] = x^[N-j]*.
+  * Thus we only need to find the set
+  * (x^[0].re, x^[1].re,..., x^[N/2].re, x^[N/2-1].im, ..., x^[1].im)
+  * which, like the original signal x, has N elements.
+  * The two key routines perform forward (real-to-Hermitian) FFT,
+  * and backward (Hermitian-to-real) FFT, respectively.
+  * For example, the sequence:
+  *
+  * fft_real_to_hermitian(x, N);
+  * fftinv_hermitian_to_real(x, N);
+  *
+  * is an identity operation on the signal x.
+  * To convolve two pure-real signals x and y, one goes:
+  *
+  * fft_real_to_hermitian(x, N);
+  * fft_real_to_hermitian(y, N);
+  * mul_hermitian(y, x, N);
+  * fftinv_hermitian_to_real(x, N);
+  *
+  * and x is the pure-real cyclic convolution of x and y.
+  */
  
-#import<math.h>
-#include <stdlib.h> /*sb, for free and malloc */
+#import <math.h>
+#import <stdlib.h> /*sb, for free and malloc */
 #define TWOPI (double)(2*3.14159265358979323846264338327950)
 
 static int cur_run = 0;

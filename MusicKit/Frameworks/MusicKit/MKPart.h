@@ -1,11 +1,17 @@
-#ifndef __MK_Part_H___
-#define __MK_Part_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
-  MKPart.h
+  $Id$
 
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
 */
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:47  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
+#ifndef __MK_Part_H___
+#define __MK_Part_H___
 
 #import <Foundation/NSObject.h>
 #import "MKNote.h"

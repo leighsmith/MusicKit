@@ -1,9 +1,25 @@
-/* Copyright Pinnacle Research, 1993 */
+/*
+  $Id$
+  Defined In: The MusicKit
 
-/* This file factored out of MKConductor.m for purposes of separate copyright and
- * to isolate MIDI time code functions. 
- * This file contains public methods and support functions.
- */
+  Description:
+    This file factored out of MKConductor.m for purposes of separate copyright and
+    to isolate MIDI time code functions.
+    This file contains public methods and support functions.
+
+  Original Author: David Jaffe
+
+  Copyright (c) Pinnacle Research, 1993
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:09  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 /* #import "_MTCHelper.h" */ /*sb: removed from here and put in MKConductor.h, since it is interfering
 			      * with stuff */
 

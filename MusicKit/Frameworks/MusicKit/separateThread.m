@@ -1,13 +1,16 @@
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
-  separateThread.m (was lock.m)
-  Responsibility: David A. Jaffe, Mike Minnick
+  $Id$
+  Original Author: David A. Jaffe, Mike Minnick
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
 */
-
 /* 
   Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:16  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   07/27/90/daj - Created.
   08/10/90/daj - Added thread_policy setting. 

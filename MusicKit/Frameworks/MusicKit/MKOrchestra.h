@@ -1,14 +1,21 @@
-#ifndef __MK_Orchestra_H___
-#define __MK_Orchestra_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. 
  * DSP Serial Port and subclass support and other 4.0 release extensions,
  * Copyright 1993, CCRMA, Stanford Univ. 
  * Author: David A. Jaffe.
  */ 
 /*
-  MKOrchestra.h
-  DEFINED IN: The Music Kit
+  $Id$
+  Defined In: The MusicKit
 */
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:47  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
+#ifndef __MK_Orchestra_H___
+#define __MK_Orchestra_H___
+
 #import <Foundation/NSObject.h>
 #import <Foundation/NSTimer.h>
 #import "orch.h"

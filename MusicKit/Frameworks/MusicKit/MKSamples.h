@@ -1,20 +1,27 @@
-#ifndef __MK_Samples_H___
-#define __MK_Samples_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
-  MKSamples.h
-  DEFINED IN: The Music Kit
+  $Id$
+  Defined In: The MusicKit
 */
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:49  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
+#ifndef __MK_Samples_H___
+#define __MK_Samples_H___
 
 #import "MKWaveTable.h"
 //sb:
-#import <SoundKit/SoundKit.h>
+//#import <SoundKit/SoundKit.h>
+#import <SndKit/SndKit.h>
 
 @interface MKSamples : MKWaveTable
 /*
  * 
- * A Samples object is a type of WaveTable that uses a Sound object (from
- * the Sound Kit) as its data.  The Sound itself can only contain sampled
+ * A Samples object is a type of WaveTable that uses a Snd object (from
+ * the SndKit) as its data.  The Sound itself can only contain sampled
  * data; each sample in the Sound corresponds to an array entry in the
  * Samples object.  The Sound object can be set directly by invoking the
  * method setSound:, or you can read it from a soundfile, through the
@@ -30,9 +37,8 @@
  * less is a good length).
  */
 {
-    Sound *sound;        /* The object's Sound object. */ 
-    NSString *soundfile; /* The name of the soundfile, if the Sound was set
-                        through readSoundfile:. */
+    Snd *sound;        /* The object's Sound object. */ 
+    NSString *soundfile; /* The name of the soundfile, if the Sound was set through readSoundfile:. */
     int tableType;
 }
 
@@ -55,7 +61,7 @@
   * See also superclass -copy.
   */
 
-- (BOOL)setSound:(Sound *)aSound; 
+- (BOOL)setSound:(Snd *)aSound; 
  /* 
   * Sets the receiver's Sound to a copy of aSound (the receiver's current
   * Sound is freed).  aSound must be one-channel, 16-bit linear data.  You

@@ -1,6 +1,15 @@
+/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/*
+  $Id$
+*/
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:42  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef __MK__Conductor_H___
 #define __MK__Conductor_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 #import "MKConductor.h"
 
 #import	<mach/message.h>

@@ -1,12 +1,18 @@
+/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/*
+  $Id$
+  Defined In: The MusicKit
+  This is the main public include file that will include all other class header files.
+*/
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:54  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef __MK_musickit_H___
 #define __MK_musickit_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* 
-    musickit.h 
-    
-    This file is part of the Music Kit.
 
-  */
 #ifndef MUSICKIT_H
 #define MUSICKIT_H
 
@@ -15,8 +21,13 @@
 //#import <streams/streams.h>     /* Contains NXStream, etc. */
 //#import <math.h>                /* Contains MAXINT, etc. */
 // These used to be in 3.3 ansi/math.h but are no longer
+// However they are in System.framework on Win32 which is typically #imported afterwards...sigh
+#if !defined(MAXSHORT) && !defined(WIN32)
 #define MAXSHORT ((short)0x7fff)
+#endif
+#if !defined(MAXINT)
 #define MAXINT  ((int)0x7fffffff)       /* max pos 32-bit int */
+#endif
 
  /* Music Kit include files */
 #import "noDVal.h"              /* Type double utilities */

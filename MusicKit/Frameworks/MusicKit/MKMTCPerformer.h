@@ -1,3 +1,13 @@
+/*
+  $Id$
+  Defined In: The MusicKit
+*/
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:45  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef __MK_MTCPerformer_H___
 #define __MK_MTCPerformer_H___
 #import "MKPerformer.h"

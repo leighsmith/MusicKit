@@ -1,6 +1,16 @@
+/* Copyright Pinnacle Research, 1993 */
+/*
+  $Id$
+  Defined In: The MusicKit
+*/
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:59  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef __MK__MTCHelper_H___
 #define __MK__MTCHelper_H___
-/* Copyright Pinnacle Research, 1993 */
 
 #import "MKPerformer.h" /*sb*/
 

@@ -1,14 +1,22 @@
+/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/*
+  $Id$
+  Defined In: The MusicKit
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:25:54  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+  4/26/90/daj - For a bit of efficiency, changed _MKTrace() to direct ref 
+                to _MKTraceFlag, since _MKTraceFlag is, indeed, a 
+                "private extern". Might want to do the same for
+		_MKGetOrchSimulator (using @defs)
+*/
 #ifndef __MK__Orchestra_H___
 #define __MK__Orchestra_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* Modification history:
-
-   4/26/90/daj - For a bit of efficiency, changed _MKTrace() to direct ref 
-                 to _MKTraceFlag, since _MKTraceFlag is, indeed, a 
-		 "private extern". Might want to do the same for
-		 _MKGetOrchSimulator (using @defs)
-
-*/
 
 #import "_DSPMK.h"
 

@@ -1,25 +1,31 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* Modification history:
-
-   daj/july 25, 1990 - Created file and changed extern to static.
-   daj/july 22, 1991 - Added arg to rec_mutex_unlock
-
- */
 /*
- * rec_mutex.c
- *
- * Mutex locks which allow recursive locks and unlocks by the same thread.
- *
- * Michael B. Jones
- *
- * 24-Jun-1987
- */
+  $Id$
+  Defined In: The MusicKit
 
+  Description: Mutex locks which allow recursive locks and unlocks by the same thread.
+
+  Original Author: Michael B. Jones
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:05  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+  daj/july 25, 1990 - Created file and changed extern to static.
+  daj/july 22, 1991 - Added arg to rec_mutex_unlock
+
+ */
 /*
  * HISTORY:
  * $Log$
- * Revision 1.1  1999/06/28 23:51:32  leigh
- * Initial revision
+ * Revision 1.2  1999/07/29 01:26:05  leigh
+ * Added Win32 compatibility, CVS logs, SBs changes
  *
  * Revision 2.1.1.2  89/07/20  17:20:20  mbj
  * 	13-Dec-88 Mary Thompson (mrt) @ Carnegie Mellon
@@ -89,6 +95,7 @@ rec_mutex_free(rec_mutex_t m)
 static int
 rec_mutex_try_lock(rec_mutex_t m)
 {
+#ifndef WIN32
     cthread_t self = cthread_self();
 
     ASSERT(self != NO_CTHREAD);
@@ -103,12 +110,14 @@ rec_mutex_try_lock(rec_mutex_t m)
 	m->thread = self;
 	return TRUE;
     }
+#endif
     return FALSE;
 }
 
 static void
 rec_mutex_lock(rec_mutex_t m)
 {
+#ifndef WIN32
     cthread_t self = cthread_self();
 
     ASSERT(self != NO_CTHREAD);
@@ -121,6 +130,7 @@ rec_mutex_lock(rec_mutex_t m)
 	m->count = 1;
 	m->thread = self;
     }
+#endif
 }
 
 static void

@@ -1,9 +1,18 @@
+/*
+  $Id$
+
+  Serial port delegate of Orchestra.
+*/
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:42  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef __MK_DSPSerialPortDevice_H___
 #define __MK_DSPSerialPortDevice_H___
 #import <Foundation/NSObject.h>
 
-/* Serial port delegate of Orchestra.
- */
 @interface DSPSerialPortDevice:NSObject 
 {
     BOOL sendsSettings;

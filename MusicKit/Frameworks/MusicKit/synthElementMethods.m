@@ -1,7 +1,21 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* This file is included by UnitGenerator.m and SynthData.m */
-/* 
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description: This file is included by UnitGenerator.m and SynthData.m
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:17  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   11/20/89/daj - Minor change to do lazy garbage collection of synth data. 
    8/27/90/daj - Added override of allocFromZone: and copyFromZone:

@@ -1,15 +1,18 @@
-#ifndef __MK__musickit_H___
-#define __MK__musickit_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
-	private musickit include file.
-	This file contains everything used by the Music Kit privately.
-	It should probably be broken up for compilation efficiency.
-	
-*/
+  $Id$
+  Defined In: The MusicKit
 
+  Private MusicKit include file.
+  This file contains everything used by the Music Kit privately.
+  It should probably be broken up for compilation efficiency.
+*/
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:02  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   09/15/89/daj - Added caching of Note class. (_MKClassNote())
   09/22/89/daj - Moved _MKNameTable functions to _MKNameTable.h.
@@ -40,6 +43,8 @@ Modification history:
    9/26/90/daj - Changed *cvtToId to objc_getClassWithoutWarning
    11/9/92/daj - Added MidiClass
 */
+#ifndef __MK__musickit_H___
+#define __MK__musickit_H___
 
 //sb: for NSData etc
 #import <Foundation/NSData.h>

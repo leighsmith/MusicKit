@@ -1,11 +1,26 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* Modification history:
+/*
+  $Id$
+  Defined In: The MusicKit
 
-   09/26/90/daj & lbj - Changed freeNoteSenders to make sure receiver's not
-                        in performance. 
-   02/25/91/daj - Added disconnectNoteSenders to be symmetrical with 
-                  Instrument's disconnectNoteReceivers.
-   03/08/95/daj - Fixed bug in removeNoteSenders.
+  Description:
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:10  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+  09/26/90/daj & lbj - Changed freeNoteSenders to make sure receiver's not
+                       in performance. 
+  02/25/91/daj - Added disconnectNoteSenders to be symmetrical with 
+                 Instrument's disconnectNoteReceivers.
+  03/08/95/daj - Fixed bug in removeNoteSenders.
 */
 #import <objc/objc.h>
 

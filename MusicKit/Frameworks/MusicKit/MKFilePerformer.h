@@ -1,14 +1,19 @@
+/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/*
+  $Id$
+  
+  Defined In: The MusicKit
+*/
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:45  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef __MK_FilePerformer_H___
 #define __MK_FilePerformer_H___
 //sb:
 #import <Foundation/Foundation.h>
-
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/*
-  MKFilePerformer.h
-  
-  DEFINED IN: The Music Kit
-*/
 
 #import "MKPerformer.h"
 

@@ -1,21 +1,33 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 #ifdef SHLIB
 #include "shlib.h"
 #endif
 
-/* Based on original version written by Lee Boynton, extensively revised by
-   David Jaffe. 
-   
-   These routines might eventually be in a MIDI library. For now, they're
-   private Music Kit functions. 
+/*
+  $Id$
+  Defined In: The MusicKit
 
-   The division of labor is as follows: All Music-Kit specifics are kept out
-   of this file. The functions in this file read/write raw MIDI and meta-
-   events.
+  Description:
+    Based on original version written by Lee Boynton, extensively revised by
+    David Jaffe.
+
+    These routines might eventually be in a MIDI library. For now, they're
+    private Music Kit functions.
+
+    The division of labor is as follows: All Music-Kit specifics are kept out
+    of this file. The functions in this file read/write raw MIDI and meta-events.
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
-
-/* 
+/*
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:09  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   12/21/89/daj - Fixed bug in writing level-1 files. last_write_time 
                  needs to be set to 0 when the track's incremented.
@@ -58,8 +70,6 @@ Modification history:
 		to preserve timing between events
   4/5/99/lms  - Changed prefixes to be public MusicKit routines.
 */
-
-
 
 #import "_musickit.h"
 #import "midi_spec.h"

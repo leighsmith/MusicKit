@@ -63,7 +63,7 @@
             AppKit.framework, 
             dsp.framework, 
             Foundation.framework, 
-            SoundKit.framework, 
+            SndKit.framework, 
             System.framework
         ); 
         FRAMEWORKSEARCH = (
@@ -72,7 +72,10 @@
             "$(SYSTEM_LIBRARY_DIR)/Frameworks/SoundKit.framework", 
             "$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework", 
             "$(HOME)//Library/Frameworks", 
-            "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks"
+            "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks", 
+            "C:\\Local\\Developer\\Frameworks", 
+            "C:\\Apple\\Local\\Library\\Frameworks", 
+            /Local/Library/Frameworks
         ); 
         HEADERSEARCH = (
             /Local/Users/leigh/Sources/Music/MusicKit/YellowBox/Frameworks/MusicKit_3.3_Headers
@@ -142,7 +145,6 @@
             _DSPMK.h, 
             _MKNameTable.h, 
             _MKParameter.h, 
-            _MKSprintf.h, 
             _MTCHelper.h, 
             _OrchloopbeginUG.h, 
             _ParName.h, 
@@ -177,14 +179,12 @@
         LIBRARYSEARCH = (./); 
         OTHER_LIBS = (); 
         OTHER_LINKED = (
-            mididriverServer.c, 
-            mididriverUser.c, 
+            sin.c, 
+            fastFFT.c, 
             mididriver_nonMig.c, 
             mididriver_replyServer.c, 
-            sin.c, 
-            _MKecvt.c, 
-            _MKSprintf.c, 
-            fastFFT.c
+            mididriverServer.c, 
+            mididriverUser.c
         ); 
         OTHER_RESOURCES = (Localized.strings); 
         OTHER_SOURCES = (
@@ -194,7 +194,6 @@
             _synthElementMethods.m, 
             equalTempered.m, 
             h.template, 
-            lock.m, 
             lock_primitives.h, 
             lock_primitives.m, 
             m.template, 
@@ -212,7 +211,8 @@
             platform.make, 
             synthElementCFuncs.m, 
             synthElementMethods.m, 
-            timetagInclude.m
+            timetagInclude.m, 
+            separateThread.m
         ); 
         PRECOMPILED_HEADERS = (); 
         PROJECT_HEADERS = (); 

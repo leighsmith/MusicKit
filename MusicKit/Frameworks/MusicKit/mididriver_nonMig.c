@@ -1,8 +1,22 @@
-/* Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under
- * license from NeXT */
+/*
+  $Id$
+  Defined In: The MusicKit
 
-/* Portions copyright (c) 1994 Stanford University */ 
+  Description:
+  Original Author: David Jaffe
 
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:08  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifdef SHLIB
 #include "shlib.h"
 #endif SHLIB

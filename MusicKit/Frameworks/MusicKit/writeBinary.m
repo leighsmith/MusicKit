@@ -1,19 +1,32 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 #ifdef SHLIB
 #include "shlib.h"
 #endif
 
-/* 
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description:
+    This file supports the writing of binary ("optimized") scorefiles. These
+    files have the extension .playscore. See the file binaryScorefile.doc
+    on the musickit source directory.
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
 Modification history:
 
+  $Log$
+  Revision 1.2  1999/07/29 01:26:19  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
   01/08/90/daj - Added comments.
-   12/11/93/daj - Added byte swapping for Intel hardware.
-
+  12/11/93/daj - Added byte swapping for Intel hardware.
 */
-
-/* This file supports the writing of binary ("optimized") scorefiles. These
-   files have the extension .playscore. See the file binaryScorefile.doc
-   on the musickit source directory */
 
 #import "_musickit.h"
 #import "tokens.h"

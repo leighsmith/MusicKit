@@ -4,10 +4,10 @@
 #endif
 
 /*
-  _ParName.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 
@@ -40,14 +40,14 @@
    Note.m, and _ParName.m. This is for reasons of avoiding inter-module
    communication (i.e. minimizing globals). Perhaps the scorefile-writing
    should be more cleanly isolated.
-   */
-
-   
-
+*/
 /* 
 Modification history:
 
-  _ParName.m:
+  $Log$
+  Revision 1.2  1999/07/29 01:26:00  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
   09/18/89/daj - Changes to accomodate new way of doing parameters (structs 
                  rather than objects).
   09/22/89/daj - Changes to accomodate changes in _MKNameTable.
@@ -742,7 +742,7 @@ static void sfWriteStrPar(register NSMutableData *aStream, NSString *strBuf)
 	  tmp = str + 1;                /* update tmp */
 	  /* Translate char. */
 	  WRITECHAR(BACKSLASH);
-	  WRITECHAR(rindex((char *)_MKTranstab(),*str)[-1]);
+	  WRITECHAR(*(strrchr((char *)_MKTranstab(),*str)-1));
 	  break;
 	default:
 	  break;

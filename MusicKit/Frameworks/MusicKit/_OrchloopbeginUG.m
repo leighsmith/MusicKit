@@ -4,14 +4,18 @@
 #endif
 
 /*
-  OrchSysUG.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:00  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   11/10/89/daj - In order to implement filling up the sound out buffers
                  before starting to play, did the following:
@@ -31,9 +35,7 @@ Modification history:
 
 @implementation _OrchloopbeginUG:MKUnitGenerator 
   /* See beg_orcl in dsp/smsrc/beginend.asm.  */ 
-{
 
-}
 #import "orchloopbeginUGInclude.m"
 
 #define LOOPER_JUMP(_arrSize) (_arrSize - 1)

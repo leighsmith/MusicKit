@@ -1,9 +1,19 @@
-#ifndef __MK_PerformerDelegate_H___
-#define __MK_PerformerDelegate_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
- * ------------ Performer delegate description
- */
+  $Id$
+
+  Performer delegate description
+  Defined In: The MusicKit
+*/
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:49  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
+#ifndef __MK_PerformerDelegate_H___
+#define __MK_PerformerDelegate_H___
+
 #import <Foundation/NSObject.h>
 @interface MKPerformerDelegate : NSObject
 /*

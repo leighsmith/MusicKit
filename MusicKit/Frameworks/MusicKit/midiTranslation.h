@@ -1,3 +1,15 @@
+/*
+  $Id$
+  Defined In: The MusicKit
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:06  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef __MK_midiTranslation_H___
 #define __MK_midiTranslation_H___
 #ifndef MIDITRANS_H

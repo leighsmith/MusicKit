@@ -1,19 +1,32 @@
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description:
+    This file defines the Music Kit Note parameters. You can also create your
+    own parameters using the Note method +parTagForName:. When an unrecognized
+    parameter is found in a scorefile, it is created automatically.
+
+    These parameters are not recognized by all SynthPatches. You must check
+    the class description (or header file) for the individual SynthPatch to
+    determine the parameters to which it responds.
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:13  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef __MK_params_H___
 #define __MK_params_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* 
-    params.h 
-    
-    This file is part of the Music Kit.
-  */
-
-/* This file defines the Music Kit Note parameters. You can also create your
-   own parameters using the Note method +parTagForName:. When an unrecognized 
-   parameter is found in a scorefile, it is created automatically. 
-
-   These parameters are not recognized by all SynthPatches. You must check
-   the class description (or header file) for the individual SynthPatch to 
-   determine the parameters to which it responds. */
 
 typedef enum _MKPars {     /* Note Parameters. */
     MK_noPar = 0,          /* Begin marker */

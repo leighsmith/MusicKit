@@ -4,14 +4,18 @@
 #endif
 
 /*
-  _SharedDataInfo.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
-  */
+*/
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:01  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   11/20/89/daj - Changed to do lazy garbage collection of synth data. 
   11/17/92/daj - Minor change to shut up compiler warning
@@ -46,9 +50,9 @@ Modification history:
     MKOrchSharedType type;
 }
 
-/* The shared object table is a HashTable that hashes from id (e.g. Partials
-   object) to a List object. The List is a List of _SharedSynthInfos.
-   Each _SharedSynthInfo contains a back-pointer to the List. */
+/* The shared object table is a NSMutableDictionary that hashes from id (e.g. MKPartials
+object) to a NSMutableArray object. The NSMutableArray is a NSMutableArray of _SharedSynthInfos.
+Each _SharedSynthInfo contains a back-pointer to the NSMutableArray. */
 
 enum {obj, objSegment, objSegmentLength};
 
@@ -88,7 +92,7 @@ id _MKFreeSharedSet(id sharedSet,NXHashTable **garbageTable)
 //    [sharedSet freeKeys:noFree values:freeObject];
     NXFreeHashTable(*garbageTable);
     *garbageTable = NULL;
-    [sharedSet release]; //sb: sharedSet WAS a HashTable and does not do -release. I want to change to dictionary
+    [sharedSet release];
     return nil; /* sb: nil for compatibility with old -free method */
 }
 
@@ -103,7 +107,7 @@ NSMutableDictionary* _MKNewSharedSet(NXHashTable **garbageTable)
 static void reallyRelease(_SharedSynthInfo *aSharedSynthInfo)
 {
     [aSharedSynthInfo->theList removeObject:aSharedSynthInfo];
-    [aSharedSynthInfo release]; /*sb: Hmmm. Could be unecessary release here FIXME */
+    [aSharedSynthInfo release];
 }
 
 BOOL _MKReleaseSharedSynthClaim(_SharedSynthInfo *aSharedSynthInfo,BOOL lazy)
@@ -196,7 +200,8 @@ BOOL _MKCollectSharedDataGarbage(id orch,NXHashTable *garbageTable)
 	[dataObj _setShared:nil];
 	reallyRelease(infoObj);
 	_MKDeallocSynthElement(dataObj,NO);
-        [dataObj release];/*since we were holding the retain in the _SharedSynthInfo */
+        [dataObj release];/* since we were holding the retain in the _SharedSynthInfo,
+            		   * we don't release the dataObj in a -dealloc method, we do it here */
     }
     if (gotOne)
       NXEmptyHashTable(garbageTable);
@@ -208,7 +213,7 @@ BOOL _MKCollectSharedDataGarbage(id orch,NXHashTable *garbageTable)
 BOOL _MKInstallSharedObject(NSMutableDictionary* sharedSet,id aSynthObj,
 			    id aKeyObj,MKOrchMemSegment whichSegment,
 			    int howLong,MKOrchSharedType whichType)
-    /* Returns nil if object is already in Set */
+    /* Returns NO if object is already in Set */
 {
     _SharedSynthInfo *aSharedSynthInfo;
     id aList = nil;
@@ -217,6 +222,7 @@ BOOL _MKInstallSharedObject(NSMutableDictionary* sharedSet,id aSynthObj,
     if (!aList) {
 	aList = [[NSMutableArray alloc] init];
         [sharedSet setObject:aList forKey:idKey];
+        [aList release];/* retain is now held in sharedSet */
     }
     else if (findSharedSynthInfo(aList,whichSegment,howLong,whichType))
       return NO;

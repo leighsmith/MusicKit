@@ -1,12 +1,20 @@
-#ifndef __MK__SynthPatch_H___
-#define __MK__SynthPatch_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/*
+  $Id$
+  Defined In: The MusicKit
+*/
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:25:58  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   1/24/90/daj - Flushed _preempted and _noteDurOff instance variables. 
   03/13/90/daj - Added private category.
 */
+#ifndef __MK__SynthPatch_H___
+#define __MK__SynthPatch_H___
 
 #ifndef __SYNTHPATCH_H
 #define __SYNTHPATCH_H
@@ -41,6 +49,7 @@ extern id _MKSynthPatchCmp();
 -_add:aUG;
 -_prepareToFree:(id *)headP :(id *)tailP;
 -_freeList:head;
+-(void)_freeList2;
 -(void)_setShared:aSharedKey;
 -(void)_addSharedSynthClaim;
 -_connectContents;

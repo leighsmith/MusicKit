@@ -1,14 +1,21 @@
-#ifndef __MK_devstatus_H___
-#define __MK_devstatus_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /* 
-    MKDeviceStatus.h 
+  $Id$ 
     
-    This file is part of the Music Kit.
-  */
+  This file is part of the Music Kit.
+*/
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:44  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 /* This file defines status protocol for the Music Kit "devices". Music 
    Kit "devices" are objects that interface to a Mach device. The two
    Music Kit devices are Midi and Orchestra. */
+
+#ifndef __MK_devstatus_H___
+#define __MK_devstatus_H___
 
 /* Status for Midi/Orchestra Music Kit classes. */
 

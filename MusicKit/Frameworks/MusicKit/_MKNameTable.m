@@ -4,54 +4,57 @@
 #endif
 
 /*
-	_MKNameTable.m
-	Responsibility: David Jaffe
+  $Id$
+  Original Author: David Jaffe
   
-	DEFINED IN: The Musickit
+  Defined In: The MusicKit
 
-	Note:
-	* back-hashing is optionally supported.
-	* the name is owned by the name table (it is copied and freed)
-	* a type is associated with the name.
+  Note:
+  * back-hashing is optionally supported.
+  * the name is owned by the name table (it is copied and freed)
+  * a type is associated with the name.
 
-	Note that if back-hashing is not specified (via the _MK_BACKHASH bit),
-	the object name is NOT accessible from the object. We use backhashing
-	except for things such as pitch names and keywords, where backhashing
-	is never done.
+  Note that if back-hashing is not specified (via the _MK_BACKHASH bit),
+  the object name is NOT accessible from the object. We use backhashing
+  except for things such as pitch names and keywords, where backhashing
+  is never done.
 
-	Should convert this to Bertrand's hashtable.
+  Should convert this to Bertrand's hashtable.
 
-	LMS: Nowdays we should convert it to NSDictionary, however:
-	1. NSDictionary always copies but memory's cheap so big deal.
-	2. using the object as reference (back-hashing) needs somewhere to save the type, otherwise an enclosing
-	object needs to be defined holding the object and the type parameters as the value. This means a search
-	won't work.
-	We could do this by making the type be an instance var of the object, or just having two dictionaries.
+  LMS: Nowdays we should convert it to NSDictionary, however:
+  1. NSDictionary always copies but memory's cheap so big deal.
+  2. using the object as reference (back-hashing) needs somewhere to save the type, otherwise an enclosing
+  object needs to be defined holding the object and the type parameters as the value. This means a search
+  won't work.
+  We could do this by making the type be an instance var of the object, or just having two dictionaries.
 
-	Also, should NOT copy strings. Or, at least, have a no-copy bit
-	that can be set for the strings that exist elsewhere (e.g. the
-	ones for the keywords and such) in the program.
+  Also, should NOT copy strings. Or, at least, have a no-copy bit
+  that can be set for the strings that exist elsewhere (e.g. the
+  ones for the keywords and such) in the program.
 */
-
 /* 
 Modification history:
 
-   09/22/89/daj - Made back-hash optional in the interest of saving space.
-                  Flushed _MKNameTableAddGlobalNameNoCopy() in light of the 
-                  decision to make name table bits (e.g. _MK_NOFREESTRINGBIT) 
-		  globally defined.
-		  Flushed _MKNameTableAddNameNoCopy() and added a copyIt
-		  parameter to _MKNameTableAddName().
-   10/06/89/daj - Changed to use hashtable.h version of table.
-   12/03/89/daj - Added seed and ranSeed to initTokens list.
-   03/05/90/daj - Added check for null name and nil object in public functions.
-                  Added conversion of name in MKNameObject to legal scorefile
-	          name and added private global function _MKSymbolize().
-   03/06/90/daj - Added _MK_repeat to keyword list.
-   04/21/90/daj - Removed unused auto var.
-   10/02/94/daj - Added MKTrace defaults var
-   ??/??/98/sb  - OpenStep conversion
-   04/21/99/lms - overhaul for NSDictionary operation for portability and clarity
+  $Log$
+  Revision 1.2  1999/07/29 01:25:59  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+  09/22/89/daj - Made back-hash optional in the interest of saving space.
+                 Flushed _MKNameTableAddGlobalNameNoCopy() in light of the 
+                 decision to make name table bits (e.g. _MK_NOFREESTRINGBIT) 
+		 globally defined.
+		 Flushed _MKNameTableAddNameNoCopy() and added a copyIt
+                 parameter to _MKNameTableAddName().
+  10/06/89/daj - Changed to use hashtable.h version of table.
+  12/03/89/daj - Added seed and ranSeed to initTokens list.
+  03/05/90/daj - Added check for null name and nil object in public functions.
+                 Added conversion of name in MKNameObject to legal scorefile
+                 name and added private global function _MKSymbolize().
+  03/06/90/daj - Added _MK_repeat to keyword list.
+  04/21/90/daj - Removed unused auto var.
+  10/02/94/daj - Added MKTrace defaults var
+  ??/??/98/sb  - OpenStep conversion
+  04/21/99/lms - overhaul for NSDictionary operation for portability and clarity
 */
 
 #import <Foundation/NSString.h>
@@ -66,6 +69,10 @@ Modification history:
 
 #define MASKBITS (_MK_NOFREESTRINGBIT | _MK_AUTOIMPORTBIT | _MK_BACKHASHBIT)
 #define TYPEMASK(_x) (_x & (0xffff & ~(MASKBITS)))
+// Dear WinNT doesn't know about PI, stolen from MacOSX-Servers math.h definition
+#ifndef M_PI
+#define M_PI            3.14159265358979323846  /* pi */
+#endif
 
 @implementation _MKNameTable
 

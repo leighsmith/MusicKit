@@ -1,15 +1,19 @@
 /*
- *	File:	<midi/mididriver_types.h>
- *
- *      Portions Copyright (c) 1994 NeXT Computer, Inc. 
- *      and reproduced under license from NeXT
- *
- *	Author:	David Jaffe
- *
- *      MIDI driver typedefs, defines, etc.
- */
+  $Id$
+  Defined In: The MusicKit
 
+  Description: MIDI driver typedefs, defines, etc.
 
+  Author: David Jaffe
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:08  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef _MDDRIVER_TYPES_
 #define _MDDRIVER_TYPES_
 

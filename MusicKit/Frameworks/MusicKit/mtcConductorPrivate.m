@@ -1,9 +1,25 @@
-/* Copyright Pinnacle Research, 1993 */
+/*
+  $Id$
+  Defined In: The MusicKit
 
-/* This file factored out of Conductor.m for purposes of separate copyright and
- * to isolate MIDI time code functions. 
- * This file contains the MTCPrivate catagory of Conductor.
- */
+  Description:
+    This file factored out of MKConductor.m for purposes of separate copyright and
+    to isolate MIDI time code functions.
+    This file contains the MTCPrivate category of Conductor.
+
+  Original Author: David Jaffe
+
+  Copyright (c) Pinnacle Research, 1993
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:09  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 //#import <midi_driver_compatability.h> // LMS obsolete 
 #import <midi_driver.h>
 

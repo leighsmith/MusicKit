@@ -1,8 +1,18 @@
-#ifndef __MK_Midi_H___
-#define __MK_Midi_H___
+/*
+  $Id$
+  Defined In: The MusicKit
+*/
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:45  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /* Time code extensions copyright Pinnacle Research, 1993. */
 /* Intel extensions copyright CCRMA, Stanford University, 1994 */
+#ifndef __MK_Midi_H___
+#define __MK_Midi_H___
 
 #import <Foundation/NSObject.h>
 #import "MKDeviceStatus.h"

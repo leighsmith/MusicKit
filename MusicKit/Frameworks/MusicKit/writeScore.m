@@ -4,14 +4,18 @@
 #endif
 
 /*
-  writeScorefile.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */ 
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:19  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   09/22/89/daj - Added _MK_BACKHASH bit or'ed in with type when adding name,
                  to accommodate new way of handling back-hashing. Fixed bug

@@ -1,12 +1,19 @@
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
-  equalTempered.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
+/*
+Modification history:
 
+  $Log$
+  Revision 1.2  1999/07/29 01:26:04  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 //sb: why didn't this get imported before now?
 #import "midi_spec.h"
 

@@ -1,16 +1,22 @@
+/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  This file has trace codes as well as error codes used by the Music Kit.
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:04  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef __MK_errors_H___
 #define __MK_errors_H___
 //sb:
 #import <Foundation/Foundation.h>
-
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* 
-    errors.h 
-    
-    This file is part of the Music Kit.
-  */
-/* This file has trace codes as well as error codes used by the
-   Music Kit. */
 
 /* Music Kit TRACE codes */
 #define MK_TRACEORCHALLOC 1  /* Orchestra allocation information */

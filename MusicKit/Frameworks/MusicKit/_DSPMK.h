@@ -1,8 +1,18 @@
-#ifndef __MK__DSPMK_H___
-#define __MK__DSPMK_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /* 4.0 Revisions Copyright 1993 CCRMA, Stanford U.  All rights reserved. */
 /* Frozen prototypes of all private libdsp functions used by Music Kit */
+/*
+  $Id$
+  Defined In: The MusicKit
+*/
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:58  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
+#ifndef __MK__DSPMK_H___
+#define __MK__DSPMK_H___
 
 extern int _DSPError(int errorcode, char *msg);
 

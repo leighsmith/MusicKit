@@ -1,8 +1,20 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* Included by MKUnitGenerator.m */
+/*
+  $Id$
+  Defined In: The MusicKit
 
-/* 
+  Description: Included by MKUnitGenerator.m
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:17  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   11/20/89/daj - Minor change to do lazy garbage collection of synth data. 
   04/21/90/daj - Changes to make compiler happy with -W switches on.
@@ -38,7 +50,7 @@ static void doDealloc(SynthElement *synthEl,BOOL shouldIdle)
       [synthEl idle];
     synthEl->synthPatch = nil;
     if (_MK_ORCHTRACE(synthEl->orchestra,MK_TRACEORCHALLOC))
-        _MKOrchTrace(synthEl->orchestra,MK_TRACEORCHALLOC,"Deallocating %s", [NSStringFromClass([synthEl class]) cString]);
+        _MKOrchTrace(synthEl->orchestra,MK_TRACEORCHALLOC,"Deallocating %s", [[NSStringFromClass([synthEl class]) stringByAppendingFormat:@" 0x%x",synthEl] cString]);
 		    /* [[synthEl name] cString]); */
     _MKOrchResetPreviousLosingTemplate(synthEl->orchestra);
     [synthEl _deallocAndAddToList];
@@ -61,6 +73,7 @@ void _MKDeallocSynthElementSafe(SynthElement *synthEl,BOOL lazy)
         else {
             [synthEl->synthPatch _free];
             [synthEl->synthPatch release];
+            synthEl->synthPatch = nil;
         }
     }
     else {

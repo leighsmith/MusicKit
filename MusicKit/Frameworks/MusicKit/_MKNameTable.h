@@ -1,8 +1,14 @@
-#ifndef __MK__MKNameTable_H___
-#define __MK__MKNameTable_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* 
+/*
+  $Id$
+  Defined In: The MusicKit
+*/
+/*
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:25:59  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   09/22/89/daj - Moved _MKNameTable functions to _MKNameTable.h. Added global
                  defines of bits.
@@ -11,6 +17,8 @@ Modification history:
   ??/??/98/sb  - OpenStep conversion
   04/21/99/lms - overhaul for NSDictionary operation for portability and clarity
 */
+#ifndef __MK__MKNameTable_H___
+#define __MK__MKNameTable_H___
 
 #define _MK_NOFREESTRINGBIT 0x8000 /* Set if string is never to be freed */
 #define _MK_AUTOIMPORTBIT 0x4000 /* Set if all LOCAL tables should import */

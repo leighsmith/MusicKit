@@ -4,15 +4,19 @@
 #endif
 
 /*
-  utilities.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:18  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   09/15/89/daj - Added caching of Note class. (_MKCheckClassNote())
   10/27/89/daj - Added argument to _MKOpenFileStream to surpress error msg.
@@ -50,7 +54,7 @@ Modification history:
 #undef MK_NODVAL
 
 #import "_error.h"
-#import "_MKSprintf.h"
+//#import "_MKSprintf.h"
 
 #import <mach/cthreads.h>
 #import <stddef.h>  /* errno */
@@ -272,11 +276,15 @@ NSString * _MKGetErrStr(int errCode)
        mechanism to be a pointer.  So we have to cast it to avoid a spurious
        warning. Sigh. 
        */
+// LMS: since chread_errno() is not called anywhere these are probably redundant and could be removed.
+// alternatively we could use the [NSThread threadDictionary] to store it if we wanted to retrieve it.
+#ifndef WIN32
 #   ifdef SHLIB    
     cthread_set_errno_self((void *)errCode);
 #   else
     cthread_set_errno_self(errCode);
 #   endif
+#endif
     switch (errCode) {
       case MK_musicKitErr:   /* Generic Music Kit error. */
           msg = NSLocalizedStringFromTableInBundle(@"Music Kit: %s.", _MK_ERRTAB, _MKErrorBundle(), "This error is used as a way of specifying Music Kit errors not otherwise defined in this list.");
@@ -543,14 +551,6 @@ id MKError(char * msg)
     return nil;
 }
 
-static char _errBuf[_MK_ERRLEN] = "";
-
-char *_MKErrBuf() 
-    /* Gets the private error buffer so parseScore can write right into it */
-{
-    return _errBuf;
-}
-
 id _MKErrorf(int errorCode,...)
     /* Calling sequence like printf, but first arg is error code. 
        It's the caller's responsibility
@@ -561,15 +561,19 @@ id _MKErrorf(int errorCode,...)
     va_list ap;
     va_start(ap,errorCode);
     errno = errorCode;
+#ifndef WIN32
 #   ifdef SHLIB
     cthread_set_errno_self((void *)errorCode);
 #   else
     cthread_set_errno_self(errorCode);
 #   endif
+#endif
     fmt = _MKGetErrStr(errorCode);
     if (errorProc) {
-	_MKVsprintf(_errBuf,[fmt cString],ap);
-	MKError(_errBuf);
+	//_MKVsprintf(_errBuf,[fmt cString],ap); // LMS _MKVsprintf only existed to be thread-safe
+	// Immutable NSStrings are that:
+        MKError([[[[NSString alloc] initWithFormat:fmt arguments:ap] autorelease] cString]);
+        // MKError(_errBuf);
     }
     else if (!errorStreamEnabled)
       return nil;

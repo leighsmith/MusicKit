@@ -1,11 +1,27 @@
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description: This file contains various functions having to do with names in the Music Kit 
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:10  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef __MK_names_H___
 #define __MK_names_H___
 #ifndef MK_NAMES_H
 #define MK_NAMES_H
-
-/* This file contains various functions having to do with names in the
- * Music Kit 
- */
 
  /* Music Kit table management.
   *  

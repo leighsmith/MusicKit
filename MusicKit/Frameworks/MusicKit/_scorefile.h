@@ -1,11 +1,20 @@
+/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/*
+  $Id$
+  Defined In: The MusicKit
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:03  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+  daj/04/23/90 - Created from _musickit.h 
+*/
 #ifndef __MK__scorefile_H___
 #define __MK__scorefile_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/*  Modification history:
 
-    daj/04/23/90 - Created from _musickit.h 
-
-*/
 #import <Foundation/NSData.h> /*sb for obvious reasons */
 
 #import "_MKNameTable.h"

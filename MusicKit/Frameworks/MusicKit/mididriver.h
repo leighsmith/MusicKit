@@ -1,7 +1,17 @@
+/*
+  $Id$
+  Defined In: The MusicKit
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:06  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef	_mididriver
 #define	_mididriver
-
-/* Module mididriver */
 
 #include <mach/kern_return.h>
 #include <mach/port.h>

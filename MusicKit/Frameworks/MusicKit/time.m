@@ -4,14 +4,18 @@
 #endif
 
 /*
-  time.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */ 
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:17  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   11/22/89/daj - Optimized MKGetDeltaTTime() and MKGetTime().
   01/08/90/daj - Added comments.

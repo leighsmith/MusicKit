@@ -50,8 +50,8 @@ HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          ScoreRecorderPrivate.h ScorefilePerformerPrivate.h\
          SynthDataPrivate.h SynthInstrumentPrivate.h SynthPatchPrivate.h\
          TuningSystemPrivate.h UnitGeneratorPrivate.h _ArielQP.h\
-         _DSPMK.h _MKNameTable.h _MKParameter.h _MKSprintf.h\
-         _MTCHelper.h _OrchloopbeginUG.h _ParName.h _ScorefileVar.h\
+         _DSPMK.h _MKNameTable.h _MKParameter.h _MTCHelper.h\
+         _OrchloopbeginUG.h _ParName.h _ScorefileVar.h\
          _SharedSynthInfo.h _error.h _midi.h _musickit.h\
          _noteRecorder.h _scorefile.h _time.h classFuncs.h dsp_types.h\
          dspwrap.h errors.h keynums.h midiTranslation.h midi_driver.h\
@@ -59,18 +59,18 @@ HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          names.h noDVal.h orch.h params.h pitches.h scorefileObject.h\
          timeunits.h tokens.h
 
-CFILES = mididriverServer.c mididriverUser.c mididriver_nonMig.c\
-         mididriver_replyServer.c sin.c _MKecvt.c _MKSprintf.c\
-         fastFFT.c
+CFILES = sin.c fastFFT.c mididriver_nonMig.c mididriver_replyServer.c\
+         mididriverServer.c mididriverUser.c
 
 OTHERSRCS = Makefile Makefile.postamble Makefile.preamble\
-            _synthElementMethods.m equalTempered.m h.template lock.m\
+            _synthElementMethods.m equalTempered.m h.template\
             lock_primitives.h lock_primitives.m m.template make.sh\
             mtcConductor.m mtcConductorPrivate.m mtcMidi.m\
             mtcMidiPrivate.m noteDispatcherMethods.m\
             noteRecorderMethods.m orchControl.m orchloopbeginUGInclude.m\
             parNames.m partialsDBInclude.m platform.make\
-            synthElementCFuncs.m synthElementMethods.m timetagInclude.m
+            synthElementCFuncs.m synthElementMethods.m timetagInclude.m\
+            separateThread.m
 
 
 MAKEFILEDIR = .
@@ -93,9 +93,12 @@ FRAMEWORK_PATHS = -F$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\
                   -F$(SYSTEM_LIBRARY_DIR)/Frameworks/SoundKit.framework\
                   -F$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\
                   -F$(HOME)//Library/Frameworks\
-                  -F$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks
+                  -F$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\
+                  -FC:/Local/Developer/Frameworks\
+                  -FC:/Apple/Local/Library/Frameworks\
+                  -F/Local/Library/Frameworks
 FRAMEWORKS = -framework AppKit -framework dsp -framework Foundation\
-             -framework SoundKit -framework System
+             -framework SndKit -framework System
 PUBLIC_HEADERS = ArielQP.h DSPSerialPortDevice.h MusicKit.h\
                  classFuncs.h dsp_types.h dspwrap.h errors.h keynums.h\
                  midiTranslation.h midi_driver.h midi_spec.h\

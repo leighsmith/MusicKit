@@ -1,11 +1,20 @@
 /*
- *	File:	MusicKit/midi_spec.h
- *	Author:	David Jaffe
- *	Copyright (C) 1991, NeXT, Inc.
- *
- *      MIDI definitions
- */
+  $Id$
+  Defined In: The MusicKit
 
+  Description: MIDI definitions
+
+  Author: David Jaffe
+ 	Copyright (C) 1991, NeXT, Inc.
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:06  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef	_MIDI_SPEC_
 #define _MIDI_SPEC_
 

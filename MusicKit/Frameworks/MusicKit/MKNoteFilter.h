@@ -1,10 +1,16 @@
-#ifndef __MK_NoteFilter_H___
-#define __MK_NoteFilter_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
-  MKNoteFilter.h
-  DEFINED IN: The Music Kit
+  $Id$
+  Defined In: The MusicKit
 */
+/*
+  $Log$
+  Revision 1.2  1999/07/29 01:25:46  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
+#ifndef __MK_NoteFilter_H___
+#define __MK_NoteFilter_H___
 
 #import "MKInstrument.h"
 

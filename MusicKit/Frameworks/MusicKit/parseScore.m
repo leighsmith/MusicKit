@@ -4,14 +4,18 @@
 #endif
 
 /*
-  parseScorefile.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:14  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   09/18/89/daj - Changes to accomodate new way of doing parameters (structs 
                  rather than objects).
@@ -100,6 +104,7 @@ Modification history:
 #import "_ScorefileVar.h"
 #import "TuningSystemPrivate.h"
 #import "_error.h"
+#import <stdlib.h>
 
 #define INT(x) (short) x
 
@@ -134,7 +139,7 @@ typedef struct _parseStateStruct {
     unsigned int _pointer;		/*sb: to keep track of position in NSMutableData _stream */
     unsigned int _length;		/*sb: initialised at opening of file to give length, so _pointer does not overrun */
     STRTYPE * _buf_base;
-    int _fd;                            /* File descriptor */
+//    int _fd;                            /* File descriptor, LMS: now redundant */
 } parseStateStruct;
 
 /* All of the following are global for speed -- to avoid indirection and
@@ -194,7 +199,7 @@ static const char transtab[][2] = {{'b',BACKSPACE},
 				   {'n','\n'}, 
 				   {'r',CR}, /* carriage return */
 				   {'t',TAB},
-				   {'v',VT}, /* verticl tab (vt) */
+				   {'v',VT}, /* vertical tab (vt) */
 				   {BACKSLASH,BACKSLASH},
                                    {QUOTE,QUOTE}, /* single quote */
 				   {'"','"'}}; /* double quote */
@@ -231,7 +236,9 @@ static short
        is well-spent, as this is where the bulk of the compute time goes
        in parsing a file. */
     register short c;
-      errorLoc = scoreStreamBuf_Base + scoreStreamPointer; //sb: was: scoreStream->buf_ptr; /* Save location before current token. */
+    char *transcharloc;
+
+    errorLoc = scoreStreamBuf_Base + scoreStreamPointer; /* Save location before current token. */
     while ((c=NEXTCHAR()) == ' ' || c == TAB)
       ;
     if ((char)c == (char)EOF) 
@@ -319,12 +326,15 @@ static short
 		      c = '\0';           /* Just to fool test below */
 		      tokenPtr -= 2;      /* Line continuation. */
 		  }
-		  else if (index((char *)transtab, c))  /* see string.h */
-		    *(--tokenPtr) = index((char *)transtab, c)[1];
+		  else {
+                      transcharloc = strchr((char *)transtab, c);
+		      if (transcharloc != NULL)  /* see string.h */
+		          *(--tokenPtr) = transcharloc[1];
 		  /* Otherwise we pass along the back-slash and its associated 
 		     character as string text. We do not bother to convert
 		     ASCII numeric escape codes. I can't believe anybody
 		     would ever need to do that. (Famous last words.) */
+		  }
 	      }
 	      if (c == EOF || c == '\n')
 		error(MK_sfMissingStringErr,"\"");
@@ -615,20 +625,27 @@ rvalue(_MKParameterUnion **valAddr,short type)
 
 /* Expression parsing: Special functions. */
 
-static double 
-ran(void)
+static double ran(void)
 {
+#if WIN32
+    return ((double) rand()) / RAND_MAX;
+#else
     /* Returns a random number between 0 and 1. */
 #   define   RANDOMMAX (double)((long)MAXINT)
     setstate(scoreRPtr->_ranState);
     return ((double)random()) / RANDOMMAX;
+#endif
 }
 
 #define STATESIZEINBYTES 256
 
 static void _setRanSeed(unsigned seed)
 {
+#if WIN32
+    srand(seed);
+#else
     initstate(seed,scoreRPtr->_ranState,STATESIZEINBYTES);
+#endif
 }
 
 static char *defaultStateArr = NULL;
@@ -637,12 +654,14 @@ static char *defaultStateArr = NULL;
 static char *initRan(void)
 {
     char *stateArr;
+#ifndef WIN32
     if (!defaultStateArr) {
       _MK_MALLOC(defaultStateArr,char,STATESIZEINBYTES);
       initstate(1,defaultStateArr,STATESIZEINBYTES);
     }
     _MK_MALLOC(stateArr,char,STATESIZEINBYTES);
     initstate(1,stateArr,STATESIZEINBYTES);
+#endif
     return stateArr;
 }
 
@@ -656,10 +675,11 @@ static void setSeed(void)
 
 static void ranSeed(void)
 {
-    struct timeval tp;
+    NSTimeInterval seconds;
+
     MATCH(_MK_ranSeed);
-    gettimeofday(&tp,NULL);
-    _setRanSeed((unsigned)tp.tv_usec);
+    seconds = [[NSDate date] timeIntervalSince1970]; // Who said flares wouldn't come back into fashion...
+    _setRanSeed((unsigned) seconds);
 }
 
 /* Expression parsing: Envelopes and other data objects */
@@ -1798,6 +1818,7 @@ getBOOL(void)
 
 static BOOL shutUp = NO;
 
+#if 0 // LMS
 static char *
 _errorMsg(MKErrno errCode,char *ap)
     /* Subsidiary error string function. Gets error and appends line number 
@@ -1818,6 +1839,26 @@ _errorMsg(MKErrno errCode,char *ap)
     vsprintf(s + strlen(s),fmt,ap);
     return s;
 }
+#else
+static NSString *_errorMsg(MKErrno errCode,va_list ap)
+    /* Subsidiary error string function. Gets error and appends line number info */
+{
+    NSString  *s;
+    NSString  *fmt = _MKGetErrStr(errCode);
+    if (shutUp)
+      return NULL;
+    if (errCode == MK_sfNonScorefileErr)  /* This one's special */
+      s = @"";
+    else if (BINARY(scoreRPtr)) /* Binary files have no 'line number' */
+      s = [parsePtr->_name stringByAppendingString: @": "];
+    else
+      s = [parsePtr->_name stringByAppendingFormat: @", pg %d, line %d: ",
+                           parsePtr->_pageNo, parsePtr->_lineNo];
+    s = [s stringByAppendingString: [[NSString alloc] initWithFormat: fmt arguments:ap]];
+    //_MKOverideErrorMessage(s);
+    return s;
+}
+#endif
 
 static int errAbort = 10;
 
@@ -1833,19 +1874,23 @@ void MKSetScorefileParseErrorAbort(int cnt)
 
 #define TOOMANYERRORS (scoreRPtr->_errCount >= errAbort)
 
-static char *
-_warning(BOOL potentiallyFatal,MKErrno errCode,char *ap)
+//static char *_warning(BOOL potentiallyFatal,MKErrno errCode,char *ap)
+static NSString *_warning(BOOL potentiallyFatal,MKErrno errCode,va_list ap)
     /* Create error string with context */
 {
     register STRTYPE *p,*q;
     int i,msgLen;
-    char *errS,*s;
+    char s[_MK_ERRLEN];
+    NSString *errMsg;
+    char *errS;
+
     if (shutUp) 
-      return NULL;    
-    errS = _errorMsg(errCode,ap);
-    s = errS;                /* Keep pointer to buffer */
+      return NULL;
+    errMsg = _errorMsg(errCode,ap);
     if (BINARY(scoreRPtr))
-      return s;
+      return errMsg;
+    strcpy(s, [errMsg cString]);  // LMS: eventually redo this function using NSString
+    errS = s;                /* Keep pointer to buffer */
     msgLen = strlen(errS);
     errS = errS + msgLen;
 //  *errS++ = '\n';
@@ -1883,7 +1928,7 @@ _warning(BOOL potentiallyFatal,MKErrno errCode,char *ap)
 	if (++scoreRPtr->_errCount >= errAbort) {
 	    sprintf(errS,"\n%s",[_MKGetErrStr(MK_sfTooManyErrorsErr) cString]);
 	}
-    return s;
+    return [NSString stringWithCString: s];
 }
 
 static void
@@ -1893,7 +1938,7 @@ errorMsg(MKErrno errCode,...)
        Calling sequence like printf. */
     va_list ap;
     va_start(ap,errCode);
-    MKError(_errorMsg(errCode,ap));
+    MKError([_errorMsg(errCode,ap) cString]);
     va_end(ap);
 }
 
@@ -1903,7 +1948,7 @@ warning(MKErrno errCode,...)
     /* Write warning without long jump. Calling sequence like printf. */
     va_list ap;
     va_start(ap,errCode);
-    MKError(_warning(NO,errCode,ap));
+    MKError([_warning(NO,errCode,ap) cString]);
     va_end(ap);
 }
 
@@ -1913,7 +1958,7 @@ error(MKErrno errCode,...)
     /* Try and recover from runtime error. Calling sequence like printf. */
     va_list ap;
     va_start(ap,errCode);
-    MKError(_warning(YES,errCode,ap));
+    MKError([_warning(YES,errCode,ap) cString]);
     va_end(ap);
     if (TOOMANYERRORS || BINARY(scoreRPtr))  
       /* Can't recover gracefully from binary errors */
@@ -1974,12 +2019,11 @@ initParsePtr(id aStream,int fd,NSString *name) /*sb: aStream could be NSData or 
 
     _MK_MALLOC(parsePtr,parseStateStruct,1);
     parsePtr->_stream = aStream;
-    parsePtr->_fd = fd;
     parsePtr->_backwardsLink = NULL;
     tokenVal = &(parsePtr->_tokenVal);
     parsePtr->_lineNo = 1;
     parsePtr->_pageNo = 1;
-    // [parsePtr->_name autorelease]; no point autoreleasing it before its assigned LMS
+    // [parsePtr->_name autorelease]; no point autoreleasing it before it is assigned LMS
     parsePtr->_name = [name copy];//sb: was _MKMakeStr(name);
     scoreStreamPointer = parsePtr->_pointer = 0;                //sb
     scoreStreamLength = parsePtr->_length = [aStream length];  //sb
@@ -2038,7 +2082,7 @@ popFileStack(void)
       return NULL;
     if (ISINCLUDEFILE(parsePtr)) { /* Don't close top level file. */
 	[parsePtr->_stream release];
-	close(parsePtr->_fd);
+//	close(parsePtr->);
     }
 //    free(parsePtr->_name);
     [parsePtr->_name autorelease];
@@ -2070,8 +2114,10 @@ _MKScoreInStruct * _MKFinishScoreIn(_MKScoreInStruct *scorefileRPtr)
 //	NXFlush(scoreRPtr->printStream); //sb: unnec?
 	[scoreRPtr->printStream release];
     }
+#ifndef WIN32
     setstate(defaultStateArr); /* Make libc forget our ranState */
     free(scoreRPtr->_ranState);  /* 1/13/96 DAJ */
+#endif
     free(scoreRPtr);
     return NULL;
 }
@@ -2408,6 +2454,7 @@ static id getBinaryDataDecl(_MKToken declType)
 	addLocalSymbol(nameString,obj,MK_waveTable);
 	MKNameObject(nameString,obj);
 	addIndexedObject(obj);
+        [obj release];/*sb: retained by scoreRPtr->_binaryIndexedObjects array */
 //	free(name);
     }
     return obj;

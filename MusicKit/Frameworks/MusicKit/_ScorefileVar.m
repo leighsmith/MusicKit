@@ -4,14 +4,18 @@
 #endif
 
 /*
-  ScorefileVar.m
-  Responsibility: David A. Jaffe
+  $Id$
+  Original Author: David A. Jaffe
   
-  DEFINED IN: The Music Kit
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
 */
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:01  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   09/18/89/daj - Changed myParameter to be a _MKParameter * instead of an object.
   10/06/89/daj - Changed to use hashtable.h version of table.

@@ -4,14 +4,27 @@
 #endif
 
 /*
-  writeMidi.m
-  Responsibility: David A. Jaffe
-  
-  DEFINED IN: The Music Kit
+  $Id$
+  Defined In: The MusicKit
   HEADER FILES: musickit.h
-  */
+
+  Description:
+    This is fairly complicated, due to the differences between Music Kit and
+    MIDI semantics. See the discussion in the manual (not in 1.0); also
+    available as ~david/doc/Midi.doc.
+
+  Original Author: David A. Jaffe
+  
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
 /* 
 Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:19  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
 
   11/15/89/daj - Fixed bug involving noteDurs without tags (see bug 4031)
   12/20/89/daj - Added feature: If the chan parameter passed to 
@@ -28,9 +41,6 @@ Modification history:
 		 Note that the stored keyNum still takes precedence.
 */
 
-/* This is fairly complicated, due to the differences between Music Kit and
-   MIDI semantics. See the discussion in the manual (not in 1.0); also 
-   available as ~david/doc/Midi.doc. */
 
 #import "_musickit.h"
 #import "_midi.h"

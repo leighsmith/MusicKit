@@ -1,6 +1,19 @@
+/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/*
+  $Id$
+  Defined In: The MusicKit
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:26:04  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
 #ifndef __MK_dsp_types_H___
 #define __MK_dsp_types_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+
 /* Numeric typedefs */
 typedef int DSPMuLaw;
 typedef int DSPFix8;

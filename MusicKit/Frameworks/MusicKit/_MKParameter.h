@@ -1,12 +1,21 @@
+/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
+/*
+  $Id$
+  Defined In: The MusicKit
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.2  1999/07/29 01:25:59  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+  daj/04/23/90 - Created from _musickit.h 
+  08/13/90/daj - Added _MKParNameStr().
+*/
 #ifndef __MK__parameter_H___
 #define __MK__parameter_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/*  Modification history:
 
-    daj/04/23/90 - Created from _musickit.h 
-    08/13/90/daj - Added _MKParNameStr().
-
-*/
 #import <Foundation/NSData.h> /*sb... */
 #import <Foundation/NSArchiver.h> /*sb... */
 #import "params.h" /*sb... */
