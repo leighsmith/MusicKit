@@ -1,12 +1,13 @@
 /*
-	Sound.h
-	Sound Kit, Release 2.0
-	Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved. 
+  $Id$
+  Sound Kit, Release 2.0
+  Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved. 
+  Modifications for inclusion in the SndKit, Copyright (c) 2000 The MusicKit Project
 */
 
 #import <Foundation/Foundation.h>
-#import "sound.h"
-//#import <streams/streams.h>
+#import "soundstruct.h"
+#import "performsound.h"
 
 @class NSPasteboard;
 

@@ -1,4 +1,6 @@
 /******************************************************************************
+$Id$
+
 LEGAL:
 This framework and all source code supplied with it, except where specified, are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use the source code for any purpose, including commercial applications, as long as you reproduce this notice on all such software.
 
@@ -33,7 +35,6 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #import <mach/mach_init.h>
 #endif
 
-//#import <sound/sound.h>
 #define HAVE_RAND 1 // this ensures Sox doesn't attempt to define its own prototype
 #import <st.h>  // prototypes and structures from the Sox sound tools library
 int st_ausunencoding(int size, int encoding);  // from sox au.c 
