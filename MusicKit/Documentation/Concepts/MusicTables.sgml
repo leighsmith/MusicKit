@@ -158,7 +158,7 @@ seconds.</entry>
 	    </row>
 	    <row>
 	      <entry>ampEnv</entry>
-	      <entry>Envelope object</entry>
+	      <entry><classname>MKEnvelope</classname> object</entry>
 	      <entry>Amplitude envelope.</entry>
 	    </row>
 	    <row>
@@ -215,7 +215,7 @@ when <emphasis role="bold">freqEnv</emphasis> = 1.0; synonym for
  <emphasis role="bold">freqEnv</emphasis> attack duration in
 seconds.</entry></row>
 
-<row><entry>freqEnv</entry><entry>Envelope object</entry>
+<row><entry>freqEnv</entry><entry><classname>MKEnvelope</classname> object</entry>
 <entry>
  Frequency
 envelope.</entry></row>
@@ -245,8 +245,7 @@ by full pitch bend deviation.  Default is 3.</entry></row>
 
 <row><entry>portamento</entry>
 <entry>[0.0, &infin;]</entry><entry>Phrase rearticulation time in seconds.  Resets the x
-value of the second point of <emphasis>all
-</emphasis>Envelopes.</entry></row>
+value of the second point of <emphasis>all</emphasis> Envelopes.</entry></row>
 
 <row><entry>rvibAmp</entry><entry>[0.0, 1.0]</entry>
 <entry>
@@ -297,8 +296,8 @@ role="bold">waveform</emphasis></entry>
 role="bold">waveformEnv</emphasis> = 1.0; synonym for <emphasis
 role="bold">waveform</emphasis>.</entry></row>
 
-<row><entry>waveformEnv</entry><entry>Envelope
-object</entry> <entry>Envelope that pans between the two <classname>MKWaveTable</classname>s.  Used by
+<row><entry>waveformEnv</entry><entry><classname>MKEnvelope</classname>
+object</entry> <entry><classname>MKEnvelope</classname> that pans between the two <classname>MKWaveTable</classname>s.  Used by
 DBWave2vi only.</entry></row>
 
 <row><entry>waveLen</entry><entry>power of 2</entry> <entry><emphasis
@@ -410,7 +409,7 @@ role="bold">amp</emphasis>.</entry></row>
 <emphasis role="bold">ampEnv</emphasis> attack duration in
 seconds.</entry></row>
 
-<row><entry>ampEnv</entry><entry>Envelope object</entry>
+<row><entry>ampEnv</entry><entry><classname>MKEnvelope</classname> object</entry>
 <entry>
  Amplitude
 envelope.</entry></row>
@@ -465,7 +464,7 @@ when <emphasis role="bold">freqEnv</emphasis> = 1.0; synonym for
 &infin;]</entry><entry> <emphasis role="bold">freqEnv</emphasis> attack duration in
 seconds.</entry></row>
 
-<row><entry>freqEnv</entry><entry>Envelope object</entry><entry> Frequency
+<row><entry>freqEnv</entry><entry><classname>MKEnvelope</classname> object</entry><entry> Frequency
 envelope.</entry></row>
 
 <row><entry>freqRel</entry><entry>[0.0, &infin;]</entry><entry> <emphasis
@@ -494,7 +493,7 @@ role="bold">m1Ind</emphasis>.</entry></row>
 <emphasis role="bold">m1IndEnv </emphasis>attack duration in
 seconds.</entry></row>
 
-<row><entry>m1IndEnv</entry><entry>Envelope object</entry><entry> Index Envelope for
+<row><entry>m1IndEnv</entry><entry><classname>MKEnvelope</classname> object</entry><entry> Index Envelope for
 modulator 1.</entry></row>
 
 <row><entry>m1IndRel</entry><entry>[0.0, &infin;]</entry><entry> <emphasis
@@ -534,7 +533,7 @@ role="bold">noiseAmp</emphasis>.</entry></row>
 &infin;]</entry><entry> <emphasis role="bold">noiseAmpEnv</emphasis> attack duration
 in seconds.</entry></row>
 
-<row><entry>noiseAmpEnv</entry><entry>Envelope object</entry><entry> Noise amplitude
+<row><entry>noiseAmpEnv</entry><entry><classname>MKEnvelope</classname> object</entry><entry> Noise amplitude
 Envelope.</entry></row>
 
 <row><entry>noiseAmpRel</entry><entry>[0.0, &infin;]</entry><entry> <emphasis
@@ -551,8 +550,8 @@ semitones represented by full pitch bend deviation.  Default is
 3.</entry></row>
 
 <row><entry>portamento</entry><entry>[0.0, &infin;]</entry><entry> Phrase rearticulation time
-in seconds.  Resets the x value of the second point of <emphasis>all
-</emphasis>Envelopes.</entry></row>
+in seconds.  Resets the x value of the second point of
+<emphasis>all</emphasis> Envelopes.</entry></row>
 
 <row><entry>rvibAmp</entry><entry>[0.0, 1.0]</entry><entry> Random vibrato
 amplitude; unused by Fm1 and Fm1i.</entry></row>
@@ -732,7 +731,7 @@ role="bold">amp</emphasis>.</entry></row>
 <emphasis role="bold">ampEnv</emphasis> attack duration in
 seconds.</entry></row>
 
-<row><entry>ampEnv</entry><entry>Envelope object</entry><entry> Amplitude
+<row><entry>ampEnv</entry><entry><classname>MKEnvelope</classname> object</entry><entry> Amplitude
 envelope.</entry></row>
 
 <row><entry>ampRel</entry><entry>[0.0, &infin;]</entry><entry> <emphasis
@@ -771,7 +770,7 @@ role="bold">freq</emphasis>.</entry></row>
 <emphasis role="bold">freqEnv</emphasis> attack duration in
 seconds.</entry></row>
 
-<row><entry>freqEnv</entry><entry>Envelope object</entry><entry> Frequency
+<row><entry>freqEnv</entry><entry><classname>MKEnvelope</classname> object</entry><entry> Frequency
 envelope.</entry></row>
 
 <row><entry>freqRel</entry><entry>[0.0, &infin;]</entry><entry> <emphasis
@@ -800,7 +799,7 @@ role="bold">m1Ind</emphasis>.</entry></row>
 <emphasis role="bold">m1IndEnv </emphasis>attack duration in
 seconds. </entry></row>
 
-<row><entry>m1IndEnv</entry><entry>Envelope object</entry><entry>Index Envelope for
+<row><entry>m1IndEnv</entry><entry><classname>MKEnvelope</classname> object</entry><entry>Index Envelope for
 waveshaping modulator.  Note: the result of the calculation of
 (m1Ind1-m1Ind0) * m1IndEnv + m1Ind1 must be less than or equal to 1.
 Otherwise, distortion will result.  Also note that the <emphasis
@@ -826,8 +825,7 @@ by full pitch bend deviation.  Default is 3.</entry></row>
 
 <row><entry>portamento</entry><entry>
 [0.0, &infin;]</entry><entry> Phrase rearticulation time in seconds.  Resets the x
-value of the second point of <emphasis>all
-</emphasis>Envelopes.</entry></row>
+value of the second point of <emphasis>all</emphasis> Envelopes.</entry></row>
 
 <row><entry>rvibAmp</entry><entry>[0.0, 1.0]</entry><entry> Random vibrato
 amplitude; unused by Fm1 and Fm1i.</entry></row>
