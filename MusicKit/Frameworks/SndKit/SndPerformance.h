@@ -41,10 +41,17 @@
     long    endAtIndex;
 /*! @var paused */
     BOOL    paused;
-    // TODO playState should be here, not Snd.
 /*! @var audioProcessorChain */
     SndAudioProcessorChain *audioProcessorChain;
 
+/*! @var looping Indicates whether to loop during performance. */
+    BOOL looping;
+/*! @var loopStartIndex The sample the loop begins at. */
+    long loopStartIndex;
+/*! @var loopEndIndex The sample the loop ends at. */
+    long loopEndIndex;
+
+    // ivars for variable speed playback - TODO needs fixing and documenting
     double  deltaTime;
 
     double  actualTime;
@@ -167,10 +174,56 @@ startPosition: (double) startPosition
 
 /*!
     @method   setEndAtIndex:
-    @abstract   Sets the sample to stop playing at.
-    @param      newEndAtIndex The sample index that playing should stop after.
+    @abstract Sets the sample to stop playing at.
+    @param    newEndAtIndex The sample index that playing should stop after.
 */
 - (void) setEndAtIndex: (long) newEndAtIndex;
+
+/*!
+  @method     setLooping:
+  @abstract   Sets looping during performance on or off.
+  @param      yesOrNo Sets looping during performance on or off.
+ */
+- (void) setLooping: (BOOL) yesOrNo;
+
+/*!
+  @method     looping
+  @abstract   Returns whether this performance loops.
+  @result     Returns whether this performance loops.
+ */
+-  (BOOL) looping;
+
+/*!
+  @method     setLoopStartIndex:
+  @abstract   Sets the sample to stop playing at.
+  @param      newEndAtIndex The sample index that playing should stop after.
+  @discussion The loop start index may be changed while the sound is being performed and regardless of
+              whether the performance is looping.
+ */
+- (void) setLoopStartIndex: (long) loopStartIndex;
+
+/*!
+  @method     loopStartIndex
+  @abstract   Returns the sample to start playing at.
+  @result     Returns the sample index to start playing at.
+ */
+- (long) loopStartIndex;
+
+/*!
+  @method     setLoopEndIndex:
+  @abstract   Sets the sample at which the performance loops back to the start index (set using setLoopStartIndex:).
+  @param      newLoopEndIndex The sample index at the end of the loop.
+  @discussion The loop end index may be changed while the sound is being performed and regardless of
+              whether the performance is looping.
+ */
+- (void) setLoopEndIndex: (long) newLoopEndIndex;
+
+/*!
+  @method     loopEndIndex
+  @abstract   Returns the sample index at the end of the loop.
+  @result     Returns the sample index ending the loop.
+ */
+- (long) loopEndIndex;
 
 /*!
     @method   stopInFuture:
