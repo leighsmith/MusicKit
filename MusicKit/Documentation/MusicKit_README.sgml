@@ -15,7 +15,7 @@ and binary distributions. Likewise if the distribution web site changes.
 
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 <!entity mkvers "5.3">
-<!entity mkvertuple "5.3.0">
+<!entity mkvertuple "5.3.1">
 <!entity sndvertuple "2.0.0">
 <!entity midisportvertuple "2.0.0">
 <!entity mkurl "http://www.musickit.org">
@@ -520,7 +520,7 @@ the Music Kit and the Ariel QuintProcessor&rdquo;
 	  </row>
 	  <row>
 	    <entry>Windows 98 (using OpenStep
-	    Enterprise, Rhapsody DR2/NT, WebObjects 4.5/NT) (Win2000 untried)</entry>
+	    Enterprise, Rhapsody DR2/NT, WebObjects 4.5/NT) (Win2000 untested)</entry>
 	    <entry>Y</entry>
 	    <entry>Y</entry>
 	    <entry>N</entry>
@@ -537,6 +537,12 @@ the Music Kit and the Ariel QuintProcessor&rdquo;
 	    <entry>Y</entry>
 	    <entry>N</entry>
 	  </row>
+	  <row>
+	    <entry>Linux/Unix (Using GnuStep PortAudio/PortMusic)</entry>
+	    <entry>N</entry>
+	    <entry>non-streaming</entry>
+	    <entry>N</entry>
+	  </row>
 	</tbody>
       </tgroup>
     </table>
@@ -546,35 +552,38 @@ the Music Kit and the Ariel QuintProcessor&rdquo;
       <para>
 After much fun with the pinnacle of Microsoft development tools, we
 have the MusicKit working on Windows9X. The solution was to emulate
-the Mach <acronym>MIDI</acronym> device driver with the core layer of DirectMusic. There
-is a fairly similar match in functionality between these API.
+the Mach <acronym>MIDI</acronym> device driver with the core layer of
+DirectMusic. There is a fairly similar match in functionality between
+these API.
 </para>
       <para>
 The downloadable sound (DLS) capability of DirectMusic (providing a
-<acronym>MIDI</acronym> oriented sample playback API to PC soundcards) is also supported
-when playing to a DirectMusic software synthesiser. There is minimal
-but usable support for downloading new DLS instruments to the software
-synthesiser.
+<acronym>MIDI</acronym> oriented sample playback API to PC soundcards)
+is also supported when playing to a DirectMusic software
+synthesiser. There is minimal but usable support for downloading new
+DLS instruments to the software synthesiser.
 </para>
       <para>
-While the future
-of Apple's OpenStep/YellowBox/Cocoa/WebObjects (!) for Windows support
-is far from clear, the combination of Gnu technologies of <ulink
-url="http://www.gnustep.org">GnuStep</ulink> and <ulink
-url="http://www.cygnus.com/cygwin">cygwin</ulink> would suggest in the
-near future that Apple's corporate interests will not dictate whether
-applications can be deployed on either platform.
+While the future of Apple's OpenStep/YellowBox/Cocoa/WebObjects (!)
+for Windows support is far from clear, the combination of Gnu
+technologies of <ulink url="http://www.gnustep.org">GnuStep</ulink>
+and <ulink url="http://www.cygnus.com/cygwin">cygwin</ulink> would
+suggest in the near future that Apple's corporate interests will not
+dictate whether applications can be deployed on either platform.
 </para>
     </sect2>
 
     <sect2 id="linux">
       <title>Linux support</title>
       <para>
-Intel Linux support is achievable, planned, partially completed and
-looking for volunteers. A series of stubs for a performance framework
-(<filename>MKPerformSndMIDI.framework</filename>) are in place in
-preparation for porting the MusicKit to Linux using the GnuStep
-libraries. Further work is needed on this, please help!
+Linux/Unix support using the <ulink
+url="http://www.gnustep.org">GnuStep</ulink> library is partially
+completed and looking for more volunteers. A performance framework
+(<filename>MKPerformSndMIDI_portaudio.framework</filename>) using the
+<ulink url="http://www.cs.cmu.edu/~music/portmusic/">PortAudio</ulink>
+library has been partially completed, porting the MusicKit to Intel
+Linux. Non-streaming sound works, but MIDI and streaming audio needs
+further work, please help!
 </para>
     </sect2>
   </sect1>
