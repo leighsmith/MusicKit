@@ -1,8 +1,9 @@
+// !$*UTF8*$!
 {
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 30;
+	objectVersion = 32;
 	objects = {
 		013F475AFFD5AEFDCFED3B96 = {
 			isa = PBXFileReference;
@@ -13,11 +14,6 @@
 			fileRef = 013F475AFFD5AEFDCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		013F475CFFD5AF5CCFED3B96 = {
@@ -39,36 +35,43 @@
 			fileRef = 013F475EFFD5AF5CCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		013F4760FFD5AF5CCFED3B96 = {
 			fileRef = 013F475DFFD5AF5CCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		013F4761FFD5AF5CCFED3B96 = {
 			fileRef = 013F475CFFD5AF5CCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
+		0AB3E78B004B3A57CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		0AB3E78C004B3A57CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
 		11E07EDBFFA3719CCFED3B93 = {
+			buildStyles = (
+				0AB3E78B004B3A57CFED3B96,
+				0AB3E78C004B3A57CFED3B96,
+			);
 			isa = PBXProject;
 			mainGroup = 11E07EDCFFA3719CCFED3B93;
 			productRefGroup = 11E07F0BFFA3719CCFED3B93;
@@ -407,10 +410,12 @@
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
+				INSTALL_PATH = "$(LOCAL_APPLICATIONS_DIR)";
 				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ScorePlayer;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
@@ -526,44 +531,24 @@
 			fileRef = 11E07EE3FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F10FFA3719CCFED3B93 = {
 			fileRef = 11E07EE4FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F11FFA3719CCFED3B93 = {
 			fileRef = 11E07EE5FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F12FFA3719CCFED3B93 = {
 			fileRef = 11E07EE6FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F13FFA3719CCFED3B93 = {
@@ -597,176 +582,96 @@
 			fileRef = 11E07EEAFFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F15FFA3719CCFED3B93 = {
 			fileRef = 11E07EECFFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F16FFA3719CCFED3B93 = {
 			fileRef = 11E07EEEFFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F17FFA3719CCFED3B93 = {
 			fileRef = 11E07EF0FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F18FFA3719CCFED3B93 = {
 			fileRef = 11E07EF2FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F19FFA3719CCFED3B93 = {
 			fileRef = 11E07EF4FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F1AFFA3719CCFED3B93 = {
 			fileRef = 11E07EF7FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F1BFFA3719CCFED3B93 = {
 			fileRef = 11E07EF8FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F1CFFA3719CCFED3B93 = {
 			fileRef = 11E07EF9FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F1DFFA3719CCFED3B93 = {
 			fileRef = 11E07EFAFFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F1EFFA3719CCFED3B93 = {
 			fileRef = 11E07EFBFFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F1FFFA3719CCFED3B93 = {
 			fileRef = 11E07EFCFFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F20FFA3719CCFED3B93 = {
 			fileRef = 11E07EFDFFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F21FFA3719CCFED3B93 = {
 			fileRef = 11E07EFEFFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F22FFA3719CCFED3B93 = {
 			fileRef = 11E07F00FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F23FFA3719CCFED3B93 = {
 			fileRef = 11E07F01FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F24FFA3719CCFED3B93 = {
@@ -786,12 +691,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -800,12 +699,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -814,12 +707,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -828,12 +715,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -842,12 +723,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -867,55 +742,30 @@
 			fileRef = 11E07F05FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F2CFFA3719CCFED3B93 = {
 			fileRef = 11E07F06FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F2DFFA3719CCFED3B93 = {
 			fileRef = 11E07F07FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F2EFFA3719CCFED3B93 = {
 			fileRef = 11E07F08FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F2FFFA3719CCFED3B93 = {
 			fileRef = 11E07F09FFA3719CCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		11E07F30FFA3719CCFED3B93 = {

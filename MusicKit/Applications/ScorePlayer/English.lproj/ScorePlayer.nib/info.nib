@@ -1,1 +1,20 @@
-{IBMainMenuLocation = "22 256 542 44 0 4 1152 844 "; }
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>IBDocumentLocation</key>
+	<string>68 182 356 240 0 4 1600 1174 </string>
+	<key>IBMainMenuLocation</key>
+	<string>433 367 238 44 0 4 1600 1174 </string>
+	<key>IBUserGuides</key>
+	<dict>
+		<key>MainWindow</key>
+		<dict>
+			<key>guideLocations</key>
+			<array/>
+			<key>guidesLocked</key>
+			<string>NO</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
