@@ -65,11 +65,11 @@ Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 NSString *NXSoundPboardType = @"NXSoundPboardType";
 #endif
 
-#define USE_STREAMING 1  // 0 will use the older monophonic sound API, 1 uses the newer SndPlayer API
+// MKPERFORMSND_USE_STREAMING == 0 will use the older monophonic sound API, 1 uses the newer SndPlayer API
 
 @implementation Snd
 
-#if !USE_STREAMING
+#if !MKPERFORMSND_USE_STREAMING
 static NSMutableDictionary *playRecTable = nil;
 static int ioTags = 1000;
 #endif
@@ -575,7 +575,7 @@ static int ioTags = 1000;
     return [NSString stringWithCString: (char *)(soundStruct->info)];
 }
 
-#if !USE_STREAMING
+#if !MKPERFORMSND_USE_STREAMING
 // Since these two functions come in from the cold, they need warm and snug autorelease pools...
 int beginFun(SndSoundStruct *sound, int tag, int err)
 {
@@ -726,7 +726,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 // Legacy method for SoundKit compatability
 - play:sender
 {
-#if !USE_STREAMING
+#if !MKPERFORMSND_USE_STREAMING
     int err;
     if (!soundStruct)
         return self;
@@ -765,13 +765,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 // Legacy method for SoundKit compatability
 - (int) play
 {
-    [self play:self];
+    [self play: self];
     return SND_ERR_NONE;
 }
 
 - record:sender
 {
-#if !USE_STREAMING
+#if !MKPERFORMSND_USE_STREAMING
     int err;
     if (!playRecTable) {
         playRecTable = [NSMutableDictionary dictionaryWithCapacity: 20];
@@ -809,7 +809,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (int) samplesProcessed
 {
-#if !USE_STREAMING
+#if !MKPERFORMSND_USE_STREAMING
     return (tag == 0) ? -1 : SNDSamplesProcessed(tag);
 #else
     // what to do, when samplesProcessed only makes sense if you know only one performance of this
@@ -856,7 +856,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (void) stop: (id) sender
 {
-#if !USE_STREAMING
+#if !MKPERFORMSND_USE_STREAMING
     NSNumber *tagNumber = [NSNumber numberWithInt: tag];
 
     if (tag) {
@@ -1123,7 +1123,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
         soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
 	loopStartIndex *= stretchFactor;  // adjust the loop pointers if the sound was resampled.
 	loopEndIndex *= stretchFactor;
-	return SND_ERR_NONE;
+	return SND_ERR_NONE;
     }
     return SND_ERR_UNKNOWN;
 }
