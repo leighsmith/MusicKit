@@ -14,6 +14,9 @@
 #  Modification history:
 #
 #  $Log$
+#  Revision 1.3  2002/02/01 13:29:49  sbrandon
+#  Added necessary additional libraries for Win32 dynamic linking
+#
 #  Revision 1.2  2001/11/27 17:55:05  sbrandon
 #  simplified library importing for all platforms.
 #
@@ -31,4 +34,5 @@ endif
 # MusicKit itself doesn't require any additional libraries, apart from those
 # imported by SndKit and MKDSP
 
-LIBRARIES_DEPEND_UPON += -lSndKit -lMKDSP
+LIBRARIES_DEPEND_UPON += -lobjc -lSndKit -lMKDSP -l$(FOUNDATION_LIBRARY_NAME) \
+                         -lMKPerformSndMIDI
