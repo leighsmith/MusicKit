@@ -23,7 +23,7 @@
 #import <vecLib/vecLib.h>
 #endif
 
-#define DEBUG_MIXING 0
+#define SNDAUDIOBUFFER_DEBUG_MIXING 0
 
 @implementation SndAudioBuffer
 
@@ -407,14 +407,14 @@
 						     samplingRate: [self samplingRate]] retain];
 	    in = [convertedBuffer bytes];
 	}
-#if DEBUG_MIXING
+#if SNDAUDIOBUFFER_DEBUG_MIXING
 	NSLog(@"mixWithBuffer: had to convert from format %d, channels %d to format %d, channels = %d\n", 
             buffDataFormat, buffNumChannels, selfDataFormat, selfNumChannels);
 #endif
     }
     else {
 	in = [buff bytes];
-#if DEBUG_MIXING
+#if SNDAUDIOBUFFER_DEBUG_MIXING
 	NSLog(@"mixWithBuffer: no conversion mixing.");
 #endif
     }
@@ -431,7 +431,7 @@
 	    out[sampleIndex] += in[sampleIndex]; // interleaving automatically taken care of!
 	}
 #endif
-#if DEBUG_MIXING
+#if SNDAUDIOBUFFER_DEBUG_MIXING
 	NSLog(@"out[0]: %f   lengthInSamples:%li\n", out[0], lengthInSamples);
 #endif
     }
@@ -651,6 +651,21 @@
     return nil;
 #endif
 }
+
+- (void) fillSNDStreamBuffer: (SNDStreamBuffer *) streamBuffer
+{
+    long streamDataSizeInBytes = SndFramesToBytes(streamBuffer->frameCount, streamBuffer->channelCount, streamBuffer->dataFormat);
+    
+#if 0
+    if(streamBuffer->interleaved == NO) {
+	// Not interleaved, we need to convert from self (which is always interleaved) to non-interleaved streamData
+	// using SndConvert functions/methods.
+    }
+#endif
+    // NSLog(@"copying %d bytes to output buffer\n", streamDataSizeInBytes);
+    memcpy(streamBuffer->streamData, [self bytes], streamDataSizeInBytes);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // frameSizeInBytes

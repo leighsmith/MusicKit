@@ -276,6 +276,14 @@ typedef enum {
 	 fromFrameRange: (NSRange) fromFrameRange;
 
 /*!
+  @method fillSNDStreamBuffer:
+  @abstract Fills the given stream buffer from the receiving audio buffer.
+  @discussion Manages any conversion from interleaved SndAudioBuffer format to possibly non-interleaved SNDStreamBuffers.
+  @param streamBuffer Pointer to the structure that describes the underlying audio API format.
+ */
+- (void) fillSNDStreamBuffer: (SNDStreamBuffer *) streamBuffer;
+
+/*!
   @method audioBufferOfChannel:
   @abstract Returns a mono SndAudioBuffer instance extracting out the given audio channel of the receiving buffer.
   @discussion Use this to retrieve a single buffer from a multichannel buffer. Sending this to a mono buffer returns the
