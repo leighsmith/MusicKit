@@ -49,10 +49,10 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// audioBufferWithSndSeg:range:
+// audioBufferWithSnd:range:
 ////////////////////////////////////////////////////////////////////////////////
 
-+ audioBufferWithSndSeg: (Snd*) snd range: (NSRange) r
++ audioBufferWithSnd: (Snd*) snd inRange: (NSRange) r
 {
   SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
 
@@ -211,23 +211,23 @@
 // init
 ////////////////////////////////////////////////////////////////////////////////
 
-- initWithFormat: (int) _dataFormat
-    channelCount: (int) _channelCount
-    samplingRate: (double) _samplingRate
+- initWithFormat: (int) newDataFormat
+    channelCount: (int) newChannelCount
+    samplingRate: (double) newSamplingRate
         duration: (double) time
 {
-  self = [super init];
-  if (self) {
-    byteCount = (SndSampleWidth(_dataFormat) * _channelCount) * (int)(time * _samplingRate);
-    samplingRate = _samplingRate;
-    channelCount = _channelCount;
-    dataFormat   = _dataFormat;
-    if (data != nil)
-      [data release];
-    data = [[NSMutableData alloc] initWithLength: byteCount];
-    maxByteCount = byteCount;
-  }
-  return self;
+    self = [super init];
+    if (self) {
+	byteCount = (SndSampleWidth(newDataFormat) * newChannelCount) * (int)(time * newSamplingRate);
+	samplingRate = newSamplingRate;
+	channelCount = newChannelCount;
+	dataFormat   = newDataFormat;
+	if (data != nil)
+	    [data release];
+	data = [[NSMutableData alloc] initWithLength: byteCount];
+	maxByteCount = byteCount;
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -323,93 +323,67 @@
 {
     long lengthInSampleFrames = [self lengthInSampleFrames];
     long incomingLengthInSampleFrames = [buff lengthInSampleFrames];
-
+    int selfDataFormat = [self dataFormat];
+    int buffDataFormat = [buff dataFormat];
+    long frameCount;
+    long lengthInSamples;
+    int selfNumChannels = channelCount;
+    int buffNumChannels = [buff channelCount];
+    float *in = NULL;
+    float *out = (float *) [data bytes];
+    SndAudioBuffer *convertedBuffer = nil;
+    
     if (start > lengthInSampleFrames)
-	NSLog(@"mixWithBuffer: start %i is > length %i",start,lengthInSampleFrames);
+	NSLog(@"mixWithBuffer: start %i is > length %i", start, lengthInSampleFrames);
     else if (end > lengthInSampleFrames) {
-	NSLog(@"mixWithBuffer: end %i is > length %i - truncating",end,lengthInSampleFrames);
+	NSLog(@"mixWithBuffer: end %i is > length %i - truncating", end, lengthInSampleFrames);
 	end = lengthInSampleFrames;
     }
-    if ([self dataFormat] == SND_FORMAT_FLOAT) {
 
-	long   frameCount;
-	int    selfNumChannels = channelCount;
-	int    buffNumChannels = [buff channelCount];
-	float *in = NULL;
-	float *out = (float*) [data bytes];
-	NSMutableData *convertData = nil;
-	float *convertBuffer = NULL;
+    if (end > byteCount / sizeof(float))
+	end = byteCount / sizeof(float);
+    frameCount = MIN(incomingLengthInSampleFrames, end - start);
+    lengthInSamples = frameCount * buffNumChannels; // number of samples for all channels.
 
-	if (end > byteCount / sizeof(float))
-	    end = byteCount / sizeof(float);
-	frameCount = MIN(incomingLengthInSampleFrames, end - start);
-
-	if  ([buff dataFormat] != SND_FORMAT_FLOAT) {
-	    if (canExpandInPlace) { /* expand in place - saves allocating new buffer/data object */
-		SndChangeSampleType([buff bytes], [buff bytes], [buff dataFormat], SND_FORMAT_FLOAT, buffNumChannels * frameCount);
-		in = [buff bytes];
-	    }
-	    else {
-		convertData = [[buff dataConvertedToFormat: SND_FORMAT_FLOAT] retain];
-		convertBuffer = [convertData mutableBytes];
-		in = convertBuffer;
-	    }
-#if DEBUG_MIXING
-	    printf("mixbuffer: had to convert to float, nChannels = %d\n",buffNumChannels);
-#endif
+    if  (buffDataFormat != selfDataFormat) {
+	if (canExpandInPlace && selfNumChannels == buffNumChannels) { /* expand in place - saves allocating new buffer/data object */
+	    SndChangeSampleType([buff bytes], [buff bytes], buffDataFormat, selfDataFormat, lengthInSamples);
+	    in = [buff bytes];
 	}
 	else {
-	    in = [buff bytes];
-            // NSLog(@"no conversion");
+	    convertedBuffer = [[buff audioBufferConvertedToFormat: selfDataFormat
+						     channelCount: selfNumChannels
+						     samplingRate: [self samplingRate]] retain];
+	    in = [convertedBuffer bytes];
 	}
-
-	if (selfNumChannels > 2 || buffNumChannels > 2) {
-	    NSLog(@"Mix buffer - channels > 2 not handled (yet)");
-	}
-	else if (selfNumChannels == buffNumChannels) {
-	    unsigned maxI = frameCount * buffNumChannels;
-	    out += start*buffNumChannels;
-#ifdef __VEC__
-	    /* FIXME need to do extra check to ensure altivec is supported at runtime */
-	    vadd(in, 1,out,1,out,1,maxI);
-#else
-	    for (i = 0; i < maxI; i++) {
-		out[i] += in[i]; // interleaving automatically taken care of!
-	    }
 #if DEBUG_MIXING
-	    {
-		printf("out[0]: %f   maxpos:%li\n",out[0],frameCount * buffNumChannels);
-	    }
+	NSLog(@"mixbuffer: had to convert to format %d, nChannels = %d\n", selfDataFormat, buffNumChannels);
 #endif
-#endif
-	}
-	else if (selfNumChannels == 2) {
-#ifdef __VEC__
-	    vadd(in, 1,out+start,2,out+start,2,frameCount);     // LEFT
-	    vadd(in, 1,out+start+1,2,out+start+1,2,frameCount); // RIGHT
-#else
-	    for (i = 0; i < frameCount; i++) {
-		register int pos = (i<<1)+start;
-		out[pos]   += in[i];
-		out[pos+1] += in[i];
-	    }
-#endif
-	}
-	else if (selfNumChannels == 1) {
-#ifdef __VEC__
-	    vadd(in, 2,out+start,1,out+start,1,frameCount);     // LEFT
-#else
-	    for (i = 0; i < frameCount; i++) {
-		out[i+start] += in[i<<1]; // copy left channel into output buffer
-	    }
-#endif
-	}
-	if (convertData)
-	    [convertData release];
     }
     else {
-	NSLog(@"SndAudioBuffer::mixWithBuffer: WARN: miss-matched buffer formats - write converter");
+	in = [buff bytes];
+#if DEBUG_MIXING
+	NSLog(@"mixbuffer: no conversion mixing.");
+#endif
     }
+    out += start * buffNumChannels;
+    // TODO we need a universal altivec mixer for all sample formats.
+    if(selfDataFormat == SND_FORMAT_FLOAT) {
+#ifdef __VEC__
+	/* FIXME need to do extra check to ensure altivec is supported at runtime */
+	vadd(in, 1, out, 1, out, 1, lengthInSamples);
+#else
+	for (i = 0; i < lengthInSamples; i++) {
+	    out[i] += in[i]; // interleaving automatically taken care of!
+	}
+#endif
+#if DEBUG_MIXING
+	NSLog(@"out[0]: %f   maxpos:%li\n", out[0], lengthInSamples);
+#endif
+    }
+    if (convertedBuffer)
+	[convertedBuffer release];
+
     return self;
 }
 
@@ -564,55 +538,6 @@
   return byteCount;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-+ (void) resampleByLinearInterpolation: (SndAudioBuffer*) aBuffer
-                           dest: (SndAudioBuffer*) tempBuffer
-                         factor: (double) deltaTime
-                         offset: (double) offset
-{
-  int i;
-  int inchans  = [aBuffer channelCount];
-  int outchans = [tempBuffer channelCount];
-  int lengthInSampleFrames = [tempBuffer lengthInSampleFrames];
-  float *inB  = [aBuffer bytes];
-  float *outB = [tempBuffer bytes];
-  double time = offset;
-
-  for (i = 0; i < lengthInSampleFrames; i++) {
-    long   prePosition  = time;
-    long   postPosition = prePosition + 1;
-    double postFraction = time - (double) prePosition;
-    double preFraction  = 1.0 - postFraction;
-    float L,R;
-
-    prePosition  *= inchans;
-    postPosition *= inchans;
-
-    L = preFraction  * inB[prePosition] +
-        postFraction * inB[postPosition];
-
-    if (inchans > 1) 
-      R = preFraction  * inB[prePosition+1] +
-          postFraction * inB[postPosition+1];
-    else
-      R = L;
-    
-
-    if (outchans == 2) {
-      outB[i*outchans]   = L;
-      outB[i*outchans+1] = R;
-    }
-    time += deltaTime;
-
-//    printf("%05i  L:%.3f  R:%.3f\n",i,L,R);
-//    if (i == lengthInSampleFrames - 1) {
-//      printf("**\n");
-//    }
-    
-  }
-}
-
 - (void) findMin:(float*) pMin max:(float*) pMax
 {
   int i, c = [self lengthInSampleFrames] * channelCount;
@@ -620,13 +545,12 @@
   *pMin = 0.0;
   *pMax = 0.0;
 
-  for (i = 0; i < c; i+=channelCount){
+  for (i = 0; i < c; i += channelCount){
     if (pE[i] < *pMin)
       *pMin = pE[i];
     else if (pE[i] > *pMax)
       *pMax = pE[i];
   }
 }
-
 
 @end
