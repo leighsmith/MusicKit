@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.17  2001/03/03 03:12:06  leigh
+ * SndPerformance used to indicate samplesProcessed and identifying delegates
+ *
  * Revision 1.16  2001/02/28 20:26:10  leigh
  * Added soundfileExtensions method and didPlay/willPlay delegation for streaming
  *
@@ -685,6 +688,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
         return self;
     status = SND_SoundPlayingPending;
     
+    // currentPerformance
     [sndPlayer playSnd: self withTimeOffset: inSeconds];
 #endif
     return self;
@@ -695,7 +699,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return [self play: sender inFuture: 0.0];
 }
 
-- (int)play
+- (int) play
 {
     [self play:self];
     return SND_ERR_NONE;
@@ -756,7 +760,14 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (int)samplesProcessed
 {
+#if !USE_STREAMING
     return (tag == 0) ? -1 : SNDSamplesProcessed(tag);
+#else
+    NSArray *performances = [sndPlayer performancesOfSnd: self];
+    // what to do, when samplesProcessed only makes sense if you know only one performance of this
+    // snd is occuring? For now, we erroneously return the first.
+    return [[performances objectAtIndex: 0] playIndex];
+#endif
 }
 
 - (int)status
@@ -799,19 +810,21 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 #else
     if (status == SND_SoundRecording || status == SND_SoundRecordingPaused) {
         status = SND_SoundStopped;
-        [self tellDelegate:@selector(didRecord:)];	
+        [self tellDelegate: @selector(didRecord:)];	
     }
     if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
+        SndPerformance *firstPerformance = [[sndPlayer performancesOfSnd: self] objectAtIndex: 0];
         [sndPlayer stopSnd: self withTimeOffset: 0.0];
         status = SND_SoundStopped;
-        [self tellDelegate:@selector(didPlay:)];	
+        [self tellDelegate: @selector(didPlay:duringPerformance:) 
+         duringPerformance: firstPerformance];	
     }
 #endif
 }
 
 - (int)stop
 {
-    [self stop:self];
+    [self stop: self];
     return SND_ERR_NONE;
 }
 
@@ -1217,11 +1230,22 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return self;
 }
 
+// delegations which are not nominated per performance.
 - (void) tellDelegate:(SEL)theMessage
 {
     if (delegate) {
         if ([delegate respondsToSelector:theMessage]) {
             [delegate performSelector:theMessage withObject:self];
+        }
+    }
+}
+
+// delegations which are nominated per performance.
+- (void) tellDelegate:(SEL)theMessage duringPerformance: (SndPerformance *) performance
+{
+    if (delegate) {
+        if ([delegate respondsToSelector:theMessage]) {
+            [delegate performSelector:theMessage withObject: self withObject: performance];
         }
     }
 }

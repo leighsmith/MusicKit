@@ -24,14 +24,14 @@
 #import "sounderror.h"
 #import "SndFunctions.h"
 
-@class NSPasteboard;
-
 /* Define this for compatibility */
 #define NXSoundPboard NXSoundPboardType
 
 extern NSString *NXSoundPboardType;
 
+@class NSPasteboard;
 @class SndPlayer;
+@class SndPerformance;
 
 /*
  * This is the sound pasteboard type.
@@ -190,7 +190,11 @@ typedef enum {
 - (SndSoundStruct *)soundStructBeingProcessed;
 - (int)processingError;
 - soundBeingProcessed;
+// delegations which are not nominated per performance.
 - (void)tellDelegate:(SEL)theMessage;
+// delegations which are nominated per performance.
+- (void) tellDelegate:(SEL)theMessage duringPerformance: (SndPerformance *) performance;
+
 - (void)_setStatus:(int)newStatus; /* Private! not for general use. */
 
     /*************************
@@ -203,10 +207,10 @@ typedef enum {
 @end
 
 @interface SndDelegate : NSObject
-- willRecord:sender;
-- didRecord:sender;
-- willPlay:sender;
-- didPlay:sender;
-- hadError:sender;
+- willRecord: sender;
+- didRecord:  sender;
+- hadError:   sender;
+- willPlay:   sender duringPerformance: (SndPerformance *) performance;
+- didPlay:    sender duringPerformance: (SndPerformance *) performance;
 @end
 
