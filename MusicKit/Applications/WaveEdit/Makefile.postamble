@@ -1,0 +1,5 @@
+install::
+	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_[0-9]*k.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app
+	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_turtlebeachms.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app
+	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_ilinki56.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app
+	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_arielpc56d.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app

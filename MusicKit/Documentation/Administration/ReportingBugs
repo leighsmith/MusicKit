@@ -1,0 +1,53 @@
+REPORTING BUGS
+
+Please email bug reports to 
+
+	musickit@ccrma.stanford.edu 
+
+If you do not have e-mail access, you can send US mail to
+
+	CCRMA
+	The Knoll
+	Attention: Music Kit
+	Music Dept.
+	Stanford University
+	Stanford, CA. 94305
+
+A "bug number" will be assigned by CCRMA when it is added to the bug list.
+
+The bug report should be in the following format:
+
+--------------------------------------------------------------------------
+Project: <Project name, e.g. musickit, synthpatches, dsp, ensemble, etc.>
+Title: <one-line description of the problem>
+Description: <complete description of the problem, including HOW TO REPRODUCE>
+Progress: <any info toward finding and/or fixing the bug>
+	Please list any known workaround for the bug.
+	Please include a small programming example which reproduces the
+	problem, if possible.
+
+CCRMASoftwareVersion: <Which CCRMA release you are working with>
+NeXTSoftwareVersion: <Which NeXT software release you are runnning>
+NeXTHardwareVersion: <Your NeXT hardware configuration, briefly put>
+--------------------------------------------------------------------------
+You can determine the CCRMA release version by looking at the file 
+Doc/Administration/VERSION.  The NeXT release is given by the Workspace
+Info panel.
+
+There is no guarantee that your bug will be pursued by CCRMA staff or by
+anyone else.  Since source code is provided, it is generally expected that
+you can clear any problems that get in your way.  In special circumstances,
+you might consider hiring a consultant to do what you want.
+
+
+Music Kit consultants
+
+David Jaffe <daj@ccrma.stanford.edu>	Availability: varies
+
+
+DSP Tools Consultants
+
+Julius Smith <jos@ccrma.stanford.edu>	Availability: up to 1/2 day/week
+
+(Please feel free to add yourself to this list by sending email to 
+musickit@ccrma.stanford.edu)

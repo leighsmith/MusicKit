@@ -1,0 +1,13 @@
+Todo:
+copyWithZone on add/delete windows
+x/y/smooth/yr perhaps has double/float difference
+Show line segments toggle should be showing current state.
+Rangecheck on ustroke - NSBeizerPath release notes
+Colour the Icon and generate transparent border.
+Convert Help to HTML
+put popup comments on buttons
+Show a ruler along bottom needs a NSScrollView, which means EnvelopeView must be its subclass.
+Set the default format on popup with defaultFormat
+Env and Temp should be Envelope (or subclasses) objects
+paste should be rewritten with NSScanner
+Able to save/load a series of envelopes from a file (default to MusicKit).

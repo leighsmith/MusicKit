@@ -1,0 +1,29 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\fmodern Courier;}
+\paperw11400
+\paperh11320
+\margl120
+\margr120
+{\colortbl;\red0\green0\blue0;}
+\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i0\ulnone\fs28\fc0\cf0 Documents\
+\
+
+\b0 Ensemble is document-oriented.  Each document consists of a window with room for the display of interfaces to four MIDI inputs, four score or MIDI file parts, four chains of note filters, and four instruments.  Each input generates notes from one MIDI input channel and/or one part of the score, and passes them down a chain of one or more note filters.  Each note filter in the chain may perform some modification to the note or alter some process according to its parameters.  Finally, the notes are sent to one or more instruments for realization.  An instrument may perform music synthesis or sound processing on the DSP, send the note out to the MIDI interface, or play a sound file. Documents may be saved and loaded via the main menu. Any number of documents may be created or loaded.  \
+\
+
+{\b{\NeXTHelpMarker806 \markername ProgramChanges;}
+¬}\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i0\ulnone\fs28\fc0\cf0 Program Changes\
+
+\b0 \
+Usually, only the active document is connected to MIDI input, the score, and the DSP or sound resources.  However, a document's Settings panel allows the specification of a MIDI program change number to the document.   The main Preferences panel then allows the specification of which MIDI channel Ensemble will listen for program changes on.  If a program change is received on that channel which corresponds to a document, that document is connected.  Documents with no program number or a different program number are disconnected.   If more than one document is assigned the same program number, those documents are always connected in parallel whenever any single one of them is selected.\
+\
+Since  the active document(s) may be changed during a performance, there is nearly unlimited flexibility in the use of system resources.\
+
+\b \
+
+{\fc1\cf1{\NeXTHelpMarker1657 \markername Settings;}
+¬}\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i0\ulnone\fs28\fc1\cf1 Settings
+\b0 \
+\
+This Document menu item allows the specification of certain parameters which are local to the current document and override any equivalent Preferences values.   If "Load Score With Document" is selected,\
+and the document saved, an attempt will be made to load that score the next time the document is loaded.
+}

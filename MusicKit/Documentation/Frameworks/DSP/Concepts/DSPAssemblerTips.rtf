@@ -1,0 +1,173 @@
+{\rtf0\ansi{\fonttbl\f0\fswiss Helvetica;}
+\paperw10920\paperh8400
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f0\fs24 \cf0 DSP Programming Tips\
+\
+J.O. Smith\
+\
+(Last updated July 26, 1992)\
+(Last updated by D. Jaffe Feb. 9, 1993)\
+\
+Introduction\
+\
+This informal document lists various pitfalls and programming considerations when writing code for the Motorola  DSP56000/1 signal processing chip using its assembler asm56000. Most of the entries in this file were made when I realized a general rule worth remembering or after some especially annoying bug was finally found.  I hope these notes save you some time when coming up to speed on DSP assembly language.\
+\
+Dangerous Assembler Instruction\
+\
+The bsc instruction is said to result in emission of lower-case hexadecimal under conditions. I have not been able to reproduce from a sketchy bug report.  If this happens, SNDReadDSPFile() will load erroneous values for these numbers into the DSP.  If you use this instruction in a .lod file that will be loaded by SNDReadDSPFile(), check to make sure the hex is all upper case.\
+\
+Expressions\
+\
+DO NOT IMBED BLANKS IN ASSEMBLY EXPRESSIONS!!!  No blanks can appear between symbol names in the SYMOBJ statement either.  \
+\
+Moves\
+\
+move  #data,\{Xn,Yn,A,B\} gives left justification of short data (8 or 12b)\
+move  #>data,\{Xn,Yn,A,B\} gives right justification of short data\
+move  #data,\{An,Bn\} gives right justification of short data\
+move \{Rn\},\{Xn,Yn,A,B,An,Bn\} gives right justification (A=>A1,B=>B1) \
+THERE IS NO IMMEDIATE TO MEMORY MOVE, e.g., "move #0,x:0" fails.\
+THERE IS NO MEMORY TO MEMORY MOVE, \
+	e.g., "move y:0,x:0" fails. (see MOVEP)\
+\
+Stack Moves - moves to/from ssh adjust stack pointer sp\
+     movec ssh,A1                       ; move ssh pops stack\
+     movec ssl,B1                       ; does not pop stack\
+\
+DO Loops\
+\
+The loop address as written in the code is the first address AFTER the loop.\
+\
+The assembler subtracts one from this address to obtain the LA (ªLoop Addressº) field coded into the DO instruction.  LA is thus the address of the last instruction in the loop.\
+\
+If you need to jump out of and back into a DO loop, you must execute at least one instruction at the end of the loop body, and three if you want the LC (ªloop countº) register to contain the number of iterations remaining including the one jumped out of and back into.  A good general strategy is to jump to the TOP of the loop on reentry and ensure that there are three instructions after the return point inside the DO loop. See DO LOOP COUNT below.\
+\
+Nested DO loops must have different termination addresses.  The error you get for this is ªimproperly nesting of DO loops.º  Beware of DO loops calling macros which may end with a DO loop.  Avoid writing macros ending with a DO loop whenever possible.\
+\
+DO NOT RTS FROM INSIDE A DO LOOP WITHOUT FIRST SAYING ENDDO.  An ENDDO instruction is required when prematurely terminating a DO loop.  Otherwise, the hardware stack will still have the loop count, loop address, etc. pushed onto it.\
+\
+The DO loop count (LC) is decremented when fetching the last body instruction (at address LA).  At this time, the instruction at LA-2 is executing and that at LA-1 is decoding.  Thus, on the last iteration, LC==1 until after the LA-2 instruction at which time it is 0.  Before jumping into the top of DO loop which was exited after the LA-2 instruction, the loop counter must be checked for 0.  See ugsrc/impulses.asm for an example.\
+\
+The REP Instruction\
+\
+If the DO loop has only one instruction in it, you may be tempted to use REP instead.\
+\
+REP #n\
+   lua (r0)-,r0\
+\
+will update r0 only every other time (because two instructions are required for r0 to be ready).\
+\
+However, note that REP will disable interrupts.  Therefore, when doing sound output or input through the serial port, REP will cause trouble.  Its use is, therefore, discouraged. \
+\
+Fast Interrupts\
+\
+A fast interrupt is a single 2-word instruction or two 1-word instructions.  Fast interrupts cannot be interrupted.  A REP of a single-word instruction can be used for a fast interrupt.  Do not place an RTI in a fast interrupt handler.\
+\
+Long Interrupts\
+\
+A long interrupt is defined by a change of flow.  The long-interrupt dispatch vector should contain "JSR >handler" and the handler subroutine should be terminated by RTI.  The first 6 instructions of any interrupt service cannot be interrupted.\
+\
+A conditional jump in the interrupt handler will force a long interrupt if it takes the jump and a short interrupt if it does not.\
+\
+Memory Access\
+\
+There is no memory to memory transfer except for MOVEP <peripheral>,<mem> (Example: MOVEP x:$FFE0,x:0).\
+Immediate data can only go to registers, not to memory.\
+Short absolute addresses (6-bits => 1st 64 words) avoid extra word.\
+Index increment registers Nn are SIGNED, i.e., N0=$FFFF means -1 not 65535.\
+\
+Long Memory\
+\
+In the early days of the assembler, l: memory had to be initialized by two DC statements, the first for the x: part and the 2nd for the y: part.  The l: location counter would advance 2 for every l: memory location (which was an assembler bug).  As of version 2.03 of asm56000, DC (et al.) statements initialize TWO words of l memory.  Thus, 'org l:0; dc 0' expands to '_DATA L 0000; 000000 000000'.  However, '_BLOCKDATA L' does not exist. It is instead expanded into '_BLOCKDATA X addr count valueHi; _BLOCKDATA Y addr count valueLo'.\
+\
+Symbols\
+\
+Use of a symbol in an address (not in n space) cannot have space selector.  A symbol in an ORG spec must have a space selector.  Symbol declarations require a memory space attribute.  If none is given, it is 'n'.\
+\
+Where can a symbol be used?\
+     Label (local label begins with '_')\
+     In an operand field\
+	  Mixed with expressions in an operand field\
+     Expression\
+A symbol is either a 32-bit integer or float with a memory space attribute.\
+\
+Relocation (Relative-Mode Assembly)\
+\
+Only symbolic addresses are relocated because address constants are not associated with a section.  For example, move x:XSYM,Y0 will emit code with relocation information for XSYM, while move x:3,Y0 will emit absolute addressing.\
+\
+Defines\
+\
+Below is an example of how you can 'nest' DEFINE statments using strings:\
+\
+     define R_X     '''R0'''\
+     define Cnt     'x:('++R_X++')+'\
+     move Cnt,A     ; assembles to move x:(R0)+,A\
+\
+Nothing is ever evaluated inside ' ' until it is finally used. For example, numeric expressions won't work inside a define.\
+\
+@DEF(sym) returns nonzero if sym is defined ANYWHERE, not just lexically before the @DEF(sym) call.\
+\
+Labels\
+\
+To concatenate three or more stubs in a macro using the \\? construct, use two (or more) macro nesting levels. (See below under Macro Arguments for more.)\
+\
+Local labels (preceded by underbar "_") cannot surround global labels.\
+\
+Macro Arguments\
+\
+A macro argument is text. Each macro argument can be enclosed in quotes(' '), but these are stipped off before substitution into the macro body.  Thus "foo a,b" is equivalent to "foo 'a','b'".\
+\
+The ? operator can only be applied to numeric macro arguments\
+\
+;    EXAMPLE: the following program:\
+newxi     macro name,val\
+     org x:\
+name      dc val\
+     endm\
+l2        macro ic\
+     newxi 'foo_'++"ic",0\
+;         newxi foo_\\?ic,0         (fails when ic not integer)\
+;         newxi foo_\\ic,0          (also works)\
+;         newxi foo_\\ic,'0'        (same thing)\
+     endm\
+l1        macro ic\
+     newxi foo_\\?ic,0\
+     l2 1_\\?ic\
+;         l2 '1_'++"ic"  (works also since ic is an integer)\
+     l2 1_\\ic       (also works)\
+     endm\
+     org p:0\
+     l1 1\
+     end 0\
+\
+generates the following listing:\
+\
+30        P:0000                                   org     p:0\
+32                                                 l1      1\
+33    +                                            newxi   foo_1,0\
+34    +   X:0000                                   org     x:\
+35   d+   X:0000 000000                  foo_1     dc      0\
+36    +                                            l2      '1_'++'1'\
+37    +                                            newxi 'foo_'++'1_1',0\
+38    +   X:0001                                   org     x:\
+39   d+   X:0001 000000                  foo_1_1   dc      0\
+41                                                 end     0\
+0    Errors\
+0    Warnings\
+\
+\
+Misc. Efficiency\
+\
+Arguments should be in x or y memory. Arguments in p memory typically take twice as long to access because fetching them interferes with the instruction prefetch.\
+\
+Short absolute addresses (6-bits => 1st 64 words) avoid a second instruction word.\
+\
+Short immediate data (ªMOVE #X,...º) is 8 bits of data.\
+\
+Numeric Comparison\
+\
+cmp [Xn,Yn,B,A],[A,B] compares Xn or Yn to A1 or B1, i.e., \{X,Y\}n is subtracted from \{A,B\}1 to set ccr.\
+\
+cmp [Xn,Yn],[A,B] CANNOT COMPARE NEGATIVE NUMBERS.  Use cmp[B,A],[A,B] instead.\
+}

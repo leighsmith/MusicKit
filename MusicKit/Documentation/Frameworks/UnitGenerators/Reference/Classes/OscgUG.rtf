@@ -1,0 +1,335 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f4\fswiss Helvetica;\f3\fmodern Ohlfs;}
+\paperw15760
+\paperh13540
+\margl120
+\margr120
+{\colortbl;\red0\green0\blue0;}
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 3.0  Copyright 
+\f1 ã
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 OscgUG\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	UnitGenerator\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit/unitgenerators/unitgenerators.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc1\cf1 This is a non-interpolating oscillator. That means that its fidelity depends on the size of the table (larger tables have lower distortion) and the highest frequency represented in the table.  For high-quality synthesis, an interpolating oscillator, such as OscgafiUG is preferable.  However, an interpolating oscillator is also more expensive, in terms of DSP cycles.  OscgUG is useful in cases where density of texture is more important than fidelity of individual sounds.\
+   \
+Restrictions:  The wavetable length must be a power of 2. The wavetable increment must be nonnegative.\
+\
+
+\pard\tx7140\li2100\fc0\cf0 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in OscgUG
+\i0 	
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 int	tableLength\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 tableLength 	Or 0 if no table.\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc1\cf1 \
+
+\pard\tx7140\li2100\fc0\cf0 MEMORY SPACES\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 OscgUG
+\i ab\
+
+\b0 a	
+\i0 output\
+
+\i b	
+\i0 table space\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 CLASS METHODS\
+\
+
+\b\fc1\cf1 defaultTableLength:\
+
+\pard\fi-1020\li3620\fc1\cf1 +
+\b0 (int)
+\b defaultTableLength:
+\b0\i anObj
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1  \
+Returns a default table length determined by the type of subclass and type 
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\fs24\fc0\cf0 of argument. \
+\
+
+\pard\tx7140\f0\fs28\li2100\fc0\cf0 \
+INSTANCE METHODS\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\li2620\fc0\cf0 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 idleSelf\
+
+\pard\f1\b0\li2620\fc0\cf0 - 
+\f0\b idleSelf
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 You never send this message.  It's invoked by sending the 
+\b idle 
+\b0 message to the object.  \
+Sets the output patchpoint to 
+\i sink
+\i0  (thus ensuring that the object does not produce any output) and deallocates any WaveTable memory that the object had allocated .  Note that you must send 
+\b setOutput:
+\b0  and 
+\b run 
+\b0 again to use the object after sending 
+\b idle
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 runSelf\
+
+\pard\f1\b0\li2620\fc0\cf0 - 
+\f0\b runSelf
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 You never send this message.  It's invoked by sending the 
+\b run 
+\b0 message to the object.    Sets the oscillator phase if 
+\b setPhase: 
+\b0 was called before the WaveTable was set.  Sets frequency to the last value set with 
+\b setFreq:
+\b0 .  If WaveTable has not been set, and table space is Y, sets table to DSP SINE ROM.\
+
+\pard\tx7140\b\li2100\fc1\cf1 \
+setPhase:\
+
+\pard\fi-1020\li3620\fc1\cf1 -setPhase:
+\b0 (double)
+\i aPhase
+\b\i0  \
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\b0\fs24\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\f0\fs28\li2620\fc1\cf1 Sets oscillator phase in degrees. If wavetable has not yet been set, stores the value for 
+\b -runSelf 
+\b0 to use to set the phase later. \
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 setFreq:\
+
+\pard\fi-1020\li3620\fc1\cf1 -setFreq:
+\b0 (double)
+\i freq
+\b\i0 \
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\b0\fs24\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\f0\fs28\li2620\fc1\cf1 Sets oscillator frequency in Hz.  If wavetable has not yet been set, stores the value for
+\b  runSelf 
+\b0 to use to set the frequency later.  \
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 setAmp:\
+
+\pard\fi-1020\li3620\fc1\cf1 -setAmp:
+\b0 (double)
+\i aAmp
+\b\i0 \
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\b0\fs24\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\f0\fs28\li2620\fc1\cf1 Sets amplitude as specifed.\
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 setOutput:\
+
+\pard\fi-1020\li3620\fc1\cf1 -setOutput:
+\b0\i aPatchPoint
+\b\i0  \
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\b0\fs24\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\f0\fs28\li2620\fc1\cf1 Set output patchPoint of the oscillator. \
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\fs24\fc0\cf0 \
+
+\pard\tx7140\f0\b\fs28\li2100\fc1\cf1 setTable:length:\
+
+\pard\fi-1020\li3620\fc1\cf1 -setTable:
+\b0\i anObj
+\b\i0  length:
+\b0 (int)
+\i aLength
+\b\i0  \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 \
+Sets the lookup table of the oscillator.  
+\i anObj
+\i0  can be a SynthData object or a WaveTable (Partials or Samples).\
+\
+This method first releases its claim on the locally-allocated SynthData, if any.  (see below).   Then, if 
+\i anObj 
+\i0 is a SynthData object, the SynthData object is used directly.   If 
+\i anObj
+\i0  is a WaveTable, the receiver first searches in its Orchestra's shared object table to see if there is already an existing SynthData based  on the same WaveTable, of the same length, and in the required memory  space.  Otherwise, a local SynthData object is created and installed in the shared object table so that other unit generators running simultaneously  may share it.   If the requested size is too large, because there is not sufficient DSP memory, smaller sizes are tried.  You can determine what size was used by sending the tableLength message.  If 
+\i anObj
+\i0  is nil, this method simply releases the locally-allocated SynthData, if any.   \
+   \
+Note that altering the contents of a WaveTable will have no effect once it  has been installed, even if you call 
+\b setTable:length: 
+\b0 again after  modifying the WaveTable. The reason is that the Orchestra's shared data  mechanism finds the requested object based on its 
+\b id
+\b0 , rather than its contents.\
+\
+You should not free WaveTables used as arguments to OscgUG until the performance is over.\
+\
+If the table is not a power of 2, returns nil and generates the error MK_ugsPowerOf2Err. \
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 setTable:\
+
+\pard\fi-1020\li3620\fc1\cf1 -setTable:
+\b0\i anObj
+\b\i0  \
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\b0\fs24\fc0\cf0  \
+
+\pard\tx3120\tx3620\tx4120\f0\fs28\li2620\fc1\cf1 Like 
+\b setTable:length:
+\b0 , but uses a default length. \
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\fs24\fc0\cf0 \
+
+\pard\tx7140\f0\b\fs28\li2100\fc1\cf1 setTableToSineROM\
+
+\pard\fi-1020\li3620\fc1\cf1 -setTableToSineROM \
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\b0\fs24\fc0\cf0  \
+
+\pard\tx3120\tx3620\tx4120\f0\fs28\li2620\fc1\cf1 Sets the lookup table to the DSP sine ROM, if address space is Y.   Otherwise generates an error.   Deallocates local wave table, if any.\
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\fs24\fc0\cf0 \
+
+\pard\tx7140\f0\b\fs28\li2100\fc1\cf1 setTable:length:defaultToSineROM:\
+
+\pard\fi-1020\li3620\fc1\cf1 -setTable:
+\b0\i anObj
+\b\i0  length:
+\b0 (int)
+\i aLength
+\b\i0  defaultToSineROM:
+\b0 (BOOL)
+\i yesOrNo
+\b\i0  \
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\b0\fs24\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\f0\fs28\li2620\fc1\cf1 This method is provided as a convenience.  It tries to do 'the right thing' in cases where the table cannot be allocated. \
+\
+If the table can be allocated, it behaves like 
+\b setTable:length:
+\b0 . If the table cannot be allocated, and the table memory space of the receiver is Y, sends 
+\b [self setTableToSineROM].
+\b0  \
+   \
+A common use of this method is to pass YES as the argument 
+\i yesOrNo
+\i0  only if the SynthPatch is beginning a new phrase (the assumtion is that it is better to keep the old wavetable than to use the sine ROM in this case).  Another use of this method is to specifically request the sine ROM by passing 
+\b nil
+\b0  as 
+\i anObj
+\i0 .  If the sine ROM is used, the 
+\i aLength
+\i0  argument is ignored.\
+   \
+If 
+\i anObj
+\i0  is not 
+\b nil
+\b0  and the sine ROM is used, generates the error 
+\b MK_spsSineROMSubstitutionErr
+\b0 . If 
+\i yesOrNo
+\i0  is YES but the receiver's table memory space is X, the error 
+\b MK_spsCantGetMemoryErr 
+\b0  is generated.\
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\fs24\fc0\cf0 \
+
+\pard\tx7140\f0\b\fs28\li2100\fc1\cf1 setTable:defaultToSineROM:\
+
+\pard\fi-1020\li3620\fc1\cf1 -setTable:
+\b0\i anObj
+\b\i0  defaultToSineROM:
+\b0 (BOOL)
+\i yesOrNo
+\b\i0 \
+\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Like 
+\b setTable:length:defaultToSineROM:
+\b0 , but uses a default length. \
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\fs24\fc0\cf0 \
+
+\pard\tx7140\f0\b\fs28\li2100\fc1\cf1 tableLength\
+
+\pard\fi-1020\li3620\fc1\cf1 -
+\b0 (unsigned)
+\b tableLength \
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\b0\fs24\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\f0\fs28\li2620\fc1\cf1 Returns the length of the assigned table 0 if no table is assigned. \
+
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f4\fs24\fc0\cf0 \
+
+}

@@ -1,0 +1,431 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Ohlfs;}
+\paperw16220
+\paperh12580
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f1 ã
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 ScoreRecorder\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 A ScoreRecorder is a pseudo-Instrument that adds Notes to the Parts in a given Score.  It does this by creating a PartRecorder, a true Instrument, for each of the Score's Part objects.  A ScoreRecorder's Score is set through the 
+\b setScore:
+\b0  method.  If you add Parts to or remove Parts from the Score after sending the 
+\b setScore:
+\b0  message, the changes will not be seen by the ScoreRecorder.  \
+
+\fs16 \
+
+\fs28 A ScoreRecorder can access a PartRecorder by the name of the Part with which it's associated.  It can also set the time unit of all its PartRecorders through a single message, 
+\b setTimeUnit:
+\b0 .\
+
+\fs16 \
+
+\fs28 A ScoreRecorder is said to be in performance from the time any of its PartRecorders receives a Note until the performance is finished.\
+
+\fs16 \
+
+\fs28 See also:  PartRecorder\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in ScoreRecorder
+\i0 	id	partRecorders;\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 id	score;\
+MKTimeUnit	timeUnit;\
+id	partRecorderClass;\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 	\
+
+\fs28 partRecorders 	The object's Set of PartRecorders.\
+
+\fs16 \
+
+\fs28 score 	The object's Score.\
+
+\fs16 \
+
+\fs28 timeUnit 	Unit the object's PartRecorders use to measure time; one of MK_second, MK_beat or MK_timeTag.\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 partRecorderClass 	Subclass of PartRecorders created by this object.\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Creating and freeing a ScoreRecorder\
+
+\f1\fi0 - 
+\f0 copy \
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 free\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Modifying the object	
+\f1 - 
+\f0 freePartRecorders\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 partRecorders\
+
+\f1 - 
+\f0 removePartRecorders\
+
+\f1 - 
+\f0 setPartRecorderClass:\
+
+\f1 - 
+\f0 setScore: \
+
+\f1 - 
+\f0 setTimeUnit:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Querying the object	
+\f1 - 
+\f0 noteReceivers\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 partRecorderForPart: \
+
+\f1 - 
+\f0 partRecorderClass\
+
+\f1 - 
+\f0 score\
+
+\f1 - 
+\f0 timeUnit\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Performing the object	
+\f1 - 
+\f0 afterPerformance\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 firstNote: \
+
+\f1 - 
+\f0 inPerformance\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 afterPerformance\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b afterPerformance\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 You never invoke this method; it's invoked automatically at the end of the performance.  The default does nothing; a subclass can implement this method for post-performance cleanup.  A subclass version should always invoke
+\b [super afterPerformance]
+\b0 .  The return value is ignored.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 copy\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b copy\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Creates and returns a ScoreRecorder as a copy of the receiver.  The new object has the same Score as the receiver, but contains its own set of PartRecorders.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 firstNote:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b firstNote:
+\b0\i aNote\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 You never invoke this method; it's invoked automatically when the first Note is received by any of the receiver's PartRecorders.  The default does nothing; a subclass can implement this method for performance initialization.  The returns value is ignored.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 free\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b free\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Frees the receiver and its PartRecorders.  If you want to free the receiver only, send 
+\b removePartRecorders
+\b0  to the receiver before invoking this method.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 freePartRecorders\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b freePartRecorders\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 If the receiver is in performance, does nothing and returns 
+\b nil.   
+\b0 Otherwise, frees the receiver's PartRecorders, sets its Score to 
+\b nil 
+\b0 and returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 inPerformance\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (BOOL)
+\b inPerformance\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns YES if the receiver is in performance, otherwise returns NO.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 noteReceivers\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b noteReceivers\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a List object that contains the receiver's NoteReceivers.  It's the sender's responsibility to free the List.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 partRecorderForPart:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b partRecorderForPart:
+\b0\i aPart\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns the receiver's PartRecorder for 
+\i aPart
+\i0 , or 
+\b nil
+\b0  if not found.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 partRecorders\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b partRecorders\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a List object that contains the receiver's PartRecorders.  It's the sender's responsibility to free the List.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 partRecorderClass\
+
+\fi-1020\li3620  
+\f1\b0 - 
+\f0\b partRecorderClass \
+
+\fi0\li2100\fc1\cf1 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Returns the class used for PartRecorders, as set by 
+\b setPartRecorderClass:
+\b0 . The default is [PartRecorder class] itself. \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+removePartRecorders\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b removePartRecorders\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Removes the receiver's PartRecorders and sets its Score to 
+\b nil
+\b0 .  (The PartRecorder objects aren't freed.)  Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 score\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b score\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the receiver's Score.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setPartRecorderClass:\
+
+\f1\b0\fi-1020\li3620 - 
+\f0\b\fi0\li2100 setPartRecorderClass:
+\b0\i aPartRecorderSubclass
+\b\i0\fi-1020\li3620 \
+
+\fi0\li2100 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Normally, ScoreRecorders create instances of the PartRecorder class.  This method allows you to specify that instances of some PartRecorder subclass be created instead.  If 
+\i aPartRecorderSubclass
+\i0  is not a subclass of PartRecorder (or PartRecorder itself), this method has no effect and returns nil.  Otherwise, it returns self.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+setScore:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setScore:
+\b0\i aScore\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Removes and frees the receiver's current PartRecorders, sets its Score to 
+\i aScore
+\i0 , and then creates and adds a PartRecorder for each Part in the Score.  Subsequent changes to 
+\i aScore
+\i0  (adding or removing Parts) aren't seen by the receiver.  If the receiver is in performance, this does nothing and returns 
+\b nil
+\b0 , otherwise it returns the receiver.\
+
+\fs16 \
+
+\fs28 If you want to set the Score without freeing the current PartRecorders you should send 
+\b removePartRecorders
+\b0  before invoking this method; the PartRecorders are then removed but not freed.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setTimeUnit:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setTimeUnit:
+\b0 (MKTimeUnit)
+\i aTimeUnit\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the receiver's time unit to 
+\i aTimeUnit
+\i0 , one of MK_beat, MK_timeTag and MK_second, and forwards the 
+\b setTimeUnit:
+\b0\i aTimeUnit
+\i0  message to the receiver's PartRecorders.  If the receiver is in performance, this does nothing and returns 
+\b nil
+\b0 .  Otherwise returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 timeUnit\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (MKTimeUnit)
+\b timeUnit\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the receiver's time unit, either MK_second, MK_timeTag or MK_beat.\
+
+\fs16 \
+
+}

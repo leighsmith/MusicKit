@@ -1,0 +1,3239 @@
+{\rtf0\ansi{\fonttbl\f2\fnil Times-Roman;\f3\ftech Symbol;\f1\fmodern Courier;}
+\paperw16220
+\paperh11920
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\f2\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f3 „
+\f2 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+Release 3.0  Revisions Copyright 
+\f3 „
+\f2 1992 by CCRMA, Stanford University.  All Rights Reserved.\
+
+\pard\tx3120\tx3620\tx4120\fc0\cf0 Release 4.0  Revisions Copyright 
+\f3 „
+\f2 1993 by CCRMA, Stanford University.  All Rights Reserved.\
+Release 4.2  Revisions Copyright 
+\f3 „
+\f2 1993 by CCRMA, Stanford University.  All Rights Reserved.\
+
+\fs16\li2620 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 Orchestra\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 The Orchestra class manages DSP resources used in music synthesis.  Each instance of Orchestra represents a single DSP that's identified by 
+\b orchIndex
+\b0 , a zero-based integer index.  In the basic NeXT hardware configuration, there's only one DSP so there's only one Orchestra instance (
+\b orchIndex
+\b0  0).  On Intel-based hardware, there may be any number of DSPs or none, depending on how many DSP cards the user has installed.  See "INSTALLING INTEL-BASED DSP DRIVERS" below.\
+
+\fs16 \
+
+\fs28 The methods defined by the Orchestra class let you manage a DSP by allocating portions of its memory for specific synthesis modules and by setting its processing characteristics.  You can allocate entire SynthPatches or individual UnitGenerator and SynthData objects through the methods defined here.  Keep in mind, however, that similar methods defined in other class–specifically, the SynthPatch allocation methods defined in SynthInstrument, and the UnitGenerator and SynthData allocation methods defined in SynthPatch–are built upon and designed to usurp those defined by Orchestra.  You only to need to allocate synthesis objects directly if you want to assemble sound-making modules at a low level.\
+
+\fs16 \
+
+\fs28 Before you can do anything with an Orchestra–particularly, before you can allocate synthesis objects–you must create and open the Orchestra.  The Orchestra is a shared resource (that is, various DSP modules all use the same single Orchestra instance.)   Therefore, creation is done through the 
+\b new
+\b0  method–sending 
+\b new 
+\b0 twice returns the same object.   (This strange convention is for historical reasons and matches the Application Kit convention.)  To open an Orchestra, you send it the 
+\b open
+\b0  message.  This provides a channel of communication with the DSP that the Orchestra represents.  Once you've allocated the objects that you want, either through the methods described here or through those defined by SynthInstrument and SynthPatch, you can start the synthesis by sending the 
+\b run
+\b0  message to the Orchestra.  (If your application uses the Music Kit's performance scheduling mechanism, the 
+\b run
+\b0  message should be sent immediately before or immediately after the 
+\b startPerformance
+\b0  message is sent to the Conductor.)  The 
+\b stop
+\b0  method halts synthesis and 
+\b close
+\b0  breaks communication with the DSP.  These methods change the Orchestra's status, which is always one of the following MKDeviceStatus values:\
+
+\fs16 \
+
+\pard\tx6140\tx9160\tx11180\fs28\li3120\fc0\cf0 MK_devOpen	The Orchestra is open but not running.\
+MK_devRunning	The Orchestra is open and running.\
+MK_devStopped	The Orchstra has been running, but is now stopped.\
+MK_devClosed	The Orchestra is closed.\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 You can query an Orchestra's status through the 
+\b deviceStatus
+\b0  method.\
+
+\fs16 \
+
+\fs28 When the Orchestra is running, the allocated UnitGenerators produce a stream of samples that, by default, are sent to the "default sound output".  On NeXT hardware, that is the NeXT monitor's stereo digital to analog converter (the DAC), which converts the samples into an audio signal.  This type of sound output is called "Host sound output" because the samples are sent to the host computer.  But there are a number of other alternatives.  You can write the samples to the DSP serial port, to be played through any of a number of devices that have their own DACs or do digital transfer to DAT recorders.   To do this, invoke the method 
+\b setSerialSoundOut:
+\b0  with a 
+\b YES
+\b0  argument before sending 
+\b open
+\b0  to the Orchestra.    This is also called "SSI" sound output.  See the DSPSerialPortDevice class for more details.  \
+\
+Another option is to write the samples to a soundfile. <<This option is currently only available for NeXT hardware.>>  You do this by invoking the method 
+\b setOutputSoundfile:
+\b0  before sending 
+\b open
+\b0  to the Orchestra.  If you're writing a soundfile, the NeXT monitor's DAC is automatically disabled.  It is also possible to save the DSP commands as a "DSP commands format soundfile".   Such files are much smaller than the equivalent soundfile.  Use the method 
+\b setOutputCommandsFile: 
+\b0 to create such a file.  However, support for playing DSP commands file may not continue in future releases.  Therefore, we do not encourage their use.\
+\
+The Orchestra can also process sound that it receives via the DSP serial port.  To do this, send 
+\b setSerialSountIn:
+\b0  with a 
+\b YES 
+\b0 argument.  <<Note that currently serial input may not be combined with writing a soundfile.>>\
+\
+Every command that's sent to the DSP is given a timestamp indicating when the command should be executed.  The manner in which the DSP regards these timestamps depends on whether its Orchestra is timed or untimed, as set through the 
+\b setTimed:
+\b0  method.  In a timed Orchestra, commands are executed at the time indicated by its timestamp.  If the Orchestra is untimed, the DSP ignores the timestamps, executing commands as soon as it receives them.  By default, an Orchestra is timed.\
+
+\fs16 \
+
+\fs28 Since the DSP is a separate processor, it has its own clock and its own notion of the current time.  Since the DSP can be dedicated to a single task–in this case, generating sound–its clock is generally more reliable than the main processor, which may be controlling any number of other tasks.  If your application is generating Notes without user-interaction, for example, if it's playing a Score or scorefile, then you should set the Music Kit performance to be unclocked, through the Conductor's 
+\b setClocked:
+\b0  method, and the Orchestra to be timed.  This allows the Music Kit to process Notes and send timestamped commands to the DSP as quickly as possible, relying on the DSP's clock to synthesize the Notes at the correct time.  However, if your application must respond to user-initiated actions with as little latency as possible, then the Conductor must be clocked.  In this case, you can set the Orchestra to be untimed.  A clocked Conductor and an untimed Orchestra yields the best possible response time.\
+
+\fs16 \
+
+\fs28 If your application responds to user actions, but can sustain some latency between an action and its effect, then you may want to set the Conductor to be clocked and the DSP to be timed, and then use the C function 
+\b MKSetDeltaT()
+\b0  to set the 
+\i delta time
+\i0 .  Delta time is an imposed latency that allows the Music Kit to run slightly ahead of the DSP.  Any rhythmic irregularities created by the Music Kit's dependence on the CPU's clock are evened out by the utter dependability of the DSP's clock (assuming that the such an irregularity isn't greater than the delta time).\
+
+\fs16 \
+
+\fs28 Since parameter updates can occur asynchronously, the Orchestra doesn't know, at the beginning of a Note, if the DSP can execute a given set of UnitGenerators quickly enough to produce a steady supply of output samples for the entire duration of the Note.  However, it makes an educated estimate and will deny allocation requests that it thinks will overload the DSP and cause it to fall out of real time.  Such a denial may result in a smaller number of simultaneously synthesized voices.  You can adjust the Orchestra's DSP processing estimate, or headroom, by invoking the 
+\b setHeadroom:
+\b0  method.  This takes an argument between -1.0 and 1.0; a negative headroom allows a more liberal estimate of the DSP resources–resulting in more simultaneous voices–but it runs the risk of causing the DSP to fall out of real time.  Conversely, a positive headroom is more conservative: You have a greater assurance that the DSP won't fall out of real time but the number of simultaneous voices is decreased.  The default is a somewhat conservative 0.1.  If you're writing samples to a soundfile with the DAC disabled, headroom is ignored.  On Intel-based hardware, the differences between the clock and memory speed of various DSP cards requires some hand-tuning of the headroom variable.  Slower DSP cards should use a higher headroom and faster cards should use a negative headroom.\
+
+\fs16 \
+
+\fs28 When sending sound to the DSP serial port, there is very little latency–for example, sound can be taken in the serial port, processed, and sent out again with less than 10 milliseconds of delay.  However, in the case of sound output via the NeXT monitor, there's a sound output time delay that's equal to the size of the buffer that's used to collect computed samples before they're shovelled to the NeXT DAC.  To accommodate applications that require the best possible response time (the time between the iniitation of a sound and its actual broadcast from the DAC), a smaller sample output buffer can be requested by sending the 
+\b setFastResponse:YES
+\b0  message to an Orchestra.  However, the more frequent attention demanded by the smaller buffer will detract from synthesis computation and, again, fewer simultaneous voices may result.  You can also improve response time by using the high sampling rate (44100) although this, too, attenuates the synthesis power of the DSP.  By default, the Orchestra's sampling rate is 22050 samples per second.  
+\b setFastResponse: 
+\b0 has no effect when sending samples to the DSP serial port.\
+
+\fs16 \
+
+\fs28 To avoid creating duplicate synthesis modules on the DSP, each instance of Orchestra maintains a shared object table.  Objects on the table are SynthPatches, SynthDatas, and UnitGenerators and are indexed by some other object that represents the shared object.  For example, the OscgafUG UnitGenerator (a family of oscillators) lets you specify its waveform-generating wave table as a Partials object (you can also set it as a Samples object; for the purposes of this example we only consider the Partials case).  When its wave table is set, through the 
+\b setTable:length:
+\b0  method, the oscillator allocates a SynthData object from the Orchestra to represent the DSP memory that will hold the waveform data that's computed from the Partials.  It also places the SynthData on the shared object table using the Partials as an index by sending the message\
+
+\fs16 \
+
+\pard\f1\fs24\li3120\fc0\cf0 [Orchestra installSharedSynthData:theSynthData for:thePartials];\
+
+\pard\tx3120\tx3620\tx4120\f2\fs16\li2620\fc0\cf0 \
+
+\fs28 If another oscillator's wave table is set as the same Partials object, the already-allocated SynthData can be returned by sending the message\
+
+\fs16 \
+
+\pard\f1\fs24\li3120\fc0\cf0 id aSynthData = [Orchestra sharedObjectFor:thePartials];\
+
+\pard\tx3120\tx3620\tx4120\f2\fs16\li2620\fc0\cf0 \
+
+\fs28 The method 
+\b installSharedObject:for:
+\b0  is provided for installing SynthPatches and UnitGenerators.\
+
+\fs16 \
+
+\fs28 If appropriate hardware is available, multiple DSPs may be used in concert.  The Orchestra automatically performs allocation on the pool of DSPs.  On Intel-based hardware, multiple DSP support is achieved by adding multiple DSP cards.  On NeXT hardware, multiple DSP support is available via the Ariel QuintProcessor, a 5-DSP card.   \
+\
+The Orchestra class may be subclassed to support other 56001-based cards.   See the ArielQP and ArielQPSat objects for an example.\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc1\cf1 The default sound output configuration may be customized by using the defaults data base.  On NeXT hardware, you can specify the destination of the sound output, and on both NeXT hardware and Intel-based DSP cards with NeXT-compatible DSP serial ports, you can specify the type of the serial port device.  The default sound out type is derived from the MusicKit "OrchestraSoundOut" variable in the defaults data base, which may currently have the value "SSI" or "Host".   More values may be added in the future.   Note that an "SSI" value for "OrchestraSoundOut" refers to the DSP's use of the SSI port and that usage does not imply NeXT-compatiblility.  For example, for the Turtle Beach cards, the default is "serialSoundOut" via the on-card CODEC.  (On Intel-based hardware, the determination as to whether the DSP serial port is NeXT-compatible is based on the driver's "SerialPortDevice" parameter–if its value is "NeXT", the serial port is NeXT-compatible. )  
+\fc0\cf0 You can always return to the default sample output configuration by sending the message 
+\b setDefaultSoundOut
+\b0 .\
+
+\fc1\cf1 \
+New Orchestras are auto-configured with their default configuration, with a DSPSerialPortDevice object automatically created.  For devices with NeXT-compatible DSP serial ports, you may change the configuration using the Orchestra methods such as 
+\b -setSerialPortDevice:
+\b0 .  \
+\
+
+\pard\tx7140\li2100\fc0\cf0 INSTALLING INTEL-BASED DSP DRIVERS\
+
+\pard\tx3120\tx3620\tx4120\li2620\fc0\cf0 \
+
+\fc1\cf1 To install an Intel-based DSP driver, follow these steps:\
+\
+1. Double click on the driver you want to install.  The drivers can be found on 
+\b /LocalLibrary/Devices/.  
+\b0 For example, to install the ArielPC56D driver, double click on 
+\b /LocalLibrary/Devices/ArielPC56D.config
+\b0 .  Type the root pass word. It will tell you driver was successfully installed. Click OK.\
+You've now "installed" the driver.\
+\
+2. In
+\b  Configure.app
+\b0 , Click Other. Click Add... Click Add.  Select the driver (from the "other" category) and make sure that the I/O port corresponds to your hardware configuration.  From Menu/Configuration, select Save.   You've now "added the driver".\
+	\
+3. Repeat the process for any other drivers, such as the TurtleBeach Multisound driver, 
+\b /LocalLibrary/Devices/TurtleBeachMS.config.
+\b0 \
+	\
+4. If you have multiple cards of a certain type, repeat step 2, making sure to assign a different I/O address to each instance of the driver.  The first will be given the name <driverName>0, where <driverName> is the name of the driver (e.g. "ArielPC56D")  The second will be given the name <driverName>1, etc.  The trailing number is called the "unit."  For example,  if you add 2 Ariel cards to your system, they will be assigned the names "ArielPC56D0" and "ArielPC56D1".  If you have one Multisound card, it will be assigned the name "TurtleBeachMS0".   This assignment is done by the 
+\b Configure.app
+\b0  application.\
+\
+5. Reboot.  Drivers are now installed and usable.\
+\
+All DSP drivers are in the same "family", called "DSP."   All DSP units are numbered with a set of "DSP indecies", beginning with 0.  (Note that this is distinct from the "unit" numbers.) If there is only one DSP card, there is no ambiguity.  However, if there is more than one card, the user's defaults data base determines which DSP or DSPs should be used.  For example, in the example given above, a user's defaults data base may have:\
+ \
+	MusicKit DSP0 ArielPC56D1\
+	MusicKit DSP2 ArielPC56D0\
+	MusicKit DSP4 TurtleBeachMS0\
+\
+This means that the default DSP is the one on the 2nd Ariel card that you installed.  Also, notice that there may be "holes"–in this example, there is no DSP1 or DSP3.  DSP identifiers up to 15 may be used.  The DSP indecies refer to the Orchestra index passed to methods like
+\b  +newOnDSP:
+\b0 .  If there is no driver for that DSP, 
+\b +newOnDSP: 
+\b0 returns nil.  \
+\
+Some DSP cards support multiple DSPs on a single card.  For such cards, we have the notion of a "sub-unit", which follows the unit in the assigned name with the following format:  <driver><unit>-<subunit>.   For example if a card named "Frankenstein" supports 4 DSPs, and there are two Frankenstein units installed in the system, the user's defaults data base might look like this:\
+\
+	MusicKit DSP0 Frankenstein0-0\
+	MusicKit DSP1 Frankenstein0-1\
+	MusicKit DSP2 Frankenstein0-2\
+	MusicKit DSP3 Frankenstein0-3\
+	MusicKit DSP4 Frankenstein1-0\
+	MusicKit DSP5 Frankenstein1-1\
+	MusicKit DSP6 Frankenstein1-2\
+	MusicKit DSP7 Frankenstein1-3\
+\
+Currently, the Music Kit provides drivers for the following cards: 
+\b Ariel PC56D,  Turtle Beach Multisound
+\b0 , 
+\b I*Link i56, Frankenstein
+\b0 .  See the release notes for the latest information on supported drivers.\
+\
+
+\pard\tx7140\li2100\fc0\cf0 \
+INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Objec
+\i0 t	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in Orchestra
+\i0 	double	computeTime;\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 double	samplingRate;\
+id	stack;\
+char	*outputSoundfile;\
+char	*outputCommandsFile;\
+id	xZero;\
+id	yZero;\
+id	xSink;\
+id	ySink;\
+id	sineROM;\
+id	muLawROM;\
+MKDeviceStatus	deviceStatus;\
+unsigned short	orchIndex;\
+BOOL	isTimed;\
+BOOL	hostSoundOut;\
+BOOL	serialSoundOut;\
+BOOL	serialSoundIn;\
+BOOL	isLoopOffChip;\
+BOOL	fastResponse;\
+double	localDeltaT;\
+short	onChipPatchPoints;\
+id	serialPortDevice;\
+int	release;\
+char	version;\
+char 	*monitorFileName;\
+char 	*lastAllocFailStr;\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 computeTime 	Time in seconds to compute one sample.\
+
+\fs16 \
+
+\fs28 samplingRate 	Sampling rate.\
+
+\fs16 \
+
+\fs28 stack 	List of UnitGenerators in order as they appear in DSP memory.  SynthData objects do not appear in this List.\
+
+\fs16 \
+
+\fs28 outputSoundfile 	Soundfile name to which output samples are written.\
+
+\fs16 \
+
+\fs28 outputCommandsFile 	Soundfile name to which output DSP commands are written.\
+\
+xZero 	Special x memory patchpoint that always holds 0.  (Don't write to it!)\
+
+\fs16 \
+
+\fs28 yZero 	Special y memory patchpoint that always holds 0.  (Don't write to it!)\
+
+\fs16 \
+
+\fs28 xSink 	Special x memory patchpoint that may be used to deposit garbage.\
+
+\fs16 \
+
+\fs28 ySink 	Special y memory patchpoint that may be used to deposit garbage.\
+
+\fs16 \
+
+\fs28 sineROM 	Special read-only SynthData that represents the sine ROM.\
+
+\fs16 \
+
+\fs28 muLawROM 	Special read-only SythData that represents the mu-law ROM.\
+
+\fs16 \
+
+\fs28 deviceStatus 	The object's status.\
+
+\fs16 \
+
+\fs28 orchIndex 	Index to the DSP that's managed by this instance.\
+
+\fs16 \
+
+\fs28 isTimed 	YES if DSP commands are timed.\
+
+\fs16 \
+
+\fs28 hostSoundOut 	YES if sound is being sent to the host DAC (NeXT hardware only).\
+
+\fs16 \
+
+\fs28 serialSoundOut 	YES if sound is being sent to the DSP serial port.\
+
+\fs16 \
+
+\fs28\fc1\cf1 serialSoundIn 	YES if sound is being received from the DSP port.\
+
+\fs16 \
+
+\fs28\fc0\cf0 isLoopOffChip 	YES if the orchestra loop is running partially off-chip.\
+
+\fs16 \
+
+\fs28 fastResponse 	YES if response latency should be minimized\
+
+\fs16 \
+
+\fs28 localDeltaT 	Offset in seconds added to output timestamps\
+
+\fs16 \
+
+\fs28 onChipPatchPoints 	Number of on-chip patchpoints.\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 serialPortDevice 	Object that represents the type of device plugged into the DSP serial port.\
+
+\fs16\fc1\cf1 \
+
+\fs28\fc0\cf0 release 	DSP run-time monitor software release.  E.g. 40 means release 4.0.\
+
+\fs16\fc1\cf1 \
+
+\fs28\fc0\cf0 version 	DSP run-time monitor software version. \
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 monitorFileName 	DSP run-time monitor file. \
+\
+lastAllocFailStr 	String describing the reason for the most recent allocation failure. \
+
+\fc1\cf1 \
+
+\pard\tx7140\li2100\fc0\cf0 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Creating and freeing an Orchestra	
+\f3 - 
+\f2 free\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 + free\
++ new\
++ newOnDSP:\
++ newOnAllDSPs:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Modifying the object	+ flushTimedMessages\
+
+\pard\tx10180\tx10680\f3\fi-520\li7660\fc0\cf0 + 
+\f2 initialize\
+
+\f3 - 
+\f2 setOnChipMemoryConfigDebug:patchPoints: \
+
+\f3 - 
+\f2 setSamplingRate: \
++ setSamplingRate: \
+
+\f3 - 
+\f2 setMonitorFileName: \
+
+\f3 - 
+\f2 trace:msg: \
+
+\f3 - 
+\f2 writeSymbolTable:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Querying the object	+ DSPCount\
+
+\fc1\cf1 	+ driverParameter: forDriver: unit: \
+
+\fc0\cf0 	+ getDriverNames:units:\
+	
+\pard\tx10180\tx10680\f3\fi-520\li7660\fc0\cf0 - 
+\f2 capabilities\
+
+\f3 - 
+\f2 computeTime\
+
+\f3 - 
+\f2 defaultSamplingRate\
+
+\f3 - 
+\f2 deviceStatus\
+
+\pard\tx7140\tx10180\tx10680\f3\fi-4540\li7140\fc0\cf0 	- 
+\f2\fc1\cf1 driverName\
+	
+\f3\fc0\cf0 - 
+\f2\fc1\cf1 driverUnit
+\fc0\cf0 \
+
+\pard\tx10180\tx10680\f3\fi-520\li7660\fc0\cf0 - 
+\f2 fastResponse\
+
+\f3 - 
+\f2 getMonitorVersion:release:\
+
+\f3 - 
+\f2 headroom\
+
+\f3 - 
+\f2 index\
+
+\f3 - 
+\f2 isDSPUsed\
+
+\f3 - 
+\f2 isRealTime\
+
+\f3 - 
+\f2 isTimed\
+
+\f3 - 
+\f2 localDeltaT\
+
+\f3 - 
+\f2\fc1\cf1 monitorFileName
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+
+\pard\tx10180\tx10680\fs28\fi-520\li7660\fc0\cf0 + nthOrchestra: \
+
+\f3 - 
+\f2 outputSoundfile\
+
+\f3 - 
+\f2 peekMemoryResources: \
+
+\f3 - 
+\f2\fc1\cf1 prefersAlternativeSamplingRate
+\f3 \
+
+\fc0\cf0 - 
+\f2 segmentName:\
+
+\f3 - 
+\f2 soundOut\
+
+\f3 - 
+\f2 serialPortDevice\
+
+\f3 - 
+\f2 serialSoundOut\
+
+\f3 - 
+\f2 serialSoundIn\
+
+\pard\tx7140\li2100\fc0\cf0 	± samplingRate\
+
+\fc1\cf1 	±ÄtickSize\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Adjusting DSP computation and timing\
+
+\f3\fi0 - 
+\f2 beginAtomicSection\
+
+\pard\tx10180\tx10680\f3\fi-520\li7660\fc0\cf0 - 
+\f2 endAtomicSection\
++ setFastResponse: \
+
+\f3 - 
+\f2 setFastResponse: \
++ setHeadroom: \
+
+\f3 - 
+\f2 setHeadroom:\
++ setLocalDeltaT: \
+
+\f3 - 
+\f2 setLocalDeltaT: \
+
+\f3 - 
+\pard\tx7140\f2\li2100\fc0\cf0 setSynchToConductor:\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 + setTimed: \
+
+\f3 - 
+\f2 setTimed:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Setting the sample output	
+\f3 - 
+\f2 setOutputSoundfile: \
+
+\f3 	- 
+\f2 setOutputCommandsFile: 	\
+
+\pard\tx10180\tx10680\f3\fi-520\li7660\fc0\cf0 - 
+\f2 setDefaultSoundOutput\
+
+\f3 - 
+\f2 setHostSoundOut:\
+
+\f3 - 
+\f2 setSerialSoundOut:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Setting the sample input	
+\f3 - 
+\f2 setSerialSoundIn: \
+\
+Managing the DSP serial port	
+\f3 - 
+\f2 setSerialPortDevice: \
+	
+\f3 - 
+\f2 sendSCIByte: \
+	
+\f3 - 
+\f2 sendSCIByte:toRegister: \
+\
+Opening and running the DSP	
+\f3 - 
+\f2 abort\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 + abort\
+
+\f3 - 
+\f2 close\
++ close\
+
+\f3 - 
+\f2 flushTimedMessages\
+
+\f3 - 
+\f2 open\
++ open\
+
+\f3 - 
+\f2 run\
++ run\
++ stop\
+
+\f3 - 
+\f2 stop\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Allocating synthesis objects	
+\f3 - 
+\f2 allocPatchpoint: \
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 + allocPatchpoint: \
+
+\f3 - 
+\f2 allocModulusSynthData:length: \
++ allocModulusSynthData:length: \
+
+\f3 - 
+\f2 allocModulusPatchpoint:\
++ allocModulusPatchpoint: \
+
+\f3 - 
+\f2 allocSynthData:length: \
++ allocSynthData:length: \
+
+\f3 - 
+\f2 allocSynthPatch: \
++ allocSynthPatch: \
+
+\f3 - 
+\f2 allocSynthPatch:patchTemplate: \
++ allocSynthPatch:patchTemplate: \
+
+\f3 - 
+\f2 allocUnitGenerator: \
++ allocUnitGenerator: \
+
+\f3 - 
+\f2 allocUnitGenerator:after: \
+
+\f3 - 
+\f2 allocUnitGenerator:before: \
+
+\f3 - 
+\f2 allocUnitGenerator:between:: \
+
+\f3 - 
+\f2 dealloc: \
++ dealloc: \
+
+\f3 - 
+\f2 muLawROM\
+
+\f3 - 
+\f2 segmentSink: \
+
+\f3 - 
+\f2 segmentSinkModulus: \
+
+\f3 - 
+\f2 segmentZero: \
+
+\f3 - 
+\f2 sineROM\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Accessing the shared data table	
+\f3 - 
+\f2 installSharedObject:for: \
+
+\pard\tx10180\tx10680\f3\fi-520\li7660\fc0\cf0 - 
+\f2 installSharedSynthDataWithSegment:for: \
+
+\f3 - 
+\f2 installSharedSynthDataWithSegment
+\fi0 AndLength:for:\
+
+\f3\fi-520 - 
+\f2 installSharedObject:for:type: \
+
+\f3 - 
+\f2 installSharedSynthDataWithSegment:for: type:\
+
+\f3 - 
+\f2 installSharedSynthDataWithSegment
+\fi0 AndLength:for:type:\
+
+\f3\fi-520 - 
+\f2 sharedObjectFor: \
+
+\f3 - 
+\f2 sharedSynthDataFor:segment: \
+
+\f3 - 
+\f2 sharedSynthDataFor:segment:length:\
+
+\f3 - 
+\f2 sharedObjectFor:type: \
+
+\f3 - 
+\f2 sharedSynthDataFor:segment:type: \
+
+\f3 - 
+\f2 sharedSynthDataFor:segment:length:type:\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc1\cf1 Subclassing Orchestra	
+\f3\fc0\cf0 - 
+\f2\fc1\cf1 outputChannelOffset 
+\f3 \
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 - 
+\f2\fc1\cf1 inputChannelOffset
+\fc0\cf0  \
+
+\f3 - 
+\f2\fc1\cf1 outputChannelCount
+\fc0\cf0 \
+
+\f3 - 
+\f2\fc1\cf1 outputInitialOffset
+\fc0\cf0  \
+
+\f3 - 
+\f2\fc1\cf1 upSamplingOutput
+\fc0\cf0 \
+
+\f3 - 
+\f2\fc1\cf1 setUpDSP
+\fc0\cf0 \
+
+\f3 - 
+\f2\fc1\cf1 startSoundWhenOpening
+\fc0\cf0 \
+
+\f3 - 
+\f2\fc1\cf1 systemOverhead
+\fc0\cf0 \
+
+\f3 + 
+\f2\fc1\cf1 registerOrchestraSubclass:forOrchIndex:
+\fc0\cf0 \
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+
+\fs28 CLASS METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28  abort\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b abort\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Sends 
+\b abort
+\b0  to each of the Orchestra instances and sets each to MK_devClosed.  If any of the Orchestras responds to the 
+\b abort
+\b0  message by returning 
+\b nil
+\b0 , so too does this method return 
+\b nil
+\b0 .  Otherwise returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28  allocModulusSynthData:length:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b allocModulusSynthData:
+\b0 (MKOrchMemSegment)
+\i segment
+\i0  
+\b length:
+\b0 (unsigned)
+\i size\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Like +
+\b allocSynthData:length:
+\b0  but memory is constrained to lie on an appropriate modulus border so that DSP modulus addressing can be used.  For example, if 
+\i size 
+\i0 is 19, then the low 4 bits of the base address of the SynthData object returned will be 0.  
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+
+\b \
+
+\fs28 allocPatchpoint:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b allocPatchpoint:
+\b0 (MKOrchMemSegment)
+\i segment\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Allocates a patchpoint in segment 
+\i segment
+\i0  Returns the patchpoint (a SynthData object), or 
+\b nil
+\b0  if the object couldn't be allocated.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocModulusPatchpoint:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b allocModulusPatchpoint:
+\b0 (MKOrchMemSegment)
+\i segment\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Like 
+\b +allocPatchpoint:
+\b0 , but memory is constrained to lie on an appropriate modulus border so that DSP modulus addressing can be used.  \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocSynthData:length:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b allocSynthData:
+\b0 (MKOrchMemSegment)
+\i segment
+\i0  
+\b length:
+\b0 (unsigned)
+\i size\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Allocates a SynthData object.  The allocationn is on the first Orchestra that will accommodate 
+\i size
+\i0  words in segment 
+\i segment
+\i0 .  Returns the SynthData, or 
+\b nil
+\b0  if the object couldn't be allocated.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocSynthPatch:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b allocSynthPatch:
+\b0\i aSynthPatchClass\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 This is the same as 
+\b allocSynthPatch:patchTemplate:
+\b0  but uses the default template obtained by sending the message 
+\b defaultPatchTemplate 
+\b0 to 
+\i aSynthPatchClass.
+\i0\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocSynthPatch:patchTemplate:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b allocSynthPatch:
+\b0\i aSynthPatchClass 
+\b\i0 patchTemplate:
+\b0\i p\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Allocates a SynthPatch with a PatchTemplate of 
+\i p
+\i0  on the first DSP with sufficient resources.  Returns the SynthPatch or 
+\b nil
+\b0  if it couldn't be allocated.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocUnitGenerator:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b allocUnitGenerator:
+\b0\i classObj\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Allocates a UnitGenerator of class 
+\i classObj
+\i0 .  The object is allocated on the first Orchestra that can accomodate it.  Returns the UnitGenerator, or 
+\b nil
+\b0  if the object couldn't be allocated.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 close\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b close\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Sends 
+\b close
+\b0  to each of the Orchestra instances and sets each to MK_devClosed.  If any of the Orchestras responds to the 
+\b close
+\b0  message by returning 
+\b nil
+\b0 , so too does this method return 
+\b nil
+\b0 .  Otherwise returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 dealloc:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b dealloc:
+\b0\i aSynthResource\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Deallocates the argument, which must be a previously allocated SynthPatch, UnitGenerator or SynthData, by sending it the 
+\b dealloc
+\b0  message.  This method is provided for symmetry with the 
+\b alloc 
+\b0 family of methods.\
+
+\fs16 \
+\
+
+\pard\tx7140\b\fs28\li2100\fc1\cf1 driverParameter: forDriver: unit: \
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + (char *)
+\b driverParameter:
+\b0 (char *)
+\i par 
+\b\i0 forDriver:
+\b0 (char *)
+\i driverName 
+\b\i0 unit:
+\b0 (int)
+\i unit\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 <<Intel-based hardware only.>> Returns the driver parameter for the specified driver and unit.   If the driver and unit do not exist, or if the driver does not support that parameter, returns NULL.  The returned value is an NXAtom  and should not be freed by the user.  
+\fc1\cf1 The following parameters are currently supported:\
+\
+	SerialPortDevice  - name of DSPSerialPortDevice subclass suggested for use with this driver\
+	Monitor	                  - name of DSP monitor suggested for use with this driver\
+	Orchestra               - name of Orchestra subclass suggested for use with this driver\
+	WaitStates             - number of wait states of the DSP memory\
+	ClockRate              - clock rate of the DSP in Mhz.\
+
+\pard\tx7140\b\fs16\li2100\fc0\cf0 \
+
+\fs28 DSPCount\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + (unsigned short)
+\b DSPCount\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the maximum possible number of DSPs.  This may be more than the number of DSPs you actually have.   \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 flushTimedMessages\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b flushTimedMessages\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Flushes all currently buffered DSP commands by invoking the 
+\b flushTimedMessages
+\b0  instance method for each Orchestra.   The usual way to invoke this method is via the Conductor 
+\b +unlockPerformance 
+\b0 method  (which must be preceeded by 
+\b +lockPerformance
+\b0 .)    \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 free\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b free\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Frees all the existing Orchestra instances and returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 getDriverNames:units:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + (int)
+\b getDriverNames:
+\b0 (char ***)namesArrayPtr 
+\b units:
+\b0 (int **)unitsArrayPtr
+\b \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 <<Intel-based hardware only.>> \
+Returns the number of driver/units added to the system.  Sets, by reference arrays of the names and unit numbers of these drivers.  The arrays and strings are not copied and should not be freed. \
+\
+Note that the ordering in the array bears no relationship to the ordering of the DSPs.  Similarly, there may be more elements in the arrays than there are DSPs enabled in the user's defaults data base.  To find out which DSPs are actually, enabled do the following:\
+
+\fs16 \
+
+\f1\fs24\fc1\cf1 	int i;\
+	id obj;\
+	for (i=0; i<cnt; i++) \{ \
+		obj = [Orchestra newOnDSP:i];\
+		if (!obj) \{\
+			fprintf(stderr,"No driver for DSP %d\\n",i);\
+		else \{\
+			fprintf(stderr,"DSP%d == %s%d\\n",i,[obj driverName],[obj driverUnit]);\
+		\}\
+
+\f2\fs28 	\}\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\fi-380\li1800\fc1\cf1 \
+
+\pard\tx7140\b\fs16\li2100\fc0\cf0 \
+
+\fs28 initialize\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b initialize\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Initializes the Orchestra class.  This method is invoked automatically at start-up time; you never to invoke it directly.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 new\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b new\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns and initializes a new Orchestra for the default DSP, if one doesn't already exist. Otherwise returns the existing one.  The DSP insn't actually claimed until the Orchestra instance is sent the 
+\b open 
+\b0 message.  \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 newOnDSP:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b newOnDSP:
+\b0 (unsigned short)
+\i index\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Creates and returns an Orchestra instance for the 
+\i index
+\i0 'th DSP.  If an Orchestra object already exists for the specified DSP, the existing object is returned.  Returns 
+\b nil
+\b0  if 
+\i index
+\i0  is out of bounds or if the 
+\i index
+\i0 'th DSP isn't available.  For example, on Intel hardware, if there is no driver for the 
+\i index
+\i0 'th DSP, this method returns nil.  Note that for some types of DSP devices, the object returned will be a 
+\i subclass 
+\i0 of Orchestra, rather than an instance of Orchestra.  (See 
+\b registerOrchestraSubclass:forOrchIndex:
+\b0 ).\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 newOnAllDSPs:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b newOnAllDSPs:
+\b0 (unsigned short)
+\i index\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Creates an Orchestra instance for every available DSP, if it has not already been created.  On Intel-based hardware, this is accomplished by consulting the user's defaults data base (settable with the Preferences application).  Returns the first Orchestra it can create or find.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 nthOrchestra:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b nthOrchestra:
+\b0 (unsigned short)
+\i index\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns the Orchestra of the 
+\i index
+\i0 'th DSP.  If 
+\i index
+\i0  is out of bounds, or if an Orchestra hasn't been created for the specified DSP, 
+\b nil
+\b0  is returned.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 open\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b open\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Sends 
+\b open
+\b0  to each of the Orchestra instances and sets each to MK_devOpen.  If any of the Orchestras responds to the 
+\b open
+\b0  message by returning 
+\b nil
+\b0 , so too does this method return 
+\b nil
+\b0 .  Otherwise returns the receiver.  Note that if you first send 
+\b open 
+\b0 and then create a new Orchestra, the new Orchestra will not automatically be opened.  \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 registerOrchestraSubclass:forOrchIndex\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b registerOrchestraSubclass:forOrchIndex\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 U
+\fc1\cf1 sed by subclasses to register themselves as the default class for the specified DSP index.  This allows the user to say
+\b  [Orchestra newOnDSP:3]
+\b0  and get an instance of 
+\b ArielQPSat
+\b0 , for example.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+run\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b run\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Sends 
+\b run
+\b0  to each of the Orchestra instances and sets each to MK_devRunning.  If any of the Orchestras responds to the 
+\b run
+\b0  message by returning 
+\b nil
+\b0 , so too does this method return 
+\b nil
+\b0 .  Otherwise returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setFastResponse:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b setFastResponse:
+\b0 (BOOL)
+\i yesOrNo\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sends 
+\b setFastResponse:
+\b0\i yesOrNo
+\i0  to all existing Orchestras objects and returns the receiver.  This also sets the default used by subsequently created Orchestras.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setHeadroom:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b setHeadroom:
+\b0 (double)
+\i headroom\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the headroom of all Orchestras instances that have been created.  Returns the receiver.\
+
+\fs16 \
+
+\fs28 See also:  
+\f3 - 
+\f2\b setHeadroom:\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 setLocalDeltaT:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b setLocalDeltaT:
+\b0 (double)
+\i val\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the local delta time for all Orchestras and changes the default, which is otherwise 0.0.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setSamplingRate:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b setSamplingRate:
+\b0 (double)
+\i newSRate\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the sampling rate of all the Orchestra instances by sending 
+\b setSamplingRate:
+\b0\i newSRate
+\i0  to all closed Orchestras.  This method also changes the default sampling rate; when a new Orchestra is subsequently created, it also gets set to 
+\i newSRate
+\i0 .  Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setTimed:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b setTimed:
+\b0 (BOOL)
+\i areOrchsTimed\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sends 
+\b setTimed:
+\b0\i areOrchsTimed
+\i0  to each Orchestra instance.  If 
+\i areOrchsTimed
+\i0  is YES, the DSP processes the commands that it receives at the times specified by the commands' timestamps.  If it's 
+\b NO
+\b0 , DSP commands are processed as quickly as possible.  By default, an Orchestra is timed.  Note, however, that this method changes the default to 
+\i areOrchsTimed
+\i0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 stop\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b stop\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Sends 
+\b stop
+\b0  to each of the Orchestra instances and sets each to MK_devStopped.  If any of the Orchestras responds to the 
+\b run
+\b0  message by returning 
+\b nil
+\b0 , so too does this method return 
+\b nil
+\b0 .  Otherwise returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 abort\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b abort\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 This is the same as 
+\b close
+\b0 , except that it doesn't wait for enqueued DSP commands to be executed.  Returns 
+\b nil
+\b0  if an error occurs, otherwise returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28  allocModulusSynthData:length:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 ± 
+\b allocModulusSynthData:
+\b0 (MKOrchMemSegment)
+\i segment
+\i0  
+\b length:
+\b0 (unsigned)
+\i size\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Like ±
+\b allocSynthData:length:
+\b0  but memory is constrained to lie on an appropriate modulus border so that DSP modulus addressing can be used.  For example, if 
+\i size 
+\i0 is 19, then the low 4 bits of the base address of the SynthData object returned will be 0.  
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+
+\b\fs28 \
+allocPatchpoint:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b allocPatchpoint:
+\b0 (MKOrchMemSegment)
+\i segment\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Allocates and returns a SynthData to be used as a patchpoint in the specified segment (MK_xPatch or MK_yPatch).  Returns 
+\b nil
+\b0  if an illegal segment is requested.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocModulusPatchpoint:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b allocModulusPatchpoint:
+\b0 (MKOrchMemSegment)
+\i segment\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Like ±
+\b allocPatchpoint:
+\b0  but memory is constrained to lie on an appropriate modulus border so that DSP modulus addressing can be used.  
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocSynthData:length:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b allocSynthData:
+\b0 (MKOrchMemSegment)
+\i segment
+\i0  
+\b length:
+\b0 (unsigned)
+\i size\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Allocates and returns a new SynthData object with the specified length, or 
+\b nil
+\b0  if the receiver doesn't have sufficient resources, if 
+\i size
+\i0  is 0, or if an illegal segment is requested.  
+\i segment
+\i0  should be MK_xData or MK_yData.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocSynthPatch:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b allocSynthPatch:
+\b0\i aSynthPatchClass\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Same as 
+\b allocSynthPatch:patchTemplate:
+\b0  but uses the default template, obtained by sending the message 
+\b defaultPatchTemplate 
+\b0 to 
+\i aSynthPatchClass
+\i0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocSynthPatch:patchTemplate:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b allocSynthPatch:
+\b0\i aSynthPatchClass
+\i0  
+\b patchTemplate:
+\b0\i p\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Allocates and returns a SynthPatch for PatchTemplate 
+\i p
+\i0 .  The receiver first tries to find an idle SynthPatch; failing that, it creates and returns a new one.  The UnitGenerators are added to the SynthPatch's unitGenerators list in the same order they are specified in the PatchTemplate.  If a new SynthPatch can't be built, this method returns 
+\b nil
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocUnitGenerator:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b allocUnitGenerator:
+\b0\i class\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Allocates and returns a UnitGenerator of the specified class, creating a new one, if necessary.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocUnitGenerator:after:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b allocUnitGenerator:
+\b0\i class
+\i0  
+\b after:
+\b0\i aUnitGeneratorInstance\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Allocates and returns a UnitGenerator of the specified class.  The newly allocated object will execute after 
+\i aUnitGeneratorInstance
+\i0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocUnitGenerator:before:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b allocUnitGenerator:
+\b0\i class
+\i0  
+\b before:
+\b0\i aUnitGeneratorInstance\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Allocates and returns a UnitGenerator of the specified class.  The newly allocated object will execute before 
+\i aUnitGeneratorInstance
+\i0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 allocUnitGenerator:between::\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b allocUnitGenerator:
+\b0\i class
+\i0  \
+
+\b\fi0 between:
+\b0\i aUnitGeneratorInstance
+\i0  \
+
+\b :
+\b0\i anotherUnitGeneratorInstance\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Allocates and returns a UnitGenerator of the specified class.  The newly allocated object will execute immediately after 
+\i aUnitGeneratorInstance
+\i0  and before 
+\i anotherUnitGenerator
+\i0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 beginAtomicSection\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b beginAtomicSection\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Marks the beginning of a section of DSP commands that are sent as a unit.  Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 capabilities\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\fc1\cf1 (unsigned)
+\b\fc0\cf0 capabilities\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc1\cf1 returns an unsigned int, the bits of which report what capabilities are provided by the DSP device corresponding to the Orchestra.  Possible values (defined in Orchestra.h) are as follows:\
+\
+
+\pard\tx3120\tx3620\tx7500\li2620\fc1\cf1 		MK_nextCompatibleDSPPort	1\
+		MK_hostSoundOut	2\
+		MK_serialSoundOut	4\
+		MK_serialSoundIn	8\
+		MK_soundfileOut	16\
+\
+
+\pard\tx3120\tx3620\tx4120\li2620\fc1\cf1 The value returns is the OR of these bits.  For example, if a device supports serial sound output and serial sound input, the value returned by 
+\b ±capabilities 
+\b0 is  (MK_serialSoundOut | MK_serialSoundIn)\
+On NeXT hardware, all of the above capabilities are provided.   \
+
+\fs16\fc0\cf0 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 close\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b close\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Waits for all enqueued DSP commands to be executed.  Then severs communication with the DSP, allowing other processes to claim it.  The SynthPatch-allocated UnitGenerators and SynthInstrument-allocated SynthPatches are freed.  All SynthPatches must be idle and non-SynthPatch-allocated UnitGenerators must be deallocated before sending this message.  Returns 
+\b nil
+\b0  if an error occurs, otherwise returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 computeTime\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (double)
+\b computeTime\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the compute time estimate currently used by the receiver in seconds per sample.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 dealloc:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b dealloc:
+\b0\i aSynthResource\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Deallocates 
+\i aSynthResource
+\i0  by sending it the 
+\b dealloc
+\b0  message.  
+\i aSynthResource
+\i0  may be a UnitGenerator, a SynthData or a SynthPatch.  This method is provided for symmetry with the 
+\b alloc 
+\b0 family of methods.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 defaultSamplingRate\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b defaultSamplingRate
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns the default sampling rate for the driver or hardware corresponding to this Orchestra instance's DSP.  If serialSoundOut or serialSoundIn is enabled, this method simply forwards the 
+\b defaultSamplingRate
+\b0  message to the DSPSerialPortDevice object.  Otherwise, returns 22050.0.  Note that you may change the sampling rate using 
+\b setSamplingRate:
+\b0 , but the default will still remain the same.  A subclass may override this method to provide a different default.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 deviceStatus\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (MKDeviceStatus)
+\b deviceStatus\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the MKDeviceStatus of the receiver, one of\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\tx4620\fs28\fi-520\li3120\fc0\cf0 ∑	MK_devClosed \
+∑	MK_devOpen \
+∑	MK_devRunning \
+∑	MK_devStopped\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 The Orchestra states are explained in the class description, above.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 driverName\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\fc1\cf1 (char *)
+\b\fc0\cf0 driverName\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0  <<Intel-based hardware only>> Returns the name of the DSP driver associated with this instance of Orchestra.  The string is not copied and should not be freed.   \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 driverParameter:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\fc1\cf1 (char *)
+\b\fc0\cf0 driverParameter:
+\b0 (char *)parameter
+\b \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0  <<Intel-based hardware only>> Returns the parameter value of the specified driver parameter for the driver associated with this instance of Orchestra.  The string is not copied and should not be freed.   \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 driverUnit\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\fc1\cf1 (int)
+\b\fc0\cf0 driverUnit\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0  <<Intel-based hardware only>> Returns the unit of the DSP driver associated with this instance of Orchestra.  \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 endAtomicSection\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b endAtomicSection\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Marks the end of a section of DSP commands that are sent as a unit.  Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 endAtomicSection\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b endAtomicSection\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Marks the end of a section of DSP commands that are sent as a unit.  Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 fastResponse\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (BOOL)
+\b fastResponse\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns YES if the receiver is using small sound-out buffers to minimize response latency.  Otherwise returns NO.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 flushTimedMessages\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b flushTimedMessages\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Sends buffered DSP commands to the DSP.  This is done for you by the Conductor.  However, if your application sends messages directly to a SynthPatch or UnitGenerator without the assistance of a Conductor, you must invoke this method yourself (after sending the synthesis messages).    The usual way to invoke this method is via the Conductor 
+\b +unlockPerformance 
+\b0 method (which must be preceeded by 
+\b +lockPerformance
+\b0 .)    Returns the receiver.  Note that you must send flushTimedMessages even if the Orchestra is set to MK_UNTIMED mode ("flushTimedMessages" is somewhat of a misnomer; a better name would have been "sendBufferedDSPCommands").\
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 free\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b free\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Frees the receiver and the UnitGenerators in its UnitGenerator stack, clears all SynthPatch allocation lists, and releases the DSP.  All SynthPatches must be idle and non-SynthPatch-allocated UnitGenerators must be deallocated before sending this message.  Returns 
+\b nil
+\b0  if an error occurs, otherwise returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+\
+
+\fs28 getMonitorVersion:release:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b getMonitorVersion:
+\b0\fc1\cf1 (char *)
+\i\fc0\cf0 version
+\b\i0  release:
+\b0\fc1\cf1 (int *)
+\i\fc0\cf0 release
+\b\i0 \
+\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 Returns by reference the DSP run-time monitor software version and release.  The 
+\i version
+\i0  changes only for an incompatible release.   It is a single character.  For example, the 4.0 release version is 'A'.  The 
+\i release 
+\i0 is the software release itself multiplied by 10.  For example, for the 4.0 release, 
+\i *release
+\i0  is set to 40.  The receiver must be open.  Returns the receiver or 
+\b nil 
+\b0 if the receiver isn't open.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 headroom\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (double)
+\b headroom\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the receiver's headroom, as set through the 
+\b setHeadroom:
+\b0  method.  Headroom should be a value between -.0 and 1.0.  The default is 0.1.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 index\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (unsigned short)
+\b index\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the index of the DSP associated with the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 inputChannelOffset\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (int)
+\b inputChannelOffset\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the increment in the input sample stream from the current channel until the next channel.  This information is normally derived from the serial port device, if any, or it defaults to 1.   Some devices, such as the Singular Solutions AD64x, have a channel offset of 2.\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 inputPadding\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (int)
+\b inputPadding\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the number of extra samples after each input sample frame.  For example the cs4215 codec requires two samples of control information following each sample frame.  This information is normally derived from the serial port device, if any, or it defaults to 0.   \
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 installSharedObject:for:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b installSharedObject:
+\b0\i aSynthObj
+\i0  
+\b for:
+\b0\i aKeyObj\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Places 
+\i aSynthObj
+\i0  on the shared object table and sets its reference count to 1.  
+\i aKeyObj
+\i0  is  any object associated with the abstract notion of the data and is used to index the shared object.  Does nothing and returns 
+\b nil
+\b0  if the 
+\i aSynthObj
+\i0  is already present in the table.  Also returns 
+\b nil
+\b0  if the orchestra isn't open.  Otherwise, returns the receiver.\
+
+\fs16 \
+
+\fs28 This method differs from 
+\b installSharedObjectWithSegmentAndLength:for:
+\b0  in that the length and segment are wild cards.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 installSharedSynthDataWithSegment:for:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b installSharedSynthDataWithSegment:
+\b0\i aSynthDataObj
+\i0  
+\b for:
+\b0\i aKeyObj\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Places 
+\i aSynthDataObj
+\i0  on the shared object table in the segment specified by 
+\i aSynthDataObj
+\i0  and sets its reference count to 1.  Does nothing and returns 
+\b nil
+\b0  if the 
+\i aSynthObj
+\i0  is already present in the table.  Also returns 
+\b nil
+\b0  if the orchestra is not open.  Otherwise, returns the receiver.\
+
+\fs16 \
+
+\fs28 This method differs from 
+\b installSharedObjectWithSegmentAndLength:for:
+\b0  in that the length is a wild card.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 installSharedSynthDataWithSegmentAndLength:for:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b installSharedSynthDataWithSegmentAndLength:
+\b0\i aSynthDataObj
+\i0  
+\b for:
+\b0\i aKeyObj\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Places 
+\i aSynthDataObj
+\i0  on the shared object table in the segment of aSynthDataObj with the specified length and sets its reference count to 1.  
+\i aKeyObj
+\i0  is used to index the shared object.  Does nothing and returns 
+\b nil
+\b0  if the 
+\i aSynthDataObj
+\i0  is already present in the table.  Also returns 
+\b nil
+\b0  if the orchestra is not open.  Otherwise, returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 installSharedObject:for:type:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b installSharedObject:
+\b0\i aSynthObj
+\i0  
+\b for:
+\b0\i aKeyObj 
+\b\i0 type:
+\b0 (MKOrchSharedType)
+\i type\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Places 
+\i aSynthObj
+\i0  on the shared object table and sets its reference count to 1.  
+\i aKeyObj
+\i0  is used to index the shared object.  
+\i type 
+\i0 is used to specify additional details about the data that is being installed.  For example, oscillator tables are intsalled as type 
+\b MK_oscTable
+\b0 , while waveshaping tables are installed as 
+\b MK_waveshapingTable
+\b0 .   Wavguide physical model excitation tables are installed as 
+\b MK_excitationTable.  
+\b0\i type 
+\i0 makes it possible to use 
+\i aKeyObj
+\i0  to lookup various different types of Synth objects.  Does nothing and returns 
+\b nil
+\b0  if the 
+\i aSynthObj
+\i0  is already present in the table.  Also returns 
+\b nil
+\b0  if the orchestra isn't open.  Otherwise, returns the receiver.\
+
+\fs16 \
+
+\fs28 This method differs from 
+\b installSharedObjectWithSegmentAndLength:for:
+\b0  in that the length and segment are wild cards.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 installSharedSynthDataWithSegment:for:type:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b installSharedSynthDataWithSegment:
+\b0\i aSynthDataObj
+\i0  
+\b for:
+\b0\i aKeyObj 
+\b\i0 type:
+\b0 (MKOrchSharedType)
+\i type\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Places 
+\i aSynthDataObj
+\i0  on the shared object table in the segment specified by 
+\i aSynthDataObj
+\i0  and sets its reference count to 1.    
+\i type 
+\i0 is used to specify additional details about the data that is being installed.  For example, oscillator tables are intsalled as type 
+\b MK_oscTable
+\b0 , while waveshaping tables are installed as 
+\b MK_waveshapingTable
+\b0 .   Wavguide physical model excitation tables are installed as 
+\b MK_excitationTable.  
+\b0\i type 
+\i0 makes it possible to use 
+\i aKeyObj
+\i0  to lookup various different types of Synth objects. Does nothing and returns 
+\b nil
+\b0  if the 
+\i aSynthObj
+\i0  is already present in the table.  Also returns 
+\b nil
+\b0  if the orchestra is not open.  Otherwise, returns the receiver.\
+
+\fs16 \
+
+\fs28 This method differs from 
+\b installSharedObjectWithSegmentAndLength:for:
+\b0  in that the length is a wild card.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 installSharedSynthDataWithSegmentAndLength:for:type:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b installSharedSynthDataWithSegmentAndLength:
+\b0\i aSynthDataObj
+\i0  
+\b for:
+\b0\i aKeyObj 
+\b\i0 type:
+\b0 (MKOrchSharedType)
+\i type\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Places 
+\i aSynthDataObj
+\i0  on the shared object table in the segment of aSynthDataObj with the specified length and sets its reference count to 1.  
+\i aKeyObj
+\i0  is used to index the shared object.  
+\i type 
+\i0 is used to specify additional details about the data that is being installed. For example, oscillator tables are intsalled as type 
+\b MK_oscTable
+\b0 , while waveshaping tables are installed as 
+\b MK_waveshapingTable
+\b0 .   Wavguide physical model excitation tables are installed as 
+\b MK_excitationTable.  
+\b0\i type 
+\i0 makes it possible to use 
+\i aKeyObj
+\i0  to lookup various different types of Synth objects.  Does nothing and returns 
+\b nil
+\b0  if the 
+\i aSynthDataObj
+\i0  is already present in the table.  Also returns 
+\b nil
+\b0  if the orchestra is not open.  Otherwise, returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 isRealTime\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (BOOL)
+\b isRealTime\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns 
+\b YES
+\b0  if the receiver runs in real time.  This will be 
+\b YES
+\b0  if any of soundOut, serialSoundOut or serialSoundIn is 
+\b YES
+\b0 .  Subclasses may want to override this method.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 isTimed\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (BOOL)
+\b isTimed\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns 
+\b YES
+\b0  if the receiver is timed 
+\b NO
+\b0  if it's untimed.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 localDeltaT\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (double)
+\b localDeltaT\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the value set through 
+\b setLocalDeltaT:
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 lastAllocationFailureString;\
+
+\pard\fi-1020\li3620\fc0\cf0 ± 
+\b0 (char *)
+\b lastAllocationFailureString;\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc0\cf0 \
+Returns a string describing the last allocation failure, if any.  Otherwise, returns NULL.   The string is not copied and should not be freed.\
+
+\pard\tx7140\b\fs16\li2100\fc0\cf0 \
+
+\fs28 monitorFileName\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (const char *)
+\b monitorFileName\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the DSP monitor's file name, as set with 
+\b setMonitorFileName:
+\b0 .   If no file name was set, this method automatically senses how much memory you have installed and loads the appropriate monitor.  If you have the 32K DSP SRAM expansion, the monitor 
+\b mkmon_A_32k.dsp 
+\b0 is loaded.  Otherwise, 
+\b mkmon_A_8k.dsp
+\b0  is loaded.  This method is invoked by 
+\b ±open
+\b0  to determine which monitor to load. \
+
+\pard\tx7140\b\fs16\li2100\fc0\cf0 \
+
+\fs28 muLawROM\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b muLawROM\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a SynthData object representing the MuLawROM.  You should never deallocate this object.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 nameForSharedType:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 -
+\f2  (char *)
+\b nameForSharedType:
+\b0 (int)
+\i aSharedType
+\i0 \
+
+\i\fs16\fi0 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns the name for the specified shared type or NULL if 
+\i aSharedType 
+\i0 is not a valid shared type.  To create a new shared type, use 
+\b sharedTypeForName:
+\b0 .    The Music Kit defines two shared types, 
+\b MK_oscTable
+\b0  and 
+\b MK_waveshapingTable
+\b0 .  In addition, the value 
+\b MK_noOrchSharedType
+\b0  is defined as a wildcard.\
+
+\pard\tx7140\b\fs16\li2100\fc0\cf0 \
+
+\fs28 open\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b open\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Opens the receiver's DSP and sets the receiver's status to MK_devOpen.  Resets orchestra loop (if not already reset), freeing all Unit Generators and SynthPatches.  Returns 
+\b nil
+\b0  if the DSP can't be opened for some reason,  otherwise returns the receiver.   To find out why the DSP can't be opened, enable Music Kit or DSP error tracing.  Possible problems opening the DSP include another application using the DSP, a missing DSP monitor file, a version mismatch and missing or broken hardware. \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 outputChannelCount\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (int)
+\b outputChannelCount\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the number of output channels.  This information is normally derived from the serial port device, if any, or it defaults to 2.  However, subclasses may override this method.  For example, the ArielQPSat class, when sending its sound to the hub DSP, forwards this message to the ArielQP obect that represents the hub DSP.\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 outputChannelOffset\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (int)
+\b outputChannelOffset\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the increment in the output sample stream from the current channel until the next channel.  This information is normally derived from the serial port device, if any, or it defaults to 1.   Some devices, such as the Singular Solutions AD64x, have a channel offset of 2.   Subclasses may override this method.   For example, the ArielQPSat class, when sending its sound to the hub DSP, forwards this message to the ArielQP obect that represents the hub DSP.\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 outputCommandsFile\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (char *)
+\b outputCommandsFile\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the output soundfile or NULL if none.
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 outputInitialOffset\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (int)
+\b outputInitialOffset\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Initial sample offset in DSP sound output buffers.  This information is normally derived from the serial port device, if any, or it defaults to 0.  Used to support Singular Solutions AD64x, which requires a single zero before the first datum.    
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 outputPadding\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (int)
+\b outputPadding\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the number of extra samples after each output sample frame.  For example the cs4215 codec requires two samples of control information following each sample frame.  This information is normally derived from the serial port device, if any, or it defaults to 0.   \
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 outputSoundfile\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (char *)
+\b outputSoundfile\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a pointer to the name of the receiver's output soundfile, or NULL if none.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 peekMemoryResources:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (MKOrchMemStruct *)
+\b peekMemoryResources:
+\b0 (MKOrchMemStruct *)
+\i peek\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns the available resources in 
+\i peek
+\i0 , which must be a pointer to a valid MKOrchMemStuct.  The returned value is the maximum available from each memory segment, assuming the memories aren't overlaid.  However, on some systems (such as NeXT hardware) xData, yData and pSubr compete for the same memory.  You should interpret the returned value with appropriate caution.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 prefersAlternativeSamplingRate\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (BOOL)
+\b prefersAlternativeSamplingRate
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns YES if the Orchestra will do better with a lower sampling rate than is ordinarily needed.  The default implementation returns YES if the driver parameter "WaitStates" is "3".  This is to accomodate the Multisound card.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 run\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b run\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Starts the clock on the receiver's DSP, thus allowing the processor to begin executing commands, and sets the receiver's status to MK_devRunning.  This opens the DSP if it isn't already open.  Returns 
+\b nil
+\b0  if the DSP couldn't be opened or run, otherwise returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 samplingRate\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (double)
+\b samplingRate\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the receiver's sampling rate. The default is determined by the method 
+\b defaultSamplingRate
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 segmentName:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (char *)
+\b segmentName:
+\b0 (int)
+\i whichSegment\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns a pointer to the name of the specified MKOrchMemSegment.  The name is not copied and should not be freed.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 segmentSink:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b segmentSink:
+\b0 (MKOrchMemSegment)
+\i segment\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns a special pre-allocated patchpoint (a SynthData) in the specified segment which may be used to write garbage.  It's commonly used as a place to send the output of idle UnitGenerators.  The patchpoint shouldn't be deallocated.  
+\i segment
+\i0  can be MK_xPatch or MK_yPatch.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 segmentSinkModulus:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b segmentSinkModulus:
+\b0 (MKOrchMemSegment)
+\i segment\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns a special pre-allocated patchpoint (a SynthData) in the specified segment, aligned for modulus addressing, which may be used to write garbage.  It's commonly used as a place to send the output of idle UnitGenerators.  The patchpoint shouldn't be deallocated.  
+\i segment
+\i0  can be MK_xPatch or MK_yPatch.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 segmentZero:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b segmentZero:
+\b0 (MKOrchMemSegment)
+\i segment\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns a special pre-allocated patchpoint (a SynthData) in the specified segment that always holds 0 and to which, by convention, nothing is ever written.  The patchpoint shouldn't be deallocated.  
+\i segment
+\i0  can be MK_xPatch or MK_yPatch.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28\fc1\cf1 sendSCIByte:\
+
+\pard\f3\b0\fi-1020\li3620\fc1\cf1 - 
+\f2\b sendSCIByte:
+\b0 (unsigned char)
+\i b
+\b\i0  
+\f3\b0 \
+
+\pard\tx3120\tx3620\tx4120\f2\li2620\fc1\cf1 \
+Send byte to DSP_STX of Serial Communications Interface of serial port.  The orchestra must be open with SerialPort output or input enabled.  Otherwise returns 
+\b nil
+\b0 .  The method is most often used in the implementation of a DSPSerialPortDevice subclass.\
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 sendSCIByte:toRegister:\
+
+\pard\f3\b0\fi-1020\li3620\fc1\cf1 - 
+\f2\b sendSCIByte:
+\b0 (unsigned char)
+\i b
+\b\i0  toRegister:
+\b0 (DSPSCITXReg)
+\i reg
+\f3\i0 \
+
+\pard\tx3120\tx3620\tx4120\f2\li2620\fc1\cf1 \
+Send byte to 
+\i reg
+\i0  of Serial Communications Interface of serial port.  The orchestra must be open with SerialPort output or input enabled.  Otherwise returns 
+\b nil
+\b0 .  The method is most often used in the implementation of a DSPSerialPortDevice subclass.\
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 serialPortDevice\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b serialPortDevice
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns the DSPSerialPortDevice subclass object that was set with 
+\b setSerialPortDevice:
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 serialSoundIn\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (BOOL)
+\b serialSoundIn
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets whether serialSoundIn is enabled.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 serialSoundOut\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (BOOL)
+\b serialSoundOut
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets whether serialSoundOut is enabled.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setDefaultSoundOutput\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setDefaultSoundOutput
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Resets serialSoundOut, hostSoundOut, serialPortDevice, etc. to produce the "default sound output" for the given hardware.  On NeXT hardware, the default sound output is the NeXT monitor's DAC.  On Intel-based hardware, this method sets up the card with the default serial port device, if any.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setFastResponse:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setFastResponse:
+\b0 (BOOL)
+\i yesOrNo\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 <<NeXT hardware only.>> Sets the size of the sound output buffer; two sizes are possible.  If 
+\i yesOrNo
+\i0  is YES, the smaller size is used, thereby improving response time but somewhat decreasing the DSP's synthesis power.  If it's NO, the larger buffer is used.  By default, an Orchestra uses the larger buffer.  Returns the receiver.  This method has no effect if sound output is done via the DSP serial port.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setHeadroom:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setHeadroom:
+\b0 (double)
+\i headroom\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the receiver's computation headroom, adjusting the tradeoff between processing power and reliability.  The argument should be in the range -1.0 to 1.0.  As you increase an Orchestra's headroom, the risk of falling out of real time decreases, but synthesis power is also weakened.  The default, 0.1, is a conservative estimate and can be decreased in many cases without heightening the risk of falling out of real time.\
+
+\fs16 \
+
+\fs28 The effective sampling period–the amount of time the Orchestra thinks the DSP has to produce a sample–is based on the formula\
+
+\fs16 \
+
+\pard\tx3620\tx4120\tx4620\fs28\li3120\fc0\cf0 (1.0/
+\b samplingRate
+\b0 ) * (1.0 
+\f3 - 
+\f2\b headroom
+\b0 ).\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setLocalDeltaT:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setLocalDeltaT:
+\b0 (double)
+\i val\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the offset, in seconds, that's added to the timestamps of commands sent to the receiver's DSP.  The offset is added to the delta time that's set with 
+\b MKSetDeltaT()
+\b0 .  This has no effect if the receiver isn't timed.  Retruns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setMonitorFileName:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setMonitorFileName:
+\b0 (char *)
+\i name\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the DSP monitor's file name to be used the next time the DSP is opend, as set with 
+\b setMonitorFileName:
+\b0 .  You should know what you're doing if you change the monitor!   The monitor name may only be changed if the object is closed.   Returns the receiver, or nil if the object is not closed.   See 
+\b -monitorFileName
+\b0 .  
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 \
+setOnChipMemoryConfigDebug:patchPoints:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setOnChipMemoryConfigDebug:
+\b0 (BOOL)
+\i debugIt
+\i0  
+\b patchPoints:
+\b0 (short)
+\i count\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets configuration of on-chip memory.  If 
+\i debugIt
+\i0  is YES, a partition is reserved for the DSP debugger; 
+\i count
+\i0  is the number of on-chip patchpoint locations that are reserved.  By default, the debugger isn't used and 11 patchpoints are reserved.  If 
+\i count
+\i0  is 0, the default is used.  By implication, this also sets the number of UnitGenerator arguments that can be set in L memory:  As more patchpoints are requested, fewer L memory UnitGenerator arguments are possible.  Attempts to set the patchpoint count such that no room is left for L arguments are ignored.  You may not reconfigure when the Orchestra is open.  
+\fs16  
+\fs28 Returns the receiver, or 
+\b nil
+\b0  if the configuration is unsuccessful.  \
+
+\pard\tx7140\b\fs16\li2100\fc0\cf0 \
+
+\fs28\fc1\cf1 setOffChipMemoryConfigXArg:yArg:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b\fc1\cf1 setOffChipMemoryConfigXArg:
+\b0 (float)
+\i xPercentage
+\i0  
+\b yArg:
+\b0 (float)
+\i yPercentage 
+\i0 \
+\
+
+\pard\tx3120\tx3620\tx4120\li2620\fc1\cf1 Sets configuration of offchip memory.   
+\i xPercentage
+\i0  is the percentage of off-chip memory devoted to x arguments.  
+\i yPercentage
+\i0  is the percentage of off-chip memory devoted to y arguments.    Passing a value of 0 for either uses the default value.    These percentages are expressed as numbers between 0.0 and 1.0.   If 
+\i xPercentage
+\i0  + 
+\i yPercentage
+\i0  is greater than 1.0, the settings are ignored and the method returns 
+\b nil
+\b0 .  You may not reconfigure when the Orchestra is open. \
+
+\b\fc0\cf0 \
+
+\pard\tx7140\li2100\fc0\cf0 setOutputCommandsFile:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setOutputCommandsFile:
+\b0 (char *)
+\i fileName\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets a file name to which DSP commands are to be written as a DSP Commands format soundfile.  A copy of the fileName is stored in the instance variable 
+\i outputCommandsFile
+\i0 .   This message is ignored if the receiver is not closed.  Playing of DSP Commands format soundfiles is currently (1995) implemented only for NeXT hardware.
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setOutputSoundfile:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setOutputSoundfile:
+\b0 (char *)
+\i fileName\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the soundfile to which sound samples are written.  The receiver must be closed; 
+\b nil
+\b0  is returned if it's open, otherwise returns the receiver.  A copy of 
+\i fileName
+\i0  is stored in the instance variable 
+\i outputSoundfile
+\i0 .    If you re-run the Orchestra, the file is rewritten. To specify that you no longer want to write a file when the Orchestra is re-run, close the Orchestra, then send 
+\b setOutputSoundfile:NULL
+\b0 .  When switching from soundfile writing to other forms of sound output,  note that you must explicitly send 
+\b setHostSoundOut:YES 
+\b0 or 
+\b setSerialSoundOut:YES 
+\b0 after setting the output soundfile to NULL. \
+\
+It is not permissable to have an output soundfile open and do host or serial port sound output at the same time.  \
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 setSamplingRate:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setSamplingRate:
+\b0 (double)
+\i newSRate\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the receiver's sampling rate to 
+\i newSRate
+\i0 , taken as samples per second.  The receiver must be closed–
+\b nil
+\b0  is returned if the receiver's status isn't MK_devClosed.  Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setSerialPortDevice:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setSerialPortDevice:
+\b0\i aDSPSerialPortDevice\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets an object that properly configures the DSP serial port for a given piece of hardware.   
+\i aDSPSerialPortDevice 
+\i0 should be a subclass of DSPSerialPortDevice.  The receiver must be closed when this message is sent.  Returns the receiver, or 
+\b nil
+\b0  if it isn't closed.  \
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 \
+setSerialSoundIn:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setSerialSoundIn:
+\b0 (BOOL)
+\i yesOrNo\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets whether the receiver, which must be closed, receives sound from the DSP serial port, as 
+\i yesOrNo
+\i0  is YES or NO.  Returns the receiver, or 
+\b nil
+\b0  if it isn't closed.   The protocol used depends on the object set with 
+\b setSerialPortDevice:
+\b0 . \
+
+\fs16 \
+\
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 setSerialSoundOut:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setSerialSoundOut:
+\b0 (BOOL)
+\i yesOrNo\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets whether the receiver, which must be closed, sends its sound signal to the DSP serial port, as 
+\i yesOrNo
+\i0  is YES or NO.  Returns the receiver, or 
+\b nil
+\b0  if it isn't closed.  The protocol used depends on the object set with 
+\b setSerialPortDevice:
+\b0 . \
+\
+Sending s
+\b etSerialSoundOut:YES
+\b0  also sends s
+\b etHostSoundOut:NO
+\b0  and 
+\b setOutputSoundfile:NULL
+\b0 .\
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 setHostSoundOut:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setHostSoundOut:
+\b0 (BOOL)
+\i yesOrNo\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 (NeXT hardware only).  Sets whether the receiver, which must be closed, sends its sound signal to the host DAC, as 
+\i yesOrNo
+\i0  is YES or NO.  Returns the receiver, or 
+\b nil
+\b0  if it isn't closed.  On NeXT hardware, the default is to send sound to the host DAC.\
+
+\fs16 \
+
+\fs28 Sending s
+\b etHostSoundOut:YES
+\b0  also sends 
+\b setOutputSoundfile:NULL
+\b0 ; you can't write samples to a soundfile and to the DAC at the same time.  Sending 
+\b setHostSoundOut:YES
+\b0  also sends s
+\b etSerialSoundOut:NO
+\b0 ; you can't write samples to the DSP serial port and to the DAC at the same time.\
+\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setSynchToConductor:\
+
+\f3\b0\fi-1020\li3620 - 
+\f2\b setSynchToConductor:
+\b0 (BOOL)
+\i yesOrNo
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\f3\b0\li2620\fc0\cf0 \
+
+\f2 The DSP sample counter and the System clock (i.e. the Conductor clock) are intended to keep the same time (except for fluctuations due to the internal buffering of the DSP and sound drivers).  Over a long-term  performance, however, the two clocks may begin to drift apart slightly, on the order of a few milliseconds per minutes.  If you are running with an extremely small "delta time" (cf. 
+\b MKSetDeltaT()
+\b0 ), you may want to synchronize the two clocks periodically.  By sending 
+\b setSynchToConductor:YES
+\b0 , you specify that the Orchestra is to synchronizes the DSP's notion of time to that of the Conductor's time every 10 seconds to account for slight differences between the rate of the two clocks.   This method assumes an Application object exists and is running and that the Conductor is in clocked mode.\
+\
+Note:  This method may cause time to go backwards in the DSP temporarily, and thus may cause distortion of envelopes, lost notes, etc.   Therefore, its use is recommended only when absolutely necessary.   An alternative method of synchronization (though no safer) can be found in the Ensemble programming example.\
+
+\b \
+
+\pard\tx7140\li2100\fc0\cf0 setTimed:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setTimed:
+\b0 (BOOL)
+\i isOrchTimed\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 If 
+\i isOrchTimed
+\i0  is YES, the receiver's DSP executes the commands it receives according to their timestamps.  If it's NO, it ignores the timestamps processes the commands immediately.  By default, an Orchestra is timed.   * Note that untimed mode was originally intended primarily as a means of inserting "out of band" messages into a timed stream and is not as efficient for high-bandwidth transfers normally associated with a Music Kit performance.  Note also that untimed mode is not deterministic with respect to precise timing. However, it has the advantage of providing the minimum possible latency.  It is permissable to change time timing mode during a Music Kit performance.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setUpDSP:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b setUpDSP\
+
+\b0\i\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 A subclass may implement this message.  It is sent after boot and before sound out is started.   The default implementation does nothing.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 sharedObjectFor:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b sharedObjectFor:
+\b0\i aKeyObj\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns, from the receiver's shared object table, the SynthData, UnitGenerator, or SynthPatch object that's indexed by 
+\i aKeyObj
+\i0  If the object is found,  
+\i aKeyObj
+\i0 's reference count is incremented. If it isn't found, or if the receiver isn't open, returns 
+\b nil
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 sharedObjectFor:type:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b sharedObjectFor:
+\b0\i aKeyObj 
+\b\i0 type:
+\b0 (MKOrchSharedType)
+\i type\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns, from the receiver's shared object table, the SynthData, UnitGenerator, or SynthPatch object that's indexed by 
+\i aKeyObj. 
+\i0  
+\i  
+\i0 The object must be allocated with the specified type.  If the object is found,  
+\i aKeyObj
+\i0 's reference count is incremented. If it isn't found, or if the receiver isn't open, returns 
+\b nil
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 sharedSynthDataFor:segment:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 -
+\f2\b  sharedSynthDataFor:
+\b0\i aKeyObj
+\i0  
+\b segment:
+\b0 (MKOrchMemSegment)
+\i whichSegment\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns, from the receiver's shared data table, the SynthData, UnitGenerator, or SynthPatch object that's indexed by 
+\i aKeyObj
+\i0 .  The object must be allocated in the specifed segment.  
+\i aKeyObj
+\i0  on the receiver in the specified segment.  If the object is found, 
+\i aKeyObj
+\i0 's reference count is incremented.  If it isn't found, or if the receiver isn't open, returns 
+\b nil
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 sharedSynthDataFor:segment:length:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 -
+\f2  
+\b sharedSynthDataFor:
+\b0\i aKeyObj
+\i0  \
+
+\b\fi0 segment:
+\b0 (MKOrchMemSegment)
+\i whichSegment
+\i0  \
+
+\b length:
+\b0 (int)
+\i length\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns, from the receiver's shared data table, the SynthData, UnitGenerator, or SynthPatch object that's indexed by 
+\i aKeyObj
+\i0 .  The object must be allocated in the specifed segment and have a length of 
+\i length
+\i0 .  
+\i aKeyObj
+\i0  on the receiver in the specified segment.  If the object is found, 
+\i aKeyObj
+\i0 's reference count is incremented.  If it isn't found, or if the receiver isn't open, returns 
+\b nil
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 sharedSynthDataFor:segment:type:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 -
+\f2\b  sharedSynthDataFor:
+\b0\i aKeyObj
+\i0  
+\b segment:
+\b0 (MKOrchMemSegment)
+\i whichSegment 
+\b\i0 type:
+\b0 (MKOrchSharedType)
+\i type\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns, from the receiver's shared data table, the SynthData, UnitGenerator, or SynthPatch object that's indexed by 
+\i aKeyObj
+\i0 .  The object must be allocated in the specifed segment with the specified type.  
+\i aKeyObj
+\i0  on the receiver in the specified segment.  If the object is found, 
+\i aKeyObj
+\i0 's reference count is incremented.  If it isn't found, or if the receiver isn't open, returns 
+\b nil
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 sharedSynthDataFor:segment:length:type:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 -
+\f2  
+\b sharedSynthDataFor:
+\b0\i aKeyObj
+\i0  \
+
+\b\fi0 segment:
+\b0 (MKOrchMemSegment)
+\i whichSegment
+\i0  \
+
+\b length:
+\b0 (int)
+\i length \
+
+\b\i0 type:
+\b0 (MKOrchSharedType)
+\i type\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns, from the receiver's shared data table, the SynthData, UnitGenerator, or SynthPatch object that's indexed by 
+\i aKeyObj
+\i0 .  The object must be allocated in the specifed segment, have a length of 
+\i length 
+\i0 and have a type 
+\i type
+\i0 .  
+\i aKeyObj
+\i0  on the receiver in the specified segment.  If the object is found, 
+\i aKeyObj
+\i0 's reference count is incremented.  If it isn't found, or if the receiver isn't open, returns 
+\b nil
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 sharedTypeForName:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 -
+\f2  (int)
+\b sharedTypeForName:
+\b0 (char *)
+\i aName
+\i0 \
+
+\i\fs16\fi0 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns the shared type for the specified name.  This type may be passed to any of the sharedSynthData or sharedObject Orchestra methods.   If a shared type with the specified name doesn't already exist, it is created.\
+
+\pard\tx7140\b\fs16\li2100\fc0\cf0 \
+
+\fs28 sineROM\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b sineROM\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a SynthData object representing the SineROM.  You should never deallocate this object.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 soundOut\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (BOOL)
+\b soundOut
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets whether soundOut is enabled.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 startSoundWhenOpening\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (BOOL)
+\b startSoundWhenOpening\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc1\cf1 Returns YES.   Subclass can override, if desired.  For example, the ArielQP class overrides this method to return NO.\
+
+\fs16\fc0\cf0 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 stop\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2\b stop\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Stops the clock on the receiver's DSP, thus halting execution of commands, and sets the receiver's status to MK_devStopped.  This opens the DSP if it isn't already open.  Returns 
+\b nil
+\b0  if an error occurs, otherwise returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 supportsSamplingRate:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f2 (BOOL)
+\b supportsSamplingRate:
+\b0 (double)aRate
+\b \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns YES if the DSP or driver supports the specified sampling rate (or half that rate).   The implementation forwards the message 
+\b supportsSamplingRate: 
+\b0 to the serial port device, if serialSoundOut or serialSoundIn is enabled.  Otherwise, for NeXT hardware, it returns YES if aRate is 22050 or 44100.  A subclass may override this method.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 systemOverhead\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 -
+\f2  (double)
+\b systemOverhead
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 A subclass may override this method to return a number between -1 and 1 to compensate for the difference between the subclass' monitor and the default Music Kit monitor.   For example, returning 0.1 means that the subclass system uses 10% more of the DSP than the default Music Kit system.  The point of this mechanism is so that a single headroom value provided by the user works for all DSPs.\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 tickSize\
+
+\pard\f3\b0\fi-1020\li3620\fc1\cf1 -(
+\f2 int
+\f3 ) 
+\f2\b tickSize
+\f3\b0 \
+
+\pard\tx7140\f2\b\li2100\fc0\cf0 	\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Returns the tick size used by synthesis unit-generators.  Each unit generator runs for this many samples, and patchpoints are this length.  Since 1989, the tick-size used on the DSP has been 16.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+trace:msg:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 -
+\f2  
+\b trace:
+\b0 (int)
+\i typeOfInfo
+\i0  
+\b msg:
+\b0 (char *)
+\i fmt,...\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Used to print debugging information.  The arguments to the 
+\b msg:
+\b0  keyword are like those to 
+\b printf()
+\b0 .  If the 
+\i typeOfInfo
+\i0  trace is set, prints to stderr.\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 upSamplingOutput \
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 -
+\f2  
+\b upSamplingOutput
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 When sending sound to the DSP serial port, the sound may need to be up-sampled if the current sampling rate is supported by the serial port device only as a "half sampling rate" (see DSPSerialPortDevice for more info.)  Returns YES if we are upsampling the sound before sending it to its output location.   Subclasses may override this method.   For example, the ArielQPSat class, when sending its sound to the hub DSP, forwards this message to the ArielQP obect that represents the hub DSP.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+writeSymbolTable:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 -
+\f2  
+\b writeSymbolTable:
+\b0 (char *)
+\i fileName\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\i0\fs28\fc1\cf1 Writes out the state of the Orchestra instance's symbol table as a DSP 
+\b .lod 
+\b0 file.  This file can then be loaded into the DSP debugging application, Ariel's Bug56, for debugging purposes.  Note that since the Orchestra changes the running DSP program dynamically, this 
+\b .lod
+\b0  file represents a snap-shot of the DSP symbol table at a particular instant.   This method is implemented in terms of UnitGenerator methods 
+\b -writeSymbolsToStream: 
+\b0 and 
+\b  -instanceNumber
+\b0 .
+\b \
+
+\b0\fc0\cf0 \
+
+}

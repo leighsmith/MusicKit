@@ -1,0 +1,72 @@
+.TH LIB56000 1 "1 June 1987" "Motorola Inc."
+.SH NAME
+lib56000 \- Motorola DSP56000 Librarian
+.SH SYNOPSIS
+\fBlib56000\fR
+[ \fB\-a\fR | \fB\-c\fR | \fB\-d\fR | \fB\-l\fR | \fB\-r\fR | \
+\fB\-u\fR | \fB\-x\fR ]
+library
+[files...]
+.SH DESCRIPTION
+.I lib56000
+is a utility that allows separate files to be grouped
+together into a single file.  The resulting library file
+can then be used for linking by the DSP56000
+Cross Linker program or for general-purpose archival
+storage.
+.LP
+.I library
+is an operating system compatible filename (including optional
+pathname) indicating the library
+file to create or access.  If no extension is supplied,
+the librarian will automatically append
+.I .lib
+to the filename.  If no
+pathname is specified, the librarian will look for the
+library in the current directory.
+.I files
+is a list of operating system compatible filenames
+separated by blanks.  For input operations the filenames may also
+contain an optional pathname; the path is stripped when the file
+is written to the library.  For output operations only the filename
+should be used to refer to library modules.
+.SH OPTIONS
+Only one of the following command line options may be
+given for each invocation of the librarian.
+Option letters may be
+entered in either upper or lower case.  If no option
+is given, the librarian operates as if the \fB\-U\fR option were
+specified.
+.IP \fB\-a\fR
+This option adds the modules in the file list to the
+named library.  The library file must exist,
+and the modules must not already be in the library.
+.IP \fB\-c\fR
+Create a new library file and add any specified modules to
+it.  If the library file already exists, an error is issued.
+.IP \fB\-d\fR
+Delete named modules from the library.  If the module
+is not in the library, an error is issued.
+.IP \fB\-l\fR
+List library contents.  This option lists the module name
+as contained in the library header, the module size (minus
+library overhead), and the date and time the file was
+stored into the library.  The listing output is routed to
+standard output so that it may be redirected to a file if
+desired.
+.IP \fB\-r\fR
+This option replaces the named modules in the given library.
+The modules must already be present in the library file.
+.IP \fB\-u\fR
+This option updates the specified modules if they exist in
+the library; otherwise it adds them to the end of the library
+file.
+.IP \fB\-x\fR
+Extract named modules from the library.
+The resulting files are given the name of the modules as
+stored in the library module header.  All files are created in the current
+working directory.
+.SH "SEE ALSO"
+\fIMotorola DSP56000 Librarian Reference Manual\fR, Motorola Inc., 1987.
+.br
+lnk56000(1)

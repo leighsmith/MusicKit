@@ -1,0 +1,47 @@
+/usr/local/lib/dsp/test/README
+
+This directory contains examples of DSP test programs in the style used
+to develop unit generators macros for the Music Kit.
+
+Each test file contains a DSP assembly language main program which invokes
+the macro under test, passing it pointers to test data.  The test file can
+be assembled and loaded into Bug56, the DSP56001 symbolic debugger.
+Single-stepping once through the macro will normally flush out any bugs in
+the code.
+
+See the comments in the DSP source code for instructions on how to assemble
+the code and run the DSP debugger.
+
+HINTS:
+
+	If you get assembly errors, search in the .lst file for "ERROR --".
+
+	The "finish" button in Bug56 will finish DO loops as well as the
+	current subroutine level.
+
+	The SWI instruction can be used to halt your test program when running
+	under Bug56.  It will cause an "unrecognized breakpoint" to occur, 
+	passing control back to you.  A SWI is treated as a NOP while 
+	single-stepping.
+
+	The dspasm shell-script (in this directory) provides a convenient
+	way to assemble your macros.  For example, "dspasm mk_ex1" will
+	assemble example 1.  "dspasm -I/me/my_dsp_dir mk_ex1" will assemble
+	example 1 and look in /me/my_dsp_dir for macros and include files not 
+	found in the normal directories under /usr/local/lib/dsp.
+
+	If you need to alter something under /usr/local/lib/dsp, create your
+	own copy (e.g., via "cp -r -p /usr/local/lib/dsp /me; ln -s /me/dsp /dsp")
+	and use the dspasml shell-script (in this directory) instead of dspasm.
+
+
+DSP Assembler pitfalls
+		
+	You cannot "define" a name which is also a formal parameter of an invoked macro.
+
+	Expressions and argument lists CANNOT HAVE ANY SPACES IN THEM.
+
+
+SEE ALSO
+	/LocalDeveloper/Examples/MusicKit/exampunitgenerator
+

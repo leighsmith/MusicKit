@@ -1,0 +1,633 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f3\fmodern Ohlfs;}
+\paperw16220
+\paperh13060
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f1 „
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+4.0 Release Updates Copyright 
+\f1 „
+\f0 1993 by CCRMA, Stanford University.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 WaveTable\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 A WaveTable represents a single period of a sound waveform as a series of samples. WaveTable is an abstract class that's succeeded by two inheriting classes:  Samples and Partials.  The Samples subclass lets you define a WaveTable through association with a Sound object or soundfile; Partials lets you build a waveform by adding sine wave components.  If you're interested in using Wavetables to create a library of timbres you should refer to the descriptions of the Samples and Partials subclasses.  Detailed familiarity with the WaveTable class, in this case, isn't necessary.\
+
+\fs16 \
+
+\fs28 WaveTable objects are designed to be used as 
+\i lookup tables
+\i0  for oscillator UnitGenerators such as OscgafiUG.  When it's instructed to run, the oscillator downloads the WaveTable's data to a portion of memory on the DSP and then cycles over the data to generate a timbre that's defined by the shape of the waveform that the data represents.  To assist this process, a WaveTable object maintains two separate arrays of data pointed to by the 
+\b dataDSP
+\b0  and 
+\b dataDouble
+\b0  instance variables: \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\tx4620\fs28\fi-520\li3120\fc0\cf0 ∑	
+\b dataDSP
+\b0  contains values of type DSPDatum, the type used by the Music Kit to represent the DSP's 24-bit fixed-point format.  It's this array that's downloaded to the DSP by an oscillator.  \
+
+\fs16 \
+
+\fs28 ∑	
+\b dataDouble
+\b0  contains doubles.  It's provided as means for representing WaveTable data on the host without the loss of precision implied by the DSPDatum type.\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 Subclasses of WaveTable are responsible for filling at least one of these arrays with data; the values in both arrays are assumed to be within the range (-1.0, 1.0).  The mechanism for filling the chosen array is defined by the subclass in its implementation of 
+\b fillTableLength:scale:
+\b0 .  Which array to fill (or whether to fill both) is at the discretion of the subclass designer.  For example, the Partials subclass fills the 
+\b dataDouble
+\b0  array only; Samples, on the other hand, fills both arrays.\
+
+\fs16 \
+
+\fs28 The 
+\b fillTableLength:scale:
+\b0  method is never invoked directly; instead, it's invoked as needed when a WaveTable object receives a request for its data.  WaveTable defines two fundamental methods, 
+\b dataDSP
+\b0  and 
+\b dataDouble
+\b0 , that return pointers to their namesake arrays.  Additional methods let you scale and size the data: \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\tx4620\fs28\fi-520\li3120\fc0\cf0 ∑	
+\b dataDSPScale:
+\b0  lets you specify, as a double, the amplitude scaling factor of the dataDSP array.\
+
+\fs16 \
+
+\fs28 ∑	
+\b dataDSPLength:
+\b0  lets you specify the length, in samples, of the dataDSP array.\
+
+\fs16 \
+
+\fs28 ∑	
+\b dataDSPLength:scale:
+\b0  scales and sizes the dataDSP array.\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 An analogous set of methods scales and sizes the 
+\b dataDouble
+\b0  array.  Conversion between the 
+\b dataDSP
+\b0  and 
+\b dataDouble
+\b0  arrays is provided by these methods; for example, if you invoke one of the 
+\b dataDSP
+\b0  retrieval methods before the array has been filled with data, the method automatically fills 
+\b dataDSP
+\b0  with data converted from the 
+\b dataDouble
+\b0  array.  If neither array has been filled, 
+\b fillTableLength:scale:
+\b0  is invoked. \
+\
+On the lowest level, one can set an oscillator's WaveTable object directly.  However, WaveTables are usually used as parameter values in Note objects as set through Note's 
+\b setPar:toWaveTable:
+\b0  method.  The Music Kit's FM and wavetable SynthPatches define five parameters that take WaveTables as values:\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\tx4620\fs28\fi-520\li3120\fc0\cf0 ∑	MK_waveform (or its synonym MK_waveform1) is the most common WaveTable parameter.  For the wavetable SynthPatches, it defines the WaveTable that's used.  For the FM SynthPatches, it defines the WaveTable used by the first modulator.\
+
+\pard\tx3120\tx3620\tx4120\tx5540\fi-520\li3120\fc0\cf0 ∑	MK_waveform0	Waveform for the main oscillator that's used when the waveformEnv, if any, is at the value 0.\
+∑	MK_m1Waveform	Waveform of the first modulator,  if any.\
+∑	MK_m2Waveform	Waveform of the second modulator,  if any .\
+∑	MK_vibWaveform	Waveform of the vibrato.\
+\
+Other parameters defined by the Music Kit, but not used in any of the standard SynthPatches are:\
+\
+∑	MK_m3Waveform	Waveform of the third modulator,  if any.\
+∑	MK_m4Waveform	Waveform of the fourth modulator,  if any .\
+∑	MK_c2Waveform	Waveform of the second carrier.\
+∑	MK_c3Waveform	Waveform of the third carrier.\
+\
+
+\pard\tx3120\tx3620\tx4120\li2620\fc0\cf0 The WaveTable class defines two instance variables, 
+\b dataDouble
+\b0  and 
+\b dataDSP
+\b0 , that point to arrays of sampled data.  The 
+\b dataDSP
+\b0  array contains values of type DSPDatum, a type used to represent the DSP's 24-bit fixed-point format; 
+\b dataDouble
+\b0  contains 
+\b double
+\b0 s.  The arrays are retrieved through the methods 
+\b dataDSP:...
+\b0  and 
+\b dataDouble:...
+\b0 .  Both of these methods can be invoked with additional keywords indicating the length and amplitude scaling of the data, as explained below.  When invoking one of these methods, you needn't know which array was actually filled by the subclass–if the array that you want hasn't yet been filled, it's converted from the data in the other array.  For example, the Partials subclass fills the 
+\b dataDouble
+\b0  array in its implementation of 
+\b fillTableLength:scale:
+\b0 .  When 
+\b dataDSP:
+\b0  is sent to a Partials object, the 
+\b dataDSP
+\b0  array is filled with data that's converted from 
+\b dataDouble
+\b0 .  If neither array is filled when a data retrieval message is received, 
+\b fillTableLength:scale:
+\b0  is automatically sent to the object.\
+
+\fs16 \
+
+\pard\b\fs28\li2620\fc0\cf0 Note:  
+\b0 If you create a subclass that fills both data arrays in its implementation of 
+\b fillTableLength:scale:
+\b0 , the arrays should always have the same number of elements.\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 The 
+\b length:
+\b0  keyword to the 
+\b dataDSP:...
+\b0  and 
+\b dataDSP:...
+\b0  methods causes the retrieved array to be resized to contain the specified number of samples.  You can also scale the amplitudes of the data by a factor specified as the argument to the 
+\b scaling:
+\b0  keyword.  Both resizing and scaling are performed through invocations of 
+\b fillTableLength:scale:
+\b0 , thus the subclass must define how to perform these operations.  By convention, a subclass should define a default length that's used if a data retrieval method is called with a 
+\b length:
+\b0  argument of 0.  A scaling factor of 0.0 should normalize the data to fit within the range -1.0 to 1.0.  Samples and Partials both follow these conventions.\
+
+\fs16 \
+
+\fs28 A WaveTable object's current length and scale are stored in the instance variables 
+\b length
+\b0  and 
+\b scaling
+\b0 , respectively; maintenance of these variables is a subclass responsibility.  When a WaveTable data retrieval method is invoked, the data is recomputed (through an invocation of 
+\b fillTableLength:scale:
+\b0 ) only if the value of the new length or scale request is different from the value of the existing instance variable, or if the 
+\b length
+\b0  instance variable is currently 0.  Thus, a subclass can force the data to be recomputed (the next time a data retrieval method is invoked) by setting the 
+\b length
+\b0  variable to 0.\
+\
+WaveTables are also frequently used to store data for other purposes, such as waveshaping synthesis. \
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in WaveTable
+\i0 	int	length;\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 double	scaling;\
+DSPDatum	*dataDSP;\
+double	*dataDouble;\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 length 	Length of the data arrays, in elements (samples).\
+
+\fs16 \
+
+\fs28 scaling 	Amplitude scaling factor; 0.0 indicates normalization.\
+
+\fs16 \
+
+\fs28 dataDSP 	Array of 24-bit fixed-point data.\
+
+\fs16 \
+
+\fs28 dataDouble 	Array of double-precision floating-point data.\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Creating a WaveTable instance	
+\f1 - 
+\f0 copy\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 free\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Modifying the instance	
+\f1 - 
+\f0 init\
+
+\fs16 \
+
+\fs28 Querying the instance	
+\f1 - 
+\f0 length\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 scaling\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Computing the waveform	
+\f1 - 
+\f0 fillTableLength:scale:\
+
+\fs16 \
+
+\fs28 Retrieving data	
+\f1 - 
+\f0 dataDSP\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 dataDSPLength: \
+
+\f1 - 
+\f0 dataDSPLength:scale: \
+
+\f1 - 
+\f0 dataDSPScale: \
+
+\f1 - 
+\f0 dataDouble\
+
+\f1 - 
+\f0 dataDoubleLength: \
+
+\f1 - 
+\f0 dataDoubleLength:scale: \
+
+\f1 - 
+\f0 dataDoubleScale:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Archiving the instance	
+\f1 - 
+\f0 read:\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 -
+\f0  write:\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 copy\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b copy\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Creates and returns a new WaveTable as a copy of the receiver\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 dataDSP\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (DSPDatum *)
+\b dataDSP\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a pointer to the receiver's 
+\b dataDSP
+\b0  array.  Implemented as an invocation of 
+\b dataDSPLength:scale:
+\b0 , with the 
+\b length
+\b0  and 
+\b scaling
+\b0  instance variables as arguments.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 dataDSPLength:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (DSPDatum *)
+\b dataDSPLength:
+\b0 (int)
+\i aLength\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns a pointer to the receiver's 
+\b dataDSP
+\b0  array.  Implemented as an invocation of 
+\b dataDSPLength:scale:
+\b0 , with 
+\i aLength
+\i0  and the 
+\b scaling
+\b0  instance variable as arguments.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 dataDSPLength:scale:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (DSPDatum *)
+\b dataDSPLength:
+\b0 (int)
+\i aLength 
+\b\i0 scale:
+\b0 (double)
+\i aScaling\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns a pointer to the receiver's 
+\b dataDSP
+\b0  array, recomputing the data if necessary (as defined in the class description).  The array is sized and scaled according to the arguments and the 
+\b length
+\b0  and 
+\b scaling
+\b0  instance variables are set to these values.  If the receiver can't fill the array, NULL is returned.  You should neither modify nor free the data returned by this method.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 dataDSPScale:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (DSPDatum *)
+\b dataDSPScale:
+\b0 (double)
+\i aScaling\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns a pointer to the receiver's 
+\b dataDSP
+\b0  array.  Implemented as an invocation of 
+\b dataDSPLength:scale:
+\b0 , with the 
+\b length
+\b0  instance variable and 
+\i aScaling
+\i0  as arguments.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 dataDouble\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double *)
+\b dataDouble\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a pointer to the receiver's 
+\b dataDouble
+\b0  array.  Implemented as an invocation of 
+\b dataDoubleLength:scale:
+\b0 , with the 
+\b length
+\b0  and 
+\b scaling
+\b0  instance variables as arguments.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 dataDoubleLength:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double *)
+\b dataDoubleLength:
+\b0 (int)
+\i aLength\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns a pointer to the receiver's 
+\b dataDouble
+\b0  array.  Implemented as an invocation of 
+\b dataDoubleLength:scale:
+\b0 , with 
+\i aLength
+\i0  and the 
+\b scaling
+\b0  instance variable as arguments.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 dataDoubleLength:scale:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double *)
+\b dataDoubleLength:
+\b0 (int)
+\i aLength
+\i0  
+\b scale:
+\b0 (double)
+\i aScaling\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns a pointer to the receiver's 
+\b dataDouble
+\b0  array, recomputing the data if necessary (as defined in the class description).  The array is sized and scaled according to the arguments and the 
+\b length
+\b0  and 
+\b scaling
+\b0  instance variables are set to these values.  If the array cna't be filled, NULL is returned.  You should neither modify nor free the data returned by this method.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 dataDoubleScale:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double *)
+\b dataDoubleScale:
+\b0 (double)
+\i aScaling\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns a pointer to the receiver's 
+\b dataDouble
+\b0  array.  Implemented as an invocation of 
+\b dataDoubleLength:scale:
+\b0 , with the 
+\b length
+\b0  instance variable and 
+\i aScaling
+\i0  as arguments.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 fillTableLength:scale:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b fillTableLength:
+\b0 (int)
+\i aLength
+\i0  
+\b scale:
+\b0 (double)
+\i aScaling\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Computes the receiver's data, sizing and scaling according to the arguments.  This is a subclass responsibility method; a subclass can implement the method to fill the 
+\b dataDSP
+\b0  array, the 
+\b dataDouble
+\b0  array, or both.  If only one of the arrays is computed and filled, the other should be freed and its pointer set to NULL.  If the data can't be computed, both arrays should be freed and 
+\b nil
+\b0  returned.  Otherwise, the receiver should be returned.\
+\
+
+\fc1\cf1 Note that the 
+\i scaling
+\i0  and 
+\i length
+\i0  instance variables must be set by the subclass' 
+\b fillTableLength:scale: 
+\b0 method.\
+
+\fs16\fc0\cf0 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 free\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b free\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Frees 
+\b dataDSP
+\b0  and 
+\b dataDouble
+\b0 , and then frees the receiver itself.  This method also removes the receiver's name, if any, from the Music Kit name table.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 init\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b init\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Initializes the receiver.  This method should be invoked when a new WaveTable is created.  You can also use it to reset, or empty, an existing object.  If you override this method in a subclass, you should include 
+\b [super init]
+\b0  in the implementation.  Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 length\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (int)
+\b length\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the length, in elements, of the data arrays (the two arrays should always contain the same number of elements).  A return value of 0 indicates that the arrays haven't been filled, or that the data needs to be recomputed.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 scaling\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double)
+\b scaling\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the factor by which the values (sample amplitues) in the data arrays are scaled.  A return value of 0.0, the default, indicates that the values are normalized, or scaled to fit perfectly within the range -1.0 to 1.0.\
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+}

@@ -1,0 +1,4 @@
+TARGET_ARCHS = i386
+
+-include $(LOCALMAKEFILEDIR)/Makefile.local_postamble
+include /NextDeveloper/Makefiles/driverkit/Makefile.bundle_postamble

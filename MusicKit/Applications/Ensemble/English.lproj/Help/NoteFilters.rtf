@@ -1,0 +1,115 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\fmodern Courier;}
+\paperw11380
+\paperh10400
+\margl120
+\margr120
+{\colortbl;\red0\green0\blue0;}
+{\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i\ulnone\fs28\fc0\cf0{\NeXTHelpMarker0 \markername NoteFilters;}
+¬}\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i\ulnone\fs28\fc0\cf0 Note Filters\
+
+\b0\i0 \
+A note filter is an object which does something based on  the input note.  For example, it may modify it, analyze it, generate new notes based on it, or throw it away.  It can then pass that note and/or its own new note or notes to an instrument or another note filter.   Any number of note filters may be chained together between MIDI and score input and the instruments.  Each note filter chain may have the same set of note filters as another, or completely different ones. Note filter functionality can range from simple thinning of notes, to complex MIDI processing during a performance, or algorithmic composition with real-time interactive modification.  One note filter which determines key number range and transposition is always included for each input, and its interface appears directly in the document window.  Other note filters are instantiated by selecting from a pop-up menu, and their interfaces are displayed in separate panels as required.  The note filters are always connected in the order that they appear in the menu, from the top down (the Note Range and Transposition filter is always first).\
+\
+Current 
+\i Ensemble 
+\i0 note filters include:\
+\
+	· MIDI data filtering and thinning\
+	· MIDI data mapping and scaling\
+	· Fractal melody generation based on sequences of note sets or live MIDI input\
+	· Harmonics synthesis based on input notes\
+	· Note delay and echoing\
+	· Chord generation with multiple chord maps in triggered or timed sequence\
+	· Quadraphonic sound path generation (via an external MIDI-controlled audio fader)\
+	· Algorithmic stereo spatial location of DSP instruments\
+
+\b\i \
+
+{{\NeXTHelpMarker1614 \markername MIDIFilter;}
+¬}\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i\ulnone\fs28\fc0\cf0 Midi Filter\
+\
+
+\b0\i0 The MIDI Filter provides various functions related to filtering MIDI input.  The Data Through Switch allows an external MIDI controller to determine whether notes are passed on to the following filters and instruments, or blocked.  The Controller Filter allows selective and adjustable thinning or blocking of arbitrary MIDI controllers.\
+Key Number and Velocity Adjustment does just what it says.  The Double Attack Filter allows MIDI Note Ons to be "debounced", useful for some pitch-to-MIDI converters, for examples.  In this filter, a note which is identical or related by an octave or fifth to a previous note within a specified time window is filtered out.\
+\
+
+{\b\i{\NeXTHelpMarker2291 \markername DataMap;}
+¬}\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i\ulnone\fs28\fc0\cf0 Data Map
+\b0\i0 \
+\
+This note filter maps one MIDI controller or Music Kit parameter to another.  An optional graphic function can be used to define the relationship between input and output values.  The original data is blocked unless the "thru" button is selected.   The "x2" button can be used to indicate that the mapping is to occur on the second input note within a short time, analagous to acting on a mouse-up instead of a mouse-down.  "x4" indicates to wait for a "double click", or the fourth note within a short time.   The time window can be adjusted at the bottom of the panel.  The "Sequential Mapping" switch enables a mode wherein all mappings which have the same input controller are performed sequentially, that is, one per note, in a loop.  Otherwise they are all performed for every input note. \
+\
+
+{\b\i{\NeXTHelpMarker3099 \markername FractalMelody;}
+¬}\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i\ulnone\fs28\fc0\cf0 Fractal Melody Generator
+\b0\i0 \
+\
+This Note Filter controls a Music Kit Performer which generates a melody, based on the selection of notes from a given set of notes.  The shape of the melody is determined by a fractal function.  \
+\
+In the "static" mode, up to 16 note sets may be pre-selected.  Each note set may be given a duration, and the performer will cycle through the note sets.  Alternatively, each note set may be assigned a Program Change number, and the sets can be selected via external MIDI control.  To start a static fractal melody, select some notes and hit the "Play" button on the main interface panel.\
+\
+In the "dynamic" mode, there is only one note set, which is constructed out of notes that are arriving in real time.  Thus, the resulting melody reflects what is being played in various ways, according to the options selected.\
+\
+Both modes allow notes to have "gravity".  Notes are selected statistically more often than their neighbors in the note set if their gravity is higher than their neighbor's gravity.  For example, if the note set consists of all white keys, then increasing the gravity of C, E, and G will increase the sense of C major.  In dynamic mode, note gravities are built up from a combination of repetition, dynamics, and durations.  The amount of importance given these factors may be adjusted from the interface panel.\
+\
+Three different fractals control pitch, velocity, and the occurence of rests.  In addition, a fourth fractal may be used to add an arbitrary MIDI controller value to each note, to control some instrument parameter like balance or brightness.   The parameters of the fractal may be adjusted.  Increasing the number of terms adds higher frequency components to the melody shape, increasing its complexity.  Adjusting the fractal dimension and lacunarity changes the relationships between the components of the function in subtle ways.  Increasing the time scaling causes the note selection to proceed more slowly through the function, making the details of the fractal shape more audible. The fractals are repeatable for any given set of coeeficients and random seeds.\
+
+\fc1\cf1 \
+
+{\b\i\fc0\cf0{\NeXTHelpMarker5223 \markername Quad;}
+¬}\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i\ulnone\fs28\fc0\cf0 Quad
+\b0\i0 \
+
+\fc1\cf1 \
+The new Quad notefilter/performer combination is used to generate simulated quadraphonic sound paths, using an external MIDI-controlled audio fader.  Each Quad instance controls four channels of the audio level.  Each channel should be fed the same mono input, and the output levels are modulated by Ensemble to simulate a specified sound path.  If you also feed the original input signal to a reverb unit, then mix the output of the reverb unit with each of the four MIDI-fader outputs, one obtains a fairly realistic motion and distance effect. The Quad filter also sends MIDI pitchbend data which, if recognized by the MIDI synth or DSP instrument, simulates doppler shift.  If used judicously, this adds an especially effective realism to the simulation.\
+\
+The sound path is the result of the modulation of two fractal functions.  By adjusting the various fractal parameters, an infinite variety of paths can be generated.\
+\
+Quad can also be used to generate a sound path under manual control.  Just specify the MIDI controller numbers coming from your joystick or other controller which correnspond to the X and Y axes of the simulates sound space. The "gravity" controllers can be used to  collapse the apparent sound space around the corresponding speaker, as a special effect.\
+\
+
+\b\i  
+{{\NeXTHelpMarker6515 \markername Harmonics;}
+¬}\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i\ulnone\fs28\fc1\cf1 Harmonics\
+ \
+
+\b0\i0 This interesting note filter also generates its own notes, based on those it receives.  For each noteOn it receives, it algorithmically generates notes with frequencies which are harmonically related to the input note.  The rate of harmonics generation and their durations are adjustable, as are which harmonic numbers are used.  The harmonics can be either completely random, or controlled by a fractal function.  External MIDI controllers can be assigned to control some of the parameters (e.g., from foot pedals).   The brightness control simply lowers the level of higher harmonics.   The pitchbend control causes pitchbend to be used to compensate for the equal-tempered frequencies of external MIDI synthesizers (DSP instruments will generate true harmonic frequencies.\
+
+\b\i\fc0\cf0 \
+
+{{\NeXTHelpMarker7305 \markername Echos;}
+¬}\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i\ulnone\fs28\fc0\cf0 Echos
+\b0\i0 \
+\
+The Echos note filter generates one or more copies of input notes, delayed by a specified amount of time.\
+Several echos with different timings may be set up.  One or two arbitrary parameters may be sent with the delayed notes, for example, to cause a change in timbre or bearing.\
+
+\b\i \
+
+{{\NeXTHelpMarker7594 \markername ChordMap;}
+¬}\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i\ulnone\fs28\fc0\cf0 Chord Map
+\b0\i0 \
+\
+The Chord Map filter can be used to cause several notes to be generated from a single input note.  The input note is not included.  Chord notes are specified by selecting the "Enter Notes" button, picking the "Relative to:" note, then playing notes from your MIDI keyboard or the Ensemble virtual Clavier.  Several maps may be created, and selected arbitrarily using the MIDI controller specified at the bottom of the panel.   Each chord note may include an arbitrary additional parameter value.\
+
+\b\i \
+
+{{\NeXTHelpMarker8103 \markername Location;}
+¬}\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i\ulnone\fs28\fc0\cf0 Location
+\b0\i0 \
+\
+The location note filter provides several ways to algorithmically add a bearing parameter to notes.
+\b\i \
+
+\b0\i0 The Spread option cycles through a specified number of positions evenly distributed from left to right.\
+The Random option generates a random position for each note. The Note option distributes according to the key number of the note.  The Sweep option algorithmically generates note updates containing bearings which move continuously back and forth at the specified rate.\
+\
+
+{\b\i{\NeXTHelpMarker8588 \markername MIDIometer;}
+¬}\pard\tx720\tx1440\tx2160\tx2880\tx3780\tx4320\tx6480\f0\b\i\ulnone\fs28\fc0\cf0 MIDIometer
+\b0\i0 \
+\
+The MIDIometer is a useful analysis tool which displays the value of up to four parameters for all notes passing through.
+\b\i \
+
+}

@@ -1,0 +1,63 @@
+First, check in the file /LocalLibrary/Documentation/MusicKit+DSP/Administration/KnownBugs and see if anything has been written about the problem already.
+
+To diagnose the problem, you will almost certainly want to build a
+debuggable version of the libraries.  To do this, say "make debug" (to
+build the libraries, but not install them) or "make debug_install" (to
+build the libraries and install them.)  The installed libraries are
+*_g.a.  Note that the source code is quite different in style from the
+programming examples in that the former was never intended for "public
+consumption."  There are few comments and there's no guarantee about
+the accuracy of the comments that are there.
+
+When you have a bugfix, please email an entry in the format below to
+musickit@ccrma.stanford.edu.
+--------------------------------------------------------------------------
+BugNumber: <if any.  If not, please include a description of the bug.>
+Version: <Version of the CCRMA software you are working with>
+Project: <Project name>
+Title: <one-line description>
+Description: <complete description>
+Progress: <anything relevant about the fix, e.g., desired enhancements>
+Diffs: <output of the UNIX diff program run as explained below>
+ReplacedFile(s): <NeXTMail attachment containing folder of changed files>
+--------------------------------------------------------------------------
+
+If a bug is not completely fixed, please enter a new bug characterizing
+the status after your fix.
+
+To submit ENHANCEMENTS of any kind:
+--------------------------------------------------------------------------
+Version: <Version of the CCRMA software you are working with>
+Project: <Project name (possibly new)>
+Title: <one-line description of enhancement>
+Description: <complete description of enhancement>
+Diffs: <if a small change to existing sources>
+ReplacedFile(s): <NeXTMail attachment containing folder of touched files>
+NewFile(s): <NeXTMail attachment containing folder of new files>
+ReleaseNotePoints: <Description of new features for the next CCRMA release>
+--------------------------------------------------------------------------
+
+If you plan to make extensive revisions or enhancements to certain files in a project, please notify CCRMA so that we will delay making extensive changes of our own at the same time.  This will make it easier for us to merge your changes when the time comes.  Please avoid unnecessary changes in formating that make "diffs" difficult.   
+
+When you make diffs, please use the following form:
+
+	diff -rcb <release_version_directory> <fixed_version_directory>
+
+The "-r" option is only necessary when the comparison involves two
+directories (typically desired when the change involves more than one
+file).  The "-c" option gives more context than the default, and "-c 10",
+for example, will give exactly 10 lines of context around each change.  The
+"-b" option says to ignore difference in blanks.  To ignore all whitespace
+differences, use the "-w" option.  See the "manual page" for diff for more details.
+
+Please keep in mind that there is no guarantee that a change you submit
+will be incorporated into a future Music Kit release.  Changes that are not
+compatible with existing Music Kit applications or with earlier releases of
+the Music Kit will not be considered further.  For best likelihood of
+acceptance, a change should be either (1) a straightforward bug fix, with
+an absolute minimum number of changed lines of code, or (2) a clean new
+feature, implemented using a minimum number of new files (e.g. a single .m
+and .h pair of files) and minimized change in the rest of the Music Kit.
+Please also describe how you tested the bugfix/feature.
+
+

@@ -1,0 +1,20 @@
+LOCALIZABLE_FILES = {
+    Info.rtf;
+    Localizable.strings;
+};
+FILESTABLE = {
+    OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble);
+    OTHER_RESOURCES = (Default.table, Info.rtf);
+    STRINGS_FILES = (Localizable.strings);
+    TOOLS = (TurtleBeachFiji_reloc.tproj);
+    SUBPROJECTS = ();
+};
+LANGUAGE = English;
+PROJECTVERSION = 1.1;
+INSTALLDIR = "$(HOME)/Library";
+PROJECTTYPE = Bundle;
+PROJECTNAME = TurtleBeachFiji;
+GENERATEMAIN = YES;
+DOCICONFILES = ();
+DOCEXTENSIONS = ();
+BUNDLE_EXTENSION = config;

@@ -1,0 +1,873 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;}
+\paperw16220
+\paperh13060
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f1 „
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+Release 4.0 Updates Copyright 
+\f1 „
+\f0 1993 by CCRMA, Stanford University.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 Partials\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	WaveTable : Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 The Partials class lets you define a sound waveform by adding together a number of sine wave components.  Partials are used to provide musical timbres in DSP synthesis, primarily by the SynthPatch classes that provide wave table synthesis–classes such as Wave1vi and DBWave1vi, as well as classes that provide waveshaping synthesis–class such as Shape.  Partials' sister class, Samples, lets you define a waveform (or waveshaping table) as a series of sound samples, through association with a Sound object or soundfile.\
+
+\fs16 \
+
+\fs28 Each of the sine waves in a Partials object is characterized by a frequency ratio, an amplitude ratio, and an initial phase.  The frequency ratios are taken as integer multiples of a fundamental frequency–in other words, a ratio of 1.0 is the fundamental frequency, 2.0 is twice the fundamental, 3.0 is three times the fundamental, and so on.  The fundamental frequency itself is defined in the frequency parameters of the Note objects that use the Partials.  The amplitude ratios are relative to each other: A sine wave component with an amplitude ratio of 0.5 has half the amplitude of a component with an amplitude ratio of 1.0.  The initial phase determines the point in the sine curve at which a particular component starts.  Phase is specified in degrees; a phase of 360.0 is the same as a phase of 0.0.  While phase information has been found to have little significance in the perception of timbre, it can be important in other uses.  For example, if you're creating a waveform that's used as a sub-audio control signal–most notably for vibrato–you will probably want to randomize or stagger the phases of the sine waves.\
+
+\fs16 \
+
+\fs28 All the component information for a Partials object is set through the 
+\b setPartialCount:freqRatios:ampRatios:phases:orDefaultPhase:
+\b0  method.  The first argument, an 
+\b int
+\b0 , is the number of sine waves in the object.  The next three arguments are pointers to arrays of 
+\b double
+\b0 s that provide corresponding lists of frequency, amplitude, and phase information.  The additional 
+\b orDefaultPhase:
+\b0  keyword is provided in recognition of phase's slim contribution to the scheme:  Rather than create and set an array of initial phases, you can pass NULL to 
+\b phases:
+\b0  and set all the sine wave components to a common initial phase as the argument to 
+\b orDefaultPhase:
+\b0 .  The following example demonstrates how to create a simple, three component Partials object.\
+
+\fs16 \
+
+\pard\f2\fs24\li3120\fc0\cf0 double freqs    = \{1.0, 2.0, 3.0 \}; \
+double amps     = \{1.0, 0.5, 0.25 \}; \
+id aPartials    = [Partials new];\
+\
+[aPartials setPartialCount:3 freqRatios:freqs \
+ampRatios:amps phases:NULL orDefaultPhase:0.0];\
+
+\pard\tx3120\tx3620\tx4120\f0\fs16\li2620\fc0\cf0 \
+
+\fs28 The elements in the arrays are matched by index order:  The first sine wave is defined by the first element of 
+\b freqs
+\b0  and the first element of 
+\b amps
+\b0 ; the second elements of the arrays define the second sine wave; the third elements define the third sine wave.  Since the phase array is specified as NULL, all three sine waves are given an initial phase of 0.0.\
+\
+In a scorefile, Partials are defined as curly-bracketed value pairs–or triplets if you want to specify phase–and the entire Partials definition is enclosed in square brackets.  If a phase value is missing, the phase of the previous component is used; the default phase is 0.0.  You can define a Partials object in-line as the value of a parameter or, more typically, in a global 
+\b waveTable
+\b0  statement.  The previous example could be defined in a scorefile as\
+
+\fs16 \
+
+\pard\f2\fs24\li3120\fc0\cf0 waveTable simpleSound = [\{1.0, 1.0\}\{2.0, 0.5\}\{3.0, 0.25\}];\
+
+\pard\tx3120\tx3620\tx4120\f0\fs16\li2620\fc0\cf0 \
+
+\fs28 where 
+\b simpleSound
+\b0  is used to identify the object in subsequent Note statements:\
+
+\fs16 \
+
+\pard\f2\fs24\li3120\fc0\cf0 partName (1.0) ... waveform:simpleSound ...;\
+
+\pard\tx3120\tx3620\tx4120\f0\fs16\li2620\fc0\cf0 \
+
+\fs28 When this scorefile is read into an application, the Partials object will be given the string name ™simpleSound∫.  The object itself can be retrieved by passing this string to the 
+\b MKGetNamedObject()
+\b0  C function.\
+
+\fs16 \
+
+\fs28 If you're creating a Partials object in an application and writing it to a scorefile, you should always name the object through 
+\b MKNameObject()
+\b0 .  This allows the object to be defined once (albeit in-line, not in the header) in a 
+\b waveTable
+\b0  statement and then referred to by name in subsequent Notes.  Without a name, a Partials object is defined in-line in every Note statement that refers to it.\
+
+\fs16 \
+
+\fs28 Partials objects are automatically created by the Music Kit in a number of circumstances, such as when reading a Scorefile.  The function 
+\b MKSetPartialsClass() 
+\b0 allows you to specify that your own subclass of Partials be used when Partialss are automatically created.   You retrieve the Partials class with 
+\b MKGetPartialsClass()
+\b0 .  \
+\
+Partials can be used in two contexts–to provide wavetables for oscillators and to provide lookup tables for waveshaping synthesis.   The access methods inherited from the WaveTable class (such as 
+\b -dataDSP
+\b0 ) provide the data in oscillator table format.  In this case the Partials 
+\i tableType 
+\i0 internal
+\i  
+\i0 instance varaible is set to 
+\b MK_oscTable
+\b0 .   Alternatively, you can retrieve the data in waveshaping format.  To do this, use one of the methods of the form 
+\i accessMethod
+\b\i0 AsWaveshapingTable
+\b0\i arguments
+\i0 .   For example, to get the data for the DSP with the default table length and scaling, use -
+\b dataDSPAsWaveshapingTable
+\b0 .  In this case the Partials 
+\i tableType 
+\i0 instance varaible is set to 
+\b MK_waveshapingTable
+\b0 .   For symmetry, a set of methods of the form 
+\b dataDSPAsOscTable 
+\b0 is provided.  These methods are synonyms for the inherited methods.   \
+\
+For more information on waveshaping synthesis, see the 
+\b Shape 
+\b0 and 
+\b Shapev
+\b0  SynthPatches and their documentation.   \
+
+\fs16 \
+
+\pard\tx7140\fs28\li2100\fc0\cf0 \
+INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Inherited from WaveTable
+\i0 	int	length;\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 double	scaling;\
+DSPDatum	*dataDSP;\
+double	*dataDouble;\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\i\fs28 Declared in Partials
+\i0 	double	*ampRatios;\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 double	*freqRatios;\
+double	*phases;\
+int	partialCount;\
+double	defaultPhase;\
+double	minFreq;\
+double	maxFreq;\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 ampRatios 	Array of amplitude ratios\
+
+\fs16 \
+
+\fs28 freqRatios 	Array of frequency ratios.\
+
+\fs16 \
+
+\fs28 phases 	Arrays of initial phases.\
+
+\fs16 \
+
+\fs28 partialCount 	Number of sine waves in the object.\
+
+\fs16 \
+
+\fs28 defaultPhase 	Common phase, used in the absence of 
+\b phases
+\b0 .\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Creating and freeing a Partials	
+\f1 - 
+\f0 copy\
+
+\fs16\fi-5040\li7660 \
+
+\fs28 Defining the sine waves	
+\f1 - 
+\f0 setPartialCount:freqRatios:ampRatios:phases:\
+
+\fi0 orDefaultPhase:\
+
+\fs16\fi-4540\li7140 \
+
+\fs28 Modifying the object	
+\f1 - 
+\f0 free\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 init\
+
+\f1 - 
+\f0 prunePartials: \
+
+\f1 - 
+\f0 setFromSamples: \
+
+\f1 - 
+\f0 writeScorefileStream:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Querying the object	
+\f1 - 
+\f0 ampRatios\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 defaultPhase\
+
+\f1 - 
+\f0 freqRatios\
+
+\f1 - 
+\f0 getPartial:freqRatio:ampRatio:phase: \
+
+\f1 - 
+\f0 highestFreqRatio\
+
+\f1 - 
+\f0 partialCount\
+
+\f1 - 
+\f0 phases\
+
+\f1 - 
+\f0 tableType\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Computing the osc table waveform	
+\f1 - 
+\f0 fillTableLength:scale:\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 fillOscTableLength:scale:
+\fs16 \
+
+\f1\fs28 - 
+\f0 fillWaveshapingTableLength:scale:
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Retrieving osc table data	
+\f1 - 
+\f0 dataDSPAsOscTable\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 dataDSPAsOscTableLength: \
+
+\f1 - 
+\f0 dataDSPAsOscTableLength:scale: \
+
+\f1 - 
+\f0 dataDSPAsOscTableScale: \
+
+\f1 - 
+\f0 dataDoubleAsOscTable\
+
+\f1 - 
+\f0 dataDoubleAsOscTableLength: \
+
+\f1 - 
+\f0 dataDoubleAsOscTableLength:scale: \
+
+\f1 - 
+\f0 dataDoubleAsOscTableScale:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Retrieving waveshaping table data	
+\f1 - 
+\f0 dataDSPasWaveshapingTable\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 dataDSPasWaveshapingTableLength: \
+
+\f1 - 
+\f0 dataDSPasWaveshapingTableLength:scale: \
+
+\f1 - 
+\f0 dataDSPasWaveshapingTableScale: \
+
+\f1 - 
+\f0 dataDoubleasWaveshapingTable\
+
+\f1 - 
+\f0 dataDoubleasWaveshapingTableLength: \
+
+\f1 - 
+\f0 dataDoubleasWaveshapingTableLength:scale: \
+
+\f1 - 
+\f0 dataDoubleasWaveshapingTableScale:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 ampRatios\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double *)
+\b ampRatios\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a pointer to the receiver's amplitude ratios array.  You should neither free nor alter the array.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 copy\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b copy\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Creates and returns a Partials as a copy of the receiver.  The returned object contains copies of the receiver's arrays.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28\fc1\cf1 dataDSPAsOscTable\
+dataDSPAsOscTableLength: \
+dataDSPAsOscTableLength:scale: \
+dataDSPAsOscTableScale: \
+dataDoubleAsOscTable\
+dataDoubleAsOscTableLength: \
+dataDoubleAsOscTableLength:scale: \
+dataDoubleAsOscTableScale:\
+
+\pard\tx3120\tx3620\tx4120\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\fc1\cf1 (DSPDatum *)
+\b\fc0\cf0 dataDSPAsOscTable\
+
+\f1\b0 - 
+\f0\fc1\cf1 (DSPDatum *)
+\b dataDSPAsOscTableLength:
+\b0 (int)length
+\b  \
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 (DSPDatum *)
+\b dataDSPAsOscTableLength:
+\b0 (int)length 
+\b scale:
+\b0 (double)scaling
+\b \
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 (DSPDatum *)
+\b dataDSPAsOscTableScale:
+\b0 (double)scaling
+\b  \
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 (double *)
+\b dataDoubleAsOscTable\
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 (double *)
+\b dataDoubleAsOscTableLength:
+\b0 (int)length
+\b \
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 (double *)
+\b dataDoubleAsOscTableLength:
+\b0 (int)length 
+\b scale: \
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 (double *)
+\b dataDoubleAsOscTableScale:
+\b0 (double)scaling
+\b \
+
+\b0\fi0\li2620 \
+These methods provide data in 
+\b MK_oscTable 
+\b0 format.   They are identical to the superclass versions (without the "OscTable" in their name).  For example, 
+\b dataDSPAsOscTable 
+\b0 is the same as WaveTable's 
+\b dataDSP
+\b0 .   \
+
+\pard\tx7140\tx10180\tx10680\b\fi-4540\li7140\fc1\cf1 \
+
+\pard\tx7140\li2100\fc1\cf1 dataDSPAsWaveshapingTable\
+dataDSPAsWaveshapingTableLength: \
+dataDSPAsWaveshapingTableLength:scale: \
+dataDSPAsWaveshapingTableScale: \
+dataDoubleAsWaveshapingTable\
+dataDoubleAsWaveshapingTableLength: \
+dataDoubleAsWaveshapingTableLength:scale: \
+dataDoubleAsWaveshapingTableScale:\
+
+\pard\tx3120\tx3620\tx4120\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\fc1\cf1 (DSPDatum *)
+\b\fc0\cf0 dataDSPAsWaveshapingTable\
+
+\f1\b0 - 
+\f0\fc1\cf1 (DSPDatum *)
+\b dataDSPAsWaveshapingTableLength:
+\b0 (int)length
+\b  \
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 (DSPDatum *)
+\b dataDSPAsWaveshapingTableLength:
+\b0 (int)length 
+\b scale:
+\b0 (double)scaling
+\b \
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 (DSPDatum *)
+\b dataDSPAsWaveshapingTableScale:
+\b0 (double)scaling
+\b  \
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 (double *)
+\b dataDoubleAsWaveshapingTable\
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 (double *)
+\b dataDoubleAsWaveshapingTableLength:
+\b0 (int)length
+\b \
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 (double *)
+\b dataDoubleAsWaveshapingTableLength:
+\b0 (int)length 
+\b scale: \
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 (double *)
+\b dataDoubleAsWaveshapingTableScale:
+\b0 (double)scaling
+\b \
+
+\b0 \
+
+\fi0\li2620 These methods are similar to the superclass versions (without the "WaveshapingTable" in their name), except that they specify that the table to be computed should be in 
+\b MK_waveshapingTable 
+\b0 format.   For example, 
+\b dataDSPAsWaveshapingTable 
+\b0 looks to see if the currently-cached data is of the type 
+\b MK_waveshapingTable 
+\b0 and is of the default length and scaling.  If so, that data is returned.   If not, it is recomputed.   \
+
+\pard\tx7140\tx10180\tx10680\b\fi-4540\li7140\fc1\cf1 \
+
+\pard\tx7140\li2100\fc0\cf0 defaultPhase\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double)
+\b defaultPhase\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the receiver's default phase\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 fillTableLength:scale:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 -
+\f0  
+\b fillTableLength:
+\b0 (int)
+\i aLength
+\i0  
+\b scale:
+\b0 (double)
+\i aScaling\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Computes the sampled waveform from the sine wave components in 
+\b MK_oscTable
+\b0  format, by doing an inverse FFT.\
+
+\fs16 \
+
+\fs28 This method is invoked automatically by the data retrieval methods inherited from the WaveTable class–you needn't invoke this method yourself.  Returns the receiver, or 
+\b nil
+\b0  if an error occurs.   Also sets the 
+\i tableType 
+\i0 internal instance variable to 
+\b MK_oscTable
+\b0 .\
+\
+
+\i Note that currently, only power-of-2 lengths are supported for oscTable format.   \
+
+\i0\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 fillOscTableLength:scale:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 -
+\f0  
+\b fillOscTableLength:
+\b0 (int)
+\i aLength
+\i0  
+\b scale:
+\b0 (double)
+\i aScaling\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Same as 
+\b fillTableLength:scale:
+\b0 .   Provided for symmetry.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 fillWaveshapingTableLength:scale:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 -
+\f0  
+\b fillWaveshapingTableLength:
+\b0 (int)
+\i aLength
+\i0  
+\b scale:
+\b0 (double)
+\i aScaling\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Computes the sampled waveform from the sine wave components in 
+\b MK_waveshapingTable
+\b0  format, by doing a recursive Chebychev polynomial expansion.\
+
+\fs16 \
+
+\fs28 This method is invoked automatically by the data retrieval methods such as 
+\b dataDSPAsWaveshapingTable
+\b0 –you needn't invoke this method yourself.  Returns the receiver, or 
+\b nil
+\b0  if an error occurs.   Also sets the 
+\i tableType 
+\i0 internal instance variable to 
+\b MK_waveshapingTable
+\b0 .    For best results, use an odd length.\
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 free\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b free\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Frees the receiver and its arrays.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 freqRatios\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double *)
+\b freqRatios\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a pointer to the receiver's frequency ratios array.  You should neither free nor alter the array.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 getPartial:freqRatio:ampRatio:phase:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (int)
+\b getPartial:
+\b0 (int)
+\i n
+\i0  \
+
+\b\fi0 freqRatio:
+\b0 (double *)
+\i fRatio
+\i0  \
+
+\b ampRatio:
+\b0 (double *)
+\i aRatio
+\i0  \
+
+\b phase:
+\b0 (double *)
+\i phase\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns, by reference, the frequency ratio, amplitude ratio, and initial phase of the 
+\i n
+\i0 th sine wave component (counting from 0).  The amplitude ratio value is scaled by the current value of the 
+\b scaling
+\b0  instance variable inherited from WaveTable.\
+
+\fs16 \
+
+\fs28 If the 
+\i n
+\i0 th sine wave is the last in the receiver, the method returns MK_lastValue.  If 
+\i n
+\i0  is out of bounds, 
+\f1 - 
+\f0 is returned.  Otherwise 0 is returned.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 highestFreqRatio\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double)
+\b highestFreqRatio\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the highest frequency ratio in the receiver.  This can be useful in determining if the receiver will generate a waveform that will fold over.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 init\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b init\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Initializes the receiver.  A subclass implementation should send 
+\b [super init]
+\b0  before performing its own initialization.  \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 partialCount\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (int)
+\b partialCount\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the number of sine wave components\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 phases\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double *)
+\b phases\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a pointer to the receiver's phase array.  You should neither free nor alter the array.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 prunePartials:\
+
+\pard\fi-1020\li3620\fc0\cf0   	 
+\f1\b0 - 
+\f0\b prunePartials:(
+\b0 double)
+\i amplitudeThreshold
+\b\i0 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Change contents to remove any partials with amplitudes below specified threshold. \
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 setFromSamples:\
+
+\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b\fi0\li2100 setFromSamples:
+\b0\i samplesObject
+\b\i0 \
+   \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Sets 
+\i freqRatios
+\i0 , 
+\i ampRatios
+\i0 , and 
+\i phases
+\i0  based on the data in the samplesObject.  This is done by taking an FFT of the data.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+setPartialCount:freqRatios:ampRatios:phases:orDefaultPhase:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setPartialCount:
+\b0 (int)
+\i count
+\i0  \
+
+\b\fi0 freqRatios:
+\b0 (double *)
+\i freqRats
+\i0  \
+
+\b ampRatios:
+\b0 (double *)
+\i ampRats
+\i0  \
+
+\b phases:
+\b0 (double *)
+\i phases
+\i0  \
+
+\b orDefaultPhase:
+\b0 (double)
+\i defaultPhase\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Defines the receiver's sine wave components.  
+\i count
+\i0  is the number of sine waves components; freqRats
+\i , 
+\b\i0 ampRats
+\b0 , and 
+\b phases
+\b0  are pointers to arrays that define the frequency ratios, amplitude ratios, and initial phases, respectively, of the sine wave components (the arrays are copied into the receiver).  The elements of the arrays are matched by index order: The nth sine wave is configured from the nth element in each array.\
+
+\fs16 \
+
+\fs28 If 
+\i phases
+\i0  is NULL, the value of 
+\i defaultPhase
+\i0  is used as the initial phase for all the components.  If 
+\i freqRats
+\i0  or 
+\i ampRats
+\i0  is NULL, the corresponding extant array, if any, is unchanged.\
+
+\fs16 \
+
+\fs28 Note that this method sets the 
+\b length
+\b0  instance variable to 0, forcing a recompute in a subsequent data array retrieval (through the 
+\b dataDSP:...
+\b0  and 
+\b dataDouble:...
+\b0  methods) as explained in the WaveTable class.\
+
+\fs16 \
+
+\fs28 Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 tableType:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\fc1\cf1 (int)
+\b tableType\
+
+\b0\i\fs16\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns the tableType of the currently-cached data, if any.  If none, returns the default, MK_oscTable.\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 writeScorefileStream:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b writeScorefileStream:
+\b0 (NXStream *)
+\i aStream\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Writes the receiver in scorefile format on the specified stream.  Returns 
+\b nil
+\b0  if ampRatios or freqRatios is NULL, otherwise returns the receiver.\
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+}

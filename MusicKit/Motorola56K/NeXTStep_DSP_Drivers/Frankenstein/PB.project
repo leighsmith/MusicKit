@@ -1,0 +1,20 @@
+BUNDLE_EXTENSION = config;
+DOCEXTENSIONS = ();
+LOCALIZABLE_FILES = {
+    Info.rtf;
+    Localizable.strings;
+};
+PROJECTVERSION = 1.1;
+INSTALLDIR = "$(HOME)/Library";
+PROJECTTYPE = Bundle;
+PROJECTNAME = Frankenstein;
+GENERATEMAIN = YES;
+LANGUAGE = English;
+DOCICONFILES = ();
+FILESTABLE = {
+    OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble);
+    OTHER_RESOURCES = (Default.table, Info.rtf);
+    STRINGS_FILES = (Localizable.strings);
+    TOOLS = (Frankenstein_reloc.tproj);
+    SUBPROJECTS = ();
+};

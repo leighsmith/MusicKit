@@ -1,0 +1,14 @@
+.TH DSPASM 1 "21 Jun 1989" "NeXT, Inc."
+.SH NAME
+dspasm \- Invoke DSP assembler asm56000 including AP/MK DSP macro libraries
+
+.SH SYNOPSIS
+\fBdspasm\fR <\fIinfile\fR>[.asm] [up to four asm56000 options]
+
+.SH DESCRIPTION
+The \fBdspasm\fR shell script merely invokes the DSP assembler as follows:
+
+	asm56000 $2 $3 $4 $5 -b -l -I/usr/lib/dsp/smsrc/ $1
+
+The directory /usr/lib/dsp/smsrc contains the DSP macros used in developing
+array processing and unit-generator macros.

@@ -1,0 +1,529 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f4\fmodern Courier;\f1\ftech Symbol;\f2\fmodern Ohlfs;}
+\paperw12240
+\paperh12580
+\margl0
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\pard\tx2520\tx2880\tx3240\f0\b0\i0\ulnone\fs16\li2160\fc0\cf0 \
+
+\fs22 \
+
+\fs16 \
+
+\pard\qc\fs56\li720\fc1\cf1 Documentation and Usage Conventions \
+
+\ql \
+
+\qc\fs28 (derived from NeXT Release 2.0 Documentation)\
+
+\b\ql\fs16\fc0\cf0 \
+
+\li1440 \
+\
+
+\fs36\fc1\cf1 Syntax Notation\
+
+\fs16\fc0\cf0 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 Where this manual shows the syntax of a function, command, or other programming element, the use of bold, italic, square brackets, and ellipsis has special significance, as described here.\
+
+\fs16 \
+
+\b\fs22 Bold
+\b0  denotes words or characters that are to be taken literally (typed as they appear).  
+\i Italic
+\i0  denotes words that represent something else or can be varied.  For example, the syntax\
+
+\fs16 \
+
+\b\fs22 	print
+\b0\i  expression\
+
+\fs16 \
+
+\i0\fs22 means that you follow the word 
+\b print
+\b0  with an expression.\
+
+\fs16 \
+
+\fs22 Square brackets [ ] mean that the enclosed syntax is optional, except when they're bold 
+\b\fs24 [ ]
+\b0\fs22 , in which case they're to be taken literally.  The exceptions are few and will be clear from the context.  For example,\
+
+\fs16 \
+
+\i\fs22 	pointer
+\i0  [
+\i filename
+\i0 ]\
+
+\fs16 \
+
+\fs22 means that you type a pointer with or without a file name after it, but\
+
+\fs16 \
+
+\b\fs24 	[
+\b0\i\fs22 receiver message
+\b\i0\fs24 ]\
+
+\fs16 \
+
+\b0\fs22 means that you specify a receiver and a message enclosed in square brackets.\
+
+\fs16 \
+
+\fs22 Ellipsis (...) indicates that the previous syntax element may be repeated.  For example:\
+
+\fs16 \
+
+\pard\tx4860\tx5400\tx6840\tx8280\b\fs22\li2520\fc0\cf0 Syntax	Allows\
+
+\pard\tx4860\tx4860\tx5400\tx5400\tx6840\tx6840\tx8280\tx8280\b0\i\fi-2340\li4860\fc0\cf0 pointer ...
+\i0 	One or more pointers\
+
+\fs16 \
+
+\pard\tx4860\tx4860\tx4860\tx5400\tx5400\tx5400\tx6840\tx6840\tx6840\tx8280\tx8280\tx8280\i\fs22\fi-2340\li4860\fc0\cf0 pointer
+\i0  [, 
+\i pointer
+\i0 ] ...	One or more pointers separated by commas\
+
+\fs16 \
+
+\pard\tx4860\tx4860\tx4860\tx4860\tx5400\tx5400\tx5400\tx5400\tx6840\tx6840\tx6840\tx6840\tx8280\tx8280\tx8280\tx8280\i\fs22\fi-2340\li4860\fc0\cf0 pointer
+\i0  [
+\i filename
+\i0  ...]	A pointer optionally followed by one or more file names\
+
+\fs16 \
+
+\pard\tx4860\tx4860\tx4860\tx4860\tx4860\tx5400\tx5400\tx5400\tx5400\tx5400\tx6840\tx6840\tx6840\tx6840\tx6840\tx8280\tx8280\tx8280\tx8280\tx8280\i\fs22\fi-2340\li4860\fc0\cf0 pointer
+\i0  [, 
+\i filename
+\i0 ] ...	A pointer optionally followed by a comma and one or more file names separated by commas\
+
+\fs16 \
+
+\pard\b\li1440\fc0\cf0 \
+\
+\
+
+\fs36\fc1\cf1 Notes and Warnings\
+
+\fs16\fc0\cf0 \
+
+\fs22\li2160 Note:  
+\b0 Paragraphs like this contain incidental information that may be of interest to curious readers but can safely be skipped.\
+
+\fs16 \
+
+\pard\tx1880\tx2160\b\fs22\fi-1440\li2160\fc0\cf0 	Warning:	
+\b0 Paragraphs like this are extremely important to read.\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b\fs26\li1440\fc0\cf0 \
+\
+
+\fs36\fc1\cf1 Header Files\
+
+\b0\fs22\li2160\fc0\cf0 \
+All header files can be viewed on-line.  They are located in 
+\b /usr/local/include
+\b0  and its subdirectorie 
+\b musickit
+\b0 , and 
+\b dsp
+\b0 .\
+
+\fs16 \
+
+\pard\fs56\li2100\fc0\cf0 \
+\
+Class Specifications\
+
+\fs16 \
+\
+\
+\
+\
+\
+\
+\
+\
+
+\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 This section provides protocol information about the classes defined in the Music Kit.  Each class is contained in a separate section wherein the class' instance variables and methods are listed and described.  Familiarity with the concepts introduced in Volume 1 is assumed. \
+
+\fs16 \
+
+\pard\b\li100\fc0\cf0 \
+\
+\
+\
+
+\fs36 How to Read the Specifications\
+
+\fs16 \
+
+\li1100 \
+\
+
+\fs36 Organization\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 Each specification begins with a header that names the class, provides its inheritance heirarchy, and names the header file that declares the class (in other words, the header file that must be imported to create an instance of the class).  For example, the Music Kit's ScorefileWriter class description header looks like this:\
+
+\fs16 \
+
+\b \
+\
+
+\fs36 ScorefileWriter\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2620\fc0\cf0 INHERITS FROM	FileWriter  :  Instrument  :  Object\
+
+\fs16 \
+
+\pard\tx7140\tx7140\fs28\li2620\fc0\cf0 DECLARED IN	musickit/musickit.h\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 The inheritance heirarchy lists the superclasses in order as they ascend to the ubiquitous Object class.  The header file, musickit/musickit.h in this case, is given as it would appear enclosed in angle brackets in an 
+\b #import
+\b0  statement:\
+
+\fs16 \
+
+\pard\f4\fs24\li2620\fc0\cf0 #import <musickit/musickit.h> \
+
+\pard\tx2620\tx3120\tx3620\f0\fs16\li2100\fc0\cf0 \
+
+\fs28 Following the header, under the heading CLASS DESCRIPTION, is a general description of the class.  Here, emphasis is placed on fully enumerating the tasks and abilities that are assumed and provided by the class (or, more accurately, instances of the class).\
+
+\fs16 \
+
+\fs28 The class' instance variablesÐwhether locally defined or inheritedÐare listed under the heading INSTANCE VARIABLES.   The list is followed by descriptions of those instance variables that are defined by the class.\
+
+\fs16 \
+\
+\
+
+\fs28 The rest of the specification is devoted to the methods that are defined by the class.  First, under the heading METHOD TYPES, the method names are grouped by topic.  Every method defined by the class is listed under at least one topic.  In addition, methods from other classes are occassionally invited if the roles they play are essential to a full understanding of the class at hand.  For example, instances of the SynthData class (defined in the Music Kit) can only be created through messages to an Orchestra object ; thus, the topic ªCreating and freeing a SynthDataº in the SynthData class specification lists the pertinent Orchestra methods: \
+
+\fs16 \
+
+\pard\tx7140\fi500\li2100\fc0\cf0 \
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7660\tx10180\tx10680\fs28\fi-4540\li7660\fc0\cf0 Creating and freeing a SynthDat
+\f1 a	- 
+\f0 allocSynthData:length: (Orchestra)\
+
+\f1\fi0 - 
+\f0 allocPatchpoint: (Orchestra)\
+
+\f1 - 
+\f0 dealloc \
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\li2100\fc0\cf0 \
+\
+
+\fs28 As shown here, the class that defines a visiting method is given in parentheses following the method name.\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS METHODS \
+INSTANCE METHODS\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 A detailed description of each method defined in the class follows the classification by type.  Methods that are used by class objects are presented first; methods that are used by instances (the objects produced by the class) are presented next.  The descriptions within each group are ordered alphabetically by method name.\
+
+\fs16 \
+
+\fs28 Each description begins with the syntax of the method's arguments and return values, continues with an explanation of the method, and ends, where appropriate, with a list of other related methods.  Where a related method is defined in another class, it's followed by the name of the other class within parentheses.\
+
+\fs16 \
+
+\fs28 All methods have reliable return values.  Unless the method description mentions otherwise, every method returns 
+\b self
+\b0 .  This allows you to chain messages together:\
+
+\fs16 \
+
+\fs28 	[[[
+\i receiver
+\i0  
+\i message1
+\i0 ] 
+\i message2
+\i0 ] 
+\i message3
+\i0 ];\
+
+\fs16 \
+
+\fs28 Internal methods used to implement the class aren't listed.  Since you shouldn't override any of these methods, or use them in a message, they're excluded from both the method directory and the method descriptions.  However, you may encounter them when looking at the call stack of your program from within the debugger.  A private method is easily recognizable by the underscore ( 
+\b _ 
+\b0 ) that begins its name.\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\li2100\fc0\cf0 \
+\
+
+\fs28 METHODS IMPLEMENTED BY ANOTHER OBJECT\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 If a class lets you define another objectÐa delegateÐthat can intercede on behalf of instances of the class, the methods that the delegate can implement are described in a separate section.  These are not methods defined in the class; rather, they're methods that you can define to respond to messages sent to the delegate.\
+
+\fs16 \
+
+\fs28 If you define one of these methods, the delegate will receive automatic messages to perform it at the appropriate time.  For example, if you define a 
+\b windowDidBecomeKey:
+\b0  method for a Window's delegate, the delegate will receive 
+\b windowDidBecomeKey:
+\b0  messages whenever the Window becomes the key window.\
+
+\fs16 \
+
+\fs28 Messages are sent only if the delegate has a method that can respond.  If you don't define a 
+\b windowDidBecomeKey:
+\b0  method, no message will be sent.\
+
+\fs16 \
+
+\fs28 Only certain classes provide for a delegate.  In the Application Kit, they are:\
+
+\fs16 \
+
+\pard\tx4620\tx6640\tx8660\tx10680\fs28\li3120\fc0\cf0 Application\
+Listener\
+Speaker\
+Text\
+Window\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 You can set a delegate for instances of these classes or for instances that inherit from these classes.\
+
+\fs16 \
+
+\fs28 A few class specifications have separate sections titled ªMethods Implemented by the SuperViewº or ªMethods Implemented by the Owner.º  The methods described in these sections need to be implemented by another object, such as the superview of an instance of that class or, in the case of the Pasteboard, the owner of the Pasteboard instance.  For example, the ClipView's superview needs to define the 
+\b scrollClip:to:
+\b0  method to coordinate scrolling of multiple ClipViews.  The owner of the Pasteboard should define 
+\b provideData:
+\b0  if certain promised data types won't be immediately written to the Pasteboard.  As is the case with the delegate methods, you won't invoke these methods directly; messages to perform them will be sent automatically when needed and only if they've been defined.\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\li2100\fc0\cf0 \
+\
+
+\fs28 CONSTANTS AND DEFINED TYPES\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 If a class makes use of symbolic constants or defined types that are specific to the class, they're listed in the last section of the class specification.  Defined types are likely to show up in instance variable declarations, and as return and parameter types in method declarations.  Symbolic constants typically define permitted return and argument values.\
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 Method Descriptions\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 By far, the major portion of each class specification is the description of methods defined in the class.  When reading these descriptions, be especially attentive to three kinds of information that affect how the method can be used:\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\tx4120\fs28\fi-520\li2620\fc0\cf0 ·	Whether you should implement your own version of the method\
+·	Whether you should have your version of the method include the kit-defined version\
+·	Whether you should ever send a message to an object to perform the method\
+
+\pard\tx2620\tx3120\tx3620\fs16\li2100\fc0\cf0 \
+
+\fs28 The next three sections examine these questions.\
+
+\fs16 \
+
+\pard\b\li2100\fc0\cf0 \
+\
+\
+\
+
+\fs28 Implementing Your Own Version of a Method\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 For the most part, the methods in a class definition act as a private library for objects belonging to that class.  Just as programmers generally don't replace functions in the standard C library with their own versions, you generally wouldn't write your own versions of the methods provided for a class.\
+
+\fs16 \
+
+\fs28 However, to add specific behavior to your application, you must override some of the methods that are defined in the kits.  Often, the kit-defined method will do little or nothing that's of use to your application, but it will appear in messages initiated by other methods.  To give content to the method, your application must implement its own version.\
+
+\fs16 \
+
+\fs28 To override a kit method with one of your own design, simply define a subclass of the appropriate class and redefine the method.  For example, the interface declaration for the CircleView class illustrated below shows that it does nothing more than override the View class's 
+\b drawSelf::
+\b0  method.\
+
+\fs16 \
+
+\pard\f4\fs24\li2620\fc0\cf0 @interface CircleView : View \{ \}\
+- drawSelf:(NWRect *)drawRects :(int)rectCount;\
+@end\
+
+\pard\tx2620\tx3120\tx3620\f0\fs16\li2100\fc0\cf0 \
+
+\fs28 CircleView objects will perform its version of 
+\b drawSelf::
+\b0  rather than the empty default version defined in View.\
+
+\fs16 \
+
+\fs28 In contrast to methods that must be overridden, some methods should never be changed by the application.  The kit depends on these methods doing just what they're currently programmed to doÐnothing more and nothing less.  While your application can use these methods, it's important that you don't override them when defining a subclass.\
+
+\fs16 \
+
+\fs28 Most methods fit between these two extremes:  They can be overridden, but it's not necessary for you to do so.  If a method description is silent on the question of overriding the kit method, you can be certain that it fits into this middle category.  It's a method that you can override, but like a function in the C library, you normally would have no reason to.\
+
+\fs16 \
+
+\fs28 If a method is designed to be overridden, or if it should never be overridden, the method description explicitly says so.\
+
+\fs16 \
+
+\pard\b\li2100\fc0\cf0 \
+\
+\
+\
+
+\fs28 Retaining the Kit's Version of a Method\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 Some methods can be overridden, but only to add behavior, not to alter the default actions of the kit-defined method.  When your application overrides one of these methods, it's important that it incorporate the very method it overrides.  This is done by messaging 
+\b super
+\b0  to perform the kit-defined version of the method.  For example, if you write a new version of the kit method that moves a Window, you'd most likely still want it to move a Window.  The easiest way to have it do that is to include the old method in the new one through a message to 
+\b super
+\b0 .\
+
+\fs16 \
+
+\pard\f4\fs24\li2620\fc0\cf0 - moveTo:(NWCoord)x :(NWCoord)y \{\
+    [super moveTo:x :y];\
+    /* your code goes here */\
+\}\
+
+\pard\tx2620\tx3120\tx3620\f0\fs16\li2100\fc0\cf0 \
+
+\fs28 The kits occasionally require you to implement a new version of a method while preserving the behavior of the method you override.  An example is the 
+\b write:
+\b0  method, which archives an object by writing it to a typed stream.  When you define a kit subclass, you may need to implement a version of this method that can archive the instance variables your subclass declares.  So that a 
+\b write:
+\b0  message will archive all of an object's instance variables, not just those declared in the subclass, your version of the method should begin by incorporating the version used by its superclass.\
+
+\fs16 \
+
+\pard\f4\fs24\li2620\fc0\cf0 - write:(NXTypedStream *)stream \{\
+    [super write:stream];\
+    /* your code goes here */\
+\}\
+
+\pard\tx2620\tx3120\tx3620\f0\fs16\li2100\fc0\cf0 \
+
+\fs28 Method descriptions explicitly mention that you should incorporate a method you override only when it's not obvious that it would be a good idea to preserve the default behavior in the new method.\
+
+\fs16 \
+
+\pard\b\li2100\fc0\cf0 \
+\
+\
+\
+
+\fs28 Sending a Message to Perform a Method\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 Some methods should never appear as messages in the code you write; you should never directly ask an object to perform the method.  Typically, these are methods that your application will use indirectly, through other methods.\
+
+\fs16 \
+
+\fs28 Most of these methods begin with a underscore and are treated as class-internal methods.  However, some don't have an underscore and are included in the method descriptions.  These are methods that your application can implement, even though it won't directly use them in a message.  The messages to perform these methods originate in the kit.\
+
+\fs16 \
+
+\fs28 The most notable example of this is the 
+\b drawSelf::
+\b0  method that draws a View.  Although you must implement a 
+\b drawSelf::
+\b0  method for each View subclass you define, your code should never send a 
+\b drawSelf::
+\b0  message.  Instead, you send a display message; the display method (such as 
+\b display
+\b0 , 
+\b displayIfNeeded
+\b0 , or 
+\b display:::
+\b0 ) sees to it that the drawing context is properly set before initiating a 
+\b drawSelf::
+\b0  message to the View.\
+
+\fs16 \
+
+\fs28 The methods that respond to event messages (such as 
+\b mouseUp:
+\b0 , 
+\b keyDown:
+\b0 , and 
+\b windowExposed:
+\b0 ) also fall into this category.  Event messages are initiated by the Application Kit when it receives events from the Window Server; you shouldn't initiate them in your own code.\
+
+\fs16 \
+
+\fs28 The 
+\b write:
+\b0  and 
+\b read:
+\b0  methods for archiving and unarchiving are other examples of methods that shouldn't be sent directly to objects.  They're generated by functions, such as 
+\b NXWriteObject()
+\b0  and 
+\b NXReadObject()
+\b0 .  \
+
+\fs16 \
+
+\fs28 If a method is designed to respond to messages generated by other methods or by a kit, the method description will generally say so.  If there's a penalty for generating the message within the code you write (as there is for 
+\b drawSelf::
+\b0 ), the description will include an explicit warning.\
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+}

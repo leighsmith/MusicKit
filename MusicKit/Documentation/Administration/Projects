@@ -1,0 +1,29 @@
+(This is obsolete, but has some important info)
+
+When you say "make install DSTROOT=/root_dir" at the top level, all
+projects are built.  It is also possible to say "make install DSTROOT=/foo"
+(or any of the other make targets) within a particular project to build
+only that project.
+
+It is important to understand the distinction between source code
+project and programming example projects.  When you build a source
+code project, the source code is not installed; it is built ("made")
+and the products of the build (libraries or executables) are
+installed.  In contrast, when you build a programming example project,
+the source itself is installed, but is not built.  If you want to
+build the programming example itself, you can cd to the installed
+source's directory and do a "make" there.  Of course, some directories
+contain both programming examples and source code.  The Makefiles do
+the appropriate thing.
+
+The following is a list of projects in the CCRMA Music and DSP Distribution
+
+dsp		CCRMA DSP Support Library
+dspwrap		Programs dspwrap/dsploadwrap for converting DSP to C
+musickit	Music Kit main classes
+unitgenerators	Music Kit Unit Generators
+synthpatches	Music Kit SynthPatch library (unit generator patches)
+apps		Music Kit Applications: ScorePlayer, Ensemble, etc.
+musicexamp	Music Kit Programming Examples
+sf		Example Music Kit scorefiles, playscore, convertscore programs, etc.
+mididriver	MPU-401 driver for compatible cards (Intel-based hardware only)

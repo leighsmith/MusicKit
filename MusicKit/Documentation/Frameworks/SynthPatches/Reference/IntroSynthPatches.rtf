@@ -1,0 +1,141 @@
+{\rtf0\ansi{\fonttbl\f2\fnil Times-Roman;\f3\ftech Symbol;\f0\fswiss Helvetica;\f1\fmodern Courier;}
+\paperw16220
+\paperh13060
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\f2\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 4.0  Copyright 
+\f3 ã
+\f2 1993 by CCRMA, Stanford University.  All Rights Reserved.\
+\
+
+\pard\tx2480\tx2860\tx3240\fs16\li2100\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\i\fs88\fc0\cf0 Music Kit SynthPatch Library\
+
+\fs16 \
+\
+\
+\
+\
+\
+\
+\
+
+\pard\tx5640\f0\b\i0\fs28\fi-3540\li5640\fc0\cf0 Library:	
+\f2\b0 libsynthpatches.a\
+
+\fs16 \
+
+\f0\b\fs28 Header File Directory:	/
+\f2\b0 LocalDeveloper/Headers/musickit/synthpatches/\
+
+\fs16 	\
+
+\f0\b\fs28 Import:	
+\f2\b0 musickit/synthpatches/synthpatches.h \
+
+\pard\f0\b\fs16\li100\fc0\cf0 \
+\
+\
+\
+\
+\
+
+\fs48\li2100 Music Kit Synthpatch Library Classes\
+
+\fs16 \
+
+\pard\tx2480\tx2860\tx3240\f2\b0\fs28\li2100\fc1\cf1 The Music Kit SynthPatch Library supports a number of generic synthesis techniques.  A consistant naming convention using abbreviations makes it easy to remember the synthesis technique each SynthPatch represents.    \
+\
+
+\f0\b\fs36\fc0\cf0 WaveTable Synthesis\
+
+\f2\b0\fs28\fc1\cf1 \
+	
+\b Wave1 
+\b0 -  Wavetable synthesis with 1 non-interpolating (drop-sample) oscillator.\
+	
+\b Wave1i
+\b0   -  Wavetable synthesis with 1 interpolating (high-quality) oscillator.\
+	
+\b Wave1vi
+\b0   -  Wavetable synthesis with 1 interpolating osc. and random and periodic vibrato.\
+	
+\b DBWave1vi
+\b0  - Like 
+\b Wave1vi
+\b0 , but with access to the Timbre Data Base.\
+	
+\b DBWave2vi
+\b0  - Like 
+\b Wave2vi
+\b0 , but with two wavetables and interpolation between them.\
+  \
+
+\f0\b\fs36\fc0\cf0 Frequency Modulation Synthesis\
+
+\f2\b0\fs28\fc1\cf1 \
+	
+\b Fm1vi
+\b0       -  Fm synthesis with 1 modulator, vibrato, interpolating carrier and arbitrary waveforms for carrier and \
+			modulator.\
+	
+\b DBFm1vi
+\b0       -  Like 
+\b Fm1vi
+\b0 , but supports the Timbre Data Base.\
+	
+\b Fm2pvi
+\b0     -  Like 
+\b Fm1vi
+\b0 , but has 2 modulators in parallel, vibrato, and interpolating carrier.\
+
+\b 	Fm2cvi
+\b0     -  Like 
+\b Fm1vi
+\b0 , but  has 2 modulators in cascade, vibrato, and interpolating carrier.\
+
+\b 	Fm2cnvi
+\b0   -  Like 
+\b Fm2cvi
+\b0 , but with an additional noise modulator.\
+
+\b 	Fm2pnvi
+\b0   -  Like 
+\b Fm2pvi
+\b0 , but with an additional noise modulator.\
+\
+
+\f0\b\fs36\fc0\cf0 Virtual Acoustics (a.k.a. Physical Modeling or Waveguide) Synthesis\
+
+\f2\b0\fs28\fc1\cf1 \
+	
+\b Pluck
+\b0    -  Plucked string synthesis.\
+
+\f0\b\fs36\fc0\cf0 \
+Waveshaping (a.k.a. Nonlinear Distortion) Synthesis\
+
+\f2\b0\fs28\fc1\cf1 \
+	
+\b Shape
+\b0    -  Waveshaping synthesis, with index control and amplitude envelope. \
+	
+\b Shapev 
+\b0 - Same as 
+\b Shape
+\b0  but with periodic and random vibrato.\
+\
+The Music Kit SynthPatch Library also supports includes a Timbre Data base supported by several of the SynthPatches. \
+\
+
+}

@@ -1,0 +1,5 @@
+This example program caputres MIDI input in a scorefile.
+
+Each time you push the button a new MIDI recording session begins. The 
+input is written to the file with the name specified in the graphic interface
+field.

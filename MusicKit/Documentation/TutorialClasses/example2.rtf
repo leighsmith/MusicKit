@@ -1,0 +1,307 @@
+{\rtf0\nextcset {\fonttbl{\f22\fmodern Courier;}{\f20\froman Times-Roman;}{\f3\fswiss 
+Helvetica;}}
+\paperw12240\paperh15840 \margl1800\margr1800\margt0\margb0 \pgnstart1\ftnstart1 
+\deftab31680 \sectd\sbknone \linemod0\linex0 \ftnbj \headery0\footery0 
+\cols1 {\header \pard \li0\ri0\fi0\qc\sl320 \plain \f3 \par 
+\par 
+\par 
+\par 
+}{\footer \pard \li0\ri0\fi0\qc\sl320 \plain \f3 \par 
+\par 
+\par 
+\par 
+}\pard \li0\ri0\fi0\qc\sl280 \tx1140 \tx2280 \tx3420 \tx4560 \tx5700 
+\tx6840 \tx7980 \plain \f20\fs32 Programming the Music Kit\par 
+NeXT Release 2.0 \fs24 \par 
+Example-2\par 
+(this file is MusicKitClass/example2.wn)\par 
+by David A. Jaffe\par 
+\pard \li0\ri0\fi0\sl280 \tx1140 \tx2280 \tx3420 \tx4560 \tx5700 
+\tx6840 \tx7980 \f22 \par 
+\f20 In this excercise, you will write a simple application, 
+based on example1.  The application will play a Note when the 
+user pushes a button.  There will also be a slider that changes 
+the frequency of the Note.    \par 
+\par 
+There are 7 main steps:\par 
+\par 
+A.\tab CREATING A GRAPHIC INTERFACE\par 
+\par 
+B.\tab CREATING AN OBJECT THAT RESPONDS TO THE INTERFACE\par 
+\par 
+C.\tab CONNECTING THE INTERFACE TO YOUR OBJECT\par 
+\par 
+D.\tab SAVING THE PROJECT\par 
+\par 
+E.\tab ADDING THE CODE TO THE CUSTOM OBJECT\par 
+\par 
+F.\tab COMPILING THE APPLICATION\par 
+\par 
+G.\tab RUNNING THE APPLICATION\par 
+\par 
+\par 
+\par 
+\pard \li0\ri0\fi0\qc\sl280 \tx1140 \tx2280 \tx3420 \tx4560 \tx5700 
+\tx6840 \tx7980 CREATING A GRAPHIC INTERFACE\par 
+\pard \li0\ri0\fi0\sl280 \tx1140 \tx2280 \tx3420 \tx4560 \tx5700 
+\tx6840 \tx7980 \par 
+1. First create a new directory where you will put your project. 
+Then launch Interface Builder. (It's on /NextApps). \par 
+\par 
+2. Click \b New Application\b0  on the \b File\b0  sub-menu. 
+This gives you a new window called \i My Window\i0 .\par 
+\par 
+3. Click on \b Save As...\b0  under the\b  File\b0  sub-menu. 
+This will bring up an \i Open panel\i0 .  Give the project 
+a name. Let's call it \i Example2\i0 . . Click on the \b Project...\b0 
+ menu item under the \b File \b0 sub-menu.  This brings up 
+the \b Inspector \b0 window.   Go to the \b Inspector \b0 
+window, which is now asking you if you want to create a new 
+project, and click "OK" to create the project.  \par 
+\par 
+4. From the \b Palettes\b0  window, drag a \i button\i0  into 
+\b My Window\b0 .  Click twice on the button name to edit 
+it.  Change its name to \i play\i0 .  Then click somewhere 
+else in the window to get out of the edit mode.\par 
+\par 
+5. From the \b Palettes\b0  window, drag a \i slider\i0  into 
+\b My Window\b0 .   \par 
+\par 
+6. From the \b Palettes \b0 window, drag a piece of text into 
+\b My Window \b0 (it appears in the palette as \b Title\b0 
+).  Put it under the slider and double click on it to edit 
+the text.  Change it to "Frequency".  Then click somewhere else 
+in the window to get out of the edit mode.\par 
+\par 
+7. Resize \b My Window\b0  to be the size you want.  To do 
+this, click on the lower corner of the window and drag.\par 
+\par 
+8. To change the name of the window from \b My Window\b0  
+to something else, go to the \b Inspector\b0  window again. 
+ Select \b Attributes \b0 from the pop-up menu in that window.. 
+  Edit the text \i My Window\i0  to be \i Example2\i0 , then 
+type the Return key. Notice that the name of the window has 
+changed. \par 
+\par 
+\pard \li0\ri0\fi0\qc\sl280 \tx1140 \tx2280 \tx3420 \tx4560 \tx5700 
+\tx6840 \tx7980 CREATING AN OBJECT THAT RESPONDS TO THE INTERFACE\par 
+\pard \li0\ri0\fi0\sl280 \tx1140 \tx2280 \tx3420 \tx4560 \tx5700 
+\tx6840 \tx7980 \par 
+9. Go to the bottom left of the screen.  There is a window 
+that has the file path you just specified.  This is the \i 
+project window\i0 .  Click on that window. Find the icon \b 
+.h\b0  called \b Classes\b0  and double-click on it.\par 
+\par 
+10. This brings up a new window called \b Classes in Example2\b0 
+ with a Browser in it.  Using the left-arrow at the left side 
+of the window, find the class called \b Object\b0 . Click  
+once on that class so that it is the only class highlighted 
+in that window. On the \b Operations\b0  pull-down menu, click 
+\b Subclass\b0 .  Note that Subclass1 appears below the well 
+now. Edit this text to be \i NotePlayer\i0 . You have just 
+created a \i custom object\i0 , a subclass of the \b Object\b0 
+ class. Now, on the \b Operations\b0  pull-down menu, click 
+\b Instantiate\b0 .  You have now created an instance of your 
+class.  Note that your object appears as a sphere in the project 
+window (the window in the lower left hand corner of the screen). 
+ Click once on the sphere to select it. Then click on the 
+\b Inspector \b0 window and use the pop-up menu to select \b 
+Class\b0 .  This makes the \b Inspector\b0  window display information 
+about \i \i0 the class \i NotePlayer\i0 .\par 
+\par 
+11.  Click in the text field and type the following:\par 
+\par 
+\tab \i myNote\par 
+\tab mySynthPatch\par 
+\par 
+\i0 Notice that the names appear in the "outlets" list.  What 
+you are doing here is declaring two instance variables of type 
+\b id\b0 .  \par 
+\par 
+Then find the \b Outlet/Action\b0  button and click \b Action\b0 
+. Click in the text field and type the following.  Be sure 
+to type the colon and a return at the end of each line.\par 
+\par 
+\tab \i play:\par 
+\tab setFreqFrom:\par 
+\i0 \par 
+Notice that the names appear in the actions list. What are you 
+are doing here is "declaring" to Interface Builder the messages 
+you will be sending to your custom object. In Interface Builder, 
+all methods have one argument, the object that is sending the 
+message.  (Note that this is not always true, in general, in 
+Objective-C.)\par 
+\par 
+12. Go back to the "Classes" window and select "Unparse" from 
+the "Operations" pop-up menu.  It will ask if you want to create 
+the files \b NotePlayer.m\b0  and \b NotePlayer.h\b0 .  Click 
+\b YES\b0 . It will ask you if you want to add these files 
+to the project.  Click YES.\par 
+\par 
+\pard \li0\ri0\fi0\qc\sl280 \tx1140 \tx2280 \tx3420 \tx4560 \tx5700 
+\tx6840 \tx7980 CONNECTING THE INTERFACE TO YOUR OBJECT\par 
+\pard \li0\ri0\fi0\sl280 \tx1140 \tx2280 \tx3420 \tx4560 \tx5700 
+\tx6840 \tx7980 \par 
+13. Go back to the \b Example2\b0  window and click on that 
+window. Press the Control key on the keyboard and, holding it 
+down, click and hold the mouse button down, while pointing to 
+the \i play\i0  button..  Drag the mouse to the \b NotePlayerInstance\b0 
+ icon in the project window.  When the line encircles the \b 
+NotePlayerInstance\b0 , release the mouse\par 
+\par 
+14. Return to the \b Inspector\b0  window.  It gives you a 
+choice of what message to send your custom object when the button 
+is pushed.  Click on \b play:\b0 . Then click \b connect\b0 
+ near the bottom of the window.\par 
+\par 
+14a. Repeat steps 13 and 14 to connect the \i frequency\i0  
+slider to the \b setFreqFrom:\b0  message.  \par 
+\par 
+15. Double click on the slider.  Go to the \b Inspector \b0 
+window and select \b Attributes \b0 from the pop-up menu.  Change 
+the minimum and maximum values of the slider to be 220 and 
+660.  Change the current value of the slider to be 440.\par 
+\par 
+\pard \li0\ri0\fi0\qc\sl280 \tx1140 \tx2280 \tx3420 \tx4560 \tx5700 
+\tx6840 \tx7980 \par 
+SAVING THE PROJECT\par 
+\pard \li0\ri0\fi0\sl280 \tx1140 \tx2280 \tx3420 \tx4560 \tx5700 
+\tx6840 \tx7980 \par 
+16. \b \b0 Then click \b Save\b0  under the \b File \b0 sub-menu 
+to save the project.\par 
+\par 
+\pard \li0\ri0\fi0\qc\sl280 \tx1140 \tx2280 \tx3420 \tx4560 \tx5700 
+\tx6840 \tx7980 \par 
+ADDING THE OBJECTIVE-C CODE TO THE CUSTOM OBJECT\par 
+\pard \li0\ri0\fi0\sl280 \tx1140 \tx2280 \tx3420 \tx4560 \tx5700 
+\tx6840 \tx7980 \par 
+\par 
+17. In the \b Classes \b0 window, click twice on the \b .h 
+\b0 icon.  This launches Edit and brings up the file NotePlayer.h. 
+ Notice that you are now no longer talking to Interface Builder. 
+ The active application is now Edit, as you can see by the 
+Menu's title in the upper left hand corner of the screen.  
+Now, click on the \b Open...\b0  menu item of the \b Window...\b0 
+ sub-menu of the Edit application.  This brings up an \b Open\b0 
+ panel.  Select \b NotePlayer.m\b0 . Notice that there is a 
+"stub" or "place-holder" method for each of the methods you declared.\par 
+\par 
+19. Replace the "stub" \b play:\b0  method with the following 
+code (the quickest way to do this is to open up the tutorial 
+and use cut/copy/paste; alternatively, you can type in the code): 
+\par 
+\par 
+\f22 - play:sender\par 
+\{\par 
+  [Conductor lockPerformance];\par 
+  [mySynthPatch noteOn:myNote];\par 
+  [Conductor unlockPerformance];\par 
+  return self;\par 
+\}\par 
+\par 
+\f20 20. Similaraly, replace the \b setFreqFrom:\b0  method as 
+shown:\par 
+\f22 \par 
+- setFreqFrom:sender\par 
+\{\par 
+  [Conductor lockPerformance];\par 
+  [myNote setPar:MK_freq toDouble:[sender doubleValue]];\par 
+  [mySynthPatch noteUpdate:myNote];\par 
+  [Conductor unlockPerformance];\par 
+  return self;\par 
+\}\par 
+\par 
+\f20 21.  Finally, you need to add the code to start up the 
+performance and allocate the Note and the SynthPatch.  To do 
+this, we add two methods\i .  \i0 The first is called \b +initialize\b0 
+.  It  is a class method and is automatically invoked when 
+the first instance of your class is created.  This method sets 
+up the performance:\par 
+\par 
+\f22 + initialize\par 
+\{\par 
+  [Conductor setFinishWhenEmpty:NO];\par 
+  [Orchestra new];\par 
+  [Orchestra setSamplingRate:44100]; \par 
+  [Orchestra setFastResponse:YES];\par 
+  [Orchestra run];\par 
+  [Conductor startPerformance];\par 
+  return self;\par 
+\}\par 
+\f20 \par 
+The second method, \b init\b0 , is invoked when a new object 
+is  instantiated:\par 
+\par 
+\f22 - init\par 
+\{\par 
+   [super init];\par 
+   [Conductor lockPerformance];\par 
+   myNote = [[Note alloc] init];\par 
+   mySynthPatch = [Orchestra allocSynthPatch:[Pluck class]];\par 
+   [Conductor unlockPerformance];\par 
+   return self;\par 
+\}\par 
+\f20 \par 
+You will also need to add three header file \b #import\b0  
+statements. (\b #import\b0  is like \b #include \b0 in conventional 
+C.)  Put them right after the \b NotePlayer\b0  \b #impor\b0 
+t statement. Note that you may not indent\b  #import\b0  statements 
+because they are processed by the C pre-precessor. \par 
+\f22 \par 
+#import <musickit/musickit.h>\par 
+#import <musickit/synthpatches/Pluck.h>\par 
+#import <appkit/appkit.h>\par 
+\par 
+\f20 Save the file, using the \b Save\b0  menu item of the 
+\b Window\b0  menu.\par 
+\f22 \f20 \par 
+\par 
+COMPILING THE APPLICATION\par 
+\par 
+23. Return to Interface Builder by clicking on any of the Interface 
+Builder windows or the Interface Builder icon.\par 
+\par 
+24. Before you compile the application, there's one more thing 
+you need to do \'b1 Interface Builder normally does not link 
+against the Music Kit and DSP libraries.  To make sure it does, 
+do the following:\par 
+\par 
+Click on the \b Inspector\b0  window and select  \b Project 
+\b0 from the pop-up menu.   Click on \b Other libs\b0 .  
+Then click \b add \b0 at the bottom of the window. This brings 
+up an Open panel.  Type:\par 
+\par 
+\tab /usr/lib/libmusic_s\par 
+\par 
+This adds the Music Kit to your library list.  You also need 
+the DSP library.  Click \b add \b0 again and this time type:\par 
+\par 
+\tab /usr/lib/libdsp_s\par 
+\par 
+Notice that libmusic and libdsp are both in your library list 
+now.  Unfortunately, they come out in alphabetical order, which 
+is not right in this case.  To put them in the correct order, 
+hold down CONTROL and click on libmusic_s.  Drag it to where 
+libdsp_s is and release the mouse button.  Notice that the two 
+names have changed places. \par 
+\par 
+\par 
+25. Under the \b File\b0  menu of Interface Builder, click \b 
+Make\b0 .  This will launch a UNIX shell window to compile 
+and link the \f22 program.\par 
+\par 
+\f20 RUNNING THE APPLICATION\par 
+\par 
+26. Double click on the NeXT cube in the dock to get back 
+to the Workspace.  Find the program you just created. It will 
+be called \b Example2.debug\b0 .  Double click on it to launch 
+it and run it! See if it worked!\par 
+\f22 \par 
+\f20 EXPANDING YOUR PROGRAM -- THE POWER OF OBJECT-ORIENTED PROGRAMMING\par 
+\par 
+27. As an excercise, try adding another play button that plays 
+a second Note.  To do this, just instantiate another NotePlayer 
+instance and connect it up as before.  You do not need to 
+add \i any \i0 new code to do this! \par 
+\par 
+}

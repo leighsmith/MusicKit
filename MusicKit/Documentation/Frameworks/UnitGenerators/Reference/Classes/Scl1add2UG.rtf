@@ -1,0 +1,195 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f3\fmodern Ohlfs;}
+\paperw16220
+\paperh14500
+\margl120
+\margr0
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f1 ã
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 Scl1add2UG\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	UnitGenerator\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit/unitgenerators/unitgenerators.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 Scl1add2UG adds two input signals, the first of which is scaled:\
+
+\fs16 \
+
+\i\fs28 	output
+\i0  = (
+\i input1 
+\i0 * 
+\i scaler
+\i0 ) + 
+\i input2\
+
+\fs16 \
+
+\pard\tx7140\i0\li2100\fc0\cf0 \
+\
+
+\fs28 MEMORY SPACES\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 Scl1add2UG
+\i abc\
+
+\b0 a	
+\i0 output \
+
+\i b	
+\i0 input 1 (scaled input)\
+
+\i c
+\i0 	input 2 (unscaled input)\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 idleSelf\
+
+\pard\f1\b0\li2620\fc0\cf0 - 
+\f0\b idleSelf
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 You never send this message.  It's invoked by sending the 
+\b idle 
+\b0 message to the object.  \
+Sets the output patchpoint to 
+\i sink
+\i0 ,
+\i  
+\i0 thus ensuring that the object does not produce any output.  Note that you must send 
+\b setOutput:
+\b0  and 
+\b run 
+\b0 again to use the UnitGenerator after sending 
+\b idle
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 setInput1:\
+
+\pard\f1\b0\li2620\fc0\cf0 - 
+\f0\b setInput1:
+\b0\i aPatchpoint\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the input 1 patchpoint to 
+\i aPatchpoint
+\i0 .  Returns 
+\b nil
+\b0  if the argument isn't a patchpoint; otherwise returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setInput2:\
+
+\pard\f1\b0\li2620\fc0\cf0 - 
+\f0\b setInput2:
+\b0\i aPatchpoint\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the input 2 patchpoint to 
+\i aPatchpoint
+\i0 .  Returns 
+\b nil
+\b0  if the argument isn't a patchpoint; otherwise returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setOutput:\
+
+\pard\f1\b0\li2620\fc0\cf0 - 
+\f0\b setOutput:
+\b0\i aPatchpoint\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the output patchpoint to 
+\i aPatchpoint
+\i0 .  Returns 
+\b nil
+\b0  if the argument isn't a patchpoint; otherwise returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setScale:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setScale:
+\b0\i (double)value\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the constant scaler.  Effective values are between 0.0 and 1.0 (a negative scaler is the same as its absolute value, but with a 180 degree phase shift).  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+}

@@ -1,0 +1,190 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\fmodern Ohlfs;}
+\paperw14640
+\paperh12000
+\margl120
+\margr120
+{\colortbl;\red0\green0\blue0;}
+\pard\tx1340\tx2680\tx4020\tx5360\tx6720\tx8060\tx9400\tx10740\tx12080\tx13440\f0\b\i0\ulnone\qc\fs48\fc0\cf0 Envelope Editor\
+
+\b0\fs28 by Fernando Lípez Lezcano\
+CCRMA, Stanford Center for Computer Research in Music and Acoustics\
+
+\ql \
+This program allows you to graphically edit envelopes or more general x-y functions. The original purpose of the program was to edit envelopes in text oriented computer music languages like the MusicKit score language, CLM, cmusic, csound, cmix, etc. The problem of interfacing between text and graphics was solved using the pasteboard of the NeXT computer. When 
+\b\fc1\cf1 copy
+\b0  is selected in the graphical envelope view, a text representation of the envelope is placed in the pasteboard. When 
+\b paste
+\b0  is selected, the program parses the text found in the pasteboard and draws the envelope.\
+\
+
+\b\qc\fs32 Editing envelopes:\
+
+\ql \
+
+\b0\fs28 The graphic window can contain any number of stacked envelope views. To add a new envelope view to the window click the 
+\b Add
+\b0  button. An envelope is selected and made current by clicking in its view (the selected or current envelope is shown in black).  The 
+\b Delete
+\b0  button erases the current envelope and removes its view from the window. Just in case, the 
+\b Undo
+\b0  retrieves the last envelope deleted. A new envelope has only two points with x-y coordinates 0,0 and 1,0.\
+\
+To 
+\b\fs32 move
+\b0\fs28  a point:		
+\b\fs32 click
+\b0\fs28  on the point and 
+\b drag
+\b0 \
+To 
+\b\fs32 add
+\b0\fs28  a point:		
+\b\fs32 shift-click
+\b0\fs28  on the desired location\
+To 
+\b\fs32 erase
+\b0\fs28  a point:		
+\b\fs32 shift-click
+\b0\fs28  on an existing breakpoint\
+To make a point the 
+\b sticky
+\b0  point:	
+\b\fs32 alternate-click
+\b0\fs28  on the point\
+\
+The current point is shown in black and can also be edited by typing numbers in the appropriate fields. The field 
+\b point
+\b0  changes the currently selected point. The fields 
+\b x
+\b0  and 
+\b y
+\b0  change the coordinates of the point. The field 
+\b yr
+\b0  shows and can alter the real value (I hope!) the envelope reaches at the breakpoint. This value depends on the smoothing parameter (changing yr changes y at constant smoothing, provided that y does not exceed the maximum displayable value). The smoothing can be changed by typing in the field 
+\b smooth
+\b0  or with the slider next to it (using the slider limits the value to a maximum of 10). The sticky point is shown graphically by a black vertical line and can also be toggled in the current point with the button called 
+\b stick point
+\b0 .\
+\
+Here is a complex envelope you can play with that includes smoothing, sticky point and everything. Just select it, copy the text to the pasteboard and paste it to the graphic view:\
+\
+[(0.000,0.000)(0.097,1.000)(0.150,0.086)(0.170,0.968,7.143)(0.306,-0.061,4.175)(0.330,0.950,3.857)(0.478,0.039,3.540)(0.865,0.115,4.651)(1.185,0.964,0.030)|(1.476,0.032)(1.581,0.384)(1.701,0.294)(2.522,0.642,5.603)(3.000,0.000)]\
+\
+
+\b\qc\fs32 Drawing limits:\
+
+\b0\ql\fs28 The four limit fields (xmin, xmax, ymin, ymax) let you select the drawing limits for the envelope view.  There are two buttons (last minute addition!) that might help you when building envelopes for different parameters of the same note. The 
+\b recalc 
+\b0 button recalculates the maximum and minimum values for both axis, so as to fit the whole envelope within the boundaries of the window. The 
+\b link all x's
+\b0  button forces all envelopes to use the x limits of the currently selected envelope. In this way you can more easily see temporal relationships between different envelopes. \
+\
+
+\b\qc\fs32 Snap grid:\
+
+\b0\ql\fs28 The snap fields let you select the rounding value of x and y coordinates.  If the x coordinates of two points are less than two snap values apart, snapping turns off. Keep in mind that the program always prints output to the pasteboard to only three decimal places.\
+\
+
+\b\qc\fs32 Input and Output Formats:\
+
+\b0\ql\fs28 The program automatically parses and can write envelopes with the following formats:\
+\
+
+\fs32 "[(x,y\{,s\})\{|\}, ...]"
+\fs28 		standard MusicKit format\
+
+\fs32 "(x y ...)"
+\fs28 			Lisp list (for CLM and similar languages)\
+
+\fs32 "((x y) ...)"
+\fs28 		Lisp list of lists \
+
+\fs32 "(x,y, ...)"
+\fs28 			comma separated list\
+
+\fs32 "x y  ..."
+\fs28 			blank separated pairs\
+
+\fs32 "x,y, ..."
+\fs28 			comma separated pairs\
+
+\fs32 "x0 y0 z0,x1 y1 z1, ..."
+\fs28 	comma separated triads\
+
+\fs32 "x0,y0,z0 x1,y1,z1  ..."
+\fs28 	space separated triads\
+	x=x coordinate of point\
+	y=y coordinate of point\
+	s=optional smoothing in MusicKit envelopes\
+	| (vertical bar)=optional sticky point position in MusicKit envelopes\
+\
+The 
+\b output format
+\b0  pop up list lets you select the output format that the program will use when copying an envelope to the pasteboard. The selection is global for all envelopes displayed.\
+The 
+\b show smooth
+\b0  button allows you to turn off the drawing of exponential envelope segments. This option is automatically turned off if you paste an envelope in any non-MusicKit format. \
+\
+
+\b\i Note
+\i0 :
+\b0  The two "triad" formats are a partial support for cmusic envelopes. The third component is the curvature of the segment and though it is not displayed (yet!) it can be edited numerically in the field 
+\b smooth
+\b0 . Please note that the separation character between components of a triad and between triads has to be different (so that the software can automatically parse the text representation of the envelope). See also the Defaults Database section for more information useful for cmusic users.\
+\
+
+\b\qc\fs32 Defaults Database:\
+
+\b0\ql\fs28 The program recognizes three options in the NeXT Defaults Database:\
+\
+
+\pard\tx620\tx1240\tx1860\tx2480\tx3100\tx3720\tx4340\tx4980\tx5600\tx6220\b\fc1\cf1 "EnvelopeEd defaultSmoothing 1.0"
+\b0 	\
+Floating point value that sets the default for the smooth parameter of new points. Default value is 1.0.\
+	\
+
+\b "EnvelopeEd showSmoothing YES/NO"
+\b0 \
+Default value of "show smooth" switch. If set to YES (the default) a new envelope shows the MusicKit smoothing. \
+
+\b \
+"EnvelopeEd drawSegments YES/NO"
+\b0 \
+Controls segment drawing. If set to YES (the default) both points and segments are drawn. Otherwise only points are drawn (with no connecting segments). \
+
+\pard\tx1340\tx2680\tx4020\tx5360\tx6720\tx8060\tx9400\tx10740\tx12080\tx13440\fc1\cf1 \
+These options can be examined or changed in a Terminal by using dwrite, dread and dremove (do a "man dwrite" for more information), or you can use the DefaultMgr program by Drew Davidson that is available on the archives. \
+\
+
+\b Many thanks to:\
+
+\b0\i * Julius O. Smith and David Jaffe
+\i0  for insights into how the MusicKit envelopes work.\
+
+\i * James Pritchett
+\i0  for his edsnd program.\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\i\fc0\cf0 * Ali Ozer and Jayson Adams
+\i0  for the lines example and easy to use UserPaths.\
+
+\pard\tx1340\tx2680\tx4020\tx5360\tx6720\tx8060\tx9400\tx10740\tx12080\tx13440\fc1\cf1 \
+Comments, bug reports or fixes and added features are welcome to the address below:\
+
+\i 	Fernando Lípez Lezcano\
+	nando@CCRMA.stanford.edu\
+
+\pard\tx620\tx1240\tx1860\tx2480\tx3100\tx3720\tx4340\tx4980\tx5600\tx6220\i0\fc1\cf1 \
+Version 1.04b\
+- Added libraries so that it can be compiled fat\
+Version 1.04\
+- Changed over to NeXTStep 3.x\
+Version 1.03\
+- Now parses exponential format numbers.\
+- Slightly enlarged point cell for functions with more than 999 breakpoints.\
+Version 1.02:\
+- Fixed nasty bug in memory allocation routines that was crashing the program with large envelopes.\
+- Three new options for output format.\
+- Three options that can be set from the NeXT Defaults Database.\
+- New menu option to toggle drawing of line segments.\
+
+}

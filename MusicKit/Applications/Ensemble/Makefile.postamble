@@ -1,0 +1,10 @@
+#install::
+#	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_[0-9]*k.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app
+#	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_turtlebeachms.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app
+#	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_turtlebeachpin.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app
+#	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_ilinki56.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app
+#	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_arielpc56d.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app
+#	mkdirs $(DSTROOT)/LocalLibrary/Music/Ensemble
+#	cp Examples/*.ens $(DSTROOT)/LocalLibrary/Music/Ensemble
+#	mkdirs $(DSTROOT)/LocalLibrary/Music/Midi
+#	cp Examples/*.midi $(DSTROOT)/LocalLibrary/Music/Midi

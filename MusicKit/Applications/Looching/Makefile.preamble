@@ -1,0 +1,2 @@
+#LIBS = -lmusic_s -ldsp_s -lNeXT_s -lsys_s
+LDFLAGS = -u .objc_class_name_Bark

@@ -1,0 +1,96 @@
+/* PWspectrum -- pswrap-able code for SpectrumView
+ * 
+ * This file includes:
+ *	PWSpectinit() 		-- Initializes variables
+ *	PWSpectdrawHruler()	-- Draws the horizontal (time) ruler
+ *	PWSpectdrawVruler()	-- Draws the vertical (frequency) ruler
+ *	PWSmeanplotdata()	-- Draws one point of mean frequency data
+ *
+ * smb@datran2.uunet.uu.net
+ * jwp@silvertone.Princeton.edu
+ * 2/90
+ * 03/90:  Removed PWSpectplotdata() (now done in SpectrumView)
+ */
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+/* PWSpectinit() -- Initialize variables
+ * 	'Spectrulerfont' = font for the rulers
+ *	'lastmeany' = last mean frequency data point
+ */
+defineps PWSpectinit()
+	/Spectrulerfont /Helvetica findfont 8 scalefont def 
+	/lastmeany -1 def
+endps
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+/* PWSpectdrawHruler -- draws the X-axis hashmarks and seconds numbers
+ * Arguments:  nmin, nmax, dn = controls for loop (these are sec. vals)
+ * 	       dx             = distance between hashmarks (in pixels)
+ * Display is always 20 pixels high.
+ * BUG: last # tends to get clipped.
+ */
+
+defineps PWSpectdrawHruler(float nmin,nmax,dn,dx)
+	Spectrulerfont setfont
+	0 setgray
+	gsave
+	nmin dn nmax {
+		0 5 moveto		% Use 'translate' to locate
+		(    ) cvs show		% Convert n to string and print
+		0 15 moveto		% Draw the hash mark
+		0 5 rlineto
+		stroke
+		dx 0 translate		% Move over by dx for next
+	} for				% for (n = nmin; n <= nmax; n += dn)
+	grestore
+endps
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+/* PWSpectdrawVruler -- draws the Y-axis hashmarks and KHz numbers
+ * Arguments:  nmin, nmax, dn = controls for loop (these are KHz vals)
+ * 	       dy             = distance between hashmarks
+ * Display is always 30 pixels wide.
+ * BUG: last # tends to get clipped.
+ */
+
+defineps PWSpectdrawVruler(int nmin,nmax,dn; float dy)
+	Spectrulerfont setfont
+	0 setgray
+	gsave
+	nmin dn nmax {
+		10 0 moveto		% Use 'translate' to locate
+		(    ) cvs show		% Convert n to string and print
+		25 0 moveto		% Draw the hash mark
+		5 0 rlineto
+		stroke
+		0 dy translate		% Move over by dx for next
+	} for				% for (n = nmin; n <= nmax; n += dn)
+	grestore
+endps
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+/* PWSmeanplotdata -- Plots the mean frequency line
+ * Arguments:	index 	= vertical index of the mean line
+ *		dx     	= distance between points (horizontally)
+ *		yscale	= scaling factor (vertical)
+ */
+
+defineps PWSmeanplotdata(int index; float dx,yscale)
+	0 setgray 1 setlinewidth
+
+	/meany index yscale mul def		% meany = index * yscale
+	lastmeany 0 ge {			% if last > 0
+			% draw a line from (-dx,lastmeany) to (0,meany)
+		newpath
+			0 dx sub lastmeany moveto
+			0 meany lineto
+		stroke
+	} if 
+	/lastmeany meany def		% update lastmeany
+endps
+
+

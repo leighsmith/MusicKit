@@ -1,0 +1,21 @@
+{\rtf0\ansi{\fonttbl\f0\fswiss Helvetica;\f1\fmodern Courier;}
+\paperw11760
+\paperh7800
+\margl120
+\margr120
+\pard\tx520\tx1060\tx1600\tx2120\tx2660\tx3200\tx3720\tx4260\tx4800\tx5320\f0\b\i0\ulnone\qc\fs24\fc0\cf0 Windowing
+\b0 \
+
+\ql \
+The reason why most of the sounds that you obtain using the waveform editor are harsh is because of discontinuities in the time domain.   For example, a square waveform sounds so bright because of its sharp edges in the time domain.  These edges are responsible for the high amplitude frequencies that can be seen in the sound's spectrum.  To see that, get a  Saw-Tooth waveform, then redraw its vertical right edge so that the resulting left part of the curve goes gently from maximum to minimum.  You can hear simultaneously that the timbre gets more mellow and the spectrum looses its high frequency components.\
+	Getting rid of the discontinuities in the signal is important in spectrum analysis, because the frequencies induced by the discontinuities can mask the ones we are interested in.  
+\i Windowing
+\i0  is a very frequently used method to achieve this result.  Windowing consists of multiplying the waveform by a curve which reduces the discontinuities of the signal.  In practice, the discontinuities are often located at the boundaries of the analysis window.  Therefore, a common window goes gently to zero on the right and left ends of the analysis window.  You can draw half the window curve in the 
+\i operation
+\i0  window, going left to right from maximum to minimum in a more or less gentle manner.  Clicking 
+\i multiply
+\i0  applies the weighting curve to the waveform, zeroing the boundaries' discontinuity.\
+	Windowing the signal corresponds to 
+\i convolving
+\i0  the signal's spectrum with the spectrum of the weight curve. 
+}

@@ -1,0 +1,49 @@
+This directory contains an example program illustrating how to design
+a Music Kit SynthPatch. Three examples are given. 
+
+1. Simplicity.m, is extremely simple, and should be studied first. 
+Simplicity implements a single sine wave with oscillator and no
+envelopes. 
+
+2. Envy.m, is a more musically useful example, as it includes
+envelopes on amplitude and frequency, but it is still primitive.  Envy
+can be made more useful by adding the ability to set the wavetable.
+
+3. FM.m is a sophisticated example and illustrates many features of
+SynthPatch design. FM supports frequency modulation synthesis with
+arbitrary waveforms, random and periodic vibrato, and a wide range of
+parameters and MIDI controls.  
+
+Sample .score files are given for each example.
+
+This directory also contains a program to play the SynthPatches. This
+program is identical to the one provided with the programing example
+"playscorefile2" except that it has one extra statement:
+
+[UnitGenerator enableErrorChecking:YES];
+
+This provides some error checking that is useful when doing SynthPatch
+developement. See that example's "README" file for details on the
+playing program and how to run it.
+
+The files Simplicity.m, Envy.m, and FM.m contains comments describing what
+they do and giving hints on how to build a SynthPatch.  If you want to
+create your own SynthPatch class, you must do the following:
+
+1. Create the SynthPatch class.
+2. Add it to the Makefile.
+3. Remake the example.
+
+See "Building a SynthPatch" in the Music chapter of the NeXT Technical
+Documentation for more information.
+
+NOTE: For Applications that follow certain restrictions, SynthPatches
+can be much simpler. If it is assumed that all parameters will be
+present in every note and that only noteDurs without noteTags are used
+(as in software packages such as CSound, C-Music, or MUSIC 5), then
+the fairly involved logic of the applyParameters: method in Envy.m is
+not needed.  Furthermore, preemptFor: is not necessary if it is
+assumed that it will never be necessary to preempt running
+SynthPatches (i.e.  if the Application never attempts to play too many
+simultaneous notes).  See the example EnvySimplified.m for an example
+of a SynthPatch that makes such assumptions.

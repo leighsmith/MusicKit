@@ -1,0 +1,23 @@
+NAME
+     dspimg - convert a ".lod" file into a ".dsp" file.
+
+SYNOPSIS
+     dspimg [-s] infile[.lod] [outfile[.dsp]]
+
+DESCRIPTION
+     A ".dsp" file is a binary encoding of an ASCII ".lod" produced by
+     the DSP assembler.  The ".dsp" format loads much faster than the
+     ".lod" format.
+
+EXAMPLES
+     The command line
+
+          dspimg boot56k.lod boot56k.dsp
+     
+     or, more simply,
+
+          dspimg boot56k
+
+     converts boot56k.lod to ".dsp" format. (The suffix of the 
+     input filename defaults to ".lod," and the output filename 
+     is derived from the input filename when omitted.)

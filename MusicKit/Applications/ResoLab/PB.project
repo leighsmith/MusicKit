@@ -1,0 +1,29 @@
+INSTALLDIR = "$(HOME)/Apps";
+APPICON = Reso.tiff;
+GENERATEMAIN = YES;
+DOCICONFILES = ();
+FILESTABLE = {
+    M_FILES = (ResoLab_main.m);
+    OTHER_LINKED = ();
+    H_FILES = (ResoController.h, SourceFilterIns.h, SpectrumView.h, Xforms.h, Z3DPlaneView.h, ZPlaneView.h);
+    CLASSES = (ResoController.m, SourceFilterIns.m, SpectrumView.m, Xforms.m, Z3DPlaneView.m, ZPlaneView.m);
+    IMAGES = ();
+    PSW_FILES = ();
+    C_FILES = ();
+    OTHER_SOURCES = ();
+    SUBPROJECTS = ();
+    PSWM_FILES = ();
+    SOUNDS = ();
+    OTHER_LIBS = (Media_s, musickit, dsp, unitgenerators, NeXT_s, Driver);
+    INTERFACES = (ResoLab.nib);
+};
+APPCLASS = ResoController;
+MAINNIB = ResoLab;
+DOCEXTENSIONS = ();
+PROJECTTYPE = Application;
+PROJECTVERSION = 1.1;
+LOCALIZABLE_FILES = {
+};
+PROJECTNAME = ResoLab;
+SYSTEMEXTENSIONS = ();
+LANGUAGE = English;

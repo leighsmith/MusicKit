@@ -1,0 +1,6 @@
+The files in the folder "Concepts" are identical to the "Sound, Music, and Signal Processing Concepts" manual from the hard-copy technical documentation shipped in the spring of 1991.  Unlike the "Reference" chapters, the "Concepts" chapters were not distributed as part of the 2.0 Extended or 2.1 Extended software releases.  (They are not available in electronic form directly from NeXT, but can be obtained from the Internet archive servers.)
+
+The "Sound, Music, and Signal Processing Concepts" chapters are based on Release 2.0. 
+
+See also the "NeXTstep Concepts" chapters, which have probably been installed in /NextLibrary/Documentation/NextDev/NextStep/Concepts.  Note that the "NeXTstep Concepts" chapters are based on Release 1.0; be sure to read the file Intro.rtf for details.  
+

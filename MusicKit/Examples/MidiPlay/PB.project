@@ -1,0 +1,32 @@
+INSTALLDIR = "$(HOME)/Apps";
+APPICON = "";
+GENERATEMAIN = YES;
+DOCICONFILES = ();
+FILESTABLE = {
+    M_FILES = (MidiPlay_main.m);
+    OTHER_LINKED = ();
+    H_FILES = (MidiFilter.h, MyApp.h);
+    CLASSES = (MidiFilter.m, MyApp.m);
+    IMAGES = ();
+    PSW_FILES = ();
+    C_FILES = ();
+    OTHER_RESOURCES = (mkmon_A_32k.dsp, mkmon_A_8k.dsp, mkmon_A_192k.dsp, mkmon_A_turtlebeachms.dsp, mkmon_A_arielpc56d.dsp,mkmon_A_ilinki56.dsp);
+    OTHER_SOURCES = (MidiPlay.iconheader, README);
+    SUBPROJECTS = ();
+    PSWM_FILES = ();
+    SOUNDS = ();
+    OTHER_LIBS = (synthpatches, unitgenerators, musickit, dsp, NeXT_s, Driver);
+    INTERFACES = (Info.nib, MidiPlay.nib);
+};
+APPCLASS = MyApp;
+MAINNIB = MidiPlay;
+DOCEXTENSIONS = ();
+PROJECTTYPE = Application;
+PROJECTVERSION = 1.1;
+LOCALIZABLE_FILES = {
+    Info.nib;
+    MidiPlay.nib;
+};
+PROJECTNAME = MidiPlay;
+SYSTEMEXTENSIONS = ();
+LANGUAGE = English;

@@ -1,0 +1,584 @@
+{\rtf0\nextcset {\fonttbl{\f21\fswiss Helvetica;}{\f22\fmodern 
+Courier;}{\f20\froman Times-Roman;}{\f3\fswiss Helvetica;}}
+\paperw12240\paperh15840 \margl1780\margr1440\margt0\margb0 
+\pgnstart1\ftnstart1 \deftab31680 \sectd\sbknone \linemod0\linex0 
+\ftnbj \headery0\footery0 \cols1 {\footer \pard \li20\ri360\fi0\qc\sl320 
+\plain \f3 \par 
+\f20\fs18\i Unit Generator Programming Example \'d0 Page 
+\chpgn \f21\fs24\i0 \par 
+\par 
+}\pard \li0\ri0\fi20\qc\sl260 \tx380 \tx1100 \tx1800 \tx2540 
+\tx3260 \tx3980 \plain \f20\fs40 A Unit Generator Programming 
+Example\par 
+\fs20 Last updated July 26, 1992\par 
+\pard \li20\ri360\fi0\sl280 \tx1160 \tx2300 \tx3440 \tx4580 
+\tx5720 \tx6860 \tx8000 \fs22 \par 
+In musicexamples/exampunitgenerator, there is a programming 
+example covering the making of unit generators.  In 
+case you do not have easy access to this example, and/or 
+for ease of study, here it is below:\par 
+\par 
+\f22\fs18 ==================================== README ====================================\par 
+\par 
+This directory contains an example of a user-created 
+UnitGenerator class.\par 
+The class corresponds to the DSP unit generator macro 
+oscw, which is\par 
+included in this directory.  To make this example, type 
+the following to a\par 
+shell:\par 
+\par 
+\tab make exampunitgenerator\par 
+\par 
+There are three steps to creating a UnitGenerator class:\par 
+\par 
+STEP 1 -- Create a unit generator macro and test it.\par 
+\par 
+See /usr/lib/dsp/test/README for details on how to make 
+your own DSP\par 
+unit generator macro, test it in "stand alone" mode 
+(i.e. without\par 
+using the Music Kit), and debug it. The example, oscw.asm 
+has already\par 
+been created and tested.\par 
+\par 
+STEP 2 -- Create UnitGenerator objects from your macro.\par 
+\par 
+The next step is to generate Music Kit objects from 
+corresponding to your \par 
+DSP unit generator macro by running dspwrap. To do this, 
+you would invoke\par 
+the utility "dspwrap". The Makefile on this directory 
+does this for you.\par 
+\par 
+Dspwrap assembles the unit generator and invokes a subsidiary 
+utility,\par 
+"dsploadwrap", to produce an Objective-C class for every 
+combination\par 
+of input and output spaces. Since oscw.asm has only 
+one space\par 
+argument (its output signal) two classes are produced, 
+one for x\par 
+output and for y output.  These classes are written 
+by dspwrap:\par 
+\par 
+\tab \b Class\b0 \tab \tab \b Code file\b0  \tab \tab 
+\b Header file\b0 \par 
+\tab OscwUGx\tab         \tab OscwUGx.m   \tab 
+OscwUGx.h\par 
+\tab OscwUGy\tab \tab OscwUGy.m \tab \tab OscwUGy.h\par 
+\par 
+An included source file oscwUGInclude.m is generated as 
+well.  The\par 
+"UG" means UnitGenerator. These files should never be 
+edited. They are\par 
+the classes you actually allocate from the Orchestra 
+in the\par 
+application. In our example, we actually only use the 
+OscwUGx version.\par 
+\par 
+Additionally, a superclass for OscwUGx and OscwUGy is 
+produced, but\par 
+only if it does not already exist:\par 
+\par 
+\tab Class\tab \tab Code file \tab Header file\par 
+\par 
+\tab OscwUG\tab \tab OscwUG.m\tab OscwUG.h\tab \par 
+\par 
+These files should be hand-edited to add methods to 
+set the unit generator\par 
+arguments and to set its response to messages such as 
+-idle, -run,\par 
+-finish, etc.  On this directory, the files OscwUG.m 
+and OscwUG.h have\par 
+already been hand-edited for you. See those files for 
+comments on what\par 
+should be added.\par 
+\par 
+OscwUG.m, without any hand-editing (i.e. as written by 
+dspwrap), is shown\par 
+below. Note that the DSP memory arguments, as defined 
+in the macro,\par 
+appear in the enum definition.\par 
+\par 
+------- OscwUG.m before hand-editing -------------------------------\par 
+/* This is a stub of the class you fill in. Generated 
+by dspwrap.*/\par 
+#import <musickit/musickit.h>\par 
+#import "OscwUG.h"\par 
+@implementation OscwUG:UnitGenerator\par 
+\{ /* Instance variables go here */\par 
+\}\par 
+\par 
+enum args \{ aout, seed\};\par 
+\par 
+#import "oscwUGInclude.m"\par 
+\par 
+-idleSelf \{\par 
+    /* This method must be implemented to put the 
+UnitGenerator in a state\par 
+       where it "does no harm". That is, if it 
+has outputs, it should write\par 
+       them to the special patchpoint sink. See 
+UnitGenerator.h for \par 
+       details.*/\par 
+    return self;\par 
+\}\par 
+----------------------------------------------------------------------\par 
+\par 
+STEP 3 -- Test the new UnitGenerator class.\par 
+\par 
+We've provided a simple example that allocates an instance 
+of OscwUGx\par 
+and patches it to an instance of Out2sum. This example 
+is given in the\par 
+file exampunitgenerator.m. \par 
+\par 
+The program plays three 0.5-second exponentially decaying 
+sine waves.\par 
+Stand back! Our simple example has no amplitude scaling 
+and so comes\par 
+out of your speaker at full amplitude.  To run the 
+program, type the\par 
+following to a shell:\par 
+\par 
+      exampunitgenerator \par 
+\par 
+Note that this example does not use a Music Kit Conductor. 
+Instead,\par 
+the timing is done with the primitive function MKSetTime(). 
+(Note that\par 
+MKSetTime() has no effect if there is a Conductor.) 
+For most\par 
+applicatons, it is much more convenient to use a Conductor 
+to do the\par 
+timing. The file exampunitgenerator2.m on this directory 
+illustrates\par 
+how to use a Conductor to do the timing.  See also\par 
+/NextDeveloper/Examples/MusicKit/exampsynthpatch for an example 
+of how\par 
+to combine UnitGenerator objects into larger structures 
+(SynthPatches)\par 
+that can be used in a Music Kit performance.\par 
+\par 
+==================================== Makefile ==================================\par 
+#\par 
+# Application makefile. \par 
+#\par 
+#\par 
+# Generated by the NeXT Interface Builder. \par 
+#\par 
+\par 
+#\par 
+# Name of the application. \par 
+#\par 
+NAME = exampunitgenerator\par 
+\par 
+#\par 
+# Source files for this application. \par 
+#\par 
+MFILES = OscwUGx.m OscwUG.m exampunitgenerator.m \par 
+HFILES = OscwUGx.h OscwUG.h exampunitgenerator.h \par 
+\par 
+#\par 
+# Libraries used by this application.\par 
+#\par 
+\par 
+LIBS = -lunitgenerators -lmusickit -ldsp_s -lNeXT_s -lsys_s 
+\par 
+CFLAGS = -O -g\par 
+\par 
+#\par 
+# Flags to pass on to the compiler and linker.\par 
+#\par 
+#LIB_ROOT = /me/P\par 
+#CFLAGS = -O -g -I$(LIB_ROOT)/musickit -I$(LIB_ROOT)/unitgenerators 
+#-I$(LIB_ROOT)/dsp/src/lib/\par 
+#LIBS = -lunitgenerators_g -lmusickit_g -ldsp_g -lNeXT_s 
+-lsys_s \\\par 
+#\tab -L$(LIB_ROOT)/musickit \\\par 
+#\tab -L$(LIB_ROOT)/unitgenerators \\\par 
+#\tab -L$(LIB_ROOT)/dsp/src/lib/\par 
+\par 
+#\par 
+# Directory containing DSP system\par 
+#\par 
+DSPDIR = /usr/lib/dsp\par 
+\par 
+#\par 
+# Rules.\par 
+#\par 
+SRCFILES = $(MFILES) $(HFILES) $(CFILES) $(NIBFILES) $(TIFFFILES) 
+$(PSWFILES) \par 
+OBJFILES = $(MFILES:.m=.o) $(CFILES:.c=.o) $(PSWFILES:.psw=.o) 
+\par 
+DERIVED = $(PSWFILES:.psw=.c) oscwUGInclude.m OscwUG[xy].* 
+oscw_*  *.lod *.lst\par 
+GARBAGE = $(DERIVED) core errs\par 
+\par 
+$(NAME): OscwUGx.m $(OBJFILES) \par 
+\tab $(CC) $(CFLAGS) $(LFLAGS) -o $@ $(OBJFILES) $(LIBS) 
+\par 
+\par 
+OscwUGx.m: oscw.asm\par 
+\tab dspwrap -ug -noDoc -local $(DSPDIR)/smsrc oscw.asm\par 
+\par 
+all: $(NAME)\par 
+\par 
+clean: \par 
+\tab -rm -f *.o $(NAME) $(DERIVED) $(GARBAGE) \par 
+\par 
+help: \par 
+\tab @echo '  make $(NAME) - to make the application'\par 
+\tab @echo '  make clean -    to remove all files 
+but the source'\par 
+\par 
+installsrc:\par 
+\tab -rm -rf $(SRCROOT)\par 
+\tab mkdirs -m 755 $(SRCROOT)\par 
+\tab cp $(SRCFILES) Makefile README $(SRCROOT)\par 
+\tab chmod 444 $(SRCROOT)/*\par 
+\par 
+\par 
+==================================== oscw.asm ==================================\par 
+\par 
+;;  Copyright 1989,1990 by NeXT Inc.\par 
+;;  Author - J.0. Smith\par 
+;;\par 
+;;  Modification history\par 
+;;  --------------------\par 
+;;  08/29/87/jos - initial file created from oscs.asm\par 
+;;  10/05/87/jos - passed test/toscw.asm, both relative 
+and absolute cases\par 
+;;\par 
+;;------------------------------ DOCUMENTATION ---------------------------\par 
+;;  NAME\par 
+;;      oscw (UG macro) - Oscillator based on 2D 
+vector rotation\par 
+;;\par 
+;;  SYNOPSIS\par 
+;;      oscw pf,ic,sout,aout0,c0,s0,u0,v0\par 
+;;\par 
+;;  MACRO ARGUMENTS\par 
+;;      pf        = global label prefix (any 
+text unique to invoking macro)\par 
+;;      ic        = instance count (s.t. pf\\_oscw_\\ic\\_ 
+is globally unique)\par 
+;;      sout      = output waveform memory space 
+('x' or 'y')\par 
+;;      aout0     = initial output vector address\par 
+;;      c0        = initial value of cos(2*pi*fc/fs) 
+where fc=osc freq, fs=srate\par 
+;;      s0        = initial value of sin(2*pi*fc/fs) 
+where fc=osc freq, fs=srate\par 
+;;      u0        = initial value of first 
+state variable\par 
+;;      v0        = initial value of second 
+state variable\par 
+;;\par 
+;;  DSP MEMORY ARGUMENTS\par 
+;;      Arg access     Argument use       
+      Initialization\par 
+;;      ----------     --------------       
+    --------------\par 
+;;      y:(R_Y)+       current output address 
+  aout0\par 
+;;      x:(R_X)+       current c address   
+     c0\par 
+;;      y:(R_Y)+       current s address   
+     s0\par 
+;;      x:(R_X)+       current u address   
+     u0\par 
+;;      y:(R_Y)+       current v address   
+     v0\par 
+;;\par 
+;;  DESCRIPTION\par 
+;;\par 
+;;      Generate I_NTICK samples of a sinusoid by 
+extracting the x-axis\par 
+;;      projection of a circular rotation in a plane. 
+ Each sample is computed\par 
+;;      by rotating the 2D vector (u,v) through 
+a fixed angle Theta = 2*pi*Fc/Fs,\par 
+;;      where Fc is the oscillation frequency and 
+Fs is the sampling rate in Hz.\par 
+;;      Equivalently, the signal is generated as 
+the real part of exp(j*w*n+phi) \par 
+;;      where w equals 2*pi*Fc/Fs, n is the sample 
+number (from 0), and phi\par 
+;;      is a phase offset.\par 
+;;\par 
+;;      The coefficients c and s can be computed 
+as the cosine and sine,\par 
+;;      respectively, of rotation angle, i.e.,\par 
+;;\par 
+;;      c=cos(2*pi*Fc/Fs) and s=sin(2*pi*Fc/Fs).\par 
+;;\par 
+;;      The initial values of u and v correspond 
+to the initial phase offset via \par 
+;;\par 
+;;      u0=cos(p) and v0=sin(p).\par 
+;;\par 
+;;      In pseudo-C:\par 
+;;\par 
+;;      aout = y:(R_Y)+;           /* output 
+address */\par 
+;;      c    = x:(R_X)+;           /* 
+cosine of pole angle in radians */\par 
+;;      s    = y:(R_Y)+;           /* 
+sine of pole angle in radians */\par 
+;;      u    = x:(R_X);            /* 
+real part of motion around unit circle */\par 
+;;      v    = y:(R_Y);            /* 
+imag part of motion around unit circle */\par 
+;;\par 
+;;      for (n=0;n<I_NTICK;n++) \{\par 
+;;          sout_aout[n] = u;      /* output 
+real part */\par 
+;;          t = c*u - s*v;         /* 
+update real part */\par 
+;;          v = s*u + c*v;         /* 
+update imag part */\par 
+;;          u = t;\par 
+;;      \}\par 
+;;\par 
+;;      x:(R_X)+ =u;               /* 
+for next time */\par 
+;;      y:(R_Y)+ =v;\par 
+;;\par 
+;;  DSPWRAP ARGUMENT INFO\par 
+;;      oscw (prefix)pf,(instance)ic,(dspace)sout,aout0,c0,s0,u0,v0\par 
+;;\par 
+;;  MINIMUM EXECUTION TIME\par 
+;;       (4*I_NTICK+7)/I_NTICK instruction cycles (4 
+inner loop + 7)\par 
+;;\par 
+;;  SOURCE\par 
+;;      /usr/lib/dsp/ugsrc/oscw.asm\par 
+;;\par 
+;;  SEE ALSO\par 
+;;      /usr/lib/dsp/ugsrc/oscs.asm - simplest osc 
+(also 4 instr. inner loop)\par 
+;;      /usr/lib/dsp/ugsrc/oscm.asm - masked wavetable 
+index (for negative inc)\par 
+;;      /usr/lib/dsp/ugsrc/osci.asm - linear interpolation 
+on table lookup\par 
+;;\par 
+;;  ALU REGISTER USE\par 
+;;      X0 = c\par 
+;;      Y0 = s\par 
+;;      X1 = u\par 
+;;      Y1 = v\par 
+;;       A = u\par 
+;;       B = v\par 
+;;\par 
+\par 
+          define pfx "pf\\_oscw_\\ic\\_"\par 
+\tab   define macpfx """pfx"""\par 
+\par 
+oscw      macro pf,ic,sout,aout0,c0,s0,u0,v0\par 
+          new_yarg macpfx,aout,aout0\par 
+          new_xarg macpfx,c,c0\par 
+          new_yarg macpfx,s,s0\par 
+          new_xarg macpfx,u,u0\par 
+          new_yarg macpfx,v,v0\par 
+\par 
+          move y:(R_Y)+,R_O            
+ ; output pointer\par 
+          move x:(R_X)+,X0 y:(R_Y)+,Y0  ; c,s\par 
+          move x:(R_X),X1 y:(R_Y),B     ; u,v\par 
+          do #I_NTICK,pfx\\tickloop\par 
+               mpy  X0,X1,A   B,Y1    
+       ; A=c*u(n-1), Y1=v(n-1)\par 
+               macr -Y0,Y1,A ;B,sout:(R_O)+ 
+ ; A=u(n)=c*u(n-1)-s*v(n-1)\par 
+               mpy  Y0,X1,B   A,X1    
+       ; B=s*u(n-1), X1=u(n)\par 
+               macr X0,Y1,B   A,sout:(R_O)+ 
+ ; B=v(n)=s*u(n-1)+c*v(n-1)\par 
+pfx\\tickloop    \par 
+          move X1,x:(R_X)+    B,y:(R_Y)+   
+  ; (u,v) for next time\par 
+          endm\par 
+\par 
+==================================== test.asm ==================================\par 
+\par 
+; test.asm - Test program for unit generator macro oscw\par 
+;\par 
+; When the program halts in Bug56,\par 
+; select DSPeek from the Tools menu, and set the range 
+to nsamps\par 
+; (below) and the origin to y:$3800 (which is symbol 
+YB_DMA_W, \par 
+; the first of the two DMA sound-out buffers).\par 
+; You should see a plot of the osc output waveform.\par 
+; Note that every other sample is zero because the 
+output buffer\par 
+; is stereo, and we are only sending data to channel 
+A.\par 
+;\par 
+; Usage:\par 
+;\tab asm56000 -A -B -L -OS,SO -I/usr/lib/dsp/smsrc/ test\par 
+;\tab open /NextDeveloper/Apps/Bug56.app\par 
+;\tab <load and erase symbols> test.lod\par 
+;\tab <run>\par 
+;\par 
+test  ident 0,0\tab \tab ; version, revision (arbitrary)\par 
+\tab include 'config_standalone'    ; on this directory\par 
+;*\tab define nolist 'list'\tab ; get absolutely everything 
+into listing file\par 
+\tab include 'music_macros'\tab ; utility macros\par 
+\par 
+nsamps\tab set 256\tab \tab \tab ; number of samples 
+to compute\par 
+srate\tab equ 22050.0\tab \tab ; samples per second\par 
+cosArg\tab equ 0.999*@cos(2*3.141592653*440.0/srate)\par 
+sinArg\tab equ 0.999*@sin(2*3.141592653*440.0/srate)\par 
+state1  equ 0.0                 ; Initial 
+values for state variables\par 
+state2  equ 1.0\par 
+\par 
+\tab beg_orch 'test'\tab ; standard startup for orchestras\par 
+\par 
+\tab new_xib xsig,I_NTICK,0\tab \tab ; allocate waveform 
+vector\par 
+\par 
+\tab beg_orcl\par 
+\tab \tab nop_sep 3\tab ; nop's to help find boundary\par 
+;     oscw      macro pf,ic,sout,aout0,c0,s0,u0,v0\par 
+\tab \tab oscw orch,1,x,xsig,cosArg,sinArg,state1,state2\par 
+\tab \tab nop_sep 3\tab    \tab ; nop's to help find 
+boundary\par 
+\tab \tab outa orch,1,x,xsig \tab ; Output signal to 
+DAC channel A\par 
+\tab \tab nop_sep 3\tab    \tab ; nop's to help find 
+boundary\par 
+\tab \tab break_on_sample nsamps\tab ; stop after nsamps 
+samples (misc.asm)\par 
+\tab end_orcl\par 
+finish\tab end_orch 'test'\par 
+\par 
+============================== config_standalone.asm ===========================\par 
+\par 
+; config_standalone -included by unit-generator and array-processing-macro\par 
+; \tab \tab      test programs.  Sets things up 
+so that assembly\par 
+;\tab \tab      includes system monitor, no degmon, 
+and no reset code.\par 
+;\tab \tab      This makes the assembly loadable 
+into a running Bug56.\par 
+ASM_SYS\tab    set 1\tab \tab ; want monitor code\par 
+ASM_RESET  set 0\tab \tab ; degmon will be preloaded 
+by Bug56\par 
+ASM_DEGMON set 0\tab \tab ; degmon will be preloaded 
+by Bug56\par 
+\par 
+; override normal runtime halt action by one convenient 
+with Bug56\par 
+\tab define DEBUG_HALT 'SWI' ; SINGLE WORD (--->abort)\par 
+DEBUG_HALT_OVERRIDDEN set 1\par 
+\par 
+==================================== OscwUG.h ==================================\par 
+\par 
+/* This is a stub of the class interface you fill 
+in. Generated by dspwrap.*/\par 
+#import <musickit/UnitGenerator.h>\par 
+@interface OscwUG : UnitGenerator\par 
+\{ /* Instance variables go here */ \}\par 
+\par 
+-setFreq:(double)hz decay:(double)dec;           
+                    // ADDED\par 
+  /* Sets frequency and decay of sine wave. */   
+                    // ADDED\par 
+-setOutput:aPatchPoint;                   
+                           // ADDED\par 
+  /* Sets UnitGenerator output. */           
+                        // ADDED\par 
+-trigger;                          
+                               
+   // ADDED\par 
+  /* Starts decaying sine wave on its way. */\par 
+\par 
+@end\par 
+\par 
+==================================== OscwUG.m ==================================\par 
+\par 
+/* The code that was added by hand is indicated by 
+the comment "// ADDED"\par 
+\par 
+/* This is a stub of the class you fill in. Generated 
+by dsploadwrap.*/\par 
+#import <musickit/musickit.h>\par 
+#import "OscwUG.h"\par 
+@implementation OscwUG:UnitGenerator\par 
+\{ /* Instance variables go here */\par 
+\}\par 
+\par 
+   enum args \{ c, u, aout, s, v\};\par 
+\par 
+#import "oscwUGInclude.m"\par 
+\par 
+-idleSelf \{\par 
+    /* This method must be implemented to put the 
+UnitGenerator in a state\par 
+       where it "does no harm". That is, if it 
+has outputs, it should write\par 
+       them to the special patchpoint sink. See 
+UnitGenerator.h for \par 
+       details.*/\par 
+    return [self setAddressArgToSink:aout];      
+                    // ADDED\par 
+\}\par 
+\par 
+-setOutput:aPatchPoint \{                  
+                           // ADDED\par 
+    return [self setAddressArg:aout to:aPatchPoint]; 
+                // ADDED\par 
+\}                              
+                               
+       // ADDED\par 
+\par 
+-initialize \{                       
+                               
+  // ADDED\par 
+    [self setDatumArg:u to:0];             
+                          // ADDED\par 
+    return [self setDatumArg:v to:0];         
+                       // ADDED\par 
+\}                              
+                               
+       // ADDED\par 
+\par 
+-trigger \{                         
+                               
+   // ADDED\par 
+    [self setDatumArg:u to:DSPDoubleToFix24(1.0)];   
+                // ADDED\par 
+    return [self setDatumArg:v to:0];         
+                       // ADDED\par 
+\}                              
+                               
+       // ADDED\par 
+\par 
+-setFreq:(double)hz decay:(double)dec            
+                    // ADDED\par 
+  /* Sets frequency and decay of sine wave. */   
+                    // ADDED\par 
+\{                              
+                               
+       // ADDED\par 
+    double radianFreq = M_PI * 2 * hz/[orchestra 
+samplingRate];      // ADDED\par 
+    [self setDatumArg:c to:DSPDoubleToFix24(cos(radianFreq) 
+* dec)]; // ADDED\par 
+    [self setDatumArg:s to:DSPDoubleToFix24(sin(radianFreq) 
+* dec)]; // ADDED\par 
+    return self;                    
+                               
+  // ADDED\par 
+\}                              
+                               
+       // ADDED\par 
+\par 
+@end\par 
+}

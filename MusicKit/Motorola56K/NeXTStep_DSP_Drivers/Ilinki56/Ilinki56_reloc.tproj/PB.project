@@ -1,0 +1,15 @@
+FILESTABLE = {
+    OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble, Makefile.driver_preamble, Load_Commands.sect, DSPMKDriver.h, DSPMKDriver.m, dspdriver_servier.c);
+    H_FILES = (dspdriver.h, dspdriverServer.h, dspdriver_types.h, Ilinki56.h);
+    CLASSES = (Ilinki56.m);
+    C_FILES = (dspdriverServer.c);
+};
+LOCALIZABLE_FILES = {
+};
+
+PROJECTVERSION = 1.1;
+INSTALLDIR = "";
+PROJECTTYPE = Tool;
+PROJECTNAME = Ilinki56_reloc;
+GENERATEMAIN = YES;
+DOCICONFILES = ();

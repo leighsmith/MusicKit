@@ -1,0 +1,513 @@
+{\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\ftech\fcharset2 Symbol;}
+{\colortbl;\red255\green255\blue255;}
+\paperw16220\paperh12580
+\pard
+
+\f0\fs24 \cf0 Release 2.0  Copyright 
+\f1 „
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+\pard\li1100\ql\qnatural
+
+\b \cf0 \
+\
+\
+\
+
+\fs36 MKPartPerformer\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b0\fs28 \cf0 INHERITS FROM	MKPerformer : NSObject\
+
+\fs16 \
+
+\fs28 DECLARED IN	MusicKit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs28 \cf0 A MKPartPerformer object performs the MKNotes in a particular MKPart.  Every MKPartPerformer has exactly one MKNoteSender.  A MKPartPerformer is associated with a MKPart through its 
+\b setPart:
+\b0  method.  While a single MKPartPerformer can only be associated with one MKPart, any number of MKPartPerformers can by associated with the same MKPart.  If you're performing a MKScore, you can use MKScorePerformer to create MKPartPerformers for you (one for each MKPart in the MKScore).\
+
+\fs16 \
+
+\fs28 When you activate a MKPartPerformer (through 
+\b activateSelf
+\b0 ) the object copies its MKPart's NSMutableArray of MKNotes (it doesn't copy the MKNotes themselves).   When the MKPartPerformer performs, it sequences over its copy of the NSMutableArray, allowing you to edit the MKPart (by adding or removing MKNotes) without disturbing the performance–changes made to a MKPart during a performance are not seen by the MKPartPerformer.  However, since only the NSMutableArray of MKNotes is copied but not the MKNotes themselves, you should neither alter nor free a MKPart's MKNotes during a performance.\
+
+\fs16 \
+
+\fs28 As an optimization for real time, you can enable a "Fast Activation mode", on a class-wide basis.  Any MKPartPerformer activated  when this mode is in effect does not retain its own copy of its MKPart's NSMutableArray.   In this mode, you must not edit the MKPart while the MKPartPerformer is using it.\
+
+\fs16 \
+
+\fs28 With the timing variables 
+\b firstTimeTag
+\b0  and 
+\b lastTimeTag
+\b0 , you can specify the first and last timeTag values that are considered for performance.  Keep in mind that you can offset the timing of a performance by setting the 
+\b timeShift 
+\b0 variable defined in MKPerformer, and you can limit the duration of the performance by setting the 
+\b duration
+\b0  variable.\
+\
+An example will clarify how 
+\b firstTimeTag 
+\b0 works.  If 
+\b firstTimeTag
+\b0  is set to 3 and the MKPartPerformer is activated at time 0, then the first note will sound at time 3.  If the MKPartPerformer is activated at time 1, the first note will sound at time 4.   If 
+\b timeShift 
+\b0 is set to -1 and the MKPartPerformer is activated at time 1, the first note will sound at time 3.\
+
+\fs16 \
+
+\fs28 See also:  MKPerformer, MKScorePerformer, MKPart\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\i\fs28 \cf0 Inherited from NSObject
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Inherited from MKPerformer
+\i0 	id	conductor;\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+\cf0 MKPerformerStatus	status;\
+int	performCount;\
+double	timeShift;\
+double	duration;\
+double	time;\
+double	nextPerform;\
+id	noteSenders;\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\i\fs28 Declared in MKPartPerformer
+\i0 	id	nextNote;\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+\cf0 id	noteSender;\
+id	part;\
+double	firstTimeTag;\
+double	lastTimeTag;\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 nextNote 	The next note to perform.\
+
+\fs16 \
+
+\fs28 noteSender 	The object's only NoteSender.\
+
+\fs16 \
+
+\fs28 part 	The Part associated with this object.\
+
+\fs16 \
+
+\fs28 firstTimeTag 	First timeTag considered for performance\
+
+\fs16 \
+
+\fs28 lastTimeTag 	Last timeTag considered for performance\
+\pard\tx7140\li2100\ql\qnatural
+
+\fs16 \cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs28 \cf0 Class methods	+ setFastActivation:\
+	+ fastActivation\
+
+\fs16 \
+
+\fs28 Creating a MKPartPerformer	
+\f1 - 
+\f0 copy \
+
+\fs16 \
+
+\fs28 Modifying the object	
+\f1 - 
+\f0 init\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 setPart:\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Querying the object	
+\f1 - 
+\f0 part\
+
+\fs16 \
+
+\fs28 Performing the object	
+\f1 - 
+\f0 activateSelf\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 deactivateSelf\
+
+\f1 - 
+\f0 perform\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Accessing the timing variables	
+\f1 - 
+\f0 firstTimeTag\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 lastTimeTag\
+
+\f1 - 
+\f0 setFirstTimeTag: \
+
+\f1 - 
+\f0 setLastTimeTag:\
+\pard\tx7140\li2100\ql\qnatural
+
+\fs16 \cf0 \
+\
+\
+
+\fs28 CLASS METHODS\
+\
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 setFastActivation:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 + 
+\f0\b setFastActivation:
+\b0 (BOOL)
+\i yesOrNo
+\i0 \
+\pard\li3620\fi-1020\ql\qnatural
+
+\b\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 If 
+\i yesOrNo 
+\i0 is YES, MKPartPerformers do 
+\i not 
+\i0 copy the MKPart's NSMutableArray of MKNotes when they activate.  Fast Activation mode is provided for real-time situations where instantaneous activation is required, such as when triggering a sequence.  In this mode, MKNotes may not be added or removed from the MKPart while the MKPartPerformer is using it.  \
+\
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 fastActivation:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 + (BOO
+\f0 L
+\f1 )
+\f0\b fastActivation
+\b0 \
+\pard\li3620\fi-1020\ql\qnatural
+
+\b\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns whether Fast Activation mode is enabled for the class.  The default is NO.  See setFastActivation:.\
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+\
+INSTANCE METHODS\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 activateSelf\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b activateSelf\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Activates the receiver for a performance.  The receiver creates a copy of its MKPart's NSMutableArray of MKNotes (unless Fast Activation mode is enabled), sets 
+\b nextNote
+\b0  to the first MKNote in the NSMutableArray, and sets 
+\b nextPerform
+\b0  (an instance variable inherited from Performer that defines the time to pperform 
+\b nextNote
+\b0 ) to the MKNote's timeTag plus 
+\b timeShift
+\b0 .\
+
+\fs16 \
+
+\fs28 You never invoke this method directly; it's invoked as part of the 
+\b activate
+\b0  method inherited from MKPerformer.  A subclass implementation should send 
+\b [super activateSelf]
+\b0 .  If 
+\b activateSelf
+\b0  returns 
+\b nil
+\b0 , the receiver isn't activated.  The default implementation returns 
+\b nil
+\b0  if there aren't any MKNotes in the receiver's MKNote NSMutableArray, otherwise it returns the receiver.  The 
+\b activate
+\b0  method performs further timing checks.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 copy\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b copy\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Creates and returns a new MKPartPerformer as a copy of the receiver.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 deactivateSelf\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b deactivateSelf\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Deactivates the receiver and frees its NSMutableArray of MKNotes.  You never invoke this method directly; it's invoked as part of the 
+\b deactivate
+\b0  method inherited from MKPerformer.  The return value is ignored.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 firstTimeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (double)
+\b firstTimeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the value of the receiver's 
+\b firstTimeTag 
+\b0 instance variable.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 init\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b init\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Initializes the receiver by creating and adding its single MKNoteSender.  You must invoke this method after creating a new MKPartPerformer.  A subclass implementation should send 
+\b [super init]
+\b0  before performing its own initialization.  The return value is ignored.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 lastTimeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (double)
+\b lastTimeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the value of the receiver's 
+\b lasTimeTag 
+\b0 instance variable.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 part\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b part\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the receiver's Part object.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 perform\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b perform\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Performs 
+\b nextNote
+\b0  (by sending it to its MKNoteSender's connections) and then prepares the receiver for its next MKNote performance.  It does this by seting 
+\b nextNote
+\b0  to the next MKNote in its NSMutableArray and setting 
+\b nextPerform
+\b0  to that MKNote's timeTag minus the value of 
+\b firstTimeTag
+\b0 .  You never invoke this method directly; it's automatically invoked by the receiver's MKConductor during a performance.  A subclass implementation should send 
+\b [super perform]
+\b0 .  The return value is ignored.  To help support MIDI time code,  
+\b perform
+\b0  sends all noteUpdates up to the current time when it is first invoked.  This makes sure that all MKSynthInstruments and MIDI controllers have the proper values. 
+\i \
+
+\i0 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 setFirstTimeTag:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b setFirstTimeTag:
+\b0 (double)
+\i aTimeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Sets the value of the receiver's 
+\b firstTimeTag
+\b0  variable to 
+\i aTimeTag
+\i0 .\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 setLastTimeTag:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b setLastTimeTag:
+\b0 (double)
+\i aTimeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Sets the value of the receiver's 
+\b lasTimeTag
+\b0  variable to 
+\i aTimeTag
+\i0 .\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 setPart:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b setPart:
+\i\b0 aPart\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Associates the receiver with 
+\i aPart
+\i0 .  If the receiver is active, this does nothing and returns 
+\b nil
+\b0 .  Otherwise returns the receiver.\
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+}

@@ -1,0 +1,13 @@
+DSP README
+
+This is the DSP software development directory.  
+
+Directories below this one include:
+
+     test       - A place to develop DSP software and simulate it.
+     smsrc      - DSP sources: music system
+     ugsrc      - DSP sources: orchestra unit generators macros
+     src	- Sources for DSP C library and DSP programs
+     monitor	- Binary-format DSP music system and associated files
+
+Principal maintainer is jos@ccrma.stanford.edu, but feel free to join the fun!

@@ -1,0 +1,5 @@
+This directory contains an example command-line program that creates
+some Notes, adds them to a Part, and plays them on the DSP, using randomly-
+selected timbres from the wave table data base.
+
+See the code comments for details.
