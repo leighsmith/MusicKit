@@ -3,8 +3,26 @@
   Defined In: The MusicKit
 
   Description:
-    This is the allocater and manager of DSP resources. 
-    CF: MKUnitGenerator.m, MKSynthPatch.m, MKSynthData.m and MKPatchTemplate.m.
+    This is the allocator and manager of DSP resources. 
+
+    The MKOrchestra class is used for managing DSP allocation and control for
+    doing sound and music on the DSP. Actually, the MKOrchestra object supports
+    multiple DSPs, although in the basic NeXT configuration, there is only one
+    DSP.
+
+    The MKOrchestra factory object manages all programs running on all the DSPs.
+    Each instances of the MKOrchestra class corresponds to a single DSP. We call
+    these instances "orchestra instances"
+    or, simply, "orchestras". We call the sum total of all orchestras the
+    "Orchestra". Each orchestra instance is referred to by an integer
+    'orchIndex'. These indecies start at 0. For the basic
+    NeXT configuration, orchIndex is always 0.
+
+    There are two levels of allocation: MKSynthPatch allocation and
+    unit generator allocation. MKSynthPatches are higher-level entities,
+    collections of MKUnitGenerators. Both levels may be used at the same time.
+
+  CF: MKUnitGenerator.m, MKSynthPatch.m, MKSynthData.m and MKPatchTemplate.m.
 
   Original Author: David A. Jaffe
 
@@ -16,6 +34,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2000/05/06 01:13:21  leigh
+  Typed parameters to reduce warnings and Parenthetised to remove warnings
+
   Revision 1.13  2000/04/26 01:22:26  leigh
   outputCommandsFile now an NSString
 
@@ -332,23 +353,6 @@ int _MKSetTopOfMemory(int val)
 
 #import "OrchestraPrivate.h"
 @implementation MKOrchestra:NSObject
- /* The Orchestra class is used for managing DSP allocation and control for
-    doing sound and music on the DSP. Actually, the Orchestra object supports
-    multiple DSPs, although in the basic NeXT configuration, there is only one 
-    DSP. 
-     
-    The Orchestra factory object manages all programs running on all the DSPs. 
-    Each instances of the Orchestra class corresponds to a single DSP. We call 
-    these instances "orchestra instances" 
-    or, simply, "orchestras". We call the sum total of all orchestras the
-    "Orchestra". Each orchestra instance is referred to by an integer 
-    'orchIndex'. These indecies start at 0. For the basic
-    NeXT configuration, orchIndex is always 0.
-     
-    There are two levels of allocation: SynthPatch allocation and 
-    unit generator allocation. SynthPatches are higher-level entities, 
-    collections of UnitGenerators. Both levels may be used at the same time.
-    */
   
 /* Some global variables. --------------------------------------- */
 static BOOL orchClassInited = NO;
@@ -752,7 +756,7 @@ static void _MKTimeStamp()
 static void setLooper(MKOrchestra *self); /* forward ref */
 static int resoAlloc(MKOrchestra *self,id factObj,MKOrchMemStruct *reloc);
 
-static id synthInstruments = nil;
+static NSMutableArray *synthInstruments = nil;
 
 -setOnChipMemoryConfigDebug:(BOOL)debugIt patchPoints:(short)count
   /* Sets configuration of onchip memory
@@ -3532,7 +3536,8 @@ static DSPAddress allocMem(MKOrchestra *self,MKOrchMemSegment segment,unsigned s
     /* Allocate off-chip memory of specified size in indicated segment 
        and returns address in specified segment. */
     id *templPtr;
-    id aPatch,deallocatedPatches;
+    id aPatch;
+    NSMutableArray *deallocatedPatches;
     DSPAddress rtnVal;     
     unsigned i;
     CHECKADJUSTTIME();
@@ -3643,21 +3648,22 @@ static int resoAlloc(MKOrchestra *self,id factObj,MKOrchMemStruct *reloc)
               ((self->_xArg += reso->xArg) >= self->_maxXArg) ? (int)MK_xArg :
               ((self->_lArg += reso->lArg) >= MAXLARG) ? (int)MK_lArg :
               ((self->_yArg += reso->yArg) >= self->_maxYArg) ? (int)MK_yArg : OK);
-    /* >= because xArg, etc. point to the NEXT available location. */ 
-    if (rtnVal)
-      {   /* Undo effect of resoAlloc. */
-          if (rtnVal != (int)MK_pLoop)
+    /* >= because xArg, etc. point to the NEXT available location. */
+    if (rtnVal) {   /* Undo effect of resoAlloc. */
+        if (rtnVal != (int)MK_pLoop) {
             if (self->isLoopOffChip)  /* See if we're moving back on chip. */
-              self->isLoopOffChip = givePELoop(self,reloc->pLoop - noops); 
-            else self->_piLoop = reloc->pLoop - noops; /* Wind back. */
-          self->_xArg = reloc->xArg;
-          self->_lArg = reloc->lArg;
-          self->_yArg = reloc->yArg;
-          giveDataMem(self,MK_yData,reloc->yData);
-          giveDataMem(self,MK_xData,reloc->xData);
-          giveDataMem(self,MK_pSubr,reloc->pSubr);
-          return rtnVal;
-      }
+                self->isLoopOffChip = givePELoop(self,reloc->pLoop - noops); 
+            else
+                self->_piLoop = reloc->pLoop - noops; /* Wind back. */
+            self->_xArg = reloc->xArg;
+            self->_lArg = reloc->lArg;
+            self->_yArg = reloc->yArg;
+            giveDataMem(self,MK_yData,reloc->yData);
+            giveDataMem(self,MK_xData,reloc->xData);
+            giveDataMem(self,MK_pSubr,reloc->pSubr);
+            return rtnVal;
+        }
+    }
     if (leapOffChip)
       putLeaper(self,reloc->pLoop);
     self->computeTime += time;
@@ -3750,7 +3756,8 @@ id factObj,beforeObj,afterObj;
        Otherwise, fail.
        */
     id *templPtr;
-    id aPatch,rtnVal,deallocatedPatches;     
+    id aPatch,rtnVal;
+    NSMutableArray *deallocatedPatches;     
     unsigned i,option;
     CHECKADJUSTTIME();
     if (self->deviceStatus == MK_devClosed)
@@ -3966,12 +3973,12 @@ static BOOL driverPresent(unsigned short index)
     return orch;
 }
 
-+(id *)_addTemplate:aNewTemplate 
++(NSMutableArray **)_addTemplate:aNewTemplate 
   /* The Orchestra keeps a list of SynthPatches indexed by PatchTemplates.
      PatchTemplate uses this to tell the Orchestra about each new Template. */
 {
     static int curArrSize = 0;
-    id *deallocatedPatches;
+    NSMutableArray **deallocatedPatches;
     int i;
 #   define ARREXPAND 5 
     if (nTemplates == 0) {
