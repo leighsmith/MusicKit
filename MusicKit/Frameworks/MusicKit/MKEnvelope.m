@@ -35,6 +35,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/10/04 07:00:47  skot
+  Improved description method for debug purposes, extra safety in init method
+
   Revision 1.4  2000/10/04 06:16:15  skot
   Added description selectors
 
@@ -86,20 +89,37 @@ Modification history:
     stickPoint = MAXINT;
     samplingPeriod = 1.0;
     defaultSmoothing = MK_DEFAULTSMOOTHING;
+
+// SKoT: safety additions
+    xArray         = NULL;
+    yArray         = NULL;
+    smoothingArray = NULL;
+    pointCount     = 0;
+
     return self;
 }
 
 // SKoT: Added 4 Oct 2000
-
 - (NSString*) description
 {
-    long i;
     NSString *s = [NSString localizedStringWithFormat: @"MKEnvelope with %i points: [", pointCount];
 
-    for (i = 0; i < pointCount; i++)
-        s = [s stringByAppendingString:
-            [NSString localizedStringWithFormat: @"{%.2f,%.2f}",xArray[i], yArray[i]]];
-
+    if (pointCount > 0) {
+        // If all is well, output control point coordinate pairs...
+        if (xArray != NULL && yArray != NULL) {
+            long i;
+            for (i = 0; i < pointCount; i++)
+                s = [s stringByAppendingString:
+                    [NSString localizedStringWithFormat: @"{%.2f,%.2f}",xArray[i], yArray[i]]];
+        }
+        // ...otherwise engage in gratuitous debug assistance.
+        else if (xArray == NULL && yArray == NULL)
+            [NSString localizedStringWithFormat: @"xArray and yArray are NULL"];
+        else if (xArray == NULL)
+            [NSString localizedStringWithFormat: @"xArray is NULL"];
+        else if (yArray == NULL)
+            [NSString localizedStringWithFormat: @"yArray is NULL"];
+    }
     [s stringByAppendingString: @"]"];
  
    return s;    
