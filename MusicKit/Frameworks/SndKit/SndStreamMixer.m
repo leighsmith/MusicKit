@@ -125,7 +125,7 @@
 	// Each client should have a second synthing buffer, and a synth thread.
 	[client startProcessingNextBufferWithInput: inB nowTime: nowTime];	
     }
-    // Do any audio processing on the mix
+    // Do any audio processing on the entire mix.
     [processorChain processBuffer: outB forTime: lastNowTime];
 
     [streamClientsLock unlock];

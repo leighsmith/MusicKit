@@ -24,7 +24,9 @@
 /*!
 @class SndStreamMixer
 @abstract Stream mixer and effects processor
-@discussion To come
+@discussion The SndStreamMixer class is responsible for managing the mixing of SndAudioBuffers from all
+            current SndStreamClients. After mixing all buffers, it can apply any signal processing to the mixed
+	    result by modifying it's SndAudioProcessorChain retrieved using audioProcessorChain.
 */
 @interface SndStreamMixer : NSObject {
 /*! @var streamClients */
