@@ -5,6 +5,7 @@
     FILESTABLE = {
         FRAMEWORKS = (Foundation.framework); 
         FRAMEWORKSEARCH = (dfdf); 
+        HEADERSEARCH = (); 
         H_FILES = (
             PerformSound.h, 
             mididriverUser.h, 
