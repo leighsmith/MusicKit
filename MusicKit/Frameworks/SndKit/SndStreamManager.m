@@ -22,6 +22,18 @@
 
 void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj);
 
+/* the enums are dual purpose -- they serve as condition locks for
+ * bg_threadlock, and they also serve as the values held by
+ * bg_sem to tell the bg thread which activity to perform.
+ */
+enum {
+    BG_ready,
+    BG_hasFlag,
+    BG_stopNow,
+    BG_startNow,
+    BG_abortNow
+};
+
 @implementation SndStreamManager
 
 static SndStreamManager *sm = nil;
@@ -59,6 +71,8 @@ static SndStreamManager *sm = nil;
     [mixer retain];
 
     active = FALSE;
+    bg_threadLock  = [[NSConditionLock alloc] initWithCondition: BG_ready];
+    bg_active = FALSE;
     SNDStreamNativeFormat(&format);
     nowTime = 0;
 
@@ -81,7 +95,7 @@ static SndStreamManager *sm = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// dealloc
+// description
 ////////////////////////////////////////////////////////////////////////////////
 
 - (NSString*) description
@@ -96,7 +110,7 @@ static SndStreamManager *sm = nil;
 // function.
 ////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL) startStreaming
+- (void) startStreaming
 {
     // Tell MKPerformSndMidi to start sending us buffers, register the
     // processAudioAtTime selector as the callback for it to use.
@@ -111,14 +125,72 @@ static SndStreamManager *sm = nil;
 
     // Get the native hardware stream format....
 
-    active = SNDStreamStart(processAudio, (void*) self);
-    nowTime = 0.0;
+    if (!bg_active) {
+        [NSThread detachNewThreadSelector: @selector(streamStartStopThread)
+                                 toTarget: self
+                               withObject: nil];
+    }
+    [bg_threadLock lock];
+    bg_sem = BG_startNow;
+    [bg_threadLock unlockWithCondition:BG_hasFlag];
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// streamStartStopThread: watches for semaphore from processing thread that it
+// should be stopped. Doing it from this thread means that the playback thread
+// doesn't have to stop itself, which is a particular problem on portaudio
+// implementations where a pthread_join is attempted on the playback thread from
+// the thread telling it to stop (which until now was the same thread)
+////////////////////////////////////////////////////////////////////////////////
+- (void)streamStartStopThread
+{
+    NSAutoreleasePool *localPool = [NSAutoreleasePool new];
+    bg_active = TRUE;
+    [self retain];
 
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"SndManager::startStreaming - Stream starting!\n"); 
-#endif        
+            NSLog(@"SndManager::entering bg thread\n");
+#endif
 
-    return active;
+    while (1) {
+        [bg_threadLock lockWhenCondition:BG_hasFlag];
+        if (bg_sem == BG_startNow) {
+            active = SNDStreamStart(processAudio, (void*) self);
+            nowTime = 0.0;
+            bg_sem = 0;
+#if SNDSTREAMMANAGER_DEBUG
+            NSLog(@"SndManager::startStreaming - Stream starting!\n");
+#endif
+        }
+        else if (bg_sem == BG_stopNow) {
+            SNDStreamStop();
+#if SNDSTREAMMANAGER_DEBUG
+            NSLog(@"SndManager::stopStreaming -  stream stopping");
+#endif
+            active = FALSE;
+            nowTime = 0.0;
+            bg_sem = 0;
+            [bg_threadLock unlock];
+            break;
+        }
+        else if (bg_sem == BG_abortNow) {
+            [bg_threadLock unlock];
+            break;
+        }
+        [bg_threadLock unlockWithCondition:BG_ready];
+    }
+#if SNDSTREAMMANAGER_DEBUG
+    NSLog(@"SndManager::exiting bg thread\n");
+#endif
+    [self release];
+    [localPool release];
+    /* even if there is a new thread is created between the following two
+     * statements, that would be ok -- there would temporarily be one
+     * extra thread but it won't cause a problem
+     */
+    bg_active = FALSE;
+    [NSThread exit];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -126,21 +198,17 @@ static SndStreamManager *sm = nil;
 // and unregister the processAudioAtTime: selector as the callback function.
 ////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL) stopStreaming
+- (void) stopStreaming
 {
     if (active) {
         [mixer managerIsShuttingDown];
-        nowTime = 0.0;
-        SNDStreamStop();
-        active = FALSE;
-#if SNDSTREAMMANAGER_DEBUG
-        NSLog(@"SndManager::stopStreaming -  stream stopping");
-#endif        
+        [bg_threadLock lock];
+        bg_sem = BG_stopNow;
+        [bg_threadLock unlockWithCondition:BG_hasFlag];
     }
     else {
         NSLog(@"SndManager::stopStreaming - Error: stopStreaming called when not streaming!\n");
     }
-    return active;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

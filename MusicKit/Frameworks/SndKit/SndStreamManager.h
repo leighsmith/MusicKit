@@ -35,11 +35,18 @@
     SndStreamMixer *mixer;
 /*! @var            active Stores the streaming state of the manager. */
     BOOL            active;
+/*! @var            bg_active Whether or not the backgroup stream stopping/starting thread has been created. */
+    BOOL            bg_active;
 /*! @var            format SndSoundStruct containing stream format information. */
     SndSoundStruct  format;
 /*! @var            nowTime Manager's conception of time, in seconds. */
     double          nowTime;
-} 
+/*! @var            bg_sem Semaphore to background thread to start/stop streaming. */
+    BOOL            bg_sem;
+/*! @var            bg_threadLock used for signalling to background thread to start streaming,
+                    stop streaming, or abort itself. */
+    NSConditionLock *bg_threadLock;
+}
 
 /*!
     @method initialize
@@ -76,19 +83,29 @@
     @method   startStreaming
     @abstract   Starts streaming.
     @discussion You should never need to call this. Streaming is started automatically
-                whene the first client connects to the manager.   
-    @result     TRUE if streaming was successfully started
+                when the first client connects to the manager.
 */
-- (BOOL) startStreaming;
+- (void) startStreaming;
 
 /*!
     @method   stopStreaming
     @abstract   Stops streaming.
     @discussion You should never need to call this. Streaming is stopped automatically
-                whene the last client disconnects from the manager.   
-    @result     TRUE if streaming was successfully stopped.
+                when the last client disconnects from the manager.
 */
-- (BOOL) stopStreaming;
+- (void) stopStreaming;
+
+/*!
+    @method   streamStartStopThread
+    @abstract   a very lightweight thread used for starting and stopping
+                the audio streams
+    @discussion You should never need to call this. The manager can instruct
+                the starting and stopping of streams by setting bg_sem to
+                BG_startNow or BG_stopNow, and setting the bg_threadLock
+                condition. The thread is created on this method when a stream
+                is to begin, if it does not exist already.
+*/
+- (void) streamStartStopThread;
 
 /*!
     @method   addClient: 
