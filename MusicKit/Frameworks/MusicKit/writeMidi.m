@@ -18,6 +18,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/07/22 00:29:11  leigh
+  Typed _MKGetNoteOns
+
   Revision 1.6  2000/06/09 03:29:46  leigh
   Typed aList to reduce warnings
 
@@ -170,7 +173,7 @@ static void cancelMidiOutNoteDurMsg(midiOutNode *node)
     node->noteDurOff = nil;
 }
 
-id _MKGetNoteOns(_MKMidiOutStruct *ptr,int chan)
+NSMutableArray *_MKGetNoteOns(_MKMidiOutStruct *ptr,int chan)
     /* Returns List of noteOffs Note object for specified channel.
      * Caller must free the List and the objects. chan is 1-based
      */
@@ -178,7 +181,7 @@ id _MKGetNoteOns(_MKMidiOutStruct *ptr,int chan)
     id map = ptr->_map[chan-1]; 
     int noteTag;
     NSMutableArray *aList = [[NSMutableArray alloc] init];
-    id aNote;
+    MKNote *aNote;
     midiOutNode *value;
     NXHashState state;
 //    int count = [map count];

@@ -7,6 +7,9 @@
   Modification history:
 
   $Log$
+  Revision 1.4  2000/07/22 00:26:32  leigh
+  Typed _MKGetNoteOns
+
   Revision 1.3  2000/04/22 20:09:35  leigh
   comment improvements
 
@@ -78,7 +81,7 @@ extern void _MKWriteMidiOut(id aNote,double timeTag,unsigned chan,
 extern unsigned char _MKGetSysExByte(char **strP);
 
 /* Useful for sending allNotesOff */
-extern id _MKGetNoteOns(_MKMidiOutStruct *ptr,int chan);
+extern NSMutableArray *_MKGetNoteOns(_MKMidiOutStruct *ptr,int chan);
 
 
 #endif
