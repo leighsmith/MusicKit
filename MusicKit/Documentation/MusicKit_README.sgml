@@ -17,6 +17,24 @@ Add in the MusicKit icon and colour the web pages (perhaps not these below):
 
   <artheader>
     <title>The MusicKit V5.1</title>
+
+  <!-- 
+   Ok, how do we place a logo for the document?
+   <informalfigure>
+    <mediaobject>
+      <imageobject>
+	<imagedata FileRef="MK_icon.eps" format="eps">
+      </imageobject>
+      <imageobject>
+	<imagedata FileRef="MK_icon.png" format="png">
+      </imageobject>
+      <imageobject>
+	<imagedata FileRef=".dir.tiff" format="tiff">
+      </imageobject>
+    </mediaobject>
+  </informalfigure>
+   -->
+
     <author>
       <firstname>Leigh</firstname> <othername>M.</othername> <surname>Smith</surname>
       <affiliation>
@@ -25,7 +43,7 @@ Add in the MusicKit icon and colour the web pages (perhaps not these below):
           <street>89 Greene Street</street>
           <city>New York</city>, <state>NY</state> <postcode>10012</postcode>
           <country>USA</country>
-          <phone>+1-212-334-0421</phone> (W) 
+          <phone>+1-212-334-0421</phone> 
           <fax>+1-212-431-4115</fax> (Fax)
           <email>leigh@tomandandy.com</email>
         </address>
@@ -33,16 +51,12 @@ Add in the MusicKit icon and colour the web pages (perhaps not these below):
     </author>
     <revhistory>
       <revision>
-	<revnumber>V1.14</revnumber>
+	<revnumber>V1.2</revnumber>
 	<date>24 July 2000</date>
       </revision>
     </revhistory>
-    <mediaobject>
-      <imageobject>
-	<imagedata FileRef="MK_icon.gif" format="gif">
-      </imageobject>
-    </mediaobject>
-    <abstract>
+
+  <abstract>
       <para>
         These are overall comments (incorporating original notes by David A. Jaffe)
         and serve as the highest level overview of the MusicKit.
@@ -105,6 +119,83 @@ copyrighted by NeXT Inc. are understandably restricted to NeXTSTEP
 platforms.)
 </para>
 
+    <sect2 id=features>
+      <title>Feature List</title>
+      <para>
+The following is a partial list of the highlights of the Music Kit
+provided by David Jaffe on his <link linkend=otherlinks>web-page</link>: 
+</para>
+      <itemizedlist>
+	<listitem>
+	  <para>
+Extensible, high-level object-oriented framework that is a super-set of Music V and MIDI paradigms.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Representation system capable of depicting phrase-level structure such
+as legato transitions.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+General time management/scheduling mechanism, supporting synchronization to MIDI time code.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Efficient real-time synthesis and sound processing, including option for quadraphonic sound.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Fully-dynamic DSP resource allocation system with dynamic linking and loading, on multiple DSPs.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Complete support for multiple MIDI inputs and outputs.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Digital sound I/O from the DSP port with support for serial port devices by all popular vendors.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Non-real time mode, where the DSP returns data to the application or writes a sound file.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Suite of applications, including <application>Ensemble</application>--an interactive algorithmic composition and performance environment (including a built-in sampler) and <application>ScorePlayer</application>.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Library of instruments, including FM, wavetable, physical modeling and waveshaping synthesis.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Library of unit generators for synthesis and sound processing.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Documentation, programming examples, utilities, including a sound file
+mixer, sample rate converter, etc.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+ScoreFile, a textual scripting language for music. 
+</para>
+	</listitem>
+      </itemizedlist>
+    </sect2>
+
     <sect2 id=otherlinks>
       <title>References at Other Sites</title>
 
@@ -158,12 +249,23 @@ lists changes and is generated from the CVS logs.
 </para>
 	</listitem>
       </itemizedlist>
-
-      <para>
+    </sect2>
+    
+    <sect2 id=maillist>
+      <title>MusicKit Mail-list</title>
+  <para>
 Updates, announcements and queries are sent to the MusicKit mail-list
 <email>mkdist@ccrma.stanford.edu</email>. Subscribe to the list by
-sending to <email>mkdist-list@ccrma.stanford.edu</email>.
+sending a message to <email>listproc@ccrma.stanford.edu</email>. The
+body of the message (not the Subject line) should contain this text:
+</para>
+      <cmdsynopsis>
+	<command>subscribe mkdist</command>
+	<arg choice=req><replaceable>YOURNAME</replaceable></arg>
+      </cmdsynopsis>
+      <para>
 Don't assume nothing is being done if you don't hear anything for a while!
+To subscribe to a Music Kit news group, send 
 </para>
     </sect2>
 
@@ -515,3 +617,13 @@ Computer Music Journal
   </bibliography>
 
 </article>
+
+<!--
+Local Variables:
+time-stamp-format:"%02d/%02m/%04y"
+time-stamp-line-limit:100
+time-stamp-start:"<date>"
+time-stamp-end:"</date>"
+End:
+-->
+
