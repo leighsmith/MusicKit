@@ -1,11 +1,21 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
-  This is the main public include file that will include all other class header files.
+
+  Description:
+    This is the main public include file that will include all other class header files.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
   $Log$
+  Revision 1.3  1999/09/20 17:30:01  leigh
+  Added midi_spec.h, cleaned up documentation.
+
   Revision 1.2  1999/07/29 01:25:54  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -18,9 +28,7 @@
 
  /* Include files outside of the Music Kit. */
 #import <objc/objc.h>           /* Contains nil, etc. */
-//#import <streams/streams.h>     /* Contains NXStream, etc. */
-//#import <math.h>                /* Contains MAXINT, etc. */
-// These used to be in 3.3 ansi/math.h but are no longer
+// These used to be in NS3.3 ansi/math.h but are no longer
 // However they are in System.framework on Win32 which is typically #imported afterwards...sigh
 #if !defined(MAXSHORT) && !defined(WIN32)
 #define MAXSHORT ((short)0x7fff)
@@ -31,11 +39,11 @@
 
  /* Music Kit include files */
 #import "noDVal.h"              /* Type double utilities */
-//#import "NSErrors.h"              /* Error codes, debug flags and functions. */
 #import "errors.h"              /* Error codes, debug flags and functions. */
 #import "names.h"               /* Various name tables */
 #import "midiTranslation.h"     /* Note<->MIDI translation */
 #import "classFuncs.h"          /* Stand-in classes */
+#import "midi_spec.h"		/* standard MIDI definitions */ 
 
  /*
   * The following magic number appears as the first 4 bytes of the optimized 
