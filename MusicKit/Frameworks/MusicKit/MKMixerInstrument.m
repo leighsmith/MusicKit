@@ -39,6 +39,9 @@
 Modification history:
 
  $Log$
+ Revision 1.7  2000/05/13 17:21:11  leigh
+ Better variable naming
+
  Revision 1.6  2000/05/06 02:34:33  leigh
  Added M_PI if it isn't there
 
@@ -369,7 +372,7 @@ static int timeToSamp(Snd *s,double time)
 	return self;
     switch (type = [aNote noteType]) {
     case MK_noteDur: {/* NoteDur means new file with duration */
-	MKSamples *newSFInfo = [[MKSamples alloc] init];
+	MKSamples *newSoundFileSamples = [[MKSamples alloc] init];
 	double dur,timeOffset;
 	NSString *file;
 	file = [aNote parAsStringNoCopy: MK_filename];
@@ -379,16 +382,16 @@ static int timeToSamp(Snd *s,double time)
 	    NSLog(@"No input sound file specified.\n");
 	    break;
 	}
-        [newSFInfo readSoundfile: file]; 
-	if (![newSFInfo sound]) {
+        [newSoundFileSamples readSoundfile: file]; 
+	if (![newSoundFileSamples sound]) {
 	    NSLog(@"Can't find file %@.\n",file);
 	    break;
 	}
-	else if([[newSFInfo sound] dataFormat] != SND_FORMAT_LINEAR_16) {
-	    [[newSFInfo sound] convertToFormat:SND_FORMAT_LINEAR_16
-                samplingRate:[[newSFInfo sound] samplingRate]
-	        channelCount:[[newSFInfo sound] channelCount]];
-	    if([[newSFInfo sound] dataFormat] != SND_FORMAT_LINEAR_16) {
+	else if([[newSoundFileSamples sound] dataFormat] != SND_FORMAT_LINEAR_16) {
+	    [[newSoundFileSamples sound] convertToFormat:SND_FORMAT_LINEAR_16
+                samplingRate:[[newSoundFileSamples sound] samplingRate]
+	        channelCount:[[newSoundFileSamples sound] channelCount]];
+	    if([[newSoundFileSamples sound] dataFormat] != SND_FORMAT_LINEAR_16) {
 	        NSLog(@"Error: mixsounds input files must be in 16-bit linear or Mu Law format.\n");
 		break;
 	    }
@@ -398,31 +401,31 @@ static int timeToSamp(Snd *s,double time)
 	    amp = [aNote parAsDouble:MK_amp];
 	if ([aNote isParPresent:MK_velocity])
 	    amp *= MKMidiToAmpAttenuation([aNote parAsInt:MK_velocity]);
-	[newSFInfo setProcessingEndSample: [[newSFInfo sound] dataSize]/sizeof(short)]; // LMS Redundant
+	[newSoundFileSamples setProcessingEndSample: [[newSoundFileSamples sound] dataSize]/sizeof(short)]; // LMS Redundant
 	if ([aNote isParPresent:timeOffsetPar]) {
 	    timeOffset = [aNote parAsDouble:timeOffsetPar];
-            [newSFInfo setCurrentSample: timeToSamp([newSFInfo sound],timeOffset)];
+            [newSoundFileSamples setCurrentSample: timeToSamp([newSoundFileSamples sound],timeOffset)];
 	}
 	else
-	    [newSFInfo setCurrentSample: 0];
+	    [newSoundFileSamples setCurrentSample: 0];
 	dur = [aNote dur];
 	if (!MKIsNoDVal(dur) && dur != 0) {
-	    int lastLoc = timeToSamp([newSFInfo sound],dur) + [newSFInfo currentSample];
-            [newSFInfo setProcessingEndSample: MIN([newSFInfo processingEndSample], lastLoc)];
+	    int lastLoc = timeToSamp([newSoundFileSamples sound],dur) + [newSoundFileSamples currentSample];
+            [newSoundFileSamples setProcessingEndSample: MIN([newSoundFileSamples processingEndSample], lastLoc)];
 	}
-	if ([newSFInfo currentSample] > [newSFInfo processingEndSample] || dur < 0 ) {
+	if ([newSoundFileSamples currentSample] > [newSoundFileSamples processingEndSample] || dur < 0 ) {
 	    NSLog(@"Warning: no samples to mix for this file.\n");
 	    break;
 	}
-	if ([[newSFInfo sound] channelCount] != channelCount) {
-	    if (channelCount == 2 && [[newSFInfo sound] channelCount] == 1) {
+	if ([[newSoundFileSamples sound] channelCount] != channelCount) {
+	    if (channelCount == 2 && [[newSoundFileSamples sound] channelCount] == 1) {
 	        /* Sound is going to be twice as long, so we have to
 	         * allocate a new sound here. 
 	         */
-                Snd *inSound = [newSFInfo sound];
+                Snd *inSound = [newSoundFileSamples sound];
                 Snd *outSound = [[[Snd alloc] init] autorelease];
 	        int bearing = (MKIsNoteParPresent(aNote, MK_bearing) ? MKGetNoteParAsInt(aNote, MK_bearing) : 0);
-	        int sampCount = ([newSFInfo processingEndSample] - [newSFInfo currentSample]);
+	        int sampCount = ([newSoundFileSamples processingEndSample] - [newSoundFileSamples currentSample]);
 	        [outSound
                      setDataSize:sampCount*sizeof(short)*2
 		     dataFormat:[inSound dataFormat]
@@ -430,24 +433,25 @@ static int timeToSamp(Snd *s,double time)
 		     channelCount:2
 		     infoSize:4];
 	        [self _position:bearing inSound:inSound outSound:outSound
-                     startSamp:[newSFInfo currentSample] sampCount:sampCount
+                     startSamp:[newSoundFileSamples currentSample] sampCount:sampCount
                      amp:([aNote isParPresent:MK_amp])?amp:defaultAmp
                      alreadySwapped:NO];
-                [newSFInfo setSound: outSound];     // inSound is released by setSound
-                [newSFInfo setProcessingEndSample: sampCount * 2]; /* Stereo */
-		[newSFInfo setAmplitude: 1.0];     /* Amp factored in above */
+                // outSound is copied by setSound, inSound is released before being assigned.
+                [newSoundFileSamples setSound: outSound];     
+                [newSoundFileSamples setProcessingEndSample: sampCount * 2]; /* Stereo */
+		[newSoundFileSamples setAmplitude: 1.0];     /* Amp factored in above */
 	    }
             else {
 	        NSLog(@"Error: File %@ has %d channels and channelCount is %d.\n",
-	       	  file, [[newSFInfo sound] channelCount], channelCount);
+	       	  file, [[newSoundFileSamples sound] channelCount], channelCount);
 	        break;
 	    }
 	}
         else {
 	    if ([aNote isParPresent:MK_amp])
-		[newSFInfo setAmplitude: amp];
+		[newSoundFileSamples setAmplitude: amp];
 	    else
-                [newSFInfo setAmplitude: defaultAmp];
+                [newSoundFileSamples setAmplitude: defaultAmp];
 	}
 	if ([aNote isParPresent:timeScalePar])
 	    timeScale = [aNote parAsInt:timeScalePar];
@@ -456,7 +460,7 @@ static int timeToSamp(Snd *s,double time)
 		MKEnvelope *ampEnv = [aNote parAsEnvelope:MK_ampEnv];
 		if (!ampEnv) 
 	            ampEnv = defaultEnvelope;
-		[self _applyEnvelope:ampEnv to:newSFInfo scaleToFit:timeScale == 2];
+		[self _applyEnvelope:ampEnv to:newSoundFileSamples scaleToFit:timeScale == 2];
 	    }
         }
 
@@ -467,7 +471,7 @@ static int timeToSamp(Snd *s,double time)
         /* freq0 is assumed old freq. freq1 is new freq. */
         if ([aNote isParPresent:MK_freq1] || [aNote isParPresent:MK_freq0] ||
 	    [aNote isParPresent:MK_keyNum] || defaultFreq1 || defaultFreq0 ||
-	    ((int)[[newSFInfo sound] samplingRate]!=(int)samplingRate)) {
+	    ((int)[[newSoundFileSamples sound] samplingRate]!=(int)samplingRate)) {
 	    /* Sound is going to change length, so we have to allocate
 	     * a new sound here.
 	     */
@@ -481,17 +485,17 @@ static int timeToSamp(Snd *s,double time)
 	    if ((f0 && !f1) || (f1 && !f0))
 		NSLog(@"Warning: Must specify both Freq0 and Freq1 if either are specified.\n");
 	    factor = ((f1 && f0)?(f0 / f1):1.0) *
-		(samplingRate / [[newSFInfo sound] samplingRate]);
+		(samplingRate / [[newSoundFileSamples sound] samplingRate]);
 	    if ((factor>32) || (factor<.03125))
 		NSLog(@"Warning: resampling more than 5 octaves.\n");
 	    if (fabs(factor-1.0)>.0001) {
-		Snd *inSound = [newSFInfo sound];
+		Snd *inSound = [newSoundFileSamples sound];
 		Snd *outSound = [[[Snd alloc] init] autorelease];
 		int inSampleFrames, outSampleFrames;
 		inSampleFrames = 
-		    (MIN([newSFInfo processingEndSample],
+		    (MIN([newSoundFileSamples processingEndSample],
 			 [inSound sampleCount]*[inSound channelCount])
-		     - [newSFInfo currentSample])/[inSound channelCount];
+		     - [newSoundFileSamples currentSample])/[inSound channelCount];
 		outSampleFrames = inSampleFrames * factor;
 		[outSound
 		    setDataSize:(outSampleFrames * sizeof(short) * [inSound channelCount])
@@ -507,10 +511,10 @@ static int timeToSamp(Snd *s,double time)
 			 NO, 	      /* Not large filter */
 			 NULL,     /* No filter file supplied */
                          [inSound soundStruct],
-                         [newSFInfo currentSample]);
+                         [newSoundFileSamples currentSample]);
 
-		[newSFInfo setSound: outSound];
-		[newSFInfo setProcessingEndSample: outSampleFrames * [inSound channelCount]];
+		[newSoundFileSamples setSound: outSound];
+		[newSoundFileSamples setProcessingEndSample: outSampleFrames * [inSound channelCount]];
 	    }
 	}
 	if (timeScale == applyEnvAfter)
@@ -518,14 +522,14 @@ static int timeToSamp(Snd *s,double time)
 		MKEnvelope *ampEnv = [aNote parAsEnvelope:MK_ampEnv];
 		if (!ampEnv) 
 		  ampEnv = defaultEnvelope;
-		[self _applyEnvelope:ampEnv to:newSFInfo scaleToFit:0];
+		[self _applyEnvelope:ampEnv to:newSoundFileSamples scaleToFit:0];
 	    }
 
 	  /* ### Add your processing modules here, if you want them to apply
 	   *     after pitch-shifting. 
 	   */
-          [newSFInfo autorelease]; // we are through with it, the samplesToMix will retain it as it needs.
-	  [samplesToMix addObject: newSFInfo];
+          [newSoundFileSamples autorelease]; // we are through with it, the samplesToMix will retain it as it needs.
+	  [samplesToMix addObject: newSoundFileSamples];
 	  break;
     }
     case MK_noteUpdate: { /* Only no-tag NoteUpdates are recognized */
