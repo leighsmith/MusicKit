@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		0134D284FFE009B6CFED3B96 = {
 			children = (
@@ -26,6 +26,7 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -39,6 +40,16 @@
 			isa = PBXBuildStyle;
 			name = Deployment;
 		};
+//010
+//011
+//012
+//013
+//014
+//020
+//021
+//022
+//023
+//024
 		02859623002A4648CFED3B96 = {
 			children = (
 				02859626002A467FCFED3B96,
@@ -80,7 +91,7 @@
 			);
 			mainGroup = 02CD290BFFB89C2FCFED3B96;
 			productRefGroup = 02CD2921FFB89C2FCFED3B96;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				02CD2923FFB89C2FCFED3B96,
 			);
@@ -218,7 +229,6 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(LOCAL_LIBRARY_DIR)/Frameworks \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
 				INSTALL_PATH = "$(HOME)/Applications";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -226,8 +236,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -356,6 +364,16 @@
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
 		};
+//020
+//021
+//022
+//023
+//024
+//320
+//321
+//322
+//323
+//324
 		329E92E0005C5DEECFED3B96 = {
 			isa = PBXFileReference;
 			name = "English - macos";
