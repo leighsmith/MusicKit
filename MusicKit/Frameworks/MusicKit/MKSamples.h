@@ -32,17 +32,19 @@
 
 A MKSamples object represents one complete cycle of a sound waveform as a series
 of samples.  The data for a MKSamples object is established through association
-with a Sound object, defined by the Sound Kit.  Two methods are provided to
+with a Snd object, defined by the SndKit.  Two methods are provided to
 create this association:
 
-&#183;	<b>setSound:</b> takes a Sound object as an argument, copies it, and
-associates the reciever with the copied Sound.
+<UL>
+<LI>	<b>setSound:</b> takes a Snd object as an argument, copies it, and
+associates the reciever with the copied Snd.
 
-&#183;	<b>readSoundfile:</b> takes the name of a soundfile, creates a Sound
+<LI>	<b>readSoundfile:</b> takes the name of a soundfile, creates a Snd
 object for the data contained therein, and associates the receiver with the
-newly created Sound.
-
-The Sound object or soundfile must be one channel of 16-bit linear data
+newly created Snd.
+</UL>
+ 
+The Snd object or soundfile must be one channel of 16-bit linear data
 (SND_FORMAT_LINEAR_16).  The sampling rate is ignored; MKSamples objects are
 designed to be used as lookup tables for oscillator MKUnitGenerators in which use
 the sampling rate of the original data is of no consequence.
@@ -54,7 +56,7 @@ brackets.  The object can be given a name in a waveTable statement:
 <tt>waveTable mySamples = [ {"samplesFile.snd" }];</tt>
 
 A MKSamples object that's written to a soundfile is referred to by the name of the
-soundfile from which it was created.  If a Sound object is used, a soundfile is
+soundfile from which it was created.  If a Snd object is used, a soundfile is
 created and the object is written to it, as explained in the method
 <b>writeScorefileStream:</b>.  You should always name your MKSamples objects by
 calling the <b>MKNameObject()</b> C function.
@@ -68,7 +70,7 @@ circumstances, such as when reading a Scorefile.  The function
 MKSamples be used when MKSamples objects are automatically created.   You retrieve
 the MKSamples class with <b>MKGetSamplesClass()</b>.  
 
-Note that most of the Music Kit DSP oscillators require tables to be of a length
+Note that most of the MusicKit DSP oscillators require tables to be of a length
 that is a power of 2.   Note also that the length of a Sample load to the DSP is
 limited by the amount of DSP memory.
 
@@ -77,19 +79,20 @@ to provide tables for periodic excitation table (PET) synthesis.   The access
 methods inherited from the MKWaveTable class (such as <b>-dataDSP</b>) provide the
 data in oscillator table format.  In this case the MKPartials <i>tableType</i>internal<i> </i>
 instance varaible is set to <b>MK_oscTable</b>.   Alternatively, you can retrieve
-the data in excitation table format.  To do this, use one of the methods of the form <i>accessMethod</i>AsExcitationTable<i>arguments</i>.   For example, to get the data
+the data in excitation table format.  To do this, use one of the methods of the form
+<i>accessMethod</i>AsExcitationTable<i>arguments</i>.   For example, to get the data
 for the DSP with the default table length and scaling, use -<b>dataDSPAsExcitationTable</b>.
 In this case the MKPartials <i>tableType </i>instance varaible is set to <b>MK_excitationTable</b>.
 For symmetry, a set of methods of the form <b>dataDSPAsOscTable</b> is provided.
 These methods are synonyms for the inherited methods.   
 
 Actually, excitationTable and oscTable formats are the same when the length
-requested is the same as the length of the Sound.  However, the two behave
-differently when asked for a length that differs from the length of the Sound. 
-For a excitationTable, samples are omitted from the end of the Sound (if the
-Sound is longer) or zeros are appended to the end of  the Sound (if the Sound is
+requested is the same as the length of the Snd.  However, the two behave
+differently when asked for a length that differs from the length of the Snd. 
+For a excitationTable, samples are omitted from the end of the Snd (if the
+Snd is longer) or zeros are appended to the end of  the Snd (if the Snd is
 shorter.)  For an oscTable, if the requested length evenly divides the actualy
-length, the Sound is downsampled by simply omitting samples.  Note that
+length, the Snd is downsampled by simply omitting samples.  Note that
 non-integer resampling is not currently supported.
 
 See also:  MKWaveTable, MKPartials
@@ -102,8 +105,8 @@ See also:  MKWaveTable, MKPartials
 
 @interface MKSamples : MKWaveTable
 {
-    Snd *sound;                       /* The object's Sound object. */
-    NSString *soundfile;              /* The name of the soundfile, if the Sound was set through readSoundfile:. */
+    Snd *sound;                       /* The object's Snd object. */
+    NSString *soundfile;              /* The name of the soundfile, if the Snd was set through readSoundfile:. */
     int tableType;
     int curLoc;                       /* Index into current sample in soundfile */
     double amplitude;                 /* Amplitude scaling of soundfile in fixed point */
@@ -114,33 +117,26 @@ See also:  MKWaveTable, MKPartials
 
 /*!
   @method init
-  @result Returns an id.
+  @result Returns the receiver.
   @discussion Send this message when you create a new instance.  You can also
               invoke this method to reset a MKSamples object.  It sets the
               receiver's <b>sound</b> variable to <b>nil</b> and <b>soundfile</b>
-              to NULL.  The receiver's previous Sound object, if any, is freed.  A
-              subclass implementation should send <b>[super init]</b>.  Returns
-              the receiver.
+              to nil.  The receiver's previous Snd object, if any, is freed.  A
+              subclass implementation should send <b>[super init]</b>.  
 */
 - init;
- /* 
-  * Sent automatically when the receiver is created, you can also invoke
-  * this method to reset a MKSamples object.  Sets the receiver's sound
-  * variable to nil and soundfile to NULL.  The receiver's previous Sound
-  * object, if any, is freed.  A subclass implementation should send
-  * [super init].  Returns the receiver.  */
 
- /* Frees the receiver and its Snd.
+ /* Frees the receiver and its instance variables.
   */
-- (void)dealloc;
+- (void) dealloc;
 
 /*!
   @method copy
   @result Returns an id.
   @discussion Creates and returns a new MKSamples object as a copy of the receiver. 
-              The receiver's Sound is copied into the new MKSamples object.
+              The receiver's Snd is copied into the new MKSamples object.
 */
-- copyWithZone:(NSZone *)zone;
+- copyWithZone: (NSZone *) zone;
 
 /*!
   @method setSound:
@@ -153,21 +149,19 @@ See also:  MKWaveTable, MKPartials
               a subsequent Snd is set.  Returns <b>nil</b> if <i>aSound</i> is
               in the wrong format, otherwise returns the receiver.
 */
-- (BOOL)setSound:(Snd *)aSound; 
+- (BOOL) setSound: (Snd *) aSound; 
 
 /*!
   @method readSoundfile:
   @param  aSoundfile is an NSString.
-  @result Returns a BOOL.
+  @result Returns <b>NO</b> if the <b>setSound:</b> message returns <b>nil</b>; otherwise returns YES for success.
   @discussion Creates a new Snd object, reads the data from <i>aSoundfile</i>
               into the object, and then sends <b>setSound:</b> to the receiver
               with the new Snd as the argument.  You shouldn't free the Snd
               yourself; it's automatically freed when the receiver is freed,
-              initialized, or when a subsequent Snd is set.  Returns <b>NO</b>
-              if the <b>setSound:</b> message returns <b>nil</b>; otherwise
-              returns YES for success.
+              initialized, or when a subsequent Snd is set.  
 */
-- (BOOL)readSoundfile:(NSString *)aSoundfile;
+- (BOOL) readSoundfile: (NSString *) aSoundfile;
 
 /*!
   @method sound
@@ -180,7 +174,7 @@ See also:  MKWaveTable, MKPartials
   @method soundfile
   @result Returns an NSString.
   @discussion Returns the name of the receiver's soundfile, or <b>nil</b> if the
-              receiver's Sound wasn't set through <b>readSoundfile:</b>.  The name
+              receiver's Snd wasn't set through <b>readSoundfile:</b>.  The name
               isn't copied; you shouldn't alter the returned string.
 */
 - (NSString *) soundfile;
@@ -190,26 +184,26 @@ See also:  MKWaveTable, MKPartials
   @param  aStream is a NSMutableData.
   @result Returns an id.
   @discussion Writes the receiver in scorefile format.  Writes the receiver in
-              scorefile format to the stream <i>aStream</i>.  If the Sound wasn't
+              scorefile format to the stream <i>aStream</i>.  If the Snd wasn't
               set from a soundfile, a soundfile with the unique name
               &ldquo;samples<i>Number</i>.snd&rdquo; (where <i>Number</i> is added
-              only if needed), is created and the Sound is written to it.  The
-              object remembers if its Sound has been written to a soundfile.  If
+              only if needed), is created and the Snd is written to it.  The
+              object remembers if its Snd has been written to a soundfile.  If
               the receiver couldn't be written to the stream, returns <b>nil</b>,
               otherwise returns the receiver.
 */
-- writeScorefileStream:(NSMutableData *)aStream;
+- writeScorefileStream: (NSMutableData *) aStream;
  /* 
   * Writes the receiver in scorefile format to the stream aStream.  A
   * MKSamples object is written by the name of the soundfile from which its
-  * Sound was read, surrounded by braces:
+  * Snd was read, surrounded by braces:
   * 
   *   { "soundfileName" }
   * 
-  * If the Sound wasn't set from a soundfile, a soundfile with the
+  * If the Snd wasn't set from a soundfile, a soundfile with the
   * unique name "samplesNumber.snd" (where number is added only if
-  * needed), is created and the Sound is written to it.  The object
-  * remembers if its Sound has been written to a soundfile.  If the
+  * needed), is created and the Snd is written to it.  The object
+  * remembers if its Snd has been written to a soundfile.  If the
   * receiver couldn't be written to the stream, returns nil, otherwise
   * returns the receiver.
   * 
@@ -221,12 +215,12 @@ See also:  MKWaveTable, MKPartials
      or from setSound:. We assume that the sound, even if it comes from
      an external source, is an intrinsic part of the object. 
      You never send this message directly.  */
-- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (void) encodeWithCoder: (NSCoder *) aCoder;
 
   /* 
      Note that -init is not sent to newly unarchived objects.
      You never send this message directly.  */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
 
 /*!
@@ -236,34 +230,58 @@ See also:  MKWaveTable, MKPartials
               either MK_oscTable or MK_excitationTable.  If
               none, returns the default, MK_oscTable.
 */
--(int)tableType;
+- (int) tableType;
 
+/*!
+  @method setProcessingStartSample:
+  @abstract Assigns the starting sample to begin some (arbitary) processing from.
+ */
 - (void) setProcessingStartSample: (unsigned int) sampleNum;
-    /* assigns the starting sample to begin some (arbitary) processing from */
 
+/*!
+  @method processingStartSample
+  @abstract returns the sample used to begin some (arbitary) processing from.
+ */
 - (unsigned int) processingStartSample;
-    /* returns the sample used to begin some (arbitary) processing from */
 
+/*!
+  @method setProcessingEndSample:
+  @abstract assigns the sample to end some (arbitary) processing at.
+ */
 - (void) setProcessingEndSample: (unsigned int) sampleNum;
-    /* assigns the sample to end some (arbitary) processing at */
 
+/*!
+  @method processingEndSample
+  @abstract returns the sample to end some (arbitary) processing at.
+ */
 - (unsigned int) processingEndSample;
-    /* returns the sample to end some (arbitary) processing at */
 
+/*!
+  @method currentSample
+  @abstract returns the current sample being used to perform processing.
+ */
 - (unsigned int) currentSample;
-    /* returns the current sample being used to perform processing */
 
+/*!
+  @method setCurrentSample:
+  @abstract assigns the current sample to perform processing at.
+ */
 - (void) setCurrentSample: (unsigned int) sampleNum;
-    /* assigns the current sample to perform processing at */
 
+/*!
+  @method amplitude
+  @abstract returns the amplitude scaling.
+ */
 - (double) amplitude;
-    /* returns the amplitude scaling */
 
+/*!
+  @method setAmplitude:
+  @abstract assigns an amplitude scaling. 
+ */
 - (void) setAmplitude: (double) amp;
-    /* assigns an amplitude scaling */
 
-- _fillTableLength:(int)aLength scale:(double)aScaling ;
- /* Private method that supports both OscTable and ExcitationTable */
+/* Private method that supports both OscTable and ExcitationTable */
+- _fillTableLength: (int) aLength scale: (double) aScaling ;
 
 @end
 
@@ -285,7 +303,7 @@ See also:  MKWaveTable, MKPartials
 
               Same as dataDSPLength:   
 */
-- (DSPDatum *) dataDSPAsOscTableLength:(int)aLength;
+- (DSPDatum *) dataDSPAsOscTableLength: (int) aLength;
  
 /*!
   @method dataDoubleAsOscTableLength:
@@ -303,7 +321,7 @@ See also:  MKWaveTable, MKPartials
 
               Same as dataDoubleLength:
 */
-- (double *)dataDoubleAsOscTableLength:(int)aLength;
+- (double *) dataDoubleAsOscTableLength: (int) aLength;
  
  /* The following methods are minor variations of 
     dataDoubleAsOscTableScaling:length: and
@@ -330,7 +348,7 @@ See also:  MKWaveTable, MKPartials
               their name).  For example, <b>dataDSPAsOscTable</b>is the same as
               WaveTable's <b>dataDSP</b>.              
 */
-- (double *)   dataDoubleAsOscTable;
+- (double *) dataDoubleAsOscTable;
 
 
 /*!
@@ -341,9 +359,9 @@ See also:  MKWaveTable, MKPartials
   @discussion Same as <b>fillTableLength:scale:</b>.   Provided for
               symmetry.
 */
-- fillOscTableLength:(int)aLength scale:(double)aScaling ;
+- fillOscTableLength: (int) aLength scale: (double) aScaling;
  /* 
-   Computes the wavetable by copying the samples from the Sound.
+   Computes the wavetable by copying the samples from the Snd.
    If scaling is 0.0, the waveform is normalized. This method is sent
    automatically if necessary by the various data-retreival methods 
    (inherited from the MKWaveTable class).  If aLength is not the
@@ -355,21 +373,23 @@ See also:  MKWaveTable, MKPartials
 
 /*!
   @method fillTableLength:scale:
+  @abstract  Same as fillOscTableLength:scale:
   @param  aLength is an int.
   @param  aScaling is a double.
-  @result Returns an id.
-  @discussion Copies <i>aLength</i> samples from the receiver's Sound into the
+  @result  Returns self or <b>nil</b> if there's a problem.
+  @discussion Copies <i>aLength</i> samples from the receiver's Snd into the
               <b>dataDSP</b> array (inherited from MKWaveTable) and scales the
               copied data by multiplying it by <i>aScaling</i>.  If
               <i>aScaling</i> is 0.0, the data is scaled to fit perfectly within
               the range -.0 to 1.0.   Uses <b>oscTable</b> format.
               
-              If <i>aLength</i> is different from the length of the Sound or soundfile, the sound is resampled.  (Note that currently only downsampling by a power of 2 is supported.)   
+              If <i>aLength</i> is different from the length of the Snd or soundfile, the sound is resampled.
+              (Note that currently only downsampling by a power of 2 is supported.)   
               
-              The <b>dataDouble</b> array (also from MKWaveTable) is reset.  You ordinarily don't invoke this method; it's invoked from methods defined in MKWaveTable.  Returns self or <b>nil</b> if there's a problem.
+              The <b>dataDouble</b> array (also from MKWaveTable) is reset.
+              You ordinarily don't invoke this method; it's invoked from methods defined in MKWaveTable.
 */
-- fillTableLength:(int)aLength scale:(double)aScaling ;
- /* Same as fillOscTableLength:scale: */
+- fillTableLength: (int) aLength scale:(double)aScaling ;
 
 @end
 
@@ -444,7 +464,7 @@ See also:  MKWaveTable, MKPartials
               and is of the default length and scaling.  If so, that data is returned.
               If not, it is recomputed.   
 */
-- (DSPDatum *) dataDSPAsExcitationTableLength:(int)aLength;
+- (DSPDatum *) dataDSPAsExcitationTableLength: (int) aLength;
 
 /*!
   @method dataDSPAsExcitationTableScale:
@@ -458,7 +478,7 @@ See also:  MKWaveTable, MKPartials
               and is of the default length and scaling.  If so, that data is returned.
               If not, it is recomputed.   
 */
-- (DSPDatum *) dataDSPAsExcitationTableScale:(double)aScaling;
+- (DSPDatum *) dataDSPAsExcitationTableScale: (double) aScaling;
 
 /*!
   @method dataDSPAsExcitationTable
@@ -471,7 +491,7 @@ See also:  MKWaveTable, MKPartials
               and is of the default length and scaling.  If so, that data is returned.
               If not, it is recomputed.   
 */
-- (double *)   dataDoubleAsExcitationTable;
+- (double *) dataDoubleAsExcitationTable;
 
 /*!
   @method dataDoubleAsExcitationTableLength:
@@ -485,7 +505,7 @@ See also:  MKWaveTable, MKPartials
               and is of the default length and scaling.  If so, that data is returned.
               If not, it is recomputed.   
 */
-- (double *)   dataDoubleAsExcitationTableLength:(int)aLength;
+- (double *) dataDoubleAsExcitationTableLength: (int) aLength;
 
 /*!
   @method dataDoubleAsExcitationTableScale:
@@ -499,7 +519,7 @@ See also:  MKWaveTable, MKPartials
               and is of the default length and scaling.  If so, that data is returned.
               If not, it is recomputed.   
 */
-- (double *)   dataDoubleAsExcitationTableScale:(double)aScaling;
+- (double *) dataDoubleAsExcitationTableScale: (double) aScaling;
 
 
 /*!
@@ -519,7 +539,7 @@ See also:  MKWaveTable, MKPartials
               If aLength is not the same as the length of the data, truncates or extends
               the sound. For best results, use an odd length.
 */
-- fillExcitationTableLength:(int)aLength scale:(double)aScaling;
+- fillExcitationTableLength: (int) aLength scale: (double) aScaling;
 
 @end
 
