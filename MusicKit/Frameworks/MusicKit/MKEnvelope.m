@@ -35,6 +35,10 @@
 Modification history:
 
  $Log$
+ Revision 1.11  2002/04/15 14:14:23  sbrandon
+ added -hash and -isEqual methods to aid use of envelopes as keys in
+ maptables/dictionaries.
+
  Revision 1.10  2002/04/04 23:08:08  leighsmith
  Corrected bug in binary search exceeding number of points, corrected check for xVal being too big
 
@@ -178,7 +182,6 @@ double **arrPtr)
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
   NSString *str;
-  /*[super encodeWithCoder:aCoder];*/ /*sb: unnec */
   str = MKGetObjectName(self);
   [aCoder encodeValuesOfObjCTypes:"ddii@",&defaultSmoothing,&samplingPeriod,
     &stickPoint,&pointCount,&str];
@@ -246,6 +249,45 @@ id MKGetEnvelopeClass(void)
   return pointCount;
 }
 
+- (unsigned) hash
+{
+// trivial hash
+    return pointCount + 256 * stickPoint + 1000 * defaultSmoothing + 19 * samplingPeriod;
+}
+
+- (BOOL) isEqual:(MKEnvelope *) anObject
+{
+    double *otherXArray, *otherYArray, *otherSmoothingArray;
+
+    if (!anObject)                           return NO;
+    if (self == anObject)                    return YES;
+    if ([self class] != [anObject class])    return NO;
+    if ([self hash] != [anObject hash])      return NO;
+    if ([anObject pointCount] != pointCount) return NO;
+    if ([anObject defaultSmoothing] != defaultSmoothing)   return NO;
+    if ([anObject samplingPeriod] != samplingPeriod)       return NO;
+    if ([anObject stickPoint] != stickPoint) return NO;
+
+    otherXArray = [anObject xArray];    
+    otherYArray = [anObject yArray];    
+    otherSmoothingArray = [anObject smoothingArray];
+    if ((otherXArray == xArray) && 
+        (otherYArray == yArray) && 
+	(otherSmoothingArray == smoothingArray)) {
+      return YES;
+    }
+    if (memcmp(otherXArray,xArray,pointCount * sizeof(double))) {
+      return NO;
+    }
+    if (memcmp(otherYArray,yArray,pointCount * sizeof(double))) {
+      return NO;
+    }
+    if (memcmp(otherSmoothingArray,smoothingArray,pointCount * sizeof(double))) {
+      return NO;
+    }
+    return YES;
+}
+
 - (void)dealloc
   /* Frees self. Removes the name, if any, from the name table. */
 {
@@ -261,9 +303,9 @@ id MKGetEnvelopeClass(void)
     free(smoothingArray);
     smoothingArray = NULL;
   }
-  /*
+  
   MKRemoveObjectName(self);
-   */
+  
   [super dealloc];
 }
 
