@@ -26,7 +26,7 @@ CLASSES = ArielQP.m DSPSerialPortDevice.m MKConductor.m MKEnvelope.m\
           MKSynthPatch.m MKTimbre.m MKTuningSystem.m MKUnitGenerator.m\
           MKWaveTable.m OrchloopbeginUG.m _MKAppProxy.m _MKNameTable.m\
           _MTCHelper.m _OrchloopbeginUG.m _ParName.m _ScorefileVar.m\
-          _SharedSynthInfo.m conversion.m midifile.m\
+          _SharedSynthInfo.m SynthPatchList.m conversion.m midifile.m\
           noteRecorderCFuncs.m parseMidi.m parseScore.m time.m\
           tokenNames.m utilities.m writeBinary.m writeMidi.m\
           writeScore.m
@@ -49,7 +49,7 @@ HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          PartialsPrivate.h PatchTemplatePrivate.h PerformerPrivate.h\
          ScorePerformerPrivate.h ScorePrivate.h ScoreRecorderPrivate.h\
          ScorefilePerformerPrivate.h SynthDataPrivate.h\
-         SynthInstrumentPrivate.h SynthPatchPrivate.h\
+         SynthInstrumentPrivate.h SynthPatchPrivate.h SynthPatchList.h\
          TuningSystemPrivate.h UnitGeneratorPrivate.h _ArielQP.h\
          _DSPMK.h _MKAppProxy.h _MKNameTable.h _MKParameter.h\
          _MTCHelper.h _OrchloopbeginUG.h _ParName.h _ScorefileVar.h\
