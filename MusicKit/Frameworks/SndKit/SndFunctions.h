@@ -81,7 +81,7 @@ SNDKIT_API int	SndPrintFrags(SndSoundStruct *sound);
 
 /*!
 @function SndFrameSize
- @abstract To come 
+ @abstract Returns the size of a sample frame, that is, the number of bytes comprising a sample times the number of channels.
  @param sound A SndStructSound containing the Snd
  @result Returns the size of a sample frame in bytes.
  */
@@ -136,51 +136,41 @@ SNDKIT_API float SndConvertDecibelsToLinear(float db);
 SNDKIT_API float SndConvertLinearToDecibels(float lin);
 
 /*!
-@function SndConvertSound
- @abstract To come 
- @param fromSound
- @param toSound
+ @function SndConvertSound
+ @abstract Convert from one sound struct format to another.
+ @param fromSound Defines the sound data to be converted.
+ @param toSound Defines the format the data is to be converted to and provides the location
+                for the converted sound data.
+ @param allocate Allocate the memory to use for the resulting converted sound, freeing the toSound passed in.
+ @param largeFilter Use a large filter for better quality resampling.
+ @param interpFilter Use interpolated filter for conversion for better quality resampling.
+ @param fast Do the conversion fast, without filtering, low quality resampling.
  @result
  */
 SNDKIT_API int SndConvertSound(const SndSoundStruct *fromSound,
-                                     SndSoundStruct **toSound);
+                                     SndSoundStruct **toSound,
+			             BOOL allocate,
+			             BOOL largeFilter,
+			             BOOL interpFilter,
+			             BOOL fast);
 
 /*!
-@function SndConvertSoundGoodQuality
- @abstract To come 
- @param fromSound
- @param toSound
- @result
- */
-SNDKIT_API int SndConvertSoundGoodQuality(const SndSoundStruct *fromSound,
-                                                SndSoundStruct **toSound);
-
-/*!
-@function SndConvertSoundHighQuality
- @abstract To come 
- @param fromSound
- @param toSound
- @result
- */
-SNDKIT_API int SndConvertSoundHighQuality(const SndSoundStruct *fromSound,
-                                                SndSoundStruct **toSound);
-
-/*!
-@function SndChangeSampleType
- @abstract Does an in-place conversion from one sample type to another.
+ @function SndChangeSampleType
+ @abstract Does an conversion from one sample type to another.
+ @discussion If fromPtr and toPtr are the same it does the conversion in-place.
            The buffer must be long enough to hold the increased number
            of bytes if the conversion calls for it. Data must be in host
            endian order. Currently knows about ulaw, char, short, int,
-           float and double data types.
- @param outPtr
- @param df1
- @param df2
- @param outCount
- @result returns error code.
+           float and double data types, represented by the data format
+           parameters (prefixed SND_FORMAT_).
+ @param fromPtr Pointer to the buffer to read data from.
+ @param toPtr Pointer to the buffer to write data to.
+ @param dfFrom The data format to convert from.
+ @param dfTo The data format to convert to.
+ @param outCount Length in samples of the original buffer, counting number of channels, that is duration in samples * number of channels.
+ @result Returns error code.
  */
-
-SNDKIT_API int SndChangeSampleType (void *outPtr, int df1, int df2, 
-                                    unsigned int outCount);
+SNDKIT_API int SndChangeSampleType (void *fromPtr, void *toPtr, int dfFrom, int dfTo, unsigned int outCount);
 
 /*!
 @function SndChangeSampleRate
