@@ -19,9 +19,13 @@
 #import <mach/thread_act.h>
 #endif
 
-#import <pthread.h>
 #include <sys/time.h>
+
+#ifndef __MINGW32__
+#import <pthread.h>
 #include <sys/resource.h>
+#endif
+
 #import <MKPerformSndMIDI/SndStruct.h>
 #import "SndAudioBuffer.h"
 #import "SndStreamManager.h"
@@ -31,6 +35,7 @@
 #define SNDSTREAMCLIENT_DEBUG 0
 
 #ifdef __MINGW32__
+# import "SndConditionLock.h"
 # define NSConditionLock SndConditionLock
 #endif
 
