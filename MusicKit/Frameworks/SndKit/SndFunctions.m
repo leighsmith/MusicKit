@@ -69,9 +69,30 @@ CONDITIONS OF THIS AGREEMENT.
 # define RIGHT(datum, bits)      ((datum) >> bits)
 #endif
 
-int st_ausunencoding(int size, int encoding);  // from sox au.c 
+#define SUN_ULAW        1                       /* u-law encoding */
+#define SUN_LIN_8       2                       /* Linear 8 bits */
+#define SUN_LIN_16      3                       /* Linear 16 bits */
+#define SUN_LIN_24      4                       /* Linear 24 bits */
+#define SUN_LIN_32      5                       /* Linear 32 bits */
+#define SUN_ALAW        27                      /* a-law encoding */
 
-#define SNDREADCHUNKSIZE 256*1024   // Number of LONG samples to read into a buffer.
+int st_ausunencoding(int size, int encoding) /* used to be in libst.a, but made private */
+{
+        int sun_encoding;
+ 
+        if (encoding == ST_ENCODING_ULAW && size == ST_SIZE_BYTE)
+                sun_encoding = SUN_ULAW;
+        else if (encoding == ST_ENCODING_ALAW && size == ST_SIZE_BYTE)
+                sun_encoding = SUN_ALAW;
+        else if (encoding == ST_ENCODING_SIGN2 && size == ST_SIZE_BYTE)
+                sun_encoding = SUN_LIN_8;
+        else if (encoding == ST_ENCODING_SIGN2 && size == ST_SIZE_WORD)
+                sun_encoding = SUN_LIN_16;
+        else
+                sun_encoding = -1;
+        return sun_encoding;
+}
+#define SNDREADCHUNKSIZE 256*1024   // Number of st_sample_t samples to read into a buffer.
 #ifdef WIN32
 #define LASTCHAR        '\\'
 #else
@@ -1080,7 +1101,7 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
         int samplesRead;
 	int headerLen;
         struct st_soundstream informat;
-        LONG *readBuffer;
+        st_sample_t *readBuffer;
         char *storePtr;
 	int i;
 
@@ -1133,7 +1154,7 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
 	// Likewise, startread function should be changed to return the sound file size for the big three (aiff, wav, au)
 	// so the allocation size can be closer to the real value.
 
-        // Sox read() always returns arrays of LONG integers for each sample which the SndKit should eventually adopt
+        // Sox read() always returns arrays of st_sample_t integers for each sample which the SndKit should eventually adopt
 	// to enable 24 bit operation.
         // For now, we kludge it to 16 bit integers until we have sound drivers that will manage the extra precision.
 
@@ -1142,18 +1163,18 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
 	// the big-endian requirement, introduce another format code allowing for little endian encoding, and revert the
 	// MKPerformSndMIDI framework to expect native endian order.
 
-        if((readBuffer = (LONG *) malloc(SNDREADCHUNKSIZE * sizeof(LONG))) == NULL) return SND_ERR_CANNOT_ALLOC;
+        if((readBuffer = (st_sample_t *) malloc(SNDREADCHUNKSIZE * sizeof(st_sample_t))) == NULL) return SND_ERR_CANNOT_ALLOC;
         samplesRead = 0; // samplesRead represents ? excluding header.
         do {
             // punt on at least SNDREADCHUNKSIZE much then trim it at the end.
             s = realloc((char *)s, headerLen + (samplesRead + SNDREADCHUNKSIZE) * informat.info.size);
             storePtr = (char *)s + headerLen + samplesRead * informat.info.size;
             /* Read chunk of input data. */
-            lenRead = (*informat.h->read)(&informat, readBuffer, (LONG) SNDREADCHUNKSIZE);
+            lenRead = (*informat.h->read)(&informat, readBuffer, (st_sample_t) SNDREADCHUNKSIZE);
             if (lenRead <= 0)
                 return SND_ERR_CANNOT_READ;
             for(i = 0; i < lenRead; i++) {
-                int sample = RIGHT(readBuffer[i], (sizeof(LONG) - informat.info.size) * 8);
+                int sample = RIGHT(readBuffer[i], (sizeof(st_sample_t) - informat.info.size) * 8);
                 *((short *) storePtr) =  htons(sample); // kludged assuming 16 bits. We always adopt big-endian format.
                 storePtr += informat.info.size;
 	    }
