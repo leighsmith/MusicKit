@@ -17,6 +17,8 @@
 
 #import <Foundation/Foundation.h>
 #import "Snd.h"
+#import "SndAudioBuffer.h"
+#import "SndAudioProcessorChain.h"
 
 /*!
 @class SndPerformance

@@ -12,7 +12,7 @@
 #define __SND_MP3_H__
 
 #import <Foundation/Foundation.h>
-#import "SndKit.h"
+#import "Snd.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 

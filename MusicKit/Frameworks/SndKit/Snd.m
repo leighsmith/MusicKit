@@ -57,6 +57,8 @@ Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 #import "SndError.h"
 #import "SndFunctions.h"
 #import "SndPlayer.h"
+#import "SndTable.h"
+#import "SndAudioBuffer.h"
 
 // TODO this needs upgrading
 #ifndef USE_NEXTSTEP_SOUND_IO
@@ -71,10 +73,6 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
 static NSMutableDictionary *playRecTable = nil;
 static int ioTags = 1000;
 #endif
-
-+ (void) initialize
-{
-}
 
 + (NSString*) defaultFileExtension
 {
@@ -331,7 +329,7 @@ static int ioTags = 1000;
     s->channelCount = NSSwapBigLongToHost(s->channelCount);
 #endif
 
-    // SndPrintStruct(s);
+    // NSLog(@"%@\n", SndStructDescription(s));
     finalSize = s->dataSize + s->dataLocation;
 
     s = realloc((char *)s,finalSize);
@@ -486,7 +484,7 @@ static int ioTags = 1000;
     s = realloc((char *)s, s->dataLocation + 1); /* allocate enough room for info string */
     [aDecoder decodeArrayOfObjCType:"c" count:s->dataLocation - sizeof(SndSoundStruct) + 4 at:s->info];
 
-    // SndPrintStruct(s);
+    // NSLog(@"%@\n", SndStructDescription(s));
 
     finalSize = s->dataSize + s->dataLocation;
 
@@ -942,7 +940,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
     err = SndReadSoundfile(filename, &soundStruct);
 
-    // SndPrintStruct(soundStruct);
+    // NSLog(@"%@\n", SndStructDescription(soundStruct));
     if (!err) {
         soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
         // This is probably a bit kludgy but it will do for now.

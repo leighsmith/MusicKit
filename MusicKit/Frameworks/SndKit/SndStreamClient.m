@@ -37,7 +37,8 @@
 #import <MKPerformSndMIDI/SndStruct.h>
 #import "SndAudioBuffer.h"
 #import "SndStreamManager.h"
-#import "SndStreamClient.h" 
+#import "SndStreamClient.h"
+#import "SndAudioProcessorChain.h"
 #import "SndAudioBufferQueue.h"
 
 #define SNDSTREAMCLIENT_DEBUG 0
@@ -156,12 +157,15 @@ enum {
 // description
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) description
+- (NSString *) description
 {
-  return [NSString stringWithFormat: @"%@: %sactive, nowTime: %.3f, input: %s output: %s",
-    (clientName == nil ? [super description] : clientName),
-    (active ? "" : "in"),
-    [self synthesisTime], needsInput ? "YES" : "NO", generatesOutput ? "YES" : "NO"];
+    return [NSString stringWithFormat: @"%@:%@ %sactive, nowTime: %.3f, input: %s output: %s",
+	[super description],
+	(clientName != nil ? clientName : @""),
+	(active ? "" : "in"),
+	[self synthesisTime],
+	needsInput ? "YES" : "NO",
+	generatesOutput ? "YES" : "NO"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -16,6 +16,8 @@
 
 #import "SndStreamManager.h"
 #import "SndStreamArchitectureView.h"
+#import "SndAudioProcessor.h"
+#import "SndStreamMixer.h"
 
 //////////////////////////////////////////////////////////////////////////////// 
 // SndAudioArchViewObject

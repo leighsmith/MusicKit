@@ -3,6 +3,7 @@
 //  $Id$
 //
 //  Description:
+//    View showing the current layout of Snd streaming components.
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
@@ -18,6 +19,7 @@
 #define __SNDKIT_SNDSTREAMARCHITECTUREVIEW_H_
 
 #import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 @class SndAudioArchViewObject;
 @class SndStreamClient;

@@ -16,7 +16,6 @@
 
 #import "SndAudioProcessor.h"
 #import "SndAudioBuffer.h"
-#import "SndAudioProcessorInspector.h"
 
 @implementation SndAudioProcessor
 

@@ -25,8 +25,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#import "SndMP3.h"
 #import <lame/lame.h>
+#import "SndMP3.h"
+#import "SndError.h"
+#import "SndAudioBuffer.h"
 
 #define SNDMP3_DEBUG_READING 0
 #define SNDMP3_DEBUG 0
@@ -635,7 +637,7 @@ static int bitrateLookupTable[16][6] = {
 	        samplesInRange: (NSRange) sndReadingRange;
 {
   // This version of insertIntoAudioBuffer: assumes that the entire MP3 has been decoded
-  // into memory. We also assume the buffer sample rate matches the MP3sample rate
+  // into memory. We also assume the buffer sample rate matches the MP3 sample rate
 #if DECODE_ENTIRE_INTO_MEMORY
     int buffChans = [anAudioBuffer channelCount];
     const short *pData = nil;
