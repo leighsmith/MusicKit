@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2001/02/15 01:51:08  leigh
+  Added MKSamplerInstrument support, retrieved valid filename extensions from MKScore
+
   Revision 1.7  2001/02/06 20:23:04  leigh
   Retained MKMidi instances which were preventing second play of score\
   Now using a single sound saving panel and updating the message
@@ -78,7 +81,7 @@ static NSString *errMsg;
 static double initialTempo = 60.0;
 static double lastTempo = 60.0;
 static double desiredTempo = 60.0;
-static NSArray *fileSuffixes;
+static NSArray *openFileExtensions;
 static NSString *dir = nil;
 #define condClass MKConductor
 static BOOL messageFlashed = NO;
@@ -86,6 +89,7 @@ static BOOL isLate = NO;
 static BOOL wasLate = NO;
 static id stopImage,playImage,playHImage;
 static MKMidi *midis[MAX_MIDIS] = {nil, nil};
+static MKSamplerInstrument *sampleInstrument;
 static int midiOffset;
 static BOOL synchToTimeCode = NO;
 static int timeCodePort = 0;
@@ -109,7 +113,7 @@ static BOOL writeData = NO;
 static enum _saveType {NO_TYPE = -1, SAVE_SCORE, SAVE_PLAYSCORE, SAVE_MIDI, SAVE_COMMANDS, SAVE_SOUND} saveType = NO_TYPE;
 static NSArray* fileIcons;
 static NSArray* fileTypes;
-static NSArray* fileExtensions;
+static NSArray* saveFileExtensions;
 
 static NSButton *accessoryView = nil;
 static id savePanel = nil;
@@ -487,7 +491,7 @@ static NSArray *soundOutputTagToName;
 
 }
 
-static id setFile(ScorePlayerController* self)
+static BOOL setFile(ScorePlayerController *self)
 {
     id tuningSys;
     id scoreInfo;
@@ -497,14 +501,13 @@ static id setFile(ScorePlayerController* self)
         [self->theMainWindow setTitle:STR_NO_FILE_OPEN];
         [self->editFileItem setEnabled:NO];
         [self->saveAsFileItem setEnabled:NO];
-        return nil;
+        return NO;
     }
     playScoreForm = [[fileName pathExtension] isEqualToString:@"playscore"];
     setFileTime();
     [self->editFileItem setEnabled:!playScoreForm];
     [self->saveAsFileItem setEnabled:YES];
     scoreObj = [MKScore score];
-//    [theMainWindow makeKeyAndOrderFront:NXApp]; /* Probably not needed */
     [self->theMainWindow setTitle: [NSString stringWithFormat:STR_READING, shortFileName]];
     [self->theMainWindow display];
     [self->button setEnabled:NO];
@@ -524,7 +527,7 @@ static id setFile(ScorePlayerController* self)
 	[self->theMainWindow setTitle:STR_SCOREPLAYER];
 	[self->button setEnabled:YES];
 	[self->theMainWindow display];
-	return nil;
+	return NO;
     }
     samplingRate = [theOrch defaultSamplingRate];
     headroom = .1;
@@ -538,12 +541,12 @@ static id setFile(ScorePlayerController* self)
 	if ([scoreInfo isParPresent:midiOffsetPar])
 	    midiOffset = [scoreInfo parAsDouble:midiOffsetPar];
 	if ([scoreInfo isParPresent:MK_headroom])
-	  headroom = [scoreInfo parAsDouble:MK_headroom];	  
+            headroom = [scoreInfo parAsDouble:MK_headroom];	  
 	if ([scoreInfo isParPresent:MK_alternativeSamplingRate] &&
 	    [theOrch prefersAlternativeSamplingRate])
-	  samplingRate = [scoreInfo parAsDouble:MK_alternativeSamplingRate];
+            samplingRate = [scoreInfo parAsDouble:MK_alternativeSamplingRate];
 	else if ([scoreInfo isParPresent:MK_samplingRate]) 
-	  samplingRate = [scoreInfo parAsDouble:MK_samplingRate];
+            samplingRate = [scoreInfo parAsDouble:MK_samplingRate];
 	if ([scoreInfo isParPresent:MK_tempo]) {
 	    initialTempo = [scoreInfo parAsDouble:MK_tempo];
 	    [[condClass defaultConductor] setTempo:initialTempo];
@@ -551,11 +554,11 @@ static id setFile(ScorePlayerController* self)
 	if (soundOutType == NEXT_SOUND) {
 #if SOUND_OUT_PAUSE_BUG
 	    if (samplingRate == 22050)
-	      midiOffset +=  .36363636363636/8.0;
+                midiOffset +=  .36363636363636/8.0;
 	    else midiOffset += .181818181818181/8.0;
 #else
 	    if (samplingRate == 22050)
-	      midiOffset +=  .36363636363636;
+                midiOffset +=  .36363636363636;
 	    else midiOffset += .181818181818181;
 #endif
 	}
@@ -570,7 +573,7 @@ static id setFile(ScorePlayerController* self)
     [self->theMainWindow display];
     [self->button setEnabled:YES];
     [scoreObj retain];  // yep, keep it.
-    return NSApp;
+    return YES;
 }
 
 
@@ -607,7 +610,7 @@ static BOOL setUpFile(NSString *workspaceFileName);
     }
     [theOrch setHostSoundOut:(soundOutType == NEXT_SOUND)];
     [tempoAnimator stopEntry];
-    [button setImage:playImage];
+    [button setImage: playImage];
     [button display];
     [tooFastErrorMsg setTextColor: [NSColor lightGrayColor]];
     [tooFastErrorMsg setBackgroundColor: [NSColor lightGrayColor]];
@@ -798,12 +801,16 @@ static void playIt(ScorePlayerController *self)
 		className = @"midi0"; /* Was "midi1" -- changed 9/30/94 */
             if ([className isEqualToString:@"midi1"])
 		whichMidi = 1;
-	    else whichMidi = 0;
+	    else
+            	whichMidi = 0;
 	    if (midis[whichMidi] == nil)
 		midis[whichMidi] = [[MKMidi midiOnDevice:className] retain];
-	    [[partPerformer noteSender] connect:
-	     [midis[whichMidi] channelNoteReceiver:midiChan]];
+	    [[partPerformer noteSender] connect: [midis[whichMidi] channelNoteReceiver:midiChan]];
 	}
+        else if([className isEqualToString: @"Samples"]) {
+            sampleInstrument = [[MKSamplerInstrument alloc] init];
+            [[partPerformer noteSender] connect: [sampleInstrument noteReceiver]];
+        }
 	else {
 	    synthPatchClass = ([className length]) ? 
 			       [MKSynthPatch findSynthPatchClass:className] : nil;
@@ -911,9 +918,9 @@ static void abortNow();
 //    int ec;
 
     if (inited++)
-      return;
+        return;
     mySelf = self;
-    fileExtensions = [[NSArray alloc] initWithObjects:
+    saveFileExtensions = [[NSArray alloc] initWithObjects:
         @"score", @"playscore",@"midi", @"snd", @"snd",nil];
     fileIcons = [[NSArray alloc] initWithObjects:
         @"ScorePlayerDoc", @"ScorePlayerDoc2",@"Midi", @"Sound", @"Sound",nil];
@@ -926,13 +933,13 @@ static void abortNow();
     playImage = LocalImage(@"play");
     [button setImage:playImage];
     [button display];
-    fileSuffixes = [[NSArray arrayWithObjects: @"score", @"playscore", nil] retain];
+    openFileExtensions = [[MKScore scorefileExtensions] retain];
     errorLog = [[ErrorLog alloc] init];
     [condClass setThreadPriority:1.0];
     [MKPartPerformer setFastActivation:YES]; /* We're not modifying parts while playing */
     setuid(getuid()); /* Must be after setThreadPriority. */
     [condClass useSeparateThread:YES];
-//    [condClass setDelegate:NXApp]; /* Default is no tempo adjustment */
+//    [condClass setDelegate: self]; /* Default is no tempo adjustment */
     [[MKConductor defaultConductor] setDelegate:self];
     /* These numbers could be endlessly tweaked */
     MKSetLowDeltaTThreshold(.25);
@@ -1001,18 +1008,18 @@ static BOOL setUpFile(NSString *workspaceFileName)
             success = [openPanel
                     runModalForDirectory: [[libraryDirs objectAtIndex: 0] stringByAppendingPathComponent: @"/Music/Scores"]
                     file:@"Examp1.score"
-                    types:fileSuffixes];
+                    types:openFileExtensions];
         }
         else if (dir) {
              success = [openPanel 
 		     runModalForDirectory:dir
 		     file:shortFileName 
-		     types:fileSuffixes]; 
+		     types:openFileExtensions]; 
 	     [dir release];
 	     dir = nil;
 	}
 	else 
-	  success = [openPanel runModalForTypes:fileSuffixes];
+	  success = [openPanel runModalForTypes:openFileExtensions];
 	if (!success)
 	  return NO;
         [fileName release];
@@ -1059,7 +1066,7 @@ static void abortNow()
 {
     abortNow(); /* Could move this to after setUpFile() */
     if (!setUpFile(nil)) {
-      return;
+        return;
     }
     setFile(self); 
 }
@@ -1068,9 +1075,8 @@ static void abortNow()
 {
     NSString *aType = [fileName pathExtension];
     if (aType)
-        if (![aType isEqualToString:@"score"] &&
-            ![aType isEqualToString:@"playscore"])
-	return NO;
+        if ([openFileExtensions indexOfObject: aType] == NSNotFound)
+            return NO;
     setUpFile(filename);
     abortNow();
     setFile(self);
@@ -1297,7 +1303,7 @@ NSString *getPath(NSString *dir, NSString *name, NSString *ext)
     }
     [accessoryView setImage:[NSImage imageNamed:[fileIcons objectAtIndex:type]]];
     [accessoryView setTitle:[fileTypes objectAtIndex:type]];
-    [savePanel setRequiredFileType:[fileExtensions objectAtIndex:type]];
+    [savePanel setRequiredFileType:[saveFileExtensions objectAtIndex:type]];
     return self;
 }
 
@@ -1321,13 +1327,13 @@ NSString *getPath(NSString *dir, NSString *name, NSString *ext)
     if (saveType==-1) 
 	[self setSaveType:SAVE_SCORE];
     if (!getSavePath(&outputFilePath,outputFileDir, outputFileName,
-                     [fileExtensions objectAtIndex:saveType]))
+                     [saveFileExtensions objectAtIndex:saveType]))
 	return;
     outputFileDir = [outputFilePath stringByDeletingLastPathComponent];
     outputFileName = [outputFilePath lastPathComponent];
     [self setSaveType:fileType(outputFilePath)];
     outputFilePath = getPath(outputFileDir, outputFileName,
-                             [fileExtensions objectAtIndex:saveType]);
+                             [saveFileExtensions objectAtIndex:saveType]);
     switch (saveType) {
       case SAVE_SCORE: 
 	[scoreObj writeScorefile:outputFilePath];
