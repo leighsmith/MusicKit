@@ -1,8 +1,18 @@
-
+////////////////////////////////////////////////////////////////////////////////
+// $Id$
+// Original Author: Stephen Brandon
+//
+//  Copyright (c) 1999, The University of Glasgow. All rights reserved.
+//  Portions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
+//
+//    Permission is granted to use and modify this code for commercial and
+//    non-commercial purposes so long as the author attribution and copyright
+//    messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 #import "Controller.h"
 #ifdef WIN32
 # import <Foundation/NSPathUtilities.h>
-# import <AppKit/NSSound.h>
 #endif
 
 /* number of seconds of sound to display */
@@ -24,7 +34,7 @@ static BOOL clipping = NO;
 
 - init
 {
-	return [super init];
+    return [super init];
 }
 
 - (void) applicationDidFinishLaunching: (NSNotification *) notification
@@ -99,37 +109,36 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
     switch (type) {
     case 0: /*sine*/
     default:
-        for (i = 0;i < SECONDS * SAMPLING_RATE;i++) {
+        for (i = 0; i < SECONDS * SAMPLING_RATE; i++) {
             pointer[i] = SINWAVE(SAMPLING_RATE,theFreq, theAmp,i);
         }
         break;
     case 1:  /*cosine*/
-        for (i = 0;i < SECONDS * SAMPLING_RATE;i++) {
+        for (i = 0; i < SECONDS * SAMPLING_RATE; i++) {
             pointer[i] = COSWAVE(SAMPLING_RATE,theFreq, theAmp,i);
         }
         break;
     case 2:  /*square*/
-        for (i = 0;i < SECONDS * SAMPLING_RATE;i++) {
+        for (i = 0; i < SECONDS * SAMPLING_RATE; i++) {
             pointer[i] = SQUAREWAVE(SAMPLING_RATE,theFreq, theAmp,i);
         }
         break;
     case 3:  /*sawtooth*/
-        for (i = 0;i < SECONDS * SAMPLING_RATE;i++) {
+        for (i = 0; i < SECONDS * SAMPLING_RATE; i++) {
             pointer[i] = SAWTOOTH(SAMPLING_RATE,theFreq, theAmp,i);
         }
         break;
     case 4:  /*rev sawtooth*/
-        for (i = 0;i < SECONDS * SAMPLING_RATE;i++) {
+        for (i = 0; i < SECONDS * SAMPLING_RATE; i++) {
             pointer[i] = REVSAWTOOTH(SAMPLING_RATE,theFreq, theAmp,i);
         }
         break;
     case 5:  /*triangle*/
-        for (i = 0;i < SECONDS * SAMPLING_RATE;i++) {
+        for (i = 0; i < SECONDS * SAMPLING_RATE; i++) {
             pointer[i] = TRIANGLE(SAMPLING_RATE,theFreq, theAmp,i);
         }
         break;
     }
-    SndSwapHostToSound(pointer, pointer, SECONDS * SAMPLING_RATE, 1,SND_FORMAT_LINEAR_16);
 }
 
 - calcSound1
@@ -158,19 +167,20 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
     short *pointer1 = (short *)[[soundView1 sound] data];
     short *pointer2 = (short *)[[soundView2 sound] data];
     short *pointer3 = (short *)[[soundView3 sound] data];
-    for (i = 0; i < SECONDS * SAMPLING_RATE;i++) {
-        newVal = (signed short)NSSwapBigShortToHost(pointer1[i]) + (signed short)NSSwapBigShortToHost(pointer2[i]);
+    
+    for (i = 0; i < SECONDS * SAMPLING_RATE; i++) {
+	newVal = pointer1[i] + pointer2[i];
+
         if (newVal > 32768 || newVal < -32767)
             clipping = YES;
         pointer3[i] = newVal;
     }
-    SndSwapHostToSound(pointer3, pointer3, SECONDS * SAMPLING_RATE, 1,SND_FORMAT_LINEAR_16);
     if (clipping) {
         clipping = NO;
-        [mesgBox setString:@"Combined amplitudes of sounds are too high and are causing clipping. Reduce amplitudes of one or both."];
+        [mesgBox setString: @"Combined amplitudes of sounds are too high and are causing clipping. Reduce amplitudes of one or both."];
     }
     else 
-        [mesgBox setString:@""];
+        [mesgBox setString: @""];
     [mesgBox display];
     return self;
 }
@@ -196,11 +206,11 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
     int i;
     float amp1,freq1;
 
-    [newSoundA setDataSize:SAMPLING_RATE * 3 * 2 
-                dataFormat:SND_FORMAT_LINEAR_16
-              samplingRate:SAMPLING_RATE 
-              channelCount:1 
-                  infoSize:0];
+    [newSoundA setDataSize: SAMPLING_RATE * 3 * 2 
+                dataFormat: SND_FORMAT_LINEAR_16
+              samplingRate: SAMPLING_RATE 
+              channelCount: 1 
+                  infoSize: 0];
 
     amp1 = [volNum1 floatValue] * 32768 / 10;
     freq1 = [freqNum1 floatValue];
