@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2001/02/13 00:08:47  leigh
+  Added MKMDErrorString()
+
   Revision 1.6  2000/12/07 00:09:20  leigh
   Added missing function prototypes, changed MKMDPort et al to mach_port_t
 
@@ -188,6 +191,8 @@ extern kern_return_t
 extern const char **
     MKMDGetAvailableDrivers(unsigned int *selectedDriver);
 
+/* interpreting error codes into a readable string. */
+extern char *MKMDErrorString(MKMDReturn errorCode);
 
 /********************* Controling how incoming data is formated ***********/
 extern kern_return_t 

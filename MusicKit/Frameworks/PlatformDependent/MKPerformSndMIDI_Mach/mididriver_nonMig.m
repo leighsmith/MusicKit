@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/02/13 00:08:47  leigh
+  Added MKMDErrorString()
+
   Revision 1.3  2000/12/14 04:54:55  leigh
   Fixed lack of null termination, partial solution for OpenStep
 
@@ -38,6 +41,13 @@ Modification history:
 #import <stdio.h>
 
 #define MKMD_NAME "Mididriver"  /* Name of driver (append unit number to use) */
+
+// interpreting error codes into a readable string.
+char *MKMDErrorString(MKMDReturn errorCode)
+{
+    // This isn't right but will suffice for now.
+    return mach_error_string(errorCode);
+}
 
 kern_return_t MKMDAwaitReply(mach_port_t port_set,
 			   MKMDReplyFunctions *funcs,
