@@ -36,7 +36,7 @@ TOOL_NAME = \
 	
 ADDITIONAL_LIB_DIRS =  
 
-ADDITIONAL_TOOL_LIBS += -lMKDSP -lMKPerformSndMIDI -lSndKit -lgnustep-base -lst -lMusicKit -lgmodel -ljpeg
+ADDITIONAL_TOOL_LIBS += -lMKDSP -lMKPerformSndMIDI -lSndKit -lgnustep-base -lst -lMusicKit
 
 ADDITIONAL_FLAGS += -g
 
