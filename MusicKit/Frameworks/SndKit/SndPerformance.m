@@ -321,13 +321,13 @@ startPosition: (double) startPosition
 {
     long fillBufferToLength = buffLength;
     long framesUntilEndOfLoop = loopEndIndex - playIndex + 1;
-    BOOL atEndOfLoop = looping && (buffLength > framesUntilEndOfLoop);
+    BOOL atEndOfLoop = looping && (buffLength >= framesUntilEndOfLoop);
     // numOfSamplesFilled and numOfSamplesRead can differ if we resample in fillAudioBuffer.
     long numOfSamplesFilled = 0;
     long numOfSamplesRead = 0;
     // specifies to fillAudioBuffer: and insertIntoAudioBuffer: the range of Snd samples permissible to read from.
     NSRange samplesToReadRange;
-    
+
     if (atEndOfLoop) {	// retrieve up to the end of the loop
 	fillBufferToLength = framesUntilEndOfLoop;
     }
@@ -360,7 +360,11 @@ startPosition: (double) startPosition
 	    int loopLength = loopEndIndex - loopStartIndex + 1;
 	    long fillBufferFrom = fillBufferToLength;
 	    long remainingLengthToFillWithLoop = buffLength - fillBufferFrom;
-	    
+
+	    // Reset playIndex to the start of the loop. We do this before the loop in case we do no loops,
+	    // in the singular case that the loop ends at the end of a buffer, requiring no insertion of loop
+	    // regions for this buffer.
+	    playIndex = loopStartIndex;   
 	    while(remainingLengthToFillWithLoop > 0 && loopLength > 0) {
 		NSRange loopRegion;
 		
@@ -371,9 +375,6 @@ startPosition: (double) startPosition
 		loopRegion.location = fillBufferFrom;
 		loopRegion.length = MIN(remainingLengthToFillWithLoop, loopLength);
 
-#if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
-		NSLog(@"after filling %@\n", bufferToFill);
-#endif		
 		numOfSamplesRead = [snd insertIntoAudioBuffer: bufferToFill
 					       intoFrameRange: loopRegion
 					       samplesInRange: samplesToReadRange];
@@ -387,7 +388,7 @@ startPosition: (double) startPosition
 		}
 #endif
 		numOfSamplesFilled += loopRegion.length;
-		playIndex = loopStartIndex + numOfSamplesRead;
+		playIndex += numOfSamplesRead;
 		fillBufferFrom += loopRegion.length; 
 		remainingLengthToFillWithLoop -= loopRegion.length;
 	    }
@@ -416,7 +417,7 @@ startPosition: (double) startPosition
 
 - (BOOL) atEndOfPerformance
 {
-    return playIndex >= endAtIndex - 1.0;
+    return playIndex >= endAtIndex - 1;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
