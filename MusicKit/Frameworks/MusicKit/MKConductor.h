@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.19  2002/04/08 19:09:38  sbrandon
+  added doco and prototypes for new methods introduced in last commit
+
   Revision 1.18  2002/04/08 17:26:04  sbrandon
   added new BOOL flags to message struct to signal whether or not to retain
   /release any object arguments.
@@ -394,6 +397,13 @@ extern MKMsgStruct *
 			 id destinationObject,int argCount,...);
 
 extern MKMsgStruct *
+  MKRescheduleMsgRequestWithObjectArgs(MKMsgStruct *aMsgStructPtr,id conductor,
+			 double timeOfNewMsg,SEL whichSelector,
+			 id destinationObject,int argCount,
+			 id arg1, BOOL retainArg1,
+			 id arg2, BOOL retainArg2);
+
+extern MKMsgStruct *
   MKRepositionMsgRequest(MKMsgStruct *aMsgStructPtr,double newTimeOfMsg);
 
 extern void MKFinishPerformance(void);
@@ -758,6 +768,32 @@ extern void MKFinishPerformance(void);
 - sel:(SEL) aSelector to: toObject withDelay:(double) beats argCount:(int) argCount, ...;
 
 /*!
+  @method sel:to:withDelay:argCount:arg1:retain:arg2:retain:
+  @param  aSelector is a SEL.
+  @param  toObject is an id.
+  @param  beats is a double.
+  @param  argCount is an int
+  @param  arg1 is an id or any 4-byte data type
+  @param  retain is a BOOL
+  @param  arg2 is an id or any 4-byte data type
+  @param  retain is a BOOL
+  @result Returns an id.
+  @discussion Places, in the receiver's message request queue, a request for
+              <i>aSelector</i> to be sent to <i>toObject</i> at time <i>beats</i>
+              beats from the receiver's notion of the current time.  To ensure
+              that the receiver's notion of time is up to date, you should send
+              <b>lockPerformance</b> before invoking this method and
+              <b>unlockPerformance</b>afterwards.   <i>argCount</i>  specifies the
+              number of four-byte arguments to <i>aSelector</i>. If arg1 or arg2 are
+	      objects, set the retain: argument following them to TRUE to prevent
+	      the object from any chance of deallocation between this method being
+	      called, and the message being dispatched.
+*/
+- sel:(SEL)aSelector to:(id)toObject withDelay:(double)deltaT argCount:(int)argCount
+           arg1:(id)arg1 retain:(BOOL)retainArg1
+           arg2:(id)arg2 retain:(BOOL)retainArg2;
+
+/*!
   @method sel:to:atTime:argCount:
   @param  aSelector is a SEL.
   @param  toObject is an id.
@@ -773,6 +809,29 @@ extern void MKFinishPerformance(void);
 */
 - sel:(SEL) aSelector to: toObject atTime:(double) time argCount:(int) argCount, ...;
 
+/*!
+  @method sel:to:atTime:argCount:arg1:retain:arg2:retain:
+  @param  aSelector is a SEL.
+  @param  toObject is an id.
+  @param  time is a double.
+  @param  argCount,... is an int
+  @param  arg1 is an object or any 4-byte type
+  @param  retain is a BOOL
+  @param  arg2 is an object or any 4-byte type
+  @param  retain is a BOOL
+  @result Returns an id.
+  @discussion Places, in the receiver's message request queue, a request for
+              <i>aSelector</i> to be sent to <i>toObject</i> at time <i>time</i>
+              beats from the beginning of the receiver's performance. 
+              <i>argCount</i> specifies the number of four-byte arguments to
+              <i>aSelector</i>. If arg1 or arg2 are
+	      objects, set the retain: argument following them to TRUE to prevent
+	      the object from any chance of deallocation between this method being
+	      called, and the message being dispatched.
+*/
+- sel:(SEL)aSelector to:(id)toObject atTime:(double)t argCount:(int)argCount
+           arg1:(id)arg1 retain:(BOOL)retainArg1
+           arg2:(id)arg2 retain:(BOOL)retainArg2;
 /*!
   @method timeInSeconds
   @result Returns a double.
@@ -828,6 +887,34 @@ extern void MKFinishPerformance(void);
 +(MKMsgStruct *) afterPerformanceSel:(SEL) aSelector to: toObject argCount:(int) argCount, ...; 
 
 /*!
+  @method afterPerformanceSel:to:argCount:arg1:retain:arg2:retain:
+  @param  aSelector is a SEL.
+  @param  toObject is an id.
+  @param  argCount is an int.
+  @param  arg1 is an id or any 4-byte type.
+  @param  retain is a BOOL.
+  @param  arg2 is an id or any 4-byte type.
+  @param  retain is a BOOL.
+  @result Returns a MKMsgStruct *.
+  @discussion Enqueues a request for <i>aSelector</i> to be sent to
+              <i>toObject</i> immediately after the current (or next) performance
+              ends.  <i>argCount</i> specifies the number of four-byte arguments
+              to <i>aSelector</i>. arg1 and arg2 can be objects or other 4-byte
+	      object types (eg int). If either is an object, specify retain:TRUE
+	      for that object, and it will receive retain and release messages, meaning
+	      that they should not become accidentally deallocated before the message
+	      containing them as arguments is dispatched.
+	      You can enqueue as many of
+              these requests as you want; they're sent in the order that they were
+              enqueued.  Returns a pointer to a <i>message request structure that
+              can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
+*/
++(MKMsgStruct *) afterPerformanceSel:(SEL)aSelector to:(id)toObject 
+                 argCount:(int)argCount
+                 arg1:(id)arg1 retain:(BOOL)retainArg1
+                 arg2:(id)arg2 retain:(BOOL)retainArg2;
+
+/*!
   @method beforePerformanceSel:to:argCount:
   @param  aSelector is a SEL.
   @param  toObject is an id.
@@ -843,6 +930,34 @@ extern void MKFinishPerformance(void);
               can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
 */
 +(MKMsgStruct *) beforePerformanceSel:(SEL) aSelector to: toObject argCount:(int) argCount, ...; 
+
+/*!
+  @method beforePerformanceSel:to:argCount:arg1:retain:arg2:retain:
+  @param  aSelector is a SEL.
+  @param  toObject is an id.
+  @param  argCount is an int.
+  @param  arg1 is an id or any 4-byte type.
+  @param  retain is a BOOL.
+  @param  arg2 is an id or any 4-byte type.
+  @param  retain is a BOOL.
+  @result Returns a MKMsgStruct *.
+  @discussion Enqueues a request for <i>aSelector</i> to be sent to
+              <i>toObject</i> at the beginning of the next performance. 
+              <i>argCount</i> specifies the number of four-byte arguments
+              to <i>aSelector</i>. arg1 and arg2 can be objects or other 4-byte
+	      object types (eg int). If either is an object, specify retain:TRUE
+	      for that object, and it will receive retain and release messages, meaning
+	      that they should not become accidentally deallocated before the message
+	      containing them as arguments is dispatched.
+	      You can enqueue as many of these
+              requests as you want; they're sent in the order that they were
+              enqueued.  Returns a pointer to a <i>message request structure that
+              can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
+*/
++(MKMsgStruct *) beforePerformanceSel:(SEL)aSelector  to:(id)toObject 
+                 argCount:(int)argCount
+                 arg1:(id)arg1 retain:(BOOL)retainArg1
+                 arg2:(id)arg2 retain:(BOOL)retainArg2;
 
 /*!
   @method setDelegate:
