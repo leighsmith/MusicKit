@@ -15,6 +15,9 @@
 
 #Modification history:
 # $Log$
+# Revision 1.2  2001/07/02 20:03:29  sbrandon
+# - added -g flag for debugging
+#
 # Revision 1.1  2001/05/12 16:59:25  sbrandon
 # - inclusion of GNUmakefile should allow the use of "make" on GNUstep platforms
 #   (certainly does for me!)
@@ -42,6 +45,7 @@ $(FRAMEWORK_NAME)_RESOURCE_DIRS =
 #sb: not sure about this...
 #$(FRAMEWORK_NAME)BUNDLE_LIBS = 
 
+ADDITIONAL_FLAGS += -g
 
 # The Bundle Objective-C source files to be compiled
 $(FRAMEWORK_NAME)_OBJC_FILES = \
