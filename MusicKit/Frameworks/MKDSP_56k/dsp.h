@@ -146,7 +146,7 @@
 #define DSP_START_ADDRESS DSP_PLI_USR /* cf. dsp_messages.h */
 
 /* Be sure to enclose in {} when followed by an else */
-#define DSP_UNTIL_ERROR(x) if (DSPErrorNo=(x)) \
+#define DSP_UNTIL_ERROR(x) if ((DSPErrorNo=(x))) \
   return(_DSPError(DSPErrorNo,"Aborting"))
 
 #define NOT_YET 1
