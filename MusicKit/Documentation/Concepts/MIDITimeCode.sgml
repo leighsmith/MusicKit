@@ -1,4 +1,4 @@
-<!-- $Id -->
+<!-- $Id$ -->
 <chapter id="MIDITimeCode">
 <title>MIDI Time Code in the Music Kit</title>
 
@@ -87,21 +87,24 @@ class=headerfile>&lt;MusicKit/MKMTCPerformer.h&gt;</filename>:</para>
 <para>You set the first and last MTC value using the methods <emphasis
 role="bold">setFirstTimeTag:</emphasis>, <emphasis
 role="bold">setLastTimeTag:</emphasis> and <emphasis
-role="bold">setTimeShift:.  </emphasis> To set the first value the
+role="bold">setTimeShift:</emphasis>. To set the first value the
 <classname>MKPerformer</classname> will generate, you use <emphasis
 role="bold">setFirstTimetTag:</emphasis>.  Note that this method also
-sets the time from activation at which the <classname>MKPerformer</classname> will start
-sending time code.  For example, if you set a <classname>MKPerformer</classname>'s
-<emphasis>firstTimeTag </emphasis>to 10.0 seconds before the
-performance has started, then activate the <classname>MKPerformer</classname> and start the
-performance, the <classname>MKPerformer</classname> will begin sending time code at time 10.0
-seconds and the values will begin at the MTC time 0:0:10:0 (zero
-hours, zero minutes, ten seconds, zero frames).  </para> 
-<para>You may
-want the time code to begin sending immediately, regardless of
-<emphasis>firstTimeTag</emphasis>.  To do this, use the <classname>MKPerformer</classname>
-method <emphasis role="bold">setTimeShift:</emphasis> and pass it an
-argument of &plusmn;<emphasis>firstTimeTag</emphasis>: </para>
+sets the time from activation at which the
+<classname>MKPerformer</classname> will start sending time code.  For
+example, if you set a <classname>MKPerformer</classname>'s
+<emphasis>firstTimeTag</emphasis> to 10.0 seconds before the
+performance has started, then activate the
+<classname>MKPerformer</classname> and start the performance, the
+<classname>MKPerformer</classname> will begin sending time code at
+time 10.0 seconds and the values will begin at the MTC time 0:0:10:0
+(zero hours, zero minutes, ten seconds, zero frames).</para>
+
+<para>You may want the time code to begin sending immediately,
+regardless of <emphasis>firstTimeTag</emphasis>.  To do this, use the
+<classname>MKPerformer</classname> method <emphasis
+role="bold">setTimeShift:</emphasis> and pass it an argument of
+<emphasis>-firstTimeTag</emphasis>:</para>
 
 <programlisting>
 MKMTCPerformer *myMTCPerformer =[[MKMTCPerformer alloc] init];	
@@ -116,6 +119,7 @@ seconds and start sending that time that time code at time 3.0
 seconds, set <emphasis>firstTimeTag </emphasis>to 2.0 and
 <emphasis>timeShift </emphasis>to 1.0.  In general, the formula is:
 </para> 
+
 <para><emphasis>start time = timeShift + firstTimeTag+
 activation time</emphasis></para>
 
@@ -131,8 +135,8 @@ However, you can specify that the <classname>MKPerformer</classname> automatical
 when it reaches a certain target MTC value by sending it the <emphasis
 role="bold">setLastTimeTag:</emphasis> message.  Normally,
 <emphasis>lastTimeTag</emphasis> should be greater than
-<emphasis>firstTimeTag.  </emphasis>However, you can tell the
-<classname>MKPerformer</classname> to send reverse time code as follows: </para>
+<emphasis>firstTimeTag</emphasis>. However, you can tell the
+<classname>MKPerformer</classname> to send reverse time code as follows:</para>
 
 <programlisting>
 [myMTCPerformer setDirection:MK_MTC_REVERSE];
@@ -426,7 +430,7 @@ Perfomer.  This example is a simplified version of the Music Kit
     int currentIndex; /* Index of nextNote */ 
 }
 
-&plusmn;initForPart:aPart 
+- initForPart:aPart 
 { 
     if (!aPart)
          return nil; 
@@ -436,13 +440,13 @@ Perfomer.  This example is a simplified version of the Music Kit
     return self; 
 }
 
-&plusmn;setFirstTimeTag:(double)aTimeTag 
+- setFirstTimeTag:(double)aTimeTag 
 { 
     firstTimeTag = aTimeTag;  
     return self;
 } 
 
-&plusmn;activateSelf 
+- activateSelf 
 { 
     int cnt 
     MKNote *aNote;
@@ -466,26 +470,26 @@ Perfomer.  This example is a simplified version of the Music Kit
     return self;
 } 
 
-&plusmn;perform 
+- perform 
 {
     double t = [nextNote timeTag]; 
-    id aNote; 
+    MKNote *aNote; 
     NSArray *noteList = [part notesNoCopy]; 
     if (performCount == 1 &amp;&amp; (firstTimeTag &gt; 0)) {  
         /* Send all noteUpdates up to now */  
         int i,cnt;  
         for (i = 0, cnt = [noteList count]; i&lt;cnt; i++) {
-            aNote = [noteList objectAtIndex:i];  
+            aNote = (MKNote *) [noteList objectAtIndex: i];  
             if ([aNote noteType] == MK_noteUpdate)  
-                [[self noteSender] sendNote:aNote]; 
+                [[self noteSender] sendNote: aNote]; 
         } 
-        aNote = [noteList objectAtIndex:currentIndex++];
+        aNote = [noteList objectAtIndex: currentIndex++];
 
-        [[self noteSender] sendNote:aNote]; 
+        [[self noteSender] sendNote: aNote]; 
         if (currentIndex == [aList count])  
             return [self deactivate]; 
         else  
-            nextPerform = [[noteList objectAtIndex:currentIndex] timeTag]-t; 
+            nextPerform = [[noteList objectAtIndex: currentIndex] timeTag] - t; 
         return self; 
 }
 </programlisting>
@@ -495,20 +499,22 @@ with a MIDI time code conductor.  However, unless you follow the Time
 Code Performer protocol described above, it will not seek as you might
 expect.  </para> 
 
-<para>N.B.  When a <classname>MKPerformer</classname> is activated while a
-performance is in progress, the <classname>MKPerformer</classname> <emphasis
-role="bold">activate </emphasis>method adds its <emphasis>nextPerform
-</emphasis>to the current <classname>MKConductor</classname> time to determine the time of
-the first invocation of the <classname>MKPerformer</classname>'s <emphasis
-role="bold">perform </emphasis>method.  Thus, the protocol described
-above would seem to introduce an undesired offset equal to the
-<classname>MKConductor</classname>'s current time.  Therfore, the <emphasis
-role="bold">activate </emphasis>method makes a special case of
-<classname>MKPerformer</classname>s that are managed by a MIDI Time Code Conductor&horbar; it
-does <emphasis>not</emphasis> add in the <classname>MKConductor</classname>'s time when
-activating such <classname>MKPerformer</classname>s.  The distinction between the two
+<para>N.B.  When a <classname>MKPerformer</classname> is activated
+while a performance is in progress, the
+<classname>MKPerformer</classname> <emphasis role="bold">activate
+</emphasis>method adds its <emphasis>nextPerform </emphasis>to the
+current <classname>MKConductor</classname> time to determine the time
+of the first invocation of the <classname>MKPerformer</classname>'s
+<emphasis role="bold">perform </emphasis>method.  Thus, the protocol
+described above would seem to introduce an undesired offset equal to
+the <classname>MKConductor</classname>'s current time.  Therfore, the
+<emphasis role="bold">activate </emphasis>method makes a special case
+of <classname>MKPerformer</classname>s that are managed by a MIDI Time
+Code Conductor&horbar; it does <emphasis>not</emphasis> add in the
+<classname>MKConductor</classname>'s time when activating such
+<classname>MKPerformer</classname>s.  The distinction between the two
 interpretations of <emphasis>nextPerform </emphasis>is an historical
-artifact.  </para> 
+artifact.  </para>
       </sect2>
       <sect2 id="SpecifyingTempo">
 	<title>Specifying Tempo</title>
