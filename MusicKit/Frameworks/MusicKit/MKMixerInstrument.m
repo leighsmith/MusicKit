@@ -40,6 +40,9 @@
 Modification history:
 
  $Log$
+ Revision 1.11  2002/01/29 16:21:49  sbrandon
+ fixed small retain/release problem (theoretical crasher)
+
  Revision 1.10  2001/09/20 01:41:37  leighsmith
  Typed parameters
 
@@ -113,7 +116,7 @@ enum {applyEnvBefore = 0,applyEnvAfter = 1,scaleEnvToFit = 2};
     channelCount = 2;
     samplingRate = 44100;
     /* array of MKSamples, one for each active file. */
-    samplesToMix = [[NSMutableArray array] retain];
+    samplesToMix = [[NSMutableArray alloc] init];
     [self addNoteReceiver: [[MKNoteReceiver alloc] init]]; /* Need one NoteReceiver */ 
     return self;
 }
@@ -538,8 +541,8 @@ static int timeToSamp(Snd *s,double time)
 	  /* ### Add your processing modules here, if you want them to apply
 	   *     after pitch-shifting. 
 	   */
-          [newSoundFileSamples autorelease]; // we are through with it, the samplesToMix will retain it as it needs.
 	  [samplesToMix addObject: newSoundFileSamples];
+          [newSoundFileSamples autorelease]; // we are through with it, the samplesToMix will retain it as it needs.
 	  break;
     }
     case MK_noteUpdate: { /* Only no-tag NoteUpdates are recognized */
