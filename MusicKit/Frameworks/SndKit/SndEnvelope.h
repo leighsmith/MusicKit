@@ -26,7 +26,7 @@
               a class for it to be able to function within SndAudioFader as an
               envelope storage and lookup class. The primary implementation of
               this protocol is the SndEnvelope class, but it is intended that
-              the MusicKit's MKEnvelope should noform to SndEnveloping too in
+              the MusicKit's MKEnvelope should conform to SndEnveloping too in
               future, by way of a category.<br>
               As the protocol is used for envelopes used in shaping audio
               streams just before audio output, implementations should be as
