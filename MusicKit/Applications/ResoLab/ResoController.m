@@ -8,8 +8,8 @@ Implementation of Zeros, as well as data storage for poles and zeros added by Da
 #import "ResoController.h"
 #import "SpectrumView.h"
 #import "ZPlaneView.h"
-#import <appkit/appkit.h>
-#import <musickit/musickit.h>
+#import <AppKit/AppKit.h>
+#import <MusicKit/MusicKit.h>
 #import "SourceFilterIns.h"
 #import "Xforms.h"
 #import "Z3DPlaneView.h"
@@ -193,27 +193,27 @@ easy loading of new values from the filterFields
     int i;
 
     if ([sender state] == 1)	{
-        theOrch = [Orchestra new];          
+        theOrch = [MKOrchestra new];          
         [theOrch setSamplingRate: 22050.0];
 	we_singin = TRUE;
-        theNote = [Note new];			
+        theNote = [MKNote new];			
         [theNote setNoteType:MK_noteOn]; 	
         [theNote setNoteTag:MKNoteTag()];      
-	theNoteUpdate = [Note new];
+	theNoteUpdate = [MKNote new];
         [theNoteUpdate setNoteType:MK_noteUpdate]; 
         [theNoteUpdate setNoteTag:[theNote noteTag]]; 
-        [Orchestra setTimed:NO];             
+        [MKOrchestra setTimed:NO];             
         if (![theOrch open]) {               
 	fprintf(stderr,"Can't open DSP. Perhaps some other process has it.\n");
 	    exit(1);
         }
-        theIns = [SynthInstrument new];      
+        theIns = [MKSynthInstrument new];      
         [theIns setSynthPatchClass: [SourceFilterIns class]];   
         [theIns setSynthPatchCount:1];	
-        [Conductor setFinishWhenEmpty:NO];
+        [MKConductor setFinishWhenEmpty:NO];
         [theOrch run];				
-        [Conductor startPerformance];    
-	[Conductor adjustTime];	
+        [MKConductor startPerformance];    
+	[MKConductor adjustTime];	
         [theNote setPar:MK_lowestFreq toDouble: 50.0];   
         [theNote setPar:MK_waveLen toInt: 1024];  
 //        [theNote setPar:MK_waveform toWaveTable: theWave];
@@ -223,27 +223,27 @@ easy loading of new values from the filterFields
         [self changeSource: nil];
         [self changeMod: nil];
         [self changePitch:  pitchField];
-	[Orchestra flushTimedMessages];      
+	[MKOrchestra flushTimedMessages];      
     }
     else	{
         we_singin = FALSE;
-        [Conductor adjustTime];               
-        [Conductor finishPerformance];       
-	[theNoteUpdate free];
-	[theNote free];
+        [MKConductor adjustTime];               
+        [MKConductor finishPerformance];       
+	[theNoteUpdate release];
+	[theNote release];
 	[theOrch close];
-	[theOrch free];
+	[theOrch release];
     }
     return self;
 }
 
 - changeSource:sender
 {
-    int		RESO_sourceFader = [[Note class] parName: "RESO_sourceFader"];
-    int		RESO_oscLevel = [[Note class] parName: "RESO_oscLevel"];
-    int		RESO_noiseLevel = [[Note class] parName: "RESO_noiseLevel"];
+    int		RESO_sourceFader = [[MKNote class] parName: "RESO_sourceFader"];
+    int		RESO_oscLevel = [[MKNote class] parName: "RESO_oscLevel"];
+    int		RESO_noiseLevel = [[MKNote class] parName: "RESO_noiseLevel"];
     if (we_singin)	{
-        [Conductor adjustTime];             
+        [MKConductor adjustTime];             
         [theNoteUpdate setPar:RESO_sourceFader toDouble:
 			[sourceFader doubleValue]];  
         [theNoteUpdate setPar:RESO_oscLevel toDouble: 
@@ -251,7 +251,7 @@ easy loading of new values from the filterFields
         [theNoteUpdate setPar:RESO_noiseLevel toDouble: 
 			[noiseLevel doubleValue]];  
         [[theIns noteReceiver] receiveNote:theNoteUpdate];
-        [Orchestra flushTimedMessages];
+        [MKOrchestra flushTimedMessages];
     }
     return self;
 }
@@ -260,7 +260,7 @@ easy loading of new values from the filterFields
 {
     double temp;
     if (we_singin)	{
-        [Conductor adjustTime];             
+        [MKConductor adjustTime];             
         temp = [vibField doubleValue];
 	[theNoteUpdate setPar:MK_svibFreq0 toDouble: temp];  
         [theNoteUpdate setPar:MK_svibFreq1 toDouble: temp];  
@@ -269,7 +269,7 @@ easy loading of new values from the filterFields
         [theNoteUpdate setPar:MK_svibAmp1 toDouble: temp];  
         [theNoteUpdate setPar:MK_rvibAmp toDouble: [randLevel doubleValue]];  
         [[theIns noteReceiver] receiveNote:theNoteUpdate];
-        [Orchestra flushTimedMessages];
+        [MKOrchestra flushTimedMessages];
     }
     return self;
 }
@@ -278,7 +278,7 @@ easy loading of new values from the filterFields
 {
     int i;
     float num_harms;
-    int 	RESO_numHarmonics = [Note parName:"RESO_numHarmonics"];
+    int 	RESO_numHarmonics = [MKNote parName:"RESO_numHarmonics"];
 
     if (we_singin)	{
         num_harms = [numHarmonics floatValue];
@@ -295,7 +295,7 @@ easy loading of new values from the filterFields
         [theNoteUpdate setPar:MK_waveLen toInt: 1024];  
         [theNoteUpdate setPar:RESO_numHarmonics toInt: num_harms];  
         [[theIns noteReceiver] receiveNote:theNoteUpdate];
-        [Orchestra flushTimedMessages];
+        [MKOrchestra flushTimedMessages];
     }
     return self;
 }
@@ -309,7 +309,7 @@ easy loading of new values from the filterFields
 			[pitchField doubleValue]];  
         [theNoteUpdate setPar:MK_freq toDouble: [pitchField doubleValue]];  
         [[theIns noteReceiver] receiveNote:theNoteUpdate];
-        [Orchestra flushTimedMessages];
+        [MKOrchestra flushTimedMessages];
 	[self changeMod: nil];
     }
     return self;
@@ -346,22 +346,22 @@ easy loading of new values from the filterFields
     float c[6],xc[6],inZ1=0.0,outZ[6]={0.0,0.0,0.0,0.0,0.0,0.0};
     float radius1,angle1,radius2,angle2,radius3,angle3;
     double a[4],b[4],d[4],e[4],gain[4] = {1.99,1.99,1.99,1.99};
-    int		RESO_filt1pr = [[Note class] parName:"RESO_filt1pr"],
-    		RESO_filt1pf = [[Note class] parName:"RESO_filt1pf"],
-    		RESO_filt1Gain = [[Note class] parName:"RESO_filt1Gain"],
-    		RESO_filt2pr = [[Note class] parName:"RESO_filt2pr"],
-    		RESO_filt2pf = [[Note class] parName:"RESO_filt2pf"],
-    		RESO_filt2Gain = [[Note class] parName:"RESO_filt2Gain"],
-    		RESO_filt3pr = [[Note class] parName:"RESO_filt3pr"],
-    		RESO_filt3pf = [[Note class] parName:"RESO_filt3pf"],
-    		RESO_filt3Gain = [[Note class] parName:"RESO_filt3Gain"],
+    int		RESO_filt1pr = [[MKNote class] parName:"RESO_filt1pr"],
+    		RESO_filt1pf = [[MKNote class] parName:"RESO_filt1pf"],
+    		RESO_filt1Gain = [[MKNote class] parName:"RESO_filt1Gain"],
+    		RESO_filt2pr = [[MKNote class] parName:"RESO_filt2pr"],
+    		RESO_filt2pf = [[MKNote class] parName:"RESO_filt2pf"],
+    		RESO_filt2Gain = [[MKNote class] parName:"RESO_filt2Gain"],
+    		RESO_filt3pr = [[MKNote class] parName:"RESO_filt3pr"],
+    		RESO_filt3pf = [[MKNote class] parName:"RESO_filt3pf"],
+    		RESO_filt3Gain = [[MKNote class] parName:"RESO_filt3Gain"],
 		
-                 RESO_filt1zr = [[Note class] parName:"RESO_filt1zr"],
-    		RESO_filt1zf = [[Note class] parName:"RESO_filt1zf"],
-    		RESO_filt2zr = [[Note class] parName:"RESO_filt2zr"],
-    		RESO_filt2zf = [[Note class] parName:"RESO_filt2zf"],
-    		RESO_filt3zr = [[Note class] parName:"RESO_filt3zr"],
-    		RESO_filt3zf = [[Note class] parName:"RESO_filt3zf"];
+                 RESO_filt1zr = [[MKNote class] parName:"RESO_filt1zr"],
+    		RESO_filt1zf = [[MKNote class] parName:"RESO_filt1zf"],
+    		RESO_filt2zr = [[MKNote class] parName:"RESO_filt2zr"],
+    		RESO_filt2zf = [[MKNote class] parName:"RESO_filt2zf"],
+    		RESO_filt3zr = [[MKNote class] parName:"RESO_filt3zr"],
+    		RESO_filt3zf = [[MKNote class] parName:"RESO_filt3zf"];
 
 
     for (i=0;i<6;i++)	{
@@ -444,7 +444,7 @@ easy loading of new values from the filterFields
     }
     power = pow(power,0.136);
     if (we_singin)	{
-	[Conductor adjustTime];             
+	[MKConductor adjustTime];             
 
         gain[1] = 1.0 / (power);
         gain[2] = 1.0 / (power);
@@ -470,7 +470,7 @@ easy loading of new values from the filterFields
 
         [[theIns noteReceiver] receiveNote:theNoteUpdate];
 
-        [Orchestra flushTimedMessages];
+        [MKOrchestra flushTimedMessages];
     }
     return self;
 }
