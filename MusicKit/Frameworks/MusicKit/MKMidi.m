@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.49  2004/08/21 23:27:09  leighsmith
+  Cleaned up
+
   Revision 1.48  2003/08/04 21:19:36  leighsmith
   Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -1031,25 +1034,27 @@ static id handleSysExclbyte(_MKMidiInStruct *ptr,unsigned char midiByte)
 static void sendIncomingNote(short chan, MKNote *aNote, MKMidi *sendingMidi, int quanta)
 {
     if (aNote) {
-	double t;
-	id synchCond = sendingMidi->synchConductor;
-        t = (((double)quanta) * _MK_MIDI_QUANTUM_PERIOD + sendingMidi->_timeOffset);
+	MKConductor *synchCond = sendingMidi->synchConductor;
+	double t = (((double) quanta) * _MK_MIDI_QUANTUM_PERIOD + sendingMidi->_timeOffset);
+	
 	if (MKGetDeltaTMode() == MK_DELTAT_SCHEDULER_ADVANCE) 
-	  t += MKGetDeltaT();
+	    t += MKGetDeltaT();
 	if (synchCond)
-	  t -= mtcTimeOffset;
-	[aNote setTimeTag:t];
+	    t -= mtcTimeOffset;
+	[aNote setTimeTag: t];
         if (sendingMidi->useInputTimeStamps) 
-	  if (synchCond)
-	    [synchCond _setMTCTime:(double)t];
-	  else _MKAdjustTime(t); /* Use input time stamp time */
-	else [_MKClassConductor() adjustTime]; 
+	    if (synchCond)
+		[synchCond _setMTCTime: (double) t];
+	    else 
+		_MKAdjustTime(t); /* Use input time stamp time */
+	else 
+	    [_MKClassConductor() adjustTime]; 
 	if (sendingMidi->mergeInput) { /* Send all on one MKNoteSender? */
-	    MKSetNoteParToInt(aNote,MK_midiChan,chan);
-            [[sendingMidi->noteSenders objectAtIndex:0] sendNote:aNote];
+	    MKSetNoteParToInt(aNote, MK_midiChan, chan);
+            [[sendingMidi->noteSenders objectAtIndex: 0] sendNote: aNote];
 	}
         else {
-            [[sendingMidi->noteSenders objectAtIndex:chan] sendNote:aNote];
+            [[sendingMidi->noteSenders objectAtIndex: chan] sendNote: aNote];
         }
 	[_MKClassOrchestra() flushTimedMessages]; /* Off to the DSP */
     }
@@ -1222,13 +1227,6 @@ static unsigned ignoreBit(unsigned param)
 }
 
 /* Creation */
-
--_free
-  /* Needed below */
-{
-//    [super release];
-    return nil; //sb: I assume this is what [super free] used to return...
-}
 
 /* This mechanism is more general than we need, because the rest of this
    object currently assumes that there's only one MIDI driver called 
