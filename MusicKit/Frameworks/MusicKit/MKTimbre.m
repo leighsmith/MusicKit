@@ -10,11 +10,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.5  2000/11/25 22:39:30  leigh
+  Removed redundant -freeSelfOnly and release
+
   Revision 1.4  2000/06/27 18:08:41  leigh
   Converted hashtable into a NSDictionary timbreDictionary
 
@@ -271,20 +275,6 @@ static MKWaveTable *waveTableForFreq(MKTimbre *timbre,
     [self init];
     [(timbreName = s) release];
     return;
-}
-
--freeSelfOnly
-{
-    [timbreDictionary removeObjectForKey: timbreName];
-    [waveTables release];
-    [freqs release];
-    [super release];
-    return nil; /* sb: nil for compatibility with old -free method */
-
-}    
--(void)release
-{
-    [super release];
 }
 
 - (void)dealloc
