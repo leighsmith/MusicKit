@@ -15,6 +15,9 @@
 
 # Modification history:
 # $Log$
+# Revision 1.3  2001/11/08 21:40:27  sbrandon
+# added the new DSPerror_gnustep.m
+#
 # Revision 1.2  2001/11/07 13:47:38  sbrandon
 # - A number of changes to support GNUstep compilation on Win32. Primary change
 #   is that it now compiles as a library rather than a framework due to
@@ -52,9 +55,9 @@ $(MY_NAME)_RESOURCE_FILES =
 $(MY_NAME)_RESOURCE_DIRS = 
 
 # The Bundle Objective-C source files to be compiled
-$(MY_NAME)_OBJC_FILES = dsp_stubs.m
+$(MY_NAME)_OBJC_FILES = dsp_stubs.m DSPerror_gnustep.m
 
-$(MY_NAME)_C_FILES =
+$(MY_NAME)_C_FILES = #_DSPUtilities.c _DSPCV.c _DSPString.c
 
 # The framework installed header files
 $(MY_NAME)_HEADER_FILES = dsp.h DSPControl.h DSPConversion.h dspdriver.h\
