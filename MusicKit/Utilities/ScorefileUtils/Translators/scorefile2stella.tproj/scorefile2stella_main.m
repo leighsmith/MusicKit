@@ -147,7 +147,7 @@ static void writeParts(MKScore *aScore)
 		MKNote *info;
 		const char *name;
 		NSString *class;
-		BOOL freqNames = NO;
+		// BOOL freqNames = NO;
 		int par, mode;
 		
 		aPart = (MKPart *)[parts objectAtIndex:i];
