@@ -1,32 +1,47 @@
-/******************************************************************************
-$Id$
+////////////////////////////////////////////////////////////////////////////////
+//
+// $Id$
+//
+//  Description:
+//    A library of functions intended to be compatible with NeXTs now defunct SoundKit.
+//
+//  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
+//
+//  This framework and all source code supplied with it, except where specified,
+//  are Copyright Stephen Brandon and the University of Glasgow, 1999. You are
+//  free to use the source code for any purpose, including commercial applications,
+//  as long as you reproduce this notice on all such software.
+//
+//  Software production is complex and we cannot warrant that the Software will be
+//  error free.  Further, we will not be liable to you if the Software is not fit
+//  for the purpose for which you acquired it, or of satisfactory quality. 
+//
+//  WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL
+//  WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES
+//  OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD
+//  PARTIES RIGHTS.
+//
+//  If a court finds that we are liable for death or personal injury caused by our
+//  negligence our liability shall be unlimited.  
+//
+//  WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS
+//  OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR
+//  POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE
+//  NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED
+//  DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND
+//  CONDITIONS OF THIS AGREEMENT.
+//
+//  Portions Copyright (c) 1999, The MusicKit Project.  All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
+//  messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
-LEGAL:
-This framework and all source code supplied with it, except where specified,
-are Copyright Stephen Brandon and the University of Glasgow, 1999. You are
-free to use the source code for any purpose, including commercial applications,
-as long as you reproduce this notice on all such software.
-
-Software production is complex and we cannot warrant that the Software will be
-error free.  Further, we will not be liable to you if the Software is not fit
-for the purpose for which you acquired it, or of satisfactory quality. 
-
-WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL
-WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES
-OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD
-PARTIES RIGHTS.
-
-If a court finds that we are liable for death or personal injury caused by our
-negligence our liability shall be unlimited.  
-
-WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS
-OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR
-POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE
-NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED
-DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND
-CONDITIONS OF THIS AGREEMENT.
-
-******************************************************************************/
+/*!
+  @abstract A library of functions intended to be compatible with NeXTs now defunct SoundKit.
+ */
 
 //#define USE_MACH_MEMORY_ALLOCATION
 #include <MKPerformSndMIDI/PerformSound.h>
@@ -34,22 +49,16 @@ CONDITIONS OF THIS AGREEMENT.
 
 #ifdef GNUSTEP
 # include "sounderror.h"
+# include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
+# include <stdio.h>     /* for FILE */
 #else
 # ifndef USE_NEXTSTEP_SOUND_IO
+#  import <Foundation/Foundation.h>
 #  import "sounderror.h"
 # endif
 #endif /* GNUSTEP */
 
 #include "SndEndianFunctions.h"
-#include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
-#include <stdio.h>     /* for FILE */
-
-/*
- @abstract A library of functions intended to be compatible with NeXTs now defunct SoundKit.
- 
- Stephen Brandon, 1999
- stephen@brandonitconsulting.co.uk
- */
 
 @class NSString;
 
@@ -191,7 +200,7 @@ SNDKIT_API int SndFree(SndSoundStruct *sound);
 /*!
 @function SndAlloc
  @abstract Allocates a sound as specified by the parameters.
- @param sound The address of a SndStructSound pointer inwhich to alloc the Snd
+ @param sound The address of a SndStructSound pointer in which to alloc the Snd
  @param dataSize
  @param dataFormat
  @param samplingRate
@@ -307,32 +316,11 @@ SNDKIT_API int SndDeleteSamples(SndSoundStruct *sound,
                                             int sampleCount);
 
 /*!
-@function SndMulaw
- @abstract To come 
- @param linearValue
- @result
+  @function SndFileExtensions
+  @abstract Returns an NSArray of valid file extensions to read or write.
+  @result Returns an NSArray of NSStrings of file extensions.
  */
-SNDKIT_API unsigned char SndMulaw(short linearValue);
-
-/*!
-@function SndiMulaw
- @abstract To come 
- @param mulawValue
- @result
- */
-SNDKIT_API short SndiMulaw(unsigned char mulawValue);
-
-/*!
-@function SndRead
- @abstract To come 
- @param fp
- @param sound
- @param filetype
- @result
- */
-SNDKIT_API int SndRead(FILE *fp,
-             SndSoundStruct **sound,
-                 const char *filetype);
+NSArray *SndFileExtensions(void);
 
 /*!
 @function SndReadHeader
@@ -341,7 +329,7 @@ SNDKIT_API int SndRead(FILE *fp,
  @param sound
  @result
  */
-SNDKIT_API int SndReadHeader(const char *path,
+SNDKIT_API int SndReadHeader(NSString *path,
                          SndSoundStruct **sound,
                              const char *fileTypeStr);
 
@@ -352,40 +340,19 @@ SNDKIT_API int SndReadHeader(const char *path,
  @param sound
  @result
  */
-SNDKIT_API int SndReadSoundfile(const char *path,
-                            SndSoundStruct **sound);
+SNDKIT_API int SndReadSoundfile(NSString *path, SndSoundStruct **sound);
 
-int SndReadSoundfileRange(const char *path, SndSoundStruct **sound, int startFrame, int frameCount, BOOL bReadData);
-
-/*!
-@function SndWriteHeader
- @abstract To come 
- @param fd
- @param sound
- @result
- */
-SNDKIT_API int SndWriteHeader(int fd,
-                   SndSoundStruct *sound);
+int SndReadSoundfileRange(NSString *path, SndSoundStruct **sound, int startFrame, int frameCount, BOOL bReadData);
 
 /*!
-@function SndWrite
- @abstract To come 
- @param fd
- @param sound
- @result
+  @function SndWriteSoundfile
+  @abstract Writes a soundStruct to the named file. The extension is used to determine the format of the output file.
+  @discussion  Expects the sound to not be fragmented, and to be in host order.
+  @param path An NSString formatted path.
+  @param sound An SndSoundStruct containing the format of the data and a pointer to the data itself.
+  @result Returns SND_ERR_NONE if the writing went correctly, otherwise an error value.
  */
-SNDKIT_API int SndWrite(int fd,
-             SndSoundStruct *sound);
-
-/*!
-@function SndWriteSoundfile
- @abstract To come 
- @param path
- @param sound
- @result
- */
-SNDKIT_API int SndWriteSoundfile(NSString *path,
-                             SndSoundStruct *sound);
+SNDKIT_API int SndWriteSoundfile(NSString *path, SndSoundStruct *sound);
 
 /*!
 @function SndSwapSoundToHost

@@ -72,6 +72,9 @@
  Modification History:
 
   $Log$
+  Revision 1.2  2003/06/03 04:40:26  leighsmith
+  Renamed the uLaw and aLaw translation routines removing wrapper functions and more meaningful namings
+
   Revision 1.1  2003/05/30 04:20:23  leighsmith
   Renamed _Sndresamplesubs.m to SndResample.m, improved error reporting
 
@@ -123,6 +126,7 @@
 # include "_Sndlargefilter.h"
 # include "_Sndfilterkit.h"
 # include "SndFunctions.h"
+# include <stdarg.h>
 #else
 # import "SndResample.h"
 # ifndef WIN32
@@ -136,6 +140,7 @@
 # include "_Sndlargefilter.h"
 # import "_Sndfilterkit.h"
 # import "SndFunctions.h"
+# import "SndMuLaw.h"
 #endif
 
 static int readData(
@@ -196,7 +201,7 @@ static int readData(
                         *(myOutPtrs[channels]++) = ((signed char *)mainIndex)[sampleIndex] << 8;
                         break;
                     case SND_FORMAT_MULAW_8:
-                        *(myOutPtrs[channels]++) = SndiMulaw(((unsigned char *)mainIndex)[sampleIndex]);
+                        *(myOutPtrs[channels]++) = SndMuLawToLinear(((unsigned char *)mainIndex)[sampleIndex]);
                         break;
                     case SND_FORMAT_LINEAR_32:
                         *(myOutPtrs[channels]++) = (SND_HWORD)(((signed int *)mainIndex)[sampleIndex] >> 16);
@@ -231,7 +236,7 @@ static int readData(
 			    sum += ((signed char *)mainIndex)[sampleIndex] << 8;
 			    break;
                         case SND_FORMAT_MULAW_8:
-			    sum += SndiMulaw(((unsigned char *)mainIndex)[sampleIndex]);
+			    sum += SndMuLawToLinear(((unsigned char *)mainIndex)[sampleIndex]);
 			    break;
                         case SND_FORMAT_LINEAR_32:
 			    sum += (SND_HWORD)(((signed int *)mainIndex)[sampleIndex] >> 16);

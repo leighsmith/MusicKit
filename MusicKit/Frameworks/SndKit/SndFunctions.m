@@ -46,7 +46,7 @@ CONDITIONS OF THIS AGREEMENT.
 #import <Foundation/Foundation.h>
 
 #import "SndFunctions.h"
-#import "_Sndlibst.h"
+#import "SndMuLaw.h"
 #import "SndResample.h"
 
 #ifdef USE_MACH_MEMORY_ALLOCATION
@@ -933,14 +933,9 @@ SndSoundStruct * _SndCopyFragBytes(SndSoundStruct *fromSoundFrag, int startByte,
   return newStruct;
 }
 
-unsigned char SndMulaw(short linearValue)
-{
-  return st_linear_to_ulaw(linearValue);
-}
-
 short SndiMulaw(unsigned char mulawValue)
 {
-  return (short)st_ulaw_to_linear(mulawValue);
+  return (short)SndMuLawToLinear(mulawValue);
 }
 
 int SndSwapSoundToHost(void *dest, void *src, int sampleCount, int channelCount, int dataFormat)

@@ -329,7 +329,7 @@ double getSoundValue(void *myData,int myType,int myActualSample)
             theValue = ((char *)myData)[myActualSample];
             break;
         case SND_FORMAT_MULAW_8:
-            theValue = SndiMulaw(((char *)myData)[myActualSample]);
+            theValue = SndMuLawToLinear(((char *)myData)[myActualSample]);
             break;
         case SND_FORMAT_EMPHASIZED:
         case SND_FORMAT_COMPRESSED:
@@ -371,7 +371,7 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
                     ((char *)myData)[myActualSample + 1]) >> 1;
             break;
         case SND_FORMAT_MULAW_8:
-            theValue = SndiMulaw(((char *)myData)[myActualSample]);
+            theValue = SndMuLawToLinear(((char *)myData)[myActualSample]);
             break;
         case SND_FORMAT_EMPHASIZED:
         case SND_FORMAT_COMPRESSED:
