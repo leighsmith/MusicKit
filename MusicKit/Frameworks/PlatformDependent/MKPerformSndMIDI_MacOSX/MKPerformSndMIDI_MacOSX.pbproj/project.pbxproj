@@ -35,10 +35,8 @@
 		};
 		016D5A26FED483BBCFED3B93 = {
 			children = (
-				016D5A27FED483BBCFED3B93,
-				016D5A28FED483BBCFED3B93,
 				016D5A29FED483BBCFED3B93,
-				016D5A2AFED483BBCFED3B93,
+				016D5A27FED483BBCFED3B93,
 				016D5A2BFED483BBCFED3B93,
 				016D5A2CFED483BBCFED3B93,
 				016D5A2DFED483BBCFED3B93,
@@ -52,19 +50,9 @@
 			path = PerformSound.h;
 			refType = 4;
 		};
-		016D5A28FED483BBCFED3B93 = {
-			isa = PBXFileReference;
-			path = mididriverUser.h;
-			refType = 4;
-		};
 		016D5A29FED483BBCFED3B93 = {
 			isa = PBXFileReference;
 			path = midi_driver.h;
-			refType = 4;
-		};
-		016D5A2AFED483BBCFED3B93 = {
-			isa = PBXFileReference;
-			path = mididriver_types.h;
 			refType = 4;
 		};
 		016D5A2BFED483BBCFED3B93 = {
@@ -93,7 +81,7 @@
 		};
 		016D5A2FFED483BBCFED3B93 = {
 			isa = PBXFileReference;
-			path = mididriverUser.c;
+			path = mididriverUser.m;
 			refType = 4;
 		};
 		016D5A30FED483BBCFED3B93 = {
@@ -227,9 +215,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				016D5A3CFED483BBCFED3B93,
-				016D5A3DFED483BBCFED3B93,
 				016D5A3EFED483BBCFED3B93,
-				016D5A3FFED483BBCFED3B93,
 				016D5A40FED483BBCFED3B93,
 				016D5A41FED483BBCFED3B93,
 				016D5A42FED483BBCFED3B93,
@@ -248,33 +234,8 @@
 				);
 			};
 		};
-		016D5A3DFED483BBCFED3B93 = {
-			fileRef = 016D5A28FED483BBCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
 		016D5A3EFED483BBCFED3B93 = {
 			fileRef = 016D5A29FED483BBCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
-		016D5A3FFED483BBCFED3B93 = {
-			fileRef = 016D5A2AFED483BBCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
