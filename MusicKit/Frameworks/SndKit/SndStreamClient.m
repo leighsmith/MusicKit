@@ -89,7 +89,8 @@ enum {
 
 - (NSString*) description
 {
-    return [NSString stringWithFormat: @"SndStreamClient object"];
+    return [NSString stringWithFormat: @"SndStreamClient %sactive, now %f, %s",
+        active ? " " : "not ", nowTime, needsInput ? "needs input" : "doesn't need input"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
