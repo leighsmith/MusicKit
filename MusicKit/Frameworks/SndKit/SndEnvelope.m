@@ -50,18 +50,18 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
         if (getXVal(sb,getXValSel) > inVal)
             return i;
     }
-    return -1;
+    return BP_NOT_FOUND;
 }
 
 - (int) breakpointIndexBeforeOrEqualToX:(double)xVal
 {
     int r,count;
-    if (!breakpoints) return -1;
+    if (!breakpoints) return BP_NOT_FOUND;
     count = [breakpoints count];
-    if (!count) return -1;
+    if (!count) return BP_NOT_FOUND;
     r = indexOfBreakpointAfter(xVal,breakpoints);
     /* returns -1 if the 0th element is greater than the input */
-    return (r == -1) ? count - 1 : r - 1 ;
+    return (r == BP_NOT_FOUND) ? count - 1 : r - 1 ;
 }
 
 - (int) breakpointIndexAfterX:(double)xVal
@@ -72,7 +72,7 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
 - (double) lookupXForBreakpoint:(int)bp
 {
     int count = [breakpoints count];
-    if (bp >= count) return -1;// raise exception?
+    if (bp >= count) return BP_NOT_FOUND;// raise exception?
     return [[breakpoints objectAtIndex:bp] getXVal];
 }
 
@@ -104,7 +104,7 @@ int indexOfBreakpointAfter(double inVal, NSMutableArray *inArray)
     }
     justAfterIndex = indexOfBreakpointAfter(xVal,breakpoints);
     /* if we've spilled off the end, assume we stay at last point */
-    if (justAfterIndex == -1) {
+    if (justAfterIndex == BP_NOT_FOUND) {
         return [(SndBreakpoint*)[breakpoints objectAtIndex:count-1] getXVal];
     }
     /* if the point is before our first breakpoint, it's undefined, so 0 */
