@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/05/06 01:14:07  leigh
+  Removed redundant ivar decls in implementation
+
   Revision 1.5  2000/04/22 20:14:01  leigh
   Properly typed connections returning an NSArray
 
@@ -41,19 +44,11 @@ Modification history:
 #import "InstrumentPrivate.h"
 #import "NoteReceiverPrivate.h"
 
-@implementation MKNoteReceiver: NSObject
-{ 
-    id noteSenders;    /* noteSenders. */
-    BOOL isSquelched;  /* YES if the object is currently squelched. */
-    id owner;          /* NoteFilter or Performer owning this PerfLink. */
-    void *_myData;
-//    void *_reservedNoteReceiver2;
-}
+@implementation MKNoteReceiver
 
 /* METHOD TYPES
  * Receiving Notes
  */
-
 
 -owner
   /* Gets the owner (an Instrument or NoteFilter). */
