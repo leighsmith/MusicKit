@@ -17,6 +17,8 @@
 #define V_MIN  1
 #define V_TINY 1
 
+#define USE_SNDEXPT 0
+
 static int iReturnCode = 0;
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,17 +46,18 @@ void showHelp(const char *absolutePath)
         commandLineName = commandLineName + 1;
     printf("usage: %s [options] <soundfile>\n", commandLineName);
     printf("\nOptions:\n"\
-           "  -O N  offset playback time by N seconds (can be non-integral)\n"\
-           "  -d N  playback duration, in samples\n"\
-           "  -b N  playback start point, in samples\n"\
-           "  -r    use reverb (freeverb) module\n"\
-           "  -v    show author/version info\n"\
-           "  -h    show this help\n"\
-           "  -t    turn on time information output\n"\
-           "  -S    shoutcast as MP3 stream to an icecast server running on local host\n"\
-           "  -a A  shoutcast server address (either form: abc.com or 127.0.0.1)\n"\
-           "  -P N  shoutcast port number\n"\
-           "  -p A  shoutcast server password\n");
+           "  -O N   offset playback time by N seconds (can be non-integral)\n"\
+           "  -d N   playback duration, in samples\n"\
+           "  -b N   playback start point, in samples\n"\
+           "  -r     use reverb (freeverb) module\n"\
+           "  -v     show author/version info\n"\
+           "  -h     show this help\n"\
+           "  -t     turn on time information output\n"\
+           "  -R f   relative playback rate (floating point)\n"\
+           "  -S     shoutcast as MP3 stream to an icecast server running on local host\n"\
+           "  -a A   shoutcast server address (either form: abc.com or 127.0.0.1)\n"\
+           "  -P N   shoutcast port number\n"\
+           "  -p A   shoutcast server password\n");
     //  " -o N  offset playback time by N samples\n"\
     //  " -E N  playback duration, in seconds\n"\
 }
@@ -69,9 +72,11 @@ int main (int argc, const char * argv[])
     BOOL   bTimeOutputFlag    = FALSE;
     BOOL   bMP3Shoutcast      = FALSE; 
     BOOL   useReverb          = FALSE;
+    BOOL   showInfo           = FALSE;
     long   startTimeInSamples = 0;
     double durationInSamples  = -1;
     float  timeOffset         = 0.0f;
+    double deltaTime = 1.0;
     int    i = 1;
     const  char  *soundFileName       = NULL;
     NSString *shoutcastServerAddress  = [SndAudioProcessorMP3Encoder defaultServerAddress ];
@@ -93,6 +98,11 @@ int main (int argc, const char * argv[])
           break;
         case 't': bTimeOutputFlag = TRUE;                       break;
         case 'r': useReverb       = TRUE;                       break;
+        case 'R':
+          i++;
+          if (i < argc) deltaTime = atof(argv[i]);
+          else          PrintError("No relative playback rate given after option -R",-1);
+          break;
         case 'v': printf("playsnd %i.%i.%i  skot@tomandandy.com  Oct 2 2001\n",V_MAJ,V_MIN,V_TINY); break;
         case 'h': showHelp(argv[0]); break;
         case 'd': 
@@ -120,7 +130,7 @@ int main (int argc, const char * argv[])
           [shoutcastSourcePassword release]; 
           shoutcastSourcePassword = [NSString stringWithCString: argv[++i]];
           break;
-        
+        case 'I': showInfo = TRUE; break;
         default: fprintf(stderr, "Ignoring unrecognized option -%c\n",argv[i][1]);
         }
       }
@@ -142,10 +152,14 @@ int main (int argc, const char * argv[])
     // Finally: do the actual sound playing!  
     else  
     {
-      Snd               *s        = [Snd new]; 
+#if USE_SNDEXPT      
+      Snd *s = [SndExpt new];
+#else      
+      Snd *s = [Snd new];
+#endif      
       NSString          *filename = nil, *extension = nil;
       NSFileManager     *fm       = [NSFileManager defaultManager];
-      BOOL               bFileExists = FALSE, bIsDir = FALSE; 
+      BOOL               bFileExists = FALSE, bIsDir = FALSE;
     
       filename  = [fm stringWithFileSystemRepresentation:soundFileName
                                                   length:strlen(soundFileName)];
@@ -174,13 +188,41 @@ int main (int argc, const char * argv[])
         int maxWait;
         SndPlayer  *player = [SndPlayer defaultSndPlayer];
         SndAudioProcessorMP3Encoder *mp3enc = nil;
-        long b1, b2;
+//        SndAudioProcessorRecorder *rec = nil;
+//        long b1, b2;
 
 //        b1 = clock();
         [s readSoundfile: filename];
+
+/*        
+        s = [[Snd alloc] initWithFormat: SND_FORMAT_FLOAT
+                               channels: 2
+                                 frames: 100000
+                           samplingRate: 44100];
+        {
+          int i;
+          float *f = [s data];
+          for (i=0;i<200000;i+=2) {
+            f[i]   = 0.5 + 0.25 * sin (100 *  i / 100000.0);
+            f[i+1] = -0.5 - 0.25 * cos (100 *  i / 100000.0);
+          }
+        }
+*/
+        if (showInfo) {
+          NSLog([s description]);
+          [s release];
+          return 0;
+        }
+
 //        b2 = clock();
 //        printf("Readtime: %li\n",b2-b1);
-        maxWait = [s duration] + 5 + timeOffset + 1;
+
+        if (durationInSamples == -1)
+          maxWait = [s duration] + 5 + timeOffset + 1;
+        else
+          maxWait = durationInSamples / [s samplingRate] + 5 + 1;
+        
+        maxWait /= deltaTime;
 
         [player setRemainConnectedToManager: FALSE];
 
@@ -189,7 +231,17 @@ int main (int argc, const char * argv[])
             [rv setActive: TRUE];
             [[player audioProcessorChain] addAudioProcessor:rv];
         }
-
+#if 0
+        {
+          rec = [SndAudioProcessorRecorder new];
+          [rec setActive: TRUE];
+          [[player audioProcessorChain] addAudioProcessor:rec];
+          [rec startRecordingToFile: @"/Local/Users/skot/test.wav"
+                     withDataFormat: SND_FORMAT_LINEAR_16
+                       channelCount: 2
+                       samplingRate: 44100];
+        }
+#endif
         if (bMP3Shoutcast) {
           mp3enc = [[SndAudioProcessorMP3Encoder alloc] init];
           [mp3enc setShoutcastServerAddress: shoutcastServerAddress
@@ -208,8 +260,13 @@ int main (int argc, const char * argv[])
             mp3enc = nil;
           }
         }
-
-        [s playInFuture: timeOffset beginSample: startTimeInSamples sampleCount: durationInSamples];
+        {
+          SndPerformance *perf;
+          perf = [s playInFuture: timeOffset
+                     beginSample: startTimeInSamples
+                     sampleCount: durationInSamples];
+          [perf setDeltaTime: deltaTime];
+        }
         if (bTimeOutputFlag) printf("Sound duration: %.3f\n",[s duration]);
 
         // Wait for stream manager to go inactive, signalling the sound has finished playing
@@ -218,6 +275,10 @@ int main (int argc, const char * argv[])
           waitCount++;
           if (bTimeOutputFlag)  printf("Time: %i\n",waitCount);
         }
+#if 0        
+        [rec stopRecording];
+        [rec closeRecordFile];
+#endif        
         if (waitCount >= maxWait) {
           fprintf(stderr,"Aborting wait for stream manager shutdown - taking too long.\n");
           fprintf(stderr,"(snd dur:%.3f, maxwait:%i)\n",[s duration],maxWait);
