@@ -52,7 +52,9 @@ static int pixelCompare(id x, id y, void *context)
 - init
 {
     self = [super init];
-    embeddedArray = [[NSMutableArray alloc] initWithCapacity:500];
+    if(self != nil) {
+	embeddedArray = [[NSMutableArray alloc] initWithCapacity:500];	
+    }
     return self;
 }
 
@@ -64,22 +66,22 @@ static int pixelCompare(id x, id y, void *context)
 }
 
 /* pass on any other methods to embeddedarray */
-- (void)forwardInvocation:(NSInvocation *)invocation
+- (void) forwardInvocation: (NSInvocation *) invocation
 {
-    if ([embeddedArray respondsToSelector:[invocation selector]])
-        [invocation invokeWithTarget:embeddedArray];
+    if ([embeddedArray respondsToSelector: [invocation selector]])
+        [invocation invokeWithTarget: embeddedArray];
     else
-        [self doesNotRecognizeSelector:[invocation selector]];
+        [self doesNotRecognizeSelector: [invocation selector]];
 }
 
 /* and ensure that the method signatures are correct, if necessary getting
  * them from embeddedArray
  */
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+- (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector
 {
-    NSMethodSignature *sig = [super methodSignatureForSelector:aSelector];
+    NSMethodSignature *sig = [super methodSignatureForSelector: aSelector];
     if (sig == nil) {
-        sig = [embeddedArray methodSignatureForSelector:aSelector];
+        sig = [embeddedArray methodSignatureForSelector: aSelector];
     }
     return sig;
 }
@@ -90,7 +92,9 @@ static int pixelCompare(id x, id y, void *context)
     return self;
 }
 
-- (int)findObjectContaining:(int)pixel next:(int *)next leadsOnFrom:(int *)leadsOnFrom
+- (int) findObjectContaining: (int) pixel
+			next: (int *) next
+		 leadsOnFrom: (int *) leadsOnFrom
 {
     int i;
     int theStart;
@@ -98,12 +102,12 @@ static int pixelCompare(id x, id y, void *context)
 
     [self sort];
     for (i = 0;i < numElements; i++) {
-        theStart = [[embeddedArray objectAtIndex:i] startPixel];
+        theStart = [[embeddedArray objectAtIndex: i] startPixel];
         if (theStart > pixel) {
             *next = i;
             if (i > 0) {
-                if ([[embeddedArray objectAtIndex:i-1] endPixel] == pixel - 1)
-                    *leadsOnFrom = i-1;
+                if ([[embeddedArray objectAtIndex: i - 1] endPixel] == pixel - 1)
+                    *leadsOnFrom = i - 1;
                 else
                     *leadsOnFrom = -1;
             }
@@ -117,7 +121,7 @@ static int pixelCompare(id x, id y, void *context)
             else
                 *next = i+1;
             if (i > 0) {
-                if ([[embeddedArray objectAtIndex:i-1] endPixel] == pixel - 1)
+                if ([[embeddedArray objectAtIndex: i - 1] endPixel] == pixel - 1)
                     *leadsOnFrom = i-1;
                 else
                     *leadsOnFrom = -1;
@@ -126,14 +130,14 @@ static int pixelCompare(id x, id y, void *context)
                 *leadsOnFrom = -1;
             return i; /* found it, bang on target */
         }
-        if ([[embeddedArray objectAtIndex:i] endPixel] >= pixel) { /* cache spans this pixel */
+        if ([[embeddedArray objectAtIndex: i] endPixel] >= pixel) { /* cache spans this pixel */
             if (i == numElements - 1)
                 *next = -1;
             else
                 *next = i+1;
             if (i > 0) {
-                if ([[embeddedArray objectAtIndex:i-1] endPixel] == [[embeddedArray objectAtIndex:i] startPixel] - 1)
-                    *leadsOnFrom = i-1;
+                if ([[embeddedArray objectAtIndex: i - 1] endPixel] == [[embeddedArray objectAtIndex: i] startPixel] - 1)
+                    *leadsOnFrom = i - 1;
                 else
                     *leadsOnFrom = -1;
             }
@@ -143,7 +147,7 @@ static int pixelCompare(id x, id y, void *context)
         }
     }
     if (numElements > 0) {
-        if ([[embeddedArray objectAtIndex:numElements - 1] endPixel] == pixel - 1)
+        if ([[embeddedArray objectAtIndex: numElements - 1] endPixel] == pixel - 1)
             *leadsOnFrom = numElements - 1;
         else
             *leadsOnFrom = -1;
@@ -154,18 +158,34 @@ static int pixelCompare(id x, id y, void *context)
     return -1; /* went through all caches and it's not there */
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) initWithCoder: (NSCoder *) aDecoder
 {
-    int v = [aDecoder versionForClassName:@"SndDisplayDataList"];
-    if (v == 0) {
-        embeddedArray = [[aDecoder decodeObject] retain];
+    SndDisplayDataList *newSelf = [self init];
+    
+    // Check if decoding a newer keyed coding archive
+    if([aDecoder allowsKeyedCoding]) {
+	[embeddedArray release];
+	embeddedArray = [[aDecoder decodeObjectForKey: @"SndDisplayDataList_embeddedArray"] retain];
     }
-    return self;
+    else {
+	int v = [aDecoder versionForClassName: @"SndDisplayDataList"];
+	if (v == 0) {
+	    [embeddedArray release];
+	    embeddedArray = [[aDecoder decodeObject] retain];
+	}	
+    }
+    return newSelf;
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder: (NSCoder *) aCoder
 {
-    [aCoder encodeObject:embeddedArray];
+    // Check if decoding a newer keyed coding archive
+    if([aCoder allowsKeyedCoding]) {
+	[aCoder encodeObject: embeddedArray forKey: @"SndDisplayDataList_embeddedArray"];
+    }
+    else {
+	[aCoder encodeObject: embeddedArray];	
+    }
 }
 
 @end
