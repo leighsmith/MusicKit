@@ -39,6 +39,10 @@
 Modification History:
 
   $Log$
+  Revision 1.3  2001/05/12 16:57:03  sbrandon
+  - tidied up all the imports
+  - added some includes for GNUstep
+
   Revision 1.2  2000/04/16 21:51:50  leigh
   Big cleanup, enabled resampling from other than beginning of sound
 
@@ -56,21 +60,29 @@ Modification History:
 *      06/18/91 jos	Split resample.c into itself plus resamplesubs.c
 *      11/21/92 jos	Added linear interpolation and saturating overflow.
 */
-#import "SndResample.h"
-
-#ifndef WIN32
-#import <libc.h>
-#else
-#import <stdio.h>
-#import <malloc.h>
-#endif
 
 #define IBUFFSIZE 4096                         /* Input buffer size */
 
-#include "_Sndsmallfilter.h"
-#include "_Sndlargefilter.h"
-#import "_Sndfilterkit.h"
-#import "SndFunctions.h"
+#ifdef GNUSTEP
+# include "SndResample.h"
+# include "_Sndsmallfilter.h"
+# include "_Sndlargefilter.h"
+# include "_Sndfilterkit.h"
+# include "SndFunctions.h"
+#else
+# import "SndResample.h"
+# ifndef WIN32
+#  import <libc.h>
+# else
+#  import <stdio.h>
+#  import <malloc.h>
+# endif
+
+# include "_Sndsmallfilter.h"
+# include "_Sndlargefilter.h"
+# import "_Sndfilterkit.h"
+# import "SndFunctions.h"
+#endif
 
 static int readData(
     int *beginFrom,
