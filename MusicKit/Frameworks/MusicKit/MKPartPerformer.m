@@ -10,11 +10,9 @@
  Copyright (c) 1988-1992, NeXT Computer, Inc.
  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
  Portions Copyright (c) 1994 Stanford University
- Portions Copyright (c) 1999-2000, The MusicKit Project.
+ Portions Copyright (c) 1999-2003, The MusicKit Project.
  */
-/* Modification history:
-
-Pre CVS history:
+/* Modification history before commital to the CVS repository:
 
 04/21/90/daj - Small mods to get rid of -W compiler warnings.
 08/23/90/daj - Changed to zone API.
@@ -180,7 +178,7 @@ static BOOL fastActivation = NO;
     return nil;
   [part _addPerformanceObj:self];
   if (!fastActivation)
-    _list = [[part notes] retain];/*sb: "notes" used to return a new list. Now it's autoreleased and needs retaining */
+    _list = [[part notes] retain]; // notes returns an autoreleased array of new notes and needs retaining */
   else {
     [part sort];
     _list = [part notesNoCopy]; /* this is autoreleased */
@@ -210,23 +208,23 @@ static BOOL fastActivation = NO;
   return self;
 }
 
-- (void)deactivate
+- (void) deactivate
   /* TYPE: Performing
-  * Finalization method sent when receiver is deactivated.
-  * Returns the receiver.
-  */
+    * Finalization method sent when receiver is deactivated.
+    * Returns the receiver.
+    */
 {
-  [super deactivate];  // added by LMS - never stopped the performance.
-  // TODO we have to do the casting since notesNoCopy returns an NSMutableArray
-  // and _list is an NSArray, we should investigate why notesNoCopy returns a
-  // mutable array, it should be the job of the method using the result to
-  // reset it's mutability.
-  if ((NSArray *) [part notesNoCopy] != _list) /* Was copied. */
-    [_list release];
-  _list = nil;
-  _loc = _endLoc = -1;//sb: was NULL;
-    [part _removePerformanceObj:self];
-    [_scorePerformer _partPerformerDidDeactivate:self];
+    [super deactivate];  // need to stop the performance.
+    // TODO we have to do the casting since notesNoCopy returns an NSMutableArray
+    // and _list is an NSArray, we should investigate why notesNoCopy returns a
+    // mutable array, it should be the job of the method using the result to
+    // reset it's mutability.
+    if ((NSArray *) [part notesNoCopy] != _list) /* Was copied. */
+	[_list release];
+    _list = nil;
+    _loc = _endLoc = -1;
+    [part _removePerformanceObj: self];
+    [_scorePerformer _partPerformerDidDeactivate: self];
 }
 
 -perform

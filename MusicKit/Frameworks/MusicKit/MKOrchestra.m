@@ -946,7 +946,7 @@ static id broadcastAndRtn(MKOrchestra *self,SEL sel)
     unsigned short i;
     samplingRateDefault = newSRate;
     FOREACHORCH(i)
-      [orchs[i] setSamplingRate:newSRate];
+      [(MKOrchestra *) orchs[i] setSamplingRate:newSRate];
     return self;
 }
 
