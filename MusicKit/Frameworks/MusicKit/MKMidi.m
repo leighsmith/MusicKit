@@ -67,6 +67,10 @@
 Modification history:
 
   $Log$
+  Revision 1.27  2000/11/13 23:07:51  leigh
+  Renamed MIDI functions to the more explicit prefix MKMD to avoid confusion with OS MIDI routines. Replaced KERN_SUCCESS with MKMD_SUCCESS to remove the Mach dependency. queuePort is now a MKMDReplyPort. Introduced a macro to determine whether to treat the ports as NSObjects requiring retain/releases.
+  Removed tvs since only one copy was held per instance, integrating the MTC variables as ivars, fixing a related bug.
+
   Revision 1.26  2000/10/30 15:13:19  leigh
   Made MKMD instead of MIDI prefixes, ioMode now an enum,ports are now typed within MKPerformSndMIDI, so the machPort methods have been removed. Platform specific code has been moved to MKPerformSndMIDI.
 
@@ -254,11 +258,6 @@ NSLocalizedStringFromTableInBundle(@"Problem communicating with MIDI device driv
 #define FCC_DID_NOT_APPROVE_DRIVER_CHANGE 1 // FIXME LMS
 
 #define DEFAULT_SOFT_NAME @"midi0"
-#if m68k
-#define DRIVER_NAME @"mididriver"
-#else
-#define DRIVER_NAME @"Mididriver"   /* MD_NAME */
-#endif
 
 #define NO_UNIT (-1)
 
@@ -282,7 +281,7 @@ NSString *midiDriverErrorString(int errorCode)
 
 - (BOOL) unitHasMTC
 {
-    return (tvs->synchConductor && tvs->midiObj == self) ;
+    return (synchConductor && mtcMidiObj == self) ;
 }
 
 + (NSMutableArray *) midisOnHost: (NSString *) midiHostname otherThanUnit: (int) midiUnit
@@ -302,49 +301,56 @@ NSString *midiDriverErrorString(int errorCode)
     return aList;
 }
 
+// Returns YES if we closed the MIDI device correctly
 static int closeMidiDev(MKMidi *self)
 {
     BOOL somebodyElseHasOwnership = NO;
     NSMutableArray *otherUnits;
 
     if (!self->ownerPort)
-	return KERN_SUCCESS;
+	return YES;
     otherUnits = [MKMidi midisOnHost: self->hostname otherThanUnit: self->unit];
-    MIDIReleaseUnit(self->devicePort, self->ownerPort, self->unit);
+    MKMDReleaseUnit(self->devicePort, self->ownerPort, self->unit);
     if (INPUTENABLED(self->ioMode)) {
 	if (self->recvPort) {
 	    _MKRemovePort(self->recvPort);
 	    addedPortsCount--;
+#if PORTS_ARE_NSOBJECTS            
 	    [self->recvPort release];
+#endif
 	}
     }
+#if PORTS_ARE_NSOBJECTS            
     if (OUTPUTENABLED(self->ioMode))  
 	[self->queuePort release];
+#endif
     if ([self unitHasMTC])
-      tearDownMTC(self);
+        tearDownMTC(self);
     if ([otherUnits count] == 0) 
-      somebodyElseHasOwnership = NO;
+        somebodyElseHasOwnership = NO;
     else {
 	MKMidi *aMidi;
 	int i,cnt = [otherUnits count];
 	for (i=0; i<cnt && !somebodyElseHasOwnership; i++) {
 	    aMidi = [otherUnits objectAtIndex:i];
 	    if (aMidi->ownerPort) 
-	      somebodyElseHasOwnership = YES;
+                somebodyElseHasOwnership = YES;
 	}
     }
     if (somebodyElseHasOwnership)
-      self->ownerPort = nil;
+        self->ownerPort = nil;
     else {
-	MIDIReleaseOwnership(self->devicePort, self->ownerPort);
+	MKMDReleaseOwnership(self->devicePort, self->ownerPort);
+#if PORTS_ARE_NSOBJECTS            
 	[self->ownerPort release];
+#endif
     } 
     [otherUnits release];
     /* Just being paranoid: */
     self->devicePort = nil;
     self->recvPort = nil;
     self->queuePort = nil;
-    return KERN_SUCCESS;
+    return YES;
 }
 
 static int getNumSuffix(NSString *s, BOOL *isSoftDev)
@@ -365,34 +371,35 @@ static int getNumSuffix(NSString *s, BOOL *isSoftDev)
     else {
         *isSoftDev = [s compare: @"midi" 
                         options: NSAnchoredSearch
-                        range:   softDevPrefixRange] == NSOrderedSame;
+                          range: softDevPrefixRange] == NSOrderedSame;
 	return unitNum;
     }
 }
 
-static int openMidiDev(MKMidi *self)
+static MKMDReturn openMidiDev(MKMidi *self)
     /* "Opens". If the device represented by devicePortName is already 
        accessed by this task, uses the ownerPort currently accessed.
        Otherwise, if ownerPort is nil, allocates a new
        port. Otherwise, uses ownerPort as specified. 
        To make the device truly public, you can pass the device port as the
-       owner port.
+       owner port. Returns the MIDI driver MKMDReturn status, MKMD_SUCCESS 
+       if the device was successfully opened.
        */
 {
-    int r;
+    MKMDReturn r;
     BOOL isSoftDevice;
     NSMutableArray *otherUnits;
 
-    self->unit = getNumSuffix(self->midiDevName, &isSoftDevice);
-    // self->unit = [[midiDriverUnits objectAtIndex: [midiDriverNames indexOfObject: self->midiDevName]] intValue];
+    // self->unit = getNumSuffix(self->midiDevName, &isSoftDevice);
+    self->unit = [[midiDriverUnits objectAtIndex: [midiDriverNames indexOfObject: self->midiDevName]] intValue];
     // kludged FIXME midiDriverUnits
     self->devicePort = MKMDGetMIDIDeviceOnHost([self->hostname cString]);
 
     if (self->devicePort == NULL) {
         _MKErrorf(MK_machErr, NETNAME_ERROR, @"Unable to find devicePort", @"MIDI Port Server lookup");
-        return !KERN_SUCCESS;
+        return !MKMD_SUCCESS;
     }
-#if !WIN32 // only retain it if it's an object.
+#if PORTS_ARE_NSOBJECTS // only retain it if it's an object.
     [self->devicePort retain];
 #endif
     otherUnits = [MKMidi midisOnHost: self->hostname otherThanUnit: self->unit];
@@ -411,35 +418,37 @@ static int openMidiDev(MKMidi *self)
     }
     [otherUnits release];
     if (!self->ownerPort) {
+#if PORTS_ARE_NSOBJECTS
         self->ownerPort = [[NSPort port] retain];
+#endif
         if (self->ownerPort == nil) {
             _MKErrorf(MK_machErr, OWNER_ERROR, @"Unable to create ownerPort", @"openMidiDev owner NSPort allocate");
-	    return !KERN_SUCCESS;
+	    return !MKMD_SUCCESS;
 	}
-	r = MIDIBecomeOwner(self->devicePort, self->ownerPort);
-	if (r != KERN_SUCCESS) {
+	r = MKMDBecomeOwner(self->devicePort, self->ownerPort);
+	if (r != MKMD_SUCCESS) {
 	    self->isOwner = NO;
 	    _MKErrorf(MK_musicKitErr, UNAVAIL_DRIVER_ERROR);
 	    closeMidiDev(self);
 	    return r;
 	}
     }
-    r = MIDIClaimUnit(self->devicePort, self->ownerPort, self->unit);
-    if (r != KERN_SUCCESS) {
-	_MKErrorf(MK_musicKitErr,UNAVAIL_UNIT_ERROR);
+    r = MKMDClaimUnit(self->devicePort, self->ownerPort, self->unit);
+    if (r != MKMD_SUCCESS) {
+	_MKErrorf(MK_musicKitErr, UNAVAIL_UNIT_ERROR);
 	closeMidiDev(self);
 	return r;
     }
 
-    r = MIDISetClockQuantum(self->devicePort, self->ownerPort, _MK_MIDI_QUANTUM);
-    if (r != KERN_SUCCESS) {
-	_MKErrorf(MK_musicKitErr,OPEN_ERROR);
+    r = MKMDSetClockQuantum(self->devicePort, self->ownerPort, _MK_MIDI_QUANTUM);
+    if (r != MKMD_SUCCESS) {
+	_MKErrorf(MK_musicKitErr, OPEN_ERROR);
 	closeMidiDev(self);
 	return r;
     }
 
-    r = MIDISetClockMode(self->devicePort, self->ownerPort, -1, MIDI_CLOCK_MODE_INTERNAL);
-    if (r != KERN_SUCCESS) {
+    r = MKMDSetClockMode(self->devicePort, self->ownerPort, -1, MKMD_CLOCK_MODE_INTERNAL);
+    if (r != MKMD_SUCCESS) {
 	_MKErrorf(MK_musicKitErr,OPEN_ERROR);
 	closeMidiDev(self);
 	return r;
@@ -447,71 +456,85 @@ static int openMidiDev(MKMidi *self)
 
     /* Input */
     if (INPUTENABLED(self->ioMode)) {
+#if PORTS_ARE_NSOBJECTS
         self->recvPort = [[NSPort port] retain];
+#endif
         if (self->recvPort == nil) {
             _MKErrorf(MK_machErr, OPEN_ERROR, @"Unable to create recvPort", @"openMidiDev recv NSPort allocate");
 	    closeMidiDev(self);
-	    return !KERN_SUCCESS;
+	    return !MKMD_SUCCESS;
 	}
         /* sb: first self was midiIn. Changed to self because 'self' responds to -handleMachMessage */
-        _MKAddPort(self->recvPort,self, 0, self, _MK_DPSPRIORITY);
+        _MKAddPort(self->recvPort, self, 0, self, _MK_DPSPRIORITY);
 	addedPortsCount++;
     }
     if (OUTPUTENABLED(self->ioMode)) {
+#if PORTS_ARE_NSOBJECTS
         self->queuePort = [[NSPort port] retain];
+#endif
         if (self->queuePort == nil) {
             _MKErrorf(MK_machErr, OPEN_ERROR, @"Unable to create queuePort", @"openMidiDev queue NSPort allocate");
 	    closeMidiDev(self);
-            return !KERN_SUCCESS;
+            return !MKMD_SUCCESS;
 	}
-	r = MIDIGetAvailableQueueSize(self->devicePort,
+	r = MKMDGetAvailableQueueSize(self->devicePort,
 				      self->ownerPort,
 				      self->unit,
 				      &(self->queueSize));
-	if (r != KERN_SUCCESS) {
-            _MKErrorf(MK_machErr, OPEN_ERROR, midiDriverErrorString(r), @"MIDIGetAvailableQueueSize");
+	if (r != MKMD_SUCCESS) {
+            _MKErrorf(MK_machErr, OPEN_ERROR, midiDriverErrorString(r), @"MKMDGetAvailableQueueSize");
 	    closeMidiDev(self);
 	    return r;
 	}
     }
     if ([self unitHasMTC])
       setUpMTC(self);
-    return KERN_SUCCESS;
+    return MKMD_SUCCESS;
 }    
 
-static timeVars *getTimeInfoFromHost(NSString *hostname)
+// At the moment this is really just a stub for determining time from a host
+static void getTimeInfoFromHost(MKMidi *self, NSString *hostname)
 {
     static NSMutableDictionary *timeInfoTable = nil;
-    timeVars *p;
     NSData *timeVarsEncoded;
 
     if (!timeInfoTable) /* Mapping from hostname to tvs pointer */
         timeInfoTable = [[NSMutableDictionary dictionary] retain];
-    if ((timeVarsEncoded = [timeInfoTable objectForKey: hostname]))
-        return (timeVars *) [timeVarsEncoded bytes];
-    _MK_CALLOC(p,timeVars,1);
-    // [timeInfoTable setObject: p forKey: hostname];
-    return p;
+    if ((timeVarsEncoded = [timeInfoTable objectForKey: hostname]) != nil) {
+        // TODO Assign ivars from [timeVarsEncoded bytes] or somesuch if timeVarsEncoded changes to be an object.
+    }
+    else { // initialise MTC ivars
+        self->synchConductor = nil;          // If non-nil, time mode is MTC Synch
+        self->exceptionPort = nil;           // Exception port.  Only one unit per device may have one
+        self->alarmPort = nil;               // Alarm port.  Only one unit per device may have one
+        self->mtcMidiObj = nil;              // No unit is receiving MTC.
+        self->alarmTime = 0.0;
+        self->intAlarmTime = 0;
+        self->alarmTimeValid = NO;
+        self->alarmPending = NO;
+        // TODO assign MTC ivars into NSData or object and use the following to save it.
+        // [timeInfoTable setObject: [NSData dataWithBytes: ?] forKey: hostname];
+    }
 }
 
 
 static void waitForRoom(MKMidi *self,int elements,int timeOut)
 {
-    int r;
-    MIDIReplyFunctions recvStruct = {0};
-    r = MIDIRequestQueueNotification(self->devicePort,
+    MKMDReturn r;
+    MKMDReplyFunctions recvStruct = {0};
+    r = MKMDRequestQueueNotification(self->devicePort,
 				     self->ownerPort,
 				     self->unit,
-				     [self->queuePort machPort],
+				     self->queuePort,
 				     elements);
-    if (r != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r),
-		@"waitForRoom queue notification request");
-    r = MIDIAwaitReply([self->queuePort machPort], &recvStruct, timeOut);
+    if (r != MKMD_SUCCESS)
+        _MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r),
+                    @"waitForRoom queue notification request");
+    r = MKMDAwaitReply(self->queuePort, &recvStruct, timeOut);
     /* THIS BLOCKS! */
-    if (r != KERN_SUCCESS) 
+    if (r != MKMD_SUCCESS) 
 	_MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r),
-		  @"waitForRoom MIDIAwaitReply");
+		  @"waitForRoom MKMDAwaitReply");
 }
 
 static void awaitMidiOutDone(MKMidi *self,int timeOut)
@@ -522,62 +545,62 @@ static void awaitMidiOutDone(MKMidi *self,int timeOut)
 
 static int stopMidiClock(MKMidi *self)
 {
-    int r;
-    if (self->tvs->synchConductor) {
-	r = MIDIRequestExceptions(self->devicePort, self->ownerPort, PORT_NULL);
-	if (r != KERN_SUCCESS)
-	  _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), @"stopMidiClock MIDIRequestExceptions");
-	r = MIDISetClockMode(self->devicePort, self->ownerPort, self->unit, MIDI_CLOCK_MODE_INTERNAL);
-	if (r != KERN_SUCCESS)
-	  _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), @"stopMidiClock MIDISetClockMode");
-	r = MIDIRequestAlarm(self->devicePort, self->ownerPort, PORT_NULL, 0);
-	if (r != KERN_SUCCESS)
-	  _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), @"stopMidiClock MIDIRequestAlarm");
-	self->tvs->alarmPending = NO;
+    MKMDReturn r;
+    if (self->synchConductor) {
+	r = MKMDRequestExceptions(self->devicePort, self->ownerPort, PORT_NULL);
+	if (r != MKMD_SUCCESS)
+	  _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), @"stopMidiClock MKMDRequestExceptions");
+	r = MKMDSetClockMode(self->devicePort, self->ownerPort, self->unit, MKMD_CLOCK_MODE_INTERNAL);
+	if (r != MKMD_SUCCESS)
+	  _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), @"stopMidiClock MKMDSetClockMode");
+	r = MKMDRequestAlarm(self->devicePort, self->ownerPort, PORT_NULL, 0);
+	if (r != MKMD_SUCCESS)
+	  _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), @"stopMidiClock MKMDRequestAlarm");
+	self->alarmPending = NO;
 	return r;
     }
-    r = MIDIStopClock(self->devicePort, self->ownerPort);
-    if (r != KERN_SUCCESS)
-      _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), @"stopMidiClock MIDIStopClock");
+    r = MKMDStopClock(self->devicePort, self->ownerPort);
+    if (r != MKMD_SUCCESS)
+      _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), @"stopMidiClock MKMDStopClock");
     return r;
 }
 
 static int resumeMidiClock(MKMidi *self)
 {
-    int r; 
-    if (self->tvs->synchConductor) {
-	r = MIDIRequestExceptions(self->devicePort, self->ownerPort,
-				  [self->tvs->exceptionPort machPort]);
-	if (r != KERN_SUCCESS)
+    MKMDReturn r; 
+    if (self->synchConductor) {
+	r = MKMDRequestExceptions(self->devicePort, self->ownerPort,
+				  [self->exceptionPort machPort]);
+	if (r != MKMD_SUCCESS)
 	  _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r),
-		    @"resumeMidiClock MIDIRequestExceptions");
-	r = MIDISetClockMode(self->devicePort, self->ownerPort, self->unit,
-			     MIDI_CLOCK_MODE_MTC_SYNC);
-	if (r != KERN_SUCCESS)
+		    @"resumeMidiClock MKMDRequestExceptions");
+	r = MKMDSetClockMode(self->devicePort, self->ownerPort, self->unit,
+			     MKMD_CLOCK_MODE_MTC_SYNC);
+	if (r != MKMD_SUCCESS)
 	  _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r),
-		    @"resumeMidiClock MIDISetClockMode");
-	if (self->tvs->alarmTimeValid) {
-	    r = MIDIRequestAlarm(self->devicePort, self->ownerPort, [self->tvs->alarmPort machPort],
-				 self->tvs->alarmTime);
-	    self->tvs->alarmPending = YES;
-	    if (r != KERN_SUCCESS)
+		    @"resumeMidiClock MKMDSetClockMode");
+	if (self->alarmTimeValid) {
+	    r = MKMDRequestAlarm(self->devicePort, self->ownerPort, [self->alarmPort machPort],
+				 self->alarmTime);
+	    self->alarmPending = YES;
+	    if (r != MKMD_SUCCESS)
 	      _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r),
-			@"resumeMidiClock MIDIRequestAlarm");
+			@"resumeMidiClock MKMDRequestAlarm");
 	}
 	return r;
     }
-    r = MIDIStartClock(self->devicePort, self->ownerPort);
-    if (r != KERN_SUCCESS)
-      _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"resumeMidiClock MIDIStartClock");
+    r = MKMDStartClock(self->devicePort, self->ownerPort);
+    if (r != MKMD_SUCCESS)
+      _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"resumeMidiClock MKMDStartClock");
     return r;
 }
 
 static int resetAndStopMidiClock(MKMidi *self)
 {
-    int r;
+    MKMDReturn r;
     stopMidiClock(self);
-    r = MIDISetClockTime(self->devicePort, self->ownerPort, 0);
-    if (r != KERN_SUCCESS)
+    r = MKMDSetClockTime(self->devicePort, self->ownerPort, 0);
+    if (r != MKMD_SUCCESS)
       _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"resetAndStopMidiClock");
     return r;
 }
@@ -585,9 +608,9 @@ static int resetAndStopMidiClock(MKMidi *self)
 static int emptyMidi(MKMidi *self)
     /* Get rid of enqueued outgoing midi messages */
 {
-    int r;
-    r = MIDIClearQueue(self->devicePort, self->ownerPort, self->unit);
-    if (r != KERN_SUCCESS)
+    MKMDReturn r;
+    r = MKMDClearQueue(self->devicePort, self->ownerPort, self->unit);
+    if (r != MKMD_SUCCESS)
       _MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r), @"emptyMidi");
     return r;
 }
@@ -595,25 +618,25 @@ static int emptyMidi(MKMidi *self)
 static int setMidiSysIgnore(MKMidi *self,unsigned bits)
     /* Tell driver to ignore particular incoming MIDI system messages */
 {
-#   if FCC_DID_NOT_APPROVE_DRIVER_CHANGE
-    int r = MIDISetSystemIgnores(self->devicePort, self->ownerPort,
+#if FCC_DID_NOT_APPROVE_DRIVER_CHANGE
+    int r = MKMDSetSystemIgnores(self->devicePort, self->ownerPort,
 				 self->unit,bits);
-#   else 
+#else 
     int r = 0;
-    r |= MIDIFilterMessage(devicePort, self->ownerPort, self->unit, 
+    r |= MKMDFilterMessage(devicePort, self->ownerPort, self->unit, 
 			   MIDI_CLOCK, bits & IGNORE_CLOCK);
-    r |= MIDIFilterMessage(devicePort, self->ownerPort, self->unit, 
+    r |= MKMDFilterMessage(devicePort, self->ownerPort, self->unit, 
 			   MIDI_START, bits & IGNORE_START);
-    r |= MIDIFilterMessage(devicePort, self->ownerPort, self->unit, 
+    r |= MKMDFilterMessage(devicePort, self->ownerPort, self->unit, 
 			   MIDI_CONTINUE, bits & IGNORE_CONTINUE);
-    r |= MIDIFilterMessage(devicePort, self->ownerPort, self->unit, 
+    r |= MKMDFilterMessage(devicePort, self->ownerPort, self->unit, 
 			   MIDI_STOP, bits & IGNORE_STOP);
-    r |= MIDIFilterMessage(devicePort, self->ownerPort, self->unit, 
+    r |= MKMDFilterMessage(devicePort, self->ownerPort, self->unit, 
 			   MIDI_ACTIVE, bits & IGNORE_ACTIVE);
-    r |= MIDIFilterMessage(devicePort, self->ownerPort, self->unit, 
+    r |= MKMDFilterMessage(devicePort, self->ownerPort, self->unit, 
 			   MIDI_RESET, bits & IGNORE_RESET);
-#   endif
-    if (r != KERN_SUCCESS) 
+#endif
+    if (r != MKMD_SUCCESS) 
       _MKErrorf(MK_machErr, INPUT_ERROR, midiDriverErrorString(r), @"");
     return r;
 }
@@ -623,10 +646,10 @@ static int setMidiSysIgnore(MKMidi *self,unsigned bits)
 
 /* We currently use MIDI "raw" mode. Perhaps cooked mode would be more efficient? */
 
-#define MIDIBUFSIZE MIDI_MAX_EVENT
+#define MIDIBUFSIZE MKMD_MAX_EVENT
 
-static MIDIRawEvent midiBuf[MIDIBUFSIZE];
-static MIDIRawEvent *bufPtr = &(midiBuf[0]);
+static MKMDRawEvent midiBuf[MIDIBUFSIZE];
+static MKMDRawEvent *bufPtr = &(midiBuf[0]);
 
 static void putTimedByte(unsigned curTime,unsigned char aByte)
     /* output a MIDI byte */
@@ -650,7 +673,7 @@ static void putTimedByteWithCheck(struct __MKMidiOutStruct *ptr,
 static void sendBufferedData(struct __MKMidiOutStruct *ptr)
     /* Send any buffered bytes and reset pointer to start of buffer */
 {
-    int r;
+    MKMDReturn r;
     MKMidi *midiObj;
     int nBytes;
     nBytes = bufPtr - &(midiBuf[0]);
@@ -658,12 +681,12 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 	return;
     midiObj = ((MKMidi *)ptr->_owner);
     for (; ;) {
-	r = MIDISendData(midiObj->devicePort, midiObj->ownerPort, midiObj->unit, &(midiBuf[0]), nBytes);
-	if (r == MIDI_ERROR_QUEUE_FULL) 
-	    waitForRoom(midiObj,nBytes,MIDI_NO_TIMEOUT);
+	r = MKMDSendData(midiObj->devicePort, midiObj->ownerPort, midiObj->unit, &(midiBuf[0]), nBytes);
+	if (r == MKMD_ERROR_QUEUE_FULL) 
+	    waitForRoom(midiObj, nBytes, MKMD_NO_TIMEOUT);
 	else break;
     }
-    if (r != KERN_SUCCESS) 
+    if (r != MKMD_SUCCESS) 
 	_MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r), @"sendBufferedData");
     bufPtr = &(midiBuf[0]);
 }
@@ -865,7 +888,7 @@ static void sendIncomingNote(short chan, MKNote *aNote, MKMidi *sendingMidi, int
 {
     if (aNote) {
 	double t;
-	id synchCond = sendingMidi->tvs->synchConductor;
+	id synchCond = sendingMidi->synchConductor;
         t = (((double)quanta) * _MK_MIDI_QUANTUM_PERIOD + sendingMidi->_timeOffset);
 	if (MKGetDeltaTMode() == MK_DELTAT_SCHEDULER_ADVANCE) 
 	  t += MKGetDeltaT();
@@ -897,7 +920,7 @@ static int incomingDataCount = 0; /* We use a static here to allow us to
 
 // my_data_reply is called direct from the MIDI Reply routine, so the Mach port needs to be defined rather than
 // an NSPort for the first parameter.
-static void my_data_reply(mach_port_t reply_port, short unit, MIDIRawEvent *events, unsigned int count) {
+static void my_data_reply(mach_port_t reply_port, short unit, MKMDRawEvent *events, unsigned int count) {
     _MKMidiInStruct *ptr;
     MKNote *aNote;
     unsigned char statusByte;
@@ -939,14 +962,14 @@ static void my_data_reply(mach_port_t reply_port, short unit, MIDIRawEvent *even
 - (void)handleMachMessage:(void *)machMessage
 {
     msg_header_t *msg = (msg_header_t *)machMessage;
-    int r;
-    MIDIReplyFunctions recvStruct = { /* Tells driver funcs to call */ my_data_reply,0,0,0};
+    MKMDReturn r;
+    MKMDReplyFunctions recvStruct = { /* Tells driver funcs to call */ my_data_reply,0,0,0};
 
     receivingMidi = self;
-    // Eventually MIDIHandleReply should be unnecessary, when we receive the MIDI data direct into handlePortMessage
+    // Eventually MKMDHandleReply should be unnecessary, when we receive the MIDI data direct into handlePortMessage
     // Then we can merge this method and my_data_reply into a single handlePortMessage. 
-    r = MIDIHandleReply(msg,&recvStruct);        /* This gets data */
-    if (r != KERN_SUCCESS)
+    r = MKMDHandleReply(msg,&recvStruct);        /* This gets data */
+    if (r != MKMD_SUCCESS)
       _MKErrorf(MK_machErr, INPUT_ERROR, midiDriverErrorString(r), @"midiIn");
 }
 
@@ -1077,20 +1100,23 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
     NSString *defaultsValue;
     int num = getNumSuffix(devName, &isSoft);
 
-    getAvailableMidiDevices(); // assigns midiDriverNames and midiDriverUnits
+    // assigns midiDriverNames and midiDriverUnits
+    if(!getAvailableMidiDevices())
+        return NO; 
     // devName can be of the soft form "midi0", or the hard description "Mididriver0" or "SB Live! MIDI Out"
     if (isSoft) {
         midiNumStrArr = [NSString stringWithFormat:@"MKMIDI%d",num];
 
-        // The owner will be whatever application links against this framework. This is what we want to allow for
-        // different applications to use different MIDI devices if necessary.
+        // The owner will be whatever application links against this framework. 
+        // This is what we want to allow for different applications to use different MIDI
+        // devices if necessary.
         defaultsValue = (NSString *) [[NSUserDefaults standardUserDefaults] objectForKey: midiNumStrArr];
 	if ([defaultsValue length]) 
-	  num = getNumSuffix(defaultsValue, &isSoft);
+            num = getNumSuffix(defaultsValue, &isSoft);
 	else if (num == 0) { 
-          // Use the system default MIDI driver
-	  *midiDevStrArr = [[midiDriverNames objectAtIndex: systemDefaultDriverNum] copy];
-	  return YES;
+            // Use the system default MIDI driver
+            *midiDevStrArr = [[midiDriverNames objectAtIndex: systemDefaultDriverNum] copy];
+            return YES;
 	}
     }
     // here we assume if we didn't have a soft device name, we are referring to a described device.
@@ -1187,7 +1213,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
 #endif
     hostAndDevName = [hostName stringByAppendingString: devName];
     if ((obj = [portTable objectForKey: hostAndDevName]) == nil) {         // Doesn't already exist
-        tvs = getTimeInfoFromHost(hostName);
+        getTimeInfoFromHost(self, hostName);
         [portTable setObject:self forKey: hostAndDevName]; 
     }
     // even if the device is in the portTable, we still need to set the device and host name
@@ -1252,7 +1278,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
 
 + midi
 {
-    return [[self midiOnDevice: DEFAULT_SOFT_NAME] autorelease];
+    return [self midiOnDevice: DEFAULT_SOFT_NAME];
 }
 
 - copyWithZone:(NSZone *)zone
@@ -1274,7 +1300,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
     int size = [noteReceivers count];
     [self abort];
     if ([self unitHasMTC]) 
-      [tvs->synchConductor _setMTCSynch:nil];
+        [synchConductor _setMTCSynch:nil];
     [self _setSynchConductor:nil];
     for (i=0; i<size; i++)
         _MKFreeParameter([[noteReceivers objectAtIndex:i] _getData]);
@@ -1334,14 +1360,14 @@ static id openMidi(MKMidi *self)
     int i,cnt,j;
     if (!MIDIOUTPTR(self) || deviceStatus != MK_devRunning)
       return nil;
-    MIDIFlushQueue(devicePort, self->ownerPort, self->unit);
+    MKMDFlushQueue(devicePort, self->ownerPort, self->unit);
     /* Not ClearQueue, which can leave MIDI devices confused. */
     for (i=1; i<=MIDI_NUMCHANS; i++) {
 	aList = _MKGetNoteOns(MIDIOUTPTR(self),i);
 	for (j=0, cnt = [aList count]; j<cnt; j++)
             _MKWriteMidiOut([aList objectAtIndex:j],0,i,MIDIOUTPTR(self),
 			  [self channelNoteReceiver:i]);
-	MIDIFlushQueue(devicePort, self->ownerPort, self->unit);
+	MKMDFlushQueue(devicePort, self->ownerPort, self->unit);
 	[aList removeAllObjects];
 	[aList release];
     }
@@ -1361,9 +1387,9 @@ int _MKAllNotesOffPause = 500; /* ms between MIDI channel blasts
        (Currently, it is, indeed, the case that we're not encoding
        running status.) */
 {
-    MIDIRawEvent tmpMidiBuf[257];  
+    MKMDRawEvent tmpMidiBuf[257];  
                                     /* 1 for "noteOff",256 for keyNum/chan */
-    MIDIRawEvent *tmpBufPtr = &(tmpMidiBuf[1]);
+    MKMDRawEvent *tmpBufPtr = &(tmpMidiBuf[1]);
     unsigned char chan;
     int i,r;
     if (deviceStatus == MK_devClosed || !OUTPUTENABLED(ioMode))
@@ -1378,28 +1404,28 @@ int _MKAllNotesOffPause = 500; /* ms between MIDI channel blasts
      * barrage of outgoing MIDI data and so that external synthesizers have
      * time to respond.  Need to insert rests between channel resets. 
      */
-    MIDIFlushQueue(devicePort, ownerPort, unit);
+    MKMDFlushQueue(devicePort, ownerPort, unit);
     /* Not ClearQueue, which can leave MIDI devices confused. */
     for (i=0; i<16; i++) {       
 	int j,k;
 	chan = i;
 	tmpMidiBuf[0].time = 0;
 	tmpMidiBuf[0].byte = MIDI_NOTEOFF | chan;
-	for (j=0; j < 257; j += MIDI_MAX_EVENT) {
+	for (j=0; j < 257; j += MKMD_MAX_EVENT) {
 	    k = 257 - j;
 	    for (; ;) {
-		r = MIDISendData(devicePort, ownerPort, unit, &(tmpMidiBuf[j]), MIN(MIDI_MAX_EVENT,k));
-	        if (r != MIDI_ERROR_QUEUE_FULL)
+		r = MKMDSendData(devicePort, ownerPort, unit, &(tmpMidiBuf[j]), MIN(MKMD_MAX_EVENT, k));
+	        if (r != MKMD_ERROR_QUEUE_FULL)
 		    break;
 		/* MIDI goes at a rate of a byte every 1/3 ms */
                 [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:(k/3)/1000.0]];
 	    }
-	    MIDIFlushQueue(devicePort, ownerPort, unit);
+	    MKMDFlushQueue(devicePort, ownerPort, unit);
 	    /* Slow it down so synths don't freak out */
             [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:(_MKAllNotesOffPause)/1000.0]];
 	}
-	MIDIFlushQueue(devicePort, ownerPort, unit);
-	if (r != KERN_SUCCESS) {
+	MKMDFlushQueue(devicePort, ownerPort, unit);
+	if (r != MKMD_SUCCESS) {
 	    _MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r), @"allNotesOffBlast");
 	    return nil;
 	}
@@ -1408,44 +1434,44 @@ int _MKAllNotesOffPause = 500; /* ms between MIDI channel blasts
     return self;
 }
 
-static void listenToMIDI(MKMidi *self,BOOL flg)
+static void listenToMIDI(MKMidi *self, BOOL receiveOnRecvPort)
 {
-    int r;
-    r = MIDIRequestData(self->devicePort, self->ownerPort, self->unit,
-			(flg) ? [self->recvPort machPort] : PORT_NULL);
-    if (r != KERN_SUCCESS) 
+    MKMDReturn r;
+    r = MKMDRequestData(self->devicePort, self->ownerPort, self->unit,
+			(receiveOnRecvPort) ? self->recvPort : nil);
+    if (r != MKMD_SUCCESS) 
 	_MKErrorf(MK_machErr, INPUT_ERROR, midiDriverErrorString(r), @"listenToMIDI");
 }
 
 static void cancelQueueReq(MKMidi *self)
 {
-    int r;
-    r = MIDIRequestQueueNotification(self->devicePort, self->ownerPort,
-				     self->unit, PORT_NULL, 0);
-    if (r != KERN_SUCCESS) 
+    MKMDReturn r;
+    r = MKMDRequestQueueNotification(self->devicePort, self->ownerPort,
+				     self->unit, nil, 0);
+    if (r != MKMD_SUCCESS) 
 	_MKErrorf(MK_machErr, INPUT_ERROR, midiDriverErrorString(r), @"cancelQueueReq");
 }
 
 -_open
 {
     switch (deviceStatus) {
-      case MK_devClosed: /* Need to open it */
+    case MK_devClosed: /* Need to open it */
 	return openMidi(self);
-      case MK_devOpen:
+    case MK_devOpen:
 	break;
-      case MK_devRunning:
+    case MK_devRunning:
 	if (INPUTENABLED(ioMode)) 
-	    listenToMIDI(self,NO);
+	    listenToMIDI(self, NO);
 	if (OUTPUTENABLED(ioMode)) 
 	    cancelQueueReq(self);
 	/* no break here */
-      case MK_devStopped:
+    case MK_devStopped:
 	if (OUTPUTENABLED(ioMode))
-	  emptyMidi(self);
+            emptyMidi(self);
 	resetAndStopMidiClock(self);
 	deviceStatus = MK_devOpen;
 	break;
-      default:
+    default:
 	break;
     }
     return self;
@@ -1455,7 +1481,7 @@ static void cancelQueueReq(MKMidi *self)
   /* Same as open but does not enable output. */
 {
     if ((deviceStatus != MK_devClosed) && (ioMode != MKMidiOutputOnly))
-      [self close];
+        [self close];
     ioMode = MKMidiOutputOnly;
     return [self _open];
 }
@@ -1463,7 +1489,7 @@ static void cancelQueueReq(MKMidi *self)
 -openInputOnly
 {
     if ((deviceStatus != MK_devClosed) && (ioMode != MKMidiInputOnly))
-      [self close];
+        [self close];
     ioMode = MKMidiInputOnly;
     return [self _open];
 }
@@ -1476,7 +1502,7 @@ static void cancelQueueReq(MKMidi *self)
      */
 {
     if ((deviceStatus != MK_devClosed) && (ioMode != MKMidiInputOutput))
-      [self close];
+        [self close];
     ioMode = MKMidiInputOutput;
     return [self _open];
 }
@@ -1495,20 +1521,20 @@ static void cancelQueueReq(MKMidi *self)
 - run
 {
     switch (deviceStatus) {
-      case MK_devClosed:
+    case MK_devClosed:
 	if (!openMidi(self))
-	  return nil;
+            return nil;
 	/* no break here */
-      case MK_devOpen:
+    case MK_devOpen:
 /*	doDeltaT(self);  Needed if we'd ever use relative time to the driver */
 	_timeOffset = MKGetTime(); /* This is needed by MidiOut. */
 	/* no break here */
-      case MK_devStopped:
+    case MK_devStopped:
 	if (INPUTENABLED(ioMode)) 
-	  listenToMIDI(self,YES);
+            listenToMIDI(self,YES);
 	resumeMidiClock(self);
 	deviceStatus = MK_devRunning;
-      default:
+    default:
 	break;
     }
     return self;
@@ -1517,19 +1543,19 @@ static void cancelQueueReq(MKMidi *self)
 -stop
 {
     switch (deviceStatus) {
-      case MK_devClosed:
+    case MK_devClosed:
 	return [self open];
-      case MK_devOpen:
-      case MK_devStopped:
+    case MK_devOpen:
+    case MK_devStopped:
 	return self;
-      case MK_devRunning:
+    case MK_devRunning:
 	stopMidiClock(self);
 	if (INPUTENABLED(ioMode)) 
 	    listenToMIDI(self,NO);
 	if (OUTPUTENABLED(ioMode)) 
 	    cancelQueueReq(self);
 	deviceStatus = MK_devStopped;
-      default:
+    default:
 	break;
     }
     return self;
@@ -1581,7 +1607,7 @@ static void cancelQueueReq(MKMidi *self)
 	}
 	if (OUTPUTENABLED(ioMode)) {
 	    if (deviceStatus == MK_devRunning) 
-		awaitMidiOutDone(self,MIDI_NO_TIMEOUT);
+		awaitMidiOutDone(self, MKMD_NO_TIMEOUT);
 	    emptyMidi(self);
 	    _pOut = (void *)_MKFinishMidiOut(MIDIOUTPTR(self));
 	}
@@ -1592,7 +1618,7 @@ static void cancelQueueReq(MKMidi *self)
 
 -awaitQueueDrain {
     if (deviceStatus == MK_devRunning) 
-      awaitMidiOutDone(self,MIDI_NO_TIMEOUT);
+        awaitMidiOutDone(self, MKMD_NO_TIMEOUT);
     return self;
 }
 
@@ -1626,20 +1652,20 @@ static void cancelQueueReq(MKMidi *self)
     double t;
     int chan;
     if ((!MIDIOUTPTR(self)) || (!aNote) || (deviceStatus != MK_devRunning))
-      return nil;
+        return nil;
     if (outputIsTimed) {
-	if (self->tvs->synchConductor) {
-	    t = ([self->tvs->synchConductor clockTime] - _timeOffset + localDeltaT + 
-		 mtcTimeOffset);
+        if (self->synchConductor) {
+	    t = ([self->synchConductor clockTime] - _timeOffset + localDeltaT + mtcTimeOffset);
 	    if (MKGetDeltaTMode() == MK_DELTAT_DEVICE_LAG) 
-	      t += MKGetDeltaT();
+                t += MKGetDeltaT();
 	}
 	else 
-	  t = MKGetDeltaTTime() - _timeOffset + localDeltaT;
+            t = MKGetDeltaTTime() - _timeOffset + localDeltaT;
     }
-    else t = 0;
+    else
+        t = 0;
     chan = _MKParAsInt([aNoteReceiver _getData]);
-    _MKWriteMidiOut(aNote,t,chan,MIDIOUTPTR(self),aNoteReceiver);
+    _MKWriteMidiOut(aNote, t, chan, MIDIOUTPTR(self), aNoteReceiver);
     return self;
 }
 
