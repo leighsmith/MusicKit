@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/02/08 00:10:56  leigh
+  Added duration display in -description
+
   Revision 1.4  2000/02/07 00:31:39  leigh
   improved description method, printing parameter values
 
@@ -448,7 +451,7 @@ static int nAppBitVects(); /* forward ref */
     return nil;
 }
 
-static double getNoteDur(id aNote);
+static double getNoteDur(MKNote *aNote);
 
 
 
@@ -1793,9 +1796,11 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
     NSMutableString *paramString = [[NSMutableString alloc] initWithString: @"Parameters: "];
     NSString *partString;
     NSString *performerString;
+    NSString *durAndNoteTagString;
     void *aState = MKInitParameterIteration(self);
 //  id conductor; // if necessary.
     int par;
+    double duration;
 
     if(performer != nil) 
         performerString = [NSString stringWithFormat: @"performed by (%@)", performer];
@@ -1811,13 +1816,19 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
     par = MKNextParameter(self, aState);
     do {
         if(par != MK_noPar) {
-            [paramString appendFormat: @"%@: %@", _MKParNameStr(par), MKGetNoteParAsString(self,par)];
+            [paramString appendFormat: @"%@: %@", _MKParNameStr(par), MKGetNoteParAsString(self, par)];
             par = MKNextParameter(self, aState);
         }
         [paramString appendString: (par != MK_noPar) ? @", " : @"."];
     } while(par != MK_noPar);
-    return [NSString stringWithFormat: @"At %lf: %s(%d) %@ %@\n%@\n",
-        timeTag, _MKTokName(noteType), noteTag, partString, performerString, paramString];
+
+    if(MKIsNoDVal(duration = getNoteDur(self)))
+        durAndNoteTagString = [NSString stringWithFormat: @"%d", noteTag];
+    else
+        durAndNoteTagString = [NSString stringWithFormat: @"%.5lf %d", duration, noteTag];
+
+    return [NSString stringWithFormat: @"At %lf: %s(%@) %@ %@\n%@\n",
+        timeTag, _MKTokName(noteType), durAndNoteTagString, partString, performerString, paramString];
 }
 
 @end
