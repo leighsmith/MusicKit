@@ -44,6 +44,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2001/03/06 21:50:23  leigh
+  Uses new method name for loading Patches
+
   Revision 1.9  2000/11/25 22:33:12  leigh
   doco cleanup
 
@@ -471,12 +474,12 @@ static void alternatePatchMsg(void)
 	break;
       case MK_mute:
 	if (MKIsTraced(MK_TRACESYNTHINS))
-            NSLog(@"MKSynthInstrument receives mute Note at time %f.\n", MKGetTime());
+            NSLog(@"MKSynthInstrument receives mute MKNote at time %f.\n", MKGetTime());
 	if (MKIsNoteParPresent(aNote,MK_synthPatch)) {
 	    NSString *sp = [aNote parAsStringNoCopy:MK_synthPatch];
 	    if (sp != nil) {
                 if ([sp length]) {
-                    id aClass = [MKSynthPatch findSynthPatchClass:sp];
+                    Class aClass = [MKSynthPatch findPatchClass:sp];
                     if (aClass)
                         [self setSynthPatchClass:aClass];
                     }
