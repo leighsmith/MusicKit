@@ -82,7 +82,7 @@
 	  only belong to one <CLASSNAME>MKScore</CLASSNAME>.  However,
 	  <CLASSNAME>MKEnvelopes</CLASSNAME> and
 	  <CLASSNAME>MKWaveTables</CLASSNAME> may be referenced by any number
-	  of Notes.   
+	  of <CLASSNAME>MKNote</CLASSNAME>s.   
 	</PARA>
       </LISTITEM>
       <LISTITEM>
@@ -245,19 +245,19 @@
 	</PARA>
 	<ITEMIZEDLIST>
 	  <LISTITEM>
-	    <PARA>int </PARA>
+	    <PARA>int</PARA>
 	  </LISTITEM>
 	  <LISTITEM>
-	    <PARA>double </PARA>
+	    <PARA>double</PARA>
 	  </LISTITEM>
 	  <LISTITEM>
-	    <PARA>string </PARA>
+	    <PARA><CLASSNAME>NSString</CLASSNAME></PARA>
 	  </LISTITEM>
 	  <LISTITEM>
-	      <PARA><CLASSNAME>MKEnvelope</CLASSNAME> </PARA>
+	      <PARA><CLASSNAME>MKEnvelope</CLASSNAME></PARA>
 	  </LISTITEM>
 	  <LISTITEM>
-	    <PARA><CLASSNAME>MKWaveTable</CLASSNAME> </PARA>
+	    <PARA><CLASSNAME>MKWaveTable</CLASSNAME></PARA>
 	  </LISTITEM>
 	  <LISTITEM>
 	    <PARA>
@@ -322,12 +322,12 @@
       <LISTITEM>
 	<PARA>Same example in Objective-C</PARA>
 	<PROGRAMLISTING>
-	  Envelope *env;	
-	  double times[] = {0, 0.1, 2.0, 2.7, 3.0};	
-	  double values[] = {0, 1, 0.5, 0.1, 0};
-	  env = [Envelope new]; /* or alloc/init in 2.0 */	
-	  [env setPointCount:5 xArray:times yArray:values];	
-	  [env setStickPoint:2]; /* zero-based	    */
+MKEnvelope *env;	
+double times[] = {0, 0.1, 2.0, 2.7, 3.0};	
+double values[] = {0, 1, 0.5, 0.1, 0};
+env = [MKEnvelope new];              /* or alloc/init in 2.0 */	
+[env setPointCount:5 xArray:times yArray:values];	
+[env setStickPoint:2];               /* zero-based           */
 	</PROGRAMLISTING>
       </LISTITEM>
       <LISTITEM>
@@ -345,8 +345,8 @@
 	</PARA>
       </LISTITEM>
       <LISTITEM>
-	<PARA> The <APPLICATION>EnvelopeEd</APPLICATION> program (ccrma ftp)
-	    helps design envs.
+	<PARA> The <APPLICATION>EnvelopeEd</APPLICATION> program (included in the <PRODUCTNAME>MusicKit</PRODUCTNAME> distribution)
+	    helps design envelopes.
 	</PARA>
       </LISTITEM>
     </ITEMIZEDLIST>
