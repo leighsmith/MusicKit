@@ -1,14 +1,23 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
 
-  This file has trace codes as well as error codes used by the Music Kit.
+  Description:
+    This file has trace codes as well as error codes used by the Music Kit.
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.6  2000/04/07 23:11:53  leigh
+  Cleaned up
+
   Revision 1.5  2000/03/31 00:08:55  leigh
   _MKErrorf doco cleanup
 
@@ -24,20 +33,20 @@ Modification history:
 */
 #ifndef __MK_errors_H___
 #define __MK_errors_H___
-//sb:
+
 #import <Foundation/Foundation.h>
 
 /* Music Kit TRACE codes */
-#define MK_TRACEORCHALLOC 1  /* Orchestra allocation information */
-#define MK_TRACEPARS 2       /* App params, when first encountered. */
-#define MK_TRACEDSP 4        /* Music Kit DSP messages */
-#define MK_TRACEMIDI 8       /* MIDI in/out/time warnings */
-#define MK_TRACEPREEMPT 16   /* SynthInstrument preemptions msgs */
-#define MK_TRACESYNTHINS  32 /* SynthInstrument messages */
-#define MK_TRACESYNTHPATCH 64 /* SynthPatch library messages */
+#define MK_TRACEORCHALLOC 1       /* Orchestra allocation information */
+#define MK_TRACEPARS 2            /* App params, when first encountered. */
+#define MK_TRACEDSP 4             /* Music Kit DSP messages */
+#define MK_TRACEMIDI 8            /* MIDI in/out/time warnings */
+#define MK_TRACEPREEMPT 16        /* SynthInstrument preemptions msgs */
+#define MK_TRACESYNTHINS  32      /* SynthInstrument messages */
+#define MK_TRACESYNTHPATCH 64     /* SynthPatch library messages */
 #define MK_TRACEUNITGENERATOR 128 /* UnitGenerator library messages */
-#define MK_TRACECONDUCTOR 256 /* Conductor time messages */
-#define MK_TRACEDSPARRAYS 512 /* Print arrays loaded to DSP */
+#define MK_TRACECONDUCTOR 256     /* Conductor time messages */
+#define MK_TRACEDSPARRAYS 512     /* Print arrays loaded to DSP */
 
  /* Tracing.  */
 extern unsigned MKSetTrace(int traceCode);
@@ -209,7 +218,6 @@ extern id _MKErrorf(int errorCode, ...);
 /* 
  * These functions are for accessing Music Kit's localized strings. 
  */ 
-#import <Foundation/NSBundle.h>
 extern NSBundle *_MKErrorBundle(void); 
 /* 
  * Music Kit bundle for selected language in 
