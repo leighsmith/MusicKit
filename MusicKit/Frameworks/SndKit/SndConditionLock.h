@@ -2,17 +2,20 @@
   $Id$
 
   Description:
+    An implementation of condition locks intended to replace the
+    standard NSConditionLock which under Windows does not properly
+    implement conditions.
+
+    This win32 condition code is substantially taken from
+    http://www.cs.wustl.edu/~schmidt/win32-cv-1.html
 
   Original Author: Stephen Brandon, <stephen@brandonitconsulting.co.uk>
 
-  Tue 30-Oct-2001, Copyright (c) 2001 tomandandy music inc.
+  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 
   Permission is granted to use and modify this code for commercial and non-commercial
   purposes so long as the author attribution and copyright messages remain intact and
   accompany all relevant code.
-
-  The Win32 Condition code is substantially taken from
-  http://www.cs.wustl.edu/~schmidt/win32-cv-1.html
 */
 
 #ifndef __SNDCONDITIONLOCK_H__
@@ -22,7 +25,6 @@
 
 #import <windows.h>
 #import <Foundation/Foundation.h>
-#import "SndKit.h"
 
 
 typedef struct
