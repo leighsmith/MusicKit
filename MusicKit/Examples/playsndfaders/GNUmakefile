@@ -10,11 +10,21 @@ include $(GNUSTEP_MAKEFILES)/common.make
 TOOL_NAME = \
 	playsndfaders
 	
-ADDITIONAL_LIB_DIRS = 
-
-ADDITIONAL_TOOL_LIBS += -lMKPerformSndMIDI -lSndKit -lgnustep-base -lgnustep-gui -lst -g -ljpeg
+ADDITIONAL_TOOL_LIBS += -lMKPerformSndMIDI -lSndKit -lgnustep-base -lst -ljpeg
 
 ADDITIONAL_CFLAGS += -g
+
+
+playsndfaders_LIBRARIES_DEPEND_UPON += -lSndKit -lgnustep-base -lst -lobjc
+
+ifneq (mingw32, $(GNUSTEP_HOST_OS))
+  ADDITIONAL_TOOL_LIBS += -lgnustep-gui
+  playsndfaders_LIBRARIES_DEPEND_UPON +=  -lgnustep-gui
+else
+  ADDITIONAL_LIB_DIRS = -Ld:/cygwin/usr/local/lib
+  ADDITIONAL_FLAGS += -Id:/cygwin/usr/local/include
+  playsndfaders_LIBRARIES_DEPEND_UPON += -Ld:/cygwin/usr/local/lib
+endif
 
 # The Objective-C source files to be compiled
 playsndfaders_OBJC_FILES = main.m
