@@ -752,7 +752,9 @@ printf("numFromFrags: %d numToFrags: %d insertFragOffset %d startSample %d inser
 			newssList[ssPointer++] = newStruct;
 		}
 	}
+
 	/* now copy last bit of original sound into last frag */
+
 	if ((startSample < SndSampleCount(toSound) + 1) && ndf != SND_FORMAT_INDIRECT) {
 		if (!(newStruct = _SndCopyFragBytes(toSound, startSample * cc * numBytes,-1))) {
 			for(i = 0;i<ssPointer;i++) {
@@ -764,12 +766,13 @@ printf("numFromFrags: %d numToFrags: %d insertFragOffset %d startSample %d inser
 		}
 		newssList[ssPointer++] = newStruct;
 	}
+
 	if (ndf == SND_FORMAT_INDIRECT) {
-		/* now copy in remainder of sliced frag (if nec), then further frags
+	  /* now copy in remainder of sliced frag (if nec), then further frags
 			* from toSound into list (just pointers)
 			*/
-		if (insertFragOffset > 0) {
-			if (!(newStruct = _SndCopyFragBytes(oldNewssList[insertFrag], insertFragOffset, -1))) {
+	  if (insertFragOffset > 0) {
+	    if (!(newStruct = _SndCopyFragBytes(oldNewssList[insertFrag], insertFragOffset, -1))) {
 				for (i = firstOfCopiedListToFree;i<ssPointer;i++) {
 					free (newssList[i]);
 				}
@@ -994,10 +997,12 @@ int SndReadHeader(int fd, SndSoundStruct **sound)
 	if ((error = read(fd, s, sizeof(SndSoundStruct))) < 0) return SND_ERR_CANNOT_READ;
 	if (error == 0) printf("Sound contained only header!\n");
 	/* now test for endianness */
-	if (s->magic != SND_MAGIC)
-		if (s->magic == (int)ntohl(SND_MAGIC))
-			reverse = YES;
-		else return SND_ERR_CANNOT_READ;
+	if (s->magic != SND_MAGIC) {
+            if (s->magic == (int)ntohl(SND_MAGIC))
+                reverse = YES;
+            else
+                return SND_ERR_CANNOT_READ;
+        }
 	if (reverse) {
 		s->magic = ntohl(s->magic);
 		s->dataLocation = ntohl(s->dataLocation);
@@ -1033,7 +1038,9 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
 		return SND_ERR_CANNOT_OPEN;
         informat.fp = fp;
         informat.seekable = YES;
-        informat.filetype = fileTypeStr;
+	/* use a default file type in the absence of an explicit type -- the user shouldn't
+           be forced to use file extensions -- snd is native to SndKit */
+        informat.filetype = *fileTypeStr == '\0' ? fileTypeStr : "snd";
         informat.info.rate = 0;
         informat.info.size = -1;
         informat.info.encoding = -1;
