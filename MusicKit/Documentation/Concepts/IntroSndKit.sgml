@@ -17,7 +17,8 @@ chapter is divided into three parts:</para>
 <listitem><para>Typical sound hardware</para>
 </listitem>
 
-<listitem><para>A brief tutorial on sound and how it's represented on a computer</para>
+<listitem><para>A brief tutorial on sound and how it's represented on
+a computer</para>
 </listitem>
 
 <listitem><para>The <productname>SndKit</productname></para>
@@ -748,15 +749,16 @@ int = [aSound readSoundfile:"KneeSqueak.snd"];   /* read a file */
 complete UNIX pathname and must include the extension; in the example,
 the soundfile is searched for in the current working directory.  Like
 many of the <classname>Sound</classname> methods, <emphasis
-role="bold">readSoundfile: </emphasis>returns an error code; the
+role="bold">readSoundfile:</emphasis> returns an error code; the
 complete list of errors codes is given in the description of the
 <function>SNDSoundError()</function> C function in
-<emphasis>Reference</emphasis>.  Success is indicated by the code
+<xref linkend="SKFunctionReferences">. Success is indicated by the code
 <constant>SND_ERR_NONE</constant>.</para>
 
-<para>These two operations, initializing a <classname>Sound</classname> object and reading a
-soundfile, are combined in the <emphasis
-role="bold">initFromSoundfile:</emphasis> method:</para>
+<para>These two operations, initializing a
+<classname>Sound</classname> object and reading a soundfile, are
+combined in the <emphasis role="bold">initFromSoundfile:</emphasis>
+method:</para>
 
 <programlisting>
 id  aSound = [[Sound alloc] initFromSoundfile:"KneeSqueak.snd"];
@@ -764,41 +766,31 @@ id  aSound = [[Sound alloc] initFromSoundfile:"KneeSqueak.snd"];
 
 <para>The method returns <emphasis role="bold">nil</emphasis> if the
 soundfile isn't found or if it can't be read.  You can read a new
-soundfile into an existing <classname>Sound</classname> object at any time; the object's old
-sound is discarded.</para>
+soundfile into an existing <classname>Sound</classname> object at any
+time; the object's old sound is discarded.</para>
 
 <para>NeXT provides a number of short sound effects (useful as system
-beeps) that are stored in the directory <filename 
-role=directory>/NextLibrary/Sounds</filename>.  These are:</para>
-
-<para>Basso.snd</para>
-
-<para>Bonk.snd</para>
-
-<para>Frog.snd</para>
-
-<para>Funk.snd</para>
-
-<para>Pop.snd</para>
-
-<para>SystemBeep.snd</para>
-
-<para>Tink.snd</para>
-
-<para>You can audition a soundfile by running the <emphasis role="bold">sndplay</emphasis> program from a Terminal or Shell window.  For example:</para>
+beeps) that are stored in the directory <filename
+role=directory>/NextLibrary/Sounds</filename>. You can audition a
+soundfile by running the <command>sndplay</command> program from a
+Terminal or Shell window.  For example:</para>
 
 <para>sndplay /NextLibrary/Sounds/Frog.snd</para>
 
-<para>Writing a soundfile from the data in a sound object is done by invoking the <emphasis role="bold">writeSoundfile:</emphasis> method:</para>
+<para>Writing a soundfile from the data in a sound object is done by
+invoking the <emphasis role="bold">writeSoundfile:</emphasis>
+method:</para>
 
 <programlisting>
 [mySound writeSoundfile:"FleaSigh.snd"];
 </programlisting>
 
-<para>Even if the <classname>Sound</classname> object contains fragmented data, the data in
-the soundfile will be compact.  However, the <classname>Sound</classname> object's data will
-remain fragmented.</para>
+<para>Even if the <classname>Sound</classname> object contains
+fragmented data, the data in the soundfile will be compact.  However,
+the <classname>Sound</classname> object's data will remain
+fragmented.</para>
 </sect4>
+
 <sect4 id="MachO">
 <title>The Mach-O Sound Segment</title>
 
@@ -835,10 +827,10 @@ original location of the file in the file system.</para>
 <sect4 id="Pasteboard">
 <title>The Pasteboard</title>
 
-<para>Placing a <classname>Sound</classname> object on the pasteboard lets you copy its data
-between running applications.  To place a <classname>Sound</classname> on the pasteboard,
-invoke the <emphasis role="bold">writeToPasteboard</emphasis>
-method:</para>
+<para>Placing a <classname>Sound</classname> object on the pasteboard
+lets you copy its data between running applications.  To place a
+<classname>Sound</classname> on the pasteboard, invoke the <emphasis
+role="bold">writeToPasteboard</emphasis> method:</para>
 
 <programlisting>
 [mySound writeToPasteboard];
@@ -865,10 +857,12 @@ role="bold">nil</emphasis>.</para>
 <sect4 id="NamedSoundList">
 <title>The Named Sound List</title>
 
-<para>The <classname>Sound</classname> class maintains an application-wide list of named
-<classname>Sound</classname> objects called the <emphasis>named Sound list</emphasis>.  The
-<emphasis role="bold">addName:Sound:</emphasis> class method lets you
-name a <classname>Sound</classname> object and add it to the named Sound list:</para>
+<para>The <classname>Sound</classname> class maintains an
+application-wide list of named <classname>Sound</classname> objects
+called the <emphasis>named Sound list</emphasis>.  The <emphasis
+role="bold">addName:Sound:</emphasis> class method lets you name a
+<classname>Sound</classname> object and add it to the named Sound
+list:</para>
 
 <programlisting>
 /* Add a Sound to the named Sound list. */
@@ -880,27 +874,30 @@ if (namedSound == nil)
 </programlisting>
 
 <para>The names in the named Sound list are unique; if you try to add
-a <classname>Sound</classname> by a name that's already in use, the effort is denied and
-<emphasis role="bold">nil</emphasis> is returned.</para>
+a <classname>Sound</classname> by a name that's already in use, the
+effort is denied and <emphasis role="bold">nil</emphasis> is
+returned.</para>
 
-<para>You can also name a <classname>Sound</classname> and place it on the named Sound list
-by sending <emphasis role="bold">setName:</emphasis> to the
-object:</para>
+<para>You can also name a <classname>Sound</classname> and place it on
+the named Sound list by sending <emphasis
+role="bold">setName:</emphasis> to the object:</para>
 
 <programlisting>
 id  namedSound = [mySound setName:"RedRover"];
 </programlisting>
 
 <para><emphasis role="bold">setName:</emphasis> can be used to change
-the name of a <classname>Sound</classname> that's already on the named Sound list.</para>
+the name of a <classname>Sound</classname> that's already on the named
+Sound list.</para>
 
 <para>The <emphasis role="bold">name</emphasis> method retrieves a
 <classname>Sound</classname> object's name, whether given in a <emphasis
 role="bold">setName:</emphasis> message or through the <emphasis
 role="bold">addName:sound:</emphasis> method.</para>
 
-<para>Named <classname>Sound</classname>s are visible to your entire application.  To
-retrieve a named <classname>Sound</classname> and load a copy of its data into a new <classname>Sound</classname>
+<para>Named <classname>Sound</classname>s are visible to your entire
+application.  To retrieve a named <classname>Sound</classname> and
+load a copy of its data into a new <classname>Sound</classname>
 object, invoke the <emphasis role="bold">findSoundFor:
 </emphasis>method:</para>
 
@@ -909,11 +906,12 @@ id  newRedButton = [Sound findSoundFor:"RedButton"];
 </programlisting>
 
 <para>If <emphasis role="bold">findSoundFor:</emphasis> fails to find
-the <classname>Sound</classname> in the named Sound list, it gives its argument (the <classname>Sound</classname>
-name) a &ldquo;.snd&rdquo; suffix and looks for a named section in the
-Mach-O sound segment.  If it's not found in the Mach-O segment, a
-soundfile (again, with the &ldquo;.snd&rdquo; extension) is searched
-for in these directories (in order):</para>
+the <classname>Sound</classname> in the named Sound list, it gives its
+argument (the <classname>Sound</classname> name) a &ldquo;.snd&rdquo;
+suffix and looks for a named section in the Mach-O sound segment.  If
+it's not found in the Mach-O segment, a soundfile (again, with the
+&ldquo;.snd&rdquo; extension) is searched for in these directories (in
+order):</para>
 
 <para>1.	~/Library/Sounds/ </para>
 
@@ -923,27 +921,31 @@ for in these directories (in order):</para>
 
 <para>(<emphasis role="bold">~</emphasis> represents the user's home directory.)</para>
 
-<para>A <classname>Sound</classname> found through <emphasis role="bold">findSoundFor:
-</emphasis>is automatically added to the named Sound list.</para>
+<para>A <classname>Sound</classname> found through <emphasis
+role="bold">findSoundFor:</emphasis> is automatically added to the
+named Sound list.</para>
 
-<para>To remove a named <classname>Sound</classname> from the named Sound list, invoke
-<emphasis role="bold">removeSoundForName:</emphasis>, passing the name
-of the object that you want to remove.  Removing a named <classname>Sound</classname> neither
-frees the <classname>Sound</classname> nor changes the object's notion of its name (which it
-stores as an instance variable).</para>
+<para>To remove a named <classname>Sound</classname> from the named
+Sound list, invoke <emphasis
+role="bold">removeSoundForName:</emphasis>, passing the name of the
+object that you want to remove.  Removing a named
+<classname>Sound</classname> neither frees the
+<classname>Sound</classname> nor changes the object's notion of its
+name (which it stores as an instance variable).</para>
 
-<para>Identifying and locating <classname>Sound</classname>s through the named Sound list is
-generally the most efficient way to access sound data.  The data in a
-named <classname>Sound</classname> is shared by all the objects that retrieve it.</para>
+<para>Identifying and locating <classname>Sound</classname>s through
+the named Sound list is generally the most efficient way to access
+sound data.  The data in a named <classname>Sound</classname> is
+shared by all the objects that retrieve it.</para>
 
 </sect4>
 </sect3>
 <sect3 id="RecordingAndPlaying">
 <title>Recording and Playing</title>
 
-<para>To record a sound into a <classname>Sound</classname> object, simply create the object
-and send it the <emphasis role="bold">record</emphasis>
-message:</para>
+<para>To record a sound into a <classname>Sound</classname> object,
+simply create the object and send it the <emphasis
+role="bold">record</emphasis> message:</para>
 
 <programlisting>
 id  mySound = [[Sound alloc] init];
@@ -955,8 +957,8 @@ always records from the CODEC microphone input.  The method returns
 immediately while the recording is performed by a background thread.
 </para>
 
-<para>The value returned by <emphasis role="bold">record
-</emphasis>indicates the success or failure of the attempt to begin
+<para>The value returned by <emphasis role="bold">record</emphasis>
+indicates the success or failure of the attempt to begin
 recording; <constant>SND_ERR_NONE</constant> indicates success.</para>
 
 <para>The recording continues until the <classname>Sound</classname>
@@ -1025,7 +1027,8 @@ role="bold">record:</emphasis>, <emphasis
 role="bold">play:</emphasis>,<emphasis role="bold">
 pause:</emphasis>,<emphasis role="bold"> resume:</emphasis>, and
 <emphasis role="bold">stop:</emphasis> are designed to be used as part
-of the target/action mechanism described in the <emphasis>Openstep
+of the target/action mechanism described in the
+<emphasis><productname>Openstep</productname>/<productname>Cocoa</productname>
 Concepts</emphasis> manual.  Briefly, this mechanism lets you assign a
 selected message (the action) and an object <emphasis
 role="bold">id</emphasis> (the target) to a
@@ -1333,9 +1336,10 @@ role="bold">copy:</emphasis>, and <emphasis
 role="bold">paste:</emphasis>.</para>
 
 <para><classname>SoundView</classname>s are designed to be used within
-a ScrollView.  While you can create a <classname>SoundView</classname>
-without placing it in a ScrollView, its utility&horbar;particularly as
-it's used to display a large <classname>Sound</classname>&horbar;is
+a <classname>NSScrollView</classname>.  While you can create a
+<classname>SoundView</classname> without placing it in a
+<classname>NSScrollView</classname>, its utility&horbar;particularly
+as it's used to display a large <classname>Sound</classname>&horbar;is
 limited.</para>
 
 <sect3 id="CreatingAndDisplayingASoundView">
@@ -1359,12 +1363,13 @@ id  mySoundView = [[SoundView alloc] initFrame:&amp;svRect];
 [mySoundView display];
 </programlisting>
 
-<para>In the example, <emphasis role="bold">svRect </emphasis>is a
-previously defined NXRect.  If autodisplaying is turned on (as set
-through View's <emphasis role="bold">setAutodisplay:</emphasis>
-method), you needn't send the <emphasis role="bold">display</emphasis>
-message; simply setting the <classname>Sound</classname> will cause the <classname>SoundView</classname> to be
-displayed.</para>
+<para>In the example, <structname>svRect</structname> is a previously
+defined <structname>NSRect</structname>.  If autodisplaying is turned
+on (as set through <classname>NSView</classname>'s <emphasis
+role="bold">setAutodisplay:</emphasis> method), you needn't send the
+<emphasis role="bold">display</emphasis> message; simply setting the
+<classname>Sound</classname> will cause the
+<classname>SoundView</classname> to be displayed.</para>
 
 <para>For most complete sounds, the length of the
 <classname>Sound</classname>'s data in samples is greater than the
@@ -1464,12 +1469,12 @@ argument:</para>
 
 	  <tbody>
 <row>
-<entry>SK_DISPLAY_WAVE</entry>
+<entry><constant>SK_DISPLAY_WAVE</constant></entry>
 <entry>Waveform display</entry>
 </row>
 
 <row>
-<entry>SK_DISPLAY_MINMAX</entry>
+<entry><constant>SK_DISPLAY_MINMAX</constant></entry>
 <entry>Amplitude outline display</entry>
 </row>
 </tbody>
