@@ -12,9 +12,6 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 ******************************************************************************/
 
-#define MACOS_X_DP3
-// raf: see play method
-
 #ifdef WIN32
 #include <Winsock.h>
 #else
@@ -619,7 +616,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 - play:sender
 {
-#ifdef MACOS_X_DP3
+#if macosx
     id tempFile;
     NSSound *tempSound;
 
@@ -669,8 +666,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 # endif
     return self;
 #endif
-#endif
-    //MACOS_X_DP3
+#endif  // macosx
 }
 #if defined(__ppc__) || defined(WIN32)
 - (void)sound:(NSSound *)sound didFinishPlaying:(BOOL)aBool;
