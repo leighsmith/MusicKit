@@ -52,6 +52,8 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
     id 		delegate;
     NSRect	selectionRect;
     int		displayMode;
+
+    NSColor	*selectionColour;
     NSColor	*backgroundColour;
     NSColor	*foregroundColour;
 
@@ -78,9 +80,13 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
     float	defaultRecordSeconds;
     SndSoundStruct *recordingSound;
 
+    NSRect	selCacheRect;
+
     int		_lastPasteCount;
     int		_lastCopyCount;
     BOOL 	notProvidedData;
+    BOOL	noSelectionDraw;
+    BOOL	firstDraw;
 
     SndDisplayDataList *dataList;
 }
@@ -128,6 +134,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 - (BOOL)setReductionFactor:(float)redFactor;
 - scaleToFit;
 - (void)sizeToFit;
+- (void)sizeToFit:(BOOL)withAutoscaling;
 - setAutoscale:(BOOL)aFlag;
 - (void)setBezeled:(BOOL)aFlag;
 - (void)setContinuous:(BOOL)aFlag;
@@ -178,6 +185,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 - (int)getOptSkip;
 - (int)getStereoMode;
 - (float)getPeakFraction;
+- (void) setSelectionColor : (NSColor *) color;
+- (NSColor *) selectionColor;
+
 
 /********************************************
     Methods Implemented by the Delegate

@@ -33,78 +33,139 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
  */
 
 #define startTimer(timer) if (!timer)  { timer = YES; [NSEvent startPeriodicEventsAfterDelay:0.1 withPeriod:0.01];}
+
 #define stopTimer(timer) if (timer) {[NSEvent stopPeriodicEvents];timer = NO;}
-#define MOVE_MASK NSLeftMouseUpMask|NSLeftMouseDraggedMask	
+
+#define MOVE_MASK NSLeftMouseUpMask|NSLeftMouseDraggedMask
+
 #define NXSoundPboardTypeOld @"NeXT sound pasteboard type"
 
 @implementation SndView
-+ (void)initialize
+
++ (void) initialize
 {
-  if (self == [SndView class])
-  {
-      (void)[SndView setVersion: (int)0];
+  if (self == [SndView class]) {
+    (void) [SndView setVersion: (int)0];
   }
+
   return;
 }
 
-- (BOOL)acceptsFirstResponder
+- (BOOL) acceptsFirstResponder
 {
 	return (!svFlags.disabled);
 }
 
-- (void)toggleCursor
+- (void) toggleCursor
 {
+
+  /*
     NSRect cursorRect = [self bounds];
-    cursorRect.origin.x = (int)((float)NSMinX(selectionRect) / (float)reductionFactor);
+
+    cursorRect.origin.x = (int) ( (float) NSMinX(selectionRect) /
+				  (float)reductionFactor);
+
     cursorRect.size.width = 1;
     [self lockFocus];
-    NSHighlightRect(cursorRect);
+
+    //    [selectionColour set];
+
+    //    NSRectFillUsingOperation(cursorRect, NSCompositeSourceOver);
+
+    //    NSHighlightRect(cursorRect);
+
     [self unlockFocus];
     [[self window] flushWindow];
     svFlags.cursorOn = !svFlags.cursorOn;
+  */
 }
 
 - hideCursor
 {
+  /*
     if (teNum) {
-            [teNum invalidate];
-            [teNum release];
-            teNum = NULL;
-            if (svFlags.cursorOn) [self toggleCursor];
-            svFlags.cursorOn = NO;
+
+      [teNum invalidate];
+      [teNum release];
+      teNum = NULL;
+
+      if (svFlags.cursorOn)
+	[self toggleCursor];
+
+      svFlags.cursorOn = NO;
     }
+
+  */
     return self;
 }
+
+
 - showCursor
 {
-    if (!teNum) {
-        if (NSWidth(selectionRect) < 0.1) {
-            if (!svFlags.cursorOn) [self toggleCursor];
 
-            teNum = [[NSTimer scheduledTimerWithTimeInterval:0.5
-                                                      target:self
-                                                    selector:@selector(toggleCursor)
-                                                    userInfo:self
-                                                     repeats:YES] retain];
-        }
+  /*
+  if (!teNum) {
+
+    if (NSWidth(selectionRect) < 0.1) {
+
+      if (!svFlags.cursorOn)
+	[self toggleCursor];
+
+      teNum = [[NSTimer scheduledTimerWithTimeInterval:0.5
+			target:self
+			selector:@selector(toggleCursor)
+			userInfo:self
+			repeats:YES] retain];
     }
-    return self;
+  }
+
+  */
+
+  return self;
 }
 
-- (void)initVars
+- (void) initVars
 {
-    NSArray * validSendTypes =
-       [[[NSArray alloc] initWithObjects:NXSoundPboardType, NXSoundPboardTypeOld, nil] autorelease];
-    NSArray * validReturnTypes =
-       [[[NSArray alloc] initWithObjects:NXSoundPboardType, NXSoundPboardTypeOld, nil] autorelease];
+    NSArray * validSendTypes = [[[NSArray alloc]
+				  initWithObjects:NXSoundPboardType,
+				  NXSoundPboardTypeOld, nil] autorelease];
+
+    NSArray * validReturnTypes = [[[NSArray alloc]
+				    initWithObjects:NXSoundPboardType,
+				    NXSoundPboardTypeOld, nil] autorelease];
+
     [NSApp registerServicesMenuSendTypes:validSendTypes
                              returnTypes:validReturnTypes];
+
     delegate = nil;
     _scratchSound = nil;
     sound = nil;
     _pasteboardSound = nil;
-    backgroundColour = [[NSColor whiteColor] retain];//white
-    foregroundColour = [[NSColor blueColor] retain];//black
+
+    /* set colors */
+
+    //    selectionColour = [[NSColor controlHighlightColor] retain];
+    //    selectionColour = [[NSColor purpleColor] retain];
+
+    selectionColour = [[NSColor colorWithCalibratedRed:1. green:.875 blue:.875
+    			alpha:1.] retain];
+
+    //    backgroundColour = [[NSColor controlBackgroundColor] retain];
+    //    backgroundColour = [[NSColor blackColor] retain];
+    //    backgroundColour = [[NSColor clearColor] retain];
+
+    //    backgroundColour = [[NSColor colorWithCalibratedWhite:0.0 alpha:0.1]
+    //		 retain];
+
+    backgroundColour = [[NSColor colorWithCalibratedRed:.25 green:0 blue:0.
+    			alpha:.1] retain];
+
+    //    foregroundColour = [[NSColor blueColor] retain];//black
+
+    foregroundColour = [[NSColor colorWithCalibratedRed:.6 green:.25 blue:1.
+    			alpha:1.] retain];
+
+
     displayMode = NX_SOUNDVIEW_MINMAX;
     selectionRect = NSMakeRect(0.0, 0.0, 0.0, 0.0);
     reductionFactor = 4.0; /* bogus */
@@ -131,7 +192,14 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
     _lastCopyCount = _lastPasteCount = 0;
     teNum = 0;
     notProvidedData = NO;
+    noSelectionDraw = NO;
+    firstDraw = YES;
+
+    selectionRect.origin.x = selectionRect.size.width = 0;
+    
+    return;
 }
+
 - (BOOL)scrollPointToVisible:(const NSPoint)point
 {
     NSRect r;
@@ -182,13 +250,17 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
             [self scaleToFit];
             [self setNeedsDisplay:YES];
             }
+
+    /*
     [[self window] disableFlushWindow];
     [self showCursor];
     [[self window] enableFlushWindow];
+    */
+
     [self tellDelegate:@selector(soundDidChange:)];
     return;
 }
-- (void)paste:(id)sender;
+- (void) paste: (id) sender;
 {
     NSPasteboard *pboard;
 
@@ -198,9 +270,13 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 - (void)selectAll:(id)sender;
 {
     if (!sound) return;
+
+/*
     [[self window] disableFlushWindow];
     [self hideCursor];
     [[self window] enableFlushWindow];
+*/
+
     selectionRect.origin.x = 0;
     selectionRect.size.width = [sound sampleCount];
     [self setNeedsDisplay:YES];
@@ -512,65 +588,136 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
     
 #endif
-    //[super drawRect:rects];//raf
-    //return;//raf
+
+    /*
     [[self window] disableFlushWindow];
     [self hideCursor];
     [[self window] enableFlushWindow];
+    */
 
     insetBounds = [self bounds];
 //        printf("from %g to %g, size %d\n",NSMinX(rects),NSMaxX(rects),(int)NSWidth(rects));
+
     [backgroundColour set];
+
     newRect = rects;
     newRect = NSIntersectionRect(insetBounds , newRect);
-    NSRectFill(newRect);
-//        printf("filling %g , %g, w %d h %d\n",NSMinX(newRect),NSMinY(newRect),(int)NSWidth(newRect),(int)NSHeight(newRect));
-    if (svFlags.bezeled) {
-        NSRectEdge mySides[] = {NSMinYEdge, NSMaxYEdge,
-                                NSMaxXEdge, NSMaxYEdge, 
-                                NSMinXEdge, NSMinYEdge, 
-                                NSMinXEdge, NSMaxXEdge};
-            float myGrays[] = { NSWhite, NSDarkGray,
-                                NSWhite, NSDarkGray,
-                                NSDarkGray, NSLightGray, 
-                                NSDarkGray, NSLightGray};
-            insetBounds = [self bounds];
-            insetBounds  = NSDrawTiledRects(insetBounds , rects , mySides, myGrays, 8);
-            }
-    if (!sound) return;
-    sampCount = [sound sampleCount];
-    if (!sampCount) return; /* do I need to do any other cleanup here? */
-    type = [sound dataFormat];
-    frag = (((SndSoundStruct *)[sound soundStruct])->dataFormat == SND_FORMAT_INDIRECT);
 
-    if (type == SND_FORMAT_LINEAR_8) { maxAmp = 127; sampleSize = 1;}
-    else if (type == SND_FORMAT_LINEAR_24 || type == SND_FORMAT_DSP_DATA_24)
-            { maxAmp = (2 << 23) - 1; sampleSize = 3;}
-    else if (type == SND_FORMAT_LINEAR_32 || type == SND_FORMAT_DSP_DATA_32)
-            { maxAmp = (2 << 31) - 1; sampleSize = 4;}
-    else if (type == SND_FORMAT_MULAW_8 || 
+    if (firstDraw) {
+
+      NSRectFill([self frame]);
+      firstDraw = NO;
+    }
+
+    else
+      NSRectFill(newRect);
+
+//        printf("filling %g , %g, w %d h %d\n",NSMinX(newRect),NSMinY(newRect),(int)NSWidth(newRect),(int)NSHeight(newRect));
+
+    if (svFlags.bezeled) {
+      NSRectEdge mySides[] = {NSMinYEdge, NSMaxYEdge,
+			      NSMaxXEdge, NSMaxYEdge, 
+			      NSMinXEdge, NSMinYEdge, 
+			      NSMinXEdge, NSMaxXEdge};
+      float myGrays[] = { NSWhite, NSDarkGray,
+			  NSWhite, NSDarkGray,
+			  NSDarkGray, NSLightGray, 
+			  NSDarkGray, NSLightGray};
+      insetBounds = [self bounds];
+      insetBounds  = NSDrawTiledRects(insetBounds , rects , mySides, myGrays, 8);
+    }
+
+
+
+    if (!sound)
+      return;
+
+    sampCount = [sound sampleCount];
+
+    if (sampCount <= 0)
+      return;
+
+
+ /* do I need to do any other cleanup here? */
+
+    if (!sampCount)
+      return;
+
+    /* draw sound data */
+
+    type = [sound dataFormat];
+
+    frag = (((SndSoundStruct *) [sound soundStruct])->dataFormat ==
+	    SND_FORMAT_INDIRECT);
+
+    if (type == SND_FORMAT_LINEAR_8) {
+      maxAmp = 127;
+      sampleSize = 1;
+    }
+
+    else
+
+      if (type == SND_FORMAT_LINEAR_24 || type == SND_FORMAT_DSP_DATA_24) {
+	maxAmp = (2 << 23) - 1;
+	sampleSize = 3;
+      }
+
+      else
+
+	if (type == SND_FORMAT_LINEAR_32 || type == SND_FORMAT_DSP_DATA_32) {
+            maxAmp = (2 << 31) - 1;
+	    sampleSize = 4;
+	}
+
+	else
+
+	  if (type == SND_FORMAT_MULAW_8 || 
                     type == SND_FORMAT_LINEAR_16 || 
                     type == SND_FORMAT_EMPHASIZED || 
                     type == SND_FORMAT_COMPRESSED || 
                     type == SND_FORMAT_COMPRESSED_EMPHASIZED || 
-                    type == SND_FORMAT_DSP_DATA_16)
-            { maxAmp = 32767; sampleSize = 2;}
-    else { maxAmp = 32767; sampleSize = 4;}; /* floating point: should search for max value */
-    if (type == SND_FORMAT_MULAW_8) sampleSize = 1;
+                    type == SND_FORMAT_DSP_DATA_16) {
+	    maxAmp = 32767;
+	    sampleSize = 2;
+	  }
+
+ /* floating point: should search for max value */
+
+	  else {
+	    maxAmp = 32767;
+	    sampleSize = 4;
+	  };
+
+    /* mulaw has only one sample, but a maxAmp of 32767 */
+
+    if (type == SND_FORMAT_MULAW_8)
+      sampleSize = 1;
+
     chanCount = [sound channelCount];
     theData = [(Snd *)sound data];
     ampScaler = [self bounds].size.height * .5 / maxAmp;
 
     /* check to see if user desires L&R channels summed.
-          * If so, check to see if there are 2 channels to sum.
-          * If sound is mono, just do 'left' channel
-          */
+       If so, check to see if there are 2 channels to sum.
+       If sound is mono, just do 'left' channel
+    */
+
     doStereo = (stereoMode == SV_STEREOMODE);
+
     if (!doStereo) {
-            if (stereoMode > chanCount - 1) whichChannel = chanCount-1;
-            else whichChannel = stereoMode;
-            }
-    if (doStereo) if (chanCount < 2) { doStereo = NO; whichChannel = 0;}
+      if (stereoMode > chanCount - 1)
+	whichChannel = chanCount-1;
+
+      else
+	whichChannel = stereoMode;
+    }
+
+    if (doStereo)
+
+      if (chanCount < 2) {
+	doStereo = NO;
+	whichChannel = 0;
+      }
 
     /* does the following:
           * 1. set up loop from frame left to right, stepping 1 pixel
@@ -580,6 +727,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
     cacheMaxArray = (float *)malloc(sizeof(float) * (NSWidth(rects) + 3));
     cacheMinArray = (float *)malloc(sizeof(float) * (NSWidth(rects) + 3));
+
 #ifndef QUARTZ_RENDERING
     PSsetlinewidth(0.0);//:ps:
 #else
@@ -589,23 +737,36 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 #endif
 
     if (reductionFactor > 1) {
-        startX = NSMinX(rects);
-        if (NSMinX(rects) > 0.9)
-                startX--; //we need to draw a line leading to first pixel
-        endX = NSMaxX(rects);
-        if (displayMode == NX_SOUNDVIEW_MINMAX && endX < NSMaxX([self frame]))
-                endX++; //we need to draw a line from last pixel
+      startX = NSMinX(rects);
+
+      /* we need to draw a line leading to first pixel */
+
+      if (NSMinX(rects) > 0.9)
+	startX--;
+
+      endX = NSMaxX(rects);
+
+      /* we need to draw a line from last pixel */
+
+      if (displayMode == NX_SOUNDVIEW_MINMAX && endX < NSMaxX([self frame]))
+	endX++;
 
 /* STARTING MAIN CACHE LOOP HERE */
 
         currStartPoint = startX;
         arrayPointer = 0;
-                while (currStartPoint <= endX) {
-        int nextCache;
-        int localMax;
-        int leadsOnFrom;
+
+	while (currStartPoint <= endX) {
+        
+	  int nextCache;
+	  int localMax;
+	  int leadsOnFrom;
+
         /* following returns leadsOn == YES iff cacheIndex == -1 && (currStartPoint - 1) is in previous cache */
-        cacheIndex = [dataList findObjectContaining:currStartPoint next:&nextCache leadsOnFrom:&leadsOnFrom];
+
+	  cacheIndex = [dataList findObjectContaining:currStartPoint
+				 next:&nextCache leadsOnFrom:&leadsOnFrom];
+
         if (cacheIndex != -1) {
             int k,numToMove,cachedStart;
             float *maxVals,*minVals;
@@ -815,141 +976,249 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
   #endif
 #else
 //QUARTZ_RENDERING
+
     CGContextBeginPath(ctx);
+
     if (displayMode == NX_SOUNDVIEW_WAVE) {
+
         float max1 = cacheMaxArray[0] * ampScaler + halfHeight;
         float min1 = cacheMinArray[0] * ampScaler + halfHeight;
-        if (endX >= NSWidth([self frame])) endX = NSWidth([self frame]) - 1;
+
+        if (endX >= NSWidth([self frame]))
+	  endX = NSWidth([self frame]) - 1;
+
         for (i = startX;i<endX;i++) {
-            float max2 = cacheMaxArray[i + 1 - startX] * ampScaler + halfHeight;
-            float min2 = cacheMinArray[i + 1 - startX] * ampScaler + halfHeight;
+
+            float max2 = cacheMaxArray[i + 1 - startX] *
+			ampScaler + halfHeight;
+
+            float min2 = cacheMinArray[i + 1 - startX] *
+			ampScaler + halfHeight;
+
             CGContextMoveToPoint(ctx, i+0.5, max1);
             CGContextAddLineToPoint(ctx, i+0.5, min1);
-            if (i < endX) {/* still one more cached point */
-                if ((min2 <= max1 && min2 >= min1) 			/* if part of the line          */
-                    || (max2 >= min1 && max2 <= max1) 		/*    is outside the one before */
-                    || (max2 >= max1 && min2 <= min1)) {		/* if both points encompass */
+
+	    /* still one more cached point */
+
+            if (i < endX) {
+
+/* if part of the line is outside the one before if both points encompass */
+
+                if ((min2 <= max1 && min2 >= min1) 			
+                    || (max2 >= min1 && max2 <= max1) 		
+                    || (max2 >= max1 && min2 <= min1)) {		
                     max1 = max2; min1 = min2;
                     continue;
                 }
-                /* so we draw line from appropriate end, to start of next line */
-                if (min2 > max1 && max1 != min1)
-                    CGContextMoveToPoint(ctx, i+0.5, max1); /*reverse to top if necessary */
-                CGContextAddLineToPoint(ctx, i+1+0.5, (min2 > max1) ? min2 : max2);
+
+/* so we draw line from appropriate end, to start of next line */
+
+                if (min2 > max1 && max1 != min1) {
+
+		  /*reverse to top if necessary */
+
+		  CGContextMoveToPoint(ctx, i+0.5, max1);
+		}
+
+                CGContextAddLineToPoint(ctx, i + 1 + 0.5,
+					(min2 > max1) ? min2 : max2);
+
                 max1 = max2; min1 = min2;
             }
         }
     }
+
     else {
-        CGContextMoveToPoint(ctx, startX+0.5, cacheMaxArray[0] * ampScaler + halfHeight);
+      CGContextMoveToPoint(ctx, startX + 0.5,
+			cacheMaxArray[0] * ampScaler + halfHeight);
+
         for (i = startX;i<endX;i++) {
-            CGContextAddLineToPoint(ctx, i+0.5, cacheMaxArray[i - startX]* ampScaler + halfHeight);
+	  CGContextAddLineToPoint(ctx, i + 0.5,
+			cacheMaxArray[i - startX]* ampScaler + halfHeight);
         }
-        CGContextMoveToPoint(ctx, startX+0.5, cacheMinArray[0] * ampScaler + halfHeight);
+
+        CGContextMoveToPoint(ctx, startX + 0.5,
+			     cacheMinArray[0] * ampScaler + halfHeight);
+
         for (i = startX;i<endX;i++) {
-            CGContextAddLineToPoint(ctx, i+0.5, cacheMinArray[i - startX]* ampScaler + halfHeight);
+
+            CGContextAddLineToPoint(ctx, i + 0.5,
+			cacheMinArray[i - startX]* ampScaler + halfHeight);
         }
     }
-    [[NSColor redColor] set];
+
+    [foregroundColour set];
+
     CGContextStrokePath(ctx);
 
 #endif
+
 #ifdef DO_TIMING
-            [t4 leave];
-        }
-        printf("Timing: walltime %g apptime %g PStime %g\n",[t4 cumWallTime],[t4 cumAppTime],[t4 cumPSTime]);
-#endif
+
+    [t4 leave];
     }
+        printf("Timing: walltime %g apptime %g PStime %g\n",[t4 cumWallTime],[t4 cumAppTime],[t4 cumPSTime]);
+
+#endif
+
+    }
+
     else { /* I don't bother caching here, as it's so quick to grab actual data */
         int myLast;
         float theValue;
-        i = (int)((float)NSMinX(rects) * (float)reductionFactor); /*first sample*/
-        if (i > 0) i--;
+
+	/* first sample */
+
+        i = (int)((float)NSMinX(rects) * (float)reductionFactor);
+
+        if (i > 0)
+	  i--;
+
         theData = getDataAddresses(i,
                         [sound soundStruct],
                         &m1, 
                         &c1);
-        myLast = (int)((float)(NSMaxX(rects)) *
-                (float)reductionFactor) + 1; /* last sample */
-        if (myLast >= sampCount) myLast = sampCount - 1;
+
+	/* last sample */
+	
+        myLast = (int)((float)(NSMaxX(rects)) * (float)reductionFactor) + 1;
+
+        if (myLast >= sampCount)
+	  myLast = sampCount - 1;
+
         theValue = doStereo ? 
-            getSoundValueStereo(theData,type, c1 * chanCount) :
-            getSoundValue(theData, type, c1 * chanCount + whichChannel);
+	  getSoundValueStereo(theData,type, c1 * chanCount) :
+	  getSoundValue(theData, type, c1 * chanCount + whichChannel);
 
         theValue = theValue * ampScaler + halfHeight;
+
         /* establish initial point */
+
         j = (float)((float)i / (float)reductionFactor);
+
 #ifndef QUARTZ_RENDERING
+
         PSmoveto((int)j + 0.5, theValue);
+
 #else
+
         CGContextMoveToPoint(ctx, (int) j + 0.5, theValue);
+
 #endif
+
         while (i <= myLast) {
-            if (c1 >= m1) theData = getDataAddresses(i,
-                                    [sound soundStruct],&m1,&c1);
-            theValue = doStereo ? 
+
+	  if (c1 >= m1)
+	    theData = getDataAddresses(i, [sound soundStruct],
+				       &m1,&c1);
+	  theValue = doStereo ? 
                 getSoundValueStereo(theData,type,c1 * chanCount) :
                 getSoundValue(theData, type, c1 * chanCount + whichChannel);
-            theValue = theValue * ampScaler + halfHeight;		
-            j = (float)((float)i / (float)reductionFactor);
+
+	  theValue = theValue * ampScaler + halfHeight;		
+
+	  j = (float)((float)i / (float)reductionFactor);
+
 #ifndef QUARTZ_RENDERING
-            PSlineto((int)j+0.5, theValue);
-            if (svFlags.drawsCrosses && reductionFactor <= CROSSTHRESH) {
-                PSrmoveto(0,3);
-                PSrlineto(0,-6);
-                PSrmoveto(0,3);
-            }
+
+	  PSlineto((int)j+0.5, theValue);
+
+	  if (svFlags.drawsCrosses && reductionFactor <= CROSSTHRESH) {
+
+	    PSrmoveto(0,3);
+	    PSrlineto(0,-6);
+	    PSrmoveto(0,3);
+	  }
 #else
-            CGContextAddLineToPoint(ctx, (int) j + 0.5, theValue);
-            if (svFlags.drawsCrosses && reductionFactor <= CROSSTHRESH) {
-                CGContextMoveToPoint(ctx, (int) j + 0.5, theValue+3);
-                CGContextAddLineToPoint(ctx, (int) j + 0.5, theValue-3);
-                CGContextMoveToPoint(ctx, (int) j + 0.5, theValue+3);
-            }
+	  CGContextAddLineToPoint(ctx, (int) j + 0.5, theValue);
+
+	  if (svFlags.drawsCrosses && reductionFactor <= CROSSTHRESH) {
+	    
+	    CGContextMoveToPoint(ctx, (int) j + 0.5, theValue+3);
+	    CGContextAddLineToPoint(ctx, (int) j + 0.5, theValue-3);
+	    CGContextMoveToPoint(ctx, (int) j + 0.5, theValue+3);
+	  }
 
 #endif
-            i++;
-            c1++;
+	  i++;
+	  c1++;
         }
+
         [foregroundColour set];
+
 #ifndef QUARTZ_RENDERING
+
         PSstroke();
+
 #else
+
         CGContextStrokePath(ctx);
+
 #endif
+
     }
+
     free(cacheMaxArray);
     free(cacheMinArray);
+
     if (NSWidth(selectionRect) < 0.1) {
-            [[self window] disableFlushWindow];
-            [self showCursor];
-            [[self window] enableFlushWindow];
-            return; /* zero compare not good idea? */
+
+      /*
+      [[self window] disableFlushWindow];
+      [self showCursor];
+      [[self window] enableFlushWindow];
+      */
+
+ /* zero compare not good idea? */
+      return;
     }
+
+    /* draw selection rect */
+
     scaledSelRect = selectionRect;
-    scaledSelRect.origin.x = (int)((float)NSMinX(selectionRect) / (float)reductionFactor);
-    scaledSelRect.size.width = (int)((NSMaxX(selectionRect) - 1) / reductionFactor)
-                  - NSMinX(scaledSelRect) + 1;
+    scaledSelRect.origin.x = (int)((float)NSMinX(selectionRect) /
+			   (float)reductionFactor);
 
-    if (!((NSMinX(scaledSelRect) >= NSMinX(rects) && NSMinX(scaledSelRect) <= NSMaxX(rects)) ||
-        (NSMaxX(scaledSelRect) >= NSMinX(rects) && NSMaxX(scaledSelRect) <= NSMaxX(rects)) ||
-        (NSMinX(scaledSelRect) <= NSMinX(rects) && NSMaxX(scaledSelRect) >= NSMaxX(rects))
-        ))
-            return;
+    scaledSelRect.size.width = (int)((NSMaxX(selectionRect) - 1) /
+			     reductionFactor) - NSMinX(scaledSelRect) + 1;
+
+    if (!((NSMinX(scaledSelRect) >= NSMinX(rects) &&
+	   NSMinX(scaledSelRect) <= NSMaxX(rects)) ||
+	  (NSMaxX(scaledSelRect) >= NSMinX(rects) && 
+	   NSMaxX(scaledSelRect) <= NSMaxX(rects)) ||
+        (NSMinX(scaledSelRect) <= NSMinX(rects) &&
+	 NSMaxX(scaledSelRect) >= NSMaxX(rects)) ) || noSelectionDraw)
+      return;
+
     else {
-        NSRect highlightRect = [self bounds];
-//		printf("HIGHLIGHTing scaled sel rect... %g to %g\n",NX_X(&scaledSelRect),NX_MAXX(&scaledSelRect));
-//		printf("HIGHLIGHTing rects... %g to %g\n",NX_X(rects),NX_MAXX(rects));
-        highlightRect.origin.x = (int)((NSMinX(scaledSelRect) >= NSMinX(rects)) ?
-                        NSMinX(scaledSelRect) : NSMinX(rects));
 
-        highlightRect.size.width = (int)(((NSMaxX(scaledSelRect) <= NSMaxX(rects)) ?
-                        NSMaxX(scaledSelRect) :
-                        NSMaxX(rects) )   - NSMinX(highlightRect) + 0.1);
+      NSRect highlightRect = [self bounds];
 
-        NSHighlightRect(highlightRect);
-//		printf("HIGHLIGHT %g to %g\n",NX_X(&highlightRect),NX_MAXX(&highlightRect));
+      /*
+    		fprintf(stderr,"HIGHLIGHTing scaled sel rect... %g to %g\n",
+			NX_X(&scaledSelRect),NX_MAXX(&scaledSelRect));
+
+		fprintf(stderr,"HIGHLIGHTing rects... %g to %g\n",
+			NX_X(rects),NX_MAXX(rects));
+      */
+
+      highlightRect.origin.x = (int)((NSMinX(scaledSelRect) >= NSMinX(rects)) ?
+			     NSMinX(scaledSelRect) : NSMinX(rects));
+
+      highlightRect.size.width = (int)(((NSMaxX(scaledSelRect) <=
+			NSMaxX(rects)) ? NSMaxX(scaledSelRect) :
+			NSMaxX(rects) )   - NSMinX(highlightRect) + 0.1);
+
+      [selectionColour set];
+
+      NSRectFillUsingOperation(highlightRect, NSCompositeDestinationOver);
+
+      //      NSHighlightRect(highlightRect);
+
+//		printf("HIGHLIGHT %g to %g\n",NX_X(&highlightRect),
+//			NX_MAXX(&highlightRect));
     }
+
     return;
 }
 
@@ -963,6 +1232,25 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 {
     return backgroundColour;
 }
+
+#ifdef QUARTZ_RENDERING
+
+- (void) setSelectionColor : (NSColor *) color
+{
+    [selectionColour release];
+    selectionColour = [color copy];
+
+    [self setNeedsDisplay:YES];
+}
+
+- (NSColor *) selectionColor
+{
+    return selectionColour;
+}
+
+#endif
+
+
 - (void)setForegroundColor:(NSColor *)color
 {
     [foregroundColour release];
@@ -979,7 +1267,11 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     NSPasteboard *pboard = [NSPasteboard generalPasteboard];
 //	printf("Freeing SndView\n");
     [self tellDelegate:@selector(willFree:)];
+
+    /*
     [self hideCursor];
+    */
+
     if ((_lastCopyCount == [pboard changeCount]) && notProvidedData) {
     /* i.e. we were the last ones to put something on the pasteboard, but
           * have not provided it yet
@@ -1007,7 +1299,9 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 - (void)setSelection:(int)firstSample size:(int)sampleCount
 {
     NSRect scaledSelection = selectionRect;
-    [self hideCursor];
+
+
+    //    [self hideCursor];
 
     scaledSelection.origin.x  = scaledSelection.origin.x / reductionFactor - 1;
     scaledSelection.size.width = scaledSelection.size.width / reductionFactor + 2;
@@ -1091,9 +1385,10 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 - (void)mouseDown:(NSEvent *)theEvent 
 {
     NSPoint		mouseDownLocation, /*mouseUpLocation,*/ mouseLocation,timerMouseLocation;
-    NSRect		visibleRect, adjSelRect;
+    NSRect		visibleRect, adjSelRect, lastRect, lastAdjRect;
     NSPoint		selPoint;
     float		oldx=0, dx=0;
+    //    float		frameDiff, lastFrameDiff;
     NSEvent *event;
     BOOL timer = NO;
     BOOL useTimerLocation = NO;
@@ -1102,6 +1397,8 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     int			realStart = ((float)NSMinX(selectionRect) + .1);
     int			realEnd = ((float)NSMaxX(selectionRect) + .1) - 1;
     BOOL		direction;
+    BOOL		firstDragEvent = YES;
+    
 	
 	/* in order to preserve the start and end points of a selection when
 	 * only the 'other' end is moved, we keep the original values here.
@@ -1117,13 +1414,31 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 //	return [super mouseDown:theEvent];
 //    }
 
-    [self hideCursor];
+    //    [self hideCursor];
+
     [[self window] makeFirstResponder:self];
-    if (!sound) return;/* so nothing can be highlighted etc if there is no sound */
+
+/* so nothing can be highlighted etc if there is no sound */
+
+    if (!sound)
+      return;
+
+    if ( [sound sampleCount] <= 0 )
+      return;
+
+    /* hmmmmm ..... */
+
+    /* invalidate previous selection rect */
+
+    if (selCacheRect.size.width > 0.) {
+      [self setNeedsDisplayInRect:selCacheRect];
+    }
+
     if ([theEvent clickCount] == 3) {
             [self selectAll:self];
             return;
     }
+
     [self lockFocus];
 
   /* we're now interested in mouse dragged events */
@@ -1151,198 +1466,437 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
         else adjSelRect.size.width = ceil(adjSelRect.size.width);
         adjSelRect.size.width -= NSMinX(adjSelRect);
 
+	/* HMMMMM .... */
+
+	/* to zap current selection */
+
         if (NSWidth(selectionRect) > 0.1) {
-                NSHighlightRect(adjSelRect);/* to zap current selection */
-//			printf("zapping %g to %g\n",NX_X(&adjSelRect),NX_MAXX(&adjSelRect));
-                selectionRect = NSMakeRect(mouseDownLocation.x, 0.0, 0.0, 0.0);
-                }
+
+	  //	  NSHighlightRect(adjSelRect);
+
+	  //	  [self setNeedsDisplay:YES];
+
+
+	  /* remember our rect for future erasure */
+
+	  selCacheRect = adjSelRect;
+
+	  [selectionColour set];
+
+	  NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
+
+
+	  //			printf("zapping %g to %g\n",NX_X(&adjSelRect),NX_MAXX(&adjSelRect));
+
+	  selectionRect = NSMakeRect(mouseDownLocation.x, 0.0, 0.0, 0.0);
 	}
-	else {/* if zero selection, (insertion point) what do we do? */
-            if (NSWidth(selectionRect) > 0.1) {
-                hilStart = ((int)((float)NSMinX(selectionRect) + 0.01) / reductionFactor);
-                hilEnd = (((int)((float)NSMaxX(selectionRect) + 0.01) - 1) / reductionFactor);
-                if (oldx < (hilStart + hilEnd) / 2) oldx = hilStart;
-                else oldx = hilEnd + 1;
+    }
+
+    /* if zero selection, (insertion point) what do we do? */
+
+    else {
+
+      if (NSWidth(selectionRect) > 0.1) {
+
+	hilStart = ((int)((float)NSMinX(selectionRect) + 0.01) /
+		    reductionFactor);
+
+	hilEnd = (((int)((float)NSMaxX(selectionRect) + 0.01) - 1) /
+		  reductionFactor);
+
+	if (oldx < (hilStart + hilEnd) / 2)
+	  oldx = hilStart;
+
+	else
+	  oldx = hilEnd + 1;
+
 //			printf("extending selection\n");
-		}
-            else {
-                if (oldx < ((float)NSMinX(selectionRect) / (float)reductionFactor))
-                        oldx = (int)((float)NSMinX(selectionRect) / (float)reductionFactor) + 1;
-                else oldx = (int)((float)NSMinX(selectionRect) / (float)reductionFactor);
-//			printf("zero selection, extending\n");
-            }
-	}
-        event = theEvent;
-        while ([event type] != NSLeftMouseUp) {
-            visibleRect = [self visibleRect];
 
-            if (!useTimerLocation) mouseLocation = [event locationInWindow];
-            else mouseLocation = timerMouseLocation;
-            mouseLocation = [self convertPoint:mouseLocation fromView:nil];
+      }
 
-            selPoint = mouseLocation;
-                    /* selFrame needs to be 'correct' for scrolling
-                    * but actual selection is -1
-                    */
-            mouseLocation.x--;
-            if (mouseLocation.x < -1) {
-                mouseLocation.x = -1;
-                selPoint.x = 0;
-                            }
-            if (selPoint.x >= NSMaxX([self bounds])) {
-                selPoint.x = (int)NSMaxX([self bounds]);
-                mouseLocation.x = selPoint.x - 1;
+      else {
+
+	if (oldx < ((float)NSMinX(selectionRect) / (float)reductionFactor))
+	  oldx = (int)((float)NSMinX(selectionRect) /
+		       (float)reductionFactor) + 1;
+
+	else
+	  oldx = (int)((float)NSMinX(selectionRect) / (float)reductionFactor);
+
+	//			printf("zero selection, extending\n");
+
+      }
+    }
+
+    event = theEvent;
+
+    while ([event type] != NSLeftMouseUp) {
+      visibleRect = [self visibleRect];
+
+      if (!useTimerLocation)
+	mouseLocation = [event locationInWindow];
+	  
+      else
+	mouseLocation = timerMouseLocation;
+
+      mouseLocation = [self convertPoint:mouseLocation fromView:nil];
+
+      selPoint = mouseLocation;
+
+/* selFrame needs to be 'correct' for scrolling but actual selection is -1 */
+
+      mouseLocation.x--;
+
+      if (mouseLocation.x < -1) {
+	mouseLocation.x = -1;
+	selPoint.x = 0;
+      }
+
+      if (selPoint.x >= NSMaxX([self bounds])) {
+	selPoint.x = (int)NSMaxX([self bounds]);
+	mouseLocation.x = selPoint.x - 1;
+
     //			printf("max'd mouseLocation: %g\n",mouseLocation.x);
-                            }
+      }
 
-                            /*
-                            * make sure the selection will be entirely visible
-                            */
-            if (!NSPointInRect(selPoint , visibleRect) && (selPoint.x != NSMaxX(visibleRect))) {	
-                [[self window] disableFlushWindow];
-                [self scrollPointToVisible:selPoint];
-    //			printf("scrolled to: %g %g\n",selPoint.x, selPoint.y);
-    //			printf("visibleRect: %g %g %g %g\n",NX_X(&visibleRect), NX_Y(&visibleRect), NX_WIDTH(&visibleRect), NX_HEIGHT(&visibleRect));
-                [[self window] enableFlushWindow];
+      /* make sure the selection will be entirely visible */
+          
+      if (!NSPointInRect(selPoint , visibleRect) &&
+	  (selPoint.x != NSMaxX(visibleRect))) {
 
-                            /*
-                            * note that we scrolled and start generating timer events for
-                            * autoscrolling
-                            */
-                scrolled = YES;
-                startTimer(timer);
-                } else {
-                            /* no scrolling, so stop any timer */
-                    stopTimer(timer);
-                    }
+	[[self window] disableFlushWindow];
+	[self scrollPointToVisible:selPoint];
 
-            dx = mouseLocation.x - oldx + 1;
-            direction = (dx > 0);
-            adjSelRect.origin.x = mouseLocation.x - dx + 1;
-            if (dx < 0) {
-                dx = -dx;
-                adjSelRect.origin.x -= dx;
-                            }
-            adjSelRect.size.width = dx;
-            if (dx) NSHighlightRect(adjSelRect);
-            if (NSMinX(adjSelRect) < 0) {
-                adjSelRect.size.width += NSMinX(adjSelRect);
-                adjSelRect.origin.x = 0;
-                            }
-            if (dx) {
-                if (hilStart == -1) {
-//				printf("(0)");
-                    hilStart = NSMinX(adjSelRect);
-                    hilEnd = (float)NSMaxX(adjSelRect) - 1.0;
-                    }
-                else if (NSMinX(adjSelRect) < hilStart) { /* new start point. need to adjust end? */
-                                    /* if endpoint of selection is within current sel, we must have
-                                    * backtracked right over the current selection, highlighting a new portion,
-                                    * but unhighlighting the latter parts of the old selection.
-                                    */
+	    /*
+	      printf("scrolled to: %g %g\n",selPoint.x, selPoint.y);
+	      printf("visibleRect: %g %g %g %g\n",NX_X(&visibleRect),
+			NX_Y(&visibleRect), NX_WIDTH(&visibleRect),
+			NX_HEIGHT(&visibleRect));
+	    */
+
+	[[self window] enableFlushWindow];
+
+	/* note that we scrolled and start generating timer events for
+	   autoscrolling */
+
+	scrolled = YES;
+	startTimer(timer);
+      }
+
+      else {
+
+	/* no scrolling, so stop any timer */
+
+	stopTimer(timer);
+      }
+
+      dx = mouseLocation.x - oldx + 1;
+      direction = (dx > 0);
+      adjSelRect.origin.x = mouseLocation.x - dx + 1;
+      
+      if (dx < 0) {
+	dx = -dx;
+	adjSelRect.origin.x -= dx;
+      }
+      
+      adjSelRect.size.width = dx;
+      
+      /* HMMMMMM ...... */
+      
+      if (dx) {
+	      
+	/*
+	  [selectionColour set];
+	      
+	  NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
+	*/
+
+	//	      NSHighlightRect(adjSelRect);
+	//	      [self setNeedsDisplay:YES];
+
+	/* adjust the size of selCacheRect to be the size of the union
+	   of selCacheRect and adjSelRect */
+
+	//	      selCacheRect = NSUnionRect( selCacheRect, adjSelRect);
+      }
+
+      if (NSMinX(adjSelRect) < 0) {
+	adjSelRect.size.width += NSMinX(adjSelRect);
+	adjSelRect.origin.x = 0;
+      }
+
+      if (dx) {
+
+	if (hilStart == -1) {
+	  //				printf("(0)");
+	  hilStart = NSMinX(adjSelRect);
+	  hilEnd = (float)NSMaxX(adjSelRect) - 1.0;
+	}
+
+	else
+
+	  /* new start point. need to adjust end? */
+
+	  if (NSMinX(adjSelRect) < hilStart) {
+		  
+/* if endpoint of selection is within current sel, we must have
+   backtracked right over the current selection, highlighting a new portion,
+   but unhighlighting the latter parts of the old selection. */
+
     //				printf("(1)");
-                    if (NSMaxX(adjSelRect) - 1 >= hilStart) hilEnd = hilStart - 1;
-                    hilStart = NSMinX(adjSelRect);
-                    }
-                else if (NSMaxX(adjSelRect) > hilEnd + 1) {/* tack on new addition to selection */
-    //				printf("(2)");
-                    if (NSMinX(adjSelRect) <= hilEnd) hilStart = hilEnd + 1;
-                    hilEnd = NSMaxX(adjSelRect) -1;
-                    }
-                else if (NSMinX(adjSelRect) <= hilEnd && NSMinX(adjSelRect) >= hilStart) {
-                                    /* we have shortened selection, by backtracking from end */
-                    if (!direction) {
-//					printf("(3)");
-                        hilEnd = NSMinX(adjSelRect) - 1;
-                                        }
-                    else { /* shorten selection by forward tracking from start */
+	    
+	    if (NSMaxX(adjSelRect) - 1 >= hilStart)
+	      hilEnd = hilStart - 1;
+	    
+	    hilStart = NSMinX(adjSelRect);
+	  }
+	
+	  else
+
+	    /* tack on new addition to selection */
+	    
+	    if (NSMaxX(adjSelRect) > hilEnd + 1) {
+	      
+	      //				printf("(2)");
+	      
+	      if (NSMinX(adjSelRect) <= hilEnd)
+		hilStart = hilEnd + 1;
+	      
+	      hilEnd = NSMaxX(adjSelRect) -1;
+	    }
+	
+	    else
+	      
+	      /* we have shortened selection, by backtracking from end */
+	      
+	      if (NSMinX(adjSelRect) <= hilEnd &&
+		  NSMinX(adjSelRect) >= hilStart) {
+		
+		if (!direction) {
+		  
+		  //					printf("(3)");
+		  
+		  hilEnd = NSMinX(adjSelRect) - 1;
+		}
+		
+/* shorten selection by forward tracking from start */
+
+		else { 
+
     //					printf("(4)");
-                        hilStart = NSMaxX(adjSelRect);
-                    }
-                    if (hilEnd < hilStart) {/* printf("(5)"); */ hilStart = hilEnd = -1; } /* empty selection */
-                }
-    //				else printf("(6)");
-                if (hilStart != -1) {
+
+		  hilStart = NSMaxX(adjSelRect);
+		}
+		
+		/* empty selection */
+		
+		if (hilEnd < hilStart) {
+
+		  /* printf("(5)"); */
+
+		  hilStart = hilEnd = -1;
+		}
+	      }
+	      
+	      //				else printf("(6)");
+	if (hilStart != -1) {
     //				printf("(7)");
-                    selectionRect.origin.x = ceil((float)hilStart * (float)reductionFactor);
+	  selectionRect.origin.x = ceil((float)hilStart * (float)reductionFactor);
 
-                    selectionRect.size.width = (float)reductionFactor * (float)(hilEnd + 1);
-                    if ((int)selectionRect.size.width == ceil(selectionRect.size.width))
-                            selectionRect.size.width -= 1;
-                    else selectionRect.size.width = (int)selectionRect.size.width;
-                    selectionRect.size.width -= (ceil(reductionFactor * hilStart) - 1);
+	  selectionRect.size.width = (float)reductionFactor * (float)(hilEnd + 1);
 
-                }
-                else {
+	  if ((int)selectionRect.size.width == 
+	      ceil(selectionRect.size.width))
+
+	    selectionRect.size.width -= 1;
+
+	  else
+	    selectionRect.size.width = (int)selectionRect.size.width;
+	  selectionRect.size.width -= (ceil(reductionFactor * hilStart) - 1);
+	  
+	}
+
+	else {
 //				printf("(8)");
-                    selectionRect.origin.x = ceil((float)NSMinX(adjSelRect) * (float)reductionFactor);
-                    selectionRect.size.width = 0;
-                }
-                            /* now check to see if we need to adjust to original values.
-                            * First, check to see if initial point has changed. If not, set
-                            * original start, and adjust length. If so, discard 'original' point
-                            */
+	  selectionRect.origin.x = ceil((float)NSMinX(adjSelRect) * (float)reductionFactor);
+	  selectionRect.size.width = 0;
+	}
+
+	/* now check to see if we need to adjust to original values.
+	 * First, check to see if initial point has changed. If not, set
+	 * original start, and adjust length. If so, discard 'original' point
+	 */
+
     //			printf("rs %d re %d ",realStart,realEnd);
-                if ((realStart != -1) && hilStart == (int)(realStart / reductionFactor)) {
+
+	if ((realStart != -1) && hilStart == (int)(realStart / reductionFactor)) {
     //				printf("(9)");
-                    selectionRect.size.width = ceil((hilEnd + 1) * reductionFactor) - realStart;
-                    selectionRect.origin.x = realStart;
-                    }
-                else realStart = -1;
-                if ((realEnd != -1) && hilEnd == (int)(realEnd / reductionFactor)) {
+	  selectionRect.size.width = ceil((hilEnd + 1) * reductionFactor) - realStart;
+	  selectionRect.origin.x = realStart;
+	}
+
+	else realStart = -1;
+	if ((realEnd != -1) && hilEnd == (int)(realEnd / reductionFactor)) {
 //				printf("(a)");
-                        selectionRect.size.width = (int)(realEnd - NSMinX(selectionRect)) + 1;
-                }
-                else realEnd = -1;
+	  selectionRect.size.width = (int)(realEnd - NSMinX(selectionRect)) + 1;
+	}
+
+	else
+	  realEnd = -1;
+
                             /* Finally, adjust selection width down to sound size, if it ends on last pixel.
                             * When the num of pixels is not a direct multiple of redfact, the calculation
                             * for selectionRect, based on the last pixel highlighted, will come out with
                             * a figure slightly too high.
                             */
-                if ((int)((float)NSMaxX(selectionRect) + 0.1) > [sound sampleCount]) {
-                        selectionRect.size.width = [sound sampleCount] - NSMinX(selectionRect);
-                }
+
+	if ((int)((float)NSMaxX(selectionRect) + 0.1) > [sound sampleCount]) {
+	  
+	  selectionRect.size.width = [sound sampleCount] - NSMinX(selectionRect);
+	}
     //			printf("selection changed to %g, %g\n",NX_X(&selectionRect),NX_WIDTH(&selectionRect));
-                if (svFlags.continuous) [self tellDelegate:@selector(selectionChanged:)];
-            }
+        
+        if (svFlags.continuous)
+	  [self tellDelegate:@selector(selectionChanged:)];
+      }
 
     //		printf("adjselrect start,end %g %g, dx %g, hs %d he %d oldx1 %g ", NX_X(&adjSelRect),NX_MAXX(&adjSelRect),dx,hilStart,hilEnd,oldx);
 
-                            /* now show what we've done */
-            [[self window] flushWindow];
+      [selectionColour set];
+	      
+      NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
 
-                            /*
-                            * if we autoscrolled, flush any lingering window server events to make
-                            * the scrolling smooth
-                            */
-            if (scrolled) {
-                //PSWait();
-                scrolled = NO;
+	      //	      NSHighlightRect(adjSelRect);
+	      //	      [self setNeedsDisplay:YES];
+
+      /* adjust the size of selCacheRect to be the size of the union
+	 of selCacheRect and adjSelRect */
+
+      selCacheRect = NSUnionRect( selCacheRect, adjSelRect);
+
+      /* if we have backtracked, invalidate rects that have been selected
+	 during this drag */
+
+      if ( !firstDragEvent &&
+	   selectionRect.size.width < lastRect.size.width ) {
+
+	NSRect	selectDiff;
+
+	/*
+	fprintf(stderr,"selectionRect:	%5.f:%5.f	%5.f,%5.f\n",
+		(selectionRect.origin.x), (selectionRect.origin.y),
+		(selectionRect.size.width), (selectionRect.size.height));
+
+	fprintf(stderr,"adjSelRect:	%5.f:%5.f	%5.f,%5.f\n",
+		adjSelRect.origin.x, adjSelRect.origin.y,
+		adjSelRect.size.width, adjSelRect.size.height);
+
+	fprintf(stderr,"lastRect:	%5.f:%5.f	%5.f,%5.f\n",
+		lastRect.origin.x, lastRect.origin.y,
+		lastRect.size.width, lastRect.size.height);
+
+	fprintf(stderr,"lastAdjRect:	%5.f:%5.f	%5.f,%5.f\n",
+		lastAdjRect.origin.x, lastAdjRect.origin.y,
+		lastAdjRect.size.width, lastAdjRect.size.height);
+	*/
+
+	if ( selectionRect.origin.x == lastRect.origin.x ) {
+
+	  //	  fprintf(stderr,"above\n");
+
+	  selectDiff.size.width = (lastAdjRect.origin.x -
+				adjSelRect.origin.x) + 
+				lastAdjRect.size.width + 1;
+
+	  selectDiff.size.height = adjSelRect.size.height;
+
+	  selectDiff.origin.x = adjSelRect.origin.x;
+	  selectDiff.origin.y = adjSelRect.origin.y;
+	}
+
+	else {
+
+	  //	  fprintf(stderr,"below\n");
+
+	  selectDiff.size.width = (adjSelRect.origin.x - 
+				   lastAdjRect.origin.x) + 2;
+
+	  selectDiff.size.height = adjSelRect.size.height;
+
+	  selectDiff.origin.x = lastAdjRect.origin.x - 1;
+	  selectDiff.origin.y = adjSelRect.origin.y;
+	}
+
+	/*
+	fprintf(stderr,"selectDiff:	%5.f:%5.f	%5.f,%5.f\n\n",
+		selectDiff.origin.x, selectDiff.origin.y,
+		selectDiff.size.width, selectDiff.size.height);
+	*/
+
+	selectDiff = NSIntersectionRect( selectDiff, [self bounds] );
+
+	noSelectionDraw=YES;
+	[self setNeedsDisplayInRect:selectDiff];
+	noSelectionDraw=NO;
+      }
+
+      /* now show what we've done */
+	    
+      [[self window] flushWindow];
+
+      /*
+        if we autoscrolled, flush any lingering window server events to make
+        the scrolling smooth
+      */
+      if (scrolled) {
+	// PSWait();
+	scrolled = NO;
+      }
+      
+      /* save the current mouse location, just in case we need it again */
+
+      oldx = mouseLocation.x + 1;
+//		printf(" oldx2: %g\n",oldx);
+
+
+      lastRect = selectionRect;
+      lastAdjRect = adjSelRect;
+      firstDragEvent = NO;
+
+      if (!useTimerLocation)
+	mouseLocation = [event locationInWindow];
+
+      else
+	mouseLocation = timerMouseLocation;
+
+            if (![[self window] nextEventMatchingMask:MOVE_MASK
+				untilDate:[NSDate date]
+				inMode:NSEventTrackingRunLoopMode
+				dequeue:NO]) {
+
+/* no mouseMoved or mouseUp event immediately available, so take mouseMoved,
+   mouseUp, or timer */
+
+	      event = [[self window]
+			nextEventMatchingMask:MOVE_MASK|NSPeriodicMask];
             }
 
-                            /* save the current mouse location, just in case we need it again */
-            oldx = mouseLocation.x + 1;
-//		printf(" oldx2: %g\n",oldx);
-            if (!useTimerLocation) mouseLocation = [event locationInWindow];
-            else mouseLocation = timerMouseLocation;
+	    else {
 
-            if (![[self window] nextEventMatchingMask:MOVE_MASK untilDate:[NSDate date] inMode:NSEventTrackingRunLoopMode dequeue:NO]) {
-                            /*
-                            * no mouseMoved or mouseUp event immediately available, so take
-                            * mouseMoved, mouseUp, or timer
-                            */
-                event = [[self window] nextEventMatchingMask:MOVE_MASK|NSPeriodicMask];
-            } else {
-                            /* get the mouseMoved or mouseUp event in the queue */
+	      /* get the mouseMoved or mouseUp event in the queue */
+
                 event = [[self window] nextEventMatchingMask:MOVE_MASK];
             }
 
-                            /* if a timer event, mouse location isn't valid, so we'll set it */
+	    /* if a timer event, mouse location isn't valid, so we'll set it */
+	    
             if ([event type] == NSPeriodic) {
-                timerMouseLocation = mouseLocation;
-                useTimerLocation = YES;
+	      timerMouseLocation = mouseLocation;
+	      useTimerLocation = YES;
             }
-            else useTimerLocation = NO;
+	    
+            else
+	      useTimerLocation = NO;
     }
     
   /* mouseUp, so stop any timer and unlock focus */
@@ -1358,28 +1912,68 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 //	printf("FINAL SELECTION %g, %g\n",NX_X(&selectionRect),NX_WIDTH(&selectionRect));
     [[self window] setAcceptsMouseMovedEvents:NO];
     if (reductionFactor < 1) [self setNeedsDisplay:YES]; /* to align to sample boundaries! */
-    if (NSWidth(selectionRect) < 0.1)  [self showCursor];
+
+    //    if (NSWidth(selectionRect) < 0.1)  [self showCursor];
+
     [self tellDelegate:@selector(selectionChanged:)];
 }
 
-- (void)pasteboard:(NSPasteboard *)thePasteboard provideDataForType:(NSString *)pboardType
+- (void) pasteboard:(NSPasteboard *)thePasteboard provideDataForType:(NSString *)pboardType
 {
 	BOOL ret;
-//	printf("provide data (SndView): %p type: %s (%s)\n", thePasteboard, pboardType, NXSoundPboardType);
-//	printf("length %d\n",[sound sampleCount]);
-    if (!([NXSoundPboardType isEqualToString:pboardType] || [NXSoundPboardTypeOld isEqualToString:pboardType])) return;
-	if (!_pasteboardSound) printf("nil sound for paste\n");
-	[_pasteboardSound compactSamples];
-//	printf("Pasting size %d %d\n",[_pasteboardSound dataSize],[_pasteboardSound soundStructSize]);
 
-        ret = [thePasteboard setData:[NSData dataWithBytes:(char *)[_pasteboardSound soundStruct] length:(int)[_pasteboardSound soundStructSize]] forType:pboardType];
+	/*
+	printf("provide data (SndView): %p type: %s (%s)\n",
+	thePasteboard, pboardType, NXSoundPboardType);
+	printf("length %d\n",[sound sampleCount]);
+	*/
+
+	if (!([NXSoundPboardType isEqualToString:pboardType] ||
+	      [NXSoundPboardTypeOld isEqualToString:pboardType]))
+	  return;
+
+	if (!_pasteboardSound)
+	  printf("nil sound for paste\n");
+
+	[_pasteboardSound compactSamples];
+
+	/*
+	printf("Pasting size %d %d\n",
+		[_pasteboardSound dataSize],
+		[_pasteboardSound soundStructSize]);
+	*/
+
+	/* sound data and full header must be sent to the pasteboard here */
+
+        ret = [thePasteboard setData:
+		[NSData dataWithBytes:(char *)[_pasteboardSound soundStruct]
+			length:(int)[_pasteboardSound soundStructSize]]
+			forType:pboardType];
 	
 	notProvidedData = NO;
-	if (!ret) printf("Sound paste error\n");
+
+	if (!ret)
+	  printf("Sound paste error\n");
 }
 
 - (void)play:sender
 {
+
+#ifdef macosx
+
+  int beginSample = (int)((float)NSMinX(selectionRect) + 0.1);
+  int sampleCount = (int)((float)NSWidth(selectionRect) + 0.1);
+
+  if (NSWidth(selectionRect) < 0.1)
+    [sound play:self];
+
+  else
+    [sound play:self beginSample:beginSample sampleCount:sampleCount];
+
+  return;
+
+#else
+
     [self stop:self];
     if (!_scratchSound) {
         _scratchSound = [[Snd alloc] init];
@@ -1392,6 +1986,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
             count:(int)((float)NSWidth(selectionRect) + 0.1)];
     [_scratchSound play:self];
     return;
+#endif
 }
 - (void)pause:sender
 {
@@ -1591,6 +2186,10 @@ char *SndSoundError(int err);
 
 - (void)stop:(id)sender
 {
+#ifdef macosx
+  [sound stop:self];
+  return;
+#else
     int stat;
     int error=0;
     if (recordingSound) {
@@ -1607,6 +2206,7 @@ char *SndSoundError(int err);
                 return;
         }
     }
+#endif
 }
 
 - (float)reductionFactor
@@ -1621,9 +2221,11 @@ char *SndSoundError(int err);
     if (reductionFactor != redFactor) [self invalidateCache];
     reductionFactor = redFactor;
     [[self window] disableFlushWindow];
-    [self hideCursor];
+
+    //    [self hideCursor];
+
     [self sizeToFit];
-    [self showCursor];
+    //    [self showCursor];
     [[self window] enableFlushWindow];
     return YES;
 }
@@ -1641,77 +2243,197 @@ char *SndSoundError(int err);
     [self setNeedsDisplay:YES];
     return self;
 }
+
 - (void)sizeToFit
 {
+
     float aWidth;
-    NSRect frame = [self frame];
+
+    NSRect newFrame = [self frame];
     NSRect zapRect = [self bounds];
-    
+
+
     [[self window] disableFlushWindow];
-    [self hideCursor];
 
-    if (!sound) aWidth = 5;
-    if (![sound sampleCount]) aWidth = 5;
+    //    [self hideCursor];
+
+    if (!sound)
+      aWidth = 5;
+
+    if (![sound sampleCount])
+      aWidth = 5;
+
     else {
-        aWidth = ([sound sampleCount] - 1.0) / reductionFactor;
-        if ((int)aWidth == ceil(aWidth)) aWidth += 1;
-        else aWidth = ceil(aWidth);
+
+      aWidth = ([sound sampleCount] - 1.0) / reductionFactor;
+
+      if ((int)aWidth == ceil(aWidth))
+	aWidth += 1;
+
+      else
+	aWidth = ceil(aWidth);
     }
-    if (aWidth < frame.size.width) {
-        zapRect.origin.x = aWidth;
-        zapRect = NSIntersectionRect(zapRect,[self visibleRect]);
-        if (!NSEqualRects(zapRect,NSZeroRect)) {
-            [self lockFocus];
+
+    if (aWidth < newFrame.size.width) {
+      zapRect.origin.x = aWidth;
+      zapRect = NSIntersectionRect(zapRect,[self visibleRect]);
+      
+      if (!NSEqualRects(zapRect,NSZeroRect)) {
+	[self lockFocus];
+
 #ifndef QUARTZ_RENDERING
-            PSsetgray(NSDarkGray);
+	PSsetgray(NSDarkGray);
+	NSRectFill(zapRect);
 #else
-            {
-                NSGraphicsContext *graphicsContext;
-                CGContextRef ctx;
-                //CGPoint point;
+	{
+	  NSGraphicsContext *graphicsContext;
+	  CGContextRef ctx;
+	  //CGPoint point;
 
-                graphicsContext = [NSGraphicsContext currentContext];
-                ctx = [graphicsContext graphicsPort];
+	  graphicsContext = [NSGraphicsContext currentContext];
+	  ctx = [graphicsContext graphicsPort];
 
-                CGContextSetGrayFillColor(ctx, 0.1, 1.0);
-            }
+	  [backgroundColour set];
+	  NSRectFill(zapRect);
+	}
 #endif
-            NSRectFill(zapRect);
-            [self unlockFocus];
-        }
-    }        
+
+	[self unlockFocus];
+      }
+    }
+
     [self setFrameSize:NSMakeSize(aWidth, [self frame].size.height)];
-    [self showCursor];
+    //    [self showCursor];
     [[self window] enableFlushWindow];
     [self setNeedsDisplay:YES];
 }
+
+
+
+- (void)sizeToFit: (BOOL) withAutoscaling
+{
+
+    int sc = [sound sampleCount];
+
+    float aWidth;
+
+    NSRect newFrame = [self frame];
+    NSRect zapRect = [self bounds];
+
+    [[self window] disableFlushWindow];
+
+    //    [self hideCursor];
+
+    if (!sound)
+      aWidth = 5;
+
+    if (![sound sampleCount])
+      aWidth = 5;
+
+    else {
+
+      aWidth = ([sound sampleCount] - 1.0) / reductionFactor;
+
+      if ((int)aWidth == ceil(aWidth))
+	aWidth += 1;
+
+      else
+	aWidth = ceil(aWidth);
+    }
+
+    if (aWidth < newFrame.size.width) {
+
+      if  (!withAutoscaling) {
+	zapRect.origin.x = aWidth;
+	zapRect = NSIntersectionRect(zapRect,[self visibleRect]);
+      
+	if (!NSEqualRects(zapRect,NSZeroRect)) {
+	  [self lockFocus];
+
+#ifndef QUARTZ_RENDERING
+	  PSsetgray(NSDarkGray);
+	  NSRectFill(zapRect);
+#else
+	  {
+	    NSGraphicsContext *graphicsContext;
+	    CGContextRef ctx;
+	    //CGPoint point;
+	    
+	    graphicsContext = [NSGraphicsContext currentContext];
+	    ctx = [graphicsContext graphicsPort];
+	    
+	    [backgroundColour set];
+	    NSRectFill(zapRect);
+	  }
+#endif
+
+	  [self unlockFocus];
+	}
+      }
+    
+    /* do autoscaling */
+
+
+      else {
+
+	/* at least give a little space! */
+
+	if (newFrame.size.width < 1.1)
+	  newFrame.size.width = 5;
+
+	if (sc && sound)
+	  reductionFactor = sc / newFrame.size.width;
+
+	[self setFrame:newFrame];
+	[self invalidateCache];
+	[[self window] enableFlushWindow];
+	[self setNeedsDisplay:YES];
+
+	return;
+      }
+    }
+
+    [self setFrameSize:NSMakeSize(aWidth, [self frame].size.height)];
+    //    [self showCursor];
+    [[self window] enableFlushWindow];
+    [self setNeedsDisplay:YES];
+}
+
+
+
 - setAutoscale:(BOOL)aFlag
 {
     svFlags.autoscale = aFlag;
     return self;
 }
+
 - (void)setBezeled:(BOOL)aFlag
 {
 	svFlags.bezeled = aFlag;
         [self setNeedsDisplay:YES];
 }
+
 - (void)setContinuous:(BOOL)aFlag
 {
 	svFlags.continuous = aFlag;
 }
+
 - (void)setDelegate:(id)anObject
 {
 	delegate = anObject;
 }
+
 - (void)setDefaultRecordTime:(float)seconds
 {
 	if (seconds <= 0) defaultRecordSeconds = 0.1;
 	else defaultRecordSeconds = seconds;
 }
+
 - (void)setEditable:(BOOL)aFlag
 {
 	svFlags.notEditable = !aFlag;
 }
+
 - (void)setEnabled:(BOOL)aFlag
 {
 	svFlags.disabled = !aFlag;
@@ -1825,7 +2547,9 @@ char *SndSoundError(int err);
     SndSoundStruct *convertedSound;
 	
     [[self window] disableFlushWindow];
-    [self hideCursor];/* maybe isn't on, but just in case */
+
+    //    [self hideCursor];/* maybe isn't on, but just in case */
+
     [[self window] enableFlushWindow];
     if (sound && NSWidth(selectionRect) > 0.1) {
         [sound deleteSamplesAt:(int)((float)NSMinX(selectionRect) + 0.1)
@@ -1878,6 +2602,7 @@ char *SndSoundError(int err);
 
 BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound2)
 {
+
     int df1 = sound1->dataFormat;
     int df2 = sound2->dataFormat;
     BOOL formatsOk;
@@ -1898,18 +2623,28 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
     BOOL usedMyOwn = NO,createdSound = NO,didConversion1 = NO,didConversion2 = NO;
     const SndSoundStruct *sndDataBytes = NULL;
     SndSoundStruct *convertedPasteSound1 = NULL,*convertedPasteSound2 = NULL;
+
     NSArray *acceptable =
         [[[NSArray alloc] initWithObjects:NXSoundPboardType,NXSoundPboardTypeOld,nil] autorelease];
+
     NSString *theType;
+
     if (svFlags.notEditable) return YES;
-    if (sound) if (![sound isEditable]) return YES;
+
+    if (sound)
+      if ([sound soundStruct]->dataSize != 0 && ![sound isEditable])
+	return YES;
 
     theType = [pboard availableTypeFromArray:acceptable];
-    if (!theType) return YES;
+
+    if (!theType)
+      return YES;
+
     if (_lastCopyCount == [pboard changeCount]) {
         sndDataBytes = [_pasteboardSound soundStruct];
         usedMyOwn = YES;
-        }
+    }
+
     if (!sndDataBytes) {
         NSData *sndData = [pboard dataForType:theType];
 //        printf("sound data length %d\n",[sndData length]);
@@ -1918,9 +2653,13 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
 //            pasteSound = [[Sound alloc] initFromPasteboard:pboard];
         }
     }
+
+    /*
     [[self window] disableFlushWindow];
     [self hideCursor];
     [[self window] enableFlushWindow];
+    */
+
     if (sndDataBytes) {
         if (sound) {
             if (!SndCompatibleWith([sound soundStruct],sndDataBytes)) {
@@ -1930,7 +2669,7 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
                 didConversion1 = YES;
                 if (SndConvertSound(sndDataBytes, &convertedPasteSound1) != SND_ERR_NONE ) {
                     [self tellDelegate:@selector(hadError:)];
-                    [self showCursor];
+		    //                    [self showCursor];
                     if (convertedPasteSound1) SndFree(convertedPasteSound1);
                     return YES;
 			    // FIXME do I need to free anything else here?
@@ -1947,7 +2686,7 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
                 didConversion2 = YES;
                 if (SndConvertSound(sndDataBytes, &convertedPasteSound2) != SND_ERR_NONE ) {
                     [self tellDelegate:@selector(hadError:)];
-                    [self showCursor];
+		    //                    [self showCursor];
                     if (convertedPasteSound1) SndFree(convertedPasteSound1);
                     if (convertedPasteSound2) SndFree(convertedPasteSound2);
                     return YES;
@@ -1983,7 +2722,7 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
             selectionRect.origin.x = (int)((float)NSMinX(selectionRect) + 0.1 +
                                            SndSampleCount(sndDataBytes));
             selectionRect.size.width = 0;
-            if (!svFlags.autoscale) [self sizeToFit];
+            if (!svFlags.autoscale) [self sizeToFit:YES];
             else { /* scaleToFit does not autodisplay, but sizeToFit does */
                 [self scaleToFit];
                 [self setNeedsDisplay:YES];
@@ -2013,13 +2752,27 @@ BOOL SndCompatibleWith(const SndSoundStruct *sound1, const SndSoundStruct *sound
 
 - (BOOL)writeSelectionToPasteboardNoProvide:thePasteboard types:(NSArray *)pboardTypes
 {
-//	printf("writeSelectionToPasteboard \n");
+
     if (NSWidth(selectionRect) < 0.1) return NO;
-    if (!sound) return NO;
-    if ([sound sampleCount] < NSMaxX(selectionRect)) return NO;
-    if (!_pasteboardSound) _pasteboardSound = [[Snd alloc] init];
-    [_pasteboardSound copySamples:sound at:(int)((float)NSMinX(selectionRect) + 0.1)
-                                          count:(int)((float)NSWidth(selectionRect) + 0.1)];
+
+    if (!sound)
+      return NO;
+
+    if ([sound sampleCount] < NSMaxX(selectionRect))
+      return NO;
+
+    if (!_pasteboardSound) 
+            _pasteboardSound = [[Snd alloc] init];
+
+    if ( [_pasteboardSound copySamples:sound
+		      at:(int)((float)NSMinX(selectionRect) + 0.1)
+		      count:(int)((float)NSWidth(selectionRect) + 0.1)] !=
+	 SND_ERR_NONE ) {
+
+      fprintf(stderr,"there was a problem copying samples\n");
+      return NO;
+    }
+
     notProvidedData = YES;
     [thePasteboard declareTypes:
         [NSArray arrayWithObjects:NXSoundPboardType,NXSoundPboardTypeOld,nil]
