@@ -183,43 +183,54 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
 /*
  * "instantaneous" getting and setting; applies from start of buffer
  */
+
 /*!
     @method setBalance:clearingEnvelope:
-    @abstract Sets the instantaneous balance value, optionally clearing future scheduled events
+    @abstract Sets the instantaneous balance value between stereo (2) channels, optionally clearing future scheduled events
     @discussion The balance value takes effect from the next buffer to pass through the processor
     chain.
-    @param balance (-1.0 to +1.0)
+    The parameter <i>newBalance</i> must be a floating-point number between -1.0 (left) 0.0 (centre) and 1.0 (right).
+    If successful, returns <b>self</b>; otherwise returns <b>nil</b>.
+    For greater than 2 channel sound, balance must be defined as between
+    two lateral planes of outputs. So a 5.1 surround system should map balance
+    between the combined left front and left surround speaker vs. the right front
+    and right surround speaker. This needs further description as to how stereo panning
+    should map onto other multichannel formats and in the most general sense, i.e even is left,
+    odd is right.
+    @param balance is a float (-1.0 to +1.0)
     @param clear If TRUE, discard any future scheduled balance events.
-    @result self
+    @result Returns self.
 */
-- setBalance:(float)balance clearingEnvelope:(BOOL)clear;
+- setBalance: (float) newBalance clearingEnvelope: (BOOL) clear;
 
 /*!
     @method getBalance
     @abstract Returns the balance value as of the start of the currently running, or next buffer.
+    @discussion Returns the position between stereo channels as a floating-point
+                number between -1.0 (left) and 1.0 (right).
     @result float (usually -1.0 to +1.0)
 */
-- (float)getBalance;
+- (float) getBalance;
 
 /*!
     @method setAmp:clearingEnvelope:
     @abstract Sets the instantaneous amplitude value, optionally clearing future scheduled events
     @discussion The amplitude value takes effect from the next buffer to pass through the processor
     chain.
-    @param amp (any float: ordinarily 0.0 to +1.0) This parameter is the scaling factor for both
-    channels. Negative values will invert the audio stream. There is no checking done for
-    overload.
+    @param amp A floating point value normally between 0.0 (minimum, silence) and +1.0 (maximum, full volume) inclusive.
+               This parameter is the scaling factor for all channels. Negative values will invert the audio stream.
+               There is no checking done for overload.
     @param clear If TRUE, discard any future scheduled amp events.
     @result self
 */
-- setAmp:(float)amp clearingEnvelope:(BOOL)clear;
+- setAmp: (float) amp clearingEnvelope:(BOOL)clear;
 
 /*!
     @method getAmp
-    @abstract Returns the amp value as of the start of the currently running, or next buffer.
+    @abstract Returns the amplitude value of all channels as of the start of the currently running, or next buffer.
     @result float (usually 0.0 to +1.0)
 */
-- (float)getAmp;
+- (float) getAmp;
 
 /*
  * "future" getting and setting; transparently reads and writes
@@ -313,17 +324,15 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
 
 /*!
     @method processReplacingInputBuffer:outputBuffer:
-    @abstract processes the input buffer according to the amplitude and balance
-    settings. This class only works with stereo float buffers.
-    @discussion Not to be called directly. This method is called by
+    @abstract Processes the input buffer according to the amplitude and balance settings. 
+    @discussion This method currently only works with stereo float buffers. Not to be called directly. This method is called by
     SndAudioProcessorChain with buffers destined for audio output.
     @param inB the audio buffer with input to the processor
     @param endB unused
-    @result NO SndAudioFader processes audio in place in inB
+    @result Always returns NO since SndAudioFader processes audio in place, in inB.
 */
-- (BOOL)processReplacingInputBuffer: (SndAudioBuffer*) inB
-                       outputBuffer: (SndAudioBuffer*) outB;
-
+- (BOOL) processReplacingInputBuffer: (SndAudioBuffer *) inB
+                        outputBuffer: (SndAudioBuffer *) outB;
 
 @end
 

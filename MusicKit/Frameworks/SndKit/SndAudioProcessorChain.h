@@ -47,7 +47,8 @@
 + audioProcessorChain;
 /*!
     @method     init
-    @abstract   Initializer
+    @abstract   Initializes SndAudioProcessorChain instance.
+    @discussion Creates an active SndAudioFader instance as the post effects fader.
     @result     Self
 */
 - init;
@@ -134,7 +135,7 @@
 - (void) setBypass: (BOOL) b;
 /*!
     @method     postFader
-    @abstract
+    @abstract   Returns the SndAudioFader which is the last effect at the end of this SndAudioProcessorChain instance.
     @discussion
     @result     id of the postFader object at the end of the chain
 */
