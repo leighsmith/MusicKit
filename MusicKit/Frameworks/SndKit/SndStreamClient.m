@@ -205,7 +205,7 @@ enum {
     if (!active)
         generatesOutput = b;
     else
-        NSLog(@"SndStreamClient::setGeneratesOutput - Warn: Can't change needsInput whilst streaming!");
+        NSLog(@"SndStreamClient::setGeneratesOutput - Warn: Can't change generatesOutput whilst streaming!");
   return self; 
 }
 
@@ -374,9 +374,9 @@ enum {
 // startProcessingNextBufferWithInput:
 // Swap the synth and output buffers, fire off next round of synthing.  
 //
-// If input isn't needed, ignore!!! (eg, if this isn't an FX unit)
+// If input isn't needed, just ignore it (eg, if this isn't an FX unit).
 //
-// Note! we do NOT adjust the client time here, as this is called by the
+// Note we do NOT adjust the client time here, as this is called by the
 // possibly behind-the-synthesis-time-front manager.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -384,6 +384,7 @@ enum {
 {
     int processedInputBuffersCount = 0, processedOutputBuffersCount = 0;
 
+    // If this client is to generate output then we rotate the next buffer ready for retrieval by the SndStreamMixer.
     if (generatesOutput) {
         processedOutputBuffersCount = [outputQueue processedBuffersCount];
 #if SNDSTREAMCLIENT_DEBUG
@@ -413,17 +414,22 @@ enum {
 #if SNDSTREAMCLIENT_DEBUG                  
     NSLog(@"startProcessingNextBufferWithInput nowTime = %f\n", t);
 #endif
+    // If this client processes received input audio, copy the newly received audio buffer into the exposed buffer of the input queue.
     if (needsInput) {
 	if (inB == nil)
-	    NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n", clientName);
+	    NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil yet client needs input!\n", clientName);
 	else {
 	    processedInputBuffersCount = [inputQueue processedBuffersCount];
 
 	    if (processedInputBuffersCount) {
-		SndAudioBuffer *inBloc = [[inputQueue popNextProcessedBuffer] retain];
-		[inBloc copyData: inB];
-		[inputQueue addPendingBuffer: inBloc];
-		[inBloc autorelease];
+		// TODO check why we need to retain it here and then release it at the end of the buffer, for copyData: or addPendingBuffer:?
+		SndAudioBuffer *exposedInputBuffer = [[inputQueue popNextProcessedBuffer] retain];
+
+		// TODO perhaps we could eventually just add the inB into the inputQueue, rather than copying it.
+		[exposedInputBuffer copyData: inB];
+		// Add the exposed input buffer with the new audio data back into the queue.
+		[inputQueue addPendingBuffer: exposedInputBuffer];
+		[exposedInputBuffer autorelease];
 	    }
 	    else if (delegateRespondsToInputBufferSkipSelector)
 		[delegate inputBufferSkipped: self];
@@ -580,7 +586,7 @@ static void inline setThreadPriority()
 #endif
         {
 	    NSAutoreleasePool *innerPool2 = [NSAutoreleasePool new];
-	    // processBuffers in the sub-class should fill or modify synthOutputBuffer or synthInputBuffer
+	    // processBuffers in the sub-class should fill or modify synthOutputBuffer and/or retrieve synthInputBuffer.
 	    [self processBuffers];
 	    [innerPool2 release];
         }

@@ -80,48 +80,48 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
 */
 @interface SndStreamClient : NSObject
 {
-/*! @var             exposedOutputBuffer The buffer in the output queue retrieved by the SndStreamMixer (driven by the output thread). */
+    /*! @var exposedOutputBuffer The buffer in the output queue retrieved by the SndStreamMixer (driven by the output thread). */
     SndAudioBuffer  *exposedOutputBuffer;
-/*! @var             synthOutputBuffer The buffer in the output queue modified by the synthesis thread. */
+    /*! @var synthOutputBuffer The buffer in the output queue modified by the synthesis thread. */
     SndAudioBuffer  *synthOutputBuffer;
-/*! @var             synthInputBuffer */
+    /*! @var synthInputBuffer */
     SndAudioBuffer  *synthInputBuffer;
-/*! @var                 outputQueue A FIFO queue of SndAudioBuffers holding those pending output and those processed. */
+    /*! @var outputQueue A FIFO queue of SndAudioBuffers holding those pending output and those processed. */
     SndAudioBufferQueue *outputQueue;
-/*! @var                 inputQueue */
+    /*! @var inputQueue */
     SndAudioBufferQueue *inputQueue;
     
-/*! @var       synthThreadLock */
+    /*! @var synthThreadLock */
     NSConditionLock *synthThreadLock;
-/*! @var       outputBufferLock Controls access to the output buffer, particularly when changing the exposedOutputBuffer. */
+    /*! @var outputBufferLock Controls access to the output buffer, particularly when changing the exposedOutputBuffer. */
     NSConditionLock *outputBufferLock;
 
-/*! @var       active */
+    /*! @var active */
     BOOL       active;
-/*! @var       needsInput */
+    /*! @var needsInput Indicates this client processes audio data received from a SndStreamMixer instance by -startProcessingNextBufferWithInput:nowTime: */
     BOOL       needsInput;
-/*! @var       generatesOutput */
+    /*! @var generatesOutput Indicates this client generates audio output data, retrieved from this client using - */
     BOOL       generatesOutput;
-/*! @var       processorChain */
+    /*! @var processorChain */
     SndAudioProcessorChain *processorChain;
-/*! @var       manager */
+    /*! @var manager */
     SndStreamManager *manager;
-/*! @var       delegate; */
+    /*! @var delegate; */
     id         delegate;    
-/*! @var       clientNowTime */
+    /*! @var clientNowTime */
     double     clientNowTime;
     
-/*! @var       clientName */
+    /*! @var clientName */
     NSString  *clientName;
     
 @private
-/*! @var       delegateRespondsToOutputBufferSkipSelector Conditional speeding up delegation messaging. */
+    /*! @var delegateRespondsToOutputBufferSkipSelector Conditional speeding up delegation messaging. */
     BOOL       delegateRespondsToOutputBufferSkipSelector;
-/*! @var       delegateRespondsToInputBufferSkipSelector Conditional speeding up delegation messaging.*/
+    /*! @var delegateRespondsToInputBufferSkipSelector Conditional speeding up delegation messaging.*/
     BOOL       delegateRespondsToInputBufferSkipSelector;
-/*! @var       delegateRespondsToDidProcessBufferSelector Conditional speeding up delegation messaging.*/
+    /*! @var delegateRespondsToDidProcessBufferSelector Conditional speeding up delegation messaging.*/
     BOOL       delegateRespondsToDidProcessBufferSelector;
-/*! @var       bDisconnect */
+    /*! @var bDisconnect */
     BOOL       bDisconnect;
 }
 
@@ -198,31 +198,31 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
  
 /*!
     @method     processingThread
-    @abstract     Root method for the synthesis thread
+    @abstract   Root method for the synthesis thread.
 */
 - (void) processingThread;
 
 /*!
-    @method   outputBuffer
+    @method     outputBuffer
     @abstract   Accessor for the currently exposed output buffer
     @discussion Don't store the object returned, as the output buffer swaps to the synthesis buffer each processing cycle.
-    @result     Returns the outputBuffer member
+    @result     Returns the output buffer as a SndAudioBuffer instance.
 */
 - (SndAudioBuffer*) outputBuffer;
 
 /*!
     @method     synthOutputBuffer
     @abstract   Accessor for the current synthesis buffer
-    @discussion 
-    @result     Returns the synthBuffer member
+    @discussion This is typically used internally in a SndStreamClient subclass to retrieve the current buffer to be processed.
+    @result     Returns the buffer to be synthesized as a SndAudioBuffer instance.
 */
 - (SndAudioBuffer*) synthOutputBuffer;
 
 /*!
-    @method     synthinputBuffer
+    @method     synthInputBuffer
     @abstract   Accessor for the current input buffer
     @discussion 
-    @result     Returns the inputBuffer member
+    @result     Returns the input buffer member
 */
 - (SndAudioBuffer*) synthInputBuffer;
 
@@ -237,8 +237,16 @@ automatic start up and and shut down of lower-level streaming services. Each Snd
 /*!
     @method   processBuffers
     @abstract   The main synthesis/processing thread method 
-    @discussion Override this in your derived client with your own buffer processing functionality.
-*/
+    @discussion A subclass should override this method with its buffer processing method.
+               This should be along the lines of (in pseudo code):
+
+ <pre>
+ SndAudioBuffer *b = [self synthBuffer];
+ 
+ for(i = 0; i < [b length]; i++)
+    ([b sample])[i] = a_synth_sample();
+ </pre>
+ */
 - (void) processBuffers; 
 
 /*!
