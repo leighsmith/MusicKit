@@ -284,10 +284,11 @@
 // for debugging
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ (%@ %@)", 
+    return [NSString stringWithFormat: @"%@ (%@ %@ %@)", 
 	[super description],
 	name != nil ? name : @"(unnamed)",
-	(soundStruct != NULL) ? SndStructDescription(soundStruct) : @""];
+	(soundStruct != NULL) ? SndStructDescription(soundStruct) : @"",
+	info];
     // TODO SndFormatDescription(format)
 }
 
@@ -307,36 +308,35 @@
                                userInfo: nil] raise];
     [stream getBytes: s length: sizeof(SndSoundStruct) - 4]; /* SndSoundStruct includes the first 4 bytes of the info string */
 
-#ifdef __LITTLE_ENDIAN__
     s->magic = NSSwapBigLongToHost(s->magic);
     s->dataLocation = NSSwapBigLongToHost(s->dataLocation);
     s->dataSize = NSSwapBigLongToHost(s->dataSize);
     s->dataFormat = NSSwapBigLongToHost(s->dataFormat);
     s->samplingRate = NSSwapBigLongToHost(s->samplingRate);
     s->channelCount = NSSwapBigLongToHost(s->channelCount);
-#endif
 
     // Verify we do have a .au/.snd file.
     if (s->magic == SND_MAGIC) {
 	int infoStringLength = s->dataLocation - sizeof(SndSoundStruct) + 4;
 	char *infoCString;
 	
-	if (!(infoCString = malloc(infoStringLength)))
+	if ((infoCString = malloc(infoStringLength + 1)) == NULL) // + 1 for terminating \0.
 	    [[NSException exceptionWithName: @"Sound Error"
 				     reason: @"Can't allocate memory for info string"
 				   userInfo: nil] raise];
 	[stream getBytes: infoCString range: NSMakeRange(sizeof(SndSoundStruct) - 4, infoStringLength)];
+	infoCString[infoStringLength] = '\0'; // terminate the string
 	[info release];
 	info = [[NSString stringWithCString: infoCString] retain];
 	free(infoCString);
 	
-	finalSize = s->dataSize + s->dataLocation;
+	finalSize = s->dataSize + sizeof(SndSoundStruct);
 	
 	// NSLog(@"%@\n", SndStructDescription(s), finalSize);
 	
 	s = realloc((char *) s, finalSize);
 	[stream getBytes: (char *) s + sizeof(SndSoundStruct)
-		   range: NSMakeRange(sizeof(SndSoundStruct), finalSize - sizeof(SndSoundStruct))];
+		   range: NSMakeRange(s->dataLocation, s->dataSize)];
 	
 	soundStruct = s;
 	status = SND_SoundInitialized;
@@ -353,63 +353,63 @@
 	return NO;
 }
 
+// TODO at the moment we ignore the dataFormat, only writing AU format.
+// Eventually we need to replace this with file writing routines.
 - (NSData *) dataEncodedAsFormat: (NSString *) dataFormat
 {
-    NSMutableData *stream; 
-    SndSoundStruct *s;
     SndSoundStruct **ssList;
     SndSoundStruct *theStruct;
-    int headerSize;
-    int df;
-    int i, j = 0;
+    NSMutableData *stream; 
+    unsigned int dataOffsetLocation = 6 * sizeof(int);  // offset past the audio header, not including info.
+    unsigned int sampleDataSize = [self dataSize];
+    SndSampleFormat df = soundStruct->dataFormat;
 
-    df = soundStruct->dataFormat;
-    headerSize = (df == SND_FORMAT_INDIRECT) ? soundStruct->dataSize : soundStruct->dataLocation;
-
-    /* make new header with swapped bytes if necessary */
-    if (!(s = malloc(headerSize))) 
-	[[NSException exceptionWithName: @"Sound Error"
-				 reason: @"Can't allocate memory for Snd class"
-			       userInfo: nil] raise];
-    memmove(s, soundStruct, headerSize);
     if (df == SND_FORMAT_INDIRECT) {
         int newCount = 0;
-        i = 0;
-        s->dataFormat = ((SndSoundStruct *)(*((SndSoundStruct **) (soundStruct->dataLocation))))->dataFormat;
+        int i = 0;
         ssList = (SndSoundStruct **) soundStruct->dataLocation;
         while ((theStruct = ssList[i++]) != NULL)
 	    newCount += theStruct->dataSize;
-        s->dataLocation = s->dataSize;
-        s->dataSize = newCount;
+        dataOffsetLocation = soundStruct->dataSize;
+        sampleDataSize = newCount;
     }
     // TODO not sure this will work with indirect sounds.
-    s->dataLocation += [info length] - 4;
+    dataOffsetLocation += [info length];
 
-    stream = [NSMutableData dataWithCapacity: s->dataSize]; 
+    stream = [NSMutableData dataWithCapacity: sampleDataSize]; 
 
-    // We standardise to a big endian integer representation
-#ifdef __LITTLE_ENDIAN__
-    s->magic = NSSwapHostIntToBig(s->magic);
-    s->dataLocation = NSSwapHostIntToBig(s->dataLocation);
-    s->dataSize = NSSwapHostIntToBig(s->dataSize);
-    s->dataFormat = NSSwapHostIntToBig(s->dataFormat);
-    s->samplingRate = NSSwapHostIntToBig(s->samplingRate);
-    s->channelCount = NSSwapHostIntToBig(s->channelCount);
-#endif
-        
-    [stream appendBytes: s length: headerSize - 4]; // TODO may not be right in all cases if info stored between header and data.
-    // append the info
+    // Write header. We standardise to a big endian integer representation
+    {
+	int bigMagic = NSSwapHostIntToBig(SND_MAGIC);
+	// TODO When we address indirect sounds 
+	// int bigDataSize = NSSwapHostIntToBig(soundFormat.frameCount * SndFrameWidth(soundFormat));
+	int bigDataLocation = NSSwapHostIntToBig(dataOffsetLocation);
+	int bigDataSize = NSSwapHostIntToBig(sampleDataSize);
+	int bigDataFormat = NSSwapHostIntToBig([self dataFormat]);
+	int bigSamplingRate = NSSwapHostIntToBig((int) (soundFormat.sampleRate + 0.5));
+	int bigChannelCount = NSSwapHostIntToBig(soundFormat.channelCount);
+	
+	[stream appendBytes: &bigMagic        length: sizeof(bigMagic)];
+	[stream appendBytes: &bigDataLocation length: sizeof(bigDataLocation)];
+	[stream appendBytes: &bigDataSize     length: sizeof(bigDataSize)];
+	[stream appendBytes: &bigDataFormat   length: sizeof(bigDataFormat)];
+	[stream appendBytes: &bigSamplingRate length: sizeof(bigSamplingRate)];
+	[stream appendBytes: &bigChannelCount length: sizeof(bigChannelCount)];
+    }
+
+    // append the info string
     // NSLog(@"writing info %@ length %d\n", info, [info length]);
+    // TODO we should write unicode data out so foreign language info fields are properly transported. 
     [stream appendBytes: [info cString] length: [info length]];
 
     if (df != SND_FORMAT_INDIRECT) { /* simple read/write of block of data */
         [stream appendBytes: (char *) soundStruct + soundStruct->dataLocation length: soundStruct->dataSize];
-	//NSLog(@"writing %u bytes from %u, headerSize %u\n", soundStruct->dataSize, soundStruct->dataLocation, headerSize);
-        free(s);
+	//NSLog(@"writing %u bytes from %u\n", soundStruct->dataSize, soundStruct->dataLocation);
     }
     else {
+	int j = 0;
+
 	ssList = (SndSoundStruct **) soundStruct->dataLocation;
-	free(s);
 	while ((theStruct = ssList[j++]) != NULL) {
 	    [stream appendBytes: (char *) theStruct + theStruct->dataLocation length: theStruct->dataSize];
 	}
@@ -469,7 +469,7 @@
     */
     [aCoder encodeValuesOfObjCTypes:"iiiiii", s->magic, s->dataLocation, s->dataSize,
             s->dataFormat, s->samplingRate,s->channelCount];
-    [aCoder encodeArrayOfObjCType:"c" count:headerSize - sizeof(SndSoundStruct) + 4 at:s->info];
+    [aCoder encodeArrayOfObjCType:"c" count:headerSize - sizeof(SndSoundStruct) + 4 at: [info cString]];
 
     if (df != SND_FORMAT_INDIRECT) { /* simple read/write of block of data */
         [aCoder encodeArrayOfObjCType:"s"
@@ -918,6 +918,9 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
  * not including the structure.
  */
 {
+    // TODO once soundStruct purged.
+    //  return soundFormat.frameCount * SndFrameWidth(soundFormat);
+
     if (!soundStruct) return 0;
     return soundStruct->dataSize; 
 }
@@ -962,6 +965,7 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
     return soundStruct;
 }
 
+#if 0
 /* if the sound is fragmented, returns only the size of the FIRST fragment */
 - (int) soundStructSize
 {
@@ -981,6 +985,7 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
     soundStructSize = aSize;
     return self;
 }
+#endif
 
 /* returns the base address of the block the sample resides in,
  * with appropriate indices for the last sample the block holds.
