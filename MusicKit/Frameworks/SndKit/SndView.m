@@ -31,6 +31,8 @@ OF THIS AGREEMENT.
 #import "SndView.h"
 #import <math.h>
 #import "SndFunctions.h"
+#import "SndMuLaw.h"
+#import "SndAudioBuffer.h"
 
 #if !defined(QUARTZ_RENDERING) && !defined(GNUSTEP)
 #define USE_PS_USER_PATHS
