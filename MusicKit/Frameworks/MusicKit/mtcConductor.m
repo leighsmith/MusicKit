@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/04/07 18:44:51  leigh
+  Upgraded logging to NSLog
+
   Revision 1.4  2000/04/01 00:31:26  leigh
   Replaced getTime with NSDate use
 
@@ -145,7 +148,7 @@ static BOOL startMTC(MKConductor *self,BOOL shouldSeek)
 	  self->time = [self->delegate clockToBeat:MTCTime from:self];
 	else self->time = MTCTime * self->inverseBeatSize;
 	if (MKIsTraced(MK_TRACEMIDI))
-	  fprintf(stderr,"MIDI time code MKConductor seeking.\n");
+	  NSLog(@"MIDI time code MKConductor seeking.\n");
 	if ([self->delegate respondsToSelector:@selector(conductorWillSeek:)])
 	  [self->delegate conductorWillSeek:self];
 	listCopy = [self->activePerformers copy];
@@ -175,7 +178,7 @@ static BOOL startMTC(MKConductor *self,BOOL shouldSeek)
     if (mtcStatus != MTC_FORWARD) {
 	mtcStatus = MTC_FORWARD;
 	if (MKIsTraced(MK_TRACEMIDI))
-	  fprintf(stderr,"Midi time code MKConductor running.\n");
+	  NSLog(@"MIDI time code MKConductor running.\n");
 	[theMTCCond _resume];
 	[mtcHelper resume];
 	[self->MTCSynch _alarm:MTCTime + mtcPollPeriod];   

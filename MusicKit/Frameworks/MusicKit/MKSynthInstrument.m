@@ -44,6 +44,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/04/07 18:45:42  leigh
+  Upgraded logging to NSLog
+
   Revision 1.3  1999/09/10 02:46:06  leigh
   Comments cleanup, removed warnings, disabled synthPatchClass initialize
 
@@ -129,7 +132,7 @@ static void CONSISTENCY_CHECK(patchList *aPatchList) {
     if (!((aPatchList->totalCount >= 0) && 
 	  (aPatchList->totalCount >= aPatchList->manualCount) && 
 	  (aPatchList->manualCount >= aPatchList->idleCount))) 
-	fprintf(stderr,"SynthInstrument accounting problem.");
+	NSLog(@"SynthInstrument accounting problem.");
 }
 
 static patchList *getList(MKSynthInstrument *self,id template)
@@ -374,10 +377,8 @@ static id adjustRunningPatch(MKSynthInstrument *self,int newNoteTag,id aNote,
 
     if (MKIsTraced(MK_TRACESYNTHINS) ||
 	MKIsTraced(MK_TRACEPREEMPT))
-      fprintf(stderr,
-	      "SynthInstrument preempts patch %d at time %f "
-	      "for tag %s.\n",
-	      (int)*currentPatch,MKGetTime(),[tagStr(newNoteTag) cString]);
+      NSLog(@"SynthInstrument preempts patch %d at time %f for tag %@.\n",
+	      (int)*currentPatch,MKGetTime(), tagStr(newNoteTag));
     *phraseStatus = MK_phraseOnPreempt;
     return self;
 }
@@ -417,17 +418,14 @@ static id adjustIdlePatch(patchList *aPatchList,int noteTag)
     aPatchList->idleCount--;
     CONSISTENCY_CHECK(aPatchList);
     if (MKIsTraced(MK_TRACESYNTHINS))
-      fprintf(stderr,
-	      "SynthInstrument uses patch %d at time %f "
-	      "for tag %s.\n",
-	      (int)currentPatch,MKGetTime(),[tagStr(noteTag) cString]);
+      NSLog(@"SynthInstrument uses patch %d at time %f for tag %@.\n",
+	      (int)currentPatch,MKGetTime(), tagStr(noteTag));
     return currentPatch;
 }
 
 static void alternatePatchMsg(void)
 {
-    fprintf(stderr,"(No patch of requested template"
-	    "was available. Using alternative template.");
+    NSLog(@"(No patch of requested template was available. Using alternative template.");
 }
 
 -realizeNote:aNote fromNoteReceiver:aNoteReceiver
@@ -471,9 +469,7 @@ static void alternatePatchMsg(void)
 	break;
       case MK_mute:
 	if (MKIsTraced(MK_TRACESYNTHINS))
-	  fprintf(stderr,
-		  "SynthInstrument receives mute Note at time %f.\n",
-		  MKGetTime());
+	  NSLog(@"MKSynthInstrument receives mute Note at time %f.\n", MKGetTime());
 	if (MKIsNoteParPresent(aNote,MK_synthPatch)) {
 	    NSString *sp = [aNote parAsStringNoCopy:MK_synthPatch];
 //	    if (*sp != '\0') {
@@ -501,9 +497,8 @@ static void alternatePatchMsg(void)
 	  if (currentPatch) {/* We have an active patch already for this tag */
 	      phraseStatus = MK_phraseRearticulate;
 	      if (MKIsTraced(MK_TRACESYNTHINS))
-		fprintf(stderr,
-			"SynthInstrument receives note for active notetag "
-			"stream %s at time %f.\n",[tagStr(noteTag) cString],MKGetTime());
+		NSLog(@"MKSynthInstrument receives note for active notetag stream %@ at time %f.\n",
+			tagStr(noteTag), MKGetTime());
 	  }
 	  else {  /* It is a new phrase. */
 	      id aTemplate;
@@ -517,9 +512,8 @@ static void alternatePatchMsg(void)
 	      if (!aPatchList)
 		aPatchList = addList(self,aTemplate);
               if (MKIsTraced(MK_TRACESYNTHINS))
-		fprintf(stderr,
-			"SynthInstrument receives note for new notetag stream "
-			"%s at time %f ",[tagStr(noteTag) cString],MKGetTime());
+		NSLog(@"MKSynthInstrument receives note for new notetag stream %@ at time %f ",
+			 tagStr(noteTag), MKGetTime());
 	      switch (allocMode) {
 		case MK_MIXEDALLOC:
 		  currentPatch = adjustIdlePatch(aPatchList,noteTag);
@@ -535,10 +529,8 @@ static void alternatePatchMsg(void)
 		      aPatchList->totalCount++;
 		      CONSISTENCY_CHECK(aPatchList);
 		      if (MKIsTraced(MK_TRACESYNTHINS))
-			  fprintf(stderr,
-				  "SynthInstrument assigns patch %d at "
-				  "time %f for tag %s.\n",
-				  (int)currentPatch,MKGetTime(),[tagStr(noteTag) cString]);
+			  NSLog(@"MKSynthInstrument assigns patch %d at time %f for tag %@.\n",
+				  (int)currentPatch, MKGetTime(), tagStr(noteTag));
 		  }
 		  break;
 		case MK_MANUALALLOC:
@@ -589,10 +581,8 @@ static void alternatePatchMsg(void)
 			  else { /* Now we give up. */
 			      if (MKIsTraced(MK_TRACESYNTHINS) ||
 				  MKIsTraced(MK_TRACEPREEMPT)) 
-				  fprintf(stderr,
-					  "SynthInstrument omits note at time %f "
-					  "for tag %s.\n",
-					  MKGetTime(),[tagStr(noteTag) cString]);
+				  NSLog(@"MKSynthInstrument omits note at time %f for tag %@.\n",
+					  MKGetTime(), tagStr(noteTag));
 			      _MKErrorf(MK_synthInsOmitNoteErr,MKGetTime());
 			      [aNote release];
 			      return nil;
@@ -994,7 +984,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
 	if (!aPatch)
 	  break;
 	if (MKIsTraced(MK_TRACESYNTHINS))
-	  fprintf(stderr,"SynthInstrument allocates patch %p from orchestra %p.\n",aPatch,[aPatch orchestra]);
+	  NSLog(@"SynthInstrument allocates patch %p from orchestra %p.\n",aPatch,[aPatch orchestra]);
 	aPatchList->manualCount++;  
 	aPatchList->totalCount++;  
 	aPatchList->idleCount++;

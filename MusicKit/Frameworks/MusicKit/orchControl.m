@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2000/04/07 18:44:51  leigh
+  Upgraded logging to NSLog
+
   Revision 1.8  2000/04/01 01:13:56  leigh
   Converted to NSPort operation
 
@@ -292,7 +295,7 @@ static int myDSPMKInit(MKOrchestra *self)
 	    return _DSPError1(ec,"DSPMKInit: Could not read music system '%s' "
 			      "for booting the DSP", (const char *)[s cString]);
 	  if (_MK_ORCHTRACE(self,MK_TRACEDSP))
-	    fprintf(stderr,"Music Kit: Loaded DSP monitor %s\n",	
+	    NSLog(@"Music Kit: Loaded DSP monitor %s\n",	
 		    [*foundFile cString]);
 	}
       } else reboot = YES;

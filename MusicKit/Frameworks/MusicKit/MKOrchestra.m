@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2000/04/07 18:46:10  leigh
+  Upgraded logging to NSLog
+
   Revision 1.9  2000/04/01 22:11:01  leigh
   Fixed warnings from finicky compilers
 
@@ -2223,22 +2226,14 @@ FILE *_MKGetOrchSimulator(orch)
     return orch->_simFP;
 }
 
-static void 
-  _traceMsg(simFP,typeOfInfo,fmt,ap)
-FILE *simFP;
-int typeOfInfo;
-char * fmt;
-char *ap;
+static void _traceMsg(FILE *simFP, int typeOfInfo, NSString *fmt, char *ap)
 /* See trace: below */
 {
-    if (_MKTrace() & typeOfInfo) {
-        vfprintf(stderr,fmt,ap);
-        fprintf(stderr,"\n");
+    if (MKIsTraced(typeOfInfo)) {
+        NSLogv([fmt stringByAppendingString: @"\n"], ap);
     }
     if (simFP) {
-        fprintf(simFP,"; ");
-        vfprintf(simFP,fmt,ap);
-        fprintf(simFP,"\n");
+        vfprintf(simFP, [[NSString stringWithFormat: @"; %@\n", fmt] cString], ap);
     }
 }
 
@@ -2249,7 +2244,7 @@ char *ap;
 {
     va_list ap;
     va_start(ap,fmt); 
-    _traceMsg(_simFP,typeOfInfo,[fmt cString], ap);
+    _traceMsg(_simFP, typeOfInfo, fmt, ap);
     va_end(ap);
     return self;
 }
@@ -2259,7 +2254,7 @@ void _MKOrchTrace(MKOrchestra *orch,int typeOfInfo,char * fmt, ...)
 {
     va_list ap;
     va_start(ap,fmt); 
-    _traceMsg(orch->_simFP,typeOfInfo,fmt,ap);
+    _traceMsg(orch->_simFP, typeOfInfo, [NSString stringWithCString: fmt], ap);
     va_end(ap);
 }
 

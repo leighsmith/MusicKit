@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/04/07 18:47:09  leigh
+  Upgraded logging to NSLog
+
   Revision 1.4  2000/03/07 18:21:14  leigh
   Removed redundant getTime function (using NSDate nowdays)
 
@@ -154,11 +157,11 @@ Modification history:
 	int bufferSize = DSPGetSystemSymbolValueInLC("NB_DMA_W", DSP_LC_N);
 #if 1
 	if (bufferSize != 0x200)
-	  fprintf(stderr,"Warning: NB_DMA_W != 0x200.  == %d\n",bufferSize);
+	  NSLog(@"Warning: NB_DMA_W != 0x200.  == %d\n",bufferSize);
 #endif
 	_satSynthData = [self allocSynthData:MK_yData length:bufferSize*4]; /* FIXME */
         if (!_satSynthData)
-	  fprintf(stderr,"Can't allocate hub memory.\n");
+	  NSLog(@"Can't allocate hub memory.\n");
 	addr = [_satSynthData address];
         varAddr =  DSPGetSystemSymbolValueInLC("X_SAT1_REB", DSP_LC_X);     
         if (varAddr > 0)
@@ -417,7 +420,7 @@ static int validSlot(int i)
     theBit = 1 << (self->orchIndex - 1)*2;
     if (varAddr > 0)
       DSPWriteValue(theBit,DSP_MS_X,varAddr);
-    else fprintf(stderr,"Warning: Can't find X_SAT_ID\n");
+    else NSLog(@"Warning: Can't find X_SAT_ID\n");
 #endif
     if (hubSoundOut) {
 	hmVal = DSPGetSystemSymbolValueInLC("HM_DMA_WD_HUB_ON", DSP_LC_P);      

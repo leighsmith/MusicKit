@@ -5,7 +5,7 @@
   Description:
     This file factored out of MKConductor.m for purposes of separate copyright and
     to isolate MIDI time code functions.
-    This file contains the MTCPrivate category of Conductor.
+    This file contains the MTCPrivate category of MKConductor.
 
   Original Author: David Jaffe
 
@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/04/07 18:41:45  leigh
+  Upgraded logging to NSLog
+
   Revision 1.5  2000/04/01 00:31:34  leigh
   Replaced getTime with NSDate use
 
@@ -29,7 +32,7 @@ Modification history:
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
-//#import <midi_driver_compatability.h> // LMS obsolete 
+#import "_musickit.h"
 #import <MKPerformSndMIDI/midi_driver.h>
 
 @implementation MKConductor(MTCPrivate)
@@ -39,10 +42,10 @@ Modification history:
 -_MTCException:(int)exception
 {
     double newTime;
-    if (!inPerformance)         /* This can happen if we're not separate-threaded */
+    if (![MKConductor inPerformance])         /* This can happen if we're not separate-threaded */
       return self;
     if (MKIsTraced(MK_TRACEMIDI))
-      fprintf(stderr,"Midi time code exception: %s\n",
+      NSLog(@"Midi time code exception: %s\n",
 	      (exception == MIDI_EXCEPTION_MTC_STARTED_FORWARD) ? "time code started" :
 	      (exception == MIDI_EXCEPTION_MTC_STOPPED) ? "time code stopped" :
 	      (exception == MIDI_EXCEPTION_MTC_STARTED_REVERSE) ? "reverse time code started" :
@@ -178,7 +181,7 @@ static double slipThreshold = .01;
     /* Invoked by _MTCHelper */
 {
     if (MKIsTraced(MK_TRACEMIDI))
-      fprintf(stderr,"Slipping MIDI time code time by %f\n",v);
+      NSLog(@"Slipping MIDI time code time by %f\n", v);
     _pauseOffset += v;
     sysTime = [[NSDate date] retain];
     MTCTime = [MTCSynch _time];
