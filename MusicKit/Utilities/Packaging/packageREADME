@@ -20,7 +20,7 @@ PDF_TMPDIR=/tmp/mkpdf
 # it's a bit hard to be universal with paths.
 MKSRCDIR=`pwd`
 MKREADMESRC=$MKSRCDIR/Documentation/MusicKit_README.sgml
-MKCONCEPTS=$MKSRCDIR/Documentation/Frameworks/MusicKit/Concepts/
+MKCONCEPTS=$MKSRCDIR/Documentation/Concepts/
 MK_STYLEDIR=$MKSRCDIR/Documentation/SGML
 MK_STYLESHEET=$MK_STYLEDIR/MusicKit_README.dsssl
 MKCONCEPTS_STYLESHEET=/usr/lib/sgml/stylesheets/cygnus-both.dsl
