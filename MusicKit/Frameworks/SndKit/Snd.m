@@ -39,6 +39,14 @@ void merror(int er)
 //	malloc_error(&merror);
     if ( self == [Snd class] ) {
         nameTable = [[NSMutableDictionary alloc] initWithCapacity:10];
+#if defined(WIN32) && defined(USE_PERFORM_SOUND_IO)
+//	{
+//	    char **driverNames;
+//            SNDInit(TRUE);
+//            driverNames = SNDGetAvailableDriverNames();
+//            printf("driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
+//	}
+#endif
     }
     return;
 }
@@ -175,6 +183,8 @@ void merror(int er)
 {
 #ifdef USE_NEXTSTEP_SOUND_IO
 	return [Sound isMuted];
+#elif defined(USE_PERFORM_SOUND_IO) && defined(WIN32)
+        return SNDIsMuted();
 #else
 	return NO;
 #endif
@@ -184,6 +194,9 @@ void merror(int er)
 {
 #ifdef USE_NEXTSTEP_SOUND_IO
 	return [Sound setMute:(BOOL)aFlag];
+#elif defined(USE_PERFORM_SOUND_IO) && defined(WIN32)
+	SNDSetMute(aFlag);
+	return self;
 #else
 	return self;
 #endif
@@ -200,6 +213,9 @@ void merror(int er)
 	_scratchSnd = NULL;
 	_scratchSize = 0;
 	tag = 0;
+#if 1
+	SNDInit(TRUE);
+#endif
 	return [super init];
 }
 
@@ -510,7 +526,7 @@ void merror(int er)
 	return strlen((char *)(soundStruct->info));
 }
 
-#ifdef USE_NEXTSTEP_SOUND_IO
+#ifdef USE_PERFORM_SOUND_IO
 int beginFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
@@ -577,7 +593,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 - play:sender
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
+#ifdef USE_PERFORM_SOUND_IO
 	int err;
 	if (!soundStruct) return self;
 	if (!playRecTable) playRecTable = [[HashTable alloc] initKeyDesc:"!"];
@@ -641,7 +657,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 - (int)samplesProcessed
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
+#ifdef USE_PERFORM_SOUND_IO
 	return (tag == 0) ? -1 : SNDSamplesProcessed(tag);
 #else
 	return -1; /* not yet implemented */
@@ -666,7 +682,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 - (void)stop:(id)sender
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
+#ifdef USE_PERFORM_SOUND_IO
 	if (tag) {
 		SNDStop(tag);
 		tag = 0;
@@ -688,7 +704,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 - (int)stop
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
+#ifdef USE_PERFORM_SOUND_IO
 	[self stop:self];
 	return SND_ERR_NONE;
 #else

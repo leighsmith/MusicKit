@@ -6,11 +6,12 @@
 */
 
 #if defined(NeXT) 
-#define USE_NEXTSTEP_SOUND_IO
-#endif
-
-#if (defined(__APPLE__) && defined(__MACH__))
-#define USE_NEXTSTEP_SOUND_IO  // LMS at the moment this causes conflicts between definitions here and the Original Sound.h
+  #define USE_NEXTSTEP_SOUND_IO
+  #define USE_PERFORM_SOUND_IO
+#elif (defined(__APPLE__) && defined(__MACH__))
+  #define USE_NEXTSTEP_SOUND_IO  // LMS currently this causes conflicts between #defines here and the Original Sound.h
+#elif defined(WIN32)
+  #define USE_PERFORM_SOUND_IO
 #endif
 
 #import <Foundation/NSObject.h>
@@ -23,6 +24,10 @@
 #else
 #import "SndFormats.h"
 #import "sounderror.h"
+#endif
+
+#ifdef WIN32
+#import <PerformSound/PerformSound.h>
 #endif
 
 #import "SndFunctions.h"
