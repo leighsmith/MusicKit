@@ -286,32 +286,57 @@ Modification history prior to commit to CVS:
 }
 
 - (void) encodeWithCoder: (NSCoder *) aCoder
-    /* You never send this message directly.  
-    Archives isSquelched. Also archives NoteReceiver List and owner. */
 {
-    NSString *str;
-    str = MKGetObjectName(self);
-    /* We don't write connection count here because we can deduce it in initWithCoder: */
-    [aCoder encodeValuesOfObjCTypes:"@cc", &str, &isSquelched, &_ownerIsAPerformer];
-    [aCoder encodeConditionalObject:owner];
-    [aCoder encodeConditionalObject:noteReceivers];
+    // Check if decoding a newer keyed coding archive
+    if([aCoder allowsKeyedCoding]) {
+	NSString *objectName = MKGetObjectName(self);
+	
+	/* We don't write connection count here because we can deduce it in initWithCoder: */
+	[aCoder encodeConditionalObject: noteReceivers forKey: @"MKNoteSender_noteReceivers"];
+	[aCoder encodeObject: objectName forKey: @"MKNoteSender_objectName"];
+	[aCoder encodeBool: isSquelched forKey: @"MKNoteSender_isSquelched"];
+	[aCoder encodeBool: _ownerIsAPerformer forKey: @"MKNoteSender_ownerIsAPerformer"];
+	[aCoder encodeConditionalObject: owner forKey: @"MKNoteSender_owner"];
+    }
+    else {
+	NSString *str = MKGetObjectName(self);
+	/* We don't write connection count here because we can deduce it in initWithCoder: */
+	[aCoder encodeValuesOfObjCTypes:"@cc", &str, &isSquelched, &_ownerIsAPerformer];
+	[aCoder encodeConditionalObject:owner];
+	[aCoder encodeConditionalObject:noteReceivers];
+    }    
 }
 
 - (id) initWithCoder: (NSCoder *) aDecoder
-    /* You never send this message directly.  
- See encodeWithCoder:. */
 {
-    NSString *str;
-    if ([aDecoder versionForClassName:@"MKNoteSender"] == VERSION2) {
-	[aDecoder decodeValuesOfObjCTypes:"@cc", &str, &isSquelched, &_ownerIsAPerformer];
-	if (str) {
-	    MKNameObject(str,self);
-	    [str release];
+    // Check if decoding a newer keyed coding archive
+    if([aDecoder allowsKeyedCoding]) {
+	NSString *objectName;
+	
+	[noteReceivers release];
+	noteReceivers = [[aDecoder decodeObjectForKey: @"MKNoteSender_noteReceivers"] retain];
+	objectName = [aDecoder decodeObjectForKey: @"MKNoteSender_objectName"];
+	if (objectName) {
+	    MKNameObject(objectName, self);
 	}
-	owner = [[aDecoder decodeObject] retain];
-	noteReceivers = [[aDecoder decodeObject] retain];
+	isSquelched = [aDecoder decodeBoolForKey: @"MKNoteSender_isSquelched"];
+	_ownerIsAPerformer = [aDecoder decodeBoolForKey: @"MKNoteSender_ownerIsAPerformer"];
+	[owner release];
+	owner = [[aDecoder decodeObjectForKey: @"MKNoteSender_owner"] retain];
     }
-    return self;
+    else {
+	NSString *str;
+	if ([aDecoder versionForClassName:@"MKNoteSender"] == VERSION2) {
+	    [aDecoder decodeValuesOfObjCTypes:"@cc", &str, &isSquelched, &_ownerIsAPerformer];
+	    if (str) {
+		MKNameObject(str,self);
+		[str release];
+	    }
+	    owner = [[aDecoder decodeObject] retain];
+	    noteReceivers = [[aDecoder decodeObject] retain];
+	}
+    }
+    return self;    
 }
 
 @end

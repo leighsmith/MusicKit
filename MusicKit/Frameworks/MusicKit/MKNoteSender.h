@@ -116,7 +116,7 @@ subclassed (at least not to override its <b>sendNote</b>: invocation).
 
 #import <Foundation/NSObject.h>
 
-@interface MKNoteSender : NSObject 
+@interface MKNoteSender: NSObject <NSCoding>
 {
     NSMutableArray *noteReceivers;   /* Array of connected MKNoteReceivers. */
     BOOL isSquelched;                /* YES if the object is squelched. */
