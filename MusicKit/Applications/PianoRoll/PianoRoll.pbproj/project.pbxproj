@@ -116,54 +116,13 @@
 		};
 		014780B1FFC46F29CFED3B96 = {
 			children = (
-				014780B2FFC46F29CFED3B96,
-				014780B4FFC46F29CFED3B96,
-				014780B6FFC46F29CFED3B96,
+				5A1B8FFDFFEA9AC4CFED3B96,
+				5A1B8FFFFFEA9AC4CFED3B96,
+				5A1B9001FFEA9AC4CFED3B96,
+				5A1B9007FFEAA4D0CFED3B96,
 			);
 			isa = PBXGroup;
 			name = Interfaces;
-			refType = 4;
-		};
-		014780B2FFC46F29CFED3B96 = {
-			children = (
-				014780B3FFC46F29CFED3B96,
-			);
-			isa = PBXVariantGroup;
-			name = PianoRoll.nib;
-			refType = 4;
-		};
-		014780B3FFC46F29CFED3B96 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/PianoRoll.nib;
-			refType = 4;
-		};
-		014780B4FFC46F29CFED3B96 = {
-			children = (
-				014780B5FFC46F29CFED3B96,
-			);
-			isa = PBXVariantGroup;
-			name = Info.nib;
-			refType = 4;
-		};
-		014780B5FFC46F29CFED3B96 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/Info.nib;
-			refType = 4;
-		};
-		014780B6FFC46F29CFED3B96 = {
-			children = (
-				014780B7FFC46F29CFED3B96,
-			);
-			isa = PBXVariantGroup;
-			name = Help.nib;
-			refType = 4;
-		};
-		014780B7FFC46F29CFED3B96 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/Help.nib;
 			refType = 4;
 		};
 		014780B8FFC46F29CFED3B96 = {
@@ -277,7 +236,7 @@
 	<key>NSExtensions</key>
 	<dict/>
 	<key>NSMainNibFile</key>
-	<string>PianoRoll</string>
+	<string>PianoRoll-macosx</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
@@ -355,46 +314,14 @@
 		014780C8FFC46F29CFED3B96 = {
 			buildActionMask = 2147483647;
 			files = (
-				014780C9FFC46F29CFED3B96,
-				014780CAFFC46F29CFED3B96,
-				014780CBFFC46F29CFED3B96,
 				014780CCFFC46F29CFED3B96,
+				5A1B9003FFEA9AC4CFED3B96,
+				5A1B9004FFEA9AC4CFED3B96,
+				5A1B9005FFEA9AC4CFED3B96,
+				5A1B9009FFEAA4D0CFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
-		};
-		014780C9FFC46F29CFED3B96 = {
-			fileRef = 014780B2FFC46F29CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
-		014780CAFFC46F29CFED3B96 = {
-			fileRef = 014780B4FFC46F29CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
-		014780CBFFC46F29CFED3B96 = {
-			fileRef = 014780B6FFC46F29CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
 		};
 		014780CCFFC46F29CFED3B96 = {
 			fileRef = 014780B9FFC46F29CFED3B96;
@@ -563,6 +490,110 @@
 		};
 		014780DBFFC4726BCFED3B96 = {
 			fileRef = 014780DAFFC4726BCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		5A1B8FFDFFEA9AC4CFED3B96 = {
+			children = (
+				5A1B8FFEFFEA9AC4CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = PianoRoll.nib;
+			path = "";
+			refType = 4;
+		};
+		5A1B8FFEFFEA9AC4CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = "English.lproj/PianoRoll-macosx.nib";
+			refType = 4;
+		};
+		5A1B8FFFFFEA9AC4CFED3B96 = {
+			children = (
+				5A1B9000FFEA9AC4CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = Info.nib;
+			path = "";
+			refType = 4;
+		};
+		5A1B9000FFEA9AC4CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = "English.lproj/Info-macosx.nib";
+			refType = 4;
+		};
+		5A1B9001FFEA9AC4CFED3B96 = {
+			children = (
+				5A1B9002FFEA9AC4CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = Help.nib;
+			path = "";
+			refType = 4;
+		};
+		5A1B9002FFEA9AC4CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = "English.lproj/Help-macosx.nib";
+			refType = 4;
+		};
+		5A1B9003FFEA9AC4CFED3B96 = {
+			fileRef = 5A1B8FFDFFEA9AC4CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		5A1B9004FFEA9AC4CFED3B96 = {
+			fileRef = 5A1B9001FFEA9AC4CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		5A1B9005FFEA9AC4CFED3B96 = {
+			fileRef = 5A1B8FFFFFEA9AC4CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		5A1B9007FFEAA4D0CFED3B96 = {
+			children = (
+				5A1B9008FFEAA4D0CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = Score.nib;
+			path = "";
+			refType = 4;
+		};
+		5A1B9008FFEAA4D0CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/Score.nib;
+			refType = 4;
+		};
+		5A1B9009FFEAA4D0CFED3B96 = {
+			fileRef = 5A1B9007FFEAA4D0CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
 				INCLUDED_OSS = (
