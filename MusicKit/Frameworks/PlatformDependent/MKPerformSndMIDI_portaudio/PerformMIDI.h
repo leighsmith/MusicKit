@@ -37,10 +37,13 @@
 #ifndef _MKMD_
 #define _MKMD_
 
-/* for defines: */
-#if HAVE_CONFIG_H
+/* We #include this file regardless of the setting of
+   HAVE_CONFIG_H so that other applications compiling against this
+   header don't have to define it. If you are seeing errors for
+   MKPerformSndMIDIConfig.h not found, you haven't run ./configure 
+ */
 #include "MKPerformSndMIDIConfig.h"
-#endif
+#include <objc/objc.h> /* for BOOL */
 
 /* kludge around type definitions. This should be replaced. */
 typedef int kern_return_t;

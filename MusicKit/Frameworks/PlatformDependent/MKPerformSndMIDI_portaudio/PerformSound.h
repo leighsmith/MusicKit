@@ -18,13 +18,16 @@
 #ifndef __PERFORMSOUND__
 #define __PERFORMSOUND__
 
-#if HAVE_CONFIG_H
+/* We #include this file regardless of the setting of
+   HAVE_CONFIG_H so that other applications compiling against this
+   header don't have to define it. If you are seeing errors for
+   MKPerformSndMIDIConfig.h not found, you haven't run ./configure 
+ */
 #include "MKPerformSndMIDIConfig.h"
-#endif
-
-// these don't seem to be defined anywhere standard - probably they
-// are in GnuStep
 #include <objc/objc.h> // for BOOL
+
+/* these don't seem to be defined anywhere standard - probably they
+   are in GnuStep */
 #ifndef FALSE
 #define FALSE 0
 #define TRUE !(FALSE)
