@@ -44,6 +44,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2002/02/26 13:18:39  sbrandon
+  fixed obscure bug to do with SynthPatchLists
+
   Revision 1.14  2001/09/08 21:53:16  leighsmith
   Prefixed MK for UnitGenerators and SynthPatches
 
@@ -215,7 +218,7 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
     NSMutableArray *newLists;
     if (oldLists) {
 	SynthPatchList *orphanList;
-	orphanList = (SynthPatchList *)[[oldLists objectAtIndex:0] bytes];
+	orphanList = (SynthPatchList *)[oldLists objectAtIndex:0];
 	activeOldest = orphanList->activeOldest;
 	activeNewest = orphanList->activeNewest;
     } 
