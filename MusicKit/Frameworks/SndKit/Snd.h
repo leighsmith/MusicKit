@@ -34,6 +34,7 @@ extern NSString *NXSoundPboardType;
 @class NSPasteboard;
 @class SndPlayer;
 @class SndPerformance;
+@class SndAudioBuffer;
 
 /*!
     @class      Snd 
@@ -1064,6 +1065,14 @@ architecture, as described in the <b>SndStruct</b> header.
   @discussion Mainly for use by SndPlayer
 */
 - (int) performanceCount;
+
+/*!
+  @method audioBufferForSamplesInRange:
+  @param  playRegion range of sample FRAMES (as opposed to individual single
+          channel samples) to stick into the audioBuffer
+  @result An SndAudioBuffer containing the samples in the range r.
+*/
+- (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) r;
 
 @end
 

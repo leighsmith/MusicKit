@@ -1406,4 +1406,19 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
   return [performancesArray count];
 }
 
+- (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) r
+{
+  SndAudioBuffer *ab  = [SndAudioBuffer alloc];
+  int   samSize       = SndFrameSize(soundStruct);
+  void* dataPtr       = [self data] + samSize * r.location;
+  int   lengthInBytes = r.length * samSize;
+  SndSoundStruct s;
+  
+  memcpy(&s,soundStruct,sizeof(SndSoundStruct));
+  s.dataSize = lengthInBytes;
+  [ab initWithFormat: &s data: dataPtr];
+
+  return [ab autorelease];
+}
+
 @end
