@@ -205,5 +205,36 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// paramDictionary
+////////////////////////////////////////////////////////////////////////////////
+
+- (NSDictionary*) paramDictionary
+{
+  int i;
+  NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+  for (i = 0; i < numParams; i++) {
+    [dictionary setObject: [self paramObjectForIndex: i] forKey: [self paramName: i]];
+  }
+  return dictionary;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// setParamWithKey:toValue:
+////////////////////////////////////////////////////////////////////////////////
+
+- setParamWithKey: (NSString*) keyName toValue: (NSValue*) value
+{
+  return self;
+}
+
+- (id) paramObjectForIndex: (int) i
+{
+  float    f = [self paramValue: i];
+  NSValue *v = [NSValue value: &f withObjCType: @encode(float)];
+  return  v;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 @end

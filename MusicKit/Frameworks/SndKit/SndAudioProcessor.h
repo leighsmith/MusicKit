@@ -156,6 +156,12 @@
 - (NSString*) name;
 - (NSString*) description;
 - inspect;
+
+- (NSDictionary*) paramDictionary;
+- setParamWithKey: (NSString*) keyName toValue: (NSValue*) value;
+
+- (id) paramObjectForIndex: (int) i;
+
 @end
 
 #endif
