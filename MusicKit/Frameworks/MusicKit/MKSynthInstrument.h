@@ -133,7 +133,7 @@
    Otherwise returns [Orchestra class].
   */
 
-- (void)dealloc; 
+//- (void)dealloc; // LMS redundant after SB's changes
  /* 
  * If the receiver isn't in performance, this frees the receiver 
  * (returns nil).  Otherwise does nothing and returns
