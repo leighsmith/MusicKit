@@ -683,7 +683,8 @@ useLinearInterpolation: (BOOL) fastInterpolation
 	if(error != SND_ERR_NONE)
 	    return nil;
     }
-    byteCount = bufferByteRange.length;
+    if(bufferByteRange.location + bufferByteRange.length > byteCount)
+	byteCount = bufferByteRange.location + bufferByteRange.length;
     
     return self;
 }
