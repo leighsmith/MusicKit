@@ -4,6 +4,10 @@
 */
 /*
   $Log$
+  Revision 1.9  2002/04/08 17:23:49  sbrandon
+  added new method _rescheduleMsgRequestWithObjectArgs:... which optionally
+  retains its arguments
+
   Revision 1.8  2000/03/31 00:12:29  leigh
   theTimeToWait now a shared function
 
@@ -78,6 +82,11 @@ extern double _MKTheTimeToWait(double nextMsgTime);
 -(MKMsgStruct *)_rescheduleMsgRequest:(MKMsgStruct *)aMsgStructPtr
   atTime:(double)timeOfNewMsg sel:(SEL)whichSelector
   to:(id)destinationObject argCount:(int)argCount, ...;
+-(MKMsgStruct *)_rescheduleMsgRequestWithObjectArgs:(MKMsgStruct *)aMsgStructPtr
+  atTime:(double)timeOfNewMsg sel:(SEL)whichSelector
+  to:(id)destinationObject argCount:(int)argCount
+  arg1:(id)arg1 retain:(BOOL)retainArg1
+  arg2:(id)arg2 retain:(BOOL)retainArg2;
 + (void) masterConductorBody:(NSTimer *) unusedTimer;
 - _error: (NSString *) errorMsg;
 
