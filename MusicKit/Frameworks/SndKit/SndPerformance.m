@@ -77,6 +77,7 @@ playingAtTime: (double) t
     playIndex    = beginIndex;
     endAtIndex   = endIndex;
     deltaTime    = 1.0;
+    actualTime   = 0.0;
   }
   return self;
 }
@@ -97,6 +98,7 @@ startPosition: (double) startPosition
     startAtIndex = samplingRate * startPosition;
     playIndex    = startAtIndex;
     endAtIndex   = startAtIndex + samplingRate * duration / deltaTime;
+    actualTime   = 0.0;
   }
   return self;
 }
@@ -279,10 +281,10 @@ startPosition: (double) startPosition
 
 - processBuffer: (SndAudioBuffer*) aBuffer
 {
+  actualTime +=  [aBuffer duration];
   if (audioProcessorChain != nil) {
-    double relativePlayTime =  (double) (playIndex - startAtIndex) / [aBuffer samplingRate];
 //printf("time: %f\n",relativePlayTime);
-    [audioProcessorChain processBuffer: aBuffer forTime: relativePlayTime];
+    [audioProcessorChain processBuffer: aBuffer forTime: actualTime];
   }
   return self;
 }

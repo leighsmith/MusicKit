@@ -45,6 +45,8 @@
     SndAudioProcessorChain *audioProcessorChain;
 
     double  deltaTime;
+
+    double  actualTime;
 }
 
 /*!
