@@ -1,19 +1,31 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
+
+  Description:
+    Note that the code for writing scorefiles is spread between writeScore.m,
+    MKNote.m, and _ParName.m. This is for reasons of avoiding inter-module
+    communication (i.e. minimizing globals). Perhaps the scorefile-writing
+    should be more cleanly isolated.
+
+    See binaryScorefile.doc on the musickit source directory for explanation
+    of binary scorefile format.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000 The MusicKit Project.  
 */ 
 /* 
 Modification history:
 
   $Log$
+  Revision 1.6  2000/10/01 06:50:53  leigh
+  Doco Cleanup
+
   Revision 1.5  2000/06/09 03:20:33  leigh
   removed redundant HashTable import
 
@@ -36,18 +48,6 @@ Modification history:
   12/15/89/daj - Changed SCOREMAGIC write to conform to one-word magic
   01/09/89/daj - Changed comments.
 */
-
-/*
-   Note that the code for writing scorefiles is spread between writeScore.m,
-   Note.m, and _ParName.m. This is for reasons of avoiding inter-module
-   communication (i.e. minimizing globals). Perhaps the scorefile-writing
-   should be more cleanly isolated.
-*/
-
-/* See binaryScorefile.doc on the musickit source directory for explanation
-   of binary scorefile format. */
-
-//#import <objc/HashTable.h>
 
 #import "_musickit.h"
 #import "_MKNameTable.h"   
