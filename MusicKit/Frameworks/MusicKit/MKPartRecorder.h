@@ -1,10 +1,40 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+  HEADER FILES: MusicKit.h
+
+  Description:
+    A PartRecorder is an Instrument that realizes Notes by adding copies
+    of them to a Part.  A PartRecorder's Part is set through the setPart:
+    method.  If the Part already contains Notes, the old Notes aren't
+    removed or otherwise affected by recording into the Part -- the
+    recorded Notes are merged in.
+  
+    Each PartRecorder contains a single NoteReceiver object.  During a
+    performance, a PartPerformer receives Notes from its NoteReceiver,
+    copies them, and then adds them to its Part object.  The PartRecorder
+    gives each Note a new timeTag and, if it's a noteDur, a new duration.
+    The new timeTag reflects the time in the performance that the Note was
+    received by the object.  The timeTag and the duration are computed
+    as beats or seconds.  (Additionally, if the timeunit is "MK_timeTag",
+    the Note's timeTag is used verbatim.)
+  
+    You can create PartRecorders yourself, or you can use a ScoreRecorder
+    object to create a group of them for you.
+  
+    CF: MKScoreRecorder, MKPart
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University  
 */
 /*
   $Log$
+  Revision 1.3  2000/03/29 02:57:04  leigh
+  Cleaned up doco and ivar declarations
+
   Revision 1.2  1999/07/29 01:25:48  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -16,38 +46,14 @@
 #import "timeunits.h"
 
 @interface MKPartRecorder : MKInstrument
-/* 
- * 
- * A PartRecorder is an Instrument that realizes Notes by adding copies
- * of them to a Part.  A PartRecorder's Part is set through the setPart:
- * method.  If the Part already contains Notes, the old Notes aren't
- * removed or otherwise affected by recording into the Part -- the
- * recorded Notes are merged in.
- * 
- * Each PartRecorder contains a single NoteReceiver object.  During a
- * performance, a PartPerformer receives Notes from its NoteReceiver,
- * copies them, and then adds them to its Part object.  The PartRecorder
- * gives each Note a new timeTag and, if it's a noteDur, a new duration.
- * The new timeTag reflects the time in the performance that the Note was
- * received by the object.  The timeTag and the duration are computed
- * as beats or seconds.  (Additionally, if the timeunit is "MK_timeTag", 
- * the Note's timeTag is used verbatim.)
- * 
- * You can create PartRecorders yourself, or you can use a ScoreRecorder
- * object to create a group of them for you.
- * 
- * CF: ScoreRecorder, Part
- * 
- */
 {
-    MKTimeUnit timeUnit;   /* How time is interpreted. */
-    id noteReceiver;       /* The object's single NoteReceiver. */
-    id part;               /* The object's Part. */
+    MKTimeUnit timeUnit;                /* How time is interpreted. */
+    MKNoteReceiver *noteReceiver;       /* The object's single NoteReceiver. */
+    MKPart *part;                       /* The object's Part. */
     BOOL compensatesDeltaT;
 
     /* The following for internal use only */
     id _scoreRecorder;
-    BOOL _reservedPartRecorder2;
 }
 
 - init; 

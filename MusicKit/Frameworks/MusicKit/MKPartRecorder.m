@@ -1,18 +1,24 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
-  $Id$
-  Original Author: David A. Jaffe
-  
+  $Id$  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
+
+  Description:
+    A simple class which records MKNotes to a MKPart. That is, it acts as
+    an MKInstrument that realizes MKNotes by adding them to its MKPart.
+ 
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University  
 */
 /* Modification History:
 
    $Log$
+   Revision 1.3  2000/03/29 02:57:05  leigh
+   Cleaned up doco and ivar declarations
+
    Revision 1.2  1999/07/29 01:16:39  leigh
    Added Win32 compatibility, CVS logs, SBs changes
 
@@ -30,20 +36,8 @@
 #import "ScoreRecorderPrivate.h"
 
 #import "MKPartRecorder.h"
-@implementation MKPartRecorder:MKInstrument
-  /* A simple class which records notes to a part. That is, it acts as
-     an Instrument that realizes notes by adding them to its Part.
-     */
-{
-    MKTimeUnit timeUnit;
-    id noteReceiver; /* The single instance of noteReceiver. */
-    id part;
-    BOOL compensatesDeltaT;
-    id _scoreRecorder;
-    BOOL _reservedPartRecorder2;
-}
 
-#define _archivePart _reservedPartRecorder2 /* Unused */
+@implementation MKPartRecorder
 
 #import "noteRecorderMethods.m"
 
