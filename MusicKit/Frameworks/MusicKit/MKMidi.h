@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.7  1999/10/28 01:37:14  leigh
+  driver names and units now returned by separate class methods, renamed ivar
+
   Revision 1.6  1999/09/24 17:06:26  leigh
   added downloadDLS method prototype
 
@@ -73,19 +76,18 @@ typedef struct _timeVars {
 {
     NSMutableArray * noteSenders;        /* The object's collection of NoteSenders. */
     NSMutableArray * noteReceivers;      /* The object's collection of NoteReceivers */
-    MKDeviceStatus deviceStatus; /* See MKDeviceStatus.h */
-    NSString * midiDev;              /* Midi device port name. */
-    BOOL useInputTimeStamps;     /* YES if Conductor's time updated from 
-                                    driver's time stamps.*/
-    BOOL outputIsTimed;   /* YES if the driver's clock is used for output */
-    double localDeltaT;   /* Offset added to MIDI-out time stamps.(see below)*/
+    MKDeviceStatus deviceStatus;         /* See MKDeviceStatus.h */
+    NSString *midiDevName;               /* Midi device port name. */
+    BOOL useInputTimeStamps;             /* YES if Conductor's time updated from driver's time stamps.*/
+    BOOL outputIsTimed;                  /* YES if the driver's clock is used for output */
+    double localDeltaT;                  /* Offset added to MIDI-out time stamps.(see below)*/
 
     /* The following are for internal use only.  */
     unsigned _ignoreBits;
     void *_pIn;
     void *_pOut;
     double _timeOffset;
-    char _mode; // should be an enumerated type. 'i' = MKMidiInputOnly 'o' = MKMidiOutputOnly 'a' = MKMidiIO
+    char ioMode; // should be an enumerated type. 'i' = MKMidiInputOnly 'o' = MKMidiOutputOnly 'a' = MKMidiIO
     // the following are from the ivar thaw
     BOOL isOwner;
     // should become NSPort
@@ -271,15 +273,14 @@ typedef struct _timeVars {
  frames:(short *)f;
 -synchConductor;
 
-// TODO have return an NSArray
-+(int)getDriverNames:(NSString ***)driverNames units:(int **)driverUnits;
-  /* Returns (by ref) pointers to arrays of driverNames and units.
-   * Returns size of array.
-   */
+// Returns NSArrays of all available driver names and their unit numbers
++ (NSArray *) getDriverNames;
++ (NSArray *) getDriverUnits;
 
 -(NSString *)driverName;
 -(int)driverUnit;
 
+// download MMA DownLoadable Sounds with patch numbers provided.
 - (void) downloadDLS: (NSArray *) dlsPatches;
 
 @end
