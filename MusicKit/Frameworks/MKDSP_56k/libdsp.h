@@ -90,7 +90,7 @@ extern int DSPReboot(DSPLoadSpec *system);
 
 /* ============================= DSPReadFile.c ============================= */
 
-extern int DSPReadFile(DSPLoadSpec **dsppp, char *fn);
+extern int DSPReadFile(DSPLoadSpec **dsppp, const char *fn);
 /*
  * Read in a DSP file (as produced by the assembler in absolute mode).
  * It looks in the system-wide .dsp directory for the given file if 
@@ -121,7 +121,7 @@ extern char *DSPTimeStampStr(DSPFix48 *aTimeStampP);
 
 /* ============================= _DSPString.c ============================== */
 
-extern char *DSPCat(char *f1, char *f2);
+extern char *DSPCat(char *f1, const char *f2);
 /* 
  * Concatenate two strings into the returned string.
  * Uses malloc to create the returned string.

@@ -2185,7 +2185,7 @@ port_t DSPMKGetReadDataReplyPort(void)
 
 /****************** Getting and setting DSP system files *********************/
 
-char *DSPGetDSPDirectory(void)
+const char *DSPGetDSPDirectory(void)
 {
     NSString *dspdir;
     char *dspdirenv;
@@ -2480,7 +2480,7 @@ BRIEF FILE *DSPMKGetWriteDataFP(void)
     return s_wd_fp[s_idsp];
 }
 
-BRIEF int DSPMKSetWriteDataFile(char *fn)
+BRIEF int DSPMKSetWriteDataFile(const char *fn)
 {
     CHECK_INIT;
     s_wd_fn[s_idsp] = fn;
@@ -3040,7 +3040,7 @@ BRIEF int DSPSetTimedZeroNoFlush(int yesOrNo)
     return 0;
 }
 
-BRIEF int DSPMKSetReadDataFile(char *fn)
+BRIEF int DSPMKSetReadDataFile(const char *fn)
 {
     CHECK_INIT;
     s_rd_fn[s_idsp] = fn;

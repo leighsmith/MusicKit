@@ -192,7 +192,7 @@ char *DSPGetErrorFile(void)
 
 
 int DSPEnableErrorFile(
-    char *fn)
+    const char *fn)
 {
     DSP_UNTIL_ERROR(DSPEnableErrorLog());
     return DSPSetErrorFile(fn);

@@ -54,7 +54,7 @@ char *_DSPMakeStr(
 
 char *DSPCat(
     char *f1,
-    char *f2)
+    const char *f2)
 {   
     char *f12,*cp;
 

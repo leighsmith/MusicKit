@@ -225,7 +225,7 @@ extern DSPTimeStamp DSPMKTimeStamp0; /* Tick-synchronized, untimed */
 #define DSP_ERRORS_FILE "/tmp/dsperrors"
 #define DSP_WHO_FILE "/tmp/dsp.who"
 
-extern char *DSPGetDSPDirectory();	/* as above or $DSP if $DSP set */
+extern const char *DSPGetDSPDirectory();	/* as above or $DSP if $DSP set */
 extern char *DSPGetSystemDirectory();	/* /u/l/l/monitor|$DSP/monitor */
 extern char *DSPGetImgDirectory();	/* /u/l/l/dsp/img or $DSP/img */
 extern char *DSPGetAPDirectory();	/* /u/l/l/dsp/imgap or $DSP/imgap */
