@@ -1,0 +1,38 @@
+#  $Id$
+#  Defined In: The MusicKit
+#  Description:
+#    Makefile preamble for GNUstep
+#
+#  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
+#
+#  6 November 2001, Copyright (c) 2001 Stephen Brandon.
+#
+#  Permission is granted to use and modify this code for commercial and non-
+#  commercial purposes so long as the author attribution and this copyright
+#  message remains intact and accompanies all derived code.
+
+#  Modification history:
+#
+#  $Log$
+#  Revision 1.1  2001/11/08 22:47:53  sbrandon
+#  now we're using an objc class in the framework (NSDate) we have to explicitly
+#  mention the frameworks we require: foundation, objc.
+#
+#  Revision 1.1  2001/11/07 13:32:15  sbrandon
+#  new file - adds correct dependencies for Win32 compilation - required in
+#  order to be able to use functions and methods from dlls.
+#
+
+# What are the libraries this library depends upon. This is needed for some
+# systems where building a shared library requires to pass to the linker
+# all the libraries the target library depends upon.
+
+LIB_DEPEND_UPON = -l$(FOUNDATION_LIBRARY_NAME) -lobjc
+
+ifeq ($(GNUSTEP_TARGET_OS),mingw32)
+$(MY_NAME)_LIBRARIES_DEPEND_UPON += $(LIB_DEPEND_UPON)
+endif
+ifeq ($(GNUSTEP_TARGET_OS),cygwin)
+$(MY_NAME)_LIBRARIES_DEPEND_UPON += $(LIB_DEPEND_UPON)
+endif
+
