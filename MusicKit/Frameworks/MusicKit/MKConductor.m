@@ -1,20 +1,28 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
   HEADER FILES: musickit.h
-*/
 
+  Description: 
+    This is the Music Kit scheduler. See documentation for details. 
+    Note that, in clocked mode, all timing is done with a single dpsclient "timed entry." 
+
+    In this version, you must use the appkit run loop if you are in clocked mode. You may,
+    however, use the unClocked mode without the appkit.
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/08/06 16:31:12  leigh
+  Removed extraInstances and implementation ivar cruft
+
   Revision 1.2  1999/07/29 01:16:36  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -77,14 +85,6 @@ Modification history:
 		 archiving. (Sigh.)
 */
 
-/* This is the Music Kit scheduler. See documentation for details. 
- * Note that, in clocked mode,  all timing is done with a single dpsclient 
- * "timed entry." 
- */
-
-/* In this version, you must use the appkit run loop if you are in clocked 
-   mode. You may, however, use the unClocked mode without the 
-   appkit. */
 
 //#import <mach/time_stamp.h> //sb: NSDate class will be used for time stamping
 #define MK_INLINE 1
@@ -141,35 +141,6 @@ static id classDelegate = nil;  /* Delegate for the whole class. */
 
 #import "ConductorPrivate.h"
 @implementation MKConductor:NSObject 
-/* nextMsgTime = (nextbeat - time) * beatSize */
-{
-    double time;     /* Time in beats, updated (for all
-		      * instances) after timed entry fires off. 
-		      */
-    double nextMsgTime; /* Time, in seconds, when next message is scheduled to 
-			* be sent by this Conductor.
-        		* sb: relative to start of performance, I think.
-			*/
-    double beatSize;   /* The size of a single beat in seconds. */
-    double timeOffset;    /* Performance timeOffset in seconds. */
-    BOOL isPaused;      /* YES if this instance is paused. 
-			 * Note that pausing all Conductors through the
-			 * pause factory
-			 * method doesn't set this to YES. */
-    id delegate;
-    id activePerformers;
-    id MTCSynch;
-    MKMsgStruct *_msgQueue;
-    id _condNext;
-    id _condLast;
-    double _pauseOffset;
-//    void *_reservedConductor5;
-    double inverseBeatSize;
-    double oldAdjustedClockTime;
-    MKMsgStruct *pauseFor;
-    unsigned char archivingFlags;
-    unsigned char delegateFlags;
-}				
 
 /* METHOD TYPES
  * Creating and freeing Conductors
@@ -185,13 +156,6 @@ static MKConductor *condQueue = nil;   /* Head of conductor queue. */
 static MKConductor *defaultCond = nil; /* default Conductor. */
 static MKConductor *clockCond = nil;   /* clock time Conductor. */
 
-//#define _extraVars _reservedConductor5
-
-/* This struct is for instance variables added after the 1.0 instance variable
-   freeze. */
-//typedef struct __extraInstanceVars {
-//} _extraInstanceVars;
-
 #define NORMALCOND (unsigned char)0
 #define CLOCKCOND (unsigned char)1
 #define DEFAULTCOND (unsigned char)2
@@ -199,19 +163,6 @@ static MKConductor *clockCond = nil;   /* clock time Conductor. */
 #define DELEGATE_RESPONDS_TO(_self,_msgBit) ((_self)->delegateFlags & _msgBit)
 #define BEAT_TO_CLOCK 1
 #define CLOCK_TO_BEAT 2
-
-/*
-#define _inverseBeatSize(_self) \
-          ((_extraInstanceVars *)_self->_extraVars)->inverseBeatSize
-#define _oldAdjustedClockTime(_self) \
-          ((_extraInstanceVars *)_self->_extraVars)->oldAdjustedClockTime
-#define _pauseFor(_self) \
-          ((_extraInstanceVars *)_self->_extraVars)->pauseFor
-#define _archivingFlags(_self) \
-          ((_extraInstanceVars *)_self->_extraVars)->archivingFlags
-#define _delegateFlags(_self) \
-          ((_extraInstanceVars *)_self->_extraVars)->delegateFlags
-*/
 
 #define VERSION2 2
 #define VERSION3 3
@@ -960,7 +911,6 @@ static void condInit()
     [super init];
     activePerformers = [[NSMutableArray allocWithZone:[self zone]] init];
     beatSize = 1;
-//    _MK_CALLOC(_extraVars,_extraInstanceVars,1);
     pauseFor = NULL; 
     delegateFlags = 0;
     inverseBeatSize = 1;
@@ -1868,7 +1818,6 @@ static MKMsgStruct *evalSpecialQueue(queue,queueEnd)
      */
 {
 //    [super initWithCoder:aDecoder]; //sb: unnec?
-//    _MK_CALLOC(_extraVars,_extraInstanceVars,1);
     delegateFlags = 0;
     if ([aDecoder versionForClassName:@"Conductor"] >= VERSION2) {
 	[aDecoder decodeValuesOfObjCTypes: "ddc", &beatSize, &timeOffset, &(archivingFlags)];

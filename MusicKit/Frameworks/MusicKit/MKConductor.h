@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.3  1999/08/06 16:31:12  leigh
+  Removed extraInstances and implementation ivar cruft
+
   Revision 1.2  1999/07/29 01:25:44  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -71,12 +74,16 @@ extern MKMsgStruct *
 extern void MKFinishPerformance(void);
 
 @interface MKConductor : NSObject
+/* nextMsgTime = (nextbeat - time) * beatSize */
 {
-    double time;       
-    double nextMsgTime;
-    double beatSize;    
-    double timeOffset; 
-    BOOL isPaused;     
+    double time;        // Time in beats, updated (for all instances) after timed entry fires off.
+    double nextMsgTime; // Time, in seconds, when next message is scheduled to be sent by this Conductor.
+                        // sb: relative to start of performance, I think.
+    double beatSize;    // The size of a single beat in seconds.
+    double timeOffset;  // Performance timeOffset in seconds.
+    BOOL isPaused;      /* YES if this instance is paused. 
+                         * Note that pausing all Conductors through the pause factory
+                         * method doesn't set this to YES. */
     id delegate;       
     id activePerformers;
     id MTCSynch;
@@ -86,7 +93,6 @@ extern void MKFinishPerformance(void);
     id _condNext;
     id _condLast;
     double _pauseOffset;
-//    void *_reservedConductor5;
     double inverseBeatSize;
     double oldAdjustedClockTime;
     MKMsgStruct *pauseFor;
