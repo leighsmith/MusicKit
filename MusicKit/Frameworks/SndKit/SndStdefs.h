@@ -1,6 +1,13 @@
 /* Sndstdefs.h */
 
+#ifndef __SNDSTDDEFS__
+#define __SNDSTDDEFS__
+
+#ifdef GNUSTEP
+#include <objc/objc.h>
+#else
 #import <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
+#endif
 //#ifndef TRUE
 //#define TRUE  1
 //#endif
@@ -49,3 +56,5 @@ typedef unsigned int   SND_UWORD;
 #else DEBUG
 #define INLINE inline
 #endif DEBUG
+
+#endif
