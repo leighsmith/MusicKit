@@ -469,6 +469,7 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
 
 #define bearingFun1(theta)    fabs(cos(theta))
 #define bearingFun2(theta)    fabs(sin(theta))
+  return NO;
 
   [lock lock];
 
@@ -526,30 +527,34 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
             int tempAmpFlags,tempBearingFlags;
 //            double tempAmpX,tempBearingX;
             float tempAmpY,tempBearingY;
-//            BOOL hasAmp=NO,hasBearing=NO;
+            BOOL hasAmp=NO,hasBearing=NO;
             double x=nowTime;
             double maxX = x + [outB duration];
-            NSLog(@"x %f, maxX %f\n",x,maxX);
             /* Find the relevant bps in each envelope.
              * We only need to take things from the last bp before the buffer
              * begins.
              */
 
-            if (!bearingEnv) bearingEnv = [[envClass alloc] init];
-            if (!ampEnv)     ampEnv     = [[envClass alloc] init];
             /************************************************************/
             #define AMP_FIRST 1
             #define BEARING_FIRST 2
-            {
+
 //            float amp,bearing;
-            int maxAmpBps = [ampEnv breakpointCount] - 1;
-            int maxBearingBps = [bearingEnv breakpointCount] - 1;
+            int maxAmpBps;
+            int maxBearingBps;
+
             int lowest = 0;
             double nextAmpX, nextBearingX, nextX;
             float nextAmpY, nextBearingY;
             float ampMult;
             float bearingMult;
 
+            NSLog(@"x %f, maxX %f\n",x,maxX);
+            if (!bearingEnv) bearingEnv = [[envClass alloc] init];
+            if (!ampEnv) ampEnv = [[envClass alloc] init];
+
+            maxAmpBps = [ampEnv breakpointCount] - 1;
+            maxBearingBps = [bearingEnv breakpointCount] - 1;
             do {
                 if (!lowest) { /* first time around */
                     tempAmpY     = [ampEnv lookupYForX:x];
@@ -583,20 +588,26 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
 
                 if (ampIndx != -1) {
                     tempAmpFlags = [ampEnv lookupFlagsForBreakpoint:ampIndx];
+                    hasAmp = YES;
                 }
+                else hasAmp = NO;
+
                 if (bearingIndx != -1) {
                     tempBearingFlags = [bearingEnv lookupFlagsForBreakpoint:ampIndx];
+                    hasBearing = YES;
                 }
+                else hasBearing = NO;
 
                 /* So that's the "from" -- what is the "to"?
-                * Better check to see whether the next amp, or the next bearing
-                * segment comes next
-                */
+                 * Better check to see whether the next amp, or the next bearing
+                 * segment comes next
+                 */
                 /* FIXME: need to check properly for max breakpoints */
                 /* what is happening here is that if the lookup for previous bp
                    comes back with -1, we are still assuming that there is a valid one
                    there, and looking for that one + 1 (==0)
                  */
+                //if (!hasAmp && )
                 if ((nextAmpX=[ampEnv lookupXForBreakpoint:nextAmpIndx]) <=
                     (nextBearingX=[bearingEnv lookupXForBreakpoint:nextBearingIndx])
                     && nextAmpIndx <= maxAmpBps ) {
@@ -632,8 +643,7 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
 
 
             } while (x <= maxX);
-            
-            }
+
             /* go and do loop again */
 
             /* now do the processing based on the line segs in store */
