@@ -3,7 +3,7 @@
 //  $Id$
 //
 //  Description:
-//    Snd methods concerned with recording and playing .
+//    Snd methods concerned with recording and playing.
 //
 //  Original Author: Leigh Smith
 //
@@ -200,19 +200,24 @@
 
 - (BOOL) isPlayable
 {
-    int df,cc,sr;
-    if (!soundStruct) return YES; /* empty sound can be played! */
-    if ((df = soundStruct->dataFormat) == SND_FORMAT_INDIRECT)
-        df =  ((SndSoundStruct *)(*((SndSoundStruct **)
-				    (soundStruct->dataLocation))))->dataFormat;
-    cc = soundStruct->channelCount;
-    if (cc < 1 || cc > 2) return NO;
-    sr = soundStruct->samplingRate;
-    if (sr < 4000 || sr > 48000) return NO; /* need to check hardware here */
+    SndSampleFormat df;
+    int cc;
+    double sr;
+    
+    if ([self lengthInSampleFrames] == 0)
+	return YES; /* empty sound can be played! */
+    df = [self dataFormat];
+    cc = [self channelCount];
+    if (cc < 1)
+	return NO;
+    sr = [self samplingRate];
+    if(sr <= 0.0)
+	return NO;
     switch (df) {
 	case SND_FORMAT_MULAW_8:
 	case SND_FORMAT_LINEAR_8:
 	case SND_FORMAT_LINEAR_16:
+	case SND_FORMAT_LINEAR_24:
 	case SND_FORMAT_LINEAR_32:
 	case SND_FORMAT_FLOAT:
 	case SND_FORMAT_DOUBLE:
