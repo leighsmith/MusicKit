@@ -487,34 +487,33 @@ static SndStreamManager *sm = nil;
 
 static void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj)
 {
-  // Eventually these must be made instance variables which you just wrap
-  // around each of the C-side buffers, to avoid allocation costs.
-  
-  NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-  SndAudioBuffer *inB  = nil;
-  SndAudioBuffer *outB = nil;
-  inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
-  outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
-  
+    // Eventually these must be made instance variables which you just wrap
+    // around each of the SNDStreamBuffers, to avoid allocation costs.
+
+    NSAutoreleasePool *localPool = [NSAutoreleasePool new];
+    SndAudioBuffer *inB  = nil;
+    SndAudioBuffer *outB = nil;
+    inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
+    outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
+
 #if SNDSTREAMMANAGER_DEBUG
-  NSLog(@"[Manager] --> processAudio sampleCount = %d\n", (int)sampleCount);
+    NSLog(@"[Manager] --> processAudio sampleCount = %d\n", (int)sampleCount);
 #endif
-  [(SndStreamManager *) obj processStreamAtTime: sampleCount input: inB output: outB];
+    [(SndStreamManager *) obj processStreamAtTime: sampleCount input: inB output: outB];
 #if SNDSTREAMMANAGER_DEBUG
-  NSLog(@"[Manager] <-- processAudio\n");
+    NSLog(@"[Manager] <-- processAudio\n");
 #endif
 
 #if SNDSTREAMMANAGER_DEBUG
-  NSLog(@"[Manager] About to release pool...\n");
+    NSLog(@"[Manager] About to release pool...\n");
 #endif
 
-  memcpy(cOutB->streamData, [outB bytes], cOutB->streamFormat.dataSize);
-  
-  [localPool release];
+    memcpy(cOutB->streamData, [outB bytes], cOutB->streamFormat.dataSize);
+
+    [localPool release];
 #if SNDSTREAMMANAGER_DEBUG
-  NSLog(@"[Manager] Released pool...\n");
+    NSLog(@"[Manager] Released pool...\n");
 #endif
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -529,41 +528,45 @@ static void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuf
                       output: (SndAudioBuffer*) outB
 {
 #if SNDSTREAMMANAGER_DEBUG
-  NSLog(@"[Manager] Entering...\n");
+    NSLog(@"[Manager] Entering...\n");
 #endif
-  if (active) {
-    // set our current notion of time.
-    if (outB != nil)
-      nowTime += [outB duration];
-    else if (inB != nil)
-      nowTime += [inB duration];
+    if (active) {
+	// set our current notion of time.
+	if (outB != nil)
+	    nowTime += [outB duration];
+	else if (inB != nil)
+	    nowTime += [inB duration];
 
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] nowTime: %.3f sampleCount: %.3f\n",nowTime,sampleCount);
+	NSLog(@"[Manager] nowTime: %.3f sampleCount: %.3f\n", nowTime, sampleCount);
 #endif
-    [mixer processInBuffer: inB outBuffer: outB nowTime: nowTime];
+	[mixer processInBuffer: inB outBuffer: outB nowTime: nowTime];
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] post mixer\n");
+	NSLog(@"[Manager] post mixer\n");
 #endif
-    if ([mixer clientCount] == 0) {// Hmm, no clients hey? Shut down the Stream.
-      [self stopStreaming];
+	if ([mixer clientCount] == 0) {// Hmm, no clients hey? Shut down the Stream.
+	    [self stopStreaming];
 #if SNDSTREAMMANAGER_DEBUG
-      NSLog(@"[Manager] signalling a stop stream...\n");
+	    NSLog(@"[Manager] signalling a stop stream...\n");
 #endif
-    }
+	}
 #if SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START
-    {
-      float *pF =  [outB data];
-      pF[0] = 1.0f;
-      pF[1] = 1.0f;
-    }
+	{
+	    float *pF =  [outB data];
+	    pF[0] = 1.0f;
+	    pF[1] = 1.0f;
+	}
 #endif
-
-  }
-  else
-    NSLog(@"SndStreamManager::processStreamAtTime - called when not active...?");
+    }
+    else {
+	// This can happen quite benignly when we first call SNDStreamStart, we literally can get callbacks
+	// after AudioDeviceStart() is called, before SNDStartStream has returned to set the active ivar.
 #if SNDSTREAMMANAGER_DEBUG
-  NSLog(@"[Manager] Leaving...\n");
+	NSLog(@"SndStreamManager::processStreamAtTime - called when not active...?");
+#endif
+    }
+#if SNDSTREAMMANAGER_DEBUG
+    NSLog(@"[Manager] Leaving...\n");
 #endif
 }
 
