@@ -3591,6 +3591,8 @@
 				D88FE30605A0F9E40024FD88,
 				D88FE30705A0F9E40024FD88,
 				D88FE30805A0F9E40024FD88,
+				D84CDEDE061F57D5007B002D,
+				D84CDEDF061F57D5007B002D,
 				D88FE30B05A0F9E40024FD88,
 				D88FE30C05A0F9E40024FD88,
 				D88FE30D05A0F9E40024FD88,
@@ -3676,6 +3678,7 @@
 				D88FE37D05A0FEB80024FD88,
 				D88FE37F05A0FEB80024FD88,
 				D88FE38005A0FEB80024FD88,
+				D84CDEE0061F57D5007B002D,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3734,6 +3737,7 @@
 				D88FE37905A0FEB80024FD88,
 				D88FE37C05A0FEB80024FD88,
 				D88FE37E05A0FEB80024FD88,
+				D84CDEE1061F57D5007B002D,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3961,6 +3965,7 @@
 				D84E218005B707F2002B493F,
 				D84E21BF05B7087A002B493F,
 				D84E221305B70AED002B493F,
+				D85A2F4A061F347D0065380E,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -3974,6 +3979,53 @@
 			path = "Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX/MKPerformSndMIDI-Info.plist";
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
+		};
+		D84CDE26061F52CB007B002D = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
+			name = SndKit.framework;
+			path = /Library/Frameworks/SndKit.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		D84CDE27061F52CB007B002D = {
+			fileRef = D84CDE26061F52CB007B002D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D84CDEDE061F57D5007B002D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SndPasteboard.h;
+			path = Frameworks/SndKit/SndPasteboard.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D84CDEDF061F57D5007B002D = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = SndPasteboard.m;
+			path = Frameworks/SndKit/SndPasteboard.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D84CDEE0061F57D5007B002D = {
+			fileRef = D84CDEDE061F57D5007B002D;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		D84CDEE1061F57D5007B002D = {
+			fileRef = D84CDEDF061F57D5007B002D;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		D84E1E4B05B5E444002B493F = {
 			children = (
@@ -5180,6 +5232,811 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
+		D85A2F21061F33C10065380E = {
+			children = (
+				D85A2F52061F34E70065380E,
+				D85A2F53061F34E70065380E,
+				D85A2F54061F34E70065380E,
+				D85A2F55061F34E70065380E,
+				D85A2F56061F34E70065380E,
+				D85A2F57061F34E70065380E,
+				D85A2F58061F34E70065380E,
+				D85A2F59061F34E70065380E,
+				D85A2F5A061F34E70065380E,
+				D85A2F5B061F34E70065380E,
+				D85A2F5C061F34E70065380E,
+				D85A2F5D061F34E70065380E,
+				D85A2F5E061F34E70065380E,
+				D85A2F5F061F34E70065380E,
+				D85A2F60061F34E70065380E,
+				D85A2F61061F34E70065380E,
+				D85A2F62061F34E80065380E,
+				D85A2F63061F34E80065380E,
+				D85A2F64061F34E80065380E,
+				D85A2F65061F34E80065380E,
+				D85A2F66061F34E80065380E,
+				D85A2F67061F34E80065380E,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F28061F33CB0065380E = {
+			children = (
+				D85A2F98061F353C0065380E,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F2F061F33D40065380E = {
+			children = (
+				D85A2F9F061F35910065380E,
+				D85A2FA1061F35910065380E,
+				D85A2FA3061F35910065380E,
+				D85A2FA5061F35910065380E,
+				D85A2FA7061F35920065380E,
+			);
+			isa = PBXGroup;
+			name = Interfaces;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F36061F33DC0065380E = {
+			children = (
+				D85A2F4C061F347D0065380E,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F3D061F33E50065380E = {
+			children = (
+				D84CDE26061F52CB007B002D,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F45061F347D0065380E = {
+			buildActionMask = 2147483647;
+			files = (
+				D85A2F68061F34E80065380E,
+				D85A2F6A061F34E80065380E,
+				D85A2F6C061F34E80065380E,
+				D85A2F6E061F34E80065380E,
+				D85A2F70061F34E80065380E,
+				D85A2F72061F34E80065380E,
+				D85A2F74061F34E80065380E,
+				D85A2F76061F34E80065380E,
+				D85A2F78061F34E80065380E,
+				D85A2F7A061F34E80065380E,
+				D85A2F7C061F34E80065380E,
+			);
+			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85A2F46061F347D0065380E = {
+			buildActionMask = 2147483647;
+			files = (
+				D85A2FA9061F35920065380E,
+				D85A2FAA061F35920065380E,
+				D85A2FAB061F35920065380E,
+				D85A2FAC061F35920065380E,
+				D85A2FAD061F35920065380E,
+				D85A2FD9061F36080065380E,
+				D85A2FDA061F36080065380E,
+				D85A2FDB061F36080065380E,
+				D85A2FDC061F36080065380E,
+				D85A2FDD061F36080065380E,
+				D85A3023061F3A820065380E,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85A2F47061F347D0065380E = {
+			buildActionMask = 2147483647;
+			files = (
+				D85A2F69061F34E80065380E,
+				D85A2F6B061F34E80065380E,
+				D85A2F6D061F34E80065380E,
+				D85A2F6F061F34E80065380E,
+				D85A2F71061F34E80065380E,
+				D85A2F73061F34E80065380E,
+				D85A2F75061F34E80065380E,
+				D85A2F77061F34E80065380E,
+				D85A2F79061F34E80065380E,
+				D85A2F7B061F34E80065380E,
+				D85A2F7D061F34E80065380E,
+				D85A2F99061F353C0065380E,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85A2F48061F347D0065380E = {
+			buildActionMask = 2147483647;
+			files = (
+				D84CDE27061F52CB007B002D,
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D85A2F49061F347D0065380E = {
+			buildPhases = (
+				D85A2F45061F347D0065380E,
+				D85A2F46061F347D0065380E,
+				D85A2F47061F347D0065380E,
+				D85A2F48061F347D0065380E,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				INFOPLIST_FILE = "Applications/Spectro/Spectro-Info.plist";
+				INSTALL_PATH = "$(USER_APPS_DIR)";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Spectro;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+			};
+			dependencies = (
+			);
+			isa = PBXNativeTarget;
+			name = "Spectro (Application)";
+			productName = Spectro;
+			productReference = D85A2F4A061F347D0065380E;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>Spectro</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string>com.MySoftwareCompany.Spectro</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0.0d1</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+			productType = "com.apple.product-type.application";
+		};
+		D85A2F4A061F347D0065380E = {
+			explicitFileType = wrapper.application;
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = Spectro.app;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D85A2F4C061F347D0065380E = {
+			isa = PBXFileReference;
+			lastKnownFileType = text.plist.xml;
+			name = "Spectro-Info.plist";
+			path = "Applications/Spectro/Spectro-Info.plist";
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		D85A2F52061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = PrefController.h;
+			path = Applications/Spectro/PrefController.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F53061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = PrefController.m;
+			path = Applications/Spectro/PrefController.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F54061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SaveToController.h;
+			path = Applications/Spectro/SaveToController.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F55061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = SaveToController.m;
+			path = Applications/Spectro/SaveToController.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F56061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScrollingSound.h;
+			path = Applications/Spectro/ScrollingSound.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F57061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = ScrollingSound.m;
+			path = Applications/Spectro/ScrollingSound.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F58061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = ScrollingSpectrum.h;
+			path = Applications/Spectro/ScrollingSpectrum.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F59061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = ScrollingSpectrum.m;
+			path = Applications/Spectro/ScrollingSpectrum.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F5A061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SignalProcessor.h;
+			path = Applications/Spectro/SignalProcessor.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F5B061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = SignalProcessor.m;
+			path = Applications/Spectro/SignalProcessor.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F5C061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SoundController.h;
+			path = Applications/Spectro/SoundController.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F5D061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = SoundController.m;
+			path = Applications/Spectro/SoundController.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F5E061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SoundDocument.h;
+			path = Applications/Spectro/SoundDocument.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F5F061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = SoundDocument.m;
+			path = Applications/Spectro/SoundDocument.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F60061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SoundInfo.h;
+			path = Applications/Spectro/SoundInfo.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F61061F34E70065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = SoundInfo.m;
+			path = Applications/Spectro/SoundInfo.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F62061F34E80065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SpectrumDocument.h;
+			path = Applications/Spectro/SpectrumDocument.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F63061F34E80065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = SpectrumDocument.m;
+			path = Applications/Spectro/SpectrumDocument.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F64061F34E80065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = SpectrumView.h;
+			path = Applications/Spectro/SpectrumView.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F65061F34E80065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = SpectrumView.m;
+			path = Applications/Spectro/SpectrumView.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F66061F34E80065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = WaterfallView.h;
+			path = Applications/Spectro/WaterfallView.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F67061F34E80065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = WaterfallView.m;
+			path = Applications/Spectro/WaterfallView.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F68061F34E80065380E = {
+			fileRef = D85A2F52061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F69061F34E80065380E = {
+			fileRef = D85A2F53061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F6A061F34E80065380E = {
+			fileRef = D85A2F54061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F6B061F34E80065380E = {
+			fileRef = D85A2F55061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F6C061F34E80065380E = {
+			fileRef = D85A2F56061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F6D061F34E80065380E = {
+			fileRef = D85A2F57061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F6E061F34E80065380E = {
+			fileRef = D85A2F58061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F6F061F34E80065380E = {
+			fileRef = D85A2F59061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F70061F34E80065380E = {
+			fileRef = D85A2F5A061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F71061F34E80065380E = {
+			fileRef = D85A2F5B061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F72061F34E80065380E = {
+			fileRef = D85A2F5C061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F73061F34E80065380E = {
+			fileRef = D85A2F5D061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F74061F34E80065380E = {
+			fileRef = D85A2F5E061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F75061F34E80065380E = {
+			fileRef = D85A2F5F061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F76061F34E80065380E = {
+			fileRef = D85A2F60061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F77061F34E80065380E = {
+			fileRef = D85A2F61061F34E70065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F78061F34E80065380E = {
+			fileRef = D85A2F62061F34E80065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F79061F34E80065380E = {
+			fileRef = D85A2F63061F34E80065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F7A061F34E80065380E = {
+			fileRef = D85A2F64061F34E80065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F7B061F34E80065380E = {
+			fileRef = D85A2F65061F34E80065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F7C061F34E80065380E = {
+			fileRef = D85A2F66061F34E80065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F7D061F34E80065380E = {
+			fileRef = D85A2F67061F34E80065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F98061F353C0065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
+			name = Spectro_main.m;
+			path = Applications/Spectro/Spectro_main.m;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2F99061F353C0065380E = {
+			fileRef = D85A2F98061F353C0065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2F9F061F35910065380E = {
+			children = (
+				D85A2FA0061F35910065380E,
+			);
+			isa = PBXVariantGroup;
+			name = preferences.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FA0061F35910065380E = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/Spectro/English.lproj/preferences.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FA1061F35910065380E = {
+			children = (
+				D85A2FA2061F35910065380E,
+			);
+			isa = PBXVariantGroup;
+			name = soundDocument.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FA2061F35910065380E = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/Spectro/English.lproj/soundDocument.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FA3061F35910065380E = {
+			children = (
+				D85A2FA4061F35910065380E,
+			);
+			isa = PBXVariantGroup;
+			name = soundInfo.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FA4061F35910065380E = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/Spectro/English.lproj/soundInfo.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FA5061F35910065380E = {
+			children = (
+				D85A2FA6061F35920065380E,
+			);
+			isa = PBXVariantGroup;
+			name = Spectro.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FA6061F35920065380E = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/Spectro/English.lproj/Spectro.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FA7061F35920065380E = {
+			children = (
+				D85A2FA8061F35920065380E,
+			);
+			isa = PBXVariantGroup;
+			name = spectrum.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FA8061F35920065380E = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = Applications/Spectro/English.lproj/spectrum.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FA9061F35920065380E = {
+			fileRef = D85A2F9F061F35910065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2FAA061F35920065380E = {
+			fileRef = D85A2FA1061F35910065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2FAB061F35920065380E = {
+			fileRef = D85A2FA3061F35910065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2FAC061F35920065380E = {
+			fileRef = D85A2FA5061F35910065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2FAD061F35920065380E = {
+			fileRef = D85A2FA7061F35920065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2FC6061F35C20065380E = {
+			children = (
+				D85A301B061F3A600065380E,
+				D85A2FCE061F35D30065380E,
+				D85A2F2F061F33D40065380E,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FCE061F35D30065380E = {
+			children = (
+				D85A2FD4061F36080065380E,
+				D85A2FD5061F36080065380E,
+				D85A2FD6061F36080065380E,
+				D85A2FD7061F36080065380E,
+				D85A2FD8061F36080065380E,
+			);
+			isa = PBXGroup;
+			name = Images;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FD4061F36080065380E = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = blank.tiff;
+			path = Applications/Spectro/blank.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FD5061F36080065380E = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
+			name = Spectro.icns;
+			path = Applications/Spectro/Spectro.icns;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FD6061F36080065380E = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.ico;
+			name = Spectro.ico;
+			path = Applications/Spectro/Spectro.ico;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FD7061F36080065380E = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = Spectro.tiff;
+			path = Applications/Spectro/Spectro.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FD8061F36080065380E = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = WaterFall.tiff;
+			path = Applications/Spectro/WaterFall.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A2FD9061F36080065380E = {
+			fileRef = D85A2FD4061F36080065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2FDA061F36080065380E = {
+			fileRef = D85A2FD5061F36080065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2FDB061F36080065380E = {
+			fileRef = D85A2FD6061F36080065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2FDC061F36080065380E = {
+			fileRef = D85A2FD7061F36080065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A2FDD061F36080065380E = {
+			fileRef = D85A2FD8061F36080065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D85A301B061F3A600065380E = {
+			children = (
+				D85A3021061F3A820065380E,
+			);
+			isa = PBXGroup;
+			name = Help;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A3021061F3A820065380E = {
+			children = (
+				D85A3022061F3A820065380E,
+			);
+			isa = PBXVariantGroup;
+			name = SpectroHelp.sgml;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A3022061F3A820065380E = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = English;
+			path = Applications/Spectro/Help/English.lproj/SpectroHelp.sgml;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D85A3023061F3A820065380E = {
+			fileRef = D85A3021061F3A820065380E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		D863A037059FAB1D00339D3B = {
 			containerPortal = D8DB4E4C059FA05500624233;
 			isa = PBXContainerItemProxy;
@@ -5217,10 +6074,10 @@
 		};
 		D8708B0205B3119C0074C18D = {
 			children = (
-				D8708C5305B3180E0074C18D,
 				D8708BAB05B314E90074C18D,
 				D8708B8F05B314660074C18D,
 				D8708B8805B3145E0074C18D,
+				D8708C5305B3180E0074C18D,
 			);
 			isa = PBXGroup;
 			name = playscore;
@@ -6001,7 +6858,7 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Headers/AppKit.h";
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				INFOPLIST_FILE = "MidiRecord-Info.plist";
+				INFOPLIST_FILE = "Examples/MidiRecord/MidiRecord-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-framework Foundation -framework AppKit";
@@ -7318,6 +8175,7 @@
 		D879C39C05A2B3CE005DB251 = {
 			children = (
 				D879C3DC05A2B506005DB251,
+				D8AE7A4306194279009D0112,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -7349,6 +8207,7 @@
 			files = (
 				D879C3D405A2B4E1005DB251,
 				D879C3DD05A2B506005DB251,
+				D8AE7A4406194279009D0112,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -10240,6 +11099,33 @@
 			settings = {
 			};
 		};
+		D8AE7A4306194279009D0112 = {
+			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
+			name = SndViewPalette.tiff;
+			path = Palettes/SndView/SndViewPalette.tiff;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8AE7A4406194279009D0112 = {
+			fileRef = D8AE7A4306194279009D0112;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D8AE7A6A061A1636009D0112 = {
+			children = (
+				D85A2F21061F33C10065380E,
+				D85A2F28061F33CB0065380E,
+				D85A2FC6061F35C20065380E,
+				D85A2F36061F33DC0065380E,
+				D85A2F3D061F33E50065380E,
+			);
+			isa = PBXGroup;
+			name = Spectro;
+			refType = 4;
+			sourceTree = "<group>";
+		};
 		D8C2747705A73970008ABA16 = {
 			children = (
 				D8C2748405A739CB008ABA16,
@@ -11369,6 +12255,7 @@
 				D84E217F05B707F2002B493F,
 				D84E21BE05B7087A002B493F,
 				D84E221205B70AED002B493F,
+				D85A2F49061F347D0065380E,
 			);
 		};
 		D8DB4E5B059FA0AA00624233 = {
@@ -11387,6 +12274,7 @@
 		};
 		D8DB4E5E059FA0C900624233 = {
 			children = (
+				D8AE7A6A061A1636009D0112,
 			);
 			isa = PBXGroup;
 			name = Applications;
