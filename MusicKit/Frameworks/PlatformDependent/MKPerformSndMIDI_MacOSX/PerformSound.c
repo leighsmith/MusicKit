@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.11  2001/04/13 01:27:39  leighsmith
+// Ensured that sample times are reset regardless of other errors
+//
 // Revision 1.10  2001/04/06 21:56:58  skotmcdonald
 // Fixed local input buffer size bug
 //
@@ -836,9 +839,12 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
         return FALSE;  // invalid sound structure.
 
     if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL)
-      return FALSE;
+        return FALSE;
     
     memset(fInputBuffer,0,bufferSizeInBytes);
+    // indicate the first absolute sample time received from the call back needs to be marked as a
+    // datum to use to convert subsequent absolute sample times to a relative time.
+    firstSampleTime = -1.0;  
 
     streamProcessor = newStreamProcessor;
     streamUserData  = newUserData;
@@ -856,23 +862,21 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
         r = FALSE;
     }
     if (r) { // all is well so far...
-      CAstatus = AudioDeviceStart(outputDeviceID, vendBuffersToStreamManagerIOProc);
-      if (CAstatus) {
-          fprintf(stderr, "SNDStartStreaming: AudioDeviceStart returned %s\n",
-                  getCoreAudioErrorStr(CAstatus));
-          r = FALSE;
-      }
-      CAstatus = AudioDeviceStart(inputDeviceID, vendBuffersToStreamManagerIOProc);
-      if (CAstatus) {
-          fprintf(stderr, "SNDStartStreaming: AudioDeviceStart returned %s\n", 
-                  getCoreAudioErrorStr(CAstatus));
-          r = FALSE;
-      }
-
+        CAstatus = AudioDeviceStart(outputDeviceID, vendBuffersToStreamManagerIOProc);
+        if (CAstatus) {
+            fprintf(stderr, "SNDStartStreaming: AudioDeviceStart returned %s\n",
+                    getCoreAudioErrorStr(CAstatus));
+            r = FALSE;
+        }
+        CAstatus = AudioDeviceStart(inputDeviceID, vendBuffersToStreamManagerIOProc);
+        if (CAstatus) {
+            fprintf(stderr, "SNDStartStreaming: AudioDeviceStart returned %s\n", 
+                    getCoreAudioErrorStr(CAstatus));
+            r = FALSE;
+        }
     }
-    // indicate the first absolute sample time received from the call back needs to be marked as a
-    // datum to use to convert subsequent absolute sample times to a relative time.
-    firstSampleTime = -1.0;  
+    // printf("initialised stream start %d\n", r);
+
     return r;
 }
 
@@ -885,6 +889,7 @@ PERFORM_API BOOL SNDStreamStop(void)
     BOOL r = TRUE;
     OSStatus CAstatus;
     
+    firstSampleTime = -1.0;  
     free(fInputBuffer);
     fInputBuffer = NULL;
 
@@ -898,7 +903,6 @@ PERFORM_API BOOL SNDStreamStop(void)
         fprintf(stderr, "SNDStreamStop: input dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
         r = FALSE;
     }
-    firstSampleTime = -1.0;  
     return r;
 }
 
