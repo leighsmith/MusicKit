@@ -57,6 +57,7 @@
         NSString *soundFileName = [filesToPlay objectAtIndex:i];
         sound = [[Snd alloc] initFromSoundfile: soundFileName];
         if(sound != nil) {
+            [sound swapSndToHost];
             NSLog(@"starting playing %@\n", soundFileName);
             [sound setDelegate: self];
             [sound setName: soundFileName];
