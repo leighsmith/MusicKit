@@ -386,7 +386,7 @@ static unsigned int nAppBitVects(MKNote *self)
     NSHashEnumerator state;
     int i, vectorCount;
 
-    newObj = [MKNote allocWithZone: zone];
+    newObj = [[self class] allocWithZone: zone];
     newObj->noteTag = noteTag;
     newObj->noteType = noteType;
     newObj->timeTag = timeTag;

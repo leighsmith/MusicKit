@@ -862,10 +862,10 @@ MKDataType;
 
 /*!
   @method parNameForTag:
+  @abstract Returns the name that identifies the parameter tagged <i>aTag</i>.
   @param  aTag is an int.
   @result Returns a NSString.
-  @discussion Returns the name that identifies the parameter tagged <i>aTag</i>. 
-              For example [MKNote parNameForTag:MK_freq] returns "freq".
+  @discussion For example [MKNote parNameForTag:MK_freq] returns "freq".
               If the parameter number given is not a valid parameter number, returns an empty string.
               Note that the string is not copied. 
                             
@@ -899,9 +899,8 @@ MKDataType;
               removePar:</b><i>parameterTag</i><b>].</b>  Returns
               <b>self</b>.
               
-              See also:   +<b>parTagForName:</b>, +<b>
-	      parNameForTag:</b>, -<b>parType:</b>, -<b>
-	      isParPresent:</b>, -<b>parAsInteger:</b> 
+              See also: +<b>parTagForName:</b>, +<b>parNameForTag:</b>,
+                        -<b>parType:</b>, -<b>isParPresent:</b>, -<b>parAsInteger:</b> 
 */
 - setPar: (int) par toInt: (int) value; 
 
