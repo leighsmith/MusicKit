@@ -95,7 +95,22 @@ in Music and Acoustics (CCRMA) of Stanford University. Since 1999 and
 version 5.0, the most recent releases run on several more 
 <link linkend="platforms">popular operating systems</link>.
 These releases have been generously supported by my employer, 
-<ulink url="http://www.tomandandy.com">tomandandy music inc.</ulink> 
+<ulink url="http://www.tomandandy.com">
+	<inlinemediaobject>
+	<imageobject>
+	  <imagedata fileref="tomandandy_logo.eps" width=50 depth=30
+		     scalefit=1>
+	</imageobject>
+	<imageobject>
+	  <imagedata fileref="tomandandy_logo.jpg">
+	</imageobject>
+	<textobject>
+	  <phrase>
+tomandandy music inc.
+</phrase>
+        </textobject>
+      </inlinemediaobject>
+</ulink>
 as open source to the community.
    </para>
 
@@ -118,9 +133,7 @@ their needs.  Enhancements can be sent to
 <email>leigh@tomandandy.com</email>
 to have them incorporated for future releases. Commercial software
 developers may freely incorporate and adapt the software to accelerate
-development of software products.  (Free commercial use of files
-copyrighted by NeXT Inc. are understandably restricted to NeXTSTEP
-platforms.)
+development of software products.
 </para>
 
     <sect2 id=features>
@@ -129,7 +142,6 @@ platforms.)
 The following is a partial list of the highlights of the Music Kit
 provided by David Jaffe on his <link linkend=otherlinks>web-page</link>: 
 </para>
-
 
       <itemizedlist>
 	<listitem>
@@ -491,7 +503,7 @@ usage file is found in
   </sect1>
 
   <sect1 id=availability>
-    <title>Availablity</title>
+    <title>Availability</title>
     <para>
 The MusicKit is listed on the following open source portals:
 </para>
@@ -641,7 +653,7 @@ Newer versions of will probably just work.
           Binaries for the compiled frameworks for various operating
           systems reside on sourceforge as tar'ed .pkg (Apple/NeXT)
           packages. The files include the version number, choose the
-          most recent release.:
+          most recent release:
         </para>
 
         <para>
@@ -850,22 +862,61 @@ on all supported platforms. The examples
 
       <para>
 At the moment, there is no single make operation to build the entire
-source tree. Compile and install sox, then compile and install either the MacOS X-Server or Windows
-<filename>MKPerformSndMIDI</filename> framework, then either the
-<filename>MKDSP_56k</filename> or <filename>MKDSP_Native</filename>
-framework, then the <filename>MusicKit</filename> framework. They will
-install into <filename
-class=directory>/Local/Library/Frameworks</filename>. The
-<filename>MKUnitGenerators</filename>/<filename>MKSynthPatches</filename>
-framework won't compile on MacOS X-Server because the Motorola
-<command>asm56000</command> and <command>lnk56000</command> tools are
-missing. I've asked Apple and Motorola for a MacOS X-Server port, why
-don't you also? :-) At the moment header files are problematic. I
-copied over the 3.3 headers to compile against the SoundKit and to
-compile the MIDI driver. These legacy headers may not actually be
-needed and could be removed in time. You can get them from the Darwin
-distribution of the SoundKit or just copy them from a NeXTStep
-3.3/OpenStep 4.2 system.
+source tree. The steps are:
+</para>
+
+      <orderedlist>
+	<listitem>
+	  <para>
+Compile and install sox into 
+<filename class=directory>/usr/local/lib</filename>.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Compile and install the appropriate platform specific
+<filename>MKPerformSndMIDI</filename> framework.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Compile and install <filename>MKDSP_56k</filename> framework if on
+OpenStep, Windows or MacOS X-Server or <filename>MKDSP_Native</filename>
+framework if on MacOS X Public Beta.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Compile and install the <filename>MusicKit</filename> framework.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Compile and install <filename>MKUnitGenerators</filename> and
+<filename>MKSynthPatches</filename> frameworks if running on
+OpenStep. These frameworks won't compile on MacOS X-Server because the
+Motorola <command>asm56000</command> and <command>lnk56000</command>
+tools are missing. I've asked Apple and Motorola for a MacOS X-Server
+port, why don't you also? :-) In theory the 56K assembler runs on
+Windows, so it may be possible to run these on Windows, but that is
+yet to be tested.
+</para>
+	</listitem>
+      </orderedlist>
+
+      <para>
+The frameworks will install into <filename
+class=directory>/Local/Library/Frameworks</filename> on MacOS
+X-Server, <filename
+class=directory>/LocalLibrary/Frameworks</filename> on OpenStep and
+<filename class=directory>/Library/Frameworks</filename> on MacOS X
+Public Beta.
+</para>
+
+      <para>
+To compile the MacOS X-Server Zilog SCC MIDI driver, some header files
+are missing.  You can get them from the Darwin distribution of the
+SoundKit or just copy them from a NeXTStep 3.3/OpenStep 4.2 system.
 </para>
     </sect2>
 
@@ -1015,11 +1066,9 @@ Computer Music Journal
 	  align=left>
 -->
 	</imageobject>
-<!--
-		<textobject>
-		  <phrase>SourceForge Logo</phrase>
-      </textobject>
--->
+	<textobject>
+	  <phrase>SourceForge Logo</phrase>
+        </textobject>
       </inlinemediaobject>
 SourceForge kindly hosts the MusicKit.
    </ulink>
