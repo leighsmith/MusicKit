@@ -15,7 +15,7 @@
   Portions Copyright (c) 2000-2001 The MusicKit Project.
 */
 /*!
-    @header MusicKit MIDI Driver
+    @header PerformMIDI
   
     This file provides compatability between the various platform dependent 
     MIDI drivers used by the MusicKit.
@@ -38,6 +38,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2001/04/13 01:34:07  leighsmith
+  Corrected name of module
+
   Revision 1.12  2001/04/06 19:24:29  leighsmith
   Renamed to more meaningful naming
 
