@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		014CEA4F0018CE4811CA2923 = {
 			buildRules = (
@@ -76,6 +76,7 @@
 				014CEA4F0018CE4811CA2923,
 				014CEA500018CE4811CA2923,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 08FB7794FE84155DC02AAC07;
 			projectDirPath = "";
@@ -102,6 +103,7 @@
 			refType = 4;
 		};
 		08FB7796FE84155DC02AAC07 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = main.m;
 			refType = 4;
@@ -148,14 +150,13 @@
 			productInstallPath = /usr/local/bin;
 			productName = playsndfaders;
 			productReference = 034768E6FF38A76511DB9C8B;
-			shouldUseHeadermap = 1;
 		};
 		08FB77A0FE84155DC02AAC07 = {
 			buildActionMask = 2147483647;
 			files = (
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		08FB77A1FE84155DC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -163,7 +164,7 @@
 				08FB77A2FE84155DC02AAC07,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		08FB77A2FE84155DC02AAC07 = {
 			fileRef = 08FB7796FE84155DC02AAC07;
@@ -180,7 +181,7 @@
 				0296329B013BDE62CFED3B94,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		08FB77A4FE84155DC02AAC07 = {
 			fileRef = 08FB779EFE84155DC02AAC07;
@@ -193,7 +194,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //080
 //081
