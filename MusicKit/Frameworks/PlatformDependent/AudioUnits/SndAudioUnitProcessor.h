@@ -44,7 +44,7 @@
     AudioUnitParameterID *parameterIDList;
     /*! @var auIsNonInterleaved Indicates if the AudioUnit accepts data as non-interleaved buffers (YES), or as a single interleaved buffer (NO). */
     BOOL auIsNonInterleaved;
-    
+    /*! @var interleavedInputSamples buffer holding audio data in interleaved format. */
     float *interleavedInputSamples;
 }
 
@@ -60,17 +60,19 @@
 + (NSArray *) availableAudioProcessors;
 
 /*!
+  @method audioProcessorNamed:
+  @abstract Returns an autoreleased instance of a SndAudioProcessor subclass named <I>processorName</I>.
+  @param processorName An NSString with one of the names returned by <B>+availableAudioProcessors</B>.
+ */
++ (SndAudioProcessor *) audioProcessorNamed: (NSString *) processorName;
+
+/*!
   @method audioUnit
   @abstract Returns the C++ AudioUnit handle.
  */
 - (AudioUnit) audioUnit;
 
-/*!
-  @method processorNamed:
-  @abstract Returns an autoreleased instance of a SndProcessor subclass named <I>processorName</I>.
-  @param processorName An NSString with one of the names returned by <B>+availableAudioProcessors</B>.
- */
-+ (SndAudioProcessor *) audioProcessorNamed: (NSString *) processorName;
+// TODO perhaps rename superclass and this to method initWithAudioUnitNamed: and remove paramCount parameter.
 
 /*
  @method initWithAudioUnitNamed:
@@ -80,7 +82,7 @@
              are the overseer of multiple available AudioUnits, each one is loaded and instantiated as a
              SndAudioUnitProcessor instance.
  */
-- initWithAudioUnitNamed: (NSString *) audioUnitName;
+- initWithParamCount: (const int) count name: (NSString *) audioUnitName;
 
 /*!
   @method processReplacingInputBuffer:outputBuffer:
@@ -99,6 +101,5 @@
 - (NSString *) paramDisplay: (const int) index;
 
 - (void) setParam: (const int) index toValue: (const float) parameterValue;
-
 
 @end
