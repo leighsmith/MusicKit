@@ -19,6 +19,11 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.27  2001/09/03 12:16:37  sbrandon
+ * added +sndPlayer method to return the internal (class variable) SndPlayer
+ * object, the one used for all [snd play...] methods. It needs to be able to
+ * be queried sometimes.
+ *
  * Revision 1.26  2001/08/28 16:33:31  skotmcdonald
  * Added missing beginAtIndex arguments, associated logic and methods for Snd playback
  *
@@ -133,6 +138,11 @@ static int ioTags = 1000;
             NSLog(@"Unable to initialise PerformSound!\n");
         }
     }
+}
+
++ (SndPlayer *)sndPlayer
+{
+    return [[sndPlayer retain] autorelease];
 }
 
 + soundNamed:(NSString *)aName
