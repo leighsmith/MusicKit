@@ -4,6 +4,8 @@
 #  Description:
 #    Makefile preamble for GNUstep
 #
+# @configure_input@
+#
 #  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
 #
 #  2 June 2001, Copyright (c) 2001 Stephen Brandon.
@@ -18,7 +20,8 @@
 # Where ever portaudio is installed.
 # TODO: These locations shouldn't be hardwired
 SHARED_LD_PREFLAGS += -L/usr/local/lib
-ADDITIONAL_FLAGS += -I/usr/local/include -g
+# Add anything from the autoconf configuration process.
+ADDITIONAL_FLAGS += -I/usr/local/include -g @DEFS@
 
 # What are the libraries this library depends upon. This is needed for some
 # systems where building a shared library requires to pass to the linker

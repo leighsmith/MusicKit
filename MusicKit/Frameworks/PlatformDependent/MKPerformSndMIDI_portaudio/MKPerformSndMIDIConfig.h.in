@@ -3,7 +3,8 @@
  *   Defined In: The MusicKit
  *
  *  Description:
- *    Defines for MKPerformSndMIDI to facilitate dll creation on Win32
+ *    Platform specific configuration definitions for MKPerformSndMIDI 
+ *    Facilitate DLL (Dynamic Link Library) creation on Win32.
  *
  *  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
  *
@@ -29,5 +30,7 @@
 #  define PERFORM_API extern
 #  define PERFORM_DECLARE
 #endif
+
+#undef HAVE_PORTAUDIO_H
 
 #endif /* __MKPerformSndMIDIDefines_INCLUDE */
