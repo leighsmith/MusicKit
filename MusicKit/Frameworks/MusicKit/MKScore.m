@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2000/04/16 04:22:44  leigh
+  Comment cleanup and removed assignment in condition warning
+
   Revision 1.12  2000/04/03 23:45:42  leigh
   Added description method
 
@@ -137,7 +140,7 @@ Modification history:
    * 
    * Sent by the superclass upon creation;
    * you never invoke this method directly.
-   * An overriding subclass method should send \fB[super initialize]\fR
+   * An overriding subclass method should send [super initialize]
    * before setting its own defaults. 
    */
 {
@@ -1240,7 +1243,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
     n = [parts count];
     for (i = 0; i < n; i++) {
         el = [parts objectAtIndex:i];
-        if (aInfo = [el infoNote])
+        if ((aInfo = [el infoNote]))
             if ([aInfo parAsInt:MK_midiChan] == aChan)
                 return [[el retain] autorelease];
     }
@@ -1362,7 +1365,7 @@ readScorefile(MKScore *self,
     register id aNote;
     IMP noteCopy, partAddNote;
     id rtnVal;
-    unsigned int readPosition = 0;   //sb: this is the top level -- hope this works.
+    unsigned int readPosition = 0;   // this is the top level.
         
     partAddNote = [MKGetPartClass() instanceMethodForSelector:@selector(addNote:)];
     noteCopy = [MKGetNoteClass() instanceMethodForSelector:@selector(copy)];
