@@ -52,6 +52,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2001/05/12 09:30:32  sbrandon
+  - GNUSTEP: minor change to casting in WRITECHAR call to keep compiler happy
+
   Revision 1.9  2000/10/01 06:34:15  leigh
   Chagned to modern function prototyping, removed NXUniqueString use.
 
@@ -701,7 +704,7 @@ static void sfWriteStrPar(register NSMutableData *aStream, NSString *strBuf)
 	  tmp = str + 1;                /* update tmp */
 	  /* Translate char. */
 	  WRITECHAR(BACKSLASH);
-	  WRITECHAR(*(strrchr((char *)_MKTranstab(),*str)-1));
+	  WRITECHAR(*(char *)(strrchr((char *)_MKTranstab(),*str)-1));
 	  break;
 	default:
 	  break;
