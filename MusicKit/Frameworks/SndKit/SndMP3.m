@@ -166,9 +166,9 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
             framesPerSecond = (float) samplingRate / (float) samplesPerFrame;
             frameSize = bitrate * 125 / framesPerSecond; // 125 = 100 / 8
                                                          //          }
-            //          time = (float) (*frameLocationsCount) * samplesPerFrame / (float) samplingRate;
-            //          printf("[Frame: %li] Header found at: %li  (t:%.2f sam:%li)\n",
-            //                 (*frameLocationsCount), position - 4, time, ((*frameLocationsCount) - 1) * samplesPerFrame);
+                                                         //          time = (float) (*frameLocationsCount) * samplesPerFrame / (float) samplingRate;
+                                                         //          printf("[Frame: %li] Header found at: %li  (t:%.2f sam:%li)\n",
+                                                         //                 (*frameLocationsCount), position - 4, time, ((*frameLocationsCount) - 1) * samplesPerFrame);
 
             if ((*frameLocationsCount) == maxFrameLocationsCount) {
               maxFrameLocationsCount <<= 1;
@@ -182,12 +182,12 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
       }
       else
         position++;
-      }
     }
+  }
   // condense allocated memory to just the frame locations found...
   *ppFrameLocations = (long*) realloc((*ppFrameLocations), sizeof(long) * (*frameLocationsCount));
   return 0;
-  }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Snd overrides required for simple playback operation
@@ -217,6 +217,12 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 {
   return duration;
   //  return [self sampleCount] / [self samplingRate];
+}
+
+- (NSString*) description
+{
+  return [NSString stringWithFormat: @"SndMP3 with duration: %.2f samples: %i sampleRate: %.2f channels: %i",
+    [self duration], [self sampleCount], [self samplingRate], [self channelCount]];
 }
 
 - (double) samplingRate
@@ -325,38 +331,46 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 
 - (int) readSoundfile: (NSString*) filename
 {
-  NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-  //  NSDate *startDate = [NSDate date];
 
-  if (mp3Data) {
-    [mp3Data release];
-    mp3Data = nil;
+  if (![[NSFileManager defaultManager] fileExistsAtPath: filename]) {
+//    NSLog(@"Snd::readSoundfile: sound file %@ doesn't exist",filename);
+    return SND_ERR_CANNOT_OPEN;
   }
-  [pcmDataLock lock];
-  if (pcmData) {
-    [pcmData release];
-    pcmData = nil;
-  }
-  [pcmDataLock unlock];
-  mp3Data = [[NSData alloc] initWithContentsOfMappedFile: filename]; // ho-ho, memory mapping! :)
+  else {
+    NSAutoreleasePool *localPool = [NSAutoreleasePool new];
 
-  find_mp3_frame_headers(mp3Data, &frameLocations, &frameLocationsCount);
+    //  NSDate *startDate = [NSDate date];
 
-  sampleCount = frameLocationsCount * 1152.0;
-  duration    = sampleCount / 44100.0;
+    if (mp3Data) {
+      [mp3Data release];
+      mp3Data = nil;
+    }
+    [pcmDataLock lock];
+    if (pcmData) {
+      [pcmData release];
+      pcmData = nil;
+    }
+    [pcmDataLock unlock];
+    mp3Data = [[NSData alloc] initWithContentsOfMappedFile: filename]; // ho-ho, memory mapping! :)
+
+    find_mp3_frame_headers(mp3Data, &frameLocations, &frameLocationsCount);
+
+    sampleCount = frameLocationsCount * 1152.0;
+    duration    = sampleCount / 44100.0;
 
 
 #if SNDMP3_DEBUG_READING
-  printf("Found %li frames\n", frameLocationsCount);
+    printf("Found %li frames\n", frameLocationsCount);
 #endif
 
-  bDecoding = TRUE;
-  [NSThread detachNewThreadSelector: @selector(decodeThread)
-                           toTarget: self
-                         withObject: nil];
+    bDecoding = TRUE;
+    [NSThread detachNewThreadSelector: @selector(decodeThread)
+                             toTarget: self
+                           withObject: nil];
 
-  [localPool release];
-  return SND_ERR_NONE;
+    [localPool release];
+    return SND_ERR_NONE;
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -440,7 +454,7 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
   long endIndex = r.length + r.location;
 
   while (bDecoding && decodedSampledCount < endIndex)
-    sleep(1);
+    [NSThread sleepUntilDate: [NSDate dateWithTimeIntervalSinceNow: 0.25]];
 
 #if SNDMP3_DEBUG_READING
   printf("requested: [%li, %li] decoded: %li  %s\n",

@@ -233,12 +233,14 @@ static int ioTags = 1000;
 
 - initFromSoundfile:(NSString *)filename
 {
-    [self init];
+  self = [self init];
+  if (self != nil) {
     if ([self readSoundfile: filename] != SND_ERR_NONE) {
-        [self release];
-        return nil;
+      [self release];
+      return nil;
     }
-    return self;
+  }
+  return self;
 }
 
 - initFromSection:(NSString *)sectionName
@@ -249,9 +251,14 @@ static int ioTags = 1000;
 
 - initFromSoundURL: (NSURL *) url
 {
-    self = [self init];
-    printf("Snd: -initFromSoundURL:(NSURL *) url, not implemented\n");
-    return self;
+  self = [self init];
+  if (self != nil) {
+    if ([self readSoundfile: [url path]] != SND_ERR_NONE) {
+      [self release];
+      return nil;
+    }
+  }
+  return self;
 }
 
 - (unsigned) hash
@@ -292,8 +299,10 @@ static int ioTags = 1000;
     }
     if (soundStruct) SndFree(soundStruct);
     if (_scratchSnd) SndFree(_scratchSnd);
-    [performancesArray     release];
+    [performancesArray release];
+    performancesArray = nil;
     [performancesArrayLock release];
+    performancesArrayLock = nil;
     [super dealloc];
 }
 
@@ -928,17 +937,24 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
   return SND_ERR_NONE;
 }
 
-- (int)readSoundfile:(NSString *)filename
+- (int) readSoundfile:(NSString *)filename
 {
     int err;
     NSDictionary *fileAttributeDictionary;
     NSFileManager *fileManager = [NSFileManager defaultManager];
+
+
 
     if (soundStruct)
         SndFree(soundStruct);
 
     [name release];
     name = nil;
+
+    if (![[NSFileManager defaultManager] fileExistsAtPath: filename]) {
+//      NSLog(@"Snd::readSoundfile: sound file %@ doesn't exist",filename);
+      return SND_ERR_CANNOT_OPEN;
+    }
 
     // check its seekable, by checking its POSIX regular.
     fileAttributeDictionary = [fileManager fileAttributesAtPath: filename

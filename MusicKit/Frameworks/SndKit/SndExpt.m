@@ -83,6 +83,12 @@
     [name release];
     name = nil;
   }
+
+  if (![[NSFileManager defaultManager] fileExistsAtPath: filename]) {
+    //      NSLog(@"Snd::readSoundfile: sound file %@ doesn't exist",filename);
+    return SND_ERR_CANNOT_OPEN;
+  }
+  
   // check its seekable, by checking its POSIX regular.
   fileAttributeDictionary = [fileManager fileAttributesAtPath: filename traverseLink: YES];
   if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular)
@@ -113,6 +119,11 @@
   int r;
   if (theFileName)
     [theFileName release];
+
+  if (![[NSFileManager defaultManager] fileExistsAtPath: filename]) {
+    //      NSLog(@"Snd::readSoundfile: sound file %@ doesn't exist",filename);
+    return SND_ERR_CANNOT_OPEN;
+  }
   theFileName = [filename copy];
   bImageInMemory = FALSE;
   r = SndReadHeader([theFileName fileSystemRepresentation], &soundStruct, NULL);
