@@ -6,7 +6,7 @@
 //
 //  Original Author: Stephen Brandon
 //
-//  Substantially based on Sound Kit, Release 2.0, Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
+//  Design substantially based on ideas from Sound Kit, Release 2.0, Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
 //  Additions Copyright (c) 1999 Stephen Brandon and the University of Glasgow
 //  Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
@@ -199,7 +199,6 @@ NSScrollView.
  <LI> SndView should be able to accept SoundStructs instead of / as well as Sound objects. This would open the door for opening a memory mapped stream to read a sound file, then passing the stream to SndView. Saves having to load the entire file into memory before it is displayed (though once it has been displayed, there's no difference to the amount of actual memory/swap space used).
  <LI> SndView should utilise a control/cell paradigm so that channels can be displayed separately within the view.
  </UL>
-
  
 */
 
@@ -271,6 +270,11 @@ NSScrollView.
     /*! @var amplitudeZoom Zoom in the vertical amplitude axis */
     float       amplitudeZoom;
 
+    /*! @struct svFlags 
+	@field autoscale With autoscaling NO, the SndView's frame grows or shrinks (horizontally) to fit
+	the new sound data and the reduction factor is unchanged. If autoscaling is enabled, the
+	reduction factor is automatically recomputed to maintain a constant frame size.
+	*/
     struct {
         unsigned int  disabled:1;
         unsigned int  continuous:1;
@@ -307,10 +311,13 @@ NSScrollView.
 @private
 
     float ampScaler;
-    float halfHeight;
+    float amplitudeDisplayHeight;
 #ifdef QUARTZ_RENDERING
     CGContextRef ctx;
-#endif    
+#endif
+    /*! @var types valid */
+    NSArray *validPasteboardSendTypes;
+    NSArray *validPasteboardReturnTypes;
 }
 
 - (void) toggleCursor;
@@ -329,7 +336,6 @@ NSScrollView.
 */
 - showCursor;
 
-- (void) initVars;
 - (BOOL) scrollPointToVisible: (const NSPoint) point;
 
 /*!
@@ -481,10 +487,10 @@ NSScrollView.
 /*!
   @method initWithFrame:
   @param  frameRect is a NSRect.
-  @result Returns an id.
+  @result Returns <b>self</b>.
   @discussion Initializes the SndView, fitting the object within the rectangle
               pointing to by <i>frameRect</i>. The initialized SndView doesn't
-              contain any sound data.   Returns <b>self</b>.
+              contain any sound data.   
 */
 - initWithFrame: (NSRect) frameRect;
 
