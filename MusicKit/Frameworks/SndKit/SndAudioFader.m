@@ -439,10 +439,9 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
   return nil;
 }
 
-- setParam: (const int) index toValue: (const float) v
-{
-  return self;
-}
+//- (void) setParam: (const int) index toValue: (const float) v
+//{
+//}
 
 float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope, double theX)
 {
@@ -559,7 +558,7 @@ inline int _processBalance( int xPtr,
 
     /* bypass if possible */
     if (ampEnv == nil && staticAmp == 1 && balanceEnv == nil && staticBalance == 0) {
-        return FALSE;
+        return NO;
     }
 
     nowTime = [[self audioProcessorChain] nowTime];

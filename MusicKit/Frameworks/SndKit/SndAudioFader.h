@@ -320,7 +320,7 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
 - (int) paramCount;
 - (float) paramValue: (const int) index;
 - (NSString*) paramName: (const int) index;
-- setParam: (const int) index toValue: (const float) v;
+//- (void) setParam: (const int) index toValue: (const float) v;
 
 /*!
     @method processReplacingInputBuffer:outputBuffer:
