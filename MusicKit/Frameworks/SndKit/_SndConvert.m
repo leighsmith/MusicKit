@@ -81,7 +81,7 @@ int SndConvertSound(const SndSoundStruct *fromSound,
     int allocedSize;
     
     if (!fromSound) return SND_ERR_NOT_SOUND;
-    if (!*toSound) return SND_ERR_NOT_SOUND;
+    if (toSound == NULL || *toSound == NULL) return SND_ERR_NOT_SOUND;
     if (fromSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
     if ((*toSound)->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
     
