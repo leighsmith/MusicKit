@@ -22,9 +22,9 @@
 
 int main (int argc, const char *argv[])
 {
-    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    int i,partCount;
+    int partIndex, partCount;
 #if SCOREFILE_PERFORMER
     MKScorefilePerformer *aSFPerformer;
     NSData *inStream;
@@ -37,13 +37,13 @@ int main (int argc, const char *argv[])
     int channelCount = 2;
     MKNote *scoreInfo;
     NSArray *noteSenders;
-    NSMutableData *outStream;
+    Snd *mixedSound;
 
+    // [SndMP3 setPreDecode: YES];  // TODO kludge for now, should  be initialized in MKSamples.
     if (argc != 3) {
         fprintf(stderr, "Usage: mixsounds <input score file> <output snd file>.\n");
         exit(1);
     }
-    outStream = [NSMutableData data];
 #if SCOREFILE_PERFORMER
     inStream = [NSData dataWithContentsOfFile: [NSString stringWithCString: argv[1]]];
     if (inStream == nil) {
@@ -59,43 +59,51 @@ int main (int argc, const char *argv[])
 #else
     mixScore = [MKScore score];
     aScorePerformer = [[MKScorePerformer alloc] init];
-    [mixScore readScorefile: [NSString stringWithCString: argv[1]]];
+    if([mixScore readScorefile: [NSString stringWithCString: argv[1]]] == nil) {
+	NSLog(@"Can't load %s\n.", argv[1]);
+    }
+    NSLog(@"mix score: %@\n", mixScore);
+    MKSetTrace(MK_TRACECONDUCTOR);
+
     [aScorePerformer setScore: mixScore];
     [aScorePerformer activate];
     scoreInfo = [mixScore infoNote];
-    [[MKConductor defaultConductor] setTempo: [scoreInfo parAsDouble: MK_tempo]];
 #endif
     if (scoreInfo) { /* Configure performance as specified in info. */
         if ([scoreInfo isParPresent: MK_samplingRate])
             samplingRate = [scoreInfo parAsDouble: MK_samplingRate];
-        if ([scoreInfo isParPresent:[MKNote parName: @"channelCount"]])
-            channelCount = [scoreInfo parAsInt:[MKNote parName: @"channelCount"]];
+        if ([scoreInfo isParPresent: [MKNote parTagForName: @"channelCount"]])
+            channelCount = [scoreInfo parAsInt: [MKNote parTagForName: @"channelCount"]];
+        if ([scoreInfo isParPresent: MK_tempo])
+	    [[MKConductor defaultConductor] setTempo: [scoreInfo parAsDouble: MK_tempo]];
     }
     mixIns = [[MKMixerInstrument alloc] init];
-    [mixIns setSamplingRate: samplingRate channelCount: channelCount writingToStream: outStream];
+    [mixIns setSamplingRate: samplingRate];
+    [mixIns setChannelCount: channelCount];
 #if SCOREFILE_PERFORMER
     noteSenders = [aSFPerformer noteSenders];
 #else
     noteSenders = [aScorePerformer noteSenders];
 #endif
     partCount = [noteSenders count];
-    for (i = 0; i < partCount; i++)
-        [[noteSenders objectAtIndex: i] connect: [mixIns noteReceiver]];
+    for (partIndex = 0; partIndex < partCount; partIndex++)
+        [[noteSenders objectAtIndex: partIndex] connect: [mixIns noteReceiver]];
     [MKConductor setClocked: NO];     /* User process runs as fast as it can. */
     NSLog(@"mixing...\n");
 
-    [MKConductor startPerformance];  /* Start sending Notes, loops till done.*/
+    [MKConductor startPerformance];  /* Start sending MKNotes, loops till done.*/
 
-    /* Conductor's startPerformance method
-    does not return until the performance is over.  Note, however, that
-    if the Conductor is in a different mode, startPerformance returns
-    immediately (if it is in clocked mode or if you have specified that the
-    performance is to occur in a separate thread).  See the Conductor
-    documentation for details.
+    /*
+     MKConductor's startPerformance method does not return until the performance is over.
+     Note, however, that if the MKConductor is in a different mode, startPerformance returns
+     immediately (if it is in clocked mode or if you have specified that the
+     performance is to occur in a separate thread).  See the MKConductor documentation for details.
     */
 
     NSLog(@"...done\n");
-    if (![outStream writeToFile: [NSString stringWithCString: argv[2]] atomically: NO]) {
+    mixedSound = [mixIns mixedSound];
+    // NSLog(@"mixed sound: %@\n", mixedSound);
+    if ([mixedSound writeSoundfile: [NSString stringWithCString: argv[2]]] != SND_ERR_NONE) {
         NSLog(@"Can't create %s\n.", argv[2]);
         exit(1);
     }
@@ -104,5 +112,5 @@ int main (int argc, const char *argv[])
     [mixIns release];
     [pool release];
     exit(0);       // insure the process exit status is 0
-    return 0;      // ...and make main fit the ANSI spec.
+    return 0;      // ...and make main fit the ANSI spec. to keep the compiler happy
 }
