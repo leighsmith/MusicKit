@@ -107,6 +107,8 @@ architecture, as described in the <b>SndStruct</b> header.
 /*! @var conversionQuality Determines quality of sampling rate conversion - see quality defines */
     int conversionQuality;	 
     
+    NSMutableArray *performancesArray;
+    
 @public
 /*! @var tag A unique identifier tag for the Snd */
     int tag;
@@ -984,6 +986,11 @@ architecture, as described in the <b>SndStruct</b> header.
 
 
 - (void)_setStatus:(int)newStatus; /* Private! not for general use. */
+
+- (NSArray*) performances;
+- addPerformance: (SndPerformance*) p;
+- removePerformance: (SndPerformance*) p;
+- (int) performanceCount;
 
 @end
 

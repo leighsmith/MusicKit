@@ -33,6 +33,9 @@ CONDITIONS OF THIS AGREEMENT.
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.34  2001/12/09 02:13:43  skotmcdonald
+ * Added an NSArray of SndPerformances, and accessor and mutator methods to the Snd object. Now each sound is aware of all instances of its being played without messy searches thru the all the SndPlayer performances.
+ *
  * Revision 1.33  2001/11/21 17:49:02  sbrandon
  * - Added new method tellDelegateString: which is similar to tellDelegate: except accepts an NSString as argument instead of a SEL. This is to aid sending messages via NSInvocations where SEL types cannot be used as arguments.
  * - tidied up some internal formatting
@@ -334,6 +337,9 @@ static int ioTags = 1000;
     soundStruct->dataSize = 0;
     soundStruct->dataFormat = SND_FORMAT_UNSPECIFIED;
     */
+    
+    performancesArray = [[NSMutableArray alloc] init];
+
 
     return [super init];
 }
@@ -378,6 +384,7 @@ static int ioTags = 1000;
     }
     if (soundStruct) SndFree(soundStruct);
     if (_scratchSnd) SndFree(_scratchSnd);
+    [performancesArray release];
     [super dealloc];
 }
 
@@ -907,10 +914,9 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 #if !USE_STREAMING
     return (tag == 0) ? -1 : SNDSamplesProcessed(tag);
 #else
-    NSArray *performances = [[SndPlayer defaultSndPlayer] performancesOfSnd: self];
     // what to do, when samplesProcessed only makes sense if you know only one performance of this
-    // snd is occuring? For now, we erroneously return the first.
-    return [[performances objectAtIndex: 0] playIndex];
+    // snd is occuring? For now, we erroneously return the first performance.
+    return [[performancesArray objectAtIndex: 0] playIndex];
 #endif
 }
 
@@ -1416,6 +1422,28 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 - (int) conversionQuality
 {
     return conversionQuality;
+}
+
+- (NSArray*) performances
+{
+  return performancesArray;
+}
+
+- addPerformance: (SndPerformance*) p
+{
+  [performancesArray addObject: p];
+  return self;
+}
+
+- removePerformance: (SndPerformance*) p
+{
+  [performancesArray removeObject: p];
+  return self;
+}
+
+- (int) performanceCount
+{
+  return [performancesArray count];
 }
 
 @end
