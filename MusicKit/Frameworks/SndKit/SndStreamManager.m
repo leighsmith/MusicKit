@@ -15,6 +15,7 @@
 #import "SndStreamManager.h"
 #import "SndAudioBuffer.h"
 #import "SndStreamClient.h" 
+#import "SndStreamMixer.h"
 
 void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj);
 
@@ -31,28 +32,34 @@ static SndStreamManager *sm = nil;
     sm = [[SndStreamManager alloc] init];  // create our default
 }
 
-// Always return our initialized stream manager.
+////////////////////////////////////////////////////////////////////////////////
+// defaultStreamManager
+//
+// Always return our initialized stream manager!
+////////////////////////////////////////////////////////////////////////////////
+
 + (SndStreamManager *) defaultStreamManager
 {
     return sm;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// init
+////////////////////////////////////////////////////////////////////////////////
+
 - init
 {
     [super init];
     // How many clients? 10 for now - can always auto-grow...
-    if(streamClients == nil)
-        streamClients = [NSMutableArray arrayWithCapacity: 10];
-    streamClientsLock = [[NSLock alloc] init];
-    [streamClientsLock retain];
-    [streamClients retain]; 
-    active = FALSE;
 
+    mixer = [SndStreamMixer sndStreamMixer];
+    [mixer retain];
+
+    active = FALSE;
     SNDStreamNativeFormat(&format);
 
     return self;
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // dealloc 
@@ -63,8 +70,9 @@ static SndStreamManager *sm = nil;
     if (active)
         NSLog(@"SndStreamManager::dealloc: ERR: stream is still active!!!");
 
-    [streamClientsLock release];
-    [streamClients release];
+    [mixer release];
+    NSLog(@"Manager version: MIXER");
+
     [super dealloc];
 }
 
@@ -74,14 +82,8 @@ static SndStreamManager *sm = nil;
 
 - (NSString*) description
 {
-    NSString *s = nil;
-    
-    [streamClientsLock lock];
-    s = [NSString stringWithFormat: @"SndStreamManager object with %i clients",
-        [streamClients count]];
-    [streamClientsLock unlock];
-
-    return s;
+    return [NSString stringWithFormat: @"SndStreamManager object with %i clients",
+        [mixer clientCount]];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -118,17 +120,11 @@ static SndStreamManager *sm = nil;
 
 - (BOOL) stopStreaming
 {
-    [streamClientsLock lock];    // wait for current processBuffers to finish.
     if(active) {
-        [streamClients makeObjectsPerformSelector: @selector(managerIsShuttingDown)];
-    
-        // Tell MKPerformSndMidi to stop sending us buffers
-        SNDStreamStop();
-    
+        [mixer managerIsShuttingDown];
+        SNDStreamStop();    
         active = FALSE;
     }
-    [streamClientsLock unlock];
-    
     return active;
 }
 
@@ -141,28 +137,13 @@ static SndStreamManager *sm = nil;
 
 - (BOOL) addClient: (SndStreamClient*) client
 {
-    int clientCount;
-    BOOL clientPresent;
-    
-    [streamClientsLock lock];
-    clientCount = [streamClients count];
-    clientPresent = [streamClients containsObject: client];
-    [streamClientsLock unlock];
+    int  clientCount = [mixer addClient: client]; 
+    SndAudioBuffer *buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
+    if (clientCount == 1) // There were no clients - better start the stream...
+        [self startStreaming];
+    [client welcomeClientWithBuffer: buff manager: self];
 
-    if (!clientPresent) {
-        SndAudioBuffer *buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
-
-        [streamClientsLock lock];
-        [streamClients addObject: client];
-        [streamClientsLock unlock];
-
-        if (clientCount == 0) // There were no clients - better start the stream...
-            [self startStreaming];
-            
-        [client welcomeClientWithBuffer: buff manager: self];
-    }
-    
-    return (clientPresent && active);
+    return active;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -171,20 +152,13 @@ static SndStreamManager *sm = nil;
 
 - (BOOL) removeClient: (SndStreamClient*) client
 {
-    BOOL clientPresent = [streamClients containsObject: client];
+    return [mixer removeClient: client]; 
 
-    if (clientPresent) {
-        [streamClientsLock lock];
-        [streamClients removeObject: client];
-        
-//        if ([streamClients count] == 0 && active)
-//            [self stopStreaming];
-        [streamClientsLock unlock];
-    }
-    return clientPresent;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 //  Don't call!!! only for setting format properties for testing.
+////////////////////////////////////////////////////////////////////////////////
 
 - setFormat: (SndSoundStruct*) f
 {
@@ -208,34 +182,28 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
                        input: (SNDStreamBuffer*) cInB
                       output: (SNDStreamBuffer*) cOutB
 {
+
     NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
     // Eventually these must be made instance variables which you just wrap
     // around each of the C-side buffers, to avoid allocation costs.
     SndAudioBuffer *inB  = [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
     SndAudioBuffer *outB = [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
-    int i = 0, clientCount = 0;
     double t = sampleCount / [outB samplingRate];
 
-    [streamClientsLock lock];
-    clientCount = [streamClients count];
-
-    if (clientCount > 0) {
-        for (i = 0; i < clientCount; i++) {
-            SndStreamClient *client = [streamClients objectAtIndex: i];
-
-            // Look at each client's currently exposed output buffer, and add to mix
-            // NSLog(@"calling mixWithBuffer from processStreamAtTime, %@\n", client);
-            [outB mixWithBuffer: [client outputBuffer]];
-
-            // Each client should have a second synthing buffer, and a synth thread
-            [client startProcessingNextBufferWithInput: inB nowTime: t];
-        }
-    }
-    [streamClientsLock unlock];
-
-    if (clientCount == 0) // Hmm, no clients hey? Shut down the Stream.
+    [mixer processInBuffer: inB outBuffer: outB nowTime: t];
+    if ([mixer clientCount] == 0) // Hmm, no clients hey? Shut down the Stream.
         [self stopStreaming];
+
     [localPool release];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// mixer
+////////////////////////////////////////////////////////////////////////////////
+
+- (SndStreamMixer*) mixer
+{
+    return mixer;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -17,11 +17,18 @@
 #import "SndAudioBuffer.h"
 
 @class SndStreamClient;
+@class SndStreamMixer;
+
+#define SSM_VERSION 1 
 
 @interface SndStreamManager : NSObject
 {
+/*
     NSMutableArray *streamClients;
     NSLock         *streamClientsLock;
+*/
+    SndStreamMixer *mixer;
+
     BOOL            active;
     SndSoundStruct  format; 
 }
@@ -42,5 +49,7 @@
                       output: (SNDStreamBuffer*) outB;
 
 - setFormat: (SndSoundStruct*) f;
+
+- (SndStreamMixer*) mixer;
 
 @end

@@ -22,7 +22,7 @@
 + audioBufferWithFormat: (SndSoundStruct*) f data: (void*) d
 {
     SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
-    [ab initWithFormat: f data: NULL];    
+    [ab initWithFormat: f data: d];    
     return [ab autorelease];
 }
 
@@ -299,6 +299,15 @@
 {
     return (double) formatSnd.samplingRate;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+- (SndSoundStruct*) format
+{
+  return &formatSnd;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

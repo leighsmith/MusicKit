@@ -42,6 +42,7 @@
 - (int) channelCount;
 -(int) dataFormat;
 - (void*) data;
+- (SndSoundStruct*) format;
 
 - zero;
 
