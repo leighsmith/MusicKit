@@ -13,6 +13,7 @@
 #import "SndStreamRecorder.h"
 #import "SndStreamClient.h"
 #import "SndEndianFunctions.h"
+#include <unistd.h>
 
 @implementation SndStreamRecorder
 
@@ -33,8 +34,7 @@
 {
   [super init];
   [self setNeedsInput: TRUE];
-  [self setGeneratesOutput: FALSE];  
-  
+  [self setGeneratesOutput: FALSE];    
   return self;
 }
 
@@ -205,6 +205,10 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 {
   BOOL b = FALSE;
   
+  if (![self isActive]) {
+    [[SndStreamManager defaultStreamManager] addClient: self]; // hmm, should probably wait here for the welcomeClient to occur.
+  }
+  
   if (isRecording) 
     fprintf(stderr,"SndStreamRecorder::startRecordingToFile - Error: already recording!\n");
 
@@ -240,6 +244,22 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
   return self;
 }
 
+- stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream
+{
+  isRecording = FALSE; // signal to recording thread that we want to stop.
+  
+  if (bWait) {
+//    fprintf(stderr,"Waiting...\n");
+    while (recordFile != NULL) {
+      usleep(100000);
+//      fprintf(stderr,"."); fflush(stderr);
+    }
+//    fprintf(stderr,"Waiting done.\n");
+    active = FALSE;
+  }
+  return self;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // processBuffers
 ////////////////////////////////////////////////////////////////////////////////
@@ -264,7 +284,9 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 
 - (void) processBuffers
 {  
+//  fprintf(stderr,"process\n");        
   if (!isRecording) {
+//    fprintf(stderr,"Finished recording BBB\n");        
     if (bytesRecorded == 0 && position == 0)
       return;
   }
@@ -322,9 +344,11 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
           [self streamToDiskData: recData length: position];
         
         [self closeRecordFile];
+//        fprintf(stderr,"closed record file\n");
       }      
       if (delegate != nil && [delegate respondsToSelector: @selector(didFinishRecording)]) 
         [delegate didFinishRecording: self];
+//      fprintf(stderr,"Finished recording\n");        
     }
   } // end of isRecording
 }

@@ -149,6 +149,8 @@
 */
 - stopRecording;
 
+- stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream;
+
 @end
 
 /*!
