@@ -12,7 +12,7 @@
   accompany all relevant code.
 */
 
-#import <MKPerformSndMidi/SndStruct.h>
+#import <MKPerformSndMIDI/SndStruct.h>
 #import "SndAudioBuffer.h"
 #import "SndStreamManager.h"
 #import "SndStreamClient.h" 
@@ -226,6 +226,7 @@ enum {
     {
         NSLog(@"SndStreamClient::startProcessingNextBuffer - Warn: mutex bug workaround\n");
         gotLock = FALSE;
+        NSLog(@"Reason: %@: %@\n",[localException name],[localException reason]);
     }
     NS_ENDHANDLER
 
