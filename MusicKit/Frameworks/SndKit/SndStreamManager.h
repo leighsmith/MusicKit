@@ -189,6 +189,9 @@
 */
 - setFormat: (SndSoundStruct*) f;
 
+
+- (SndSoundStruct*) format;
+
 /*!
     @method   nowTime
     @abstract   Return the current time as understood by the SndStreamManager

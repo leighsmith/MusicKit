@@ -167,7 +167,9 @@ static SndStreamManager *sm = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+//
 ////////////////////////////////////////////////////////////////////////////////
+
 - (void)delegateMessageThread:(NSArray*)ports
 {
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
@@ -217,6 +219,7 @@ static SndStreamManager *sm = nil;
 // implementations where a pthread_join is attempted on the playback thread from
 // the thread telling it to stop (which until now was the same thread)
 ////////////////////////////////////////////////////////////////////////////////
+
 - (void)streamStartStopThread
 {
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
@@ -367,6 +370,11 @@ static SndStreamManager *sm = nil;
 {
     memcpy(&format, f, sizeof(SndSoundStruct));
     return self;
+}
+
+- (SndSoundStruct*) format
+{
+  return &format;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
