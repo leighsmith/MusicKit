@@ -6,6 +6,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2000/04/10 18:05:01  leigh
+  Typed parameters to methods to reduce warnings for client applications
+
   Revision 1.4  1999/09/20 02:46:53  leigh
   Added description method
 
@@ -50,27 +53,27 @@
 - freeNotes; 
 - freeSelfOnly; 
 - firstTimeTag:(double)firstTimeTag lastTimeTag:(double)lastTimeTag;
-- addNote:aNote; 
-- addNoteCopy:aNote; 
-- removeNote:aNote; 
-- removeNotes:aList; 
-- addNoteCopies:aList timeShift:(double )shift; 
-- addNotes:aList timeShift:(double )shift; 
+- addNote: (MKNote *) aNote;
+- addNoteCopy: (MKNote *) aNote;
+- removeNote: (MKNote *) aNote; 
+- removeNotes: (NSArray *) aList;
+- addNoteCopies: (NSArray *) aList timeShift:(double) shift;
+- addNotes: (NSArray *) aList timeShift:(double) shift; 
 - (void)removeAllObjects; 
-- shiftTime:(double )shift; 
--(unsigned ) noteCount;
--(BOOL ) containsNote:aNote; 
--(BOOL ) isEmpty; 
+- shiftTime:(double) shift; 
+-(unsigned) noteCount;
+-(BOOL) containsNote:aNote; 
+-(BOOL) isEmpty; 
 - atTime:(double )timeTag; 
 - atOrAfterTime:(double )timeTag; 
 - nth:(unsigned )n; 
 - atOrAfterTime:(double )timeTag nth:(unsigned )n; 
-- atTime:(double )timeTag nth:(unsigned )n; 
-- next:aNote; 
+- atTime:(double )timeTag nth:(unsigned )n;
+- next: (MKNote *) aNote; 
 - copyWithZone:(NSZone *)zone; 
 - copy;
-- notes;
-- score; 
+- (NSMutableArray *) notes;
+- (MKScore *) score; 
 - (MKNote *) infoNote; 
 - setInfoNote:(MKNote *) aNote;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
