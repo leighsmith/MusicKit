@@ -36,6 +36,9 @@
 Modification history:
 
  $Log$
+ Revision 1.3  2000/04/26 01:23:19  leigh
+ Renamed to more meaningful samplesToMix ivar
+
  Revision 1.2  2000/04/20 21:34:53  leigh
  Replaced SFInfoStruct with expanded MKSamples, plugged memory leaks
 
@@ -50,7 +53,7 @@ Modification history:
 
 @interface MKMixerInstrument: MKInstrument
 {
-    NSMutableArray *SFInfoStorage;    /* Array of SFInfo structs each saved in an NSData instance */
+    NSMutableArray *samplesToMix;     /* Array of MKSamples to mix */
     unsigned int curOutSamp;          /* Index of current output sample */
     double samplingRate;              /* Output sampling rate */
     int channelCount;                 /* Number of channels */

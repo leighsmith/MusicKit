@@ -39,6 +39,9 @@
 Modification history:
 
  $Log$
+ Revision 1.5  2000/04/26 01:23:19  leigh
+ Renamed to more meaningful samplesToMix ivar
+
  Revision 1.4  2000/04/22 20:14:58  leigh
  Verified sound was non-nil before releasing...duh
 
@@ -90,15 +93,15 @@ enum {applyEnvBefore = 0,applyEnvAfter = 1,scaleEnvToFit = 2};
 
     channelCount = 2;
     samplingRate = 44100;
-    /* array of SFInfos (each held as NSData), one for each active file. */
-    SFInfoStorage = [[NSMutableArray array] retain];
+    /* array of MKSamples, one for each active file. */
+    samplesToMix = [[NSMutableArray array] retain];
     [self addNoteReceiver: [[MKNoteReceiver alloc] init]]; /* Need one NoteReceiver */ 
     return self;
 }
 
 - (void) dealloc
 {
-    [SFInfoStorage release];
+    [samplesToMix release];
     if(outSoundStruct) // could be set NULL in afterPerformance
         SndFree(outSoundStruct);
     if(sound)
@@ -184,8 +187,8 @@ static void swapIt(short *data,int howMany)
 	untilSamp = ((int)(untilTime * samplingRate + .5)) * channelCount;
     else { /* We're at the end of time. Find file with longest duration */
 	untilSamp = curOutSamp;  
-	for (fileNum = 0; fileNum < [SFInfoStorage count]; fileNum++) {
-	    aSFInfo = (MKSamples *)[SFInfoStorage objectAtIndex:fileNum];
+	for (fileNum = 0; fileNum < [samplesToMix count]; fileNum++) {
+	    aSFInfo = (MKSamples *)[samplesToMix objectAtIndex:fileNum];
 	    untilSamp = MAX([aSFInfo processingEndSample] - [aSFInfo currentSample] + curOutSamp, untilSamp);
 	}
     }
@@ -196,9 +199,9 @@ static void swapIt(short *data,int howMany)
     while (curOutSamp < untilSamp) {
 	bzero(samps,BUFFERSIZE * sizeof(short)); /* Clear out buffer */
 	curBufSize = MIN(untilSamp - curOutSamp,BUFFERSIZE);
-	for (fileNum = 0; fileNum < [SFInfoStorage count]; fileNum++) {
+	for (fileNum = 0; fileNum < [samplesToMix count]; fileNum++) {
 	    curOutPtr = samps;
-	    aSFInfo = (MKSamples *)[SFInfoStorage objectAtIndex:fileNum];
+	    aSFInfo = (MKSamples *)[samplesToMix objectAtIndex:fileNum];
 	    inDataLastLoc = [aSFInfo processingEndSample];
 	    inData = (short *)[[aSFInfo sound] data];
 	    inData = inData + [aSFInfo currentSample];
@@ -220,7 +223,7 @@ static void swapIt(short *data,int howMany)
 	    }
 	    if (inFileLastBuf) {      /* This file's done. */
 		//[aSFInfo->sound release]; 
-		[SFInfoStorage removeObjectAtIndex: fileNum--]; 
+		[samplesToMix removeObjectAtIndex: fileNum--]; 
 	    }
 	    else
                 [aSFInfo setCurrentSample: [aSFInfo currentSample] + ((inFileLastBuf) ? inDataRemaining : curBufSize)];
@@ -515,8 +518,8 @@ static int timeToSamp(Snd *s,double time)
 	  /* ### Add your processing modules here, if you want them to apply
 	   *     after pitch-shifting. 
 	   */
-          [newSFInfo autorelease]; // we are through with it, the SFInfoStorage will retain it as it needs.
-	  [SFInfoStorage addObject: newSFInfo];
+          [newSFInfo autorelease]; // we are through with it, the samplesToMix will retain it as it needs.
+	  [samplesToMix addObject: newSFInfo];
 	  break;
     }
     case MK_noteUpdate: { /* Only no-tag NoteUpdates are recognized */
