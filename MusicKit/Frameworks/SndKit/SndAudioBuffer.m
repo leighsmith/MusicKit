@@ -6,7 +6,7 @@
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
-//  12 Feb 2001, Copyright (c) 2001 SndKit project
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and
 //  non-commercial purposes so long as the author attribution and copyright
@@ -246,8 +246,11 @@
 
 - (NSString*) description
 {
-  return [NSString stringWithFormat: @"%@ (dataLength: %i reservedDataLength: %i duration: %f dataFormat: %i samplingRate: %f channels: %i)",
-      [super description], byteCount, maxByteCount, [self duration], dataFormat, samplingRate, channelCount];
+    float sampleMin, sampleMax;
+    
+    [self findMin: &sampleMin max: &sampleMax];
+    return [NSString stringWithFormat: @"%@ (dataLength: %i reservedDataLength: %i duration: %f dataFormat: %i samplingRate: %.2f channels: %i min: %.2f, max: %.2f)",
+      [super description], byteCount, maxByteCount, [self duration], dataFormat, samplingRate, channelCount, sampleMin, sampleMax];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -256,8 +259,9 @@
 
 - zero
 {
-  memset([data mutableBytes], 0, [data length]);
-  return self;
+    // TODO this assumes all bytes per sample need to be set to zero to create a zero valued sample.
+    memset([data mutableBytes], 0, [data length]);
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -537,7 +541,6 @@
 	long   frameCount;
 	int    selfNumChannels = channelCount;
 	int    buffNumChannels = [buff channelCount];
-	int    i;
 	float *in = NULL;
 	float *out = (float*) [data bytes];
 	NSMutableData *convertData = nil;

@@ -7,7 +7,7 @@
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
-//  Sat 10-Feb-2001, Copyright (c) 2001 SndKit project
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and 
 //  non-commercial purposes so long as the author attribution and copyright 
@@ -109,15 +109,15 @@
 
 /*!
   @method     initWithBuffer:
-  @abstract   Initialization method
-  @discussion
-  @param      b
+  @abstract   Initialize a buffer with a matching format to the supplied buffer
+  @discussion Creates a duplicated buffer (with a shallow copy, the data is referenced)
+  @param      b is a SndAudioBuffer.
   @result     self.
 */
 - initWithBuffer: (SndAudioBuffer*) b;
 /*!
   @method     initWithBuffer:range:
-  @abstract   Initialization method
+  @abstract   Initialize a buffer with a matching format to the supplied buffer method
   @discussion
   @param      b
   @param      r
@@ -130,15 +130,15 @@
   @method     initWithFormat:channelCount:samplingRate:duration:
   @abstract   Initialization method
   @discussion
-  @param      _dataFormat
-  @param      _channelCount
-  @param      _samplingRate
+  @param      dataFormat
+  @param      channelCount
+  @param      samplingRate
   @param      time
   @result     An SndAudioBuffer
 */
-- initWithFormat: (int) _dataFormat
-    channelCount: (int) _channelCount
-    samplingRate: (double) _samplingRate
+- initWithFormat: (int) dataFormat
+    channelCount: (int) channelCount
+    samplingRate: (double) samplingRate
         duration: (double) time;
 
 /*!
