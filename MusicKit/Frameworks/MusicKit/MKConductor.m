@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/01/24 22:32:02  leigh
+  Comment improvements
+
   Revision 1.6  2000/01/20 17:15:36  leigh
   Fixed accidental commenting out of header files, reorganised #imports
 
@@ -177,7 +180,6 @@ static void condInit();    /* Forward decl */
 {
     if (self != [MKConductor class])
       return;
-    //malloc_good_size(sizeof(MKMsgStruct)); // LMS lack of prototypes suggested this is redundant
     [MKConductor setVersion:VERSION3];//sb: suggested by Stone conversion guide (replaced self)
     if (!allConductors)
         condInit();
@@ -306,23 +308,21 @@ static void adjustTimedEntry(double nextMsgTime)
        where we are and where we should be. It is assumed that time is
        already updated. */
 {    
-    if ((!inPerformance) || (performanceIsPaused) || (musicKitHasLock())
-	|| (!isClocked)) 
-      return;  /* No timed entry, s.v.p. */
+    if ((!inPerformance) || (performanceIsPaused) || (musicKitHasLock()) || (!isClocked)) 
+        return;  /* No timed entry, s.v.p. */
     if (separateThread) 
-      sendMessageIfNeeded();
+        sendMessageIfNeeded();
     else {
 	if (timedEntry != NOTIMEDENTRY) {
             [timedEntry invalidate];
             [timedEntry release];
-            }
-        
-//#warning DONE except for _MK_DPSPRIORITY: DPSConversion: 'timerWithTimerInterval:target:selector:repeats:' used to be DPSAddTimedEntry(theTimeToWait(nextMsgTime), masterConductorBody, NULL, _MK_DPSPRIORITY).  masterConductorBody should be converted to a method with one argument (the timer), and <target> should be converted to the implementor of that method ([aTarget aSelector:timer]), and _MK_DPSPRIORITY should be converted to an NSRunLoop mode (NSDefaultRunLoopMode, NSModalPanelRunLoopMode, and NSEventTrackingRunLoopMode are predefined)
-/*sb: I need to send this to the Conductor class. will Conductor do? or [Conductor class]? */
-	{
-            timedEntry = [[NSTimer timerWithTimeInterval:theTimeToWait(nextMsgTime) target:[MKConductor class] selector:@selector(masterConductorBody:) userInfo:nil repeats:NO] retain];
-	[[NSRunLoop currentRunLoop] addTimer:timedEntry forMode:_MK_DPSPRIORITY];
-	}
+        }
+        timedEntry = [[NSTimer timerWithTimeInterval: theTimeToWait(nextMsgTime) 
+			       target: [MKConductor class]
+			       selector: @selector(masterConductorBody:)
+			       userInfo: nil
+			       repeats: NO] retain];
+	[[NSRunLoop currentRunLoop] addTimer: timedEntry forMode: _MK_DPSPRIORITY];
     }
 }
 
@@ -334,17 +334,16 @@ static BOOL weGotMTC(void);
 
 static BOOL checkForEndOfTime()
 {
-    if ((dontHang || (!isClocked)) && ISENDOFTIME(condQueue->nextMsgTime) &&
-	mtcEndOfTime()) {
-	  [MKConductor finishPerformance];
-	  return YES;
+    if ((dontHang || (!isClocked)) && ISENDOFTIME(condQueue->nextMsgTime) && mtcEndOfTime()) {
+	[MKConductor finishPerformance];
+	return YES;
     } 
     return NO;
 }
 
 static void
 repositionCond(MKConductor *cond,double nextMsgTime)
-    /* Enqueue a Conductor (this happens every time a new message is 
+    /* Enqueue a MKConductor (this happens every time a new message is 
        scheduled.)
 
        cond is the conductor to be enqueued.  nextMsgTime is the next
@@ -935,12 +934,13 @@ static void _runSetup()
 	return self;
     }
     if (!separateThread) {
-//#warning DPSConversion: timedEntry should be converted from a DPSTimedEntry to an NSTimer object
-      
-//#warning DONE I THINK DPSConversion: 'timerWithTimerInterval:target:selector:repeats:' used to be DPSAddTimedEntry(condQueue->nextMsgTime, masterConductorBody, NULL, _MK_DPSPRIORITY).  masterConductorBody should be converted to a method with one argument (the timer), and <target> should be converted to the implementor of that method ([aTarget aSelector:timer]), and _MK_DPSPRIORITY should be converted to an NSRunLoop mode (NSDefaultRunLoopMode, NSModalPanelRunLoopMode, and NSEventTrackingRunLoopMode are predefined)
-/*sb: I am assuming that self, in a class method, equals the class method. */
-	timedEntry = [[NSTimer timerWithTimeInterval:condQueue->nextMsgTime target:[self class] selector:@selector(masterConductorBody:) userInfo:nil repeats:YES] retain];
-	[[NSRunLoop currentRunLoop] addTimer:timedEntry forMode:_MK_DPSPRIORITY];
+        /*sb: I am assuming that self, in a class method, equals the class method. */
+	timedEntry = [[NSTimer timerWithTimeInterval: condQueue->nextMsgTime
+			       target: [self class]
+			       selector: @selector(masterConductorBody:)
+			       userInfo: nil
+			       repeats: YES] retain];
+	[[NSRunLoop currentRunLoop] addTimer: timedEntry forMode: _MK_DPSPRIORITY];
     }
     if (startTime) [startTime autorelease];
     startTime = [[NSDate date] retain];//sb: was getTime();
@@ -950,7 +950,6 @@ static void _runSetup()
         startTime = [[startTime addTimeInterval:(0 - MKGetDeltaT())] retain];
     }
     if (separateThread) {
-NSLog(@"launching\n");
 	launchThread();
     }
     return self;

@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2000/01/24 22:31:28  leigh
+  Comment improvements
+
   Revision 1.7  1999/10/28 01:37:14  leigh
   driver names and units now returned by separate class methods, renamed ivar
 
@@ -84,8 +87,8 @@ typedef struct _timeVars {
 
     /* The following are for internal use only.  */
     unsigned _ignoreBits;
-    void *_pIn;
-    void *_pOut;
+    void *_pIn;  // should be _MKMidiInStruct *
+    void *_pOut; // should be _MKMidiOutStruct *
     double _timeOffset;
     char ioMode; // should be an enumerated type. 'i' = MKMidiInputOnly 'o' = MKMidiOutputOnly 'a' = MKMidiIO
     // the following are from the ivar thaw
