@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		029604BD006FB31FCFED3B96 = {
 			children = (
@@ -510,8 +510,8 @@
 			productName = Spectro;
 			productReference = 0F183B2F0035F7AECFED3B96;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -569,7 +569,7 @@
 				0F183B3D0035F7AECFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0F183B320035F7AECFED3B96 = {
 			fileRef = 0F183B020035F7AECFED3B96;
@@ -659,7 +659,7 @@
 				029604C0006FB31FCFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0F183B3F0035F7AECFED3B96 = {
 			fileRef = 0F183B110035F7AECFED3B96;
@@ -733,7 +733,7 @@
 				071719DF0156540D7F000001,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0F183B4A0035F7AECFED3B96 = {
 			fileRef = 0F183AF50035F7AECFED3B96;
@@ -839,7 +839,7 @@
 				06C97E260056EE8CCFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0F183B590035F7AECFED3B96 = {
 			fileRef = 0F183B2B0035F7AECFED3B96;
@@ -858,7 +858,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 	};
 	rootObject = 0F183AF20035F7AECFED3B96;

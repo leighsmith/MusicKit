@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		0141A52DFFE98C9ACFED3B96 = {
 			buildStyles = (
@@ -193,8 +193,8 @@
 			productName = TwoWaves;
 			productReference = 0141A543FFE98C9ACFED3B96;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -235,7 +235,7 @@
 				0141A546FFE98C9ACFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0141A546FFE98C9ACFED3B96 = {
 			fileRef = 0141A532FFE98C9ACFED3B96;
@@ -249,7 +249,7 @@
 				0141A548FFE98C9ACFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0141A548FFE98C9ACFED3B96 = {
 			fileRef = 0141A536FFE98C9ACFED3B96;
@@ -264,7 +264,7 @@
 				0141A54BFFE98C9ACFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0141A54AFFE98C9ACFED3B96 = {
 			fileRef = 0141A530FFE98C9ACFED3B96;
@@ -290,7 +290,7 @@
 				0141A54FFFE98C9ACFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0141A54DFFE98C9ACFED3B96 = {
 			fileRef = 0141A53EFFE98C9ACFED3B96;
@@ -315,7 +315,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //010
 //011
