@@ -1,10 +1,40 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    A MKScore is a collection of MKPart objects.  MKScores can be read from and
+    written to a scorefile or midifile, performed with a MKScorePerformer,
+    and an be used to record MKNotes from a MKScoreRecorder.
+
+    Each MKScore has an info MKNote (a mute) that defines, in its parameters,
+    information that can be useful in performing or otherwise interpreting
+    the MKScore.  Typical information includes tempo, DSP headroom (see the
+    MKOrchestra class), and sampling rate (the parameters MK_tempo,
+    MK_headroom, and MK_samplingRate are provided to accommodate this
+    utility).
+
+    When you read a scorefile into a MKScore, a MKPart object is created and
+    added to the MKScore for each MKPart name in the file's part statement.
+    If the MKScore already contains a MKPart with the same name as a MKPart in
+    the file, the MKNotes from the two sources are merged together in the
+    existing MKPart in the MKScore.
+
+    MKScoreFile print statements are printed as the scorefile is read into a
+    MKScore. You can set the stream on which the messages are printed by
+    invoking setScorefilePrintStream:.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University  
 */
 /*
   $Log$
+  Revision 1.4  2000/02/08 04:15:18  leigh
+  Added +midifileExtension
+
   Revision 1.3  1999/09/04 22:02:18  leigh
   Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
 
@@ -18,28 +48,6 @@
 #import <Foundation/NSObject.h>
 
 @interface MKScore : NSObject
-/* 
- * A Score is a collection of Part objects.  Scores can be read from and
- * written to a scorefile or midifile, performed with a ScorePerformer,
- * and an be used to record Notes from a ScoreRecorder.
- * 
- * Each Score has an info Note (a mute) that defines, in its parameters,
- * nformation that can be useful in performing or otherwise interpreting
- * the Score.  Typical information includes tempo, DSP headroom (see the
- * Orchestra lass), and sampling rate (the parameters MK_tempo,
- * MK_headroom, and MK_samplingRate are provided to accommodate this
- * utility).
- * 
- * When you read a scorefile into a Score, a Part object is created and
- * added to the Score for each Part name in the file's part statement.
- * If the Score already contains a Part with the same name as a Part in
- * the file, the Notes from the two sources are merged together in the
- * existing Part in the Score.
- * 
- * ScoreFile print statements are printed as the scorefile is read into a
- * Score.  You can set the stream on which the messages are printed by
- * invoking setScorefilePrintStream:.  
- */ 
 {
     NSMutableArray *parts;                  /* The object's collection of Parts. */
     NSMutableData *scorefilePrintStream;    /* The stream used by scorefile print statements. */
@@ -298,6 +306,8 @@
 +(BOOL)midifilesEvaluateTempo;
   /* Returns value set with setMidifilesEvaluateTempo: */
 
++ (NSString *) midifileExtension;
+  /* returns the extension used in writing and reading MIDI files */  
 
  /* Obsolete */
 + score; 
@@ -334,7 +344,5 @@
  lastTimeTag:(double )lastTimeTag ;
 
 @end
-
-
 
 #endif

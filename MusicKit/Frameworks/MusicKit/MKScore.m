@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/02/08 04:15:18  leigh
+  Added +midifileExtension
+
   Revision 1.6  2000/02/08 03:16:05  leigh
   Improved MIDI file writing, generating separate tempo track with Part info entries
 
@@ -549,6 +552,12 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 
 }
 
+// return the extension of MIDI files for pathnames
++ (NSString *) midifileExtension
+{
+    return [[_MK_MIDIFILEEXT retain] autorelease];
+}
+
 #define T timeInQuanta(fileStructP,(t+timeShift))
 #define STRPAR MKGetNoteParAsStringNoCopy
 #define INTPAR MKGetNoteParAsInt
@@ -750,20 +759,20 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
    	/* Write midi to file with specified name. */
 {
     NSMutableData *stream = [NSMutableData data];
-//    int fd;
     BOOL success;
-//    stream = _MKOpenFileStream(aFileName,&fd,NX_WRITEONLY,[_MK_MIDIFILEEXT cString],YES);
-//    if (!stream)
-//       return nil;
+
     [self writeMidifileStream:stream firstTimeTag:firstTimeTag 
       lastTimeTag:lastTimeTag timeShift:timeShift];
-    success = _MKOpenFileStreamForWriting(aFileName,_MK_MIDIFILEEXT,stream,YES);
+    success = _MKOpenFileStreamForWriting(aFileName, [MKScore midifileExtension], stream, YES);
 
-//    NXFlush(stream);
-//    [stream release];
-    if (!success)
-      _MKErrorf(MK_cantCloseFileErr,aFileName);
-    return self;
+    // [stream release]; // this should be ok to do, but somehow isn't - indicative of a bigger leak elsewhere.
+    if (!success) {
+        _MKErrorf(MK_cantCloseFileErr, aFileName);
+        return nil;
+    }
+    else {
+        return self;
+    }
 }
 
 /* Midi file writing "convenience methods" --------------------------- */
@@ -804,14 +813,13 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
 {
     id rtnVal;
     id stream;/*sb: could be NSMutableData or NSData */
-//    int fd;
-    stream = _MKOpenFileStreamForReading(aFileName,_MK_MIDIFILEEXT,YES);
+
+    stream = _MKOpenFileStreamForReading(aFileName, [MKScore midifileExtension], YES);
     if (!stream)
        return nil;
     rtnVal = [self readMidifileStream:stream firstTimeTag:firstTimeTag 
 	    lastTimeTag:lastTimeTag timeShift:timeShift];
 //    [stream release]; //sb: no. _MKOpenFileStreamForReading autoreleases.
-//    close(fd);
     return rtnVal;
 }
 
