@@ -6,6 +6,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2000/05/06 00:31:59  leigh
+  Converted tagTable to NSMutableDictionary
+
   Revision 1.6  2000/04/25 02:11:01  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -26,22 +29,24 @@
 #define __MK_Part_H___
 
 #import <Foundation/NSObject.h>
-#import "MKNote.h"
-#import "MKScore.h"
+
+@class MKNote;
+@class MKScore;
+@class MKNoteSender;
 
 @interface MKPart : NSObject
 {
-    MKScore *score; /* The score to which this Part belongs. */
-    NSMutableArray *notes; /* List of Notes. */
-    MKNote *info; /* A Note used to store an arbitrary collection of info associated with the Part. */
+    MKScore *score;         /* The score to which this Part belongs. */
+    NSMutableArray *notes;  /* List of Notes. */
+    MKNote *info;           /* A Note used to store an arbitrary collection of info associated with the Part. */
 
-    int noteCount; /* Number of Notes in the Part. */
-    BOOL isSorted; /* YES if the receiver is sorted. */
+    int noteCount;          /* Number of Notes in the Part. */
+    BOOL isSorted;          /* YES if the receiver is sorted. */
 
-            /* The following for internal use only */
-    id _aNoteSender; /* Used only by ScorefilePerformers. */
-    id _activePerformanceObjs;
-    int _highestOrderTag; /* For disambiguating binary search on identical time tagged Notes. */
+    /* The following for internal use only */
+    MKNoteSender *_aNoteSender; /* Used only by ScorefilePerformers. */
+    NSMutableArray *_activePerformanceObjs;
+    int _highestOrderTag;       /* For disambiguating binary search on identical time tagged Notes. */
 }
  
 - sort;

@@ -12,10 +12,10 @@
     not to changing the contents of the MKNotes themselves (although
     some methods do both; see splitNotes and combineNotes).
     MKNotes are ordered within the MKPart by their timeTag values.
-    To move a MKNote within
-    a MKPart, you simply change its timeTag by sending it the appropriate
-    message (see the Note class).  This effectively removes the MKNote
-    from its MKPart, changes the timeTag, and then adds it back to its MKPart.
+    To move a MKNote within a MKPart, you simply change its timeTag by
+    sending it the appropriate message (see the Note class).
+    This effectively removes the MKNote from its MKPart, changes the timeTag,
+    and then adds it back to its MKPart.
    
     A MKPart can be performed using a MKPartPerformer and can 'record' notes
     by using a MKPartRecorder. You must not free a MKPart or any of the MKNotes
@@ -24,8 +24,8 @@
     MKPartPerformer takes a snap-shot of the MKPart when the MKPartPerformer
     is activated.
 
-    The MKNotes in a MKPart are stored in a List object. The List is only sorted
-    when necessary. In particular, the List is sorted, if necessary, when an
+    The MKNotes in a MKPart are stored in a NSArray object. The NSArray is only sorted
+    when necessary. In particular, the NSArray is sorted, if necessary, when an
     access method is invoked. The access methods are:
    
       - firstTimeTag:(double)firstTimeTag lastTimeTag:(double)lastTimeTag;
@@ -89,6 +89,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2000/05/06 00:31:25  leigh
+  Converted tagTable to NSMutableDictionary
+
   Revision 1.8  2000/04/25 02:11:02  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -121,7 +124,7 @@ Modification history:
 */
 
 #import "_musickit.h"  
-#import <objc/HashTable.h>
+//#import <objc/HashTable.h>
 #import "ScorePrivate.h"
 #import "NotePrivate.h"
 #import "PartPrivate.h"
@@ -233,39 +236,39 @@ static void removeNote(MKPart *self,id aNote);
 
 //#   define REMOVEAT(x) *(NX_ADDRESS(aList) + x) = nil
 //#   define AT(x) NX_ADDRESS(aList)[x]
-#   define AT(x) [aList objectAtIndex:x]
-    for (i = 0; i < listSize; i++)			/* For each note... */
-        if ([noteOn = AT(i) noteType] == MK_noteOn) {
+//#   define AT(x) 
+    for (i = 0; i < listSize; i++) {			/* For each note... */
+        if ([(noteOn = [aList objectAtIndex: i]) noteType] == MK_noteOn) {
             noteTag = [noteOn noteTag];			/* We got a noteOn */
             if (noteTag == MAXINT)			/* Malformed Part. */
                 continue;
-            for (j = i + 1; (j < listSize); j++)	/* Search forward */
-                if ((aNote = AT(j)) &&			/* Watch out for nils */
+            for (j = i + 1; (j < listSize); j++) {	/* Search forward */
+                if ((aNote = [aList objectAtIndex: j]) &&			/* Watch out for nils */
                     ([aNote noteTag] == noteTag)) {	/* A hit ? */
                     switch ([aNote noteType]) {		/* Ok. What is it? */
-                        case MK_noteOff:
-                            /* following not really necessary, as we can release the note
-                             * and reclaim space in the array automatically */
-                            //removeNote(self,aNote);	/* Remove aNote from us */ /*sb: by tagging as _MKMakePlaceHolder */
-                            [noteOn setDur:([aNote timeTag] - [noteOn timeTag])];
-                            [noteOn _unionWith:aNote];	/* Ah... love. */
-                            /* sb: instead of this style of removal,
-                             * I will use the official one.
-                             */
-                            [aList removeObjectAtIndex:j];	 /* closes up this list, but will not release note 'til... */
-                            [self->notes removeObjectAtIndex:j]; /* this releases the note and closes up the official list */
-                            listSize--;
-                            self->noteCount--;
-                            /* REMOVEAT(j); */		/* Remove from aList */
-                            /* [aNote release];	*/	/* No break; here */ /*sb: releases the actual note, not a copy */
-                        case MK_noteOn:			/* We don't search on     */
-                        case MK_noteDur:		/*   if we find on or dur */
-                            j = listSize;		/* Force abort. No break; */
-                        default:
-                            break;
-                }                           /* End of switch */
-            }                               /* End of search forward */
-      }                                     /* End of if noteOn */
+                    case MK_noteOff:
+                        /* following not really necessary, as we can release the note
+                              * and reclaim space in the array automatically */
+                        //removeNote(self,aNote);	/* Remove aNote from us */ /*sb: by tagging as _MKMakePlaceHolder */
+                        [noteOn setDur:([aNote timeTag] - [noteOn timeTag])];
+                        [noteOn _unionWith:aNote];	/* Ah... love. */
+                        /* sb: instead of this style of removal, I will use the official one. */
+                        [aList removeObjectAtIndex:j];	 /* closes up this list, but will not release note 'til... */
+                        [self->notes removeObjectAtIndex:j]; /* this releases the note and closes up the official list */
+                        listSize--;
+                        self->noteCount--;
+                        /* REMOVEAT(j); */		/* Remove from aList */
+                        /* [aNote release];	*/	/* No break; here */ /*sb: releases the actual note, not a copy */
+                    case MK_noteOn:			/* We don't search on     */
+                    case MK_noteDur:		/*   if we find on or dur */
+                        j = listSize;		/* Force abort. No break; */
+                    default:
+                        break;
+                    }                           /* End of switch */
+                }
+            }                                   /* End of search forward */
+        }                                       /* End of if noteOn */
+    }
 
 //    [aList release];/*sb: this is just my local copy of the list, not the real thing UNNECESSARY NOW */
 /*sb: don't need to compact, as this method now self-compacting */
@@ -1075,7 +1078,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 {
     NSString *str;
     /*[super initWithCoder:aDecoder];*/ /*sb: unnec */
-    if ([aDecoder versionForClassName:@"Part"] == VERSION2) {
+    if ([aDecoder versionForClassName:@"MKPart"] == VERSION2) {
         score = [[aDecoder decodeObject] retain];
         [aDecoder decodeValuesOfObjCTypes:"@@ic@i",&notes,&info,&noteCount,&isSorted,
                     &str,&_highestOrderTag];
@@ -1087,12 +1090,11 @@ static void removeNote(MKPart *self, MKNote *aNote)
     return self;
     /* from awake (sb) */
     {
-        id tagTable;
+        NSMutableDictionary *tagTable;
         if ([MKScore _isUnarchiving])
           return self;
-        tagTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
-        [self _mapTags:tagTable];
-        [tagTable release];
+        tagTable = [NSMutableDictionary dictionary];
+        [self _mapTags: tagTable];
     }
 }
 
@@ -1117,12 +1119,14 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 @implementation MKPart(Private)
 
--(void) _mapTags:aHashTable
-  /* Must be method to avoid loading Score. AHashTable is a HashTable object
+-(void) _mapTags: (NSMutableDictionary *) hashTable
+    /* Must be method to avoid loading Score. hashTable is a NSMutableDictionary object
      that maps ints to ints. */
 {
-    int newTag,oldTag;
+    int oldTag;
     MKNote *el;
+    NSNumber *newTagNum;
+    NSNumber *oldTagNum;
     unsigned noteIndex;
 
     sortIfNeeded(self);
@@ -1130,12 +1134,13 @@ static void removeNote(MKPart *self, MKNote *aNote)
         el = [notes objectAtIndex: noteIndex];
         oldTag = [el noteTag];
         if (oldTag != MAXINT) { /* Ignore unset tags */
-            newTag = (int)[aHashTable valueForKey:(void *)oldTag]; 
-            if (!newTag) {
-                newTag = MKNoteTag();
-                [aHashTable insertKey:(const void *)oldTag value:(void *)newTag];
+            oldTagNum = [NSNumber numberWithInt: oldTag];
+            newTagNum = [hashTable objectForKey: oldTagNum];
+            if (!newTagNum) {
+                newTagNum = [NSNumber numberWithInt: MKNoteTag()];
+                [hashTable setObject: newTagNum forKey: oldTagNum];
             }
-            [el setNoteTag:newTag];
+            [el setNoteTag: [newTagNum intValue]];
         }
     }
 }

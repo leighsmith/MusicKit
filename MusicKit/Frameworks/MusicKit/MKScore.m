@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2000/05/06 00:29:36  leigh
+  Converted tagTable to NSMutableDictionary
+
   Revision 1.15  2000/04/26 01:20:27  leigh
   Corrected readScorefileStream to take a NSData instead of NSMutableData instance
 
@@ -1473,38 +1476,19 @@ static BOOL isUnarchiving = NO;
 {
     isUnarchiving = YES; /* Inhibit Parts' mapping of noteTags. */
     /*[super initWithCoder:aDecoder];*/ /*sb: unnec */
-    if ([aDecoder versionForClassName:@"Score"] == VERSION2) 
+    if ([aDecoder versionForClassName:@"MKScore"] == VERSION2) 
       [aDecoder decodeValuesOfObjCTypes:"@@",&parts,&info];
-    /* from awake (sb) */
+    /* Maps noteTags as represented in the archive file onto a set that is
+       unused in the current application. This insures that the integrity
+       of the noteTag is maintained. */
     {
-        id tagTable;
-        tagTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
+        NSMutableDictionary *tagTable = [NSMutableDictionary dictionary];
         [parts makeObjectsPerformSelector:@selector(_mapTags:) withObject:tagTable];
-        [tagTable release];
         isUnarchiving = NO;
-        }
+    }
     /****/
     return self;
 }
-
-#if 0
-- awake
-  /* Maps noteTags as represented in the archive file onto a set that is
-     unused in the current application. This insures that the integrity
-     of the noteTag is maintained. */
-{
-/*    id tagTable; */
-#warning DONE ArchiverConversion: put the contents of your 'awake' method at the end of your 'initWithCoder:' method instead
-    [super awake];
-/*
-    tagTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
-    [parts makeObjectsPerformSelector:@selector(_mapTags:) withObject:tagTable];
-    [tagTable release];
-    isUnarchiving = NO;
- */
-    return self;
-}
-#endif
 
 - (NSString *) description
 {
