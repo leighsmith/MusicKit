@@ -24,7 +24,7 @@
 // both sox and SndKit use Julius Smiths resampling code, logically sox should be the final version and SndKit use that.
 #define SUPERCEDED 1 
 
-#import "_Sndresample.h"
+#import "SndResample.h"
 #import "_Sndfilterkit.h"
 
 #ifndef WIN32
