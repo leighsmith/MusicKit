@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.17  2001/09/05 17:01:49  skotmcdonald
+// Fixed nasty bug: freeing input buffer memory BEFORE the streaming shutdown function call had been made - this has appeared due to the across-thread stop call made by the new startStop signalling SK thread. Added extra paranoia debug statements, gated by #ifs
+//
 // Revision 1.16  2001/08/28 16:49:28  skotmcdonald
 // Put debug #defines around SND::start/stop messages to reduce everyday useage spam
 //
@@ -88,6 +91,7 @@ extern "C" {
 #define DEBUG_BUFFERSIZE    0  // dump the check of the audio buffer size.
 #define DEBUG_SNDPLAYIOPROC 0  // dump the channel count etc while generating the buffer.
 #define DEBUG_STARTSTOPMSG  0  // dump stream start/stop msgs
+#define DEBUG_CALLBACK      0
 
 #define DEFAULT_BUFFERSIZE 16384
 
@@ -262,6 +266,10 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
 {
     SNDStreamBuffer inStream, outStream;
     int bufferIndex;
+    
+#if DEBUG_CALLBACK    
+    fprintf(stderr,"[SND] starting vend...\n");
+#endif
 
     if(inOutputTime->mFlags & kAudioTimeStampSampleTimeValid == 0) {
         fprintf(stderr, "sample time is not valid!\n");
@@ -292,6 +300,10 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
         }
         // to tell the client the format it should send.
         
+#if DEBUG_CALLBACK    
+    fprintf(stderr,"[SND] vend middle...\n");
+#endif
+
         if (outOutputData->mNumberBuffers == 0)
           outStream.streamData = NULL;
         else {
@@ -313,6 +325,10 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
                              &inStream, &outStream, streamUserData);
         }
     }
+#if DEBUG_CALLBACK    
+    fprintf(stderr,"[SND] ending vend...\n");
+#endif
+    
     return 0; // TODO need better definition...
 }
 
@@ -852,6 +868,10 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
     BOOL r = TRUE;
     OSStatus CAstatus;
     
+#if DEBUG_STARTSTOPMSG    
+    fprintf(stderr,"[SND] Beginning stream start...\n");
+#endif    
+
     if(!initialised)
         return FALSE;  // invalid sound structure.
 
@@ -898,7 +918,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
     }
     // printf("initialised stream start %d\n", r);
 #if DEBUG_STARTSTOPMSG    
-    fprintf(stderr,"SND::Stream Start: %s\n", r ? "OK":"ERR");
+    fprintf(stderr,"[SND] Stream Started: %s\n", r ? "OK":"ERR");
 #endif    
     return r;
 }
@@ -911,12 +931,11 @@ PERFORM_API BOOL SNDStreamStop(void)
 {
     BOOL r = TRUE;
     OSStatus CAstatus;
+
+#if DEBUG_STARTSTOPMSG    
+    fprintf(stderr,"[SND] Begining stream shutdown...\n");
+#endif    
     
-    firstSampleTime = -1.0;  
-    if (inputInit) {
-        free(fInputBuffer);
-        fInputBuffer = NULL;
-    }
     CAstatus = AudioDeviceStop(outputDeviceID, vendBuffersToStreamManagerIOProc);
     if (CAstatus) {
         fprintf(stderr, "SNDStreamStop: output dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
@@ -929,8 +948,13 @@ PERFORM_API BOOL SNDStreamStop(void)
             r = FALSE;
         }
     }
+    firstSampleTime = -1.0;  
+    if (inputInit) {
+        free(fInputBuffer);
+        fInputBuffer = NULL;
+    }
 #if DEBUG_STARTSTOPMSG    
-    fprintf(stderr,"SND::Stream Stopped: %s\n", r ? "OK" : "ERR");
+    fprintf(stderr,"[SND] Stream Stopped: %s\n", r ? "OK" : "ERR");
 #endif    
     return r;
 }
