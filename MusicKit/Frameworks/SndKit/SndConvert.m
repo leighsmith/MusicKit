@@ -682,9 +682,8 @@ useLinearInterpolation: (BOOL) fastInterpolation
 
 	if(error != SND_ERR_NONE)
 	    return nil;
-	
-	// byteCount = maxCount = // do we need to do this? Only if the buffer range differs. TODO
     }
+    byteCount = bufferByteRange.length;
     
     return self;
 }
