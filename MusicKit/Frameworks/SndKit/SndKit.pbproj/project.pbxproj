@@ -127,6 +127,7 @@
 				00D2C43FFEDB2CB5CFED3B93,
 				00D2C440FEDB2CB5CFED3B93,
 				00D2C442FEDB2CB5CFED3B93,
+				0266378F01998D477F000001,
 			);
 			isa = PBXGroup;
 			name = Headers;
@@ -382,6 +383,7 @@
 				0109B294014D0BC3CFED3B94,
 				0109B295014D0BC3CFED3B94,
 				0109B297014D0BC3CFED3B94,
+				0266379001998D477F000001,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -987,6 +989,20 @@
 			fileRef = 02240692007269D2CFED3B8B;
 			isa = PBXBuildFile;
 			settings = {
+			};
+		};
+		0266378F01998D477F000001 = {
+			isa = PBXFileReference;
+			path = SndKitDefines.h;
+			refType = 4;
+		};
+		0266379001998D477F000001 = {
+			fileRef = 0266378F01998D477F000001;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 //020
