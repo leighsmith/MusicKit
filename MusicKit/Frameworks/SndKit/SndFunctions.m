@@ -270,6 +270,7 @@ int SndPrintFrags(SndSoundStruct *sound)
   return SND_ERR_NONE;
 }
 
+// TODO this is ripe for removal, use it only in the process of abandoning SndSoundStructs!
 int SndGetDataPointer(const SndSoundStruct *sound, char **ptr, int *size, int *width)
 /* only useful for non-fragmented sounds */
 {

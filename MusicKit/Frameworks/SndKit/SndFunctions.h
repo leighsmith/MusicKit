@@ -86,8 +86,8 @@ SNDKIT_API int SndFrameSize(SndSoundStruct* sound);
 
 /*!
   @function SndSampleWidth
-  @abstract To come 
-  @param format 
+  @abstract Returns the size of a sample in bytes for the given format code. 
+  @param format The sample format enumerated integer. See ?  for a description.
   @result Returns the size of a sample in bytes.
  */
 SNDKIT_API int  SndSampleWidth(int format);
@@ -133,122 +133,6 @@ SNDKIT_API float SndConvertDecibelsToLinear(float db);
 SNDKIT_API float SndConvertLinearToDecibels(float lin);
 
 /*!
- @function SndConvertSound
- @abstract Convert from one sound struct format to another.
- @discussion Converts from one sound struct to another, where toSound defines the format the data is to be
-             converted to and provides the location for the converted sound data.
- @param fromSound Defines the sound data to be converted.
- @param toSound Defines the format the data is to be converted to and provides the location
-                for the converted sound data.
- @param allocate Allocate the memory to use for the resulting converted sound, freeing the toSound passed in.
- @param largeFilter Use a large filter for better quality resampling.
- @param interpFilter Use interpolated filter for conversion for better quality resampling.
- @param fast Do the conversion fast, without filtering, low quality resampling.
- @result Returns various SND_ERR constants, or SND_ERR_NONE if the conversion worked.
- */
-SNDKIT_API int SndConvertSound(const SndSoundStruct *fromSound,
-                                     SndSoundStruct **toSound,
-			             BOOL allocate,
-			             BOOL largeFilter,
-			             BOOL interpFilter,
-			             BOOL fast);
-
-/*!
- @function SndChangeSampleType
- @abstract Does an conversion from one sample type to another.
- @discussion If fromPtr and toPtr are the same it does the conversion in-place.
-           The buffer must be long enough to hold the increased number
-           of bytes if the conversion calls for it. Data must be in host
-           endian order. Currently knows about ulaw, char, short, int,
-           float and double data types, represented by the data format
-           parameters (prefixed SND_FORMAT_).
- @param fromPtr Pointer to the buffer to read data from.
- @param toPtr Pointer to the buffer to write data to.
- @param dfFrom The data format to convert from.
- @param dfTo The data format to convert to.
- @param outCount Length in samples of the original buffer, counting number of channels, that is duration in samples * number of channels.
- @result Returns error code.
- */
-SNDKIT_API int SndChangeSampleType (void *fromPtr, void *toPtr, int dfFrom, int dfTo, unsigned int outCount);
-
-/*!
-@function SndChangeSampleRate
- @abstract Resamples an input buffer into an output buffer, effectively
-           changing the sampling rate.
- @discussion Internal function which uses the "resample" routine to resample
-           an input buffer into an output buffer. Various boolean flags
-           control the speed and accuracy of the conversion. The output is
-           always 16 bit, but the input routine can read ulaw, char, short,
-           int, float and double types, of any number of channels. The old
-           and new sample rates are determined by fromSound->samplingRate
-           and toSound->samplingRate, respectively. Data must be in host
-           endian order.
- @param fromSound Holds header information about the input sound, and
-                  optionally the input sound data itself (see also
-                  "alternativeInput" below). The fromSound may hold fragmented
-                  SndSoundStruct data.
- @param toSound Holds header information about the target sound
- @param factor Ratio of new_sample_rate / old_sample_rate
- @param largeFilter TRUE means use 65-tap FIR filter, with higher quality.
- @param interpFilter When not in "fast" mode, controls whether or not the
-                     filter coefficients are interpolated (disregarded in
-                     fast mode).
- @param fast if TRUE, uses a fast, non-interpolating resample routine.
- @param alternativeInput If non-null, points to a contiguous buffer of input
-                         data to be used instead of any data pointed to by
-                         fromSound.
-                         If null, the "fromSound" structure hold the
-                         input data.
- @param outPtr pointer to a buffer big enough to hold the output data
- @result void
- */
-SNDKIT_API void SndChangeSampleRate(const SndSoundStruct *fromSound,
-                                    SndSoundStruct *toSound,
-                                    BOOL largeFilter, BOOL interpFilter,
-                                    BOOL fast,
-                                    void *alternativeInput,
-                                    short *outPtr);
-
-/*!
-@function    SndChannelIncrease
- @abstract   Increases the number of channels in the buffer, in place.
- @discussion Endian-agnostic. Only sensible conversions are accepted (1
-             to anything, 2 to 4, 8 etc, 4 to 8, 16 etc). Buffer must have
-             enough memory allocated to hold the increased data.
- @param outPtr
- @param frames
- @param oldNumChannels
- @param newNumChannels
- @param df   data format of buffer
- @result does not return error code.
- */
-
-SNDKIT_API void SndChannelIncrease (void *outPtr, int frames,
-                                    int oldNumChannels,
-                                    int newNumChannels,
-                                    int df );
-
-
-/*!
-@function SndChannelDecrease
- @abstract Decreases the number of channels in the buffer, in place.
- @discussion Because samples are read and averaged, must be host-endian. Only
-           exact divisors are supported (anything to 1, even numbers to even
-           numbers)
- @param outPtr
- @param frames
- @param oldNumChannels
- @param newNumChannels
- @param df data format of buffer
- @result does not return error code.
- */
-
-SNDKIT_API void SndChannelDecrease (void *outPtr, int frames,
-                                    int oldNumChannels,
-                                    int newNumChannels,
-                                    int df );
-
-/*!
 @function SndGetDataAddresses
  @abstract Get data address and statistics for fragmented or non-fragmented
            SndSoundStructs
@@ -281,8 +165,9 @@ SNDKIT_API int SndSampleCount(const SndSoundStruct *sound);
 
 /*!
 @function SndGetDataPointer
- @abstract    Gets data address and number of samples in SndSoundStruct 
- @discussion  SndGetDataPointer is only useful for non-fragmented sounds
+ @abstract    Gets data address and number of samples in SndSoundStruct
+ @discussion  <B>This function is deprecated and ripe for removal, use it only in the process of abandoning SndSoundStructs!</B>
+              SndGetDataPointer is only useful for non-fragmented sounds.
  @param sound A SndStructSound containing the Snd
  @param ptr   returns the char* pointer to the audio data
  @param size  returns the number of samples (divide by number of channels
