@@ -11,6 +11,10 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2001/07/02 16:58:03  sbrandon
+  - commented out cruft after endif
+  - added newline onto end of file
+
   Revision 1.4  2000/05/13 17:07:35  leigh
   Added extra controller type definitions
 
@@ -154,4 +158,4 @@ Modification history:
 #define MIDI_EVENTSIZE(byte)    (MIDI_TYPE_1BYTE(byte) ? 1 : \
 				 MIDI_TYPE_2BYTE(byte) ? 2 : 3)
 
-#endif	_MIDI_SPEC_
+#endif	 /* _MIDI_SPEC_ */
