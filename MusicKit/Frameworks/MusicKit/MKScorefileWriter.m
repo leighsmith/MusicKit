@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  1999/09/04 22:44:23  leigh
+  setInfo now setInfoNote
+
   Revision 1.2  1999/07/29 01:16:43  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -216,7 +219,7 @@ Modification history:
     return self;
 }
 
--setInfo:aNote
+-setInfoNote:(MKNote *) aNote
   /* Sets info, overwriting any previous info. aNote is copied. The info is 
      written out in the initializeFile method. The old info, if any, is freed. 
      */
@@ -226,12 +229,12 @@ Modification history:
     return self;
 }
 
--infoNote
+-(MKNote *) infoNote
 {
     return info;
 }
 
--setInfo:aNote forNoteReceiver:aNR
+-setInfoNote:(MKNote *) aNote forNoteReceiver: (MKNoteReceiver *) aNR
   /* Sets Info for partName corresponding to specified NoteReceiver.
      If in performance or if aNR is not a NoteReceiver of the 
      receiver, generates an error and returns nil. 

@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.3  1999/09/04 22:44:04  leigh
+  setInfo now setInfoNote
+
   Revision 1.2  1999/07/29 01:25:50  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -58,19 +61,19 @@
   * set with setOptimizedFile: or setOptimizedStream:.  The string is not
   * copied. */
 
--setInfo:aNote;
+-setInfoNote:(MKNote *) aNote;
  /* 
   * Sets the receiver's info Note, freeing a previously set info Note, if any. 
   * The Note is written, in the scorefile, as an info statement.
   * Returns the receiver.
   */
 
-- infoNote;
+-(MKNote *) infoNote;
  /* 
   * Returns the receiver's info Note, as set through setInfo:.
   */
 
--setInfo:aPartInfo forNoteReceiver:aNoteReceiver;
+-setInfoNote:(MKNote *) aPartInfo forNoteReceiver: (MKNoteReceiver *) aNR;
  /* 
   * Sets aNote as the Note that's written as the info Note for the
   * Part that corresponds to the NoteReceiver aNR.
