@@ -20,6 +20,11 @@
 Modification history:
 
  $Log$
+ Revision 1.31  2002/03/12 22:52:56  sbrandon
+ Changed some of the ways that the list of parts is dealt with. Specifically,
+ changed to indexOfObjectIdenticalTo: from indexOfObject, since the isEqual:
+ method on MKPart now does a deep compare.
+
  Revision 1.30  2002/03/06 07:54:34  skotmcdonald
  Added method partNamed which returns the MKPart with a given info-note title
 
@@ -1213,7 +1218,7 @@ return self;
   * if newPart is not a kind of MKPart, returns nil.
   */
 {
-  int i = [parts indexOfObject:oldPart];
+  int i = [parts indexOfObjectIdenticalTo:oldPart];
   if (i == NSNotFound)
     return nil;
   [self removePart:oldPart];
@@ -1232,7 +1237,7 @@ return self;
   if ((!aPart) || ([aPart score] == self) || ![aPart isKindOfClass:[MKPart class]])
     return nil;
   [aPart _setScore:self];
-  if (![parts containsObject:aPart])
+  if ([parts indexOfObjectIdenticalTo:aPart] == NSNotFound)
     [parts addObject:aPart];
   return self;
 }
@@ -1242,7 +1247,7 @@ return self;
   If aPart is not a member of this score, returns nil. */
 {
   [aPart _unsetScore];
-  [parts removeObject:aPart];
+  [parts removeObjectIdenticalTo:aPart];
   return self; //sb: assume self is correct. Arrays return void...
 }
 
@@ -1273,7 +1278,7 @@ return self;
 -(BOOL)isPartPresent:aPart
   /* Returns whether MKPart is a member of the receiver. */
 {
-  return ([parts indexOfObject:aPart] == -1) ? NO : YES;
+  return ([parts indexOfObjectIdenticalTo:aPart] == NSNotFound) ? NO : YES;
 }
 
 -midiPart:(int)aChan
