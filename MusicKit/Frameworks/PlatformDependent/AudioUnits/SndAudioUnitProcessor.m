@@ -95,7 +95,7 @@ static BOOL getAudioUnitProperty(AudioUnit au, AudioUnitPropertyID propertyType,
     desc.componentFlags = 0;
     desc.componentFlagsMask = 0;
 
-    NSLog(@"Found %ld Effect Audio Units\n", CountComponents(&desc));
+    // NSLog(@"Found %ld Effect Audio Units\n", CountComponents(&desc));
 
     theAUComponent = FindNextComponent(NULL, &desc);
     
