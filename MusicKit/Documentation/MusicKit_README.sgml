@@ -108,14 +108,14 @@ MusicKit &mkvertuple; &horbar; the &ldquo;README&rdquo;.
     </abstract>
   </articleinfo>
 
-<sect1 id="description">
-  <title>Description</title>
+  <sect1 id="description">
+    <title>Description</title>
 
-  <indexterm>
-    <primary>MusicKit</primary>
-  </indexterm>
+    <indexterm>
+      <primary>MusicKit</primary>
+    </indexterm>
 
-  <para>
+    <para>
 The <productname>MusicKit</productname> is an object-oriented software
 system for building music, sound, signal processing, and
 <acronym>MIDI</acronym> applications.  It has been used in such
@@ -132,7 +132,7 @@ at Bell Labs four decades ago, was the first widely available
 &ldquo;computer music compiler&rdquo;).
    </para>
 
-   <para>
+    <para>
 The NeXT
 <productname>MusicKit</productname> was first demonstrated at the 1988
 NeXT product introduction and was bundled in
@@ -148,7 +148,7 @@ porting to several more <link linkend="platforms">popular operating
 systems</link>.
    </para>
 
-   <para>
+    <para>
 The <link linkend="availability"><productname>MusicKit</productname>
 Distribution</link> is a comprehensive package that includes <link
 linkend=onlinedoco>on-line documentation</link>, <link
@@ -160,7 +160,7 @@ Stephen Brandon, and both Framework collections are available at the
 same distribution site.
 </para>
 
-<para>
+    <para>
 Source code is available for everything, with the exception of the
 NeXT hardware implementation of the
 low-level sound and <acronym>DSP</acronym> drivers.  This means
@@ -384,6 +384,7 @@ they are committed by developers.
     </sect2>
 
   </sect1>
+
   <sect1 id="furtherdoco">
     <title>Further Documentation</title>
 
@@ -540,12 +541,11 @@ function and <productname>Objective-C</productname> class.
         <filename>MKPerformSndMIDI</filename> framework.  The
         <productname>MusicKit</productname> and
         <productname>SndKit</productname> interface to
-        <filename>MKPerformSndMIDI</filename> using a C API was
-        originally modelled after some NeXT
+        <filename>MKPerformSndMIDI</filename> using a C
+        <acronym>API</acronym> was originally modelled after some NeXT
         <acronym>API</acronym> (although that is now history,
         particularly for streaming audio).  There are several versions
-        of <filename>MKPerformSndMIDI</filename> underneath
-        <filename
+        of <filename>MKPerformSndMIDI</filename> underneath <filename
         class=directory>MusicKit/Frameworks/PlatformSpecific</filename>.
         You only compile one, all the versions are intended to produce
         one framework named
@@ -1929,7 +1929,6 @@ MacOS X available for download from <ulink
 url="http://www.midiman.com">MIDIMan's web page</ulink> and other
 vendors may well have drivers available for their hardware.
 </para>
-
 	</listitem>
       </orderedlist>
 
@@ -1989,7 +1988,99 @@ compatibility issue.
       </listitem>
     </itemizedlist>
   </sect1>
-  
+
+  <sect1 id=mkV5changes>
+    <title><acronym>API</acronym> Changes in
+    <productname>MusicKit</productname> V5.X frameworks</title>
+
+    <para>The changes from Version 4 to Version 5 of the
+      <productname>MusicKit</productname> mostly consists of
+      conversion to the <productname>OpenStep</productname>
+      specification from the older <productname>NeXTStep</productname>
+      <acronym>API</acronym>.
+    </para>
+    <sect2>
+      <title>Frameworks replace libraries</title>
+      <para>Libraries have now been replaced as the following frameworks:</para>
+      <itemizedlist>
+	<listitem>
+	  <para>MusicKit.framework</para>
+	</listitem>
+	<listitem>
+	  <para>MKDSP.framework</para>
+	</listitem>
+	<listitem>
+	  <para>MKPerformSndMIDI.framework</para>
+	</listitem>
+	<listitem>
+	  <para>MKSynthPatches.framework</para>
+	</listitem>
+	<listitem>
+	  <para>MKUnitGenerators.framework</para>
+	</listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2>
+      <title>Include Files</title> <para>The root hierarchical include file
+is now <literal>#import</literal>ed as
+<literal>&lt;MusicKit/MusicKit.h&gt;</literal> replacing
+<literal>&lt;musickit/musickit.h&gt;</literal>.
+</para>
+      <para>Unit generator headers are included from
+<filename>MKUnitGenerators.framework</filename>, not
+<filename>musickit/unitgenerators</filename>.
+</para>
+    </sect2>
+
+    <sect2>
+      <title>Class naming conventions</title>
+      <para>All the public <productname>MusicKit</productname> classes are now prefixed with
+<literal>MK</literal> to match the Foundation/AppKit model, ie
+<classname>MKNote</classname>, <classname>MKOrchestra</classname>
+replaces <classname>Note</classname> and
+<classname>Orchestra</classname>. In a similar manner to the changes
+in other frameworks when <productname>OpenStep</productname>-ified, as
+well as method name changes, there are object allocation changes,
+generally <methodname>+new</methodname> is now an appropriate name
+returning an autoreleased instance, i.e
+<methodname>+score</methodname> for <classname>MKScore</classname>,
+<methodname>+note</methodname> for <classname>MKNote</classname> etc.
+<classname>NSString</classname>s replace <literal>char *</literal>
+where ever possible.
+</para>
+    </sect2>
+    <sect2>
+      <title>Class Specific Changes</title>
+
+      <sect3>
+	<title><classname>MKMidi</classname></title>
+	<itemizedlist>
+	  <listitem>
+	    <para><methodname>+new</methodname> has been renamed
+<methodname>+midi</methodname> in keeping with
+<productname>OpenStep</productname> conventions.</para>
+	  </listitem>
+	  <listitem>
+	    <para><methodname>allocFromZone:onDevice:</methodname> and
+<methodname>allocFromZone:onDevice:hostName</methodname> have been replaced
+with corresponding <methodname>-initOnDevice:</methodname> and
+<methodname>-initOnDevice:hostName:</methodname> instance methods and
+<methodname>+midiOnDevice:</methodname>,
+<methodname>+midiOnDevice:hostName:</methodname> class methods to support
+<productname>OpenStep</productname> allocation conventions.</para>
+	  </listitem>
+	  <listitem>
+	    <para> The methods <methodname>-noteSenders</methodname> and
+<methodname>-noteReceivers</methodname> don't return a copy of the
+array. The parent object is expected to copy it.
+</para>
+	  </listitem>
+	</itemizedlist>
+      </sect3>
+    </sect2>
+  </sect1>
+
   <sect1 id=fixes>
     <title>Contributing Fixes</title>
     <para>
@@ -2000,7 +2091,7 @@ them and check them in. If you are planning to do major work, I can
 register you as a developer to provide write access to the CVS server.
 </para>
 
-<para>
+    <para>
 If you make a <productname>MusicKit</productname> program that you'd
 like us to consider for distribution as part of the
 <productname>MusicKit</productname>, <acronym>DSP</acronym> and
@@ -2011,7 +2102,7 @@ you do not have e-mail access, you can send media to the address of
 the author at the start of this document.
 </para>
 
-<para>
+    <para>
 If you have discovered a bug, please report it via the
 <productname>sourceforge</productname> bug tracker.
 </para>
