@@ -38,7 +38,8 @@ extern "Objective-C" {
 #import "names.h"               /* Various name tables */
 #import "midiTranslation.h"     /* Note<->MIDI translation */
 #import "classFuncs.h"          /* Stand-in classes */
-#import "midi_spec.h"		/* standard MIDI definitions */ 
+#import "midi_spec.h"		/* standard MIDI definitions */
+#import "fastFFT.h"
 
 /* Music Kit classes. */
 #import "MKConductor.h"
@@ -76,7 +77,6 @@ extern "Objective-C" {
 #import "MKTuningSystem.h"
 #import "MKUnitGenerator.h"
 #import "MKWaveTable.h"
-#import "fastFFT.h"
 
 #endif /* MUSICKIT_H */
 
