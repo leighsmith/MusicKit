@@ -10,6 +10,7 @@
  *	Created.
  * Modifications by Julius Smith (jos) at NeXT
  */ 
+#ifndef GNUSTEP
 
 #import <mach/mach.h>
 
@@ -229,4 +230,5 @@ mach_msg_header_t *_DSP_dsp_read_data(
 	int eltsize,			// 1, 2, 3, or 4 byte data
 	int nelts); 			// number of data elements
 
+#endif /*GNUSTEP*/
 #endif
