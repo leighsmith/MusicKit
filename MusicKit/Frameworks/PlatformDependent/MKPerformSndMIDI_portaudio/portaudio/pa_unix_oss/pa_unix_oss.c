@@ -111,6 +111,8 @@ typedef struct PaDriverInfo /* PROPOSED */
 #include <sched.h> 
 #include <pthread.h> 
                      
+#define SET_THREAD_PRIORITY 1
+
 /* Some versions of OSS do not define AFMT_S16_NE. Assume little endian. FIXME - check CPU*/     
 #ifndef AFMT_S16_NE
 	#define AFMT_S16_NE AFMT_S16_LE
@@ -508,10 +510,20 @@ static PaError Pa_AudioThreadProc( internalPortAudioStream   *past )
 	PaHostSoundControl             *pahsc;
  	short				bytes_read = 0;
  
+#ifdef SET_THREAD_PRIORITY
+	/* POSIX_RT, must be running with root privileges */
+	struct sched_param sp;
+	int theError;
+	memset(&sp, 0, sizeof(struct sched_param));
+	sp.sched_priority = sched_get_priority_min(SCHED_FIFO);
+	theError = sched_setscheduler(0, SCHED_RR, &sp);
+	if (theError == -1)
+	  fprintf(stderr,"Can't get real-time priority\n");
+#endif      
 #ifdef GNUSTEP
-	GSRegisterCurrentThread(); /* SB20010904 */
+        GSRegisterCurrentThread(); /* SB20010904 */
 #endif
-	
+
 	pahsc = (PaHostSoundControl *) past->past_DeviceData;
 	if( pahsc == NULL ) return paInternalError;
 
