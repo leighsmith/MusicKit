@@ -1,7 +1,15 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* Created by David Jaffe on Jan. 25, 1991. 
+/*
+  $Id$  
 
- */
+  Description:
+    Created on Jan. 25, 1991. 
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc. All rights reserved.
+  Addition of timecode and Intel support copyright David A. Jaffe, 1992
+  Portions Copyright (c) 1999-2000 The MusicKit Project.  All rights reserved.
+*/
 
 #import "ErrorLog.h"
 #import <AppKit/AppKit.h>
@@ -29,7 +37,8 @@
     return self;
 }
 
-- clear {
+- clear 
+{
     int endPos = [[[msg textStorage] string] length];
     [msg replaceCharactersInRange:NSMakeRange(0,endPos) withString:@"\n"];
     return self;
@@ -55,7 +64,7 @@
 - (void)dealloc
 {
     [panel release];
-    { [super dealloc]; return; };
+    [super dealloc];
 }
 
 - (void)addText:(NSString *)theText
