@@ -108,6 +108,10 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2002/01/29 16:30:18  sbrandon
+  fixed object leak in copyWithZone (not releasing copies)
+  removed redundant NeXTSTEP comments
+
   Revision 1.10  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -195,9 +199,8 @@ Modification history:
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
   /* You never send this message directly.  
-     Should be invoked with NXWriteRootObject(). 
      Archives noteSender List, timeShift, and duration. Also archives
-     conductor and delegate using NXWriteObjectReference().
+     conductor and delegate.
      */
 {
     [aCoder encodeValuesOfObjCTypes: "@dd", &noteSenders, &timeShift, &duration];
@@ -207,8 +210,7 @@ Modification history:
 
 - (id)initWithCoder:(NSCoder *)aDecoder
   /* You never send this message directly.  
-     Should be invoked via NXReadObject(). 
-     See write:. */
+     See encodeWithCoder:. */
 {
     if ([aDecoder versionForClassName: @"MKPerformer"] == VERSION2) {
 	[aDecoder decodeValuesOfObjCTypes:"@dd", &noteSenders, &timeShift, &duration];
@@ -671,10 +673,15 @@ static id copyFields(MKPerformer *self,MKPerformer *newObj)
    */
 {
     MKPerformer *newObj = NSCopyObject(self, 0, zone);
+    id obj_copy;
     unsigned n,i;
     newObj = copyFields(self,newObj);
-    newObj->noteSenders = [[NSMutableArray arrayWithCapacity:n = [noteSenders count]] retain];
-    for (i = 0; i < n; i++) [newObj addNoteSender:[[noteSenders objectAtIndex:i] copy]];
+    newObj->noteSenders = [[NSMutableArray alloc] initWithCapacity:n = [noteSenders count]];
+    for (i = 0; i < n; i++) {
+        obj_copy = [[noteSenders objectAtIndex:i] copy];
+        [newObj addNoteSender:obj_copy];
+        [obj_copy release];
+    }
     return newObj;
 }
 
