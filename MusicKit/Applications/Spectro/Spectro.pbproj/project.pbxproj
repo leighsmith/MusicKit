@@ -5,6 +5,35 @@
 	};
 	objectVersion = 32;
 	objects = {
+		029604BD006FB31FCFED3B96 = {
+			children = (
+				029604BE006FB31FCFED3B96,
+			);
+			isa = PBXGroup;
+			name = Help;
+			refType = 4;
+		};
+		029604BE006FB31FCFED3B96 = {
+			children = (
+				029604BF006FB31FCFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = SpectroHelp.sgml;
+			path = "";
+			refType = 4;
+		};
+		029604BF006FB31FCFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = Help/English.lproj/SpectroHelp.sgml;
+			refType = 4;
+		};
+		029604C0006FB31FCFED3B96 = {
+			fileRef = 029604BE006FB31FCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		06C97E250056EE8CCFED3B96 = {
 			isa = PBXFrameworkReference;
 			name = SndKit.framework;
@@ -61,6 +90,7 @@
 		};
 		0F183AF30035F7AECFED3B96 = {
 			children = (
+				029604BD006FB31FCFED3B96,
 				0F183AF40035F7AECFED3B96,
 				0F183B010035F7AECFED3B96,
 				0F183B0E0035F7AECFED3B96,
@@ -592,6 +622,7 @@
 				0F183B460035F7AECFED3B96,
 				0F183B470035F7AECFED3B96,
 				06C97E2A00570B37CFED3B96,
+				029604C0006FB31FCFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
