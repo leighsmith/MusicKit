@@ -32,6 +32,8 @@
     int   numParams;
 /*! @var  audioProcessorChain */
     SndAudioProcessorChain *audioProcessorChain;
+    
+    BOOL  bActive;
 }
 
 /*!
@@ -129,6 +131,9 @@
     @result     id of the SndAudioProcessorChain
 */
 - (SndAudioProcessorChain*) audioProcessorChain;
+
+- (BOOL) isActive;
+- setActive: (BOOL) b;
 
 @end
 
