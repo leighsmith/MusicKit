@@ -34,6 +34,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2000/06/16 23:22:10  leigh
+  Removed extraneous AppKit import
+
   Revision 1.15  2000/06/09 03:27:54  leigh
   Typing of parameters passed to installSharedSynthDataWithSegmentAndLength methods
 
@@ -182,7 +185,6 @@ Modification history:
   7/12/97/daj -  Added MONITOR_4_2 driver parameter for release 4.2
 */
 
-//#import <AppKit/AppKit.h>
 #import <Foundation/NSUserDefaults.h>
 #import "_musickit.h"
 #import "_error.h"
