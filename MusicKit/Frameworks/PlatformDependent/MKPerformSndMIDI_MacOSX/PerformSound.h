@@ -15,6 +15,9 @@
 */
 /*
   $Log$
+  Revision 1.9  2001/09/03 15:04:28  sbrandon
+  added a couple of headerdoc comments
+
   Revision 1.8  2001/08/06 22:58:05  skotmcdonald
   Fixed teeny does-input-exist flag bug that was sending streaming arch to send blank recording buffers up to clients. Doh.
 
@@ -171,13 +174,17 @@ PERFORM_API BOOL SNDIsMuted(void);
     @param          aFlag
                         YES to mute, NO to unmute.
 */
-
-PERFORM_API BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes);
-
-
-
-
 PERFORM_API void SNDSetMute(BOOL aFlag);
+
+/*!
+    @function       SNDSetBufferSizeInBytes
+    @abstract       Mute or unmute the currently playing sound..
+    @param          liBufferSizeInBytes
+                        number of bytes in buffer. Note that current implementation
+                        uses stereo float output buffers, which therefore take 8 bytes
+                        per sample frame.
+*/
+PERFORM_API BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes);
 
 /*!
     @function       SNDStartPlaying
@@ -192,7 +199,7 @@ PERFORM_API void SNDSetMute(BOOL aFlag);
     @param          endFun
     @result         Returns .
 */
-PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct, int tag, int priority,  int preempt, 
+PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct, int tag, int priority,  int preempt,
   SNDNotificationFun beginFun, SNDNotificationFun endFun);
 
 /*!
@@ -208,9 +215,9 @@ PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct, int tag, int priori
     @param          endRecFun
     @result         Returns .
 */
-PERFORM_API int SNDStartRecording(SndSoundStruct *soundStruct, int tag, int priority, int preempt, 
+PERFORM_API int SNDStartRecording(SndSoundStruct *soundStruct, int tag, int priority, int preempt,
   SNDNotificationFun beginRecFun, SNDNotificationFun endRecFun);
- 
+
 /*!
     @function       SNDSamplesProcessed
     @abstract       .
@@ -261,9 +268,9 @@ PERFORM_API void SNDTerminate(void);
 
 /*!
     @function       SNDStreamNativeFormat
-    @abstract       .
+    @abstract       Return in the struct the format of the sound data preferred by the operating system.
     @param          streamFormat
-                        .
+                        pointer to an allocated block of memory into which to put the SndSoundStruct
 */
 PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat);
 
