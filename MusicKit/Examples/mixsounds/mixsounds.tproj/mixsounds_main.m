@@ -18,7 +18,7 @@
 #import <Foundation/Foundation.h>
 #import <MusicKit/MusicKit.h>
 
-#define SCOREFILE_PERFORMER 0
+#define SCOREFILE_PERFORMER 0 // 1 to use MKScorefilePerformer, 0 to use MKScorePerformer
 
 int main (int argc, const char *argv[])
 {
@@ -30,7 +30,7 @@ int main (int argc, const char *argv[])
     NSData *inStream;
 #else
     MKScorePerformer *aScorePerformer;
-    MKScore *mixScore = [MKScore score];
+    MKScore *mixScore;
 #endif
     MKMixerInstrument *mixIns;
     double samplingRate = 44100;
@@ -57,11 +57,13 @@ int main (int argc, const char *argv[])
     [aSFPerformer activate];
     scoreInfo = [aSFPerformer infoNote];
 #else
+    mixScore = [MKScore score];
     aScorePerformer = [[MKScorePerformer alloc] init];
     [mixScore readScorefile: [NSString stringWithCString: argv[1]]];
     [aScorePerformer setScore: mixScore];
     [aScorePerformer activate];
     scoreInfo = [mixScore infoNote];
+    [[MKConductor defaultConductor] setTempo: [scoreInfo parAsDouble: MK_tempo]];
 #endif
     if (scoreInfo) { /* Configure performance as specified in info. */
         if ([scoreInfo isParPresent: MK_samplingRate])
@@ -81,6 +83,7 @@ int main (int argc, const char *argv[])
         [[noteSenders objectAtIndex: i] connect: [mixIns noteReceiver]];
     [MKConductor setClocked: NO];     /* User process runs as fast as it can. */
     NSLog(@"mixing...\n");
+
     [MKConductor startPerformance];  /* Start sending Notes, loops till done.*/
 
     /* Conductor's startPerformance method
@@ -98,7 +101,7 @@ int main (int argc, const char *argv[])
     }
     else
         NSLog(@"Output sound file: %s\n", argv[2]);
-
+    [mixIns release];
     [pool release];
     exit(0);       // insure the process exit status is 0
     return 0;      // ...and make main fit the ANSI spec.
