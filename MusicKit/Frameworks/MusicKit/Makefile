@@ -11,6 +11,7 @@ NAME = MusicKit
 
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Framework
+LANGUAGE = English
 
 GLOBAL_RESOURCES = Localized.strings
 
@@ -29,7 +30,7 @@ CLASSES = ArielQP.m DSPSerialPortDevice.m MKConductor.m MKEnvelope.m\
           _SharedSynthInfo.m conversion.m midifile.m\
           noteRecorderCFuncs.m parseMidi.m parseScore.m time.m\
           tokenNames.m utilities.m writeBinary.m writeMidi.m\
-          writeScore.m
+          writeScore.m MKSamplerInstrument.m
 
 HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          EnvelopePrivate.h InstrumentPrivate.h MKConductor.h\
@@ -56,7 +57,7 @@ HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          _noteRecorder.h _scorefile.h _time.h classFuncs.h dsp_types.h\
          dspwrap.h errors.h keynums.h midiTranslation.h midi_spec.h\
          midifile.h names.h noDVal.h orch.h params.h pitches.h\
-         scorefileObject.h timeunits.h tokens.h
+         scorefileObject.h timeunits.h tokens.h MKSamplerInstrument.h
 
 CFILES = sin.c fastFFT.c
 
@@ -95,7 +96,7 @@ FRAMEWORK_PATHS = -F$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\
                   -FC:/Apple/Local/Library/Frameworks\
                   -F/Local/Library/Frameworks
 FRAMEWORKS = -framework AppKit -framework dsp -framework Foundation\
-             -framework MKPerformMIDI -framework SndKit\
+             -framework MKPerformSndMIDI -framework SndKit\
              -framework System
 PUBLIC_HEADERS = ArielQP.h DSPSerialPortDevice.h MusicKit.h\
                  classFuncs.h dsp_types.h dspwrap.h errors.h keynums.h\
@@ -112,7 +113,7 @@ PUBLIC_HEADERS = ArielQP.h DSPSerialPortDevice.h MusicKit.h\
                  MKTuningSystem.h MKSynthPatch.h MKEnvelope.h\
                  MKSynthInstrument.h MKTimbre.h MKSamples.h\
                  MKWaveTable.h MKPartials.h MKUnitGenerator.h\
-                 MKSynthData.h MKPatchTemplate.h
+                 MKSynthData.h MKPatchTemplate.h MKSamplerInstrument.h
 
 
 

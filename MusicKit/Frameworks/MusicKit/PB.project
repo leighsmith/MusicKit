@@ -56,14 +56,15 @@
             utilities.m, 
             writeBinary.m, 
             writeMidi.m, 
-            writeScore.m
+            writeScore.m, 
+            MKSamplerInstrument.m
         ); 
         DOCUMENTATION = (); 
         FRAMEWORKS = (
             AppKit.framework, 
             dsp.framework, 
             Foundation.framework, 
-            MKPerformMIDI.framework, 
+            MKPerformSndMIDI.framework, 
             SndKit.framework, 
             System.framework
         ); 
@@ -172,7 +173,8 @@
             pitches.h, 
             scorefileObject.h, 
             timeunits.h, 
-            tokens.h
+            tokens.h, 
+            MKSamplerInstrument.h
         ); 
         LIBRARYSEARCH = (./); 
         OTHER_LIBS = (); 
@@ -257,7 +259,8 @@
             MKPartials.h, 
             MKUnitGenerator.h, 
             MKSynthData.h, 
-            MKPatchTemplate.h
+            MKPatchTemplate.h, 
+            MKSamplerInstrument.h
         ); 
     }; 
     LANGUAGE = English; 
