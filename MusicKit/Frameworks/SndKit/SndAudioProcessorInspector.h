@@ -27,24 +27,27 @@
 @abstract   
 @discussion To come
 */
-@interface SndAudioProcessorInspector : NSDocumentController {
+@interface SndAudioProcessorInspector : NSObject {
 /*! @var parameterTableView */   
-  id parameterTableView;
+  IBOutlet id parameterTableView;
 /*! @var parameterValueSilder */   
-  id parameterValueSilder;
+  IBOutlet id parameterValueSilder;
 /*! @var processorActive */   
-  id processorActive;
+  IBOutlet id processorActive;
 /*! @var processorName */   
-  id processorName;
+  IBOutlet id processorName;
 /*! @var sndArchView */   
-  SndStreamArchitectureView *sndArchView;
+  IBOutlet SndStreamArchitectureView *sndArchView;
 /*! @var theAudProc */   
   SndAudioProcessor *theAudProc;
 
-  id addFxButton;
-  id delFxButton;
-  id fxChooser;
+  IBOutlet id addFxButton;
+  IBOutlet id delFxButton;
+  IBOutlet id fxChooser;
+  IBOutlet NSPanel *window;
 }
+
++ defaultAudioProcessorInspector;
 
 /*!
   @method     init
