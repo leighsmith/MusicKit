@@ -23,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.2  2000/04/26 01:20:01  leigh
+  Corrected readASCIIStream to take a NSData instead of NSMutableData instance
+
   Revision 1.1  2000/04/16 04:07:57  leigh
   Renamed scorefileObject to MKScorefileObject headers
 
@@ -35,7 +38,7 @@ Modification history:
 
 #import <Foundation/NSObject.h>
 @interface MKScorefileObject: NSObject
--readASCIIStream: (NSMutableData *) aStream;
+-readASCIIStream: (NSData *) aStream;
 -writeASCIIStream: (NSMutableData *) aStream;
 @end
 
