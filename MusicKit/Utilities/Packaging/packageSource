@@ -38,6 +38,13 @@ fi
 
 CVSTAG=${DISTNAME}_`echo $RELEASE | tr '.' '-'`
 
+# This is a kludge, we need to return back to where we started
+# packageSources from since packageDocumentation expects the SndKit to
+# be sitting next to the MusicKit directory. Once SndKit is integrated
+# within the MusicKit, we should remove this and just operate from
+#  DISTCHECKOUTSRCLOC/DISTNAME
+STARTDIR=`pwd`
+
 # Checkout the source tree
 echo Checking out $CVSTAG to $DISTCHECKEDOUTSRCLOC
 mkdir -p $DISTCHECKEDOUTSRCLOC
@@ -94,7 +101,11 @@ $CHGLOGGEN --no-wrap --separate-header --window 86400 --file $TARLOC/${DISTNAME}
 
 # create a readily readable PDF version of the MusicKit_README.sgml file
 if [ $DISTNAME = MusicKit ]; then
+    # Return to where we started, expecting SndKit source to be
+    # sitting next to the MusicKit, for headerdoc.
+    pushd $STARTDIR
     Utilities/Packaging/packageDocumentation $TARLOC/${DISTNAME}_ChangeLog $DISTCHECKEDOUTSRCLOC/$DISTNAME
+    popd
 fi
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
