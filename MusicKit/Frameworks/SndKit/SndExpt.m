@@ -109,7 +109,7 @@
     err = SndReadHeader(filename, &soundStruct, NULL);
     //    NSLog([self description]);
   }
-  // SndPrintStruct(soundStruct);
+    // NSLog(@"%@\n", SndStructDescription(soundStruct));
   if (!err)
     soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
   return err;
@@ -163,7 +163,7 @@ BOOL subRangeIsInsideSuperRange(NSRange subR, NSRange superR)
 	        samplesInRange: sndReadingRange];
     }
     else {
-	long lengthInSampleFrames = [self lengthInSampleFrames];
+	unsigned long lengthInSampleFrames = [self lengthInSampleFrames];
 	int readLength = (4096*16);
 	int bufferMultiplier = ((playRegion.length + 4095)/4096);
 	int bufferSize;
@@ -189,7 +189,7 @@ BOOL subRangeIsInsideSuperRange(NSRange subR, NSRange superR)
 	}
 
 	if (cachedBuffer == nil) {
-	    long newLocation = 0;
+	    unsigned long newLocation = 0;
 	    [readAheadLock lock];
 	    cachedBufferRange.location = (playRegion.location / 4096) * 4096;
 	    cachedBufferRange.length   = bufferSize;
@@ -216,10 +216,10 @@ BOOL subRangeIsInsideSuperRange(NSRange subR, NSRange superR)
 	}
 
 	if (readAheadBuffer != nil &&
-     subRangeIsInsideSuperRange (playRegion, readAheadRange) &&
-     playRegion.location + playRegion.length < lengthInSampleFrames) {
-      // we have moved into the readAheadCache - swap the buffers and request the next...
-	    long newLocation = 0;
+	    subRangeIsInsideSuperRange (playRegion, readAheadRange) &&
+	    playRegion.location + playRegion.length < lengthInSampleFrames) {
+	    // we have moved into the readAheadCache - swap the buffers and request the next...
+	    unsigned long newLocation = 0;
 
 	    [readAheadLock lock];
 	    if (cachedBuffer != nil)
@@ -394,8 +394,8 @@ static SndExptAudioBufferServer *defaultServer = nil;
 {
   SndExpt *snd = [aJob snd];
   NSRange r = [aJob range];
-  long requestedLength = r.length;
-  long lengthInSampleFrames = [snd lengthInSampleFrames];
+  unsigned long requestedLength = r.length;
+  unsigned long lengthInSampleFrames = [snd lengthInSampleFrames];
   SndAudioBuffer *aBuffer = nil;
 
   if (r.location + r.length > [snd lengthInSampleFrames])

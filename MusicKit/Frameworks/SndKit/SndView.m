@@ -1595,7 +1595,7 @@ static double maximumAmplitude(int type)
              * a figure slightly too high.
              */
 
-            if ((int) ((float) NSMaxX(selectionRect) + 0.1) > [sound lengthInSampleFrames]) {
+            if ((unsigned long) ((float) NSMaxX(selectionRect) + 0.1) > [sound lengthInSampleFrames]) {
                 selectionRect.size.width = [sound lengthInSampleFrames] - NSMinX(selectionRect);
             }
     //      printf("selection changed to %g, %g\n",NX_X(&selectionRect),NX_WIDTH(&selectionRect));

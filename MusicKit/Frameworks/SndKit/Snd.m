@@ -109,18 +109,17 @@ static int ioTags = 1000;
   return [[SndTable defaultSndTable] addName: aName fromBundle: aBundle];
 }
 
-+ (void)removeSoundForName: (NSString *) aname
++ (void) removeSoundForName: (NSString *) aname
 {
-  return [[SndTable defaultSndTable] removeSoundForName: aname];
+    [[SndTable defaultSndTable] removeSoundForName: aname];
 }
 
 + (void) removeAllSounds
 {
-  return [[SndTable defaultSndTable] removeAllSounds];
+    [[SndTable defaultSndTable] removeAllSounds];
 }
 
-
-+ (BOOL)isMuted
++ (BOOL) isMuted
 {
     return SNDIsMuted();
 }
@@ -489,7 +488,7 @@ static int ioTags = 1000;
     finalSize = s->dataSize + s->dataLocation;
 
     s = realloc((char *)s,finalSize);
-    if (s->dataLocation > sizeof(SndSoundStruct)) {
+    if ((unsigned) s->dataLocation > sizeof(SndSoundStruct)) {
             /* read off the rest of the info string */
         [aDecoder decodeArrayOfObjCType: "c"
                                   count: s->dataLocation - sizeof(SndSoundStruct)
@@ -549,7 +548,7 @@ static int ioTags = 1000;
     return (double)(soundStruct->samplingRate);
 }
 
-- (long) lengthInSampleFrames
+- (unsigned long) lengthInSampleFrames
 {
     if (!soundStruct) return 0;
     return SndFrameCount(soundStruct);
@@ -658,11 +657,11 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 // Begin the playback of the sound at some future time, specified in seconds, over a region of the sound.
 // All other play methods are convenience wrappers around this.
 - (SndPerformance *) playInFuture: (double) inSeconds 
-                      beginSample: (int) begin
-                      sampleCount: (int) count 
+                      beginSample: (unsigned long) begin
+                      sampleCount: (unsigned long) count 
 {
-    int playBegin = begin;
-    int playEnd = begin + count;
+    unsigned long playBegin = begin;
+    unsigned long playEnd = begin + count;
     
     if (playBegin > [self lengthInSampleFrames] || playBegin < 0)
         playBegin = 0;

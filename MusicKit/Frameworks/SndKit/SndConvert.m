@@ -43,8 +43,6 @@ OF THIS AGREEMENT.
 #import <Winsock.h>
 #import <malloc.h>
 #import <stdio.h>
-#else
-//#import <libc.h>
 #endif
 
 #endif /* GNUSTEP */
@@ -121,7 +119,7 @@ void SndChangeSampleRate(const SndFormat fromSound,
 // dataFormat is the same going in and going out.
 // This is capable of in place conversion if inPtr and outPtr are the same.
 // TODO This is a good candidate for Altivec optimisation
-void SndChannelDecrease(void *inPtr, void *outPtr, int numberOfSampleFrames, int oldNumChannels, int newNumChannels, int dataFormat)
+void SndChannelDecrease(void *inPtr, void *outPtr, unsigned int numberOfSampleFrames, int oldNumChannels, int newNumChannels, int dataFormat)
 {
     int chansToSum = oldNumChannels / newNumChannels;
     int passes = newNumChannels; /* convenience name */
@@ -220,7 +218,7 @@ void SndChannelIncrease(void *inPtr, void *outPtr, int numberOfSampleFrames, int
     }
 }
 
-int SndChangeChannelCount(void *inPtr, void *outPtr, int numberOfSampleFrames, int oldNumChannels, int newNumChannels, int dataFormat)
+int SndChangeChannelCount(void *inPtr, void *outPtr, unsigned int numberOfSampleFrames, int oldNumChannels, int newNumChannels, int dataFormat)
 {
     /* now check channel count -- if we need to increase the number of channels from 1 to
     * 2, or 4, we have hopefully got enough data malloced in *toSound to duplicate pairs
@@ -256,7 +254,7 @@ int SndChangeChannelCount(void *inPtr, void *outPtr, int numberOfSampleFrames, i
 
 int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDataFormat, unsigned int sampleCount)
 {
-    int i;
+    unsigned int i;
     static double ONE_OVER_TWO_THIRTYONE   = 1.0/2147483647.0f; /* 1/((2 ^ 31) - 1) */
     static double ONE_OVER_TWO_TWENTYTHREE = 1.0/8388607.0f;    /* 1/((2 ^ 23) - 1) */
     static double ONE_OVER_TWO_FIFTEEN     = 1.0/32767.0f;      /* 1/((2 ^ 15) - 1) */
@@ -544,7 +542,7 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, int fromDataFormat, int toDa
      channelCount: (int) toChannelCount
 {
     if(channelCount != toChannelCount) {
-	int sampleFrames = [self lengthInSampleFrames];
+	unsigned int sampleFrames = [self lengthInSampleFrames];
 	long dataItems = sampleFrames * toChannelCount;
 	NSMutableData *toData = [NSMutableData dataWithLength: dataItems * SndSampleWidth(dataFormat)];
 	void *fromDataPtr = [data mutableBytes];
@@ -607,10 +605,10 @@ useLinearInterpolation: (BOOL) fastInterpolation
     int toDataFormat = [self dataFormat];
     double toSampleRate = [self samplingRate];
     void *toDataPtr = [self bytes] + bufferFrameRange.location * [self frameSizeInBytes];
-    long toSampleFrames = bufferFrameRange.length;
+    unsigned long toSampleFrames = bufferFrameRange.length;
     // unless we convert sample rates we read and write the same number of frames.
     long fromSampleFrames = toSampleFrames;
-    long lastModifiedByte;
+    unsigned long lastModifiedByte;
     int error;
 
     if(fromSampleRate != toSampleRate) {
@@ -689,7 +687,7 @@ useLinearInterpolation: (BOOL) fastInterpolation
 							 channelCount: toChannelCount
 							 samplingRate: toSamplingRate
 							     duration: [self duration]];
-    int sampleFrames = [self lengthInSampleFrames];
+    unsigned int sampleFrames = [self lengthInSampleFrames];
     long dataItems = sampleFrames * toChannelCount;
     void *fromDataPtr = [data mutableBytes];
     void *toDataPtr = [newBuffer bytes];

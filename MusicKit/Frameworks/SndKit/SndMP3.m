@@ -42,6 +42,7 @@
 
 static NSLock *decoderLock;
 
+#if 0 // disable this until we need it to stop warnings
 static const char *const genre_names[] =
 {
   /*
@@ -78,6 +79,7 @@ static const char *const genre_names[] =
 
 #define GENRE_NAME_COUNT \
 ((int)(sizeof genre_names / sizeof (const char *const)))
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // SndMP3DecodeJob
@@ -650,12 +652,12 @@ static int bitrateLookupTable[16][6] = {
 	float *pBuff = [anAudioBuffer bytes];
 	
 	if (buffChans == 2) {
-	    long frameIndex = 0;
-	    long sndDataLength = [pcmData length] / (sizeof(short) * 2);  // determine length in frames.
+	    unsigned long frameIndex = 0;
+	    unsigned long sndDataLength = [pcmData length] / (sizeof(short) * 2);  // determine length in frames.
 	    
 	    if (sndReadingRange.location < sndDataLength) {
 		// Since we do no resampling, we can use bufferRange.length here
-		int numOfFramesToCopy = MIN(bufferRange.length, sndReadingRange.length);
+		unsigned int numOfFramesToCopy = MIN(bufferRange.length, sndReadingRange.length);
 
 		for (; frameIndex < numOfFramesToCopy; frameIndex++) {
 		    long currentBufferSample = (bufferRange.location + frameIndex) * buffChans;
@@ -688,12 +690,12 @@ static int bitrateLookupTable[16][6] = {
 	short *pBuff = [anAudioBuffer bytes];
 	
 	if (buffChans == 2) {
-	    long frameIndex = 0;
-	    long sndDataLength = [pcmData length] / (sizeof(short) * 2);  // determine length in frames.
+	    unsigned long frameIndex = 0;
+	    unsigned long sndDataLength = [pcmData length] / (sizeof(short) * 2);  // determine length in frames.
 
 	    if (sndReadingRange.location < sndDataLength) {
 		// Since we do no resampling, we can use bufferRange.length here
-		int numOfFramesToCopy = MIN(bufferRange.length, sndReadingRange.length);
+		unsigned int numOfFramesToCopy = MIN(bufferRange.length, sndReadingRange.length);
 		
 		for (; frameIndex < numOfFramesToCopy; frameIndex++) {
 		    long currentBufferSample = (bufferRange.location + frameIndex) * buffChans;

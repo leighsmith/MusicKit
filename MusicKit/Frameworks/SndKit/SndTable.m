@@ -64,7 +64,7 @@ static SndTable* defaultSndTable = nil;
 {
     NSMutableArray *libraryDirs = [NSMutableArray arrayWithObject: @"."];
     NSArray *sndFileExtensions = [Snd soundFileExtensions];
-    int directoryIndex;
+    unsigned int directoryIndex;
     id retSnd = [nameTable objectForKey: aName];
     
     if (retSnd)
@@ -77,7 +77,7 @@ static SndTable* defaultSndTable = nil;
 	NSBundle *soundLibraryBundle = (directoryIndex == 0) ? [NSBundle mainBundle] : [NSBundle bundleWithPath: soundLibraryPath];
 	
 	if (soundLibraryBundle) {
-	    int extensionIndex;
+	    unsigned int extensionIndex;
 
 	    for(extensionIndex = 0; extensionIndex < [sndFileExtensions count]; extensionIndex++) {
 		NSString *sndFileExtension = [sndFileExtensions objectAtIndex: extensionIndex];

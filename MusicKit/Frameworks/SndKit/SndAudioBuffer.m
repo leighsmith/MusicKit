@@ -44,9 +44,13 @@
 
 + audioBufferWrapperAroundSNDStreamBuffer: (SNDStreamBuffer*) cBuff
 {
-  SndAudioBuffer *ab = [[SndAudioBuffer alloc] initWithFormat: &(cBuff->streamFormat)
-                                                         data: cBuff->streamData];
-  return [ab autorelease];
+    // Repack the format parameters from the stream buffer into a SndFormat structure
+    // SndFormat streamFormat = { cBuff->dataFormat, cBuff->frameCount, cBuff->channelCount, cBuff->sampleRate };
+    //SndAudioBuffer *ab = [[SndAudioBuffer alloc] initWithFormat: streamFormat
+    //							   data: cBuff->streamData];
+    SndAudioBuffer *ab = [[SndAudioBuffer alloc] initWithFormat: &(cBuff->streamFormat)
+							   data: cBuff->streamData];
+    return [ab autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -326,12 +330,12 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 - mixWithBuffer: (SndAudioBuffer*) buff
-      fromStart: (long) start
-          toEnd: (long) end
+      fromStart: (unsigned long) start
+          toEnd: (unsigned long) end
       canExpand: (BOOL) canExpandInPlace
 {
-    long lengthInSampleFrames = [self lengthInSampleFrames];
-    long incomingLengthInSampleFrames = [buff lengthInSampleFrames];
+    unsigned long lengthInSampleFrames = [self lengthInSampleFrames];
+    unsigned long incomingLengthInSampleFrames = [buff lengthInSampleFrames];
     int selfDataFormat = [self dataFormat];
     int buffDataFormat = [buff dataFormat];
     long frameCount;
@@ -510,7 +514,7 @@
 // lengthInSampleFrames
 ////////////////////////////////////////////////////////////////////////////////
 
-- (long) lengthInSampleFrames
+- (unsigned long) lengthInSampleFrames
 {
   return byteCount / [self frameSizeInBytes];
 }
@@ -519,28 +523,28 @@
 // setLengthInSampleFrames
 ////////////////////////////////////////////////////////////////////////////////
 
-- setLengthInSampleFrames: (long) newSampleFrameCount
+- setLengthInSampleFrames: (unsigned long) newSampleFrameCount
 {
-  long frameSizeInBytes = [self frameSizeInBytes];
-  long oldLengthInBytes = byteCount;
-  long newLengthInBytes = frameSizeInBytes * newSampleFrameCount;
+    long frameSizeInBytes = [self frameSizeInBytes];
+    unsigned long oldLengthInBytes = byteCount;
+    unsigned long newLengthInBytes = frameSizeInBytes * newSampleFrameCount;
 
-  if (newSampleFrameCount < 0) {
-    NSLog(@"SndAudioBuffer::setLengthInSampleFrames: newSampleFrameCount (%ld) < 0!", newSampleFrameCount);
-  }
-  else {
-    if (byteCount > newLengthInBytes)
-      byteCount = newLengthInBytes;
-    else {
-      [data setLength: newLengthInBytes];
-      if (oldLengthInBytes < newLengthInBytes) {
-        NSRange r = {oldLengthInBytes, newLengthInBytes - oldLengthInBytes};
-        [data resetBytesInRange: r];
-      }
-      byteCount = maxByteCount = newLengthInBytes;
+    if (newSampleFrameCount < 0) {
+	NSLog(@"SndAudioBuffer::setLengthInSampleFrames: newSampleFrameCount (%ld) < 0!", newSampleFrameCount);
     }
-  }
-  return self;
+    else {
+	if (byteCount > newLengthInBytes)
+	    byteCount = newLengthInBytes;
+	else {
+	    [data setLength: newLengthInBytes];
+	    if (oldLengthInBytes < newLengthInBytes) {
+		NSRange r = {oldLengthInBytes, newLengthInBytes - oldLengthInBytes};
+		[data resetBytesInRange: r];
+	    }
+	    byteCount = maxByteCount = newLengthInBytes;
+	}
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -581,9 +585,9 @@
     }
 }
 
-- (float) sampleAtFrameIndex: (long) frameIndex channel: (int) channel
+- (float) sampleAtFrameIndex: (unsigned long) frameIndex channel: (int) channel
 {
-    long sampleIndex = frameIndex * channelCount + channel;
+    unsigned long sampleIndex = frameIndex * channelCount + channel;
     const void *samplePtr = [data bytes];
     float sample = 0.0;
 
