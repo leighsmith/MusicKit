@@ -53,8 +53,7 @@
 
 - (void) processBuffers; // The big one for the sub classes - override!.
 - (double) nowTime;
-- (SndStreamManager*) manager;
-- (BOOL) active;
+- (BOOL) isActive;
 // Peak detection
 - setDetectPeaks: (BOOL) detectPeaks;
 - getPeakLeft: (float *) leftPeak right: (float *) rightPeak;
