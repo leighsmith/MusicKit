@@ -31,14 +31,16 @@
   @discussion To come
 */
 @interface SndAudioProcessor : NSObject {
-/*! @var  numParams Number of parameters in the audio processor */
-    int   numParams;
-/*! @var  audioProcessorChain The SndAudioProcessorChain hosting this processor */
+    /*! @var numParams Number of parameters in the audio processor */
+    int numParams;
+    /*! @var audioProcessorChain The SndAudioProcessorChain hosting this processor */
     SndAudioProcessorChain *audioProcessorChain;
-/*! @var name */    
+    /*! @var name */    
     NSString *name;
-/*! @var  active Indicates the processor instance will perform the processing. */
+    /*! @var active Indicates the processor instance will perform the processing. */
     BOOL  active;
+    /*! @var parameterDelegate Delegate object informed when a parameters value is changed. */
+    id parameterDelegate;
 }
 
 /*!
@@ -285,6 +287,20 @@
 */
 // - (id) paramObjectForIndex: (const int) i;
 - (NSNumber *) paramObjectForIndex: (const int) i;
+
+/*!
+  @method setParameterDelegate:
+  @abstract Assigns the current parameter delegate.
+  @discussion The message -parameter:ofAudioProcessor:didChangeTo: is sent to the delegate when a parameter changes.
+  @param delegate An object to receive notification that a parameter changed value.
+ */
+- (void) setParameterDelegate: (id) delegate;
+
+/*!
+ @method parameterDelegate
+ @result Returns the current parameter delegate. 
+ */
+- (id) parameterDelegate;
 
 @end
 

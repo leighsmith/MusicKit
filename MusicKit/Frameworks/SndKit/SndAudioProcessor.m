@@ -90,6 +90,7 @@ static NSMutableArray *fxClassesArray = nil;
 	[self setName: s];
 	numParams = count;
 	active   = FALSE;
+	parameterDelegate = nil;
     }
     return self;
 }
@@ -118,7 +119,22 @@ static NSMutableArray *fxClassesArray = nil;
 
 - (void) dealloc
 {
-  [super dealloc];
+    [name release];
+    name =  nil;
+    
+    [super dealloc];
+}
+
+- (void) describeParameters
+{
+    int parameterCount = [self paramCount];
+    int parameterIndex;
+    
+    for(parameterIndex = 0; parameterIndex < parameterCount; parameterIndex++)
+	NSLog(@"Parameter %d: %@: %@ %@\n", parameterIndex, 
+	      [self paramName: parameterIndex], 
+	      [self paramDisplay: parameterIndex],
+	      [self paramLabel: parameterIndex]);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -362,5 +378,16 @@ static NSMutableArray *fxClassesArray = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+
+- (void) setParameterDelegate: (id) delegate;
+{
+    parameterDelegate = delegate; // TODO Should be retained?
+}
+
+- (id) parameterDelegate
+{
+    return parameterDelegate;
+}
 
 @end
