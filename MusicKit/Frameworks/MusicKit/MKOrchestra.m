@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  1999/08/06 16:55:09  leigh
+  removed strcasecmp use (non-OpenStep)
+
   Revision 1.2  1999/07/29 01:16:39  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -765,16 +768,14 @@ static id synthInstruments = nil;
 
 -init
 {
-    char *s;
+    NSString *s;
     int i;
     if (dspNumToOrch[orchIndex] == self) /* Already initialized */
       return self;
     [super init];
-//    _MK_CALLOC(_extraVars,_extraInstanceVars,1);
     deviceStatus = MK_devClosed;
 //#warning DefaultsConversion: This used to be a call to NXGetDefaultValue with the owner "MusicKit".  If the owner was different from your applications name, you may need to modify this code.
-    s = (char *)[[[NSUserDefaults standardUserDefaults] objectForKey:@"DSPDebug"] cString];
-    if (s && !strcasecmp(s,"YES"))
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DSPDebug"])
       [self setOnChipMemoryConfigDebug:YES patchPoints:0];
     else 
       [self setOnChipMemoryConfigDebug:NO patchPoints:0];
@@ -2181,7 +2182,6 @@ BOOL _MKOrchLateDeltaTMode(MKOrchestra *self)
       ;
     for (; orchs[i]; i++) /* Guaranteed to stop because we keep one nil at end */
       orchs[i] = orchs[i+1];
- //   free(_extraVars);
     [super dealloc];
 }
 
