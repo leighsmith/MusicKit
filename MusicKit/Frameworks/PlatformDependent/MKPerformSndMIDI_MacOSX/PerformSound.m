@@ -343,7 +343,7 @@ static BOOL retrieveDriverList(BOOL isInput)
             return FALSE;
         }
 
-        NSLog(@"DevID: %d   name: %s\n", allDeviceIDs[driverIndex], deviceName);
+        // NSLog(@"DevID: %d   name: %s\n", allDeviceIDs[driverIndex], deviceName);
     
         driverList[driverIndex] = deviceName;
     }
@@ -676,18 +676,21 @@ static BOOL getSpeakerConfiguration(AudioDeviceID outputDeviceID)
 {
     // unsigned char channelDescription[1024];
     UInt32 stereoChannels[2];
-	int numOfChannels = 4;  // TODO hardwired
+    int numOfChannels = 4;  // TODO hardwired
     
     if (!getDeviceProperty(outputDeviceID, false, kAudioDevicePropertyPreferredChannelsForStereo, &stereoChannels, sizeof(stereoChannels))) {
-		return FALSE;
+	return FALSE;
     }
     
-    NSLog(@"Preferred channels for stereo Left = %d, Right = %d\n", stereoChannels[0], stereoChannels[1]);
+    // NSLog(@"Preferred channels for stereo Left = %d, Right = %d\n", stereoChannels[0], stereoChannels[1]);
 
-    // TODO determine multichannel layouts. kAudioDevicePropertyPreferredChannelLayout
-	
-	if(speakerConfigurationList != NULL)
-		free(speakerConfigurationList);
+    // TODO determine multichannel layouts. 
+    // if (!getDeviceProperty(outputDeviceID, false, kAudioDevicePropertyPreferredChannelLayout, &channelLayout, sizeof(channelLayout))) {
+    //	return FALSE;
+    //}
+    
+    if(speakerConfigurationList != NULL)
+	free(speakerConfigurationList);
     if((speakerConfigurationList = (char **) malloc(sizeof(char *) * (numOfChannels + 1))) == NULL) {
         NSLog(@"Unable to malloc speaker configuration list\n");
         return FALSE;
@@ -840,6 +843,10 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 // Shut down what we started up in SndInit();
 PERFORM_API BOOL SNDTerminate(void)
 {
+    [inputLock release];
+    inputLock = nil;
+    initialised = FALSE;
+
     // CoreAudio doesn't need an explicit call to shut down/disengage/unreserve to our app.
     return YES;
 }
