@@ -2,7 +2,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 26;
+	objectVersion = 30;
 	objects = {
 		016D5A22FED483BACFED3B93 = {
 			isa = PBXProject;
@@ -27,16 +27,11 @@
 		};
 		016D5A24FED483BBCFED3B93 = {
 			children = (
-				016D5A25FED483BBCFED3B93,
+				06D6961DFF81940ECFED3B93,
 			);
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
-		};
-		016D5A25FED483BBCFED3B93 = {
-			isa = PBXFrameworkReference;
-			path = MKPerformSndMIDI.framework;
-			refType = 3;
 		};
 		016D5A26FED483BBCFED3B93 = {
 			children = (
@@ -176,6 +171,8 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "";
 				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
@@ -194,20 +191,36 @@
 			name = "MKPerformSndMIDI (Framework)";
 			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 			productName = MKPerformSndMIDI;
-			productReference = 016D5A25FED483BBCFED3B93;
-			productSettings = {
-				CFBundleDevelopmentRegion = English;
-				CFBundleExecutable = MKPerformSndMIDI;
-				CFBundleGetInfoString = "";
-				CFBundleIconFile = "";
-				CFBundleIdentifier = "";
-				CFBundleInfoDictionaryVersion = 6.0;
-				CFBundleName = "";
-				CFBundlePackageType = FMWK;
-				CFBundleShortVersionString = "";
-				CFBundleSignature = "????";
-				CFBundleVersion = 0.0.1d1;
-			};
+			productReference = 06D6961DFF81940ECFED3B93;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
+<plist version=\"0.9\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>MKPerformSndMIDI</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+</dict>
+</plist>
+";
 			shouldUseHeadermap = 0;
 		};
 		016D5A3BFED483BBCFED3B93 = {
@@ -376,6 +389,11 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
+		};
+		06D6961DFF81940ECFED3B93 = {
+			isa = PBXFrameworkReference;
+			path = MKPerformSndMIDI.framework;
+			refType = 3;
 		};
 	};
 	rootObject = 016D5A22FED483BACFED3B93;
