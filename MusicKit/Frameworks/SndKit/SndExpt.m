@@ -160,8 +160,10 @@
         err = SndReadSoundfileRange([theFileName fileSystemRepresentation], &cacheStruct,
                                     cachedBufferRange.location,
                                     cachedBufferRange.length, TRUE);
-        if (cacheStruct)
+        if (cacheStruct) {
           [cachedBuffer initWithFormat: cacheStruct data: ((char*)cacheStruct) + cacheStruct->dataLocation];
+          [cachedBuffer convertToFormat: SND_FORMAT_FLOAT];
+        }
       }
       else {
         //      printf("Hit the cache!\n");
@@ -169,12 +171,9 @@
       if (cacheStruct)
       {
         // woohoo! we are inside the cache...
-        SndSoundStruct theStruct;
-        dataPtr = [cachedBuffer data] + samSize * (playRegion.location - cachedBufferRange.location);
-        memcpy(&theStruct,soundStruct,sizeof(SndSoundStruct));
-        theStruct.dataSize = lengthInBytes;
-        [ab initWithFormat: &theStruct data: nil];
-        memcpy([ab data], dataPtr, lengthInBytes);
+        NSRange relativeRange = playRegion;
+        relativeRange.location = playRegion.location - cachedBufferRange.location;
+        [ab initWithBuffer: cachedBuffer range: relativeRange];
       }
     }
   }
