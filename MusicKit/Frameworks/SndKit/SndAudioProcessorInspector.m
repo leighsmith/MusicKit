@@ -3,6 +3,7 @@
 //  $Id$
 //
 //  Description:
+//    See Class headerdoc description below.
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
@@ -24,7 +25,9 @@
 #import "SndAudioProcessorDistortion.h"
 #import "SndAudioProcessorFlanger.h"
 #import "SndAudioProcessorNoiseGate.h"
+#ifdef SND_MP3_ENCODER
 #import "SndAudioProcessorMP3Encoder.h"
+#endif
 #import "SndAudioProcessorRecorder.h"
 #import "SndAudioProcessorReverb.h"
 #import "SndAudioProcessorToneGenerator.h"
