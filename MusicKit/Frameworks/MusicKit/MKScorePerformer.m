@@ -25,6 +25,9 @@
 /* Modification history:
 
    $Log$
+   Revision 1.7  2001/07/09 22:58:59  leighsmith
+   Corrected partPerformerForPart: to return a MKPartPerformer, not a MKPart
+
    Revision 1.6  2000/10/01 06:31:12  leigh
    Statically typed noteSenders
 
@@ -457,13 +460,14 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return self;
 }
 
--partPerformerForPart:aPart
-  /* Returns the PartPerformer for aPart, if found. */
+-partPerformerForPart: (MKPart *) aPart
+  /* Returns the MKPartPerformer for aPart, if found. */
 {
-    id el;
+    MKPartPerformer *partPerformer;
     unsigned n = [partPerformers count], i;
     for (i = 0; i < n; i++)
-        if ((el = [[partPerformers objectAtIndex:i] part]) == aPart) return el;
+        if ([(partPerformer = [partPerformers objectAtIndex: i]) part] == aPart)
+            return partPerformer;
     return nil;
 }
 
