@@ -48,11 +48,11 @@
 
     // PUT THIS IN AN INIT FN!!!!
 
-    memcpy(&(ab->format),[snd soundStruct], sizeof(SndSoundStruct));
+    memcpy(&(ab->formatSnd),[snd soundStruct], sizeof(SndSoundStruct));
     {
         int samSize       = [ab multiChannelSampleSizeInBytes];
         int lengthInBytes = r.length * samSize;
-        ab->format.dataSize = lengthInBytes;
+        ab->formatSnd.dataSize = lengthInBytes;
         ab->data  = [snd data] + samSize * r.location; 
     }
     ab->bOwnsData = FALSE;
@@ -72,7 +72,7 @@
 
 - initWithFormat: (SndSoundStruct*) f data: (void*) d
 {
-    memcpy(&format, f, sizeof(SndSoundStruct));
+    memcpy(&formatSnd, f, sizeof(SndSoundStruct));
 
     if (data != NULL && bOwnsData) {
         NSLog(@"freeing\n");
@@ -81,9 +81,9 @@
     }
 
     if (d == NULL) {
-        if((data = malloc(format.dataSize)) == NULL)
-            NSLog(@"Unable to malloc %d bytes\n", format.dataSize);
-        memset(data, 0, format.dataSize);
+        if((data = malloc(formatSnd.dataSize)) == NULL)
+            NSLog(@"Unable to malloc %d bytes\n", formatSnd.dataSize);
+        memset(data, 0, formatSnd.dataSize);
         bOwnsData = TRUE;
     }
     else {
@@ -96,7 +96,7 @@
 - zero
 {
     if (bOwnsData)
-        memset(data, 0, format.dataSize);
+        memset(data, 0, formatSnd.dataSize);
     else
         NSLog(@"SndAudioBuffer::zero: tried zeroing memory I didn't own!");
     return self;
@@ -108,7 +108,7 @@
 
 - (int) dataFormat
 {
-    return format.dataFormat;
+    return formatSnd.dataFormat;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@
 
 - (int) channelCount
 {
-    return format.channelCount;
+    return formatSnd.channelCount;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -133,14 +133,16 @@
 {
     long l;
     
-    if (end > format.dataSize / sizeof(float))
-        end = format.dataSize / sizeof(float);
+    // SndPrintStruct(&formatSnd);
+    
+    if (end > formatSnd.dataSize / sizeof(float))
+        end = formatSnd.dataSize / sizeof(float);
 
     l = end - start;
     
     if ([self dataFormat] == SND_FORMAT_FLOAT) {
 
-        int selfNumChannels = format.channelCount;
+        int selfNumChannels = formatSnd.channelCount;
         int buffNumChannels = [buff channelCount];
         int i;
 
@@ -216,7 +218,7 @@
             }
                 break;
             default:
-                NSLog(@"SndAudioBuffer::mixWithBuffer: WARN: unsupported format - write stuff!");
+                NSLog(@"SndAudioBuffer::mixWithBuffer: WARN: unsupported format %d", [buff dataFormat]);
         }
 
     }
@@ -229,7 +231,9 @@
 
 - mixWithBuffer: (SndAudioBuffer*) buff
 {
-    [self mixWithBuffer: buff fromStart: 0 toEnd: format.dataSize / sizeof(float)];
+    // NSLog(@"buffer to mix: %s", SndStructDescription(&(buff->formatSnd)));
+    
+    [self mixWithBuffer: buff fromStart: 0 toEnd: formatSnd.dataSize / sizeof(float)];
     
     // TO DO!
     // 1. Ensure buff is in same format as self, if not
@@ -244,8 +248,8 @@
 
 - copy
 {
-    SndAudioBuffer *to = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
-    memcpy(to->data, data, format.dataSize);
+    SndAudioBuffer *to = [SndAudioBuffer audioBufferWithFormat: &formatSnd data: NULL];
+    memcpy(to->data, data, formatSnd.dataSize);
     return to;
 }
 
@@ -255,8 +259,8 @@
 
 - copyData: (SndAudioBuffer*) from
 {
-    if (from->format.dataSize == format.dataSize)
-        memcpy(data, from->data, format.dataSize);
+    if (from->formatSnd.dataSize == formatSnd.dataSize)
+        memcpy(data, from->data, formatSnd.dataSize);
     else {
         NSLog(@"Buffers are different lengths - code to handle");
         // TO DO!
@@ -266,19 +270,7 @@
 
 - (int) multiChannelSampleSizeInBytes
 {
-    long d = format.channelCount;
-
-    switch ([self dataFormat]) {
-        case SND_FORMAT_LINEAR_8:                       break;
-        case SND_FORMAT_LINEAR_16: d *= sizeof(short);  break;
-        case SND_FORMAT_LINEAR_24: d *= 3;              break;
-        case SND_FORMAT_LINEAR_32: d *= sizeof(long);   break;
-        case SND_FORMAT_DOUBLE:    d *= sizeof(double); break;
-        case SND_FORMAT_FLOAT:     d *= sizeof(float);  break;
-        default:
-            NSLog(@"SndAudioBuffer::duration: ERR: This format not coded yet... sorry");
-    }
-    return d;
+    return formatSnd.channelCount * SndSampleWidth([self dataFormat]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -287,7 +279,7 @@
 
 - (long) lengthInSamples
 {
-    return format.dataSize/ [self multiChannelSampleSizeInBytes];
+    return formatSnd.dataSize/ [self multiChannelSampleSizeInBytes];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -296,7 +288,7 @@
 
 - (double) duration
 {
-    return (double) [self lengthInSamples] / (double) format.samplingRate;
+    return (double) [self lengthInSamples] / (double) formatSnd.samplingRate;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -304,7 +296,7 @@
 
 - (double) samplingRate
 {
-    return (double) format.samplingRate;
+    return (double) formatSnd.samplingRate;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
