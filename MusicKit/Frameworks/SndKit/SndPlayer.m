@@ -442,7 +442,7 @@ static SndPlayer *defaultSndPlayer;
     numberPlaying = [playing count];
     
     if (numberPlaying > 0) {
-      int buffLength = [ab lengthInSamples];
+      int buffLength = [ab lengthInSampleFrames];
 
       for (i = 0; i < numberPlaying; i++) {
         SndPerformance *performance = [playing objectAtIndex: i];
