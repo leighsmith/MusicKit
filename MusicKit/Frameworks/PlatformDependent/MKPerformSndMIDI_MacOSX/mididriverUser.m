@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2001/03/08 18:42:36  leigh
+  New include of header for new CoreAudio spec, removed Mach error use
+
   Revision 1.10  2001/02/23 03:19:04  leigh
   Rewrote sending data to enable timing each byte when slowing SysEx streams
 
@@ -50,9 +53,6 @@ Modification history:
 */
 #include "midi_driver.h"
 #include <CoreMIDI/MIDIServices.h>
-#include <CarbonCore/CarbonCore.h> // needed for AbsoluteTime definitions.
-
-#include <mach/mach_error.h>  // temporary until we improve error reporting.
 
 #define FUNCLOG 1
 
@@ -154,8 +154,9 @@ PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
 // Interpret the errorCode and return the appropriate error string
 PERFORM_API char *MKMDErrorString(MKMDReturn errorCode)
 {
-    // This isn't right but will suffice for now.
-    return mach_error_string(errorCode);
+    static char errMsg[80];
+    sprintf(errMsg, "MusicKit MacOS X MIDI Driver error encountered, code %d", errorCode);
+    return errMsg;
 }
 
 // returns NULL if unable to find the hostname, otherwise whatever value for MKMDPort
