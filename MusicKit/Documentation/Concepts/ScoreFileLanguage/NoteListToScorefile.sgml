@@ -312,7 +312,7 @@ share noteTags.</para>
 that produces a single line of 3 notes.</para>
 
 <example id="ex1"
-<title>Example 1</title>
+<title>Three Staccato Notes</title>
 <programlisting>
 guitar (noteOn,1) freq:c4; 		
 t +.1; 		
@@ -327,7 +327,7 @@ guitar (noteOff,1);
 <para>In contrast, the next example produces 3 overlapping notes:</para>
 
 <example id="ex2">
-<title>Example 2</title>
+<title>Three Overlapping Notes</title>
 <programlisting>
 guitar (2) freq:c4; 		
 t +.1; 		
@@ -344,7 +344,7 @@ same tag, are ignored.
 </para>
 
 <example id="ex3">
-<title>Example 3</title>
+<title>Three Stacatto Notes using Note-tags</title>
 <programlisting>
 guitar (2,1) freq:c4; 		
 t +.1; 		
@@ -358,7 +358,7 @@ guitar (.2,1) freq:e4;
 produces a line of 3 notes and 3 overlapping notes.</para>
 
 <example id="ex4">
-<title>Example 4</title>
+<title>Overlapping and Staccato Notes</title>
 <programlisting>
 guitar (noteOn,1) freq:c4; 		
 guitar (2) freq:c5;
@@ -377,13 +377,13 @@ guitar (noteOff,1);
 different noteTag: </para>
 
 <example id="ex5">
-<title>Example 5</title>
+<title>Overlapping and Staccato Notes with Independent Melody</title>
 <programlisting>
-guitar (noteOn,1) freq:c4; 		
-guitar (2) freq:c5; 		
-guitar (noteOn,2) freq:g5; 		
+guitar (noteOn,1) freq:c4;
+guitar (2) freq:c5;
+guitar (noteOn,2) freq:g5;
 t +.1;
-guitar (2) freq:d4; 		
+guitar (2) freq:d4;
 guitar (noteOn,1) freq:d5; 		
 t +.2; 		
 guitar (.2) freq:e4; 		
@@ -418,7 +418,7 @@ appropriate noteTag.  In this example the note goes sharp and its
 amplitude is increased: </para>
 
 <example id="ex6">
-<title>Example 6</title>
+<title>Note Updating</title>
 <programlisting>
 guitar (noteOn,1) freq:c4 amp:.1 		
 t +2; 		
@@ -493,7 +493,7 @@ future notes. This mechanism can be used to provide
 &ldquo;voicings&rdquo; that periodically change.</para>
 
 <example id="ex7">
-<title>Example 7</title>
+<title>Use of Anonymous Note Updates</title>
 <programlisting>
 singer (noteUpdate) waveLen:128.000 svibAmp0:.003 	
            svibAmp1:.011 rvibAmp:.006 bearing:.000;	 		
