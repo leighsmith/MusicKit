@@ -56,7 +56,7 @@ static int _rowToDataFormat(int row)
 }
 
 /*
- * Note that the Sound object's convertToFormat: method will convert
+ * Note that the Sound object's convertToSampleFormat: method will convert
  * to or from any sampling rate.  However, to minimize confusion for
  * casual users, we restrict the choices to the three which arise
  * naturally on the NeXT Computer.
@@ -90,18 +90,12 @@ static int _samplingRateToRow(double srate)
  * Create an empty sound conveying the requested format
  */
 {
-    if (!newSound)
-      newSound = [[Snd alloc] init];
-    [newSound	setDataSize:20 /*sb: was sizeof(SNDCompressionSubheader)*/
-             /* Conceptually, dataSize is 0 above. However,
-		if the new format is COMPRESSED a "subheader" 
-		containing compression parameters is required, and
-		for historical reasons, the subheader is counted
-		as data for allocation purposes. */
-	dataFormat:newDataFormat
-	samplingRate:newSamplingRate
-	channelCount:newChannelCount
-	infoSize:0];      
+    [newSound release];
+    newSound = [[Snd alloc] initWithFormat: newDataFormat
+			      channelCount: newChannelCount
+				    frames: 0
+			      samplingRate: newSamplingRate];
+	
     return newSound;
 }
 
