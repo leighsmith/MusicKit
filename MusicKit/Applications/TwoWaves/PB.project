@@ -5,6 +5,7 @@
         CLASSES = (Controller.m); 
         English_INTERFACES = ("TwoWaves-windows.nib", TwoWaves.nib); 
         FRAMEWORKS = (AppKit.framework, Foundation.framework, SndKit.framework); 
+        FRAMEWORKSEARCH = ("$(LOCAL_LIBRARY_DIR)/Frameworks"); 
         H_FILES = (Controller.h); 
         INTERFACES = (); 
         M_FILES = (); 
@@ -15,7 +16,7 @@
     GENERATEMAIN = YES; 
     LANGUAGE = English; 
     MAKEFILEDIR = .; 
-    NEXTSTEP_BUILDTOOL = /bin/gnumake; 
+    NEXTSTEP_BUILDTOOL = /usr/bin/gnumake; 
     NEXTSTEP_DOCUMENTEXTENSIONS = (); 
     NEXTSTEP_INSTALLDIR = "$(HOME)/Apps"; 
     NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 
