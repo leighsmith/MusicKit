@@ -2154,7 +2154,7 @@ int endRecord(SndSoundStruct *sound, int tag, int err)
 //	printf("self == %p\n",self);
     SndStartRecording(recordingSound,1,2,0, startRecord,endRecord);
 	return;
-#endif NEXT_RECORDING_ENABLED
+#endif /* NEXT_RECORDING_ENABLED */
 }
 
 #ifdef USE_NEXTSTEP_SOUND_IO
