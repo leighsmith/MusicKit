@@ -17,13 +17,17 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
 <!entity mkvers "5.4">
-<!entity mkvertuple "5.4.0">
-<!entity sndvertuple "2.1.0">
-<!entity midisportvertuple "2.0.0">
+<!entity mkvertuple "5.4.1">
+<!entity sndvertuple "2.2.0">
+<!entity soxvertuple "12.17.3">
+<!entity lamevertuple "3.91">
+<!entity icesvertuple "0.2.2">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://ftp.musickit.org/musickit">
 <!entity mkcvsweb "http://cvs.musickit.org">
 <!entity soxdownload "http://ftp1.sourceforge.net/sox">
+<!entity lamedownload "http://ftp1.sourceforge.net/lame">
+<!entity icesdownload "http://www.icecast.org/releases/ices">
 ]>
 
 <article id="README">
@@ -311,7 +315,7 @@ standard audio effects such as reverb.
         <listitem>
           <para>
 <acronym>MP3</acronym> streaming of audio output to web servers using
-the <ulink url=http://www.icecast.org>icecast</url> library. The
+the <ulink url="http://www.icecast.org">icecast</url> library. The
 portions of the library used are <acronym>LGPL</acronym>, not
 <acronym>GPL</acronym> and so do not compromise the
 <productname>MusicKit</productname> <link
@@ -948,9 +952,11 @@ for regression testing.
             </term>
 	      <listitem>
 		<para>
-                The MacOS X-Server V1.0-1.2 <acronym>MIDI</acronym> driver
-                source. Probably versions of MacOS X-Server later than
-                1.2 will use MacOS X <acronym>MIDI</acronym> plugins.
+                The <productname>MacOS X-Server</productname> V1.0-1.2
+                <acronym>MIDI</acronym> driver source.  Versions of
+                <productname>MacOS X-Server</productname> later than
+                1.2 will use <productname>MacOS X</productname>
+                <acronym>MIDI</acronym> plugins.
               </para>
 	      </listitem>
 	    </varlistentry>
@@ -972,19 +978,52 @@ for regression testing.
 	<title>Supporting Libraries</title>
 	<para>
 The following libraries need to be compiled and installed to compile
-the MK source:
+the MK source. These may be installable using <ulink url="http://www.sourceforge.net/projects/fink">fink</fink>:
 </para>
 	<variablelist>
-	  <varlistentry>
+	  <varlistentry id=sox>
 	    <term>
-            <ulink url="&soxdownload;/sox-12.17.tar.gz">sox-12.17.tar.gz</ulink>. 
+            <ulink url="&soxdownload;/sox-&soxvertuple;.tar.gz">sox-&soxvertuple;.tar.gz</ulink>. 
             </term>
 	    <listitem>
 	      <para>
               The 
 <ulink url="http://www.sourceforge.net/projects/sox">SoX</ulink>
 sound tools library provides sound file format conversion.
-Newer versions will probably just work.
+Newer versions than &soxvertuple; will probably just work.
+              </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry id=lame>
+	    <term>
+            <ulink url="&lamedownload;/lame-&lamevertuple;.tar.gz">lame-&lamevertuple;.tar.gz</ulink>. 
+            </term>
+	    <listitem>
+	      <para>
+              The 
+<ulink url="http://www.sourceforge.net/projects/lame">LAME</ulink>
+library provides <acronym>MP3</acronym> encoding/decoding capability.
+Newer versions than &lamevertuple; will probably just work.
+              </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry id=libshout>
+	    <term>
+            <ulink url="&icesdownload;/ices-&icesvertuple;.tar.gz">ices-&libshoutvertuple;.tar.gz</ulink>. 
+            </term>
+	    <listitem>
+	      <para>
+              The libshout library (part of the
+<productname>IceS</productname> distribution) of the <ulink
+url="http://www.icecast.org">icecast</ulink> project provides the
+capability to stream <acronym>MP3</acronym> encoded audio to a
+<acronym>MP3</acronym> broadcast server.
+<!-- While we still need a patch -->
+ This version requires a
+<ulink url="&mkurl;/libshout.patch">patch</ulink> to be applied to
+compile on <productname>MacOS X</productname>.
+<!-- End of patch for ices-0.2.2 -->
+ Newer versions than &icesvertuple; will probably just work.
               </para>
 	    </listitem>
 	  </varlistentry>
@@ -1422,7 +1461,9 @@ Builder</application> or <command>pbxbuild install DSTROOT=/</command> on
       <orderedlist>
 	<listitem>
 	  <para>
-Compile and install <command>sox</command> into 
+Compile and install <link linkend=sox><command>sox</command></link>,
+<link linkend=lame><command>lame</command></link> and <link
+linkend=libshout><command>libshout</command></link> libraries into
 <filename class=directory>/usr/local/lib</filename>.
 </para>
 	</listitem>
@@ -1440,8 +1481,10 @@ Compile and install the <filename>SndKit</filename> framework.
 	<listitem>
 	  <para>
 Compile and install <filename>MKDSP_56k</filename> framework if on
-OpenStep, or <filename>MKDSP_Native</filename>
-framework if on Windows, MacOS X-Server or MacOS X.
+<productname>OpenStep</productname>, or
+<filename>MKDSP_Native</filename> framework if on
+<productname>Windows</productname>, <productname>MacOS X-Server
+V1.2</productname> or <productname>MacOS X</productname>.
 </para>
 	</listitem>
 	<listitem>
@@ -1453,12 +1496,13 @@ Compile and install the <filename>MusicKit</filename> framework.
 	  <para>
 Compile and install <filename>MKUnitGenerators</filename> and
 <filename>MKSynthPatches</filename> frameworks if running on
-OpenStep. These frameworks won't compile on MacOS X-Server because the
-Motorola <command>asm56000</command> and <command>lnk56000</command>
-tools are missing. I've asked Apple and Motorola for a MacOS X
-port, why don't you also? :-) In theory the 56K assembler runs on
-Windows, so it may be possible to run these on Windows, but that is
-yet to be tested.
+OpenStep. These frameworks won't compile on <productname>MacOS
+X</productname> because the Motorola <command>asm56000</command> and
+<command>lnk56000</command> tools are missing. I've asked Apple and
+Motorola for a <productname>MacOS X</productname> port, why don't you
+also? :-) In theory the 56K assembler runs on
+<productname>Windows</productname>, so it may be possible to run these
+on <productname>Windows</productname>, but that is yet to be tested.
 </para>
 	</listitem>
 	<listitem>
@@ -1474,7 +1518,7 @@ class=directory>Examples</filename> respectively.
 Compile and install an appropriate <acronym>MIDI</acronym> driver.
 </para>
       <para>
-To compile the <productname>MacOS X-Server</productname>
+To compile the <productname>MacOS X-Server V1.2</productname>
 Zilog <acronym>SCC</acronym>
 <acronym>MIDI</acronym> driver, some header files are missing.  You
 can get them from the <productname>Darwin</productname> distribution
