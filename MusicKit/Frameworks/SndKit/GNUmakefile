@@ -24,7 +24,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 # For use in rpm generation:
 PACKAGE_NAME = SndKit
-VERSION = 2.3.0
+VERSION = 2.3.2
 
 srcdir = .
 
@@ -85,8 +85,8 @@ $(MY_NAME)_OBJC_FILES = \
          SndView.m \
          SndConvert.m \
          SndResample.m \
-	 SndMuLaw.m
-         #SndMeter.m
+	 SndMuLaw.m \
+         SndMeter.m
 
 $(MY_NAME)_C_FILES = \
          SndEndianFunctions.c \
@@ -137,8 +137,8 @@ $(MY_NAME)_HEADER_FILES = \
          SndStreamRecorder.h \
          SndTable.h \
          SndView.h\
-         Sound.h \
          SndMuLaw.h \
+         SndMeter.h \
          _Sndfilterkit.h \
          _Sndlargefilter.h \
          _Sndsmallfilter.h
