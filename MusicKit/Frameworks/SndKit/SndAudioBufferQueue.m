@@ -227,37 +227,36 @@ enum {
 
 - prepareQueueAsType: (SndAudioBufferQueueType) type withBufferPrototype: (SndAudioBuffer*) buff
 {
-  if (buff == nil) {
-    NSLog(@"SndAudioBufferQueue::prepareQueueAsType - ERROR: buff is nil!\n");
-    return self;
-  }
-  switch (type)
-    {
-    case audioBufferQueue_typeInput:
-      {
-        int i;
-        [pendingBuffersLock lock];
-        [pendingBuffersLock unlockWithCondition: ABQ_noData];
-        [processedBuffersLock lock];
-        for (i = 0; i < numBuffers; i++)
-          [processedBuffers addObject: [buff copy]];
-        [processedBuffersLock unlockWithCondition: ABQ_hasData];
-      }
-      break;
-
-    case audioBufferQueue_typeOutput:
-      {
-        int i;
-        [processedBuffersLock lock];
-        [processedBuffersLock unlockWithCondition: ABQ_noData];
-        [pendingBuffersLock lock];
-        for (i = 0; i < numBuffers - 1; i++)
-          [pendingBuffers addObject: [buff copy]];
-        [pendingBuffersLock unlockWithCondition: ABQ_hasData];
-      }
-      break;
+    if (buff == nil) {
+	NSLog(@"SndAudioBufferQueue::prepareQueueAsType - ERROR: buff is nil!\n");
+	return self;
     }
-  return self;
+    switch (type) {
+	case audioBufferQueue_typeInput: {
+	    int processedBufferIndex;
+	    
+	    [pendingBuffersLock lock];
+	    [pendingBuffersLock unlockWithCondition: ABQ_noData];
+	    [processedBuffersLock lock];
+	    for (processedBufferIndex = 0; processedBufferIndex < numBuffers; processedBufferIndex++)
+		[processedBuffers addObject: [buff copy]];
+	    [processedBuffersLock unlockWithCondition: ABQ_hasData];
+	}
+	break;
+	    
+	case audioBufferQueue_typeOutput: {
+	    int pendingBufferIndex;
+	    
+	    [processedBuffersLock lock];
+	    [processedBuffersLock unlockWithCondition: ABQ_noData];
+	    [pendingBuffersLock lock];
+	    for (pendingBufferIndex = 0; pendingBufferIndex < numBuffers - 1; pendingBufferIndex++)
+		[pendingBuffers addObject: [buff copy]];
+	    [pendingBuffersLock unlockWithCondition: ABQ_hasData];
+	}
+	break;
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
