@@ -1,15 +1,37 @@
+/*
+  $Id$
+  
+  Defined In: The MusicKit
+  Description:
+    This class is just like Wave1i but overrides the interpolating osc
+    with a non-interpolating osc. Thus, it is slightly less expensive than
+    Wave1i (See discussion below).
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
+*/
+/*
+  $Log$
+  Revision 1.3  2001/09/08 20:22:09  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
+*/
 /*!
-  @header Wave1
+  @class Wave1
+  @discussion
 
-
-<b>Wave1i</b> is a single-interpolating-oscillator wavetable SynthPatch with an amplitude and frequency envelope.  
-<b>Wave1</b> (a subclass of <b>Wave1i</b>) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.)  <b>Wave1i</b> is used as the root class for a number of wavetable SynthPatches.
+<b>Wave1i</b> is a single-interpolating-oscillator wavetable MKSynthPatch with an amplitude and frequency envelope.  
+<b>Wave1</b> (a subclass of <b>Wave1i</b>) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.)  <b>Wave1i</b> is used as the root class for a number of wavetable MKSynthPatches.
 
 Here is a diagram of <b>Wave1</b>:
 
 <img src="Images/Wave1i.gif"> .
 
-When using this SynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the SynthPatch.
+When using this MKSynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the MKSynthPatch.
 
 <h2>Parameter Interpretation</h2>
 
@@ -33,11 +55,11 @@ When using this SynthPatch in an interactive real-time context, such as playing 
 
 <b>freqEnv</b> - Frequency envelope.  Default is an envelope that is always a constant 1.0.
 
-<b>freq0</b> -Fundamental frequency when the envelope is at 0.  freq is frequency when the envelope is at 1.  freq1 is a synonym for freq.  Default is 0.0.
+<b>freq0</b> - Fundamental frequency when the envelope is at 0.  freq is frequency when the envelope is at 1.  freq1 is a synonym for freq.  Default is 0.0.
 
-<b>freqAtt</b> -Time of attack portion of envelope in seconds.  If this parameter is not present, the times in the envelope are used verbatim.
+<b>freqAtt</b> - Time of attack portion of envelope in seconds.  If this parameter is not present, the times in the envelope are used verbatim.
 
-<b>freqRel</b> -Time of release portion of envelope in seconds.  If this parameter is not present, the times in the envelope are used verbatim.
+<b>freqRel</b> - Time of release portion of envelope in seconds.  If this parameter is not present, the times in the envelope are used verbatim.
 
 <b>keyNum</b> - The MIDI key number, an alternative to freq.  If both freq and keyNum are present, freq, takes precedence.  In the range 0:127.
 
@@ -56,15 +78,9 @@ When using this SynthPatch in an interactive real-time context, such as playing 
 <b>velocity</b> - A MIDI parameter.  In range 0:127.  The default is 64.  Velocity scales amplitude by an amount deteremined by velocitySensitivity.  Some SynthPatches also scale brightness or FM index based on velocity.  
 
 <b>velocitySensitivity</b> - In range 0.0:1.0.  Default is 0.5.  When velocitySensitivity is 0, velocity has no effect.
-
-
 */
 #ifndef __MK_Wave1_H___
 #define __MK_Wave1_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* This class is just like Wave1i but overrides the interpolating osc
-   with a non-interpolating osc. Thus, it is slightly less expensive than
-   Wave1i. */
 
 #import "Wave1i.h"
 
@@ -72,15 +88,13 @@ When using this SynthPatch in an interactive real-time context, such as playing 
 {
 }
 
-
 /*!
   @method patchTemplateFor:
   @param aNote is a (id)
   @result A (id)
-  @discussion Returns a default template. <i>aNote </i>is ignored.
+  @discussion Returns a template using the non-interpolating osc. <i>aNote </i>is ignored.
 */
 +patchTemplateFor:aNote;
-/* Returns a template using the non-interpolating osc. */
 
 @end
 

@@ -1,6 +1,26 @@
-/*!
-  @header Shape
+/*
+  $Id$
+  
+  Defined In: The MusicKit
+  Description:
+    (See discussion below)
 
+  Original Author: Eric J. Graves and David A. Jaffe
+
+  Copyright (c) 1992 Eric J. Graves & Stanford University.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
+*/
+/*
+  $Log$
+  Revision 1.3  2001/09/08 20:22:09  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
+*/
+/*!
+  @class Shape
+  @discussion
 
 <b>Shape</b> is a single-lookup table non-linear distortion (waveshaping) SynthPatch.  It has an interpolating-oscillator for a "carrier" (oscillator driving the lookup) with an arbitrary waveform, an interpolating lookup table, and envelopes on amplitude (scaler on output), frequency, and waveshaping index (amplitude of carrier).  Additionally, 
 
@@ -12,7 +32,7 @@ Here is a diagram of <b>Shape:</b>
 <img src="Images/Waveshape.gif"> 
 If the <b>m1Waveform</b> parameter's value is a Partials object, it gives a specification for the harmonic structure of the lookup table.  For example, if you want the table to produce two harmonics, you could specify a Partials object with two partials, one at harmonic number 1 and one at harmonic number 2.  Note also that using higher numbered harmonics in a waveshaping table Partials object, results in a greater compute time to create the table.  If you specify a Samples object to <b>m1Waveform</b>, it is used directly as the distortion lookup table.   
  
- Additional features that ambitious users might want to consider adding include doing some of the other things that Arfib, LeBrun, and Beauchamp described in their articles:
+Additional features that ambitious users might want to consider adding include doing some of the other things that Arfib, LeBrun, and Beauchamp described in their articles:
 
         1- adding a post-lookup multiplication with a sinusoid, to
                 obtain symmetric Spectra, and with proper choice of the 
@@ -99,17 +119,9 @@ Roads, C. 1979. "A Tutorial on Nonlinear Distortion or Waveshaping Synthesis."
 <b>waveform</b> - WaveTable used for the oscillator.  Defaults to sine.  Note that the WaveTable you supply is normalized so that its peak amplitude is 1.0.
 
 <b>waveLen</b> - Length of wavetable.  Defaults to an optimal value.  May only be set at the start of a phrase or with a noteUpdate that has no noteTag.
-
-
 */
 #ifndef __MK_Shape_H___
 #define __MK_Shape_H___
-/* Shape.
- *
- * Eric J. Graves and David A. Jaffe
- * (c) 1992 Eric J. Graves & Stanford University
- *
- */
 
 #import <MusicKit/MKSynthPatch.h>
 #import <MusicKit/MKEnvelope.h>
@@ -176,7 +188,7 @@ Roads, C. 1979. "A Tutorial on Nonlinear Distortion or Waveshaping Synthesis."
   @method noteOnSelf:
   @param aNote is a (id)
   @result A (id)
-  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method triggers (or retriggers) the Note's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the Note.  
+  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method triggers (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
 */
 - noteOnSelf:aNote;
 
@@ -184,7 +196,7 @@ Roads, C. 1979. "A Tutorial on Nonlinear Distortion or Waveshaping Synthesis."
   @method noteUpdateSelf:
   @param aNote is a (id)
   @result A (id)
-  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a Note.  Sets parameters as specified in <i>aNote.</i>
+  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a MKNote.  Sets parameters as specified in <i>aNote.</i>
 */
 - noteUpdateSelf:aNote;
 
@@ -192,7 +204,7 @@ Roads, C. 1979. "A Tutorial on Nonlinear Distortion or Waveshaping Synthesis."
   @method noteOffSelf:
   @param aNote is a (id)
   @result A (double)
-  @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the Note's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
+  @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the MKNote's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
 */
 - (double)noteOffSelf:aNote;
 

@@ -1,11 +1,33 @@
-/*!
-  @header Wave1vi
+/*
+  $Id$
+  
+  Defined In: The MusicKit
+  Description:
+    (See discussion below)
 
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
+*/
+/*
+  $Log$
+  Revision 1.3  2001/09/08 20:22:09  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
+*/
+/*!
+  @class Wave1vi
+  @abstract Wave1vi is like Wave1i but adds periodic and random vibrato.
+            See Wave1i.h for a description of the non-vibrato parameters.
+  @discussion
 
 <b>Wave1vi</b> is like <b>Wave1i</b>, but it includes periodic and random vibrato.
 <b>Wave1v</b>(a subclass of <b>Wave1vi</b> ) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.).   
 
-When using this SynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the SynthPatch.
+When using this MKSynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the MKSynthPatch.
 
 <img src="Images/Wave1vi.gif"> 
 
@@ -28,18 +50,11 @@ In addition to the parameters described in <b>Wave1i.rtfd</b>, the following par
 <b>rvibAmp</b> - Random vibrato amplitude as roughly a percentage of the fundamental frequency.  In the range 0.0:1.0.  Default is 0.0.
 
 <b>vibWaveform</b> - WaveTable object that specifies shape of vibrato.
-
 */
 #ifndef __MK_Wave1vi_H___
 #define __MK_Wave1vi_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#import <MusicKit/MKSynthPatch.h>
 
-/* ------------------------------------------------------------------------ * 
- * Wave1vi is like Wave1i but adds periodic and random vibrato.
- * 
- * See Wave1i.h for a description of the non-vibrato parameters.
- * ------------------------------------------------------------------------ */
+#import <MusicKit/MKSynthPatch.h>
 
 #import "Wave1i.h"
 

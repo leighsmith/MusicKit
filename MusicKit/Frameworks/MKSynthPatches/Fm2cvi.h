@@ -1,12 +1,33 @@
+/*
+  $Id$
+  
+  Defined In: The MusicKit
+  Description:
+    (See discussion below)
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
+*/
+/*
+  $Log$
+  Revision 1.3  2001/09/08 20:22:09  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
+*/
 /*!
-  @header Fm2cvi
+  @class Fm2cvi
+  @discussion
 
+<b>Fm2cvi</b> is a cascade-modulator frequency modulation MKSynthPatch, with an interpolating-oscillator as a carrier.  It provides for envelopes on amplitude, frequency, and a separate envelope on each modulator's FM index.  It also supports vibrato.   Although it does not inherit from <b>Fm1vi</b>, it implements the same parameters, plus some of its own. 
 
-<b>Fm2cvi</b> is a cascade-modulator frequency modulation SynthPatch, with an interpolating-oscillator as a carrier.  It provides for envelopes on amplitude, frequency, and a separate envelope on each modulator's FM index.  It also supports vibrato.   Although it does not inherit from <b>Fm1vi</b>, it implements the same parameters, plus some of its own. 
+When using this MKSynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the MKSynthPatch.
 
-When using this SynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the SynthPatch.
-
-<img src="Images/Fm2cvi.gif"> 
+<img src="Images/Fm2cvi.gif">
+ 
 <h2>Parameter Interpretation</h2>
 
 In addition to the parameters described in <b>Fm11vi.rtfd</b>, the following parameters are supported:
@@ -36,18 +57,12 @@ In addition to the parameters described in <b>Fm11vi.rtfd</b>, the following par
 <b>panSensitivity -</b> In the range 0.0:1.0.  Default is 1.0.
 
 <b>velocity -</b> In addition to the usual amplitude scaling, velocity scales the strength of  the FM modulation.  The default velocity (64) has no effect on FM index.  
-
-
 */
 #ifndef __MK_Fm2cvi_H___
 #define __MK_Fm2cvi_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* 
-	Fm2cvi.h 
 
-	This class is part of the Music Kit MKSynthPatch Library.
-*/
 #import <MusicKit/MKSynthPatch.h>
+
 @interface Fm2cvi:MKSynthPatch
 {
   double amp0, amp1, ampAtt, ampRel, freq0, freq1, freqAtt, freqRel,
@@ -62,7 +77,6 @@ In addition to the parameters described in <b>Fm11vi.rtfd</b>, the following par
   void *_ugNums;
 }
 
-
 /*!
   @method patchTemplateFor:
   @param aNote is a (id)
@@ -70,37 +84,30 @@ In addition to the parameters described in <b>Fm11vi.rtfd</b>, the following par
   @discussion Returns a template. A non-zero for <b>svibAmp</b>and <b>rvibAmp </b> determines whether vibrato resources are allocated. 
 */
 +patchTemplateFor:aNote;
-   
-
 
 /*!
   @method noteOnSelf:
   @param aNote is a (id)
   @result A (id)
-  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method triggers (or retriggers) the Note's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the Note.  
+  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method triggers (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
 */
 -noteOnSelf:aNote;
- 
-
 
 /*!
   @method noteUpdateSelf:
   @param aNote is a (id)
   @result A (id)
-  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a Note.  Sets parameters as specified in <i>aNote.</i>
+  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a MKNote.  Sets parameters as specified in <i>aNote.</i>
 */
 -noteUpdateSelf:aNote;
-
 
 /*!
   @method noteOffSelf:
   @param aNote is a (id)
   @result A (double)
-  @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the Note's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
+  @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the MKNote's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
 */
 -(double)noteOffSelf:aNote;
- 
-
 
 /*!
   @method noteEndSelf
@@ -108,7 +115,6 @@ In addition to the parameters described in <b>Fm11vi.rtfd</b>, the following par
   @discussion Resest instance variables to default values.
 */
 -noteEndSelf;
- 
 
 @end
 

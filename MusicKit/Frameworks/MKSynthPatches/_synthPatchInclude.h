@@ -1,18 +1,31 @@
-#ifndef __MK__synthPatchInclude_H___
-#define __MK__synthPatchInclude_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* 
-	_synthPatchInclude.h 
+/*
+  $Id$
+  
+  Defined In: The MusicKit
+  Description:
+    (See discussion below)
 
-	This header file is part of the Music Kit MKSynthPatch Library.
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/* 
+/*
 Modification history:
+
+  $Log$
+  Revision 1.2  2001/09/08 20:22:09  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
 
   09/19/89/daj - Changed macros to use Note C-function parameter access.
   10/3/93/daj -  Got rid of some unused macros (FREQ_SCALE, TWO_TO_M_23)
-
 */
+#ifndef __MK__synthPatchInclude_H___
+#define __MK__synthPatchInclude_H___
+
 /* Various useful macros for SynthPatches. */
 
 #import <string.h>

@@ -1,12 +1,35 @@
-/*!
-  @header Fm1vi
+/*
+  $Id$
+  
+  Defined In: The MusicKit
+  Description:
+    Fm1vi is like Fm1i but adds periodic and random vibrato.
+    See Fm1i.h for a description of the non-vibrato parameters.
+    See discussion below.
 
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
+*/
+/*
+  $Log$
+  Revision 1.3  2001/09/08 20:22:09  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
+*/
+/*!
+  @class Fm1vi
+  @discussion
 
 <b>Fm1vi</b> is like <b>Fm1i</b>, but it includes periodic and random vibrato.
 <b>Fm1v</b>(a subclass of <b>Fm1vi</b> ) is identical, but it uses a non-interpolating-oscillator (lower quality, but uses less DSP computation.).   
 
-<img src="Images/Fm1vi.gif"> 
-When using this SynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the SynthPatch.
+<img src="Images/Fm1vi.gif">
+ 
+When using this MKSynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the MKSynthPatch.
 
 <h2>Parameter Interpretation</h2>
 
@@ -31,12 +54,6 @@ In addition to the parameters described in <b>Fm1i.rtf</b>, the following parame
 */
 #ifndef __MK_Fm1vi_H___
 #define __MK_Fm1vi_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* ------------------------------------------------------------------------ * 
- * Fm1vi is like Fm1i but adds periodic and random vibrato.
- * 
- * See Fm1i.h for a description of the non-vibrato parameters.
- * ------------------------------------------------------------------------ */
 
 #import "Fm1i.h"
 

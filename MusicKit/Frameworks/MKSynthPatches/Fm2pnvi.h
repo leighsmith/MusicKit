@@ -1,10 +1,31 @@
-/*!
-  @header Fm2pnvi
+/*
+  $Id$
+  
+  Defined In: The MusicKit
+  Description:
+    (See discussion below)
 
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
+*/
+/*
+  $Log$
+  Revision 1.3  2001/09/08 20:22:09  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
+*/
+/*!
+  @class Fm2pnvi
+  @discussion
 
 <b>Fm2pnvi</b> is a parallel-modulator frequency modulation SynthPatch, with an interpolating-oscillator as a carrier and a noise source modulating the frequency of the two wavetable modulators.  It provides for envelopes on amplitude, frequency, and a separate envelope on each modulator's FM index, as well as an envvelope on the noise source.  It also supports vibrato.   Although it does not inherit from <b>Fm2pvi</b>, it implements the same parameters, plus some of its own. 
 
 <img src="Images/FM2pnvi.gif"> 
+
 When using this SynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the SynthPatch.
 
 <h2>Parameter Interpretation</h2>
@@ -26,18 +47,12 @@ In addition to the parameters described in <b>Fm2pvi.rtfd</b>, the following par
 <b>noiseAmpAtt</b> - Time of attack portion of noise envelope in seconds.  If this parameter is not present, the times in the envelope are used verbatim.
 
 <b>noiseAmpRel</b> - Time of release portion of noise envelope in seconds.  If this parameter is not present, the times in the envelope are used verbatim.
-
-
 */
 #ifndef __MK_Fm2pnvi_H___
 #define __MK_Fm2pnvi_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* 
-	Fm2pnvi.h 
 
-	This class is part of the Music Kit MKSynthPatch Library.
-*/
 #import <MusicKit/MKSynthPatch.h>
+
 @interface Fm2pnvi:MKSynthPatch
 {
   double amp0, amp1, ampAtt, ampRel, freq0, freq1, freqAtt, freqRel,
@@ -56,49 +71,42 @@ In addition to the parameters described in <b>Fm2pvi.rtfd</b>, the following par
   void *_ugNums;
 }
 
-
 /*!
   @method patchTemplateFor:
-  @param aNote is a (id)
-  @result A (id)
-  @discussion Returns a template. A non-zero for <b>svibAmp</b>and <b>rvibAmp </b> determines whether vibrato resources are allocated. 
+  @param aNote is an id.
+  @result Returns an id.
+  @discussion Returns a template. A non-zero for <b>svibAmp</b> and <b>rvibAmp</b> determines
+              whether vibrato resources are allocated. 
 */
 +patchTemplateFor:aNote;
    
-
-
 /*!
   @method noteOnSelf:
-  @param aNote is a (id)
-  @result A (id)
-  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method triggers (or retriggers) the Note's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the Note.  
+  @param aNote is an id.
+  @result Returns an id.
+  @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method triggers (or retriggers) the MKNote's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the MKNote.  
 */
 -noteOnSelf:aNote;
  
-
-
 /*!
   @method noteUpdateSelf:
-  @param aNote is a (id)
-  @result A (id)
-  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a Note.  Sets parameters as specified in <i>aNote.</i>
+  @param aNote is an id.
+  @result Returns an id.
+  @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a MKNote.  Sets parameters as specified in <i>aNote.</i>
 */
 -noteUpdateSelf:aNote;
 
-
 /*!
   @method noteOffSelf:
-  @param aNote is a (id)
-  @result A (double)
-  @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the Note's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
+  @param aNote is an id.
+  @result Returns a double.
+  @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the MKNote's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
 */
 -(double)noteOffSelf:aNote;
  
-
-
 /*!
   @method noteEndSelf
-  @result A (id)
+  @result Returns an id.
   @discussion Resest instance variables to default values.
 */
 -noteEndSelf;
