@@ -19,10 +19,13 @@ PDF_TMPDIR=/tmp/mkpdf
 # Assume we are standing at the top of the source tree, since with NFS
 # it's a bit hard to be universal with paths.
 MKSRCDIR=`pwd`
-MKREADMESRC=$MKSRCDIR/Documentation/MusicKit_README.sgml
-MKCONCEPTS=$MKSRCDIR/Documentation/Concepts/
-MKTUTORIALS=$MKSRCDIR/Documentation/TutorialClasses/
-MK_STYLEDIR=$MKSRCDIR/Documentation/SGML
+MKDOCDIR-$MKSRCDIR/Documentation
+MKREADMESRC=$MKDOCDIR/MusicKit_README.sgml
+MKCONCEPTS=$MKDOCDIR/Concepts/
+MKTUTORIALS=$MKDOCDIR/TutorialClasses/
+MKPUBLICATIONS=$MKDOCDIR/Publications/
+MKHEADERDOC=$MKDOCDIR/HeaderDoc/
+MK_STYLEDIR=$MKDOCDIR/SGML
 MK_STYLESHEET=$MK_STYLEDIR/MusicKit_README.dsssl
 MKCONCEPTS_STYLESHEET=/usr/lib/sgml/stylesheets/cygnus-both.dsl
 MKTUTORIALS_STYLESHEET=$MKCONCEPTS_STYLESHEET
@@ -58,14 +61,10 @@ ln -s musickittutorials.html index.html
 #
 # Run HeaderDoc over the frameworks
 #
-
-#
-# Now create a tarball
-#
-cd ../..
-tar czf $HTML_TARBALL $HTML_DISTRIB_DIR
-echo MusicKit README HTML pages packaged into /tmp/$HTML_TARBALL
-rm -r $HTML_TMPDIR
+mkdir $HTML_TMPDIR/Frameworks
+cd $MKHEADERDOC
+# The MacOS X version of the MKPerformSndMIDI framework is the definitive documentation version.
+headerdoc2html -o $HTML_TMPDIR/Frameworks/MKPerformSndMIDI $MKSRCDIR/Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX
 
 #
 # Now create the PDF of the README
@@ -74,14 +73,26 @@ mkdir $PDF_TMPDIR
 cd $PDF_TMPDIR 
 cp $MK_STYLEDIR/Images/*.eps .
 db2dvi $MKREADMESRC
-FINAL=`basename $MKREADMESRC .sgml`.pdf
+PDFFINAL=`basename $MKREADMESRC .sgml`.pdf
 dvips -o intermediate.ps MusicKit_README.dvi
 # This allows us to incorporate any special postscript fonts.
 #psprepare intermediate.ps prepared.ps
 cp intermediate.ps prepared.ps
-ps2pdf prepared.ps /tmp/$FINAL
-echo MusicKit README PDF file generated into /tmp/$FINAL
+ps2pdf prepared.ps /tmp/$PDFFINAL
+echo MusicKit README PDF file generated into /tmp/$PDFFINAL
 rm -r $PDF_TMPDIR
 
-# copy all PDFs
+#
+# copy all PDFs to be placed on the web-site, both those prepared and the README
+#
+mkdir -p $HTML_TMPDIR/Publications
+cp $MKPUBLICATIONS/*.pdf $HTML_TMPDIR/Publications
+cp /tmp/$PDFFINAL $HTML_TMPDIR
 
+#
+# Now create a tarball
+#
+cd ../..
+tar czf $HTML_TARBALL $HTML_DISTRIB_DIR
+echo MusicKit README HTML pages packaged into /tmp/$HTML_TARBALL
+rm -r $HTML_TMPDIR
