@@ -4,6 +4,6 @@
         LauncherSelectedExec = (
             "$[PBProject projectName].app/$[PBProject projectName]$[PBProjectType executableExtension]"
         ); 
-        Target = clean; 
+        Target = app; 
     }; 
 }
