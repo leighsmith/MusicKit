@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.27  2002/04/08 19:09:04  sbrandon
+  removed extraneous semicolons
+
   Revision 1.26  2002/04/08 17:34:29  sbrandon
   Changed newMsgRequest() definition to include a couple of BOOL flags saying
   whether or not to retain arg1 and arg2 (to be used if they are objects).
@@ -1879,7 +1882,7 @@ static MKMsgStruct *newMsgRequest(
  to:(id)toObject 
  argCount:(int)argCount
  arg1:(id)arg1 retain:(BOOL)retainArg1
- arg2:(id)arg2 retain:(BOOL)retainArg2;
+ arg2:(id)arg2 retain:(BOOL)retainArg2
 /* TYPE: Requesting; Sends aSelector to toObject before performance.
  * Schedules a request for the factory object
  * to send the message aSelector to the object
@@ -2223,7 +2226,7 @@ static double getNextMsgTime(MKConductor *aCond)
  to:(id)toObject 
  argCount:(int)argCount
  arg1:(id)arg1 retain:(BOOL)retainArg1
- arg2:(id)arg2 retain:(BOOL)retainArg2;
+ arg2:(id)arg2 retain:(BOOL)retainArg2
 /* 
   Same as afterPerformanceSel:to:argCount: but ensures that message will
   be sent before any of the messages enqueued with that method. Private
