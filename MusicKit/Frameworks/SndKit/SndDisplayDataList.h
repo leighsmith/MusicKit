@@ -12,6 +12,8 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 ******************************************************************************/
 
+#ifndef __SNDDISPLAYDATALIST_H__
+#define __SNDDISPLAYDATALIST_H__
 
 #import <AppKit/AppKit.h>
 
@@ -27,3 +29,5 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 	next:(int *)next 
 	leadsOnFrom:(int *)leadsOnFrom;
 @end
+
+#endif

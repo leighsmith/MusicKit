@@ -12,6 +12,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef __SNDAUDIOPROCESSORCHAIN_H__
+#define __SNDAUDIOPROCESSORCHAIN_H__
+
 #import <Foundation/Foundation.h>
 
 @class SndAudioBuffer;
@@ -38,3 +41,5 @@
 - (void) setBypass: (BOOL) b;
 
 @end
+
+#endif

@@ -5,6 +5,8 @@
 	Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
 	Additions Copyright (c) 1999 Stephen Brandon and the University of Glasgow 
 */
+#ifndef __SND_H__
+#define __SND_H__
 
 #import <Foundation/Foundation.h>
 //#import <Foundation/NSObject.h>
@@ -278,3 +280,4 @@ typedef enum {
 - didPlay:    sender duringPerformance: (SndPerformance *) performance;
 @end
 
+#endif

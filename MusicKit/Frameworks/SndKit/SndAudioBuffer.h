@@ -12,6 +12,9 @@
   accompany all relevant code.
 */
 
+#ifndef __SNDAUDIOBUFFER_H__
+#define __SNDAUDIOBUFFER_H__
+
 #import <Foundation/Foundation.h>
 #import <SndKit/SndKit.h>
 
@@ -51,3 +54,5 @@
 - (int) multiChannelSampleSizeInBytes;
 
 @end
+
+#endif

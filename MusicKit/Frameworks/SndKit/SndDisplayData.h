@@ -12,6 +12,8 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 ******************************************************************************/
 
+#ifndef __SNDDISPLAYDATA_H__
+#define __SNDDISPLAYDATA_H__
 
 #import <AppKit/AppKit.h>
 
@@ -40,3 +42,5 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 - (BOOL)truncateToLastPixel:(int)pixel;
 - (BOOL)truncateToFirstPixel:(int)pixel;
 @end
+
+#endif
