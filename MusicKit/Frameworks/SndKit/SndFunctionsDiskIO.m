@@ -61,7 +61,7 @@
 #define SUN_FLOAT	6			/* IEEE FP 32 bits */
 #define SUN_ALAW        27                      /* a-law encoding */
 
-#define SNDREADCHUNKSIZE 128*1024   // Number of st_sample_t samples to read into a buffer.
+#define SNDREADCHUNKSIZE 256*1024   // Number of st_sample_t samples to read into a buffer.
 #ifdef WIN32
 #define LASTCHAR        '\\'
 #else
