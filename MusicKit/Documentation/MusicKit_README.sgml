@@ -1016,19 +1016,6 @@ Newer versions will probably just work.
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="&mkdownload;/MIDISPORT-&midisportvertuple;.b.MOX.pkg.tar">MIDISPORT-&midisportvertuple;.b.MOX.pkg.tar</ulink>
-            </term>
-	      <listitem>
-		<para>
-The Mac OS X <acronym>MIDI</acronym> plugin binary for
-the <productname class="Registered">Midiman</productname>
-<acronym>USB</acronym>
-<trademark>MIDISPORT 1x1, 2x2, 4x4 and 8x8</trademark> interfaces.
-              </para>
-	      </listitem>
-	    </varlistentry>
-	    <varlistentry>
-	      <term>
               <ulink url="&mkdownload;/ZilogSCCMIDI.b.tar.gz">ZilogSCCMIDI.b.tar.gz</ulink>
             </term>
 	      <listitem>
@@ -1503,9 +1490,10 @@ MacOS X Developer release includes source for a generic
 There is also a driver binary for the <productname
 class="Registered">MIDIMan</productname>
 <trademark>MIDISPORT</trademark> <acronym>USB</acronym> interfaces for
-MacOS X <link linkend="availability">available</link> for download.
+MacOS X <link linkend="availability">available</link> for download
+from <ulink url="http://www.midiman.com">MIDIMan's web page</ulink>
+and other vendors may well have drivers available for their hardware.
 </para>
-
 
 	</listitem>
       </orderedlist>
