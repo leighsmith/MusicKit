@@ -22,8 +22,8 @@
 #define __SND_AUDIO_PROCESSOR_REVERB_H__
 
 #import <Foundation/Foundation.h>
-#import <SndKit/SndAudioBuffer.h>
-#import <SndKit/SndAudioProcessor.h>
+#import "SndAudioBuffer.h"
+#import "SndAudioProcessor.h"
 
 /*!
     @enum     SndReverbParam

@@ -16,7 +16,7 @@
 #define __SNDAUDIOBUFFER_H__
 
 #import <Foundation/Foundation.h>
-#import <SndKit/SndKit.h>
+#import "SndKit.h"
 
 
 /*!
