@@ -72,19 +72,19 @@ scorefile.</para>
 <para>Thus, the tag and the name are simply two ways of identifying
 the same parameter.  To create a new parameter, you pass a print name
 (that you make up yourself) to the <emphasis
-role="bold">parName:</emphasis> class method.  The method returns a
+role="bold">parTagForName:</emphasis> class method.  The method returns a
 unique tag for the parameter:</para>
 
 <programlisting>
 /* Create a new parameter tag (an int). */
-int myPar = [MKNote parName:"myPar"];
+int myPar = [MKNote parTagForName:"myPar"];
 </programlisting>
 
 <para>The name of the variable that represents the tag needn't be the
 same as the string name, although in the interest of clarity this is
-regarded as good form.  The <emphasis role="bold">parName:</emphasis>
+regarded as good form.  The <emphasis role="bold">parTagForName:</emphasis>
 method can also be used to retrieve the tag of a parameter that's
-already been created: <emphasis role="bold">parName:</emphasis>
+already been created: <emphasis role="bold">parTagForName:</emphasis>
 creates a new tag for each unique argument that's passed to it;
 subsequent invocations with the same argument will return the
 already-created tag.</para>
@@ -175,7 +175,7 @@ For example, the message</para>
 
 <programlisting>
 /* Retrieve the bearing parameter value as a double. */
-double theBearing = [aNote ParAsDouble:MK_bearing];
+double theBearing = [aNote parAsDouble:MK_bearing];
 </programlisting>
 
 <para>returns the <emphasis role="bold">double</emphasis> 45.0
