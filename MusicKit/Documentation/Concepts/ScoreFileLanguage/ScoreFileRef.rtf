@@ -1,7 +1,7 @@
 {\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\ftech\fcharset2 Symbol;}
 {\colortbl;\red255\green255\blue255;}
 \paperw16220\paperh13540
-\pard
+\pard\ql\qnatural
 
 \f0\fs24 \cf0 Release 2.0  Copyright 
 \f1 ã
@@ -35,7 +35,7 @@
 
 \fs28 \cf0 ScoreFile is a language designed to represent, create, and manipulate music data.  The code for a ScoreFile program is maintained in a file, called a 
 \i scorefile
-\i0 , on the disk.  A scorefile represents a Music Kit Score object and its contents in ASCII form.  Scorefiles can be created from a text editor or generated automatically by a Score or ScorefileWriter object.  A scorefile is interpreted when it's read by a Score object or performed by a ScorefilePerformer object.  \
+\i0 , on the disk.  A scorefile represents a MusicKit MKScore object and its contents in ASCII form.  Scorefiles can be created from a text editor or generated automatically by a MKScore or MKScorefileWriter object.  A scorefile is interpreted when it's read by a MKScore object or performed by a MKScorefilePerformer object.  \
 \
 There is also a binary format scorefile.  The binary format is more than twice as fast to read as the ASCII form.  The utility 
 \b convertscore
@@ -45,7 +45,7 @@ There is also a binary format scorefile.  The binary format is more than twice a
 
 \fs16 \
 
-\fs28 This chapter describes the syntax and conventions of the ScoreFile language.  The presentation in this chapter assumes a familiarity with Chapter 3 in the 
+\fs28 This chapter describes the syntax and conventions of the MKScoreFile language.  The presentation in this chapter assumes a familiarity with Chapter 3 in the 
 \i Concepts
 \i0  manual.  A concise outline of ScoreFile syntax can be found in 
 \b ScoreFileSummary.rtf
@@ -111,7 +111,7 @@ There is also a binary format scorefile.  The binary format is more than twice a
 
 \fs16 \cf0 \
 
-\fs28 The body consists of a time-ordered series of statements that represent Note objects.  This information is found only in the body:\
+\fs28 The body consists of a time-ordered series of statements that represent MKNote objects.  This information is found only in the body:\
 
 \fs16 \
 \pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
@@ -172,7 +172,7 @@ There is also a binary format scorefile.  The binary format is more than twice a
 \fs16 \
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\fs28 \cf0 A scorefile can have a Score info statement that consists of the keyword 
+\b0\fs28 \cf0 A scorefile can have a MKScore info statement that consists of the keyword 
 \b info
 \b0  followed by one or more parameters:\
 
@@ -194,7 +194,7 @@ There is also a binary format scorefile.  The binary format is more than twice a
 
 \b0\fs28 \cf0 The
 \b\fs36  
-\b0\fs28 Score info statement represents a Score object's info Note; it can contain any amount and type of information.  Typically, the Score info statement contains one or more of the following parameters:\
+\b0\fs28 Score info statement represents a MKScore object's info MKNote; it can contain any amount and type of information.  Typically, the MKScore info statement contains one or more of the following parameters:\
 
 \fs16 \
 \pard\tx5140\tx6640\tx8660\tx10680\li2620\ql\qnatural
@@ -211,15 +211,15 @@ headroom	The Orchestra's headroom setting; a value between
 \fs16 \
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs28 \cf0 A scorefile can have more than one Score info statement; if a parameter conflicts with a parameter set in a previous 
+\fs28 \cf0 A scorefile can have more than one MKScore info statement; if a parameter conflicts with a parameter set in a previous 
 \b info
-\b0  statement, the subsequent setting takes precedence.  Parameters are similarly merged if a scorefile is read into a Score object that already has an info Note (a Score object can have only one info Note).  Parameter syntax is described in the section ªNote Statements,º below.\
+\b0  statement, the subsequent setting takes precedence.  Parameters are similarly merged if a scorefile is read into a MKScore object that already has an info MKNote (a MKScore object can have only one info MKNote).  Parameter syntax is described in the section ªNote Statements,º below.\
 
 \fs16 \
 
 \fs28 The parameters in the 
 \b info
-\b0  statement aren't explicitly used when the scorefile is read by a Score or ScorefilePerformer.  It's left to the application designer to provide an implementation that acts on the 
+\b0  statement aren't explicitly used when the scorefile is read by a MKScore or MKScorefilePerformer.  It's left to the application designer to provide an implementation that acts on the 
 \b info 
 \b0 statement's parameters.\
 
@@ -236,7 +236,7 @@ headroom	The Orchestra's headroom setting; a value between
 \fs16 \
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\fs28 \cf0 The names of all the Part objects that are represented in a scorefile must be declared in a 
+\b0\fs28 \cf0 The names of all the MKPart objects that are represented in a scorefile must be declared in a 
 \b part
 \b0  statement in the header:\
 
@@ -258,9 +258,9 @@ headroom	The Orchestra's headroom setting; a value between
 
 \b0\fs28 \cf0 partName is an identifier that must not have been previously declared.  A scorefile can contain more than one 
 \b part
-\b0  statement.  When the scorefile is read by an application, a Part object is created and named for each partName in the file's 
+\b0  statement.  When the scorefile is read by an application, a MKPart object is created and named for each partName in the file's 
 \b part
-\b0  statements.  If a name conflict results from reading a scorefile into a Score, the Part represented in the scorefile is merged into the similarly named Part in the Score.\
+\b0  statements.  If a name conflict results from reading a scorefile into a MKScore, the MKPart represented in the scorefile is merged into the similarly named MKPart in the MKScore.\
 
 \fs16 \
 \pard\li1100\ql\qnatural
@@ -275,7 +275,7 @@ headroom	The Orchestra's headroom setting; a value between
 \fs16 \
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\fs28 \cf0 Each Part represented in the scorefile can have a Part info statement that consists of the Part's 
+\b0\fs28 \cf0 Each MKPart represented in the scorefile can have a MKPart info statement that consists of the MKPart's 
 \i partName 
 \i0 as it appears in the 
 \b part
@@ -296,7 +296,7 @@ headroom	The Orchestra's headroom setting; a value between
 \fs16 \cf0 \
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\fs28 \cf0 The Part info statement represents a Part object's info Note; it can contain any amount and type of information.  The following parameters are typically used in a part info statement:\
+\b0\fs28 \cf0 The MKPart info statement represents a MKPart object's info MKNote; it can contain any amount and type of information.  The following parameters are typically used in a part info statement:\
 
 \fs16 \
 \pard\tx5140\tx6640\tx8660\tx10680\li2620\ql\qnatural
@@ -304,16 +304,16 @@ headroom	The Orchestra's headroom setting; a value between
 \b\fs28 \cf0 Parameter	Meaning\
 \pard\tx5140\tx5140\tx6640\tx6640\tx8660\tx8660\tx10680\tx10680\li2620\ql\qnatural
 
-\b0 \cf0 synthPatch	The name of the SynthPatch class used to realize the Part\
+\b0 \cf0 synthPatch	The name of the SynthPatch class used to realize the MKPart\
 synthPatchCount	The number of manually allocated SynthPatch objects\
-midiChan	The MIDI channel on which the Part appears\
+midiChan	The MIDI channel on which the MKPart appears\
 
 \fs16 \
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs28 \cf0 Each Part represented in a scorefile can have only one Part info statement.  Like the scorefile's 
+\fs28 \cf0 Each MKPart represented in a scorefile can have only one MKPart info statement.  Like the scorefile's 
 \b info
-\b0  statement, interpretation and use of a Part info's parameters is left to the application designer.\
+\b0  statement, interpretation and use of a MKPart info's parameters is left to the application designer.\
 
 \fs16 \
 \pard\li1100\ql\qnatural
@@ -482,7 +482,7 @@ var\
 \b  
 \b0 and 
 \b object 
-\b0 take Envelope, WaveTable, and object values, respectively, as described in the following sections.  
+\b0 take MKEnvelope, MKWaveTable, and object values, respectively, as described in the following sections.  
 \b var
 \b0  is a wild card:  A variable so declared automatically matches the type of its assigned data.  In general, 
 \b var
@@ -502,7 +502,7 @@ var\
 \fs16 \
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\fs28 \cf0 You can create an Envelope in a scorefile by using an 
+\b0\fs28 \cf0 You can create an MKEnvelope in a scorefile by using an 
 \b envelope
 \b0  statement:\
 
@@ -519,7 +519,7 @@ var\
 \fs16 \cf0 \
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\fs28 \cf0 When the scorefile is read, an Envelope object is created and named for each 
+\b0\fs28 \cf0 When the scorefile is read, an MKEnvelope object is created and named for each 
 \b envelope 
 \b0 statement in the file.  
 \i envelopeName 
@@ -542,7 +542,7 @@ var\
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
 \i\b0\fs28 \cf0 envelopeConstant 
-\i0 contains a list of the Envelope's breakpoints.  Each breakpoint is described by its x, y, and (optional) smoothing values.  Breakpoint descriptions are in parentheses and the entire Envelope is delimited by brackets:\
+\i0 contains a list of the MKEnvelope's breakpoints.  Each breakpoint is described by its x, y, and (optional) smoothing values.  Breakpoint descriptions are in parentheses and the entire MKEnvelope is delimited by brackets:\
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
 \fs16 \cf0 \
@@ -581,7 +581,7 @@ var\
 \fs16 \
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\fs28 \cf0 WaveTables are created with the 
+\b0\fs28 \cf0 MKWaveTables are created with the 
 \b waveTable
 \b0  statement:\
 
@@ -602,13 +602,13 @@ var\
 \b envelope
 \b0  statement, an object is created and named for each 
 \b waveTable
-\b0  statement in a scorefile when the file is read.  The created object is either a Partials or a Samples object, depending on the specification in 
+\b0  statement in a scorefile when the file is read.  The created object is either a MKPartials or a MKSamples object, depending on the specification in 
 \i waveTableConstant
-\i0 .  A Partials object is described as a series frequency ratio, amplitude ratio, and (optional) phase values.\
+\i0 .  A MKPartials object is described as a series frequency ratio, amplitude ratio, and (optional) phase values.\
 
 \fs16 \
 
-\fs28 Each specification defines a single partial and is surrounded by braces; like an Envelope, the entire object is delimited by brackets:\
+\fs28 Each specification defines a single partial and is surrounded by braces; like an MKEnvelope, the entire object is delimited by brackets:\
 
 \fs16 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
@@ -775,7 +775,7 @@ var\
 
 \b0\fs28 \cf0 The information is displayed when the scorefile is interpreted.  The 
 \b setScorefilePrintStream: 
-\b0 method, defined by Score and ScorefilePerformer, lets you set the stream to which a scorefile's messages are printed.  By default, they're printed to standard error.\
+\b0 method, defined by MKScore and MKScorefilePerformer, lets you set the stream to which a scorefile's messages are printed.  By default, they're printed to standard error.\
 
 \fs16 \
 \pard\li1100\ql\qnatural
@@ -818,7 +818,7 @@ tune
 
 \b0\fs28 \cf0 The first form of the statement tunes 
 \i pitchVariable
-\i0 , a predeclared ScoreFile variable, to 
+\i0 , a predeclared MKScoreFile variable, to 
 \i expression, 
 \i0 taken as a frequency in hertz.  All pitch variables of the same pitch class as 
 \i pitchVariable
@@ -870,7 +870,7 @@ tune
 \fs16 \
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\b0\fs28 \cf0 When a scorefile is read by an application, a single Note object is created for each note statement in the file.  Note statements take the following form:\
+\b0\fs28 \cf0 When a scorefile is read by an application, a single MKNote object is created for each note statement in the file.  Note statements take the following form:\
 
 \fs16 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
@@ -895,7 +895,7 @@ tune
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
 \i\b0\fs28 \cf0 partName
-\i0  is the name of the Part to which the Note belongs.  It must be declared in a 
+\i0  is the name of the MKPart to which the MKNote belongs.  It must be declared in a 
 \b part
 \b0  statement in the header.\
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
@@ -981,7 +981,7 @@ tune
 \fs16 \
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
-\fs28 \cf0 A noteUpdate with a noteTag is applied to the specified noteTag stream.  Without a noteTag, it's applied to all noteTag streams that are currently being realized on the same Instrument as the noteUpdate.\
+\fs28 \cf0 A noteUpdate with a noteTag is applied to the specified noteTag stream.  Without a noteTag, it's applied to all noteTag streams that are currently being realized on the same MKInstrument as the noteUpdate.\
 
 \fs16 \
 \pard\tx2620\tx3120\tx3620\tx4120\li2620\fi-520\ql\qnatural
@@ -1015,7 +1015,7 @@ tune
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
 
 \fs28 \cf0 parameterName 
-\i0 is the name of the parameter.  Its form is that of a Music Kit parameter identifier minus the ªMK_º prefix.  For example, MK_freq becomes, in a scorefile, 
+\i0 is the name of the parameter.  Its form is that of a MusicKit parameter identifier minus the ªMK_º prefix.  For example, MK_freq becomes, in a scorefile, 
 \b freq
 \b0 .  In a scorefile you can create your own parameters simply by including them in a note statement.  When the scorefile is read by an application, a parameter identifier is automatically created and named for each of your invented parameters.\
 \pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
