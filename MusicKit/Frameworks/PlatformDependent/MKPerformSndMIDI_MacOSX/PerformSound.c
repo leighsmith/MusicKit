@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.2  2000/05/05 22:42:48  leigh
+// ensure we don't have boolean constants predefined
+//
 // Revision 1.1  2000/03/11 01:42:19  leigh
 // Initial Release
 //
@@ -88,18 +91,22 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 // TODO return driverIndex by reference
 PERFORM_API char **SNDGetAvailableDriverNames(void)
 {
-  // This needs to be called after initialising. TODO - probably should call the initialisation.
-  if(!initialised)
-    return NULL;
+    static char *silentDriver = "silent Sound Driver";
+
+    // This needs to be called after initialising. TODO - probably should call the initialisation.
+    if(!initialised)
+        return NULL;
+    return &silentDriver;
 }
 
 
 // Match the driverDescription against the driverList
 PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex)
 {
-  // This needs to be called after initialising.
-  if(!initialised)
-    return FALSE;
+    // This needs to be called after initialising.
+    if(!initialised)
+        return FALSE;
+    return TRUE;
 }
 
 // Match the driverDescription against the driverList

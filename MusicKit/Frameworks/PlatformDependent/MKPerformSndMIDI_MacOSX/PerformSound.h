@@ -15,6 +15,9 @@
 */
 /*
   $Log$
+  Revision 1.2  2000/05/05 22:43:56  leigh
+  ensure we don't have boolean constants predefined
+
   Revision 1.1  2000/03/11 01:42:19  leigh
   Initial Release
 
@@ -33,8 +36,10 @@
 // these don't seem to be defined anywhere standard - probably they
 // are in GnuStep
 typedef int BOOL;
+#ifndef FALSE
 #define FALSE 0
 #define TRUE !(FALSE)
+#endif
 
 #include <stdlib.h> // for NULL definition
 #include "soundstruct.h"

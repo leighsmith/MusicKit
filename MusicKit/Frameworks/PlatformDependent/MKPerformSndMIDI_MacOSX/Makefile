@@ -19,15 +19,15 @@ HFILES = PerformSound.h mididriverUser.h midi_driver.h\
 CFILES = mididriverUser.c PerformSound.c
 
 OTHERSRCS = Makefile.preamble Makefile Makefile.postamble m.template\
-            h.template
+            h.template platform.make
 
 
-MAKEFILEDIR = $(MAKEFILEPATH)/pb_makefiles
+MAKEFILEDIR = .
 CURRENTLY_ACTIVE_VERSION = YES
 DEPLOY_WITH_VERSION_NAME = A
 CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = framework.make
-NEXTSTEP_INSTALLDIR = /Local/Library/Frameworks
+NEXTSTEP_INSTALLDIR = $(LOCAL_LIBRARY_DIR)/Frameworks
 WINDOWS_INSTALLDIR = /Library/Frameworks
 PDO_UNIX_INSTALLDIR = /Library/Frameworks
 LIBS = 
@@ -35,8 +35,10 @@ DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
 
-FRAMEWORK_PATHS = -Fdfdf
+FRAMEWORK_PATHS = 
 FRAMEWORKS = -framework Foundation
+PUBLIC_HEADERS = midi_driver.h mididriver_types.h
+
 
 
 NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc
