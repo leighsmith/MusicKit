@@ -40,8 +40,10 @@
     int outputBusNumber;
     /*! @var parameterListLength The number of parameters in this AudioUnit. */
     int parameterListLength;
-    /*! @var parameterIDList An array of AudioUnitParameterIDs used to refer to each AudioUnit parameter */
+    /*! @var parameterIDList An array of AudioUnitParameterIDs used to refer to each AudioUnit parameter. */
     AudioUnitParameterID *parameterIDList;
+    /*! @var auIsNonInterleaved Indicates if the AudioUnit accepts data as non-interleaved buffers (YES), or as a single interleaved buffer (NO). */
+    BOOL auIsNonInterleaved;
     
     float *interleavedInputSamples;
 }
