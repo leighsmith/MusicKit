@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.3  2001/08/31 21:01:59  skotmcdonald
   Changed calls to conductor time to appropriate new timeInSeconds, timeInBeats calls
 
@@ -30,7 +33,7 @@ Modification history:
 #import "timeunits.h"
 
 /* This file implements the "NoteRecorder" functionality. Originally this
-   was a class (subclass of Instrument) but since it does so little, it's
+   was a class (subclass of MKInstrument) but since it does so little, it's
    now just a couple of functions. 
 
    The idea of this is to support both tempo-evaluated file writing and

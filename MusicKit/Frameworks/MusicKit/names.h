@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.3  2001/07/02 16:58:36  sbrandon
   - commented out cruft after endif
 
@@ -33,18 +36,18 @@ Modification history:
   * declared below.
   * 
   * Names are primarily used when reading and writing scorefiles. For
-  * example, when you read a scorefile into a Score object, the Parts that
+  * example, when you read a scorefile into a MKScore object, the MKParts that
   * are created are given the names used in the file.  Similarly, when
-  * performing a scorefile with a ScorefilePerformer, the NoteSenders are
+  * performing a scorefile with a MKScorefilePerformer, the MKNoteSenders are
   * given the part names used in the file.  Envelopes and WaveTables
   * created when reading a scorefile are also given names.
   * 
-  * When writing a Score which contains Parts you created in an application,
-  * you can explicitly give the Parts names.  If a name you specify is not
+  * When writing a MKScore which contains MKParts you created in an application,
+  * you can explicitly give the MKParts names.  If a name you specify is not
   * unique, or if you don't specify any name, one will be automatically
   * generated (a variant of what you supplied). Similarly, when recording to a 
-  * scorefile with a ScorefileWriter, you can explicitly provide part names by 
-  * naming the corresponding NoteReceivers.
+  * scorefile with a MKScorefileWriter, you can explicitly provide part names by 
+  * naming the corresponding MKNoteReceivers.
   * 
   * Note that the naming mechanism allows any object, whether or not it is
   * in the Music Kit, to be named. In general, it is the Application's 
@@ -53,7 +56,7 @@ Modification history:
   * when freeing the instance. Copying an object does not copy its name.
   * 
   * It's illegal to change the name of an object during a performance
-  * involving a ScorefileWriter. (Because an object'll get written to the
+  * involving a MKScorefileWriter. (Because an object'll get written to the
   * file with the wrong name.) 
   */
 
@@ -91,8 +94,8 @@ extern BOOL MKAddGlobalScorefileObject(id object,NSString *name);
   * If there is already a global scorefile object with the specified name, 
   * does nothing and returns NO. Otherwise returns YES. 
   * The type of the object in the scorefile is determined as follows:
-  * If object -isKindOf:WaveTable, then the type is MK_waveTable.
-  * If object -isKindOf:Envelope, then the type is MK_envelope.
+  * If object -isKindOf:MKWaveTable, then the type is MK_waveTable.
+  * If object -isKindOf:MKEnvelope, then the type is MK_envelope.
   * Otherwise, the type is MK_object.
   * Note that the global scorefile table is independent of the Music Kit
   * name table. Thus, an object can be named in one and unnamed in the other,

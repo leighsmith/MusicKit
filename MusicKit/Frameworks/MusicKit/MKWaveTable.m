@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.4  2001/08/07 16:10:32  leighsmith
   Corrected class name during en/decode to match latest MK prefixed name
 
@@ -39,17 +42,17 @@ Modification history:
 #import "MKWaveTable.h"
 
 @implementation MKWaveTable : NSObject
-/* WaveTable is an abstract class inherited by classes which produce or store 
-   an array of data to be used as a lookup table in a UnitGenerator.
+/* MKWaveTable is an abstract class inherited by classes which produce or store 
+   an array of data to be used as a lookup table in a MKUnitGenerator.
    Subclasses provided by the Music Kit are
 
-   * * Partials computes a WaveTable given an arrays of harmonic amplitudes, 
+   * * MKPartials computes a MKWaveTable given an arrays of harmonic amplitudes, 
    frequency ratios, and phases.
 
-   * * Samples stores a WaveTable of existing samples read in from a Sound 
+   * * MKSamples stores a MKWaveTable of existing samples read in from a Sound 
    object or soundfile.
 
-   The WaveTable class caches multiple formats for the data. This is
+   The MKWaveTable class caches multiple formats for the data. This is
    usefuly because it is expensive to recompute the data.
    Access to the data is through one of the "data" methods (-dataDSP, 
    -dataDouble, etc.).  The method
@@ -180,7 +183,7 @@ Modification history:
 }
 
 - (DSPDatum *)dataDSPLength:(int)aLength scale:(double)aScaling
-/* Returns the WaveTable as an array of DSPDatums, recomputing 
+/* Returns the MKWaveTable as an array of DSPDatums, recomputing 
    the data if necessary at the requested scaling and length. If the 
    subclass has no data, returns NULL. The data should neither be modified
    nor freed by the sender. */
@@ -197,7 +200,7 @@ Modification history:
 }
 
 - (double *)dataDoubleLength:(int)aLength scale:(double)aScaling
-/* Returns the WaveTable as an array of doubles, recomputing 
+/* Returns the MKWaveTable as an array of doubles, recomputing 
    the data if necessary at the requested scaling and length. If the 
    subclass has no data, returns NULL. The data should neither be modified
    nor freed by the sender. */
@@ -230,7 +233,7 @@ Modification history:
 }
 
 - (DSPDatum *)dataDSP
-/* Returns the WaveTable as an array of DSPDatums
+/* Returns the MKWaveTable as an array of DSPDatums
    with the current length and scaling, computing the data if it has
    not been computed yet. Returns NULL if the subclass cannot compute the
    data.  You should neither alter nor free the data. */
@@ -239,7 +242,7 @@ Modification history:
 }
 
 - (double *)dataDouble
-/* Returns the WaveTable as an array of doubles, 
+/* Returns the MKWaveTable as an array of doubles, 
    with the current length and scaling, computing the data if it has
    not been computed yet. Returns NULL if the subclass cannot compute the
    data.  You should neither alter nor free the data. */
@@ -248,7 +251,7 @@ Modification history:
 }
 
 - (DSPDatum *)dataDSPLength:(int)aLength
-/* Returns the WaveTable as an array of DSPDatums, recomputing 
+/* Returns the MKWaveTable as an array of DSPDatums, recomputing 
    the data if necessary to make the array the requested length.
    Returns NULL if the subclass cannot compute the data.
    You should neither alter nor free the data. */
@@ -257,7 +260,7 @@ Modification history:
 }
 
 - (double *)dataDoubleLength:(int)aLength
-/* Returns the WaveTable as an array of doubles, recomputing 
+/* Returns the MKWaveTable as an array of doubles, recomputing 
    the data if necessary to make the array the requested length.
    Returns NULL if the subclass cannot compute the data.
    You should neither alter nor free the data. */
@@ -266,7 +269,7 @@ Modification history:
 }
 
 - (DSPDatum *)dataDSPScale:(double)aScaling
-/* Returns the WaveTable as an array of DSPDatums, recomputing 
+/* Returns the MKWaveTable as an array of DSPDatums, recomputing 
    the data if necessary with the requested scaling. 
    Returns NULL if the subclass cannot compute the data.
    You should neither alter nor free the data. */
@@ -275,7 +278,7 @@ Modification history:
 }
 
 - (double *)dataDoubleScale:(double)aScaling
-/* Returns the WaveTable as an array of doubles, recomputing 
+/* Returns the MKWaveTable as an array of doubles, recomputing 
    the data if necessary with the requested scaling.
    Returns NULL if the subclass cannot compute the data.
    You should neither alter nor free the data. */

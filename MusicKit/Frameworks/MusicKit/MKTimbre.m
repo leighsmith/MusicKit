@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.6  2001/08/07 16:11:52  leighsmith
   Corrected class name during decode to match latest MK prefixed name
 
@@ -40,7 +43,7 @@ Modification history:
   04/23/90/daj - Changed to partialsDB.m (made it no longer a class).
   07/24/90/daj - Changed sscanf to atoi to support separate-threaded Music Kit
   performance.
-  08/17/90/daj - Changed to use new float/int format Partials objects. It saves
+  08/17/90/daj - Changed to use new float/int format MKPartials objects. It saves
                  300K in the size of libmusic and in vmem space. Also changed 
                  to use MKGetPartialsClass(). I experimented with more radical
                  changes: Initializing of data base could be made lazy, but
@@ -50,13 +53,13 @@ Modification history:
 		 unsigned char arrays but that would only save about 50K.
 		 These are small wins compared with 300K, so I'm calling it
 		 a day.  Note, however, that a lot of ugly hacking was done
-		 to Partials to accomodate this change.  Partials should be
+		 to MKPartials to accomodate this change.  MKPartials should be
 		 cleaned up (and the data base made public) in a future 
 		 release. Made nameStr not static -- there's no need for it 
 		 to be.
 
   03/02/91/daj - Added public data base support; moved to musickit_proj.
-  05/06/91/daj - Created Timbre.m from other version.
+  05/06/91/daj - Created MKTimbre.m from other version.
   07/12/91/daj - Changed waveTableForFreq to interpret frequencies as center
                  frequencies.
   08/22/91/daj - Changed to new Storage API.
@@ -106,7 +109,7 @@ static MKTimbre *newNeXTTimbre(NSString *newName,int count)
 }
 
 static void initNeXTTimbres(void)
-    /* Creates a set of Partials objects which contain the spectra of analyzed
+    /* Creates a set of MKPartials objects which contain the spectra of analyzed
        voices and instruments. Created by Michael McNabb.  We may want to 
        put these in a file instead of having them in memory. */
 {
@@ -413,27 +416,27 @@ static MKWaveTable *waveTableForFreq(MKTimbre *timbre,
 }
 
 -(MKWaveTable *)waveTableForFreq:(double)freq
-  /* Returns the WaveTable object corresponding to the specified freq, if 
+  /* Returns the MKWaveTable object corresponding to the specified freq, if 
      any */
 {    return waveTableForFreq(self,freq);  }
 
 -(MKWaveTable *)waveTableAt:(int)index
-  /* Returns the WaveTable object corresponding to the specified freq, if 
+  /* Returns the MKWaveTable object corresponding to the specified freq, if 
      any */
 {    return waveTableForIndex(self,index); }
 
 -(double)freqForWaveTable:(MKWaveTable *)obj
-  /* Returns the WaveTable object corresponding to the specified freq, if 
+  /* Returns the MKWaveTable object corresponding to the specified freq, if 
      any */
 {    
-//    WaveTable **p;
+//    MKWaveTable **p;
 //    int count;
     int i;
     if (!waveTables || !freqs)
 	return MK_NODVAL;
 
     /* sb: simple case of NSArray method...
-    p = (WaveTable **)NX_ADDRESS(waveTables);
+    p = (MKWaveTable **)NX_ADDRESS(waveTables);
     count = [waveTables count];
     for (i=0; i<count; p++,i++)
 	if (*p == obj)

@@ -13,7 +13,7 @@
     In a typical Music Kit performance, the connection set consists
     exclusively of MKNoteReceivers which are owned by MKNoteFilters and MKInstruments.
 
-    MKNoteSender's sendNote: method defines the Note-sending
+    MKNoteSender's sendNote: method defines the MKNote-sending
     mechanism:  when a MKNoteSender receives the message sendNote:aNote,
     it forwards the argument (a MKNote object) by sending the 
     message receiveNote:aNote to each of its connections.
@@ -39,6 +39,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.4  2001/07/02 16:37:58  sbrandon
   - added newline onto end of file
 
@@ -72,7 +75,7 @@ Modification history:
 }
 
 -owner
-  /* Gets the owner (an Instrument or NoteFilter). */
+  /* Gets the owner (an MKInstrument or MKNoteFilter). */
 {
     return owner;
 }
@@ -94,7 +97,7 @@ Modification history:
    * sendNote:atTime: or sendNote:withDelay even if the
    * receiver is squelched.
    * However, if the receiver is still squelched when the
-   * sendNote: message is received, the Note isn't sent.
+   * sendNote: message is received, the MKNote isn't sent.
    *
    * Returns the receiver.
    */
@@ -387,7 +390,7 @@ Modification history:
 @implementation MKNoteSender(Private)
 
 -_setOwner:obj
-  /* Sets the owner (an Instrument or NoteFilter). In most cases,
+  /* Sets the owner (an MKInstrument or MKNoteFilter). In most cases,
      only the owner itself sends this message. 
      */
 {
@@ -409,12 +412,12 @@ Modification history:
 }
 
 -(void)_setPerformer:aPerformer
-  /* Sets the receiver's Performer.
+  /* Sets the receiver's MKPerformer.
    * Associates a aPerformer
    * with the receiver, such that aPerformer
    * owns the receiver.
    * Normally, you only invoke this method if you are 
-   * implementing a subclass of Performer that creates MKNoteSender instances.
+   * implementing a subclass of MKPerformer that creates MKNoteSender instances.
    * Returns the receiver.
    */
 {

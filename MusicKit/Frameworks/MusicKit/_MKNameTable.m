@@ -36,6 +36,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.7  2000/10/01 06:42:47  leigh
   Doco cleanup.
 
@@ -378,8 +381,8 @@ BOOL MKAddGlobalScorefileObject(id object,NSString *name)
  * The object does not become visible to scorefiles unless they explicitly
  * do a call of getGlobal.  
  * The type of the object in the scorefile is determined as follows:
- * * If object isKindOf:[WaveTable class], then the type is MK_waveTable.
- * * If object isKindOf:[Envelope class], then the type is MK_envelope.
+ * * If object isKindOf:[MKWaveTable class], then the type is MK_waveTable.
+ * * If object isKindOf:[MKEnvelope class], then the type is MK_envelope.
  * * Otherwise, the type is MK_object.
  */
 {
@@ -428,7 +431,7 @@ id MKGetGlobalScorefileObject(NSString *name)
 static const int keyWordsArr[] = {
     /* note types */
     MK_noteDur,MK_mute,MK_noteOn,MK_noteOff,MK_noteUpdate, 
-    /* Midi pars */
+    /* MKMidi pars */
     MK_resetControllers,MK_localControlModeOn,MK_localControlModeOff,
     MK_allNotesOff,MK_omniModeOff,MK_omniModeOn,MK_monoMode,MK_polyMode,
     MK_sysClock,MK_sysStart,MK_sysContinue,MK_sysStop,MK_sysActiveSensing,

@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.5  2001/08/31 21:01:59  skotmcdonald
   Changed calls to conductor time to appropriate new timeInSeconds, timeInBeats calls
 
@@ -105,14 +108,14 @@ double MKSetTime(double newTime)
     /* The first call to MKSetTime() after a conducted performance is over
        resets this variable. Hence, there is a (safe) assumption that nobody
        will call MKSetTime() between the time the conductor finishes its
-       performance and the time that Orchestra close is called. (This is the
+       performance and the time that MKOrchestra close is called. (This is the
        only situation where the value of wasConductedPerformance matters). */
 
     return myTime = newTime;
 }
 
 double _MKAdjustTime(double newTime)
-    /* Adjusts the time as specified. This is used, e.g. by Midi for 
+    /* Adjusts the time as specified. This is used, e.g. by MKMidi for 
        setting the time as specified in incoming Midi time stamps.
        */
 {

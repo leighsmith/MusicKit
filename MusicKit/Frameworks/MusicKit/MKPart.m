@@ -13,7 +13,7 @@
     some methods do both; see splitNotes and combineNotes).
     MKNotes are ordered within the MKPart by their timeTag values.
     To move a MKNote within a MKPart, you simply change its timeTag by
-    sending it the appropriate message (see the Note class).
+    sending it the appropriate message (see the MKNote class).
     This effectively removes the MKNote from its MKPart, changes the timeTag,
     and then adds it back to its MKPart.
    
@@ -90,6 +90,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.14  2001/08/07 16:22:51  leighsmith
   Moved return self in initWithCoder that was short-circuiting initialization
 
@@ -231,13 +234,13 @@ static void removeNote(MKPart *self,id aNote);
 
 -combineNotes
   /* TYPE: Editing 
-   * Attempts to minimize the number of Notes by creating
+   * Attempts to minimize the number of MKNotes by creating
    * a single noteDur for every noteOn/noteOff pair
-   * (see the Note class).  A noteOn is paired with the 
+   * (see the MKNote class).  A noteOn is paired with the 
    * earliest subsequent noteOff that has a matching noteTag. However,
    * if an intervening noteOn or noteDur is found, the noteOn is not 
    * converted to a noteDur.
-   * If a match isn't found, the Note is unaffected.
+   * If a match isn't found, the MKNote is unaffected.
    * Returns the receiver.
    */
 {
@@ -255,7 +258,7 @@ static void removeNote(MKPart *self,id aNote);
     for (i = 0; i < listSize; i++) {			/* For each note... */
         if ([(noteOn = [aList objectAtIndex: i]) noteType] == MK_noteOn) {
             noteTag = [noteOn noteTag];			/* We got a noteOn */
-            if (noteTag == MAXINT)			/* Malformed Part. */
+            if (noteTag == MAXINT)			/* Malformed MKPart. */
                 continue;
             for (j = i + 1; (j < listSize); j++) {	/* Search forward */
                 if ((aNote = [aList objectAtIndex: j]) &&			/* Watch out for nils */
@@ -296,11 +299,11 @@ static void removeNote(MKPart *self,id aNote);
    * Splits all noteDurs into a noteOn/noteOff pair.
    * This is done by changing the noteType of the noteDur to noteOn
    * and creating a noteOff with timeTag equal to the 
-   * timeTag of the original Note plus its duration.
+   * timeTag of the original MKNote plus its duration.
    * However, if an intervening noteOn or noteDur of the same tag
    * appears, the noteOff is not added (the noteDur is still converted
    * to a noteOn in this case).
-   * Returns the receiver, or nil if the receiver contains no Notes.
+   * Returns the receiver, or nil if the receiver contains no MKNotes.
    */
 {
     NSArray *aList;
@@ -322,7 +325,7 @@ static void removeNote(MKPart *self,id aNote);
             if (noteTag == MAXINT) {               // Add noteOff if no tag.
                 [self addNote: noteOff];
             }
-            else {                                 // Need to check for intervening Note.
+            else {                                 // Need to check for intervening MKNote.
                 matchFound = NO;
                 timeTag = [noteOff timeTag];
 		// search for matching noteTag in the subsequent notes before the noteOff.
@@ -370,12 +373,12 @@ static void removeNote(MKPart *self,id aNote);
     return self;
 }
 
-/* Score Interface. ------------------------------------------------------- */
+/* MKScore Interface. ------------------------------------------------------- */
 
 
 -addToScore:(id)newScore
   /* TYPE: Modifying
-   * Removes the receiver from its present Score, if any, and adds it
+   * Removes the receiver from its present MKScore, if any, and adds it
    * to newScore.  
    */
 {
@@ -384,8 +387,8 @@ static void removeNote(MKPart *self,id aNote);
 
 -removeFromScore
   /* TYPE: Modifying
-   * Removes the receiver from its present Score.
-   * Returns the receiver, or nil if it isn't part of a Score.
+   * Removes the receiver from its present MKScore.
+   * Returns the receiver, or nil if it isn't part of a MKScore.
    * (Implemented as [score removePart:self].)
    */
 {
@@ -403,7 +406,7 @@ static void removeNote(MKPart *self,id aNote);
 #endif
 
 -init
-  /* TYPE: Creating and freeing a Part
+  /* TYPE: Creating and freeing a MKPart
    * Initializes the receiver:
    *
    * Sent by the superclass upon creation;
@@ -420,8 +423,8 @@ static void removeNote(MKPart *self,id aNote);
 /* Freeing. ------------------------------------------------------------- */
 
 - (void)dealloc
-  /* TYPE: Creating and freeing a Part
-   * Frees the receiver and its Notes, including the info note, if any.
+  /* TYPE: Creating and freeing a MKPart
+   * Frees the receiver and its MKNotes, including the info note, if any.
    * Also removes the name, if any, from the name table.
    * Illegal while the receiver is being performed. In this case, does not
    * free the receiver and returns self. Otherwise returns nil.
@@ -437,10 +440,10 @@ static void removeNote(MKPart *self,id aNote);
 
 static void unsetPartLinks(MKPart *aPart)
 {
-//    Note **el;
+//    MKNote **el;
     unsigned n;
    /*
-   for (n = [aPart->notes count], el = (Note **)NX_ADDRESS(aPart->notes); 
+   for (n = [aPart->notes count], el = (MKNote **)NX_ADDRESS(aPart->notes); 
 	   n--;
 	   )
 	[*el++ _setPartLink:nil order:0];
@@ -452,7 +455,7 @@ static void unsetPartLinks(MKPart *aPart)
 
 -releaseNotes
   /* TYPE: Editing
-   * Removes and frees all Notes from the receiver including the info 
+   * Removes and frees all MKNotes from the receiver including the info 
    * note, if any.
    * Doesn't free the receiver.
    * Returns the receiver.
@@ -473,8 +476,8 @@ static void unsetPartLinks(MKPart *aPart)
 }
 
 -releaseSelfOnly
-  /* TYPE: Creating and freeing a Part
-   * Frees the receiver but not their Notes.
+  /* TYPE: Creating and freeing a MKPart
+   * Frees the receiver but not their MKNotes.
    * Returns the receiver. */
 {
     [score removePart:self];
@@ -526,7 +529,7 @@ static id findNote(MKPart *self, MKNote *aNote)
      */
 /*
     NSEnumerator *enumerator = [self->notes objectEnumerator];
-    Note *anObject;
+    MKNote *anObject;
 
     while ((anObject = [enumerator nextObject])) {
         if (_MKNoteCompare(&anObject,&aNote) == NSOrderedSame) return anObject;
@@ -556,9 +559,9 @@ static int findAux(MKPart *self,double timeTag)
 {       
     /* This function returns:
        If no elements in list, NULL. sb: -1
-       If the timeTag equals that of the first Note or the timeTag is less 
-       than that of the first Note, a pointer to the first Note.
-       Otherwise, a pointer to the last Note with timeTag less than the one
+       If the timeTag equals that of the first MKNote or the timeTag is less 
+       than that of the first MKNote, a pointer to the first MKNote.
+       Otherwise, a pointer to the last MKNote with timeTag less than the one
        specified. */
     /*sb: changed to returning index to note rather than pointer. -1 = notFound. */
     register int low = 0;//NX_ADDRESS(self->notes); 
@@ -631,7 +634,7 @@ static int findAtOrBeforeTime(MKPart *self,double lastTimeTag)
   /* TYPE: Editing
    * Adds a copy of aNote
    * to the receiver.  
-   * Returns the new Note.
+   * Returns the new MKNote.
    */
 {
     id newNote = [aNote copyWithZone:NSDefaultMallocZone()];
@@ -644,18 +647,18 @@ static BOOL suspendCompaction = NO;
 static void removeNote(MKPart *self, MKNote *aNote)
 {
     MKNote *where = findNote(self,aNote); /*sb: returns the note, not the address in the list */
-    if (where)  /* Note in Part? */
+    if (where)  /* MKNote in MKPart? */
       _MKMakePlaceHolder(aNote); /* Mark it as 'to be removed' */
 }
 
 -removeNote:aNote
   /* TYPE: Editing
    * Removes aNote from the receiver.
-   * Returns the removed Note or nil if not found.
-   * You shouldn't free the removed Note if
+   * Returns the removed MKNote or nil if not found.
+   * You shouldn't free the removed MKNote if
    * there are any active Performers using the receiver.
    * 
-   * Keep in mind that if you have to remove a large number of Notes,
+   * Keep in mind that if you have to remove a large number of MKNotes,
    * it is more efficient to put them in a List and then use removeNotes:.
    */
 {
@@ -685,7 +688,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 - removeNotes:aList
   /* TYPE: Editing
-   * Removes from the receiver all Notes common to the receiver
+   * Removes from the receiver all MKNotes common to the receiver
    * and aList. 
    * Returns the receiver.
    */
@@ -699,10 +702,10 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 - addNoteCopies:aList timeShift:(double) shift     
   /* TYPE: Editing
-   * Copies the Notes in aList, shifts the copies'
+   * Copies the MKNotes in aList, shifts the copies'
    * timeTags by shift beats, and then adds them
    * to the receiver.  aList isn't altered.
-   * aList should contain only Notes.
+   * aList should contain only MKNotes.
    * Returns the receiver.
    */
 { 
@@ -732,24 +735,24 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 -addNotes: (NSArray *) aList timeShift:(double) shift
   /* TYPE: Editing
-   * aList should contain only Notes.
-   * For each Note in aList, removes the Note
-   * from its present Part, if any, shifts its timeTag by
+   * aList should contain only MKNotes.
+   * For each MKNote in aList, removes the MKNote
+   * from its present MKPart, if any, shifts its timeTag by
    * shift beats, and adds it to the receiver.
    * 
    * Returns the receiver. 
    */
 { 
     /* In order to optimize the common case of moving notes from one
-       Part to another, we do the following.
+       MKPart to another, we do the following.
 
-       First we go through the List, removing the Notes from their Parts,
-       with the suspendCompaction set. We also keep track of which Parts we've
+       First we go through the List, removing the MKNotes from their MKParts,
+       with the suspendCompaction set. We also keep track of which MKParts we've
        seen. 
 
-       Then we compact each of the Parts.
+       Then we compact each of the MKParts.
        
-       Finally, we add the Notes. */
+       Finally, we add the MKNotes. */
 
     register MKNote *el;
     MKPart *elPart;
@@ -809,7 +812,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 - (void)removeAllObjects
   /* TYPE: Editing
-   * Removes the receiver's Notes but doesn't free them, except for 
+   * Removes the receiver's MKNotes but doesn't free them, except for 
    * placeHolder notes, which are freed.
    * Returns the receiver. 
    */
@@ -823,7 +826,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 -shiftTime:(double)shift
   /* TYPE: Editing
-   * Shift is added to the timeTags of all notes in the Part. 
+   * Shift is added to the timeTags of all notes in the MKPart. 
    * Implemented in terms of addNotes:timeShift:.
    */
 {
@@ -837,7 +840,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 - firstTimeTag:(double) firstTimeTag lastTimeTag:(double) lastTimeTag 
   /* TYPE: Querying the object
-   * Creates and returns a List containing the receiver's Notes
+   * Creates and returns a List containing the receiver's MKNotes
    * between firstTimeTag and lastTimeTag in time order.
    * The notes are not copied. This method is useful in conjunction with
    * addNotes:timeShift:, removeNotes:, etc.
@@ -864,7 +867,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 -(unsigned)noteCount
   /* TYPE: Querying
-   * Return the number of Notes in the receiver.
+   * Return the number of MKNotes in the receiver.
    */
 {
     return noteCount;
@@ -880,17 +883,17 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 -(BOOL)isEmpty
   /* TYPE: Querying
-   * Returns YES if the receiver contains no Notes.
+   * Returns YES if the receiver contains no MKNotes.
    */
 {
     return (noteCount == 0);
 }
 
 - atTime:(double) timeTag
-  /* TYPE: Accessing Notes
-   * Returns the first Note found at time timeTag, or nil if 
-   * no such Note.
-   * Doesn't copy the Note.
+  /* TYPE: Accessing MKNotes
+   * Returns the first MKNote found at time timeTag, or nil if 
+   * no such MKNote.
+   * Doesn't copy the MKNote.
    */
 {
     MKNote *el;
@@ -905,10 +908,10 @@ static void removeNote(MKPart *self, MKNote *aNote)
 }
 
 -atOrAfterTime:(double)timeTag
-  /* TYPE: Accessing Notes
-   * Returns the first Note found at or after time timeTag, 
-   * or nil if no such Note. 
-   * Doesn't copy the Note.
+  /* TYPE: Accessing MKNotes
+   * Returns the first MKNote found at or after time timeTag, 
+   * or nil if no such MKNote. 
+   * Doesn't copy the MKNote.
    */
 {
     int elReturned;
@@ -919,19 +922,19 @@ static void removeNote(MKPart *self, MKNote *aNote)
 }
 
 - nth:(unsigned) n
-  /* TYPE: Accessing Notes
-   * Returns the nth Note (0-based), or nil if no such Note.
-   * Doesn't copy the Note. */
+  /* TYPE: Accessing MKNotes
+   * Returns the nth MKNote (0-based), or nil if no such MKNote.
+   * Doesn't copy the MKNote. */
 {
     sortIfNeeded(self);
     return [[[notes objectAtIndex:n] retain] autorelease];
 }
 
 -atOrAfterTime:(double)timeTag nth:(unsigned) n 
-  /* TYPE: Accessing Notes
-   * Returns the nth Note (0-based) at or after time timeTag,
-   * or nil if no such Note. 
-   * Doesn't copy the Note.
+  /* TYPE: Accessing MKNotes
+   * Returns the nth MKNote (0-based) at or after time timeTag,
+   * or nil if no such MKNote. 
+   * Doesn't copy the MKNote.
    */
 {
     int arrEnd;
@@ -952,10 +955,10 @@ static void removeNote(MKPart *self, MKNote *aNote)
 }
 
 -atTime:(double)timeTag nth:(unsigned) n
-  /* TYPE: Accessing Notes
-   * Returns the nth Note (0-based) at time timeTag,
-   * or nil if no such Note. 
-   * Doesn't copy the Note.
+  /* TYPE: Accessing MKNotes
+   * Returns the nth MKNote (0-based) at time timeTag,
+   * or nil if no such MKNote. 
+   * Doesn't copy the MKNote.
    */
 {
     id aNote = [self atOrAfterTime:timeTag nth:n];
@@ -967,9 +970,9 @@ static void removeNote(MKPart *self, MKNote *aNote)
 }
 
 -next:aNote  
-  /* TYPE: Accessing Notes
-   * Returns the Note immediately following aNote, or nil
-   * if no such Note.  (A more efficient procedure is to create a
+  /* TYPE: Accessing MKNotes
+   * Returns the MKNote immediately following aNote, or nil
+   * if no such MKNote.  (A more efficient procedure is to create a
    * List with notes and then step down the List using NX_ADDRESS().
    */
 /* sb: returns note that is retained and autoreleased, so the receiving method
@@ -993,8 +996,8 @@ static void removeNote(MKPart *self, MKNote *aNote)
 /* Querying --------------------------------------------------- */
 
 - copyWithZone:(NSZone *)zone
-  /* TYPE: Creating a Part
-   * Creates and returns a new Part that contains
+  /* TYPE: Creating a MKPart
+   * Creates and returns a new MKPart that contains
    * a copy of the contents of the receiver. The info is copied as well.
    */
 {
@@ -1011,9 +1014,9 @@ static void removeNote(MKPart *self, MKNote *aNote)
 }
 
 -notesNoCopy
-  /* TYPE: Accessing Notes
-   * Returns a List of the Notes in the receiver, in time order. 
-   * The Notes are not copied. 
+  /* TYPE: Accessing MKNotes
+   * Returns a List of the MKNotes in the receiver, in time order. 
+   * The MKNotes are not copied. 
    * The List is not copied and is not guaranteed to be sorted.
    */
 {
@@ -1021,9 +1024,9 @@ static void removeNote(MKPart *self, MKNote *aNote)
 }
 
 - (NSMutableArray *) notes
-  /* TYPE: Accessing Notes
-   * Returns a Array of the Notes in the receiver, in time order. 
-   * The Notes *are* copied. 
+  /* TYPE: Accessing MKNotes
+   * Returns a Array of the MKNotes in the receiver, in time order. 
+   * The MKNotes *are* copied. 
 //   * It is the sender's responsibility to free the List.
 //   * sb: NOT TRUE. List will be autoreleased.
    */
@@ -1036,7 +1039,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 - (MKScore *) score  
   /* TYPE: Querying
-   * Returns the Score of the receiver's owner.
+   * Returns the MKScore of the receiver's owner.
    */
 {
     // we didn't allocate it, so we don't autorelease it.
@@ -1044,7 +1047,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 }
 
 - (MKNote *) infoNote
-  /* Returns 'header note', a collection of info associated with each Part,
+  /* Returns 'header note', a collection of info associated with each MKPart,
      which may be used by the App in any way it wants. */ 
 {
 //    return [[info retain] autorelease];
@@ -1053,7 +1056,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 }
 
 -setInfoNote:(MKNote *) aNote
-  /* Sets 'header note', a collection of info associated with each Part,
+  /* Sets 'header note', a collection of info associated with each MKPart,
      which may be used by the App in any way it wants. aNote is copied. 
      The old info, if any, is freed. */ 
 {
@@ -1065,7 +1068,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 - (void)encodeWithCoder:(NSCoder *)aCoder
   /* You never send this message directly.  
      Should be invoked with NXWriteRootObject(). 
-     Archives Notes and info. Also archives Score using 
+     Archives MKNotes and info. Also archives MKScore using 
      NXWriteObjectReference(). */
 {
     NSString *str;
@@ -1124,7 +1127,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 @implementation MKPart(Private)
 
 -(void) _mapTags: (NSMutableDictionary *) hashTable
-    /* Must be method to avoid loading Score. hashTable is a NSMutableDictionary object
+    /* Must be method to avoid loading MKScore. hashTable is a NSMutableDictionary object
      that maps ints to ints. */
 {
     int oldTag;

@@ -25,6 +25,9 @@
 /* Modification history:
 
    $Log$
+   Revision 1.9  2001/09/06 21:27:48  leighsmith
+   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
    Revision 1.8  2001/08/07 16:16:11  leighsmith
    Corrected class name during decode to match latest MK prefixed name
 
@@ -66,7 +69,7 @@
 		  This is less than clean, but probably nobody will ever
 		  notice (!).
    06/06/92/daj - Changed freePartPerformers to refuse to do so if the
-                  ScorePerformer is in performance.
+                  MKScorePerformer is in performance.
    11/01/94/daj - Fixed _partPerformerDidDeactivate: so it correctly notices
 	          when all PartPerformers are deactivated.
  */
@@ -226,7 +229,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
      MKPartPerformers for each MKPart in the MKScore in the same order as the
      corresponding MKParts. Note that any MKParts added to 
      aScore after -setScore: is sent will not appear in the performance. In
-     order to get such Parts to appear, you must send setScore: again. 
+     order to get such MKParts to appear, you must send setScore: again. 
      If aScore is not the same as the previously specified score,
      frees all contained MKPartPerformers.  The MKPartPerformers are added
      in the order the corresponding MKParts appear in the MKScore. */
@@ -293,7 +296,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
 		In this case, _deactivate is sent by the Conductor.  
 		Note that the Conductor also deactivates the PartPerformers.
 		Here it's a race. We don't know the order that the deactivate
-		messages will come in.  If the ScorePerformer gets his first,
+		messages will come in.  If the MKScorePerformer gets his first,
 		the PartPerformers will be deactivated and then will ignore
 		their messages from the Conductor. if the PartPerformers get
 		their's first, _deactivate will be sent from 
@@ -402,7 +405,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
     newObj->conductor = [conductor retain];
 
 /*
-    ScorePerformer *newObj = [super copyWithZone:zone];
+    MKScorePerformer *newObj = [super copyWithZone:zone];
     newObj->partPerformers = nil;
     [newObj setScore:score];
     newObj->_deactivateMsgPtr = NULL;
@@ -462,7 +465,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
 
 -partPerformers
   /* TYPE: Processing
-   * Returns a copy of the Array of the receiver's PartPerformer collection.
+   * Returns a copy of the Array of the receiver's MKPartPerformer collection.
    * The PartPerformers themselves are not copied. It is the sender's
    * responsibility to free the Array.
    */
@@ -533,7 +536,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
 }
 
 -(BOOL)archiveScore
-  /* Returns whether Score is archived when the receiver or any object 
+  /* Returns whether MKScore is archived when the receiver or any object 
    pointing to the receiver is archived. */
 {
     return archiveScore;

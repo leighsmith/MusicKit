@@ -18,6 +18,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.14  2000/11/25 22:42:43  leigh
   Doco cleanup
 
@@ -59,7 +62,7 @@ Modification history:
 
   09/15/89/daj - Added caching of Note class. (_MKCheckClassNote())
   10/27/89/daj - Added argument to _MKOpenFileStream to surpress error msg.
-  11/15/89/daj - Added caching of Partials class. (_MKCheckClassPartials())
+  11/15/89/daj - Added caching of MKPartials class. (_MKCheckClassPartials())
   12/21/89/daj - Changed strstr() calls to isExtensionPresent() in 
                  _MKOpenFileStream(). This insures that the extension is the
 		 final extension (i.e. it does the right thing with multiple-
@@ -304,7 +307,7 @@ NSString * _MKGetErrStr(int errCode)
           msg = NSLocalizedStringFromTableInBundle(@"Music Kit: Note at time %f out-of-order. Current time is %f.", _MK_ERRTAB, _MKErrorBundle(), " This error warns that notes were found in a scorefile with times out of order.  There are two arguments, which must be in the order indicated. The first is the time of the incorrect note.  The second is the current time.");
 	break;
       case MK_samplesNoResampleErr:
-          msg = NSLocalizedStringFromTableInBundle(@"Music Kit: Samples object cannot resample.", _MK_ERRTAB, _MKErrorBundle(), " This error warns that the Samples object cannot change the sampling rate of a Waveform.  This error will rarely be seen by a user.");
+          msg = NSLocalizedStringFromTableInBundle(@"Music Kit: MKSamples object cannot resample.", _MK_ERRTAB, _MKErrorBundle(), " This error warns that the MKSamples object cannot change the sampling rate of a Waveform.  This error will rarely be seen by a user.");
 	break;
       case MK_noMoreTagsErr:
           msg = NSLocalizedStringFromTableInBundle(@"Music Kit: No more noteTags.", _MK_ERRTAB, _MKErrorBundle(), "This error warns that the Music Kit has run out of "noteTags".  Thiswill probably never be seen by a user. ");
@@ -314,7 +317,7 @@ NSString * _MKGetErrStr(int errCode)
 	break;
 	/* ---------------- Synthesis errors --------------------- */
       case MK_orchBadFreeErr:
-          msg = NSLocalizedStringFromTableInBundle(@"Music Kit: Unit Generators are still in use.", _MK_ERRTAB, _MKErrorBundle(), " This error indicates that the developer attempted to abort the Orchestra while manually-allocated Unit Generators or SynthPatches were still allocated.  This error rarely if ever is seen by users.");
+          msg = NSLocalizedStringFromTableInBundle(@"Music Kit: Unit Generators are still in use.", _MK_ERRTAB, _MKErrorBundle(), " This error indicates that the developer attempted to abort the MKOrchestra while manually-allocated Unit Generators or SynthPatches were still allocated.  This error rarely if ever is seen by users.");
 	break;
       case MK_synthDataCantClearErr:
           msg = NSLocalizedStringFromTableInBundle(@"Music Kit: Can't clear SynthData memory.", _MK_ERRTAB, _MKErrorBundle(), " A DSP error occurred when trying to clear DSP memory.  This error rarely if ever is seen by users.");
@@ -329,7 +332,7 @@ NSString * _MKGetErrStr(int errCode)
           msg = NSLocalizedStringFromTableInBundle(@"SynthInstrument: Omitting note at time %f.", _MK_ERRTAB, _MKErrorBundle(), "This error occurs if there are not enough DSP resources to play a note. Its one argument is the time of the note.");
 	break;
       case MK_synthInsNoClass:
-          msg = NSLocalizedStringFromTableInBundle(@"Music Kit: No SynthPatch class set in SynthInstrument.", _MK_ERRTAB, _MKErrorBundle(), "This error warns that a SynthInstrument object cannot do DSP synthesis because no SynthPatch class was set.");
+          msg = NSLocalizedStringFromTableInBundle(@"Music Kit: No MKSynthPatch class set in SynthInstrument.", _MK_ERRTAB, _MKErrorBundle(), "This error warns that a SynthInstrument object cannot do DSP synthesis because no MKSynthPatch class was set.");
 	break;
       case MK_ugLoadErr:
           msg = NSLocalizedStringFromTableInBundle(@"Music Kit: Can't load unit generator %s.", _MK_ERRTAB, _MKErrorBundle(), "A DSP error occurred when trying to load a unit generator module into DSP memory.  This error rarely if ever is seen by users. The one argument is the class of the unit generator that could not be loaded.");
@@ -344,7 +347,7 @@ NSString * _MKGetErrStr(int errCode)
           msg = NSLocalizedStringFromTableInBundle(@"Music Kit: Could not put datum %d into argument %@ of %@.", _MK_ERRTAB, _MKErrorBundle(), " This error indicates that a DSP error occurred while attempting to set a DSP unit generator argument to a datum value.  The three arguments, which must be in the order indicated, are the datum value, the argument name and the unit generator name.  This error rarely if ever is seen by users. ");
 	break;
       case MK_ugOrchMismatchErr:
-          msg = NSLocalizedStringFromTableInBundle(@"Music Kit: Attempt to put address into argument of unit generator of a different orchestra.", _MK_ERRTAB, _MKErrorBundle(), "This error indicates that an attempt was made to put a DSP address into a unit generator running on a different DSP Orchestra.  This error rarely if ever is seen by users.");
+          msg = NSLocalizedStringFromTableInBundle(@"Music Kit: Attempt to put address into argument of unit generator of a different orchestra.", _MK_ERRTAB, _MKErrorBundle(), "This error indicates that an attempt was made to put a DSP address into a unit generator running on a different DSP MKOrchestra.  This error rarely if ever is seen by users.");
 	break;
       case MK_ugArgSpaceMismatchErr:
           msg = NSLocalizedStringFromTableInBundle(@"Music Kit: Attempt to put %s-space address into %s-space argument %@ of %@.", _MK_ERRTAB, _MKErrorBundle(), "This error indicates that an attempt was made to put a DSP address value with a memory space that does not match the memory space which the DSP unit generator assumes.  The arguments, which must be in the order specified, are the space of the address, the space of the agrument, the name of the argument, and the name of the unit generator.   This error rarely if ever is seen by users.");	
@@ -479,9 +482,9 @@ NSString * _MKGetErrStr(int errCode)
       case MK_sfTooManyErrorsErr:
           msg = NSLocalizedStringFromTableInBundle(@"Too many parser errors. Quitting.", _MK_ERRTAB, _MKErrorBundle(), "This error occurs when the number of errors exceeds some limit.  (The limit is set by the application.)");
 	break;
-	/* -------------- UnitGenerator Library errors -------------- */
+	/* -------------- MKUnitGenerator Library errors -------------- */
       case MK_ugsNotSetRunErr:
-          msg = NSLocalizedStringFromTableInBundle(@"Unitgenerator Library: %s must be set before running %s.", _MK_ERRTAB, _MKErrorBundle(), "This error occurs if a DSP UnitGenerator argument is left unset and then the UnitGenerator is sent the -run message.  The two arguments, which must  be in the order indicated, are the argument that was left unset and the name of the UnitGenerator.  This error is rarely if ever seen by the user.");
+          msg = NSLocalizedStringFromTableInBundle(@"Unitgenerator Library: %s must be set before running %s.", _MK_ERRTAB, _MKErrorBundle(), "This error occurs if a DSP MKUnitGenerator argument is left unset and then the MKUnitGenerator is sent the -run message.  The two arguments, which must  be in the order indicated, are the argument that was left unset and the name of the MKUnitGenerator.  This error is rarely if ever seen by the user.");
 	break;
       case MK_ugsPowerOf2Err:
           msg = NSLocalizedStringFromTableInBundle(@"Unitgenerator Library: Table size of %s must be a power of 2.", _MK_ERRTAB, _MKErrorBundle(), "This error indicates a request to load an oscillator table that is a size which is not a power of 2.  This error is rarely seen by the user.");
@@ -489,7 +492,7 @@ NSString * _MKGetErrStr(int errCode)
       case MK_ugsNotSetGetErr:
           msg = NSLocalizedStringFromTableInBundle(@"Unitgenerator Library: %s of %s must be set before getting %s.", _MK_ERRTAB, _MKErrorBundle(), "This error indicates that a particular argument of a particular DSP unit generator must be set before asking for the value of another argument of that unit generator.  The three arguments, which must be in the order specified, are the argument that needs to be set, the unit generator for which it needs to be set, and the argument whose value is being requested.  Users rarely see this error.");
 	break;
-	/* -------------------- SynthPatch Library errors -------------- */
+	/* -------------------- MKSynthPatch Library errors -------------- */
       case MK_spsCantGetMemoryErr:
           msg = NSLocalizedStringFromTableInBundle(@"Synthpatch Library: Out of %s memory at time %.3f.", _MK_ERRTAB, _MKErrorBundle(), " This error indicates that a particular kind of memory is not available. The two arguments, which must be in the order indicated, are the type of memory and the time of the note for which the memory cannot be found. For example: '...Out of wavetable memory at time 3.123'.");
 	break;
@@ -500,10 +503,10 @@ NSString * _MKGetErrStr(int errCode)
           msg = NSLocalizedStringFromTableInBundle(@"Synthpatch Library: Invalid timbre database keyword: %s.", _MK_ERRTAB, _MKErrorBundle(), "This error occurs if a scorefile or applicatin specifies a timbre specifier that is invalid or does not correspond to a known timbre.  The single argument is the timbre specifier.");
 	break;
       case MK_spsOutOfRangeErr:
-          msg = NSLocalizedStringFromTableInBundle(@"Synthpatch Library: %s out of range.", _MK_ERRTAB, _MKErrorBundle(), "This error occurs if a parameter is out of range for the SynthPatch. The single argument is the parameter that is out of range.  For example, '...pitch out of range.'");
+          msg = NSLocalizedStringFromTableInBundle(@"Synthpatch Library: %s out of range.", _MK_ERRTAB, _MKErrorBundle(), "This error occurs if a parameter is out of range for the MKSynthPatch. The single argument is the parameter that is out of range.  For example, '...pitch out of range.'");
 	break;
       case MK_spsCantGetUGErr:
-          msg = NSLocalizedStringFromTableInBundle(@"Synthpatch Library: Can't allocate %s at time %.3f.", _MK_ERRTAB, _MKErrorBundle(), "This error indicates that the SynthPatch could not allocate the specified resource at the specifed time.  The two arguments, which must be in the order specified, are the resource that could not be allocated and the time at which it could not be allocated.  Example: 'Can't allocate Pluck noise generator at time 3.123.'");
+          msg = NSLocalizedStringFromTableInBundle(@"Synthpatch Library: Can't allocate %s at time %.3f.", _MK_ERRTAB, _MKErrorBundle(), "This error indicates that the MKSynthPatch could not allocate the specified resource at the specifed time.  The two arguments, which must be in the order specified, are the resource that could not be allocated and the time at which it could not be allocated.  Example: 'Can't allocate Pluck noise generator at time 3.123.'");
 	break;
 	/* ---------------- Post-2.0 errors ------------------------- */
       case MK_synthDataCantReadDSPErr:
@@ -659,20 +662,20 @@ NSData *_MKOpenFileStreamForReading(NSString * fileName,
 
 
 #if 0
-/* Orchestra set/get */
+/* MKOrchestra set/get */
 
-/* At one time, I was thinking of supporting a List of all Orchestra classes
+/* At one time, I was thinking of supporting a List of all MKOrchestra classes
    so that people can add Orchestras for other hardware. But the changes
-   needed to UnitGenerator, SynthPatch, etc. would be quite extensive. It's
+   needed to MKUnitGenerator, MKSynthPatch, etc. would be quite extensive. It's
    misleading to suggest that we really support other hardware now. Thus
    this function's not supported. */
 
 static id orchList = nil;
 
 id MKOrchestraClasses(void)
-    /* Returns a List of Orchestra factories. Ordinarily this list contains
-	only the Orchestra factory. However you may modify this List to
-	add your own Orchestra analog. This List is used for any
+    /* Returns a List of MKOrchestra factories. Ordinarily this list contains
+	only the MKOrchestra factory. However you may modify this List to
+	add your own MKOrchestra analog. This List is used for any
 	"broadcasts". For example, the Conductor sends +flushTimedMessages
 	to each of the elements in the List. */
 {
@@ -681,7 +684,7 @@ id MKOrchestraClasses(void)
 #endif
 
 
-/* Used by AsympUG, SynthPatch, etc. */
+/* Used by AsympUG, MKSynthPatch, etc. */
 static double preemptDuration = .006;
 
 

@@ -42,6 +42,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.6  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.5  2001/07/10 17:03:54  leighsmith
   Removed subclass specific note sender ivar so the super class method noteSender works correctly
 
@@ -59,7 +62,7 @@
   12/04/90/daj - Fixed bug in copyFromZone: (thanks to lbj)
   02/06/92/daj - Fixed bug in activate that could cause note before
                  firstTimeTag to play, if it's the last note.
-  06/29/93/daj - Fixed bug in activate that would cause the Performer to
+  06/29/93/daj - Fixed bug in activate that would cause the MKPerformer to
 		 wait unnecessarily in the case where there are no notes
 		 between firstTimeTag and lastTimeTag, but where there
 		 is a note after lastTimeTag. 
@@ -127,7 +130,6 @@ static BOOL fastActivation = NO;
      Optionally archives part using NXWriteObjectReference().
      */
 {
-    [super encodeWithCoder: aCoder];
     [aCoder encodeConditionalObject: part];
     [aCoder encodeValuesOfObjCTypes: "dd", &firstTimeTag, &lastTimeTag];
     [aCoder encodeConditionalObject: _scorePerformer];
@@ -138,7 +140,6 @@ static BOOL fastActivation = NO;
      Should be invoked via NXReadObject(). 
      See write:. */
 {
-    [super initWithCoder:aDecoder];
     if ([aDecoder versionForClassName: @"MKPartPerformer"] == VERSION2) {
 	part = [[aDecoder decodeObject] retain];
 	[aDecoder decodeValuesOfObjCTypes: "dd", &firstTimeTag, &lastTimeTag];
@@ -161,7 +162,7 @@ static BOOL fastActivation = NO;
 
 - copyWithZone:(NSZone *)zone;
   /* TYPE: Copying: Returns a copy of the receiver.
-   * Creates and returns a new inactive Performer as
+   * Creates and returns a new inactive MKPerformer as
    * a copy of the receiver.  
    * The new object has the same timeShift and 
    * duration values as the reciever. Its

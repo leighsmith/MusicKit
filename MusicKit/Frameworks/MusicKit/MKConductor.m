@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.23  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.22  2001/08/27 23:51:47  skotmcdonald
   deltaT fetched from conductor, took out accidently left behind debug messages (MKSampler). Conductor: renamed time methods to timeInBeat, timeInSamples to be more explicit
 
@@ -136,9 +139,9 @@ Modification history:
   11/02/92/daj - Changes for MTC
   11/09/92/daj - Changed beatToClock and adjustBeat.  Changes to pause/resume, etc.
   11/16/92/daj - Bumped archiving version to 3 and added archiving of delegate.
-                 We don't archive activePerformers because Performer doesn't archive
+                 We don't archive activePerformers because MKPerformer doesn't archive
 		 it's status--unarchived performers always come up inactive.
-		 We don't archive MTCSynch because Midi (still!) doesn't support 
+		 We don't archive MTCSynch because MKMidi (still!) doesn't support 
 		 archiving. (Sigh.)
 */
 #import <AppKit/NSApplication.h>
@@ -233,7 +236,7 @@ static void condInit();    /* Forward decl */
 static MKMsgStruct *evalSpecialQueue();
 
 /*
- LMS these are SB's Notes, perhaps redundant.
+ LMS these are SB's notes, perhaps redundant.
  startTime is absolute date (NSDate *)
  nextmsgtime: maybe relative time to start of performance YES
  clockTime: relative to start of performance
@@ -1047,7 +1050,7 @@ static void evalAfterQueues()
    * case, otherwise returns the receiver.
    * Note that pausing a performance does not pause MidiIn, nor does it
    * pause any Instruments that have their own clocks. (e.g. MidiOut, and
-   * the Orchestra).
+   * the MKOrchestra).
    */
 {	
    if ((!inPerformance)  || performanceIsPaused)

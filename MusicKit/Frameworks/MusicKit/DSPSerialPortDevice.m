@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.3  2000/02/03 19:12:23  leigh
   Renamed for MKDSP framework
 
@@ -29,7 +32,7 @@ Modification history:
 
 #define EQU(_x,_y) ((((_x)-(_y))>0)?(((_x)-(_y))<.0001):(((_y)-(_x))<.0001))
 
-/* Serial port delegate of Orchestra.
+/* Serial port delegate of MKOrchestra.
  */
 @implementation DSPSerialPortDevice:NSObject 
 {
@@ -88,7 +91,7 @@ Modification history:
 }
 
 -setUpSerialPort:orch
-/* This is invoked by Orchestra open to set up the serial port. 
+/* This is invoked by MKOrchestra open to set up the serial port. 
  * The DSPSerialPortDevice should fill the struct with the
  * appropriate values.
  */

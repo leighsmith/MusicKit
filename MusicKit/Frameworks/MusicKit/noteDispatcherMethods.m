@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.5  2000/04/25 02:08:39  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -93,7 +96,7 @@ Modification history:
 }
 
 -disconnectNoteSenders
-    /* Broadcasts "disconnect" to NoteSenders. */ 
+    /* Broadcasts "disconnect" to MKNoteSenders. */ 
 {
     [noteSenders makeObjectsPerformSelector:@selector(disconnect)];
     return self;

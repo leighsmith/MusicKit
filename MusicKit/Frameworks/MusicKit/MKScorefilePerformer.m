@@ -7,7 +7,7 @@
     Instances of this class are used directly in an application;
     you don't have to design your own subclass.
    
-    A ScorefilePerformer creates
+    A MKScorefilePerformer creates
     a separate MKNoteSender object for each part name in the file
     (as given in the file's part statements).  The MKNoteSender objects
     are maintained as an List in the inherited variable noteSenders.
@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.7  2001/08/07 16:16:11  leighsmith
   Corrected class name during decode to match latest MK prefixed name
 
@@ -76,7 +79,7 @@ Modification history:
   /* TYPE: Archiving; Writes object.
      You never send this message directly.  
      Should be invoked with NXWriteRootObject(). 
-     Invokes superclass write:, which archives NoteSenders.
+     Invokes superclass write:, which archives MKNoteSenders.
      Then archives info and part infos gleaned from the Scorefile. */
 {
     [aCoder encodeValuesOfObjCTypes: "@@", &info, &_partStubs];
@@ -132,11 +135,11 @@ Modification history:
   /* TYPE: Accessing f
    * Initializes the information obtained from the scorefile header.
    * Notice that the parts representing the scorefile do not appear
-   * in the ScorefilePerformer until activation.
+   * in the MKScorefilePerformer until activation.
    * Returns the receiver, or nil if the file can't be read, there
    * are too many parse errors, or there is no body. 
    * You never send the initializeFile message 
-   * directly to a ScorefilePerformer; it's invoked by the
+   * directly to a MKScorefilePerformer; it's invoked by the
    * selfActivate method.
    */
 {
@@ -157,7 +160,7 @@ Modification history:
   /* TYPE: Accessing f
    * Performs file finalization and returns the receiver.
    * You never send the finishFile message 
-   * directly to a ScorefilePerformer; it's invoked by the
+   * directly to a MKScorefilePerformer; it's invoked by the
    * deactivate method.
    */
 {
@@ -181,13 +184,13 @@ Modification history:
 -nextNote
   /* TYPE: Accessing N
    * Grabs the next entry in the body of the scorefile.
-   * If the entry is a note statement, this fashions a Note
+   * If the entry is a note statement, this fashions a MKNote
    * object and returns it.  If it's a time statement, updates
    * the fileTime variable
    * and returns nil.
    *
    * You never send nextNote directly to a 
-   * ScorefilePerformer; it's invoked by the perform method.
+   * MKScorefilePerformer; it's invoked by the perform method.
    * You may override this method, e.g. to modify the note before it is 
    * performed but you must send [super nextNote].
    */
@@ -198,7 +201,7 @@ Modification history:
 }
 
 -infoNoteForNoteSender:(id)aNoteSender
-  /* If aNoteSender is a member of the receiver, returns the info Note
+  /* If aNoteSender is a member of the receiver, returns the info MKNote
      corresponding to the partName represented by that MKNoteSender. Otherwise, 
      returns nil. */
 {
@@ -230,7 +233,7 @@ Modification history:
 -performNote:aNote
   /* TYPE: Accessing N
    * Sends aNote to the appropriate MKNoteSender
-   * You never send performNote: directly to a ScorefilePerformer;
+   * You never send performNote: directly to a MKScorefilePerformer;
    * it's invoked by the perform method.
    */
 {
@@ -239,7 +242,7 @@ Modification history:
 }
 
 - (void)dealloc
-  /* Frees receiver and its NoteSenders.  Also frees the info.
+  /* Frees receiver and its MKNoteSenders.  Also frees the info.
      If the receiver is active, does nothing and returns self. Otherwise,
      returns nil. */
 {
@@ -272,7 +275,7 @@ Modification history:
      to add a MKNoteSender to the receiver when a part is declared in the
      scorefile. 
      It is a method rather than a C function to hide from the parser
-     the differences between Score and ScorefilePerformer.
+     the differences between MKScore and MKScorefilePerformer.
      */
 {
     id aNoteSender = [MKNoteSender new];
@@ -290,7 +293,7 @@ Modification history:
 -_elements
   /* Same as noteSenders. (Needed by Scorefile parser.) 
    It is a method rather than a C function to hide from the parser
-   the differences between Score and ScorefilePerformer. */
+   the differences between MKScore and MKScorefilePerformer. */
 {
 //    return [self noteSenders];
     return _MKLightweightArrayCopy(_partStubs); 

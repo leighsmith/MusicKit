@@ -6,6 +6,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.2  1999/07/29 01:25:43  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -17,7 +20,7 @@ Modification history:
 
 #import "MKEnvelope.h"
 
-/* Envelope functions. */
+/* MKEnvelope functions. */
 extern MKEnvStatus _MKGetEnvelopeNth(id self,int n,double *xPtr,double *yPtr, double *smoothingPtr);
 
 #endif

@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.3  2000/06/09 03:29:10  leigh
   Removed objc.h
 
@@ -30,14 +33,14 @@ Modification history:
    happy */
 
 id _MKSetSynthElementSynthPatchLoc(SynthElement *synthEl,unsigned short loc)
-    /* Used for cross-ref into SynthPatch location. */
+    /* Used for cross-ref into MKSynthPatch location. */
 {
     synthEl->_synthPatchLoc = loc;
     return synthEl;
 }
 
 unsigned _MKGetSynthElementSynthPatchLoc(SynthElement *synthEl)
-    /* Used for cross-ref into SynthPatch location */
+    /* Used for cross-ref into MKSynthPatch location */
 {
     return synthEl->_synthPatchLoc;
 }

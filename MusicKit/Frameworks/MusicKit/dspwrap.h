@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.2  1999/07/29 01:26:04  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -18,7 +21,7 @@ Modification history:
    never need to deal with these structures. They are generated automatically
    by the utility dspwrap. */
 
-typedef struct _MKMasterUGStruct { /* Used by UnitGenerator "master" class. */
+typedef struct _MKMasterUGStruct { /* Used by MKUnitGenerator "master" class. */
     unsigned argCount;             /* Number of arguments. */
     int symCount[DSP_LC_NUM];      /* Number of symbols loaded in each space.
                       Needed for symbols that are not args. */
@@ -28,7 +31,7 @@ typedef struct _MKMasterUGStruct { /* Used by UnitGenerator "master" class. */
     void *reserved;                /* Reserved */ 
 } MKMasterUGStruct;
 
-typedef struct _MKLeafUGStruct {    /* Used by UnitGenerator "leaf" class. */
+typedef struct _MKLeafUGStruct {    /* Used by MKUnitGenerator "leaf" class. */
     MKOrchMemStruct reso;           /* Resources needed  */
     double computeTime;             /* Time for this unit generator to
                                        compute one sample, in seconds. */

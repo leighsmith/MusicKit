@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.3  2000/05/13 17:16:49  leigh
   Doco cleanup and stricter typing of parameters
 
@@ -189,7 +192,7 @@ int _MKSetEnvSFVar(_ScorefileVar *self,id envelope)
 }
 
 int _MKSetWaveSFVar(_ScorefileVar *self,id waveTable)
-    /* Receiver must be untyped or waveTable-typed. WaveTable is not copied. */
+    /* Receiver must be untyped or waveTable-typed. MKWaveTable is not copied. */
 {
     return setToSymbol(self,waveTable,MK_waveTable);
 }

@@ -3,7 +3,7 @@
   Defined In: The MusicKit
 
   Description:
-    A MKScoreRecorder is a pseudo-Instrument that adds MKNotes to the MKParts in
+    A MKScoreRecorder is a pseudo-MKInstrument that adds MKNotes to the MKParts in
     a given MKScore.  It does this by creating a MKPartRecorder, a true
     MKInstrument, for each of the MKScore's MKPart objects.  A MKScoreRecorder's
     MKScore is set through the setScore: method.  If you add MKParts to or
@@ -26,10 +26,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2000, The MusicKit Project.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.6  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.5  2000/11/25 23:01:40  leigh
   Enforced ivar privacy, removed -releasePartRecorders, doco cleanup, correctly typed partRecorderClass to Class
 
@@ -42,6 +45,26 @@
   Revision 1.2  1999/07/29 01:25:50  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
+*/
+/*!
+  @class MKScoreRecorder
+  @discussion
+
+A MKScoreRecorder is a pseudo-MKInstrument that adds MKNotes to the MKParts in a given
+MKScore.  It does this by creating a MKPartRecorder, a true MKInstrument, for each of
+the MKScore's MKPart objects.  A MKScoreRecorder's MKScore is set through the
+<b>setScore:</b> method.  If you add MKParts to or remove MKParts from the MKScore
+after sending the <b>setScore:</b> message, the changes will not be seen by the
+MKScoreRecorder.  
+
+A MKScoreRecorder can access a MKPartRecorder by the name of the MKPart with which
+it's associated.  It can also set the time unit of all its MKPartRecorders through
+a single message, <b>setTimeUnit:</b>.
+
+A MKScoreRecorder is said to be in performance from the time any of its
+MKPartRecorders receives a MKNote until the performance is finished.
+
+See also:  MKPartRecorder
 */
 #ifndef __MK_ScoreRecorder_H___
 #define __MK_ScoreRecorder_H___
@@ -62,29 +85,38 @@
     BOOL _noteSeen;
 }
 
+/*!
+  @method init
+  @result Returns <b>self</b>
+  @discussion Inits the receiver; you never invoke this method directly.
+              A subclass implementation should send <tt>[super init]</tt>
+              before performing its own initialization.
+*/
 - init; 
- /* 
-  * Inits the receiver; you never invoke this method directly.
-  * A subclass implementation
-  * should send [super init] before performing its own initialization.
-  * The return value is ignored.  
-  */
 
+/*!
+  @method setScore:
+  @param  aScore is an id.
+  @result Returns an id.
+  @discussion Removes and frees the receiver's current PartRecorders, sets its
+              MKScore to <i>aScore</i>, and then creates and adds a MKPartRecorder for
+              each MKPart in the MKScore.  Subsequent changes to <i>aScore</i> (adding
+              or removing MKParts) aren't seen by the receiver.  If the receiver is
+              in performance, this does nothing and returns <b>nil</b>, otherwise
+              it returns the receiver.
+              
+              If you want to set the MKScore without freeing the current PartRecorders
+              you should send <b>removePartRecorders</b> before invoking this method;
+              the PartRecorders are then removed but not freed.
+*/
 - setScore: (MKScore *) aScore; 
- /* 
-  * Removes and frees the receiver's current MKPartRecorders, sets its MKScore
-  * to aScore, and then creates and adds a MKPartRecorder for each MKPart in
-  * the MKScore.  Subsequent changes to aScore (adding or removing Parts)
-  * aren't seen by the receiver.  If the receiver is in performance, this
-  * does nothing and returns nil, otherwise it returns the receiver.
-  * 
-  * If you want to set the MKScore without freeing the current MKPartRecorders you
-  * should send removePartRecorders before invoking this method; the
-  * MKPartRecorders are then removed but not freed.  
-  */
 
+/*!
+  @method score
+  @result Returns an MKScore.
+  @discussion Returns the receiver's MKScore.
+*/
 - (MKScore *) score; 
- /* Returns the receiver's MKScore. */
 
 - copyWithZone:(NSZone *)zone; 
  /* 
@@ -93,98 +125,140 @@
   * set of MKPartRecorders.
   */
 
--copy;
- /* Same as [self copyFromZone:[self zone]]; */
 
+/*!
+  @method copy
+  @result Returns an id.
+  @discussion Creates and returns a MKScoreRecorder as a copy of the receiver.  The
+              new object has the same MKScore as the receiver, but contains its own
+              set of PartRecorders.  Same as [self copyFromZone:[self zone]];
+*/
+-copy;
+
+/*!
+  @method removePartRecorders
+  @result Returns an id.
+  @discussion Removes the receiver's MKPartRecorders and sets its MKScore to
+              <b>nil</b>.  (The MKPartRecorder objects aren't freed.)  Returns the
+              receiver.
+*/
 - removePartRecorders; 
- /* 
-  * Removes the receiver's MKPartRecorders and sets its MKScore to nil.  (The
-  * MKPartRecorder objects aren't freed.)  Returns the receiver.  
-  */
 
 - (void)dealloc; 
  /* 
   * Frees the receiver and its MKPartRecorders.  You never directly invoke this method. 
   */
 
-- (MKTimeUnit)timeUnit;
- /* Returns the receiver's time unit, either MK_second or MK_beat. */
+/*!
+  @method timeUnit
+  @result Returns a MKTimeUnit.
+  @discussion Returns the receiver's time unit, either MK_second, MK_timeTag or
+              MK_beat.
+*/
+- (MKTimeUnit) timeUnit;
 
-- setTimeUnit:(MKTimeUnit)aTimeUnit;
- /* 
-  * Sets the receiver's time unit to aTimeUnit, one of MK_beat and
-  * MK_second, and forwards the setTimeUnit:aTimeUnit message to the
-  * receiver's MKPartRecorders.  If the receiver is in performance, this
-  * does nothing and returns nil.  Otherwise returns the receiver.
-  */
+/*!
+  @method setTimeUnit:
+  @param  aTimeUnit is a MKTimeUnit.
+  @result Returns an id.
+  @discussion Sets the receiver's time unit to <i>aTimeUnit</i>, one of MK_beat,
+              MK_timeTag and MK_second, and forwards the 
+              <b>setTimeUnit:</b><i>aTimeUnit</i> message to the receiver's PartRecorders.
+              If the receiver is in performance, this does nothing and returns <b>nil</b>.
+              Otherwise returns the receiver.
+*/
+- setTimeUnit:(MKTimeUnit) aTimeUnit;
 
+/*!
+  @method partRecorders
+  @result Returns an id.
+  @discussion Returns a NSArray object that contains the receiver's MKPartRecorders. 
+*/
 - partRecorders; 
- /* 
-  * Returns a NSArray object that contains the receiver's MKPartRecorders.
-  * It's the sender's responsibility to free the NSArray.
-  */
 
-- (BOOL )inPerformance;
- /* 
-  * Returns YES if the receiver is in performance, otherwise returns NO.
-  */
+/*!
+  @method inPerformance
+  @result Returns a BOOL.
+  @discussion Returns YES if the receiver is in performance, otherwise returns
+              NO.
+*/
+- (BOOL) inPerformance;
 
+/*!
+  @method firstNote:
+  @param  aNote is an id.
+  @result Returns an id.
+  @discussion You never invoke this method; it's invoked automatically when the
+              first MKNote is received by any of the receiver's MKPartRecorders.  The
+              default does nothing; a subclass can implement this method for
+              performance initialization.  The returns value is
+              ignored.
+*/
 - firstNote:aNote; 
- /* 
-  * You never invoke this method; it's invoked automatically when the
-  * first MKNote is received by any of the receiver's MKPartRecorders.  The
-  * default does nothing; a subclass can implement this method for
-  * performance initialization.  The returns value is ignored.
-  */
 
+/*!
+  @method afterPerformance
+  @result Returns an id.
+  @discussion You never invoke this method; it's invoked automatically at the end
+              of the performance.  The default does nothing; a subclass can
+              implement this method for post-performance cleanup.  A subclass
+              version should always invoke <b>[super afterPerformance]</b>.  The
+              return value is ignored.
+*/
 - afterPerformance; 
- /* 
-  * You never invoke this method; it's invoked automatically at the end of
-  * the performance.  The default does nothing; a subclass can implement
-  * this method for post-performance cleanup.  A subclass version should
-  * always invoke [super afterPerformance].  The return value is ignored.
-  */
 
+/*!
+  @method noteReceivers
+  @result Returns an id.
+  @discussion Returns a NSArray object that contains the receiver's MKNoteReceivers. 
+              It's the sender's responsibility to free the NSArray.
+*/
 - noteReceivers; 
- /* 
-  * Returns a NSArray object that contains the receiver's MKNoteReceivers.  You
-  * must free the NSArray yourself when you're done with it.
-  */
 
+/*!
+  @method partRecorderForPart:
+  @param  aPart is an id.
+  @result Returns an id.
+  @discussion Returns the receiver's MKPartRecorder for <i>aPart</i>, or <b>nil</b>
+              if not found.
+*/
 - partRecorderForPart:aPart; 
- /* 
-  * Returns the receiver's MKPartRecorder for aPart, or nil if not found.
-  */ 
 
+/*!
+  @method setPartRecorderClass:
+  @param  aPartRecorderSubclass is an id.
+  @result Returns an id.
+  @discussion Normally, MKScoreRecorders create instances of the MKPartRecorder class.
+              This method allows you to specify that instances of some
+              MKPartRecorder subclass be created instead.  If 
+              <i>aPartRecorderSubclass</i> is not a subclass of MKPartRecorder
+              (or MKPartRecorder itself), this method has no effect and returns nil.
+              Otherwise, it returns self.
+*/
 -setPartRecorderClass:aPartRecorderSubclass;
- /* Normally, ScoreRecorders create instances of the MKPartRecorder class.
-   This method allows you to specify that instances of some MKPartRecorder
-   subclass be created instead. If aPartRecorderSubclass is not 
-   a subclass of MKPartRecorder (or MKPartRecorder itself), this method has 
-   no effect and returns nil. Otherwise, it returns self.
-  */
--partRecorderClass;
- /* Returns the class used for MKPartRecorders, as set by 
-   setPartRecorderClass:. The default is MKPartRecorder itself. */
 
-- (void)encodeWithCoder:(NSCoder *)aCoder;
+/*! 
+  @method partRecorderClass
+  @result Returns a Class.
+  @discussion Returns the class used for MKPartRecorders, as set by 
+              <b>setPartRecorderClass:</b>. The default is MKPartRecorder itself. 
+*/
+-partRecorderClass;
+
   /* 
      You never send this message directly.  
      Should be invoked with NXWriteRootObject(). 
      Archives partRecorders, timeUnit and partRecorderClass.
      Also optionally archives score using NXWriteObjectReference().
      */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+- (void)encodeWithCoder:(NSCoder *)aCoder;
+
   /* 
      You never send this message directly.  
      Should be invoked with NXReadObject(). 
      */
-
-//+ new; 
- /* Obsolete */
+- (id)initWithCoder:(NSCoder *)aDecoder;
    
 @end
-
-
 
 #endif

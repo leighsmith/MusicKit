@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.11  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.10  2001/08/28 23:39:34  leighsmith
   Cleaned up doco (variable naming and tables)
 
@@ -93,7 +96,7 @@ MKPartPerformer's performance.
 
 A MKPartPerformer creates its own NSMutableArray of the MKPart's
 MKNotes when it receives the setPart: message (but keep in mind that
-it doesn't make copies of the Notes themselves); changes to the MKPart
+it doesn't make copies of the MKNotes themselves); changes to the MKPart
 made during a performance won't affect the MKPartPerformer.  This
 allows a MKPart to be performed by a MKPartPerformer and used for
 recording by a MKPartRecorder at the same time.
@@ -134,7 +137,7 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
     some methods do both; see <b>splitNotes</b> and <b>combineNotes</b>).
     MKNotes are ordered within the MKPart by their timeTag values.
     To move a MKNote within a MKPart, you simply change its timeTag by
-    sending it the appropriate message (see the Note class).
+    sending it the appropriate message (see the MKNote class).
     This effectively removes the MKNote from its MKPart, changes the timeTag,
     and then adds it back to its MKPart.
    
@@ -282,7 +285,7 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               divided between the two MKNotes as described in MKNote's
               <b>split::</b> method.  Returns <b>self</b>.
               
-              See also: - <b>combineNotes:</b>, -<b> split:: </b>(Note)
+              See also: - <b>combineNotes:</b>, -<b> split:: </b>(MKNote)
 */
 - splitNotes; 
 

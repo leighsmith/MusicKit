@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.15  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.14  2001/08/30 19:05:20  leighsmith
   Merged RTF Class documentation into headerdoc comments
 
@@ -321,7 +324,7 @@ MKConductor is set, then its MKConductor is the
 <i>defaultConductor</i>, which has a default (but not immutable)
 tempo of 60.0 beats per minute.
 
-Keep in mind that if you send a MKNote directly to an Instrument, then
+Keep in mind that if you send a MKNote directly to an MKInstrument, then
 the MKNote's time tag is (usually) ignored, as described above, but
 its duration may be considered and employed by the MKInstrument.
 
@@ -431,7 +434,7 @@ extern int MKHighestPar(void);
   * can be used, for example, to print the names of all known parameters
   * as follows:
   *
-  * for (i=0; i<=MKHighestPar(); i++) printf([Note parNameForTag:i]);
+  * for (i=0; i<=MKHighestPar(); i++) printf([MKNote parNameForTag:i]);
   */
 
 #import "params.h"
@@ -439,7 +442,7 @@ extern int MKHighestPar(void);
 #define BITS_PER_INT 32
 #define MK_MKPARBITVECTS ((((int)MK_appPars-1)/ BITS_PER_INT)+1)
 
-typedef enum _MKDataType {     /* Data types supported by Notes */
+typedef enum _MKDataType {     /* Data types supported by MKNotes */
     MK_noType = ((int)MK_sysReset + 1),
     MK_double,  
     MK_string,
@@ -469,7 +472,7 @@ MKDataType;
     unsigned *_appPars; /* Bit-vector for application-defined parameters. */
     short _highAppPar; /* Highest bit in _appPars (0 if none). */
     /* _orderTag disambiguates simultaneous notes. If it's negative,
-       it means that the Note is actually slated for deletion. In this case,
+       it means that the MKNote is actually slated for deletion. In this case,
        the ordering is the absolute value of _orderTag. */
     int _orderTag;
 } 
@@ -550,7 +553,7 @@ MKDataType;
  /* 
   * If receiver isn't a noteDur, returns nil.  Otherwise, creates a noteOn
   * and a noteOff, splits the information in the receiver between the two
-  * of them (as explained below), and returns the new Notes by reference
+  * of them (as explained below), and returns the new MKNotes by reference
   * in the arguments.  The method itself returns the receiver, which is
   * neither freed nor otherwise affected.
   * 
@@ -558,8 +561,8 @@ MKDataType;
   * MK_relVelocity which, if present, is copied into the noteOff.  The
   * noteOn takes the receiver's timeTag while the noteOff's timeTag is
   * that of the receiver plus its duration.  If the receiver has a
-  * noteTag, it's copied into both new Notes; otherwise a new noteTag is
-  * generated for them.  The new Notes are added to the receiver's Part,
+  * noteTag, it's copied into both new MKNotes; otherwise a new noteTag is
+  * generated for them.  The new MKNotes are added to the receiver's MKPart,
   * if any.
   * 
   * The new noteOn shares the receiver's object-valued parameters.
@@ -662,9 +665,9 @@ MKDataType;
   * or MK_ENDOFTIME if none.  If newTimeTag is negative, it is clipped to
   * 0.0.
   * 
-  * If the receiver is a member of a Part, it's first removed from the
-  * Part, its timeTag is set, and then it's re-added to the Part.  This
-  * ensures that the receiver's position within its Part is correct.  
+  * If the receiver is a member of a MKPart, it's first removed from the
+  * MKPart, its timeTag is set, and then it's re-added to the MKPart.  This
+  * ensures that the receiver's position within its MKPart is correct.  
   */
 
 -(double ) setTimeTagPreserveEndTime:(double )newTimeTag;
@@ -673,9 +676,9 @@ MKDataType;
  * or MK_ENDOFTIME if none.  If newTimeTag is negative, it's clipped to
  * 0.0. If newTimeTag is greater than the endTime, it is clipped to endTime.
  *
- * If the receiver is a member of a Part, it's first removed from the
- * Part, its timeTag is set, and then it's re-added to the Part.  This
- * ensures that the receiver's position within its Part is correct.
+ * If the receiver is a member of a MKPart, it's first removed from the
+ * MKPart, its timeTag is set, and then it's re-added to the MKPart.  This
+ * ensures that the receiver's position within its MKPart is correct.
  *
  * Duration is changed to preserve the endTime of the note
  *
@@ -722,7 +725,7 @@ MKDataType;
   * 
   * If the timeTags are equal, the comparison is by order in the part.
   * 
-  * If the Notes are both not in parts or are in different parts, the
+  * If the MKNotes are both not in parts or are in different parts, the
   * result is indeterminate.
   * 
   */
@@ -832,7 +835,7 @@ MKDataType;
               <b>MK_mute it's changed to MK_noteUpdate.  Returns
               self</b>.
               
-              Note tags are used to associate different MKNotes with
+              MKNote tags are used to associate different MKNotes with
               each other, thus creating an identifiable (by the note
               tag value) &#170;Note stream.&#186; For example, you
               create a noteOn/noteOff pair by giving the two MKNotes
@@ -1112,7 +1115,7 @@ MKDataType;
 */
 - parAsWaveTable:(int )par; 
  /* 
-  * Returns the WaveTable value of par.  If par isn't present or if it's
+  * Returns the MKWaveTable value of par.  If par isn't present or if it's
   * value wasn't set as waveTable type, returns nil.  */
 
 
@@ -1132,7 +1135,7 @@ MKDataType;
  /* 
   * Returns the object value of par.  If par isn't present or if its value
   * isn't an object, returns nil.  (This method will return MKEnvelope and
-  * WaveTable objects).  */
+  * MKWaveTable objects).  */
 
 
 /*!
@@ -1211,7 +1214,7 @@ MKDataType;
 - copyParsFrom:aNote; 
  /* 
   * Copies aNote's parameters into the receiver.  Object-valued parameters
-  * are shared by the two Notes.  Returns the receiver.  */
+  * are shared by the two MKNotes.  Returns the receiver.  */
 
 
 /*!
@@ -1234,7 +1237,7 @@ MKDataType;
  /* 
   * If MK_freq is present, returns its value.  Otherwise, gets the
   * frequency that correponds to MK_keyNum according to the installed
-  * tuning system (see the TuningSystem class).  If MK_keyNum isn't
+  * tuning system (see the MKTuningSystem class).  If MK_keyNum isn't
   * present, returns MK_NODVAL. (Use MKIsNoDVal() to check for MK_NODVAL.)
   * The correpondence between key numbers and
   * frequencies for the default tuning system is given in Appendix F,
@@ -1262,7 +1265,7 @@ MKDataType;
  /* 
   * If MK_keyNum is present, returns its value.  Otherwise, gets the
   * frequency that correponds to MK_freq according to the installed tuning
-  * system (see the TuningSystem class).  If MK_freq isn't present,
+  * system (see the MKTuningSystem class).  If MK_freq isn't present,
   * returns MAXINT.  The correpondence between key numbers and
   * frequencies for the default tuning system is given in Appendix F,
   * "Music Tables."  */
@@ -1275,7 +1278,7 @@ MKDataType;
   @discussion Writes the MKNote, in scorefile format, to the stream
               <b><i>aStream</i></b>.  The stream must be open for writing.  You
               rarely invoke this method yourself; it's invoked from the
-              scorefile-writing methods defined by Score and ScorefileWriter. 
+              scorefile-writing methods defined by MKScore and MKScorefileWriter. 
               Returns self.
 */
 - writeScorefileStream:(NSMutableData *)aStream; 
@@ -1293,9 +1296,9 @@ MKDataType;
 - (id)initWithCoder:(NSCoder *)aDecoder;
   /* 
      You never send this message directly.  
-     Reads Note back from archive file. Note that the noteTag is NOT mapped
-     onto a unique note tag. This is left up to the Part or Score with which
-     the Note is unarchived. If the Note is unarchived directly with 
+     Reads MKNote back from archive file. Note that the noteTag is NOT mapped
+     onto a unique note tag. This is left up to the MKPart or MKScore with which
+     the Note is unarchived. If the MKNote is unarchived directly with 
      NXReadObject(), then the handling of the noteTag is left to the 
      application.
    */

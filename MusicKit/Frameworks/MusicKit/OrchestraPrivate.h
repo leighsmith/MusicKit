@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.4  2000/05/06 00:58:14  leigh
   typed parameters to reduce warnings
 
@@ -31,7 +34,7 @@ Modification history:
 #define _MK_ORCHTRACE(_orch,_debugFlag) \
   ((_MKTraceFlag & _debugFlag) || (_MKGetOrchSimulator(_orch)))
 
-/* Orchestra functions */
+/* MKOrchestra functions */
 extern id MKOrchestraClasses(void);
 extern void _MKOrchResetPreviousLosingTemplate(id self);
 extern id _MKFreeMem(id self,MKOrchAddrStruct *mem);
@@ -40,7 +43,7 @@ extern FILE *_MKGetOrchSimulator();
 extern DSPFix48 *_MKCurSample(id orch);
 extern void _MKOrchAddSynthIns(id anIns);
 extern void _MKOrchRemoveSynthIns(id anIns);
-extern BOOL _MKOrchLateDeltaTMode(id theOrch); /* See Orchestra.m ***SIGH*** */
+extern BOOL _MKOrchLateDeltaTMode(id theOrch); /* See MKOrchestra.m ***SIGH*** */
 
 @interface MKOrchestra(Private)
 

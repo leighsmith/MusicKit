@@ -14,6 +14,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.10  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.9  2001/08/27 19:59:09  leighsmith
   Added allNotesOff as a abstract instance method (since nearly all instruments implemented this anyway) and this provides a mechanism to shut off any sounding notes when a MKNoteReceiver is squelched
 
@@ -47,7 +50,7 @@
 		       freeNoteReceivers.
   02/25/91/daj - Added removeFromPerformance and disconnectNoteReceivers.
                  Also flushed class description comment.
-  10/7/93/daj - Added check in addNoteReceiver for existance of NoteReceivers list.
+  10/7/93/daj - Added check in addNoteReceiver for existance of MKNoteReceivers list.
 */
 
 #import "_musickit.h"
@@ -91,8 +94,8 @@
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
   /* TYPE: Performing; Realizes aNote.
    * Realizes aNote in the manner defined by the subclass.  
-   * You never send this message; it's sent to an Instrument
-   * as its NoteReceivers receive Note objects.
+   * You never send this message; it's sent to an MKInstrument
+   * as its MKNoteReceivers receive MKNote objects.
    */
 {
     return self;
@@ -100,13 +103,13 @@
 
 
 - firstNote: (MKNote *) aNote
-  /* TYPE: Performing; Received just before the first Note is realized.
+  /* TYPE: Performing; Received just before the first MKNote is realized.
    * You never invoke this method directly; it's sent by the receiver to 
-   * itself just before it realizes its first Note.
+   * itself just before it realizes its first MKNote.
    * You can subclass the method to perform pre-realization initialization.
-   * aNote, the Note that the Instrument is about to realize,
+   * aNote, the MKNote that the MKInstrument is about to realize,
    * is provided as a convenience and can be ignored in a subclass 
-   * implementation.  The Instrument isn't considered to be in performance 
+   * implementation.  The MKInstrument isn't considered to be in performance 
    * until after this method returns.
    * The default implementation does nothing and returns the receiver.
    */
@@ -115,8 +118,8 @@
 }
 
 - (NSArray *) noteReceivers	
-  /* TYPE: Querying; Returns a copy of the Array of NoteReceivers.
-   * Returns a copy of the Array of NoteReceivers. The NoteReceivers themselves
+  /* TYPE: Querying; Returns a copy of the Array of MKNoteReceivers.
+   * Returns a copy of the Array of MKNoteReceivers. The MKNoteReceivers themselves
    * are not copied.	
    */
 {
@@ -141,7 +144,7 @@
   /* TYPE: Modifying; Adds aNoteReceiver to the receiver.
    * Removes aNoteReceiver from its current owner and adds it to the 
    * receiver. 
-   * You can't add a NoteReceiver to an Instrument that's in performance.
+   * You can't add a NoteReceiver to an MKInstrument that's in performance.
    * If the receiver is in a performance, this message is ignored and nil is
    * returned. Otherwise aNoteReceiver is returned.
    */
@@ -162,7 +165,7 @@
   /* TYPE: Modifying; Removes aNoteReceiver from the receiver.
    * Removes aNoteReceiver from the receiver and returns it
    * (the NoteReceiver) or nil if it wasn't owned by the receiver.
-   * You can't remove a NoteReceiver from an Instrument that's in
+   * You can't remove a NoteReceiver from an MKInstrument that's in
    * performance. Returns nil in this case.
    */ 
 {
@@ -176,8 +179,8 @@
 }
 
 - (void)dealloc
-  /* TYPE: Creating; Frees the receiver and its NoteReceivers.
-   * Removes and frees the receiver's NoteReceivers and then frees the
+  /* TYPE: Creating; Frees the receiver and its MKNoteReceivers.
+   * Removes and frees the receiver's MKNoteReceivers and then frees the
    * receiver itself.  
    * The NoteReceiver's connections are severed (see the PerfLink class).
    * This message is ignored if the receiver is in a performance. In this
@@ -192,7 +195,7 @@
 }
 
 -disconnectNoteReceivers
-    /* Broadcasts "disconnect" to NoteReceivers. */ 
+    /* Broadcasts "disconnect" to MKNoteReceivers. */ 
 {
     [noteReceivers makeObjectsPerformSelector:@selector(disconnect)];
     return self;
@@ -211,8 +214,8 @@
 }
 
 -releaseNoteReceivers
-  /* TYPE: Creating; Frees the receiver's NoteReceivers.
-   * Removes and frees the receiver's NoteReceivers.
+  /* TYPE: Creating; Frees the receiver's MKNoteReceivers.
+   * Removes and frees the receiver's MKNoteReceivers.
    * The NoteReceiver's connections are severed (see the PerfLink class).
    * Returns the receiver. 
    */
@@ -246,8 +249,8 @@
 }
 
 -(BOOL)inPerformance
-  /* TYPE: Querying; Returns YES if first Note has been seen.
-   * Returns NO if the receiver has yet to receive a Note object.
+  /* TYPE: Querying; Returns YES if first MKNote has been seen.
+   * Returns NO if the receiver has yet to receive a MKNote object.
    * Otherwise returns YES.
    */
 {
@@ -268,9 +271,9 @@
 
 - copyWithZone:(NSZone *)zone
   /* TYPE: Creating; Creates and returns a copy of the receiver.
-   * Creates and returns a new Instrument as a copy of the receiver.  
+   * Creates and returns a new MKInstrument as a copy of the receiver.  
    * The new object has its own NoteReceiver collection that contains
-   * copies of the receiver's NoteReceivers.  The new NoteReceivers'
+   * copies of the receiver's MKNoteReceivers.  The new MKNoteReceivers'
    * connections (see the PerfLink class) are copied from 
    * those in the receiver.
    */

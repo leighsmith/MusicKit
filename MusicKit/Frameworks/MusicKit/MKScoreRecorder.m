@@ -16,6 +16,9 @@
 /* Modification History:
 
    $Log$
+   Revision 1.7  2001/09/06 21:27:48  leighsmith
+   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
    Revision 1.6  2001/08/07 16:16:11  leighsmith
    Corrected class name during decode to match latest MK prefixed name
 
@@ -36,7 +39,7 @@
    04/21/90/daj - Small mods to get rid of -W compiler warnings.
    08/27/90/daj - API changes to support zones
    06/06/92/daj - Changed -freePartRecorders to refuse to do so if the
-                  ScoreRecorder is in performance.
+                  MKScoreRecorder is in performance.
    01/13/96/daj - Added init of partRecorders in copyFromZone: 
 
 */
@@ -136,7 +139,7 @@
     return self;
 }
 
-// reset all the partRecorders of the ScoreRecorder to nil, release the score and set it's value nil
+// reset all the partRecorders of the MKScoreRecorder to nil, release the score and set it's value nil
 static void unsetPartRecorders(MKScoreRecorder *self)
 {
     unsigned n = [self->partRecorders count],i;
@@ -192,7 +195,7 @@ static void unsetPartRecorders(MKScoreRecorder *self)
      of partRecorders.
      */
 {
-//    ScoreRecorder *newObj = [super copyWithZone:zone];
+//    MKScoreRecorder *newObj = [super copyWithZone:zone];
     MKScoreRecorder *newObj = [[MKScoreRecorder allocWithZone:[self zone]] init];
     newObj->timeUnit = timeUnit;/* sb */
     newObj->partRecorderClass = partRecorderClass;
@@ -268,7 +271,7 @@ static void unsetPartRecorders(MKScoreRecorder *self)
 
 -partRecorders
   /* TYPE: Processing
-   * Returns a copy of the NSArray of the receiver's PartRecorder collection.
+   * Returns a copy of the NSArray of the receiver's MKPartRecorder collection.
    * The PartRecorders themselves are not copied. It is the sender's
    * responsibility to free the NSArray.
    */
@@ -302,8 +305,8 @@ static void unsetPartRecorders(MKScoreRecorder *self)
 
 
 -noteReceivers
- /* Creates and returns a List of the PartRecorders' NoteReceivers. The 
-    NoteReceivers themselves are not copied. It is the sender's 
+ /* Creates and returns a List of the PartRecorders' MKNoteReceivers. The 
+    MKNoteReceivers themselves are not copied. It is the sender's 
     responsibility to free the List. */
 {
     // this functionality is now embodied in _MKLightweigthArrayCopy()
@@ -328,7 +331,7 @@ static void unsetPartRecorders(MKScoreRecorder *self)
 #endif
 
 -partRecorderForPart:aPart
-  /* Returns the PartRecorder for aPart, if found. */
+  /* Returns the MKPartRecorder for aPart, if found. */
 {
     id el;
     unsigned n = [partRecorders count], i;

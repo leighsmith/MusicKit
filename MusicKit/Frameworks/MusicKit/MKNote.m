@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.15  2001/08/30 19:07:45  leighsmith
   removed obsolete parName, nameOfPar messages
 
@@ -74,13 +77,13 @@ Modification history:
   03/21/90/daj - Added archiving support.
   04/21/90/daj - Small mods to get rid of -W compiler warnings.
   05/13/90/daj - Simultaneously fixed 2 bugs. The bugs were 1) that unarchived
-                 Parts could 'lose' Notes because id of Notes may come in
-		 wrong order. 2) that Notes in a Scorefile can get reordered.
+                 MKParts could 'lose' MKNotes because id of MKNotes may come in
+		 wrong order. 2) that MKNotes in a Scorefile can get reordered.
 		 The fix is to change _reservedNote5 to be an int and use
 		 it to store an "orderTag" which is an int assigned by the 
-		 Part. This tag is used to disambiguate Notes with the same
+		 MKPart. This tag is used to disambiguate MKNotes with the same
 		 timeTag. The former use of this field, to hold the 
-		 'placeHolder' Notes is implemented as a negative order tag.
+		 'placeHolder' MKNotes is implemented as a negative order tag.
 		 Note that I changed the semantics of the compare: 
 		 method. This is a backward incompatible change.
   08/13/90/daj - Removed extraneous checks for noteClassInited and 
@@ -90,12 +93,12 @@ Modification history:
   11/7/91/daj  - Added clearing of performer in initWithTimeTag:
                  Added conductor instance variable.  This (slightly) cleans
 		 up semantics of conductor method, in that it allows conductor
-		 to be set from objects other than Performer. It also 
-		 eliminates the problem of dangling Performer references in 
-		 copied Notes. The dangling reference problem still exists in
+		 to be set from objects other than MKPerformer. It also 
+		 eliminates the problem of dangling MKPerformer references in 
+		 copied MKNotes. The dangling reference problem still exists in
 		 another form, however, in that we now can have dangling
-		 references to the conductor. As a precaution, PartRecorder
-		 clears conductor field when it writes a note to a Part.
+		 references to the conductor. As a precaution, MKPartRecorder
+		 clears conductor field when it writes a note to a MKPart.
   02/19/92/daj - Fixed bug in _noteOffForNoteDur--it wasn't saving midiChan.
   06/04/92/daj - Fixed bug in MKNextParameter().  (Was including private
                  parameters.)
@@ -351,7 +354,7 @@ static unsigned noteCachePtr = 0;
 {
     MKNote *newObj;
     if (self == noteClass && noteCachePtr) { 
-	/* We initialize reused Notes here. */
+	/* We initialize reused MKNotes here. */
 	newObj = noteCache[--noteCachePtr]; 
 	newObj->_parameters = NULL;
 	memset(&(newObj->_mkPars[0]), 0, 
@@ -393,9 +396,9 @@ static unsigned noteCachePtr = 0;
 
 - (void)dealloc
   /* TYPE: Creating; Frees the receiver and its contents.
-   * Removes the receiver from its Part, if any, and then frees the
+   * Removes the receiver from its MKPart, if any, and then frees the
    * receiver and its contents.
-   * Envelope and WaveTable objects are not freed.
+   * MKEnvelope and MKWaveTable objects are not freed.
    */
 {
     [part removeNote:self];
@@ -417,7 +420,7 @@ static int nAppBitVects(); /* forward ref */
    * Creates and returns a new MKNote object as a copy of the receiver.
    * The new MKNote's parameters, timing information, noteType and noteTag
    * are the same as the receiver's.
-   * However, it isn't added to a Part 
+   * However, it isn't added to a MKPart 
    * regardless of the state of the receiver.
    *
    * Note: MKEnvelope and MKWaveTable objects aren't copied, the new MKNote shares the
@@ -463,10 +466,10 @@ static int nAppBitVects(); /* forward ref */
 }
 
 -split:(id *)aNoteOn :(id *)aNoteOff
-  /* TYPE: Type; Splits the noteDur receiver into two Notes.
+  /* TYPE: Type; Splits the noteDur receiver into two MKNotes.
    * If receiver isn't a noteDur, returns nil.   Otherwise,
-   * creates two new Notes (a noteOn and a noteOff), splits the information
-   * in the receiver between the two of them, places the new Notes in the
+   * creates two new MKNotes (a noteOn and a noteOff), splits the information
+   * in the receiver between the two of them, places the new MKNotes in the
    * arguments,
    * and returns the receiver
    * (which is neither freed
@@ -477,12 +480,12 @@ static int nAppBitVects(); /* forward ref */
    * in the receiver, is copied into the noteOff.
    * The noteOn takes the receiver's timeTag while the noteOff's
    * timeTag is that of the receiver plus its duration.
-   * If the receiver has a noteTag, it's copied into the two new Notes;
+   * If the receiver has a noteTag, it's copied into the two new MKNotes;
    * otherwise a new noteTag is generated for them.
-   * The new Notes are added to the Part of the receiver, if any.
+   * The new MKNotes are added to the MKPart of the receiver, if any.
    *
-   * Note: Envelope objects aren't copied, the new Notes share the
-   * receiver's Envelope objects.
+   * Note: MKEnvelope objects aren't copied, the new MKNotes share the
+   * receiver's MKEnvelope objects.
    */
 {
     *aNoteOff = [(*aNoteOn = [self copyWithZone:NSDefaultMallocZone()]) _splitNoteDurNoCopy];
@@ -493,19 +496,19 @@ static int nAppBitVects(); /* forward ref */
 
 
 
-/* Perfomers, Conductors, Parts */
+/* Perfomers, Conductors, MKParts */
 
 
 -performer      
-  /* TYPE: Perf; Returns the Performer that's sending the Note.
+  /* TYPE: Perf; Returns the MKPerformer that's sending the MKNote.
    */
 {
         return performer;
 }
 
 -part     
-  /* TYPE: Acc; Return the receiver's Part.
-   * Returns the Part that the receiver is a member of, or nil if none.
+  /* TYPE: Acc; Return the receiver's MKPart.
+   * Returns the MKPart that the receiver is a member of, or nil if none.
    */
 {
     return part;
@@ -518,7 +521,7 @@ static int nAppBitVects(); /* forward ref */
 }
 
 -conductor
-  /* If note is being sent by a Performer, returns the Performer's 
+  /* If note is being sent by a MKPerformer, returns the Performer's 
    * Conductor. Otherwise, if conductor was set, returns conductor.
    * Otherwise returns the default Conductor.
    */
@@ -532,9 +535,9 @@ static int nAppBitVects(); /* forward ref */
 
 - addToPart:aPart
   /* TYPE: Acc; Adds the receiver to aPart.
-   * Removes the receiver from the Part that it's currently 
+   * Removes the receiver from the MKPart that it's currently 
    * a member of and adds it to aPart.
-   * Returns the receiver's old Part, if any. 
+   * Returns the receiver's old MKPart, if any. 
    */
 {
     id oldPart = part;
@@ -557,11 +560,11 @@ static int nAppBitVects(); /* forward ref */
    * timeTag, or MK_ENDOFTIME if none. 
    * If newTimeTag is negative, it's clipped to 0.0.
    *
-   * Note:  If the receiver is a member of a Part, 
-   * it's first removed from the Part,
+   * Note:  If the receiver is a member of a MKPart, 
+   * it's first removed from the MKPart,
    * the timeTag is set, and then it's
    * re-added in order to ensure that its ordinal position within the
-   * Part is correct.
+   * MKPart is correct.
    */
 { 
     double tmp = timeTag;
@@ -579,9 +582,9 @@ static int nAppBitVects(); /* forward ref */
   * or MK_ENDOFTIME if none.  If newTimeTag is negative, it's clipped to
   * 0.0. If newTimeTag is greater than the endTime, it is clipped to endTime.
   *
-  * If the receiver is a member of a Part, it's first removed from the
-  * Part, its timeTag is set, and then it's re-added to the Part.  This
-  * ensures that the receiver's position within its Part is correct.
+  * If the receiver is a member of a MKPart, it's first removed from the
+  * MKPart, its timeTag is set, and then it's re-added to the MKPart.  This
+  * ensures that the receiver's position within its MKPart is correct.
   *
   * Duration is changed to preserve the endTime of the note
   *
@@ -608,9 +611,9 @@ static int nAppBitVects(); /* forward ref */
 
 
 - removeFromPart
-  /* TYPE: Acc; Removes the receiver from its Part.
-   * Removes the receiver from its Part, if any.
-   * Returns the old Part, or nil if none. 
+  /* TYPE: Acc; Removes the receiver from its MKPart.
+   * Removes the receiver from its MKPart, if any.
+   * Returns the old MKPart, or nil if none. 
    */
 {
     id tmp = part;
@@ -663,10 +666,10 @@ int _MKNoteCompare(const void *el1,const void *el2)
     *  * If the receiver's timeTag > aNote's timeTag, returns 1.  NSOrderedDescending
    *
    * If their timeTags are equal, the two objects are compared 
-   * by their order in the Part.
+   * by their order in the MKPart.
    *
    * This comparison indicates the order in which the
-   * two Notes would be stored if they were members of the same Part.
+   * two MKNotes would be stored if they were members of the same MKPart.
    */
 { 
     /* We must only return 0 in one case: when aNote == the receiver.
@@ -1010,7 +1013,7 @@ id MKSetNoteParToEnvelope(MKNote *aNote,int par,id envObj)
 }
 
 -setPar:(int)par toEnvelope:(id)envObj
-  /* TYPE: Parameters; Sets parameter par to the Envelope envObj.
+  /* TYPE: Parameters; Sets parameter par to the MKEnvelope envObj.
    * Points the parameter par to 
    * envObj (envObj isn't copied).
    * Scaling and offset information is retained. 
@@ -1028,7 +1031,7 @@ id MKSetNoteParToWaveTable(MKNote *aNote,int par,id waveObj)
 }
 
 -setPar:(int)par toWaveTable:(id)waveObj
-  /* TYPE: Parameters; Sets parameter par to the WaveTable waveObj.
+  /* TYPE: Parameters; Sets parameter par to the MKWaveTable waveObj.
    * Points the parameter par to 
    * waveObj (waveObj isn't copied).
    * Returns the receiver.
@@ -1151,8 +1154,8 @@ id MKGetNoteParAsEnvelope(MKNote *aNote,int par)
 }
 
 -parAsEnvelope:(int)par
-  /* TYPE: Parameters; Returns par's Envelope object.
-   * If par is an envelope, returns its Envelope object.
+  /* TYPE: Parameters; Returns par's MKEnvelope object.
+   * If par is an envelope, returns its MKEnvelope object.
    * Otherwise returns nil.
    */
 {
@@ -1165,8 +1168,8 @@ id MKGetNoteParAsWaveTable(MKNote *aNote,int par)
 }
 
 -parAsWaveTable:(int)par
-  /* TYPE: Parameters; Returns par's WaveTable object.
-   * If par is a waveTable, returns its WaveTable object.
+  /* TYPE: Parameters; Returns par's MKWaveTable object.
+   * If par is a waveTable, returns its MKWaveTable object.
    * Otherwise returns nil.
    */
 {
@@ -1180,7 +1183,7 @@ id MKGetNoteParAsObject(MKNote *aNote,int par)
 
 -parAsObject:(int)par
   /* TYPE: Parameters; Returns par's object.
-   * If par is an object (including an Envelope or WaveTable), 
+   * If par is an object (including an MKEnvelope or MKWaveTable), 
    * returns its object. Otherwise returns nil.
    */
 {
@@ -1271,7 +1274,7 @@ static void copyPars(); /* forward ref */
 -copyParsFrom:aNote
   /* TYPE: Copying; Copies parameters and dur (if any) from aNote to receiver.
    * Copies aNote's parameters and duration into
-   * the receiver (Envelope and WaveTables and other objects are shared rather than copied).
+   * the receiver (MKEnvelope and WaveTables and other objects are shared rather than copied).
    * Overwrites such values already present in the receiver.
    * Returns the receiver.
    */
@@ -1663,13 +1666,13 @@ static void copyPars(toObj,fromObj,override)
 }
 
 -(unsigned)hash
-   /* Notes hash themselves based on their noteTag. */
+   /* MKNotes hash themselves based on their noteTag. */
 {
     return noteTag;
 }
 
 -(BOOL)isEqual:aNote
-   /* Notes are considered 'equal' if their noteTags are the same. */
+   /* MKNotes are considered 'equal' if their noteTags are the same. */
 {
    return [aNote isKindOfClass:noteClass] && (((MKNote *)aNote)->noteTag == noteTag);
 }
@@ -1981,7 +1984,7 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
 }
 
 - _setPartLink:aPart order:(int)orderTag
-  /* Private method used for interface with Part class. */
+  /* Private method used for interface with MKPart class. */
 {
     id oldPart;
     oldPart = part;

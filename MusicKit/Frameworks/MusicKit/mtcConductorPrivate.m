@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.8  2001/04/06 19:29:51  leighsmith
   Renamed to more meaningful MIDI API include file naming
 
@@ -197,7 +200,7 @@ static double slipThreshold = .01;
 }
 
 -(double) _setMTCTime:(double)desiredTime
-/* This is invoked by the Midi object when an incoming MIDI message is received
+/* This is invoked by the MKMidi object when an incoming MIDI message is received
  * and useInputTimeStamps is YES.
  */
 {

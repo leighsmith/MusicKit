@@ -19,7 +19,7 @@
     space--keep some room free on the disk off of which you booted.
 
     MKMixerInstrument is also an illustration of how to make your own MusicKit
-    MKInstrument subclass to "realize Notes" in some novel fashion. In this
+    MKInstrument subclass to "realize MKNotes" in some novel fashion. In this
     case, MKNotes are soundfile mix specifications. They are "realized" by
     being mixed into the output file.
 
@@ -40,6 +40,9 @@
 Modification history:
 
  $Log$
+ Revision 1.9  2001/09/06 21:27:47  leighsmith
+ Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
  Revision 1.8  2001/08/30 19:07:17  leighsmith
  upgraded parName to parTagForName methods
 
@@ -366,7 +369,7 @@ static int timeToSamp(Snd *s,double time)
 }
 
 -realizeNote:aNote fromNoteReceiver:aNoteReceiver
-  /* This is invoked when a new Note is received during performance */
+  /* This is invoked when a new MKNote is received during performance */
 {
     MKNoteType type;
     double amp = defaultAmp;

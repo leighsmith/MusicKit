@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.17  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.16  2001/08/28 23:38:24  leighsmith
   Merged RTF Class reference documentation into headerdoc
 
@@ -401,7 +404,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               follows:
               
               If the file is format 0, the Channel Voice messages are
-              written into 16 Parts, one for each channel.  Channel
+              written into 16 MKParts, one for each channel.  Channel
               Mode and System messages are combined in an additional
               MKPart.  The midi channel of a particular MKPart can be
               determined by examining the MK_midiChan parameter of the
@@ -566,8 +569,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 */
 - midiPart:(int) aChan; 
   /* 
-     Returns the first Part with a MK_midiChan info parameter equal to
-     aChan, if any. aChan equal to 0 corresponds to the Part representing
+     Returns the first MKPart with a MK_midiChan info parameter equal to
+     aChan, if any. aChan equal to 0 corresponds to the MKPart representing
      MIDI system and channel mode messages. */
 
 
@@ -644,7 +647,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
  /* 
    You never send this message directly.  
    Should be invoked with NXWriteRootObject(). 
-   Archives Notes and info. Also archives Score using 
+   Archives MKNotes and info. Also archives MKScore using 
    NXWriteObjectReference(). */
 - (void) encodeWithCoder: (NSCoder *) aCoder;
 
@@ -656,7 +659,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 
    Maps noteTags as represented in the archive file onto a set that is
    unused in the current application. This insures that the integrity
-   of the noteTag is maintained. The noteTags of all Parts in the Score are 
+   of the noteTag is maintained. The noteTags of all MKParts in the MKScore are 
    considered part of a single noteTag space. 
 */ 
 - (id) initWithCoder: (NSCoder *) aDecoder;

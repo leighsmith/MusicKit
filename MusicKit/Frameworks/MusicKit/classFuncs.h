@@ -6,6 +6,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.3  2001/07/02 16:56:01  sbrandon
   - commented out cruft after endif
 
@@ -28,7 +31,7 @@ extern BOOL MKSetNoteClass(id aNoteSubclass);
   */
 
 extern id MKGetNoteClass(void);
- /* Returns class set with MKSetNoteClass() or [Note class] if none. */
+ /* Returns class set with MKSetNoteClass() or [MKNote class] if none. */
 
  /* The following are similar to MKSetNoteClass() and MKGetNoteClass() for
   * other Music Kit classes. */

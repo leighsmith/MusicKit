@@ -50,11 +50,11 @@
     is disregarded.
    
     Both nextNote and performNote: are invoked
-    by the perform method, which, recall from the Performer
+    by the perform method, which, recall from the MKPerformer
     class, is itself never called directly but is sent by a Conductor.
     perform also checks and incorporates the time limit
     and performance offset established by the timing window
-    variables inherited from Performer; nextNote and
+    variables inherited from MKPerformer; nextNote and
     performNote: needn't access nor otherwise be concerned
     about these variables.
    
@@ -92,6 +92,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.8  2001/07/02 16:32:46  sbrandon
   - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
     compliant)
@@ -118,7 +121,7 @@ Modification history:
   04/21/90/daj - Small mods to get rid of -W compiler warnings.
   08/23/90/daj - Changed to zone API.
   03/04/91/daj - Fixed bug in copy and free of _extraVars.
-  11/17/92/daj - Flushed _extraPerformerVars to go along with Performer change.
+  11/17/92/daj - Flushed _extraPerformerVars to go along with MKPerformer change.
 */
 
 #import "_musickit.h"
@@ -131,7 +134,7 @@ Modification history:
 /* METHOD TYPES
  * Initializing a MKFilePerformer
  * Accessing files
- * Accessing Notes
+ * Accessing MKNotes
  * Performing
  */
 
@@ -365,7 +368,7 @@ Modification history:
 /* Methods which must be supplied by subclass. ---------------- */
 
 -performNote:(id)aNote
-  /* TYPE: Accessing Notes
+  /* TYPE: Accessing MKNotes
    * This is a subclass responsibility expected to manipulate
    * and send aNote which was presumably just read from a file.
    * It's up to the subclass to free aNote. 
@@ -379,7 +382,7 @@ Modification history:
 }
 
 -(id)nextNote     
-  /* TYPE: Accessing Notes
+  /* TYPE: Accessing MKNotes
    * This is a subclass responsibility expected to get the next MKNote
    * from the file.  Should return the MKNote or nil if the
    * next file entry is a performance time.  In the latter case,
@@ -439,7 +442,7 @@ Modification history:
 
 - copyWithZone:(NSZone *)zone
   /* The returned value is a copy of the receiver, with a copy of the filename
-     and stream set to NULL. The NoteSenders are not copied (the superclass
+     and stream set to NULL. The MKNoteSenders are not copied (the superclass
      copy method is overridden); instead, an empty list is given.  */
 {
     MKFilePerformer *newObj = [super _copyFromZone:zone];

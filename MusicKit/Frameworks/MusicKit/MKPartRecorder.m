@@ -17,6 +17,9 @@
 /* Modification History:
 
    $Log$
+   Revision 1.8  2001/09/06 21:27:47  leighsmith
+   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
    Revision 1.7  2001/08/07 16:16:11  leighsmith
    Corrected class name during decode to match latest MK prefixed name
 
@@ -122,7 +125,7 @@
 }
 
 - (void)dealloc
-  /* If receiver is a member of a ScoreRecorder or is in performance, 
+  /* If receiver is a member of a MKScoreRecorder or is in performance, 
      returns self and does nothing. Otherwise frees the receiver. */
 {
     /*sb: FIXME!!! This is not the right place to decide whether or not to dealloc.
@@ -172,7 +175,7 @@ void _MKSetScoreRecorderOfPartRecorder(aPR,aSR)
 }
 
 -setPart: aPart
-  /* Sets Part to which notes are sent. */
+  /* Sets MKPart to which notes are sent. */
 {
     part = aPart;
     return self;
@@ -208,7 +211,7 @@ void _MKSetScoreRecorderOfPartRecorder(aPR,aSR)
 
 -realizeNote:aNote fromNoteReceiver:aNoteReceiver
   /* Copies the note, adjusting its timetag and possibly adjusting its 
-     duration according to tempo, then sends addNote: to the Part. */
+     duration according to tempo, then sends addNote: to the MKPart. */
 {
     aNote = [aNote copyWithZone: NSDefaultMallocZone()];
     [aNote setTimeTag: _MKTimeTagForTimeUnit(aNote, timeUnit, compensatesDeltaT)];

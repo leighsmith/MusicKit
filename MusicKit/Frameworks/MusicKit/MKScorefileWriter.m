@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.5  2001/08/07 16:12:30  leighsmith
   Corrected class name during decode to match latest MK prefixed name
 
@@ -82,8 +85,8 @@ Modification history:
 - (void)encodeWithCoder:(NSCoder *)aCoder
   /* You never send this message directly.  
      Should be invoked with NXWriteRootObject(). 
-     Invokes superclass write:, which archives NoteReceivers.
-     Then archives info, isOptimized, and Part info Notes.  */
+     Invokes superclass write:, which archives MKNoteReceivers.
+     Then archives info, isOptimized, and MKPart info MKNotes.  */
 {
     unsigned n = [noteReceivers count], i;
 
@@ -102,7 +105,7 @@ Modification history:
 
     if ([aDecoder versionForClassName: @"MKScorefileWriter"] == VERSION2) {
 	[aDecoder decodeValuesOfObjCTypes:"@ci",&info,&_isOptimized,&noteReceiverCount];
-	/* Because we can't install the Part infos now in the NoteReceivers,
+	/* Because we can't install the MKPart infos now in the MKNoteReceivers,
 	   we have to use them temporarily in an available pointer, _p. 
 	   See awake below. */
 	_MK_MALLOC(el,id,noteReceiverCount);
@@ -130,7 +133,7 @@ Modification history:
 
 + (NSString *) fileExtension
   /* Returns "score", the default file extension for score files.
-     This method is used by the FileWriter class. The string is not
+     This method is used by the MKFileWriter class. The string is not
      copied. */
 {
     return [[_MK_SCOREFILEEXT retain] autorelease];
@@ -147,7 +150,7 @@ Modification history:
 }
 
 -initializeFile
-    /* Initializes file specified by the name of the FileWriter. You never
+    /* Initializes file specified by the name of the MKFileWriter. You never
        send this message directly. */
 {
     id el;
@@ -253,7 +256,7 @@ Modification history:
 }
 
 - (void)dealloc
-  /* Frees receiver, NoteReceivers and info notes. */ 
+  /* Frees receiver, MKNoteReceivers and info notes. */ 
 {
     /*sb: FIXME!!! This is not the right place to decide whether or not to dealloc.
      * maybe need to put self in a global list of non-dealloced objects for later cleanup */

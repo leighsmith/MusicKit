@@ -13,7 +13,7 @@
     even create a MKTuningSystem that descends in pitch as the key numbers
     ascend the scale.  The freqForKeyNum: method retrieves the frequency
     value of the argument key number.  Such values are typically used to
-    set the frequency of a Note object:
+    set the frequency of a MKNote object:
    
     * #import <musickit/keynums.h>
     * [aNote setPar:MK_freq toDouble:[aTuningSystem freqForKeyNum:c4k]];
@@ -35,16 +35,26 @@
     map.  Subsequent changes to the object won't affect the installed
     tuning system (unless you again send the object the install message).
    
-    Note that while key numbers can also be used to define pitch for Notes
+    Note that while key numbers can also be used to define pitch for MKNotes
     used in MIDI performance, the MKTuningSystem object has no affect on the
-    precise frequency of a Note sent to a MIDI instrument.  The
+    precise frequency of a MKNote sent to a MIDI instrument.  The
     relationship between key numbers and frequencies on a MIDI instrument
     is set on the instrument itself. (An application can, of course, use
     the information in a MKTuningSystem object to configure the MIDI
     instrument.)
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.6  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.5  2001/07/02 16:48:16  sbrandon
   - added (Class)_transpose:(double)semitones method, identical to (Class)transpose:(double)semitones
     This is because GNUStep does not like sending messages to class objects
@@ -59,6 +69,46 @@
   Revision 1.2  1999/07/29 01:25:52  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
+*/
+/*!
+  @class MKTuningSystem
+  @discussion
+
+A MKTuningSystem object represents a musical tuning system by mapping key numbers
+to frequencies.  The method <b>setFreq:forKeyNum:</b> establishes a
+frequency/key number correspondence.  To tune a key number and its octaves at
+the same time, invoke the method <b>setFreq:forKeyNumAndOctaves:</b>.  The
+frequencies in a MKTuningSystem object don't have to increase as the key numbers
+increase - you can even create a MKTuningSystem that descends in pitch as the key
+numbers ascend the scale.  The <b>freqForKeyNum:</b> method retrieves the
+frequency value of the argument key number.  Such values are typically used to
+set the frequency of a MKNote object:
+
+<tt>[aNote setPar:MK_freq</tt>
+<tt>     toDouble:[aTuningSystem freqForKeyNum:c4k]];</tt>
+
+The MKTuningSystem class maintains a master system called the <i>installed tuning
+system</i>.  By default, the installed tuning system is set to 12-tone
+equal-temperament with A above middle C set to 440 Hz.  A key number that
+doesn't reference a MKTuningSystem object takes its frequency value from the
+installed tuning system.  The frequency value of a pitch variable is also taken
+from the installed system. The difference between key numbers and pitch
+variables is explained in Volume 1, Chapter 3.  The entire map of key numbers,
+pitch variables, and frequency values in the default 12-tone equal-tempered
+system is given in Appendix D, &#170;Music Tables.&#186;
+
+You can install a tuning system by sending the <b>install</b> message to a
+MKTuningSystem object.  Keep in mind that this doesn't install the object itself,
+it simply copies its key number-frequency map.  Subsequent changes to the object
+won't affect the installed tuning system (unless you again send the object the
+<b>install</b> message).
+
+Note that while key numbers can also be used to define pitch for MKNotes used in
+MIDI performance, the MKTuningSystem object has no affect on the precise frequency
+of a MKNote sent to a MIDI instrument.  The relationship between key numbers and
+frequencies on a MIDI instrument is set on the instrument itself. (An
+application can, of course, use the information in a MKTuningSystem object to
+configure the MIDI instrument.)
 */
 #ifndef __MK_TuningSystem_H___
 #define __MK_TuningSystem_H___
@@ -99,98 +149,149 @@ extern NSString *MKPitchNameForKeyNum(int keyNum);
 
 @interface MKTuningSystem : NSObject
 {
-    NSMutableArray *frequencies; /* Array object of frequencies, indexed by keyNum. */
+    /*! @var frequencies NSArray object of frequencies, indexed by keyNum. */
+    NSMutableArray *frequencies; 
 }
 
+/*!
+  @method init
+  @result Returns an initialized MKTuningSystem instance.
+  @discussion Initializes receiver to 12-tone equal tempered tuning. 
+*/
 - init;
- /* Initializes receiver to 12-tone equal tempered tuning. */
 
+/* Copies object and arrays. */
 - copyWithZone:(NSZone *)zone;
- /* Copies object and arrays. */
 
+
+/*!
+  @method copy
+  @result Returns an id.
+  @discussion Creates and returns a new MKTuningSystem as a copy of the
+              receiver. Same as <tt>[self copyFromZone:[self zone]];</tt>
+*/
 -copy;
- /* Same as [self copyFromZone:[self zone]]; */
 
-- (void)dealloc;
  /* Frees object and internal storage. */
+- (void)dealloc;
 
+
+/*!
+  @method setTo12ToneTempered
+  @result Returns an id.
+  @discussion Sets the receiver's tuning to 12-tone equal-tempered.
+*/
 - setTo12ToneTempered; 
- /* Sets the receiver's tuning to 12-tone equal-tempered. */
 
+/*!
+  @method install
+  @result Returns an id.
+  @discussion Installs the receiver's tuning as the current tuning system.  The
+              receiver itself isn't installed, only its tuning system; subsequent
+              changes to the receiver won't affect the installed system unless you
+              resend the <b>install</b> message to the receiver.  Returns the
+              receiver.
+*/
 - install; 
- /* 
-  * Installs the receiver's tuning as the current tuning system.  The
-  * receiver itself isn't installed, only its tuning system; subsequent
-  * changes to the receiver won't affect the installed system unless you
-  * resend the install message to the receiver.  Returns the receiver.
-  */
 
+/*! 
+  @method initFromInstalledTuningSystem
+  @result Returns <b>self</b>
+  @discussion Initializes a new MKTuningSystem object to the installed tuning system. 
+*/
 - initFromInstalledTuningSystem;
- /* Initializes a new MKTuningSystem object to the installed tuning system. */
 
+/*!
+  @method freqForKeyNum:
+  @param  aKeyNum is a MKKeyNum.
+  @result Returns a double.
+  @discussion Returns the installed frequency for the key number <i>aKeyNum</i>. 
+              If <i>aKeyNum</i> is out of bounds, returns MK_NODVAL (Use MKIsNoDVal()
+              to check for MK_NODVAL).  The value
+              returned by this method is the same value as <i>aKeyNum</i>'s
+              analogous pitch variable.
+*/
 +(double) freqForKeyNum:(MKKeyNum )aKeyNum; 
- /* 
-  * Returns the installed frequency for the key number aKeyNum.  If
-  * aKeyNum is out of bounds, returns MK_NODVAL.  
-  * (Use MKIsNoDVal() to check for MK_NODVAL.)
-  * The value returned by this method is the same value as aKeyNum's 
-  * analogous pitch variable.
-  */
 
+/*!
+  @method freqForKeyNum:
+  @param  aKeyNum is a MKKeyNum.
+  @result Returns a double.
+  @discussion Returns the receiver's frequency for the key number <i>aKeyNum</i>. 
+              If <i>aKeyNum</i> is out of bounds, returns MK_NODVAL (Use MKIsNoDVal()
+              to check for MK_NODVAL).
+*/
 -(double) freqForKeyNum:(MKKeyNum )aKeyNum; 
- /* 
-  * Returns the receiver's frequency for the key number aKeyNum.  If
-  * aKeyNum is out of bounds, returns MK_NODVAL.
-  * (Use MKIsNoDVal() to check for MK_NODVAL.)
-  */
 
+/*!
+  @method setKeyNum:toFreq:
+  @param  aKeyNum is a MKKeyNum.
+  @param  freq is a double.
+  @result Returns an id.
+  @discussion Tunes the receiver's <i>aKeyNum</i> key number to <i>freq</i> and
+              returns the receiver.  If <i>aKeyNum</i> is out of bounds, returns
+              MK_NODVAL (Use MKIsNoDVal() to check for MK_NODVAL).
+*/
 - setKeyNum:(MKKeyNum )aKeyNum toFreq:(double)freq;
- /* 
-  * Tunes the receiver's aKeyNum key number to freq and returns the
-  * receiver.  If aKeyNum is out of bounds, returns MK_NODVAL.
-  * (Use MKIsNoDVal() to check for MK_NODVAL.)
-  */
 
+/*!
+  @method setKeyNum:toFreq:
+  @param  aKeyNum is a MKKeyNum.
+  @param  freq is a double.
+  @result Returns an id.
+  @discussion Tunes the installed tuning system's <i>aKeyNum</i> key number to
+              <i>freq</i> and returns the receiver.  If <i>aKeyNum</i> is out of
+              bounds, returns MK_NODVAL (Use MKIsNoDVal() to check for MK_NODVAL).
+              
+              <b>Note:</b>  If you're making several changes to the installed
+              tuning system, it's more efficient to make the changes in an MKTuningSystem
+              instance and then send it the install message than it is to repeatedly
+              invoke this method.
+*/
 + setKeyNum:(MKKeyNum )aKeyNum toFreq:(double)freq; 
- /* 
-  * Tunes the installed tuning system's aKeyNum key number to freq and
-  * returns the receiver.  If aKeyNum is out of bounds, returns MK_NODVAL.
-  * (Use MKIsNoDVal() to check for MK_NODVAL.)
-  * 
-  * Note: If you're making several changes to the installed tuning
-  * system, it's more efficient to make the changes in a MKTuningSystem
-  * instance and then send it the install message than it is to repeatedly
-  * invoke this method.
-  */
 
+/*!
+  @method setKeyNumAndOctaves:toFreq:
+  @param  aKeyNum is a MKKeyNum.
+  @param  freq is a double.
+  @result Returns an id.
+  @discussion Tunes all the receiver's key numbers with the same pitch class as
+              <i>aKeyNum</i> to octaves of <i>freq</i> such that <i>aKeyNum</i> is
+              tuned to <i>freq</i>.  Returns the receiver or <b>nil</b> if aKeyNum
+              is out of bounds.
+*/
 - setKeyNumAndOctaves:(MKKeyNum )aKeyNum toFreq:(double)freq;
- /* 
-  * Tunes all the receiver's key numbers with the same pitch class as
-  * aKeyNum to octaves of freq such that aKeyNum is tuned to freq.
-  * Returns the receiver or nil if aKeyNum is out of bounds.
-  */
 
+/*!
+  @method setKeyNumAndOctaves:toFreq:
+  @param  aKeyNum is a MKKeyNum.
+  @param  freq is a double.
+  @result Returns an id.
+  @discussion Tunes the key numbers in the installed tuning system that are the
+              same pitch class as <i>aKeyNum</i> to octaves of <i>freq</i> such
+              that <i>aKeyNum</i> is tuned to <i>freq</i>.  Returns the receiver
+              or <b>nil</b> if aKeyNum is out of bounds.
+              
+              <b>Note:</b>  If you're making several changes to the installed
+              tuning system, it's more efficient to make the changes in a MKTuningSystem
+              instance and then send it the install message than it is to repeatedly
+              invoke this method.
+*/
 + setKeyNumAndOctaves:(MKKeyNum )aKeyNum toFreq:(double)freq;
- /* 
-  * Tunes the key numbers in the installed tuning system that are the same
-  * pitch class as aKeyNum to octaves of freq such that aKeyNum is tuned
-  * to freq.  Returns the receiver or nil if aKeyNum is out of bounds.
-  * 
-  * Note: If you're making several changes to the installed tuning system,
-  * it's more efficient to make the changes in a MKTuningSystem instance and
-  * then send it the install message than it is to repeatedly invoke this
-  * method.
-  */
 
+/*!
+  @method transpose:
+  @param  semitones is a double.
+  @result Returns an id.
+  @discussion Transposes the installed tuning system by <i>semitones</i>
+              half-steps.  (The half-step used here is 12-tone equal-tempered.) 
+              If <i>semitones</i> is positive, the transposition is up, if it's
+              negative, the transposition is down.  <i>semitones</i> can be any
+              <b>double</b> value, thus you can transpose the tuning system by
+              increments smaller than a half-step.  Returns the
+              receiver.
+*/
 + (Class)transpose:(double)semitones; 
- /* 
-  * Transposes the installed tuning system by semitones half-steps.  (The
-  * half-step used here is 12-tone equal-tempered.)  If semitones is
-  * positive, the transposition is up, if it's negative, the transposition
-  * is down.  semitones can be any double value, thus you can transpose
-  * the tuning system by increments smaller than a half-step.  Returns the
-  * receiver.
-  */
 
  /* some versions of gcc can't deal properly with class methods that have
   * the same name as instance methods in other classes. So I have renamed
@@ -198,22 +299,41 @@ extern NSString *MKPitchNameForKeyNum(int keyNum);
   */
 + (Class)_transpose:(double)semitones;
 
+/*!
+  @method transpose:
+  @param  semitones is a double.
+  @result Returns an id.
+  @discussion Transposes the receiver by <i>semitones</i> half-steps.  (The
+              half-step used here is 12-tone equal-tempered.)  If <i>semitones</i>
+              is positive, the transposition is up, if it's negative, the
+              transposition is down.  <i>semitones</i> can be any <b>double</b>
+              value, thus you can transpose the receiver by increments smaller
+              than a half-step.  Returns the receiver.
+*/
 - transpose:(double)semitones; 
- /* 
-  * Transposes the receiver by semitones half-steps.  (The half-step used
-  * here is 12-tone equal-tempered.)  If semitones is positive, the
-  * transposition is up, if it's negative, the transposition is down.
-  * semitones can be any double value, thus you can transpose the receiver
-  * by increments smaller than a half-step.  Returns the receiver.
-  */
 
-- (void)encodeWithCoder:(NSCoder *)aCoder;
  /* Writes receiver to archive file. */ 
-- (id)initWithCoder:(NSCoder *)aDecoder;
+- (void)encodeWithCoder:(NSCoder *)aCoder;
  /* Reads receiver from archive file. */ 
+- (id)initWithCoder:(NSCoder *)aDecoder;
 
  /* Obsolete */
+
+/*!
+  @method installedTuningSystem
+  @result Returns an id.
+  @discussion Creates a MKTuningSystem object and tunes it to the installed tuning
+              system.  Returns the newly created object.  Tuning the returned
+              object won't affect the installed MKTuningSystem.
+*/
 + installedTuningSystem; 
+
+/*!
+  @method new
+  @result Returns an id.
+  @discussion Returns a new 12-tone equal-tempered MKTuningSystem
+              object.
+*/
 + new; 
 
 @end

@@ -36,7 +36,7 @@
     When a MKNoteReceiver receives the message receiveNote: it sends the
     message realizeNote:fromNoteReceiver: to its owner, with the received
     MKNote as the first argument and its own id as the second.  receiveNote:
-    is automatically invoked when a connected MKNoteSender sends a Note.
+    is automatically invoked when a connected MKNoteSender sends a MKNote.
     You can toggle a MKNoteReceiver's MKNote-forwarding capability through the
     squelch and unsquelch methods; a MKNoteReceiver ignores the MKNotes it
     receives while it's squelched.  A newly created MKNoteReceiver is
@@ -53,6 +53,9 @@
 */
 /*
   $Log$
+  Revision 1.10  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.9  2001/08/30 23:26:40  leighsmith
   Merged RTF Class reference documentation into headerdoc comments
 

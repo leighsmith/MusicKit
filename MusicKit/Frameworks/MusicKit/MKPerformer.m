@@ -4,97 +4,97 @@
   HEADER FILES: MusicKit.h
 
   Description:
-    A Performer produces a series of time-ordered Note
+    A MKPerformer produces a series of time-ordered Note
     objects and initiates their distribution to
     a set of Instruments during a Music Kit performance.
-    Performer is an abstract class which managed an List
-    of NoteSenders. These NoteSenders are "Note outputs" of the
-    Performer. For convenience,
+    MKPerformer is an abstract class which managed an List
+    of MKNoteSenders. These MKNoteSenders are "Note outputs" of the
+    MKPerformer. For convenience,
     Performers support a subset of the MKNoteSender connection methods.
-    Sending one of the connection messages to a Performer merely
-    broadcasts the message to its NoteSenders.
-    The Performer class creates and frees the List for you.
+    Sending one of the connection messages to a MKPerformer merely
+    broadcasts the message to its MKNoteSenders.
+    The MKPerformer class creates and frees the List for you.
 
-    Every Performer object is owned by exactly one Conductor.
+    Every MKPerformer object is owned by exactly one Conductor.
     Unless you set its Conductor
-    by sending it the setConductor: message, a Performer
+    by sending it the setConductor: message, a MKPerformer
     is owned by the defaultConductor (see the Conductor class).
     During a performance, the Conductor sends
-    perform messages to the Performer according
-    to requests scheduled by the Performer.
+    perform messages to the MKPerformer according
+    to requests scheduled by the MKPerformer.
    
-    perform is the most important method for a Performer.
+    perform is the most important method for a MKPerformer.
     A subclass responsibility, each implementation of the
     method should include two activities:
    
-     * It may send a Note object to one of its NoteSenders.
+     * It may send a MKNote object to one of its MKNoteSenders.
      * It must schedule the next invocation of perform.
    
-    A Performer usually sends a Note by sending the sendNote: message
-    to one of its NoteSenders.
-    The Note object to be sent can be supplied in any manner:  for example
-    the Performer
-    can read Notes from a file, or from another object, or it can
+    A MKPerformer usually sends a MKNote by sending the sendNote: message
+    to one of its MKNoteSenders.
+    The MKNote object to be sent can be supplied in any manner:  for example
+    the MKPerformer
+    can read MKNotes from a file, or from another object, or it can
     create them itself.
    
     The second step, scheduling the next invocation of perform, is
     accomplished simply by setting the value of the variable nextPerform.
     The value of nextPerform is the amount of time, in beats,
     that the Conductor waits before sending the next
-    perform message to the Performer.
+    perform message to the MKPerformer.
     The perform method should only be invoked in this way --
     an application shouldn't send the perform message itself.
    
-    To use a Performer in a performance,
+    To use a MKPerformer in a performance,
     you must first activate it by invoking its
-    activate method.  This prepares the Performer
+    activate method.  This prepares the MKPerformer
     by first invoking the activateSelf method and then scheduling
     the first perform message request.
     activateSelf can be overridden to provide
-    further initialization of the Performer.  For instance,
+    further initialization of the MKPerformer.  For instance,
     the PartSegment subclass implements activateSelf
     to set the value of nextPerform
-    to the timeTag value of its first Note.
+    to the timeTag value of its first MKNote.
    
     The performance begins when the Conductor factory receives the
     startPerformance message.
-    It's legal to activate a Performer after the performance has started.
+    It's legal to activate a MKPerformer after the performance has started.
    
-    Sending the deactivate message removes the Performer
+    Sending the deactivate message removes the MKPerformer
     from the performance.
     This method can be overridden to implement
     any necessary finalization, such as freeing contained objects.
    
-    During a performance, a Performer can be stopped and restarted by
+    During a performance, a MKPerformer can be stopped and restarted by
     sending it the
     paused and resume messages, respectively.
-    perform messages destined for a paused Performer are suppressed.
-    When a paused Performer is resumed, it recommences
+    perform messages destined for a paused MKPerformer are suppressed.
+    When a paused MKPerformer is resumed, it recommences
     performing from the point at which it was stopped.
     (Compare this with the squelch
     method, inherited from MKNoteSender, which doesn't suppress
     perform messages
-    but simply prevents Notes from
+    but simply prevents MKNotes from
     being sent.)
    
-    Each Performer has two instance variables
+    Each MKPerformer has two instance variables
     that can adjust its performance time window:
     timeShift, and duration.
     timeShift and duration set the time, in beats, that the
-    first Note will be sent and the maximum duration of the Performer's
+    first MKNote will be sent and the maximum duration of the Performer's
     performance,
-    respectively.  A Performer is automatically deactivated if its
+    respectively.  A MKPerformer is automatically deactivated if its
     performance extends beyond duration beats.
    
-    A Performer has a status, represented as one of the
+    A MKPerformer has a status, represented as one of the
     following MKPerformerStatus values:
    
-     * MK_inactive.  A deactivated or not-yet-activated Performer.
-     * MK_active.  An activated, unpaused Performer.
-     * MK_paused.  The Performer is activated but currently paused.
+     * MK_inactive.  A deactivated or not-yet-activated MKPerformer.
+     * MK_active.  An activated, unpaused MKPerformer.
+     * MK_paused.  The MKPerformer is activated but currently paused.
    
     Some messages can only be sent to an inactive (MK_inactive)
-    Performer.  A Performer's status can be queried with the status
+    MKPerformer.  A Performer's status can be queried with the status
     message.  
 
   Original Author: David A. Jaffe
@@ -108,6 +108,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.9  2001/08/27 23:51:47  skotmcdonald
   deltaT fetched from conductor, took out accidently left behind debug messages (MKSampler). Conductor: renamed time methods to timeInBeat, timeInSamples to be more explicit
 
@@ -235,7 +238,7 @@ Modification history:
      and returns aNoteSender.
      For some subclasses, it is inappropriate for anyone
      other than the subclass instance itself to send this message. 
-     It is illegal to modify an active Performer. Returns nil in this case,
+     It is illegal to modify an active MKPerformer. Returns nil in this case,
      else aNoteSender. */
 {
     if ([aNoteSender owner] != self)
@@ -316,9 +319,9 @@ Modification history:
 /* Perform ------------------------------------------------------------ */
 
 -perform	
-  /* TYPE: Performing; Subclass responsibility; sends Notes and sets nextPerform.
+  /* TYPE: Performing; Subclass responsibility; sends MKNotes and sets nextPerform.
    * This is a subclass responsibility 
-   * expected to send Notes and set the value of the nextPerform
+   * expected to send MKNotes and set the value of the nextPerform
    * variable.
    * The value returned by perform is ignored.
    */
@@ -341,7 +344,7 @@ Modification history:
 
     [self perform];
 
-    /* Performer perform after daemon. */
+    /* MKPerformer perform after daemon. */
     switch (status) {
       case MK_paused: 
         return self;
@@ -429,8 +432,8 @@ Modification history:
 }
 
 -(int) performCount
-  /* TYPE: Querying; Returns the number of Notes the receiver has performed.
-   * Returns the number Notes the receiver has performed in the
+  /* TYPE: Querying; Returns the number of MKNotes the receiver has performed.
+   * Returns the number MKNotes the receiver has performed in the
    * current performance.  Does this by counting the number of
    * perform messages it has received. 
    */
@@ -535,7 +538,7 @@ Modification history:
    * and returns the receiver.  
    * Otherwise does nothing and returns the receiver.
    *
-   * If you want to free a paused Performer during a performance,
+   * If you want to free a paused MKPerformer during a performance,
    * you should first send it the deactivate message.
    */
 {  
@@ -637,7 +640,7 @@ Modification history:
 
 
 static id copyFields(MKPerformer *self,MKPerformer *newObj)
-  /* Same as copy but doesn't copy NoteSenders. */
+  /* Same as copy but doesn't copy MKNoteSenders. */
 {
     newObj->timeShift = self->timeShift;
     newObj->duration = self->duration;
@@ -657,7 +660,7 @@ static id copyFields(MKPerformer *self,MKPerformer *newObj)
 
 - copyWithZone:(NSZone *)zone;
   /* TYPE: Copying: Returns a copy of the receiver.
-   * Creates and returns a new inactive Performer as
+   * Creates and returns a new inactive MKPerformer as
    * a copy of the receiver.  
    * The new object has the same timeShift and 
    * duration values as the reciever. Its
@@ -679,7 +682,7 @@ static id copyFields(MKPerformer *self,MKPerformer *newObj)
 - (void)dealloc
   /* TYPE: Creating
    * This invokes freeContents and then frees the receiver
-   * and its NoteSenders. This message is ignored if the receiver is not
+   * and its MKNoteSenders. This message is ignored if the receiver is not
    * inactive. In this case, returns self; otherwise returns nil.
    */
 {
@@ -731,7 +734,7 @@ static void setNoteSenders(MKPerformer *newObj,id aList)
 
 -_copyFromZone:(NSZone *)zone
 {
-    /* This is like copyFromZone: except that the NoteSenders are not copied.
+    /* This is like copyFromZone: except that the MKNoteSenders are not copied.
        Instead, a virgin empty List is given. */
     MKPerformer *newObj = NSCopyObject(self, 0, zone);
     newObj = copyFields(self,newObj);

@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.23  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.22  2001/08/29 00:27:45  leighsmith
   Merged RTF Class reference documentation into headerdoc
 
@@ -215,8 +218,8 @@ See<b> ../Administration/MidiHardwareInfo.rtf</b>
 
 @interface MKMidi:NSObject
 {
-    NSMutableArray *noteSenders;         /* @var noteSenders The object's collection of NoteSenders. */
-    NSMutableArray *noteReceivers;       /* @var noteReceivers The object's collection of NoteReceivers */
+    NSMutableArray *noteSenders;         /* @var noteSenders The object's collection of MKNoteSenders. */
+    NSMutableArray *noteReceivers;       /* @var noteReceivers The object's collection of MKNoteReceivers */
     MKDeviceStatus deviceStatus;         /* @var deviceStatus See MKDeviceStatus.h */
     NSString *midiDevName;               /* @var midiDevName Midi device port name. */
     BOOL useInputTimeStamps;             /* @var useInputTimeStamps YES if MKConductor's time updated from driver's time stamps.*/

@@ -5,9 +5,9 @@
 
   Description:
     Data memory object. Used to allocate DSP data memory. Also used
-    to allocate patchpoints. You never create instances of SynthData or any
+    to allocate patchpoints. You never create instances of MKSynthData or any
     of its subclasses directly. They are created automatically by the
-    Orchestra object in response to messages such as allocSynthData:length:.
+    MKOrchestra object in response to messages such as allocSynthData:length:.
 
   Original Author: David A. Jaffe
 
@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.4  2000/06/09 18:05:27  leigh
   Added braces to reduce finicky compiler warnings
 
@@ -90,21 +93,21 @@ Modification history:
 }
 
 - run
-  /* Provided for compatability with UnitGenerator. Does nothing and returns
+  /* Provided for compatability with MKUnitGenerator. Does nothing and returns
      self. */
 {
     return self;
 }
 
 -idle
-  /* Provided for compatability with UnitGenerator. Does nothing and returns
+  /* Provided for compatability with MKUnitGenerator. Does nothing and returns
      self. */
 {
     return self;
 }
 
 -(double)finish
-  /* Provided for compatability with UnitGenerator. Does nothing and returns 0
+  /* Provided for compatability with MKUnitGenerator. Does nothing and returns 0
      */
 {
     return 0;
@@ -329,7 +332,7 @@ extern int DSPReadValue(DSPMemorySpace space,
 -readShortDataUntimed:(short *)dataArray length:(unsigned int)len offset:(int)off
 /* This returns a valid value by reference only when one of the following
    is true:
-   the data was allocated before the Orchestra started running
+   the data was allocated before the MKOrchestra started running
    the data was allocated more than deltaT in the past
    delta-t is 0
    there is no Conductor performing
@@ -358,7 +361,7 @@ extern int DSPReadValue(DSPMemorySpace space,
 -readDataUntimed:(DSPDatum *)dataArray length:(unsigned int )len offset:(int )off
 /* This returns a valid value by reference only when one of the following
    is true:
-   the data was allocated before the Orchestra started running
+   the data was allocated before the MKOrchestra started running
    the data was allocated more than deltaT in the past
    delta-t is 0
    there is no Conductor performing
@@ -402,7 +405,7 @@ extern int DSPReadValue(DSPMemorySpace space,
      *    Thus we do a [super dealloc].
      * Hmmm... yes, sometimes this method is called as part of -dealloc, but not always. What do we do?
      * ...so I have decided to remove the deallocation from here. When synthdata is deallocated 
-     * in the SynthPatch class, it is via the release of the MutableArray that holds it. Therefore
+     * in the MKSynthPatch class, it is via the release of the MutableArray that holds it. Therefore
      * there is no point in deallocing it here -- the array will complete the release.
      * I need to check for the other times this method is called, though, to check whether it is released
      * in all circumstances.
@@ -416,7 +419,7 @@ extern int DSPReadValue(DSPMemorySpace space,
 {
     static int instanceCount[MK_numOrchMemSegments-MK_xData] = {0}; 
     /* Just counts up forever (for debugging) */
-//    SynthData *newObj = [super new]; //sb: this fails, saying that SynthData doesn't respond to alloc
+//    MKSynthData *newObj = [super new]; //sb: this fails, saying that MKSynthData doesn't respond to alloc
     MKSynthData *newObj = [[super allocWithZone:NSDefaultMallocZone()] init];
     newObj->_instanceNumber = instanceCount[whichSegment-MK_xData]++;
     newObj->orchestra = anOrch;

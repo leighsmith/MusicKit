@@ -1,10 +1,13 @@
 /*
   $Id$
 
-  Serial port delegate of Orchestra.
+  Serial port delegate of MKOrchestra.
 */
 /*
   $Log$
+  Revision 1.4  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.3  2001/03/12 01:56:54  leigh
   Typed orch to avoid warnings
 
@@ -104,7 +107,7 @@
     MKOrchestra *orch;
 }
 
-/* The following methods are invoked by the Orchestra. */
+/* The following methods are invoked by the MKOrchestra. */
 -setUpSerialPort:orchestra;
 -(int)hardwareSupportedSamplingRates:(double **)ar;
 -(int)outputPadding;

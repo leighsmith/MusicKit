@@ -13,13 +13,16 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.2  1999/07/29 01:26:15  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
   09/22/89/daj - Add 'const' all over the place to make these things go in
                  text segment (in preparation for shlibs).
-  08/17/90/daj - Changed to use new float/int format Partials objects.
-                 See comments in partialsDB.m and Partials.m
+  08/17/90/daj - Changed to use new float/int format MKPartials objects.
+                 See comments in partialsDB.m and MKPartials.m
   08/12/91/daj - Changed to use new mid-point freq format.
   05/31/92/daj - Changed const synthptr to synthptr
 */

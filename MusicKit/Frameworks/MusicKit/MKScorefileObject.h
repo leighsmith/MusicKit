@@ -18,11 +18,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.3  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.2  2000/04/26 01:20:01  leigh
   Corrected readASCIIStream to take a NSData instead of NSMutableData instance
 

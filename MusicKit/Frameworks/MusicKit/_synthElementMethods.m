@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.2  1999/07/29 01:26:03  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -20,7 +23,7 @@ Modification history:
 */
 
 -(MKOrchMemStruct *)_setSynthPatch:aSynthPatch     
-  /* Private method used by SynthPatch to add the receiver to itself. */
+  /* Private method used by MKSynthPatch to add the receiver to itself. */
 {
     synthPatch = aSynthPatch;
     return [self _resources];

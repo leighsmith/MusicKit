@@ -14,9 +14,9 @@
     There is also a binary scorefile format. For the most part, it
     uses its own set of routines. For the binary format, we chose NOT
     to use object archiving. The reason is that this would require the
-    entire Score, Part and Notes to be read in as objects. We want to 
-    reserve the right to read it in one Note at a time, thus avoiding 
-    building the entire object structure. E.g. this is how ScorefilePerformer
+    entire MKScore, MKPart and MKNotes to be read in as objects. We want to 
+    reserve the right to read it in one MKNote at a time, thus avoiding 
+    building the entire object structure. E.g. this is how MKScorefilePerformer
     works.
 
     See binaryScorefile.doc on the MusicKit source directory for explanation
@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.15  2001/07/02 17:03:17  sbrandon
   - For GNUStep (ifdef'd it) use [MKTuningSystem _transpose:val] instead of
     [MKTuningSystem transpose:val] because GNUStep has difficulties with
@@ -125,7 +128,7 @@ Modification history:
    12/11/93/daj - Added byte swapping for Intel hardware.
    10/10/95/daj - Added resetControllers: case to factor()
    1/13/96/daj -  Added global default random state to avoid memory leak on each 
-                  Score read.
+                  MKScore read.
    1/28/96/daj -  Minor optimization to getBinaryDataDecl 
 */
 
@@ -913,14 +916,14 @@ static id obj(void)
        as a normal object. SPECIAL-WAVE-ENV-CASE. */
     /*
       Note: It is forbidden to use the character "]" in the description.
-      Also, it is forbidden to write a Note, Score or Part as a parameter value
+      Also, it is forbidden to write a MKNote, MKScore or MKPart as a parameter value
       since these may use ']' in their description.
       */
     if (!strcmp("Envelope",tokenBuf)) {
 	MATCH(_MK_undef);
 	return env();
     }
-    if ((!strcmp("Partials",tokenBuf)) ||
+    if ((!strcmp("MKPartials",tokenBuf)) ||
 	(!strcmp("Samples",tokenBuf))) {
 	MATCH(_MK_undef);
 	return wave();
@@ -2303,7 +2306,7 @@ static id getBinaryWaveTableDecl(void)
     id rtn;
     c = (int)PPSTREAMGETC();//sb: was NXGetc(parsePtr->_stream);
     CHECKEOS();
-    if (c == '\0') { /* Partials */
+    if (c == '\0') { /* MKPartials */
 #       define INITPTR(_cur,_base) _cur = _base - 1
 #       define FIRSTPHASE() (curPoint == 0)
 #       define NPTS() (((int)(dataCurX - dataX)) + 1)
@@ -2347,7 +2350,7 @@ static id getBinaryWaveTableDecl(void)
        phases:(varyingPhase) ? dataZ : NULL 
        orDefaultPhase:phaseConstant];
     }
-    else { /* Samples */
+    else { /* MKSamples */
 	rtn = [MKGetSamplesClass() new];
 	[(MKSamples *) rtn readSoundfile:getBinaryString(NO)];
     }
@@ -2425,13 +2428,13 @@ static id getBinaryObjectDecl(void)
        as a normal object. SPECIAL-WAVE-ENV-CASE. */
     /*
       Note: It is forbidden to use the character "]" in the description.
-      Also, it is forbidden to write a Note, Score or Part as a parameter value
+      Also, it is forbidden to write a MKNote, MKScore or MKPart as a parameter value
       since these may use ']' in their description.
       */
     if (!strcmp("Envelope",tokenBuf)) {
 	return getBinaryEnvelopeDecl();
     }
-    if ((!strcmp("Partials",tokenBuf)) ||
+    if ((!strcmp("MKPartials",tokenBuf)) ||
 	(!strcmp("Samples",tokenBuf))) {
 	return getBinaryWaveTableDecl();
     }
@@ -3559,7 +3562,7 @@ _MKNewScoreInStruct(NSData *aStream,id owner,NSMutableData *printStream,
        Owner is an object that must meet the following restrictions:
        1. It must respond to _newFilePartWithName:(char *)name by
        creating an object corresponding to name. This object corresponds to
-       a part declaration in the file. It may actually be a Part object or it 
+       a part declaration in the file. It may actually be a MKPart object or it 
        may be any object that responds to _setInfo:.
        2. It must respond to _setInfo:.  
        3. If mergeParts is YES, it must respond to -_elements by returning a 
@@ -3568,7 +3571,7 @@ _MKNewScoreInStruct(NSData *aStream,id owner,NSMutableData *printStream,
 
        FIXME 
        To make this more palatable:
-       Change _setInfo: to setInfoMerge: in both Score and Part. 
+       Change _setInfo: to setInfoMerge: in both MKScore and MKPart. 
        Change _newFilePartWithName: to newScorefilePartWithName: or
           newObjectWithName:.
        Make mergeParts be private or change _elements to ??.
@@ -3631,10 +3634,10 @@ _MKNewScoreInStruct(NSData *aStream,id owner,NSMutableData *printStream,
     scoreRPtr->_symbolTable = _MKNewScorefileParseTable();
     scoreRPtr->_aNote = (id) nil;
     parsePtr = initParsePtr(aStream, YES, ((name) ? name : @"Scorefile"));
-    /* We decided NOT to merge the same Part name when you read a scorefile 
-       into a Score. For ScorefilePerformer, we currently are merging Parts.
+    /* We decided NOT to merge the same MKPart name when you read a scorefile 
+       into a MKScore. For MKScorefilePerformer, we currently are merging MKParts.
        But this is maybe the wrong thing. It might be better to 'clean up'
-       the ScorefilePerformer after performing. FIXME. */
+       the MKScorefilePerformer after performing. FIXME. */
     if (mergeParts)
     {       
 	id aList;
@@ -3949,7 +3952,7 @@ static id
    If EOF is reached, the timeTag field of scorefileRPtr is set to 
    MK_ENDOFTIME and _MKParseScoreNote returns nil. 
    Otherwise, the timeTag field is set to the current time. The part
-   field of scorefileRPtr is set to the Part of the current note.
+   field of scorefileRPtr is set to the MKPart of the current note.
    The note returned should be copied on memory. 
    It is 'owned' by the _MKScoreInStruct pointer. */
 {
@@ -3979,7 +3982,7 @@ static id
 	      _MKSetNoteType(aNote,tok);
 	      _MKSetNoteTag(aNote,getNoteTag(YES,tok));
 	      break;
-	    case MK_mute: /* Notes are type mute by default. */
+	    case MK_mute: /* MKNotes are type mute by default. */
 	      break;
 	    case MK_noteDur:
 	      _MKSetNoteDur(aNote,getBinaryDouble()); /* Also sets type */
@@ -4071,8 +4074,8 @@ static char *getHomeDirectory()
 #define LOCALSCOREDIR @"/LocalLibrary/Music/Scores/"
 #define SYSTEMSCOREDIR @"/NextLibrary/Music/Scores/"
 
-/**** FIXME Add this to parseScore.m, Score.m (read only) 
-  ScorefilePerformer.m (read only) ***/
+/**** FIXME Add this to parseScore.m, MKScore.m (read only) 
+  MKScorefilePerformer.m (read only) ***/
 
 NSMutableData *_MKFindScorefile(int *fd,NSString *name)
 {

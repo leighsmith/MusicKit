@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.10  2001/07/02 16:51:38  sbrandon
   - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
     compliant)
@@ -331,7 +334,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
 
 +(MKMasterUGStruct *)masterUGPtr
     /* This method is a subclass responsibility. It is automatically
-       provided by the UnitGenerator creation utility, dspwrap. */
+       provided by the MKUnitGenerator creation utility, dspwrap. */
 {
     [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
     return NULL;
@@ -339,7 +342,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
 
 +(MKLeafUGStruct *)classInfo
     /* This method is a subclass responsibility. It is automatically
-       provided by the UnitGenerator creation utility, dspwrap. */
+       provided by the MKUnitGenerator creation utility, dspwrap. */
 {
     [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
     return NULL;
@@ -353,7 +356,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
 
 -moved
   /* 
-     The moved message is sent when the Orchestra moves a UnitGenerator
+     The moved message is sent when the MKOrchestra moves a MKUnitGenerator
      during compaction.
      A subclass occasionally overrides this method.
      The default method does nothing. */
@@ -364,7 +367,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
 
 -(BOOL)runsAfter:(MKUnitGenerator *)aUnitGenerator
   /* Returns YES if aUnitGenerator executes on the DSP after the receiver. 
-     aUnitGenerator is assumed to be executing in the same Orchestra as
+     aUnitGenerator is assumed to be executing in the same MKOrchestra as
      the receiver. */
 {
     if (![aUnitGenerator isKindOfClass:[MKUnitGenerator class]]) 
@@ -396,7 +399,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
 
 -(MKOrchMemStruct *) resources     
   /* Return pointer to DSP memory requirements of the receiver.
-     E.g. if the UnitGenerator uses 10 words of pLoop memory 
+     E.g. if the MKUnitGenerator uses 10 words of pLoop memory 
      [aUG resources]->pLoop will be equal to 10. */
 {
     return &_classInfo->reso;
@@ -418,7 +421,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
    * Empty method that can be overridden by a subclass. Sent when an object
    * is created, after its code is loaded.
    * Returns self or nil if the creation is to be aborted. In the
-   * latter case, the object is then freed automatically by the Orchestra.
+   * latter case, the object is then freed automatically by the MKOrchestra.
    * Subclass should send [super init] before doing its own 
    * initialiazation and should return nil immediately if [super init]
    * returns nil. The default implementation returns self. 
@@ -457,7 +460,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
     /* Sends [self runSelf] then sets status to MK_running. 
      This method should not be overridden by subclass. Instead, the
      subclass implements runSelf. Music Kit semantics require that run
-     be sent to a UnitGenerator before it is used. */
+     be sent to a MKUnitGenerator before it is used. */
 {
     [self runSelf];
     status = MK_running;
@@ -546,7 +549,7 @@ static void reportOpt(MKUnitGenerator *self,unsigned argNum)
      an argument means that if it is set to the same value twice, the second
      setting is supressed. Note that you should never optimize an argument
      that the unit generator DSP code changes itself, i.e. anything used 
-     for running state. The reason is that the UnitGenerator bases its 
+     for running state. The reason is that the MKUnitGenerator bases its 
      decision on whether to optimize by storing the previous set value, not by
      reading back the current value from the DSP. 
      This method should return YES if arg should be optimized, NO otherwise. 
@@ -600,7 +603,7 @@ static BOOL errorChecks = NO;
 }
 
 /* The following is an optimziation to avoid calling _MKCurSample() more
-   than necessary. Note that it is optimized for the single-Orchestra case. */
+   than necessary. Note that it is optimized for the single-MKOrchestra case. */
 static id sameTimeOrch = nil;
 static DSPFix48 *ts = NULL;
 static BOOL adjustTimeNeeded = NO;
@@ -1089,7 +1092,7 @@ extern int _MKOrchestraGetNoops(void);
 }
 -(MKOrchMemStruct *) _resources     
   /* Return pointer to DSP memory requirements of this unit generator. 
-     E.g. if the UnitGenerator uses 10 words of pLoop memory 
+     E.g. if the MKUnitGenerator uses 10 words of pLoop memory 
      [aUG resources]->pLoop will be equal to 10. */
 {
     return &_classInfo->reso;
@@ -1202,7 +1205,7 @@ extern int _MKOrchestraGetNoops(void);
 
 +(id)_newInOrch:(id)anOrch index:(unsigned short)whichDSP 
  reloc:(MKOrchMemStruct *)reloc looper:(unsigned int)looper
-    /* Called by orchestra to instantiate a new copy of a UnitGenerator. 
+    /* Called by orchestra to instantiate a new copy of a MKUnitGenerator. 
        */
 {
     static int UGInstanceCount = 0; /* Just counts up forever (for debugging) */
@@ -1251,7 +1254,7 @@ extern int _MKOrchestraGetNoops(void);
   /* Frees object and removes corresponding DSP code from the DSP. 
      You never call this method directly. 
      You may override it to do any clean-up needed before free. 
-     Note the distinction between deallocating a UnitGenerator and freeing
+     Note the distinction between deallocating a MKUnitGenerator and freeing
      it. */
 {
     MKUnitGenerator **listP = IAVAIL(_orchIndex);
@@ -1275,7 +1278,7 @@ extern int _MKOrchestraGetNoops(void);
 
 
 -_deallocAndAddToList
-    /* Unit generators are stored in free lists by the Orchestra.
+    /* Unit generators are stored in free lists by the MKOrchestra.
        This method adds the receiver to the specified list. The 
        list is sorted by reloc. */
 {

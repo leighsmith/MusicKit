@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.41  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.40  2001/08/07 16:20:05  leighsmith
   Added first draft of encode/decode methods, typed _pIn/_pOut
 
@@ -228,11 +231,11 @@ Modification history:
 		 sent something), the Music Kit hangs.
   08/26/91/daj - Internationalized strings.
   08/30/91/daj - Changed to set time tag of incoming notes.
-                 Flushed superfluous setting of timeTag when creating Note
+                 Flushed superfluous setting of timeTag when creating MKNote
 		 in sysex method.
   09/06/91/daj - Switched to new driver.  Need to release unit and driver.
   01/07/92/daj - Added break out of my_data_reply when the response
-                 to the incoming Note is to abort.
+                 to the incoming MKNote is to abort.
   06/04/92/daj - Added settable conductor.
   10/20/92/daj - Set table name to _MK_ERRTAB so that localization will work.
   10/31/92/daj - Got rid of bad free of NXAtom hostname.
@@ -1176,7 +1179,7 @@ static unsigned ignoreBit(unsigned param)
     return self;
 }
 
-/* Performer-like methods. */
+/* MKPerformer-like methods. */
 
 - (MKConductor *) conductor
 {
@@ -1826,11 +1829,11 @@ static void cancelQueueReq(MKMidi *self)
     return self;
 }
 
-/* Accessing NoteSenders and NoteReceivers */
+/* Accessing MKNoteSenders and MKNoteReceivers */
 
 - channelNoteSender:(unsigned)n
   /* Returns the MKNoteSender corresponding to the specified channel or nil
-     if none. If n is 0, returns the MKNoteSender used for Notes fasioned
+     if none. If n is 0, returns the MKNoteSender used for MKNotes fasioned
      from midi channel mode and system messages. */
 { 
     return (n > MIDI_NUMCHANS) ? nil : [noteSenders objectAtIndex:n];
@@ -1838,7 +1841,7 @@ static void cancelQueueReq(MKMidi *self)
 
 - channelNoteReceiver:(unsigned)n
   /* Returns the NoteReceiver corresponding to the specified channel or nil
-     if none. If n is 0, returns the NoteReceiver used for Notes fasioned
+     if none. If n is 0, returns the NoteReceiver used for MKNotes fasioned
      from midi channel mode and system messages. */
 { 
     return (n > MIDI_NUMCHANS) ? nil : [noteReceivers objectAtIndex:n];
@@ -1861,8 +1864,8 @@ static void cancelQueueReq(MKMidi *self)
 }
 
 - noteReceivers	
-  /* TYPE: Querying; Returns a copy of the List of NoteReceivers.
-   * Returns a copy of the List of NoteReceivers. The NoteReceivers themselves
+  /* TYPE: Querying; Returns a copy of the List of MKNoteReceivers.
+   * Returns a copy of the List of MKNoteReceivers. The MKNoteReceivers themselves
    * are not copied.	
    */
 {

@@ -14,7 +14,7 @@
     Each instances of the MKOrchestra class corresponds to a single DSP. We call
     these instances "orchestra instances"
     or, simply, "orchestras". We call the sum total of all orchestras the
-    "Orchestra". Each orchestra instance is referred to by an integer
+    "MKOrchestra". Each orchestra instance is referred to by an integer
     'orchIndex'. These indecies start at 0. For the basic
     NeXT configuration, orchIndex is always 0.
 
@@ -35,6 +35,9 @@
 Modification history:
 
   $Log$
+  Revision 1.21  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.20  2001/05/14 21:44:56  leighsmith
   Now uses the separateThreadedAndInMusicKitThread class method
 
@@ -98,7 +101,7 @@ Modification history:
                  for write data and for write dac.
   11/21/89/daj - Minor changes to support lazy shared data garbage collection.   
   11/27/89/daj - Removed argument from _MKCurSample. Made _previousTime and
-                 _previousTimeStamp be instance variables of Orchestra.
+                 _previousTimeStamp be instance variables of MKOrchestra.
   12/3/89/daj  - Moved deviceStatus = MK_devClosed to freeUgs() from 
                  closeOrch() to prevent problems when Conductor's 
                  finishPerformance sends -close recursively. For maximum
@@ -121,7 +124,7 @@ Modification history:
                  Changed loadOrchLoop failure case to just call freeUGs(). 
                  This failure should never happen, anyway.
                  Fixed trace message in allocUnitGenerator.
-                 Fixed bug in resoAlloc. It wasn't selecting UnitGenerator
+                 Fixed bug in resoAlloc. It wasn't selecting MKUnitGenerator
                  times correctly. Got rid of wasTimed in loadOrchLoop(). It
                  was a noop because we're always untimed when loading the
                  orch loop. Added new dspwrap support to compaction code.
@@ -129,9 +132,9 @@ Modification history:
                  -installSharedObject:for:segment:length and 
                  -installSharedObject:for:segment:.
   02/13/90/daj - Fixed bugs in compaction: I was pre-incrementing piLoop so
-                 the space for a freed UnitGenerator wasn't really getting 
+                 the space for a freed MKUnitGenerator wasn't really getting 
                  freed. Reversed order of bltArgs and bltLoop so that 
-                 moved messages get sent after the UnitGenerator is fully
+                 moved messages get sent after the MKUnitGenerator is fully
                  moved. Changed increment of el to end of loop. Removed -1
                  in bltLoop and bltArgs calls. Changed bltLoop and bltArgs
                  to take address of ug list pointer and set it to NULL (this
@@ -147,7 +150,7 @@ Modification history:
   03/28/90/mtm - Changed above to "setOutputCommandsFile" and 
                  "outputCommandsFile"
   03/28/90/daj - Added read data API support. 
-  04/05/90/mmm - Added synchToConductor: from daj experimental Orchestra
+  04/05/90/mmm - Added synchToConductor: from daj experimental MKOrchestra
   04/05/90/mmm - Added adjustTime hack in all allocation routines.
   04/21/90/daj - Small mods to get rid of -W compiler warnings.
   04/25/90/daj - Added check for devStatus == MK_devClosed in 
@@ -163,7 +166,7 @@ Modification history:
   12/18/90/daj - Fixed memory leak (orchloop UG was leaking on close/abort)
   01/08/91/daj - Added compaction call and clearing of previousLosingTemplate
   		 to setHeadroom:.  This is needed if headroom is set when
-		 the Orchestra is open.
+		 the MKOrchestra is open.
   02/08/91/daj - Changed allocPatchPoint to be more forgiving if passed
                  MK_xData instead of MK_xPatch or MK_yData instead of MK_yPatch
   07/10/91/daj - Changed to make synchToConductor: safer.
@@ -172,7 +175,7 @@ Modification history:
   1/31/93/daj -  Changed value of _XLI_USR and _YLI_USR
   1/31/93/daj -  Added .02 to HEADROOMFUDGE to accomodate new slightly slower ugs
                  (because R_L is gone.)
-  3/10/93/daj -  Got rid of orchBadFree error.  Orchestra now frees existing 
+  3/10/93/daj -  Got rid of orchBadFree error.  MKOrchestra now frees existing 
                  unitgenerators for you.
   3/18/93/daj -  Added check for DSPCheckVersion() failing.  Added goto in
                  loadOrchLoop.
@@ -231,7 +234,7 @@ Modification history:
    But it is assumed that the INTERNAL memory size of the DSP will not
    change. 
    When things change enough for them to become variables, we may want to 
-   revamp the entire memory map. Note also that the Orchestra assumes 
+   revamp the entire memory map. Note also that the MKOrchestra assumes 
    overlaid addressing of off-chip memory (i.e. X, Y and P spaces all refer 
    to the same memory location). 
    FIXME */
@@ -350,7 +353,7 @@ static int extraRoomAtTopOfOffchipMemory = 0;
 int _MKSetTopOfMemory(int val)
     /* This is something Julius wanted for debugging purposes. It allows an
        extra partition to be left at the top of DSP memory. Must be 
-       called before the Orchestra is opened. val is the amount of extra
+       called before the MKOrchestra is opened. val is the amount of extra
        room to leave at the top of memory. */
 {
     extraRoomAtTopOfOffchipMemory = val;
@@ -1124,7 +1127,7 @@ static id broadcastAndRtn(MKOrchestra *self,SEL sel)
 
 +allocSynthPatch:aSynthPatchClass
  patchTemplate:p
-  /* Get a SynthPatch on the first DSP which has sufficient resources. */
+  /* Get a MKSynthPatch on the first DSP which has sufficient resources. */
 {
     id rtnVal;
     register int i;
@@ -1137,7 +1140,7 @@ static id broadcastAndRtn(MKOrchestra *self,SEL sel)
 +dealloc:aSynthResource
   /* Deallocates aSynthResource by sending it the dealloc
      message. 
-     aSynthResource may be a UnitGenerator, a SynthData or a SynthPatch.
+     aSynthResource may be a MKUnitGenerator, a MKSynthData or a MKSynthPatch.
      This method is provided for symmetry with the alloc family
      of methods. */
 {
@@ -1148,7 +1151,7 @@ static id broadcastAndRtn(MKOrchestra *self,SEL sel)
 -dealloc:aSynthResource
   /* Deallocates aSynthResource by sending it the dealloc
      message. 
-     aSynthResource may be a UnitGenerator, a SynthData or a SynthPatch.
+     aSynthResource may be a MKUnitGenerator, a MKSynthData or a MKSynthPatch.
      This method is provided for symmetry with the alloc family
      of methods. */
 {
@@ -1208,7 +1211,7 @@ static void initSharedTable(void)
 -sharedSynthDataFor:aKeyObj 
  segment:(MKOrchMemSegment)whichSegment 
  length:(int)length
-  /* This method returns the SynthData, UnitGenerator or SynthPatch instance 
+  /* This method returns the MKSynthData, MKUnitGenerator or MKSynthPatch instance 
      representing anObj in the specified segment and increments its reference 
      count, if such an object exists. 
      If not, or if the orchestra is not open, returns nil. 
@@ -1355,14 +1358,14 @@ static id installSharedObject(MKOrchestra *self,
 }
 
 -sineROM
-  /* Returns a SynthData object representing the SineROM. You should never
+  /* Returns a MKSynthData object representing the SineROM. You should never
      deallocate this object. */
 {
     return sineROM;
 }
 
 -muLawROM
-  /* Returns a SynthData object representing the MuLawROM. You should never
+  /* Returns a MKSynthData object representing the MuLawROM. You should never
      deallocate this object. */
 {
     return muLawROM;
@@ -1492,8 +1495,8 @@ static id installSharedObject(MKOrchestra *self,
      soundfile (the string is copied). In the current release, it
      is not permissable to have an output soundfile and do sound-out at the same
      time. This message is currently ignored if the receiver is not closed. 
-     If you re-run the Orchestra, the file is rewritten. To specify that
-     you no longer want a file when the Orchestra is re-run, close the Orchestra,
+     If you re-run the MKOrchestra, the file is rewritten. To specify that
+     you no longer want a file when the MKOrchestra is re-run, close the MKOrchestra,
      then send setOutputSoundfile:NULL. 
      
      Note that sending setOutputSoundfile:NULL does not automatically 
@@ -1595,8 +1598,8 @@ static id installSharedObject(MKOrchestra *self,
      is to be written. In the current release a complete log is only available
      when doing sound-out or writing a soundfile.
      This message is currently ignored if the receiver is not closed. 
-     If you re-run the Orchestra, the file is rewritten. To specify that
-     you no longer want a file when the Orchestra is re-run, close the Orchestra,
+     If you re-run the MKOrchestra, the file is rewritten. To specify that
+     you no longer want a file when the MKOrchestra is re-run, close the MKOrchestra,
      then send setSimulatorFile:NULL.  */
 {
     if (deviceStatus != MK_devClosed) 
@@ -1726,7 +1729,7 @@ static id installSharedObject(MKOrchestra *self,
 }
 
 
-/* Methods that do Orchestra control (e.g. open, close, free, etc.) */
+/* Methods that do MKOrchestra control (e.g. open, close, free, etc.) */
 
 
 static BOOL popResoAndSetLooper(MKOrchestra *self);
@@ -1762,7 +1765,7 @@ static void freeEMem(MKOrchestra *self,int whichSpace) {
 
 static void freeUGs(self)
     MKOrchestra *self;
-    /* Free all SynthData and UnitGenerators. */
+    /* Free all MKSynthData and UnitGenerators. */
 {
     char wasTimed = [self isTimed];
     self->deviceStatus = MK_devClosed;
@@ -2093,7 +2096,7 @@ static id loadOrchLoop(self)
     }
 #if READDATA 
     /* Need something here to selectively create either the stereo or the
-       mono Read data UnitGenerator. Or maybe it'll just be one UnitGenerator.
+       mono Read data MKUnitGenerator. Or maybe it'll just be one MKUnitGenerator.
        */
     if (((resoAlloc(self,self->_orchSysUGClass,&reloc) != OK) || 
          self->isLoopOffChip || 
@@ -2145,7 +2148,7 @@ static id loadOrchLoop(self)
 }
 
 void _MKOrchAddSynthIns(id anIns)
-    /* The Orchestra keeps track of all the SynthInstruments so it can
+    /* The MKOrchestra keeps track of all the SynthInstruments so it can
        clean up at the end of time. */
 {
     if (!synthInstruments)
@@ -2154,7 +2157,7 @@ void _MKOrchAddSynthIns(id anIns)
 }
 
 void _MKOrchRemoveSynthIns(id anIns)
-    /* The Orchestra keeps track of all the SynthInstruments so it can
+    /* The MKOrchestra keeps track of all the SynthInstruments so it can
        clean up at the end of time. */
 {
     [synthInstruments removeObject:anIns];
@@ -2197,14 +2200,14 @@ BOOL _MKOrchLateDeltaTMode(MKOrchestra *self)
 #endif
 
 -copy
-  /* We override this method. Copying is not supported by the Orchestra class.
+  /* We override this method. Copying is not supported by the MKOrchestra class.
    */
 {
     [self doesNotRecognizeSelector:_cmd];  return nil;
 }
 
 - copyWithZone:(NSZone *)zone
-  /* We override this method. Copying is not supported by the Orchestra class.
+  /* We override this method. Copying is not supported by the MKOrchestra class.
    */
 {
     [self doesNotRecognizeSelector:_cmd];  return nil;
@@ -2232,7 +2235,7 @@ BOOL _MKOrchLateDeltaTMode(MKOrchestra *self)
 
 -useDSP:(BOOL)useIt
   /* Controls whether or not the output actually goes to the DSP. Has no effect
-     if the Orchestra is not closed. The default is YES. 
+     if the MKOrchestra is not closed. The default is YES. 
      This method should not be used in release 0.9. */
 {
     if (deviceStatus != MK_devClosed)
@@ -2466,12 +2469,12 @@ static BOOL compactResourceStack(MKOrchestra *self); /* Forward ref */
 -setHeadroom:(double)headroom
   /* Sets DSP computational headroom. (This only has an effect when you are
      generating sound in real time.) This adjusts the tradeoff between
-     maximizing the processing power of the Orchestra on the one hand and
+     maximizing the processing power of the MKOrchestra on the one hand and
      running a risk of falling out of real time on the other.
      A value of 0 runs a large risk of falling out of real time.
      A value of .5 runs a small risk of falling out of real time but 
-     allows for a substantially less powerful Orchestra. 
-     Since the UnitGenerator computation time estimates are conservative,
+     allows for a substantially less powerful MKOrchestra. 
+     Since the MKUnitGenerator computation time estimates are conservative,
      negative headroom values may sometimes work. The default is .1. 
      
      The effective sampling period is computed as 
@@ -2553,7 +2556,7 @@ id _MKFreeMem(MKOrchestra *self,MKOrchAddrStruct *mem)
     return self;
 }
 
-/* Instance methods for SynthPatch alloc/dealloc.------------------------  */
+/* Instance methods for MKSynthPatch alloc/dealloc.------------------------  */
 
 -allocSynthPatch:aSynthPatchClass
   /* Same as allocSynthPatch:patchTemplate: but uses default template. 
@@ -2567,10 +2570,10 @@ id _MKFreeMem(MKOrchestra *self,MKOrchAddrStruct *mem)
 #define CHECKADJUSTTIME() if (self->isTimed == MK_SOFTTIMED) _MKAdjustTimeIfNecessary()
 
 -allocSynthPatch:aSynthPatchClass patchTemplate:p
-  /* Reuse a SynthPatch if possible. Otherwise, build a new one, if 
-     possible. If successful, return the new SynthPatch. Otherwise,
+  /* Reuse a MKSynthPatch if possible. Otherwise, build a new one, if 
+     possible. If successful, return the new MKSynthPatch. Otherwise,
      return nil. Note that the ordered collection of objects in the 
-     SynthPatch is in the same order as specified in the template. */
+     MKSynthPatch is in the same order as specified in the template. */
 {
     id rtnVal;
     if ((!p) || (deviceStatus == MK_devClosed))
@@ -2673,7 +2676,7 @@ static DSPAddress allocMem(MKOrchestra *self,MKOrchMemSegment segment,unsigned s
 }
 
 -allocSynthData:(MKOrchMemSegment)segment length:(unsigned)size
-  /* Returns a new SynthData object with the specified length or nil if 
+  /* Returns a new MKSynthData object with the specified length or nil if 
      there's no more memory or if size is 0. This method can be used
      to allocate patch points but the size must be DSPMK_NTICK. */
 {
@@ -2834,8 +2837,8 @@ static void abortAlloc(self,factObj,reloc)
 
 static void adjustUGInSP(sp,aUG)
     id sp,aUG;
-    /* This is what we do when freeing a UnitGenerator that's in a 
-       SynthPatch */
+    /* This is what we do when freeing a MKUnitGenerator that's in a 
+       MKSynthPatch */
 {
     [sp _remove:aUG];                     /* Put a hole in the sp */
     _MKDeallocSynthElement(aUG,NO);
@@ -2855,7 +2858,7 @@ static void freeUG(self,aUG,aSP)
     register MKOrchestra *self;
     id aUG;
     id aSP;
-    /* Free a UnitGenerator */
+    /* Free a MKUnitGenerator */
 {
     double time;
     MKLeafUGStruct *classInfo;
@@ -2871,7 +2874,7 @@ static void freeUG(self,aUG,aSP)
 }
 
 static BOOL popResoAndSetLooper(MKOrchestra *self)
-    /* Pops the UnitGenerator unitGeneratorStack and resets the looper. See popReso */
+    /* Pops the MKUnitGenerator unitGeneratorStack and resets the looper. See popReso */
 {
     BOOL resetLooper = popReso(self);
     if (resetLooper)
@@ -2938,7 +2941,7 @@ static void freeUG2(self,aUG,aSP)
     [aUG release];
 }
 
-/*static void bltArgs(Orchestra *self,MKOrchMemStruct *argBLTFrom,
+/*static void bltArgs(MKOrchestra *self,MKOrchMemStruct *argBLTFrom,
                     MKOrchMemStruct *argBLTTo,MKOrchMemStruct *reso,
                     id **ugList,id *endOfUGList,id theList)
  */
@@ -2973,7 +2976,7 @@ static void bltArgs(MKOrchestra *self,MKOrchMemStruct *argBLTFrom,
 //    for (el = *ugList; (el < endOfUGList); el++) {
     for (;*ugList < endOfUGList; (*ugList)++) {
         el = [theList objectAtIndex:*ugList];
-        /* Inform UnitGenerator and its patch of the relocation change. */
+        /* Inform MKUnitGenerator and its patch of the relocation change. */
         [el moved];             
         [[el synthPatch] moved:el];
     }
@@ -2981,7 +2984,7 @@ static void bltArgs(MKOrchestra *self,MKOrchMemStruct *argBLTFrom,
 }
 
 /*
-static void bltLoop(Orchestra *self,MKOrchMemStruct *loopBLTFrom,
+static void bltLoop(MKOrchestra *self,MKOrchMemStruct *loopBLTFrom,
                     MKOrchMemStruct *loopBLTTo,MKOrchMemStruct *reso,
                     id **ugList,id *endOfUGList)
  */
@@ -3029,7 +3032,7 @@ static BOOL compactResourceStack(MKOrchestra *self)
        have already done so. Instead, we merely free any off-chip
        memory that ug has. This is done by the C-function freeUG2.
        The actual moving of the DSP code and argument values is done
-       by the UnitGenerator function _MKMoveUGCodeAndArgs(). */
+       by the MKUnitGenerator function _MKMoveUGCodeAndArgs(). */
     
     int i;
     unsigned n = [self->unitGeneratorStack count];
@@ -3583,7 +3586,7 @@ static DSPAddress allocMem(MKOrchestra *self,MKOrchMemSegment segment,unsigned s
         if ([deallocatedPatches count]) {
             aPatch = [deallocatedPatches lastObject]; /* peek */
             if ([aPatch _usesEMem:segment])
-            /* See comment in SynthPatch.m */
+            /* See comment in MKSynthPatch.m */
                 while ([deallocatedPatches count]) {
                     aPatch = [deallocatedPatches lastObject];
                     [aPatch _free];            /* Deallocate some UGs. */
@@ -3615,7 +3618,7 @@ static int resoAlloc(MKOrchestra *self,id factObj,MKOrchMemStruct *reloc)
        else an MKOrchMemSegment indicating what was in short supply.
        If a non-0 value is returned, the
        reloc contents is not valid and should be ignored. This is 
-       used by the UnitGenerator class to allocate space for the new
+       used by the MKUnitGenerator class to allocate space for the new
        instance. */
 {
     BOOL leapOffChip = NO;
@@ -3948,11 +3951,11 @@ static BOOL notificationSent = NO;
 
 @end
   
-/* Private Orchestra interface */
+/* Private MKOrchestra interface */
 @implementation MKOrchestra(Private)
 
 -_notifyAbort
-  /* Sent by UnitGenerator, SynthData or Orchestra when they notice trouble */
+  /* Sent by MKUnitGenerator, MKSynthData or MKOrchestra when they notice trouble */
 {
     if (abortNotificationDelegate && !notificationSent)
       [MKConductor sendMsgToApplicationThreadSel:@selector(orchestraDidAbort:)
@@ -3997,8 +4000,8 @@ static BOOL driverPresent(unsigned short index)
 }
 
 +(NSMutableArray **)_addTemplate:aNewTemplate 
-  /* The Orchestra keeps a list of SynthPatches indexed by PatchTemplates.
-     PatchTemplate uses this to tell the Orchestra about each new Template. */
+  /* The MKOrchestra keeps a list of SynthPatches indexed by PatchTemplates.
+     MKPatchTemplate uses this to tell the MKOrchestra about each new Template. */
 {
     static int curArrSize = 0;
     NSMutableArray **deallocatedPatches;

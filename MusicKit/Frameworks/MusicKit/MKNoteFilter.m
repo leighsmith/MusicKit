@@ -25,6 +25,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.7  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.6  2001/08/07 16:16:11  leighsmith
   Corrected class name during decode to match latest MK prefixed name
 
@@ -94,7 +97,7 @@
 #import "noteDispatcherMethods.m"
 
 - copyWithZone:(NSZone *)zone
-  /* Copies object, copying NoteSenders and NoteReceivers. */
+  /* Copies object, copying MKNoteSenders and MKNoteReceivers. */
 {
     MKNoteFilter *newObj = [super copyWithZone:zone];
 //    id *el,newEl;

@@ -19,7 +19,7 @@
     space--keep some room free on the disk off of which you booted.
 
     MKMixerInstrument is also an illustration of how to make your own MusicKit
-    MKInstrument subclass to "realize Notes" in some novel fashion. In this
+    MKInstrument subclass to "realize MKNotes" in some novel fashion. In this
     case, MKNotes are soundfile mix specifications. They are "realized" by
     being mixed into the output file.
 
@@ -36,6 +36,9 @@
 Modification history:
 
  $Log$
+ Revision 1.4  2001/09/06 21:27:47  leighsmith
+ Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
  Revision 1.3  2000/04/26 01:23:19  leigh
  Renamed to more meaningful samplesToMix ivar
 
@@ -81,7 +84,7 @@ Modification history:
   /* This is invoked when first note is received during performance */
 
 -realizeNote:aNote fromNoteReceiver:aNoteReceiver;
-  /* This is invoked when a new Note is received during performance */
+  /* This is invoked when a new MKNote is received during performance */
 
 -afterPerformance;
   /* This is invoked when performance is over. */

@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.11  2001/05/12 09:35:19  sbrandon
   - GNUSTEP: don't import mach headers
 
@@ -46,7 +49,7 @@ Modification history:
   Revision 1.2  1999/07/29 01:26:13  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
-  01/30/90/daj - Created from Orchestra.m.
+  01/30/90/daj - Created from MKOrchestra.m.
   01/31/90/daj - Changed select() to msg_receive() for uniformity with 
                  the rest of the Music Kit.
   02/15/90/daj - Changed order of events in re-open in -open. 
@@ -86,7 +89,7 @@ Modification history:
   06/10/90/daj - Changed USEFREEZE to 0
   08/17/90/daj - Added more conditional compilation code to make it so
                  if the pause/resume driver bug gets fixed, then the
-		 Orchestra will correctly start on a dime with its buffers
+		 MKOrchestra will correctly start on a dime with its buffers
 		 full.
   09/26/90/daj - For dsp-18, need to change DSPMKGetClipCountAddress() to 
                  DSPMKGetClipCountXAddress() to correspond to new libdsp
@@ -414,7 +417,7 @@ static void
 #if 0
 static void vmProc( msg_header_t *msg, void *userData)
 {
-    Orchestra *self;
+    MKOrchestra *self;
     vmMsg *myMsg = (vmMsg *)msg; /* Coerce it */
     self = dspNumToOrch[myMsg->dspNum];
     [[self outputSoundDelegate] orchestra:self
@@ -951,7 +954,7 @@ static void
      Returns self unless there's some problem
      closing the DSP, in which case, returns nil.
 
-     SB's Notes: bufferTime is absolute in seconds.
+     SB's MKNotes: bufferTime is absolute in seconds.
      */
 {
     if (deviceStatus == MK_devRunning) { /* If not, can't wait for end of time */ 

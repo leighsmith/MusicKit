@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.10  2001/08/27 20:00:31  leighsmith
   Added automatic sending of allNotesOff to the owner of the receiver when squelching
 
@@ -60,11 +63,11 @@ Modification history:
 @implementation MKNoteReceiver
 
 /* METHOD TYPES
- * Receiving Notes
+ * Receiving MKNotes
  */
 
 -owner
-  /* Gets the owner (an Instrument or NoteFilter). */
+  /* Gets the owner (an MKInstrument or MKNoteFilter). */
 {
     return owner;
 }
@@ -268,7 +271,7 @@ Modification history:
 }
 
 -receiveNote: (MKNote *) aNote atTime: (double) time 
-    /* TYPE: Receiving; Receive Note at time specified in beats.
+    /* TYPE: Receiving; Receive MKNote at time specified in beats.
        Receives the specifed note at the specified time using
        the note's Conductor for time coordination. */
 {
@@ -324,7 +327,7 @@ Modification history:
 @implementation MKNoteReceiver(Private)
 
 -_setOwner:obj
-  /* Sets the owner (an Instrument or NoteFilter). In most cases,
+  /* Sets the owner (an MKInstrument or MKNoteFilter). In most cases,
      only the owner itself sends this message. 
      */
 {

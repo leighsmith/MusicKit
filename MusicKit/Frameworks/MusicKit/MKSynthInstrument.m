@@ -44,6 +44,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.12  2001/08/27 19:57:16  leighsmith
   Comment cleanup
 
@@ -77,7 +80,7 @@ Modification history:
   Revision 1.2  1999/07/29 01:16:43  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
-  09/19/89/daj - Changed to use Note C functions for efficiency.
+  09/19/89/daj - Changed to use MKNote C functions for efficiency.
   12/15/89/daj - Changed _noteOffAndScheduleEnd: to noteOff:.
   12/18/89/daj - Added flushTimedMessages to setSynthPatchCount: (to fix 
                  bug (suggestion) 3132)
@@ -145,7 +148,7 @@ static void CONSISTENCY_CHECK(SynthPatchList *aPatchList) {
     if (!((aPatchList->totalCount >= 0) && 
 	  (aPatchList->totalCount >= aPatchList->manualCount) && 
 	  (aPatchList->manualCount >= aPatchList->idleCount))) 
-	NSLog(@"SynthInstrument accounting problem.");
+	NSLog(@"MKSynthInstrument accounting problem.");
 }
 
 static SynthPatchList *getList(MKSynthInstrument *self,id template)
@@ -230,7 +233,7 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
 -(oneway void)release
 {
       /* Frees the receiver. It is illegal to send this message to a
-         SynthInstrument which is in performance. Returns self in this case,
+         MKSynthInstrument which is in performance. Returns self in this case,
          otherwise nil. */
        /*  sb: here, this was a -free method. Had to jump through hoops to get
     the object to dealloc, since a retain is held by an array by MKOrchestra.
@@ -308,7 +311,7 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
      determining which Patch to grab. For example, you might want to
      grab the quietest Patch. To do this, you need to examine the currently
      running patches and choose one. (see -activeSynthPatches: below).
-     The subclass may return nil to signal that the new Note should be
+     The subclass may return nil to signal that the new MKNote should be
      omitted. It is illegal to return a patch which is not a member of the
      active patch list.
      
@@ -339,8 +342,8 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
 }
 
 -mute:aMute
-  /* This method is invoked when a Note of type mute is received.
-     Notes of type mute are not sent to SynthPatches because they do not deal 
+  /* This method is invoked when a MKNote of type mute is received.
+     MKNotes of type mute are not sent to SynthPatches because they do not deal 
      directly with sound production. The default implementation does
      nothing. A subclass may implement this 
      method to look at the parameters of aMute and perform some appropriate
@@ -362,7 +365,7 @@ static id adjustRunningPatch(MKSynthInstrument *self,int newNoteTag,id aNote,
 			     id *currentPatch,SynthPatchList *aPatchList,
 			     MKPhraseStatus *phraseStatus)
     /* This function returns self almost all the time. The exception is 
-       when the preemption happens right now and the SynthPatch noteOn
+       when the preemption happens right now and the MKSynthPatch noteOn
        method aborts. */
 /* RETURNS RETAINED *currentPatch OBJECT */
 {
@@ -378,7 +381,7 @@ static id adjustRunningPatch(MKSynthInstrument *self,int newNoteTag,id aNote,
         [self->taggedPatches removeObjectForKey: [NSNumber numberWithInt: oldNoteTag]];
     _MKSynthPatchSetInfo(*currentPatch,newNoteTag,self);
     /* This function returns self almost all the time. The exception is 
-       when the preemption happens right now and the SynthPatch noteOn
+       when the preemption happens right now and the MKSynthPatch noteOn
        method aborts. */
     tempPatch = *currentPatch;
     if (!(*currentPatch = _MKSynthPatchPreempt(*currentPatch,aNote,self->controllerTable))) {
@@ -388,7 +391,7 @@ static id adjustRunningPatch(MKSynthInstrument *self,int newNoteTag,id aNote,
 
     if (MKIsTraced(MK_TRACESYNTHINS) ||
 	MKIsTraced(MK_TRACEPREEMPT))
-      NSLog(@"SynthInstrument preempts patch %d at time %f for tag %@.\n",
+      NSLog(@"MKSynthInstrument preempts patch %d at time %f for tag %@.\n",
 	      (int)*currentPatch,MKGetTime(), tagStr(newNoteTag));
     *phraseStatus = MK_phraseOnPreempt;
     return self;
@@ -429,7 +432,7 @@ static id adjustIdlePatch(SynthPatchList *aPatchList,int noteTag)
     aPatchList->idleCount--;
     CONSISTENCY_CHECK(aPatchList);
     if (MKIsTraced(MK_TRACESYNTHINS))
-      NSLog(@"SynthInstrument uses patch %d at time %f for tag %@.\n",
+      NSLog(@"MKSynthInstrument uses patch %d at time %f for tag %@.\n",
 	      (int)currentPatch,MKGetTime(), tagStr(noteTag));
     return currentPatch;
 }
@@ -440,7 +443,7 @@ static void alternatePatchMsg(void)
 }
 
 -realizeNote:aNote fromNoteReceiver:aNoteReceiver
-  /* Does SynthPatch allocation. 
+  /* Does MKSynthPatch allocation. 
      
      The entire algorithm is given below. The new steps are so-indicated:
      
@@ -620,8 +623,8 @@ static void alternatePatchMsg(void)
 	    _MKSynthPatchNoteDur(currentPatch,aNote,
 				 (noteTag == MAXINT) ? YES : NO);
 	      /* If noteTag is MAXINT, the patch is not addressable. 
-		 Therefore, the SynthPatch need not go through the
-		 SynthInstrument for it's auto-generated noteOff and 
+		 Therefore, the MKSynthPatch need not go through the
+		 MKSynthInstrument for it's auto-generated noteOff and 
 		 can handle the noteOff: message itself. */
 	  if (phraseStatus == MK_phraseOn)
 	    [aNote release];
@@ -786,7 +789,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch);
 
 -setSynthPatchClass:aSynthPatchClass orchestra:anOrch
   /* Set synthPatchClass as specified. If aSynthPatchClass doesn't inherit 
-     from SynthPatch, does nothing and returns nil. Otherwise, returns self.
+     from MKSynthPatch, does nothing and returns nil. Otherwise, returns self.
      Note: This does NOT allow you to supply a different synthPatchClass for
      each orchestra!  Rather, it's a way of setting two independent variables:
      orchestra and synthpatchClass. */
@@ -869,7 +872,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
 
 -abort
   /* Sends the noteEnd message to all running (or finishing) synthPatches 
-     managed by this SynthInstrument. This is used only for aborting in 
+     managed by this MKSynthInstrument. This is used only for aborting in 
      emergencies. */
 {
     deallocRunningVoices(self,nil); /* Must be first */
@@ -877,7 +880,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
 }
 
 -clearUpdates
-/* Causes the SynthInstrument to forget any noteUpdate state it has accumulated
+/* Causes the MKSynthInstrument to forget any noteUpdate state it has accumulated
    as a result of receiving noteUpdates without noteTags.
    The effect is not felt by the SynthPatches until the next phrase. Also
    clears controller info.
@@ -940,7 +943,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
 
 -(int)setSynthPatchCount:(int)voices patchTemplate:aTemplate
   /* Sets the synthPatchCount for the given template.
-     This message may only be sent when the Orchestra is open.
+     This message may only be sent when the MKOrchestra is open.
      If aTemplate is nil, the value returned by
      [synthPatchClass defaultPatchTemplate] is used. Returns the number of 
      voices for the given template. If the number of voices is decreased,
@@ -986,7 +989,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
 	if (!aPatch)
 	  break;
 	if (MKIsTraced(MK_TRACESYNTHINS))
-	  NSLog(@"SynthInstrument allocates patch %p from orchestra %p.\n",aPatch,[aPatch orchestra]);
+	  NSLog(@"MKSynthInstrument allocates patch %p from orchestra %p.\n",aPatch,[aPatch orchestra]);
 	aPatchList->manualCount++;  
 	aPatchList->totalCount++;  
 	aPatchList->idleCount++;
@@ -1074,8 +1077,8 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
 }
 
 -_deallocSynthPatch:aSynthPatch template:aTemplate tag:(int)noteTag
-    /* Removes SynthPatch from active list, possibly adding it to idle list. 
-       Returns nil if the SynthPatch is being deallocated, else self. */
+    /* Removes MKSynthPatch from active list, possibly adding it to idle list. 
+       Returns nil if the MKSynthPatch is being deallocated, else self. */
 {
     SynthPatchList *aPatchList = getList(self,aTemplate);
     if (noteTag != MAXINT)

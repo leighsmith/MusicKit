@@ -14,7 +14,7 @@
     Each instances of the MKOrchestra class corresponds to a single DSP. We call
     these instances "orchestra instances"
     or, simply, "orchestras". We call the sum total of all orchestras the
-    "Orchestra". Each orchestra instance is referred to by an integer
+    "MKOrchestra". Each orchestra instance is referred to by an integer
     'orchIndex'. These indecies start at 0. For the basic
     NeXT configuration, orchIndex is always 0.
 
@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.9  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.8  2000/10/01 06:53:39  leigh
   Changed NXHashTable to NSHashTable.
 
@@ -54,6 +57,271 @@
   Revision 1.2  1999/07/29 01:25:47  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
+*/
+/*!
+  @class MKOrchestra
+  @abstract This is the allocator and manager of DSP resources.
+  @discussion
+
+The MKOrchestra class manages DSP resources used in music synthesis.  Each
+instance of MKOrchestra represents a single DSP that's identified by
+<b>orchIndex</b>, a zero-based integer index.  In the basic NeXT hardware
+configuration, there's only one DSP so there's only one MKOrchestra instance
+(<b>orchIndex</b> 0).  On Intel-based hardware, there may be any number of DSPs
+or none, depending on how many DSP cards the user has installed.  See
+"INSTALLING INTEL-BASED DSP DRIVERS" below.
+
+The methods defined by the MKOrchestra class let you manage a DSP by allocating
+portions of its memory for specific synthesis modules and by setting its
+processing characteristics.  You can allocate entire SynthPatches or individual
+MKUnitGenerator and MKSynthData objects through the methods defined here.  Keep in
+mind, however, that similar methods defined in other class - specifically, the
+MKSynthPatch allocation methods defined in MKSynthInstrument, and the MKUnitGenerator
+and MKSynthData allocation methods defined in MKSynthPatch - are built upon and
+designed to usurp those defined by MKOrchestra.  You only to need to allocate
+synthesis objects directly if you want to assemble sound-making modules at a low
+level.
+
+Before you can do anything with an MKOrchestra - particularly, before you can
+allocate synthesis objects - you must create and open the MKOrchestra.  The
+MKOrchestra is a shared resource (that is, various DSP modules all use the same
+single MKOrchestra instance.)   Therefore, creation is done through the <b>new</b>
+method - sending <b>new</b> twice returns the same object.   (This strange
+convention is for historical reasons and matches the Application Kit
+convention.)  To open an MKOrchestra, you send it the <b>open</b> message.  This
+provides a channel of communication with the DSP that the MKOrchestra represents. 
+Once you've allocated the objects that you want, either through the methods
+described here or through those defined by MKSynthInstrument and MKSynthPatch, you
+can start the synthesis by sending the <b>run</b> message to the MKOrchestra.  (If
+your application uses the Music Kit's performance scheduling mechanism, the
+<b>run</b> message should be sent immediately before or immediately after the
+<b>startPerformance</b> message is sent to the Conductor.) The <b>stop</b>
+method halts synthesis and <b>close</b> breaks communication with the DSP. 
+These methods change the Orchestra's status, which is always one of the
+following MKDeviceStatus values:
+
+MK_devOpen	The MKOrchestra is open but not running.
+MK_devRunning	The MKOrchestra is open and running.
+MK_devStopped	The MKOrchestra has been running, but is now stopped.
+MK_devClosed	The MKOrchestra is closed.
+
+You can query an MKOrchestra's status through the <b>deviceStatus</b>
+method.
+
+When the MKOrchestra is running, the allocated UnitGenerators produce a stream of
+samples that, by default, are sent to the "default sound output".  On NeXT
+hardware, that is the NeXT monitor's stereo digital to analog converter (the
+DAC), which converts the samples into an audio signal.  This type of sound
+output is called "Host sound output" because the samples are sent to the host
+computer.  But there are a number of other alternatives.  You can write the
+samples to the DSP serial port, to be played through any of a number of devices
+that have their own DACs or do digital transfer to DAT recorders.   To do this,
+invoke the method <b>setSerialSoundOut:</b> with a <b>YES</b> argument before
+sending <b>open</b> to the MKOrchestra.    This is also called "SSI" sound output.
+ See the DSPSerialPortDevice class for more details.  
+
+Another option is to write the samples to a soundfile. &lt;&lt;This option is
+currently only available for NeXT hardware.&gt;&gt;  You do this by invoking the
+method <b>setOutputSoundfile:</b> before sending <b>open</b> to the MKOrchestra. 
+If you're writing a soundfile, the NeXT monitor's DAC is automatically disabled.
+ It is also possible to save the DSP commands as a "DSP commands format
+soundfile".   Such files are much smaller than the equivalent soundfile.  Use
+the method <b>setOutputCommandsFile:</b> to create such a file.  However,
+support for playing DSP commands file may not continue in future releases. 
+Therefore, we do not encourage their use.
+
+The MKOrchestra can also process sound that it receives via the DSP serial port. 
+To do this, send <b>setSerialSountIn:</b> with a <b>YES</b> argument. 
+&lt;&lt;Note that currently serial input may not be combined with writing a
+soundfile.&gt;&gt;
+
+Every command that's sent to the DSP is given a timestamp indicating when the
+command should be executed.  The manner in which the DSP regards these
+timestamps depends on whether its MKOrchestra is timed or untimed, as set through
+the <b>setTimed:</b> method.  In a timed MKOrchestra, commands are executed at the
+time indicated by its timestamp.  If the MKOrchestra is untimed, the DSP ignores
+the timestamps, executing commands as soon as it receives them.  By default, an
+MKOrchestra is timed.
+
+Since the DSP is a separate processor, it has its own clock and its own notion
+of the current time. Since the DSP can be dedicated to a single task - in this
+case, generating sound - its clock is generally more reliable than the main
+processor, which may be controlling any number of other tasks.  If your
+application is generating MKNotes without user-interaction, for example, if it's
+playing a MKScore or scorefile, then you should set the Music Kit performance to
+be unclocked, through the Conductor's <b>setClocked:</b> method, and the
+MKOrchestra to be timed.  This allows the Music Kit to process MKNotes and send
+timestamped commands to the DSP as quickly as possible, relying on the DSP's
+clock to synthesize the MKNotes at the correct time.  However, if your application
+must respond to user-initiated actions with as little latency as possible, then
+the Conductor must be clocked.  In this case, you can set the MKOrchestra to be
+untimed.  A clocked Conductor and an untimed MKOrchestra yields the best possible
+response time.
+
+If your application responds to user actions, but can sustain some latency
+between an action and its effect, then you may want to set the Conductor to be
+clocked and the DSP to be timed, and then use the C function
+<b>MKSetDeltaT()</b> to set the <i>delta time</i>.  Delta time is an imposed
+latency that allows the Music Kit to run slightly ahead of the DSP.  Any
+rhythmic irregularities created by the Music Kit's dependence on the CPU's clock
+are evened out by the utter dependability of the DSP's clock (assuming that the
+such an irregularity isn't greater than the delta time).
+
+Since parameter updates can occur asynchronously, the MKOrchestra doesn't know, at
+the beginning of a MKNote, if the DSP can execute a given set of UnitGenerators
+quickly enough to produce a steady supply of output samples for the entire
+duration of the MKNote.  However, it makes an educated estimate and will deny
+allocation requests that it thinks will overload the DSP and cause it to fall
+out of real time.  Such a denial may result in a smaller number of
+simultaneously synthesized voices.  You can adjust the Orchestra's DSP
+processing estimate, or headroom, by invoking the <b>setHeadroom:</b> method. 
+This takes an argument between -1.0 and 1.0; a negative headroom allows a more
+liberal estimate of the DSP resources - resulting in more simultaneous voices -
+but it runs the risk of causing the DSP to fall out of real time.  Conversely, a
+positive headroom is more conservative: You have a greater assurance that the
+DSP won't fall out of real time but the number of simultaneous voices is
+decreased.  The default is a somewhat conservative 0.1.  If you're writing
+samples to a soundfile with the DAC disabled, headroom is ignored.  On
+Intel-based hardware, the differences between the clock and memory speed of
+various DSP cards requires some hand-tuning of the headroom variable.  Slower
+DSP cards should use a higher headroom and faster cards should use a negative
+headroom.
+
+When sending sound to the DSP serial port, there is very little latency - for
+example, sound can be taken in the serial port, processed, and sent out again
+with less than 10 milliseconds of delay.  However, in the case of sound output
+via the NeXT monitor, there's a sound output time delay that's equal to the size
+of the buffer that's used to collect computed samples before they're shovelled
+to the NeXT DAC.  To accommodate applications that require the best possible
+response time (the time between the iniitation of a sound and its actual
+broadcast from the DAC), a smaller sample output buffer can be requested by
+sending the <b>setFastResponse:YES</b> message to an MKOrchestra.  However, the
+more frequent attention demanded by the smaller buffer will detract from
+synthesis computation and, again, fewer simultaneous voices may result.  You can
+also improve response time by using the high sampling rate (44100) although
+this, too, attenuates the synthesis power of the DSP.  By default, the
+Orchestra's sampling rate is 22050 samples per second.  <b>setFastResponse:</b>
+has no effect when sending samples to the DSP serial port.
+
+To avoid creating duplicate synthesis modules on the DSP, each instance of
+MKOrchestra maintains a shared object table.  Objects on the table are
+SynthPatches, SynthDatas, and UnitGenerators and are indexed by some other
+object that represents the shared object.  For example, the OscgafUG
+MKUnitGenerator (a family of oscillators) lets you specify its waveform-generating
+wave table as a MKPartials object (you can also set it as a MKSamples object; for
+the purposes of this example we only consider the MKPartials case).  When its wave
+table is set, through the <b>setTable:length:</b> method, the oscillator
+allocates a MKSynthData object from the MKOrchestra to represent the DSP memory that
+will hold the waveform data that's computed from the MKPartials.  It also places
+the MKSynthData on the shared object table using the MKPartials as an index by
+sending the message
+
+<tt>[MKOrchestra installSharedSynthData:theSynthData for:thePartials];</tt>
+
+If another oscillator's wave table is set as the same MKPartials object, the
+already-allocated MKSynthData can be returned by sending the message
+
+<tt>id aSynthData = [MKOrchestra sharedObjectFor:thePartials];</tt>
+
+The method <b>installSharedObject:for:</b> is provided for installing
+SynthPatches and UnitGenerators.
+
+If appropriate hardware is available, multiple DSPs may be used in concert.  The
+MKOrchestra automatically performs allocation on the pool of DSPs.  On Intel-based
+hardware, multiple DSP support is achieved by adding multiple DSP cards.  On
+NeXT hardware, multiple DSP support is available via the Ariel QuintProcessor, a
+5-DSP card.   
+
+The MKOrchestra class may be subclassed to support other 56001-based cards.   See
+the ArielQP and ArielQPSat objects for an example.
+
+The default sound output configuration may be customized by using the defaults
+data base.  On NeXT hardware, you can specify the destination of the sound
+output, and on both NeXT hardware and Intel-based DSP cards with NeXT-compatible
+DSP serial ports, you can specify the type of the serial port device.  The
+default sound out type is derived from the MusicKit "OrchestraSoundOut" variable
+in the defaults data base, which may currently have the value "SSI" or "Host".  
+More values may be added in the future.   Note that an "SSI" value for
+"OrchestraSoundOut" refers to the DSP's use of the SSI port and that usage does
+not imply NeXT-compatiblility.  For example, for the Turtle Beach cards, the
+default is "serialSoundOut" via the on-card CODEC.  (On Intel-based hardware,
+the determination as to whether the DSP serial port is NeXT-compatible is based
+on the driver's "SerialPortDevice" parameter - if its value is "NeXT", the
+serial port is NeXT-compatible. )  You can always return to the default sample
+output configuration by sending the message <b>setDefaultSoundOut</b>.
+
+New MKOrchestras are auto-configured with their default configuration, with a
+DSPSerialPortDevice object automatically created.  For devices with
+NeXT-compatible DSP serial ports, you may change the configuration using the
+MKOrchestra methods such as <b>-setSerialPortDevice:</b>.  
+
+INSTALLING INTEL-BASED DSP DRIVERS
+
+To install an Intel-based DSP driver, follow these steps:
+
+1. Double click on the driver you want to install.  The drivers can be found on
+<b>/LocalLibrary/Devices/.</b>  For example, to install the ArielPC56D driver,
+double click on <b>/LocalLibrary/Devices/ArielPC56D.config</b>.  Type the root
+pass word. It will tell you driver was successfully installed. Click
+OK.
+You've now "installed" the driver.
+
+2. In<b> Configure.app</b>, Click Other. Click Add... Click Add.  Select the
+driver (from the "other" category) and make sure that the I/O port corresponds
+to your hardware configuration.  From Menu/Configuration, select Save.   You've
+now "added the driver".	
+
+3. Repeat the process for any other drivers, such as the TurtleBeach Multisound
+driver, <b>/LocalLibrary/Devices/TurtleBeachMS.config.</b>	
+
+4. If you have multiple cards of a certain type, repeat step 2, making sure to
+assign a different I/O address to each instance of the driver.  The first will
+be given the name &lt;driverName&gt;0, where &lt;driverName&gt; is the name of
+the driver (e.g. "ArielPC56D")  The second will be given the name
+&lt;driverName&gt;1, etc. The trailing number is called the "unit."  For
+example,  if you add 2 Ariel cards to your system, they will be assigned the
+names "ArielPC56D0" and "ArielPC56D1".  If you have one Multisound card, it will
+be assigned the name "TurtleBeachMS0".   This assignment is done by the
+<b>Configure.app</b> application.
+
+5. Reboot.  Drivers are now installed and usable.
+
+All DSP drivers are in the same "family", called "DSP."   All DSP units are
+numbered with a set of "DSP indecies", beginning with 0.  (Note that this is
+distinct from the "unit" numbers.) If there is only one DSP card, there is no
+ambiguity.  However, if there is more than one card, the user's defaults data
+base determines which DSP or DSPs should be used.  For example, in the example
+given above, a user's defaults data base may have:
+ 	
+MusicKit DSP0 ArielPC56D1	
+MusicKit DSP2 ArielPC56D0	
+MusicKit DSP4 TurtleBeachMS0
+
+This means that the default DSP is the one on the 2nd Ariel card that you
+installed.  Also, notice that there may be "holes" - in this example, there is
+no DSP1 or DSP3.  DSP identifiers up to 15 may be used.  The DSP indecies refer
+to the MKOrchestra index passed to methods like<b> +newOnDSP:</b>.  If there is no
+driver for that DSP, <b>+newOnDSP:</b> returns nil.  
+
+Some DSP cards support multiple DSPs on a single card.  For such cards, we have
+the notion of a "sub-unit", which follows the unit in the assigned name with the
+following format:  &lt;driver&gt;&lt;unit&gt;-&lt;subunit&gt;.   For example if
+a card named "Frankenstein" supports 4 DSPs, and there are two Frankenstein
+units installed in the system, the user's defaults data base might look like
+this:
+	
+MusicKit DSP0 Frankenstein0-0	
+MusicKit DSP1 Frankenstein0-1	
+MusicKit DSP2 Frankenstein0-2	
+MusicKit DSP3 Frankenstein0-3	
+MusicKit DSP4 Frankenstein1-0	
+MusicKit DSP5 Frankenstein1-1	
+MusicKit DSP6 Frankenstein1-2	
+MusicKit DSP7 Frankenstein1-3
+
+Currently, the Music Kit provides drivers for the following cards: <b>Ariel
+PC56D,  Turtle Beach Multisound</b>, <b>I*Link i56, Frankenstein</b>.  See the
+release notes for the latest information on supported drivers.
 */
 #ifndef __MK_Orchestra_H___
 #define __MK_Orchestra_H___
@@ -102,11 +370,11 @@ extern void MKSetPreemptDuration(double seconds);
                       reads, by convention. */
     id yModulusSink;/* Special pre-allocated y patch-point that nobody ever
                       reads, by convention. */
-    id sineROM;    /* Special read-only SynthData object used to represent
+    id sineROM;    /* Special read-only MKSynthData object used to represent
                       the SineROM. */
     id muLawROM;   /* Special read-only SYnthData object used to represent
                       the Mu-law ROM. */
-    MKDeviceStatus deviceStatus; /* Status of Orchestra. */
+    MKDeviceStatus deviceStatus; /* Status of MKOrchestra. */
     unsigned short orchIndex;  /* Index of the DSP managed by this instance. */
     char isTimed;    /* Determines whether DSP commands go out timed or not. */
     BOOL useDSP;     /* YES if running on an actual DSP (Default is YES) */
@@ -172,130 +440,1243 @@ extern void MKSetPreemptDuration(double seconds);
 }
 
 + (void)initialize; 
+
+/*!
+  @method deviceStatus
+  @result Returns a MKDeviceStatus.
+  @discussion Returns the MKDeviceStatus of the receiver, one of
+              
+              &#183;	MK_devClosed 
+              &#183;	MK_devOpen 
+              &#183;	MK_devRunning 
+              &#183;	MK_devStopped
+              
+              The MKOrchestra states are explained in the class description, above.
+*/
 -(MKDeviceStatus)deviceStatus;
+
+/*!
+  @method setHeadroom:
+  @param  headroom is a double.
+  @result Returns an id.
+  @discussion Sets the receiver's computation headroom, adjusting the tradeoff
+              between processing power and reliability.  The argument should be in
+              the range -1.0 to 1.0.  As you increase an Orchestra's headroom, the
+              risk of falling out of real time decreases, but synthesis power is
+              also weakened.  The default, 0.1, is a conservative estimate and can
+              be decreased in many cases without heightening the risk of falling
+              out of real time.
+              
+              The effective sampling period - the amount of time the MKOrchestra 
+              thinks the DSP has to produce a sample - is based on the formula
+              
+              (1.0/<b>samplingRate</b>) * (1.0 - <b>headroom</b>).
+              
+              Returns the receiver.
+*/
 - setHeadroom:(double)headroom;
+
+/*!
+  @method setHeadroom:
+  @param  headroom is a double.
+  @result Returns an id.
+  @discussion Sets the headroom of all MKOrchestras instances that have been
+              created.  Returns the receiver.
+              
+              See also:  - <b>setHeadroom:</b>
+*/
 + setHeadroom:(double)headroom;
+
+/*!
+  @method headroom
+  @result Returns a double.
+  @discussion Returns the receiver's headroom, as set through the
+              <b>setHeadroom:</b> method.  Headroom should be a value between -.0
+              and 1.0.  The default is 0.1.
+*/
 -(double)headroom;
+
+/*!
+  @method beginAtomicSection
+  @result Returns an id.
+  @discussion Marks the beginning of a section of DSP commands that are sent as a
+              unit.  Returns the receiver.
+*/
 - beginAtomicSection;
+
+/*!
+  @method endAtomicSection
+  @result Returns an id.
+  @discussion Marks the end of a section of DSP commands that are sent as a unit. 
+              Returns the receiver.
+*/
 - endAtomicSection;
+
+/*!
+  @method new
+  @result Returns an id.
+  @discussion Returns and initializes a new MKOrchestra for the default DSP, if one
+              doesn't already exist. Otherwise returns the existing one.  The DSP
+              insn't actually claimed until the MKOrchestra instance is sent the
+              <b>open</b>message.  
+*/
 + new; 
+
+/*!
+  @method newOnDSP:
+  @param  index is an unsigned short.
+  @result Returns an id.
+  @discussion Creates and returns an MKOrchestra instance for the <i>index</i>'th
+              DSP.  If an MKOrchestra object already exists for the specified DSP,
+              the existing object is returned.  Returns <b>nil</b> if <i>index</i>
+              is out of bounds or if the <i>index</i>'th DSP isn't available.  For
+              example, on Intel hardware, if there is no driver for the
+              <i>index</i>'th DSP, this method returns nil.  Note that for some
+              types of DSP devices, the object returned will be a <i>subclass</i>
+              of MKOrchestra, rather than an instance of MKOrchestra.  (See
+              <b>registerOrchestraSubclass:forOrchIndex:</b>).
+*/
 + newOnDSP:(unsigned short)index; 
+
+/*!
+  @method newOnAllDSPs:
+  @result Returns an id.
+  @discussion Creates an MKOrchestra instance for every available DSP, if it has not
+              already been created.  On Intel-based hardware, this is accomplished
+              by consulting the user's defaults data base (settable with the
+              Preferences application).  Returns the first MKOrchestra it can create
+              or find.
+*/
 + newOnAllDSPs;
+
+/*!
+  @method flushTimedMessages
+  @result Returns an id.
+  @discussion Flushes all currently buffered DSP commands by invoking the
+              <b>flushTimedMessages</b> instance method for each MKOrchestra.   The
+              usual way to invoke this method is via the Conductor
+              <b>+unlockPerformance </b>method  (which must be preceeded by
+              <b>+lockPerformance</b>.)    
+*/
 + flushTimedMessages; 
+
+/*!
+  @method DSPCount
+  @result Returns an unsigned short.
+  @discussion Returns the maximum possible number of DSPs.  This may be more than
+              the number of DSPs you actually have.   
+*/
 +(unsigned short)DSPCount;
+
+/*!
+  @method nthOrchestra:
+  @param  index is an unsigned short.
+  @result Returns an id.
+  @discussion Returns the MKOrchestra of the <i>index</i>'th DSP.  If <i>index</i>
+              is out of bounds, or if an MKOrchestra hasn't been created for the
+              specified DSP, <b>nil</b> is returned.
+*/
 + nthOrchestra:(unsigned short)index; 
 + (void)dealloc; 
+
+/*!
+  @method open
+  @result Returns an id.
+  @discussion Sends <b>open</b> to each of the MKOrchestra instances and sets each
+              to MK_devOpen.  If any of the MKOrchestras responds to the <b>open</b>
+              message by returning <b>nil</b>, so too does this method return
+              <b>nil</b>.  Otherwise returns the receiver.  Note that if you first
+              send <b>open</b> and then create a new MKOrchestra, the new MKOrchestra
+              will not automatically be opened.  
+*/
 + open; 
+
+/*!
+  @method run
+  @result Returns an id.
+  @discussion Sends <b>run</b> to each of the MKOrchestra instances and sets each to
+              MK_devRunning.  If any of the MKOrchestras responds to the <b>run</b>
+              message by returning <b>nil</b>, so too does this method return
+              <b>nil</b>.  Otherwise returns the receiver.
+*/
 + run; 
+
+/*!
+  @method stop
+  @result Returns an id.
+  @discussion Sends <b>stop</b> to each of the MKOrchestra instances and sets each
+              to MK_devStopped.  If any of the MKOrchestras responds to the
+              <b>run</b> message by returning <b>nil</b>, so too does this method
+              return <b>nil</b>.  Otherwise returns the receiver.
+*/
 + stop; 
+
+/*!
+  @method close
+  @result Returns an id.
+  @discussion Sends <b>close</b> to each of the MKOrchestra instances and sets each
+              to MK_devClosed.  If any of the MKOrchestras responds to the
+              <b>close</b> message by returning <b>nil</b>, so too does this
+              method return <b>nil</b>.  Otherwise returns the
+              receiver.
+*/
 + close; 
+
+/*!
+  @method abort
+  @result Returns an id.
+  @discussion Sends <b>abort</b> to each of the MKOrchestra instances and sets each
+              to MK_devClosed.  If any of the MKOrchestras responds to the
+              <b>abort</b> message by returning <b>nil</b>, so too does this
+              method return <b>nil</b>.  Otherwise returns the
+              receiver.
+              
+              
+              <b> allocModulusSynthData:length:</b>
+              + <b>allocModulusSynthData:</b>(MKOrchMemSegment)<i>segment</i> <b>length:</b>(unsigned)<i>size</i>
+              
+              Like +<b>allocSynthData:length:</b> but memory is constrained to lie on an appropriate modulus border so that DSP modulus addressing can be used.  For example, if <i>size</i> is 19, then the low 4 bits of the base address of the MKSynthData object returned will be 0.  
+*/
 + abort;
 -(void)synchTime:(NSTimer *)timer;
+
+/*!
+  @method tickSize
+  @result Returns an int.
+  @discussion Returns the tick size used by synthesis unit-generators. Each unit
+              generator runs for this many samples, and patchpoints are this
+              length. Since 1989, the tick-size used on the DSP has been
+              16.
+*/
 -(int) tickSize; 
+
+/*!
+  @method samplingRate
+  @result Returns a double.
+  @discussion Returns the receiver's sampling rate. The default is determined by
+              the method <b>defaultSamplingRate</b>.
+*/
 -(double ) samplingRate; 
+
+/*!
+  @method setSamplingRate:
+  @param  newSRate is a double.
+  @result Returns an id.
+  @discussion Sets the sampling rate of all the MKOrchestra instances by sending
+              <b>setSamplingRate:</b><i>newSRate</i> to all closed MKOrchestras. 
+              This method also changes the default sampling rate; when a new
+              MKOrchestra is subsequently created, it also gets set to
+              <i>newSRate</i>.  Returns the receiver.
+*/
 + setSamplingRate:(double )newSRate; 
+
+/*!
+  @method setSamplingRate:
+  @param  newSRate is a double.
+  @result Returns an id.
+  @discussion Sets the receiver's sampling rate to <i>newSRate</i>, taken as
+              samples per second.  The receiver must be closed - <b>nil</b> is
+              returned if the receiver's status isn't MK_devClosed.  Returns the
+              receiver.
+*/
 - setSamplingRate:(double )newSRate; 
 #define MK_UNTIMED ((char)0)
 #define MK_TIMED   ((char)1)
 #define MK_SOFTTIMED ((char)2)
+
+/*!
+  @method setTimed:
+  @param  areOrchsTimed is a BOOL.
+  @result Returns an id.
+  @discussion Sends <b>setTimed:</b><i>areOrchsTimed</i> to each MKOrchestra
+              instance.  If <i>areOrchsTimed</i> is YES, the DSP processes the
+              commands that it receives at the times specified by the commands'
+              timestamps.  If it's <b>NO</b>, DSP commands are processed as
+              quickly as possible.  By default, an MKOrchestra is timed.  Note,
+              however, that this method changes the default to
+              <i>areOrchsTimed</i>.
+*/
 + setTimed:(char )areOrchsTimed; 
+
+/*!
+  @method setTimed:
+  @param  isOrchTimed is a BOOL.
+  @result Returns an id.
+  @discussion If <i>isOrchTimed</i> is YES, the receiver's DSP executes the
+              commands it receives according to their timestamps.  If it's NO, it
+              ignores the timestamps processes the commands immediately.  By
+              default, an MKOrchestra is timed.   * Note that untimed mode was
+              originally intended primarily as a means of inserting "out of band"
+              messages into a timed stream and is not as efficient for
+              high-bandwidth transfers normally associated with a Music Kit
+              performance.  Note also that untimed mode is not deterministic with
+              respect to precise timing. However, it has the advantage of
+              providing the minimum possible latency.  It is permissable to change
+              time timing mode during a Music Kit performance.
+*/
 - setTimed:(char )isOrchTimed; 
--(char ) isTimed; 
+
+/*!
+  @method isTimed
+  @result Returns a BOOL.
+  @discussion Returns <b>YES</b> if the receiver is timed <b>NO</b> if it's
+              untimed.
+*/
+-(char) isTimed; 
+
+/*!
+  @method setSynchToConductor:
+  @param  yesOrNo is a BOOL.
+  @result Returns an id.
+  @discussion The DSP sample counter and the System clock (i.e. the Conductor
+              clock) are intended to keep the same time (except for fluctuations
+              due to the internal buffering of the DSP and sound drivers).  Over a
+              long-term  performance, however, the two clocks may begin to drift
+              apart slightly, on the order of a few milliseconds per minutes.  If
+              you are running with an extremely small "delta time" (cf.
+              <b>MKSetDeltaT()</b>), you may want to synchronize the two clocks
+              periodically.  By sending <b>setSynchToConductor:YES</b>, you
+              specify that the MKOrchestra is to synchronizes the DSP's notion of
+              time to that of the Conductor's time every 10 seconds to account for
+              slight differences between the rate of the two clocks.   This method
+              assumes an Application object exists and is running and that the
+              Conductor is in clocked mode.
+              
+              Note:  This method may cause time to go backwards in the DSP temporarily,
+              and thus may cause distortion of envelopes, lost notes, etc.
+              Therefore, its use is recommended only when absolutely necessary.
+              An alternative method of synchronization (though no safer) can be found
+              in the Ensemble programming example.
+*/
 -setSynchToConductor:(BOOL)yesOrNo;
+
+/*!
+  @method setFastResponse:
+  @param  yesOrNo is a BOOL.
+  @result Returns an id.
+  @discussion &lt;&lt;NeXT hardware only.&gt;&gt; Sets the size of the sound
+              output buffer; two sizes are possible.  If <i>yesOrNo</i> is YES,
+              the smaller size is used, thereby improving response time but
+              somewhat decreasing the DSP's synthesis power.  If it's NO, the
+              larger buffer is used.  By default, an MKOrchestra uses the larger
+              buffer.  Returns the receiver.  This method has no effect if sound
+              output is done via the DSP serial port.
+*/
 -setFastResponse:(char)yesOrNo;
+
+/*!
+  @method setFastResponse:
+  @param  yesOrNo is a BOOL.
+  @result Returns an id.
+  @discussion Sends <b>setFastResponse:</b><i>yesOrNo</i> to all existing
+              MKOrchestras objects and returns the receiver.  This also sets the
+              default used by subsequently created MKOrchestras.
+*/
 +setFastResponse:(char)yesOrNo;
+
+/*!
+  @method fastResponse
+  @result Returns a BOOL.
+  @discussion Returns YES if the receiver is using small sound-out buffers to
+              minimize response latency.  Otherwise returns NO.
+*/
 -(char)fastResponse;
+
 + setAbortNotification:aDelegate;
+
+/*!
+  @method setLocalDeltaT:
+  @param  val is a double.
+  @result Returns an id.
+  @discussion Sets the offset, in seconds, that's added to the timestamps of
+              commands sent to the receiver's DSP.  The offset is added to the
+              delta time that's set with <b>MKSetDeltaT()</b>.  This has no effect
+              if the receiver isn't timed.  Retruns the receiver.
+*/
 - setLocalDeltaT:(double)val;
+
+/*!
+  @method localDeltaT
+  @result Returns a double.
+  @discussion Returns the value set through <b>setLocalDeltaT:</b>.
+*/
 - (double)localDeltaT;
+
+/*!
+  @method setLocalDeltaT:
+  @param  val is a double.
+  @result Returns an id.
+  @discussion Sets the local delta time for all MKOrchestras and changes the
+              default, which is otherwise 0.0.
+*/
 + setLocalDeltaT:(double)val;
+
+/*!
+  @method setHostSoundOut:
+  @param  yesOrNo is a BOOL.
+  @result Returns an id.
+  @discussion (NeXT hardware only).  Sets whether the receiver, which must be
+              closed, sends its sound signal to the host DAC, as <i>yesOrNo</i> is
+              YES or NO.  Returns the receiver, or <b>nil</b> if it isn't closed. 
+              On NeXT hardware, the default is to send sound to the host
+              DAC.
+              
+              Sending s<b>etHostSoundOut:YES</b> also sends <b>setOutputSoundfile:NULL</b>;
+              you can't write samples to a soundfile and to the DAC at the same time.
+              Sending <b>setHostSoundOut:YES</b> also sends s<b>etSerialSoundOut:NO</b>;
+              you can't write samples to the DSP serial port and to the DAC at the same time.
+*/
 - setHostSoundOut:(BOOL)yesOrNo;
+
 -(BOOL)hostSoundOut;
+
+/*!
+  @method setSerialSoundOut:
+  @param  yesOrNo is a BOOL.
+  @result Returns an id.
+  @discussion Sets whether the receiver, which must be closed, sends its sound
+              signal to the DSP serial port, as <i>yesOrNo</i> is YES or NO. 
+              Returns the receiver, or <b>nil</b> if it isn't closed.  The
+              protocol used depends on the object set with <b>setSerialPortDevice:</b>. 
+              
+              Sending s<b>etSerialSoundOut:YES</b> also sends s<b>etHostSoundOut:NO</b> 
+              and <b>setOutputSoundfile:NULL</b>.
+*/
 -setSerialSoundOut:(BOOL)yesOrNo;
+
+/*!
+  @method serialSoundOut
+  @result Returns a BOOL.
+  @discussion Sets whether serialSoundOut is enabled.
+*/
 -(BOOL)serialSoundOut;
+
+/*!
+  @method setSerialSoundIn:
+  @param  yesOrNo is a BOOL.
+  @result Returns an id.
+  @discussion Sets whether the receiver, which must be closed, receives sound from
+              the DSP serial port, as <i>yesOrNo</i> is YES or NO.  Returns the
+              receiver, or <b>nil</b> if it isn't closed.   The protocol used
+              depends on the object set with <b>setSerialPortDevice:</b>.
+              
+*/
 -setSerialSoundIn:(BOOL)yesOrNo;
+
+/*!
+  @method serialSoundIn
+  @result Returns a BOOL.
+  @discussion Sets whether serialSoundIn is enabled.
+*/
 -(BOOL)serialSoundIn;
+
+/*!
+  @method setSerialPortDevice:
+  @param  aDSPSerialPortDevice is an id.
+  @result Returns an id.
+  @discussion Sets an object that properly configures the DSP serial port for a
+              given piece of hardware.   <i>aDSPSerialPortDevice</i> should be a
+              subclass of DSPSerialPortDevice.  The receiver must be closed when
+              this message is sent.  Returns the receiver, or <b>nil</b> if it
+              isn't closed.  
+*/
 -setSerialPortDevice:(id)obj;
+
+/*!
+  @method serialPortDevice
+  @result Returns an id.
+  @discussion Returns the DSPSerialPortDevice subclass object that was set with
+              <b>setSerialPortDevice:</b>.
+*/
 -serialPortDevice;
+
+/*!
+  @method sendSCIByte:
+  @param  b is an unsigned char.
+  @result Returns an id.
+  @discussion Send byte to DSP_STX of Serial Communications Interface of serial
+              port.  The orchestra must be open with SerialPort output or input
+              enabled.  Otherwise returns <b>nil</b>.  The method is most often
+              used in the implementation of a DSPSerialPortDevice
+              subclass.
+*/
 -sendSCIByte:(unsigned char)b; 
+
+/*!
+  @method sendSCIByte:toRegister:
+  @param  b is an unsigned char.
+  @param  reg is a DSPSCITXReg.
+  @result Returns an id.
+  @discussion Send byte to <i>reg</i> of Serial Communications Interface of serial
+              port.  The orchestra must be open with SerialPort output or input
+              enabled.  Otherwise returns <b>nil</b>.  The method is most often
+              used in the implementation of a DSPSerialPortDevice
+              subclass.
+*/
 -sendSCIByte:(unsigned char)b toRegister:(DSPSCITXReg)reg;
+
+/*!
+  @method setOutputSoundfile:
+  @param  fileName is a char *.
+  @result Returns an id.
+  @discussion Sets the soundfile to which sound samples are written.  The receiver
+              must be closed; <b>nil</b> is returned if it's open, otherwise
+              returns the receiver.  A copy of <i>fileName</i> is stored in the
+              instance variable <i>outputSoundfile</i>.    If you re-run the
+              MKOrchestra, the file is rewritten. To specify that you no longer want
+              to write a file when the MKOrchestra is re-run, close the MKOrchestra,
+              then send <b>setOutputSoundfile:NULL</b>.  When switching from
+              soundfile writing to other forms of sound output,  note that you
+              must explicitly send <b>setHostSoundOut:YES</b>or <b>
+              setSerialSoundOut:YES </b>after setting the output soundfile to
+              NULL. 
+              
+              It is not permissable to have an output soundfile open and do host
+              or serial port sound output at the same time.  
+*/
 -setOutputSoundfile:(NSString *)fileName;
+
+/*!
+  @method outputSoundfile
+  @result Returns an NSString.
+  @discussion Returns a pointer to the name of the receiver's output soundfile, or
+              NULL if none.
+*/
 -(NSString *)outputSoundfile;
+
 -setOutputSoundDelegate:aDelegate;
 -outputSoundDelegate;
+
+/*!
+  @method setOutputCommandsFile:
+  @param  fileName is a char *.
+  @result Returns an id.
+  @discussion Sets a file name to which DSP commands are to be written as a DSP
+              Commands format soundfile.  A copy of the fileName is stored in the
+              instance variable <i>outputCommandsFile</i>.   This message is
+              ignored if the receiver is not closed.  Playing of DSP Commands
+              format soundfiles is currently (1995) implemented only for NeXT
+              hardware.
+*/
 -setOutputCommandsFile:(NSString *)fileName;
+
+/*!
+  @method outputCommandsFile
+  @result Returns a NSString.
+  @discussion Returns the output soundfile or <b>nil</b> if none.
+*/
 -(NSString *)outputCommandsFile;
+
+/*!
+  @method allocUnitGenerator:
+  @param  classObj is an id.
+  @result Returns an id.
+  @discussion Allocates a MKUnitGenerator of class <i>classObj</i>.  The object is
+              allocated on the first MKOrchestra that can accomodate it.  Returns
+              the MKUnitGenerator, or <b>nil</b> if the object couldn't be
+              allocated.
+*/
 + allocUnitGenerator:classObj; 
+
+/*!
+  @method allocSynthData:length:
+  @param  segment is a MKOrchMemSegment.
+  @param  size is an unsigned.
+  @result Returns an id.
+  @discussion Allocates a MKSynthData object.  The allocationn is on the first
+              MKOrchestra that will accommodate <i>size</i> words in segment
+              <i>segment</i>.  Returns the MKSynthData, or <b>nil</b> if the object
+              couldn't be allocated.
+*/
 + allocSynthData:(MKOrchMemSegment )segment length:(unsigned )size; 
 +allocModulusSynthData:(MKOrchMemSegment)segment length:(unsigned )size;
+
+/*!
+  @method allocModulusPatchpoint:
+  @param  segment is a MKOrchMemSegment.
+  @result Returns an id.
+  @discussion Like <b>+allocPatchpoint:</b>, but memory is constrained to lie on
+              an appropriate modulus border so that DSP modulus addressing can be
+              used.  
+*/
 +allocModulusPatchpoint:(MKOrchMemSegment)segment;
+
+/*!
+  @method allocPatchpoint:
+  @param  segment is a MKOrchMemSegment.
+  @result Returns an id.
+  @discussion Allocates a patchpoint in segment <i>segment</i> Returns the
+              patchpoint (a MKSynthData object), or <b>nil</b> if the object
+              couldn't be allocated.
+*/
 + allocPatchpoint:(MKOrchMemSegment )segment; 
+
+/*!
+  @method allocSynthPatch:
+  @param  aSynthPatchClass is an id.
+  @result Returns an id.
+  @discussion This is the same as <b>allocSynthPatch:patchTemplate:</b> but uses
+              the default template obtained by sending the message
+              <b>defaultPatchTemplate</b> to <i>aSynthPatchClass.</i>
+*/
 + allocSynthPatch:aSynthPatchClass;
+
+/*!
+  @method allocSynthPatch:patchTemplate:
+  @param  aSynthPatchClass is an id.
+  @param  p is an id.
+  @result Returns an id.
+  @discussion Allocates a MKSynthPatch with a MKPatchTemplate of <i>p</i> on the first
+              DSP with sufficient resources.  Returns the MKSynthPatch or <b>nil</b>
+              if it couldn't be allocated.
+*/
 + allocSynthPatch:aSynthPatchClass patchTemplate:p;
+
+/*!
+  @method dealloc:
+  @param  aSynthResource is an id.
+  @result Returns an id.
+  @discussion Deallocates the argument, which must be a previously allocated
+              MKSynthPatch, MKUnitGenerator or MKSynthData, by sending it the
+              <b>dealloc</b> message.  This method is provided for symmetry with
+              the <b>alloc</b>family of methods.
+              
+              
+              <b> driverParameter: forDriver: unit: </b>
+              + (char *)<b>driverParameter:</b>(char *)<i>par</i> forDriver:(char *)<i>driverName</i>unit:(int)<i>unit</i>
+*/
 + dealloc:aSynthResource;
+
+/*!
+  @method flushTimedMessages
+  @result Returns an id.
+  @discussion Sends buffered DSP commands to the DSP.  This is done for you by the
+              Conductor.  However, if your application sends messages directly to
+              a MKSynthPatch or MKUnitGenerator without the assistance of a Conductor,
+              you must invoke this method yourself (after sending the synthesis
+              messages).    The usual way to invoke this method is via the
+              Conductor <b>+unlockPerformance </b>method (which must be preceeded
+              by <b>+lockPerformance</b>.)    Returns the receiver.  Note that you
+              must send flushTimedMessages even if the MKOrchestra is set to
+              MK_UNTIMED mode ("flushTimedMessages" is somewhat of a misnomer; a
+              better name would have been "sendBufferedDSPCommands").
+*/
 - flushTimedMessages;
 +(int)sharedTypeForName:(char *)str;
 +(char *)nameForSharedType:(int)typeInt;
+
+/*!
+  @method installSharedObject:for:
+  @param  aSynthObj is an id.
+  @param  aKeyObj is an id.
+  @result Returns an id.
+  @discussion Places <i>aSynthObj</i> on the shared object table and sets its
+              reference count to 1.  <i>aKeyObj</i> is  any object associated with
+              the abstract notion of the data and is used to index the shared
+              object.  Does nothing and returns <b>nil</b> if the <i>aSynthObj</i>
+              is already present in the table.  Also returns <b>nil</b> if the
+              orchestra isn't open.  Otherwise, returns the receiver.
+              
+              This method differs from <b>installSharedObjectWithSegmentAndLength:for:</b> in that the length and segment are wild cards.
+*/
 - installSharedObject:aSynthObj for:aKeyObj;
+
+/*!
+  @method installSharedObject:for:type:
+  @param  aSynthObj is an id.
+  @param  aKeyObj is an id.
+  @param  type is a MKOrchSharedType.
+  @result Returns an id.
+  @discussion Places <i>aSynthObj</i> on the shared object table and sets its
+              reference count to 1.  <i>aKeyObj</i> is used to index the shared
+              object.  <i>type</i> is used to specify additional details about the
+              data that is being installed.  For example, oscillator tables are
+              intsalled as type <b>MK_oscTable</b>, while waveshaping tables are
+              installed as <b>MK_waveshapingTable</b>.   Wavguide physical model
+              excitation tables are installed as <b>MK_excitationTable.</b><i>type
+              </i>  makes it possible to use <i>aKeyObj</i> to lookup various
+              different types of Synth objects.  Does nothing and returns
+              <b>nil</b> if the <i>aSynthObj</i> is already present in the table. 
+              Also returns <b>nil</b> if the orchestra isn't open.  Otherwise,
+              returns the receiver.
+              
+              This method differs from <b>installSharedObjectWithSegmentAndLength:for:</b> in that the length and segment are wild cards.
+*/
 - installSharedObject:aSynthObj for:aKeyObj type:(MKOrchSharedType)aType;
+
+/*!
+  @method installSharedSynthDataWithSegment:for:
+  @param  aSynthDataObj is an id.
+  @param  aKeyObj is an id.
+  @result Returns an id.
+  @discussion Places <i>aSynthDataObj</i> on the shared object table in the
+              segment specified by <i>aSynthDataObj</i> and sets its reference
+              count to 1.  Does nothing and returns <b>nil</b> if the
+              <i>aSynthObj</i> is already present in the table.  Also returns
+              <b>nil</b> if the orchestra is not open.  Otherwise, returns the
+              receiver.
+              
+              This method differs from <b>installSharedObjectWithSegmentAndLength:for:</b> in that the length is a wild card.
+*/
 -installSharedSynthDataWithSegment:aSynthDataObj for:aKeyObj;
+
+/*!
+  @method installSharedSynthDataWithSegment:for:
+  @param  aSynthDataObj is an id.
+  @param  aKeyObj is an id.
+  @result Returns an id.
+  @discussion Places <i>aSynthDataObj</i> on the shared object table in the
+              segment specified by <i>aSynthDataObj</i> and sets its reference
+              count to 1.  Does nothing and returns <b>nil</b> if the
+              <i>aSynthObj</i> is already present in the table.  Also returns
+              <b>nil</b> if the orchestra is not open.  Otherwise, returns the
+              receiver.
+              
+              This method differs from <b>installSharedObjectWithSegmentAndLength:for:</b> in that the length is a wild card.
+*/
 -installSharedSynthDataWithSegment:aSynthDataObj for:aKeyObj 
  type:(MKOrchSharedType)aType;
 -installSharedSynthDataWithSegmentAndLength: (MKSynthData *) aSynthDataObj
  for:aKeyObj;
+
+/*!
+  @method installSharedSynthDataWithSegmentAndLength:for:
+  @param  aSynthDataObj is an id.
+  @param  aKeyObj is an id.
+  @result Returns an id.
+  @discussion Places <i>aSynthDataObj</i> on the shared object table in the
+              segment of aSynthDataObj with the specified length and sets its
+              reference count to 1.  <i>aKeyObj</i> is used to index the shared
+              object.  Does nothing and returns <b>nil</b> if the
+              <i>aSynthDataObj</i> is already present in the table.  Also returns
+              <b>nil</b> if the orchestra is not open.  Otherwise, returns the
+              receiver.
+*/
 -installSharedSynthDataWithSegmentAndLength: (MKSynthData *) aSynthDataObj for:aKeyObj 
  type:(MKOrchSharedType)aType;
+
+/*!
+  @method sharedObjectFor:
+  @param  aKeyObj is an id.
+  @result Returns an id.
+  @discussion Returns, from the receiver's shared object table, the MKSynthData,
+              MKUnitGenerator, or MKSynthPatch object that's indexed by <i>aKeyObj</i>
+              If the object is found,  <i>aKeyObj</i>'s reference count is
+              incremented. If it isn't found, or if the receiver isn't open,
+              returns <b>nil</b>.
+*/
 - sharedObjectFor:aKeyObj;
+
+/*!
+  @method sharedObjectFor:type:
+  @param  aKeyObj is an id.
+  @param  type is a MKOrchSharedType.
+  @result Returns an id.
+  @discussion Returns, from the receiver's shared object table, the MKSynthData,
+              MKUnitGenerator, or MKSynthPatch object that's indexed by
+              <i>aKeyObj.</i> <i> </i> The object must be allocated with the
+              specified type.  If the object is found,  <i>aKeyObj</i>'s reference
+              count is incremented. If it isn't found, or if the receiver isn't
+              open, returns <b>nil</b>.
+*/
 - sharedObjectFor:aKeyObj type:(MKOrchSharedType)aType;
+
+/*!
+  @method sharedSynthDataFor:segment:
+  @param  aKeyObj is an id.
+  @param  whichSegment is a MKOrchMemSegment.
+  @result Returns an id.
+  @discussion Returns, from the receiver's shared data table, the MKSynthData,
+              MKUnitGenerator, or MKSynthPatch object that's indexed by
+              <i>aKeyObj</i>.  The object must be allocated in the specifed
+              segment.  <i>aKeyObj</i> on the receiver in the specified segment. 
+              If the object is found, <i>aKeyObj</i>'s reference count is
+              incremented.  If it isn't found, or if the receiver isn't open,
+              returns <b>nil</b>.
+*/
 - sharedSynthDataFor:aKeyObj segment:(MKOrchMemSegment)whichSegment;
+
+/*!
+  @method sharedSynthDataFor:segment:
+  @param  aKeyObj is an id.
+  @param  whichSegment is a MKOrchMemSegment.
+  @result Returns an id.
+  @discussion Returns, from the receiver's shared data table, the MKSynthData,
+              MKUnitGenerator, or MKSynthPatch object that's indexed by
+              <i>aKeyObj</i>.  The object must be allocated in the specifed
+              segment.  <i>aKeyObj</i> on the receiver in the specified segment. 
+              If the object is found, <i>aKeyObj</i>'s reference count is
+              incremented.  If it isn't found, or if the receiver isn't open,
+              returns <b>nil</b>.
+*/
 - sharedSynthDataFor:aKeyObj segment:(MKOrchMemSegment)whichSegment
   type:(MKOrchSharedType)aType; 
+
+/*!
+  @method sharedSynthDataFor:segment:
+  @param  aKeyObj is an id.
+  @param  whichSegment is a MKOrchMemSegment.
+  @result Returns an id.
+  @discussion Returns, from the receiver's shared data table, the MKSynthData,
+              MKUnitGenerator, or MKSynthPatch object that's indexed by
+              <i>aKeyObj</i>.  The object must be allocated in the specifed
+              segment.  <i>aKeyObj</i> on the receiver in the specified segment. 
+              If the object is found, <i>aKeyObj</i>'s reference count is
+              incremented.  If it isn't found, or if the receiver isn't open,
+              returns <b>nil</b>.
+*/
 - sharedSynthDataFor:aKeyObj segment:(MKOrchMemSegment)whichSegment 
  length:(int)length;
+
+/*!
+  @method sharedSynthDataFor:segment:length:type:
+  @param  aKeyObj is an id.
+  @param  whichSegment is a MKOrchMemSegment.
+  @param  length is an int.
+  @param  type is a MKOrchSharedType.
+  @result Returns an id.
+  @discussion Returns, from the receiver's shared data table, the MKSynthData,
+              MKUnitGenerator, or MKSynthPatch object that's indexed by
+              <i>aKeyObj</i>.  The object must be allocated in the specifed
+              segment, have a length of <i>length</i>and have a type <i>type</i> .
+               <i>aKeyObj</i> on the receiver in the specified segment.  If the
+              object is found, <i>aKeyObj</i>'s reference count is incremented. 
+              If it isn't found, or if the receiver isn't open, returns
+              <b>nil</b>.
+*/
 - sharedSynthDataFor:aKeyObj segment:(MKOrchMemSegment)whichSegment length:(int)length type:(MKOrchSharedType)aType; 
+
+/*!
+  @method sineROM
+  @result Returns an id.
+  @discussion Returns a MKSynthData object representing the SineROM.  You should
+              never deallocate this object.
+*/
 - sineROM; 
+
+/*!
+  @method muLawROM
+  @result Returns an id.
+  @discussion Returns a MKSynthData object representing the MuLawROM.  You should
+              never deallocate this object.
+*/
 - muLawROM; 
+
+/*!
+  @method segmentZero:
+  @param  segment is a MKOrchMemSegment.
+  @result Returns an id.
+  @discussion Returns a special pre-allocated patchpoint (a MKSynthData) in the
+              specified segment that always holds 0 and to which, by convention,
+              nothing is ever written.  The patchpoint shouldn't be deallocated. 
+              <i>segment</i> can be MK_xPatch or MK_yPatch.
+*/
 - segmentZero:(MKOrchMemSegment )segment; 
+
+/*!
+  @method segmentSink:
+  @param  segment is a MKOrchMemSegment.
+  @result Returns an id.
+  @discussion Returns a special pre-allocated patchpoint (a MKSynthData) in the
+              specified segment which may be used to write garbage.  It's commonly
+              used as a place to send the output of idle UnitGenerators.  The
+              patchpoint shouldn't be deallocated.  <i>segment</i> can be
+              MK_xPatch or MK_yPatch.
+*/
 - segmentSink:(MKOrchMemSegment )segment; 
+
+/*!
+  @method segmentSinkModulus:
+  @param  segment is a MKOrchMemSegment.
+  @result Returns an id.
+  @discussion Returns a special pre-allocated patchpoint (a MKSynthData) in the
+              specified segment, aligned for modulus addressing, which may be used
+              to write garbage.  It's commonly used as a place to send the output
+              of idle UnitGenerators.  The patchpoint shouldn't be deallocated. 
+              <i>segment</i> can be MK_xPatch or MK_yPatch.
+*/
 - segmentSinkModulus:(MKOrchMemSegment )segment; 
+
+/*!
+  @method open
+  @result Returns an id.
+  @discussion Opens the receiver's DSP and sets the receiver's status to
+              MK_devOpen.  Resets orchestra loop (if not already reset), freeing
+              all Unit Generators and SynthPatches.  Returns <b>nil</b> if the DSP
+              can't be opened for some reason,  otherwise returns the receiver.  
+              To find out why the DSP can't be opened, enable Music Kit or DSP
+              error tracing.  Possible problems opening the DSP include another
+              application using the DSP, a missing DSP monitor file, a version
+              mismatch and missing or broken hardware. 
+*/
 - open; 
+
+/*!
+  @method run
+  @result Returns an id.
+  @discussion Starts the clock on the receiver's DSP, thus allowing the processor
+              to begin executing commands, and sets the receiver's status to
+              MK_devRunning.  This opens the DSP if it isn't already open. 
+              Returns <b>nil</b> if the DSP couldn't be opened or run, otherwise
+              returns the receiver.
+*/
 - run; 
+
+/*!
+  @method stop
+  @result Returns an id.
+  @discussion Stops the clock on the receiver's DSP, thus halting execution of
+              commands, and sets the receiver's status to MK_devStopped.  This
+              opens the DSP if it isn't already open.  Returns <b>nil</b> if an
+              error occurs, otherwise returns the receiver.
+*/
 - stop; 
+
+/*!
+  @method close
+  @result Returns an id.
+  @discussion Waits for all enqueued DSP commands to be executed.  Then severs
+              communication with the DSP, allowing other processes to claim it. 
+              The MKSynthPatch-allocated UnitGenerators and MKSynthInstrument-allocated SynthPatches are freed.  All SynthPatches must be idle and non-MKSynthPatch-allocated UnitGenerators must be deallocated before sending this message.  Returns <b>nil</b> if an error occurs, otherwise returns the receiver.
+*/
 - close; 
+
+/*!
+  @method abort
+  @result Returns an id.
+  @discussion This is the same as <b>close</b>, except that it doesn't wait for
+              enqueued DSP commands to be executed.  Returns <b>nil</b> if an
+              error occurs, otherwise returns the receiver.
+*/
 - abort;
 - (void)dealloc; 
 - useDSP:(BOOL )useIt; 
 -(BOOL ) isDSPUsed; 
+
+/*!
+  @method trace:msg:
+  @param  typeOfInfo is an int.
+  @param  fmt,... is a char *.
+  @result Returns an id.
+  @discussion Used to print debugging information.  The arguments to the
+              <b>msg:</b> keyword are like those to <b>printf()</b>.  If the
+              <i>typeOfInfo</i> trace is set, prints to stderr.
+              
+              <b>upSamplingOutput </b>
+              - <b>upSamplingOutput</b>
+              
+              When sending sound to the DSP serial port, the sound may need to be up-sampled if the current sampling rate is supported by the serial port device only as a "half sampling rate" (see DSPSerialPortDevice for more info.)  Returns YES if we are upsampling the sound before sending it to its output location.   Subclasses may override this method. For example, the ArielQPSat class, when sending its sound to the hub DSP, forwards this message to the ArielQP obect that represents the hub DSP.
+*/
 - trace: (int) typeOfInfo msg: (NSString *) fmt,...; 
+
+/*!
+  @method segmentName:
+  @param  whichSegment is an int.
+  @result Returns a char *.
+  @discussion Returns a pointer to the name of the specified MKOrchMemSegment. 
+              The name is not copied and should not be freed.
+*/
 -(char * )segmentName:(int )whichSegment; 
 -(MKEMemType)externalMemoryIsOverlaid; 
+
+/*!
+  @method peekMemoryResources:
+  @param  peek is a MKOrchMemStruct *.
+  @result Returns a MKOrchMemStruct *.
+  @discussion Returns the available resources in <i>peek</i>, which must be a
+              pointer to a valid MKOrchMemStuct.  The returned value is the
+              maximum available from each memory segment, assuming the memories
+              aren't overlaid.  However, on some systems (such as NeXT hardware)
+              xData, yData and pSubr compete for the same memory.  You should
+              interpret the returned value with appropriate caution.
+*/
 -(MKOrchMemStruct *)peekMemoryResources:(MKOrchMemStruct *)peek;
+
+/*!
+  @method index
+  @result Returns an unsigned short.
+  @discussion Returns the index of the DSP associated with the
+              receiver.
+*/
 -(unsigned short) index; 
+
+/*!
+  @method computeTime
+  @result Returns a double.
+  @discussion Returns the compute time estimate currently used by the receiver in
+              seconds per sample.
+*/
 -(double ) computeTime; 
+
+/*!
+  @method allocSynthPatch:
+  @param  aSynthPatchClass is an id.
+  @result Returns an id.
+  @discussion Same as <b>allocSynthPatch:patchTemplate:</b> but uses the default
+              template, obtained by sending the message <b>defaultPatchTemplate</b> to <i>aSynthPatchClass</i>.
+*/
 - allocSynthPatch:aSynthPatchClass; 
+
+/*!
+  @method allocSynthPatch:patchTemplate:
+  @param  aSynthPatchClass is an id.
+  @param  p is an id.
+  @result Returns an id.
+  @discussion Allocates and returns a MKSynthPatch for MKPatchTemplate <i>p</i>.  The
+              receiver first tries to find an idle MKSynthPatch; failing that, it
+              creates and returns a new one.  The UnitGenerators are added to the
+              SynthPatch's unitGenerators list in the same order they are
+              specified in the MKPatchTemplate.  If a new MKSynthPatch can't be built,
+              this method returns <b>nil</b>.
+*/
 - allocSynthPatch:aSynthPatchClass patchTemplate:p; 
+
+/*!
+  @method allocUnitGenerator:
+  @param  class is an id.
+  @result Returns an id.
+  @discussion Allocates and returns a MKUnitGenerator of the specified class,
+              creating a new one, if necessary.
+*/
 - allocUnitGenerator:aClass; 
+
+/*!
+  @method allocUnitGenerator:before:
+  @param  class is an id.
+  @param  aUnitGeneratorInstance is an id.
+  @result Returns an id.
+  @discussion Allocates and returns a MKUnitGenerator of the specified class.  The
+              newly allocated object will execute before <i>aUnitGeneratorInstance</i>.
+*/
 - allocUnitGenerator:aClass before:aUnitGeneratorInstance; 
+
+/*!
+  @method allocUnitGenerator:after:
+  @param  class is an id.
+  @param  aUnitGeneratorInstance is an id.
+  @result Returns an id.
+  @discussion Allocates and returns a MKUnitGenerator of the specified class.  The
+              newly allocated object will execute after <i>aUnitGeneratorInstance</i>.
+*/
 - allocUnitGenerator:aClass after:aUnitGeneratorInstance; 
+
+/*!
+  @method allocUnitGenerator:between::
+  @param  class is an id.
+  @param  aUnitGeneratorInstance is an id.
+  @param  anotherUnitGeneratorInstance is an id.
+  @result Returns an id.
+  @discussion Allocates and returns a MKUnitGenerator of the specified class.  The
+              newly allocated object will execute immediately after
+              <i>aUnitGeneratorInstance</i> and before <i>anotherUnitGenerator</i>.
+*/
 - allocUnitGenerator:aClass between:aUnitGeneratorInstance :anotherUnitGeneratorInstance; 
 - (char *)lastAllocationFailureString;
+
+/*!
+  @method allocSynthData:length:
+  @param  segment is a MKOrchMemSegment.
+  @param  size is an unsigned.
+  @result Returns an id.
+  @discussion Allocates and returns a new MKSynthData object with the specified
+              length, or <b>nil</b> if the receiver doesn't have sufficient
+              resources, if <i>size</i> is 0, or if an illegal segment is
+              requested.  <i>segment</i> should be MK_xData or
+              MK_yData.
+*/
 - allocSynthData:(MKOrchMemSegment )segment length:(unsigned )size; 
+
+/*!
+  @method allocModulusPatchpoint:
+  @param  segment is a MKOrchMemSegment.
+  @result Returns an id.
+  @discussion Like -<b>allocPatchpoint:</b> but memory is constrained to lie on an
+              appropriate modulus border so that DSP modulus addressing can be
+              used.  
+*/
 - allocModulusPatchpoint:(MKOrchMemSegment )segment;
+
+/*!
+   @method allocModulusSynthData:length:
+   @param  segment is an MKOrchMemSegment.
+   @param  size is an unsigned.
+   @result Returns an id.
+   @discussion Like -<b>allocSynthData:length:</b> but memory is constrained to
+               lie on an appropriate modulus border so that DSP modulus addressing
+               can be used.  For example, if <i>size</i> is 19, then the low 4 bits
+               of the base address of the MKSynthData object returned will be 0. 
+*/
 -allocModulusSynthData:(MKOrchMemSegment)segment length:(unsigned)size ;
+
+/*!
+  @method allocPatchpoint:
+  @param  segment is a MKOrchMemSegment.
+  @result Returns an id.
+  @discussion Allocates and returns a MKSynthData to be used as a patchpoint in the
+              specified segment (MK_xPatch or MK_yPatch).  Returns <b>nil</b> if
+              an illegal segment is requested.
+*/
 - allocPatchpoint:(MKOrchMemSegment )segment; 
+
+/*!
+  @method dealloc:
+  @param  aSynthResource is an id.
+  @result Returns an id.
+  @discussion Deallocates <i>aSynthResource</i> by sending it the <b>dealloc</b>
+              message.  <i>aSynthResource</i> may be a MKUnitGenerator, a MKSynthData
+              or a MKSynthPatch.  This method is provided for symmetry with the
+              <b>alloc</b> family of methods.
+*/
 - dealloc:aSynthResource;
+
+/*!
+  @method setOnChipMemoryConfigDebug:patchPoints:
+  @param  debugIt is a BOOL.
+  @param  count is a short.
+  @result Returns an id.
+  @discussion Sets configuration of on-chip memory.  If <i>debugIt</i> is YES, a
+              partition is reserved for the DSP debugger; <i>count</i> is the
+              number of on-chip patchpoint locations that are reserved.  By
+              default, the debugger isn't used and 11 patchpoints are reserved. 
+              If <i>count</i> is 0, the default is used.  By implication, this
+              also sets the number of MKUnitGenerator arguments that can be set in L
+              memory:  As more patchpoints are requested, fewer L memory
+              MKUnitGenerator arguments are possible.  Attempts to set the
+              patchpoint count such that no room is left for L arguments are
+              ignored.  You may not reconfigure when the MKOrchestra is open.  
+              Returns the receiver, or <b>nil</b> if the configuration is
+              unsuccessful.  
+*/
 -setOnChipMemoryConfigDebug:(BOOL)debugIt patchPoints:(short)count;
+
+/*!
+  @method setOffChipMemoryConfigXArg:yArg:
+  @param  xPercentage is a float.
+  @param  yPercentage is a float.
+  @result Returns an id.
+  @discussion Sets configuration of offchip memory.   <i>xPercentage</i> is the
+              percentage of off-chip memory devoted to x arguments. 
+              <i>yPercentage</i> is the percentage of off-chip memory devoted to y
+              arguments.    Passing a value of 0 for either uses the default
+              value.    These percentages are expressed as numbers between 0.0 and
+              1.0.   If <i>xPercentage</i> + <i>yPercentage</i> is greater than
+              1.0, the settings are ignored and the method returns <b>nil</b>. 
+              You may not reconfigure when the MKOrchestra is open.
+              
+*/
 -setOffChipMemoryConfigXArg:(float)xPercentage yArg:(float)yPercentage;
+
+/*!
+  @method getMonitorVersion:release:
+  @param  version is a char *.
+  @param  release is an int *.
+  @result Returns an id.
+  @discussion Returns by reference the DSP run-time monitor software version and
+              release.  The <i>version</i> changes only for an incompatible
+              release.   It is a single character.  For example, the 4.0 release
+              version is 'A'.  The <i>release</i> is the software release itself
+              multiplied by 10.  For example, for the 4.0 release, <i>*release</i>
+              is set to 40.  The receiver must be open.  Returns the receiver or
+              <b>nil</b> if the receiver isn't open.
+*/
 -getMonitorVersion:(char *)versionP release:(int *)releaseP;
+
+/*!
+  @method isRealTime
+  @result Returns a BOOL.
+  @discussion Returns <b>YES</b> if the receiver runs in real time.  This will be
+              <b>YES</b> if any of soundOut, serialSoundOut or serialSoundIn is
+              <b>YES</b>.  Subclasses may want to override this
+              method.
+*/
 -(BOOL)isRealTime;
+
+/*!
+  @method outputChannelOffset
+  @result Returns an int.
+  @discussion Returns the increment in the output sample stream from the current
+              channel until the next channel.  This information is normally
+              derived from the serial port device, if any, or it defaults to 1.  
+              Some devices, such as the Singular Solutions AD64x, have a channel
+              offset of 2.  Subclasses may override this method.   For example,
+              the ArielQPSat class, when sending its sound to the hub DSP,
+              forwards this message to the ArielQP obect that represents the hub
+              DSP.
+*/
 -(int)outputChannelOffset;
+
+/*!
+  @method inputChannelOffset
+  @result Returns an int.
+  @discussion Returns the increment in the input sample stream from the current
+              channel until the next channel.  This information is normally
+              derived from the serial port device, if any, or it defaults to 1.  
+              Some devices, such as the Singular Solutions AD64x, have a channel
+              offset of 2.
+*/
 -(int)inputChannelOffset;
+
+/*!
+  @method inputPadding
+  @result Returns an int.
+  @discussion Returns the number of extra samples after each input sample frame. 
+              For example the cs4215 codec requires two samples of control
+              information following each sample frame.  This information is
+              normally derived from the serial port device, if any, or it defaults
+              to 0.   
+*/
 -(int)inputPadding;
+
+/*!
+  @method supportsSamplingRate:
+  @param  rate is a double.
+  @result Returns a BOOL.
+  @discussion Returns YES if the DSP or driver supports the specified sampling
+              rate (or half that rate).   The implementation forwards the message
+              <b>supportsSamplingRate:</b> to the serial port device, if
+              serialSoundOut or serialSoundIn is enabled.  Otherwise, for NeXT
+              hardware, it returns YES if aRate is 22050 or 44100.  A subclass may
+              override this method.
+*/
 -(BOOL)supportsSamplingRate:(double)rate;
+
 -(int)hardwareSupportedSamplingRates:(double **)arr;
+
+/*!
+  @method defaultSamplingRate
+  @result Returns a double.
+  @discussion Returns the default sampling rate for the driver or hardware
+              corresponding to this MKOrchestra instance's DSP.  If serialSoundOut
+              or serialSoundIn is enabled, this method simply forwards the
+              <b>defaultSamplingRate</b> message to the DSPSerialPortDevice
+              object.  Otherwise, returns 22050.0.  Note that you may change the
+              sampling rate using <b>setSamplingRate:</b>, but the default will
+              still remain the same.  A subclass may override this method to
+              provide a different default.
+*/
 -(double)defaultSamplingRate;
+
+/*!
+  @method prefersAlternativeSamplingRate
+  @result Returns a BOOL.
+  @discussion Returns YES if the MKOrchestra will do better with a lower sampling
+              rate than is ordinarily needed.  The default implementation returns
+              YES if the driver parameter "WaitStates" is "3".  This is to
+              accomodate the Multisound card.
+*/
 -(BOOL)prefersAlternativeSamplingRate;
+
 +setAbortNotification:aDelegate;
+
+/*!
+  @method setDefaultSoundOut
+  @result Returns an id.
+  @discussion Resets serialSoundOut, hostSoundOut, serialPortDevice, etc. to
+              produce the "default sound output" for the given hardware.  On NeXT
+              hardware, the default sound output is the NeXT monitor's DAC. On
+              Intel-based hardware, this method sets up the card with the default
+              serial port device, if any.
+*/
 -setDefaultSoundOut;
 
 #define MK_nextCompatibleDSPPort 1
@@ -304,17 +1685,133 @@ extern void MKSetPreemptDuration(double seconds);
 #define MK_serialSoundIn (1<<3)
 #define MK_soundfileOut (1<<4)
 
+
+/*!
+  @method capabilities
+  @result Returns an unsigned.
+  @discussion returns an unsigned int, the bits of which report what capabilities
+              are provided by the DSP device corresponding to the MKOrchestra. 
+              Possible values (defined in MKOrchestra.h) are as follows:
+*/
 -(unsigned)capabilities;
+
+/*!
+  @method outputChannelCount
+  @result Returns an int.
+  @discussion Returns the number of output channels.  This information is normally
+              derived from the serial port device, if any, or it defaults to 2. 
+              However, subclasses may override this method.  For example, the
+              ArielQPSat class, when sending its sound to the hub DSP, forwards
+              this message to the ArielQP obect that represents the hub
+              DSP.
+*/
 -(int)outputChannelCount;
+
+/*!
+  @method outputInitialOffset
+  @result Returns an int.
+  @discussion Initial sample offset in DSP sound output buffers.  This information
+              is normally derived from the serial port device, if any, or it
+              defaults to 0.  Used to support Singular Solutions AD64x, which
+              requires a single zero before the first datum.   
+              
+*/
 -(int)outputInitialOffset;
+
+/*!
+  @method outputPadding
+  @result Returns an int.
+  @discussion Returns the number of extra samples after each output sample frame. 
+              For example the cs4215 codec requires two samples of control
+              information following each sample frame.  This information is
+              normally derived from the serial port device, if any, or it defaults
+              to 0.   
+*/
 -(int)outputPadding;
+
+/*!
+  @method upSamplingOutput
+  @result Returns a BOOL
+  @discussion When sending sound to the DSP serial port, the sound
+              may need to be up-sampled if the current sampling rate is supported
+              by the serial port device only as a "half sampling rate" (see
+              DSPSerialPortDevice for more info.)  Returns YES if we are
+              upsampling the sound before sending it to its output location.  
+              Subclasses may override this method. For example, the ArielQPSat
+              class, when sending its sound to the hub DSP, forwards this message
+              to the ArielQP obect that represents the hub DSP.
+*/
 -(BOOL)upSamplingOutput;
+
+/*!
+  @method setUpDSP
+  @result Returns an id.
+  @discussion A subclass may implement this message.  It is sent after boot and
+              before sound out is started.   The default implementation does
+              nothing.
+*/
 -setUpDSP;
+
+/*!
+  @method startSoundWhenOpening
+  @result Returns a BOOL.
+  @discussion Returns YES.   Subclass can override, if desired.  For example, the
+              ArielQP class overrides this method to return NO.
+*/
 -(BOOL)startSoundWhenOpening;
+
+/*!
+  @method monitorFileName
+  @result Returns an NSString.
+  @discussion Returns the DSP monitor's file name, as set with
+              <b>setMonitorFileName:</b>.   If no file name was set, this method
+              automatically senses how much memory you have installed and loads
+              the appropriate monitor.  If you have the 32K DSP SRAM expansion,
+              the monitor <b>mkmon_A_32k.dsp</b>is loaded.  Otherwise,
+              <b>mkmon_A_8k.dsp</b>  is loaded.  This method is invoked by
+              <b>-open</b> to determine which monitor to load.
+              
+*/
 -(NSString *)monitorFileName;
+
+/*!
+  @method setMonitorFileName:
+  @param  name is a char *.
+  @result Returns an id.
+  @discussion Sets the DSP monitor's file name to be used the next time the DSP is
+              opend, as set with <b>setMonitorFileName:</b>.  You should know what
+              you're doing if you change the monitor!   The monitor name may only
+              be changed if the object is closed.   Returns the receiver, or nil
+              if the object is not closed.   See <b>-monitorFileName</b>. 
+              
+*/
 -setMonitorFileName:(NSString *)name;
+
+/*!
+  @method systemOverhead
+  @result Returns a double.
+  @discussion A subclass may override this method to return a number between -1
+              and 1 to compensate for the difference between the subclass' monitor
+              and the default Music Kit monitor.   For example, returning 0.1
+              means that the subclass system uses 10% more of the DSP than the
+              default Music Kit system.  The point of this mechanism is so that a
+              single headroom value provided by the user works for all
+              DSPs.
+*/
 -(double)systemOverhead;
+
+/*!
+  @method registerOrchestraSubclass:forOrchIndex
+  @param  classObject is an id.
+  @param  index is an int.
+  @result Returns an id.
+  @discussion Used by subclasses to register themselves as the default class for
+              the specified DSP index.  This allows the user to say 
+              <b>[MKOrchestra newOnDSP:3]</b> and get an instance of <b>ArielQPSat</b>, for
+              example.
+*/
 +registerOrchestraSubclass:(id)classObject forOrchIndex:(int)index;
+
 -segmentInputSoundfile:(MKOrchMemSegment)segment;
 -setInputSoundfile:(NSString *)file;
 -(NSString *)inputSoundfile;
@@ -322,24 +1819,151 @@ extern void MKSetPreemptDuration(double seconds);
 -resumeInputSoundfile;
 
 #if !m68k
-+(int)getDriverNames:(char ***)driverNames units:(int **)driverUnits
- subUnits:(int **)driverSubUnits;
--(char *)driverName ;
--(int)driverUnit;
--(int)driverSubUnit;
-+(NSString *)driverParameter:( NSString *)parameterName forOrchIndex:(unsigned short)index;
--(NSString *)driverParameter:( NSString *)parameterName;
+
+/*!
+  @method getDriverNames:units:subUnits:
+  @param  driverNames is a char ***.
+  @param  driverUnits is an int **.
+  @param  driverSubUnits is an int **.
+  @result Returns an int.
+  @discussion &lt;&lt;Intel-based hardware only.&gt;&gt; 
+              Returns the number of driver/units added to the
+              system.  Sets, by reference arrays of the names and unit numbers of
+              these drivers.  The arrays and strings are not copied and should not
+              be freed. 
+              
+              Note that the ordering in the array bears no
+              relationship to the ordering of the DSPs.  Similarly, there may be
+              more elements in the arrays than there are DSPs enabled in the
+              user's defaults data base.  To find out which DSPs are actually,
+              enabled do the following:
+              	
+<tt>
+int i;	
+id obj;	
+for (i=0; i&lt;cnt; i++) {	
+    obj = [MKOrchestra newOnDSP:i];	
+    if (!obj) {	
+        fprintf(stderr,"No driver for DSP%d\n",i);	
+    else {	
+        fprintf(stderr,"DSP%d == %s%d\n",i,[obj driverName],[obj driverUnit]);	
+    }	
+}
+</tt>
+*/
++(int)getDriverNames:(char ***) driverNames
+               units:(int **) driverUnits
+            subUnits:(int **) driverSubUnits;
+
+/*!
+  @method getDriverNames:units:
+  @param  driverNames is a char ***.
+  @param  driverUnits is an int **.
+  @result Returns an int.
+  @discussion &lt;&lt;Intel-based hardware only.&gt;&gt; 
+              Returns the number of driver/units added to the
+              system.  Sets, by reference arrays of the names and unit numbers of
+              these drivers.  The arrays and strings are not copied and should not
+              be freed. 
+              
+              Note that the ordering in the array bears no
+              relationship to the ordering of the DSPs.  Similarly, there may be
+              more elements in the arrays than there are DSPs enabled in the
+              user's defaults data base.  To find out which DSPs are actually,
+              enabled do the following:
+              	
+<tt>
+int i;	
+id obj;	
+for (i=0; i&lt;cnt; i++) {	
+    obj = [MKOrchestra newOnDSP:i];	
+    if (!obj) {	
+        fprintf(stderr,"No driver for DSP%d\n",i);	
+    else {	
+        fprintf(stderr,"DSP%d == %s%d\n",i,[obj driverName],[obj driverUnit]);	
+    }	
+}
+</tt>
+*/
 +(int)getDriverNames:(char ***)driverNames units:(int **)driverUnits;
+
+/*!
+  @method driverName
+  @result Returns a char *.
+  @discussion &lt;&lt;Intel-based hardware only&gt;&gt; Returns the name of the
+              DSP driver associated with this instance of MKOrchestra.  The string
+              is not copied and should not be freed.   
+*/
+-(char *)driverName;
+
+/*!
+  @method driverUnit
+  @result Returns an int.
+  @discussion &lt;&lt;Intel-based hardware only&gt;&gt; Returns the unit of the
+              DSP driver associated with this instance of MKOrchestra. 
+              
+*/
+-(int)driverUnit;
+
+-(int)driverSubUnit;
+
+/*!
+  @method driverParameter:forOrchIndex:
+  @param  parameter is a NSString.
+  @param  index is an unsigned short.
+  @result Returns an NSString.
+  @discussion &lt;&lt;Intel-based hardware only&gt;&gt; Returns the parameter
+              value of the specified driver parameter for the driver associated
+              with the given index of MKOrchestra.  The string is not copied and
+              should not be freed.   
+*/
++(NSString *)driverParameter:( NSString *)parameterName forOrchIndex:(unsigned short)index;
+
+/*!
+  @method driverParameter:
+  @param  parameter is an NSString.
+  @result Returns an NSString.
+  @discussion &lt;&lt;Intel-based hardware only&gt;&gt; Returns the parameter
+              value of the specified driver parameter for the driver associated
+              with this instance of MKOrchestra.  The string is not copied and
+              should not be freed.   
+*/
+-(NSString *)driverParameter:( NSString *)parameterName;
+
 #endif
 
 -awaitEndOfTime:(double)endOfTime timeStamp:(DSPTimeStamp *)aTimeStampP;
+
+/*!
+  @method writeSymbolTable:
+  @param  fileName is a char *.
+  @result Returns an id.
+  @discussion Writes out the state of the MKOrchestra instance's symbol table as a
+              DSP <b>.lod</b> file.  This file can then be loaded into the DSP
+              debugging application, Ariel's Bug56, for debugging purposes.  Note
+              that since the MKOrchestra changes the running DSP program
+              dynamically, this <b>.lod</b> file represents a snap-shot of the DSP
+              symbol table at a particular instant.   This method is implemented
+              in terms of MKUnitGenerator methods <b>-writeSymbolsToStream:</b>and
+              <b> -instanceNumber</b>.
+*/
 -writeSymbolTable:(NSString *)fileName;
+
 -setSimulatorFile:(char *)filename;
 -(char *)simulatorFile;
+
 - sharedObjectFor:aKeyObj segment:(MKOrchMemSegment)whichSegment length:(int)length;
 - sharedObjectFor:aKeyObj segment:(MKOrchMemSegment)whichSegment;
+
 - setSoundOut:(BOOL)yesOrNo;
+
+/*!
+  @method soundOut
+  @result Returns a BOOL.
+  @discussion Sets whether soundOut is enabled.
+*/
 - (BOOL)soundOut;
+
 @end
 
 @interface OrchestraDelegate : NSObject

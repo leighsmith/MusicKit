@@ -4,7 +4,7 @@
   HEADER FILES: MusicKit.h
 
   Description: 
-    Each TuningSystem object manages a mapping from keynumbers to frequencies.
+    Each MKTuningSystem object manages a mapping from keynumbers to frequencies.
     There are MIDI_NUMKEYS individually tunable elements. The tuning system
     which is accessed by pitch variables is referred to as the "installed
     tuning system".
@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.8  2001/08/07 16:11:16  leighsmith
   Corrected class name during en/decode to match latest MK prefixed name
 
@@ -454,7 +457,7 @@ void _MKTuningSystemInit(void)
 - copyWithZone:(NSZone *)zone
   /* Returns a copy of receiver. */
 {
-//    TuningSystem *newObj = [super copyWithZone:zone];
+//    MKTuningSystem *newObj = [super copyWithZone:zone];
     MKTuningSystem *newObj = NSCopyObject(self, 0, zone);//sb: must check for deep copying
     
     newObj->frequencies = [[NSMutableArray arrayWithArray: frequencies] retain];
@@ -467,7 +470,7 @@ void _MKTuningSystemInit(void)
 }
 
 +installedTuningSystem
-  /* Returns a new TuningSystem set to the values of the currently installed
+  /* Returns a new MKTuningSystem set to the values of the currently installed
      tuning system. Note, however, that this is a copy of the current values.
      Thus, altering the returned object does not alter the current values
      unless the -install message is sent. */
@@ -522,7 +525,7 @@ void _MKTuningSystemInit(void)
 +setKeyNum:(MKKeyNum)aKeyNum toFreq:(double)freq
   /* Sets frequency for specified keyNum in the installed tuning system.
      Note that if several changes are going to be made at once, it is more
-     efficient to make the changes in a TuningSystem instance and then send
+     efficient to make the changes in a MKTuningSystem instance and then send
      the install message to that object. 
      Returns self or nil if aKeyNum is out of bounds. */
 {
@@ -553,7 +556,7 @@ void _MKTuningSystemInit(void)
   /* Sets frequency for specified keyNum and all its octaves in the installed
      tuning system.
      Note that if several changes are going to be made at once, it is more
-     efficient to make the changes in a TuningSystem instance and then send
+     efficient to make the changes in a MKTuningSystem instance and then send
      the install message to that object. 
      Returns self or nil if aKeyNum is out of bounds. */
 {	

@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.7  2000/07/22 00:32:20  leigh
   Minor doco and typing cleanups.
 
@@ -40,14 +43,14 @@ Modification history:
 #import <Foundation/Foundation.h>
 
 /* Music Kit TRACE codes */
-#define MK_TRACEORCHALLOC 1       /* Orchestra allocation information */
+#define MK_TRACEORCHALLOC 1       /* MKOrchestra allocation information */
 #define MK_TRACEPARS 2            /* App params, when first encountered. */
 #define MK_TRACEDSP 4             /* Music Kit DSP messages */
 #define MK_TRACEMIDI 8            /* MIDI in/out/time warnings */
-#define MK_TRACEPREEMPT 16        /* SynthInstrument preemptions msgs */
-#define MK_TRACESYNTHINS  32      /* SynthInstrument messages */
-#define MK_TRACESYNTHPATCH 64     /* SynthPatch library messages */
-#define MK_TRACEUNITGENERATOR 128 /* UnitGenerator library messages */
+#define MK_TRACEPREEMPT 16        /* MKSynthInstrument preemptions msgs */
+#define MK_TRACESYNTHINS  32      /* MKSynthInstrument messages */
+#define MK_TRACESYNTHPATCH 64     /* MKSynthPatch library messages */
+#define MK_TRACEUNITGENERATOR 128 /* MKUnitGenerator library messages */
 #define MK_TRACECONDUCTOR 256     /* Conductor time messages */
 #define MK_TRACEDSPARRAYS 512     /* Print arrays loaded to DSP */
 
@@ -121,9 +124,9 @@ typedef enum _MKErrno {
     MK_synthDataCantClearErr,   /* Synthdata errors */ 
     MK_synthDataLoadErr,
     MK_synthDataReadonlyErr,
-    MK_synthInsOmitNoteErr,     /* SynthInstrument errors */
+    MK_synthInsOmitNoteErr,     /* MKSynthInstrument errors */
     MK_synthInsNoClass,
-    MK_ugLoadErr,               /* UnitGenerator errors. */
+    MK_ugLoadErr,               /* MKUnitGenerator errors. */
     MK_ugBadArgErr,
     MK_ugBadAddrPokeErr,
     MK_ugBadDatumPokeErr,

@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.6  2001/07/02 16:55:33  sbrandon
   - commented out cruft after endif
 
@@ -35,7 +38,7 @@ Modification history:
   09/15/89/daj - Added caching of Note class. (_MKClassNote())
   09/22/89/daj - Moved _MKNameTable functions to _MKNameTable.h.
   10/08/89/daj - Changed types for new _MKNameTable implementation.
-  11/10/89/daj - Added caching of Partials class. (_MKClassPartials())
+  11/10/89/daj - Added caching of MKPartials class. (_MKClassPartials())
   11/26/89/daj - Added _MKBeginUGBlock() and _MKEndUGBlock().
   11/27/89/daj - Removed arg from _MKCurSample.
   12/3/89/daj  - Added seed and ranSeed tokens.

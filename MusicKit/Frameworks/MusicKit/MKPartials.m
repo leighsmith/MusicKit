@@ -26,6 +26,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.9  2001/08/07 16:16:11  leighsmith
   Corrected class name during decode to match latest MK prefixed name
 
@@ -63,7 +66,7 @@ Modification history:
 		 ints to support the timbre data base. Note that archiving, 
 		 copying, interpolateBetween: and other such methods are not 
 		 supported. The likelyhood of someone calling this methods 
-		 on a data base WaveTable is very low.  On the off chance that
+		 on a data base MKWaveTable is very low.  On the off chance that
 		 someone does call them, I added code to convert the object to
 		 normal form. However, if someone has a subclass and tries to 
 		 access the instance vars directly, he'll get garbage. The
@@ -529,7 +532,7 @@ static BOOL isPowerOfTwo(int n)
 }
 
 #define POWERS_OF_2_ERROR \
-NSLocalizedStringFromTableInBundle(@"Partials object currently supports table sizes of powers of 2 only.", _MK_ERRTAB, _MKErrorBundle(), "This error occurs if an application asks for a WaveTable size tha is not a power of 2. This error is rarely if ever seen by the user.")
+NSLocalizedStringFromTableInBundle(@"MKPartials object currently supports table sizes of powers of 2 only.", _MK_ERRTAB, _MKErrorBundle(), "This error occurs if an application asks for a MKWaveTable size tha is not a power of 2. This error is rarely if ever seen by the user.")
 
 
 #define DEFAULT_OSC_TABLE_LENGTH 256
@@ -575,7 +578,7 @@ NSLocalizedStringFromTableInBundle(@"Partials object currently supports table si
       imaginary = arr[howMany - i];
       ampRatios[i] = sqrt(real * real + imaginary * imaginary) * oneOverN;
       phases[i] = RADIANS_TO_DEG(atan2(imaginary,real))+90;
-      /* Partials is a sum of sines, not cosines, so add 90 degrees. */
+      /* MKPartials is a sum of sines, not cosines, so add 90 degrees. */
   }
   _MK_MALLOC(freqRatios,double,halfHowMany);
   for (arr = freqRatios, i = 0; i<halfHowMany; i++) 
@@ -730,7 +733,7 @@ NSLocalizedStringFromTableInBundle(@"Partials object currently supports table si
 }
 
 - (DSPDatum *)dataDSPLength:(int)aLength scale:(double)aScaling
-/* Returns the WaveTable as an array of DSPDatums, recomputing 
+/* Returns the MKWaveTable as an array of DSPDatums, recomputing 
    the data if necessary at the requested scaling and length. If the 
    subclass has no data, returns NULL. The data should neither be modified
    nor freed by the sender. */
@@ -748,7 +751,7 @@ NSLocalizedStringFromTableInBundle(@"Partials object currently supports table si
 }
 
 - (double *)dataDoubleLength:(int)aLength scale:(double)aScaling
-/* Returns the WaveTable as an array of doubles, recomputing 
+/* Returns the MKWaveTable as an array of doubles, recomputing 
    the data if necessary at the requested scaling and length. If the 
    subclass has no data, returns NULL. The data should neither be modified
    nor freed by the sender. */

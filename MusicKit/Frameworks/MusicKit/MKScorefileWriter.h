@@ -27,10 +27,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 CCRMA, Stanford University
-  Portions Copyright (c) 1999-2000, The MusicKit Project.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.5  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.4  2000/11/25 23:04:01  leigh
   Corrected typing of ivars and enforced their privacy
 
@@ -40,6 +43,34 @@
   Revision 1.2  1999/07/29 01:25:50  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
+*/
+/*!
+  @class MKScorefileWriter
+  @discussion
+
+A MKScorefileWriter is an MKInstrument that realizes MKNotes by writing them to a
+scorefile.  The name of the scorefile to which the MKNotes are written is set
+through methods inherited from MKFileWriter.
+
+Each of a ScorefileWriter's MKNoteReceivers corresponds to a MKPart that will appear
+in the scorefile.  Unlike most Instruments, the MKScorefileWriter class doesn't
+add any MKNoteReceivers to a newly created object, they must be added by invoking
+the <b>addNoteReceiver:</b> method.
+
+The names of the MKParts represented in the scorefile are taken from the
+NoteRecievers for which they were created.  You can name a NoteReceiver by
+calling the <b>MKNameObject()</b> function.
+
+The header of the scorefile always includes a <b>part</b> statement that names
+the MKParts represented in the MKScore, and a <b>tagRange</b> statement that states
+the range of noteTag values used in the MKNote statements.  A MKScorefileWriter can
+be given an info MKNote that's written as a MKScore info statement in the file;
+similarly, the ScorefileWriter's MKNoteReceivers can each contain a MKPart info
+MKNote.  These, too, are written to the scorefile, each in a separate MKPart info
+statement.
+
+You shouldn't change the name of a data object (such as an MKEnvelope, MKWaveTable,
+or NoteReceiver) during a performance involving a MKScorefileWriter.
 */
 #ifndef __MK_ScorefileWriter_H___
 #define __MK_ScorefileWriter_H___
@@ -56,110 +87,147 @@
     void *_p;
 }
  
-+(NSString *)fileExtension;
  /* 
   * scorefiles.  The string isn't copied.  Note: This method is superceded
   * by the instance method by the same name.  */
++(NSString *)fileExtension;
 
+/*!
+  @method fileExtension
+  @result Returns an NSString.
+  @discussion Returns "score", the default file extension for score files if the
+              file was set with <b>setFile:</b> or <b>setStream:</b>. Returns
+              "playscore", the default file extension for optimized format score
+              files if the file was set with <b>setOptimizedFile:</b> or
+              <b>setOptimizedStream:</b>. The string is not copied.
+*/
 -(NSString *)fileExtension;
- /* 
-  * Returns "score", the default file extension for score files if the
-  * file was set with setFile: or setStream:. Returns "playscore", the
-  * default file extension for optimized format score files if the file was
-  * set with setOptimizedFile: or setOptimizedStream:.  The string is not
-  * copied. */
 
+/*!
+  @method setInfo:
+  @param  aNote is an MKNote.
+  @result Returns an id.
+  @discussion Sets the receiver's info MKNote, freeing a previously set info MKNote,
+              if any.  The MKNote is written, in the scorefile, as a MKScore info
+              statement.  Returns the receiver.
+*/
 -setInfoNote:(MKNote *) aNote;
- /* 
-  * Sets the receiver's info Note, freeing a previously set info Note, if any. 
-  * The Note is written, in the scorefile, as an info statement.
-  * Returns the receiver.
-  */
 
+/*!
+  @method info
+  @result Returns an id.
+  @discussion Returns the receiver's info MKNote, as set through
+              <b>setInfo:</b>.
+*/
 -(MKNote *) infoNote;
- /* 
-  * Returns the receiver's info Note, as set through setInfo:.
-  */
 
+/*!
+  @method setInfo:forNoteReceiver:
+  @param  aPartInfo is an MKNote.
+  @param  aNoteReceiver is an MKNoteReceiver.
+  @result Returns an id.
+  @discussion Sets <i>aPartInfo</i> as the MKNote that's written as the info MKNote
+              for the MKPart that corresponds to the MKNoteReceiver
+              <i>aNoteReceiver</i>.  The MKPart's previously set info MKNote, if any,
+              is freed.  If the receiver is in performance, or if
+              <i>aNoteReceiver</i> doesn't belong to the receiver, does nothing
+              and returns <b>nil</b>, otherwise returns the receiver.
+*/
 -setInfoNote:(MKNote *) aPartInfo forNoteReceiver: (MKNoteReceiver *) aNR;
- /* 
-  * Sets aNote as the Note that's written as the info Note for the
-  * Part that corresponds to the NoteReceiver aNR.
-  * The Part's previously set info Note, if any, is freed.
-  * If the receiver is in performance, or if aNR doesn't belong
-  * to the receiver, does nothing and returns nil,
-  * Otherwise returns the receiver.
-  */
 
+/*!
+  @method infoNoteForNoteReceiver:
+  @param  aNoteReceiver is an id.
+  @result Returns an id.
+  @discussion Returns the info MKNote that's associated with an MKNoteReceiver
+              (as set through <b>setInfo:forNoteReceiver:</b>).
+*/
 - infoNoteForNoteReceiver:aNoteReceiver;
- /* 
-  * Returns the info Note that's associated with a NoteReceiver
-  * (as set through setInfo:forNoteReceiver:).
-  */
 
+/*!
+  @method initializeFile
+  @result Returns an id.
+  @discussion Initializes the scorefile.  You never invoke this method; it's
+              invoked automatically just before the receiver writes its first MKNote
+              to the scorefile.
+*/
 - initializeFile; 
- /* 
-  * Initializes the scorefile.
-  * You never invoke this method; it's invoked automatically just before the
-  * receiver writes its first Note to the scorefile.
-  */
 
+/*!
+  @method finishFile
+  @result Returns an id.
+  @discussion You never invoke this method; it's invoked automatically at the end
+              of a performance.
+*/
 - finishFile; 
- /* 
-  * You never invoke this method; it's invoked automatically at the end
-  * of a performance. 
-  */
 
+ /* 
+  * Creates and returns a new MKScorefileWriter as a copy of the receiver.
+  * The new object copies the receivers MKNoteReceivers and info MKNotes.
+  * See MKInstrument copy method.
+  */
 - copyWithZone:(NSZone *)zone; 
- /* 
-  * Creates and returns a new ScorefileWriter as a copy of the receiver.
-  * The new object copies the receivers NoteReceivers and info Notes.
-  * See Instrument copy method.
-  */
 
+/*!
+  @method realizeNote:fromNoteReceiver:
+  @param  aNote is an id.
+  @param  aNoteReceiver is an id.
+  @result Returns an id.
+  @discussion Realizes <i>aNote</i> by writing it to the scorefile.  The MKNote
+              statement created from <i>aNote</i> is assigned to the MKPart that
+              corresponds to <i>aNoteReceiver</i>.
+*/
 - realizeNote:aNote fromNoteReceiver:aNoteReceiver; 
- /* 
-  * Realizes aNote by writing it to the scorefile.  The Note statement
-  * created from aNote is assigned to the Part that corresponds to
-  * aNoteReceiver.
-  */
 
--setFile:(NSString *)aName;
-  /* Sets file and specifies that the data be written in ascii (.score) format.
-     See superclass documentation for details. 
-   */ 
+/*!
+  @method setFile:
+  @param  aName is a char *.
+  @result Returns an id.
+  @discussion Sets file and specifies that the data be written in ascii (<tt>.score</tt>)
+              format.   See superclass documentation for details.
+*/
+- setFile:(NSString *)aName;
 
+/*!
+  @method setStream:
+  @param  aStream is an NSMutableData.
+  @result Returns an id.
+  @discussion Sets stream and specifies that the data be written in ascii (<tt>.score</tt>)
+              format. See superclass documentation for details.
+*/
 -setStream:(NSMutableData *)aStream;
-  /* Sets stream and specifies that the data be written in ascii (.score) 
-     format. See superclass documentation for details. 
-   */ 
 
+/*!
+  @method setOptimizedStream:
+  @param  aStream is an NSMutableData.
+  @result Returns an id.
+  @discussion Same as setStream: but specifies that the data be written in
+              optimized scorefile (<tt>.playscore</tt>) format. 
+*/
 -setOptimizedStream:(NSMutableData *)aStream;
-  /* Same as setStream: but specifies that the data be written in optimized 
-     scorefile (.playscore) format. */
 
+/*!
+  @method setOptimizedFile:
+  @param  aName is an NSString.
+  @result Returns an id.
+  @discussion Same as setFile: but specifies that the data be written in optimized
+              (<tt>.playscore</tt>) format. 
+*/
 -setOptimizedFile:(NSString *)aName;
-  /* Same as setFile: but specifies that the data be written in optimized 
-     (.playscore) format. */
 
-- (void)encodeWithCoder:(NSCoder *)aCoder;
   /* 
      You never send this message directly.  
      Should be invoked with NXWriteRootObject(). 
-     Invokes superclass write:, which archives NoteReceivers.
-     Then archives info, isOptimized, and Part info Notes.  */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+     Invokes superclass write:, which archives MKNoteReceivers.
+     Then archives info, isOptimized, and MKPart info MKNotes.  */
+- (void)encodeWithCoder:(NSCoder *)aCoder;
   /* 
      You never send this message directly.  
      Should be invoked via NXReadObject(). 
      Note that -init is not sent to newly unarchived objects.
      See write:. */
-//- awake;
-  /* 
-     Gets object ready for use. */
+- (id)initWithCoder:(NSCoder *)aDecoder;
 
 @end
-
-
 
 #endif

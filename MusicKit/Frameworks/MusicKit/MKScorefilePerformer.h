@@ -30,10 +30,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 CCRMA, Stanford University
-  Portions Copyright (c) 1999-2000, The MusicKit Project.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.6  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.5  2000/11/28 19:15:13  leigh
   Doco cleanup
 
@@ -46,6 +49,25 @@
   Revision 1.2  1999/07/29 01:25:50  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
+*/
+/*!
+  @class MKScorefilePerformer
+  @discussion
+
+
+ScorefilePerformers are used to perform scorefiles.  When the object is
+activated, it reads the file's header and creates a NoteSender for each (unique)
+member of the <b>part</b> statement.  A NoteSender is given the same name as the
+MKPart for which it was created.
+
+During a performance, a MKScorefilePerformer reads successive MKNote and time
+statements from the file from which it creates MKNote objects that it sends
+through its MKNoteSenders.  When it reaches the end of the file, the
+MKScorefilePerformer is deactivated.
+
+A MKScorefilePerformer has its own info MKNote that it fashions from the <b>info</b>
+statement in the file, and defines an NXStream on which scorefile <b>print</b>
+statements are printed.
 */
 #ifndef __MK_ScorefilePerformer_H___
 #define __MK_ScorefilePerformer_H___
@@ -62,109 +84,141 @@
     NSMutableArray *_partStubs;
 }
  
+
+/*!
+  @method init
+  @result Returns an id.
+  @discussion Initializes the receiver.  You invoke this method when creating a
+              new intance.  A subclass implementation should send <b>[super
+              init]</b> before performing its own initialization. 
+              
+*/
 - init;
- /* 
-  * Initializes the receiver.  You never invoke this method directly.  A
-  * subclass implementation should send [super initialize] before
-  * performing its own initialization.  The return value is ignored.
-  */
 
 +(NSString *)fileExtension;
  /* Obsolete (see fileExtensions)
   */
 
+/*!
+  @method fileExtensions
+  @result Returns an NSArray.
+  @discussion Returns a NSArray of the default file extensions
+              recognized by MKScorefilePerformer instances. This array typically consists of
+              "score" and "playscore".   This method is used by the MKFilePerformer
+              class.  The string is not copied. 
+*/
 +(NSArray *)fileExtensions;
- /* Returns a NSArray of the default file extensions
-  * recognized by MKScorefilePerformer instances. This array consists of
-  * "score" and "playscore".  This method is used by the MKFilePerformer
-  * class.  The string is not copied. */
 
+/*!
+  @method infoNote
+  @result Returns an MKNote.
+  @discussion Returns the receiver's info MKNote, fashioned from an <b>info</b>
+              statement in the header of the scorefile.
+*/
 - infoNote;
- /* 
-  * Returns the receiver's info MKNote, fashioned from an info statement
-  * in the header of the scorefile.
-  */
 
+/*!
+  @method initializeFile
+  @result Returns an id.
+  @discussion You never invoke this method; it's invoked automatically by
+              <b>selfActivate</b> (just before the file is performed).  It reads
+              the scorefile header and creates NoteSender objects for each member
+              of the file's <b>part</b> statements.  It also creates info MKNotes
+              from the file's MKScore and MKPart info statements and adds them to
+              itself and its MKParts.  If the file can't be read, or the scorefile
+              parser encounters too many errors, the receiver is
+              deactivated.
+*/
 - initializeFile; 
- /* 
-  * You never invoke this method; it's invoked automatically by
-  * selfActivate (just before the file is performed).  It reads the
-  * scorefile header and creates MKNoteSender objects for each member of the
-  * file's part statements.  It also creates info MKNotes from the file's
-  * MKScore and MKPart info statements and adds them to itself and its MKParts.
-  * If the file can't be read, or the scorefile parser encounters too many
-  * errors, the receiver is deactivated.
-  */
 
+/*!
+  @method finishFile
+  @result Returns an id.
+  @discussion You never invoke this method; it's invoked automatically by
+              <b>deactivate</b>.  Performs post-performance cleanup of the
+              scorefile parser.
+*/
 - finishFile; 
- /* 
-  * You never invoke this method; it's invoked automatically by
-  * deactivate.  Performs post-performance cleanup of the scorefile
-  * parser.
-  */
 
+/*!
+  @method scorefilePrintStream
+  @result Returns an NSMutableData.
+  @discussion Returns the receiver's scorefile <b>print</b> statement
+              stream.
+*/
 -(NSMutableData *)scorefilePrintStream;
- /* 
-  * Returns the receiver's scorefile print statement stream.
-  */
 
+/*!
+  @method nextNote
+  @result Returns an id.
+  @discussion Reads the next MKNote or time statement from the body of the
+              scorefile.  MKNote statements are turned into MKNote objects and
+              returned.  If its a time statement that's read, fileTime is set to
+              the statement's value and <b>nil</b> is returned.
+              
+              You never invoke this method; it's invoked automatically by the
+              <b>perform</b> method.  If you override this method, you must
+              send <b>[super nextNote]</b>.
+*/
 - nextNote; 
- /* 
-  * Reads the next MKNote or time statement from the body of the scorefile.
-  * Note statements are turned into MKNote objects and returned.  If its a
-  * time statement that's read, fileTime is set to the statement's value
-  * and nil is returned.
-  * 
-  * You never invoke this method; it's invoked automatically by the
-  * perform method.  If you override this method, you must send 
-  * [super nextNote].
-  */
 
+/*!
+  @method infoNoteForNoteSender:
+  @param  aNoteSender is an id.
+  @result Returns an id.
+  @discussion Returns the info MKNote of the MKPart associated with the MKNoteSender
+              <i>aNoteSender</i>.  If <i>aNoteSender</i> isn't a contained in the
+              receiver, returns <b>nil</b>.
+*/
 - infoNoteForNoteSender:aNoteSender; 
- /* 
-  * Returns the info MKNote of the MKPart associated with the 
-  * MKNoteSender aNoteSender.  If aNoteSender isn't 
-  * a contained in the receiver, returns nil.
-  */
 
+/*!
+  @method performNote:
+  @param  aNote is an id.
+  @result Returns an id.
+  @discussion Sends <i>aNote</i> to the appropriate MKNoteSender You never send
+              <b>performNote:</b> directly to a MKScorefilePerformer; it's invoked
+              by the <b>perform</b> method.
+*/
 - performNote:aNote; 
- /* 
-  * Sends aNote to the appropriate MKNoteSender
-  * You never send performNote: directly to a ScorefilePerformer;
-  * it's invoked by the perform method.  
-  */
 
+/*!
+  @method midiNoteSender:
+  @param  aChan is an int.
+  @result Returns an id.
+  @discussion Returns the first MKNoteSender whose corresponding MKPart has 
+              a MK_midiChan info parameter equal to <i>aChan</i>, if any. <i>aChan</i> equal
+              to 0 corresponds to the MKPart representing MIDI system and channel
+              mode messages.
+*/
 -midiNoteSender:(int)aChan;
- /* Returns the first MKNoteSender whose corresponding MKPart has 
-  * a MK_midiChan info parameter equal to
-  * aChan, if any. aChan equal to 0 corresponds to the MKPart representing
-  * MIDI system and channel mode messages. */
 
-- (void)dealloc;
  /* 
   * Frees the receiver, its MKNoteSenders, and its info MKNote.  If the
   * receiver is active, this does nothing and returns self. Otherwise,
   * returns nil. You never call this directly, it is called by the release
   * mechanism of NSObject.
   */
+- (void)dealloc;
 
-- copyWithZone:(NSZone *)zone;
  /* 
   * Creates and returns a new MKScorefilePerformer as a copy of the
   * receiver.  The info receiver's info MKNote is also copied.
   */
+- copyWithZone:(NSZone *)zone;
 
-- (void)encodeWithCoder:(NSCoder *)aCoder;
   /* 
      You never send this message directly.  
      Should be invoked via NSArchiver. 
      Invokes superclass write:, which archives MKNoteSenders.
      Then archives info and part infos gleaned from the Scorefile. */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+- (void)encodeWithCoder:(NSCoder *)aCoder;
+
   /* 
      You never send this message directly.  
      Should be invoked via NSArchiver. 
      Note that -init is not sent to newly unarchived objects. */
+- (id)initWithCoder:(NSCoder *)aDecoder;
 
 @end
 

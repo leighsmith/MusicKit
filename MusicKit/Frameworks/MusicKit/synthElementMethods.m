@@ -2,7 +2,7 @@
   $Id$
   Defined In: The MusicKit
 
-  Description: This file is included by UnitGenerator.m and SynthData.m
+  Description: This file is included by MKUnitGenerator.m and MKSynthData.m
 
   Original Author: David Jaffe
 
@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.3  2000/06/09 03:28:35  leigh
   Removed objc.h
 
@@ -29,7 +32,7 @@ Modification history:
 
 +new 
   /* We override this method since instances are never created directly.
-     They are always created by the Orchestra.
+     They are always created by the MKOrchestra.
      A private version of +new is used internally. */
 {
     [self doesNotRecognizeSelector:_cmd];  return nil;
@@ -37,7 +40,7 @@ Modification history:
 
 + allocWithZone:(NSZone *)zone
   /* We override this method since instances are never created directly.
-     They are always created by the Orchestra.
+     They are always created by the MKOrchestra.
      A private version of +new is used internally. */
 {
     [self doesNotRecognizeSelector:_cmd];  return nil;
@@ -45,7 +48,7 @@ Modification history:
 
 +alloc;
   /* We override this method since instances are never created directly.
-     They are always created by the Orchestra.
+     They are always created by the MKOrchestra.
      A private version of +new is used internally. */
 {
     [self doesNotRecognizeSelector:_cmd];  return nil;
@@ -59,34 +62,34 @@ Modification history:
 
 -copy
   /* We override this method since instances are never created directly. 
-     They are always created by the Orchestra. */
+     They are always created by the MKOrchestra. */
 {
     [self doesNotRecognizeSelector:_cmd];  return nil;
 }
 
 - copyWithZone:(NSZone *)zone
   /* We override this method since instances are never created directly. 
-     They are always created by the Orchestra. */
+     They are always created by the MKOrchestra. */
 {
     [self doesNotRecognizeSelector:_cmd];  return nil;
 }
 
 +orchestraClass
-  /* This method always returns the Orchestra factory. It is provided for
+  /* This method always returns the MKOrchestra factory. It is provided for
    applications that extend the Music Kit to use other hardware. Each 
    subclass is associated with a particular kind of hardware.
-   The default hardware is that represented by Orchestra, the DSP56001.
+   The default hardware is that represented by MKOrchestra, the DSP56001.
 
    If you have some other hardware, you do the following:
-   1. Make an analog to the Orchestra class for your hardware.
+   1. Make an analog to the MKOrchestra class for your hardware.
    2. Add this class to the List returned by MKOrchestraFactories().
    3. Make a subclass and override +orchestraFactory to return 
    the class you designed. 
    4. You also need to override some other methods. This 
    procedure is not documented yet. Talk to the NeXT developer support group 
    for more
-   information. They can also tell you exactly what part of the Orchestra
-   protocol your Orchestra analog needs to support.
+   information. They can also tell you exactly what part of the MKOrchestra
+   protocol your MKOrchestra analog needs to support.
    */
 {
     return _MKClassOrchestra();
@@ -99,15 +102,15 @@ Modification history:
 }
 
 -(BOOL)isFreeable
-  /* Used by the Orchestra instance to determine when the receiver may
+  /* Used by the MKOrchestra instance to determine when the receiver may
      be freed. Returns YES if the receiver is not allocated or is part of 
-     a SynthPatch which is freeable. */
+     a MKSynthPatch which is freeable. */
 {
     return ((![self isAllocated]) || (synthPatch && [synthPatch isFreeable]));
 }
 
 -(id)synthPatch
-    /* Returns the SynthPatch of which the receiver is a member, if any. */
+    /* Returns the MKSynthPatch of which the receiver is a member, if any. */
 {
     return synthPatch;
 }

@@ -31,7 +31,7 @@
     Two other methods, initializeFile and finishFile, can
     be redefined in a subclass, although neither
     must be.  initializeFile is invoked
-    just before the first Note is written to the
+    just before the first MKNote is written to the
     file and should perform any special
     initialization such as writing a file header.
    
@@ -49,6 +49,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.3  2000/04/16 04:09:32  leigh
   comment cleanup
 
@@ -141,7 +144,7 @@ Modification history:
   /* Returns default file extension for files managed by the subclass. The
      default implementation just invokes the fileExtension method.
      A subclass can override this to provide a fileExtension on an instance-
-     by-instance basis. For example ScorefileWriter returns a different
+     by-instance basis. For example MKScorefileWriter returns a different
      default extension for binary format scorefiles. */
 {
     return [[[[self class] fileExtension] retain] autorelease];
@@ -157,7 +160,7 @@ Modification history:
 -setFile:(NSString *)aName
   /* TYPE: Modifying; Associates the receiver with file aName.
    * Associates the receiver with file aName. The string is copied.
-   * The file is opened when the first Note is realized
+   * The file is opened when the first MKNote is realized
    * (written to the file) and closed at the end of the
    * performance.
    *

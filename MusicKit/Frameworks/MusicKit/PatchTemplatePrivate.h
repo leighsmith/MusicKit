@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.3  2000/05/06 00:56:32  leigh
   typed parameters to reduce warnings
 
@@ -20,7 +23,7 @@ Modification history:
 
 #import "MKPatchTemplate.h"
 
-/* PatchTemplate functions */
+/* MKPatchTemplate functions */
 extern BOOL _MKIsClassInTemplate(id templ,id factObj);
 extern NSMutableArray *_MKDeallocatedSynthPatches(id templ,int orchIndex);
 extern void _MKEvalTemplateConnections(id templ,id synthPatchContents);

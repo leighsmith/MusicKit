@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.10  2001/08/31 21:01:59  skotmcdonald
   Changed calls to conductor time to appropriate new timeInSeconds, timeInBeats calls
 
@@ -177,7 +180,7 @@ static void midiOutNodeNoteDur(midiOutNode *node,id aNoteDur,id msgReceiver)
     /* Always do beat time here. When the note eventually happens, it will
        be written in beats or seconds depending on how the caller of 
        _MKMidiOut passes the time. */
-    /* See comment in SynthPatch. */
+    /* See comment in MKSynthPatch. */
     node->noteDurMsgPtr = 
       [cond _rescheduleMsgRequest:node->noteDurMsgPtr atTime:
        (time - _MK_TINYTIME) sel:@selector(receiveNote:) to:
@@ -185,7 +188,7 @@ static void midiOutNodeNoteDur(midiOutNode *node,id aNoteDur,id msgReceiver)
 }
 
 static void cancelMidiOutNoteDurMsg(midiOutNode *node)
-    /* Cancel request for noteOff that was derived from a noteDur Note. */
+    /* Cancel request for noteOff that was derived from a noteDur MKNote. */
 {
     if (!node->noteDurOff)
       return;
@@ -196,7 +199,7 @@ static void cancelMidiOutNoteDurMsg(midiOutNode *node)
 }
 
 NSMutableArray *_MKGetNoteOns(_MKMidiOutStruct *ptr,int chan)
-    /* Returns List of noteOffs Note object for specified channel.
+    /* Returns List of noteOffs MKNote object for specified channel.
      * Caller must free the List and the objects. chan is 1-based
      */
 {
@@ -329,7 +332,7 @@ void  _MKWriteMidiOut(MKNote *aNote, double timeTag, unsigned chan, /* 1 based *
       return;
     ptr->_timeTag = timeTag;     
     pars = [aNote parVector:0];
-    if (chan == 0) { /* If channel is 0, use midiChan parameter in Note */
+    if (chan == 0) { /* If channel is 0, use midiChan parameter in MKNote */
 	chan = MKGetNoteParAsInt(aNote,MK_midiChan);
 	if (chan == MAXINT) /* No parameter? Default to 1. */
 	  chan = 1;

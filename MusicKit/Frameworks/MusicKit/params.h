@@ -3,12 +3,12 @@
   Defined In: The MusicKit
 
   Description:
-    This file defines the Music Kit Note parameters. You can also create your
+    This file defines the Music Kit MKNote parameters. You can also create your
     own parameters using the MKNote method +parTagForName:. When an unrecognized
     parameter is found in a scorefile, it is created automatically.
 
     These parameters are not recognized by all SynthPatches. You must check
-    the class description (or header file) for the individual SynthPatch to
+    the class description (or header file) for the individual MKSynthPatch to
     determine the parameters to which it responds.
 
   Original Author: David Jaffe
@@ -21,6 +21,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.4  2000/02/07 00:29:14  leigh
   comment improvements
 
@@ -34,7 +37,7 @@ Modification history:
 #ifndef __MK_params_H___
 #define __MK_params_H___
 
-typedef enum _MKPars {     /* Note Parameters. */
+typedef enum _MKPars {     /* MKNote Parameters. */
     MK_noPar = 0,          /* Begin marker */
 
     /* MIDI opcodes are represented by the presence of one of the following
@@ -65,12 +68,12 @@ typedef enum _MKPars {     /* Note Parameters. */
     MK_monoChans,       /* An arg for the MIDI monoMode msg arg */
 
     /* The following are derived from MIDI but are used extensively in 
-       Orchestra synthesis as well. Most SynthPatches support them */
+       MKOrchestra synthesis as well. Most SynthPatches support them */
 
     MK_velocity,        /* Key velocity for noteOns -- also used as a 
-                           brightness and amp in Orchestra synthesis. */
+                           brightness and amp in MKOrchestra synthesis. */
     MK_relVelocity,     /* Release key velocity. Asociated with noteOffs. */
-    MK_keyNum,          /* Key number. Also may be used for Orchestra 
+    MK_keyNum,          /* Key number. Also may be used for MKOrchestra 
                            synthesis as a substitute for freq. Takes a 
                            MKKeyNum value. */
                   
@@ -86,24 +89,24 @@ typedef enum _MKPars {     /* Note Parameters. */
     MK_pitchBendSensitivity,
 
     /* The following are basic synthesis parameters, which should be 
-       supported by all SynthPatch classes, if possible.  */ 
+       supported by all MKSynthPatch classes, if possible.  */ 
 
     MK_freq,          /* Frequency of the fundamental. 
-                         keyNum is an alternative (see Note class). */
+                         keyNum is an alternative (see MKNote class). */
     MK_amp,           /* Amplitude. In the range 0 : 1.0. velocity is an
-                         alternative (see Note class). */
+                         alternative (see MKNote class). */
     MK_bearing,       /* L/R stereo panning. In the range -45 : 45 */
     MK_bright,        /* Brightness. */
     MK_portamento,    /* Portamento time.  In a phrase, the transition time 
                          to a note from the immediately preceding note. */
 
-    /* The following are supported by oscillator-based SynthPatch classes. */
+    /* The following are supported by oscillator-based MKSynthPatch classes. */
 
-    MK_waveform,        /* WaveTable used for the oscillator */
+    MK_waveform,        /* MKWaveTable used for the oscillator */
     MK_waveLen,         /* Length of wavetable. */
     MK_phase,           /* Initial phase in degrees of wavetable */
     
-    /* The following are supported by SynthPatch classes which use
+    /* The following are supported by MKSynthPatch classes which use
        frequency modulation synthesis.  Parameters are predefined
        for three carriers and four modulators, enough to emulate
        the patches on 4-operator fm synthesizers.  For fm instruments, 
@@ -114,15 +117,15 @@ typedef enum _MKPars {     /* Note Parameters. */
                          c1Ratio is a synonym.  */
     MK_c2Ratio,       /* carrier 2 frequency == (c2Ratio * freq) */
     MK_c2Amp,         /* carrier 2 amplitude  */
-    MK_c2Waveform,    /* carrier 2 WaveTable */
+    MK_c2Waveform,    /* carrier 2 MKWaveTable */
     MK_c2Phase,
     MK_c3Ratio,       /* carrier 3 frequency == (c3Ratio * freq) */
     MK_c3Amp,         /* carrier 3 amplitude  */
-    MK_c3Waveform,    /* carrier 3 WaveTable */
+    MK_c3Waveform,    /* carrier 3 MKWaveTable */
     MK_c3Phase,
     MK_m1Ratio,       /* modulator 1 frequency == (m1Ratio * freq) */
     MK_m1Ind,         /* modulator 1 modulation index */
-    MK_m1Waveform,    /* modulator 1 WaveTable */
+    MK_m1Waveform,    /* modulator 1 MKWaveTable */
     MK_m1Phase,
     MK_m2Ratio,       /* Same as above for second modulator. */
     MK_m2Ind,
@@ -138,7 +141,7 @@ typedef enum _MKPars {     /* Note Parameters. */
     MK_m4Phase,
     MK_feedback,      /* Percentage of modulator feedback. */
     
-    /* The following are recognized by the Pluck SynthPatch */
+    /* The following are recognized by the Pluck MKSynthPatch */
 
     MK_pickNoise,     /* Duration of attack noise burst in seconds. */
     MK_decay,         /* Frequency-independent decay during entire note. 
@@ -148,7 +151,7 @@ typedef enum _MKPars {     /* Note Parameters. */
     MK_sustain,       /* Frequency-dependent sustain.
                          In the range 0 == normal : 1 == maximum. */
     MK_lowestFreq,    /* In the first note of a phrase, this warns the
-                         SynthPatch what the lowest note of the phrase is.
+                         MKSynthPatch what the lowest note of the phrase is.
                          Some SynthPatches (such as Pluck) need this 
                          information to do appropriate allocation. */
 
@@ -179,7 +182,7 @@ typedef enum _MKPars {     /* Note Parameters. */
     MK_noiseFreq,    /* Frequency of a noise generator in Hz. */
                    
     /* The following are commonly-used envelope parameters, which may be 
-       supported by some SynthPatch classes.  Note that there are several
+       supported by some MKSynthPatch classes.  Note that there are several
        alternative ways to use envelopes, among them:
        
        * Specify the desired values directly as the y values of the envelope.  
@@ -232,9 +235,9 @@ typedef enum _MKPars {     /* Note Parameters. */
     MK_brightAtt,    /* Absolute time of attack portion of envelope */
     MK_brightRel,    /* Absolute time of release portion of envelope */
 
-    MK_waveformEnv,  /* WaveTable interpolation envelope */
-    MK_waveform0,    /* WaveTable when the envelope is at 0. 
-                        MK_waveform is WaveTable when the envelope is at 1. 
+    MK_waveformEnv,  /* MKWaveTable interpolation envelope */
+    MK_waveform0,    /* MKWaveTable when the envelope is at 0. 
+                        MK_waveform is MKWaveTable when the envelope is at 1. 
                         MK_waveform1 is a synonym for MK_waveform. */
     MK_waveformAtt,  /* Absolute time of attack portion of envelope */
     MK_waveformRel,  /* Absolute time of release portion of envelope */
@@ -306,23 +309,23 @@ typedef enum _MKPars {     /* Note Parameters. */
                            MK_noiseFreq1 is synonym for MK_noiseFreq. */
     
     /* The following are currently not supported explicitly by any Musickit 
-       class. However, by convention, they may appear in Part info notes to 
-       associate information with a Part. */
+       class. However, by convention, they may appear in MKPart info notes to 
+       associate information with a MKPart. */
 
     MK_synthPatch,        /* A suggested synthPatch class which the 
-                             app may want to assign to a SynthInstrument */
+                             app may want to assign to a MKSynthInstrument */
     MK_synthPatchCount,   /* A suggested count of manually allocated 
                              SynthPatches of the type specified by
                              MK_synthPatch and the default template. */
     MK_midiChan,          /* A suggested midi channel to which the app may
                              want to connect to playing this part on 
                              MidiOut. */
-    MK_track,             /* Track number. Set in Part info when a midifile 
+    MK_track,             /* Track number. Set in MKPart info when a midifile 
                              is read.*/ 
 
     /* The following are currently not supported explicitly by any Musickit 
-       class. However, by convention, they may appear in Score info notes to 
-       associate information with a Score. */
+       class. However, by convention, they may appear in MKScore info notes to 
+       associate information with a MKScore. */
 
     MK_title,            /* Used in MKScore infoNote as the name for the piece.
 			    Used for the Track name for MKPart infoNote. */
@@ -331,8 +334,8 @@ typedef enum _MKPars {     /* Note Parameters. */
                             must be 44100 or 22050. */
     MK_headroom,         /* Suggested "headroom" on DSP synthesis in the
                             range (-1:1). The headroom determines how 
-                            conservative the Orchestra is when allocating 
-                            resources. See the Orchestra class for details. */
+                            conservative the MKOrchestra is when allocating 
+                            resources. See the MKOrchestra class for details. */
     MK_tempo,            /* Suggested performance tempo for the default 
                             conductor. When a MIDI file is read, this parameter
                             appears in the score info note if the MIDI file
@@ -342,14 +345,14 @@ typedef enum _MKPars {     /* Note Parameters. */
 
     /* The following parameters are used primarily in reading/writing Standard 
        MIDI files. See Standard MIDI file 1.0 Specification for details. */
-    MK_sequence,         /* Sequence number may be in the Part info. */  
+    MK_sequence,         /* Sequence number may be in the MKPart info. */  
     MK_text,             /* Any text describing anything. */
-    MK_copyright,        /* Copyright notice. May be in Score info */
+    MK_copyright,        /* Copyright notice. May be in MKScore info */
     MK_lyric,            /* Lyric to be sung */
     MK_marker,           /* Rehearsal letter or section name */
     MK_cuePoint,         /* Description of something happening on film. */
     MK_smpteOffset,      /* SMPTE time at which the track starts. May be in
-                            Score info. Encoded as a string of five hex 
+                            MKScore info. Encoded as a string of five hex 
                             numbers, separated by spaces. See MIDI file spec */
     MK_timeSignature,    /* Encoded as a string of 4 hex numbers, separated
                             by spaces. See MIDI file spec. */
@@ -367,7 +370,7 @@ typedef enum _MKPars {     /* Note Parameters. */
 				   cards (such as those with extra memory wait
 				   states.)
 				 */
-    MK_orchestraIndex,   /* Orchestra number for multiple DSP performances */
+    MK_orchestraIndex,   /* MKOrchestra number for multiple DSP performances */
     MK_filename,	 /* Name of sound file for MKSamplerInstrument */
     MK_privatePars,      /* Marker for private Music Kit parameter block */
                          /* Parameters MK_privatePars to MK_appPars are 
@@ -412,7 +415,7 @@ typedef enum _MKPars {     /* Note Parameters. */
 /* Some default parameter values */
 
 #define MK_DEFAULTAMP        0.1
-#define MK_DEFAULTSMOOTHING  1.0     /* Used by Envelope */
+#define MK_DEFAULTSMOOTHING  1.0     /* Used by MKEnvelope */
 #define MK_DEFAULTBRIGHT     0.5     
 #define MK_DEFAULTFREQ       440.0
 #define MK_DEFAULTPORTAMENTO 0.1

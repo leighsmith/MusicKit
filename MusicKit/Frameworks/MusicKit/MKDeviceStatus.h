@@ -6,18 +6,21 @@
 */
 /*
   $Log$
+  Revision 1.3  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.2  1999/07/29 01:25:44  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
 /* This file defines status protocol for the Music Kit "devices". Music 
    Kit "devices" are objects that interface to a Mach device. The two
-   Music Kit devices are Midi and Orchestra. */
+   Music Kit devices are MKMidi and MKOrchestra. */
 
 #ifndef __MK_devstatus_H___
 #define __MK_devstatus_H___
 
-/* Status for Midi/Orchestra Music Kit classes. */
+/* Status for MKMidi/MKOrchestra Music Kit classes. */
 
 typedef enum _MKDeviceStatus { 
     MK_devClosed = 0,

@@ -4,8 +4,8 @@
   HEADER FILES: MusicKit.h
 
   Description:
-    PatchTemplate is a recipe for building a particular kind of SynthPatch.
-    The template is created with the PatchTemplate class method +new
+    MKPatchTemplate is a recipe for building a particular kind of MKSynthPatch.
+    The template is created with the MKPatchTemplate class method +new
     and configured with the basic methods
 
     -to:(unsigned)anObjInt sel:(SEL)aSelector arg:(unsigned)anArgInt
@@ -13,44 +13,44 @@
     -(unsigned)addSynthData:(MKOrchMemSegment)segment length:(unsigned)len
     -(unsigned)addPatchpoint:(MKOrchMemSegment)segment
 
-    The template consists of "ordered" UnitGenerator factories,
-    "unordered" UnitGenerator factories, "data memory blocks", and
+    The template consists of "ordered" MKUnitGenerator factories,
+    "unordered" MKUnitGenerator factories, "data memory blocks", and
     "message requests". (The meaning of the terms is indicated below.)  These
     are added to the template using the three methods shown above. In the
     case of "ordered" UnitGenerators, the order used is the order of the
     -addUnitGenerator: messages. -addUnitGenerator:ordered:, -addSynthData:length:,
     and -addPatchpoint: return an int value to be used as an argument to
-    sendSel:to:with: or when referencing UnitGenerators in the SynthPatch.
+    sendSel:to:with: or when referencing UnitGenerators in the MKSynthPatch.
 
     When UnitGenerators are connected up, it usually doesn't matter if
     there is a one-tick delay involved in the interconnection.  If it does
-    not matter one way or the other, you should specify the UnitGenerator
-    as an "unordered" UnitGenerator. However, if it is essential that no
+    not matter one way or the other, you should specify the MKUnitGenerator
+    as an "unordered" MKUnitGenerator. However, if it is essential that no
     pipe-line delay be incurred, you should specify the two unit
     generators in the correct order as "ordered" UnitGenerators.
     Similarly, if it is essential that exactly one pipe-line delay be
     incurred, you should specify the two UnitGenerators in the reverse
-    order in the "ordered" UnitGenerator list.
+    order in the "ordered" MKUnitGenerator list.
 
-    Each data block used privately in the SynthPatch is allocated
+    Each data block used privately in the MKSynthPatch is allocated
     by specifying the length and memory segment of that data block to the
-    PatchTemplate. The instances allocated are SynthData instances.
+    MKPatchTemplate. The instances allocated are MKSynthData instances.
 
     Finally, the message requests of the Template are specified with the
     to:sel:arg: method. This mechanism is used primarily to specify the
     interconnections of the UnitGenerators.
     The to: and with: arguments are one of the values
     returned by addUnitGenerator:ordered: or addSynthData:length:.
-    These connections are made automatically by the -initialize SynthPatch
-    method. When the initialize method is sent to the SynthPatch,
+    These connections are made automatically by the -initialize MKSynthPatch
+    method. When the initialize method is sent to the MKSynthPatch,
     each of the connections is made in the order the to:sel:arg: messages
     were sent.
 
     It is important to point out that PatchTemplates are considered different
-    by the Orchestra, even if their contents are identical. A PatchTemplate should not
+    by the MKOrchestra, even if their contents are identical. A MKPatchTemplate should not
     be changed once it has been used during a Musickit performance.
 
-    PatchTemplate should never be freed.
+    MKPatchTemplate should never be freed.
 
   Original Author: David A. Jaffe
 
@@ -62,6 +62,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.7  2001/04/23 21:17:29  leighsmith
   Corrected _MKEvalTamplateConnections
 
@@ -85,9 +88,9 @@ Modification history:
   03/21/90/daj - Added archiving.
   04/21/90/daj - Small mods to get rid of -W compiler warnings.
   04/25/90/daj - Added CHECKCLASS to make sure that the right class is
-                 returned when inheritance is used in SynthPatch design.
+                 returned when inheritance is used in MKSynthPatch design.
   04/27/90/daj - Removed checks for _MKClassOrchestra, since we're a
-                 shlib now so Orchestra will always be there.
+                 shlib now so MKOrchestra will always be there.
   08/27/90/daj - Added zone support API.
   07/05/91/daj - Fixed bug in _MKAllocSynthPatch.
   08/22/91/daj - Changed Storage API for 3.0.
@@ -114,7 +117,7 @@ Modification history:
 }
 
 -init
-  /* Creates a new PatchTemplate instance. */
+  /* Creates a new MKPatchTemplate instance. */
 {
     [super init];
     _deallocatedPatches = [_MKClassOrchestra() _addTemplate:self];
@@ -175,7 +178,7 @@ Modification history:
 }
 
 - copyWithZone:(NSZone *)zone
-  /* Creates a new PatchTemplate that's a copy of the receiver, containing
+  /* Creates a new MKPatchTemplate that's a copy of the receiver, containing
      the same connections and entries. */
 {
     MKPatchTemplate *newObj = NSCopyObject(self, 0, zone);
@@ -201,7 +204,7 @@ Modification history:
      unsigned  patchPoint = [tmpl addPatchpoint:MK_xPatch];
      [tmpl to:osc sel:@selector(setOutput:) arg:patchPoint];
 
-     then later, when the SynthPatch is built, the message
+     then later, when the MKSynthPatch is built, the message
 
      [[self at:osc] setOutput:[self at:patchPoint]];
 
@@ -237,12 +240,12 @@ static unsigned addEl(MKPatchTemplate *self, MKPatchEntry *newEntry)
 }
 
 -(unsigned)addUnitGenerator:(id)aUGClass ordered:(BOOL)isOrdered
-  /* Adds a UnitGenerator or PatchPoint class to the receiver. If isOrdered
-     is NO, the ordering of the UnitGenerator in memory is considered
+  /* Adds a MKUnitGenerator or PatchPoint class to the receiver. If isOrdered
+     is NO, the ordering of the MKUnitGenerator in memory is considered
      irrelevant. It is more efficient, from the standpoint of memory 
      thrashing, to set isOrdered to NO. However, it makes the job of 
      writing SynthPatches tricker, since the designer may need to ask each
-     UnitGenerator if it runs after or before the others. */
+     MKUnitGenerator if it runs after or before the others. */
 {
     MKPatchEntry *newEntry = [[MKPatchEntry alloc] initWithClass: aUGClass
                                                             type: (isOrdered) ? ORDERED : UNORDERED];

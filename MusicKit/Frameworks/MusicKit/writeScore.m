@@ -23,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.6  2000/10/01 06:50:53  leigh
   Doco Cleanup
 
@@ -57,7 +60,7 @@ Modification history:
 #import "_noteRecorder.h"
 
 static void writeScoreInfo(_MKScoreOutStruct *p,id info)
-    /* Writes the Score "info note" */
+    /* Writes the MKScore "info note" */
 {
     NSMutableData *aStream = p->_stream;
     if (!info)
@@ -106,7 +109,7 @@ _MKInitScoreOut(NSMutableData *fileStream,id owner,id anInfoNote,double timeShif
 #define BINARY(_p) (p->_binary)
 
 static void writePartInfo(_MKScoreOutStruct *p, MKPart *aPart, NSString *partName, MKNote *info)
-    /* Writes the Part "info note" */
+    /* Writes the MKPart "info note" */
 {
     NSMutableData *aStream = p->_stream;
     if (!info)

@@ -52,6 +52,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.11  2001/08/31 21:01:59  skotmcdonald
   Changed calls to conductor time to appropriate new timeInSeconds, timeInBeats calls
 
@@ -791,7 +794,7 @@ void _MKUnarchiveParOn(_MKParameter *param,NSCoder *aTypedStream) /*sb: NSCoder 
     BOOL isMKPublicPar;
     char *strVar;
     [aTypedStream decodeValueOfObjCType:"c" at:&isMKPublicPar];
-    /* See fix for bug in Note.m's read: method */
+    /* See fix for bug in MKNote.m's read: method */
     if (isMKPublicPar) /* Write parameter number */
       [aTypedStream decodeValueOfObjCType:"s" at:&param->parNum];
     else {       /* Write parameter name */

@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.4  2001/07/02 16:59:08  sbrandon
   - commented out cruft after endif
 
@@ -31,10 +34,10 @@ Modification history:
 
 #import <MKDSP/dsp.h>             /* Contains DSPAddress, etc. */
 
-typedef enum _MKOrchMemSegment { /* Memory segments for Orchestra */
+typedef enum _MKOrchMemSegment { /* Memory segments for MKOrchestra */
     /* Memory segments may be on or off chip unless otherwise indicated */
     MK_noSegment = 0,            /* Illegal segment. */
-    MK_pLoop,                    /* Orchestra loop P memory. */
+    MK_pLoop,                    /* MKOrchestra loop P memory. */
     MK_pSubr,                    /* P subroutine memory (off-chip only) */
     MK_xArg,                     /* X argument memory. 
                                     (currently only on-chip) */
@@ -66,7 +69,7 @@ typedef struct _MKOrchMemStruct { /* Used to represent relocation as well
 typedef struct _MKOrchAddrStruct { /* Used to represent orchestra addresses. */
     DSPAddress address;            /* Absolute address of symbol. */
     DSPMemorySpace memSpace;       /* In low-level DSP terms. */
-    MKOrchMemSegment memSegment;   /* In higher-level Orchestra terms. */
+    MKOrchMemSegment memSegment;   /* In higher-level MKOrchestra terms. */
     int orchIndex;                 /* Which DSP. */
 } MKOrchAddrStruct;
 

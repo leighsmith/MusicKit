@@ -3,13 +3,13 @@
   Defined In: The MusicKit
 
   Description:
-    The Samples object allows you to use a NSSound as data in DSP synthesis.
+    The MKSamples object allows you to use a NSSound as data in DSP synthesis.
     The most common use is as a wavetable table for an oscillator.
     You may set the Sound from a Sound object or from a Soundfile using
     setSound: or readSoundfile:.
 
-    Access to the data, is provided by the superclass, WaveTable.
-    Samples currently does not provide resampling functionality.
+    Access to the data, is provided by the superclass, MKWaveTable.
+    MKSamples currently does not provide resampling functionality.
     Hence, it is an error to ask for an array length other than the
     length of the original Sound passed to the object.
 
@@ -23,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.5  2001/08/07 16:16:11  leighsmith
   Corrected class name during decode to match latest MK prefixed name
 
@@ -76,7 +79,7 @@ id MKGetSamplesClass(void)
 + (void)initialize
 {
 /* Changed by Nick 8/11/95 */
-/*    if (self != [Envelope class]) */
+/*    if (self != [MKEnvelope class]) */
     if (self == [MKEnvelope class])  
       return;
     [MKSamples setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
@@ -155,7 +158,7 @@ id MKGetSamplesClass(void)
 }
 
 - (BOOL)setSound:(Snd *)aSoundObj //sb: originally returned self/nil -- now BOOL.
-/* Sets the Sound of the Samples object to be aSoundObj.
+/* Sets the Sound of the MKSamples object to be aSoundObj.
    aSoundObj must be in 16-bit linear mono format. If not, setSound: returns
    nil. aSoundObj is copied. 
 
@@ -180,7 +183,7 @@ id MKGetSamplesClass(void)
     NSFileManager *manager = [NSFileManager defaultManager];
     
     if (isBinary)
-      _MKWriteChar(aStream,'\1'); /* Marks it as Sample rather than Partials */
+      _MKWriteChar(aStream,'\1'); /* Marks it as Sample rather than MKPartials */
     if (!soundfile) {
 	/* Generate file name and write samples. */  
 	int i = 0;
@@ -229,7 +232,7 @@ id MKGetSamplesClass(void)
    soundfile with the auto-generated name on the current directory.
    The soundfile name is guaranteed to be unique on the current directory.
    Also remembers that the file's been written and what its name is so that 
-   future references to the Samples object use the same name and don't 
+   future references to the MKSamples object use the same name and don't 
    rewrite the file.
 
    */
@@ -324,7 +327,7 @@ reasonable (maxamp in 16 => maxamp in 24) but it leaves you no dynamic
 range for growth.  If you don't left-shift, you do have to sign extend.
 - Julius Smith
 
-Since the Samples object has a scale factor argument in its
+Since the MKSamples object has a scale factor argument in its
 fileTableLength:scale: method, you can always 'get there from here'.
 Therefore, we can pick one or the other method and anyone can get the
 desired effect by scaling. So it's a flip of a coin. I'm currently

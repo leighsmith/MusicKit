@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.2  1999/07/29 01:25:58  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -21,7 +24,7 @@ Modification history:
 
 #import "MKSynthPatch.h"
 
-/* SynthPatch functions and defines */
+/* MKSynthPatch functions and defines */
 extern id _MKSynthPatchPreempt(id aPatch,id aNote,id controllers);
 extern id _MKAddPatchToList(id self,id *headP,id *tailP,unsigned short listFlag);
 extern id _MKSynthPatchSetInfo(id synthP, int aNoteTag, id synthIns);

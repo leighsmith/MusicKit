@@ -22,6 +22,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.3  2000/02/24 22:56:35  leigh
   Added Davids bug fix for unused recognised meta events
 
@@ -31,13 +34,13 @@ Modification history:
   12/21/89/daj - Fixed bug in writing level-1 files. last_write_time 
                  needs to be set to 0 when the track's incremented.
 		 Note: If this stuff is ever made reentrant (like if 
-		       I ever support MidifileWriter/Performer), all
+		       I ever support MidifileWriter/MKPerformer), all
 		       statics will have to be struct entries.
   02/25-8/90/daj - Changed to make reentrant. Added sysexcl support.
                  Added support for most meta-events. All of the meta-events
 		 defined in the July 1988 MIDI file spec are supported, 
 		 with the exception of "MIDI Channel Prefix",
-		 "Instrument Name" and "Sequencer-Specific Meta-Event".
+		 "MKInstrument Name" and "Sequencer-Specific Meta-Event".
 
                  To do:
 		     Add support for writing formats 0 and 2.

@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2001/09/06 21:27:47  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.13  2001/08/29 21:51:55  leighsmith
   Merged RTF Class Reference documentation into headerdoc comments
 
@@ -879,7 +882,7 @@ Appendix B. entitled MIDI Time Code in the MusicKit
 /*!
   @method MTCSynch
   @result Returns an id.
-  @discussion Returns the Midi object previously set with <b>setMTCSynch:</b>, or
+  @discussion Returns the MKMidi object previously set with <b>setMTCSynch:</b>, or
               <b>nil</b> if none.  Keep in mind that only one MKConductor at a
               time may have an MTCSynch object.
 */

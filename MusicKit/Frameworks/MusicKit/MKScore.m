@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.26  2001/09/06 21:27:48  leighsmith
+  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
+
   Revision 1.25  2001/08/07 16:17:06  leighsmith
   Cleaned up encoding and decoding
 
@@ -78,7 +81,7 @@ Modification history:
   Added +midifileExtension
 
   Revision 1.6  2000/02/08 03:16:05  leigh
-  Improved MIDI file writing, generating separate tempo track with Part info entries
+  Improved MIDI file writing, generating separate tempo track with MKPart info entries
 
   Revision 1.5  1999/10/10 01:10:22  leigh
   MIDI mode messages read from SMF0 files now receive MK_midiChan parameters so MKScores read from SMF1 or SMF0 behave the same.
@@ -111,8 +114,8 @@ Modification history:
   04/23/90/daj - Changes to make it a shlib and to make header files more
                  modular.
   05/16/90/daj - Got rid of the "fudgeTime" kludge in the MIDI file reader,
-                 now that the Part object's been fixed to insure correct
-		 ordering. Added check for clas of Part class in setPart:.
+                 now that the MKPart object's been fixed to insure correct
+		 ordering. Added check for clas of MKPart class in setPart:.
   06/10/90/daj - Fixed bug in writing of scorefiles.
   07/24/90/daj - Removed unneeded copy of Note from readScorefile. Then
                  added it back because it actually sped things up.
@@ -169,7 +172,7 @@ Modification history:
 }
 
 -init
-  /* TYPE: Creating and freeing a Part
+  /* TYPE: Creating and freeing a MKPart
    * Initializes the receiver:
    *
    *  * Creates a new notes collection.
@@ -230,13 +233,13 @@ static id readScorefile(MKScore *self, NSData *stream,
  firstTimeTag:(double)firstTimeTag 
  lastTimeTag:(double)lastTimeTag 
  timeShift:(double)timeShift
-  /* Read from scoreFile to receiver, creating new Parts as needed
+  /* Read from scoreFile to receiver, creating new MKParts as needed
        and including only those notes between times firstTimeTag to
        time lastTimeTag, inclusive. Note that the TimeTags of the
        notes are not altered from those in the file. I.e.
        the first note's TimeTag will be greater than or equal to
        firstTimeTag.
-       Merges contents of file with current Parts when the Part
+       Merges contents of file with current MKParts when the MKPart
        name found in the file is the same as one of those in the
        receiver. 
        Returns self or nil if file not found or the parse was aborted
@@ -259,13 +262,13 @@ static id readScorefile(MKScore *self, NSData *stream,
  firstTimeTag:(double)firstTimeTag 
  lastTimeTag:(double)lastTimeTag 
  timeShift:(double)timeShift
-    /* Read from scoreFile to receiver, creating new Parts as needed
+    /* Read from scoreFile to receiver, creating new MKParts as needed
        and including only those notes between times firstTimeTag to
        time lastTimeTag, inclusive. Note that the TimeTags of the
        notes are not altered from those in the file. I.e.
        the first note's TimeTag will be greater than or equal to
        firstTimeTag.
-       Merges contents of file with current Parts when the Part
+       Merges contents of file with current MKParts when the MKPart
        name found in the file is the same as one of those in the
        receiver. 
        Returns self or nil if the parse was aborted due to errors. 
@@ -964,7 +967,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 	}
 	t = *quanta * timeFactor;
 	/* FIXME Should do something better here. (need to change
-	   Part to allow ordering spec for simultaneous notes.) */
+	   MKPart to allow ordering spec for simultaneous notes.) */
 	if (t < firstTimeTag) 
 	  continue;
 	if (t > lastTimeTag) {
@@ -1006,7 +1009,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 		continue; /* Don't clobber prevT below */
 	      case MKMIDI_tempoChange: 
 		/* For MK-compatibility, tempo is duplicated in info
-		   Notes, but only if it's at time 0 in file.    */
+		   MKNotes, but only if it's at time 0 in file.    */
 		if (t == 0) {
 		  if (lastTempoTime == 0) {
 		      /* Supress duplicate tempi, which can arise because of 
@@ -1092,9 +1095,9 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 	      }
 	    }
 	    aNote = _MKMidiToMusicKit(midiInPtr,DATA[0]);
-	    if (aNote) { /* _MKMidiToMusicKit can omit Notes sometimes. */
+	    if (aNote) { /* _MKMidiToMusicKit can omit MKNotes sometimes. */
 		[aNote setTimeTag:t+timeShift];
-		/* Need to copy Note because it's "owned" by midiInPtr. */
+		/* Need to copy MKNote because it's "owned" by midiInPtr. */
 		if (LEVEL0) {
 		  // LMS even if aNote has come from a Level0 file it should retain midiChannels from mode messages.
                   if (midiInPtr->chan != _MK_MIDISYS)   
@@ -1165,7 +1168,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 }
 
 -(unsigned)noteCount
-    /* Returns the total number of notes in all the contained Parts. */
+    /* Returns the total number of notes in all the contained MKParts. */
 {
     unsigned n = [parts count], i;
     unsigned numNotes = 0;
@@ -1175,7 +1178,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
     return numNotes;
 }
 
-/* Modifying the set of Parts. ------------------------------- */
+/* Modifying the set of MKParts. ------------------------------- */
 
 -replacePart:(id)oldPart with:(id)newPart
   /* Removes oldPart from self and replaces it with newPart.
@@ -1183,7 +1186,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
    * If oldPart is not a member of this score, returns nil
    * and doesn't add newPart.  If newPart is nil, or if
    * newPart is already a member of this score, or 
-   * if newPart is not a kind of Part, returns nil.
+   * if newPart is not a kind of MKPart, returns nil.
    */
 {
     int i = [parts indexOfObject:oldPart];
@@ -1198,7 +1201,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 }
 
 -addPart:(id)aPart
-    /* If aPart is already a member of the Score, returns nil. Otherwise,
+    /* If aPart is already a member of the MKScore, returns nil. Otherwise,
        adds aPart to the receiver and returns aPart,
        first removing aPart from any other score of which it is a member. */
 {
@@ -1221,7 +1224,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 
 -shiftTime:(double)shift
   /* TYPE: Editing
-   * Shift is added to the timeTags of all notes in the Part. 
+   * Shift is added to the timeTags of all notes in the MKPart. 
    */
 {
     unsigned n = [parts count], i;
@@ -1233,14 +1236,14 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 /* Finding a Part ----------------------------------------------- */
 
 -(BOOL)isPartPresent:aPart
-    /* Returns whether Part is a member of the receiver. */
+    /* Returns whether MKPart is a member of the receiver. */
 {
     return ([parts indexOfObject:aPart] == -1) ? NO : YES;
 }
 
 -midiPart:(int)aChan
-  /* Returns the first Part with a MK_midiChan info parameter equal to
-     aChan, if any. aChan equal to 0 corresponds to the Part representing
+  /* Returns the first MKPart with a MK_midiChan info parameter equal to
+     aChan, if any. aChan equal to 0 corresponds to the MKPart representing
      MIDI system and channel mode messages. */
 {
     id el, aInfo;
@@ -1262,9 +1265,9 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 
 
 static void merge(NSMutableArray *listOfLists,NSMutableArray *allNotes)
-    /* ListOfLists is an Array containing List objects, one per Part.
-       AllNotes is an empty List big enough to hold all the Notes of all the
-       Parts. 
+    /* ListOfLists is an Array containing List objects, one per MKPart.
+       AllNotes is an empty List big enough to hold all the MKNotes of all the
+       MKParts. 
        */
 {
     int *counts,*maxcounts;
@@ -1358,13 +1361,13 @@ readScorefile(MKScore *self,
     double firstTimeTag, double lastTimeTag, double timeShift,
     NSString *fileName)
  {
-     /* Read from scoreFile to receiver, creating new Parts as needed
+     /* Read from scoreFile to receiver, creating new MKParts as needed
        and including only those notes between times firstTimeTag to
        time lastTimeTag, inclusive. Note that the TimeTags of the
        notes are not altered from those in the file. I.e.
        the first note's TimeTag will be greater than or equal to
        firstTimeTag.
-       Merges contents of file with current Parts when the Part
+       Merges contents of file with current MKParts when the MKPart
        name found in the file is the same as one of those in the
        receiver. 
        Returns self or nil if error abort.  */
@@ -1451,7 +1454,7 @@ readScorefile(MKScore *self,
 }
 
 - (NSMutableArray *) parts;
-  /* Returns a copy of the List of Parts in the receiver. The Parts themselves are not copied.
+  /* Returns a copy of the List of MKParts in the receiver. The MKParts themselves are not copied.
      Now that we use NSArrays, a [List copyWithZone] did a shallow copy, whereas
      [NSMutableArray copyWithZone] does a deep copy, so we emulate the List operation.  */
 {
@@ -1459,7 +1462,7 @@ readScorefile(MKScore *self,
 }
 
 - copyWithZone:(NSZone *)zone
-  /* Copies receiver, including its Parts, Notes and info. */ 
+  /* Copies receiver, including its MKParts, MKNotes and info. */ 
 {
     unsigned n = [parts count], i;
     MKScore *newScore = [MKScore allocWithZone:zone];
@@ -1492,7 +1495,7 @@ static BOOL isUnarchiving = NO;
      See write:. */
 {
     NSMutableDictionary *tagTable = [NSMutableDictionary dictionary];
-    isUnarchiving = YES; /* Inhibit Parts' mapping of noteTags. */
+    isUnarchiving = YES; /* Inhibit MKParts' mapping of noteTags. */
 
     if ([aDecoder versionForClassName: @"MKScore"] == VERSION2) 
       [aDecoder decodeValuesOfObjCTypes: "@@", &parts, &info];
@@ -1531,10 +1534,10 @@ static BOOL isUnarchiving = NO;
 
 -_newFilePartWithName:(NSString *)name
  /* You never send this message. It is used only by the Scorefile parser
-     to add a Part to the receiver when a part is declared in the
+     to add a MKPart to the receiver when a part is declared in the
      scorefile. 
      It is a method rather than a C function to hide from the parser
-     the differences between Score and ScorefilePerformer.
+     the differences between MKScore and MKScorefilePerformer.
      */
 {
     id aPart = [MKGetPartClass() new];
