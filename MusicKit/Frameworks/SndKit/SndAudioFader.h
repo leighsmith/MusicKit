@@ -18,7 +18,7 @@
 #import <Foundation/Foundation.h>
 
 #import "SndEnvelope.h"
-#import "SndAudioProcessor.h";
+#import "SndAudioProcessor.h"
 @class SndStreamManager;
 @class SndStreamMixer;
 @class SndAudioProcessor;
