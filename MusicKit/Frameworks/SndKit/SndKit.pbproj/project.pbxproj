@@ -20,6 +20,7 @@
 		};
 		00D2C428FEDB2CB5CFED3B93 = {
 			children = (
+				B5405222026DE7B1002A0494,
 				B5B040B701BEC4B2002A0494,
 				B5799BA201DB8E23002A0494,
 				00D2C42BFEDB2CB5CFED3B93,
@@ -29,8 +30,6 @@
 				00D2C454FEDB2CB5CFED3B93,
 				00D2C429FEDB2CB5CFED3B93,
 				B5799BA701DBCF75002A0494,
-				B508535C01F8D71B002A0494,
-				B508535D01F8D71B002A0494,
 			);
 			isa = PBXGroup;
 			name = SndKit;
@@ -248,7 +247,6 @@
 				011279830168CEA1CFED3B94,
 				3AE3B96C007931DBCFED3B8B,
 				B52BE0CC01F775D6002A0494,
-				B5345E8A025A5A37002A0494,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -387,6 +385,7 @@
 				B552CD7401F4908E002A0494,
 				B52BE0FA01F8BD38002A0494,
 				B508535E01F8D71B002A0494,
+				B5405225026DE7B1002A0494,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -468,6 +467,8 @@
 			fileRef = 00D2C43EFEDB2CB5CFED3B93;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+				);
 			};
 		};
 		00D2C467FEDB2CB5CFED3B93 = {
@@ -542,6 +543,7 @@
 				B52BE0FB01F8BD38002A0494,
 				B52BE0FD01F8D0AD002A0494,
 				B508535F01F8D71C002A0494,
+				B5405226026DE7B1002A0494,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -631,7 +633,6 @@
 				011279840168CEA1CFED3B94,
 				0112798A0169158CCFED3B94,
 				B52BE0CD01F775D6002A0494,
-				B5345E8B025A5A37002A0494,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -1641,14 +1642,38 @@
 			settings = {
 			};
 		};
-		B5345E8A025A5A37002A0494 = {
-			isa = PBXFileReference;
-			name = libmad.a;
-			path = /usr/local/lib/libmad.a;
-			refType = 0;
+		B5405222026DE7B1002A0494 = {
+			children = (
+				B508535C01F8D71B002A0494,
+				B508535D01F8D71B002A0494,
+				B5405223026DE7B1002A0494,
+				B5405224026DE7B1002A0494,
+			);
+			isa = PBXGroup;
+			name = Experimental;
+			refType = 4;
 		};
-		B5345E8B025A5A37002A0494 = {
-			fileRef = B5345E8A025A5A37002A0494;
+		B5405223026DE7B1002A0494 = {
+			isa = PBXFileReference;
+			path = SndMP3.h;
+			refType = 2;
+		};
+		B5405224026DE7B1002A0494 = {
+			isa = PBXFileReference;
+			path = SndMP3.m;
+			refType = 2;
+		};
+		B5405225026DE7B1002A0494 = {
+			fileRef = B5405223026DE7B1002A0494;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		B5405226026DE7B1002A0494 = {
+			fileRef = B5405224026DE7B1002A0494;
 			isa = PBXBuildFile;
 			settings = {
 			};
