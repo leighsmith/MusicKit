@@ -20,7 +20,7 @@ JADE=openjade
 # HTML_DISTRIB_DIR makes it easier to install into SourceForge.
 HTML_DISTRIB_DIR=htdocs
 HTML_TMPDIR=/tmp/$HTML_DISTRIB_DIR
-HTML_TARBALL=/tmp/MusicKitREADME.tar.gz
+HTML_TARBALL=/tmp/MusicKitREADME.tar.bz2
 
 PDF_TMPDIR=/tmp/mkpdf
 PDF_OUTDIR=/tmp/generatedPDFs
@@ -28,9 +28,6 @@ PDF_OUTDIR=/tmp/generatedPDFs
 # Assume we are standing at the top of the source tree, since with NFS
 # it's a bit hard to be universal with paths.
 MKSRCDIR=`pwd`
-# Assume SndKit sits next to MusicKit in the directory. In the future
-# the SndKit will be merged into the MusicKit.
-SKSRCDIR=$MKSRCDIR/../SndKit
 MKDOCDIR=$MKSRCDIR/Documentation
 
 MKCONCEPTS=$MKDOCDIR/Concepts/
@@ -163,7 +160,8 @@ cd $MKHEADERDOC
 # The MacOS X version of the MKPerformSndMIDI framework is the 
 # definitive documentation version.
 FRAMEWORKS_TO_HEADERDOC="$MKSRCDIR/Frameworks/MusicKit \
-    $SKSRCDIR/Frameworks/SndKit $MKSRCDIR/Frameworks/MKSynthPatches \
+    $MKSRCDIR/Frameworks/SndKit \
+    $MKSRCDIR/Frameworks/MKSynthPatches \
     $MKSRCDIR/Frameworks/MKUnitGenerators \
     $MKSRCDIR/Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX \
     $MKSRCDIR/Frameworks/PlatformDependent/MKPerformSndMIDI_portaudio"
@@ -223,7 +221,7 @@ fi
 # Now create a tarball
 #
 cd /tmp
-tar czf $HTML_TARBALL $HTML_DISTRIB_DIR
+tar cjf $HTML_TARBALL $HTML_DISTRIB_DIR
 echo MusicKit README HTML pages packaged into $HTML_TARBALL
 
 #
