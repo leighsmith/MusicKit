@@ -64,8 +64,8 @@ typedef struct {
 } Note;	
 </PROGRAMLISTING>	
     
-      <PARA>Note is now a convenient package.  To create a new
-	<CLASSNAME>MKNote</CLASSNAME>, you just call
+      <PARA>This struct <STRUCTNAME>Note</STRUCTNAME> is now a
+	convenient package.  To create a new Note, you just call
 	<FUNCTION>malloc</FUNCTION>.
       </PARA>
     <PROGRAMLISTING>
@@ -273,11 +273,12 @@ or      [myInstance aMessageWithArg:arg otherArg:arg2];
 	  <emphasis role="bold">init</emphasis> (for reasons that will not
 	  be covered here.)
 	</PARA>
-	<PROGRAMLISTING>
-Note *aNote;	
+<PROGRAMLISTING>
+MKNote *aNote;	
 	  
-aNote = [Note alloc];   [aNote init];
-	</PROGRAMLISTING>
+aNote = [MKNote alloc];
+[aNote init];
+</PROGRAMLISTING>
       </LISTITEM>
       <LISTITEM>
 	<PARA>An object-valued variable (such as "aNote" above) need not have
@@ -293,10 +294,10 @@ aNote = [Note alloc];   [aNote init];
       </LISTITEM>
       <LISTITEM>
 	<PARA>Sometimes "class-wide" behavior is implemented by class methods.
-	    Example:</PARA>
+	    For example:</PARA>
 	
 	<PROGRAMLISTING>
-[Conductor startPerformance]. 
+[MKConductor startPerformance]. 
 	</PROGRAMLISTING>
       </LISTITEM>
     </ITEMIZEDLIST>
@@ -311,14 +312,14 @@ aNote = [Note alloc];   [aNote init];
       
 main()
 {	
-      Note *aNote;	
-      Part *aPart;	
-      Score *aScore;	
-      aScore = [Score new]; /* In 2.0, use alloc/init */	
-      aPart = [Part new];	
-      aNote = [Note new];	
+      MKNote *aNote;	
+      MKPart *aPart;	
+      MKScore *aScore;	
+      aScore = [MKScore score];    /* In 2.0, use alloc/init */	
+      aPart = [MKPart new];	
+      aNote = [MKNote new];	
       [aNote setPar:MK_freq toDouble:440.0];	
-      [aNote setTimeTag:1.0]; /* Play after 1 beat */	
+      [aNote setTimeTag:1.0];      /* Play after 1 beat */	
       [aNote setDur:1.0];          /* Duration is 1 beat */	
       [aScore addPart:aPart];	
       [aPart addNote:aNote];	
@@ -337,11 +338,11 @@ main()
 	indicating the name of the <CLASSNAME>MKSynthPatch</CLASSNAME>:
     </PARA>
     
-    <PROGRAMLISTING>
-aNote = [Note new];  /* Another Note for info */	
-[aNote setPar:MK_synthPatch toString:"Pluck"];	
+<PROGRAMLISTING>
+aNote = [MKNote new];  /* Another MKNote for info */	
+[aNote setPar:MK_synthPatch toString: @"Pluck"];	
 [aPart setInfo:aNote];
-    </PROGRAMLISTING>
+</PROGRAMLISTING>
   </SECT1>
   
   <SECT1 id="ExampleDefiningAnObjective-CClass">
@@ -356,13 +357,16 @@ aNote = [Note new];  /* Another Note for info */
 	<PARA> The header file defines the interface to the class, i.e. the instance variables and methods defined by the class.  Instance methods begin with "-", class methods begin with "+".  Example:
 	</PARA>
 	<PROGRAMLISTING>
-/* Here is an example .h file, "CircularList.h".  All behavior is inherited from List, which defines a List of objects.  */
+/* Here is an example .h file, "CircularList.h".
+   All behavior is inherited from List, which defines a List of objects.
+   Nowdays we can use NSArray which is more complex than List.
+*/
 	  
 #include &lt;objc/List.h&gt;  /* Superclass interface */
 	  
 @interface CircularList:List /* List is superclass */
 {  
-	    int currentLocation;
+    int currentLocation;
 }  
 
 -next; /* Returns next object in List or nil if none.  */ 
@@ -375,10 +379,10 @@ aNote = [Note new];  /* Another Note for info */
 @implementation CircularList
 
 -next { 	
-	  int numObjects = [self count];	
-	  if (currentLocation &gt;= numObjects)	
-	  currentLocation = 0; 	
-	  return [self objectAt:currentLocation++];
+    int numObjects = [self count];	
+    if (currentLocation &gt;= numObjects)	
+        currentLocation = 0; 	
+    return [self objectAt:currentLocation++];
 }
 
 @end
@@ -388,18 +392,25 @@ aNote = [Note new];  /* Another Note for info */
   </SECT1>
   
   <SECT1 id="NeXTSoftwareKits">
-      <TITLE><PRODUCTNAME>NeXT</PRODUCTNAME> Software Kits</TITLE>
+      <TITLE><PRODUCTNAME>OpenStep</PRODUCTNAME> Software Kits</TITLE>
     
     <ITEMIZEDLIST>
       <LISTITEM>
 	  <PARA> Application Kit &horbar; Contains
-	    <CLASSNAME>Buttons</CLASSNAME>, <CLASSNAME>Sliders</CLASSNAME>,
+	    <CLASSNAME>NSButtons</CLASSNAME>, <CLASSNAME>NSSliders</CLASSNAME>,
 	    and other user interface classes.  Best used with the
 	    <APPLICATION>Interface Builder</APPLICATION> application.
 	</PARA>
       </LISTITEM>
       <LISTITEM>
-	<PARA><productname>MusicKit</productname> &horbar;Contains classes
+          <PARA> Foundation Kit &horbar; Contains 
+classes that aid the manipulation of non-user interface data, 
+for example <CLASSNAME>NSArray</CLASSNAME>, 
+<CLASSNAME>NSDictionary</CLASSNAME>, <CLASSNAME>NSString</CLASSNAME>.
+	  </PARA>
+      </LISTITEM>
+      <LISTITEM>
+	<PARA><productname>MusicKit</productname> &horbar; Contains classes
 	  such as <CLASSNAME>MKNote</CLASSNAME>, <CLASSNAME>MKMidi</CLASSNAME>,
 	  <CLASSNAME>MKConductor</CLASSNAME>, and
 	  <CLASSNAME>MKOrchestra</CLASSNAME> for doing <ACRONYM>DSP</ACRONYM>
@@ -410,20 +421,20 @@ aNote = [Note new];  /* Another Note for info */
 	</PARA>
       </LISTITEM>
       <LISTITEM>
-	<PARA><productname>SndKit</productname> &horbar;(very small)
-	  Contains only the <CLASSNAME>Sound</CLASSNAME> class and a class for
-	  displaying a <CLASSNAME>Sound</CLASSNAME>. Lets you record, playback
+	<PARA><productname>SndKit</productname> &horbar;
+	  Contains the <CLASSNAME>Snd</CLASSNAME> class and 
+	  <CLASSNAME>SndView</CLASSNAME>, a class for
+	  displaying a <CLASSNAME>Snd</CLASSNAME>. Lets you record, playback
 	  and display sound data.
 	</PARA>
       </LISTITEM>
     </ITEMIZEDLIST>
-    <PARA>Each class in each Kit has a "Class Description" on line on the
-	<APPLICATION>NeXT</APPLICATION> Computer.  It describes the class in
+    <PARA>Each class in each Kit has a "Class Description" on-line.
+        It describes the class in
 	prose form, and describes in detail the instance variables and the
 	methods. These Class Descriptions are also given out in class.
     </PARA>
-      <PARA>Use the <APPLICATION>Digital Librarian</APPLICATION> to search the
-	<PRODUCTNAME>NeXT</PRODUCTNAME> Reference Manual.
+      <PARA>The <PRODUCTNAME>Apple</PRODUCTNAME> Kit documentation for the <ULINK URL="http://www.apple.com">AppKit</ULINK> and <ULINK URL="http://www.apple.com">FoundationKit</ULINK> is available. The <ULINK URL="http://musickit.sourceforge.net">MusicKit</ULINK> and <ULINK URL="http://musickit.sourceforge.net">SndKit</ULINK> documentation will be available soon.
     </PARA>
   </SECT1>
   
