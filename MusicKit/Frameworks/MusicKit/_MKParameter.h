@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/05/06 00:30:48  leigh
+  Better typing of _MKParAsInt()
+
   Revision 1.3  2000/02/07 00:30:14  leigh
   removed _MKHighestPar()
 
@@ -56,7 +59,7 @@ extern _MKParameter *_MKNewObjPar();
 extern _MKParameter *_MKSetDoublePar();
 extern double _MKParAsDouble();
 extern _MKParameter *_MKSetIntPar();
-extern int _MKParAsInt();
+extern int _MKParAsInt(_MKParameter *param);
 extern _MKParameter *_MKSetStringPar();
 extern NSString *_MKParAsString();
 extern _MKParameter *_MKSetObjPar();
