@@ -18,6 +18,37 @@
 
 @implementation SndAudioProcessor
 
+static NSMutableArray *fxClassesArray = nil;
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+
++ (void) registerAudioProcessorClass: (id) fxclass
+{
+  if (!fxClassesArray)
+    fxClassesArray = [[NSMutableArray alloc] init];
+
+  if (fxclass != [SndAudioProcessor class]) {// don't want to register the base class!
+    if (![fxClassesArray containsObject: fxclass]) {
+      [fxClassesArray addObject: fxclass];
+      NSLog(@"registering FX class: %@",[fxclass className]);
+    }
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+
++ (NSArray*) fxClasses
+{
+  if (fxClassesArray)
+    return [[fxClassesArray retain] autorelease];
+  else
+    return nil;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // audioProcessor 
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,17 +64,20 @@
 
 - init
 {
-  [super init];
+  self = [super init];
+  [SndAudioProcessor registerAudioProcessorClass: [self class]];
   numParams = 0;
+  bActive   = FALSE;
   return self;
 }
 
 - initWithParamCount: (const int) count name: (NSString*) s
 {
-  [super init];
+  self = [super init];
+  [SndAudioProcessor registerAudioProcessorClass: [self class]];
   [self setName: s];
   numParams = count;
-  bActive = TRUE;
+  bActive   = FALSE;
   return self;
 }
 

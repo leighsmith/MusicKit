@@ -19,8 +19,8 @@
 
 #import <Foundation/Foundation.h>
 
-@class SndAudioBuffer;
-@class SndAudioProcessorChain;
+#import "SndAudioBuffer.h"
+#import "SndAudioProcessorChain.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -39,6 +39,9 @@
 /*! @var  bActive */    
     BOOL  bActive;
 }
+
++ (void) registerAudioProcessorClass: (id) fxclass;
++ (NSArray*) fxClasses;
 
 /*!
     @method     audioProcessor
