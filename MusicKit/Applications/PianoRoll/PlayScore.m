@@ -75,7 +75,7 @@ static void handleMKError(NSString *msg)
 
     if ([self isPlaying])
     	[self stop];
-    theOrch = [MKOrchestra newOnDSP:0]; /* A noop if it exists */
+    theOrch = [[MKOrchestra alloc] initOnDSP: 0]; /* A noop if it exists */
 //    [theOrch setHeadroom:headroom];    /* Must be reset for each play */ 
     [theOrch setSamplingRate:samplingRate];
     if (![theOrch open]) {
