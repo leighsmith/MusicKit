@@ -7,18 +7,18 @@
 
 <para>In this document &ldquo;synthesis&rdquo; refers to creating
 sound from scratch, while &ldquo;processing&rdquo; refers to modifying
-sound from elsewhere.  However, the MusicKit provides a unified model
+sound from elsewhere.  However, the <productname>MusicKit</productname> provides a unified model
 of synthesis and processing.  Thus, nearly all operations that apply
 to synthesis can also be used in sound processing.</para>
 
-<para>There are four levels of MusicKit classes involved in
-synthesizing and processing music on the DSP:</para>
+<para>There are four levels of <productname>MusicKit</productname> classes involved in
+synthesizing and processing music on the <acronym>DSP</acronym>:</para>
 
 <itemizedlist>
 <listitem><para>At the top level is the
 <classname>MKSynthInstrument</classname> class; an inheritor from
-Instrument, it provides an interface between the MusicKit performance
-mechanism and DSP synthesis/processing.  A
+Instrument, it provides an interface between the <productname>MusicKit</productname> performance
+mechanism and <acronym>DSP</acronym> synthesis/processing.  A
 <classname>MKSynthInstrument</classname> distributes
 <classname>MKNote</classname>s that it receives during a performance
 to individual <classname>MKSynthPatch</classname> objects that control
@@ -34,21 +34,21 @@ its class.</para></listitem>
 
 <listitem><para>The <classname>MKUnitGenerator</classname> class is
 also abstract; each of its subclasses represents a signal processing
-function that runs on the DSP.  These are the basic building blocks of
+function that runs on the <acronym>DSP</acronym>.  These are the basic building blocks of
 music synthesis/processing that a <classname>MKSynthPatch</classname>
 subclass configures to define its synthesis/processing strategy.  At
 the same level as <classname>MKUnitGenerator</classname> is the
 <classname>MKSynthData</classname> class.  Instances of
-<classname>MKSynthData</classname> represent portions of DSP memory
+<classname>MKSynthData</classname> represent portions of <acronym>DSP</acronym> memory
 that hold synthesis/processing data such as wavetables and delay
 memory.  In addition, <classname>MKSynthData</classname> objects are
 used to transmit data between <classname>MKUnitGenerator</classname>
 objects.</para></listitem>
 
 <listitem><para>The <classname>MKOrchestra</classname> represents the
-DSP itself.  It manages the allocation of DSP resources and controls
-communication between the DSP and the host.  Requests for use of the
-DSP are always made through messages to the
+<acronym>DSP</acronym> itself.  It manages the allocation of <acronym>DSP</acronym> resources and controls
+communication between the <acronym>DSP</acronym> and the host.  Requests for use of the
+<acronym>DSP</acronym> are always made through messages to the
 <classname>MKOrchestra</classname>; this includes requests made by a
 <classname>MKSynthInstrument</classname> for more
 <classname>MKSynthPatch</classname>es, and those of a
@@ -73,14 +73,14 @@ the other classes listed above.</para>
 <sect1 id="TheMKOrchestraClass">
 <title>The <classname>MKOrchestra</classname> Class</title>
 
-<para>The <classname>MKOrchestra</classname> class manages DSP
+<para>The <classname>MKOrchestra</classname> class manages <acronym>DSP</acronym>
 resources used in music synthesis/processing.  Each instance of
-<classname>MKOrchestra</classname> represents a single DSP; in the
-basic NeXT configuration, there's only one DSP so you create only one
+<classname>MKOrchestra</classname> represents a single <acronym>DSP</acronym>; in the
+basic NeXT configuration, there's only one <acronym>DSP</acronym> so you create only one
 <classname>MKOrchestra</classname> object.</para>
 
 <para>The methods defined by the <classname>MKOrchestra</classname>
-class let you manage a DSP by allocating portions of its memory for
+class let you manage a <acronym>DSP</acronym> by allocating portions of its memory for
 specific synthesis/processing modules and by setting its processing
 characteristics.</para>
 
@@ -101,7 +101,7 @@ subclass.</para></listitem>
 
 <listitem><para><emphasis
 role="bold">allocSynthData:length:</emphasis> allocates a portion of
-DSP memory of a given length.</para></listitem>
+<acronym>DSP</acronym> memory of a given length.</para></listitem>
 </itemizedlist>
 
 <para>Keep in mind, however, that similar methods defined in other
@@ -122,31 +122,32 @@ sound-making modules at a low level.</para>
 <para>Different applications have different needs. When playing a
 sequence or scorefile, it is essential that the timing of the notes be
 precise and a bit of latency is tolerable. On the other hand, when
-playing the DSP from a <acronym>MIDI</acronym> keyboard, the critical element is to keep
-response time to a minimum. In the first case, you should set the
-<classname>MKOrchestra</classname> to &ldquo;timed mode&rdquo; by sending
-<emphasis role="bold">[orchestra setTimed:YES]</emphasis>, while in
-the second case, you should set the <classname>MKOrchestra</classname>
-to &ldquo;untimed mode&rdquo; by sending <emphasis role="bold">[orchestra
-setTimed:NO]</emphasis>.  In addition, when performing from a
-keyboard, you should call <emphasis
-role="bold">MKSetRealTimeEnvelopes(YES)</emphasis> before allocating
+playing the <acronym>DSP</acronym> from a <acronym>MIDI</acronym>
+keyboard, the critical element is to keep response time to a
+minimum. In the first case, you should set the
+<classname>MKOrchestra</classname> to &ldquo;timed mode&rdquo; by
+sending <emphasis role="bold">[orchestra setTimed:YES]</emphasis>,
+while in the second case, you should set the
+<classname>MKOrchestra</classname> to &ldquo;untimed mode&rdquo; by
+sending <emphasis role="bold">[orchestra setTimed:NO]</emphasis>.  In
+addition, when performing from a keyboard, you should call
+<function>MKSetRealTimeEnvelopes(YES)</function> before allocating
 your <classname>MKSynthPatch</classname>es.  This has the effect of
-setting the MusicKit <classname>MKSynthPatch</classname>es to use a
-version of the envelope handler that is best-suited to the interactive
-situation. Actually, <emphasis
-role="bold">MKSetRealTimeEnvelopes(YES)</emphasis> may be used for
+setting the <productname>MusicKit</productname>
+<classname>MKSynthPatch</classname>es to use a version of the envelope
+handler that is best-suited to the interactive situation. Actually,
+<function>MKSetRealTimeEnvelopes(YES)</function> may be used for
 either case; its only drawback is that it does not allow for
 arbitrarily long envelopes. In timed mode, the fixed latency is set by
-the function <function>MKSetDeltaT()</function>.  For
-example, <emphasis role="bold">MKSetDeltaT(.1)</emphasis> sets a fixed
-latency of a tenth of a second.</para>
+the function <function>MKSetDeltaT()</function>.  For example,
+<function>MKSetDeltaT(.1)</function> sets a fixed latency
+of a tenth of a second.</para>
 </sect2>
 <sect2 id="SharingAllocations">
 <title>Sharing Allocations</title>
 
 <para>To avoid creating duplicate synthesis/processing modules on the
-DSP, each instance of <classname>MKOrchestra</classname> maintains a
+<acronym>DSP</acronym>, each instance of <classname>MKOrchestra</classname> maintains a
 shared object table.  Objects on the table are
 <classname>MKSynthPatch</classname>es,
 <classname>MKSynthData</classname>s, and
@@ -159,7 +160,7 @@ Samples object; for the purposes of this example we only consider the
 <classname>MKPartials</classname> case).  When its wave table is set
 through the <emphasis role="bold">setTable:length:</emphasis> method,
 the oscillator allocates a <classname>MKSynthData</classname> object
-from the <classname>MKOrchestra</classname> to represent the DSP
+from the <classname>MKOrchestra</classname> to represent the <acronym>DSP</acronym>
 memory that will hold the waveform data computed from the
 <classname>MKPartials</classname>.  It also places the
 <classname>MKSynthData</classname> on the shared object table using
@@ -194,11 +195,11 @@ it.  As usual, creation is done through the <emphasis
 role="bold">alloc</emphasis> and <emphasis role="bold">init</emphasis>
 methods; to open an <classname>MKOrchestra</classname>, you send it
 the <emphasis role="bold">open</emphasis> message.  This provides a
-channel of communication with the DSP that the
-<classname>MKOrchestra</classname> represents.  The DSP can be opened
+channel of communication with the <acronym>DSP</acronym> that the
+<classname>MKOrchestra</classname> represents.  The <acronym>DSP</acronym> can be opened
 by only one application at a time, so you should always check the
 value returned by open; the method returns <emphasis
-role="bold">nil</emphasis> if the DSP couldn't be opened.</para>
+role="bold">nil</emphasis> if the <acronym>DSP</acronym> couldn't be opened.</para>
 
 <para>Once you've allocated the objects that you want, either through
 the methods described above or through those defined by
@@ -209,7 +210,7 @@ role="bold">run</emphasis> message to the
 <classname>MKOrchestra</classname>.  The <emphasis
 role="bold">stop</emphasis> method halts synthesis/processing and
 <emphasis role="bold">close</emphasis> breaks communication with the
-DSP.  These methods change the <classname>MKOrchestra</classname>'s
+<acronym>DSP</acronym>.  These methods change the <classname>MKOrchestra</classname>'s
 status, which is always one of the following MKDeviceStatus
 values:</para>
 
@@ -255,8 +256,9 @@ method.</para>
 
 <para>When the <classname>MKOrchestra</classname> is running it
 produces a stream of samples that, by default, are sent to the stereo
-digital to analog converter (DAC), which converts the samples into an
-audio signal.  But there are two other options:</para>
+digital to analog converter (<acronym>DAC</acronym>), which converts
+the samples into an audio signal.  But there are two other
+options:</para>
 
 		<orderedlist>
 <listitem><para>You can tell the <classname>MKOrchestra</classname> to
@@ -266,7 +268,7 @@ before sending <emphasis role="bold">run</emphasis> to the
 <classname>MKOrchestra</classname>).</para>
 		  </listitem>
 <listitem><para>You can tell the <classname>MKOrchestra</classname> to
-write the samples to the DSP serial port by invoking the method
+write the samples to the <acronym>DSP</acronym> serial port by invoking the method
 <emphasis role="bold">setSerialSoundOut:</emphasis> (you must set this
 before sending <emphasis role="bold">run</emphasis> to the
 <classname>MKOrchestra</classname>).  For more information, see <xref
@@ -279,15 +281,15 @@ sound can only go to one destination at a time.</para>
 
 </sect2>
 <sect2 id="UsingTheDSPSerialPort">
-<title>Using the DSP Serial Port</title>
+<title>Using the <acronym>DSP</acronym> Serial Port</title>
 
-<para>One of the most powerful aspects of the MusicKit is its seamless
-integration with the NeXT DSP serial port.  There are three main uses
+<para>One of the most powerful aspects of the <productname>MusicKit</productname> is its seamless
+integration with the NeXT <acronym>DSP</acronym> serial port.  There are three main uses
 for the serial port:</para>
 
 <orderedlist>
 <listitem>
-<para>Direct to DAT transfers of sound in or out of the MusicKit</para>
+<para>Direct to <acronym>DAT</acronym> transfers of sound in or out of the <productname>MusicKit</productname></para>
 </listitem>
 
 <listitem>
@@ -302,10 +304,11 @@ for the serial port:</para>
 <para>The standard NeXT configuration (at the time of this writing)
 does not include a high-quality sound input.  Therefore, in order to
 do real-time high-quality sound processing, you need to obtain a
-device that plugs into the DSP serial port.  Similarly, you may want
-to use the DSP serial port for high-quality sound output to an
-outboard digital-to-analog converter or for direct digital transfer to
-or from a DAT machine.</para>
+device that plugs into the <acronym>DSP</acronym> serial port.
+Similarly, you may want to use the <acronym>DSP</acronym> serial port
+for high-quality sound output to an outboard digital-to-analog
+converter or for direct digital transfer to or from a
+<acronym>DAT</acronym> machine.</para>
 
 <para>A number of such devices are commercially available.
 Metaresearch sells the DigitalEars, an analog-to-digital converter.
@@ -317,14 +320,14 @@ AD64x, which is a combination analog-to-digital converter and DAT
 interface.</para>
 
 <para>To set up the <classname>MKOrchestra</classname> to do sound
-input via the DSP serial port, you send it the message:</para>
+input via the <acronym>DSP</acronym> serial port, you send it the message:</para>
 
 <programlisting>
 [orchestra setSerialSoundIn:YES];
 </programlisting>
 
 <para>To set up the <classname>MKOrchestra</classname> to do sound
-output via the DSP serial port, you send it the message:</para>
+output via the <acronym>DSP</acronym> serial port, you send it the message:</para>
 
 <programlisting>
 [orchestra setSerialSoundOut:YES];
@@ -334,15 +337,15 @@ output via the DSP serial port, you send it the message:</para>
 Alternatively, you may combine serial port input with normal NeXT
 sound output.</para>
 
-<para>You may additionally provide an object that tells the MusicKit
-about the kind of device you have connected to the DSP serial port.
+<para>You may additionally provide an object that tells the <productname>MusicKit</productname>
+about the kind of device you have connected to the <acronym>DSP</acronym> serial port.
 To do this you send the message:</para>
 
 <programlisting>
 [orchestra setSerialPortDevice:aSerialPortDevice];
 </programlisting>
 
-<para>aSerialPortDevice must be an instance of the MusicKit class
+<para>aSerialPortDevice must be an instance of the <productname>MusicKit</productname> class
 DSPSerialPortDevice or one of its subclasses.  The class
 DSPSerialPortDevice itself provides a general-purpose interface to a
 number of common devices.  It supports
@@ -369,9 +372,9 @@ file <filename>Classes/DSPSerialPortDevice.rtf</filename>.</para>
 </sect2>
 </sect1>
 <sect1 id="TheMusicKitMKSynthPatchSubclasses">
-<title>The MusicKit <classname>MKSynthPatch</classname> Subclasses</title>
+<title>The <productname>MusicKit</productname> <classname>MKSynthPatch</classname> Subclasses</title>
 
-<para>The MusicKit provides a number of
+<para>The <productname>MusicKit</productname> provides a number of
 <classname>MKSynthPatch</classname> subclasses, instances of which you
 can use in your application.  <classname>MKSynthPatch</classname>
 objects are &ldquo;data-driven&rdquo;; during a performance, they're
@@ -380,9 +383,9 @@ in the next section) from which they pluck the parameters of interest.
 Thus, in order to use a <classname>MKSynthPatch</classname>, you must
 know not only what sort of synthesis/processing it embodies, but which
 parameters it expects to see in the <classname>MKNote</classname>s it
-receives.  A table of the MusicKit parameters organized by
+receives.  A table of the <productname>MusicKit</productname> parameters organized by
 <classname>MKSynthPatch</classname> synthesis/processing technique is
-given in <xref linkend="MusicTables">. Below, some of the MusicKit
+given in <xref linkend="MusicTables">. Below, some of the <productname>MusicKit</productname>
 <classname>MKSynthPatch</classname> subclasses are listed and briefly
 described. For a complete list, see <filename
 class=headerfile>&lt;MusicKit/synthpatches/synthpatches.h&gt;</filename>.</para>
@@ -390,7 +393,7 @@ class=headerfile>&lt;MusicKit/synthpatches/synthpatches.h&gt;</filename>.</para>
 <tip><para>When doing synthesis in a realtime interactive context,
 such as when playing it from a <acronym>MIDI</acronym> keyboard, you should invoke
 <emphasis role="bold">[orchestra setTimed:NO]</emphasis> and call
-<emphasis role="bold">MKUseRealTimeEnvelopes(YES)</emphasis> before
+<function>MKUseRealTimeEnvelopes(YES)</function> before
 allocating the <classname>MKSynthPatch</classname>.</para></tip>
 
 <sect2 id="Pluck">
@@ -399,7 +402,7 @@ allocating the <classname>MKSynthPatch</classname>.</para></tip>
 <para>Pluck employs physical modelling to synthesize the sound of a
 plucked string, using a technique developed by Alex Strong, Kevin
 Karplus, David Jaffe and Julius Smith.  The real-world mechanics of a
-plectrum plucking a string are replaced on the DSP by a burst of noise
+plectrum plucking a string are replaced on the <acronym>DSP</acronym> by a burst of noise
 filling a length of delay memory.  The delay memory is looped and
 filtered, causing the initial noise burst to gradually become more
 harmonic as the spectral energy subsides towards the fundamental,
@@ -419,7 +422,7 @@ the extent that you don't have control over the individual elements
 that create the timbre (which you do with techniques such as frequency
 modulation).</para>
 
-<para>The MusicKit's wavetable synthesis
+<para>The <productname>MusicKit</productname>'s wavetable synthesis
 <classname>MKSynthPatch</classname>es use single-period wavetables;
 they are:</para>
 
@@ -468,32 +471,32 @@ they are:</para>
 </table>
 
 <para>The database wavetable <classname>MKSynthPatch</classname>es
-access the MusicKit's <classname>MKWaveTable</classname> Database, a
+access the <productname>MusicKit</productname>'s <classname>MKWaveTable</classname> Database, a
 library of predefined timbres.  These are listed in <xref
 linkend="MusicTables">.</para>
 </sect2>
 <sect2 id="FrequencyModulation">
 <title>Frequency Modulation</title>
 
-<para>In frequency modulation (FM) synthesis, the output of one
-oscillator controls the frequency of another oscillator.  If the
-frequency of the controlling oscillator (or &ldquo;modulator&rdquo;)
-is subaudio, the tone produced by the controlled oscillator (or
-&ldquo;carrier&rdquo;) will exhibit vibrato.  However, as the
-modulator's frequency is increased, the carrier's vibrato also
-increases until the individual undulation become indistinguishable and
-sidebands, or reflections of the modulator's frequency around the
-carrier's frequency, appear.  If the oscillators are producing sine
-waves with identical or harmonically-related frequencies, the
-sidebands produce a harmonic series.  As the oscillators' waveforms
-become more complex, the sidebands become more numerous, but they may
-still produce a harmonic series.  However, if the oscillators'
-frequencies aren't harmonically related, the result can be a
-clangorous mess (which is good if you're trying to make bell sounds,
-one of the more popular and occasionally unavoidable results of FM
-synthesis).</para>
+<para>In frequency modulation (<acronym>FM</acronym>) synthesis, the
+output of one oscillator controls the frequency of another oscillator.
+If the frequency of the controlling oscillator (or
+&ldquo;modulator&rdquo;) is subaudio, the tone produced by the
+controlled oscillator (or &ldquo;carrier&rdquo;) will exhibit vibrato.
+However, as the modulator's frequency is increased, the carrier's
+vibrato also increases until the individual undulation become
+indistinguishable and sidebands, or reflections of the modulator's
+frequency around the carrier's frequency, appear.  If the oscillators
+are producing sine waves with identical or harmonically-related
+frequencies, the sidebands produce a harmonic series.  As the
+oscillators' waveforms become more complex, the sidebands become more
+numerous, but they may still produce a harmonic series.  However, if
+the oscillators' frequencies aren't harmonically related, the result
+can be a clangorous mess (which is good if you're trying to make bell
+sounds, one of the more popular and occasionally unavoidable results
+of <acronym>FM</acronym> synthesis).</para>
 
-      <table frame=all><title>FM <classname>MKSynthPatch</classname> Descriptions</title>
+      <table frame=all><title><acronym>FM</acronym> <classname>MKSynthPatch</classname> Descriptions</title>
 	<tgroup cols=2 colsep=1 rowsep=1>
 	  <colspec colnum=1 align=left>
 	  <colspec colnum=2 align=left>
@@ -507,35 +510,35 @@ synthesis).</para>
 	  <tbody>
 	    <row>
 <entry>Fm1</entry>
-<entry>Simple (one-modulator) FM</entry>
+<entry>Simple (one-modulator) <acronym>FM</acronym></entry>
 </row>
 <row>
 <entry>Fm1i</entry>
-<entry>Simple FM with frequency interpolation</entry>
+<entry>Simple <acronym>FM</acronym> with frequency interpolation</entry>
 </row>
 <row>
 <entry>Fm1v</entry>
-<entry>Simple FM with vibrato</entry>
+<entry>Simple <acronym>FM</acronym> with vibrato</entry>
 </row>
 <row>
 <entry>Fm1vi</entry>
-<entry>Simple FM with interpolation and vibrato</entry>
+<entry>Simple <acronym>FM</acronym> with interpolation and vibrato</entry>
 </row>
 <row>
 <entry>Fm2cvi</entry>
-<entry>Cascade FM</entry>
+<entry>Cascade <acronym>FM</acronym></entry>
 </row>
 <row>
 <entry>Fm2cnvi</entry>
-<entry>Cascade FM with random modulation (noise) on the modulators</entry>
+<entry>Cascade <acronym>FM</acronym> with random modulation (noise) on the modulators</entry>
 </row>
 <row>
 <entry>Fm2pvi</entry>
-<entry>Parallel FM</entry>
+<entry>Parallel <acronym>FM</acronym></entry>
 </row>
 <row>
 <entry>Fm2pnvi</entry>
-<entry>Parallel FM with noise</entry>
+<entry>Parallel <acronym>FM</acronym> with noise</entry>
 </row>
 </tbody>
 </tgroup>
@@ -568,7 +571,7 @@ strategy for creating a musical sound.  It does this by implementing
 methods that provide two things:</para>
 
 <itemizedlist>
-<listitem><para>A <emphasis>patch</emphasis> specification.  A patch is a configuration of DSP synthesis/processing elements.</para></listitem>
+<listitem><para>A <emphasis>patch</emphasis> specification.  A patch is a configuration of <acronym>DSP</acronym> synthesis/processing elements.</para></listitem>
 
 <listitem><para>A scheme for playing the patch.  This consists of
 defining the conditions in which the patch is turned on and off and
@@ -576,23 +579,25 @@ how <classname>MKNote</classname> parameters are used to control it
 while it's running.</para></listitem>
 </itemizedlist>
 
-<para>Designing a patch is actually quite simple: The MusicKit
-provides an object-oriented interface to the DSP, thus protecting the
+<para>Designing a patch is actually quite simple: The
+<productname>MusicKit</productname> provides an object-oriented
+interface to the <acronym>DSP</acronym>, thus protecting the
 <classname>MKSynthPatch</classname> designer from the rigors of
-programming directly in DSP56000 assembly code.  While concern for
-efficiency makes some knowledge of DSP memory organization necessary,
+programming directly in <hardware>MC56000</hardware> assembly code.
+While concern for efficiency makes some knowledge of
+<acronym>DSP</acronym> memory organization necessary,
 <classname>MKSynthPatch</classname> design makes greater demands of
 your imagination in creating new sound-making schemes than of your
 ability to examine and grasp the small print of signal
 processing.</para>
 
-<para>The MusicKit defines a number of conventions for controlling a
-patch.  Most of these conventions are manifested as methods that are
-declared as subclass responsibilities by the
-<classname>MKSynthPatch</classname> class.  Other conventions are
-given as general guidelines that should be followed to maintain
+<para>The <productname>MusicKit</productname> defines a number of
+conventions for controlling a patch.  Most of these conventions are
+manifested as methods that are declared as subclass responsibilities
+by the <classname>MKSynthPatch</classname> class.  Other conventions
+are given as general guidelines that should be followed to maintain
 consistency with the <classname>MKSynthPatch</classname> subclasses
-provided by the MusicKit.</para>
+provided by the <productname>MusicKit</productname>.</para>
 
 <sect2 id="ASimpleMKSynthPatch">
 <title>A Simple <classname>MKSynthPatch</classname></title>
@@ -611,17 +616,21 @@ features are shown in the more complex
 <xref linkend="ABetterMKSynthPatch">, later in this chapter.</para>
 
 <important>
-<title><filename>exampsynthpatch</filename></title>
+<title><filename>exampsynthpatch</filename></title> 
+
 <para>Please see the programming example
 <filename>./Examples/MusicKit/exampsynthpatch</filename>.  It
 illustrates a variety of <classname>MKSynthPatch</classname>es.  These
-range from a sophisticated FM <classname>MKSynthPatch</classname> with
-vibrato and a wide variety of parameters settable at any time, to a
-simple <classname>MKSynthPatch</classname> designed for applications
-that assume traditional computer music scorefile semantics (such as
-are assumed by MUSIC-5, CMUSIC, CSOUND, etc.).  Much of the complexity
-of <classname>MKSynthPatch</classname> design is eliminated if the
-traditional restrictions are adopted.</para>
+range from a sophisticated <acronym>FM</acronym>
+<classname>MKSynthPatch</classname> with vibrato and a wide variety of
+parameters settable at any time, to a simple
+<classname>MKSynthPatch</classname> designed for applications that
+assume traditional computer music scorefile semantics (such as are
+assumed by <productname>MUSIC-5</productname>,
+<productname>CMUSIC</productname>, <productname>CSOUND</productname>,
+etc.).  Much of the complexity of <classname>MKSynthPatch</classname>
+design is eliminated if the traditional restrictions are
+adopted.</para>
 </important>
 
 <sect3 id="DesigningThePatchSpecification">
@@ -635,7 +644,7 @@ as <emphasis>synthElements</emphasis>):</para>
 
 <itemizedlist>
 <listitem><para>Each <classname>MKUnitGenerator</classname> subclass
-represents a specific signal processing function.  The MusicKit
+represents a specific signal processing function.  The <productname>MusicKit</productname>
 supplies a number of <classname>MKUnitGenerator</classname> subclasses
 that perform functions such as creating and combining signals,
 filtering, and adding the finished product to the output sample
@@ -643,8 +652,8 @@ stream.</para></listitem>
 
 <listitem><para><classname>MKSynthData</classname> objects represent
 data.  These objects can be used for downloading information to the
-DSP; for example, a <classname>MKWaveTable</classname> is represented
-on the DSP as a <classname>MKSynthData</classname>.  Another important
+<acronym>DSP</acronym>; for example, a <classname>MKWaveTable</classname> is represented
+on the <acronym>DSP</acronym> as a <classname>MKSynthData</classname>.  Another important
 use of a <classname>MKSynthData</classname> is to provide a location
 through which one <classname>MKUnitGenerator</classname> can send data
 to another <classname>MKUnitGenerator</classname>.  This type of
@@ -747,12 +756,12 @@ role="bold">outPatchpoint</emphasis>.</para>
 <title>Simplicity's SynthElements Examined</title>
 
 <para>To understand the synthElements used in the example, you need to
-be familiar with a simple detail of DSP memory organization.  DSP
+be familiar with a simple detail of <acronym>DSP</acronym> memory organization.  <acronym>DSP</acronym>
 memory is divided into three sections, x, y, and p.  x and y memory
 are used for data; p memory is used for program code.  Thus,
 <classname>MKSynthData</classname> objects represent data in either x
 or y memory, while <classname>MKUnitGenerator</classname>s represent
-DSP functions that always reside in p memory.  This is illustrated in
+<acronym>DSP</acronym> functions that always reside in p memory.  This is illustrated in
 <xref linkend="DSPMemoryDivision">.</para>
 
 <figure id="DSPMemoryDivision">
@@ -764,7 +773,7 @@ DSP functions that always reside in p memory.  This is illustrated in
 </mediaobject>
 </figure>
 
-<para>The MusicKit further divides DSP memory into logical segments,
+<para>The <productname>MusicKit</productname> further divides <acronym>DSP</acronym> memory into logical segments,
 represented as integer constants.  In designing a
 <classname>MKSynthPatch</classname>, you only need to be concerned
 with four of these segments:</para>
@@ -811,13 +820,13 @@ for reading data and a single output for writing data.  The order of
 these data spigots, or <emphasis>memory arguments</emphasis>, is given
 in the <classname>MKUnitGenerator</classname> name as output followed
 by input.  Thus, OscgUGxy's writes data to x memory (output) and reads
-it from y memory (input).  The MusicKit provides a class for each
+it from y memory (input).  The <productname>MusicKit</productname> provides a class for each
 memory permutation: OscgUGyy, OscgUGyx, OscgUGxy, and OscgUGxx.  These
 are called <emphasis>leaf classes</emphasis> of the <emphasis>master
 class</emphasis> OscgUG.  Aside from the differing memory references,
 the leaf classes are exactly the same.  Every
 <classname>MKUnitGenerator</classname> function provided by the
-MusicKit is similarly organized into a master class and a complete set
+<productname>MusicKit</productname> is similarly organized into a master class and a complete set
 of leaf classes.</para>
 
 <tip><para>When describing a
@@ -860,7 +869,7 @@ Simplicity uses the Out2sumUGx leaf class so the
 <classname>MKUnitGenerator</classname> can read the MK_xPatch
 patchpoint that's written to by OscgUGxy.  <xref
 linkend="SimplicitysPatch"> shows a diagram of the complete patch,
-superimposed on the DSP memory layout.</para>
+superimposed on the <acronym>DSP</acronym> memory layout.</para>
 
 <figure id="SimplicitysPatch">
 <title>Simplicity's Patch</title>
@@ -895,7 +904,7 @@ bottom.</para></listitem>
 
 <listitem><para>Patchpoints are drawn as diamonds.  Other
 <classname>MKSynthData</classname> objects, including the predefined
-<classname>MKSynthData</classname> that represents the DSP sineROM,
+<classname>MKSynthData</classname> that represents the <acronym>DSP</acronym> sineROM,
 are rectangles.</para></listitem>
 
 <listitem><para>Data written to a <classname>MKSynthData</classname>
@@ -904,7 +913,7 @@ right.</para></listitem>
 </itemizedlist>
 
 <para>It's often convenient to represent a patch without including the
-patchpoints and without superimposing the schematic on the DSP memory
+patchpoints and without superimposing the schematic on the <acronym>DSP</acronym> memory
 diagram.  <xref linkend="ConventionalPatchDiagram"> shows Simplicity's
 patch in an abbreviated form.  A <classname>MKSynthData</classname>'s
 memory space is indicated by an x or y inside the icon.  The spaces
@@ -928,7 +937,7 @@ and output.</para>
 
 <para>Keep in mind that a <classname>MKSynthPatch</classname> object
 is ordinarily created and controlled by an instance of
-<classname>MKSynthInstrument</classname>.  During a MusicKit
+<classname>MKSynthInstrument</classname>.  During a <productname>MusicKit</productname>
 performance, the <classname>MKSynthInstrument</classname> distributes
 the Notes it receives to the various
 <classname>MKSynthPatch</classname> objects that it controls through
@@ -1387,58 +1396,103 @@ somewhat more efficient.</para></tip>
 <title>Oscgafi</title>
 
 <para>The Oscgafi <classname>MKUnitGenerator</classname> is the most
-flexible oscillator provided by the MusicKit.  In addition to allowing
-envelope control of amplitude and frequency, it also performs an
-interpolation, minimizing the noise that's sometimes introduced when
-reading the lookup table.  The components of the
+flexible oscillator provided by the
+<productname>MusicKit</productname>.  In addition to allowing envelope
+control of amplitude and frequency, it also performs an interpolation,
+minimizing the noise that's sometimes introduced when reading the
+lookup table.  The components of the
 <classname>MKUnitGenerator</classname>'s name summarize these
 features:</para>
 
-<para><emphasis role="bold">Component	Meaning</emphasis></para> 
+      <table frame=all><title>Class naming convention for <classname>Oscgafi</classname></title>
+	<tgroup cols=2 colsep=1 rowsep=1>
+	  <colspec colnum=1 align=left>
+	  <colspec colnum=2 align=left>
+	  <thead>
+	    <row>
+<entry>Component</entry>
+<entry>Meaning</entry> 
+	    </row>
+	  </thead>
 
-<para>Osc	Oscillator</para>
-
-<para>g	General</para>
-
-<para>a	Amplitude control</para>
-
-<para>f	Frequency control</para> 
-
-<para>i	Interpolation</para>
+	  <tbody>
+<row>
+<entry>Osc</entry>
+<entry>Oscillator</entry>
+</row>
+<row>
+<entry>g</entry>
+<entry>General</entry>
+</row>
+<row>
+<entry>a</entry>
+<entry>Amplitude control</entry>
+</row>
+<row>
+<entry>f</entry>
+<entry>Frequency control</entry> 
+</row>
+<row>
+<entry>i</entry>
+<entry>Interpolation</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
 
 <para>Oscgafi has four memory arguments, in this order:</para>
 
-<para>1.	output</para> 
-
-<para>2.	amplitude control input</para> 
-
-<para>3.	frequency control input</para> 
-
-<para>4.	lookup table input</para>
+<orderedlist>
+<listitem><para>output</para></listitem>
+<listitem><para>amplitude control input</para></listitem>
+<listitem><para>frequency control input</para></listitem>
+<listitem><para>lookup table input</para></listitem>
+</orderedlist>
 
 <para>The permutations of a <classname>MKUnitGenerator</classname>
 with four memory arguments results in 16 leaf classes.  Envy uses the
 xxyy version (OscgafiUGxxyy), so the memory arguments correspond to
 memory space as follows:</para>
 
-<para><emphasis role="bold">Argument	Space</emphasis></para> 
-
-<para>output	x</para>
-
-<para>amplitude control	x</para> 
-
-<para>frequency control	y</para> 
-
-<para>lookup table	y</para>
+      <table frame=all><title>Memory Space Association to Memory Arguments</title>
+	<tgroup cols=2 colsep=1 rowsep=1>
+	  <colspec colnum=1 align=left>
+	  <colspec colnum=2 align=left>
+	  <thead>
+<row>
+<entry>Argument</entry>
+<entry>Space</entry> 
+</row>
+</thead>
+<tbody>
+<row>
+<entry>output</entry>
+<entry>x</entry>
+</row>
+<row>
+<entry>amplitude control</entry>
+<entry>x</entry> 
+</row>
+<row>
+<entry>frequency control</entry>
+<entry>y</entry> 
+</row>
+<row>
+<entry>lookup table</entry>
+<entry>y</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
 
 <para>A notable difference between Oscg and Oscgafi is that in the
 latter, frequency and amplitude aren't set directly through messages
 to the oscillator.  To control these attributes, you affect the
 <classname>MKUnitGenerator</classname>s that are connected to
-Oscgafi's inputs.  The MusicKit provides a C function, called
-<function>MKUpdateAsymp()</function> that does this for
-you.  This function is described later as it's used to apply parameter
-values to Envy's patch.</para>
+Oscgafi's inputs.  The <productname>MusicKit</productname> provides a
+C function, called <function>MKUpdateAsymp()</function> that does this
+for you.  This function is described later as it's used to apply
+parameter values to Envy's patch.</para>
 
 <para>In addition, Oscgafi's frequency input is actually an increment
 input&horbar;the oscillator's frequency is defined by the increment,
@@ -1461,7 +1515,7 @@ used when applying parameter values.</para>
 
 <para>The Asymp and Asympenv <classname>MKUnitGenerator</classname>s
 are envelope handlers; they translates the data in an
-<classname>MKEnvelope</classname> object and load it onto the DSP.  An
+<classname>MKEnvelope</classname> object and load it onto the <acronym>DSP</acronym>.  An
 <classname>MKEnvelope</classname> object is associated with an Asymp
 or Asympenv through the <emphasis
 role="bold">MKUpdateAsymp()</emphasis> function. The only difference
@@ -1497,8 +1551,8 @@ used to maintain the state of the object's patch.</para>
 <para>Because of the introduction of envelope control into the patch,
 Envy responds to several more parameters than did Simplicity.  These
 are shown as they are declared as instance variables in the
-<classname>MKSynthPatch</classname>'s interface file (
-<filename class=headerfile>Envy.h</filename>):</para>
+<classname>MKSynthPatch</classname>'s interface file (<filename
+class=headerfile>Envy.h</filename>):</para>
 
 <programlisting>
 @interface Envy:SynthPatch
@@ -1599,6 +1653,7 @@ role="bold">setDefaults:</emphasis>.  It ignores the argument:</para>
     [synthElements makeObjectsPerform:@selector(run)];
     return self;
 }
+
 - noteUpdateSelf:aNote
 {
     /* Apply the parameters to the patch. */
@@ -1765,7 +1820,7 @@ appropriate variable.</para>
 more complicated in the implementation of Envy than in that of
 Simplicity.  Because of its use of <classname>MKEnvelope</classname>
 objects, Envy's amplitude and frequency depend on the values of a
-number of related parameters.  The MusicKit provides a C function
+number of related parameters.  The <productname>MusicKit</productname> provides a C function
 called <function>MKUpdateAsymp()</function> that helps to
 untangle this web.  The function takes, as arguments, all the objects
 and parameter values associated with a particular
@@ -1999,7 +2054,7 @@ rewritten to attend to the new parameter:</para>
 role="bold">setTable:length:defaultToSineROM:</emphasis> method sets
 the oscillator's lookup table to the specified
 <classname>MKWaveTable</classname> object.  Passing 0 as the length of
-the table causes the MusicKit to compute a default value.  The
+the table causes the <productname>MusicKit</productname> to compute a default value.  The
 argument to <emphasis role="bold">defaultToSineROM:</emphasis> is a
 BOOL value that determines whether the sineROM should be used if
 memory for the <classname>MKWaveTable</classname> can't be allocated.
@@ -2022,7 +2077,7 @@ oscillators.</para>
 <sect1 id="DoingReal-timeSoundProcessing">
 <title>Doing Real-time Sound Processing</title>
 
-<para>One of the most exciting aspects of the MusicKit is the ability
+<para>One of the most exciting aspects of the <productname>MusicKit</productname> is the ability
 to process sound in real time, under arbitrarily rich control.  To do
 this, you follow all the guidelines given above.  There are only three
 differences:</para> 
@@ -2030,7 +2085,7 @@ differences:</para>
   <orderedlist>
 
 <listitem><para>You must connect hardware that accepts sound input to
-the DSP serial port.</para>
+the <acronym>DSP</acronym> serial port.</para>
 </listitem>
 
 <listitem><para>You must set up the <classname>MKOrchesra</classname> to do sound processing.</para>
@@ -2043,7 +2098,7 @@ the DSP serial port.</para>
 <para>The standard NeXT configuration (at the time of this writing)
 does not include a high-quality sound input.  Therefore, in order to
 do real-time high-quality sound processing, you need to obtain a
-device that plugs into the DSP serial port.  See <xref
+device that plugs into the <acronym>DSP</acronym> serial port.  See <xref
 linkend="UsingTheDSPSerialPort"> above for how to set up the hardware
 and how to configure the <classname>MKOrchestra</classname>.</para>
 
@@ -2067,18 +2122,21 @@ In1aUG.</para>
 <title>Creating a <classname>MKUnitGenerator</classname> Subclass</title>
 
 <para>Each <classname>MKUnitGenerator</classname> subclass is an
-object-oriented interface to a DSP macro, called a <emphasis>unit
-generator</emphasis>, that's written in DSP56001 assembly language.
-The Objective-C code in the subclass is generated automatically from a
-DSP macro by the <command>dspwrap</command> program.  To
-build your own <classname>MKUnitGenerator</classname> subclass that
-you can use in <classname>MKSynthPatch</classname> design, you run
-<command>dspwrap</command> on a DSP56001 assembly
-language macro that you've created.  In addition, you can modify and
-wrap the DSP macros that NeXT provides as source code in the directory
-<filename class=directory>/usr/local/lib/dsp/ugsrc</filename>.</para>
+object-oriented interface to a <acronym>DSP</acronym> macro, called a
+<emphasis>unit generator</emphasis>, that's written in
+<hardware>MC56001</hardware> assembly language.  The Objective-C code
+in the subclass is generated automatically from a
+<acronym>DSP</acronym> macro by the <command>dspwrap</command>
+program.  To build your own <classname>MKUnitGenerator</classname>
+subclass that you can use in <classname>MKSynthPatch</classname>
+design, you run <command>dspwrap</command> on a
+<hardware>MC56001</hardware> assembly language macro that you've
+created.  In addition, you can modify and wrap the
+<acronym>DSP</acronym> macros that NeXT provides as source code in the
+directory <filename
+class=directory>/usr/local/lib/dsp/ugsrc</filename>.</para>
 
-<para>The design of DSP assembly language macros is outside the scope
+<para>The design of <acronym>DSP</acronym> assembly language macros is outside the scope
 of the present discussion.  The following sections show how to use
 <command>dspwrap</command> and how to further modify the
 <classname>MKUnitGenerator</classname>s that it creates.</para>
@@ -2129,12 +2187,12 @@ by the master class.</para>
 <para>The number of leaf classes that are created depends on the
 number of address-valued memory arguments, described below, in the
 macro: A different leaf class is created for each combination of x and
-y DSP memory spaces.  The <emphasis role="bold">unoisehp</emphasis>
+y <acronym>DSP</acronym> memory spaces.  The <emphasis role="bold">unoisehp</emphasis>
 macro, which implements a high-pass random number generator, has only
 one such argument&horbar;its output&horbar;so two leaf classes are
 generated, one for either memory space.</para>
 
-<para>Some other files, such as documentation and DSP assembler and
+<para>Some other files, such as documentation and <acronym>DSP</acronym> assembler and
 linker files, are also created.  These can be moved, deleted, or
 disregarded as you see fit.  For the present purposes, only the files
 listed above are important.</para>
@@ -2147,7 +2205,7 @@ listed above are important.</para>
 <command>dspwrap</command>:</para>
 
 <itemizedlist>
-<listitem><para>To set the values of the DSP memory arguments that are passed to the macro</para>
+<listitem><para>To set the values of the <acronym>DSP</acronym> memory arguments that are passed to the macro</para>
 </listitem>
 <listitem><para>To define the class's response to some common messages</para>
 </listitem>
@@ -2176,14 +2234,14 @@ enum args { aout, seed};
 
 <para>The two <emphasis role="bold">enum</emphasis> variables shown
 above, <emphasis role="bold">aout</emphasis> and <emphasis
-role="bold">seed</emphasis>, are DSP memory arguments.  A memory
-argument represents a location on the DSP from which the unit
+role="bold">seed</emphasis>, are <acronym>DSP</acronym> memory arguments.  A memory
+argument represents a location on the <acronym>DSP</acronym> from which the unit
 generator that's executing can read information sent to it by the
-MusicKit.  There are two types of memory arguments:</para>
+<productname>MusicKit</productname>.  There are two types of memory arguments:</para>
 
 <itemizedlist>
 <listitem><para>Address-valued arguments administer the location in
-DSP memory from which, or to which, the executing unit generator reads
+<acronym>DSP</acronym> memory from which, or to which, the executing unit generator reads
 or writes data.</para>
 </listitem>
 
@@ -2207,7 +2265,7 @@ that sets this argument:</para>
 
 <para>The <emphasis role="bold">setAddressArg:to:</emphasis> method is
 defined by <classname>MKUnitGenerator</classname> to set an
-address-valued DSP memory argument.</para>
+address-valued <acronym>DSP</acronym> memory argument.</para>
 
 <para>The other <emphasis role="bold">enum</emphasis> variable,
 <emphasis role="bold">seed</emphasis>, is a datum-valued memory
@@ -2258,7 +2316,7 @@ received.</para>
 role="bold">idleSelf</emphasis> to ensure that your
 <classname>MKUnitGenerator</classname> is brought to a halt in a
 manner befitting its activity.  The Unoisehp implementation of this
-method sets its output to the DSP's <emphasis>sink</emphasis>, a
+method sets its output to the <acronym>DSP</acronym>'s <emphasis>sink</emphasis>, a
 location that, by convention, is never read:</para>
 
 <programlisting>
