@@ -103,9 +103,10 @@ static NSMutableArray *fxClassesArray = nil;
 // description
 //////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) description
+- (NSString *) description
 {
-  return [NSString stringWithFormat: @"%@ params:%i",name,numParams];
+    return [NSString stringWithFormat: @"%@ %@ %@ params:%i",
+	[super description], name, bActive ? @"(active)" : @"(inactive)", numParams];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
