@@ -10,106 +10,10 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2001 The MusicKit Project.
+  Portions Copyright (c) 1999 The MusicKit Project.
 */
 /* 
-Modification history:
-
-  $Log$
-  Revision 1.28  2003/08/04 21:19:36  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
-  Revision 1.27  2002/04/16 15:28:47  sbrandon
-  tightened up a couple of casts to keep compiler happy
-
-  Revision 1.26  2002/04/16 15:19:10  sbrandon
-  - several clumsy string-appending calls were simplified for speed
-  - a couple of _MKFreeParameter calls removed, since removal from the
-    hashtable automatically does this (and releases any objects in the
-    parameter)
-  - added a few comments about data retention
-
-  Revision 1.25  2002/04/15 14:16:59  sbrandon
-  tidied up some long lines (cosmetic)
-
-  Revision 1.24  2002/04/03 03:59:41  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.23  2002/04/01 11:58:57  sbrandon
-  paranoia check on MKNotes as they are deallocated - set various hashtables
-  to null. This is because MKNotes are not actually deallocated - just added
-  to a pool of notes which can be quickly created. Problem is that if
-  "de-allocated" notes are referenced they will not behave as normal zombies
-  and could allow double-frees.
-
-  Revision 1.22  2002/03/12 22:50:31  sbrandon
-  change _binaryIndecies from NSMutableDictionary to NSMapTable
-
-  Revision 1.21  2002/01/24 13:55:39  sbrandon
-  fixed a couple of places where notes could possibly get dealloced between
-  being removed from one array and added to another
-
-  Revision 1.20  2002/01/24 13:26:57  sbrandon
-  return NSOrderedAscending instead of int from _MKNoteCompare, removed some
-  needless comments.
-
-  Revision 1.19  2002/01/23 15:33:02  sbrandon
-  The start of a major cleanup of memory management within the MK. This set of
-  changes revolves around MKNote allocation/retain/release/autorelease.
-
-  Revision 1.18  2002/01/22 13:50:14  sbrandon
-  squashed a bug in -copyWithZone which prevented copies of notes from being
-  able to retrieve any user-defined parameters
-
-  Revision 1.17  2002/01/09 19:49:43  leighsmith
-  Clean up of doco and typed copyParsFrom: parameter
-
-  Revision 1.16  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.15  2001/08/30 19:07:45  leighsmith
-  removed obsolete parName, nameOfPar messages
-
-  Revision 1.14  2001/07/02 16:36:46  sbrandon
-  - NSHashTableCallBacks cannot on GNUSTEP contain NULL values at this time.
-    This affected MKNotes and their parameters. I have implemented a couple
-    of bogus void functions with which which to replace the NULL functions.
-
-  Revision 1.13  2001/02/03 02:34:30  leigh
-  Cleaned up error checking message
-
-  Revision 1.12  2001/01/31 21:42:06  leigh
-  Added assertion checking intermittent problem with _parameters becoming NULL
-
-  Revision 1.11  2001/01/24 21:58:51  skot
-  Added note adjustment methods setEndTime, setTimeTagPreserveEndTime
-
-  Revision 1.10  2000/10/04 06:30:18  skot
-  Added endTime method
-
-  Revision 1.9  2000/10/01 00:45:59  leigh
-  Replaced NXHashTable functions with FoundationKit NSHashTable functions. Removed redundant HashTable caching. Fixed erroneous use of char * with _MKNewStringPar().
-
-  Revision 1.8  2000/05/06 00:32:59  leigh
-  Converted _binaryIndecies to NSMutableDictionary
-
-  Revision 1.7  2000/04/04 00:13:21  leigh
-  Made class reference clear in description
-
-  Revision 1.6  2000/03/31 00:07:05  leigh
-  Adopted OpenStep naming of factory methods
-
-  Revision 1.5  2000/02/08 00:10:56  leigh
-  Added duration display in -description
-
-  Revision 1.4  2000/02/07 00:31:39  leigh
-  improved description method, printing parameter values
-
-  Revision 1.3  1999/09/24 05:49:31  leigh
-  cleaned up documentation, improved description method, changed parameter type of writeNoteAux to NSString
-
-  Revision 1.2  1999/07/29 01:16:37  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history prior to committal to CVS:
 
   09/18/89/daj - Changed hash table to be non-object variety. Changed parameters
                  to be structs rather than objects. Added C-function access
@@ -168,23 +72,6 @@ Modification history:
   03/08/95/daj/nick - Added check for MK_noPar in -isParPresent:
 */
 
-/*** Oft-used Methods to make c funcs
-
-  -conductor
-  -_noteOffForNoteDur
-  -free
-  -unionWith
-  -copy
-  -timeTag
-  -part
-  -_setPartLink
-  -setNoteTag:
-  -noteDur
-  -noteType
-  -noteTag
-
-***/
-
 #define INT(_x) ((int) _x)
 
 #define MK_INLINE 1
@@ -196,7 +83,7 @@ Modification history:
 #import "_MKNameTable.h" 
 #import "NotePrivate.h"
 
-@implementation MKNote:NSObject 
+@implementation MKNote 
 
 /* Creation, copying, deleting------------------------------------------ */
 
@@ -615,7 +502,7 @@ static unsigned int nAppBitVects(MKNote *self)
     return oldPart;
 }
 
-- (double)timeTag
+- (double) timeTag
   /* TYPE: Timing; Returns the receiver's timeTag.
    * Returns the receiver's timeTag.  If the timeTag isn't set, 
    * returns MK_ENDOFTIME.
@@ -637,18 +524,19 @@ static unsigned int nAppBitVects(MKNote *self)
    * MKPart is correct.
    */
 { 
-    double tmp = timeTag;
-    id aPart = part;    /* Save it because remove causes it to be set to nil */
-    newTimeTag = MIN(MAX(newTimeTag,0.0),MK_ENDOFTIME);
-	[self retain]; /* so there's no chance of being dealloced in the next line */
-    [aPart removeNote:self];
+    double time = timeTag;
+    MKPart *aPart = part;    /* Save it because remove causes it to be set to nil */
+    
+    newTimeTag = MIN(MAX(newTimeTag, 0.0), MK_ENDOFTIME);
+    [self retain]; /* so there's no chance of being dealloced in the next line */
+    [aPart removeNote: self];
     timeTag = newTimeTag;
-    [aPart addNote:self];
-	[self release];
-    return tmp; 
+    [aPart addNote: self];
+    [self release];
+    return time; 
 }
 
--(double ) setTimeTagPreserveEndTime:(double )newTimeTag;
+- (double) setTimeTagPreserveEndTime: (double) newTimeTag;
  /*
   * Sets the receiver's timeTag to newTimeTag and returns the old timeTag,
   * or MK_ENDOFTIME if none.  If newTimeTag is negative, it's clipped to
@@ -2012,8 +1900,8 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
     else
         durAndNoteTagString = [NSString stringWithFormat: @"%.5lf %d", duration, noteTag];
 
-    return [NSString stringWithFormat: @"MKNote at %lf: %s(%@) %@ %@\n%@\n",
-        timeTag, _MKTokName(noteType), durAndNoteTagString, partString, performerString, paramString];
+    return [NSString stringWithFormat: @"%@ at %lf: %s(%@) %@ %@\n%@\n",
+        [super description], timeTag, _MKTokName(noteType), durAndNoteTagString, partString, performerString, paramString];
 }
 
 @end
