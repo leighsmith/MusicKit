@@ -126,19 +126,22 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// Note: This is only an interim proof of concept implementation and doesn't manage all 
+// combinations of formats. Instead of adding extra formats, this code should be
+// changed to use a version of SndConvertSoundInternal() that has been suitably modified
+// to accept presupplied buffers (SndConvertSoundInternal currently allocates them itself).
 ////////////////////////////////////////////////////////////////////////////////
 
 - mixWithBuffer: (SndAudioBuffer*) buff fromStart: (long) start toEnd: (long) end
 {
-    long l;
+    long frameCount;
     
     // SndPrintStruct(&formatSnd); // for checking the formatSnd is valid
     
     if (end > formatSnd.dataSize / sizeof(float))
         end = formatSnd.dataSize / sizeof(float);
 
-    l = end - start;
+    frameCount = end - start;
     
     if ([self dataFormat] == SND_FORMAT_FLOAT) {
 
@@ -158,14 +161,14 @@
 //                NSLog(@"Mixing client output buffer with main output buff, (%f)",in[100]);
 
                 if (selfNumChannels == buffNumChannels) {
-                    for (i = 0; i < l; i++) {
+                    for (i = 0; i < frameCount * buffNumChannels; i++) {
                         out[i+start] += in[i]; // interleaving automatically taken care of!
                     }
                 }
                 else if (selfNumChannels == 2) {
                     switch (buffNumChannels) {
                         case 1:
-                            for (i = 0; i < l; i++) {
+                            for (i = 0; i < frameCount; i++) {
                                 out[i+start]   += in[i]; // interleaving automatically taken care of!
                                 out[i*2+start] += in[i]; // interleaving automatically taken care of!
                             }
@@ -177,7 +180,7 @@
                 else if (selfNumChannels == 1) {
                     switch (buffNumChannels) {
                         case 2:
-                            for (i = 0; i < l; i++) {
+                            for (i = 0; i < frameCount; i++) {
                                 out[i+start] += in[i*2]; // copy left channel into output buffer
                             }
                             break;
@@ -185,8 +188,8 @@
                             NSLog(@"Mix buffer - not format handled (yet)");
                     }
                 }
-            }
                 break;
+            }
 
 // SOURCE BUFFER IS 16-BIT
                 
@@ -195,28 +198,29 @@
                 short *in  = (short*) [buff data];
                 float *out = (float*) data, f;
 
+                // NSLog(@"16bit Linear Format, selfNumChannels = %d, buffNumChannels = %d, frameCount = %ld\n",
+                //    selfNumChannels, buffNumChannels, frameCount);
                 if (selfNumChannels == buffNumChannels) {
-
-                    for (i = 0; i < l; i++) {
+                    for (i = 0; i < frameCount * buffNumChannels; i++) {
                         f = (float) in[i] / 32768.0f;
                         out[i+start] += f; // interleaving automatically taken care of!
                     }
                 }
                 else if (buffNumChannels == 1)  {
-                    for (i = 0; i < l; i++) {
+                    for (i = 0; i < frameCount; i++) {
                         f = (float) in[i] / 32768.0f;
                         out[i*2+start]   += f; // interleaving automatically taken care of!
                         out[i*2+start+1] += f; // interleaving automatically taken care of!
                     }
                 }
                 else if (buffNumChannels == 2)  {
-                    for (i = 0; i < l; i++) {
+                    for (i = 0; i < frameCount; i++) {
                         f = (float) in[i*2] / 32768.0f;
                         out[i+start] += f; // interleaving automatically taken care of!
                     }
                 }
-            }
                 break;
+            }
             default:
                 NSLog(@"SndAudioBuffer::mixWithBuffer: WARN: unsupported format %d", [buff dataFormat]);
         }
@@ -234,12 +238,8 @@
     // NSLog(@"buffer = %x\n", buff);
     // NSLog(@"buffer to mix: %s", SndStructDescription(&(buff->formatSnd)));
     
-    [self mixWithBuffer: buff fromStart: 0 toEnd: formatSnd.dataSize / sizeof(float)];
+    [self mixWithBuffer: buff fromStart: 0 toEnd: formatSnd.dataSize / [self multiChannelSampleSizeInBytes]];
     
-    // TO DO!
-    // 1. Ensure buff is in same format as self, if not
-    //  CONVERT INTO A LOCAL COPY!! (don't convert buff)
-
     return self;
 }
 
