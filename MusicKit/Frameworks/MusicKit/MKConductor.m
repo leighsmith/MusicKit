@@ -14,7 +14,7 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2003 The MusicKit Project.
+  Portions Copyright (c) 1999-2004 The MusicKit Project.
 */
 /*
   Original pre MusicKit.org project modification history. For current history, 
@@ -654,7 +654,7 @@ static void condInit()
     // NSLog(@"condInit(): allConductors = %@, defaultCond = %@, clockCond = %@\n", allConductors, defaultCond, clockCond);
 }
 
-- (void)dealloc
+- (void) dealloc
   /* Freeing a conductor is not permitted. This message overrides the free 
      capability. */
 {
@@ -662,7 +662,7 @@ static void condInit()
     //return nil;
 }
 
--_initialize
+- _initialize
     /* Private method that initializes the Conductor when it is created
        and after it finishes performing. Sent by self only. Returns self.
        BeatSize is not reset. It retains its previous value. */
@@ -730,12 +730,6 @@ static void condInit()
     return self;
 }
 
-- copy
-  /* Same as [[self copyFromZone:[self zone]]. */
-{
-    return [self copyWithZone:[self zone]];
-}
-
 - copyWithZone:(NSZone *)zone
   /* Same as [[self class] allocFromZone:zone] followed by [self init]. */
 {
@@ -745,7 +739,7 @@ static void condInit()
     return obj;
 }
 
-+adjustTime
++ adjustTime
   /* TYPE: Modifying; Updates the current time.
    * Updates the factory's notion of the current time.
    * This method should be invoked whenever 
@@ -754,7 +748,7 @@ static void condInit()
    */
 {
     if (inPerformance)
-      adjustTime();
+	adjustTime();
     return self;
 }
 
@@ -857,7 +851,7 @@ static void evalAfterQueues()
    afterPerformanceQueue = evalSpecialQueue(afterPerformanceQueue, &afterPerformanceQueueEnd);
 }
 
-+finishPerformance
++ finishPerformance
   /* TYPE: Modifying; Ends the performance.
    * Stops the performance.  All enqueued messages are  
    * flushed and the afterPerformance message is sent
@@ -872,6 +866,7 @@ static void evalAfterQueues()
    */
 {	
     double lastTime;
+    
     if (MKIsTraced(MK_TRACECONDUCTOR))
         NSLog(@"finishPerformance,%s separate threaded,%s in performance.\n", separateThread ? "" : " not", inPerformance ? "" : " not");
     if (!inPerformance) {
@@ -906,7 +901,7 @@ static void evalAfterQueues()
     return self;
 }
 
-+pausePerformance
++ pausePerformance
   /* TYPE: Controlling; Pauses a performance.
    * Pauses all Conductors.  The performance is resumed when
    * the factory receives the resume message.
@@ -920,13 +915,13 @@ static void evalAfterQueues()
    */
 {	
    if ((!inPerformance)  || performanceIsPaused)
-     return self;
+       return self;
    if (!isClocked || weGotMTC())
-     return nil;
+       return nil;
    [pauseTime autorelease];
    pauseTime = [[NSDate date] retain];
    if (separateThread)
-     removeTimedEntry(pauseThread);
+       removeTimedEntry(pauseThread);
    else if (timedEntry != NOTIMEDENTRY) {
        [timedEntry invalidate];
        [timedEntry release];
@@ -936,7 +931,7 @@ static void evalAfterQueues()
    return self;
 }
 
-+(BOOL)isPaused
++ (BOOL) isPaused
   /* TYPE: Querying; YES if performance is paused.
    * Returns YES if the performance is paused.
    */
@@ -944,7 +939,7 @@ static void evalAfterQueues()
     return performanceIsPaused;
 }
 
-+resumePerformance
++ resumePerformance
   /* TYPE: Controlling; Unpauses a paused performance.
    * Resumes a paused performance.
    * When the performance resumes, the notion of the
@@ -955,10 +950,10 @@ static void evalAfterQueues()
    * Returns nil in this case, otherwise returns the receiver.
    */
 {	
-    if ((!inPerformance)  || (!performanceIsPaused))
-      return self;
+    if ((!inPerformance) || (!performanceIsPaused))
+	return self;
     if (!isClocked)
-      return nil;
+	return nil;
     performanceIsPaused = NO;
     [startTime autorelease];
 //    startTime += (getTime() - pauseTime);
@@ -980,7 +975,7 @@ static void evalAfterQueues()
     return curRunningCond;
 }
 
-+ setFinishWhenEmpty:(BOOL)yesOrNo
++ setFinishWhenEmpty: (BOOL) yesOrNo
   /* TYPE: Modifying; Sets BOOL for continuing with empty queues.
    * If yesOrNo is NO (the default), the performance
    * is terminated when all the Conductors' message queues are empty.
@@ -993,7 +988,7 @@ static void evalAfterQueues()
 }
 
 
-+ setClocked:(BOOL)yesOrNo 
++ setClocked: (BOOL) yesOrNo 
   /* TYPE: Modifying; Establishes clocked or unclocked performance.  
    * If yesOrNo is YES, messages are dispatched
    * at specific times.  If NO, they are sent 
@@ -1009,7 +1004,7 @@ static void evalAfterQueues()
     return self;
 }
 
-+(BOOL)isEmpty
++ (BOOL) isEmpty
   /* TYPE: Querying; YES if in performance and all queues are empty.
    * YES if the performance is active and all message queues are empty. 
    * (This can only happen if setFinishWhenEmpty:NO was sent.)
@@ -1020,7 +1015,7 @@ static void evalAfterQueues()
 			     mtcEndOfTime()))));
 }
 
-+(BOOL)finishWhenEmpty
++ (BOOL) finishWhenEmpty
   /* TYPE: Querying; YES if performance continues despite empty queues.
    * Returns NO if the performance is terminated when the
    * queues are empty, NO if the performance continues.
@@ -1029,7 +1024,7 @@ static void evalAfterQueues()
     return dontHang;
 }
 
-+(BOOL) isClocked
++ (BOOL) isClocked
   /* TYPE: Querying; YES if performance is clocked, NO if not.
    * Returns YES if messages are sent at specific times,
    * NO if they are sent as quickly as possible.
@@ -1038,19 +1033,19 @@ static void evalAfterQueues()
     return isClocked;
 }
 
--activePerformers
+- activePerformers
 {
     return activePerformers;
 }
 
--(BOOL)isPaused 
+- (BOOL) isPaused 
   /* Returns YES if the receiver is paused. */
 {
     return isPaused;
 }
 
 
--pause
+- pause
   /* TYPE: Controlling; Pauses the receiver.
    * Pauses the performance of the receiver.
    * The effect on the receiver is restricted to
@@ -1061,17 +1056,17 @@ static void evalAfterQueues()
    */
 {
     if (self == clockCond || MTCSynch)
-      return nil;
+	return nil;
     if (isPaused)
-      return self;
+	return self;
     isPaused = YES;
-    repositionCond(self,PAUSETIME);
-    if ([delegate respondsToSelector:@selector(conductorDidPause:)])
-      [delegate conductorDidPause:self];
+    repositionCond(self, PAUSETIME);
+    if ([delegate respondsToSelector: @selector(conductorDidPause:)])
+	[delegate conductorDidPause: self];
     return self;
 }
 
--resume
+- resume
   /* TYPE: Controlling; Resumes a paused receiver.
    * Resumes the receiver.  If the receiver isn't currently paused
    * (if it wasn't previously sent the pause message),
@@ -1079,16 +1074,16 @@ static void evalAfterQueues()
    */
 {
     if (MTCSynch)
-      return nil;
+	return nil;
     if (!isPaused)
-      return self;
+	return self;
     [self _resume];
-    if ([delegate respondsToSelector:@selector(conductorDidResume:)])
-      [delegate conductorDidResume:self];
+    if ([delegate respondsToSelector: @selector(conductorDidResume:)])
+	[delegate conductorDidResume: self];
     return self;
 }
 
--pauseFor:(double)seconds
+- pauseFor: (double) seconds
 {
     /* Pause it if it's not already paused. */
     if (seconds <= 0.0 || ![self pause]) 
@@ -1131,7 +1126,7 @@ static void evalAfterQueues()
     return oldBeatSize;
 }
 
--(double)setTempo:(double)newTempo
+- (double) setTempo: (double) newTempo
   /* TYPE: Tempo; Sets the tempo in beats per minute.
    * Sets the tempo to newTempo, measured in beats per minute.
    * Implemented as [self\ setBeatSize:(60.0/newTempo)].
@@ -1142,7 +1137,7 @@ static void evalAfterQueues()
     return 60.0 / [self setBeatSize: (60.0 / newTempo)];
 }
 
--(double)setTimeOffset:(double)newTimeOffset
+- (double) setTimeOffset: (double) newTimeOffset
   /* TYPE: Tempo; Sets the receiver's timeOffset value in seconds.
    * Sets the number of seconds into the performance
    * that the receives waits before it begins processing
@@ -1177,7 +1172,7 @@ static void evalAfterQueues()
     return beatSize;
 }
 
--(double)tempo
+- (double) tempo
   /* TYPE: Tempo; Returns the receiver's tempo in beats per minute.
    * Returns the receiver's tempo in beats per minute.
    */
@@ -1185,7 +1180,7 @@ static void evalAfterQueues()
     return 60.0 * inverseBeatSize;
 }
 
--(double)timeOffset
+- (double) timeOffset
   /* TYPE: Tempo; Returns the receiver's timeOffset.
    * Returns the receiver's timeOffset value.
    */
@@ -1212,8 +1207,7 @@ static void evalAfterQueues()
     arg2 = va_arg(ap,id);
     va_end(ap);	
     return insertMsgQueue(
-        newMsgRequest(CONDUCTORFREES, self->time + deltaT,
-		aSelector, toObject, argCount, arg1, FALSE, arg2, FALSE), self);
+        newMsgRequest(CONDUCTORFREES, self->time + deltaT, aSelector, toObject, argCount, arg1, FALSE, arg2, FALSE), self);
 }
 
 -sel:(SEL)aSelector to:(id)toObject withDelay:(double)deltaT 
@@ -1296,11 +1290,11 @@ static void evalAfterQueues()
 //	nextMsgTime = MIN(nextMsgTime,MK_ENDOFTIME);    
         nextMsgTime = beatToClock(self, PEEKTIME(_msgQueue));
     }
-    repositionCond(self,nextMsgTime);
+    repositionCond(self, nextMsgTime);
     return self;
 }
 
--(double)predictTime:(double)beatTime
+- (double) predictTime: (double) beatTime
   /* TYPE: Querying; Returns predicted time corresponding to beat.
    * Returns the time, in tempo-mapped time units,
    * corresponding to a specified beat time.  In our Conductor, this method
@@ -1312,10 +1306,10 @@ static void evalAfterQueues()
    * CMJ (etc.) for details of tempo mappings. 
    */
 {
-    return beatToClock(self,beatTime);
+    return beatToClock(self, beatTime);
 }    
 
--(double)timeInBeats
+- (double) timeInBeats
   /* TYPE: Querying; Returns the receiver's notion of the current time.
    * Returns the receiver's notion of the current time
    * in beats.
@@ -1324,7 +1318,7 @@ static void evalAfterQueues()
     return self->time;
 }
 
--emptyQueue
+- emptyQueue
   /* TYPE: Requesting; Flushes the receiver's message queue.
    * Flushes the receiver's message queue and returns self.
    */
@@ -1340,11 +1334,11 @@ static void evalAfterQueues()
         }
     }
     if (!isPaused)
-      repositionCond(self,MK_ENDOFTIME);
+	repositionCond(self,MK_ENDOFTIME);
     return self;
 }
 
--(BOOL)isCurrentConductor
+- (BOOL) isCurrentConductor
   /* TYPE: Querying; YES if the receiver is sending a message.
    * Returns YES if the receiver
    * is currently sending a message.
@@ -1370,34 +1364,36 @@ static void evalAfterQueues()
 
 static void freeSp();
 
-MKMsgStruct *
-MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr)
+MKMsgStruct *MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr)
     /* Cancels MKScheduleMsgRequest() request and frees the structure. 
        Returns NULL.
        */
 {
     if (!aMsgStructPtr)
-      return NULL;
+	return NULL;
     if (!aMsgStructPtr->_conductor) { /* Special queue */
 	/* Special queue messages are cancelled differently. Here we just
 	   set the _toObject field to nil and leave the struct in the list. */
 	if (!aMsgStructPtr->_toObject) /* Already canceled? */
-	  return NULL;
+	    return NULL;
         [aMsgStructPtr->_toObject release];
-        if (aMsgStructPtr->_retainArg1) [aMsgStructPtr->_arg1 release];
-        if (aMsgStructPtr->_retainArg2) [aMsgStructPtr->_arg2 release];
+        if (aMsgStructPtr->_retainArg1) 
+	    [aMsgStructPtr->_arg1 release];
+        if (aMsgStructPtr->_retainArg2)
+	    [aMsgStructPtr->_arg2 release];
 	aMsgStructPtr->_toObject = nil;
 	aMsgStructPtr->_arg1 = nil;
 	aMsgStructPtr->_arg2 = nil;
 	if (aMsgStructPtr->_onQueue) 
-	  aMsgStructPtr->_conductorFrees = YES;
-	else freeSp(aMsgStructPtr);
+	    aMsgStructPtr->_conductorFrees = YES;
+	else
+	    freeSp(aMsgStructPtr);
 	return NULL;
     }
     if (aMsgStructPtr->_onQueue) { /* Remove from ordinary queue */
 	aMsgStructPtr->_next->_prev = aMsgStructPtr->_prev;
 	if (aMsgStructPtr->_prev)
-	  aMsgStructPtr->_prev->_next = aMsgStructPtr->_next;
+	    aMsgStructPtr->_prev->_next = aMsgStructPtr->_next;
 	else {
 	    MKConductor *conductor = aMsgStructPtr->_conductor;
 	    conductor->_msgQueue = aMsgStructPtr->_next;
@@ -1418,13 +1414,15 @@ MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr)
 		/* If curRunningCond is non-nil, adjustTimedEntry will be 
 		   done for us by masterConductorBody. */
 		if (inPerformance && !curRunningCond && wasHeadOfQueue)
-		  adjustTimedEntry(condQueue->nextMsgTime);
+		    adjustTimedEntry(condQueue->nextMsgTime);
 	    }
 	}
     }
     [aMsgStructPtr->_toObject release];
-    if (aMsgStructPtr->_retainArg1) [aMsgStructPtr->_arg1 release];
-    if (aMsgStructPtr->_retainArg2) [aMsgStructPtr->_arg2 release];
+    if (aMsgStructPtr->_retainArg1)
+	[aMsgStructPtr->_arg1 release];
+    if (aMsgStructPtr->_retainArg2)
+	[aMsgStructPtr->_arg2 release];
     freeSp(aMsgStructPtr);
     return NULL;
 }
@@ -1539,7 +1537,7 @@ MKMsgStruct *MKRescheduleMsgRequestWithObjectArgs(MKMsgStruct *aMsgStructPtr,id 
 MKMsgStruct *MKRepositionMsgRequest(MKMsgStruct *aMsgStructPtr,
 				    double timeOfNewMsg)
 {
-    MKMsgStruct *newMsgStructPtr = newMsgRequest(TARGETFREES,timeOfNewMsg,
+    MKMsgStruct *newMsgStructPtr = newMsgRequest(TARGETFREES, timeOfNewMsg,
 						    aMsgStructPtr->_aSelector,
 						    aMsgStructPtr->_toObject,
 						    aMsgStructPtr->_argCount,
@@ -1547,7 +1545,7 @@ MKMsgStruct *MKRepositionMsgRequest(MKMsgStruct *aMsgStructPtr,
 						    aMsgStructPtr->_retainArg1,
 						    aMsgStructPtr->_arg2,
 						    aMsgStructPtr->_retainArg2);
-    MKScheduleMsgRequest(newMsgStructPtr,aMsgStructPtr->_conductor);
+    MKScheduleMsgRequest(newMsgStructPtr, aMsgStructPtr->_conductor);
     MKCancelMsgRequest(aMsgStructPtr);
     return aMsgStructPtr = newMsgStructPtr;
 }
@@ -1564,10 +1562,10 @@ static MKMsgStruct *newMsgRequest(
     BOOL retainArg2)
     /* Create a new msg struct */
 {
-    MKMsgStruct * sp;
-    sp = allocSp();
+    MKMsgStruct *sp = allocSp();
+    
     if ((sp->_conductorFrees = doesConductorFree) == TARGETFREES)
-      sp->_methodImp = [destinationObject methodForSelector:whichSelector];
+	sp->_methodImp = [destinationObject methodForSelector: whichSelector];
     sp->_timeOfMsg = timeOfMsg;
     sp->_aSelector = whichSelector;
     sp->_toObject = [destinationObject retain];
@@ -1584,15 +1582,16 @@ static MKMsgStruct *newMsgRequest(
 	return NULL;
     case 2:
         sp->_arg2 = arg2;
-	if (retainArg2) [arg2 retain];
+	if (retainArg2)
+	    [arg2 retain];
     case 1:
         sp->_arg1 = arg1;
-	if (retainArg1) [arg1 retain];
+	if (retainArg1)
+	    [arg1 retain];
     case 0:
         break;
     }
     return(sp);
-  return NULL;
 }	
 
 +(MKMsgStruct *)afterPerformanceSel:(SEL)aSelector 
@@ -2029,44 +2028,39 @@ static double getNextMsgTime(MKConductor *aCond)
 */
 {
     MKMsgStruct *sp;
-    id arg1,arg2;
+    id arg1, arg2;
     va_list ap;
     
     va_start(ap,argCount); 
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
-    sp = newMsgRequest(CONDUCTORFREES, MK_ENDOFTIME,
-		       aSelector, toObject, argCount,
-		       arg1, FALSE, arg2, FALSE);
+    sp = newMsgRequest(CONDUCTORFREES, MK_ENDOFTIME, aSelector, toObject, argCount, arg1, FALSE, arg2, FALSE);
     _afterPerformanceQueue = insertSpecialQueue(sp, _afterPerformanceQueue, &_afterPerformanceQueueEnd);
     va_end(ap);
     return(sp);
 }
 
-+(MKMsgStruct *)_afterPerformanceSel:(SEL)aSelector 
- to:(id)toObject 
- argCount:(int)argCount
- arg1:(id)arg1 retain:(BOOL)retainArg1
- arg2:(id)arg2 retain:(BOOL)retainArg2
++ (MKMsgStruct *) _afterPerformanceSel: (SEL) aSelector 
+				    to: (id) toObject 
+			      argCount: (int) argCount
+				  arg1: (id) arg1 retain: (BOOL) retainArg1
+				  arg2: (id) arg2 retain: (BOOL) retainArg2
 /* 
   Same as afterPerformanceSel:to:argCount: but ensures that message will
   be sent before any of the messages enqueued with that method. Private
   to the musickit.
 */
 {
-    MKMsgStruct *sp;
-    _afterPerformanceQueue = 
-      insertSpecialQueue(sp = newMsgRequest(CONDUCTORFREES,MK_ENDOFTIME,
-					    aSelector,toObject,argCount,
-					    arg1, retainArg1,
-					    arg2, retainArg2),
-			 _afterPerformanceQueue,&_afterPerformanceQueueEnd);
+    MKMsgStruct *sp = newMsgRequest(CONDUCTORFREES, MK_ENDOFTIME, aSelector, toObject, argCount, arg1, retainArg1, arg2, retainArg2);
+    
+    _afterPerformanceQueue = insertSpecialQueue(sp, _afterPerformanceQueue, &_afterPerformanceQueueEnd);
     return(sp);
 }
 
-+(MKMsgStruct *)_newMsgRequestAtTime:(double)timeOfMsg
-  sel:(SEL)whichSelector to:(id)destinationObject
-  argCount:(int)argCount, ...;
++ (MKMsgStruct *) _newMsgRequestAtTime: (double) timeOfMsg
+				   sel: (SEL) whichSelector
+				    to: (id) destinationObject
+			      argCount: (int) argCount, ...;
 /* TYPE: Requesting; Creates and returns a new message request.
  * Creates and returns message request but doesn't schedule it.
  * The return value can be passed as an argument to the
@@ -2078,21 +2072,22 @@ static double getNextMsgTime(MKConductor *aCond)
  * sel:to:withDelay:argCount: methods.
  */
 {
-    id arg1,arg2;
+    id arg1, arg2;
     va_list ap;
-    va_start(ap,argCount); 
-    arg1 = va_arg(ap,id);
-    arg2 = va_arg(ap,id);
+    
+    va_start(ap, argCount); 
+    arg1 = va_arg(ap, id);
+    arg2 = va_arg(ap, id);
     va_end(ap);
-    return newMsgRequest(
-        TARGETFREES, timeOfMsg, whichSelector, destinationObject, argCount, arg1, FALSE, arg2, FALSE);
+    return newMsgRequest(TARGETFREES, timeOfMsg, whichSelector, destinationObject, argCount, arg1, FALSE, arg2, FALSE);
 }
 
-+(MKMsgStruct *)_newMsgRequestAtTime:(double)timeOfMsg
-  sel:(SEL)whichSelector to:(id)destinationObject
-  argCount:(int)argCount
-  arg1:(id)arg1 retain:(BOOL)retainArg1
-  arg2:(id)arg2 retain:(BOOL)retainArg2
++ (MKMsgStruct *) _newMsgRequestAtTime: (double) timeOfMsg
+				   sel: (SEL) whichSelector 
+				    to: (id) destinationObject
+			      argCount: (int) argCount
+				  arg1: (id) arg1 retain: (BOOL) retainArg1
+				  arg2: (id) arg2 retain: (BOOL) retainArg2
 /* TYPE: Requesting; Creates and returns a new message request.
  * Creates and returns message request but doesn't schedule it.
  * The return value can be passed as an argument to the
@@ -2104,13 +2099,10 @@ static double getNextMsgTime(MKConductor *aCond)
  * sel:to:withDelay:argCount: methods.
  */
 {
-    return 
-        newMsgRequest(
-	    TARGETFREES, timeOfMsg, whichSelector, destinationObject,
-	    argCount, arg1, retainArg1, arg2, retainArg2);
+    return newMsgRequest(TARGETFREES, timeOfMsg, whichSelector, destinationObject, argCount, arg1, retainArg1, arg2, retainArg2);
 }
 
--(void)_scheduleMsgRequest:(MKMsgStruct *)aMsgStructPtr
+- (void) _scheduleMsgRequest: (MKMsgStruct *) aMsgStructPtr
   /* TYPE: Requesting; Schedules a message request with the receiver.
    * Sorts the message request aMsgStructPtr
    * into the receiver's message queue.  aMsgStructPtr is 
@@ -2119,20 +2111,22 @@ static double getNextMsgTime(MKConductor *aCond)
    */
 {
     if (aMsgStructPtr && (!aMsgStructPtr->_onQueue))
-        insertMsgQueue(aMsgStructPtr,self);
+        insertMsgQueue(aMsgStructPtr, self);
 }
 
-+(void)_scheduleMsgRequest:(MKMsgStruct *)aMsgStructPtr
++ (void) _scheduleMsgRequest: (MKMsgStruct *) aMsgStructPtr
   /* Same as _scheduleMsgRequest: but uses clock conductor. 
    */
 {
     if (aMsgStructPtr && (!aMsgStructPtr->_onQueue))
-        insertMsgQueue(aMsgStructPtr,clockCond);
+        insertMsgQueue(aMsgStructPtr, clockCond);
 }
 
--(MKMsgStruct *)_rescheduleMsgRequest:(MKMsgStruct *)aMsgStructPtr
-  atTime:(double)timeOfNewMsg sel:(SEL)whichSelector
-  to:(id)destinationObject argCount:(int)argCount, ...;
+- (MKMsgStruct *) _rescheduleMsgRequest: (MKMsgStruct *) aMsgStructPtr
+				 atTime: (double) timeOfNewMsg 
+				    sel: (SEL) whichSelector
+				     to: (id) destinationObject 
+			       argCount: (int) argCount, ...;
   /* TYPE: Requesting; Reschedules a message request with the receiver.
    * Redefines the message request aMsgStructPtr according
    * to the following arguments and resorts
@@ -2144,31 +2138,30 @@ static double getNextMsgTime(MKConductor *aCond)
 
 /* Same as MKReschedule */
 {
-    id arg1,arg2;
+    id arg1, arg2;
     va_list ap;
+    
     va_start(ap,argCount); 
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
-    return MKRescheduleMsgRequest(aMsgStructPtr,self,timeOfNewMsg,
-    		whichSelector,destinationObject,argCount,arg1,FALSE,
-				  arg2, FALSE);
     va_end(ap);
+    return MKRescheduleMsgRequest(aMsgStructPtr, self, timeOfNewMsg, whichSelector, destinationObject, argCount, arg1, FALSE, arg2, FALSE);
 }
 
--(MKMsgStruct *)_rescheduleMsgRequestWithObjectArgs:(MKMsgStruct *)aMsgStructPtr
-  atTime:(double)timeOfNewMsg sel:(SEL)whichSelector
-  to:(id)destinationObject argCount:(int)argCount
-  arg1:(id)arg1 retain:(BOOL)retainArg1
-  arg2:(id)arg2 retain:(BOOL)retainArg2
+- (MKMsgStruct *) _rescheduleMsgRequestWithObjectArgs: (MKMsgStruct *) aMsgStructPtr
+					       atTime: (double) timeOfNewMsg
+						  sel: (SEL) whichSelector
+						   to: (id) destinationObject
+					     argCount: (int) argCount
+						 arg1: (id) arg1 retain: (BOOL) retainArg1
+						 arg2: (id) arg2 retain: (BOOL) retainArg2
 /* Same as MKReschedule */
 {
-    return MKRescheduleMsgRequest(aMsgStructPtr,self,timeOfNewMsg,
-    		whichSelector,destinationObject,argCount,arg1,retainArg1,
-				  arg2, retainArg2);
+    return MKRescheduleMsgRequest(aMsgStructPtr, self, timeOfNewMsg, whichSelector, destinationObject, argCount, arg1, retainArg1, arg2, retainArg2);
 }
 
 
-+(MKMsgStruct *)_cancelMsgRequest:(MKMsgStruct *)aMsgStructPtr
++ (MKMsgStruct *) _cancelMsgRequest: (MKMsgStruct *) aMsgStructPtr
   /* TYPE: Requesting; Cancels the message request aMsgStructPtr.
    * Removes the message request pointed to by
    * aMsgStructPtr. 
@@ -2182,7 +2175,7 @@ static double getNextMsgTime(MKConductor *aCond)
     return MKCancelMsgRequest(aMsgStructPtr);
 }
 
-+(double)_adjustTimeNoTE:(double)desiredTime     
++ (double) _adjustTimeNoTE: (double) desiredTime     
   /* TYPE: Modifying; Sets the current time to desiredTime.
    * Sets the factory's notion of the current time to
    * desiredTime.  desiredTime is clipped
@@ -2194,24 +2187,24 @@ static double getNextMsgTime(MKConductor *aCond)
 {
     double t;
     if (!inPerformance || performanceIsPaused)
-      return clockTime;
+	return clockTime;
     /* FIXME Should maybe do a gettime() and compare with the time
-      we've been handed. If they're different, we need to 
-      adjust startTime (subtract difference) and then adjust timed entry.
-      */
+	we've been handed. If they're different, we need to 
+	adjust startTime (subtract difference) and then adjust timed entry.
+	*/
     t = MIN(desiredTime, condQueue->nextMsgTime);
     t = MAX(t, clockTime);
     setTime(t);
     return clockTime;
 }
 
-+(double)_getLastTime
++ (double) _getLastTime
   /* See time.m: _MKLastTime(). */ 
 {
     return (clockTime != 0.0) ? clockTime : oldClockTime;
 }
 
-+_adjustDeltaTThresholds
++ _adjustDeltaTThresholds
 {
     double dt = -MKGetDeltaT();
     deltaTThresholdLow = dt * (1 - deltaTThresholdLowPC);
@@ -2229,7 +2222,7 @@ static double getNextMsgTime(MKConductor *aCond)
    return self;
 }
 
--_resume
+- _resume
     /* This is factored out of resume to avoid circularity in MTC
     * implementation.
     */
@@ -2238,20 +2231,20 @@ static double getNextMsgTime(MKConductor *aCond)
 	return self;
     isPaused = NO;
     oldAdjustedClockTime = clockTime - _pauseOffset;
-    repositionCond(self,beatToClock(self,PEEKTIME(_msgQueue)));
+    repositionCond(self, beatToClock(self, PEEKTIME(_msgQueue)));
     pauseFor = MKCancelMsgRequest(pauseFor);
     return self;
 }
 
--_pause
+- _pause
     /* Used by MTC mechanism */
 {
     if (isPaused)
 	return self;
     isPaused = YES;
     repositionCond(self,PAUSETIME);
-    if ([delegate respondsToSelector:@selector(conductorDidPause:)])
-	[delegate conductorDidPause:self];
+    if ([delegate respondsToSelector: @selector(conductorDidPause:)])
+	[delegate conductorDidPause: self];
     return self;
 }
 
