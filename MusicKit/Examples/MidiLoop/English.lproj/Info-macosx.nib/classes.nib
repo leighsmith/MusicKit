@@ -1,0 +1,25 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {orderFrontNXColorPanel = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {go = id; showInfoPanel = id; }; 
+            CLASS = MidiLoop; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {infoPanel = NSPanel; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {go = id; showInfoPanel = id; terminate = id; }; 
+            CLASS = MyApp; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {infoPanel = id; midiObj = id; }; 
+            SUPERCLASS = NSApplication; 
+        }
+    ); 
+    IBVersion = 1; 
+}
