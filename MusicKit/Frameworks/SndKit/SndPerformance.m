@@ -97,7 +97,7 @@ startPosition: (double) startPosition
 
     startAtIndex = samplingRate * startPosition;
     playIndex    = startAtIndex;
-    endAtIndex   = startAtIndex + samplingRate * duration / deltaTime;
+    endAtIndex   = startAtIndex + samplingRate * duration * deltaTime;
     actualTime   = 0.0;
   }
   return self;
