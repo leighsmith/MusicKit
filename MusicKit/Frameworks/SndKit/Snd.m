@@ -246,6 +246,20 @@ static int ioTags = 1000;
     return nil;
 }
 
+- (unsigned) hash
+{
+  unsigned ss = 0;
+  if (soundStruct) {
+    // take into account all basic metadata, including size, formate, rate, channels
+    ss = ((unsigned *)soundStruct)[0] + ((unsigned *)soundStruct)[1] + 
+         ((unsigned *)soundStruct)[2] + ((unsigned *)soundStruct)[3] +
+	 ((unsigned *)soundStruct)[4] + ((unsigned *)soundStruct)[5] +
+         ((unsigned *)soundStruct)[6] + ((unsigned *)soundStruct)[7];
+  }
+  return [name length] * 256 + 512 * tag + ss + 1023 *soundStructSize;
+
+}
+
 // return the file extensions supported by sox.
 + (NSArray *) soundFileExtensions
 {
