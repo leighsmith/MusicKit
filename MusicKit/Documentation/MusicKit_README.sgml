@@ -16,13 +16,14 @@ and binary distributions. Likewise if the distribution web site changes.
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
 <!entity bibliography        SYSTEM "Publications/PublishedDocumentation.sgml">
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
-<!entity maintaineremail "leigh@leighsmith.com">
-<!entity mkvers "5.4">
-<!entity mkvertuple "5.4.4">
+<!entity maintaineremail "leigh@leighsmith.com_nospam">
+<!entity mkvertuple "5.5.0">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://prdownloads.sourceforge.net/musickit">
-<!entity mkcvsweb "http://cvs.musickit.org">
+<!entity mkcvsweb "http://sourceforge.net/cvs/?group_id=9881">
 <!entity mksfweb "http://www.sourceforge.net/projects/musickit">
+<!-- Disable mklists to stop spam -->
+<!entity mklists "@lists.sourceforge.net_nospam">
 <!-- GNUstep Libraries used -->
 <!entity gnustepdownload "http://www.gnustep.org">
 <!entity gsmakevertuple "1.6.0">
@@ -52,14 +53,13 @@ and binary distributions. Likewise if the distribution web site changes.
 
 <article id="README">
   <articleinfo>
-    <title>The MusicKit V&mkvers;</title>
+    <title>The MusicKit V&mkvertuple;</title>
 
 <!-- TODO
    Add in the MusicKit icon
 
    Ok, how do we place a logo for the document in the title, since
    this is legal DocBook, but is ignored?
--->
     <mediaobject>
       <imageobject>
 	<imagedata FileRef="Images/MK_icon.eps" format="eps">
@@ -71,6 +71,7 @@ and binary distributions. Likewise if the distribution web site changes.
 	<imagedata FileRef="Images/.dir.tiff" format="tiff">
       </imageobject>
     </mediaobject>
+-->
 
     <author>
       <firstname>Leigh</firstname>
@@ -91,7 +92,7 @@ and binary distributions. Likewise if the distribution web site changes.
       </affiliation>
     </author>
     <copyright>
-      <year>2000-2003</year>
+      <year>2000-2004</year>
       <holder>The MusicKit Project</holder>
     </copyright>
     <revhistory>
@@ -159,7 +160,12 @@ linkend=applications>utilities, applications</link> and sample score
 documents. The <productname>MusicKit</productname> is dependent on the
 <productname>SndKit</productname> distribution, originally written by
 Stephen Brandon, and both Framework collections are available at the
-same distribution site.
+same distribution site. The <productname>SndKit</productname> was
+written to be a complete open source implementation of NeXTs
+<productname>SoundKit</productname>. The re-write started and almost
+finished before the <productname>SoundKit</productname> itself was
+released in source code form.
+
 </para>
 
     <para>
@@ -298,6 +304,21 @@ Connectable audio processing modules (&ldquo;plugins&rdquo) including
 standard audio effects such as reverb.
 </para>
         </listitem>
+	<listitem>
+	  <para>
+Sound data held in a specifiable variety of formats, i.e 8, 16, 24 bit or
+floating point. Allows trading off sample data size vs. processing
+time.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+<acronym>MP3</acronym> file reading and writing. Decoding of
+<acronym>MP3</acronym> can be done in a background thread after
+reading, or on-the-fly during playback, allowing selection of memory
+consumption versus processor load.
+</para>
+	</listitem>
         <listitem>
           <para>
 <acronym>MP3</acronym> and <productname>Ogg/Vorbis</productname>
@@ -407,8 +428,8 @@ opensourcedirectory.org
       <itemizedlist>
 	<listitem>
 	  <para>
-Announcements of new releases are sent to
-<email>musickit-announce@lists.sourceforge.net</email>. 
+Announcements of new releases are sent to the
+<email>musickit-announce&mklists;</email> mail list. 
 Subscribe to the list by visiting 
 <ulink url="http://lists.sourceforge.net/mailman/listinfo/musickit-announce">
 http://lists.sourceforge.net/mailman/listinfo/musickit-announce</ulink>.
@@ -419,7 +440,7 @@ http://lists.sourceforge.net/mailman/listinfo/musickit-announce</ulink>.
 	  <para>
 Discussions on development of the <productname>MusicKit</productname> and notices of updates
 committed to the CVS source repository are sent to
-<email>musickit-developer@lists.sourceforge.net</email>. 
+<email>musickit-developer&mklists;</email> mail list. 
 Subscribe to the list by visiting 
 <ulink url="http://lists.sourceforge.net/mailman/listinfo/musickit-developer">
 http://lists.sourceforge.net/mailman/listinfo/musickit-developer</ulink>.
@@ -430,7 +451,7 @@ http://lists.sourceforge.net/mailman/listinfo/musickit-developer</ulink>.
 	  <para>
 Discussions on writing applications using the <productname>MusicKit</productname> (not developing
 it) are sent to
-<email>musickit-users@lists.sourceforge.net</email>. 
+<email>musickit-users&mklists;</email> mail list. 
 Subscribe to the list by visiting 
 <ulink url="http://lists.sourceforge.net/mailman/listinfo/musickit-users">
 http://lists.sourceforge.net/mailman/listinfo/musickit-users</ulink>.
@@ -539,7 +560,7 @@ function and <productname>Objective-C</productname> class.
       <listitem>
 	<para>
 The <productname>MusicKit</productname> was designed and implemented
-by David A. Jaffe <email>david@jaffe.com</email>, and the
+by David A. Jaffe, and the
 <acronym>DSP</acronym> computer-music and array-processing software
 was designed and implemented by Julius O. Smith III while at NeXT.
 The <productname>SoundKit</productname> (forerunner of the
@@ -646,7 +667,7 @@ contributors (acknowledged in code comments).
 
       <listitem>
 	<para>
-Stephen Brandon <email>sbrandon@music.gla.ac.uk</email> did the
+Stephen Brandon did the
 initial OpenStep port in early 1998 and the majority of the conversion
 work. The <productname>MusicKit</productname> now uses the
 <productname>SndKit</productname>, written by Stephen Brandon, rather
@@ -656,7 +677,7 @@ than the SoundKit for its sound processing.
 
       <listitem>
 	<para>
-Leigh M. Smith <email>leigh@cs.uwa.edu.au</email>, now
+Leigh M. Smith, now
 <email>&maintaineremail;</email> fixed bugs and ported the
 <productname>MusicKit</productname> and <acronym>MIDI</acronym>
 drivers to <productname>Intel</productname> and
@@ -674,7 +695,7 @@ url="&mksfweb;">sourceforge project</ulink> was created in 2000.
 <productname>DirectSound</productname> interface code for
 <productname>Windows</productname>, <acronym>MP3</acronym> encoding
 and <acronym>FX</acronym> architecture was contributed by SKoT
-McDonald <email>skot@vellocet.com</email>.
+McDonald.
         </para>
       </listitem>
 
@@ -1371,11 +1392,20 @@ for regression testing.
       </para>
     </sect2>
 
+    <sect2 id="RetrieveCVS">
+      <title>Retrieving from the CVS repository</title>
+      <para>
+The bleeding edge source is obtainable from the CVS repository on
+<ulink url="http://www.sourceforge.net">sourceforge</ulink> and is
+described in detail by <ulink url="&mkcvsweb;">this sourceforge page</ulink>.
+</para>
+    </sect2>
+
     <sect2 id=support>
       <title>Supporting Libraries</title>
       <para>
 The following libraries need to be compiled and installed prior to
-compiling the MK source. These may be installable using <ulink
+compiling the MusicKit source. These may be installable using <ulink
 url="http://www.sourceforge.net/projects/fink">fink</ulink>.
 </para>
       <note>
@@ -1623,7 +1653,9 @@ release:
                 </para>
                 <note>
                   <para>
-                    This driver is not needed and will not work on <productname>MacOS X</productname>.
+                    This driver is not needed and will not work on
+                    <productname>MacOS X</productname>, only
+                    <productname>MacOS X-Server V1.2</productname>.
                   </para>
                 </note>
 	      </listitem>
@@ -2016,8 +2048,8 @@ platform locations given in <xref linkend=installlocations>.
 	  </row>
 	  <row>
 	    <entry><productname>GNUStep</productname> (on <productname>Windows</productname>)</entry>
-	    <entry><acronym>TBD</acronym></entry>
-	    <entry><acronym>TBD</acronym></entry>
+	    <entry><filename class=directory>C:\GNUstep\Local\Library\Frameworks</filename></entry>
+	    <entry><filename class=directory>C:\GNUstep\Local\Applications</filename></entry>
 	  </row>
 	</tbody>
       </tgroup>
@@ -2045,21 +2077,24 @@ there and you're done.
     <sect2 id="compilation">
       <title>Compilation</title>
 
-      <para>
-At the moment, there is no single <command>make</command> operation to
+      <sect3 id="compilationOther">
+      <title>Compiling on OpenStep, GNUstep, MacOS X Server 1.2 and MacOS 10.1/10.2</title>
+
+	<para>
+With the exception of MacOS 10.3, there is no single operation to
 build the entire source tree. Use
 <application>ProjectBuilder</application> or <command>make</command>
 on <productname>OpenStep</productname> or <productname>MacOS X Server
 V1.X</productname>, <command>make</command> on
-<productname>GNUStep</productname> supported platforms and the new
+<productname>GNUStep</productname> supported platforms, the new
 <application>Project Builder</application> or <command>pbxbuild
-install DSTROOT=/</command> on <productname>MacOS X</productname>. The
-steps to build are:
+install DSTROOT=/</command> on <productname>MacOS
+10.0-10.2</productname> systems. The steps to build are:
 </para>
 
-      <orderedlist>
-	<listitem>
-	  <para>
+	<orderedlist>
+	  <listitem id="libraryInstallation">
+	    <para>
 Compile and install
 <link linkend=oggvorbis><command>libogg</command></link>,
 <link linkend=oggvorbis><command>libvorbis</command></link>,
@@ -2068,35 +2103,36 @@ Compile and install
 <link linkend=libshout><command>libshout</command></link>  and 
 <link linkend=portaudio><command>portaudio</command></link>
 libraries into
-<filename class=directory>/usr/local/lib</filename>.
+<filename class=directory>/usr/local/lib</filename>. Refer to the
+documentation accompanying each library as to how to build and install it.
 </para>
-	</listitem>
-	<listitem>
-	  <para>
+	  </listitem>
+	  <listitem>
+	    <para>
 Compile and install the appropriate platform specific
 <filename>MKPerformSndMIDI</filename> framework.
 </para>
-	</listitem>
-	<listitem>
-	  <para>
+	  </listitem>
+	  <listitem>
+	    <para>
 Compile and install the <filename>SndKit</filename> framework.
 </para>
-	</listitem>
-	<listitem>
-	  <para>
+	  </listitem>
+	  <listitem>
+	    <para>
 Compile and install <filename>MKDSP_56k</filename> framework if on
 <productname>OpenStep</productname>, or
 <filename>MKDSP_Native</filename> framework if on
 any other operating system.
 </para>
-	</listitem>
-	<listitem>
+	  </listitem>
+	  <listitem>
 	  <para>
 Compile and install the <filename>MusicKit</filename> framework.
 </para>
-	</listitem>
-	<listitem>
-	  <para>
+	  </listitem>
+	  <listitem>
+	    <para>
 Compile and install <filename>MKUnitGenerators</filename> and
 <filename>MKSynthPatches</filename> frameworks if running on
 OpenStep. These frameworks won't compile on <productname>MacOS
@@ -2107,9 +2143,9 @@ also? :-) In theory the 56K assembler runs on
 <productname>Windows</productname>, so it may be possible to run these
 on <productname>Windows</productname>, but that is yet to be tested.
 </para>
-	</listitem>
-	<listitem>
-	  <para>
+	  </listitem>
+	  <listitem>
+	    <para>
 Compile and install applications and examples located in the
 directories <filename
 class=directory>Applications</filename> and <filename
@@ -2121,12 +2157,12 @@ will determine which applications and examples will build for you. The
 application <application>ScorePlayer</application> and the command
 <command>playsnd</command> will build without those frameworks.
 </para>
-	</listitem>
-        <listitem>
-          <para>
+	  </listitem>
+	  <listitem>
+	    <para>
 Compile and install an appropriate <acronym>MIDI</acronym> driver.
 </para>
-      <para>
+	    <para>
 To compile the <productname>MacOS X-Server V1.2</productname>
 Zilog <acronym>SCC</acronym>
 <acronym>MIDI</acronym> driver, some header files are missing.  You
@@ -2137,7 +2173,7 @@ of the <productname>SoundKit</productname>, copy them from a
 for <link linkend=DriverKitHeaders>download</link>.
 </para>
 
-<para>
+	    <para>
 MacOS X Developer release includes source for a generic
 <acronym>USB</acronym> <acronym>MIDI</acronym> driver at
 <filename>/Developer/Examples/CoreAudio/MIDI/SampleUSBDriver</filename>.
@@ -2148,8 +2184,23 @@ MacOS X available for download from <ulink
 url="http://www.midiman.com">MIDIMan's web page</ulink> and other
 vendors may well have drivers available for their hardware.
 </para>
-	</listitem>
-      </orderedlist>
+	  </listitem>
+	</orderedlist>
+
+      </sect3>
+
+      <sect3 id="compilationMacOS103">
+	<title>Compilation on MacOS 10.3 (Panther)</title>
+	<para>
+For MacOS 10.3, <filename>MusicKit.xcode</filename> in the topmost
+directory in the distribution can be used to build the entire source
+distribution. Note however, the same libraries must be installed as
+described in <link linkend=libraryInstallation>the section on library
+installation</link>. Use the <application>Xcode</application>
+application building or <command>xcodebuild install
+-buildtarget="MusicKit (Aggregate)" DSTROOT=/</command>.
+</para>
+      </sect3>
 
     </sect2>
 
@@ -2304,7 +2355,7 @@ array. The parent object is expected to copy it.
     <title>Contributing Fixes</title>
     <para>
 Please! Changes are maintained via an 
-<ulink url="&mkcvsweb;/cgi-bin/viewcvs.cgi/musickit">open CVS system</ulink>.
+<ulink url="&mkcvsweb;">open CVS system</ulink>.
 If you send me <email>&maintaineremail;</email> changes I will incorporate
 them and check them in. If you are planning to do major work, I can
 register you as a developer to provide write access to the CVS server.
@@ -2324,6 +2375,35 @@ the author at the start of this document.
     <para>
 If you have discovered a bug, please report it via the
 <productname>sourceforge</productname> bug tracker.
+</para>
+  </sect1>
+
+  <sect1 id=Donations>
+    <title>Supporting The MusicKit Project by Donations</title>
+
+    <para>
+The MusicKit project is run by volunteers who donate their development
+time, equipment and personal money instead of working on paying
+jobs. While we prefer contributions of development time and of
+code, monetary donations allow us in a very real sense to continue to
+develop the MusicKit for the benefit of all your projects, including
+commercial projects.
+</para>
+
+    <para>
+Please consider donating to the MusicKit project to keep releases and
+bug fixes regularly delivered. You can make online donations via
+<ulink
+url="http://sourceforge.net/project/project_donations.php?group_id=9881">the
+sourceforge donations system</ulink>.
+</para>
+
+    <para>
+The MusicKit Project developers are also available for contracting
+work to add substantial features to the MusicKit, to consult on
+integration of MusicKit technologies into other projects and to work
+on other complimentary projects. Please direct questions to the project
+administrator <email>&maintaineremail;</email>.
 </para>
   </sect1>
 
