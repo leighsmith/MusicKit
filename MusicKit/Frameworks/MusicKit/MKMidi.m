@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/08/26 19:54:54  leigh
+  Code cleanup, Win32 clock support
+
   Revision 1.3  1999/08/08 01:59:22  leigh
   Removed extraVars cruft
 
@@ -103,7 +106,6 @@ Modification history:
 #import "tokens.h"
 #import "_error.h"
 #import "_ParName.h"
-//#import "_NoteSender.h" TODO redundant as it's in MKNoteSender.h
 #import "_midi.h"
 #import "_time.h"
 #import "ConductorPrivate.h"
@@ -145,7 +147,7 @@ NSLocalizedStringFromTableInBundle(@"Problem communicating with MIDI device driv
 
 /* Mach stuff */
 
-/* Explanation of Intel support:
+/* Explanation of NeXTStep/OpenStep Intel support (not Win32):
 
    On the DSP, we use "soft" integers to map to "hard" driver/unit pairs.
    Here, we pass in a device 'name' in the form "midiN", where N is an integer.
@@ -256,7 +258,7 @@ static MKMidi *getMidiFromRecvPort(port_t aPort)
 
 static int closeMidiDev(MKMidi *self)
 {
-    int somebodyElseHasOwnership = 0;
+    BOOL somebodyElseHasOwnership = NO;
     NSMutableArray *otherUnits;
 
     if (!self->ownerPort)
@@ -275,14 +277,14 @@ static int closeMidiDev(MKMidi *self)
     if ([self unitHasMTC])
       tearDownMTC(self);
     if ([otherUnits count] == 0) 
-      somebodyElseHasOwnership = 0;
+      somebodyElseHasOwnership = NO;
     else {
 	MKMidi *aMidi;
 	int i,cnt = [otherUnits count];
 	for (i=0; i<cnt && !somebodyElseHasOwnership; i++) {
 	    aMidi = [otherUnits objectAtIndex:i];
 	    if (aMidi->ownerPort) 
-	      somebodyElseHasOwnership = 1;
+	      somebodyElseHasOwnership = YES;
 	}
     }
     if (somebodyElseHasOwnership)
@@ -337,6 +339,7 @@ static int openMidiDev(MKMidi *self)
     BOOL b;
     NSMutableArray *otherUnits;
     self->unit = getNumSuffix([self->midiDev cString],&b);
+#ifndef WIN32
     r = netname_look_up(name_server_port, [self->hostname cString], [DRIVER_NAME cString],
 			&(self->devicePort));
     if (r != KERN_SUCCESS) {
@@ -353,12 +356,16 @@ static int openMidiDev(MKMidi *self)
 	    aMidi = [otherUnits objectAtIndex:i];
 	    /* Should be the first one, but just in case... */
 	    if (aMidi->ownerPort != PORT_NULL) {
-            self->ownerPort = aMidi->ownerPort;
+                self->ownerPort = aMidi->ownerPort;
 		break;
 	    }
 	}
     }
     [otherUnits release];
+#else
+    self->devicePort = !PORT_NULL; // kludge it so it seems initialised
+    self->ownerPort = PORT_NULL;
+#endif
     if (!self->ownerPort) {
 	r = port_allocate(task_self(), &self->ownerPort);
 	if (r != KERN_SUCCESS) {
@@ -387,8 +394,7 @@ static int openMidiDev(MKMidi *self)
 	return r;
     }
 
-    r = MIDISetClockMode(self->devicePort, self->ownerPort, -1,
-			 MIDI_CLOCK_MODE_INTERNAL);
+    r = MIDISetClockMode(self->devicePort, self->ownerPort, -1, MIDI_CLOCK_MODE_INTERNAL);
     if (r != KERN_SUCCESS) {
 	_MKErrorf(MK_musicKitErr,OPEN_ERROR);
 	closeMidiDev(self);
@@ -478,27 +484,21 @@ static int stopMidiClock(MKMidi *self)
 {
     int r;
     if (self->tvs->synchConductor) {
-	r = MIDIRequestExceptions(self->devicePort,self->ownerPort,
-				  PORT_NULL);
+	r = MIDIRequestExceptions(self->devicePort,self->ownerPort, PORT_NULL);
 	if (r != KERN_SUCCESS)
-	  _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r),
-		    "stopMidiClock MIDIRequestExceptions");
-	r = MIDISetClockMode(self->devicePort,self->ownerPort,self->unit,
-			     MIDI_CLOCK_MODE_INTERNAL);
+	  _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), "stopMidiClock MIDIRequestExceptions");
+	r = MIDISetClockMode(self->devicePort,self->ownerPort,self->unit, MIDI_CLOCK_MODE_INTERNAL);
 	if (r != KERN_SUCCESS)
-	  _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r),
-		    "stopMidiClock MIDISetClockMode");
+	  _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), "stopMidiClock MIDISetClockMode");
 	r = MIDIRequestAlarm(self->devicePort,self->ownerPort,PORT_NULL,0);
 	if (r != KERN_SUCCESS)
-	  _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r),
-		    "stopMidiClock MIDIRequestAlarm");
+	  _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), "stopMidiClock MIDIRequestAlarm");
 	self->tvs->alarmPending = NO;
 	return r;
     }
     r = MIDIStopClock(self->devicePort,self->ownerPort);
     if (r != KERN_SUCCESS)
-      _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r),
-		"stopMidiClock MIDIStopClock");
+      _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), "stopMidiClock MIDIStopClock");
     return r;
 }
 
@@ -596,8 +596,7 @@ static int setMidiSysIgnore(MKMidi *self,unsigned bits)
 
 /* Low-level output routines */
 
-/* We currently use MIDI "raw" mode. Perhaps cooked mode would be more
-   efficient? */
+/* We currently use MIDI "raw" mode. Perhaps cooked mode would be more efficient? */
 
 #define MIDIBUFSIZE MIDI_MAX_EVENT
 
@@ -627,24 +626,20 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
     /* Send any buffered bytes and reset pointer to start of buffer */
 {
     int r;
-//    extraInstanceVars *ivars;
     MKMidi *midiObj;
     int nBytes;
     nBytes = bufPtr - &(midiBuf[0]);
     if (nBytes == 0)
 	return;
     midiObj = ((MKMidi *)ptr->_owner);
-//    ivars = midiObj->_extraVars;
     for (; ;) {
-	r = MIDISendData(midiObj->devicePort,midiObj->ownerPort,midiObj->unit,
-			 &(midiBuf[0]),nBytes);
+	r = MIDISendData(midiObj->devicePort,midiObj->ownerPort,midiObj->unit, &(midiBuf[0]),nBytes);
 	if (r == MIDI_ERROR_QUEUE_FULL) 
 	    waitForRoom(midiObj,nBytes,MIDI_NO_TIMEOUT);
 	else break;
     }
     if (r != KERN_SUCCESS) 
-	_MKErrorf(MK_machErr,OUTPUT_ERROR,midiDriverErrorString(r),
-		  "sendBufferedData");
+	_MKErrorf(MK_machErr,OUTPUT_ERROR,midiDriverErrorString(r), "sendBufferedData");
     bufPtr = &(midiBuf[0]);
 }
 
@@ -930,7 +925,6 @@ static void midiIn(msg_header_t *msg,void *self)
     int r;
     MIDIReplyFunctions recvStruct =
         { /* Tells driver funcs to call */ my_data_reply,0,0,0};
-//    extraInstanceVars *ivars = ((Midi *)self)->_extraVars;
     r = MIDIHandleReply(msg,&recvStruct);        /* This gets data */
     if (r != KERN_SUCCESS)
       _MKErrorf(MK_machErr,INPUT_ERROR,
@@ -1059,7 +1053,7 @@ static BOOL initDriverKitBasedMIDIs(void)
        */
     midiDriverList = [[NSMutableArray alloc] init];
     /* Get MIDI drivers */
-    for (i=0; i < [installedDrivers count]; i++) {
+    for (i = 0; i < [installedDrivers count]; i++) {
         aConfigTable = [installedDrivers objectAt:i]; 	/* Each driver */
         familyStr = [aConfigTable valueForStringKey:"Family"];
 //        fprintf(stderr, "%s\n", [aConfigTable valueForStringKey: "Driver Name"]);
