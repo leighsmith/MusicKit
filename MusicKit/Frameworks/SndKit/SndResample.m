@@ -1,6 +1,41 @@
 /* 
   $Id$
 
+ Description:
+   Sampling Rate Conversion Subroutines
+   Implements sampling rate conversions by (almost) arbitrary factors.
+   The program internally uses 16-bit data and 16-bit filter coefficients.
+
+   Reference: "A Flexible Sampling-Rate Conversion Method,"
+     J. O. Smith and P. Gossett, ICASSP, San Diego, 1984, Pgs 19.4.
+
+   CHANGES from original SAIL program:
+
+   1. LpScl is scaled by factor (when factor < 1) in resample() so this is
+         done whether the filter was loaded or created.
+   2. makeFilter() - ImpD[] is created from Imp[] instead of ImpR[], to
+	 avoid problems with round-off errors.
+   3. makeFilter() - ImpD[Nwing-1] gets NEGATIVE Imp[Nwing-1].
+   4. SrcU/D() - Switched order of making guard bits (v>>Nhg) and
+         normalizing.  This was done to prevent overflow.
+
+   LIBRARIES needed:
+
+   1. filterkit
+       readFilter() - reads standard filter file
+       FilterUp()   - applies filter to sample when factor >= 1
+       FilterUD()   - applies filter to sample for any factor
+   2. math
+
+ 
+ Original Author:
+   BY: Julius Smith (at CCRMA, Stanford U)
+   C BY: translated from SAIL to C by Christopher Lee Fraley
+         (cf0v@spice.cs.cmu.edu or @andrew.cmu.edu)
+         maintained by Julius Smith (jos) and Mike Minnick (mminnick) at NeXT
+   Added to the SndKit handling a variety of sound formats by Stephen Brandon
+   Cleaned up by Leigh Smith
+
  Original License:
    Copyright (c) 1984, Julius Smith
    All rights reserved.
@@ -35,43 +70,16 @@
  Subsequent changes:
    Copyright (c) 1999, The MusicKit Project.  All rights reserved.
 
- Description:
-   Sampling Rate Conversion Subroutines
-   Implements sampling rate conversions by (almost) arbitrary factors.
-   The program internally uses 16-bit data and 16-bit filter coefficients.
-
-   Reference: "A Flexible Sampling-Rate Conversion Method,"
-     J. O. Smith and P. Gossett, ICASSP, San Diego, 1984, Pgs 19.4.
-
-   CHANGES from original SAIL program:
-   
-   1. LpScl is scaled by factor (when factor<1) in resample() so this is
-         done whether the filter was loaded or created.
-   2. makeFilter() - ImpD[] is created from Imp[] instead of ImpR[], to
-         avoid problems with round-off errors.
-   3. makeFilter() - ImpD[Nwing-1] gets NEGATIVE Imp[Nwing-1].
-   4. SrcU/D() - Switched order of making guard bits (v>>Nhg) and
-         normalizing.  This was done to prevent overflow.
-   
-   LIBRARIES needed:
-   
-   1. filterkit
-         readFilter() - reads standard filter file
-         FilterUp()   - applies filter to sample when factor >= 1
-         FilterUD()   - applies filter to sample for any factor
-   2. math
-
- Original Author: 
-   BY: Julius Smith (at CCRMA, Stanford U)
-   C BY: translated from SAIL to C by Christopher Lee Fraley
-         (cf0v@spice.cs.cmu.edu or @andrew.cmu.edu)
-       maintained by Julius Smith (jos) and Mike Minnick (mminnick) at NeXT
-   Added to the SndKit handling a variety of sound formats by Stephen Brandon
-   Cleaned up by Leigh Smith
-
+   Permission is granted to use and modify this code for commercial and
+   non-commercial purposes so long as the author attribution and copyright
+   messages remain intact and accompany all relevant code.
+  
  Modification History:
 
   $Log$
+  Revision 1.3  2003/06/13 03:33:15  leighsmith
+  Big cleanup of code, stripped copious cruft from readData as part of the great purge of SndSoundStruct
+
   Revision 1.2  2003/06/03 04:40:26  leighsmith
   Renamed the uLaw and aLaw translation routines removing wrapper functions and more meaningful namings
 
@@ -143,167 +151,90 @@
 # import "SndMuLaw.h"
 #endif
 
+/* return: 0 - notDone */
+/*        >0 - index of last sample */
 static int readData(
     int *beginFrom,
-    int inCount,
-    SND_HWORD **outPtrs,
-    int dataArraySize,
-    int nChansOut, int Xoff,
+    int inCount,	  /* specifies the number of frames */
+    SND_HWORD **outPtrs,  /* array of channels of sound samples, each sampleArraySizeInFrames long. */
+    int sampleArraySizeInFrames,  /* specifies the number of frames (SND_HWORDS) */
+    int nChans,           /* number of channels for input and output which must match, no averaging occurs */
+    int Xoff,		  /* read into input array starting at this index */
     const SndSoundStruct *inSnd, /* take account of data format */
-    void *inData) /* if this is non-null use this address of contiguous memory instead of the SndStruct */
-    /* return: 0 - notDone */
-    /*        >0 - index of last sample */
+    void *inData) /* use this address for contiguous memory instead of the SndSoundStruct */
 {
-    int Nsamps, val=0;
-    SND_HWORD *dataStart;
-    void *newDataStarts[16];/* max 16 channel */
-    int channels;
-    int nChansIn = inSnd->channelCount;
-    int inEnd = inCount + *beginFrom;
-    SND_HWORD *myOutPtrs[16];
-
-    int lastSampleInBlock, currentSampleInBlock;
-    int origNsamps;
-    int inDataFormat;
-
-    void *mainIndex;
+    int origNsamps, Nsamps;  // The number of frames to read into the output buffer. Two versions for debugging.
+    int lastFrameIndex = 0;
+    SND_HWORD *dataStart;    // where the first channel starts. Helps calculate the number of samples read.
+    int channelIndex;
+    SND_HWORD *shiftedOutPtrs[16]; // Maximum of 16 channels (change at will, or make dynamic if need be).
+    int numOfFramesInInputBlock, currentFrameInInputBlock;
+    int inEndAtIndex = *beginFrom + inCount;  // The input sample index to end at.
+    int inDataFormat = inSnd->dataFormat;
     
-    if (inData) {
-        lastSampleInBlock = inSnd->dataSize / inSnd->channelCount / SndSampleWidth(inSnd->dataFormat);
-        currentSampleInBlock = 0;
-        mainIndex = inData;
+    if (!inData) {
+	NSLog(@"readData now only works with inData, no more SndSoundStructs.\n");
+	return 0;
     }
-    else {
-        mainIndex = SndGetDataAddresses(*beginFrom,
-              inSnd,
-              &lastSampleInBlock, /* channel independent */
-              &currentSampleInBlock);     /* channel independent */
-    }
-    inDataFormat = inSnd->dataFormat;
-    if (inDataFormat == SND_FORMAT_INDIRECT)
-        inDataFormat = ((SndSoundStruct *)(*((SndSoundStruct **)
-                (inSnd->dataLocation))))->dataFormat;
+    numOfFramesInInputBlock = inSnd->dataSize / inSnd->channelCount / SndSampleWidth(inSnd->dataFormat);
+    currentFrameInInputBlock = 0;
+    
     dataStart = outPtrs[0];
-    origNsamps = Nsamps = dataArraySize - Xoff; /* Calculate number of samples to get */
-    for (channels = 0; channels < nChansOut; channels++) {
-        myOutPtrs[channels] = outPtrs[channels] + Xoff;		/* Start at designated sample number */
-        newDataStarts[channels] = myOutPtrs[channels];
+    for (channelIndex = 0; channelIndex < nChans; channelIndex++) {
+	/* Start at designated sample number */
+        shiftedOutPtrs[channelIndex] = outPtrs[channelIndex] + Xoff;
     }
 
-    if (lastSampleInBlock != -1) {
-        for (; Nsamps > 0 && *beginFrom != inEnd; Nsamps--) {
-            if (nChansIn == nChansOut) {
-                for (channels = 0; channels < nChansOut; channels++) {
-		    int sampleIndex = currentSampleInBlock * nChansIn + channels;
-		    
-                    switch(inDataFormat) {
-                    case SND_FORMAT_LINEAR_8:
-                        *(myOutPtrs[channels]++) = ((signed char *)mainIndex)[sampleIndex] << 8;
-                        break;
-                    case SND_FORMAT_MULAW_8:
-                        *(myOutPtrs[channels]++) = SndMuLawToLinear(((unsigned char *)mainIndex)[sampleIndex]);
-                        break;
-                    case SND_FORMAT_LINEAR_32:
-                        *(myOutPtrs[channels]++) = (SND_HWORD)(((signed int *)mainIndex)[sampleIndex] >> 16);
-                        break;
-                    case SND_FORMAT_FLOAT:
-                        *(myOutPtrs[channels]++) = (SND_HWORD)(((float *)mainIndex)[sampleIndex]);
-                        break;
-                    case SND_FORMAT_DOUBLE:
-                        *(myOutPtrs[channels]++) = (SND_HWORD)(((double *)mainIndex)[sampleIndex]);
-                        break;
-                    default:
-                    case SND_FORMAT_LINEAR_16:
-                        *(myOutPtrs[channels]++) = ((SND_HWORD *)mainIndex)[sampleIndex];
-                        break;
-                    }
-                }
-            }
-            else { /* reduce num of channels by averaging alternate pairs/quads of channels */
-                int chansToSum = nChansIn / nChansOut;
-                int passes = nChansOut; /* convenience name */
-                int m,n;
+    /* Calculate number of samples to get */
+    origNsamps = Nsamps = sampleArraySizeInFrames - Xoff;
+    // NSLog(@"Nsamps = %d\n", Nsamps);
 
-                for (m = 0;m < passes; m++) { /*m and n take us through 1 chnl indep sample*/
-                    long sum = 0;
-                    float sumFloat = 0.0;
-                    double sumDouble = 0.0;
-                    for (n = 0; n < chansToSum; n++) {
-			int sampleIndex = currentSampleInBlock * nChansIn + n;
-			
-                        switch(inDataFormat) {
-                        case SND_FORMAT_LINEAR_8:
-			    sum += ((signed char *)mainIndex)[sampleIndex] << 8;
-			    break;
-                        case SND_FORMAT_MULAW_8:
-			    sum += SndMuLawToLinear(((unsigned char *)mainIndex)[sampleIndex]);
-			    break;
-                        case SND_FORMAT_LINEAR_32:
-			    sum += (SND_HWORD)(((signed int *)mainIndex)[sampleIndex] >> 16);
-			    break;
-                        case SND_FORMAT_FLOAT:
-			    sumFloat += (SND_HWORD)(((float *)mainIndex)[sampleIndex]);
-			    break;
-                        case SND_FORMAT_DOUBLE:
-			    sumDouble += (SND_HWORD)(((double *)mainIndex)[sampleIndex]);
-			    break;
-                        default:
-                        case SND_FORMAT_LINEAR_16:
-			    sum += ((SND_HWORD *)mainIndex)[sampleIndex];
-			    break;
-                        }
-                    } /* summing several channels into 1 channel */
-
-                    switch(inDataFormat) {
-                    case SND_FORMAT_FLOAT:
-			*(myOutPtrs[m]++) = (SND_HWORD)(sumFloat / chansToSum);
-			break;
-                    case SND_FORMAT_DOUBLE:
-			*(myOutPtrs[m]++) = (SND_HWORD)(sumDouble / chansToSum);
-			break;
-                    default:
-                    case SND_FORMAT_LINEAR_16:
-                    case SND_FORMAT_LINEAR_8:
-                    case SND_FORMAT_MULAW_8:
-                    case SND_FORMAT_LINEAR_32:
-			*(myOutPtrs[m]++) = (SND_HWORD)(sum / chansToSum);
-                    }
-                } /* passes through channel independent sample */
-            } /* averaging of channels */
-            currentSampleInBlock++;
+    if (numOfFramesInInputBlock != -1) {
+        for (; Nsamps > 0 && *beginFrom < inEndAtIndex; Nsamps--) {
+	    for (channelIndex = 0; channelIndex < nChans; channelIndex++) {
+		int sampleIndex = currentFrameInInputBlock * nChans + channelIndex;
+		
+		switch(inDataFormat) {
+		case SND_FORMAT_LINEAR_8:
+		    *(shiftedOutPtrs[channelIndex]++) = ((signed char *)inData)[sampleIndex] << 8;
+		    break;
+		case SND_FORMAT_MULAW_8:
+		    *(shiftedOutPtrs[channelIndex]++) = SndMuLawToLinear(((unsigned char *)inData)[sampleIndex]);
+		    break;
+		case SND_FORMAT_LINEAR_32:
+		    *(shiftedOutPtrs[channelIndex]++) = (SND_HWORD)(((signed int *)inData)[sampleIndex] >> 16);
+		    break;
+		case SND_FORMAT_FLOAT:
+		    *(shiftedOutPtrs[channelIndex]++) = (SND_HWORD)(((float *)inData)[sampleIndex] * MAX_HWORD);
+		    break;
+		case SND_FORMAT_DOUBLE:
+		    *(shiftedOutPtrs[channelIndex]++) = (SND_HWORD)(((double *)inData)[sampleIndex] * MAX_HWORD);
+		    break;
+		default:
+		case SND_FORMAT_LINEAR_16:
+		    *(shiftedOutPtrs[channelIndex]++) = ((SND_HWORD *)inData)[sampleIndex];
+		    break;
+		}
+	    }
+            currentFrameInInputBlock++;
             (*beginFrom)++;
-            if (currentSampleInBlock >= lastSampleInBlock && inData != NULL) {
-                fprintf(stderr,"Error in resample - overreading data - should not happen, currentSampleInBlock = %d, lastSampleInBlock = %d, origNsamps = %d\n", currentSampleInBlock, lastSampleInBlock, origNsamps);
+            if (currentFrameInInputBlock > numOfFramesInInputBlock) {
+                NSLog(@"Error in resample - overreading data - should not happen, currentFrameInInputBlock = %d, numOfFramesInInputBlock = %d, origNsamps = %d\n",
+			currentFrameInInputBlock, numOfFramesInInputBlock, origNsamps);
                 break;
-            }
-            else if (currentSampleInBlock >= lastSampleInBlock) {
-                mainIndex = SndGetDataAddresses(*beginFrom,
-                        inSnd,
-                        (int *)&lastSampleInBlock, /* channel independent */
-                        (int *)&currentSampleInBlock);
-                if (currentSampleInBlock == -1 || lastSampleInBlock == -1) {
-//                  printf("met boundary: %d\n",*inPtr);
-                    break;
-                }
             }
         }
     }
     if (Nsamps > 0) {
-        val = myOutPtrs[0] - dataStart; /* (Calc return value) */
+        lastFrameIndex = shiftedOutPtrs[0] - dataStart; /* (Calc return value) */
         while (--Nsamps > 0) {	/*   fill unread spaces with 0's */
-            for (channels = 0; channels < nChansOut; channels++) {
-                    *(myOutPtrs[channels]++) = 0;
+            for (channelIndex = 0; channelIndex < nChans; channelIndex++) {
+		*(shiftedOutPtrs[channelIndex]++) = 0;
             }
         }
     }
 
-#if 0
-// have now decided to only operate with host ordered input
-    for (channels = 0; channels < nChansOut; channels++) {
-        SndSwapSoundToHost(newDataStarts[channels], newDataStarts[channels], origNsamps, 1, SND_FORMAT_LINEAR_16);
-    }
-#endif
-    return(val);
+    return(lastFrameIndex); /* return index of last samp */
 }
 
 
@@ -419,29 +350,26 @@ static int SrcUD(SND_HWORD X[], SND_HWORD Y[], double factor, SND_UWORD *Time,
     SND_HWORD *Xp, *Ystart;
     SND_WORD v;
 
-    double dh;                  /* Step through filter impulse response */
-    double dt;                  /* Step through input signal */
+    double dh;                      /* Step through filter impulse response */
+    double dt;                      /* Step through input signal */
     SND_UWORD endTime;              /* When Time reaches EndTime, return to user */
     SND_UWORD dhb, dtb;             /* Fixed-point versions of Dh,Dt */
 
-    dt = 1.0/factor;            /* Output sampling period */
-    dtb = dt*(1<<Np) + 0.5;     /* Fixed-point representation */
+    dt = 1.0/factor;                /* Output sampling period */
+    dtb = dt * (1 << Np) + 0.5;     /* Fixed-point representation */
 
-    dh = MIN(Npc, factor*Npc);  /* Filter sampling period */
-    dhb = dh*(1<<Na) + 0.5;     /* Fixed-point representation */
+    dh = MIN(Npc, factor * Npc);    /* Filter sampling period */
+    dhb = dh * (1 << Na) + 0.5;     /* Fixed-point representation */
 
     Ystart = Y;
-    endTime = *Time + (1<<Np)*(SND_WORD)Nx;
-    while (*Time < endTime)
-    {
-        Xp = &X[*Time>>Np];	/* Ptr to current input sample */
-    v = FilterUD(Imp, ImpD, Nwing, Interp, Xp, (SND_HWORD)(*Time&Pmask),
-                     -1, dhb);	/* Perform left-wing inner product */
-                 v += FilterUD(Imp, ImpD, Nwing, Interp, Xp+1, (SND_HWORD)((-*Time)&Pmask),
-                      1, dhb);	/* Perform right-wing inner product */
+    endTime = *Time + (1 << Np) * (SND_WORD) Nx;
+    while (*Time < endTime) {
+        Xp = &X[*Time >> Np];	/* Ptr to current input sample */
+	v = FilterUD(Imp, ImpD, Nwing, Interp, Xp, (SND_HWORD)(*Time&Pmask), -1, dhb);	/* Perform left-wing inner product */
+	v += FilterUD(Imp, ImpD, Nwing, Interp, Xp+1, (SND_HWORD)((-*Time)&Pmask), 1, dhb);	/* Perform right-wing inner product */
         v >>= Nhg;		/* Make guard bits */
         v *= LpScl;		/* Normalize for unity filter gain */
-        *Y++ = WordToHword(v,NLpScl);   /* strip guard bits, deposit output */
+        *Y++ = WordToHword(v, NLpScl);   /* strip guard bits, deposit output */
         *Time += dtb;		/* Move to next sample by time increment */
     }
     return (Y - Ystart);        /* Return the number of output samples */
@@ -593,117 +521,115 @@ static int resampleWithFilter(  /* number of output samples returned */
 {
     SND_UWORD Time, Times[16];		/* Current time/pos in input sample */
     SND_UHWORD Xp, Ncreep, Xoff, Xread;
-    int OBUFFSIZE = (int)(((double)IBUFFSIZE)*factor+2.0);
-    SND_HWORD *X1S[16],*Y1S[16];
-
-    SND_UHWORD Nout=0, Nx;
-
+    int OBUFFSIZE = (int)(((double)IBUFFSIZE) * factor + 2.0);
+    SND_HWORD *X1S[16], *Y1S[16];
+    SND_UHWORD Nout = 0, Nx;
     int inPtrRun = beginFrom;
-
-    int i=0, Ycount, last;
-    int channels;
-
+    int i = 0, Ycount, last;
+    int channelIndex;
 
     /* Account for increased filter gain when using factors less than 1 */
     if (factor < 1)
-        LpScl = LpScl*factor + 0.5;
+        LpScl = LpScl * factor + 0.5;
     /* Calc reach of LP filter wing & give some creeping room */
-    Xoff = ((Nmult+1)/2.0) * MAX(1.0,1.0/factor) + 10;
-    if (IBUFFSIZE < 2*Xoff)      /* Check input buffer size */
-      return err_ret("IBUFFSIZE %d (or factor %lf) is too small compared to Xoff %u", IBUFFSIZE, factor, Xoff);
-    Nx = IBUFFSIZE - 2*Xoff;     /* # of samples to process each iteration */
+    Xoff = ((Nmult + 1) / 2.0) * MAX(1.0, 1.0 / factor) + 10;
+    if (IBUFFSIZE < 2 * Xoff)      /* Check input buffer size */
+	return err_ret("IBUFFSIZE %d (or factor %lf) is too small compared to Xoff %u", IBUFFSIZE, factor, Xoff);
+    Nx = IBUFFSIZE - 2 * Xoff;     /* # of samples to process each iteration */
 
-    for (channels = 0; channels < nChans; channels++){
-        X1S[channels] = malloc(IBUFFSIZE * sizeof(SND_HWORD));
-        Y1S[channels] = malloc(OBUFFSIZE * sizeof(SND_HWORD));
-// printf("Channel %d array: X1S = %p, Y1S = %p\n",channels, X1S[channels], Y1S[channels]);
+    for (channelIndex = 0; channelIndex < nChans; channelIndex++){
+        X1S[channelIndex] = malloc(IBUFFSIZE * sizeof(SND_HWORD));
+        Y1S[channelIndex] = malloc(OBUFFSIZE * sizeof(SND_HWORD));
+	// NSLog(@"Channel %d array: X1S = %p, Y1S = %p\n", channelIndex, X1S[channelIndex], Y1S[channelIndex]);
     }
 
     last = 0;			/* Have not read last input sample yet */
     Ycount = 0;			/* Current sample and length of output file */
     Xp = Xoff;			/* Current "now"-sample pointer for input */
     Xread = Xoff;		/* Position in input array to read into */
-    Time = (Xoff<<Np);		/* Current-time pointer for converter */
+    Time = (Xoff << Np);	/* Current-time pointer for converter */
 
-    for (channels = 0; channels < nChans; channels++){
-        for (i=0; i<Xoff; X1S[channels][i++]=0); /* Need Xoff zeros at begining of sample */
+    for (channelIndex = 0; channelIndex < nChans; channelIndex++) {
+        for (i = 0; i < Xoff; i++)
+	    X1S[channelIndex][i] = 0; /* Need Xoff zeros at begining of sample */
     }
     do {
         if (!last) {		/* If haven't read last sample yet */
-            last = readData(&inPtrRun, inCount, X1S, IBUFFSIZE,
-                            nChans, (int)Xread, inSnd, inData);
-            if (last && (last-Xoff<Nx)) { /* If last sample has been read... */
-                Nx = last-Xoff;	/* ...calc last sample affected by filter */
+            last = readData(&inPtrRun, inCount, X1S, IBUFFSIZE, nChans, (int) Xread, inSnd, inData);
+            if (last && (last - Xoff < Nx)) { /* If last sample has been read... */
+                Nx = last - Xoff;	/* ...calc last sample affected by filter */
                 if (Nx <= 0)
                     break;
             }
         }
         /* Resample stuff in input buffer */
         if (factor >= 1) {	/* SrcUp() is faster if we can use it */
-            for (channels = 0; channels < nChans; channels++){
-                    Times[channels] = Time;
-                    Nout=SrcUp(X1S[channels],Y1S[channels],factor,
-                            &Times[channels],Nx,Nwing,LpScl,Imp,ImpD,interpFilt);
+            for (channelIndex = 0; channelIndex < nChans; channelIndex++){
+		Times[channelIndex] = Time;
+		Nout = SrcUp(X1S[channelIndex], Y1S[channelIndex], factor,
+			&Times[channelIndex], Nx, Nwing, LpScl, Imp, ImpD, interpFilt);
             }
         }
         else {
-            for (channels = 0; channels < nChans; channels++) {
-                    Times[channels] = Time;
-                    Nout=SrcUD(X1S[channels],Y1S[channels],factor,
-                            &Times[channels],Nx,Nwing,LpScl,Imp,ImpD,interpFilt);
+            for (channelIndex = 0; channelIndex < nChans; channelIndex++) {
+		Times[channelIndex] = Time;
+		Nout = SrcUD(X1S[channelIndex], Y1S[channelIndex], factor,
+			&Times[channelIndex], Nx, Nwing, LpScl, Imp, ImpD, interpFilt);
             }
         }
         Time = Times[0];
-        Time -= (Nx<<Np);	/* Move converter Nx samples back in time */
+        Time -= (Nx << Np);	/* Move converter Nx samples back in time */
         Xp += Nx;		/* Advance by number of samples processed */
-        Ncreep = (Time>>Np) - Xoff; /* Calc time accumulation in Time */
+        Ncreep = (Time >> Np) - Xoff; /* Calc time accumulation in Time */
         if (Ncreep) {
             Time -= (Ncreep<<Np);    /* Remove time accumulation */
             Xp += Ncreep;            /* and add it to read pointer */
         }
-        for (i=0; i<IBUFFSIZE-Xp+Xoff; i++) { /* Copy part of input signal */
-            for (channels = 0; channels < nChans; channels++) {
-                    X1S[channels][i] = X1S[channels][i+Xp-Xoff]; /* that must be re-used */
+        for (i = 0; i < IBUFFSIZE - Xp + Xoff; i++) { /* Copy part of input signal */
+            for (channelIndex = 0; channelIndex < nChans; channelIndex++) {
+		X1S[channelIndex][i] = X1S[channelIndex][i + Xp - Xoff]; /* that must be re-used */
             }
         }
         if (last) {		/* If near end of sample... */
             last -= Xp;		/* ...keep track were it ends */
             if (!last)		/* Lengthen input by 1 sample if... */
-                    last++;		/* ...needed to keep flag TRUE */
+		last++;		/* ...needed to keep flag TRUE */
         }
         Xread = i;		/* Pos in input buff to read new data into */
         Xp = Xoff;
 
         Ycount += Nout;
-        if (Ycount>outCount) {
-            Nout -= (Ycount-outCount);
+        if (Ycount > outCount) {
+            Nout -= (Ycount - outCount);
             Ycount = outCount;
         }
 
-        if (Nout > OBUFFSIZE) {/* Check to see if output buff overflowed */
-            for (channels = 0; channels < nChans; channels++){
-                    free(X1S[channels]);
-                    free(Y1S[channels]);
+        if (Nout > OBUFFSIZE) { /* Check to see if output buff overflowed */
+            for (channelIndex = 0; channelIndex < nChans; channelIndex++){
+		free(X1S[channelIndex]);
+		free(Y1S[channelIndex]);
             }
             return err_ret("Output array overflow");
         }
         {
-            register SND_HWORD *op=outPtr;
+            register SND_HWORD *op = outPtr;
             SND_HWORD *Y1P[16];
-            for (channels = 0; channels < nChans; channels++) {
-                Y1P[channels] = Y1S[channels];
+	    
+            for (channelIndex = 0; channelIndex < nChans; channelIndex++) {
+                Y1P[channelIndex] = Y1S[channelIndex];
             }
             while (Nout--) {
-                for (channels = 0; channels < nChans; channels++) {
-                    *op++ = *(Y1P[channels]++);
+                for (channelIndex = 0; channelIndex < nChans; channelIndex++) {
+                    *op++ = *(Y1P[channelIndex]++);
                 }
             }
             outPtr = op;
         }
-    } while (Ycount<outCount); /* Continue until done */
-    for (channels = 0; channels < nChans; channels++) {
-        free(X1S[channels]);
-        free(Y1S[channels]);
+    } while (Ycount < outCount); /* Continue until done */
+
+    for (channelIndex = 0; channelIndex < nChans; channelIndex++) {
+        free(X1S[channelIndex]);
+        free(Y1S[channelIndex]);
     }
     return(Ycount);		/* Return # of samples in output file */
 }
@@ -721,8 +647,7 @@ int resample(			/* number of output samples returned */
     char *filterFile,		/* NULL for internal filter, else filename */
     const SndSoundStruct *inSnd, /* for data format etc */
     int beginFrom,		/* The sample number within the sound to begin the resampling from */
-    void *inData)               /* if non-null, gives an alternative
-                                   source of contiguous audio data */
+    void *inData)               /* if non-null, gives an alternative source of contiguous audio data */
 {
     SND_UHWORD LpScl;		/* Unity-gain scale factor */
     SND_UHWORD Nwing;		/* Filter table size */
@@ -731,31 +656,31 @@ int resample(			/* number of output samples returned */
     SND_HWORD *ImpD=0;		/* ImpD[n] = Imp[n+1]-Imp[n] */
 
     if (fastMode)
-        return resampleFast(factor,outPtr,inCount,outCount,nChans, inSnd, beginFrom, inData);
+        return resampleFast(factor, outPtr, inCount, outCount, nChans, inSnd, beginFrom, inData);
 
-#ifdef DEBUG
+#ifdef DEBUG  // turn this on only when SndResample.h is modified.
     /* Check for illegal constants */
     if (Np >= 16)
-      return err_ret("Error: Np>=16");
-    if (Nb+Nhg+NLpScl >= 32)
-      return err_ret("Error: Nb+Nhg+NLpScl>=32");
-    if (Nh+Nb > 32)
-      return err_ret("Error: Nh+Nb>32");
+      return err_ret("Error: Np >= 16");
+    if (Nb + Nhg + NLpScl >= 32)
+      return err_ret("Error: Nb + Nhg + NLpScl >= 32");
+    if (Nh + Nb > 32)
+      return err_ret("Error: Nh + Nb > 32");
 #endif
 
     /* Set defaults */
-
     if (filterFile != NULL && *filterFile != '\0') {
         if (readFilter(filterFile, &Imp, &ImpD, &LpScl, &Nmult, &Nwing))
-                return err_ret("could not find filter file, "
-                        "or syntax error in contents of filter file");
-    } else if (largeFilter) {
+	    return err_ret("could not find filter file, or syntax error in contents of filter file");
+    }
+    else if (largeFilter) {
         Nmult = LARGE_FILTER_NMULT;
         Imp = LARGE_FILTER_IMP;	        /* Impulse response */
         ImpD = LARGE_FILTER_IMPD;	/* Impulse response deltas */
         LpScl = LARGE_FILTER_SCALE;	/* Unity-gain scale factor */
         Nwing = LARGE_FILTER_NWING;	/* Filter table length */
-    } else {
+    }
+    else {
         Nmult = SMALL_FILTER_NMULT;
         Imp = SMALL_FILTER_IMP;	        /* Impulse response */
         ImpD = SMALL_FILTER_IMPD;	/* Impulse response deltas */
@@ -763,10 +688,9 @@ int resample(			/* number of output samples returned */
         Nwing = SMALL_FILTER_NWING;	/* Filter table length */
     }
 #ifdef DEBUG
-    fprintf(stderr,"Attenuating resampler scale factor by 0.95 "
-            "to reduce probability of clipping\n");
+    NSLog(@"Attenuating resampler scale factor by 0.95 to reduce probability of clipping\n");
 #endif
     LpScl *= 0.95;
-    return resampleWithFilter(factor,outPtr,inCount,outCount,nChans,
+    return resampleWithFilter(factor, outPtr, inCount, outCount, nChans,
                               interpFilt, Imp, ImpD, LpScl, Nmult, Nwing, inSnd, beginFrom, inData);
 }
