@@ -29,9 +29,7 @@
     so you must send another
     setStream: message in order to replay the file.
    
-    Note:  The argument to setStream:
-    is typically a pointer to a file on the disk, but it can also
-    be a UNIX socket or pipe.
+    Note:  The argument to -setStream: is a NSData or NSMutableData.
    
     The MKFilePerformer class declares two methods as subclass responsibilities:
     nextNote and performNote:.
@@ -94,6 +92,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/11/29 00:39:52  leigh
+  Corrected comment
+
   Revision 1.6  2000/04/22 20:16:05  leigh
   Changed fileExtensions to less error-prone NSArray of NSStrings
 
@@ -139,8 +140,8 @@ Modification history:
 + (void)initialize
 {
     if (self != [MKFilePerformer class])
-      return;
-    [MKFilePerformer setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
+        return;
+    [MKFilePerformer setVersion: VERSION2]; //sb: suggested by Stone conversion guide (replaced self)
     return;
 }
 
@@ -224,7 +225,7 @@ Modification history:
    */
 {
     if (status != MK_inactive) 
-      return nil;
+        return nil;
     [self setFile:nil];
     if(stream != nil)
         [stream autorelease];

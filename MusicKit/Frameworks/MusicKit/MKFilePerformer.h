@@ -26,8 +26,7 @@
     file pointer is set to NULL after each performance
     so you must send another setStream: message in order to replay the file.
 
-    Note:  The argument to setStream: is typically a pointer to a file on the disk, but it can also
-    be a UNIX socket or pipe.
+    Note:  The argument to -setStream: is a NSData or NSMutableData.
 
     The MKFilePerformer class declares two methods as subclass responsibilities:
     nextNote and performNote:. nextNote must be subclassed to access the next line of information
@@ -81,6 +80,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2000/11/29 00:39:52  leigh
+  Corrected comment
+
   Revision 1.5  2000/04/22 20:16:02  leigh
   Changed fileExtensions to less error-prone NSArray of NSStrings
 
