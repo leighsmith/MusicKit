@@ -3,10 +3,10 @@
   Defined In: The MusicKit
 
   Description:
-    MidiPlay is an example of an interactive Music Kit performance.
+    MidiPlay is an example of an interactive MusicKit performance.
     Therefore, the Conductor is clocked. The Conductor is also set to not 
     'finishWhenEmpty' to ensure the performance will continue, whether or 
-    not the Conductor has any objective-c messages to send, 
+    not the Conductor has any Objective-c messages to send, 
     until the user decides to terminate the performance.  
 
     In this case, we are interested in a fast interactive response; 
@@ -22,8 +22,15 @@
     MIDI pitch bend data is thinned out by sending it through a subclass of
     NoteFilter.
 
-    Please note that the SynthPatches in the Music Kit SynthPatch library
+    Please note that the MKSynthPatches in the MusicKit SynthPatch library
     are not optimized for real time applications such as this one.
+ 
+  Portions Copyright (c) 1999-2005, The MusicKit Project.  All rights reserved.
+
+    Permission is granted to use and modify this code for commercial and 
+    non-commercial purposes so long as the author attribution and copyright 
+    messages remain intact and accompany all relevant code.
+ 
 */
 
 //#import <MKSynthPatches/SynthPatches.h>
@@ -37,15 +44,15 @@ static void handleMKErrors(NSString *msg)
 {
     if ([MKConductor inPerformance]) /* Don't disturb performance. */
 	return;
-    else if (!NSRunAlertPanel(@"MidiPlay",msg,@"OK",@"Quit",NULL,NULL))
-	[NSApp terminate:NSApp];
+    else if (!NSRunAlertPanel(@"MidiPlay", msg, @"OK", @"Quit", NULL, NULL))
+	[NSApp terminate: NSApp];
 }
 
 #define VOICES 5
 
 static MKOrchestra *orch = nil;
 
-- (IBAction) go:sender
+- (IBAction) go: (id) sender
 {
     MKSynthInstrument *synthIns;
     MKNote *aNote;
@@ -71,8 +78,8 @@ static MKOrchestra *orch = nil;
 
     /* Connect Midi to the SynthInstrument by way of a note filter. */
     myMidiFilter = [[MidiFilter alloc] init];
-    [[midiIn channelNoteSender:1] connect:[myMidiFilter noteReceiver]];
-    [[myMidiFilter noteSender] connect:[synthIns noteReceiver]];
+    [[midiIn channelNoteSender: 1] connect: [myMidiFilter noteReceiver]];
+    [[myMidiFilter noteSender] connect: [synthIns noteReceiver]];
     [midiIn openInputOnly];
 
     /* Create the Orchestra, if it doesn't exist yet,
@@ -82,40 +89,40 @@ static MKOrchestra *orch = nil;
     /* Set some variables for all Orchestras. */
     MKSetDeltaT(0.01); /* See comment above. */
 
-    [orch setSamplingRate:44100.0]; /* High sampling rate gives faster response (in current release). */
-    [orch setFastResponse:YES];     /* Use small sound-out buffers */
+    [orch setSamplingRate: 44100.0]; /* High sampling rate gives faster response (in current release). */
+    [orch setFastResponse: YES];     /* Use small sound-out buffers */
 
     /* You must first open the MKOrchestra before allocating MKSynthPatches */
     while (![orch open]) {               
 	if (NSRunAlertPanel(@"MidiPlay", @"DSP Unavailable", @"Quit", @"Try Again", nil) == NSAlertDefaultReturn)
-	    [NSApp terminate:NSApp];
+	    [NSApp terminate: NSApp];
     }
 
     /* Specify the SynthPatch to use. Here we use Pluck. */
     // [synthIns setSynthPatchClass:[MKPluck class]]; //disabled by LMS for now until MKSynthPatches work
 
     /* Specify manual allocation mode and number of simultaneous notes */ 
-    [synthIns setSynthPatchCount:VOICES];
+    [synthIns setSynthPatchCount: VOICES];
 
-    [MKConductor setFinishWhenEmpty:NO];    /* Just wait until terminate */
+    [MKConductor setFinishWhenEmpty: NO];    /* Just wait until terminate */
 
     /* Next we set a few default parameters. */
     aNote = [[MKNote alloc] init];      
-    [aNote setNoteType:MK_noteUpdate];
+    [aNote setNoteType: MK_noteUpdate];
 
     /* Set pitch bend to be plus or minus 1 semi tone. */
-    [aNote setPar:MK_pitchBendSensitivity toDouble:1.0]; 
+    [aNote setPar: MK_pitchBendSensitivity toDouble: 1.0]; 
     
     /* The following is optional. It helps make the pitch bend smoother for 
        Pluck -- by specifying the lowest frequency, Pluck always allocates 
        more than it needs (assuming the frequency never goes below 100 Hz.) */
-    [aNote setPar:MK_lowestFreq toDouble:100.0];
+    [aNote setPar: MK_lowestFreq toDouble: 100.0];
 
     /* Set the brightness. Brightness is scaled by MIDI velocity. */
-    [aNote setPar:MK_bright toDouble:.75];
+    [aNote setPar: MK_bright toDouble: .75];
 
     /* Now send the updates. */
-    [[synthIns noteReceiver] receiveNote:aNote]; 
+    [[synthIns noteReceiver] receiveNote: aNote]; 
     
     /* Now start up the DSP, Midi and the Conductor. */
 
@@ -123,6 +130,12 @@ static MKOrchestra *orch = nil;
     [midiIn run];
     [MKConductor startPerformance];
     return;
+}
+
+- (IBAction) showInfoPanel: (id) sender
+{
+    [NSBundle loadNibNamed: @"Info" owner: self];
+    [infoPanel makeKeyAndOrderFront: sender];
 }
 
 - (void) applicationWillTerminate: (NSNotification *) aNotification
