@@ -271,8 +271,8 @@ static SndPlayer *defaultSndPlayer;
         numToBePlayed = [toBePlayed count];
         insertIndex = numToBePlayed;
         for (i = 0; i < numToBePlayed; i++) {
-            SndPerformance *this = [toBePlayed objectAtIndex: i];
-            if ([this playTime] > playT) {
+            SndPerformance *thisPerf = [toBePlayed objectAtIndex: i];
+            if ([thisPerf playTime] > playT) {
                 insertIndex = i;
                 break;
             }
