@@ -158,9 +158,18 @@
 #import "libdsp.h"		/* Function prototypes for libdsp functions */
 
 #ifdef WIN32
-#import <winsock.h>  // LMS play with the evil empire for u_int definition
-#else
-#import <unistd.h> // LMS do we need this?
+// LMS it turns out -ObjC++ barfs including winsock.h
+// so these are taken from winsock.h
+typedef unsigned int u_int;
+/*
+ * Structure used in select() call, taken from the BSD file sys/time.h.
+ */
+struct timeval {
+        long    tv_sec;         /* seconds */
+        long    tv_usec;        /* and microseconds */
+};
+#else // WIN32
+ #import <unistd.h> // LMS do we need this?
 #endif
 #import <sys/types.h> // LMS replacement
 #import <stdio.h>
