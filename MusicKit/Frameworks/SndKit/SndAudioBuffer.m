@@ -528,16 +528,15 @@
 - copyData: (SndAudioBuffer *) from
 {
     if (from != nil) {
-	// TODO [self formatSameAsBuffer: from];
-        if (from->format.frameCount == format.frameCount)
-            [data setData: from->data];
+        if ([self hasSameFormatAsBuffer: from])
+            [data setData: [from data]];
         else {
-            NSLog(@"Buffers are different lengths - need code to handle this case!");
+            NSLog(@"SndAudioBuffer -copyData: Buffers are different formats from %@ to %@ - unhandled case!", from, self);
             // TO DO!
         }
     }
     else
-        NSLog(@"AudioBuffer::copyData: ERR: param 'from' is nil!");
+        NSLog(@"SndAudioBuffer -copyData: ERR: param 'from' is nil!");
     return self;
 }
 
@@ -705,7 +704,8 @@
 - (void) findMin: (float *) pMin max: (float *) pMax
 {
     unsigned long samplesInBuffer = [self lengthInSampleFrames] * format.channelCount;
-#ifndef __VEC__
+// #ifndef __VEC__
+#if 1
     unsigned long sampleIndex;
     const void *samplePtr = [data bytes];
     *pMin = 0.0;
