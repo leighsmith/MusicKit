@@ -17,11 +17,13 @@
 	Welcome to Spectro V&spectroVer;, a spectrum analysis tool for use in the
 	NeXTStep environment.  This application was originally created by
 	Perry R. Cook (version 2.497) at the Center for Computer Research in
-	Music and Acoustics (CCRMA), Stanford University.  The current
-	version, created by Gary P. Scavone, represents a total overhaul of
+	Music and Acoustics (CCRMA), Stanford University.  
+	Version 3, created by Gary P. Scavone, represents a total overhaul of
 	the original application and is compatible with Intel based computer
-	systems running the NeXTStep operating system.  Direct
-	bugs/suggestions to gary@ccrma.stanford.edu.
+	systems running the NeXTStep operating system.  Version 4 is an update
+	and port to OpenStep by Stephen Brandon, Leigh Smith and other MusicKit
+	project developers and is therefore operational with Apple's Cocoa and
+	GnuStep APIs. Direct bugs/suggestions to musickit-dev@lists.sourceforge.net.
       </para>
 
       <para>
