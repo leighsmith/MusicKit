@@ -1,14 +1,21 @@
 /*
  * $Id$
  *
- * The configuration constants below govern
- * the number of bits in the input sample and filter coefficients, the 
+ * The configuration constants below govern the number of bits in the 
+ * input sample and filter coefficients, the 
  * number of bits to the right of the binary-point for fixed-point math, etc.
  *
+ * Portions Copyright (c) 1999, The MusicKit Project.  All rights reserved.
+ *
+ * Permission is granted to use and modify this code for commercial and
+ * non-commercial purposes so long as the author attribution and copyright
+ * messages remain intact and accompany all relevant code.
+ *
  */
-#include "SndStdefs.h"
+#if HAVE_CONFIG_H
+# include "SndKitConfig.h"
+#endif
 #include "SndFormat.h"
-#include "SndKitDefines.h"
 
 /* Conversion constants */
 #define Nhc       8
