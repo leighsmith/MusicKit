@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.3  1999/08/26 19:57:47  leigh
+  extra doco
+
   Revision 1.2  1999/07/29 01:25:52  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -94,13 +97,16 @@ typedef struct _MKUGArgStruct {   /* Used to represent Unit Generator args */
     int _instanceNumber;
 
     BOOL isAllocated;   /* YES if allocated */
-    MKUGArgStruct *args;   
+    MKUGArgStruct *args;   /* Pointer to the first of a block of 
+                             MKUGArgStructs. Each of these corresponds to 
+                             a unit generator memory argment. */
     MKSynthStatus status;
     MKOrchMemStruct relocation;
 
     /* The following for internal use ony */
-    MKLeafUGStruct *_classInfo; 
-    id _next;                   
+    MKLeafUGStruct *_classInfo; /* Same as [[self class] classInfo]. 
+                                   Stored in instance as an optimization. */ 
+    id _next;                   /* For available linked lists. */
 }
 
 +new;
