@@ -57,8 +57,8 @@ char *doFloat(float f, int x, int y)	/* Trims float values */
     else
         [mySoundView setDisplayMode: SND_SOUNDVIEW_MINMAX];
     [mySoundView setDelegate: self];
-    [mySoundView setContinuous: YES];
-    // [mySoundView setForegroundColor: [NSColor blueColor]];
+    [mySoundView setContinuousSelectionUpdates: YES];
+    [mySoundView setForegroundColor: [NSColor blueColor]];
     soundInfo = [[SoundInfo alloc] init];
     fresh = YES;
     return self;
