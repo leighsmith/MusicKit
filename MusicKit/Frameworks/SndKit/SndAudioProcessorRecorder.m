@@ -3,7 +3,7 @@
 //  $Id$
 //
 //  Description:
-//    Heavily inspired by Steinberg's VST effects plugins for the moment
+//    See the description in SndAudioProcessorRecorder.h 
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
@@ -15,10 +15,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#import <MKPerformSndMIDI/SndStruct.h>
 #import "SndFunctions.h"
 #import "SndAudioBuffer.h"
 #import "SndAudioProcessorRecorder.h"
+#import "SndStreamManager.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Debug defines
@@ -34,9 +34,15 @@
 
 - init
 {
-  self = [super initWithParamCount: recorder_kNumParams name: @"Recorder"];
-  fStartTriggerThreshold = 0.002f;
-  return self;
+    self = [super initWithParamCount: recorder_kNumParams name: @"Recorder"];
+    if(self != nil) {
+	startTriggerThreshold = 0.002f;
+	isRecording = NO;
+	fileFormat.dataFormat = SND_FORMAT_LINEAR_16; // default format
+	fileFormat.channelCount = 2;
+	fileFormat.sampleRate = 44100.0;
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -45,9 +51,15 @@
 
 - (void) dealloc
 {
-  if (recordBuffer != nil)
-    [recordBuffer release];
-  [super dealloc];
+    if (recordBuffer != nil)
+	[recordBuffer release];
+    [super dealloc];
+}
+
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"%@ %srecording, %ld bytes recorded\n",
+	[super description], isRecording ? "" : "not ", bytesRecorded];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,19 +68,7 @@
 
 - (BOOL) isRecording
 {
-  return isRecording;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// setRecordBuffer:
-////////////////////////////////////////////////////////////////////////////////
-
-- setRecordBuffer: (SndAudioBuffer*) buffer
-{
-  if (recordBuffer != nil)
-    [recordBuffer release];
-  recordBuffer = [buffer retain];
-  return self;
+    return isRecording;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,320 @@
 
 - (long) bytesRecorded
 {
-  return bytesRecorded;
+    return bytesRecorded;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// prepareToRecordForDuration:
+////////////////////////////////////////////////////////////////////////////////
+
+- (BOOL) prepareToRecordForDuration: (double) recordDuration
+{
+    if (!isRecording) {
+	SndFormat managerFormat = [[SndStreamManager defaultStreamManager] format];
+
+	// Make the buffer the same format as the SndStreamManager but longer.
+	managerFormat.frameCount = managerFormat.sampleRate * recordDuration;
+	[recordBuffer release];
+	recordBuffer = [[SndAudioBuffer audioBufferWithFormat: managerFormat] retain];
+#if SNDAUDIOPROCRECORDER_DEBUG  
+	NSLog(@"recordBuffer %@\n", recordBuffer);
+#endif
+	return recordBuffer != nil;
+    }
+#if SNDAUDIOPROCRECORDER_DEBUG  
+    NSLog(@"SndAudioProcessorRecorder::prepareToRecordForDuration - Error: already recording!\n");
+#endif
+    return NO;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// writeFileHeaderWithFormat:toFileHandle:ofLength:
+// Writes out the file format, we write out a minimal Microsoft RIFF (*.wav) file
+// TODO This should be replaced with our modernised file writing routines if the underlying
+// file I/O library is flexible enough to allow rewriting the size at the conclusion of the file.
+////////////////////////////////////////////////////////////////////////////////
+
+- (void) writeFileHeaderWithFormat: (SndFormat) format
+		     toFileHandle: (FILE *) f
+			 ofLength: (unsigned long) dataLengthInBytes
+{
+    unsigned long bytesPerSecond;
+    unsigned short frameSize;
+   // file format 1 = linear wav
+   // format.dataFormat == SND_FORMAT_LINEAR_16 ? 1 : format == SND_FORMAT_FLOAT ? dunno : 1 
+    unsigned short wavFormatCode = 1;
+    
+    fwrite("RIFF", 4, 1, f);  
+    fwrite(SndSwap_Convert32BitNative2LittleEndian(dataLengthInBytes + 38), 4, 1, f); // file length
+    fwrite("WAVE", 4, 1, f);  
+    fwrite("fmt ", 4, 1, f);  
+    fwrite(SndSwap_Convert32BitNative2LittleEndian(18), 4, 1, f);                    // chunk length
+    fwrite(SndSwap_Convert16BitNative2LittleEndian(wavFormatCode),  2, 1, f);        // data format
+    fwrite(SndSwap_Convert16BitNative2LittleEndian(format.channelCount),  2, 1, f);  // channels
+    fwrite(SndSwap_Convert32BitNative2LittleEndian(format.sampleRate), 4, 1, f);     // chunk length
+    bytesPerSecond = format.sampleRate * format.channelCount * sizeof(short);
+    fwrite(SndSwap_Convert32BitNative2LittleEndian(bytesPerSecond), 4, 1, f);        // bytes per second
+    frameSize = format.channelCount * sizeof(short);
+    fwrite(SndSwap_Convert16BitNative2LittleEndian(frameSize),  2, 1, f);            // frame size
+    fwrite(SndSwap_Convert16BitNative2LittleEndian(16),  2, 1, f);                   // bit resolution
+    fwrite(SndSwap_Convert16BitNative2LittleEndian(0),  2, 1, f);                    // extra bytes
+    fwrite("data", 4, 1, f);  
+    fwrite(SndSwap_Convert32BitNative2LittleEndian(dataLengthInBytes), 4, 1, f);     // data chunk length
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// setUpRecordFile:withFormat:
+////////////////////////////////////////////////////////////////////////////////
+
+- (BOOL) setUpRecordFile: (NSString *) filename
+	      withFormat: (SndFormat) format
+{
+    if ((recordFile = fopen([filename fileSystemRepresentation],"wb")) == NULL) {
+#if SNDAUDIOPROCRECORDER_DEBUG  
+	NSLog(@"SndAudioProcessorRecorder::setupRecordFile - Error opening file '%@' for recording.\n", filename);
+#endif
+	return NO;
+    }
+    else  {
+	[self writeFileHeaderWithFormat: format
+			   toFileHandle: recordFile
+			       ofLength: 0];
+	[recordFileName release];
+	recordFileName = [filename copy];
+	return YES;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// closeRecordFile:
+////////////////////////////////////////////////////////////////////////////////
+
+- (BOOL) closeRecordFile
+{
+    // We have to seek back to the beginning of the recorded file to rewrite the
+    // file header so that it contains the size of the recorded data, and the
+    // file-stream format  
+    fseek(recordFile, 0, SEEK_SET);
+    [self writeFileHeaderWithFormat: fileFormat
+		       toFileHandle: recordFile
+			   ofLength: bytesRecorded];
+    // NSLog(@"wrote %d bytes\n", bytesRecorded);
+    // [fileWriteLock lock]
+    fclose(recordFile);
+    recordFile = NULL;
+    bytesRecorded = 0;
+    stopSignal = NO;
+    isRecording = NO; // Since we've closed the file, we halt all recording.
+    // [fileWriteLock unlock];
+    
+#if SNDAUDIOPROCRECORDER_DEBUG
+    NSLog(@"SndAudioProcessor::closeRecordFile - closed\n");
+#endif
+    
+    return YES;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// startRecording
+////////////////////////////////////////////////////////////////////////////////
+
+- (BOOL) startRecording
+{  
+    if (recordBuffer == nil) {
+#if SNDAUDIOPROCRECORDER_DEBUG  
+	NSLog(@"SndAudioProcessorRecorder::startRecording - Error: recordBuffer is nil.\n");
+#endif
+    }
+    else if (isRecording) {  
+#if SNDAUDIOPROCRECORDER_DEBUG  
+	NSLog(@"SndAudioProcessorRecorder::startRecording - Error: already recording!\n");
+#endif
+    }
+    else {
+	recordPosition = 0;
+	isRecording = YES;	
+    }
+    return isRecording;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// startRecordingToFile:
+//
+// Set up an snd file for storage.
+////////////////////////////////////////////////////////////////////////////////
+
+- (BOOL) startRecordingToFile: (NSString *) filename
+               withDataFormat: (SndSampleFormat) dataFormat
+                 channelCount: (int) channelCount
+                 samplingRate: (int) samplingRate
+{
+    // fileFormat.dataFormat = dataFormat; // TODO disabled
+    fileFormat.channelCount = channelCount;
+    fileFormat.sampleRate = samplingRate;
+    
+    // Create a temporary buffer of 1 second duration for buffering before writing to disk.
+    if (![self prepareToRecordForDuration: 1.0]) {
+	NSLog(@"SndAudioProcessorRecorder::startRecordingToFile - Error in prepareToRecordForDuration.\n");
+    }
+    else if (![self setUpRecordFile: filename withFormat: fileFormat]) {
+	NSLog(@"SndAudioProcessorRecorder::startRecordingToFile - Error in setUpRecordFile\n");
+    }
+    else {
+	// conversionBuffer = [SndAudioBuffer audioBufferWithFormat: dataFormat channelCount: [recordBuffer channelCount]
+	long size = sizeof(short) * [recordBuffer lengthInSampleFrames] * [recordBuffer channelCount];
+	
+	if ((conversionBuffer = (short*) malloc(size)) == NULL) {
+	    NSLog(@"SndAudioProcessorRecorder::startRecordingToFile - Error: bad malloc for conversionBuffer of %ld\n", size);
+	}
+	else {
+	    // [fileWriteLock lock]
+	    recordPosition = 0;
+	    bytesRecorded = 0;
+	    stopSignal = NO;
+	    [self primeStartTrigger];
+	    isRecording = YES;
+	    // [fileWriteLock unlock];
+	}
+    }
+    return isRecording;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// stopRecording
+////////////////////////////////////////////////////////////////////////////////
+
+- stopRecording
+{
+    stopSignal = YES; // signal to recording thread that we wanna stop.
+    return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// stopRecordingWait:
+////////////////////////////////////////////////////////////////////////////////
+
+- stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream
+{
+    float timeWaiting = 0.0;
+    stopSignal = YES; // signal to recording thread that we want to stop.
+    
+    if (bWait) {
+	while (recordFile != NULL && timeWaiting < 3.0) {
+	    [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+	    timeWaiting += 0.1;
+	}
+    }
+#if SNDAUDIOPROCRECORDER_DEBUG
+    NSLog(@"SndAudioProcessor::stopRecordingWait:disconnectFromStream: \n");
+#endif
+    
+    return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// streamToDiskData
+////////////////////////////////////////////////////////////////////////////////
+
+- (void) streamToDiskData: (void*) recData length: (long) bytesToRecord
+{
+    float *f = (float*) recData; 
+    int    sampleIndex, samsToConvert = bytesToRecord / sizeof(float);
+
+    switch(fileFormat.dataFormat) {
+    case SND_FORMAT_FLOAT:
+	NSLog(@"writing format float - incomplete!\n");
+	for (sampleIndex = 0; sampleIndex < samsToConvert; sampleIndex++) {
+
+	}
+	fwrite(conversionBuffer, samsToConvert, sizeof(float), recordFile);
+	bytesRecorded += samsToConvert * sizeof(float);    
+	break;
+    default:
+    case SND_FORMAT_LINEAR_16:
+	// short *conversionPtr = (short *) [conversionBuffer data];
+	for (sampleIndex = 0; sampleIndex < samsToConvert; sampleIndex++) {
+	    char *p = (char*)(conversionBuffer + sampleIndex); 
+	    short s = (short)(f[sampleIndex] * 32767.0f);
+	    p[0] = (char) (s & 0x00FF);
+	    p[1] = (char) ((s & 0xFF00) >> 8);
+	}
+	// [conversionBuffer writeToFile: recordFile littleEndian: YES];
+	fwrite(conversionBuffer, samsToConvert, sizeof(short), recordFile);
+	bytesRecorded += samsToConvert * sizeof(short);    
+	break;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// primeStartTrigger
+////////////////////////////////////////////////////////////////////////////////
+
+- primeStartTrigger
+{
+    startedRecording = NO;
+    return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// setStartTriggerThreshold:
+////////////////////////////////////////////////////////////////////////////////
+
+- setStartTriggerThreshold: (float) f
+{
+    startTriggerThreshold = f;
+    return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// paramObjectForIndex:
+////////////////////////////////////////////////////////////////////////////////
+
+- (id) paramObjectForIndex: (const int) i
+{
+    id obj;
+    
+    switch (i) {
+	case recorder_kRecordFile:
+	    obj = (recordFileName != nil) ? recordFileName : @"";
+	    break;
+	default:
+	    obj = [super paramObjectForIndex: i];
+    }
+    return obj;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// paramValue:
+////////////////////////////////////////////////////////////////////////////////
+
+- (float) paramValue: (const int) index
+{
+    float f = 0.0f;
+    switch (index) {
+	case recorder_kStartTriggerThreshold: 
+	    f = startTriggerThreshold; 
+	    break;
+    }
+    return f;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// paramValue:
+////////////////////////////////////////////////////////////////////////////////
+
+- (NSString*) paramName: (const int) index
+{
+    NSString *r = nil;
+    switch (index) {
+	case recorder_kStartTriggerThreshold: 
+	    r = @"StartTriggerThreshold"; 
+	    break;
+	case recorder_kRecordFile:            
+	    r = @"RecordFileName";        
+	    break;
+    }
+    return r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,402 +401,106 @@
                         outputBuffer: (SndAudioBuffer*) outB;
 {
 #if SNDAUDIOPROCRECORDER_DEBUG > 1
-  fprintf(stderr,"SndAudioProcessor::processReplacing: Entering...\n");
+    NSLog(@"SndAudioProcessor::processReplacing: Entering...\n");
 #endif
-  if (stopSignal) {
+    if (stopSignal) {
 #if SNDAUDIOPROCRECORDER_DEBUG > 1
-    fprintf(stderr,"SndAudioProcessor::processReplacing: Finished recording BBB\n");        
+	NSLog(@"SndAudioProcessor::processReplacing: Finished recording BBB\n");        
 #endif    
-    if (bytesRecorded == 0 && position == 0)
-      return FALSE;
-  }
-  {
-    float *recData             = (float*) [recordBuffer bytes];
-    float *inputData           = (float*) [inB bytes]; 
-    long inBuffLengthInBytes  = [inB lengthInBytes];
-    long recBuffLengthInBytes = [recordBuffer lengthInBytes];
-    long remainder            = 0;
-    long length               = 0, i;
-    
-    if (bStartTrigger) { // whoop! haven't started recording - look thru buffer
-      long inBuffLengthInSams   = [inB lengthInSampleFrames];
-      float *finB = (float*) [inB bytes];
-      long skip = [inB channelCount];
-      
-      for (i = skip ; i < inBuffLengthInSams; i += skip) {
-        if (fabs(finB[i]) > fStartTriggerThreshold) {
-          bStartTrigger = FALSE;
-          inputData           += (i-skip);
-          inBuffLengthInBytes -= (i-skip);
-          break;
-        }
-      }
+	if (bytesRecorded == 0 && recordPosition == 0)
+	    return NO;
     }
-    
-    if (!bStartTrigger) { // do NOT make this an 'else' with the above 'if'!
-    // work out how much of the incoming buffer we can dump in the
-    // record buffer...
-      if (inBuffLengthInBytes + position > recBuffLengthInBytes) {
-        remainder = (inBuffLengthInBytes + position) - recBuffLengthInBytes;
-        length    = recBuffLengthInBytes - position;
-      }
-      else {
-        length = inBuffLengthInBytes;
-      }
-      // transfer the incoming data...
-      memcpy(((void*)recData) + position, inputData, length);
-      position += length;    
-      
-      // have we filled a record buffer?
-      if (position == recBuffLengthInBytes) {      
-    
-        if (recordFile != NULL) { // we are streaming to a file, and need to write to disk!
-          [self streamToDiskData: recData length: recBuffLengthInBytes];
+    if(isRecording) {
+	float *recData            = (float *) [recordBuffer bytes]; // TODO this assumes the data is always floats.
+	float *inputData          = (float *) [inB bytes];          // TODO this assumes the data is always floats.
+	long inBuffLengthInBytes  = [inB lengthInBytes];
+	long inBuffLengthInFrames = [inB lengthInSampleFrames];
+	long recBuffLengthInBytes = [recordBuffer lengthInBytes];
+	long remainder            = 0;
+	long length               = 0;
+	
+	if (!startedRecording) { // whoop! haven't yet started recording - look thru buffer
+	    // float *finB = (float *) [inB bytes];
+	    long channelCount = [inB channelCount];
+	    long bufferLengthInSamples = inBuffLengthInFrames * channelCount;
+	    long sampleIndex;
+	    
+	    for (sampleIndex = 0; sampleIndex < bufferLengthInSamples; sampleIndex++) {
+		if (fabs(inputData[sampleIndex]) > startTriggerThreshold) {
+		    long samplesToSkip = (sampleIndex / channelCount) * channelCount;
+		    startedRecording = YES; // to execute the saving below.
+		    // Now determine which frame this sample is within in order to calculate sample to begin copying from.
+		    inputData           += samplesToSkip;
+		    inBuffLengthInBytes -= samplesToSkip * sizeof(float); // TODO this assumes floats for samples.
+		    break;
+		}
+	    }
+	}
+	
+	// do NOT make this an 'else' with the above 'if', allow it to drop through.
+	if (startedRecording) {
+	    // NSLog(@"inB = %@, recordBuffer %@\n", inB, recordBuffer);
+	    // work out how much of the incoming buffer we can dump in the record buffer...
+	    if (inBuffLengthInBytes + recordPosition > recBuffLengthInBytes) {
+		remainder = (inBuffLengthInBytes + recordPosition) - recBuffLengthInBytes;
+		length    = recBuffLengthInBytes - recordPosition;
+	    }
+	    else {
+		length = inBuffLengthInBytes;
+	    }
+	    // NSLog(@"recordPosition %d remainder %d length %d\n", recordPosition, remainder, length);
+	    // transfer the incoming data...
+	    memcpy(((void*) recData) + recordPosition, inputData, length);
+	    // [recordBuffer insertBuffer: inB inRange: aboveThresholdRange];
+	    recordPosition += length;    
+	    
+	    // have we filled a record buffer?
+	    if (recordPosition == recBuffLengthInBytes) {
+		if (recordFile != NULL) { // we are streaming to a file, and need to write to disk!
+		    [self streamToDiskData: recData length: recBuffLengthInBytes];
+		    // [self writeToDiskBuffer: recordBuffer range: ];
 #if SNDAUDIOPROCRECORDER_DEBUG
-          fprintf(stderr,"SndAudioProcessor::processReplacing: Processing... (pos: %li / %li  length: %li inlength: %li)\n",position,recBuffLengthInBytes,bytesRecorded,[inB lengthInBytes]);
+		    NSLog(@"SndAudioProcessor::processReplacing: Processing... (pos: %li / %li  length: %li inlength: %li)\n",recordPosition,recBuffLengthInBytes,bytesRecorded,[inB lengthInBytes]);
+		    NSLog(@"recordBuffer %@\n", recordBuffer);
 #endif
-        }
-        else {
-          bytesRecorded += length;
-          isRecording = FALSE;
-        }
-        position = 0;
-      }        
-      if (remainder) {
+		}
+		else {
+		    bytesRecorded += length;
+		    isRecording = NO;
+		}
+		recordPosition = 0;
+	    }        
+	    if (remainder) {
 #if SNDAUDIOPROCRECORDER_DEBUG
-        fprintf(stderr,"SndAudioProcessor::processReplacing: memcpy... (position: %li length: %li remainder: %li recData: %p inputData:%p inLength:%li)\n",
-                position, length, remainder,recData,inputData,[inB lengthInBytes]);
+		NSLog(@"SndAudioProcessor::processReplacing: memcpy... (recordPosition: %li length: %li remainder: %li recData: %p inputData:%p inLength:%li)\n",
+		      recordPosition, length, remainder,recData,inputData,[inB lengthInBytes]);
 #endif
-        memcpy(recData, ((void*)inputData) + length, remainder);
-        position += remainder;
-      }    
-    
-      if (stopSignal) { // If so, shut down stuff.
-        if (recordFile != NULL) {
-          if (position > 0)  // flush out partial record buffer to disk
-            [self streamToDiskData: recData length: position];
-        
-          [self closeRecordFile];
+		memcpy(recData, ((void*)inputData) + length, remainder);
+		// [recordBuffer insertBuffer: inB inRange: remainingFramesRange];
+		recordPosition += remainder;
+	    }    
+	    
+	    if (stopSignal) { // If we are in the process of stopping, shut down stuff.
+		if (recordFile != NULL) {
+		    if (recordPosition > 0)  // flush out partial record buffer to disk
+			[self streamToDiskData: recData length: recordPosition];
+			// [self writeToDiskBuffer: inB range: ];
+		    
+		    [self closeRecordFile];
 #if SNDAUDIOPROCRECORDER_DEBUG  
-        fprintf(stderr,"SndAudioProcessor::processReplacing: closed record file\n");
+		    NSLog(@"SndAudioProcessor::processReplacing: closed record file\n");
 #endif
-        }      
-      }
-    }
-  } // end of isRecording
+		}
+		else {
+		    isRecording = NO;
+		}
+	    }
+	}
+    } // end of isRecording
 #if SNDAUDIOPROCRECORDER_DEBUG > 1
-  fprintf(stderr,"SndAudioProcessor::processReplacing: Leaving...\n");
+    NSLog(@"SndAudioProcessor::processReplacing: Leaving...\n");
 #endif
-  return FALSE;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// prepareToRecordForDuration:
-////////////////////////////////////////////////////////////////////////////////
-
-- (BOOL) prepareToRecordForDuration: (double) time
-                     withDataFormat: (int) dataFormat
-                       channelCount: (int) chanChan
-                       samplingRate: (int) samRate
-{
-  BOOL r = FALSE;
-  
-  if (isRecording) {
-#if SNDAUDIOPROCRECORDER_DEBUG  
-    fprintf(stderr,"SndAudioProcessorRecorder::prepareToRecordForDuration - Error: already recording!\n");
-#endif
-  }
-  else {
-    // This ain't an optimal situation - recorder shouldn't even HAVE an output buffer.
-    // However, it is the only way at present to get format info from manager 
-    // Ideally, we would like the recorder to connect to the stream manager itself
-    if (recordBuffer != nil)
-      [recordBuffer release];
-
-    recordBuffer = [SndAudioBuffer audioBufferWithDataFormat: dataFormat
-						    channelCount: chanChan
-                                                samplingRate: samRate
-                                                    duration: time];
-    if (recordBuffer == nil) {
-#if SNDAUDIOPROCRECORDER_DEBUG
-      fprintf(stderr,"SndAudioProcessorRecorder::prepareToRecordForDuration - Error: record buffer is nil.\n");
-#endif
-    }
-    else {
-      [recordBuffer retain];
-      r = TRUE;
-    }
-  }
-  return r;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// startRecording
-////////////////////////////////////////////////////////////////////////////////
-
-- (BOOL) startRecording
-{
-  BOOL r = FALSE;
-  
-  if (recordBuffer == nil) {
-#if SNDAUDIOPROCRECORDER_DEBUG  
-    fprintf(stderr,"SndAudioProcessorRecorder::startRecording - Error: recordBuffer is nil.\n");
-#endif
-  }
-  else if (isRecording) {  
-#if SNDAUDIOPROCRECORDER_DEBUG  
-    fprintf(stderr,"SndAudioProcessorRecorder::startRecording - Error: already recording!\n");
-#endif
-  }
-  else {
-    position    = 0;
-    isRecording = TRUE;	
-    r           = TRUE;
-  }
-  return r;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// setUpRecordFile:
-////////////////////////////////////////////////////////////////////////////////
-
-void writeWavFormatHeader(int format, int channelCount, int samplingRate,
-                          FILE* f, unsigned long dataLengthInBytes)
-{
-  unsigned long dw;
-  unsigned short w;
-  
-  fwrite("RIFF", 4, 1, f);  
-  fwrite(SndSwap_Convert32BitNative2LittleEndian(dataLengthInBytes + 38), 4, 1, f); // file length
-  fwrite("WAVE", 4, 1, f);  
-  fwrite("fmt ", 4, 1, f);  
-  fwrite(SndSwap_Convert32BitNative2LittleEndian(18), 4, 1, f);                    // chunk length
-  fwrite(SndSwap_Convert16BitNative2LittleEndian(1),  2, 1, f);                    // file format 1 = linear wav
-  fwrite(SndSwap_Convert16BitNative2LittleEndian(channelCount),  2, 1, f); // channels
-  fwrite(SndSwap_Convert32BitNative2LittleEndian(samplingRate), 4, 1, f);  // chunk length
-  dw = samplingRate * channelCount * sizeof(short);
-  fwrite(SndSwap_Convert32BitNative2LittleEndian(dw), 4, 1, f);                    // bytes per second
-  w = channelCount * sizeof(short);
-  fwrite(SndSwap_Convert16BitNative2LittleEndian(w),  2, 1, f);                    // frame size
-  fwrite(SndSwap_Convert16BitNative2LittleEndian(16),  2, 1, f);                   // bit resolution
-  fwrite(SndSwap_Convert16BitNative2LittleEndian(0),  2, 1, f);                    // extra bytes
-  fwrite("data", 4, 1, f);  
-  fwrite(SndSwap_Convert32BitNative2LittleEndian(dataLengthInBytes), 4, 1, f);     // data chunk length
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// setUpRecordFile:withFormat:
-////////////////////////////////////////////////////////////////////////////////
-
-- (BOOL) setUpRecordFile: (NSString*) filename
-          withDataFormat: (int) dataFormat
-            channelCount: (int) channelCount
-            samplingRate: (int) samplingRate
-{
-  if ((recordFile = fopen([filename fileSystemRepresentation],"wb")) == NULL) {
-#if SNDAUDIOPROCRECORDER_DEBUG  
-    fprintf(stderr, "SndAudioProcessorRecorder::setupRecordFile - Error opening file '%s' for recording.\n",[filename cString]);
-#endif
-  }
-  else  {
-    writeWavFormatHeader(dataFormat, channelCount, samplingRate,
-                         recordFile, 0);
-    if (recordFileName != nil)
-      [recordFileName release];
-    recordFileName = [filename copy];
-    return TRUE;
-  }
-  return FALSE;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// closeRecordFile:
-////////////////////////////////////////////////////////////////////////////////
-
-- (BOOL) closeRecordFile
-{
-  // We have to seek back to the beginning of the recorded file to rewrite the
-  // file header so that it contains the size of the recorded data, and the
-  // file-stream format  
-  fseek(recordFile, 0, SEEK_SET);
-  writeWavFormatHeader([recordBuffer dataFormat], [recordBuffer channelCount],
-                       [recordBuffer samplingRate], recordFile, bytesRecorded);
-  fclose(recordFile);
-  recordFile    = NULL;
-  bytesRecorded = 0;
-  stopSignal = FALSE;
-
-#if SNDAUDIOPROCRECORDER_DEBUG
-  fprintf(stderr,"SndAudioProcessor::closeRecordFile - closed\n");
-#endif
-  
-  return TRUE;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// startRecordingToFile:
-//
-// Set up an snd file for storage.
-////////////////////////////////////////////////////////////////////////////////
-
-- (BOOL) startRecordingToFile: (NSString*) filename
-               withDataFormat: (int) dataFormat
-                 channelCount: (int) channelCount
-                 samplingRate: (int) samplingRate
-{
-  BOOL b = FALSE;
-  
-  if (![self prepareToRecordForDuration: 1.0
-                         withDataFormat: dataFormat
-                           channelCount: channelCount
-                           samplingRate: samplingRate]) {
-#if SNDAUDIOPROCRECORDER_DEBUG  
-    fprintf(stderr,"SndAudioProcessorRecorder::startRecordingToFile - Error in prepareTorecordForDuration.\n");
-#endif
-  }
-  else  if (![self setUpRecordFile: filename
-                    withDataFormat: dataFormat
-                      channelCount: channelCount
-                      samplingRate: samplingRate]) {
-#if SNDAUDIOPROCRECORDER_DEBUG  
-    fprintf(stderr,"SndAudioProcessorRecorder::startRecordingToFile - Error in setUpRecordFile\n");
-#endif
-  }
-  else if (recordBuffer == nil) {
-#if SNDAUDIOPROCRECORDER_DEBUG  
-    fprintf(stderr,"SndAudioProcessorRecorder::startRecordingToFile - Error: recordBuffer is nil.\n");
-#endif
-  }
-  else {
-    long size = sizeof(short) * [recordBuffer lengthInSampleFrames] * [recordBuffer channelCount];
-    if ((conversionBuffer = (short*) malloc(size)) == NULL) {
-#if SNDAUDIOPROCRECORDER_DEBUG  
-      fprintf(stderr,"SndAudioProcessorRecorder::startRecordingToFile - Error: bad malloc for conversionBuffer\n");
-#endif
-    }
-    else
-    {
-      position      = 0;
-      bytesRecorded = 0;
-      isRecording   = TRUE;
-      b             = TRUE;
-      stopSignal    = FALSE;
-    }
-  }
-  return b;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// stopRecording
-////////////////////////////////////////////////////////////////////////////////
-
-- stopRecording
-{
-  stopSignal = TRUE; // signal to recording thread that we wanna stop.
-  return self;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// stopRecordingWait:
-////////////////////////////////////////////////////////////////////////////////
-
-- stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream
-{
-  float timeWaiting = 0.0;
-  stopSignal = TRUE; // signal to recording thread that we want to stop.
-  
-  if (bWait) {
-    while (recordFile != NULL && timeWaiting < 3.0) {
-      [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-      timeWaiting += 0.1;
-    }
-  }
-#if SNDAUDIOPROCRECORDER_DEBUG
-  fprintf(stderr,"SndAudioProcessor::stopRecordingWait:disconnectFromStream: \n");
-#endif
-  
-  return self;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// processBuffers
-////////////////////////////////////////////////////////////////////////////////
-
-- (void) streamToDiskData: (void*) recData length: (long) bytesToRecord
-{
-    float *f = (float*) recData; 
-    int    i, samsToConvert = bytesToRecord / sizeof(float);
-
-    for (i = 0; i < samsToConvert; i++) {
-        char *p = (char*)(conversionBuffer + i); 
-        short s = (short)(f[i] * 32767.0f);
-        p[0] = (char) (s & 0x00FF);
-        p[1] = (char) ((s & 0xFF00) >> 8);
-    }              
-    fwrite(conversionBuffer, samsToConvert, sizeof(short), recordFile);
-    bytesRecorded += samsToConvert * sizeof(short);    
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// primeStartTrigger
-////////////////////////////////////////////////////////////////////////////////
-
-- primeStartTrigger
-{
-  bStartTrigger = TRUE;
-  return self;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// setStartTriggerThreshold:
-////////////////////////////////////////////////////////////////////////////////
-
-- setStartTriggerThreshold: (float) f
-{
-  fStartTriggerThreshold = f;
-  return self;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// paramObjectForIndex:
-////////////////////////////////////////////////////////////////////////////////
-
-- (id) paramObjectForIndex: (const int) i
-{
-  id obj;
-  switch (i) {
-    case recorder_kRecordFile: if (recordFileName != nil) obj = recordFileName; else obj = @""; break;
-    default:
-      obj = [super paramObjectForIndex: i];
-  }
-  return obj;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// paramValue:
-////////////////////////////////////////////////////////////////////////////////
-
-- (float) paramValue: (const int) index
-{
-  float f = 0.0f;
-  switch (index) {
-    case recorder_kStartTriggerThreshold: f = fStartTriggerThreshold; break;
-  }
-  return f;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// paramValue:
-////////////////////////////////////////////////////////////////////////////////
-
-- (NSString*) paramName: (const int) index
-{
-  NSString *r = nil;
-  switch (index) {
-    case recorder_kStartTriggerThreshold: r = @"StartTriggerThreshold"; break;
-    case recorder_kRecordFile:            r = @"RecordFileName";        break;
-  }
-  return r;
+    return NO;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
