@@ -60,8 +60,8 @@ static SndPlayer *defaultSndPlayer;
     SndSoundStruct s;
       
     SNDStreamNativeFormat(&s); /* get maximum length for processing buffer */
-    //NSLog(@"Native format of streaming audio buffer:\n");
-    //SndPrintStruct(&s);
+    if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowStreamingFormat"])
+	NSLog(@"Native format of streaming audio buffer: %@\n", SndStructDescription(&s));
 
     nativelyFormattedStreamingBuffer = [[SndAudioBuffer alloc] initWithFormat: &s data: NULL];
     
