@@ -61,6 +61,8 @@
 {
   if (theAudProc != nil)
     [theAudProc release];
+  if (paramDictionary != nil)
+    [paramDictionary release];
   [super dealloc];
 }
 
@@ -78,6 +80,10 @@
   [parameterTableView selectRow: 0 byExtendingSelection: FALSE];
   [parameterValueSilder setFloatValue: [theAudProc paramValue: 0]];
   [parameterTableView setDataSource: self];
+
+  if (paramDictionary != nil)
+    [paramDictionary release];
+  paramDictionary = nil;
   [parameterTableView reloadData];
   [processorActive setIntValue: [theAudProc isActive]];
   return self;
@@ -103,6 +109,9 @@
   [theAudProc setParam: r toValue: [sender doubleValue]];
   [parameterValueSilder setDoubleValue: [theAudProc paramValue: r]];
 
+  if (paramDictionary != nil)
+    [paramDictionary release];
+  paramDictionary = nil;
   [parameterTableView reloadData];
   return self;
 }
@@ -134,12 +143,40 @@
     return 0;
 }
 
-- (id) tableView:(NSTableView *) aTableView objectValueForTableColumn: (NSTableColumn *)aTableColumn row:(int)rowIndex
+- (id) tableView: (NSTableView*) aTableView objectValueForTableColumn: (NSTableColumn*) aTableColumn
+             row: (int) rowIndex
 {
-  if ([[aTableColumn identifier] isEqualToString: @"Name"])
-    return [theAudProc paramName: rowIndex];
-  else
-    return [NSString stringWithFormat: @"%.3f", [theAudProc paramValue: rowIndex]];
+  if (paramDictionary == nil) {
+    paramDictionary = [[theAudProc paramDictionary] retain];
+  }
+  if ([[aTableColumn identifier] isEqualToString: @"Name"]) {
+    
+      return [[paramDictionary allKeys] objectAtIndex: rowIndex];
+  }
+  else {
+    id obj = [paramDictionary objectForKey: [[paramDictionary allKeys] objectAtIndex: rowIndex]];
+
+    if ([obj isKindOfClass: [NSString class]]) {
+      return obj;
+    }
+    else if ([obj isKindOfClass: [NSValue class]]){
+      NSValue *v = obj;
+      const char* type = [v objCType];
+
+      if (strcmp(type,@encode(float)) == 0) {
+        float f;
+        [v getValue: &f];
+        return [NSString stringWithFormat: @"%.3f", f];
+      }
+      else if (strcmp(type,@encode(int)) == 0) {
+        int i;
+        [v getValue: &i];
+        return [NSString stringWithFormat: @"%i", i];
+      }
+    }
+  }
+  NSLog(@"SndAudioProcessor param type not supported yet - code it!\n");
+  return nil;
 }
 
 - didSelectObject: (id) sndAudioArchObject
