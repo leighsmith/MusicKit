@@ -245,7 +245,7 @@
 - (double) streamTime;
 
 /*!
-    @method   isActive
+    @method     isActive
     @abstract   Returns whether the client is active.
     @result     Returns a boolean indicating whether the client is active.
 */

@@ -42,6 +42,9 @@ enum {
 
 - init
 {
+    Snd *s = [Snd new];
+    [s release];
+
     [super init];
     
     outputQueue = [SndAudioBufferQueue audioBufferQueueWithLength: 4];
@@ -353,7 +356,7 @@ enum {
         [processedOutputBuffersLock unlock];
 */          
 #if SNDSTREAMCLIENT_DEBUG            
-      fprintf(stderr,"[%s] time: %f Processed: %i Pending: %i \n", [clientName cString], t, oc, [pendingOutputBuffers count]);
+      fprintf(stderr,"[%s] time: %f Processed: %i Pending: %i \n", [clientName cString], t, oc, [outputQueue pendingBuffersCount]);
 #endif          
 
       if (oc > 0) {
