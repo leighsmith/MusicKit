@@ -1,19 +1,28 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
-  $Id$
-  Original Author: David A. Jaffe
-  
+  $Id$  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
+
+  Description:
+    This class is used for variable values. Setting a ScorefileVar never
+    changes its type unless it is an Untyped score var. Automatic type
+    conversion is done where possible.
+
+    This is a private musickit class.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  2000/05/13 17:16:49  leigh
+  Doco cleanup and stricter typing of parameters
+
   Revision 1.2  1999/07/29 01:26:01  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -25,37 +34,13 @@ Modification history:
 
 #import "_musickit.h"
 #import <ctype.h>
-
 #import "_ParName.h"
 #import "_ScorefileVar.h"
-@implementation _ScorefileVar: NSObject
-/* This class is used for variable values. Setting a ScorefileVar never
-   changes its type unless it is an Untyped score var. Automatic type
-   conversion is done where possible. 
 
-   This is a private musickit class.
-       */
-{
-    _MKToken token;
-    _MKParameter *myParameter;          /* Used internally to store value. */
-    BOOL (*preDaemon)();   
-    /* preDaemon is an optional function of three arguments: 
-       id varObject; _MKToken newValueType; and char *ptrToNewValue;
-       It is called before the value is set and is used to filter bad values.
-       It returns YES if the value should be set or NO if it should not be set.
-       */
-    void (*postDaemon)();
-    /* postDaemon is an optional function of one arguments:
-       id ScorefileVarObject;
-       It is called after the value has been set. 
-       */
-    BOOL readOnly;   /* YES, if variable should not be changed. */
-    NSString *s;
-}
+@implementation _ScorefileVar
 
-id _MKNewScorefileVar(_MKParameter *parObj,NSString * name,BOOL untyped,BOOL isReadOnly)
-    /* You supply the parObj yourself. The object is not copied.*/
-/*sb: the name is, though*/
+_ScorefileVar *_MKNewScorefileVar(_MKParameter *parObj,NSString * name,BOOL untyped,BOOL isReadOnly)
+   /* You supply the parObj yourself. The name is copied, the rest of the object is not copied. */
 {	
     _ScorefileVar *self = [_ScorefileVar new];
     self->s = [name copy];// sb: was _MKMakeStr(name);
@@ -274,7 +259,7 @@ id _MKSetScorefileVarPostDaemon(self,funPtr)
     return rtnVal;
 }
 
--writeScorefileStream:(NSMutableData *)aStream
+- writeScorefileStream:(NSMutableData *)aStream
     /* Writes <ScorefileVarName> = <value>. */
 {	
     [aStream appendData:[[NSString stringWithFormat:@"%s = ", s] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
@@ -282,7 +267,7 @@ id _MKSetScorefileVarPostDaemon(self,funPtr)
     return self;
 }
 
-- (void)dealloc
+- (void) dealloc
     /* Frees object */
 {
     if ((myParameter->parNum) != MK_privatePars) 
@@ -293,7 +278,7 @@ id _MKSetScorefileVarPostDaemon(self,funPtr)
     [super dealloc];
 }
 
--(NSString *)varName
+- (NSString *) varName
 {
     return s;
 }
