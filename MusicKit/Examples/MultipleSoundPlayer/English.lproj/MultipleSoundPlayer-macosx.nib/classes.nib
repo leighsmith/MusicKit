@@ -1,0 +1,18 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {showHelp = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {chooseSoundFile = id; playSound = id; }; 
+            CLASS = SoundPlayerController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {playButton = NSButton; soundFileNameTableView = NSTableView; }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}
