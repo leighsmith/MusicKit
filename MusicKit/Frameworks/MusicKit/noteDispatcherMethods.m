@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/04/04 00:14:10  leigh
+  Removed crufty include file
+
   Revision 1.2  1999/07/29 01:26:10  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -22,7 +25,6 @@ Modification history:
                  Instrument's disconnectNoteReceivers.
   03/08/95/daj - Fixed bug in removeNoteSenders.
 */
-#import <objc/objc.h>
 
 -noteSenders
   /* TYPE: Processing
