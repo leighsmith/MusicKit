@@ -30,6 +30,10 @@ static id ENVCLASS=nil;
 - (void)_setStaticPointInEnvelope:(id <SndEnveloping, NSObject>) theEnv
                              yVal:(float)yVal
                              xVal:(double)atTime;
+/* this internal method takes account of the flags associated with the bps
+ * surrounding the lookup point.
+ */
+- (float)_lookupEnv:(id <SndEnveloping, NSObject>)anEnvelope forX:(double)theX;
 @end
 
 @interface _SndFaderStorage : NSObject
@@ -111,6 +115,7 @@ static id ENVCLASS=nil;
     bearingEnv = nil;
     staticBearing = 0;
     envClass = ENVCLASS;
+    uee = NULL;
     return self;
 }
 
@@ -429,6 +434,7 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
 
 - (void) dealloc
 {
+    if (uee) free(uee);
     [ampEnvLock release];
     [bearingEnvLock release];
     [ampEnv release];
@@ -456,6 +462,22 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
     return self;
 }
 
+- (float)_lookupEnv:(id <SndEnveloping, NSObject>)anEnvelope forX:(double)theX
+{
+    int prevBreakpoint = [anEnvelope breakpointIndexBeforeOrEqualToX:theX];
+    if (prevBreakpoint == -1) {
+        return 0;
+    }
+    /* it was a static breakpoint: take last y val and don't interpolate */
+    if (!([anEnvelope lookupFlagsForBreakpoint:prevBreakpoint] &
+        SND_FADER_ATTACH_RAMP_RIGHT)) {
+        return [anEnvelope lookupYForBreakpoint:prevBreakpoint];
+    }
+    /* let the envelope object do its interpolation */
+    return [anEnvelope lookupYForX:theX];
+
+}
+
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
                         outputBuffer: (SndAudioBuffer*) outB
 {
@@ -469,7 +491,7 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
 
 #define bearingFun1(theta)    fabs(cos(theta))
 #define bearingFun2(theta)    fabs(sin(theta))
-  return NO;
+//  return NO;
 
   [lock lock];
 
@@ -478,11 +500,11 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
       [outB dataFormat]      == [inB dataFormat]      &&
       [inB dataFormat]       == SND_FORMAT_FLOAT      &&
       [inB channelCount]     == 2) {
-      
+
       float *inD  = (float*) [inB  data];
       float *outD = (float*) [outB data];
       long   len  = [inB  lengthInSamples], i;
-      
+
       if (!ampEnv && !bearingEnv) {
         if (staticBearing == 0) {
           for (i=0;i<len*2;i+=2) {
@@ -501,163 +523,211 @@ BOOL middleOfMovement(double xVal, id <SndEnveloping,NSObject> anEnvelope)
         }
       }
       else {
-        //here's where the interesting bit goes...
-       /* tasks:
-        (1) make a copy of the relevant parts of the envelopes so we can
-            unlock it as soon as possible
-        (2) take account of bearing AND amp envs
-        (3) calc offsets within the buffer of any breakpoints that are hit
-            in either bearing or amp envelopes.
-        (4) make series of loops over the various segments.
-           - each loop from x1 to x2
-           - the scaling will be different for each channel, but will be
-             confined to the same set of segments.
-           - for R channel, scaler will go from r1 to r2 (at x1 the scaling
-             is r1; at x2, r2). Given iterator i (0 to x2-x1) the scaling
-             at each sample is (r1 + i/(x2-x1) * (r2-r1))
-        */
-        /* assume just for now that we have valid bearing and amp envs. */
-            /* these are our new derived envelopes for each channel */
-            NSMutableArray *store = [[NSMutableArray alloc] initWithCapacity:10];
-            int i,count;
- //           int lindx, rindx;
-            int ampIndx,bearingIndx;
-            int nextAmpIndx,nextBearingIndx;
-//            float tempL,tempR;
-            int tempAmpFlags,tempBearingFlags;
-//            double tempAmpX,tempBearingX;
-            float tempAmpY,tempBearingY;
-            BOOL hasAmp=NO,hasBearing=NO;
-            double x=nowTime;
-            double maxX = x + [outB duration];
-            /* Find the relevant bps in each envelope.
-             * We only need to take things from the last bp before the buffer
-             * begins.
-             */
+        double x = nowTime;
+        double maxX = x + [outB duration];
+        int xPtr = 0;
+        int ampPtr = 0, bearingPtr = 0;
+        double ampX = x, bearingX = x;
+        double nextAmpX, nextBearingX;
+        int nextAmpIndx, nextBearingIndx;
+        int countAmp;
+        int countBearing;
+        int i,j;
+        int nextAmpFlags = 0, nextBearingFlags = 0;
+        int currentAmpFlags = 0, currentBearingFlags = 0;
 
-            /************************************************************/
-            #define AMP_FIRST 1
-            #define BEARING_FIRST 2
+        if (!bearingEnv && !ampEnv) {
+            [lock unlock];
+            return NO;
+        }
+        if (!bearingEnv) bearingEnv = [[envClass alloc] init];
+        else if (!ampEnv) ampEnv = [[envClass alloc] init];
 
-//            float amp,bearing;
-            int maxAmpBps;
-            int maxBearingBps;
+        countAmp = [ampEnv breakpointCount];
+        countBearing = [bearingEnv breakpointCount];
 
-            int lowest = 0;
-            double nextAmpX, nextBearingX, nextX;
-            float nextAmpY, nextBearingY;
-            float ampMult;
-            float bearingMult;
+        if (!uee) uee = calloc(256,sizeof(SndUnifiedEnvelopeEntry));
 
-            NSLog(@"x %f, maxX %f\n",x,maxX);
-            if (!bearingEnv) bearingEnv = [[envClass alloc] init];
-            if (!ampEnv) ampEnv = [[envClass alloc] init];
+        /* prime the loop */
+        nextAmpIndx = [ampEnv breakpointIndexAfterX:nowTime];
+        nextBearingIndx = [bearingEnv breakpointIndexAfterX:nowTime];
+        if (nextAmpIndx != -1) {
+            nextAmpX = [ampEnv lookupXForBreakpoint:nextAmpIndx];
+            nextAmpFlags = [ampEnv lookupFlagsForBreakpoint:nextAmpIndx];
+        }
+        else {
+            nextAmpX = maxX + 1;
+        }
+        if (nextBearingIndx != -1) {
+            nextBearingX = [bearingEnv lookupXForBreakpoint:nextBearingIndx];
+            nextBearingFlags = [bearingEnv lookupFlagsForBreakpoint:nextBearingIndx];
+        }
+        else {
+            nextBearingX = maxX + 1;
+        }
 
-            maxAmpBps = [ampEnv breakpointCount] - 1;
-            maxBearingBps = [bearingEnv breakpointCount] - 1;
-            do {
-                if (!lowest) { /* first time around */
-                    tempAmpY     = [ampEnv lookupYForX:x];
-                    tempBearingY = [bearingEnv lookupYForX:x];
-                    ampIndx      = [ampEnv breakpointIndexBeforeOrEqualToX:x];
-                    bearingIndx  = [bearingEnv breakpointIndexBeforeOrEqualToX:x];
+        /* last chance to bypass: if the first amp and bearing envelope points
+         * are beyond the end of the buffer, we eject.
+         */
+        if ((!countBearing || (nextBearingIndx == 0 && (nextBearingX > maxX))) &&
+            (!countAmp || (nextAmpIndx == 0 && (nextAmpX > maxX)))) {
+            [lock unlock];
+            return NO;
+        }
+        /* always put in start of buffer */
+        /* grab some values pertaining to start of envelope */
+        {
+            int b4AmpIndx = [ampEnv breakpointIndexBeforeOrEqualToX:nowTime];
+            int b4BearingIndx = [bearingEnv breakpointIndexBeforeOrEqualToX:nowTime];
+            if (b4AmpIndx != -1) {
+                uee[xPtr].ampFlags = [ampEnv lookupFlagsForBreakpoint:b4AmpIndx];
+                uee[xPtr].ampY = [self _lookupEnv:ampEnv forX:ampX];
+            } else {
+                uee[xPtr].ampFlags = 0;
+                uee[xPtr].ampY = 1; /* FIXME what about static amp??? */
+            }
+            if (b4BearingIndx != -1) {
+                uee[xPtr].bearingFlags = [bearingEnv lookupFlagsForBreakpoint:b4BearingIndx];
+                uee[xPtr].bearingY = [self _lookupEnv:bearingEnv forX:ampX];
+            } else {
+                uee[xPtr].bearingFlags = 0;
+                uee[xPtr].bearingY = 0; /* FIXME what about static bearing??? */
+            }
+        }
+        uee[xPtr].xVal = ampX;
+        xPtr++;
+
+        /* do the loop to get all relevant x values within our relevant
+         * time period
+         */
+        while ((nextAmpX < maxX) || (nextBearingX < maxX)) {
+//            NSLog(@"nextAmpX %f, nextBearingX %f\n",nextAmpX, nextBearingX);
+            if (nextAmpX <= nextBearingX) {
+                uee[xPtr].xVal = nextAmpX;
+                uee[xPtr].ampFlags = nextAmpFlags;
+                uee[xPtr].ampY = [ampEnv lookupYForBreakpoint:nextAmpIndx];
+                uee[xPtr].bearingY = [self _lookupEnv:bearingEnv forX:nextAmpX];
+                /* since we're slotting in an unexpected bp as far as the bearing env
+                 * is concerned, make sure we tell the new bp to ramp on both sides,
+                 * if it needs to
+                 */
+                if ((currentBearingFlags & SND_FADER_ATTACH_RAMP_RIGHT) ||
+                    (nextBearingFlags & SND_FADER_ATTACH_RAMP_LEFT)) {
+                    uee[xPtr].bearingFlags = SND_FADER_ATTACH_RAMP_RIGHT | SND_FADER_ATTACH_RAMP_LEFT;
                 }
                 else {
-                    tempAmpY = nextAmpY;
-                    tempBearingY = nextBearingY;
-                    if (lowest == AMP_FIRST) {
-                    /* last time thru, an amp bp came before the next bearing bp */
-                        if (nextAmpIndx > maxAmpBps) ampIndx = -1;
-                        else ampIndx = nextAmpIndx;
-                        /* bearingIndx stays where it was: we still need to refer
-                         * to it for its flags
-                         */
-                    }
-                    else {
-                        if (nextBearingIndx > maxBearingBps) bearingIndx = -1;
-                        else bearingIndx = nextBearingIndx;
-                    }
+                    uee[xPtr].bearingFlags = 0;
                 }
-
-                nextAmpIndx = ampIndx + 1;
-                nextBearingIndx = bearingIndx + 1;
-
-                /* immediate termination if we have no enveloping yet */
-                NSLog(@"ampIndx (previous point) %d, bearingindx %d\n",ampIndx,bearingIndx);
-                if ((ampIndx == -1) && (bearingIndx == -1)) break;
-
-                if (ampIndx != -1) {
-                    tempAmpFlags = [ampEnv lookupFlagsForBreakpoint:ampIndx];
-                    hasAmp = YES;
-                }
-                else hasAmp = NO;
-
-                if (bearingIndx != -1) {
-                    tempBearingFlags = [bearingEnv lookupFlagsForBreakpoint:ampIndx];
-                    hasBearing = YES;
-                }
-                else hasBearing = NO;
-
-                /* So that's the "from" -- what is the "to"?
-                 * Better check to see whether the next amp, or the next bearing
-                 * segment comes next
-                 */
-                /* FIXME: need to check properly for max breakpoints */
-                /* what is happening here is that if the lookup for previous bp
-                   comes back with -1, we are still assuming that there is a valid one
-                   there, and looking for that one + 1 (==0)
-                 */
-                //if (!hasAmp && )
-                if ((nextAmpX=[ampEnv lookupXForBreakpoint:nextAmpIndx]) <=
-                    (nextBearingX=[bearingEnv lookupXForBreakpoint:nextBearingIndx])
-                    && nextAmpIndx <= maxAmpBps ) {
-                    lowest = AMP_FIRST;
+                xPtr++;
+                nextAmpIndx++;
+                if (nextAmpIndx < countAmp) {
+                    nextAmpX = [ampEnv lookupXForBreakpoint:nextAmpIndx];
+                    currentAmpFlags = nextAmpFlags;
+                    nextAmpFlags = [ampEnv lookupFlagsForBreakpoint:nextAmpIndx];
                 }
                 else {
-                    lowest = BEARING_FIRST;
+                    nextAmpX = maxX + 1;
+                    currentAmpFlags = nextAmpFlags;
+                    nextAmpFlags = 0;
                 }
-                NSLog(@"NextAmpX %f\n",nextAmpX);
-                nextX = (lowest == AMP_FIRST) ? nextAmpX : nextBearingX;
-                nextAmpY = [ampEnv lookupYForX:nextX];
-                nextBearingY = [bearingEnv lookupYForX:nextX];
-
-
-                /* at this point I have a complete segment with x1, x2 etc and
-                * I want to insert it into array
-                */
-                ampMult = ((tempAmpFlags & SND_FADER_ATTACH_RAMP_RIGHT) ?
-                    nextAmpY : tempAmpY);
-                bearingMult = ((tempBearingFlags & SND_FADER_ATTACH_RAMP_RIGHT) ?
-                    nextBearingY : tempBearingY);
-                    
-                [_SndFaderStorage addToArray:store
-                    x1:x
-                    x2:nextX
-                    l1:tempAmpY * (tempBearingY - 45 ) / -90
-                    l2:tempAmpY * (tempBearingY + 45 ) / 90
-                    r1:ampMult * (bearingMult - 45) / -90
-                    r2:ampMult * (bearingMult + 45) / 90
-                    ];
-                
-                x = nextX;
-
-
-            } while (x <= maxX);
-
-            /* go and do loop again */
-
-            /* now do the processing based on the line segs in store */
-            /* bla bla bla */
-            count = [store count];
-            NSLog(@"Fader Storage listing (%d points)\n",count);
-            for (i = 0 ; i < count ; i++) {
-                _SndFaderStorage *t = [store objectAtIndex:i];
-                NSLog(@"From x:%f To x: %f L1:%f L2:%f R1:%f R2:%f\n",
-                t->x1,t->x2,t->l1,t->l2,t->r1,t->r2);
+            }
+            else {
+                uee[xPtr].xVal = nextBearingX;
+                uee[xPtr].bearingFlags = nextBearingFlags;
+                uee[xPtr].ampY = [self _lookupEnv:ampEnv forX:nextBearingX];
+                uee[xPtr].bearingY = [bearingEnv lookupYForBreakpoint:nextBearingIndx];
+                /* since we're slotting in an unexpected bp as far as the amp env
+                 * is concerned, make sure we tell the new bp to ramp on both sides,
+                 * if it needs to
+                 */
+                if ((currentAmpFlags & SND_FADER_ATTACH_RAMP_RIGHT) ||
+                    (nextAmpFlags & SND_FADER_ATTACH_RAMP_LEFT)) {
+                    uee[xPtr].ampFlags = SND_FADER_ATTACH_RAMP_RIGHT | SND_FADER_ATTACH_RAMP_LEFT;
+                }
+                else {
+                    uee[xPtr].ampFlags = 0;
+                }
+                xPtr++;
+                nextBearingIndx++;
+                if (nextBearingIndx < countBearing) {
+                    nextBearingX = [bearingEnv lookupXForBreakpoint:nextBearingIndx];
+                    currentBearingFlags = nextBearingFlags;
+                    nextBearingFlags = [bearingEnv lookupFlagsForBreakpoint:nextBearingIndx];
+                }
+                else {
+                    nextBearingX = maxX + 1;
+                    currentBearingFlags = nextBearingFlags;
+                    nextBearingFlags = 0;
+                }
             }
 
+        } /* end while */
+        /* always put in end of buffer */
+        uee[xPtr].xVal = maxX;
+        uee[xPtr].ampFlags = nextAmpFlags;
+        uee[xPtr].bearingFlags = nextBearingFlags;
+        uee[xPtr].ampY = [self _lookupEnv:ampEnv forX:maxX];
+        uee[xPtr].bearingY = [self _lookupEnv:bearingEnv forX:maxX];
+        xPtr++;
 
-            [store release];
+        /* log 'em */
+#if 0
+        NSLog(@"number of points: %d\n",xPtr);
+        for (i = 0 ; i < xPtr ; i++) {
+            NSLog(@"xVal%f ampFlag %d, ampY %f, bearingFlag %d, bearingY %f\n",
+            uee[i].xVal,
+            uee[i].ampFlags,
+            uee[i].ampY,
+            uee[i].bearingFlags,
+            uee[i].bearingY );
+        }
+#endif
+
+        /* use 'em */
+//  For R channel, scaler will go from rStartAmp to rEndAmp (at x1 the scaling
+//  is rStartAmp; at x2, rEndAmp). Given iterator i (0 to x2-x1) the scaling
+//  at each sample is (rStartAmp + i/(x2-x1) * (rEndAmp-rStartAmp))
+
+        { /* new block so I can define variables */
+        SndUnifiedEnvelopeEntry *startUee;
+        SndUnifiedEnvelopeEntry *endUee;
+        float *inD  = (float*) [inB  data];
+        int currSample,lastSample;
+        int timeDiff;
+        float lDiff,rDiff;
+        float lEndAmp, rEndAmp, lStartAmp, rStartAmp;
+        float lScaler, rScaler;
+        float ampMult, bearingMult;
+
+        for (i = 0 ; i < xPtr - 1 ; i++) {
+            startUee = &(uee[i]);
+            endUee = &(uee[i+1]);
+            ampMult = ((startUee->ampFlags & SND_FADER_ATTACH_RAMP_RIGHT) ?
+                    endUee->ampY : startUee->ampY);
+            bearingMult = ((startUee->bearingFlags & SND_FADER_ATTACH_RAMP_RIGHT) ?
+                    endUee->bearingY : startUee->bearingY);
+
+            currSample = (startUee->xVal - nowTime) * [outB samplingRate] * 2;
+            lastSample = (endUee->xVal - nowTime) * [outB samplingRate] * 2;
+            timeDiff = lastSample - currSample;
+            lStartAmp = startUee->ampY * (startUee->bearingY - 45.0) / -90.0;
+            rStartAmp = startUee->ampY * (startUee->bearingY + 45.0) / 90.0;
+            lEndAmp = ampMult * (bearingMult - 45.0) / -90.0;
+            rEndAmp = ampMult * (bearingMult + 45.0) / 90.0;
+            lDiff = lEndAmp - lStartAmp; /* how much we have to scale l from start to end */
+            rDiff = rEndAmp - rStartAmp;
+
+
+            for (j = currSample ; j < lastSample ; j+=2) {
+                float ll = inD[j];
+                float rr = inD[j+1];
+                lScaler = lStartAmp + lDiff * j/timeDiff;
+                rScaler = rStartAmp + rDiff * j/timeDiff;
+                inD[j] *= lScaler;
+                inD[j+1] *= rScaler;
+            }
+        }
+        } /*end block */
       }
   }
   else
