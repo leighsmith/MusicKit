@@ -10,6 +10,12 @@
 <!ENTITY ScoreFileSummary    SYSTEM "ScoreFileLanguage/ScoreFileSummary.sgml">
 <!ENTITY MusicTables         SYSTEM "MusicTables.sgml">
 <!ENTITY MIDITimeCode        SYSTEM "MIDITimeCode.sgml">
+<!ENTITY MKWeb               "http://www.sourceforge.net/projects/musickit">
+<!ENTITY MKClassReferences   "&MKWeb;">
+<!ENTITY MKFunctionReferences "&MKWeb;">
+<!ENTITY SKClassReferences   "&MKWeb;">
+<!ENTITY SKFunctionReferences "&MKWeb;">
+<!ENTITY IntroSynthPatches   "&MKWeb;">
 ]>
 
 <!-- 
@@ -80,6 +86,31 @@ Leigh Smith <leigh@tomandandy.com>
       <holder>The MusicKit Project (Updates). All Rights Reserved.</holder>
     </copyright>
   </bookinfo>
+
+<preface>
+<title>Editors Forward</title>
+<para>
+Befitting its origins, this documentation still retains some of its
+<productname>NeXT</productname> specific character, particularly <xref
+linkend="SoundHardware"> and can sometimes err on the side of being
+&ldquo;promotional&rdquo; in tone. The majority of the document is
+however platform independent. Over subsequent releases, we intend to
+rewrite the redundant material, and clarify the confusing. Please
+direct suggestions to <email>leigh@tomandandy.com</email>.
+</para>
+
+<para>
+To gain a quick overview of the capabilities of the Kits and to decide
+whether to investigate further, read <xref
+linkend="SystemOverview">. Class and Functions are well described in
+this book, but fully referenced in separate documents. At the time
+of writing, these are yet to be formatted for access via a web-browser
+and must be read in their original <acronym>RTF</acronym> format
+located in the source distribution available from the
+<ulink url="&MKWeb;">
+<productname>MusicKit</productname> web site</ulink>.
+</para>
+</preface>
 
 &SystemOverview;
 
