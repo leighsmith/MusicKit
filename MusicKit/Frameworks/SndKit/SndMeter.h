@@ -1,4 +1,11 @@
 /*
+ * $Id$
+ *
+ * Description: Defines a NSView subclass displaying instantaneous amplitude of sound.
+ *
+ * Original Author: Lee Boynton
+ *
+ * Substantially based on Sound Kit, Release 2.0, Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved. 
  * Copyright (c) 1999 Apple Computer, Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
@@ -20,21 +27,23 @@
  * under the License."
  * 
  * @APPLE_LICENSE_HEADER_END@
- */
- 
-#import <AppKit/NSView.h>
+ *
+ * Portions Copyright (c) 2001-2003, The MusicKit project. All rights reserved.
+ *
+ * Legal Statement Covering Additions by The MusicKit Project:
+ *
+ *    Permission is granted to use and modify this code for commercial and
+ *    non-commercial purposes so long as the author attribution and copyright
+ *    messages remain intact and accompany all relevant code.
+ *
+ */ 
+#import <AppKit/AppKit.h>
 
 @class Snd;
- 
- 
-/*
-	SndMeter.h
-	Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
-        Modifications Copyright (c) 2001, The MusicKit project. All rights reserved.
-*/
+
 /*!
   @class SndMeter
- @abstract Not ready for operation just yet!
+  @abstract Not ready for operation just yet!
   @discussion
 
 A SndMeter is a view that displays the amplitude level of a sound as
@@ -60,9 +69,9 @@ and <b>maxValue</b>. All SndMeter amplitude levels are normalized to
 fit between 0.0 (inaudible) and 1.0 (maximum amplitude).
 */
 
-@interface SndMeter:NSView
+@interface SndMeter: NSView
 {
-    id sound;
+    Snd *sound;
     int currentSample;
     float currentValue;
     float currentPeak;
@@ -298,5 +307,6 @@ Border			bezeled<br>
               look of the running bar and peak bubble.
 */
 - (void)drawCurrentValue;
+
 @end
 

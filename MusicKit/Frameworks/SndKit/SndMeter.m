@@ -1,8 +1,15 @@
 /*
+ * $Id$
+ *
+ * Description: Defines a NSView subclass displaying instantaneous amplitude of sound.
+ *
+ * Original Author: Lee Boynton
+ *
+ * Substantially based on Sound Kit, Release 2.0, Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
  * Copyright (c) 1999 Apple Computer, Inc. All rights reserved.
  *
  * @APPLE_LICENSE_HEADER_START@
- * 
+ *
  * "Portions Copyright (c) 1999 Apple Computer, Inc.  All Rights
  * Reserved.  This file contains Original Code and/or Modifications of
  * Original Code as defined in and that are subject to the Apple Public
@@ -10,7 +17,7 @@
  * except in compliance with the License.  Please obtain a copy of the
  * License at http://www.apple.com/publicsource and read it before using
  * this file.
- * 
+ *
  * The Original Code and all software distributed under the License are
  * distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
  * EXPRESS OR IMPLIED, AND APPLE HEREBY DISCLAIMS ALL SUCH WARRANTIES,
@@ -18,88 +25,41 @@
  * FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT.  Please see the
  * License for the specific language governing rights and limitations
  * under the License."
- * 
- * @APPLE_LICENSE_HEADER_END@
- */
-#ifdef SHLIB
-#include "shlib.h"
-#endif SHLIB
-
-/*
- *	SoundMeter.h
- *	Written by Lee Boynton
- *	Copyright 1988-89 NeXT, Inc.
  *
- *	Modification History:
- *	10/12/90/mtm	Give up CPU more often when playing (bug #10591).
- *	10/12/90/mtm	Adjust BREAK_DELAY and timed entry period
+ * @APPLE_LICENSE_HEADER_END@
+ *
+ * Portions Copyright (c) 2001-2003, The MusicKit project. All rights reserved.
+ *
+ * Legal Statement Covering Additions by The MusicKit Project:
+ *
+ *    Permission is granted to use and modify this code for commercial and
+ *    non-commercial purposes so long as the author attribution and copyright
+ *    messages remain intact and accompany all relevant code.
+ *
+ */
+/* Modification History prior to commital to CVS repository:
+ *
+ * 10/12/90/mtm	Give up CPU more often when playing (bug #10591).
+ * 10/12/90/mtm	Adjust BREAK_DELAY and timed entry period
  *			(bug #6312).
+ * soundkit-25
+ * =======================================================================================
+ * 20 Sept 90 (wot)	Added support for SND_FORMAT_EMPHASIZED.
+ *                      Made it do the same things as SND_FORMAT_LINEAR_16.
+ *
+ * 3/18/92 mminnick	Use sound driver peak detection.
+ * 4/23/92 mminnick	Lock/unlock focus around draw in -run (bug 19540)
+ * 10/7/93 aozer		NSString/NSRect kit conversion
  */
 
-//#import "NXSoundThreshold_Private.h"
-#import <AppKit/NSApplication.h>
-#import <AppKit/NSWindow.h>
-#import <AppKit/NSView.h>
-#import <AppKit/NSEvent.h>
-//#import <kern/time_stamp.h>
-//#import <objc/zone.h>
+#import <AppKit/AppKit.h>
 
-//#import "SoundMeter.h"
 #import "Snd.h"
+#import "SndMuLaw.h"
 #import "SndStreamClient.h"
+#import "SndMeter.h"
 
-//extern int kern_timestamp();
-@interface SndMeter : NSView {
-	Snd *sound;
-	int currentSample;
-	float currentValue;
-	float currentPeak;
-    float minValue;
-    float maxValue;
-    float holdTime;
-    NSColor *backgroundColor;
-    NSColor *foregroundColor;
-    NSColor *peakColor;
-    struct {
-        unsigned int running:1;
-        unsigned int bezeled:1;
-        unsigned int shouldStop:1;
-        unsigned int _reservedFlags:13;
-    } smFlags;
-    void *_timedEntry;
-    int _valTime;
-    int _peakTime;
-    float _valOneAgo;
-    float _valTwoAgo;
-}
-- (id)initWithFrame:(NSRect)frameRect;
-
-- (id)initWithCoder:(NSCoder *)aStream;
-- (void)encodeWithCoder:(NSCoder *)aStream;
-- (float)holdTime;
-- (void)setHoldTime:(float)seconds;
-- (void)setBackgroundColor:(NSColor *)color;
-- (NSColor *)backgroundColor;
-- (void)setForegroundColor:(NSColor *)color;
-- (NSColor *)foregroundColor;
-- (void)setPeakColor:(NSColor *)color;
-- (NSColor *)peakColor;
-- (Snd *)sound;
-- (void)setSound:(Snd *)aSound;
-- (void)run:(id)sender;
-- (void)stop:(id)sender;
-- (BOOL)isRunning;
-- (BOOL)isBezeled;
-- (void)setBezeled:(BOOL)aFlag;
-- (void)setFloatValue:(float)aValue;
-- (float)floatValue;
-- (float)peakValue;
-- (float)minValue;
-- (float)maxValue;
-- (void)drawRect:(NSRect)rects;
-- (void)drawCurrentValue;                                                                         
-@end
-
+#define PEAK_WIDTH (3.0)
 
 @implementation SndMeter
 
@@ -116,11 +76,15 @@ static float smoothValue(SndMeter *self, float aValue)
     return (aValue > 0)? newValue : aValue;
 }
 
-static float prepareValueForDisplay(id self, float m)
+// TODO this only handles muLaw encoded sound! Needs upgrading to handle all formats,
+/// especially 16 bit and float.
+static float prepareValueForDisplay(SndMeter *self, float m)
 {
+    // TODO switch([self->sound dataFormat]) {
     float result;
     int val = (m > 0)? 32767.0 * m  :  0;
-    int temp = (int)SndMulaw(val);
+    int temp = (int)SndMuLawToLinear(val);
+    
     temp = ~temp & 127;
     result = ((float)(temp))/128.0;
     return result;
@@ -128,65 +92,66 @@ static float prepareValueForDisplay(id self, float m)
 
 static void calcValues(SndMeter *self, float *aveVal, float *peakVal)
 {
-    static SndStreamClient *outDevice = nil;
-    static SndStreamClient *inDevice = nil;
-    id device = nil;
+    static SndStreamClient *outStream = nil;
+    static SndStreamClient *inStream = nil;
+    SndStreamClient *stream = nil;
     int status = [self->sound status];
     float leftPeak, rightPeak;
 
     *peakVal = *aveVal = 0.0;
-    if (status == NX_SoundStopped || status == NX_SoundInitialized ||
-	status == NX_SoundFreed || status == NX_SoundRecordingPaused ||
-	status == NX_SoundPlayingPaused) {
+    if (status == SND_SoundStopped || status == SND_SoundInitialized ||
+	status == SND_SoundFreed || status == SND_SoundRecordingPaused ||
+	status == SND_SoundPlayingPaused) {
 	/*
 	 * Not playing or recording, smooth last value.
 	 */
 	*peakVal = self->currentValue * 0.7;
-    } else if (status == NX_SoundRecording ||
-	       status == NX_SoundRecordingPending) {
-	/*
-	 * Recording, get the sound in device.
-	 */
-	if (!inDevice) {
-	    inDevice = [[SndStreamClient alloc] init];
-	    if (inDevice &&
-		([inDevice setDetectPeaks:YES] != SND_ERROR_NONE)) {
-		 [inDevice release];
-		inDevice = nil;
-	    }
-	}
-	device = inDevice;
-    } else {
-	/*
-	 * Playing, get the sound out device.
-	 */
-	if (!outDevice) {
-	    outDevice = [[SndStreamClient alloc] init];
-	    if (outDevice &&
-		([outDevice setDetectPeaks:YES] != SND_SoundDeviceErrorNone)) {
-		 [outDevice release];
-		outDevice = nil;
-	    }
-	}
-	device = outDevice;
     }
-    if (device &&
-	([device getPeakLeft:&leftPeak right:&rightPeak] == SND_SoundDeviceErrorNone)) {
+    else if (status == SND_SoundRecording || status == SND_SoundRecordingPending) {
+	/*
+	 * Recording, get the sound in stream.
+	 */
+	if (!inStream) {
+	    inStream = [[SndStreamClient alloc] init];
+	    if (inStream &&
+		([inStream setDetectPeaks: YES] == nil)) {
+		 [inStream release];
+		 inStream = nil;
+	    }
+	}
+	stream = inStream;
+    }
+    else {
+	/*
+	 * Playing, get the sound out stream.
+	 */
+	if (!outStream) {
+	    outStream = [[SndStreamClient alloc] init];
+	    if (outStream &&
+		([outStream setDetectPeaks: YES] == nil)) {
+		 [outStream release];
+ 		 outStream = nil;
+	    }
+	}
+	stream = outStream;
+    }
+    if (stream &&
+	([stream getPeakLeft: &leftPeak right: &rightPeak] != nil)) {
 	*peakVal = (leftPeak + rightPeak) / 2.0;	/* stereo avg. */
 	*aveVal = *peakVal;	/* always return peak as average */
     }
 }
 
-static int shouldBreak(SndMeter *self)
+- (int) shouldBreak
 {
    NSEvent *ev;
    int status = [self->sound status];
 
    /* Always give up the CPU when playing. */
-   if (status == SK_STATUS_PLAYING)
+   if (status == SND_SoundPlaying)
        return 1;
-   ev = [[self window] nextEventMatchingMask:NSAnyEventMask  
-	     untilDate:[NSDate date] inMode:NSDefaultRunLoopMode dequeue:NO];
+   ev = [[self window] nextEventMatchingMask: NSAnyEventMask  
+	     untilDate: [NSDate date] inMode: NSDefaultRunLoopMode dequeue: NO];
    return ev != nil || !status || self->smFlags.shouldStop;
 }
 
@@ -194,8 +159,8 @@ static int shouldBreak(SndMeter *self)
 #define DONE_DELAY (10)
 #define BREAK_DELAY (0)
 
-static void animate_self(id /* _NSSKTimedEntry */ timedEntry, double now,
-							 SndMeter *self)
+- (void) animate_self: (id) /* _NSSKTimedEntry */ timedEntry
+		 when: (double) now
 {
     static int stopDelay = DONE_DELAY;
     int breakDelay = BREAK_DELAY;
@@ -220,14 +185,17 @@ static void animate_self(id /* _NSSKTimedEntry */ timedEntry, double now,
 		calcValues(self, &aveVal, &peakVal);
 		if (aveVal < self->minValue) self->minValue = aveVal;
 		if (aveVal > self->maxValue) self->maxValue = aveVal;
-	    } else
+	    }
+	    else
 		self->minValue = self->maxValue = aveVal = peakVal = 0.0;
 	    [self setFloatValue:peakVal];
 	    [self drawCurrentValue];
 	    [[self window] flushWindow];
 //	    PSWait();
-	    if (!breakDelay) break;
-	    else if (shouldBreak(self)) breakDelay--;
+	    if (!breakDelay)
+		break;
+	    else if ([self shouldBreak])
+		breakDelay--;
 	}
     }
     [self unlockFocus];
@@ -243,11 +211,6 @@ static void animate_self(id /* _NSSKTimedEntry */ timedEntry, double now,
     if (self == [SndMeter class]) {
 	[SndMeter setVersion:1];
     }
-}
-
-+ newFrame:(NSRect)frameRect
-{
-    return [[self allocFromZone:NSDefaultMallocZone()] initWithFrame:frameRect];
 }
 
 - (id)initWithFrame:(NSRect)frameRect {
@@ -357,10 +320,10 @@ static void animate_self(id /* _NSSKTimedEntry */ timedEntry, double now,
     [self setNeedsDisplay:YES];
 }
 
-- (void)setFloatValue:(float)aValue
+- (void) setFloatValue: (float) aValue
 {
 //    struct tsval foo;
-    double peakDelay;
+    // double peakDelay;
 
     if (aValue < 0.0)
 	currentValue = currentPeak = aValue;
@@ -391,36 +354,62 @@ static void animate_self(id /* _NSSKTimedEntry */ timedEntry, double now,
     [self drawCurrentValue];
 }
 
-- (void)drawCurrentValue
+- (void) drawCurrentValue
 {
-    #define PEAK_WIDTH (3.0)
-    float x, y, w, h;
     float valueOffset, peakOffset;
     NSRect bounds = [self bounds];
-    float displayValue = prepareValueForDisplay(self,smoothValue(self,
-    								currentValue));
-    float displayPeak = prepareValueForDisplay(self,currentPeak);
-    x = bounds.origin.x + 5.0;
-    y = bounds.origin.y + 5.0;
-    w = bounds.size.width - 9.0;
-    h = bounds.size.height - 9.0;
-    valueOffset = (w - PEAK_WIDTH) * displayValue;
-    peakOffset = (w - PEAK_WIDTH) * displayPeak;
+    float displayValue = prepareValueForDisplay(self, smoothValue(self, currentValue));
+    float displayPeak = prepareValueForDisplay(self, currentPeak);
+    // float x, y, w, h;
+    NSRect meterRect;
+
+    meterRect.origin.x = bounds.origin.x + 5.0;
+    meterRect.origin.y = bounds.origin.y + 5.0;
+    meterRect.size.width = bounds.size.width - 9.0;
+    meterRect.size.height = bounds.size.height - 9.0;
+    
+    valueOffset = (meterRect.size.width - PEAK_WIDTH) * displayValue;
+    peakOffset  = (meterRect.size.width - PEAK_WIDTH) * displayPeak;
     if (peakOffset > 0.0) {
+	NSRect peakRect;
+
 	if (valueOffset > 0.0) {
+	    NSRect foregroundRect;
+	    NSRect backgroundRect;
+
 	    [foregroundColor set];
-	    PSrectfill(x,y,valueOffset,h);
+	    // PSrectfill(x,y,valueOffset,h);
+	    foregroundRect.origin.x = meterRect.origin.x;
+	    foregroundRect.origin.y = meterRect.origin.y;
+	    foregroundRect.size.width = valueOffset;
+	    foregroundRect.size.height = meterRect.size.height;	    
+	    NSRectFill(foregroundRect);
+	    
 	    [backgroundColor set];
-	    PSrectfill(x+valueOffset,y,w-valueOffset,h);
-	} else {
+	    // PSrectfill(x+valueOffset,y,w-valueOffset,h);
+	    backgroundRect.origin.x = meterRect.origin.x + valueOffset;
+	    backgroundRect.origin.y = meterRect.origin.y;
+	    backgroundRect.size.width = meterRect.size.width - valueOffset;
+	    backgroundRect.size.height = meterRect.size.height;
+	    NSRectFill(backgroundRect);
+	}
+	else { // if no value, just colour with the background colour.
 	    [backgroundColor set];
-	    PSrectfill(x,y,w,h);
+	    // PSrectfill(x,y,w,h);
+	    NSRectFill(meterRect);
 	}
 	[peakColor set];
-	PSrectfill(x+peakOffset,y,PEAK_WIDTH,h);
-    } else {
+	// PSrectfill(x+peakOffset,y,PEAK_WIDTH,h);
+	peakRect.origin.x = meterRect.origin.x + peakOffset;
+	peakRect.origin.y = meterRect.origin.y;
+	peakRect.size.width = PEAK_WIDTH;
+	peakRect.size.height = meterRect.size.height;
+	NSRectFill(peakRect);
+    }
+    else {
 	[backgroundColor set];
-	PSrectfill(x,y,w,h);
+	//PSrectfill(x,y,w,h);
+	NSRectFill(meterRect);
     }
 }
 
@@ -467,18 +456,4 @@ static void animate_self(id /* _NSSKTimedEntry */ timedEntry, double now,
 }
 
 @end
-
-/*
-
-Modification History:
-
-soundkit-25
-=======================================================================================
-20 Sept 90 (wot)	Added support for SND_FORMAT_EMPHASIZED.  Made it do the same
-			things as SND_FORMAT_LINEAR_16.
-
-3/18/92 mminnick	Use sound driver peak detection.
-4/23/92 mminnick	Lock/unlock focus around draw in -run (bug 19540)
-10/7/93 aozer		NSString/NSRect kit conversion
-*/
 
