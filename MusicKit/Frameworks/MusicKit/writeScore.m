@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  1999/09/04 22:53:15  leigh
+  tokname now const char to stop warnings
+
   Revision 1.2  1999/07/29 01:26:19  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -123,7 +126,7 @@ _MKWritePartDecl(MKPart *aPart, _MKScoreOutStruct * p, MKNote *aPartInfo)
     unsigned short iTmp;
     id tmp;
     NSString *partName;
-    char *tokname;
+    const char *tokname;
 
     if (!p)
       return NULL;
