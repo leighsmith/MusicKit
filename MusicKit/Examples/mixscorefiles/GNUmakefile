@@ -30,10 +30,6 @@ ADDITIONAL_TOOL_LIBS += -lMusicKit
 
 ADDITIONAL_FLAGS += -g
 
-ifeq ($(GNUSTEP_TARGET_OS), mingw32)
-  ADDITIONAL_FLAGS += -DSK_NO_MP3_ENCODER
-endif
-
 # The Objective-C source files to be compiled
 $(TOOL_NAME)_OBJC_FILES = mixscorefiles_main.m
 
@@ -42,6 +38,12 @@ SRCS = $(TEST_TOOL_NAME:=.m)
 HDRS =
 
 DIST_FILES = $(SRCS) $(HDRS)
+
+ifeq (mingw32, $(GNUSTEP_HOST_OS))
+  CYG_PATH = $(shell cygpath -w '/' | tr '\\' '/' )
+  ADDITIONAL_FLAGS += -I$(CYG_PATH)/usr/local/include
+  ADDITIONAL_LDFLAGS += -L$(CYG_PATH)/usr/local/lib
+endif
 
 -include Makefile.preamble
 
