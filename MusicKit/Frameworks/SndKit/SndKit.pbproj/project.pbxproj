@@ -360,7 +360,6 @@
 				00D2C46DFEDB2CB5CFED3B93,
 				00D2C47AFEDB2CB5CFED3B93,
 				00D2C47FFEDB2CB5CFED3B93,
-				D88C18010432955600A80103,
 			);
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2215,22 +2214,6 @@
 			sourceTree = "<absolute>";
 		};
 		D87070F4040CA58D00A80103 = {
-			fileRef = D87070F3040CA58D00A80103;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D88C18010432955600A80103 = {
-			buildActionMask = 8;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				D88C18040432980000A80103,
-			);
-			isa = PBXCopyFilesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-		D88C18040432980000A80103 = {
 			fileRef = D87070F3040CA58D00A80103;
 			isa = PBXBuildFile;
 			settings = {
