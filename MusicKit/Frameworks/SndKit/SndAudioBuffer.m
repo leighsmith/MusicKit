@@ -242,6 +242,7 @@
                 
                 short *in  = (short*) [buff data];
                 float *out = (float*) data, f;
+                start = start * selfNumChannels;
 
                 if (selfNumChannels == buffNumChannels) {
                     for (i = 0; i < frameCount * buffNumChannels; i++) {
