@@ -147,19 +147,9 @@
 				       userInfo: nil] raise];
 	}
 	
-	// TODO _why_ do we still have file format specific data in Snd???? History is the only reason,
-	// it should eventually be removed now we use Sox for File I/O.
-	soundStruct->magic        = SND_MAGIC;
-	soundStruct->dataLocation = 0; 
-	soundStruct->dataSize     = 0;
-	soundStruct->dataFormat   = format;
-	soundStruct->samplingRate = (int) samplingRate;
-	soundStruct->channelCount = channels;
-	[self setDataSize: SndFramesToBytes(frames, channels, format)
-	       dataFormat: format
-	     samplingRate: (int) samplingRate
-	     channelCount: channels
-		 infoSize: 0];
+	if (soundStruct)
+	    SndFree(soundStruct);
+	SndAlloc(&soundStruct, SndFramesToBytes(frames, channels, format), format, (int) samplingRate, channels, 0);
 #endif
 	soundFormat.dataFormat = format;
 	soundFormat.sampleRate = samplingRate;
@@ -170,10 +160,10 @@
     return self;
 }
 
-// The default version, generate a zero length 16 bit, stereo CD quality sound.
+// The default modern version, generate a zero length floating point, stereo CD quality sound.
 - init
 {
-    return [self initWithFormat: SND_FORMAT_LINEAR_16 channelCount: 2 frames: 0 samplingRate: 44100.0];
+    return [self initWithFormat: SND_FORMAT_FLOAT channelCount: 2 frames: 0 samplingRate: 44100.0];
 }
 
 - initWithAudioBuffer: (SndAudioBuffer *) aBuffer
@@ -381,13 +371,11 @@
     // Write header. We standardise to a big endian integer representation
     {
 	int bigMagic = NSSwapHostIntToBig(SND_MAGIC);
-	// TODO When we address indirect sounds 
-	// int bigDataSize = NSSwapHostIntToBig(soundFormat.frameCount * SndFrameWidth(soundFormat));
 	int bigDataLocation = NSSwapHostIntToBig(dataOffsetLocation);
 	int bigDataSize = NSSwapHostIntToBig(sampleDataSize);
 	int bigDataFormat = NSSwapHostIntToBig([self dataFormat]);
-	int bigSamplingRate = NSSwapHostIntToBig((int) (soundFormat.sampleRate + 0.5));
-	int bigChannelCount = NSSwapHostIntToBig(soundFormat.channelCount);
+	int bigSamplingRate = NSSwapHostIntToBig((int) ([self samplingRate] + 0.5));
+	int bigChannelCount = NSSwapHostIntToBig([self channelCount]);
 	
 	[stream appendBytes: &bigMagic        length: sizeof(bigMagic)];
 	[stream appendBytes: &bigDataLocation length: sizeof(bigDataLocation)];
@@ -429,6 +417,7 @@
     SndSwapBigEndianSoundToHost(d, d, [self lengthInSampleFrames], [self channelCount], [self dataFormat]);
 }
 
+// TODO Adopt keyed coding. Don't save magic.
 - (void) encodeWithCoder: (NSCoder *) aCoder
 /* Here I archive data to coder as CHAR rather than exact data
  * type. Why? Well, I don't want it swapping data for me! I always want the
@@ -919,7 +908,7 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
  */
 {
     // TODO once soundStruct purged.
-    //  return soundFormat.frameCount * SndFrameWidth(soundFormat);
+    //  return soundFormat.frameCount * SndFrameSize(soundFormat);
 
     if (!soundStruct) return 0;
     return soundStruct->dataSize; 
@@ -947,59 +936,32 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 	       ([self samplingRate] == [buff samplingRate]);
 }
 
-// TODO deprecated, remove and use initWithFormat:channelCount:frames:samplingRate: instead
-- (int) setDataSize: (int) newDataSize
-         dataFormat: (SndSampleFormat) newDataFormat
-       samplingRate: (double) newSamplingRate
-       channelCount: (int) newChannelCount
-           infoSize: (int) newInfoSize
-{
-    if (soundStruct)
-        SndFree(soundStruct);
-    return SndAlloc(&soundStruct, newDataSize, newDataFormat,
-            newSamplingRate, newChannelCount, newInfoSize);
-}
-
 - (SndSoundStruct *) soundStruct
 {
+#if 0
+    // TODO Prepare the soundStruct from the soundFormat once soundFormat is the authorative source.
+    soundStruct->dataFormat = soundFormat.dataFormat;
+    soundStruct->channelCount = soundFormat.channelCount;
+    soundStruct->samplingRate = soundFormat.samplingRate;
+    etc
+#endif
+    
     return soundStruct;
 }
-
-#if 0
-/* if the sound is fragmented, returns only the size of the FIRST fragment */
-- (int) soundStructSize
-{
-    if (!soundStruct) return 0;
-    if (soundStruct->dataFormat != SND_FORMAT_INDIRECT)
-        return soundStruct->dataSize + soundStruct->dataLocation;
-    else
-        return soundStruct->dataSize; /* see SndFunctions.h */
-}
-
-- setSoundStruct: (SndSoundStruct *) aStruct soundStructSize: (int) aSize
-{
-    if (status != SND_SoundInitialized && status != SND_SoundStopped)
-            return nil;
-    if (soundStruct && soundStruct != aStruct) SndFree(soundStruct);
-    soundStruct = aStruct;
-    soundStructSize = aSize;
-    return self;
-}
-#endif
 
 /* returns the base address of the block the sample resides in,
  * with appropriate indices for the last sample the block holds.
  * Indices count from 0 so they can be utilised directly.
  */
 - (void *) fragmentOfFrame: (int) frame 
-	   indexInFragment: (int *) currentFrame 
-       lastFrameInFragment: (int *) lastFrameInBlock
+	   indexInFragment: (unsigned int *) currentFrame 
+	    fragmentLength: (unsigned int *) fragmentLength
 		dataFormat: (SndSampleFormat *) dataFormat
 {            
     *dataFormat = [self dataFormat];
     if (soundStruct->dataFormat != SND_FORMAT_INDIRECT) {
-	*lastFrameInBlock = [self lengthInSampleFrames];
-	*currentFrame = frame;
+	*fragmentLength = [self lengthInSampleFrames];
+	*currentFrame = frame < *fragmentLength ? frame : *fragmentLength - 1;
 	return [self data];
     }
     else {
@@ -1014,14 +976,14 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 	    
 	    count += numberOfFramesInFragment;
 	    if (count > frame) {
-		*lastFrameInBlock = numberOfFramesInFragment;
+		*fragmentLength = numberOfFramesInFragment;
 		*currentFrame = frame - oldCount;
 		return (char *) theStruct + theStruct->dataLocation;
 	    }
 	    oldCount = count;
 	}
-	*currentFrame = -1;
-	*lastFrameInBlock = -1;
+	*currentFrame = 0;
+	*fragmentLength = 0;
 	return NULL;	
     }
 }
@@ -1042,7 +1004,7 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
     unsigned long sampleNumber;
     void *pcmData;
     int fragmentIndex;
-    int lastFrameInFragment;
+    int fragmentLength;
     SndSampleFormat dataFormat;
     
     if (channelNumber == channelCount) {
@@ -1056,7 +1018,7 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
     // 
     pcmData = [self fragmentOfFrame: frameIndex 
 		    indexInFragment: &fragmentIndex 
-		lastFrameInFragment: &lastFrameInFragment
+		     fragmentLength: &fragmentLength
 			 dataFormat: &dataFormat];
     sampleNumber = fragmentIndex * channelCount + startingChannel;
     

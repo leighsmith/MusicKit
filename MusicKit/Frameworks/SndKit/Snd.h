@@ -672,26 +672,6 @@ typedef enum {
 - (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer *) buff;
 
 /*!
-  @method setDataSize:dataFormat:samplingRate:channelCount:infoSize:
-  @param  newDataSize is an int.
-  @param  newDataFormat is an SndSampleFormat.
-  @param  newSamplingRate is a double.
-  @param  newChannelCount is an int.
-  @param  newInfoSize is an int.
-  @result Returns an int.
-  @discussion Allocates new, unfragmented sound data for the Snd, as described
-              by the arguments. The Snd's previous data is freed. This method is
-              useful for setting a determinate data length prior to a recording or
-              for creating a scratch pad for algorithmic sound creation. An error
-              code is returned.
-*/
-- (int) setDataSize: (int) newDataSize
-         dataFormat: (SndSampleFormat) newDataFormat
-       samplingRate: (double) newSamplingRate
-       channelCount: (int) newChannelCount
-           infoSize: (int) newInfoSize;
-
-/*!
   @method soundStruct
   @result Returns a SndSoundStruct *.
   @discussion Returns a pointer to the Snd's SndSoundStruct structure that holds
@@ -700,53 +680,23 @@ typedef enum {
 */
 - (SndSoundStruct *) soundStruct;
 
-#if 0
 /*!
-  @method soundStructSize
-  @result Returns an int.
-  @discussion Returns the size, in bytes, of the Snd's sound structure (pointed
-              to by <b>soundStruct</b>). Use of this value requires a knowledge of
-              the SndSoundStruct architecture.
-*/
-- (int) soundStructSize;
-
-/*!
-  @method setSoundStruct:soundStructSize:
-  @param  aStruct is a SndSoundStruct *.
-  @param  size is an int.
-  @discussion Sets the Snd's sound structure to <i>aStruct</i>. The size in
-              bytes of the new structure, including its sound data storage, must
-              be specified by <i>size</i>. This method can be used to set up a
-              large buffer before recording into an existing Snd, by passing the
-              existing <b>soundStruct</b> in the first argument while making
-              <i>size</i> larger than the current size. (The default buffer holds
-              ten minutes of CODEC sound.) The method is also useful in cases
-              where <i>aStruct</i> already has sound data but isn't encapsulated
-              in a Snd object yet. The Snd's status must be
-              SND_SoundInitialized or SND_SoundStopped for this method to do
-              anything.
-              TODO This will be changed to setSoundData: (NSData *).
-*/
-- setSoundStruct: (SndSoundStruct *) aStruct soundStructSize: (int) aSize;
-#endif
-
-/*!
-  @function fragmentBlockOfFrame:indexInBlock:lastFrameInBlock:
+  @function fragmentOfFrame:indexInFragment:fragmentLength:dataFormat:
   @abstract Get data address and statistics for fragmented or non-fragmented Snds
   @discussion For fragmented sounds, you often need to be able to find the
               block of data that a certain frame resides in. You then often
               need to know which is the last frame in that fragment (block),
               indexed from the start of the block.
   @param frame            The index of the sample you wish to find the block for, indexed from the beginning of the sound
-  @param lastFrameInBlock Returns by reference the index of the last frame in the block, indexed from the start of the block
   @param currentFrame     Returns by reference the index of the frame supplied, indexed from the start of the block
+  @param fragmentLength   Returns by reference the length the block, indexed from the start of the block
   @param dataFormat       Returns by reference the format of the data. This will normally be the same as the Snd's dataFormat,
-                          but can differ if the format is nomally encoded.
+                          but can differ if the format is encoded with compression.
  @result the memory address of the first sample in the block.
 */
 - (void *) fragmentOfFrame: (int) frame 
-	   indexInFragment: (int *) currentFrame 
-       lastFrameInFragment: (int *) lastFrameInBlock
+	   indexInFragment: (unsigned int *) currentFrame 
+	    fragmentLength: (unsigned int *) fragmentLength
 		dataFormat: (SndSampleFormat *) dataFormat;
 
 /*!
@@ -1165,6 +1115,11 @@ typedef enum {
   @result     Returns the sample index ending the loop.
  */
 - (long) loopEndIndex;
+
+// We declare this because it is used by the SndEditing category.
+- (void) adjustLoopsAfterAdding: (BOOL) adding 
+			 frames: (long) sampleCount
+		     startingAt: (long) startSample;
 
 /*!
   @method     setAudioProcessorChain:
