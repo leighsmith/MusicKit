@@ -15,6 +15,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2001/08/06 22:58:05  skotmcdonald
+  Fixed teeny does-input-exist flag bug that was sending streaming arch to send blank recording buffers up to clients. Doh.
+
   Revision 1.7  2001/04/12 00:33:26  leighsmith
   First draft of HeaderDoc descriptions, much still to be done
 
@@ -168,6 +171,12 @@ PERFORM_API BOOL SNDIsMuted(void);
     @param          aFlag
                         YES to mute, NO to unmute.
 */
+
+PERFORM_API BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes);
+
+
+
+
 PERFORM_API void SNDSetMute(BOOL aFlag);
 
 /*!

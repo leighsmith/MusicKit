@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.14  2001/08/06 22:58:05  skotmcdonald
+// Fixed teeny does-input-exist flag bug that was sending streaming arch to send blank recording buffers up to clients. Doh.
+//
 // Revision 1.13  2001/05/18 20:35:44  skotmcdonald
 // Added inputInit flag to gate input-handling routines when no input device is present
 //
@@ -273,7 +276,6 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
         */
         
         // to tell the client the format it is receiving.
-        
         if (inputInit) {
             if (inInputData->mNumberBuffers == 0)
                 inStream.streamData = NULL;
@@ -287,11 +289,15 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
           outStream.streamData = NULL;
         else {
         
-          SNDStreamNativeFormat(&outStream.streamFormat);   
+          SNDStreamNativeFormat(&outStream.streamFormat);                     
           SNDStreamNativeFormat(&inStream.streamFormat);    
 
           inStream.streamData  = fInputBuffer;  
           outStream.streamData = outOutputData->mBuffers[bufferIndex].mData;
+
+          if (!inputInit) {
+            memset(fInputBuffer, 0, bufferSizeInBytes);
+          }
         
           // hand over the stream buffers to the processor/stream manager.
           // the output time goes out as a relative time, noted from the 
@@ -493,9 +499,9 @@ static BOOL determineBasicDescription(AudioDeviceID deviceID,
 // setBufferSize
 ////////////////////////////////////////////////////////////////////////////////
 
-static BOOL setBufferSize(AudioDeviceID deviceID, 
-                          long bufferSizeToSetInBytes, 
-                          BOOL isInput)
+BOOL setBufferSize(AudioDeviceID deviceID, 
+                   long bufferSizeToSetInBytes, 
+                   BOOL isInput)
 {
     OSStatus CAstatus;
     UInt32 propertySize;
@@ -558,6 +564,19 @@ static BOOL setBufferSize(AudioDeviceID deviceID,
 
     return TRUE;
 }
+
+BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes)
+{
+  if (isDeviceRunning(outputDeviceID, FALSE))
+    return FALSE;
+  bufferSizeInBytes = liBufferSizeInBytes;
+  if(!setBufferSize(outputDeviceID, bufferSizeInBytes, false)) {
+      fprintf(stderr, "output device - error setting buffer size\n");
+      return FALSE;
+  }
+  return TRUE;  
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // SNDInit
@@ -872,7 +891,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
         }
     }
     // printf("initialised stream start %d\n", r);
-
+    fprintf(stderr,"SND::Stream Start: %s\n", r ? "OK":"ERR");
     return r;
 }
 
@@ -902,6 +921,7 @@ PERFORM_API BOOL SNDStreamStop(void)
             r = FALSE;
         }
     }
+    fprintf(stderr,"SND::Stream Stopped: %s\n", r ? "OK" : "ERR");
     return r;
 }
 
