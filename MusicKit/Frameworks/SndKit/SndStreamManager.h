@@ -19,7 +19,7 @@
 #define __SNDSTREAMMANAGER_H__
 
 #import <Foundation/Foundation.h>
-#import "SndKit.h"
+#import "SndFormat.h"
 
 @class SndAudioBuffer;
 @class SndStreamClient;
@@ -203,6 +203,11 @@
 - setFormat: (SndSoundStruct*) f;
 
 
+/*!
+  @method   format
+  @abstract Returns the format to be used during streaming.
+  @result   Returns a SndFormat structure.
+ */
 - (SndSoundStruct*) format;
 
 /*!

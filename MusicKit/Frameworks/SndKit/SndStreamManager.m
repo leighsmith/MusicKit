@@ -12,6 +12,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+// TODO This is needed since we check for NSApp, but I don't think checking for NSApp is the correct way to
+// check for an NSApplication generated run loop.
+#import <AppKit/AppKit.h>  
 #import "SndAudioBuffer.h"
 #import "SndStreamClient.h"
 #import "SndStreamMixer.h"
@@ -94,7 +97,7 @@ static SndStreamManager *sm = nil;
 
 - init
 {
-  NSPort *managerReceivePort,*managerSendPort;
+  NSPort *managerReceivePort, *managerSendPort;
 
   self = [super init];
   if (!self)
@@ -109,6 +112,9 @@ static SndStreamManager *sm = nil;
   nowTime       = 0;
   bDelegateMessagingEnabled = FALSE;
   SNDStreamNativeFormat(&format);
+  if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowStreamingFormat"])
+      NSLog(@"Native format of streaming audio buffer: %@\n", self);
+
   /* might as well set up the delegate background thread now too */
 
   if ([[NSRunLoop currentRunLoop] currentMode] || NSApp) {
@@ -168,11 +174,13 @@ static SndStreamManager *sm = nil;
 // description
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) description
+- (NSString *) description
 {
-  return [NSString stringWithFormat: @"SndStreamManager [buffer samrate::%.1fkHz, chans:%i, length:%i]",
-    format.samplingRate / 1000.0, format.channelCount,
-    format.dataSize/(format.channelCount*sizeof(float))];
+    return [NSString stringWithFormat: @"%@ (sample rate:%.1fKHz, channels:%i, length:%i frames)",
+	[super description],
+	format.samplingRate / 1000.0,
+	format.channelCount,
+	format.dataSize/(format.channelCount*sizeof(float))];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
