@@ -13,18 +13,6 @@
   Portions (Time code extensions) Copyright (c) 1993 Pinnacle Research.
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.4  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.3  2000/11/25 22:53:25  leigh
-  Enforced ivar privacy
-
-  Revision 1.2  1999/07/29 01:25:45  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKMTCPerformer
   @discussion
@@ -52,22 +40,24 @@ value 0:0:0:0, using the default format (24 frames/second).
 You set the format of the time code to be generated with the method
 <b>setFormat:</b>.  The argument should be one of the following constants,
 defined in<b> &lt;MusicKit/MKMTCPerformer.h&gt;</b>:	
-	
-MK_MTC_FORMAT_24
-MK_MTC_FORMAT_25
-MK_MTC_FORMAT_DROP_30
-MK_MTC_FORMAT_30
+
+<UL>
+<LI>MK_MTC_FORMAT_24
+<LI>MK_MTC_FORMAT_25
+<LI>MK_MTC_FORMAT_DROP_30
+<LI>MK_MTC_FORMAT_30
+</UL>
 
 These are the standard MIDI time code formats.  For more information, see the
 MIDI Time Code Specification (available from the MIDI Manufacturer's
 Association).
 
 You set the first and last MTC value using the methods <b>setFirstTimeTag:</b>,
-<b>setLastTimeTag:</b> and <b>setTimeShift:</b>.    To set the first value the
-MKPerformer will generate, you use <b>setFirstTimetTag:</b>.   Note that this
+<b>setLastTimeTag:</b> and <b>setTimeShift:</b>. To set the first value the
+MKPerformer will generate, you use <b>setFirstTimetTag:</b>. Note that this
 method also sets the time from activation at which the MKPerformer will start
 sending time code.  For example, if (before the performance) you set a
-Performer's <i>firstTimeTag</i> to 10.0 seconds, then activate the MKPerformer and
+MKPerformer's <i>firstTimeTag</i> to 10.0 seconds, then activate the MKPerformer and
 start the performance, the MKPerformer will begin sending time code at time 10.0
 seconds and the values will begin at the MTC time 0:0:10:0  (zero hours, zero
 minutes, ten seconds, zero frames).   
@@ -207,12 +197,18 @@ extern void
     BOOL frozen;
 
 @private
-    int _cmpStat;          
+    int _cmpStat;
+    /* This is the stopping point, in delta-t-adjusted time */
     short _lastHours;
     short _lastMinutes;
     short _lastSeconds;
     short _lastFrames;
-    short _frameQuarter;
+    short _frameQuarter;     /* Which quarter-frame we're on */
+
+    /* These are the time in delta-t adjusted units.  Use
+     * the access methods to get their value in MKConductor's time
+     * base.
+     */
     short _hours;
     short _minutes;
     short _seconds;
