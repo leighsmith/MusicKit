@@ -27,44 +27,45 @@
 /*!
  @enum SndRecorderParam
  @abstract Parameter keys
- @constant recorder_kStartTriggerThreshold  Start trigger threshold
- @constant recorder_kRecordFile             Record filename              
- @constant recorder_kNumParams              Number of parameters
+ @constant recorder_StartTriggerThreshold  Start trigger threshold
+ @constant recorder_RecordFile             Record filename
+ @constant recorder_NumParams              Number of parameters
 */
 enum SndRecorderParam {
-  recorder_kStartTriggerThreshold = 0,
-  recorder_kRecordFile            = 1,
-  recorder_kNumParams             = 2
+    recorder_StartTriggerThreshold = 0,
+    recorder_RecordFile            = 1,
+    recorder_NumParams             = 2
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
 /*!
-@class SndAudioProcessorRecorder
-@abstract Records the FX audio stream to disk.
-@discussion To come.
+  @class SndAudioProcessorRecorder
+  @abstract Records the FX audio stream to disk.
+  @discussion A threshold can be set to prevent silence being recorded prior to the sound. An automatic shutoff
+              after a specifiable period of silence is also possible.
 */
 @interface SndAudioProcessorRecorder : SndAudioProcessor {
 
 @protected
-    /*! @var writingQueue A queue of buffers copied from those received by processReplacingInputBuffer: */
+    /*! @var writingQueue A queue of buffers copied from those received by processReplacingInputBuffer: ready for writing. */
     SndAudioBufferQueue *writingQueue;
     /*! @var fileFormat The format of the data to be stored in the file. */
     SndFormat fileFormat;
     /*! @var isRecording Indicates if recording is currently active. */
-    BOOL            isRecording; 
+    BOOL isRecording; 
     /*! @var framesRecorded Number of sample frames written */
-    long            framesRecorded;  
-    /*! @var recordFile */
-    SNDFILE         *recordFile;
-    /*! @var recordFileName */
-    NSString       *recordFileName;
+    unsigned long framesRecorded;  
+    /*! @var recordFile The libsndfile handle referring to the open file. NULL if not open. */
+    SNDFILE *recordFile;
+    /*! @var recordFileName Full pathname of the file being or about to be written. */
+    NSString *recordFileName;
     /*! @var startedRecording Indicates if a minimum threshold or time trigger has passed and recording has begun. */
-    BOOL            startedRecording;
-    /*! @var startTriggerThreshold A floating point threshold to begin the recording of sound. */
-    float           startTriggerThreshold;
-    /*! @var stopSignal */
-    BOOL            stopSignal;
+    BOOL startedRecording;
+    /*! @var startTriggerThreshold A normalised absolute value threshold to begin the recording of sound. */
+    float startTriggerThreshold;
+    /*! @var stopSignal A boolean variable to indicate that recording should stop and the file should be closed. */
+    BOOL stopSignal;
 }
 
 /*!
@@ -125,20 +126,11 @@ enum SndRecorderParam {
 - (long) framesRecorded;
 
 /*!
-    @method     primeStartTrigger
-    @abstract 
-    @discussion 
-    @result     
-*/
-- primeStartTrigger;
-
-/*!
     @method     setStartTriggerThreshold:
     @abstract 
     @discussion 
-    @result     
 */
-- setStartTriggerThreshold: (float) f;
+- (void) setStartTriggerThreshold: (float) f;
 
 @end
 
