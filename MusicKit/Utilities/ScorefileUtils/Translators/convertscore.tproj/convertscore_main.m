@@ -11,10 +11,14 @@
   Converted to OpenStep: Leigh M. Smith <leigh@tomandandy.com>
 
   Copyright 1988-1992, NeXT Inc.  All rights reserved.
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /*
  Modification history:
    $Log$
+   Revision 1.5  2000/11/29 03:47:45  leigh
+   Added copyright statement
+
    Revision 1.4  2000/06/13 17:50:28  leigh
    Made file searches use platform independent approach, add note combining
 
