@@ -1,33 +1,54 @@
-/********************************************************************************
-$Id$
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//
+//  Description: Class defining an AppKit view of a Snd object.
+//
+//  Original Author: Stephen Brandon
+//
+//  Substantially based on Sound Kit, Release 2.0, Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
+//  Additions Copyright (c) 1999 Stephen Brandon and the University of Glasgow
+//  Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
+//
+//  Legal Statement Covering Additions by Stephen Brandon and the University of Glasgow:
+//
+//  This framework and all source code supplied with it, except where specified, are
+//  Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use
+//  the source code for any purpose, including commercial applications, as long as you
+//  reproduce this notice on all such software.
+//
+//  Software production is complex and we cannot warrant that the Software will be
+//  error free.  Further, we will not be liable to you if the Software is not fit
+//  for the purpose for which you acquired it, or of satisfactory quality. 
+//
+//  WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL
+//  WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES
+//  OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD
+//  PARTIES RIGHTS.
+//
+//  If a court finds that we are liable for death or personal injury caused by our
+//  negligence our liability shall be unlimited.  
+//
+//  WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS
+//  OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR POSSESSION
+//  OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE NO LIABILITY
+//  IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED DOCUMENTATION WHERE SUCH
+//  USE IS NOT IN COMPLIANCE WITH THE TERMS AND CONDITIONS OF THIS AGREEMENT.
+//
+// Legal Statement Covering Additions by The MusicKit Project:
+//
+//    Permission is granted to use and modify this code for commercial and
+//    non-commercial purposes so long as the author attribution and copyright
+//    messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
-LEGAL:
-This framework and all source code supplied with it, except where specified, are
-Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use
-the source code for any purpose, including commercial applications, as long as you
-reproduce this notice on all such software.
-
-Software production is complex and we cannot warrant that the Software will be
-error free.  Further, we will not be liable to you if the Software is not fit
-for the purpose for which you acquired it, or of satisfactory quality. 
-
-WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL
-WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES
-OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD
-PARTIES RIGHTS.
-
-If a court finds that we are liable for death or personal injury caused by our
-negligence our liability shall be unlimited.  
-
-WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS
-OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR POSSESSION
-OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE NO LIABILITY
-IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED DOCUMENTATION WHERE SUCH
-USE IS NOT IN COMPLIANCE WITH THE TERMS AND CONDITIONS OF THIS AGREEMENT.
-
-********************************************************************************/
 /*!
-  @header SndView
+ @class SndView
+
+ @abstract SndView is responsible for displaying a amplitude/time plot of Snd data.
+ 
+ @discussion 
 
 A SndView object provides a graphical representation of sound
 data. This data is taken from an associated Snd object. In addition
@@ -58,17 +79,18 @@ so on.
 
 Lines are drawn between the chosen values to yield a continuous
 shape. Two drawing modes are provided:
-
-&#183; In NX_SOUNDVIEW_WAVE mode, the drawing is rendered in an
+<UL>
+<LI> In SND_SOUNDVIEW_WAVE mode, the drawing is rendered in an
 oscilloscopic fashion.
 
-&#183; In NX_SOUNDVIEW_MINMAX mode, two lines are drawn, one to
+<LI> In SND_SOUNDVIEW_MINMAX mode, two lines are drawn, one to
 connect the maximum values, and one to connect the minimum values.
+</UL>
 
 As you zoom in (as the reduction factor decreases), the two drawing
 modes become indistinguishable.
 
-<b>Autoscaling the Display</b>
+<B>Autoscaling the Display</B>
 
 When a SndView's sound data changes (due to editing or recording),
 the manner in which the SndView is redisplayed depends on its
@@ -78,7 +100,36 @@ the reduction factor is unchanged. If autoscaling is enabled, the
 reduction factor is automatically recomputed to maintain a constant
 frame size. By default, autoscaling is disabled; this is to
 accommodate the use of a SndView object as the document of an
-NSScrollView.  */
+NSScrollView.
+
+<B>Methods Implemented by the Delegate</B>
+
+ - didPlay:sender duringPerformance: (SndPerformance *) performance
+ Sent to the delegate just after the SndView's sound is played.
+
+ - didRecord:sender
+ Sent to the delegate just after the SndView's sound is recorded into.
+
+ - hadError:sender
+ Sent to the delegate if an error is encountered during recording or
+ playback of the SndView's sound.
+
+ - selectionChanged:sender
+ Sent to the delegate when the SndView's selection changes.
+
+ - soundDidChange:sender
+ Sent to the delegate when the SndView's sound data is edited.
+
+ - willFree:sender
+ Sent to the delegate when the SndView is freed.
+
+ - willPlay:sender duringPerformance: (SndPerformance *) performance
+ Sent to the delegate just before the SndView's sound is played.
+
+ - willRecord:sender
+ Sent to the delegate just before the SndView's sound is recorded into.
+ 
+*/
 
 #ifndef __SNDVIEW_H__
 #define __SNDVIEW_H__
@@ -121,15 +172,12 @@ NSScrollView.  */
 #define SND_SOUNDVIEW_MINMAX 0
 #define SND_SOUNDVIEW_WAVE 1
 
+// Legacy definitions
 #define NX_SOUNDVIEW_MINMAX SND_SOUNDVIEW_MINMAX
 #define NX_SOUNDVIEW_WAVE SND_SOUNDVIEW_WAVE
 
 #define DEFAULT_RECORD_SECONDS 5
 
-/*!
-@class SndView
-@discussion To come
-*/
 @interface SndView:NSView
 {
     Snd*       	sound;
@@ -177,7 +225,7 @@ NSScrollView.  */
     SndDisplayDataList *dataList;
 }
 
-- (void)toggleCursor;
+- (void) toggleCursor;
 
 /*!
   @method hideCursor
@@ -193,8 +241,8 @@ NSScrollView.  */
 */
 - showCursor;
 
-- (void)initVars;
-- (BOOL)scrollPointToVisible:(const NSPoint)point;
+- (void) initVars;
+- (BOOL) scrollPointToVisible: (const NSPoint)point;
 
 /*!
   @method resignFirstResponder
@@ -202,7 +250,7 @@ NSScrollView.  */
   @discussion Resigns the position of first responder. Returns
               YES.
 */
-- (BOOL)resignFirstResponder;
+- (BOOL) resignFirstResponder;
 
 /*!
   @method becomeFirstResponder
@@ -210,14 +258,14 @@ NSScrollView.  */
   @discussion Promotes the SndView to first responder, and returns YES. You
               never invoke this method directly.
 */
-- (BOOL)becomeFirstResponder;
+- (BOOL) becomeFirstResponder;
 
 /*!
   @method copy:
   @param  sender is an id.
   @discussion Copies the current selection to the pasteboard.
 */
-- (void)copy:(id)sender;
+- (void) copy: (id) sender;
 
 /*!
   @method cut:
@@ -227,7 +275,7 @@ NSScrollView.  */
               delegate. The insertion point is positioned to where the selection
               used to start.
 */
-- (void)cut:(id)sender;
+- (void) cut: (id) sender;
 
 /*!
   @method delete:
@@ -236,7 +284,7 @@ NSScrollView.  */
               the <b>soundDidChange:</b> message to the delegate. The deletion
               isn't placed on the pasteboard.
 */
-- (void)delete:(id)sender;
+- (void) delete: (id) sender;
 
 /*!
   @method paste:
@@ -248,14 +296,14 @@ NSScrollView.  */
               method <b>compatibleWith:</b>. If the paste is successful, the
               <b>soundDidChange:</b> message is sent to the delegate.
 */
-- (void)paste:(id)sender;
+- (void) paste: (id) sender;
 
 /*!
   @method selectAll:
   @param  sender is an id.
   @discussion Creates a selection over the SndView's entire Snd.
 */
-- (void)selectAll:(id)sender;
+- (void) selectAll: (id) sender;
 
 /*!
   @method delegate
@@ -283,11 +331,11 @@ NSScrollView.  */
 /*!
   @method displayMode
   @result Returns an int.
-  @discussion Returns the SndView's display mode, one of NX_SOUNDVIEW_WAVE
-              (oscilloscopic display) or NX_SOUNDVIEW_MINMAX (minimum/maximum
+  @discussion Returns the SndView's display mode, one of SND_SOUNDVIEW_WAVE
+              (oscilloscopic display) or SND_SOUNDVIEW_MINMAX (minimum/maximum
               display; this is the default).
 */
-- (int)displayMode;
+- (int) displayMode;
 
 /*!
   @method drawSamplesFrom:to:
@@ -297,7 +345,7 @@ NSScrollView.  */
   @discussion Redisplays the given range of samples. Returns YES if there is data
               that can be displayed, NO otherwise.
 */
-- drawSamplesFrom:(int)first to:(int)last;
+- drawSamplesFrom: (int) first to: (int) last;
 
 /*!
   @method drawRect:
@@ -310,7 +358,7 @@ NSScrollView.  */
               one of the display messages defined by the NSView
               class.
 */
-- (void)drawRect:(NSRect)rects;
+- (void) drawRect: (NSRect)rects;
 
 /*!
   @method getSelection:size:
@@ -321,7 +369,7 @@ NSScrollView.  */
               The size of the selection in samples is returned in
               <i>sampleCount</i>. 
 */
-- getSelection:(int *)firstSample size:(int *)sampleCount;
+- getSelection: (int *)firstSample size: (int *)sampleCount;
 
 /*!
   @method setSelection:size:
@@ -331,7 +379,7 @@ NSScrollView.  */
               with sample <i>firstSample</i> (samples are counted from
               0).
 */
-- (void)setSelection:(int)firstSample size:(int)sampleCount;
+- (void) setSelection: (int) firstSample size: (int) sampleCount;
 
 /*!
   @method hadError:
@@ -349,7 +397,7 @@ NSScrollView.  */
               pointing to by <i>frameRect</i>. The initialized SndView doesn't
               contain any sound data.   Returns <b>self</b>.
 */
-- initWithFrame:(NSRect)frameRect;
+- initWithFrame: (NSRect)frameRect;
 
 /*!
   @method isAutoScale
@@ -357,7 +405,7 @@ NSScrollView.  */
   @discussion Returns YES if the SndView is in autoscaling mode, otherwise
               returns NO.
 */
-- (BOOL)isAutoScale;
+- (BOOL) isAutoScale;
 
 /*!
   @method isBezeled
@@ -365,7 +413,7 @@ NSScrollView.  */
   @discussion Returns YES if the SndView has a bezeled border, otherwise returns
               NO (the default).
 */
-- (BOOL)isBezeled;
+- (BOOL) isBezeled;
 
 /*!
   @method isContinuous
@@ -373,7 +421,7 @@ NSScrollView.  */
   @discussion Returns YES if the SndView responds to mouse-dragged events (as
               set through <b>setContinuous:</b>). The default is NO.
 */
-- (BOOL)isContinuous;
+- (BOOL) isContinuous;
 
 /*!
   @method isEditable
@@ -381,7 +429,7 @@ NSScrollView.  */
   @discussion Returns YES if the SndView's sound data can be
               edited.
 */
-- (BOOL)isEditable;
+- (BOOL) isEditable;
 
 /*!
   @method isEnabled
@@ -390,7 +438,7 @@ NSScrollView.  */
               mouse has no effect in a disabled SndView. By default, a SndView
               is enabled.
 */
-- (BOOL)isEnabled;
+- (BOOL) isEnabled;
 
 /*!
   @method isOptimizedForSpeed
@@ -398,7 +446,7 @@ NSScrollView.  */
   @discussion Returns YES if the SndView is optimized for speedy display.
               SndViews are optimized by default.
 */
-- (BOOL)isOptimizedForSpeed;
+- (BOOL) isOptimizedForSpeed;
 
 /*!
   @method isPlayable
@@ -406,8 +454,8 @@ NSScrollView.  */
   @discussion Returns YES if the SndView's sound data can be played without
               first being converted.
 */
-- (BOOL)isPlayable;
-- (float)getDefaultRecordTime;
+- (BOOL) isPlayable;
+- (float) getDefaultRecordTime;
 
 /*!
   @method mouseDown:
@@ -420,7 +468,7 @@ NSScrollView.  */
               is being dragged. You never invoke this method; it's invoked
               automatically in response to the user's actions.
 */
-- (void)mouseDown:(NSEvent *)theEvent;
+- (void) mouseDown: (NSEvent *)theEvent;
 
 /*!
   @method pasteboard:provideData:
@@ -430,7 +478,7 @@ NSScrollView.  */
               Currently, the <i>type</i> argument must be &#ldquo;NXSoundPboardType&#rdquo;,
               the pasteboard type that represents sound data.
 */
-- (void)pasteboard:(NSPasteboard *)thePasteboard provideDataForType:(NSString *)pboardType;
+- (void) pasteboard: (NSPasteboard *)thePasteboard provideDataForType: (NSString *)pboardType;
 
 /*!
   @method pause:
@@ -438,7 +486,7 @@ NSScrollView.  */
   @discussion Pauses the current playback or recording session by invoking Snd's
               <b>pause:</b> method.
 */
-- (void)pause:sender;
+- (void) pause:sender;
 
 /*!
   @method play:
@@ -449,7 +497,7 @@ NSScrollView.  */
               selection is played; <b>didPlay:</b> is sent when the selection is
               done playing.
 */
-- (void)play:sender;
+- (void) play:sender;
 
 /*!
   @method resume:
@@ -457,7 +505,7 @@ NSScrollView.  */
   @discussion Resumes the current playback or recording session by invoking
               Snd's <b>resume:</b> method.
 */
-- (void)resume:sender;
+- (void) resume:sender;
 
 /*!
   @method record:
@@ -469,14 +517,14 @@ NSScrollView.  */
               recording has completed. Recorded data is always taken from the
               CODEC microphone input.
 */
-- (void)record:sender;
+- (void) record:sender;
 
 /*!
   @method stop:
   @param  sender is an id.
   @discussion Stops the SndView's current recording or playback.
 */
-- (void)stop:(id)sender;
+- (void) stop: (id) sender;
 
 /*!
   @method readSelectionFromPasteboard:
@@ -490,7 +538,7 @@ NSScrollView.  */
               you can retrieve by sending <b>processingError</b> to the Snd) and
               returns YES.
 */
-- (BOOL)readSelectionFromPasteboard:(NSPasteboard *)thePasteboard;
+- (BOOL) readSelectionFromPasteboard: (NSPasteboard *) thePasteboard;
 
 /*!
   @method reductionFactor
@@ -499,7 +547,7 @@ NSScrollView.  */
                             
               <tt>reductionFactor = sampleCount / displayUnits</tt>
 */
-- (float)reductionFactor;
+- (float) reductionFactor;
 
 /*!
   @method setReductionFactor:
@@ -524,7 +572,7 @@ NSScrollView.  */
               the method returns immediately without recomputing the frame
               size.
 */
-- (BOOL)setReductionFactor:(float)redFactor;
+- (BOOL) setReductionFactor: (float) redFactor;
 
 /*!
   @method scaleToFit
@@ -548,7 +596,7 @@ NSScrollView.  */
               subclass can reimplement this method to provide specialized
               behavior.
 */
-- (void)sizeToFit;
+- (void) sizeToFit;
 
 /*!
   @method sizeToFit:
@@ -561,7 +609,7 @@ NSScrollView.  */
               subclass can reimplement this method to provide specialized
               behavior.
 */
-- (void)sizeToFit:(BOOL)withAutoscaling;
+- (void) sizeToFit: (BOOL) withAutoscaling;
 
 /*!
   @method setAutoscale:
@@ -575,7 +623,7 @@ NSScrollView.  */
               NSScrollView, autoscaling should be disabled (autoscaling is
               disabled by default).
 */
-- setAutoscale:(BOOL)aFlag;
+- setAutoscale: (BOOL) aFlag;
 
 /*!
   @method setBezeled:
@@ -585,7 +633,7 @@ NSScrollView.  */
               autodisplay is enabled, the Snd is automatically
               redisplayed.
 */
-- (void)setBezeled:(BOOL)aFlag;
+- (void) setBezeled: (BOOL) aFlag;
 
 /*!
   @method setContinuous:
@@ -595,7 +643,7 @@ NSScrollView.  */
               the mouse is being dragged. If NO, the message is sent only on mouse
               up. The default is NO. 
 */
-- (void)setContinuous:(BOOL)aFlag;
+- (void) setContinuous: (BOOL) aFlag;
 
 /*!
   @method setDelegate:
@@ -604,17 +652,17 @@ NSScrollView.  */
               sent messages when the user changes or acts on the
               selection.
 */
-- (void)setDelegate:(id)anObject;
-- (void)setDefaultRecordTime:(float)seconds;
+- (void) setDelegate: (id) anObject;
+- (void) setDefaultRecordTime: (float) seconds;
 
 /*!
   @method setDisplayMode:
   @param  aMode is an int.
-  @discussion Sets the SndView's display mode, either NX_SOUNDVIEW_WAVE or
-              NX_SOUNDVIEW_MINMAX (the default). If autodisplaying is enabled, the
+  @discussion Sets the SndView's display mode, either SND_SOUNDVIEW_WAVE or
+              SND_SOUNDVIEW_MINMAX (the default). If autodisplaying is enabled, the
               Snd is automatically redisplayed.
 */
-- (void)setDisplayMode:(int)aMode; /*NX_SOUNDVIEW_WAVE or NX_SOUNDVIEW_MINMAX*/
+- (void) setDisplayMode: (int) aMode;
 
 /*!
   @method setEditable:
@@ -622,7 +670,7 @@ NSScrollView.  */
   @discussion Enables or disables editing in the SndView as <i>aFlag</i> is YES
               or NO. By default, a SndView is editable.
 */
-- (void)setEditable:(BOOL)aFlag;
+- (void) setEditable: (BOOL) aFlag;
 
 /*!
   @method setEnabled:
@@ -631,7 +679,7 @@ NSScrollView.  */
               mouse has no effect in a disabled SndView. By default, a SndView
               is enabled.
 */
-- (void)setEnabled:(BOOL)aFlag;
+- (void) setEnabled: (BOOL) aFlag;
 
 /*!
   @method setOptimizedForSpeed:
@@ -643,7 +691,7 @@ NSScrollView.  */
               inaccuracies are corrected as you zoom in on the data. All
               SndView's are optimized by default.
 */
-- (void)setOptimizedForSpeed:(BOOL)flag;
+- (void) setOptimizedForSpeed: (BOOL) flag;
 
 /*!
   @method setSound:
@@ -655,7 +703,7 @@ NSScrollView.  */
               autodisplaying is enabled, the SndView is automatically
               redisplayed.
 */
-- (void)setSound:(Snd *)aSound;
+- (void) setSound: (Snd *)aSound;
 
 /*!
   @method sound
@@ -671,20 +719,20 @@ NSScrollView.  */
               autodisplaying is enabled, the SndView is automatically
               redisplayed.
 */
-- (void)setFrameSize:(NSSize)_newSize;
+- (void) setFrameSize: (NSSize)_newSize;
 
 /*!
   @method soundBeingProcessed
   @result Returns an id.
   @discussion Returns the Snd object that's currently being played or recorded
               into. Note that the actual Snd object that's being performed isn't
-              necessarily the object returned by SndView's <b>sound </b>method;
+              necessarily the object returned by SndView's <b>sound</b> method;
               for efficiency, SndView creates a private performance Snd
               object. While this is generally an implementation detail, this
               method is supplied in case the SndView's delegate needs to know
               exactly which object will be (or was) performed.
 */
-- soundBeingProcessed;
+- (Snd *) soundBeingProcessed;
 
 /*!
   @method tellDelegate:
@@ -696,7 +744,7 @@ NSScrollView.  */
               editing, is performed. However, you can invoke it in the design of a
               SndView subclass.
 */
-- (void)tellDelegate:(SEL)theMessage;
+- (void) tellDelegate: (SEL) theMessage;
 
 /*!
   @method tellDelegate:duringPerformance:
@@ -708,7 +756,7 @@ NSScrollView.  */
               editing, is performed. However, you can invoke it in the design of a
               SndView subclass.
 */
-- (void)tellDelegate:(SEL)theMessage duringPerformance: performance;
+- (void) tellDelegate: (SEL) theMessage duringPerformance: performance;
 
 /*!
   @method validRequestorForSendType:returnType:
@@ -718,7 +766,7 @@ NSScrollView.  */
   @discussion You never invoke this method; it's implemented to support services
               that act on sound data.
 */
-- validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType;
+- validRequestorForSendType: (NSString *) sendType returnType: (NSString *)returnType;
 
 /*!
   @method willPlay:
@@ -726,7 +774,7 @@ NSScrollView.  */
   @discussion Used to redirect delegate messages from the SndView's Snd
               object; you never invoke this method directly.
 */
-- (void)willPlay:sender duringPerformance: performance;
+- (void) willPlay: sender duringPerformance: performance;
 
 /*!
   @method willRecord:
@@ -734,11 +782,11 @@ NSScrollView.  */
   @discussion Used to redirect delegate messages from the SndView's Snd
               object; you never invoke this method directly.
 */
-- (void)willRecord:sender;
-- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)thePasteboard types:(NSArray *)pboardTypes;
-- (BOOL)writeSelectionToPasteboardNoProvide:thePasteboard types:(NSArray *)pboardTypes;
-- (id)initWithCoder:(NSCoder *)aDecoder;
-- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (void) willRecord:sender;
+- (BOOL) writeSelectionToPasteboard: (NSPasteboard *) thePasteboard types: (NSArray *) pboardTypes;
+- (BOOL) writeSelectionToPasteboardNoProvide: thePasteboard types: (NSArray *) pboardTypes;
+- (id) initWithCoder: (NSCoder *) aDecoder;
+- (void) encodeWithCoder: (NSCoder *) aCoder;
 
 
     /*************************
@@ -746,60 +794,71 @@ NSScrollView.  */
      * to SndKit.
      *************************/
 
-- (BOOL)invalidateCacheStartPixel:(int)start end:(int)end;
+- (BOOL) invalidateCacheStartPixel: (int) start end: (int) end;
 	/* if end == -1, invalidates to end of last cache*/
-- (BOOL)invalidateCacheStartSample:(int)start end:(int)end;
+- (BOOL) invalidateCacheStartSample: (int) start end: (int) end;
 	/* start and end are samples. Must be exact. */
-- (void)invalidateCache; /* convenience method for above */
+- (void) invalidateCache; /* convenience method for above */
    /* invalidation: if you change the data of a sound which is being used
     * in a SndView in any way, you must inform the SndView. The easiest message
     * is -invalidateCache, but you can be more specific and tell it the
-    * exact sample number with -invalidateCacheStartSample:(int)start end:(int)end
+    * exact sample number with -invalidateCacheStartSample: (int) start end: (int) end
     */
 
-- (void)setDrawsCrosses:(BOOL)aFlag; /* default YES */
+- (void) setDrawsCrosses: (BOOL) aFlag; /* default YES */
     /* see README for explanation of optimisation thresholds and skips, and peak fractions */
-- (void)setOptThreshold:(int)threshold;
-- (void)setOptSkip:(int)skip;
-- (void)setPeakFraction:(float)fraction;
-- (BOOL)setStereoMode:(int)aMode;
-- (BOOL)drawsCrosses;
-- (int)getOptThreshold;
-- (int)getOptSkip;
-- (int)getStereoMode;
-- (float)getPeakFraction;
-- (void) setSelectionColor : (NSColor *) color;
+- (void) setOptThreshold: (int) threshold;
+- (void) setOptSkip: (int) skip;
+- (void) setPeakFraction: (float) fraction;
+- (BOOL) setStereoMode: (int) aMode;
+- (BOOL) drawsCrosses;
+- (int) getOptThreshold;
+- (int) getOptSkip;
+- (int) getStereoMode;
+- (float) getPeakFraction;
+
+/*!
+  @method setSelectionColor:
+  @discussion Sets the selection colour.
+  @param color An NSColor.
+ */
+- (void) setSelectionColor: (NSColor *) color;
+
+/*!
+  @method selectionColor
+  @discussion Returns the current selection colour.
+  @result Returns an NSColor.
+ */
 - (NSColor *) selectionColor;
 
+/*!
+  @method setBackgroundColor:
+  @discussion Sets the background colour.
+  @param color An NSColor.
+ */
+- (void) setBackgroundColor: (NSColor *) color;
 
-/********************************************
-    Methods Implemented by the Delegate
+/*!
+  @method backgroundColor
+  @discussion Returns the current background colour.
+  @result Returns an NSColor.
+ */
+- (NSColor *) backgroundColor;
 
-    - didPlay:sender duringPerformance: (SndPerformance *) performance
-    Sent to the delegate just after the SndView's sound is played.
+/*!
+  @method setForegroundColor:
+  @discussion Sets the foreground colour.
+  @param color An NSColor.
+ */
+- (void) setForegroundColor: (NSColor *) color;
 
-    - didRecord:sender
-    Sent to the delegate just after the SndView's sound is recorded into.
+/*!
+  @method foregroundColor
+  @discussion Returns the current foreground colour.
+  @result Returns an NSColor.
+ */
+- (NSColor *) foregroundColor;
 
-    - hadError:sender
-    Sent to the delegate if an error is encountered during recording or 
-            playback of the SndView's sound.
-
-    - selectionChanged:sender
-    Sent to the delegate when the SndView's selection changes.
-
-    - soundDidChange:sender
-    Sent to the delegate when the SndView's sound data is edited.
-
-    - willFree:sender
-    Sent to the delegate when the SndView is freed.
-
-    - willPlay:sender duringPerformance: (SndPerformance *) performance
-    Sent to the delegate just before the SndView's sound is played.
-
-    - willRecord:sender
-    Sent to the delegate just before the SndView's sound is recorded into.
-********************************************/
 @end
 
 #endif
