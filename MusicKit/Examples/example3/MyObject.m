@@ -114,7 +114,6 @@ static double ranNum()
     [aNote setPar:MK_synthPatch toString: @"Pluck"];
     [aPart setInfoNote:aNote];
     [aScore writeOptimizedScorefile: @"/tmp/test.playscore"];
-    [aScore free];
     return self;
 }
 
@@ -123,6 +122,5 @@ static double ranNum()
     system("playscore -f -q /tmp/test.playscore");
     return self;
 }
-
 
 @end
