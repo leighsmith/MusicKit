@@ -58,9 +58,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h> /* for memmove() */
-// TODO these should be able to be purged once we move the pasteboard stuff into SndView.
-#include <AppKit/NSPasteboard.h>
-#include <AppKit/NSApplication.h>
 
 #import "Snd.h"
 #import "SndError.h"
@@ -69,11 +66,6 @@
 #import "SndTable.h"
 #import "SndAudioBuffer.h"
 #import "SndAudioProcessorChain.h"
-
-// TODO this needs upgrading
-#ifndef USE_NEXTSTEP_SOUND_IO
-NSString *NXSoundPboardType = @"NXSoundPboardType";
-#endif
 
 // Turn on for debugging output.
 #define SND_DEBUG_LOOPING 0
@@ -248,6 +240,14 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
   return self;
 }
 
+- initWithData: (NSData *) soundData
+{
+    if([self init] != nil)
+	[self readSoundFromData: soundData];
+    
+    return self;
+}
+
 - (unsigned) hash
 {
   unsigned ss = 0;
@@ -258,8 +258,7 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
 	 ((unsigned *)soundStruct)[4] + ((unsigned *)soundStruct)[5] +
          ((unsigned *)soundStruct)[6] + ((unsigned *)soundStruct)[7];
   }
-  return [name length] * 256 + 512 * tag + ss + 1023 *soundStructSize;
-
+  return [name length] * 256 + 512 * tag + ss + 1023 * soundStructSize;
 }
 
 // return the file extensions supported by our sound file reading library, typically sox or sndlibfile.
@@ -328,12 +327,13 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
     [name release];
     priority = 0;
 
-    if (soundStruct) SndFree(soundStruct);
+    if (soundStruct)
+	SndFree(soundStruct);
     if (!(s = malloc(sizeof(SndSoundStruct))))
-        [[NSException exceptionWithName:@"Sound Error"
-                                 reason:@"Can't allocate memory for Snd class"
-                               userInfo:nil] raise];
-    [stream getBytes:s length:sizeof(SndSoundStruct)];/* only gets 1st 4 bytes of info string */
+        [[NSException exceptionWithName: @"Sound Error"
+                                 reason: @"Can't allocate memory for Snd class"
+                               userInfo: nil] raise];
+    [stream getBytes: s length: sizeof(SndSoundStruct)];/* only gets 1st 4 bytes of info string */
 #ifdef __LITTLE_ENDIAN__
     s->magic = NSSwapBigLongToHost(s->magic);
     s->dataLocation = NSSwapBigLongToHost(s->dataLocation);
@@ -347,15 +347,15 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
     finalSize = s->dataSize + s->dataLocation;
 
     s = realloc((char *)s,finalSize);
-    [stream getBytes:(char *)s + sizeof(SndSoundStruct)
-               range:NSMakeRange(sizeof(SndSoundStruct),finalSize - sizeof(SndSoundStruct))];
+    [stream getBytes: (char *) s + sizeof(SndSoundStruct)
+               range: NSMakeRange(sizeof(SndSoundStruct), finalSize - sizeof(SndSoundStruct))];
 
     soundStruct = s;
     status = SND_SoundInitialized;
     return SND_ERR_NONE;
 }
 
-- writeSoundToStream:(NSMutableData *)stream
+- writeSoundToData:(NSMutableData *)stream
 {
     SndSoundStruct *s;
     SndSoundStruct **ssList;
@@ -821,47 +821,6 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
     //return SndWriteSoundfile([filename fileSystemRepresentation], soundStruct);
 }
 
-- (void) writeToPasteboard: (NSPasteboard *) thePboard
-{
-/* here I provide data straight away. Ideally, a non-freeing object
- * should be given the data to hold, and it should implement the "provideData"
- * method.
- * If I could guarantee that the Snd Class object itself wold not be freed
- * (for instance when the app is terminated) then one could specify the class
- * object. Cunning, eh. Maybe I'll do that anyway, and use a static variable to
- * hold the data...
- */
-/* an alternative method of providing the data here is to NOT compact,
- * but to write the data to a stream (  NXStream *ts ) and send the stream to 
- * the pasteboard. I'll leave it like it is for now.
- */
-/* here I assume that the header will be in host form, and the sound data
- * will be in "sound" (ie big endian) format. This is ok if we aren't trying
- * to share the pasteboard between dissimilar machines...
- */
-    BOOL ret;
-    NSMutableData *ts = [NSMutableData dataWithCapacity:soundStructSize];
-
-//	[self compactSamples];
-    [self writeSoundToStream:ts];
-    [thePboard declareTypes:[NSArray arrayWithObject:NXSoundPboardType] owner:nil];	
-
-    ret = [thePboard setData:ts forType:NXSoundPboardType];
-    if (!ret) {
-        printf("Sound paste error\n");
-    }
-}
-
-- initFromPasteboard: (NSPasteboard *) thePboard
-{
-    NSData *soundData = [thePboard dataForType: NXSoundPboardType];
-	
-    if([self init] != nil)
-		[self readSoundFromData: soundData];
-
-    return self;
-}
-
 - (BOOL) isEmpty
 {
     if (![self isEditable]) return NO;
@@ -892,15 +851,26 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
     return NO;
 }
 
-- (BOOL) compatibleWith: (Snd *) aSound
+- (BOOL) compatibleWithSound: (Snd *) aSound
 {
+    BOOL formatsOk;
     SndSoundStruct *aStruct;
+    int df1 = [self dataFormat];
+    int df2 = [aSound dataFormat];
+    
+    if (df1 == SND_FORMAT_INDIRECT)
+        df1 = ((SndSoundStruct *) (*((SndSoundStruct **) (soundStruct->dataLocation))))->dataFormat;
+    if (df2 == SND_FORMAT_INDIRECT)
+        df2 = ((SndSoundStruct *) (*((SndSoundStruct **) ([aSound soundStruct]->dataLocation))))->dataFormat;
+    formatsOk = ((df1 == df2) && df1 != SND_FORMAT_INDIRECT);
+    
     if (!soundStruct) return YES;
     if (!aSound) return YES;
     if (!(aStruct = [aSound soundStruct])) return YES;
-    if (soundStruct->samplingRate == aStruct->samplingRate
-          && soundStruct->channelCount == aStruct->channelCount
-          && [self dataFormat] == [aSound dataFormat]) return YES;
+    if (soundStruct->samplingRate == aStruct->samplingRate &&
+	soundStruct->channelCount == aStruct->channelCount &&
+	formatsOk)
+	       return YES;
     return NO;
 }
 
@@ -1092,7 +1062,7 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
     if (soundStruct) {
         if (![self isEditable]) return SND_ERR_CANNOT_EDIT;
 // following condition not in the original! Therefore removed.
-//		if (![aSnd compatibleWith:self]) return SND_ERR_CANNOT_COPY;
+//		if (![aSnd compatibleWithSound:self]) return SND_ERR_CANNOT_COPY;
         SndFree(soundStruct);
         soundStruct = NULL;
         soundStructSize = 0;
@@ -1128,13 +1098,13 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
     return (soundStruct->dataFormat == SND_FORMAT_INDIRECT);
 }
 
-// TODO should be named: - (void *) bytes
-- (unsigned char *) data
+- (void *) data
 {
-  if (!soundStruct) return NULL;
-  if (soundStruct->dataFormat == SND_FORMAT_INDIRECT)
-    return (char *)soundStruct->dataLocation;
-  return (char *)soundStruct + soundStruct->dataLocation;
+    if (!soundStruct)
+	return NULL;
+    if (soundStruct->dataFormat == SND_FORMAT_INDIRECT)
+	return (void *) soundStruct->dataLocation;
+    return (void *)((char *) soundStruct + soundStruct->dataLocation);
 }
 
 - (int) dataSize
@@ -1506,6 +1476,30 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
 - (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) sndFrameRange
 {
     return [self audioBufferForSamplesInRange: sndFrameRange looping: NO];
+}
+
+- (void) normalise
+{
+    // Retrieve the Snd as an SndAudioBuffer (TODO eventually this will be redundant once a SndAudioBuffer is an ivar).
+    NSRange wholeSound = { 0, [self lengthInSampleFrames] };
+    SndAudioBuffer *audioBufferOfEntireSound = [SndAudioBuffer audioBufferWithSnd: self inRange: wholeSound];
+    
+    [audioBufferOfEntireSound normalise];
+
+    // We need to copy the buffer sample data back into the soundStruct. In the future, post-soundStruct,
+    // we should just be able to use the buffer directly.
+    {
+	SndSoundStruct *toSound;
+	int err = SndAlloc(&toSound, [audioBufferOfEntireSound lengthInBytes], [self dataFormat], [self samplingRate], [self channelCount], 4);
+	
+	if (err != SND_ERR_NONE)
+	    return;
+	
+	SndFree(soundStruct);
+	memcpy((void *) toSound + toSound->dataLocation, [audioBufferOfEntireSound bytes], [audioBufferOfEntireSound lengthInBytes]);
+	soundStruct = toSound;
+	soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;	
+    }
 }
 
 - (void) setLoopWhenPlaying: (BOOL) yesOrNo
