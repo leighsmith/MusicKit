@@ -44,29 +44,19 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
- 
-
 #ifndef __SND_H__
 #define __SND_H__
 
 #import <Foundation/Foundation.h>
-
-/* The following define maps most sound I/O functions to the SoundKit counterparts,
- * for OpenStep 4.2 Intel and m68k (black NeXT) machines. You could try it on PPC
- * MacOS-X machines if you wanted to, but this may then conflict with the ppc/YBWin
- * code for using NSSound objects for sound playback.
- */
-#if !defined(macosx)
-#define macosx (defined(__ppc__) && !defined(ppc))
-#define macosx_server (defined(__ppc__) && defined(ppc))
-#endif
-
 #import <MKPerformSndMIDI/PerformSound.h>
 
+// TODO this can probably be bumped along with the pasteboard methods to SndView.
+#ifndef USE_NEXTSTEP_SOUND_IO
 /* Define this for compatibility */
 #define NXSoundPboard NXSoundPboardType
 
 extern NSString *NXSoundPboardType;
+#endif
 
 @class NSPasteboard;
 @class SndPlayer;
@@ -142,6 +132,21 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 
 */
 
+/*!
+@enum       SNDSoundConversion
+ @abstract   Sound conversion quality codes
+ @constant   SndConvertLowQuality Low quality conversion, using linear interpolation.
+ @constant   SndConvertMediumQuality Medium quality conversion. Uses bandlimited interpolation,
+             using a small filter. Relatively fast.
+ @constant   SndConvertHighQuality High quality conversion. Uses bandlimited interpolation, using a
+ 	     large filter. Relatively slow.
+ */
+typedef enum {
+    SndConvertLowQuality = 0,
+    SndConvertMediumQuality = 1,
+    SndConvertHighQuality  = 2
+} SndConversionQuality;
+
 @interface Snd : NSObject
 {
  @protected
@@ -178,7 +183,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 /*! @var currentError */
     int currentError;
 /*! @var conversionQuality Determines quality of sampling rate conversion - see quality defines */
-    int conversionQuality;	 
+    SndConversionQuality conversionQuality;	 
 
 /*! @var performancesArray An array of all active AND pending performances of this Snd */
     NSMutableArray *performancesArray;
@@ -237,10 +242,12 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
               for <i>&#ldquo;aName</i>.snd&#rdquo; in the sound segment of the
               application's executable file. Finally, <i>the file</i> is searched
               for in the following directories (in order):
-              
-              &#183;	~/Library/Sounds
-              &#183;	/LocalLibrary/Sounds
-              &#183;	/NextLibrary/Sounds
+
+	      <UL>
+              <LI>~/Library/Sounds</LI>
+              <LI>/LocalLibrary/Sounds</LI>
+              <LI>/NextLibrary/Sounds</LI>
+	      </UL>
               
               where <b>~</b> represents the user's home directory.
               If the Snd eludes the search, <b>nil</b> is returned.
@@ -473,7 +480,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @result Returns a NSString *.
   @discussion Returns the Snd's name.
 */
-- (NSString *)name;
+- (NSString *) name;
 
 /*!
   @method setName:
@@ -483,7 +490,7 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
               being used, then the Snd's name isn't set and NO is returned;
               otherwise returns YES.
 */
-- setName:(NSString *)theName;
+- setName: (NSString *) theName;
 
 /*!
   @method delegate
@@ -497,36 +504,36 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @param  anObject is an id.
   @discussion Sets the Snd's delegate to <i>anObject</i>.
 */
-- (void)setDelegate:(id)anObject;
+- (void) setDelegate: (id) anObject;
 
 /*!
   @method samplingRate
   @result Returns a double.
   @discussion Returns the Snd's sampling rate.
 */
-- (double)samplingRate;
+- (double) samplingRate;
 
 /*!
-  @method sampleCount
+  @method lengthInSampleFrames
   @result Returns an int.
   @discussion Returns the number of sample frames, or channel count-independent
               samples, in the Snd.
 */
-- (int)sampleCount;
+- (long) lengthInSampleFrames;
 
 /*!
   @method duration
   @result Returns a double.
   @discussion Returns the Snd's length in seconds.
 */
-- (double)duration;
+- (double) duration;
 
 /*!
   @method channelCount
   @result Returns an int.
   @discussion Returns the number of channels in the Snd.
 */
-- (int)channelCount;
+- (int) channelCount;
 
 /*!
   @method info
@@ -828,33 +835,41 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @param  newFormat is an int.
   @param  newRate is a double.
   @param  newChannelCount is an int.
-  @result Returns an int.
+  @result Returns an error code or SND_ERR_NONE if the conversion was performed correctly.
   @discussion Convert the Snd's data to the given format,
               sampling rate, and number of channels. The following conversions are
               possible:
-              
-              &#183;	Arbitrary sampling rate conversion.
-              &#183;	Compression and decompression.
-              &#183;	Floating-point formats (including double-precision) to and from linear formats.
-              &#183;	Mono to stereo.
-              &#183;	CODEC mu-law to and from linear formats.
-
-              An error code is returned.
-*/
-- (int)convertToFormat:(int)aFormat
-	   samplingRate:(double)aRate
-	   channelCount:(int)aChannelCount;
+	      <UL>
+              <LI>Arbitrary sampling rate conversion.</LI>
+              <LI>Compression and decompression.</LI>
+              <LI>Floating-point formats (including double-precision) to and from linear formats.</LI>
+              <LI>Mono to stereo.</LI>
+              <LI>CODEC mu-law to and from linear formats.</LI>
+	      </UL>
+ */
+- (int) convertToFormat: (int) aFormat
+	   samplingRate: (double) aRate
+	   channelCount: (int) aChannelCount;
 
 /*!
   @method convertToFormat:
   @param  newFormat is an int.
-  @result Returns an int.
+  @result Returns an integer indicating any error or SND_ERR_NONE if the conversion worked.
   @discussion This is the same as
               <b>convertToFormat:samplingRate:channelCount:</b>,
               except that only the format is changed. An error code is
               returned.  
 */
-- (int)convertToFormat:(int)aFormat;
+- (int) convertToFormat: (int) aFormat;
+
+/*!
+  @method convertToFormat:
+  @result Returns an int.
+  @discussion The Snd is converted to the format (sampling rate, resolution and channels) that
+              the hardware natively uses. This should result in the fastest playback, avoiding any
+	      on the fly conversions. An error code is returned.
+ */
+- (int) convertToNativeFormat;
 
 /*!
   @method deleteSamples
@@ -1124,14 +1139,20 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 - (void) tellDelegateString:(NSString *)theMessage duringPerformance: (SndPerformance *) performance;
 
 
-    /*************************
-     * these methods are unique
-     * to SndKit.
-     *************************/
-- (void)setConversionQuality:(int)quality; /* default is SND_CONVERT_LOWQ */
+/*!
+  @method setConversionQuality:
+  @abstract Sets the conversion quality performed by convertToFormat:
+  @param quality Sets the conversion quality to a SndConversionQuality enumerated type.
+  @discussion Default is SndConvertLowQuality.
+ */
+- (void) setConversionQuality: (SndConversionQuality) quality;
 
-- (int)conversionQuality;
-
+/*!
+  @method conversionQuality
+  @abstract Returns the current conversion quality performed by convertToFormat:
+  @result Returns a SndConversionQuality enumerated type.
+*/
+- (SndConversionQuality) conversionQuality;
 
 - (void)_setStatus:(int)newStatus; /* Private! not for general use. */
 
@@ -1180,36 +1201,37 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @discussion The SndAudioBuffer's data object's size is decreased if less than fillLength number
               of samples can be read. The buffer is not expanded.
   @param buff The SndAudioBuffer object into which to copy the data.
-  @param fillLength The number of sample frames to copy.
-  @param readFromSndSample The sample frame in the Snd to start reading from.
-  @result Returns the number of sample frames filled, can be less than the number requested, but not more.
+  @param fillLength The number of sample frames in the buffer to copy into.
+  @param sndReadingRange The sample frame in the Snd to start reading from and maximum length of samples readable.
+  @result Returns the number of sample frames read from the Snd instance in filling the audio buffer.
+          This can be more or less than the number requested, if resampling occurs.
 */
 - (long) fillAudioBuffer: (SndAudioBuffer *) buff
 	        toLength: (long) fillLength
-     samplesStartingFrom: (long) readFromSndSample;
+          samplesInRange: (NSRange) sndReadingRange;
 
 /*!
-  @method insertIntoAudioBuffer:intoRange:samplesStartingAt:
+  @method insertIntoAudioBuffer:intoFrameRange:samplesStartingAt:
   @abstract Copies samples from self into a sub region of the provided SndAudioBuffer.
   @discussion If the buffer and the Snd instance have different formats, a format
               conversion will be performed to the buffers format, including resampling
               if necessary. The Snd audio data will be read enough to fill the range of samples
               specified according to the sample rate of the buffer compared to the sample rate
               of the Snd instance. In the case where there are less than the needed number of
-              samples left in the Snd to completely insert into the specified buffer region, the
+              samples left in the sndFrameRange to completely insert into the specified buffer region, the
               number of samples inserted will be returned less than bufferRange.length.
   @param buff The SndAudioBuffer object into which to copy the data.
   @param bufferRange An NSRange of sample frames (i.e channel independent time position specified in samples)
 		     in the buffer to copy into.
-  @param sndStartIndex The frame position (i.e channel independent time position specified in samples) within
-                       the Snd to start reading data from.
+  @param sndFrameRange An NSRange of sample frames (i.e channel independent time position specified in samples)
+                       within the Snd to start reading data from and the last permissible index to read from.
   @result Returns the number of samples actually inserted. This may be less than the length specified
           in the bufferRange if sndStartIndex is less than the number samples needed to convert to
           insert in the specified buffer region.
  */
 - (long) insertIntoAudioBuffer: (SndAudioBuffer *) buff
-		     intoRange: (NSRange) bufferRange
-	     samplesStartingAt: (long) sndStartIndex;
+		intoFrameRange: (NSRange) bufferFrameRange
+		samplesInRange: (NSRange) sndFrameRange;
 
 /*!
   @method initWithAudioBuffer:
@@ -1389,19 +1411,6 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 - didPlay:    sender duringPerformance: (SndPerformance *) performance;
 
 @end
-
-/*!
-  @enum       SNDSoundConversion 
-  @abstract   Sound conversion quality codes
-  @constant   SND_CONVERT_LOWQ Low quality
-  @constant   SND_CONVERT_MEDQ Medium quality
-  @constant   SND_CONVERT_HIQ  High quality
-*/
-typedef enum {
-    SND_CONVERT_LOWQ = 0,
-    SND_CONVERT_MEDQ = 1,
-    SND_CONVERT_HIQ  = 2
-} SNDSoundConversionQuality;
 
 /*!
   @enum       SNDSoundStatus
