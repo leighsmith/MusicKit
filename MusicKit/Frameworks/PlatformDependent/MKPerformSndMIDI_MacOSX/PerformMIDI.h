@@ -38,6 +38,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2004/11/25 04:26:18  leighsmith
+  Added input parameter to MKMDClaimUnit, MKMDReleaseUnit, and MKMDGetAvailableDrivers
+
   Revision 1.15  2001/05/14 21:03:09  leighsmith
   Replaced port_t with correct MKMDReplyPort definition
 
@@ -359,7 +362,7 @@ PERFORM_API MKMDReturn
     @result         Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
 */
 PERFORM_API MKMDReturn 
-    MKMDClaimUnit(MKMDPort driver, MKMDOwnerPort owner, short unit);
+    MKMDClaimUnit(BOOL input, MKMDPort driver, MKMDOwnerPort owner, short unit);
 
 /*!
     @function       MKMDReleaseUnit
@@ -376,7 +379,7 @@ PERFORM_API MKMDReturn
     @result         Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
 */
 PERFORM_API MKMDReturn 
-    MKMDReleaseUnit(MKMDPort driver, MKMDOwnerPort owner, short unit);
+    MKMDReleaseUnit(BOOL input, MKMDPort driver, MKMDOwnerPort owner, short unit);
 
 /*!
     @function       MKMDSetClockMode
@@ -724,15 +727,18 @@ PERFORM_API MKMDReturn
 
 /*!
     @function       MKMDGetAvailableDrivers
-    @abstract       Return the names of available drivers.    
+    @abstract       Return the names of available drivers.
+    @param          input
+                      Indicates whether the drivers listed are for input or output. 
+                      These may differ for devices which provide only output or only input.
     @param          selectedDriver
-                        Receives the default driver index.
+		      Receives the default driver index.
     @result         Returns a list of strings giving driver names and available ports,
                     and therefore (0 based) unit numbers. A NULL char * terminates the
                     list a la argv behaviour.
 */
 PERFORM_API const char **
-    MKMDGetAvailableDrivers(unsigned int *selectedDriver);
+    MKMDGetAvailableDrivers(BOOL inputDrivers, unsigned int *selectedDriver);
 
 /*!
     @function       MKMDFilterMessage
