@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		F52EFCAE01AD09F801A80103 = {
 			buildStyles = (
 				F52EFCD501AD09F801A80103,
 				F52EFCD601AD09F801A80103,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = F52EFCAF01AD09F801A80103;
 			productRefGroup = F52EFCC501AD09F801A80103;
@@ -24,7 +25,6 @@
 				F52EFCB201AD09F801A80103,
 				F52EFCB401AD09F801A80103,
 				F52EFCB701AD09F801A80103,
-				F52EFCB901AD09F801A80103,
 				F52EFCBF01AD09F801A80103,
 				F52EFCC501AD09F801A80103,
 			);
@@ -41,6 +41,7 @@
 			refType = 4;
 		};
 		F52EFCB101AD09F801A80103 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndViewP.m;
 			refType = 4;
@@ -54,6 +55,7 @@
 			refType = 4;
 		};
 		F52EFCB301AD09F801A80103 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndViewP.h;
 			refType = 4;
@@ -89,45 +91,9 @@
 			refType = 4;
 		};
 		F52EFCB801AD09F801A80103 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = palette.table;
-			refType = 4;
-		};
-		F52EFCB901AD09F801A80103 = {
-			children = (
-				F52EFCBA01AD09F801A80103,
-				F52EFCBB01AD09F801A80103,
-				F52EFCBC01AD09F801A80103,
-				F52EFCBD01AD09F801A80103,
-				F52EFCBE01AD09F801A80103,
-			);
-			isa = PBXGroup;
-			name = "Supporting Files";
-			refType = 4;
-		};
-		F52EFCBA01AD09F801A80103 = {
-			isa = PBXFileReference;
-			path = Makefile.preamble;
-			refType = 4;
-		};
-		F52EFCBB01AD09F801A80103 = {
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		F52EFCBC01AD09F801A80103 = {
-			isa = PBXFileReference;
-			path = Makefile.postamble;
-			refType = 4;
-		};
-		F52EFCBD01AD09F801A80103 = {
-			isa = PBXFileReference;
-			path = m.template;
-			refType = 4;
-		};
-		F52EFCBE01AD09F801A80103 = {
-			isa = PBXFileReference;
-			path = h.template;
 			refType = 4;
 		};
 		F52EFCBF01AD09F801A80103 = {
@@ -206,8 +172,8 @@
 			productName = "SndViewP (Bundle)";
 			productReference = F52EFCC601AD09F801A80103;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -234,7 +200,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		F52EFCC801AD09F801A80103 = {
 			buildActionMask = 2147483647;
@@ -242,7 +207,7 @@
 				F52EFCC901AD09F801A80103,
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F52EFCC901AD09F801A80103 = {
 			fileRef = F52EFCB301AD09F801A80103;
@@ -260,7 +225,7 @@
 				F52EFCCC01AD09F801A80103,
 			);
 			isa = PBXResourcesBuildPhase;
-			name = "Bundle Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F52EFCCB01AD09F801A80103 = {
 			fileRef = F52EFCB501AD09F801A80103;
@@ -280,7 +245,7 @@
 				F52EFCCE01AD09F801A80103,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F52EFCCE01AD09F801A80103 = {
 			fileRef = F52EFCB101AD09F801A80103;
@@ -299,7 +264,7 @@
 				F52EFCD301AD09F801A80103,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F52EFCD001AD09F801A80103 = {
 			fileRef = F52EFCC001AD09F801A80103;
@@ -330,7 +295,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F52EFCD501AD09F801A80103 = {
 			buildRules = (
