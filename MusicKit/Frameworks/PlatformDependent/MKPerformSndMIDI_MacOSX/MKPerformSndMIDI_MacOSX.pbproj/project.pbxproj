@@ -350,6 +350,9 @@
 			fileRef = 155A3D8F00376A7BCFED3B96;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 				INCLUDED_OSS = (
 					MACOS,
 					WINDOWS,
