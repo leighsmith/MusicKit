@@ -41,12 +41,12 @@
 }
 
 /*!
-  @method initWithProcessor:
+  @method initWithAudioProcessor:
   @abstract Initialises a view instance with a given AudioUnit Processor. 
   @discussion Responsible for loading the user interface and displaying it either in a separate window (Carbon)
               or initialising it ready for incorporation within another view (Cocoa).
  */
-- initWithProcessor: (SndAudioUnitProcessor *) processor;
+- initWithAudioProcessor: (SndAudioUnitProcessor *) processor;
 
 /*!
   @method window

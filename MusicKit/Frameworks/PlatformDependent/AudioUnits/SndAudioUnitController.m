@@ -268,7 +268,7 @@ static void eventListener(void *inUserData, AudioUnitCarbonView inView,
     return YES;
 }
 
-- initWithProcessor: (SndAudioUnitProcessor *) processor;
+- initWithAudioProcessor: (SndAudioUnitProcessor *) processor;
 {
     UInt32 dataSize;
     Boolean isWritable;
