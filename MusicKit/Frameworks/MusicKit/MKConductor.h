@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.21  2002/09/24 21:22:33  leighsmith
+  Moved @class declarations before the headerdoc @class entry as it was screwing up the headerdoc generation
+
   Revision 1.20  2002/05/09 16:41:17  leighsmith
   Cleaned up headerdoc listitems
 
@@ -80,6 +83,13 @@ Modification history:
 
 */
 @class MKConductor;
+@class NSLock;
+@class NSConditionLock;
+@class NSConnection;
+
+#ifdef __MINGW32__
+@class SndConditionLock;
+#endif
 
 /*!
   @class MKConductor
@@ -335,14 +345,6 @@ See also: MKPerformer, MKOrchestra, MKMidi
 #import <Foundation/NSArray.h>
 #import <Foundation/NSThread.h>
 #import <SndKit/SndKit.h>
-
-@class NSLock;
-@class NSConditionLock;
-@class NSConnection;
-
-#ifdef __MINGW32__
-  @class SndConditionLock;
-#endif
 
 // Enforce C name mangling to allow linking MusicKit functions to C++ code
 #ifdef __cplusplus
