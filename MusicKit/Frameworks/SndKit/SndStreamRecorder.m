@@ -28,15 +28,15 @@
 
 - init
 {
-  self = [super init];
-  if (self != nil) {
-    if (recorder != nil)
-      [recorder release];
-    recorder = [[SndAudioProcessorRecorder alloc] init];
-    [self setNeedsInput: TRUE];
-    [self setGeneratesOutput: FALSE];    
-  }
-  return self;
+    self = [super init];
+    if (self != nil) {
+	if (recorder != nil)
+	    [recorder release];
+	recorder = [[SndAudioProcessorRecorder alloc] init];
+	[self setNeedsInput: TRUE];
+	[self setGeneratesOutput: FALSE];    
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -45,9 +45,9 @@
 
 - (void) dealloc
 {
-  if (recorder != nil)
-    [recorder release];
-  [super dealloc];
+    if (recorder != nil)
+	[recorder release];
+    [super dealloc];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@
 
 - (BOOL) startRecording
 {
-  return [recorder startRecording];
+    return [recorder startRecording];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,8 +74,8 @@
 
 - stopRecording
 {
-  [recorder stopRecording];
-  return self;
+    [recorder stopRecording];
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,9 +84,9 @@
 
 - stopRecordingWait: (BOOL) bWaitUntilSaved disconnectFromStream: (BOOL) bDisconnectFromStream
 {
-  [recorder stopRecordingWait: bWaitUntilSaved];
-  active = !bDisconnectFromStream;
-  return self;
+    [recorder stopRecordingWait: bWaitUntilSaved];
+    active = !bDisconnectFromStream;
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,14 +95,14 @@
 
 - (void) processBuffers
 {  
-  if ([recorder isRecording]) {
-    SndAudioBuffer *inB       = [self synthInputBuffer];  
-    if ([recorder framesRecorded] == 0) {
-      if (delegate != nil && [delegate respondsToSelector: @selector(didStartRecording)]) 
-        [delegate didStartRecording: self];
+    if ([recorder isRecording]) {
+	SndAudioBuffer *inBuffer = [self synthInputBuffer];  
+	if ([recorder framesRecorded] == 0) {
+	    if (delegate != nil && [delegate respondsToSelector: @selector(didStartRecording)]) 
+		[delegate didStartRecording: self];
+	}
+	[recorder processReplacingInputBuffer: inBuffer outputBuffer: nil];
     }
-    [recorder processReplacingInputBuffer: inB outputBuffer: nil];
-  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -139,23 +139,23 @@
 
 - (BOOL) startRecordingToFile: (NSString*) filename
 {
-  BOOL b = FALSE;
-  
-  if (![self isActive]) {
-    [[SndStreamManager defaultStreamManager] addClient: self]; // hmm, should probably wait here for the welcomeClient to occur.
-
-    [outputBufferLock lockWhenCondition: OB_isInit];
-    [outputBufferLock unlockWithCondition: OB_isInit];
-  }
-  if ([recorder isRecording]) 
-    NSLog(@"SndStreamRecorder::startRecordingToFile - Error: already recording!\n");
-
-  b = [recorder startRecordingToFile: filename
-                      withDataFormat: [exposedOutputBuffer dataFormat]
-                        channelCount: [exposedOutputBuffer channelCount]
-                        samplingRate: [exposedOutputBuffer samplingRate]];
-  
-  return b;
+    BOOL b = FALSE;
+    
+    if (![self isActive]) {
+	[[SndStreamManager defaultStreamManager] addClient: self]; // hmm, should probably wait here for the welcomeClient to occur.
+	
+	[outputBufferLock lockWhenCondition: OB_isInit];
+	[outputBufferLock unlockWithCondition: OB_isInit];
+    }
+    if ([recorder isRecording]) 
+	NSLog(@"SndStreamRecorder::startRecordingToFile - Error: already recording!\n");
+    
+    b = [recorder startRecordingToFile: filename
+			withDataFormat: [exposedOutputBuffer dataFormat]
+			  channelCount: [exposedOutputBuffer channelCount]
+			  samplingRate: [exposedOutputBuffer samplingRate]];
+    
+    return b;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

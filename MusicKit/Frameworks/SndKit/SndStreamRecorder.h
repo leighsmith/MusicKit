@@ -41,13 +41,13 @@
     then either...
  
     [rec startRecordingToFile: "/tmp/incomingsound.snd"];
-    (time passes)
+    (time passes...)
     [rec stopRecording];
  
     or:
 
     [rec prepareForRecording: 10.5]; //record for 10.5 seonds
-    [rec startrRecording];
+    [rec startRecording];
 
     TODO:
     - Obviously the big todo here is to get general purpose stream and file
@@ -57,10 +57,12 @@
     - delegate call-backs to say recording has started / ended, what incoming
       levels are like, etc  
 */
-@interface SndStreamRecorder : SndStreamClient {
-/*! @var recorder A stream recording FX processor*/
-  SndAudioProcessorRecorder *recorder;
+@interface SndStreamRecorder : SndStreamClient 
+{
+    /*! @var recorder A stream recording FX processor */
+    SndAudioProcessorRecorder *recorder;
 }
+
 /*! 
     @method     init
     @abstract   Initializor
@@ -68,18 +70,14 @@
     @result     self
 */
 - init;
-/*! 
-    @method     dealloc
-    @abstract   Destructor
-    @discussion 
-*/
-- (void) dealloc;
+
 /*! 
     @method     description
     @abstract   
     @result     NSString with description
 */
 - (NSString*) description;
+
 /*! 
     @method     startRecording 
     @abstract 
@@ -88,6 +86,7 @@
     @result     Boolean indicating success
 */
 - (BOOL) startRecording;
+
 /*! 
     @method     startRecordingToFile:
     @abstract   Starts the record-to-disk routines.
@@ -96,6 +95,7 @@
     @result     Boolean indicating success
 */
 - (BOOL) startRecordingToFile: (NSString*) filename;
+
 /*! 
     @method     stopRecording
     @abstract   Sets up the record file amd 
@@ -103,6 +103,7 @@
     @result     Boolean indicating success
 */
 - stopRecording;
+
 /*! 
     @method     stopRecordingWait:disconnectFromStream:
     @abstract   Sets up the record file amd 
@@ -127,6 +128,7 @@
  @discussion To come.
 */
 @protocol SndStreamRecorderDelegate <SndStreamClientDelegate>
+
 /*! 
     @method   didStartRecording:sender
     @abstract   Message sent to delegate just before the recording thread enters
@@ -135,7 +137,8 @@
     @discussion Protocol method for SndStreamRecorderDelegate
     @result     self.
 */
-- didStartRecording:  sender;
+- didStartRecording: sender;
+
 /*! 
     @method     didFinishRecording:sender
     @abstract   Message sent to delegate when recording has completed. This is 
