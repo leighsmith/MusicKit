@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/python
 # $Id$
 #
 # Print a summary of a score or MIDI file including number of parts,
@@ -28,8 +28,7 @@ def main():
     pool = rt.NSAutoreleasePool()
 
     # Load MusicKit Framework
-    rt.NSBundle.bundleWithPath_( 
-	'/Library/Frameworks/MusicKit.framework').load()
+    rt.NSBundle.bundleWithPath_('/Library/Frameworks/MusicKit.framework').load()
 
     # need to read these from params.h
     MK_tempo = 148
