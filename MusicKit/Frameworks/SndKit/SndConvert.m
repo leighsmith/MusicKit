@@ -845,8 +845,10 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
     
     if([newBuffer convertToSampleFormat: toDataFormat] == nil)
 	return nil;
-    
-    return newBuffer; // Already autoreleased...
+
+    // newBuffer is already autoreleased but we retain and autorelease it again so that the current thread
+    // will autorelease it.
+    return [[newBuffer retain] autorelease];
 }
 
 @end
