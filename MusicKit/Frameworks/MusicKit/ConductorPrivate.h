@@ -4,6 +4,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2000/01/20 17:15:36  leigh
+  Moved the backgroundThreadAction enum to properly be in a header
+
   Revision 1.4  2000/01/13 06:54:04  leigh
   Added a missing (pre-OpenStep conversion!) _error: method
 
@@ -26,6 +29,11 @@
 
 #define _MK_ONLY_ONE_MTC_SUPPORTED 1 /* Do we ever need more than one? */
 #define _MK_DEFAULT_MTC_POLL_PERIOD (1/30.0)
+
+typedef enum _backgroundThreadAction {
+    exitThread,
+    pauseThread
+} backgroundThreadAction;
 
 extern void _MKLock(void) ;
     /* Waits for Music Kit to become available for messaging. */
