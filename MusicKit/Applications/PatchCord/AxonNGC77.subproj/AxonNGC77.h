@@ -7,17 +7,16 @@
 @interface AxonNGC77: MIDISysExSynth
 {
     SysExMessage *update;
-    id guitarNeck;
-    id pickups;
-    id holdMode;
-    id holdController;
-    id splitButton;
+    IBOutlet id guitarNeck;
+    IBOutlet id pickups;
+    IBOutlet id holdMode;
+    IBOutlet id holdController;
+    IBOutlet NSButton *splitButton;
     NSMutableString *patchName;
 }
 
 - init;
 - (id) initWithEmptyPatch;
-- (BOOL) isAnNGC77: (SysExMessage *) msg;
 - (BOOL) isParameterUpdate: (SysExMessage *) msg;
 - (BOOL) isNewPatch: (SysExMessage *) msg;
 - (void) acceptNewPatch: (SysExMessage *) msg;
