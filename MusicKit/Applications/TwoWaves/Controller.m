@@ -65,25 +65,19 @@ static BOOL clipping = NO;
     }
     type1 = 0;
     type2 = 0;
-    theSound1 = [[Snd alloc] init] ;
-    theSound2 = [[Snd alloc] init] ;
-    theSound3 = [[Snd alloc] init] ;
+    theSound1 = [[Snd alloc] initWithFormat: SND_FORMAT_LINEAR_16
+			       channelCount: 1
+				     frames: SAMPLING_RATE * SECONDS
+			       samplingRate: SAMPLING_RATE];
+    theSound2 = [[Snd alloc] initWithFormat: SND_FORMAT_LINEAR_16
+			       channelCount: 1
+				     frames: SAMPLING_RATE * SECONDS
+			       samplingRate: SAMPLING_RATE];
+    theSound3 = [[Snd alloc] initWithFormat: SND_FORMAT_LINEAR_16
+			       channelCount: 1
+				     frames: SAMPLING_RATE * SECONDS
+			       samplingRate: SAMPLING_RATE];
     newSound = [[Snd alloc] init] ;
-    [theSound1 setDataSize: SAMPLING_RATE * 2 * SECONDS 
-                dataFormat: SND_FORMAT_LINEAR_16
-              samplingRate: SAMPLING_RATE 
-              channelCount: 1 
-                  infoSize: 0];
-    [theSound2 setDataSize: SAMPLING_RATE * 2 * SECONDS 
-                dataFormat: SND_FORMAT_LINEAR_16
-              samplingRate: SAMPLING_RATE 
-              channelCount: 1 
-                  infoSize: 0];
-    [theSound3 setDataSize: SAMPLING_RATE * 2 * SECONDS 
-                dataFormat: SND_FORMAT_LINEAR_16
-              samplingRate: SAMPLING_RATE 
-              channelCount: 1 
-                  infoSize: 0];
     newSound = nil;
     redFact = SAMPLING_RATE * SECONDS / theFrame.size.width;
     [soundView1 setReductionFactor: redFact];
@@ -204,15 +198,12 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 - (Snd *) singleSound:sender
 {
     short *pointer;
-    Snd *newSoundA = [[Snd alloc] init];
+    Snd *newSoundA = [[Snd alloc] initWithFormat: SND_FORMAT_LINEAR_16
+				    channelCount: 1
+					  frames: SAMPLING_RATE * 3.0
+				    samplingRate: SAMPLING_RATE];
     int i;
     float amp1,freq1;
-
-    [newSoundA setDataSize: SAMPLING_RATE * 3 * 2 
-                dataFormat: SND_FORMAT_LINEAR_16
-              samplingRate: SAMPLING_RATE 
-              channelCount: 1 
-                  infoSize: 0];
 
     amp1 = [volNum1 floatValue] * 32768 / 10;
     freq1 = [freqNum1 floatValue];
@@ -269,12 +260,10 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
     freq2 = [freqNum2 floatValue];
     if (somethingChanged) {
         [newSound release];
-        newSound = [[Snd alloc] init];
-        [newSound setDataSize: SAMPLING_RATE * 2 * theLength 
-                dataFormat: SND_FORMAT_LINEAR_16
-                samplingRate: SAMPLING_RATE 
-                channelCount: 1 
-                    infoSize: 0];
+        newSound = [[Snd alloc] initWithFormat: SND_FORMAT_LINEAR_16
+				  channelCount: 1
+					frames: SAMPLING_RATE * theLength
+				  samplingRate: SAMPLING_RATE];
         pointer = (short *)[newSound data];
         
         for (i = 0; i < theLength*SAMPLING_RATE; i++) {
