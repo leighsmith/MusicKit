@@ -595,4 +595,8 @@ int _DSPHostMessageTimed(DSPFix48 *aTimeStampP, int msg)
 return 0;
 }
 
+int DSPSetHostMessageMode(void)
+{
+return 0;
+}
 
