@@ -82,9 +82,22 @@
 - addAudioProcessor: (SndAudioProcessor *) proc
 {
     [audioProcessorArray addObject: proc];
-    [proc setAudioProcessorChain:self];
+    [proc setAudioProcessorChain: self];
     return self;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// insertAudioProcessor:atIndex:
+////////////////////////////////////////////////////////////////////////////////
+
+- insertAudioProcessor: (SndAudioProcessor *) proc
+	       atIndex: (int) processorIndex
+{
+    [audioProcessorArray insertObject: proc atIndex: processorIndex];
+    [proc setAudioProcessorChain: self];
+    return self;    
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // removeAudioProcessor

@@ -78,6 +78,17 @@
 - addAudioProcessor: (SndAudioProcessor*) proc;
 
 /*!
+    @method     insertAudioProcessor:atIndex:
+    @abstract   Inserts an SndAudioProcessor into the FX chain at a specific location.
+    @discussion
+    @param      newAudioProcessor The SndAudioProcessor to be added to the FX chain.
+    @param      processorIndex The location in the FX chain to insert the SndAudioProcessor.
+    @result     Returns self
+*/
+- insertAudioProcessor: (SndAudioProcessor *) newAudioProcessor
+	       atIndex: (int) processorIndex;
+
+/*!
     @method     removeAudioProcessor:
     @abstract   Removes an SndAudioProcesor from the FX chain
     @discussion
