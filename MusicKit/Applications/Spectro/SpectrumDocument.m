@@ -15,7 +15,7 @@
 #import <math.h>
 #import <stdlib.h>
 #import <Foundation/NSByteOrder.h>
-#import <SndKit/Snd.h>
+#import <SndKit/SndKit.h>
 
 #define SWAP(int) NSSwapBigShortToHost(int)
 #define PUTVAL(cell,f)	[cell setStringValue:[NSString stringWithCString:doFloat(f, 2, 3)]]
