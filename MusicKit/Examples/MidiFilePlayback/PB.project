@@ -9,8 +9,7 @@
             AppKit.framework, 
             Foundation.framework, 
             MKPerformSndMIDI.framework, 
-            MusicKit.framework, 
-            SndKit.framework
+            MusicKit.framework
         ); 
         FRAMEWORKSEARCH = (
             /Local/Library/Frameworks, 
