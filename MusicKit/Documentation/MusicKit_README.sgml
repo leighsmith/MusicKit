@@ -853,7 +853,7 @@ Newer versions of will probably just work.
 	<variablelist>
 	    <varlistentry>
 	      <term>
-            <ulink url="&mkdownload;/MK-&mkvertuple;.MOX.pkg.tar">MK-&mkvertuple;.MOX.pkg.tar</ulink>
+            <ulink url="&mkdownload;/MK-&mkvertuple;.b.MOX.pkg.tar">MK-&mkvertuple;.b.MOX.pkg.tar</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -890,7 +890,7 @@ the <productname class="Registered">Midiman</productname>
 <!-- TODO
 	  <varlistentry>
 	    <term>
-            <ulink url="&mkdownload;/MK-&mkvertuple;.w32.pkg.tar">MK-&mkvertuple;.w32.pkg.tar</ulink>
+            <ulink url="&mkdownload;/MK-&mkvertuple;.b.w32.pkg.tar">MK-&mkvertuple;.b.w32.pkg.tar</ulink>
             </term>
 	    <listitem>
 	      <para>
@@ -900,7 +900,7 @@ the <productname class="Registered">Midiman</productname>
 	  </varlistentry>
 	  <varlistentry>
 	    <term>
-            <ulink url="&mkdownload;/MK-&mkvertuple;.linux.rpm">MK-&mkvertuple;.linux.rpm</ulink>
+            <ulink url="&mkdownload;/MK-&mkvertuple;.b.linux.rpm">MK-&mkvertuple;.b.linux.rpm</ulink>
             </term>
 	    <listitem>
 	      <para>
@@ -1047,9 +1047,10 @@ the <productname class="Registered">Midiman</productname>
     <para>
 The frameworks have been exercised fairly extensively and seem quite
 stable. <acronym>MIDI</acronym> recording and playback of scores and computed parts works
-on all supported platforms. The examples
+on all supported platforms. The application
+<application>ScorePlayer</application>, the examples
 <application>MidiFilePlayback</application> and
-<command>playscorefilemidi</command> and the utility
+<command>playscorefilemidi</command>, and the utility
 <command>playscore</command> demonstrate these capabilities.
 </para>
 
