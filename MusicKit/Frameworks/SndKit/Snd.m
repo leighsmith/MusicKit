@@ -283,7 +283,7 @@ static int ioTags = 1000;
 - initFromSoundfile:(NSString *)filename
 {
     [self init];
-    if ([self readSoundfile: filename]) {
+    if (![self readSoundfile: filename]) {
         [self release];
         return nil;
     }
