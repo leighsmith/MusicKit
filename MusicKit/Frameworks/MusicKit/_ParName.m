@@ -52,6 +52,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2002/03/12 22:53:51  sbrandon
+  Changed _binaryIndecies from NSMutableDictionary to NSMapTable
+
   Revision 1.12  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -643,7 +646,7 @@ static void writeData(NSMutableData *aStream,_MKScoreOutStruct *p, id dataObj,in
 	break;
     }
     if (binary) {
-	int val = [[p->_binaryIndecies objectForKey: dataObj] intValue];
+	int val = (int)NSMapGet(p->_binaryIndecies, dataObj);
 	if (val) {
 	    _MKWriteShort(aStream,type);
 	    _MKWriteShort(aStream,val);
@@ -680,7 +683,7 @@ static void writeData(NSMutableData *aStream,_MKScoreOutStruct *p, id dataObj,in
 	if (binary) {
 	    _MKWriteShort(aStream,declToken);
 	    _MKWriteNSString(aStream,name);
-	    [p->_binaryIndecies setObject: [NSNumber numberWithInt: (++(p->_highBinaryIndex))] forKey: dataObj];
+	    NSMapInsert(p->_binaryIndecies,dataObj,(void *)(++(p->_highBinaryIndex)));
 	}
 	else
 	    [aStream appendData: [[NSString stringWithFormat:@"%s %@ = ", _MKTokName(declToken),name] dataUsingEncoding: NSNEXTSTEPStringEncoding]];
