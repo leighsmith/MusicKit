@@ -413,14 +413,14 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     if (end == -1) end = NSWidth([self bounds]) - 1;
 
     for (i = [dataList count] - 1;i >= 0 ; i--) {
-        theObj = [dataList objectAt:i];
+        theObj = [dataList objectAtIndex:i];
         startpix = [theObj startPixel];
         endpix = [theObj endPixel];
         if (startpix > end) continue; /* this cache is higher than region */
         if (endpix < start) break; /* this cache is lower than region */
         if (startpix >= start && startpix <= end &&
             endpix >= start && endpix <= end) { /* cache is enclosed in region, and deleted */
-                [dataList removeObjectAt:i];
+                [dataList removeObjectAtIndex: i];
                 continue;
         }
         if (startpix < start && endpix >= start && endpix <= end) {
@@ -442,7 +442,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
                 min:&[theObj pixelDataMin][end + 1 - startOfCache]
                 count:[theObj endPixel] - end
                 start:end+1];
-        [dataList insertObject:newObj at:i+1];
+        [dataList insertObject:newObj atIndex:i+1];
         [theObj truncateToLastPixel:start-1];
     }
     return YES;
@@ -451,7 +451,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 - (void)invalidateCache /* blast 'em all away */
 {
     if (!dataList) return;
-    [dataList freeObjects];
+    [dataList removeAllObjects];
 }
 
 - (BOOL)isOpaque
@@ -601,7 +601,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
             int k,numToMove,cachedStart;
             float *maxVals,*minVals;
 //			printf("Using cached data %d\n",cacheIndex);
-            currentCacheObject = (SndDisplayData *)[dataList objectAt:cacheIndex];
+            currentCacheObject = (SndDisplayData *)[dataList objectAtIndex:cacheIndex];
             numToMove = [currentCacheObject endPixel];
             cachedStart = [currentCacheObject startPixel];
             if (numToMove > endX) numToMove = endX - currStartPoint + 1;
@@ -617,7 +617,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
             continue;
         }
         if (nextCache != -1) {
-            localMax = [[dataList objectAt:nextCache] startPixel] - 1;
+            localMax = [[dataList objectAtIndex:nextCache] startPixel] - 1;
             if (localMax > endX) localMax = endX;
         }
         else localMax = endX;
@@ -691,7 +691,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
                     * Continue...
                     */
         if (leadsOnFrom != -1) { /* we have calculated a new region which exactly appends an existing cache */
-            SndDisplayData * cacheToExtend = (SndDisplayData *)[dataList objectAt:leadsOnFrom];
+            SndDisplayData * cacheToExtend = (SndDisplayData *)[dataList objectAtIndex:leadsOnFrom];
             [cacheToExtend addPixelDataMax:&cacheMaxArray[currStartPoint - startX]
                                        min:&cacheMinArray[currStartPoint - startX]
                                      count:localMax - currStartPoint + 1
@@ -711,8 +711,8 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
         /* now see if we should join up to following cache */
         cacheIndex = [dataList findObjectContaining:localMax + 1 next:&nextCache leadsOnFrom:&leadsOnFrom];
         if (cacheIndex != -1 && leadsOnFrom != -1) {
-            [[dataList objectAt:leadsOnFrom] addDataFrom:[dataList objectAt:cacheIndex]];
-            [dataList removeObjectAt:cacheIndex];
+            [[dataList objectAtIndex:leadsOnFrom] addDataFrom:[dataList objectAtIndex:cacheIndex]];
+            [dataList removeObjectAtIndex:cacheIndex];
 //	printf("Compacted %d with %d. Now %d caches\n", leadsOnFrom, cacheIndex,[dataList count]);
         }
 
@@ -982,10 +982,8 @@ CGStroke(ctx);
     [foregroundColour release];
     if (recordingSound) SndFree(recordingSound);/* just in case */
     if (dataList) {
-        [dataList freeObjects];
-        [dataList free];//will need to be release, when I change to NSArray
-        //[dataList release];
-            // think the change is made... raf
+        [dataList removeAllObjects];
+        [dataList release];
     }
     [super dealloc];
     return;
