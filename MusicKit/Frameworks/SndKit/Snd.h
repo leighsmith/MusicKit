@@ -15,10 +15,15 @@
  * MacOS-X machines if you wanted to, but this may then conflict with the ppc/YBWin
  * code for using NSSound objects for sound playback.
  */
+#if !defined(macosx)
+#define macosx (defined(__ppc__) && !defined(ppc))
+#define macosx_server (defined(__ppc__) && defined(ppc))
+#endif
+
 #if defined(NeXT) 
   #define USE_NEXTSTEP_SOUND_IO
   #define USE_PERFORM_SOUND_IO
-#elif (defined(__APPLE__) && defined(__MACH__))
+#elif macosx_server
   #define USE_PERFORM_SOUND_IO
   #import "Sound.h"
 #elif defined(WIN32)
