@@ -9,8 +9,20 @@
                     "~/Most.midi", 
                     "~/Library/Lobe/PlaybackHistory/MostRecentlyPlayed.score"
                 ), 
-                ("-m", "-o", "~/rearticulation.midi", "~/rearticulation.score"), 
-                ("-s", "-n", "-o", "~/rearticulation_new.score", "~/rearticulation_new.midi"), 
+                (
+                    "-m", 
+                    "-o", 
+                    "~/rearticulation/rearticulation_new.midi", 
+                    "~/rearticulation/rearticulation.score"
+                ), 
+                (
+                    "-s", 
+                    "-n", 
+                    "-c", 
+                    "-o", 
+                    "~/rearticulation/rearticulation_new.score", 
+                    "~/rearticulation/rearticulation.midi"
+                ), 
                 ("-s", "-o", /tmp/foo.score, /tmp/foo.playscore)
             ); 
             cla_array_index = 2; 
