@@ -645,10 +645,8 @@
 				00D2C47EFEDB2CB5CFED3B93,
 				055C7F3B0049CD79CFED3B96,
 				04F0C04D00EA6A89CFED3B8B,
-				3AE3B96D007931DBCFED3B8B,
 				011279840168CEA1CFED3B94,
 				0112798A0169158CCFED3B94,
-				B52BE0CD01F775D6002A0494,
 				D87070F4040CA58D00A80103,
 				D8CC46AF048BEDBA00A80164,
 			);
@@ -1365,28 +1363,6 @@
 //362
 //363
 //364
-//3A0
-//3A1
-//3A2
-//3A3
-//3A4
-		3AE3B96C007931DBCFED3B8B = {
-			isa = PBXFileReference;
-			name = libst.a;
-			path = /Local/Unix/lib/libst.a;
-			refType = 0;
-		};
-		3AE3B96D007931DBCFED3B8B = {
-			fileRef = 3AE3B96C007931DBCFED3B8B;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-//3A0
-//3A1
-//3A2
-//3A3
-//3A4
 //4E0
 //4E1
 //4E2
@@ -1624,18 +1600,6 @@
 		};
 		B526060501CFC639002A0494 = {
 			fileRef = B526060301CFC639002A0494;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		B52BE0CC01F775D6002A0494 = {
-			isa = PBXFileReference;
-			name = libgsm.a;
-			path = /Local/Unix/lib/libgsm.a;
-			refType = 0;
-		};
-		B52BE0CD01F775D6002A0494 = {
-			fileRef = B52BE0CC01F775D6002A0494;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1958,25 +1922,12 @@
 			dstPath = "";
 			dstSubfolderSpec = 1;
 			files = (
-				D84D9F65040ECEAF00A80103,
-				D84D9F66040ECEAF00A80103,
+				D8A248FC048CFB4100A80165,
 				D84D9F67040ECEAF00A80103,
 				D84D9F68040ECEAF00A80103,
 			);
 			isa = PBXCopyFilesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 1;
-		};
-		D84D9F65040ECEAF00A80103 = {
-			fileRef = 3AE3B96C007931DBCFED3B8B;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D84D9F66040ECEAF00A80103 = {
-			fileRef = B52BE0CC01F775D6002A0494;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		D84D9F67040ECEAF00A80103 = {
 			fileRef = 011279890169158CCFED3B94;
@@ -2033,8 +1984,6 @@
 		D88C366004082B7C002A0496 = {
 			children = (
 				D8CC46AE048BEDBA00A80164,
-				3AE3B96C007931DBCFED3B8B,
-				B52BE0CC01F775D6002A0494,
 				011279890169158CCFED3B94,
 				011279830168CEA1CFED3B94,
 			);
@@ -2053,6 +2002,12 @@
 			};
 			isa = PBXBuildStyle;
 			name = Embedded;
+		};
+		D8A248FC048CFB4100A80165 = {
+			fileRef = D8CC46AE048BEDBA00A80164;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		D8CC46AE048BEDBA00A80164 = {
 			isa = PBXFileReference;
