@@ -13,6 +13,11 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/04/21 22:02:29  sbrandon
+  - removed importing of Mach headers
+  - removed extraneous function declaration
+  - fixed spelling typo
+
   Revision 1.3  2001/04/07 21:08:35  leighsmith
   Renamed header file to suit new more descriptive name used in MusicKit framework
 
@@ -31,14 +36,6 @@ Modification history:
 */
 #ifndef _MKMD_
 #define _MKMD_
-
-#import <mach/kern_return.h>
-#import <mach/message.h>
-#import <mach/port.h>
-#import <mach/boolean.h>
-
-// kludge around type definitions. This should be replaced.
-typedef int msg_header_t;  // mach_msg_header_t
 
 #define MKMDPort int
 #define MKMDOwnerPort int
@@ -170,9 +167,8 @@ extern kern_return_t
     MKMDFlushQueue(MKMDPort device_port, MKMDOwnerPort owner_port, short unit);
 extern kern_return_t 
     MIDIDownloadDLSInstruments(unsigned int *patches, int patchCount);
-extern char **MIDIGetAvailableDrivers(unsigned int *selectedDriver);
 
-/********************* Controling how incoming data is formated ***********/
+/********************* Controling how incoming data is formatted ***********/
 extern kern_return_t 
     MKMDFilterMessage(MKMDPort driver, MKMDOwnerPort owner, short unit, unsigned char statusByte, boolean_t filterIt);
 extern kern_return_t 
@@ -181,6 +177,7 @@ extern kern_return_t
 /* This will be obsolete soon: */
 extern kern_return_t 
     MKMDSetSystemIgnores(MKMDPort driver, MKMDOwnerPort owner, short unit, unsigned int ignoreBits);
+
 
 #endif _MD_
 
