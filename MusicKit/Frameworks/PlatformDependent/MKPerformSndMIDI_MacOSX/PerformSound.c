@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.15  2001/08/23 20:06:05  skotmcdonald
+// Fixed a nasty bug that caused framework to crash if no valid input detected - failed to allocate a buffer to send up filled with zeros to streaming arch.
+//
 // Revision 1.14  2001/08/06 22:58:05  skotmcdonald
 // Fixed teeny does-input-exist flag bug that was sending streaming arch to send blank recording buffers up to clients. Doh.
 //
@@ -109,7 +112,7 @@ typedef struct _audioStream {
 } SNDPlayingSound;
 
 // "class" variables
-static BOOL         initialised = FALSE;
+static BOOL initialised = FALSE;
 
 static BOOL inputInit = FALSE;
 
@@ -848,11 +851,10 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
     if(!initialised)
         return FALSE;  // invalid sound structure.
 
-    if (inputInit) {
-        if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL)
-            return FALSE;
-        memset(fInputBuffer,0,bufferSizeInBytes);
-    }
+    // Even if we don't have input, we still need an input buffer to send up empty to the rest of the arch.
+    if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL)
+        return FALSE;
+    memset(fInputBuffer,0,bufferSizeInBytes);
     // indicate the first absolute sample time received from the call back needs to be marked as a
     // datum to use to convert subsequent absolute sample times to a relative time.
     firstSampleTime = -1.0;  
