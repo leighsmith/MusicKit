@@ -1,10 +1,53 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    A MKSynthInstrument realizes MKNotes by synthesizing them on the DSP.  It
+    does this by forwarding each MKNote it receives to a MKSynthPatch object,
+    which translates the parameter information in the MKNote into DSP
+    instructions.  A MKSynthInstrument can manage any number of MKSynthPatch
+    objects (limited by the speed and size of the DSP).  However, all of
+    its MKSynthPatches are instances of the same MKSynthPatch subclass.  You
+    assign a particular MKSynthPatch subclass to a MKSynthInstrument through
+    the latter's setSynthPatchClass: method.  A MKSynthInstrument can't
+    change its MKSynthPatch class during a performance.
+
+    Each MKSynthPatch managed by the MKSynthInstrument corresponds to a
+    particular noteTag.  As the MKSynthInstrument receives MKNotes, it
+    compares the MKNote's noteTag to the noteTags of the MKSynthPatches that
+    it's managing.  If a MKSynthPatch already exists for the noteTag, the
+    MKNote is forwarded to that object; otherwise, the MKSynthInstrument
+    either asks the MKOrchestra to allocate another MKSynthPatch, or it
+    preempts an allocated MKSynthPatch to accommodate the MKNote.  Which
+    action it takes depends on the MKSynthInstrument's allocation mode and
+    the available DSP resources.
+
+    A MKSynthInstrument can either be in automatic allocation mode
+    (MK_AUTOALLOC) or manual mode (MK_MANUALALLOC).  In automatic mode,
+    MKSynthPatches are allocated directly from the MKOrchestra as MKNotes are
+    received by the MKSynthInstrument and released when it's no longer
+    needed.  Automatic allocation is the default.
+
+    In manual mode, the MKSynthInstrument pre-allocates a fixed number of
+    MKSynthPatch objects through the setSynthPatchCount: method.  If it
+    receives more simultaneously sounding MKNotes than it has MKSynthPatches,
+    the MKSynthInstrument preempt its oldest running MKSynthPatch (by sending
+    it the preemptFor: message).
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University  
 */
 /*
+ Modification history:
+
   $Log$
+  Revision 1.5  2000/05/24 03:46:23  leigh
+  Removed use of Storage, replacing with SynthPatchList object
+
   Revision 1.4  1999/09/10 02:47:03  leigh
   Comments update
 
@@ -24,53 +67,17 @@
 #import <objc/HashTable.h>
 
 @interface MKSynthInstrument : MKInstrument
-/* 
- * 
- * A SynthInstrument realizes Notes by synthesizing them on the DSP.  It
- * does this by forwarding each Note it receives to a SynthPatch object,
- * which translates the parameter information in the Note into DSP
- * instructions.  A SynthInstrument can manage any number of SynthPatch
- * objects (limited by the speed and size of the DSP).  However, all of
- * its SynthPatches are instances of the same SynthPatch subclass.  You
- * assign a particular SynthPatch subclass to a SynthInstrument through
- * the latter's setSynthPatchClass: method.  A SynthInstrument can't
- * change its SynthPatch class during a performance.
- * 
- * Each SynthPatch managed by the SynthInstrument corresponds to a
- * particular noteTag.  As the SynthInstrument receives Notes, it
- * compares the Note's noteTag to the noteTags of the SynthPatches that
- * it's managing.  If a SynthPatch already exists for the noteTag, the
- * Note is forwarded to that object; otherwise, the SynthInstrument
- * either asks the Orchestra to allocate another SynthPatch, or it
- * preempts an allocated SynthPatch to accommodate the Note.  Which
- * action it takes depends on the SynthInstrument's allocation mode and
- * the available DSP resources.
- * 
- * A SynthInstrument can either be in automatic allocation mode
- * (MK_AUTOALLOC) or manual mode (MK_MANUALALLOC).  In automatic mode,
- * SynthPatches are allocated directly from the Orchestra as Notes are
- * received by the SynthInstrument and released when it's no longer
- * needed.  Automatic allocation is the default.
- * 
- * In manual mode, the SynthInstrument pre-allocates a fixed number of
- * SynthPatch objects through the setSynthPatchCount: method.  If it
- * receives more simultaneously sounding Notes than it has SynthPatches,
- * the SynthInstrument preempt its oldest running SynthPatch (by sending
- * it the preemptFor: message).
- * 
- */
 {
-    id synthPatchClass;        /* class used to create patches. */
-    unsigned short allocMode;  /* One of MK_MANUALALLOC, MK_AUTOALLOC, or MK_MIXEDALLOC. */
+    id synthPatchClass;          /* class used to create patches. */
+    unsigned short allocMode;    /* One of MK_MANUALALLOC, MK_AUTOALLOC, or MK_MIXEDALLOC. */
     HashTable * taggedPatches;   /* HashTable mapping noteTags to SynthPatches */
     HashTable * controllerTable; /* HashTable mapping MIDI controllers to values */
-    id updates;         /* Note for storing common (no noteTag) updates. */
-    BOOL retainUpdates; /* NO if updates and controllerTable are cleared after
-                           each performance. */
-    id orchestra;       /* Orchestra to allocate SynthPatches from */
+    id updates;                  /* Note for storing common (no noteTag) updates. */
+    BOOL retainUpdates;          /* NO if updates and controllerTable are cleared after each performance. */
+    MKOrchestra *orchestra;      /* Orchestra to allocate SynthPatches from */
 
     /* The following for internal use only */
-    id _patchLists;
+    NSMutableArray *_patchLists;
 }
  
 - init;

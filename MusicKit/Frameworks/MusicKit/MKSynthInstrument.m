@@ -3,35 +3,34 @@
   Defined In: The MusicKit
 
   Description:
-    Instances of the SynthInstrument class manage a collection of SynthPatches.
-    The principal job of the SynthInstrument is to assign SynthPatches to
-    incoming Notes.
+    Instances of the MKSynthInstrument class manage a collection of MKSynthPatches.
+    The principal job of the MKSynthInstrument is to assign MKSynthPatches to
+    incoming MKNotes.
 
-    A SynthInstrument can be in one of two modes, 'manual mode' or 'automatic mode'.
-    If the SynthInstrument is in automatic mode, Patches are allocated directly
-    from the Orchestra as needed, then returned to the available pool, to be
-    shared among all SynthInstruments. This is the default.
-    If more Notes arrive than there are synthesizer resources,
-    the oldest running Patch of this SynthInstrument is preempted
-    (the SynthPatch is sent the preemptFor:aNote message)
-    and used for the new Note. This behavior can be over-ridden for
+    A MKSynthInstrument can be in one of two modes, 'manual mode' or 'automatic mode'.
+    If the MKSynthInstrument is in automatic mode, Patches are allocated directly
+    from the MKOrchestra as needed, then returned to the available pool, to be
+    shared among all MKSynthInstruments. This is the default.
+    If more MKNotes arrive than there are synthesizer resources,
+    the oldest running Patch of this MKSynthInstrument is preempted
+    (the MKSynthPatch is sent the preemptFor:aNote message)
+    and used for the new MKNote. This behavior can be over-ridden for
     an alternative "grab" strategy.
 
-    If it is in manual mode,
-    a fixed number of Patches are used over and over and you set the
-    number of Patches managed. If more Notes arrive than there are Patches
-    set aside, the oldest running Patch is preempted (the SynthPatch is
-    sent the preemptFor:aNote message) and used for the new Note. As above,
+    If it is in manual mode, a fixed number of Patches are used over and over
+    and you set the number of Patches managed. If more MKNotes arrive than there
+    are Patches set aside, the oldest running Patch is preempted (the MKSynthPatch is
+    sent the preemptFor:aNote message) and used for the new MKNote. As above,
     this behavior can be over-ridden for an alternative "grab" strategy.
     You can set the number of patches for each template.
 
     There is also a MK_MIXEDALLOC that allows manual allocation with the
     addition of "auto overflow".
 
-    Each SynthInstrument instance supports patches of a particular SynthPatch
+    Each MKSynthInstrument instance supports patches of a particular MKSynthPatch
     subclass.
 
-    Mutes Notes are ignored by SynthInstruments, with the exception of the
+    Mute MKNotes are ignored by MKSynthInstruments, with the exception of the
     special parameter synthPatchCount: and synthPatch:.
 
   Original Author: David A. Jaffe
@@ -44,6 +43,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/05/24 03:46:23  leigh
+  Removed use of Storage, replacing with SynthPatchList object
+
   Revision 1.5  2000/04/16 04:23:47  leigh
   Comment cleanup
 
@@ -92,7 +94,7 @@ Modification history:
   11/28/96/daj - Minor optimization 
 */
 
-#import <objc/Storage.h>
+//#import <objc/Storage.h>
 #import <objc/HashTable.h>
 
 #import "_musickit.h"
@@ -112,6 +114,7 @@ typedef struct {
 	@defs (MKSynthPatch)
 } synthPatchStruct;
 #import "SynthPatchPrivate.h"
+#import "SynthPatchList.h"
 
 @implementation MKSynthInstrument:MKInstrument /*sb moved to here (see above) */
 
@@ -122,28 +125,19 @@ typedef struct {
 
 #define WILD (-1)
 
-typedef struct _patchList {
-    id idleNewest,idleOldest,activeNewest,activeOldest;
-    int idleCount,totalCount,manualCount;
-    id template;
-} patchList; /* One of these for each template. */
-
-#define PLISTSIZE	(sizeof(patchList))
-#define PLISTDESCR @"{@@@@ii@}" 
-
-static void CONSISTENCY_CHECK(patchList *aPatchList) {
+static void CONSISTENCY_CHECK(SynthPatchList *aPatchList) {
     if (!((aPatchList->totalCount >= 0) && 
 	  (aPatchList->totalCount >= aPatchList->manualCount) && 
 	  (aPatchList->manualCount >= aPatchList->idleCount))) 
 	NSLog(@"SynthInstrument accounting problem.");
 }
 
-static patchList *getList(MKSynthInstrument *self,id template)
+static SynthPatchList *getList(MKSynthInstrument *self,id template)
     /* Returns list matching template, else NULL. */
 {
     /* Skip over the orphan list. */
-    register patchList *tmp = (patchList *)[self->_patchLists elementAt:1];
-    register patchList *last = tmp + [self->_patchLists count] - 1;
+    register SynthPatchList *tmp = (SynthPatchList *)[self->_patchLists objectAtIndex:1];
+    register SynthPatchList *last = tmp + [self->_patchLists count] - 1;
     while (tmp < last)
       if (tmp->template == template)
 	return tmp;
@@ -151,21 +145,20 @@ static patchList *getList(MKSynthInstrument *self,id template)
     return NULL;
 }
 
-static patchList *addList(MKSynthInstrument *self,id template)
+static SynthPatchList *addList(MKSynthInstrument *self,id template)
     /* adds list. Assumes it's not there. */
 {
-    patchList p = {nil,nil,nil,nil,0,0};
-    p.template = template;
-    [self->_patchLists insertElement:(char *)&p at:[self->_patchLists count]];
-    return (patchList *)[self->_patchLists elementAt:
-			 [self->_patchLists count]-1];
+    SynthPatchList *p = [[[SynthPatchList alloc] init] autorelease];
+    [p setTemplate: template];
+    [self->_patchLists insertObject: p atIndex: [self->_patchLists count]];
+    return (SynthPatchList *)[self->_patchLists objectAtIndex: [self->_patchLists count]-1];
 }
 
-static patchList *findListWithIdlePatch(MKSynthInstrument *self)
+static SynthPatchList *findListWithIdlePatch(MKSynthInstrument *self)
 {
     /* Skip orphan list */
-    register patchList *tmp = (patchList *)[self->_patchLists elementAt:1];
-    register patchList *last = tmp + [self->_patchLists count] - 1;
+    register SynthPatchList *tmp = (SynthPatchList *)[self->_patchLists objectAtIndex:1];
+    register SynthPatchList *last = tmp + [self->_patchLists count] - 1;
     while (tmp < last)
       if (tmp->idleOldest) 
 	return tmp;
@@ -178,7 +171,7 @@ static patchList *findListWithIdlePatch(MKSynthInstrument *self)
 
 static NSZone *zone; /* Cache zone for copying notes. */
 
-#warning sb: "if subclass overrides this method, it must sent [super initialize]"
+//#warning sb: "if subclass overrides this method, it must send [super initialize]"
 
 + (void)initialize
 {
@@ -190,28 +183,29 @@ static NSZone *zone; /* Cache zone for copying notes. */
 }
 
 
-static id initPatchLists(id oldLists)
+static NSMutableArray *initPatchLists(NSArray *oldLists)
     /* Frees oldLists and creates a new object to hold the lists. 
        Copies orphans if oldLists is non-nil. */
 {
     /* Give them value to shut up compiler warning  */
     id activeOldest = NULL,activeNewest = NULL; 
-    patchList p = {nil,nil,nil,nil,0,0};
-    id newLists;
+    SynthPatchList *p = [[SynthPatchList alloc] init];
+    NSMutableArray *newLists;
     if (oldLists) {
-	patchList *orphanList;
-	orphanList = (patchList *)[oldLists elementAt:0];
+	SynthPatchList *orphanList;
+	orphanList = (SynthPatchList *)[[oldLists objectAtIndex:0] bytes];
 	activeOldest = orphanList->activeOldest;
 	activeNewest = orphanList->activeNewest;
     } 
     [oldLists release];           /* Flush patch lists */
-    newLists = 
-	[Storage newCount:0 elementSize:PLISTSIZE description:[PLISTDESCR cString]];
+    newLists = [NSMutableArray array];
+//	[Storage newCount:0 elementSize:PLISTSIZE description:[PLISTDESCR cString]];
     if (oldLists) {
-	p.activeNewest = activeNewest;
-	p.activeOldest = activeOldest;
+	[p setActiveNewest: activeNewest];
+	[p setActiveOldest: activeOldest];
     }
-    [newLists insertElement:(char *)&p at:0];
+//    [newLists insertElement:(char *)&p at:0];
+    [newLists addObject: p];
     return newLists;
 }
 -retain
@@ -245,7 +239,7 @@ static id initPatchLists(id oldLists)
      If subclass overrides this method, it must send [super initialize]
      before setting its own defaults. */
 {
-    id aNoteRec = [MKNoteReceiver new];
+    MKNoteReceiver *aNoteRec = [MKNoteReceiver new];
     _MKLinkUnreferencedClasses([MKSynthPatch class]);
     [super init];
     _patchLists = initPatchLists(nil);
@@ -253,8 +247,7 @@ static id initPatchLists(id oldLists)
     controllerTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
     [self addNoteReceiver:aNoteRec];
     [aNoteRec release];
-    updates = [MKGetNoteClass() new];  /* For remembering partUpdate 
-				parameter values on this channel. */
+    updates = [MKGetNoteClass() new];  /* For remembering partUpdate parameter values on this channel. */
     [updates setNoteType:MK_noteUpdate];
     _MKOrchAddSynthIns(self);
     orchestra = _MKClassOrchestra();
@@ -266,8 +259,8 @@ static id initPatchLists(id oldLists)
      has no synth patches allocated. */
 {
     MKSynthInstrument *newObj = [super copyWithZone:zone];
-    newObj->_patchLists = 
-      [Storage newCount:0 elementSize:PLISTSIZE description:[PLISTDESCR cString]];
+    newObj->_patchLists = [NSMutableArray array];
+//      [Storage newCount:0 elementSize:PLISTSIZE description:[PLISTDESCR cString]];
     newObj->taggedPatches = [HashTable newKeyDesc:"i"];
     newObj->controllerTable = [HashTable newKeyDesc:"i" valueDesc:"i"];
     newObj->updates = [MKGetNoteClass() new];  
@@ -321,7 +314,7 @@ static id initPatchLists(id oldLists)
      each patch. Returns nil if there are no patches sounding with that
      template. */
 {
-    patchList *p;
+    SynthPatchList *p;
     if (!aTemplate)
       aTemplate = [synthPatchClass defaultPatchTemplate];
     p = getList(self,aTemplate);
@@ -351,7 +344,7 @@ static NSString *tagStr(int noteTag)
 }
 
 static id adjustRunningPatch(MKSynthInstrument *self,int newNoteTag,id aNote,
-			     id *currentPatch,patchList *aPatchList,
+			     id *currentPatch,SynthPatchList *aPatchList,
 			     MKPhraseStatus *phraseStatus)
     /* This function returns self almost all the time. The exception is 
        when the preemption happens right now and the SynthPatch noteOn
@@ -386,11 +379,11 @@ static id adjustRunningPatch(MKSynthInstrument *self,int newNoteTag,id aNote,
     return self;
 }
 
-static id findAltListRunningPatch(MKSynthInstrument *self,id aNote,patchList **aPatchList)
+static id findAltListRunningPatch(MKSynthInstrument *self,id aNote,SynthPatchList **aPatchList)
 {
     /* Skip orphan list */
-    register patchList *tmp = (patchList *)[self->_patchLists elementAt:1];
-    register patchList *last = tmp + [self->_patchLists count] - 1;
+    register SynthPatchList *tmp = (SynthPatchList *)[self->_patchLists objectAtIndex:1];
+    register SynthPatchList *last = tmp + [self->_patchLists count] - 1;
     id currentPatch;
     while (tmp < last) {
 	if (tmp != *aPatchList)
@@ -407,7 +400,7 @@ static id findAltListRunningPatch(MKSynthInstrument *self,id aNote,patchList **a
     return nil;
 }
 
-static id adjustIdlePatch(patchList *aPatchList,int noteTag)
+static id adjustIdlePatch(SynthPatchList *aPatchList,int noteTag)
 /*NB RETURNS RETAINED OBJECT*/
 {
     id currentPatch = aPatchList->idleOldest;
@@ -505,7 +498,7 @@ static void alternatePatchMsg(void)
 	  }
 	  else {  /* It is a new phrase. */
 	      id aTemplate;
-	      patchList *aPatchList;
+	      SynthPatchList *aPatchList;
 	      phraseStatus = MK_phraseOn;
 	      aNote = [aNote copyWithZone:zone];
 	      /* Copy common updates into aNote. */
@@ -623,8 +616,8 @@ static void alternatePatchMsg(void)
       }
       case MK_noteUpdate:
 	if (noteTag == MAXINT) { /* It's a broadcast */
-            register patchList *tmp = (patchList *)[_patchLists elementAt:0];
-            register patchList *last = tmp + [_patchLists count];
+            register SynthPatchList *tmp = (SynthPatchList *)[_patchLists objectAtIndex:0];
+            register SynthPatchList *last = tmp + [_patchLists count];
 	    for (; tmp < last; tmp++) {
 		currentPatch = tmp->activeOldest;
 		if (currentPatch) {
@@ -677,7 +670,7 @@ static void alternatePatchMsg(void)
 }
 
 
-static void releaseIdlePatch(id aPatch,patchList *aPatchList)
+static void releaseIdlePatch(id aPatch,SynthPatchList *aPatchList)
 {
     [aPatch retain]; /* until put on list by _deallocate */
     _MKRemoveSynthPatch(aPatch, &(aPatchList->idleNewest),
@@ -695,10 +688,10 @@ static void deallocIdleVoices(MKSynthInstrument *self,id orch)
        card. */
 {
     register id aPatch,nextPatch;
-    register patchList *aPatchList;
-    register patchList *last;
+    register SynthPatchList *aPatchList;
+    register SynthPatchList *last;
     /* Skip orphan list */
-    for (aPatchList  = (patchList *)[self->_patchLists elementAt:1],
+    for (aPatchList  = (SynthPatchList *)[self->_patchLists objectAtIndex:1],
 	 last = aPatchList + [self->_patchLists count] - 1;
 	 (aPatchList < last);
 	 aPatchList++) {
@@ -715,10 +708,10 @@ static void orphanRunningVoices(MKSynthInstrument *self)
        from running, however. */
 {
     register id aPatch;
-    register patchList *aPatchList,*orphanList;
-    register patchList *last;
-    orphanList =  (patchList *)[self->_patchLists elementAt:0];
-    for (aPatchList  = (patchList *)[self->_patchLists elementAt:1],
+    register SynthPatchList *aPatchList,*orphanList;
+    register SynthPatchList *last;
+    orphanList =  (SynthPatchList *)[self->_patchLists objectAtIndex:0];
+    for (aPatchList  = (SynthPatchList *)[self->_patchLists objectAtIndex:1],
 	 last = aPatchList + [self->_patchLists count] - 1;
 	 (aPatchList < last);
 	 aPatchList++) {
@@ -740,9 +733,9 @@ static void orphanRunningVoices(MKSynthInstrument *self)
 static void reinstallOrphans(MKSynthInstrument *self,id newClass)
 {
     id aPatch,nextPatch;
-    patchList *orphanList,*aPatchList;
+    SynthPatchList *orphanList,*aPatchList;
     MKPatchTemplate *aTemplate;
-    orphanList =  (patchList *)[self->_patchLists elementAt:0];
+    orphanList =  (SynthPatchList *)[self->_patchLists objectAtIndex:0];
     for (aPatch = orphanList->activeOldest; aPatch; aPatch = nextPatch) {
 	nextPatch = NEXTSP(aPatch);  
 	if ([aPatch class] == newClass) {
@@ -803,7 +796,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch);
     } 
     allocMode = MK_AUTOALLOC;
     synthPatchClass = aSynthPatchClass;
-#warning sb: initialize method seems to be used here. What does it refer to?
+//#warning sb: initialize method seems to be used here. What does it refer to?
 // LMS I think we should just comment it out and see what breaks...
 // MKSynthPatch.h has a instance method initialize which is marked obsolete...
 //    [synthPatchClass initialize]; /* Make sure PartialsDatabase is inited */
@@ -827,10 +820,10 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch);
        is wild card) Includes orphan patches. */
 {
     register id aPatch,nextPatch;
-    register patchList *aPatchList;
-    register patchList *last;
+    register SynthPatchList *aPatchList;
+    register SynthPatchList *last;
     id aNote = [[MKNote allocWithZone:[self zone]] init];
-    for (aPatchList  = (patchList *)[self->_patchLists elementAt:0],
+    for (aPatchList  = (SynthPatchList *)[self->_patchLists objectAtIndex:0],
 	 last = aPatchList + [self->_patchLists count];
 	 (aPatchList < last);
 	 aPatchList++) {
@@ -848,9 +841,9 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
        is wild card) Includes orphan patches. */
 {
     register id aPatch,nextPatch;
-    register patchList *aPatchList;
-    register patchList *last;
-    for (aPatchList  = (patchList *)[self->_patchLists elementAt:0],
+    register SynthPatchList *aPatchList;
+    register SynthPatchList *last;
+    for (aPatchList  = (SynthPatchList *)[self->_patchLists objectAtIndex:0],
 	 last = aPatchList + [self->_patchLists count];
 	 (aPatchList < last);
 	 aPatchList++) {
@@ -911,7 +904,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
   /* Returns number of manually-allocated voices for the specified template. 
      If the receiver is in automatic allocation mode, returns 0. */
 {
-    patchList *aPatchList;
+    SynthPatchList *aPatchList;
     if (allocMode == MK_AUTOALLOC) 
       return 0;
     if (!aTemplate)
@@ -944,7 +937,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
 {
     id aPatch,nextPatch;
     int i,j;
-    patchList *aPatchList;
+    SynthPatchList *aPatchList;
     if (!synthPatchClass)
 	return 0;
     if (!aTemplate)
@@ -1080,7 +1073,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
      noteOffs, then all other active patches, in the order of their noteOns.
      */
 {
-    patchList *aPatchList = getList(self,patchTemplate);
+    SynthPatchList *aPatchList = getList(self,patchTemplate);
     if (!aPatchList) /* Should never happen. */
       return nil;
     _MKReplaceFinishingPatch(synthPatch,
@@ -1094,12 +1087,12 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
     /* Removes SynthPatch from active list, possibly adding it to idle list. 
        Returns nil if the SynthPatch is being deallocated, else self. */
 {
-    patchList *aPatchList = getList(self,aTemplate);
+    SynthPatchList *aPatchList = getList(self,aTemplate);
     if (noteTag != MAXINT)
       [taggedPatches removeKey:(void *)noteTag];
     if (!aPatchList) {            /* This happens if the synthPatchClass is 
 				     changed. */
-	patchList *orphanList = (patchList *)[_patchLists elementAt:0];
+	SynthPatchList *orphanList = (SynthPatchList *)[_patchLists objectAtIndex:0];
         [aSynthPatch retain]; /* so we don't lose it too soon */
 	_MKRemoveSynthPatch(aSynthPatch,
 			    &(orphanList->activeNewest),
