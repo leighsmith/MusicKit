@@ -15,6 +15,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2001/03/08 18:43:29  leigh
+  Cleanup of includes
+
   Revision 1.5  2001/02/12 17:41:19  leigh
   Added streaming support
 
@@ -30,22 +33,11 @@
   Revision 1.1  2000/03/11 01:42:19  leigh
   Initial Release
 
-  Revision 1.1.1.1  2000/01/14 00:14:34  leigh
-  Initial revision
-
-  Revision 1.1.1.1  1999/11/17 17:57:14  leigh
-  Initial working version
-
-  Revision 1.2  1999/07/21 19:19:42  leigh
-  Single Sound playback working
 */
 
 #define PERFORM_API 
 
-// TODO either include objc/objc.h for FALSE etc or Foundation.h if PerformSound is a .m
-#include <objc/objc.h>
-
-#include <stdlib.h> // for NULL definition
+#include <objc/objc.h> // for BOOL
 #include "SndStruct.h"
 #include "SndFormats.h"
 
