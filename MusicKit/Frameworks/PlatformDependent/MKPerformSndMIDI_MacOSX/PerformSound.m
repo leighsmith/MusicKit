@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.3  2001/12/09 02:41:34  skotmcdonald
+// Fixed bug in input stream routine that allowed a memcpy into possibly dealloced memory; fixed bug that shut down output before shutting down the currently dependent input.
+//
 // Revision 1.2  2001/11/07 17:55:10  sbrandon
 // changed bool to BOOL in method declaration. How did this work before?
 //
@@ -377,21 +380,22 @@ static OSStatus vendBuffersToStreamManagerIOProcAux(AudioDeviceID inDevice,
                           const AudioTimeStamp *inOutputTime,
                           void *inClientData)
 {
-    SNDStreamBuffer inStream, outStream;
-    int bufferIndex;
     
 #if DEBUG_CALLBACK    
     fprintf(stderr,"[SND] starting vend aux...\n");
 #endif
+    if( fInputBuffer ) {
+      SNDStreamBuffer inStream, outStream;
+      int bufferIndex;
 
-    if(inOutputTime->mFlags & kAudioTimeStampSampleTimeValid == 0) {
+      if(inOutputTime->mFlags & kAudioTimeStampSampleTimeValid == 0) {
         fprintf(stderr, "sample time is not valid!\n");
-    }
-    if(firstSampleTime == -1.0) {
+      }
+      if(firstSampleTime == -1.0) {
         firstSampleTime = inOutputTime->mSampleTime;
-    }
+      }
 
-    for(bufferIndex = 0; bufferIndex < 1 /* outOutputData->mNumberBuffers */ ; bufferIndex++) {
+      for(bufferIndex = 0; bufferIndex < 1 /* outOutputData->mNumberBuffers */ ; bufferIndex++) {
         if (inputInit) {
             if (inInputData->mNumberBuffers == 0)
                 inStream.streamData = NULL;
@@ -401,6 +405,12 @@ static OSStatus vendBuffersToStreamManagerIOProcAux(AudioDeviceID inDevice,
                 [inputLock unlock];
             }
         }
+      }
+    }
+    else {
+#if DEBUG_CALLBACK    
+      fprintf(stderr,"[SND] input vend: input buffer is NULL!\n");
+#endif
     }
     
 #if DEBUG_CALLBACK    
@@ -1010,23 +1020,26 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
 PERFORM_API BOOL SNDStreamStop(void)
 {
     BOOL r = TRUE;
-    OSStatus CAstatus;
+    OSStatus CAstatus = 0;
 
-#if DEBUG_STARTSTOPMSG    
-    fprintf(stderr,"[SND] Begining stream shutdown...\n");
-#endif    
-    
-    CAstatus = AudioDeviceStop(outputDeviceID, vendBuffersToStreamManagerIOProc);
-    if (CAstatus) {
-        fprintf(stderr, "SNDStreamStop: output dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
-        r =  FALSE;
-    }
+    // Must close input first !
     if (inputInit) {
         CAstatus = AudioDeviceStop(inputDeviceID, vendBuffersToStreamManagerIOProc);
         if (CAstatus) {
             fprintf(stderr, "SNDStreamStop: input dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
             r = FALSE;
         }
+    }
+
+    CAstatus =  AudioDeviceStop(outputDeviceID, vendBuffersToStreamManagerIOProc);
+
+#if DEBUG_STARTSTOPMSG    
+    fprintf(stderr,"[SND] Begining stream shutdown...\n");
+#endif    
+    
+    if (CAstatus) {
+        fprintf(stderr, "SNDStreamStop: output dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
+        r =  FALSE;
     }
     firstSampleTime = -1.0;  
     if (inputInit) {
