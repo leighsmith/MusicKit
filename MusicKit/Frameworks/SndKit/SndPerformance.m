@@ -132,7 +132,7 @@ startPosition: (double) startPosition
 
 - copyWithZone: (NSZone *) zone
 {
-  SndPerformance *newPerformance = [[SndPerformance allocWithZone: zone] init];
+  SndPerformance *newPerformance = [[[self class] allocWithZone: zone] init];
 
   // We do a lightweight copy since this is just a reference to the Snd anyway.
   newPerformance->snd          = [snd retain];
@@ -233,7 +233,7 @@ startPosition: (double) startPosition
     // If we are going to move the play index after the end index, allow that,
     // but adjust the end index in order to stay legal.
     if(newPlayIndex > endAtIndex)
-		endAtIndex = newPlayIndex;
+	endAtIndex = newPlayIndex;
     playIndex = newPlayIndex;
 }
 
@@ -247,9 +247,9 @@ startPosition: (double) startPosition
     
     // check if we need to wrap around the loop start index if we are looping and we have entered the loop.
     if(looping && distanceFromLoopStart > 0 && distanceFromLoopStart < numberOfSamplesToRewind)
-		playIndex = loopEndIndex - (numberOfSamplesToRewind - distanceFromLoopStart);
+	playIndex = loopEndIndex - (numberOfSamplesToRewind - distanceFromLoopStart);
     else
-		playIndex -= numberOfSamplesToRewind;
+	playIndex -= numberOfSamplesToRewind;
     return playIndex;
 }
 
@@ -328,18 +328,23 @@ startPosition: (double) startPosition
 // respected.
 - (long) retrievePerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength
 {
-    long fillBufferToLength = buffLength;
-    // long framesUntilEndOfLoop = loopEndIndex - playIndex + 1;
-    // Determine number of frames in the loop, checking for resampling shortening that number.
-    double stretchFactor = [bufferToFill samplingRate] / [snd samplingRate];
-    long framesUntilEndOfLoop = (loopEndIndex - playIndex + 1) * (stretchFactor < 1.0 ? stretchFactor : 1.0);
-    BOOL atEndOfLoop = looping && (buffLength >= framesUntilEndOfLoop);
+    long fillBufferToLength;
+    double stretchFactor;
+    long framesUntilEndOfLoop;
+    BOOL atEndOfLoop;
     // numOfSamplesFilled and numOfSamplesRead can differ if we resample in fillAudioBuffer.
     long numOfSamplesFilled = 0;
     long numOfSamplesRead = 0;
     // specifies to fillAudioBuffer: and insertIntoAudioBuffer: the range of Snd samples permissible to read from.
     NSRange samplesToReadRange;
     
+    [snd lockEditing];
+    fillBufferToLength = buffLength;
+    // Determine number of frames in the loop, checking for resampling shortening that number.
+    stretchFactor = [bufferToFill samplingRate] / [snd samplingRate];
+    framesUntilEndOfLoop = (loopEndIndex - playIndex + 1) * (stretchFactor < 1.0 ? stretchFactor : 1.0);
+    atEndOfLoop = looping && (buffLength >= framesUntilEndOfLoop);
+
     if (atEndOfLoop) {	// retrieve up to the end of the loop
 	fillBufferToLength = framesUntilEndOfLoop;
     }
@@ -347,10 +352,14 @@ startPosition: (double) startPosition
     samplesToReadRange.location = playIndex;
     samplesToReadRange.length = looping ? framesUntilEndOfLoop : endAtIndex - playIndex;
     
+    if(samplesToReadRange.location + samplesToReadRange.length > [snd lengthInSampleFrames]) {
+	NSLog(@"Assertion failed, samplesToReadRange [%ld length %ld] exceed length of sound %ld\n", 
+	      samplesToReadRange.location, samplesToReadRange.length, [snd lengthInSampleFrames]);
+    }
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
-    NSLog(@"[SndPerformance][SYNTH THREAD] playIndex = %ld, endAtIndex = %ld, buffer length = %d, fill buffer to length = %d, framesUntilEndOfLoop = %ld\n",
-	  playIndex, endAtIndex, buffLength, fillBufferToLength, framesUntilEndOfLoop);
-#endif
+    NSLog(@"[SndPerformance][SYNTH THREAD] playIndex = %ld, endAtIndex = %ld, loopEndIndex = %ld, buffer length = %d, fill buffer to length = %d, framesUntilEndOfLoop = %ld\n",
+	  playIndex, endAtIndex, loopEndIndex, buffLength, fillBufferToLength, framesUntilEndOfLoop);
+#endif	
     
     // Negative or zero buffer length means the endAtIndex was moved before or to the current playIndex,
     // so we should skip any mixing and stop.
@@ -432,6 +441,7 @@ startPosition: (double) startPosition
 	playIndex += buffLength;  // If there is a problem, push the playIndex forward, we may improve...somehow...
     
     //NSLog(@"retrieved numOfSamplesFilled = %ld\n", numOfSamplesFilled);
+    [snd unlockEditing];
     return numOfSamplesFilled;
 }
 
