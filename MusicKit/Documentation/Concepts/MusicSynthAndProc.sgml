@@ -7,9 +7,10 @@
 
 <para>In this document &ldquo;synthesis&rdquo; refers to creating
 sound from scratch, while &ldquo;processing&rdquo; refers to modifying
-sound from elsewhere.  However, the <productname>MusicKit</productname> provides a unified model
-of synthesis and processing.  Thus, nearly all operations that apply
-to synthesis can also be used in sound processing.</para>
+sound from elsewhere.  However, the
+<productname>MusicKit</productname> provides a unified model of
+synthesis and processing.  Thus, nearly all operations that apply to
+synthesis can also be used in sound processing.</para>
 
 <para>There are four levels of <productname>MusicKit</productname> classes involved in
 synthesizing and processing music on the <acronym>DSP</acronym>:</para>
@@ -17,8 +18,9 @@ synthesizing and processing music on the <acronym>DSP</acronym>:</para>
 <itemizedlist>
 <listitem><para>At the top level is the
 <classname>MKSynthInstrument</classname> class; an inheritor from
-Instrument, it provides an interface between the <productname>MusicKit</productname> performance
-mechanism and <acronym>DSP</acronym> synthesis/processing.  A
+<classname>MKInstrument</classname>, it provides an interface between
+the <productname>MusicKit</productname> performance mechanism and
+<acronym>DSP</acronym> synthesis/processing.  A
 <classname>MKSynthInstrument</classname> distributes
 <classname>MKNote</classname>s that it receives during a performance
 to individual <classname>MKSynthPatch</classname> objects that control
@@ -147,24 +149,25 @@ of a tenth of a second.</para>
 <title>Sharing Allocations</title>
 
 <para>To avoid creating duplicate synthesis/processing modules on the
-<acronym>DSP</acronym>, each instance of <classname>MKOrchestra</classname> maintains a
-shared object table.  Objects on the table are
-<classname>MKSynthPatch</classname>es,
+<acronym>DSP</acronym>, each instance of
+<classname>MKOrchestra</classname> maintains a shared object table.
+Objects on the table are <classname>MKSynthPatch</classname>es,
 <classname>MKSynthData</classname>s, and
 <classname>MKUnitGenerator</classname>s; each is indexed by some other
-object that represents the shared object.  For example, the OscgafUG
-<classname>MKUnitGenerator</classname> (a family of oscillators) lets
-you specify its waveform-generating wave table as a
-<classname>MKPartials</classname> object (you can also set it as a
-Samples object; for the purposes of this example we only consider the
-<classname>MKPartials</classname> case).  When its wave table is set
-through the <emphasis role="bold">setTable:length:</emphasis> method,
-the oscillator allocates a <classname>MKSynthData</classname> object
-from the <classname>MKOrchestra</classname> to represent the <acronym>DSP</acronym>
-memory that will hold the waveform data computed from the
-<classname>MKPartials</classname>.  It also places the
-<classname>MKSynthData</classname> on the shared object table using
-the <classname>MKPartials</classname> as an index by sending the
+object that represents the shared object.  For example, the
+<classname>OscgafUG</classname> <classname>MKUnitGenerator</classname>
+(a family of oscillators) lets you specify its waveform-generating
+wave table as a <classname>MKPartials</classname> object (you can also
+set it as a <classname>MKSamples</classname> object; for the purposes
+of this example we only consider the <classname>MKPartials</classname>
+case).  When its wave table is set through the <emphasis
+role="bold">setTable:length:</emphasis> method, the oscillator
+allocates a <classname>MKSynthData</classname> object from the
+<classname>MKOrchestra</classname> to represent the
+<acronym>DSP</acronym> memory that will hold the waveform data
+computed from the <classname>MKPartials</classname>.  It also places
+the <classname>MKSynthData</classname> on the shared object table
+using the <classname>MKPartials</classname> as an index by sending the
 message</para>
 
 <programlisting>
@@ -186,7 +189,7 @@ installing <classname>MKSynthPatch</classname>es and
 <classname>MKUnitGenerator</classname>s.</para>
 </sect2>
 <sect2 id="OrchestrasDeviceStatus">
-<title>Orchestra's Device Status</title>
+<title><classname>MKOrchestra</classname>'s Device Status</title>
 
 <para>Before you can do anything with an
 <classname>MKOrchestra</classname>&horbar;particularly, before you can
@@ -397,17 +400,17 @@ such as when playing it from a <acronym>MIDI</acronym> keyboard, you should invo
 allocating the <classname>MKSynthPatch</classname>.</para></tip>
 
 <sect2 id="Pluck">
-<title>Pluck</title>
+<title><classname>Pluck</classname></title>
 
-<para>Pluck employs physical modelling to synthesize the sound of a
-plucked string, using a technique developed by Alex Strong, Kevin
-Karplus, David Jaffe and Julius Smith.  The real-world mechanics of a
-plectrum plucking a string are replaced on the <acronym>DSP</acronym> by a burst of noise
-filling a length of delay memory.  The delay memory is looped and
-filtered, causing the initial noise burst to gradually become more
-harmonic as the spectral energy subsides towards the fundamental,
-emulating the strike-and-fade characteristics of a real plucked
-string.</para>
+<para><classname>Pluck</classname> employs physical modelling to
+synthesize the sound of a plucked string, using a technique developed
+by Alex Strong, Kevin Karplus, David Jaffe and Julius Smith.  The
+real-world mechanics of a plectrum plucking a string are replaced on
+the <acronym>DSP</acronym> by a burst of noise filling a length of
+delay memory.  The delay memory is looped and filtered, causing the
+initial noise burst to gradually become more harmonic as the spectral
+energy subsides towards the fundamental, emulating the strike-and-fade
+characteristics of a real plucked string.</para>
 
 </sect2>
 <sect2 id="WavetableSynthesis">
@@ -439,31 +442,31 @@ they are:</para>
 
 	  <tbody>
 	    <row>
-<entry>Wave1</entry>
+<entry><classname>Wave1</classname></entry>
 <entry>One wavetable</entry>
 </row>
 <row>
-<entry>Wave1v</entry>
+<entry><classname>Wave1v</classname></entry>
 <entry>One wavetable with vibrato</entry>
 </row>
 <row>
-<entry>Wave1i</entry>
+<entry><classname>Wave1i</classname></entry>
 <entry>One wavetable with frequency interpolation</entry>
 </row>
 <row>
-<entry>Wave1vi</entry>
+<entry><classname>Wave1vi</classname></entry>
 <entry>One wavetable with vibrato and interpolation</entry>
 </row>
 <row>
-<entry>DBWave1v</entry>
+<entry><classname>DBWave1v</classname></entry>
 <entry>One database wavetable with vibrato</entry>
 </row>
 <row>
-<entry>DBWave1vi</entry>
+<entry><classname>DBWave1vi</classname></entry>
 <entry>One database wavetable with vibrato and interpolation</entry>
 </row>
 <row>
-<entry>DBWave2vi</entry>
+<entry><classname>DBWave2vi</classname></entry>
 <entry>Two database wavetables with vibrato and interpolation</entry>
 </row>
 </tbody>
@@ -509,35 +512,35 @@ of <acronym>FM</acronym> synthesis).</para>
 
 	  <tbody>
 	    <row>
-<entry>Fm1</entry>
+<entry><classname>Fm1</classname></entry>
 <entry>Simple (one-modulator) <acronym>FM</acronym></entry>
 </row>
 <row>
-<entry>Fm1i</entry>
+<entry><classname>Fm1i</classname></entry>
 <entry>Simple <acronym>FM</acronym> with frequency interpolation</entry>
 </row>
 <row>
-<entry>Fm1v</entry>
+<entry><classname>Fm1v</classname></entry>
 <entry>Simple <acronym>FM</acronym> with vibrato</entry>
 </row>
 <row>
-<entry>Fm1vi</entry>
+<entry><classname>Fm1vi</classname></entry>
 <entry>Simple <acronym>FM</acronym> with interpolation and vibrato</entry>
 </row>
 <row>
-<entry>Fm2cvi</entry>
+<entry><classname>Fm2cvi</classname></entry>
 <entry>Cascade <acronym>FM</acronym></entry>
 </row>
 <row>
-<entry>Fm2cnvi</entry>
+<entry><classname>Fm2cnvi</classname></entry>
 <entry>Cascade <acronym>FM</acronym> with random modulation (noise) on the modulators</entry>
 </row>
 <row>
-<entry>Fm2pvi</entry>
+<entry><classname>Fm2pvi</classname></entry>
 <entry>Parallel <acronym>FM</acronym></entry>
 </row>
 <row>
-<entry>Fm2pnvi</entry>
+<entry><classname>Fm2pnvi</classname></entry>
 <entry>Parallel <acronym>FM</acronym> with noise</entry>
 </row>
 </tbody>
@@ -549,10 +552,9 @@ of <acronym>FM</acronym> synthesis).</para>
 <title>Waveshaping Synthesis</title>
 
 <para>There are two waveshaping <classname>MKSynthPatch</classname>es,
-<emphasis role="bold">Shape</emphasis> and <emphasis
-role="bold">Shapev</emphasis>.  They differ in that the vibrato
-parameters are supported only by <emphasis
-role="bold">Shapev</emphasis>.</para>
+<classname>Shape</classname> and <classname>Shapev</classname>.  They
+differ in that the vibrato parameters are supported only by
+<classname>Shapev</classname>.</para>
 
 <para>These <classname>MKSynthPatch</classname>es implement non-linear
 distortion synthesis, which means that they produce sound by using an
@@ -616,10 +618,10 @@ features are shown in the more complex
 <xref linkend="ABetterMKSynthPatch">, later in this chapter.</para>
 
 <important>
-<title><filename>exampsynthpatch</filename></title> 
+<title><filename>exampleSynthPatch</filename></title> 
 
 <para>Please see the programming example
-<filename>./Examples/MusicKit/exampsynthpatch</filename>.  It
+<filename>./Examples/MusicKit/exampleSynthPatch</filename>.  It
 illustrates a variety of <classname>MKSynthPatch</classname>es.  These
 range from a sophisticated <acronym>FM</acronym>
 <classname>MKSynthPatch</classname> with vibrato and a wide variety of
@@ -707,16 +709,19 @@ static int  osc,              /* sine wave UnitGenerator */
     osc = [theTemplate addUnitGenerator:[OscgUGxy class]];
     stereoOut = [theTemplate addUnitGenerator:[Out2sumUGx class]];
     outPatchpoint = [theTemplate addPatchpoint:MK_xPatch];
-    /* Step 3:  Specify the connections between synthElements. */
+    /* 
+     * Step 3:  Specify the connections between synthElements. 
+     */
     [theTemplate to:osc sel:@selector(setOutput:) arg:outPatchpoint];
     /* Always return the PatchTemplate. */
     return theTemplate;
 }
 </programlisting>
 
-<para>After creating the <classname>MKPatchTemplate</classname> instance (step 1 in the
-example), synthElement specifications are added to it (step 2) using
-methods defined by the <classname>MKPatchTemplate</classname> class.  There are three basic
+<para>After creating the <classname>MKPatchTemplate</classname>
+instance (step 1 in the example), synthElement specifications are
+added to it (step 2) using methods defined by the
+<classname>MKPatchTemplate</classname> class.  There are three basic
 methods to do this (a fourth method will be discussed later):</para>
 
 <itemizedlist>
@@ -815,20 +820,24 @@ patch:</para>
 </programlisting>
 
 <para>The &ldquo;x&rdquo; and &ldquo;y&rdquo; in the class name
-OscgUGxy refer to x and y memory spaces, respectively.  OscgUGxy is a
-simple <classname>MKUnitGenerator</classname> that has a single input
-for reading data and a single output for writing data.  The order of
-these data spigots, or <emphasis>memory arguments</emphasis>, is given
-in the <classname>MKUnitGenerator</classname> name as output followed
-by input.  Thus, OscgUGxy's writes data to x memory (output) and reads
-it from y memory (input).  The <productname>MusicKit</productname> provides a class for each
-memory permutation: OscgUGyy, OscgUGyx, OscgUGxy, and OscgUGxx.  These
-are called <emphasis>leaf classes</emphasis> of the <emphasis>master
-class</emphasis> OscgUG.  Aside from the differing memory references,
-the leaf classes are exactly the same.  Every
+<classname>OscgUGxy</classname> refer to x and y memory spaces,
+respectively.  <classname>OscgUGxy</classname> is a simple
+<classname>MKUnitGenerator</classname> that has a single input for
+reading data and a single output for writing data.  The order of these
+data spigots, or <emphasis>memory arguments</emphasis>, is given in
+the <classname>MKUnitGenerator</classname> name as output followed by
+input.  Thus, <classname>OscgUGxy</classname>'s writes data to x
+memory (output) and reads it from y memory (input).  The
+<productname>MusicKit</productname> provides a class for each memory
+permutation: <classname>OscgUGyy</classname>,
+<classname>OscgUGyx</classname>, <classname>OscgUGxy</classname>, and
+<classname>OscgUGxx</classname>.  These are called <emphasis>leaf
+classes</emphasis> of the <emphasis>master class</emphasis>
+<classname>OscgUG</classname>.  Aside from the differing memory references, the
+leaf classes are exactly the same.  Every
 <classname>MKUnitGenerator</classname> function provided by the
-<productname>MusicKit</productname> is similarly organized into a master class and a complete set
-of leaf classes.</para>
+<productname>MusicKit</productname> is similarly organized into a
+master class and a complete set of leaf classes.</para>
 
 <tip><para>When describing a
 subclass of <classname>MKUnitGenerator</classname>, it's convenient to
@@ -837,39 +846,40 @@ Furthermore, the &ldquo;UG&rdquo; (which stands for
 &ldquo;<classname>MKUnitGenerator</classname>&rdquo;) is often dropped
 from the master class name.</para></tip>
 
-<para>The Oscg family of <classname>MKUnitGenerator</classname>s
-provides a general oscillator function (the &ldquo;g&rdquo; in Oscg
-stands for &ldquo;general&rdquo;).  An oscillator is a module that
-creates a signal by cycling over a table of values, called a
-<emphasis>lookup table</emphasis>, that represents a single period of
-a waveform.  In a general oscillator, the lookup table isn't part of
-the <classname>MKUnitGenerator</classname>.  You can supply the
-oscillator with a lookup table by using a
-<classname>MKWaveTable</classname> object (this will be demonstrated
-in a subsequent example).  Alternatively, the oscillator can use the
-built-in sineROM, a read-only section of y memory that contains a
-single period of a sine wave.  Simplicity's OscgUGxy does the latter:
-It reads the sineRom, therefore its input <emphasis>must</emphasis>
-read from y memory.  In the example, the connection between the
-sineROM and OscgUGxy is made by default&horbar;it needn't be specified
+<para>The <classname>Oscg</classname> family of
+<classname>MKUnitGenerator</classname>s provides a general oscillator
+function (the &ldquo;g&rdquo; in <classname>Oscg</classname> stands
+for &ldquo;general&rdquo;).  An oscillator is a module that creates a
+signal by cycling over a table of values, called a <emphasis>lookup
+table</emphasis>, that represents a single period of a waveform.  In a
+general oscillator, the lookup table isn't part of the
+<classname>MKUnitGenerator</classname>.  You can supply the oscillator
+with a lookup table by using a <classname>MKWaveTable</classname>
+object (this will be demonstrated in a subsequent example).
+Alternatively, the oscillator can use the built-in sineROM, a
+read-only section of y memory that contains a single period of a sine
+wave.  Simplicity's <classname>OscgUGxy</classname> does the latter: It reads the
+sineRom, therefore its input <emphasis>must</emphasis> read from y
+memory.  In the example, the connection between the sineROM and
+<classname>OscgUGxy</classname> is made by default&horbar;it needn't be specified
 through the <emphasis role="bold">to:sel:arg:</emphasis>
 method.</para>
 
 <para>One of the conventions of designing a patch is to balance, as
 much as possible, the use of x and y memory.  Since Simplicity's
 oscillator must read from y memory in order to read the sineROM, its
-output is set to x memory.  So of the four Oscg leaf classes, OscgUGxy
-is chosen.</para>
+output is set to x memory.  So of the four <classname>Oscg</classname>
+leaf classes, <classname>OscgUGxy</classname> is chosen.</para>
 
 <para>The other <classname>MKUnitGenerator</classname> in Simplicity's
-patch, Out2sumUGx, is a special <classname>MKUnitGenerator</classname>
+patch, <classname>Out2sumUGx</classname>, is a special <classname>MKUnitGenerator</classname>
 that adds a stream of (two-channel) sample data to the stereo output
 sample stream.  The single memory argument (the &ldquo;x&rdquo; in
-Out2sumUGx) is the <classname>MKUnitGenerator</classname>'s input.
-Simplicity uses the Out2sumUGx leaf class so the
+<classname>Out2sumUGx</classname>) is the <classname>MKUnitGenerator</classname>'s input.
+Simplicity uses the <classname>Out2sumUGx</classname> leaf class so the
 <classname>MKUnitGenerator</classname> can read the
 <constant>MK_xPatch</constant> patchpoint that's written to by
-OscgUGxy.  <xref linkend="SimplicitysPatch"> shows a diagram of the
+<classname>OscgUGxy</classname>.  <xref linkend="SimplicitysPatch"> shows a diagram of the
 complete patch, superimposed on the <acronym>DSP</acronym> memory
 layout.</para>
 
@@ -941,7 +951,7 @@ and output.</para>
 is ordinarily created and controlled by an instance of
 <classname>MKSynthInstrument</classname>.  During a <productname>MusicKit</productname>
 performance, the <classname>MKSynthInstrument</classname> distributes
-the Notes it receives to the various
+the <classname>MKNote</classname>s it receives to the various
 <classname>MKSynthPatch</classname> objects that it controls through
 the methods <emphasis role="bold">noteOn:</emphasis>, <emphasis
 role="bold">noteUpdate:</emphasis>, and <emphasis
@@ -1073,7 +1083,7 @@ demonstrated in the example above in the line</para>
 <para><emphasis role="bold">synthElementAt:stereoOut</emphasis>
 returns an instance of the object indexed by <emphasis
 role="bold">stereoOut</emphasis>.  In other words, it returns an
-instance of the Out2sumUGx class, as specified in Simplicity's
+instance of the <classname>Out2sumUGx</classname> class, as specified in Simplicity's
 <emphasis role="bold">patchTemplateFor:</emphasis> method.  Similarly,
 <emphasis role="bold">synthElementAt:outPatchpoint</emphasis> returns
 Simplicity's patchpoint.</para>
@@ -1158,7 +1168,7 @@ role="bold">noteEndSelf</emphasis>, a method that deactivates the
 
 <para>The <emphasis role="bold">idle</emphasis> method is implemented
 by all subclasses of <classname>MKUnitGenerator</classname>.  In its
-implementation of <emphasis role="bold">idle</emphasis>, Out2sum
+implementation of <emphasis role="bold">idle</emphasis>, <classname>Out2sum</classname>
 connects its input to a predefined patchpoint that always contains
 zero data (the data in the patchpoint consists wholly of zeroes).
 This effectively turns off the patch.  Notice that the
@@ -1174,7 +1184,7 @@ another noteOn arrives) as efficient as possible.</para>
 invoked when the <classname>MKSynthPatch</classname> is created,
 thereby ensuring that the patch is silent until the first
 <classname>MKNote</classname> is received.  This also explains why the
-final connection to Out2sum isn't specified in the
+final connection to <classname>Out2sum</classname> isn't specified in the
 <classname>MKPatchTemplate</classname>&horbar;if it was so specified, the connection would be
 made only to be immediately severed upon reception of the <emphasis
 role="bold">noteEnd</emphasis> message (the patch is created before
@@ -1221,11 +1231,11 @@ role="bold">MK_freq</emphasis>'s absence, a value converted from
 
 <para>To apply a parameter value to the patch, you send a message to
 the <classname>MKUnitGenerator</classname> that controls that aspect
-of the patch.  The Oscg <classname>MKUnitGenerator</classname>
+of the patch.  The <classname>Oscg</classname> <classname>MKUnitGenerator</classname>
 controls frequency and amplitude, so <emphasis
 role="bold">setFreq:</emphasis> and <emphasis
-role="bold">setAmp:</emphasis> are sent to the patch's OscgUGxy
-object.  Out2sum controls bearing, so it receives <emphasis
+role="bold">setAmp:</emphasis> are sent to the patch's <classname>OscgUGxy</classname>
+object.  <classname>Out2sum</classname> controls bearing, so it receives <emphasis
 role="bold">setBearing:</emphasis>.  These methods are defined in the
 <classname>MKUnitGenerator</classname>s' master classes.</para>
 
@@ -1300,8 +1310,8 @@ static int  ampAsymp,      /* amplitude envelope UG */
 <classname>MKPatchTemplate</classname> is created, the synthElement specifications are added to
 the <classname>MKPatchTemplate</classname>, and the connections between SynthElements are
 specified.  However, two new <classname>MKUnitGenerator</classname>
-families, Oscgafi and Asymp, are introduced.  These are examined in
-the next sections; briefly, Oscgafi is a general oscillator that
+families, <classname>Oscgafi</classname> and Asymp, are introduced.  These are examined in
+the next sections; briefly, <classname>Oscgafi</classname> is a general oscillator that
 allows another <classname>MKUnitGenerator</classname> to its amplitude
 and frequency.  Asymp is an envelope handler; it's used to apply
 <classname>MKEnvelope</classname> objects to the patch.  Asympenv is a
@@ -1395,14 +1405,14 @@ in a patch that uses unordered
 somewhat more efficient.</para></tip>
 
 <sect4 id="Oscgafi">
-<title>Oscgafi</title>
+<title><classname>Oscgafi</classname></title>
 
-<para>The Oscgafi <classname>MKUnitGenerator</classname> is the most
-flexible oscillator provided by the
-<productname>MusicKit</productname>.  In addition to allowing envelope
-control of amplitude and frequency, it also performs an interpolation,
-minimizing the noise that's sometimes introduced when reading the
-lookup table.  The components of the
+<para>The <classname>Oscgafi</classname>
+<classname>MKUnitGenerator</classname> is the most flexible oscillator
+provided by the <productname>MusicKit</productname>.  In addition to
+allowing envelope control of amplitude and frequency, it also performs
+an interpolation, minimizing the noise that's sometimes introduced
+when reading the lookup table.  The components of the
 <classname>MKUnitGenerator</classname>'s name summarize these
 features:</para>
 
@@ -1442,7 +1452,7 @@ features:</para>
 </tgroup>
 </table>
 
-<para>Oscgafi has four memory arguments, in this order:</para>
+<para><classname>Oscgafi</classname> has four memory arguments, in this order:</para>
 
 <orderedlist>
 <listitem><para>output</para></listitem>
@@ -1453,7 +1463,7 @@ features:</para>
 
 <para>The permutations of a <classname>MKUnitGenerator</classname>
 with four memory arguments results in 16 leaf classes.  Envy uses the
-xxyy version (OscgafiUGxxyy), so the memory arguments correspond to
+xxyy version (<classname>OscgafiUGxxyy</classname>), so the memory arguments correspond to
 memory space as follows:</para>
 
       <table frame=all><title>Memory Space Association to Memory Arguments</title>
@@ -1487,16 +1497,17 @@ memory space as follows:</para>
 </tgroup>
 </table>
 
-<para>A notable difference between Oscg and Oscgafi is that in the
-latter, frequency and amplitude aren't set directly through messages
-to the oscillator.  To control these attributes, you affect the
+<para>A notable difference between <classname>Oscg</classname> and
+<classname>Oscgafi</classname> is that in the latter, frequency and
+amplitude aren't set directly through messages to the oscillator.  To
+control these attributes, you affect the
 <classname>MKUnitGenerator</classname>s that are connected to
-Oscgafi's inputs.  The <productname>MusicKit</productname> provides a
-C function, called <function>MKUpdateAsymp()</function> that does this
-for you.  This function is described later as it's used to apply
-parameter values to Envy's patch.</para>
+<classname>Oscgafi</classname>'s inputs.  The <productname>MusicKit</productname>
+provides a C function, called <function>MKUpdateAsymp()</function>
+that does this for you.  This function is described later as it's used
+to apply parameter values to Envy's patch.</para>
 
-<para>In addition, Oscgafi's frequency input is actually an increment
+<para>In addition, <classname>Oscgafi</classname>'s frequency input is actually an increment
 input&horbar;the oscillator's frequency is defined by the increment,
 or step size, that it uses when reading its lookup table.  This
 explains why <emphasis role="bold">osc</emphasis> is connected to the
@@ -1507,9 +1518,10 @@ explains why <emphasis role="bold">osc</emphasis> is connected to the
 [theTemplate to:osc sel:@selector(setIncInput:) arg:freqPp];
 </programlisting>
 
-<para>Oscgafi's <emphasis role="bold">incAtFreq:</emphasis> method is
-provided to translate frequencies into increments.  This, too, will be
-used when applying parameter values.</para>
+<para><classname>Oscgafi</classname>'s <emphasis
+role="bold">incAtFreq:</emphasis> method is provided to translate
+frequencies into increments.  This, too, will be used when applying
+parameter values.</para>
 </sect4>
 
 <sect4 id="AsympAndAsympenv">
@@ -1525,11 +1537,11 @@ between Asymp and Asympenv is that the former allows for arbitrarily
 long envelopes and the latter is better-suited to interactive
 real-time applications.</para>
 
-<para>Envy uses two Asympenvs, one to control the frequency of Oscgafi
-and the other to control its amplitude.  The leaf classes are chosen
-to match the memory arguments in Oscgafi: The Asympenv leaf class that
-controls amplitude is AsympenvUGx; for frequency, it's
-AsympenvUGy.</para>
+<para>Envy uses two Asympenvs, one to control the frequency of
+<classname>Oscgafi</classname> and the other to control its amplitude.
+The leaf classes are chosen to match the memory arguments in
+<classname>Oscgafi</classname>: The Asympenv leaf class that controls amplitude is
+AsympenvUGx; for frequency, it's AsympenvUGy.</para>
 </sect4>
 </sect3>
 <sect3 id="PlayingThePatch2">
@@ -1668,7 +1680,7 @@ role="bold">setDefaults:</emphasis>.  It ignores the argument:</para>
 role="bold">applyParameters:</emphasis> to apply the Note's parameters
 to the patch.  In addition, <emphasis
 role="bold">noteOnSelf:</emphasis> completes the connection between
-Oscgafi and Out2sum, and it tells the
+<classname>Oscgafi</classname> and <classname>Out2sum</classname>, and it tells the
 <classname>MKUnitGenerator</classname>s to run by sending <emphasis
 role="bold">run</emphasis> to each of the synthElements.</para>
 </sect4>
@@ -1700,7 +1712,7 @@ of its <classname>MKEnvelope</classname>; the method returns the
 duration of the release.</para>
 
 <para>As in Simplicity, <emphasis role="bold">noteEndSelf</emphasis>
-sends <emphasis role="bold">idle</emphasis> to the Out2sum object to
+sends <emphasis role="bold">idle</emphasis> to the <classname>Out2sum</classname> object to
 remove it from the output sample stream.  It also aborts the frequency
 <classname>MKEnvelope</classname> (we're assured that the amplitude
 <classname>MKEnvelope</classname> has finished since its demise is
@@ -1985,7 +1997,7 @@ role="bold">freq1</emphasis> values aren't passed directly to
 used to retrieve increment values from <emphasis
 role="bold">osc</emphasis> through its <emphasis
 role="bold">incAtFreq:</emphasis> method.  As mentioned earlier,
-Oscgafi's frequency value isn't set as a frequency in hertz, but
+<classname>Oscgafi</classname>'s frequency value isn't set as a frequency in hertz, but
 rather as an increment into its lookup table.</para>
 
 <para>Finally, the bearing parameter is tested, its instance variable
@@ -2074,7 +2086,7 @@ allocated.</para>
 <classname>MKWaveTable</classname> object (with the same length), the
 <classname>MKWaveTable</classname> is allocated once and the
 <classname>MKSynthPatch</classname>es read from the same memory.  This
-feature is provided automatically by all the Oscg-type
+feature is provided automatically by all the <classname>Oscg</classname>-type
 oscillators.</para>
 </sect2>
 </sect1>
