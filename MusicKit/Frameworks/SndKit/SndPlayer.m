@@ -286,6 +286,7 @@ static SndPlayer *defaultSndPlayer;
                   endAtIndex: (unsigned long) endAtIndex
 {
     SndPerformance *thePerformance;
+    SndAudioProcessorChain *processorChainWhenPlaying = [sound audioProcessorChain];
 
     if(endAtIndex > [sound lengthInSampleFrames]) {
 	endAtIndex = [sound lengthInSampleFrames];	// Ensure the end of play can't exceed the sound data
@@ -308,18 +309,11 @@ static SndPlayer *defaultSndPlayer;
 					 beginAtIndex: beginAtIndex
 					   endAtIndex: endAtIndex];
     
-    if([sound useVolumeWhenPlaying] || [sound useBalanceWhenPlaying]) {
-	// Set the initial volume and balance of the performance from the sound.
-	// Do balance and volume modification of each performance using its processor chain postFader SndAudioFader
-	SndAudioProcessorChain *performanceAudioProcessorChain = [SndAudioProcessorChain audioProcessorChain];
-	SndAudioFader *performanceAudioFader;    
+    if(processorChainWhenPlaying != nil) {
+	// Set the processor chain (including post fader initial volume and balance) of the performance from the sound.
+	// Do balance and volume modification of each performance using its processor chain postFader (a SndAudioFader instance).
     
-	[thePerformance setAudioProcessorChain: performanceAudioProcessorChain];
-	performanceAudioFader = [performanceAudioProcessorChain postFader];
-	if([sound useVolumeWhenPlaying])
-	    [performanceAudioFader setAmp: [sound allChannelsVolume] clearingEnvelope: NO];
-	if([sound useBalanceWhenPlaying])
-	    [performanceAudioFader setBalance: [sound balance] clearingEnvelope: NO];
+	[thePerformance setAudioProcessorChain: processorChainWhenPlaying];
     }
 
     // Save the performance so we know which performance not to reset playIndexes for.
@@ -355,16 +349,16 @@ static SndPlayer *defaultSndPlayer;
 
     // From the preemption time in seconds, determine the new playIndex for each performance.
     for(performanceIndex = 0; performanceIndex < numberPlaying; performanceIndex++) {
-		SndPerformance *performance = [playing objectAtIndex: performanceIndex];
-		
-		// We need to know which performance has just been added so we don't modify the playIndex of that one.
-		if(![performance isEqual: preemptingPerformance]) {
+	SndPerformance *performance = [playing objectAtIndex: performanceIndex];
+	
+	// We need to know which performance has just been added so we don't modify the playIndex of that one.
+	if(![performance isEqual: preemptingPerformance]) {
 #if SNDPLAYER_DEBUG
-			NSLog(@"preemptionInSamples %ld performance %d playIndex %ld\n",
-			preemptionInSamples, performanceIndex, [performance playIndex]);
+	    NSLog(@"preemptionInSamples %ld performance %d playIndex %ld\n",
+		  preemptionInSamples, performanceIndex, [performance playIndex]);
 #endif
-			[performance rewindPlayIndexBySamples: preemptionInSamples];
-		}
+	    [performance rewindPlayIndexBySamples: preemptionInSamples];
+	}
     }
     // Now we have performed the rewinding on the other performances, we have no need to keep the preemptingPerformance.
     [preemptingPerformance release];
