@@ -26,9 +26,21 @@ AC_REVISION($Id$)
 AC_CONFIG_SRCDIR([Frameworks/SndKit/Snd.h])
 AC_LANG(C)
 
+# AC_ARGV_VAR(XCODEBUILD, [[Defines if xcodebuild exists (set to no
+# to compile with GNUstep on MacOS X)]])
+
 # Check if xcodebuild exists, if so we need to use Makefile.in.
 # If xcodebuild does not exist, we need to use GNUmakefile.in.
-AC_CHECK_PROG(TOPLEVELBUILD, xcodebuild, Makefile, GNUmakefile)
+AC_CHECK_PROG(XCODEBUILD, xcodebuild, yes, no)
+
+# TODO The other alternative is to use AC_SUBST_FILE to construct
+# Makefile appropriate to MacOS X or GNUstep, rather than selecting
+# between two types of configuration file, which is fraught with danger. 
+if test $XCODEBUILD == yes; then
+   AC_SUBST(TOPLEVELBUILD, Makefile)
+else
+   AC_SUBST(TOPLEVELBUILD, GNUmakefile)
+fi
 
 # Check for an SGML translator for generating documentation.
 # Currently openjade is our only option.
