@@ -1,18 +1,21 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+
+  Description: 
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* Modification history:
 
   $Log$
+  Revision 1.3  1999/09/28 03:06:06  leigh
+  Doco cleanup
+
   Revision 1.2  1999/07/29 01:16:37  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -55,14 +58,6 @@
 //    [self initialize]; /* Avoid breaking old apps. */ //sb: removed. Unnec.
     return self;
 }
-
-#if 0
-- (void)initialize 
-  /* For backwards compatibility */
-{ 
-    
-} 
-#endif
 
 -init
   /* TYPE: Creating; Initializes the receiver.
@@ -259,7 +254,6 @@
    * those in the receiver.
    */
 {
-//    Instrument *newObj = [super copyWithZone:zone];
     MKNoteReceiver *el;
     int noteReceiverIndex;
 
