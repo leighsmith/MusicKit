@@ -347,22 +347,22 @@ static int bitrateLookupTable[16][6] = {
   return self;
 }
 
-- (int) sampleCount
+- (long) lengthInSampleFrames
 {
   // [pcmData length] / (sizeof(short) * 2);
-  return sampleCount;
+  return lengthInSampleFrames;
 }
 
 - (double) duration
 {
   return duration;
-  //  return [self sampleCount] / [self samplingRate];
+  //  return [self lengthInSampleFrames] / [self samplingRate];
 }
 
 - (NSString*) description
 {
   return [NSString stringWithFormat: @"%@ with duration: %.2f samples: %i sampleRate: %.2f channels: %i",
-    [super description], [self duration], [self sampleCount], [self samplingRate], [self channelCount]];
+    [super description], [self duration], [self lengthInSampleFrames], [self samplingRate], [self channelCount]];
 }
 
 - (double) samplingRate
@@ -467,16 +467,16 @@ static int bitrateLookupTable[16][6] = {
     decodedSampledCount += sams_created;
     iterations++;
 #if SNDMP3_DEBUG_READING
-    printf("[%04li] Decoded: %li/%li\n",iterations,decodedSampledCount,sampleCount);
+    printf("[%04li] Decoded: %li/%li\n",iterations,decodedSampledCount,lengthInSampleFrames);
 #endif
     if (samplesRecovered >= requestedSampleCount)
       break;
   }
-  sampleCount = samplesRecovered;
-  duration    = sampleCount / 44100.0;
+  lengthInSampleFrames = samplesRecovered;
+  duration    = lengthInSampleFrames / 44100.0;
   [pcmDataLock lock];
-  [pcmData setLength: sampleCount * sizeof(short) * 2];
-  duration = sampleCount / 44100.0;
+  [pcmData setLength: lengthInSampleFrames * sizeof(short) * 2];
+  duration = lengthInSampleFrames / 44100.0;
   [pcmDataLock unlock];
 
   [decoderLock unlock];
@@ -509,8 +509,8 @@ static int bitrateLookupTable[16][6] = {
             storeFrameLocationsAt: &frameLocations
 			    count: &frameLocationsCount];
       
-  sampleCount = frameLocationsCount * 1152.0;
-  duration    = sampleCount / 44100.0;
+  lengthInSampleFrames = frameLocationsCount * 1152.0;
+  duration    = lengthInSampleFrames / 44100.0;
   
   [localPool release];
 }
@@ -608,12 +608,12 @@ static int bitrateLookupTable[16][6] = {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// insertIntoAudioBuffer:intoRange:samplesStartingAt:
+// insertIntoAudioBuffer:intoFrameRange:samplesInRange:
 ////////////////////////////////////////////////////////////////////////////////
 
 - (long) insertIntoAudioBuffer: (SndAudioBuffer *) anAudioBuffer
-		     intoRange: (NSRange) bufferRange
-	     samplesStartingAt: (long) sndStartIndex;
+		intoFrameRange: (NSRange) bufferRange
+	        samplesInRange: (NSRange) sndReadingRange;
 {
   // This version of insertIntoAudioBuffer: assumes that the entire MP3 has been decoded
   // into memory. We also assume the buffer sample rate matches the MP3sample rate
@@ -632,11 +632,11 @@ static int bitrateLookupTable[16][6] = {
 	    int currentBufferSample = bufferRange.location * buffChans;
 	    long sndDataLength = [pcmData length] / (sizeof(short) * 2);  // determine length in frames.
 	    
-	    if (sndStartIndex < sndDataLength) {
+	    if (sndReadingRange.location < sndDataLength) {
 		// Since we do no resampling, we can use bufferRange.length here
-		int numOfFramesToCopy = MIN(bufferRange.length, sndDataLength - sndStartIndex);
+		int numOfFramesToCopy = MIN(bufferRange.length, sndReadingRange.length);
 
-		pData += sndStartIndex * buffChans;  // shift the base pointer up so we can use the same index for pData as pBuff.
+		pData += sndReadingRange.location * buffChans;  // shift the base pointer up so we can use the same index for pData as pBuff.
 		for (; currentBufferSample < numOfFramesToCopy * buffChans; currentBufferSample += buffChans) {
 		    pBuff[currentBufferSample]   = (float) pData[currentBufferSample]   / 32768.0;
 		    pBuff[currentBufferSample+1] = (float) pData[currentBufferSample+1] / 32768.0;
@@ -651,7 +651,7 @@ static int bitrateLookupTable[16][6] = {
 		float min, max;
 		
 		[anAudioBuffer findMin: &min max: &max];
-		NSLog(@"f SndMP3: min: %5.3f max: %5.3f [dataLen:%i buffLen:%i loc:%li len:%i]\n", MAX(-1, min), MIN(1,max), sndDataLength, bufferRange.length, sndStartIndex, bufferRange.length);
+		NSLog(@"f SndMP3: min: %5.3f max: %5.3f [dataLen:%i buffLen:%i loc:%li len:%i]\n", MAX(-1, min), MIN(1,max), sndDataLength, bufferRange.length, sndReadingRange.location, bufferRange.length);
 	    }
 #endif
 	}
@@ -666,11 +666,11 @@ static int bitrateLookupTable[16][6] = {
 	    int currentBufferSample = bufferRange.location * buffChans;
 	    long sndDataLength = [pcmData length] / (sizeof(short) * 2);  // determine length in frames.
 
-	    if (sndStartIndex < sndDataLength) {
+	    if (sndReadingRange.location < sndDataLength) {
 		// Since we do no resampling, we can use bufferRange.length here
-		int numOfFramesToCopy = MIN(bufferRange.length, sndDataLength - sndStartIndex);
+		int numOfFramesToCopy = MIN(bufferRange.length, sndReadingRange.length);
 		
-		pData += sndStartIndex * buffChans;
+		pData += sndReadingRange.location * buffChans;
 		for (; currentBufferSample < numOfFramesToCopy * buffChans; currentBufferSample += buffChans) {
 		    pBuff[currentBufferSample]   = pData[currentBufferSample]   / 32768;
 		    pBuff[currentBufferSample+1] = pData[currentBufferSample+1] / 32768;
@@ -684,7 +684,7 @@ static int bitrateLookupTable[16][6] = {
 	    {
 		float min, max;
 		[anAudioBuffer findMin: &min max: &max];
-		NSLog(@"s SndMP3: min: %5.3f max: %5.3f [dataLen:%li buffLen:%i loc:%li len:%i]\n",MAX(-1, min), MIN(1,max), sndDataLength, bufferRange.length, sndStartIndex, bufferRange.length);
+		NSLog(@"s SndMP3: min: %5.3f max: %5.3f [dataLen:%li buffLen:%i loc:%li len:%i]\n",MAX(-1, min), MIN(1,max), sndDataLength, bufferRange.length, sndReadingRange.location, bufferRange.length);
 	    }
 #endif
 	}
@@ -702,9 +702,9 @@ static int bitrateLookupTable[16][6] = {
     
     /* TODO Decode on the fly */
 
-    int startFrameID = floor(sndStartIndex / 1152.0);
+    int startFrameID = floor(sndReadingRange.location / 1152.0);
     int startSamplePosition = startFrameID * 1152;
-    int endFrameID   = floor(sndStartIndex + bufferRange.length / 1152.0);
+    int endFrameID   = floor(sndReadingRange.location + bufferRange.length / 1152.0);
     int endSamplePosition = (endFrameID + 1) * 1152;
     int currentFrameID = startFrameID;
 
@@ -754,7 +754,7 @@ static int bitrateLookupTable[16][6] = {
         samplingRate: 44100
             duration: r.length / 44100.0];
 
-  [self fillAudioBuffer: ab toLength: r.length samplesStartingFrom: r.location];
+  [self fillAudioBuffer: ab toLength: r.length samplesInRange: r];
 
   return [ab autorelease];
 }
