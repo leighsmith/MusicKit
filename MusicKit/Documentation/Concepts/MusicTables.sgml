@@ -819,11 +819,13 @@ role="bold">m1IndEnv </emphasis>release duration in seconds.</entry></row>
 
 <row><entry>m1Waveform</entry><entry><classname>MKWaveTable</classname>
 object</entry><entry>Waveform used to specify consitution of the
-distortion table.  If the object is a Samples object, the Samples are
-used directly as the distortion table.  If the object is a Partials
-object, the Chebychev polynomial calculation is performed to convert
-it into a distortion table.  Note that using high-numbered harmonics
-increases the time it takes to compute the table.</entry></row>
+distortion table.  If the object is a <classname>MKSamples</classname>
+object, the <classname>MKSamples</classname> are used directly as the
+distortion table.  If the object is a
+<classname>MKPartials</classname> object, the Chebychev polynomial
+calculation is performed to convert it into a distortion table.  Note
+that using high-numbered harmonics increases the time it takes to
+compute the table.</entry></row>
 
 <row><entry>pitchbend</entry><entry>[0,0x3fff]</entry><entry> MIDI pitch bend.  Default is no bend</entry></row>
 
@@ -863,114 +865,252 @@ waveform.</entry></row>
   <sect1 id="MKWaveTableDatabase">
     <title><classname>MKWaveTable</classname> Database</title> 
 
-<para>The <productname>MusicKit</productname> provides a library of
+<para>
+The Timbre Data Base is a set of spectra derived from recordings of
+musical instruments and voices in various ranges.  The Data Base was
+created by Michael McNabb.
+</para>
+
+<para>
+The <productname>MusicKit</productname> provides a library of
 <classname>MKWaveTable</classname> objects that can be accessed by the
-DB family of <classname>MKSynthPatch</classname>es:
-<classname>DBFm1vi</classname>, <classname>DBWave1v(i)</classname>,
-and <classname>DBWave2vi</classname>.  The entries in the database are
-referred to by string names, both in an application and in a
-scorefile.  The precise <classname>MKWaveTable</classname> that's used
-depends on the frequency of the <classname>MKNote</classname> that's
-being synthesized.  By default, the value of <emphasis
+DB (&ldquo;DB&rdquo; stands for &ldquo;Data Base&rdquo;) family of
+<classname>MKSynthPatch</classname>es: <classname>DBFm1vi</classname>,
+<classname>DBWave1v(i)</classname>, and
+<classname>DBWave2vi</classname>.  Note that the use of the Data Base
+is strictly optional in these instruments.  For example, if the Data
+Base is not used, <classname>DBWave1vi</classname> acts just like
+<classname>Wave1vi</classname>.  That is, the <b>waveform</b>
+parameter may be passed either an ordinary
+<classname>MKWaveTable</classname> (as in
+<classname>Wave1vi</classname>) or a timbre string (as defined below).
+</para>
+
+<para>
+To use the Data Base, you specify a timbre as a string (such as
+&ldquo;SA&rdquo;, including the quotation marks) to the
+<classname>MKSynthPatch</classname>'s <emphasis
+role="bold">waveform</emphasis> parameter.
+<classname>MKSynthPatch</classname>es with multiple <emphasis
+role="bold">waveform</emphasis> parameters accept multiple timbre
+strings.  Each timbre string represents a group of
+<classname>MKWaveTable</classname>s, one for approximately every whole
+step in the normal range of the voice or instrument.  The
+<classname>MKSynthPatch</classname> selects the
+<classname>MKWaveTable</classname> appropriate to the frequency.
+</para>
+
+<para>
+The entries in the database are referred to by string names, both in
+an application and in a scorefile.  The precise
+<classname>MKWaveTable</classname> that's used depends on the
+frequency of the <classname>MKNote</classname> that's being
+synthesized.  By default, the value of <emphasis
 role="bold">freq</emphasis> (or its synonym <emphasis
-role="bold">freq1</emphasis>) is used to determine the Note's
-frequency; you can find an entry based on the value of <emphasis
-role="bold">freq0</emphasis> by preceding the database string name
-with the character &ldquo;0&rdquo; (zero); for example,
-&ldquo;0BA&rdquo;.</para>
+role="bold">freq1</emphasis>) is used to determine the
+<classname>MKNote</classname>'s frequency; you can find an entry based
+on the value of <emphasis role="bold">freq0</emphasis> by preceding
+the database string name with the character &ldquo;0&rdquo; (zero);
+for example, &ldquo;0BA&rdquo;, the timbre will be selected based on
+the <emphasis role="bold">freq0</emphasis> parameter instead.
+</para>
+
+<para>
+The various timbre groups have different numbers of
+<classname>MKWaveTable</classname>s, as given in the chart below.
+Internally, the <classname>MKWaveTable</classname>s for a particular
+timbre group are numbered sequentially, with 1 corresponding to the
+<classname>MKWaveTable</classname> for the bottom of the range of that
+timbre.  Specific <classname>MKWaveTable</classname>s in a timbre
+group can be requested by adding a numeric suffix.  In this manner,
+the automatic selection based on frequency can be overridden.  For
+example, the timbre group &ldquo;BA&rdquo; (bass voice singing
+&ldquo;AH&rdquo;) consists of 15 timbres.  The timbre string
+&ldquo;BA12&rdquo; requests the 12th
+<classname>MKWaveTable</classname>, independent of the frequency.
+</para>
+
+<para>
+Some of the timbres are actually recordings of the attack of an
+instrument.  These are best used with the
+<classname>MKSynthPatch</classname> <classname>DBWave2vi</classname>,
+which can interpolate between timbres.  Note also that for realism,
+appropriate envelopes, attack/decay values and vibrato must be used.
+</para>
+
+<para>
+Here are the string keywords for the timbres currently in the timbre
+database.  Note that case is significant.  The number in the third column
+is the number of <classname>MKWaveTable</classname>s for that timbre.
+The normal range of the timbre corresponds to that of the
+corresponding instrument.  For example, &ldquo;BA&rdquo; is normally
+used from about <constant>c2</constant> to about <constant>d4</constant>.
+</para>
 
       <table frame=all><title>Subclasses of <classname>MKSynthPatch</classname></title>
-	<tgroup cols=2 colsep=1 rowsep=1>
+	<tgroup cols=3 colsep=1 rowsep=1>
 	  <colspec colnum=1 align=left>
 	  <colspec colnum=2 align=left>
+	  <colspec colnum=3 align=left>
 	  <thead>
 	    <row>
 	      <entry>Name</entry>
 	      <entry>Description</entry>
+              <entry>Number of <classname>MKWaveTable</classname>s</entry>
 	    </row>
 	  </thead>
 	  <tbody>
-<row><entry>&ldquo;BA&rdquo;</entry><entry>Bass voice
-&ldquo;ah&rdquo;</entry></row>
+<row><entry>&ldquo;BA&rdquo;</entry>
+<entry>Bass voice &ldquo;ah&rdquo;</entry>
+<entry>15</entry></row>
 
-<row><entry>&ldquo;BE&rdquo;</entry><entry>Bass voice
-&ldquo;eh&rdquo;</entry></row>
+<row><entry>&ldquo;BE&rdquo;</entry>
+<entry>Bass voice &ldquo;eh&rdquo;</entry>
+<entry>14</entry></row>
 
-<row><entry>&ldquo;BO&rdquo;</entry><entry>Bass voice
-&ldquo;oh&rdquo;</entry></row>
+<row><entry>&ldquo;BO&rdquo;</entry>
+<entry>Bass voice &ldquo;oh&rdquo;</entry>
+<entry>15</entry></row>
 
-<row><entry>&ldquo;BU&rdquo;</entry><entry>Bass voice
-&ldquo;oo&rdquo;</entry></row>
+<row><entry>&ldquo;BU&rdquo;</entry>
+<entry>Bass voice &ldquo;oo&rdquo;</entry>
+<entry>15</entry></row>
 
-<row><entry>&ldquo;TA&rdquo;</entry><entry>Tenor voice
-&ldquo;ah&rdquo;</entry></row>
+<row><entry>&ldquo;TA&rdquo;</entry>
+<entry>Tenor voice &ldquo;ah&rdquo;</entry>
+<entry>12</entry></row>
 
-<row><entry>&ldquo;TE&rdquo;</entry><entry>Tenor voice
-&ldquo;eh&rdquo;</entry></row>
+<row><entry>&ldquo;TE&rdquo;</entry>
+<entry>Tenor voice &ldquo;eh&rdquo;</entry>
+<entry>12</entry></row>
 
-<row><entry>&ldquo;TI&rdquo;</entry><entry>Tenor voice
-&ldquo;ee&rdquo;</entry></row>
+<row><entry>&ldquo;TI&rdquo;</entry>
+<entry>Tenor voice &ldquo;ee&rdquo;</entry>
+<entry>12</entry></row>
 
-<row><entry>&ldquo;TO&rdquo;</entry><entry>Tenor voice
-&ldquo;oh&rdquo;</entry></row>
+<row><entry>&ldquo;TO&rdquo;</entry>
+<entry>Tenor voice &ldquo;oh&rdquo;</entry>
+<entry>12</entry></row>
 
-<row><entry>&ldquo;TU&rdquo;</entry><entry>Tenor voice
-&ldquo;oo&rdquo;</entry></row>
+<row><entry>&ldquo;TU&rdquo;</entry>
+<entry>Tenor voice &ldquo;oo&rdquo;</entry>
+<entry>12</row>
 
-<row><entry>&ldquo;SA&rdquo;</entry><entry>Soprano voice
-&ldquo;ah&rdquo;</entry></row>
+<row><entry>&ldquo;SA&rdquo;</entry>
+<entry>Soprano voice &ldquo;ah&rdquo;</entry>
+<entry>13</entry>
+</row>
 
-<row><entry>&ldquo;SE&rdquo;</entry><entry>Soprano voice
-&ldquo;eh&rdquo;</entry></row>
+<row><entry>&ldquo;SE&rdquo;</entry>
+<entry>Soprano voice &ldquo;eh&rdquo;</entry>
+<entry>13</entry>
+</row>
 
-<row><entry>&ldquo;SI&rdquo;</entry><entry>Soprano voice
-&ldquo;ee&rdquo;</entry></row>
+<row><entry>&ldquo;SI&rdquo;</entry>
+<entry>Soprano voice &ldquo;ee&rdquo;</entry>
+<entry>13</entry>
+</row>
 
-<row><entry>&ldquo;SO&rdquo;</entry><entry>Soprano voice
-&ldquo;oh&rdquo;</entry></row>
+<row><entry>&ldquo;SO&rdquo;</entry>
+<entry>Soprano voice &ldquo;oh&rdquo;</entry>
+<entry>13</entry>
+</row>
 
-<row><entry>&ldquo;SU&rdquo;</entry><entry>Soprano voice
-&ldquo;oo&rdquo;</entry></row>
+<row><entry>&ldquo;SU&rdquo;</entry>
+<entry>Soprano voice &ldquo;oo&rdquo;</entry>
+<entry>13</entry>
+</row>
 
-<row><entry>&ldquo;VCA&rdquo;</entry><entry>Cello attack</entry></row>
+<row><entry>&ldquo;VCA&rdquo;</entry>
+<entry>Cello attack</entry>
+<entry>53</entry>
+</row>
 
-<row><entry>&ldquo;VCS&rdquo;</entry><entry>Cello sustain</entry></row>
+<row><entry>&ldquo;VCS&rdquo;</entry>
+<entry>Cello sustain</entry>
+<entry>53</entry>
+</row>
 
-<row><entry>&ldquo;VNA&rdquo;</entry><entry>
-Violin attack</entry></row>
+<row><entry>&ldquo;VNA&rdquo;</entry>
+<entry>Violin attack</entry>
+<entry>56</entry>
+</row>
 
-<row><entry>&ldquo;VNS&rdquo;</entry><entry>Violin sustain</entry></row>
+<row><entry>&ldquo;VNS&rdquo;</entry>
+<entry>Violin sustain</entry>
+<entry>56</entry>
+</row>
 
-<row><entry>&ldquo;TR&rdquo;</entry><entry>Trumpet</entry></row>
+<row><entry>&ldquo;TR&rdquo;</entry>
+<entry>Trumpet</entry>
+<entry>31</entry>
+</row>
 
-<row><entry>&ldquo;BN&rdquo;</entry><entry>
-Bassoon</entry></row>
+<row><entry>&ldquo;BN&rdquo;</entry>
+<entry>Bassoon</entry>
+<entry>41</entry>
+</row>
 
-<row><entry>&ldquo;AS&rdquo;</entry><entry>Alto saxophone</entry></row>
+<row><entry>&ldquo;AS&rdquo;</entry>
+<entry>Alto saxophone</entry>
+<entry>31</entry>
+</row>
 
-<row><entry>&ldquo;SS&rdquo;</entry><entry>Soprano saxophone</entry></row>
+<row><entry>&ldquo;SS&rdquo;</entry>
+<entry>Soprano saxophone</entry>
+<entry>31</entry>
+</row>
 
-<row><entry>&ldquo;BC&rdquo;</entry><entry>
-Bass clarinet</entry></row>
+<row><entry>&ldquo;BC&rdquo;</entry>
+<entry>Bass clarinet</entry>
+<entry>47</entry>
+</row>
 
-<row><entry>&ldquo;CL&rdquo;</entry><entry>Clarinet</entry></row>
+<row><entry>&ldquo;CL&rdquo;</entry>
+<entry>Clarinet</entry>
+<entry>45</entry>
+</row>
 
-<row><entry>&ldquo;EH&rdquo;</entry><entry>English horn</entry></row>
+<row><entry>&ldquo;EH&rdquo;</entry>
+<entry>English horn</entry>
+<entry>32</entry>
+</row>
 
-<row><entry>&ldquo;OB&rdquo;</entry><entry>
-Oboe</entry></row>
+<row><entry>&ldquo;OB&rdquo;</entry>
+<entry>Oboe</entry>
+<entry>33</entry>
+</row>
 
-<row><entry>&ldquo;PN&rdquo;</entry><entry>Piano</entry></row>
+<row><entry>&ldquo;PN&rdquo;</entry>
+<entry>Piano</entry>
+<entry>62</entry>
+</row>
 
-<row><entry>&ldquo;TW&rdquo;</entry><entry>
-Triangle wave</entry></row>
+<row><entry>&ldquo;TW&rdquo;</entry>
+<entry>Triangle wave</entry>
+<entry>31</entry>
+</row>
 
-<row><entry>&ldquo;SW&rdquo;</entry><entry>Sawtooth wave</entry></row>
+<row><entry>&ldquo;SW&rdquo;</entry>
+<entry>Sawtooth wave</entry>
+<entry>35</entry>
+</row>
 
-<row><entry>&ldquo;IW&rdquo;</entry><entry>Impulse wave</entry></row>
+<row><entry>&ldquo;IW&rdquo;</entry>
+<entry>Impulse wave</entry>
+<entry>29</entry>
+</row>
 	  </tbody>
 	</tgroup>
       </table>
+      <sect2>
+        <title>Adding Your Own Timbres</title>
+          <para>
+The MusicKit allows you to add your own timbres.  This can only be done
+from an Objective-C program - it can not be done in a ScoreFile.  See the
+<classname>MKTimbre</classname> class for details.
+</para>
+      </sect2>
   </sect1>
   <sect1 id="PitchesAndFrequencies">
     <title>Pitches and Frequencies</title>
