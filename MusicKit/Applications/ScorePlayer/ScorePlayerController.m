@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2001/03/22 20:17:49  leigh
+  Made tempo changeable during playback
+
   Revision 1.12  2001/03/17 02:04:39  leigh
   Forced synthPatches to midi if we loaded a midi file, not a score
 
@@ -133,62 +136,14 @@ static NSString *soundFile = nil;
 static int warnedAboutSrate = NO;
 static NSDate *lastModifyTime;
 
+static ErrorLog *errorLog;
+static BOOL errorDuringPlayback = NO;
+
 #define PLAYING ([MKConductor inPerformance])
 #if m68k
 #define SOUND_OUT_PAUSE_BUG 1 /* Workaround for problem synching MIDI to DSP */
 #endif
 
-// LMS disabled, the console is good enough for us to see ObjectiveC errors.
-// static int handleObjcError(const char *className)
-//{
-//    return 0;
-//}
-
-static ErrorLog *errorLog;
-static BOOL errorDuringPlayback = NO;
-
-- showConductorDidSeek
-{
-    [timeCodeTextField setStringValue:@"Time code running"];
-    return self;
-}
-
-- showConductorWillSeek
-{
-    [timeCodeTextField setStringValue:@"Time code starting..."];
-    return self;
-}
- 
-- showConductorDidReverse
-{
-     [timeCodeTextField setStringValue:@"Time code running backwards"];
-     return self;
-}
- 
-- showConductorDidPause
-{
-    [timeCodeTextField setStringValue:@"Time code stopped.  Waiting for time code to start"];
-    return self;
-}
-
-- showConductorDidResume
-{
-    [timeCodeTextField setStringValue:@"Time code running"];
-    return self;
-}
-
-- (void)showErrorLog:sender
-{
-    [errorLog show]; 
-}
-
--runAlert:(NSString *)text
-{
-    [errorLog addText:text];
-    [text release];
-    errorDuringPlayback = YES;
-    return self;
-}
 
 
 /* Localizable strings */
@@ -249,6 +204,55 @@ static BOOL errorDuringPlayback = NO;
 #define STR_SOUNDFILE NSLocalizedStringFromTableInBundle(@"Sound File", @"ScorePlayer", MB, "This appears in the SaveAs... panel")
 
 #define STR_CANT_OPEN_MIDI NSLocalizedStringFromTableInBundle(@"Can't open MIDI driver port for MIDI. Perhaps another application has it.", @"ScorePlayer", MB, "This message appears if the serial port is busy.")
+
+- showConductorDidSeek
+{
+    [timeCodeTextField setStringValue:@"Time code running"];
+    return self;
+}
+
+- showConductorWillSeek
+{
+    [timeCodeTextField setStringValue:@"Time code starting..."];
+    return self;
+}
+ 
+- showConductorDidReverse
+{
+     [timeCodeTextField setStringValue:@"Time code running backwards"];
+     return self;
+}
+ 
+- showConductorDidPause
+{
+    [timeCodeTextField setStringValue:@"Time code stopped.  Waiting for time code to start"];
+    return self;
+}
+
+- showConductorDidResume
+{
+    [timeCodeTextField setStringValue:@"Time code running"];
+    return self;
+}
+
+- (void)showErrorLog:sender
+{
+    [errorLog show]; 
+}
+
+-runAlert:(NSString *)text
+{
+    [errorLog addText:text];
+    [text release];
+    errorDuringPlayback = YES;
+    return self;
+}
+
+// LMS disabled, the console is good enough for us to see ObjectiveC errors.
+// static int handleObjcError(const char *className)
+//{
+//    return 0;
+//}
 
 static void handleMKError(NSString *msg)
 {
@@ -926,6 +930,18 @@ static void playIt(ScorePlayerController *self)
     return self;
 }
 
+- (void) setMidiDriverName: (id) sender
+{
+    int i;
+//    [midis[i] close];
+//    [midis[i] release];
+//    midis[i] = [MKMidi midiOnDevice: [driverPopup titleOfSelectedItem]];
+//    [midis[i] retain];
+    
+    for(i = 0; i < MAX_MIDIS; i++)
+        NSLog([midis[i] driverName]);
+}
+
 static id LocalImage(NSString *s)
 {
     NSString * buf;
@@ -1209,13 +1225,14 @@ static void adjustTempo(double slowDown)
 
 - (void)setTempoFrom:sender	// currently called by slider only
 {
-    double val = ([sender doubleValue]);
+    double val = [sender doubleValue];
     desiredTempo = getTempo(val);
-    if (!PLAYING) {
-	[[MKConductor defaultConductor] setTempo:desiredTempo];
+    // LMS it's unclear if this was only able to happen when not playing due to earlier MK limitations.
+//    if (!PLAYING) {  
+	[[MKConductor defaultConductor] setTempo: desiredTempo];
 	[tempoTextField setFloatValue:desiredTempo];
 	lastTempo = desiredTempo;
-    }
+//    }
 }
 
 - (void)setTimeCodeSynch:sender
