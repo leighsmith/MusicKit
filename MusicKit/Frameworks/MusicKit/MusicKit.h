@@ -13,6 +13,9 @@
 */
 /*
   $Log$
+  Revision 1.9  2000/10/05 08:05:47  skot
+  Added fastFFt.h
+
   Revision 1.8  2000/06/13 17:46:24  leigh
   Added SMF magic number definition
 
@@ -110,6 +113,7 @@ extern "Objective-C" {
 #import "MKTuningSystem.h"
 #import "MKUnitGenerator.h"
 #import "MKWaveTable.h"
+#import "fastFFT.h"
 
 #endif MUSICKIT_H
 
