@@ -79,7 +79,9 @@ int DSPMKSendShortArraySkipTimed(DSPFix48 *aTimeStampP,
     return 0;
 }
 
-int _DSPMKSendUnitGeneratorWithLooperTimed(
+/* sbrandon: for explanation of the MKDSP_API, see below */
+
+MKDSP_API int _DSPMKSendUnitGeneratorWithLooperTimed(
     DSPFix48 *aTimeStampP, 
     DSPMemorySpace space,
     DSPAddress address,
@@ -90,14 +92,24 @@ int _DSPMKSendUnitGeneratorWithLooperTimed(
     return 0;
 }
 
-int _DSPReloc(DSPDataRecord *data, DSPFixup *fixups,
+MKDSP_API int _DSPReloc(DSPDataRecord *data, DSPFixup *fixups,
     int fixupCount, int *loadAddresses)
 {
     return 0;
 }
 
-#if 0
-int _DSPError1(
+/* sbrandon: reinstated the following section November 2001
+   as the Windows build was complaining that they weren't there.
+   I don't know why it was removed -- if things start to break
+   on other platforms, revisit this.
+   I have included the MKDSP_API symbol here because the actual
+   header files containing the symbols can't be imported, because
+   of things like mach header dependencies. It's not elegant, and
+   it causes hacks to be required in MusicKit as well, but it works.
+ */
+
+//#if 1
+MKDSP_API int _DSPError1(
     int errorcode,
     char *msg,
     char *arg)
@@ -105,7 +117,7 @@ int _DSPError1(
     return 0;
 }
 
-int _DSPError(
+MKDSP_API int _DSPError(
     int errorcode,
     char *msg)
 {
@@ -116,7 +128,7 @@ int DSPEnableErrorFile(const char *fn)
 {
     return 0;
 }
-#endif
+//#endif
 
 FILE *DSPGetSimulatorFP(void)
 {
@@ -142,7 +154,7 @@ return 0;
 }
 
 
-#if 0
+#if 1
 const char *DSPMemoryNames(int memSpaceNo)
 {
 return 0;
