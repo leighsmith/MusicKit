@@ -14,6 +14,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef __SND_AUDIO_PROCESSOR_H__
+#define __SND_AUDIO_PROCESSOR_H__
+
 #import <Foundation/Foundation.h>
 
 @class SndAudioBuffer;
@@ -36,3 +39,5 @@
                  outputBuffer: (SndAudioBuffer*) outB;
 
 @end
+
+#endif

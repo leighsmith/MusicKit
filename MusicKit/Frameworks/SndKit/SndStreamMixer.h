@@ -12,6 +12,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef __SND_STREAM_MIXER_H__
+#define __SND_STREAM_MIXER_H__
+
 #import <Foundation/Foundation.h>
 
 #import "SndAudioBuffer.h"
@@ -39,3 +42,5 @@
 - (SndAudioProcessorChain*) audioProcessorChain;
 
 @end
+
+#endif
