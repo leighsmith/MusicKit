@@ -39,6 +39,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2001/08/27 19:59:09  leighsmith
+  Added allNotesOff as a abstract instance method (since nearly all instruments implemented this anyway) and this provides a mechanism to shut off any sounding notes when a MKNoteReceiver is squelched
+
   Revision 1.7  2000/11/25 22:52:14  leigh
   Enforced ivar privacy
 
@@ -200,6 +203,13 @@
   * Should be invoked via NXReadObject(). 
   * Note that -init is not sent to newly unarchived objects.
   * See write:. */
+
+/*!
+    @method allNotesOff
+    @description Immeditately stops playing any sounding notes. The default behaviour is to do nothing.
+                 Subclasses may implement specific behaviour appropriate to the synthesis method.
+*/
+- allNotesOff;
 
  /* Obsolete methods: */
 + new; 

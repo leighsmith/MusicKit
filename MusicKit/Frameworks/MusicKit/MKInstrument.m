@@ -14,6 +14,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.9  2001/08/27 19:59:09  leighsmith
+  Added allNotesOff as a abstract instance method (since nearly all instruments implemented this anyway) and this provides a mechanism to shut off any sounding notes when a MKNoteReceiver is squelched
+
   Revision 1.8  2001/08/07 16:16:11  leighsmith
   Corrected class name during decode to match latest MK prefixed name
 
@@ -319,6 +322,12 @@
 {
     if ([aDecoder versionForClassName: @"MKInstrument"] == VERSION2) 
       noteReceivers = [[aDecoder decodeObject] retain];
+    return self;
+}
+
+// Immeditately stops playing any sounding notes. The default is to do nothing.
+- allNotesOff
+{
     return self;
 }
 
