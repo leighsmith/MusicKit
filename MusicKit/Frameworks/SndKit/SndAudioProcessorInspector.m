@@ -70,7 +70,7 @@
   theAudProc = [anAudProc retain];
   [processorName setStringValue: [theAudProc name]];
 
-  [parameterTableView selectRow: 0 byExtendingSelection: FALSE];
+  [parameterTableView selectRow: 0 byExtendingSelection: NO];
   [parameterValueSilder setFloatValue: [theAudProc paramValue: 0]];
   [parameterTableView setDataSource: self];
 
@@ -112,7 +112,7 @@
   if (theAudProc != nil) {
     int row = [tableView selectedRow];
     [parameterValueSilder setFloatValue: [theAudProc paramValue: row]];
-    [parameterValueSilder setNeedsDisplay: TRUE];
+    [parameterValueSilder setNeedsDisplay: YES];
   }
 }
 
@@ -126,7 +126,7 @@
   printf("row: %i\n",r);
   if (theAudProc != nil) {
     [parameterValueSilder setFloatValue:  [theAudProc paramValue: r]];
-    [parameterValueSilder setNeedsDisplay: TRUE];
+    [parameterValueSilder setNeedsDisplay: YES];
   }
   return self;
 }
