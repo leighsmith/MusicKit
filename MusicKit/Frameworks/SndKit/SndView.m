@@ -96,11 +96,13 @@ OF THIS AGREEMENT.
     cursorRect.size.width = CURSOR_WIDTH;
     
     if(svFlags.cursorOn) {
-	[self lockFocus];
-	[selectionColour set];
-	NSRectFillUsingOperation(cursorRect, NSCompositeDestinationIn);
-	NSHighlightRect(cursorRect);
-	[self unlockFocus];	
+	if([self lockFocusIfCanDraw]) {
+	    // [self lockFocus];
+	    [selectionColour set];
+	    NSRectFillUsingOperation(cursorRect, NSCompositeDestinationIn);
+	    NSHighlightRect(cursorRect);
+	    [self unlockFocus];	
+	}
     }
     else {
 	[self setNeedsDisplayInRect: cursorRect];	
