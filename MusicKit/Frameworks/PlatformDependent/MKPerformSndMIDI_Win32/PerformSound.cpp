@@ -33,6 +33,9 @@
 */
 /*
 // $Log$
+// Revision 1.3  2000/01/03 20:33:26  leigh
+// initialises the SND API before attempting to retrieve the DirectSound object
+//
 // Revision 1.2  1999/11/17 22:10:51  leigh
 // Added the VS-1 audio routines into project
 //
@@ -244,12 +247,12 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 
     // WaveOut initialisation
 		if (!audioOutWO.Initialise(GenAudio,0)) {
-      AfxMessageBox("Error initialising WO: " + audioOutWO.GetErrMsg());
+      AfxMessageBox("Error initialising WaveOut: " + audioOutWO.GetErrMsg());
 			return FALSE;
 		}
     // DirectSound initialisation
 		if (!audioOutDX.Initialise(GenAudio,0)) {
-			AfxMessageBox("Error initialising DX: " + audioOutDX.GetErrMsg());
+			AfxMessageBox("Error initialising DirectSound: " + audioOutDX.GetErrMsg());
 			return FALSE;
 		}
     retrieveDriverList();
@@ -284,10 +287,10 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
 // to begin playing. Really we should check If we are not using DirectSound, NULL is returned.
 LPDIRECTSOUND SNDGetDirectSound(void)
 {
-  if(initialised)
-    return audioOutDX.GetDirectSound();
-  else
-    return (LPDIRECTSOUND) 7; // just so we can tell where this came from, should be NULL.
+  if(!initialised) {
+    SNDInit(TRUE);
+  }
+  return audioOutDX.GetDirectSound();
 }
 
 // Returns an array of strings listing the available drivers.
