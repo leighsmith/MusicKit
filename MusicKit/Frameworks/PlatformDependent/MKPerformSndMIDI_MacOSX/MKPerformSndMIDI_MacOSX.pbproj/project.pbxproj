@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		01575C4F0048D569CFED3B96 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O3";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -31,7 +32,7 @@
 			isa = PBXProject;
 			mainGroup = 016D5A23FED483BBCFED3B93;
 			productRefGroup = 016D5A24FED483BBCFED3B93;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				016D5A3AFED483BBCFED3B93,
 			);
@@ -124,7 +125,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "";
-				FRAMEWORK_VERSION = 5.3;
+				FRAMEWORK_VERSION = 5.4;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
@@ -138,8 +139,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -169,11 +168,11 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>MKPerformSndMIDI V5.3.0</string>
+	<string>MKPerformSndMIDI V5.4.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>5.3.0</string>
+	<string>5.4.0</string>
 </dict>
 </plist>
 ";
@@ -256,6 +255,16 @@
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
 		};
+//010
+//011
+//012
+//013
+//014
+//030
+//031
+//032
+//033
+//034
 		0310678EFFBCB9BDCFED3B96 = {
 			fileRef = 016D5A2FFED483BBCFED3B93;
 			isa = PBXBuildFile;
@@ -264,11 +273,31 @@
 				);
 			};
 		};
+//030
+//031
+//032
+//033
+//034
+//060
+//061
+//062
+//063
+//064
 		06D6961DFF81940ECFED3B93 = {
 			isa = PBXFrameworkReference;
 			path = MKPerformSndMIDI.framework;
 			refType = 3;
 		};
+//060
+//061
+//062
+//063
+//064
+//070
+//071
+//072
+//073
+//074
 		07B2BE620034ACD5CFED3B96 = {
 			isa = PBXFrameworkReference;
 			name = CoreAudio.framework;
@@ -295,6 +324,16 @@
 				);
 			};
 		};
+//070
+//071
+//072
+//073
+//074
+//100
+//101
+//102
+//103
+//104
 		1001C124FFAE54A5CFED3B93 = {
 			isa = PBXFrameworkReference;
 			name = CoreMIDI.framework;
@@ -319,6 +358,16 @@
 			settings = {
 			};
 		};
+//100
+//101
+//102
+//103
+//104
+//150
+//151
+//152
+//153
+//154
 		155A3D8F00376A7BCFED3B96 = {
 			isa = PBXFileReference;
 			path = SndFormats.h;
