@@ -20,8 +20,8 @@
 
     The biquad difference equation which implements H(z) is
 
-      v(n) = g * x(n) - a1 * v(n-1) - a2 * v(n-2);
-      y(n) =     v(n) + b1 * v(n-1) + b2 * v(n-2);
+     v(n) = g * x(n) - a1 * v(n-1) - a2 * v(n-2);
+     y(n) =     v(n) + b1 * v(n-1) + b2 * v(n-2);
 
     where n denotes the current sample time, x(n) is the input signal at
     time n, y(n) is the output signal, and v(n) is an intermediate signal
@@ -57,23 +57,27 @@ corresponding to the two possible input spaces.
 
 The biquad transfer function is
 
-                             -1         -2
-                 1  +  b1 * z   + b2 * z
-      H(z) = g * -------------------------
-                             -1         -2
-                 1  +  a1 * z   + a2 * z
+<pre>
+<tab>                       -1         -2
+<tab>           1  +  b1 * z   + b2 * z
+<tab>H(z) = g * -------------------------
+<tab>                       -1         -2
+<tab>           1  +  a1 * z   + a2 * z
+</pre>
 
 The biquad difference equation which implements H(z) is
 
-     v(n) = g * x(n) - a1 * v(n-1) - a2 * v(n-2);
-     y(n) =     v(n) + b1 * v(n-1) + b2 * v(n-2);
+<pre>
+v(n) = g * x(n) - a1 * v(n-1) - a2 * v(n-2);
+y(n) =     v(n) + b1 * v(n-1) + b2 * v(n-2);
+</pre>
 
 where n denotes the current sample time, x(n) is the input signal at time n,
 y(n) is the output signal, and v(n) is an intermediate signal.  This is the
-so-called "transposed direct form II" digital filter structure, which avoids the
-possibility of internal overflow. See Digital Signal Processing by A.V.
-Oppenheim and R.W. Schafer (Prentice-Hall, 1975, p. 155) for further
-discussion.
+so-called "transposed direct form II" digital filter structure, which
+avoids the possibility of internal overflow. See Digital Signal
+Processing by A.V. Oppenheim and R.W. Schafer (Prentice-Hall, 1975,
+p. 155) for further discussion.
 
 <h2>Memory Spaces</h2>
 
