@@ -89,7 +89,7 @@ static int ioTags = 1000;
 
 + (NSString*) defaultFileExtension
 {
-  return @"snd";
+  return DEFAULT_SOUNDFILE_EXTENSION;
 }
 
 + soundNamed:(NSString *)aName
@@ -614,7 +614,7 @@ static int ioTags = 1000;
 }
 
 #if !USE_STREAMING
-// Since these two functions come in from the cold, they warm and snug autorelease pools...
+// Since these two functions come in from the cold, they need warm and snug autorelease pools...
 int beginFun(SndSoundStruct *sound, int tag, int err)
 {
     Snd *theSnd;
@@ -728,7 +728,8 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
                 sampleCount: d * sr];
 }
 
-
+// TODO See if we can make this use self playInFuture so all use of looping
+// is done in playInFuture:beginSample:sampleCount:
 - (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d
 {
 //  NSLog(@"Snd::playAtTimeInSeconds: %f", t);
@@ -833,6 +834,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
             (SNDNotificationFun) endRecFun);
     return self;
 #else
+    NSLog(@"Not yet implemented!\n");
     return self;
 #endif
 }
