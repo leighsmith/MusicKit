@@ -392,7 +392,7 @@ extern int DSPMKDisableBlockingOnTMQEmptyTimed(DSPFix48 *aTimeStampP);
 
 
 /* Misc. routines for getting various directories. */
-char *DSPGetDSPDirectory(void);    /* DSP_SYSTEM_DIRECTORY or $DSP if set */
+const char *DSPGetDSPDirectory(void);    /* DSP_SYSTEM_DIRECTORY or $DSP if set */
 char *DSPGetSystemDirectory(void); /* <DSPDirectory>/monitor */
 char *DSPGetAPDirectory(void);	   /* <DSPDirectory>/DSP_AP_BIN_DIRECTORY */
 
@@ -458,7 +458,7 @@ extern int DSPSetAPSystemFiles(void);
  */
 
 
-extern int DSPMKSetWriteDataFile(char *fn);
+extern int DSPMKSetWriteDataFile(const char *fn);
 /* 
  * Set the file-name for DSP write-data to fn.
  */
@@ -567,7 +567,7 @@ extern int DSPMKReadDataIsEnabled(void);
  */
 
 
-extern int DSPMKSetReadDataFile(char *fn);
+extern int DSPMKSetReadDataFile(const char *fn);
 /* 
  * Set the read-data file-name to fn.
  */

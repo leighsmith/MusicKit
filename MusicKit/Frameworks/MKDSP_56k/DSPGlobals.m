@@ -43,8 +43,18 @@ const char * const DSPLCNames[DSP_LC_NUM] = { LITERAL_N,
 			       LITERAL_L, LITERAL_LL, LITERAL_LH, 
 			       LITERAL_P, LITERAL_PL, LITERAL_PH};
 
+// LMS: changed this from an array of strings to get around link problems with MS Win32 DLLs.
+#if 0
 const char * const DSPMemoryNames[(int)DSP_MS_Num] = {
 		LITERAL_N, LITERAL_X, LITERAL_Y, LITERAL_L, LITERAL_P};
+#else
+const char * DSPMemoryNames(int memorySpaceNum)
+{
+    static const char *memNames[] = { LITERAL_N, LITERAL_X, LITERAL_Y, LITERAL_L, LITERAL_P };
+
+    return memNames[memorySpaceNum];
+}
+#endif
 
 #ifdef SHLIB
 static const char _libdsp_constdata_pad1[172] = { 0 };

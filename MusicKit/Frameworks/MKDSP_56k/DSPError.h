@@ -27,7 +27,7 @@ extern int DSPErrorLogIsEnabled(void);
 
 /******************************* ERROR FILE CONTROL **************************/
 
-extern int DSPEnableErrorFile(char *fn);
+extern int DSPEnableErrorFile(const char *fn);
 /* 
  * Turn on DSP error message logging (equivalent to DSPEnableErrorLog())
  * and set the error file to fn (equivalent to DSPSetErrorFile(fn)).

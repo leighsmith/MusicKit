@@ -52,7 +52,7 @@ extern int DSPGetHostTime(void);
 /* End of "Warning" section */
 
 /********** Intel utilities ***************************/
-char *DSPGetDriverParameter(char *parameterName);
+char *DSPGetDriverParameter(const char *parameterName);
 /* Returns the specified driver parameter of the current DSP.  
    This value can be overridden by the user's defaults data base.
    The returned value is an NXAtom and should not be freed. 
@@ -438,7 +438,7 @@ extern int DSPMKDisableBlockingOnTMQEmptyTimed(DSPFix48 *aTimeStampP);
 
 
 /* Misc. routines for getting various directories. */
-char *DSPGetDSPDirectory(void);    /* DSP_SYSTEM_DIRECTORY or $DSP if set */
+const char *DSPGetDSPDirectory(void);    /* DSP_SYSTEM_DIRECTORY or $DSP if set */
 char *DSPGetSystemDirectory(void); /* <DSPDirectory>/monitor */
 char *DSPGetAPDirectory(void);	   /* <DSPDirectory>/DSP_AP_BIN_DIRECTORY */
 
@@ -504,7 +504,7 @@ extern int DSPSetAPSystemFiles(void);
  */
 
 
-extern int DSPMKSetWriteDataFile(char *fn);
+extern int DSPMKSetWriteDataFile(const char *fn);
 /* 
  * Set the file-name for DSP write-data to fn.
  */
@@ -628,7 +628,7 @@ extern int DSPMKReadDataIsEnabled(void);
  */
 
 
-extern int DSPMKSetReadDataFile(char *fn);
+extern int DSPMKSetReadDataFile(const char *fn);
 /* 
  * Set the read-data file-name to fn.
  */

@@ -27,6 +27,10 @@
 #import <Foundation/Foundation.h>
 #endif
 
+#if WIN32
+#import <winnt-pdo.h>
+#endif
+
 #include "_dsp.h"
 //#include <sys/file.h>   /* DSPLoadSpecReadFile(), DSPLoadSpecWriteFile() */  // LMS do we really need this?
 

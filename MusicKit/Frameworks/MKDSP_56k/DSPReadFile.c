@@ -33,7 +33,7 @@
 
 #include "_dsp.h"
 
-int DSPReadFile( DSPLoadSpec **dsppp, char *fn)
+int DSPReadFile( DSPLoadSpec **dsppp, const char *fn)
 {
     int olddeb,ec;
     char *dspdir;

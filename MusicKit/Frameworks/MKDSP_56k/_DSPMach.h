@@ -13,7 +13,7 @@
 
 #import <mach/mach.h>
 
-#if !m68k && (defined(NeXT) || (defined(__APPLE__) && defined(__MACH__)))
+#if !m68k && (defined(NeXT) || (defined(__APPLE__) && defined(__MACH__)) || defined(WIN32))
 #import "dspdriverAccess.h"
 
 extern msg_header_t *_DSP_data_request_msg (

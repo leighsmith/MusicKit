@@ -415,16 +415,16 @@ int *DSPGetInUseDriverSubUnits(void)
     return inUseDriverSubUnits;
 }
 
-char *DSPGetDriverParameter(char *parameterName)
+char *DSPGetDriverParameter(const char *parameterName)
 {
     initIntelBasedDSPs();
-    return getDriverParameter((char *)parameterName);
+    return getDriverParameter((const char *)parameterName);
 }
 
 #else
 /* Dummys */
 
-char *DSPGetDriverParameter(char *parameterName) { return NULL; }
+char *DSPGetDriverParameter(const char *parameterName) { return NULL; }
 int DSPGetDriverCount(void) { return 0; }
 char **DSPGetDriverNames(void) { return NULL; }
 int *DSPGetDriverUnits(void) { return NULL; }

@@ -4,8 +4,11 @@
     DYNAMIC_CODE_GEN = YES; 
     FILESTABLE = {
         CLASSES = (DSPObjectObjc.m); 
-        FRAMEWORKS = (Foundation.framework, SoundKit.framework, System.framework); 
-        FRAMEWORKSEARCH = ("$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks"); 
+        FRAMEWORKS = (Foundation.framework, SndKit.framework, System.framework); 
+        FRAMEWORKSEARCH = (
+            "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks", 
+            "$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks"
+        ); 
         H_FILES = (
             dsp.h, 
             DSPControl.h, 
@@ -46,11 +49,11 @@
             _libdsp.h, 
             _MachMessages.h
         ); 
+        LIBRARYSEARCH = ("$(LOCAL_DEVELOPER_DIR)/Libraries"); 
         OTHER_LIBS = (Driver); 
         OTHER_LINKED = (
             DSPSymbols.c, 
             DSPReadFile.c, 
-            DSPError.c, 
             DSPLoad.c, 
             DSPBoot.c, 
             _DSPCV.c, 
@@ -59,11 +62,12 @@
             gdbHelp.c, 
             _DSPUtilities.c, 
             DSPConversion.c, 
-            DSPGlobals.c, 
             dspdriverAccess.c, 
             _DSPRelocate.c, 
             DSPStructMisc.m, 
-            DSPObject.m
+            DSPObject.m, 
+            DSPError.m, 
+            DSPGlobals.m
         ); 
         OTHER_RESOURCES = (); 
         OTHER_SOURCES = (

@@ -8,7 +8,9 @@
 #include <stdarg.h>
 
 //#ifdef SHLIB
-#include <SoundKit/sounddriver.h>	/* This will fully replace the following */
+//#include <SoundKit/sounddriver.h>	/* This will fully replace the following */
+#include <SndKit/SndKit.h>
+//#include <SoundKit/SoundKit.h>
 //#else
 //#include "foodriver.h"		/*** FIXME ***/
 //#endif
@@ -54,11 +56,11 @@ static char *s_err_fn = DSP_ERRORS_FILE;
 
 /* unprototyped procedures which trigger -Wimplicit warnings */
 /* extern int umask(); */
-extern int getpid();
+/* extern int getpid(); */
 
 /******************************* error string ***************************/
 
-#import <SoundKit/sounderror.h>	/* for SNDSoundError() */
+//#import <SoundKit/sounderror.h>	/* for SNDSoundError() */
 
 #ifndef SND_NO_ERROR
 #define SND_NO_ERROR	100	// non-error ack.
@@ -109,7 +111,7 @@ static char *my_foodriver_error_string(int error)
     else if (error >= SND_NO_ERROR && error <= SND_MAX_ERROR)
       return foodriver_error_list[error-SND_NO_ERROR];
     else
-      return SNDSoundError(error);
+      return SndSoundError(error);
 }
 
 /***************************** Error Enabling ********************************/
@@ -190,7 +192,7 @@ char *DSPGetErrorFile(void)
 
 
 int DSPEnableErrorFile(
-    char *fn)
+    const char *fn)
 {
     DSP_UNTIL_ERROR(DSPEnableErrorLog());
     return DSPSetErrorFile(fn);
