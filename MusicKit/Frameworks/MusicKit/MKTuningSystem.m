@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/05/13 17:17:50  leigh
+  Added MKPitchNameForKeyNum()
+
   Revision 1.3  2000/04/25 22:08:41  leigh
   Converted from Storage to NSArray operation
 
@@ -143,7 +146,7 @@ MKKeyNum MKFreqToKeyNum(double freq,int *bendPtr,double sensitivity)
 static id addReadOnlyVar(NSString * name,int val)
 {
     /* Add a read-only variable to the global parse table. */
-    id rtnVal;
+    _ScorefileVar *rtnVal;
     _MKNameGlobal(name,rtnVal = 
 		  _MKNewScorefileVar(_MKNewIntPar(val,MK_noPar),name,NO,YES),
 		  _MK_typedVar,YES,YES);
@@ -200,20 +203,25 @@ void MKWriteKeyNumNames(BOOL useKeyNumNames)
     writeKeyNumNames = useKeyNumNames;
 }
 
-BOOL _MKKeyNumPrintfunc(_MKParameter *param,NSMutableData *aStream,
-			_MKScoreOutStruct *p)
+NSString *MKPitchNameForKeyNum(int i)
+{
+    return [keyNumToId[i] varName];
+}
+
+BOOL _MKKeyNumPrintfunc(_MKParameter *param, NSMutableData *aStream, _MKScoreOutStruct *p)
 {
     /* Used to write keyNum parameters. */
     int i = _MKParAsInt(param);
     if (!tuningInited)
-      _MKCheckInit();
+        _MKCheckInit();
     if ((param->_uType == MK_envelope) || !writeKeyNumNames)
-      return NO;
+        return NO;
     if (BINARY(p))
-      _MKWriteIntPar(aStream,i);
+        _MKWriteIntPar(aStream,i);
     else if ((i < 0) || (i > MIDI_NUMKEYS))
-      [aStream appendData:[[NSString stringWithFormat:@"%d", i] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-    else [aStream appendData:[[NSString stringWithFormat:@"%s", [keyNumToId[i] varName]] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+        [aStream appendData:[[NSString stringWithFormat:@"%d", i] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    else
+        [aStream appendData: [[NSString stringWithFormat:@"%@", MKPitchNameForKeyNum(i)] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     return YES;
 }    
     
@@ -224,8 +232,7 @@ void MKWritePitchNames(BOOL usePitchNames)
     writePitches = usePitchNames;
 }
 
-BOOL _MKFreqPrintfunc(_MKParameter *param,NSMutableData *aStream,
-		      _MKScoreOutStruct *p)
+BOOL _MKFreqPrintfunc(_MKParameter *param, NSMutableData *aStream, _MKScoreOutStruct *p)
 {
     /* Used to write keyNum parameters. */
     double frq;
@@ -258,14 +265,10 @@ static void install(NSArray *arrOFreqs)
 }
 
 static void
-addPitch(keyNumValue,name,oct)
-    int keyNumValue;
-//    char * name,*oct;
-    NSString * name, *oct;
+addPitch(int keyNumValue, NSString *name, NSString *oct)
 {
     /* Add a pitch to the music kit table. */
-    id obj;
-//    char * s1,*s2;
+    _ScorefileVar *obj;
     NSString *s1, *s2;
     if (keyNumValue>=MIDI_NUMKEYS)
       return;
@@ -288,7 +291,8 @@ addAccidentalPitch(keyNumValue,name1,name2,oct1,oct2)
 {
     /* Add an accidental pitch to the musickit table, including
        its enharmonic equivalent as well. */
-    id obj1,obj2;
+    _ScorefileVar *obj1;
+    _ScorefileVar *obj2;
     _MKParameter *tmp;
 //    char * sharpStr,*flatStr,*sharpKeyStr,*flatKeyStr;
     NSString * sharpStr,*flatStr,*sharpKeyStr,*flatKeyStr;

@@ -1,17 +1,16 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
   HEADER FILES: MusicKit.h
 
   Description: 
-    A TuningSystem object represents a musical tuning system by mapping
+    A MKTuningSystem object represents a musical tuning system by mapping
     key numbers to frequencies.  The method setFreq:forKeyNum: defines the
     frequency value (in hertz) for a specified key number.  To tune a key
     number and its octaves at the same time, invoke the method
-    setFreq:forKeyNumAndOctaves:.  The frequencies in a TuningSystem
+    setFreq:forKeyNumAndOctaves:.  The frequencies in a MKTuningSystem
     object don't have to increase as the key numbers increase -- you can
-    even create a TuningSystem that descends in pitch as the key numbers
+    even create a MKTuningSystem that descends in pitch as the key numbers
     ascend the scale.  The freqForKeyNum: method retrieves the frequency
     value of the argument key number.  Such values are typically used to
     set the frequency of a Note object:
@@ -19,10 +18,10 @@
     * #import <musickit/keynums.h>
     * [aNote setPar:MK_freq toDouble:[aTuningSystem freqForKeyNum:c4k]];
    
-    The TuningSystem class maintains a master system called the
+    The MKTuningSystem class maintains a master system called the
     installed tuning system.  By default, the installed tuning system is
     tuned to 12-tone equal-temperament with a above middle c set to 440
-    Hz.  A key number that doesn't reference a TuningSystem object takes
+    Hz.  A key number that doesn't reference a MKTuningSystem object takes
     its frequency value from the installed tuning system.  The frequency
     value of a pitch variable is also taken from the installed system.
     The difference between key numbers and pitch variables is explained in
@@ -31,21 +30,24 @@
     given in Appendix G, "Music Tables."
    
     You can install your own tuning system by sending the install
-    message to a TuningSystem instance.  Keep in mind that this doesn't
+    message to a MKTuningSystem instance.  Keep in mind that this doesn't
     install the object itself, it simply copies its key number-frequency
     map.  Subsequent changes to the object won't affect the installed
     tuning system (unless you again send the object the install message).
    
     Note that while key numbers can also be used to define pitch for Notes
-    used in MIDI performance, the TuningSystem object has no affect on the
+    used in MIDI performance, the MKTuningSystem object has no affect on the
     precise frequency of a Note sent to a MIDI instrument.  The
     relationship between key numbers and frequencies on a MIDI instrument
     is set on the instrument itself. (An application can, of course, use
-    the information in a TuningSystem object to configure the MIDI
+    the information in a MKTuningSystem object to configure the MIDI
     instrument.)
 */
 /*
   $Log$
+  Revision 1.4  2000/05/13 17:17:49  leigh
+  Added MKPitchNameForKeyNum()
+
   Revision 1.3  2000/04/25 22:08:41  leigh
   Converted from Storage to NSArray operation
 
@@ -78,8 +80,7 @@ extern MKKeyNum MKFreqToKeyNum(double freq,int *bendPtr,double sensitivity);
     Similarly, a value of 2.0 give a whole tone displacement in either
     direction. MIDI_ZEROBEND gives no displacement. */
 
-extern double MKAdjustFreqWithPitchBend(double freq,int pitchBend,
-                    double sensitivity);
+extern double MKAdjustFreqWithPitchBend(double freq, int pitchBend, double sensitivity);
  /* Return the result of adjusting freq by the amount specified in
     pitchBend. PitchBend is interpreted in the context of the current
     value of sensitivity. */
@@ -87,6 +88,9 @@ extern double MKAdjustFreqWithPitchBend(double freq,int pitchBend,
 extern double MKTranspose(double freq,double semiTonesUp);
  /* Transpose a frequency up by the specified number of semitones. 
     A negative value will transpose the note down. */
+
+extern NSString *MKPitchNameForKeyNum(int keyNum);
+/* Returns a formatted NSString of the pitch indicated by keyNum. */
 
 @interface MKTuningSystem : NSObject
 {
@@ -117,7 +121,7 @@ extern double MKTranspose(double freq,double semiTonesUp);
   */
 
 - initFromInstalledTuningSystem;
- /* Initializes a new TuningSystem object to the installed tuning system. */
+ /* Initializes a new MKTuningSystem object to the installed tuning system. */
 
 +(double) freqForKeyNum:(MKKeyNum )aKeyNum; 
  /* 
@@ -149,7 +153,7 @@ extern double MKTranspose(double freq,double semiTonesUp);
   * (Use MKIsNoDVal() to check for MK_NODVAL.)
   * 
   * Note: If you're making several changes to the installed tuning
-  * system, it's more efficient to make the changes in a TuningSystem
+  * system, it's more efficient to make the changes in a MKTuningSystem
   * instance and then send it the install message than it is to repeatedly
   * invoke this method.
   */
@@ -168,7 +172,7 @@ extern double MKTranspose(double freq,double semiTonesUp);
   * to freq.  Returns the receiver or nil if aKeyNum is out of bounds.
   * 
   * Note: If you're making several changes to the installed tuning system,
-  * it's more efficient to make the changes in a TuningSystem instance and
+  * it's more efficient to make the changes in a MKTuningSystem instance and
   * then send it the install message than it is to repeatedly invoke this
   * method.
   */
