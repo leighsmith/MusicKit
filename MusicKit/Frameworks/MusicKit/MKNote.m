@@ -10,12 +10,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2000 The MusicKit Project.
+  Portions Copyright (c) 1999-2001 The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.15  2001/08/30 19:07:45  leighsmith
+  removed obsolete parName, nameOfPar messages
+
   Revision 1.14  2001/07/02 16:36:46  sbrandon
   - NSHashTableCallBacks cannot on GNUSTEP contain NULL values at this time.
     This affected MKNotes and their parameters. I have implemented a couple
@@ -187,7 +190,7 @@ static double getNoteEndTime(MKNote *aNote);
 BOOL MKSetNoteClass(id aClass)
 {
     if (!_MKInheritsFrom(aClass,[MKNote class]))
-      return NO;
+        return NO;
     theSubclass = aClass;
     return YES;
 }
@@ -199,12 +202,6 @@ id MKGetNoteClass(void)
     return theSubclass;
 }
 
-+(int)parName:(NSString *)aName
-    /* Obsolete */
-{
-    return [self parTagForName:aName];
-}    
-
 +(int)parTagForName:(NSString *)aName
   /* Returns the par int corresponding to the given name. If a parameter
      with aName does not exist, creates a new one. */
@@ -213,22 +210,15 @@ id MKGetNoteClass(void)
     return _MKGetPar(aName,&aPar);
 }    
 
-+(NSString *)nameOfPar:(int)aPar
-  /* Returns the name corresponding to the parameter number given.
-     If the parameter number given is not a valid parameter number,
-     returns "". Note that the string is not copied. */
-{
-    return [self parNameForTag:aPar];
-}    
-
 +(NSString *)parNameForTag:(int)aPar
   /* Returns the name corresponding to the parameter number given.
      If the parameter number given is not a valid parameter number,
      returns "". Note that the string is not copied. */
 {
     if (_MKIsPar(aPar))
-      return _MKParNameStr(aPar);
-    else return nil;
+        return _MKParNameStr(aPar);
+    else
+        return nil;
 }    
 
 #define DEFAULTNUMPARS 1
@@ -341,7 +331,8 @@ static unsigned noteCachePtr = 0;
     noteTag = MAXINT;
     noteType = MK_mute;
     timeTag = aTimeTag;
-    performer = conductor = nil;
+    performer = nil;
+    conductor = nil;
     return self;
 }
 
