@@ -35,7 +35,6 @@
 
 #import "InstrumentPrivate.h"
 #import "MKNoteSender.h"
-#import "NoteReceiverPrivate.h"
 #import "MKNoteFilter.h"
 
 @implementation MKNoteFilter
