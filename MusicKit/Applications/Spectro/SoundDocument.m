@@ -583,6 +583,11 @@ static int calcFormat(SndSoundStruct *s)
 
 - didPlay: sender duringPerformance: (SndPerformance *) performance;
 {
+    return [self didPlay:sender];
+}
+
+- didPlay: sender;
+{
     [playButton setState:0];
     [playButton setEnabled:YES];
     [recordButton setState:0];
