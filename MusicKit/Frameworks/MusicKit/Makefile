@@ -11,6 +11,7 @@ NAME = MusicKit
 
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Framework
+LANGUAGE = English
 
 GLOBAL_RESOURCES = Localized.strings
 
@@ -93,7 +94,7 @@ FRAMEWORK_PATHS = -F$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\
                   -F$(HOME)//Library/Frameworks\
                   -F$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\
                   -F/Local/Library/Frameworks\
-                  -F$(HOMEDRIVE)$(LOCAL_DEVELOPER_LIB)/Frameworks
+                  -F$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks
 FRAMEWORKS = -framework AppKit -framework dsp -framework Foundation\
              -framework MKPerformSndMIDI -framework SndKit\
              -framework System

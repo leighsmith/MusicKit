@@ -76,7 +76,7 @@
             "$(HOME)//Library/Frameworks", 
             "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks", 
             /Local/Library/Frameworks, 
-            "$(HOMEDRIVE)$(LOCAL_DEVELOPER_LIB)/Frameworks"
+            "$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks"
         ); 
         HEADERSEARCH = (
             /Local/Users/leigh/Sources/Music/MusicKit/YellowBox/Frameworks/MusicKit_3.3_Headers
