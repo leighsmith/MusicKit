@@ -11,11 +11,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.8  2001/04/19 17:10:19  leighsmith
+  Removed redundant (given NSObject reference counting) receiveAndFreeNote methods
+
   Revision 1.7  2001/01/31 21:32:57  leigh
   Typed note parameters
 
@@ -271,32 +275,6 @@ Modification history:
     [[aNote conductor] sel:@selector(receiveNote:) to:self withDelay:delayTime argCount:1,aNote];
     return self;
 }
-
--receiveAndFreeNote: (MKNote *) aNote withDelay:(double)delayTime
-    /* Receives the specifed note, delayed by delayTime from the
-       current time, as far as the note's conductor is concerned. Then
-       frees the note. */
-{
-    [[aNote conductor] sel:@selector(receiveAndFreeNote:) to:self withDelay:delayTime argCount:1,aNote];
-    return self;
-}
-
--receiveAndFreeNote: (MKNote *) aNote
-    /* Receive note and then free it. */
-{
-    [self receiveNote:aNote];
-    [aNote release];
-    return self;
-}
-
--receiveAndFreeNote: (MKNote *) aNote atTime:(double)time
-    /* Receive the specifed note at the specified time using
-       the note's Conductor for time coordination. Then free the note. */
-{
-    [[aNote conductor] sel:@selector(receiveAndFreeNote:) to:self atTime:time argCount:1,aNote];
-    return self;
-}
-
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
   /* You never send this message directly.  

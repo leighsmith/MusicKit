@@ -49,10 +49,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2000, The MusicKit Project.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.8  2001/04/19 17:10:19  leighsmith
+  Removed redundant (given NSObject reference counting) receiveAndFreeNote methods
+
   Revision 1.7  2001/01/31 21:32:57  leigh
   Typed note parameters
 
@@ -196,29 +199,6 @@
  * receiveNote:aNote to be sent to the receiver at time
  * delayTime, measured in beats from the time this message
  * is received.  Returns the receiver.
- */
-
-- receiveAndFreeNote: (MKNote *) aNote withDelay:(double) delayTime; 
- /* 
- * Schedules a request (with aNote's Conductor) for 
- * receiveAndFreeNote:aNote to be sent to the receiver at time
- * delayTime, measured in beats from the time this message
- * is received.  Returns the receiver.
- */
-
-- receiveAndFreeNote: (MKNote *) aNote; 
- /* 
- * Sends the message receiveNote:aNote to the receiver and
- * then frees the Note.
- * Returns the receiver.
- */
-
-- receiveAndFreeNote: (MKNote *) aNote atTime:(double) time; 
- /* 
- * Schedules a request (with aNote's Conductor) for 
- * receiveAndFreeNote:aNote to be sent to the receiver at time
- * time, measured in beats from the beginning of the perfromance.
- * Returns the receiver.
  */
 
 - (void)encodeWithCoder:(NSCoder *)aCoder;
