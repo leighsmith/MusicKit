@@ -378,6 +378,7 @@
 				B512F13B01D3D819002A0494,
 				B5799B9301D76E11002A0494,
 				B5B66B0001E0EF45002A0494,
+				B552CD7401F4908E002A0494,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -529,6 +530,7 @@
 				B512F13C01D3D819002A0494,
 				B5799B9401D76E11002A0494,
 				B5B66B0101E0EF45002A0494,
+				B552CD7501F4908E002A0494,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -1567,6 +1569,28 @@
 			settings = {
 			};
 		};
+		B552CD7201F4908E002A0494 = {
+			isa = PBXFileReference;
+			path = SndAudioProcessorNoiseGate.h;
+			refType = 2;
+		};
+		B552CD7301F4908E002A0494 = {
+			isa = PBXFileReference;
+			path = SndAudioProcessorNoiseGate.m;
+			refType = 2;
+		};
+		B552CD7401F4908E002A0494 = {
+			fileRef = B552CD7201F4908E002A0494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		B552CD7501F4908E002A0494 = {
+			fileRef = B552CD7301F4908E002A0494;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		B5799B9101D76E11002A0494 = {
 			isa = PBXFileReference;
 			path = SndStreamArchitectureView.h;
@@ -1651,6 +1675,7 @@
 		};
 		B5B040B801BEC4B2002A0494 = {
 			children = (
+				B552CD7201F4908E002A0494,
 				0224068900713935CFED3B8B,
 				02240693007269D2CFED3B8B,
 				B526060201CFC639002A0494,
@@ -1671,6 +1696,7 @@
 		};
 		B5B040BA01BEC4B2002A0494 = {
 			children = (
+				B552CD7301F4908E002A0494,
 				0224068700713935CFED3B8B,
 				02240692007269D2CFED3B8B,
 				B526060301CFC639002A0494,
