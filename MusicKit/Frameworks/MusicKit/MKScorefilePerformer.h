@@ -1,10 +1,33 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    MKScorefilePerformers are used to perform scorefiles.  When the object
+    is activated, it reads the file's header and creates a MKNoteSender for
+    each (unique) member of the part statement.  A MKNoteSender is given the
+    same name as the Parts for which it was created.
+
+    A MKScorefilePerformer also has an info MKNote which it fashions from the
+    info statement in the file and defines a stream on which scorefile
+    print statements are printed.
+
+    During a performance, a MKScorefilePerformer reads successive MKNote and
+    time statements from the file.  When it reaches the end of the file,
+    the MKScorefilePerformer is deactivated.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 CCRMA, Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.4  2000/11/25 23:03:09  leigh
+  Corrected typing of ivars and enforced their privacy
+
   Revision 1.3  2000/04/22 20:11:16  leigh
   Changed fileExtensions to less error-prone NSArray of NSStrings
 
@@ -18,26 +41,11 @@
 #import "MKFilePerformer.h"
 
 @interface MKScorefilePerformer : MKFilePerformer
-/* 
- * ScorefilePerformers are used to perform scorefiles.  When the object
- * is activated, it reads the file's header and creates a MKNoteSender for
- * each (unique) member of the part statement.  A MKNoteSender is given the
- * same name as the Parts for which it was created.
- * 
- * A ScorefilePerformer also has an info Note which it fashions from the
- * info statement in the file and defines a stream on which scorefile
- * print statements are printed.
- * 
- * During a performance, a ScorefilePerformer reads successive Note and
- * time statements from the file.  When it reaches the end of the file,
- * the ScorefilePerformer is deactivated.
- */
 {
-    NSMutableData *scorefilePrintStream; /* The stream used for the 
-				       scorefile's print statements.*/
-    id info;                        /* Score info Note for the file. */
+    NSMutableData *scorefilePrintStream;  // The stream used for the scorefile's print statements.
+    MKNote *info;                         // MKScore info MKNote for the file.
 
-    /* The following are for internal use only */
+@private
     void *_p;
     NSMutableArray *_partStubs;
 }

@@ -1,10 +1,39 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    A MKScorefileWriter is an MKInstrument that realizes MKNotes by writing
+    them to a scorefile.  Each of the receiver's MKNoteReceivers 
+    correspond to a MKPart that will appear in the scorefile.
+    Unlike most MKInstruments, the MKScorefileWriter class doesn't add
+    any MKNoteReceivers to a newly created object, they must be added by 
+    invoking the addNoteReceiver:. method. 
+
+    The names of the MKParts represented in the scorefile are taken from the
+    MKNoteRecievers for which they were created.  You can name a MKNoteReceiver by
+    calling the MKNameObject() function.
+
+    The header of the scorefile always includes a part statement naming the
+    MKParts represented in the MKScore, and a tagRange statement, outlining the
+    range of noteTag values used in the MKNote statements.
+
+    You shouldn't change the name of a data object (such as an
+    MKEnvelope, MKWaveTable, or MKNoteReceiver) during a performance involving a
+    MKScorefileWriter.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 CCRMA, Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.4  2000/11/25 23:04:01  leigh
+  Corrected typing of ivars and enforced their privacy
+
   Revision 1.3  1999/09/04 22:44:04  leigh
   setInfo now setInfoNote
 
@@ -18,31 +47,10 @@
 #import "MKFileWriter.h"
 
 @interface MKScorefileWriter : MKFileWriter
-/*  
- * 
- * A ScorefileWriter is an Instrument that realizes Notes by writing
- * them to a scorefile.  Each of the receiver's NoteReceivers 
- * correspond to a Part that will appear in the scorefile.
- * Unlike most Instruments, the ScorefileWriter class doesn't add
- * any NoteReceivers to a newly created object, they must be added by 
- * invoking the addNoteReceiver:. method. 
- * 
- * The names of the Parts represented in the scorefile are taken from the
- * NoteRecievers for which they were created.  You can name a NoteReceiver by
- * calling the MKNameObject() function.
- * 
- * The header of the scorefile always includes a part statement naming the
- * Parts represented in the Score, and a tagRange statement, outlining the
- * range of noteTag values used in the Note statements.
- * 
- * You shouldn't change the name of a data object (such as an
- * Envelope, WaveTable, or NoteReceiver) during a performance involving a
- * ScorefileWriter.
- */
 {
-    id info; /* The info Note to be written to the file. */
+    MKNote *info; /* The info MKNote to be written to the file. */
 
-    /* The following for internal use only */
+@private
     int _highTag,_lowTag;
     BOOL _isOptimized;
     void *_p;
