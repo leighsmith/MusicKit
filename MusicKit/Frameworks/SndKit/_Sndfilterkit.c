@@ -1,6 +1,6 @@
 /*
  * filterkit.c (library "filterkit.a"):  Kaiser-windowed low-pass filter support.
- *
+ */
 
 /* filterkit.c
  *
