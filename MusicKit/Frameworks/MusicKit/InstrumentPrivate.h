@@ -4,6 +4,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2001/07/07 14:36:17  sbrandon
+  removed cruft after endif (GNUSTEP compiler worning)
+
   Revision 1.3  2001/01/31 21:43:50  leigh
   Typed note parameters
 
@@ -27,7 +30,7 @@
 
 @end
 
-#endif __INSTRUMENT_H
+#endif /* __INSTRUMENT_H  */
 
 
 
