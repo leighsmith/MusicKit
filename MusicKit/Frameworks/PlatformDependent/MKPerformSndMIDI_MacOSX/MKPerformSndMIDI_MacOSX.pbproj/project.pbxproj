@@ -249,25 +249,11 @@
 		016D5A44FED483BBCFED3B93 = {
 			buildActionMask = 2147483647;
 			files = (
-				016D5A45FED483BBCFED3B93,
 				016D5A46FED483BBCFED3B93,
+				0310678EFFBCB9BDCFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
-		};
-		016D5A45FED483BBCFED3B93 = {
-			fileRef = 016D5A2FFED483BBCFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
 		};
 		016D5A46FED483BBCFED3B93 = {
 			fileRef = 016D5A30FED483BBCFED3B93;
@@ -310,6 +296,20 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
+		};
+		0310678EFFBCB9BDCFED3B96 = {
+			fileRef = 016D5A2FFED483BBCFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
 		};
 		06D6961DFF81940ECFED3B93 = {
 			isa = PBXFrameworkReference;
