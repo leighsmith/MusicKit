@@ -1,7 +1,3 @@
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
   Defined In: The MusicKit
@@ -10,8 +6,8 @@
     Based on original version written by Lee Boynton, extensively revised by
     David Jaffe.
 
-    These routines might eventually be in a MIDI library. For now, they're
-    private Music Kit functions.
+    These routines might eventually be in a MIDI library. Nowdays, they're
+    public MusicKit functions.
 
     The division of labor is as follows: All Music-Kit specifics are kept out
     of this file. The functions in this file read/write raw MIDI and meta-events.
@@ -26,6 +22,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/02/24 22:56:35  leigh
+  Added Davids bug fix for unused recognised meta events
+
   Revision 1.2  1999/07/29 01:26:09  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -287,12 +286,12 @@ static int readMetaevent(midiFileInStruct *p,unsigned int *streamPos)
 {
     unsigned char theByte = '\0';
     int temp;
-    int len; unsigned int poin;
+    int varQuantityLength; unsigned int poin;
     if (*streamPos >= [p->midiStream length]) return endOfStream; //sb
     poin = *streamPos;
     theByte = ((const char *)[p->midiStream bytes])[poin];
     *streamPos = poin + 1;
-    if (!readVariableQuantity(p->midiStream,&len,streamPos))
+    if (!readVariableQuantity(p->midiStream,&varQuantityLength,streamPos))
       return endOfStream;
     if (theByte == SEQUENCENUMBER) {
 	short val;
@@ -301,12 +300,12 @@ static int readMetaevent(midiFileInStruct *p,unsigned int *streamPos)
 	p->data[0] = MKMIDI_sequenceNumber;
 	p->data[1] = val >> 8;
 	p->data[2] = val;
-	len -= 2;
+	varQuantityLength -= 2;
 	p->nData = 3;
     }
     else if (theByte >= 1 && theByte <= 0x0f) { /* Text meta events */
 	p->data[0] = theByte;
-	p->nData = len + 1; /* nData doesn't include the \0 */
+	p->nData = varQuantityLength + 1; /* nData doesn't include the \0 */
 	checkRealloc(p,p->nData + 1);
 	if (!readBytes(p->midiStream,&(p->data[1]),p->nData - 1,streamPos))
 	  return endOfStream;
@@ -318,7 +317,7 @@ static int readMetaevent(midiFileInStruct *p,unsigned int *streamPos)
 	if (temp == endOfStream) 
 	  return endOfStream;
 	/* trackChange doesn't have any args but we pass up the track number,
-	   so no len -= needed.
+	   so no varQuantityLength -= needed.
 	 */
 	p->nData = 3;
 	p->data[0] = MKMIDI_trackChange;
@@ -358,39 +357,37 @@ static int readMetaevent(midiFileInStruct *p,unsigned int *streamPos)
 	p->data[4] = i & 0xff;
 #endif
 	p->nData = 5;
-	len -= 3;
+	varQuantityLength -= 3;
     } 
     else if (theByte == SMPTEOFFSET) {
 	p->data[0] = MKMIDI_smpteOffset;
 	if (!readBytes(p->midiStream,&(p->data[1]),5,streamPos))
 	  return endOfStream;
 	p->nData = 6;
-	len -= 5;
+	varQuantityLength -= 5;
     } 
     else if (theByte == TIMESIG) {
 	if (!readBytes(p->midiStream,&p->data[1],4,streamPos))
 	  return endOfStream;
 	p->data[0] = MKMIDI_timeSig;
 	p->nData = 5;
-	len -= 4;
+	varQuantityLength -= 4;
     } 
     else if (theByte == KEYSIG) {
 	if (!readBytes(p->midiStream,&p->data[1],2,streamPos))
 	  return endOfStream;
 	p->data[0] = MKMIDI_keySig;
 	p->nData = 3;
-	len -= 2;
+	varQuantityLength -= 2;
     } 
     else { /* Skip unrecognized meta events */
-        if (!readVariableQuantity(p->midiStream,&temp,streamPos))
-	     return endOfStream;
-//	NXSeek(p->midiStream,temp,NX_FROMCURRENT);
-        *streamPos += temp;//sb: to replace seek
+        // According to David J, we should simply advance past the variable quantity,
+        // not read any further data.
+        *streamPos += varQuantityLength;
 	return unrecognized;
     }
 
-//    NXSeek(p->midiStream,len,NX_FROMCURRENT); /* Skip any extra length in field. */
-    *streamPos += len;
+    *streamPos += varQuantityLength;
     return ok;
 }
 
