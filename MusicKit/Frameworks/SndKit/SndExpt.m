@@ -115,7 +115,7 @@
 // fillAudioBuffer:withSamplesInRange:
 ////////////////////////////////////////////////////////////////////////////////
 
-- fillAudioBuffer: (SndAudioBuffer*) anAudioBuffer withSamplesInRange: (NSRange) playRegion
+- (void) fillAudioBuffer: (SndAudioBuffer*) anAudioBuffer withSamplesInRange: (NSRange) playRegion
 {
   [cacheLock lock];
 
@@ -164,7 +164,6 @@
     }
   }
   [cacheLock unlock];
-  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
