@@ -4,6 +4,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2000/03/31 00:12:29  leigh
+  theTimeToWait now a shared function
+
   Revision 1.7  2000/03/24 16:25:16  leigh
   Removed redundant AppKit headers
 
@@ -54,6 +57,9 @@ extern void _MKSendVMMsgToApplicationThread(id self,
 					    short *data,
 					    int dataCount,
 					    int vmCount);
+
+
+extern double _MKTheTimeToWait(double nextMsgTime);
 
 @interface MKConductor(Private)
 
