@@ -284,7 +284,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Network/Servers/whiteley/lauren/Local/Library/Frameworks /Local/Library/Frameworks";
-				FRAMEWORK_VERSION = 2.0;
+				FRAMEWORK_VERSION = 2.1;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LIBRARY_SEARCH_PATHS = /Volumes/manray/Local/Unix/lib;
@@ -329,11 +329,11 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>V2.0.0</string>
+	<string>SndKit V2.1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2.0.0</string>
+	<string>2.1.0</string>
 </dict>
 </plist>
 ";
