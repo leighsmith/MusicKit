@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/08/07 16:10:32  leighsmith
+  Corrected class name during en/decode to match latest MK prefixed name
+
   Revision 1.3  2001/07/02 16:52:20  sbrandon
   - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
     compliant)
@@ -94,7 +97,6 @@ Modification history:
 {
     NSString *str;
     str = MKGetObjectName(self);
-    /*[super encodeWithCoder:aCoder];*/ /*sb: unnecessary */
     [aCoder encodeValueOfObjCType:"@" at:&str];
 }
 
@@ -105,12 +107,11 @@ Modification history:
      */
 {
     /*[super initWithCoder:aDecoder];*/ /*sb: unnecessary */
-    if ([aDecoder versionForClassName:@"WaveTable"] == VERSION2) {
+    if ([aDecoder versionForClassName: @"MKWaveTable"] == VERSION2) {
 	NSString *str;
-	[aDecoder decodeValueOfObjCType:"@" at:&str];
+	[aDecoder decodeValueOfObjCType: "@" at: &str];
 	if (str) {
 	    MKNameObject(str,self);
-//	    free(str);
 	}
     }
     return self;

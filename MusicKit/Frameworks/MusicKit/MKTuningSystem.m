@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2001/08/07 16:11:16  leighsmith
+  Corrected class name during en/decode to match latest MK prefixed name
+
   Revision 1.7  2001/07/02 16:48:49  sbrandon
   - added (Class)_transpose:(double)semitones method, identical to (Class)transpose:(double)semitones
     This is because GNUStep does not like sending messages to class objects
@@ -407,15 +410,13 @@ void _MKTuningSystemInit(void)
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-    /*[super encodeWithCoder:aCoder];*/ /*sb: unnec */
     [aCoder encodeObject:frequencies];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-    /*[super encodeWithCoder:aDecoder];*/ /*sb: unnec */
-    if ([aDecoder versionForClassName:@"MKTuningSystem"] == VERSION2) 
-      frequencies = [[aDecoder decodeObject] retain];
+    if ([aDecoder versionForClassName: @"MKTuningSystem"] == VERSION2) 
+        frequencies = [[aDecoder decodeObject] retain];
     return self;
 }
 
