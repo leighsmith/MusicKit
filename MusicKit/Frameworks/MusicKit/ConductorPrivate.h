@@ -4,6 +4,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2000/01/13 06:54:04  leigh
+  Added a missing (pre-OpenStep conversion!) _error: method
+
   Revision 1.3  1999/09/04 22:02:16  leigh
   Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
 
@@ -58,6 +61,7 @@ extern void _MKSendVMMsgToApplicationThread(id self,
   atTime:(double)timeOfNewMsg sel:(SEL)whichSelector
   to:(id)destinationObject argCount:(int)argCount, ...;
 + (void) masterConductorBody:(NSTimer *) unusedTimer;
+- _error: (NSString *) errorMsg;
 
 @end
 
