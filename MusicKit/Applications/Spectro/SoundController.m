@@ -9,28 +9,9 @@
 #import "SoundDocument.h"
 
 #import <AppKit/AppKit.h>
-#import <string.h>
 #import <Foundation/Foundation.h>
 
 static NSString *pathname;
-
-static NSString * getOpenPath(NSString *buf)
-{
-    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-    NSArray *fileTypes = [Snd soundFileExtensions];
-    int opr;
-    
-    if (!buf)
-        buf = @"";
-    
-    opr = [openPanel runModalForDirectory: buf file: @"" types: fileTypes];
-
-    if (opr == NSOKButton)
-        return [buf stringByAppendingPathComponent: [openPanel filename]];
-    else
-        return nil;
-}
-
 
 static NSString *getSavePath(NSString *defaultPath, NSView *accessory)
 {
@@ -43,7 +24,8 @@ static NSString *getSavePath(NSString *defaultPath, NSView *accessory)
     if (defaultPath) if ([defaultPath length]) {
         ok = [savePanel runModalForDirectory:[defaultPath stringByDeletingLastPathComponent]
                                         file:[defaultPath lastPathComponent]];
-    } else
+    }
+    else
         ok = [savePanel runModal];
     if (ok) {
         return [savePanel filename];
@@ -114,10 +96,18 @@ NSColor *StringToColor(NSString *buffer)
 
 - open:sender
 {
+    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+    NSArray *fileTypes = [Snd soundFileExtensions];
+    int opr;
+    
     [pathname release];
-    pathname = nil;
-    if (pathname = getOpenPath(pathname))
-        [self openFile:[pathname retain]];
+    pathname = nil;  // so if we fail to load, we have notice of this.
+    
+    opr = [openPanel runModalForDirectory: pathname file: @"" types: fileTypes];
+    if (opr == NSOKButton) {
+        pathname = [[openPanel filename] retain];
+        [self openFile: pathname];
+    }
     return self;
 }
 
@@ -127,7 +117,7 @@ NSColor *StringToColor(NSString *buffer)
     newDocument = [self openDoc];
     [newDocument setFileName:fileName];
     [newDocument load:nil];
-        [newDocument setButtons];
+    [newDocument setButtons];
     return self;
 }
 
