@@ -169,10 +169,10 @@ int main (int argc, const char * argv[])
         SndAudioProcessorMP3Encoder *mp3enc = nil;
         long b1, b2;
 
-        b1 = clock();
+//        b1 = clock();
         [s readSoundfile: filename];
-        b2 = clock();
-        printf("Readtime: %li\n",b2-b1);
+//        b2 = clock();
+//        printf("Readtime: %li\n",b2-b1);
         maxWait = [s duration] + 5 + timeOffset + 1;
 
         [player setRemainConnectedToManager: FALSE];
