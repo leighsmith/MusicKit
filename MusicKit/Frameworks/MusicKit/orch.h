@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/07/02 16:59:08  sbrandon
+  - commented out cruft after endif
+
   Revision 1.3  2000/02/03 19:12:23  leigh
   Renamed for MKDSP framework
 
@@ -73,7 +76,7 @@ typedef enum _MKSynthStatus { /* Status for SynthPatches and UnitGenerators. */
     MK_finishing,             /* The meaning of this is defined by the ug */
   } MKSynthStatus;
 
-#endif MK_ORCH_H
+#endif /* MK_ORCH_H */
 
 
 

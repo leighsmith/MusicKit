@@ -6,6 +6,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/07/02 16:57:16  sbrandon
+  - commented out cruft after endif
+
   Revision 1.2  1999/07/29 01:26:06  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -26,5 +29,5 @@ extern void MKSetInclusiveMidiTranslation(BOOL yesOrNo);
 extern BOOL MKGetInclusiveMidiTranslation(void);
   /* Returns value set with the above function. */
 
-#endif MIDITRANS_H
+#endif /* MIDITRANS_H */
 #endif

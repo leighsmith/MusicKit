@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/07/02 16:55:33  sbrandon
+  - commented out cruft after endif
+
   Revision 1.5  2001/05/12 09:31:44  sbrandon
   - changed from "id aClass" to Class aClass to avoid compiler warnings on GNUSTEP
 
@@ -235,7 +238,7 @@ extern NSBundle *_MKErrorBundle(void);
 extern NSString *_MKErrorStringFile(void);
 #define _MK_ERRTAB _MKErrorStringFile()
 
-#endif _MKUTILITIES_H
+#endif /* _MKUTILITIES_H */
 
 
 

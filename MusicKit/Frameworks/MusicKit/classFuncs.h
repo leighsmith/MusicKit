@@ -6,6 +6,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/07/02 16:56:01  sbrandon
+  - commented out cruft after endif
+
   Revision 1.2  1999/07/29 01:26:03  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -39,5 +42,5 @@ extern id MKGetPartialsClass(void);
 extern id MKGetSamplesClass(void);
 
 
-#endif CLASSFUNCS_H
+#endif /* CLASSFUNCS_H */
 #endif

@@ -7,6 +7,9 @@
  Modification history:
 
   $Log$
+  Revision 1.3  2001/07/02 16:54:37  sbrandon
+  - commented out cruft after endif
+
   Revision 1.2  1999/07/29 01:25:56  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -28,7 +31,7 @@
 
 @end
 
-#endif __PERFORMER_H
+#endif /* __PERFORMER_H  */
 
 
 

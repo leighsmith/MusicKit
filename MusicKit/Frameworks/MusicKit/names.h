@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/07/02 16:58:36  sbrandon
+  - commented out cruft after endif
+
   Revision 1.2  1999/07/29 01:26:10  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -118,5 +121,5 @@ extern void MKWriteKeyNumNames(BOOL useKeyNums);
   * keyNum names or as integers. The default is YES.
   */
 
-#endif MK_NAMES_H
+#endif /* MK_NAMES_H */
 #endif

@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/07/02 16:56:40  sbrandon
+  - commented out cruft after endif
+
   Revision 1.2  1999/07/29 01:26:05  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -152,7 +155,7 @@ typedef enum _MKKeyNum {
 #define ff9k e9k  
 #define gf9k fs9k
 
-#endif KEYNUMS_H
+#endif /* KEYNUMS_H */
 
 
 
