@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.5  2001/09/12 11:28:11  sbrandon
+// added audio input routines (easier than I thought!)
+//
 // Revision 1.4  2001/09/05 10:07:39  sbrandon
 // - because of changes to SndStreamManager.m we can now properly stop streams
 //   in SNDStreamStop - therefore we now call Pa_CloseStream after Pa_StopStream
@@ -68,6 +71,7 @@ extern "C" {
 
 #define PA_DEFAULT_SAMPLE_RATE     (44100)
 #define PA_DEFAULT_OUT_CHANNELS    (2)
+#define PA_DEFAULT_IN_CHANNELS     (2)
 /* Note: if changing the default buffer size, ensure it is exactly
  * divisible by PA_BYTES_PER_FRAME (which is 8 for stereo, 4 byte
  * floats).
@@ -244,6 +248,7 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
         return FALSE;
     if(!initialised)
         initialised = TRUE;   // SNDSetDriverIndex() needs to think we're initialised.
+    inputInit = TRUE;
 
     return TRUE;
 }
@@ -337,7 +342,7 @@ PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct,
 
     err = Pa_OpenDefaultStream(
         &stream,                         /* passes back stream pointer */
-        0,                               /* no input channels */
+        PA_DEFAULT_IN_CHANNELS,          /* stereo input */
         PA_DEFAULT_OUT_CHANNELS,         /* stereo output */
         paFloat32,                       /* 32 bit floating point output */
         PA_DEFAULT_SAMPLE_RATE,          /* sample rate */
@@ -427,17 +432,13 @@ static int vendBuffersToStreamManagerIOProc(void *inputBuffer,
     if(firstSampleTime == -1.0) {
         firstSampleTime = outTime; /* I assume this will be 0, but interesting to find out. */
     }
-        
+
     // to tell the client the format it is receiving.
-    /*****
+
     if (inputInit) {
-        if (inInputData->mNumberBuffers == 0)
-            inStream.streamData = NULL;
-        else {
-            memcpy(fInputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
-        }
+        memcpy(fInputBuffer, inputBuffer, bufferSizeInBytes);
     }
-    ****/
+
     // to tell the client the format it should send.
         
     SNDStreamNativeFormat(&outStream.streamFormat);   
@@ -475,13 +476,11 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
     if(!initialised)
         return FALSE;  // invalid sound structure.
 
-    /*****
     if (inputInit) {
         if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL)
             return FALSE;
         memset(fInputBuffer,0,bufferSizeInBytes);
     }
-    *****/
 
     // indicate the first absolute sample time received from the call back needs to be marked as a
     // datum to use to convert subsequent absolute sample times to a relative time.
@@ -497,7 +496,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
     }
     err = Pa_OpenDefaultStream(
         &stream,                         /* passes back stream pointer */
-        0,                               /* no input channels */
+        PA_DEFAULT_IN_CHANNELS,          /* stereo input */
         PA_DEFAULT_OUT_CHANNELS,         /* stereo output */
         paFloat32,                       /* 32 bit floating point output paFloat32 */
                                          /*  note: this value instructs portaudio
@@ -540,6 +539,10 @@ PERFORM_API BOOL SNDStreamStop(void)
     }
 
 //    SNDTerminate();
+    if (inputInit) {
+        free(fInputBuffer);
+        fInputBuffer = NULL;
+    }
     NSLog(@"SNDStreamStopped\n" );
     return r;
 }
