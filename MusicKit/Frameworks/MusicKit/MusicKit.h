@@ -13,6 +13,10 @@
 */
 /*
   $Log$
+  Revision 1.11  2001/07/02 16:53:59  sbrandon
+  - got rid of useless macro __MK_musickit_H___
+  - commented out cruft after endif
+
   Revision 1.10  2001/05/12 09:28:36  sbrandon
   - GNUSTEP: don't import ArielQP.h or DSPSerialPortDevice.h
 
@@ -41,8 +45,6 @@
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
-#ifndef __MK_musickit_H___
-#define __MK_musickit_H___
 
 #ifdef __cplusplus
 extern "Objective-C" {
@@ -120,10 +122,9 @@ extern "Objective-C" {
 #import "MKWaveTable.h"
 #import "fastFFT.h"
 
-#endif MUSICKIT_H
+#endif /* MUSICKIT_H */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif __MK_musickit_H___
