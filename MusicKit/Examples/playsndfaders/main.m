@@ -11,6 +11,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #import <Foundation/Foundation.h>
+
 #import <SndKit/SndKit.h>
 #import <unistd.h>
 
@@ -74,7 +75,7 @@ int main (int argc, const char * argv[])
     float  amplitude          = 1;
     float  balance            = 0;
     int    numzigzags         = 0;
-    
+
     if (argc == 1) {
       printf("Use: playsndfaders [options] <soundfile>\nType playsnd -h for more help.\n");
       return 0;
@@ -238,7 +239,7 @@ int main (int argc, const char * argv[])
 
         // Wait for stream manager to go inactive, signalling the sound has finished playing
         while ([[SndStreamManager defaultStreamManager] isActive] && waitCount < maxWait) {
-          sleep(1);
+          [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:1]];
           if (bTimeOutputFlag)  printf("Time: %i\n",i+1);
           waitCount++;
         }
