@@ -82,25 +82,11 @@
 #import "_musickit.h"
 #import "_time.h"
 #import "MidiPrivate.h"
-#import "_MTCHelper.h"   // sb: moved this to here from _MTCHelper.m, since it interferred there.
+#import "_MTCHelper.h"
 #import "_MKAppProxy.h"
+#import "ConductorPrivate.h"
 
 #define MK_INLINE 1
-
-// This used to be NX_FOREVER which is obsolete with OpenStep. There's no reason not to include it manually though.
-#define MK_FOREVER	(6307200000.0)	/* 200 years of seconds */
-
-#define ENDOFLIST (MK_FOREVER)
-#define PAUSETIME (MK_ENDOFTIME - 2.0) /* See ISENDOFTIME below */
-
-/* Macros for safe float compares */
-#define ISENDOFLIST(_x) (_x > (ENDOFLIST - 1.0))
-#define ISENDOFTIME(_x) (_x > (MK_ENDOFTIME - 1.0))
-
-#define TARGETFREES NO
-#define CONDUCTORFREES YES
-
-#define NOTIMEDENTRY nil
 
 static BOOL separateThread = NO;
 static NSTimer *timedEntry = NOTIMEDENTRY; /* Only used for DPS client mode */
@@ -124,8 +110,7 @@ static BOOL performanceIsPaused = NO; /* YES if the entire performance is
 					 paused. */
 static id classDelegate = nil;  /* Delegate for the whole class. */
 
-#import "ConductorPrivate.h"
-@implementation MKConductor:NSObject 
+@implementation MKConductor
 
 /* METHOD TYPES
  * Creating and freeing Conductors
@@ -139,15 +124,12 @@ static id classDelegate = nil;  /* Delegate for the whole class. */
 static MKConductor *curRunningCond = nil; /* Or nil if no running conductor. */
 static MKConductor *condQueue = nil;   /* Head of conductor queue. */
 static MKConductor *defaultCond = nil; /* default Conductor. */
-static MKConductor *clockCond = nil;   /* clock time Conductor. */
+// TODO this should be static but has to be extern for categories to be able to access it.
+MKConductor *clockCond = nil;   /* clock time Conductor. */
 
 #define NORMALCOND (unsigned char)0
 #define CLOCKCOND (unsigned char)1
 #define DEFAULTCOND (unsigned char)2
-
-#define DELEGATE_RESPONDS_TO(_self,_msgBit) ((_self)->delegateFlags & _msgBit)
-#define BEAT_TO_CLOCK 1
-#define CLOCK_TO_BEAT 2
 
 #define VERSION2 2
 #define VERSION3 3
@@ -251,13 +233,7 @@ static void adjustTimedEntry(double nextMsgTime)
     }
 }
 
-/* mtc forward decls */
-static void resetMTCTime(void);
-static void setupMTC(void);
-static BOOL mtcEndOfTime(void);
-static BOOL weGotMTC(void);
-
-static BOOL checkForEndOfTime()
+BOOL checkForEndOfTime()
 {
     if ((dontHang || (!isClocked)) && ISENDOFTIME(condQueue->nextMsgTime) && mtcEndOfTime()) {
         [MKConductor finishPerformance];
@@ -266,7 +242,7 @@ static BOOL checkForEndOfTime()
     return NO;
 }
 
-static void repositionCond(MKConductor *cond,double nextMsgTime)
+void repositionCond(MKConductor *cond,double nextMsgTime)
     /* Enqueue a MKConductor (this happens every time a new message is 
        scheduled.)
 
@@ -357,7 +333,7 @@ static void repositionCond(MKConductor *cond,double nextMsgTime)
 #pragma CC_OPT_OFF
 #endif
 
-static double beatToClock(MKConductor *self,double newBeat)
+double beatToClock(MKConductor *self, double newBeat)
     /* Conversion from beat time to clock time.
        This function assumes that self has been adjusted with adjustBeat. */
 {
@@ -436,7 +412,7 @@ static void setTime(t)
       adjustBeat(cond);
 }
 
-static void adjustTime()
+void adjustTime()
 /* Normally, the variable time jumps in discrete amounts. However,
    sometimes, as, for example, when an asynchronous event such as
    MIDI or a mouse-click is received, it is desirable to adjust time 
@@ -487,15 +463,13 @@ BOOL _MKAdjustTimeIfNotBehind(void)
     return YES;
 }
 
-+(double)timeInSeconds
++ (double) timeInSeconds
     /* Returns the time in seconds as viewed by the clock conductor.
        Same as [[Conductor clockConductor] time]. 
        Returns MK_NODVAL if not in
        performance. Use MKIsNoDVal() to check for this return value.  */
 {
-    if (inPerformance)
-      return clockTime;
-    return MK_NODVAL;
+    return (inPerformance) ? clockTime : MK_NODVAL;
 }
 
 /* Convenience class methods to set the delta time using the MKConductor class */
@@ -551,10 +525,6 @@ insertSpecialQueue(sp,queue,queueEnd)
     sp->_conductor = nil; /* nil signals special queue */
     return queue;
 }
-
-#define PEEKTIME(pq) (pq)->_timeOfMsg
-
-#define COUNT_MSG_QUEUE_LENGTH 0
 
 static id insertMsgQueue(register MKMsgStruct *sp, MKConductor *self)
 /* inserts in msgQueue and changes timed entry if necessary. */
@@ -873,7 +843,7 @@ static void _runSetup()
     return defaultCond;
 }
 
-+(BOOL)inPerformance
++ (BOOL) inPerformance
   /* TYPE: Querying; Returns YES if a performance is in session.
    * Returns YES if a performance is currently taking
    * place.
@@ -1095,17 +1065,6 @@ static void evalAfterQueues()
     return isPaused;
 }
 
--_pause
-  /* Used by MTC mechanism */
-{
-    if (isPaused)
-      return self;
-    isPaused = YES;
-    repositionCond(self,PAUSETIME);
-    if ([delegate respondsToSelector:@selector(conductorDidPause:)])
-      [delegate conductorDidPause:self];
-    return self;
-}
 
 -pause
   /* TYPE: Controlling; Pauses the receiver.
@@ -1125,20 +1084,6 @@ static void evalAfterQueues()
     repositionCond(self,PAUSETIME);
     if ([delegate respondsToSelector:@selector(conductorDidPause:)])
       [delegate conductorDidPause:self];
-    return self;
-}
-
--_resume
-  /* This is factored out of resume to avoid circularity in MTC
-   * implementation.
-   */
-{
-    if (!isPaused)
-      return self;
-    isPaused = NO;
-    oldAdjustedClockTime = clockTime - _pauseOffset;
-    repositionCond(self,beatToClock(self,PEEKTIME(_msgQueue)));
-    pauseFor = MKCancelMsgRequest(pauseFor);
     return self;
 }
 
@@ -1972,11 +1917,7 @@ static double getNextMsgTime(MKConductor *aCond)
     return [queue stringByAppendingFormat: @"%@%@%@\n%@%@", timeStr, beatTime, msgs, pausing, misc];
 }
 
-#import "mtcConductor.m"
-
 @end
-
-#import "mtcConductorPrivate.m"
 
 @implementation MKConductor(Private)
 
@@ -2298,6 +2239,32 @@ static double getNextMsgTime(MKConductor *aCond)
 {
    MKError(errorMsg);
    return self;
+}
+
+-_resume
+    /* This is factored out of resume to avoid circularity in MTC
+    * implementation.
+    */
+{
+    if (!isPaused)
+	return self;
+    isPaused = NO;
+    oldAdjustedClockTime = clockTime - _pauseOffset;
+    repositionCond(self,beatToClock(self,PEEKTIME(_msgQueue)));
+    pauseFor = MKCancelMsgRequest(pauseFor);
+    return self;
+}
+
+-_pause
+    /* Used by MTC mechanism */
+{
+    if (isPaused)
+	return self;
+    isPaused = YES;
+    repositionCond(self,PAUSETIME);
+    if ([delegate respondsToSelector:@selector(conductorDidPause:)])
+	[delegate conductorDidPause:self];
+    return self;
 }
 
 @end

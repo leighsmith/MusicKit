@@ -3,93 +3,20 @@
   Defined In: The MusicKit
 
   Description:
-    This is the header for the MusicKit scheduler. See documentation for details.
+    This is the header for the MusicKit scheduler. See documentation below for details.
 
   Original Author: David Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2003 The MusicKit Project.
 */
-/*
-Modification history:
 
-  $Log$
-  Revision 1.21  2002/09/24 21:22:33  leighsmith
-  Moved @class declarations before the headerdoc @class entry as it was screwing up the headerdoc generation
+#import <Foundation/Foundation.h>
 
-  Revision 1.20  2002/05/09 16:41:17  leighsmith
-  Cleaned up headerdoc listitems
-
-  Revision 1.19  2002/04/08 19:09:38  sbrandon
-  added doco and prototypes for new methods introduced in last commit
-
-  Revision 1.18  2002/04/08 17:26:04  sbrandon
-  added new BOOL flags to message struct to signal whether or not to retain
-  /release any object arguments.
-  added *MKNewMsgRequestWithObjectArgs() function similar to MKNewMsgRequest
-  except you can tell it to retain its (object) arguments.
-
-  Revision 1.17  2002/03/20 17:05:11  sbrandon
-  New delegate message passing system, between any thread and the
-  appkit thread. This is basically the same as that in the SndKit
-  for passing delegate messages back from background thread, so
-  it works quite well.
-
-  Revision 1.16  2001/09/07 18:44:12  leighsmith
-  Moved @class before headerdoc declaration, corrected URL reference
-
-  Revision 1.15  2001/09/07 00:14:46  leighsmith
-  Corrected @discussion
-
-  Revision 1.14  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.13  2001/08/29 21:51:55  leighsmith
-  Merged RTF Class Reference documentation into headerdoc comments
-
-  Revision 1.12  2001/08/27 23:51:47  skotmcdonald
-  deltaT fetched from conductor, took out accidently left behind debug messages (MKSampler). Conductor: renamed time methods to timeInBeat, timeInSamples to be more explicit
-
-  Revision 1.11  2001/07/05 22:57:58  leighsmith
-  Added useful status methods and removed _wakeUpMKThread
-
-  Revision 1.10  2001/04/24 23:37:26  leighsmith
-  Added _MKWakeThread prototype for separate threading
-
-  Revision 1.9  2000/04/20 21:39:00  leigh
-  Removed flakey longjmp for unclocked MKConductors, improved description
-
-  Revision 1.8  2000/04/16 04:28:17  leigh
-  Class typing and added description method
-
-  Revision 1.7  2000/03/31 00:14:43  leigh
-  typed defaultConductor
-
-  Revision 1.6  2000/01/20 17:15:36  leigh
-  Replaced sleepMs with OpenStep NSThread delay
-
-  Revision 1.5  2000/01/13 06:53:17  leigh
-  doco cleanup
-
-  Revision 1.4  1999/09/04 22:02:17  leigh
-  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
-
-  Revision 1.3  1999/08/06 16:31:12  leigh
-  Removed extraInstances and implementation ivar cruft
-
-  Revision 1.2  1999/07/29 01:25:44  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
+@class MKMidi;
 @class MKConductor;
-@class NSLock;
-@class NSConditionLock;
-@class NSConnection;
-
-#ifdef __MINGW32__
-@class SndConditionLock;
-#endif
 
 /*!
   @class MKConductor
@@ -390,12 +317,11 @@ extern int MKGetDeltaTMode(void);
 extern double MKSetTime(double newTime); /* Rarely used */
 
 extern MKMsgStruct 
-  *MKNewMsgRequest(double timeOfMsg,SEL whichSelector,id destinationObject,
-		   int argCount,...);
+  *MKNewMsgRequest(double timeOfMsg, SEL whichSelector, id destinationObject, int argCount, ...);
 
 extern MKMsgStruct 
-  *MKNewMsgRequestWithObjectArgs(double timeOfMsg,SEL whichSelector,id destinationObject,
-		   int argCount,id arg1, BOOL, id arg2, BOOL);
+  *MKNewMsgRequestWithObjectArgs(double timeOfMsg, SEL whichSelector, id destinationObject,
+		   int argCount, id arg1, BOOL, id arg2, BOOL);
 
 extern void 
   MKScheduleMsgRequest(MKMsgStruct *aMsgStructPtr, id conductor);
@@ -404,29 +330,29 @@ extern MKMsgStruct *
   MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr);
 
 extern MKMsgStruct *
-  MKRescheduleMsgRequest(MKMsgStruct *aMsgStructPtr,id conductor,
-			 double timeOfNewMsg,SEL whichSelector,
-			 id destinationObject,int argCount,...);
+  MKRescheduleMsgRequest(MKMsgStruct *aMsgStructPtr, id conductor,
+			 double timeOfNewMsg, SEL whichSelector,
+			 id destinationObject, int argCount, ...);
 
 extern MKMsgStruct *
-  MKRescheduleMsgRequestWithObjectArgs(MKMsgStruct *aMsgStructPtr,id conductor,
-			 double timeOfNewMsg,SEL whichSelector,
-			 id destinationObject,int argCount,
+  MKRescheduleMsgRequestWithObjectArgs(MKMsgStruct *aMsgStructPtr, id conductor,
+			 double timeOfNewMsg, SEL whichSelector,
+			 id destinationObject, int argCount,
 			 id arg1, BOOL retainArg1,
 			 id arg2, BOOL retainArg2);
 
 extern MKMsgStruct *
-  MKRepositionMsgRequest(MKMsgStruct *aMsgStructPtr,double newTimeOfMsg);
+  MKRepositionMsgRequest(MKMsgStruct *aMsgStructPtr, double newTimeOfMsg);
 
 extern void MKFinishPerformance(void);
 
-@interface MKConductor : NSObject
-/* nextMsgTime = (nextbeat - time) * beatSize */
+@interface MKConductor: NSObject
 {
   /*! @var time Current Time in beats, updated (for all instances) after timed entry fires off. */
     double time;       
   /*! @var nextMsgTime Time, in seconds, when next message is scheduled to be sent by this MKConductor. */
     double nextMsgTime;           // sb: relative to start of performance, I think.
+    /* nextMsgTime = (nextbeat - time) * beatSize */
   /*! @var beatSize The duration of a single beat in seconds. */
     double beatSize;    
   /*! @var timeOffset Performance timeOffset in seconds. */
@@ -456,7 +382,7 @@ extern void MKFinishPerformance(void);
     unsigned char delegateFlags;
 }
  
-+ allocWithZone:(NSZone *)zone;
++ allocWithZone: (NSZone *) zone;
 
 /*!
   @method alloc
@@ -498,11 +424,12 @@ extern void MKFinishPerformance(void);
 
 /*!
   @method startPerformance
+  @abstract Starts a performance.
   @result Returns an id.
-  @discussion Starts a performance.  All MKConductor objects begin at the same
+  @discussion All MKConductor objects begin at the same
               time.  If the performance is clocked and you don't have a running
-              Application object (NSApplication), this does nothing and returns
-              <b>nil</b>.  In all other cases, the receiver is returned; however,
+              NSRunLoop, this does nothing and returns <b>nil</b>.
+			  In all other cases, the receiver is returned; however,
               if the performance is unclocked, this method doesn't return until
               the performance is over.
 */
@@ -595,7 +522,7 @@ extern void MKFinishPerformance(void);
               receiver.<i></i>   Unclocked performances involving MIDI time code
               conductors are not supported.   
 */
-+ setClocked:(BOOL) yesOrNo; 
++ setClocked: (BOOL) yesOrNo; 
 
 /*!
   @method isClocked
@@ -603,7 +530,7 @@ extern void MKFinishPerformance(void);
   @discussion Returns <b>YES</b> if the performance is clocked, <b>NO</b> if it
               isn't.  By default, a performance is clocked.
 */
-+(BOOL) isClocked; 
++ (BOOL) isClocked; 
 
 /*!
   @method setFinishWhenEmpty:
@@ -614,7 +541,7 @@ extern void MKFinishPerformance(void);
               <b>NO</b>, the performance continues until the
 	      <b>finishPerformance</b> message is sent to the MKConductor class.
 */
-+ setFinishWhenEmpty:(BOOL) yesOrNo; 
++ setFinishWhenEmpty: (BOOL) yesOrNo; 
 
 /*!
   @method isEmpty
@@ -623,7 +550,7 @@ extern void MKFinishPerformance(void);
               MKConductor instances' message request queues are are empty,
               otherwise returns <b>NO.</b>
 */
-+(BOOL) isEmpty;
++ (BOOL) isEmpty;
 
 /*!
   @method finishWhenEmpty
@@ -632,7 +559,7 @@ extern void MKFinishPerformance(void);
               MKConductors' message queues are empty, <b>otherwise returns
               NO</b>.
 */
-+(BOOL) finishWhenEmpty;
++ (BOOL) finishWhenEmpty;
 
 /*!
   @method setDeltaT:
@@ -640,14 +567,14 @@ extern void MKFinishPerformance(void);
   @discussion Set the delta time in seconds.
               See also: <b>MKSetDeltaT()</b>
 */
-+(void) setDeltaT: (double) newDeltaT;
++ (void) setDeltaT: (double) newDeltaT;
 
 /*!
   @method deltaT
   @result Returns a double.
   @discussion Returns the delta time in seconds.
 */
-+(double) deltaT;
++ (double) deltaT;
 
 /*!
   @method copy
@@ -656,14 +583,14 @@ extern void MKFinishPerformance(void);
               new]</b>.
 */
 - copy;
-- copyWithZone:(NSZone *)zone;
+- copyWithZone: (NSZone *) zone;
 
 /*!
   @method isPaused
   @result Returns a BOOL.
   @discussion Returns <b>YES</b> if the receiver is paused.
 */
--(BOOL) isPaused; 
+- (BOOL) isPaused; 
 
 /*!
   @method pause
@@ -695,7 +622,7 @@ extern void MKFinishPerformance(void);
               begins; the <b>resume</b> message is enqueued to be sent
               <i>seconds</i> seconds after the performance starts.
 */
-- pauseFor:(double) seconds;
+- pauseFor: (double) seconds;
 
 /*!
   @method resume
@@ -714,14 +641,14 @@ extern void MKFinishPerformance(void);
               Attempts to set the tempo of the clockConductor are ignored. 
               Returns the previous beat size.
 */
--(double) setBeatSize:(double) newBeatSize; 
+- (double) setBeatSize: (double) newBeatSize; 
 
 /*!
   @method beatSize
   @result Returns a double.
   @discussion Returns the size of the receiver's beat in seconds.
 */
--(double) beatSize; 
+- (double) beatSize; 
 
 /*!
   @method setTempo:
@@ -731,14 +658,14 @@ extern void MKFinishPerformance(void);
               minute.  Attempts to set the tempo of the clockConductor are
               ignored.  Returns the previous tempo.
 */
--(double) setTempo:(double) newTempo; 
+-(double) setTempo: (double) newTempo; 
 
 /*!
   @method tempo
   @result Returns a double.
   @discussion Returns the receiver's tempo in beats per minute.
 */
--(double) tempo; 
+- (double) tempo; 
 
 /*!
   @method setTimeOffset:
@@ -750,7 +677,7 @@ extern void MKFinishPerformance(void);
               offset of the clockConductor are ignored. Returns the previous time
               offset.
 */
--(double) setTimeOffset:(double) newTimeOffset; 
+- (double) setTimeOffset: (double) newTimeOffset; 
 
 /*!
   @method timeOffset
@@ -758,7 +685,7 @@ extern void MKFinishPerformance(void);
   @discussion Returns the receiver's performance time offset in
               seconds.
 */
--(double) timeOffset; 
+- (double) timeOffset; 
 
 /*!
   @method sel:to:withDelay:argCount:
@@ -777,7 +704,7 @@ extern void MKFinishPerformance(void);
               arguments themselves, seperated by commas (two arguments,
               maximum).
 */
-- sel:(SEL) aSelector to: toObject withDelay:(double) beats argCount:(int) argCount, ...;
+- sel: (SEL) aSelector to: toObject withDelay: (double) beats argCount: (int) argCount, ...;
 
 /*!
   @method sel:to:withDelay:argCount:arg1:retain:arg2:retain:
@@ -801,9 +728,14 @@ extern void MKFinishPerformance(void);
 	      the object from any chance of deallocation between this method being
 	      called, and the message being dispatched.
 */
-- sel:(SEL)aSelector to:(id)toObject withDelay:(double)deltaT argCount:(int)argCount
-           arg1:(id)arg1 retain:(BOOL)retainArg1
-           arg2:(id)arg2 retain:(BOOL)retainArg2;
+- (id) sel: (SEL) aSelector
+	to: (id) toObject
+ withDelay: (double) deltaT
+  argCount: (int) argCount
+      arg1: (id) arg1 
+    retain: (BOOL) retainArg1
+      arg2: (id) arg2 
+    retain: (BOOL) retainArg2;
 
 /*!
   @method sel:to:atTime:argCount:
@@ -819,7 +751,7 @@ extern void MKFinishPerformance(void);
               <i>aSelector</i> followed by the arguments themselves, seperated by
               commas (two arguments, maximum). 
 */
-- sel:(SEL) aSelector to: toObject atTime:(double) time argCount:(int) argCount, ...;
+- sel: (SEL) aSelector to: toObject atTime: (double) time argCount: (int) argCount, ...;
 
 /*!
   @method sel:to:atTime:argCount:arg1:retain:arg2:retain:
@@ -841,9 +773,9 @@ extern void MKFinishPerformance(void);
 	      the object from any chance of deallocation between this method being
 	      called, and the message being dispatched.
 */
-- sel:(SEL)aSelector to:(id)toObject atTime:(double)t argCount:(int)argCount
-           arg1:(id)arg1 retain:(BOOL)retainArg1
-           arg2:(id)arg2 retain:(BOOL)retainArg2;
+- sel: (SEL) aSelector to: (id) toObject atTime: (double) t argCount: (int) argCount
+           arg1: (id) arg1 retain: (BOOL) retainArg1
+           arg2: (id) arg2 retain: (BOOL) retainArg2;
 /*!
   @method timeInSeconds
   @result Returns a double.
@@ -854,7 +786,7 @@ extern void MKFinishPerformance(void);
               progress, MK_NODVAL is returned .  Use <b>MKIsNoDVal()</b> to check
               for this return value.
 */
-+(double) timeInSeconds; 
++ (double) timeInSeconds; 
 
 /*!
   @method time
@@ -862,7 +794,7 @@ extern void MKFinishPerformance(void);
   @discussion Returns the receiver's notion of the current time in
               beats.
 */
--(double) timeInBeats; 
+- (double) timeInBeats; 
 
 /*!
   @method emptyQueue
@@ -879,7 +811,7 @@ extern void MKFinishPerformance(void);
   @discussion Returns <b>YES</b> if the receiver is currently sending a message
               from its message request queue.
 */
--(BOOL) isCurrentConductor;
+- (BOOL) isCurrentConductor;
 
 /*!
   @method afterPerformanceSel:to:argCount:
@@ -896,7 +828,9 @@ extern void MKFinishPerformance(void);
               enqueued.  Returns a pointer to a <i>message request structure that
               can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
 */
-+(MKMsgStruct *) afterPerformanceSel:(SEL) aSelector to: toObject argCount:(int) argCount, ...; 
++ (MKMsgStruct *) afterPerformanceSel: (SEL) aSelector
+				   to: toObject
+			     argCount: (int) argCount, ...; 
 
 /*!
   @method afterPerformanceSel:to:argCount:arg1:retain:arg2:retain:
@@ -921,10 +855,10 @@ extern void MKFinishPerformance(void);
               enqueued.  Returns a pointer to a <i>message request structure that
               can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
 */
-+(MKMsgStruct *) afterPerformanceSel:(SEL)aSelector to:(id)toObject 
-                 argCount:(int)argCount
-                 arg1:(id)arg1 retain:(BOOL)retainArg1
-                 arg2:(id)arg2 retain:(BOOL)retainArg2;
++ (MKMsgStruct *) afterPerformanceSel: (SEL) aSelector to: (id) toObject 
+                 argCount: (int) argCount
+                 arg1: (id) arg1 retain: (BOOL) retainArg1
+                 arg2: (id) arg2 retain: (BOOL) retainArg2;
 
 /*!
   @method beforePerformanceSel:to:argCount:
@@ -941,7 +875,7 @@ extern void MKFinishPerformance(void);
               enqueued.  Returns a pointer to a <i>message request structure that
               can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
 */
-+(MKMsgStruct *) beforePerformanceSel:(SEL) aSelector to: toObject argCount:(int) argCount, ...; 
++ (MKMsgStruct *) beforePerformanceSel: (SEL) aSelector to: toObject argCount: (int) argCount, ...; 
 
 /*!
   @method beforePerformanceSel:to:argCount:arg1:retain:arg2:retain:
@@ -966,10 +900,10 @@ extern void MKFinishPerformance(void);
               enqueued.  Returns a pointer to a <i>message request structure that
               can be passed to</i><b> a C function such as MKCancelMsgRequest()</b>.
 */
-+(MKMsgStruct *) beforePerformanceSel:(SEL)aSelector  to:(id)toObject 
-                 argCount:(int)argCount
-                 arg1:(id)arg1 retain:(BOOL)retainArg1
-                 arg2:(id)arg2 retain:(BOOL)retainArg2;
++ (MKMsgStruct *) beforePerformanceSel: (SEL) aSelector  to: (id) toObject 
+                 argCount: (int) argCount
+                 arg1: (id) arg1 retain: (BOOL) retainArg1
+                 arg2: (id) arg2 retain: (BOOL) retainArg2;
 
 /*!
   @method setDelegate:
@@ -980,7 +914,7 @@ extern void MKFinishPerformance(void);
               <b>hasResumed:</b> as the receiver is paused and resumed,
               respectively. 
 */
--(void) setDelegate:(id) object;
+- (void) setDelegate: (id) object;
 
 /*!
   @method delegate
@@ -999,7 +933,7 @@ extern void MKFinishPerformance(void);
               <b>hasResumed:</b> as the receiver is paused and resumed,
               respectively. 
 */
-+(void) setDelegate: object;
++ (void) setDelegate: object;
 
 /*!
   @method delegate
@@ -1018,9 +952,17 @@ extern void MKFinishPerformance(void);
 */
 - activePerformers;
 
--(void) encodeWithCoder:(NSCoder *) aCoder;
--(id) initWithCoder:(NSCoder *) aDecoder;
-- awakeAfterUsingCoder:(NSCoder *) aDecoder;
+- (void) encodeWithCoder: (NSCoder *) aCoder;
+- (id) initWithCoder: (NSCoder *) aDecoder;
+- awakeAfterUsingCoder: (NSCoder *) aDecoder;
+
+/* Obsolete methods */
++ new; 
+- (double) predictTime:(double)beatTime; 
+
+@end
+
+@interface MKConductor(MTC)
 
 /*!
   @method setMTCSynch:
@@ -1034,10 +976,10 @@ extern void MKFinishPerformance(void);
 	      <tt>[MKConductor setClocked:YES];</tt>.  For
               details, see 
 <a href=http://www.musickit.org/MusicKitConcepts/miditimecode.html>
-Appendix B. entitled MIDI Time Code in the MusicKit
+Appendix entitled MIDI Time Code in the MusicKit
 </a> mentioned above.
 */
-- setMTCSynch:aMidiObj;
+- setMTCSynch: (MKMidi *) aMidiObj;
 
 /*!
   @method MTCSynch
@@ -1046,7 +988,7 @@ Appendix B. entitled MIDI Time Code in the MusicKit
               <b>nil</b> if none.  Keep in mind that only one MKConductor at a
               time may have an MTCSynch object.
 */
-- MTCSynch;
+- (MKMidi *) MTCSynch;
 
 /*!
   @method clockTime
@@ -1058,16 +1000,11 @@ Appendix B. entitled MIDI Time Code in the MusicKit
               to MIDI time code, the value returend is the same value as the value
               returned by  <tt>[[MKConductor clockConductor] time]</tt>.
 */
--(double) clockTime;
-
-/* Obsolete methods */
-+ new; 
--(double) predictTime:(double)beatTime; 
+- (double) clockTime;
 
 @end
 
 @interface MKConductor(SeparateThread)  <SndDelegateMessagePassing>
-
 
 /*!
   @method useSeparateThread:
@@ -1083,7 +1020,7 @@ Appendix B. entitled MIDI Time Code in the MusicKit
               Default is NO.  You should not send this message if any MKMidi objects are open (or running or stopped. ) 
                
 */
-+ useSeparateThread:(BOOL) yesOrNo;
++ useSeparateThread: (BOOL) yesOrNo;
 
 /*!
     @function separateThreaded
@@ -1092,7 +1029,7 @@ Appendix B. entitled MIDI Time Code in the MusicKit
 + (BOOL) separateThreaded;
 
 /*!
-    @function separateThreadedAndInMusicKitThread
+    @method separateThreadedAndInMusicKitThread
     @discussion Returns YES if the MKConductor is separate threaded and the calling code is running
         in the separate thread, NO if the code is running in the application thread.
 */
@@ -1163,7 +1100,7 @@ Appendix B. entitled MIDI Time Code in the MusicKit
               real-time processes than  the ordinary time sharing policy.
               
 */
-+ setThreadPriority:(float) priorityFactor;
++ setThreadPriority: (float) priorityFactor;
 
 /*!
   @method performanceThread
@@ -1193,7 +1130,7 @@ Appendix B. entitled MIDI Time Code in the MusicKit
               performance going on, this is the same as sending
               aSelector directly to toObject.
 */
-+ sendMsgToApplicationThreadSel:(SEL) aSelector to:(id) toObject argCount:(int)argCount, ...;
++ sendMsgToApplicationThreadSel: (SEL) aSelector to: (id) toObject argCount: (int) argCount, ...;
 
 /*!
   @method detachDelegateMessageThread
@@ -1204,7 +1141,7 @@ Appendix B. entitled MIDI Time Code in the MusicKit
               that the very first use of [MKConductor ...] must be done in the
               application thread.
 */
-+ (void)detachDelegateMessageThread;
++ (void) detachDelegateMessageThread;
 
 /*!              
   @method sendMessageInMainThreadToTarget:sel:arg1:arg2:count:
@@ -1218,11 +1155,11 @@ Appendix B. entitled MIDI Time Code in the MusicKit
               It relies on the delegate message thread having been set up
               which is done from +initialize.
 */
-+ (void) sendMessageInMainThreadToTarget:(id)target 
-                                     sel:(SEL)aSelecto
-                                    arg1:(id)arg1
-                                    arg2:(id)arg2
-                                   count:(int)count;
++ (void) sendMessageInMainThreadToTarget: (id) target 
+                                     sel: (SEL) aSelector
+                                    arg1: (id) arg1
+                                    arg2: (id) arg2
+                                   count: (int) count;
 
 /*!
   @method setInterThreadThreshold:
@@ -1232,7 +1169,7 @@ Appendix B. entitled MIDI Time Code in the MusicKit
               communication.  This message may only be sent from the Application
               thread.  Otherwise, it is ignored.
 */
-+ setInterThreadThreshold:(NSString *) newThreshold;
++ setInterThreadThreshold: (NSString *) newThreshold;
 
 /*!
   @method _sendDelegateInvocation:
@@ -1244,7 +1181,7 @@ Appendix B. entitled MIDI Time Code in the MusicKit
               the message sent through form the background thread (eg background
               MKConductor thread).
 */
-+ (void) _sendDelegateInvocation:(in unsigned long) mesg;
++ (void) _sendDelegateInvocation: (in unsigned long) mesg;
 
 @end
 
