@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.42  2001/10/15 01:34:00  leighsmith
+  Removed warning caused by assigning self in factory methods
+
   Revision 1.41  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -1428,14 +1431,12 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
 
 + midiOnDevice:(NSString *) devName host:(NSString *) hostName
 {
-    self = [MKMidi alloc];
-    return [[self initOnDevice: devName hostName: hostName] autorelease];
+    return [[[MKMidi alloc] initOnDevice: devName hostName: hostName] autorelease];
 }
 
 + midiOnDevice:(NSString *) devName
 {
-    self = [MKMidi alloc];
-    return [[self initOnDevice:devName] autorelease];
+    return [[[MKMidi alloc] initOnDevice:devName] autorelease];
 }
 
 + midi
