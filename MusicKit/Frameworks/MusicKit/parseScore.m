@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2001/03/06 21:49:24  leigh
+  renamed to pTypePtr to avoid name clashes
+
   Revision 1.12  2000/11/28 18:59:11  leigh
   enforced constant string behaviour to remove warnings
 
@@ -554,7 +557,7 @@ typeStack[PARSINGSTACKSIZE];
 
 static _MKParameterUnion **pValPtr = NULL;
 static short *fullStack = typeStack + PARSINGSTACKSIZE - 1;
-static short *typePtr = NULL; 
+static short *pTypePtr = NULL; 
 
 static double *dataX = NULL;
 static double *dataY = NULL;
@@ -614,18 +617,18 @@ static void
 stackPush(_MKParameterUnion *val, short type)
     /* Copies the value of val to stack as well as the type. */
 {
-    if (typePtr == fullStack)
+    if (pTypePtr == fullStack)
       error(MK_sfBadExprErr);
     **(++pValPtr) = *val;
-    *(++typePtr) = type;
+    *(++pTypePtr) = type;
 }
 
 static _MKParameterUnion * 
 stackPop(short *typeAddr)
 {
-    if (typePtr < typeStack)
+    if (pTypePtr < typeStack)
       error(MK_sfBadExprErr);
-    *typeAddr = *typePtr--;
+    *typeAddr = *pTypePtr--;
     return *pValPtr--;
 }
 
@@ -1751,8 +1754,8 @@ assign(void)
 /* Expression parsing: Interface to statement and declaration level. */
 
 
-#define EMPTYSTACK()      typePtr = typeStack-1; pValPtr = parvalStack-1
-#define STACKERRORCHECK() if (typePtr != typeStack-1) error(MK_sfBadExprErr)
+#define EMPTYSTACK()      pTypePtr = typeStack-1; pValPtr = parvalStack-1
+#define STACKERRORCHECK() if (pTypePtr != typeStack-1) error(MK_sfBadExprErr)
 
 static short
 expression(_MKParameterUnion *rtnValPtr)
