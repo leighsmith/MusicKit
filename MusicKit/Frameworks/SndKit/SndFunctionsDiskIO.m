@@ -21,7 +21,7 @@
 
 #define DEBUG_MESSAGES 0
 
-#define LIBSNDFILE_AVAILABLE
+#define LIBSNDFILE_AVAILABLE 1
 
 #import "SndFunctions.h"
 #import "SndMuLaw.h"
@@ -545,6 +545,12 @@ int SndReadSoundfileRange(NSString *path, SndSoundStruct **sound, int startFrame
     if ((sfp = sf_open([path fileSystemRepresentation], SFM_READ, &sfinfo)) == NULL) {
 	if(sf_error(sfp) != SF_ERR_NO_ERROR) {
 	    NSLog(@"%s\n", sf_strerror(sfp));
+            if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowLogOnReadError"]) {
+                char readingLogBuffer[2048];  // TODO we could malloc and free this here instead.
+
+                sf_command(sfp, SFC_GET_LOG_INFO, readingLogBuffer, sizeof(readingLogBuffer));
+                NSLog(@"Error log of file reading: %s\n", readingLogBuffer);
+            }
 	}	
 	return SND_ERR_CANNOT_OPEN;
     }
