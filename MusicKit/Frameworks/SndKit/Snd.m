@@ -33,6 +33,10 @@ CONDITIONS OF THIS AGREEMENT.
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.33  2001/11/21 17:49:02  sbrandon
+ * - Added new method tellDelegateString: which is similar to tellDelegate: except accepts an NSString as argument instead of a SEL. This is to aid sending messages via NSInvocations where SEL types cannot be used as arguments.
+ * - tidied up some internal formatting
+ *
  * Revision 1.32  2001/11/07 12:41:29  sbrandon
  * - cleaned up formatting of license
  * - added defines to force new version of sox lib (libst.h) to import correct
@@ -762,7 +766,9 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 // Begin the playback of the sound at some future time, specified in seconds, over a region of the sound.
 // All other play methods are convience wrappers around this.
-- (SndPerformance *) playInFuture: (double) inSeconds beginSample: (int) begin sampleCount: (int) count 
+- (SndPerformance *) playInFuture: (double) inSeconds 
+                      beginSample: (int) begin
+                      sampleCount: (int) count 
 {
     int playBegin = begin;
     int playEnd = begin + count;
@@ -777,18 +783,25 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
         return nil;
     status = SND_SoundPlayingPending;
     
-    return [[SndPlayer defaultSndPlayer] playSnd: self withTimeOffset: inSeconds beginAtIndex: playBegin endAtIndex: playEnd];
+    return [[SndPlayer defaultSndPlayer] playSnd: self 
+                                  withTimeOffset: inSeconds 
+                                    beginAtIndex: playBegin 
+                                      endAtIndex: playEnd];
 }
 
 - (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d
 {
 //  NSLog(@"Snd::playAtTimeInSeconds: %f", t);
-    return [[SndPlayer defaultSndPlayer] playSnd: self atTimeInSeconds: t withDurationInSeconds: d];  
+    return [[SndPlayer defaultSndPlayer] playSnd: self
+                                 atTimeInSeconds: t
+                           withDurationInSeconds: d];  
 }
 
 - (SndPerformance *) playInFuture: (double) inSeconds 
 {
-    return [self playInFuture: inSeconds beginSample: 0 sampleCount: [self sampleCount]];
+    return [self playInFuture: inSeconds 
+                  beginSample: 0
+                  sampleCount: [self sampleCount]];
 }
 
 - (SndPerformance *) playAtDate: (NSDate *) date
@@ -800,7 +813,9 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 - play:(id) sender beginSample:(int) begin sampleCount: (int) count 
 {
     // do something with sender?
-    [self playInFuture: 0.0 beginSample: begin sampleCount: count];
+    [self playInFuture: 0.0
+           beginSample: begin
+           sampleCount: count];
     return self;
 }
 
@@ -1384,6 +1399,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
             [delegate performSelector:theMessage withObject: self withObject: performance];
         }
     }
+}
+
+// Convenience function for when using NSInvocations to send messages. NSInvocations don't like
+// dealing with SEL types, so we use a NSString on the other end, and convert to SEL here.
+- (void) tellDelegateString:(NSString *)theMessage duringPerformance: (SndPerformance *) performance
+{
+    [self tellDelegate: NSSelectorFromString(theMessage) duringPerformance: performance];
 }
 
 - (void) setConversionQuality:(int)quality /* default is SND_CONVERT_LOWQ */
