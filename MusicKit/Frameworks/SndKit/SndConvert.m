@@ -254,6 +254,7 @@ void SndChannelMap(void *inPtr, void *outPtr, int numberOfSampleFrames, int oldN
             // and use SndChannelDecrease as a means to decrease during mapping.
             map[0] = 0;
             map[1] = 1;
+            // [self stereoChannels: map];
             // Silence the remaining channels.
             for(chanIndex = 2; chanIndex < newNumChannels; chanIndex++)
                 map[chanIndex] = -1;
@@ -618,7 +619,6 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 	
 	[data release];
 	data = [toData retain];
-	byteCount = [toData length];
 	format.dataFormat = toDataFormat;
 	// NSLog(@"convert: %@", self);
     }
@@ -646,7 +646,6 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 	
 	[data release];
 	data = [toData retain];
-	byteCount = [toData length];
 	format.channelCount = toChannelCount;
     }    
     return [self convertToFormat: toDataFormat];
@@ -674,9 +673,6 @@ useLinearInterpolation: (BOOL) fastInterpolation
 	// assign dataFormat here in case we don't do any conversion using SndChangeSampleType() below.
 	format.dataFormat = toSoundFormat.dataFormat;
 
-	// assign this here in case we don't do any conversion in convertToFormat:channelCount:
-	byteCount = SndDataSize(toSoundFormat);  
-
 	// replace the old data with the new sample rate converted data.
 	[data release];
 	data = [toData retain];
@@ -690,7 +686,7 @@ useLinearInterpolation: (BOOL) fastInterpolation
 - (long) convertBytes: (void *) fromDataPtr
        intoFrameRange: (NSRange) bufferFrameRange
            fromFormat: (SndSampleFormat) fromDataFormat
-             channels: (int) fromChannelCount
+	 channelCount: (int) fromChannelCount
          samplingRate: (double) fromSampleRate
 {
     int toChannelCount = [self channelCount];
@@ -700,7 +696,7 @@ useLinearInterpolation: (BOOL) fastInterpolation
     unsigned long toSampleFrames = bufferFrameRange.length;
     // unless we convert sample rates we read and write the same number of frames.
     long fromSampleFrames = toSampleFrames;
-    unsigned long lastModifiedByte;
+    unsigned long lastModifiedFrame;
     int error;
 
     if(fromSampleRate != toSampleRate) {
@@ -728,9 +724,7 @@ useLinearInterpolation: (BOOL) fastInterpolation
 	
 	// assign dataFormat here in case we don't do any conversion using SndChangeSampleType() below.
 	fromDataFormat = format.dataFormat = toSoundFormat.dataFormat;
-	
-	// assign this here in case we don't do any conversion using SndChangeSampleType() below.
-	byteCount = SndDataSize(toSoundFormat);  
+
 	// replace the old data with the new sample rate converted data.
 	fromDataPtr = toDataPtr; // This will then do the channel count conversion in place, which is ok by -changeFromChannelCount:.
 #if 0
@@ -765,8 +759,8 @@ useLinearInterpolation: (BOOL) fastInterpolation
 	// Reassign dataFormat in case it was changed by the sample rate changing code.
 	format.dataFormat = toDataFormat;
     }
-    lastModifiedByte = (bufferFrameRange.location + bufferFrameRange.length) * [self frameSizeInBytes];
-    byteCount = MAX(lastModifiedByte, byteCount);   // extend the byte count if we modify a greater region.
+    lastModifiedFrame = (bufferFrameRange.location + bufferFrameRange.length);
+    format.frameCount = MAX(lastModifiedFrame, format.frameCount);   // extend the frame count if we modify a greater region.
 
     // NSLog(@"Final converted buffer %@\n", self);
     
