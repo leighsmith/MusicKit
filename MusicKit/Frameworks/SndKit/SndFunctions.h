@@ -40,6 +40,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /*!
+  @header SndFunctions
   @abstract A library of functions originally intended to be compatible with NeXTs now defunct SoundKit.
  */
 
