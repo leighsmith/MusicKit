@@ -98,7 +98,7 @@ _longjmp
 //#import "snddriver.h"		/*** FIXME ***/
 //#endif
 #else
-#import <SoundKit/sounddriver.h>	/* This will be replaced someday as it is stubs anway */
+#import <SndKit/sounddriver.h>	/* This will be replaced someday as there is nothing but stubs anway */
 #endif
 
 #ifdef WIN32
