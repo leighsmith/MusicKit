@@ -16,12 +16,15 @@
 Modification history:
 
   $Log$
+  Revision 1.3  1999/09/04 23:00:01  leigh
+  midi_driver.h now included from MKPerformMIDI framework
+
   Revision 1.2  1999/07/29 01:26:09  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
 //#import <midi_driver_compatability.h> // LMS obsolete 
-#import <midi_driver.h>
+#import <MKPerformMIDI/midi_driver.h>
 
 @implementation MKConductor(MTCPrivate)
 
