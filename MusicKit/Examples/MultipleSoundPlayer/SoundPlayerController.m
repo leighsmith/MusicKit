@@ -8,7 +8,7 @@
     
   Original Author: Leigh Smith, <leigh@tomandandy.com>, tomandandy music inc.
 
-  2-Mar-2001, Copyright (c) 2001 tomandandy music inc. All rights reserved.
+  Copyright (c) 2001 tomandandy music inc. All rights reserved.
 
   Permission is granted to use and modify this code for commercial and non-commercial
   purposes so long as the author attribution and copyright messages remain intact and
@@ -34,16 +34,16 @@
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
 
     NSLog(@"Accepting %@\n", fileTypes);
-    [oPanel setAllowsMultipleSelection:YES];
+    [oPanel setAllowsMultipleSelection: YES];
     result = [oPanel runModalForDirectory: nil file: nil types: fileTypes];
     if (result == NSOKButton) {
         [filesToPlay release];
         filesToPlay = [[oPanel filenames] retain];
         [playButton setEnabled: YES];
     }
-    [soundFileNameTextBox setDataSource:self];
-    [soundFileNameTextBox deselectAll:self];
-    [soundFileNameTextBox reloadData];
+    [soundFileNameTableView setDataSource: self];
+    [soundFileNameTableView deselectAll: self];
+    [soundFileNameTableView reloadData];
 }
 
 - (void) playSound: (id) sender
@@ -92,14 +92,14 @@
 }
 
 /******************** DELEGATE MESSAGES FOR NSTableView ******************/
-- (id)tableView:(NSTableView *)aTableView
-    objectValueForTableColumn:(NSTableColumn *)aTableColumn
-    row:(int)rowIndex
+- (id) tableView: (NSTableView *) aTableView
+objectValueForTableColumn: (NSTableColumn *) aTableColumn
+	     row: (int) rowIndex
 {	
     return [filesToPlay objectAtIndex:rowIndex];
 }
 
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView
+- (int) numberOfRowsInTableView: (NSTableView *) aTableView
 {
     return [filesToPlay count];
 }

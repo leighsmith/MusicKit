@@ -18,8 +18,8 @@
 
 @interface SoundPlayerController : NSObject
 {
-    IBOutlet id soundFileNameTextBox;
-    IBOutlet id playButton;
+    IBOutlet NSTableView *soundFileNameTableView;
+    IBOutlet NSButton *playButton;
     NSArray *filesToPlay;
     NSMutableDictionary *currentPerformances;
     int soundTag;
