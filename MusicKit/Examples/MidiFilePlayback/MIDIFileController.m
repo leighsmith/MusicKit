@@ -21,6 +21,16 @@
     [driverPopup selectItemWithTitle: [midiInstrument driverName]];
 }
 
+// User double clicked a MIDI filename to launch the app
+- (BOOL) application:(NSApplication *) theApplication openFile:(NSString *) filename 
+{
+    [midiPathName release];   // since it was retained in -init
+    midiPathName = [filename retain];
+    [midiPathNameTextBox setStringValue: midiPathName];
+    [playButton setEnabled: YES];
+    return YES;
+}
+
 - init
 {
     currentTempo = [tempoSlider doubleValue];
@@ -109,7 +119,7 @@
 - (void) connectPartsToChannels: (MKScorePerformer *) theScorePerformer forInstrument: (MKMidi *) theMidiInstrument
 {
     int partCount, chan, i;
-    NSMutableArray *allNoteSenders;
+    NSArray *allNoteSenders;
     MKNote *partInfo = nil;
     MKNoteSender *aNoteSender;
     MKPart *aPart;
