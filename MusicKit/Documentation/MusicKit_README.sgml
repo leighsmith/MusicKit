@@ -32,9 +32,10 @@ and binary distributions. Likewise if the distribution web site changes.
 <!-- Libraries used -->
 <!entity soxvertuple "12.17.3">
 <!entity soxdownload "http://prdownloads.sourceforge.net/sox">
-<!entity libsndfileweb "http://www.zipworld.com.au/~erikd/libsndfile/">
-<!entity libsndfilevertuple "1.0.6pre12">
-<!entity libsndfiledownload "http://www.zipworld.com.au/~erikd/">
+<!entity libsndfileweb "http://www.mega-nerd.com/libsndfile/">
+<!entity libsndfilevertuple "1.0.10">
+<!entity libsndfiledownload "http://www.mega-nerd.com/libsndfile/">
+<!entity hipvertuple "1.0">
 <!entity lameweb "http://www.sourceforge.net/projects/lame">
 <!entity lamevertuple "3.93.1">
 <!entity lamedownload "http://prdownloads.sourceforge.net/lame">
