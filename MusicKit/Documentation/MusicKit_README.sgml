@@ -197,6 +197,15 @@ Written in Objective C and C, using Apple's OpenStep/Cocoa API, the
 FoundationKit.
 </para>
 	</listitem>
+        <listitem>
+           <para>
+Using the Python to Objective C bridge 
+<ulink url="http://www.sourceforge.net/projects/pyobjc">PyObjC</ulink>
+enables applications and utilities to be written in 
+<ulink url="http://www.python.org">Python</ulink>, an interpreted
+object-oriented language.
+           </para>
+        </listitem>
 	<listitem>
 	  <para>
 Functionally comparable (although architecturally dissimilar) to JMSL
@@ -247,9 +256,10 @@ writes a sound file.
 	<listitem>
 	  <para>
 Suite of <link linkend=applications>applications</link>, including
-<application>Ensemble</application>--an interactive algorithmic
-composition and performance environment (including a built-in sampler)
-and <application>ScorePlayer</application>.
+<application>Ensemble</application> &horbar; an interactive algorithmic
+composition and performance environment (including a built-in sampler),
+and <application>ScorePlayer</application> &horbar; a Scorefile and standard
+MIDI file player.
 </para>
 	</listitem>
 	<listitem>
@@ -490,7 +500,44 @@ preparation for porting the MusicKit to Linux using the GnuStep
 libraries. Further work is needed on this, please help!
 </para>
     </sect2>
-</sect1>
+  </sect1>
+
+  <sect1 id="SupportedLanguages">
+    <title>Supported Languages</title>
+    <para>
+While the <productname>MusicKit</productname> and
+<productname>SndKit</productname> have been written in
+<productname>Objective C</productname>, this does not limit the
+system's use to that language. In particular, the dynamic binding of
+<productname>Objective C</productname> enables quite straightforward
+bridging to interpreters. This enables a relatively slow but
+&ldquo;friendly&rdquo; (i.e interactive) interpreter to benefit from
+the speed, multi-threading and feature set of the
+<productname>MusicKit</productname> and
+<productname>SndKit</productname> architectures.
+</para>
+
+    <para>
+Examples included in the distribution which are written in other languages
+include:
+</para>
+
+    <variablelist>
+      <varlistentry>
+	<term><command>scoreinfo</command></term>
+	<listitem>
+	  <para>
+A command-line tool written in Python to list MIDI channels
+(<constant>MK_midiChan</constant>) used by each part in MIDI or
+Scorefiles. This requires <ulink
+url="http://www.python.org">Python</ulink> and <ulink
+url="http://www.sourceforge.net/projects/pyobjc">PyObjC</ulink> to be
+installed.
+</para>
+	</listitem>
+      </varlistentry>
+    </variablelist>
+  </sect1>
 
   <sect1 id="history">
     <title>Contributors, History and Acknowledgements</title>
@@ -1301,9 +1348,9 @@ MacOS X Developer release includes source for a generic
 <acronym>USB</acronym> <acronym>MIDI</acronym> driver at
 <filename>/Developer/Examples/CoreAudio/MIDI/SampleUSBDriver</filename>.
 There is also a driver binary for the <productname
-class="Registered">MIDIMan</productname> <trademark>MIDISPORT
-2x2</trademark> <acronym>USB</acronym> interface for MacOS X <link
-linkend="availability">available</link> for download.
+class="Registered">MIDIMan</productname>
+<trademark>MIDISPORT</trademark> <acronym>USB</acronym> interfaces for
+MacOS X <link linkend="availability">available</link> for download.
 </para>
 
 
