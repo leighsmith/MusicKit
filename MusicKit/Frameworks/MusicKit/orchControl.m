@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2001/11/07 13:02:47  sbrandon
+  removed unnecessary prototype for _DSPError1
+
   Revision 1.13  2001/09/12 14:00:44  sbrandon
   changed -cString to -fileSystemRepresentation
 
@@ -245,8 +248,6 @@ static void startSoundAndFillBuffers(MKOrchestra *self)
         [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:(TIMETOWAIT)/1000.0]];
     }
 }
-
-extern int _DSPError1(int errorcode,char *msg, const char *arg);
 
 static BOOL sysExists(MKOrchestra *self,int *prevSys,NSString *name)
 {
