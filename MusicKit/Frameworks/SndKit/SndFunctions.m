@@ -98,38 +98,38 @@ int SndFrameSize(SndSoundStruct* format)
 
 int SndSampleWidth(int format)
 {
-  int width;
   switch (format) {
     case SND_FORMAT_MULAW_8:
     case SND_FORMAT_LINEAR_8:
-      width = 1;
+      return 1;
       break;
     case SND_FORMAT_EMPHASIZED:
     case SND_FORMAT_COMPRESSED:
     case SND_FORMAT_COMPRESSED_EMPHASIZED:
     case SND_FORMAT_DSP_DATA_16:
     case SND_FORMAT_LINEAR_16:
-      width = 2;
+      return 2;
       break;
     case SND_FORMAT_LINEAR_24:
     case SND_FORMAT_DSP_DATA_24:
-      width = 3;
+      return 3;
       break;
     case SND_FORMAT_LINEAR_32:
     case SND_FORMAT_DSP_DATA_32:
-      width = 4;
+      return 4;
       break;
     case SND_FORMAT_FLOAT:
-      width = sizeof(float);
+      return sizeof(float);
       break;
     case SND_FORMAT_DOUBLE:
-      width = sizeof(double);
+      return sizeof(double);
       break;
     default: /* just in case */
-      width = 2;
+      return 2;
       break;
   }
-  return width;
+  /* never reaches here */
+  return 2;
 }
 int mcheck()
 {
@@ -161,14 +161,14 @@ float SndConvertLinearToDecibels(float lin)
 }
 
 void *SndGetDataAddresses(int sample,
-                          const SndSoundStruct *theSound,
+                        const SndSoundStruct *theSound,
                           int *lastSampleInBlock, /* channel independent */
                           int *currentSample)     /* channel independent */
                           /* returns the base address of the block the sample resides in,
-                          * with appropriate indices for the last sample the block holds.
-                          * Indices count from 0 so they can be utilised directly.
-                          */
-                          {
+                           * with appropriate indices for the last sample the block holds.
+                           * Indices count from 0 so they can be utilised directly.
+                           */
+{
   int cc = theSound->channelCount;
   int df = theSound->dataFormat;
   int ds = theSound->dataSize;
@@ -177,7 +177,9 @@ void *SndGetDataAddresses(int sample,
   SndSoundStruct *theStruct;
   int i=0,count=0,oldCount = 0;
 
-  if (df == SND_FORMAT_INDIRECT) df = ((SndSoundStruct *)(*((SndSoundStruct **)(theSound->dataLocation))))->dataFormat;
+  if (df == SND_FORMAT_INDIRECT) {
+    df = ((SndSoundStruct *)(*((SndSoundStruct **)(theSound->dataLocation))))->dataFormat;
+  }
 
   numBytes = SndSampleWidth(df);
 
@@ -223,7 +225,8 @@ int SndSampleCount(const SndSoundStruct *sound)
 
 NSString *SndStructDescription(SndSoundStruct *s)
 {
-  NSString *message = [NSString stringWithFormat: @"%slocation:%d size:%d format:%d sample rate:%d channels:%d info:%s\n",
+  NSString *message = [NSString stringWithFormat: 
+           @"%slocation:%d size:%d format:%d sample rate:%d channels:%d info:%s\n",
           (s->magic != SND_MAGIC) ? "(struct lacking magic number): " : "",
           s->dataLocation, s->dataSize, s->dataFormat,
           s->samplingRate, s->channelCount, s->info];
@@ -245,17 +248,17 @@ int SndPrintFrags(SndSoundStruct *sound)
   if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
   df = sound->dataFormat;
   if (df != SND_FORMAT_INDIRECT) {
-    printf("not fragmented\n");
+    fprintf(stderr,"not fragmented\n");
     return SND_ERR_NONE;
   }
   /* more complicated */
   ssList = (SndSoundStruct **)sound->dataLocation;
   df = ssList[0]->dataFormat;
   while ((theStruct = ssList[i++]) != NULL) {
-    printf("**** Frag %d: starts at byte %d\n",i-1,count);
+    fprintf(stderr,"**** Frag %d: starts at byte %d\n",i-1,count);
     count += theStruct->dataSize;
-    printf("...ends at byte: %d\n",count-theStruct->channelCount*SndSampleWidth(df));
-    printf("channels: %d sample frames: %d samples in tot: %d\n",
+    fprintf(stderr,"...ends at byte: %d\n",count-theStruct->channelCount*SndSampleWidth(df));
+    fprintf(stderr,"channels: %d sample frames: %d samples in tot: %d\n",
            theStruct->channelCount, theStruct->dataSize/theStruct->channelCount/SndSampleWidth(df),
            theStruct->dataSize/theStruct->channelCount);
   }
@@ -621,61 +624,65 @@ int SndCopySamples(SndSoundStruct **toSound, SndSoundStruct *fromSound,
     }
   }
 
-if (originalFormat != SND_FORMAT_INDIRECT || fromOneFrag) {  /* simple case... */
-if (SndAlloc(toSound, sampleCount * cc * SndSampleWidth(df),
-             df, sr, cc, 4) != SND_ERR_NONE)
-return SND_ERR_CANNOT_ALLOC;
-memmove((char *)(*toSound)   + (*toSound)->dataLocation,
-        (char *)fromSound + fromSound->dataLocation +
-        (fromOneFrag ? startOffset : startSample * cc * SndSampleWidth(df)),
-        sampleCount * cc * SndSampleWidth(df));
-return SND_ERR_NONE;
-}
-/* complicated case (fragged) */
-
-if (lastFrag == -1 || firstFrag == -1) return SND_ERR_BAD_SIZE; /* should not really happen I don't think */
-/* allocate main header */
-if (SndAlloc(toSound, 0, df, sr, cc, 4) != SND_ERR_NONE)
-return SND_ERR_CANNOT_ALLOC;
-(*toSound)->dataSize = sizeof(SndSoundStruct);/* we don't copy any header info */
-(*toSound)->dataFormat = SND_FORMAT_INDIRECT;
-/* allocate ssList */
-/* i is the number of frags */
-if (!(newssList = malloc((lastFrag - firstFrag + 2) * sizeof(SndSoundStruct *)))) {
-		free (*toSound);
-		return SND_ERR_CANNOT_ALLOC;
-}
-newssList[lastFrag - firstFrag + 1] = NULL; /* do the last one now... */
-
-for (ssPointer = firstFrag; ssPointer <= lastFrag; ssPointer++) {
-		int charOffset = 0, charLength;
-		theStruct = ssList[ssPointer];
-    charLength = theStruct->dataSize;
-    if (firstFrag == lastFrag) {
-      charOffset = startOffset;
-      charLength = endLength - startOffset;
-    }
-    else if (ssPointer == firstFrag) {
-      charOffset = startOffset;
-      charLength = startLength;
-    }
-    else if (ssPointer == lastFrag) charLength = endLength;
-
-    if (SndAlloc(&newStruct, charLength, theStruct->dataFormat,
-                 theStruct->samplingRate,theStruct->channelCount, 4)) {
-      free (*toSound);
-      for (i = 0; i < ssPointer; i++) {
-        free (newssList[i]);
+  if (originalFormat != SND_FORMAT_INDIRECT || fromOneFrag) {  /* simple case... */
+      if (SndAlloc(toSound, sampleCount * cc * SndSampleWidth(df),
+                  df, sr, cc, 4) != SND_ERR_NONE) {
+          return SND_ERR_CANNOT_ALLOC;
       }
+      memmove((char *)(*toSound)   + (*toSound)->dataLocation,
+              (char *)fromSound + fromSound->dataLocation +
+              (fromOneFrag ? startOffset : startSample * cc * SndSampleWidth(df)),
+              sampleCount * cc * SndSampleWidth(df));
+      return SND_ERR_NONE;
+  }
+  /* complicated case (fragged) */
+
+  if (lastFrag == -1 || firstFrag == -1) return SND_ERR_BAD_SIZE; /* should not really happen I don't think */
+  /* allocate main header */
+  if (SndAlloc(toSound, 0, df, sr, cc, 4) != SND_ERR_NONE) {
       return SND_ERR_CANNOT_ALLOC;
-    }
-    memmove((char *)newStruct + newStruct->dataLocation,
+  }
+  (*toSound)->dataSize = sizeof(SndSoundStruct);/* we don't copy any header info */
+  (*toSound)->dataFormat = SND_FORMAT_INDIRECT;
+  /* allocate ssList */
+  /* i is the number of frags */
+  if (!(newssList = malloc((lastFrag - firstFrag + 2) * sizeof(SndSoundStruct *)))) {
+      free (*toSound);
+      return SND_ERR_CANNOT_ALLOC;
+  }
+  newssList[lastFrag - firstFrag + 1] = NULL; /* do the last one now... */
+
+  for (ssPointer = firstFrag; ssPointer <= lastFrag; ssPointer++) {
+      int charOffset = 0, charLength;
+      theStruct = ssList[ssPointer];
+      charLength = theStruct->dataSize;
+      if (firstFrag == lastFrag) {
+          charOffset = startOffset;
+          charLength = endLength - startOffset;
+      }
+      else if (ssPointer == firstFrag) {
+          charOffset = startOffset;
+          charLength = startLength;
+      }
+      else if (ssPointer == lastFrag) {
+          charLength = endLength;
+      }
+
+      if (SndAlloc(&newStruct, charLength, theStruct->dataFormat,
+                 theStruct->samplingRate,theStruct->channelCount, 4)) {
+          free (*toSound);
+          for (i = 0; i < ssPointer; i++) {
+              free (newssList[i]);
+          }
+          return SND_ERR_CANNOT_ALLOC;
+      }
+      memmove((char *)newStruct + newStruct->dataLocation,
             (char *)theStruct + theStruct->dataLocation + charOffset,
             charLength);
-    newssList[ssPointer - firstFrag] = newStruct;
-}
-(SndSoundStruct **)((*toSound)->dataLocation) = newssList;
-return SND_ERR_NONE;
+      newssList[ssPointer - firstFrag] = newStruct;
+  }
+  (SndSoundStruct **)((*toSound)->dataLocation) = newssList;
+  return SND_ERR_NONE;
 }
 
 int SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromSound, int startSample)
@@ -702,7 +709,7 @@ int SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromSound, i
   int insertFrag = -1;
   int insertFragOffset = 0;
   int insertFragCounter = 0;
-  int numFrags;
+  int numFrags = 0;
   int firstFragToFree = -1, firstOfCopiedListToFree = -1;
 
   if (!fromSound) return SND_ERR_NOT_SOUND;
@@ -725,146 +732,153 @@ int SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromSound, i
     numFromFrags--;
     /* numFromFrags is the number of frags */
   }
-else numBytes = SndSampleWidth(df);
-if (ndf == SND_FORMAT_INDIRECT) { /* count the num of frags in "to" sound */
-oldNewssList = (SndSoundStruct **)toSound->dataLocation;
-while ((theStruct = oldNewssList[numToFrags++]) != NULL) {
-  int thisCount = (theStruct->dataSize / cc / numBytes);
-  if (startSample >= insertFragCounter && startSample < (insertFragCounter + thisCount)) {
-				insertFrag = numToFrags - 1;
-				insertFragOffset = (startSample - insertFragCounter) * cc * numBytes;
+  else numBytes = SndSampleWidth(df);
+  if (ndf == SND_FORMAT_INDIRECT) { /* count the num of frags in "to" sound */
+  oldNewssList = (SndSoundStruct **)toSound->dataLocation;
+  while ((theStruct = oldNewssList[numToFrags++]) != NULL) {
+    int thisCount = (theStruct->dataSize / cc / numBytes);
+    if (startSample >= insertFragCounter && startSample < (insertFragCounter + thisCount)) {
+        insertFrag = numToFrags - 1;
+        insertFragOffset = (startSample - insertFragCounter) * cc * numBytes;
+    }
+    insertFragCounter += thisCount;
   }
-  insertFragCounter += thisCount;
-}
-numToFrags--;
-if (insertFrag == -1) insertFrag = numToFrags; /* stick new data after last frag */
-/* numToFrags is the number of frags */
-/*NOW I know the frag that the insertion begins in, and the sample number within it.*/
-}
-/* need to do frag of original sound if not already fragged. Will require realloc of fromSound,
-* creation of list etc.
-*/
+  numToFrags--;
+  if (insertFrag == -1) insertFrag = numToFrags; /* stick new data after last frag */
+  /* numToFrags is the number of frags */
+  /* NOW I know the frag that the insertion begins in, and the sample number within it.*/
+  }
 
-/* In order to make this work with fragged 'toSound', I need to be able to copy
-* the start and end portions as multi-frags, not just as flat data. Hmmm.
-* To do this, I need to be able to split the frag that the startFrag
-* starts and ends in.
-*/
-if (ndf != SND_FORMAT_INDIRECT) {
-		if (startSample == 0) numFrags = numFromFrags ? numFromFrags + 1 : 2;
-		else if (startSample == SndSampleCount(toSound) + 1)
+  /* need to do frag of original sound if not already fragged. Will require realloc of fromSound,
+  * creation of list etc.
+  */
+
+  /* In order to make this work with fragged 'toSound', I need to be able to copy
+   * the start and end portions as multi-frags, not just as flat data. Hmmm.
+   * To do this, I need to be able to split the frag that the startFrag
+   * starts and ends in.
+   */
+  if (ndf != SND_FORMAT_INDIRECT) {
+    if (startSample == 0) {
       numFrags = numFromFrags ? numFromFrags + 1 : 2;
-		else numFrags = numFromFrags ? numFromFrags + 2 : 3;
-}
-
-/* now add number of frags in toSound */
-if (ndf == SND_FORMAT_INDIRECT) {
-		numFrags = numFromFrags ? numFromFrags : 1;
-		if (insertFragOffset == 0 || startSample == SndSampleCount(toSound) + 1)
-      numFrags += numToFrags;
-		else numFrags += (numToFrags + 1);
-}
-//printf("numFromFrags: %d numToFrags: %d insertFragOffset %d startSample %d insertFrag %d\n",
-//		numFromFrags, numToFrags, insertFragOffset, startSample, insertFrag);
-
-if (!(newssList = malloc((numFrags + 1) * sizeof(SndSoundStruct *)))) {
-		return SND_ERR_CANNOT_ALLOC;
-}
-newssList[numFrags] = NULL;
-/* stick all sound pre-insert into 1st frag... */
-if (startSample > 0 && ndf != SND_FORMAT_INDIRECT) {
-		if (!(newStruct = _SndCopyFragBytes(toSound, 0, startSample * cc * numBytes))) {
-      free(newssList);
-      return SND_ERR_CANNOT_ALLOC;
     }
-		newssList[ssPointer++] = newStruct;
-}
-if (ndf == SND_FORMAT_INDIRECT) {
-		/* if insertFrag > 0, we copy pointers to all frags < insertFrag.
-  * then, if insertFragOffset > 0, we copy first part of sliced frag
-  */
-		for (i = 0; i<insertFrag; i++) {
-      newssList[ssPointer++] = oldNewssList[i];
+    else if (startSample == SndSampleCount(toSound) + 1) {
+        numFrags = numFromFrags ? numFromFrags + 1 : 2;
     }
-		if (insertFragOffset > 0) {
-      if (!(newStruct = _SndCopyFragBytes(oldNewssList[insertFrag],0, insertFragOffset))) {
-        /* don't have to free earlier frags, as they are only pointers */
-        free(newssList);
-        return SND_ERR_CANNOT_ALLOC;
+    else numFrags = numFromFrags ? numFromFrags + 2 : 3;
+  }
+
+  /* now add number of frags in toSound */
+  if (ndf == SND_FORMAT_INDIRECT) {
+      numFrags = numFromFrags ? numFromFrags : 1;
+      if (insertFragOffset == 0 || startSample == SndSampleCount(toSound) + 1) {
+          numFrags += numToFrags;
       }
-      firstFragToFree = ssPointer;
-      newssList[ssPointer++] = newStruct;
-    }
-}
-/* now copy all the fromSound, or its frags if necessary */
-if (df != SND_FORMAT_INDIRECT) {
-		if (!(newStruct = _SndCopyFrag(fromSound))) {
-      if (ssPointer > 0) free(newssList[0]);
-      free(newssList);
+      else numFrags += (numToFrags + 1);
+  }
+  //fprintf(stderr,
+  //  "numFromFrags: %d numToFrags: %d insertFragOffset %d startSample %d insertFrag %d\n",
+  //   numFromFrags, numToFrags, insertFragOffset, startSample, insertFrag);
+
+  if (!(newssList = malloc((numFrags + 1) * sizeof(SndSoundStruct *)))) {
       return SND_ERR_CANNOT_ALLOC;
+  }
+  newssList[numFrags] = NULL;
+  /* stick all sound pre-insert into 1st frag... */
+  if (startSample > 0 && ndf != SND_FORMAT_INDIRECT) {
+      if (!(newStruct = _SndCopyFragBytes(toSound, 0, startSample * cc * numBytes))) {
+          free(newssList);
+          return SND_ERR_CANNOT_ALLOC;
+      }
+      newssList[ssPointer++] = newStruct;
+  }
+  if (ndf == SND_FORMAT_INDIRECT) {
+   /* if insertFrag > 0, we copy pointers to all frags < insertFrag.
+    * then, if insertFragOffset > 0, we copy first part of sliced frag
+    */
+    for (i = 0; i<insertFrag; i++) {
+        newssList[ssPointer++] = oldNewssList[i];
     }
-		newssList[ssPointer++] = newStruct;
-}
-else {
-		firstOfCopiedListToFree = ssPointer;/* remember this value so we can free if nec */
-		for (i = 0; i < numFromFrags;i++){
-      if (!(newStruct = _SndCopyFrag(ssList[i]))) {
-        for (i = firstOfCopiedListToFree; i<ssPointer;i++) {
-          free (newssList[i]);
+    if (insertFragOffset > 0) {
+        if (!(newStruct = _SndCopyFragBytes(oldNewssList[insertFrag],0, insertFragOffset))) {
+            /* don't have to free earlier frags, as they are only pointers */
+            free(newssList);
+            return SND_ERR_CANNOT_ALLOC;
         }
-        if (firstFragToFree != -1) free(newssList[firstFragToFree]);
-        free(newssList);
-        return SND_ERR_CANNOT_ALLOC;
+        firstFragToFree = ssPointer;
+        newssList[ssPointer++] = newStruct;
+    }
+  }
+  /* now copy all the fromSound, or its frags if necessary */
+  if (df != SND_FORMAT_INDIRECT) {
+      if (!(newStruct = _SndCopyFrag(fromSound))) {
+          if (ssPointer > 0) free(newssList[0]);
+          free(newssList);
+          return SND_ERR_CANNOT_ALLOC;
       }
       newssList[ssPointer++] = newStruct;
-    }
-}
-
-/* now copy last bit of original sound into last frag */
-
-if ((startSample < SndSampleCount(toSound) + 1) && ndf != SND_FORMAT_INDIRECT) {
-		if (!(newStruct = _SndCopyFragBytes(toSound, startSample * cc * numBytes,-1))) {
-      for(i = 0;i<ssPointer;i++) {
-        free (newssList[i]);
+  }
+  else {
+      firstOfCopiedListToFree = ssPointer;/* remember this value so we can free if nec */
+      for (i = 0; i < numFromFrags;i++){
+          if (!(newStruct = _SndCopyFrag(ssList[i]))) {
+              for (i = firstOfCopiedListToFree; i<ssPointer;i++) {
+                  free (newssList[i]);
+              }
+              if (firstFragToFree != -1) free(newssList[firstFragToFree]);
+              free(newssList);
+              return SND_ERR_CANNOT_ALLOC;
+          }
+          newssList[ssPointer++] = newStruct;
       }
-      if (firstFragToFree != -1) free(newssList[firstFragToFree]);
-      free(newssList);
-      return SND_ERR_CANNOT_ALLOC;
-    }
-		newssList[ssPointer++] = newStruct;
-}
+  }
 
-if (ndf == SND_FORMAT_INDIRECT) {
-  /* now copy in remainder of sliced frag (if nec), then further frags
-  * from toSound into list (just pointers)
-  */
-  if (insertFragOffset > 0) {
-    if (!(newStruct = _SndCopyFragBytes(oldNewssList[insertFrag], insertFragOffset, -1))) {
-      for (i = firstOfCopiedListToFree;i<ssPointer;i++) {
-        free (newssList[i]);
+  /* now copy last bit of original sound into last frag */
+
+  if ((startSample < SndSampleCount(toSound) + 1) && ndf != SND_FORMAT_INDIRECT) {
+      if (!(newStruct = _SndCopyFragBytes(toSound, startSample * cc * numBytes,-1))) {
+          for(i = 0;i<ssPointer;i++) {
+              free (newssList[i]);
+          }
+          if (firstFragToFree != -1) free(newssList[firstFragToFree]);
+          free(newssList);
+          return SND_ERR_CANNOT_ALLOC;
       }
-      if (firstFragToFree != -1) free(newssList[firstFragToFree]);
-      free(newssList);
-      return SND_ERR_CANNOT_ALLOC;
-    }
-    newssList[ssPointer++] = newStruct;
-    free(oldNewssList[insertFrag]);/* this was the one that was sliced,
-      * and we have copied it, so we free */
-      insertFrag++; /* step up to next complete frag to copy references to new list */
-		}
-		for (i = insertFrag; i<numToFrags; i++) {
-      newssList[ssPointer++] = oldNewssList[i];
-    }
+      newssList[ssPointer++] = newStruct;
+  }
 
-}
-if (ndf != SND_FORMAT_INDIRECT) {
-		toSound = realloc(toSound,toSound->dataLocation);
-		toSound->dataSize = toSound->dataLocation; /* now holds info size only */
-    toSound->dataFormat = SND_FORMAT_INDIRECT;
-}
-else free(oldNewssList);
-(SndSoundStruct **)(toSound->dataLocation) = newssList;
-return SND_ERR_NONE;
+  if (ndf == SND_FORMAT_INDIRECT) {
+      /* now copy in remainder of sliced frag (if nec), then further frags
+       * from toSound into list (just pointers)
+       */
+      if (insertFragOffset > 0) {
+          if (!(newStruct = _SndCopyFragBytes(oldNewssList[insertFrag], insertFragOffset, -1))) {
+              for (i = firstOfCopiedListToFree;i<ssPointer;i++) {
+                  free (newssList[i]);
+              }
+              if (firstFragToFree != -1) free(newssList[firstFragToFree]);
+              free(newssList);
+              return SND_ERR_CANNOT_ALLOC;
+          }
+          newssList[ssPointer++] = newStruct;
+          free(oldNewssList[insertFrag]);/* this was the one that was sliced,
+                                          * and we have copied it, so we free */
+          insertFrag++; /* step up to next complete frag to copy references to new list */
+      }
+      for (i = insertFrag; i<numToFrags; i++) {
+          newssList[ssPointer++] = oldNewssList[i];
+      }
+
+  }
+  if (ndf != SND_FORMAT_INDIRECT) {
+      toSound = realloc(toSound,toSound->dataLocation);
+      toSound->dataSize = toSound->dataLocation; /* now holds info size only */
+      toSound->dataFormat = SND_FORMAT_INDIRECT;
+  }
+  else free(oldNewssList);
+  
+  (SndSoundStruct **)(toSound->dataLocation) = newssList;
+  return SND_ERR_NONE;
 }
 
 int SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCount)
@@ -928,17 +942,17 @@ int SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCount)
   }
   numFromFrags = i - 1;
   /* We have firstFrag and lastFrag, which may be equal.
-    * First, copy all frags before firstFrag.
-    * If startOffset == 0 and firstFrag < lastFrag, we can delete (ignore) all frags
-    * from firstFrag to lastFrag.
-    * If firstFrag == lastFrag, we must be careful to ignore only that data which is between
-    * the start and end point.
-    * Then copy all frags following endFrag.
-    */
+   * First, copy all frags before firstFrag.
+   * If startOffset == 0 and firstFrag < lastFrag, we can delete (ignore) all frags
+   * from firstFrag to lastFrag.
+   * If firstFrag == lastFrag, we must be careful to ignore only that data which is between
+   * the start and end point.
+   * Then copy all frags following endFrag.
+   */
   /* The following may overestimate the number of frags by 2, iff firstFrag == lastFrag.
-    * This does not really matter, as it's just a list of pointers, and usually not a big
-    * one at that.
-    */
+   * This does not really matter, as it's just a list of pointers, and usually not a big
+   * one at that.
+   */
   numFrags = numFromFrags - (lastFrag - firstFrag + 1) + 2;
   if (!(newssList = malloc((numFrags + 1) * sizeof(SndSoundStruct *)))) {
     return SND_ERR_CANNOT_ALLOC;
@@ -972,9 +986,9 @@ int SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCount)
       if (startOffset > 0) free(newssList[ssPointer - 1]);
       free(newssList);
       return SND_ERR_CANNOT_ALLOC;
-		}
+    }
     newssList[ssPointer++] = newStruct;
-	}
+  }
   free(ssList[firstFrag]);
   if (firstFrag != lastFrag) free(ssList[lastFrag]);
   /* now we do all the rest of the list, as pointers only */
@@ -990,13 +1004,13 @@ int SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCount)
     sound->dataLocation = sound->dataSize; /* size was temporarily held in dataSize */
     sound->dataSize = 0;
   }
-return SND_ERR_NONE;
+  return SND_ERR_NONE;
 }
 
 SndSoundStruct * _SndCopyFrag(const SndSoundStruct *fromSoundFrag)
 /* will not make copy of fragged sound. Info string should therefore be only 4 bytes,
-* but this takes account of longer info strings if they exist.
-*/
+ * but this takes account of longer info strings if they exist.
+ */
 {
   SndSoundStruct *newStruct;
   int infoSize;
@@ -1016,11 +1030,11 @@ SndSoundStruct * _SndCopyFrag(const SndSoundStruct *fromSoundFrag)
 
 SndSoundStruct * _SndCopyFragBytes(SndSoundStruct *fromSoundFrag, int startByte, int byteCount)
 /* Does the same as _SndCopyFrag, but used for `partial' frags that occur when you insert or
-* delete data from a SndStruct.
-* If byteCount == -1, uses all data from startByte to end of frag.
-* Does not make copy of fragged sound. Info string should therefore be only 4 bytes,
-* but this takes account of longer info strings if they exist.
-*/
+ * delete data from a SndStruct.
+ * If byteCount == -1, uses all data from startByte to end of frag.
+ * Does not make copy of fragged sound. Info string should therefore be only 4 bytes,
+ * but this takes account of longer info strings if they exist.
+ */
 {
   SndSoundStruct *newStruct;
   int infoSize;
@@ -1081,7 +1095,7 @@ int SndSwapSoundToHost(void *dest, void *src, int sampleCount, int channelCount,
     }
     return SND_ERR_NONE;
   }
-  printf("SndSoundSwap: format not currently supported, sorry.\n");
+  fprintf(stderr,"SndSoundSwap: format not currently supported, sorry.\n");
   return SND_ERR_BAD_FORMAT;
 #endif
 }
@@ -1114,7 +1128,7 @@ int SndSwapHostToSound(void *dest, void *src, int sampleCount, int channelCount,
     }
     return SND_ERR_NONE;
   }
-  printf("SndSoundSwap: format not currently supported, sorry.\n");
+  fprintf(stderr,"SndSoundSwap: format not currently supported, sorry.\n");
   return SND_ERR_BAD_FORMAT;
 
 #endif
