@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.20  2001/07/05 22:52:42  leighsmith
+  Comment cleanups, removed redundant getNextMsgTime()
+
   Revision 1.19  2000/05/27 19:16:08  leigh
   Code cleanup
 
@@ -137,7 +140,6 @@ Modification history:
 #import "_time.h"
 #import "MidiPrivate.h"
 #import "_MTCHelper.h"   // sb: moved this to here from _MTCHelper.m, since it interferred there.
-//#import "ConductorThread.h"
 #import "_MKAppProxy.h"
 
 #define MK_INLINE 1
@@ -787,7 +789,7 @@ static void condInit()
     /* If the end-of-list marker is ever sent, it will print an error. (It's a bug if this ever happens.) */
     if (!_msgQueue)
         _msgQueue = newMsgRequest(CONDUCTORFREES,ENDOFLIST, @selector(_error:), self,
-                                1, @"MKConductor's end-of-list was erroneously evaluated (shouldn't happen).\n", nil);
+                                1, @"MKConductor's end-of-list was erroneously evaluated (this shouldn't happen).\n", nil);
     // Remove links. We don't want to leave links around because they screw up repositionCond.
     // The links are added at the last minute in _runSetup.
     _condLast = _condNext = nil; 
@@ -915,7 +917,7 @@ static void _runSetup()
 	return self;
     }
     if (!separateThread) 
-      setPriority();
+        setPriority();
     if (!isClocked && !separateThread) {
 	timedEntry = NOTIMEDENTRY;
 	unclockedLoop();
@@ -998,7 +1000,8 @@ static void evalAfterQueues()
     if (separateThread)
         removeTimedEntry(exitThread);
     else if (timedEntry != NOTIMEDENTRY) {
-        [timedEntry invalidate]; [timedEntry release];
+        [timedEntry invalidate];
+        [timedEntry release];
     }
     if (!separateThread)
         resetPriority();
@@ -1125,9 +1128,8 @@ static void evalAfterQueues()
    * Initialized to YES.  
    */
 {	
-    if (inPerformance && 
-	((yesOrNo && (!isClocked)) || ((!yesOrNo) && isClocked)))
-      return nil;
+    if (inPerformance && ((yesOrNo && (!isClocked)) || ((!yesOrNo) && isClocked)))
+        return nil;
     isClocked = yesOrNo;
     return self;
 }
@@ -1826,11 +1828,13 @@ static MKMsgStruct *evalSpecialQueue(MKMsgStruct *queue, MKMsgStruct **queueEnd)
     return delegate;
 }
 
+#if 0
 /* Needed to get around a compiler bug FIXME */
 static double getNextMsgTime(MKConductor *aCond)
 {
     return aCond->nextMsgTime;
 }
+#endif
 
 // for debugging
 - (NSString *) description
@@ -1872,6 +1876,8 @@ static double getNextMsgTime(MKConductor *aCond)
 + (void) masterConductorBody:(NSTimer *) unusedTimer
 /*sb: created for the change from DPS timers to OS-style timers. The timer performs a method, not
  * a function. It's a class method because we want only one object to look after these messages.
+ * When called from a separate thread, it will not actually be called from a NSTimer, but after a timed condition lock.
+ * Therefore we should never do anything with unusedTimer.
  */
 {
     MKMsgStruct  *curProc;
@@ -2079,8 +2085,8 @@ static double getNextMsgTime(MKConductor *aCond)
       we've been handed. If they're different, we need to 
       adjust startTime (subtract difference) and then adjust timed entry.
       */
-    t = MIN(desiredTime,getNextMsgTime(condQueue));
-    t = MAX(t,clockTime);
+    t = MIN(desiredTime, condQueue->nextMsgTime);
+    t = MAX(t, clockTime);
     setTime(t);
     return clockTime;
 }
