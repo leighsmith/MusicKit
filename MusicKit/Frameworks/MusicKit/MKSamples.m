@@ -1,12 +1,18 @@
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
   Defined In: The MusicKit
 
   Description:
+    The Samples object allows you to use a NSSound as data in DSP synthesis.
+    The most common use is as a wavetable table for an oscillator.
+    You may set the Sound from a Sound object or from a Soundfile using
+    setSound: or readSoundfile:.
+
+    Access to the data, is provided by the superclass, WaveTable.
+    Samples currently does not provide resampling functionality.
+    Hence, it is an error to ask for an array length other than the
+    length of the original Sound passed to the object.
+
   Original Author: David Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
@@ -17,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/03/11 01:22:19  leigh
+  Now using NSSound to replace Snd. This means removing functionality until NSSound is full-featured
+
   Revision 1.2  1999/07/29 01:16:42  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -37,24 +46,7 @@ Modification history:
 #import "_error.h"
 #import "MKSamples.h"
 
-//#import <SoundKit/Sound.h>   
-
 @implementation  MKSamples : MKWaveTable
-/* The Samples object allows you to use a Snd as data in DSP synthesis.
-   The most common use is as a wavetable table for an oscillator.
-   You may set the Sound from a Sound object or from a Soundfile using
-   setSound: or readSoundfile:.
-
-   Access to the data, is provided by the superclass, WaveTable.
-   Samples currently does not provide resampling functionality.
-   Hence, it is an error to ask for an array length other than the
-   length of the original Sound passed to the object.
-   */
-{
-	Snd *sound;          /* Sound object set by app or internally. */
-	NSString * soundfile; /* Name of soundfile set by app. */
-	int tableType;
-}
 
 static id theSubclass = nil;
 
@@ -126,11 +118,9 @@ id MKGetSamplesClass(void)
   /* Copies receiver. Copies the Sound as well. */
 {
     MKSamples *newObj = [super copyWithZone:zone];
-    newObj->soundfile = /*_MKMakeStr(soundfile); */ [soundfile copy]; /*sb */
-    newObj->sound = [Snd alloc];
-    if ([newObj->sound copySound:sound] != SND_ERR_NONE) 
-      return newObj;
-    return nil;
+    newObj->soundfile = [soundfile copy];
+    newObj->sound = [sound copy];
+    return newObj;
 }
 
 - (int)readSoundfile:(NSString *)aSoundfile 
@@ -141,7 +131,8 @@ id MKGetSamplesClass(void)
    
    Returns self or nil if there's an error. */
 {
-    id aTmpSound = [[Snd alloc] initFromSoundfile:aSoundfile];
+    NSSound *aTmpSound = [[NSSound alloc] initWithContentsOfFile: aSoundfile byReference: NO];
+
     if (!aTmpSound)
       return 0;
     if (![self setSound:aTmpSound]) {
@@ -156,7 +147,7 @@ id MKGetSamplesClass(void)
     return 1;//sb: was self
 }
 
-- (BOOL)setSound:(Snd *)aSoundObj //sb: originally returned self/nil -- now BOOL.
+- (BOOL)setSound:(NSSound *)aSoundObj //sb: originally returned self/nil -- now BOOL.
 /* Sets the Sound of the Samples object to be aSoundObj.
    aSoundObj must be in 16-bit linear mono format. If not, setSound: returns
    nil. aSoundObj is copied. 
@@ -167,14 +158,11 @@ id MKGetSamplesClass(void)
       return FALSE;
     if (sound) [sound autorelease];/*sb: gets rid of old one*/
     length = 0; /* This ensures that the superclass recomputes cached buffers. */ 
-    if (([aSoundObj dataFormat] != SND_FORMAT_LINEAR_16) ||
-	([aSoundObj channelCount] != 1))
+// LMS disabled since we can't check it and it shouldn't matter anyway.
+//    if (([aSoundObj dataFormat] != SND_FORMAT_LINEAR_16) ||
+//	([aSoundObj channelCount] != 1))
       return FALSE; /*** FIXME Eventually convert ***/
-    sound = [Snd alloc];
-    if ([sound copySound:aSoundObj] != SND_ERR_NONE) {
-	[sound release];
-	return FALSE;
-    }
+    sound = [aSoundObj copy];
     return TRUE;
 }
 
@@ -187,32 +175,35 @@ id MKGetSamplesClass(void)
       _MKWriteChar(aStream,'\1'); /* Marks it as Sample rather than Partials */
     if (!soundfile) {
 	/* Generate file name and write samples. */  
-	char * root;
-	int i;
-	i = 0;
-	root = "samples";
+	int i = 0;
+        BOOL error = NO;
+
         tempSoundFile = @"samples.snd";
 	for (; ;) {                         /* Keep trying until success */
-//            if ((fd = open([tempSoundFile cString],O_RDONLY,_MK_PERMS)) == -1) // LMS
             if([manager fileExistsAtPath: tempSoundFile] != YES)
                 break;                       /* File doesn't exist. */
-            tempSoundFile = [NSString stringWithFormat:@"samples%d.snd",(++i)];
+            tempSoundFile = [NSString stringWithFormat: @"samples%d.snd", (++i)];
         }
         [soundfile autorelease];
         soundfile = [tempSoundFile copy];
-        if ([sound writeSoundfile:soundfile] != SND_ERR_NONE) { 
+        /* LMS: currently no way to write a sound file in MacOsX-Server! */
+        // error = [sound writeSoundfile:soundfile];
+        if (error) { 
             [soundfile release];
 	    soundfile = nil;
 	    /*** FIXME Print sound error code here. ***/ 
 	    if (isBinary)
-	      _MKWriteString(aStream,"/dev/null");
-	    else [aStream appendData:[@"{\"/dev/null\"}" dataUsingEncoding:NSNEXTSTEPStringEncoding]];      /* Not very good */
+	        _MKWriteString(aStream,"/dev/null");
+	    else
+                [aStream appendData:[@"{\"/dev/null\"}" dataUsingEncoding:NSNEXTSTEPStringEncoding]];      /* Not very good */
 	    return nil;
 	}
     }
     if (isBinary)
 	_MKWriteNSString(aStream,soundfile);
-    else [aStream appendData:[[NSString stringWithFormat:@"{\"%@\"}", soundfile] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    else
+        [aStream appendData: [[NSString stringWithFormat: @"{\"%@\"}", soundfile] 
+                 dataUsingEncoding: NSNEXTSTEPStringEncoding]];
     return self;
 }
 

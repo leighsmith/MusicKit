@@ -2,9 +2,37 @@
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    A Samples object is a type of WaveTable that uses a NSSound object (from
+    the AppKit) as its data.  The Sound itself can only contain sampled
+    data; each sample in the Sound corresponds to an array entry in the
+    Samples object.  The Sound object can be set directly by invoking the
+    method setSound:, or you can read it from a soundfile, through the
+    readSoundfile: method.
+   
+    Note that the Samples object currently does not resample (except in
+    one special case, when the sound is evenly divisible by the access
+    length). Except in this special case, the length of the sound must be
+    the same as the length you ask for with the access methods.
+   
+    Note also that for use with the Music Kit oscillator unit generators,
+    the length must be a power of 2 and must fit in DSP memory (1024 or
+    less is a good length).
+
+   Original Author: David Jaffe
+
+   Copyright (c) 1988-1992, NeXT Computer, Inc.
+   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+   Portions Copyright (c) 1994 Stanford University
 */
 /*
+ Modification history:
+
   $Log$
+  Revision 1.3  2000/03/11 01:22:19  leigh
+  Now using NSSound to replace Snd. This means removing functionality until NSSound is full-featured
+
   Revision 1.2  1999/07/29 01:25:49  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -13,32 +41,12 @@
 #define __MK_Samples_H___
 
 #import "MKWaveTable.h"
-//sb:
-//#import <SoundKit/SoundKit.h>
-#import <SndKit/SndKit.h>
+#import <AppKit/NSSound.h>
 
 @interface MKSamples : MKWaveTable
-/*
- * 
- * A Samples object is a type of WaveTable that uses a Snd object (from
- * the SndKit) as its data.  The Sound itself can only contain sampled
- * data; each sample in the Sound corresponds to an array entry in the
- * Samples object.  The Sound object can be set directly by invoking the
- * method setSound:, or you can read it from a soundfile, through the
- * readSoundfile: method.
- * 
- * Note that the Samples object currently does not resample (except in
- * one special case, when the sound is evenly divisible by the access
- * length). Except in this special case, the length of the sound must be
- * the same as the length you ask for with the access methods.
- * 
- * Note also that for use with the Music Kit oscillator unit generators,
- * the length must be a power of 2 and must fit in DSP memory (1024 or
- * less is a good length).
- */
 {
-    Snd *sound;        /* The object's Sound object. */ 
-    NSString *soundfile; /* The name of the soundfile, if the Sound was set through readSoundfile:. */
+    NSSound *sound;        /* The object's Sound object. */ 
+    NSString *soundfile;   /* The name of the soundfile, if the Sound was set through readSoundfile:. */
     int tableType;
 }
 
@@ -61,7 +69,7 @@
   * See also superclass -copy.
   */
 
-- (BOOL)setSound:(Snd *)aSound; 
+- (BOOL)setSound:(NSSound *)aSound; 
  /* 
   * Sets the receiver's Sound to a copy of aSound (the receiver's current
   * Sound is freed).  aSound must be one-channel, 16-bit linear data.  You
