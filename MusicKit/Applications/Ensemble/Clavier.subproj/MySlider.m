@@ -12,7 +12,7 @@
     return self;
 }
 
-- setReturnValue:(double)aValue
+- (void) setReturnValue:(void *)aValue
     /* Set the value that the slider will snap back to. */
 {
     returnValue = aValue;

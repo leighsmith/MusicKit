@@ -12,185 +12,185 @@
 #import "../ParamInterface.h"
 
 char *GeneralMidiGroupings[16] = {
-								  "Piano",
-								  "Chromatic Percussion",
-								  "Organ",
-								  "Guitar",
-								  "Bass",
-								  "Strings",
-								  "Ensemble",
-								  "Brass",
-								  "Reed",
-								  "Pipe",
-								  "Synth Lead",
-								  "Synth Pad",
-								  "Synth Effects",
-								  "Ethnic",
-								  "Percussive",
-								  "Sound Effects"
+    "Piano",
+    "Chromatic Percussion",
+    "Organ",
+    "Guitar",
+    "Bass",
+    "Strings",
+    "Ensemble",
+    "Brass",
+    "Reed",
+    "Pipe",
+    "Synth Lead",
+    "Synth Pad",
+    "Synth Effects",
+    "Ethnic",
+    "Percussive",
+    "Sound Effects"
 };
 
 char *GeneralMidiSounds[128] = {
 
  /* Piano */
-								"Acoustic Grand Piano",
-								"Bright Acoustic Piano",
-								"Electric Grand Piano",
-								"Honky-tonk Piano",
-								"Elec Piano 1",
-								"Elec Piano 2",
-								"Harpsichord",
-								"Clavichord",
+    "Acoustic Grand Piano",
+    "Bright Acoustic Piano",
+    "Electric Grand Piano",
+    "Honky-tonk Piano",
+    "Elec Piano 1",
+    "Elec Piano 2",
+    "Harpsichord",
+    "Clavichord",
 
  /* Chromatic Percussion */
-								"Celesta",
-								"Glockenspiel",
-								"Music Box",
-								"Vibraphone",
-								"Marimba",
-								"Xylophone",
-								"Tubular Bells",
-								"Dulcimer",
+    "Celesta",
+    "Glockenspiel",
+    "Music Box",
+    "Vibraphone",
+    "Marimba",
+    "Xylophone",
+    "Tubular Bells",
+    "Dulcimer",
 
  /* Organ */
-								"Drawbar Organ",
-								"Percussive Organ",
-								"Rock Organ",
-								"Church Organ",
-								"Reed Organ",
-								"Accordion",
-								"Harmonica",
-								"Tango Accordion",
+    "Drawbar Organ",
+    "Percussive Organ",
+    "Rock Organ",
+    "Church Organ",
+    "Reed Organ",
+    "Accordion",
+    "Harmonica",
+    "Tango Accordion",
 
  /* Guitar */
-								"Acoustic Guitar (nylon)",
-								"Acoustic Guitar (steel)",
-								"Electric Guitar (jazz)",
-								"Electric Guitar (clean)",
-								"Electric Guitar (muted)",
-								"Overdriven Guitar",
-								"Distortion Guitar",
-								"Guitar Harmonics",
+    "Acoustic Guitar (nylon)",
+    "Acoustic Guitar (steel)",
+    "Electric Guitar (jazz)",
+    "Electric Guitar (clean)",
+    "Electric Guitar (muted)",
+    "Overdriven Guitar",
+    "Distortion Guitar",
+    "Guitar Harmonics",
 
  /* Bass */
-								"Acoustic Bass",
-								"Electric Bass (finger)",
-								"Electric Bass (pick)",
-								"Fretless Bass",
-								"Slap Bass 1",
-								"Slap Bass 2",
-								"Synth Bass 1",
-								"Synth Bass 2",
+    "Acoustic Bass",
+    "Electric Bass (finger)",
+    "Electric Bass (pick)",
+    "Fretless Bass",
+    "Slap Bass 1",
+    "Slap Bass 2",
+    "Synth Bass 1",
+    "Synth Bass 2",
 
  /* Strings */
-								"Violin",
-								"Viola",
-								"Cello",
-								"Contrabass",
-								"Tremolo Strings",
-								"Pizzicato Strings",
-								"Orchestral Harp",
-								"Timpani",
+    "Violin",
+    "Viola",
+    "Cello",
+    "Contrabass",
+    "Tremolo Strings",
+    "Pizzicato Strings",
+    "Orchestral Harp",
+    "Timpani",
 
  /* Ensemble */
-								"String Ensemble 1",
-								"String Ensemble 2",
-								"SynthStrings 1",
-								"SynthStrings 2",
-								"Choir Aahs",
-								"Voice Oohs",
-								"Synth Voice",
-								"Orchestra Hit",
+    "String Ensemble 1",
+    "String Ensemble 2",
+    "SynthStrings 1",
+    "SynthStrings 2",
+    "Choir Aahs",
+    "Voice Oohs",
+    "Synth Voice",
+    "Orchestra Hit",
 
  /* Brass */
-								"Trumpet",
-								"Trombone",
-								"Tuba",
-								"Muted Trumpet",
-								"French Horn",
-								"Brass Section",
-								"SynthBrass 1",
-								"SynthBrass 2",
+    "Trumpet",
+    "Trombone",
+    "Tuba",
+    "Muted Trumpet",
+    "French Horn",
+    "Brass Section",
+    "SynthBrass 1",
+    "SynthBrass 2",
 
  /* Reed */
-								"Soprano Sax",
-								"Alto Sax",
-								"Tenor Sax",
-								"Baritone Sax",
-								"Oboe",
-								"English Horn",
-								"Bassoon",
-								"Clarinet",
+    "Soprano Sax",
+    "Alto Sax",
+    "Tenor Sax",
+    "Baritone Sax",
+    "Oboe",
+    "English Horn",
+    "Bassoon",
+    "Clarinet",
 
  /* Pipe */
-								"Piccolo",
-								"Flute",
-								"Recorder",
-								"Pan Flute",
-								"Blown Bottle",
-								"Shakuhachi",
-								"Whistle",
-								"Ocarina",
+    "Piccolo",
+    "Flute",
+    "Recorder",
+    "Pan Flute",
+    "Blown Bottle",
+    "Shakuhachi",
+    "Whistle",
+    "Ocarina",
 
  /* Synth Lead */
-								"Lead 1 (square)",
-								"Lead 2 (sawtooth)",
-								"Lead 3 (calliope)",
-								"Lead 4 (chiff)",
-								"Lead 5 (charang)",
-								"Lead 6 (voice)",
-								"Lead 7 (fifths)",
-								"Lead 8 (bass+lead)",
+    "Lead 1 (square)",
+    "Lead 2 (sawtooth)",
+    "Lead 3 (calliope)",
+    "Lead 4 (chiff)",
+    "Lead 5 (charang)",
+    "Lead 6 (voice)",
+    "Lead 7 (fifths)",
+    "Lead 8 (bass+lead)",
 
  /* Synth Pad */
-								"Pad 1 (new age)",
-								"Pad 2 (warm)",
-								"Pad 3 (polysynth)",
-								"Pad 4 (choir)",
-								"Pad 5 (bowed)",
-								"Pad 6 (metallic)",
-								"Pad 7 (halo)",
-								"Pad 8 (sweep)",
+    "Pad 1 (new age)",
+    "Pad 2 (warm)",
+    "Pad 3 (polysynth)",
+    "Pad 4 (choir)",
+    "Pad 5 (bowed)",
+    "Pad 6 (metallic)",
+    "Pad 7 (halo)",
+    "Pad 8 (sweep)",
 
  /* Synth Effects */
-								"FX 1 (rain)",
-								"FX 2 (soundtrack)",
-								"FX 3 (crystal)",
-								"FX 4 (atmosphere)",
-								"FX 5 (brightness)",
-								"FX 6 (goblins)",
-								"FX 7 (echoes)",
-								"FX 8 (sci-fi)",
+    "FX 1 (rain)",
+    "FX 2 (soundtrack)",
+    "FX 3 (crystal)",
+    "FX 4 (atmosphere)",
+    "FX 5 (brightness)",
+    "FX 6 (goblins)",
+    "FX 7 (echoes)",
+    "FX 8 (sci-fi)",
 
  /* Ethnic */
-								"Sitar",
-								"Banjo",
-								"Shamisen",
-								"Koto",
-								"Kalimba",
-								"Bad pipe",
-								"Fiddle",
-								"Shanai",
+    "Sitar",
+    "Banjo",
+    "Shamisen",
+    "Koto",
+    "Kalimba",
+    "Bad pipe",
+    "Fiddle",
+    "Shanai",
 
  /* Percussive */
-								"Tinkle Bell",
-								"Agogo",
-								"Steel Drums",
-								"Woodblock",
-								"Taiko Drum",
-								"Melodic Tom",
-								"Synth Drum",
-								"Reverse Cymbal",
+    "Tinkle Bell",
+    "Agogo",
+    "Steel Drums",
+    "Woodblock",
+    "Taiko Drum",
+    "Melodic Tom",
+    "Synth Drum",
+    "Reverse Cymbal",
 
  /* Sound Effects */
-								"Guitar Fret Noise",
-								"Breath Noise",
-								"Seashore",
-								"Bird Tweet",
-								"Telephone Ring",
-								"Helicopter",
-								"Applause",
-								"Gunshot"
+    "Guitar Fret Noise",
+    "Breath Noise",
+    "Seashore",
+    "Bird Tweet",
+    "Telephone Ring",
+    "Helicopter",
+    "Applause",
+    "Gunshot"
 };
 
 static char *shortName(int controller)
@@ -232,11 +232,11 @@ static char *shortName(int controller)
 	controllers[1] = 93;
 	controllers[2] = 11;
 
-	[NSApp loadNibSection:"Clavier.nib" owner:self withNames:NO];
+        [NSBundle loadNibNamed:@"Clavier.nib" owner:self];
 	return self;
 }
 
-- awakeFromNib
+- (void) awakeFromNib
 {
 	[window center];
 	[pianoOctave1 setTag:0];	/* Indicates octaves from base octave */
@@ -251,14 +251,13 @@ static char *shortName(int controller)
 	 	(NX_MOUSEDOWNMASK | NX_MOUSEDRAGGEDMASK | NX_MOUSEUPMASK)];
 	[controllerInterface setMode:CONTROLS];
 	[controllerInterface setIntValues:controllers];
-	[[controllerFields cellAt:0:0] setStringValue:shortName(controllers[0])];
-	[[controllerFields cellAt:0:1] setStringValue:shortName(controllers[1])];
-	[[controllerFields cellAt:0:2] setStringValue:shortName(controllers[2])];
+        [[controllerFields cellAt:0:0] setStringValue: [NSString stringWithCString: shortName(controllers[0])]];
+        [[controllerFields cellAt:0:1] setStringValue: [NSString stringWithCString: shortName(controllers[1])]];
+        [[controllerFields cellAt:0:2] setStringValue: [NSString stringWithCString: shortName(controllers[2])]];
 	[soundGroupMatrix selectCellAt:0 :0];
-	[soundGroupDisplayer setStringValue:GeneralMidiGroupings[soundGroup]];
+        [soundGroupDisplayer setStringValue: [NSString stringWithCString: GeneralMidiGroupings[soundGroup]]];
 	[variationMatrix selectCellAt:0 :0];
 	[programChangeField setIntValue:soundGroup*8+variation];
-	return self;
 }
 
 - noteSender
@@ -274,11 +273,8 @@ static char *shortName(int controller)
 - takeOctaveFrom:sender
  /* Set the base octave of the three octaves available. */
 {
-	static char str[] = "C0";
-
 	octave = MAX(MIN(octave + [[sender selectedCell] tag], 7), 1);
-	sprintf(str, "C%d", octave - 1);
-	[octaveDisplayer setStringValue:str];
+        [octaveDisplayer setStringValue: [NSString stringWithFormat: @"C%d", octave - 1]];
 
 	return self;
 }
@@ -314,7 +310,7 @@ static char *shortName(int controller)
 		fprintf(stderr, "timbre ( = %d ) must be 0-127\n", timbre);
 		return nil;
 	}
-	[variationDisplayer setStringValue:GeneralMidiSounds[timbre]];
+	[variationDisplayer setStringValue: [NSString stringWithCString: GeneralMidiSounds[timbre]]];
 	[programChangeField setIntValue:timbre];
 
 	[MKConductor lockPerformance];
@@ -335,7 +331,7 @@ static char *shortName(int controller)
 				"( = %d ) must be 0-15\n", soundGroup);
 		return nil;
 	}
-	[soundGroupDisplayer setStringValue:GeneralMidiGroupings[soundGroup]];
+        [soundGroupDisplayer setStringValue: [NSString stringWithCString: GeneralMidiGroupings[soundGroup]]];
 	[self setSound];
 	return self;
 }
@@ -397,7 +393,7 @@ static char *shortName(int controller)
 {
 	int which = [sender selectedIndex];
 	controllers[which] = [sender intValue];
-	[[controllerFields cellAt:0:which] setStringValue:shortName(controllers[which])];
+        [[controllerFields cellAt:0:which] setStringValue: [NSString stringWithCString: shortName(controllers[which])]];
 	return self;
 }
 

@@ -14,7 +14,7 @@ static int keyToRect[] = {0,14,2,15,4,6,16,8,17,10,18,12};
 
 @implementation PianoOctave
 
-- initWithFrame:(const NSRect *)frameRect
+- initWithFrame:(NSRect)frameRect
     /* Initialize all the key rects according to the frameRect size */
 { 
     double viewWidth,viewHeight, viewX,viewY,
@@ -124,8 +124,6 @@ static int keyToRect[] = {0,14,2,15,4,6,16,8,17,10,18,12};
 	[self setKey:value toState:0];
 	[self sendAction:action to:target];
     }
-
-    return self;
 }
 
 - (BOOL) acceptsFirstMouse;
@@ -138,14 +136,14 @@ static int keyToRect[] = {0,14,2,15,4,6,16,8,17,10,18,12};
     return value;
 }
 
-- setTarget:anObject
+- (void)setTarget:(id)anObject
 {
     target = anObject;
 
     return self;
 }
 
-- setAction:(SEL)aSelector
+- (void)setAction:(SEL)aSelector
 {
     action = aSelector;
 

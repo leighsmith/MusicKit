@@ -52,10 +52,10 @@ extern int beatIndexForTime(float time);
 - setModeAt:(int)row:(int)col to:(int)displayMode;	/* Set type at cell */
 - takeValueFrom:sender;						/* Get a value from slider or text field */
 - incrementValueFrom:sender;				/* Increment or decrement the controls */
-- setIntValue:(int)value;					/* Display the specified value */
-- setDoubleValue:(double)value;				/* Display the specified value */
-- setIntValueAt:(int)index to:(int)aValue;	/* Display one of a matrix of values */
-- setDoubleValueAt:(int)index to:(double)aValue;  /* Same */
+- (void) setIntValue:(int)value;					/* Display the specified value */
+- (void) setDoubleValue:(double)value;				/* Display the specified value */
+- (void) setIntValueAt:(int)index to:(int)aValue;	/* Display one of a matrix of values */
+- (void) setDoubleValueAt:(int)index to:(double)aValue;  /* Same */
 - setIntValueAt:(int)row:(int)col to:(int)aValue; /* Display one of a matrix of values */
 - setDoubleValueAt:(int)row:(int)col to:(double)aValue;	/* Same */
 - setIntValues:(int *)values;

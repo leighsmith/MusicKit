@@ -7,7 +7,7 @@
     double returnValue;
 }
 
-- setReturnValue:(double)aValue;
+- (void) setReturnValue:(double)aValue;
 
 @end
 
