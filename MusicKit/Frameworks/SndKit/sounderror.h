@@ -27,6 +27,10 @@
  *	Copyright 1988-89 NeXT, Inc.
  *
  */
+#ifndef __SNDERROR_H
+#define __SNDERROR_H 1
+
+
 #if !defined(SND_ERR_NOT_SOUND)
 typedef enum {
     SND_ERR_NONE		= 0,
@@ -75,3 +79,4 @@ char *SndSoundError(int err);
  * given error code. 
  */
 
+#endif
