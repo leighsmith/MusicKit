@@ -1,9 +1,35 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description:
+    One pole filter.
+         You instantiate a subclass of the form
+         OnepoleUG<a><b>, where
+         <a> = space of output
+         <b> = space of input
+
+       The onepole unit-generator implements a one-pole
+       filter section in direct form. In pseudo-C notation:
+
+       for (n=0;n<DSPMK_NTICK;n++) {
+            s = bb0*sinp:ainp[n] - aa1*s;
+            sout:aout[n] = s;
+       }
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 2000 The MusicKit Project
+*/
 /* 
 Modification history:
+ $Log$
+ Revision 1.3  2000/09/14 18:02:06  leigh
+ Doco cleanups
+
 
   11/22/89/daj - Changed to use UnitGenerator C functions instead of methods.
 */
@@ -13,23 +39,6 @@ Modification history:
 #import "OnepoleUG.h"
 
 @implementation OnepoleUG:MKUnitGenerator
-/* One pole filter.
-	You instantiate a subclass of the form 
-	OnepoleUG<a><b>, where 
-	<a> = space of output
-	<b> = space of input
-
-      The onepole unit-generator implements a one-pole
-      filter section in direct form. In pseudo-C notation:
-
-      for (n=0;n<DSPMK_NTICK;n++) {
-           s = bb0*sinp:ainp[n] - aa1*s;
-           sout:aout[n] = s;
-      }
-
-      */
-{
-}
 
 enum args { ainp, aout, s, aa1, bb0};
 

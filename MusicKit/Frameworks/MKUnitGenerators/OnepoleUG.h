@@ -1,22 +1,29 @@
+/*
+  $Id$
+  Defined In: This class is part of the Music Kit UnitGenerator Library.
+
+  Description:   
+    OnepoleUG  - from dsp macro /usr/lib/dsp/ugsrc/onepole.asm (see source for details).
+
+    The onepole unit-generator implements a one-pole
+    filter section in direct form.
+
+    You instantiate a subclass of the form
+    OnepoleUG<a><b>, where <a> = space of output and <b> = space of input.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 2000 The MusicKit Project
+*/
 #ifndef __MK_OnepoleUG_H___
 #define __MK_OnepoleUG_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* 
-	OnepoleUG.h 
 
-	This class is part of the Music Kit UnitGenerator Library.
-*/
 #import <MusicKit/MKUnitGenerator.h>
 
 @interface OnepoleUG : MKUnitGenerator
-/* OnepoleUG  - from dsp macro /usr/lib/dsp/ugsrc/onepole.asm (see source for details).
-
-   The onepole unit-generator implements a one-pole
-   filter section in direct form. 
-
-   You instantiate a subclass of the form 
-   OnepoleUG<a><b>, where <a> = space of output and <b> = space of input.
-*/
 
 -setInput:aPatchPoint;
 /* Sets filter input. */

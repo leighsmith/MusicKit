@@ -1,18 +1,32 @@
+/*
+  $Id$
+  Defined In: This file is part of the MusicKit UnitGenerator Library
+
+  Description:
+    This is a convenient way to get the .h files for the MusicKit Unit
+    Generator library.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 2000 The MusicKit Project
+*/
+/*
+  Modification history:
+  $Log$
+  Revision 1.3  2000/09/14 18:01:44  leigh
+  Doco cleanups
+
+*/
 #ifndef __MK_unitgenerators_H___
 #define __MK_unitgenerators_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* 
-	unitgenerators.h 
 
-	This file is part of the Music Kit UnitGenerator Library.
-*/
 #ifndef UNITGENERATORS_H
 #define UNITGENERATORS_H
 
 #import <MusicKit/MusicKit.h>
-
-/* This is a convenient way to get the .h files for the Music Kit Unit
-   Generator library. */
 
 /* Allpass1UG - from dsp macro allpass1. See Allpass1UG.h for details. */
 #import "Allpass1UGxx.h"

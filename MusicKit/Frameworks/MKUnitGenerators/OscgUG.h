@@ -1,30 +1,44 @@
+/*
+  $Id$
+  Defined In: This class is part of the Music Kit UnitGenerator Library.
+
+  Description:
+    Simple oscillator with no envelopes.
+
+    OscgUG  - from dsp macro /usr/lib/dsp/ugsrc/oscg.asm (see source for details).
+
+    OscgUG<a><b>, where <a> is output space and <b> is table space.
+
+    This is a non-interpolating oscillator. That means that its fidelity
+    depends on the size of the table (larger tables have lower distortion)
+    and the highest frequency represented in the table. For high-quality
+    synthesis, an interpolating oscillator is preferable. However, an
+    interpolating oscillator is also more expensive. OscgUG is useful
+    in cases where density of texture is more important than fidelity of
+    individual sounds.
+
+    The wavetable length must be a power of 2.
+    The wavetable increment must be nonnegative.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+  Modification history:
+  $Log$
+  Revision 1.3  2000/09/14 18:02:45  leigh
+  Doco cleanups
+
+*/
 #ifndef __MK_OscgUG_H___
 #define __MK_OscgUG_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* 
-	OscgUG.h 
 
-	This class is part of the Music Kit UnitGenerator Library.
-*/
 #import <MusicKit/MKUnitGenerator.h>
 
 @interface OscgUG:MKUnitGenerator
-/* OscgUG  - from dsp macro /usr/lib/dsp/ugsrc/oscg.asm (see source for details).
-
-   OscgUG<a><b>, where <a> is output space and <b> is table space.
-   
-   This is a non-interpolating oscillator. That means that its fidelity
-   depends on the size of the table (larger tables have lower distortion)
-   and the highest frequency represented in the table. For high-quality
-   synthesis, an interpolating oscillator is preferable. However, an
-   interpolating oscillator is also more expensive. OscgUG is useful
-   in cases where density of texture is more important than fidelity of
-   individual sounds.
-   
-   The wavetable length must be a power of 2.
-   The wavetable increment must be nonnegative.
-   
-   */
 {
     double _reservedOscg1;
     double _reservedOscg2;
