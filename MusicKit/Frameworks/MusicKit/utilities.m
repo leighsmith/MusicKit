@@ -18,6 +18,9 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2002/04/16 15:22:33  sbrandon
+  a couple of string-appending functions simplified for speed
+
   Revision 1.16  2002/01/24 13:25:43  sbrandon
   added function _MKDeepMutableArrayCopy() which gives what it says it does, and
   is guaranteed to do so cross-platform (NSArray:-mutableCopy does the same on
@@ -584,7 +587,7 @@ id MKError(NSString * msg)
     }
     else {
         [errorStream appendData: [msg dataUsingEncoding: NSNEXTSTEPStringEncoding]];
-        [errorStream appendData: [@"\n" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+        [errorStream appendBytes: "\n" length:1];
     }
     return nil;
 }
@@ -613,7 +616,7 @@ id _MKErrorf(int errorCode,...)
         }
         else {
             [errorStream appendData: [theErrorString dataUsingEncoding: NSNEXTSTEPStringEncoding]];
-            [errorStream appendData: [@"\n" dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+            [errorStream appendBytes: "\n" length:1];
         }
     }
     va_end(ap);
