@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/05/06 00:58:14  leigh
+  typed parameters to reduce warnings
+
   Revision 1.3  2000/04/01 22:11:01  leigh
   Fixed warnings from finicky compilers
 
@@ -41,7 +44,7 @@ extern BOOL _MKOrchLateDeltaTMode(id theOrch); /* See Orchestra.m ***SIGH*** */
 
 @interface MKOrchestra(Private)
 
-+(id *)_addTemplate:aNewTemplate ;
++(NSMutableArray **)_addTemplate:aNewTemplate ;
 +allocFromZone:(NSZone *)zone onDSP:(unsigned short)index;
 -_adjustOrchTE:(int)yesOrNo reset:(int)reset;
 -_notifyAbort;

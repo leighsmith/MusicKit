@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/05/06 00:56:32  leigh
+  typed parameters to reduce warnings
+
   Revision 1.2  1999/07/29 01:25:56  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -19,7 +22,7 @@ Modification history:
 
 /* PatchTemplate functions */
 extern BOOL _MKIsClassInTemplate(id templ,id factObj);
-extern id _MKDeallocatedSynthPatches(id templ,int orchIndex);
+extern NSMutableArray *_MKDeallocatedSynthPatches(id templ,int orchIndex);
 extern void _MKEvalTemplateConnections(id templ,id synthPatchContents);
 extern void _MKSetTemplateEMemUsage(id templ,MKOrchMemStruct *reso);
 extern unsigned _MKGetTemplateEMemUsage(id templ);
