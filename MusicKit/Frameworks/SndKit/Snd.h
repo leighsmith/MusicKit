@@ -393,6 +393,9 @@ architecture, as described in the <b>SndStruct</b> header.
 */
 - (SndPerformance *) playInFuture: (double) inSeconds beginSample: (int) begin sampleCount: (int) count;
 
+- (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d;
+
+
 /*!
     @method play:beginSample:sampleCount:
     @abstract Begin playback now, over a region of the sound.

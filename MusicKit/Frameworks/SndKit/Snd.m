@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.24  2001/08/27 21:07:18  skotmcdonald
+ * Added new playAtTimeInSeconds:withDurationInSeconds method to support sample-accurate stream placement with SndPlayer
+ *
  * Revision 1.23  2001/07/18 13:12:45  sbrandon
  * - changed playInFuture:beginSample:sampleCount: implementation to take
  *   advantage of new SndPlayer API (can specify the playEnd sample)
@@ -705,6 +708,12 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     status = SND_SoundPlayingPending;
     
     return [sndPlayer playSnd: self withTimeOffset: inSeconds endAtIndex: playEnd];
+}
+
+- (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d
+{
+  NSLog(@"Snd::playAtTimeInSeconds: %f", t);
+    return [sndPlayer playSnd: self atTimeInSeconds: t withDurationInSeconds: d];  
 }
 
 - (SndPerformance *) playInFuture: (double) inSeconds 
