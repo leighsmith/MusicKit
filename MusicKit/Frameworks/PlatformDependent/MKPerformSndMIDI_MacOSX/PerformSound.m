@@ -33,6 +33,8 @@ extern "C" {
 #define DEBUG_SNDPLAYIOPROC 0  // dump the channel count etc while generating the buffer.
 #define DEBUG_STARTSTOPMSG  0  // dump stream start/stop msgs
 #define DEBUG_CALLBACK      0
+#define CHECK_DEVICE_RUNNING_STATUS 0   
+
 
 #define DEFAULT_BUFFERSIZE 16384
 
@@ -426,10 +428,10 @@ static BOOL retrieveDriverList(void)
 
 static BOOL isDeviceRunning(AudioDeviceID deviceID, BOOL isInput)
 {
-    UInt32 running;
-    OSStatus CAstatus;
-    UInt32 propertySize;
-    Boolean propertyWritable;
+    UInt32 running = 0;
+    OSStatus CAstatus = 0;
+    UInt32 propertySize = 0;
+    Boolean propertyWritable = 0;
 
     /* check the device is running */    
     CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput,
@@ -644,7 +646,12 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
         /* Get the default sound output device */    
         CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDefaultOutputDevice, 
                                                 &propertySize, &propertyWritable);
-        CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
+      if (CAstatus) {
+        fprintf(stderr, "Output: AudioHardwareGetPropertyInfo returned %s\n",
+                getCoreAudioErrorStr(CAstatus));
+        return FALSE;
+      }
+      CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
                                             &propertySize, &outputDeviceID);
         if (CAstatus) {
             fprintf(stderr, "Output: AudioHardwareGetProperty returned %s\n",
@@ -675,10 +682,6 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
         fprintf(stderr, "outputDeviceID is kAudioDeviceUnknown\n");
         return FALSE;
     }
-    if(isDeviceRunning(outputDeviceID, false)) {
-        fprintf(stderr, "output device is already running\n");
-        return FALSE;
-    }
     if(!determineBasicDescription(outputDeviceID, &outputStreamBasicDescription, false)) {
         fprintf(stderr, "output device - error determining basic description\n");
         return FALSE;
@@ -687,16 +690,13 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
         fprintf(stderr, "output device - error setting buffer size\n");
         return FALSE;
     }
-
+    
 #if DEBUG_DESCRIPTION
 //    fprintf(stderr,"INPUT ===========\n");
 #endif
 
     if (inputDeviceID == kAudioDeviceUnknown) {
         fprintf(stderr, "inputDeviceID is kAudioDeviceUnknown\n");
-    }
-    else if(isDeviceRunning(inputDeviceID, true)) {
-        fprintf(stderr, "input device is already running\n");
     }
     else if(!determineBasicDescription(inputDeviceID, &inputStreamBasicDescription, true)) {
         fprintf(stderr, "input device - error determining basic setup\n");
@@ -705,8 +705,18 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
         fprintf(stderr, "input device - error setting buffer size\n");
     }
     else {
-        inputInit = TRUE;
+      inputInit = TRUE;
     }
+
+#if CHECK_DEVICE_RUNNING_STATUS    
+    if(isDeviceRunning(outputDeviceID, false)) {
+      fprintf(stderr, "output device is already running... but this is ok in CoreAudio land\n");
+    }    
+    if(isDeviceRunning(inputDeviceID, true)) {
+      fprintf(stderr, "Input device is already running... but this is ok in CoreAudio land\n");
+    }
+#endif    
+
     return TRUE;
 }
 
