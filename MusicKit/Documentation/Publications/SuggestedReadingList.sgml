@@ -129,7 +129,7 @@
       </bibliomset>
       <bibliomset relation=journal>
 	<title>Journal of the Audio Engineering Society</title>
-	<volumenum>v26</volumenum><issuenum>n10</issuenum>
+	<volumenum>26</volumenum>(<issuenum>10</issuenum>)
 	<pagenums>pp. 739-771</pagenums>
 	<pubdate>1978</pubdate>
       </bibliomset>
@@ -201,7 +201,7 @@
       </bibliomset>
       <bibliomset relation=journal>
 	<title>Computer Music Journal</title>
-	<volumenum>v1</volumenum><issuenum>n4</issuenum>
+	<volumenum>1</volumenum>(<issuenum>4</issuenum>)
 	<pagenums>pp. 46-50</pagenums>
 	<pubdate>1977</pubdate>
       </bibliomset>
@@ -218,7 +218,7 @@
       <bibliomset relation=journal>
 	<title>Digital Waveshaping Synthesis</title>
 	Journal of the Audio Engineering Society
-	<volumenum>v18</volumenum><issuenum>n2</issuenum>
+	<volumenum>18</volumenum>(<issuenum>2</issuenum>)
 	<pagenums>pp. 250-266</pagenums>
 	<pubdate>1979</pubdate>
       </bibliomset>
@@ -227,18 +227,19 @@
     <bibliomixed>
     <bibliomset relation=article>
       <authorgroup>
-	  <author>
-	    <firstname>Eric</firstname> <othername>D.</othername>
-	    <surname>Scheirer</surname>
-	  </author>
-	  <author>
-	    <firstname>Barry</firstname> <othername>L.</othername>
-	    <surname>Vercoe</surname>
-	  </author>
-	</authorgroup>
-
+	<author>
+	  <firstname>Eric</firstname> <othername>D.</othername>
+	  <surname>Scheirer</surname>
+	</author>
+	<author>
+	  <firstname>Barry</firstname> <othername>L.</othername>
+	  <surname>Vercoe</surname>
+	</author>
+      </authorgroup>
       <title role=article>SAOL: The MPEG-4 Structured Audio Orchestra Language</title>
-Computer Music Journal
+    </bibliomset>
+    <bibliomset relation=journal>
+      <title>Computer Music Journal</title>
       <volumenum>23</volumenum>(<issuenum>2</issuenum>)
       <pubdate>1999</pubdate>
       <pagenums>31-51</pagenums>
