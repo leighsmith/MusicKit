@@ -11,7 +11,13 @@
             sounderror.m, 
             UserPath.m
         ); 
-        FRAMEWORKS = (AppKit.framework, Foundation.framework, SoundKit.framework, System.framework); 
+        FRAMEWORKS = (
+            AppKit.framework, 
+            Foundation.framework, 
+            MKPerformSndMIDI.framework, 
+            System.framework
+        ); 
+        FRAMEWORKSEARCH = ("$(HOME_DRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks"); 
         HEADERSEARCH = (/usr/local/include); 
         H_FILES = (
             Snd.h, 
@@ -84,7 +90,7 @@
     PROJECTVERSION = 2.8; 
     WINDOWS_BUILDTOOL = ./make.sh; 
     WINDOWS_COMPILEROPTIONS = "-O2"; 
-    WINDOWS_INSTALLDIR = "$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks"; 
+    WINDOWS_INSTALLDIR = "$(HOME_DRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks"; 
     WINDOWS_JAVA_COMPILER = "$(JDKBINDIR)/javac.exe"; 
     WINDOWS_LINKEROPTIONS = "-O2"; 
     WINDOWS_OBJCPLUS_COMPILER = "$(DEVDIR)/gcc"; 
