@@ -110,9 +110,17 @@ SNDKIT_API NSString *SndFormatName(SndSampleFormat dataFormat, BOOL verbose);
 SNDKIT_API int SndFrameSize(SndFormat sound);
 
 /*!
+  @function SndMaximumAmplitude
+  @abstract Returns the maximum amplitude of the format, that is, the maximum positive value of a sample.
+  @param dataFormat The sample format enumerated integer. See ?  for a description.
+  @result Returns the maximum value of a sample.
+ */
+SNDKIT_API double SndMaximumAmplitude(SndSampleFormat dataFormat);
+
+/*!
   @function SndSampleWidth
   @abstract Returns the size of a sample in bytes for the given format code. 
-  @param format The sample format enumerated integer. See ?  for a description.
+  @param dataFormat The sample format enumerated integer. See ?  for a description.
   @result Returns the size of a sample in bytes.
  */
 SNDKIT_API int  SndSampleWidth(SndSampleFormat dataFormat);
@@ -170,29 +178,6 @@ SNDKIT_API float SndConvertDecibelsToLinear(float db);
  @result The relative decibel equivalent of lin
  */
 SNDKIT_API float SndConvertLinearToDecibels(float lin);
-
-/*!
-@function SndGetDataAddresses
- @abstract Get data address and statistics for fragmented or non-fragmented
-           SndSoundStructs
- @discussion For fragmented sounds, you often need to be able to find the
-             block of data that a certain sample resides in. You then often
-             need to know which is the last sample in that fragment (block),
-             indexed from the start of the block
-             The sample indices referred to are channel independent.
- @param sample    The index of the sample you wish to find the block for,
-                  indexed from the beginning of the sound
- @param theSound  The SndSoundStruct
- @param lastSampleInBlock returns by reference the index of the last sample
-                          in the block, indexed from the start of the block
- @param currentSample     returns by reference the index of the sample supplied,
-                          indexed from the start of the block
- @result the memory address of the first sample in the block.
- */
-SNDKIT_API void   *SndGetDataAddresses(int sample,
-                    const SndSoundStruct *theSound,
-                                     int *lastSampleInBlock,
-                                     int *currentSample);
 
 /*!
 @function SndFrameCount

@@ -127,6 +127,33 @@ NSString *SndFormatName(SndSampleFormat dataFormat, BOOL verbose)
     }
 }
 
+double SndMaximumAmplitude(SndSampleFormat type)
+{
+    switch (type) {
+	case SND_FORMAT_LINEAR_8:
+	    return 128.0;
+	case SND_FORMAT_LINEAR_24:
+	case SND_FORMAT_DSP_DATA_24:
+	    return 8388608.0;
+	case SND_FORMAT_LINEAR_32:
+	case SND_FORMAT_DSP_DATA_32:
+	    return 2147483648.0;
+	case SND_FORMAT_MULAW_8:
+	    return 32768.0;
+	case SND_FORMAT_MP3:
+	case SND_FORMAT_FLOAT:
+	case SND_FORMAT_DOUBLE:
+	    return 1.0;
+	case SND_FORMAT_LINEAR_16:
+	case SND_FORMAT_EMPHASIZED:
+	case SND_FORMAT_COMPRESSED:
+	case SND_FORMAT_COMPRESSED_EMPHASIZED:
+	case SND_FORMAT_DSP_DATA_16:
+	default:
+	    return 32768.0;
+    }
+}
+
 // Given the data size in bytes, the number of channels and the data format, return the number of samples.
 int SndBytesToFrames(int byteCount, int channelCount, SndSampleFormat dataFormat)
 {
@@ -163,50 +190,6 @@ float SndConvertDecibelsToLinear(float db)
 float SndConvertLinearToDecibels(float lin)
 {
     return (float) (20.0 * log10((double) lin));
-}
-
-// TODO Only used by SndView, should be removed when we remove SndSoundStruct.
-void *SndGetDataAddresses(int sample,
-                        const SndSoundStruct *theSound,
-                          int *lastSampleInBlock, /* channel independent */
-                          int *currentSample)     /* channel independent */
-                          /* returns the base address of the block the sample resides in,
-                           * with appropriate indices for the last sample the block holds.
-                           * Indices count from 0 so they can be utilised directly.
-                           */
-{
-  int cc = theSound->channelCount;
-  SndSampleFormat df = theSound->dataFormat;
-  int ds = theSound->dataSize;
-  int numBytes;
-  SndSoundStruct **ssList;
-  SndSoundStruct *theStruct;
-  int i=0,count=0,oldCount = 0;
-
-  if (df == SND_FORMAT_INDIRECT) {
-    df = ((SndSoundStruct *)(*((SndSoundStruct **)(theSound->dataLocation))))->dataFormat;
-  }
-
-  numBytes = SndSampleWidth(df);
-
-  if ((theSound->dataFormat) != SND_FORMAT_INDIRECT) {
-    *lastSampleInBlock = ds / cc / numBytes;
-    *currentSample = sample;
-    return (char *)theSound + theSound->dataLocation;
-  }
-  ssList = (SndSoundStruct **)theSound->dataLocation;
-  while ((theStruct = ssList[i++]) != NULL) {
-    count += ((theStruct->dataSize) / cc / numBytes);
-    if (count > sample) {
-      *lastSampleInBlock = ((theStruct->dataSize) / cc / numBytes);
-      *currentSample = sample - oldCount;
-      return (char *)theStruct + theStruct->dataLocation;
-    }
-    oldCount = count;
-  }
-  *currentSample = -1;
-  *lastSampleInBlock = -1;
-  return NULL;
 }
 
 int SndFrameCount(const SndSoundStruct *sound)
