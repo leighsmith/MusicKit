@@ -19,6 +19,10 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.23  2001/07/18 13:12:45  sbrandon
+ * - changed playInFuture:beginSample:sampleCount: implementation to take
+ *   advantage of new SndPlayer API (can specify the playEnd sample)
+ *
  * Revision 1.22  2001/05/12 09:45:22  sbrandon
  * - GNUSTEP: don't include libc.h
  *
@@ -109,7 +113,7 @@ static int ioTags = 1000;
 {
     char **driverNames;
     pool = [[NSAutoreleasePool alloc] init];
-    if ( self == [Snd class] ) {
+	    if ( self == [Snd class] ) {
         nameTable = [[NSMutableDictionary alloc] initWithCapacity:10];
         if(SNDInit(TRUE)) {
             driverNames = SNDGetAvailableDriverNames();
@@ -700,7 +704,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
         return nil;
     status = SND_SoundPlayingPending;
     
-    return [sndPlayer playSnd: self withTimeOffset: inSeconds];
+    return [sndPlayer playSnd: self withTimeOffset: inSeconds endAtIndex: playEnd];
 }
 
 - (SndPerformance *) playInFuture: (double) inSeconds 
