@@ -35,6 +35,9 @@
 Modification history:
 
   $Log$
+  Revision 1.18  2000/11/28 18:57:51  leigh
+  replaced malloc with _MKMalloc (which does error checking)
+
   Revision 1.17  2000/10/01 00:49:03  leigh
   Prototyped Factory methods, better naming of ivars.
 
@@ -3879,7 +3882,7 @@ id factObj,beforeObj,afterObj;
 {
 if (serialPortDevice && serialSoundOut)
       return [serialPortDevice hardwareSupportedSamplingRates:arr];
-    *arr = malloc(sizeof(double)*1);
+    *arr = (double *) _MKMalloc(sizeof(double)*1);
     (*arr)[0] = 44100;
     return 1;
 }
