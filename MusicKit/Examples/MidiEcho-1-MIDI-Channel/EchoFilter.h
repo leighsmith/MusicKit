@@ -14,6 +14,6 @@
 }
 
 -init;
--setDelay:(double)delayArg;
--realizeNote:aNote fromNoteReceiver:aNoteReceiver;
+- (void) setDelay: (double) delayArg;
+-realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 @end
