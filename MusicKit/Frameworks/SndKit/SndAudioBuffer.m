@@ -378,10 +378,14 @@
     if (buff == nil)
         return FALSE;
     else
-        return ( format.dataFormat   == buff->format.dataFormat   ) &&
+#if 0
+	return format == buff->format;
+#else
+	return ( format.dataFormat   == buff->format.dataFormat   ) &&
                ( format.sampleRate   == buff->format.sampleRate   ) &&
                ( format.channelCount == buff->format.channelCount ) &&
                ( format.frameCount   == buff->format.frameCount   );
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -505,7 +509,7 @@
             [data setData: [from data]];
         else {
             NSLog(@"SndAudioBuffer -copyDataFromBuffer: Buffers are different formats from %@ to %@ - unhandled case!", from, self);
-            // TO DO!
+            // TODO! use copyFromBuffer instead
         }
     }
     else
@@ -547,29 +551,10 @@
     return [self copyBytes: bytes intoRange: NSMakeRange(0, count) format: newFormat];
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// copyFromBuffer:intoRange:
-////////////////////////////////////////////////////////////////////////////////
-
-- copyFromBuffer: (SndAudioBuffer *) fromBuffer intoRange: (NSRange) rangeInSamples
-{
-    if([self hasSameFormatAsBuffer: fromBuffer]) {
-	long   sampleSize;
-	NSRange rangeInBytes;
-	
-	sampleSize = SndFrameSize(format);
-
-	rangeInBytes.location = rangeInSamples.location * sampleSize;
-	rangeInBytes.length = rangeInSamples.length * sampleSize;
-	return [self copyBytes: [fromBuffer bytes] intoRange: rangeInBytes format: format];
-    }
-    return nil;
-}
-
 // This is pretty kludgy, it only really works for SND_FORMAT_LINEAR_16 to SND_FORMAT_FLOAT conversions. It should
 // be revamped to work with all formats, and to do channel mapping if necessary.
 - (long) copyFromBuffer: (SndAudioBuffer *) fromBuffer
-	 intoFrameRange: (NSRange) bufferRange
+	 intoFrameRange: (NSRange) bufferFrameRange
 	 fromFrameRange: (NSRange) fromFrameRange
 {
     int numOfChannelsInBuffer = [self channelCount];
@@ -582,18 +567,27 @@
     // [fromBuffer stereoChannels: stereoChannels];
     short *fromData = [fromBuffer bytes];
     
-    // Catch the trivial case where both buffers have the same format, if so we just copy data.
-    if([self hasSameFormatAsBuffer: fromBuffer] && bufferRange.length == fromFrameRange.length) {
-	int frameWidth = SndFrameSize([self format]);
-	void *toPtr = [self bytes] + (bufferRange.location * frameWidth);
-	void *fromPtr = [fromBuffer bytes] + (fromFrameRange.location * frameWidth);
+    if (bufferFrameRange.length > format.frameCount) {
+	NSLog(@"frameRange length %ld exceeds buffer length %ld\n", format.frameCount, bufferFrameRange.length);
+    }
+
+    // Catch the trivial case where both buffers have the same format (although the frame counts can differ),
+    // if so we just copy data.
+    if ((format.dataFormat   == [fromBuffer dataFormat]) &&
+	(format.sampleRate   == [fromBuffer samplingRate]) &&
+	(format.channelCount == [fromBuffer channelCount]) &&
+	bufferFrameRange.length == fromFrameRange.length) {
+	unsigned long frameWidth = SndFrameSize([self format]);
+	NSRange rangeInBytes;
 	
-	memcpy(toPtr, fromPtr, fromFrameRange.length * frameWidth);
+	rangeInBytes.location = bufferFrameRange.location * frameWidth;
+	rangeInBytes.length = bufferFrameRange.length * frameWidth;
+	[self copyBytes: [fromBuffer bytes] + (fromFrameRange.location * frameWidth) intoRange: rangeInBytes format: format];
     }
     else {
 #if 0
 	return [self convertBytes: [fromBuffer bytes] + (fromFrameRange.location * SndFrameSize([fromBuffer format]))
-		   intoFrameRange: bufferRange
+		   intoFrameRange: bufferFrameRange
 		       fromFormat: [fromBuffer dataFormat]
 		     channelCount: [fromBuffer channelCount]
 		     samplingRate: [fromBuffer samplingRate]];
@@ -613,7 +607,7 @@
 		unsigned short channelIndex;
 		
 		for (frameIndex = 0; frameIndex < fromFrameRange.length; frameIndex++) {
-		    long currentBufferSample = (bufferRange.location + frameIndex) * numOfChannelsInBuffer;
+		    long currentBufferSample = (bufferFrameRange.location + frameIndex) * numOfChannelsInBuffer;
 		    // LAME always produces stereo data in two separate buffers
 		    long currentSample = (fromFrameRange.location + frameIndex) * [fromBuffer channelCount];
 		    
@@ -628,7 +622,7 @@
 		    }
 		}
 		// Silence the rest of the buffer, all channels
-		for (sampleIndex = (bufferRange.location + frameIndex) * numOfChannelsInBuffer; sampleIndex < (bufferRange.location + bufferRange.length) * numOfChannelsInBuffer; sampleIndex++) {
+		for (sampleIndex = (bufferFrameRange.location + frameIndex) * numOfChannelsInBuffer; sampleIndex < (bufferFrameRange.location + bufferFrameRange.length) * numOfChannelsInBuffer; sampleIndex++) {
 		    buff[sampleIndex] = 0;
 		}
 		
@@ -640,6 +634,31 @@
 #endif
     }
     return fromFrameRange.length;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// copyFromBuffer:intoRange:
+////////////////////////////////////////////////////////////////////////////////
+
+- copyFromBuffer: (SndAudioBuffer *) fromBuffer intoRange: (NSRange) rangeInFrames
+{
+#if 0
+    return [self copyFromBuffer: fromBuffer
+		 intoFrameRange: rangeInFrames
+		 fromFrameRange: NSMakeRange(0, rangeInFrames.length)];
+#else	
+    if([self hasSameFormatAsBuffer: fromBuffer]) {
+	long   frameSize;
+	NSRange rangeInBytes;
+	
+	frameSize = SndFrameSize(format);
+	
+	rangeInBytes.location = rangeInFrames.location * frameSize;
+	rangeInBytes.length = rangeInFrames.length * frameSize;
+	return [self copyBytes: [fromBuffer bytes] intoRange: rangeInBytes format: format];
+    }
+    return nil;
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////////

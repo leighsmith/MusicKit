@@ -359,7 +359,8 @@ typedef enum {
 
 /*!
   @method     hasSameFormatAsBuffer:
-  @abstract   compares the data format and length of this buffer to a second buffer
+  @abstract   compares the data format and length of this buffer to a second buffer.
+  @discussion The number of frames (frameCount) <B>are</B> compared.
   @param      buff The SndAudioBuffer to compare to.
   @result     YES if the buffers have the same format and length, NO if there are
               any differences in format between buffers.
