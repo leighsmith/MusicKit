@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2001/03/17 02:04:39  leigh
+  Forced synthPatches to midi if we loaded a midi file, not a score
+
   Revision 1.11  2001/03/12 02:02:01  leigh
   Updated to findPatchClass method
 
@@ -819,16 +822,18 @@ static void playIt(ScorePlayerController *self)
 	partPerformer = [partPerformers objectAtIndex:i];
 	aPart = [partPerformer part]; 
 	partInfo = [aPart infoNote];      
-	if ((!partInfo) || ![partInfo isParPresent:MK_synthPatch]) {
+	if (!partInfo) {
             errMsg = [NSString stringWithFormat: STR_INFO_MISSING, MKGetObjectName(aPart)];
             [errorLog addText: errMsg];
-#if 0
             if (!NSRunAlertPanel(STR_SCOREPLAYER, errMsg, STR_CONTINUE, STR_CANCEL, nil)) 
                 return;
-#endif
 	    continue;
 	}		
-	className = [partInfo parAsStringNoCopy:MK_synthPatch];
+        // If it's a SMF, all parts are MKMidi synthPatches.
+        if(![partInfo isParPresent: MK_synthPatch] && scoreForm == MIDI_FILE) {
+            [partInfo setPar: MK_synthPatch toString: @"midi"];
+        }
+        className = [partInfo parAsStringNoCopy:MK_synthPatch];
 	if (isMidiClassName(className)) {
 	    midiChan = [partInfo parAsInt:MK_midiChan];
 	    if ((midiChan == MAXINT) || (midiChan > 16))
