@@ -31,83 +31,6 @@
   Portions (Time code extensions) Copyright (c) 1993 Pinnacle Research
   Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.25  2001/11/26 22:40:13  leighsmith
-  Cleaned up headerdoc items
-
-  Revision 1.24  2001/09/07 18:45:08  leighsmith
-  Replaced HTML numeric entity with correct symbolic entity for double quotes, moved @class before headerdoc declaration
-
-  Revision 1.23  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.22  2001/08/29 00:27:45  leighsmith
-  Merged RTF Class reference documentation into headerdoc
-
-  Revision 1.21  2001/08/07 16:21:25  leighsmith
-  Typed _pIn/_pOut
-
-  Revision 1.20  2001/05/14 21:02:13  leighsmith
-  Added description method
-
-  Revision 1.19  2001/05/12 09:10:06  sbrandon
-  - get around the fact that GNUstep does not have NSMachPorts, but
-    NSPort does respond to -machPort and +portWithMachPort so we magically
-    transform from one to the other with a define.
-
-  Revision 1.18  2001/04/06 19:30:39  leighsmith
-  Renamed to more meaningful MIDI API include file naming
-
-  Revision 1.17  2001/01/31 21:43:50  leigh
-  Typed note parameters
-
-  Revision 1.16  2000/12/07 00:33:01  leigh
-  Standardised on NSMachPorts and machPorts as the mechanism for MKMD routines.
-
-  Revision 1.15  2000/11/25 22:53:48  leigh
-  Enforced ivar privacy and typed conductors and access methods
-
-  Revision 1.14  2000/11/13 23:15:20  leigh
-  Moved timeVars structure into MKMidi ivars, abstracted from NSMachPort for ports to MKMDPorts
-
-  Revision 1.13  2000/06/16 23:23:33  leigh
-  Added other older OpenStep platforms to NSPort fudging
-
-  Revision 1.12  2000/06/09 18:09:19  leigh
-  added better platform definitions to deal with deprecated API
-
-  Revision 1.11  2000/05/06 02:36:41  leigh
-  Made Win32 declare regression class types also
-
-  Revision 1.10  2000/04/04 00:16:54  leigh
-  added condition checks for OS to handle variations between FoundationKits on MacOsX and Server
-
-  Revision 1.9  2000/01/27 19:06:12  leigh
-  Now using NSPort replacing C Mach port API
-
-  Revision 1.8  2000/01/24 22:31:28  leigh
-  Comment improvements
-
-  Revision 1.7  1999/10/28 01:37:14  leigh
-  driver names and units now returned by separate class methods, renamed ivar
-
-  Revision 1.6  1999/09/24 17:06:26  leigh
-  added downloadDLS method prototype
-
-  Revision 1.5  1999/09/04 22:02:17  leigh
-  Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
-
-  Revision 1.4  1999/08/26 19:55:21  leigh
-  extra documentation
-
-  Revision 1.3  1999/08/08 01:59:22  leigh
-  Removed extraVars cruft
-
-  Revision 1.2  1999/07/29 01:25:45  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 @class MKConductor;
 
 /*!
@@ -169,35 +92,46 @@ steadfast than the MKConductor's clock.  To take advantage of this,
 the MKConductor is, by default, synched to incoming MIDI messages:
 When a MIDI message arrives, the MKConductor's clock is set to the
 time stated in the message timestamp.  You can disable this feature
-by sending <b>setUseInputTimeStamps:NO</b> to a MKMidi object.
+by sending <b>setUseInputTimeStamps: NO</b> to a MKMidi object.
 
 On the other side, as a MKMidi object initiates an outgoing MIDI
 message, it gives the message a timestamp that indicates when the
 message should be performed by the external MIDI device.  By default,
 the MIDI driver looks at the timestamp and waits until the appropriate
 time (as determined by its own clock) to send the message on to the
-synthesizer.  By sending <b>setOutputTimed:NO</b> to a MKMidi object,
+synthesizer.  By sending <b>setOutputTimed: NO</b> to a MKMidi object,
 you can specify that the driver is to ignore the timestamps and send
 all messages as soon as it receives them.
 
-Note that in all cases the MKConductor that's overseeing the MusicKit performance must be clocked if you want to use a MKMidi object.
+Note that in all cases the MKConductor that's overseeing the MusicKit 
+performance must be clocked if you want to use a MKMidi object.
 
 As MKMidi receives MIDI messages it creates MKNote objects following these rules:
 
 <ul>
-<li>	For each MIDI message that has a Note Number, a MKNote object is created and given a noteTag that corresponds to the combination of the message's Channel Number and Note Number.
+<li>	For each MIDI message that has a Note Number, a MKNote object is created and
+        given a noteTag that corresponds to the combination of the message's Channel 
+        Number and Note Number.
 
-<li>	If multiple Note Offs are received (for a particular Channel/Note number) without intervening Note Ons, only the first Note Off is converted into a MKNote object. The others are suppressed.
+<li>	If multiple Note Offs are received (for a particular Channel/Note number) without
+        intervening Note Ons, only the first Note Off is converted into a MKNote object. 
+        The others are suppressed.
 
 <li>	A Note On message with a MIDI Velocity of 0 is turned into a MKNote object of type noteOff.
 
-<li>	If a Note Off message has a MIDI Release Velocity of 0, the MK_releaseVelocity parameter in the corresponding MKNote object is omitted.
-
+<li>	If a Note Off message has a MIDI Release Velocity of 0, the MK_releaseVelocity parameter in
+        the corresponding MKNote object is omitted.
+</ul>
+ 
 In sending messages to an external synthesizer, MKMidi converts MKNote objects to MIDI messages:
 
-<li>	If two successive noteOns have the same noteTag and the same MK_keyNum value, a Note Off is generated on the same channel and with the same Key Number as those for the Note Ons.
+<ul>
+<li>	If two successive noteOns have the same noteTag and the same MK_keyNum value, a Note Off
+        is generated on the same channel and with the same Key Number as those for the Note Ons.
 
-<li>	If two successive noteOns have the same noteTag but different MK_keyNum values, the second Note On message is followed by a Note Off with the Key Number of the first Note On.  This is to accommodate MIDI Mono Mode.
+<li>	If two successive noteOns have the same noteTag but different MK_keyNum values, the second
+        Note On message is followed by a Note Off with the Key Number of the first Note On.  
+        This is to accommodate MIDI Mono Mode.
 
 <li>	A noteOff with no MK_relVelocity parameter is converted to a Note On with a Velocity of 0.
 </ul>
@@ -217,8 +151,7 @@ the appendix titled MIDI Time Code in the MusicKit
 
 USING MIDI ON NeXT HARDWARE
 
-See <b>../Administration/MidiHardwareInfo.rtf</b>
-
+See <b>Administration/MidiHardwareInfo.rtf</b>
 
 */
 #ifndef __MK_Midi_H___
@@ -238,15 +171,15 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
 #define NSMachPort NSPort
 #endif
 
-@interface MKMidi:NSObject
+@interface MKMidi: NSObject
 {
-    NSMutableArray *noteSenders;         /* @var noteSenders The object's collection of MKNoteSenders. */
-    NSMutableArray *noteReceivers;       /* @var noteReceivers The object's collection of MKNoteReceivers */
-    MKDeviceStatus deviceStatus;         /* @var deviceStatus See MKDeviceStatus.h */
-    NSString *midiDevName;               /* @var midiDevName Midi device port name. */
-    BOOL useInputTimeStamps;             /* @var useInputTimeStamps YES if MKConductor's time updated from driver's time stamps.*/
-    BOOL outputIsTimed;                  /* @var outputIsTimed YES if the driver's clock is used for output */
-    double localDeltaT;                  /* @var localDeltaT Offset added to MIDI-out time stamps.(see below)*/
+    NSMutableArray *noteSenders;         /*! @var noteSenders The object's collection of MKNoteSenders. */
+    NSMutableArray *noteReceivers;       /*! @var noteReceivers The object's collection of MKNoteReceivers. */
+    MKDeviceStatus deviceStatus;         /*! @var deviceStatus See MKDeviceStatus.h */
+    NSString *midiDevName;               /*! @var midiDevName Midi device port name. */
+    BOOL useInputTimeStamps;             /*! @var useInputTimeStamps YES if MKConductor's time updated from driver's time stamps. */
+    BOOL outputIsTimed;                  /*! @var outputIsTimed YES if the driver's clock is used for output */
+    double localDeltaT;                  /*! @var localDeltaT Offset added to MIDI-out time stamps.(see below) */
 
 @private
     unsigned _ignoreBits;
@@ -296,7 +229,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
   @discussion Sets the MKConductor that the MKNotes originating with MKMidi will
               return when sent the <b>-conductor</b> message.
 */
--setConductor: (MKConductor *) aConductor;
+- setConductor: (MKConductor *) aConductor;
 
 /*!
   @method midiOnDevice:host:
@@ -313,7 +246,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               &lt;&lt;On Non-NeXT hardware, <i>hostName</i> is currently ignored - thus,
               you may not open a Midi device on a network-based device when running on white hardware.&gt;&gt;
 */
-+midiOnDevice:(NSString *) devName host:(NSString *) hostName;
++ midiOnDevice: (NSString *) devName host: (NSString *) hostName;
 
 /*!
   @method midiOnDevice:
@@ -331,7 +264,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               direct driverName/unit combination, e.g. "Mididriver2." 
               
 */
-+midiOnDevice:(NSString *) devName;
++ midiOnDevice: (NSString *) devName;
  /* Allocates and initializes a new object, if one doesn't exist already, for
     specified device. 
     For the NeXT hardware, "midi1" is serial port B and "midi0" is port A.
@@ -351,7 +284,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               the existing object.  &ldquo;midi0&rdquo; corresponds to serial port A on the
               NeXT (black) hardware, the default MIDI port on other platforms.  
 */
-+midi;
++ midi;
 
   /* theme and variations of initialising an allocated instance */
 - initOnDevice: (NSString *) devName hostName: (NSString *) hostName;
@@ -367,7 +300,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
   @result Returns a MKDeviceStatus.
   @discussion Returns the receiver's MKDeviceStatus device status.
 */
--(MKDeviceStatus)deviceStatus;
+- (MKDeviceStatus) deviceStatus;
 
 /*!
   @method open
@@ -378,7 +311,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               message queues are flushed.  Returns the receiver, or <b>nil</b> if
               it couldn't be opened.
 */
--open;
+- open;
 
 /*!
   @method openInputOnly
@@ -388,7 +321,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               Returns the receiver, or <b>nil</b> if it couldn't be
               opened.
 */
--openInputOnly;
+- openInputOnly;
 
 /*!
   @method openOutputOnly
@@ -398,7 +331,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               Returns the receiver, or <b>nil</b> if it couldn't be
               opened.
 */
--openOutputOnly;
+- openOutputOnly;
 
 /*!
   @method run
@@ -418,7 +351,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               the receiver, or <b>nil</b> if it's closed and can't be
               opened.
 */
--stop;
+- stop;
 
 /*!
   @method close
@@ -427,7 +360,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               receiver, sets its status to MK_devClosed, and releases the device
               port.  Returns the receiver.
 */
-- (void)close;
+- (void) close;
 
 /*!
   @method abort
@@ -448,7 +381,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               always 0, indicating, to the MIDI driver, that the messages should
               be sent immediately.  The default is timed.
 */
--setOutputTimed:(BOOL)yesOrNo;
+- setOutputTimed: (BOOL) yesOrNo;
 
 /*!
   @method outputIsTimed
@@ -461,31 +394,31 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               If setOutputTimed:NO is sent, events are sent to the driver with a time
               stamp of 0, indicating they are to be played as soon as they are received.
 
-              See also:  - <b>setOutputTimed</b>
+              See also:  -<b>setOutputTimed</b>
 */
--(BOOL)outputIsTimed;
+- (BOOL) outputIsTimed;
 
 /*!
   @method channelNoteSender:
-  @param  n is an unsigned.
-  @result Returns an id.
+  @param  channel is an unsigned MIDI channel.
+  @result Returns an MKNoteSender instance.
   @discussion Returns the MKNoteSender corresponding to channel <i>n</i>, or
-              <b>nil</b> if none.  A MKMidi object's MKNoteRecieverSenders are
+              <b>nil</b> if none.  A MKMidi object's MKNoteSenders are
               numbered such that 0 is the MKNoteSender that processes
               system/channel mode messages and 1 through 16 are the MKNoteSenders
-              for the MIDI channels. The MKNoteReceiver corresponding to 0 is
+              for the MIDI channels. The MKNoteSender corresponding to 0 is
               special. It uses the MK_midiChan parameter of the note, if any, to
               determine which midi channel to send the note on. If no MK_midiChan
               parameter is present,  the default is channel 1. This MKNoteReceiver
               is also commonly used for MIDI channel mode and system messages.
               
 */
--channelNoteSender:(unsigned)n;
+- (MKNoteSender *) channelNoteSender: (unsigned) n;
 
 /*!
   @method channelNoteReceiver:
-  @param  n is an unsigned.
-  @result Returns an id.
+  @param  channel is an unsigned MIDI channel.
+  @result Returns an MKNoteReceiver instance.
   @discussion Returns the MKNoteReceiver corresponding to the specified channel <i>n</i>, or
               <b>nil</b> if none.  A MKMidi object's MKNoteReceivers are numbered
               such that 0 is the MKNoteReceiver that processes system/channel mode
@@ -495,14 +428,14 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               MIDI channel to send the note on. If no MK_midiChan parameter is present,
               the default is channel 1. 
 */
--channelNoteReceiver:(unsigned)n;
+- (MKNoteReceiver *) channelNoteReceiver: (unsigned) channel;
 
 /*!
   @method noteReceiver
-  @result Returns an id.
+  @result Returns an MKNoteReceiver instance.
   @discussion Returns the default MKNoteReceiver.
 */
--noteReceiver;
+- (MKNoteReceiver *) noteReceiver;
 
 /*!
   @method noteReceivers
@@ -511,14 +444,14 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               NSArray object will be autoreleased, although its contents (the
               MKNoteReceiver objects themselves) will not be released.
 */
--noteReceivers;
+- (NSArray *) noteReceivers;
 
 /*!
   @method noteSender
   @result Returns an id.
   @discussion Returns the default MKNoteSender
 */
--noteSender;
+- (MKNoteSender *) noteSender;
 
 /*!
   @method noteSenders
@@ -527,7 +460,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               NSArray object will be autoreleased, although its contents (the
               MKNoteSender objects themselves) will not be released.
 */
--noteSenders;
+- (NSArray *) noteSenders;
   
 - (void)handleMachMessage:(void *)machMessage;
  /*sb: added 30/6/98 to replace MidiIn function */
@@ -543,7 +476,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               returns <b>nil</b>; otherwise returns the receiver.
               
 */
--setUseInputTimeStamps:(BOOL)yesOrNo;
+- setUseInputTimeStamps: (BOOL) yesOrNo;
 
 /*!
   @method useInputTimeStamps
@@ -571,7 +504,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               MKMidi is stopped when the performance is paused and
               that Midi is run when the performance is resumed.  
 */
--(BOOL)useInputTimeStamps;
+- (BOOL) useInputTimeStamps;
 
 
 /*!
@@ -583,7 +516,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               are ignored by default is given in <b>acceptSys:</b>.  Returns the
               receiver.
 */
--ignoreSys:(MKMidiParVal)param;
+- ignoreSys: (MKMidiParVal) param;
 
 /*!
   @method acceptSys:
@@ -639,7 +572,7 @@ See <b>../Administration/MidiHardwareInfo.rtf</b>
               system messages).   In addition, a MK_midiChan is added so that the
               stream can be split up again later.
 */
--setMergeInput:(BOOL)yesOrNo;
+- setMergeInput: (BOOL) yesOrNo;
 
 /*!
   @method awaitQueueDrain

@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.50  2004/10/22 01:54:54  leighsmith
+  Correctly typed parameters and return types
+
   Revision 1.49  2004/08/21 23:27:09  leighsmith
   Cleaned up
 
@@ -1197,19 +1200,19 @@ static unsigned ignoreBit(unsigned param)
     return 0;
 }
 
-- ignoreSys:(MKMidiParVal)param
+- ignoreSys: (MKMidiParVal) param
 {
     _ignoreBits |= ignoreBit(param);
     if (deviceStatus != MK_devClosed)
-      setMidiSysIgnore(self,_ignoreBits);
+	setMidiSysIgnore(self,_ignoreBits);
     return self;
 } 
 
-- acceptSys:(MKMidiParVal)param 
+- acceptSys: (MKMidiParVal) param 
 {
     _ignoreBits &= ~(ignoreBit(param));
     if (deviceStatus != MK_devClosed)
-      setMidiSysIgnore(self,_ignoreBits);
+	setMidiSysIgnore(self,_ignoreBits);
     return self;
 }
 
@@ -1456,12 +1459,12 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
     return [self initOnDevice: DEFAULT_SOFT_NAME];
 }
 
-+ midiOnDevice:(NSString *) devName host:(NSString *) hostName
++ midiOnDevice: (NSString *) devName host: (NSString *) hostName
 {
     return [[[MKMidi alloc] initOnDevice: devName hostName: hostName] autorelease];
 }
 
-+ midiOnDevice:(NSString *) devName
++ midiOnDevice: (NSString *) devName
 {
     return [[[MKMidi alloc] initOnDevice:devName] autorelease];
 }
@@ -1471,7 +1474,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
     return [self midiOnDevice: DEFAULT_SOFT_NAME];
 }
 
-- copyWithZone:(NSZone *)zone
+- copyWithZone: (NSZone *) zone
   /* Overridden to return self. */
 {
     return self;
@@ -1859,23 +1862,23 @@ static void cancelQueueReq(MKMidi *self)
 
 /* Accessing MKNoteSenders and MKNoteReceivers */
 
-- channelNoteSender:(unsigned)n
+- (MKNoteSender *) channelNoteSender: (unsigned) channel
   /* Returns the MKNoteSender corresponding to the specified channel or nil
      if none. If n is 0, returns the MKNoteSender used for MKNotes fasioned
      from midi channel mode and system messages. */
 { 
-    return (n > MIDI_NUMCHANS) ? nil : [noteSenders objectAtIndex:n];
+    return (channel > MIDI_NUMCHANS) ? nil : [noteSenders objectAtIndex: channel];
 }
 
-- channelNoteReceiver:(unsigned)n
+- (MKNoteReceiver *) channelNoteReceiver: (unsigned) channel
   /* Returns the NoteReceiver corresponding to the specified channel or nil
      if none. If n is 0, returns the NoteReceiver used for MKNotes fasioned
      from midi channel mode and system messages. */
 { 
-    return (n > MIDI_NUMCHANS) ? nil : [noteReceivers objectAtIndex:n];
+    return (channel > MIDI_NUMCHANS) ? nil : [noteReceivers objectAtIndex: channel];
 }
 
-- noteSenders
+- (NSArray *) noteSenders
   /* TYPE: Processing 
    * Returns a copy of the receiver's MKNoteSender List. 
    */
@@ -1884,14 +1887,14 @@ static void cancelQueueReq(MKMidi *self)
 //    return [[noteSenders copy] autorelease];  // Cause of problem?? LMS
 }
 
-- noteSender
+- (MKNoteSender *) noteSender
   /* Returns the default MKNoteSender. This is used when you don't care
      which MKNoteSender you get. */
 {
-    return [noteSenders objectAtIndex:0];
+    return [noteSenders objectAtIndex: 0];
 }
 
-- noteReceivers	
+- (NSArray *) noteReceivers	
   /* TYPE: Querying; Returns a copy of the List of MKNoteReceivers.
    * Returns a copy of the List of MKNoteReceivers. The MKNoteReceivers themselves
    * are not copied.	
@@ -1900,14 +1903,14 @@ static void cancelQueueReq(MKMidi *self)
     return _MKLightweightArrayCopy(noteReceivers);
 }
 
-- noteReceiver
+- (MKNoteReceiver *) noteReceiver
   /* TYPE: Querying; Returns the receiver's first MKNoteReceiver.
    * Returns the first MKNoteReceiver in the receiver's NSArray.
    * This is particularly useful for MKInstruments that have only
    * one MKNoteReceiver.
    */
 {
-    return [noteReceivers objectAtIndex:0];
+    return [noteReceivers objectAtIndex: 0];
 }
 
 - setMergeInput: (BOOL) yesOrNo
