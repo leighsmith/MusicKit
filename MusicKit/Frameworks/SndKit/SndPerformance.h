@@ -27,12 +27,13 @@
     // TODO playState should be here, not Snd.
 }
 
-+ performanceOfSnd: (Snd*) s playTime: (double) t ;
++ (SndPerformance *) performanceOfSnd: (Snd *) s playTime: (double) seconds;
 - (Snd *) snd;
 - (double) playTime;
-
+- (BOOL) isEqual: (id) anotherPerformance;
 - (void) dealloc;
 - (long) playIndex;
 - (void) setPlayIndex: (long) li;
+- (NSString *) description;
 
 @end
