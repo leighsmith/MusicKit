@@ -2,7 +2,7 @@
   $Id$
   Defined In: The MusicKit
 
-  Description:
+  @header MusicKit MIDI driver
     MIDI driver typedefs, defines, and functions exported to other MusicKit frameworks.
 
     This file provides compatability between the various platform dependent 
@@ -12,19 +12,23 @@
     DirectMusic for Windows, CoreMIDI/QTMA for MacOS X etc.
     The other sobering thought about this framework is that it does not rely on
     any OpenStep/Cocoa API types, unless they are declared here. 
-    Therefore cStrings and ints are de rigeur...
+    Therefore C Strings and ints are de rigeur...
 
   Original Author: David Jaffe
+  Rewritten: Leigh M. Smith
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 2000 The MusicKit Project.
+  Portions Copyright (c) 2000-2001 The MusicKit Project.
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.10  2001/03/30 22:35:14  leighsmith
+  Added function definitions for HeaderDoc
+
   Revision 1.9  2001/02/03 02:32:49  leigh
   Hid error string assignments behind MKMDErrorString
 
@@ -142,65 +146,446 @@ typedef struct _MKMDReplyFunctions {
     MKMDQueueReplyFunction queueReply;         // 
 } MKMDReplyFunctions;
 
-/******* Locating the driver ********/
-// returns NULL if unable to find the hostname, otherwise whatever value for MKMDPort
-// that has meaning.
+
+/*!
+    @function       MKMDGetMIDIDeviceOnHost
+
+    @abstract       Locating the driver on a given host.
+    
+    @param          hostname
+                        Name of the host.
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDPort
     MKMDGetMIDIDeviceOnHost(const char *hostname);
 
-/******* Managing ownership of the driver ********/
-/* Routine MKMDBecomeOwner */
+/*!
+    @function       MKMDBecomeOwner
+
+    @abstract       Takes ownership of the driver.
+    
+    @param          mididriver_port
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner_port
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDBecomeOwner(MKMDPort mididriver_port, MKMDOwnerPort owner_port);
-/* Routine MKMDReleaseOwnership */
+
+/*!
+    @function       MKMDReleaseOwnership
+
+    @abstract       Releases ownership of the driver.
+    
+    @param          mididriver_port
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner_port
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDReleaseOwnership(MKMDPort mididriver_port, MKMDOwnerPort owner_port);
 
-/*** Claiming a particular serial port (ownership of driver required) *****/
+
+/*!
+    @function       MKMDClaimUnit
+
+    @abstract       Claiming a particular MIDI port (cable). 
+                    Ownership of driver is required.
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          unit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver.
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDClaimUnit(MKMDPort driver, MKMDOwnerPort owner, short unit);
+
+/*!
+    @function       MKMDReleaseUnit
+
+    @abstract       Releases ownership of a particular MIDI port (cable).
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          unit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver.
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDReleaseUnit(MKMDPort driver, MKMDOwnerPort owner, short unit);
 
-/******** Controlling the clock ****************/
+/*!
+    @function       MKMDSetClockMode
+
+    @abstract       Controlling the clock.
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          synchUnit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver to synchronize to.
+
+    @param          mode
+                        Synchronization mode (description to be expanded).
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDSetClockMode(MKMDPort driver, MKMDOwnerPort owner, short synchUnit, int mode);
-// set the period of each clock tick in microseconds.
+
+/*!
+    @function       MKMDSetClockQuantum
+
+    @abstract       Set the period of each clock tick in microseconds.
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          microseconds
+                        Period of each clock tick.
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDSetClockQuantum(MKMDPort driver, MKMDOwnerPort owner, int microseconds);
+
+/*!
+    @function       MKMDSetClockTime
+
+    @abstract       
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          time
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDSetClockTime(MKMDPort driver, MKMDOwnerPort owner, int time);
+
+/*!
+    @function       MKMDGetClockTime
+
+    @abstract       
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          time
+                        Receives the current clock time.
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDGetClockTime(MKMDPort driver, MKMDOwnerPort owner, int *time);
+
+/*!
+    @function       MKMDGetMTCTime
+
+    @abstract       
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          format
+
+    @param          hours
+
+    @param          minutes
+
+    @param          seconds
+
+    @param          frames
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDGetMTCTime(MKMDPort driver, MKMDOwnerPort owner, short *format, short *hours, short *minutes, short *seconds, short *frames);
+
+/*!
+    @function       MKMDStartClock
+
+    @abstract       
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDStartClock(MKMDPort driver, MKMDOwnerPort owner);
+
+/*!
+    @function       MKMDStopClock
+
+    @abstract       
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDStopClock(MKMDPort driver, MKMDOwnerPort owner);
 
-/****************** Requesting asynchronous messages *******************/
+/*!
+    @function       MKMDRequestData
+
+    @abstract       Requesting asynchronous messages.
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          unit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver.
+
+    @param          replyPort
+                        
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDRequestData(MKMDPort driver, MKMDOwnerPort owner, short unit, MKMDReplyPort replyPort);
+
+/*!
+    @function       MKMDRequestAlarm
+
+    @abstract       
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          replyPort
+    @param          time
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDRequestAlarm(MKMDPort driver, MKMDOwnerPort owner, MKMDReplyPort replyPort, int time);
+
+/*!
+    @function       MKMDRequestExceptions
+
+    @abstract       
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          exceptionPort
+                        
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDRequestExceptions(MKMDPort driver, MKMDOwnerPort owner, MKMDReplyPort exceptionPort);
+
+/*!
+    @function       MKMDRequestQueueNotification
+
+    @abstract       Send a message on <b>notificationPort</b> when playback
+                    queue has <b>size</b> MIDI elements available.
+
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          unit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver.
+
+    @param          notificationPort
+                        Can be nil to cancel the queue request.
+
+    @param          size
+    
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDRequestQueueNotification(MKMDPort driver, MKMDOwnerPort owner, short unit, MKMDReplyPort notificationPort, int size);
 
 /****************** Receiving asynchronous messages *******************/
-// This waits until a reply is received on port_set
+
+/*!
+    @function       MKMDAwaitReply
+
+    @abstract       Waits until a reply is received on ports or until timeout.
+    
+    @param          ports
+                        
+    @param          funcs
+
+    @param          timeout
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDAwaitReply(MKMDReplyPort ports, MKMDReplyFunctions *funcs, int timeout);
 
 #define MKMD_NO_TIMEOUT (-1)
 
+
+/*!
+    @function       MKMDHandleReply
+
+    @abstract       
+    
+    @param          msg
+                        
+
+    @param          funcs
+
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions *funcs);
 
-/* Routine MKMDSetReplyCallback - this is called to nominate a function to be called on reception of events
-instead of sending a message to a Mach port */
+
+/*!
+    @function       MKMDSetReplyCallback
+
+    @abstract       Called to nominate a function to be called on reception
+                    of events instead of sending a message to a Mach port.
+    
+    @param          mididriver_port
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner_port
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          unit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver.
+
+    @param          newCallbackFn
+
+    @param          newCallbackParam
+
+
+    @result         Returns 
+*/
 PERFORM_API MKMDReturn MKMDSetReplyCallback (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
@@ -208,32 +593,236 @@ PERFORM_API MKMDReturn MKMDSetReplyCallback (
 	void (*newCallbackFn)(void *),
         void *newCallbackParam);
 
-/****************** Writing MKMD data to the driver *********************/
+/*!
+    @function       MKMDSendData
+
+    @abstract       Writes MKMD data to the driver.
+
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          unit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver.
+
+    @param          data
+                        Each event consists of a time stamp per byte. This
+	                allows slowing byte output to stop choking synths
+                        with sysex messages. 
+
+    @param          count
+                        Number of data items.
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDSendData(MKMDPort driver, MKMDOwnerPort owner, short unit, MKMDRawEvent *data, unsigned int count);
+
+/*!
+    @function       MKMDGetAvailableQueueSize
+
+    @abstract       
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          unit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver.
+
+    @param          size
+                        Receives the size of the queue.
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+*/
 PERFORM_API MKMDReturn 
     MKMDGetAvailableQueueSize(MKMDPort driver, MKMDOwnerPort owner, short unit, int *size);
+
+/*!
+    @function       MKMDClearQueue
+
+    @abstract       
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          unit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver.
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDClearQueue(MKMDPort driver, MKMDOwnerPort owner, short unit);
+
+/*!
+    @function       MKMDFlushQueue
+
+    @abstract       
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          unit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver.
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDFlushQueue(MKMDPort device_port, MKMDOwnerPort owner_port, short unit);
-/* download the patch numbers (MSB,LSB,patch) to the sound card */
+
+/*!
+    @function       MKMDDownloadDLSInstruments
+
+    @abstract       Download the patch numbers (MSB,LSB,patch) to the sound card.
+    
+    @param          patches
+                        An array of patches to download.
+
+    @param	    patchCount
+                        Number of patches.
+
+    @result         Returns 
+
+*/
 PERFORM_API MKMDReturn 
     MKMDDownloadDLSInstruments(unsigned int *patches, int patchCount);
-/* return the names of available drivers */
+
+/*!
+    @function       MKMDGetAvailableDrivers
+
+    @abstract       Return the names of available drivers.
+    
+    @param          selectedDriver
+                        Receives the default driver index.
+
+    @result         Returns a list of strings giving driver names and available ports,
+                    and therefore (0 based) unit numbers. A NULL char * terminates the
+                    list a la argv behaviour.
+*/
 PERFORM_API const char **
     MKMDGetAvailableDrivers(unsigned int *selectedDriver);
 
-/********************* Controling how incoming data is formated ***********/
+/*!
+    @function       MKMDFilterMessage
+
+    @abstract       Controling how incoming data is formated.
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          unit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver.
+
+    @param          statusByte
+                        The MIDI status byte to filter.
+
+    @param          filterIt
+                        Enables or disables the filtering out of the
+			status byte.
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDFilterMessage(MKMDPort driver, MKMDOwnerPort owner, short unit, unsigned char statusByte, boolean_t filterIt);
+
+/*!
+    @function       MKMDParseInput
+
+    @abstract       
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          unit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver.
+
+    @param          parseIt
+                        Enables or disables parsing.
+
+    @result         Returns 
+*/
 PERFORM_API MKMDReturn 
     MKMDParseInput(MKMDPort driver, MKMDOwnerPort owner, short unit, boolean_t parseIt);
 
-// interpreting error codes into a readable string.
+/*!
+    @function       MKMDErrorString
+
+    @abstract       Interpret the errorCode and return the appropriate error string.
+    
+    @param          errorCode
+                        The error code returned by a MKMD function.
+
+    @result         Returns a readable string.
+*/
 PERFORM_API char *MKMDErrorString(MKMDReturn errorCode);
 
-/* This will be obsolete soon: */
+
+/*!
+    @function       MKMDSetSystemIgnores
+
+    @abstract       This will be obsolete soon.
+    
+    @param          driver
+                        Port indicating and enabling communication
+			with the MIDI driver.
+    @param          owner
+                        Port indicating and enabling communication
+			with the owner (calling routine).
+
+    @param          unit
+                        Indicates the MIDI port (cable) in a multiple
+			MIDI port driver.
+
+    @param          ignoreBits
+                        A binary value indicating messages to ignore.
+
+    @result         Returns NULL if unable to find the hostname,
+                    otherwise whatever value for MKMDPort that has meaning.
+
+*/
 PERFORM_API MKMDReturn 
     MKMDSetSystemIgnores(MKMDPort driver, MKMDOwnerPort owner, short unit, unsigned int ignoreBits);
 
