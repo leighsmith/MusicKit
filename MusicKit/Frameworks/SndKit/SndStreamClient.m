@@ -71,7 +71,7 @@ enum {
     [super init];
 
     // Modern audio hardware can have quite small buffers (i.e 4096 bytes), yet we want to do
-    // increasing more complex processing, so we settle for many small buffers, given we now have a preemption
+    // increasingly more complex processing, so we settle for many small buffers, given we now have a preemption
     // mechanism.
     outputQueue = [[SndAudioBufferQueue audioBufferQueueWithLength: 8] retain];
     inputQueue  = [[SndAudioBufferQueue audioBufferQueueWithLength: 8] retain];
@@ -340,7 +340,8 @@ enum {
 
 	[synthThreadLock lock];
 #if SNDSTREAMCLIENT_DEBUG
-	NSLog(@"clientNowTime was %lf, synthOutputBuffer duration %lf, exposedOutputBuffer duration %lf, outputQueue processed buffers count %d\n", clientNowTime, [synthOutputBuffer duration], [exposedOutputBuffer duration], [outputQueue processedBuffersCount]);
+	NSLog(@"clientNowTime was %lf, synthOutputBuffer duration %lf, exposedOutputBuffer duration %lf, outputQueue processed buffers count %d\n",
+	      clientNowTime, [synthOutputBuffer duration], [exposedOutputBuffer duration], [outputQueue processedBuffersCount]);
 #endif
 	clientNowTime -= processedBufferDuration;
 
@@ -422,11 +423,11 @@ enum {
 	    processedInputBuffersCount = [inputQueue processedBuffersCount];
 
 	    if (processedInputBuffersCount) {
-		// TODO check why we need to retain it here and then release it at the end of the buffer, for copyData: or addPendingBuffer:?
+		// TODO check why we need to retain it here and then release it at the end of the buffer, for copyDataFromBuffer: or addPendingBuffer:?
 		SndAudioBuffer *exposedInputBuffer = [[inputQueue popNextProcessedBuffer] retain];
 
 		// TODO perhaps we could eventually just add the inB into the inputQueue, rather than copying it.
-		[exposedInputBuffer copyData: inB];
+		[exposedInputBuffer copyDataFromBuffer: inB];
 		// Add the exposed input buffer with the new audio data back into the queue.
 		[inputQueue addPendingBuffer: exposedInputBuffer];
 		[exposedInputBuffer autorelease];
