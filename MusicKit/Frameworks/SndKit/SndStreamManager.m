@@ -4,7 +4,7 @@
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
-//  Sat 10-Feb-2001, Copyright (c) 2001 SndKit project
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and
 //  non-commercial purposes so long as the author attribution and copyright
@@ -26,12 +26,7 @@
 #define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
 #define SNDSTREAMMANAGER_SHOW_DRIVER_SELECTED   0
 
-#ifdef __MINGW32__
-#import "SndConditionLock.h"
-#define NSConditionLock SndConditionLock
-#endif
-
-void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj);
+static void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj);
 
 ////////////////////////////////////////////////////////////////////////////////
 // The enums are dual purpose -- they serve as condition locks for
@@ -490,7 +485,7 @@ static SndStreamManager *sm = nil;
 // processAudio
 ////////////////////////////////////////////////////////////////////////////////
 
-void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj)
+static void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj)
 {
   // Eventually these must be made instance variables which you just wrap
   // around each of the C-side buffers, to avoid allocation costs.
