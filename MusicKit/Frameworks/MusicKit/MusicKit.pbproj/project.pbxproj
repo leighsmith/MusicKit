@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		00D5A006FED5ABC1CFED3B93 = {
 			buildStyles = (
@@ -13,7 +13,7 @@
 			isa = PBXProject;
 			mainGroup = 00D5A007FED5ABC1CFED3B93;
 			productRefGroup = 00D5A008FED5ABC1CFED3B93;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				00D5A0C5FED5ABC1CFED3B93,
 			);
@@ -1135,7 +1135,6 @@
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LIBRARY_SEARCH_PATHS = ./;
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "-Wall";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOL_FLAGS = "";
@@ -1145,8 +1144,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -2571,6 +2568,16 @@
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
 		};
+//000
+//001
+//002
+//003
+//004
+//010
+//011
+//012
+//013
+//014
 		0142566AFFBF5179CFED3B96 = {
 			isa = PBXFileReference;
 			path = fastFFT.h;
@@ -2599,6 +2606,16 @@
 			path = MusicKit.framework;
 			refType = 3;
 		};
+//010
+//011
+//012
+//013
+//014
+//020
+//021
+//022
+//023
+//024
 		02CDDD26FEF14087CFED3B93 = {
 			isa = PBXFileReference;
 			path = MKPatchConnection.m;
@@ -2679,6 +2696,16 @@
 				);
 			};
 		};
+//020
+//021
+//022
+//023
+//024
+//090
+//091
+//092
+//093
+//094
 		09217BEF00541E3FCFED3B96 = {
 			isa = PBXFileReference;
 			path = MKPatch.h;
@@ -2704,11 +2731,22 @@
 			settings = {
 			};
 		};
+//090
+//091
+//092
+//093
+//094
+//130
+//131
+//132
+//133
+//134
 		139A74CF0049D9B3CFED3B96 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -2722,11 +2760,31 @@
 			isa = PBXBuildStyle;
 			name = Deployment;
 		};
+//130
+//131
+//132
+//133
+//134
+//1E0
+//1E1
+//1E2
+//1E3
+//1E4
 		1E2536DE00CEE0D7CFED3B96 = {
 			isa = PBXFileReference;
 			path = separateThread.m;
 			refType = 4;
 		};
+//1E0
+//1E1
+//1E2
+//1E3
+//1E4
+//2F0
+//2F1
+//2F2
+//2F3
+//2F4
 		2F3AE7A0012B0DB3CFED3B8B = {
 			isa = PBXFrameworkReference;
 			name = MKDSP.framework;
