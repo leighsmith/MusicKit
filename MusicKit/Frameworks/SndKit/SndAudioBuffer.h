@@ -223,10 +223,11 @@
 - copyFromBuffer: (SndAudioBuffer *) sourceBuffer intoRange: (NSRange) rangeInSamples;
 
 /*!
-  @method     lengthInSamples
-  @abstract
-  @discussion
-  @result     buffer length in sample frames
+  @method     lengthInSampleFrames
+  @abstract   Returns the number of sample frames in the audio buffer.
+  @discussion A sample frame is a channel independent time position duration, it's duration is the reciprocal
+              of the sample rate.
+  @result     Returns the buffer length in sample frames.
 */
 - (long) lengthInSampleFrames;
 /*!
@@ -292,20 +293,20 @@
 
 /*!
     @method     zero
-    @abstract   Sets data to zero
+    @abstract   Sets buffer data to zero.
     @discussion
     @result     self
 */
 - zero;
 
 /*!
-    @method     zeroForeignBuffer
-    @abstract   Sets buffer data to zero, regardless of whether the buffer is owned by the SndAudioBuffer or not.
-    @discussion Same as zero, but skips a buffer ownership test.
-    @result     self
-*/
-- (void) zeroForeignBuffer;
-
+  @method     zeroFrameRange:
+  @abstract   Zeros a given range of frames.
+  @discussion The range must be between 0 and the buffers frame length.
+  @result     Returns self.
+ */
+- zeroFrameRange: (NSRange) frameRange;
+ 
 /*!
     @method     frameSizeInBytes
     @abstract
@@ -369,21 +370,27 @@
 - convertToFormat: (int) newDataFormat;
 
 /*!
-  @method convertBytes:intoRange:fromFormat:channels:samplingRate:
-  @abstract Converts from a data pointer described by the given data format, channel count and sampling rate to the current buffer format.
-  @discussion Checks the range does not exceed the bounds of the buffer.
+  @method convertBytes:intoFrameRange:fromFormat:channels:samplingRate:
+  @abstract Converts from a data pointer described by the given data format, channel count and
+            sampling rate to the current buffer format.
+  @discussion Checks the range does not exceed the bounds of the buffer. The number of frames read during the
+              conversion is returned. This may be larger or smaller than the bufferFrameRange.length specified
+              number if sample rate conversion is performed. This allows the calling method to correctly update
+              it's read pointer.
   @param fromDataPtr      A pointer to raw sample data.
-  @param bufferByteRange  Indicates the region of the buffer which will be converted.
+  @param bufferFrameRange Indicates the region of the buffer which will be converted, specified
+                          in channel independent samples.
   @param fromDataFormat   An integer representing different sample data formats.
   @param fromChannelCount The old number of channels in the raw sample data.
   @param fromSamplingRate The old sampling rate in the raw sample data.
-  @result Returns self if conversion was successful, nil if conversion was not possible, such as due to incompatible channel counts.
+  @result Returns the number of frames that were read if conversion was successful, 0 if conversion was not
+	  possible, such as due to incompatible channel counts.
  */
-- convertBytes: (void *) fromDataPtr
-     intoRange: (NSRange) bufferByteRange
-    fromFormat: (int) fromDataFormat
-      channels: (int) fromChannelCount
-  samplingRate: (double) fromSamplingRate;
+- (long) convertBytes: (void *) fromDataPtr
+       intoFrameRange: (NSRange) bufferFrameRange
+           fromFormat: (int) fromDataFormat
+             channels: (int) fromChannelCount
+         samplingRate: (double) fromSamplingRate;
 
 /*!
   @method convertToFormat:channelCount:
