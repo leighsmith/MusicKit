@@ -20,6 +20,14 @@
 */
 /*
 // $Log$
+// Revision 1.4  2001/09/05 10:07:39  sbrandon
+// - because of changes to SndStreamManager.m we can now properly stop streams
+//   in SNDStreamStop - therefore we now call Pa_CloseStream after Pa_StopStream
+// - implemented SNDSetMute and SndIsMuted, by zeroing out buffers as they are
+//   about to get sent off to the portaudio engine, if requested.
+// - changes to allow correct querying of driver list, and setting of selected
+//   driver
+//
 // Revision 1.3  2001/09/03 17:19:41  sbrandon
 // - increased default buffer size to 16k in line with MacOSX version
 // - properly implemented retrieveDriverList() for SNDGetAvailableDriverNames
@@ -103,6 +111,7 @@ static int              bufferSizeInFrames;
 static long             bufferSizeInBytes = PA_DEFAULT_BUFFERSIZE;
 static SNDPlayingSound  singlePlayingSound;
 static PortAudioStream  *stream;
+static BOOL             isMuted = FALSE;
 
 // Stream processing data.
 static SNDStreamProcessor streamProcessor;
@@ -184,7 +193,11 @@ static int paSKCallback( void *inputBuffer,
                 // obtain data from big-endian ordered words
                 sampleWord = (((signed short) grabDataFrom[0]) << 8) + (grabDataFrom[1] & 0xff);
                 // make a float, do any other sounds, normalize and then write it.
-                ((float *)outputBuffer)[sampleToPlay] = sampleWord / 32768.0f;
+                if (!isMuted) {
+                    ((float *)outputBuffer)[sampleToPlay] = sampleWord / 32768.0f;
+                }
+                else ((float *)outputBuffer)[sampleToPlay] = 0.0f;
+
                 if(snd->channelCount != 1)	// play mono by sending same sample to all channels
                     byteToPlayFrom += bytesPerSample;
 #endif
@@ -256,45 +269,50 @@ PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex)
   // This needs to be called after initialising.
   if(!initialised)
     return FALSE;
+  else if(selectedIndex >= 0 && selectedIndex < numOfDevices) {
+    driverIndex = selectedIndex;
+    return TRUE;
+  }
+  return FALSE;
 }
 
 // Match the driverDescription against the driverList
 PERFORM_API unsigned int SNDGetAssignedDriverIndex(void)
 {
-  return 0;
+  return driverIndex;
 }
 
 PERFORM_API void SNDGetVolume(float *left, float * right)
 {
-	// TODO
+    // TODO
 }
 
 PERFORM_API void SNDSetVolume(float left, float right)
 {
-	// TODO
+    // TODO
 }
 
 PERFORM_API BOOL SNDIsMuted(void)
 {
-	return FALSE; // TODO
+    return isMuted;
 }
 
 PERFORM_API void SNDSetMute(BOOL aFlag)
 {
-	// TODO
+    isMuted = aFlag;
 }
 
 // Routine to begin playback
 PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct, 
                                            int tag,
-				           int priority, 
+                                           int priority,
                                            int preempt, 
                             SNDNotificationFun beginFun,
                             SNDNotificationFun endFun)
 {
     PaError err;
     int data = 0;
-	
+
     if(!initialised)
         return SND_ERR_NOT_RESERVED;  // invalid sound structure.
  
@@ -419,7 +437,7 @@ static int vendBuffersToStreamManagerIOProc(void *inputBuffer,
             memcpy(fInputBuffer, inInputData->mBuffers[0].mData, bufferSizeInBytes);
         }
     }
-	****/
+    ****/
     // to tell the client the format it should send.
         
     SNDStreamNativeFormat(&outStream.streamFormat);   
@@ -434,6 +452,9 @@ static int vendBuffersToStreamManagerIOProc(void *inputBuffer,
 
     (*streamProcessor)(outTime - firstSampleTime, 
                        &inStream, &outStream, streamUserData);
+    if (isMuted) {
+        memset(outputBuffer,0,bufferSizeInBytes);
+    }
 
     return 0; // returning 1 stops the stream
 }
@@ -453,15 +474,15 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor,
     
     if(!initialised)
         return FALSE;  // invalid sound structure.
-		
-	/*****
+
+    /*****
     if (inputInit) {
         if ((fInputBuffer = (float*) malloc(bufferSizeInBytes)) == NULL)
             return FALSE;
         memset(fInputBuffer,0,bufferSizeInBytes);
     }
-	*****/
-	
+    *****/
+
     // indicate the first absolute sample time received from the call back needs to be marked as a
     // datum to use to convert subsequent absolute sample times to a relative time.
     firstSampleTime = -1.0;  
@@ -512,17 +533,12 @@ PERFORM_API BOOL SNDStreamStop(void)
         r = FALSE;
     }
 
-  // Why does this cause a segfault? I thought one was supposed to do a
-  // Pa_CloseStream() after a Pa_StopStream(). It is probably because these
-  // get called from within the callback thread itself when SndStreamMixer
-  // streams finish playing.
-  /*  
     err = Pa_CloseStream(stream);
     if( err != paNoError ) {
         NSLog(@"PortAudio Pa_CloseStream error: %s\n", Pa_GetErrorText( err ) );
         r = FALSE;
     }
-   */
+
 //    SNDTerminate();
     NSLog(@"SNDStreamStopped\n" );
     return r;
