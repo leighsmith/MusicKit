@@ -3,6 +3,7 @@
 //  $Id$
 //
 //  Description:
+//    See the headerdoc below.
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //

@@ -110,7 +110,7 @@
 	return YES;
     }
 #if SNDAUDIOPROCRECORDER_DEBUG  
-    NSLog(@"SndAudioProcessorRecorder::prepareToRecordForDuration - Error: already recording!\n");
+    NSLog(@"SndAudioProcessorRecorder -prepareToRecordForDuration - Error: already recording!\n");
 #endif
     return NO;
 }
@@ -158,7 +158,7 @@
     framesRecorded = 0;
     
 #if SNDAUDIOPROCRECORDER_DEBUG
-    NSLog(@"SndAudioProcessor::closeRecordFile - closed\n");
+    NSLog(@"SndAudioProcessor -closeRecordFile - closed\n");
 #endif
     
     return YES;
@@ -220,7 +220,7 @@
 {
     if (isRecording) {  
 #if SNDAUDIOPROCRECORDER_DEBUG  
-	NSLog(@"SndAudioProcessorRecorder::startRecording - Error: already recording!\n");
+	NSLog(@"SndAudioProcessorRecorder -startRecording - Error: already recording!\n");
 #endif
     }
     else {
@@ -246,10 +246,10 @@
     
     // Create a temporary buffer of 1 second duration for buffering before writing to disk.
     if (![self prepareToRecordForDuration: BUFFER_DURATION]) {
-	NSLog(@"SndAudioProcessorRecorder::startRecordingToFile - Error in prepareToRecordForDuration.\n");
+	NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in prepareToRecordForDuration.\n");
     }
     else if (![self setUpRecordFile: filename withFormat: fileFormat]) {
-	NSLog(@"SndAudioProcessorRecorder::startRecordingToFile - Error in setUpRecordFile\n");
+	NSLog(@"SndAudioProcessorRecorder -startRecordingToFile - Error in setUpRecordFile\n");
     }
     else {
 	framesRecorded = 0;
@@ -287,7 +287,7 @@
 	}
     }
 #if SNDAUDIOPROCRECORDER_DEBUG
-    NSLog(@"SndAudioProcessor::stopRecordingWait:disconnectFromStream: \n");
+    NSLog(@"SndAudioProcessor -stopRecordingWait:disconnectFromStream: \n");
 #endif
     
     return self;
@@ -424,13 +424,13 @@
 	    [writingQueue addProcessedBuffer: bufferForWriting];
 	    
 #if SNDAUDIOPROCRECORDER_DEBUG
-	    NSLog(@"SndAudioProcessor::processReplacing: framesRecorded: %li inB frames: %li bufferForWriting %@\n",
+	    NSLog(@"SndAudioProcessor -processReplacing: framesRecorded: %li inB frames: %li bufferForWriting %@\n",
 		  framesRecorded, [inB lengthInSampleFrames], bufferForWriting);
 #endif	    	    
 	}
     } // end of isRecording
 #if SNDAUDIOPROCRECORDER_DEBUG > 1
-    NSLog(@"SndAudioProcessor::processReplacing: Leaving...\n");
+    NSLog(@"SndAudioProcessor -processReplacing: Leaving...\n");
 #endif
     return NO;
 }
