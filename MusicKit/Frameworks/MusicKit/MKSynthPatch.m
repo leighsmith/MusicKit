@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2001/03/06 21:47:33  leigh
+  Abstracted patch loading from SynthPatches into MKPatch
+
   Revision 1.8  2000/11/25 22:37:52  leigh
   Enabled NSBundle loading within findSynthPatchClass:
 
@@ -114,7 +117,6 @@ Modification history:
 */
 
 #import "_musickit.h"
-#define INT(_x) ((int)_x)
 #import "_SharedSynthInfo.h"
 #import "PatchTemplatePrivate.h"
 #import "ConductorPrivate.h" // @requires
@@ -123,17 +125,9 @@ Modification history:
 #import "SynthInstrumentPrivate.h"
 #import "NotePrivate.h"
 #import "SynthPatchPrivate.h"
+//#import <stdio.h>
 
-//#import <objc/objc-load.h> // for objc_loadModules - to replace with Foundation approach
-
-#define PERMS 0660 /* RW for owner and group. */
-#define HOME_SYNTHPATCH_DIR @"/Library/Music/SynthPatches/"
-#define LOCAL_SYNTHPATCH_DIR @"/Local/Library/Music/SynthPatches/"
-#define SYNTHPATCH_EXTENSION @"o"
-
-#import <stdio.h>
-
-#define SOUND_OUT_PAUSE_BUG 1
+#define INT(_x) ((int)_x)
 
 @implementation MKSynthPatch
 
@@ -293,14 +287,6 @@ static void cancelMsgs(register id self)
 {
     return self;
 }
-
-#if 0
-- (void)initialize
-  /* Obsolete */
-{
-    
-}
-#endif
 
 -controllerValues:controllers
   /* This message is sent by the SynthInstrument 
@@ -1084,90 +1070,12 @@ id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tail
 
 @end
 
+@implementation MKSynthPatch(PatchLoad)
 
-@implementation MKSynthPatch(SynthPatchLoad)
-
-static BOOL tryIt(NSString **filename,NSString *extension,NSString *name,int addExt,
-                 NSString *dir1,NSString *dir2)
++ findPatchClass: (NSString *) className
 {
-    if (dir1) {
-        *filename = [NSString stringWithString:dir1];
-	if (dir2)
-            *filename = [*filename stringByAppendingPathComponent:dir2];
-        *filename = [*filename stringByAppendingPathComponent:name];
-    }
-    else
-        *filename = [NSString stringWithString:name];
-    if (addExt)
-        *filename = [*filename stringByAppendingPathExtension:extension];
-    return [[NSFileManager defaultManager] isReadableFileAtPath:*filename];
-    //open([*filename cString],O_RDONLY,PERMS); 
-}
-
-static NSString *findFilenameForClassname(NSString *name)
-    /* Returns filename or nil if failure. Assumes name is non-NULL. */
-{
-    BOOL ok;
-    NSString *p;
-    NSString *filename;
-    int addExt = 0;
-    if (![[name pathExtension] isEqualToString: SYNTHPATCH_EXTENSION])
-      addExt = 1;
-    ok = tryIt(&filename, SYNTHPATCH_EXTENSION, name, addExt, nil, nil);
-    if (ok) 
-      return filename;
-    if (![name isAbsolutePath]) { /* There's hope */
-        if ((p = NSHomeDirectory())) {
-            ok = tryIt(&filename, SYNTHPATCH_EXTENSION, name, addExt, p, HOME_SYNTHPATCH_DIR);
-	    if (ok) 
-	      return filename;
-	}
-	
-        ok = tryIt(&filename, SYNTHPATCH_EXTENSION, name, addExt, LOCAL_SYNTHPATCH_DIR, nil);
-	if (ok) 
-	  return filename;
-    }
-    return filename;
-}
-
-static Class getClassWithoutWarning(NSString *clname)
-/* sb: checks all loaded classes to see if we have the named class. Surely NSClassFromString()
- * would do exactly the same thing? (I've tried it for a couple of examples in gdb, and appears
- * to have the desired behaviour)
- */
-{
-    return NSClassFromString(clname);
-}
-
-+ findSynthPatchClass:(NSString *)className
-    /* The user can load in arbitrary bundles. */
-{
-    NSString *filename;
-//    const char *modules[2];
-    NSBundle *bundleToLoad;
-    Class loadedClass;
-    
-    loadedClass = getClassWithoutWarning(className);
-    if (loadedClass != nil)
-	return loadedClass;
-    filename = findFilenameForClassname(className);
-    if (filename == nil) 
-	return nil;
-//    modules[0] = [filename cString];
-//    modules[1] = '\0';
-    /*sb: because of difficulties with ErrorStreams, I have removed the error reporting from
-     * this function. Unfortunate, as it will be difficult to diagnose loading errors now.
-     */
-//    if (objc_loadModules(modules,MKErrorStream(),NULL,NULL,NULL))
-//    if (objc_loadModules(modules,NULL,NULL,NULL,NULL)) 
-//	return nil;
-//    return NSClassFromString(className);
-    bundleToLoad = [NSBundle bundleWithPath: filename];
-    if ((loadedClass = [bundleToLoad classNamed: className]) != nil)
-        return loadedClass;
-    else
-        return nil;
+    // TODO [@"SynthPatches" stringByAppendingPathComponent: className]
+    return [super findPatchClass: className];
 }
 
 @end
-

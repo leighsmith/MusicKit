@@ -45,6 +45,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2001/03/06 21:47:32  leigh
+  Abstracted patch loading from SynthPatches into MKPatch
+
   Revision 1.4  2000/11/25 23:26:10  leigh
   Enforced ivar privacy
 
@@ -60,6 +63,7 @@
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSArray.h>    /* Needed, by subclass, to access synth elements. */
+#import "MKPatch.h"
 #import "MKConductor.h"
 #import "orch.h"
 
@@ -74,16 +78,16 @@ typedef enum _MKPhraseStatus {
         MK_noPhraseActivity}
 MKPhraseStatus;
 
-@interface MKSynthPatch : NSObject
+@interface MKSynthPatch : MKPatch
 {
-    NSMutableArray *synthElements;    // List of MKUnitGenerator and MKSynthData objects.
+    NSMutableArray *synthElements;    // Array of MKUnitGenerator and MKSynthData objects.
     id synthInstrument;    // The MKSynthInstrument object currently in possession of the MKSynthPatch or nil if none.
     int noteTag;           // Tag of notes currently implemented by this MKSynthPatch.
     MKSynthStatus status;  // Status of patch. One of MK_running, MK_finishing or MK_idle.
                            // You should never set it explicitly in your subclass.
     id patchTemplate;      // MKPatchTemplate of this patch.
     BOOL isAllocated;      // YES if the object is allocated.
-    id orchestra;          // MKOrchestra instance on which the object is allocated and on which this MKSynthPatch is running.
+    MKOrchestra *orchestra; // MKOrchestra instance on which the object is allocated and on which this MKSynthPatch is running.
 
 @private
     unsigned short _whichList;  // Which list am I on?
@@ -348,33 +352,28 @@ MKPhraseStatus;
 
 @end
 
-@interface MKSynthPatch(SynthPatchLoad)
+@interface MKSynthPatch(PatchLoad)
 
-+findSynthPatchClass:(NSString *)name;
++findPatchClass: (NSString *) name;
  /* This method looks for a class with the specified name.  
     If found, it is returned.
     If not found, this method tries to dynamically load the class. 
-    The following directories are searched for a file <name>.o:
+    The standard library directories are searched for a file named <name>.bundle.
+    On MacOS X these would be:
 
     1. ./
-    2. ~/Library/Music/SynthPatches/
-    3. /LocalLibrary/Music/SynthPatches/
-    4. /NextLibrary/Music/SynthPatches/
+    2. ~/Library/MusicKit/SynthPatches/
+    3. /Library/MusicKit/SynthPatches/
+    4. /Network/Library/MusicKit/SynthPatches/
+    5. /System/Library/MusicKit/SynthPatches/
 
     If a file is found, it is dynamically loaded.  If the whole process
     is successful, the newly loaded class is returned.  Otherwise, nil
     is returned.  If the file is found but the link fails, an error is printed
     to the stream returned by MKErrorStream() (this defaults to stderr). You
     can change it to another stream with MKSetErrorStream().
-
-    Note: To use dynamic loading, you must link and install your application 
-    in a particular way.  See the MKSynthPatch class description for details.
-
-    */
-   
+    */   
 
 @end
-
-
 
 #endif
