@@ -528,200 +528,140 @@ static int SndCopySamples(SndSoundStruct **toSound, SndSoundStruct *fromSound,
     return (soundStruct->dataFormat == SND_FORMAT_INDIRECT);
 }
 
-- (void) adjustLoopStart: (long *) newLoopStart 
-		     end: (long *) newLoopEnd
-	   afterRemoving: (long) sampleCountRemoved
-	      startingAt: (long) startSample
+- (int) deleteSamplesAt: (long) startSample count: (long) sampleCount
 {
-    NSLog(@"*newLoopStart %ld, *newLoopEnd %ld\n", *newLoopStart, *newLoopEnd);
-    if(*newLoopEnd < startSample + sampleCountRemoved)
-	*newLoopEnd = MIN(*newLoopEnd, [self lengthInSampleFrames]);
-    else {
-	*newLoopEnd = *newLoopEnd - sampleCountRemoved;
-	if(*newLoopEnd < 0)
-	    *newLoopEnd = 0;
-    }
-    if(*newLoopStart < startSample + sampleCountRemoved)
-	// TODO Perhaps just leave it rather than moving it to startSample?
-	*newLoopStart = MIN(*newLoopStart, startSample); 
-    else {
-	*newLoopStart = *newLoopStart - sampleCountRemoved;
-	if(*newLoopStart < 0)
-	    *newLoopStart = 0;	    
-    }
-    NSLog(@"after deleting *newLoopStart %ld, *newLoopEnd %ld\n", *newLoopStart, *newLoopEnd);    
-}
-
-#if 0
-- (void) adjustAllLoopsAfterRemoving: (long) sampleCountRemoved startingAt: (long) startSample
-{
-    int performanceIndex;
-    
-    [self adjustLoopStart: &loopStartIndex
-		      end: &loopEndIndex
-	    afterRemoving: sampleCountRemoved
-	       startingAt: startSample];	
-    [performanceArrayLock lock]; // TODO check this is right.
-    for(performanceIndex = 0; performanceIndex < [performanceArray count]; performanceIndex++) {
-	SndPerformance *performance = [performanceArray objectAtIndex: performanceIndex];
-	long performanceStartLoopIndex = [performance loopStartIndex];
-	long performanceEndLoopIndex = [performance loopEndIndex];
-	
-	adjustLoopPoints(&performanceStartLoopIndex, &performanceEndLoopIndex, startSample, sampleCountRemoved);
-	[performance setLoopStartIndex: performanceStartLoopIndex];
-	[performance setLoopEndIndex: performanceEndLoopIndex];
-    }
-    [performanceArrayLock unlock];
-
-}
-#endif
-
-
-// TODO move this function inside deleteSamplesAt:count: 
-static int SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCount)
-{
-    SndSoundStruct **ssList,**newssList;
-    SndSoundStruct *theStruct,*newStruct;
-    int i = 0, ssPointer = 0;
     int cc;
     SndSampleFormat df,olddf=0;
     int ds;
-    int sr;
     int numBytes;
-    int lastSample = startSample + sampleCount - 1;
-    int firstFrag = -1, lastFrag = -1;
-    int numFromFrags = 0;
-    int numFrags;
-    int count = 0;
-    int startOffset=0, startLength = 0, endLength = 0;
     
-    if (!sound) return SND_ERR_NOT_SOUND;
-    if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-    if (startSample < 0 || startSample > SndFrameCount(sound)
-	|| startSample + sampleCount > SndFrameCount(sound)) return SND_ERR_BAD_SIZE;
+    if (!soundStruct) return SND_ERR_NOT_SOUND;
+    if (soundStruct->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+    if (startSample < 0 || startSample > SndFrameCount(soundStruct)
+	|| startSample + sampleCount > SndFrameCount(soundStruct)) return SND_ERR_BAD_SIZE;
     if (!sampleCount) return SND_ERR_NONE;
     
-    cc = sound->channelCount;
-    df = sound->dataFormat;
-    ds = sound->dataSize; /* ie size of header including info string; or data */
-    sr = sound->samplingRate;
-    
-    if (df == SND_FORMAT_INDIRECT) {
-	olddf = ((SndSoundStruct *)(*((SndSoundStruct **)
-				      (sound->dataLocation))))->dataFormat;
-	numBytes = SndSampleWidth(((SndSoundStruct *)(*((SndSoundStruct **)
-							(sound->dataLocation))))->dataFormat);
-    }
-    else numBytes = SndSampleWidth(df);
+    cc = soundStruct->channelCount;
+    df = soundStruct->dataFormat;
+    ds = soundStruct->dataSize; /* ie size of header including info string; or data */
     
     if (df != SND_FORMAT_INDIRECT) {
-	char *firstByteToMove = (char *)sound + sound->dataLocation +
-	(startSample + sampleCount) * cc * numBytes;
-	int numBytesToMove = ds - (startSample + sampleCount) * cc * numBytes;
-	char *moveToHere = (char *)sound + sound->dataLocation + startSample * cc * numBytes;
-	if (numBytesToMove) memmove(moveToHere, firstByteToMove, numBytesToMove);
-	sound = realloc(sound, ds + sound->dataLocation - (sampleCount * cc * numBytes));
-	sound->dataSize -= (sampleCount * cc * numBytes);
-	return SND_ERR_NONE;
-    }
-    /* find 1st and last frag containing data to be deleted */
-    ssList = (SndSoundStruct **)sound->dataLocation;
-    while ((theStruct = ssList[i++]) != NULL) {
-	int thisCount = (theStruct->dataSize / cc / numBytes);
-	if (startSample >= count && startSample < (count + thisCount)) {
-	    firstFrag = i - 1;
-	    startOffset = (startSample - count) * cc * numBytes;
-	    startLength = theStruct->dataSize - startOffset;
-	}
-	if (lastSample >= count && lastSample < (count + thisCount))
-	{lastFrag = i - 1; endLength = (lastSample - count + 1) * cc * numBytes; }
-	count += thisCount;
-    }
-    numFromFrags = i - 1;
-    /* We have firstFrag and lastFrag, which may be equal.
-	* First, copy all frags before firstFrag.
-	* If startOffset == 0 and firstFrag < lastFrag, we can delete (ignore) all frags
-	* from firstFrag to lastFrag.
-	* If firstFrag == lastFrag, we must be careful to ignore only that data which is between
-	* the start and end point.
-	* Then copy all frags following endFrag.
-	*/
-    /* The following may overestimate the number of frags by 2, iff firstFrag == lastFrag.
-	* This does not really matter, as it's just a list of pointers, and usually not a big
-	* one at that.
-	*/
-    numFrags = numFromFrags - (lastFrag - firstFrag + 1) + 2;
-    if (!(newssList = malloc((numFrags + 1) * sizeof(SndSoundStruct *)))) {
-	return SND_ERR_CANNOT_ALLOC;
-    }
-    
-    for (i = 0; i<firstFrag; i++) {
-	newssList[ssPointer++] = ssList[i];
-    }
-    /* copy first part of 1st affected frag (the non-deleted part) */
-    /* TODO an excellent optimisation here would be to work out which part of the sound is
-	* larger (the 1st remaining part of the frag, or the last remaining part), and instead of
-	* copying it, just shuffle the data down the frag, and realloc it. This would save having to
-	* malloc a totally new block of memory. In fact, where firstFrag != lastFrag, this should
-	* be done for both halves.
-	*/
-    if (startOffset > 0) {
-	if (!(newStruct = _SndCopyFragBytes(ssList[firstFrag], 0, startOffset))) {
-	    /* we don't free members of the list here, since they are still part of the
-	    * original sound (i.e. we are only holding copies of the pointers)
-	    */
-	    free(newssList);
-	    return SND_ERR_CANNOT_ALLOC;
-	}
-	newssList[ssPointer++] = newStruct;
-    }
-    if (endLength < ssList[lastFrag]->dataSize) {
-	if (!(newStruct = _SndCopyFragBytes(ssList[lastFrag], endLength, -1))) {
-	    /* we don't free members of the list here, since they are still part of the
-	    * original sound (i.e. we are only holding copies of the pointers
-			      */
-	    if (startOffset > 0) free(newssList[ssPointer - 1]);
-	    free(newssList);
-	    return SND_ERR_CANNOT_ALLOC;
-    }
-	newssList[ssPointer++] = newStruct;
-  }
-    free(ssList[firstFrag]);
-    if (firstFrag != lastFrag) free(ssList[lastFrag]);
-    /* now we do all the rest of the list, as pointers only */
-    for (i = lastFrag + 1; i<numFromFrags; i++) {
-	newssList[ssPointer++] = ssList[i];
-    }
-    newssList[ssPointer++] = NULL;
-    free(ssList); /* old list */
-    if (newssList[0]) (SndSoundStruct **)(sound->dataLocation) = newssList;
-    else { /* we have deleted all samples. Free new list. Check dataLocation. */
-	free(newssList);
-	sound->dataFormat = olddf;
-	sound->dataLocation = sound->dataSize; /* size was temporarily held in dataSize */
-	sound->dataSize = 0;
-    }
-    return SND_ERR_NONE;
-}
-
-- (int) deleteSamplesAt: (long) startSample count: (long) sampleCount
-{
-    int err = SndDeleteSamples(soundStruct, startSample, sampleCount);
-    
-    if (!err) {
-        if (soundStruct->dataFormat != SND_FORMAT_INDIRECT)
-            soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-        else
-	    soundStructSize = soundStruct->dataSize;
-	// Update loop end index and in all performances.
-	[self adjustLoopStart: &loopStartIndex
-			  end: &loopEndIndex
-		afterRemoving: sampleCount
-		   startingAt: startSample];	
-	// [self adjustAllLoopsAfterRemoving: sampleCountRemoved startingAt: startSample];
+	char *firstByteToMove;
+	int numBytesToMove;
+	char *moveToHere;
+	int frameWidth = SndFrameSize(soundFormat);
 	
+	firstByteToMove = (char *) soundStruct + soundStruct->dataLocation + (startSample + sampleCount) * frameWidth;
+	numBytesToMove = ds - (startSample + sampleCount) * frameWidth;
+	moveToHere = (char *) soundStruct + soundStruct->dataLocation + startSample * frameWidth;
+	
+	if (numBytesToMove) memmove(moveToHere, firstByteToMove, numBytesToMove);
+	soundStruct = realloc(soundStruct, ds + soundStruct->dataLocation - (sampleCount * frameWidth));
+	soundStruct->dataSize -= (sampleCount * frameWidth);
+	soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
     }
-    return err;
+    else { // Deleting from an indirect sound
+	SndSoundStruct **ssList,**newssList;
+	SndSoundStruct *theStruct,*newStruct;
+	int i = 0, ssPointer = 0;
+	int lastSample = startSample + sampleCount - 1;
+	int firstFrag = -1, lastFrag = -1;
+	int numFromFrags = 0;
+	int numFrags;
+	int startOffset=0, startLength = 0, endLength = 0;
+	int count = 0;
+	
+	olddf = [self dataFormat];
+	numBytes = SndSampleWidth(olddf);
+	/* find 1st and last frag containing data to be deleted */
+	ssList = (SndSoundStruct **) soundStruct->dataLocation;
+	while ((theStruct = ssList[i++]) != NULL) {
+	    int thisCount = (theStruct->dataSize / cc / numBytes);
+	    
+	    if (startSample >= count && startSample < (count + thisCount)) {
+		firstFrag = i - 1;
+		startOffset = (startSample - count) * cc * numBytes;
+		startLength = theStruct->dataSize - startOffset;
+	    }
+	    if (lastSample >= count && lastSample < (count + thisCount)) {
+		lastFrag = i - 1;
+		endLength = (lastSample - count + 1) * cc * numBytes; 
+	    }
+	    count += thisCount;
+	}
+	numFromFrags = i - 1;
+	/* We have firstFrag and lastFrag, which may be equal.
+	    * First, copy all frags before firstFrag.
+	    * If startOffset == 0 and firstFrag < lastFrag, we can delete (ignore) all frags
+	    * from firstFrag to lastFrag.
+	    * If firstFrag == lastFrag, we must be careful to ignore only that data which is between
+	    * the start and end point.
+	    * Then copy all frags following endFrag.
+	    */
+	/* The following may overestimate the number of frags by 2, iff firstFrag == lastFrag.
+	    * This does not really matter, as it's just a list of pointers, and usually not a big
+	    * one at that.
+	    */
+	numFrags = numFromFrags - (lastFrag - firstFrag + 1) + 2;
+	if (!(newssList = malloc((numFrags + 1) * sizeof(SndSoundStruct *)))) {
+	    return SND_ERR_CANNOT_ALLOC;
+	}
+	
+	for (i = 0; i<firstFrag; i++) {
+	    newssList[ssPointer++] = ssList[i];
+	}
+	/* copy first part of 1st affected frag (the non-deleted part) */
+	/* TODO an excellent optimisation here would be to work out which part of the soundStruct is
+	    * larger (the 1st remaining part of the frag, or the last remaining part), and instead of
+	    * copying it, just shuffle the data down the frag, and realloc it. This would save having to
+	    * malloc a totally new block of memory. In fact, where firstFrag != lastFrag, this should
+	    * be done for both halves.
+	    */
+	if (startOffset > 0) {
+	    if (!(newStruct = _SndCopyFragBytes(ssList[firstFrag], 0, startOffset))) {
+	    // we don't free members of the list here, since they are still part of the
+	    // original sound (i.e. we are only holding copies of the pointers)
+		free(newssList);
+		return SND_ERR_CANNOT_ALLOC;
+	    }
+	    newssList[ssPointer++] = newStruct;
+	}
+	if (endLength < ssList[lastFrag]->dataSize) {
+	    if (!(newStruct = _SndCopyFragBytes(ssList[lastFrag], endLength, -1))) {
+		// we don't free members of the list here, since they are still part of the
+		// original sound (i.e. we are only holding copies of the pointers
+		if (startOffset > 0) 
+		    free(newssList[ssPointer - 1]);
+		free(newssList);
+		return SND_ERR_CANNOT_ALLOC;
+	    }
+	    newssList[ssPointer++] = newStruct;
+	}
+	free(ssList[firstFrag]);
+	if (firstFrag != lastFrag) 
+	    free(ssList[lastFrag]);
+	/* now we do all the rest of the list, as pointers only */
+	for (i = lastFrag + 1; i < numFromFrags; i++) {
+	    newssList[ssPointer++] = ssList[i];
+	}
+	newssList[ssPointer++] = NULL;
+	free(ssList); /* old list */
+	if (newssList[0]) 
+	    (SndSoundStruct **)(soundStruct->dataLocation) = newssList;
+	else { /* we have deleted all samples. Free new list. Check dataLocation. */
+	    free(newssList);
+	    soundStruct->dataFormat = olddf;
+	    soundStruct->dataLocation = soundStruct->dataSize; /* size was temporarily held in dataSize */
+	    soundStruct->dataSize = 0;
+	}
+	soundStructSize = soundStruct->dataSize;
+    }
+
+    soundFormat.frameCount -= sampleCount;
+    // Update loop end index and in all performances.
+    [self adjustLoopsAfterAdding: NO frames: sampleCount startingAt: startSample];
+
+    return SND_ERR_NONE;
 }
 
 - (int) deleteSamples
@@ -733,6 +673,7 @@ static int SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCo
 {
     int err;
     SndSoundStruct *fromSound;
+    unsigned sampleCount = [aSnd lengthInSampleFrames];
     
     if (!aSnd)
         return SND_ERR_NONE;
@@ -743,17 +684,30 @@ static int SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCo
         if (soundStruct->dataFormat != SND_FORMAT_INDIRECT)
             soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
         else
-            soundStructSize = soundStruct->dataSize;		
+            soundStructSize = soundStruct->dataSize;
+	
+	soundFormat.frameCount += sampleCount;
+
+	// Update loop end index and in all performances.
+	[self adjustLoopsAfterAdding: YES frames: sampleCount startingAt: startSample];
     }
     return err;
 }
 
+// Handles fragmented and non-fragmented sounds.
 - (long) insertIntoAudioBuffer: (SndAudioBuffer *) buff
 		intoFrameRange: (NSRange) bufferFrameRange
 	        samplesInRange: (NSRange) sndFrameRange
 {
-    void  *sndDataPtr = [self data] + sndFrameRange.location * SndFrameSize(soundFormat);
+    unsigned int frameIndexWithinFragment;
+    SndSampleFormat retrievedDataFormat;
+    NSRange bufferFragment;
+    unsigned int framesFilled = 0;
+    unsigned int buffFrameSize = [buff frameSizeInBytes];
+    unsigned int sndFrameSize = SndFrameSize(soundFormat);
+    void  *sndDataPtr = [self data] + sndFrameRange.location * sndFrameSize;
     double stretchFactor = [buff samplingRate] / [self samplingRate];
+    BOOL sameFormat = [self hasSameFormatAsBuffer: buff];
 
     //NSLog(@"bufferFrameRange [%ld, %ld] sndFrameRange [%ld,%ld]\n",
     //	  bufferFrameRange.location, bufferFrameRange.location + bufferFrameRange.length,
@@ -774,30 +728,50 @@ static int SndDeleteSamples(SndSoundStruct *sound, int startSample, int sampleCo
 	[buff zeroFrameRange: toZero];
     }
     
-    if(![self hasSameFormatAsBuffer: buff]) { // If not the same, do a data conversion.
-	// The number of frames returned as read could be more or less than bufferFrameRange.length if resampling occurs.
-	long framesRead = [buff convertBytes: sndDataPtr
-			      intoFrameRange: bufferFrameRange
-			          fromFormat: [self dataFormat]
-				channelCount: [self channelCount]
-			        samplingRate: [self samplingRate]];
+    // When retrieving from a fragmented sound, we fetch one or more fragments to fill the buffer.
+    bufferFragment.location = bufferFrameRange.location;
+    
+    while(framesFilled < bufferFrameRange.length) { // iterate over the number fragments the buffer filling spans
+	unsigned int fragmentLength;
+	void *sndFragmentPtr = [self fragmentOfFrame: sndFrameRange.location 
+				     indexInFragment: &frameIndexWithinFragment 
+				      fragmentLength: &fragmentLength
+					  dataFormat: &retrievedDataFormat];
+	unsigned int sndFragmentRemaining = fragmentLength - frameIndexWithinFragment;
 	
-	//NSLog(@"buffer to fill %@ mismatched to %@, converted, read %ld\n", buff, self, framesRead);
-	return framesRead;  // framesRead depends on resampling.
-    }
-    else {
-	// Matching sound buffer formats, so we can just do a copy.
-	int buffFrameSize = [buff frameSizeInBytes];
-	NSRange bufferByteRange = { bufferFrameRange.location * buffFrameSize, bufferFrameRange.length * buffFrameSize };
-        SndFormat sndFormat;
+	sndDataPtr = sndFragmentPtr + frameIndexWithinFragment * sndFrameSize;
 	
-        sndFormat.channelCount = soundStruct->channelCount;
-        sndFormat.dataFormat = soundStruct->dataFormat;
-        sndFormat.sampleRate = soundStruct->samplingRate;
-	// NSLog(@"channel count of sound = %d, of buffer = %d\n", soundStruct->channelCount, [buff channelCount]);
-	[buff copyBytes: sndDataPtr intoRange: bufferByteRange format: sndFormat];
-	return bufferFrameRange.length;
+	if(sndFragmentRemaining < bufferFrameRange.length - framesFilled)
+	    bufferFragment.length = sndFragmentRemaining;
+	else
+	    bufferFragment.length = bufferFrameRange.length - framesFilled;
+	
+	// Matching sound and buffer formats, so we can just do a copy.
+	if(sameFormat) {
+	    NSRange bufferByteRange;
+
+	    bufferByteRange.location = bufferFragment.location * buffFrameSize;
+	    bufferByteRange.length = bufferFragment.length * buffFrameSize;
+	    [buff copyBytes: sndDataPtr intoRange: bufferByteRange format: soundFormat];
+	    // framesFilled += bufferFragment.length;
+	}
+	else { // If not the same, do a data conversion.
+	    // The number of frames returned as read could be more or less than bufferFrameRange.length if resampling occurs.
+	    long framesRead = [buff convertBytes: sndDataPtr
+				  intoFrameRange: bufferFragment
+				      fromFormat: [self dataFormat]
+				    channelCount: [self channelCount]
+				    samplingRate: [self samplingRate]];
+	    
+	    //NSLog(@"buffer to fill %@ mismatched to %@, converted, read %ld\n", buff, self, framesRead);
+	    // bufferFragment.length = framesRead;  // framesRead depends on resampling.
+	}
+	
+	bufferFragment.location += bufferFragment.length;
+	sndFrameRange.location += bufferFragment.length;
+	framesFilled += bufferFragment.length;
     }
+    return bufferFrameRange.length; // framesFilled
 }
 
 - (long) insertIntoAudioBuffer: (SndAudioBuffer *) bufferToFill
