@@ -4,6 +4,9 @@
 */
 /*
   $Log$
+  Revision 1.10  2002/04/08 19:10:28  sbrandon
+  added prototypes for new private methods introduced in last commit
+
   Revision 1.9  2002/04/08 17:23:49  sbrandon
   added new method _rescheduleMsgRequestWithObjectArgs:... which optionally
   retains its arguments
@@ -70,9 +73,18 @@ extern double _MKTheTimeToWait(double nextMsgTime);
 +(MKMsgStruct *)_afterPerformanceSel:(SEL)aSelector 
  to:(id)toObject 
  argCount:(int)argCount, ...;
++(MKMsgStruct *)_afterPerformanceSel:(SEL)aSelector 
+ to:(id)toObject 
+ argCount:(int)argCount
+ arg1:(id)arg1 retain:(BOOL)retainArg1
+ arg2:(id)arg2 retain:(BOOL)retainArg2;
 +(MKMsgStruct *)_newMsgRequestAtTime:(double)timeOfMsg
   sel:(SEL)whichSelector to:(id)destinationObject
   argCount:(int)argCount, ...;
++(MKMsgStruct *)_newMsgRequestAtTime:(double)timeOfMsg
+  sel:(SEL)whichSelector to:(id)destinationObject
+  argCount:(int)argCount arg1:(id)arg1 retain:(BOOL)retainArg1
+  arg2:(id)arg2 retain:(BOOL)retainArg2;
 +(void)_scheduleMsgRequest:(MKMsgStruct *)aMsgStructPtr;
 +(MKMsgStruct *)_cancelMsgRequest:(MKMsgStruct *)aMsgStructPtr;
 +(double)_adjustTimeNoTE:(double)desiredTime ;
