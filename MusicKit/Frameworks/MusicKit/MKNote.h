@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2000/03/31 00:06:21  leigh
+  Adopted OpenStep naming of factory methods
+
   Revision 1.3  1999/09/24 05:50:27  leigh
   cleaned up documentation.
 
@@ -564,9 +567,8 @@ extern id MKGetNoteParAsWaveTable(id aNote,int par);
 extern id MKGetNoteParAsObject(id aNote,int par);
 extern BOOL MKIsNoteParPresent(id aNote,int par);
 
- /* Obsolete methods: */ 
 + note; 
-+ newSetTimeTag:(double )aTimeTag; 
++ noteWithTimeTag:(double )aTimeTag; 
 +(int ) parName:(NSString * )aName; 
 +(NSString *) nameOfPar:(int)aPar;
 

@@ -32,6 +32,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/03/31 00:05:46  leigh
+  Adopted OpenStep naming of factory methods
+
   Revision 1.5  2000/02/11 22:52:40  leigh
   Fixed memory leak reading scorefiles
 
@@ -3815,7 +3818,7 @@ static id parseScoreNote(void)
 	    MATCH(_MK_partInstance);
 	    [scoreRPtr->_aNote release];
 	    scoreRPtr->_aNote = aNote = 
-	      [MKGetNoteClass() newSetTimeTag:scoreRPtr->timeTag];
+	      [MKGetNoteClass() noteWithTimeTag:scoreRPtr->timeTag];
 	    snarfCommas();
 	    if (lookahead != '(') 
 	      error(MK_sfBadNoteTypeErr);
@@ -3936,7 +3939,7 @@ static id
 	  aPart = tokenVal->symbol;
 	  [scoreRPtr->_aNote release]; 
 	  scoreRPtr->_aNote = aNote = 
-	    [MKGetNoteClass() newSetTimeTag:scoreRPtr->timeTag];
+	    [MKGetNoteClass() noteWithTimeTag:scoreRPtr->timeTag];
 	  tok = getBinaryShort();
 	  switch (tok) {
 	    case MK_noteOn:

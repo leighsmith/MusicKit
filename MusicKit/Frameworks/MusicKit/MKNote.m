@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/03/31 00:07:05  leigh
+  Adopted OpenStep naming of factory methods
+
   Revision 1.5  2000/02/08 00:10:56  leigh
   Added duration display in -description
 
@@ -287,7 +290,22 @@ static void initNoteClass()
 static id noteCache[NOTECACHESIZE];
 static unsigned noteCachePtr = 0;
 
-+newSetTimeTag:(double)aTimeTag
+-initWithTimeTag:(double)aTimeTag
+{
+/*    [super init]; Not needed -- we omit in this case, for efficiency */
+    noteTag = MAXINT;
+    noteType = MK_mute;
+    timeTag = aTimeTag;
+    performer = conductor = nil;
+    return self;
+}
+
+-init
+{
+    return [self initWithTimeTag:MK_ENDOFTIME];
+}
+
++noteWithTimeTag:(double)aTimeTag
   /* TYPE: Creating; Creates a new MKNote and sets its timeTag.
    * Creates and initializes a new (mute) MKNote object 
    * with a timeTag value of aTimeTag.
@@ -308,31 +326,16 @@ static unsigned noteCachePtr = 0;
     else 
       newObj = [super allocWithZone:NSDefaultMallocZone()];
     [newObj initWithTimeTag:aTimeTag];
-    return newObj;
-}
-
--initWithTimeTag:(double)aTimeTag
-{
-/*    [super init]; Not needed -- we omit in this case, for efficiency */
-    noteTag = MAXINT;
-    noteType = MK_mute;
-    timeTag = aTimeTag;
-    performer = conductor = nil;
-    return self;
-}
-
--init
-{
-    return [self initWithTimeTag:MK_ENDOFTIME];
+    return newObj; // LMS: we should be autoreleasing here...and one day will when I trust we have the correct num of retains...
 }
 
 + note 
   /* TYPE: Creating; Creates a new MKNote object.
    * Creates, initializes and returns a new MKNote object.
-   * Implemented as newSetTimeTag:MK_ENDOFTIME.
+   * Implemented as noteWithTimeTag:MK_ENDOFTIME.
    */
 {
-    return [self newSetTimeTag:MK_ENDOFTIME];
+    return [self noteWithTimeTag:MK_ENDOFTIME];
 }
 
 #if 0
@@ -1850,20 +1853,21 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
    * the noteOff created according to the rules described in
    * -split::.
    */
- {
+{
     MKNote *aNoteOff;
-    if (noteType != MK_noteDur) 
-      return nil;
-    aNoteOff = [noteClass newSetTimeTag:timeTag+getNoteDur(self)];
-    if (noteTag == MAXINT) 
-      noteTag = MKNoteTag(); 
-    setNoteOffFields(aNoteOff,noteTag,performer,conductor);
+
+    if (noteType != MK_noteDur) {
+        _MKErrorf(MK_musicKitErr, @"receiver isnt a noteDur\n");
+        return nil;
+    }
+    aNoteOff = [noteClass noteWithTimeTag: timeTag + getNoteDur(self)];
+    if (noteTag == MAXINT)
+        noteTag = MKNoteTag(); 
+    setNoteOffFields(aNoteOff, noteTag, performer, conductor);
     if (isParPresent(self,MK_relVelocity))
-      MKSetNoteParToInt(aNoteOff,MK_relVelocity,
-                        MKGetNoteParAsInt(self,MK_relVelocity));
-    if ([self isParPresent:MK_midiChan])/* This is needed by _MKWriteMidiOut */
-      MKSetNoteParToInt(aNoteOff,MK_midiChan,
-                        MKGetNoteParAsInt(self,MK_midiChan));
+        MKSetNoteParToInt(aNoteOff, MK_relVelocity, MKGetNoteParAsInt(self, MK_relVelocity));
+    if ([self isParPresent: MK_midiChan])   /* This is needed by _MKWriteMidiOut */
+        MKSetNoteParToInt(aNoteOff, MK_midiChan, MKGetNoteParAsInt(self, MK_midiChan));
     return aNoteOff;
 }
 
@@ -1880,7 +1884,7 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
 -(void)_setPerformer:anObj
   /* Private method sent by MKNoteSender class.  */
 {
-        performer = anObj;
+    performer = anObj;
 }
 
 - _setPartLink:aPart order:(int)orderTag

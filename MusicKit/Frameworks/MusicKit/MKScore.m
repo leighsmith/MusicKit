@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2000/03/31 00:09:31  leigh
+  Adopted OpenStep naming of factory methods
+
   Revision 1.10  2000/03/29 03:17:47  leigh
   Cleaned up doco and ivar declarations
 
@@ -963,7 +966,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 	    /* Now handle meta-events that can be in regular notes. These
 	       are skipped when out of the time window, as are regular 
 	       MIDI messages. */
-	    aNote = [MKGetNoteClass() newSetTimeTag:t+timeShift];
+	    aNote = [MKGetNoteClass() noteWithTimeTag:t+timeShift];
 	    switch (DATA[0]) { 
 	      case MKMIDI_trackChange: 
 		/* Sent at the end of every track. May be missing from the
@@ -1070,7 +1073,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 		      ptr += 3;
 		  }
 		  *ptr = '\0';
-		  aNote = [MKGetNoteClass() newSetTimeTag:t+timeShift];
+		  aNote = [MKGetNoteClass() noteWithTimeTag:t+timeShift];
                   MKSetNoteParToString(aNote,MK_sysExclusive,[NSString stringWithCString:str]); /* copy */
 		  [CURPART addNote:aNote];
 		  continue;
