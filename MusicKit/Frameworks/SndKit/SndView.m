@@ -53,6 +53,7 @@ OF THIS AGREEMENT.
 // #define DEBUG_MOUSE(x) NSLog(@"Debug mouse: %@\n", (x))
 #define DEBUG_MOUSE(x)
 // #define DEBUG_SNDVIEW
+// #define DEBUG_SELECTION_DRAWING
 
 #define CURSOR_TIMER_HALF_PERIOD 0.5 // in seconds.
 #define CURSOR_WIDTH 1 // in pixels
@@ -1403,58 +1404,81 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 - (void) drawSelectedRegionRect: (NSRect) selectedRegionRect
 	   previousSelectedRect: (NSRect) previousSelectedRegionRect
 {
-    [selectionColour set];
-    NSRectFillUsingOperation(selectedRegionRect, SELECTION_DRAWING_COMPOSITE);
-
-    // NSHighlightRect(selectedRegionRect);
-    // [self setNeedsDisplay: YES];
-    /* adjust the size of cachedSelectionRect to be the size of the union of cachedSelectionRect and selectedRegionRect */
-    cachedSelectionRect = NSUnionRect(cachedSelectionRect, selectedRegionRect);
-    
     /* if we have backtracked, invalidate rects that have been selected during this drag for redraw. */
-    if (selectedFrames.length < previousSelectedFrames.length) {
-	NSRect	selectDiff;
+    if (selectedFrames.length < previousSelectedFrames.length || 
+	(selectedFrames.location >= previousSelectedFrames.location + previousSelectedFrames.length && previousSelectedFrames.length != 0)) {
+	NSRect invalidateRect;
 	
-#if 0
-	NSLog(@"selectedFrames:	    %5u	%5u\n",
-	      selectedFrames.location, selectedFrames.length);
-	
-	NSLog(@"selectedRegionRect: %5.f:%5.f	%5.f,%5.f\n",
+#ifdef DEBUG_SELECTION_DRAWING
+	if(selectedFrames.location >= previousSelectedFrames.location + previousSelectedFrames.length)
+	    NSLog(@"Jumped ahead of the end of the selection\n");
+	NSLog(@"selectedRegionRect:         %5.f:%5.f %5.f,%5.f\n",
 	      selectedRegionRect.origin.x, selectedRegionRect.origin.y,
 	      selectedRegionRect.size.width, selectedRegionRect.size.height);
 	
-	NSLog(@"previousSelectedFrames:		    %5u	%5u\n",
-	      previousSelectedFrames.location, previousSelectedFrames.width);
-	
-	NSLog(@"previousSelectedRegionRect:	    %5.f:%5.f	%5.f,%5.f\n",
+	NSLog(@"previousSelectedRegionRect: %5.f:%5.f %5.f,%5.f\n",
 	      previousSelectedRegionRect.origin.x, previousSelectedRegionRect.origin.y,
 	      previousSelectedRegionRect.size.width, previousSelectedRegionRect.size.height);
 #endif
 	
+	// Check if we are changing the length only, if so we know we are ahead of the start frame of the selection, moving the end of the selection.
 	if (selectedFrames.location == previousSelectedFrames.location) {
-	    DEBUG_MOUSE(@"above");
-	    selectDiff.size.width = (previousSelectedRegionRect.origin.x - selectedRegionRect.origin.x) + previousSelectedRegionRect.size.width + 1;
-	    selectDiff.size.height = selectedRegionRect.size.height;
-	    selectDiff.origin.x = selectedRegionRect.origin.x;
-	    selectDiff.origin.y = selectedRegionRect.origin.y;
+	    // DEBUG_MOUSE(@"ahead of selection start frame, changing end of selection");
+	    invalidateRect.size.width = (previousSelectedRegionRect.origin.x - selectedRegionRect.origin.x) + previousSelectedRegionRect.size.width + 1;
+	    invalidateRect.origin.x = selectedRegionRect.origin.x;
 	}
-	else {
-	    DEBUG_MOUSE(@"below");
-	    selectDiff.size.width = (selectedRegionRect.origin.x - previousSelectedRegionRect.origin.x) + 2;
-	    selectDiff.size.height = selectedRegionRect.size.height;
-	    selectDiff.origin.x = previousSelectedRegionRect.origin.x - 1;
-	    selectDiff.origin.y = selectedRegionRect.origin.y;
+	else { 
+	    // If we drag the end of selection past the beginning (typically by dragging quickly), then the location will differ from the 
+	    // previousSelectedRegionRect's location.
+	    if(selectedRegionRect.origin.x < previousSelectedRegionRect.origin.x) {
+		// DEBUG_MOUSE(@"dragged end of selection past beginning");
+		invalidateRect.size.width = (previousSelectedRegionRect.origin.x - selectedRegionRect.origin.x) + 2;
+		invalidateRect.origin.x = selectedRegionRect.origin.x - 1;
+	    }
+	    else { // if the location changes and we didn't cross the end past the beginning, we are therefore 
+		// moving the beginning of the selection.
+		// DEBUG_MOUSE(@"before the selection start frame, changing start of selection");
+		invalidateRect.size.width = (selectedRegionRect.origin.x - previousSelectedRegionRect.origin.x) + 2;
+		// If we jumped ahead of the end of the selection, we need to invalidate the current selection width also.
+		if(selectedFrames.location >= previousSelectedFrames.location + previousSelectedFrames.length)
+		    invalidateRect.size.width += selectedRegionRect.size.width;
+		invalidateRect.origin.x = previousSelectedRegionRect.origin.x - 1;
+	    }
+	    
 	}
-#if 0
-	NSLog(@"selectDiff:	%5.f:%5.f	%5.f,%5.f\n\n",
-	      selectDiff.origin.x, selectDiff.origin.y,
-	      selectDiff.size.width, selectDiff.size.height);
+	invalidateRect.size.height = selectedRegionRect.size.height;
+	invalidateRect.origin.y = selectedRegionRect.origin.y;
+#ifdef DEBUG_SELECTION_DRAWING
+	NSLog(@"invalidateRect:             %5.f:%5.f %5.f,%5.f\n",
+	      invalidateRect.origin.x, invalidateRect.origin.y,
+	      invalidateRect.size.width, invalidateRect.size.height);
 #endif
-	selectDiff = NSIntersectionRect(selectDiff, [self bounds]);
+	invalidateRect = NSIntersectionRect(invalidateRect, [self bounds]); // clip within the window bounds.
 	noSelectionDraw = YES;
-	[self setNeedsDisplayInRect: selectDiff];
+	[self setNeedsDisplayInRect: invalidateRect];
 	noSelectionDraw = NO;
+#if 0 // DEBUG_SELECTION_DRAWING
+	[[NSColor redColor] set];
+	NSFrameRect(invalidateRect);
+	[[NSColor blueColor] set];
+	NSFrameRect(selectedRegionRect);
+#endif
     }
+
+#ifdef DEBUG_SELECTION_DRAWING
+    NSLog(@"selectedRegionRect (%g, %g)\n", selectedRegionRect.origin.x, selectedRegionRect.size.width);
+    NSLog(@"selectedFrames:             %5u %5u\n",
+	  selectedFrames.location, selectedFrames.length);
+    
+    NSLog(@"previousSelectedFrames:     %5u %5u\n",
+	  previousSelectedFrames.location, previousSelectedFrames.length);
+#endif
+    
+    [selectionColour set];
+    NSRectFillUsingOperation(selectedRegionRect, SELECTION_DRAWING_COMPOSITE);
+    
+    /* adjust the size of cachedSelectionRect to be the size of the union of cachedSelectionRect and selectedRegionRect */
+    cachedSelectionRect = NSUnionRect(cachedSelectionRect, selectedRegionRect);
 }
 
 - (void) mouseDown: (NSEvent *) theEvent 
@@ -1543,16 +1567,12 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
 	    }	    
 	} 	
 	
-	/* to zap current selection */
+	// Now erase current selection range and highlighted pixels.
         if (selectedFrames.length > 0) {
-	    // NSHighlightRect(currentSelectionRect);
-	    // [self setNeedsDisplay: YES];
 	    /* remember our rect for future erasure */
 	    cachedSelectionRect = currentSelectionRect;
-	    [selectionColour set];
-	    // NSRectFillUsingOperation(currentSelectionRect, NSCompositeDestinationOver);
-	    // NSLog(@"zapping %g to %g\n", NSMinX(currentSelectionRect), NSMaxX(currentSelectionRect));
-	    selectedFrames = NSMakeRange(mouseDownLocation.x, 0);  // TODO LMS this seems wrong
+	    selectedFrames = NSMakeRange(0, 0); // reset our selection range before redrawing.
+	    [self setNeedsDisplayInRect: currentSelectionRect]; 
 	}
     }
     else { // Shift key pressed
@@ -1749,8 +1769,8 @@ static float getSoundValue(void *pcmData, SndSampleFormat sampleDataFormat, int 
         } // dx != 0
 
 #if 0 // DEBUG_MOUSE
-	NSLog(@"selectedRegionRect (%g, %g), dx %g, hilight (%d, %d) oldx %g ",
-	      NSMinX(selectedRegionRect), NSMaxX(selectedRegionRect), dx, hilightStartPixel, hilightEndPixel, oldx);
+	NSLog(@"dx %g, hilight (%d, %d) oldx %g ",
+	      dx, hilightStartPixel, hilightEndPixel, oldx);
 #endif
 
 	[self drawSelectedRegionRect: draggedSelectionRect previousSelectedRect: previousSelectedRegionRect];
