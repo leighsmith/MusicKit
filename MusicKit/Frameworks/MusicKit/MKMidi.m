@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2000/02/03 19:14:56  leigh
+  Removed extraneous header imports
+
   Revision 1.12  2000/01/27 19:05:59  leigh
   Now using NSPort replacing C Mach port API
 
@@ -107,8 +110,6 @@ Modification history:
 */
 #import <objc/HashTable.h>
 #import <mach/mach_error.h>
-#import <servers/netname.h>
-#import <ctype.h>  /* For isdigit() */
 #import <Foundation/NSUserDefaults.h>
 
 #if !m68k && !WIN32
@@ -1077,10 +1078,8 @@ static BOOL getAvailableMidiDevices(void)
 	[midiDriverList release];
 	return NO;
     }
-//    midiDriverNames = (NSString **) malloc(sizeof(NSString *) * midiDriverCount);
     midiDriverNames = [NSMutableArray arrayWithCapacity: midiDriverCount];
     midiDriverUnits = [NSMutableArray arrayWithCapacity: midiDriverCount];
-//    midiDriverUnits = (int *) malloc(sizeof(int) * midiDriverCount);
     for (i=0; i < midiDriverCount; i++) {
 	/* Or "Server Name"? */
 	aConfigTable = [midiDriverList objectAtIndex:i];
