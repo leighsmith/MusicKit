@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/06/09 18:06:29  leigh
+  Added braces to reduce finicky compiler warnings
+
   Revision 1.2  1999/07/29 01:16:40  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -608,12 +611,14 @@ NSLocalizedStringFromTableInBundle(@"Partials object currently supports table si
     int indexVal,halfLength;
     tableType = MK_oscTable;
 
-   if (!ampRatios || !freqRatios || (partialCount <= 0))
+    if (!ampRatios || !freqRatios || (partialCount <= 0))
       return nil;
-    if (aLength == 0)
+    if (aLength == 0) {
       if (length == 0)
 	aLength = DEFAULT_OSC_TABLE_LENGTH;
-      else aLength = length;
+      else
+        aLength = length;
+    }
     if (!isPowerOfTwo(aLength)) {
 	_MKErrorf(MK_musicKitErr,
 		  POWERS_OF_2_ERROR);

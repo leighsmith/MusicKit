@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.20  2000/06/09 18:05:59  leigh
+  Added braces to reduce finicky compiler warnings
+
   Revision 1.19  2000/06/09 15:01:03  leigh
   typed the parameter returned by -parts
 
@@ -973,10 +976,12 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 	   Part to allow ordering spec for simultaneous notes.) */
 	if (t < firstTimeTag) 
 	  continue;
-	if (t > lastTimeTag)
+	if (t > lastTimeTag) {
 	  if (LEVEL0)
 	    break; /* We know we're done */
-	  else continue;
+	  else
+            continue;
+        }
 	if (*metaevent) {
 	    /* Now handle meta-events that can be in regular notes. These
 	       are skipped when out of the time window, as are regular 
@@ -1011,7 +1016,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 	      case MKMIDI_tempoChange: 
 		/* For MK-compatibility, tempo is duplicated in info
 		   Notes, but only if it's at time 0 in file.    */
-		if (t == 0) 
+		if (t == 0) {
 		  if (lastTempoTime == 0) {
 		      /* Supress duplicate tempi, which can arise because of 
 			 the way we duplicate tempo in info */
@@ -1024,6 +1029,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 			MKSetNoteParToDouble(theInfo,MK_tempo,
 			 [MKScore midifilesEvaluateTempo] ? 60 : 60000000.0/LONGDATA);
    		  }
+                }
 		lastTempoTime = t;
 		if(![MKScore midifilesEvaluateTempo]) {
 		   MKSetNoteParToDouble(aNote,MK_tempo,60000000.0/LONGDATA);

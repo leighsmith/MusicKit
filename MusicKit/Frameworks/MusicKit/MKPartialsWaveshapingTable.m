@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/06/09 18:05:59  leigh
+  Added braces to reduce finicky compiler warnings
+
   Revision 1.2  1999/07/29 01:16:40  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -117,10 +120,12 @@ NSLocalizedStringFromTableInBundle(@"Waveshaping harmonics must be integers.", _
 
     if (!ampRatios || !freqRatios || (partialCount <= 0))
       return nil;
-    if (aLength == 0)
+    if (aLength == 0) {
       if (length == 0)
 	aLength = DEFAULT_WAVESHAPING_TABLE_LENGTH;
-      else aLength = length;
+      else
+        aLength = length;
+    }
     isEven = (aLength % 2 == 0);
     tableType = MK_waveshapingTable;
     if (!dataDouble || (length != aLength)) {

@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/06/09 18:05:27  leigh
+  Added braces to reduce finicky compiler warnings
+
   Revision 1.3  2000/03/29 03:35:41  leigh
   Cleaned up doco and ivar declarations
 
@@ -77,10 +80,12 @@ Modification history:
     ec = DSPMKMemoryFillSkipTimed(_MKCurSample(orchestra),0,
 				  orchAddr.memSpace,orchAddr.address,1,
 				  length);
-    if (ec)
+    if (ec) {
       if (ec == DSP_EABORT)
 	[self->orchestra _notifyAbort];
-      else return _MKErrorf(MK_synthDataCantClearErr);
+      else
+        return _MKErrorf(MK_synthDataCantClearErr);
+    }
     return self;
 }
 
@@ -134,7 +139,7 @@ Modification history:
     unsigned i = orchAddr.address;
     if (isModulus)
       return YES;
-    for (i=1; orchAddr.address & i == 0; i += i)
+    for (i=1; (orchAddr.address & i) == 0; i += i)
       ;
     return (isModulus = (i >= length));
 }
@@ -211,10 +216,12 @@ static id sendPreamble(self,dataArray,len,off,value)
     ec = DSPMKSendArraySkipTimed(_MKCurSample(orchestra),dataArray,
 				 orchAddr.memSpace,orchAddr.address + off,
 				 1,len);
-    if (ec)
+    if (ec) {
       if (ec == DSP_EABORT)
 	[orchestra _notifyAbort];
-      else return _MKErrorf(MK_synthDataLoadErr);
+      else 
+        return _MKErrorf(MK_synthDataLoadErr);
+    }
     return self;
 }
 
@@ -243,10 +250,12 @@ static id sendPreamble(self,dataArray,len,off,value)
     ec =  DSPMKSendShortArraySkipTimed(_MKCurSample(orchestra),dataArray,
 				       orchAddr.memSpace,orchAddr.address + off,
 				       1,len); 
-    if (ec)
+    if (ec) {
       if (ec == DSP_EABORT)
 	[orchestra _notifyAbort];
-      else return _MKErrorf(MK_synthDataLoadErr);
+      else
+        return _MKErrorf(MK_synthDataLoadErr);
+    }
     return self;
 }
 
@@ -266,10 +275,12 @@ static id sendPreamble(self,dataArray,len,off,value)
     ec = DSPMKMemoryFillSkipTimed(_MKCurSample(orchestra),value,
 				  orchAddr.memSpace,orchAddr.address + off,
 				  1,len); 
-    if (ec)
+    if (ec) {
       if (ec == DSP_EABORT)
 	[orchestra _notifyAbort];
-      else return _MKErrorf(MK_synthDataLoadErr);
+      else
+        return _MKErrorf(MK_synthDataLoadErr);
+    }
     return self;
 }
 
@@ -331,12 +342,14 @@ extern int DSPReadValue(DSPMemorySpace space,
       return self;
     for (i=0; i<cnt; i++) {
 	ec = DSPReadValue(orchAddr.memSpace,orchAddr.address+off+i,&value);
-	if (ec)
+	if (ec) {
 	  if (ec == DSP_EABORT) {
 	      [orchestra _notifyAbort];
 	      return nil;
 	  }
-	  else return _MKErrorf(MK_synthDataCantReadDSPErr);
+	  else
+              return _MKErrorf(MK_synthDataCantReadDSPErr);
+        }
 	dataArray[i] = value;
     }
     return self;
@@ -357,12 +370,14 @@ extern int DSPReadValue(DSPMemorySpace space,
       return self;
     for (i=0; i<cnt; i++) {
 	ec = DSPReadValue(orchAddr.memSpace,orchAddr.address+off+i,dataArray++);
-	if (ec)
+	if (ec) {
 	  if (ec == DSP_EABORT) {
 	      [orchestra _notifyAbort];
 	      return nil;
 	  }
-	  else return _MKErrorf(MK_synthDataCantReadDSPErr);
+	  else
+              return _MKErrorf(MK_synthDataCantReadDSPErr);
+        }
     }
     return self;
 }
