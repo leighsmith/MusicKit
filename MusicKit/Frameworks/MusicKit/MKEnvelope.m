@@ -35,6 +35,9 @@
 Modification history:
 
  $Log$
+ Revision 1.9  2002/04/03 03:47:25  skotmcdonald
+ Disabled MKRemoveObjectName in dealloc - we have a serious problem here, in that an envelope is supposed to remove itself on dealloc, but the name table has a retain via its NSDictionary - can lead to recursive deallocs or memory problems (I think - bit sleepy here). Made x and yArray mem management safer with explicit set-to-NULL-after-free as part of the bug catching paranoia
+
  Revision 1.8  2002/02/13 01:27:41  skotmcdonald
  Changed YForX lookup alg from linear to binary partioning
 
@@ -88,23 +91,25 @@ Modification history:
 {
   if (self != [MKEnvelope class])
     return;
-  [MKEnvelope setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
+  [MKEnvelope setVersion:VERSION2]; //sb: suggested by Stone conversion guide (replaced self)
     return;
 }
 
 
 -init
 {
-  stickPoint = MAXINT;
-  samplingPeriod = 1.0;
-  defaultSmoothing = MK_DEFAULTSMOOTHING;
+  self = [super init];
+  if (self != nil) {
+    stickPoint = MAXINT;
+    samplingPeriod = 1.0;
+    defaultSmoothing = MK_DEFAULTSMOOTHING;
 
-  // SKoT: safety additions
-  xArray         = NULL;
-  yArray         = NULL;
-  smoothingArray = NULL;
-  pointCount     = 0;
-
+    // SKoT: safety additions
+    xArray         = NULL;
+    yArray         = NULL;
+    smoothingArray = NULL;
+    pointCount     = 0;
+  }
   return self;
 }
 
@@ -160,7 +165,10 @@ double **arrPtr)
     [aTypedStream decodeArrayOfObjCType:"d" count:pointCount at:arr];
     if (!*arrPtr)
       *arrPtr = arr;
-    else free(arr);
+    else {
+      free(arr);
+      arr = NULL;
+    }
   }
 }
 
@@ -238,13 +246,21 @@ id MKGetEnvelopeClass(void)
 - (void)dealloc
   /* Frees self. Removes the name, if any, from the name table. */
 {
-  if (xArray != NULL)
+  if (xArray != NULL) {
     free(xArray);
-  if (yArray != NULL)
+    xArray = NULL;
+  }
+  if (yArray != NULL) {
     free(yArray);
-  if (smoothingArray != NULL)
+    yArray = NULL;
+  }
+  if (smoothingArray != NULL) {
     free(smoothingArray);
+    smoothingArray = NULL;
+  }
+  /*
   MKRemoveObjectName(self);
+   */
   [super dealloc];
 }
 
@@ -304,7 +320,7 @@ orDefaultSmoothing:(double)smoothing
   value is used. If yP is NULL, the y values are unchanged. */
 {
   if (yPtr) {
-    if (yArray != NULL)
+    if (yArray != NULL) 
       free(yArray);
     _MK_MALLOC(yArray,double,n);
     memmove( yArray,yPtr, n * sizeof(double)); /* Copy yPtr to yArray */
