@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/04/07 18:33:34  leigh
+  Unified tracing to the function for data hiding
+
   Revision 1.3  2000/04/07 18:23:28  leigh
   Upgraded logging to NSLog
 
@@ -358,7 +361,7 @@ id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte)
 	  else { /* Exceptional case: Multiple noteOns on same chan/key */
 	      midiInList *l = findList(keyNum,ptr);
 	      midiInNode *newN;
-	      if (_MKTrace() & MK_TRACEMIDI) 
+              if (MKIsTraced(MK_TRACEMIDI)) 
 		NSLog(@"Two noteOns on same keyNum without intervening noteOff.\n");
 	      _MK_MALLOC(newN,midiInNode,1);
 	      if (!l)
@@ -379,7 +382,7 @@ id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte)
 	  }
 	  if (l = findList(keyNum,ptr)) {
 	      /* Multiple noteOns on same chan/key? */
-	      if (_MKTrace() & MK_TRACEMIDI) 
+              if (MKIsTraced(MK_TRACEMIDI)) 
 		NSLog(@"NoteOff for multiply on keyNum.\n");
 	      if (IS_DEFAULT_TAG_OFF_SENT(ptr,chan,keyNum))  
 		/* Use element in list. */
