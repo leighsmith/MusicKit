@@ -87,6 +87,15 @@
 - removeAudioProcessor: (SndAudioProcessor*) proc;
 
 /*!
+  @method     removeAudioProcessorAtIndex:
+  @abstract   Removes an SndAudioProcesor from the FX chain
+  @discussion
+  @param      index The base 0 entry in FX chain to remove
+  @result     self
+ */
+- removeAudioProcessorAtIndex: (int) index;
+
+/*!
     @method     processorAtIndex:
     @abstract   Get the processor at a certain index
     @discussion
