@@ -27,12 +27,9 @@
 */
 
 //#import <MKSynthPatches/SynthPatches.h>
-#import <objc/NXStringTable.h>
-#import <AppKit/NSPanel.h>
+#import <AppKit/AppKit.h>
 #import "MidiPlayController.h"
 #import "MidiFilter.h"
-
-#define STRINGVAL(_x) [stringTable valueForStringKey:_x]
 
 @implementation MidiPlayController
 
@@ -66,10 +63,10 @@ static MKOrchestra *orch = nil;
     /* Disable error printing. We don't want error print-out to slow us down */
     MKSetErrorProc(handleMKErrors);      
 
-    /* Make a Midi object to get events from serial port A. */ 
+    /* Make a MKMidi object to get events from serial port A. */ 
     midiIn = [MKMidi midi];
 
-    /* Make a SynthInstrument to do voice (SynthPatch) management. */
+    /* Make a MKSynthInstrument to do voice (MKSynthPatch) management. */
     synthIns = [[MKSynthInstrument alloc] init];
 
     /* Connect Midi to the SynthInstrument by way of a note filter. */
@@ -85,18 +82,17 @@ static MKOrchestra *orch = nil;
     /* Set some variables for all Orchestras. */
     MKSetDeltaT(0.01); /* See comment above. */
 
-    [orch setSamplingRate:44100.0]; /* High sampling rate gives faster
-					    response (in current release). */
+    [orch setSamplingRate:44100.0]; /* High sampling rate gives faster response (in current release). */
     [orch setFastResponse:YES];     /* Use small sound-out buffers */
 
-    /* You must first open the Orchestra before allocating SynthPatches */
+    /* You must first open the MKOrchestra before allocating MKSynthPatches */
     while (![orch open]) {               
 	if (NSRunAlertPanel(@"MidiPlay", @"DSP Unavailable", @"Quit", @"Try Again", nil) == NSAlertDefaultReturn)
 	    [NSApp terminate:NSApp];
     }
 
     /* Specify the SynthPatch to use. Here we use Pluck. */
-    // [synthIns setSynthPatchClass:[Pluck class]]; //disabled by LMS for now until MKSynthPatches work
+    // [synthIns setSynthPatchClass:[MKPluck class]]; //disabled by LMS for now until MKSynthPatches work
 
     /* Specify manual allocation mode and number of simultaneous notes */ 
     [synthIns setSynthPatchCount:VOICES];
