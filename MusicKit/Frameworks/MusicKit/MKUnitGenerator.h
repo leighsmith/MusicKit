@@ -58,6 +58,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2001/09/07 18:28:28  leighsmith
+  Replaced HTML numeric entity with correct symbolic entity for double quotes, further MK prefixing
+
   Revision 1.6  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -78,7 +81,7 @@
   @class MKUnitGenerator
   @discussion
 
-UnitGenerators are the building blocks of DSP music synthesis.  Each
+MKUnitGenerators are the building blocks of DSP music synthesis.  Each
 MKUnitGenerator subclass represents a modular DSP program (a <i>unit
 generator</i>) that provides a particular synthesis operation, such as waveform
 generation, filtering, and mixing.  Sound is synthesized by dowloading unit
@@ -107,10 +110,10 @@ aNoise = [anOrch allocateUnitGenerator:[UnoiseUGx class]];
 </tt>
 
 Notice that the receiver of the <b>class</b> message in the final line of the
-example is UnoiseUGx. <i> </i>The &#170;x&#186; is explained later in this class
-description<i>.    </i>
+example is UnoiseUGx. The &ldquo;x&rdquo; is explained later in this class
+description.
 
-To connect two UnitGenerators together, you allocate a <i>patchpoint</i> through
+To connect two MKUnitGenerators together, you allocate a <i>patchpoint</i> through
 which they can communicate.  A patchpoint is a type of MKSynthData object that's
 designed to be used for just this purpose, to communicate data from the output
 of one MKUnitGenerator to the input of another.  For example, to connect our
@@ -123,7 +126,7 @@ spaces:
 The DSP's memory is divided into three sections, P, X, and Y:  P memory holds
 program data; X and Y contain data. Unit generator programs are always
 downloaded to P memory; the memory represented by a MKSynthData object is
-allocated in either X or Y, as the argument to Orchestra's <b>allocSynthData:</b> method
+allocated in either X or Y, as the argument to MKOrchestra's <b>allocSynthData:</b> method
 is MK_xData or MK_yData.  In general, there's no difference between the two data
 memory spaces (the one difference is mentioned below); dividing data memory into
 two partitions allows the DSP to be used more efficiently (although it presents
@@ -213,7 +216,7 @@ typedef struct _MKUGArgStruct {   /* Used to represent Unit Generator args */
 - copyWithZone:(NSZone *)zone;
 
  /* These methods are overridden to return [self doesNotRecognize]. 
-    You never create, free or copy UnitGenerators directly. These operations
+    You never create, free or copy MKUnitGenerators directly. These operations
     are always done via an MKOrchestra object. */
 
 +orchestraWillCreate:anOrch;
@@ -274,7 +277,7 @@ typedef struct _MKUGArgStruct {   /* Used to represent Unit Generator args */
               an argument that the receiver's DSP code itself might change.
               
               Argument optimization applies to the entire class - all instances of
-              the UnitGenerators leaf classes inherit an argument's optimization -
+              the MKUnitGenerators leaf classes inherit an argument's optimization -
               and it can't be changed during a performance.
 */
 +(BOOL)shouldOptimize:(unsigned) arg;
@@ -352,7 +355,7 @@ typedef struct _MKUGArgStruct {   /* Used to represent Unit Generator args */
               idling.  The default does nothing and returns the receiver.  Most
               MKUnitGenerator subclasses implement <b>idleSelf</b> to patch their
               outputs to sink, a location that, by convention, nobody reads. 
-              UnitGenerators that have inputs, such as Out2sumUG, implement
+              MKUnitGenerators that have inputs, such as Out2sumUG, implement
               <b>idleSelf</b> to patch their inputs to zero, a location that
               always holds the value 0.0.
 */
@@ -582,7 +585,7 @@ typedef struct _MKUGArgStruct {   /* Used to represent Unit Generator args */
   @discussion Sets whether various error checks are done, such as verifying that
               MKUnitGenerator arguments and MKSynthData memory spaces are correct. 
               The default is NO. You should send enableErrorChecking:YES when you
-              are debugging UnitGenerators or SynthPatches, then disable it when
+              are debugging MKUnitGenerators or MKSynthPatches, then disable it when
               your application is finished.
 */
 +enableErrorChecking:(BOOL)yesOrNo;
@@ -590,7 +593,7 @@ typedef struct _MKUGArgStruct {   /* Used to represent Unit Generator args */
 /*!
   @method referenceCount
   @result Returns an int.
-  @discussion If this object is installed in its Orchestra's shared table, returns
+  @discussion If this object is installed in its MKOrchestra's shared table, returns
               the number of objects that have allocated it. Otherwise returns 1 if
               it is allocated, 0 if it is not.
 */
@@ -609,7 +612,7 @@ id MKSetUGAddressArgToInt(id self,unsigned argNum,DSPAddress addr);
   @param  s is a NSMutableData.
   @result Returns an id.
   @discussion Writes the MKUnitGenerator as a portion of a DSP .lod file.  You
-              normally don't invoked this method.  It's invoked by Orchestra's
+              normally don't invoked this method.  It's invoked by MKOrchestra's
               <b>writeSymbolTable:</b>.
 */
 -writeSymbolsToStream:(NSMutableData *)s;
