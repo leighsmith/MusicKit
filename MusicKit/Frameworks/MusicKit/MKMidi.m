@@ -77,8 +77,11 @@
 Modification history:
 
   $Log$
+  Revision 1.32  2001/01/17 22:59:50  leigh
+  Fixed bug caused by driverInfoInitialized being set YES, even if there were no drivers available
+
   Revision 1.31  2000/12/15 02:02:27  leigh
-  Cosmetic changes.
+  Initial Revision
 
   Revision 1.30  2000/12/07 00:28:37  leigh
   Standardised on machPorts as the mechanism for MKMD routines.
@@ -1118,8 +1121,6 @@ static BOOL getAvailableMidiDevices(void)
     if (driverInfoInitialized) { /* Already initialized */
 	return YES;
     }
-    else
-        driverInfoInitialized = YES;
     // Using the cross-platform means to obtain the available drivers.
     systemDriverNames = MKMDGetAvailableDrivers(&systemDefaultDriverNum);
     midiDriverNames = [NSMutableArray array];
@@ -1133,6 +1134,8 @@ static BOOL getAvailableMidiDevices(void)
     // NSLog([midiDriverNames description]);
     [midiDriverNames retain];
     [midiDriverUnits retain];
+    // only indicate we initialized the driverInfo if there was at least one driver, otherwise keep checking.
+    driverInfoInitialized = YES;
     return YES;
 }
 
