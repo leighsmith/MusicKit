@@ -41,8 +41,8 @@ Add in the MusicKit icon and colour the web pages (perhaps not these below):
         <orgname>tomandandy</orgname>
 	<address>
           <street>89 Greene Street</street>
-          <city>New York</city>, <state>NY</state> <postcode>10012</postcode>
-          <country>USA</country>
+          <city>New York</city>, <state>NY</state>
+          <postcode>10012</postcode> <country>USA</country>
           <phone>+1-212-334-0421</phone> 
           <fax>+1-212-431-4115</fax> (Fax)
           <email>leigh@tomandandy.com</email>
@@ -60,7 +60,7 @@ Add in the MusicKit icon and colour the web pages (perhaps not these below):
       </revision>
     </revhistory>
 
-  <abstract>
+    <abstract>
       <para>
         These are overall comments (incorporating original notes by David A. Jaffe)
         and serve as the highest level overview of the MusicKit.
@@ -319,10 +319,10 @@ help!
   </sect1>
 
 <sect1 id="history">
-    <title>Contributors and History (As best as LMS knows)</title>
-
-<para>
-David A. Jaffe and Julius O. Smith
+    <title>Contributors and History</title>
+    <subtitle>(As best as LMS knows)</subtitle>
+    <para>
+David A. Jaffe <email>david@jaffe.com</email> and Julius O. Smith
 III at NeXT did the original design, with David coding the Objective C
 and Julius most of the 56K DSP. Their original design appeared in
 <citation>JaffeBoynton89</citation>.
@@ -337,7 +337,7 @@ DSP drivers. There were some other bug fix contributors (acknowledged
 in code comments).
 </para> 
 
-<para>
+    <para>
 Stephen Brandon <email>sbrandon@music.gla.ac.uk</email> did the initial
 OpenStep port in early 1998 and the majority of the conversion
 work. Leigh M. Smith <email>leigh@cs.uwa.edu.au</email>, now
@@ -351,34 +351,34 @@ MusicKit now uses the SndKit, written by Stephen Brandon, rather than
 the SoundKit for its sound processing. Keith Hamel tested and helped
 in bug fixes for the MacOsX Server version.
 </para>
-</sect1>
+  </sect1>
 
-<sect1 id="license">
-<title>License</title>
+  <sect1 id="license">
+    <title>License</title>
 
-<para>
+    <para>
 The source code as distributed by Stanford (V4.2) included the
 following usage message:
 </para>
 
-<blockquote>
-<title>Music Kit Usage</title>
-<para>
+    <blockquote>
+      <title>Music Kit Usage</title>
+      <para>
 The Music Kit software is
 distributed free of charge.  Copyright remains with the owner
 indicated in each file.   The software may be freely incorporated into
 any NeXTstep commercial application, any academic application, or any
 musical composition.
 </para>
-<para>
+      <para>
 We would appreciate your acknowledging the use
 of the Music Kit in any academic paper, music program notes and
 application documentation that use the Music
 Kit.
 </para>
-</blockquote>
+    </blockquote>
 
-<para>
+    <para>
 In regard of this version as indicated at the top of this file
 (consitituting all changes and modifications, porting efforts and
 documentation), I am continuing this usage philosophy. The latest
@@ -387,7 +387,7 @@ usage file is found in
 ./Documentation/Administration/Usage.rtf
 </filename>
 </para>
-</sect1>
+  </sect1>
 
   <sect1 id="works">
     <title>What works?</title>
