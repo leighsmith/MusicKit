@@ -1,20 +1,21 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
   HEADER FILES: musickit.h
-*/
 
+  Original Author: David A. Jaffe
+  
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/08/04 16:35:45  leigh
+  fixed copyright and removed _MKSprintf include
+
   Revision 1.2  1999/07/29 01:26:18  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -54,7 +55,6 @@ Modification history:
 #undef MK_NODVAL
 
 #import "_error.h"
-//#import "_MKSprintf.h"
 
 #import <mach/cthreads.h>
 #import <stddef.h>  /* errno */
