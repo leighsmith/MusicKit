@@ -15,6 +15,10 @@
 */
 /*
   $Log$
+  Revision 1.2  2001/09/03 15:02:53  sbrandon
+  - added headerdoc comments from MKPerformSndMIDI_MACOSX project
+  - added SNDSetBufferSizeInBytes method
+
   Revision 1.1  2001/07/02 22:03:48  sbrandon
   - initial revision. Still a work in progress, but does allow the MusicKit
     and SndKit to compile on GNUstep.
@@ -92,46 +96,176 @@ typedef void (*SNDStreamProcessor)(double sampleTime, SNDStreamBuffer *inStream,
     @defined SND_NULL_FUN
     @discussion Indicates no function is to be called.
 */
-
 #define SND_NULL_FUN ((SNDNotificationFun)0)
 
+/*!
+    @function       SNDInit
+    @abstract       Initialise the Sound hardware.
+    @param          guessTheDevice
+                        Indicates whether to guess the device to select using the system default.
+    @discussion     The <tt>guessTheDevice</tt> parameter allows hard coding devices or using heuristics
+                    to prevent the user having to always select the best device to use.
+                    Whether guessing or not, a driver is still initialised.
+    @result         Returns a YES if initialised correctly, NO if unable to initialise the device,
+                    such as an unavailable sound interface.
+*/
 PERFORM_API BOOL SNDInit(BOOL guessTheDevice);
 
-// retrieve a list of available driver descriptions
+/*!
+    @function       SNDGetAvailableDriverNames
+    @abstract       Retrieve a list of available driver descriptions.
+    @result         Returns a NULL terminated array of readable strings of each driver's name.
+*/
 PERFORM_API char **SNDGetAvailableDriverNames(void);
 
-// assign currently active driver
+/*!
+    @function       SNDSetDriverIndex
+    @abstract       Assign currently active driver.
+    @param          selectedIndex
+                        The 0 base index into the driver table returned by SNDGetAvailableDriverNames
+    @result         Returns YES if able to set the index, no if unable (for example selectedIndex out of bounds).
+*/
 PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex);
 
-// return the index into driverList currently selected.
+/*!
+    @function       SNDGetAssignedDriverIndex
+    @abstract       Return the index into driverList currently selected.
+    @result         Returns the index (0 base).
+*/
 PERFORM_API unsigned int SNDGetAssignedDriverIndex(void);
 
+/*!
+    @function       SNDGetVolume
+    @abstract       Retrieve the current volume.
+    @param          left
+                        Receives the current left volume value (what units?).
+    @param          right
+                        Receives the current right volume value (what units?).
+*/
 PERFORM_API void SNDGetVolume(float *left, float * right);
 
+/*!
+    @function       SNDSetVolume
+    @abstract       Sets the current volume.
+    @param          left
+                        Sets the current left volume value (what units?).
+    @param          right
+                        Sets the current right volume value (what units?).
+    @result         Returns a readable string.
+*/
 PERFORM_API void SNDSetVolume(float left, float right);
 
+/*!
+    @function       SNDIsMuted
+    @abstract       Determine if the currently playing sound is muted.
+    @result         Returns YES if the currently playing sound is muted.
+*/
 PERFORM_API BOOL SNDIsMuted(void);
 
+/*!
+    @function       SNDSetMute
+    @abstract       Mute or unmute the currently playing sound..
+    @param          aFlag
+                        YES to mute, NO to unmute.
+*/
 PERFORM_API void SNDSetMute(BOOL aFlag);
 
-PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct, int tag, int priority,  int preempt, 
+/*!
+    @function       SNDSetBufferSizeInBytes
+    @abstract       Mute or unmute the currently playing sound..
+    @param          liBufferSizeInBytes
+                        number of bytes in buffer. Note that current implementation
+                        uses stereo float output buffers, which therefore take 8 bytes
+                        per sample frame.
+*/
+PERFORM_API BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes);
+
+/*!
+    @function       SNDStartPlaying
+    @abstract       .
+    @discussion	    This function need not be implemented if sound streaming is supported.
+    @param          soundStruct
+                        .
+    @param          tag
+    @param          priority
+    @param          preempt
+    @param          beginFun
+    @param          endFun
+    @result         Returns .
+*/
+PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct, int tag, int priority,  int preempt,
   SNDNotificationFun beginFun, SNDNotificationFun endFun);
 
-PERFORM_API int SNDStartRecording(SndSoundStruct *soundStruct, int tag, int priority, int preempt, 
+/*!
+    @function       SNDStartRecording
+    @abstract       .
+    @discussion	    This function need not be implemented if sound streaming is supported.
+    @param          soundStruct
+                        .
+    @param          tag
+    @param          priority
+    @param          preempt
+    @param          beginRecFun
+    @param          endRecFun
+    @result         Returns .
+*/
+PERFORM_API int SNDStartRecording(SndSoundStruct *soundStruct, int tag, int priority, int preempt,
   SNDNotificationFun beginRecFun, SNDNotificationFun endRecFun);
  
+/*!
+    @function       SNDSamplesProcessed
+    @abstract       .
+    @param          tag
+                        The integer tag indicating the sound to inspect.
+    @result         Returns the number of samples processed.
+*/
 PERFORM_API int SNDSamplesProcessed(int tag);
 
+/*!
+    @function       SNDStop
+    @abstract       .
+    @param          tag
+                        The integer tag indicating the sound to stop.
+*/
 PERFORM_API void SNDStop(int tag);
 
+/*!
+    @function       SNDPause
+    @abstract       .
+    @param          tag
+                        The integer tag indicating the sound to pause.
+*/
 PERFORM_API void SNDPause(int tag);
 
+/*!
+    @function       SNDResume
+    @abstract       .
+    @param          tag
+                        The integer tag indicating the sound to resume.
+*/
 PERFORM_API void SNDResume(int tag);
 
+/*!
+    @function       SNDUnreserve
+    @abstract       .
+    @param          dunno
+                        .
+    @result         Returns a .
+*/
 PERFORM_API int SNDUnreserve(int dunno);
 
+/*!
+    @function       SNDTerminate
+    @abstract       .
+*/
 PERFORM_API void SNDTerminate(void);
 
+/*!
+    @function       SNDStreamNativeFormat
+    @abstract       Return in the struct the format of the sound data preferred by the operating system.
+    @param          streamFormat
+                        pointer to an allocated block of memory into which to put the SndSoundStruct
+*/
 PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat);
 
 /*!
