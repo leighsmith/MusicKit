@@ -27,7 +27,7 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity mkcvsweb "http://cvs.musickit.org">
 <!entity soxdownload "http://ftp1.sourceforge.net/sox">
 <!entity lamedownload "http://ftp1.sourceforge.net/lame">
-<!entity icesdownload "http://www.icecast.org/releases/ices">
+<!entity icesdownload "http://www.icecast.org/releases">
 ]>
 
 <article id="README">
@@ -1000,9 +1000,14 @@ Newer versions than &soxvertuple; will probably just work.
             </term>
 	    <listitem>
 	      <para>
-              The 
-<ulink url="http://www.sourceforge.net/projects/lame">LAME</ulink>
-library provides <acronym>MP3</acronym> encoding/decoding capability.
+              The <ulink
+url="http://www.sourceforge.net/projects/lame">LAME</ulink> library
+provides <acronym>MP3</acronym> encoding/decoding capability.
+<!-- While 3.91 is the latest released version -->
+Unfortunately 3.91 needs patching to add
+<userinput>-fno-common</userinput> to compile. You will need to use
+the CVS repository version until a new release appears.
+<!-- While 3.91 is the latest released version --> 
 Newer versions than &lamevertuple; will probably just work.
               </para>
 	    </listitem>
@@ -1018,12 +1023,36 @@ Newer versions than &lamevertuple; will probably just work.
 url="http://www.icecast.org">icecast</ulink> project provides the
 capability to stream <acronym>MP3</acronym> encoded audio to a
 <acronym>MP3</acronym> broadcast server.
+</para>
 <!-- While we still need a patch -->
- This version requires a
-<ulink url="&mkurl;/libshout.patch">patch</ulink> to be applied to
-compile on <productname>MacOS X</productname>.
+<para>
+This version requires a <ulink
+			       url="&mkurl;/libshout.patch">patch</ulink> to be applied to compile on
+<productname>MacOS X</productname>. Apply it using the commands
+<example>
+<userinput>
+cd <replaceable>directory above ices-&icesvertuple;</replaceable>
+</userinput>
+<userinput>
+patch -p1 < libshout.patch
+</userinput>
+<userinput>
+cd ices-&icesvertuple;/libshout
+</userinput>
+<userinput>
+./configure --without-python --disable-dependency-tracking
+</userinput>
+<userinput>
+make
+</userinput>
+<userinput>
+sudo make install
+</userinput>
+</example>
+</para>
 <!-- End of patch for ices-0.2.2 -->
- Newer versions than &icesvertuple; will probably just work.
+<para>
+Newer versions than &icesvertuple; will probably just work.
               </para>
 	    </listitem>
 	  </varlistentry>
