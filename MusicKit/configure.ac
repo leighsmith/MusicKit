@@ -89,6 +89,8 @@ AC_CONFIG_HEADERS(Frameworks/PlatformDependent/MKPerformSndMIDI_portaudio/MKPerf
 # file is selected when make is run.
 AC_CONFIG_FILES($TOPLEVELBUILD \
                 Frameworks/PlatformDependent/MKPerformSndMIDI_portaudio/GNUmakefile.preamble \
-                Frameworks/SndKit/GNUmakefile)
+                Frameworks/SndKit/GNUmakefile.preamble \
+		Frameworks/MKDSP_Native/GNUmakefile.preamble \
+		Frameworks/MusicKit/GNUmakefile.preamble)
 
 AC_OUTPUT
