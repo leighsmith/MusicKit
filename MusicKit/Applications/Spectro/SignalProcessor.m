@@ -29,16 +29,16 @@
 }
 
 - window:(int)size array:(float *)array type:(NSString *)type
-    /* Call with phase = FALSE */
+    /* Call with phase = NO */
 {
-    return [self window:size array:array type:type phase: FALSE];
+    return [self window:size array:array type:type phase: NO];
 }
 
 - window:(int)size array:(float *)array type:(NSString *)type phase:(BOOL)phase
 
     /*	Window array of floats with window of type <"Triangle","Hanning","Hamming",
     "Blackman3","Blackman4","Kaiser"> with window centered at zero (phase=TRUE)
-    or size/2 (phase=FALSE).
+    or size/2 (phase=NO).
     */
 {
     extern void triangle(int size, float* array, BOOL phase),
