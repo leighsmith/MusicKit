@@ -59,7 +59,7 @@
   if (!snd) {
     return nil;
   }
-  return [self initWithSnd: s playingAtTime: t beginAtIndex: 0 endAtIndex: [s sampleCount]];
+  return [self initWithSnd: s playingAtTime: t beginAtIndex: 0 endAtIndex: [s lengthInSampleFrames]];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -322,20 +322,19 @@ startPosition: (double) startPosition
     long fillBufferToLength = buffLength;
     long framesUntilEndOfLoop = loopEndIndex - playIndex + 1;
     BOOL atEndOfLoop = looping && (buffLength > framesUntilEndOfLoop);
+    // numOfSamplesFilled and numOfSamplesRead can differ if we resample in fillAudioBuffer.
     long numOfSamplesFilled = 0;
-#if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
-    long oldPlayIndex = playIndex;
-#endif
-
+    long numOfSamplesRead = 0;
+    // specifies to fillAudioBuffer: and insertIntoAudioBuffer: the range of Snd samples permissible to read from.
+    NSRange samplesToReadRange;
+    
     if (atEndOfLoop) {	// retrieve up to the end of the loop
 	fillBufferToLength = framesUntilEndOfLoop;
     }
-    else if (fillBufferToLength > endAtIndex - playIndex) {  // check if at end of play region.
-	// we have reached the end of the Snd play region, the buffer length to return needs shortening
-	// TODO this could be shorter if resampling occurs, depends on what's returned by fillAudioBuffer:
-	// and insertIntoAudioBuffer:
-	fillBufferToLength = endAtIndex - playIndex;
-    }
+    // specify the final boundary in the Snd fillAudioBuffer: can not read beyond.
+    samplesToReadRange.location = playIndex;
+    samplesToReadRange.length = looping ? framesUntilEndOfLoop : endAtIndex - playIndex;
+
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
     NSLog(@"[SndPerformance][SYNTH THREAD] playIndex = %ld, endAtIndex = %ld, buffer length = %d, fill buffer to length = %d\n",
 	    playIndex, endAtIndex, buffLength, fillBufferToLength);
@@ -348,51 +347,53 @@ startPosition: (double) startPosition
     // ears from hearing noise.
     if (playIndex >= 0 && buffLength > 0 && fillBufferToLength > 0) {
 	// NSLog(@"bufferToFill dataFormat before processing 1 %d\n", [bufferToFill dataFormat]);
-	numOfSamplesFilled = [snd fillAudioBuffer: bufferToFill
-					 toLength: fillBufferToLength
-			      samplesStartingFrom: playIndex];
-	// NSLog(@"bufferToFill dataFormat before processing 2 %d, numOfSamplesFilled = %ld\n", [bufferToFill dataFormat], numOfSamplesFilled);
+	numOfSamplesRead = [snd fillAudioBuffer: bufferToFill
+				       toLength: fillBufferToLength
+			         samplesInRange: samplesToReadRange];
+	numOfSamplesFilled = fillBufferToLength;
+	// NSLog(@"bufferToFill dataFormat before processing 2 %d, numOfSamplesFilled = %ld, numOfSamplesRead = %ld\n",
+	// [bufferToFill dataFormat], numOfSamplesFilled, numOfSamplesRead);
 
 	if(atEndOfLoop) {
 	    // If we are at the end of the loop, copy in zero or more (when the loop is small) loop regions 
 	    // then any remaining beginning of the loop.
 	    int loopLength = loopEndIndex - loopStartIndex + 1;
-	    long fillFrom = fillBufferToLength;
-	    long remainingLengthToFillWithLoop = buffLength - fillFrom;
+	    long fillBufferFrom = fillBufferToLength;
+	    long remainingLengthToFillWithLoop = buffLength - fillBufferFrom;
 	    
 	    while(remainingLengthToFillWithLoop > 0 && loopLength > 0) {
 		NSRange loopRegion;
-		long numOfSamplesInserted;
-
-		loopRegion.location = fillFrom;
+		
+		// give the range of Snd samples permissible to read from.
+		samplesToReadRange.location = loopStartIndex;
+		samplesToReadRange.length = loopLength;
+		// give the range to fill in the buffer
+		loopRegion.location = fillBufferFrom;
 		loopRegion.length = MIN(remainingLengthToFillWithLoop, loopLength);
 
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
 		NSLog(@"after filling %@\n", bufferToFill);
-		NSLog(@"after filling buffer[%ld] = %e\n", fillBufferToLength-3, [bufferToFill sampleAtFrameIndex: fillBufferToLength-3 channel: 0]);
-		NSLog(@"after filling buffer[%ld] = %e\n", fillBufferToLength-2, [bufferToFill sampleAtFrameIndex: fillBufferToLength-2 channel: 0]);
-		NSLog(@"after filling buffer[%ld] = %e\n", fillBufferToLength-1, [bufferToFill sampleAtFrameIndex: fillBufferToLength-1 channel: 0]);
 #endif		
-		numOfSamplesInserted = [snd insertIntoAudioBuffer: bufferToFill
-							intoRange: loopRegion
-						samplesStartingAt: loopStartIndex];
+		numOfSamplesRead = [snd insertIntoAudioBuffer: bufferToFill
+					       intoFrameRange: loopRegion
+					       samplesInRange: samplesToReadRange];
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
 		{
 		    long i;
-		    NSLog(@"%@ loopRegion.location = %ld, loopRegion.length = %ld, playIndex = %ld, fillFrom = %d, remainingLengthToFillWithLoop = %d\n",
-			bufferToFill, loopRegion.location, loopRegion.length, playIndex, fillFrom, remainingLengthToFillWithLoop);
-		    for (i = fillFrom - 5; i < fillFrom + 5; i++)
+		    NSLog(@"%@ loopRegion.location = %ld, loopRegion.length = %ld, playIndex = %ld, fillBufferFrom = %d, remainingLengthToFillWithLoop = %d\n",
+			bufferToFill, loopRegion.location, loopRegion.length, playIndex, fillBufferFrom, remainingLengthToFillWithLoop);
+		    for (i = fillBufferFrom - 5; i < fillBufferFrom + 5; i++)
 			NSLog(@"buffer[%ld] = %e\n", i, [bufferToFill sampleAtFrameIndex: i channel: 0]);
 		}
 #endif
-		numOfSamplesFilled += numOfSamplesInserted;
-		playIndex = loopStartIndex + loopRegion.length;
-		fillFrom += loopRegion.length; 
+		numOfSamplesFilled += loopRegion.length;
+		playIndex = loopStartIndex + numOfSamplesRead;
+		fillBufferFrom += loopRegion.length; 
 		remainingLengthToFillWithLoop -= loopRegion.length;
 	    }
 	}
 	else
-	    playIndex += numOfSamplesFilled;  // TODO this value needs to change for resampling.
+	    playIndex += numOfSamplesRead;  // Update the read index accounting for change from resampling.
 
 	actualTime += [bufferToFill duration];
 	if (audioProcessorChain != nil) {
@@ -402,12 +403,12 @@ startPosition: (double) startPosition
 
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
 	NSLog(@"[SndPerformance][SYNTH THREAD] will mix buffer from %d to %d, old playIndex %d for %d, val at start = %f\n",
-		0, fillBufferToLength, oldPlayIndex, numOfSamplesFilled,
-		(((short *) [snd data])[oldPlayIndex]) / (float) 32768);
+		0, fillBufferToLength, samplesToReadRange.location, numOfSamplesFilled,
+		(((short *) [snd data])[samplesToReadRange.location]) / (float) 32768);
 #endif
     }
     else
-	playIndex += buffLength;
+	playIndex += buffLength;  // If there is a problem, push the playIndex forward, we may improve...somehow...
 
     //NSLog(@"retrieved numOfSamplesFilled = %ld\n", numOfSamplesFilled);
     return numOfSamplesFilled;
