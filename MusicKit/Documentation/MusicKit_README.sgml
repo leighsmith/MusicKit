@@ -92,8 +92,9 @@ NeXT product introduction and was bundled in NeXT software releases
 longer part of the standard NeXT software release.  Instead, it was
 being distributed and supported by the Center for Computer  Research
 in Music and Acoustics (CCRMA) of Stanford University. Since 1999 and
-version 5.0, the most recent releases have been generously supported by
-my employer, 
+version 5.0, the most recent releases run on several more 
+<link linkend="platforms">popular operating systems</link>.
+These releases have been generously supported by my employer, 
 <ulink url="http://www.tomandandy.com">tomandandy music inc.</ulink> 
 as open source to the community.
    </para>
@@ -531,7 +532,7 @@ sourceforge.net
       </listitem>
       <listitem>
 	<para>
-	<ulink url="http://www.stepwise.com">
+	<ulink url="http://softrak.stepwise.com/Apps/WebObjects/Softrak.woa/7/wa/displayPackage?package=191&os=10">
 	<inlinemediaobject>
 	      <imageobject>
 		<imagedata fileref="Stepwise.eps" width=50 depth=30 scalefit=1>
@@ -540,7 +541,7 @@ sourceforge.net
 		<imagedata fileref="Stepwise.gif">
 	      </imageobject>
 	    </inlinemediaobject>
-SoftTrak on Stepwise.com (search for MusicKit)
+SoftTrak on Stepwise.com
       </ulink>
       </para>
       </listitem>
@@ -923,10 +924,10 @@ behaviour and needs to be completed.
       <listitem>
 	<para>
 For this current revision the .nibs have been upgraded to work with
-MacOS X and MacOS X-Server and will not load with OpenStep 4.2. Please
-contact <email>leigh@tomandandy.com</email> to obtain a set that work
-with OpenStep 4.2. Future versions of the MusicKit will have both nib
-sets for backward compatibility with OpenStep 4.2. Eventually Apple's
+MacOS X and MacOS X-Server and will not load with OpenStep 4.2. The
+.nibs which are compatible with OpenStep 4.2 are now named
+nibname-openstep.nib. At the moment you will need to manually
+symbolically link these to compile for OpenStep 4.2. Eventually Apple's
 InterfaceBuilder will produce XML based nibs which should reduce the
 compatibility issue.
 </para>
