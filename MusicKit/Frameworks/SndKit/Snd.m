@@ -300,15 +300,16 @@ static int ioTags = 1000;
 
 + (BOOL) isPathForSoundFile: (NSString *) path
 {
-  NSArray *exts = [[self class] soundFileExtensions];
-  NSString *ext  = [path pathExtension];
-  int i, c = [exts count];
-  for (i = 0; i < c; i++) {
-    NSString *anExt = [exts objectAtIndex: i];
-    if ([ext isEqualToString: anExt])
-      return YES;
-  }
-  return NO;
+    NSArray *exts = [[self class] soundFileExtensions];
+    NSString *ext  = [path pathExtension];
+    int extensionIndex, c = [exts count];
+    
+    for (extensionIndex = 0; extensionIndex < c; extensionIndex++) {
+	NSString *anExt = [exts objectAtIndex: extensionIndex];
+	if ([ext compare: anExt options: NSCaseInsensitiveSearch] == NSOrderedSame)
+	    return YES;
+    }
+    return NO;
 }
 
 - (void)dealloc
@@ -697,7 +698,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 #endif
 
 // Begin the playback of the sound at some future time, specified in seconds, over a region of the sound.
-// All other play methods are convience wrappers around this.
+// All other play methods are convenience wrappers around this.
 - (SndPerformance *) playInFuture: (double) inSeconds 
                       beginSample: (int) begin
                       sampleCount: (int) count 
@@ -1439,13 +1440,14 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     NSRange bufferByteRange = { bufferStartIndex * buffFrameSize, sndSampleRange.length * buffFrameSize };
 
     if([buff dataFormat] != [self dataFormat]) {
+	// If not the same, do a data conversion.
 	// NSLog(@"buffer to fill and sound mismatched in data formats %d vs. %d, converting", [buff dataFormat], [self dataFormat]);
 	// TODO should be:
 	// SndConvertSound
 	SndChangeSampleType(sndDataPtr, [buff bytes] + bufferByteRange.location, [self dataFormat], [buff dataFormat], sndSampleRange.length * soundStruct->channelCount);
     }
     else {
-	NSLog(@"channel count of sound = %d, of buffer = %d\n", soundStruct->channelCount, [buff channelCount]);
+	// NSLog(@"channel count of sound = %d, of buffer = %d\n", soundStruct->channelCount, [buff channelCount]);
 	[buff copyBytes: sndDataPtr intoRange: bufferByteRange format: soundStruct];
     }
 }
