@@ -17,6 +17,8 @@
 #import "SndStreamManager.h"
 #import "SndStreamClient.h" 
 
+#define SNDSTREAMCLIENT_DEBUG 0
+
 enum {
     SC_noData,
     SC_hasData
@@ -104,8 +106,8 @@ enum {
     if (synthThreadLock)
         [synthThreadLock release];    
     
-    if (manager)
-        [manager release];
+//    if (manager)
+//        [manager release];
 
     [super dealloc];
 }
@@ -116,8 +118,8 @@ enum {
 
 - (NSString*) description
 {
-    return [NSString stringWithFormat: @"SndStreamClient %sactive, now %f, %s",
-        active ? " " : "not ", [self nowTime], needsInput ? "needs input" : "doesn't need input"];
+    return [NSString stringWithFormat: @"SndStreamClient %sactive, client nowTime %f, %s",
+        active ? " " : "not ", [self synthesisTime], needsInput ? "needs input" : "doesn't need input"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -135,9 +137,6 @@ enum {
     [processedInputBuffers removeAllObjects];
     if (synthInputBuffer)
         [synthInputBuffer  release];
-        
-    if (exposedOutputBuffer)
-        [exposedOutputBuffer  release];
         
     exposedOutputBuffer = nil;
     synthOutputBuffer   = nil;
@@ -197,14 +196,25 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// nowTime
-// The client's sense of time is just the manager's sense of time, defining a 
-// common clock among clients.
+// synthesisTime
+// The client's sense of time, which may variably run ahead of the manager's
+// sense of time depending on the number of buffers synth-ahead latency and 
+// thread scheduling.
 ////////////////////////////////////////////////////////////////////////////////
 
-- (double) nowTime
+- (double) synthesisTime
 {
-    return nowTime;
+    return clientNowTime;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// streamTime
+// The manager's sense of time, defining a common clock among clients.
+////////////////////////////////////////////////////////////////////////////////
+
+- (double) streamTime
+{
+    return [manager nowTime];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -236,8 +246,10 @@ enum {
             for (i = 0; i < numInputBuffers; i++) 
               [processedInputBuffers addObject: [buff copy]];
             [processedInputBuffersLock unlockWithCondition: SC_hasData];
-            
+
+#if SNDSTREAMCLIENT_DEBUG            
             NSLog(@"Allocated %i input buffers",[processedInputBuffers count]);
+#endif            
         }
 
         if (generatesOutput) {
@@ -253,6 +265,8 @@ enum {
         
         [self prepareToStreamWithBuffer: buff];
         [self setManager: m];
+        
+        clientNowTime = [m nowTime]; // reset nowTime to the manager's sense of time
 
         [NSThread detachNewThreadSelector: @selector(processingThread)
                                  toTarget: self
@@ -269,100 +283,86 @@ enum {
 // startProcessingNextBufferWithInput:
 //
 // If input isn't needed, ignore!!! (eg, if this isn't an FX unit)
+//
+// Note! we do NOT adjust the client time here, as this is called by the
+// possibly behind-the-synthesis-time-front manager.
 ////////////////////////////////////////////////////////////////////////////////
 
 - startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) t
 {
-//    BOOL gotLock = NO;
-    nowTime = t;
-
-/*
-    NS_DURING
-    gotLock = [synthThreadLock tryLockWhenCondition: SC_bufferReady];
-    NS_HANDLER
-    {
-        NSLog(@"SndStreamClient::startProcessingNextBuffer - Warn: mutex bug workaround\n");
-        gotLock = FALSE;
-        NSLog(@"Reason: %@: %@\n",[localException name],[localException reason]);
-    }
-    NS_ENDHANDLER
-
-    if(gotLock) {
-*/
-        // swap the synth and output buffers, fire off next round of synthing
-        
-        if (generatesOutput)
-        {
-          int oc;
-//        NSLog(@"startprocessing: stage1");
-          [processedOutputBuffersLock lock];
-          oc = [processedOutputBuffers count];
-          [processedOutputBuffersLock unlock];
-          
-//          fprintf(stderr,"Got %i buffers in reserve\n",oc);
-          
-          if (oc > 0) {
-            [pendingOutputBuffersLock lock];
-            [pendingOutputBuffers addObject: exposedOutputBuffer];            
-            [exposedOutputBuffer release];
-            [pendingOutputBuffersLock unlockWithCondition: SC_hasData];
-              
-            [processedOutputBuffersLock lock];
-            exposedOutputBuffer = [[processedOutputBuffers objectAtIndex: 0] retain];
-            [processedOutputBuffers removeObjectAtIndex: 0];
-            [processedOutputBuffersLock unlock];
-//              NSLog(@"swapped buffers");
-          }
-          else if (bDelegateRespondsToOutputBufferSkipSelector)
-            [delegate outputBufferSkipped: self];
-          else {
-//            NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked?");
-          }    
-//          NSLog(@"startprocessing: stage2");
-        }
-
-        // printf("startProcessingNextBufferWithInput nowTime = %f\n", t);
-        if (needsInput) {
-          if (inB == nil)
-            NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n");
-          else {
-            int ic;          
-            [processedInputBuffersLock lock];
-            ic = [processedInputBuffers count];
-            [processedInputBuffersLock unlock];
-            
-            if (ic) {
-              SndAudioBuffer *inBloc = nil;
-              [processedInputBuffersLock lock];
-              inBloc = [[processedInputBuffers objectAtIndex: 0] retain];
-              [processedInputBuffers removeObjectAtIndex: 0];
-              [processedInputBuffersLock unlock];
-
-              [inBloc copyData: inB];
-                
-              [pendingInputBuffersLock lock];
-              [pendingInputBuffers addObject: inBloc];
-              [inBloc release];
-              [pendingInputBuffersLock unlockWithCondition: SC_hasData];
-            }
-            else if (bDelegateRespondsToInputBufferSkipSelector)
-              [delegate inputBufferSkipped: self];
-            else {
-//              NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?");
-            }
-          }
-        }
-/*
-        [synthThreadLock unlockWithCondition: SC_processBuffer];
-    }
+    int ic = 0, oc = 0;
+    // swap the synth and output buffers, fire off next round of synthing   
     
-    else if ( delegate != nil && [delegate respondsToSelector: @selector(outputBufferSkipped)] )
+    if (generatesOutput)
+    {
+//        NSLog(@"startprocessing: stage1");
+      [processedOutputBuffersLock lock];
+      oc = [processedOutputBuffers count];
+      [processedOutputBuffersLock unlock];
+          
+#if SNDSTREAMCLIENT_DEBUG            
+      fprintf(stderr,"Processed: %i Pending: %i \n",oc,[pendingOutputBuffers count]);
+#endif          
+      if (oc > 0) {
+        [pendingOutputBuffersLock lock];
+        [pendingOutputBuffers addObject: exposedOutputBuffer];            
+        [exposedOutputBuffer release];
+        [pendingOutputBuffersLock unlockWithCondition: SC_hasData];
+              
+        [processedOutputBuffersLock lock];
+        exposedOutputBuffer = [[processedOutputBuffers objectAtIndex: 0] retain];
+        [processedOutputBuffers removeObjectAtIndex: 0];
+        [processedOutputBuffersLock unlock];
+//              NSLog(@"swapped buffers");
+      }
+      else if (bDelegateRespondsToOutputBufferSkipSelector)
         [delegate outputBufferSkipped: self];
-    else {
-        NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked?");
-    }    
-*/
+      else {
+//            NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked?");
+      }    
+//          NSLog(@"startprocessing: stage2");
+    }
 
+    // printf("startProcessingNextBufferWithInput nowTime = %f\n", t);
+    if (needsInput) {
+      if (inB == nil)
+        NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n");
+      else {
+        [processedInputBuffersLock lock];
+        ic = [processedInputBuffers count];
+        [processedInputBuffersLock unlock];
+            
+        if (ic) {
+          SndAudioBuffer *inBloc = nil;
+          [processedInputBuffersLock lock];
+          inBloc = [[processedInputBuffers objectAtIndex: 0] retain];
+          [processedInputBuffers removeObjectAtIndex: 0];
+          [processedInputBuffersLock unlock];
+
+          [inBloc copyData: inB];
+                
+          [pendingInputBuffersLock lock];
+          [pendingInputBuffers addObject: inBloc];
+          [inBloc release];
+          [pendingInputBuffersLock unlockWithCondition: SC_hasData];
+        }
+        else if (bDelegateRespondsToInputBufferSkipSelector)
+          [delegate inputBufferSkipped: self];
+        else {
+//              NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?");
+        }
+      }
+    }
+  
+    if (bDisconnect) {
+      if (ic == 0 && oc == 0) {
+        [manager removeClient: self];
+        [self setManager: nil];
+        [self freeBufferMem];
+        [self didFinishStreaming];
+        bDisconnect = FALSE;
+      }
+    }
 /*
     fprintf(stderr,"Input: pending:%i processed:%i  Output: pending:%i processed:%i\n",
             [pendingInputBuffers count],  [processedInputBuffers count],
@@ -401,9 +401,11 @@ enum {
         [self processBuffers];
 
 //        NSLog(@"SYNTH THREAD: ... done processBuffers\n");
-        if (synthOutputBuffer != nil)
-          [processorChain processBuffer: synthOutputBuffer forTime: nowTime];
+        if (synthOutputBuffer != nil) 
+          [processorChain processBuffer: synthOutputBuffer forTime: clientNowTime];
 
+        clientNowTime += [synthOutputBuffer duration];
+        
         if (processFinishedCallback != NULL)
             processFinishedCallback(); // SKoT: should this be a selector, hmm hmm...?
             
@@ -422,10 +424,7 @@ enum {
         
         [synthThreadLock unlock];
     }
-    [manager removeClient: self];
-    [self setManager: nil];
-    [self freeBufferMem];
-    [self didFinishStreaming];
+    bDisconnect = TRUE;
     [localPool release];
 //    fprintf(stderr,"SndStreamClient: processing thread stopped\n");                       
     [NSThread exit];

@@ -87,11 +87,12 @@
 /*! @var       delegate; */
     id         delegate;    
 /*! @var       nowTime */
-    double     nowTime;
+    double     clientNowTime;
     
 @private
     BOOL       bDelegateRespondsToOutputBufferSkipSelector;
     BOOL       bDelegateRespondsToInputBufferSkipSelector;
+    BOOL       bDisconnect;
 }
 
 /*!
@@ -198,12 +199,37 @@
 - (void) processBuffers; 
 
 /*!
-    @method   nowTime
-    @abstract   Return the client's current time.
-    @discussion The clients sense of time is just the manager's sense of time, defining a common clock among clients.
-    @result     Returns the time in seconds.
+    @method     synthesisTime
+    @abstract   Return the client's current SYNTHESIS time.
+    @discussion The client synthesis thread's sense of time. Since the client's synthesis (processing)
+                thread can process several buffers ahead of the manager, the client must maintain an 
+                independent sense of time. This is the time your derived stream client class <B>MUST</B>
+                use inside its processBuffers overridden method. 
+                
+                <B>NOTE</B> - This means all operations must be fed to a stream client thread with a 
+                look-ahead delta time greater or equal to the process-ahead latency to ensure correct 
+                timing.
+
+                (See <tt>streamTime</tt>)
+
+    @result     Returns the synthesis thread time, in seconds.
 */
-- (double) nowTime;
+- (double) synthesisTime;
+/*!
+    @method     streamTime
+    @abstract   Return the global (the MANAGER'S) current time.
+    @discussion The manager's sense of time. For most time-operations outside of the synthesis thread,
+                your stream client will probably want the "absolute" stream time as determined by the
+                manager. For example, a client that it told to perform an operation 0.5 seconds in the
+                future must compute the time-till-operation based on the global time; if it were to
+                use the synthesis time, the operation would be performed 0.5 seconds PLUS the synth-ahead
+                latency into the future.
+
+                (See <tt>synthesisTime</tt>)
+                              
+    @result     Returns the global (manager) time, in seconds.
+*/
+- (double) streamTime;
 
 /*!
     @method   isActive
