@@ -15,6 +15,14 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 
 //#define USE_MACH_MEMORY_ALLOCATION
+#ifdef GNUSTEP
+#include <MKPerformSndMIDI/PerformSound.h>
+#include "sounderror.h"
+#include "SndEndianFunctions.h"
+#include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
+#include <stdio.h> // for FILE
+
+#else
 
 #import <MKPerformSndMIDI/PerformSound.h>
 #ifndef USE_NEXTSTEP_SOUND_IO
@@ -26,6 +34,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 #import <stdio.h> // for FILE
 
+#endif /* GNUSTEP */
 	/*
 	 *   functions.h
 	 * A library of functions intended to be compatible with NeXTs
