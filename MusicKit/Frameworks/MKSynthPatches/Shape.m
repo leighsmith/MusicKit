@@ -393,7 +393,7 @@ static int
     if (setWT) {
 	id theTable;
 	if (!(theTable = [self _makeTable:tableInfo])) {
-	    _MKErrorf(MK_spsCantGetMemoryErr,"table",MKGetTime());
+	    MKErrorCode(MK_spsCantGetMemoryErr,"table",MKGetTime());
 	    return nil;
 	}
 	[tab setLookupTable:theTable];

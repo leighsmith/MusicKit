@@ -353,7 +353,7 @@ needToSetOneZero = NO;
 					   pitchBendSensitivity);
 	  delayLen = tuneIt(srate,freq,sustain,&allPassCoefficient);
 	  if (delayLen < 1) {
-	      _MKErrorf(MK_spsOutOfRangeErr,PITCH_STR,MKGetTime());
+	      MKErrorCode(MK_spsOutOfRangeErr,PITCH_STR,MKGetTime());
 	      delayLen = 0;
 	      return nil;
 	  }
@@ -397,7 +397,7 @@ needToSetOneZero = NO;
 	      delayMem = [[self orchestra] allocSynthData:MK_yData length:
 			  (longestDelayLen) ? longestDelayLen : delayLen];
 	      if (!delayMem) {                           /* Alloc failed? */
-		  _MKErrorf(MK_spsCantGetMemoryErr,LOW_PITCH_STR,MKGetTime());
+		  MKErrorCode(MK_spsCantGetMemoryErr,LOW_PITCH_STR,MKGetTime());
 		  if (noteType == MK_noteOn) {
 		      delayLen = 0;
 		      return nil;                          /* Omit note. */
@@ -527,7 +527,7 @@ static id claimNoise(Pluck *self)
 	    [noiseFlt2 mkdealloc];
 	    [self->noiseLoc mkdealloc];
 	    self->noiseLoc = nil;
-	    _MKErrorf(MK_spsCantGetUGErr,PLUCK_NOISE_STR,MKGetTime());
+	    MKErrorCode(MK_spsCantGetUGErr,PLUCK_NOISE_STR,MKGetTime());
 	    return nil;
 	}
         /*sb: the following was originally before the nil check above. But you can't add nil
