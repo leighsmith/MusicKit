@@ -481,39 +481,56 @@ static SndStreamManager *sm = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// processAudio
+////////////////////////////////////////////////////////////////////////////////
+
+void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj)
+{
+  // Eventually these must be made instance variables which you just wrap
+  // around each of the C-side buffers, to avoid allocation costs.
+  
+  NSAutoreleasePool *localPool = [NSAutoreleasePool new];
+  SndAudioBuffer *inB  = nil;
+  SndAudioBuffer *outB = nil;
+  inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
+  outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
+  
+#if SNDSTREAMMANAGER_DEBUG
+  fprintf(stderr,"[Manager] --> processAudio sampleCount = %d\n", (int)sampleCount);
+#endif
+  [(SndStreamManager *) obj processStreamAtTime: sampleCount input: inB output: outB];
+#if SNDSTREAMMANAGER_DEBUG
+  fprintf(stderr,"[Manager] <-- processAudio\n");
+#endif
+
+#if SNDSTREAMMANAGER_DEBUG
+  fprintf(stderr,"[Manager] About to release pool...\n");
+#endif
+
+  memcpy(cOutB->streamData, [outB bytes], cOutB->streamFormat.dataSize);
+  
+  [localPool release];
+#if SNDSTREAMMANAGER_DEBUG
+  fprintf(stderr,"[Manager] Released pool...\n");
+#endif
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // processAudioAtTime:input:output:
 //
 // Poll all the clients for their current output buffers, tell them to start
 // processing
 ////////////////////////////////////////////////////////////////////////////////
 
-void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj)
-{
-#if SNDSTREAMMANAGER_DEBUG
-  fprintf(stderr,"[Manager] --> processAudio sampleCount = %d\n", (int)sampleCount);
-#endif
-  [(SndStreamManager *) obj processStreamAtTime: sampleCount input: cInB output: cOutB];
-#if SNDSTREAMMANAGER_DEBUG
-  fprintf(stderr,"[Manager] <-- processAudio\n");
-#endif
-}
-
 - (void) processStreamAtTime: (double) sampleCount
-                       input: (SNDStreamBuffer*) cInB
-                      output: (SNDStreamBuffer*) cOutB
+                       input: (SndAudioBuffer*) inB
+                      output: (SndAudioBuffer*) outB
 {
 #if SNDSTREAMMANAGER_DEBUG
   fprintf(stderr,"[Manager] Entering...\n");
 #endif
   if (active) {
-    NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-    // Eventually these must be made instance variables which you just wrap
-    // around each of the C-side buffers, to avoid allocation costs.
-    SndAudioBuffer *inB  = nil;
-    SndAudioBuffer *outB = nil;
-    inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
-    outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
-
     // set our current notion of time.
     if (outB != nil)
       nowTime += [outB duration];
@@ -541,10 +558,6 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
     }
 #endif
 
-#if SNDSTREAMMANAGER_DEBUG
-    fprintf(stderr,"[Manager] About to release pool...\n");
-#endif
-    [localPool release];
   }
   else
     NSLog(@"SndStreamManager::processStreamAtTime - called when not active...?");

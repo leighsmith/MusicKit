@@ -187,8 +187,8 @@
     @param      outB
 */
 - (void) processStreamAtTime: (double) sampleCount
-                       input: (SNDStreamBuffer*) inB
-                      output: (SNDStreamBuffer*) outB;
+                       input: (SndAudioBuffer*) inB
+                      output: (SndAudioBuffer*) outB;
 
 /*!
     @method   setFormat:
