@@ -359,9 +359,9 @@ typedef enum {
   @discussion Replaces the Snd's contents with those of the sound in the
               NSData instance <i>stream</i>. If the sound in the NSData is named,
               the Snd gets the new name.
-			  <B>Currently only reads Sun/NeXT .au format files</B>.
+	      <B>Currently only reads Sun/NeXT .au format files</B>.
 */
-- readSoundFromData: (NSData *) stream;
+- (BOOL) readSoundFromData: (NSData *) stream;
 
 /*!
   @method      swapBigEndianToHostFormat
