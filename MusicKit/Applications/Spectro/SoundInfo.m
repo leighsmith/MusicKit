@@ -5,10 +5,7 @@
  */
 
 
-#import <AppKit/NSApplication.h>
-#import <AppKit/NSPanel.h>
-#import <AppKit/NSFormCell.h>
-
+#import <AppKit/AppKit.h>
 #import "SoundInfo.h"
 
 @implementation SoundInfo
