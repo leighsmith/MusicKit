@@ -17,6 +17,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2000/04/12 00:36:28  leigh
+  Hacked to use either SndKit or NSSound, depending on which is more complete on each platform, added uglySamplerTimingHack, hopefully this is only a momentary lapse of reason
+
   Revision 1.5  2000/03/31 00:11:31  leigh
   Cleaned up cruft
 
@@ -33,15 +36,20 @@
   Added sample playback support
 
 */
+// 1 to use the SndKit, 0 to use NSSound
+// MacOsX-Server works more reliably with SndKit, NSSound is more complete on MacOsX DP3.
+#define USE_SNDKIT 1  
 #import "_musickit.h"
 #import "MKSamplerInstrument.h"
 
-#define MAX_PERFORMERS 128
 #define UNASSIGNED_SAMPLE_KEYNUM (-1)
-#define DEFAULT_ACTIVE_SOUND_MAX 32
 
-int activeSoundMax = DEFAULT_ACTIVE_SOUND_MAX;
-int activeSoundCount = 0;
+static int activeSoundCount = 0;
+
+// This should be zero or I should rot in purgatory for my sins.
+// This can typically be expected to be so dependent on operating system and platform that it will be
+// nearly impossible to set correctly. See realizeNote: for why this has to exist.
+static float uglySamplerTimingHack = 0.0;
 
 @implementation MKSamplerInstrument
 
@@ -77,28 +85,30 @@ int activeSoundCount = 0;
 // Initialize the sound objects.
 - init
 {
-  [super init];
-  if (!soundTable) {
-    soundTable = [NSMutableDictionary dictionaryWithCapacity: DEFAULT_ACTIVE_SOUND_MAX];
-    [soundTable retain];
-  }
-  else
-    [soundTable removeAllObjects];
-  [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
+    [super init];
+    if (!soundTable) {
+        soundTable = [NSMutableDictionary dictionaryWithCapacity: 32];
+        [soundTable retain];
+    }
+    else
+        [soundTable removeAllObjects];
+    uglySamplerTimingHack = [[NSUserDefaults standardUserDefaults] floatForKey: @"MKUglySamplerTimingHack"];
+    [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
 
-  conductor = [MKConductor defaultConductor];
+    conductor = [[MKConductor defaultConductor] retain];
+    playingNotes = [[NSMutableArray arrayWithCapacity: 20] retain]; 
 
-  [self reset];
-  return self;
+    [self reset];
+    return self;
 }
 
 - releaseSounds
   /* Free all the sound structs */
 {
-  [MKConductor lockPerformance];
-  [soundTable removeAllObjects];
-  [MKConductor unlockPerformance];
-  return self;
+    [MKConductor lockPerformance];
+    [soundTable removeAllObjects];
+    [MKConductor unlockPerformance];
+    return self;
 }
 
 - (void) dealloc
@@ -107,29 +117,30 @@ int activeSoundCount = 0;
   * window.
   */
 {
-  [self releaseSounds];
-  [soundTable release];
+    [self releaseSounds];
+    [soundTable release];
+    [playingNotes release];
+    [conductor release];
 }
 
 - clearAll:sender
 {
 //  [soundOutDevice abortStreams:nil];
-  [self releaseSounds];
-  return self;
+    [self releaseSounds];
+    return self;
 }
 
 // Prepare by preparing the PlayingSound instance
-- prepareSound: (MKNote *) aNote
+- prepareSoundWithNote: (MKNote *) aNote
 {
     int velocity;
     int key;
     int baseKey;
     int noteTag;
-    NSSound *newSound;
+    WorkingSoundClass *newSound;
     NSString *filePath;
 
-//  [MKConductor lockPerformance]; // what do we need to protect?
-
+    // NSLog(@"Preparing %@\n", aNote);
     // only prepare those notes which are samples.
     if(![aNote isParPresent: MK_filename])
         return nil;
@@ -140,43 +151,43 @@ int activeSoundCount = 0;
 
     filePath = [aNote parAsString: MK_filename];
     // either retrieve playingSample from the table of playing sounds according to the filename or create afresh.
-    if ([NSSound soundNamed: filePath] != nil) {     // check if the sound file is already loaded.
+    if ([WorkingSoundClass soundNamed: filePath] != nil) {     // check if the sound file is already loaded.
+        // NSLog(@"Already loaded for keyNum %d %@\n", key, filePath);
         return nil;
     }
+
     // not loaded, load it now.
-    // read soundfile, for now loading it into a NSSound object, eventually priming the buffers for play direct from disk.
+    // read soundfile, for now loading it into a WorkingSoundClass object, eventually priming the buffers for play direct from disk.
+#if USE_SNDKIT
+    if ((newSound = [Snd addName: filePath fromSoundfile: filePath]) == nil) {
+#else
     if ((newSound = [[NSSound alloc] initWithContentsOfFile: filePath byReference: NO]) == nil) {
+#endif
         _MKErrorf(MK_cantOpenFileErr, filePath);
         return nil;
     }
     [newSound setName: filePath];
-
-    NSLog(@"Preparing for keyNum %d %@\n", key, [newSound description]);
-
     velocity = [aNote parAsInt: MK_velocity];
-
-    //  [MKConductor unlockPerformance];
-
     return self;
 }
 
 - playSampleNote: aNote
 {
-    NSSound *existingSound;
+    WorkingSoundClass *existingSound;
     NSString *filePath;
 
     // only play those notes which are samples.
     if(![aNote isParPresent: MK_filename])
         return nil;
     filePath = [aNote parAsString: MK_filename];
-    NSLog(@"playing file %@\n", filePath);
+    // NSLog(@"playing file %@\n", filePath);
 
-    if ((existingSound = [NSSound soundNamed: filePath]) == nil) {
+    if ((existingSound = [WorkingSoundClass soundNamed: filePath]) == nil) {
         _MKErrorf(MK_cantOpenFileErr, filePath);
         return nil;
     }
     [existingSound setDelegate:self];
-
+    [playingNotes addObject: aNote];    // keep a list (ordered oldest to youngest) of playing notes.
     [existingSound play]; // just do it.
     return self;
 }
@@ -184,22 +195,37 @@ int activeSoundCount = 0;
 // Probably should revamp this to determine the playingSound instance to send the stop to.
 - stopSampleNote: aNote
 {
-    NSSound *existingSound;
+    WorkingSoundClass *existingSound;
     NSString *filePath;
 
-    NSLog(@"stopping sample note\n");
+    //NSLog(@"stopping sample note %@\n", aNote);
 
-    // only play those notes which are samples.
-    if(![aNote isParPresent: MK_filename])
+    // only stop playing those notes which are samples.
+    if(![aNote isParPresent: MK_filename]) {
+        // NSLog(@"Not a sample note, can't stop!\n");
         return nil;
+    }
     filePath = [aNote parAsString: MK_filename];
-    NSLog(@"stopping file %@\n", filePath);
 
-    if ((existingSound = [NSSound soundNamed: filePath]) == nil) {
+    if ((existingSound = [WorkingSoundClass soundNamed: filePath]) == nil) {
         _MKErrorf(MK_cantOpenFileErr, filePath);
         return nil;
     }
+    // locking playback
+    // NSLog(@"sound is playing %d\n", [existingSound isPlaying]);
+    [playingNotes removeObject: aNote];
     [existingSound stop]; // just do it.
+    return self;
+}
+
+
+- stop
+{
+    unsigned int noteIndex;
+
+    for(noteIndex = 0; noteIndex < [playingNotes count]; noteIndex++)
+	[self stopSampleNote: [playingNotes objectAtIndex: noteIndex]];
+    // [ stopRecording];
     return self;
 }
 
@@ -207,7 +233,7 @@ int activeSoundCount = 0;
 - firstNote: (MKNote *) aNote
 {
     [super firstNote: aNote];
-    [self prepareSound: aNote];
+    [self prepareSoundWithNote: aNote];
     return self;
 }
 
@@ -221,7 +247,7 @@ int activeSoundCount = 0;
 
 - performerDidDeactivate:sender
 {
-NSLog(@"Got playingSample delegate deactivation notice\n");
+    NSLog(@"Got playingSample delegate deactivation notice\n");
     if (activeVoices > 0) activeVoices--;
     if (activeSoundCount > 0) activeSoundCount--;
     return self;
@@ -231,12 +257,12 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
 // FIXME needs a value to prevent limiting.
 - (void) setVoiceCount:(int) newVoiceCount
 {
- voiceCount = newVoiceCount;
+    voiceCount = newVoiceCount;
 }
 
 - (int) voiceCount
 {
- return voiceCount;
+    return voiceCount;
 }
 
 - setAmp: (int) noteTag
@@ -301,15 +327,14 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
 
 #if 0 // only needed when we are recording.
   if (noteTag == recordTag) {
-    NSSound *newSound, *oldSound;
+    WorkingSoundClass *newSound, *oldSound;
 
     [recorder stopRecording];
     newSound = [recorder soundStruct];
     oldSound = [soundTable insertKey:(const void *)recordKey value:(void *)newSound];
     [self clearAtKey:recordKey];
-    keyMap[recordKey] = recordKey;
     if (!playingSamples[recordKey]) {
-    playingSamples[recordKey] = [[NSSound alloc] initWithSound:newSound];
+    playingSamples[recordKey] = [[WorkingSoundClass alloc] initWithSound:newSound];
       [playingSamples[recordKey] setDelegate:self];
       [playingSamples[recordKey] enablePreloading:preloadingEnabled];
     }
@@ -363,7 +388,7 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
     else objc_msgSend(receiver,selector,arg); \
   }
 
-// The problem is currently we can't request a NSSound instance to play at some future moment in time
+// The problem is currently we can't request a WorkingSoundClass instance to play at some future moment in time
 // with respect to the playback clock like we can with the MIDI driver used within MKMidi.
 // Therefore we use the conductor to time sending a message in the future to play the sound file at the
 // deltaT offset and pray there isn't too much overhead playing the sound.
@@ -371,84 +396,89 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
 // operating system support for playback scheduling.
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
 {
-  MKNoteType type = [aNote noteType];
-  int     noteTag = [aNote noteTag];
-  double  deltaT = MKGetDeltaT() / [conductor beatSize];
+    MKNoteType type = [aNote noteType];
+    int     noteTag = [aNote noteTag];
+    // [MKConductor sel:to:withDelay:argCount:] takes delay parameters in beats.
+    double  deltaT = (MKGetDeltaT() + uglySamplerTimingHack) / [conductor beatSize]; 
 
-  NSLog(@"deltaT = %lf beatSize = %lf\n", deltaT, [conductor beatSize]);
-  if ((type == MK_noteOn) || (type == MK_noteDur)) {
-    [self prepareSound: aNote];
-    TIMEDSENDTO(self, @selector(playSampleNote:), deltaT, aNote);
-    if (type == MK_noteDur) {
-        TIMEDSENDTO(self, @selector(stopSampleNote:), deltaT+[aNote dur], aNote); // noteTag
+    // NSLog(@"deltaT = %lf beatSize = %lf tempo = %lf\n", deltaT, [conductor beatSize], [conductor tempo]);
+    if ((type == MK_noteOn) || (type == MK_noteDur)) {
+        [self prepareSoundWithNote: aNote];
+        TIMEDSENDTO(self, @selector(playSampleNote:), deltaT, aNote);
+        if (type == MK_noteDur) {
+            TIMEDSENDTO(self, @selector(stopSampleNote:), deltaT+[aNote dur], aNote);
+        }
     }
-  }
-  else if ((type == MK_noteOff) && !damperOn)
-    TIMEDSENDTO(self, @selector(stopSampleNote:), deltaT, aNote);  // noteTag
+    else if ((type == MK_noteOff) && !damperOn) {
+        TIMEDSENDTO(self, @selector(stopSampleNote:), deltaT, aNote);
+    }
 
-  if (MKIsNoteParPresent(aNote, MK_amp)) {
-    linearAmp = MKGetNoteParAsDouble(aNote, MK_amp);
-    TIMEDSENDTO(self, @selector(setAmp:), deltaT, noteTag);
-  }
-  if (MKIsNoteParPresent(aNote, MK_bearing)) {
-    bearing = MKGetNoteParAsDouble(aNote, MK_bearing);
-    TIMEDSENDTO(self, @selector(setBearing:), deltaT, noteTag);
-  }
-  if (MKIsNoteParPresent(aNote, MK_pitchBendSensitivity)) {
-    pitchbendSensitivity = MKGetNoteParAsDouble(aNote, MK_pitchBendSensitivity);
-    pbSensitivity = (pitchbendSensitivity / 12.0) / 8192.0;
-  }
-  if (MKIsNoteParPresent(aNote, MK_pitchBend)) {
-    double bend = MKGetNoteParAsDouble(aNote, MK_pitchBend);
-    pitchBend = pow(2.0, (bend - 8192.0) * pbSensitivity);
-    TIMEDSENDTO(self, @selector(setPitchBend:), deltaT, noteTag);
-  }
-  // control value to perform recording. Needs updating
-  //if (isControlPresent(aNote, recordModeController))
-  //	recordMode = getControlValAsInt(aNote, recordModeController) > 0;
-  if (MKIsNoteParPresent(aNote, MK_controlChange)) {
+    if (MKIsNoteParPresent(aNote, MK_amp)) {
+        linearAmp = MKGetNoteParAsDouble(aNote, MK_amp);
+        TIMEDSENDTO(self, @selector(setAmp:), deltaT, noteTag);
+    }
+    if (MKIsNoteParPresent(aNote, MK_bearing)) {
+        bearing = MKGetNoteParAsDouble(aNote, MK_bearing);
+        TIMEDSENDTO(self, @selector(setBearing:), deltaT, noteTag);
+    }
+    if (MKIsNoteParPresent(aNote, MK_pitchBendSensitivity)) {
+        pitchbendSensitivity = MKGetNoteParAsDouble(aNote, MK_pitchBendSensitivity);
+        pbSensitivity = (pitchbendSensitivity / 12.0) / 8192.0;
+    }
+    if (MKIsNoteParPresent(aNote, MK_pitchBend)) {
+        double bend = MKGetNoteParAsDouble(aNote, MK_pitchBend);
+        pitchBend = pow(2.0, (bend - 8192.0) * pbSensitivity);
+        TIMEDSENDTO(self, @selector(setPitchBend:), deltaT, noteTag);
+    }
+    // control value to perform recording. Needs updating
+    //if (isControlPresent(aNote, recordModeController))
+    //	recordMode = getControlValAsInt(aNote, recordModeController) > 0;
+    if (MKIsNoteParPresent(aNote, MK_controlChange)) {
 #if 0
-    int controller = MKGetNoteParAsInt(aNote, MK_controlChange);
+        int controller = MKGetNoteParAsInt(aNote, MK_controlChange);
 
-    if (controller == MIDI_DAMPER) {
-      damperOn = (MKGetNoteParAsInt(aNote, MK_controlVal) >= 64);
-      if (!damperOn)
-	TIMEDSENDTO(self, @selector(stopSampleNote:), deltaT, aNote);
-    }
-    else if (controller == MIDI_MAINVOLUME) {
-      volume = (float)MKGetNoteParAsInt(aNote, MK_controlVal) / 127.0;
-      TIMEDSENDTO(self, @selector(setVolume:), deltaT, noteTag);
-    }
-    else if (controller == MIDI_PAN) {
-      bearing = -45 + 90.0 * (MKGetNoteParAsInt(aNote, MK_controlVal)/127.0);
-      TIMEDSENDTO(self,@selector(setBearing:), deltaT, noteTag);
-    }
-    else if (controller == 14) {
-      /* Mostly for 2.1 compatibility */
-      int headphoneLevel = 
-	(int)(-84.0 + MKGetNoteParAsDouble(aNote, MK_controlVal)*.66142);
-      [soundOutDevice setAttenuationLeft: headphoneLevel right: headphoneLevel];
-    }
+        if (controller == MIDI_DAMPER) {
+        damperOn = (MKGetNoteParAsInt(aNote, MK_controlVal) >= 64);
+        if (!damperOn)
+            TIMEDSENDTO(self, @selector(stopSampleNote:), deltaT, aNote);
+        }
+        else if (controller == MIDI_MAINVOLUME) {
+            volume = (float)MKGetNoteParAsInt(aNote, MK_controlVal) / 127.0;
+            TIMEDSENDTO(self, @selector(setVolume:), deltaT, noteTag);
+        }
+        else if (controller == MIDI_PAN) {
+            bearing = -45 + 90.0 * (MKGetNoteParAsInt(aNote, MK_controlVal)/127.0);
+            TIMEDSENDTO(self,@selector(setBearing:), deltaT, noteTag);
+        }
+        else if (controller == 14) {
+            /* Mostly for 2.1 compatibility */
+            int headphoneLevel =
+                (int)(-84.0 + MKGetNoteParAsDouble(aNote, MK_controlVal)*.66142);
+            [soundOutDevice setAttenuationLeft: headphoneLevel right: headphoneLevel];
+        }
 #endif
-  }
-	
-  if (((type == MK_noteOn) || (type == MK_noteDur)) && !recordMode) {
-    TIMEDSENDTO(self, @selector(activate:), deltaT, noteTag);
-  }
-  else if (type == MK_mute) {
-    if (MKGetNoteParAsInt(aNote, MK_sysRealTime) == MK_sysReset)
-      [self reset];
-    else if (MKGetNoteParAsInt(aNote, MK_sysRealTime) == MK_sysStop)
-      TIMEDSENDTO(self, @selector(stopSampleNote:), 0.0, aNote);
-  }
+    }
 
-  return self;
+    if (((type == MK_noteOn) || (type == MK_noteDur)) && !recordMode) {
+        //TIMEDSENDTO(self, @selector(activate:), deltaT, noteTag);
+    }
+    else if (type == MK_mute) {
+        if (MKGetNoteParAsInt(aNote, MK_sysRealTime) == MK_sysReset)
+            [self reset];
+        else if (MKGetNoteParAsInt(aNote, MK_sysRealTime) == MK_sysStop)
+            TIMEDSENDTO(self, @selector(stopSampleNote:), 0.0, aNote);
+    }
+
+    return self;
 }
 
 // NSSound delegate
-- (void) sound:(NSSound *) sound didFinishPlaying:(BOOL)aBool
+- (void) sound:(WorkingSoundClass *) sound didFinishPlaying:(BOOL) finished
 {
-    NSLog(@"did finish playing %d sound named %@\n", aBool, [sound name]);
+    NSLog(@"did finish playing %d sound named %@\n", finished, [sound name]);
+    if(finished) {
+        // unlock playback
+    }
 }
 
 - (void) encodeWithCoder:(NSCoder *) coder

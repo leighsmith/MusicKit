@@ -18,6 +18,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2000/04/12 00:36:28  leigh
+  Hacked to use either SndKit or NSSound, depending on which is more complete on each platform, added uglySamplerTimingHack, hopefully this is only a momentary lapse of reason
+
   Revision 1.3  2000/03/11 01:16:21  leigh
   Now using NSSound to replace Snd
 
@@ -27,7 +30,19 @@
 */
 #ifndef __MK_SamplerInstrument_H___
 #define __MK_SamplerInstrument_H___
+
+// we optimistically assume NSSound is the best default.
+#ifndef USE_SNDKIT
+#define USE_SNDKIT 0
+#endif
+
+#if USE_SNDKIT
+#import <SndKit/SndKit.h>
+#define WorkingSoundClass Snd
+#else
 #import <AppKit/NSSound.h>
+#define WorkingSoundClass NSSound
+#endif
 #import "MKInstrument.h"
 #import "MKConductor.h"
 
@@ -46,8 +61,7 @@
     char *directory;
 
     NSMutableDictionary *soundTable;
-    int keyMap[128];
-//    PlayingSound *playingSamples[128];
+    NSMutableArray *playingNotes;
 //    PlayingSound *playingSample;
     BOOL sustained[128];
     int activeVoices;
@@ -76,16 +90,17 @@
 
 - init;
 - abort;
+- stop;
 - reset;
 - (int) voiceCount;
 - (void) setVoiceCount: (int) newVoiceCount;
 - clearAll:sender;
 - releaseSounds;
-- prepareSound: (MKNote *) aNote;
+- prepareSoundWithNote: (MKNote *) aNote;
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
-- (void) sound:(NSSound *) sound didFinishPlaying:(BOOL)aBool;
+- (void) sound: (WorkingSoundClass *) sound didFinishPlaying:(BOOL)aBool;
 - (void) encodeWithCoder:(NSCoder *) coder;
-- (id)initWithCoder:(NSCoder *) decoder;
+- (id) initWithCoder:(NSCoder *) decoder;
 @end
 
 
