@@ -21,34 +21,9 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2004, The MusicKit Project.
  */
-/* Modification history:
-
-  $Log$
-  Revision 1.9  2003/08/04 21:19:36  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
-
-  Revision 1.8  2002/01/29 16:23:35  sbrandon
-  we now call superclass methods in archival methods
-  copyWithZone: leaked objects - added releases where necessary
-
-  Revision 1.7  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.6  2001/08/07 16:16:11  leighsmith
-  Corrected class name during decode to match latest MK prefixed name
-
-  Revision 1.5  2000/04/25 02:11:02  leigh
-  Renamed free methods to release methods to reflect OpenStep behaviour
-
-  Revision 1.4  2000/04/16 04:20:36  leigh
-  Comment cleanup
-
-  Revision 1.3  2000/04/02 17:12:08  leigh
-  Cleaned up doco
-
-  Revision 1.2  1999/07/29 01:16:38  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+/* Modification history prior to commiting to CVS:
 
   03/21/90/daj - Added archiving.
   04/21/90/daj - Small mods to get rid of -W compiler warnings.
@@ -61,49 +36,66 @@
 #import "InstrumentPrivate.h"
 #import "MKNoteSender.h"
 #import "NoteReceiverPrivate.h"
-
 #import "MKNoteFilter.h"
+
 @implementation MKNoteFilter
 
 #define VERSION2 2
 
-+ (void)initialize
++ (void) initialize
 {
     if (self != [MKNoteFilter class])
       return;
-    [MKNoteFilter setVersion:VERSION2];
+    [MKNoteFilter setVersion: VERSION2];
     return;
 }
 
--init
+- init
 {
-    [super init]; /* Creates noteReceivers */
-    noteSenders = [[NSMutableArray alloc] init];
+    self = [super init]; /* Creates noteReceivers */
+    if(self != nil) {
+	noteSenders = [[NSMutableArray alloc] init];	
+    }
     return self;
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder: (NSCoder *) aCoder
   /* You never send this message directly.  
      Invokes superclass encodeWithCoder: and archives noteSender List. */
 {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:noteSenders];
+    [super encodeWithCoder: aCoder];
+    
+    // Check if decoding a newer keyed coding archive
+    if([aCoder allowsKeyedCoding]) {
+	[aCoder encodeObject: noteSenders forKey: @"MKNoteFilter_noteSenders"];
+    }
+    else {
+	[aCoder encodeObject: noteSenders];
+    }
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) initWithCoder: (NSCoder *) aDecoder
   /* You never send this message directly.  
      See encodeWithCoder:. */
 {
-    self = [super initWithCoder:aDecoder];
-    if ([aDecoder versionForClassName: @"MKNoteFilter"] == VERSION2) 
-      noteSenders = [[aDecoder decodeObject] retain];
+    self = [super initWithCoder: aDecoder];
+    
+    // Check if decoding a newer keyed coding archive
+    if([aDecoder allowsKeyedCoding]) {
+	[noteSenders release];
+	noteSenders = [[aDecoder decodeObjectForKey: @"MKNoteFilter_noteSenders"] retain];
+    }
+    else {
+	if ([aDecoder versionForClassName: @"MKNoteFilter"] == VERSION2) 
+	    noteSenders = [[aDecoder decodeObject] retain];
+    }
     return self;
 }
 
 #import "noteDispatcherMethods.m"
 
 - copyWithZone: (NSZone *) zone
-  /* Copies object, copying MKNoteSenders and MKNoteReceivers. */
+    /* Copies object, copying MKNoteSenders and MKNoteReceivers. */
 {
     MKNoteFilter *newObj = [super copyWithZone: zone];
     unsigned int i;
@@ -111,14 +103,14 @@
     
     newObj->noteSenders = [[NSMutableArray alloc] initWithCapacity: n];
     for (i = 0; i < n; i++) {
-      id ns_copy = [[noteSenders objectAtIndex: i] copy];
-      [newObj addNoteSender: ns_copy];
-      [ns_copy release];
+	id ns_copy = [[noteSenders objectAtIndex: i] copy];
+	[newObj addNoteSender: ns_copy];
+	[ns_copy release];
     }
     return newObj;
 }
 
--addNoteSender:(id)aNoteSender
+- (MKNoteSender *) addNoteSender: (MKNoteSender *) aNoteSender
   /* If aNoteSender is already owned by the receiver, returns nil.
      Otherwise, aNoteSender is removed from its owner, the owner
      of aNoteSender is set to self, aNoteSender is added to 
@@ -131,18 +123,20 @@
      */
 {
     id owner = [aNoteSender owner];
+    
     if (owner == self)
-      return nil;
-    if (_noteSeen)
-      return nil;
-    [owner removeNoteSender:aNoteSender];
-    if (![noteSenders containsObject:aNoteSender]) [noteSenders addObject:aNoteSender];
-    [aNoteSender _setOwner:self];    /* Tell it we're the owner */
-    [aNoteSender _setPerformer:nil]; /* Tell it we're not a performer */
+	return nil;
+    if (noteSeen)
+	return nil;
+    [owner removeNoteSender: aNoteSender];
+    if (![noteSenders containsObject: aNoteSender])
+	[noteSenders addObject: aNoteSender];
+    [aNoteSender _setOwner: self];    /* Tell it we're the owner */
+    [aNoteSender _setPerformer: nil]; /* Tell it we're not a performer */
     return aNoteSender;
 }
 
--removeNoteSender:(id)aNoteSender
+- (MKNoteSender *) removeNoteSender: (MKNoteSender *) aNoteSender
   /* If aNoteSender is not owned by the receiver, returns nil.
      Otherwise, removes aNoteSender from the receiver's MKNoteSender List
      and returns aNoteSender. 
@@ -152,18 +146,17 @@
      returned. */
 {
     if ([aNoteSender owner] != self)
-      return nil;
-    if (_noteSeen)
-      return nil;
-    [noteSenders removeObject:aNoteSender];
-    [aNoteSender _setOwner:nil];
+	return nil;
+    if (noteSeen)
+	return nil;
+    [noteSenders removeObject: aNoteSender];
+    [aNoteSender _setOwner: nil];
     return aNoteSender;
 }
 
-
-- (void)dealloc
+- (void) dealloc
   /* TYPE: Creating
-   * This invokes releaseNoteSenders and releaseNoteReceivers.
+   * This invokes releaseNoteSenders.
    * Then it frees itself.
    */
 {
