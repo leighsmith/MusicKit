@@ -6,19 +6,38 @@ Description: Main class defining a sound object.
 Original Author: Stephen Brandon
 
 LEGAL:
-This framework and all source code supplied with it, except where specified, are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use the source code for any purpose, including commercial applications, as long as you reproduce this notice on all such software.
+This framework and all source code supplied with it, except where specified,
+are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free
+to use the source code for any purpose, including commercial applications, as
+long as you reproduce this notice on all such software.
 
-Software production is complex and we cannot warrant that the Software will be error free.  Further, we will not be liable to you if the Software is not fit for the purpose for which you acquired it, or of satisfactory quality. 
+Software production is complex and we cannot warrant that the Software will be
+error free.  Further, we will not be liable to you if the Software is not fit
+for the purpose for which you acquired it, or of satisfactory quality. 
 
-WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD PARTIES RIGHTS.
+WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL
+WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES
+OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD
+PARTIES RIGHTS.
 
-If a court finds that we are liable for death or personal injury caused by our negligence our liability shall be unlimited.  
+If a court finds that we are liable for death or personal injury caused by our
+negligence our liability shall be unlimited.  
 
-WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND CONDITIONS OF THIS AGREEMENT.
+WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS
+OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR
+POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE
+NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED
+DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND
+CONDITIONS OF THIS AGREEMENT.
 
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.32  2001/11/07 12:41:29  sbrandon
+ * - cleaned up formatting of license
+ * - added defines to force new version of sox lib (libst.h) to import correct
+ *   headers
+ *
  * Revision 1.31  2001/10/31 15:35:04  sbrandon
  * replaced htonl() calls with equivalent NSSwap...() function
  *
@@ -102,7 +121,6 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 #ifdef WIN32
 #include <windows.h>
-#include <Winsock.h> // for htonl() functions
 #else
 # ifndef GNUSTEP
 #  include <libc.h>
@@ -123,7 +141,16 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 NSString *NXSoundPboardType = @"NXSoundPboardType";
 #endif
 
-#define HAVE_RAND 1 // this ensures Sox doesn't attempt to define its own prototype
+/* the following ensures Sox doesn't attempt to define its own
+ * prototype
+ */
+#define HAVE_RAND 1 
+/* the following defines are to fool st.h into importing the right
+ * headers.
+ */
+#define HAVE_UNISTD_H 1
+#define HAVE_STDINT_H 1
+#define HAVE_SYS_TYPES 1
 #import <st.h>  // prototypes and structures from the Sox sound tools library
 
 #define DEFAULT_SOUNDFILE_EXTENSION @"snd" // TODO this should probably be determined at run time.
