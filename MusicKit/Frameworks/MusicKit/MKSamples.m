@@ -23,6 +23,11 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2002/04/15 14:22:35  sbrandon
+  - set a couple of ivars to nil after releasing, in -init
+  - added -hash and -isEqual: methods to aid in situations where object is
+    used as a key in dictionaries or maptables.
+
   Revision 1.7  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -98,19 +103,43 @@ id MKGetSamplesClass(void)
     /*sound = */
     if (sound) [sound release];/*sb: used to be sound free*/
     if (soundfile) [soundfile release];
+    sound  = nil;
+    soundfile = nil;
 
     tableType = MK_oscTable;
     return self;
 }
 
+- (unsigned) hash
+{
+//trivial hash
+  return [sound hash] + 256 * tableType + 23 * curLoc + 32767 * amplitude
+    + 512 * startSampleLoc + 1024 * lastSampleLoc + [soundfile length];
+}
+
+- (BOOL) isEqual: (MKSamples *)anObject
+{
+    if (!anObject)                           return NO;
+    if (self == anObject)                    return YES;
+    if ([self class] != [anObject class])    return NO;
+    if ([self hash] != [anObject hash])      return NO;
+    if (![soundfile isEqual:[anObject soundfile]])     return NO;
+    if (sound != [anObject sound])           return NO;
+    if (startSampleLoc != [anObject processingStartSample]) return NO;
+    if (lastSampleLoc != [anObject processingEndSample])   return NO;
+
+    return [super isEqual:anObject];
+}
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
+    [super encodeWithCoder:aCoder];
     [aCoder encodeValuesOfObjCTypes: "@@", &sound, &soundfile];/* sb was @* */
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
+    self = [super initWithCoder:aDecoder];
     if ([aDecoder versionForClassName: @"MKSamples"] >= VERSION2) 
       [aDecoder decodeValuesOfObjCTypes: "@@", &sound, &soundfile];/* sb was @* */
     return self;
@@ -128,8 +157,8 @@ id MKGetSamplesClass(void)
   /* Copies receiver. Copies the Sound as well. */
 {
     MKSamples *newObj = [super copyWithZone:zone];
-    newObj->soundfile = [soundfile copy];
-    newObj->sound = [sound copy];
+    newObj->soundfile = [soundfile copyWithZone:zone];
+    newObj->sound     = [sound copyWithZone:zone];
     return newObj;
 }
 
@@ -171,11 +200,10 @@ id MKGetSamplesClass(void)
       return FALSE;
     if (sound) [sound autorelease];/*sb: gets rid of old one*/
     length = 0; /* This ensures that the superclass recomputes cached buffers. */ 
-// LMS disabled since we can't check it and it shouldn't matter anyway.
-//    if (([aSoundObj dataFormat] != SND_FORMAT_LINEAR_16) ||
-//	([aSoundObj channelCount] != 1))
-//      return FALSE; /*** FIXME Eventually convert ***/
     sound = [aSoundObj copy];
+    [sound convertToFormat:SND_FORMAT_LINEAR_16
+              samplingRate:[sound samplingRate]
+              channelCount:1];
     curLoc = 0;
     return TRUE;
 }
@@ -200,8 +228,7 @@ id MKGetSamplesClass(void)
         }
         [soundfile autorelease];
         soundfile = [tempSoundFile copy];
-        /* LMS: currently no way to write a sound file in MacOsX-Server! */
-        // error = [sound writeSoundfile:soundfile];
+        error = [sound writeSoundfile:soundfile];
         if (error) { 
             [soundfile release];
 	    soundfile = nil;
