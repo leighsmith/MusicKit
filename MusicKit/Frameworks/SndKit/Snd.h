@@ -4,25 +4,25 @@
 	Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
 	Additions Copyright (c) 1999 Stephen Brandon and the University of Glasgow 
 */
-
-#if defined(NeXT) 
-#define USE_NEXTSTEP_SOUND_IO
-#endif
-
-#if (defined(__APPLE__) && defined(__MACH__))
-#define USE_NEXTSTEP_SOUND_IO  // LMS at the moment this causes conflicts between definitions here and the Original Sound.h
-#endif
-
 #import <Foundation/NSObject.h>
 #import <Foundation/Foundation.h>
 #import <objc/hashtable.h>
 #import <Foundation/NSBundle.h>
 
-#ifdef USE_NEXTSTEP_SOUND_IO
-#import <SoundKit/Sound.h>
-#else
+#if defined(NeXT) 
+  #define USE_NEXTSTEP_SOUND_IO
+  #define USE_PERFORM_SOUND_IO
+#elif (defined(__APPLE__) && defined(__MACH__))
+  #define USE_PERFORM_SOUND_IO
+  #import "Sound.h"
+#elif defined(WIN32)
+  #define USE_PERFORM_SOUND_IO
+  #import <MKPerformSndMIDI/PerformSound.h>
+  #import "sounderror.h"
+#endif
+
+#ifdef USE_PERFORM_SOUND_IO
 #import "SndFormats.h"
-#import "sounderror.h"
 #endif
 
 #import "SndFunctions.h"
@@ -59,7 +59,7 @@ extern NSString *NXSoundPboardType;
 	int tag;
 }
 
-#ifndef USE_NEXTSTEP_SOUND_IO
+#if !defined(USE_NEXTSTEP_SOUND_IO) && !defined(USE_PERFORM_SOUND_IO) || defined(WIN32)
 /*
  * Status codes
  */
@@ -87,7 +87,7 @@ typedef enum {
  * --------------- Factory Methods
  */
 
-+ findSoundFor:(NSString *)aName;
++ soundNamed:(NSString *)aName;
 
 + addName:(NSString *)name sound:aSnd;
 + addName:(NSString *)name fromSoundfile:(NSString *)filename;

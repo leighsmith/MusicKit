@@ -1,6 +1,6 @@
 /*:filterkit.h */
 
-#import	"_Sndstdefs.h"
+#import	"SndStdefs.h"
 
 /*
  * LpFilter() - Calculates the filter coeffs for a Kaiser-windowed low-pass

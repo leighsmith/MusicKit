@@ -14,7 +14,7 @@
 #endif
 #import "SndFormats.h"
 #import "SndFunctions.h"
-#import "_Sndresample.h"
+#import "SndResample.h"
 
 /* forward decl */
 int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **toSound,BOOL largeFilter, BOOL interpFilter, BOOL fast);
@@ -140,7 +140,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
 			BOOL linearInterp = fast;
 			int outCountReal;
 			outCountReal = resample(factor, outPtr, inCount, outCount, MIN(cc1,cc2),
-							interpFilter, linearInterp, largeFilter, filterFile, fromSound);
+							interpFilter, linearInterp, largeFilter, filterFile, fromSound, 0);
 			(*toSound)->dataFormat = SND_FORMAT_LINEAR_16; /* this is the output format */
 			(*toSound)->channelCount = MIN(cc1,cc2); /* channel count is reduced if nec */
 			printf("Completed resample. OutCount = %d\n", outCountReal);

@@ -11,8 +11,20 @@
             sounderror.m, 
             UserPath.m
         ); 
-        FRAMEWORKS = (AppKit.framework, Foundation.framework, SoundKit.framework, System.framework); 
+        FRAMEWORKS = (
+            AppKit.framework, 
+            Foundation.framework, 
+            MKPerformSndMIDI.framework, 
+            SoundKit.framework, 
+            System.framework
+        ); 
+        FRAMEWORKSEARCH = (
+            "$(HOME_DRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks", 
+            /System/Library/PrivateFrameworks
+        ); 
+        HEADERSEARCH = (/usr/local/include); 
         H_FILES = (
+            performsound.h, 
             Snd.h, 
             SndDisplayData.h, 
             SndDisplayDataList.h, 
@@ -20,17 +32,22 @@
             SndFormats.h, 
             SndFunctions.h, 
             SndKit.h, 
+            SndResample.h, 
             SndStruct.h, 
             SndView.h, 
+            Sound.h, 
+            sound.h, 
             sounderror.h, 
+            soundstruct.h, 
             UserPath.h, 
             _Sndfilterkit.h, 
             _Sndlargefilter.h, 
             _Sndlibst.h, 
-            _Sndresample.h, 
             _Sndsmallfilter.h, 
-            _Sndstdefs.h
+            SndStdefs.h
         ); 
+        LIBRARYSEARCH = (/usr/local/lib); 
+        OTHER_LIBS = (st); 
         OTHER_LINKED = (
             SndEndianFunctions.c, 
             SndFunctions.c, 
@@ -46,8 +63,11 @@
             m.template, 
             h.template, 
             make.sh, 
-            platform.make
+            platform.make, 
+            packageSndKit
         ); 
+        PRECOMPILED_HEADERS = (); 
+        PROJECT_HEADERS = (); 
         PUBLIC_HEADERS = (
             SndFunctions.h, 
             SndFormats.h, 
@@ -60,7 +80,13 @@
             SndDisplayData.h, 
             SndDisplayDataList.h, 
             UserPath.h, 
-            _Sndlibst.h
+            _Sndlibst.h, 
+            Sound.h, 
+            sound.h, 
+            soundstruct.h, 
+            performsound.h, 
+            SndResample.h, 
+            SndStdefs.h
         ); 
         SUBPROJECTS = (); 
     }; 
@@ -81,7 +107,7 @@
     PROJECTVERSION = 2.8; 
     WINDOWS_BUILDTOOL = ./make.sh; 
     WINDOWS_COMPILEROPTIONS = "-O2"; 
-    WINDOWS_INSTALLDIR = "$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks"; 
+    WINDOWS_INSTALLDIR = "$(HOME_DRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks"; 
     WINDOWS_JAVA_COMPILER = "$(JDKBINDIR)/javac.exe"; 
     WINDOWS_LINKEROPTIONS = "-O2"; 
     WINDOWS_OBJCPLUS_COMPILER = "$(DEVDIR)/gcc"; 

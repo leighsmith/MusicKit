@@ -15,17 +15,17 @@ PROJECT_TYPE = Framework
 CLASSES = Snd.m SndDisplayData.m SndDisplayDataList.m SndView.m\
           sounderror.m UserPath.m
 
-HFILES = Snd.h SndDisplayData.h SndDisplayDataList.h\
+HFILES = performsound.h Snd.h SndDisplayData.h SndDisplayDataList.h\
          SndEndianFunctions.h SndFormats.h SndFunctions.h SndKit.h\
-         SndStruct.h SndView.h sounderror.h UserPath.h _Sndfilterkit.h\
-         _Sndlargefilter.h _Sndlibst.h _Sndresample.h _Sndsmallfilter.h\
-         _Sndstdefs.h
+         SndResample.h SndStruct.h SndView.h Sound.h sound.h\
+         sounderror.h soundstruct.h UserPath.h _Sndfilterkit.h\
+         _Sndlargefilter.h _Sndlibst.h _Sndsmallfilter.h SndStdefs.h
 
 CFILES = SndEndianFunctions.c SndFunctions.c _SndConvert.c\
          _Sndfilterkit.c _Sndlibst.c _Sndresamplesubs.c
 
 OTHERSRCS = Makefile.preamble Makefile Makefile.postamble m.template\
-            h.template make.sh platform.make
+            h.template make.sh platform.make packageSndKit
 
 
 MAKEFILEDIR = .
@@ -34,22 +34,28 @@ DEPLOY_WITH_VERSION_NAME = A
 CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = framework.make
 NEXTSTEP_INSTALLDIR = $(LOCAL_LIBRARY_DIR)/Frameworks
-WINDOWS_INSTALLDIR = $(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks
-LIBS = 
+WINDOWS_INSTALLDIR = $(HOME_DRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks
+LIBS = -lst
 DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
 
+HEADER_PATHS = -I/usr/local/include
+LIBRARY_PATHS = -L/usr/local/lib
+FRAMEWORK_PATHS = -F$(HOME_DRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\
+                  -F/System/Library/PrivateFrameworks
 NEXTSTEP_PB_CFLAGS = -O2
 NEXTSTEP_PB_LDFLAGS = -O2
 WINDOWS_PB_CFLAGS = -O2
 WINDOWS_PB_LDFLAGS = -O2
-FRAMEWORKS = -framework AppKit -framework Foundation -framework SoundKit\
+FRAMEWORKS = -framework AppKit -framework Foundation\
+             -framework MKPerformSndMIDI -framework SoundKit\
              -framework System
 PUBLIC_HEADERS = SndFunctions.h SndFormats.h SndEndianFunctions.h\
                  SndStruct.h SndKit.h Snd.h sounderror.h SndView.h\
                  SndDisplayData.h SndDisplayDataList.h UserPath.h\
-                 _Sndlibst.h
+                 _Sndlibst.h Sound.h sound.h soundstruct.h\
+                 performsound.h SndResample.h SndStdefs.h
 
 
 
