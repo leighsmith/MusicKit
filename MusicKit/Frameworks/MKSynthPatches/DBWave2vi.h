@@ -3,6 +3,7 @@
   
   Defined In: The MusicKit
   Description:
+  classgroup WaveTable Synthesis 
     (See discussion below)
 
   Original Author: David A. Jaffe
@@ -12,32 +13,18 @@
   Portions Copyright (c) 1994 Stanford University.
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.6  2001/11/16 20:37:51  leighsmith
-  Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
-
-  Revision 1.5  2001/09/10 17:38:28  leighsmith
-  Added abstracts from IntroSynthPatches.rtf
-
-  Revision 1.4  2001/09/09 00:26:50  leighsmith
-  Removed crufty reference to TimbreDataBase.rtf
-
-  Revision 1.3  2001/09/08 20:22:09  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-*/
-//  classgroup WaveTable Synthesis
 /*!
   @class DBWave2vi
   @abstract Like <b>Wave1vi</b>, but with two wavetables and interpolation between them.
   @discussion
 
-<b>DBWave2vi</b> is a double interpolating oscillator wavetable synthesis MKSynthPatch with dynamic envelope-driven interpolation between the two oscillators, amplitude and frequency envelopes.
-Although <b>DBWave2vi</b> does not inherit from any other wavetable synthesis class, it is similar to <b>DBWave1vi</b>, except that there are two oscillators doing the synthesis.  
+<b>DBWave2vi</b> is a double interpolating oscillator wavetable synthesis MKSynthPatch
+with dynamic envelope-driven interpolation between the two oscillators, amplitude and frequency envelopes.
+Although <b>DBWave2vi</b> does not inherit from any other wavetable synthesis class, it is similar
+to <b>DBWave1vi</b>, except that there are two oscillators doing the synthesis.  
 
 The Timbre Data Base is a set of spectra derived from recordings of
-musical instruments and voices in various ranges.  The Data Base was
+musical instruments and voices in various ranges.  The database was
 created by Michael McNabb.
 
 The MKSynthPatches that support the Data Base are DBWave1vi,
@@ -77,7 +64,8 @@ appropriate envelopes, attack/decay values and vibrato must be used.
 
 <img src="Images/Wave2vi.png">
 
-When using this MKSynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the MKSynthPatch.
+When using this MKSynthPatch in an interactive real-time context, such
+as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the MKSynthPatch.
 
 <h2>Parameter Interpretation</h2>
 
@@ -87,7 +75,7 @@ In addition to the parameters described in <b>Wave1vi.rtfd</b>, the following pa
 
 <b>controlVal</b> - See controlChange.
 
-<b>panSensitivity -</b> In the range 0.0:1.0.  Default is 1.0.
+<b>panSensitivity</b> - In the range 0.0:1.0.  Default is 1.0.
 
 <b>waveformEnv</b>  - wavetable cross-fading envelope
 
@@ -99,19 +87,13 @@ In addition to the parameters described in <b>Wave1vi.rtfd</b>, the following pa
 
 <b>waveformRel</b> - Waveform envelope balance release time.  
 
-
 */
 #ifndef __MK_DBWave2vi_H___
 #define __MK_DBWave2vi_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* 
-	DBWave2vi.h 
 
-	This class is part of the Music Kit MKSynthPatch Library.
-*/
 #import <MusicKit/MKSynthPatch.h>
-@interface DBWave2vi:MKSynthPatch
 
+@interface DBWave2vi: MKSynthPatch
 {
   double amp0, amp1, ampAtt, ampRel, freq0, freq1, freqAtt, freqRel,
          bearing, phase, portamento, svibAmp0, svibAmp1, rvibAmp,
@@ -129,7 +111,7 @@ In addition to the parameters described in <b>Wave1vi.rtfd</b>, the following pa
   @discussion Returns a template. A non-zero for <b>svibAmp</b>and <b>rvibAmp </b> determines
               whether vibrato resources are allocated. 
 */
-+patchTemplateFor:aNote;
++ patchTemplateFor: aNote;
    
 /*!
   @method noteOnSelf:
@@ -137,7 +119,7 @@ In addition to the parameters described in <b>Wave1vi.rtfd</b>, the following pa
   @result Returns an id.
   @discussion <i>aNote</i> is assumed to be a noteOn or noteDur.  This method triggers (or retriggers) the Note's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the Note.  
 */
--noteOnSelf:aNote;
+- noteOnSelf: aNote;
 
 /*!
   @method noteUpdateSelf:
@@ -145,7 +127,7 @@ In addition to the parameters described in <b>Wave1vi.rtfd</b>, the following pa
   @result Returns a id.
   @discussion <i>aNote</i> is assumed to be a noteUpdate and the receiver is assumed to be currently playing a Note.  Sets parameters as specified in <i>aNote.</i>
 */
--noteUpdateSelf:aNote;
+- noteUpdateSelf: aNote;
 
 /*!
   @method noteOffSelf:
@@ -153,14 +135,14 @@ In addition to the parameters described in <b>Wave1vi.rtfd</b>, the following pa
   @result Returns a double.
   @discussion <i>aNote</i> is assumed to be a noteOff.  This method causes the Note's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in <i>aNote.</i>
 */
--(double)noteOffSelf:aNote;
+- (double) noteOffSelf: aNote;
 
 /*!
   @method noteEndSelf
   @result Returns an id.
   @discussion Resest instance variables to default values.
 */
--noteEndSelf;
+- noteEndSelf;
  
 @end
 
