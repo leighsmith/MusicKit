@@ -33,6 +33,10 @@
 Modification history:
 
   $Log$
+  Revision 1.23  2002/04/16 15:21:40  sbrandon
+  new envelopes read from scores are now autoreleased, since the ref counting
+  system works properly for note parameters (they were being leaked before)
+
   Revision 1.22  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -820,7 +824,7 @@ static id env(void)
           stickPoint = curPoint;
         else error(MK_sfNotHereErr,curToken());
     }
-    tmpUnion.symbol = [MKGetEnvelopeClass() new];
+    tmpUnion.symbol = [[MKGetEnvelopeClass() new] autorelease];
     [tmpUnion.symbol setPointCount:NPTS()
                      xArray:dataX
                      orSamplingPeriod:0.0 
@@ -2544,7 +2548,7 @@ static id getBinaryEnvelopeDecl(BOOL inHeader)
             SETDATAVAL(dataCurZ,x); /* Use previous value. */
         }
     }
-    rtn = [MKGetEnvelopeClass() new];
+    rtn = [[MKGetEnvelopeClass() new] autorelease];
     [rtn setPointCount:curPoint + 1
    xArray:dataX
    orSamplingPeriod:0.0 
