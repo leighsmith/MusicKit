@@ -2,7 +2,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 26;
+	objectVersion = 30;
 	objects = {
 		00D2C427FEDB2CB5CFED3B93 = {
 			isa = PBXProject;
@@ -28,16 +28,11 @@
 		};
 		00D2C429FEDB2CB5CFED3B93 = {
 			children = (
-				00D2C42AFEDB2CB5CFED3B93,
+				0422778F0030C8C0CFED3B96,
 			);
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
-		};
-		00D2C42AFEDB2CB5CFED3B93 = {
-			isa = PBXFrameworkReference;
-			path = SndKit.framework;
-			refType = 3;
 		};
 		00D2C42BFEDB2CB5CFED3B93 = {
 			children = (
@@ -98,9 +93,7 @@
 				00D2C43EFEDB2CB5CFED3B93,
 				00D2C43FFEDB2CB5CFED3B93,
 				00D2C440FEDB2CB5CFED3B93,
-				00D2C441FEDB2CB5CFED3B93,
 				00D2C442FEDB2CB5CFED3B93,
-				00D2C443FEDB2CB5CFED3B93,
 			);
 			isa = PBXGroup;
 			name = Headers;
@@ -176,25 +169,15 @@
 			path = _Sndlibst.h;
 			refType = 4;
 		};
-		00D2C441FEDB2CB5CFED3B93 = {
-			isa = PBXFileReference;
-			path = _Sndresample.h;
-			refType = 4;
-		};
 		00D2C442FEDB2CB5CFED3B93 = {
 			isa = PBXFileReference;
 			path = _Sndsmallfilter.h;
 			refType = 4;
 		};
-		00D2C443FEDB2CB5CFED3B93 = {
-			isa = PBXFileReference;
-			path = _Sndstdefs.h;
-			refType = 4;
-		};
 		00D2C444FEDB2CB5CFED3B93 = {
 			children = (
+				042277900030C91CCFED3B96,
 				00D2C445FEDB2CB5CFED3B93,
-				00D2C446FEDB2CB5CFED3B93,
 				00D2C447FEDB2CB5CFED3B93,
 				00D2C448FEDB2CB5CFED3B93,
 				00D2C449FEDB2CB5CFED3B93,
@@ -207,11 +190,6 @@
 		00D2C445FEDB2CB5CFED3B93 = {
 			isa = PBXFileReference;
 			path = SndEndianFunctions.c;
-			refType = 4;
-		};
-		00D2C446FEDB2CB5CFED3B93 = {
-			isa = PBXFileReference;
-			path = SndFunctions.c;
 			refType = 4;
 		};
 		00D2C447FEDB2CB5CFED3B93 = {
@@ -236,52 +214,10 @@
 		};
 		00D2C44BFEDB2CB5CFED3B93 = {
 			children = (
-				00D2C44CFEDB2CB5CFED3B93,
-				00D2C44DFEDB2CB5CFED3B93,
-				00D2C44EFEDB2CB5CFED3B93,
-				00D2C44FFEDB2CB5CFED3B93,
-				00D2C450FEDB2CB5CFED3B93,
-				00D2C451FEDB2CB5CFED3B93,
-				00D2C452FEDB2CB5CFED3B93,
 				00D2C453FEDB2CB5CFED3B93,
 			);
 			isa = PBXGroup;
 			name = "Supporting Files";
-			refType = 4;
-		};
-		00D2C44CFEDB2CB5CFED3B93 = {
-			isa = PBXFileReference;
-			path = Makefile.preamble;
-			refType = 4;
-		};
-		00D2C44DFEDB2CB5CFED3B93 = {
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		00D2C44EFEDB2CB5CFED3B93 = {
-			isa = PBXFileReference;
-			path = Makefile.postamble;
-			refType = 4;
-		};
-		00D2C44FFEDB2CB5CFED3B93 = {
-			isa = PBXFileReference;
-			path = m.template;
-			refType = 4;
-		};
-		00D2C450FEDB2CB5CFED3B93 = {
-			isa = PBXFileReference;
-			path = h.template;
-			refType = 4;
-		};
-		00D2C451FEDB2CB5CFED3B93 = {
-			isa = PBXFileReference;
-			path = make.sh;
-			refType = 4;
-		};
-		00D2C452FEDB2CB5CFED3B93 = {
-			isa = PBXFileReference;
-			path = platform.make;
 			refType = 4;
 		};
 		00D2C453FEDB2CB5CFED3B93 = {
@@ -291,6 +227,7 @@
 		};
 		00D2C454FEDB2CB5CFED3B93 = {
 			children = (
+				042277920030CC78CFED3B96,
 				00D2C455FEDB2CB5CFED3B93,
 				00D2C456FEDB2CB5CFED3B93,
 				00D2C457FEDB2CB5CFED3B93,
@@ -335,7 +272,10 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
+				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_VERSION = 1.4;
+				HEADER_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "-O2 -Wall";
 				OTHER_LDFLAGS = "-O2 -Wall";
@@ -354,20 +294,36 @@
 			name = "SndKit (Framework)";
 			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 			productName = SndKit;
-			productReference = 00D2C42AFEDB2CB5CFED3B93;
-			productSettings = {
-				CFBundleDevelopmentRegion = English;
-				CFBundleExecutable = SndKit;
-				CFBundleGetInfoString = "";
-				CFBundleIconFile = "";
-				CFBundleIdentifier = "";
-				CFBundleInfoDictionaryVersion = 6.0;
-				CFBundleName = "";
-				CFBundlePackageType = FMWK;
-				CFBundleShortVersionString = "";
-				CFBundleSignature = "????";
-				CFBundleVersion = 0.0.1d1;
-			};
+			productReference = 0422778F0030C8C0CFED3B96;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
+<plist version=\"0.9\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>SndKit</string>
+	<key>CFBundleGetInfoString</key>
+	<string>A collection of classes for representing, displaying and performing sound</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string>org.musickit.SndKit</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>The SndKit</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>V1.4.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.4.0</string>
+</dict>
+</plist>
+";
 			shouldUseHeadermap = 0;
 		};
 		00D2C45AFEDB2CB5CFED3B93 = {
@@ -387,9 +343,7 @@
 				00D2C466FEDB2CB5CFED3B93,
 				00D2C467FEDB2CB5CFED3B93,
 				00D2C468FEDB2CB5CFED3B93,
-				00D2C469FEDB2CB5CFED3B93,
 				00D2C46AFEDB2CB5CFED3B93,
-				00D2C46BFEDB2CB5CFED3B93,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -585,30 +539,8 @@
 				);
 			};
 		};
-		00D2C469FEDB2CB5CFED3B93 = {
-			fileRef = 00D2C441FEDB2CB5CFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
 		00D2C46AFEDB2CB5CFED3B93 = {
 			fileRef = 00D2C442FEDB2CB5CFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
-		00D2C46BFEDB2CB5CFED3B93 = {
-			fileRef = 00D2C443FEDB2CB5CFED3B93;
 			isa = PBXBuildFile;
 			settings = {
 				INCLUDED_OSS = (
@@ -635,11 +567,11 @@
 				00D2C472FEDB2CB5CFED3B93,
 				00D2C473FEDB2CB5CFED3B93,
 				00D2C474FEDB2CB5CFED3B93,
-				00D2C475FEDB2CB5CFED3B93,
 				00D2C476FEDB2CB5CFED3B93,
 				00D2C477FEDB2CB5CFED3B93,
 				00D2C478FEDB2CB5CFED3B93,
 				00D2C479FEDB2CB5CFED3B93,
+				042277910030C91CCFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -742,20 +674,6 @@
 				);
 			};
 		};
-		00D2C475FEDB2CB5CFED3B93 = {
-			fileRef = 00D2C446FEDB2CB5CFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
 		00D2C476FEDB2CB5CFED3B93 = {
 			fileRef = 00D2C447FEDB2CB5CFED3B93;
 			isa = PBXBuildFile;
@@ -819,6 +737,7 @@
 				00D2C47CFEDB2CB5CFED3B93,
 				00D2C47DFEDB2CB5CFED3B93,
 				00D2C47EFEDB2CB5CFED3B93,
+				042277930030CC78CFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -873,6 +792,47 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
+		};
+		0422778F0030C8C0CFED3B96 = {
+			isa = PBXFrameworkReference;
+			path = SndKit.framework;
+			refType = 3;
+		};
+		042277900030C91CCFED3B96 = {
+			isa = PBXFileReference;
+			path = SndFunctions.m;
+			refType = 4;
+		};
+		042277910030C91CCFED3B96 = {
+			fileRef = 042277900030C91CCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		042277920030CC78CFED3B96 = {
+			isa = PBXFileReference;
+			name = libst.a;
+			path = /manray/usrlocal/lib/libst.a;
+			refType = 0;
+		};
+		042277930030CC78CFED3B96 = {
+			fileRef = 042277920030CC78CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
 		};
 	};
 	rootObject = 00D2C427FEDB2CB5CFED3B93;
