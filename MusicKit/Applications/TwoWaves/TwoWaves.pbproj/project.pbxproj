@@ -21,7 +21,6 @@
 				0141A535FFE98C9ACFED3B96,
 				0141A539FFE98C9ACFED3B96,
 				0141A53DFFE98C9ACFED3B96,
-				0141A541FFE98C9ACFED3B96,
 				0141A542FFE98C9ACFED3B96,
 			);
 			isa = PBXGroup;
@@ -147,12 +146,6 @@
 			isa = PBXFrameworkReference;
 			name = Foundation.framework;
 			path = /System/Library/Frameworks/Foundation.framework;
-			refType = 0;
-		};
-		0141A541FFE98C9ACFED3B96 = {
-			isa = PBXFileReference;
-			name = "Import Log.rtf";
-			path = "/manray/Local/Users/leigh/Sources/PublicDomain/SndKit/Applications/TwoWaves/Import Log.rtf";
 			refType = 0;
 		};
 		0141A542FFE98C9ACFED3B96 = {
