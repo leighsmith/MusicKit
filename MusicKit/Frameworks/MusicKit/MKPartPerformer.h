@@ -40,6 +40,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.6  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -158,14 +161,6 @@ See also:  MKPerformer, MKScorePerformer, MKPart
               value is ignored.
 */
 - init;
- /* 
-  * Initializes the receiver by creating and adding its single MKNoteSender.  You
-  * never invoke this method directly.  A subclass implementation should send
-  * [super init] before performing its own initialization.  The return
-  * value is ignored.  
-  */
-
-
 /*!
   @method setPart:
   @param  aPart is an id.
@@ -174,14 +169,14 @@ See also:  MKPerformer, MKScorePerformer, MKPart
               active, this does nothing and returns <b>nil</b>.  Otherwise returns
               the receiver.
 */
-- setPart:aPart; 
+- setPart: (MKPart*) aPart; 
 
 /*!
   @method part
   @result Returns an id.
   @discussion Returns the receiver's MKPart object.
 */
-- part;
+- (MKPart*) part;
 
 /*!
   @method activateSelf

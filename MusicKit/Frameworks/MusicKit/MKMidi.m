@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.46  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.45  2002/01/29 16:20:33  sbrandon
   tidied up object retain/release in getAvailableMidiDevices,
   preventing array leaks/stale pointers when no MIDI devices are
@@ -1928,7 +1931,10 @@ static void cancelQueueReq(MKMidi *self)
         for(i = 0; i < [dlsPatches count]; i++)
             dlsPatchArray[i] = [[dlsPatches objectAtIndex: i] unsignedIntValue];
         MKMDDownloadDLSInstruments(dlsPatchArray, [dlsPatches count]);
-        free(dlsPatchArray);
+        if (dlsPatchArray != NULL) {
+          free(dlsPatchArray);
+          dlsPatchArray = NULL;
+        }
     }
 }
 

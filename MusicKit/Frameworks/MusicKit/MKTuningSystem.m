@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.10  2002/01/29 16:42:19  sbrandon
   changed several uses of NSMutableArray arrayWithArray/retain to
   NSMutableArray initWithCapacity to avoid autoreleases
@@ -407,12 +410,14 @@ void _MKTuningSystemInit(void)
 -init
   /* Returns a new tuning system initialized to 12-tone equal tempered. */
 {
-    [super init];
+  self = [super init];
+  if (self != nil) {
     if (!tuningInited)
       _MKCheckInit();
     frequencies = [[NSMutableArray alloc] initWithCapacity: MIDI_NUMKEYS];
     [self setTo12ToneTempered];
-    return self;
+  }
+  return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -422,9 +427,12 @@ void _MKTuningSystemInit(void)
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-    if ([aDecoder versionForClassName: @"MKTuningSystem"] == VERSION2) 
-        frequencies = [[aDecoder decodeObject] retain];
-    return self;
+  self = [self init];
+  if (self != nil) {
+    if ([aDecoder versionForClassName: @"MKTuningSystem"] == VERSION2)
+      frequencies = [[aDecoder decodeObject] retain];
+  }
+  return self;
 }
 
 -setTo12ToneTempered
@@ -454,8 +462,11 @@ void _MKTuningSystemInit(void)
 
 - (void)dealloc
 {
+  if (frequencies != nil) {
     [frequencies release];
-    [super dealloc];
+    frequencies = nil;
+  }
+  [super dealloc];
 }
 
 - copyWithZone:(NSZone *)zone
@@ -487,12 +498,16 @@ void _MKTuningSystemInit(void)
     register int i;
     register id *pit;
 
-    [super init];
-    if (!tuningInited)
-      _MKCheckInit();
-    frequencies = [[NSMutableArray alloc] initWithCapacity: MIDI_NUMKEYS];
-    for (i=0, pit = pitchVars; i<MIDI_NUMKEYS; i++)
-        [frequencies addObject: [NSNumber numberWithDouble: _MKParAsDouble(_MKSFVarGetParameter(*pit++))]];
+    self = [super init];
+    if (self != nil) {
+      if (!tuningInited)
+        _MKCheckInit();
+      frequencies = [[NSMutableArray alloc] initWithCapacity: MIDI_NUMKEYS];
+      for (i=0, pit = pitchVars; i<MIDI_NUMKEYS; i++) {
+        double d =  _MKParAsDouble(_MKSFVarGetParameter(*pit++));
+        [frequencies addObject: [NSNumber numberWithDouble: d]];
+      }
+    }
     return self;
 }
 

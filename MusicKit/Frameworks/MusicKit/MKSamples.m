@@ -23,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.6  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -360,12 +363,14 @@ of it.
        multiple of the desired length, we can do cheap sampling rate 
        conversion. */
 
-    if (dataDSP) 
+    if (dataDSP) {
       free(dataDSP);
+      dataDSP = NULL;
+    }
     _MK_MALLOC(dataDSP, DSPDatum, aLength);
     if (dataDouble) {
-	free(dataDouble); 
-	dataDouble = NULL;
+      free(dataDouble);
+      dataDouble = NULL;
     }
     length = aLength;
     scaling = aScaling;

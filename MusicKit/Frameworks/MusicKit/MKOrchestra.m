@@ -35,6 +35,9 @@
 Modification history:
 
   $Log$
+  Revision 1.26  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.25  2002/01/29 16:36:22  skotmcdonald
   Fixed small character combination / * in log causing log comment block to be prematurely ended
 
@@ -449,10 +452,13 @@ static dataMemBlockStruct *freeDataMemBlock(dataMemBlockStruct *block)
     /* Free a dataMemBlockStruct. Cache it, if possible */
 {
     if (block) {
-        if (dataMemBlockCachePtr < DATAMEMBLOCKCACHESIZE) {
-            dataMemBlockCache[dataMemBlockCachePtr++] = block;
-        }
-        else free(block);
+      if (dataMemBlockCachePtr < DATAMEMBLOCKCACHESIZE) {
+        dataMemBlockCache[dataMemBlockCachePtr++] = block;
+      }
+      else {
+        free(block);
+        block = NULL;
+      }
     }
     return NULL;
 }
@@ -1873,10 +1879,14 @@ self->muLawROM = self->sineROM = self->xZero = self->yZero =
     self->_sharedSet = _MKFreeSharedSet(self->_sharedSet, &self->sharedGarbage);
     [self->unitGeneratorStack release];
     self->unitGeneratorStack = nil;//sb: added
-    free(self->_xPatch);
-    free(self->_yPatch);
-    self->_xPatch = NULL;
-    self->_yPatch = NULL;
+    if (self->_xPatch != NULL) {
+      free(self->_xPatch);
+      self->_xPatch = NULL;
+    }
+    if (self->_yPatch != NULL) {
+      free(self->_yPatch);
+      self->_yPatch = NULL;
+    }
     self->_xPatchAllocBits = 0;
     self->_yPatchAllocBits = 0;
     [self setTimed:wasTimed];

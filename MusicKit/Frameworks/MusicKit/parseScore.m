@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.22  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.21  2002/03/12 23:17:41  sbrandon
   Major overhaul of binary scorefile handling, fixes some longstanding bugs.
   Most internal functions dealing with binary IO now take an extra argument
@@ -1020,11 +1023,14 @@ static void namedDataDecl(_MKToken type)
     /* The following code creates a unique new name for the Musickit table. 
        If the object is a duplicate, a name is generated of the form
        <oldName><low integer>. */
-    addLocalSymbol([NSString stringWithCString:name],dataObj,dataToken);       
-    MKNameObject([NSString stringWithCString:name],dataObj);
+    {
+      NSString *s = [NSString stringWithCString:name];
+      addLocalSymbol(s,dataObj,dataToken);
+      MKNameObject(s,dataObj);
+    }
     /* Name may collide with other object names but that's ok! It'll get
        resolved when its written out. */
-    free(name); 
+    free(name); name = NULL;
     emitVar(tmpType,tmpUnion);               /* Put data itself 
                                                 back on stack. */
 }
@@ -2106,6 +2112,7 @@ initParsePtr(NSData *aStream, BOOL TopLevelFile, NSString *name)
         [parsePtr->_name autorelease];
         [parsePtr->_stream autorelease]; // LMS: I assume we need to do this.
         free(parsePtr);
+        parsePtr = NULL;
         return NULL;
     }
     /* Note: even if we didn't need to check the first char, we'd need
@@ -2168,6 +2175,7 @@ popFileStack(void)
     scoreRPtr->_parsePtr = (void *)parsePtr->_backwardsLink;   
     /* Pop file stack.*/
     free(parsePtr);
+    parsePtr = NULL;
     loadFromStruct(scoreRPtr);
     return parsePtr;
 }
@@ -2194,8 +2202,9 @@ _MKScoreInStruct * _MKFinishScoreIn(_MKScoreInStruct *scorefileRPtr)
 #ifndef WIN32
     setstate(defaultStateArr); /* Make libc forget our ranState */
     free(scoreRPtr->_ranState);  /* 1/13/96 DAJ */
+    scoreRPtr->_ranState = NULL;
 #endif
-    free(scoreRPtr);
+    free(scoreRPtr); scoreRPtr = NULL;
     return NULL;
 }
 
@@ -3038,6 +3047,7 @@ static void popStructureStack(void)
       return;
     scoreRPtr->_repeatStack = tmp->next;
     free(tmp);
+    tmp = NULL;
 }
 
 static progStructure *addProgStruct(void)

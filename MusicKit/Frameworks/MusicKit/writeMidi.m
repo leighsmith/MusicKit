@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2002/04/03 03:59:42  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.13  2002/01/23 15:33:02  sbrandon
   The start of a major cleanup of memory management within the MK. This set of
   changes revolves around MKNote allocation/retain/release/autorelease.
@@ -174,7 +177,7 @@ static void freeMidiOutNode(NSMapTable *table, void *aNode)
     cancelMidiOutNoteDurMsg((midiOutNode *) aNode);
     if (midiOutNodeCachePtr < CACHESIZE)
         midiOutNodeCache[midiOutNodeCachePtr++] = (midiOutNode *) aNode;
-    else
+    else 
         free(aNode);
 }
 
@@ -242,7 +245,7 @@ _MKMidiOutStruct *_MKFinishMidiOut(_MKMidiOutStruct *ptr)
     if (!ptr) 
         return NULL;
     for (i = 0; i < MIDI_NUMCHANS; i++) {
-	NSFreeMapTable(ptr->_map[i]);
+      NSFreeMapTable(ptr->_map[i]);
     }
     free(ptr);
     return NULL;

@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.7  2002/01/29 16:32:01  sbrandon
   don't bother to retain/release constant NSStrings
   (_MK_BINARYSCOREFILEEXT, _MK_SCOREFILEEXT)
@@ -262,16 +265,20 @@ Modification history:
 - (void)dealloc
   /* Frees receiver, MKNoteReceivers and info notes. */ 
 {
-    /*sb: FIXME!!! This is not the right place to decide whether or not to dealloc.
-     * maybe need to put self in a global list of non-dealloced objects for later cleanup */
-    unsigned n, i;
-    if ([self inPerformance])
-      return;
+  /*sb: FIXME!!! This is not the right place to decide whether or not to dealloc.
+  * maybe need to put self in a global list of non-dealloced objects for later cleanup */
+  unsigned n, i;
+  if ([self inPerformance])
+    return;
+  if (info != nil) {
     [info release];
-    n = [noteReceivers count];
-    for (i = 0; i < n; i++)
-        [PARTINFO([noteReceivers objectAtIndex: i]) release]; /* Free part info notes. */
-    [super dealloc];
+    info = nil;
+  }
+  n = [noteReceivers count];
+  for (i = 0; i < n; i++)
+    [PARTINFO([noteReceivers objectAtIndex: i]) release]; /* Free part info notes. */
+  
+  [super dealloc];
 }
 
 -realizeNote:aNote fromNoteReceiver:aNoteReceiver

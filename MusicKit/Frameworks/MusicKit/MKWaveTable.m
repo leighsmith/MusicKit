@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.5  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -134,11 +137,20 @@ Modification history:
    A subclass should send [super init] if it overrides this 
    method. */ 
 {
-    if (dataDSP) {free(dataDSP); dataDSP = NULL; }
-    if (dataDouble) {free(dataDouble); dataDouble = NULL; }
+  self = [super init];
+  if (self != nil) {
+    if (dataDSP) {
+      free(dataDSP);
+      dataDSP = NULL;
+    }
+    if (dataDouble) {
+      free(dataDouble);
+      dataDouble = NULL;
+    }
     length = 0;
     scaling = 0.0;
-    return self;
+  }
+  return self;
 }
  
 - copyWithZone:(NSZone *)zone
@@ -160,12 +172,16 @@ Modification history:
 /* Frees cached data arrays then sends [super free].
    It also removes the name, if any, from the Music Kit name table. */
 {
-    if (dataDSP) 
-      free(dataDSP);
-    if (dataDouble) 
-      free(dataDouble);
-    MKRemoveObjectName(self);
-    [super dealloc];
+  if (dataDSP) {
+    free(dataDSP);
+    dataDSP = NULL;
+  }
+  if (dataDouble) {
+    free(dataDouble);
+    dataDouble = NULL;
+  }
+  MKRemoveObjectName(self);
+  [super dealloc];
 }
 
 - (unsigned int)length

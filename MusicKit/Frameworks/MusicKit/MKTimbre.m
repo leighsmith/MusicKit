@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.7  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -285,11 +288,17 @@ static MKWaveTable *waveTableForFreq(MKTimbre *timbre,
 
 - (void)dealloc
 {
-    [timbreDictionary removeObjectForKey: timbreName];
+  [timbreDictionary removeObjectForKey: timbreName];
+  if (waveTables != nil) {
     [waveTables removeAllObjects];
     [waveTables release];
+    waveTables = nil;
+  }
+  if (freqs != nil) {
     [freqs release];
-    [super dealloc];
+    freqs = nil;
+  }
+  [super dealloc];
 }
 
 - copyWithZone:(NSZone *)zone
@@ -309,17 +318,27 @@ static MKWaveTable *waveTableForFreq(MKTimbre *timbre,
 
 -init
 {
+  self = [super init];
+  if (self != nil) {
+    
     if (timbreName)
-        [timbreDictionary removeObjectForKey: timbreName];
-    [waveTables release];
-    [freqs release];
+      [timbreDictionary removeObjectForKey: timbreName];
+    if (waveTables) {
+      [waveTables release];
+      waveTables = nil;
+    }
+    if (freqs) {
+      [freqs release];
+      freqs = nil;
+    }
     waveTables = [[NSMutableArray allocWithZone:[self zone]] init];
     freqs = [[NSMutableArray allocWithZone:[self zone]] init];
-/*    freqs = [Storage newCount:0 elementSize:sizeof(double) 
-	   description:"d"];
+    /*    freqs = [Storage newCount:0 elementSize:sizeof(double)
+description:"d"];
  */
     timbreName = NULL;
-    return self;
+  }
+  return self;
 }
 
 +newTimbre:(NSString *)newTimbreName;

@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.12  2002/01/29 16:44:26  sbrandon
   changed +argName and argName() to return NSStrings; also changed all
   uses of _MKOrchTrace to use NSString args.
@@ -431,7 +434,8 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
    * returns nil. The default implementation returns self. 
    */
 {
-    return self;
+  self = [super init];
+  return self;
 }
 
 
@@ -1275,6 +1279,7 @@ extern int _MKOrchestraGetNoops(void);
 	tmp->_next = ((MKUnitGenerator *)(tmp->_next))->_next;
       else tmp = tmp->_next;
     free(args);
+    args = NULL;
 //    [super release];
     if (_MK_ORCHTRACE(orchestra,MK_TRACEORCHALLOC))
         _MKOrchTrace(orchestra,MK_TRACEORCHALLOC,@"Freeing %@_%p",NSStringFromClass([self class]),

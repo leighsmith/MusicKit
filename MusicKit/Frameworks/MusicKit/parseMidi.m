@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.7  2002/04/01 12:00:31  sbrandon
   fixed bug leading to double-dealloc of notes used in MIDI. _MKMidiToMusicKit
   now returns a retained/autoreleased MKNote instead of just an autoreleased one.
@@ -195,7 +198,7 @@ static int removeHeadOfList(midiInList *l,_MKMidiInStruct *ptr,short keyNum)
 	CLEAR_ON(ptr,ptr->chan,keyNum);
     } else l->head->prev = NULL;
     rtnVal = n->tag;
-    free(n);
+    free(n); n = NULL;
     return rtnVal;
 }
 

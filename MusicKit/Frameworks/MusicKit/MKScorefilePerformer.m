@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.8  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -102,9 +105,11 @@ Modification history:
    * You never invoke this method directly.
    */
 {
-    [super init];
-    _partStubs = [[NSMutableArray alloc] init];
-    return self;
+  self = [super init];
+  if (self != nil) {
+    _partStubs = [NSMutableArray new];
+  }
+  return self;
 }
 
 +(NSString *)fileExtension
@@ -250,10 +255,16 @@ Modification history:
      * maybe need to put self in a global list of non-dealloced objects for later cleanup */
     if (status != MK_inactive)
       return;
+  if (_partStubs != nil) {
     [_partStubs removeAllObjects];
     [_partStubs release];
+    _partStubs = nil;
+  }
+  if (info != nil) {
     [info release];
-    [super dealloc];
+    info = nil;
+  }
+  [super dealloc];
 }
 
 - copyWithZone:(NSZone *)zone

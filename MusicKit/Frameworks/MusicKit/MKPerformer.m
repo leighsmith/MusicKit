@@ -108,6 +108,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.11  2002/01/29 16:30:18  sbrandon
   fixed object leak in copyWithZone (not releasing copies)
   removed redundant NeXTSTEP comments
@@ -697,7 +700,10 @@ static id copyFields(MKPerformer *self,MKPerformer *newObj)
      * maybe need to put self in a global list of non-dealloced objects for later cleanup */
     if (status != MK_inactive)
       return;
+  if (_performMsgPtr != NULL) {
     free(_performMsgPtr);
+    _performMsgPtr = NULL;
+  }
     [self releaseNoteSenders];
     [noteSenders release];
     [super dealloc];

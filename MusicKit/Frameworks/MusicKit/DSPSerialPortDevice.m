@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.4  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -144,11 +147,17 @@ Modification history:
     int i;
     for (i=0; i<cnt; i++) {
 	if (EQU(arr[i],rate)) {
-	  free((void *)arr);
-	  return YES; 	
-        }
+    if ((void *)arr != NULL) {
+      free((void *)arr);
+      arr = NULL;
     }
-    free((void *)arr);
+	  return YES;
+  }
+    }
+    if ((void *)arr != NULL) {
+      free((void *)arr);
+      arr = NULL;
+    }
     return NO;
 }
 

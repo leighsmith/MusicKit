@@ -23,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2002/04/03 03:59:42  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.9  2002/03/12 23:02:24  sbrandon
   Cleaned up some formatting and typos.
   Changed _binaryIndecies from NSMutableDictionary to NSMapTable.
@@ -225,12 +228,13 @@ _MKScoreOutStruct *_MKFinishScoreOut(_MKScoreOutStruct * p, BOOL writeEnd)
               }
 	  }
 	}
-	_MKFreeScorefileTable(p->_nameTable);
+    _MKFreeScorefileTable(p->_nameTable);
         [p->_stream release];
         if (p->_binaryIndecies) {
             NSFreeMapTable(p->_binaryIndecies);
         }
-	free(p);
+        free(p);
+        p = NULL;
     }
     return NULL;
 }

@@ -15,6 +15,9 @@ Modification history:
  Now in CVS - musickit.sourceforge.net
 
  $Log$
+ Revision 1.26  2002/04/03 03:59:41  skotmcdonald
+ Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
  Revision 1.25  2002/03/27 20:07:11  skotmcdonald
  Added method atOrBeforeTime:, symmetrical to preexisting atOrAfterTime: note accessor
 
@@ -350,8 +353,8 @@ static void removeNote(MKPart *self,id aNote);
   */
 {
   self = [super init];
-  if (self) {
-    notes = [[NSMutableArray alloc] init];
+  if (self != nil) {
+    notes    = [NSMutableArray new];
     isSorted = YES;
   }
   return self;
@@ -371,11 +374,13 @@ static void removeNote(MKPart *self,id aNote);
     NSLog(@"MusicKit MKPart object: deallocation attempt while _activePerformanceObjs (should not happen). Ignoring.\n");
     //return;
   }
-  MKRemoveObjectName(self);
-  if (score)
+  if (score != nil)
     [score removePart:self];  // moved over from releaseSelfOnly
-  if (notes)
+  if (notes != nil) {
     [notes release];
+    notes = nil;
+  }
+  MKRemoveObjectName(self);
   [super dealloc];
   // Changed on K. Hamels suggestion, used to message to releaseSelfOnly but this would cause a dealloc loop.
 }
@@ -1104,20 +1109,24 @@ static void removeNote(MKPart *self, MKNote *aNote)
   NSString *str;
   NSMutableDictionary *tagTable;
 
-  if ([aDecoder versionForClassName:@"MKPart"] == VERSION2) {
-    score = [[aDecoder decodeObject] retain];
-    [aDecoder decodeValuesOfObjCTypes:"@@ic@i",&notes,&info,&noteCount,&isSorted,
-      &str,&_highestOrderTag];
-    if (str) {
-      MKNameObject(str,self);
-      //            free(str);
+  self = [super init];
+  if (self != nil) {
+
+    if ([aDecoder versionForClassName:@"MKPart"] == VERSION2) {
+      score = [[aDecoder decodeObject] retain];
+      [aDecoder decodeValuesOfObjCTypes:"@@ic@i",&notes,&info,&noteCount,&isSorted,
+        &str,&_highestOrderTag];
+      if (str) {
+        MKNameObject(str,self);
+        //            free(str);
+      }
     }
+    /* from awake (sb) */
+    if ([MKScore _isUnarchiving])
+      return self;
+    tagTable = [NSMutableDictionary dictionary];
+    [self _mapTags: tagTable];
   }
-  /* from awake (sb) */
-  if ([MKScore _isUnarchiving])
-    return self;
-  tagTable = [NSMutableDictionary dictionary];
-  [self _mapTags: tagTable];
   return self;
 }
 

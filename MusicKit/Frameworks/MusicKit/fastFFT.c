@@ -15,6 +15,9 @@
 Modification history:
 
    $Log$
+   Revision 1.6  2002/04/03 03:59:41  skotmcdonald
+   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
    Revision 1.5  2001/05/12 09:32:55  sbrandon
    - GNUSTEP: changed imports to includes
 
@@ -90,8 +93,8 @@ static void init_sincos(int n) {
 
         cur_run = n;
         quart = (cur_run>>2);
-        if(sintable) free(sintable);
-        if(costable) free(costable);
+        if(sintable) { free(sintable); sintable = NULL; }
+        if(costable) { free(costable); costable = NULL; }
 
         sintable = (double *)malloc(sizeof(double)*(1+n));
         costable = (double *)malloc(sizeof(double)*(1+n));

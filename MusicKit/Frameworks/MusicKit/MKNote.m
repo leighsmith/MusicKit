@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.24  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.23  2002/04/01 11:58:57  sbrandon
   paranoia check on MKNotes as they are deallocated - set various hashtables
   to null. This is because MKNotes are not actually deallocated - just added
@@ -359,18 +362,20 @@ static unsigned noteCachePtr = 0;
 
 -initWithTimeTag:(double)aTimeTag
 {
-    [super init];
-    noteTag = MAXINT;
-    noteType = MK_mute;
-    timeTag = aTimeTag;
+  self = [super init];
+  if (self != nil) {
+    noteTag   = MAXINT;
+    noteType  = MK_mute;
+    timeTag   = aTimeTag;
     performer = nil;
     conductor = nil;
-    return self;
+  }
+  return self;
 }
 
 -init
 {
-    return [self initWithTimeTag:MK_ENDOFTIME];
+  return [self initWithTimeTag:MK_ENDOFTIME];
 }
 
 +noteWithTimeTag:(double)aTimeTag
@@ -381,20 +386,20 @@ static unsigned noteCachePtr = 0;
    * Returns the new object.
    */
 {
-    MKNote *newObj;
-    if (self == noteClass && noteCachePtr) { 
+  MKNote *newObj;
+  if (self == noteClass && noteCachePtr) { 
 	/* We initialize reused MKNotes here. */
-	newObj = noteCache[--noteCachePtr]; 
-	newObj->_parameters = NULL;
-	memset(&(newObj->_mkPars[0]), 0, 
-	       MK_MKPARBITVECTS * sizeof(newObj->_mkPars[0])); 
-	newObj->_highAppPar = 0;
-	newObj->_appPars = NULL;
-    }
-    else 
-      newObj = [super allocWithZone:NSDefaultMallocZone()];
-    [newObj initWithTimeTag:aTimeTag];
-    return [newObj autorelease];
+    newObj = noteCache[--noteCachePtr];
+    newObj->_parameters = NULL;
+    memset(&(newObj->_mkPars[0]), 0,
+           MK_MKPARBITVECTS * sizeof(newObj->_mkPars[0]));
+    newObj->_highAppPar = 0;
+    newObj->_appPars = NULL;
+  }
+  else
+    newObj = [super allocWithZone:NSDefaultMallocZone()];
+  [newObj initWithTimeTag:aTimeTag];
+  return [newObj autorelease];
 }
 
 + note 
@@ -431,16 +436,21 @@ static unsigned noteCachePtr = 0;
    */
 {
     [part removeNote:self];
+
+  if (_parameters)
     freeHashTable(_parameters);
-    _parameters = NULL;
-    if (_highAppPar) 
-      free(_appPars);
-    _appPars = NULL;
-    if (((NSObject *)(self->isa)) == noteClass)
-      if (noteCachePtr < NOTECACHESIZE) {
-          noteCache[noteCachePtr++] = self;
-      } else [super dealloc];
+  _parameters = NULL;
+
+  if (_highAppPar)
+    free(_appPars);
+  _appPars = NULL;
+  
+  if (((NSObject *)(self->isa)) == noteClass)
+    if (noteCachePtr < NOTECACHESIZE) {
+      noteCache[noteCachePtr++] = self;
+    }
     else [super dealloc];
+  else [super dealloc];
 }
 
 
@@ -1906,7 +1916,8 @@ int MKNextParameter(MKNote *aNote, NSHashEnumerator *aState)
             return MKNextParameter(aNote,aState);
     else {
         if (cachedHashState) { /* Cache is full */
-            free(aState);
+          free(aState);
+          aState = NULL;
         }
 	else
 	    cachedHashState = aState; /* Cache it */

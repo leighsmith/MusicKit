@@ -40,6 +40,9 @@
 Modification history:
 
  $Log$
+ Revision 1.13  2002/04/03 03:59:41  skotmcdonald
+ Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
  Revision 1.12  2002/03/06 19:02:05  leighsmith
  Added extra NULL parameter to match new prototype for resample()
 
@@ -257,7 +260,10 @@ static void swapIt(short *data,int howMany)
         [stream appendBytes: (void *) samps length: curBufSize * sizeof(short)];
 	curOutSamp += curBufSize;
     }
+  if (samps) {
     free(samps);
+    samps = NULL;
+}
     return self;
 }
 

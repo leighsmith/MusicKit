@@ -17,9 +17,12 @@
  Portions Copyright (c) 1999-2000, The MusicKit Project.
  */
 /*
-Modification history:
+ Modification history:
 
  $Log$
+ Revision 1.32  2002/04/03 03:59:41  skotmcdonald
+ Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
  Revision 1.31  2002/03/12 22:52:56  sbrandon
  Changed some of the ways that the list of parts is dealt with. Specifically,
  changed to indexOfObjectIdenticalTo: from indexOfObject, since the isEqual:
@@ -202,7 +205,10 @@ Modification history:
   * before setting its own defaults.
   */
 {
-  parts = [[NSMutableArray alloc] init];
+  self = [super init];
+  if (self != nil) {
+    parts = [NSMutableArray new];
+  }
   return self;
 }
 
@@ -222,12 +228,16 @@ Modification history:
 - (void)dealloc
   /* Frees receiver, parts and MKNotes, including info note. */
 {
-  [parts makeObjectsPerformSelector:@selector(_unsetScore)];
+  if (parts != nil) {
+    [parts makeObjectsPerformSelector:@selector(_unsetScore)];
   //    [parts removeAllObjects];          // LMS redundant
-  [parts release];
-  parts = nil;
-  [info release];
-  info = nil;
+    [parts release];
+    parts = nil;
+  }
+  if (info != nil) {
+    [info release];
+    info = nil;
+  }
   [super dealloc];
 }
 
@@ -305,7 +315,7 @@ static id readScorefile(MKScore *self, NSData *stream,
    lastTimeTag:(double)lastTimeTag
 {
   return [self readScorefile:fileName firstTimeTag:firstTimeTag
-                  lastTimeTag:lastTimeTag timeShift:0.0];
+                 lastTimeTag:lastTimeTag timeShift:0.0];
 }
 
 -readScorefileStream:(NSData *)stream
@@ -313,19 +323,19 @@ static id readScorefile(MKScore *self, NSData *stream,
          lastTimeTag:(double)lastTimeTag
 {
   return [self readScorefileStream:stream firstTimeTag:firstTimeTag
-                        lastTimeTag:lastTimeTag timeShift:0.0];
+                       lastTimeTag:lastTimeTag timeShift:0.0];
 }
 
 -readScorefile:(NSString *)fileName
 {
   return [self readScorefile:fileName firstTimeTag:0.0
-                  lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+                 lastTimeTag:MK_ENDOFTIME timeShift:0.0];
 }
 
 -readScorefileStream:(NSData *)stream
 {
   return [self readScorefileStream:stream firstTimeTag:0.0
-                        lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+                       lastTimeTag:MK_ENDOFTIME timeShift:0.0];
 }
 
 /* Writing Scorefiles --------------------------------------------------- */
@@ -414,10 +424,10 @@ static void writeNotes();
   bounds. */
 {
   return [self _writeScorefile:aFileName
-                   firstTimeTag:firstTimeTag
-                    lastTimeTag:lastTimeTag
-                      timeShift:timeShift
-                         binary:NO];
+                  firstTimeTag:firstTimeTag
+                   lastTimeTag:lastTimeTag
+                     timeShift:timeShift
+                        binary:NO];
 }
 
 -writeScorefileStream:(NSMutableData *)aStream
@@ -428,9 +438,9 @@ static void writeNotes();
   time bounds. */
 {
   return [self _writeScorefileStream:aStream
-                         firstTimeTag:firstTimeTag
-                          lastTimeTag:lastTimeTag
-                            timeShift:timeShift binary:NO];
+                        firstTimeTag:firstTimeTag
+                         lastTimeTag:lastTimeTag
+                           timeShift:timeShift binary:NO];
 }
 
 -writeOptimizedScorefile:(NSString *)aFileName
@@ -441,10 +451,10 @@ static void writeNotes();
   bounds. */
 {
   return [self _writeScorefile:aFileName
-                   firstTimeTag:firstTimeTag
-                    lastTimeTag:lastTimeTag
-                      timeShift:timeShift
-                         binary:YES];
+                  firstTimeTag:firstTimeTag
+                   lastTimeTag:lastTimeTag
+                     timeShift:timeShift
+                        binary:YES];
 }
 
 -writeOptimizedScorefileStream:(NSMutableData *)aStream
@@ -455,9 +465,9 @@ static void writeNotes();
   time bounds. */
 {
   return [self _writeScorefileStream:aStream
-                         firstTimeTag:firstTimeTag
-                          lastTimeTag:lastTimeTag
-                            timeShift:timeShift binary:YES];
+                        firstTimeTag:firstTimeTag
+                         lastTimeTag:lastTimeTag
+                           timeShift:timeShift binary:YES];
 }
 
 /* Scorefile writing "convenience methods" ------------------------ */
@@ -467,10 +477,10 @@ static void writeNotes();
     lastTimeTag:(double)lastTimeTag
 {
   return [self _writeScorefile:aFileName
-                   firstTimeTag:firstTimeTag
-                    lastTimeTag:lastTimeTag
-                      timeShift:0.0
-                         binary:NO];
+                  firstTimeTag:firstTimeTag
+                   lastTimeTag:lastTimeTag
+                     timeShift:0.0
+                        binary:NO];
 }
 
 -writeScorefileStream:(NSMutableData *)aStream
@@ -478,21 +488,21 @@ static void writeNotes();
           lastTimeTag:(double)lastTimeTag
 {
   return [self _writeScorefileStream:aStream
-                         firstTimeTag:firstTimeTag
-                          lastTimeTag:lastTimeTag
-                            timeShift:0.0 binary:NO];
+                        firstTimeTag:firstTimeTag
+                         lastTimeTag:lastTimeTag
+                           timeShift:0.0 binary:NO];
 }
 
 -writeScorefile:(NSString *)aFileName
 {
   return [self writeScorefile:aFileName firstTimeTag:0.0
-                   lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+                  lastTimeTag:MK_ENDOFTIME timeShift:0.0];
 }
 
 -writeScorefileStream:(NSMutableData *)aStream
 {
   return [self writeScorefileStream:aStream firstTimeTag:0.0
-                         lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+                        lastTimeTag:MK_ENDOFTIME timeShift:0.0];
 }
 
 -writeOptimizedScorefile:(NSString *)aFileName
@@ -500,10 +510,10 @@ static void writeNotes();
              lastTimeTag:(double)lastTimeTag
 {
   return [self _writeScorefile:aFileName
-                   firstTimeTag:firstTimeTag
-                    lastTimeTag:lastTimeTag
-                      timeShift:0.0
-                         binary:YES];
+                  firstTimeTag:firstTimeTag
+                   lastTimeTag:lastTimeTag
+                     timeShift:0.0
+                        binary:YES];
 }
 
 -writeOptimizedScorefileStream:(NSMutableData *)aStream
@@ -511,21 +521,21 @@ static void writeNotes();
                    lastTimeTag:(double)lastTimeTag
 {
   return [self _writeScorefileStream:aStream
-                         firstTimeTag:firstTimeTag
-                          lastTimeTag:lastTimeTag
-                            timeShift:0.0 binary:YES];
+                        firstTimeTag:firstTimeTag
+                         lastTimeTag:lastTimeTag
+                           timeShift:0.0 binary:YES];
 }
 
 -writeOptimizedScorefile:(NSString *)aFileName
 {
   return [self writeOptimizedScorefile:aFileName firstTimeTag:0.0
-                            lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+                           lastTimeTag:MK_ENDOFTIME timeShift:0.0];
 }
 
 -writeOptimizedScorefileStream:(NSMutableData *)aStream
 {
   return [self writeOptimizedScorefileStream:aStream firstTimeTag:0.0
-                                  lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+                                 lastTimeTag:MK_ENDOFTIME timeShift:0.0];
 }
 
 
@@ -829,7 +839,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
          lastTimeTag:(double)lastTimeTag
 {
   return [self writeMidifileStream:aStream firstTimeTag:firstTimeTag
-                        lastTimeTag:lastTimeTag timeShift:0.0];
+                       lastTimeTag:lastTimeTag timeShift:0.0];
 }
 
 -writeMidifile:(NSString *)aFileName
@@ -837,19 +847,19 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
    lastTimeTag:(double)lastTimeTag
 {
   return [self writeMidifile:aFileName firstTimeTag:firstTimeTag
-                  lastTimeTag:lastTimeTag timeShift:0.0];
+                 lastTimeTag:lastTimeTag timeShift:0.0];
 }
 
 -writeMidifileStream:(NSMutableData *)aStream
 {
   return [self writeMidifileStream:aStream firstTimeTag:0.0
-                        lastTimeTag:MK_ENDOFTIME];
+                       lastTimeTag:MK_ENDOFTIME];
 }
 
 -writeMidifile:(NSString *)aFileName
 {
   return [self writeMidifile:aFileName firstTimeTag:0.0
-                  lastTimeTag:MK_ENDOFTIME];
+                 lastTimeTag:MK_ENDOFTIME];
 }
 
 
@@ -865,7 +875,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
     if (!stream)
       return nil;
     rtnVal = [self readMidifileStream:stream firstTimeTag:firstTimeTag
-                           lastTimeTag:lastTimeTag timeShift:timeShift];
+                          lastTimeTag:lastTimeTag timeShift:timeShift];
     return rtnVal;
 }
 
@@ -1162,7 +1172,7 @@ return self;
   lastTimeTag:(double)lastTimeTag
 {
   return [self readMidifile:fileName firstTimeTag:firstTimeTag
-                 lastTimeTag:lastTimeTag timeShift:0.0];
+                lastTimeTag:lastTimeTag timeShift:0.0];
 }
 
 -readMidifileStream:(NSMutableData *)aStream
@@ -1170,7 +1180,7 @@ return self;
         lastTimeTag:(double)lastTimeTag
 {
   return [self readMidifileStream:aStream firstTimeTag:firstTimeTag
-                       lastTimeTag:lastTimeTag timeShift:0.0];
+                      lastTimeTag:lastTimeTag timeShift:0.0];
 }
 
 -readMidifile:(NSString *)fileName
@@ -1178,7 +1188,7 @@ return self;
   but always reads the whole file. */
 {
   return [self readMidifile:fileName firstTimeTag:0.0
-                 lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+                lastTimeTag:MK_ENDOFTIME timeShift:0.0];
 }
 
 -readMidifileStream:(NSMutableData *)aStream
@@ -1186,7 +1196,7 @@ return self;
   but always reads the whole file. */
 {
   return [self readMidifileStream:aStream firstTimeTag:0.0
-                       lastTimeTag:MK_ENDOFTIME timeShift:0.0];
+                      lastTimeTag:MK_ENDOFTIME timeShift:0.0];
 }
 
 /* Number of notes and parts ------------------------------------------ */
@@ -1350,15 +1360,18 @@ MKParts.
         theList = i;
         i++;
       }
-else i++;
+      else
+        i++;
     }
-if (theNote) {
-  (*addMethod)(allNotes,@selector(addObject:),theNote);
-  counts[theList]++;
-}
+    if (theNote) {
+      (*addMethod)(allNotes,@selector(addObject:),theNote);
+      counts[theList]++;
+    }
   }
-free(counts);
-free(maxcounts);
+  if (counts)
+    free(counts);
+  if (maxcounts)
+    free(maxcounts);
 }
 
 static void writeNotes(NSMutableData *aStream, MKScore *aScore, _MKScoreOutStruct *p,
@@ -1554,6 +1567,7 @@ static BOOL isUnarchiving = NO;
   NSMutableDictionary *tagTable = [NSMutableDictionary dictionary];
   isUnarchiving = YES; /* Inhibit MKParts' mapping of noteTags. */
 
+  
   if ([aDecoder versionForClassName: @"MKScore"] == VERSION2)
     [aDecoder decodeValuesOfObjCTypes: "@@", &parts, &info];
   /* Maps noteTags as represented in the archive file onto a set that is
@@ -1589,7 +1603,7 @@ static BOOL isUnarchiving = NO;
     if ([infoNote isParPresent: MK_title]) {
       NSString *s = [infoNote parAsString: MK_title];
       if ([s isEqualToString: partName])
-        return mkp; 
+        return mkp;
     }
   }
   return nil;

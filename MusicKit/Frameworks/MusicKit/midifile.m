@@ -22,6 +22,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2002/04/03 03:59:41  skotmcdonald
+  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
+
   Revision 1.4  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -153,7 +156,9 @@ void *MKMIDIFileBeginReading(NSMutableData *midiStream,
 void *MKMIDIFileEndReading(void *p)
 {
     free(IP->data);
+    IP->data = NULL;
     free(IP);
+    IP = NULL; 
     return NULL;
 }
 
@@ -654,31 +659,33 @@ void *MKMIDIFileBeginWriting(NSMutableData *midiStream, int level, NSString *seq
     if (MKMIDIFileBeginWritingTrack(p,sequenceName))
       return p;
     else {
-	free(p);
-	return NULL;
+      free(p);
+      p = NULL;
+      return NULL;
     }
 }
 
 int MKMIDIFileEndWriting(void *p)
 {
-    short ntracks = OP->currentTrack+1; /* +1 for "tempo track" */
-    NSRange replaceRange;
+  short ntracks = OP->currentTrack+1; /* +1 for "tempo track" */
+  NSRange replaceRange;
 
-    if (OP->currentCount) {  /* Did we forget to finish before? */
-	int err = MKMIDIFileEndWritingTrack(p,0);
-	if (err == endOfStream) {
-	    free(p);
-	    return endOfStream;
-	}
+  if (OP->currentCount) {  /* Did we forget to finish before? */
+    int err = MKMIDIFileEndWritingTrack(p,0);
+    if (err == endOfStream) {
+      free(p);
+      p = NULL;
+      return endOfStream;
     }
-    replaceRange.location = 10;
-    replaceRange.length = 2;
+  }
+  replaceRange.location = 10;
+  replaceRange.length = 2;
 
-    ntracks = NSSwapHostShortToBig(ntracks);
-    [OP->midiStream replaceBytesInRange: replaceRange withBytes: &ntracks];
+  ntracks = NSSwapHostShortToBig(ntracks);
+  [OP->midiStream replaceBytesInRange: replaceRange withBytes: &ntracks];
 
-    free(p);
-    return ok;
+  if(p) { free(p); p = NULL; };
+  return ok;
 }
 
 int MKMIDIFileBeginWritingTrack(void *p, NSString *trackName)
