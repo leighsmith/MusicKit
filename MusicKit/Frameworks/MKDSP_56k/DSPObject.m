@@ -169,10 +169,10 @@ static int s_dsp_count = 0;	/* Current DSP count */
 static int s_dsp_alloc = 0;	/* DSP count provided for in advance */
 
 /* Might want to make these per-DSP--DAJ 11/26/95 */
-static msg_header_t *s_dsprcv_msg = 0;  /* contains unread DSP data */
-static msg_header_t *s_dspcmd_msg = 0;  /* contains a re-useable dspcmd msg */
-static msg_header_t *s_msg = 0;  	/* general purpose message pointer */
-static msg_header_t *s_driver_reply_msg = 0; /* re-useable reply msg */
+static mach_msg_header_t *s_dsprcv_msg = 0;  /* contains unread DSP data */
+static mach_msg_header_t *s_dspcmd_msg = 0;  /* contains a re-useable dspcmd msg */
+static mach_msg_header_t *s_msg = 0;  	/* general purpose message pointer */
+static mach_msg_header_t *s_driver_reply_msg = 0; /* re-useable reply msg */
 
 /*** ------------------------- Per-DSP variables ------------------------ ***/
 
@@ -230,25 +230,25 @@ static cthread_t *s_rd_thread=NULL;
 static int *s_rd_error=NULL;
 static char **s_rd_error_str=NULL;
 static int *s_dsp_rd_buf0=NULL;
-static msg_header_t *s_rd_rmsg=NULL;
+static mach_msg_header_t *s_rd_rmsg=NULL;
 
 static int s_dsp_err_reader();
 static int *s_cur_pri=NULL;
 static int *s_cur_atomicity=NULL;
-static port_t *s_sound_dev_port=NULL;
-static port_t *s_dsp_owner_port=NULL;
-static port_t *s_dsp_hm_port=NULL;
-static port_t *s_dsp_dm_port=NULL;
-static port_t *s_driver_reply_port=NULL;
-static port_t *s_dsp_err_port=NULL;
-static port_t *s_dsp_neg_port=NULL;
+static mach_port_t *s_sound_dev_port=NULL;
+static mach_port_t *s_dsp_owner_port=NULL;
+static mach_port_t *s_dsp_hm_port=NULL;
+static mach_port_t *s_dsp_dm_port=NULL;
+static mach_port_t *s_driver_reply_port=NULL;
+static mach_port_t *s_dsp_err_port=NULL;
+static mach_port_t *s_dsp_neg_port=NULL;
 static cthread_t *s_dsp_err_thread=NULL;
 static cthread_t *s_dsp_msg_thread=NULL;
 static int *s_stop_msg_reader=NULL;
-static port_t *s_wd_stream_port=NULL;
-static port_t *s_wd_reply_port=NULL;
-static port_t *s_rd_stream_port=NULL;
-static port_t *s_rd_reply_port=NULL;
+static mach_port_t *s_wd_stream_port=NULL;
+static mach_port_t *s_wd_reply_port=NULL;
+static mach_port_t *s_rd_stream_port=NULL;
+static mach_port_t *s_rd_reply_port=NULL;
 static int *s_msg_read_pending=NULL;
 static int *s_optimizing=NULL;
 static int *s_timed_zero_noflush = NULL;
@@ -335,7 +335,7 @@ static DSPFix48 *s_curTimeStamp = NULL;
 static int *s_hm_ptr = NULL;
 static int **s_hm_array = NULL;
 
-static msg_header_t **s_wd_rmsg = NULL; /* DAJ. 11/26/95. Was static */
+static mach_msg_header_t **s_wd_rmsg = NULL; /* DAJ. 11/26/95. Was static */
 
 static int *s_min_dma_chan = NULL;
 static int *s_max_dma_chan = NULL;
@@ -717,8 +717,8 @@ static int s_checkMsgFrameOverflow(char *fn_name)
     /*** FIXME: Change to an automatic flush when there is a test case ***/
     int msg_frame_overflowed = 0;
     if (s_msg != s_dspcmd_msg) { 
-	if (s_msg == ((msg_header_t *)SEND_MSG_TOO_LARGE)) { 
-	    if (((snd_dspcmd_msg_t *)s_dspcmd_msg)->header.msg_size 
+	if (s_msg == ((mach_msg_header_t *)SEND_MSG_TOO_LARGE)) { 
+	    if (((snd_dspcmd_msg_t *)s_dspcmd_msg)->header.msgh_size 
 		== sizeof(snd_dspcmd_msg_t))
 	      /* A nonzero return will cause an infinite loop */
 	      return 
@@ -753,7 +753,7 @@ static int s_checkMsgFrameOverflow(char *fn_name)
 
 #define END_OPTIMIZATION \
     if (!s_mapped_only[s_idsp] && s_optimizing[s_idsp] && \
-	(((snd_dspcmd_msg_t *)s_dspcmd_msg)->header.msg_size \
+	(((snd_dspcmd_msg_t *)s_dspcmd_msg)->header.msgh_size \
 	> sizeof(snd_dspcmd_msg_t))) \
        ec = s_msgSend(); \
     s_optimizing[s_idsp] = 0
@@ -2081,20 +2081,20 @@ BRIEF int _DSPOwnershipIsJoint()
 
 /************ Getting/Setting Mach Ports associated with the DSP *************/
 
-BRIEF int DSPSetNegotiationPort(port_t np)
+BRIEF int DSPSetNegotiationPort(mach_port_t np)
 {
     CHECK_INIT;
     s_dsp_neg_port[s_idsp] = np;
     return 0;
 }
 
-port_t DSPGetNegotiationPort(void)
+mach_port_t DSPGetNegotiationPort(void)
 {
     CHECK_INIT;
     return s_dsp_neg_port[s_idsp];
 }
 
-port_t DSPMKGetSoundPort(void)
+mach_port_t DSPMKGetSoundPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2103,13 +2103,13 @@ port_t DSPMKGetSoundPort(void)
     return s_sound_dev_port[s_idsp];
 }
 
-port_t DSPGetSoundPort(void)
+mach_port_t DSPGetSoundPort(void)
 {
     CHECK_INIT;
     return DSPMKGetSoundPort();
 }
 
-port_t DSPGetOwnerPort(void)
+mach_port_t DSPGetOwnerPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2118,7 +2118,7 @@ port_t DSPGetOwnerPort(void)
     return s_dsp_owner_port[s_idsp];
 }
 
-port_t DSPGetHostMessagePort(void)
+mach_port_t DSPGetHostMessagePort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2127,7 +2127,7 @@ port_t DSPGetHostMessagePort(void)
     return s_dsp_hm_port[s_idsp];
 }
 
-port_t DSPGetDSPMessagePort(void)
+mach_port_t DSPGetDSPMessagePort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2136,7 +2136,7 @@ port_t DSPGetDSPMessagePort(void)
     return s_dsp_dm_port[s_idsp];
 }
 
-port_t DSPGetErrorPort(void)
+mach_port_t DSPGetErrorPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2145,7 +2145,7 @@ port_t DSPGetErrorPort(void)
     return s_dsp_err_port[s_idsp];
 }
 
-port_t DSPMKGetWriteDataStreamPort(void)
+mach_port_t DSPMKGetWriteDataStreamPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2155,7 +2155,7 @@ port_t DSPMKGetWriteDataStreamPort(void)
     return s_wd_stream_port[s_idsp];
 }
 
-port_t DSPMKGetReadDataStreamPort(void)
+mach_port_t DSPMKGetReadDataStreamPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2165,7 +2165,7 @@ port_t DSPMKGetReadDataStreamPort(void)
     return s_rd_stream_port[s_idsp];
 }
 
-port_t DSPMKGetWriteDataReplyPort(void)
+mach_port_t DSPMKGetWriteDataReplyPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2175,7 +2175,7 @@ port_t DSPMKGetWriteDataReplyPort(void)
     return s_wd_reply_port[s_idsp];
 }
 
-port_t DSPMKGetReadDataReplyPort(void)
+mach_port_t DSPMKGetReadDataReplyPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2367,7 +2367,7 @@ BRIEF int DSPMKDisableBlockingOnTMQEmptyTimed(DSPFix48 *aTimeStampP)
     return DSPMKHostMessageTimed(aTimeStampP,dsp_hm_unblock_tmq_lwm[s_idsp]);
 }
 
-static int s_allocPort(port_t *portP)
+static int s_allocPort(mach_port_t *portP)
 /* 
  * Allocate Mach port.
  */
@@ -2380,7 +2380,7 @@ static int s_allocPort(port_t *portP)
       return 0;
 }
 
-static int s_freePort(port_t *portP)
+static int s_freePort(mach_port_t *portP)
 /* 
  * Deallocate Mach port.
  */
@@ -2406,7 +2406,7 @@ int DSPAwakenDriver(void)
  */
 {
 #if m68k 
-    static msg_header_t *dspcmd_msg = 0;
+    static mach_msg_header_t *dspcmd_msg = 0;
     if (s_mapped_only[s_idsp] == 0)
       return 0;
     CHECK_INIT;
@@ -2829,7 +2829,7 @@ static int s_wd_reader(int myDSP)
     /* timeout subdivision vars */
     int timeout=500;		/* timeout we really use in ms */
     int timeout_so_far=0;	/* total timeout used so far */
-    msg_header_t *wd_rmsg = s_wd_rmsg[myDSP];
+    mach_msg_header_t *wd_rmsg = s_wd_rmsg[myDSP];
     if (timeout > s_wd_timeout[myDSP])	/* take min */
       timeout = s_wd_timeout[myDSP];	/* do not exceed user-req'd timeout */
     while (1) {
@@ -2838,8 +2838,8 @@ static int s_wd_reader(int myDSP)
 	/*
 	 *
 	 */
-	wd_rmsg->msg_size = _DSP_DATA_MSG_SIZE;
-	wd_rmsg->msg_local_port = s_wd_reply_port[myDSP];
+	wd_rmsg->msgh_size = _DSP_DATA_MSG_SIZE;
+	wd_rmsg->msgh_local_port = s_wd_reply_port[myDSP];
 	
 	ec = msg_receive(wd_rmsg, RCV_TIMEOUT, timeout);
 	
@@ -2877,12 +2877,12 @@ static int s_wd_reader(int myDSP)
 	  timeout_so_far = 0;	/* reset cumulated timeout */
 
 	/* The following should never happen on Intel (or maybe even on m68k?)-DAJ */
-	if (wd_rmsg->msg_id != SND_MSG_RECORDED_DATA) {
+	if (wd_rmsg->msgh_id != SND_MSG_RECORDED_DATA) {
 	    s_wd_error[myDSP] = ec;
 	    s_wd_error_str[myDSP] = "Unexpected msg while expecting "
 	      "SND_MSG_RECORDED_DATA. "
 		"See snd_msgs.h(SND_MSG_*)";
-	    /* Unexpected msg = _DSPCVS(wd_rmsg->msg_id)); */
+	    /* Unexpected msg = _DSPCVS(wd_rmsg->msgh_id)); */
 	    continue;
 	}
 	
@@ -2901,7 +2901,7 @@ static int s_wd_reader(int myDSP)
 
 #if TRACE_POSSIBLE
 	if (_DSPTrace)
-	  fprintf(stderr,"received msgid %d, %d samples\n", wd_rmsg->msg_id, 
+	  fprintf(stderr,"received msgid %d, %d samples\n", wd_rmsg->msgh_id, 
 		  ndata);
 #endif TRACE_POSSIBLE
 	
@@ -3305,8 +3305,8 @@ static int s_rd_writer(int myDSP)
 	 * Wait for "completed" message on the read-data stream port.
 	 */
 
-	s_rd_rmsg->msg_size = MSG_SIZE_MAX;
-	s_rd_rmsg->msg_local_port = s_rd_reply_port[myDSP];
+	s_rd_rmsg->msgh_size = MSG_SIZE_MAX;
+	s_rd_rmsg->msgh_local_port = s_rd_reply_port[myDSP];
 	
 	ec = msg_receive(s_rd_rmsg, RCV_TIMEOUT, timeout);
 	
@@ -3329,12 +3329,12 @@ static int s_rd_writer(int myDSP)
 	    continue;	/* retry buffer read from DSP */
 	}
 
-	if (s_rd_rmsg->msg_id != SND_MSG_COMPLETED) {
+	if (s_rd_rmsg->msgh_id != SND_MSG_COMPLETED) {
 	    s_rd_error[myDSP] = ec;
 	    s_rd_error_str[myDSP] = "Unexpected msg while expecting "
 	      "SND_MSG_COMPLETED... "
 	      "See snd_msgs.h(SND_MSG_*)";
-	    /* Unexpected msg = _DSPCVS(s_rd_rmsg->msg_id)); */
+	    /* Unexpected msg = _DSPCVS(s_rd_rmsg->msgh_id)); */
 	    continue;
 	}
 	
@@ -3500,15 +3500,15 @@ static int s_notifyingMsgSend(void)
  * Normally, messages to send have a null "local port" in order
  * to suppress a reply.  If there is a local port, we use it. 
  */
-    if (s_dspcmd_msg->msg_local_port && (s_dspcmd_msg->msg_local_port != thread_reply()))
+    if (s_dspcmd_msg->msgh_local_port && (s_dspcmd_msg->msgh_local_port != thread_reply()))
         _DSPError(DSP_EMACH,"DSPObject.c: s_msgSend: "
 	   "Reply port in Mach message not thread_reply() "
 		  "for SEND_NOTIFY reply.");
    
-    if (s_dspcmd_msg->msg_local_port)
+    if (s_dspcmd_msg->msgh_local_port)
         rpe=1;
     else
-        s_dspcmd_msg->msg_local_port = thread_reply();
+        s_dspcmd_msg->msgh_local_port = thread_reply();
 
     if (notify_switch)
     	ec = msg_send(s_dspcmd_msg, SEND_NOTIFY,0); 
@@ -3527,7 +3527,7 @@ static int s_notifyingMsgSend(void)
 #if 0
     *** FIXME: The following for loop always times out without ever getting the
     notify message.  We do get several SND messages (ill_msgid 200 =>
-    SND_MSG_DSP_MSG) which are probably due to our setting msg_local_port in
+    SND_MSG_DSP_MSG) which are probably due to our setting msgh_local_port in
     the message sent when it otherwise would have been NULL.  (The sound driver
     suppresses replies when the local port is NULL in the sent message.)  It
     seems the NOTIFY_MSG_ACCEPTED message is getting lost.
@@ -3536,17 +3536,17 @@ static int s_notifyingMsgSend(void)
     for(toc=0; toc<10; toc++) {
     
     	_DSP_dsprcv_msg_reset(s_dsprcv_msg,s_dsp_hm_port[s_idsp],
-			      s_dspcmd_msg->msg_local_port);
+			      s_dspcmd_msg->msgh_local_port);
 
     	ec = msg_receive(s_dsprcv_msg, RCV_TIMEOUT, 100); /* wait 100 ms */
     
     	if (ec == RCV_TIMED_OUT)
 	    continue;
 
-	if ( s_dsprcv_msg->msg_id == NOTIFY_MSG_ACCEPTED ) 
+	if ( s_dsprcv_msg->msgh_id == NOTIFY_MSG_ACCEPTED ) 
 	    break;
 	else {
-	    if ( s_dsprcv_msg->msg_id == NOTIFY_PORT_DELETED )
+	    if ( s_dsprcv_msg->msgh_id == NOTIFY_PORT_DELETED )
 	    	return _DSPError(DSP_EMACH,"DSPObject.c: s_msgSend: "
 	    		"Got NOTIFY_PORT_DELETED message waiting for "
 				 "msg_send() to unblock.");
@@ -3556,21 +3556,21 @@ static int s_notifyingMsgSend(void)
 			 "Original message had a reply_port, "
 			 "and we may have got its msg while waiting for "
 			  "NOTIFY_MSG_ACCEPTED");
-    	    if (s_dsprcv_msg->msg_id == SND_MSG_ILLEGAL_MSG)
+    	    if (s_dsprcv_msg->msgh_id == SND_MSG_ILLEGAL_MSG)
       		_DSPError1(DSP_EMACH,"_DSPAwaitMsgSendAck: "
-			 "Got reply to msg_id %s instead of SEND_NOTIFY",
+			 "Got reply to msgh_id %s instead of SEND_NOTIFY",
 			 _DSPCVS(((snd_illegal_msg_t *) 
 				  s_dsprcv_msg)->ill_msgid));
 	    else
 	      _DSPError1(DSP_EMACH,"DSPObject.c: s_msgSend: "
-			 "msg_id %s in reply not recognized while waiting for "
+			 "msgh_id %s in reply not recognized while waiting for "
 			 "NOTIFY_MSG_ACCEPTED. \n"
 			 ";; Look in snd_msgs.h for "
 			 "300 series messages,\n "
 			 ";; and /usr/include/sys/notify.h for "
 			 "100 series messages.\n"
 			 ";; THROWING THIS MESSAGE AWAY and continuing.",
-			 _DSPCVS(s_dsprcv_msg->msg_id));
+			 _DSPCVS(s_dsprcv_msg->msgh_id));
 	}
     }
     return 0;
@@ -3589,11 +3589,11 @@ static int s_msgSend(void)
 	 * writing of commands files on Intel hardware. - DAJ
 	 */
 	if (write(s_commands_fd[s_idsp],(void *)s_dspcmd_msg, 
-		  s_dspcmd_msg->msg_size)
-	    != s_dspcmd_msg->msg_size)
+		  s_dspcmd_msg->msgh_size)
+	    != s_dspcmd_msg->msgh_size)
 	  return _DSPError(DSP_EUNIX, 
 			   "Could not write message to dsp commands file");
-	s_commands_numbytes[s_idsp] += s_dspcmd_msg->msg_size;
+	s_commands_numbytes[s_idsp] += s_dspcmd_msg->msgh_size;
     }
 	    
     ec = msg_send(s_dspcmd_msg, SEND_TIMEOUT,_DSP_MACH_SEND_TIMEOUT);
@@ -4233,7 +4233,7 @@ BRIEF int DSPOpenNoBootHighPriority(void)
 
 int DSPAlternateReset(void)	/*** FIXME: This seems not to work ***/
 {
-    port_t neg_port;
+    mach_port_t neg_port;
 
     CHECK_INIT;
     if (s_dsp_neg_port[s_idsp])
@@ -4294,7 +4294,7 @@ int DSPOpenNoBoot(void)		/* open current DSP */
 {
     /*** FIXME: Move outside of single DSP instance ***/
     int ec=0,ecs;
-    port_t neg_port;
+    mach_port_t neg_port;
     char *host;
 
     CHECK_INIT;
@@ -5199,7 +5199,7 @@ BRIEF int DSPReadDataAndToss(int n)
     if (DSP_CAN_INTERRUPT 
 	&& (!s_optimizing[s_idsp] 
 	    || /* nothing yet placed in optimization group: */
-	    (((snd_dspcmd_msg_t *)s_dspcmd_msg)->header.msg_size
+	    (((snd_dspcmd_msg_t *)s_dspcmd_msg)->header.msgh_size
 	     <= sizeof(snd_dspcmd_msg_t))))
       return _DSPError(0,"DSPReadDataAndToss: "
 		       "Only designed to work in RAW mode or in opt group");
@@ -5713,10 +5713,10 @@ BRIEF int _DSPReadRegs(void)
 	if (ec != KERN_SUCCESS)
 	  return _DSPMachError(ec,"_DSPReadRegs: msg_receive failed.");
 
-	if (s_dsprcv_msg->msg_id != SND_MSG_DSP_COND_TRUE) /* snd_msgs.h */
+	if (s_dsprcv_msg->msgh_id != SND_MSG_DSP_COND_TRUE) /* snd_msgs.h */
 	  return (_DSPError1(DSP_EMACH,"_DSPReadRegs: "
 			     "Unrecognized msg id %s",
-			     _DSPCVS(s_dsprcv_msg->msg_id)));
+			     _DSPCVS(s_dsprcv_msg->msgh_id)));
 
 	s_regs = ((snd_dsp_cond_true_t *)s_dsprcv_msg)->value; /* snd_msgs.h */
     }
@@ -6809,19 +6809,19 @@ int _DSPOpenStatePrint()
 
 /*************************** DSP SYNCHRONIZATION ***************************/
 
-/*** FIXME: Delete _DSPAwaitMsgSendAck(msg_header_t *msg) ***/
+/*** FIXME: Delete _DSPAwaitMsgSendAck(mach_msg_header_t *msg) ***/
 
-int _DSPAwaitMsgSendAck(msg_header_t *msg)
+int _DSPAwaitMsgSendAck(mach_msg_header_t *msg)
 {    
     int ec;
     
-    if (!msg->msg_local_port)
+    if (!msg->msgh_local_port)
       return (_DSPError(0,"_DSPAwaitMsgSendAck: "
-			"no msg_local_port in message for ack"));
+			"no msgh_local_port in message for ack"));
     
     _DSP_dsprcv_msg_reset(s_dsprcv_msg,
 			  s_dsp_hm_port[s_idsp],
-			  msg->msg_local_port);
+			  msg->msgh_local_port);
     ec = msg_receive(s_dsprcv_msg, RCV_TIMEOUT, 10000); /* wait 10 seconds */
     
     if (ec == RCV_TIMED_OUT)
@@ -6831,20 +6831,20 @@ int _DSPAwaitMsgSendAck(msg_header_t *msg)
     if (ec != KERN_SUCCESS)
       return (_DSPMachError(ec,"_DSPAwaitMsgSendAck: msg_receive failed."));
     
-    if (   s_dsprcv_msg->msg_id != SND_MSG_ILLEGAL_MSG
+    if (   s_dsprcv_msg->msgh_id != SND_MSG_ILLEGAL_MSG
 	|| ((snd_illegal_msg_t *)s_dsprcv_msg)->ill_msgid != SND_MSG_DSP_MSG
 	|| ((snd_illegal_msg_t *)s_dsprcv_msg)->ill_error != SND_NO_ERROR )
       return (_DSPError1(DSP_EMACH,"_DSPAwaitMsgSendAck: "
-			 "msg_id %s in reply not recognized",
-			 _DSPCVS(s_dsprcv_msg->msg_id)));
+			 "msgh_id %s in reply not recognized",
+			 _DSPCVS(s_dsprcv_msg->msgh_id)));
     
-    if (((snd_illegal_msg_t *)s_dsprcv_msg)->ill_msgid != msg->msg_id)
+    if (((snd_illegal_msg_t *)s_dsprcv_msg)->ill_msgid != msg->msgh_id)
       return (_DSPError1(DSP_EMACH,"_DSPAwaitMsgSendAck: "
-			 "Got reply to msg_id %s",
+			 "Got reply to msgh_id %s",
 			 DSPCat(_DSPCVS(((snd_illegal_msg_t *) 
 					 s_dsprcv_msg)->ill_msgid),
-				 DSPCat(" instead of msg_id ",
-					 _DSPCVS(s_dsprcv_msg->msg_id)))));
+				 DSPCat(" instead of msgh_id ",
+					 _DSPCVS(s_dsprcv_msg->msgh_id)))));
     
     return 0;
 }
@@ -6964,8 +6964,8 @@ BRIEF int DSPAwaitCondition(
      * Get the reply we've enqueued.
      */
 retry:
-    s_dsprcv_msg->msg_size = MSG_SIZE_MAX;
-    s_dsprcv_msg->msg_local_port = s_driver_reply_port[s_idsp];
+    s_dsprcv_msg->msgh_size = MSG_SIZE_MAX;
+    s_dsprcv_msg->msgh_local_port = s_driver_reply_port[s_idsp];
 
     /* Nick/daj:  6/5/96  Broke up msg_receive wait below for abort detection */
 //	ec = msg_receive(s_dsprcv_msg, RCV_TIMEOUT, 
@@ -7004,10 +7004,10 @@ retry:
     if (ec != KERN_SUCCESS)
       return (_DSPMachError(ec,"DSPAwaitCondition: msg_receive failed."));
     
-    if (s_dsprcv_msg->msg_id != s_driver_reply_msg->msg_id)
+    if (s_dsprcv_msg->msgh_id != s_driver_reply_msg->msgh_id)
       return (_DSPError1(DSP_EMACH,"DSPAwaitCondition: "
 			 "Unrecognized msg id %s",
-			 _DSPCVS(s_dsprcv_msg->msg_id)));
+			 _DSPCVS(s_dsprcv_msg->msgh_id)));
     return 0;
 }
 
@@ -7028,8 +7028,8 @@ BRIEF int DSPResumeAwaitingCondition(int msTimeLimit)
      * Get the reply we've enqueued using DSPAwaitCondition():
      */
  retry:
-    s_dsprcv_msg->msg_size = MSG_SIZE_MAX;
-    s_dsprcv_msg->msg_local_port = s_driver_reply_port[s_idsp];
+    s_dsprcv_msg->msgh_size = MSG_SIZE_MAX;
+    s_dsprcv_msg->msgh_local_port = s_driver_reply_port[s_idsp];
     
     ec = msg_receive(s_dsprcv_msg, RCV_TIMEOUT, 
 		     (msTimeLimit? msTimeLimit : _DSP_MACH_FOREVER) );
@@ -7044,10 +7044,10 @@ BRIEF int DSPResumeAwaitingCondition(int msTimeLimit)
       return _DSPMachError(ec,"DSPResumeAwaitingCondition: "
 			   "msg_receive failed.");
     
-    if (s_dsprcv_msg->msg_id != s_driver_reply_msg->msg_id)
+    if (s_dsprcv_msg->msgh_id != s_driver_reply_msg->msgh_id)
       return _DSPError1(DSP_EMACH,"DSPResumeAwaitingCondition: "
 			 "Unrecognized msg id %s",
-			 _DSPCVS(s_dsprcv_msg->msg_id));
+			 _DSPCVS(s_dsprcv_msg->msgh_id));
     return 0;
 }
 
@@ -7205,7 +7205,7 @@ static int s_dsp_err_reader(int myDSP)
 {
     register int r, rsize, i;
     int err_read_pending = 0;	   /* set when err read request is out */
-    static msg_header_t *rcv_msg = 0; /* message frame for msg_receive */
+    static mach_msg_header_t *rcv_msg = 0; /* message frame for msg_receive */
 
     int kern_ack_op_code = DSP_DE_KERNEL_ACK;
     struct timeval atimeval;       /* Needs to be on a per-DSP basis FIXME */
@@ -7406,13 +7406,13 @@ int DSPReadMessages(int msTimeLimit)
 
 	if (ec == KERN_SUCCESS) {
 	    register int *dp1,*dp2;
-	    if (s_dsprcv_msg->msg_id != SND_MSG_RET_DSP_MSG) {
+	    if (s_dsprcv_msg->msgh_id != SND_MSG_RET_DSP_MSG) {
 		if (DSPErrorLogIsEnabled()) { /* _DSPCVS() is a memory leak! */
 		    _DSPError1(DSP_EMISC,"got msg %s instead of "
 			   "SND_MSG_RET_DSP_MSG", 
-			   _DSPCVS(s_dsprcv_msg->msg_id));
+			   _DSPCVS(s_dsprcv_msg->msgh_id));
 		}
-		if (s_dsprcv_msg->msg_id == SND_MSG_ILLEGAL_MSG) {
+		if (s_dsprcv_msg->msgh_id == SND_MSG_ILLEGAL_MSG) {
 		  if (DSPErrorLogIsEnabled()) { /* _DSPCVS() = memory leak! */
 		    _DSPError1(DSP_EMISC,"s_msgSend ack SND_MSG_ILLEGAL_MSG "
 			       "to msg %s",_DSPCVS(((snd_illegal_msg_t *)
@@ -9196,7 +9196,7 @@ int DSPSenseMem(int *memCount)
      */
 {
     int size, result;
-    port_t dev_port = 0, owner_port = 0, cmd_port;
+    mach_port_t dev_port = 0, owner_port = 0, cmd_port;
     SndSoundStruct *dspStruct;
     int i,*p,ec;
 #   define HEADERBYTES (128)
