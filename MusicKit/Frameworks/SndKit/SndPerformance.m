@@ -260,6 +260,7 @@ startPosition: (double) startPosition
 {
   paused = NO;
   playIndex = endAtIndex;
+  looping = NO;   // We set the looping off so we don't miss the stop condition.
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -292,19 +293,19 @@ startPosition: (double) startPosition
 // Fills the given buffer with sound data, reading from the playIndex up until endAtIndex
 // (which allows us to play a sub-section of a sound). playIndex is updated, and looping is
 // respected.
-- (void) retrieveAPerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength
+- (long) retrieveAPerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength
 {
     // deltaTime may be a misnomer, it is a multiple of buffers
     double  stretchedBufferLength = deltaTime * buffLength;
     NSRange playRegion = {playIndex, stretchedBufferLength + MAX(2, deltaTime)};
     BOOL atEndOfLoop = looping && playRegion.length > loopEndIndex - playIndex;
 
-    if (atEndOfLoop) {
-	playRegion.length = loopEndIndex - playIndex + MAX(2, deltaTime);
+    if (atEndOfLoop) {	// retrieve up to the end of the loop
+	playRegion.length = loopEndIndex - playIndex;
     }
     else if (playRegion.length > endAtIndex - playIndex) {
 	buffLength = (endAtIndex - playIndex) / deltaTime;
-	playRegion.length = (buffLength) * deltaTime + MAX(2, deltaTime);
+	playRegion.length = buffLength * deltaTime + MAX(2, deltaTime);
     }
     if (playIndex > -stretchedBufferLength) {
 	if (playIndex < 0) {
@@ -315,7 +316,7 @@ startPosition: (double) startPosition
 	NSLog(@"[SndPerformance][SYNTH THREAD] playIndex = %.2f, endAtIndex = %ld, location = %d, length = %d\n",
               playIndex, endAtIndex, playRegion.location, playRegion.length);
 #endif
-	// Negative buffer length means the endAtIndex was moved before the current playIndex,
+	// Negative or zero buffer length means the endAtIndex was moved before or to the current playIndex,
 	// so we should skip any mixing and stop.
 	// Nowdays, with better checking on the updates of endAtIndex and playIndex this should never occur, so this check is probably redundant.
 	if (buffLength > 0) {
@@ -348,7 +349,7 @@ startPosition: (double) startPosition
 		playIndex = startOfLoop.location + startOfLoop.length;
 	    }
 	    else
-		playIndex += stretchedBufferLength;
+		playIndex += playRegion.length;
 
 	    /*
 	    if (playIndex < 0) {
@@ -372,6 +373,7 @@ startPosition: (double) startPosition
     }
     else
 	playIndex += stretchedBufferLength;
+    return buffLength;
 }
 
 - (BOOL) atEndOfPerformance

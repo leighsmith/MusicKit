@@ -296,13 +296,14 @@ startPosition: (double) startPosition
 
 /*!
   @method retrieveAPerformBuffer:ofLength:
-  @param bufferToFill
+  @param bufferToFill A SndAudioBuffer that will be filled with samples.
   @param buffLength
+  @result Returns the final buffer length, which may be less than the requested amount in the case of a premature stop, or simply reaching the end of the data. 
   @discussion Fills the given buffer with sound data, reading from the playIndex up until endAtIndex
   	      (which allows us to play a sub-section of a sound). playIndex is updated, and looping is
-              respected.
+              respected. In the case of the end of the sound being encountered, a smaller buffer will be filled, and the smaller size is returned.
  */
-- (void) retrieveAPerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength;
+- (long) retrieveAPerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength;
 
 /*!
   @method atEndOfPerformance

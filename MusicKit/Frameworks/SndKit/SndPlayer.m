@@ -496,7 +496,7 @@ static SndPlayer *defaultSndPlayer;
 	    if ([performance isPaused])
 		continue;
 
-	    [performance retrieveAPerformBuffer: tempBuffer ofLength: synthOutputBufferLength];
+	    synthOutputBufferLength = [performance retrieveAPerformBuffer: tempBuffer ofLength: synthOutputBufferLength];
 	    [ab mixWithBuffer: tempBuffer fromStart: 0 toEnd: synthOutputBufferLength canExpand:YES];
 
             // When at the end of sounds, signal the delegate and remove the performance.
