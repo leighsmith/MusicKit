@@ -144,7 +144,7 @@
             cEnd   >= playRegion.location + playRegion.length)) {
         // OK, ve must read in der cache...
         int readLength = (4096*16);
-        int bufferMultiplier = (playRegion.length/4096);
+        int bufferMultiplier = ((playRegion.length + 4095)/4096);
         bufferMultiplier = bufferMultiplier == 0 ? 1 : bufferMultiplier;
         cachedBufferRange.location = (playRegion.location/4096)*4096;
         cachedBufferRange.length   = (bufferMultiplier)*readLength;
