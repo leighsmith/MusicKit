@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.16  2001/08/28 16:49:28  skotmcdonald
+// Put debug #defines around SND::start/stop messages to reduce everyday useage spam
+//
 // Revision 1.15  2001/08/23 20:06:05  skotmcdonald
 // Fixed a nasty bug that caused framework to crash if no valid input detected - failed to allocate a buffer to send up filled with zeros to streaming arch.
 //
@@ -84,6 +87,7 @@ extern "C" {
 #define DEBUG_DESCRIPTION   0  // dump the description of the audio device.
 #define DEBUG_BUFFERSIZE    0  // dump the check of the audio buffer size.
 #define DEBUG_SNDPLAYIOPROC 0  // dump the channel count etc while generating the buffer.
+#define DEBUG_STARTSTOPMSG  0  // dump stream start/stop msgs
 
 #define DEFAULT_BUFFERSIZE 16384
 
@@ -893,7 +897,9 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
         }
     }
     // printf("initialised stream start %d\n", r);
+#if DEBUG_STARTSTOPMSG    
     fprintf(stderr,"SND::Stream Start: %s\n", r ? "OK":"ERR");
+#endif    
     return r;
 }
 
@@ -923,7 +929,9 @@ PERFORM_API BOOL SNDStreamStop(void)
             r = FALSE;
         }
     }
+#if DEBUG_STARTSTOPMSG    
     fprintf(stderr,"SND::Stream Stopped: %s\n", r ? "OK" : "ERR");
+#endif    
     return r;
 }
 
