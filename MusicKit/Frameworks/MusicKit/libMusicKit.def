@@ -1,0 +1,60 @@
+;
+;   libMKPerformSndMIDI.def
+;
+;   Exports for libMKPerformSndMIDI DLL
+;   Specific to WIN32 operating systems
+;
+;   Copyright (C) 2001 tomandandy Inc.
+;
+;   Author:  Stephen Brandon <stephen@brandonitconsulting.co.uk>
+;   Date: October 2001
+;
+;
+LIBRARY libMKPerformSndMIDI
+EXPORTS
+__objc_class_name_MKConductor
+__objc_class_name_MKEnvelope
+__objc_class_name_MKFilePerformer
+__objc_class_name_MKFileWriter
+__objc_class_name_MKInstrument
+__objc_class_name_MKMTCPerformer
+__objc_class_name_MKMidi
+__objc_class_name_MKMixerInstrument
+__objc_class_name_MKNote
+__objc_class_name_MKNoteFilter
+__objc_class_name_MKNoteReceiver
+__objc_class_name_MKNoteSender
+__objc_class_name_ArielPC56D
+__objc_class_name_MKOrchestra
+__objc_class_name_MKPart
+__objc_class_name_MKPartPerformer
+__objc_class_name_MKPartRecorder
+__objc_class_name_MKPartials
+__objc_class_name_MKPatch
+__objc_class_name_MKPatchConnection
+__objc_class_name_MKPatchEntry
+__objc_class_name_MKPatchTemplate
+__objc_class_name_MKPerformer
+__objc_class_name_MKSamplerInstrument
+__objc_class_name_MKSamples
+__objc_class_name_MKScore
+__objc_class_name_MKScorePerformer
+__objc_class_name_MKScoreRecorder
+__objc_class_name_MKScorefilePerformer
+__objc_class_name_MKScorefileWriter
+__objc_class_name_MKSynthData
+__objc_class_name_MKSynthInstrument
+__objc_class_name_MKSynthPatch
+__objc_class_name_MKTimbre
+__objc_class_name_MKTuningSystem
+__objc_class_name_MKUnitGenerator
+__objc_class_name_MKWaveTable
+__objc_class_name_OrchloopbeginUG
+__objc_class_name_SynthPatchList
+__objc_class_name__MKAppProxy
+__objc_class_name__MKNameTable
+__objc_class_name__MTCHelper
+__objc_class_name__OrchloopbeginUG
+__objc_class_name__ParName
+__objc_class_name__ScorefileVar
+__objc_class_name__SharedSynthInfo

@@ -1,0 +1,14 @@
+;
+;   libMKPerformSndMIDI.def
+;
+;   Exports for libMKPerformSndMIDI DLL
+;   Specific to WIN32 operating systems
+;
+;   Copyright (C) 2001 tomandandy Inc.
+;
+;   Author:  Stephen Brandon <stephen@brandonitconsulting.co.uk>
+;   Date: October 2001
+;
+;
+LIBRARY libMKPerformSndMIDI
+EXPORTS
