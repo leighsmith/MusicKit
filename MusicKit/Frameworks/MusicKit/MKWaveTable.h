@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.3  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -35,7 +38,7 @@ descriptions of the MKSamples and MKPartials subclasses.  Detailed familiarity w
 the MKWaveTable class, in this case, isn't necessary.
 
 MKWaveTable objects are designed to be used as <i>lookup tables</i> for oscillator
-UnitGenerators such as OscgafiUG.  When it's instructed to run, the oscillator
+MKUnitGenerators such as OscgafiUG.  When it's instructed to run, the oscillator
 downloads the WaveTable's data to a portion of memory on the DSP and then cycles
 over the data to generate a timbre that's defined by the shape of the waveform
 that the data represents.  To assist this process, a MKWaveTable object maintains

@@ -30,6 +30,9 @@
  Modification history:
 
   $Log$
+  Revision 1.8  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.7  2001/09/07 18:36:34  leighsmith
   adopted symbolic entity naming and corrected parameter types in doco
 
@@ -68,7 +71,7 @@ newly created Sound.
 
 The Sound object or soundfile must be one channel of 16-bit linear data
 (SND_FORMAT_LINEAR_16).  The sampling rate is ignored; MKSamples objects are
-designed to be used as lookup tables for oscillator UnitGenerators in which use
+designed to be used as lookup tables for oscillator MKUnitGenerators in which use
 the sampling rate of the original data is of no consequence.
 
 You can create a MKSamples object from a scorefile by quoting the name of a

@@ -23,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.5  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -83,7 +86,7 @@ Modification history:
  ***  are rarely seen by users.  
  ***/
 /*  This error indicates that the developer attempted to abort the
-    MKOrchestra while manually-allocated Unit Generators or SynthPatches
+    MKOrchestra while manually-allocated Unit Generators or MKSynthPatches
     were still allocated.  This error rarely if ever is seen by users. 
 */
 "Music Kit: Unit Generators are still in use.";

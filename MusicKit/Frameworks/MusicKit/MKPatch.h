@@ -16,6 +16,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.3  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -23,7 +26,7 @@
   Moved patch locations inside the class implementation since they shouldn't be accessible to apps at compile time, only at run time
 
   Revision 1.1  2001/03/06 21:47:32  leigh
-  Abstracted patch loading from SynthPatches into MKPatch
+  Abstracted patch loading from MKSynthPatches into MKPatch
 
 */
 /*!

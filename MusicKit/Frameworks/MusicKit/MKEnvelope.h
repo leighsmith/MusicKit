@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.5  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -104,7 +107,7 @@ is simply the value of <b>MK_amp0</b>.  In other words, <b>MK_amp0</b> defines
 the interpreted value when <i>y</i> is 0.0 and <b>MK_amp1</b> is the interpreted
 value when <i>y</i> is 1.0.  
 While an Envelopes's x values are normally taken as an absolute time in seconds,
-SynthPatches usually provide additional parameters that let you reset the attack
+MKSynthPatches usually provide additional parameters that let you reset the attack
 and release durations.  For example, the <b>MK_ampAtt</b> parameter  resets the
 duration of the attack portion of a Note's amplitude MKEnvelope; similarly,
 <b>MK_ampRel</b> resets the release duration. 

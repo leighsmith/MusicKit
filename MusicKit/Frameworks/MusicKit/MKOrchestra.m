@@ -35,6 +35,9 @@
 Modification history:
 
   $Log$
+  Revision 1.22  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.21  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -1765,7 +1768,7 @@ static void freeEMem(MKOrchestra *self,int whichSpace) {
 
 static void freeUGs(self)
     MKOrchestra *self;
-    /* Free all MKSynthData and UnitGenerators. */
+    /* Free all MKSynthData and MKUnitGenerators. */
 {
     char wasTimed = [self isTimed];
     self->deviceStatus = MK_devClosed;
@@ -4000,7 +4003,7 @@ static BOOL driverPresent(unsigned short index)
 }
 
 +(NSMutableArray **)_addTemplate:aNewTemplate 
-  /* The MKOrchestra keeps a list of SynthPatches indexed by PatchTemplates.
+  /* The MKOrchestra keeps a list of MKSynthPatches indexed by PatchTemplates.
      MKPatchTemplate uses this to tell the MKOrchestra about each new Template. */
 {
     static int curArrSize = 0;

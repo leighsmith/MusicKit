@@ -17,19 +17,19 @@
     "unordered" MKUnitGenerator factories, "data memory blocks", and
     "message requests". (The meaning of the terms is indicated below.)  These
     are added to the template using the three methods shown above. In the
-    case of "ordered" UnitGenerators, the order used is the order of the
+    case of "ordered" MKUnitGenerators, the order used is the order of the
     -addUnitGenerator: messages. -addUnitGenerator:ordered:, -addSynthData:length:,
     and -addPatchpoint: return an int value to be used as an argument to
-    sendSel:to:with: or when referencing UnitGenerators in the MKSynthPatch.
+    sendSel:to:with: or when referencing MKUnitGenerators in the MKSynthPatch.
 
-    When UnitGenerators are connected up, it usually doesn't matter if
+    When MKUnitGenerators are connected up, it usually doesn't matter if
     there is a one-tick delay involved in the interconnection.  If it does
     not matter one way or the other, you should specify the MKUnitGenerator
     as an "unordered" MKUnitGenerator. However, if it is essential that no
     pipe-line delay be incurred, you should specify the two unit
-    generators in the correct order as "ordered" UnitGenerators.
+    generators in the correct order as "ordered" MKUnitGenerators.
     Similarly, if it is essential that exactly one pipe-line delay be
-    incurred, you should specify the two UnitGenerators in the reverse
+    incurred, you should specify the two MKUnitGenerators in the reverse
     order in the "ordered" MKUnitGenerator list.
 
     Each data block used privately in the MKSynthPatch is allocated
@@ -38,7 +38,7 @@
 
     Finally, the message requests of the Template are specified with the
     to:sel:arg: method. This mechanism is used primarily to specify the
-    interconnections of the UnitGenerators.
+    interconnections of the MKUnitGenerators.
     The to: and with: arguments are one of the values
     returned by addUnitGenerator:ordered: or addSynthData:length:.
     These connections are made automatically by the -initialize MKSynthPatch
@@ -62,6 +62,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.8  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -244,7 +247,7 @@ static unsigned addEl(MKPatchTemplate *self, MKPatchEntry *newEntry)
      is NO, the ordering of the MKUnitGenerator in memory is considered
      irrelevant. It is more efficient, from the standpoint of memory 
      thrashing, to set isOrdered to NO. However, it makes the job of 
-     writing SynthPatches tricker, since the designer may need to ask each
+     writing MKSynthPatches trickier, since the designer may need to ask each
      MKUnitGenerator if it runs after or before the others. */
 {
     MKPatchEntry *newEntry = [[MKPatchEntry alloc] initWithClass: aUGClass

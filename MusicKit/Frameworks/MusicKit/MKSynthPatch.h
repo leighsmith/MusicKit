@@ -45,11 +45,14 @@
 */
 /*
   $Log$
+  Revision 1.7  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.6  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
   Revision 1.5  2001/03/06 21:47:32  leigh
-  Abstracted patch loading from SynthPatches into MKPatch
+  Abstracted patch loading from MKSynthPatches into MKPatch
 
   Revision 1.4  2000/11/25 23:26:10  leigh
   Enforced ivar privacy
@@ -65,19 +68,19 @@
   @class MKSynthPatch
   @discussion
 
-A MKSynthPatch contains a configuration of UnitGenerators that work as a sound
-synthesis module.  SynthPatches are not created by the application; rather,
+A MKSynthPatch contains a configuration of MKUnitGenerators that work as a sound
+synthesis module.  MKSynthPatches are not created by the application; rather,
 they're created by the MKOrchestra.  The MKOrchestra is also responsible for filling
 the MKSynthPatch instance with MKUnitGenerator and MKSynthData instances.  It does
 this on the basis of a template provided by the MKSynthPatch class method
 <b>patchTemplate</b>.  You implement this method in a subclass of MKSynthPatch to
-provide a MKPatchTemplate that specifies the mix of UnitGenerators and MKSynthData
+provide a MKPatchTemplate that specifies the mix of MKUnitGenerators and MKSynthData
 objects, in what order they're allocated, and how to connect
 them.
 
 Typically, a MKSynthPatch is owned and operated by a MKSynthInstrument object.  The
-MKSynthInstrument manages the allocation of SynthPatches in response to incoming
-MKNotes.  Alternatively, SynthPatches may be used in a stand-alone fashion.  In
+MKSynthInstrument manages the allocation of MKSynthPatches in response to incoming
+MKNotes.  Alternatively, MKSynthPatches may be used in a stand-alone fashion.  In
 this case, you must allocate the objects by sending the MKOrchestra an
 <b>allocSynthPatch:</b> or <b>allocSynthPatch:patchTemplate:</b>
 message.
@@ -119,7 +122,7 @@ MKPhraseStatus;
 @private
     unsigned short _whichList;  // Which list am I on?
     int _orchIndex;             // Which DSP?
-    id _next;                   // Used internally for linked list of active SynthPatches.
+    id _next;                   // Used internally for linked list of active MKSynthPatches.
 
     // Used to unqueue noteEnd request. If non-null, we have seen a noteOff but are not yet noteEnd.
     MKMsgStruct *_noteEndMsgPtr; 
@@ -139,7 +142,7 @@ MKPhraseStatus;
 -copy;
 - copyWithZone:(NSZone *)zone;
  /* These methods are overridden to return [self doesNotRecognize]. 
-    You never create, free or copy SynthPatches directly. These operations
+    You never create, free or copy MKSynthPatches directly. These operations
     are always done via an MKOrchestra object. */
 
 
@@ -461,15 +464,15 @@ MKPhraseStatus;
   @method status
   @result Returns an int.
   @discussion Returns the status of the receiver.  This is not necessarily the
-              status of all contained UnitGenerators.  For example, it is not
-              unusual for a MKSynthPatch to be idle but most of its UnitGenerators,
+              status of all contained MKUnitGenerators.  For example, it is not
+              unusual for a MKSynthPatch to be idle but most of its MKUnitGenerators,
               with the exception of the Out2sum, to be running.
 */
 -(int ) status; 
  /* 
    Returns status of the receiver. This is not necessarily the status
-   of all contained UnitGenerators. For example, it is not unusual
-   for a MKSynthPatch to be idle but most of its UnitGenerators, with the
+   of all contained MKUnitGenerators. For example, it is not unusual
+   for a MKSynthPatch to be idle but most of its MKUnitGenerators, with the
    exception of the Out2sum, to be running. */
 
 
@@ -477,7 +480,7 @@ MKPhraseStatus;
   @method isEqual:
   @param  anObject is an id.
   @result Returns a BOOL.
-  @discussion Two SynthPatches are considered equal if they have the same noteTag.
+  @discussion Two MKSynthPatches are considered equal if they have the same noteTag.
                This is used by the MKSynthInstrument to search for a MKSynthPatch
               matching a certain noteTag.
 */
@@ -520,14 +523,14 @@ MKPhraseStatus;
   @method orchestra
   @result Returns an id.
   @discussion Returns the MKOrchestra instance to which the receiver belongs.  All
-              UnitGenerators and MKSynthData in an instance of MKSynthPatch are on the
+              MKUnitGenerators and MKSynthData in an instance of MKSynthPatch are on the
               same MKOrchestra instance.  In the standard NeXT configuration, there
               is one DSP and, thus, one MKOrchestra instance.
 */
 - orchestra; 
     /* 
        Returns the MKOrchestra instance to which the receiver belongs. All
-       UnitGenerators and MKSynthData in an instance of MKSynthPatch are on
+       MKUnitGenerators and MKSynthData in an instance of MKSynthPatch are on
        the same MKOrchestra instance. In the standard NeXT configuration, there
        is one DSP and, thus, one MKOrchestra instance. */
 
@@ -585,7 +588,7 @@ MKPhraseStatus;
   @result Returns an id.
   @discussion This method is used in conjunction with a SynthInstrument's
               <b>preemptSynthPatchFor:patches:</b> method.  It returns the next
-              MKSynthPatch in a List of active SynthPatches owned by the
+              MKSynthPatch in a List of active MKSynthPatches owned by the
               MKSynthInstrument.  The objects in the List are in the order in which
               they began synthesizing their current phrases (oldest
               first).
@@ -596,10 +599,10 @@ MKPhraseStatus;
      -preemptSynthPatchFor:patches: method. If you send -next to a MKSynthPatch
      which is active (not idle) and which is managed by a 
      MKSynthInstrument,
-     the value returned is the next in the list of active SynthPatches (for
+     the value returned is the next in the list of active MKSynthPatches (for
      a given MKPatchTemplate) managed 
      by that MKSynthInstrument. The list is in the order of the onset times
-     of the phrases played by the SynthPatches. */
+     of the phrases played by the MKSynthPatches. */
 
 
 /*!

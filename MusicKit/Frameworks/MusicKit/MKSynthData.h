@@ -54,6 +54,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.5  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -75,7 +78,7 @@ MKSynthData objects represent DSP memory that's used in music synthesis.  For
 example, you can use a MKSynthData object to load predefined data for wavetable
 synthesis or to store DSP-computed data to create a digital delay. Perhaps the
 most common use of MKSynthData is to create a location through which
-UnitGenerators can pass data.  This type of MKSynthData object is called a
+MKUnitGenerators can pass data.  This type of MKSynthData object is called a
 <i>patchpoint</i>.  For example, in frequency modulation an oscillator
 MKUnitGenerator writes its output to a patchpoint which can then be read by
 another oscillator as its frequency input.
@@ -144,7 +147,7 @@ See also:  MKSynthPatch, MKOrchestra, MKUnitGenerator
 
 - copyWithZone:(NSZone *)zone;
  /* These methods are overridden to return [self doesNotRecognize]. 
-    You never create, free or copy UnitGenerators directly. These operations
+    You never create, free or copy MKUnitGenerators directly. These operations
     are always done via an MKOrchestra object. */
 
 - (void)dealloc; /* was "free" before conversion */

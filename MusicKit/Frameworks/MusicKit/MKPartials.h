@@ -24,6 +24,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.6  2001/09/07 18:38:20  leighsmith
   adopted symbolic entity naming
 
@@ -145,7 +148,7 @@ set of methods of the form <b>dataDSPAsOscTable</b> is provided.  These methods
 are synonyms for the inherited methods.   
 
 For more information on waveshaping synthesis, see the <b>Shape</b>and
-<b>Shapev</b>  SynthPatches and their documentation.   
+<b>Shapev</b>  MKSynthPatches and their documentation.   
 */
 #ifndef __MK_Partials_H___
 #define __MK_Partials_H___

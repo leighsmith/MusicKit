@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.12  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -58,7 +61,7 @@ Modification history:
   - added newline onto end of file
 
   Revision 1.9  2001/03/06 21:47:33  leigh
-  Abstracted patch loading from SynthPatches into MKPatch
+  Abstracted patch loading from MKSynthPatches into MKPatch
 
   Revision 1.8  2000/11/25 22:37:52  leigh
   Enabled NSBundle loading within findSynthPatchClass:
@@ -283,7 +286,7 @@ static void cancelMsgs(register id self)
     return [self patchTemplateFor:nil];
 }
 
-  /* Returns a copy of the Array of UnitGenerators and MKSynthData. 
+  /* Returns a copy of the Array of MKUnitGenerators and MKSynthData. 
      The elements themselves are not copied. */
 - synthElements
 {
@@ -619,7 +622,7 @@ id _MKSynthPatchPreempt(MKSynthPatch *aPatch,id aNote,id controllers)
 
     /* Returns status of this MKSynthPatch. This is not necessarily the status
        of all contained synthElements. For example, it is not unusual
-       for a MKSynthPatch to be idle but most of its UnitGenerators, with the
+       for a MKSynthPatch to be idle but most of its MKUnitGenerators, with the
        exception of the Out2sum, to be running. */
 - (int) status
 {
@@ -647,7 +650,7 @@ id _MKSynthPatchPreempt(MKSynthPatch *aPatch,id aNote,id controllers)
 }
 
     /* Returns the orchestra instance to which the receiver belongs. All
-       UnitGenerators and MKSynthData in an instance of MKSynthPatch are on
+       MKUnitGenerators and MKSynthData in an instance of MKSynthPatch are on
        the same MKOrchestra instance. In the standard NeXT configuration, there
        is one DSP and, thus, one MKOrchestra instance. */
 - orchestra
@@ -986,7 +989,7 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
    MKSynthInstrument for its list of active patches.
 
    The following must be methods (rather than C functions) to avoid the
-   undesired loading of the MKSynthPatch class when no SynthPatches are being
+   undesired loading of the MKSynthPatch class when no MKSynthPatches are being
    used. */
 //////////////////////////////////////////////////////////////////////////////*/
 - _freeList: (MKSynthPatch*) head
@@ -1204,7 +1207,7 @@ id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tail
 
 + findPatchClass: (NSString *) className
 {
-    // TODO [@"SynthPatches" stringByAppendingPathComponent: className]
+    // TODO [@"MKSynthPatches" stringByAppendingPathComponent: className]
     return [super findPatchClass: className];
 }
 

@@ -7,7 +7,7 @@
     own parameters using the MKNote method +parTagForName:. When an unrecognized
     parameter is found in a scorefile, it is created automatically.
 
-    These parameters are not recognized by all SynthPatches. You must check
+    These parameters are not recognized by all MKSynthPatches. You must check
     the class description (or header file) for the individual MKSynthPatch to
     determine the parameters to which it responds.
 
@@ -21,6 +21,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.5  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -68,7 +71,7 @@ typedef enum _MKPars {     /* MKNote Parameters. */
     MK_monoChans,       /* An arg for the MIDI monoMode msg arg */
 
     /* The following are derived from MIDI but are used extensively in 
-       MKOrchestra synthesis as well. Most SynthPatches support them */
+       MKOrchestra synthesis as well. Most MKSynthPatches support them */
 
     MK_velocity,        /* Key velocity for noteOns -- also used as a 
                            brightness and amp in MKOrchestra synthesis. */
@@ -152,10 +155,10 @@ typedef enum _MKPars {     /* MKNote Parameters. */
                          In the range 0 == normal : 1 == maximum. */
     MK_lowestFreq,    /* In the first note of a phrase, this warns the
                          MKSynthPatch what the lowest note of the phrase is.
-                         Some SynthPatches (such as Pluck) need this 
+                         Some MKSynthPatches (such as Pluck) need this 
                          information to do appropriate allocation. */
 
-    /* The following vibrato parameters are supported by SynthPatches
+    /* The following vibrato parameters are supported by MKSynthPatches
        that allow vibrato of various kinds */
 
     MK_svibFreq,       /* Periodic vibrato rate in hz. */
@@ -171,9 +174,9 @@ typedef enum _MKPars {     /* MKNote Parameters. */
     MK_indRvibAmp,     /* Random fm index vibrato amplitude in 
                           percentage of current fm index. */
                
-    /* A noise generator may play a role in some SynthPatches to create
+    /* A noise generator may play a role in some MKSynthPatches to create
        special effects or increase realism.  The following predefined 
-       parameters are useful in these cases. Note that for SynthPatches where
+       parameters are useful in these cases. Note that for MKSynthPatches where
        the noise generator is the primary source of sound (as in Pluck),
        the standard parameters MK_amp and MK_freq are used instead of 
        these parameters. */
@@ -192,7 +195,7 @@ typedef enum _MKPars {     /* MKNote Parameters. */
        * Do the same, adding a constant to the results. 
        * Use the envelope to interpolate between two specific values.
       
-       The SynthPatches provided with the Music Kit allow all of the above 
+       The MKSynthPatches provided with the Music Kit allow all of the above 
        situations for parameters which support envelopes, depending on what
        is supplied in the parameter list.  If a parameter is specified as a
        single value, that value is used.  If an envelope is supplied but no
@@ -315,7 +318,7 @@ typedef enum _MKPars {     /* MKNote Parameters. */
     MK_synthPatch,        /* A suggested synthPatch class which the 
                              app may want to assign to a MKSynthInstrument */
     MK_synthPatchCount,   /* A suggested count of manually allocated 
-                             SynthPatches of the type specified by
+                             MKSynthPatches of the type specified by
                              MK_synthPatch and the default template. */
     MK_midiChan,          /* A suggested midi channel to which the app may
                              want to connect to playing this part on 

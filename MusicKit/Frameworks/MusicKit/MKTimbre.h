@@ -50,6 +50,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.6  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -93,7 +96,7 @@ name of a  timbre that is already in the Data Base.  <b>timbreName</b> may be
 used to retrieve the name of an MKTimbre.  An anonymous timbre has a name field of
 NULL.
 
-The Music Kit SynthPatches use the Data Base by passing it a "timbre key".   A
+The Music Kit MKSynthPatches use the Data Base by passing it a "timbre key".   A
 timbre key is a timbre name with an optional integer appended to it and an
 optional 0 or 1 prepended to it.   The trailing number in a timbre key specifies
 a particular table (1-based).  A leading 0 or 1 specifies use of  the

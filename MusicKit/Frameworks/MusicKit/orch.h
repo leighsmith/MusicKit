@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.5  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -55,7 +58,7 @@ typedef enum _MKOrchMemSegment { /* Memory segments for MKOrchestra */
   } MKOrchMemSegment;
 
 typedef struct _MKOrchMemStruct { /* Used to represent relocation as well
-                     as memory usage of UnitGenerators. */ 
+                     as memory usage of MKUnitGenerators. */ 
     unsigned xArg;   /* x unit generator memory arguments */
     unsigned yArg;   /* y */
     unsigned lArg;   /* l */
@@ -73,7 +76,7 @@ typedef struct _MKOrchAddrStruct { /* Used to represent orchestra addresses. */
     int orchIndex;                 /* Which DSP. */
 } MKOrchAddrStruct;
 
-typedef enum _MKSynthStatus { /* Status for SynthPatches and UnitGenerators. */
+typedef enum _MKSynthStatus { /* Status for MKSynthPatches and MKUnitGenerators. */
     MK_idle,                  /* Writing to sink (nowhere). */ 
     MK_running,               /* The meaning of this is defined by the ug */
     MK_finishing,             /* The meaning of this is defined by the ug */

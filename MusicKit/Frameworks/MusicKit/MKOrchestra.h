@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.10  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.9  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -73,7 +76,7 @@ or none, depending on how many DSP cards the user has installed.  See
 
 The methods defined by the MKOrchestra class let you manage a DSP by allocating
 portions of its memory for specific synthesis modules and by setting its
-processing characteristics.  You can allocate entire SynthPatches or individual
+processing characteristics.  You can allocate entire MKSynthPatches or individual
 MKUnitGenerator and MKSynthData objects through the methods defined here.  Keep in
 mind, however, that similar methods defined in other class - specifically, the
 MKSynthPatch allocation methods defined in MKSynthInstrument, and the MKUnitGenerator
@@ -108,7 +111,7 @@ MK_devClosed	The MKOrchestra is closed.
 You can query an MKOrchestra's status through the <b>deviceStatus</b>
 method.
 
-When the MKOrchestra is running, the allocated UnitGenerators produce a stream of
+When the MKOrchestra is running, the allocated MKUnitGenerators produce a stream of
 samples that, by default, are sent to the "default sound output".  On NeXT
 hardware, that is the NeXT monitor's stereo digital to analog converter (the
 DAC), which converts the samples into an audio signal.  This type of sound
@@ -168,7 +171,7 @@ are evened out by the utter dependability of the DSP's clock (assuming that the
 such an irregularity isn't greater than the delta time).
 
 Since parameter updates can occur asynchronously, the MKOrchestra doesn't know, at
-the beginning of a MKNote, if the DSP can execute a given set of UnitGenerators
+the beginning of a MKNote, if the DSP can execute a given set of MKUnitGenerators
 quickly enough to produce a steady supply of output samples for the entire
 duration of the MKNote.  However, it makes an educated estimate and will deny
 allocation requests that it thinks will overload the DSP and cause it to fall
@@ -205,7 +208,7 @@ has no effect when sending samples to the DSP serial port.
 
 To avoid creating duplicate synthesis modules on the DSP, each instance of
 MKOrchestra maintains a shared object table.  Objects on the table are
-SynthPatches, SynthDatas, and UnitGenerators and are indexed by some other
+MKSynthPatches, SynthDatas, and MKUnitGenerators and are indexed by some other
 object that represents the shared object.  For example, the OscgafUG
 MKUnitGenerator (a family of oscillators) lets you specify its waveform-generating
 wave table as a MKPartials object (you can also set it as a MKSamples object; for
@@ -224,7 +227,7 @@ already-allocated MKSynthData can be returned by sending the message
 <tt>id aSynthData = [MKOrchestra sharedObjectFor:thePartials];</tt>
 
 The method <b>installSharedObject:for:</b> is provided for installing
-SynthPatches and UnitGenerators.
+MKSynthPatches and MKUnitGenerators.
 
 If appropriate hardware is available, multiple DSPs may be used in concert.  The
 MKOrchestra automatically performs allocation on the pool of DSPs.  On Intel-based
@@ -1279,7 +1282,7 @@ extern void MKSetPreemptDuration(double seconds);
   @result Returns an id.
   @discussion Returns a special pre-allocated patchpoint (a MKSynthData) in the
               specified segment which may be used to write garbage.  It's commonly
-              used as a place to send the output of idle UnitGenerators.  The
+              used as a place to send the output of idle MKUnitGenerators.  The
               patchpoint shouldn't be deallocated.  <i>segment</i> can be
               MK_xPatch or MK_yPatch.
 */
@@ -1292,7 +1295,7 @@ extern void MKSetPreemptDuration(double seconds);
   @discussion Returns a special pre-allocated patchpoint (a MKSynthData) in the
               specified segment, aligned for modulus addressing, which may be used
               to write garbage.  It's commonly used as a place to send the output
-              of idle UnitGenerators.  The patchpoint shouldn't be deallocated. 
+              of idle MKUnitGenerators.  The patchpoint shouldn't be deallocated. 
               <i>segment</i> can be MK_xPatch or MK_yPatch.
 */
 - segmentSinkModulus:(MKOrchMemSegment )segment; 
@@ -1302,7 +1305,7 @@ extern void MKSetPreemptDuration(double seconds);
   @result Returns an id.
   @discussion Opens the receiver's DSP and sets the receiver's status to
               MK_devOpen.  Resets orchestra loop (if not already reset), freeing
-              all Unit Generators and SynthPatches.  Returns <b>nil</b> if the DSP
+              all Unit Generators and MKSynthPatches.  Returns <b>nil</b> if the DSP
               can't be opened for some reason,  otherwise returns the receiver.  
               To find out why the DSP can't be opened, enable Music Kit or DSP
               error tracing.  Possible problems opening the DSP include another
@@ -1337,7 +1340,7 @@ extern void MKSetPreemptDuration(double seconds);
   @result Returns an id.
   @discussion Waits for all enqueued DSP commands to be executed.  Then severs
               communication with the DSP, allowing other processes to claim it. 
-              The MKSynthPatch-allocated UnitGenerators and MKSynthInstrument-allocated SynthPatches are freed.  All SynthPatches must be idle and non-MKSynthPatch-allocated UnitGenerators must be deallocated before sending this message.  Returns <b>nil</b> if an error occurs, otherwise returns the receiver.
+              The MKSynthPatch-allocated MKUnitGenerators and MKSynthInstrument-allocated MKSynthPatches are freed.  All MKSynthPatches must be idle and non-MKSynthPatch-allocated MKUnitGenerators must be deallocated before sending this message.  Returns <b>nil</b> if an error occurs, otherwise returns the receiver.
 */
 - close; 
 
@@ -1424,7 +1427,7 @@ extern void MKSetPreemptDuration(double seconds);
   @result Returns an id.
   @discussion Allocates and returns a MKSynthPatch for MKPatchTemplate <i>p</i>.  The
               receiver first tries to find an idle MKSynthPatch; failing that, it
-              creates and returns a new one.  The UnitGenerators are added to the
+              creates and returns a new one.  The MKUnitGenerators are added to the
               SynthPatch's unitGenerators list in the same order they are
               specified in the MKPatchTemplate.  If a new MKSynthPatch can't be built,
               this method returns <b>nil</b>.

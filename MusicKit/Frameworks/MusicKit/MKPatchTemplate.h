@@ -75,6 +75,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.6  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -105,33 +108,33 @@ keep in mind that these methods don't add actual objects to the MKPatchTemplate.
 Instead, they specify the types of objects that will be created when the
 MKSynthPatch is constructed by the MKOrchestra.
 
-A PatchTemplate's UnitGenerators are specified by their class, given as the
+A PatchTemplate's MKUnitGenerators are specified by their class, given as the
 first argument to the <b>addUnitGenerator:ordered:</b> method.  The argument
 should be a MKUnitGenerator leaf class, not a master class (leaf and master
 classes are explained in the MKUnitGenerator class description).
 
 The MKUnitGenerator is further described as being ordered or unordered, as the
-argument to the <b>ordered:</b> keyword is YES or NO.  Ordered UnitGenerators
+argument to the <b>ordered:</b> keyword is YES or NO.  Ordered MKUnitGenerators
 are executed (on the DSP) in the order that they're added to the MKPatchTemplate;
-unordered UnitGenerators are executed in an undetermined order.  Usually, the
-order in which UnitGenerators are executed is significant; for example, if the
+unordered MKUnitGenerators are executed in an undetermined order.  Usually, the
+order in which MKUnitGenerators are executed is significant; for example, if the
 output of MKUnitGenerator A is read by MKUnitGenerator B, then A must be executed
 before B if no delay is to be incurred.  As a convenience, the
-<b>addUnitGenerator:</b> method is provided to add UnitGenerators that are
-automatically declared as ordered.  The advantage of unordered UnitGenerators is
+<b>addUnitGenerator:</b> method is provided to add MKUnitGenerators that are
+automatically declared as ordered.  The advantage of unordered MKUnitGenerators is
 that their allocation is less constrained.
 
 SynthDatas are specified by a DSP memory segment and a length.  The memory
 segment is given as the first argument to <b>addSynthData:length:</b>.  This can
 be either MK_xData, for x data memory, or MK_yData, for y data memory.  Which
-memory segment to specify depends on where the UnitGenerators that access it
+memory segment to specify depends on where the MKUnitGenerators that access it
 expects it to be.  The argument to the <b>length:</b> keyword specifies the size
 of the MKSynthData, or how much DSP memory it represents, and is given as DSPDatum
 (24-bit) words.
 
 A typical use of a MKSynthData is to create a location called a <i>patchpoint</i>
 that's written to by one MKUnitGenerator and then read by another.  A patchpoint,
-which is always 8 words long, is ordinarily the only way that two UnitGenerators
+which is always 8 words long, is ordinarily the only way that two MKUnitGenerators
 can communicate.  The <b>addPatchPoint:</b> method is provided as a convenient
 way to add SynthDatas that are used as patchpoints.  The argument to this method
 is either MK_xPatch or MK_yPatch, for x and y patchpoint memory,

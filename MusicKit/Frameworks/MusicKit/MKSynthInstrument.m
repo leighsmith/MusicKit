@@ -44,6 +44,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2001/09/08 21:53:16  leighsmith
+  Prefixed MK for UnitGenerators and SynthPatches
+
   Revision 1.13  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -302,7 +305,7 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
 -preemptSynthPatchFor:aNote patches:firstPatch
   /* You never send this message. Rather, 
      this method is invoked when we are in manual allocation mode and 
-     all SynthPatches are in use or we are in auto allocation mode
+     all MKSynthPatches are in use or we are in auto allocation mode
      and no more DSP resources are available. The default implementation
      returns the Patch with the appropriate template whose phrase began the 
      earliest  (This is the same value returned by the method -activeSynthPatches:.)
@@ -327,7 +330,7 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
      specified template. If aTemplate is nil, 
      [synthPatchClass defaultPatchTemplate] is used.
      The list is ordered by when the phrase began, from the earliest to
-     the latest. In addition, all finishing SynthPatches are before all
+     the latest. In addition, all finishing MKSynthPatches are before all
      running ones. You step down the list by sending the -next message to
      each patch. Returns nil if there are no patches sounding with that
      template. */
@@ -343,7 +346,7 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
 
 -mute:aMute
   /* This method is invoked when a MKNote of type mute is received.
-     MKNotes of type mute are not sent to SynthPatches because they do not deal 
+     MKNotes of type mute are not sent to MKSynthPatches because they do not deal 
      directly with sound production. The default implementation does
      nothing. A subclass may implement this 
      method to look at the parameters of aMute and perform some appropriate
@@ -719,7 +722,7 @@ static void deallocIdleVoices(MKSynthInstrument *self,id orch)
 }
 
 static void orphanRunningVoices(MKSynthInstrument *self)
-    /* Moves running SynthPatches to orphan list. Doesn't stop them 
+    /* Moves running MKSynthPatches to orphan list. Doesn't stop them 
        from running, however. */
 {
     register id aPatch;
@@ -882,7 +885,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch)
 -clearUpdates
 /* Causes the MKSynthInstrument to forget any noteUpdate state it has accumulated
    as a result of receiving noteUpdates without noteTags.
-   The effect is not felt by the SynthPatches until the next phrase. Also
+   The effect is not felt by the MKSynthPatches until the next phrase. Also
    clears controller info.
  */
 {
