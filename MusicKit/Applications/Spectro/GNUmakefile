@@ -18,7 +18,6 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
 
 include $(GNUSTEP_MAKEFILES)/common.make
 
-
 APP_NAME = \
 	Spectro	
 ADDITIONAL_LIB_DIRS =
@@ -30,10 +29,9 @@ PACKAGE_NAME=Spectro
 # use -lMusicKit instead. It doesn't matter if you do both.
 
 ADDITIONAL_TOOL_LIBS += -lSndKit
- 
+
 ADDITIONAL_CFLAGS += -g
- 
- 
+
 ifeq (mingw32, $(GNUSTEP_HOST_OS))
   CYG_DRIVE = $(shell cygpath -w '/' | tr '\\' '/' )
   ADDITIONAL_LIB_DIRS = -L$(CYG_DRIVE)/usr/local/lib
@@ -48,7 +46,7 @@ Spectro_OBJC_FILES = Spectro_main.m \
 	PrefController.m     SignalProcessor.m  WaterfallView.m \
 	SaveToController.m   SoundController.m  SpectrumDocument.m \
 	ScrollingSound.m     SoundDocument.m    SpectrumView.m \
-	ScrollingSpectrum.m  SoundInfo.m        SubSoundView.m
+	ScrollingSpectrum.m  SoundInfo.m        
 
 
 SRCS = $(TEST_APP_NAME:=.m)
