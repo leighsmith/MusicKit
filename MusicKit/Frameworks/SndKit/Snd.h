@@ -50,16 +50,6 @@
 #import <Foundation/Foundation.h>
 #import "SndFormat.h"
 
-// TODO this can probably be bumped along with the pasteboard methods to SndView or do something
-// similar to NSAttributedString etc that extends FoundationKit class functionality in the AppKit.
-#ifndef USE_NEXTSTEP_SOUND_IO
-/* Define this for compatibility */
-#define NXSoundPboard NXSoundPboardType
-
-extern NSString *NXSoundPboardType;
-#import <AppKit/NSPasteboard.h>
-#endif
-
 @class SndPlayer;
 @class SndPerformance;
 @class SndAudioBuffer;
@@ -344,21 +334,6 @@ typedef enum {
 - initFromSoundfile: (NSString *) filename;
 
 /*!
-  @method initFromPasteboard:
-  @param  thePboard is a NSPasteboard *.
-  @result Returns an id.
-  @discussion Initializes the Snd instance, which must be newly allocated, by
-              copying the sound data from the Pasteboard object <i>thePboard</i>.
-              (A Pasteboard can have only one sound entry at a time.) Returns
-              <b>self</b> (an unnamed Snd) if <i>thePboard</i> currently
-              contains a sound entry; otherwise, frees the newly allocated Snd
-              and returns <b>nil</b>.
-              
-              See also:	+<b>alloc</b> (NSObject), +<b>allocWithZone:</b> (NSObject)
-*/
-- initFromPasteboard: (NSPasteboard *) thePboard;
-
-/*!
   @method initFromSoundURL:
   @param  url is a NSURL *.
   @result Returns an id.
@@ -377,11 +352,21 @@ typedef enum {
   @param  channels
   @param  frames
   @param  samplingRate
+  @result Returns self
 */
 - initWithFormat: (SndSampleFormat) format
-        channelCount: (int) channels
+    channelCount: (int) channels
           frames: (int) frames
     samplingRate: (float) samplingRate;
+
+/*!
+  @method initWithData:
+  @abstract Initialise a Snd instance using a NSData instance which holds audio data in Sun/NeXT .au format.
+  @discussion The data is held with format preceding the PCM audio data.
+  @param soundData An NSData instance containing preceding sound format data followed by PCM audio data, in Sun/NeXT .au format.
+  @result Returns self
+ */
+- initWithData: (NSData *) soundData;
 
 - (void) dealloc;
 
@@ -397,12 +382,12 @@ typedef enum {
 - readSoundFromData: (NSData *) stream;
 
 /*!
-  @method writeSoundToStream:
+  @method writeSoundToData:
   @param  stream is an NSMutableData instance.
   @discussion Writes the Snd's name (if any), priority, sample format, and
               sound data (if any) to the NSMutableData <i>stream</i>.
 */
-- writeSoundToStream: (NSMutableData *) stream;
+- writeSoundToData: (NSMutableData *) stream;
 
 /*!
   @method      swapBigEndianToHostFormat
@@ -758,17 +743,6 @@ typedef enum {
 - (int) writeSoundfile: (NSString *) filename;
 
 /*!
-  @method writeToPasteboard:
-  @param  thePboard is a NSPasteboard *.
-  @result Returns an int.
-  @discussion Puts a copy of the Snd's contents (its sample format and sound
-              data) on the pasteboard maintained by the NSPasteboard object
-              <i>thePboard</i>. If the Snd is fragmented, it's compacted before
-              the copy is created. An error code is returned.
-*/
-- (void) writeToPasteboard: (NSPasteboard *) thePboard;
-
-/*!
   @method isEmpty
   @result Returns a BOOL.
   @discussion Returns <b>YES</b> if the Snd doesn't contain any sound data,
@@ -787,7 +761,7 @@ typedef enum {
 - (BOOL) isEditable;
 
 /*!
-  @method compatibleWith:
+  @method compatibleWithSound:
   @param  aSound is an id.
   @result Returns a BOOL.
   @discussion Returns <b>YES</b> if the format, sampling rate, and channel count
@@ -797,7 +771,7 @@ typedef enum {
               objects are declared compatible and <b>YES</b> is returned.
               
 */
-- (BOOL) compatibleWith: (Snd *) aSound;
+- (BOOL) compatibleWithSound: (Snd *) aSound;
 
 /*!
   @method isPlayable
@@ -959,7 +933,7 @@ typedef enum {
 
 /*!
   @method data
-  @result Returns an unsigned char *.
+  @result Returns a void *.
   @discussion Returns a pointer to the Snd's sampled data. You can use the
               pointer to examine, create, and modify the sound data. To
               intelligently manipulate the data, you need to be aware of its size,
@@ -981,7 +955,7 @@ typedef enum {
               examine or manipulate the samples in a fragmented sound,
               you must understand the SndSoundStruct structure.  
 */
-- (unsigned char *) data;
+- (void *) data;
 
 /*!
   @method dataSize
@@ -1252,11 +1226,18 @@ typedef enum {
 
 /*!
   @method initWithAudioBuffer:
-  @abstract  Initialises a Snd instance from the provided SndAudioBuffer.
+  @abstract Initialises a Snd instance from the provided SndAudioBuffer.
   @param aBuffer the SndAudioBuffer object from which to copy the data
   @result self
  */
 - initWithAudioBuffer: (SndAudioBuffer *) aBuffer;
+
+/*!
+  @method normalise
+  @abstract Normalises the amplitude of the entire sound.
+  @discussion The highest amplitude sample in the sound is scaled to be the maximum resolution.
+ */
+- (void) normalise;
 
 /*!
   @method     setLoopWhenPlaying:
