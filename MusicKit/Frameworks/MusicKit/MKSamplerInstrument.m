@@ -21,6 +21,9 @@
 */
 /*
   $Log$
+  Revision 1.17  2001/08/27 21:03:23  skotmcdonald
+  Added playNote method which plays the Snd at the absolute audio stream time. Calls new Snd play:atTime:withDuration method. Needed for sample accurate timing as we can't guarantee relative dts to be accurate enough
+
   Revision 1.16  2001/08/27 20:04:52  leighsmith
   Renamed the stop method to allNotesOff since this gives a clearer understanding of its function, better matches the behaviour of other MKInstruments and doesn't confuse against the stop method of MKMidi or MKOrchestra
 
@@ -113,7 +116,7 @@
 - init
 {
     [super init];
-    [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
+    [self addNoteReceiver:[MKNoteReceiver new]];
 
     playingNotes = [[NSMutableDictionary dictionaryWithCapacity: 20] retain]; 
     // since we update the playingNotes queue (actually a dictionary) via an abort/stop routine from
@@ -179,7 +182,7 @@
     filePath = [aNote parAsString: MK_filename];
     // NSLog(@"playing file %@\n", filePath);
 
-    if ((existingSound = [Snd soundNamed: filePath]) == nil) {
+    if ((existingSound = [Snd soundNamed: filePath]) == nil) { // Ouch! better check the disk-load times here
         _MKErrorf(MK_cantOpenFileErr, filePath);
         return nil;
     }
@@ -195,8 +198,47 @@
 
 - playSampleNote: (MKNote *) aNote
 {
+    Snd            *existingSound;
+    NSString       *filePath;
+    SndPerformance *newPerformance;
+    MKConductor    *conductor = [aNote conductor]; 
+    double          factor    = 60 / [conductor tempo];
+    double          noteTime  = [aNote timeTag] * factor;  // for now - static tempo time. Urk!
+    double          duration  = 1;
+
+    // only play those notes which are samples.
+    if(![aNote isParPresent: MK_filename])
+        return nil;
+    filePath = [aNote parAsString: MK_filename];
+    // NSLog(@"playing file %@\n", filePath);
+
+    if ((existingSound = [Snd soundNamed: filePath]) == nil) { 
+        _MKErrorf(MK_cantOpenFileErr, filePath);
+        return nil;
+    }
+    // needed to remove notes when sounds complete playing.
+    [existingSound setDelegate: self];
+    
+
+    if ([aNote noteType] == MK_noteDur) {
+      duration  = [aNote dur] * factor;
+    }
+    
+    newPerformance = [existingSound playAtTimeInSeconds:  noteTime + 1.0
+                                  withDurationInSeconds: duration];
+
+    // keep a dictionary of playing notes (keyed by note instance, added in time order) and their performances.
+    [playingNotes setObject: newPerformance forKey: aNote];
+    return self;
+}
+
+
+/*
+- playSampleNote: (MKNote *) aNote
+{
     return [self playSampleNote: aNote inFuture: 0.0];
 }
+*/
 
 // schedule stopping a sample at some time in the future.
 - stopSampleNote: (MKNote *) aNote inFuture: (double) inSeconds
@@ -391,12 +433,12 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
     // [MKConductor sel:to:withDelay:argCount:] takes delay parameters in beats.
     double  deltaT = MKGetDeltaT() / [conductor beatSize]; 
 
-    // NSLog(@"deltaT = %lf beatSize = %lf tempo = %lf\n", deltaT, [conductor beatSize], [conductor tempo]);
+    NSLog(@"MKSamplePLayer::realizeNote - deltaT = %lf beatSize = %lf tempo = %lf\n", deltaT, [conductor beatSize], [conductor tempo]);
     if ((type == MK_noteOn) || (type == MK_noteDur)) {
         [self prepareSoundWithNote: aNote];
-        [self playSampleNote: aNote inFuture: deltaT];
-        if (type == MK_noteDur) {
-            [self stopSampleNote: aNote inFuture: deltaT+[aNote dur]];
+        
+        {
+          [self playSampleNote: aNote];
         }
     }
     else if ((type == MK_noteOff) && !damperOn) {
