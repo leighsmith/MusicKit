@@ -12,7 +12,11 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 ******************************************************************************/
 
+#ifdef GNUSTEP
+#include "SndEndianFunctions.h"
+#else
 #import "SndEndianFunctions.h"
+#endif
 
 float SndSwapSwappedFloatToHost(SndSwappedFloat aSwappedFloat)
 {
