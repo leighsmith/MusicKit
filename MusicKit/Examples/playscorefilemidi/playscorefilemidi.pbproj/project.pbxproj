@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 38;
 	objects = {
 		0899F109FFD585C4CFED3B96 = {
 			buildStyles = (
 				441ED0EC005D5BA4CFED3B96,
 				441ED0ED005D5BA4CFED3B96,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 0899F10AFFD585C4CFED3B96;
 			productRefGroup = 0899F119FFD585C4CFED3B96;
@@ -38,6 +39,7 @@
 			refType = 4;
 		};
 		0899F10CFFD585C4CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = playscorefilemidi.m;
 			refType = 4;
@@ -51,6 +53,7 @@
 			refType = 4;
 		};
 		0899F113FFD585C4CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = README;
 			refType = 4;
@@ -97,7 +100,10 @@
 				0899F123FFD585C4CFED3B96,
 			);
 			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
+				GCC_VERSION = 3.x;
 				INSTALL_PATH = /bin;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
@@ -114,14 +120,13 @@
 			productInstallPath = /bin;
 			productName = playscorefilemidi;
 			productReference = 0899F11AFFD585C4CFED3B96;
-			shouldUseHeadermap = 0;
 		};
 		0899F11CFFD585C4CFED3B96 = {
 			buildActionMask = 2147483647;
 			files = (
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0899F11DFFD585C4CFED3B96 = {
 			buildActionMask = 2147483647;
@@ -129,7 +134,7 @@
 				0899F11EFFD585C4CFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0899F11EFFD585C4CFED3B96 = {
 			fileRef = 0899F10CFFD585C4CFED3B96;
@@ -146,7 +151,7 @@
 				0899F122FFD585C4CFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0899F121FFD585C4CFED3B96 = {
 			fileRef = 0899F116FFD585C4CFED3B96;
@@ -165,7 +170,7 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //080
 //081
