@@ -53,7 +53,9 @@ void DoRecord(const char* recordFilename, double recordDuration)
     NSAutoreleasePool *pool     = [NSAutoreleasePool new];
     SndStreamRecorder *recorder = [SndStreamRecorder streamRecorder];
     [[SndStreamManager defaultStreamManager] addClient: recorder];
-		[recorder startRecordingToFile: [NSString stringWithCString: recordFilename]]; 
+    [recorder startRecordingToFile: [[NSFileManager defaultManager]
+                stringWithFileSystemRepresentation:recordFilename
+                                            length:strlen(recordFilename)]];
 
     if (recordDuration >= 0.0) {
         while (recordDuration > 0.0) {

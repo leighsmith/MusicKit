@@ -115,7 +115,8 @@ int main (int argc, const char * argv[])
       NSFileManager     *fm       = [NSFileManager defaultManager];
       BOOL               bFileExists = FALSE, bIsDir = FALSE; 
     
-      filename  = [NSString stringWithCString: soundFileName];
+      filename  = [fm stringWithFileSystemRepresentation:soundFileName
+                                                  length:strlen(soundFileName)];
       extension = [filename pathExtension];
       
       bFileExists = [fm fileExistsAtPath: filename isDirectory: &bIsDir];      
