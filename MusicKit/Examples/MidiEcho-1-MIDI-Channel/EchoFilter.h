@@ -13,7 +13,7 @@
     NSMutableDictionary *echoingNotes;  /* See below */
 }
 
--init;
+- init;
 - (void) setDelay: (double) delayArg;
--realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
+- realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
 @end
