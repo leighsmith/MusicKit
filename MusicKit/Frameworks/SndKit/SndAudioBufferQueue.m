@@ -36,7 +36,7 @@ enum {
 
 + audioBufferQueueWithLength: (int) n
 {
-  return [[[self alloc] initQueueWithLength: 4] autorelease];
+  return [[[self alloc] initQueueWithLength: n] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
