@@ -29,6 +29,7 @@
 				01575C4F0048D569CFED3B96,
 				01575C500048D569CFED3B96,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 016D5A23FED483BBCFED3B93;
 			productRefGroup = 016D5A24FED483BBCFED3B93;
@@ -68,11 +69,13 @@
 			refType = 4;
 		};
 		016D5A27FED483BBCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PerformSound.h;
 			refType = 4;
 		};
 		016D5A29FED483BBCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PerformMIDI.h;
 			refType = 4;
@@ -87,11 +90,13 @@
 			refType = 4;
 		};
 		016D5A2FFED483BBCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PerformMIDI.m;
 			refType = 4;
 		};
 		016D5A30FED483BBCFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PerformSound.m;
 			refType = 4;
@@ -176,7 +181,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		016D5A3BFED483BBCFED3B93 = {
 			buildActionMask = 2147483647;
@@ -311,6 +315,7 @@
 			};
 		};
 		07B2BE640034BFE6CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStruct.h;
 			refType = 4;
@@ -369,6 +374,7 @@
 //153
 //154
 		155A3D8F00376A7BCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndFormats.h;
 			refType = 4;

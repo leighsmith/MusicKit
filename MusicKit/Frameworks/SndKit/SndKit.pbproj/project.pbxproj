@@ -10,6 +10,7 @@
 				055C7F3C0049CD79CFED3B96,
 				055C7F3D0049CD79CFED3B96,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 00D2C428FEDB2CB5CFED3B93;
 			productRefGroup = 00D2C429FEDB2CB5CFED3B93;
@@ -81,26 +82,31 @@
 			refType = 4;
 		};
 		00D2C42CFEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Snd.m;
 			refType = 4;
 		};
 		00D2C42DFEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndDisplayData.m;
 			refType = 4;
 		};
 		00D2C42EFEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndDisplayDataList.m;
 			refType = 4;
 		};
 		00D2C42FFEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndView.m;
 			refType = 4;
 		};
 		00D2C430FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = sounderror.m;
 			refType = 4;
@@ -119,61 +125,73 @@
 			refType = 4;
 		};
 		00D2C433FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Snd.h;
 			refType = 4;
 		};
 		00D2C434FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndDisplayData.h;
 			refType = 4;
 		};
 		00D2C435FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndDisplayDataList.h;
 			refType = 4;
 		};
 		00D2C436FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndEndianFunctions.h;
 			refType = 4;
 		};
 		00D2C438FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndFunctions.h;
 			refType = 4;
 		};
 		00D2C439FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndKit.h;
 			refType = 4;
 		};
 		00D2C43BFEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndView.h;
 			refType = 4;
 		};
 		00D2C43CFEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = sounderror.h;
 			refType = 4;
 		};
 		00D2C43EFEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = _Sndfilterkit.h;
 			refType = 4;
 		};
 		00D2C43FFEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = _Sndlargefilter.h;
 			refType = 4;
 		};
 		00D2C440FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = _Sndlibst.h;
 			refType = 4;
 		};
 		00D2C442FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = _Sndsmallfilter.h;
 			refType = 4;
@@ -198,26 +216,31 @@
 			refType = 4;
 		};
 		00D2C445FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndEndianFunctions.c;
 			refType = 4;
 		};
 		00D2C447FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = _SndConvert.m;
 			refType = 4;
 		};
 		00D2C448FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = _Sndfilterkit.c;
 			refType = 4;
 		};
 		00D2C449FEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = _Sndlibst.c;
 			refType = 4;
 		};
 		00D2C44AFEDB2CB5CFED3B93 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = _Sndresamplesubs.m;
 			refType = 4;
@@ -333,7 +356,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		00D2C45AFEDB2CB5CFED3B93 = {
 			buildActionMask = 2147483647;
@@ -691,61 +713,73 @@
 			refType = 4;
 		};
 		0109B285014D0BC3CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = allpass.cpp;
 			refType = 2;
 		};
 		0109B286014D0BC3CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = comb.cpp;
 			refType = 2;
 		};
 		0109B287014D0BC3CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = reverbBridge.cpp;
 			refType = 2;
 		};
 		0109B288014D0BC3CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = revmodel.cpp;
 			refType = 2;
 		};
 		0109B289014D0BC3CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = allpass.h;
 			refType = 2;
 		};
 		0109B28A014D0BC3CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = comb.h;
 			refType = 2;
 		};
 		0109B28B014D0BC3CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = denormals.h;
 			refType = 2;
 		};
 		0109B28C014D0BC3CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = reverbBridge.h;
 			refType = 2;
 		};
 		0109B28D014D0BC3CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = revmodel.h;
 			refType = 2;
 		};
 		0109B28E014D0BC3CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = tuning.h;
 			refType = 2;
 		};
 		0109B28F014D0BC3CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorReverb.m;
 			refType = 2;
 		};
 		0109B290014D0BC3CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorReverb.h;
 			refType = 2;
@@ -838,11 +872,13 @@
 			};
 		};
 		011279850168CEFCCFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorMP3Encoder.m;
 			refType = 4;
 		};
 		011279860168CEFCCFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorMP3Encoder.h;
 			refType = 4;
@@ -875,11 +911,13 @@
 			};
 		};
 		017A8C4C004DDCB1CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndPerformance.h;
 			refType = 4;
 		};
 		017A8C4D004DDCB1CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndPerformance.m;
 			refType = 4;
@@ -910,11 +948,13 @@
 //023
 //024
 		02240682007138A9CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamMixer.m;
 			refType = 4;
 		};
 		02240683007138A9CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamMixer.h;
 			refType = 4;
@@ -935,21 +975,25 @@
 			};
 		};
 		0224068600713935CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorChain.m;
 			refType = 4;
 		};
 		0224068700713935CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessor.m;
 			refType = 4;
 		};
 		0224068800713935CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorChain.h;
 			refType = 4;
 		};
 		0224068900713935CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessor.h;
 			refType = 4;
@@ -985,11 +1029,13 @@
 			};
 		};
 		02240692007269D2CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorDelay.m;
 			refType = 4;
 		};
 		02240693007269D2CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorDelay.h;
 			refType = 4;
@@ -1010,6 +1056,7 @@
 			};
 		};
 		0266378F01998D477F000001 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndKitDefines.h;
 			refType = 4;
@@ -1039,6 +1086,7 @@
 			refType = 3;
 		};
 		042277900030C91CCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndFunctions.m;
 			refType = 4;
@@ -1115,11 +1163,13 @@
 //063
 //064
 		06C30561007CD69BCFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamRecorder.m;
 			refType = 4;
 		};
 		06C30562007CD69BCFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamRecorder.h;
 			refType = 4;
@@ -1150,11 +1200,13 @@
 //073
 //074
 		07986ABF013D43C8CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioBufferQueue.h;
 			refType = 4;
 		};
 		07986AC0013D43C8CFED3B94 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioBufferQueue.m;
 			refType = 4;
@@ -1185,6 +1237,7 @@
 //093
 //094
 		095E1FC30030E169CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndResample.h;
 			refType = 4;
@@ -1199,6 +1252,7 @@
 			};
 		};
 		095E1FC50030E3C7CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStdefs.h;
 			refType = 4;
@@ -1261,21 +1315,25 @@
 //363
 //364
 		36C5C1C10039F18CCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioBuffer.m;
 			refType = 4;
 		};
 		36C5C1C20039F18CCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamClient.m;
 			refType = 4;
 		};
 		36C5C1C30039F18CCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamManager.m;
 			refType = 4;
 		};
 		36C5C1C40039F18CCFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioBuffer.h;
 			refType = 4;
@@ -1314,11 +1372,13 @@
 			};
 		};
 		36C5C1C90039F2E2CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamClient.h;
 			refType = 4;
 		};
 		36C5C1CA0039F2E2CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamManager.h;
 			refType = 4;
@@ -1374,31 +1434,37 @@
 //4E3
 //4E4
 		4E8FE8650122ECB1CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioFader.m;
 			refType = 2;
 		};
 		4E8FE8660122ECB1CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndBreakpoint.m;
 			refType = 2;
 		};
 		4E8FE8670122ECB1CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndEnvelope.m;
 			refType = 2;
 		};
 		4E8FE8680122ECB1CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioFader.h;
 			refType = 2;
 		};
 		4E8FE8690122ECB1CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndBreakpoint.h;
 			refType = 2;
 		};
 		4E8FE86A0122ECB1CFED3B8B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndEnvelope.h;
 			refType = 2;
@@ -1459,6 +1525,7 @@
 //503
 //504
 		508F93C3003C7A83CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndPlayer.m;
 			refType = 4;
@@ -1472,6 +1539,7 @@
 			};
 		};
 		508F93C5003C7F23CFED3B96 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndPlayer.h;
 			refType = 4;
@@ -1496,6 +1564,7 @@
 //7B3
 //7B4
 		7B0B0D33019A30F6002A0496 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndKitDefines.h;
 			refType = 4;
@@ -1520,11 +1589,13 @@
 //B53
 //B54
 		B508535C01F8D71B002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndExpt.h;
 			refType = 4;
 		};
 		B508535D01F8D71B002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndExpt.m;
 			refType = 4;
@@ -1545,11 +1616,13 @@
 			};
 		};
 		B512F13901D3D819002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorInspector.h;
 			refType = 4;
 		};
 		B512F13A01D3D819002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorInspector.m;
 			refType = 4;
@@ -1570,11 +1643,13 @@
 			};
 		};
 		B526060201CFC639002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorDistortion.h;
 			refType = 4;
 		};
 		B526060301CFC639002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorDistortion.m;
 			refType = 4;
@@ -1607,11 +1682,13 @@
 			};
 		};
 		B52BE0F801F8BD38002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndTable.h;
 			refType = 2;
 		};
 		B52BE0F901F8BD38002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndTable.m;
 			refType = 2;
@@ -1632,6 +1709,7 @@
 			};
 		};
 		B52BE0FC01F8D0AC002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndFunctionsDiskIO.m;
 			refType = 2;
@@ -1654,11 +1732,13 @@
 			refType = 4;
 		};
 		B5405223026DE7B1002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndMP3.h;
 			refType = 2;
 		};
 		B5405224026DE7B1002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndMP3.m;
 			refType = 2;
@@ -1679,11 +1759,13 @@
 			};
 		};
 		B552CD7201F4908E002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorNoiseGate.h;
 			refType = 2;
 		};
 		B552CD7301F4908E002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorNoiseGate.m;
 			refType = 2;
@@ -1704,11 +1786,13 @@
 			};
 		};
 		B5799B9101D76E11002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamArchitectureView.h;
 			refType = 4;
 		};
 		B5799B9201D76E11002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndStreamArchitectureView.m;
 			refType = 4;
@@ -1803,6 +1887,7 @@
 			refType = 4;
 		};
 		B5B040B901BEC4B2002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorRecorder.h;
 			refType = 4;
@@ -1824,6 +1909,7 @@
 			refType = 4;
 		};
 		B5B040BB01BEC4B2002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorRecorder.m;
 			refType = 4;
@@ -1844,11 +1930,13 @@
 			};
 		};
 		B5B66AFE01E0EF45002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorToneGenerator.h;
 			refType = 4;
 		};
 		B5B66AFF01E0EF45002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorToneGenerator.m;
 			refType = 4;
@@ -1869,11 +1957,13 @@
 			};
 		};
 		B5E433BE01CE8A53002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorFlanger.h;
 			refType = 4;
 		};
 		B5E433BF01CE8A53002A0494 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SndAudioProcessorFlanger.m;
 			refType = 4;
