@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.9  2000/08/11 01:18:06  leigh
+ * Commented out debugging info
+ *
  * Revision 1.8  2000/06/29 18:03:37  leigh
  * Merged the NSDictionary use with MacOsX support branches
  *
@@ -577,7 +580,7 @@ int endFun(SNDSoundStruct *sound, int tag, int err)
     NSNumber *tagNumber = [NSNumber numberWithInt: tag];
 
     theSnd = [playRecTable objectForKey: tagNumber];
-    NSLog(@"endFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
+    // NSLog(@"endFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
     [theSnd _setStatus:NX_SoundStopped];
     if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
     if (err) [theSnd tellDelegate:@selector(hadError:)];
@@ -592,7 +595,7 @@ int endFun(SNDSoundStruct *sound, int tag, int err)
     if(err) {
         NSLog(@"Unreserving error %d\n", err);
     }
-    NSLog(@"theSnd = %x, err = %d\n", theSnd, err);
+    // NSLog(@"theSnd = %x, err = %d\n", theSnd, err);
     ((Snd *)theSnd)->tag = 0;
     return 0;
 }
@@ -640,7 +643,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
     [self writeSoundfile:tempFile];
     tempSound = [[NSSound alloc] initWithContentsOfFile:tempFile byReference:NO];
     [[NSFileManager defaultManager] removeFileAtPath:tempFile handler:nil];
-    //[tempSound setDelegate:self]; // this cause problem if the Snd is released before the end of playing // raf
+    //[tempSound setDelegate:self]; // raf: this causes problems if the Snd is released before the end of playing
     [tempSound play];
     [tempSound release];
     
