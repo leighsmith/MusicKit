@@ -15,6 +15,10 @@ Modification history:
  Now in CVS - musickit.sourceforge.net
 
  $Log$
+ Revision 1.21  2002/01/24 14:49:43  sbrandon
+ fixed typo in addNotes:timeShift:, and removed unused variable in
+ -combineNotes
+
  Revision 1.20  2002/01/24 13:31:03  sbrandon
  +new and +part create instances of theSubclass, if set, instead of MKPart
  +part now returns an autoreleased object
@@ -172,7 +176,7 @@ static void removeNote(MKPart *self,id aNote);
   * Returns the receiver.
   */
 {
-  id aList,noteOn,aNote;
+  id noteOn,aNote;
   int noteTag,listSize;
   register int i,j;
   SEL oaiSel = @selector(objectAtIndex:);
@@ -675,7 +679,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
     IMP addPart = [parts methodForSelector:@selector(addObject:)];
 # define ADDPART(x) (*addPart)(parts, @selector(addObject:), (x))
     IMP partsContainsObject = [parts methodForSelector:@selector(containsObject:)];
-# define PARTSCONTAINSOBJECT(x) (*addPart)(parts, @selector(containsObject:), (x))
+# define PARTSCONTAINSOBJECT(x) (*partsContainsObject)(parts, @selector(containsObject:), (x))
 
     suspendCompaction = YES;
     alc = [aList count];
