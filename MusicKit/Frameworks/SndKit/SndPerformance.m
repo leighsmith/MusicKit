@@ -20,17 +20,36 @@
 
 @implementation SndPerformance
 
-+ (SndPerformance *) performanceOfSnd: (Snd *) s playingAtTime: (double) t;
++ (SndPerformance *) performanceOfSnd: (Snd *) s
+                        playingAtTime: (double) t;
 {
     return [[[SndPerformance alloc] initWithSnd: s playingAtTime: t] autorelease];
 }
 
++ (SndPerformance *) performanceOfSnd: (Snd *) s
+                        playingAtTime: (double) t
+			   endAtIndex: (long) endIndex;
+{
+    return [[[SndPerformance alloc] initWithSnd: s
+                                  playingAtTime: t
+				     endAtIndex: endIndex] autorelease];
+}
+
 - initWithSnd: (Snd *) s playingAtTime: (double) t
+{
+    if (!snd) {
+        return nil;
+    }
+    return [self initWithSnd:s playingAtTime:t endAtIndex:[s sampleCount]];
+}
+
+- initWithSnd: (Snd *) s playingAtTime: (double) t 
+                            endAtIndex: (long) endIndex
 {
     snd = [s retain];
     playTime = t;
     playIndex = 0;
-    endAtIndex = [s sampleCount];
+    endAtIndex = endIndex;
     return self;
 }
 
