@@ -29,27 +29,36 @@
 @implementation SndAudioBuffer
 
 ////////////////////////////////////////////////////////////////////////////////
+// audioBufferWithSoundStruct:data:
+////////////////////////////////////////////////////////////////////////////////
+
++ audioBufferWithSoundStruct: (SndSoundStruct*) f data: (void*) d
+{
+    SndAudioBuffer *ab = [[SndAudioBuffer alloc] initWithSoundStruct: f data: d];
+    return [ab autorelease];
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // audioBufferWithFormat:data:
 ////////////////////////////////////////////////////////////////////////////////
 
-+ audioBufferWithFormat: (SndSoundStruct*) f data: (void*) d
++ audioBufferWithFormat: (SndFormat *) newFormat data: (void *) sampleData
 {
-  SndAudioBuffer *ab = [[SndAudioBuffer alloc] initWithFormat: f data: d];
-  return [ab autorelease];
+    SndAudioBuffer *ab = [[SndAudioBuffer alloc] initWithFormat: newFormat data: sampleData];
+    return [ab autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // audioBufferWrapperAroundSNDStreamBuffer:
 ////////////////////////////////////////////////////////////////////////////////
 
-+ audioBufferWrapperAroundSNDStreamBuffer: (SNDStreamBuffer*) cBuff
++ audioBufferWithSNDStreamBuffer: (SNDStreamBuffer *) streamBuffer
 {
-    // Repack the format parameters from the stream buffer into a SndFormat structure
-    // SndFormat streamFormat = { cBuff->dataFormat, cBuff->frameCount, cBuff->channelCount, cBuff->sampleRate };
-    //SndAudioBuffer *ab = [[SndAudioBuffer alloc] initWithFormat: streamFormat
-    //							   data: cBuff->streamData];
-    SndAudioBuffer *ab = [[SndAudioBuffer alloc] initWithFormat: &(cBuff->streamFormat)
-							   data: cBuff->streamData];
+    // Repack the format parameters from the stream buffer into a SndFormat structure.
+    SndFormat streamFormat = SndFormatOfSNDStreamBuffer(streamBuffer);
+
+    SndAudioBuffer *ab = [[SndAudioBuffer alloc] initWithFormat: &streamFormat
+    							   data: streamBuffer->streamData];
     return [ab autorelease];
 }
 
@@ -57,7 +66,7 @@
 // audioBufferWithSnd:inRange:
 ////////////////////////////////////////////////////////////////////////////////
 
-+ audioBufferWithSnd: (Snd*) snd inRange: (NSRange) r
++ audioBufferWithSnd: (Snd *) snd inRange: (NSRange) r
 {
     SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
     int frameSizeInBytes;
@@ -83,29 +92,29 @@
 {
   SndAudioBuffer *ab = [SndAudioBuffer alloc];
 
-  [ab initWithFormat: f->dataFormat
-        channelCount: f->channelCount
-        samplingRate: f->samplingRate
-            duration: timeInSec];
+  [ab initWithDataFormat: f->dataFormat
+            channelCount: f->channelCount
+            samplingRate: f->samplingRate
+                duration: timeInSec];
 
   return [ab autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// audioBufferWithFormat:channelCount:samplingRate:duration:
+// audioBufferWithDataFormat:channelCount:samplingRate:duration:
 ////////////////////////////////////////////////////////////////////////////////
 
-+ audioBufferWithFormat: (int) newDataFormat
-           channelCount: (int) newChannelCount
-           samplingRate: (double) newSamplingRate
-               duration: (double) time;
++ audioBufferWithDataFormat: (int) newDataFormat
+               channelCount: (int) newChannelCount
+               samplingRate: (double) newSamplingRate
+                   duration: (double) time;
 {
   SndAudioBuffer *ab = [SndAudioBuffer alloc];
 
-  [ab initWithFormat: (int) newDataFormat
-        channelCount: (int) newChannelCount
-        samplingRate: (double) newSamplingRate
-            duration: (double) time];
+  [ab initWithDataFormat: (int) newDataFormat
+            channelCount: (int) newChannelCount
+            samplingRate: (double) newSamplingRate
+                duration: (double) time];
 
   return [ab autorelease];
 }
@@ -185,10 +194,10 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// initWithFormat:data:
+// initWithSoundStruct:data:
 ////////////////////////////////////////////////////////////////////////////////
 
-- initWithFormat: (SndSoundStruct*) f data: (void*) d
+- initWithSoundStruct: (SndSoundStruct*) f data: (void*) d
 {
   self = [super init];
   if (self) {
@@ -199,7 +208,7 @@
     if (data != nil)
       [data release];
     if (f->dataSize < 0)
-      NSLog(@"SndAudioBuffer::initWithFormat: ERR - f->dataSize (%d) < 0", f->dataSize);
+      NSLog(@"SndAudioBuffer::initWithSoundStruct: ERR - f->dataSize (%d) < 0", f->dataSize);
 
 
     if (d == NULL) {
@@ -214,13 +223,43 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// initWithFormat:data:
+////////////////////////////////////////////////////////////////////////////////
+
+- initWithFormat: (SndFormat *) newFormat data: (void *) sampleData
+{
+    self = [super init];
+    if (self) {
+        samplingRate = newFormat->sampleRate;
+        channelCount = newFormat->channelCount;
+        dataFormat   = newFormat->dataFormat;
+
+        if (data != nil)
+            [data release];
+            
+        maxByteCount = byteCount = SndDataSize(*newFormat);
+
+        if (byteCount < 0)
+            NSLog(@"SndAudioBuffer::initWithFormat: ERR - format byteCount (%d) < 0", byteCount);
+
+        if (sampleData == NULL) {
+            data = [[NSMutableData alloc] initWithLength: byteCount];
+        }
+        else {
+            data = [[NSMutableData alloc] initWithBytes: sampleData length: byteCount];
+        }
+    }
+    return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // init
 ////////////////////////////////////////////////////////////////////////////////
 
-- initWithFormat: (int) newDataFormat
-    channelCount: (int) newChannelCount
-    samplingRate: (double) newSamplingRate
-        duration: (double) time
+- initWithDataFormat: (int) newDataFormat
+        channelCount: (int) newChannelCount
+        samplingRate: (double) newSamplingRate
+            duration: (double) time
 {
     self = [super init];
     if (self) {
@@ -358,7 +397,7 @@
     frameCount = MIN(incomingLengthInSampleFrames, end - start);
     lengthInSamples = frameCount * buffNumChannels; // number of samples for all channels.
 
-    if  (buffDataFormat != selfDataFormat) {
+    if (buffDataFormat != selfDataFormat) {
 	if (canExpandInPlace && selfNumChannels == buffNumChannels) { /* expand in place - saves allocating new buffer/data object */
 	    SndChangeSampleType([buff bytes], [buff bytes], buffDataFormat, selfDataFormat, lengthInSamples);
 	    in = [buff bytes];
@@ -383,7 +422,7 @@
     // TODO we need a universal altivec mixer for all sample formats.
     if(selfDataFormat == SND_FORMAT_FLOAT) {
 #ifdef __VEC__
-	/* FIXME need to do extra check to ensure altivec is supported at runtime */
+	/* TODO need to do extra check to ensure altivec is supported at runtime */
 	vadd(in, 1, out, 1, out, 1, lengthInSamples);
 #else
 	int i;

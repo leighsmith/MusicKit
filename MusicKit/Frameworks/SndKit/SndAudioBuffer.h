@@ -44,7 +44,8 @@
   int    dataFormat;
 /*! @var channelCount  */
   int    channelCount;
-  // TODO SndFormat format; // Will hold sound parameters and frame count rather than byteCount.
+/*! @var format Will hold sound parameters and frame count rather than byteCount. Replaces samplingRate, dataFormat, channelCount */
+  SndFormat format;
 /*! @var data */
   NSMutableData *data;
 }
@@ -57,10 +58,11 @@
   @param      timeInSec
   @result     An SndAudioBuffer
 */
+// TODO + audioBufferWithFormat: (SndFormat *) format duration: (double) timeInSec;
 + audioBufferWithFormat: (SndSoundStruct*) format duration: (double) timeInSec;
 
 /*!
-  @method     audioBufferWithFormat:channelCount:samplingRate:duration:
+  @method     audioBufferWithDataFormat:channelCount:samplingRate:duration:
   @abstract   Factory method
   @discussion
   @param      dataFormat
@@ -69,10 +71,10 @@
   @param      duration
   @result     An SndAudioBuffer
 */
-+ audioBufferWithFormat: (int) dataFormat
-           channelCount: (int) chanCount
-           samplingRate: (double) samRate
-               duration: (double) time;
++ audioBufferWithDataFormat: (int) dataFormat
+               channelCount: (int) chanCount
+               samplingRate: (double) samRate
+                   duration: (double) time;
 
 /*!
     @method     audioBufferWithFormat:data:
@@ -82,16 +84,26 @@
     @param      d
     @result     An SndAudioBuffer
 */
-+ audioBufferWithFormat: (SndSoundStruct*) format data: (void*) d;
++ audioBufferWithFormat: (SndFormat *) format data: (void *) d;
 
 /*!
-    @method     audioBufferWrapperAroundSNDStreamBuffer:
+    @method     audioBufferWithSoundStruct:data:
     @abstract   Factory method
-    @discussion
-    @param      cBuff
+    @discussion The dataLength member of format MUST be set to the length of d (in bytes)!
+    @param      format
+    @param      d
     @result     An SndAudioBuffer
 */
-+ audioBufferWrapperAroundSNDStreamBuffer: (SNDStreamBuffer*) cBuff;
++ audioBufferWithSoundStruct: (SndSoundStruct *) format data: (void *) d;
+
+/*!
+    @method     audioBufferWithSNDStreamBuffer:
+    @abstract   Factory method creating an SndAudioBuffer instance from a SNDStreamBuffer.
+    @discussion
+    @param      streamBuffer A fully populated SNDStreamBuffer structure.
+    @result     Returns an autoreleased SndAudioBuffer instance.
+*/
++ audioBufferWithSNDStreamBuffer: (SNDStreamBuffer *) streamBuffer;
 
 /*!
     @method     audioBufferWithSnd:inRange:
@@ -101,17 +113,28 @@
     @param      r An NSRange structure indicating the start and end of the region in samples.
     @result     An SndAudioBuffer 
 */
-+ audioBufferWithSnd: (Snd*) snd inRange: (NSRange) r;
++ audioBufferWithSnd: (Snd *) snd inRange: (NSRange) r;
+
+/*!
+  @method     initWithSoundStruct:data:
+  @abstract   Initialization method from a SndSoundStruct.
+  @discussion This used to be called initWithFormat:data: and is deprecated. 
+              You should transition to using initWithFormat:data:
+  @param      sndStruct A SndSoundStruct
+  @param      sampleData A pointer to the memory holding the sample data in the format described by sndStruct.
+  @result     self.
+*/
+- initWithSoundStruct: (SndSoundStruct *) sndStruct data: (void *) sampleData;
 
 /*!
   @method     initWithFormat:data:
-  @abstract   Initialization method
+  @abstract   Initialization method from a SndFormat and the data it describes.
   @discussion
-  @param      f
-  @param      d
+  @param      format A SndFormat
+  @param      sampleData A pointer to the memory holding the sample data in the format described by format.
   @result     self.
 */
-- initWithFormat: (SndSoundStruct*) f data: (void*) d;
+- initWithFormat: (SndFormat *) format data: (void *) sampleData;
 
 /*!
   @method     initWithBuffer:
@@ -121,6 +144,7 @@
   @result     self.
 */
 - initWithBuffer: (SndAudioBuffer*) b;
+
 /*!
   @method     initWithBuffer:range:
   @abstract   Initialize a buffer with a matching format to the supplied buffer method
@@ -133,7 +157,7 @@
            range: (NSRange) r;
 
 /*!
-  @method     initWithFormat:channelCount:samplingRate:duration:
+  @method     initWithDataFormat:channelCount:samplingRate:duration:
   @abstract   Initialization method
   @discussion
   @param      dataFormat
@@ -142,10 +166,10 @@
   @param      time
   @result     An SndAudioBuffer
 */
-- initWithFormat: (int) dataFormat
-    channelCount: (int) channelCount
-    samplingRate: (double) samplingRate
-        duration: (double) time;
+- initWithDataFormat: (int) dataFormat
+        channelCount: (int) channelCount
+        samplingRate: (double) samplingRate
+            duration: (double) time;
 
 /*!
   @method     mixWithBuffer:fromStart:toEnd:
@@ -170,7 +194,7 @@
   @param      buff The SndAudioBuffer instance to mix.
   @result     Returns self.
 */
-- mixWithBuffer: (SndAudioBuffer*) buff;
+- mixWithBuffer: (SndAudioBuffer *) buff;
 
 /*!
   @method     copy
@@ -187,7 +211,7 @@
   @param      ab
   @result     self.
 */
-- copyData: (SndAudioBuffer*) ab;
+- copyData: (SndAudioBuffer *) ab;
 
 /*!
   @method     copyBytes:count:format:
@@ -199,7 +223,7 @@
               samplingRate and dataFormat variables.
   @result     self.
 */
-- copyBytes: (char*) bytes count:(unsigned int)count format: (SndSoundStruct *) f;
+- copyBytes: (char *) bytes count: (unsigned int) count format: (SndSoundStruct *) f;
 
 /*!
   @method     copyBytes:intoRange:format:
@@ -211,7 +235,7 @@
               samplingRate and dataFormat variables.
   @result     self.
  */
-- copyBytes: (char*) bytes intoRange: (NSRange) range format: (SndSoundStruct *) f;
+- copyBytes: (char *) bytes intoRange: (NSRange) range format: (SndSoundStruct *) f;
 
 /*!
   @method     copyFromBuffer:intoRange:
@@ -231,11 +255,13 @@
   @result     Returns the buffer length in sample frames.
 */
 - (unsigned long) lengthInSampleFrames;
+
 /*!
   @method     setLengthInSampleFrames
   @abstract   Changes the length of the buffer to <I>newSampleFrameCount</I> sample frames.
 */
 - setLengthInSampleFrames: (unsigned long) newSampleFrameCount;
+
 /*!
   @method     lengthInBytes
   @abstract
@@ -259,6 +285,7 @@
   @result     sampling rate
 */
 - (double) samplingRate;
+
 /*!
   @method     channelCount
   @abstract
@@ -330,7 +357,7 @@
   @param pMin Points to a float to store the minimum sample value (between -1.0 and 1.0).
   @param pMax Points to a float to store the maximum sample value (between -1.0 and 1.0).
  */
-- (void) findMin:(float*) pMin max:(float*) pMax;
+- (void) findMin: (float *) pMin max: (float *) pMax;
 
 /*!
   @method sampleAtFrameIndex:channel:
