@@ -355,6 +355,7 @@ startPosition: (double) startPosition
     if(samplesToReadRange.location + samplesToReadRange.length > [snd lengthInSampleFrames]) {
 	NSLog(@"Assertion failed, samplesToReadRange [%ld length %ld] exceed length of sound %ld\n", 
 	      samplesToReadRange.location, samplesToReadRange.length, [snd lengthInSampleFrames]);
+	NSLog(@"looping %d, snd %@ framesUntilEndOfLoop %ld\n", looping, snd, framesUntilEndOfLoop);
     }
 #if SNDPERFORMANCE_DEBUG_RETRIEVE_BUFFER
     NSLog(@"[SndPerformance][SYNTH THREAD] playIndex = %ld, endAtIndex = %ld, loopEndIndex = %ld, buffer length = %d, fill buffer to length = %d, framesUntilEndOfLoop = %ld\n",
