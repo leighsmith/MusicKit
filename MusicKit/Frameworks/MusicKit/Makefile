@@ -16,15 +16,15 @@ GLOBAL_RESOURCES = Localized.strings
 
 CLASSES = ArielQP.m DSPSerialPortDevice.m MKConductor.m MKEnvelope.m\
           MKFilePerformer.m MKFileWriter.m MKInstrument.m\
-          MKMTCPerformer.m MKMidi.m MKNote.m MKNoteFilter.m\
-          MKNoteReceiver.m MKNoteSender.m MKOrchestra.m MKPart.m\
-          MKPartPerformer.m MKPartRecorder.m MKPartials.m\
+          MKMTCPerformer.m MKMidi.m MKMixerInstrument.m MKNote.m\
+          MKNoteFilter.m MKNoteReceiver.m MKNoteSender.m MKOrchestra.m\
+          MKPart.m MKPartPerformer.m MKPartRecorder.m MKPartials.m\
           MKPartialsWaveshapingTable.m MKPatchTemplate.m MKPerformer.m\
           MKSamplerInstrument.m MKSamples.m MKScore.m\
           MKScorePerformer.m MKScoreRecorder.m MKScorefilePerformer.m\
           MKScorefileWriter.m MKSynthData.m MKSynthInstrument.m\
           MKSynthPatch.m MKTimbre.m MKTuningSystem.m MKUnitGenerator.m\
-          MKWaveTable.m OrchloopbeginUG.m _MKNameTable.m _MKAppProxy.m\
+          MKWaveTable.m OrchloopbeginUG.m _MKAppProxy.m _MKNameTable.m\
           _MTCHelper.m _OrchloopbeginUG.m _ParName.m _ScorefileVar.m\
           _SharedSynthInfo.m conversion.m midifile.m\
           noteRecorderCFuncs.m parseMidi.m parseScore.m time.m\
@@ -35,29 +35,29 @@ HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          EnvelopePrivate.h InstrumentPrivate.h MKConductor.h\
          MKConductorDelegate.h MKDeviceStatus.h MKEnvelope.h\
          MKFilePerformer.h MKFileWriter.h MKInstrument.h\
-         MKMTCPerformer.h MKMidi.h MKNote.h MKNoteFilter.h\
-         MKNoteReceiver.h MKNoteSender.h MKOrchestra.h MKPart.h\
-         MKPartPerformer.h MKPartRecorder.h MKPartials.h\
+         MKMTCPerformer.h MKMidi.h MKMixerInstrument.h MKNote.h\
+         MKNoteFilter.h MKNoteReceiver.h MKNoteSender.h MKOrchestra.h\
+         MKPart.h MKPartPerformer.h MKPartRecorder.h MKPartials.h\
          MKPatchTemplate.h MKPerformer.h MKPerformerDelegate.h\
          MKSamplerInstrument.h MKSamples.h MKScore.h MKScorePerformer.h\
-         MKScoreRecorder.h MKScorefilePerformer.h MKScorefileWriter.h\
-         MKSynthData.h MKSynthInstrument.h MKSynthPatch.h MKTimbre.h\
-         MKTuningSystem.h MKUnitGenerator.h MKWaveTable.h MidiPrivate.h\
-         MusicKit.h NotePrivate.h NoteReceiverPrivate.h\
-         OrchestraPrivate.h OrchloopbeginUG.h PartPerformerPrivate.h\
-         PartPrivate.h PartRecorderPrivate.h PartialsPrivate.h\
-         PatchTemplatePrivate.h PerformerPrivate.h\
+         MKScoreRecorder.h MKScorefileObject.h MKScorefilePerformer.h\
+         MKScorefileWriter.h MKSynthData.h MKSynthInstrument.h\
+         MKSynthPatch.h MKTimbre.h MKTuningSystem.h MKUnitGenerator.h\
+         MKWaveTable.h MidiPrivate.h MusicKit.h NotePrivate.h\
+         NoteReceiverPrivate.h OrchestraPrivate.h OrchloopbeginUG.h\
+         PartPerformerPrivate.h PartPrivate.h PartRecorderPrivate.h\
+         PartialsPrivate.h PatchTemplatePrivate.h PerformerPrivate.h\
          ScorePerformerPrivate.h ScorePrivate.h ScoreRecorderPrivate.h\
          ScorefilePerformerPrivate.h SynthDataPrivate.h\
          SynthInstrumentPrivate.h SynthPatchPrivate.h\
          TuningSystemPrivate.h UnitGeneratorPrivate.h _ArielQP.h\
-         _DSPMK.h _MKNameTable.h _MKParameter.h _MTCHelper.h\
-         _OrchloopbeginUG.h _ParName.h _ScorefileVar.h\
+         _DSPMK.h _MKAppProxy.h _MKNameTable.h _MKParameter.h\
+         _MTCHelper.h _OrchloopbeginUG.h _ParName.h _ScorefileVar.h\
          _SharedSynthInfo.h _error.h _midi.h _musickit.h\
          _noteRecorder.h _scorefile.h _time.h classFuncs.h dsp_types.h\
          dspwrap.h errors.h keynums.h midiTranslation.h midi_spec.h\
          midifile.h names.h noDVal.h orch.h params.h pitches.h\
-         scorefileObject.h timeunits.h tokens.h _MKAppProxy.h
+         timeunits.h tokens.h
 
 CFILES = sin.c fastFFT.c
 
@@ -73,7 +73,7 @@ OTHERSRCS = Makefile Makefile.postamble Makefile.preamble\
 
 MAKEFILEDIR = .
 CURRENTLY_ACTIVE_VERSION = YES
-DEPLOY_WITH_VERSION_NAME = 5.1.4
+DEPLOY_WITH_VERSION_NAME = 5.1.5
 CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = framework.make
 NEXTSTEP_INSTALLDIR = $(LOCAL_LIBRARY_DIR)/Frameworks
@@ -94,25 +94,27 @@ FRAMEWORK_PATHS = -F$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\
                   -F$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\
                   -F/Local/Library/Frameworks\
                   -F$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks
+NEXTSTEP_PB_CFLAGS = -Wall
 FRAMEWORKS = -framework AppKit -framework Foundation -framework MKDSP\
              -framework MKPerformSndMIDI -framework SndKit\
              -framework System
 PUBLIC_HEADERS = ArielQP.h DSPSerialPortDevice.h MusicKit.h\
                  classFuncs.h dsp_types.h dspwrap.h errors.h keynums.h\
                  midiTranslation.h midi_spec.h midifile.h names.h\
-                 noDVal.h orch.h params.h pitches.h scorefileObject.h\
-                 timeunits.h MKOrchestra.h MKConductor.h\
-                 MKConductorDelegate.h MKNote.h MKInstrument.h\
-                 MKPartPerformer.h MKMidi.h MKScore.h MKNoteSender.h\
-                 MKPart.h MKPerformer.h MKFilePerformer.h\
-                 MKScorefilePerformer.h MKNoteReceiver.h\
-                 MKScorefileWriter.h MKFileWriter.h MKPartRecorder.h\
-                 MKScoreRecorder.h MKScorePerformer.h MKNoteFilter.h\
-                 MKDeviceStatus.h MKPerformerDelegate.h MKMTCPerformer.h\
-                 MKTuningSystem.h MKSynthPatch.h MKEnvelope.h\
-                 MKSynthInstrument.h MKTimbre.h MKSamples.h\
-                 MKWaveTable.h MKPartials.h MKUnitGenerator.h\
-                 MKSynthData.h MKPatchTemplate.h MKSamplerInstrument.h
+                 noDVal.h orch.h params.h pitches.h timeunits.h\
+                 MKOrchestra.h MKConductor.h MKConductorDelegate.h\
+                 MKNote.h MKInstrument.h MKPartPerformer.h MKMidi.h\
+                 MKScore.h MKNoteSender.h MKPart.h MKPerformer.h\
+                 MKFilePerformer.h MKScorefilePerformer.h\
+                 MKNoteReceiver.h MKScorefileWriter.h MKFileWriter.h\
+                 MKPartRecorder.h MKScoreRecorder.h MKScorePerformer.h\
+                 MKNoteFilter.h MKDeviceStatus.h MKPerformerDelegate.h\
+                 MKMTCPerformer.h MKTuningSystem.h MKSynthPatch.h\
+                 MKEnvelope.h MKSynthInstrument.h MKTimbre.h\
+                 MKSamples.h MKWaveTable.h MKPartials.h\
+                 MKUnitGenerator.h MKSynthData.h MKPatchTemplate.h\
+                 MKSamplerInstrument.h MKMixerInstrument.h\
+                 MKScorefileObject.h
 
 
 

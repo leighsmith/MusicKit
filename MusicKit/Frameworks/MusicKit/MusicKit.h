@@ -13,6 +13,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2000/04/16 04:26:34  leigh
+  Renamed scorefileObject.h to MKScorefileObject.h
+
   Revision 1.5  2000/02/03 19:13:48  leigh
   objective-C declaration added if compiling with ObjC++ to ensure correct name-mangling
 
@@ -71,6 +74,7 @@ extern "Objective-C" {
 #import "MKFileWriter.h"
 #import "MKInstrument.h"
 #import "MKMidi.h"
+#import "MKMixerInstrument.h"
 #import "MKNote.h"
 #import "MKNoteFilter.h"
 #import "MKNoteReceiver.h"
@@ -89,6 +93,7 @@ extern "Objective-C" {
 #import "MKScore.h"
 #import "MKScorePerformer.h"
 #import "MKScoreRecorder.h"
+#import "MKScorefileObject.h"
 #import "MKScorefilePerformer.h"
 #import "MKScorefileWriter.h"
 #import "MKSynthData.h"
@@ -97,7 +102,6 @@ extern "Objective-C" {
 #import "MKTuningSystem.h"
 #import "MKUnitGenerator.h"
 #import "MKWaveTable.h"
-#import "scorefileObject.h"
 
 #endif MUSICKIT_H
 
