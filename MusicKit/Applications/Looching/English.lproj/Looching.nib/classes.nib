@@ -25,7 +25,7 @@
                 outVibRate = id; 
                 outVibWidth = id; 
             }; 
-            SUPERCLASS = Object; 
+            SUPERCLASS = NSObject; 
         }, 
         {CLASS = Stopit; LANGUAGE = ObjC; SUPERCLASS = NSApplication; }
     ); 
