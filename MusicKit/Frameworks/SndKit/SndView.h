@@ -251,21 +251,26 @@ NSScrollView.
 
 @interface SndView: NSView
 {
+    /*! @var sound The sound to display. */
     Snd       	*sound;
-    Snd 	*_scratchSound;
-    Snd		*_pasteboardSound;
+    Snd 	*scratchSound;
+    Snd		*pasteboardSound;
     id 		delegate;
     NSRect	selectionRect;
     int		displayMode;
 
-    NSColor	*selectionColour;
+    /*! @var backgroundColour Colour used as a non image background. */
     NSColor	*backgroundColour;
+    /*! @var foregroundColour Colour used when drawing the amplitude of each pixel. */
     NSColor	*foregroundColour;
+    /*! @var selectionColour Colour used when user selects a region of sound. */
+    NSColor	*selectionColour;
 
     /*! @var reductionFactor Reduction in the horizontal time axis */
     float	reductionFactor;
     /*! @var amplitudeZoom Zoom in the vertical amplitude axis */
     float       amplitudeZoom;
+
     struct {
         unsigned int  disabled:1;
         unsigned int  continuous:1;
@@ -276,6 +281,7 @@ NSScrollView.
         unsigned int  notEditable:1;
         unsigned int  notOptimizedForSpeed:1;
     } svFlags;
+    
     NSTimer 	*teNum; /* for flashing cursor */
     int		optThreshold;
     int		optSkip;
@@ -286,17 +292,25 @@ NSScrollView.
     int		defaultRecordChannelCount;
     double	defaultRecordSampleRate;
     float	defaultRecordSeconds;
-    SndSoundStruct *recordingSound;
+    /*! @var recordingSound A Snd instance holding the sound recorded from an input source. */
+    Snd *recordingSound;
 
     NSRect	selCacheRect;
 
-    int		_lastPasteCount;
-    int		_lastCopyCount;
+    int		lastPasteCount;
+    int		lastCopyCount;
     BOOL 	notProvidedData;
     BOOL	noSelectionDraw;
     BOOL	firstDraw;
 
     SndDisplayDataList *dataList;
+@private
+
+    float ampScaler;
+    float halfHeight;
+#ifdef QUARTZ_RENDERING
+    CGContextRef ctx;
+#endif    
 }
 
 - (void) toggleCursor;
@@ -367,7 +381,7 @@ NSScrollView.
               currently on the pasteboard. If there is no selection the pasteboard
               data is inserted at the cursor position. The pasteboard data must be
               compatible with the SndView's data, as determined by the Snd
-              method <b>compatibleWith:</b>. If the paste is successful, the
+              method <b>compatibleWithSound:</b>. If the paste is successful, the
               <b>soundDidChange:</b> message is sent to the delegate.
 */
 - (void) paste: (id) sender;
@@ -550,7 +564,7 @@ NSScrollView.
   @param  thePasteboard is a NSPasteboard *.
   @param  type is a NSString *.
   @discussion Places the SndView's entire sound on the given pasteboard.
-              Currently, the <i>type</i> argument must be &#ldquo;NXSoundPboardType&#rdquo;,
+              Currently, the <i>type</i> argument must be &#ldquo;SndPasteboardType&#rdquo;,
               the pasteboard type that represents sound data.
 */
 - (void) pasteboard: (NSPasteboard *) thePasteboard provideDataForType: (NSString *) pboardType;
