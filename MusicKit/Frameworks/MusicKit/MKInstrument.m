@@ -3,6 +3,7 @@
   Defined In: The MusicKit
 
   Description: 
+    See MKInstrument.h
 
   Original Author: David A. Jaffe
 
@@ -13,6 +14,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.4  2000/04/16 04:18:32  leigh
+  class typing and comment cleanup
+
   Revision 1.3  1999/09/28 03:06:06  leigh
   Doco cleanup
 
@@ -37,7 +41,7 @@
 #import "NoteReceiverPrivate.h"
 #import "InstrumentPrivate.h"
 
-@implementation MKInstrument:NSObject
+@implementation MKInstrument
 
 #define VERSION2 2
 
@@ -50,21 +54,18 @@
     return;
 }
 
-+new
++ new
   /* Create a new instance and sends [self init]. */
 {
-    self = [self allocWithZone:NSDefaultMallocZone()];
-    [self init];
-//    [self initialize]; /* Avoid breaking old apps. */ //sb: removed. Unnec.
-    return self;
+    return [[self allocWithZone:NSDefaultMallocZone()] init];
 }
 
--init
+- init
   /* TYPE: Creating; Initializes the receiver.
    * Initializes the receiver.
    * You never invoke this method directly,
    * it's sent by the superclass when the receiver is created.
-   * An overriding subclass method should send \fB[super\ init]\fR
+   * An overriding subclass method should send [super\ init]
    * before setting its own defaults. 
    */
 {
@@ -72,9 +73,9 @@
     return self;
 }
 
--realizeNote:aNote fromNoteReceiver:aNoteReceiver
-  /* TYPE: Performing; Realizes \fIaNote\fR.
-   * Realizes \fIaNote\fR in the manner defined by the subclass.  
+- realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
+  /* TYPE: Performing; Realizes aNote.
+   * Realizes aNote in the manner defined by the subclass.  
    * You never send this message; it's sent to an Instrument
    * as its NoteReceivers receive Note objects.
    */
@@ -83,12 +84,12 @@
 }
 
 
--firstNote:aNote
+- firstNote: (MKNote *) aNote
   /* TYPE: Performing; Received just before the first Note is realized.
    * You never invoke this method directly; it's sent by the receiver to 
    * itself just before it realizes its first Note.
    * You can subclass the method to perform pre-realization initialization.
-   * \fIaNote\fR, the Note that the Instrument is about to realize,
+   * aNote, the Note that the Instrument is about to realize,
    * is provided as a convenience and can be ignored in a subclass 
    * implementation.  The Instrument isn't considered to be in performance 
    * until after this method returns.
@@ -98,7 +99,7 @@
     return self;
 }
 
-- noteReceivers	
+- (NSArray *) noteReceivers	
   /* TYPE: Querying; Returns a copy of the Array of NoteReceivers.
    * Returns a copy of the Array of NoteReceivers. The NoteReceivers themselves
    * are not copied.	
@@ -107,22 +108,22 @@
     return _MKLightweightArrayCopy(noteReceivers);
 }
 
--(BOOL)isNoteReceiverPresent:(id)aNoteReceiver
-  /* TYPE: Querying; Returns \fBYES\fR if \fIaNoteReceiver\fR is present.
-   * Returns \fBYES\fR if \fIaNoteReceiver\fR is a member of the receiver's 
-   * NoteReceiver collection.  Otherwise returns \fBNO\fR.
+- (BOOL) isNoteReceiverPresent: (MKNoteReceiver *) aNoteReceiver
+  /* TYPE: Querying; Returns YES if aNoteReceiver is present.
+   * Returns YES if aNoteReceiver is a member of the receiver's 
+   * NoteReceiver collection.  Otherwise returns NO.
    */
 {
     return ([noteReceivers indexOfObject:aNoteReceiver] == ((unsigned)-1))? NO : YES;
 }
 
--addNoteReceiver:(id)aNoteReceiver
-  /* TYPE: Modifying; Adds \fIaNoteReceiver\fR to the receiver.
-   * Removes \fIaNoteReceiver\fR from its current owner and adds it to the 
+-addNoteReceiver: (MKNoteReceiver *) aNoteReceiver
+  /* TYPE: Modifying; Adds aNoteReceiver to the receiver.
+   * Removes aNoteReceiver from its current owner and adds it to the 
    * receiver. 
    * You can't add a NoteReceiver to an Instrument that's in performance.
    * If the receiver is in a performance, this message is ignored and nil is
-   * returned. Otherwise \fIaNoteReceiver\fR is returned.
+   * returned. Otherwise aNoteReceiver is returned.
    */
 {
     id owner = [aNoteReceiver owner];
@@ -137,10 +138,10 @@
     return aNoteReceiver;
 }
 
--removeNoteReceiver:(id)aNoteReceiver
-  /* TYPE: Modifying; Removes \fIaNoteReceiver\fR from the receiver.
-   * Removes \fIaNoteReceiver\fR from the receiver and returns it
-   * (the NoteReceiver) or \fBnil\fR if it wasn't owned by the receiver.
+-removeNoteReceiver:(MKNoteReceiver *) aNoteReceiver
+  /* TYPE: Modifying; Removes aNoteReceiver from the receiver.
+   * Removes aNoteReceiver from the receiver and returns it
+   * (the NoteReceiver) or nil if it wasn't owned by the receiver.
    * You can't remove a NoteReceiver from an Instrument that's in
    * performance. Returns nil in this case.
    */ 
@@ -225,9 +226,9 @@
 }
 
 -(BOOL)inPerformance
-  /* TYPE: Querying; Returns \fBYES\fR if first Note has been seen.
-   * Returns \fBNO\fR if the receiver has yet to receive a Note object.
-   * Otherwise returns \fBYES\fR.
+  /* TYPE: Querying; Returns YES if first Note has been seen.
+   * Returns NO if the receiver has yet to receive a Note object.
+   * Otherwise returns YES.
    */
 {
     return (_noteSeen);
@@ -274,7 +275,7 @@
     return [self copyWithZone:[self zone]];
 }
 
--noteReceiver
+- (MKNoteReceiver *) noteReceiver
   /* TYPE: Querying; Returns the receiver's first NoteReceiver.
    * Returns the first NoteReceiver in the receiver's List.
    * This is particularly useful for Instruments that have only
