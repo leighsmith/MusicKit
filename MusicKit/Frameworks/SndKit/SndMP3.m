@@ -10,7 +10,7 @@
 //  mp3 power NOW!
 //
 //  TODO: - This is only good for 44.1 stereo MP3s at the moment.
-//        - need to dynamically unpack bitstream to lienar on as-needed basis
+//        - need to dynamically unpack bitstream to linear on as-needed basis
 //          (support on-the-fly fillAudioBuffer type action), currently we
 //          decode on loading
 //        - Seek support - the frame header table is constructed and ready to go.
@@ -22,6 +22,8 @@
 
 #define SNDMP3_DEBUG_READING 0
 #define SNDMP3_DEBUG 0
+// This defines that we decode the entire MP3 into memory (yikes!) then fetch from there.
+#define DECODE_ENTIRE_INTO_MEMORY 1
 
 #define MP3_BITRATE_BAD  -1
 #define MP3_BITRATE_FREE -2
@@ -584,86 +586,118 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 // fillAudioBuffer:withSamplesInRange:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) fillAudioBuffer: (SndAudioBuffer*) anAudioBuffer withSamplesInRange: (NSRange) playRegion
+- (void) insertIntoAudioBuffer: (SndAudioBuffer *) anAudioBuffer
+		    startingAt: (long) bufferStartIndex
+		samplesInRange: (NSRange) playRegion
 {
   // This version of fillAudioBuffer assumes that the entire MP3 has been decoded
   // into memory.
-#if 1
-  int buffChans = [anAudioBuffer channelCount];
-  const short *pData = nil;
+#if DECODE_ENTIRE_INTO_MEMORY
+    int buffChans = [anAudioBuffer channelCount];
+    const short *pData = nil;
 
-  [pcmDataLock lock];
-  pData = [pcmData bytes];
+    [pcmDataLock lock];
+    pData = [pcmData bytes];
 
-  switch ([anAudioBuffer dataFormat]) {
-    case SND_FORMAT_FLOAT:
-      {
-        float *pBuff = [anAudioBuffer bytes];
-        if (buffChans == 2) {
-          int i = 0;
-          long dataLength = [pcmData length] / 4;
-          long bufferLength = [anAudioBuffer lengthInSampleFrames];
-          if (playRegion.location < dataLength) {
-            int c = MIN(playRegion.location + playRegion.length, dataLength) - playRegion.location;
-            pData += playRegion.location * 2;
-            for (; i < c * 2; i += 2) {
-              pBuff[i]   = (float)pData[i]   / 32768.0;
-              pBuff[i+1] = (float)pData[i+1] / 32768.0;
-            }
-          }
-          for (; i < bufferLength * 2; i+= 2) {
-            pBuff[i]   = 0.0;
-            pBuff[i+1] = 0.0;
-          }
-#if SNDMP3_DEBUG  
-          {
-            float min, max;
-            [anAudioBuffer findMin: &min max: &max];
-            printf("  SndMP3: min: %5.3f max: %5.3f [dataLen:%li buffLen:%li loc:%i len:%i]\n",MAX(-1, min), MIN(1,max), dataLength, bufferLength, playRegion.location,playRegion.length);
-          }
-#endif          
-        }
-        else
-          NSLog(@"SndMP3::fillAudioBuffer - Urk 1");
-      }
-      break;
-    default:
-      NSLog(@"SndMP3::fillAudioBuffer - Urk 2");
-  }
-  [pcmDataLock unlock];
+    switch ([anAudioBuffer dataFormat]) {
+    case SND_FORMAT_FLOAT: {
+	float *pBuff = [anAudioBuffer bytes];
+	if (buffChans == 2) {
+	    int i = bufferStartIndex * buffChans;
+	    long dataLength = [pcmData length] / 4;  // 4 bytes per sample
+	    long bufferLength = [anAudioBuffer lengthInSampleFrames];
+	    if (playRegion.location < dataLength) {
+		int c = MIN(playRegion.location + playRegion.length, dataLength) - playRegion.location;
+		pData += playRegion.location * buffChans;
+		for (; i < c * buffChans; i += buffChans) {
+		    pBuff[i]   = (float)pData[i]   / 32768.0;
+		    pBuff[i+1] = (float)pData[i+1] / 32768.0;
+		}
+	    }
+	    for (; i < bufferLength * buffChans; i+= buffChans) {
+		pBuff[i]   = 0.0;
+		pBuff[i+1] = 0.0;
+	    }
+#if SNDMP3_DEBUG
+	    {
+		float min, max;
+		[anAudioBuffer findMin: &min max: &max];
+		printf("  SndMP3: min: %5.3f max: %5.3f [dataLen:%li buffLen:%li loc:%i len:%i]\n",MAX(-1, min), MIN(1,max), dataLength, bufferLength, playRegion.location,playRegion.length);
+	    }
 #endif
+	}
+	else
+	    NSLog(@"SndMP3 -insertIntoAudioBuffer: - Unhandled number of channels %d", buffChans);
+    }
+    break;
+    case SND_FORMAT_LINEAR_16:
+    {
+	short *pBuff = [anAudioBuffer bytes];
+	if (buffChans == 2) {
+	    int i = bufferStartIndex * buffChans;
+	    long dataLength = [pcmData length] / 4;  // 4 bytes per sample
+	    long bufferLength = [anAudioBuffer lengthInSampleFrames];
+	    if (playRegion.location < dataLength) {
+		int c = MIN(playRegion.location + playRegion.length, dataLength) - playRegion.location;
+		pData += playRegion.location * buffChans;
+		for (; i < c * buffChans; i += buffChans) {
+		    pBuff[i]   = pData[i]   / 32768;
+		    pBuff[i+1] = pData[i+1] / 32768;
+		}
+	    }
+	    for (; i < bufferLength * buffChans; i+= buffChans) {
+		pBuff[i]   = 0.0;
+		pBuff[i+1] = 0.0;
+	    }
+//#if SNDMP3_DEBUG
+	    {
+		float min, max;
+		[anAudioBuffer findMin: &min max: &max];
+		printf("  SndMP3: min: %5.3f max: %5.3f [dataLen:%li buffLen:%li loc:%i len:%i]\n",MAX(-1, min), MIN(1,max), dataLength, bufferLength, playRegion.location,playRegion.length);
+	    }
+//#endif
+	}
+	else
+	    NSLog(@"SndMP3 -insertIntoAudioBuffer: %@ - Unhandled number of channels %d of SND_FORMAT_LINEAR_16 data", anAudioBuffer, buffChans);
+    }
+	break;
+	
+    default:
+	NSLog(@"SndMP3 -insertIntoAudioBuffer: - unhandled data format %d", [anAudioBuffer dataFormat]);
+    }
+    [pcmDataLock unlock];
 
-#if 0
+#else
+    
+    /* TODO Decode on the fly */
 
-  /* TO DO */
+    int startFrameID = floor(playRegion.location / 1152.0);
+    int startSamplePosition = startFrameID * 1152;
+    int endFrameID   = floor(playRegion.location + playRegion.length / 1152.0);
+    int endSamplePosition = (endFrameID + 1) * 1152;
+    int currentFrameID = startFrameID;
 
-  int startFrameID = floor(playRegion.location / 1152.0);
-  int startSamplePosition = startFrameID * 1152;
-  int endFrameID   = floor(playRegion.location + playRegion.length / 1152.0);
-  int endSamplePosition = (endFrameID + 1) * 1152;
-  int currentFrameID = startFrameID;
+    short decode_pcm_l[10000];
+    short decode_pcm_r[10000];
 
-  short decode_pcm_l[10000];
-  short decode_pcm_r[10000];
+    const short *pData = [pcmData bytes];
+    float *pBuff = [anAudioBuffer bytes];
+    long   samsCreated      = 0;
+    long   totalSamsCreated = 0;
 
-  const short *pData = [pcmData bytes];
-  float *pBuff = [anAudioBuffer bytes];
-  long   samsCreated      = 0;
-  long   totalSamsCreated = 0;
+    /*
+     while (totalSamsCreated < playRegion.length) {
+	 long decodePos        = frameLocations[currentFrameID];
+	 long decodeFeedAmount = frameLocations[currentFrameID + 1] - frameLocations[currentFrameID];
 
-  /*
-   while (totalSamsCreated < playRegion.length) {
-     long decodePos        = frameLocations[currentFrameID];
-     long decodeFeedAmount = frameLocations[currentFrameID + 1] - frameLocations[currentFrameID];
+	 sams_created = lame_decode1(mp3DataBytes + decodePos, decodeFeedAmount, pcm_l, pcm_r);
 
-     sams_created = lame_decode1(mp3DataBytes + decodePos, decodeFeedAmount, pcm_l, pcm_r);
-
-     if (sams_created > 0) {
-       totalSamsCreated ;
+	 if (sams_created > 0) {
+	     totalSamsCreated ;
+	 }
+	 currentFrameID++;
      }
-     currentFrameID++;
-   }
-   */
+     */
 
 #endif
 }

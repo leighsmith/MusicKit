@@ -37,9 +37,13 @@
 - (int) sampleCount;
 - (int) channelCount;
 - (double) samplingRate;
-- (int) readSoundfile: (NSString*) filename;
-- (void) fillAudioBuffer: (SndAudioBuffer*) anAudioBuffer withSamplesInRange: (NSRange) playRegion;
 
+- (void) insertIntoAudioBuffer: (SndAudioBuffer *) anAudioBuffer
+				  startingAt: (long) bufferStartIndex
+			      samplesInRange: (NSRange) playRegion;
+
+
+- (int) readSoundfile: (NSString*) filename;
 - (int) readSoundURL: (NSURL*) soundURL
    startTimePosition: (double) segmentStartTime
             duration: (double) segmentDuration;
