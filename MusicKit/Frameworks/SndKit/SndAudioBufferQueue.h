@@ -6,6 +6,9 @@
 //  Copyright (c) 2001 __CompanyName__. All rights reserved.
 //
 
+#ifndef __SNDAUDIOBUFFERQUEUE_H__
+#define __SNDAUDIOBUFFERQUEUE_H__
+
 #import <Foundation/Foundation.h>
 
 @class SndAudioBuffer;
@@ -42,3 +45,5 @@ typedef enum {
 
 
 @end
+
+#endif
