@@ -222,7 +222,8 @@ sk_win32_pthread_cond_broadcast (pthread_cond_t *cv)
 int
 sk_condition_allocate(objc_condition_t condition)
 {
-  if (sk_win32_pthread_cond_init((pthread_cond_t *)(&(condition->backend))))
+  condition->backend = objc_malloc(sizeof(pthread_cond_t));
+  if (sk_win32_pthread_cond_init((pthread_cond_t *)(condition->backend)))
     return -1;
   else
     return 0;
@@ -232,29 +233,29 @@ sk_condition_allocate(objc_condition_t condition)
 int
 sk_condition_deallocate(objc_condition_t condition)
 {
-  return sk_win32_pthread_cond_destroy((pthread_cond_t *)(&(condition->backend)));
+  return sk_win32_pthread_cond_destroy((pthread_cond_t *)(condition->backend));
 }
 
 /* Wait on the condition */
 int
 sk_condition_wait(objc_condition_t condition, objc_mutex_t mutex)
 {
-  return sk_win32_pthread_cond_wait((pthread_cond_t *)(&(condition->backend)),
-			   (pthread_mutex_t *)(&(mutex->backend)));
+  return sk_win32_pthread_cond_wait((pthread_cond_t *)(condition->backend),
+			   (pthread_mutex_t *)(mutex->backend));
 }
 
 /* Wake up all threads waiting on this condition. */
 int
 sk_condition_broadcast(objc_condition_t condition)
 {
-  return sk_win32_pthread_cond_broadcast((pthread_cond_t *)(&(condition->backend)));
+  return sk_win32_pthread_cond_broadcast((pthread_cond_t *)(condition->backend));
 }
 
 /* Wake up one thread waiting on this condition. */
 int
 sk_condition_signal(objc_condition_t condition)
 {
-  return sk_win32_pthread_cond_signal((pthread_cond_t *)(&(condition->backend)));
+  return sk_win32_pthread_cond_signal((pthread_cond_t *)(condition->backend));
 }
 
 
