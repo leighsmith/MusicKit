@@ -1,0 +1,20 @@
+<i>Music Kit UnitGenerators Library</i>
+
+<br>
+UnitGenerators have two types of state:	<br>
+<br>
+&#183;	<i>memory arguments</i> describe the UnitGenerator state
+and are assumed to be relatively slowly-changing and not necessarily at a
+constant sampling rate.   They can be updated, at the fastest, at the audio
+sampling rate divided by the "tick size" (which is 16 on the
+DSP56001).<br>
+<br>
+&#183;	<i>patchpoints </i>represent the signal connections
+between UnitGenerators.   They are accessed at a constant sampling rate, which
+is the same as the audio sampling rate.  <br>
+<br>
+The Music Kit UnitGenerator library supplies the following classes:
+<br>
+<br>
+
+
