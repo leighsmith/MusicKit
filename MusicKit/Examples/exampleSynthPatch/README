@@ -1,5 +1,5 @@
-This directory contains an example program illustrating how to design
-a Music Kit SynthPatch. Three examples are given. 
+This directory contains an example command-line program illustrating
+how to design a Music Kit MKSynthPatch. Three examples are given. 
 
 1. Simplicity.m, is extremely simple, and should be studied first. 
 Simplicity implements a single sine wave with oscillator and no
@@ -34,8 +34,9 @@ create your own SynthPatch class, you must do the following:
 2. Add it to the Makefile.
 3. Remake the example.
 
-See "Building a SynthPatch" in the Music chapter of the NeXT Technical
-Documentation for more information.
+See "Building a MKSynthPatch" in the "Music Synthesis and Processing" chapter
+of the "MusicKit and SndKit Concepts" Documentation (http://musickit.sourceforge.net/MusicKitConcepts/buildingamksynthpatch.html)
+for more information.
 
 NOTE: For Applications that follow certain restrictions, SynthPatches
 can be much simpler. If it is assumed that all parameters will be

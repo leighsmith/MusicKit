@@ -18,8 +18,7 @@
 
 /* Written by Mike McNabb and David Jaffe. */
   
-#import <mididriver/midi_spec.h>
-#import <musickit/unitgenerators/unitgenerators.h>
+#import <MKUnitGenerators/UnitGenerators.h> 
 #import "FM.h"
   
 @implementation FM:SynthPatch
