@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		11F73AE4001E6990CFED3B96 = {
 			buildStyles = (
@@ -13,7 +13,7 @@
 			isa = PBXProject;
 			mainGroup = 11F73AE5001E6990CFED3B96;
 			productRefGroup = 11F73AFE001E6990CFED3B96;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				11F73B00001E6990CFED3B96,
 			);
@@ -165,7 +165,6 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
 				INSTALL_PATH = /Applications;
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -173,8 +172,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -322,11 +319,22 @@
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
 		};
+//110
+//111
+//112
+//113
+//114
+//2C0
+//2C1
+//2C2
+//2C3
+//2C4
 		2C2216D7005C54A1CFED3B96 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;

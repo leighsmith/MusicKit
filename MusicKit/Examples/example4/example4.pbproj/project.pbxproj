@@ -3,15 +3,17 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		03722A87007511AECFED3B96 = {
 			buildStyles = (
+				F59C32E702488E3901A80103,
+				F59C32E802488E3901A80103,
 			);
 			isa = PBXProject;
 			mainGroup = 03722A88007511AECFED3B96;
 			productRefGroup = 03722AA1007511AECFED3B96;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				03722AA3007511AECFED3B96,
 			);
@@ -207,7 +209,6 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" /Network/Servers/whiteley/lauren/Local/Library/Frameworks";
 				INSTALL_PATH = /Applications;
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -215,8 +216,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -304,7 +303,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -313,7 +311,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -365,6 +362,35 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
+		};
+//030
+//031
+//032
+//033
+//034
+//F50
+//F51
+//F52
+//F53
+//F54
+		F59C32E702488E3901A80103 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		F59C32E802488E3901A80103 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
 		};
 	};
 	rootObject = 03722A87007511AECFED3B96;

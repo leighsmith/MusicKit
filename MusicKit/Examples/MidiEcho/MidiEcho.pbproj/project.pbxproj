@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		01A886BCFFC5B347CFED3B96 = {
 			buildStyles = (
@@ -20,7 +20,7 @@
 			);
 			mainGroup = 01A886BDFFC5B347CFED3B96;
 			productRefGroup = 01A886D7FFC5B347CFED3B96;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				01A886D9FFC5B347CFED3B96,
 			);
@@ -185,7 +185,6 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
 				INSTALL_PATH = "$(HOME)/Apps";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -193,8 +192,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -358,6 +355,16 @@
 			settings = {
 			};
 		};
+//010
+//011
+//012
+//013
+//014
+//1B0
+//1B1
+//1B2
+//1B3
+//1B4
 		1B44C8D80072C3D4CFED3B96 = {
 			children = (
 				1B44C8D90072C3D4CFED3B96,
@@ -400,11 +407,22 @@
 			settings = {
 			};
 		};
+//1B0
+//1B1
+//1B2
+//1B3
+//1B4
+//440
+//441
+//442
+//443
+//444
 		441ED0E0005D5AFACFED3B96 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
