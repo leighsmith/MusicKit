@@ -23,7 +23,7 @@
 
 + soundPlayerDataWithSnd: (Snd*) s playTime: (double) t 
 {
-    SndPlayerData *spd = [SndPlayerData alloc];
+    SndPlayerData *spd = [[SndPlayerData alloc] init];
     spd->snd = s;
     [spd->snd retain];
     spd->playTime = t;
@@ -83,7 +83,7 @@
 
 - init
 {
-    
+    [super init];
     toBePlayed = [NSMutableArray arrayWithCapacity: 10];
     playing    = [NSMutableArray arrayWithCapacity: 10];
 
