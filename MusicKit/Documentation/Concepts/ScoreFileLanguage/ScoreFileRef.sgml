@@ -756,6 +756,18 @@ interpolation between breakpoints, if necessary.</para>
 produce a new string, regardless of the data types of the original
 expressions.</para>
 </sect2>
+
+<sect2 id="CharacterExtraction">
+<title>Character Extraction</title>
+
+<para>
+Beginning with Release 3.0, ScoreFile language
+supports character extraction from a string.  For example: <emphasis
+role="bold">"abc"[2]</emphasis> is equal to the string <emphasis
+role="bold">"c"</emphasis>.  No other array access or definition is
+currently supported.
+</para>
+</sect2>
 </sect1>
 <sect1 id="PredeclaredVariables">
 <title>Predeclared Variables, Constants, and Special Symbols</title>
