@@ -132,10 +132,13 @@
     long sampleCount = [self sampleCount];
     int readLength = (4096*16);
     int bufferMultiplier = ((playRegion.length + 4095)/4096);
+    int bufferSize; 
     bufferMultiplier = bufferMultiplier == 0 ? 1 : bufferMultiplier;
+    bufferSize = readLength * bufferMultiplier;
 
     if (cachedBufferRange.location >= playRegion.location ||
         readAheadRange.location + readAheadRange.length <= playRegion.location + playRegion.length) {
+      [readAheadLock lock];
       // damn, our play region is outside our cache zone. Throw ze buffers away!
       if (cachedBuffer != nil)
         [cachedBuffer release];
@@ -143,11 +146,16 @@
       if (readAheadBuffer != nil)
         [readAheadBuffer release];
       readAheadBuffer = nil;
+      readAheadRange.location = 0;
+      cachedBufferRange.location = 0;
+      [readAheadLock unlock];
     }
 
     if (cachedBuffer == nil) {
+      long newLocation = 0;
+      [readAheadLock lock];
       cachedBufferRange.location = (playRegion.location / 4096) * 4096;
-      cachedBufferRange.length   = (bufferMultiplier) * readLength;
+      cachedBufferRange.length   = bufferSize;
             
       cachedBuffer = [[SndExptAudioBufferServer readRange: cachedBufferRange
                                               ofSoundFile: theFileName] retain];
@@ -155,43 +163,58 @@
         [readAheadBuffer release];
       readAheadBuffer = nil;
       
-      readAheadRange           = cachedBufferRange;
-      readAheadRange.location += cachedBufferRange.length - playRegion.length * 4;
-      if (readAheadRange.location + readAheadRange.length > sampleCount)
-        readAheadRange.length = sampleCount - readAheadRange.location;
-      
-      [self requestNextBufferWithRange: readAheadRange];
-#if SERVER_DEBUG      
-      NSLog(@"Requesting (1) Buffer with range: [%i, %i]",readAheadRange.location, readAheadRange.length);
-#endif      
+      newLocation = cachedBufferRange.location + bufferSize - playRegion.length * 4;
+
+      if (newLocation < sampleCount) {
+        readAheadRange.location = newLocation;
+        readAheadRange.length   = bufferSize;
+        if (readAheadRange.location + readAheadRange.length > sampleCount)
+          readAheadRange.length = sampleCount - readAheadRange.location;
+        [self requestNextBufferWithRange: readAheadRange];
+#if SERVER_DEBUG
+        NSLog(@"Requesting (1) Buffer with range: [%i, %i] sndlength: %i",readAheadRange.location, readAheadRange.length,sampleCount);
+#endif
+      }
+      [readAheadLock unlock];
     }
     
-    if (playRegion.location >= readAheadRange.location &&
-        playRegion.location + playRegion.length <= readAheadRange.location + readAheadRange.length) {
+    if (readAheadBuffer != nil &&
+        playRegion.location >= readAheadRange.location &&
+        playRegion.location + playRegion.length <= readAheadRange.location + readAheadRange.length &&
+        playRegion.location + playRegion.length < sampleCount) {
       // we have moved into the readAheadCache - swap the buffers and request the next...
+      long newLocation = 0;
       [readAheadLock lock];
       if (cachedBuffer != nil)
         [cachedBuffer release];
       cachedBuffer = readAheadBuffer;
       cachedBufferRange = readAheadRange;
-
-      readAheadRange.location += readAheadRange.length - playRegion.length * 4;
-      if (readAheadRange.location + readAheadRange.length > sampleCount)
-        readAheadRange.length = sampleCount - readAheadRange.location;
-      
       readAheadBuffer = nil;
-      [self requestNextBufferWithRange: readAheadRange];      
-      [readAheadLock unlock];
-#if SERVER_DEBUG            
-      NSLog(@"Requesting (2) Buffer with range: [%i, %i]",readAheadRange.location, readAheadRange.length);
-      NSLog(@"Swapped in Buffer with range: [%i, %i]",cachedBufferRange.location, cachedBufferRange.length);
+      
+      newLocation = cachedBufferRange.location + bufferSize - playRegion.length * 4;
+      if (newLocation < sampleCount) {
+        readAheadRange.location = newLocation;
+        readAheadRange.length   = bufferSize;
+        if (readAheadRange.location + readAheadRange.length > sampleCount)
+          readAheadRange.length = sampleCount - readAheadRange.location;
+        readAheadBuffer = nil;
+        [self requestNextBufferWithRange: readAheadRange];
+#if SERVER_DEBUG
+        NSLog(@"Requesting (2) Buffer with range: [%i, %i] sndLength: %i",readAheadRange.location, readAheadRange.length,sampleCount);
+        NSLog(@"Swapped in Buffer with range: [%i, %i]",cachedBufferRange.location, cachedBufferRange.length);
 #endif
+      }
+      [readAheadLock unlock];
     }
     if (cachedBuffer != nil) {
       // woohoo! we are inside the cache...
       NSRange relativeRange = playRegion;
       relativeRange.location = playRegion.location - cachedBufferRange.location;
+      if (relativeRange.location + relativeRange.length > cachedBufferRange.length)
+        relativeRange.length = cachedBufferRange.length - relativeRange.location;
       [anAudioBuffer initWithBuffer: cachedBuffer range: relativeRange];
+      if ([anAudioBuffer lengthInSampleFrames] < playRegion.length)
+        [anAudioBuffer setLengthInSampleFrames: playRegion.length];
     }
   }
   [cacheLock unlock];
@@ -318,8 +341,19 @@ static SndExptAudioBufferServer *defaultServer = nil;
 - (void) doJob: (SndExptAudioBufferServerJob*) aJob
 {
   SndExpt *snd = [aJob snd];
-  SndAudioBuffer *aBuffer = [SndExptAudioBufferServer readRange: [aJob range]
-                                                    ofSoundFile: [snd filename]];
+  NSRange r = [aJob range];
+  long requestedLength = r.length;
+  long sampleCount = [snd sampleCount];
+  SndAudioBuffer *aBuffer = nil;
+
+  if (r.location + r.length > [snd sampleCount])
+    r.length = sampleCount - r.location;
+    
+  aBuffer = [SndExptAudioBufferServer readRange: [aJob range]
+                              ofSoundFile: [snd filename]];
+  
+  if ([aBuffer lengthInSampleFrames] < requestedLength)
+      [aBuffer setLengthInSampleFrames: requestedLength];
 
   [snd receiveRequestedBuffer: aBuffer];
   [aJob release];

@@ -201,7 +201,11 @@
   @result     buffer length in sample frames
 */
 - (long) lengthInSampleFrames;
-
+/*!
+  @method     setLengthInSampleFrames
+  @abstract   Changes the length of the buffer to <I>newSampleFrameCount</I> sample frames.
+*/
+- setLengthInSampleFrames: (long) newSampleFrameCount;
 /*!
   @method     lengthInBytes
   @abstract
