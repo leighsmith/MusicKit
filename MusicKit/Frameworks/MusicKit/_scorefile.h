@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2002/03/12 22:55:22  sbrandon
+  Changed _binaryIndecies from NSMutableDictionary to NSMapTable.
+
   Revision 1.5  2000/06/09 14:55:11  leigh
   Typed ivars to reduce warnings
 
@@ -68,7 +71,7 @@ typedef struct __MKScoreOutStruct {
     BOOL _ownerIsNoteRecorder;       /* Private. */
     double _timeShift;               /* Added to time tags before writing. */ 
     long _tagRangePos;
-    NSMutableDictionary *_binaryIndecies;  /* For encoding objects in binary files. (mapping from object to index) */
+    NSMapTable *_binaryIndecies;     /* For encoding objects in binary files. (mapping from object to index) */
     int _highBinaryIndex;            /* Currently highest index. */
     BOOL _binary;
 } _MKScoreOutStruct;
