@@ -21,25 +21,15 @@
 #import <Foundation/Foundation.h>
 #import <SndKit/SndKit.h>
 
-char *formatName(int format)
-{
-    switch(format) {
-    case SND_FORMAT_LINEAR_16:
-	return "16-bit integer (2's complement, big endian)";
-    case SND_FORMAT_FLOAT:
-	return "Signed floating point (4 byte floats)";
-    default:
-	return "Unknown format\n";
-    }
-}
-
 void printSoundReport(NSString *filename, Snd *snd)
 {
+    NSString *formatName = SndFormatName([snd dataFormat], YES);
+    
     printf("File: %s\n", [filename cString]);
-    printf("Data Format: %s\n", formatName([snd dataFormat]));
+    printf("Data Format: %s\n", [formatName cString]);
     printf("Sampling Rate: %.2lf Hz\n", [snd samplingRate]);
     printf("Channels: %d\n", [snd channelCount]);
-    printf("Samples/channel: %d\n", [snd sampleCount]/[snd channelCount]);
+    printf("Sample frames: %ld\n", [snd lengthInSampleFrames]);
     printf("Duration %.3lf seconds\n", [snd duration]);
     printf("Info: %s\n", [[snd info] cString]);
 }
