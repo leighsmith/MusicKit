@@ -133,6 +133,6 @@ typedef enum {
   @param err The reported error number
   @result An NSString that describes the given error code.
  */
-const NSString *SndSoundError(int err);
+NSString *SndSoundError(int err);
 
 #endif

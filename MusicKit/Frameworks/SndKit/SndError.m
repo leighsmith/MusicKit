@@ -219,7 +219,7 @@ NSLocalizedStringFromTableInBundle(@"Bad duration error", @"SoundLib", soundBund
                                    @"SndError message")
 
 
-const NSString *SndSoundError(int err)
+NSString *SndSoundError(int err)
 {
     /*
      * Tell string localize routines where .strings file is.
