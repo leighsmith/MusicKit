@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.3  2001/04/20 02:57:11  leighsmith
+  Improved variable naming
+
   Revision 1.2  2001/03/12 01:55:38  leigh
   Moved patch locations inside the class implementation since they shouldn't be accessible to apps at compile time, only at run time
 
@@ -34,15 +37,15 @@
 
 @implementation MKPatch(PatchLoad)
 
-static NSString *findFilenameForClassname(NSString *name)
+static NSString *findFilenameForClassname(NSString *className)
     /* Returns filename or nil if failure. Assumes name is non-NULL. */
 {
     NSString *filename;
     
-    if (![[name pathExtension] isEqualToString: MK_PATCH_EXTENSION])
-        filename = [name stringByAppendingPathExtension: MK_PATCH_EXTENSION];
+    if (![[className pathExtension] isEqualToString: MK_PATCH_EXTENSION])
+        filename = [className stringByAppendingPathExtension: MK_PATCH_EXTENSION];
     else
-        filename = [NSString stringWithString: name];
+        filename = [NSString stringWithString: className];
 
     if (![filename isAbsolutePath]) {
         NSArray *libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
