@@ -763,16 +763,16 @@ MKUnitGenerators and MKSynthPatches frameworks and all utilites,
 applications, documentation and example code.
               </para>
 		<para>
-This is the most recent revision and patch. Older revisions are
-located at the 
-<ulink url="ftp://ftp.tomandandy.com/pub/MusicKit">tomandandy ftp site</ulink>
+This is the most recent revision and patch. Some older revisions are
+located at the <ulink
+url="http://download.tomandandy.com/musickit">sourceforge site</ulink>
 for regression testing.
               </para>
 	      </listitem>
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://download.sourceforge.net/musickit/SndKit_V&sndvertuple;.s.tar.gz">SndKit_V&sndvertuple;.s.tar.gz</ulink>
+              <ulink url="http://download.sourceforge.net/musickit/SndKit-&sndvertuple;.s.tar.gz">SndKit-&sndvertuple;.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -852,22 +852,14 @@ Newer versions of will probably just work.
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-            <ulink url="http://download.sourceforge.net/musickit/MK-&mkvertuple;.MOXS.pkg.tar">MK-&mkvertuple;.MOXS.pkg.tar</ulink>
-            </term>
-	      <listitem>
-		<para>
-              The MacOS X-Server frameworks (including the SndKit).
-              </para>
-	      </listitem>
-	    </varlistentry>
-	    <varlistentry>
-	      <term>
               <ulink url="http://download.sourceforge.net/musickit/MIDISPORT2x2-V&midisportvertuple;.b.tar.gz">MIDISPORT2x2-V&midisportvertuple;.b.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
-                The Mac OS X <acronym>MIDI</acronym> plugin binary for the Midiman USB
-                MIDISPORT 2x2 interface.
+The Mac OS X <acronym>MIDI</acronym> plugin binary for
+the <productname class="Registered">Midiman</productname>
+<acronym>USB</acronym>
+<trademark>MIDISPORT 2x2</trademark> interface.
               </para>
 	      </listitem>
 	    </varlistentry>
@@ -877,7 +869,10 @@ Newer versions of will probably just work.
             </term>
 	      <listitem>
 		<para>
-                The MacOS X-Server <acronym>MIDI</acronym> driver binary for SCC UARTs in 8500/8600/9500/9600/G3/G4 PowerMacs.
+                The MacOS X-Server <acronym>MIDI</acronym> driver
+                binary for SCC UARTs in 8500/8600/9500/9600/G3/G4
+                PowerMacs. Note that this driver will not work on
+                MacOS X.
               </para>
 	      </listitem>
 	    </varlistentry>
@@ -961,7 +956,7 @@ Newer versions of will probably just work.
       <title>Example code in the distribution</title>
       <itemizedlist>
 	<listitem>
-	  <para><application>MIDIFilePlayback</application></para>
+	  <para><application>MidiFilePlayback</application></para>
 	</listitem>
 	<listitem>
 	  <para><application>MidiEcho</application></para>
@@ -1042,7 +1037,7 @@ Newer versions of will probably just work.
 The frameworks have been exercised fairly extensively and seem quite
 stable. <acronym>MIDI</acronym> recording and playback of scores and computed parts works
 on all supported platforms. The examples
-<application>MIDIFilePlayback</application> and
+<application>MidiFilePlayback</application> and
 <command>playscorefilemidi</command> and the utility
 <command>playscore</command> demonstrate these capabilities.
 </para>
@@ -1051,19 +1046,19 @@ on all supported platforms. The examples
       <title>Installation</title>
 
       <para>
-At the moment, there is no single make operation to build the entire
-source tree. Use <application>ProjectBuilder</application> or
-<command>make</command> on <productname>OpenStep</productname> or
-<productname>MacOS X Server V1.X</productname>, and the new
-<application>Project Builder</application> or <command>pbxbuild
-install</command> on <productname>MacOS X</productname>. The steps to
-build are:
+At the moment, there is no single <command>make</command> operation to
+build the entire source tree. Use
+<application>ProjectBuilder</application> or <command>make</command>
+on <productname>OpenStep</productname> or <productname>MacOS X Server
+V1.X</productname>, and the new <application>Project
+Builder</application> or <command>pbxbuild install</command> on
+<productname>MacOS X</productname>. The steps to build are:
 </para>
 
       <orderedlist>
 	<listitem>
 	  <para>
-Compile and install sox into 
+Compile and install <command>sox</command> into 
 <filename class=directory>/usr/local/lib</filename>.
 </para>
 	</listitem>
@@ -1082,7 +1077,7 @@ Compile and install the <filename>SndKit</filename> framework.
 	  <para>
 Compile and install <filename>MKDSP_56k</filename> framework if on
 OpenStep, or <filename>MKDSP_Native</filename>
-framework if on Windows, MacOS X-Server or MacOS X Public Beta.
+framework if on Windows, MacOS X-Server or MacOS X.
 </para>
 	</listitem>
 	<listitem>
@@ -1096,7 +1091,7 @@ Compile and install <filename>MKUnitGenerators</filename> and
 <filename>MKSynthPatches</filename> frameworks if running on
 OpenStep. These frameworks won't compile on MacOS X-Server because the
 Motorola <command>asm56000</command> and <command>lnk56000</command>
-tools are missing. I've asked Apple and Motorola for a MacOS X-Server
+tools are missing. I've asked Apple and Motorola for a MacOS X
 port, why don't you also? :-) In theory the 56K assembler runs on
 Windows, so it may be possible to run these on Windows, but that is
 yet to be tested.
@@ -1106,8 +1101,7 @@ The frameworks will install into <filename
 class=directory>/Local/Library/Frameworks</filename> on MacOS
 X-Server, <filename
 class=directory>/LocalLibrary/Frameworks</filename> on OpenStep and
-<filename class=directory>/Library/Frameworks</filename> on MacOS X
-Public Beta.
+<filename class=directory>/Library/Frameworks</filename> on MacOS X.
 </para>
 	</listitem>
 	<listitem>
@@ -1133,12 +1127,13 @@ of the <productname>SoundKit</productname> or just copy them from a
 </para>
 
 <para>
-MacOS X Public Beta Developer release includes source for a generic
+MacOS X Developer release includes source for a generic
 <acronym>USB</acronym> <acronym>MIDI</acronym> driver at
 <filename>/Developer/Examples/CoreAudio/MIDI/SampleUSBDriver</filename>.
-There is also a driver binary for the MIDIMan MIDISPORT2x2 USB
-interface for MacOS X <link linkend="availability">available</link>
-for download.
+There is also a driver binary for the <productname
+class="Registered">MIDIMan</productname> <trademark>MIDISPORT
+2x2</trademark> <acronym>USB</acronym> interface for MacOS X <link
+linkend="availability">available</link> for download.
 </para>
 
 
