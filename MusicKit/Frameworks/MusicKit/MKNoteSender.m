@@ -39,6 +39,10 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2002/01/29 16:25:11  sbrandon
+  removed redundant comments relating to NeXTSTEP-isms
+  fixed object leak in initWithCoder:
+
   Revision 1.5  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -181,8 +185,7 @@ Modification history:
 - init
 {
     [super init];
-    noteReceivers = [NSMutableArray arrayWithCapacity: EXPANDAMT];
-    [noteReceivers retain];
+    noteReceivers = [[NSMutableArray alloc] initWithCapacity: EXPANDAMT];
     isSending = 0;
     return self;
 }
@@ -352,14 +355,11 @@ Modification history:
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
   /* You never send this message directly.  
-     Should be invoked with NXWriteRootObject(). 
-     Archives isSquelched. Also archives NoteReceiver List and owner using 
-     NXWriteObjectReference(). */
+     Archives isSquelched. Also archives NoteReceiver List and owner. */
 {
     NSString *str;
-    /* [super encodeWithCoder:aCoder];*/ /*sb: unnecessary */
     str = MKGetObjectName(self);
-    /* We don't write connection count here because we can deduce it in read: */
+    /* We don't write connection count here because we can deduce it in initWithCoder: */
     [aCoder encodeValuesOfObjCTypes:"@cc", &str, &isSquelched, &_ownerIsAPerformer];
     [aCoder encodeConditionalObject:owner];
     [aCoder encodeConditionalObject:noteReceivers];
@@ -367,16 +367,14 @@ Modification history:
 
 - (id)initWithCoder:(NSCoder *)aDecoder
   /* You never send this message directly.  
-     Should be invoked via NXReadObject(). 
-     See write:. */
+     See encodeWithCoder:. */
 {
     NSString *str;
-    /*[super initWithCoder:aDecoder]; */ /*sb: unnecessary */
     if ([aDecoder versionForClassName:@"MKNoteSender"] == VERSION2) {
 	[aDecoder decodeValuesOfObjCTypes:"@cc", &str, &isSquelched, &_ownerIsAPerformer];
 	if (str) {
 	    MKNameObject(str,self);
-//	    free(str);
+	    [str release];
 	}
 	owner = [[aDecoder decodeObject] retain];
 	noteReceivers = [[aDecoder decodeObject] retain];
