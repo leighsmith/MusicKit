@@ -7,6 +7,9 @@
   Modification history:
 
   $Log$
+  Revision 1.3  2000/04/22 20:09:35  leigh
+  comment improvements
+
   Revision 1.2  1999/07/29 01:26:02  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -55,6 +58,7 @@ typedef struct __MKMidiOutStruct { /* Midi output structure */
     void *_midiFileStruct;
 } _MKMidiOutStruct;
 
+// see _scorefile.h for the scorefile extension definitions
 #define _MK_MIDIFILEEXT @"midi"
 
 /* Midi parts */
