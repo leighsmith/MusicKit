@@ -92,6 +92,10 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2001/07/02 16:32:46  sbrandon
+  - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
+    compliant)
+
   Revision 1.7  2000/11/29 00:39:52  leigh
   Corrected comment
 
@@ -371,7 +375,7 @@ Modification history:
    * method.
    */
 {
-    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", sel_getName(_cmd)]; return nil;
+    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)]; return nil;
 }
 
 -(id)nextNote     
@@ -386,7 +390,7 @@ Modification history:
    * method.
    */
 {
-    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", sel_getName(_cmd)]; return nil;
+    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)]; return nil;
 }
 
 -initializeFile
