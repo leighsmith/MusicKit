@@ -11,6 +11,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/02/07 23:53:26  leigh
+  added patch bank change and MIDI pitch bend range defintions
+
   Revision 1.2  1999/07/29 01:26:06  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -55,10 +58,10 @@ Modification history:
 #define MIDI_OP(y)              (y & (MIDI_STATUSMASK))
 #define MIDI_DATA(y)            (y & (MIDI_MAXDATA))
 #define MIDI_MAXCHAN            0x0f
-#define MIDI_NUMCHANS             16
-#define MIDI_NUMKEYS             128
-#define MIDI_ZEROBEND         0x2000
-#define MIDI_DEFAULTVELOCITY     64
+#define MIDI_NUMCHANS           16
+#define MIDI_NUMKEYS            128
+#define MIDI_ZEROBEND           0x2000
+#define MIDI_DEFAULTVELOCITY    64
 
 /* MIDI Controller numbers */
 
@@ -85,6 +88,10 @@ Modification history:
 #define MIDI_PANLSB             (10 + 31)
 #define MIDI_EXPRESSIONLSB      (11 + 31)
 
+/* patch bank change commands */
+#define MIDI_BANKMSB		0
+#define MIDI_BANKLSB		32
+
 #define MIDI_DAMPER             64
 #define MIDI_PORTAMENTO         65
 #define MIDI_SOSTENUTO          66
@@ -109,6 +116,9 @@ Modification history:
 #define MIDI_DATAINCREMENT      96
 #define MIDI_DATADECREMENT      97
 
+/* Controller 100-101 definitions for pitch bend range */
+#define MIDI_PITCHBENDRANGE	100
+
 /*
  * Masks for disassembling MIDI status bytes
  */
@@ -129,10 +139,5 @@ Modification history:
 #define MIDI_TYPE_SYSTEM(byte)	(((byte)&0xf0) == 0xf0)
 #define MIDI_EVENTSIZE(byte)    (MIDI_TYPE_1BYTE(byte) ? 1 : \
 				 MIDI_TYPE_2BYTE(byte) ? 2 : 3)
-				 
-
-
 
 #endif	_MIDI_SPEC_
-
-
