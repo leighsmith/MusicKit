@@ -366,7 +366,7 @@ startPosition: (double) startPosition
     // Nowdays, with better checking on the updates of endAtIndex and playIndex this should never occur,
     // so this check is probably redundant, but hey, it adds robustness which translates into saving someones
     // ears from hearing noise.
-    if (playIndex >= 0 && buffLength > 0 && fillBufferToLength > 0) {
+    if (playIndex >= 0 && buffLength > 0 && fillBufferToLength > 0 && samplesToReadRange.length > 0) {
 	// NSLog(@"bufferToFill dataFormat before processing 1 %d\n", [bufferToFill dataFormat]);
 	numOfSamplesRead = [snd fillAudioBuffer: bufferToFill
 				       toLength: fillBufferToLength
