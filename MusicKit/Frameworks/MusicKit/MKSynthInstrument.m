@@ -44,6 +44,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2004/10/25 16:25:12  leighsmith
+  Removed dodgy override of release and retain and replaced with dealloc and an assertion message if dealloc occurs while in performance. If so, we need to tell the wold loudly about it.
+
   Revision 1.15  2002/02/26 13:18:39  sbrandon
   fixed obscure bug to do with SynthPatchLists
 
@@ -233,9 +236,9 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
     [newLists addObject: p];
     return newLists;
 }
--retain
-{ return [super retain];
-}
+
+// TODO LMS should be dealloc and just leave data around when the noteSeen is still TRUE.
+#if 0
 -(oneway void)release
 {
       /* Frees the receiver. It is illegal to send this message to a
@@ -245,7 +248,7 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
     the object to dealloc, since a retain is held by an array by MKOrchestra.
     */
 
-    if (_noteSeen) /*sb: this is a problem. there's no good way to signal that we don't want to release. FIXME */
+    if (noteSeen) /*sb: this is a problem. there's no good way to signal that we don't want to release. FIXME */
         return;
     if ([self retainCount] == 2) {
         [self abort];
@@ -258,6 +261,29 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
     }
     else [super release];
 }
+#else
+- (void) dealloc
+{
+    // Releases the ivars of the receiving instance. 
+    // It is illegal to send this message to a MKSynthInstrument which is in performance.
+    /*  sb: here, this was a -free method. Had to jump through hoops to get
+    the object to dealloc, since a retain is held by an array by MKOrchestra.
+    */
+    
+    if (!noteSeen) {
+        [self abort];
+        [updates release];
+        [controllerTable release];
+        [taggedPatches release];
+        [_patchLists release];
+        _MKOrchRemoveSynthIns(self); /* release the "array" copy, which will now dealloc */	
+        [super dealloc]; /* release the "alloc" copy */
+    }
+    else {
+	NSLog(@"Assertion failed %@ -dealloc while still in performance!\n", self);
+    }
+}
+#endif
 
 -init
   /* Does instance initialization. Sent by superclass on creation. 
@@ -266,16 +292,18 @@ static NSMutableArray *initPatchLists(NSArray *oldLists)
 {
     MKNoteReceiver *aNoteRec = [MKNoteReceiver new];
     _MKLinkUnreferencedClasses([MKSynthPatch class]);
-    [super init];
-    _patchLists = initPatchLists(nil);
-    taggedPatches = [[NSMutableDictionary dictionary] retain];
-    controllerTable = [[NSMutableDictionary dictionary] retain];
-    [self addNoteReceiver:aNoteRec];
-    [aNoteRec release];
-    updates = [MKGetNoteClass() new];  /* For remembering partUpdate parameter values on this channel. */
-    [updates setNoteType:MK_noteUpdate];
-    _MKOrchAddSynthIns(self);
-    orchestra = _MKClassOrchestra();
+    self = [super init];
+    if(self) {
+	_patchLists = initPatchLists(nil);
+	taggedPatches = [[NSMutableDictionary dictionary] retain];
+	controllerTable = [[NSMutableDictionary dictionary] retain];
+	[self addNoteReceiver: aNoteRec];
+	[aNoteRec release];
+	updates = [MKGetNoteClass() new];  /* For remembering partUpdate parameter values on this channel. */
+	[updates setNoteType: MK_noteUpdate];
+	_MKOrchAddSynthIns(self);
+	orchestra = _MKClassOrchestra();	
+    }
     return self;
 }
 
