@@ -348,7 +348,6 @@
 				21D92A350122F440CFED3B96,
 				21D92A360122F440CFED3B96,
 				21D92A370122F440CFED3B96,
-				21D92A380122F440CFED3B96,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -372,12 +371,6 @@
 			path = /System/Library/Frameworks/Foundation.framework;
 			refType = 0;
 		};
-		21D92A380122F440CFED3B96 = {
-			isa = PBXFrameworkReference;
-			name = unitgenerators.framework;
-			path = /System/Library/Frameworks/unitgenerators.framework;
-			refType = 0;
-		};
 		21D92A3A0122F440CFED3B96 = {
 			children = (
 				21D92A3B0122F440CFED3B96,
@@ -388,7 +381,7 @@
 		};
 		21D92A3B0122F440CFED3B96 = {
 			isa = PBXFrameworkReference;
-			path = synthpatches.framework;
+			path = MKSynthPatches.framework;
 			refType = 3;
 		};
 		21D92A3C0122F440CFED3B96 = {
@@ -411,7 +404,7 @@
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRINCIPAL_CLASS = "";
-				PRODUCT_NAME = synthpatches;
+				PRODUCT_NAME = MKSynthPatches;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
@@ -432,7 +425,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>synthpatches</string>
+	<string>MKSynthPatches</string>
 	<key>CFBundleGetInfoString</key>
 	<string></string>
 	<key>CFBundleIconFile</key>
@@ -948,7 +941,6 @@
 				21D92A730122F440CFED3B96,
 				21D92A740122F440CFED3B96,
 				21D92A750122F440CFED3B96,
-				21D92A760122F440CFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -967,12 +959,6 @@
 		};
 		21D92A750122F440CFED3B96 = {
 			fileRef = 21D92A370122F440CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		21D92A760122F440CFED3B96 = {
-			fileRef = 21D92A380122F440CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
 			};
