@@ -15,6 +15,11 @@
 
 # Modification history:
 # $Log$
+# Revision 1.17  2002/01/15 16:55:25  sbrandon
+# added new additions to project, also re-instated appkit-based classes for
+# mingw32 compilation since recent changes to gnustep now allow gnustep-gui
+# based classes to load properly on mingw32/win32.
+#
 # Revision 1.16  2002/01/15 13:19:59  sbrandon
 # added 2 new classes to GNUstep compilation: SndAudioProcessorNoiseGate.m and
 # SndStreamArchitectureView.m
@@ -84,7 +89,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 srcdir = .
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
-  SK_COMPILE_APPKIT_CLASSES = no
+  SK_COMPILE_APPKIT_CLASSES = yes 
   SK_COMPILE_MP3_ENCODER = no
 else
   SK_COMPILE_APPKIT_CLASSES = yes
@@ -120,7 +125,7 @@ $(MY_NAME)_OBJC_FILES = \
 	  SndAudioProcessorDistortion.m	SndAudioProcessorFlanger.m \
 	  SndAudioProcessorRecorder.m SndAudioProcessorInspector.m \
           SndAudioProcessorToneGenerator.m SndAudioProcessorNoiseGate.m \
-          SndStreamArchitectureView.m
+          SndStreamArchitectureView.m SndView.m
 	  #SndMeter.m
 
 $(MY_NAME)_C_FILES = \
@@ -156,10 +161,14 @@ else
   ADDITIONAL_FLAGS += -DSK_NO_MP3_ENCODER
 endif
 
-ifeq (yes, $(SK_COMPILE_APPKIT_CLASSES))
-  $(MY_NAME)_OBJC_FILES += SndView.m
-  ADDITIONAL_FLAGS += -DSK_COMPILE_APPKIT_CLASSES
-else
+#ifeq (yes, $(SK_COMPILE_APPKIT_CLASSES))
+#  $(MY_NAME)_OBJC_FILES += SndView.m
+#  ADDITIONAL_FLAGS += -DSK_COMPILE_APPKIT_CLASSES
+#else
+#  $(MY_NAME)_OBJC_FILES += SndConditionLock.m
+#endif
+
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   $(MY_NAME)_OBJC_FILES += SndConditionLock.m
 endif
 
