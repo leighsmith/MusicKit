@@ -569,6 +569,7 @@
 				00D2C46FFEDB2CB5CFED3B93,
 				00D2C470FEDB2CB5CFED3B93,
 				D836455604F5ED7400A80103,
+				D8BF975104FACD9300A80103,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2089,6 +2090,12 @@
 				ATTRIBUTES = (
 					Public,
 				);
+			};
+		};
+		D8BF975104FACD9300A80103 = {
+			fileRef = 011279850168CEFCCFED3B94;
+			isa = PBXBuildFile;
+			settings = {
 			};
 		};
 		D8CC46AE048BEDBA00A80164 = {
