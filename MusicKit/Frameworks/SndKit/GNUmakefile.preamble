@@ -24,7 +24,8 @@ LIBRARIES_DEPEND_UPON += -lMKPerformSndMIDI \
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   LIBRARIES_DEPEND_UPON += -lobjc -l$(FOUNDATION_LIBRARY_NAME) -lgnustep-gui \
-                           -lsndfile -lshout -lmp3lame -lwinmm -lvorbis -logg  
+                           -lsndfile -lshout -lmp3lame -lmp3hip \
+			   -lwinmm -lvorbis -logg  
 
 # The /usr/local/[include|lib] is where the shout and lame headers and libraries
 # should have been placed.
@@ -35,7 +36,7 @@ ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   SHARED_LD_POSTFLAGS += -L/usr/local/lib
 
 else
-  LIBRARIES_DEPEND_UPON += -lgnustep-gui -lshout -lmp3lame
+  LIBRARIES_DEPEND_UPON += -lgnustep-gui -lshout -lmp3lame -lmp3hip
   ST_CONFIG=$(shell which libst-config 2>/dev/null)
   ifneq ($(ST_CONFIG),)
     LIBRARIES_DEPEND_UPON += -lst -lgsm $(shell libst-config --libs)
