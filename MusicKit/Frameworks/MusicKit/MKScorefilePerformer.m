@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/04/22 20:11:09  leigh
+  Changed fileExtensions to less error-prone NSArray of NSStrings
+
   Revision 1.4  2000/04/13 21:50:15  leigh
   Fixed uninitialised readPosition index
 
@@ -114,17 +117,13 @@ Modification history:
     return _MK_SCOREFILEEXT;
 }
 
-+(NSString **)fileExtensions
-  /* Returns a null-terminated array of the default file extensions 
++(NSArray *)fileExtensions
+  /* Returns a NSArray of the default file extensions 
      recognized by ScorefilePerformer instances. This array consists of
      "score" and "scoreO".
-     This method is used by the FilePerformer class. The string is not
-     copied. */
+     This method is used by the FilePerformer class. */
 {
-    static NSString *extensions[3] = {NULL};
-    extensions[0] = _MK_BINARYSCOREFILEEXT;
-    extensions[1] = _MK_SCOREFILEEXT;
-    return extensions;
+    return [NSArray arrayWithObjects: _MK_BINARYSCOREFILEEXT, _MK_SCOREFILEEXT, nil];
 }
 
 -infoNote

@@ -94,6 +94,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/04/22 20:16:05  leigh
+  Changed fileExtensions to less error-prone NSArray of NSStrings
+
   Revision 1.5  2000/04/16 04:12:58  leigh
   removed assignment in condition warning
 
@@ -261,7 +264,7 @@ Modification history:
     return NULL;
 }
 
-+(NSString **)fileExtensions
++(NSArray *)fileExtensions
   /* This method is used when several file extensions must be handled. 
      The value returned by this method is a pointer to a null-terminated
      array of strings, each of which is a valid file extension for files
@@ -269,9 +272,7 @@ Modification history:
      file extension.  The default implementation returns 
      an array with one element equal to [self fileExtension]. */
 {
-    static NSString *extensions[2] = {NULL};
-    extensions[0] = [self fileExtension];
-    return extensions;
+    return [NSArray arrayWithObject: [self fileExtension]];
 }
 
 /* Methods required by superclasses. ------------------------------- */
@@ -292,18 +293,18 @@ Modification history:
    */
 {
     if (filename) {
-	NSString **fileExt = [[self class] fileExtensions];
-	for (; ;) {
+	NSArray *fileExt = [[self class] fileExtensions];
+        int fileExtensionsIndex;
+
+        for (fileExtensionsIndex = 0; fileExtensionsIndex < [fileExt count];fileExtensionsIndex++) {
 /*	    stream = _MKOpenFileStream(filename,&(_fd(self)),NX_READONLY,
 				       *fileExt,NO);
  */
-            stream = _MKOpenFileStreamForReading(filename,*fileExt,NO);//sb
+            stream = _MKOpenFileStreamForReading(filename, [fileExt objectAtIndex: fileExtensionsIndex], NO);//sb
             if (stream) {
                 [stream retain];
                 break;
             }
-	    if (*fileExt++ == nil) 
-	      break;
 	} 
 	if (!stream)
 	  _MKErrorf(MK_cantOpenFileErr,filename);

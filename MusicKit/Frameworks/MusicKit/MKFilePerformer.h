@@ -81,6 +81,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2000/04/22 20:16:02  leigh
+  Changed fileExtensions to less error-prone NSArray of NSStrings
+
   Revision 1.4  2000/04/02 17:05:05  leigh
   Cleaned up doco
 
@@ -115,7 +118,7 @@
 -(NSString *) file; 
 - activateSelf; 
 +(NSString *)fileExtension;
-+(NSString **)fileExtensions;
++(NSArray *)fileExtensions;
 - perform; 
 - performNote:aNote; 
 - nextNote; 

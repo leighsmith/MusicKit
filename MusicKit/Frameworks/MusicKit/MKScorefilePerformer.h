@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.3  2000/04/22 20:11:16  leigh
+  Changed fileExtensions to less error-prone NSArray of NSStrings
+
   Revision 1.2  1999/07/29 01:25:50  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -50,7 +53,7 @@
  /* Obsolete (see fileExtensions)
   */
 
-+(NSString **)fileExtensions;
++(NSArray *)fileExtensions;
  /* Returns a null-terminated array of the default file extensions
   * recognized by ScorefilePerformer instances. This array consists of
   * "score" and "playscore".  This method is used by the FilePerformer
