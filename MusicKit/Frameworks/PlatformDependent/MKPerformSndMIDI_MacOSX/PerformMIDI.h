@@ -38,6 +38,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2001/04/06 19:24:29  leighsmith
+  Renamed to more meaningful naming
+
   Revision 1.11  2001/04/05 19:22:19  leighsmith
   Updated HeaderDoc entries removing extraneous whitespace, adding typedefs, definitions and a header
 

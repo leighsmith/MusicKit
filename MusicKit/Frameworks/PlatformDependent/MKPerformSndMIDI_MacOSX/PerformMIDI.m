@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2001/04/06 19:23:54  leighsmith
+  Renamed to more meaningful naming
+
   Revision 1.12  2001/03/30 22:34:35  leighsmith
   Now retrieves destinations as the driver list
 
@@ -54,10 +57,10 @@ Modification history:
   Replaced the C code with ObjC so we can pass NSPorts
 
 */
-#include "midi_driver.h"
+#include "PerformMIDI.h"
 #include <CoreMIDI/MIDIServices.h>
 
-#define FUNCLOG 1
+#define FUNCLOG 0  // 1 = write a log to disk whenever a function in this API is called.
 
 #if FUNCLOG
 #include <stdio.h> // for fprintf and debug
