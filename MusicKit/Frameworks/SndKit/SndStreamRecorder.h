@@ -35,7 +35,7 @@
       Using the client currently requires an explicit connect-to-stream manager
       call:
  
-    SndStreamRecorder *rec = [SndStreamrRecorder streamRecorder];
+    SndStreamRecorder *rec = [SndStreamRecorder streamRecorder];
     [[SndStreamManager defaultStreamManager] addClient: rec];
  
     then either...
