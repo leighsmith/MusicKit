@@ -58,8 +58,8 @@
     BOOL            active;
 /*! @var            bg_active Whether or not the backgroup stream stopping/starting thread has been created. */
     BOOL            bg_active;
-/*! @var            format SndSoundStruct containing stream format information. */
-    SndSoundStruct  format;
+/*! @var            format SndFormat containing stream format information. */
+    SndFormat       format;
 /*! @var            nowTime Manager's conception of time, in seconds. */
     double          nowTime;
 /*! @var            bg_sem Semaphore to the background thread to start/stop streaming. */
@@ -208,7 +208,7 @@
   @abstract Returns the format to be used during streaming.
   @result   Returns a SndFormat structure.
  */
-- (SndSoundStruct*) format;
+- (SndFormat) format;
 
 /*!
     @method   nowTime
