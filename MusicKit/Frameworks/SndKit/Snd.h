@@ -1348,12 +1348,12 @@ typedef enum {
 - (long) loopEndIndex;
 
 /*!
-  @method getAllChannelsVolume
+  @method allChannelsVolume
   @result Returns an float.
   @discussion Returns the output level of all channels as a floating-point
               number between 0.0 and 1.0.
  */
-- (float) getAllChannelsVolume;
+- (float) allChannelsVolume;
 
 /*!
   @method setAllChannelsVolume:

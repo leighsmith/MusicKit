@@ -1583,7 +1583,7 @@ int endRecFun(SNDStreamBuffer *sound, int tag, int err)
     return loopEndIndex;
 }
 
-- (float) getAllChannelsVolume
+- (float) allChannelsVolume
 {
     return allChannelsVolume;
 }

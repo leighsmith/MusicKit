@@ -317,7 +317,7 @@ static SndPlayer *defaultSndPlayer;
 	[thePerformance setAudioProcessorChain: performanceAudioProcessorChain];
 	performanceAudioFader = [performanceAudioProcessorChain postFader];
 	if([sound useVolumeWhenPlaying])
-	    [performanceAudioFader setAmp: [sound getAllChannelsVolume] clearingEnvelope: NO];
+	    [performanceAudioFader setAmp: [sound allChannelsVolume] clearingEnvelope: NO];
 	if([sound useBalanceWhenPlaying])
 	    [performanceAudioFader setBalance: [sound balance] clearingEnvelope: NO];
     }
@@ -355,16 +355,16 @@ static SndPlayer *defaultSndPlayer;
 
     // From the preemption time in seconds, determine the new playIndex for each performance.
     for(performanceIndex = 0; performanceIndex < numberPlaying; performanceIndex++) {
-	SndPerformance *performance = [playing objectAtIndex: performanceIndex];
-	
-	// We need to know which performance has just been added so we don't modify the playIndex of that one.
-	if(![performance isEqual: preemptingPerformance]) {
+		SndPerformance *performance = [playing objectAtIndex: performanceIndex];
+		
+		// We need to know which performance has just been added so we don't modify the playIndex of that one.
+		if(![performance isEqual: preemptingPerformance]) {
 #if SNDPLAYER_DEBUG
-	    NSLog(@"preemptionInSamples %ld performance %d playIndex %ld\n",
-		preemptionInSamples, performanceIndex, [performance playIndex]);
+			NSLog(@"preemptionInSamples %ld performance %d playIndex %ld\n",
+			preemptionInSamples, performanceIndex, [performance playIndex]);
 #endif
-	    [performance rewindPlayIndexBySamples: preemptionInSamples];
-	}
+			[performance rewindPlayIndexBySamples: preemptionInSamples];
+		}
     }
     // Now we have performed the rewinding on the other performances, we have no need to keep the preemptingPerformance.
     [preemptingPerformance release];
@@ -523,11 +523,13 @@ static SndPlayer *defaultSndPlayer;
 	double bufferDur     = [currentSynthOutputBuffer duration];
 	double bufferEndTime = [self synthesisTime] + bufferDur;
 	int numberToBePlayed = [toBePlayed count];
+        
 	for (i = 0; i < numberToBePlayed; i++) {
 	    SndPerformance *performance = [toBePlayed objectAtIndex: i];
 	    if ([performance playTime] < bufferEndTime) {
 		float timeOffset  = ([performance playTime] - [self synthesisTime]);
 		long thePlayIndex = [performance playIndex] - [[performance snd] samplingRate] * timeOffset;
+                
 		[removalArray addObject: performance];
 		[performance setPlayIndex: thePlayIndex];
 		[self startPerformance: performance];
