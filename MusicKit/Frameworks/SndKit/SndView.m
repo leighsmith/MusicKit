@@ -19,7 +19,11 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #ifndef QUARTZ_RENDERING
 #define USE_PS_USER_PATHS
 #define DISPLAY_SOUNDDEVICE_INFO
-#define DO_TIMING
+//#define DO_TIMING
+#endif
+
+#ifdef USE_PS_USER_PATHS
+#import "UserPath.h"
 #endif
 
 /* For 250 pixels, on black m68k hardware, user paths take 1.872 s for 100 iterations.
