@@ -19,13 +19,14 @@ CLASSES = ArielQP.m DSPSerialPortDevice.m MKConductor.m MKEnvelope.m\
           MKMixerInstrument.m MKMTCPerformer.m MKNote.m MKNoteFilter.m\
           MKNoteReceiver.m MKNoteSender.m MKOrchestra.m MKPart.m\
           MKPartPerformer.m MKPartRecorder.m MKPartials.m\
-          MKPartialsWaveshapingTable.m MKPatchTemplate.m MKPerformer.m\
-          MKSamplerInstrument.m MKSamples.m MKScore.m\
-          MKScorePerformer.m MKScoreRecorder.m MKScorefilePerformer.m\
-          MKScorefileWriter.m MKSynthData.m MKSynthInstrument.m\
-          MKSynthPatch.m MKTimbre.m MKTuningSystem.m MKUnitGenerator.m\
-          MKWaveTable.m OrchloopbeginUG.m _MKAppProxy.m _MKNameTable.m\
-          _MTCHelper.m _OrchloopbeginUG.m _ParName.m _ScorefileVar.m\
+          MKPartialsWaveshapingTable.m MKPatchConnection.m\
+          MKPatchTemplate.m MKPerformer.m MKSamplerInstrument.m\
+          MKSamples.m MKScore.m MKScorePerformer.m MKScoreRecorder.m\
+          MKScorefilePerformer.m MKScorefileWriter.m MKSynthData.m\
+          MKSynthInstrument.m MKSynthPatch.m MKTimbre.m\
+          MKTuningSystem.m MKUnitGenerator.m MKWaveTable.m\
+          OrchloopbeginUG.m _MKAppProxy.m _MKNameTable.m _MTCHelper.m\
+          _OrchloopbeginUG.m _ParName.m _ScorefileVar.m\
           _SharedSynthInfo.m SynthPatchList.m conversion.m midifile.m\
           noteRecorderCFuncs.m parseMidi.m parseScore.m time.m\
           tokenNames.m utilities.m writeBinary.m writeMidi.m\
@@ -57,7 +58,7 @@ HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          _noteRecorder.h _scorefile.h _time.h classFuncs.h dsp_types.h\
          dspwrap.h errors.h keynums.h midiTranslation.h midi_spec.h\
          midifile.h names.h noDVal.h orch.h params.h pitches.h\
-         timeunits.h tokens.h
+         timeunits.h tokens.h MKPatchConnection.h
 
 CFILES = sin.c fastFFT.c
 
@@ -115,6 +116,8 @@ PUBLIC_HEADERS = ArielQP.h DSPSerialPortDevice.h MusicKit.h\
                  MKUnitGenerator.h MKSynthData.h MKPatchTemplate.h\
                  MKSamplerInstrument.h MKMixerInstrument.h\
                  MKScorefileObject.h
+
+PROJECT_HEADERS = MusicKit.h
 
 
 

@@ -25,6 +25,7 @@
             MKPartRecorder.m, 
             MKPartials.m, 
             MKPartialsWaveshapingTable.m, 
+            MKPatchConnection.m, 
             MKPatchTemplate.m, 
             MKPerformer.m, 
             MKSamplerInstrument.m, 
@@ -179,7 +180,8 @@
             params.h, 
             pitches.h, 
             timeunits.h, 
-            tokens.h
+            tokens.h, 
+            MKPatchConnection.h
         ); 
         LIBRARYSEARCH = (./); 
         OTHER_LIBS = (); 
@@ -211,7 +213,7 @@
             separateThread.m
         ); 
         PRECOMPILED_HEADERS = (); 
-        PROJECT_HEADERS = (); 
+        PROJECT_HEADERS = (MusicKit.h); 
         PUBLIC_HEADERS = (
             ArielQP.h, 
             DSPSerialPortDevice.h, 
