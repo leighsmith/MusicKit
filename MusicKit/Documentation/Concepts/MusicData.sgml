@@ -382,17 +382,41 @@ and 9 is the highest.  Octaves are numbered such that <emphasis
 role="bold">c4</emphasis> is middle C.</para>
 	  </listitem>
 	</itemizedlist>
+
 <para>Some examples of pitch variables are:</para>
 
-<para><emphasis role="bold">Pitch Variable Pitch</emphasis></para>
+	  <table frame=all>
+	    <title>Pitch variable examples</title>
+	    <tgroup cols=2 colsep=1 rowsep=1>
+	      <colspec colnum=1 align=left>
+	      <colspec colnum=2 align=left>
+	      <thead>
+		<row>
+		  <entry>Pitch Variable</entry>
+                  <entry>Pitch</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+<entry>ef4</entry>
+<entry> E flat above middle C</entry>
+		</row>
+		<row>
+<entry>gs3</entry>
+<entry> G sharp below middle C</entry>
+		</row>
+		<row>
+<entry>f00</entry>
+<entry> F natural in the fifth octave below middle C</entry>
+		</row>
+		<row>
+<entry>bs8</entry>
+<entry> B sharp five octaves above middle C (the same as c9)</entry>
+		</row>
+</tbody>
+</tgroup>
+</table>
 
-<para>ef4 E flat above middle C</para>
-
-<para>gs3 G sharp below middle C</para>
-
-<para>f00 F natural in the fifth octave below middle C</para>
-
-<para>bs8 B sharp five octaves above middle C (the same as c9)</para>
 
 <para>Notice that the natural sign isn't represented in the pitch
 variables.  If neither the sharp nor the flat sign is present, the
@@ -419,7 +443,7 @@ any pair of successive tones is always the same.</para>
 <para>This is the tuning system used to tune modern fixed-pitch
 instruments, most notably the piano.  The complete table of pitch
 variables and the corresponding default frequencies is given in
-Appendix B of <emphasis>Reference</emphasis>.</para>
+<xref linkend="PitchesAndFrequencies">.</para>
 	</sect4>
 	<sect4>
 	  <title>Key Numbers</title>
@@ -432,16 +456,33 @@ The form of these constants is like that of the pitch variables, but
 with the letter <emphasis role="bold">k</emphasis> appended; for
 example:</para>
 
-<para><emphasis role="bold">Pitch Variable Key Number</emphasis>
-</para>
-
-<para>ef4 ef4k</para>
-
-<para>gs3 gs3k</para>
-
-<para>f00 f00k</para>
-
-<para>bs8 bs8k</para>
+	  <table frame=all>
+	    <title>Key Number examples</title>
+	    <tgroup cols=2 colsep=1 rowsep=1>
+	      <colspec colnum=1 align=left>
+	      <colspec colnum=2 align=left>
+	      <thead>
+		<row>
+		  <entry>Pitch Variable</entry>
+                  <entry>Key Number</entry>
+		</row>
+	      </thead>
+	      <tbody>
+		<row>
+<entry>ef4</entry> <entry>ef4k</entry>
+</row>
+<row>
+<entry>gs3</entry> <entry> gs3k</entry>
+</row>
+<row>
+<entry>f00</entry> <entry> f00k</entry>
+</row>
+<row>
+<entry>bs8</entry> <entry> bs8k</entry>
+</row>
+</tbody>
+</tgroup>
+</table>
 
 <para>Key numbers are provided primarily to accommodate MIDI
 instruments.  If you record a MIDI performance (using a
@@ -524,7 +565,7 @@ other: Setting one doesn't reset the other.</para>
 <para>Since frequencies are continuous and key numbers are discrete,
 the correspondence between them isn't exact; conversion from frequency
 to key number sometimes requires approximation.  The pitch table in
-Appendix B of <emphasis>Reference</emphasis> gives the frequency range
+<xref linkend="PitchesAndFrequencies"> gives the frequency range
 that corresponds to particular key numbers (in the default tuning
 system).</para>
 	</sect4>
@@ -978,7 +1019,8 @@ steady state, and then falls back to zero.</para>
 <para>As with any parameter, an
 <classname>MKEnvelope</classname>-valued parameter is only meaningful
 if it's looked for and used by the <classname>MKSynthPatch</classname>
-object that synthesizes the Note.  Appendix B lists and describes the
+object that synthesizes the <classname>MKNote</classname>.  <xref
+linkend="MusicTables"> lists and describes the
 <classname>MKEnvelope</classname> parameters used by the MusicKit
 <classname>MKSynthPatch</classname> subclasses.</para>
 
@@ -1590,11 +1632,10 @@ in DSP synthesis to describe and create musical timbres.  While
 particularly easy and direct way to create a library of sounds.
 However, to intelligently define a <classname>MKWaveTable</classname>,
 you need to be familiar with a few basic concepts of musical
-acoustics.  <xref linkend="WhatIsSound"> in <xref linkend="Chapter2">
-introduces some of these fundamentals; the cogent points from <xref
-linkend="Chapter2"> are summarized and new concepts that pertain to
-<classname>MKWaveTable</classname>s are introduced in the next
-section.</para>
+acoustics.  <xref linkend="WhatIsSound"> introduces some of these
+fundamentals; the cogent points from that section are summarized and
+new concepts that pertain to <classname>MKWaveTable</classname>s are
+introduced in the next section.</para>
 
       <sect3><title>Summary of Musical Acoustics</title>
 
@@ -1772,7 +1813,7 @@ id aSound = [Snd new];
 stored in the <classname>MKSamples</classname> object when <emphasis
 role="bold">setSound:</emphasis> is invoked, so it's important that
 you fill the <classname>Snd</classname> with data before invoking the
-method.  Chapter 2 describes ways to create Sound data.</para>
+method.  <xref linkend="Chapter2"> describes ways to create Sound data.</para>
 
 <para>You can also associate a <classname>MKSamples</classname> with a
 <classname>Snd</classname> by reading a soundfile, through the
@@ -1846,7 +1887,7 @@ info and <classname>MKScore</classname> info are described.</para>
 
     <sect2><title>Constructing a
       <classname>MKScore</classname></title> <sect3><title>Adding a
-      Note to a <classname>MKPart</classname></title>
+      <classname>MKNote</classname> to a <classname>MKPart</classname></title>
 
 <para>A <classname>MKPart</classname> is a time tag sorted collection
 of <classname>MKNote</classname> objects.  A
@@ -2284,7 +2325,7 @@ role="bold">empty</emphasis> method.</para>
 
 <para>In the MusicKit, MIDI messages are represented as
 <classname>MKNote</classname>s, where each
-<classname>MKNote</classname> can represent one ore more MIDI
+<classname>MKNote</classname> can represent one or more MIDI
 messages.  The MIDI message is represented by a combination of the
 <classname>MKNote</classname>'s type, tag and parameters.</para>
 
@@ -2350,7 +2391,7 @@ parameter provides the velocity ([0-127]).  If no <emphasis
 role="bold">MK_keyNum</emphasis> is present, the <emphasis
 role="bold">MK_freq</emphasis> parameter is checked and, if it is
 present, converted to a MIDI key number using the currently installed
-TuningSystem.  Finally,a noteTag <emphasis>must</emphasis> be provided
+TuningSystem.  Finally, a noteTag <emphasis>must</emphasis> be provided
 so that noteOff Notes and polyphonic aftertouch Notes can be properly
 matched.</para>
 
@@ -2385,6 +2426,7 @@ accommodate MIDI Mono Mode.</para>
 it to MIDI OUT.  This is a very simple case with no <classname>MKConductor</classname> to
 manage timing.</para>
 
+<para>
 <programlisting>
 #import &lt;MusicKit/MusicKit.h&gt;
 #import &lt;MusicKit/keynums.h&gt;
@@ -2403,7 +2445,7 @@ MKNote *aNote = [[MKNote alloc] init]; /* Create a MKNote */
 
 [aMidi close];
 </programlisting>
-
+</para>
 	  </listitem>
 
 <listitem><para> A <emphasis role="bold">noteOff</emphasis> message is
