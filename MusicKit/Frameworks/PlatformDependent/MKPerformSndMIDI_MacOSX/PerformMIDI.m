@@ -25,6 +25,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2001/05/30 00:35:40  leighsmith
+  Corrected MKMDAwaitReply to time waiting from clock set time
+
   Revision 1.15  2001/04/28 21:29:03  leighsmith
   Made packet dumping compilation controlled by a macro to avoid warnings
 
@@ -91,6 +94,7 @@ extern "C" {
 static MIDITimeStamp   quantumFactor; 
 static MIDITimeStamp   datumRefTime;
 static int             datumMilliSecTime;
+static NSDate          *datumAsDate;
 static float           quantumInSeconds = 0.0;
 
 static MIDIClientRef   client = NULL;   // handle indicating we are a client of the MIDI server.
@@ -107,7 +111,7 @@ static void (*callbackFn)(void *);
 static void *callbackParam;
 
 // Amount of time in seconds estimated for the current collection of MIDI packets to play.
-static long playTimeEstimate = 0;
+static long playEndTimeEstimate = 0;
 
 // This should become part of the CoreMIDI library.
 MIDITimeStamp MIDIGetCurrentTime(void)
@@ -292,6 +296,9 @@ PERFORM_API MKMDReturn MKMDSetClockTime (
     // defines datum to associate the integer time to the nanosecond time
     datumRefTime = MIDIGetCurrentTime();
     datumMilliSecTime = time;
+    if(datumAsDate)
+        [datumAsDate release];
+    datumAsDate = [[NSDate date] retain]; // Note the absolute date we set the time datum, for MKMDAwaitReply
 #if FUNCLOG
     fprintf(debug, "MKMDSetClockTime called %d, datumRefTime = %f\n", time, (double) datumRefTime);
 #endif
@@ -492,11 +499,12 @@ PERFORM_API MKMDReturn MKMDSendData (
         unsigned int bufferIndex;
 
         playTime = (data[msgIndex].time - datumMilliSecTime) * quantumFactor + datumRefTime;
-        if(data[msgIndex].time > playTimeEstimate)
-            playTimeEstimate = data[msgIndex].time;
+        // since note-offs are also timed, playEndTimeEstimate will save the end time of the last note.
+        if(data[msgIndex].time > playEndTimeEstimate)
+            playEndTimeEstimate = data[msgIndex].time;
 
 #if FUNCLOG
-        printf("MK time %d, playTimeEstimate %ld\n", data[msgIndex].time, playTimeEstimate);
+        fprintf(debug, "MK time %d, playEndTimeEstimate %ld\n", data[msgIndex].time, playEndTimeEstimate);
         fprintf(debug, "Current time %f, play time %f:\n", (double) MIDIGetCurrentTime(), (double) playTime);
 #endif
         // collect all event bytes marked with the same time into a single buffer.
@@ -675,12 +683,12 @@ static void replyDispatch(MKMDReplyFunctions *userFuncs)
 }
 
 // This should wait until a reply is received on port_set or until timeout.
-// For MacOS X, this is achieved by waiting for the playTimeEstimate, which is the time we
-// assume all the notes have been played at. This is a bodge because cancelling should
-// shorten this playTimeEstimate to 0 and/or cancel the run loop...#@$%# Apple...
+// For MacOS X, this is achieved by waiting for the playEndTimeEstimate, which is the time we
+// assume by which all the notes have been played. This is a bodge because cancelling should
+// shorten this playEndTimeEstimate to 0 and/or cancel the run loop...#@$%# Apple... :-(
 PERFORM_API MKMDReturn MKMDAwaitReply(MKMDReplyPort port_set, MKMDReplyFunctions *funcs, int timeout)
 {
-    double estimateInSeconds;
+    double delayEstimateInSeconds;
     
 #if FUNCLOG
     fprintf(debug, "MKMDAwaitReply called %d timeout\n", timeout);
@@ -688,16 +696,23 @@ PERFORM_API MKMDReturn MKMDAwaitReply(MKMDReplyPort port_set, MKMDReplyFunctions
     userFuncs = funcs;
     // since readProc will be called asynchronously when data is available, don't wait, just return
     if(timeout != MKMD_NO_TIMEOUT) { 
-        playTimeEstimate = playTimeEstimate < timeout ? playTimeEstimate : timeout;
+        playEndTimeEstimate = playEndTimeEstimate < timeout ? playEndTimeEstimate : timeout;
     }
-    estimateInSeconds = playTimeEstimate * quantumInSeconds;
-    // printf("MKMDAwaitReply waiting %ld quantums or %f seconds\n", playTimeEstimate, estimateInSeconds);
+    delayEstimateInSeconds = (playEndTimeEstimate - datumMilliSecTime) * quantumInSeconds;
+#if FUNCLOG
+    fprintf(debug, "MKMDAwaitReply waiting %ld quantums or %f seconds\n", playEndTimeEstimate, delayEstimateInSeconds);
+#endif
 
+    // delayEstimateInSeconds never reduces as events are to be played, since
+    // we can't estimate their consumption rate, so this is the entire
+    // performance duration since last MKMDSetClockTime. 
+    // We note the start date of MKMDSetClockTime and wait an absolute date.
     [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
-                             beforeDate: [NSDate dateWithTimeIntervalSinceNow: estimateInSeconds]];
+                             beforeDate: [datumAsDate addTimeInterval: delayEstimateInSeconds]];
 
     // Should be calling userFuncs appropriately.
-    playTimeEstimate = 0;
+    
+    playEndTimeEstimate = 0;
     return MKMD_SUCCESS;
 }
 
