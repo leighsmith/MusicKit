@@ -90,6 +90,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2001/11/16 19:56:45  skotmcdonald
+  Added scaleTime method to MKPart and MKScore, which adjusts the timeTags and durations of notes by a scaling factor (useful for compensating for changes in score tempo). Note: parameters inside individual MKNotes (apart from MK_dur) will need to receive scaling msgs, eg envelopes that match physical sample or synthesis parameters that should(n't) be scaled... a conundrum for discussion at present.
+
   Revision 1.15  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -824,7 +827,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 }
 
 
--shiftTime:(double)shift
+- shiftTime: (double) shift
   /* TYPE: Editing
    * Shift is added to the timeTags of all notes in the MKPart. 
    * Implemented in terms of addNotes:timeShift:.
@@ -836,6 +839,26 @@ static void removeNote(MKPart *self, MKNote *aNote)
     return rtn;
 }
 
+- scaleTime: (double) scale
+  /* TYPE: Editing
+   * Shift is added to the timeTags of all notes in the MKPart. 
+   * Implemented in terms of addNotes:timeShift:.
+   */
+{
+    NSArray *aList = [self notes];
+    MKNote  *mkn;
+    int i,n = [aList count];
+    for (i = 0 ; i < n; i++) {
+      mkn = [aList objectAtIndex: i];
+      [mkn setTimeTag:  [mkn timeTag]  * scale];
+      if ([mkn noteType] == MK_noteDur)
+        [mkn setDur: [mkn dur] * scale];
+    }
+//    [aList release]; /*sb: unnecessary. It's autoreleased */
+    return self;
+}
+
+
 /* Accessing ------------------------------------------------------------- */
 
 - firstTimeTag:(double) firstTimeTag lastTimeTag:(double) lastTimeTag 
@@ -846,7 +869,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
    * addNotes:timeShift:, removeNotes:, etc.
    */
 {
-    id aList;
+    NSMutableArray *aList;
 //    id *firstEl,*lastEl;
     int firstEl,lastEl;
     if (!noteCount)

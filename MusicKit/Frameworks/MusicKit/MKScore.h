@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.18  2001/11/16 19:56:45  skotmcdonald
+  Added scaleTime method to MKPart and MKScore, which adjusts the timeTags and durations of notes by a scaling factor (useful for compensating for changes in score tempo). Note: parameters inside individual MKNotes (apart from MK_dur) will need to receive scaling msgs, eg envelopes that match physical sample or synthesis parameters that should(n't) be scaled... a conundrum for discussion at present.
+
   Revision 1.17  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -548,6 +551,16 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               Returns the receiver.
 */
 - shiftTime:(double) shift; 
+
+/*!
+  @method scaleTime:
+  @param  scale is a double.
+  @result Returns an id.
+  @discussion Scales the timeTags and durations of all receiver's MKNotes by 
+              <i>scale</i> beats. Returns the receiver.
+*/
+- scaleTime:(double)scale;
+
 
 /*!
   @method isPartPresent:

@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.13  2001/11/16 19:56:45  skotmcdonald
+  Added scaleTime method to MKPart and MKScore, which adjusts the timeTags and durations of notes by a scaling factor (useful for compensating for changes in score tempo). Note: parameters inside individual MKNotes (apart from MK_dur) will need to receive scaling msgs, eg envelopes that match physical sample or synthesis parameters that should(n't) be scaled... a conundrum for discussion at present.
+
   Revision 1.12  2001/09/07 18:37:52  leighsmith
   Generates lists and moved @class before headerdoc declaration
 
@@ -467,6 +470,15 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               MKPart.
 */
 - shiftTime:(double) shift; 
+
+/*!
+  @method scaleTime:
+  @param  scale is a double.
+  @result Returns <b>self</b>.
+  @discussion Scales the MKPart's contents by multiplying <i>scale</i> to each of the
+              MKNotes' time tags and durations.  
+*/
+- scaleTime: (double) scale;
 
 /*!
   @method noteCount

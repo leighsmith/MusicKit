@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.27  2001/11/16 19:56:45  skotmcdonald
+  Added scaleTime method to MKPart and MKScore, which adjusts the timeTags and durations of notes by a scaling factor (useful for compensating for changes in score tempo). Note: parameters inside individual MKNotes (apart from MK_dur) will need to receive scaling msgs, eg envelopes that match physical sample or synthesis parameters that should(n't) be scaled... a conundrum for discussion at present.
+
   Revision 1.26  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -1230,6 +1233,17 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
     unsigned n = [parts count], i;
     for (i = 0; i < n; i++)
         [[parts objectAtIndex:i] shiftTime:shift];
+    return self;
+}
+
+-scaleTime:(double)scale
+  /* TYPE: Editing
+   * Scale factor is applied to the timeTags and durations of all notes in the MKPart. 
+   */
+{
+    unsigned n = [parts count], i;
+    for (i = 0; i < n; i++)
+        [[parts objectAtIndex:i] scaleTime: scale];
     return self;
 }
 
