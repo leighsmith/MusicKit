@@ -76,7 +76,7 @@
     /* Sent when an instance is created. */
 {    
     [super init];
-    noteReceiver = [self addNoteReceiver:[[NoteReceiver alloc] init]];
+    noteReceiver = [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
 //    noteSender = [self addNoteSender:[[NoteSender alloc] init]];
     [self reset];
     return self;
