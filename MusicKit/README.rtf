@@ -1,4 +1,4 @@
-{\rtf1\mac\ansicpg10000{\fonttbl\f0\froman\fcharset77 Times-Roman;\f1\fswiss\fcharset77 Helvetica;\f2\fmodern\fcharset77 Courier;
+{\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\fswiss Helvetica;\f2\fmodern Courier;
 }
 {\colortbl;\red255\green255\blue255;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
@@ -151,15 +151,21 @@ At the moment, there is no single
 \f2 make
 \f0  operation to build the entire source tree.\
 \
-Compile the 
-\f2 MKDSP
-\f0  framework then either the MacOsX-Server or Windows 
+Compile either the MacOsX-Server or Windows 
 \f2 MKPerformSndMIDI
+\f0  framework, then either the 
+\f2 MKDSP_56k 
+\f0 or
+\f2  MKDSP_Native
 \f0  framework, then the 
 \f2 MusicKit
 \f0  framework. They will install into 
 \f2 /Local/Library/Frameworks
-\f0 . The unitgenerators framework won't compile on MacOsX-Server because the Motorola asm56000 and lnk56000 tools are missing. I've asked Apple and Motorola for a MacOsX-Server port, why don't you also? :-)\
+\f0 . The 
+\f2 MKUnitGenerators
+\f0 /
+\f2 MKSynthPatches
+\f0  framework won't compile on MacOsX-Server because the Motorola asm56000 and lnk56000 tools are missing. I've asked Apple and Motorola for a MacOsX-Server port, why don't you also? :-)\
 \
 At the moment header files are problematic. I copied over the 3.3 headers to compile against the SoundKit and to compile the MIDI driver. These legacy headers may not actually be needed and could be removed in time. You can get them from the Darwin distribution of the SoundKit or just copy them from a NeXTStep 3.3/OpenStep 4.2 system. \
 \
@@ -193,7 +199,7 @@ A series of stubs for a performance framework (
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \i0\fs24 \cf0 \
-DSP on MacOsX-Server. Stephen mentioned he got sound out under OS4.2. However none of the dsp drivers have been ported from NeXTStep V3.3 (as they are all ISA and I don't know of a PCI 56K card with published interface specs). A more fruitful avenue seems to be to convert the unit generators to use Apples AltiVec vector libraries and then do an open source version of them to support other vector processors. Another option is to convert the unit generators to SAOL (Need CMJ reference) and modify the MKDSP framework to download to a supporting card (or do the emulation using the native processor).\
+DSP on MacOsX-Server. Stephen mentioned he got sound out under OS4.2. However none of the dsp drivers have been ported from NeXTStep V3.3 (as they are all ISA bus cards and I don't know of a PCI 56K card with published interface specs). A more fruitful avenue seems to be to convert the unit generators to use Apples AltiVec vector libraries and then do an open source version of them to support other vector processors. Another option is to convert the unit generators to the MPEG Layer 4 structured audio language SAOL (Need CMJ reference) and modify the MKDSP framework to download to a supporting card (or do the emulation using the native processor).\
 \
 There are several programs in the Examples and Applications directories which have yet to be converted to the OpenStep version. Please feel free to dive in and upgrade them!\
 \
