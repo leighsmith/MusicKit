@@ -22,16 +22,26 @@ provided by the MusicKit Project are:</para>
 </listitem>
 </itemizedlist>
 
-<para>The <productname>SndKit</productname> and
-<productname>MusicKit</productname>s use the
+    <para>
+      The <productname>MusicKit</productname> currently uses the
 <hardware>MC56001</hardware> digital signal processor (the
-<acronym>DSP</acronym>) as a sound synthesizer.
-Objects in these kits communicate with the <acronym>DSP</acronym> by
-calling functions in the <acronym>DSP</acronym> system library.  In
-addition to establishing and managing a channel of communication
-between your application and the <acronym>DSP</acronym>, the functions
-in the <acronym>DSP</acronym> system library also provide diagnostic
+<acronym>DSP</acronym>) as a sound synthesizer.  Objects in this kit
+communicates with the <acronym>DSP</acronym> by calling functions in
+the <acronym>DSP</acronym> system library.  In addition to
+establishing and managing a channel of communication between your
+application and the <acronym>DSP</acronym>, the functions in the
+<acronym>DSP</acronym> system library also provide diagnostic
 capabilities and data conversion routines.</para>
+
+    <tip>
+      <para>
+	Work is underway to remove the requirement of specific DSP
+	hardware to do synthesis, instead using the MPEG-4 Structured
+	Audio language <acronym>SAOL</acronym> and any MPEG-4
+	compatible hardware, on the <productname>sfront</productname>
+	<acronym>SAOL</acronym> interpreter running on the native processor.
+      </para>
+    </tip>
 
 <sect1 id="SoundAndMusicOverview">
 <title>Sound and Music Overview</title>
