@@ -25,7 +25,7 @@
 
 - init
 {
-  self = [super init];
+  self = [super initWithParamCount: flanger_kNumParams name: @"Flanger"];
 
   [self setToDefault];
 
@@ -64,7 +64,7 @@
 // setParameter
 //////////////////////////////////////////////////////////////////////////////
 
-- (void) setParameter: (long) index toValue: (float) value
+- (void) setParam: (int) index toValue: (float) value
 {
   if (value < 0.0f)
     value = 0.0f;
@@ -83,10 +83,10 @@
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// getParameter
+// paramValue
 //////////////////////////////////////////////////////////////////////////////
 
-- (float) getParameter: (long) index
+- (float) paramValue: (int) index
 {
   float r = 0.0f;
   switch (index)
@@ -102,10 +102,10 @@
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// getParameterName
+// paramName
 //////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) getParameterName: (long) index
+- (NSString*) paramName: (int) index
 {
   NSString *r = nil;
 	switch (index)
@@ -121,10 +121,10 @@
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// getParameterDisplay
+// paramDisplay
 //////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) getParameterDisplay: (long) index
+- (NSString*) paramDisplay: (int) index
 {
   NSString *r;
 	switch (index)
@@ -140,10 +140,10 @@
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// getParameterLabel
+// paramLabel
 //////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) getParameterLabel:(long) index
+- (NSString*) paramLabel:(int) index
 {
   NSString *r = nil;
 	switch (index)
@@ -290,19 +290,19 @@
 // micro accessors and mutators
 //////////////////////////////////////////////////////////////////////////////
 
-- (void)  setRate:     (float) f { [self setParameter: flanger_kRate     toValue: f]; };
-- (void)  setMin:      (float) f { [self setParameter: flanger_kMin      toValue: f]; };
-- (void)  setMax:      (float) f { [self setParameter: flanger_kMax      toValue: f]; };
-- (void)  setSwap:     (float) f { [self setParameter: flanger_kSwap     toValue: f]; };
-- (void)  setPhase:    (float) f { [self setParameter: flanger_kPhase    toValue: f]; };
-- (void)  setFeedback: (float) f { [self setParameter: flanger_kFeedback toValue: f]; };
+- (void)  setRate:     (float) f { [self setParam: flanger_kRate     toValue: f]; };
+- (void)  setMin:      (float) f { [self setParam: flanger_kMin      toValue: f]; };
+- (void)  setMax:      (float) f { [self setParam: flanger_kMax      toValue: f]; };
+- (void)  setSwap:     (float) f { [self setParam: flanger_kSwap     toValue: f]; };
+- (void)  setPhase:    (float) f { [self setParam: flanger_kPhase    toValue: f]; };
+- (void)  setFeedback: (float) f { [self setParam: flanger_kFeedback toValue: f]; };
 
-- (float) getRate      { return [self getParameter: flanger_kRate];     };
-- (float) getMin       { return [self getParameter: flanger_kMin];      };
-- (float) getMax       { return [self getParameter: flanger_kMax];      };
-- (float) getSwap      { return [self getParameter: flanger_kSwap];     };
-- (float) getPhase     { return [self getParameter: flanger_kPhase];    };
-- (float) getFeedback  { return [self getParameter: flanger_kFeedback]; };
+- (float) getRate      { return [self paramValue: flanger_kRate];     };
+- (float) getMin       { return [self paramValue: flanger_kMin];      };
+- (float) getMax       { return [self paramValue: flanger_kMax];      };
+- (float) getSwap      { return [self paramValue: flanger_kSwap];     };
+- (float) getPhase     { return [self paramValue: flanger_kPhase];    };
+- (float) getFeedback  { return [self paramValue: flanger_kFeedback]; };
 
 //////////////////////////////////////////////////////////////////////////////
 

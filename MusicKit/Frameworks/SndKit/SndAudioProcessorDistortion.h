@@ -25,7 +25,7 @@ enum {
   distort_kKnee        = 1,
   distort_kHardness    = 2,
   distort_kBoostRange  = 3,
-  distort_kNumParams   = 5
+  distort_kNumParams   = 4
 };
 
 @interface SndAudioProcessorDistortion : SndAudioProcessor {
@@ -37,14 +37,14 @@ enum {
 }
 
 - init;
-- (void) dealloc;
+- (void)  dealloc;
 
 - (void)  setToDefault;
 - (BOOL)  processReplacingInputBuffer: (SndAudioBuffer*) inB outputBuffer: (SndAudioBuffer*) outB;
 
 - (void)  setParam: (int) index toValue: (float) value;
-- (NSString*) getParamName: (int) index;
-- (float) getParam: (int) index;
+- (NSString*) paramName: (int) index;
+- (float) param: (int) index;
 
 - (void)  setBoostRange: (float) fBoostRange;
 - (void)  setBoostAmount: (float) fBoostAmount;

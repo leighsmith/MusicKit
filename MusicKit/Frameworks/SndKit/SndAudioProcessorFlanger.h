@@ -60,12 +60,12 @@ enum
                               outL: (float*) outL outR: (float*) outR
                        sampleCount: (long) sampleCount step: (int) step;
 
-- (void)  setParameter: (long) index toValue: (float) value;
-- (float) getParameter: (long) index;
+- (void)  setParam: (int) index toValue: (float) value;
+- (float) paramValue: (int) index;
 
-- (NSString*) getParameterLabel:   (long) index;
-- (NSString*) getParameterDisplay: (long) index;
-- (NSString*) getParameterName:    (long) index;
+- (NSString*) paramLabel:   (int) index;
+- (NSString*) paramDisplay: (int) index;
+- (NSString*) paramName:    (int) index;
 
 - setActive: (BOOL) b;
 - (void)  setToDefault;

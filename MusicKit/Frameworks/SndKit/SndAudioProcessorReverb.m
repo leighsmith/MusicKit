@@ -27,10 +27,8 @@
 
 - init
 {
-  [super init];
-  numParams = rvrbNumParams;
+  [super initWithParamCount: rvrbNumParams name: @"Reverb"];
   cppFreeReverbObj = reverbCreate();
-  NSLog(@"[Freeverb] cpp object created!");
   return self;
 }
 
@@ -52,17 +50,15 @@
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
                         outputBuffer: (SndAudioBuffer*) outB
 {
-  if ([outB lengthInSamples] == [inB lengthInSamples] &&
-      [outB channelCount]    == [inB channelCount]    &&
-      [outB dataFormat]      == [inB dataFormat]      &&
-      [inB dataFormat]       == SND_FORMAT_FLOAT      &&
-      [inB channelCount]     == 2) {
+  if ([outB hasSameFormatAsBuffer: inB]      &&
+      [inB dataFormat]   == SND_FORMAT_FLOAT &&
+      [inB channelCount] == 2) {
       
       float *inD  = (float*) [inB  data];
       float *outD = (float*) [outB data];
       long   len  = [inB  lengthInSamples];
 
-      reverbProcessReplacing(cppFreeReverbObj,inD,inD+1,outD,outD+1,len,2);
+      reverbProcessReplacing(cppFreeReverbObj, inD,inD+1,outD,outD+1,len,2);
   }
   else
     printf("SndAudioProcessorReverb::processreplacing: ERR: Buffers have different formats\n");
@@ -121,12 +117,12 @@
   }
   else {
     switch (index) {
-    case rvrbRoomSize: setRoomSize(cppFreeReverbObj,v); break;
-    case rvrbDamp:     setDamp(cppFreeReverbObj,v);     break;
-    case rvrbWet:      setWet(cppFreeReverbObj,v);      break;
-    case rvrbDry:      setDry(cppFreeReverbObj,v);      break;
-    case rvrbWidth:    setWidth(cppFreeReverbObj,v);    break;
-    case rvrbMode:     setMode(cppFreeReverbObj,v);     break; 
+    case rvrbRoomSize: setRoomSize(cppFreeReverbObj, v); break;
+    case rvrbDamp:     setDamp(cppFreeReverbObj, v);     break;
+    case rvrbWet:      setWet(cppFreeReverbObj, v);      break;
+    case rvrbDry:      setDry(cppFreeReverbObj, v);      break;
+    case rvrbWidth:    setWidth(cppFreeReverbObj, v);    break;
+    case rvrbMode:     setMode(cppFreeReverbObj, v);     break; 
     }
   }
   return self;

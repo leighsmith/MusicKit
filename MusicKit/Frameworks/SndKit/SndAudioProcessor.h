@@ -32,8 +32,11 @@
     int   numParams;
 /*! @var  audioProcessorChain The SndAudioProcessorChain hosting this processor */
     SndAudioProcessorChain *audioProcessorChain;
+    NSString *name;
 /*! @var  bActive */    
     BOOL  bActive;
+
+    id inspector;
 }
 
 /*!
@@ -50,6 +53,7 @@
     @result     Self.
 */
 - init;
+- initWithParamCount: (int) count name: (NSString*) s;
 
 /*!
     @method      reset
@@ -148,6 +152,10 @@
 */
 - setActive: (BOOL) b;
 
+- setName: (NSString*) aName;
+- (NSString*) name;
+- (NSString*) description;
+- inspect;
 @end
 
 #endif

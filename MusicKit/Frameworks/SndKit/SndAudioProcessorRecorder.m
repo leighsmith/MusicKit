@@ -30,10 +30,11 @@
 
 - init
 {
+  self = [super initWithParamCount: 0 name: @"Recorder"];
   bStartTrigger = FALSE;
   fStartTriggerThreshold = 0.002;
 
-  return [super init];
+  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,8 +93,8 @@
       return FALSE;
   }
   {
-    void *recData             = [recordBuffer data];
-    void *inputData           = [inB data]; 
+    float *recData             = (float*) [recordBuffer data];
+    float *inputData           = (float*) [inB data]; 
     long inBuffLengthInBytes  = [inB lengthInBytes];
     long recBuffLengthInBytes = [recordBuffer lengthInBytes];
     long remainder            = 0;
@@ -107,8 +108,8 @@
       for (i = skip ; i < inBuffLengthInSams; i += skip) {
         if (fabs(finB[i]) > fStartTriggerThreshold) {
           bStartTrigger = FALSE;
-          inputData           += (i-skip) * sizeof(float);
-          inBuffLengthInBytes -= (i-skip) * sizeof(float);
+          inputData           += (i-skip);
+          inBuffLengthInBytes -= (i-skip);
           break;
         }
       }

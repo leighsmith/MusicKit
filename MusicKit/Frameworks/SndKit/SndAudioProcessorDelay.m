@@ -33,14 +33,11 @@
 
 - init
 {
-  [super init];
-  
-  if (lock == nil)
-    lock    = [[NSLock alloc] init];
-   length   = 0;
-   feedback = 0;
-   chanL    = NULL;
-   chanR    = NULL; 
+  if (lock == nil) {
+    [super initWithParamCount: dlyNumParams name: @"Delay"];
+    lock = [[NSLock alloc] init];
+  }
+  [self initWithLength: 11025 feedback: 0.25];
   return self;
 }
 
@@ -77,6 +74,8 @@
 
 - initWithLength: (long) nSams feedback: (float) fFB
 {
+  [super init];
+  
   [lock lock];
   
   [self freemem];

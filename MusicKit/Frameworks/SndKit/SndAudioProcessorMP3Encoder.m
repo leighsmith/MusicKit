@@ -50,7 +50,7 @@
 
 - init
 {
-  [super init];
+  [super initWithParamCount: 0 name: @"MP3Encoder"];
   
   buffer_l             = NULL;
   buffer_r             = NULL;

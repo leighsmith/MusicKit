@@ -29,7 +29,7 @@ enum {
   dlyLength    = 0, // in samples!
   dlyFeedback  = 1,
   dlyNumParams = 2
-} SndDelayParam;
+};
 
 /*! 
     @class      SndAudioProcessorDelay

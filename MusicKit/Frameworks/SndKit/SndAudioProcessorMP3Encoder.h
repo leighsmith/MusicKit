@@ -43,6 +43,9 @@
     @discussion To come.
 */
 
+#ifndef __SNDAUDIOPROCESSORMP3ENCODER_H_
+#define __SNDAUDIOPROCESSORMP3ENCODER_H_
+
 @interface SndAudioProcessorMP3Encoder : SndAudioProcessor {
 /*! @var buffer_l Left audio channel data (pre-encoding)                      */
   float             *buffer_l;
@@ -155,3 +158,4 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#endif

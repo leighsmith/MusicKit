@@ -21,9 +21,8 @@
 
 - init 
 {
-  self = [super init];
+  self = [super initWithParamCount: distort_kNumParams name: @"Distortion"];
   [self setToDefault];
-  numParams = distort_kNumParams;
   return self;
 }
 
@@ -51,7 +50,7 @@
 
   for (ch = 0; ch < chans; ch++) {
     
-    float *inp   = (float*) [inB data];
+    float *inp   = (float*) [inB  data];
     float *outp  = (float*) [outB data];
 
     // take care of interleaving initial offsets...
@@ -82,7 +81,7 @@
 // getParamName
 //////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) getParamName: (int) index
+- (NSString*) paramName: (int) index
 {
   NSString *r = nil;
   switch (index)  {
@@ -98,7 +97,7 @@
 // getParam
 //////////////////////////////////////////////////////////////////////////////
 
-- (float) getParam: (int) index
+- (float) param: (int) index
 {
   float r = 0.0f;
   switch (index)  {
