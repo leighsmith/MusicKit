@@ -147,20 +147,23 @@ typedef enum {
     int dataSize;
     int dataFormat;
     int samplingRate;
-    int channelCount;
+    int channelCount; // channelCount is no longer guaranteed to be accurate, soundFormat.channelCount is now authorative.
     char info[4]; // now redundant, always "\0\0\0\0".
   } SndSoundStruct;
   </pre>
   */
-    SndSoundStruct *soundStruct; // TODO this is deprecated in favour of soundFormat.
+    // TODO this is in the process of phase-out in favour of soundFormat.
+    SndSoundStruct *soundStruct; 
+    /*! @var soundStructSize the length of the structure in bytes */
+    int soundStructSize;
+
+    // TODO NSArray *soundBuffers; /* An array of SndAudioBuffers, the number of elements will depend on the fragmentation. */
     /*! @var soundFormat The parameters defining the format of the sound. */
     SndFormat soundFormat;
     /*! @var info A descriptive information string read from a sound file. */
     NSString *info;
-    /*! @var soundStructSize the length of the structure in bytes */
-    int soundStructSize;
 
-    /*! @var priority the priority of the sound */
+    /*! @var priority the priority of the sound - currently unused. */
     int priority;		 
     /*! @var delegate the target of notification messages */
     id delegate;		 
@@ -175,9 +178,12 @@ typedef enum {
 
     /*! @var performancesArray An array of all active AND pending performances of this Snd */
     NSMutableArray *performancesArray;
-    /*! @var performancesArrayLock An NSLock to protect the performancesArray */
+    /*! @var performancesArrayLock An NSLock to protect the performancesArray when playing. */
     NSLock *performancesArrayLock;
 
+    /*! @var editingLock An NSRecursiveLock to protect concurrent modifying of a sound. */
+    NSRecursiveLock *editingLock;
+    
     /*! @var loopWhenPlaying Indicates whether the default behaviour is to loop when playing.
 	This is set from reading the sound file.
      */
@@ -193,7 +199,7 @@ typedef enum {
     SndAudioProcessorChain *audioProcessorChain;
         
 @public
-/*! @var tag A unique identifier tag for the Snd */
+    /*! @var tag A unique identifier tag for the Snd */
     int tag;
 }
 
@@ -587,7 +593,7 @@ typedef enum {
               (through <b>readSoundfile:</b>, for example) and can't be changed
               directly. To resize the data, you should invoke one of the editing
               methods such as <b>insertSamples:at:</b> or
-	      <b>deleteSamplesAt:count:</b>.
+	      <b>deleteSamplesInRange:</b>.
 
               To start with a new, unfragmented sound with a
               determinate length, invoke the
@@ -646,25 +652,6 @@ typedef enum {
               TODO This will be changed to soundData and return an NSData instance.
 */
 - (SndSoundStruct *) soundStruct;
-
-/*!
-  @function fragmentOfFrame:indexInFragment:fragmentLength:dataFormat:
-  @abstract Get data address and statistics for fragmented or non-fragmented Snds
-  @discussion For fragmented sounds, you often need to be able to find the
-              block of data that a certain frame resides in. You then often
-              need to know which is the last frame in that fragment (block),
-              indexed from the start of the block.
-  @param frame            The index of the sample you wish to find the block for, indexed from the beginning of the sound
-  @param currentFrame     Returns by reference the index of the frame supplied, indexed from the start of the block
-  @param fragmentLength   Returns by reference the length the block, indexed from the start of the block
-  @param dataFormat       Returns by reference the format of the data. This will normally be the same as the Snd's dataFormat,
-                          but can differ if the format is encoded with compression.
- @result the memory address of the first sample in the block.
-*/
-- (void *) fragmentOfFrame: (int) frame 
-	   indexInFragment: (unsigned int *) currentFrame 
-	    fragmentLength: (unsigned int *) fragmentLength
-		dataFormat: (SndSampleFormat *) dataFormat;
 
 /*!
   @method processingError
@@ -1181,6 +1168,20 @@ typedef enum {
 @interface Snd(Editing)
 
 /*!
+  @method lockEditing
+  @abstract Used to lock Snd instance against editing.
+  @discussion See also -<i>unlockEditing</i> for the complementary method to match with.
+ */
+- (void) lockEditing;
+
+/*!
+  @method unlockEditing
+  @abstract Used to unlock Snd instance for editing.
+  @discussion See also -<i>lockEditing</i> for the complementary method to match with.
+ */
+- (void) unlockEditing;
+
+/*!
   @method deleteSamples
   @result Returns an int.
   @discussion Deletes all the samples in the Snd's data. The Snd must be
@@ -1189,16 +1190,14 @@ typedef enum {
 - (int) deleteSamples;
 
 /*!
-  @method deleteSamplesAt:count:
-  @param  startFrame is an long.
-  @param  frameCount is an long.
-  @result Returns an int.
-  @discussion Deletes a range of samples from the Snd: <i>sampleCount</i>
-              samples are deleted starting with the <i>startSample</i>'th sample
+  @method deleteSamplesInRange:
+  @param  frameRange is an NSRange giving the range of frames to delete.
+  @result Returns an integer error code.
+  @discussion Deletes a range of samples from the sound: the length of <i>frameRange</i>
+              sample frames are deleted starting with the location of the <i>frameRange</i>
               (zero-based). The Snd must be editable and may become fragmented.
- An error code is returned.
  */
-- (int) deleteSamplesAt: (long) startFrame count: (long) frameCount;
+- (int) deleteSamplesInRange: (NSRange) frameRange;
 
 /*!
   @method insertSamples:at:
@@ -1249,6 +1248,25 @@ typedef enum {
   @discussion Returns <b>YES</b> if the Snd's data is fragmented. Otherwise returns <b>NO</b>.
  */
 - (BOOL) needsCompacting;
+
+/*!
+  @function fragmentOfFrame:indexInFragment:fragmentLength:dataFormat:
+  @abstract Get data address and statistics for fragmented or non-fragmented Snds
+  @discussion For fragmented sounds, you often need to be able to find the
+              block of data that a certain frame resides in. You then often
+              need to know which is the last frame in that fragment (block),
+              indexed from the start of the block.
+  @param frame            The index of the sample you wish to find the block for, indexed from the beginning of the sound
+  @param currentFrame     Returns by reference the index of the frame supplied, indexed from the start of the block
+  @param fragmentLength   Returns by reference the length the block, indexed from the start of the block
+  @param dataFormat       Returns by reference the format of the data. This will normally be the same as the Snd's dataFormat,
+                          but can differ if the format is encoded with compression.
+  @result the memory address of the first sample in the block.
+ */
+- (void *) fragmentOfFrame: (unsigned long) frame 
+	   indexInFragment: (unsigned long *) currentFrame 
+	    fragmentLength: (unsigned long *) fragmentLength
+		dataFormat: (SndSampleFormat *) dataFormat;
 
 /*!
   @method fillAudioBuffer:toLength:samplesStartingFrom:
