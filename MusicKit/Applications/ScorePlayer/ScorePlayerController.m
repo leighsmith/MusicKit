@@ -41,19 +41,21 @@
 @implementation ScorePlayerController
 
 static BOOL playScoreForm;
-static id synthInstruments;
+static NSMutableArray *synthInstruments;
 static id openPanel;
-static char* fileName,*shortFileName;
-static id scoreObj,scorePerformer,theOrch;
+static NSString *fileName, *shortFileName;
+static MKScore *scoreObj;
+static MKScorePerformer *scorePerformer;
+static MKOrchestra *theOrch;
 static double headroom = .1;
 static BOOL userCancelFileRead = NO;
 static char errMsg[200];
 static double initialTempo = 60.0;
 static double lastTempo = 60.0;
 static double desiredTempo = 60.0;
-static char *fileSuffixes[3] = {"score","playscore",NULL};
-static char *dir = NULL;
-static id condClass = nil;
+static NSArray *fileSuffixes;
+static NSString *dir = nil;
+static MKConductor *condClass = nil;
 static BOOL messageFlashed = NO;
 static BOOL isLate = NO;
 static BOOL wasLate = NO;
@@ -65,15 +67,15 @@ static int timeCodePort = 0;
 static unsigned capabilities;
 static double samplingRate;
 
-static char outputFilePath[MAXPATHLEN+1]; /* Complete output file path */
-static char outputFileDir[MAXPATHLEN+1];	 /* Just the directory */
-static char outputFileName[MAXPATHLEN+1]; /* Just the name */
+static NSString *outputFilePath; /* Complete output file path */
+static NSString *outputFileDir;	 /* Just the directory */
+static NSString *outputFileName; /* Just the name */
 
 
 static BOOL DSPCommands = NO;
 static BOOL writeData = NO;
 
-#define PLAYING ([condClass performanceThread] != NO_CTHREAD)
+#define PLAYING ([condClass inPerformance])
 
 #define SOUND_OUT_PAUSE_BUG 1 /* Workaround for problem synching MIDI to DSP */
 
@@ -203,7 +205,7 @@ static void handleMKError(char *msg)
     else {
 	char *str = malloc(strlen(msg)+1);
 	strcpy(str,msg);
-	[Conductor sendMsgToApplicationThreadSel:@selector(runAlert:) to:NXApp
+	[MKConductor sendMsgToApplicationThreadSel:@selector(runAlert:) to:self
          argCount:1, (id)str];
     }
 }
@@ -420,6 +422,7 @@ static char *soundOutputTagToName[] =
 {
     port_t	port;
     int		ok1 = 0;
+#if 0
     port = NXPortFromName("Edit",NULL);
     if (port == PORT_NULL)  /* No workspace -- impossible error, probably */
 	return nil;
@@ -432,7 +435,8 @@ static char *soundOutputTagToName[] =
 	NXRunAlertPanel(STR_SCOREPLAYER,STR_EDIT_CANT_OPEN_FILE,STR_OK, NULL, NULL);
 	return nil;
     }
-    return NXApp;
+#endif
+    return self;
 }
 
 static id setFile(ScorePlayerController* self)
@@ -450,26 +454,23 @@ static id setFile(ScorePlayerController* self)
     setFileTime();
     [self->editFileItem setEnabled:!playScoreForm];
     [self->saveAsFileItem setEnabled:YES];
-    [scoreObj free];
-    scoreObj = [Score new];
+    scoreObj = [MKScore score];
     sprintf(errMsg,STR_READING,shortFileName);
 //    [theMainWindow makeKeyAndOrderFront:NXApp]; /* Probably not needed */
     [self->theMainWindow setTitle:errMsg];
     [self->theMainWindow display];
     [self->button setEnabled:NO];
     userCancelFileRead = NO;
-    tuningSys = [[TuningSystem alloc] init]; /* 12-tone equal tempered */
+    tuningSys = [[MKTuningSystem alloc] init]; /* 12-tone equal tempered */
     [tuningSys install];
     [tuningSys free];
-    if (![scoreObj readScorefile:(char *)fileName] || 
-	userCancelFileRead) 
-      {  
+    if (![scoreObj readScorefile:(char *)fileName] || userCancelFileRead) {  
 	/* Error in file? */
 	if (!userCancelFileRead) 
-	    NXRunAlertPanel(STR_SCOREPLAYER,
-			    STR_FIX_ERRORS,STR_OK,NULL,NULL);
-	scoreObj = [scoreObj free];
-	fileName[0] = '\0';
+	    NSRunAlertPanel(STR_SCOREPLAYER, STR_FIX_ERRORS,STR_OK,NULL,NULL);
+	scoreObj = nil;
+        [filename release];
+	fileName = @"";
 	[self->editFileItem setEnabled:NO];
 	[self->saveAsFileItem setEnabled:NO];
 	[self->theMainWindow setTitle:STR_SCOREPLAYER];
@@ -485,7 +486,7 @@ static id setFile(ScorePlayerController* self)
     if (scoreInfo) { /* Configure performance as specified in info. */ 
 	int midiOffsetPar;
 	midiOffset = 0;
-	midiOffsetPar = [Note parName:"midiOffset"];
+	midiOffsetPar = [MKNote parName:"midiOffset"];
 	if ([scoreInfo isParPresent:midiOffsetPar])
 	    midiOffset = [scoreInfo parAsDouble:midiOffsetPar];
 	if ([scoreInfo isParPresent:MK_headroom])
@@ -520,6 +521,7 @@ static id setFile(ScorePlayerController* self)
     [self->theMainWindow setTitle:shortFileName];
     [self->theMainWindow display];
     [self->button setEnabled:YES];
+    [scoreObj retain];  // yep, keep it.
     return NXApp;
 }
 
@@ -594,7 +596,7 @@ void *endOfTimeProc(msg_header_t *msg,ScorePlayerController *myself )
     [myself->soundSavePanel close];
     [myself->dspCommandsSavePanel close];
     [myself _enableMTCControls:YES];
-    return NXApp;
+    return self;
 }
 
 static BOOL isMidiClassName(char *className)
@@ -644,7 +646,7 @@ static double getUntempo(float tempoVal)
 #define ANIMATE_DIFF_THRESHOLD 1.0
 #define ANIMATE_INCREMENT 0.3
 
-static id playIt(ScorePlayerController *self)
+static void playIt(ScorePlayerController *self)
 {
     int partCount,synthPatchCount,voices,i,whichMidi,midiChan;
     char *className;
@@ -655,16 +657,15 @@ static id playIt(ScorePlayerController *self)
 
     /* Could keep these around, in repeat-play cases: */ 
     scorePerformer = [scorePerformer free];
-    [synthInstruments freeObjects];
-    synthInstruments = [synthInstruments free];
+    [synthInstruments release];
     [self _enableMTCControls:NO];
 
     if (synchToTimeCode) {
-	midis[timeCodePort] = [Midi newOnDevice:(timeCodePort) ? "midi1" : "midi0"];
-	[[Conductor defaultConductor] setMTCSynch:midis[timeCodePort]];
-    } else [[Conductor defaultConductor] setMTCSynch:nil];
+	midis[timeCodePort] = [MKMidi midiOnDevice:(timeCodePort) ? "midi1" : "midi0"];
+	[[MKConductor defaultConductor] setMTCSynch:midis[timeCodePort]];
+    } else [[MKConductor defaultConductor] setMTCSynch:nil];
 
-    theOrch = [Orchestra newOnDSP:0]; /* A noop if it exists */
+    theOrch = [MKOrchestra newOnDSP:0]; /* A noop if it exists */
 
     [theOrch setHeadroom:headroom];    /* Must be reset for each play */ 
     if (serialSoundOutDevice)
@@ -694,15 +695,15 @@ static id playIt(ScorePlayerController *self)
     if (msg && !warnedAboutSrate) {	
 	[errorLog addText:msg];
 	warnedAboutSrate = YES;
-	NXRunAlertPanel(STR_SCOREPLAYER,msg,STR_OK,NULL,NULL);
+	NSRunAlertPanel(STR_SCOREPLAYER,msg,STR_OK,NULL,NULL);
     }
     [theOrch setSamplingRate:actualSrate];
 
-    #if SOUND_OUT_PAUSE_BUG
+#if SOUND_OUT_PAUSE_BUG
     if (checkForMidi(scoreObj))
 	[theOrch setFastResponse:YES];
     else [theOrch setFastResponse:NO];
-    #endif
+#endif
     [theOrch setOutputCommandsFile:(DSPCommands)?outputFilePath:NULL];
     [theOrch setOutputSoundfile:(writeData)?outputFilePath:NULL];
     [theOrch setHostSoundOut:!writeData && (soundOutType == NEXT_SOUND)];
@@ -711,7 +712,7 @@ static id playIt(ScorePlayerController *self)
     if (![theOrch open]) {
 	char *msg = (char *)STR_CANT_OPEN_DSP;
 	[errorLog addText:msg];
-	NXRunAlertPanel(STR_SCOREPLAYER,msg,STR_OK,NULL,NULL);
+	NSRunAlertPanel(STR_SCOREPLAYER,msg,STR_OK,NULL,NULL);
 	return nil;
     }
     scorePerformer = [MKScorePerformer new];
@@ -719,7 +720,7 @@ static id playIt(ScorePlayerController *self)
     [(MKScorePerformer *)scorePerformer activate]; 
     partPerformers = [scorePerformer partPerformers];
     partCount = [partPerformers count];
-    synthInstruments = [List new];
+    synthInstruments = [NSMutableArray array];
     for (i = 0; i < partCount; i++) {
 	partPerformer = [partPerformers objectAtIndex:i];
 	aPart = [partPerformer part]; 
@@ -746,13 +747,13 @@ static id playIt(ScorePlayerController *self)
 		whichMidi = 1;
 	    else whichMidi = 0;
 	    if (midis[whichMidi] == nil)
-		midis[whichMidi] = [Midi newOnDevice:className];
+		midis[whichMidi] = [MKMidi newOnDevice:className];
 	    [[partPerformer noteSender] connect:
 	     [midis[whichMidi] channelNoteReceiver:midiChan]];
 	}
 	else {
 	    synthPatchClass = (strlen(className) ? 
-			       [SynthPatch findSynthPatchClass:className] : nil);
+			       [MKSynthPatch findSynthPatchClass:className] : nil);
 	    if (!synthPatchClass) {         /* Class not loaded in program? */ 
 		sprintf(errMsg,STR_NO_SYNTHPATCH,className);
 		[errorLog addText:errMsg];
@@ -762,7 +763,7 @@ static id playIt(ScorePlayerController *self)
 		/* We would prefer to do dynamic loading here. */
 		continue;
 	    }
-	    anIns = [SynthInstrument new];      
+	    anIns = [MKSynthInstrument new];      
 	    [synthInstruments addObject:anIns];
 	    [[partPerformer noteSender] connect:[anIns noteReceiver]];
 	    [anIns setSynthPatchClass:synthPatchClass];
@@ -773,24 +774,23 @@ static id playIt(ScorePlayerController *self)
 		[anIns setSynthPatchCount:voices patchTemplate:
 		 [synthPatchClass patchTemplateFor:partInfo]];
 	    if (synthPatchCount < voices) {
-		sprintf(errMsg,STR_TOO_MANY_SYNTHPATCHES,
-			synthPatchCount,voices,className,
+		sprintf(errMsg, STR_TOO_MANY_SYNTHPATCHES,
+			synthPatchCount, voices, className,
 			MKGetObjectName(aPart));
 		[errorLog addText:errMsg];
-		if (!NXRunAlertPanel(STR_SCOREPLAYER,errMsg,STR_CONTINUE,
-				     STR_CANCEL, NULL))
+		if (!NSRunAlertPanel(STR_SCOREPLAYER, errMsg, STR_CONTINUE, STR_CANCEL, NULL))
 		    return nil;
 	    }
 	}
     }
-    [partPerformers free];
+    [partPerformers release];
     errorDuringPlayback = NO;
     sprintf(errMsg,STR_PLAYING,shortFileName);
     [self->theMainWindow setTitle:errMsg];
     [self->theMainWindow display];
     MKSetDeltaT(.75);
-    [Orchestra setTimed:YES];
-    [condClass afterPerformanceSel:@selector(endOfTime) to:NXApp argCount:0];
+    [MKOrchestra setTimed:YES];
+    [condClass afterPerformanceSel:@selector(endOfTime) to:self argCount:0];
     [self->button setImage:stopImage];
     [self->button display];
     if (synchToTimeCode)
@@ -812,28 +812,13 @@ static id playIt(ScorePlayerController *self)
 	[midis[i] run];
     [theOrch run];
     [condClass startPerformance];     
-    return NXApp;
 }
 
 -setTempoAdjustment:sender
 {
-    [Conductor setDelegate:([[sender selectedCell] tag] == 0) ? NXApp : nil];
+    [MKConductor setDelegate:([[sender selectedCell] tag] == 0) ? self : nil];
     return self;
 }
-
-static char *copyStr(char *oldPtr,char *strToCopy)
-{
-    char *rtnVal;
-    if (oldPtr)
-      free(oldPtr);
-    if (!strToCopy)
-      return NULL;
-    NX_MALLOC(rtnVal,char,strlen(strToCopy)+1);
-    strcpy(rtnVal,strToCopy);
-    return rtnVal;
-}
-
-extern void _MKSetConductorThreadMaxStress(int arg);
 
 static id LocalImage(char *s)
 {
@@ -844,11 +829,9 @@ static id LocalImage(char *s)
 
 +initialize
 {
-    static NXDefaultsVector ScorePlayerDefaults = {
-	{"Sound output", "NeXT sound"},
-	{NULL}
-    };
-    NXRegisterDefaults("ScorePlayer", ScorePlayerDefaults);
+    NSDictionary *ScorePlayerDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
+        @"NeXTsound", @"SoundOutput", NULL, NULL];
+    [[NSUserDefaults standardUserDefaults] registerDefaults:ScorePlayerDefaults];
     return self;
 }
 
@@ -857,36 +840,41 @@ static void abortNow();
 - orchestraDidAbort:whichOrch
   /* This is received by the appkit thread */
 {
-    NXRunAlertPanel(STR_SCOREPLAYER,STR_HUNG_DSP,NULL,NULL,NULL);
+    NSRunAlertPanel(STR_SCOREPLAYER,STR_HUNG_DSP,NULL,NULL,NULL);
     abortNow();
     return self;
 }
 
-- appWillInit:sender
+- (void) applicationWillFinishLaunching: (NSNotification *) aNotification 
 {
-    char *s;
+    NSString *s;
     static int inited = 0;
+    NSUserDefaults *scorePlayerDefaults = [NSUserDefaults standardUserDefaults];
     int ec;
+
     if (inited++)
-      return NXApp;
+      return;
     playImage = LocalImage("play.tiff");
     [button setImage:playImage];
     [button display];
+    [fileSuffixes arrayWithObjects: @"score", @"playscore", nil];
     errorLog = [[ErrorLog alloc] init];
-    condClass = [Conductor class];
+    condClass = [MKConductor class];
     [condClass setThreadPriority:1.0];
-    [PartPerformer setFastActivation:YES]; /* We're not modifying parts while playing */
+    [MKPartPerformer setFastActivation:YES]; /* We're not modifying parts while playing */
     setuid(getuid()); /* Must be after setThreadPriority. */
     [condClass useSeparateThread:YES];
 //    [condClass setDelegate:NXApp]; /* Default is no tempo adjustment */
-    [[Conductor defaultConductor] setDelegate:self];
+    [[MKConductor defaultConductor] setDelegate:self];
     /* These numbers could be endlessly tweaked */
     MKSetLowDeltaTThreshold(.25);
     MKSetHighDeltaTThreshold(.4);
 //    _MKSetConductorThreadMaxStress(1000000); /* Don't do cthread_yields */
+#if 0
     ec = port_allocate(task_self(), &endOfTimePort);
     DPSAddPort(endOfTimePort,(DPSPortProc)endOfTimeProc,
 	       sizeof(msg_header_t),(void *)self,30);
+#endif
     MKSetErrorProc(handleMKError);
     objc_setClassHandler(handleObjcError);
    
@@ -904,22 +892,24 @@ static void abortNow();
     playHImage = LocalImage("playH.tiff");
     [button setAltImage:playHImage];
 	    
-    [Orchestra setAbortNotification:self]; 
-    theOrch = [Orchestra new];
+    [MKOrchestra setAbortNotification:self]; 
+    theOrch = [MKOrchestra new];
     capabilities = [theOrch capabilities];
+
+
     if (capabilities & MK_hostSoundOut) {
-	s = (char *)NXGetDefaultValue("MusicKit", "OrchestraSoundOut");
-	if (!strcmp(s,"Host")) {
-	    [self _setSoundOutDeviceTag:NEXT_SOUND];
+        s = [scorePlayerDefaults stringForKey: @"MKOrchestraSoundOut"];
+	if ([s isEqual: @"Host"]) {
+	    [self _setSoundOutDeviceTag: NEXT_SOUND];
 	}
 	else {
-	    s = (char *)NXGetDefaultValue("MusicKit", "DSPSerialPortDevice0");
-	    [self _setSoundOutDeviceTag:[self _soundOutputNameToTag:s]];
+            s = [scorePlayerDefaults stringForKey: @"MKDSPSerialPortDevice0"];
+	    [self _setSoundOutDeviceTag:[self _soundOutputNameToTag: s]];
 	}
     } else {
 	if ((capabilities & MK_nextCompatibleDSPPort)) {
-	    s = (char *)NXGetDefaultValue("MusicKit", "DSPSerialPortDevice0");
-	    [self _setSoundOutDeviceTag:[self _soundOutputNameToTag:s]];
+            s = [scorePlayerDefaults stringForKey: @"MKDSPSerialPortDevice0"];
+	    [self _setSoundOutDeviceTag:[self _soundOutputNameToTag: s]];
 	}
 	else {
 	    [self _setSoundOutDeviceTag:GENERIC];
@@ -930,30 +920,12 @@ static void abortNow();
     return self;
 }
 
-
-char *getShortFileName(char *fName)
-{
-    char *tmp;
-    tmp = strrchr(fName,'/');
-    if (tmp) {
-	dir = copyStr(dir,fName);
-	dir[tmp - fName] = '\0'; 
-	tmp++; /* Increment over the '/' */
-    }
-    else {
-	if (dir)
-	  free(dir);
-	dir = NULL;
-    }
-    return (tmp) ? tmp : fName;
-}
-
-static id setUpFile(char *workspaceFileName)
+static BOOL setUpFile(NSString *workspaceFileName)
 {
     int success;
     static BOOL firstTime = YES;
     if (!openPanel)
-        openPanel = [OpenPanel new];    
+        openPanel = [NSOpenPanel new];    
     if (!workspaceFileName) {
 	if (firstTime)
 	  success = [openPanel 
@@ -972,16 +944,15 @@ static id setUpFile(char *workspaceFileName)
 	  success = [openPanel 
 		   runModalForTypes:(const char *const *)fileSuffixes];
 	if (!success)
-	  return nil;
+	  return NO;
 	fileName = copyStr(fileName,
 				 (char *)[openPanel filename]);
 	shortFileName = copyStr(shortFileName,
 				      (char *)*[openPanel filenames]);
     }
     else {
-	fileName = copyStr(fileName,workspaceFileName);
-	shortFileName = copyStr(shortFileName,
-				      getShortFileName(workspaceFileName));
+	fileName = [workspaceFileName copy];
+	shortFileName = [workspaceFileName lastPathComponent];
     }
     if  ( (strcmp(shortFileName,"Jungle.score") == 0) ||
 	  (strcmp(shortFileName,"Jungle.playscore") == 0)
@@ -989,7 +960,7 @@ static id setUpFile(char *workspaceFileName)
       tempoExponent = 1.3;  /* A real hack to make the demos play ok. */
     else tempoExponent = 1.5;
     firstTime = NO;
-    return NXApp;
+    return YES;
 }
 
 static void abortNow()
@@ -1005,9 +976,9 @@ static void abortNow()
 	[theOrch abort];
 	[condClass finishPerformance];
 	[condClass unlockPerformance];
-	cthread_yield();
-	while (PLAYING) /* Make sure it's really done. */
-	  usleep(1000);
+
+//	while (PLAYING) /* Make sure it's really done. */
+//	  usleep(1000);
     }
 }
 
@@ -1015,10 +986,10 @@ static void abortNow()
 {
     abortNow(); /* Could move this to after setUpFile() */
     if (!setUpFile(NULL)) {
-      return NXApp;
+      return self;
     }
     setFile(self);
-    return NXApp;
+    return self;
 }
 
 - (BOOL) appAcceptsAnotherFile : sender {
@@ -1115,7 +1086,7 @@ static void adjustTempo(double slowDown)
     if (!forceAdjustment && diff < ANIMATE_DIFF_THRESHOLD) /* diff too small */
       return self;
     [condClass lockPerformance];
-    [[condClass defaultConductor] setTempo:desiredTempo];
+    [[MKConductor defaultConductor] setTempo:desiredTempo];
     [condClass unlockPerformance];
     [tempoTextField setFloatValue:desiredTempo];
     if (wasLate || isLate)
@@ -1124,7 +1095,7 @@ static void adjustTempo(double slowDown)
     return self;
 }
 
-- setTempoFrom:sender	// currently called by slider only
+- (void) setTempoFrom:sender	// currently called by slider only
 {
     double val = ([sender doubleValue]);
     desiredTempo = getTempo(val);
@@ -1133,7 +1104,6 @@ static void adjustTempo(double slowDown)
 	[tempoTextField setFloatValue:desiredTempo];
 	lastTempo = desiredTempo;
     }
-    return NXApp;
 }
 
 - setTimeCodeSynch:sender
@@ -1154,21 +1124,21 @@ static void adjustTempo(double slowDown)
 
 - conductorWillSeek:sender
 {
-    [Conductor sendMsgToApplicationThreadSel:@selector(showConductorWillSeek)
+    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorWillSeek)
      to:self argCount:0];
     return self;
 }
 
 - conductorDidSeek:sender
 {
-    [Conductor sendMsgToApplicationThreadSel:@selector(showConductorDidSeek)
+    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidSeek)
      to:self argCount:0];
     return self;
 }
 
 - conductorDidReverse:sender
 {
-    [Conductor sendMsgToApplicationThreadSel:@selector(showConductorDidReverse)
+    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidReverse)
      to:self argCount:0];
     return self;
 }
@@ -1176,9 +1146,9 @@ static void adjustTempo(double slowDown)
 - conductorDidPause:sender
 {
     int i;
-    [Conductor sendMsgToApplicationThreadSel:@selector(showConductorDidPause)
+    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidPause)
      to:self argCount:0];
-    [synthInstruments makeObjectsPerform:@selector(allNotesOff)];
+    [synthInstruments makeObjectsPerformSelector:@selector(allNotesOff)];
     for (i=0; i<2; i++) 
       [midis[i] allNotesOff];
     return self;
@@ -1186,16 +1156,14 @@ static void adjustTempo(double slowDown)
 
 - conductorDidResume:sender
 {
-    [Conductor sendMsgToApplicationThreadSel:@selector(showConductorDidResume)
+    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidResume)
      to:self argCount:0];
     return self;
 }
 
--terminate:sender
+- (void) applicationWillTerminate: (NSNotification *) aNotification
 {
     abortNow();
-    [super terminate:sender];
-    return NXApp;
 }
 
 
@@ -1207,7 +1175,7 @@ static char* fileIcons[] = {"ScorePlayerDoc", "ScorePlayerDoc2", "Midi", "Sound"
 static char* fileTypes[5];
 static char* fileExtensions[] = {"score", "playscore","midi", "snd", "snd"};
 
-static id accessoryView = nil;
+static NSButton *accessoryView = nil;
 static id savePanel = nil;
 char *soundFile = NULL;
 
@@ -1219,17 +1187,17 @@ BOOL getSavePath(char *returnBuf, char *dir, char *name, char const *theType)
     BOOL flag;
 
     if (!savePanel) {
-	savePanel = [SavePanel new];
+	savePanel = [NSSavePanel new];
 	[savePanel setTitle:"ScorePlayer Save"];
 	[accessoryView setIconPosition:NX_ICONABOVE];
-	[accessoryView setTarget:NXApp];
+	[accessoryView setTarget:NSApp];
 	[accessoryView setAction:@selector(changeSaveType:)];
 	[accessoryView sizeTo:124:68];
     }
     [savePanel setAccessoryView:accessoryView];
     if (theType && *theType)
 	[savePanel setRequiredFileType:theType];
-    [NXApp setAutoupdate:NO];
+    [NSApp setAutoupdate:NO];
     flag = [savePanel runModalForDirectory:dir file:name];
     if (flag) strcpy(returnBuf,[savePanel filename]);
     soundFile = (saveType==SAVE_SOUND)?returnBuf:NULL;
@@ -1289,7 +1257,7 @@ void getPath(char *path, char *dir, char *name, char *ext)
 {
     saveType = type;
     if (!accessoryView) {
-	accessoryView = [[Button alloc] init];
+	accessoryView = [[NSButton alloc] init];
 	fileTypes[0] = (char *)STR_SCOREFILE;
 	fileTypes[1] = (char *)STR_PLAYSCOREFILE;
 	fileTypes[2] = (char *)STR_MIDIFILE;
@@ -1359,27 +1327,15 @@ void getPath(char *path, char *dir, char *name, char *ext)
     return self;
 }
 
-static BOOL fileExists(char *name)
-{
-	FILE   *fp;
-
-	if (fp = fopen(name, "r")) {
-		fclose(fp);
-		return YES;
-	} else
-		return NO;
-}
-
 - help:sender
  /* Display the help text file with Edit. */
 {
 	int     ok = 0;
 	port_t	port;
-	char   *helpfile;
+	NSString *helpfile;
 
-	NX_MALLOC(helpfile, char, MAXPATHLEN + 1);
-	sprintf(helpfile, "%s/help.rtfd", *NXArgv);	/* Look in the app wrapper */
-	if (!fileExists(helpfile)) {/* If not there, try the directory. */
+	[helpfile stringWithFormat: "%s/help.rtfd", *NXArgv];	/* Look in the app wrapper */
+	if (![[NSFileManager defaultManager] fileExistsAtPath: helpfile]) {/* If not there, try the directory. */
 		char   *end = strrchr(*NXArgv, '/');
 		int     n = (end) ? end - *NXArgv + 1 : 0;
 
@@ -1393,6 +1349,7 @@ static BOOL fileExists(char *name)
 		}
 	}
 
+#if 0
 	port = NXPortFromName("Edit",NULL);
 	if (port == PORT_NULL) 
 		return nil;
@@ -1400,7 +1357,7 @@ static BOOL fileExists(char *name)
         if ([[NXApp appSpeaker] openFile:helpfile ok:&ok] || !ok) 
 		NXRunAlertPanel(STR_SCOREPLAYER, STR_EDIT_CANT_OPEN_FILE, NULL, 
 				NULL, NULL);
-	NX_FREE(helpfile);
+#endif
 	return self;
 }
 
@@ -1415,7 +1372,7 @@ static BOOL fileExists(char *name)
 -resume:sender
 {
     [MKConductor lockPerformance];
-    [[MKonductor defaultConductor] resume];
+    [[MKConductor defaultConductor] resume];
     [MKConductor unlockPerformance];
     return self;
 }

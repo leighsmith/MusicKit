@@ -14,7 +14,7 @@
     id	panel;
     id	title;
     id  first,second,third;
-    NSCoord buttonHeight, buttonSpacing;
+//    NSCoord buttonHeight, buttonSpacing;
     NSSize defaultPanelSize;
 }
 
