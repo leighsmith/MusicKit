@@ -23,6 +23,10 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2002/03/12 23:02:24  sbrandon
+  Cleaned up some formatting and typos.
+  Changed _binaryIndecies from NSMutableDictionary to NSMapTable.
+
   Revision 1.8  2002/01/29 16:47:33  sbrandon
   ensured we retain and release stream (NSMutableData) and _binaryIndecies variables (fixed leak)
 
@@ -70,7 +74,11 @@ static void writeScoreInfo(_MKScoreOutStruct *p,id info)
       return;
     if (p->_binaryIndecies) 
       _MKWriteShort(aStream,_MK_info);
-    else [aStream appendData:[[NSString stringWithFormat:@"%s ", _MKTokName(_MK_info)] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    else {
+        [aStream appendData:
+	    [[NSString stringWithFormat:@"%s ", _MKTokName(_MK_info)]
+	    dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    }
     _MKWriteParameters(info,aStream,p);
 }
 
@@ -89,7 +97,7 @@ _MKInitScoreOut(NSMutableData *fileStream,id owner,id anInfoNote,double timeShif
     p->_stream = [fileStream retain];             
     p->_nameTable = _MKNewScorefileParseTable();
     /* We need keyword and such symbols here to make sure there's no
-       collission with such symbols when file is written. */
+       collision with such symbols when file is written. */
     p->timeTag = NO_TAG_YET; /* Insure first 0 tag is written */
     p->_timeShift = timeShift;
     p->_owner = owner;
@@ -98,11 +106,12 @@ _MKInitScoreOut(NSMutableData *fileStream,id owner,id anInfoNote,double timeShif
 #   define DEFAULTINDECIES 8
     p->_binary = binary;
     if (binary) {
-	p->_binaryIndecies = [[NSMutableDictionary dictionaryWithCapacity: DEFAULTINDECIES] retain];
-	p->_highBinaryIndex = 0;
+	p->_binaryIndecies = NSCreateMapTable(NSObjectMapKeyCallBacks,
+                                NSIntMapValueCallBacks, DEFAULTINDECIES);
+        p->_highBinaryIndex = 0;
     }
     else
-        p->_binaryIndecies = nil;
+        p->_binaryIndecies = NULL;
     if (binary)
       _MKWriteInt(p->_stream,MK_SCOREMAGIC);
     writeScoreInfo(p,anInfoNote);
@@ -119,9 +128,12 @@ static void writePartInfo(_MKScoreOutStruct *p, MKPart *aPart, NSString *partNam
       return;
     if (BINARY(p)) {
 	_MKWriteShort(aStream, _MK_partInstance);
-	_MKWriteShort(aStream, [[p->_binaryIndecies objectForKey: aPart] intValue]);
+	_MKWriteShort(aStream, (int)NSMapGet(p->_binaryIndecies,aPart));
     }
-    else [aStream appendData:[[NSString stringWithFormat:@"%@ ", partName] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    else {
+        [aStream appendData:[[NSString stringWithFormat:@"%@ ", partName]
+           dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    }
     _MKWriteParameters(info,aStream,p);
 }
 
@@ -169,7 +181,7 @@ _MKWritePartDecl(MKPart *aPart, _MKScoreOutStruct * p, MKNote *aPartInfo)
     if (BINARY(p)) {
 	_MKWriteShort(p->_stream,_MK_part);
 	_MKWriteNSString(p->_stream,partName);
-        [p->_binaryIndecies setObject: [NSNumber numberWithInt: (++(p->_highBinaryIndex))] forKey: aPart];
+        NSMapInsert(p->_binaryIndecies, aPart, (void *)(++(p->_highBinaryIndex)));
     }
     else 
       [p->_stream appendData:[[NSString stringWithFormat:@"%s %@;\n", _MKTokNameNoCheck(_MK_part),partName]
@@ -193,8 +205,12 @@ _MKScoreOutStruct *_MKFinishScoreOut(_MKScoreOutStruct * p, BOOL writeEnd)
 		  _MKWriteShort(p->_stream,_MK_end);
 	      }
 	      else {
-		  [p->_stream appendData:[[NSString stringWithFormat:@"\n\n%s;\n\n", _MKTokNameNoCheck(_MK_begin)] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-		  [p->_stream appendData:[[NSString stringWithFormat:@"%s;\n", _MKTokNameNoCheck(_MK_end)] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+		  [p->_stream appendData:
+		      [[NSString stringWithFormat:@"\n\n%s;\n\n", _MKTokNameNoCheck(_MK_begin)]
+		      dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+		  [p->_stream appendData:
+                      [[NSString stringWithFormat:@"%s;\n", _MKTokNameNoCheck(_MK_end)]
+                      dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 	      }
 	    else {
 	      if (BINARY(p)) {
@@ -202,15 +218,18 @@ _MKScoreOutStruct *_MKFinishScoreOut(_MKScoreOutStruct * p, BOOL writeEnd)
 		  _MKWriteShort(p->_stream,0); /* Parser likes to read 
 						  4 bytes */
 	      }
-	      else 
-		[p->_stream appendData:[[NSString stringWithFormat:@"%s;\n", _MKTokNameNoCheck(_MK_end)] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+	      else {
+		[p->_stream appendData:
+		   [[NSString stringWithFormat:@"%s;\n", _MKTokNameNoCheck(_MK_end)]
+		    dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+              }
 	  }
 	}
 	_MKFreeScorefileTable(p->_nameTable);
         [p->_stream release];
-        [p->_binaryIndecies release];
-//#warning StreamConversion: NXFlush should be converted to an NSData method
-//	NXFlush(p->_stream);
+        if (p->_binaryIndecies) {
+            NSFreeMapTable(p->_binaryIndecies);
+        }
 	free(p);
     }
     return NULL;
@@ -228,7 +247,12 @@ _MKWriteNote(id aNote, id aPart, _MKScoreOutStruct * p)
     if (!(p->isInBody)) {
 	if (BINARY(p))
 	  _MKWriteShort(p->_stream,_MK_begin);
-	else [p->_stream appendData:[[NSString stringWithFormat:@"\n\n%s;\n\n", _MKTokNameNoCheck(_MK_begin)] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+	else {
+	    [p->_stream appendData:
+	        [[NSString stringWithFormat:@"\n\n%s;\n\n", 
+		_MKTokNameNoCheck(_MK_begin)]
+		dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+        }
 	p->isInBody = YES;
     }
     timeTag = ((p->_ownerIsNoteRecorder) ? 
@@ -258,9 +282,11 @@ _MKWriteNote(id aNote, id aPart, _MKScoreOutStruct * p)
 	    _MKWriteShort(p->_stream,_MK_time);
 	    _MKWriteFloat(p->_stream,(float)t);
 	}
-	else 
-	  [p->_stream appendData:[[NSString stringWithFormat:@"%s %.5f;\n", _MKTokNameNoCheck(_MK_time),
+	else {
+	  [p->_stream appendData:
+	      [[NSString stringWithFormat:@"%s %.5f;\n", _MKTokNameNoCheck(_MK_time),
 		   timeTag] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+        }
 	p->timeTag = timeTag;
     }
     else if (timeTag < p->timeTag) 
