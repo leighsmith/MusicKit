@@ -1,10 +1,22 @@
-// $Id$
+/*
+  $Id$
 
-#import "SubSoundView.h"
+  Part of Spectro.app
+  Modifications Copyright (c) 2003 The MusicKit Project, All Rights Reserved.
+
+  Legal Statement Covering Additions by The MusicKit Project:
+
+    Permission is granted to use and modify this code for commercial and
+    non-commercial purposes so long as the author attribution and copyright
+    messages remain intact and accompany all relevant code.
+
+*/
+#import <AppKit/AppKit.h>
+#import <Foundation/Foundation.h>
+#import <AppKit/NSDocument.h> // For some reason GnuStep doesn't include this
+#import <SndKit/SndView.h>
 #import "SpectrumDocument.h"
 #import "ScrollingSound.h"
-#import <Foundation/NSObject.h>
-#import <SndKit/SndView.h>
 
 char *doFloat(float f, int a, int r);
 
@@ -28,7 +40,7 @@ char *doFloat(float f, int a, int r);
     IBOutlet id soundInfo;
     IBOutlet id spectrumDocument;
     NSString *fileName;
-    SubSoundView *mySoundView;
+    SndView *mySoundView;
     SpectrumDocument *mySpectrumDocument;
     BOOL fresh;
 }
