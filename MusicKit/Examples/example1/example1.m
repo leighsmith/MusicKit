@@ -1,24 +1,29 @@
+#import <Foundation/Foundation.h>
 #include <stdlib.h>
-#include <musickit/musickit.h>
+#include <MusicKit/MusicKit.h>
 
-main()
+int main (int argc, const char *argv[])
 {
-	Note *aNote,*partInfo;
-	Part *aPart;
-	Score *aScore;
-	aScore = [[Score alloc] init];
-	aPart = [[Part alloc] init];
-	/* REPEAT FROM HERE TO XXX TO ADD MULTIPLE NOTES */
-	aNote = [[Note alloc] init];
-	[aNote setPar:MK_freq toDouble:440.0];
-	[aNote setTimeTag:1.0];
-	[aNote setDur:1.0];
-	[aScore addPart:aPart];
-	[aPart addNote:aNote];           /* Doesn't copy note */
-	/* XXX */
-	partInfo = [[Note alloc] init];	
-	[partInfo setPar:MK_synthPatch toString:"Pluck"];
-	[aPart setInfo:partInfo];
-	[aScore writeScorefile:"test.score"];
-	system("playscore test.score");  /* play the thing */
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    MKNote *aNote, *partInfo;
+    MKPart *aPart;
+    MKScore *aScore;
+    aScore = [[MKScore alloc] init];
+    aPart = [[MKPart alloc] init];
+    /* REPEAT FROM HERE TO XXX TO ADD MULTIPLE NOTES */
+    aNote = [[MKNote alloc] init];
+    [aNote setPar: MK_freq toDouble:440.0];
+    [aNote setTimeTag: 1.0];
+    [aNote setDur: 1.0];
+    [aScore addPart: aPart];
+    [aPart addNote: aNote];           /* Doesn't copy note */
+    /* XXX */
+    partInfo = [[MKNote alloc] init];	
+    [partInfo setPar: MK_synthPatch toString: @"Pluck"];
+    [aPart setInfoNote: partInfo];
+    [aScore writeScorefile: @"test.score"];
+    system("playscore test.score");  /* play the thing */
+    [pool release];
+    exit(0);       // insure the process exit status is 0
+    return 0;      // ...and make main fit the ANSI spec.
 }

@@ -1,22 +1,29 @@
-LOCALIZABLE_FILES = {
-    MKPrefs_next.nib;
-    MKPrefs_intel.nib;
-};
-FILESTABLE = {
-    CLASSES = (MusicKitPrefs.m);
-    OTHER_RESOURCES = (driverinfo);
-    OTHER_SOURCES = (Makefile, Makefile.postamble, Makefile.preamble);
-    INTERFACES = (MKPrefs_intel.nib, MKPrefs_next.nib);
-    H_FILES = (MusicKitPrefs.h, MusicKitPrefs_r.h);
-    IMAGES = (MusicKitPrefs.tiff);
-    OTHER_LINKED = ();
-    M_FILES = ();
-};
-LANGUAGE = English;
-PROJECTVERSION = 1.1;
-INSTALLDIR = /LocalLibrary/Preferences;
-PROJECTTYPE = Bundle;
-PROJECTNAME = MusicKitPrefs;
-GENERATEMAIN = YES;
-DOCICONFILES = ();
-DOCEXTENSIONS = ();
+{
+    FILESTABLE = {
+        CLASSES = (MusicKitPrefs.m); 
+        English_INTERFACES = (MKPrefs_intel.nib, MKPrefs_next.nib); 
+        H_FILES = (MusicKitPrefs.h); 
+        IMAGES = (MusicKitPrefs.tiff); 
+        INTERFACES = (); 
+        M_FILES = (); 
+        OTHER_LINKED = (); 
+        OTHER_RESOURCES = (); 
+        OTHER_SOURCES = (Makefile, Makefile.postamble, Makefile.preamble); 
+    }; 
+    GENERATEMAIN = YES; 
+    LANGUAGE = English; 
+    MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles; 
+    NEXTSTEP_DOCUMENTEXTENSIONS = (); 
+    NEXTSTEP_INSTALLDIR = /LocalLibrary/Preferences; 
+    NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 
+    NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc; 
+    PDO_UNIX_INSTALLDIR = /LocalLibrary/Preferences; 
+    PDO_UNIX_JAVA_COMPILER = "$(JDKBINDIR)/javac"; 
+    PDO_UNIX_OBJCPLUS_COMPILER = "$(NEXTDEV_BIN)/gcc"; 
+    PROJECTNAME = MusicKitPrefs; 
+    PROJECTTYPE = Bundle; 
+    PROJECTVERSION = 2.8; 
+    WINDOWS_INSTALLDIR = /LocalLibrary/Preferences; 
+    WINDOWS_JAVA_COMPILER = "$(JDKBINDIR)/javac.exe"; 
+    WINDOWS_OBJCPLUS_COMPILER = "$(DEVDIR)/gcc"; 
+}

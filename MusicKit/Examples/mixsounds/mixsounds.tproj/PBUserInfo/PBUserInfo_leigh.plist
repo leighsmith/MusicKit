@@ -1,0 +1,16 @@
+{
+    NSMACHOperatingSystem = {
+        "Executable-$[PBProject projectName]$[PBProjectType executableExtension]" = {
+            asrc_array = (/leigh/Local/Users/leigh/Sources/Music/MusicKit/MusicKit/Frameworks/MusicKit); 
+            cla_array = (
+                (testMix.score, /tmp/test.snd), 
+                (testMix2.score, /tmp/test2.snd), 
+                (testMix3.score, /tmp/test3.snd), 
+                ("~/Library/Music/Scorefiles/mytestMix.score", /tmp/mytest.snd), 
+                ("~/Library/Lobe/PlaybackHistory/MostRecentlyMixed.score", /tmp/mixtest.snd), 
+                ("~/MostRecentlyMixed.score", /tmp/mixtest.snd)
+            ); 
+            cla_array_index = 4; 
+        }; 
+    }; 
+}

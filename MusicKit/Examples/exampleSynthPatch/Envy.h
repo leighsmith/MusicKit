@@ -1,3 +1,5 @@
+#ifndef __MK_Envy_H___
+#define __MK_Envy_H___
 #import <musickit/SynthPatch.h>
 #import <musickit/Envelope.h>
 
@@ -34,3 +36,4 @@
 
 @end
 
+#endif

@@ -13,7 +13,7 @@ PROJECTVERSION = 2.8
 PROJECT_TYPE = Application
 ICONSECTIONS =	-sectcreate __ICON app $(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Resources/NSDefaultApplicationIcon.tiff
 
-English_RESOURCES = example5-windows.nib example5.nib example5_new.nib
+English_RESOURCES = example5-windows.nib example5.nib
 
 LANGUAGES = English
 

@@ -20,8 +20,11 @@
 Modification history:
 
   $Log$
-  Revision 1.1  1999/11/17 17:57:14  leigh
-  Initial revision
+  Revision 1.2  2000/01/03 20:32:01  leigh
+  moved FUNCLOG initialisation to PerformMIDI.m, fixed precision warnings
+
+  Revision 1.1.1.1  1999/11/17 17:57:14  leigh
+  Initial working version
 
 
 */
@@ -42,7 +45,7 @@ typedef int port_t;
 #ifdef FUNCLOG
 #include <stdio.h> // for fprintf and debug
 
-FILE *debug; // precedes extern "C".
+FILE *debug = NULL; // precedes extern "C".
 #endif
 
 #ifdef __cplusplus
@@ -58,18 +61,14 @@ PERFORM_API kern_return_t MDBecomeOwner (
 	port_t mididriver_port,
 	port_t owner_port)
 {
-#ifdef FUNCLOG
-  if(debug == NULL) {
-    // create a means to see where we are without having to tiptoe around the MS debugger.
-    if((debug = fopen("/tmp/PerformMIDI_debug.txt", "w")) == NULL)
-      return MD_ERROR_UNKNOWN_ERROR;
-  }
-  fprintf(debug, "MDBecomeOwner called\n");
-#endif
   // TODO check the ports properly
   if(!PMinitialise()) {
     return MD_ERROR_BUSY;
   }
+#ifdef FUNCLOG
+  // PMinitialise must open the debug log file
+  fprintf(debug, "MDBecomeOwner called\n");
+#endif
   datumRefTime = PMGetCurrentTime();
   return 0;
 }
@@ -84,6 +83,7 @@ PERFORM_API kern_return_t MDReleaseOwnership (
   fprintf(debug, "MDReleaseOwnership called\n");
   fclose(debug); // hopefully save what we did.
 #endif
+
   if(!PMterminate()) {
     return MD_ERROR_BUSY;
   }
@@ -117,7 +117,7 @@ PERFORM_API kern_return_t MDGetClockTime (
 #endif
   currentRefTime = PMGetCurrentTime();
   // TODO we need to properly convert the result to an int, since the division will reduce the actual result within those bounds.
-  *time = (int) (currentRefTime - datumRefTime) / quantumFactor;
+  *time = (int) ((currentRefTime - datumRefTime) / quantumFactor);
   return 0;
 }
 
@@ -388,13 +388,15 @@ PERFORM_API kern_return_t MDHandleReply(msg_header_t *msg, MDReplyFunctions *fun
  "Working with DLS data requires knowledge of the DLS specification and file structure. 
  For detailed information on these topics, see the document entitled Downloadable Sounds Level 1, published
  by the MIDI Manufacturers Association."
+
+ Returns TRUE if successfully downloaded the sounds, FALSE if there was a problem.
  */
 PERFORM_API kern_return_t MIDIDownloadDLSInstruments(unsigned int *patchesToDownload, int patchesUsed)
 {
     return PMDownloadDLSInstruments(patchesToDownload, patchesUsed);
 }
 
-// retrieve a list of strings giving driver names, and therefore (0 based) unit numbers.
+// return a list of strings giving driver names, and therefore (0 based) unit numbers.
 PERFORM_API const char **MIDIGetAvailableDrivers(unsigned int *selectedDriver)
 {
     return PMGetAvailableMIDIPorts(selectedDriver);

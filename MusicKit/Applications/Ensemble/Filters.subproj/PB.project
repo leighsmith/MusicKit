@@ -56,6 +56,7 @@
         INTERFACES = (); 
         OTHER_RESOURCES = (mulaw.c); 
         OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble); 
+        SUBPROJECTS = (); 
     }; 
     GENERATEMAIN = YES; 
     LANGUAGE = English; 

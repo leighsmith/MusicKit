@@ -1,0 +1,3 @@
+#ifndef __MK_smsrc_dependencies_H___
+#define __MK_smsrc_dependencies_H___
+#endif

@@ -1,32 +1,49 @@
-INSTALLDIR = "$(HOME)/Apps";
-APPICON = "";
-GENERATEMAIN = YES;
-DOCICONFILES = ();
-FILESTABLE = {
-    M_FILES = (PlayNote_main.m);
-    OTHER_LINKED = ();
-    H_FILES = (ExampApp.h);
-    CLASSES = (ExampApp.m);
-    IMAGES = ();
-    PSW_FILES = ();
-    C_FILES = ();
-    OTHER_RESOURCES = (mkmon_A_32k.dsp, mkmon_A_8k.dsp, mkmon_A_192k.dsp, mkmon_A_turtlebeachms.dsp, mkmon_A_arielpc56d.dsp,mkmon_A_ilinki56.dsp);
-    OTHER_SOURCES = (Makefile, PlayNote.iconheader, README);
-    SUBPROJECTS = ();
-    PSWM_FILES = ();
-    SOUNDS = ();
-    OTHER_LIBS = (synthpatches, unitgenerators, musickit, dsp, NeXT_s, Driver);
-    INTERFACES = (Info.nib, PlayNote.nib);
-};
-APPCLASS = ExampApp;
-MAINNIB = PlayNote;
-DOCEXTENSIONS = ();
-PROJECTTYPE = Application;
-PROJECTVERSION = 1.1;
-LOCALIZABLE_FILES = {
-    Info.nib;
-    PlayNote.nib;
-};
-PROJECTNAME = PlayNote;
-SYSTEMEXTENSIONS = ();
-LANGUAGE = English;
+{
+    APPCLASS = ExampApp; 
+    English_RESOURCES = {}; 
+    FILESTABLE = {
+        CLASSES = (ExampApp.m); 
+        C_FILES = (); 
+        English_INTERFACES = (PlayNote.nib, Info.nib); 
+        H_FILES = (ExampApp.h); 
+        IMAGES = (); 
+        INTERFACES = (); 
+        M_FILES = (); 
+        OTHER_LIBS = (synthpatches, unitgenerators, musickit, dsp, NeXT_s, Driver); 
+        OTHER_LINKED = (PlayNote_main.m); 
+        OTHER_RESOURCES = (
+            mkmon_A_32k.dsp, 
+            mkmon_A_8k.dsp, 
+            mkmon_A_192k.dsp, 
+            mkmon_A_turtlebeachms.dsp, 
+            mkmon_A_arielpc56d.dsp, 
+            mkmon_A_ilinki56.dsp
+        ); 
+        OTHER_SOURCES = (Makefile, PlayNote.iconheader, README); 
+        PSWM_FILES = (); 
+        PSW_FILES = (); 
+        SOUNDS = (); 
+        SUBPROJECTS = (); 
+    }; 
+    GENERATEMAIN = YES; 
+    LANGUAGE = English; 
+    MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles; 
+    NEXTSTEP_APPICON = ""; 
+    NEXTSTEP_DOCUMENTEXTENSIONS = (); 
+    NEXTSTEP_INSTALLDIR = "$(HOME)/Apps"; 
+    NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 
+    NEXTSTEP_MAINNIB = PlayNote; 
+    NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc; 
+    PDO_UNIX_INSTALLDIR = "$(HOME)/Apps"; 
+    PDO_UNIX_JAVA_COMPILER = "$(JDKBINDIR)/javac"; 
+    PDO_UNIX_MAINNIB = PlayNote; 
+    PDO_UNIX_OBJCPLUS_COMPILER = "$(NEXTDEV_BIN)/gcc"; 
+    PROJECTNAME = PlayNote; 
+    PROJECTTYPE = Application; 
+    PROJECTVERSION = 2.8; 
+    SYSTEMEXTENSIONS = (); 
+    WINDOWS_INSTALLDIR = "$(HOME)/Apps"; 
+    WINDOWS_JAVA_COMPILER = "$(JDKBINDIR)/javac.exe"; 
+    WINDOWS_MAINNIB = PlayNote; 
+    WINDOWS_OBJCPLUS_COMPILER = "$(DEVDIR)/gcc"; 
+}

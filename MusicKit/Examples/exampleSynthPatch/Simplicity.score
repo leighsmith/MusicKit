@@ -3,7 +3,7 @@
 	series, but using only odd harmonics. */
 
 part p;                /* Declare a part. */
-p synthPatchCount:29 synthPatch:"Simplicity"; /* Allocate 29 Simplicities */
+p synthPatchCount:26 synthPatch:"Simplicity"; /* Allocate 29 Simplicities */
 var bFreq = a0;        /* Base frequency. Very low. */
 var bAmp = .0025;      /* Base amplitude. Quite quiet. */
 var tInc1 = .2;        /* Time between adjacent notes when ascending. */

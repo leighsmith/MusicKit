@@ -10,11 +10,6 @@
 
 @implementation MIDIFileController
 
-#ifdef WIN32
-#define SAMPLE_LOC @"/Windows/Library/Lobe/Samples/"
-#else
-#define SAMPLE_LOC @"/Local/Users/leigh/Library/Lobe/Samples/"
-#endif
 #define KEYMAPFORMAT @"chan:%d key:%d"
 #define SOUNDFILEEXT @"wav"
 
@@ -37,10 +32,10 @@
     [midiInstrument retain];
     NSLog(@"Initialised with %@ driver\n", [midiInstrument driverName]);
 
-    /* Create a PartPerformer to perform the Part. */
     aScorePerformer = [[MKScorePerformer alloc] init];
     [aScorePerformer retain];
 
+    /* Create a PartPerformer to perform the Part. */
     samplePartPerformer = [[MKPartPerformer alloc] init];
     [samplePartPerformer retain];
     [[samplePartPerformer noteSender] connect: [sampleInstrument noteReceiver]];
@@ -48,14 +43,10 @@
     midiPathName = NSHomeDirectory();
     [midiPathName retain];
 
-    // rather than just loading and playing a file, we read in a plist of a keymap allowing us to overide
-    // MIDI channels and keys with sample files.
-    keymap = [NSDictionary dictionaryWithContentsOfFile: [SAMPLE_LOC stringByAppendingString: @"keymap.plist"]];
-    if(keymap == nil) {
-        NSLog(@"Couldn't load keymap file\n");
-        return nil;
-    }
-    [keymap retain];
+    // rather than just loading and playing a sound file, we read in a plist of a keymap allowing us to overide
+    // specific MIDI channels and keys with sound files.
+    keymap = nil;     // by default we don't do this until the user selects a keymap file.
+
     return self;
 }
 
@@ -77,17 +68,24 @@
 // Determine the sample filename to be assigned to this note using the keymap
 - assignSampleFromKeymapOf: (MKNote *) aNote
 {
-   NSString *chanAndKeyNum = [NSString stringWithFormat: KEYMAPFORMAT, [aNote parAsInt: MK_midiChan], [aNote parAsInt: MK_keyNum]];
-   NSString *filename = [keymap objectForKey: chanAndKeyNum];
-//   NSLog(@"Testing  %@\n", chanAndKeyNum);
-  // NSLog([aNote description]);
-   if(filename != nil) {
-       soundPathName = [[SAMPLE_LOC stringByAppendingPathComponent: filename] stringByAppendingPathExtension: SOUNDFILEEXT];
-       NSLog(@"Assigning %@ to %@\n", soundPathName, chanAndKeyNum);
-       [aNote setPar:MK_filename toString: soundPathName];
-       return self;
-   }
-   return nil;
+    NSString *chanAndKeyNum = [NSString stringWithFormat: KEYMAPFORMAT, [aNote parAsInt: MK_midiChan], [aNote parAsInt: MK_keyNum]];
+    NSString *filename = [keymap objectForKey: chanAndKeyNum];
+
+    NSLog(@"Testing  %@\n", chanAndKeyNum);
+    NSLog([aNote description]);
+    if(filename == nil) { // if we can't find the filename using the keymap, we may be able to find it using the noteTag
+        filename = [samplesIndexedByTag objectForKey: [NSNumber numberWithInt: [aNote noteTag]]];
+    }
+    if(filename != nil) {
+        NSString *sampleFilePath = [keymapPathName stringByDeletingLastPathComponent];
+        soundPathName = [[sampleFilePath stringByAppendingPathComponent: filename] stringByAppendingPathExtension: SOUNDFILEEXT];
+        NSLog(@"Assigning %@ to %@\n", soundPathName, chanAndKeyNum);
+        [aNote setPar:MK_filename toString: soundPathName];
+        [samplesIndexedByTag setObject: filename forKey: [NSNumber numberWithInt: [aNote noteTag]]];
+        [sampleInstrument prepareSoundWithNote: aNote]; // optimisation to preload the samples.
+        return self;
+    }
+    return nil;
 }
 
 // Enables a part to be played with the MKSampleInstrument.
@@ -119,11 +117,11 @@
     allNoteSenders = [theScorePerformer noteSenders];
     partCount = [allNoteSenders count];
     for (i = 0; i < partCount; i++) {
-        /* Connect each part to MKMidi based on its midiChan parameter */
+        // Connect each part to MKMidi based on its midiChan parameter
         aNoteSender = [allNoteSenders objectAtIndex: i];
         aPart = [[aNoteSender owner] part];
         partInfo = [aPart infoNote];
-        /* Look in the partInfo for a midi channel. Default to 1. */
+        // Look in the partInfo for a midi channel. Default to 1.
         if (!partInfo)
             chan = 1;
         if (![partInfo isParPresent:MK_midiChan])
@@ -131,8 +129,8 @@
         else
             chan = [partInfo parAsInt:MK_midiChan];
         // don't connect the sampler parts to MIDI, they need to be connected to the MKSamplerInstrument
-        if([self convertPartToSamples: aPart]) {
-//	    NSLog([aPart description]);
+        if(keymap != nil && [self convertPartToSamples: aPart]) {
+            // NSLog([aPart description]);
             [aNoteSender connect:[sampleInstrument noteReceiver]];
         }
         else
@@ -140,36 +138,11 @@
     }
 }
 
-// Generate another long sound to play over the top while the beats sound.
-// This has its own part (as it will be performed by a different instrument).
-- (MKPart *) generateDroneOfDuration: (double) duration
-{
-   MKPart *dronePart = [[MKPart alloc] init];
-   MKNote *aNote;
-
-   aNote = [[MKNote alloc] initWithTimeTag:1.333]; // 8.333 seconds corresponds to tick 4000 in the file.
-   [aNote setNoteType:MK_noteDur];
-   [aNote setNoteTag: MKNoteTag()];
-   [aNote setDur: duration];  // at least as long as the drums sound and then 3 seconds more
-   [aNote setPar:MK_velocity toInt: 127];
-   [aNote setPar:MK_keyNum toInt: 40]; // drone keyNum
-   [aNote setPar:MK_filename toString: @"/Local/Users/leigh/Library/Lobe/Samples/Amanda/Amanda16.snd"];
-   NSLog([aNote description]);
-   [dronePart addNote:aNote];
-   [aNote release];
-
-   return [dronePart autorelease];
-}
-
 - (void) startPlaying
 {
     MKMsgStruct *endRequest;
-    MKScore *outputScore = [[MKScore alloc] init];
-    MKPart *dronePart = [self generateDroneOfDuration: 3.0];
+    MKScore *outputScore = [MKScore score];
     NSArray *instruments = [[NSArray arrayWithObject: [NSNumber numberWithUnsignedInt: 0x01]] retain];
-
-    [dronePart retain];
-    [samplePartPerformer setPart: dronePart];
 
     [MKScore setMidifilesEvaluateTempo: NO]; // this ensures timing values are not modified during reading.
     if([outputScore readMidifile: midiPathName] == nil) {
@@ -183,46 +156,42 @@
     [aScorePerformer setScore: outputScore];
     [self connectPartsToChannels: aScorePerformer forInstrument: midiInstrument];
 
-   [midiInstrument downloadDLS: instruments];
-
     [aScorePerformer activate];
-//    [samplePartPerformer activate];
+    // [samplePartPerformer activate]; // don't play the samplePart just now.
 
     [MKConductor setDeltaT: 0.5];            // Run (MKConductor) at least half a second ahead of DSP
     [MKConductor setClocked: YES];           // The conductor needs to be clocked when using MIDI.
-    [(MKConductor *)[MKConductor defaultConductor] setTempo: currentTempo];    // we could also retrieve this from the file.
+    [[MKConductor defaultConductor] setTempo: currentTempo];    // we could also retrieve this from the file.
 
     NSLog(@"playing %@...\n", midiPathName);
 
-//    MKSetTrace(MK_TRACECONDUCTOR);
     endRequest = [MKConductor afterPerformanceSel:@selector(haveFinishedPlaying) to: self argCount: 0];
     [MKConductor useSeparateThread: YES];
     [midiInstrument openOutputOnly];         /* No need for MKMidi input. */
+    [midiInstrument downloadDLS: instruments];
     [midiInstrument run];                    /* This starts the device driver clock. */
     [MKConductor startPerformance];  /* Start sending Notes, loops until done. */
 
-    /* MKConductor's startPerformance method
-    does not return until the performance is over.  Note, however, that
-    if the Conductor is in a different mode, startPerformance returns
-    immediately (if it is in clocked mode or if you have specified that the
-    performance is to occur in a separate thread).  See the Conductor
-    documentation for details. In this case we will return immediately.
+    /* 
+    MKConductor's startPerformance method does not return until the performance is over.
+    Note, however, that if the Conductor is in a different mode, startPerformance returns
+    immediately (if it is in clocked mode or if you have specified that the performance is
+    to occur in a separate thread).  See the MKConductor documentation for details.
+    In this case we will return immediately.
     */
+    [pauseButton setEnabled: YES];
 }
 
 - (void) stopPlaying
 {
-   NSLog(@"...stopping\n");
-   NSLog(@"...locking\n");
    [MKConductor lockPerformance];
-   NSLog(@"allNotesOff\n");
    [midiInstrument allNotesOff];
-   NSLog(@"stop\n");
    [midiInstrument stop];  // abort will actually close the device, whereas stop just stops it
-   NSLog(@"finishPerformance\n");
-   [MKConductor unlockPerformance]; // need to unlock the performance before trying to finish it.
-   NSLog(@"unlockPerformance\n");
+   [sampleInstrument stop];         // this doesn't seem right to have to stop each instrument separately,
+                                    // this should be the job of the Conductor.
+   [MKConductor unlockPerformance]; // should unlock the performance before trying to finish it.
    [MKConductor finishPerformance];
+   [pauseButton setEnabled: NO];    // we disable the pause button here.
    NSLog(@"finished\n");
 }
 
@@ -237,6 +206,24 @@
     }
     else {
         [self stopPlaying];
+    }
+}
+
+// pause or resume a currently playing sequence.
+- (void) pause: (id) sender
+{
+    if([MKConductor isPaused]) { // resume
+        NSLog(@"...resuming play\n");
+        [MKConductor lockPerformance];
+        [MKConductor resumePerformance];
+        [MKConductor unlockPerformance];
+    }
+    else {  // pause
+        NSLog(@"...pausing play\n");
+        [MKConductor lockPerformance];
+        [midiInstrument allNotesOff];
+        [MKConductor pausePerformance];
+        [MKConductor unlockPerformance];
     }
 }
 
@@ -255,7 +242,7 @@
 - (void) setMIDIFilename: (id) sender
 {
     int result;
-    NSArray *fileTypes = [NSArray arrayWithObject:@"midi"];
+    NSArray *fileTypes = [NSArray arrayWithObjects:@"midi", @"", nil];
     NSOpenPanel *oPanel = [NSOpenPanel openPanel];
 
     [oPanel setAllowsMultipleSelection:NO];
@@ -266,43 +253,62 @@
         for (i=0; i<count; i++) {
             midiPathName = [filesToOpen objectAtIndex:i];
             [midiPathNameTextBox setStringValue: midiPathName];
+            [playButton setEnabled: YES];
         }
     }   
 }
 
-- (void) setSoundfileName: (id) sender
+// Rather than just loading and playing a file, we read in a plist of a keymap allowing us to overide
+// MIDI channels and keys with sample files.
+- (void) setKeymapFilename: (id) sender
 {
+    int result;
+    NSArray *fileTypes = [NSArray arrayWithObject:@"plist"];
+    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
+
+    [oPanel setAllowsMultipleSelection:NO];
+    result = [oPanel runModalForDirectory:keymapPathName file:nil types:fileTypes];
+    if (result == NSOKButton) {
+        NSArray *filesToOpen = [oPanel filenames];
+        int i, count = [filesToOpen count];
+        for (i=0; i<count; i++) {
+            keymapPathName = [filesToOpen objectAtIndex:i];
+            keymap = [NSDictionary dictionaryWithContentsOfFile: keymapPathName];
+            if(keymap == nil) {
+                NSLog(@"Couldn't load keymap file %@.\n", keymapPathName);
+                return;
+            }
+            [keymapPathNameTextBox setStringValue: keymapPathName];
+            [keymap retain];
+            samplesIndexedByTag = [[NSMutableDictionary dictionary] retain];
+        }
+    }   
 }
 
 //@implementation MIDIFileController(ConductorDelegate)
 - conductorWillSeek:sender
 {
-//    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorWillSeek) to:self argCount:0];
     return self;
 }
 
 - conductorDidSeek:sender
 {
-//    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidSeek) to:self argCount:0];
     return self;
 }
 
 - conductorDidReverse:sender
 {
-//    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidReverse) to:self argCount:0];
     return self;
 }
 
 - conductorDidPause:sender
 {
-//    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidPause) to:self argCount:0];
     [midiInstrument allNotesOff];
     return self;
 }
 
 - conductorDidResume:sender
 {
-//    [MKConductor sendMsgToApplicationThreadSel:@selector(showConductorDidResume) to:self argCount:0];
     return self;
 }
 

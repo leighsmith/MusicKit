@@ -1,0 +1,400 @@
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 30;
+	objects = {
+		016D5A22FED483BACFED3B93 = {
+			isa = PBXProject;
+			mainGroup = 016D5A23FED483BBCFED3B93;
+			productRefGroup = 016D5A24FED483BBCFED3B93;
+			projectDirPath = .;
+			targets = (
+				016D5A3AFED483BBCFED3B93,
+			);
+		};
+		016D5A23FED483BBCFED3B93 = {
+			children = (
+				016D5A24FED483BBCFED3B93,
+				016D5A26FED483BBCFED3B93,
+				016D5A2EFED483BBCFED3B93,
+				016D5A31FED483BBCFED3B93,
+				016D5A38FED483BBCFED3B93,
+			);
+			isa = PBXGroup;
+			name = MKPerformSndMIDI;
+			refType = 4;
+		};
+		016D5A24FED483BBCFED3B93 = {
+			children = (
+				06D6961DFF81940ECFED3B93,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		016D5A26FED483BBCFED3B93 = {
+			children = (
+				016D5A27FED483BBCFED3B93,
+				016D5A28FED483BBCFED3B93,
+				016D5A29FED483BBCFED3B93,
+				016D5A2AFED483BBCFED3B93,
+				016D5A2BFED483BBCFED3B93,
+				016D5A2CFED483BBCFED3B93,
+				016D5A2DFED483BBCFED3B93,
+			);
+			isa = PBXGroup;
+			name = Headers;
+			refType = 4;
+		};
+		016D5A27FED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = PerformSound.h;
+			refType = 4;
+		};
+		016D5A28FED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = mididriverUser.h;
+			refType = 4;
+		};
+		016D5A29FED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = midi_driver.h;
+			refType = 4;
+		};
+		016D5A2AFED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = mididriver_types.h;
+			refType = 4;
+		};
+		016D5A2BFED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = PerformSoundPrivate.h;
+			refType = 4;
+		};
+		016D5A2CFED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = sounderror.h;
+			refType = 4;
+		};
+		016D5A2DFED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = soundstruct.h;
+			refType = 4;
+		};
+		016D5A2EFED483BBCFED3B93 = {
+			children = (
+				016D5A2FFED483BBCFED3B93,
+				016D5A30FED483BBCFED3B93,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+		};
+		016D5A2FFED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = mididriverUser.c;
+			refType = 4;
+		};
+		016D5A30FED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = PerformSound.c;
+			refType = 4;
+		};
+		016D5A31FED483BBCFED3B93 = {
+			children = (
+				016D5A32FED483BBCFED3B93,
+				016D5A33FED483BBCFED3B93,
+				016D5A34FED483BBCFED3B93,
+				016D5A35FED483BBCFED3B93,
+				016D5A36FED483BBCFED3B93,
+				016D5A37FED483BBCFED3B93,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+		};
+		016D5A32FED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = Makefile.preamble;
+			refType = 4;
+		};
+		016D5A33FED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = Makefile;
+			refType = 4;
+		};
+		016D5A34FED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = Makefile.postamble;
+			refType = 4;
+		};
+		016D5A35FED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = m.template;
+			refType = 4;
+		};
+		016D5A36FED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = h.template;
+			refType = 4;
+		};
+		016D5A37FED483BBCFED3B93 = {
+			isa = PBXFileReference;
+			path = platform.make;
+			refType = 4;
+		};
+		016D5A38FED483BBCFED3B93 = {
+			children = (
+				016D5A39FED483BBCFED3B93,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+		};
+		016D5A39FED483BBCFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+		};
+		016D5A3AFED483BBCFED3B93 = {
+			buildPhases = (
+				016D5A3BFED483BBCFED3B93,
+				016D5A43FED483BBCFED3B93,
+				016D5A44FED483BBCFED3B93,
+				016D5A47FED483BBCFED3B93,
+				016D5A49FED483BBCFED3B93,
+			);
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_VERSION = A;
+				HEADER_SEARCH_PATHS = "";
+				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRINCIPAL_CLASS = "";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WRAPPER_EXTENSION = framework;
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXFrameworkTarget;
+			name = "MKPerformSndMIDI (Framework)";
+			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+			productName = MKPerformSndMIDI;
+			productReference = 06D6961DFF81940ECFED3B93;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
+<plist version=\"0.9\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>MKPerformSndMIDI</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+</dict>
+</plist>
+";
+			shouldUseHeadermap = 0;
+		};
+		016D5A3BFED483BBCFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				016D5A3CFED483BBCFED3B93,
+				016D5A3DFED483BBCFED3B93,
+				016D5A3EFED483BBCFED3B93,
+				016D5A3FFED483BBCFED3B93,
+				016D5A40FED483BBCFED3B93,
+				016D5A41FED483BBCFED3B93,
+				016D5A42FED483BBCFED3B93,
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		016D5A3CFED483BBCFED3B93 = {
+			fileRef = 016D5A27FED483BBCFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		016D5A3DFED483BBCFED3B93 = {
+			fileRef = 016D5A28FED483BBCFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		016D5A3EFED483BBCFED3B93 = {
+			fileRef = 016D5A29FED483BBCFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		016D5A3FFED483BBCFED3B93 = {
+			fileRef = 016D5A2AFED483BBCFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		016D5A40FED483BBCFED3B93 = {
+			fileRef = 016D5A2BFED483BBCFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		016D5A41FED483BBCFED3B93 = {
+			fileRef = 016D5A2CFED483BBCFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		016D5A42FED483BBCFED3B93 = {
+			fileRef = 016D5A2DFED483BBCFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		016D5A43FED483BBCFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXResourcesBuildPhase;
+			name = "Bundle Resources";
+		};
+		016D5A44FED483BBCFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				016D5A45FED483BBCFED3B93,
+				016D5A46FED483BBCFED3B93,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		016D5A45FED483BBCFED3B93 = {
+			fileRef = 016D5A2FFED483BBCFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		016D5A46FED483BBCFED3B93 = {
+			fileRef = 016D5A30FED483BBCFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		016D5A47FED483BBCFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				016D5A48FED483BBCFED3B93,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		016D5A48FED483BBCFED3B93 = {
+			fileRef = 016D5A39FED483BBCFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		016D5A49FED483BBCFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+		06D6961DFF81940ECFED3B93 = {
+			isa = PBXFrameworkReference;
+			path = MKPerformSndMIDI.framework;
+			refType = 3;
+		};
+	};
+	rootObject = 016D5A22FED483BACFED3B93;
+}

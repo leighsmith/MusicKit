@@ -13,8 +13,14 @@
 Modification history:
 
   $Log$
-  Revision 1.1  1999/09/12 00:20:18  leigh
-  Initial revision
+  Revision 1.3  2000/01/27 18:15:43  leigh
+  upgraded to new typedef names for Mach
+
+  Revision 1.2  1999/11/24 17:30:12  leigh
+  Added a MDDownloadDLSInstruments stub
+
+  Revision 1.1.1.1  1999/09/12 00:20:18  leigh
+  separated out from MusicKit framework
 
   Revision 1.2  1999/07/29 01:26:08  leigh
   Added Win32 compatibility, CVS logs, SBs changes
@@ -30,7 +36,7 @@ Modification history:
 #import "midi_driver.h"
 #import <stdio.h>
 
-kern_return_t MDAwaitReply(port_t port_set,
+kern_return_t MDAwaitReply(mach_port_t port_set,
 			   MDReplyFunctions *funcs,
 			   int timeout)
 {
@@ -48,7 +54,7 @@ kern_return_t MDAwaitReply(port_t port_set,
 
 static MDReplyFunctions *userFuncs;
 
-kern_return_t MDExceptionReply(port_t reply_port, 
+kern_return_t MDExceptionReply(mach_port_t reply_port, 
 			       int exception) {
     if (userFuncs->exceptionReply) {
 	(*(userFuncs->exceptionReply))(reply_port,exception);
@@ -56,7 +62,7 @@ kern_return_t MDExceptionReply(port_t reply_port,
     } else return MIG_BAD_ID;
 }
 
-kern_return_t MDQueueReply(port_t reply_port, 
+kern_return_t MDQueueReply(mach_port_t reply_port, 
 			   int unit) { 
     if (userFuncs->queueReply) {
 	(*(userFuncs->queueReply))(reply_port,unit);
@@ -64,7 +70,7 @@ kern_return_t MDQueueReply(port_t reply_port,
     } else return MIG_BAD_ID;
 }
 
-kern_return_t MDAlarmReply(port_t reply_port, 
+kern_return_t MDAlarmReply(mach_port_t reply_port, 
 			   int time, 
 			   int actualTime) {
     if (userFuncs->alarmReply) {
@@ -73,7 +79,7 @@ kern_return_t MDAlarmReply(port_t reply_port,
     } else return MIG_BAD_ID;
 }
 
-kern_return_t MDDataReply(port_t reply_port, 
+kern_return_t MDDataReply(mach_port_t reply_port, 
 			  int unit,
 			  MDRawEvent *events, 
 			  int count) {
@@ -102,7 +108,7 @@ kern_return_t MDHandleReply(msg_header_t *msg,
     char out_msg_buf[sizeof(Reply)];
     Reply *out_msg = (Reply *)out_msg_buf;
     kern_return_t ret_code;
-//    port_t local_port = msg->msg_local_port;
+//    mach_port_t local_port = msg->msg_local_port;
     if (!funcs)
 	return KERN_SUCCESS;
     userFuncs = funcs;
@@ -113,3 +119,9 @@ kern_return_t MDHandleReply(msg_header_t *msg,
     return ret_code;
 }
 
+// Should download the given patch numbers to the DLS player.
+// For MacOsX, this is currently disabled until we have a DLS player.
+kern_return_t MDDownloadDLSInstruments(unsigned int *patches, int patchCount)
+{
+    return KERN_SUCCESS;
+}

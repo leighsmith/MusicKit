@@ -19,6 +19,7 @@
         C_FILES = (); 
         English_INTERFACES = (Settings.nib, Info.nib, Document.nib, Preferences.nib, Ensemble.nib); 
         English_OTHER_RESOURCES = (Help); 
+        FRAMEWORKS = (AppKit.framework, Foundation.framework); 
         H_FILES = (
             EnsembleApp.h, 
             EnsembleDoc.h, 
@@ -56,7 +57,7 @@
         ); 
         INTERFACES = (); 
         M_FILES = (); 
-        OTHER_LIBS = (synthpatches, unitgenerators, musickit, dsp, Indexing_s, NeXT_s, Driver); 
+        OTHER_LIBS = (); 
         OTHER_LINKED = (Ensemble_main.m); 
         OTHER_RESOURCES = (); 
         OTHER_SOURCES = (Examples, Makefile, Makefile.postamble); 

@@ -91,15 +91,15 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\CAudOut\AudOut.cpp
+SOURCE=.\AudOut.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\CAudOut\AudOutDX.cpp
+SOURCE=.\AudOutDX.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\CAudOut\AudOutWO.cpp
+SOURCE=.\AudOutWO.cpp
 # End Source File
 # Begin Source File
 
@@ -123,15 +123,15 @@ SOURCE=.\StdAfx.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\CAudOut\AudOut.h
+SOURCE=.\AudOut.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\CAudOut\AudOutDX.h
+SOURCE=.\AudOutDX.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\CAudOut\AudOutWO.h
+SOURCE=.\AudOutWO.h
 # End Source File
 # Begin Source File
 

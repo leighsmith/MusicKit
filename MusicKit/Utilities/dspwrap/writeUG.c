@@ -47,7 +47,7 @@ Modification history:
 #import <c.h>
 #import <ctype.h>
 #import <sys/file.h>
-#import <dsp/dsp.h>
+#import <MKDSP/dsp.h>
 
 /* private functions from libdsp */
 extern int _DSPError();

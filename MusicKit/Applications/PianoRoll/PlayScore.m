@@ -1,8 +1,9 @@
-/* Plays scorefile in background. -- David Jaffe */
+/* $Id$
+  Plays scorefile in background. -- David Jaffe 
+*/
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-
 #import <MusicKit/MusicKit.h>
 #import "PlayScore.h"
 
@@ -17,8 +18,6 @@ static double headroom = .1;
 static double initialTempo;
 static char errMsg[200];
 
-#define PLAYING ([MKConductor performanceThread] != NO_CTHREAD)
-
 static int handleObjcError(char *className)
 {
     return 0;
@@ -29,24 +28,14 @@ static BOOL userCancelFileRead = NO;
 
 static void handleMKError(char *msg)
 {
-    if (!PLAYING) {
-	if (!NSRunAlertPanel(@"ScorePlayer", [NSString stringWithCString:msg], @"OK", @"Cancel", nil, NULL)) {
+    if (![MKConductor inPerformance]) {
+	if (!NSRunAlertPanel(@"PianoRoll", [NSString stringWithCString:msg], @"OK", @"Cancel", nil, NULL)) {
 	  MKSetScorefileParseErrorAbort(0);
 	  userCancelFileRead = YES;         /* A kludge for now. */
       }
     }
     else {
-	int fd = stderr->_file;
-	char *str = "ScorePlayer: ";
-	/* Use write instead of stdio here for thread-safety (I'm assuming
-	   nobody else will write to stderr here -- this is quasi-safe here,
-	   but not in a general context.)
-	   */
-	/* fprintf(stderr,"ScorePlayer: %s\n",msg); */
-	write(fd,str,strlen(str));
-	write(fd,msg,strlen(msg));
-	str = "\n";
-	write(fd,str,strlen(str));
+	NSLog([NSString stringWithCString: msg]);
     }
 }
 

@@ -19,8 +19,8 @@
 #define writeParPreserveCase	4
 #define writeParInString        8
 
-static void writeScore(MKScore *aScore, char *fil);
-static void writeHeader(MKScore *aScore, char *fil);
+static void writeScore(MKScore *aScore, const char *fil);
+static void writeHeader(MKScore *aScore, const char *fil);
 static void EnvelopesAndWaveTables(MKScore *aScore, NSMutableArray *aList);
 static void writeParts(MKScore *aScore);
 static void writeNotes(MKPart *aPart, unsigned modes);
@@ -64,7 +64,7 @@ static void indent(int n)
 	for (i=0;i<n;i++) fprintf(fp," ");	  
 }
 
-static void writeScore(MKScore *aScore, char *fil)
+static void writeScore(MKScore *aScore, const char *fil)
 {
 	fprintf(fp,"(in-package :stella)");
 	indent(0);
@@ -84,7 +84,7 @@ static void writeScore(MKScore *aScore, char *fil)
 	fprintf(fp,"))\n"); /* end make-object, lambda form */
 }
 
-static void writeHeader(MKScore *aScore, char *fil)
+static void writeHeader(MKScore *aScore, const char *fil)
 {
 	NSMutableArray *aHeader = [[NSMutableArray alloc] init];
 	MKNote  *info = [aScore infoNote];
@@ -145,7 +145,7 @@ static void writeParts(MKScore *aScore)
 	{
 		MKPart *aPart;
 		MKNote *info;
-		char *name;
+		const char *name;
 		NSString *class;
 		BOOL freqNames = NO;
 		int par, mode;
