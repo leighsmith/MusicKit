@@ -28,6 +28,7 @@ OF THIS AGREEMENT.
 
 #import <MKPerformSndMIDI/PerformSound.h>
 #import "SndEndianFunctions.h"
+#import "SndTable.h"
 #import "Snd.h"
 #import "SndView.h"
 #ifndef USE_NEXTSTEP_SOUND_IO

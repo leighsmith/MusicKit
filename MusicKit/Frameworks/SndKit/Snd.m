@@ -76,8 +76,6 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
 
 @implementation Snd
 
-//static NSAutoreleasePool *pool;
-static NSMutableDictionary *nameTable = nil;
 #if !USE_STREAMING
 static NSMutableDictionary *playRecTable = nil;
 static int ioTags = 1000;
@@ -85,116 +83,51 @@ static int ioTags = 1000;
 
 + (void) initialize
 {
-//  pool = [[NSAutoreleasePool alloc] init];
-  if ( self == [Snd class] ) {
-    if (nameTable == nil)
-      nameTable = [[NSMutableDictionary alloc] initWithCapacity:10];
-  }
 }
 
-+ (SndPlayer *)sndPlayer
++ (NSString*) defaultFileExtension
 {
-    return [SndPlayer defaultSndPlayer];
+  return @"snd";
 }
 
 + soundNamed:(NSString *)aName
-/* Does not name sound, or add to name table.
- */
 {
-    BOOL found;
-    Snd *newSound;
-    NSBundle *soundLocation;
-    NSString *path;
-    NSArray *libraryDirs;
-    int i;
-    id retSnd = [nameTable objectForKey:aName];
-    if (retSnd) return retSnd;
-
-    path = [[NSBundle mainBundle] pathForResource:aName ofType: DEFAULT_SOUNDFILE_EXTENSION];
-    found = (path != nil);
-    if (found) {
-        newSound = [[Snd alloc] initFromSoundfile:path];
-        if (newSound) {
-            return [newSound autorelease];
-        }
-    }
-
-    libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
-    for(i = 0; i < [libraryDirs count]; i++) {
-        path = [[[libraryDirs objectAtIndex: i] stringByAppendingPathComponent: @"Sounds"] stringByAppendingPathComponent:path];
-        soundLocation = [[NSBundle alloc] initWithPath:path];
-        if (soundLocation) {
-            found = ((path = [soundLocation pathForResource:aName ofType: DEFAULT_SOUNDFILE_EXTENSION]) != nil);
-            [soundLocation release];
-            if (found) {
-                newSound = [[Snd alloc] initFromSoundfile:path];
-                if (newSound) {
-                    return [newSound autorelease];
-                }
-            }
-        }
-    }
-    return nil;
+  return [[SndTable defaultSndTable] soundNamed: aName];
 }
 
 + findSoundFor:(NSString *)aName
 {
-    return [self soundNamed: aName];
+  return [[SndTable defaultSndTable] findSoundFor: aName];
 }
 
 + addName:(NSString *)aname sound:aSnd
 {
-    if ([nameTable objectForKey:aname]) return nil; /* already exists */
-    if (!aSnd) return nil;
-    [(Snd *)aSnd setName:aname];
-    [nameTable setObject:aSnd forKey:aname];
-    return aSnd;
+  return [[SndTable defaultSndTable] addName: aname sound:aSnd];
 }
 
 + addName:(NSString *)aname fromSoundfile:(NSString *)filename
 {
-    Snd *newSnd;
-    if ([nameTable objectForKey:aname]) return nil; /* already exists */
-    newSnd = [[Snd alloc] initFromSoundfile:filename];
-    if (!newSnd) return nil;
-    [Snd addName:aname sound:newSnd];
-    return [newSnd autorelease];
+  return [[SndTable defaultSndTable] addName: aname fromSoundfile: filename];
 }
 
 + addName:(NSString *)aname fromSection:(NSString *)sectionName
 {
-    printf("Snd: +addName:fromSection: obsolete, not implemented\n");
-    return self;
+  return [[SndTable defaultSndTable] addName: aname fromSection: sectionName];
 }
 
 + addName:(NSString *)aName fromBundle:(NSBundle *)aBundle
 {
-    BOOL found;
-    Snd *newSound;
-    NSString *path;
-    if (!aBundle) return nil;
-    if (!aName) return nil;
-    if (![aName length]) return nil;
-    if ([nameTable objectForKey:aName]) return nil; /* already exists */
-    found = ((path = [aBundle pathForResource:aName ofType: DEFAULT_SOUNDFILE_EXTENSION]) != nil);
-    if (found) {
-        newSound = [[Snd alloc] initFromSoundfile: path];
-        if (newSound) {
-            [Snd addName: aName sound: newSound];
-            return [newSound autorelease];
-        }
-    }
-    return nil;
+  return [[SndTable defaultSndTable] addName: aName fromBundle: aBundle];
 }
 
 + (void)removeSoundForName: (NSString *) aname
 {
-    [nameTable removeObjectForKey: aname];
+  return [[SndTable defaultSndTable] removeSoundForName: aname];
 }
 
 + (void) removeAllSounds
 {
-    [nameTable removeAllObjects];
+  return [[SndTable defaultSndTable] removeAllSounds];
 }
 
 + getVolume:(float *)left :(float *)right
@@ -302,8 +235,8 @@ static int ioTags = 1000;
 - (void)dealloc
 {
     if (name) {
-        if ([nameTable objectForKey:name] == self)
-            [Snd removeSoundForName:name];
+        if ([[SndTable defaultSndTable] objectForKey:name] == self)
+            [[SndTable defaultSndTable] removeSoundForName:name];
         [name release];
     }
     if (soundStruct) SndFree(soundStruct);

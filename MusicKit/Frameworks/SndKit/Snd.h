@@ -268,6 +268,7 @@ architecture, as described in the <b>SndStruct</b> header.
               derived from those formats supported by the underlying Sox library.
 */
 + (NSArray *) soundFileExtensions;
++ (NSString*) defaultFileExtension;
 
 - (NSString *) description;
 
@@ -658,16 +659,6 @@ architecture, as described in the <b>SndStruct</b> header.
               returned.
 */
 - (int)resume;
-
-/*!
-  @method sndPlayer
-  @result Returns the static SndPlayer object used by the Snd class.
-  @discussion The Snd class holds a static SndPlayer object to which all
-              playing Snds are attached. If you wish to query this object
-              or set performance attributes such as <b>setRemainConnectedToManager:</b>
-              you can get it using this method.
-*/
-+ (SndPlayer *)sndPlayer;
 
 /*!
   @method readSoundfile:
