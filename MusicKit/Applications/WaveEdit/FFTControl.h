@@ -10,9 +10,9 @@
 
 @interface FFTControl:Object
 {
-    id	modView;
-    id	phiView;
-    id	waveView;
+    ModView	*modView;
+    PhiView	*phiView;
+    FuncView	*waveView;
     id convView;
     float *FFTData, *PHIData, *MODData;
     float *storeTable[4];

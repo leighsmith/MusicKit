@@ -1,0 +1,563 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 32;
+	objects = {
+		0348D9FD007130C5CFED3B96 = {
+			buildPhases = (
+				0348DA26007130C5CFED3B96,
+				0348DA2C007130C5CFED3B96,
+				0348DA30007130C5CFED3B96,
+				0348DA38007130C5CFED3B96,
+				0348DA40007130C5CFED3B96,
+			);
+			buildSettings = {
+				INSTALL_PATH = /LocalApps;
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = WaveEdit;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WRAPPER_EXTENSION = app;
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXApplicationTarget;
+			name = "WaveEdit (Application)";
+			productInstallPath = /LocalApps;
+			productName = "WaveEdit (Application)";
+			productReference = 0348DA25007130C5CFED3B96;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
+<plist version=\"0.9\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>WaveEdit</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string>foo.tiff</string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+	<key>NSExtensions</key>
+	<dict/>
+	<key>NSMainNibFile</key>
+	<string>WaveEdit</string>
+	<key>NSPrincipalClass</key>
+	<string>Application</string>
+</dict>
+</plist>
+";
+			shouldUseHeadermap = 0;
+		};
+		0348D9FE007130C5CFED3B96 = {
+			buildStyles = (
+			);
+			isa = PBXProject;
+			mainGroup = 0348D9FF007130C5CFED3B96;
+			productRefGroup = 0348DA24007130C5CFED3B96;
+			projectDirPath = .;
+			targets = (
+				0348D9FD007130C5CFED3B96,
+			);
+		};
+		0348D9FF007130C5CFED3B96 = {
+			children = (
+				0348DA00007130C5CFED3B96,
+				0348DA06007130C5CFED3B96,
+				0348DA0C007130C5CFED3B96,
+				0348DA0F007130C5CFED3B96,
+				0348DA12007130C5CFED3B96,
+				0348DA14007130C5CFED3B96,
+				0348DA17007130C5CFED3B96,
+				0348DA1B007130C5CFED3B96,
+				0348DA23007130C5CFED3B96,
+				0348DA24007130C5CFED3B96,
+			);
+			isa = PBXGroup;
+			name = WaveEdit;
+			refType = 4;
+		};
+		0348DA00007130C5CFED3B96 = {
+			children = (
+				0348DA01007130C5CFED3B96,
+				0348DA02007130C5CFED3B96,
+				0348DA03007130C5CFED3B96,
+				0348DA04007130C5CFED3B96,
+				0348DA05007130C5CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+		};
+		0348DA01007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = FFTControl.m;
+			refType = 4;
+		};
+		0348DA02007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = FuncView.m;
+			refType = 4;
+		};
+		0348DA03007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = ModView.m;
+			refType = 4;
+		};
+		0348DA04007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = PhiView.m;
+			refType = 4;
+		};
+		0348DA05007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = Wave.m;
+			refType = 4;
+		};
+		0348DA06007130C5CFED3B96 = {
+			children = (
+				0348DA07007130C5CFED3B96,
+				0348DA08007130C5CFED3B96,
+				0348DA09007130C5CFED3B96,
+				0348DA0A007130C5CFED3B96,
+				0348DA0B007130C5CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Headers;
+			refType = 4;
+		};
+		0348DA07007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = FFTControl.h;
+			refType = 4;
+		};
+		0348DA08007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = FuncView.h;
+			refType = 4;
+		};
+		0348DA09007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = ModView.h;
+			refType = 4;
+		};
+		0348DA0A007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = PhiView.h;
+			refType = 4;
+		};
+		0348DA0B007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = Wave.h;
+			refType = 4;
+		};
+		0348DA0C007130C5CFED3B96 = {
+			children = (
+				0348DA0D007130C5CFED3B96,
+				0348DA0E007130C5CFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+		};
+		0348DA0D007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = fft.c;
+			refType = 4;
+		};
+		0348DA0E007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = WaveEdit_main.m;
+			refType = 4;
+		};
+		0348DA0F007130C5CFED3B96 = {
+			children = (
+				0348DA10007130C5CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Interfaces;
+			refType = 4;
+		};
+		0348DA10007130C5CFED3B96 = {
+			children = (
+				0348DA11007130C5CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = WaveEdit.nib;
+			refType = 4;
+		};
+		0348DA11007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/WaveEdit.nib;
+			refType = 4;
+		};
+		0348DA12007130C5CFED3B96 = {
+			children = (
+				0348DA13007130C5CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Images;
+			refType = 4;
+		};
+		0348DA13007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = foo.tiff;
+			refType = 4;
+		};
+		0348DA14007130C5CFED3B96 = {
+			children = (
+				0348DA15007130C5CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			refType = 4;
+		};
+		0348DA15007130C5CFED3B96 = {
+			children = (
+				0348DA16007130C5CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = Help;
+			refType = 4;
+		};
+		0348DA16007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/Help;
+			refType = 4;
+		};
+		0348DA17007130C5CFED3B96 = {
+			children = (
+				0348DA18007130C5CFED3B96,
+				0348DA19007130C5CFED3B96,
+				0348DA1A007130C5CFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+		};
+		0348DA18007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile.preamble;
+			refType = 4;
+		};
+		0348DA19007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile.postamble;
+			refType = 4;
+		};
+		0348DA1A007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			path = Makefile;
+			refType = 4;
+		};
+		0348DA1B007130C5CFED3B96 = {
+			children = (
+				0348DA1C007130C5CFED3B96,
+				0348DA1D007130C5CFED3B96,
+				0348DA1E007130C5CFED3B96,
+				0348DA1F007130C5CFED3B96,
+				0348DA20007130C5CFED3B96,
+				0348DA21007130C5CFED3B96,
+				0348DA22007130C5CFED3B96,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+		};
+		0348DA1C007130C5CFED3B96 = {
+			isa = PBXLibraryReference;
+			name = libNeXT_s.a;
+			path = /usr/lib/libNeXT_s.a;
+			refType = 0;
+		};
+		0348DA1D007130C5CFED3B96 = {
+			isa = PBXLibraryReference;
+			name = libsynthpatches.a;
+			path = /usr/lib/libsynthpatches.a;
+			refType = 0;
+		};
+		0348DA1E007130C5CFED3B96 = {
+			isa = PBXLibraryReference;
+			name = libDriver.a;
+			path = /usr/lib/libDriver.a;
+			refType = 0;
+		};
+		0348DA1F007130C5CFED3B96 = {
+			isa = PBXLibraryReference;
+			name = libunitgenerators.a;
+			path = /usr/lib/libunitgenerators.a;
+			refType = 0;
+		};
+		0348DA20007130C5CFED3B96 = {
+			isa = PBXLibraryReference;
+			name = libmusickit.a;
+			path = /usr/lib/libmusickit.a;
+			refType = 0;
+		};
+		0348DA21007130C5CFED3B96 = {
+			isa = PBXLibraryReference;
+			name = libIndexing_s.a;
+			path = /usr/lib/libIndexing_s.a;
+			refType = 0;
+		};
+		0348DA22007130C5CFED3B96 = {
+			isa = PBXLibraryReference;
+			name = libdsp.a;
+			path = /usr/lib/libdsp.a;
+			refType = 0;
+		};
+		0348DA23007130C5CFED3B96 = {
+			isa = PBXFileReference;
+			name = "Import Log.rtf";
+			path = "/Volumes/manray/Local/Users/leigh/Sources/Music/PublicDomain/MusicKit/Applications/WaveEdit/Import Log.rtf";
+			refType = 0;
+		};
+		0348DA24007130C5CFED3B96 = {
+			children = (
+				0348DA25007130C5CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		0348DA25007130C5CFED3B96 = {
+			isa = PBXApplicationReference;
+			path = WaveEdit.app;
+			refType = 3;
+		};
+		0348DA26007130C5CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				0348DA27007130C5CFED3B96,
+				0348DA28007130C5CFED3B96,
+				0348DA29007130C5CFED3B96,
+				0348DA2A007130C5CFED3B96,
+				0348DA2B007130C5CFED3B96,
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		0348DA27007130C5CFED3B96 = {
+			fileRef = 0348DA07007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA28007130C5CFED3B96 = {
+			fileRef = 0348DA08007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA29007130C5CFED3B96 = {
+			fileRef = 0348DA09007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA2A007130C5CFED3B96 = {
+			fileRef = 0348DA0A007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA2B007130C5CFED3B96 = {
+			fileRef = 0348DA0B007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA2C007130C5CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				0348DA2D007130C5CFED3B96,
+				0348DA2E007130C5CFED3B96,
+				0348DA2F007130C5CFED3B96,
+			);
+			isa = PBXResourcesBuildPhase;
+			name = "Bundle Resources";
+		};
+		0348DA2D007130C5CFED3B96 = {
+			fileRef = 0348DA10007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA2E007130C5CFED3B96 = {
+			fileRef = 0348DA13007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA2F007130C5CFED3B96 = {
+			fileRef = 0348DA15007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA30007130C5CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				0348DA31007130C5CFED3B96,
+				0348DA32007130C5CFED3B96,
+				0348DA33007130C5CFED3B96,
+				0348DA34007130C5CFED3B96,
+				0348DA35007130C5CFED3B96,
+				0348DA36007130C5CFED3B96,
+				0348DA37007130C5CFED3B96,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		0348DA31007130C5CFED3B96 = {
+			fileRef = 0348DA01007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+			};
+		};
+		0348DA32007130C5CFED3B96 = {
+			fileRef = 0348DA02007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+			};
+		};
+		0348DA33007130C5CFED3B96 = {
+			fileRef = 0348DA03007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+			};
+		};
+		0348DA34007130C5CFED3B96 = {
+			fileRef = 0348DA04007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+			};
+		};
+		0348DA35007130C5CFED3B96 = {
+			fileRef = 0348DA05007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+			};
+		};
+		0348DA36007130C5CFED3B96 = {
+			fileRef = 0348DA0D007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+			};
+		};
+		0348DA37007130C5CFED3B96 = {
+			fileRef = 0348DA0E007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+			};
+		};
+		0348DA38007130C5CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				0348DA39007130C5CFED3B96,
+				0348DA3A007130C5CFED3B96,
+				0348DA3B007130C5CFED3B96,
+				0348DA3C007130C5CFED3B96,
+				0348DA3D007130C5CFED3B96,
+				0348DA3E007130C5CFED3B96,
+				0348DA3F007130C5CFED3B96,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		0348DA39007130C5CFED3B96 = {
+			fileRef = 0348DA1C007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA3A007130C5CFED3B96 = {
+			fileRef = 0348DA1D007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA3B007130C5CFED3B96 = {
+			fileRef = 0348DA1E007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA3C007130C5CFED3B96 = {
+			fileRef = 0348DA1F007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA3D007130C5CFED3B96 = {
+			fileRef = 0348DA20007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA3E007130C5CFED3B96 = {
+			fileRef = 0348DA21007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA3F007130C5CFED3B96 = {
+			fileRef = 0348DA22007130C5CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		0348DA40007130C5CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+	};
+	rootObject = 0348D9FE007130C5CFED3B96;
+}

@@ -5,8 +5,7 @@
 
 #import "FuncView.h"
 #import "FFTControl.h"
-#import <appkit/Button.h>
-#import <appkit/Matrix.h>
+#import <AppKit/AppKit.h>
 
 @interface PhiView:FuncView
 {
@@ -16,7 +15,7 @@
 
 - setFFTControler:anObject;
 - afterUp:(float*)data length:(int)aLength;
-- drawSelf:(NXRect *)rect :(int)rectCount;
+- drawSelf:(NSRect *)rect :(int)rectCount;
 - drawSelfAux:(float)origin;
 @end
 #endif

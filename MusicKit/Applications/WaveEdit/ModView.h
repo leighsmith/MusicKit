@@ -14,7 +14,7 @@
 
 - setFFTControler:anObject;
 - afterUp:(float*)data length:(int)aLength;
-- drawSelf:(NXRect *)rect : (int)rectCount;
+- drawSelf:(NSRect *)rect : (int)rectCount;
 - drawSelfAux:(float)origin;
 
 @end

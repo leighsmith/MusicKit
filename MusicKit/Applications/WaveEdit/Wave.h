@@ -21,7 +21,7 @@
 
 - setFftView:anObject;
 - awakeFromNib;
-- mouseDown:(NXEvent *) anEvent;
+- mouseDown:(NSEvent *) anEvent;
 - sawTooth:sender;
 - triangle:sender;
 - sine:sender;

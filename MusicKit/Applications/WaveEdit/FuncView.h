@@ -17,42 +17,37 @@
 // scrollView to the containing scrollView object. You can then zoom-in, zoom-out, and select the
 // display mode (continuous or discrete.) 
 
-#import <appkit/View.h>	
-#import <appkit/Application.h>	
-#import <appkit/ScrollView.h>	
-#import <appkit/Window.h>	
-#import <dpsclient/wraps.h>	// For PS and DPS function prototypes
-#import <dpsclient/dpsclient.h>
-#import <appkit/nextstd.h>	// For PS and DPS function prototypes
+#import <AppKit/AppKit.h>	
+
 #define CONTINUOUS 1	// For a continuous display of the FuncTable
 #define DISCRETE 0		// For a discrete display of the FuncTable (vertical lines)
 
 
-@interface FuncView:View
+@interface FuncView: NSView
 {
-id scrollView;			// The optional ScrollView containing the FuncView
-NXRect clip;
-NXRect funcFrame;
-float *FuncTable;		// The array where the function's values are stored
-int displayMode;		// Flag containing the type of display
-BOOL editableFlag;	// Flag determining if the FuncView is editable or not
-BOOL scrollable;		// Flag determining if the FuncView is scrollable or not
-int ratio;
-int tableLength;		// Length of the FuncTable
+    id scrollView;			// The optional ScrollView containing the FuncView
+    NSRect clip;
+    NSRect funcFrame;
+    float *FuncTable;		// The array where the function's values are stored
+    int displayMode;		// Flag containing the type of display
+    BOOL editableFlag;	// Flag determining if the FuncView is editable or not
+    BOOL scrollable;		// Flag determining if the FuncView is scrollable or not
+    int ratio;
+    int tableLength;		// Length of the FuncTable
 }
 
 
 // This method creates a new FuncView instance and sets the size of its FuncTable array to the
 // width of *(frameRect). If you want to set the FuncTable to a different size, use setTableLengh.
 
-+ newFrame:(NXRect *) frameRect;
++ newFrame:(NSRect *) frameRect;
 
 // Use this method to connect the FuncView to a ScrollView's docView;
 
 - setScrollView:anObject;
 	
-- drawSelf:(NXRect *) rect : (int) rectCount;
-- mouseDown:(NXEvent *) anEvent;
+- drawSelf:(NSRect *) rect : (int) rectCount;
+- mouseDown:(NSEvent *) anEvent;
 
 // afterDrag is called by the FuncView object each time it receives a mouseDragged event; 
 // The default implementation just returns self. You can override this method to perform any action

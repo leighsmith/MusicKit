@@ -4,9 +4,7 @@
 #import "Wave.h"
 #import "FFTControl.h"
 #import <stdio.h>
-#import <appkit/Application.h>
-#import <appkit/Button.h>
-#import <appkit/Pasteboard.h>
+#import <AppKit/AppKit.h>
 #import <ctype.h>
 #define LOGBOTTOM 6.9077552
 
@@ -411,7 +409,7 @@ extern void rfft(float x[], int N, int forward );
 {
     if ([sender intValue]) {
 	if (![waveView startSound])
-	  [(Button *)sender setState:0];
+	  [(NSButton *)sender setState:0];
     }
     else [waveView stopSound];
     return self;
