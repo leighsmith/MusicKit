@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.9  2000/10/04 06:30:18  skot
+  Added endTime method
+
   Revision 1.8  2000/10/01 06:52:40  leigh
   Changed NXHashTable to NSHashTable, typing _parameter properly.
 
@@ -354,6 +357,11 @@ MKDataType;
   * Returns the receiver's duration, or MK_NODVAL if it isn't set or if
   * the receiver noteType isn't MK_noteDur.    
   * (Use MKIsNoDVal() to check for MK_NODVAL.)*/
+
+- (double) endTime;
+ /* 
+  * Returns the receiver's end time (duration + timeTag), or MK_NODVAL if
+  * not a MK_noteDur or MK_mute. */
 
 -(int ) noteTag; 
  /* 

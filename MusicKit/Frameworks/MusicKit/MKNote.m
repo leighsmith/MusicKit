@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2000/10/04 06:30:18  skot
+  Added endTime method
+
   Revision 1.9  2000/10/01 00:45:59  leigh
   Replaced NXHashTable functions with FoundationKit NSHashTable functions. Removed redundant HashTable caching. Fixed erroneous use of char * with _MKNewStringPar().
 
@@ -695,8 +698,32 @@ static double getNoteDur(MKNote *aNote)
    * Returns the receiver's duration, or MK_NODVAL if
    * it isn't set or if the receiver noteType isn't MK_noteDur.
    */
-{       
+{
     return getNoteDur(self);
+}
+
+// getNoteEndTime
+// SKoT: Added 4 Oct 2000
+
+static double getNoteEndTime(MKNote *aNote)
+{
+    switch (aNote->noteType) {
+        case MK_mute:
+            return MKGetNoteParAsDouble(aNote,MK_restDur) + aNote->timeTag;
+        case MK_noteDur:
+            return MKGetNoteParAsDouble(aNote,_MK_dur) + aNote->timeTag;
+        default:
+            break;
+    }
+    return MK_NODVAL;
+}
+
+// endTime
+// SKoT: Added 4 Oct 2000
+
+- (double) endTime
+{
+    return getNoteEndTime(self);
 }
 
 - (int)noteTag
