@@ -78,10 +78,14 @@ while (chop($_ = <>)) {
     s/&#8364;/ /g;
     # and wierd not signs indicating RTF images.
     s/&#172;//g;
+    # For some reason, elongated hyphens were sometimes used for '-'.
+    s/&#177;/-/g;
     # move any leading space before an end tag i.e 
     # <b>Text with trailing space </b>
     s/(  *)<\/(.*)>/<\/$2>$1/g;
 
+    # substitute wierd German characters for hyphens between text.
+    s/&ETH;/ - /g;
     # This checks if any page breaks divide a section title.
     $wholeFile = $wholeFile . " " . $_;
 }
@@ -92,7 +96,7 @@ if($wholeFile =~ s/Parameter Interpretation(.*?)$//i) {
 }
 
 # Check for class header, if so, generate a @header tag
-if ($wholeFile =~ s/^.*?Class Description(.*?)Instance Variables/Instance Variables/i) {
+if ($wholeFile =~ s/^.*?Class Description(.*?)(Instance Variables|Method Types)/\2/i) {
     $description = $1;
     if($sedOutput) {
 	printf("1i\\\n");
@@ -131,7 +135,7 @@ $wholeFile =~ s/Instance Methods//i;
 # description.
 # We rewrite this as a <br> to ensure we don't break other prototype
 # boundaries.
-while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<br>$)/<br>/) {
+while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<br>\s|<br>$)/<br>/) {
     $classOrInstanceMethod = $1;
     $prototype = $2;
     $discussion = $4;
@@ -139,11 +143,16 @@ while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<b
     # give ourselves a clean description
     # $formattedPrototype =~ s/<\/*[bi]>//g;
 
+    # print "prototype for matching = $prototype\n";
+    # print "discussion = $discussion\n";
     # Format the prototype for HeaderDoc.
     # Match the return type and the method name prior to parameters.
     if ($prototype =~ s/\s*(\(.*?\)|[^\s<]*?)\s*<b>\s*(.*?)\s*<\/b>//) {
 	$returnType = $1;
 	$methodName = $2;  # The start of the method name.
+	# blow away any parentheses, in theory I can do it in the
+	# previous regexp, but I haven't achieved that astral plane yet...
+	$returnType =~ s/[\(\)]//g;
 
 	$paramCount = 0;
 	while($prototype !~ /^\s*$/) {
@@ -163,9 +172,15 @@ while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<b
 		$paramName[$paramCount] = $1;
 	    }
 	    
+	    # ...and wierd cruft like trailing semicolons, invisible
+	    # italics and bolding...arrggh!
+	    $prototype =~ s/;//;
+	    $prototype =~ s/<b><\/b>//;
+	    $prototype =~ s/<i><\/i>//;
+
 	    # ...and subsequent 'keyName:' keywords
-	    if ($prototype =~ s/\s*<b>\s*(.*?:)\s*<\/b>//) {
-		$methodName .= $1;
+	    if ($prototype =~ s/\s*((<b>\s*)|())(.*?:)\s*((<\/b>)|())//) {
+		$methodName .= $4;
 	    }
 	    $paramCount++;
 	}
@@ -173,7 +188,24 @@ while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<b
     
     # print out what we found, possibly as a sed script
     if($sedOutput) {
-	printf("/%s *%s *%s/i\\\n\\\n", $classOrInstanceMethod, $returnType, $methodName);
+	if ($returnType ne "") {
+	    # if return type is id, allow id or nothing, since it
+	    # is the default type.
+	    if ($returnType eq "id") {
+		$sedReturnType = "(*i*d*)*";
+	    }
+	    else {
+		$sedReturnType = "\($returnType\)";
+		# preserve any pointers, don't make them wild cards.
+		$sedReturnType =~ s/\*/\\*/g;
+	    }
+	}
+	else {
+	    $sedReturnType = "";
+	}
+	$sedMethodName = $methodName;
+	$sedMethodName =~ s/:/:.*/g;
+	printf("/%s *%s *%s/i\\\n\\\n", $classOrInstanceMethod, $sedReturnType, $sedMethodName);
 	$commentPadding = "\\ \\ ";
     }
     else {
@@ -187,7 +219,7 @@ while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<b
 	if (length($paramType[$i]) == 0) {
 	    $paramType[$i] = "id";
 	}
-	printf("%s\@param %s is %s %s.%s\n", $commentPadding,
+	printf("%s\@param  %s is %s %s.%s\n", $commentPadding,
 	       $paramName[$i], indefiniteArticle($paramType[$i]), $paramType[$i],
 	       $eolChar); 
 	$paramType[$i] = $paramName[$i] = "";
@@ -197,14 +229,15 @@ while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<b
     if (length($returnType) == 0) {
 	$returnType = "id";
     }
-    if ($returnType ne "(void)") {
+    if ($returnType ne "void") {
 	printf("%s\@result Returns %s %s.%s\n", $commentPadding,
 	       indefiniteArticle($returnType), $returnType, $eolChar);
     }
 
     # convert <br>'s to standard line breaks for headerDoc to do it's stuff.
     $discussion =~ s/<br>/\n/g;
-    printf("%s\@discussion %s%s\n*/\n", $commentPadding, $discussion, $eolChar);
+    printf("%s\@discussion %s%s\n*/\n", $commentPadding,
+	   lineWrap($discussion, 68, $commentPadding . "            "));
 }
 
 # print what was not accounted for for debugging.
@@ -212,7 +245,32 @@ if ($printMissing) {
     print STDERR "remaining data not accounted for: $wholeFile";
 }
 
+# Determine whether to prefix the word with an "a" or an "an".
 sub indefiniteArticle
 {
     return (index("aeiouh", substr($_[0],0,1)) == -1) ? "a" : "an";
+}
+
+# Reformat the string to a maximum of lineWidth with a prefix padding
+# the line.
+sub lineWrap
+{
+    local($longString, $lineWidth, $padding) = @_;
+    local($formattedString);
+    local($minWidth) = $lineWidth - 20;
+    
+    $longString =~ s/\n/$eolChar\n$padding/sg;
+    do {
+	while($longString =~ s/^([^\n]{$minWidth,$lineWidth})\s//s) {
+	    $formattedString .= "$1$eolChar\n$padding";
+	}
+	$longString =~ s/^(.*?)(\n|$)//s;
+	if($2 eq "\n") {
+	    $formattedString .= "$1$eolChar\n";
+	}
+	else {
+	    $formattedString .= $1;
+	}
+    } while(length($longString) > $lineWidth);
+    return "$formattedString$longString$eolChar";
 }
