@@ -78,7 +78,7 @@ static int ioTags = 1000;
 
 + (NSString*) defaultFileExtension
 {
-    return @"snd"; // TODO this should probably be determined at run time.
+    return @"snd"; // TODO this should probably be determined at run time based on the operating system
 }
 
 + soundNamed:(NSString *)aName
@@ -265,7 +265,7 @@ static int ioTags = 1000;
 
 }
 
-// return the file extensions supported by sox.
+// return the file extensions supported by our sound file reading library, typically sox or sndlibfile.
 + (NSArray *) soundFileExtensions
 {
     return SndFileExtensions();
@@ -304,10 +304,8 @@ static int ioTags = 1000;
 // for debugging
 - (NSString *) description
 {
-    if(soundStruct != NULL)
-        return [NSString stringWithFormat: @"%@ (%@)", [super description], SndStructDescription(soundStruct)];
-    else
-        return name;
+    return [NSString stringWithFormat: @"%@ (%@ %@)", [super description], name,
+		(soundStruct != NULL) ? SndStructDescription(soundStruct) : @""];
 }
 
 - readSoundFromStream:(NSData *)stream
