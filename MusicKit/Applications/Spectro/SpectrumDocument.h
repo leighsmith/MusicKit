@@ -1,11 +1,10 @@
 /* 
  * $Id$
- * Interface for SpectrumDocument class
  *
  * This object manages the computation and display of Spectrum data
  * via the SpectrumWindow, SpectrumView, ScrollingSpectrum, and the
  * SignalProcessor.
- 
+ *
  * An instance of this object is created for each separate sound.
  *
  * Created by Gary Scavone.
@@ -23,6 +22,7 @@
 #import <Foundation/Foundation.h>
 #import <SndKit/SndKit.h>
 #import "SpectrumView.h"
+#import "SignalProcessor.h"
 
 @interface SpectrumDocument: NSObject
 {
@@ -30,8 +30,8 @@
     IBOutlet id scrollSpectrum;
     IBOutlet id waterfallWindow;
     IBOutlet id myWaterfallView;
-    IBOutlet id mySignalProcessor;
-    IBOutlet id mySound;
+    SignalProcessor *mySignalProcessor;
+    Snd *mySound;
     IBOutlet id delegate;
     IBOutlet id waterFallButton;
     IBOutlet id cursorFreq;
@@ -81,35 +81,35 @@
 }
 
 - init;
-- newSpectrumLocation:(NSPoint *)p;
-- newWaterfallLocation:(NSPoint *)p;
-- (void)awakeFromNib;
-- (void)setDelegate:(id)anObject;
+- newSpectrumLocation: (NSPoint *) p;
+- newWaterfallLocation: (NSPoint *) p;
+- (void) awakeFromNib;
+- (void) setDelegate: (id) anObject;
 - delegate;
-- setSoundView:aSoundView;
-- setWindowTitle:(NSString *)aFileName;
+- setSoundView: (SndView *) aSoundView;
+- setWindowTitle: (NSString *) aFileName;
 - soundChanged;
 - printSpectrum;
 - printWaterfall;
 - displayFreqRange;
-- changeFreqRange:sender;
-- changeWFFreqRange:sender;
-- changedBLimits:sender;
-- changeWindowType:sender;
-- changeWindowSize:sender;
-- changeZPFactor:sender;
-- changeHopRatio:sender;
-- nextFrame:sender;
+- (IBAction) changeFreqRange: (id) sender;
+- (IBAction) changeWFFreqRange: (id) sender;
+- (IBAction) changedBLimits: (id) sender;
+- (IBAction) changeWindowType: (id) sender;
+- (IBAction) changeWindowSize: (id) sender;
+- (IBAction) changeZPFactor: (id) sender;
+- (IBAction) changeHopRatio: (id) sender;
+- (IBAction) nextFrame: (id) sender;
 - disableWFSlider;
 - setTotalFrames;
-- frameSliderMoved:sender;
-- wfFrameSliderMoved:sender;
-- wfPlotHeightChanged:sender;
+- (IBAction) frameSliderMoved: (id) sender;
+- (IBAction) wfFrameSliderMoved: (id) sender;
+- (IBAction) wfPlotHeightChanged: (id) sender;
 - spectroButtonDepressed;
-- doSpectrum;
-- doWaterfall:sender;
+- (void) doSpectrum;
+- (IBAction) doWaterfall: (id) sender;
 - checkStopButton;
-- interpolatePeak:sender;
+- (IBAction) interpolatePeak: (id) sender;
 - closeWindows;
 - setViewColors;
 

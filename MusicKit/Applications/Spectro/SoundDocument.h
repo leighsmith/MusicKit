@@ -20,15 +20,15 @@
 
 char *doFloat(float f, int a, int r);
 
-@interface SoundDocument : NSDocument
+@interface SoundDocument: NSDocument
 {
     IBOutlet id soundWindow;
     ScrollingSound *scrollSound;
-    IBOutlet id playButton;
-    IBOutlet id recordButton;
-    IBOutlet id stopButton;
-    IBOutlet id pauseButton;
-    IBOutlet id spectrumButton;
+    IBOutlet NSButton *playButton;
+    IBOutlet NSButton *recordButton;
+    IBOutlet NSButton *stopButton;
+    IBOutlet NSButton *pauseButton;
+    IBOutlet NSButton *spectrumButton;
     IBOutlet id wStartSamp;
     IBOutlet id wStartSec;
     IBOutlet id wDurSamp;
@@ -38,10 +38,11 @@ char *doFloat(float f, int a, int r);
     IBOutlet id sDurSamp;
     IBOutlet id sDurSec;
     IBOutlet id soundInfo;
+    // TODO determine difference between these.
     IBOutlet id spectrumDocument;
+    SpectrumDocument *mySpectrumDocument;
     NSString *fileName;
     SndView *mySoundView;
-    SpectrumDocument *mySpectrumDocument;
     BOOL fresh;
 }
 
@@ -62,11 +63,17 @@ char *doFloat(float f, int a, int r);
 */
 - (NSData *) dataRepresentationOfType: (NSString *) aType;
 
-- setFileName:(NSString *)aName;
-- (NSString *)fileName;
+- setFileName: (NSString *) aName;
+- (NSString *) fileName;
 - setWindowTitle;
-- sound;
-- (double)samplingRate;
+
+/*!
+  @method sound
+  @abstract Returns the Snd instance currently being displayed.
+ */
+- (Snd *) sound;
+
+- (double) samplingRate;
 - printTimeWindow;
 - printSpectrumWindow;
 - printWaterfallWindow;
@@ -74,54 +81,54 @@ char *doFloat(float f, int a, int r);
 - saveError:(NSString *)msg arg: (NSString *)arg;
 - saveToFormat:templateSound fileName:(NSString *)fileName;
 - (void) save: (id) sender;
-- revertToSaved:sender;
+- (IBAction) revertToSaved:sender;
 - load:sender;
-- play:sender;
+- (IBAction) play:sender;
 - (void) stop: (id) sender;
-- pause:sender;
-- record:sender;
-- displayMode:sender;
+- (IBAction) pause:sender;
+- (IBAction) record:sender;
+- (IBAction) displayMode:sender;
 - showDisplayTimes;
 - showSelectionTimes;
 - windowMatrixChanged:sender;
 - selectionMatrixChanged:sender;
 - touch;
-- (BOOL)touched;
+- (BOOL) touched;
 - setButtons;
-- sndInfo:sender;
-- spectrum:sender;
+- (IBAction) sndInfo:sender;
+- (IBAction) spectrum: (id) sender;
 - setColors;
-- zoom:(float)scale center:(int)sample;
-- zoomIn:sender;
-- zoomOut:sender;
-- zoomSelect:sender;
-- zoomAll:sender;
-- (BOOL)isRecordable;
+- zoom: (float) scale center: (int) sample;
+- (IBAction) zoomIn:sender;
+- (IBAction) zoomOut:sender;
+- (IBAction) zoomSelect:sender;
+- (IBAction) zoomAll:sender;
+- (BOOL) isRecordable;
 
 @end
 
 @interface SoundDocument(ScrollingSoundDelegate)
 
-- displayChanged:sender;
+- displayChanged: sender;
 
 @end
 
 @interface SoundDocument(SoundViewDelegate)
 
-- didPlay:sender duringPerformance: (SndPerformance *) performance;
-- didRecord:sender;
-- hadError:sender;
-- selectionChanged:sender;
-- soundDidChange:sender;
+- didPlay: sender duringPerformance: (SndPerformance *) performance;
+- didRecord: sender;
+- hadError: sender;
+- selectionChanged: sender;
+- soundDidChange: sender;
 
 @end
 
 @interface SoundDocument(WindowDelegate)
 
-- (void)windowDidBecomeMain:(NSNotification *)notification;
-- (void)windowDidResignMain:(NSNotification *)notification;
-- (void)windowDidMiniaturize:(NSNotification *)notification;
-- (void)windowDidResize:(NSNotification *)notification;
-- (BOOL)windowShouldClose:(id)sender;
+- (void) windowDidBecomeMain: (NSNotification *) notification;
+- (void) windowDidResignMain: (NSNotification *) notification;
+- (void) windowDidMiniaturize: (NSNotification *) notification;
+- (void) windowDidResize: (NSNotification *) notification;
+- (BOOL) windowShouldClose: (id) sender;
 
 @end

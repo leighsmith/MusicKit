@@ -1,8 +1,8 @@
 /*	$Id$
- *	Originally from SoundEditor3.0.
- *	Modified for Spectro3 by Gary Scavone.
- *	Last modified: 4/94
- */
+*	Originally from SoundEditor3.0.
+*	Modified for Spectro3 by Gary Scavone.
+*	Last modified: 4/94
+*/
 
 #import "SoundController.h"
 #import "SaveToController.h"
@@ -17,20 +17,20 @@ static NSString *getSavePath(NSString *defaultPath, NSView *accessory)
 {
     id	savePanel;
     BOOL		ok=NO;
-
+    
     savePanel = [NSSavePanel savePanel];
     [savePanel setAllowedFileTypes: [Snd soundFileExtensions]];
     /* sbrandon, 23/11/2001 added extra retain to accessory view as it was
-       being released unexpectedly. I would have thought that because it's in
-       the nib file it would never be released fully, but looks like it was.
-     */
+	being released unexpectedly. I would have thought that because it's in
+	the nib file it would never be released fully, but looks like it was.
+	*/
     [savePanel setAccessoryView:[accessory retain]];
     if (defaultPath) if ([defaultPath length]) {
         ok = [savePanel runModalForDirectory:[defaultPath stringByDeletingLastPathComponent]
                                         file:[defaultPath lastPathComponent]];
     }
-    else
-        ok = [savePanel runModal];
+	else
+	    ok = [savePanel runModal];
     if (ok) {
         return [savePanel filename];
     }
@@ -60,30 +60,30 @@ NSColor *StringToColor(NSString *buffer)
 - init
 {
     [super init];
-	counter = 0;
+    counter = 0;
     return self;
 }
 
 + (void)initialize
 {
     NSMutableDictionary *SpectroDefaults = [[NSDictionary dictionaryWithObjectsAndKeys:
-    @"1024",	@"WindowSize",
-    @"2.0",	@"ZPFactor",
-    @"0.5",	@"HopRatio",
-    @"Hanning",	@"WindowType",
-    @"10000",	@"SpectrumMaxFreq",
-    @"-100",	@"dBLimit",
-    @"5000",	@"WFMaxFreq",
-    @"3.0",	@"WFPlotHeight",
-    @"0",	@"DisplayType",
-    @"0:0:0",	@"SpectrumColor",
-    @"1:0:0",	@"CursorColor",
-    @"0.3333:0.3333:0.3333", @"WaterfallColor",
-    @"0.6666:0.6666:0.6666", @"GridColor",
-    NULL,NULL] retain];
+	@"1024",	@"WindowSize",
+	@"2.0",	@"ZPFactor",
+	@"0.5",	@"HopRatio",
+	@"Hanning",	@"WindowType",
+	@"10000",	@"SpectrumMaxFreq",
+	@"-100",	@"dBLimit",
+	@"5000",	@"WFMaxFreq",
+	@"3.0",	@"WFPlotHeight",
+	@"0",	@"DisplayType",
+										   @"0:0:0",	@"SpectrumColor",
+										   @"1:0:0",	@"CursorColor",
+									      @"0.3333:0.3333:0.3333", @"WaterfallColor",
+									      @"0.6666:0.6666:0.6666", @"GridColor",
+	NULL,NULL] retain];
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:SpectroDefaults];
-	
+    
     return;
 }
 
@@ -127,11 +127,11 @@ NSColor *StringToColor(NSString *buffer)
 
 - openDoc
 {
-	id newDoc;
-	newDoc = [[SoundDocument alloc] init];
-	[self setDocument:newDoc];
-	[documentList addObject:newDoc];
-	return newDoc;
+    id newDoc;
+    newDoc = [[SoundDocument alloc] init];
+    [self setDocument:newDoc];
+    [documentList addObject:newDoc];
+    return newDoc;
 }
 
 - setDocument:aDocument
@@ -147,8 +147,8 @@ NSColor *StringToColor(NSString *buffer)
 
 - closeDoc:aDoc
 {
-	[documentList removeObject:aDoc];
-	return self;
+    [documentList removeObject:aDoc];
+    return self;
 }
 
 - (void) save: (id) sender
@@ -161,8 +161,8 @@ NSColor *StringToColor(NSString *buffer)
 		[self saveAs:sender];
 		return;
 	    }
-	    else
-		[currentDocument save:sender];
+		else
+		    [currentDocument save:sender];
     }
 }
 
@@ -198,33 +198,31 @@ NSColor *StringToColor(NSString *buffer)
 
 - printSound:sender
 {
-	[currentDocument printTimeWindow];
-	return self;
+    [currentDocument printTimeWindow];
+    return self;
 }
 
 - printSpectrum:sender
 {
-	[currentDocument printSpectrumWindow];
-	return self;
+    [currentDocument printSpectrumWindow];
+    return self;
 }
 
 - printWaterfall:sender
 {
-	[currentDocument printWaterfallWindow];
-	return self;
+    [currentDocument printWaterfallWindow];
+    return self;
 }
 
-- sndInfo:sender
+- (IBAction) sndInfo: (id) sender
 {
-	[currentDocument sndInfo:sender];
-	return self;
+    [currentDocument sndInfo:sender];
 }
 
-- revertToSaved:sender
+- (IBAction) revertToSaved: (id) sender
 {
     if (currentDocument)
-		[currentDocument revertToSaved:sender];
-    return self;
+	[currentDocument revertToSaved:sender];
 }
 
 - showInfoPanel:sender
@@ -235,22 +233,22 @@ NSColor *StringToColor(NSString *buffer)
 
 - showPreferences:sender
 {
-	if (!prefController) {
-		[NSBundle loadNibNamed:@"preferences.nib" owner:self];
-	}
-	[[prefController window] makeKeyAndOrderFront:sender];
-	return self;
+    if (!prefController) {
+	[NSBundle loadNibNamed:@"preferences.nib" owner:self];
+    }
+    [[prefController window] makeKeyAndOrderFront:sender];
+    return self;
 }
 
 - (int)documentCount
 {
-	return counter;
+    return counter;
 }
 
 - setCounter:(int)count
 {
-	counter = count;
-	return self;
+    counter = count;
+    return self;
 }
 
 @end
@@ -284,25 +282,25 @@ NSColor *StringToColor(NSString *buffer)
 
 - (BOOL)applicationShouldTerminate:(id)sender
 {
-	int i, count, touched;
-	id doc;
-	
-	count = [documentList count];
-	touched = NO;
-	for (i = 0; i < count; i++) {
-		doc = [documentList objectAtIndex:i];
-		if ([doc touched]) touched = YES;
-	}
-	if (touched) {
-		i = NSRunAlertPanel(@"Quit",
-                      NSLocalizedStringFromTableInBundle(@"Sound Document(s) not saved", @"Spectro", [NSBundle mainBundle], "not saved button name"),
-                      NSLocalizedStringFromTableInBundle(@"Yes", @"Spectro", [NSBundle mainBundle], "Yes button name"),
-                      NSLocalizedStringFromTableInBundle(@"No", @"Spectro", [NSBundle mainBundle], "No button name"), nil); 
-		if (i == NSAlertAlternateReturn)
-                    return NO;
-	}
-	[documentList release];
-	return YES;
+    int i, count, touched;
+    id doc;
+    
+    count = [documentList count];
+    touched = NO;
+    for (i = 0; i < count; i++) {
+	doc = [documentList objectAtIndex:i];
+	if ([doc touched]) touched = YES;
+    }
+    if (touched) {
+	i = NSRunAlertPanel(@"Quit",
+			    NSLocalizedStringFromTableInBundle(@"Sound Document(s) not saved", @"Spectro", [NSBundle mainBundle], "not saved button name"),
+			    NSLocalizedStringFromTableInBundle(@"Yes", @"Spectro", [NSBundle mainBundle], "Yes button name"),
+			    NSLocalizedStringFromTableInBundle(@"No", @"Spectro", [NSBundle mainBundle], "No button name"), nil); 
+	if (i == NSAlertAlternateReturn)
+	    return NO;
+    }
+    [documentList release];
+    return YES;
 }
 
 @end
