@@ -158,24 +158,16 @@ enum {
 
 - freeBufferMem
 {
-/*
-    [pendingOutputBuffers removeAllObjects];
-    [processedOutputBuffers removeAllObjects];
-*/ 
     [outputQueue freeBuffers];
     if (synthOutputBuffer)
         [synthOutputBuffer release];
     synthOutputBuffer   = nil;
-/*    
-    [pendingInputBuffers removeAllObjects];
-    [processedInputBuffers removeAllObjects];
-*/
+
     [inputQueue freeBuffers];
     if (synthInputBuffer)
         [synthInputBuffer  release];
     synthInputBuffer    = nil;
-        
-    
+            
     return self;
 }
 
@@ -204,11 +196,7 @@ enum {
 - setManager: (SndStreamManager*) m
 {
     if (!active) {
-//        if (manager)
-//            [manager release];
         manager = m;
-//        if (manager != nil)
-//            [manager retain];
     }
     else
         NSLog(@"SndStreamClient::setManager - Warn: Can't setManager whilst streaming!");
@@ -285,32 +273,10 @@ enum {
 
         if (needsInput) {
             [inputQueue prepareQueueAsType: audioBufferQueue_typeInput withBufferPrototype: buff];
-/*
-            int i;
-            [pendingInputBuffersLock lock];
-            [pendingInputBuffersLock unlockWithCondition: SC_noData];            
-            [processedInputBuffersLock lock];
-            for (i = 0; i < numInputBuffers; i++) 
-              [processedInputBuffers addObject: [buff copy]];
-            [processedInputBuffersLock unlockWithCondition: SC_hasData];
-*/
         }
-
         if (generatesOutput) {
             [outputQueue prepareQueueAsType: audioBufferQueue_typeOutput withBufferPrototype: buff];
-/*
-            int i;
-            [processedOutputBuffersLock lock];
-            [processedOutputBuffersLock unlockWithCondition: SC_noData];            
-            [pendingOutputBuffersLock lock];
-            for (i = 0; i < numOutputBuffers - 1; i++)  
-              [pendingOutputBuffers addObject: [buff copy]];
-            [pendingOutputBuffersLock unlockWithCondition: SC_hasData];
-*/            
-        }
-        
-//        NSLog(@"OUTPUTQUEUE: %@",[outputQueue description]);
-        
+        }        
         [self prepareToStreamWithBuffer: buff];
         [self setManager: m];
         
@@ -343,36 +309,15 @@ enum {
     
     if (generatesOutput)
     {
-//        NSLog(@"startprocessing: stage1");
-
         oc = [outputQueue processedBuffersCount];
-/*        
-        [processedOutputBuffersLock lock];
-        oc = [processedOutputBuffers count];
-        [processedOutputBuffersLock unlock];
-*/          
 #if SNDSTREAMCLIENT_DEBUG            
       fprintf(stderr,"[%s] time: %f Processed: %i Pending: %i \n", [clientName cString], t, oc, [outputQueue pendingBuffersCount]);
 #endif          
 
       if (oc > 0) {
-/*
-        [pendingOutputBuffersLock lock];
-        [pendingOutputBuffers addObject: exposedOutputBuffer];            
-        [exposedOutputBuffer release];
-        [pendingOutputBuffersLock unlockWithCondition: SC_hasData];
-              
-        [processedOutputBuffersLock lock];
-        exposedOutputBuffer = [[processedOutputBuffers objectAtIndex: 0] retain];
-        [processedOutputBuffers removeObjectAtIndex: 0];
-        [processedOutputBuffersLock unlock];
-*/
-
         [outputQueue addPendingBuffer: exposedOutputBuffer];
         [exposedOutputBuffer release];        
         exposedOutputBuffer = [[outputQueue popNextProcessedBuffer] retain];
-
-//              NSLog(@"swapped buffers");
       }
       else if (bDelegateRespondsToOutputBufferSkipSelector)
         [delegate outputBufferSkipped: self];
@@ -387,30 +332,9 @@ enum {
       if (inB == nil)
         NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n");
       else {
-      /*
-        [processedInputBuffersLock lock];
-        ic = [processedInputBuffers count];
-        [processedInputBuffersLock unlock];
-      */
         ic = [inputQueue processedBuffersCount];
         
         if (ic) {
-/*
-          SndAudioBuffer *inBloc = nil;
-
-          [processedInputBuffersLock lock];
-          inBloc = [[processedInputBuffers objectAtIndex: 0] retain];
-          [processedInputBuffers removeObjectAtIndex: 0];
-          [processedInputBuffersLock unlock];
-
-          [inBloc copyData: inB];
-                
-          [pendingInputBuffersLock lock];
-          [pendingInputBuffers addObject: inBloc];
-          [inBloc release];
-          [pendingInputBuffersLock unlockWithCondition: SC_hasData];
-*/
-
           SndAudioBuffer *inBloc = [[inputQueue popNextProcessedBuffer] retain];
           [inBloc copyData: inB];
           [inputQueue addPendingBuffer: inBloc];                      
@@ -433,8 +357,7 @@ enum {
         bDisconnect = FALSE;
 #if SNDSTREAMCLIENT_DEBUG            
     fprintf(stderr,"SndStreamClient: disconnected\n");                       
-#endif
-        
+#endif        
       }
     }
 /*
