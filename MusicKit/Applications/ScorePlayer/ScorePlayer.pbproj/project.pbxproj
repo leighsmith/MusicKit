@@ -460,9 +460,9 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>ScorePlayerDoc.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>scorefiles</string>
+			<string>MusicKit ScoreFiles</string>
 			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
+			<string>Editor</string>
 		</dict>
 		<dict>
 			<key>CFBundleTypeExtensions</key>
@@ -472,7 +472,7 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>ScorePlayerDoc2.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>playscore files</string>
+			<string>MusicKit playscore (binary) ScoreFiles</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 		</dict>
@@ -484,7 +484,19 @@
 			<key>CFBundleTypeIconFile</key>
 			<string>Midi.icns</string>
 			<key>CFBundleTypeName</key>
-			<string>SMF</string>
+			<string>Standard MIDI File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>snd</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>Sound</string>
+			<key>CFBundleTypeName</key>
+			<string>NeXT/Sun soundfiles</string>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 		</dict>
