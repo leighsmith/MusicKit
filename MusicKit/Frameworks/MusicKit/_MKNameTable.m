@@ -36,6 +36,9 @@
 Modification history:
 
  $Log$
+ Revision 1.15  2004/11/16 18:17:26  leighsmith
+ Removed _MKTuningSystemInit() so it is now unnecessary to initialise the tuning system until it is needed
+
  Revision 1.14  2003/08/16 22:29:11  leighsmith
  replaced some i386 #if conditions with a tighter check to verify it is only in the case of Intel NeXTStep platforms, several chunks of code were being compiled on Intel machines running GnuStep
 
@@ -171,8 +174,8 @@ MK_envelope, MK_waveTable or MK_object. (Actually, it's anything
   NSEndMapTableEnumeration(&enumerator);
 }
 
-_MKNameTable *_MKNameTableAddName(_MKNameTable * table, NSString *theName,id theOwner,
-                                  id theObject, unsigned short theType,BOOL copyIt)
+_MKNameTable *_MKNameTableAddName(_MKNameTable *table, NSString *theName, id theOwner,
+                                  id theObject, unsigned short theType, BOOL copyIt)
 /*
  * Adds the object theObject in the table, with name theName and owner
  * theOwner. If there is already an entry for this name and owner does
@@ -575,62 +578,60 @@ static void initKeyWords()
 /* set up defaults which will apply to each app linked to the MK framework. */
 void _MKCheckInit(void)
 {
-  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-  NSDictionary *MKDefaults;
-
-  if (globalParseNameTable)  /* Been here? */
-    return;
-  MKDefaults = [[NSDictionary dictionaryWithObjectsAndKeys:
-    @"", @"MKTrace",
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *MKDefaults;
+    
+    if (globalParseNameTable)  /* Been here? */
+	return;
+    MKDefaults = [[NSDictionary dictionaryWithObjectsAndKeys:
+	@"", @"MKTrace",
 #if 0  // disabled as it is becoming redundant as we move DSP to native CPU
-    @"", @"MKDSPSerialPortDevice0",
-    @"", @"MKDSPSerialPortDevice1",
-    @"", @"MKDSPSerialPortDevice2",
-    @"", @"MKDSPSerialPortDevice3",
-    @"", @"MKDSPSerialPortDevice4",
-    @"", @"MKDSPSerialPortDevice5",
-    @"", @"MKDSPSerialPortDevice6",
-    @"", @"MKDSPSerialPortDevice7",
-    @"", @"MKDSPSerialPortDevice8",
-    @"", @"MKDSPSerialPortDevice9",
-    @"", @"MKDSPSerialPortDevice10",
-    @"", @"MKDSPSerialPortDevice11",
-    @"", @"MKDSPSerialPortDevice12",
-    @"", @"MKDSPSerialPortDevice13",
-    @"", @"MKDSPSerialPortDevice14",
-    @"", @"MKDSPSerialPortDevice15",
+	@"", @"MKDSPSerialPortDevice0",
+	@"", @"MKDSPSerialPortDevice1",
+	@"", @"MKDSPSerialPortDevice2",
+	@"", @"MKDSPSerialPortDevice3",
+	@"", @"MKDSPSerialPortDevice4",
+	@"", @"MKDSPSerialPortDevice5",
+	@"", @"MKDSPSerialPortDevice6",
+	@"", @"MKDSPSerialPortDevice7",
+	@"", @"MKDSPSerialPortDevice8",
+	@"", @"MKDSPSerialPortDevice9",
+	@"", @"MKDSPSerialPortDevice10",
+	@"", @"MKDSPSerialPortDevice11",
+	@"", @"MKDSPSerialPortDevice12",
+	@"", @"MKDSPSerialPortDevice13",
+	@"", @"MKDSPSerialPortDevice14",
+	@"", @"MKDSPSerialPortDevice15",
 #endif
 #if i386 && defined(__NeXT__)
-    @"SSI", @"MKOrchestraSoundOut",   /* One of "Host", "SSI", "IRQA", "IRQB" */
+	@"SSI", @"MKOrchestraSoundOut",   /* One of "Host", "SSI", "IRQA", "IRQB" */
 #else
-    @"Host", @"MKOrchestraSoundOut",
+	@"Host", @"MKOrchestraSoundOut",
 #endif
-    NULL,NULL] retain];
-
-  [defaults registerDefaults:MKDefaults]; //stick these in the temporary area that is searched last.
-
-  MKSetTrace([defaults integerForKey:@"MKTrace"]);
-
-  /*sb: I don't think we need to register anything here. */
-  MKSetErrorStream(nil);
-  /* We don't try and use the Appkit error mechanism. It's not well-suited to real-time. */
-  //  NXRegisterErrorReporter( MK_ERRORBASE, MK_ERRORBASE+1000,_MKWriteError);
-  globalParseNameTable = [[_MKNameTable alloc] initWithCapacity: GLOBALTABLESIZE];
-  mkNameTable = [[_MKNameTable alloc] initWithCapacity: 0];
-  [[[MKNote alloc] init] release]; /* Force initialization. Must be after table creation.*/
-  _MKTuningSystemInit();
+	NULL,NULL] retain];
+    
+    [defaults registerDefaults: MKDefaults]; //stick these in the temporary area that is searched last.
+    
+    MKSetTrace([defaults integerForKey: @"MKTrace"]);
+    
+    /*sb: I don't think we need to register anything here. */
+    MKSetErrorStream(nil);
+    /* We don't try and use the Appkit error mechanism. It's not well-suited to real-time. */
+    //  NXRegisterErrorReporter( MK_ERRORBASE, MK_ERRORBASE+1000,_MKWriteError);
+    globalParseNameTable = [[_MKNameTable alloc] initWithCapacity: GLOBALTABLESIZE];
+    mkNameTable = [[_MKNameTable alloc] initWithCapacity: 0];
+    [[[MKNote alloc] init] release]; /* Force initialization. Must be after table creation.*/
 }
 
-// Needs NSDictionary
-_MKNameTable *
-_MKNewScorefileParseTable(void)
+// TODO Needs NSDictionary
+_MKNameTable *_MKNewScorefileParseTable(void)
 {
-  /* Initialize a local symbol table for a new score file to be parsed.
-  Global symbols are not included here. */
-  _MKNameTable *localTable = [[_MKNameTable alloc] initWithCapacity: LOCALTABLESIZE];
-  initKeyWords();     /* Add key words to global symbol table. */
-  importAutoGlobals(globalParseNameTable,localTable);
-  return localTable;
+    // Initialize a local symbol table for a new score file to be parsed.
+    // Global symbols are not included here.
+    _MKNameTable *localTable = [[_MKNameTable alloc] initWithCapacity: LOCALTABLESIZE];
+    initKeyWords();     /* Add key words to global symbol table. */
+    importAutoGlobals(globalParseNameTable,localTable);
+    return localTable;
 }
 
 void _MKFreeScorefileTable(_MKNameTable *aTable)
