@@ -21,6 +21,9 @@
 */
 /*
   $Log$
+  Revision 1.11  2000/07/22 00:31:17  leigh
+  Reassert Snd as the one true way to deal with sound.
+
   Revision 1.10  2000/04/26 01:21:52  leigh
   Moved uglySamplerTimingHack to firstNote in the dreadful scenario
   that the default must change during the run of the program :-(
@@ -53,9 +56,6 @@
   Added sample playback support
 
 */
-// 1 to use the SndKit, 0 to use NSSound
-// MacOsX-Server works more reliably with SndKit, NSSound is more complete on MacOsX DP3.
-#define USE_SNDKIT 1  
 #import "_musickit.h"
 #import "MKSamplerInstrument.h"
 #import "MKConductor.h"
@@ -115,7 +115,7 @@ static float uglySamplerTimingHack = 0.0;
 {
     unsigned int i;
     for(i = 0; i < [nameTable count]; i++) {
-        [WorkingSoundClass removeSoundForName: [nameTable objectAtIndex: i]];
+        [Snd removeSoundForName: [nameTable objectAtIndex: i]];
     }
 }
 
@@ -134,7 +134,7 @@ static float uglySamplerTimingHack = 0.0;
     int key;
     int baseKey;
     int noteTag;
-    WorkingSoundClass *newSound;
+    Snd *newSound;
     NSString *filePath;
 
     // NSLog(@"Preparing %@\n", aNote);
@@ -148,24 +148,17 @@ static float uglySamplerTimingHack = 0.0;
 
     filePath = [aNote parAsString: MK_filename];
     // either retrieve playingSample from the table of playing sounds according to the filename or create afresh.
-    if ([WorkingSoundClass soundNamed: filePath] != nil) {     // check if the sound file is already loaded.
+    if ([Snd soundNamed: filePath] != nil) {     // check if the sound file is already loaded.
         // NSLog(@"Already loaded for keyNum %d %@\n", key, filePath);
         return nil;
     }
 
     // not loaded, load it now.
-    // read soundfile, for now loading it into a WorkingSoundClass object, eventually priming the buffers for play direct from disk.
-#if USE_SNDKIT
+    // read soundfile, for now loading it into a Snd object, eventually priming the buffers for play direct from disk.
     if ((newSound = [Snd addName: filePath fromSoundfile: filePath]) == nil) {
-#else
-    if ((newSound = [[NSSound alloc] initWithContentsOfFile: filePath byReference: NO]) == nil) {
-#endif
         _MKErrorf(MK_cantOpenFileErr, filePath);
         return nil;
     }
-#if !USE_SNDKIT
-    [newSound setName: filePath];
-#endif
     [nameTable addObject: filePath];
     velocity = [aNote parAsInt: MK_velocity];
     return self;
@@ -173,7 +166,7 @@ static float uglySamplerTimingHack = 0.0;
 
 - playSampleNote: aNote
 {
-    WorkingSoundClass *existingSound;
+    Snd *existingSound;
     NSString *filePath;
 
     // only play those notes which are samples.
@@ -182,7 +175,7 @@ static float uglySamplerTimingHack = 0.0;
     filePath = [aNote parAsString: MK_filename];
     // NSLog(@"playing file %@\n", filePath);
 
-    if ((existingSound = [WorkingSoundClass soundNamed: filePath]) == nil) {
+    if ((existingSound = [Snd soundNamed: filePath]) == nil) {
         _MKErrorf(MK_cantOpenFileErr, filePath);
         return nil;
     }
@@ -195,7 +188,7 @@ static float uglySamplerTimingHack = 0.0;
 // Probably should revamp this to determine the playingSound instance to send the stop to.
 - stopSampleNote: aNote
 {
-    WorkingSoundClass *existingSound;
+    Snd *existingSound;
     NSString *filePath;
 
     // NSLog(@"stopping sample note %@ at time %@\n", aNote, [NSDate date]);
@@ -207,7 +200,7 @@ static float uglySamplerTimingHack = 0.0;
     }
     filePath = [aNote parAsString: MK_filename];
 
-    if ((existingSound = [WorkingSoundClass soundNamed: filePath]) == nil) {
+    if ((existingSound = [Snd soundNamed: filePath]) == nil) {
         _MKErrorf(MK_cantOpenFileErr, filePath);
         return nil;
     }
@@ -325,13 +318,13 @@ static float uglySamplerTimingHack = 0.0;
 NSLog(@"in MKSamplerInstrument deactivate:\n");
 #if 0 // only needed when we are recording.
   if (noteTag == recordTag) {
-    WorkingSoundClass *newSound, *oldSound;
+    Snd *newSound, *oldSound;
 
     [recorder stopRecording];
     newSound = [recorder soundStruct];
     [self clearAtKey:recordKey];
     if (!playingSamples[recordKey]) {
-    playingSamples[recordKey] = [[WorkingSoundClass alloc] initWithSound:newSound];
+    playingSamples[recordKey] = [[Snd alloc] initWithSound:newSound];
       [playingSamples[recordKey] setDelegate:self];
       [playingSamples[recordKey] enablePreloading:preloadingEnabled];
     }
@@ -386,7 +379,7 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
     else objc_msgSend(receiver,selector,arg); \
   }
 
-// The problem is currently we can't request a WorkingSoundClass instance to play at some future moment in time
+// The problem is currently we can't request a Snd instance to play at some future moment in time
 // with respect to the playback clock like we can with the MIDI driver used within MKMidi.
 // Therefore we use the conductor to time sending a message in the future to play the sound file at the
 // deltaT offset and pray there isn't too much overhead playing the sound.
@@ -474,7 +467,7 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
 }
 
 // NSSound delegate
-- (void) sound:(WorkingSoundClass *) sound didFinishPlaying:(BOOL) finished
+- (void) sound:(Snd *) sound didFinishPlaying:(BOOL) finished
 {
     NSLog(@"did finish playing %d sound named %@\n", finished, [sound name]);
     if(finished) {

@@ -18,6 +18,9 @@
 */
 /*
   $Log$
+  Revision 1.9  2000/07/22 00:31:17  leigh
+  Reassert Snd as the one true way to deal with sound.
+
   Revision 1.8  2000/05/09 03:12:06  leigh
   Removed NSSound use and fully replaced with SndKit,\
    if necessary, SndKit will just become a wrapper around NSSound
@@ -45,7 +48,6 @@
 #define __MK_SamplerInstrument_H___
 
 #import <SndKit/SndKit.h>
-#define WorkingSoundClass Snd
 #import "MKInstrument.h"
 
 @interface MKSamplerInstrument: MKInstrument
@@ -85,7 +87,7 @@
     id recordModeInterface;
     int recordKey;
     int recordTag;
-    WorkingSoundClass *recorder;
+    Snd *recorder;
 }
 
 - init;
@@ -97,7 +99,7 @@
 - prepareSoundWithNote: (MKNote *) aNote;
 - (void) removePreparedSounds;
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
-- (void) sound: (WorkingSoundClass *) sound didFinishPlaying:(BOOL)aBool;
+- (void) sound: (Snd *) sound didFinishPlaying:(BOOL)aBool;
 - (void) encodeWithCoder:(NSCoder *) coder;
 - (id) initWithCoder:(NSCoder *) decoder;
 - performerDidDeactivate: (id) sender;
