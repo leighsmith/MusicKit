@@ -19,6 +19,7 @@
 #import "SndPlayer.h"
 #import "SndStreamManager.h"
 #import "SndPerformance.h"
+#import "SndAudioFader.h"
 
 #define SNDPLAYER_DEBUG                          0
 #define SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS        0
@@ -60,8 +61,6 @@ static SndPlayer *defaultSndPlayer;
     SndSoundStruct s;
       
     SNDStreamNativeFormat(&s); /* get maximum length for processing buffer */
-    if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowStreamingFormat"])
-	NSLog(@"Native format of streaming audio buffer: %@\n", SndStructDescription(&s));
 
     nativelyFormattedStreamingBuffer = [[SndAudioBuffer alloc] initWithFormat: &s data: NULL];
     
