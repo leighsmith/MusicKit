@@ -1146,7 +1146,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/SoundKit.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)//Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)//Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
 				FRAMEWORK_VERSION = 5.2;
 				HEADER_SEARCH_PATHS = "";
 				LIBRARY_SEARCH_PATHS = ./;
