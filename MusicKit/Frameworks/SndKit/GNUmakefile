@@ -15,6 +15,9 @@
 
 #Modification history:
 # $Log$
+# Revision 1.4  2001/08/27 09:32:54  sbrandon
+# added more stringent compiler warnings on GNUstep
+#
 # Revision 1.3  2001/08/08 19:29:19  sbrandon
 # - added new classes SndAudioFader, SndEnvelope, SndBreakpoint
 #
@@ -48,7 +51,7 @@ $(FRAMEWORK_NAME)_RESOURCE_DIRS =
 #sb: not sure about this...
 #$(FRAMEWORK_NAME)BUNDLE_LIBS = 
 
-ADDITIONAL_FLAGS += -g
+ADDITIONAL_FLAGS += -g -Wall
 
 # The Bundle Objective-C source files to be compiled
 $(FRAMEWORK_NAME)_OBJC_FILES = \
