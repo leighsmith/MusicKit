@@ -12,7 +12,10 @@
   accompany all relevant code.
 */
 #import "SndAudioBuffer.h"
+
+#ifdef __VEC__
 #import <vecLib/vecLib.h>
+#endif
 
 @implementation SndAudioBuffer
 
@@ -198,13 +201,14 @@
                 float *out = (float*) data;
 
                 if (selfNumChannels == buffNumChannels) {
-
+#ifdef __VEC__
+/* FIXME need to do extra check to ensure altivec is supported at runtime */
                     vadd(in, 1,out+start,1,out+start,1,frameCount * buffNumChannels);
-
-// ALTIVEC                
-//                    for (i = 0; i < frameCount * buffNumChannels; i++) {
-//                        out[i+start] += in[i]; // interleaving automatically taken care of!
-//                    }
+#else
+                    for (i = 0; i < frameCount * buffNumChannels; i++) {
+                        out[i+start] += in[i]; // interleaving automatically taken care of!
+                    }
+#endif
                 }
                 else if (selfNumChannels == 2) {
                     switch (buffNumChannels) {
