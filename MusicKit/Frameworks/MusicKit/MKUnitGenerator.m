@@ -16,7 +16,7 @@
     and
     -init
 
-    In addition to the subclasss responsibility methods given below, the 
+    In addition to the subclass responsibility methods given below, the 
     subclass designer will probably want to provide methods for poking 
     values into the DSP (e.g. an oscillator would have a setFreq:
     method.) The utility dspwrap (not provided in release 0.9) 
@@ -32,6 +32,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/01/13 06:38:27  leigh
+  Corrected _MKErrorf to take NSString error message, kludging the second parameter to be assumed as a char *, this needs further work
+
   Revision 1.4  1999/11/12 01:25:43  leigh
   Fixed error message to NSString
 
@@ -59,6 +62,9 @@ Modification history:
   6/11/93/daj - Changed assignment to self in private +_new method (for NS486)
   11/6/94/daj - Changed error returns to notify orch on abort.
 */
+
+// LMS: FIXME _MKErrorf use here is wrong, for now I'm continuing to make the earlier assumption that the second argument
+// is somehow a cString.
 
 #import "UnitGeneratorPrivate.h"
 #import "_musickit.h"
@@ -163,7 +169,7 @@ id _MKFixupUG(MKUnitGenerator *self,DSPFix48 *ts)
 	      if (ec)
 		if (ec == DSP_EABORT)
 		  [self->orchestra _notifyAbort];
-                  else return _MKErrorf(MK_ugLoadErr,[NSStringFromClass([self class]) cString]);
+                  else return _MKErrorf(MK_ugLoadErr, NSStringFromClass([self class]));
 	  }
       }
     return self;
@@ -494,7 +500,7 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
 static id argOutOfBoundsErr(unsigned argNum,MKUnitGenerator *self)
   /* Generates error message saying argument is out of bounds. */
 {
-    return _MKErrorf(MK_ugBadArgErr,argNum,[NSStringFromClass([self class]) cString]);
+    return _MKErrorf(MK_ugBadArgErr, [NSString stringWithCString: (char *) argNum], NSStringFromClass([self class]));
 }
 
 static id addrSetErr(MKUnitGenerator *self,unsigned argNum)
@@ -503,9 +509,8 @@ static id addrSetErr(MKUnitGenerator *self,unsigned argNum)
 {
     if (OUTOFBOUNDS(self,argNum))
       argOutOfBoundsErr(argNum,self);
-    return _MKErrorf((self->args[argNum].addressMemSpace != DSP_MS_N) ? 
-		     MK_ugNonAddrErr : MK_ugNonDatumErr,
-                     argName(self,argNum),[NSStringFromClass([self class]) cString]);
+    return _MKErrorf((self->args[argNum].addressMemSpace != DSP_MS_N) ?  MK_ugNonAddrErr : MK_ugNonDatumErr,
+                     [NSString stringWithCString: argName(self,argNum)], NSStringFromClass([self class]));
 }
 
 static void reportOpt(MKUnitGenerator *self,unsigned argNum)
@@ -648,8 +653,8 @@ id MKSetUGDatumArg(MKUnitGenerator *self,unsigned argNum,DSPDatum val)
 	if (ec)
 	  if (ec == DSP_EABORT)
 	    [self->orchestra _notifyAbort];
-	  else return _MKErrorf(MK_ugBadDatumPokeErr,val,
-				argName(self,argNum),[NSStringFromClass([self class]) cString]);
+          else return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+				argName(self,argNum), [NSStringFromClass([self class]) cString]);
 	return self;
     }
     if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
@@ -662,7 +667,7 @@ id MKSetUGDatumArg(MKUnitGenerator *self,unsigned argNum,DSPDatum val)
     if (ec)
       if (ec == DSP_EABORT)
 	[self->orchestra _notifyAbort];
-      else return _MKErrorf(MK_ugBadDatumPokeErr,val,
+      else return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
 			    argName(self,argNum),[NSStringFromClass([self class]) cString]);
     return self;
 }
@@ -702,8 +707,8 @@ id MKSetUGDatumArgLong(MKUnitGenerator *self,unsigned argNum,DSPLongDatum *val)
 	if (ec)
 	  if (ec == DSP_EABORT)
 	    [self->orchestra _notifyAbort];
-	  else return _MKErrorf(MK_ugBadDatumPokeErr,val,
-				argName(self,argNum),[NSStringFromClass([self class]) cString]);
+          else return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+				argName(self,argNum), [NSStringFromClass([self class]) cString]);
     }
     else {
 	if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
@@ -717,8 +722,8 @@ id MKSetUGDatumArgLong(MKUnitGenerator *self,unsigned argNum,DSPLongDatum *val)
 	if (ec)
 	  if (ec == DSP_EABORT)
 	    [self->orchestra _notifyAbort];
-	  else return _MKErrorf(MK_ugBadDatumPokeErr,val,
-				argName(self,argNum),[NSStringFromClass([self class]) cString]);
+          else return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
+				argName(self,argNum), [NSStringFromClass([self class]) cString]);
     }
     return self;
 }
@@ -747,17 +752,17 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
 	if (OUTOFBOUNDS(self,argNum))                 /* Arg ok? */
 	  return argOutOfBoundsErr(argNum,self);
 	if (self->_orchIndex != memP->orchIndex)            /* Right orch? */
-	  return _MKErrorf(MK_ugOrchMismatchErr,memP->orchIndex,
-			   argName(self,argNum),[NSStringFromClass([self class]) cString],self->_orchIndex);
+          return _MKErrorf(MK_ugOrchMismatchErr, [NSString stringWithCString: (char *) memP->orchIndex],
+			   argName(self,argNum), [NSStringFromClass([self class]) cString],self->_orchIndex);
 	if (argP->addressMemSpace == DSP_MS_N)        /* Address valued arg? */
 	  return addrSetErr(self,argNum);
 	if (argP->addressMemSpace != memP->memSpace)  /* space match? */ 
 	  return _MKErrorf(MK_ugArgSpaceMismatchErr,
-			   (((int)memP->memSpace < (int)DSP_MS_Num 
-			     && (int)memP->memSpace > (int)DSP_MS_N) ? 
-			    ((int)memP->memSpace) : "invalid"),
+                           [NSString stringWithCString: 
+				(((int)memP->memSpace < (int)DSP_MS_Num && (int)memP->memSpace > (int)DSP_MS_N) ? 
+			    ((char *)memP->memSpace) : "invalid")],
 			   DSPMemoryNames((int)argP->addressMemSpace),
-			   argName(self,argNum),[NSStringFromClass([self class]) cString]);
+			   argName(self,argNum), NSStringFromClass([self class]));
     }
     if (optimize(self,argNum,argP,memP->address,0))
       return self;
@@ -775,8 +780,8 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
     if (ec)
       if (ec == DSP_EABORT)
 	[self->orchestra _notifyAbort];
-      else return _MKErrorf(MK_ugBadAddrPokeErr,memP->address,
-			    argName(self,argNum),[NSStringFromClass([self class]) cString]);
+      else return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
+			    argName(self,argNum), [NSStringFromClass([self class]) cString]);
     return self;
 }
 
@@ -811,7 +816,7 @@ id MKSetUGAddressArgToInt(MKUnitGenerator *self,unsigned argNum,DSPAddress addr)
     if (ec)
       if (ec == DSP_EABORT)
 	[self->orchestra _notifyAbort];
-      else return _MKErrorf(MK_ugBadAddrPokeErr,addr,
+      else return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) addr],
 			    argName(self,argNum),[NSStringFromClass([self class]) cString]);
     return self;
 }
@@ -857,8 +862,8 @@ static id specialAddressVal(self,argNum,orchSel)
     if (ec)
       if (ec == DSP_EABORT)
 	[self->orchestra _notifyAbort];
-      else return _MKErrorf(MK_ugBadAddrPokeErr,memP->address,
-			    argName(self,argNum),[NSStringFromClass([self class]) cString]);
+      else return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
+			    argName(self,argNum), [NSStringFromClass([self class]) cString]);
     return self;
 }
 
@@ -1189,7 +1194,7 @@ extern int _MKOrchestraGetNoops(void);
     if (ec)
       if (ec == DSP_EABORT)
 	[aUG->orchestra _notifyAbort];
-        else return _MKErrorf(MK_ugLoadErr,[NSStringFromClass([aUG class]) cString]);
+        else return _MKErrorf(MK_ugLoadErr, NSStringFromClass([aUG class]));
     /* Relocate arguments. */
     if (aUG->_classInfo->master->argCount > 0) { 
 	/* Allocate a block of args and relocate args. */
