@@ -51,9 +51,9 @@
             OUTLETS = {freqFields = id; logFreq = id; }; 
             SUPERCLASS = NSView; 
         }, 
-        {CLASS = SynthPatch; LANGUAGE = ObjC; SUPERCLASS = Object; }, 
-        {CLASS = UnitGenerator; LANGUAGE = ObjC; SUPERCLASS = Object; }, 
-        {CLASS = Xforms; LANGUAGE = ObjC; SUPERCLASS = Object; }, 
+        {CLASS = SynthPatch; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = UnitGenerator; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = Xforms; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
             ACTIONS = {updateGain = id; }; 
             CLASS = Z3DPlaneView; 

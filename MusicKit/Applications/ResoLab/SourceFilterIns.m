@@ -234,10 +234,10 @@ static int		ampAsymp,   	/* amplitude envelope UG */
     double	myFreqAtt = [aNote parAsDouble:MK_freqAtt];
     double	myFreqRel = [aNote parAsDouble:MK_freqRel];
 
-    int		MK_svibAmpAtt = [[aNote class] parName:"MK_svibAmpAtt"],
-    		MK_svibAmpRel = [[aNote class] parName:"MK_svibAmpRe"],
-    		MK_svibFreqAtt = [[aNote class] parName:"MK_svibFreqAtt"],
-    		MK_svibFreqRel = [[aNote class] parName:"MK_svibFreqRel"];
+    int		MK_svibAmpAtt = [[aNote class] parName: @"MK_svibAmpAtt"],
+    		MK_svibAmpRel = [[aNote class] parName: @"MK_svibAmpRe"],
+    		MK_svibFreqAtt = [[aNote class] parName: @"MK_svibFreqAtt"],
+    		MK_svibFreqRel = [[aNote class] parName: @"MK_svibFreqRel"];
 
     id		myVAmpEnv = [aNote parAsEnvelope:MK_svibAmpEnv];
     double	myVAmp0   = [aNote parAsDouble:MK_svibAmp0];
@@ -251,13 +251,13 @@ static int		ampAsymp,   	/* amplitude envelope UG */
     double	myVFreqAtt = [aNote parAsDouble:MK_svibFreqAtt];
     double	myVFreqRel = [aNote parAsDouble:MK_svibFreqRel];
 
-    int		RESO_sourceFader = [[MKNote class] parName: "RESO_sourceFader"];
+    int		RESO_sourceFader = [[MKNote class] parName: @"RESO_sourceFader"];
     double	mySourceFader = [aNote parAsDouble: RESO_sourceFader];
     
-    int		RESO_oscLevel = [[MKNote class] parName: "RESO_oscLevel"];
+    int		RESO_oscLevel = [[MKNote class] parName: @"RESO_oscLevel"];
     double	myOscLevel = [aNote parAsDouble: RESO_oscLevel];
     
-    int		RESO_noiseLevel = [[MKNote class] parName: "RESO_noiseLevel"];
+    int		RESO_noiseLevel = [[MKNote class] parName: @"RESO_noiseLevel"];
     double	myNoiseLevel = [aNote parAsDouble: RESO_noiseLevel];
     
     id		myWaveTable  = [aNote parAsWaveTable:MK_waveform];
@@ -268,23 +268,23 @@ static int		ampAsymp,   	/* amplitude envelope UG */
     
     double 	myrvibAmp = [aNote parAsDouble:MK_rvibAmp];
     
-    int		RESO_filt1pr = [[aNote class] parName:"RESO_filt1pr"],
-    		RESO_filt1pf = [[aNote class] parName:"RESO_filt1pf"],
-    		RESO_filt2pr = [[aNote class] parName:"RESO_filt2pr"],
-    		RESO_filt2pf = [[aNote class] parName:"RESO_filt2pf"],
-    		RESO_filt3pr = [[aNote class] parName:"RESO_filt3pr"],
-    		RESO_filt3pf = [[aNote class] parName:"RESO_filt3pf"],
-    		RESO_filt1zr = [[aNote class] parName:"RESO_filt1zr"],
-    		RESO_filt1zf = [[aNote class] parName:"RESO_filt1zf"],
-    		RESO_filt2zr = [[aNote class] parName:"RESO_filt2zr"],
-    		RESO_filt2zf = [[aNote class] parName:"RESO_filt2zf"],
-    		RESO_filt3zr = [[aNote class] parName:"RESO_filt3zr"],
-    		RESO_filt3zf = [[aNote class] parName:"RESO_filt3zf"],
-     		RESO_filt1Gain = [[aNote class] parName:"RESO_filt1Gain"],
-    		RESO_filt2Gain = [[aNote class] parName:"RESO_filt2Gain"],
-    		RESO_filt3Gain = [[aNote class] parName:"RESO_filt3Gain"];
+    int		RESO_filt1pr = [[aNote class] parName: @"RESO_filt1pr"],
+    		RESO_filt1pf = [[aNote class] parName: @"RESO_filt1pf"],
+    		RESO_filt2pr = [[aNote class] parName: @"RESO_filt2pr"],
+    		RESO_filt2pf = [[aNote class] parName: @"RESO_filt2pf"],
+    		RESO_filt3pr = [[aNote class] parName: @"RESO_filt3pr"],
+    		RESO_filt3pf = [[aNote class] parName: @"RESO_filt3pf"],
+    		RESO_filt1zr = [[aNote class] parName: @"RESO_filt1zr"],
+    		RESO_filt1zf = [[aNote class] parName: @"RESO_filt1zf"],
+    		RESO_filt2zr = [[aNote class] parName: @"RESO_filt2zr"],
+    		RESO_filt2zf = [[aNote class] parName: @"RESO_filt2zf"],
+    		RESO_filt3zr = [[aNote class] parName: @"RESO_filt3zr"],
+    		RESO_filt3zf = [[aNote class] parName: @"RESO_filt3zf"],
+     		RESO_filt1Gain = [[aNote class] parName: @"RESO_filt1Gain"],
+    		RESO_filt2Gain = [[aNote class] parName: @"RESO_filt2Gain"],
+    		RESO_filt3Gain = [[aNote class] parName: @"RESO_filt3Gain"];
 		
-    int 	RESO_numHarmonics = [[aNote class] parName:"RESO_numHarmonics"];
+    int 	RESO_numHarmonics = [[aNote class] parName: @"RESO_numHarmonics"];
     int         myNumHarmonics = [aNote parAsInt:RESO_numHarmonics];
     		
     double   	myFilt1pr = [aNote parAsDouble:RESO_filt1pr],
