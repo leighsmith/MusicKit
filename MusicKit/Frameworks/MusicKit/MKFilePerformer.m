@@ -92,6 +92,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2003/08/04 21:19:37  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.11  2002/01/29 16:07:54  sbrandon
   simplified retain/autorelease usage (not bugfixes)
 
@@ -308,7 +311,7 @@ Modification history:
 {
     if (filename) {
 	NSArray *fileExt = [[self class] fileExtensions];
-        int fileExtensionsIndex;
+        unsigned int fileExtensionsIndex;
 
         for (fileExtensionsIndex = 0; fileExtensionsIndex < [fileExt count];fileExtensionsIndex++) {
 /*	    stream = _MKOpenFileStream(filename,&(_fd(self)),NX_READONLY,

@@ -39,6 +39,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2003/08/04 21:19:36  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.6  2002/01/29 16:25:11  sbrandon
   removed redundant comments relating to NeXTSTEP-isms
   fixed object leak in initWithCoder:
@@ -339,7 +342,7 @@ Modification history:
    * If we copied the noteSenders, then we couldn't connect senders.
    */
 {
-    int noteReceiverIndex;
+    unsigned int noteReceiverIndex;
     MKNoteSender *newObj = NSCopyObject(self, 0, zone);
 
     newObj->noteReceivers = [NSMutableArray arrayWithCapacity: [noteReceivers count]];

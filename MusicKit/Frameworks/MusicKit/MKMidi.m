@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.48  2003/08/04 21:19:36  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.47  2002/09/25 17:38:09  leighsmith
   Made setupMTC and tearDownMTC methods rather than functions to avoid warnings of private ivar use
 
@@ -1275,7 +1278,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
      */
 {
     NSString *midiNumStrArr;
-    int i;
+    unsigned int deviceIndex;
     BOOL isSoft;
     NSString *defaultsValue;
     int num = getNumSuffix(devName, &isSoft);
@@ -1309,14 +1312,14 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
     *driverNameAndUnit = devName;
 
     // ensure the driver was on the legitimate list
-    for (i=0; i < [midiDriverNames count]; i++) {
-        if ([*driverNameAndUnit isEqualToString: [midiDriverNames objectAtIndex:i]]) {
+    for (deviceIndex = 0; deviceIndex < [midiDriverNames count]; deviceIndex++) {
+        if ([*driverNameAndUnit isEqualToString: [midiDriverNames objectAtIndex: deviceIndex]]) {
 	    // num will be NO_UNIT if there was no conversion from soft to hard driver names
 	    // LMS: Disabled unit check as getNumSuffix() will report MPU-401 as the 401st unit!
             // The check was really doing very little since we have verified the name is correct anyway.
             // If the driver name included a numeric suffix i.e Mididriver0 then the match above
             // has verified correctly.
-	    // if ((num == NO_UNIT) || ([[midiDriverUnits objectAtIndex: i] intValue] == num)) 
+	    // if ((num == NO_UNIT) || ([[midiDriverUnits objectAtIndex: deviceIndex] intValue] == num)) 
 		return YES;
 	}
     }
@@ -1925,7 +1928,7 @@ static void cancelQueueReq(MKMidi *self)
 - (void) downloadDLS: (NSArray *) dlsPatches
 {
     unsigned int *dlsPatchArray;
-    int i;
+    unsigned int i;
 
     if (OUTPUTENABLED(ioMode) && deviceStatus != MK_devClosed) {
         _MK_MALLOC(dlsPatchArray, unsigned int, [dlsPatches count]);

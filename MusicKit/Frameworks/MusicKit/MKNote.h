@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.20  2003/08/04 21:19:36  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.19  2002/01/23 15:33:02  sbrandon
   The start of a major cleanup of memory management within the MK. This set of
   changes revolves around MKNote allocation/retain/release/autorelease.
@@ -515,7 +518,7 @@ MKDataType;
     NSHashTable *_parameters;       /* Set of parameter values. */
     unsigned _mkPars[MK_MKPARBITVECTS]; /* Bit vectors specifying presence of Music Kit parameters. */
     unsigned *_appPars; /* Bit-vector for application-defined parameters. */
-    short _highAppPar; /* Highest bit in _appPars (0 if none). */
+    unsigned short _highAppPar; /* Highest bit in _appPars (0 if none). */
     /* _orderTag disambiguates simultaneous notes. If it's negative,
        it means that the MKNote is actually slated for deletion. In this case,
        the ordering is the absolute value of _orderTag. */

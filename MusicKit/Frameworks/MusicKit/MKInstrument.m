@@ -14,6 +14,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.12  2003/08/04 21:19:37  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.11  2002/01/29 16:16:30  sbrandon
   plugged leak in copyWithZone (not releasing copies)
 
@@ -140,7 +143,7 @@
    * NoteReceiver collection.  Otherwise returns NO.
    */
 {
-    return ([self indexOfNoteReceiver: aNoteReceiver] == ((unsigned)-1))? NO : YES;
+    return ([self indexOfNoteReceiver: aNoteReceiver] == -1) ? NO : YES;
 }
 
 -addNoteReceiver: (MKNoteReceiver *) aNoteReceiver

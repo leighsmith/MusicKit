@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.13  2003/08/04 21:19:36  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.12  2002/01/29 16:36:22  skotmcdonald
   Fixed small character combination / * in log causing log comment block to be prematurely ended
 
@@ -429,7 +432,7 @@ extern void MKSetPreemptDuration(double seconds);
     DSPFix48 _previousTimeStamp;
     int _parenCount;
     int _bottomOfMemory;
-    int _bottomOfExternalMemory[3];
+    unsigned int _bottomOfExternalMemory[3];
     int _topOfExternalMemory[3];
     int _onChipPPPartitionSize;
     int _numXArgs;

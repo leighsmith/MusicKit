@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.28  2003/08/04 21:19:36  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.27  2002/04/16 15:28:47  sbrandon
   tightened up a couple of casts to keep compiler happy
 
@@ -473,8 +476,11 @@ static unsigned noteCachePtr = 0;
   else [super dealloc];
 }
 
-
-static int nAppBitVects(); /* forward ref */
+static unsigned int nAppBitVects(MKNote *self)
+/* Assumes we have an appBitVect. */
+{
+    return (self->_highAppPar) ? (self->_highAppPar - _MK_FIRSTAPPPAR) / BITS_PER_INT + 1 : 0;
+}
 
 - copyWithZone:(NSZone *)zone
   /* TYPE: Copying; Returns a new MKNote as a copy of the receiver.
@@ -961,13 +967,6 @@ static BOOL isParPresent(MKNote *aNote, unsigned aPar)
         return NO;    
 }
 
-static int nAppBitVects(self)
-    MKNote *self;
-    /* Assumes we have an appBitVect. */
-{
-    return (self->_highAppPar) ? (self->_highAppPar - _MK_FIRSTAPPPAR) / BITS_PER_INT + 1 : 0;
-}
-
 static BOOL setParBit(self,aPar)
     MKNote *self;
     unsigned aPar;
@@ -985,7 +984,7 @@ static BOOL setParBit(self,aPar)
     }
     bitVectIndex -= MK_MKPARBITVECTS;
     if (aPar > self->_highAppPar) {
-        int i;
+        unsigned int i;
         if (self->_highAppPar != 0)
            _MK_REALLOC(self->_appPars,unsigned,(bitVectIndex + 1));
         else 
@@ -1310,7 +1309,7 @@ BOOL MKIsNoteParPresent(MKNote *aNote,int par)
     return self;
 }
 
--(unsigned)parVector:(unsigned)index
+- (unsigned) parVector: (unsigned) index
   /* TYPE: Parameters; Checks presence of a number of parameters at once.
    * Returns a bit vector indicating the presence of parameters 
    * identified by integers (index * BITS_PER_INT) through 
@@ -1887,7 +1886,7 @@ unsigned MKNoteTags(unsigned n)
     /* Return the first of a block of n noteTags or generate an error
        and return MAXINT if no more noteTags or n is 0. */
     int base = highestTag + 1;
-    if (((int)MAXINT) - ((int)n) >= highestTag) { 
+    if (((unsigned int) MAXINT) - n >= highestTag) { 
         highestTag += n;
         return base;
     }

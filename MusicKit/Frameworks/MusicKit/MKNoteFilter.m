@@ -25,6 +25,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.9  2003/08/04 21:19:36  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.8  2002/01/29 16:23:35  sbrandon
   we now call superclass methods in archival methods
   copyWithZone: leaked objects - added releases where necessary
@@ -99,16 +102,16 @@
 
 #import "noteDispatcherMethods.m"
 
-- copyWithZone:(NSZone *)zone
+- copyWithZone: (NSZone *) zone
   /* Copies object, copying MKNoteSenders and MKNoteReceivers. */
 {
-    MKNoteFilter *newObj = [super copyWithZone:zone];
-    id ns_copy;
-    int i;
-    unsigned n;
-    newObj->noteSenders = [[NSMutableArray alloc] initWithCapacity:n = [noteSenders count]];
-    for (i=0; i<n; i++) {
-      ns_copy = [[noteSenders objectAtIndex:i] copy];
+    MKNoteFilter *newObj = [super copyWithZone: zone];
+    unsigned int i;
+    unsigned int n = [noteSenders count];
+    
+    newObj->noteSenders = [[NSMutableArray alloc] initWithCapacity: n];
+    for (i = 0; i < n; i++) {
+      id ns_copy = [[noteSenders objectAtIndex: i] copy];
       [newObj addNoteSender: ns_copy];
       [ns_copy release];
     }
