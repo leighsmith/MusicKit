@@ -40,6 +40,9 @@
 Modification history:
 
  $Log$
+ Revision 1.10  2001/09/20 01:41:37  leighsmith
+ Typed parameters
+
  Revision 1.9  2001/09/06 21:27:47  leighsmith
  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -154,7 +157,7 @@ enum {applyEnvBefore = 0,applyEnvAfter = 1,scaleEnvToFit = 2};
     return self;
 }
 
--firstNote:aNote 
+-firstNote: (MKNote *) aNote 
     /* This is invoked when first note is received during performance */
 {
     SndAlloc(&outSoundStruct,
@@ -368,7 +371,7 @@ static int timeToSamp(Snd *s,double time)
     return [s channelCount] * (int)([s samplingRate] * time + .5);
 }
 
--realizeNote:aNote fromNoteReceiver:aNoteReceiver
+-realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
   /* This is invoked when a new MKNote is received during performance */
 {
     MKNoteType type;
