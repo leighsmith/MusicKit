@@ -768,7 +768,7 @@ inline int _processBalance( int xPtr,
 
         /* log 'em */
 #if 0
-NSLog(@"time diff: %f at %f\n",GSTimeNow()-t,nowTime);
+//NSLog(@"time diff: %f at %f\n",GSTimeNow()-t,nowTime);
         NSLog(@"number of points: %d\n",xPtr);
         for (i = 0 ; i < xPtr ; i++) {
             NSLog(@"xVal %f ampFlag %d, ampY %f, balanceFlag %d, balanceY %f, balL %f, balR %f\n",
@@ -800,6 +800,7 @@ NSLog(@"time diff: %f at %f\n",GSTimeNow()-t,nowTime);
         double sr = [inB samplingRate];
         float proportion;
 
+//printf("before  : %f (nowTime %f) %f %f %f %f\n",GSTimeNow() - t, nowTime,inD[0],inD[1],inD[1022],inD[1023]);
         for (i = 0 ; i < xPtr - 1 ; i++) {
             startUee = &(uee[i]);
             endUee = &(uee[i+1]);
@@ -845,8 +846,14 @@ NSLog(@"time diff: %f at %f\n",GSTimeNow()-t,nowTime);
 
             lDiff = lEndAmp - lStartAmp; /* how much we have to scale l from start to end */
             rDiff = rEndAmp - rStartAmp;
+//printf("curr sample %d last sample %d nowTime %f lstart %f lend %f rstart %f rend %f\n",
+//    currSample,lastSample,nowTime,lStartAmp,lEndAmp,rStartAmp,rEndAmp);
 
-            if ((lDiff != 0.0F) && (rDiff != 0.0F)) {
+            if (timeDiff == 0.0F) {
+                inD[currSample] *= lStartAmp;
+                inD[currSample + 1] *= rStartAmp;
+            }
+            else if ((lDiff != 0.0F) && (rDiff != 0.0F)) {
                 for (j = currSample ; j <= lastSample ; j+=2) {
                     proportion = j/timeDiff;
                     lScaler = lStartAmp + lDiff * proportion;
@@ -878,6 +885,7 @@ NSLog(@"time diff: %f at %f\n",GSTimeNow()-t,nowTime);
                 }
             }
         }
+//printf("tot time: %f (nowTime %f) %f %f %f %f\n",GSTimeNow() - t, nowTime,inD[0],inD[1],inD[1022],inD[1023]);
         } /*end block */
       }
   }
