@@ -1,13 +1,18 @@
 #!/bin/sh
 # $Id$
-# Create a set of HTML pages suitable for distribution on the
-# web-site. We do this with a customised stylesheet (in DSSSL)
+# Create a set of HTML pages from the SGML documentation suitable for
+# distribution on the web-site. We do this with a customised stylesheet (in DSSSL)
 # to produce the correct text coloring, background images etc.
+#
+# Also creates HTML pages of class documentation from header files
+# using HeaderDoc and copies in PDF's of documentation.
+# The entire tree of documentation is then packaged up suitable for
+# shipping to a webserver.
 #
 # Leigh Smith <leigh@tomandandy.com>
 #
 
-JADE=jade
+JADE=openjade
 
 # HTML_DISTRIB_DIR makes it easier to install into SourceForge.
 HTML_DISTRIB_DIR=htdocs
@@ -29,8 +34,13 @@ MKPUBLICATIONS=$MKDOCDIR/Publications/
 MKHEADERDOC=$MKDOCDIR/HeaderDoc/
 MK_STYLEDIR=$MKDOCDIR/SGML
 MK_STYLESHEET=$MK_STYLEDIR/MusicKit_README.dsssl
-MKCONCEPTS_STYLESHEET=/usr/lib/sgml/stylesheets/cygnus-both.dsl
+#MKCONCEPTS_STYLESHEET=/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/html/docbook.dsl
+MKCONCEPTS_STYLESHEET=$MK_STYLESHEET
 MKTUTORIALS_STYLESHEET=$MKCONCEPTS_STYLESHEET
+
+# We allow the path to the ChangeLog to be passed in so it can be
+# posted onto the web for inspection.
+CHANGELOG=$1
 
 #
 # Convert all SGML to HTML and package
@@ -72,6 +82,7 @@ cat > $HTML_TMPDIR/Frameworks/index.html <<EOF
 <BODY bgcolor="#442643" text="#FFFFFF" link="#C7DE1E" alink="#969FF4" vlink="#80C2E2"> 
 <center><H1>MusicKit and SndKit Documented Frameworks</H1></center>
 EOF
+
 cd $MKHEADERDOC
 # The MacOS X version of the MKPerformSndMIDI framework is the 
 # definitive documentation version.
@@ -99,23 +110,51 @@ cat >> $HTML_TMPDIR/Frameworks/index.html <<EOF
 </body>
 </html>
 EOF
-cp -r $MKSRCDIR/Documentation/Frameworks/SynthPatches/Reference/Classes/Images $HTML_TMPDIR/Frameworks/MKSynthPatches
+
+# Copy images to appear in the class documentation into each respective class.
+mkdir $HTML_TMPDIR/Frameworks/MKSynthPatches/Images
+cp $MKSRCDIR/Documentation/Frameworks/SynthPatches/Reference/Classes/Images/*.png $HTML_TMPDIR/Frameworks/MKSynthPatches/Images
+
+# if we specified a changelog on the command line, copy it into the
+# web directory.
+if [ ${CHANGELOG}_x != _x ]; then
+    cp $CHANGELOG $HTML_TMPDIR
+fi
 
 #
 # Now create the PDF of the README
 #
+MKREADMETEX=`basename $MKREADMESRC .sgml`.tex
+PDFFINAL=`basename $MKREADMESRC .sgml`.pdf
 rm -rf $PDF_TMPDIR
 mkdir $PDF_TMPDIR
 cd $PDF_TMPDIR 
 cp $MK_STYLEDIR/Images/*.eps .
-db2dvi $MKREADMESRC # 2>1 /tmp/db.log
-PDFFINAL=`basename $MKREADMESRC .sgml`.pdf
-dvips -o intermediate.ps MusicKit_README.dvi
-# This allows us to incorporate any special postscript fonts.
-#psprepare intermediate.ps prepared.ps
-cp intermediate.ps prepared.ps
+$JADE -t tex -d ${MK_STYLESHEET}\#print -o $MKREADMETEX $MKREADMESRC
+jadetex $MKREADMETEX 
+dvips -o prepared.ps MusicKit_README.dvi
 ps2pdf prepared.ps /tmp/$PDFFINAL
 echo MusicKit README PDF file generated into /tmp/$PDFFINAL
+
+#
+# Create PDF of the concepts documentation
+# This should become a subroutine.
+#  cd $PDF_TMPDIR 
+#  cp $MK_STYLEDIR/Images/*.eps .
+#  db2dvi $MKCONCEPTS/MusicKitConcepts.sgml # 2>1 /tmp/db.log
+#  PDFFINAL=`basename $MKREADMESRC .sgml`.pdf
+#  dvips -o intermediate.ps MusicKitConcepts.dvi
+#  # This allows us to incorporate any special postscript fonts.
+#  #psprepare intermediate.ps prepared.ps
+#  cp intermediate.ps prepared.ps
+#  ps2pdf prepared.ps /tmp/$PDFFINAL
+#  echo MusicKit README PDF file generated into /tmp/$PDFFINAL
+#  mkdir -p $HTML_TMPDIR/MusicKitConcepts/Images
+#  cd $HTML_TMPDIR/MusicKitConcepts
+#  $JADE -t sgml -ihtml -d ${MKCONCEPTS_STYLESHEET}\#html 
+#  cp -r $MKCONCEPTS/Images/*.gif Images
+#  ln -s musickitconcepts.html index.html
+
 rm -r $PDF_TMPDIR
 
 #
