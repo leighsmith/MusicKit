@@ -62,7 +62,7 @@ static SndStreamManager *sm = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// dealloc 
+// dealloc
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) dealloc
@@ -87,8 +87,8 @@ static SndStreamManager *sm = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// startStreaming: responsible for calling low-level C stuff to get a stream 
-// happening, and register the processAudioAtTime: selector as the callback 
+// startStreaming: responsible for calling low-level C stuff to get a stream
+// happening, and register the processAudioAtTime: selector as the callback
 // function.
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -106,10 +106,10 @@ static SndStreamManager *sm = nil;
     // active = TRUE
 
     // Get the native hardware stream format....
-    
+
     active = SNDStreamStart(processAudio, (void*) self);
     nowTime = 0.0;
-    
+
     return active;
 }
 
@@ -123,7 +123,7 @@ static SndStreamManager *sm = nil;
     if (active) {
         [mixer managerIsShuttingDown];
         nowTime = 0.0;
-        SNDStreamStop();    
+        SNDStreamStop();
         active = FALSE;
         fprintf(stderr,"SND Manager: stream stopping\n");
     }
@@ -135,13 +135,13 @@ static SndStreamManager *sm = nil;
 ////////////////////////////////////////////////////////////////////////////////
 // addClient:
 //
-// Returns false if the client is already registered, or the audio device 
+// Returns false if the client is already registered, or the audio device
 // couldn't start streaming... true if all is well.
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) addClient: (SndStreamClient*) client
 {
-    int  oldClientCount = [mixer clientCount]; 
+    int  oldClientCount = [mixer clientCount];
     int  clientCount = [mixer addClient: client];
     BOOL alreadyRegistered = (oldClientCount == clientCount);
     SndAudioBuffer *buff;
@@ -161,7 +161,7 @@ static SndStreamManager *sm = nil;
 
 - (BOOL) removeClient: (SndStreamClient*) client
 {
-    return [mixer removeClient: client]; 
+    return [mixer removeClient: client];
 
 }
 
@@ -178,7 +178,7 @@ static SndStreamManager *sm = nil;
 ////////////////////////////////////////////////////////////////////////////////
 // processAudioAtTime:input:output:
 //
-// Poll all the clients for their current output buffers, tell them to start 
+// Poll all the clients for their current output buffers, tell them to start
 // processing
 ////////////////////////////////////////////////////////////////////////////////
 
