@@ -10,7 +10,7 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2001, The MusicKit Project.
+  Portions Copyright (c) 1999-2004, The MusicKit Project.
 */
 /*!
   @class MKPerformer
@@ -179,22 +179,29 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
     MK_inactive,
     MK_active,
     MK_paused
-  } MKPerformerStatus;
+} MKPerformerStatus;
 
 @interface MKPerformer : NSObject
 {
-    MKConductor *conductor;       /* The object's MKConductor. */
-    MKPerformerStatus status;     /* The object's status. */
-    int performCount;             /* Number of times the object has received perform messages. */
-    double timeShift;             /* Performance offset time in beats. */
-    double duration;              /* Maximum performance duration in beats. */
-    double time;                  /* The object's notion of the current time.
-                                     The time in beats of the current invocation of
-                                     perform, if any, otherwise, the time in beats of the
-                                     last invocation of perform. */
-    double nextPerform;           // The next time in beats until the object will send a MKNote by sending a perform message.
-    NSMutableArray *noteSenders;  /* The object's collection of MKNoteSenders. */
-    id delegate;                  /* The object's delegate, if any. */
+    /*! @var conductor The object's MKConductor. */
+    MKConductor *conductor;
+    /*! @var status The object's status. */
+    MKPerformerStatus status;
+    /*! @var performCount Number of times the object has received perform messages. */
+    int performCount;
+    /*! @var timeShift Performance offset time in beats. */
+    double timeShift;
+    /*! @var duration Maximum performance duration in beats. */
+    double duration;
+    /*! @var time The object's notion of the current time.
+	The time in beats of the current invocation of perform, if any, otherwise, the time in beats of the last invocation of perform. */
+    double time;
+    /*! @var nextPerform The next time in beats until the object will send a MKNote by sending a perform message. */
+    double nextPerform;
+    /*! @var noteSenders The object's collection of MKNoteSenders. */
+    NSMutableArray *noteSenders;
+    /*! @var delegate The object's delegate, if any. */
+    id delegate;
 
 @private
     double _pauseOffset;          // Difference between the beat when a performer is paused and its time.
@@ -219,14 +226,14 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
   @discussion Returns YES if <i>aNoteSender</i> is a member of the receiver's
               MKNoteSender NSArray.
 */
--(BOOL ) isNoteSenderPresent:aNoteSender; 
+- (BOOL) isNoteSenderPresent: (MKNoteSender *) aNoteSender; 
 
 /*!
   @method disconnectNoteSenders
   @result Returns an id.
   @discussion Sends <b>disconnect</b> to each of the object's MKNoteSenders.
 */
--disconnectNoteSenders;
+- disconnectNoteSenders;
 
 /*!
   @method releaseNoteSenders
@@ -252,45 +259,48 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
               single MKNoteSender.  If there are currently no MKNoteSenders, this
               method creates and adds a MKNoteSender.
 */
-- noteSender; 
+- (MKNoteSender *) noteSender; 
 
 /*!
   @method removeNoteSender:
-  @param  aNoteSender is an id.
+  @param  aNoteSender is an MKNoteSender instance.
   @result Returns an id.
   @discussion Removes <i>aNoteSender</i> from the receiver.  The receiver must be
               inactive.  If the receiver is currently in performance, or if
               <i>aNoteSender</i> wasn't part of its MKNoteSender NSArray, returns
-              <b>nil</b>.  Otherwise returns the receiver.
-*/
-- removeNoteSender:aNoteSender; 
+              <b>nil</b>.  Otherwise returns <i>aNoteSender</i>.
+	      For some subclasses, it is inappropriate for anyone other than the
+              subclass instance itself to send this message. It is illegal to modify
+              an active MKPerformer.
+ */
+- (MKNoteSender *) removeNoteSender: (MKNoteSender *) aNoteSender; 
 
 /*!
   @method addNoteSender:
-  @param  aNoteSender is an id.
+  @param  aNoteSender is an MKNoteSender instance.
   @result Returns an id.
   @discussion Adds <i>aNoteSender</i> to the recevier.  The receiver must be
               inactive.  If the receiver is currently in performance, or if
               <i>aNoteSender</i> already belongs to the receiver, returns
               <b>nil</b>.  Otherwise returns the receiver.
 */
-- addNoteSender:aNoteSender; 
+- (MKNoteSender *) addNoteSender: (MKNoteSender *) aNoteSender; 
 
 /*!
   @method setConductor:
-  @param  aConductor is an id.
-  @result Returns an id.
-  @discussion Sets the receiver's MKConductor to <i>aConductor</i>.   The receiver
-              must be inactive.
+  @abstract Sets the receiver's MKConductor to <i>aConductor</i>. 
+  @discussion The receiver must be inactive.
+  @param  aConductor is an MKConductor instance.
+  @result Returns an NO if receiver is active, YES if receiver is inactive and MKConductor properly set.
 */
-- setConductor:aConductor; 
+- (BOOL) setConductor: (MKConductor *) aConductor;
 
 /*!
   @method conductor
-  @result Returns an id.
-  @discussion Returns the receiver's MKConductor.
+  @abstract Returns the receiver's MKConductor.
+  @result Returns an MKConductor instance.
 */
-- conductor; 
+- (MKConductor *) conductor; 
 
 /*!
   @method activateSelf
@@ -323,7 +333,7 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
               is currently in performance, otherwise returns the
               receiver.
 */
-- setTimeShift:(double )timeShift;
+- setTimeShift: (double) timeShift;
 
 /*!
   @method setDuration:
@@ -334,28 +344,28 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
               receiver is currently in performance, otherwise returns the
               receiver.
 */
-- setDuration:(double )dur; 
+- setDuration: (double) dur; 
 
 /*!
   @method timeShift
   @result Returns a double.
   @discussion Returns the receiver's time shift value.
 */
--(double ) timeShift;
+- (double) timeShift;
 
 /*!
   @method duration
   @result Returns a double.
   @discussion Returns the receiver's duration value.
 */
--(double ) duration; 
+- (double) duration; 
 
 /*!
   @method status
   @result Returns an int.
   @discussion Returns the receiver's status.
 */
--(int ) status; 
+- (int) status; 
 
 /*!
   @method performCount
@@ -363,7 +373,7 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
   @discussion Returns the number of <b>perform</b> messages the receiver has
               recieved in the current performance.
 */
--(int ) performCount; 
+- (int) performCount; 
 
 /*!
   @method activate
@@ -383,14 +393,13 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 
 /*!
   @method deactivate
-  @result Returns an id.
   @discussion If the receiver's status is inactive, this does nothing and
               immediately returns the receiver.  Otherwise removes the receiver
               from the performance, invokes <b>deactivateSelf</b>, and sets the
               receiver's status to <b>MK_inactive</b>.  Also sends <tt>[delegate hasDeactivated:self];</tt>
               Returns the receiver.
 */
-- (void)deactivate;
+- (void) deactivate;
 
 /*!
   @method init
@@ -418,7 +427,7 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
   @discussion Like pause, but also enqueues a resume message to be sent the specified
               number of beats into the future.
 */
--pauseFor:(double)beats;
+-pauseFor: (double) beats;
 
 /*!
   @method resume
@@ -428,30 +437,16 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 */
 - resume; 
 
- /* 
-  * Creates and returns a new, inactive MKPerformer as a copy of the
-  * receiver.  The new object has the same time shift and duration as the
-  * reciever.  Its time and nextPerform variables are set to 0.0.  The new
-  * object's MKNoteSenders are copied from the receiver.  
-  * Note that you shouldn't send init to the new object. */
-- copyWithZone:(NSZone *)zone; ;
-
 /*!
-  @method copy
-  @result Returns an id.
-  @discussion Creates and returns a new, inactive MKPerformer as a copy of the
+  @method copyWithZone:
+  @result Returns an MKPerformer instance.
+  @discussion Creates and returns an initialised, inactive MKPerformer as a copy of the
               receiver.  The new object has the same time shift and duration as
               the reciever.  Its <b>time</b> and <b>nextPerform</b> variables are
               set to 0.0.  The new object's MKNoteSenders are copied from the
-              receiver. Same as [self copyFromZone:[self zone]].
+              receiver.
 */
-- copy; 
-
- /* 
-  * Frees the receiver and its MKNoteSenders. The receiver must be inactive.
-  * Does nothing and returns nil if the receiver is currently in
-  * performance.  */
-- (void)dealloc; 
+- copyWithZone: (NSZone *) zone;
 
 /*!
   @method time
@@ -462,15 +457,43 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
               the performance and doesn't include any time that the receiver has
               been paused.
 */
--(double ) time; 
+- (double) time; 
 
-/* Implement an informal protocol for firstTimeTag/lastTimeTag. */
--setFirstTimeTag:(double)v; /* Does nothing */
--setLastTimeTag:(double)v;  /* Does nothing */
--(double)firstTimeTag;      /* Returns 0 */
--(double)lastTimeTag;       /* Returns MK_ENDOFTIME */
+/*!
+  @method setFirstTimeTag:
+  @abstract Implements an informal protocol for firstTimeTag/lastTimeTag.
+  @discussion Does nothing in this abstract class.
+ */
+- setFirstTimeTag: (double) v;
 
-- (void)setDelegate:(id)object;
+/*!
+  @method setFirstTimeTag:
+  @abstract Implements an informal protocol for firstTimeTag/lastTimeTag.
+  @discussion Does nothing in this abstract class.
+ */
+- setLastTimeTag: (double) v;
+
+/*!
+  @method firstTimeTag
+  @abstract 
+  @result Returns the first time tag in beats.
+  @discussion Returns 0.
+ */
+- (double) firstTimeTag;
+
+/*!
+  @method lastTimeTag
+ Returns MK_ENDOFTIME 
+ */
+- (double) lastTimeTag;
+
+/*!
+  @method setDelegate:
+  @abstract Assigns a delegate to receive messages described in MKPerformerDelegate.h
+  @param object The receiving delegate object.
+  @discussion object is not retained.
+ */
+- (void) setDelegate: (id) object;
 
 /*!
   @method delegate
@@ -478,7 +501,6 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
   @discussion Returns the receiver's delegate, if any.
 */
 - delegate;
-
 
 /*!
   @method rescheduleBy:
@@ -490,7 +512,7 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
               magnitude large enough to shift the MKPerformer into the past,
               reschedules the MKPerformer to invoke <b>perform </b>immediately.
 */
--rescheduleBy:(double)aTimeIncrement;
+- rescheduleBy: (double) aTimeIncrement;
 
 /*!
   @method rescheduleAtTime:
@@ -501,32 +523,29 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
               If <i>time</i> is in the past, reschedules the MKPerformer to invoke
               <b>perform</b>immediately.
 */
--rescheduleAtTime:(double)aTime;
+- rescheduleAtTime: (double) aTime;
 
-  /* 
-     You never send this message directly.  
-     Should be invoked with NXWriteRootObject(). 
-     Archives noteSender List, timeShift, and duration. Also optionally 
-     archives conductor and delegate using NXWriteObjectReference().
-     */
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-  /* 
-     You never send this message directly.  
-     Should be invoked via NXReadObject(). 
+/*!
+  @method encodeWithCoder:
+  @discussion  You never send this message directly.  
+ Archives noteSender List, timeShift, and duration. Also optionally 
+ archives conductor and delegate using NXWriteObjectReference().
+ */
+- (void) encodeWithCoder: (NSCoder *) aCoder;
+
+/*! 
+  @method initWithCoder:
+  @discussion You never send this message directly.  
      Note that the status of an unarchived MKPerformer is always MK_inactive.
-     Note also that -init is not sent to newly unarchived objects.
-     See write:. */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+ */
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
 /*!
   @method inPerformance
   @result Returns a BOOL.
   @discussion Returns YES if receiver's status is not MK_inactive.
 */
--(BOOL)inPerformance;
-
- /* Obsolete */
-+ new; 
+- (BOOL) inPerformance;
 
 @end
 

@@ -108,6 +108,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2004/11/12 18:19:13  leighsmith
+  Removed obsolete methods, properly typed parameters, documented ivars and cleaned up headerdoc
+
   Revision 1.12  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -181,7 +184,7 @@ Modification history:
 
 #define VERSION2 2
 
-+ (void)initialize
++ (void) initialize
 {
     if (self != [MKPerformer class])
       return;
@@ -191,16 +194,7 @@ Modification history:
     return;
 }
 
-+new
-  /* Create a new instance and sends [self init]. */
-{
-    self = [self allocWithZone:NSDefaultMallocZone()];
-    [self init];
-//    [self initialize]; /* Avoid breaking pre-2.0 apps. */ //sb: removed. Unnec.
-    return self;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder: (NSCoder *) aCoder
   /* You never send this message directly.  
      Archives noteSender List, timeShift, and duration. Also archives
      conductor and delegate.
@@ -211,7 +205,7 @@ Modification history:
     [aCoder encodeConditionalObject: delegate];
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) initWithCoder: (NSCoder *) aDecoder
   /* You never send this message directly.  
      See encodeWithCoder:. */
 {
@@ -231,13 +225,27 @@ Modification history:
 #import "noteDispatcherMethods.m"
 
 /* Implement a dummy protocol for firstTimeTag/lastTimeTag. */
--setFirstTimeTag:(double)v { return self; }
--setLastTimeTag:(double)v  { return self; }
+- setFirstTimeTag: (double) v
+{
+    return self;
+}
 
--(double)firstTimeTag { return 0; }
--(double)lastTimeTag { return MK_ENDOFTIME; }
+- setLastTimeTag: (double) v
+{
+    return self; 
+}
 
--removeNoteSender:(id)aNoteSender
+- (double) firstTimeTag
+{
+    return 0;
+}
+
+- (double) lastTimeTag
+{
+    return MK_ENDOFTIME; 
+}
+
+- (MKNoteSender *) removeNoteSender: (MKNoteSender *) aNoteSender
   /* If aNoteSender is not owned by the receiver, returns nil.
      Otherwise, removes aNoteSender from the receiver's MKNoteSender List
      and returns aNoteSender.
@@ -247,15 +255,15 @@ Modification history:
      else aNoteSender. */
 {
     if ([aNoteSender owner] != self)
-      return nil;
+	return nil;
     if (status != MK_inactive)
-      return nil;
-    [noteSenders removeObject:aNoteSender];
-    [aNoteSender _setOwner:nil];
+	return nil;
+    [noteSenders removeObject: aNoteSender];
+    [aNoteSender _setOwner: nil];
     return aNoteSender;
 }
 
--addNoteSender:(id)aNoteSender
+- (MKNoteSender *) addNoteSender: (MKNoteSender *) aNoteSender
   /* If aNoteSender is already owned by the receiver or the receiver is 
      not inactive, returns nil.
      Otherwise, aNoteSender is removed from its owner, the owner
@@ -267,37 +275,38 @@ Modification history:
      */
 {
     id owner = [aNoteSender owner];
+    
     if ((status != MK_inactive) || /* in performance */
-	(owner && (![owner removeNoteSender:aNoteSender])))
+	(owner && (![owner removeNoteSender: aNoteSender])))
         /* owner might be in perf */
 	return nil;
     if (!noteSenders) /* Just in case init wasn't called */
-      noteSenders = [[NSMutableArray alloc] init];
-    [noteSenders addObject:aNoteSender];
-    [aNoteSender _setPerformer:self];
+	noteSenders = [[NSMutableArray alloc] init];
+    [noteSenders addObject: aNoteSender];
+    [aNoteSender _setPerformer: self];
     return aNoteSender;
 }
 
-/* Conductor control ------------------------------------------------ */
+/* MKConductor control ------------------------------------------------ */
 
--setConductor:(id)aConductor
-  /* TYPE: Accessing the Conductor; Sets the receiver's Conductor to aConductor.
-   * Sets the receiver's Conductor to aConductor
+- (BOOL) setConductor: (MKConductor *) aConductor
+  /* TYPE: Accessing the MKConductor; Sets the receiver's MKConductor to aConductor.
+   * Sets the receiver's MKConductor to aConductor
    * and returns the receiver.
    * Illegal while the receiver is active. Returns nil in this case, else self.
    */
 {
     if (status != MK_inactive)
-      return nil;
+	return NO;
     conductor = aConductor;
     if (!conductor)
-      conductor = [MKConductor defaultConductor];
-    return self;
+	conductor = [MKConductor defaultConductor];
+    return YES;
 }
 
--conductor
-  /* TYPE: Accessing the Conductor;  Returns the receiver's Conductor.
-   * Returns the receiver's Conductor.
+- (MKConductor *) conductor
+  /* TYPE: Accessing the MKConductor;  Returns the receiver's MKConductor.
+   * Returns the receiver's MKConductor.
    */
 {
     return conductor;
@@ -305,7 +314,7 @@ Modification history:
 
 /* Activation and deactivation  --------------------------------- */
 
--activateSelf
+- activateSelf
   /* TYPE: Performing; Does nothing; subclass may override for special behavior.
    * Invoked from the activate method,
    * a subclass can implement
@@ -323,7 +332,7 @@ Modification history:
 }
 /* Perform ------------------------------------------------------------ */
 
--perform	
+- perform	
   /* TYPE: Performing; Subclass responsibility; sends MKNotes and sets nextPerform.
    * This is a subclass responsibility 
    * expected to send MKNotes and set the value of the nextPerform
@@ -331,12 +340,14 @@ Modification history:
    * The value returned by perform is ignored.
    */
 {
-    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)]; return nil;
+    [NSException raise: NSInvalidArgumentException
+		format: @"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
+    return nil;
 }
 
 
 
--_performerBody
+- _performerBody
     /* _performerBody is a private method that wraps around the
        subclass's perform method. */
 {	
@@ -373,7 +384,7 @@ Modification history:
 
 /* Time window variables ------------------------------------------- */
 
--setTimeShift:(double)shift
+- setTimeShift: (double) shift
   /* TYPE: Accessing time; Delays performance for shift beats.
    * Sets the begin time of the receiver;
    * the receiver's performance is delayed by shift beats.
@@ -387,7 +398,7 @@ Modification history:
     return self;
 }		
 
--setDuration:(double)dur
+- setDuration: (double) dur
   /* TYPE: Accessing time;Sets max duration of the receiver to dur beats.
    * Sets the maximum duration of the receiver to dur beats.
    * Returns the receiver.
@@ -401,25 +412,25 @@ Modification history:
 }		
 
 
--(double)timeShift 
+- (double) timeShift 
   /* TYPE: Accessing time; Returns the receiver's performance begin time.
    * Returns the receiver's performance begin time, as set through
    * setTimeShift:.
    */
 {
-	return timeShift;
+    return timeShift;
 }
 
--(double)duration 
+- (double) duration 
   /* TYPE: Accessing time; Returns the reciever's performance duration.
    * Returns the receiver's maximum performance duration, as 
    * set through setDuration:.
    */
 {
-	return duration;
+    return duration;
 }
 
--(int) status
+- (int) status
   /* TYPE: Querying; Returns the receiver's status.
    * Returns the receiver's status as one of the
    * following values:
@@ -436,7 +447,7 @@ Modification history:
     return (int) status;
 }
 
--(int) performCount
+- (int) performCount
   /* TYPE: Querying; Returns the number of MKNotes the receiver has performed.
    * Returns the number MKNotes the receiver has performed in the
    * current performance.  Does this by counting the number of
@@ -448,7 +459,7 @@ Modification history:
 
 /* Activation and deactivation ------------------------------------------ */
 
--activate
+- activate
   /* TYPE: Performing; Prepares the receiver for a performance.
    * If the receiver isn't MK_inactive, immediately returns the receiver;
    * Otherwise 
@@ -464,12 +475,12 @@ Modification history:
 {
     double condTime;
     if (status != MK_inactive) 
-      return self;
+	return self;
     if (duration <= 0)
-      return nil;
+	return nil;
     nextPerform = 0;
     if (![self activateSelf])
-      return nil;
+	return nil;
     performCount = 0;
     condTime = [conductor timeInBeats];
     self->time = 0.0;
@@ -480,18 +491,18 @@ Modification history:
     /* Old version:   _endTime = _pauseOffset + duration; */
     _endTime = MIN(_endTime,  MK_ENDOFTIME);
     if (_endTime <= _performMsgPtr->_timeOfMsg)
-      return nil;
+	return nil;
     MKScheduleMsgRequest(_performMsgPtr,conductor);
     [conductor _addActivePerformer:self];
     status = MK_active;
     _deactivateMsgPtr = [MKConductor _afterPerformanceSel:
-			 @selector(deactivate) to:self argCount:0];
+				 @selector(deactivate) to:self argCount:0];
     if ([delegate respondsToSelector:@selector(performerDidActivate:)])
-      [delegate performerDidActivate:self];
+	[delegate performerDidActivate:self];
     return self;
 }
 
-- (void)deactivate
+- (void) deactivate
   /* TYPE: Performing; Removes the receiver from the performance.
    * If the receiver's status is already MK_inactive, this
    * does nothing and immediately returns the receiver.
@@ -501,42 +512,45 @@ Modification history:
    */
 {
     if (status == MK_inactive)
-      return;
+	return;
     _performMsgPtr = MKCancelMsgRequest(_performMsgPtr);
     _pauseForMsgPtr = MKCancelMsgRequest(_pauseForMsgPtr);
-    _performMsgPtr = MKNewMsgRequest(0.0,@selector(_performerBody),self,0);
+    _performMsgPtr = MKNewMsgRequest(0.0,@selector(_performerBody), self, 0);
     _deactivateMsgPtr = MKCancelMsgRequest(_deactivateMsgPtr);
     _pauseOffset = 0;
     status = MK_inactive;
-    [conductor _removeActivePerformer:self];
-    if ([delegate respondsToSelector:@selector(performerDidDeactivate:)])
-      [delegate performerDidDeactivate:self];
+    [conductor _removeActivePerformer: self];
+    if ([delegate respondsToSelector: @selector(performerDidDeactivate:)])
+	[delegate performerDidDeactivate: self];
 }
 
 /* Creation ------------------------------------------------------- */
 
--init
+- init
   /* TYPE: Initializing; Initializes the receiver.
    * Initializes the receiver.
    * You never invoke this method directly,
    * it's sent by the superclass upon creation.
-   * An overriding subclass method must send [super\ init]
+   * An overriding subclass method must send [super init]
    * before setting its own defaults. 
    */
 {
-    noteSenders = [[NSMutableArray alloc] init];
-    conductor=[MKConductor defaultConductor];
-    duration = MK_ENDOFTIME;
-    _endTime = MK_ENDOFTIME;
-    status = MK_inactive;
-    _performMsgPtr= MKNewMsgRequest(0.0,@selector(_performerBody),self,0);
+    self = [super init];
+    if(self != nil) {
+	noteSenders = [[NSMutableArray alloc] init];
+	conductor = [MKConductor defaultConductor];
+	duration = MK_ENDOFTIME;
+	_endTime = MK_ENDOFTIME;
+	status = MK_inactive;
+	_performMsgPtr = MKNewMsgRequest(0.0, @selector(_performerBody), self, 0);	
+    }
     return self;
 }
 
 
 /* Changing status during a performance ---------------------------------- */
 
--pause   
+- pause   
   /* TYPE: Performing; Suspends the the receiver's performance.
    * If the receiver is MK_active, this changes its 
    * status to MK_paused, suspends its performance, 
@@ -548,31 +562,30 @@ Modification history:
    */
 {  
     if (status == MK_inactive || status == MK_paused) 
-      return self;
+	return self;
     _performMsgPtr = MKCancelMsgRequest(_performMsgPtr);
     _pauseOffset -= [conductor timeInBeats];
     status = MK_paused;
-    if ([delegate respondsToSelector:@selector(performerDidPause:)])
-      [delegate performerDidPause:self];
+    if ([delegate respondsToSelector: @selector(performerDidPause:)])
+	[delegate performerDidPause: self];
     return self;	
 }
 
--pauseFor:(double)beats
+- pauseFor: (double) beats
 {
     if (beats <= 0.0) 
-      return nil;
+	return nil;
     [self pause];
-    if (_pauseForMsgPtr)/* Already doing a "pauseFor"? */
-      MKRepositionMsgRequest(_pauseForMsgPtr,[conductor timeInBeats] + beats);
+    if (_pauseForMsgPtr) /* Already doing a "pauseFor"? */
+	MKRepositionMsgRequest(_pauseForMsgPtr,[conductor timeInBeats] + beats);
     else {             /* New "pauseFor". */
-	_pauseForMsgPtr = MKNewMsgRequest([conductor timeInBeats] + beats,
-					  @selector(resume),self,0);
+	_pauseForMsgPtr = MKNewMsgRequest([conductor timeInBeats] + beats, @selector(resume), self, 0);
 	MKScheduleMsgRequest(_pauseForMsgPtr,conductor);
     }
     return self;
 }
 
--resume
+- resume
   /* TYPE: Performing; Resumes the receiver's performance.
    * If the receiver is paused, this changes its status to MK_active,
    * resumes its performance and returns the receiver.
@@ -580,19 +593,18 @@ Modification history:
    */
 {
     double resumeTime;
+    
     if (status != MK_paused)
-      return self;
+	return self;
     _pauseOffset += [conductor timeInBeats];
     resumeTime = nextPerform + self->time + _pauseOffset;
     if (resumeTime > _endTime)
-      return nil;
-    _performMsgPtr = 
-      MKRescheduleMsgRequest(_performMsgPtr,conductor,resumeTime,
-			     @selector(_performerBody),self,0);
+	return nil;
+    _performMsgPtr = MKRescheduleMsgRequest(_performMsgPtr, conductor, resumeTime, @selector(_performerBody), self, 0);
     _pauseForMsgPtr = MKCancelMsgRequest(_pauseForMsgPtr);
     status = MK_active;
-    if ([delegate respondsToSelector:@selector(performerDidResume:)])
-      [delegate performerDidResume:self];
+    if ([delegate respondsToSelector: @selector(performerDidResume:)])
+	[delegate performerDidResume: self];
     return self;
 }
 
@@ -602,18 +614,17 @@ Modification history:
      base. Returns nil and does nothing if the receiver is not active. */
 {
     double condTime;
+    
     if (status != MK_active)
-      return nil;
+	return nil;
     condTime = [conductor timeInBeats];
     if (aTime < condTime)
-      aTime = condTime;
+	aTime = condTime;
     /* Try to keep nextPerform reasonable, in case subclass depends on it. */ 
     nextPerform += aTime - _performMsgPtr->_timeOfMsg;
     if (nextPerform < 0)
-      nextPerform = 0;
-    _performMsgPtr = 
-      MKRescheduleMsgRequest(_performMsgPtr,conductor,aTime,
-			     @selector(_performerBody),self,0);
+	nextPerform = 0;
+    _performMsgPtr = MKRescheduleMsgRequest(_performMsgPtr, conductor, aTime, @selector(_performerBody), self, 0);
     return self;
 }
 
@@ -658,12 +669,7 @@ static id copyFields(MKPerformer *self,MKPerformer *newObj)
     return newObj;
 }
 
--copy
-{
-    return [self copyWithZone:[self zone]];
-}
-
-- copyWithZone:(NSZone *)zone;
+- copyWithZone: (NSZone *) zone;
   /* TYPE: Copying: Returns a copy of the receiver.
    * Creates and returns a new inactive MKPerformer as
    * a copy of the receiver.  
@@ -677,39 +683,40 @@ static id copyFields(MKPerformer *self,MKPerformer *newObj)
 {
     MKPerformer *newObj = NSCopyObject(self, 0, zone);
     id obj_copy;
-    unsigned n,i;
-    newObj = copyFields(self,newObj);
-    newObj->noteSenders = [[NSMutableArray alloc] initWithCapacity:n = [noteSenders count]];
+    unsigned n, i;
+    
+    newObj = copyFields(self, newObj);
+    newObj->noteSenders = [[NSMutableArray alloc] initWithCapacity: n = [noteSenders count]];
     for (i = 0; i < n; i++) {
-        obj_copy = [[noteSenders objectAtIndex:i] copy];
-        [newObj addNoteSender:obj_copy];
+        obj_copy = [[noteSenders objectAtIndex: i] copy];
+        [newObj addNoteSender: obj_copy];
         [obj_copy release];
     }
     return newObj;
 }
 
 
-- (void)dealloc
+- (void) dealloc
   /* TYPE: Creating
    * This invokes freeContents and then frees the receiver
    * and its MKNoteSenders. This message is ignored if the receiver is not
    * inactive. In this case, returns self; otherwise returns nil.
    */
 {
-    /*sb: FIXME!!! This is not the right place to decide whether or not to dealloc.
-     * maybe need to put self in a global list of non-dealloced objects for later cleanup */
-    if (status != MK_inactive)
-      return;
-  if (_performMsgPtr != NULL) {
-    free(_performMsgPtr);
-    _performMsgPtr = NULL;
-  }
+    if (status != MK_inactive) {
+	NSLog(@"Assertion failed, %@ not inactive when deallocing\n");
+	/* if we get this, maybe we need to put self in a global list of non-dealloced objects for later cleanup */
+    }
+    if (_performMsgPtr != NULL) {
+	free(_performMsgPtr);
+	_performMsgPtr = NULL;
+    }
     [self releaseNoteSenders];
     [noteSenders release];
     [super dealloc];
 }
 
--(double)time
+- (double) time
 /* TYPE: Accessing time; Returns the receiver's latest performance time.
    Returns the time, in beats, that the receiver last received the perform
    message.  If the receiver is inactive, returns MK_ENDOFTIME.  The return
@@ -720,32 +727,32 @@ static id copyFields(MKPerformer *self,MKPerformer *newObj)
     return (status != MK_inactive) ? self->time : MK_ENDOFTIME;
 }
 
-- (void)setDelegate:(id)object
+- (void) setDelegate: (id) object
 {
     delegate = object;
 }
 
--delegate
+- delegate
 {
     return delegate;
 }
 
 /* FIXME Needed due to a compiler bug. */
-static void setNoteSenders(MKPerformer *newObj,id aList)
+static void setNoteSenders(MKPerformer *newObj, id aList)
 {
     newObj->noteSenders = aList;
 }
 
--(BOOL)inPerformance
+- (BOOL) inPerformance
 {
     return status != MK_inactive;
 }
 
 @end
-
+
 @implementation MKPerformer(Private)
 
--_copyFromZone:(NSZone *)zone
+- _copyFromZone: (NSZone *) zone
 {
     /* This is like copyFromZone: except that the MKNoteSenders are not copied.
        Instead, a virgin empty List is given. */
