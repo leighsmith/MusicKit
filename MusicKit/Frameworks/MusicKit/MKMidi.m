@@ -69,6 +69,9 @@
 Modification history:
 
   $Log$
+  Revision 1.29  2000/11/27 23:49:43  leigh
+  Added autorelease pool for the MIDI receive call back function
+
   Revision 1.28  2000/11/25 22:50:51  leigh
   Improved class description, made error messages less NeXT specific, introduced a call-back function alternative to using a port for receiving MIDI messages from the driver, ensured ownerPort is nil when closing the device
 
@@ -1000,12 +1003,14 @@ void handleCallBack(void *midiObj)
     NSString *errorMessage;
     MKMDReturn r;
     /* Tells driver funcs to call: */ 
-    // MKMDReplyFunctions recvStruct = { my_data_reply, my_alarm_reply, my_exception_reply, 0};
+    // TODO MKMDReplyFunctions recvStruct = { my_data_reply, my_alarm_reply, my_exception_reply, 0};
     MKMDReplyFunctions recvStruct = { my_data_reply, 0, 0, 0};
+    // since the callback is coming from the cold harsh world of C, not cozy ObjC:
+    NSAutoreleasePool *handlerPool = [[NSAutoreleasePool alloc] init]; 
 
-    // determine what the port is that called this method, then set the appropriate my_*_reply function
+    // TODO determine what the port is that called this method, then set the appropriate my_*_reply function
     // and error message.
-    // if the error is from midiAlarm or Exception, CLOCK_ERROR rather than INPUT_ERROR should be used.
+    // TODO if the error is from midiAlarm or Exception, CLOCK_ERROR rather than INPUT_ERROR should be used.
     errorMessage = INPUT_ERROR;
 
     receivingMidi = (MKMidi *) midiObj;
@@ -1013,6 +1018,7 @@ void handleCallBack(void *midiObj)
     if (r != MKMD_SUCCESS) {
       _MKErrorf(MK_machErr, errorMessage, midiDriverErrorString(r), @"midiIn");
     }
+    [handlerPool release];
 }
 /* Input configuration */
 
