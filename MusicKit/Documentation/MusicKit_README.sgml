@@ -726,7 +726,7 @@ The Source files consist of:
         <variablelist>
 	    <varlistentry>
 	      <term>
-              <ulink url="http://download.sourceforge.net/musickit/MK_V&mkvertuple;.s.tar.gz">MK_V&mkvertuple;.s.tar.gz</ulink>
+              <ulink url="http://download.sourceforge.net/musickit/MK-&mkvertuple;.s.tar.gz">MK-&mkvertuple;.s.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
