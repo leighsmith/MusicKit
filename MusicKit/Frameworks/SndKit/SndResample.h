@@ -7,7 +7,7 @@
  *
  */
 #include "SndStdefs.h"
-#include "SndFunctions.h"
+#include <MKPerformSndMIDI/SndStruct.h>
 #include "SndKitDefines.h"
 
 /* Conversion constants */
