@@ -25,7 +25,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #ifndef USE_NEXTSTEP_SOUND_IO
 #import "sounderror.h"
 #endif
-#import "SndFormats.h"
+#import <MKPerformSndMIDI/SndFormats.h>
 #import "SndFunctions.h"
 #import "SndResample.h"
 

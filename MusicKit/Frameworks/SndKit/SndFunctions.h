@@ -18,14 +18,11 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 //#define USE_MACH_MEMORY_ALLOCATION
 
-#ifndef SND_FORMAT_UNSPECIFIED
-#import "SndFormats.h"
-# ifndef USE_NEXTSTEP_SOUND_IO
-# import "sounderror.h"
-# endif
+#import <MKPerformSndMIDI/PerformSound.h>
+#ifndef USE_NEXTSTEP_SOUND_IO
+#import "sounderror.h"
 #endif
 
-#import "SndStruct.h"
 #import "SndEndianFunctions.h"
 #import <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
 
