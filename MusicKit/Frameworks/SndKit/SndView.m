@@ -87,7 +87,7 @@ OF THIS AGREEMENT.
     if(svFlags.cursorOn) {
 	if([self lockFocusIfCanDraw]) {
 	    [selectionColour set];
-	    NSRectFillUsingOperation(cursorRect, NSCompositeDestinationIn);
+	    NSRectFillUsingOperation(cursorRect, NSCompositeCopy);  // overwrite with cursor since we restore it on next phase of duty cycle.
 	    NSHighlightRect(cursorRect);
 	    [self unlockFocus];	
 	}
