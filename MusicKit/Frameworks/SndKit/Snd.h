@@ -5,7 +5,7 @@
 	Additions Copyright (c) 1999 Stephen Brandon and the University of Glasgow 
 */
 
-#import <Foundation/NSObject.h>
+//#import <Foundation/NSObject.h>
 #import <Foundation/Foundation.h>
 #import <objc/hashtable.h>
 #import <Foundation/NSBundle.h>
