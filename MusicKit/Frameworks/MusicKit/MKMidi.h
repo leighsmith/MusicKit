@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.21  2001/08/07 16:21:25  leighsmith
+  Typed _pIn/_pOut
+
   Revision 1.20  2001/05/14 21:02:13  leighsmith
   Added description method
 
@@ -100,6 +103,7 @@
 #import <MKPerformSndMIDI/PerformMIDI.h>
 #import "MKDeviceStatus.h"
 #import "params.h"
+#import "_midi.h"  // for _MKMidiInStruct and _MKMidiOutStruct definitions
 
 /* sbrandon: 10/05/2001
  * get around the fact that GNUstep does not have NSMach ports, but does respond to -machPort
@@ -123,8 +127,8 @@
 
 @private
     unsigned _ignoreBits;
-    void *_pIn;                  // should be _MKMidiInStruct *
-    void *_pOut;                 // should be _MKMidiOutStruct *
+    _MKMidiInStruct *_pIn;               // determines input source
+    _MKMidiOutStruct *_pOut;             // determines output sink
     double _timeOffset;
     enum {MKMidiInputOnly, MKMidiOutputOnly, MKMidiInputOutput} ioMode; 
     BOOL isOwner;
