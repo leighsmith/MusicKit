@@ -10,7 +10,7 @@
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are met:
-	      
+
    Redistributions of source code must retain the above copyright notice, this
    list of conditions and the following disclaimer.
    Redistributions in binary form must reproduce the above copyright notice,
@@ -19,7 +19,7 @@
    Neither the name of CCRMA, Stanford University, nor the names of its
    contributors may be used to endorse or promote products derived from this
    software without specific prior written permission.
-    
+
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
    AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -72,6 +72,13 @@
  Modification History:
 
   $Log$
+  Revision 1.2  2002/03/06 11:45:48  sbrandon
+  changed resample routines in 2 ways:
+  - now only operate on host endian data
+  - resample now takes an additional argument which takes an alternative input
+    buffer. If non-null, this buffer is used intead of the input SndStruct.
+    This allows the routine to be used on arbitrary buffers of data.
+
   Revision 1.1  2002/02/26 13:07:39  sbrandon
   recent changes in compiler tools on MacOSX refuse to compile these
   functions as "c" files since they contain ObjC code. Renamed as .m.
@@ -131,7 +138,8 @@ static int readData(
     SND_HWORD **outPtrs,
     int dataArraySize,
     int nChansOut, int Xoff,
-    const SndSoundStruct *inSnd)  /*sb: take account of data format */
+    const SndSoundStruct *inSnd, /* take account of data format */
+    void *inData) /* if this is non-null use this address of contiguous memory instead of the SndStruct */
     /* return: 0 - notDone */
     /*        >0 - index of last sample */
 {
@@ -147,10 +155,19 @@ static int readData(
     int origNsamps;
     int df;
 
-    void *mainIndex = SndGetDataAddresses(*beginFrom,
-            inSnd,
-            (int *)&lastSampleInBlock, /* channel independent */
-            (int *)&currentSample);     /* channel independent */
+    void *mainIndex;
+    
+    if (inData) {
+        lastSampleInBlock = inSnd->dataSize / inSnd->channelCount / SndSampleWidth(inSnd->dataFormat);
+        currentSample = *beginFrom;
+        mainIndex = inData;
+    }
+    else {
+        mainIndex = SndGetDataAddresses(*beginFrom,
+              inSnd,
+              (int *)&lastSampleInBlock, /* channel independent */
+              (int *)&currentSample);     /* channel independent */
+    }
     df = inSnd->dataFormat;
     if (df == SND_FORMAT_INDIRECT)
         df = ((SndSoundStruct *)(*((SndSoundStruct **)
@@ -246,7 +263,11 @@ static int readData(
             } /*averaging of channels */
             currentSample++;
             (*beginFrom)++;
-            if (currentSample >= lastSampleInBlock) {
+            if (currentSample >= lastSampleInBlock && inData) {
+                fprintf(stderr,"Error in resample - overreading data - should not happen\n");
+                break;
+            }
+            else if (currentSample >= lastSampleInBlock) {
                 mainIndex = SndGetDataAddresses(*beginFrom,
                         inSnd,
                         (int *)&lastSampleInBlock, /* channel independent */
@@ -267,9 +288,12 @@ static int readData(
         }
     }
 
+#if 0
+// have now decided to only operate with host ordered input
     for (channels = 0; channels < nChansOut; channels++) {
         SndSwapSoundToHost(newDataStarts[channels], newDataStarts[channels], origNsamps, 1, SND_FORMAT_LINEAR_16);
     }
+#endif
     return(val);
 }
 
@@ -426,9 +450,11 @@ static int resampleFast(  /* number of output samples returned */
     SND_HWORD *outPtr,		/* output data pointer */
     int inCount,		/* number of input samples to convert */
     int outCount,		/* number of output samples to compute */
-    int nChans,			/* number of sound channels (1 or 2) */
+    int nChans,			/* number of sound channels (1 to n) */
     const SndSoundStruct *inSnd, /* to pick up formats and frags*/
-    int beginFrom)
+    int beginFrom,
+    void *inData)               /* if non-null, gives an alternative
+                                   source of contiguous audio data */
 {
     SND_UWORD Time, Times[16];		/* Current time/pos in input sample */
     SND_UHWORD Xp, Ncreep, Xoff, Xread;
@@ -464,7 +490,7 @@ static int resampleFast(  /* number of output samples returned */
     do {
         if (!last) {		/* If haven't read last sample yet */
             last = readData(&inPtrRun, inCount, X1S, IBUFFSIZE,
-                            nChans, (int)Xread, inSnd);
+                            nChans, (int)Xread, inSnd, inData);
             if (last && (last-Xoff<Nx)) { /* If last sample has been read... */
             Nx = last-Xoff;	/* ...calc last sample affected by filter */
             if (Nx <= 0)
@@ -540,12 +566,14 @@ static int resampleWithFilter(  /* number of output samples returned */
     SND_HWORD *outPtr,		/* output data pointer */
     int inCount,		/* number of input samples to convert */
     int outCount,		/* number of output samples to compute */
-    int nChans,			/* number of sound channels (1 or 2) */
+    int nChans,			/* number of sound channels (1 to n) */
     BOOL interpFilt,		/* TRUE means interpolate filter coeffs */
     SND_HWORD Imp[], SND_HWORD ImpD[],
     SND_UHWORD LpScl, SND_UHWORD Nmult, SND_UHWORD Nwing,
     const SndSoundStruct *inSnd, /* to pick up formats and frags*/
-    int beginFrom)
+    int beginFrom,
+    void *inData)               /* if non-null, gives an alternative
+                                   source of contiguous audio data */
 {
     SND_UWORD Time, Times[16];		/* Current time/pos in input sample */
     SND_UHWORD Xp, Ncreep, Xoff, Xread;
@@ -584,10 +612,10 @@ static int resampleWithFilter(  /* number of output samples returned */
     for (channels = 0; channels < nChans; channels++){
         for (i=0; i<Xoff; X1S[channels][i++]=0); /* Need Xoff zeros at begining of sample */
     }
-        do {
+    do {
         if (!last) {		/* If haven't read last sample yet */
             last = readData(&inPtrRun, inCount, X1S, IBUFFSIZE,
-                            nChans, (int)Xread, inSnd);
+                            nChans, (int)Xread, inSnd, inData);
             if (last && (last-Xoff<Nx)) { /* If last sample has been read... */
                 Nx = last-Xoff;	/* ...calc last sample affected by filter */
                 if (Nx <= 0)
@@ -670,13 +698,15 @@ int resample(			/* number of output samples returned */
     SND_HWORD *outPtr,		/* output data pointer */
     int inCount,		/* number of input samples to convert */
     int outCount,		/* number of output samples to compute */
-    int nChans,			/* number of sound channels (1 or 2) */
+    int nChans,			/* number of sound channels (1 to n) */
     BOOL interpFilt,		/* TRUE means interpolate filter coeffs */
     int fastMode,		/* 0 = highest quality, slowest speed */
     BOOL largeFilter,		/* TRUE means use 65-tap FIR filter */
     char *filterFile,		/* NULL for internal filter, else filename */
     const SndSoundStruct *inSnd, /* for data format etc */
-    int beginFrom)		/* The sample number within the sound to begin the resampling from */
+    int beginFrom,		/* The sample number within the sound to begin the resampling from */
+    void *inData)               /* if non-null, gives an alternative
+                                   source of contiguous audio data */
 {
     SND_UHWORD LpScl;		/* Unity-gain scale factor */
     SND_UHWORD Nwing;		/* Filter table size */
@@ -685,7 +715,7 @@ int resample(			/* number of output samples returned */
     SND_HWORD *ImpD=0;		/* ImpD[n] = Imp[n+1]-Imp[n] */
 
     if (fastMode)
-        return resampleFast(factor,outPtr,inCount,outCount,nChans, inSnd, beginFrom);
+        return resampleFast(factor,outPtr,inCount,outCount,nChans, inSnd, beginFrom, inData);
 
 #ifdef DEBUG
     /* Check for illegal constants */
@@ -716,11 +746,11 @@ int resample(			/* number of output samples returned */
         LpScl = SMALL_FILTER_SCALE;	/* Unity-gain scale factor */
         Nwing = SMALL_FILTER_NWING;	/* Filter table length */
     }
-#if DEBUG
+#ifdef DEBUG
     fprintf(stderr,"Attenuating resampler scale factor by 0.95 "
             "to reduce probability of clipping\n");
 #endif
     LpScl *= 0.95;
     return resampleWithFilter(factor,outPtr,inCount,outCount,nChans,
-                              interpFilt, Imp, ImpD, LpScl, Nmult, Nwing, inSnd, beginFrom);
+                              interpFilt, Imp, ImpD, LpScl, Nmult, Nwing, inSnd, beginFrom, inData);
 }
