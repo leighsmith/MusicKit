@@ -5,7 +5,7 @@
 #  Description:
 #    Makefile for GNUstep
 #
-#  Original Author: Stephen Brandon <stephen@pyrusmalus.com>
+#  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
 #
 #  21 April 2001, Copyright (c) 2001 Stephen Brandon.
 #
@@ -13,8 +13,11 @@
 #  purposes so long as the author attribution and this copyright message remains intact
 #  and accompanies all derived code.
 
-#Modification history:
+# Modification history:
 # $Log$
+# Revision 1.8  2001/09/12 14:10:02  sbrandon
+# changed my e-mail address, added additional LDFLAG
+#
 # Revision 1.7  2001/09/11 17:12:11  sbrandon
 # added cpp.subproj subproject, for GNUstep only, as a way of incorporating
 # C++ files into GNUstep framework
@@ -62,6 +65,7 @@ $(FRAMEWORK_NAME)_RESOURCE_DIRS =
 #$(FRAMEWORK_NAME)BUNDLE_LIBS = 
 
 ADDITIONAL_FLAGS += -g -Wall
+ADDITIONAL_LDFLAGS += -g
 
 # The Bundle Objective-C source files to be compiled
 $(FRAMEWORK_NAME)_OBJC_FILES = \
