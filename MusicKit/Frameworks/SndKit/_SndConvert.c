@@ -17,8 +17,10 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #include "sounderror.h"
 #include "SndFunctions.h"
 #include "SndResample.h"
+#include <Foundation/NSByteOrder.h>
 
 #else
+#import <Foundation/Foundation.h>
 #include "SndFunctions.h"
 #include "SndResample.h"
 
@@ -39,8 +41,6 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 //#import <MKPerformSndMIDI/SndFormats.h>
 
 #endif /* GNUSTEP */
-
-#include <Foundation/NSByteOrder.h>
 
 /* forward decl */
 int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **toSound,BOOL largeFilter, BOOL interpFilter, BOOL fast);
