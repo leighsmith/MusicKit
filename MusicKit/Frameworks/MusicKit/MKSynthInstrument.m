@@ -1,19 +1,52 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
-  */
+
+  Description:
+    Instances of the SynthInstrument class manage a collection of SynthPatches.
+    The principal job of the SynthInstrument is to assign SynthPatches to
+    incoming Notes.
+
+    A SynthInstrument can be in one of two modes, 'manual mode' or 'automatic mode'.
+    If the SynthInstrument is in automatic mode, Patches are allocated directly
+    from the Orchestra as needed, then returned to the available pool, to be
+    shared among all SynthInstruments. This is the default.
+    If more Notes arrive than there are synthesizer resources,
+    the oldest running Patch of this SynthInstrument is preempted
+    (the SynthPatch is sent the preemptFor:aNote message)
+    and used for the new Note. This behavior can be over-ridden for
+    an alternative "grab" strategy.
+
+    If it is in manual mode,
+    a fixed number of Patches are used over and over and you set the
+    number of Patches managed. If more Notes arrive than there are Patches
+    set aside, the oldest running Patch is preempted (the SynthPatch is
+    sent the preemptFor:aNote message) and used for the new Note. As above,
+    this behavior can be over-ridden for an alternative "grab" strategy.
+    You can set the number of patches for each template.
+
+    There is also a MK_MIXEDALLOC that allows manual allocation with the
+    addition of "auto overflow".
+
+    Each SynthInstrument instance supports patches of a particular SynthPatch
+    subclass.
+
+    Mutes Notes are ignored by SynthInstruments, with the exception of the
+    special parameter synthPatchCount: and synthPatch:.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University  
+*/
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/09/10 02:46:06  leigh
+  Comments cleanup, removed warnings, disabled synthPatchClass initialize
+
   Revision 1.2  1999/07/29 01:16:43  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -65,47 +98,9 @@ Modification history:
 #import "MKUnitGenerator.h" // @requires
 
 #import "SynthInstrumentPrivate.h"
-/*@implementation SynthInstrument:Instrument */	/*sb: moved this declaration to after the other
-						 * includes, as OpenStep doesn't seem to like
-						 * having it this way.
-/* Instances of the SynthInstrument class manage a collection of SynthPatches.
-   The principal job of the SynthInstrument is to assign SynthPatches to 
-   incoming Notes.
-
-   A SynthInstrument can be in one of two modes, 'manual mode' or 'automatic
-   mode'. 
-   If the SynthInstrument is in automatic mode, Patches are allocated directly
-   from the Orchestra as needed, then returned to the available pool, to be
-   shared among all SynthInstruments. This is the default.
-   If more Notes arrive than there are synthesizer resources,
-   the oldest running Patch of this SynthInstrument is preempted 
-   (the SynthPatch is sent the preemptFor:aNote message) 
-   and used for the new Note. This behavior can be over-ridden for 
-   an alternative "grab" strategy.
-
-   If it is in manual mode,
-   a fixed number of Patches are used over and over and you set the
-   number of Patches managed. If more Notes arrive than there are Patches
-   set aside, the oldest running Patch is preempted (the SynthPatch is 
-   sent the preemptFor:aNote message) and used for the new Note. As above,
-   this behavior can be over-ridden for an alternative "grab" strategy.   
-   You can set the number of patches for each template.
-   
-   There is also a MK_MIXEDALLOC that allows manual allocation with the
-   addition of "auto overflow".
-
-   Each SynthInstrument instance supports patches of a particular SynthPatch 
-   subclass. 
-
-   Mutes Notes are ignored by SynthInstruments, with the exception of the
-   special parameter synthPatchCount: and synthPatch:.
-   */
-
-
 #import "InstrumentPrivate.h"
 /* Set of active SynthPatches but not including those 
    which had no noteTag. Hash from noteTag to patch. */
-
 
 typedef struct {
 	@defs (MKSynthPatch)
@@ -113,17 +108,6 @@ typedef struct {
 #import "SynthPatchPrivate.h"
 
 @implementation MKSynthInstrument:MKInstrument /*sb moved to here (see above) */
-{
-    id synthPatchClass; /* class used to create patches. */
-    unsigned short allocMode;  /* One of MK_MANUALALLOC,
-                                  MK_AUTOALLOC, or MK_MIXEDALLOC. */
-    HashTable * taggedPatches;
-    HashTable * controllerTable;
-    id updates;
-    BOOL retainUpdates;
-    id orchestra;
-    id _patchLists;
-}
 
 #define NEXT(_y) (((synthPatchStruct *)(_y))->_next)
 // #define NEXTSP(_x) ((NEXT(_x) != _x) ? _x : nil)
@@ -832,15 +816,16 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch);
     allocMode = MK_AUTOALLOC;
     synthPatchClass = aSynthPatchClass;
 #warning sb: initialize method seems to be used here. What does it refer to?
-    [synthPatchClass initialize]; /* Make sure PartialsDatabase is inited */
+// LMS I think we should just comment it out and see what breaks...
+// MKSynthPatch.h has a instance method initialize which is marked obsolete...
+//    [synthPatchClass initialize]; /* Make sure PartialsDatabase is inited */
     orchestra = anOrch;
     return self;
 }
 
 -setSynthPatchClass:aSynthPatchClass
 {
-    return [self setSynthPatchClass:aSynthPatchClass
-	  orchestra:nil];
+    return [self setSynthPatchClass:aSynthPatchClass orchestra:nil];
 }
 
 -synthPatchClass
@@ -863,7 +848,7 @@ static void deallocRunningVoices(MKSynthInstrument *self,id orch);
 	 aPatchList++) {
 	for (aPatch = aPatchList->activeOldest; aPatch; aPatch = nextPatch) {
 	    nextPatch = NEXTSP(aPatch);  
-	    if ([aPatch status] == MK_running)
+	    if ([(MKSynthPatch *) aPatch status] == MK_running)
 	      [aPatch noteOff:aNote];
 	}
     }
