@@ -11,6 +11,7 @@
   purposes so long as the author attribution and copyright messages remain intact and
   accompany all relevant code.
 */
+
 #import "SndStreamManager.h"
 #import "SndStreamClient.h"
 #import "SndAudioBuffer.h"
@@ -28,9 +29,7 @@ enum {
 
 + streamClient
 {
-    SndStreamClient *sc = [[SndStreamClient alloc] init];
-    
-    return [sc autorelease];
+    return [[SndStreamClient new] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +39,7 @@ enum {
 - init
 {
     [super init];
-    outputBufferLock = [[NSLock alloc] init];
+    outputBufferLock = [NSLock new];
     synthThreadLock  = [[[NSConditionLock alloc] initWithCondition: SC_processBuffer] retain];    
     outputBuffer     = nil;
     synthBuffer      = nil;
@@ -57,9 +56,13 @@ enum {
 
 - freeBufferMem
 {
-    [outputBuffer release];
-    [synthBuffer  release];
-    [inputBuffer  release];
+    if (outputBuffer)
+        [outputBuffer release];
+    if (synthBuffer)
+        [synthBuffer  release];
+    if (inputBuffer)
+        [inputBuffer  release];
+        
     outputBuffer = nil;
     synthBuffer  = nil;
     inputBuffer  = nil;
@@ -68,7 +71,7 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @setNeedsInput
+// basic mutators
 ////////////////////////////////////////////////////////////////////////////////
 
 - setNeedsInput: (BOOL) b
@@ -83,6 +86,20 @@ enum {
   return self; 
 }
 
+- setManager: (SndStreamManager*) m
+{
+    if (manager)
+        [manager release];
+    manager = m;
+    if (manager != nil)
+        [manager retain];
+    return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// basic accessors
+////////////////////////////////////////////////////////////////////////////////
+
 - (BOOL) needsInput
 {
   return needsInput;
@@ -94,17 +111,26 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @dealloc
+// dealloc
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) dealloc
 {
     [self freeBufferMem];
+    
+    if (outputBufferLock)
+        [outputBufferLock release];
+    if (synthThreadLock)  
+        [synthThreadLock release];    
+
+    if (manager)
+        [manager release];
+    
     [super dealloc];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @description
+// description
 ////////////////////////////////////////////////////////////////////////////////
 
 - (NSString*) description
@@ -114,7 +140,9 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// The clients sense of time is just the manager's sense of time, defining a common clock among clients.
+// nowTime
+// The client's sense of time is just the manager's sense of time, defining a 
+// common clock among clients.
 ////////////////////////////////////////////////////////////////////////////////
 
 - (double) nowTime
@@ -123,7 +151,7 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @manager
+// manager
 ////////////////////////////////////////////////////////////////////////////////
 
 - (SndStreamManager*) manager
@@ -132,7 +160,7 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @welcomeClientWithBuffer:manager:
+// welcomeClientWithBuffer:manager:
 ////////////////////////////////////////////////////////////////////////////////
 
 - welcomeClientWithBuffer: (SndAudioBuffer*) buff manager: (SndStreamManager*) m
@@ -146,15 +174,13 @@ enum {
             inputBuffer = [buff copy];
             [inputBuffer retain];
         }
-    
         if (generatesOutput) {
             synthBuffer = [buff copy];
             [synthBuffer retain];
         }
-    
-        // NSLog(@"assigning manager %@\n", m);
-        manager = [m retain];
-        
+        [self prepareToStreamWithBuffer: buff];
+        [self setManager: m];
+                
         [NSThread detachNewThreadSelector: @selector(processingThread)
                                  toTarget: self
                                withObject: nil];
@@ -169,12 +195,11 @@ enum {
 ////////////////////////////////////////////////////////////////////////////////
 // startProcessingNextBufferWithInput:
 //
-// If input isn't needed, ignore!!! (ie, if this isn't an FX unit)
+// If input isn't needed, ignore!!! (eg, if this isn't an FX unit)
 ////////////////////////////////////////////////////////////////////////////////
 
 - startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) t 
 {
-    SndAudioBuffer *temp = nil;
     BOOL gotLock = NO;
     
     NS_DURING
@@ -188,57 +213,83 @@ enum {
     
     if( gotLock ) {
         // swap the synth and output buffers, fire off next round of synthing
-
         [outputBufferLock lock];
-
-        temp            = synthBuffer;
-        synthBuffer     = outputBuffer;
-        outputBuffer    = temp;
-
-        // NSLog(@"Got SC_bufferReady: startProcessingNextBufferWithInput nowTime = %f\n", t);
-        
+        {
+            SndAudioBuffer *temp = synthBuffer;
+            synthBuffer          = outputBuffer;
+            outputBuffer         = temp;
+        }
         [outputBufferLock unlock];
-	
-        if (needsInput)
-            [inputBuffer copyData: inB];
-	    
+
+        // printf("startProcessingNextBufferWithInput nowTime = %f\n", t);
+
+        if (needsInput) {
+            if (inB) 
+                [inputBuffer copyData: inB];
+            else
+                NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n");
+        }
         [synthThreadLock unlockWithCondition: SC_processBuffer];
     }
     return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @processingThread
+// processingThread
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) processingThread
 {
-    NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
+    NSAutoreleasePool *localPool = [NSAutoreleasePool new];
     active = TRUE;
     // NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
     while (active) {
         [synthThreadLock lockWhenCondition: SC_processBuffer];
+
         [synthBuffer zero];
         //NSLog(@"SYNTH THREAD: going to processBuffers\n");
         [self processBuffers];
         //NSLog(@"SYNTH THREAD: ... done processBuffers\n");
 
         if (processFinishedCallback != NULL)
-            processFinishedCallback();
-	    
+            processFinishedCallback(); // SKoT: should this be a selector, hmm hmm...?
+
         [synthThreadLock unlockWithCondition: SC_bufferReady];
     }
     [manager removeClient: self];
-    [manager release];
-    manager = nil; // avoids double release.
+    [self setManager: nil];
     [self freeBufferMem];
-    // NSLog(@"SYNTH THREAD: EXITING\n");
+    [self didFinishStreaming];
     [localPool release];
+//    fprintf(stderr,"SndStreamClient: processing thread stopped\n");                       
     [NSThread exit];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @active
+// prepareToStreamWithBuffer
+//
+// Note! Only use the buffer for getting the size + data format for your 
+// sub-classed stream client's internal setup stuff. 
+////////////////////////////////////////////////////////////////////////////////
+
+- prepareToStreamWithBuffer: (SndAudioBuffer*) buff
+{
+  return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// didFinishStreaming
+// 
+// Override this to give a sub-classed client an opportunity to 'clean up'
+////////////////////////////////////////////////////////////////////////////////
+
+- didFinishStreaming
+{
+  return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// active
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) active
@@ -247,28 +298,30 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @setProcessFinishedCallBack:
+// setProcessFinishedCallBack:
 ////////////////////////////////////////////////////////////////////////////////
 
-- setProcessFinishedCallBack: (void*)fn
+- setProcessFinishedCallBack: (void*) fn
 {
     processFinishedCallback = fn;
     return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @processBuffers
+// processBuffers
+//
+// subclass: Override this with your buffer processing method
+//
+// This should be along the lines of: (in pseudo code!!!)
+//
+// SndAudioBuffer *b = [self synthBuffer]; 
+// for i = 0 to b.length
+//   b.sample[i] = a_synth_sample();
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) processBuffers
 {
-  // Nowt here. sub class should override with an audio buffer filling function.
-  // 
-  // along the lines of: (in pseudo code!!!)
-  //
-  // SndAudioBuffer *b = [self synthBuffer]; 
-  // for i = 0 to b.length
-  //   b.samples[i] = a_synth_sample();
+  NSLog(@"SndStreamClient::processBuffers is being called - have you remembered to override this in your strem client?");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -281,7 +334,7 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @synthBuffer
+// synthBuffer
 ////////////////////////////////////////////////////////////////////////////////
 
 - (SndAudioBuffer*) synthBuffer
@@ -304,15 +357,16 @@ enum {
 
 - managerIsShuttingDown
 {
-    // make sure the synthesis thread is paused
+    // Need lock to make sure the synthesis thread is paused before shutting down!
     [synthThreadLock lockWhenCondition:   SC_bufferReady ]; 
     active = FALSE;
     [synthThreadLock unlockWithCondition: SC_processBuffer];
+    
     return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @isActive
+// isActive
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) isActive;
@@ -321,7 +375,7 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// @setDetectPeaks
+// setDetectPeaks
 ////////////////////////////////////////////////////////////////////////////////
 
 - setDetectPeaks: (BOOL) detectPeaks
@@ -333,11 +387,13 @@ enum {
 // getPeakLeft:right:
 ////////////////////////////////////////////////////////////////////////////////
 
-- getPeakLeft: (float *) leftPeak right: (float *) rightPeak
+- getPeakLeft: (float *) leftPeak right: (float *) rightPeak 
 {
     return self;
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// Output buffer lock / unlock
 ////////////////////////////////////////////////////////////////////////////////
 
 - lockOutputBuffer
@@ -352,5 +408,6 @@ enum {
   return self;
 }
 
+////////////////////////////////////////////////////////////////////////////////
 
 @end
