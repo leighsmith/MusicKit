@@ -42,19 +42,21 @@
 }
 
 /*!
-@method registerAudioProcessorClass:
- @abstract Registers an SndAudioProcessor class
- @discussion Automatically called by the SndAudioProcessor init method,
- so any subclasses will automatically register themselves once instantiated.
- @param fxclass The class of an SndAudioProcessor
+  @method registerAudioProcessorClass:
+  @abstract Registers an SndAudioProcessor class
+  @discussion Automatically called by the SndAudioProcessor init method,
+  so any subclasses will automatically register themselves once instantiated.
+  @param fxclass The class of an SndAudioProcessor
 */
 + (void) registerAudioProcessorClass: (id) fxclass;
+
 /*!
  @method fxClasses
  @discussion Use this to get a list of all the available FX processors.
  @result An NSArray of SndAudioProcessor sub-classed Class object ids
 */
 + (NSArray*) fxClasses;
+
 /*!
  @method     audioProcessor
  @abstract   Factory method
@@ -62,18 +64,21 @@
  @result     Returns a freshly initialized, autoreleased SndAudioProcessor
 */
 + audioProcessor;
+
 /*!
   @method     init
   @abstract   Initialization method
   @result     Self.
 */
 - init;
+
 /*!
   @method     initWithParamCount:name:
   @abstract   Initialization method
   @result     Self.
 */
 - initWithParamCount: (const int) count name: (NSString*) s;
+
 /*!
   @method      reset
   @abstract    Message sent when host determines the SndAudioProcessor should reinitialize
@@ -81,12 +86,14 @@
   @result      self
 */
 - reset;
+
 /*!
   @method     paramCount
   @abstract   Gets the number of parameters
   @result     number of parameters
 */
 - (int) paramCount;
+
 /*!
   @method     paramValue:
   @abstract   Gets the value of the indexed parameter. 
@@ -95,6 +102,7 @@
   @result     parameter value
 */
 - (float) paramValue: (const int) index;
+
 /*!
  @method   paramName:
  @abstract   Gets the name of indexed parameter.
@@ -102,6 +110,7 @@
  @result     NSString with parameter name
 */
 - (NSString*) paramName: (const int) index;
+
 /*!
  @method     paramLabel:
  @abstract   Returns a label or extra text associated with the parameter
@@ -110,16 +119,18 @@
  @result     Returns the label for the parameter.
 */
 - (NSString*) paramLabel: (const int) index;
+
 /*!
-@method     paramDisplay:
- @abstract   Converts an object-internal value into a more user-friendly representation.
- @param      index Parameter index
- @discussion Example: An instance variable may have a floating point range [0,1], but it
- represents a deciBel amount for user purposes. This method is an opportunity for the
- object to provide a more meaningful description of the parameter.
- @result     Returns a containing the alternative string representation of the parameter
+  @method     paramDisplay:
+  @abstract   Converts an object-internal value into a more user-friendly representation.
+  @param      index Parameter index
+  @discussion Example: An instance variable may have a floating point range [0,1], but it
+              represents a deciBel amount for user purposes. This method is an opportunity for the
+              object to provide a more meaningful description of the parameter.
+  @result     Returns a containing the alternative string representation of the parameter
 */
 - (NSString*) paramDisplay: (const int) index;
+
 /*!
  @method     setParam:toValue:
  @abstract   Sets the indexed parameter to the value v.
@@ -130,21 +141,23 @@
  @result     Self.
 */
 - setParam: (const int) index toValue: (const float) v;
+
 /*!
  @method     processReplacingInputBuffer:outputBuffer:
- @abstract   process the inputBuffer, and replace the results in the output buffer
+ @abstract   Process the inputBuffer, and replace the results in the output buffer
  @discussion Overide this method with your own FX processing routines.
              There is nothing to stop inB and outB referring to the same buffer -  
              be warned that replacing the output values in outB may change inB in 
              these cases.
  @param      inB The input buffer
  @param      outB The output buffer
- @result     BOOL indicates whether the output is held in outB (TRUE), or inB (false). 
+ @result     BOOL indicates whether the output is held in outB (YES), or inB (NO). 
              Means that processors that decide not to touch their data at all don't 
              need to spend time copying between buffers.
 */
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
                         outputBuffer: (SndAudioBuffer*) outB;
+
 /*!
  @method    setAudioProcessorChain:
  @abstract
@@ -157,6 +170,7 @@
  @result     void.
 */
 - (void) setAudioProcessorChain: (SndAudioProcessorChain*) inChain;
+
 /*!
   @method     audioProcessorChain
   @abstract   Returns the SndAudioProcessorChain to which the processor is
@@ -165,6 +179,7 @@
   @result     id of the SndAudioProcessorChain
 */
 - (SndAudioProcessorChain*) audioProcessorChain;
+
 /*!
   @method     isActive
   @abstract   Processor activity status query method
@@ -172,6 +187,7 @@
               chain should pass the audio stream through this processor.
 */
 - (BOOL) isActive;
+
 /*!
   @method     setActive
   @abstract   Sets the active status of the processor.
@@ -179,6 +195,7 @@
   @result     self
 */
 - setActive: (const BOOL) b;
+
 /*!
   @method     setName:
   @abstract
@@ -186,6 +203,7 @@
   @discussion
 */
 - setName: (NSString*) aName;
+
 /*!
   @method     name
   @abstract
@@ -193,6 +211,7 @@
   @discussion
 */
 - (NSString*) name;
+
 /*!
   @method     description
   @abstract
@@ -200,6 +219,7 @@
   @discussion
 */
 - (NSString*) description;
+
 /*!
   @method     paramDictionary
   @abstract
@@ -207,6 +227,7 @@
   @discussion
 */
 - (NSDictionary*) paramDictionary;
+
 /*!
   @method     setParamWithKey:toValue:
   @abstract
@@ -214,6 +235,7 @@
   @discussion
 */
 - setParamWithKey: (NSString*) keyName toValue: (NSValue*) value;
+
 /*!
   @method     paramObjectForIndex:
   @abstract
