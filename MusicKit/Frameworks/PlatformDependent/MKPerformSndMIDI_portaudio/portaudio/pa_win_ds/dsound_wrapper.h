@@ -36,6 +36,8 @@
  *
  */
 
+// try to solve some header problems...
+#undef __DSOUND_INCLUDED__
 #include <DSound.h>
 
 #if !defined(BOOL)
