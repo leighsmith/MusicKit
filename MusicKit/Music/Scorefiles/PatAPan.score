@@ -1,0 +1,1244 @@
+/*
+    Pat-A-Pan
+    
+    A Burgundian carol, as found in the Oxford Book of Carols, in three verses.
+    
+    Here is carol that uses the Pluck synthPatch, but deserves something better.
+    This piece sounds beautiful when played by a consort of four recorders, one
+    of each of the bass, tenor, alto, and soprano sizes.
+    
+     Rendered by Christopher Kane on 12-06-90.
+     If you have any questions about this score, or suggestions, or scores you have
+     written, my e-mail addresses are:
+          INTERNET: kane@nic.gac.edu
+	 BITNET: christopher@gacvax1.bitnet
+*/
+
+info tempo:144, headroom:0.33;
+noteTagRange = 1 to 6;
+
+part sop,alto,ten,bass;
+
+sop synthPatchCount:1, synthPatch:"Pluck";
+alto synthPatchCount:1, synthPatch:"Pluck";
+ten synthPatchCount:1, synthPatch:"Pluck";
+bass synthPatchCount:1, synthPatch:"Pluck";
+
+var start = 0.01;
+var whole = 4.0;
+var half = whole / 2;
+var quart = whole / 4;
+var eigth = whole / 8;
+var sixt = whole / 16; 
+var breath = whole / 32;
+
+BEGIN;
+
+sop (noteUpdate) sustain:0.97, decay:15, bright:0.37, bearing:-18.0, amp:0.6;
+alto (noteUpdate) sustain:0.97, decay:15, bright:0.37, bearing:-6.0, amp:0.6;
+ten (noteUpdate) sustain:0.97, decay:15, bright:0.37, bearing:6.0, amp:0.7;
+bass (noteUpdate) sustain:0.97, decay:15, bright:0.37, bearing:18.0, amp:0.7;
+
+t start;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:g4;
+t +quart;
+
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:e4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:fs4;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:e4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:a4;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +quart;
+
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:f4;
+bass (noteOn 4) freq:f3;
+t +eigth;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:c3;
+t +eigth;
+
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:c3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+sop (noteOn 1) freq:fs4;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:e4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:c3;
+t +quart;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:a2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:a2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:c4;
+bass (noteOn 4) freq:f3;
+t +quart;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:c4;
+bass (noteOn 4) freq:f3;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:c4;
+bass (noteOn 4) freq:f3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+alto (noteOn 2) freq:e4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:g2;
+t +half+quart;
+
+sop (noteOff 1);
+alto (noteOff 2);
+ten (noteOff 3);
+bass (noteOff 4);
+t +breath;
+
+/*====================================================*/
+
+/*---------------------------------*/
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:g3;                     /* added only to give g3 more volume */
+t +quart;
+
+sop (noteOn 1) freq:d5, amp:0.35;
+alto (noteOn 2) freq:bf4, amp:0.35;
+ten (noteOn 3) freq:g3, amp:1.0;
+bass (noteOn 4) freq:g3, amp:0.6;
+t +eigth;
+
+sop (noteOn 1) freq:ef5;
+alto (noteOn 2) freq:c5;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +quart;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:c4;
+bass (noteOn 4) freq:f3;
+t +quart;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:g3;
+t +quart;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:ef5;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:c4;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:g4;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:g4;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:e5;
+alto (noteOn 2) freq:g4;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:fs5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:fs4;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:ef5;
+alto (noteOn 2) freq:g4;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:ef5;
+alto (noteOn 2) freq:g4;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:fs3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:e3;
+t +quart;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:fs3;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:e4;
+bass (noteOn 4) freq:fs3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:g3;
+t +quart;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:ef5;
+alto (noteOn 2) freq:c5;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:a3;
+t +eigth;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:ef5;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:c4;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:c4;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+ten (noteOn 3) freq:d4;
+t +eigth;
+
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:e4;
+ten (noteOn 3) freq:c4;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:fs4;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:fs4;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:ef5;
+alto (noteOn 2) freq:g4;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:f4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:fs3;
+t +quart;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:fs3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:e3;
+t +quart;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:fs3;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:e4;
+bass (noteOn 4) freq:fs3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:g3;
+t +quart;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:f4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:f3;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:f4;
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:f3;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:f4;
+ten (noteOn 3) freq:c4;
+bass (noteOn 4) freq:f4;
+t +quart;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:f3;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:f3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:bf2;
+t +quart;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:a4;
+bass (noteOn 4) freq:bf2;
+t +eigth;
+
+sop (noteOn 1) freq:ef5;
+alto (noteOn 2) freq:g4;
+bass (noteOn 4) freq:c3;
+t +eigth;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:d4;
+bass (noteOn 4) freq:fs2;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:d4;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:b4;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:g2;
+t +half+quart;
+
+sop (noteOff 1);
+alto (noteOff 2);
+ten (noteOff 3);
+bass (noteOff 4);
+t +breath;
+
+/*====================================================*/
+
+/*---------------------------------*/
+sop (noteOn 1) freq:g4, amp:0.6;
+alto (noteOn 2) freq:g4, amp:0.6;
+t +quart;
+
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d3, amp:0.7;
+bass (noteOn 4) freq:g2, amp:0.7;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:e4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:fs4;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:e4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:a4;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +quart;
+
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:f4;
+bass (noteOn 4) freq:f3;
+t +eigth;
+
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:c3;
+t +eigth;
+
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:c3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+sop (noteOn 1) freq:fs4;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:e4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:c3;
+t +quart;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:a2;
+t +eigth;
+
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:a2;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d3;
+bass (noteOn 4) freq:g2;
+t +quart;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:d4;
+bass (noteOn 4) freq:g3;
+t +eigth;
+
+sop (noteOn 1) freq:c5;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:c4;
+bass (noteOn 4) freq:f3;
+t +quart;
+
+sop (noteOn 1) freq:bf4;
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:c4;
+bass (noteOn 4) freq:f3;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:c4;
+bass (noteOn 4) freq:f3;
+t +eigth;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:d5;
+alto (noteOn 2) freq:bf4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+alto (noteOn 2) freq:a4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+alto (noteOn 2) freq:g4;
+ten (noteOn 3) freq:g3;
+bass (noteOn 4) freq:d3;
+t +eigth;
+
+sop (noteOn 1) freq:a4;
+alto (noteOn 2) freq:fs4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+alto (noteOn 2) freq:e4;
+ten (noteOn 3) freq:a3;
+bass (noteOn 4) freq:d3;
+t +quart;
+
+/*---------------------------------*/
+sop (noteOn 1) freq:g4;
+alto (noteOn 2) freq:d4;
+ten (noteOn 3) freq:bf3;
+bass (noteOn 4) freq:g2;
+t +whole;
+
+
+sop (noteOff 1);
+alto (noteOff 2);
+ten (noteOff 3);
+bass (noteOff 4);
+END;
+
