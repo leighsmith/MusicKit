@@ -10,7 +10,36 @@
 
     Note that the MKConductor must be clocked to use MKMidi.
 
-    Explanation of NeXTStep/OpenStep Intel support (not Win32):
+    The elaborate support here for shared ownership stems from the fact that, 
+    unlike with DSP drivers, the MIDI driver is also a time base.  That means
+    that it must be shared among all instances.
+    This complicates matters if we ever have more than one driver (as opposed to
+    multiple instances of one driver.)  For now, I'm going to punt on that. If
+    the situation ever comes up, we may have to factor the time stuff out of the
+    driver and make a separate time server, which will be hard, seeing how MIDI
+    time code must be parsed, etc.
+
+    There is another subtle difference between MIDI and DSP handling.
+    In the case of MIDI, we are perfectly happy to allocate objects for bogus
+    midi objects.  We don't find out they're bogus until we try to open them.
+
+    Note that the support for MIDI devices on different hosts is currently disabled.
+    Hence if the host machine (the one the MusicKit app
+    is running on) is an Intel machine, we ignore the hostName.
+
+    Also, if a NeXT host tries to access a MIDI driver on an Intel machine, it
+    will fail because there's no device "midiN" on Intel.
+
+    Explanation of MIDI driver support:
+
+    For Win32, the "driver" within the MKPerformSndMIDI framework interfacing to
+    DirectMusic will return a list of DirectMusic "ports", which can be hardware MIDI
+    interfaces, PCM ROM playback engines on soundcards, the Microsoft DLS Sound Synthesiser
+    etc. The device name can be either a port description string (exactly matching one of
+    the driverNames), or can be "midiX" i.e. the soft form described above, where X is the
+    0 base index referring to a driver.
+
+    For NeXTStep/OpenStep Intel:
 
     On the DSP, we use "soft" integers to map to "hard" driver/unit pairs.
     Here, we pass in a device 'name' in the form "midiN", where N is an integer.
@@ -29,33 +58,6 @@
 
     Note: For now, we can just support the "soft" form.
 
-    The elaborate support here for shared ownership stems from the fact that, 
-    unlike with DSP drivers, the MIDI driver is also a time base.  That means
-    that it must be shared among all instances.
-    This complicates matters if we ever have more than one driver (as opposed to
-    multiple instances of one driver.)  For now, I'm going to punt on that. If
-    the situation ever comes up, we may have to factor the time stuff out of the
-    driver and make a separate time server, which will be hard, seeing how MIDI
-    time code must be parsed, etc.
-
-    There is another subtle difference between MIDI and DSP handling.
-    In the case of MIDI, we are perfectly happy to allocate objects for bogus
-    midi objects.  We don't find out they're bogus until we try to open them.
-
-    Note that the support for MIDI devices on different hosts will not work for
-    Intel machines.  Hence if the host machine (the one the MusicKit app
-    is running on) is an Intel machine, we ignore the hostName.
-
-    Also, if a NeXT host tries to access a MIDI driver on an Intel machine, it
-    will fail because there's no device "midiN" on Intel.
-
-    For Win32, the "driver" within the MKPerformSndMIDI framework interfacing to
-    DirectMusic will return a list of DirectMusic "ports", which can be hardware MIDI
-    interfaces, PCM ROM playback engines on soundcards, the Microsoft DLS Sound Synthesiser
-    etc. The device name can be either a port description string (exactly matching one of
-    the driverNames), or can be "midiX" i.e. the soft form described above, where X is the
-    0 base index referring to a driver.
-
   Original Author: David A. Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
@@ -67,6 +69,9 @@
 Modification history:
 
   $Log$
+  Revision 1.28  2000/11/25 22:50:51  leigh
+  Improved class description, made error messages less NeXT specific, introduced a call-back function alternative to using a port for receiving MIDI messages from the driver, ensured ownerPort is nil when closing the device
+
   Revision 1.27  2000/11/13 23:07:51  leigh
   Renamed MIDI functions to the more explicit prefix MKMD to avoid confusion with OS MIDI routines. Replaced KERN_SUCCESS with MKMD_SUCCESS to remove the Mach dependency. queuePort is now a MKMDReplyPort. Introduced a macro to determine whether to treat the ports as NSObjects requiring retain/releases.
   Removed tvs since only one copy was held per instance, integrating the MTC variables as ivars, fixing a related bug.
@@ -229,10 +234,10 @@ NSLocalizedStringFromTableInBundle(@"MIDI driver is unavailable. Perhaps another
 NSLocalizedStringFromTableInBundle(@"MIDI port is unavailable. Perhaps another application is using the port", _MK_ERRTAB, _MKErrorBundle(), "")
 
 #define INPUT_ERROR \
-NSLocalizedStringFromTableInBundle(@"Problem receiving MIDI from serial port", _MK_ERRTAB, _MKErrorBundle(), "This error occurs when an error is received from the Mach MIDI driver when receiving MIDI data.")
+NSLocalizedStringFromTableInBundle(@"Problem receiving MIDI from the MIDI device driver port", _MK_ERRTAB, _MKErrorBundle(), "This error occurs when an error is received from the Mach MIDI driver when receiving MIDI data.")
 
 #define OUTPUT_ERROR \
-NSLocalizedStringFromTableInBundle(@"Problem sending MIDI to serial port", _MK_ERRTAB, _MKErrorBundle(), "This error occurs when an error is received from the Mach MIDI driver when sending MIDI data.")
+NSLocalizedStringFromTableInBundle(@"Problem sending MIDI to the MIDI device driver port", _MK_ERRTAB, _MKErrorBundle(), "This error occurs when an error is received from the MIDI driver when sending MIDI data.")
 
 #define OWNER_ERROR \
 NSLocalizedStringFromTableInBundle(@"Can't become owner of MIDI driver", _MK_ERRTAB, _MKErrorBundle(), "This error occurs when an attempt to become owner of the MIDI driver fails.")
@@ -273,6 +278,7 @@ static unsigned int systemDefaultDriverNum;   // index into the midiDriverNames 
 static double mtcTimeOffset = 0;
 static BOOL tearDownMTC(MKMidi *self);
 static BOOL setUpMTC(MKMidi *self);
+void handleCallBack(void *midiObj);
 
 NSString *midiDriverErrorString(int errorCode)
 {
@@ -313,8 +319,10 @@ static int closeMidiDev(MKMidi *self)
     MKMDReleaseUnit(self->devicePort, self->ownerPort, self->unit);
     if (INPUTENABLED(self->ioMode)) {
 	if (self->recvPort) {
+#if RECEPTION_USING_PORTS
 	    _MKRemovePort(self->recvPort);
 	    addedPortsCount--;
+#endif
 #if PORTS_ARE_NSOBJECTS            
 	    [self->recvPort release];
 #endif
@@ -337,14 +345,13 @@ static int closeMidiDev(MKMidi *self)
                 somebodyElseHasOwnership = YES;
 	}
     }
-    if (somebodyElseHasOwnership)
-        self->ownerPort = nil;
-    else {
+    if (!somebodyElseHasOwnership) {
 	MKMDReleaseOwnership(self->devicePort, self->ownerPort);
 #if PORTS_ARE_NSOBJECTS            
 	[self->ownerPort release];
 #endif
     } 
+    self->ownerPort = nil;
     [otherUnits release];
     /* Just being paranoid: */
     self->devicePort = nil;
@@ -387,10 +394,12 @@ static MKMDReturn openMidiDev(MKMidi *self)
        */
 {
     MKMDReturn r;
-    BOOL isSoftDevice;
+//    BOOL isSoftDevice;
     NSMutableArray *otherUnits;
 
+    // FIXME the soft and hard (i.e explicit driver name) forms needs to be integrated with midiDriver units.
     // self->unit = getNumSuffix(self->midiDevName, &isSoftDevice);
+    // FIXME Verify that self->midiDevName has already been mapped to a hard device.
     self->unit = [[midiDriverUnits objectAtIndex: [midiDriverNames indexOfObject: self->midiDevName]] intValue];
     // kludged FIXME midiDriverUnits
     self->devicePort = MKMDGetMIDIDeviceOnHost([self->hostname cString]);
@@ -464,9 +473,13 @@ static MKMDReturn openMidiDev(MKMidi *self)
 	    closeMidiDev(self);
 	    return !MKMD_SUCCESS;
 	}
+#if RECEPTION_USING_PORTS
         /* sb: first self was midiIn. Changed to self because 'self' responds to -handleMachMessage */
         _MKAddPort(self->recvPort, self, 0, self, _MK_DPSPRIORITY);
 	addedPortsCount++;
+#else
+        MKMDSetReplyCallback(self->devicePort, self->ownerPort, self->unit, handleCallBack, (void *) self);
+#endif
     }
     if (OUTPUTENABLED(self->ioMode)) {
 #if PORTS_ARE_NSOBJECTS
@@ -580,7 +593,7 @@ static int resumeMidiClock(MKMidi *self)
 	  _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r),
 		    @"resumeMidiClock MKMDSetClockMode");
 	if (self->alarmTimeValid) {
-	    r = MKMDRequestAlarm(self->devicePort, self->ownerPort, [self->alarmPort machPort],
+	    r = MKMDRequestAlarm(self->devicePort, self->ownerPort, self->alarmPort,
 				 self->alarmTime);
 	    self->alarmPending = YES;
 	    if (r != MKMD_SUCCESS)
@@ -659,17 +672,6 @@ static void putTimedByte(unsigned curTime,unsigned char aByte)
     bufPtr++;
 }
 
-static void sendBufferedData(struct __MKMidiOutStruct *ptr); /* forward decl*/
-
-static void putTimedByteWithCheck(struct __MKMidiOutStruct *ptr,
-				  unsigned curTime,unsigned char aByte)
-    /* Same as above, but checks for full buffer */
-{
-    if ((&(midiBuf[MIDIBUFSIZE])) == bufPtr) 
-      sendBufferedData(ptr);
-    putTimedByte(curTime,aByte);
-}
-
 static void sendBufferedData(struct __MKMidiOutStruct *ptr)
     /* Send any buffered bytes and reset pointer to start of buffer */
 {
@@ -690,6 +692,16 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 	_MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r), @"sendBufferedData");
     bufPtr = &(midiBuf[0]);
 }
+
+static void putTimedByteWithCheck(struct __MKMidiOutStruct *ptr,
+				  unsigned curTime,unsigned char aByte)
+    /* Same as above, but checks for full buffer */
+{
+    if ((&(midiBuf[MIDIBUFSIZE])) == bufPtr) 
+      sendBufferedData(ptr);
+    putTimedByte(curTime,aByte);
+}
+
 
 static void putMidi(struct __MKMidiOutStruct *ptr)
     /* Adds a complete MIDI message to the output buffer */
@@ -918,14 +930,13 @@ static int incomingDataCount = 0; /* We use a static here to allow us to
 				   * this. 
 				   */
 
-// my_data_reply is called direct from the MIDI Reply routine, so the Mach port needs to be defined rather than
-// an NSPort for the first parameter.
+// my_data_reply manages the incoming MIDI events. It is called from MKMDHandleReply
 static void my_data_reply(mach_port_t reply_port, short unit, MKMDRawEvent *events, unsigned int count) {
     _MKMidiInStruct *ptr;
     MKNote *aNote;
     unsigned char statusByte;
 
-    if(receivingMidi == nil) { // check we assigned this in handleMachMessage
+    if(receivingMidi == nil) { // check we assigned this in handleMachMessage/handleCallback
         _MKErrorf(MK_musicKitErr, @"Internal error, receiving MKMidi has not been assigned\n");
         return;
     }
@@ -946,7 +957,8 @@ static void my_data_reply(mach_port_t reply_port, short unit, MKMDRawEvent *even
 	    }
 	}
     }
-    receivingMidi = nil; // to rigourously check handleMachMessage does its job, prevents spurious wrong messages being sent.
+    // to rigorously check handleMachMessage/handleCallBack do their job, prevents spurious wrong messages being sent.
+    receivingMidi = nil; 
 }
 
 /*sb: added the following method to handle mach messages. This replaces the earlier function
@@ -962,20 +974,47 @@ static void my_data_reply(mach_port_t reply_port, short unit, MKMDRawEvent *even
 - (void)handleMachMessage:(void *)machMessage
 {
     msg_header_t *msg = (msg_header_t *)machMessage;
+    NSString *errorMessage;
     MKMDReturn r;
-    MKMDReplyFunctions recvStruct = { /* Tells driver funcs to call */ my_data_reply,0,0,0};
+    /* Tells driver funcs to call: */ 
+    // MKMDReplyFunctions recvStruct = { my_data_reply, my_alarm_reply, my_exception_reply, 0};
+    MKMDReplyFunctions recvStruct = { my_data_reply, 0, 0, 0};
+
+    // determine what the port is that called this method, then set the appropriate my_*_reply function
+    // and error message.
+    // if the error is from midiAlarm or Exception, CLOCK_ERROR rather than INPUT_ERROR should be used.
+    errorMessage = INPUT_ERROR;
 
     receivingMidi = self;
     // Eventually MKMDHandleReply should be unnecessary, when we receive the MIDI data direct into handlePortMessage
     // Then we can merge this method and my_data_reply into a single handlePortMessage. 
-    r = MKMDHandleReply(msg,&recvStruct);        /* This gets data */
-    if (r != MKMD_SUCCESS)
-      _MKErrorf(MK_machErr, INPUT_ERROR, midiDriverErrorString(r), @"midiIn");
+    r = MKMDHandleReply(msg, &recvStruct);        /* This gets data */
+    if (r != MKMD_SUCCESS) {
+      _MKErrorf(MK_machErr, errorMessage, midiDriverErrorString(r), @"midiIn");
+    }
 }
 
+// The alternative to using a Mach message is to use a call back function to receive the MIDI data.
+void handleCallBack(void *midiObj)
+{
+    NSString *errorMessage;
+    MKMDReturn r;
+    /* Tells driver funcs to call: */ 
+    // MKMDReplyFunctions recvStruct = { my_data_reply, my_alarm_reply, my_exception_reply, 0};
+    MKMDReplyFunctions recvStruct = { my_data_reply, 0, 0, 0};
+
+    // determine what the port is that called this method, then set the appropriate my_*_reply function
+    // and error message.
+    // if the error is from midiAlarm or Exception, CLOCK_ERROR rather than INPUT_ERROR should be used.
+    errorMessage = INPUT_ERROR;
+
+    receivingMidi = (MKMidi *) midiObj;
+    r = MKMDHandleReply(NULL, &recvStruct);        /* This gets data */
+    if (r != MKMD_SUCCESS) {
+      _MKErrorf(MK_machErr, errorMessage, midiDriverErrorString(r), @"midiIn");
+    }
+}
 /* Input configuration */
-
-
 
 -setUseInputTimeStamps:(BOOL)yesOrNo
 {
@@ -1028,12 +1067,12 @@ static unsigned ignoreBit(unsigned param)
 
 /* Performer-like methods. */
 
--conductor
+- (MKConductor *) conductor
 {
     return conductor ? conductor : [_MKClassConductor() clockConductor];
 }
 
--setConductor:aConductor
+- setConductor: (MKConductor *) aConductor
 {
     conductor = aConductor;
     return self;
@@ -1056,7 +1095,7 @@ static unsigned ignoreBit(unsigned param)
    the general API.  And since this code was already written for the DSP
    case, I thought I'd just grab it from there.
    LMS: The day is rapidly approaching when we need all of David's functionality
-   with Win32 named ports, MOXS USB MIDI devices etc.
+   with Win32 named ports, MacOS X CoreMIDI USB devices etc.
  */
 
 // Return YES if able to initialise for the MIDI driver which registers available MIDI output ports.
@@ -1287,13 +1326,13 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
     return self;
 }
 
--copy
+- copy
   /* Overridden to return self. */
 {
     return self;
 }
 
-- (void)dealloc
+- (void) dealloc
   /* Aborts and frees the receiver. */
 {
     int i;
@@ -1316,7 +1355,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
 }
 /* Control of device */
 
--(MKDeviceStatus)deviceStatus
+- (MKDeviceStatus) deviceStatus
   /* Returns MKDeviceStatus of receiver. */
 {
     return deviceStatus;
@@ -1349,7 +1388,7 @@ static id openMidi(MKMidi *self)
     return self;
 }
 
--allNotesOff
+- allNotesOff
    /* This is a conservative version of allNotesOff.  It only sends
     * noteOffs for notes if those notes are sounding.
     * The notes are sent immediately (but will be
@@ -1381,7 +1420,7 @@ int _MKAllNotesOffPause = 500; /* ms between MIDI channel blasts
 				* the future.
 				*/
 
--allNotesOffBlast
+- allNotesOffBlast
     /* If object is open for output, sends noteOff on every keyNum/channel.
        Note that this object assumes we're NOT encoding running status.
        (Currently, it is, indeed, the case that we're not encoding
@@ -1452,7 +1491,7 @@ static void cancelQueueReq(MKMidi *self)
 	_MKErrorf(MK_machErr, INPUT_ERROR, midiDriverErrorString(r), @"cancelQueueReq");
 }
 
--_open
+- _open
 {
     switch (deviceStatus) {
     case MK_devClosed: /* Need to open it */
@@ -1477,7 +1516,7 @@ static void cancelQueueReq(MKMidi *self)
     return self;
 }
 
--openOutputOnly
+- openOutputOnly
   /* Same as open but does not enable output. */
 {
     if ((deviceStatus != MK_devClosed) && (ioMode != MKMidiOutputOnly))
@@ -1486,7 +1525,7 @@ static void cancelQueueReq(MKMidi *self)
     return [self _open];
 }
 
--openInputOnly
+- openInputOnly
 {
     if ((deviceStatus != MK_devClosed) && (ioMode != MKMidiInputOnly))
         [self close];
@@ -1494,7 +1533,7 @@ static void cancelQueueReq(MKMidi *self)
     return [self _open];
 }
 
--open
+- open
   /* Opens device if not already open.
      If already open, flushes output queue. 
      Sets deviceStatus to MK_devOpen. 
@@ -1507,12 +1546,12 @@ static void cancelQueueReq(MKMidi *self)
     return [self _open];
 }
 
--(double)localDeltaT
+- (double) localDeltaT
 {
     return localDeltaT;
 }
 
--setLocalDeltaT:(double)value
+- setLocalDeltaT: (double) value
 {
     localDeltaT = value;
     return self;
@@ -1540,7 +1579,7 @@ static void cancelQueueReq(MKMidi *self)
     return self;
 }
 
--stop
+- stop
 {
     switch (deviceStatus) {
     case MK_devClosed:
@@ -1561,7 +1600,7 @@ static void cancelQueueReq(MKMidi *self)
     return self;
 }
 
--abort
+- abort
 {
     switch (deviceStatus) {
       case MK_devClosed:
@@ -1616,7 +1655,8 @@ static void cancelQueueReq(MKMidi *self)
     }
 }
 
--awaitQueueDrain {
+- awaitQueueDrain
+{
     if (deviceStatus == MK_devRunning) 
         awaitMidiOutDone(self, MKMD_NO_TIMEOUT);
     return self;
@@ -1624,7 +1664,7 @@ static void cancelQueueReq(MKMidi *self)
 
 /* output configuration */
 
--setOutputTimed:(BOOL)yesOrNo
+- setOutputTimed: (BOOL) yesOrNo
 /* Controls whether MIDI commands are sent timed or untimed. The default
    is timed. It is permitted to change
    from timed to untimed during a performance. */
@@ -1633,7 +1673,7 @@ static void cancelQueueReq(MKMidi *self)
     return self;
 }
 
--(BOOL)outputIsTimed
+- (BOOL) outputIsTimed
   /* Returns whether MIDI commands are sent timed. */
 {
     return outputIsTimed;
@@ -1642,7 +1682,7 @@ static void cancelQueueReq(MKMidi *self)
 
 /* Receiving notes */
 
--_realizeNote:aNote fromNoteReceiver:aNoteReceiver
+- _realizeNote: aNote fromNoteReceiver: aNoteReceiver
     /* Performs note by converting it to midi and emiting it. 
        Is careful about matching noteOns with noteOffs. For
        notes of type MK_noteDur, schedules up a message to
@@ -1671,7 +1711,7 @@ static void cancelQueueReq(MKMidi *self)
 
 /* Accessing NoteSenders and NoteReceivers */
 
--channelNoteSender:(unsigned)n
+- channelNoteSender:(unsigned)n
   /* Returns the MKNoteSender corresponding to the specified channel or nil
      if none. If n is 0, returns the MKNoteSender used for Notes fasioned
      from midi channel mode and system messages. */
@@ -1679,7 +1719,7 @@ static void cancelQueueReq(MKMidi *self)
     return (n > MIDI_NUMCHANS) ? nil : [noteSenders objectAtIndex:n];
 }
 
--channelNoteReceiver:(unsigned)n
+- channelNoteReceiver:(unsigned)n
   /* Returns the NoteReceiver corresponding to the specified channel or nil
      if none. If n is 0, returns the NoteReceiver used for Notes fasioned
      from midi channel mode and system messages. */
@@ -1687,7 +1727,7 @@ static void cancelQueueReq(MKMidi *self)
     return (n > MIDI_NUMCHANS) ? nil : [noteReceivers objectAtIndex:n];
 }
 
--noteSenders
+- noteSenders
   /* TYPE: Processing 
    * Returns a copy of the receiver's MKNoteSender List. 
    */
@@ -1696,8 +1736,7 @@ static void cancelQueueReq(MKMidi *self)
 //    return [[noteSenders copy] autorelease];  // Cause of problem?? LMS
 }
 
-
--noteSender
+- noteSender
   /* Returns the default MKNoteSender. This is used when you don't care
      which MKNoteSender you get. */
 {
@@ -1713,7 +1752,7 @@ static void cancelQueueReq(MKMidi *self)
     return _MKLightweightArrayCopy(noteReceivers);
 }
 
--noteReceiver
+- noteReceiver
   /* TYPE: Querying; Returns the receiver's first MKNoteReceiver.
    * Returns the first MKNoteReceiver in the receiver's NSArray.
    * This is particularly useful for MKInstruments that have only
@@ -1723,7 +1762,7 @@ static void cancelQueueReq(MKMidi *self)
     return [noteReceivers objectAtIndex:0];
 }
 
--setMergeInput:(BOOL)yesOrNo
+- setMergeInput: (BOOL) yesOrNo
 {
     self->mergeInput = yesOrNo;
     return self;
