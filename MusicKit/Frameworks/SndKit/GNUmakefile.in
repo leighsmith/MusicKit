@@ -22,7 +22,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 # For use in rpm generation:
 PACKAGE_NAME = SndKit
-VERSION = 2.3.2
+VERSION = 5.5.0
 
 srcdir = .
 
