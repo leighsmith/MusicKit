@@ -3,11 +3,11 @@
   Defined In: The MusicKit
 
   Description:
-    This is the Music Kit scheduler. See documentation for details. 
-    Note that, in clocked mode, all timing is done with a single dpsclient "timed entry." 
+    This is the MusicKit scheduler. See documentation for details. 
+    Note that, in clocked mode, all timing is done with a single NSTimer "timed entry." 
 
-    In this version, you must use the appkit run loop if you are in clocked mode. You may,
-    however, use the unClocked mode without the AppKit.
+    In this version, you must use the FoundationKit NSRunLoop if you are in clocked mode. You may,
+    however, use the unClocked mode, although its purpose is now deprecated.
 
   Original Author: David Jaffe
 
@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2000/04/02 17:22:13  leigh
+  Cleaned doco
+
   Revision 1.10  2000/04/01 01:19:27  leigh
   Removed redundant getTime function
 
