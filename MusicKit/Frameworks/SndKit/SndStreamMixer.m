@@ -12,7 +12,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#import <MKPerformSndMIDI/PerformSound.h>
 #import "SndStreamMixer.h"
 #import "SndAudioProcessor.h"
 
