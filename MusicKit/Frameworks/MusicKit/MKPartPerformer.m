@@ -10,7 +10,7 @@
  Copyright (c) 1988-1992, NeXT Computer, Inc.
  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
  Portions Copyright (c) 1994 Stanford University
- Portions Copyright (c) 1999-2003, The MusicKit Project.
+ Portions Copyright (c) 1999-2004, The MusicKit Project.
  */
 /* Modification history before commital to the CVS repository:
 
@@ -24,7 +24,7 @@ wait unnecessarily in the case where there are no notes
 between firstTimeTag and lastTimeTag, but where there
 is a note after lastTimeTag.
 11/01/94/daj - Added argument to _partPerformerDidDeactivate:.
-06/19/98/sb  - Changed _loc and _endLoc to Array indices rather than addresses
+06/19/98/sb  - Changed noteIndex and noteCount to Array indices rather than addresses
 this is because we can't use NX_ADDRESS to step through the
 array contents any more. (OpenStep conversion)
 */
@@ -41,48 +41,46 @@ array contents any more. (OpenStep conversion)
 
 void _MKSetScorePerformerOfPartPerformer(MKPartPerformer *aPP, id aSP)
 {
-  aPP->_scorePerformer = aSP;
+  aPP->scorePerformer = aSP;
 }
 
 #define VERSION2 2
 
-+ (void)initialize
++ (void) initialize
 {
-  if (self != [MKPartPerformer class])
-    return;
-  [MKPartPerformer setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
-    return;
+    if (self == [MKPartPerformer class])
+	[MKPartPerformer setVersion: VERSION2]; //sb: suggested by Stone conversion guide (replaced self)
 }
 
 static BOOL fastActivation = NO;
 
-+setFastActivation:(BOOL)yesOrNo
++ setFastActivation: (BOOL) yesOrNo
 {
-  fastActivation = YES;
-  return self;
+    fastActivation = YES;
+    return self;
 }
 
-+(BOOL)fastActivation
++ (BOOL) fastActivation
 {
-  return fastActivation;
+    return fastActivation;
 }
 
--init
+- init
   /* You never send this message. Subclass may implement it but must
   send [super initialize] before doing its own initialization. Sent
   once when an instance is created. Creates the single noteSender
   and adds the noteSender to the superclass cltn. */
 {
-  self = [super init];
-  if (self) {
-    lastTimeTag = MK_ENDOFTIME;
-    [self addNoteSender: [MKNoteSender new]];    /* The object's only MKNoteSender. */
-  }
-  return self;
+    self = [super init];
+    if (self) {
+	lastTimeTag = MK_ENDOFTIME;
+	[self addNoteSender: [MKNoteSender new]];    /* The object's only MKNoteSender. */
+    }
+    return self;
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
-                /* TYPE: Archiving; Writes object.
+- (void) encodeWithCoder: (NSCoder *) aCoder
+/* TYPE: Archiving; Writes object.
   You never send this message directly.
   Should be invoked with NXWriteRootObject(). 
      Invokes superclass write: then archives firstTimeTag and lastTimeTag.
@@ -91,10 +89,10 @@ static BOOL fastActivation = NO;
 {
   [aCoder encodeConditionalObject: part];
   [aCoder encodeValuesOfObjCTypes: "dd", &firstTimeTag, &lastTimeTag];
-  [aCoder encodeConditionalObject: _scorePerformer];
+  [aCoder encodeConditionalObject: scorePerformer];
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) initWithCoder: (NSCoder *) aDecoder
   /* You never send this message directly.
   Should be invoked via NXReadObject().
           See write:. */
@@ -102,19 +100,19 @@ static BOOL fastActivation = NO;
   if ([aDecoder versionForClassName: @"MKPartPerformer"] == VERSION2) {
     part = [[aDecoder decodeObject] retain];
     [aDecoder decodeValuesOfObjCTypes: "dd", &firstTimeTag, &lastTimeTag];
-    _scorePerformer = [[aDecoder decodeObject] retain];
+    scorePerformer = [[aDecoder decodeObject] retain];
   }
 
   return self;
 }
 
-- (void)dealloc
+- (void) dealloc
   /* If receiver is a member of a MKScorePerformer or is active, returns self
   and does nothing. Otherwise frees the receiver. */
 {
   /*sb: FIXME!!! This is not the right place to decide whether or not to dealloc.
   * maybe need to put self in a global list of non-dealloced objects for later cleanup */
-  if ((status != MK_inactive) || _scorePerformer) {
+  if ((status != MK_inactive) || scorePerformer) {
     NSLog(@"MkPart::dealloc  dealloc aborted - in performance. Fix!");
     return;
   }
@@ -123,7 +121,7 @@ static BOOL fastActivation = NO;
   [super dealloc];
 }
 
-- copyWithZone:(NSZone *)zone;
+- copyWithZone: (NSZone *) zone;
        /* TYPE: Copying: Returns a copy of the receiver.
   * Creates and returns a new inactive MKPerformer as
   * a copy of the receiver.
@@ -135,31 +133,31 @@ static BOOL fastActivation = NO;
 * added to the collection by addNoteSender:.
   */
 {
-  MKPartPerformer *newObj = [super copyWithZone:zone];
-  newObj->_list = nil;
-  newObj->_loc = -1; /* sb: was NULL */
-  newObj->_endLoc = -1; /* sb: was NULL */
-  newObj->_scorePerformer = nil;
-  return newObj; 	//sb: do we need to retain and autorelease this? Or is this done
-                  // as part of [super copyWithZone:zone] ?
+    MKPartPerformer *newObj = [super copyWithZone:zone];
+    newObj->noteArray = nil;
+    newObj->noteIndex = -1; /* sb: was NULL */
+    newObj->noteCount = -1; /* sb: was NULL */
+    newObj->scorePerformer = nil;
+    //sb: do we need to retain and autorelease this? Or is this done
+    // as part of [super copyWithZone:zone] ?
+    return newObj;
 }
 
-- setPart: (MKPart*) aPart
-  /* Sets MKPart over which we sequence.
-  If the receiver is active, does nothing and returns nil. Otherwise
-  returns self. */
+- setPart: (MKPart *) aPart
+    /* Sets MKPart over which we sequence.
+    If the receiver is active, does nothing and returns nil. Otherwise
+    returns self. */
 {
-  if (status != MK_inactive)
-    return nil;
-  [part release];
-  part = [aPart retain];
-  return self;
+    if (status != MK_inactive)
+	return nil;
+    [part release];
+    part = [aPart retain];
+    return self;
 }
 
-- (MKPart*) part
-  /* Gets MKPart over which we sequence. */
+- (MKPart *) part
 {
-  return [[part retain] autorelease];
+    return [[part retain] autorelease];
 }
 
 - activateSelf
@@ -168,98 +166,105 @@ static BOOL fastActivation = NO;
   * this time. Any subsequent changes to the MKPart will not affect the
   * current performance. Returns the receiver.
   */
-     /*sb: I have had to change _loc and _endLoc to Array indices rather than addresses.
+     /*sb: I have had to change noteIndex and noteCount to Array indices rather than addresses.
   * this is because we can't use NX_ADDRESS to step through the array contents any more.
   */
 {
-  id tmpNote;
-  double tTag = 0;
-  if (!part)
-    return nil;
-  [part _addPerformanceObj:self];
-  if (!fastActivation)
-    _list = [[part notes] retain]; // notes returns an autoreleased array of new notes and needs retaining */
-  else {
-    [part sort];
-    _list = [part notesNoCopy]; /* this is autoreleased */
-  }
-
-  _loc = 0; //NX_ADDRESS(_list);
-  _endLoc = [_list count]; // + _loc
-  nextNote = nil;
-  while (_loc != _endLoc) {
-    tmpNote = [_list objectAtIndex:_loc++]; //*_loc++;
-    tTag = [tmpNote timeTag];
-    if (tTag >= firstTimeTag) {
-      nextNote = tmpNote;
-      break;
-    }
-  }
-  if (!nextNote || tTag > lastTimeTag) {
+    MKNote *tmpNote;
+    double tTag = 0;
+    
+    if (!part)
+	return nil;
+    [part _addPerformanceObj: self];
     if (!fastActivation)
-      [_list release];
-    _list = nil;
-    _loc = _endLoc = -1;//sb: was NULL;
-      [part _removePerformanceObj:self];
-      return nil;
-  }
-  //  nextPerform = tTag - firstTimeTag;
-  nextPerform = tTag;
-  return self;
+	noteArray = [[part notes] retain]; // notes returns an autoreleased array of new notes and needs retaining */
+    else {
+	[part sort];
+	noteArray = [part notesNoCopy]; // this is autoreleased
+    }
+    
+    noteIndex = 0;
+    noteCount = [noteArray count];
+    nextNote = nil;
+    while (noteIndex != noteCount) {
+	tmpNote = [noteArray objectAtIndex: noteIndex++];
+	tTag = [tmpNote timeTag];
+	if (tTag >= firstTimeTag) {
+	    nextNote = tmpNote;
+	    break;
+	}
+    }
+    if (!nextNote || tTag > lastTimeTag) {
+	if (!fastActivation)
+	    [noteArray release];
+	noteArray = nil;
+	noteIndex = -1;
+	noteCount = -1;
+	[part _removePerformanceObj: self];
+	return nil;
+    }
+    nextPerform = tTag;
+    return self;
 }
 
 - (void) deactivate
   /* TYPE: Performing
     * Finalization method sent when receiver is deactivated.
-    * Returns the receiver.
     */
 {
     [super deactivate];  // need to stop the performance.
     // TODO we have to do the casting since notesNoCopy returns an NSMutableArray
-    // and _list is an NSArray, we should investigate why notesNoCopy returns a
+    // and noteArray is an NSArray, we should investigate why notesNoCopy returns a
     // mutable array, it should be the job of the method using the result to
     // reset it's mutability.
-    if ((NSArray *) [part notesNoCopy] != _list) /* Was copied. */
-	[_list release];
-    _list = nil;
-    _loc = _endLoc = -1;
+    if ((NSArray *) [part notesNoCopy] != noteArray) /* Was copied. */
+	[noteArray release];
+    noteArray = nil;
+    noteIndex = noteCount = -1;
     [part _removePerformanceObj: self];
-    [_scorePerformer _partPerformerDidDeactivate: self];
+    [scorePerformer _partPerformerDidDeactivate: self];
 }
 
 -perform
   /* TYPE: Performing
-  * Sends nextNote and specifies the next time to perform.
-  * Returns the receiver. You never send this message directly to an instance.
-  * Rather, it is invoked by the MKConductor.
-  * You may override this method, e.g. to modify the note before it is
-  * performed or to modify nextPerform,
-  * but you must send [super perform] to perform the note.
-  */
+    * Sends nextNote and specifies the next time to perform.
+    * Returns the receiver. You never send this message directly to an instance.
+    * Rather, it is invoked by the MKConductor.
+    * You may override this method, e.g. to modify the note before it is
+    * performed or to modify nextPerform,
+    * but you must send [super perform] to perform the note.
+    */
 {
-  double t = [nextNote timeTag];
-  double tNew;
-  MKNoteSender *noteSender = [self noteSender];
-
-  if (performCount == 1 && (firstTimeTag > 0)) {  /* Send all noteUpdates up to now */
-    int nt;
-    NSEnumerator *enumerator = [_list objectEnumerator];
-    MKNote *aNote;
-
-    while ((aNote = [enumerator nextObject])) {
-      if (aNote == nextNote)
-        break;
-      nt = [aNote noteType];
-      if (nt == MK_noteUpdate || nt == MK_mute)
-        [noteSender sendNote: aNote];
+    double t = [nextNote timeTag];
+    double tNew;
+    MKNoteSender *noteSender = [self noteSender];
+    
+    if (performCount == 1 && (firstTimeTag > 0)) {  /* Send all noteUpdates up to now */
+	int noteType;
+	NSEnumerator *enumerator = [noteArray objectEnumerator];
+	MKNote *aNote;
+	
+	while ((aNote = [enumerator nextObject])) {
+	    if (aNote == nextNote)
+		break;
+	    noteType = [aNote noteType];
+	    if (noteType == MK_noteUpdate || noteType == MK_mute)
+		[noteSender sendNote: aNote];
+	}
     }
-  }
-  [noteSender sendNote: nextNote];
-  if ((_loc == _endLoc) || ((tNew = [(nextNote = [_list objectAtIndex:_loc++]) timeTag]) > lastTimeTag))
-  [self deactivate];
-  else
-  nextPerform = tNew - t;
-  return self;
+    [noteSender sendNote: nextNote];
+    if (noteIndex < noteCount) {
+	nextNote = [noteArray objectAtIndex: noteIndex++];
+	tNew = [nextNote timeTag];	
+	nextPerform = tNew - t;
+	if (tNew > lastTimeTag) {
+	    [self deactivate];	
+	}
+    }
+    else
+	[self deactivate];	
+
+    return self;
 }
 
 @end

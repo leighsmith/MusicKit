@@ -40,6 +40,9 @@
 */
 /*
   $Log$
+  Revision 1.8  2004/01/29 22:30:16  leighsmith
+  Corrected bug not sending out last note of part. Renamed ivars to meaningful names matching their current type and use.
+
   Revision 1.7  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -114,12 +117,10 @@ See also:  MKPerformer, MKScorePerformer, MKPart
     double lastTimeTag;          /* The greatest timeTag value considered for performance.  */
 
 @private
-    /*  id *_loc;
-        id *_endLoc;
-     */
-    int _loc,_endLoc;
-    NSArray *_list;
-    MKScorePerformer *_scorePerformer;
+    int noteIndex;
+    int noteCount;
+    NSArray *noteArray;
+    MKScorePerformer *scorePerformer;
 }
 
 
@@ -169,11 +170,11 @@ See also:  MKPerformer, MKScorePerformer, MKPart
               active, this does nothing and returns <b>nil</b>.  Otherwise returns
               the receiver.
 */
-- setPart: (MKPart*) aPart; 
+- setPart: (MKPart *) aPart; 
 
 /*!
   @method part
-  @result Returns an id.
+  @result Returns the MKPart instance over which we sequence.
   @discussion Returns the receiver's MKPart object.
 */
 - (MKPart*) part;
@@ -206,7 +207,7 @@ See also:  MKPerformer, MKScorePerformer, MKPart
               <b>deactivate</b> method inherited from MKPerformer.  The return
               value is ignored.
 */
-- (void)deactivate; 
+- (void) deactivate; 
 
 /*!
   @method perform
@@ -234,7 +235,7 @@ See also:  MKPerformer, MKScorePerformer, MKPart
               <i>aTimeTag</i>. Only MKNotes within the time span from <b>firstTimeTag</b>
               to <b>lastTimeTag</b> are included in the performance.
 */
-- setFirstTimeTag:(double )aTimeTag; 
+- setFirstTimeTag: (double) aTimeTag; 
 
 /*!
   @method setLastTimeTag:
@@ -244,7 +245,7 @@ See also:  MKPerformer, MKScorePerformer, MKPart
               <i>aTimeTag</i>. Only MKNotes within the time span from <b>firstTimeTag</b>
               to <b>lastTimeTag</b> are included in the performance.
 */
-- setLastTimeTag:(double )aTimeTag; 
+- setLastTimeTag: (double) aTimeTag; 
 
 /*!
   @method firstTimeTag
@@ -252,7 +253,7 @@ See also:  MKPerformer, MKScorePerformer, MKPart
   @discussion Returns the value of the receiver's <b>firstTimeTag</b>instance
               variable.
 */
--(double ) firstTimeTag; 
+- (double) firstTimeTag; 
 
 /*!
   @method lastTimeTag
@@ -260,7 +261,7 @@ See also:  MKPerformer, MKScorePerformer, MKPart
   @discussion Returns the value of the receiver's <b>lasTimeTag</b>instance
               variable.
 */
--(double )lastTimeTag; 
+- (double) lastTimeTag; 
 
 /*!
   @method copyWithZone:
@@ -272,21 +273,19 @@ See also:  MKPerformer, MKScorePerformer, MKPart
               The new MKNoteReceivers' connections (see the MKNoteReceiver class)
               are copied from the MKNoteReceivers in the receiver.
 */
-- copyWithZone:(NSZone *)zone; 
+- copyWithZone: (NSZone *) zone; 
 
-  /* 
-     You never send this message directly.  
-     Should be invoked with NXWriteRootObject(). 
-     Invokes superclass write: then archives firstTimeTag and lastTimeTag.
-     Optionally archives part using NXWriteObjectReference().
-     */
-- (void)encodeWithCoder:(NSCoder *)aCoder;
+/* 
+  You never send this message directly.  
+  Invokes superclass write: then archives firstTimeTag and lastTimeTag.
+  Optionally archives part using NXWriteObjectReference().
+ */
+- (void) encodeWithCoder: (NSCoder *) aCoder;
 
-  /* 
-     Should be invoked via NXReadObject(). 
-     Note that -init is not sent to newly unarchived objects.
-     See write:. */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+/* 
+  Note that -init is not sent to newly unarchived objects.
+ */
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
 @end
 
