@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  1999/08/26 19:56:56  leigh
+  using new MKError prototype
+
   Revision 1.2  1999/07/29 01:16:43  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -756,14 +759,14 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
     /* Don't document this -- it's just for better error handling. */
 {
     if (!isAllocated) {
-	MKError("Attempt to use a deallocated SynthPatch.");
+	MKError(@"Attempt to use a deallocated SynthPatch.");
         return;
     }
     if (synthElements) {
 	int count,i;
 	for (i = 0,count = [synthElements count]; i<count; i++) 
 	    if ([synthElements objectAtIndex:i] == DUMMY) {
-		MKError("Attempt to use a freed SynthPatch.");
+		MKError(@"Attempt to use a freed SynthPatch.");
                 return;
             }
     }

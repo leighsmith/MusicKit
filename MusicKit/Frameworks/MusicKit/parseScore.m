@@ -32,6 +32,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/08/26 20:00:53  leigh
+  using new MKError prototype
+
   Revision 1.3  1999/08/07 23:59:30  leigh
   Enabled reading MS-DOS format scorefiles \r\n and replaced HashTable use with NSDictionary
 
@@ -1935,7 +1938,7 @@ errorMsg(MKErrno errCode,...)
        Calling sequence like printf. */
     va_list ap;
     va_start(ap,errCode);
-    MKError([_errorMsg(errCode,ap) cString]);
+    MKError(_errorMsg(errCode,ap));
     va_end(ap);
 }
 
@@ -1945,7 +1948,7 @@ warning(MKErrno errCode,...)
     /* Write warning without long jump. Calling sequence like printf. */
     va_list ap;
     va_start(ap,errCode);
-    MKError([_warning(NO,errCode,ap) cString]);
+    MKError(_warning(NO,errCode,ap));
     va_end(ap);
 }
 
@@ -1955,7 +1958,7 @@ error(MKErrno errCode,...)
     /* Try and recover from runtime error. Calling sequence like printf. */
     va_list ap;
     va_start(ap,errCode);
-    MKError([_warning(YES,errCode,ap) cString]);
+    MKError(_warning(YES,errCode,ap));
     va_end(ap);
     if (TOOMANYERRORS || BINARY(scoreRPtr))  
       /* Can't recover gracefully from binary errors */
