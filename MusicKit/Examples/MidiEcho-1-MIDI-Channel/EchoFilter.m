@@ -30,89 +30,87 @@ static int myIsEqual(const void *info, const void *data1, const void *data2)
     return (arr1[0] == arr2[0]);
 }
 
--init
+- init
   /* Called automatically when an instance is created. */
 {    
      [super init]; 
      delay = .1;
-     [self addNoteSender:[[MKNoteSender alloc] init]];
-     [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
+     [self addNoteSender: [[MKNoteSender alloc] init]];
+     [self addNoteReceiver: [[MKNoteReceiver alloc] init]];
      echoingNotes = [[NSMutableDictionary dictionaryWithCapacity: HASHSIZE] retain];
      return self;
  }
 
--setDelay:(double)delayArg
+- (void) setDelay: (double) delayArg
   /* change the amount of delay (in seconds) between echoes */
 {
     delay = delayArg;
-    return self;
 }
 
 /* Forward declarations */
-static int *addMapping(id self,int noteTag);
-static int getMapping(id self,int noteTag,int echoNumber);
-static void removeMapping(id self,int noteTag);
+static int *addMapping(id self, int noteTag);
+static int getMapping(id self, int noteTag, int echoNumber);
+static void removeMapping(id self, int noteTag);
 
 #define BOGUS_TAG MAXINT
+#define ECHOS 8
 
--realizeNote:aNote fromNoteReceiver:aNoteReceiver
+- realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
   /* Here's where the work is done. */
 {
-    #define ECHOS 8
     int i;
     int *noteTagMap;
     double curDly;
-    int velocity,newNoteTag;
+    int velocity, newNoteTag;
     id newNote;
     int noteType = [aNote noteType];
     int noteTag = [aNote noteTag];
     if (noteType == MK_mute || noteTag == BOGUS_TAG) { /* Don't echo these */
-	[[self noteSender] sendNote:aNote];         			
+	[[self noteSender] sendNote: aNote];         			
 	return self;
     }
     curDly = 0;
-    [[self noteSender] sendNote:aNote];          /* Send the original */     
+    [[self noteSender] sendNote: aNote];          /* Send the original */     
     if (delay == 0)
     	return self;
-    velocity = [aNote parAsInt:MK_velocity];     
+    velocity = [aNote parAsInt: MK_velocity];     
     if (noteType == MK_noteOn)
-      noteTagMap = addMapping(self,noteTag);
-    for (i=1;i<ECHOS;i++) {                  
+      noteTagMap = addMapping(self, noteTag);
+    for (i = 1; i < ECHOS; i++) {                  
 	curDly += delay;                         
 	newNote = [aNote copy];                  
 	switch (noteType) {
 	  case MK_noteOn:
-	    [newNote setNoteTag:newNoteTag = MKNoteTag()];
-	    [newNote setPar:MK_velocity toInt:velocity -= 15];
+	    [newNote setNoteTag: newNoteTag = MKNoteTag()];
+	    [newNote setPar: MK_velocity toInt: velocity -= 15];
 	    noteTagMap[i] = newNoteTag;
 	    break;
 	  case MK_noteOff:
-	    newNoteTag = getMapping(self,noteTag,i);
+	    newNoteTag = getMapping(self, noteTag, i);
 	    if (newNoteTag == BOGUS_TAG) /* Bogus noteOff */
 	      continue;
 	    if (i == ECHOS) /* It's the last one */
-	      removeMapping(self,noteTag);
-	    [newNote setNoteTag:newNoteTag];
+	      removeMapping(self, noteTag);
+	    [newNote setNoteTag: newNoteTag];
 	    break;
 	  case MK_noteUpdate:
-	    newNoteTag = getMapping(self,noteTag,i);
+	    newNoteTag = getMapping(self, noteTag, i);
 	    if (newNoteTag == BOGUS_TAG) /* Bogus noteOff */
 	      continue;
-	    [newNote setNoteTag:newNoteTag];
+	    [newNote setNoteTag: newNoteTag];
 	    break;
 	  }
-	[[self noteSender] sendAndFreeNote:newNote withDelay:curDly];
+	[[self noteSender] sendAndFreeNote: newNote withDelay: curDly];
     }
     return self;
 }
 
-static int *addMapping(EchoFilter *self,int noteTag)
+static int *addMapping(EchoFilter *self, int noteTag)
 {
-  int *array;
-  array = (int *)malloc(sizeof(int) * ECHOS);
-  array[0] = noteTag;
-  [self->echoingNotes addObject: (const void *)array forKey: noteTag];
-  return array;
+    NSNumber *noteTagNumber = [NSNumber numberWithInt: noteTag];
+    NSArray *array = [NSArray arrayWithObject: noteTagNumber];
+    [self->echoingNotes setObject: array forKey: noteTagNumber];
+    return array;
 }
 
 static int getMapping(EchoFilter *self,int noteTag,int echoNumber)
