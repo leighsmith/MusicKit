@@ -1,8 +1,7 @@
 <!-- $Id$ -->
 
   <chapter id="class1">
-    <TITLE><PRODUCTNAME>MusicKit</PRODUCTNAME> Class 1 &horbar; Object Oriented
-      Programming in Objective-C</TITLE>
+    <TITLE>Class 1 &horbar; Object Oriented Programming in Objective-C</TITLE>
     <SECT1>
       <TITLE>Objective-C</TITLE>
   
@@ -145,20 +144,20 @@ play(aDSPNote);
     
     <ITEMIZEDLIST>
       <LISTITEM>
-	<PARA><emphasis role="bold">Class</emphasis> - analagous to the
+	<PARA><emphasis role="bold">Class</emphasis> - analogous to the
 	<emphasis role="bold">typedef</emphasis> above; defines a complex data
 	type and functions to operate on that data.
 	</PARA>
       </LISTITEM>
       <LISTITEM>
-	<PARA><emphasis role="bold">Instance of a class</emphasis> - analagous
+	<PARA><emphasis role="bold">Instance of a class</emphasis> - analogous
 	to the pointer to the <FUNCTION>malloc</FUNCTION>ed memory above; each
 	instance of a class has its own memory.  In this memory, the instance
 	stores the values of its "instance variables".
 	</PARA>
       </LISTITEM>
       <LISTITEM>
-	<PARA><emphasis role="bold">Instance variables</emphasis> - analagous
+	<PARA><emphasis role="bold">Instance variables</emphasis> - analogous
 	to the fields of the <emphasis role="bold">struct</emphasis>.  The
 	memory allocated for each instance is used to store that instance's
 	variables.
@@ -219,7 +218,7 @@ or      [myInstance aMessageWithArg:arg otherArg:arg2];
       <LISTITEM>
 	<PARA>Subclassing may be applied recursively, forming trees of
 	    inheritance.  All classes inherit from
-	    <CLASSNAME>MKObject</CLASSNAME>.  Therefore, instances of a class
+	    <CLASSNAME>NSObject</CLASSNAME>.  Therefore, instances of a class
 	    are sometimes called "objects".
 	</PARA>
       </LISTITEM>
