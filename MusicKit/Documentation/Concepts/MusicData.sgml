@@ -894,8 +894,8 @@ end of a note.</para>
 <figure id="figure3-2">
 <title>Typical Envelopes</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS2.eps"></imageobject>
-<imageobject><imagedata fileref="EPS2.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData2.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData2.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -912,8 +912,8 @@ circle denotes the location of a breakpoint).</para>
 <figure id="figure3-3">
 <title>Breakpoint Envelopes</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS5.eps"></imageobject>
-<imageobject><imagedata fileref="EPS5.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData5.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData5.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -974,8 +974,8 @@ are shown in parentheses.</para>
 <figure id="figure3-4">
 <title>Simple <classname>MKEnvelope</classname></title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS6.eps"></imageobject>
-<imageobject><imagedata fileref="EPS6.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData6.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData6.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -1094,8 +1094,8 @@ interpretations are affected).</para>
 <figure id="figure3-5">
 <title>Scaled Amplitude <classname>MKEnvelope</classname></title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS7.eps"></imageobject>
-<imageobject><imagedata fileref="EPS7.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData7.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData7.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -1170,8 +1170,8 @@ assumed to be 60.0.</para>
 <figure id="figure3-6">
 <title><classname>MKEnvelope</classname> with Stickpoint</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS10.eps"></imageobject>
-<imageobject><imagedata fileref="EPS10.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData10.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData10.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -1211,8 +1211,8 @@ defined proportions.</para>
 <figure id="figure3-7">
 <title>Attack and Release</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS11.eps"></imageobject>
-<imageobject><imagedata fileref="EPS11.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData11.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData11.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -1230,8 +1230,8 @@ various attack and release values.</para>
 <title><classname>MKEnvelope</classname> with Attack and
 Release</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS14.eps"></imageobject>
-<imageobject><imagedata fileref="EPS14.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData14.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData14.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -1248,8 +1248,8 @@ role="bold">MK_ampRel</emphasis> are assumed to have values of
 <figure id="figure3-9">
 <title>Early noteOff</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS17.eps"></imageobject>
-<imageobject><imagedata fileref="EPS17.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData17.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData17.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -1273,8 +1273,8 @@ This is depicted in <xref linkend="figure3-10">.</para>
 <figure id="figure3-10">
 <title>Piano <classname>MKEnvelope</classname></title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS18.eps"></imageobject>
-<imageobject><imagedata fileref="EPS18.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData18.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData18.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -1298,8 +1298,8 @@ double yVals = {0,0, 1.0, 0.5, 0.3, 0.0, 0.0};
 <figure id="figure3-11">
 <title>Simulated Piano <classname>MKEnvelope</classname></title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS19.eps"></imageobject>
-<imageobject><imagedata fileref="EPS19.gif"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData19.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData19.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -1427,8 +1427,8 @@ y, and smoothing values for each breakpoint.</para>
 <figure id="figure3-12">
 <title><classname>MKEnvelope</classname> with Smoothing</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS20.eps"></imageobject>
-<imageobject><imagedata fileref="EPS20.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData20.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData20.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -1514,8 +1514,8 @@ double interpY = [anEnvelope lookupYForX:0.5];
 <figure id="figure3-13">
 <title>Linear Interpolation</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS21.eps"></imageobject>
-<imageobject><imagedata fileref="EPS21.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData21.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicData21.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
