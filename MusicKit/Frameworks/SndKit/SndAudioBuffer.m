@@ -75,7 +75,7 @@
     memcpy(&formatSnd, f, sizeof(SndSoundStruct));
 
     if (data != NULL && bOwnsData) {
-        NSLog(@"freeing\n");
+        // NSLog(@"freeing\n");
         free(data);
         data = NULL;
     }
@@ -133,7 +133,7 @@
 {
     long l;
     
-    // SndPrintStruct(&formatSnd);
+    // SndPrintStruct(&formatSnd); // for checking the formatSnd is valid
     
     if (end > formatSnd.dataSize / sizeof(float))
         end = formatSnd.dataSize / sizeof(float);
@@ -231,6 +231,7 @@
 
 - mixWithBuffer: (SndAudioBuffer*) buff
 {
+    // NSLog(@"buffer = %x\n", buff);
     // NSLog(@"buffer to mix: %s", SndStructDescription(&(buff->formatSnd)));
     
     [self mixWithBuffer: buff fromStart: 0 toEnd: formatSnd.dataSize / sizeof(float)];
@@ -262,7 +263,7 @@
     if (from->formatSnd.dataSize == formatSnd.dataSize)
         memcpy(data, from->data, formatSnd.dataSize);
     else {
-        NSLog(@"Buffers are different lengths - code to handle");
+        NSLog(@"Buffers are different lengths - need code to handle this case!");
         // TO DO!
     }
     return self;
@@ -279,7 +280,7 @@
 
 - (long) lengthInSamples
 {
-    return formatSnd.dataSize/ [self multiChannelSampleSizeInBytes];
+    return formatSnd.dataSize / [self multiChannelSampleSizeInBytes];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
