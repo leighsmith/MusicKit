@@ -13,12 +13,13 @@ TOOL_NAME = \
 ADDITIONAL_TOOL_LIBS += -lSndKit
 
 ADDITIONAL_CFLAGS += -g
+ADDITIONAL_FLAGS += -g
 
 ifeq (mingw32, $(GNUSTEP_HOST_OS))
-  ADDITIONAL_LIB_DIRS = -Ld:/cygwin/usr/local/lib
-  ADDITIONAL_FLAGS += -Id:/cygwin/usr/local/include
+  CYG_DRIVE = $(shell cygpath -w '/' | tr '\\' '/' )
+  ADDITIONAL_LIB_DIRS = -L$(CYG_DRIVE)/usr/local/lib
+  ADDITIONAL_FLAGS += -I$(CYG_DRIVE)/usr/local/include
 endif
-
 # The Objective-C source files to be compiled
 playsndfaders_OBJC_FILES = main.m
 
