@@ -79,8 +79,9 @@ performance classes, showing their hierarchical relationship:</para>
     <figure id="figurePerformance">
       <title>Performance Classes</title>
       <mediaobject>
-	<imageobject><imagedata
-	fileref="Images/MusicPerformance.eps"></imageobject>
+	<imageobject>
+	  <imagedata fileref="Images/MusicPerformance.eps" scalefit=1>
+        </imageobject>
 	<imageobject><imagedata
 	fileref="Images/MusicPerformance.gif"></imageobject>
 	<textobject><phrase><productname>MusicKit</productname> Image</phrase></textobject>
