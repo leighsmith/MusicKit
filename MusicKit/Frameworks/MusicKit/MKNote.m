@@ -10,11 +10,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.9  2000/10/01 00:45:59  leigh
+  Replaced NXHashTable functions with FoundationKit NSHashTable functions. Removed redundant HashTable caching. Fixed erroneous use of char * with _MKNewStringPar().
+
   Revision 1.8  2000/05/06 00:32:59  leigh
   Converted _binaryIndecies to NSMutableDictionary
 
@@ -108,12 +112,10 @@ Modification history:
   -noteType
   -noteTag
 
-LMS: All the _parameter hashtable stuff needs to be converted to NSMutableArray accesses
 ***/
 
 #define INT(_x) ((int) _x)
 
-#import <objc/hashtable.h>
 #define MK_INLINE 1
 #import "_musickit.h"
 #import "tokens.h"
@@ -211,55 +213,62 @@ id MKGetNoteClass(void)
 
 #define DEFAULTNUMPARS 1
 
-#define HASHTABLECACHESIZE 16
-static NXHashTable *hashTableCache[HASHTABLECACHESIZE];
-static unsigned hashTableCachePtr = 0;
+//#define HASHTABLECACHESIZE 16
+//#define HASHTABLECACHESIZE 0 // disable cacheing
+//static NSHashTable *hashTableCache[HASHTABLECACHESIZE];
+//static NSHashTable *hashTableCache[HASHTABLECACHESIZE+1]; // but keep things compilable
+//static unsigned hashTableCachePtr = 0;
 
 #define PARNUM(_x) ((_MKParameter *)_x)->parNum
 
-static unsigned hashFun(const void *info, const void *data)
+static unsigned hashFun(NSHashTable *info, const void *data)
 {
-    return (unsigned)PARNUM(data);
+    // NSLog(@"hash function info = %x, parNum = %u\n", info, (unsigned) PARNUM(data));
+    return (unsigned) PARNUM(data);
 }
 
-static int isEqualFun(const void *info, const void *data1, const void *data2)
+static BOOL isEqualFun(NSHashTable *info, const void *data1, const void *data2)
 {
+    // NSLog(@"isEqual function %x, %u == %u?\n", info, (unsigned) PARNUM(data1), (unsigned) PARNUM(data2));
     return (PARNUM(data1) == PARNUM(data2));
 }
 
-static void freeFun(const void *info, void *data)
+static void freeFun(NSHashTable *info, void *data)
 {
-    _MKFreeParameter(data);
+    // NSLog(@"freeFun function %x, %u\n", info, (unsigned) PARNUM(data));
+    _MKFreeParameter((_MKParameter *) data);
 }
 
-static NXHashTablePrototype htPrototype = {hashFun,isEqualFun,freeFun,0};
+static NSHashTableCallBacks htPrototype = {hashFun,isEqualFun,NULL,freeFun,NULL};
 
-static NXHashTable *allocHashTable(void)
+static NSHashTable *allocHashTable(void)
     /* alloc a new table. */
 {
-    if (hashTableCachePtr) 
-      return hashTableCache[--hashTableCachePtr]; 
-    else return NXCreateHashTable(htPrototype,DEFAULTNUMPARS,NULL);
+//    if (hashTableCachePtr) 
+//      return hashTableCache[--hashTableCachePtr]; 
+//    else
+    return NSCreateHashTable(htPrototype, DEFAULTNUMPARS);
 }
 
-static NXHashTable *freeHashTable(NXHashTable *tab)
+static NSHashTable *freeHashTable(NSHashTable *tab)
 {
     if (!tab)
-      return NULL;
+        return NULL;
     if (tab) {
-        if (hashTableCachePtr < HASHTABLECACHESIZE) {
+//        if (hashTableCachePtr < HASHTABLECACHESIZE) {
             /* We only need to free elements if we're not freeing 
                the table. If we do free the table, we free elements in freeFun 
                above */
-            _MKParameter *data;
-            NXHashState state;
-            state = NXInitHashState(tab);
-            while (NXNextHashState (tab, &state, (void **)&data))
-              _MKFreeParameter(data); /* Free all parameters. */
-            NXEmptyHashTable(tab);
-            hashTableCache[hashTableCachePtr++] = tab;
-        }
-        else NXFreeHashTable(tab); 
+//            _MKParameter *data;
+//            NSHashEnumerator state;
+//            state = NSEnumerateHashTable(tab);
+//            while ((data = (_MKParameter *) NSNextHashEnumeratorItem(&state)))
+//                _MKFreeParameter(data); /* Free all parameters. */
+//            NSResetHashTable(tab);
+//            hashTableCache[hashTableCachePtr++] = tab;
+//        }
+//        else
+            NSFreeHashTable(tab); 
     }
     return NULL;
 }
@@ -285,7 +294,6 @@ static void initNoteClass()
       initNoteClass();
     if (self != [MKNote class])
       return;
-//    [self setVersion:VERSION4]; 
     [MKNote setVersion:VERSION4]; //sb: suggested by Stone conversion guide
     /* Changed to version 3, 10/23/92-DAJ */
     /* Changed to version 4, 11/9/94-DAJ */
@@ -298,7 +306,7 @@ static unsigned noteCachePtr = 0;
 
 -initWithTimeTag:(double)aTimeTag
 {
-/*    [super init]; Not needed -- we omit in this case, for efficiency */
+    [super init];
     noteTag = MAXINT;
     noteType = MK_mute;
     timeTag = aTimeTag;
@@ -348,7 +356,7 @@ static unsigned noteCachePtr = 0;
 /* Might want to add this some day */
 - (void)removeAllObjects
 {
-    freeHashTable((NXHashTable *)_parameters); /* Frees all parameters */
+    freeHashTable(_parameters); /* Frees all parameters */
     _parameters = NULL;
     /* Clear bit vectors */
     memset(&(_mkPars[0]), 0, MK_MKPARBITVECTS * sizeof(_mkPars[0])); 
@@ -369,7 +377,7 @@ static unsigned noteCachePtr = 0;
    */
 {
     [part removeNote:self];
-    freeHashTable((NXHashTable *)_parameters);
+    freeHashTable(_parameters);
     if (_highAppPar) 
       free(_appPars);
     if (((NSObject *)(self->isa)) == noteClass)
@@ -390,43 +398,44 @@ static int nAppBitVects(); /* forward ref */
    * However, it isn't added to a Part 
    * regardless of the state of the receiver.
    *
-   * Note: Envelope and WaveTable objects aren't copied, the new MKNote shares the
-   * receiver's Envelope objects.
+   * Note: MKEnvelope and MKWaveTable objects aren't copied, the new MKNote shares the
+   * receiver's MKEnvelope objects.
    */
 {
     MKNote *newObj;
     _MKParameter *aPar;
-    NXHashState state;
+    NSHashEnumerator state;
     int i, vectorCount;
-//    newObj = [super copyWithZone:zone];
-    newObj = [MKNote allocWithZone:zone] ;//sb: suggested in Stone porting guide
-    newObj->noteTag = noteTag;//sb
-    newObj->noteType = noteType;//sb
-    newObj->timeTag = timeTag;//sb
-/*sb: FIXME - I don't think that all parameters have been copied correctly. The call to
- * super was previously supposed to copy all instance variables, but I am afraid this does not work
- * any more
- */
+
+    newObj = [MKNote allocWithZone: zone]; //sb: suggested in Stone porting guide
+    newObj->noteTag = noteTag;
+    newObj->noteType = noteType;
+    newObj->timeTag = timeTag;
+    /* The call to super i.e  newObj = [super copyWithZone:zone] was previously supposed to copy all 
+       instance variables, but I am afraid this does not work any more
+     */
     newObj->part = nil;
     newObj->conductor = performer ? [performer conductor] : conductor;
-    newObj->performer = nil; 
+    newObj->performer = nil;
     if (!_parameters) 
-      return newObj;
-    state = NXInitHashState((NXHashTable *)_parameters);
-    newObj->_parameters =  /* Don't use allocHashtable 'cause we know size */
-      NXCreateHashTable(htPrototype, NXCountHashTable((NXHashTable *)_parameters),NULL);
-    while (NXNextHashState((NXHashTable *)_parameters,&state,(void **)&aPar))
-      NXHashInsert((NXHashTable *)newObj->_parameters,
-                   (void *)_MKCopyParameter(aPar));
+        return newObj;
+    state = NSEnumerateHashTable(_parameters);
+    // NSLog(@"parameters = %x, number of parameters %d\n", _parameters, NSCountHashTable(_parameters));
+    /* Don't use allocHashtable 'cause we know size. */
+    newObj->_parameters = NSCreateHashTableWithZone(htPrototype, NSCountHashTable(_parameters), zone);
+    while ((aPar = (_MKParameter *) NSNextHashEnumeratorItem(&state)) != NULL) {
+        // NSLog(@"Inserting %u into %x\n",  aPar->parNum, newObj->_parameters);
+        NSHashInsert(newObj->_parameters, (void *)_MKCopyParameter(aPar));
+    }
 
-    for (i = 0; i < MK_MKPARBITVECTS; i++) // reinstated by LMS
+    for (i = 0; i < MK_MKPARBITVECTS; i++) // duplicate the parameter bitmap
         newObj->_mkPars[i] = _mkPars[i];
 
     vectorCount = nAppBitVects(self);
     if (vectorCount) {
         _MK_MALLOC(newObj->_appPars, unsigned, vectorCount);
         for (i = 0; i < vectorCount; i++)
-          newObj->_appPars[i] = _appPars[i];
+            newObj->_appPars[i] = _appPars[i];
     }
     return newObj;
 }
@@ -962,12 +971,15 @@ id MKSetNoteParToObject(MKNote *aNote,int par,id anObj)
 
 #define SETDUMMYPAR(_par) dummyPar->parNum = _par;
 
-/*** FIXME Might be faster to just do the hash here, rather than calling 
-  isParPresent? ***/
+// While it might be faster to just do the hash here, rather than calling isParPresent,
+// isParPresent simply checks for a bit set, NSHashGet probably needs to do more than that.
+// Add this in below SETDUMMYPAR for debugging GETPAR.
+// NSLog(@"parNum = %d, parameters = %x\n", dummyPar->parNum, self->_parameters); \
+
 #define GETPAR(self,_getFun,_noVal) \
 if (!self || !isParPresent(self,par)) return _noVal; \
 SETDUMMYPAR(par); \
-return _getFun(NXHashGet((NXHashTable *)self->_parameters, (const void *)dummyPar))
+return _getFun(NSHashGet((NSHashTable *)self->_parameters, (const void *)dummyPar))
 
 double MKGetNoteParAsDouble(MKNote *aNote,int par)
 {
@@ -989,7 +1001,7 @@ int MKGetNoteParAsInt(MKNote *aNote,int par)
 //    GETPAR(aNote,_MKParAsInt,MAXINT);
 if (!aNote || !isParPresent(aNote,par)) return MAXINT;
 SETDUMMYPAR(par);
-return _MKParAsInt(NXHashGet((NXHashTable *)aNote->_parameters, (const void *)dummyPar));
+return _MKParAsInt(NSHashGet((NSHashTable *)aNote->_parameters, (const void *)dummyPar));
 
 }
 
@@ -1022,7 +1034,7 @@ NSString *MKGetNoteParAsStringNoCopy(MKNote *aNote,int par)
     if (!aNote || !isParPresent(aNote,par)) 
       return @"";//sb: was (char *)_MKUniqueNull(); 
     SETDUMMYPAR(par);
-    return _MKParAsStringNoCopy(NXHashGet((NXHashTable *)aNote->_parameters, (const void *)dummyPar));
+    return _MKParAsStringNoCopy(NSHashGet((NSHashTable *)aNote->_parameters, (const void *)dummyPar));
 }
 
 -(NSString *)parAsStringNoCopy:(int)par
@@ -1114,7 +1126,7 @@ BOOL MKIsNoteParPresent(MKNote *aNote,int par)
     if (!isParPresent(self,par)) 
       return MK_noType;
     SETDUMMYPAR(par);
-    return ((_MKParameter *)NXHashGet((NXHashTable *)_parameters, (const void *)dummyPar))->_uType;
+    return ((_MKParameter *)NSHashGet((NSHashTable *)_parameters, (const void *)dummyPar))->_uType;
 }
 
 -removePar:(int)par
@@ -1124,13 +1136,10 @@ BOOL MKIsNoteParPresent(MKNote *aNote,int par)
    * returns nil.
    */
 {
-    _MKParameter *aParameter;
     if (!_MKIsPar(par) || !clearParBit(self,par))
       return nil;
     SETDUMMYPAR(par);
-    aParameter = (_MKParameter *)NXHashRemove((NXHashTable *)_parameters,
-                                              (const void *)dummyPar);
-    _MKFreeParameter(aParameter);
+    NSHashRemove((NSHashTable *) _parameters, (const void *) dummyPar);
     return self;
 }
 
@@ -1268,18 +1277,16 @@ static void copyPars(); /* forward ref */
 void _MKWriteParameters(MKNote *self,NSMutableData *aStream,_MKScoreOutStruct *p)
 {
     _MKParameter *aPar;
-    NXHashState state;
+    NSHashEnumerator state;
     if (self->_parameters) {
-        state = NXInitHashState((NXHashTable *)self->_parameters);
+        state = NSEnumerateHashTable((NSHashTable *) self->_parameters);
         if (BINARY(p)) {
-            while (NXNextHashState((NXHashTable *)self->_parameters,
-                                   &state,(void **)&aPar))
+            while ((aPar = (_MKParameter *) NSNextHashEnumeratorItem(&state)))
               _MKParWriteOn(aPar,aStream,p);
         }
         else {
             int parCnt = 0;
-            while (NXNextHashState((NXHashTable *)self->_parameters,
-                                   &state,(void **)&aPar))
+            while ((aPar = (_MKParameter *) NSNextHashEnumeratorItem(&state)))
               if (_MKIsParPublic(aPar)) {  /* Private parameters don't print */
 #                 if _MK_LINEBREAKS
 #                 define PARSPERLINE 5
@@ -1454,12 +1461,9 @@ int MKAmpAttenuationToMidi(double amp)
     return MAX(v,0);
 }
 
-static id _removePar(self,aPar)
-    MKNote *self;
-    _MKParameter *aPar;
+static id _removePar(MKNote *self, _MKParameter *aPar)
 {
-    aPar = (_MKParameter *)NXHashRemove((NXHashTable *)self->_parameters,
-					(const void *)aPar);
+    NSHashRemove((NSHashTable *) self->_parameters, (const void *) aPar);
     _MKFreeParameter(aPar);
     return self;
 }
@@ -1475,28 +1479,29 @@ static id setPar(self,parNum,value,type)
       return nil;
     if (setParBit(self,parNum)) { /* Parameter is already present */
         SETDUMMYPAR(parNum);
-        aPar = (_MKParameter *)NXHashGet((NXHashTable *)self->_parameters,
+        aPar = (_MKParameter *)NSHashGet((NSHashTable *)self->_parameters,
                                          (const void *)dummyPar);
         switch (type) {
-          case MK_double:
+        case MK_double:
 	    if (MKIsNoDVal(*((double *)value))) {
 		_removePar(self,aPar);
 		clearParBit(self,parNum);
 	    }
 	    else _MKSetDoublePar(aPar,*((double *)value));
             break;
-          case MK_string:
-	    if ((NSString *)value == nil ) { //sb: separated the nil and the zero-length tests
-		_removePar(self,aPar);
-		clearParBit(self,parNum);
-	    }
-              else if ( ![(NSString *)value length] ) {
-                  _removePar(self,aPar);
-                  clearParBit(self,parNum);
-                  }
-              else _MKSetStringPar(aPar,(NSString *)value);
+        case MK_string:
+	    if ((NSString *) value == nil) { //sb: separated the nil and the zero-length tests
+		_removePar(self, aPar);
+		clearParBit(self, parNum);
+            }
+            else if (![(NSString *) value length]) {
+                _removePar(self, aPar);
+                clearParBit(self, parNum);
+            }
+            else
+                _MKSetStringPar(aPar, (NSString *)value);
             break;
-          case MK_int:
+        case MK_int:
 	    if (*((int *)value) == MAXINT) {
 		_removePar(self,aPar);
 		clearParBit(self,parNum);
@@ -1514,28 +1519,28 @@ static id setPar(self,parNum,value,type)
     }
     else { /* New parameter */
         switch (type) {
-          case MK_int:
+        case MK_int:
 	    if (*((int *)value) == MAXINT) {
 		clearParBit(self,parNum);
 		return self;
 	    }
             aPar = _MKNewIntPar(*((int *)value),parNum); 
             break;
-          case MK_double:
+        case MK_double:
 	    if (MKIsNoDVal(*((double *)value))) {
 		clearParBit(self,parNum);
 		return self;
 	    }
             aPar = _MKNewDoublePar(*((double *)value),parNum); 
             break;
-          case MK_string:
-	    if ((char *)value == NULL || (((char *)value)[0]) == '\0') {
-		clearParBit(self,parNum);
+        case MK_string:
+            if ((NSString *) value == nil || ![(NSString *) value length]) {
+		clearParBit(self, parNum);
 		return self;
 	    }
-            aPar = _MKNewStringPar((char *)value,parNum); 
+            aPar = _MKNewStringPar((NSString *) value, parNum); 
             break;
-          default:
+        default:
 	    if (!(id)value) {
 		clearParBit(self,parNum);
 		return self;
@@ -1543,7 +1548,7 @@ static id setPar(self,parNum,value,type)
 	    aPar = _MKNewObjPar((id)value,parNum,type); 
             break;
         }
-        NXHashInsert((NXHashTable *)self->_parameters,(void *)aPar);
+        NSHashInsert((NSHashTable *)self->_parameters,(void *)aPar);
     }
     return self;
 }
@@ -1559,14 +1564,13 @@ static void copyPars(toObj,fromObj,override)
        is YES, the value from fromObj takes parameter. Otherwise, the
        value from toObj takes priority. */
     _MKParameter *aPar;
-    NXHashState state;
+    NSHashEnumerator state;
     if ((!fromObj) || (!toObj) || (![fromObj isKindOfClass:noteClass]))
       return;
     if (!fromObj->_parameters)
       return;
-    state = NXInitHashState((NXHashTable *)fromObj->_parameters);
-    while (NXNextHashState((NXHashTable *)fromObj->_parameters,
-                           &state,(void **)&aPar))
+    state = NSEnumerateHashTable((NSHashTable *)fromObj->_parameters);
+    while ((aPar = (_MKParameter *) NSNextHashEnumeratorItem(&state)))
       if (PARNUM(aPar) != _MK_dur)
         if (override || !isParPresent(toObj,PARNUM(aPar)))
           addParameter(toObj,aPar);
@@ -1590,7 +1594,7 @@ static void copyPars(toObj,fromObj,override)
      performer and part using MKWriteObjectReference(). This object should
      be written with NXWriteRootObject(). */
 {
-    NXHashState state;
+    NSHashEnumerator state;
     _MKParameter *aPar;
     int parCount;
 
@@ -1598,7 +1602,7 @@ static void copyPars(toObj,fromObj,override)
     
     /* First archive the note's type, noteTag, timeTag, and number of pars */
     if (_parameters)
-      parCount = NXCountHashTable((NXHashTable *)_parameters);
+      parCount = NSCountHashTable(_parameters);
     else parCount = 0;
     [aCoder encodeValuesOfObjCTypes:"iiidi", &noteType, &noteTag, &parCount, 
                  &timeTag,&_orderTag];
@@ -1609,9 +1613,8 @@ static void copyPars(toObj,fromObj,override)
       return;
 
     /* Archive pars */
-    state = NXInitHashState((NXHashTable *)_parameters);
-    while (NXNextHashState((NXHashTable *)_parameters,&state,
-                           (void **)&aPar)) 
+    state = NSEnumerateHashTable(_parameters);
+    while ((aPar = (_MKParameter *) NSNextHashEnumeratorItem(&state))) 
       _MKArchiveParOn(aPar,aCoder);
 }
 
@@ -1635,7 +1638,7 @@ static void copyPars(toObj,fromObj,override)
         part = [[aDecoder decodeObject] retain];
         
         if (parCount) /* Don't use allocHashtable 'cause we know size */
-          _parameters =  NXCreateHashTable(htPrototype,parCount,NULL);
+          _parameters =  NSCreateHashTable(htPrototype, parCount);
         for (i=0; i<parCount; i++) {
             _MKUnarchiveParOn(&aPar,aDecoder); /* Writes into aPar */
 	    if (version <= VERSION3) {
@@ -1689,7 +1692,7 @@ static void copyPars(toObj,fromObj,override)
 {
     if (!aNote->_parameters)
       return 0;
-    return (int)NXCountHashTable(aNote->_parameters);
+    return (int)NSCountHashTable(aNote->_parameters);
 }
 #endif
 
@@ -1723,9 +1726,8 @@ static void addParameter(MKNote *self,_MKParameter *aPar)
       The object is first copied. Returns nil. */
 {
     aPar = _MKCopyParameter(aPar);
-    setParBit(self,PARNUM(aPar));
-    aPar = (_MKParameter *)NXHashInsert((NXHashTable *)self->_parameters,
-                                        (const void *)aPar);
+    setParBit(self, PARNUM(aPar));
+    NSHashInsert((NSHashTable *) self->_parameters, (const void *) aPar);
     _MKFreeParameter(aPar);
 }
 
@@ -1735,55 +1737,55 @@ void _MKNoteShiftTimeTag(MKNote *aNote, double timeShift)
     aNote->timeTag += timeShift;
 }
 
-static NXHashState *cachedHashState = NULL;
+static NSHashEnumerator *cachedHashState = NULL;
 
-void *MKInitParameterIteration(MKNote *aNote)
-    /* Call this to start an iteration over the parameters of a MKNote.
-       Usage:
+/* Call this to start an iteration over the parameters of a MKNote.
+    Usage:
 
-    void *aState = MKInitParameterIteration(aNote);
-    int par;
-    while ((par = MKNextParameter(aNote,aState)) != MK_noPar) {
-        select (par) {
-          case freq0: 
-            something;
-            break;
-          case amp0:
-            somethingElse;
-            break;
-          default: // Skip unrecognized parameters
-            break;
-        }}
-    */
+void *aState = MKInitParameterIteration(aNote);
+int par;
+while ((par = MKNextParameter(aNote,aState)) != MK_noPar) {
+    select (par) {
+        case freq0: 
+        something;
+        break;
+        case amp0:
+        somethingElse;
+        break;
+        default: // Skip unrecognized parameters
+        break;
+    }}
+*/
+NSHashEnumerator *MKInitParameterIteration(MKNote *aNote)
 {
-    NXHashState *aState;
+    NSHashEnumerator *aState;
     if (!aNote || !aNote->_parameters)
       return NULL;
     if (cachedHashState) {
         aState = cachedHashState;
         cachedHashState = NULL;
     }
-    else _MK_MALLOC(aState,NXHashState,1);
-    *aState = NXInitHashState((NXHashTable *)aNote->_parameters);
-    return (void *)aState;
+    else _MK_MALLOC(aState,NSHashEnumerator,1);
+    *aState = NSEnumerateHashTable((NSHashTable *) aNote->_parameters);
+    return aState;
 }
 
-int MKNextParameter(MKNote *aNote,void *aState)
+int MKNextParameter(MKNote *aNote, NSHashEnumerator *aState)
 {
     id aPar;
     if (!aNote || !aState) 
-      return MK_noPar;
-    if (NXNextHashState((NXHashTable *)aNote->_parameters,
-                        (NXHashState *) aState, (void **)&aPar))
-      if (_MKIsPar(PARNUM(aPar))) /* Is it public? */
-	return PARNUM(aPar); 
-      else return MKNextParameter(aNote,aState);
+        return MK_noPar;
+    if ((aPar = (id) NSNextHashEnumeratorItem(aState)))
+        if (_MKIsPar(PARNUM(aPar))) /* Is it public? */
+            return PARNUM(aPar); 
+        else
+            return MKNextParameter(aNote,aState);
     else {
         if (cachedHashState) { /* Cache is full */
             free(aState);
         }
 	else
-	    cachedHashState = (NXHashState *)aState; /* Cache it */
+	    cachedHashState = aState; /* Cache it */
         return MK_noPar;
     }
 }
