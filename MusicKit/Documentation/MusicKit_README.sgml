@@ -18,17 +18,34 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
 <!entity maintaineremail "leigh@leighsmith.com">
 <!entity mkvers "5.4">
-<!entity mkvertuple "5.4.2">
-<!entity sndvertuple "2.3.1">
-<!entity soxvertuple "12.17.3">
-<!entity lamevertuple "3.92">
-<!entity icesvertuple "0.2.2">
+<!entity mkvertuple "5.4.3">
+<!entity sndvertuple "2.3.2">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://prdownloads.sourceforge.net/musickit/">
 <!entity mkcvsweb "http://cvs.musickit.org">
-<!entity soxdownload "http://ftp1.sourceforge.net/sox">
-<!entity lamedownload "http://ftp1.sourceforge.net/lame">
-<!entity icesdownload "http://www.icecast.org/releases">
+<!entity mksfweb "http://www.sourceforge.net/projects/musickit">
+<!-- GnuStep Libraries used -->
+<!entity gnustepdownload "http://www.gnustep.org">
+<!entity gsmakevertuple "1.6.0">
+<!entity gsbasevertuple "1.6.0">
+<!entity gsguivertuple "0.8.5">
+<!-- Libraries used -->
+<!entity soxvertuple "12.17.3">
+<!entity soxdownload "http://prdownloads.sourceforge.net/sox">
+<!entity libsndfileweb "http://www.zipworld.com.au/~erikd/libsndfile/">
+<!entity libsndfilevertuple "1.0.5">
+<!entity libsndfiledownload "http://www.zipworld.com.au/~erikd/libsndfile/">
+<!entity lameweb "http://www.sourceforge.net/projects/lame">
+<!entity lamevertuple "3.93.1">
+<!entity lamedownload "http://prdownloads.sourceforge.net/lame">
+<!entity oggvorbisweb "http://www.xiph.org/ogg/vorbis">
+<!entity oggvertuple "1.0">
+<!entity oggdownload "http://www.xiph.org/ogg/vorbis/download">
+<!entity vorbisvertuple "1.0">
+<!entity vorbisdownload "http://www.xiph.org/ogg/vorbis/download">
+<!entity libshoutweb "http://www.icecast.org">
+<!entity libshoutvertuple "2.0">
+<!entity libshoutdownload "http://www.icecast.org/files/libshout">
 ]>
 
 <article id="README">
@@ -62,7 +79,7 @@ and binary distributions. Likewise if the distribution web site changes.
           <ulink url="http://www.ozmusiccode.com">Oz Music Code LLC.</ulink>
         </orgname>
         <address>
-          <street>686 Degraw Street</street>
+          <street>686 Degraw St.</street>
           <city>Brooklyn</city>, <state>NY</state>
           <postcode>11217</postcode>
           <country>USA</country>
@@ -108,24 +125,25 @@ used the <productname>MusicKit</productname> in a host of areas,
 including music performance, scientific experiments, computer-aided
 instruction, and physical modeling.  The
 <productname>MusicKit</productname> was the first to unify the
-<acronym>MIDI</acronym> and Music V paradigms, thus combining
-interaction with generality.  (Music V, written by Max Mathews and
-others at Bell Labs four decades ago, was the first widely available
-"computer music compiler".)
+<acronym>MIDI</acronym> and <productname>Music V</productname>
+paradigms, thus combining interaction with generality
+(<productname>Music V</productname>, written by Max Mathews and others
+at Bell Labs four decades ago, was the first widely available
+&ldquo;computer music compiler&rdquo;).
    </para>
 
    <para>
-The <productname>NeXT</productname>
+The NeXT
 <productname>MusicKit</productname> was first demonstrated at the 1988
 NeXT product introduction and was bundled in
-<productname>NeXT</productname> software releases 1.0 and 2.0.
-Beginning with <productname>NeXT</productname>'s 3.0 release, the
+NeXT software releases 1.0 and 2.0.
+Beginning with NeXT's 3.0 release, the
 <productname>MusicKit</productname> was no longer part of the standard
-<productname>NeXT</productname> software release.  Instead, it was
+NeXT software release.  Instead, it was
 being distributed and supported as Version 4.0 by the Center for
 Computer Research in Music and Acoustics (<acronym>CCRMA</acronym>) of
 Stanford University. Versions 5.0 to 5.4.1 were then supported by
-<ulink url="http://www.tomandandy.com">tomandandy music</ulink>,
+tomandandy music,
 porting to several more <link linkend="platforms">popular operating
 systems</link>.
    </para>
@@ -144,10 +162,10 @@ same distribution site.
 
 <para>
 Source code is available for everything, with the exception of the
-<productname>NeXT</productname> hardware implementation of the
+NeXT hardware implementation of the
 low-level sound and <acronym>DSP</acronym> drivers.  This means
 researchers and developers may study the source or even customize the
-Music Kit and <acronym>DSP</acronym> Tools to suit their needs.
+Music Kit and <acronym>DSP</acronym> tools to suit their needs.
 Enhancements can be committed to the <link linkend=fixes>CVS
 repository</link> to have them incorporated for future
 releases. Commercial software developers may freely incorporate and
@@ -274,17 +292,17 @@ ScoreFile, a textual scripting language for music.
 	</listitem>
         <listitem>
           <para>
-Connectable audio processing modules (&ldquo;plugins&rdquo") including
+Connectable audio processing modules (&ldquo;plugins&rdquo) including
 standard audio effects such as reverb.
 </para>
         </listitem>
         <listitem>
           <para>
-<acronym>MP3</acronym> streaming of audio output to web servers using
-the <ulink url="http://www.icecast.org">icecast</ulink> library. The
-portions of the library used are <acronym>LGPL</acronym>, not
-<acronym>GPL</acronym> and so do not compromise the
-<productname>MusicKit</productname> <link
+<acronym>MP3</acronym> and <productname>Ogg/Vorbis</productname>
+streaming of audio output to web servers using the <ulink
+url="&libshoutweb;">libshout</ulink> library. The portions of the
+library used are <acronym>LGPL</acronym>, not <acronym>GPL</acronym>
+and so do not compromise the <productname>MusicKit</productname> <link
 linkend="license">license</link>
 </para>
         </listitem>
@@ -471,7 +489,7 @@ function and <productname>Objective-C</productname> class.
 	</thead>
 	<tbody>
 	  <row>
-	    <entry>OpenStep 4.2/m68k (<productname>NeXT</productname>)</entry>
+	    <entry>OpenStep 4.2/m68k (NeXT)</entry>
 	    <entry>Y</entry>
 	    <entry>Y</entry>
 	    <entry>Y</entry>
@@ -511,38 +529,78 @@ function and <productname>Objective-C</productname> class.
       </tgroup>
     </table>
 
-    <sect2 id="windows">
-      <title>Windows support</title>
+    <sect2 id="portability">
+      <title>Portability</title>
+
       <para>
-After much fun with the pinnacle of Microsoft development tools, we
-have the <productname>MusicKit</productname> working on Windows9X. The solution was to emulate
-the Mach <acronym>MIDI</acronym> device driver with the core layer of
-DirectMusic. There is a fairly similar match in functionality between
-these API.
-</para>
+        All the platform specific stuff is located in the
+        <filename>MKPerformSndMIDI</filename> framework.  The
+        <productname>MusicKit</productname> and
+        <productname>SndKit</productname> interface to
+        <filename>MKPerformSndMIDI</filename> using a C API was
+        originally modelled after some NeXT
+        <acronym>API</acronym> (although that is now history,
+        particularly for streaming audio).  There are several versions
+        of <filename>MKPerformSndMIDI</filename> underneath
+        <filename
+        class=directory>MusicKit/Frameworks/PlatformSpecific</filename>.
+        You only compile one, all the versions are intended to produce
+        one framework named
+        <filename>MKPerformSndMIDI.framework</filename> which the
+        'kits link to.
+      </para>
+
       <para>
-The downloadable sound (<acronym>DLS</acronym>) capability of DirectMusic (providing a
-<acronym>MIDI</acronym> oriented sample playback <acronym>API</acronym> to PC soundcards)
-is also supported when playing to a DirectMusic software
-synthesiser. There is minimal but usable support for downloading new
-<acronym>DLS</acronym> instruments to the software synthesiser.
-</para>
+        The two versions under most active development are
+        <filename>MKPerformSndMIDI_MacOSX</filename> and
+        <filename>MKPerformSndMIDI_portaudio</filename>. The latter
+        uses the multiplatform <ulink
+        url="http://www.cs.cmu.edu/~music/portmusic/"><productname>portaudio</productname></ulink>
+        (and eventually <productname>portmidi</productname>) library
+        to map down to the platform specific <acronym>API</acronym>
+        and this is the means to interface with
+        <productname>Linux</productname> and
+        <productname>Windows</productname>.
+      </para>
+    </sect2>
+
+    <sect2 id="macosx">
+      <title>MacOS X support</title>
+
       <para>
-While the future of Apple's OpenStep/YellowBox/Cocoa/WebObjects (!)
-for Windows support is far from clear, the combination of Gnu
-technologies of <ulink url="http://www.gnustep.org">GnuStep</ulink>
-and <ulink url="http://www.cygnus.com/cygwin">cygwin</ulink> have
-ensured that Apple's corporate interests don't prevent
-deploying applications on the platform. Currently
-the <productname>AppKit</productname> support on Windows is
-incomplete, so it is unlikely that GUI applications will run. As
-GnuStep on Windows matures, MusicKit applications will compile and run
-correctly.
-</para>
+        While there is now <productname>MacOS X</productname> support
+in <productname>portaudio</productname>, historically
+<filename>MKPerformSndMIDI_MacOSX</filename> existed before it and
+I've personally continued to use it to ensure <productname>MacOS
+X</productname> support is first class.  All <acronym>MIDI</acronym>
+access is done using <productname>CoreMIDI</productname>
+<acronym>API</acronym> calls and all sound I/O is done using
+<productname>CoreAudio</productname>.
+      </para>
+
+      <para>
+<productname>AudioUnits</productname>
+are currently not supported. However, I've started work on being able
+to load and use existing <productname>AudioUnits</productname> as a
+<classname>SndAudioProcessor</classname>, so you will be able to plug other
+developers <productname>AudioUnits</productname> into your
+<productname>SndKit</productname> sound processing stream.
+      </para>
+
+      <para>
+The other <productname>AudioUnit</productname> issue is whether a
+<productname>SndKit</productname> program can function as an
+<productname>AudioUnit</productname>. In theory this should be
+possible once <productname>Cocoa</productname> apps can draw their own
+<productname>AudioUnit</productname> <acronym>GUI</acronym>, however
+this depends on Apple.
+      </para>
+
     </sect2>
 
     <sect2 id="linux">
       <title>Linux support</title>
+
       <para>
 Linux/Unix support using the <ulink
 url="http://www.gnustep.org">GnuStep</ulink> library is partially
@@ -557,7 +615,120 @@ library has been partially completed, porting the
 other <productname>Unix</productname> platforms will work
 (<productname>Solaris</productname>,
 <productname>FreeBSD</productname>, <productname>AIX</productname>
-etc) if they are supported in the PortAudio library and GnuStep.
+etc) if they are supported in the <productname>PortAudio</productname>
+library and <productname>GnuStep</productname>.
+</para>
+    <sect3 id=installinggnustep>
+      <title>Installing GNUStep</title>
+      <para>
+        Install <productname>GNUStep</productname> on your system in
+        the usual fashion, according to the build guide. The following
+        versions of <productname>GNUStep</productname> packages are
+        known to work:
+      </para>
+     
+	<variablelist>
+	  <varlistentry id=gnustep-make>
+	    <term>
+            <ulink url="&gnustepdownload;/gnustep-make-&gsmakevertuple;.tar.gz">gnustep-make-&gsmakevertuple;.tar.gz</ulink>. 
+            </term>
+	    <listitem>
+              <para>
+Install the library using:
+                <informalexample>
+                  <screen>
+tar xzvf gnustep-make-&gsmakevertuple;.tar.gz
+cd gnustep-make-&gsmakevertuple;
+sh ./configure --enable-import
+sudo make install
+</screen>
+                </informalexample>
+              </para>
+              <note>
+                <para>
+We continue to use <literal>#import</literal> since it seems it has
+been reinstated according to <ulink
+url="http://gcc.gnu.org/ml/gcc/2003-03/msg00269.html">this email
+exchange</ulink>.
+                </para>
+              </note>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry id=gnustep-base>
+	    <term>
+            <ulink url="&gnustepdownload;/gnustep-base-&gsbasevertuple;.tar.gz">gnustep-base-&gsbasevertuple;.tar.gz</ulink>. 
+            </term>
+	    <listitem>
+              <para>
+Install the library using:
+                <informalexample>
+                  <screen>
+tar xzvf gnustep-base-&gsbasevertuple;.tar.gz
+cd gnustep-base-&gsbasevertuple;
+sh ./configure
+sudo make install
+</screen>
+                </informalexample>
+              </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry id=gnustep-gui>
+	    <term>
+            <ulink url="&gnustepdownload;/gnustep-gui-&gsguivertuple;.tar.gz">gnustep-gui-&gsguivertuple;.tar.gz</ulink>. 
+            </term>
+	    <listitem>
+              <para>
+Install the library using:
+                <informalexample>
+                  <screen>
+tar xzvf gnustep-gui-&gsguivertuple;.tar.gz
+cd gnustep-gui-&gsguivertuple;
+sh ./configure --disable-gsnd
+sudo make install
+</screen>
+                </informalexample>
+              </para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </sect3>
+    </sect2>
+
+    <sect2 id="windows">
+      <title>Windows support</title>
+
+      <para>
+After much fun with the pinnacle of Microsoft development tools, we
+have the <productname>MusicKit</productname> working on
+<productname>Windows9X</productname>. The solution was to emulate the
+Mach <acronym>MIDI</acronym> device driver with the core layer of
+<productname>DirectMusic</productname>. There is a fairly similar
+match in functionality between these <acronym>API</acronym>.
+</para>
+
+      <para>
+The downloadable sound (<acronym>DLS</acronym>) capability of
+<productname>DirectMusic</productname> (providing a
+<acronym>MIDI</acronym> oriented sample playback
+<acronym>API</acronym> to <acronym>PC</acronym> soundcards) is also
+supported when playing to a <productname>DirectMusic</productname>
+software synthesiser. There is minimal but usable support for
+downloading new <acronym>DLS</acronym> instruments to the software
+synthesiser.
+</para>
+
+      <para>
+While the future of Apple's
+<productname>OpenStep/YellowBox/Cocoa/WebObjects</productname> (!)
+for <productname>Windows</productname> support is far from clear, the
+combination of Gnu technologies of <ulink
+url="http://www.gnustep.org">GnuStep</ulink> and <ulink
+url="http://www.cygnus.com/cygwin">cygwin</ulink> have ensured that
+Apple's corporate interests don't prevent deploying applications on
+the platform. Currently the <productname>AppKit</productname> support
+on Windows is incomplete, so it is unlikely that GUI applications will
+run. As GnuStep on Windows matures, MusicKit applications will compile
+and run correctly.
 </para>
     </sect2>
   </sect1>
@@ -575,12 +746,12 @@ bridging to interpreters. This enables a relatively slow but
 the speed, multi-threading and feature set of the
 <productname>MusicKit</productname> and
 <productname>SndKit</productname> architectures.
-</para>
+    </para>
 
     <para>
 Examples included in the distribution which are written in other languages
 include:
-</para>
+    </para>
 
     <variablelist>
       <varlistentry>
@@ -605,68 +776,111 @@ installed.
     <itemizedlist>
       <listitem>
 	<para>
-The <productname>MusicKit</productname> was designed and implemented by David
-	  A. Jaffe <email>david@jaffe.com</email>, and the <acronym>DSP</acronym> computer-music
-and array-processing software was designed and implemented by Julius
-O. Smith III while at <productname>NeXT</productname>.
-The SoundKit (forerunner of the <productname>SndKit</productname>) was designed and implemented by
-Lee Boynton.
-Their original design appeared in
-<citation>JaffeBoynton89</citation>.
-</para></listitem>
+The <productname>MusicKit</productname> was designed and implemented
+by David A. Jaffe <email>david@jaffe.com</email>, and the
+<acronym>DSP</acronym> computer-music and array-processing software
+was designed and implemented by Julius O. Smith III while at NeXT.
+The <productname>SoundKit</productname> (forerunner of the
+<productname>SndKit</productname>) was designed and implemented by Lee
+Boynton.  Their original design appeared in
+<citation>JaffeBoynton89</citation>. 
+</para>
+</listitem>
 
-      <listitem><para>
+      <listitem>
+        <para>
 Michael McNabb brought wave table synthesis to the <productname>MusicKit</productname>
 and designed and built a number of <classname>UnitGenerator</classname> and <classname>SynthPatch</classname>
-subclasses and contributed the <application>Ensemble</application> application.</para></listitem>
+subclasses and contributed the <application>Ensemble</application>
+application.
+</para>
+      </listitem>
 
-      <listitem><para>Douglas Fulton was responsibile for the
+      <listitem>
+        <para>
+Douglas Fulton was responsibile for the
 documentation and made substantial design improvements in clarifying
 general protocol and the identity and mechanisms of the
-classes.</para></listitem>
+classes.
+</para>
+      </listitem>
 
-      <listitem><para>Gregg Kellogg wrote the <acronym>DSP</acronym>, Sound, and
-<acronym>MIDI</acronym> device drivers for the <productname>NeXT</productname> which were then maintained by Doug
-Mitchell.</para></listitem>
+      <listitem>
+        <para>
+Gregg Kellogg wrote the <acronym>DSP</acronym>, Sound, and
+<acronym>MIDI</acronym> device drivers for the NeXT which were then maintained by Doug
+Mitchell.
+</para>
+      </listitem>
 
-      <listitem><para>John Strawn wrote most of the matrix and array processing
-macros.</para></listitem>
+      <listitem>
+        <para>
+John Strawn wrote most of the matrix and array processing
+macros.
+</para>
+      </listitem>
 
-      <listitem><para>Dana Massie contributed speech coding, sampling-rate
-conversion, and signal conditioning modules for the Sound Kit.</para></listitem>
+      <listitem>
+        <para>
+Dana Massie contributed speech coding, sampling-rate
+conversion, and signal conditioning modules for the Sound Kit.
+</para>
+      </listitem>
 
-      <listitem><para>Doug
-Keislar helped with testing, developer support, and demos.</para></listitem>
+      <listitem>
+<para>
+Doug Keislar helped with testing, developer support, and demos.
+</para>
+      </listitem>
 
-      <listitem><para>
+      <listitem>
+        <para>
 Mike Minnick helped finish the <acronym>DSP</acronym> array processing tools and
-wrote most of the programming examples.</para></listitem>
+wrote most of the programming examples.
+</para>
+      </listitem>
 
       <listitem><para>Roger Dannenberg influenced
 both the <productname>MusicKit</productname> noteTag design and the design of the performance
 mechanism (using a data flow discrete simulation
-model).</para></listitem>
+model).
+</para>
+      </listitem>
 
-      <listitem><para>Andy Moorer
+      <listitem>
+        <para>
+Andy Moorer
 helped shape the Envelope strategy, suggested the unit-generator
-memory-argument scheme, and provided consultation.</para></listitem>
+memory-argument scheme, and provided consultation.
+</para>
+      </listitem>
 
-      <listitem><para>The software of William Schottstaedt and others
+      <listitem>
+        <para>
+The software of William Schottstaedt and others
 at <acronym>CCRMA</acronym> (Stanford University) served as a model
 for some of the mechanisms in the <productname>MusicKit</productname>.
 </para>
-</listitem>
+      </listitem>
 
-      <listitem><para>James A. Moorer, Perry Cook, 
+      <listitem>
+        <para>
+James A. Moorer, Perry Cook, 
 Rob Poor made code and design contributions
-also.</para></listitem>
+also.
+        </para>
+      </listitem>
 
-      <listitem><para>Following <productname>NeXT</productname>'s
+      <listitem>
+        <para>
+Following NeXT's
 release of the source to Stanford in 1994, David did the port to Intel
 <productname>NeXTStep</productname> and the
 <productname>MPU-401</productname> <acronym>MIDI</acronym> and
 <acronym>DSP</acronym> drivers. There were some other bug fix
-contributors (acknowledged in code comments).</para></listitem>
+contributors (acknowledged in code comments).
+        </para>
+      </listitem>
 
       <listitem>
 	<para>
@@ -686,17 +900,35 @@ Leigh M. Smith <email>leigh@cs.uwa.edu.au</email>, now
 drivers to Intel and PowerPC Rhapsody in late 1998 and reorganised the
 packages and documentation for MacOS X-Server and in 2000, to various
 developer previews of MacOS X.  The frameworks were ported to Windows
-98/NT using DirectMusic in 1999.</para></listitem>
-
-      <listitem><para>DirectSound interface code for Windows, MP3
+98/NT using DirectMusic in 1999. A <ulink url="&mksfweb;">sourceforge
+project</ulink> was created in 2000.
+        </para>
+      </listitem>
+      <listitem>
+        <para>
+DirectSound interface code for Windows, MP3
 encoding and FX architecture was contributed by SKoT McDonald
-<email>skot@tomandandy.com</email>.</para></listitem>
+<email>skot@vellocet.com</email>.
+        </para>
+      </listitem>
 
       <listitem>
 	<para>
 Keith Hamel tested and helped in bug fixes for the <productname>MacOS X</productname>
 version.
 </para>
+      </listitem>
+      <listitem>
+        <para>
+Matt Rice and Denis Crowdy both made valuable contributions to the
+<productname>Linux</productname>/<productname>portaudio</productname>
+port.
+       </para>
+      </listitem>
+      <listitem>
+        <para>
+Kim Shrier added FreeBSD support.
+        </para>
       </listitem>
     </itemizedlist>
   </sect1>
@@ -751,11 +983,11 @@ following usage message:
     <blockquote>
       <title>Music Kit Usage</title>
       <para>
-The Music Kit software is
-distributed free of charge.  Copyright remains with the owner
-indicated in each file.   The software may be freely incorporated into
-any NeXTstep commercial application, any academic application, or any
-musical composition.
+The Music Kit software is distributed free of charge.  Copyright
+remains with the owner indicated in each file.  The software may be
+freely incorporated into any <productname>NeXTStep</productname>
+commercial application, any academic application, or any musical
+composition.
 </para>
       <para>
 We would appreciate your acknowledging the use
@@ -805,7 +1037,7 @@ The <productname>MusicKit</productname> is listed on the following open source p
     <itemizedlist>
       <listitem>
 	<para>
-	<ulink url="http://www.sourceforge.net/projects/musickit">
+	<ulink url="&mksfweb;">
 	<inlinemediaobject>
 	      <imageobject>
 		<imagedata fileref="Images/sourceforge.eps" width=50 depth=30
@@ -829,7 +1061,7 @@ sourceforge.net
 			   scalefit=1>
 	      </imageobject>
 	      <imageobject>
-		<imagedata fileref="Images/freshmeat.jpg">
+		<imagedata fileref="Images/freshmeat.png">
 	      </imageobject>
 	    </inlinemediaobject>
 freshmeat.net
@@ -844,7 +1076,7 @@ freshmeat.net
 		<imagedata fileref="Images/Stepwise.eps" width=50 depth=30 scalefit=1>
 	      </imageobject>
 	      <imageobject>
-		<imagedata fileref="Images/Stepwise.gif">
+		<imagedata fileref="Images/Stepwise.png">
 	      </imageobject>
 	    </inlinemediaobject>
 SoftTrak on <systemitem class="systemname">stepwise.com</systemitem>
@@ -860,7 +1092,7 @@ SoftTrak on <systemitem class="systemname">stepwise.com</systemitem>
 			   scalefit=1>
 	      </imageobject>
 	      <imageobject>
-		<imagedata fileref="Images/advogato.gif">
+		<imagedata fileref="Images/advogato.png">
 	      </imageobject>
 	    </inlinemediaobject>
 advogato.org
@@ -876,7 +1108,7 @@ advogato.org
 			   scalefit=1>
 	      </imageobject>
 	      <imageobject>
-		<imagedata fileref="Images/osd.gif">
+		<imagedata fileref="Images/osd.png">
 	      </imageobject>
 	    </inlinemediaobject>
 opensourcedirectory.org
@@ -941,7 +1173,7 @@ for regression testing.
 	    </varlistentry>
 	    <varlistentry>
 	      <term>
-               <ulink url="http://www.tomandandy.com/MusicKit/DriverKitHeaders.tar.gz">DriverKitHeaders.tar.gz</ulink>
+               <ulink url="http://&mkdownload;/DriverKitHeaders.tar.gz">DriverKitHeaders.tar.gz</ulink>
             </term>
 	      <listitem>
 		<para>
@@ -956,10 +1188,37 @@ for regression testing.
       <sect3 id=support>
 	<title>Supporting Libraries</title>
 	<para>
-The following libraries need to be compiled and installed to compile
+The following libraries need to be compiled and installed prior to compiling
 the MK source. These may be installable using <ulink url="http://www.sourceforge.net/projects/fink">fink</ulink>:
 </para>
 	<variablelist>
+	  <varlistentry id=libsndfile>
+	    <term>
+            <ulink url="&libsndfiledownload;/libsndfile-&libsndfilevertuple;.tar.gz">libsndfile-&libsndfilevertuple;.tar.gz</ulink>. 
+            </term>
+	    <listitem>
+	      <para>
+              The 
+<ulink url="&libsndfileweb">libsndfile</ulink>
+sound file I/O library provides sound file format conversion.
+Newer versions than &libsndfilevertuple; will probably just work.
+This is the default sound I/O library replacing
+<link linkend=sox><command>sox</command></link>
+in most cases.
+              </para>
+              <para>
+Install the library using:
+                <informalexample>
+                  <screen>
+tar xzvf libsndfile-&libsndfilevertuple;.tar.gz
+cd libsndfile-&libsndfilevertuple;
+sh ./configure
+sudo make install
+</screen>
+                </informalexample>
+              </para>
+	    </listitem>
+	  </varlistentry>
 	  <varlistentry id=sox>
 	    <term>
             <ulink url="&soxdownload;/sox-&soxvertuple;.tar.gz">sox-&soxvertuple;.tar.gz</ulink>. 
@@ -968,17 +1227,25 @@ the MK source. These may be installable using <ulink url="http://www.sourceforge
 	      <para>
               The 
 <ulink url="http://www.sourceforge.net/projects/sox">SoX</ulink>
-sound tools library provides sound file format conversion.
-Newer versions than &soxvertuple; will probably just work.
+sound tools library is a deprecated means of sound file format conversion.
               </para>
+              <note>
+	        <para>
+Only install this if you have set the macro definitions in 
+<filename>SndFunctionsDiskIO.m</filename> to use the <command>sox</command>
+instead of <command>libsndfile</command> <acronym>API</acronym>.
+                </para>
+              </note>
               <para>
 Install the library using:
-<informalexample>
-<screen>
+                <informalexample>
+                  <screen>
+tar xzvf sox-&soxvertuple;.tar.gz
 cd sox-&soxvertuple;
+sh ./configure
 sudo make install-lib
 </screen>
-</informalexample>
+                </informalexample>
               </para>
 	    </listitem>
 	  </varlistentry>
@@ -988,47 +1255,80 @@ sudo make install-lib
             </term>
 	    <listitem>
 	      <para>
-              The <ulink
-url="http://www.sourceforge.net/projects/lame">LAME</ulink> library
+              The <ulink url="&lameweb;">LAME</ulink> library
 provides <acronym>MP3</acronym> encoding/decoding capability.
 Newer versions than &lamevertuple; will probably just work.
+              </para>
+              <para>
+Install the library using:
+                <informalexample>
+                  <screen>
+tar xzvf lame-&lamevertuple;.tar.gz
+cd lame-&lamevertuple;
+sh ./configure
+sudo make install
+</screen>
+                </informalexample>
+              </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry id=oggvorbis>
+	    <term>
+            <ulink url="&oggdownload;/libogg-&oggvertuple;.tar.gz">libogg-&oggvertuple;.tar.gz</ulink>. 
+            </term>
+	    <term>
+            <ulink url="&vorbisdownload;/libvorbis-&vorbisvertuple;.tar.gz">libvorbis-&vorbisvertuple;.tar.gz</ulink>. 
+            </term>
+	    <listitem>
+	      <para>
+              The <ulink url="&oggvorbisweb;">Ogg/Vorbis</ulink> libraries
+provide patent-free <productname>Ogg</productname> encoding/decoding
+capability of <productname>Vorbis</productname> format data for use by
+<link linkend=libshout>libshout</link>.  Newer versions than
+&oggvertuple; for <productname>Ogg</productname> and &vorbisvertuple;
+for <productname>Vorbis</productname> will probably just work.
+              </para>
+              <para>
+Install the library using:
+                <informalexample>
+                  <screen>
+tar xzvf libogg-&oggvertuple;.tar.gz
+cd libogg-&oggvertuple;
+sh ./configure
+sudo make install
+cd ..
+tar xzvf libvorbis-&vorbisvertuple;.tar.gz
+cd libvorbis-&vorbisvertuple;
+sh ./configure
+sudo make install
+</screen>
+                </informalexample>
               </para>
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry id=libshout>
 	    <term>
-            <ulink url="&icesdownload;/ices-&icesvertuple;.tar.gz">ices-&icesvertuple;.tar.gz</ulink>. 
+            <ulink url="&libshoutdownload;/libshout-&libshoutvertuple;.tar.gz">libshout-&libshoutvertuple;.tar.gz</ulink>. 
             </term>
 	    <listitem>
 	      <para>
               The libshout library (part of the
 <productname>IceS</productname> distribution) of the 
-<ulink url="http://www.icecast.org">icecast</ulink> project provides the
-capability to stream <acronym>MP3</acronym> encoded audio to a
-<acronym>MP3</acronym> broadcast server.
-</para>
-<!-- While we still need a patch -->
-<para>
-This version requires a 
-<ulink url="&mkurl;/libshout.patch">patch</ulink> to be applied to compile on
-<productname>MacOS X</productname>. Apply it using the commands:
-
-<informalexample>
-<screen>
-cd <replaceable>directory above ices-&icesvertuple;</replaceable>
-patch -p1 < libshout.patch
-cd ices-&icesvertuple;/libshout
-autoconf
+<ulink url="&libshoutweb;">icecast</ulink> project provides the
+capability to stream <acronym>MP3</acronym> or
+<productname>Ogg/Vorbis</productname> encoded audio to a broadcast server.
+              </para>
+              <para>
+Install the library using:
+                <informalexample>
+                  <screen>
+tar xzvf libshout-&libshoutvertuple;
+cd libshout-&libshoutvertuple;
 ./configure --without-python --disable-dependency-tracking
 make
 sudo make install
 </screen>
-</informalexample>
-
-</para>
-<!-- End of patch for ices-0.2.2 -->
-<para>
-Newer versions than &icesvertuple; will probably just work.
+                </informalexample>
               </para>
 	    </listitem>
 	  </varlistentry>
@@ -1039,9 +1339,11 @@ Newer versions than &icesvertuple; will probably just work.
 	<title>Binaries</title>
 	<para>
           Binaries for the compiled frameworks for various operating
-          systems reside on sourceforge as tar'ed .pkg (Apple/NeXT),
-          or .rpm (Linux) packages. The files include the version
-          number, choose the most recent release:
+          systems reside on sourceforge as tar'ed
+          <filename>.pkg</filename> (Apple/NeXT), or
+          <filename>.rpm</filename> (<productname>Linux</productname>)
+          packages. The files include the version number, choose the
+          most recent release:
         </para>
 
         <para>
@@ -1071,6 +1373,7 @@ Newer versions than &icesvertuple; will probably just work.
               </para>
 	      </listitem>
 	    </varlistentry>
+<!-- TODO
 	    <varlistentry>
 	      <term>
             <ulink url="&mkdownload;/MK-&mkvertuple;.b.linux-i386.rpm">MK-&mkvertuple;.b.linux-i386.rpm</ulink>
@@ -1082,6 +1385,7 @@ Newer versions than &icesvertuple; will probably just work.
               </para>
 	    </listitem>
 	  </varlistentry>
+-->
 <!-- TODO
 	  <varlistentry>
 	    <term>
@@ -1112,14 +1416,14 @@ Newer versions than &icesvertuple; will probably just work.
 	<listitem>
 	  <para><application>WaveEdit</application> (David Jaffe)</para>
           <para>
-            WaveEdit is an application that makes it possible to
+            <application>WaveEdit</application> is an application that makes it possible to
             display, edit and listen to wave tables.
           </para>
 	</listitem>
 	<listitem>
 	  <para><application>Ensemble</application> (Michael McNabb)</para>
           <para>
-	    Ensemble combines elements of a sequencer, a voicing
+	    <application>Ensemble</application> combines elements of a sequencer, a voicing
 	    application and an algorithmic composition application.
           </para>
 	</listitem>
@@ -1160,7 +1464,7 @@ Newer versions than &icesvertuple; will probably just work.
         <listitem>
           <para><application>PatchCord</application> (Leigh Smith)</para>
           <para>
-            A System Exclusive librarian and patch editor.
+            A system exclusive librarian and patch editor.
           </para>
         </listitem>
       </itemizedlist>
@@ -1207,7 +1511,7 @@ the <acronym>DSP</acronym>.
 	  <term><command>playscorefile2</command></term>
 	  <listitem>
 	    <para>
-Read a scorefile and play it on the DSP as it is read.
+Read a scorefile and play it on the <acronym>DSP</acronym> as it is read.
 </para>
 	  </listitem>
 	</varlistentry>
@@ -1398,8 +1702,8 @@ Interactively adjust the frequency of a sine wave.
     <title>What works?</title>
     <para>
 The frameworks have been exercised fairly extensively and seem quite
-stable. <acronym>MIDI</acronym> recording and playback of scores and computed parts works
-on all supported platforms. The application
+stable. <acronym>MIDI</acronym> recording and playback of scores and
+computed parts works on all supported platforms. The application
 <application>ScorePlayer</application>, the examples
 <application>MidiFilePlayback</application> and
 <command>playscorefilemidi</command>, and the utility
@@ -1419,21 +1723,53 @@ installation directory (the default).
 </para>
 
       <para>
-This will cause the frameworks to install into <filename
-class=directory>/Local/Library/Frameworks</filename> on
-<productname>MacOS X-Server V1.2</productname>, <filename
-class=directory>/LocalLibrary/Frameworks</filename> on
-<productname>OpenStep</productname> and <filename
-class=directory>/Library/Frameworks</filename> on <productname>MacOS
-X</productname>.  Applications will install in <filename
-class=directory>/Local/Apps</filename> on 
-<productname>MacOS X-Server V1.2</productname>, 
-<filename class=directory>/LocalApps</filename> on
-<productname>OpenStep</productname>, and
- <filename class=directory>/Applications</filename> on 
-<productname>MacOS X</productname>.
-Locations for installing GnuStep applications on Linux and Windows
-have yet to be determined.
+The the frameworks and applications are installed into the appropriate
+platform locations given in the table below.
+</para>
+
+    <table frame=all><title><productname>MusicKit</productname> Install locations</title>
+      <tgroup cols=3 colsep=1 rowsep=1>
+	<colspec colnum=1 align=left>
+	<colspec colnum=2 align=center>
+	<colspec colnum=3 align=center>
+	<thead>
+	  <row>
+	    <entry>Platform</entry>
+	    <entry>Frameworks install location</entry>
+	    <entry>Applications install location</entry>
+	  </row>
+	</thead>
+	<tbody>
+	  <row>
+	    <entry><productname>OpenStep 4.2 (m68k,ix86)</productname></entry>
+	    <entry><filename class=directory>/LocalLibrary/Frameworks</filename></entry>
+	    <entry><filename class=directory>/LocalApps</filename></entry>
+	  </row>
+	  <row>
+	    <entry><productname>MacOS X-Server V1.0-1.2</productname></entry>
+	    <entry><filename class=directory>/Local/Library/Frameworks</filename></entry>
+	    <entry><filename class=directory>/Local/Apps</filename></entry>
+	  </row>
+	  <row>
+	    <entry><productname>MacOS X</productname></entry>
+	    <entry><filename class=directory>/Library/Frameworks</filename></entry>
+	    <entry><filename class=directory>/Applications</filename></entry>
+	  </row>
+	  <row>
+	    <entry><productname>GNUStep</productname> (on <productname>Unix</productname>en)</entry>
+	    <entry><filename class=directory>/usr/GNUstep/Local/Library/Frameworks</filename></entry>
+	    <entry><filename class=directory>/usr/GNUstep/Local/Applications</filename></entry>
+	  </row>
+	  <row>
+	    <entry><productname>GNUStep</productname> (on <productname>Windows</productname>)</entry>
+	    <entry><acronym>TBD</acronym></entry>
+	    <entry><acronym>TBD</acronym></entry>
+	  </row>
+	</tbody>
+      </tgroup>
+    </table>
+
+<para>
 Command line tools and manual pages will install into the 
 <filename class=directory>/usr/local</filename> hierarchy on
 <productname>Unix</productname> type machines, specifically
@@ -1460,15 +1796,20 @@ At the moment, there is no single <command>make</command> operation to
 build the entire source tree. Use
 <application>ProjectBuilder</application> or <command>make</command>
 on <productname>OpenStep</productname> or <productname>MacOS X Server
-V1.X</productname>, and the new <application>Project
-Builder</application> or <command>pbxbuild install DSTROOT=/</command> on
-<productname>MacOS X</productname>. The steps to build are:
+V1.X</productname>, <command>make</command> on
+<productname>GNUStep</productname> supported platforms and the new
+<application>Project Builder</application> or <command>pbxbuild
+install DSTROOT=/</command> on <productname>MacOS X</productname>. The
+steps to build are:
 </para>
 
       <orderedlist>
 	<listitem>
 	  <para>
-Compile and install <link linkend=sox><command>sox</command></link>,
+Compile and install
+<link linkend=oggvorbis><command>libogg</command></link>,
+<link linkend=oggvorbis><command>libvorbis</command></link>,
+<link linkend=libsndfile><command>libsndfile</command></link>,
 <link linkend=lame><command>lame</command></link> and <link
 linkend=libshout><command>libshout</command></link> libraries into
 <filename class=directory>/usr/local/lib</filename>.
