@@ -3,7 +3,8 @@
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
             ACTIONS = {
-                browserAction = id; 
+                onAddFxButton = id; 
+                onDelFxButton = id; 
                 onParameterValueSlider = id; 
                 onProcessorActive = id; 
                 parameterTableAction = id; 
@@ -11,6 +12,9 @@
             CLASS = SndAudioProcessorInspector; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                addFxButton = id; 
+                delFxButton = id; 
+                fxChooser = id; 
                 parameterTableView = id; 
                 parameterValueSilder = id; 
                 processorActive = id; 
