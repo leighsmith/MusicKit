@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2002/04/08 17:36:23  sbrandon
+  changed _rescheduleMsgRequest: reference to _rescheduleMsgRequestWithObjectArgs:
+
   Revision 1.14  2002/04/03 03:59:42  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -195,9 +198,9 @@ static void midiOutNodeNoteDur(midiOutNode *node,id aNoteDur,id msgReceiver)
        _MKMidiOut passes the time. */
     /* See comment in MKSynthPatch. */
     node->noteDurMsgPtr = 
-      [cond _rescheduleMsgRequest:node->noteDurMsgPtr atTime:
+      [cond _rescheduleMsgRequestWithObjectArgs:node->noteDurMsgPtr atTime:
        (time - _MK_TINYTIME) sel:@selector(receiveNote:) to:
-       msgReceiver argCount:1,node->noteDurOff];
+       msgReceiver argCount:1 arg1:node->noteDurOff retain:TRUE arg2:nil retain:FALSE];
 }
 
 static void cancelMidiOutNoteDurMsg(midiOutNode *node)
