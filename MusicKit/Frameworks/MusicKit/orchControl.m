@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/04/01 01:13:56  leigh
+  Converted to NSPort operation
+
   Revision 1.7  2000/03/31 00:07:48  leigh
   Added SBs notes
 
@@ -123,6 +126,8 @@ static int DSPMKPauseSoundOut(void);
 static int DSPMKResumeSoundOut(void);
 #endif
 
+// Once we figure out the use of static vars
+// @implementation MKOrchestra(Control)
 
 #if 1
 
@@ -368,13 +373,10 @@ static int myDSPMKInit(MKOrchestra *self)
 #define MSGTYPE_VM 2
 
 typedef struct _vmMsg {
-#if 0
-    msg_header_t header;
-#endif
-    int dspNum;
-    void *data;
+    int dspNum; // NSNumber?
+    void *data;  // NSData
     int dataCount;
-    int vmCount;
+    int vmCount; // NSNumber?
 } vmMsg;
 
 #if 0 /* In case we want to pass it to a different thread. */
@@ -385,25 +387,21 @@ static void
 /* Invoked by libdsp.  Sends a message to our (musicKit) thread */
 {
     /* Sends a Mach message */
-    vmMsg msg = 
-        {0,                    /* msg_unused */
-	 TRUE,                 /* msg_simple */
-	 sizeof(vmMsg),        /* msg_size */
-	 MSG_TYPE_NORMAL,      /* msg_type */
-	 0};                   /* Fills in remaining fields */
-    msg.header.msg_local_port = PORT_NULL;
-    msg.header.msg_remote_port = vmMsgPort;
-    msg.header.msg_id = MSGTYPE_VM;
+      NSPortMessage *msg = [[NSPortMessage alloc] initWithSendPort: vmMsgPort
+                                                       receivePort: nil // this might be breaking the rules.
+                                                        components: [NSArray arrayWithObject: [NSData data]]];
     /* Now the type-specific fields */
-    msg.dspNum = dspNum;
-    msg.data = data;
-    msg.dataCount = dataCount;
-    msg.vmCount = vmCount;
-    (void)msg_send(&msg.header, MSG_OPTION_NONE, 0);
+    vmMsg.dspNum = dspNum;
+    vmMsg.data = data;
+    vmMsg.dataCount = dataCount;
+    vmMsg.vmCount = vmCount;
+    [msg sendBeforeDate: [NSDate dateWithTimeIntervalSinceNow: 0.020]];  //20mSec's *should* be plenty.
+    [msg release];
 }
 
-static void 
-  vmProc( msg_header_t *msg, void *userData)
+// LMS replaced the function with a delegate method
+#if 0
+static void vmProc( msg_header_t *msg, void *userData)
 {
     Orchestra *self;
     vmMsg *myMsg = (vmMsg *)msg; /* Coerce it */
@@ -412,6 +410,17 @@ static void
      didRecordData:myMsg->data size:myMsg->dataCount];
     /* It's up to the user method to call vm_deallocate(). */
 }
+#else
+- (void) handlePortMessage: (NSPortMessage *) portMessage
+{
+    MKOrchestra *orchForDSP;
+    vmMsg *myMsg = [portMessage ]; /* FIXME Coerce it */
+    orchForDSP = dspNumToOrch[myMsg->dspNum];
+    [[orchForDSP outputSoundDelegate] orchestra: orchForDSP
+     didRecordData: myMsg->data size: myMsg->dataCount];
+    /* It's up to the user method to call vm_deallocate(). */
+}
+#endif
 #endif
 
 static void 
@@ -463,7 +472,7 @@ static void
                 if (vmMsgPort == nil) 
 		  return nil;
                 [vmMsgPort retain];
-		_MKAddPort(vmMsgPort,vmProc,MSG_SIZE_MAX,self,_MK_DPSPRIORITY);
+		_MKAddPort(vmMsgPort,self,MSG_SIZE_MAX,self,_MK_DPSPRIORITY);
 	    }
 #endif
 	    DSPMKSetUserWriteDataFunc((DSPMKWriteDataUserFunc)myWriteDataFunc);
@@ -1071,3 +1080,5 @@ static int awaitEndOfTime(DSPTimeStamp *aTimeStampP,id self)
       return nil;
     return self;
 }
+
+//@end
