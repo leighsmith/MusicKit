@@ -15,6 +15,9 @@
 
 # Modification history:
 # $Log$
+# Revision 1.23  2003/06/01 17:24:50  leighsmith
+# Corrected files built per Matt Rice's diffs
+#
 # Revision 1.22  2002/05/09 11:21:58  sbrandon
 # added support for rpm generation, removed unecessary debugging info (better
 # to do "make debug=yes" if that's what you want), and sorted list of source
@@ -162,8 +165,8 @@ $(MY_NAME)_OBJC_FILES = \
          SndPlayer.m\
          SndTable.m \
          SndView.m \
-         _SndConvert.m \
-         _Sndresamplesubs.m \
+         SndConvert.m \
+         SndResample.m \
          sounderror.m \
          #SndMeter.m
 

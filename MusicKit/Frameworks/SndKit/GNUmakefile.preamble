@@ -14,6 +14,9 @@
 #  Modification history:
 #
 #  $Log$
+#  Revision 1.8  2003/06/01 17:24:50  leighsmith
+#  Corrected files built per Matt Rice's diffs
+#
 #  Revision 1.7  2002/05/09 11:24:55  sbrandon
 #  Added support for new sox config script (libst-config), available in cvs
 #  of sox, which provides the dynamic libraries that sox was linked against.
@@ -55,7 +58,7 @@
 # binaries don't have to.
 
 LIBRARIES_DEPEND_UPON += -lMKPerformSndMIDI \
-                         -lobjc -lst
+                         -lobjc -lst -lvorbis -lvorbisenc -lvorbisfile -logg -lstdc++ -lgsm
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
   LIBRARIES_DEPEND_UPON += -lobjc -l$(FOUNDATION_LIBRARY_NAME) -lgnustep-gui \
