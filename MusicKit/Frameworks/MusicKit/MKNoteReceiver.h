@@ -51,46 +51,9 @@
   Portions Copyright (c) 1994 Stanford University
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.13  2002/04/15 14:18:17  sbrandon
-  removed redundant +new method
-
-  Revision 1.12  2001/09/08 21:55:34  leighsmith
-  Leigh learns lesson that putting comment characters into CVS entries is not a good idea
-
-  Revision 1.11  2001/09/07 18:46:05  leighsmith
-  Moved @class declarations to not clash with headerdoc - really headerdoc should only be looking for @class declarations within comments
-
-  Revision 1.10  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.9  2001/08/30 23:26:40  leighsmith
-  Merged RTF Class reference documentation into headerdoc comments
-
-  Revision 1.8  2001/04/19 17:10:19  leighsmith
-  Removed redundant (given NSObject reference counting) receiveAndFreeNote methods
-
-  Revision 1.7  2001/01/31 21:32:57  leigh
-  Typed note parameters
-
-  Revision 1.6  2000/11/25 22:54:46  leigh
-  Enforced ivar privacy
-
-  Revision 1.5  2000/05/06 01:15:25  leigh
-  Typed ivars to reduce warnings
-
-  Revision 1.4  2000/04/22 20:14:00  leigh
-  Properly typed connections returning an NSArray
-
-  Revision 1.3  2000/02/07 23:49:52  leigh
-  Comment corrections
-
-  Revision 1.2  1999/07/29 01:25:46  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 @class MKInstrument;
+@class MKNote;
+@class MKNoteSender;
 
 /*!
   @class MKNoteReceiver
@@ -102,16 +65,17 @@ MKNoteReceiver is an auxilliary class that completes the implementation of
 MKInstrument.  Instances of MKNoteReceiver are owned by MKInstrument objects to
 provide the following:
 
-&#183;	It's part of the link between a MKPerformer and an MKInstrument. 
+<ul>
+<li>It's part of the link between a MKPerformer and an MKInstrument. 
 MKNoteReceiver's <b>connect</b>: method connects a MKNoteReceiver to a
 MKNoteSender, which is owned by a MKPerformer in much the same way that a
 MKNoteReceiver is owned by an MKInstrument.  By connecting a MKNoteReceiver to a
 MKNoteSender, their respective owners are said to be connected.   MKNoteSender
 defines an equivalent <b>connect:</b> method - it doesn't matter which of the
 two objects is the receiver and which is the argument when sending a
-<b>connect:</b> message.
+<b>connect:</b> message.</li>
 
-&#183;	MKNoteReceiver's <b>receiveNote:</b> method defines the mechanism by
+<li>MKNoteReceiver's <b>receiveNote:</b> method defines the mechanism by
 which an MKInstrument obtains MKNotes.  When a MKNoteReceiver receives the
 <b>receiveNote:</b> message, it forwards the argument (a MKNote object) to its
 owner by invoking the MKInstrument method<b> realizeNote:fromNoteReceiver:</b>. 
@@ -121,8 +85,9 @@ receives a <b>sendNote:</b> message from its owner; you can also send
 MKNoteReceiver from your application.  You can toggle a MKNoteReceiver's ability
 to pass MKNotes to its owner through the <b>squelch</b> and <b>unsquelch</b>
 methods; a MKNoteReceiver won't send <b>realizeNote:fromNoteReceiver:</b>
-messages while it's squelched.
-
+messages while it's squelched.</li>
+</ul>
+ 
 Unlike MKNoteSenders, which are generally expected to be created by the
 MKPerformers that own them, MKNoteReceivers can be created either by their
 owners or by your application.  For example, each MKSynthInstrument object
@@ -177,14 +142,15 @@ their assumption of the role of MKInstrument.
 */
 - init;
 
- /* 
-  * Disconnects and frees the receiver.
-  */
-- (void)dealloc; 
+/*!
+  @method dealloc
+  @abstract Disconnects and frees the receiver.
+ */
+- (void) dealloc; 
 
 /*!
   @method disconnect:
-  @param  aNoteSender is an id.
+  @param  aNoteSender is an MKNoteSender instance.
   @result Returns <b>self</b>.
   @discussion Severs the connection between the MKNoteReceiver and
               <i>aNoteSender</i>; if the MKNoteSender isn't connected, this does
@@ -192,7 +158,7 @@ their assumption of the role of MKInstrument.
               
               See also: - <b>disconnect</b>, - <b>connect:</b>, - <b>isConnected:</b>, - <b>connections</b> 
 */
-- disconnect:aNoteSender; 
+- disconnect: (MKNoteSender *) aNoteSender; 
 
 /*!
   @method disconnect
@@ -206,25 +172,25 @@ their assumption of the role of MKInstrument.
 
 /*!
   @method isConnected:
-  @param  aNoteSender is an id.
+  @param  aNoteSender is an MKNoteSender instance.
   @result Returns a BOOL.
   @discussion Returns YES if <i>aNoteSender</i> is connected to the
               MKNoteReceiver, otherwise returns NO.
               
               See also: - <b>connect</b>, - <b>disconnect</b>, - <b>connections</b>, - <b>connectionCount</b>,  
 */
--(BOOL ) isConnected:aNoteSender; 
+- (BOOL) isConnected: (MKNoteSender *) aNoteSender; 
 
 /*!
   @method connect:
-  @param  aNoteSender is an id.
+  @param  aNoteSender is an MKNoteSender instance.
   @result Returns <b>self</b>.
   @discussion Connects <i>aNoteSender</i> to the MKNoteReceiver; if the argument
               isn't a MKNoteSender, the connection isn't made.
               
-              See also: - <b>disconnect:</b>,<b></b> - <b>isConnected</b>,<b></b> - <b>connections</b>
+              See also: - <b>disconnect:</b>, - <b>isConnected</b>, - <b>connections</b>
 */
-- connect:aNoteSender; 
+- connect: (MKNoteSender *) aNoteSender; 
 
 /*!
   @method squelch
@@ -232,7 +198,7 @@ their assumption of the role of MKInstrument.
   @discussion Disables the MKNoteReceiver's ability to send <b>realizeNote:fromMKNoteReceiver:</b>
               messages to its owner.
               
-              See also: - <b>isSquelched</b>,<b></b>   - <b>unsquelch</b>
+              See also: - <b>isSquelched</b>, - <b>unsquelch</b>
 */
 - squelch; 
 
@@ -242,8 +208,7 @@ their assumption of the role of MKInstrument.
   @discussion Enables the MKNoteReceiver's ability to send <b>realizeNote:fromMKNoteReceiver:</b>
               messages to its owner, undoing the effect of a previous <b>squelch</b> message.
               
-              See also: - <b>isSquelched</b>,<b></b>  -
-              <b>squelch</b>
+              See also: - <b>isSquelched</b>, - <b>squelch</b>
 */
 - unsquelch; 
 
@@ -254,14 +219,9 @@ their assumption of the role of MKInstrument.
               NO.  A squelched MKNoteReceiver won't invoke its owner's
               <b>realizeNote:fromNoteReceiver:</b> method.
               
-              See also: - <b>squelch</b>,<b></b>   - <b>unsquelch</b>
+              See also: - <b>squelch</b>, - <b>unsquelch</b>
 */
--(BOOL ) isSquelched; 
-
-//- copy; 
- /* 
-    Same as [self copyFromZone:[self zone]] 
-  */
+- (BOOL) isSquelched; 
 
 /*!
   @method copyFromZone:
@@ -274,7 +234,7 @@ their assumption of the role of MKInstrument.
               
               See also: - <b>copy</b>
 */
-- copyWithZone:(NSZone *)zone; 
+- copyWithZone: (NSZone *) zone; 
 
 /*!
   @method connectionCount
@@ -286,11 +246,11 @@ their assumption of the role of MKInstrument.
               <b>disconnect:</b>,<b></b>- <b>isConnected</b>,<b> </b> -
               <b>connections</b>
 */
--(unsigned)connectionCount;
+- (unsigned) connectionCount;
 
 /*!
   @method connections
-  @result Returns a NSArray *.
+  @result Returns a NSArray instance.
   @discussion Creates and returns a NSArray of the MKNoteSenders that are
               connected to the MKNoteReceiver. 
               
@@ -300,33 +260,22 @@ their assumption of the role of MKInstrument.
 
 /*!
   @method receiveNote:
-  @param  aNote is an id.
-  @result Returns <b>self</b>.
+  @param  aNote is an MKNote instance.
+  @result Returns the receiver, or nil if the receiver is squelched.
   @discussion Sends the message <b>realizeNote:</b><i>aNote</i>
-              <b>fromMKNoteReceiver:self</b> to the MKNoteReceiver's owner.  If
-              the MKNoteReceiver is squelched, the message isn't sent.  This
-              method is invoked automatically as the MKNoteReceiver's connected
-              MKNoteSenders receive <b>sendNote:</b> messages; you can also invoke
-              this method directly.
+              <b>fromMKNoteReceiver:self</b> to the MKNoteReceiver's owner thereby causing <i>aNote</i>
+              to be realized by the receiver's owner.  If the MKNoteReceiver is squelched, the message isn't sent.
+              This method is invoked automatically as the MKNoteReceiver's connected MKNoteSenders receive
+              <b>sendNote:</b> messages; you can also invoke this method directly, although typically 
+              <b>receiveNote:</b> is sent as part of a MKNoteSender's <b>sendNote:</b> method.
               
-              See also: - <b>receiveAndFreeNote:</b>,<b></b>-<b> receiveNote:withDelay:</b>, -<b>  receiveNote:atTime:</b>,
+              See also: - <b>receiveAndFreeNote:</b>, - <b>receiveNote:withDelay:</b>, - <b>receiveNote:atTime:</b>
 */
 - receiveNote: (MKNote *) aNote; 
- /* 
- * If the receiver isn't squelched, this sends the message
- * 
- * [owner realizeNote:aNote fromNoteReceiver:self];
- *
- * thereby causing aNote to be realized by the receiver's owner.
- * You never send receiveNote: directly to a NoteReceiver;
- * it's sent as part of a MKNoteSender's sendNote: method.
- * Returns the receiver, or nil if the receiver is squelched.
- */
-
 
 /*!
   @method receiveNote:atTime:
-  @param  aNote is an id.
+  @param  aNote is an MKNote instance.
   @param  time is a double.
   @result Returns <b>self</b>.
   @discussion Enqueues, with the MKConductor object described below, a request for
@@ -345,50 +294,38 @@ their assumption of the role of MKInstrument.
               
               See also: - <b>receiveNote:</b>,<b></b>-<b>  receiveNote:withDelay:</b>
 */
-- receiveNote: (MKNote *) aNote atTime: (double) time; 
- /* 
- * Schedules a request (with aNote's Conductor) for 
- * receiveNote:aNote to be sent to the receiver at time
- * time, measured in beats from the beginning of the
- * performance.  Returns the receiver.
- */
-
+- receiveNote: (MKNote *) aNote atTime: (double) time;
 
 /*!
   @method receiveNote:withDelay:
-  @param  aNote is an id.
+  @param  aNote is an MKNote instance.
   @param  delayTime is a double.
   @result Returns <b>self</b>.
   @discussion Enqueues, with the appropriate MKConductor, a request for
               <b>receiveNote:</b><i>aNote</i> to be sent to <b>self</b> after
-              <i>delayBeats</i>.  See <b>receiveNote:atTime:</b> for a description
+              <i>delayTime</i>, measured in beats from the time this message
+              is received.  See <b>receiveNote:atTime:</b> for a description
               of the MKConductor that's used.  Returns <b>self</b>.
               
               See also: - <b>receiveNote:</b>,<b></b>-<b>  receiveNote:atTime:</b>
 */
-- receiveNote: (MKNote *) aNote withDelay:(double) delayTime; 
- /* 
- * Schedules a request (with aNote's Conductor) for 
- * receiveNote:aNote to be sent to the receiver at time
- * delayTime, measured in beats from the time this message
- * is received.  Returns the receiver.
- */
+- receiveNote: (MKNote *) aNote withDelay: (double) delayTime; 
 
 /* 
     You never send this message directly.  
     Should be invoked with NXWriteRootObject(). 
     Archives isSquelched and object name, if any. 
-    Also optionally archives elements of MKNoteSender List and owner using 
+    Also optionally archives elements of MKNoteSender NSArray and owner using 
     NXWriteObjectReference(). 
 */
-- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (void) encodeWithCoder: (NSCoder *) aCoder;
 
 /* 
     You never send this message directly.  
     Should be invoked via NXReadObject(). 
     See write:. 
 */
-- (id)initWithCoder:(NSCoder *)aDecoder;
+- (id) initWithCoder: (NSCoder *) aDecoder;
 
 @end
 
