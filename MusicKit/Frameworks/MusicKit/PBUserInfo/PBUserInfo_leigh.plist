@@ -1,8 +1,0 @@
-{
-    NSMACHOperatingSystem = {
-        Archs = "18 "; 
-        Args = "STRIP_ON_INSTALL=NO"; 
-        ContinueAfterError = YES; 
-        Target = install; 
-    }; 
-}
