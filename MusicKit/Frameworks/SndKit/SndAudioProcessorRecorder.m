@@ -170,10 +170,15 @@
 
 - (void) writeToFileBuffer: (SndAudioBuffer *) saveBuffer
 {
+    SndAudioBuffer *bufferFormattedForFile = [saveBuffer audioBufferConvertedToFormat: fileFormat.dataFormat
+									 channelCount: fileFormat.channelCount
+									 samplingRate: fileFormat.sampleRate];
+    SndFormat recordBufferFormat = [bufferFormattedForFile format];
     int error;
-    SndFormat recordBufferFormat = [saveBuffer format];
     
-    error = SndWriteSampleData(recordFile, [saveBuffer bytes], recordBufferFormat);
+    // NSLog(@"bufferFormattedForFile: %@\n", bufferFormattedForFile);
+    // TODO [bufferFormattedForFile writeToFile: recordFile];
+    error = SndWriteSampleData(recordFile, [bufferFormattedForFile bytes], recordBufferFormat);
     if(error != SND_ERR_NONE)
 	NSLog(@"SndAudioProcessorRecorder writeToFileBuffer problem writing buffer\n");
     framesRecorded += recordBufferFormat.frameCount;    
@@ -222,7 +227,7 @@
                  channelCount: (int) channelCount
                  samplingRate: (int) samplingRate
 {
-    // fileFormat.dataFormat = dataFormat; // TODO disabled
+    fileFormat.dataFormat = dataFormat;
     fileFormat.channelCount = channelCount;
     fileFormat.sampleRate = samplingRate;
     
