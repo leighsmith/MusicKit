@@ -18,46 +18,17 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2004 The MusicKit Project.
 */
 /*
-Modification history:
-
-  $Log$
-  Revision 1.10  2003/08/04 21:23:22  leighsmith
-  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values. Removed use of NSSound, now only uses Snd class
-
-  Revision 1.9  2003/06/20 20:27:08  leighsmith
-  Changed Snd -sampleCount to lengthInSampleFrames
-
-  Revision 1.8  2002/04/15 14:22:35  sbrandon
-  - set a couple of ivars to nil after releasing, in -init
-  - added -hash and -isEqual: methods to aid in situations where object is
-    used as a key in dictionaries or maptables.
-
-  Revision 1.7  2002/04/03 03:59:41  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.6  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.5  2001/08/07 16:16:11  leighsmith
-  Corrected class name during decode to match latest MK prefixed name
-
-  Revision 1.4  2000/04/20 21:33:12  leigh
-  Added extra methods to allow processing regions of samples
-
-  Revision 1.3  2000/03/11 01:22:19  leigh
-  Now using NSSound to replace Snd. This means removing functionality until NSSound is full-featured
-
-  Revision 1.2  1999/07/29 01:16:42  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+Modification history before CVS commital:
 
   12/4/89 /daj - Fixed normalization in fillTableLength:scale:.
    3/19/90/daj - Added MKGet/SetSamplesClass().
   03/21/90/daj - Added archiving.
   03/21/90/daj - Small changes to quiet -W compiler warnings.
   08/27/90/daj - Changed to zone API.
-  07/25/91/daj - Fixed bug in _writeScorefileStream:. Was writing wrong for
+  07/25/91/daj - Fixed bug in writeScorefileStream:. Was writing wrong for
                  ASCII scorefile.
   05/31/92/daj - Changed invocation of newFromSoundfile: to initFromSoundFile:
                  for 3.0
@@ -68,6 +39,9 @@ Modification history:
 #import "_scorefile.h"
 #import "_error.h"
 #import "MKSamples.h"
+
+// This allows all formats of Snd, but probably breaks traditional MKSample use until _fillTableLength: has been modified
+#define PRECONVERT 0 
 
 @implementation MKSamples
 
@@ -90,14 +64,10 @@ id MKGetSamplesClass(void)
 
 #define VERSION2 2
 
-+ (void)initialize
++ (void) initialize
 {
-/* Changed by Nick 8/11/95 */
-/*    if (self != [MKEnvelope class]) */
-    if (self == [MKEnvelope class])  
-      return;
-    [MKSamples setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
-    return;
+    if (self != [MKEnvelope class])
+	[MKSamples setVersion: VERSION2]; //sb: suggested by Stone conversion guide (replaced self)
 }
 
 -  init
@@ -106,10 +76,11 @@ id MKGetSamplesClass(void)
 
 {
     [super init];
-    /*sound = */
-    if (sound) [sound release];/*sb: used to be sound free*/
-    if (soundfile) [soundfile release];
-    sound  = nil;
+    if (sound) 
+	[sound release];
+    if (soundfile) 
+	[soundfile release];
+    sound = nil;
     soundfile = nil;
 
     tableType = MK_oscTable;
@@ -174,12 +145,12 @@ id MKGetSamplesClass(void)
    setSound:. This method creates a Sound object which is owned
    by the receiver. You should not free the Sound. 
    
-   Returns self or nil if there's an error. */
+   Returns YES or NO if there's an error. */
 {
     Snd *aTmpSound = [[Snd alloc] initFromSoundfile: aSoundfile];
 
     if (!aTmpSound)
-      return NO;
+	return NO;
     if (![self setSound: aTmpSound]) {
 	[aTmpSound release];
 	if (soundfile)
@@ -200,19 +171,21 @@ id MKGetSamplesClass(void)
 - (BOOL) setSound: (Snd *) aSoundObj //sb: originally returned self/nil -- now BOOL.
 {
     if (!aSoundObj)
-      return FALSE;
+	return FALSE;
     if (sound)
 	[sound autorelease];/*sb: gets rid of old one*/
     length = 0; /* This ensures that the superclass recomputes cached buffers. */ 
     sound = [aSoundObj copy];
+#if PRECONVERT
     [sound convertToFormat: SND_FORMAT_LINEAR_16
               samplingRate: [sound samplingRate]
               channelCount: 1];
+#endif
     curLoc = 0;
     return TRUE;
 }
 
-- _writeScorefileStream:(NSMutableData *)aStream binary:(BOOL)isBinary
+- writeScorefileStream:(NSMutableData *)aStream binary:(BOOL)isBinary
 {
     NSString* tempSoundFile;
     NSFileManager *manager = [NSFileManager defaultManager];
@@ -269,20 +242,20 @@ id MKGetSamplesClass(void)
    rewrite the file.
 
    */
-- writeScorefileStream:(NSMutableData *)aStream
+- writeScorefileStream: (NSMutableData *) aStream
 {
-    return [self _writeScorefileStream:aStream binary:NO];
+    return [self writeScorefileStream: aStream binary: NO];
 }
 
-- _writeBinaryScorefileStream:(NSMutableData *)aStream
+- writeBinaryScorefileStream: (NSMutableData *) aStream
 {
-    return [self _writeScorefileStream:aStream binary:YES];
+    return [self writeScorefileStream: aStream binary: YES];
 }
 
 - (Snd *) sound
 /* Returns the Snd object. */
 {
-    return sound;
+    return [[sound retain] autorelease];
 }
 
 -(NSString *) soundfile
@@ -292,7 +265,7 @@ id MKGetSamplesClass(void)
    returns a nil. 
    */
 {
-    return soundfile;
+    return [[soundfile retain] autorelease];
 }
 
 // Methods for setting and using processing sub-regions
@@ -379,6 +352,7 @@ of it.
     int originalLength, inc;
     short *data,*end;
     DSPDatum  *newData;
+    
     if (!sound)
       return nil;
     originalLength = [sound lengthInSampleFrames];
