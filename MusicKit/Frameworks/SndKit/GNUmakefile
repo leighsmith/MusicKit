@@ -15,6 +15,9 @@
 
 # Modification history:
 # $Log$
+# Revision 1.21  2002/05/07 08:20:06  sbrandon
+# added SndMP3 source files
+#
 # Revision 1.20  2002/02/26 15:42:12  sbrandon
 # changed 2 x .c to .m files as per MacOSX changes
 #
@@ -137,7 +140,8 @@ $(MY_NAME)_OBJC_FILES = \
 	  SndAudioProcessorRecorder.m SndAudioProcessorInspector.m \
           SndAudioProcessorToneGenerator.m SndAudioProcessorNoiseGate.m \
           SndStreamArchitectureView.m SndView.m SndTable.m SndExpt.m \
-	  SndFunctionsDiskIO.m _SndConvert.m _Sndresamplesubs.m#SndMeter.m
+	  SndFunctionsDiskIO.m _SndConvert.m _Sndresamplesubs.m \
+          #SndMeter.m
 
 $(MY_NAME)_C_FILES = \
          SndEndianFunctions.c _Sndfilterkit.c _Sndlibst.c
@@ -168,8 +172,8 @@ $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
 $(MY_NAME)_DLL_DEF = $(MY_NAME).def
 
 ifeq ($(SK_COMPILE_MP3_ENCODER), yes)
-  $(MY_NAME)_OBJC_FILES += SndAudioProcessorMP3Encoder.m
-  $(MY_NAME)_HEADER_FILES += SndAudioProcessorMP3Encoder.h
+  $(MY_NAME)_OBJC_FILES += SndAudioProcessorMP3Encoder.m SndMP3.m
+  $(MY_NAME)_HEADER_FILES += SndAudioProcessorMP3Encoder.h SndMP3.h
 else
   ADDITIONAL_FLAGS += -DSK_NO_MP3_ENCODER
 endif
