@@ -30,6 +30,8 @@ NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED
 DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND
 CONDITIONS OF THIS AGREEMENT.
 
+Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
+
 ******************************************************************************/
 /* HISTORY
  * ..is now contained in the cvs log.
@@ -132,17 +134,6 @@ static int ioTags = 1000;
   return [[SndTable defaultSndTable] removeAllSounds];
 }
 
-+ getVolume:(float *)left :(float *)right
-{
-    SNDGetVolume(left, right);
-    return [self class];
-}
-
-+ setVolume:(float)left :(float)right
-{
-    SNDSetVolume(left, right);
-    return [self class];
-}
 
 + (BOOL)isMuted
 {
@@ -178,6 +169,10 @@ static int ioTags = 1000;
     loopWhenPlaying = NO;
     loopStartIndex = 0;
     loopEndIndex = 0;
+
+    // initialize the priming volume and balance for playback.
+    allChannelsVolume = 1.0;  // full volume,
+    balance = 0.0;            // center panning.
     
     return [super init];
 }
@@ -962,8 +957,6 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     NSDictionary *fileAttributeDictionary;
     NSFileManager *fileManager = [NSFileManager defaultManager];
 
-
-
     if (soundStruct)
         SndFree(soundStruct);
 
@@ -1439,14 +1432,25 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     int   buffFrameSize = [buff frameSizeInBytes];
     NSRange bufferByteRange = { bufferStartIndex * buffFrameSize, sndSampleRange.length * buffFrameSize };
 
+    // TODO this test is insufficient, we need to check channels, should use something similar to: [buff hasSameFormatAsBuffer: [self nativeFormatBuffer]]
+    // Alternatively check the audio buffer sample frame size against the SndFrameSize()
     if([buff dataFormat] != [self dataFormat]) {
 	// If not the same, do a data conversion.
 	// NSLog(@"buffer to fill and sound mismatched in data formats %d vs. %d, converting", [buff dataFormat], [self dataFormat]);
 	// TODO should be:
 	// SndConvertSound
+	/*
+	 int SndConvertSound(const SndSoundStruct *fromSound,
+		      SndSoundStruct **toSound,
+		      BOOL allocate,
+		      BOOL largeFilter,
+		      BOOL interpFilter,
+		      BOOL fast)
+*/	 
 	SndChangeSampleType(sndDataPtr, [buff bytes] + bufferByteRange.location, [self dataFormat], [buff dataFormat], sndSampleRange.length * soundStruct->channelCount);
     }
     else {
+	// Matching sound buffer formats, so we can just do a copy.
 	// NSLog(@"channel count of sound = %d, of buffer = %d\n", soundStruct->channelCount, [buff channelCount]);
 	[buff copyBytes: sndDataPtr intoRange: bufferByteRange format: soundStruct];
     }
@@ -1455,6 +1459,26 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 - (void) fillAudioBuffer: (SndAudioBuffer *) buff withSamplesInRange: (NSRange) r
 {
     [self insertIntoAudioBuffer: buff startingAt: 0 samplesInRange: r];
+}
+
+- (void) setUseVolumeWhenPlaying: (BOOL) yesOrNo
+{
+    useVolumeWhenPlaying = yesOrNo;
+}
+
+- (BOOL) useVolumeWhenPlaying
+{
+    return useVolumeWhenPlaying;
+}
+
+- (void) setUseBalanceWhenPlaying: (BOOL) yesOrNo
+{
+    useBalanceWhenPlaying = yesOrNo;
+}
+
+- (BOOL) useBalanceWhenPlaying
+{
+    return useBalanceWhenPlaying;
 }
 
 - (void) setLoopWhenPlaying: (BOOL) yesOrNo
@@ -1485,6 +1509,36 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 - (long) loopEndIndex
 {
     return loopEndIndex;
+}
+
+- (float) getAllChannelsVolume
+{
+    return allChannelsVolume;
+}
+
+- setAllChannelsVolume: (float) newAllChannelsVolume
+{
+    // TODO Check to see if this sound is playing, if so, update the volume of the performance
+    //[self isPlaying]
+    // Can we hide this within [self performance] setAllChannelsVolume: 
+    //[[[self performance] audioProcessorChain] postFader] setAmp
+    // Regardless of the sound performance, update the priming sound value.
+    allChannelsVolume = newAllChannelsVolume;
+    return [self class];
+}
+
+- (float) balance
+{
+    return balance;
+}
+
+- setBalance: (float) newBalance
+{
+    // TODO Check to see if this sound is playing, if so, update the balance of the performance
+    //[self isPlaying]
+    // Regardless of the sound performance, update the priming sound value.
+    balance = newBalance;
+    return [self class];
 }
 
 @end

@@ -1,10 +1,51 @@
-/*
-  $Id$
+////////////////////////////////////////////////////////////////////////////////
+//
+//  $Id$
+//
+//  Description: Main class defining a sound object.
+//
+//  Original Author: Stephen Brandon
+//
+//  Substantially based on Sound Kit, Release 2.0, Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
+//  Additions Copyright (c) 1999 Stephen Brandon and the University of Glasgow
+//  Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
+//
+//  Legal Statement Covering Additions by Stephen Brandon and the University of Glasgow:
+//
+//    This framework and all source code supplied with it, except where specified,
+//    are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free
+//    to use the source code for any purpose, including commercial applications, as
+//    long as you reproduce this notice on all such software.
+//
+//    Software production is complex and we cannot warrant that the Software will be
+//    error free.  Further, we will not be liable to you if the Software is not fit
+//    for the purpose for which you acquired it, or of satisfactory quality.
+//
+//    WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL
+//    WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES
+//    OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD
+//    PARTIES RIGHTS.
+//
+//    If a court finds that we are liable for death or personal injury caused by our
+//    negligence our liability shall be unlimited.
+//
+//    WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS
+//    OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR
+//    POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE
+//    NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED
+//    DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND
+//    CONDITIONS OF THIS AGREEMENT.
+//
+// Legal Statement Covering Additions by The MusicKit Project:
+//
+//    Permission is granted to use and modify this code for commercial and
+//    non-commercial purposes so long as the author attribution and copyright
+//    messages remain intact and accompany all relevant code.
+//
+////////////////////////////////////////////////////////////////////////////////
 
-	Substantially based on Sound Kit, Release 2.0
-	Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
-	Additions Copyright (c) 1999 Stephen Brandon and the University of Glasgow 
-*/
+ 
+
 #ifndef __SND_H__
 #define __SND_H__
 
@@ -132,6 +173,20 @@ architecture, as described in the <b>SndStruct</b> header.
 /*! @var loopEndIndex The sample the loop ends at. */
     long loopEndIndex;
 
+/*! @var useVolumeWhenPlaying Indicates whether to create a SndAudioFader per performance and assign it the allChannelsVolume setting. */
+    BOOL useVolumeWhenPlaying;
+/*! @var allChannelsVolume The initial volume setting for all channels when playing.
+	Between 0.0 (silence) and 1.0 (maximum volume). Therefore this is an attenuating value, not boosting.
+ */
+    float allChannelsVolume;
+
+/*! @var useBalanceWhenPlaying Indicates whether to create a SndAudioFader per performance and assign it the balance setting. */
+    BOOL useBalanceWhenPlaying;
+/*! @var balance The initial balance between stereo (left, right) channels when playing.
+	Between -1.0 (left), 0.0 (center) and 1.0 (right).
+ */
+    float balance;
+    
 @public
 /*! @var tag A unique identifier tag for the Snd */
     int tag;
@@ -223,34 +278,10 @@ architecture, as described in the <b>SndStruct</b> header.
 */
 + (void) removeAllSounds;
 
-
-/*!
-  @method getVolume::
-  @param  left is a float *.
-  @param  right is a float *.
-  @result Returns an id.
-  @discussion  Returns, by reference, the stereo output levels as floating-point
-              numbers between 0.0 and 1.0.
-*/
-+ getVolume:(float *)left :(float *)right;
-
-/*!
-  @method setVolume::
-  @param  left is a float.
-  @param  right is a float.
-  @result Returns an id.
-  @discussion  Sets the stereo output levels. These affect the volume of the
-              stereo signals sent to the built-in speaker and headphone jacks.
-              <i>left</i> and <i>right</i> must be floating-point numbers between
-              0.0 (minimum) and 1.0 (maximum). If successful, returns<b> self</b>;
-              otherwise returns <b>nil</b>.
-*/
-+ setVolume:(float)left :(float)right;
-
 /*!
   @method isMuted
   @result Returns a BOOL.
-  @discussion Returns YES if the sound output level is currently
+  @discussion Returns YES if the sound output of all playing sounds is currently
               muted.
 */
 + (BOOL)isMuted;
@@ -259,8 +290,8 @@ architecture, as described in the <b>SndStruct</b> header.
   @method setMute:
   @param  aFlag is a BOOL.
   @result Returns an id.
-  @discussion Mutes and unmutes the sound output level as <i>aFlag</i> is YES or
-              NO, respectively. If successful, returns<b> self</b>; otherwise
+  @discussion Mutes and unmutes the sound output level of all playing sounds if <i>aFlag</i> is YES or
+              NO, respectively. If successful, returns <b>self</b>; otherwise
               returns <b>nil</b>.
 */
 + setMute:(BOOL)aFlag;
@@ -1140,6 +1171,46 @@ architecture, as described in the <b>SndStruct</b> header.
 - initWithAudioBuffer: (SndAudioBuffer*) aBuffer;
 
 /*!
+  @method     setUseVolumeWhenPlaying:
+  @abstract   Sets the default behaviour whether to assign volume during play.
+  @discussion Passing YES to this method causes the sound's volume setting to
+              be used to control a SndAudioFader associated with each SndPerformance
+              when beginning sound playing. While this can be done manually after starting
+              sound playback, setting this parameter guarantees the volume setting is used
+              at the very beginning of playback, so that no buffers will not be modified in
+              volume.
+  @param      yesOrNo YES causes the volume setting to be used during play.
+ */
+- (void) setUseVolumeWhenPlaying: (BOOL) yesOrNo;
+
+/*!
+  @method     useVolumeWhenPlaying
+  @abstract   Returns whether the default behaviour is to use volume during play.
+  @result     Returns whether the default behaviour is to use volume during play.
+ */
+- (BOOL) useVolumeWhenPlaying;
+
+/*!
+  @method     setUseBalanceWhenPlaying:
+  @abstract   Sets the default behaviour whether to assign stereo balance during play.
+  @discussion Passing YES to this method causes the sound's balance setting to
+	      be used to control a SndAudioFader associated with each SndPerformance
+	      when beginning sound playing. While this can be done manually after starting
+	      sound playback, setting this parameter guarantees the balance setting is used
+	      at the very beginning of playback, so that no buffers will not be modified in
+	      balance.
+  @param      yesOrNo YES causes the balance setting to be used during play.
+ */
+- (void) setUseBalanceWhenPlaying: (BOOL) yesOrNo;
+
+/*!
+  @method     useBalanceWhenPlaying
+  @abstract   Returns whether the default behaviour is to use the balance during play.
+  @result     Returns whether the default behaviour is to use the balance during play.
+ */
+- (BOOL) useBalanceWhenPlaying;
+
+/*!
   @method     setLoopWhenPlaying:
   @abstract   Sets the default behaviour whether to loop during play.
   @param      yesOrNo Sets the default behaviour whether to loop during play.
@@ -1185,6 +1256,43 @@ architecture, as described in the <b>SndStruct</b> header.
  */
 - (long) loopEndIndex;
 
+/*!
+  @method getAllChannelsVolume
+  @result Returns an float.
+  @discussion Returns the output level of all channels as a floating-point
+              number between 0.0 and 1.0.
+ */
+- (float) getAllChannelsVolume;
+
+/*!
+  @method setAllChannelsVolume:
+  @param  allChannelsVolume is a float.
+  @result Returns an id.
+  @discussion  Sets the output levels of all channels of this Snd when performed.
+     <i>allChannelsVolume</i> must be a floating-point number between
+     0.0 (minimum, silence) and 1.0 (maximum, full volume).
+     If successful, returns <b>self</b>; otherwise returns <b>nil</b>.
+ */
+- setAllChannelsVolume: (float) allChannelsVolume;
+
+/*!
+  @method balance
+  @result Returns an float.
+  @discussion Returns the between stereo channels as a floating-point
+    number between -1.0 (left) and 1.0 (right).
+ */
+- (float) balance;
+
+/*!
+  @method setBalance:
+  @param  newBalance is a float.
+  @result Returns an id.
+  @discussion  Sets the balance between stereo (2 channel) sounds.
+    <i>newBalance</i> must be a floating-point number between
+    -1.0 (left) 0.0 (centre) and 1.0 (right).
+    If successful, returns <b>self</b>; otherwise returns <b>nil</b>.
+    */
+- setBalance: (float) newBalance;
 
 @end
 
