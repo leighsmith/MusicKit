@@ -2,10 +2,30 @@
     IBClasses = (
         {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
         {
-            ACTIONS = {revert = id; setNewChn = id; setNewFmt = id; setNewFs = id; }; 
-            CLASS = SaveToController; 
+            ACTIONS = {defaults = id; okay = id; setPref = id; }; 
+            CLASS = PrefController; 
             LANGUAGE = ObjC; 
-            OUTLETS = {newChnMtx = id; newFmtMtx = id; newFsMtx = id; }; 
+            OUTLETS = {
+                colorView = id; 
+                cursorColorWell = id; 
+                dBLimitCell = id; 
+                displayMode = id; 
+                fftView = id; 
+                gridColorWell = id; 
+                hopRatioCell = id; 
+                multiView = id; 
+                soundDisplayView = id; 
+                spectrumColorWell = id; 
+                spectrumDisplayView = id; 
+                spectrumMaxFreqCell = id; 
+                waterfallColorWell = id; 
+                wfMaxFreqCell = id; 
+                wfPlotHeightCell = id; 
+                window = id; 
+                windowSizeCell = id; 
+                windowTypeMatrix = id; 
+                zpFactorCell = id; 
+            }; 
             SUPERCLASS = NSObject; 
         }, 
         {
@@ -15,9 +35,6 @@
                 appWillTerminate = id; 
                 newSoundDoc = id; 
                 open = id; 
-                printSound = id; 
-                printSpectrum = id; 
-                printWaterfall = id; 
                 revertToSaved = id; 
                 save = id; 
                 saveAs = id; 
