@@ -15,6 +15,10 @@
 
 # Modification history:
 # $Log$
+# Revision 1.11  2001/11/07 12:38:18  sbrandon
+# added SndKitDefines.h header which contains Win32-specific SNDKIT_API
+# declarations.
+#
 # Revision 1.10  2001/10/31 16:16:35  sbrandon
 # Major rehash of makefile to aid win32 compilation. For mingw32, now compiles as a library rather than a framework, until GNUstep frameworks are sorted out properly on Windows (they are ok on UNIX).
 #
@@ -110,7 +114,7 @@ $(MY_NAME)_HEADER_FILES = \
          SndPlayer.h SndPerformance.h\
          SndAudioProcessorChain.h SndAudioProcessor.h SndAudioProcessorDelay.h\
          SndAudioFader.h SndEnvelope.h SndBreakpoint.h SndAudioBufferQueue.h\
-         SndAudioProcessorReverb.h
+         SndAudioProcessorReverb.h SndKitDefines.h
 
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
