@@ -1,6 +1,6 @@
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 <!entity mkvers "5.2">
-<!entity mkvertuple "5.2.0">
+<!entity mkvertuple "5.2.1">
 <!entity sndvertuple "1.3.0">
 ]>
 
@@ -41,7 +41,7 @@ $Id$
 -->
 
     <author>
-      <firstname>Leigh</firstname> <othername>M.</othername> <surname>Smith</surname>
+      <firstname>Leigh</firstname> <othername role=mi>M.</othername> <surname>Smith</surname>
       <affiliation>
         <orgname>
 <ulink url="http://www.tomandandy.com">
@@ -460,11 +460,12 @@ libraries. Further work is needed on this, please help!
     </sect2>
 </sect1>
 
-<sect1 id="history">
+  <sect1 id="history">
     <title>Contributors, History and Acknowledgements</title>
     <subtitle>(As best as LMS has determined from written acknowledgements)</subtitle>
-<itemizedlist>
-<listitem>
+    <itemizedlist>
+      <listitem>
+	<para>
 The MusicKit was designed and implemented by David
 A. Jaffe <email>david@jaffe.com</email>, and the DSP computer-music
 and array-processing software was designed and implemented by Julius
@@ -475,64 +476,61 @@ Their original design appeared in
 <citation>JaffeBoynton89</citation>.
 </para></listitem>
 
-<listitem><para>
+      <listitem><para>
 Michael McNabb brought wave table synthesis to the Music Kit
 and designed and built a number of UnitGenerator and SynthPatch
 subclasses and contributed the Ensemble application.</para></listitem>
 
-<listitem><para>Douglas Fulton was responsibile
-for the documentation and
-made substantial design improvements in clarifying general protocol
-and the identity and mechanisms of the classes.</para></listitem>
+      <listitem><para>Douglas Fulton was responsibile for the
+documentation and made substantial design improvements in clarifying
+general protocol and the identity and mechanisms of the
+classes.</para></listitem>
 
-<listitem><para>Gregg Kellogg wrote the DSP, Sound, and
+      <listitem><para>Gregg Kellogg wrote the DSP, Sound, and
 MIDI device drivers for the NeXT which were then maintained by Doug
 Mitchell.</para></listitem>
 
-<listitem><para>John Strawn wrote most of the matrix and array processing
+      <listitem><para>John Strawn wrote most of the matrix and array processing
 macros.</para></listitem>
 
-<listitem><para>Dana Massie contributed speech coding, sampling-rate
+      <listitem><para>Dana Massie contributed speech coding, sampling-rate
 conversion, and signal conditioning modules for the Sound Kit.</para></listitem>
 
-<listitem><para>Doug
+      <listitem><para>Doug
 Keislar helped with testing, developer support, and demos.</para></listitem>
 
-<listitem><para>
+      <listitem><para>
 Mike Minnick helped finish the DSP array processing tools and
 wrote most of the programming examples.</para></listitem>
 
-<listitem><para>Roger Dannenberg influenced
+      <listitem><para>Roger Dannenberg influenced
 both the MusicKit noteTag design and the design of the performance
 mechanism (using a data flow discrete simulation
 model).</para></listitem>
 
-<listitem><para>Andy Moorer
+      <listitem><para>Andy Moorer
 helped shape the Envelope strategy, suggested the unit-generator
 memory-argument scheme, and provided consultation.</para></listitem>
 
-<listitem><para>The
+      <listitem><para>The
 software of William Schottstaedt and others at CCRMA (Stanford
 University) served as a model for some of the mechanisms in the Music
 Kit.</para></listitem>
 
-<listitem><para>James A. Moorer, Perry Cook, 
+      <listitem><para>James A. Moorer, Perry Cook, 
 Rob Poor made code and design contributions
 also.</para></listitem>
 
-<listitem><para>Following NeXT's release of the source to Stanford in 1994,
-David did the port to Intel NeXTStep and the MPU-401 MIDI and DSP
-drivers. There were some other bug fix contributors (acknowledged in
-code comments).</para></listitem>
+      <listitem><para>Following NeXT's release of the source to
+Stanford in 1994, David did the port to Intel NeXTStep and the MPU-401
+MIDI and DSP drivers. There were some other bug fix contributors
+(acknowledged in code comments).</para></listitem>
 
-<listitem><para>
-Stephen Brandon <email>sbrandon@music.gla.ac.uk</email> did the initial
-OpenStep port in early 1998 and the majority of the conversion
-work.</para></listitem>
-
-<listitem><para>The
-MusicKit now uses the SndKit, written by Stephen Brandon, rather than
-the SoundKit for its sound processing.</para></listitem>
+      <listitem><para> Stephen Brandon
+<email>sbrandon@music.gla.ac.uk</email> did the initial OpenStep port
+in early 1998 and the majority of the conversion work. The MusicKit
+now uses the SndKit, written by Stephen Brandon, rather than the
+SoundKit for its sound processing.</para></listitem>
 
 <listitem><para>Leigh M. Smith <email>leigh@cs.uwa.edu.au</email>, now
 <email>leigh@tomandandy.com</email> fixed bugs and ported the MusicKit
@@ -541,11 +539,11 @@ reorganised the packages and documentation for MacOS X-Server and in
 2000, to various developer previews of MacOS X.  The frameworks were
 ported to Windows 98/NT using DirectMusic in 1999.</para></listitem>
 
-<listitem><para>DirectSound interface
-code was contributed by SKoT McDonald
+      <listitem><para>DirectSound interface code for Windows was
+contributed by SKoT McDonald
 <email>skot@tomandandy.com</email>.</para></listitem>
 
-<listitem><para>Keith Hamel tested and helped
+      <listitem><para>Keith Hamel tested and helped
 in bug fixes for the MacOS X-Server version.</para></listitem>
 </itemizedlist>
   </sect1>
