@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2002/01/29 16:04:51  sbrandon
+  changed declaration of _MK_ERRMSG to use NSString
+
   Revision 1.2  1999/07/29 01:26:02  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -15,7 +18,7 @@ Modification history:
 #ifndef __MK__error_H___
 #define __MK__error_H___
 
-#define _MK_ERRMSG static char * 
+#define _MK_ERRMSG static NSString * 
 
 #import "errors.h"
 
