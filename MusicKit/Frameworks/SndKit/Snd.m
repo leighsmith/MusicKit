@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.19  2001/04/12 20:46:14  leighsmith
+ * Made playInFuture:beginSample:count: the fundamental play method
+ *
  * Revision 1.18  2001/03/07 22:07:38  leigh
  * Adopted NSCopying protocol
  *
@@ -89,7 +92,7 @@ static NSMutableDictionary *playRecTable = nil;
 static int ioTags = 1000;
 static SndPlayer *sndPlayer;
 
-+ (void)initialize
++ (void) initialize
 {
     char **driverNames;
     pool = [[NSAutoreleasePool alloc] init];
@@ -658,8 +661,46 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return 0;
 }
 
-// Begin the playback of the sound at some future time, specified in seconds.
-- play: (id) sender inFuture: (double) inSeconds 
+// Begin the playback of the sound at some future time, specified in seconds, over a region of the sound.
+// All other play methods are convience wrappers around this.
+- (SndPerformance *) playInFuture: (double) inSeconds beginSample: (int) begin sampleCount: (int) count 
+{
+    int playBegin = begin;
+    int playEnd = begin + count;
+    
+    if (playBegin > [self sampleCount] || playBegin < 0)
+        playBegin = 0;
+    
+    if (playEnd > [self sampleCount] || playEnd < playBegin)
+        playEnd = [self sampleCount];
+
+    if (!soundStruct)
+        return nil;
+    status = SND_SoundPlayingPending;
+    
+    return [sndPlayer playSnd: self withTimeOffset: inSeconds];
+}
+
+- (SndPerformance *) playInFuture: (double) inSeconds 
+{
+    return [self playInFuture: inSeconds beginSample: 0 sampleCount: [self sampleCount]];
+}
+
+- (SndPerformance *) playAtDate: (NSDate *) date
+{
+    return [self playInFuture: [date timeIntervalSinceNow]];
+}
+
+// Legacy method for SoundKit compatability
+- play:(id) sender beginSample:(int) begin sampleCount: (int) count 
+{
+    // do something with sender?
+    [self playInFuture: 0.0 beginSample: begin sampleCount: count];
+    return self;
+}
+
+// Legacy method for SoundKit compatability
+- play:sender
 {
 #if !USE_STREAMING
     int err;
@@ -685,47 +726,23 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
             0 /*	int preempt		*/, 
             (SNDNotificationFun) beginFun,
             (SNDNotificationFun) endFun);
-    if (err) NSLog(@"Playback error %d\n",err);
-#else
-    if (!soundStruct)
-        return self;
-    status = SND_SoundPlayingPending;
-    
-    // currentPerformance
-    [sndPlayer playSnd: self withTimeOffset: inSeconds];
-#endif
+    if (err) {
+        NSLog(@"Playback error %d\n",err);
+        return nil;
+    }
     return self;
+#else
+    // do something with sender?
+    [self playInFuture: 0.0];
+    return self;
+#endif
 }
 
-- play:sender
-{
-    return [self play: sender inFuture: 0.0];
-}
-
+// Legacy method for SoundKit compatability
 - (int) play
 {
     [self play:self];
     return SND_ERR_NONE;
-}
-
-- play:(id) sender beginSample:(int) begin sampleCount: (int) count 
-{
-    int playBegin = begin;
-    int playEnd = begin + count;
-    
-    if (playBegin > [self sampleCount] || playBegin < 0)
-        playBegin = 0;
-    
-    if (playEnd > [self sampleCount] || playEnd < playBegin)
-        playEnd = [self sampleCount];
-    
-    // TODO must pass playBegin, playEnd in
-    return [self play: sender];
-}
-
-- play: (id) sender atDate: (NSDate *) date
-{
-    return [self play: sender inFuture: [date timeIntervalSinceNow]];
 }
 
 - record:sender

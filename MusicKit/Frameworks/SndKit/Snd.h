@@ -143,10 +143,59 @@ typedef enum {
 - (int)channelCount;
 - (char *)info;
 - (int)infoSize;
+
+/*!
+    @method play
+    @abstract Play the entire sound now.
+    @result Returns SND_ERR_NONE if the sound played correctly.
+*/
+- (int) play;
+
+/*!
+    @method play:
+    @abstract Play the entire sound now, for use as an action method.
+    @param sender The sending object.
+    @result Returns self if play occured correctly, nil if there was an error.
+*/
 - play:sender;
+
+/*!
+    @method playInFuture:beginSample:sampleCount:
+    @abstract Begin playback at some time in the future, over a region of the sound.
+    @param inSeconds The number of seconds beyond the current time point to begin playback.
+    @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
+    @param count The number of samples to play. Use sampleCount to play the entire sound.
+    @result Returns the performance that represents the sound playing.
+*/
+- (SndPerformance *) playInFuture: (double) inSeconds beginSample: (int) begin sampleCount: (int) count;
+
+/*!
+    @method play:beginSample:sampleCount:
+    @abstract Begin playback now, over a region of the sound.
+    @discussion This is a deprecated method for SoundKit compatability. 
+                You should use playInFuture:beginSample:sampleCount: instead.
+    @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
+    @param count The number of samples to play. Use sampleCount to play the entire sound.
+    @result Returns self
+*/
 - play:(id) sender beginSample:(int) begin sampleCount:(int) count;
 
-- (int)play;
+/*!
+    @method playInFuture:
+    @abstract Begin the playback of the sound at some future time, specified in seconds.
+    @param inSeconds The number of seconds beyond the current time point to begin playback.
+    @result Returns the performance that represents the sound playing.
+*/
+- (SndPerformance *) playInFuture: (double) inSeconds;
+
+/*!
+    @method playAtDate:
+    @abstract Begin the playback of the sound at a specified date.
+    @param date The date to begin playback.
+    @result Returns the performance that represents the sound playing.
+*/
+- (SndPerformance *) playAtDate: (NSDate *) date;
+
 - record:sender;
 - (int)record;
 - (int)samplesProcessed;
