@@ -10,9 +10,9 @@
 #ifndef _DSPDRIVER_TYPES_
 #define _DSPDRIVER_TYPES_
 
-#import <mach/kern_return.h>
-#import <mach/message.h>
-#import <mach/port.h>
+//#import <mach/kern_return.h>
+//#import <mach/message.h>
+//#import <mach/port.h>
 
 /* error codes */
 #define DSPDRIVER_ERROR_BUSY 100
