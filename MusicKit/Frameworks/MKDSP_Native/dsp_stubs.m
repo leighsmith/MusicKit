@@ -27,6 +27,10 @@ int DSPMKMemoryFillSkipTimed(
     return 0;
 }
 
+void DSPEnableErrorFile(char *filename)
+{
+}
+
 int DSPMKSendArraySkipTimed(DSPFix48 *aTimeStampP,
 				   DSPFix24 *data,
 				   DSPMemorySpace space,
