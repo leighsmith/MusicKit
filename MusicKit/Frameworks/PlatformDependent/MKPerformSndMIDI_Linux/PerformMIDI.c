@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/07/02 19:46:28  sbrandon
+  - added MKMDSetReplyCallback
+
   Revision 1.3  2001/05/23 18:21:53  leighsmith
   Added MKMDErrorString
 
@@ -62,6 +65,8 @@ extern "C" {
   //static REFERENCE_TIME quantumFactor; // multiplicative factor difference between MusicKit quantum and REFERENCE_TIME
   //static REFERENCE_TIME datumRefTime;
   //static int datumMSecTime;
+static void (*callbackFn)(void *);
+static void *callbackParam;
 
 PERFORM_API MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
 {
@@ -407,6 +412,23 @@ PERFORM_API kern_return_t MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions 
   fprintf(debug, "MKMDHandleReply called\n");
 #endif
   return MKMD_SUCCESS;
+}
+
+/* Routine MKMDSetReplyCallback - this is called to nominate a function to be called on reception of events
+instead of sending a message to a Mach port */
+PERFORM_API MKMDReturn MKMDSetReplyCallback (
+	MKMDPort mididriver_port,
+	MKMDOwnerPort owner_port,
+	short unit,
+	void (*newCallbackFn)(void *),
+	void *newCallbackParam)
+{
+#if FUNCLOG
+    fprintf(debug, "MKMDSetReplyCallback called\n");
+#endif
+    callbackFn = newCallbackFn;
+    callbackParam = newCallbackParam;
+    return MKMD_SUCCESS;
 }
 
 /*
