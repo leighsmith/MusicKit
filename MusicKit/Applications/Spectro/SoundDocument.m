@@ -1,9 +1,11 @@
-/*	SoundDocument.m
+/*	$Id$
  *	Originally from SoundEditor3.0.
  *	Modified for Spectro3.0 by Gary Scavone.
  *	Last modified: 1/94
  */
 
+#import <AppKit/AppKit.h>
+#import <SndKit/SndKit.h>
 
 #import "SoundDocument.h"
 #import "SoundController.h"
@@ -11,11 +13,6 @@
 #import "ScrollingSound.h"
 #import "SoundInfo.h"
 #import "SpectrumDocument.h"
-
-#import <AppKit/AppKit.h>
-
-#import <stdlib.h>
-#import <string.h>
 
 #define ZOOM_FACTOR 2.0
 #define WAVE_MODE 0
@@ -232,28 +229,12 @@ static int calcFormat(SndSoundStruct *s)
 
 - load: sender
 {	
-    NSBundle *mainB = [NSBundle mainBundle];
     if (fileName) {
         Snd *newSound = [[Snd alloc] initFromSoundfile: fileName];
 	
         if (newSound) {
             [soundWindow disableFlushWindow];
             [scrollSound setSound: newSound];
-#if 0 /*sb: can't determine displayability this way. Find some other way one day... */
-            if (![scrollSound setSound:newSound]) { /* not displayable */
-                if ([newSound convertToFormat:SND_FORMAT_LINEAR_16]) {
-                    NSRunAlertPanel(
-                            [mainB localizedStringForKey:@"Open" value:@"Open" table:nil],
-                            [mainB localizedStringForKey:@"Cannot convert format for display (DSP Busy?)"
-                                value:@"Cannot convert format for display (DSP Busy?)" table:nil],
-                            [mainB localizedStringForKey:@"OK" value:@"OK" table:nil],
-                                nil, nil);
-                    return nil;
-                }
-		else
-                    [scrollSound setSound:newSound];
-            }
-#endif
             [mySpectrumDocument soundChanged]; /*sb */
             [soundWindow enableFlushWindow];
             [self zoomAll:self];
@@ -262,7 +243,7 @@ static int calcFormat(SndSoundStruct *s)
 	    [self setWindowTitle];
 	    fresh = NO;
 	    /*sb: do this now, as new windows have not yet been displayed. */
-	    [soundWindow makeKeyAndOrderFront:self];
+	    [soundWindow makeKeyAndOrderFront: self];
         }
     }
     return self;
