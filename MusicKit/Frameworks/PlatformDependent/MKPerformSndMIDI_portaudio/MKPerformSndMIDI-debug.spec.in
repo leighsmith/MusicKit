@@ -1,0 +1,11 @@
+Summary: Debug version of pre-requisite library (framework) for MusicKit and SndKit which contains the audio I/O routines
+Release: 1
+Copyright: Public Domain (but see enclosed copyright information and http://www.musickit.org/license.html)
+Group: Development/Libraries
+Source: http://prdownloads.sourceforge.net/musickit/%{gs_name}-%{gs_version}.tar.gz
+
+%description
+This package contains MKPerformSndMIDI, the audio streaming mechanism underlying
+SndKit and MusicKit. It is based on portaudio, the cross-platform audio I/O toolkit
+(http://www.portaudio.com). The GNUStep implementation of MKPerformSndMIDI does not
+yet support MIDI, but this support will appear in a future version.
