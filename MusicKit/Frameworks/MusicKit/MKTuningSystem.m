@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/10/25 18:07:51  leigh
+  Added Stephen's check for at least one entry in the array
+
   Revision 1.5  2000/10/01 06:41:30  leigh
   Tightened function prototyping.
 
@@ -415,9 +418,13 @@ void _MKTuningSystemInit(void)
   /* Sets receiver to 12-tone equal-tempered tuning. */
 {
     unsigned int i;
+    NSNumber *newNum;
+    int fCount = [frequencies count];
 
     for(i = 0; i < MIDI_NUMKEYS; i++) {
-        [frequencies replaceObjectAtIndex: i withObject: [NSNumber numberWithDouble: equalTempered12[i]]];
+        newNum = [NSNumber numberWithDouble: equalTempered12[i]];
+        if (fCount == 0) [frequencies addObject: newNum];
+            else [frequencies replaceObjectAtIndex: i withObject: newNum];
     }
     /* Copy from equalTempered12 to us. */
     return self;
