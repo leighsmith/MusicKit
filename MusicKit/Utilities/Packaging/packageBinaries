@@ -36,10 +36,6 @@ case `uname` in
 	;;
 esac
 
-if [ x_$MKICON = x_ ]; then
-    echo "Error: Environment variable MKICON must be set to point to the .tiff file used for the $packagetitle icon."
-    exit 1;
-fi
 if [ x_$1 = x_ ]; then
     echo "Usage: $0 version_number"
     echo "where version_number = V.R.P"
@@ -66,28 +62,31 @@ installLibrariesInto=$packageLibrariesFrom
 
 cd $workingdir
 
+# Clean out anything already there.
+rm -r -f $install_file_directory
+
 # Gather up the packages...
 mkdir -p $workingdir/$install_file_directory/$installFrameworksInto
 foreach f ($packages)
-  cp -r $packageFrameworksFrom/$f.framework $workingdir/$install_file_directory/$installFrameworksInto
+  cp -R $packageFrameworksFrom/$f.framework $workingdir/$install_file_directory/$installFrameworksInto
 end
 
 # ...the libraries...
 mkdir -p $workingdir/$install_file_directory/$installLibrariesInto
 foreach f ($libraries)
-  cp -r $packageLibrariesFrom/$f $workingdir/$install_file_directory/$installLibrariesInto
+  cp -R $packageLibrariesFrom/$f $workingdir/$install_file_directory/$installLibrariesInto
 end
 
 # ...the applications...
 mkdir -p $workingdir/$install_file_directory/$installApplicationsInto
 foreach f ($applications)
-  cp -r $packageApplicationsFrom/$f $install_file_directory/$installApplicationsInto
+  cp -R $packageApplicationsFrom/$f $install_file_directory/$installApplicationsInto
 end
 
 # ...and the commands.
 mkdir -p $workingdir/$install_file_directory/$installCommandsInto
 foreach f ($cmds)
-  cp -r $packageCommandsFrom/$f $install_file_directory/$installCommandsInto
+  cp -R $packageCommandsFrom/$f $install_file_directory/$installCommandsInto
 end
 
 # This is the point where you'll want to make sure that the
@@ -111,9 +110,6 @@ end
 
 echo "Changing ownership to root.wheel, log in as root."
 echo "/usr/sbin/chown -R root.wheel $workingdir/$install_file_directory/" | su root -s
-
-cp $MKICON ./$frameworkname.tiff
-
 
 #  The .info file is in a basic key/value format. The keys that are
 #  commonly used are defined below, a more complete list of keys is
@@ -158,7 +154,9 @@ EOF
 
 # perhaps use DeleteWarning
 
-package $install_file_directory $frameworkname.info $frameworkname.tiff 
+# If we want the old fashioned (and safer!) way.
+# package $install_file_directory $frameworkname.info -gnutar
+package $install_file_directory $frameworkname.info
 
 # -d $installRoot
 
@@ -172,3 +170,4 @@ echo "/bin/rm -r -f $workingdir/$install_file_directory" | su root -s
 rm -r -f $workingdir/$frameworkname.pkg
 
 echo "Finished. Final package is located at $shipfile"
+
