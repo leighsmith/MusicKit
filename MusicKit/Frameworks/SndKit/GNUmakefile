@@ -67,8 +67,8 @@ $(MY_NAME)_OBJC_FILES = \
          SndEnvelope.m \
          SndError.m \
          SndExpt.m \
+	 SndFileIO.m \
          SndFunctions.m \
-         SndFunctionsDiskIO.m \
          SndMeter.m \
 	 SndMuLaw.m \
          SndMP3.m \
