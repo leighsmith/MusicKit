@@ -11,22 +11,6 @@ $Id$
 <article>
 
   <artheader>
-    <author>
-      <firstname>Leigh</firstname> <othername>M.</othername>
-      <surname>Smith</surname>
-      <affiliation>
-	<orgname>tomandandy</orgname>
-	<address>
-          <street>89 Greene Street</street>
-          <city>New York</city>, <state>NY</state>
-          <postcode>10012</postcode> <country>USA</country>
-          <phone>+1-212-334-0421</phone>
-          <fax>+1-212-431-4115</fax> (Fax)
-          <email>leigh@tomandandy.com</email>
-	</address>
-      </affiliation>
-    </author>
-
     <copyright>
       <year>1993</year>
       <holder>CCRMA, Stanford University</holder>
@@ -43,12 +27,6 @@ $Id$
 	<date>$Date$</date>
       </revision>
     </revhistory>
-
-    <abstract>
-      <para>
-</para>
-    </abstract>
-
   </artheader>
   
 
@@ -58,7 +36,7 @@ $Id$
 
     <!--
   <synopsis>
-  <todo>Library:</todo>
+  <todo>Frameworks:</todo>
   <filename>MusicKit.framework</filename>, <filename>MKDSP.framework</filename>, <filename>MKPerformSndMIDI.framework</filename>. 
 
   <para>
