@@ -1,15 +1,18 @@
 #!/bin/sh
 # $Id$
+#
+# Usage: packageDocumentation [ChangeLog] [Directory for README.pdf]
+#
 # Create a set of HTML pages from the SGML documentation suitable for
 # distribution on the web-site. We do this with a customised stylesheet (in DSSSL)
-# to produce the correct text coloring, background images etc.
+# to produce the correct text colouring, background images etc.
 #
 # Also creates HTML pages of class documentation from header files
 # using HeaderDoc and copies in PDF's of documentation.
 # The entire tree of documentation is then packaged up suitable for
 # shipping to a webserver.
 #
-# Leigh Smith <leigh@tomandandy.com>
+# Leigh Smith <leigh@leighsmith.com>
 #
 
 JADE=openjade
@@ -20,56 +23,120 @@ HTML_TMPDIR=/tmp/$HTML_DISTRIB_DIR
 HTML_TARBALL=/tmp/MusicKitREADME.tar.gz
 
 PDF_TMPDIR=/tmp/mkpdf
+PDF_OUTDIR=/tmp/generatedPDFs
 
 # Assume we are standing at the top of the source tree, since with NFS
 # it's a bit hard to be universal with paths.
 MKSRCDIR=`pwd`
-# Assume SndKit will sit next to MusicKit in the directory 
+# Assume SndKit sits next to MusicKit in the directory. In the future
+# the SndKit will be merged into the MusicKit.
 SKSRCDIR=$MKSRCDIR/../SndKit
 MKDOCDIR=$MKSRCDIR/Documentation
-MKREADMESRC=$MKDOCDIR/MusicKit_README.sgml
+
 MKCONCEPTS=$MKDOCDIR/Concepts/
 MKTUTORIALS=$MKDOCDIR/TutorialClasses/
 MKPUBLICATIONS=$MKDOCDIR/Publications/
 MKHEADERDOC=$MKDOCDIR/HeaderDoc/
 MK_STYLEDIR=$MKDOCDIR/SGML
 MK_STYLESHEET=$MK_STYLEDIR/MusicKit_README.dsssl
-#MKCONCEPTS_STYLESHEET=/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/html/docbook.dsl
+
+MKREADME_STYLESHEET=$MK_STYLESHEET
 MKCONCEPTS_STYLESHEET=$MK_STYLESHEET
-MKTUTORIALS_STYLESHEET=$MKCONCEPTS_STYLESHEET
+MKTUTORIALS_STYLESHEET=$MK_STYLESHEET
+
+READMESRC=MusicKit_README.sgml
 
 # We allow the path to the ChangeLog to be passed in so it can be
 # posted onto the web for inspection.
 CHANGELOG=$1
 
+# We specify where we want the README.pdf file to be copied into when
+# we drive the packaging of the documentation from the packageSource script.
+COPYREADMETO=$2
+
 #
-# Convert all SGML to HTML and package
+# Create HTML from the supplied DocBook SGML file
 #
-rm -rf $HTML_TMPDIR
-mkdir $HTML_TMPDIR
-cd $HTML_TMPDIR
-$JADE -t sgml -ihtml -d ${MK_STYLESHEET}\#html $MKREADMESRC
-ln -s readme.html index.html
-cp $MK_STYLEDIR/Images/*.{gif,jpg,png} .
+generateHTML()
+{
+    SGMLFILE=$1
+    STYLESHEET=$2
+    IMAGESDIR=$3
+    WRITEHTMLTODIR=$4
+
+    BASENAME=`basename $SGMLFILE .sgml`
+
+    mkdir -p $HTML_TMPDIR/$WRITEHTMLTODIR/Images
+    cd $HTML_TMPDIR/$WRITEHTMLTODIR
+    cp -r $IMAGESDIR/Images/*.{gif,jpg,png} Images
+    $JADE -t sgml -ihtml -d ${STYLESHEET}\#html $SGMLFILE
+    echo HTML of ${BASENAME}.sgml generated into $HTML_TMPDIR/$WRITEHTMLTODIR
+}
+
+#
+# Create PDF from the supplied DocBook SGML file
+#
+generatePDF()
+{
+    SGMLFILE=$1
+    STYLESHEET=$2
+    IMAGESDIR=$3
+    WRITEPDFTODIR=$4
+
+    BASENAME=`basename $SGMLFILE .sgml`
+    TEXINPUT=${BASENAME}.tex
+    DVIINTERMEDIARY=${BASENAME}.dvi
+    PDFFINAL=${BASENAME}.pdf
+
+    cd $PDF_TMPDIR 
+    mkdir -p Images
+    cp $IMAGESDIR/Images/*.eps Images
+    $JADE -t tex -d ${STYLESHEET}\#print -o $TEXINPUT $SGMLFILE
+    jadetex $TEXINPUT
+    jadetex $TEXINPUT
+    dvips -o prepared.ps $DVIINTERMEDIARY
+    ps2pdf prepared.ps $WRITEPDFTODIR/$PDFFINAL
+    echo PDF of ${BASENAME}.sgml generated into $WRITEPDFTODIR/$PDFFINAL
+}
+
+generateAllFormats()
+{
+    #
+    # Convert SGML to HTML
+    #
+    generateHTML $1 $2 $3 $4
+    #
+    # Convert SGML to PDF
+    #
+    generatePDF $1 $2 $3 $PDF_OUTDIR
+}
+
+#
+# Blow away any old versions
+#
+rm -rf $HTML_TMPDIR $PDF_TMPDIR $PDF_OUTDIR
+mkdir -p $PDF_TMPDIR $PDF_OUTDIR
+
+#
+# Generate the README documentation
+#
+generateAllFormats $MKDOCDIR/$READMESRC $MKREADME_STYLESHEET $MK_STYLEDIR .
 
 #
 # Generate the Concepts Book underneath the README directory, so it
 # can be referenced by URL independent of the README directory.
 #
-mkdir -p $HTML_TMPDIR/MusicKitConcepts/Images
-cd $HTML_TMPDIR/MusicKitConcepts
-$JADE -t sgml -ihtml -d ${MKCONCEPTS_STYLESHEET}\#html $MKCONCEPTS/MusicKitConcepts.sgml
-cp -r $MKCONCEPTS/Images/*.gif Images
-ln -s musickitconcepts.html index.html
+generateAllFormats $MKCONCEPTS/MusicKitConcepts.sgml $MKCONCEPTS_STYLESHEET $MKCONCEPTS MusicKitConcepts
 
 #
 # Generate the tutorials and also place them under the README directory.
 #
-mkdir -p $HTML_TMPDIR/TutorialClasses/Images
-cd $HTML_TMPDIR/TutorialClasses
-$JADE -t sgml -ihtml -d ${MKTUTORIALS_STYLESHEET}\#html $MKTUTORIALS/MusicKitTutorials.sgml
-cp -r $MKTUTORIALS/Images/*.gif Images
-ln -s musickittutorials.html index.html
+generateAllFormats $MKTUTORIALS/MusicKitTutorials.sgml $MKTUTORIALS_STYLESHEET $MKTUTORIALS TutorialClasses
+
+#
+# Remove the temp PDF build area.
+#
+rm -r $PDF_TMPDIR
 
 #
 # Run HeaderDoc over the frameworks
@@ -86,20 +153,22 @@ EOF
 cd $MKHEADERDOC
 # The MacOS X version of the MKPerformSndMIDI framework is the 
 # definitive documentation version.
-FRAMEWORKS_TO_HEADERDOC="$MKSRCDIR/Frameworks/MusicKit $SKSRCDIR/Frameworks/SndKit $MKSRCDIR/Frameworks/MKSynthPatches $MKSRCDIR/Frameworks/MKUnitGenerators $MKSRCDIR/Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX"
+FRAMEWORKS_TO_HEADERDOC="$MKSRCDIR/Frameworks/MusicKit \
+    $SKSRCDIR/Frameworks/SndKit $MKSRCDIR/Frameworks/MKSynthPatches \
+    $MKSRCDIR/Frameworks/MKUnitGenerators \
+    $MKSRCDIR/Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX \
+    $MKSRCDIR/Frameworks/PlatformDependent/MKPerformSndMIDI_portaudio"
 
 for frameworkDir in $FRAMEWORKS_TO_HEADERDOC; do (
-    # We get a bit sneaky here and assume any part of the framework name
-    # following an underscore is not what we want to have appear in
-    # the output.
-    CLEANED_FRAMEWORK=`basename $frameworkDir`
-    FRAMEWORK_DOC_OUT_DIR=$HTML_TMPDIR/Frameworks/$CLEANED_FRAMEWORK
+    FRAMEWORK_NAME=`basename $frameworkDir`
+    FRAMEWORK_DOC_OUT_DIR=$HTML_TMPDIR/Frameworks/$FRAMEWORK_NAME
     headerdoc2html -o $FRAMEWORK_DOC_OUT_DIR $frameworkDir
-    gatherheaderdoc -p "$CLEANED_FRAMEWORK" $FRAMEWORK_DOC_OUT_DIR
-    echo "<a href=$CLEANED_FRAMEWORK>$CLEANED_FRAMEWORK</a><p>" >> $HTML_TMPDIR/Frameworks/index.html
-    cd $FRAMEWORK_DOC_OUT_DIR
+    # gatherheaderdoc -p "$FRAMEWORK_NAME" $FRAMEWORK_DOC_OUT_DIR
+    gatherheaderdoc $FRAMEWORK_DOC_OUT_DIR
+    echo "<a href=$FRAMEWORK_NAME>$FRAMEWORK_NAME</a><p>" >> $HTML_TMPDIR/Frameworks/index.html
     # Gatherheaderdoc generates a file MasterTOC.html, that we make the
-    # default file. 
+    # default file. We change into the directory so we create relative symlinks.
+    cd $FRAMEWORK_DOC_OUT_DIR
     ln -s MasterTOC.html index.html
 ); 
 done
@@ -115,54 +184,31 @@ EOF
 mkdir $HTML_TMPDIR/Frameworks/MKSynthPatches/Images
 cp $MKSRCDIR/Documentation/Frameworks/SynthPatches/Reference/Classes/Images/*.png $HTML_TMPDIR/Frameworks/MKSynthPatches/Images
 
-# if we specified a changelog on the command line, copy it into the
+#
+# If we specified a changelog on the command line, copy it into the
 # web directory.
+#
 if [ ${CHANGELOG}_x != _x ]; then
     cp $CHANGELOG $HTML_TMPDIR
 fi
 
 #
-# Now create the PDF of the README
-#
-MKREADMETEX=`basename $MKREADMESRC .sgml`.tex
-PDFFINAL=`basename $MKREADMESRC .sgml`.pdf
-rm -rf $PDF_TMPDIR
-mkdir $PDF_TMPDIR
-cd $PDF_TMPDIR 
-cp $MK_STYLEDIR/Images/*.eps .
-$JADE -t tex -d ${MK_STYLESHEET}\#print -o $MKREADMETEX $MKREADMESRC
-jadetex $MKREADMETEX 
-dvips -o prepared.ps MusicKit_README.dvi
-ps2pdf prepared.ps /tmp/$PDFFINAL
-echo MusicKit README PDF file generated into /tmp/$PDFFINAL
-
-#
-# Create PDF of the concepts documentation
-# This should become a subroutine.
-#  cd $PDF_TMPDIR 
-#  cp $MK_STYLEDIR/Images/*.eps .
-#  db2dvi $MKCONCEPTS/MusicKitConcepts.sgml # 2>1 /tmp/db.log
-#  PDFFINAL=`basename $MKREADMESRC .sgml`.pdf
-#  dvips -o intermediate.ps MusicKitConcepts.dvi
-#  # This allows us to incorporate any special postscript fonts.
-#  #psprepare intermediate.ps prepared.ps
-#  cp intermediate.ps prepared.ps
-#  ps2pdf prepared.ps /tmp/$PDFFINAL
-#  echo MusicKit README PDF file generated into /tmp/$PDFFINAL
-#  mkdir -p $HTML_TMPDIR/MusicKitConcepts/Images
-#  cd $HTML_TMPDIR/MusicKitConcepts
-#  $JADE -t sgml -ihtml -d ${MKCONCEPTS_STYLESHEET}\#html 
-#  cp -r $MKCONCEPTS/Images/*.gif Images
-#  ln -s musickitconcepts.html index.html
-
-rm -r $PDF_TMPDIR
-
-#
-# copy all PDFs to be placed on the web-site, both those prepared and the README
+# Copy all PDFs to be placed on the web-site, both those prepared
+# beforehand and those generated by this script.
 #
 mkdir -p $HTML_TMPDIR/Publications
 cp $MKPUBLICATIONS/*.pdf $HTML_TMPDIR/Publications
-cp /tmp/$PDFFINAL $HTML_TMPDIR
+cp $PDF_OUTDIR/*.pdf $HTML_TMPDIR
+
+#
+# If the user specified a location to additionally copy the README
+# file to, we copy it there. It will typically be the source code
+# packaging directory.
+# 
+if [ ${COPYREADMETO}_x != _x ]; then
+    READMEPDF=`basename $READMESRC .sgml`.pdf
+    cp $PDF_OUTDIR/$READMEPDF $COPYREADMETO
+fi
 
 #
 # Now create a tarball
@@ -170,4 +216,9 @@ cp /tmp/$PDFFINAL $HTML_TMPDIR
 cd /tmp
 tar czf $HTML_TARBALL $HTML_DISTRIB_DIR
 echo MusicKit README HTML pages packaged into $HTML_TARBALL
-rm -r $HTML_TMPDIR
+
+#
+# And clean up
+#
+rm -r $PDF_OUTDIR $HTML_TMPDIR
+
