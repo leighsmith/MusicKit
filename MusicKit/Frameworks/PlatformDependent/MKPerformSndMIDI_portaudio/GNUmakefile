@@ -53,8 +53,8 @@ $(MY_NAME)_C_FILES = PerformMIDI.c
 # The framework installed header files
 $(MY_NAME)_HEADER_FILES = PerformSound.h PerformMIDI.h \
          mididriver_types.h PerformSoundPrivate.h \
-         SndStruct.h mididriverUser.h SndFormats.h \
-         MKPerformSndMIDIDefines.h
+         SndStruct.h SndFormats.h \
+         MKPerformSndMIDIConfig.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = MKPerformSndMIDI
 

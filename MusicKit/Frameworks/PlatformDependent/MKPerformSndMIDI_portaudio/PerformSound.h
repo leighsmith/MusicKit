@@ -18,19 +18,21 @@
 #ifndef __PERFORMSOUND__
 #define __PERFORMSOUND__
 
-//#define PERFORM_API 
-#include "MKPerformSndMIDIDefines.h"
+#if HAVE_CONFIG_H
+#include "MKPerformSndMIDIConfig.h"
+#endif
 
 // these don't seem to be defined anywhere standard - probably they
 // are in GnuStep
-//typedef int BOOL;
+#include <objc/objc.h> // for BOOL
 #ifndef FALSE
 #define FALSE 0
 #define TRUE !(FALSE)
 #endif
-#include <objc/objc.h>
 
-#include <stdlib.h> // for NULL definition
+#if STDC_HEADERS
+# include <stdlib.h> // for NULL definition
+#endif
 #include "SndStruct.h"
 #include "SndFormats.h"
 

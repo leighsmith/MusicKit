@@ -21,8 +21,9 @@
 
 #import <Foundation/Foundation.h>
 #include "PerformSoundPrivate.h"
-#include "portaudio.h"
-#include <stdio.h>
+#if HAVE_PORTAUDIO_H
+# include <portaudio.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -133,7 +134,7 @@ static int vendBuffersToStreamManagerIOProc(const void *inputBuffer,
     // SNDStreamNativeFormat() is called.
     // bufferSizeInFrames = framesPerBuffer; 
 #if DEBUG_VENDBUFFER
-    fprintf(stderr, "framesPerBuffer now %ld\n", framesPerBuffer);
+    NSLog(@"framesPerBuffer now %ld\n", framesPerBuffer);
 #endif
 //    if(statusFlags) {
 //        NSLog(@"Problem in callback: %x\n", statusFlags);
