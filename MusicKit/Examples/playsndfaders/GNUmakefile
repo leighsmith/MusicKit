@@ -18,7 +18,7 @@ ADDITIONAL_CFLAGS += -g
 playsndfaders_LIBRARIES_DEPEND_UPON += -lSndKit -lgnustep-base -lst -lobjc
 
 ifneq (mingw32, $(GNUSTEP_HOST_OS))
-  ADDITIONAL_TOOL_LIBS += -lgnustep-gui
+  ADDITIONAL_TOOL_LIBS += -lgnustep-gui -lmp3lame -lshout
   playsndfaders_LIBRARIES_DEPEND_UPON +=  -lgnustep-gui
 else
   ADDITIONAL_LIB_DIRS = -Ld:/cygwin/usr/local/lib
