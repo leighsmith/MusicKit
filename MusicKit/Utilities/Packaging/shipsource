@@ -32,7 +32,7 @@ unwrap_symlink $APPNAME
 cd $MKCHECKEDOUT_SRCLOC/$APPNAME
 cvs2cl -t -f Documentation/ChangeLog
 # copy it so it can be used for generating an announcement.
-cp Documentation/ChangeLog $TARLOG
+cp Documentation/ChangeLog $TARLOC
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
 find $MKCHECKEDOUT_SRCLOC -name CVS -type d -exec rm -r {} \; -prune
