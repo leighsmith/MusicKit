@@ -417,12 +417,17 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
 
 - (void) dealloc
 {
-  if (uee) free(uee);
-  [ampEnvLock release];
-  [balanceEnvLock release];
-  [ampEnv release];
-  [balanceEnv release];
-  [super dealloc];
+    if (uee)
+	free(uee);
+    [envelopesLock release];
+    envelopesLock = nil;
+    [ampEnvLock release];
+    ampEnvLock = nil;
+    [balanceEnvLock release];
+    balanceEnvLock = nil;
+    [ampEnv release];
+    [balanceEnv release];
+    [super dealloc];
 }
 
 - (float) paramValue: (const int) paramIndex
