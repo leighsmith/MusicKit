@@ -101,7 +101,7 @@ if ($wholeFile =~ s/^.*?Class Description(.*?)(Instance Variables|Method Types)/
     if($sedOutput) {
 	printf("1i\\\n");
     }
-    printf("/*!%s\n  \@class $classname%s\n  \@discussion%s", $eolChar, $eolChar, $eolChar);
+    printf("/*!%s\n  \@class $classname%s\n  \@discussion%s\n", $eolChar, $eolChar, $eolChar);
 
     # Substitute any .eps files to be a figure
     $description =~ s/([^>\s]+)\.eps/\<img src=\"Images\/$1.gif\">/;
@@ -205,13 +205,16 @@ while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<b
 	}
 	$sedMethodName = $methodName;
 	# ensure methodName and methodNameLongerVersion are not confused
-	$sedMethodName =~ s/([^:])$/\1 */;
+	$sedMethodName =~ s/([^:])$/\1 *; */;
 	# distinguish between  methodName: and methodName:extraParam:
 	$sedMethodName =~ s/:/:[^:]* */g;
 	# anchor the search to ensure substrings are not found.
 	$sedMethodName .= "\$";
-	# $sedMethodName =~ s/:/:.*/g;
-	printf("/%s *%s *%s/i\\\n\\\n", $classOrInstanceMethod, $sedReturnType, $sedMethodName);
+	# ensure method starts at beginning of line (avoids problems
+	# with prototypes in comments). Really we should do something
+	# to avoid doing searches within C comments, but that can be
+	# hard to do in sed.
+	printf("/^%s *%s *%s/i\\\n\\\n", $classOrInstanceMethod, $sedReturnType, $sedMethodName);
 	$commentPadding = "\\ \\ ";
     }
     else {
@@ -269,7 +272,7 @@ sub lineWrap
     do {
 	# print "longstring = $longString\n";
 	# print "formattedString = $formattedString\n";
-	while($longString =~ s/^([^\n]{$minWidth,$lineWidth})\s//s) {
+	while($longString =~ s/^([^\n\\]{$minWidth,$lineWidth})\s//s) {
 	    $formattedString .= $1 . $eolChar. "\n" . $padding;
 	}
 	$longString =~ s/^(.*?)(\n|$)//s;
