@@ -2204,7 +2204,10 @@ performance at the expense of a greater latency.  The function
 <function>MKGetDeltaT()</function> returns
 <emphasis>deltaT</emphasis>.  You can set the value of
 <emphasis>deltaT</emphasis> with the function
-<function>MKSetDeltaT()</function>.</para>
+<function>MKSetDeltaT()</function>. For convenience, these have
+<class>MKConductor</class> class method equivalents,
+<emphasis>+deltaT</emphasis> and <emphasis>+setDeltaT</emphasis>,
+respectively.</para>
 
 <para>The manner in which <emphasis>deltaT</emphasis> is interpreted
 depends on the <emphasis>deltaT mode</emphasis>.
