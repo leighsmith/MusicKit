@@ -1031,10 +1031,10 @@ should use the C functions <function>SNDStartRecording()</function>,
 
 <para>The <classname>Sound</classname> class methods <emphasis
 role="bold">record:</emphasis>, <emphasis
-role="bold">play:</emphasis>,<emphasis role="bold">
-pause:</emphasis>,<emphasis role="bold"> resume:</emphasis>, and
-<emphasis role="bold">stop:</emphasis> are designed to be used as part
-of the target/action mechanism described in the
+role="bold">play:</emphasis>, <emphasis role="bold">pause:</emphasis>,
+<emphasis role="bold">resume:</emphasis>, and <emphasis
+role="bold">stop:</emphasis> are designed to be used as part of the
+target/action mechanism described in the
 <emphasis><productname>Openstep</productname>/<productname>Cocoa</productname>
 Concepts</emphasis> manual.  Briefly, this mechanism lets you assign a
 selected message (the action) and an object <emphasis

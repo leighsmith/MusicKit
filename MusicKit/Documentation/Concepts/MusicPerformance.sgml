@@ -148,22 +148,22 @@ focus of a <productname>MusicKit</productname> performance: Every performance in
 one <classname>MKInstrument</classname>.</para>
 
     <para>At the heart of an <classname>MKInstrument</classname> is
-its <emphasis role="bold">
-realizeNote:fromNoteReceiver:
-</emphasis> method.  The <classname>MKInstrument</classname> class
-itself is abstract and doesn't implement this method; it's the
-responsibility of each <classname>MKInstrument</classname> subclass to
-provide an implementation of <emphasis
-role="bold">realizeNote:fromNoteReceiver:</emphasis>
-to establish the manner in which instances of the subclass realize
-<classname>MKNote</classname>s.  The <productname>MusicKit</productname> includes a number of
+its <emphasis role="bold">realizeNote:fromNoteReceiver:</emphasis>
+method.  The <classname>MKInstrument</classname> class itself is
+abstract and doesn't implement this method; it's the responsibility of
+each <classname>MKInstrument</classname> subclass to provide an
+implementation of <emphasis
+role="bold">realizeNote:fromNoteReceiver:</emphasis> to establish the
+manner in which instances of the subclass realize
+<classname>MKNote</classname>s.  The
+<productname>MusicKit</productname> includes a number of
 <classname>MKInstrument</classname> subclasses (and
 pseudo-<classname>MKInstrument</classname>s) that realize
-<classname>MKNote</classname>s by synthesizing them on the <acronym>DSP</acronym> or an
-external <acronym>MIDI</acronym> synthesizer, and that store
-<classname>MKNote</classname>s by adding them to a
-<classname>MKPart</classname> or <classname>MKScore</classname> or by
-writing them to a file.</para>
+<classname>MKNote</classname>s by synthesizing them on the
+<acronym>DSP</acronym> or an external <acronym>MIDI</acronym>
+synthesizer, and that store <classname>MKNote</classname>s by adding
+them to a <classname>MKPart</classname> or
+<classname>MKScore</classname> or by writing them to a file.</para>
 
 <para>One of the principals of <classname>MKInstrument</classname>
 design is that an <classname>MKInstrument</classname> doesn't create
@@ -1305,15 +1305,16 @@ to remove a request&horbar;you should use the following C
 functions:</para>
 
 	  <itemizedlist>
-	    <listitem><para><emphasis role="bold">MKNewMsgRequest(double
-</emphasis><emphasis>time</emphasis>,<emphasis role="bold"> SEL
-</emphasis><emphasis>selector</emphasis>,<emphasis role="bold"> id
-</emphasis><emphasis>receiver</emphasis>,<emphasis role="bold"> int
-</emphasis><emphasis>argCount</emphasis>,<emphasis
-role="bold">...)</emphasis> creates a new MKMsgStruct structure and
-returns a pointer to it.  The arguments are similar, although in a
-different order, to those of the <emphasis
-role="bold">sel:to:atTime:argCount:</emphasis> method.</para>
+	    <listitem><para> <emphasis
+role="bold">MKNewMsgRequest(double</emphasis>
+<emphasis>time</emphasis>, <emphasis role="bold">SEL</emphasis>
+<emphasis>selector</emphasis>, <emphasis role="bold">id</emphasis>
+<emphasis>receiver</emphasis>, <emphasis role="bold">int</emphasis>
+<emphasis>argCount</emphasis>, <emphasis role="bold">...)</emphasis>
+creates a new MKMsgStruct structure and returns a pointer to it.  The
+arguments are similar, although in a different order, to those of the
+<emphasis role="bold">sel:to:atTime:argCount:</emphasis>
+method.</para>
 </listitem>
 
 	    <listitem><para><emphasis
@@ -1954,8 +1955,8 @@ first <emphasis role="bold">perform</emphasis> message is
 automatically scheduled to be sent just after the
 <classname>MKPerformer</classname> is activated.  You can delay this
 initial invocation by setting the <emphasis
-role="bold">nextPerform</emphasis> variable from within the<emphasis
-role="bold"> activateSelf</emphasis> method.  The default
+role="bold">nextPerform</emphasis> variable from within the
+<emphasis role="bold">activateSelf</emphasis> method.  The default
 implementation of <emphasis role="bold">activateSelf</emphasis> does
 nothing; a subclass can implement it to provide pre-performance
 initialization just such as this.</para>

@@ -531,10 +531,10 @@ parameters are used by Fm2cnvi and Fm2pnvi only.</entry></row>
 </emphasis></entry><entry>Amplitude of noise when <emphasis
 role="bold">noiseAmpEnv</emphasis> = 0.0.</entry></row>
 
-<row><entry>noiseAmp1</entry><entry>same
-as <emphasis role="bold">noiseAmp </emphasis></entry><entry>Amplitude of noise
-when<emphasis role="bold"> noiseAmpEnv </emphasis>= 1.0<emphasis
-role="bold">; </emphasis>synonym for <emphasis
+<row><entry>noiseAmp1</entry><entry>same as <emphasis
+role="bold">noiseAmp </emphasis></entry><entry>Amplitude of noise when
+<emphasis role="bold">noiseAmpEnv</emphasis> = 1.0 <emphasis
+role="bold">;</emphasis> synonym for <emphasis
 role="bold">noiseAmp</emphasis>.</entry></row>
 
 <row><entry>noiseAmpAtt</entry><entry>[0.0,

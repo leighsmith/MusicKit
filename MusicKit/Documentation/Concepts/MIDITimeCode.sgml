@@ -337,7 +337,7 @@ When time code starts the first time, the delegate receives the
 message <emphasis role="bold">conductorWillSeek:</emphasis>,
 indicating that the <classname>MKPerformer</classname>s were reactivated, followed by
 <emphasis role="bold">conductorDidSeek:</emphasis> and <emphasis
-role="bold"> conductorDidResume:</emphasis>.  If time code stops, the
+role="bold">conductorDidResume:</emphasis>.  If time code stops, the
 <classname>MKConductor</classname> sends its delegate the message <emphasis
 role="bold">conductorDidPause:</emphasis>.  If time code starts again
 in the same place, the delegate receives <emphasis
