@@ -41,8 +41,8 @@
             UnoiseUG.m
         ); 
         DOCUMENTATION = (biquad.l, constant.l, UG_MACROS_SUMMARY); 
-        FRAMEWORKS = (Foundation.framework, MKDSP.framework, MusicKit.framework, SoundKit.framework); 
-        FRAMEWORKSEARCH = (/Local/Library/Frameworks); 
+        FRAMEWORKS = (Foundation.framework, MKDSP.framework, MusicKit.framework, SndKit.framework); 
+        FRAMEWORKSEARCH = ("$(LOCAL_LIBRARY_DIR)/Frameworks"); 
         H_FILES = (
             AsympUG.h, 
             AsympenvUG.h, 
