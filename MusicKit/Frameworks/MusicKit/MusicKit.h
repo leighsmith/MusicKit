@@ -13,6 +13,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2000/02/03 19:13:48  leigh
+  objective-C declaration added if compiling with ObjC++ to ensure correct name-mangling
+
   Revision 1.4  1999/10/08 19:53:43  leigh
   MAXSHORT defined irrespective of WIN32, MKSamplerInstrument.h included
 
@@ -25,6 +28,10 @@
 */
 #ifndef __MK_musickit_H___
 #define __MK_musickit_H___
+
+#ifdef __cplusplus
+extern "Objective-C" {
+#endif
 
 #ifndef MUSICKIT_H
 #define MUSICKIT_H
@@ -93,5 +100,9 @@
 #import "scorefileObject.h"
 
 #endif MUSICKIT_H
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif __MK_musickit_H___
