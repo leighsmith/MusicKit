@@ -1,0 +1,8 @@
+# Compilation Sequence
+cd dsp
+make install
+cd MusicKit
+make install
+cd unitgenerators
+make install
+cd SynthPatches

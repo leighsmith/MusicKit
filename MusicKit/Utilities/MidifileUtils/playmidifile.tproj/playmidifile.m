@@ -18,8 +18,8 @@
 #import <signal.h>
 #import <servers/netname.h>
 #import <libc.h>
-#import <MKPerformMIDI/midi_driver.h>
-#import <MusicKit/midi_spec.h>
+#import <MusicKit/MusicKit.h> // one day this should be the only header we include..not yet.. 
+#import <MKPerformSndMIDI/midi_driver.h>
 #import <MusicKit/midifile.h>
 
 static port_t driverPort;    /* Port for driver on particular host. */

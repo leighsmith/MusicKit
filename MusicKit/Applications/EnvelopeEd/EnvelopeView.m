@@ -1,12 +1,16 @@
 //////////////////////////////////////////////////////////////
 //
-// EnvelopeView.m -- Implementation for the EnvelopeView class
+// $Id$
+// Implementation for the EnvelopeView class
 // Copyright 1991-94 Fernando Lopez Lezcano All Rights Reserved
 //
 //////////////////////////////////////////////////////////////
 
 // Revision History:
-
+// $Log$
+// Revision 1.2  2000/01/11 21:57:03  leigh
+// Capitialised defaults
+//
 // 6/16/1998 Converted to OpenStep API by Leigh Smith leigh@cs.uwa.edu.au
 // 8/25/92 Add parsing of exponential format numbers
 // 8/21/92 Memory allocation bug on allocateTemp and allocateDraw
@@ -73,10 +77,10 @@
 #define sValues [theEnvelope smoothingArray]
 
 // The application defaults
-#define SHOWSMOOTH   @"showSmoothing"
-#define DRAWSEGMENTS @"drawSegments"
-#define DEFSMOOTH    @"defaultSmoothing"
-#define DEFFORMAT    @"defaultFormat"
+#define SHOWSMOOTH   @"ShowSmoothing"
+#define DRAWSEGMENTS @"DrawSegments"
+#define DEFSMOOTH    @"DefaultSmoothing"
+#define DEFFORMAT    @"DefaultFormat"
 
 //-------------------------------------------------------------------
 // Temporary copy arrays for envelope copy operations
