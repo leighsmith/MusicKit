@@ -1,7 +1,15 @@
 {
     IBClasses = (
         {
-            ACTIONS = {play = id; updateNums = id; updateSliders = id; waveChanged = id; }; 
+            ACTIONS = {
+                changeLength = id; 
+                play = id; 
+                playA = id; 
+                playB = id; 
+                updateNums = id; 
+                updateSliders = id; 
+                waveChanged = id; 
+            }; 
             CLASS = Controller; 
             LANGUAGE = ObjC; 
             OUTLETS = {
@@ -11,9 +19,9 @@
                 freqSlide2 = id; 
                 mesgBox = id; 
                 sLength = id; 
-                sound1 = id; 
-                sound2 = id; 
-                sound3 = id; 
+                soundView1 = SndView; 
+                soundView2 = SndView; 
+                soundView3 = SndView; 
                 volNum1 = id; 
                 volNum2 = id; 
                 volSlide1 = id; 
