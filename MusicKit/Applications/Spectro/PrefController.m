@@ -203,7 +203,7 @@
 	id newView = nil;
 	
 #ifndef WIN32
-        switch ([[sender selectedCell] tag]) {
+        switch ([sender tag]) {
 #else
         switch ([sender tag]) {
 #endif
