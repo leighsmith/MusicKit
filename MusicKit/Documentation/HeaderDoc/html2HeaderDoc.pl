@@ -95,13 +95,13 @@ if($wholeFile =~ s/Parameter Interpretation(.*?)$//i) {
     $parameterInterpretation = $1;
 }
 
-# Check for class header, if so, generate a @header tag
+# Check for class header, if so, generate a @discussion tag
 if ($wholeFile =~ s/^.*?Class Description(.*?)(Instance Variables|Method Types)/\2/i) {
     $description = $1;
     if($sedOutput) {
 	printf("1i\\\n");
     }
-    printf("/*!%s\n  \@header $classname%s\n", $eolChar, $eolChar);
+    printf("/*!%s\n  \@class $classname%s\n  \@discussion%s", $eolChar, $eolChar, $eolChar);
 
     # Substitute any .eps files to be a figure
     $description =~ s/([^>\s]+)\.eps/\<img src=\"Images\/$1.gif\">/;
@@ -204,7 +204,13 @@ while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<b
 	    $sedReturnType = "";
 	}
 	$sedMethodName = $methodName;
-	$sedMethodName =~ s/:/:.*/g;
+	# ensure methodName and methodNameLongerVersion are not confused
+	$sedMethodName =~ s/([^:])$/\1 */;
+	# distinguish between  methodName: and methodName:extraParam:
+	$sedMethodName =~ s/:/:[^:]* */g;
+	# anchor the search to ensure substrings are not found.
+	$sedMethodName .= "\$";
+	# $sedMethodName =~ s/:/:.*/g;
 	printf("/%s *%s *%s/i\\\n\\\n", $classOrInstanceMethod, $sedReturnType, $sedMethodName);
 	$commentPadding = "\\ \\ ";
     }
@@ -261,16 +267,18 @@ sub lineWrap
     
     $longString =~ s/\n/$eolChar\n$padding/sg;
     do {
+	# print "longstring = $longString\n";
+	# print "formattedString = $formattedString\n";
 	while($longString =~ s/^([^\n]{$minWidth,$lineWidth})\s//s) {
-	    $formattedString .= "$1$eolChar\n$padding";
+	    $formattedString .= $1 . $eolChar. "\n" . $padding;
 	}
 	$longString =~ s/^(.*?)(\n|$)//s;
 	if($2 eq "\n") {
-	    $formattedString .= "$1$eolChar\n";
+	    $formattedString .= $1 . "\n";
 	}
 	else {
 	    $formattedString .= $1;
 	}
     } while(length($longString) > $lineWidth);
-    return "$formattedString$longString$eolChar";
+    return $formattedString . $longString . $eolChar;
 }
