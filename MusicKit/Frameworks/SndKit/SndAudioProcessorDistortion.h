@@ -17,7 +17,6 @@
 #define __SNDKIT_SNDAUDIOPROCESSORDISTORTION_H__
 
 #import <Foundation/Foundation.h>
-#import "SndAudioBuffer.h"
 #import "SndAudioProcessor.h"
 
 /*!

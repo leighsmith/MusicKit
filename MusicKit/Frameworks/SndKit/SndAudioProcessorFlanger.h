@@ -16,7 +16,6 @@
 #ifndef __SNDKIT_SNDAUDIOPROCESSORFLANGER_H__
 #define __SNDKIT_SNDAUDIOPROCESSORFLANGER_H__
 
-@class SndAudioBuffer;
 #import "SndAudioProcessor.h"
 
 /*!
