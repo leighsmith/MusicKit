@@ -115,6 +115,8 @@ NSString *SndFormatName(SndSampleFormat dataFormat, BOOL verbose)
 	return verbose ? @"Signed 32-bit floating point" : @"32-bit Floating Point";
     case SND_FORMAT_DOUBLE:
 	return verbose ? @"Signed 64-bit floating point" : @"64-bit Floating Point";
+    case SND_FORMAT_MP3:
+	return verbose ? @"MPEG 1 Layer 3 Compressed" : @"MP3 Compressed";
     case SND_FORMAT_INDIRECT:
 	return @"Fragmented";
     default:
