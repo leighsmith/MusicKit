@@ -604,18 +604,6 @@
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>snd</string>
-			</array>
-			<key>CFBundleTypeIconFile</key>
-			<string>Sound</string>
-			<key>CFBundleTypeName</key>
-			<string>NeXT/Sun soundfiles</string>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>ScorePlayer</string>
