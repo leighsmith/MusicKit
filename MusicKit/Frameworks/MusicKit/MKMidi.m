@@ -62,7 +62,7 @@
     To achieve maximum portablity, we assume a Mach port is nothing more than an integer
     and functions as a handle with which to refer to a MIDI driver. It is only when receiving
     data do we need to actually behave as a Mach port. This is conditionally compiled using
-    MKMD_RECEPTION_USING_PORTS defined in MKPerformSndMIDI/midi_driver.h. The alternative
+    MKMD_RECEPTION_USING_PORTS defined in MKPerformSndMIDI/PerformMIDI.h. The alternative
     is to use a call back function. Therefore, while we do need a NSPort or NSMachPort,
     their support can be minimal and we are not enforced to run on a Mach type operating system.
 
@@ -71,12 +71,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University.
-  Portions Copyright (c) 1999-2000, The MusicKit Project.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
 /*
 Modification history:
 
   $Log$
+  Revision 1.38  2001/05/14 21:01:34  leighsmith
+  Added description, cleaned comments, temporarily disabled SysEx slowing code
+
   Revision 1.37  2001/05/12 09:13:45  sbrandon
   - changed mach_port_t to MKMDReplyPort, as this fits in with the types used
     on GNUSTEP. This may break MacOSX.
@@ -555,7 +558,7 @@ static void getTimeInfoFromHost(MKMidi *self, NSString *hostname)
 }
 
 
-static void waitForRoom(MKMidi *self,int elements,int timeOut)
+static void waitForRoom(MKMidi *self, int elements, int timeOut)
 {
     MKMDReturn r;
     MKMDReplyFunctions recvStruct = {0};
@@ -567,8 +570,7 @@ static void waitForRoom(MKMidi *self,int elements,int timeOut)
     if (r != MKMD_SUCCESS)
         _MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r),
                     @"waitForRoom queue notification request");
-    r = MKMDAwaitReply((MKMDReplyPort) [self->queuePort machPort], &recvStruct, timeOut);
-    /* THIS BLOCKS! */
+    r = MKMDAwaitReply((MKMDReplyPort) [self->queuePort machPort], &recvStruct, timeOut); // THIS BLOCKS!
     if (r != MKMD_SUCCESS) 
 	_MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r),
 		  @"waitForRoom MKMDAwaitReply");
@@ -577,6 +579,7 @@ static void waitForRoom(MKMidi *self,int elements,int timeOut)
 static void awaitMidiOutDone(MKMidi *self,int timeOut)
     /* Wait until Midi is done and then return */
 {
+    // NSLog(@"waiting for room of %d, with timeOut = %d\n", self->queueSize, timeOut);
     waitForRoom(self, self->queueSize, timeOut);
 }
 
@@ -647,7 +650,8 @@ static int emptyMidi(MKMidi *self)
     MKMDReturn r;
     r = MKMDClearQueue((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], self->unit);
     if (r != MKMD_SUCCESS)
-      _MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r), @"emptyMidi");
+        _MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r), @"emptyMidi");
+    NSLog(@"emptying the enqued MIDI messages\n");
     return r;
 }
 
@@ -770,7 +774,7 @@ static void putSysExcl(struct __MKMidiOutStruct *ptr, NSString *sysExclString)
         // Add an inter-byte delay of 300mS to avoid overflow problems in slow synthesisers.
         // TODO this should actually be a note parameter: MK_interByteDelay
 //        curTime += 300 * _MK_MIDI_QUANTUM;
-        curTime += 300;
+//        curTime += 300;
     }
     if (c != MIDI_EOX) 
         putTimedByteWithCheck(ptr, curTime, MIDI_EOX);  /* Terminate it properly */
@@ -961,10 +965,6 @@ static int incomingDataCount = 0; /* We use a static here to allow us to
 
 // my_data_reply manages the incoming MIDI events. It is called from MKMDHandleReply.
 // It may be called multiple times successively with events from the MKMDHandleReply mechanism.
-/* MOD: sbrandon, 10/05/2001
- * changed mach_port_t to MKMDReplyPort, as this fits in with the types used
- * on GNUSTEP. This may break MacOSX.
- */
 static void my_data_reply(MKMDReplyPort reply_port, short unit, MKMDRawEvent *events, unsigned int count) {
     _MKMidiInStruct *ptr;
     MKNote *aNote;
@@ -1248,6 +1248,11 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
     return unit;
 }
 
+- (NSString *) description
+{
+    return [NSString stringWithFormat: @"MKMidi I/O to %@, unit %d, on host %@", midiDevName, unit, hostname];
+}
+
 // Here we initialize our class variables.
 + (void) initialize
 {
@@ -1393,7 +1398,6 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverN
     [noteSenders makeObjectsPerformSelector:@selector(disconnect)];
     [noteSenders removeAllObjects];  
     [noteSenders release];
-    NSLog(@"removing the object");
     [portTable removeObjectForKey:midiDevName];
     [super dealloc];
 }
@@ -1436,7 +1440,7 @@ static id openMidi(MKMidi *self)
    /* This is a conservative version of allNotesOff.  It only sends
     * noteOffs for notes if those notes are sounding.
     * The notes are sent immediately (but will be
-    * queued behind any notes that have already been queued up.)
+    * queued behind any notes that have already been queued up).
     */
 {
     NSMutableArray *aList;
@@ -1444,21 +1448,20 @@ static id openMidi(MKMidi *self)
     if (!MIDIOUTPTR(self) || deviceStatus != MK_devRunning)
       return nil;
     MKMDFlushQueue((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], self->unit);
-    /* Not ClearQueue, which can leave MIDI devices confused. */
-    for (i=1; i<=MIDI_NUMCHANS; i++) {
-	aList = _MKGetNoteOns(MIDIOUTPTR(self),i);
-	for (j=0, cnt = [aList count]; j<cnt; j++)
-            _MKWriteMidiOut([aList objectAtIndex:j],0,i,MIDIOUTPTR(self),
-			  [self channelNoteReceiver:i]);
+    /* Not MKMDClearQueue, which can leave MIDI devices confused. */
+    for (i = 1; i <= MIDI_NUMCHANS; i++) {
+	aList = _MKGetNoteOns(MIDIOUTPTR(self), i);
+	for (j = 0, cnt = [aList count]; j < cnt; j++)
+            _MKWriteMidiOut([aList objectAtIndex: j], 0, i, MIDIOUTPTR(self), [self channelNoteReceiver:i]);
         MKMDFlushQueue((MKMDPort) [self->devicePort machPort], (MKMDOwnerPort) [self->ownerPort machPort], self->unit);
 	[aList removeAllObjects];
 	[aList release];
     }
-    awaitMidiOutDone(self,1000); /* Timeout to work around driver (?) bug */
+    awaitMidiOutDone(self, 1000); /* Timeout to work around driver (?) bug */
     return self;
 }
 
-int _MKAllNotesOffPause = 500; /* ms between MIDI channel blasts 
+int _MKAllNotesOffPause = 500; /* mSec between MIDI channel blasts 
 				* This is a temporary hack and should
 				* not be depended on!  It may change in 
 				* the future.
@@ -1689,9 +1692,8 @@ static void cancelQueueReq(MKMidi *self)
 	    incomingDataCount = 0;
 	}
 	if (OUTPUTENABLED(ioMode)) {
-	    if (deviceStatus == MK_devRunning) 
-		awaitMidiOutDone(self, MKMD_NO_TIMEOUT);
-	    emptyMidi(self);
+	    [self awaitQueueDrain];
+            emptyMidi(self);
 	    _pOut = (void *)_MKFinishMidiOut(MIDIOUTPTR(self));
 	}
 	closeMidiDev(self);
