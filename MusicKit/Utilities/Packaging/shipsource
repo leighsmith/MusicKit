@@ -28,9 +28,10 @@ cvs -Q checkout -r $CVSTAG $APPNAME
 # unwrap the symbolic links, this will remove the symbolic links wrap file.
 unwrap_symlink $APPNAME
 
-# build a ChangeLog
+# build a ChangeLog with spaces between filenames and comments, 
+# collected to half-day window, incorporating tags.
 cd $MKCHECKEDOUT_SRCLOC/$APPNAME
-cvs2cl -t -S -f Documentation/ChangeLog
+cvs2cl --tags --no-wrap --separate-header --window 43200 --file /tmp/ChangeLog
 # copy it so it can be used for generating an announcement.
 cp Documentation/ChangeLog $TARLOC
 
