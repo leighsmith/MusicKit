@@ -8,7 +8,7 @@
 #endif
 /* LINTLIBRARY */
 
-extern port_t mig_get_reply_port();
+extern mach_port_t mig_get_reply_port();
 extern void mig_dealloc_reply_port();
 
 #ifndef	mig_internal
@@ -31,26 +31,26 @@ extern void mig_dealloc_reply_port();
 #endif
 #endif
 
-#define msg_request_port	msg_remote_port
-#define msg_reply_port		msg_local_port
+#define msg_request_port	msgh_remote_port
+#define msg_reply_port		msgh_local_port
 
 
 /* Routine dsp_become_owner */
 mig_external kern_return_t dsp_become_owner (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 	} Reply;
@@ -69,7 +69,7 @@ mig_external kern_return_t dsp_become_owner (
 	boolean_t msg_simple;
 #endif	TypeCheck
 
-	unsigned int msg_size = 40;
+	unsigned int msgh_size = 40;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -134,11 +134,11 @@ mig_external kern_return_t dsp_become_owner (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL | MSG_TYPE_RPC;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = mig_get_reply_port();
-	InP->Head.msg_id = 500;
+	InP->Head.msgh_id = 500;
 
 	msg_result = msg_rpc(&InP->Head, SEND_TIMEOUT|RCV_TIMEOUT|SEND_SWITCH, sizeof(Reply), 5000, 5000);
 	if (msg_result != RPC_SUCCESS) {
@@ -149,16 +149,16 @@ mig_external kern_return_t dsp_become_owner (
 	}
 
 #if	TypeCheck
-	msg_size = OutP->Head.msg_size;
+	msgh_size = OutP->Head.msgh_size;
 	msg_simple = OutP->Head.msg_simple;
 #endif	TypeCheck
 
-	if (OutP->Head.msg_id != 600)
+	if (OutP->Head.msgh_id != 600)
 		return MIG_REPLY_MISMATCH;
 
 #if	TypeCheck
-	if (((msg_size != 32) || (msg_simple != TRUE)) &&
-	    ((msg_size != sizeof(death_pill_t)) ||
+	if (((msgh_size != 32) || (msg_simple != TRUE)) &&
+	    ((msgh_size != sizeof(death_pill_t)) ||
 	     (msg_simple != TRUE) ||
 	     (OutP->RetCode == KERN_SUCCESS)))
 		return MIG_TYPE_ERROR;
@@ -185,15 +185,15 @@ mig_external kern_return_t dsp_become_owner (
 
 /* Routine dsp_reset_chip */
 mig_external kern_return_t dsp_reset_chip (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char on,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t onType;
 		char on;
 		char onPad[3];
@@ -202,7 +202,7 @@ mig_external kern_return_t dsp_reset_chip (
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 	} Reply;
@@ -221,7 +221,7 @@ mig_external kern_return_t dsp_reset_chip (
 	boolean_t msg_simple;
 #endif	TypeCheck
 
-	unsigned int msg_size = 48;
+	unsigned int msgh_size = 48;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -311,11 +311,11 @@ mig_external kern_return_t dsp_reset_chip (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL | MSG_TYPE_RPC;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = mig_get_reply_port();
-	InP->Head.msg_id = 501;
+	InP->Head.msgh_id = 501;
 
 	msg_result = msg_rpc(&InP->Head, SEND_TIMEOUT|RCV_TIMEOUT|SEND_SWITCH, sizeof(Reply), 5000, 5000);
 	if (msg_result != RPC_SUCCESS) {
@@ -326,16 +326,16 @@ mig_external kern_return_t dsp_reset_chip (
 	}
 
 #if	TypeCheck
-	msg_size = OutP->Head.msg_size;
+	msgh_size = OutP->Head.msgh_size;
 	msg_simple = OutP->Head.msg_simple;
 #endif	TypeCheck
 
-	if (OutP->Head.msg_id != 601)
+	if (OutP->Head.msgh_id != 601)
 		return MIG_REPLY_MISMATCH;
 
 #if	TypeCheck
-	if (((msg_size != 32) || (msg_simple != TRUE)) &&
-	    ((msg_size != sizeof(death_pill_t)) ||
+	if (((msgh_size != 32) || (msg_simple != TRUE)) &&
+	    ((msgh_size != sizeof(death_pill_t)) ||
 	     (msg_simple != TRUE) ||
 	     (OutP->RetCode == KERN_SUCCESS)))
 		return MIG_TYPE_ERROR;
@@ -362,20 +362,20 @@ mig_external kern_return_t dsp_reset_chip (
 
 /* Routine dsp_release_ownership */
 mig_external kern_return_t dsp_release_ownership (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 	} Reply;
@@ -394,7 +394,7 @@ mig_external kern_return_t dsp_release_ownership (
 	boolean_t msg_simple;
 #endif	TypeCheck
 
-	unsigned int msg_size = 40;
+	unsigned int msgh_size = 40;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -459,11 +459,11 @@ mig_external kern_return_t dsp_release_ownership (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL | MSG_TYPE_RPC;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = mig_get_reply_port();
-	InP->Head.msg_id = 502;
+	InP->Head.msgh_id = 502;
 
 	msg_result = msg_rpc(&InP->Head, SEND_TIMEOUT|RCV_TIMEOUT|SEND_SWITCH, sizeof(Reply), 5000, 5000);
 	if (msg_result != RPC_SUCCESS) {
@@ -474,16 +474,16 @@ mig_external kern_return_t dsp_release_ownership (
 	}
 
 #if	TypeCheck
-	msg_size = OutP->Head.msg_size;
+	msgh_size = OutP->Head.msgh_size;
 	msg_simple = OutP->Head.msg_simple;
 #endif	TypeCheck
 
-	if (OutP->Head.msg_id != 602)
+	if (OutP->Head.msgh_id != 602)
 		return MIG_REPLY_MISMATCH;
 
 #if	TypeCheck
-	if (((msg_size != 32) || (msg_simple != TRUE)) &&
-	    ((msg_size != sizeof(death_pill_t)) ||
+	if (((msgh_size != 32) || (msg_simple != TRUE)) &&
+	    ((msgh_size != sizeof(death_pill_t)) ||
 	     (msg_simple != TRUE) ||
 	     (OutP->RetCode == KERN_SUCCESS)))
 		return MIG_TYPE_ERROR;
@@ -510,21 +510,21 @@ mig_external kern_return_t dsp_release_ownership (
 
 /* Routine dsp_get_icr */
 mig_external kern_return_t dsp_get_icr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char *icr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t icrType;
@@ -546,7 +546,7 @@ mig_external kern_return_t dsp_get_icr (
 	boolean_t msg_simple;
 #endif	TypeCheck
 
-	unsigned int msg_size = 40;
+	unsigned int msgh_size = 40;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -623,11 +623,11 @@ mig_external kern_return_t dsp_get_icr (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL | MSG_TYPE_RPC;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = mig_get_reply_port();
-	InP->Head.msg_id = 503;
+	InP->Head.msgh_id = 503;
 
 	msg_result = msg_rpc(&InP->Head, SEND_TIMEOUT|RCV_TIMEOUT|SEND_SWITCH, sizeof(Reply), 5000, 5000);
 	if (msg_result != RPC_SUCCESS) {
@@ -638,16 +638,16 @@ mig_external kern_return_t dsp_get_icr (
 	}
 
 #if	TypeCheck
-	msg_size = OutP->Head.msg_size;
+	msgh_size = OutP->Head.msgh_size;
 	msg_simple = OutP->Head.msg_simple;
 #endif	TypeCheck
 
-	if (OutP->Head.msg_id != 603)
+	if (OutP->Head.msgh_id != 603)
 		return MIG_REPLY_MISMATCH;
 
 #if	TypeCheck
-	if (((msg_size != 40) || (msg_simple != TRUE)) &&
-	    ((msg_size != sizeof(death_pill_t)) ||
+	if (((msgh_size != 40) || (msg_simple != TRUE)) &&
+	    ((msgh_size != sizeof(death_pill_t)) ||
 	     (msg_simple != TRUE) ||
 	     (OutP->RetCode == KERN_SUCCESS)))
 		return MIG_TYPE_ERROR;
@@ -689,21 +689,21 @@ mig_external kern_return_t dsp_get_icr (
 
 /* Routine dsp_get_cvr */
 mig_external kern_return_t dsp_get_cvr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char *cvr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t cvrType;
@@ -725,7 +725,7 @@ mig_external kern_return_t dsp_get_cvr (
 	boolean_t msg_simple;
 #endif	TypeCheck
 
-	unsigned int msg_size = 40;
+	unsigned int msgh_size = 40;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -802,11 +802,11 @@ mig_external kern_return_t dsp_get_cvr (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL | MSG_TYPE_RPC;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = mig_get_reply_port();
-	InP->Head.msg_id = 504;
+	InP->Head.msgh_id = 504;
 
 	msg_result = msg_rpc(&InP->Head, SEND_TIMEOUT|RCV_TIMEOUT|SEND_SWITCH, sizeof(Reply), 5000, 5000);
 	if (msg_result != RPC_SUCCESS) {
@@ -817,16 +817,16 @@ mig_external kern_return_t dsp_get_cvr (
 	}
 
 #if	TypeCheck
-	msg_size = OutP->Head.msg_size;
+	msgh_size = OutP->Head.msgh_size;
 	msg_simple = OutP->Head.msg_simple;
 #endif	TypeCheck
 
-	if (OutP->Head.msg_id != 604)
+	if (OutP->Head.msgh_id != 604)
 		return MIG_REPLY_MISMATCH;
 
 #if	TypeCheck
-	if (((msg_size != 40) || (msg_simple != TRUE)) &&
-	    ((msg_size != sizeof(death_pill_t)) ||
+	if (((msgh_size != 40) || (msg_simple != TRUE)) &&
+	    ((msgh_size != sizeof(death_pill_t)) ||
 	     (msg_simple != TRUE) ||
 	     (OutP->RetCode == KERN_SUCCESS)))
 		return MIG_TYPE_ERROR;
@@ -868,21 +868,21 @@ mig_external kern_return_t dsp_get_cvr (
 
 /* Routine dsp_get_isr */
 mig_external kern_return_t dsp_get_isr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char *isr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t isrType;
@@ -904,7 +904,7 @@ mig_external kern_return_t dsp_get_isr (
 	boolean_t msg_simple;
 #endif	TypeCheck
 
-	unsigned int msg_size = 40;
+	unsigned int msgh_size = 40;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -981,11 +981,11 @@ mig_external kern_return_t dsp_get_isr (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL | MSG_TYPE_RPC;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = mig_get_reply_port();
-	InP->Head.msg_id = 505;
+	InP->Head.msgh_id = 505;
 
 	msg_result = msg_rpc(&InP->Head, SEND_TIMEOUT|RCV_TIMEOUT|SEND_SWITCH, sizeof(Reply), 5000, 5000);
 	if (msg_result != RPC_SUCCESS) {
@@ -996,16 +996,16 @@ mig_external kern_return_t dsp_get_isr (
 	}
 
 #if	TypeCheck
-	msg_size = OutP->Head.msg_size;
+	msgh_size = OutP->Head.msgh_size;
 	msg_simple = OutP->Head.msg_simple;
 #endif	TypeCheck
 
-	if (OutP->Head.msg_id != 605)
+	if (OutP->Head.msgh_id != 605)
 		return MIG_REPLY_MISMATCH;
 
 #if	TypeCheck
-	if (((msg_size != 40) || (msg_simple != TRUE)) &&
-	    ((msg_size != sizeof(death_pill_t)) ||
+	if (((msgh_size != 40) || (msg_simple != TRUE)) &&
+	    ((msgh_size != sizeof(death_pill_t)) ||
 	     (msg_simple != TRUE) ||
 	     (OutP->RetCode == KERN_SUCCESS)))
 		return MIG_TYPE_ERROR;
@@ -1047,21 +1047,21 @@ mig_external kern_return_t dsp_get_isr (
 
 /* Routine dsp_get_ivr */
 mig_external kern_return_t dsp_get_ivr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char *ivr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t ivrType;
@@ -1083,7 +1083,7 @@ mig_external kern_return_t dsp_get_ivr (
 	boolean_t msg_simple;
 #endif	TypeCheck
 
-	unsigned int msg_size = 40;
+	unsigned int msgh_size = 40;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -1160,11 +1160,11 @@ mig_external kern_return_t dsp_get_ivr (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL | MSG_TYPE_RPC;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = mig_get_reply_port();
-	InP->Head.msg_id = 506;
+	InP->Head.msgh_id = 506;
 
 	msg_result = msg_rpc(&InP->Head, SEND_TIMEOUT|RCV_TIMEOUT|SEND_SWITCH, sizeof(Reply), 5000, 5000);
 	if (msg_result != RPC_SUCCESS) {
@@ -1175,16 +1175,16 @@ mig_external kern_return_t dsp_get_ivr (
 	}
 
 #if	TypeCheck
-	msg_size = OutP->Head.msg_size;
+	msgh_size = OutP->Head.msgh_size;
 	msg_simple = OutP->Head.msg_simple;
 #endif	TypeCheck
 
-	if (OutP->Head.msg_id != 606)
+	if (OutP->Head.msgh_id != 606)
 		return MIG_REPLY_MISMATCH;
 
 #if	TypeCheck
-	if (((msg_size != 40) || (msg_simple != TRUE)) &&
-	    ((msg_size != sizeof(death_pill_t)) ||
+	if (((msgh_size != 40) || (msg_simple != TRUE)) &&
+	    ((msgh_size != sizeof(death_pill_t)) ||
 	     (msg_simple != TRUE) ||
 	     (OutP->RetCode == KERN_SUCCESS)))
 		return MIG_TYPE_ERROR;
@@ -1226,15 +1226,15 @@ mig_external kern_return_t dsp_get_ivr (
 
 /* SimpleRoutine dsp_put_icr */
 mig_external kern_return_t dsp_put_icr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char icr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t icrType;
 		char icr;
 		char icrPad[3];
@@ -1248,7 +1248,7 @@ mig_external kern_return_t dsp_put_icr (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 48;
+	unsigned int msgh_size = 48;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -1326,26 +1326,26 @@ mig_external kern_return_t dsp_put_icr (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 507;
+	InP->Head.msgh_id = 507;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_put_cvr */
 mig_external kern_return_t dsp_put_cvr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char cvr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t cvrType;
 		char cvr;
 		char cvrPad[3];
@@ -1359,7 +1359,7 @@ mig_external kern_return_t dsp_put_cvr (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 48;
+	unsigned int msgh_size = 48;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -1437,26 +1437,26 @@ mig_external kern_return_t dsp_put_cvr (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 508;
+	InP->Head.msgh_id = 508;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_put_ivr */
 mig_external kern_return_t dsp_put_ivr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char ivr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t ivrType;
 		char ivr;
 		char ivrPad[3];
@@ -1470,7 +1470,7 @@ mig_external kern_return_t dsp_put_ivr (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 48;
+	unsigned int msgh_size = 48;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -1548,28 +1548,28 @@ mig_external kern_return_t dsp_put_ivr (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 509;
+	InP->Head.msgh_id = 509;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_put_data_raw */
 mig_external kern_return_t dsp_put_data_raw (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char high,
 	char med,
 	char low,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t highType;
 		char high;
 		char highPad[3];
@@ -1589,7 +1589,7 @@ mig_external kern_return_t dsp_put_data_raw (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 64;
+	unsigned int msgh_size = 64;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -1717,34 +1717,34 @@ mig_external kern_return_t dsp_put_data_raw (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 510;
+	InP->Head.msgh_id = 510;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* Routine dsp_get_data_raw */
 mig_external kern_return_t dsp_get_data_raw (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char *high,
 	char *med,
 	char *low,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t highType;
@@ -1772,7 +1772,7 @@ mig_external kern_return_t dsp_get_data_raw (
 	boolean_t msg_simple;
 #endif	TypeCheck
 
-	unsigned int msg_size = 40;
+	unsigned int msgh_size = 40;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -1873,11 +1873,11 @@ mig_external kern_return_t dsp_get_data_raw (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL | MSG_TYPE_RPC;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = mig_get_reply_port();
-	InP->Head.msg_id = 511;
+	InP->Head.msgh_id = 511;
 
 	msg_result = msg_rpc(&InP->Head, SEND_TIMEOUT|RCV_TIMEOUT|SEND_SWITCH, sizeof(Reply), 5000, 5000);
 	if (msg_result != RPC_SUCCESS) {
@@ -1888,16 +1888,16 @@ mig_external kern_return_t dsp_get_data_raw (
 	}
 
 #if	TypeCheck
-	msg_size = OutP->Head.msg_size;
+	msgh_size = OutP->Head.msgh_size;
 	msg_simple = OutP->Head.msg_simple;
 #endif	TypeCheck
 
-	if (OutP->Head.msg_id != 611)
+	if (OutP->Head.msgh_id != 611)
 		return MIG_REPLY_MISMATCH;
 
 #if	TypeCheck
-	if (((msg_size != 56) || (msg_simple != TRUE)) &&
-	    ((msg_size != sizeof(death_pill_t)) ||
+	if (((msgh_size != 56) || (msg_simple != TRUE)) &&
+	    ((msgh_size != sizeof(death_pill_t)) ||
 	     (msg_simple != TRUE) ||
 	     (OutP->RetCode == KERN_SUCCESS)))
 		return MIG_TYPE_ERROR;
@@ -1969,17 +1969,17 @@ mig_external kern_return_t dsp_get_data_raw (
 
 /* SimpleRoutine dsp_put_data */
 mig_external kern_return_t dsp_put_data (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char high,
 	char med,
 	char low,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t highType;
 		char high;
 		char highPad[3];
@@ -1999,7 +1999,7 @@ mig_external kern_return_t dsp_put_data (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 64;
+	unsigned int msgh_size = 64;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -2127,34 +2127,34 @@ mig_external kern_return_t dsp_put_data (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 512;
+	InP->Head.msgh_id = 512;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* Routine dsp_get_data */
 mig_external kern_return_t dsp_get_data (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char *high,
 	char *med,
 	char *low,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t highType;
@@ -2182,7 +2182,7 @@ mig_external kern_return_t dsp_get_data (
 	boolean_t msg_simple;
 #endif	TypeCheck
 
-	unsigned int msg_size = 40;
+	unsigned int msgh_size = 40;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -2283,11 +2283,11 @@ mig_external kern_return_t dsp_get_data (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL | MSG_TYPE_RPC;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = mig_get_reply_port();
-	InP->Head.msg_id = 513;
+	InP->Head.msgh_id = 513;
 
 	msg_result = msg_rpc(&InP->Head, SEND_TIMEOUT|RCV_TIMEOUT|SEND_SWITCH, sizeof(Reply), 5000, 5000);
 	if (msg_result != RPC_SUCCESS) {
@@ -2298,16 +2298,16 @@ mig_external kern_return_t dsp_get_data (
 	}
 
 #if	TypeCheck
-	msg_size = OutP->Head.msg_size;
+	msgh_size = OutP->Head.msgh_size;
 	msg_simple = OutP->Head.msg_simple;
 #endif	TypeCheck
 
-	if (OutP->Head.msg_id != 613)
+	if (OutP->Head.msgh_id != 613)
 		return MIG_REPLY_MISMATCH;
 
 #if	TypeCheck
-	if (((msg_size != 56) || (msg_simple != TRUE)) &&
-	    ((msg_size != sizeof(death_pill_t)) ||
+	if (((msgh_size != 56) || (msg_simple != TRUE)) &&
+	    ((msgh_size != sizeof(death_pill_t)) ||
 	     (msg_simple != TRUE) ||
 	     (OutP->RetCode == KERN_SUCCESS)))
 		return MIG_TYPE_ERROR;
@@ -2379,16 +2379,16 @@ mig_external kern_return_t dsp_get_data (
 
 /* SimpleRoutine dsp_put_data_array */
 mig_external kern_return_t dsp_put_data_array (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPWordPtr data,
 	unsigned int dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t dataType;
 		int data[512];
 		msg_type_t unitType;
@@ -2401,7 +2401,7 @@ mig_external kern_return_t dsp_put_data_array (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 44;
+	unsigned int msgh_size = 44;
 	/* Maximum request size 2092 */
 	unsigned int msg_size_delta;
 
@@ -2471,7 +2471,7 @@ mig_external kern_return_t dsp_put_data_array (
 	InP->dataType.msg_type_number /* dataCnt */ = /* dataType.msg_type_number */ dataCnt;
 
 	msg_size_delta = 4 * dataCnt;
-	msg_size += msg_size_delta;
+	msgh_size += msg_size_delta;
 	InP = (Request *) ((char *) InP + msg_size_delta - 2048);
 
 #if	UseStaticMsgType
@@ -2489,27 +2489,27 @@ mig_external kern_return_t dsp_put_data_array (
 
 	InP = &Mess.In;
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 514;
+	InP->Head.msgh_id = 514;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_put_data_byte_array */
 mig_external kern_return_t dsp_put_data_byte_array (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPCharPtr data,
 	unsigned int dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t dataType;
 		char data[2048];
 		msg_type_t unitType;
@@ -2522,7 +2522,7 @@ mig_external kern_return_t dsp_put_data_byte_array (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 44;
+	unsigned int msgh_size = 44;
 	/* Maximum request size 2092 */
 	unsigned int msg_size_delta;
 
@@ -2592,7 +2592,7 @@ mig_external kern_return_t dsp_put_data_byte_array (
 	InP->dataType.msg_type_number /* dataCnt */ = /* dataType.msg_type_number */ dataCnt;
 
 	msg_size_delta = (1 * dataCnt + 3) & ~3;
-	msg_size += msg_size_delta;
+	msgh_size += msg_size_delta;
 	InP = (Request *) ((char *) InP + msg_size_delta - 2048);
 
 #if	UseStaticMsgType
@@ -2610,27 +2610,27 @@ mig_external kern_return_t dsp_put_data_byte_array (
 
 	InP = &Mess.In;
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 515;
+	InP->Head.msgh_id = 515;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_put_data_short_array */
 mig_external kern_return_t dsp_put_data_short_array (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPShortPtr data,
 	unsigned int dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t dataType;
 		short data[1024];
 		msg_type_t unitType;
@@ -2643,7 +2643,7 @@ mig_external kern_return_t dsp_put_data_short_array (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 44;
+	unsigned int msgh_size = 44;
 	/* Maximum request size 2092 */
 	unsigned int msg_size_delta;
 
@@ -2713,7 +2713,7 @@ mig_external kern_return_t dsp_put_data_short_array (
 	InP->dataType.msg_type_number /* dataCnt */ = /* dataType.msg_type_number */ dataCnt;
 
 	msg_size_delta = (2 * dataCnt + 3) & ~3;
-	msg_size += msg_size_delta;
+	msgh_size += msg_size_delta;
 	InP = (Request *) ((char *) InP + msg_size_delta - 2048);
 
 #if	UseStaticMsgType
@@ -2731,27 +2731,27 @@ mig_external kern_return_t dsp_put_data_short_array (
 
 	InP = &Mess.In;
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 516;
+	InP->Head.msgh_id = 516;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_put_data_packed_array */
 mig_external kern_return_t dsp_put_data_packed_array (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPCharPtr data,
 	unsigned int dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t dataType;
 		char data[2048];
 		msg_type_t unitType;
@@ -2764,7 +2764,7 @@ mig_external kern_return_t dsp_put_data_packed_array (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 44;
+	unsigned int msgh_size = 44;
 	/* Maximum request size 2092 */
 	unsigned int msg_size_delta;
 
@@ -2834,7 +2834,7 @@ mig_external kern_return_t dsp_put_data_packed_array (
 	InP->dataType.msg_type_number /* dataCnt */ = /* dataType.msg_type_number */ dataCnt;
 
 	msg_size_delta = (1 * dataCnt + 3) & ~3;
-	msg_size += msg_size_delta;
+	msgh_size += msg_size_delta;
 	InP = (Request *) ((char *) InP + msg_size_delta - 2048);
 
 #if	UseStaticMsgType
@@ -2852,27 +2852,27 @@ mig_external kern_return_t dsp_put_data_packed_array (
 
 	InP = &Mess.In;
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 517;
+	InP->Head.msgh_id = 517;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_put_data_left_array */
 mig_external kern_return_t dsp_put_data_left_array (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPWordPtr data,
 	unsigned int dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t dataType;
 		int data[512];
 		msg_type_t unitType;
@@ -2885,7 +2885,7 @@ mig_external kern_return_t dsp_put_data_left_array (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 44;
+	unsigned int msgh_size = 44;
 	/* Maximum request size 2092 */
 	unsigned int msg_size_delta;
 
@@ -2955,7 +2955,7 @@ mig_external kern_return_t dsp_put_data_left_array (
 	InP->dataType.msg_type_number /* dataCnt */ = /* dataType.msg_type_number */ dataCnt;
 
 	msg_size_delta = 4 * dataCnt;
-	msg_size += msg_size_delta;
+	msgh_size += msg_size_delta;
 	InP = (Request *) ((char *) InP + msg_size_delta - 2048);
 
 #if	UseStaticMsgType
@@ -2973,28 +2973,28 @@ mig_external kern_return_t dsp_put_data_left_array (
 
 	InP = &Mess.In;
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 518;
+	InP->Head.msgh_id = 518;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* Routine dsp_get_data_array */
 mig_external kern_return_t dsp_get_data_array (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int count,
 	DSPWordPtr data,
 	unsigned int *dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t countType;
 		int count;
 		msg_type_t unitType;
@@ -3002,7 +3002,7 @@ mig_external kern_return_t dsp_get_data_array (
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t dataType;
@@ -3023,7 +3023,7 @@ mig_external kern_return_t dsp_get_data_array (
 	boolean_t msg_simple;
 #endif	TypeCheck
 
-	unsigned int msg_size = 48;
+	unsigned int msgh_size = 48;
 	unsigned int msg_size_delta;
 
 #if	UseStaticMsgType
@@ -3114,11 +3114,11 @@ mig_external kern_return_t dsp_get_data_array (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL | MSG_TYPE_RPC;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = mig_get_reply_port();
-	InP->Head.msg_id = 519;
+	InP->Head.msgh_id = 519;
 
 	msg_result = msg_rpc(&InP->Head, SEND_TIMEOUT|RCV_TIMEOUT|SEND_SWITCH, sizeof(Reply), 5000, 5000);
 	if (msg_result != RPC_SUCCESS) {
@@ -3129,16 +3129,16 @@ mig_external kern_return_t dsp_get_data_array (
 	}
 
 #if	TypeCheck
-	msg_size = OutP->Head.msg_size;
+	msgh_size = OutP->Head.msgh_size;
 	msg_simple = OutP->Head.msg_simple;
 #endif	TypeCheck
 
-	if (OutP->Head.msg_id != 619)
+	if (OutP->Head.msgh_id != 619)
 		return MIG_REPLY_MISMATCH;
 
 #if	TypeCheck
-	if (((msg_size < 36) || (msg_size > 2084) || (msg_simple != TRUE)) &&
-	    ((msg_size != sizeof(death_pill_t)) ||
+	if (((msgh_size < 36) || (msgh_size > 2084) || (msg_simple != TRUE)) &&
+	    ((msgh_size != sizeof(death_pill_t)) ||
 	     (msg_simple != TRUE) ||
 	     (OutP->RetCode == KERN_SUCCESS)))
 		return MIG_TYPE_ERROR;
@@ -3170,7 +3170,7 @@ mig_external kern_return_t dsp_get_data_array (
 
 #if	TypeCheck
 	msg_size_delta = 4 * OutP->dataType.msg_type_number;
-	if (msg_size != 36 + msg_size_delta)
+	if (msgh_size != 36 + msg_size_delta)
 		return MIG_TYPE_ERROR;
 #endif	TypeCheck
 
@@ -3189,17 +3189,17 @@ mig_external kern_return_t dsp_get_data_array (
 
 /* SimpleRoutine dsp_put_mk_timed_message */
 mig_external kern_return_t dsp_put_mk_timed_message (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int highWord,
 	int lowWord,
 	int opCode,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t highWordType;
 		int highWord;
 		msg_type_t lowWordType;
@@ -3216,7 +3216,7 @@ mig_external kern_return_t dsp_put_mk_timed_message (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 64;
+	unsigned int msgh_size = 64;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -3344,25 +3344,25 @@ mig_external kern_return_t dsp_put_mk_timed_message (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 520;
+	InP->Head.msgh_id = 520;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_exec_mk_host_message */
 mig_external kern_return_t dsp_exec_mk_host_message (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
@@ -3373,7 +3373,7 @@ mig_external kern_return_t dsp_exec_mk_host_message (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 40;
+	unsigned int msgh_size = 40;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -3426,32 +3426,32 @@ mig_external kern_return_t dsp_exec_mk_host_message (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 521;
+	InP->Head.msgh_id = 521;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* Routine dsp_get_hi */
 mig_external kern_return_t dsp_get_hi (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int *hi,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t hiType;
@@ -3472,7 +3472,7 @@ mig_external kern_return_t dsp_get_hi (
 	boolean_t msg_simple;
 #endif	TypeCheck
 
-	unsigned int msg_size = 40;
+	unsigned int msgh_size = 40;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -3549,11 +3549,11 @@ mig_external kern_return_t dsp_get_hi (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL | MSG_TYPE_RPC;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = mig_get_reply_port();
-	InP->Head.msg_id = 522;
+	InP->Head.msgh_id = 522;
 
 	msg_result = msg_rpc(&InP->Head, SEND_TIMEOUT|RCV_TIMEOUT|SEND_SWITCH, sizeof(Reply), 5000, 5000);
 	if (msg_result != RPC_SUCCESS) {
@@ -3564,16 +3564,16 @@ mig_external kern_return_t dsp_get_hi (
 	}
 
 #if	TypeCheck
-	msg_size = OutP->Head.msg_size;
+	msgh_size = OutP->Head.msgh_size;
 	msg_simple = OutP->Head.msg_simple;
 #endif	TypeCheck
 
-	if (OutP->Head.msg_id != 622)
+	if (OutP->Head.msgh_id != 622)
 		return MIG_REPLY_MISMATCH;
 
 #if	TypeCheck
-	if (((msg_size != 40) || (msg_simple != TRUE)) &&
-	    ((msg_size != sizeof(death_pill_t)) ||
+	if (((msgh_size != 40) || (msg_simple != TRUE)) &&
+	    ((msgh_size != sizeof(death_pill_t)) ||
 	     (msg_simple != TRUE) ||
 	     (OutP->RetCode == KERN_SUCCESS)))
 		return MIG_TYPE_ERROR;
@@ -3615,16 +3615,16 @@ mig_external kern_return_t dsp_get_hi (
 
 /* SimpleRoutine dsp_put_and_exec_mk_host_message */
 mig_external kern_return_t dsp_put_and_exec_mk_host_message (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPWordPtr data,
 	unsigned int dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t dataType;
 		int data[512];
 		msg_type_t unitType;
@@ -3637,7 +3637,7 @@ mig_external kern_return_t dsp_put_and_exec_mk_host_message (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 44;
+	unsigned int msgh_size = 44;
 	/* Maximum request size 2092 */
 	unsigned int msg_size_delta;
 
@@ -3707,7 +3707,7 @@ mig_external kern_return_t dsp_put_and_exec_mk_host_message (
 	InP->dataType.msg_type_number /* dataCnt */ = /* dataType.msg_type_number */ dataCnt;
 
 	msg_size_delta = 4 * dataCnt;
-	msg_size += msg_size_delta;
+	msgh_size += msg_size_delta;
 	InP = (Request *) ((char *) InP + msg_size_delta - 2048);
 
 #if	UseStaticMsgType
@@ -3725,26 +3725,26 @@ mig_external kern_return_t dsp_put_and_exec_mk_host_message (
 
 	InP = &Mess.In;
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 523;
+	InP->Head.msgh_id = 523;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_set_sub_unit */
 mig_external kern_return_t dsp_set_sub_unit (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int sub_unit,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t sub_unitType;
 		int sub_unit;
 		msg_type_t unitType;
@@ -3757,7 +3757,7 @@ mig_external kern_return_t dsp_set_sub_unit (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 48;
+	unsigned int msgh_size = 48;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -3835,30 +3835,30 @@ mig_external kern_return_t dsp_set_sub_unit (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 524;
+	InP->Head.msgh_id = 524;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_put_page */
 mig_external kern_return_t dsp_put_page (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPPagePtr pageAddress,
 	int regionTag,
 	boolean_t msgStarted,
 	boolean_t msgCompleted,
-	port_t reply_port,
+	mach_port_t reply_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t pageAddressType;
 		DSPPagePtr pageAddress;
 		msg_type_t regionTagType;
@@ -3868,7 +3868,7 @@ mig_external kern_return_t dsp_put_page (
 		msg_type_t msgCompletedType;
 		boolean_t msgCompleted;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
@@ -3879,7 +3879,7 @@ mig_external kern_return_t dsp_put_page (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 80;
+	unsigned int msgh_size = 80;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -4057,26 +4057,26 @@ mig_external kern_return_t dsp_put_page (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 525;
+	InP->Head.msgh_id = 525;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_set_messaging */
 mig_external kern_return_t dsp_set_messaging (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	boolean_t flag,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t flagType;
 		boolean_t flag;
 		msg_type_t unitType;
@@ -4089,7 +4089,7 @@ mig_external kern_return_t dsp_set_messaging (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 48;
+	unsigned int msgh_size = 48;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -4167,30 +4167,30 @@ mig_external kern_return_t dsp_set_messaging (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 526;
+	InP->Head.msgh_id = 526;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_queue_page */
 mig_external kern_return_t dsp_queue_page (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPPagePtr pageAddress,
 	int regionTag,
 	boolean_t msgStarted,
 	boolean_t msgCompleted,
-	port_t reply_port,
+	mach_port_t reply_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t pageAddressType;
 		DSPPagePtr pageAddress;
 		msg_type_t regionTagType;
@@ -4200,7 +4200,7 @@ mig_external kern_return_t dsp_queue_page (
 		msg_type_t msgCompletedType;
 		boolean_t msgCompleted;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
@@ -4211,7 +4211,7 @@ mig_external kern_return_t dsp_queue_page (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 80;
+	unsigned int msgh_size = 80;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -4389,35 +4389,35 @@ mig_external kern_return_t dsp_queue_page (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 527;
+	InP->Head.msgh_id = 527;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_set_short_big_endian_return */
 mig_external kern_return_t dsp_set_short_big_endian_return (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int regionTag,
 	int wordCount,
-	port_t reply_port,
+	mach_port_t reply_port,
 	int chan,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t regionTagType;
 		int regionTag;
 		msg_type_t wordCountType;
 		int wordCount;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t chanType;
 		int chan;
 		msg_type_t unitType;
@@ -4430,7 +4430,7 @@ mig_external kern_return_t dsp_set_short_big_endian_return (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 72;
+	unsigned int msgh_size = 72;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -4583,35 +4583,35 @@ mig_external kern_return_t dsp_set_short_big_endian_return (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 528;
+	InP->Head.msgh_id = 528;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_set_short_return */
 mig_external kern_return_t dsp_set_short_return (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int regionTag,
 	int wordCount,
-	port_t reply_port,
+	mach_port_t reply_port,
 	int chan,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t regionTagType;
 		int regionTag;
 		msg_type_t wordCountType;
 		int wordCount;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t chanType;
 		int chan;
 		msg_type_t unitType;
@@ -4624,7 +4624,7 @@ mig_external kern_return_t dsp_set_short_return (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 72;
+	unsigned int msgh_size = 72;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -4777,35 +4777,35 @@ mig_external kern_return_t dsp_set_short_return (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 529;
+	InP->Head.msgh_id = 529;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_set_long_return */
 mig_external kern_return_t dsp_set_long_return (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int regionTag,
 	int wordCount,
-	port_t reply_port,
+	mach_port_t reply_port,
 	int chan,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t regionTagType;
 		int regionTag;
 		msg_type_t wordCountType;
 		int wordCount;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t chanType;
 		int chan;
 		msg_type_t unitType;
@@ -4818,7 +4818,7 @@ mig_external kern_return_t dsp_set_long_return (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 72;
+	unsigned int msgh_size = 72;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -4971,28 +4971,28 @@ mig_external kern_return_t dsp_set_long_return (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 530;
+	InP->Head.msgh_id = 530;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_set_error_port */
 mig_external kern_return_t dsp_set_error_port (
-	port_t dspdriver_port,
-	port_t owner_port,
-	port_t reply_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
+	mach_port_t reply_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
@@ -5003,7 +5003,7 @@ mig_external kern_return_t dsp_set_error_port (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 48;
+	unsigned int msgh_size = 48;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -5081,28 +5081,28 @@ mig_external kern_return_t dsp_set_error_port (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 531;
+	InP->Head.msgh_id = 531;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_set_msg_port */
 mig_external kern_return_t dsp_set_msg_port (
-	port_t dspdriver_port,
-	port_t owner_port,
-	port_t reply_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
+	mach_port_t reply_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
@@ -5113,7 +5113,7 @@ mig_external kern_return_t dsp_set_msg_port (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 48;
+	unsigned int msgh_size = 48;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -5191,22 +5191,22 @@ mig_external kern_return_t dsp_set_msg_port (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 532;
+	InP->Head.msgh_id = 532;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_set_debug */
 mig_external kern_return_t dsp_set_debug (
-	port_t dspdriver_port,
+	mach_port_t dspdriver_port,
 	int debug_flags)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t debug_flagsType;
 		int debug_flags;
 	} Request;
@@ -5217,7 +5217,7 @@ mig_external kern_return_t dsp_set_debug (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 32;
+	unsigned int msgh_size = 32;
 
 #if	UseStaticMsgType
 	static const msg_type_t debug_flagsType = {
@@ -5245,26 +5245,26 @@ mig_external kern_return_t dsp_set_debug (
 	InP->debug_flags /* debug_flags */ = /* debug_flags */ debug_flags;
 
 	InP->Head.msg_simple = TRUE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 533;
+	InP->Head.msgh_id = 533;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }
 
 /* SimpleRoutine dsp_free_page */
 mig_external kern_return_t dsp_free_page (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int page_index,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t page_indexType;
 		int page_index;
 		msg_type_t unitType;
@@ -5277,7 +5277,7 @@ mig_external kern_return_t dsp_free_page (
 
 	register Request *InP = &Mess.In;
 
-	unsigned int msg_size = 48;
+	unsigned int msgh_size = 48;
 
 #if	UseStaticMsgType
 	static const msg_type_t owner_portType = {
@@ -5355,11 +5355,11 @@ mig_external kern_return_t dsp_free_page (
 	InP->unit /* unit */ = /* unit */ unit;
 
 	InP->Head.msg_simple = FALSE;
-	InP->Head.msg_size = msg_size;
+	InP->Head.msgh_size = msgh_size;
 	InP->Head.msg_type = MSG_TYPE_NORMAL;
 	InP->Head.msg_request_port = dspdriver_port;
 	InP->Head.msg_reply_port = PORT_NULL;
-	InP->Head.msg_id = 534;
+	InP->Head.msgh_id = 534;
 
 	return msg_send(&InP->Head, SEND_TIMEOUT, 5000);
 }

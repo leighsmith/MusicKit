@@ -10,9 +10,9 @@
 #import <mach/mig_errors.h>
 
 typedef struct {
-    port_t old_exc_port;
-    port_t clear_port;
-    port_t exc_port;
+    mach_port_t old_exc_port;
+    mach_port_t clear_port;
+    mach_port_t exc_port;
 } ports_t;
 
 volatile boolean_t pass_on = FALSE;
@@ -21,13 +21,13 @@ static any_t exc_thread(ports_t *port_p)
 {
     kern_return_t r;
     char *msg_data[2][64];
-    msg_header_t *imsg = (msg_header_t *)msg_data[0],
-    *omsg = (msg_header_t *)msg_data[1];
+    mach_msg_header_t *imsg = (mach_msg_header_t *)msg_data[0],
+    *omsg = (mach_msg_header_t *)msg_data[1];
     
     /* Wait for exceptions */
     while(1) {
-	imsg->msg_size = 64;
-	imsg->msg_local_port = port_p->exc_port;
+	imsg->msgh_size = 64;
+	imsg->msgh_local_port = port_p->exc_port;
 	r = msg_receive(imsg, MSG_OPTION_NONE, 0);
 	if (r == RCV_SUCCESS) {
 	    /* Give the message to the Mach exception server. */
@@ -52,8 +52,8 @@ static any_t exc_thread(ports_t *port_p)
 	
 	/* Pass the message to the old exception handler, if necessary. */
 	if (pass_on == TRUE) {
-	    imsg->msg_remote_port = port_p->old_exc_port;
-	    imsg->msg_local_port = port_p->clear_port;
+	    imsg->msgh_remote_port = port_p->old_exc_port;
+	    imsg->msgh_local_port = port_p->clear_port;
 	    r = msg_send(imsg, MSG_OPTION_NONE, 0);
 	    if (r != SEND_SUCCESS) {
 		mach_error("msg_send to old_exc_port",r);
@@ -66,6 +66,7 @@ static any_t exc_thread(ports_t *port_p)
 static boolean_t bailOut = FALSE;
 
 /* catch_exception_raise() is called by the exc_server(). */
+// This needs to be defined with traditional port_t types to stop the compiler complaining...
 kern_return_t catch_exception_raise(port_t exception_port,
 				    port_t thread, port_t task, int exception, int code, int subcode)
 {

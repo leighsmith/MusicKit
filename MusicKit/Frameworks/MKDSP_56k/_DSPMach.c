@@ -79,10 +79,10 @@ extern char *strcpy();
  * except that it will reuse an existing message frame if passed, saving
  * a one-page malloc.
  */
-msg_header_t *_DSP_stream_msg (
-	msg_header_t *msg,		// message pointer to reuse or malloc
-	port_t	stream_port,		// valid stream port
-	port_t	reply_port,		// task port or other
+mach_msg_header_t *_DSP_stream_msg (
+	mach_msg_header_t *msg,		// message pointer to reuse or malloc
+	mach_port_t	stream_port,		// valid stream port
+	mach_port_t	reply_port,		// task port or other
 	int	data_tag)		// tag associated with request
 {
 	snd_stream_msg_t *m = (snd_stream_msg_t *)msg;
@@ -91,11 +91,11 @@ msg_header_t *_DSP_stream_msg (
 		{
 			/* no name */		0,
 			/* msg_simple */	TRUE,
-			/* msg_size */		sizeof(snd_stream_msg_t),
+			/* msgh_size */		sizeof(snd_stream_msg_t),
 			/* msg_type */		MSG_TYPE_NORMAL,
-			/* msg_remote_port */	0,
+			/* msgh_remote_port */	0,
 			/* msg_reply_port */	0,
-			/* msg_id */		SND_MSG_STREAM_MSG
+			/* msgh_id */		SND_MSG_STREAM_MSG
 		},
 		{
 			/* msg_type_name = */		MSG_TYPE_INTEGER_32,
@@ -111,10 +111,10 @@ msg_header_t *_DSP_stream_msg (
 	  m = (snd_stream_msg_t *)malloc(MSG_SIZE_MAX);
 
 	*m = M;
-	m->header.msg_remote_port = stream_port;
-	m->header.msg_local_port = reply_port;
+	m->header.msgh_remote_port = stream_port;
+	m->header.msgh_local_port = reply_port;
 	m->data_tag = data_tag;
-	return ((msg_header_t *)m);
+	return ((mach_msg_header_t *)m);
 }
 
 /*
@@ -131,11 +131,11 @@ msg_header_t *_DSP_stream_msg (
     /* header */ {
 		    /* no name */		0,
 		    /* msg_simple */		TRUE,
-		    /* msg_size */		sizeof(snd_dspcmd_msg_t),
+		    /* msgh_size */		sizeof(snd_dspcmd_msg_t),
 		    /* msg_type */		MSG_TYPE_NORMAL,
-		    /* msg_remote_port */	0,
+		    /* msgh_remote_port */	0,
 		    /* msg_reply_port */	0,
-		    /* msg_id */		SND_MSG_DSP_MSG
+		    /* msgh_id */		SND_MSG_DSP_MSG
 		 },
    /* priType */ {
 		    /* msg_type_name = */	MSG_TYPE_INTEGER_32,
@@ -154,21 +154,21 @@ msg_header_t *_DSP_stream_msg (
  * a set of requests to dsp command port.  The message size can be
  * extended up to the maximum size MSG_SIZE_MAX.
  */
-msg_header_t *_DSP_dspcmd_msg (
-	port_t	cmd_port,		// valid dsp command port
-	port_t	reply_port,		// where to send reply message(s)
+mach_msg_header_t *_DSP_dspcmd_msg (
+	mach_port_t	cmd_port,		// valid dsp command port
+	mach_port_t	reply_port,		// where to send reply message(s)
 	int	priority,		// DSP_MSG_{LOW,MED,HIGH}
 	int	atomic)			// message may not be preempted
 {
 	snd_dspcmd_msg_t *m;
 	vm_allocate(task_self(),(vm_address_t *)(&m), MSG_SIZE_MAX, TRUE);
 	*m = snd_dspcmd_msg_proto;
-	_DSP_dspcmd_msg_reset((msg_header_t *)m,
+	_DSP_dspcmd_msg_reset((mach_msg_header_t *)m,
 			     cmd_port,reply_port,priority,atomic);
-	return ((msg_header_t *)m);
+	return ((mach_msg_header_t *)m);
 }
 
-void _DSP_free_dspcmd_msg(msg_header_t **msg) {
+void _DSP_free_dspcmd_msg(mach_msg_header_t **msg) {
 	vm_deallocate(task_self(), (vm_address_t)*msg, MSG_SIZE_MAX);
 	*msg = 0;
 }
@@ -177,10 +177,10 @@ void _DSP_free_dspcmd_msg(msg_header_t **msg) {
  * Restores a message header as created by snd_dspcmd_msg to its initial state,
  * possibly resetting the command/reply ports, priority, and atomic bits.
  */
-msg_header_t *_DSP_dspcmd_msg_reset (
-	msg_header_t *msg,		// Existing message header
-	port_t	cmd_port,		// valid dsp command port
-	port_t	reply_port,		// where to send reply message(s)
+mach_msg_header_t *_DSP_dspcmd_msg_reset (
+	mach_msg_header_t *msg,		// Existing message header
+	mach_port_t	cmd_port,		// valid dsp command port
+	mach_port_t	reply_port,		// where to send reply message(s)
    /* reply_port = PORT_NULL inhibits reply when it's only a msg_send ack */
 	int	priority,		// DSP_MSG_{LOW,MED,HIGH}
 	int	atomic)			// message may not be preempted
@@ -191,65 +191,65 @@ msg_header_t *_DSP_dspcmd_msg_reset (
 	  msg = _DSP_dspcmd_msg(cmd_port,reply_port,priority,atomic);
 
 	m = (snd_dspcmd_msg_t *)msg;
-	m->header.msg_size = sizeof(snd_dspcmd_msg_t);
-	m->header.msg_remote_port = cmd_port;
-	m->header.msg_local_port = reply_port; 
-	m->header.msg_id = SND_MSG_DSP_MSG;
+	m->header.msgh_size = sizeof(snd_dspcmd_msg_t);
+	m->header.msgh_remote_port = cmd_port;
+	m->header.msgh_local_port = reply_port; 
+	m->header.msgh_id = SND_MSG_DSP_MSG;
 	m->pri = priority;
 	m->atomic = atomic;
-	return ((msg_header_t *)m);
+	return ((mach_msg_header_t *)m);
 }
 
 /*
  * Returns a message header of maximum size size used to receive
  * data from the DSP.
  */
-msg_header_t *_DSP_dsprcv_msg (
-	port_t	cmd_port,		// valid dsp command port
-	port_t	reply_port)		// where to get message receives
+mach_msg_header_t *_DSP_dsprcv_msg (
+	mach_port_t	cmd_port,		// valid dsp command port
+	mach_port_t	reply_port)		// where to get message receives
 {
-    msg_header_t *m = _DSP_dspcmd_msg(cmd_port,reply_port,DSP_MSG_LOW,0);
-    m->msg_size = MSG_SIZE_MAX;
+    mach_msg_header_t *m = _DSP_dspcmd_msg(cmd_port,reply_port,DSP_MSG_LOW,0);
+    m->msgh_size = MSG_SIZE_MAX;
     return(m);
 }
 
-msg_header_t *_DSP_dsprcv_msg_reset(
-	msg_header_t *msg,		// message created by _DSP_dsprcv_msg
-	port_t	cmd_port,		// valid dsp command port
-	port_t	reply_port)		// where to get message receives
+mach_msg_header_t *_DSP_dsprcv_msg_reset(
+	mach_msg_header_t *msg,		// message created by _DSP_dsprcv_msg
+	mach_port_t	cmd_port,		// valid dsp command port
+	mach_port_t	reply_port)		// where to get message receives
 {
     if (!msg)
       msg = _DSP_dsprcv_msg (cmd_port,reply_port);
-    msg->msg_size = MSG_SIZE_MAX;
-    msg->msg_local_port = reply_port;
+    msg->msgh_size = MSG_SIZE_MAX;
+    msg->msgh_local_port = reply_port;
     return(msg);
 }
 
 
-static msg_header_t snd_dspreply_msg_proto = { 
+static mach_msg_header_t snd_dspreply_msg_proto = { 
 		/* no name */		0,
 		/* msg_simple */	TRUE,
-		/* msg_size */		sizeof(msg_header_t),
+		/* msgh_size */		sizeof(mach_msg_header_t),
 		/* msg_type */		MSG_TYPE_NORMAL,
-		/* msg_remote_port */	PORT_NULL,	// MUST BE SET
-		/* msg_local_port */	PORT_NULL,
-		/* msg_id */		54321
+		/* msgh_remote_port */	PORT_NULL,	// MUST BE SET
+		/* msgh_local_port */	PORT_NULL,
+		/* msgh_id */		54321
 	};
 
 
 /*
  * Restores a message header as created by _DSP_dspreply_msg to initial state.
  */
-msg_header_t *_DSP_dspreply_msg_reset (
-	msg_header_t *msg,		// Existing message header
-	port_t	reply_port)		// where to send reply message
+mach_msg_header_t *_DSP_dspreply_msg_reset (
+	mach_msg_header_t *msg,		// Existing message header
+	mach_port_t	reply_port)		// where to send reply message
 {
     if (!msg)
       msg = _DSP_dspreply_msg(reply_port);
-    msg->msg_size = sizeof(msg_header_t);
-    msg->msg_remote_port = reply_port;
-    msg->msg_local_port = PORT_NULL;
-    msg->msg_id = 54321;
+    msg->msgh_size = sizeof(mach_msg_header_t);
+    msg->msgh_remote_port = reply_port;
+    msg->msgh_local_port = PORT_NULL;
+    msg->msgh_id = 54321;
     return (msg);
 }
 
@@ -257,10 +257,10 @@ msg_header_t *_DSP_dspreply_msg_reset (
  * Returns a message header suitable for general purpose reply messages.
  * It cannot be extended.
  */
-msg_header_t *_DSP_dspreply_msg (
-	port_t	reply_port)		// where to send reply message
+mach_msg_header_t *_DSP_dspreply_msg (
+	mach_port_t	reply_port)		// where to send reply message
 {
-	msg_header_t *m = &snd_dspreply_msg_proto;
+	mach_msg_header_t *m = &snd_dspreply_msg_proto;
 	_DSP_dspreply_msg_reset(m,reply_port);
 	return (m);
 }
@@ -268,11 +268,11 @@ msg_header_t *_DSP_dspreply_msg (
 /*
  * Add a DSP reset message.
  */
-msg_header_t *_DSP_dspreset (
-	msg_header_t	*msg)		// message frame to add request to
+mach_msg_header_t *_DSP_dspreset (
+	mach_msg_header_t	*msg)		// message frame to add request to
 {
 	snd_dsp_reset_t *m =
-		(snd_dsp_reset_t *)(((int)msg)+msg->msg_size);
+		(snd_dsp_reset_t *)(((int)msg)+msg->msgh_size);
 	static const snd_dsp_reset_t M = {
 		{{
 			/* msg_type_name = */		MSG_TYPE_INTEGER_32,
@@ -285,28 +285,28 @@ msg_header_t *_DSP_dspreset (
 		SND_DSP_MT_RESET}
 	};
 			
-	if (msg->msg_size + sizeof(*m) >= MSG_SIZE_MAX)
-		return (msg_header_t *)SEND_MSG_TOO_LARGE;
+	if (msg->msgh_size + sizeof(*m) >= MSG_SIZE_MAX)
+		return (mach_msg_header_t *)SEND_MSG_TOO_LARGE;
 
 	/*
 	 * Add this message component to the message.
 	 */
 	*m = M;
 
-	msg->msg_size += sizeof(*m);
+	msg->msgh_size += sizeof(*m);
 	return(msg);
 }
 
 /*
  * Add a condition to the message.
  */
-msg_header_t *_DSP_dsp_condition (
-	msg_header_t	*msg,		// message frame to add request to
+mach_msg_header_t *_DSP_dsp_condition (
+	mach_msg_header_t	*msg,		// message frame to add request to
 	u_int		mask,		// mask of flags to inspect
 	u_int		flags)		// set of flags that must be on
 {
 	snd_dsp_condition_t *m =
-		(snd_dsp_condition_t *)(((int)msg)+msg->msg_size);
+		(snd_dsp_condition_t *)(((int)msg)+msg->msgh_size);
 	static const snd_dsp_condition_t M = {
 		{{
 			/* msg_type_name = */		MSG_TYPE_INTEGER_32,
@@ -327,8 +327,8 @@ msg_header_t *_DSP_dsp_condition (
 		}
 	};
 			
-	if (msg->msg_size + sizeof(*m) >= MSG_SIZE_MAX)
-		return (msg_header_t *)SEND_MSG_TOO_LARGE;
+	if (msg->msgh_size + sizeof(*m) >= MSG_SIZE_MAX)
+		return (mach_msg_header_t *)SEND_MSG_TOO_LARGE;
 
 	/*
 	 * Add this message component to the message.
@@ -337,20 +337,20 @@ msg_header_t *_DSP_dsp_condition (
 	m->mask = mask;
 	m->flags = flags;
 
-	msg->msg_size += sizeof(*m);
+	msg->msgh_size += sizeof(*m);
 	return(msg);
 }
 
 /*
  * Add return message dsp command message.
  */
-msg_header_t *_DSP_dsp_ret_msg (
-	msg_header_t	*msg,		// message frame to add request to
-	msg_header_t	*ret_msg)	// message to sent to reply port
+mach_msg_header_t *_DSP_dsp_ret_msg (
+	mach_msg_header_t	*msg,		// message frame to add request to
+	mach_msg_header_t	*ret_msg)	// message to sent to reply port
 {
 	int msize;
 	snd_dsp_ret_msg_t *m =
-		(snd_dsp_ret_msg_t *)(((int)msg)+msg->msg_size);
+		(snd_dsp_ret_msg_t *)(((int)msg)+msg->msgh_size);
 	static const snd_dsp_ret_msg_t M = {
 		{{
 			/* msg_type_name = */		MSG_TYPE_INTEGER_32,
@@ -385,37 +385,37 @@ msg_header_t *_DSP_dsp_ret_msg (
 		}
 	};
 			
-	msize = sizeof(*m) - sizeof(*ret_msg) + ret_msg->msg_size;
+	msize = sizeof(*m) - sizeof(*ret_msg) + ret_msg->msgh_size;
 
-	if (msg->msg_size + msize >= MSG_SIZE_MAX)
-		return (msg_header_t *)SEND_MSG_TOO_LARGE;
+	if (msg->msgh_size + msize >= MSG_SIZE_MAX)
+		return (mach_msg_header_t *)SEND_MSG_TOO_LARGE;
 
 	/*
 	 * Add this message component to the message.
 	 */
 	*m = M;
-	m->ret_port = ret_msg->msg_remote_port;
-	bcopy((char *)ret_msg, (char *)&m->ret_msg, ret_msg->msg_size);
-	m->ret_msgType.msg_type_long_number = ret_msg->msg_size;
+	m->ret_port = ret_msg->msgh_remote_port;
+	bcopy((char *)ret_msg, (char *)&m->ret_msg, ret_msg->msgh_size);
+	m->ret_msgType.msg_type_long_number = ret_msg->msgh_size;
 	msg->msg_simple = FALSE;
 	/*
 	 * Message can't be a simple type anymore.
 	 */
-	msg->msg_size += msize;
+	msg->msgh_size += msize;
 	return(msg);
 }
 
 /*
  * Add transmit data request to dsp command message.
  */
-msg_header_t *_DSP_dsp_data (
-	msg_header_t	*msg,		// message frame to add request to
+mach_msg_header_t *_DSP_dsp_data (
+	mach_msg_header_t	*msg,		// message frame to add request to
 	pointer_t	data,		// data to play
 	int		eltsize,	// 1, 2, or 4 byte data
 	int		nelts)		// number of elements of data to send
 {
 	int msize, dsize;
-	snd_dsp_data_t *m = (snd_dsp_data_t *)(((int)msg)+msg->msg_size);
+	snd_dsp_data_t *m = (snd_dsp_data_t *)(((int)msg)+msg->msgh_size);
 	static const snd_dsp_data_t M = {
 		{{
 			/* msg_type_name = */		MSG_TYPE_INTEGER_32,
@@ -447,15 +447,15 @@ msg_header_t *_DSP_dsp_data (
 	dsize = eltsize * nelts;
 	msize = sizeof(*m) - sizeof(m->data) + dsize; /* in-line msg sz */
 
-	if (msg->msg_size + sizeof(*m) >= MSG_SIZE_MAX)
-	  return (msg_header_t *)SEND_MSG_TOO_LARGE; /* can't even go o.o.l */
+	if (msg->msgh_size + sizeof(*m) >= MSG_SIZE_MAX)
+	  return (mach_msg_header_t *)SEND_MSG_TOO_LARGE; /* can't even go o.o.l */
 
 	/*
 	 * Add this message component to the message.
 	 */
 	*m = M;
 
-	if ((msg->msg_size + msize) >= MSG_SIZE_MAX) {
+	if ((msg->msgh_size + msize) >= MSG_SIZE_MAX) {
 		/*
 		 * Too big to be sent inline, construct out-of-line data
 		 * message.
@@ -477,20 +477,20 @@ msg_header_t *_DSP_dsp_data (
 	/*
 	 * Message can't be a simple type anymore.
 	 */
-	msg->msg_size += msize;
+	msg->msgh_size += msize;
 	return(msg);
 }
 
 /*
  * Add a host flag to the message.
  */
-msg_header_t *_DSP_dsp_host_flag (
-	msg_header_t	*msg,		// message frame to add request to
+mach_msg_header_t *_DSP_dsp_host_flag (
+	mach_msg_header_t	*msg,		// message frame to add request to
 	u_int		mask,		// mask of flags to inspect
 	u_int		flags)		// set of flags that must be on
 {
 	snd_dsp_host_flag_t *m =
-		(snd_dsp_host_flag_t *)(((int)msg)+msg->msg_size);
+		(snd_dsp_host_flag_t *)(((int)msg)+msg->msgh_size);
 	static const snd_dsp_host_flag_t M = {
 		{{
 			/* msg_type_name = */		MSG_TYPE_INTEGER_32,
@@ -511,8 +511,8 @@ msg_header_t *_DSP_dsp_host_flag (
 		}
 	};
 			
-	if (msg->msg_size + sizeof(*m) >= MSG_SIZE_MAX)
-		return (msg_header_t *)SEND_MSG_TOO_LARGE;
+	if (msg->msgh_size + sizeof(*m) >= MSG_SIZE_MAX)
+		return (mach_msg_header_t *)SEND_MSG_TOO_LARGE;
 
 	/*
 	 * Add this message component to the message.
@@ -521,19 +521,19 @@ msg_header_t *_DSP_dsp_host_flag (
 	m->mask = mask;
 	m->flags = flags;
 
-	msg->msg_size += sizeof(*m);
+	msg->msgh_size += sizeof(*m);
 	return(msg);
 }
 
 /*
  * Add a host command to the message.
  */
-msg_header_t *_DSP_dsp_host_command (
-	msg_header_t	*msg,		// message frame to add request to
+mach_msg_header_t *_DSP_dsp_host_command (
+	mach_msg_header_t	*msg,		// message frame to add request to
 	u_int		host_command)	// host command to execute
 {
 	snd_dsp_host_command_t *m =
-		(snd_dsp_host_command_t *)(((int)msg)+msg->msg_size);
+		(snd_dsp_host_command_t *)(((int)msg)+msg->msgh_size);
 	static const snd_dsp_host_command_t M = {
 		{{
 			/* msg_type_name = */		MSG_TYPE_INTEGER_32,
@@ -554,8 +554,8 @@ msg_header_t *_DSP_dsp_host_command (
 		}
 	};
 			
-	if (msg->msg_size + sizeof(*m) >= MSG_SIZE_MAX)
-		return (msg_header_t *)SEND_MSG_TOO_LARGE;
+	if (msg->msgh_size + sizeof(*m) >= MSG_SIZE_MAX)
+		return (mach_msg_header_t *)SEND_MSG_TOO_LARGE;
 
 	/*
 	 * Add this message component to the message.
@@ -563,19 +563,19 @@ msg_header_t *_DSP_dsp_host_command (
 	*m = M;
 	m->hc = host_command;
 
-	msg->msg_size += sizeof(*m);
+	msg->msgh_size += sizeof(*m);
 	return(msg);
 }
 
 
-msg_header_t *_DSP_dsp_protocol (
-	msg_header_t	*msg,		// message frame to add request to
-	port_t		device_port,		// valid device port
-	port_t		owner_port,		// port registered as owner
+mach_msg_header_t *_DSP_dsp_protocol (
+	mach_msg_header_t	*msg,		// message frame to add request to
+	mach_port_t		device_port,		// valid device port
+	mach_port_t		owner_port,		// port registered as owner
 	int		protocol)		// protocol bits
 {
 	snd_dsp_mt_proto_t *m =
-	  (snd_dsp_mt_proto_t *)(((int)msg)+(msg->msg_size));
+	  (snd_dsp_mt_proto_t *)(((int)msg)+(msg->msgh_size));
 	static const snd_dsp_mt_proto_t M = {
 		{{
 			/* msg_type_name = */		MSG_TYPE_INTEGER_32,
@@ -596,8 +596,8 @@ msg_header_t *_DSP_dsp_protocol (
 		}
 	};
 			
-	if (msg->msg_size + sizeof(*m) >= MSG_SIZE_MAX)
-		return (msg_header_t *)SEND_MSG_TOO_LARGE;
+	if (msg->msgh_size + sizeof(*m) >= MSG_SIZE_MAX)
+		return (mach_msg_header_t *)SEND_MSG_TOO_LARGE;
 
 #ifdef VERSION_1
 	return _DSPError(DSP_EMISC,"DSP protocol changes cannot work "
@@ -614,18 +614,18 @@ msg_header_t *_DSP_dsp_protocol (
 	*m = M;
 	m->proto = protocol;
 
-	msg->msg_size += sizeof(*m);
+	msg->msgh_size += sizeof(*m);
 	return(msg);
 }
 
 /*
  * Add read-data request to dsp command message. (New for 2.0.)
  */
-msg_header_t *_DSP_dsp_read_data(msg_header_t *msg, // message frame
+mach_msg_header_t *_DSP_dsp_read_data(mach_msg_header_t *msg, // message frame
 				 int eltsize,	// 1, 2, 3, or 4 byte data
 				 int nelts) 	// number of data elements
 {
-    snd_dsp_data_t *m = (snd_dsp_data_t *)(((int)msg)+msg->msg_size);
+    snd_dsp_data_t *m = (snd_dsp_data_t *)(((int)msg)+msg->msgh_size);
     static const snd_dsp_data_t M = {
 	       {{
 			/* msg_type_name = */		MSG_TYPE_INTEGER_32,
@@ -655,8 +655,8 @@ msg_header_t *_DSP_dsp_read_data(msg_header_t *msg, // message frame
     if (eltsize < 1 || eltsize > 4)
       eltsize = 1;
 
-    if (msg->msg_size + sizeof(*m) >= MSG_SIZE_MAX)
-      return (msg_header_t *)SEND_MSG_TOO_LARGE;
+    if (msg->msgh_size + sizeof(*m) >= MSG_SIZE_MAX)
+      return (mach_msg_header_t *)SEND_MSG_TOO_LARGE;
 
     /*
      * Add this message component to the message.
@@ -677,17 +677,17 @@ msg_header_t *_DSP_dsp_read_data(msg_header_t *msg, // message frame
 	/*
 	 * Message can't be a simple type anymore.
 	 */
-	msg->msg_size += sizeof(*m);
+	msg->msgh_size += sizeof(*m);
 	return(msg);
 }
 
 #if !m68k && (defined(NeXT) || (defined(__APPLE__) && defined(__MACH__)) || defined(WIN32))
 /* Maybe move this somewhere else */
 
-msg_header_t *_DSP_data_request_msg (
-	msg_header_t *msg,		// message pointer to reuse or malloc
-	port_t	stream_port,		// valid stream port
-	port_t	reply_port,		// task port or other
+mach_msg_header_t *_DSP_data_request_msg (
+	mach_msg_header_t *msg,		// message pointer to reuse or malloc
+	mach_port_t	stream_port,		// valid stream port
+	mach_port_t	reply_port,		// task port or other
 	int	data_tag,		// tag associated with request
         int     chan,			// dsp transfer channel
         int     msgID)			// type of msg	    
@@ -697,12 +697,12 @@ msg_header_t *_DSP_data_request_msg (
       msg = (void *)malloc(MSGSIZ); 
     m = (void *)msg;
     /* Probably don't need to fill in all these fields, but it doesn't hurt */ 
-    m->h.msg_remote_port = stream_port;  /* Or PORT_NULL? */ 
-    m->h.msg_local_port = reply_port;
+    m->h.msgh_remote_port = stream_port;  /* Or PORT_NULL? */ 
+    m->h.msgh_local_port = reply_port;
     m->h.msg_simple = TRUE; 
-    m->h.msg_size = sizeof(DSPDRIVERDataMessage); 
+    m->h.msgh_size = sizeof(DSPDRIVERDataMessage); 
     m->h.msg_type = MSG_TYPE_NORMAL; 
-    m->h.msg_id = msgID; 
+    m->h.msgh_id = msgID; 
     m->t1.msg_type_name = MSG_TYPE_INTEGER_32; 
     m->t1.msg_type_size = 32; 
     m->t1.msg_type_number = 3; 
@@ -731,19 +731,19 @@ msg_header_t *_DSP_data_request_msg (
  * Returns a message header of maximum size size used to receive
  * data from the DSP.
  */
-msg_header_t *_DSP_simple_request_msg (
-	port_t	cmd_port,		// valid dsp command port
-	port_t	reply_port,		// where to get message receives
+mach_msg_header_t *_DSP_simple_request_msg (
+	mach_port_t	cmd_port,		// valid dsp command port
+	mach_port_t	reply_port,		// where to get message receives
         int messageType)				       
 {
     DSPDRIVERSimpleMessage *msg = malloc(sizeof(DSPDRIVERSimpleMessage));
     /*  FILL IN THE MESSAGE HEADER  */
     msg->h.msg_simple = TRUE;
-    msg->h.msg_size = sizeof(DSPDRIVERSimpleMessage);
+    msg->h.msgh_size = sizeof(DSPDRIVERSimpleMessage);
     msg->h.msg_type = MSG_TYPE_NORMAL;
-    msg->h.msg_remote_port = cmd_port;
-    msg->h.msg_local_port = reply_port;
-    msg->h.msg_id = messageType;
+    msg->h.msgh_remote_port = cmd_port;
+    msg->h.msgh_local_port = reply_port;
+    msg->h.msgh_id = messageType;
     /*  FILL IN THE TYPE DESCRIPTOR  */
     msg->t.msg_type_name = MSG_TYPE_INTEGER_32;
     msg->t.msg_type_size = 32;
@@ -751,10 +751,10 @@ msg_header_t *_DSP_simple_request_msg (
     msg->t.msg_type_inline = TRUE;
     msg->t.msg_type_longform = FALSE;
     msg->t.msg_type_deallocate = FALSE;
-    return (msg_header_t *)msg;					 
+    return (mach_msg_header_t *)msg;					 
 }
 
-void _DSP_free_simple_request_msg(msg_header_t **msg) {
+void _DSP_free_simple_request_msg(mach_msg_header_t **msg) {
 	free(*msg);
 	*msg = 0;
 }

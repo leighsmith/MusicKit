@@ -43,7 +43,7 @@ typedef struct {
  * Messages sent from the kernel
  */
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	data_tagType;
 	int		data_tag;
 	msg_type_long_t	dataType;
@@ -51,19 +51,19 @@ typedef struct {
 } snd_recorded_data_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	data_tagType;
 	int		data_tag;
 } snd_taged_reply_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	dataType;
 	int		nsamples;
 } snd_ret_samples_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	dataType;
 	unsigned int	parms;
 #define SND_PARM_LOWPASS	0x1
@@ -72,7 +72,7 @@ typedef struct {
 } snd_ret_parms_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	dataType;
 	unsigned int	volume;
 #define SND_VOLUME_RCHAN_MASK	0xff
@@ -82,13 +82,13 @@ typedef struct {
 } snd_ret_volume_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	dataType;
 	int		dsp_regs;
 } snd_ret_dsp_regs_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	dataType;
 	unsigned int	ill_msgid;	// message id of bad message.
 	unsigned int	ill_error;	// error returned
@@ -108,10 +108,10 @@ typedef struct {
 #define SND_BAD_PROTO 	113	// can't do requested operation given protocol
 } snd_illegal_msg_t;
 
-typedef struct {msg_header_t header;} snd_ret_port_t;
+typedef struct {mach_msg_header_t header;} snd_ret_mach_port_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	dataType;
 	unsigned int	mask;
 	unsigned int	flags;
@@ -122,11 +122,11 @@ typedef struct {
  * Messages sent from the user to the device
  */
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	Type;
 	unsigned int	stream;
 	msg_type_t	ownerType;
-	port_t		owner;
+	mach_port_t		owner;
 } snd_get_stream_t;
 
 #define SND_GD_CHAN_MASK	0x7f
@@ -147,23 +147,23 @@ typedef struct {
 #define SND_GD_DSP_IN	snd_gd_bitmap(DSP_SI_CHAN, FALSE) // sound in to dsp
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	Type;
 	unsigned int	parms;
 } snd_set_parms_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	Type;
 	unsigned int	volume;
 } snd_set_volume_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	Type;
 	unsigned int	proto;
 	msg_type_t	ownerType;
-	port_t		owner;
+	mach_port_t		owner;
 } snd_dsp_proto_t;
 
 #define SND_DSP_PROTO_DSPERR	0x1	// DSP error messages enabled
@@ -178,48 +178,48 @@ typedef struct {
 #define SND_DSP_PROTO_RAW	0x200	// DSP messages enabled
 #define SND_DSP_PROTO_TXD	0x400	// DSP txd interrupt enable (040 only)
 
-typedef msg_header_t	snd_get_parms_t;
-typedef msg_header_t	snd_get_volume_t;
+typedef mach_msg_header_t	snd_get_parms_t;
+typedef mach_msg_header_t	snd_get_volume_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	ownerType;
-	port_t		owner;		// owner port
-} snd_get_dsp_cmd_port_t;
+	mach_port_t		owner;		// owner port
+} snd_get_dsp_cmd_mach_port_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	negType;
-	port_t		negotiation;	// negotiation port
+	mach_port_t		negotiation;	// negotiation port
 	msg_type_t	ownerType;
-	port_t		owner;		// owner port
+	mach_port_t		owner;		// owner port
 } snd_set_owner_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	old_ownerType;
-	port_t		old_owner;
+	mach_port_t		old_owner;
 	msg_type_t	new_ownerType;
-	port_t		new_owner;
+	mach_port_t		new_owner;
 	msg_type_t	new_negotiationType;
-	port_t		new_negotiation;
+	mach_port_t		new_negotiation;
 } snd_reset_owner_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	privType;
-	port_t		priv;
+	mach_port_t		priv;
 } snd_new_device_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_long_t	dataType;
 #define DSP_DEF_BUFSIZE	512			// default #words in each buf
 	unsigned int	data[DSP_DEF_BUFSIZE];
 } snd_dsp_msg_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_long_t	dataType;
 #define DSP_DEF_EBUFSIZE 32			// default #words in each buf
 	unsigned int	data[DSP_DEF_EBUFSIZE];
@@ -231,7 +231,7 @@ typedef struct {
  * of several different sub-messages.
  */
 typedef struct snd_stream_msg {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	data_tagType;
 	int		data_tag;		// tag for this request, 0 def
 } snd_stream_msg_t;
@@ -248,7 +248,7 @@ typedef struct {
 #define SND_DM_OVERFLOW_MSG	0x20
 #define SND_DM_PREEMPT		0x40
 	msg_type_t	reg_portType;
-	port_t		reg_port;	// remote port for region messages
+	mach_port_t		reg_port;	// remote port for region messages
 	msg_type_long_t	dataType;
 	pointer_t	data;
 } snd_stream_play_data_t;
@@ -259,7 +259,7 @@ typedef struct {
 	unsigned int	options;
 	int		nbytes;
 	msg_type_t	reg_portType;
-	port_t		reg_port;	// remote port for region messages
+	mach_port_t		reg_port;	// remote port for region messages
 	msg_type_t	filenameType;	// filename string follows inline
 } snd_stream_record_data_t;
 
@@ -294,29 +294,29 @@ typedef struct {
  * Nsamples is another message on a stream port.
  */
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 } snd_stream_nsamples_t;
 
 /*
  * Messages sent by user to dsp command port.
  */
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	reg_maskType;
 	unsigned int	mask;		// mask of flags to inspect
 	unsigned int	flags;		// set of flags that must be on
 	msg_type_t	ret_portType;
-	port_t		ret_port;	// remote port for ret_msg
+	mach_port_t		ret_port;	// remote port for ret_msg
 	msg_type_long_t	ret_msgType;
 	/*
 	 * follows is the body of the (simple) message to send
-	 * either to msg_remote_port, or to snd_var.dsp  (if PORT_NULL).
+	 * either to msgh_remote_port, or to snd_var.dsp  (if PORT_NULL).
 	 */
-	msg_header_t	ret_msg;	// possibly longer than this.
+	mach_msg_header_t	ret_msg;	// possibly longer than this.
 } snd_dspcmd_event_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	dataType;
 	int		addr;		// .. of dsp buffer
 	int		size;		// .. of dsp buffer
@@ -350,7 +350,7 @@ typedef struct {
 } snd_dspcmd_chandata_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	chandataType;
 	int		addr;		// .. of dsp buffer
 	int		size;		// .. of dsp buffer
@@ -361,9 +361,9 @@ typedef struct {
 	pointer_t	data;		// data to output
 } snd_dspcmd_dma_t;
 
-typedef msg_header_t	snd_dspcmd_abortdma_t;
-typedef msg_header_t	snd_dspcmd_req_err_t;
-typedef msg_header_t	snd_dspcmd_req_msg_t;
+typedef mach_msg_header_t	snd_dspcmd_abortdma_t;
+typedef mach_msg_header_t	snd_dspcmd_req_err_t;
+typedef mach_msg_header_t	snd_dspcmd_req_msg_t;
 
 /*
  * Multi-part dspcmd_msg.
@@ -386,7 +386,7 @@ typedef struct {
 } snd_dsp_type_t;
 
 typedef struct {
-	msg_header_t	header;
+	mach_msg_header_t	header;
 	msg_type_t	priType;
 	int		pri;		// Priority of message group
 #define DSP_MSG_HIGH		0
@@ -401,7 +401,7 @@ typedef struct {
 	unsigned int	mask;		// mask of flags to inspect
 	unsigned int	flags;		// set of flags that must be on
 	msg_type_t	reply_portType;
-	port_t		reply_port;	// were to send device regs to
+	mach_port_t		reply_port;	// were to send device regs to
 } snd_dsp_condition_t;
 
 typedef struct {
@@ -432,13 +432,13 @@ typedef struct {
 typedef struct {
 	snd_dsp_type_t	msgtype;
 	msg_type_t	ret_portType;
-	port_t		ret_port;	// remote port for ret_msg
+	mach_port_t		ret_port;	// remote port for ret_msg
 	msg_type_long_t	ret_msgType;
 	/*
 	 * follows is the body of the (simple) message to send
-	 * either to msg_remote_port, or to snd_var.dspowner (if PORT_NULL).
+	 * either to msgh_remote_port, or to snd_var.dspowner (if PORT_NULL).
 	 */
-	msg_header_t	ret_msg;	// possibly longer than this.
+	mach_msg_header_t	ret_msg;	// possibly longer than this.
 } snd_dsp_ret_msg_t;
 
 typedef struct {
@@ -531,59 +531,59 @@ typedef struct {
  */
 #if	KERNEL
 kern_return_t snd_reply_recorded_data (
-	port_t		remote_port,	// who to reply to
+	mach_port_t		remote_port,	// who to reply to
 	int		data_tag,	// tag from region
 	pointer_t	data,		// recorded data
 	int		nbytes,		// number of bytes of data to send
 	int		in_line);	// "Send data inline" flag.
 kern_return_t snd_reply_timed_out (
-	port_t		remote_port,	// who to send it to.
+	mach_port_t		remote_port,	// who to send it to.
 	int		data_tag);	// tag from region
 kern_return_t snd_reply_ret_samples (
-	port_t		remote_port,	// who to send it to.
+	mach_port_t		remote_port,	// who to send it to.
 	int		nsamples);	// number of bytes of data to record
 kern_return_t snd_reply_ret_device (
-	port_t		remote_port,	// who to send it to.
-	port_t		device_port);	// returned port.
+	mach_port_t		remote_port,	// who to send it to.
+	mach_port_t		device_port);	// returned port.
 kern_return_t snd_reply_ret_stream (
-	port_t		remote_port,	// who to send it to.
-	port_t		stream_port);	// returned port.
+	mach_port_t		remote_port,	// who to send it to.
+	mach_port_t		stream_port);	// returned port.
 kern_return_t snd_reply_ret_parms (
-	port_t		remote_port,	// who to send it to.
+	mach_port_t		remote_port,	// who to send it to.
 	unsigned int	parms);
 kern_return_t snd_reply_ret_volume (
-	port_t		remote_port,	// who to send it to.
+	mach_port_t		remote_port,	// who to send it to.
 	unsigned int	volume);
 kern_return_t snd_reply_overflow (
-	port_t		remote_port,	// who to send it to.
+	mach_port_t		remote_port,	// who to send it to.
 	int		data_tag);	// from region
 kern_return_t snd_reply_started (
-	port_t		remote_port,	// who to send it to.
+	mach_port_t		remote_port,	// who to send it to.
 	int		data_tag);	// from region
 kern_return_t snd_reply_completed (
-	port_t		remote_port,	// who to send it to.
+	mach_port_t		remote_port,	// who to send it to.
 	int		data_tag);	// from region
 kern_return_t snd_reply_aborted (
-	port_t		remote_port,	// who to send it to.
+	mach_port_t		remote_port,	// who to send it to.
 	int		data_tag);	// from region
 kern_return_t snd_reply_paused (
-	port_t		remote_port,	// who to send it to.
+	mach_port_t		remote_port,	// who to send it to.
 	int		data_tag);	// from region
 kern_return_t snd_reply_resumed (
-	port_t		remote_port,	// who to send it to.
+	mach_port_t		remote_port,	// who to send it to.
 	int		data_tag);	// from region
 kern_return_t snd_reply_illegal_msg (
-	port_t		local_port,	// returned port of interest
-	port_t		remote_port,	// who to send it to.
-	int		msg_id,		// message id with illegal syntax	
+	mach_port_t		local_port,	// returned port of interest
+	mach_port_t		remote_port,	// who to send it to.
+	int		msgh_id,		// message id with illegal syntax	
 	int		error);		// error code
 kern_return_t snd_reply_dsp_err (
-	port_t		remote_port);	// who to send it to.
+	mach_port_t		remote_port);	// who to send it to.
 kern_return_t snd_reply_dsp_msg (
-	port_t		remote_port);	// who to send it to.
+	mach_port_t		remote_port);	// who to send it to.
 kern_return_t snd_reply_dsp_cmd_port(
-	port_t		cmd_port,	// port to return.
-	port_t		remote_port);	// where to return it
+	mach_port_t		cmd_port,	// port to return.
+	mach_port_t		remote_port);	// where to return it
 kern_return_t snd_reply_dsp_regs (
 	int		regs);		// DSP host I/F registers (not recieve)
 kern_return_t snd_reply_dsp_cond_true (	// reply indicating condition true

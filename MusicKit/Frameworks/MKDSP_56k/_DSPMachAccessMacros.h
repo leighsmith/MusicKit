@@ -92,8 +92,8 @@
 #define _DSP_FREE_DSPMSG_MSG(_msg) _DSP_free_simple_request_msg(_msg)
 
 #define _DSP_DSPRCV_MSG_RESET(_msg,_hmPort,_rcvPort) \
-	_msg->msg_size = sizeof(DSPDRIVERSimpleMessage); \
-	_msg->msg_local_port = _rcvPort
+	_msg->msgh_size = sizeof(DSPDRIVERSimpleMessage); \
+	_msg->msgh_local_port = _rcvPort
 
 #endif
 
@@ -140,8 +140,8 @@
 #define _DSP_FREE_DSPMSG_MSG(_msg) _DSP_free_simple_request_msg(_msg)
 
 #define _DSP_DSPRCV_MSG_RESET(_msg,_hmPort,_rcvPort) \
-	_msg->msg_size = sizeof(DSPDRIVERSimpleMessage); \
-	_msg->msg_local_port = _rcvPort
+	_msg->msgh_size = sizeof(DSPDRIVERSimpleMessage); \
+	_msg->msgh_local_port = _rcvPort
 
 #endif
 
@@ -188,7 +188,7 @@
 #define _DSP_FREE_DSPMSG_MSG(_msg) _DSP_free_simple_request_msg(_msg)
 
 #define _DSP_DSPRCV_MSG_RESET(_msg,_hmPort,_rcvPort) \
-        _msg->msg_size = sizeof(DSPDRIVERSimpleMessage); \
-        _msg->msg_local_port = _rcvPort
+        _msg->msgh_size = sizeof(DSPDRIVERSimpleMessage); \
+        _msg->msgh_local_port = _rcvPort
 
 #endif
