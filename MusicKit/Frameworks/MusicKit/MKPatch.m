@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2002/01/24 16:55:57  sbrandon
+  fixed nasty release bug in findFilenameForClassname
+
   Revision 1.4  2001/09/08 21:53:16  leighsmith
   Prefixed MK for UnitGenerators and SynthPatches
 
@@ -44,11 +47,15 @@ static NSString *findFilenameForClassname(NSString *className)
     /* Returns filename or nil if failure. Assumes name is non-NULL. */
 {
     NSString *filename;
-    
-    if (![[className pathExtension] isEqualToString: MK_PATCH_EXTENSION])
-        filename = [className stringByAppendingPathExtension: MK_PATCH_EXTENSION];
-    else
-        filename = [NSString stringWithString: className];
+    NSString *ext;
+    ext = [className pathExtension];
+    if ([ext length])  {
+        if (![ext isEqualToString: MK_PATCH_EXTENSION])
+            filename = [className stringByAppendingPathExtension: MK_PATCH_EXTENSION];
+        else
+            filename = [NSString stringWithString: className];
+    }
+    else filename = [NSString stringWithString: className];
 
     if (![filename isAbsolutePath]) {
         NSArray *libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
@@ -60,8 +67,6 @@ static NSString *findFilenameForClassname(NSString *className)
                                         stringByAppendingPathComponent: filename];
             if ([[NSFileManager defaultManager] isReadableFileAtPath: absolutePath]) 
                 return absolutePath;
-            else
-                [absolutePath release];
         }
         return nil;
     }
