@@ -1161,9 +1161,10 @@ control is divided between the class object and instances of
 
     <itemizedlist>
       <listitem><para>The <classname>MKConductor</classname> class
-itself represents an entire Music Kit performance.  The class methods
-perform global operations such as setting characteristics that apply
-to all <classname>MKConductor</classname> instances, and starting and
+itself represents an entire <productname>MusicKit</productname>
+performance.  The class methods perform global operations such as
+setting characteristics that apply to all
+<classname>MKConductor</classname> instances, and starting and
 stopping a performance.</para>
       </listitem>
 
