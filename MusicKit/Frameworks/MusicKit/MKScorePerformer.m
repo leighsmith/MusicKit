@@ -24,6 +24,9 @@
 /* Modification history:
 
    $Log$
+   Revision 1.4  2000/02/24 22:55:21  leigh
+   Clean up of comments, parameter typing
+
    Revision 1.3  1999/09/04 22:42:22  leigh
    extra doco from implementation ivar descriptions
 
@@ -62,11 +65,11 @@
 
 @implementation MKScorePerformer:NSObject
 
-+new
++scorePerformer
 {
-    self = [super allocWithZone:NSDefaultMallocZone()];
+    self = [MKScorePerformer allocWithZone:NSDefaultMallocZone()];
     [self init];
-    return self;
+    return [self autorelease];
 }
 
 -init
@@ -176,17 +179,17 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return self;
 }
 
--score
+- (MKScore *) score
   /* Returns score. */
 {
     return score;
 }
 
 -activate
-  /* If score is not set or Score contains no parts, returns nil. Otherwise, 
+  /* If score is not set or MKScore contains no parts, returns nil. Otherwise, 
      sends activateSelf, broadcasts activate message to contents, and 
      returns self and sets status to MK_active if any one of the
-     PartPerformers returns self.
+     MKPartPerformers returns self.
      */ 
 {
     unsigned n = [partPerformers count], i;
@@ -194,7 +197,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
       return nil;
     for (i = 0; i < n; i++)
         if ([(MKPerformer *)[partPerformers objectAtIndex:i] activate])
-            status= MK_active;
+            status = MK_active;
     if (status != MK_active)
       return nil;
     _deactivateMsgPtr = MKCancelMsgRequest(_deactivateMsgPtr);
@@ -208,10 +211,10 @@ static void unsetPartPerformers(MKScorePerformer *self)
 
 -activateSelf
   /* TYPE: Performing; Does nothing; subclass may override for special behavior.
-   * Invoked from the \fBactivate\fR method,
+   * Invoked from the activate method,
    * a subclass can implement
    * this method to perform pre-performance activities.
-   * If \fBactivateSelf\fR returns \fBnil\fR, the activation of the 
+   * If activateSelf returns nil, the activation of the 
    * PartPerformers is aborted.
    * The default does nothing and returns the receiver.
    */
@@ -219,21 +222,21 @@ static void unsetPartPerformers(MKScorePerformer *self)
     return self;
 }
 
--setScore:aScore
-  /* Snapshots the score over which we will sequence and creates 
-     PartPerformers for each Part in the Score in the same order as the
-     corresponding Parts. Note that any Parts added to 
+-setScore: (MKScore *) aScore
+  /* Snapshots the score over which we will sequence and creates
+     MKPartPerformers for each MKPart in the MKScore in the same order as the
+     corresponding MKParts. Note that any MKParts added to 
      aScore after -setScore: is sent will not appear in the performance. In
      order to get such Parts to appear, you must send setScore: again. 
-      If aScore is not the same as the previously specified score, 
-     frees all contained PartPerformers.  The PartPerformers are added
-     in the order the corresponding Parts appear in the Score. */
+     If aScore is not the same as the previously specified score,
+     frees all contained MKPartPerformers.  The MKPartPerformers are added
+     in the order the corresponding MKParts appear in the MKScore. */
 {
     if (aScore == score)
       return self;
     if (status != MK_inactive)
       return nil;
-    [self freePartPerformers];
+    [self freePartPerformers]; // also releases score
     score = [aScore retain];
     if (!score)
       return self;
@@ -329,7 +332,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
 
 -(double)firstTimeTag  
   /* TYPE: Accessing time
-   * Returns the value of the receiver's \fBfirstTimeTag\fR variable.
+   * Returns the value of the receiver's firstTimeTag variable.
    */
 {
     return firstTimeTag;
@@ -337,7 +340,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
 
 -(double)lastTimeTag 
   /* TYPE: Accessing time
-   * Returns the value of the receiver's \fBlastTimeTag\fR variable.
+   * Returns the value of the receiver's lastTimeTag variable.
    */
 {
     return lastTimeTag;
@@ -368,7 +371,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
 
 -(double)timeShift 
   /* TYPE: Accessing time
-   * Returns the value of the receiver's \fBtimeShift\fR variable.
+   * Returns the value of the receiver's timeShift variable.
    */
 {
 	return timeShift;
@@ -376,7 +379,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
 
 -(double)duration 
   /* TYPE: Accessing time
-   * Returns the value of the receiver's \fBduration\fR variable.
+   * Returns the value of the receiver's duration variable.
    */
 {
 	return duration;
@@ -486,13 +489,13 @@ static void unsetPartPerformers(MKScorePerformer *self)
    * Returns the receiver's status as one of the
    * following values:
    *
-   *  *   	\fBStatus\fR	\fBMeaning\fR
+   *  *   	Status	        Meaning
    *  *		MK_inactive	between performances
    *  *		MK_active	in performance
    *  * 	MK_paused	in performance but currently paused
    *
    * A performer's status is set as a side effect of 
-   * methods such as \fBactivate\fR and \fBpause\fR.
+   * methods such as activate and pause.
    */
 {
     return (int) status;

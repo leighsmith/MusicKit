@@ -1,10 +1,42 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    A MKScorePerformer performs a MKScore object by creating a group of
+    MKPartPerformers, one for each MKPart in the MKScore, and controlling the
+    group's performance.  MKScorePerformer itself isn't a MKPerformer but it
+    does define a number of methods, such as activate, pause, and resume,
+    that resemble MKPerformer methods.  When a MKScorePerformer receives such
+    a message, it simply forwards it to each of its MKPartPerformer objects,
+    which are true MKPerformers.
+   
+    MKScorePerformer also has a MKPerformer-like status; it can be active,
+    inactive, or paused.  The status of a MKScorePerformer is, in general,
+    the same as the status of all of its MKPartPerformers.  For instance,
+    when you send the activate message to a MKScorePerformer, its status
+    becomes MK_active as does the status of all its MKPartPerformers.
+    However, you can access and control a MKPartPerformer independent of the
+    MKScorePerformer that created it.  Thus, an individual MKPartPerformer's
+    status can be different from that of the MKScorePerformer.
+   
+    A MKScorePerformer's score is set and its MKPartPerformers are created
+    when it receives the setScore: message.  If you add MKParts to or remove
+    MKParts from the MKScore after sending the setScore: message, the changes
+    will not be seen by the MKScorePerformer.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
+Modification history:
   $Log$
+  Revision 1.4  2000/02/24 22:55:21  leigh
+  Clean up of comments, parameter typing
+
   Revision 1.3  1999/09/04 22:44:52  leigh
   extra doco from implementation ivar descriptions
 
@@ -18,48 +50,28 @@
 #import <Foundation/NSObject.h>
 #import "MKPerformer.h"
 
+@class MKScore;
+
 @interface MKScorePerformer : NSObject
-/* 
- * 
- * A ScorePerformer performs a Score object by creating a group of
- * PartPerformers, one for each Part in the Score, and controlling the
- * group's performance.  ScorePerformer itself isn't a Performer but it
- * does define a number of methods, such as activate, pause, and resume,
- * that resemble Performer methods.  When a ScorePerformer receives such
- * a message, it simply forwards it to each of its PartPerformer objects,
- * which are true Performers.
- * 
- * ScorePerformer also has a Performer-like status; it can be active,
- * inactive, or paused.  The status of a ScorePerformer is, in general,
- * the same as the status of all of its PartPerformers.  For instance,
- * when you send the activate message to a ScorePerformer, its status
- * becomes MK_active as does the status of all its PartPerformers.
- * However, you can access and control a PartPerformer independent of the
- * ScorePerformer that created it.  Thus, an individual PartPerformer's
- * status can be different from that of the ScorePerformer.
- * 
- * A ScorePerformer's score is set and its PartPerformers are created
- * when it receives the setScore: message.  If you add Parts to or remove
- * Parts from the Score after sending the setScore: message, the changes
- * will not be seen by the ScorePerformer.
- * 
- */ 
 {
     MKPerformerStatus status;       /* The object's status. */
     NSMutableArray *partPerformers; /* An array of the object's MKPartPerformer instances. */
-    id score;             /* The MKScore with which this object is associated. */     
-    double firstTimeTag;  /* The smallest timeTag value considered for
-                             performance, as last broadcast to the MKPartPerformers. */
+    MKScore *score;                 /* The MKScore with which this object is associated. */     
+    double firstTimeTag;            /* The smallest timeTag value considered for
+                                       performance, as last broadcast to the MKPartPerformers. */
     double lastTimeTag;   /* The greatest timeTag value considered for
                              performance, as last broadcast to the MKPartPerformers. */
     double timeShift;	  /* The Performance offset time for the object in beats, as last broadcast to the MKPartPerformers. */
     double duration;      /* The Maximum performance duration in beats, as last broadcast to the MKPartPerformers. */
-    id conductor; /* The object's MKConductor (its PartPerformers' MKConductor). last broadcast to MKPartPerformers.*/
-    id delegate;  /* The object's delegate. */
-    id partPerformerClass; /* The PartPerformer subclass used. */
+    MKConductor *conductor; /* The object's MKConductor (its MKPartPerformers' MKConductor) as last broadcast to MKPartPerformers.*/
+    id delegate;            /* The object's delegate. */
+    id partPerformerClass;  /* The PartPerformer subclass used. */
     /* The following is for internal use only */
     MKMsgStruct * _deactivateMsgPtr;
 }
+
++ (MKScorePerformer *) scorePerformer;
+   /* allocates, initialises and returns an autoreleased instance */
 
 - init; 
  /* 
@@ -82,7 +94,7 @@
   * receiver's Score to nil.  Returns the receiver.  
   */
 
-- setScore:aScore; 
+- setScore: (MKScore *) aScore;
  /* 
   * Sets the receiver's Score to aScore and creates a PartPerformer for
   * each of the Score's Parts.  Subsequent changes to aScore (by adding or
@@ -93,7 +105,7 @@
   * is ignored. Returns the receiver or nil if the score could not be set.
   */
 
-- score; 
+- (MKScore *) score; 
  /* Returns the object's Score. */
    
 - activate; 
@@ -143,7 +155,7 @@
   * nil.  
   */
 
-- setLastTimeTag:(double )aTimeTag; 
+- setLastTimeTag:(double) aTimeTag; 
  /* 
   * Sets the greatest timeTag value considered for performance by sending
   * setLastTimeTag:aTimeTag to each of the receiver's PartPerformers.
@@ -151,13 +163,13 @@
   * and returns nil.
   */
 
--(double ) firstTimeTag; 
+- (double) firstTimeTag; 
  /* Returns the smallest timeTag value considered for performance.*/
    
--(double ) lastTimeTag; 
+- (double) lastTimeTag; 
  /* Returns the greatest timeTag value considered for performance.*/
    
-- setTimeShift:(double )aTimeShift; 
+- setTimeShift:(double) aTimeShift; 
  /* 
   * Sets the performance time offset by sending setTimeShift:aTimeShift to
   * each of the receiver's PartPerformers.  The offset is measured in
@@ -165,7 +177,7 @@
   * nothing and returns nil.
   */
 
-- setDuration:(double )aDuration; 
+- setDuration:(double) aDuration; 
  /* 
   * Sets the maximum performance duration by sending setDuration:aDuration
   * to each of the receiver's PartPerformers.  The duration is measured in
@@ -173,13 +185,13 @@
   * nothing and returns nil.
   */
 
--(double ) timeShift;
+- (double) timeShift;
  /* Returns the receiver's performance time offset in beats. */
    
--(double ) duration; 
+- (double ) duration; 
  /* Returns the receiver's maximum performance duration in beats.*/
 
-- copyWithZone:(NSZone *)zone; 
+- copyWithZone:(NSZone *) zone;
  /* 
   * Creates and returns a new, inactive ScorePerformer that's a copy of
   * the receiver.  The new object is associated with the same Score as the
@@ -188,13 +200,13 @@
   * are created for the new object.
   */
 
--copy;
+- copy;
  /* Same as [self copyFromZone:[self zone]]; */
 
-- (void)dealloc; 
+- (void) dealloc; 
  /* Frees the receiver and its PartPerformers. */
    
-- setConductor:aConductor; 
+- setConductor: (MKConductor *) aConductor; 
  /* 
   * Sends the message setConductor:aConductor to each of the receiver's
   * PartPerformers. 
@@ -258,10 +270,6 @@
   /* 
      Sets conductor field to defaultConductor if it was nil. */
 
- /* Obsolete methods */
-+ new; 
-//- (void)initialize;
-   
 @end
 
 /* Describes the protocol that may be implemented by the delegate: */
