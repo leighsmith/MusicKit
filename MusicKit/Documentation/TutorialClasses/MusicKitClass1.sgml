@@ -241,6 +241,9 @@ or      [myInstance aMessageWithArg:arg otherArg:arg2];
       <TITLE>Example of MusicKit Inheritance</TITLE>
       <MEDIAOBJECT>
 	<IMAGEOBJECT>
+<!--	  <IMAGEDATA FILEREF="Images/MusicKitClass1-Inheritance.pdf" 
+		     FORMAT="pdf" SCALE=50>
+-->
 	  <IMAGEDATA FILEREF="Images/MusicKitClass1-Inheritance.eps" 
 		     FORMAT="eps" SCALE=50>
 	</IMAGEOBJECT>

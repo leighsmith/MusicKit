@@ -21,12 +21,12 @@
 	  </LISTITEM>
 	</VARLISTENTRY>
 	<VARLISTENTRY>
-	  <TERM> <ACRONYM>DSP</ACRONYM> Synthesis classes (4)	</TERM>
+	  <TERM><ACRONYM>DSP</ACRONYM> Synthesis classes (4)</TERM>
 	  <LISTITEM>
 	    <PARA><CLASSNAME>MKOrchestra</CLASSNAME>,
 	      <CLASSNAME>MKUnitGenerator</CLASSNAME>,
 	      <CLASSNAME>MKSynthPatch</CLASSNAME>,
-	      <CLASSNAME>MKSynthData</CLASSNAME> </PARA> 
+	      <CLASSNAME>MKSynthData</CLASSNAME></PARA> 
 	    <PARA>(also <CLASSNAME>MKSynthInstrument</CLASSNAME>)</PARA>
 	  </LISTITEM>
 	</VARLISTENTRY>
@@ -93,6 +93,9 @@
 	<MEDIAOBJECT>
 
 	  <IMAGEOBJECT>
+<!--	    <IMAGEDATA FILEREF="Images/MusicKitClass4-SynthInstrument.pdf"
+		       FORMAT="PDF" SCALE=50>
+-->
 	    <IMAGEDATA FILEREF="Images/MusicKitClass4-SynthInstrument.eps"
 		       FORMAT="EPS" SCALE=50>
 	  </IMAGEOBJECT>
@@ -603,7 +606,8 @@ MKSynthData *pp;
 MKUnitGenerator *osc,*out; 	
 
 + init
-{	MKOrchestra *orch = [MKOrchestra new];	
+{
+	MKOrchestra *orch = [MKOrchestra new];	
 	[MKUnitGenerator enableErrorChecking: YES];	
 	[orch open];	
 	pp = [orch allocPatchpoint: MK_xData];	
@@ -621,19 +625,22 @@ MKUnitGenerator *osc,*out;
 }
 
 + setFreqFrom: sender
-{	[MKConductor lockPerformance];	
+{
+	[MKConductor lockPerformance];	
 	[osc setFreq: [sender doubleValue]];	
 	[MKConductor unlockPerformance];
 }
 
 + setBearingFrom: sender
-{	[MKConductor lockPerformance];	
+{
+	[MKConductor lockPerformance];	
 	[out setBearing: [sender doubleValue]];	
 	[MKConductor unlockPerformance];
 }
 
 + setAmplitudeFrom: sender
-{	[MKConductor lockPerformance];	
+{
+	[MKConductor lockPerformance];	
 	[osc setAmp: [sender doubleValue]];	
 	[MKConductor unlockPerformance];
 }

@@ -293,6 +293,9 @@ id  sp = [orch allocSynthPatch: [Pluck class]];
 	<TITLE>	A Simple Synth Patch</TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
+<!--	    <IMAGEDATA FILEREF="Images/MusicKitClass5-SimpleSynthPatch.pdf" 
+		       FORMAT="PDF" SCALE=50>
+-->
 	    <IMAGEDATA FILEREF="Images/MusicKitClass5-SimpleSynthPatch.eps" 
 		       FORMAT="EPS" SCALE=50>
 	  </IMAGEOBJECT>
@@ -668,12 +671,15 @@ MKUpdateAsymp(
 	Value&rdquo;).</PARA>
 
       <PARA>Phrase status is obtained by sending [<emphasis role="bold">self
-	  phraseStatus</emphasis> ]; </PARA>
+	  phraseStatus</emphasis>];</PARA>
 
       <FIGURE ID="FIGURE5-2-NOTETYPES">
 	<TITLE>noteTypes Time Line</TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
+<!--	    <IMAGEDATA FILEREF="Images/MusicKitClass5-noteTypes.pdf" 
+		       FORMAT="PDF" SCALE=50>
+-->
 	    <IMAGEDATA FILEREF="Images/MusicKitClass5-noteTypes.eps" 
 		       FORMAT="EPS" SCALE=50>
 	  </IMAGEOBJECT>
@@ -728,8 +734,8 @@ MKUpdateAsymp(
 	</TGROUP>
       </TABLE>
       <PARA>Preemption occurs when there is not enough <ACRONYM>DSP</ACRONYM>
-	resources to support the requested number of simultaneous notes.  It
-	is controlled by the <CLASSNAME>MKSynthInstrument</CLASSNAME>.  The
+	resources to support the requested number of simultaneous notes. It
+	is controlled by the <CLASSNAME>MKSynthInstrument</CLASSNAME>. The
 	<CLASSNAME>MKSynthPatch</CLASSNAME> designer need only implement a
 	method:
       </PARA>
@@ -738,7 +744,8 @@ MKUpdateAsymp(
       </PROGRAMLISTING>
       <PARA>A typical implementation aborts any running envelopes. Example:</PARA>
       <PROGRAMLISTING>
-+ preemptFor: newNote  {	
++ preemptFor: newNote  
+{	
 	[ampEnvelopeAsymp preemptEnvelope];	
 	return self;
 }
@@ -755,7 +762,7 @@ MKUpdateAsymp(
 	<CLASSNAME>MKWaveTable</CLASSNAME>, and test it.
       </PARA>
       <PARA>Modify any one of the example synthpatches on that directory to do
-	some other sort of synthesis, such as amplitude modulation.</para>
+	some other sort of synthesis, such as amplitude modulation.</PARA>
     </SECT1>
 </CHAPTER>
 

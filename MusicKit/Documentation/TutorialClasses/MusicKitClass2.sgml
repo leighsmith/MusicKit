@@ -14,7 +14,7 @@
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA>Performance classes (16)	</PARA>
+	  <PARA>Performance classes (16)</PARA>
 	  <PARA>
 	    <CLASSNAME>MKConductor</CLASSNAME>, 
 	    <CLASSNAME>MKPerformer</CLASSNAME>, 
@@ -22,7 +22,7 @@
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA><ACRONYM>DSP</ACRONYM> Synthesis classes (4) </PARA>
+	  <PARA><ACRONYM>DSP</ACRONYM> Synthesis classes (4)</PARA>
 	  <PARA><CLASSNAME>MKOrchestra</CLASSNAME>,
 	    <CLASSNAME>MKUnitGenerator</CLASSNAME>,
 	    <CLASSNAME>MKSynthPatch</CLASSNAME>,
@@ -396,6 +396,9 @@ env = [MKEnvelope new];              /* or alloc/init in 2.0 */
 	<TITLE>EnvelopeEd</TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
+<!--	    <IMAGEDATA FILEREF="Images/MusicKitClass2-EnvelopeEd.pdf"
+		       FORMAT="pdf" SCALE=50>
+-->
 	    <IMAGEDATA FILEREF="Images/MusicKitClass2-EnvelopeEd.eps"
 		       FORMAT="eps" SCALE=50>
 	  </IMAGEOBJECT>
@@ -410,6 +413,9 @@ env = [MKEnvelope new];              /* or alloc/init in 2.0 */
 	<TITLE>Wave Form Display</TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
+<!--	    <IMAGEDATA FILEREF="Images/MusicKitClass2-Wave_Form_Display.pdf"
+		       FORMAT="pdf" SCALE=50>
+-->
 	    <IMAGEDATA FILEREF="Images/MusicKitClass2-Wave_Form_Display.eps"
 		       FORMAT="eps" SCALE=50>
 	  </IMAGEOBJECT>

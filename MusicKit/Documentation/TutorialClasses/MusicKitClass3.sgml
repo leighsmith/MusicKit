@@ -6,13 +6,13 @@
       <TITLE>Review: Classes in the <PRODUCTNAME>MusicKit</PRODUCTNAME></TITLE>
       <VARIABLELIST>
 	<VARLISTENTRY>
-	  <TERM> Representation classes (7) </TERM>
+	  <TERM>Representation classes (7)</TERM>
 	  <LISTITEM>
 	    <PARA><CLASSNAME>MKNote</CLASSNAME>, <CLASSNAME>MKPart</CLASSNAME>,
 	      <CLASSNAME>MKScore</CLASSNAME>, etc.</PARA> </LISTITEM>
 	</VARLISTENTRY>
 	<VARLISTENTRY>
-	  <TERM> Performance classes (16) </TERM>
+	  <TERM>Performance classes (16)</TERM>
 	  <LISTITEM>
 	    <PARA><CLASSNAME>MKConductor</CLASSNAME>,
 	      <CLASSNAME>MKPerformer</CLASSNAME>,
@@ -20,7 +20,7 @@
 	  </LISTITEM>
 	</VARLISTENTRY>
 	<VARLISTENTRY>
-	  <TERM> <ACRONYM>DSP</ACRONYM> Synthesis classes (4) </TERM>
+	  <TERM><ACRONYM>DSP</ACRONYM> Synthesis classes (4)</TERM>
 	  <LISTITEM>
 	    <PARA><CLASSNAME>MKOrchestra</CLASSNAME>,
 	      <CLASSNAME>MKUnitGenerator</CLASSNAME>,
@@ -58,8 +58,11 @@
 	<TITLE> A <PRODUCTNAME>MusicKit</PRODUCTNAME> Performance</TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
+<!--	    <IMAGEDATA FILEREF="Images/MusicKitClass3-performance.pdf"
+		       FORMAT="pdf" SCALE=50>
+-->
 	    <IMAGEDATA FILEREF="Images/MusicKitClass3-performance.eps"
-		       FORMAT="EPS" SCALE=50>
+		       FORMAT="eps" SCALE=50>
 	  </IMAGEOBJECT>
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/MusicKitClass3-performance.gif" FORMAT="GIF">
