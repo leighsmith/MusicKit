@@ -47,6 +47,9 @@ static SndStreamManager *sm = nil;
     [streamClientsLock retain];
     [streamClients retain]; 
     active = FALSE;
+
+    SNDStreamNativeFormat(&format);
+
     return self;
 }
 
@@ -103,8 +106,6 @@ static SndStreamManager *sm = nil;
 
     // Get the native hardware stream format....
     
-    SNDStreamNativeFormat(&format);
-
     active = SNDStreamStart(processAudio, (void*) self);
     
     return active;
@@ -150,18 +151,20 @@ static SndStreamManager *sm = nil;
     clientPresent = [streamClients containsObject: client];
     [streamClientsLock unlock];
 
-    if (c == 0) // There are no clients - better start the stream...
-        [self startStreaming];
-
-    if (!clientPresent && active) {
+    if (!clientPresent) {
         SndAudioBuffer *buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
 
-        [client welcomeClientWithBuffer: buff manager: self];
 
         [streamClientsLock lock];
         [streamClients addObject: client];
         [streamClientsLock unlock];
+
+        if (c == 0) // There were no clients - better start the stream...
+            [self startStreaming];
+            
+        [client welcomeClientWithBuffer: buff manager: self];
     }
+    
     
     return (clientPresent && active);
 }

@@ -137,7 +137,6 @@
         end = format.dataSize / sizeof(float);
 
     l = end - start;
-
     
     if ([self dataFormat] == SND_FORMAT_FLOAT) {
 
@@ -153,6 +152,8 @@
                 
                 float *in  = (float*) [buff data];
                 float *out = (float*) data;
+
+//                NSLog(@"Mixing client output buffer with main output buff, (%f)",in[100]);
 
                 if (selfNumChannels == buffNumChannels) {
                     for (i = 0; i < l; i++) {
