@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.25  2004/09/18 19:32:30  leighsmith
+  Removed win32 specific rand() use since random() is now available on win32/MinGW
+
   Revision 1.24  2003/08/04 21:14:33  leighsmith
   Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
 
@@ -183,7 +186,7 @@ Modification history:
 
 static jmp_buf begin;       /* For long jump. */ // LMS this is broken and causes bus errors. It should be replaced with NSNotification
 
-/* Lexical analysis. ---------------------------------------------------- */
+/* Lexical analysis. ---------------------------------------------------- */
 
 /* This module does lexical analysis for scorefile reading. */
 
@@ -380,7 +383,7 @@ static short
         return INT(_MK_undef);
     }                    
     switch (c) {
-      case '':
+      case '\f':        /* check for a ^L form-feed. */
         parsePtr->_pageNo++;
         return lexan();
       case '"':
@@ -553,7 +556,7 @@ static void matchSemicolon(void)
 }
 
 
-/* Recursive descent expression parsing. ------------------------------ */
+/* Recursive descent expression parsing. ------------------------------ */
 
 /* Variables I store as _ScorefileVar objects. 
    Intermediate values are handled as unions with associated types. There
@@ -693,29 +696,29 @@ rvalue(_MKParameterUnion **valAddr,short type)
     return resultType;
 }
 
-/* Expression parsing: Special functions. */
+/* Expression parsing: Special functions. */
 
 static double ran(void)
 {
-#if WIN32
-    return ((double) rand()) / RAND_MAX;
-#else
+  //#if WIN32
+  //return ((double) rand()) / RAND_MAX;
+  //#else
     /* Returns a random number between 0 and 1. */
 #   define   RANDOMMAX (double)((long)MAXINT)
     setstate(scoreRPtr->_ranState);
     return ((double)random()) / RANDOMMAX;
-#endif
+    //#endif
 }
 
 #define STATESIZEINBYTES 256
 
 static void _setRanSeed(unsigned seed)
 {
-#if WIN32
-    srand(seed);
-#else
+  //#if WIN32
+  //  srand(seed);
+  //#else
     initstate(seed,scoreRPtr->_ranState,STATESIZEINBYTES);
-#endif
+    //#endif
 }
 
 static char *defaultStateArr = NULL;
@@ -724,14 +727,14 @@ static char *defaultStateArr = NULL;
 static char *initRan(void)
 {
     char *stateArr;
-#ifndef WIN32
+    //#ifndef WIN32
     if (!defaultStateArr) {
       _MK_MALLOC(defaultStateArr,char,STATESIZEINBYTES);
       initstate(1,defaultStateArr,STATESIZEINBYTES);
     }
     _MK_MALLOC(stateArr,char,STATESIZEINBYTES);
     initstate(1,stateArr,STATESIZEINBYTES);
-#endif
+    //#endif
     return stateArr;
 }
 
@@ -752,7 +755,7 @@ static void ranSeed(void)
     _setRanSeed((unsigned) seconds);
 }
 
-/* Expression parsing: Envelopes and other data objects */
+/* Expression parsing: Envelopes and other data objects */
 
 enum restrictions {noRestriction,noWaveTab,noRecursiveDefines};
 static enum restrictions restriction;
@@ -1042,7 +1045,7 @@ static void namedDataDecl(_MKToken type)
                                                 back on stack. */
 }
 
-/* Expression parsing: Evaluation. */
+/* Expression parsing: Evaluation. */
 
 static void
   unaryEval(_MKParameterUnion * val,short type,short *resultTypeAddr,
@@ -1497,7 +1500,7 @@ eval(_MKParameterUnion *val1,_MKParameterUnion *val2,short type1,short type2,
     }
 }
 
-/* Expression parsing: Emit. */
+/* Expression parsing: Emit. */
 
 static void
 emitVar(short t,_MKParameterUnion * tokenVal)
@@ -1563,7 +1566,7 @@ emit(short t)
     }
 }
 
-/* Expression parsing: Syntax. */
+/* Expression parsing: Syntax. */
 
 static void
 factor(void) 
@@ -1799,7 +1802,7 @@ assign(void)
     }
 }
 
-/* Expression parsing: Interface to statement and declaration level. */
+/* Expression parsing: Interface to statement and declaration level. */
 
 
 #define EMPTYSTACK()      pTypePtr = typeStack-1; pValPtr = parvalStack-1
@@ -1885,7 +1888,7 @@ getBOOL(void)
 }
 
 
-/* Error handling. ------------------------------------------------------ */
+/* Error handling. ------------------------------------------------------ */
 
 #define BINARY(_p) scoreRPtr->_binary
 
@@ -2046,7 +2049,7 @@ error(MKErrno errCode,...)
     longjmp(begin,errorLongjmp);
 }
 
-/* Saving and restoring state. ---------------------------------------- */
+/* Saving and restoring state. ---------------------------------------- */
 
 static void loadFromStruct(register _MKScoreInStruct * scoreP)
 {
@@ -2206,16 +2209,16 @@ _MKScoreInStruct * _MKFinishScoreIn(_MKScoreInStruct *scorefileRPtr)
     if (scoreRPtr->_freeStream) {
         [scoreRPtr->printStream release];
     }
-#ifndef WIN32
+    //#ifndef WIN32
     setstate(defaultStateArr); /* Make libc forget our ranState */
     free(scoreRPtr->_ranState);  /* 1/13/96 DAJ */
     scoreRPtr->_ranState = NULL;
-#endif
+    //#endif
     free(scoreRPtr); scoreRPtr = NULL;
     return NULL;
 }
 
-/* Binary scorefile primitives. ------------------------------------ */
+/* Binary scorefile primitives. ------------------------------------ */
 
 #define abortBinary() longjmp(begin,eofLongjmp)
 
@@ -2771,7 +2774,7 @@ static void getBinaryParameters(id aNote, BOOL inHeader)
 }
 
 
-/* Declaration processing. ------------------------------------------- */
+/* Declaration processing. ------------------------------------------- */
 
 static void snarfCommas(void) 
 {
@@ -2836,7 +2839,7 @@ binaryPartDecl(BOOL inHeader)
     return;
 }
 
-/* Globals */
+/* Globals */
 
 /* See /ds/david/doc/globals.doc */
 
@@ -2948,8 +2951,6 @@ static void getGlobal()
     } while (match(','));
 }
 
-
-
 static void
 varDecl(void)
 {
@@ -3030,7 +3031,6 @@ tune(void)
     }
 }
 
-
 /* Control structure --------------------------------------------------- */
 
 enum {thenClause, elseClause, repeatClause, whileClause, doClause }; 
@@ -3291,7 +3291,6 @@ static void
 }
 
 
-
 
 static void
 comment(void)
@@ -3947,7 +3946,7 @@ BOOL _MKParseScoreHeaderStmt(_MKScoreInStruct *scorefileRPtr)
     return scoreRPtr->isInBody;
 }
 
-/* Statement processing. -------------------------------------------- */
+/* Statement processing. -------------------------------------------- */
 
 
 static double
@@ -4292,7 +4291,7 @@ _MKParseScoreNote(_MKScoreInStruct * scorefileRPtr)
     else return parseScoreNote();
 }
 
-/* File-finding stuff */
+/* File-finding stuff */
 #if 0    
 /* Don't include this stuff until it's fixed */
 
