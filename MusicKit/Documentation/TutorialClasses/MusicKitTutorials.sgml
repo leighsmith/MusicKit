@@ -1,0 +1,12 @@
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+<!ENTITY class1 SYSTEM "MusicKitClass1.sgml">
+]>
+
+<book id="MusicKitTutorials">
+  <bookinfo>
+    <title><productname>MusicKit</productname> Tutorials</title>
+  </bookinfo>
+
+&class1;
+
+</book>
