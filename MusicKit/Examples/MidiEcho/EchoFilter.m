@@ -10,75 +10,74 @@
 #define NUMCHANS 8  /* My MIDI Synthesizer handles 8 channels. */
   
 @implementation EchoFilter : MKNoteFilter
-  /* A simple note filter that does MIDI echo */
+
+/* Called automatically when an instance is created. */
+- init
 {
-    double delay;		    /* delay between echos, in seconds */
+    self = [super init];
+    if(self != nil) {
+	int i;
+
+	delay = .1;
+	for (i = 0; i <= NUMCHANS; i++)  /* 1 for each channel plus 'sys' messages */ 
+	    [self addNoteSender: [[MKNoteSender alloc] init]];
+	[self addNoteReceiver: [[MKNoteReceiver alloc] init]];
+    }
+    return self;	
 }
 
--init
-  /* Called automatically when an instance is created. */
-{    int i;
-     
-     [super init]; 
-     delay = .1;
-     for (i=0;i<=NUMCHANS;i++)  /* 1 for each channel plus 'sys' messages */ 
-	 [self addNoteSender:[[MKNoteSender alloc] init]];
-     [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
-     return self;
- }
-
-- (void)setDelay:(double)delayArg
-  /* change the amount of delay (in seconds) between echoes */
+/* change the amount of delay (in seconds) between echoes */
+- (void) setDelay: (double) delayArg
 {
     delay = delayArg; 
 }
 
-- (void)connectAcross:anInstOrNoteFilter    
-  /* Just connects successive NoteSenders of the receivers to successive
-     NoteReceivers of anInstOrNoteFilter. */
+/* Just connects successive MKNoteSenders of the receivers to successive MKNoteReceivers of anInstOrNoteFilter. */
+- (void) connectAcross: anInstOrNoteFilter    
 {
-    NSArray *pList = [self noteSenders];
-    NSArray *iList = [anInstOrNoteFilter noteReceivers];
-    int i,siz;
-    int pSiz = [pList count];
-    int iSiz = [iList count];
+    NSArray *noteSendersList = [self noteSenders];
+    NSArray *noteReceiversList = [anInstOrNoteFilter noteReceivers];
+    int i, siz;
+    int pSiz = [noteSendersList count];
+    int iSiz = [noteReceiversList count];
+    
     siz = (pSiz > iSiz) ? iSiz : pSiz; /* Take min length */
-    for (i = 0; i<siz; i++)            /* Connect them up */
-      [[pList objectAtIndex:i] connect:[iList objectAtIndex:i]];
+    for (i = 0; i < siz; i++) {        /* Connect them up */
+	MKNoteSender *noteSender = [noteSendersList objectAtIndex: i];
+	MKNoteReceiver *noteReceiver = [noteReceiversList objectAtIndex: i];
+	[noteSender connect: noteReceiver];
+    } 
 }
 
-//#define NOTESENDER(_i) NX_ADDRESS(noteSenders)[_i] /* For quick array access */
-#define NOTESENDER(_i) [[self noteSenders] objectAtIndex:_i]  // for usable array access LMS
-
-- (void)realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
-  /* Here's where the work is done. */
+/* Here's where the work is done. */
+- (void) realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
 {
     /* This relies on the knowledge that the Midi object sorts its incoming 
-       notes by channel as well as by noteTag. Thus, duplicating a note with
-       a particular noteTag on several channels works ok. In general, this 
-       NoteFilter assumes each output (NoteSender) is assigned a unique
-       connection (NoteReceiver). */
-       
+    notes by channel as well as by noteTag. Thus, duplicating a note with
+    a particular noteTag on several channels works ok. In general, this 
+    MKNoteFilter assumes each output (MKNoteSender) is assigned a unique
+    connection (MKNoteReceiver). */
+    
     int i;
     double curDly;
     int velocity,noteType;
     MKNote *newNote;
-
+    
     noteType = [aNote noteType];
     if (noteType == MK_mute) {
-	[NOTESENDER(0) sendNote:aNote];          /* Just forward these */
+	[[[self noteSenders] objectAtIndex: 0] sendNote: aNote];          /* Just forward these */
 	return;
     }
     curDly = 0;
-    [NOTESENDER(1) sendNote:aNote];              /* Send current note */
-    velocity = [aNote parAsInt:MK_velocity];     /* Grab velocity */
-    for (i=2;i<=NUMCHANS;i++) {                  /* Make echoes */
+    [[[self noteSenders] objectAtIndex: 1] sendNote: aNote];              /* Send current note */
+    velocity = [aNote parAsInt: MK_velocity];     /* Grab velocity */
+    for (i = 2; i <= NUMCHANS; i++) {                  /* Make echoes */
 	curDly += delay;                         
 	newNote = [aNote copy];                  /* Need to copy notes here */
 	if (noteType == MK_noteOn)               /* Decrement echo velocity */
-	  [newNote setPar:MK_velocity toInt:velocity -= 15];
-	                                         /* Schedule it for later */
-	[NOTESENDER(i) sendAndFreeNote:newNote withDelay:curDly];
+	    [newNote setPar: MK_velocity toInt: velocity -= 15];
+	/* Schedule it for later */
+	[[[self noteSenders] objectAtIndex: i] sendAndFreeNote: newNote withDelay: curDly];
     } 
 }
 

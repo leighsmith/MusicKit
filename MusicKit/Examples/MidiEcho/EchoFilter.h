@@ -1,12 +1,17 @@
 #import <MusicKit/MusicKit.h>
 
+/*!
+  @class EchoFilter
+  @description A simple note filter that does MIDI echo
+ */
 @interface EchoFilter : MKNoteFilter
-  /* A simple note filter that does MIDI echo */
 {    
     double delay;		    /* delay between echos, in seconds */
 }
--init;
-- (void)setDelay:(double)delayArg;
-- (void)connectAcross:anInstOrNoteFilter;
-- (void)realizeNote:aNote fromNoteReceiver:aNoteReceiver;
+
+- init;
+- (void) setDelay: (double) delayArg;
+- (void) connectAcross: anInstOrNoteFilter;
+- (void) realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
+
 @end
