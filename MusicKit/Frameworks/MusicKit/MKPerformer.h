@@ -77,6 +77,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2001/07/10 17:07:07  leighsmith
+  Prefixed class names in doco
+
   Revision 1.6  2000/11/25 22:58:02  leigh
   Enforced ivar privacy
 
@@ -138,41 +141,41 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 -(BOOL ) isNoteSenderPresent:aNoteSender; 
  /* 
   * Returns YES if aNoteSender is a member of the receiver's MKNoteSender
-  * List.  */
+  * Array.  */
 
 -disconnectNoteSenders;
  /* 
-  * Sends disconnect to each of the receiver's NoteSenders. 
+  * Sends disconnect to each of the receiver's MKNoteSenders. 
   */
 
 - releaseNoteSenders; 
  /* 
-  * Disconnects and frees the receiver's NoteSenders.
+  * Disconnects and frees the receiver's MKNoteSenders.
   * Returns the receiver.
   */
 
 - removeNoteSenders; 
  /* 
-  * Removes the receiver's NoteSenders (but doesn't free them).
+  * Removes the receiver's MKNoteSenders (but doesn't free them).
   * Returns the receiver.
   */
 
 - noteSender; 
  /* 
-  * Returns the first MKNoteSender in the receiver's List.  This is a convenience
-  * method provided for Performers that create and add a single MKNoteSender.
+  * Returns the first MKNoteSender in the receiver's Array.  This is a convenience
+  * method provided for MKPerformers that create and add a single MKNoteSender.
   */
 
 - removeNoteSender:aNoteSender; 
  /* 
   * Removes aNoteSender from the receiver.  The receiver must be inactive.
   * If the receiver is currently in performance, or if aNoteSender wasn't
-  * part of its MKNoteSender List, returns nil.  Otherwise returns the
+  * part of its MKNoteSender Array, returns nil.  Otherwise returns the
   * receiver.  */
 
 - addNoteSender:aNoteSender; 
  /* 
-  * Adds aNoteSender to the recevier.  The receiver must be inactive.  If
+  * Adds aNoteSender to the receiver.  The receiver must be inactive.  If
   * the receiver is currently in performance, or if aNoteSender already
   * belongs to the receiver, returns nil.  Otherwise returns the receiver.
   */
@@ -198,7 +201,7 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 
 - perform; 
  /* 
-  * This is a subclass responsibility expected to send a Note and then set the
+  * This is a subclass responsibility expected to send a MKNote and then set the
   * value of nextPerform.  The return value is ignored.  
   */
 
@@ -275,10 +278,10 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 
 - copyWithZone:(NSZone *)zone; ;
  /* 
-  * Creates and returns a new, inactive Performer as a copy of the
+  * Creates and returns a new, inactive MKPerformer as a copy of the
   * receiver.  The new object has the same time shift and duration as the
   * reciever.  Its time and nextPerform variables are set to 0.0.  The new
-  * object's NoteSenders are copied from the receiver.  
+  * object's MKNoteSenders are copied from the receiver.  
   * Note that you shouldn't send init to the new object. */
 
 - copy; 
@@ -288,7 +291,7 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
 
 - (void)dealloc; 
  /* 
-  * Frees the receiver and its NoteSenders. The receiver must be inactive.
+  * Frees the receiver and its MKNoteSenders. The receiver must be inactive.
   * Does nothing and returns nil if the receiver is currently in
   * performance.  */
 
