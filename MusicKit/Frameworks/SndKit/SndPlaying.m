@@ -310,4 +310,99 @@
     return [[audioProcessorChain retain] autorelease];
 }
 
+- (void) adjustLoopStart: (long *) newLoopStart 
+		     end: (long *) newLoopEnd
+	   afterRemoving: (long) sampleCountRemoved
+	      startingAt: (long) startSample
+{
+    // NSLog(@"*newLoopStart %ld, *newLoopEnd %ld\n", *newLoopStart, *newLoopEnd);
+    if(*newLoopEnd < startSample + sampleCountRemoved)
+	*newLoopEnd = MIN(*newLoopEnd, [self lengthInSampleFrames]);
+    else {
+	*newLoopEnd -= sampleCountRemoved;
+	if(*newLoopEnd < 0)
+	    *newLoopEnd = 0;
+    }
+    if(*newLoopStart < startSample + sampleCountRemoved)
+	// TODO Perhaps just leave it rather than moving it to startSample?
+	*newLoopStart = MIN(*newLoopStart, startSample); 
+    else {
+	*newLoopStart -= sampleCountRemoved;
+	if(*newLoopStart < 0)
+	    *newLoopStart = 0;	    
+    }
+    // NSLog(@"after deleting *newLoopStart %ld, *newLoopEnd %ld\n", *newLoopStart, *newLoopEnd);    
+}
+
+- (void) adjustLoopStart: (long *) newLoopStart 
+		     end: (long *) newLoopEnd
+	     afterAdding: (long) sampleCountAdded
+	      startingAt: (long) startSample
+{
+    long soundLength = [self lengthInSampleFrames];
+    
+    NSLog(@"adding %ld to *newLoopStart %ld, *newLoopEnd %ld \n", sampleCountAdded, *newLoopStart, *newLoopEnd);
+    if(*newLoopEnd < startSample)
+	*newLoopEnd = MIN(*newLoopEnd, soundLength);
+    else {
+	*newLoopEnd += sampleCountAdded;
+	if(*newLoopEnd > soundLength)
+	    *newLoopEnd = soundLength;
+    }
+    if(*newLoopStart >= startSample) {
+	*newLoopStart += sampleCountAdded;
+	if(*newLoopStart > soundLength)
+	    *newLoopStart = soundLength;	    
+    }
+    NSLog(@"after adding *newLoopStart %ld, *newLoopEnd %ld, soundLength %ld\n", *newLoopStart, *newLoopEnd, soundLength);    
+}
+
+- (void) adjustLoopsAfterAdding: (BOOL) adding 
+			 frames: (long) sampleCount
+		     startingAt: (long) startSample
+{
+    int performanceIndex;
+    
+    // Update loop end index and in all performances.
+    if(adding) {
+	[self adjustLoopStart: &loopStartIndex
+			  end: &loopEndIndex
+		  afterAdding: sampleCount
+		   startingAt: startSample];	
+    }
+    else {
+	[self adjustLoopStart: &loopStartIndex
+			  end: &loopEndIndex
+		afterRemoving: sampleCount
+		   startingAt: startSample];
+    }
+    for(performanceIndex = 0; performanceIndex < [performancesArray count]; performanceIndex++) {
+	SndPerformance *performance = [performancesArray objectAtIndex: performanceIndex];
+	long performanceStartLoopIndex;
+	long performanceEndLoopIndex;
+	
+	[performancesArrayLock lock]; // TODO check this is right.
+	performanceStartLoopIndex = [performance loopStartIndex];
+	performanceEndLoopIndex = [performance loopEndIndex];
+	if(adding) {
+	    [self adjustLoopStart: &performanceStartLoopIndex
+			      end: &performanceEndLoopIndex
+		      afterAdding: sampleCount
+		       startingAt: startSample];
+	    [performance setEndAtIndex: [performance endAtIndex] + sampleCount];
+	    NSLog(@"performanceEndLoopIndex %ld endIndex %ld\n", performanceEndLoopIndex, [performance endAtIndex]);
+	}
+	else {
+	    [self adjustLoopStart: &performanceStartLoopIndex
+			      end: &performanceEndLoopIndex
+		    afterRemoving: sampleCount
+		       startingAt: startSample];
+	    [performance setEndAtIndex: [performance endAtIndex] - sampleCount];
+	}
+	[performance setLoopStartIndex: performanceStartLoopIndex];
+	[performance setLoopEndIndex: performanceEndLoopIndex];
+	[performancesArrayLock unlock];
+    }
+}
+
 @end
