@@ -33,7 +33,9 @@ typedef enum _DSPSectionType {DSP_Global=0,DSP_System,DSP_User,
 
 /* strings from DSPGlobals.c */
 extern const char * const DSPSectionNames[]; /* "GLOBAL", "SYSTEM", "USER" */
-extern const char * const DSPMemoryNames[];  /* Memory spaces (N,X,Y,L,P) */
+// Now a function LMS
+//extern const char * const DSPMemoryNames[];  /* Memory spaces (N,X,Y,L,P) */
+const char *DSPMemoryNames(int memSpaceNo);  /* Memory spaces (N,X,Y,L,P) */
 extern const char * const DSPLCNames[];	/* Location counters (N,XL,X,XH,...) */
 extern int   DSPLCtoMS[];	/* DSP memory code given LC number */
 
