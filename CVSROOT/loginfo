@@ -28,10 +28,10 @@
 #
 # Changes to CVSROOT go to the Admins
 #
-CVSROOT (echo ""; id; echo %{sv}; date; cat) | mail -s "updates to MusicKit CVSROOT" leigh@tomandandy.com
+CVSROOT (echo ""; id; echo %{sv}; date; cat) | mail -s "updates to MusicKit CVSROOT" leighsmith@users.sourceforge.net
 
 # The syncmail way of doing things.
-#CVSROOT $CVSROOT/CVSROOT/syncmail %{sv} leigh@tomandandy.com 
+#CVSROOT $CVSROOT/CVSROOT/syncmail %{sv} leighsmith@users.sourceforge.net
 
 #
 # Changes to MusicKit or SndKit are mailled to the musickit-developers list
