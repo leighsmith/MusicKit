@@ -555,7 +555,10 @@
 				11E07F30FFA3719CCFED3B93,
 			);
 			buildSettings = {
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Local/Library/Frameworks";
+				GCC_VERSION = 3.x;
 				INSTALL_PATH = "$(LOCAL_APPLICATIONS_DIR)";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
