@@ -5,8 +5,8 @@
         English_INTERFACES = (HosePlayer.nib); 
         FRAMEWORKS = (
             AppKit.framework, 
-            dsp.framework, 
             Foundation.framework, 
+            MKDSP.framework, 
             MKPerformSndMIDI.framework, 
             MusicKit.framework
         ); 
