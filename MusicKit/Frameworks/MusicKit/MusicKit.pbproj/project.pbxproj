@@ -15,13 +15,13 @@
 		};
 		00D5A007FED5ABC1CFED3B93 = {
 			children = (
-				00D5A008FED5ABC1CFED3B93,
 				00D5A00AFED5ABC1CFED3B93,
 				00D5A042FED5ABC1CFED3B93,
 				00D5A0A1FED5ABC1CFED3B93,
 				00D5A0A4FED5ABC1CFED3B93,
 				00D5A0A6FED5ABC1CFED3B93,
 				00D5A0BEFED5ABC1CFED3B93,
+				00D5A008FED5ABC1CFED3B93,
 			);
 			isa = PBXGroup;
 			name = MusicKit;
@@ -33,6 +33,7 @@
 			);
 			isa = PBXGroup;
 			name = Products;
+			path = "";
 			refType = 4;
 		};
 		00D5A00AFED5ABC1CFED3B93 = {
@@ -463,6 +464,7 @@
 				00D5A093FED5ABC1CFED3B93,
 				00D5A094FED5ABC1CFED3B93,
 				00D5A095FED5ABC1CFED3B93,
+				0142566AFFBF5179CFED3B96,
 				00D5A096FED5ABC1CFED3B93,
 				00D5A097FED5ABC1CFED3B93,
 				00D5A098FED5ABC1CFED3B93,
@@ -983,14 +985,8 @@
 		};
 		00D5A0A6FED5ABC1CFED3B93 = {
 			children = (
-				00D5A0A7FED5ABC1CFED3B93,
-				00D5A0A8FED5ABC1CFED3B93,
-				00D5A0A9FED5ABC1CFED3B93,
 				00D5A0AAFED5ABC1CFED3B93,
 				00D5A0ABFED5ABC1CFED3B93,
-				00D5A0ACFED5ABC1CFED3B93,
-				00D5A0ADFED5ABC1CFED3B93,
-				00D5A0AEFED5ABC1CFED3B93,
 				00D5A0AFFED5ABC1CFED3B93,
 				00D5A0B0FED5ABC1CFED3B93,
 				00D5A0B1FED5ABC1CFED3B93,
@@ -1001,7 +997,6 @@
 				00D5A0B6FED5ABC1CFED3B93,
 				00D5A0B7FED5ABC1CFED3B93,
 				00D5A0B8FED5ABC1CFED3B93,
-				00D5A0B9FED5ABC1CFED3B93,
 				00D5A0BAFED5ABC1CFED3B93,
 				00D5A0BBFED5ABC1CFED3B93,
 				00D5A0BCFED5ABC1CFED3B93,
@@ -1009,21 +1004,6 @@
 			);
 			isa = PBXGroup;
 			name = "Supporting Files";
-			refType = 4;
-		};
-		00D5A0A7FED5ABC1CFED3B93 = {
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		00D5A0A8FED5ABC1CFED3B93 = {
-			isa = PBXFileReference;
-			path = Makefile.postamble;
-			refType = 4;
-		};
-		00D5A0A9FED5ABC1CFED3B93 = {
-			isa = PBXFileReference;
-			path = Makefile.preamble;
 			refType = 4;
 		};
 		00D5A0AAFED5ABC1CFED3B93 = {
@@ -1034,21 +1014,6 @@
 		00D5A0ABFED5ABC1CFED3B93 = {
 			isa = PBXFileReference;
 			path = equalTempered.m;
-			refType = 4;
-		};
-		00D5A0ACFED5ABC1CFED3B93 = {
-			isa = PBXFileReference;
-			path = h.template;
-			refType = 4;
-		};
-		00D5A0ADFED5ABC1CFED3B93 = {
-			isa = PBXFileReference;
-			path = m.template;
-			refType = 4;
-		};
-		00D5A0AEFED5ABC1CFED3B93 = {
-			isa = PBXFileReference;
-			path = make.sh;
 			refType = 4;
 		};
 		00D5A0AFFED5ABC1CFED3B93 = {
@@ -1099,11 +1064,6 @@
 		00D5A0B8FED5ABC1CFED3B93 = {
 			isa = PBXFileReference;
 			path = partialsDBInclude.m;
-			refType = 4;
-		};
-		00D5A0B9FED5ABC1CFED3B93 = {
-			isa = PBXFileReference;
-			path = platform.make;
 			refType = 4;
 		};
 		00D5A0BAFED5ABC1CFED3B93 = {
@@ -1230,7 +1190,7 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>V5.2</string>
+	<string>Music representation, synthesis and performance</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -1274,7 +1234,6 @@
 				00D5A0E3FED5ABC1CFED3B93,
 				00D5A0E4FED5ABC1CFED3B93,
 				00D5A0E5FED5ABC1CFED3B93,
-				00D5A0E6FED5ABC1CFED3B93,
 				00D5A0E7FED5ABC1CFED3B93,
 				00D5A0E8FED5ABC1CFED3B93,
 				00D5A0E9FED5ABC1CFED3B93,
@@ -1340,6 +1299,7 @@
 				02CDDD28FEF14087CFED3B93,
 				02CDDD2DFEF16257CFED3B93,
 				02CDDD30FEF166B5CFED3B93,
+				0142566BFFBF5179CFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -1757,20 +1717,6 @@
 		};
 		00D5A0E5FED5ABC1CFED3B93 = {
 			fileRef = 00D5A061FED5ABC1CFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
-		00D5A0E6FED5ABC1CFED3B93 = {
-			fileRef = 00D5A062FED5ABC1CFED3B93;
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
@@ -2616,7 +2562,6 @@
 				00D5A15CFED5ABC1CFED3B93,
 				00D5A15DFED5ABC1CFED3B93,
 				00D5A15EFED5ABC1CFED3B93,
-				00D5A15FFED5ABC1CFED3B93,
 				00D5A160FED5ABC1CFED3B93,
 				02CDDD29FEF14087CFED3B93,
 				02CDDD2BFEF1622CCFED3B93,
@@ -3382,20 +3327,6 @@
 				);
 			};
 		};
-		00D5A15FFED5ABC1CFED3B93 = {
-			fileRef = 00D5A0A2FED5ABC1CFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
 		00D5A160FED5ABC1CFED3B93 = {
 			fileRef = 00D5A0A3FED5ABC1CFED3B93;
 			isa = PBXBuildFile;
@@ -3495,6 +3426,25 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
+		};
+		0142566AFFBF5179CFED3B96 = {
+			isa = PBXFileReference;
+			path = fastFFT.h;
+			refType = 4;
+		};
+		0142566BFFBF5179CFED3B96 = {
+			fileRef = 0142566AFFBF5179CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
 		};
 		016EB772FF8071FFCFED3B93 = {
 			isa = PBXFrameworkReference;
