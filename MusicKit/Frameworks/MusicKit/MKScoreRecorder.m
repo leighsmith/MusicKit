@@ -1,18 +1,23 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
+
+  Description:
+    A pseudo-recorder that does its work by managing a set of MKPartRecorders.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* Modification History:
 
    $Log$
+   Revision 1.4  2000/06/09 02:56:02  leigh
+   Comment cleanup and correct typing of ivars
+
    Revision 1.3  2000/04/25 02:08:39  leigh
    Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -36,20 +41,6 @@
 #import "ScoreRecorderPrivate.h"
 
 @implementation MKScoreRecorder: NSObject
-  /* A pseudo-recorder that does its work by managing a set of PartRecorders.
-   */
-{
-    id partRecorders; /* A Set of PartRecorders */
-    id score;         /* The Score to which we're assigned. */   
-    MKTimeUnit timeUnit;
-    id partRecorderClass;
-    BOOL compensatesDeltaT;
-    BOOL _noteSeen;
-    BOOL _reservedScoreRecorder2;
-    void *_reservedScoreRecorder3;
-}
-
-#define _archiveScore _reservedScoreRecorder1 /* Unused */
 
 +new
 {
@@ -58,14 +49,6 @@
 //    [self initialize]; //sb: removed. Unnec.
     return self;
 }
-
-#if 0
-- (void)initialize 
-  /* For backwards compatibility */
-{ 
-    
-} 
-#endif
 
 -init
 {
@@ -128,7 +111,7 @@
      each Part in the Score. Note that any Parts added to aScore after
      the setScore call will not appear in the performance. */
 {
-    id aList;
+    NSMutableArray *aListOfParts;
     id el,newEl;
     unsigned n,i;
     if (aScore == score)
@@ -139,10 +122,10 @@
     score = aScore;
     if (!aScore)
       return self;
-    aList = [aScore parts];
-    n = [aList count];
+    aListOfParts = [aScore parts];
+    n = [aListOfParts count];
     for (i = 0; i < n; i++) {
-        el = [aList objectAtIndex:i];
+        el = [aListOfParts objectAtIndex:i];
        	[partRecorders addObject:newEl = [partRecorderClass new]];
 	[newEl setPart:el];
 	_MKSetScoreRecorderOfPartRecorder(newEl,self);

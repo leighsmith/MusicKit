@@ -1,10 +1,37 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    A MKScoreRecorder is a pseudo-Instrument that adds MKNotes to the MKParts in
+    a given MKScore.  It does this by creating a MKPartRecorder, a true
+    MKInstrument, for each of the MKScore's MKPart objects.  A MKScoreRecorder's
+    MKScore is set through the setScore: method.  If you add MKParts to or
+    remove MKParts from the MKScore after sending the setScore: message, the
+    changes will not be seen by the MKScoreRecorder.  For example, if you
+    add a MKPart to the MKScore, the MKScoreRecorder won't create an additional
+    MKPartRecorder for that MKPart.
+
+    A MKScoreRecorder can access a MKPartRecorder by the name of the MKPart with
+    which it's associated.  It can also set the time unit of all its
+    MKPartRecorders through a single message, setTimeUnit:.
+
+    A MKScoreRecorder is said to be in performance from the time any of its
+    MKPartRecorders receives a MKNote until the performance is finished.
+
+  CF: MKPartRecorder
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
   $Log$
+  Revision 1.4  2000/06/09 02:56:02  leigh
+  Comment cleanup and correct typing of ivars
+
   Revision 1.3  2000/04/25 02:08:40  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -16,31 +43,12 @@
 #define __MK_ScoreRecorder_H___
 
 #import <Foundation/NSObject.h>
+#import "MKScore.h"
 
 @interface MKScoreRecorder : NSObject
-/*
- * 
- * A ScoreRecorder is a pseudo-Instrument that adds Notes to the Parts in
- * a given Score.  It does this by creating a PartRecorder, a true
- * Instrument, for each of the Score's Part objects.  A ScoreRecorder's
- * Score is set through the setScore: method.  If you add Parts to or
- * remove Parts from the Score after sending the setScore: message, the
- * changes will not be seen by the ScoreRecorder.  For example, if you
- * add a Part to the Score, the ScoreRecorder won't create an additional
- * PartRecorder for that Part.
- * 
- * A ScoreRecorder can access a PartRecorder by the name of the Part with
- * which it's associated.  It can also set the time unit of all its
- * PartRecorders through a single message, setTimeUnit:.
- * 
- * A ScoreRecorder is said to be in performance from the time any of its
- * PartRecorders receives a Note until the performance is finished.
- * 
- * CF: PartRecorder
- */
 {
-    id partRecorders; /* The object's Set of PartRecorders. */
-    id score; /* The object's Score. */
+    NSMutableArray *partRecorders; /* The object's Set of MKPartRecorders. */
+    MKScore *score; /* The object's MKScore. */
     MKTimeUnit timeUnit; /* Unit the object's PartRecorders use to 
                             measure time; one of MK_second or MK_beat. */
     id partRecorderClass; /* The PartRecorder subclass used. */
@@ -48,8 +56,6 @@
 
     /* The following is for internal use only */
     BOOL _noteSeen;
-    BOOL _reservedScoreRecorder2;
-    void *_reservedScoreRecorder3;
 }
 
 - init; 
