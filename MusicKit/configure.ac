@@ -47,7 +47,7 @@ AC_CHECK_LIB(vorbis, vorbis_info_init)
 # Ensure that libsndfile must be installed.
 AC_CHECK_LIB(sndfile, sf_open)
 if test $ac_cv_lib_sndfile_sf_open != yes; then
-   AC_MSG_ERROR([[libsndfile must be installed and isn't.]])
+   AC_MSG_ERROR([[libsndfile must be installed and is not.]])
 fi
 
 # Will #if define out SndAudioProcessorMP3Encoder.m if LAME or
