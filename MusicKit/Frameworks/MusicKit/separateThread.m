@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.19  2000/06/16 23:21:01  leigh
+  Added other older OpenStep platforms to NSPort fudging
+
   Revision 1.18  2000/05/06 02:35:41  leigh
   Made Win32 declare regression class types also
 
@@ -145,8 +148,8 @@ static int oldPriority = MAXINT;
 static int oldPolicy = INVALID_POLICY;
 #endif
 
-#if (defined(__ppc__) && defined(ppc)) || WIN32
-#define NSMessagePort NSPort  // fudge around MacOsX-Server old concrete NSPort for MacOsX-Server or OpenStep
+#if (defined(__ppc__) && defined(ppc)) || WIN32 || m68k || i386
+#define NSMessagePort NSPort  // fudge around old concrete NSPort for MacOsX-Server or OpenStep
 #endif
 
 static NSMessagePort *appToMKPortObj = nil; /*sb: added these 2 to provide NSPort objects */

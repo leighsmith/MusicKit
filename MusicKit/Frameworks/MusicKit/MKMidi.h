@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.13  2000/06/16 23:23:33  leigh
+  Added other older OpenStep platforms to NSPort fudging
+
   Revision 1.12  2000/06/09 18:09:19  leigh
   added better platform definitions to deal with deprecated API
 
@@ -76,7 +79,9 @@
 // Determine the MacOsX derivative being compiled on. This is a passing phase (MOXS 1.2) until the two O.S. merge API
 #define macosx (defined(__ppc__) && !defined(ppc))
 #define macosx_server (defined(__ppc__) && defined(ppc))
-#if macosx_server || WIN32
+#define openstep_i386 (i386 && !WIN32)
+// earlier OpenStep incantations had NSPort as a concrete class.
+#if macosx_server || WIN32 || m68k || openstep_i386
 #define NSMachPort NSPort
 #endif
 
