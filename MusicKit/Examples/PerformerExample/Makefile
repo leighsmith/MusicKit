@@ -9,11 +9,13 @@
 
 NAME = PerformerExample
 
-PROJECTVERSION = 1.1
-LANGUAGE = English
+PROJECTVERSION = 2.8
+PROJECT_TYPE = Application
+ICONSECTIONS =	-sectcreate __ICON app $(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Resources/NSDefaultApplicationIcon.tiff
 
-GLOBAL_RESOURCES = InfoPanel.nib PerformerExample.nib mkmon_A_32k.dsp \
-                   mkmon_A_8k.dsp
+English_RESOURCES = InfoPanel.nib PerformerExample.nib
+
+LANGUAGES = English
 
 CLASSES = PerformerController.m RandomPerformer.m
 
@@ -24,21 +26,34 @@ MFILES = PerformerExample_main.m
 OTHERSRCS = Makefile PerformerExample.iconheader README
 
 
-MAKEFILEDIR = /NextDeveloper/Makefiles/app
-INSTALLDIR = $(HOME)/Apps
-INSTALLFLAGS = -c -s -m 755
-SOURCEMODE = 444
-
-ICONSECTIONS =	-sectcreate __ICON app /usr/lib/NextStep/Workspace.app/application.tiff
-
-LIBS = -lsynthpatches -lunitgenerators -lmusickit -ldsp -lNeXT_s -lDriver
+MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles
+CODE_GEN_STYLE = DYNAMIC
+MAKEFILE = app.make
+NEXTSTEP_INSTALLDIR = $(HOME)/Apps
+WINDOWS_INSTALLDIR = $(HOME)/Apps
+PDO_UNIX_INSTALLDIR = $(HOME)/Apps
+LIBS = -lsynthpatches -lunitgenerators
 DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
 
+FRAMEWORK_PATHS = -F/Local/Library/Frameworks
+FRAMEWORKS = -framework AppKit -framework Foundation -framework MKDSP\
+             -framework MKPerformSndMIDI -framework MusicKit
+
+
+NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc
+WINDOWS_OBJCPLUS_COMPILER = $(DEVDIR)/gcc
+PDO_UNIX_OBJCPLUS_COMPILER = $(NEXTDEV_BIN)/gcc
+NEXTSTEP_JAVA_COMPILER = /usr/bin/javac
+WINDOWS_JAVA_COMPILER = $(JDKBINDIR)/javac.exe
+PDO_UNIX_JAVA_COMPILER = $(JDKBINDIR)/javac
+
+include $(MAKEFILEDIR)/platform.make
+
 -include Makefile.preamble
 
-include $(MAKEFILEDIR)/app.make
+include $(MAKEFILEDIR)/$(MAKEFILE)
 
 -include Makefile.postamble
 

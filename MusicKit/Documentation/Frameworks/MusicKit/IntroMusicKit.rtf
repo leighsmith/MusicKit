@@ -2,9 +2,10 @@
 }
 {\colortbl;\red255\green255\blue255;}
 \paperw16220\paperh12580
-\pard
+\pard\ql\qnatural
 
-\f0\fs24 \cf0 Release 4.0  Copyright 
+\f0\fs24 \cf0 $Id$ \
+Copyright 
 \f1 ã
 \f0 1993 by CCRMA, Stanford University.  All Rights Reserved.\
 \
@@ -34,22 +35,22 @@
 \pard\tx5640\li5640\fi-3540\ql\qnatural
 
 \f2\i0\b\fs28 \cf0 Library:	
-\f0\b0 MusicKit.framework, dsp.framework, MKPerformMIDI.framework.  \
-	Also, optionally unitgenerators.framework, synthpatches.framework\
+\f0\b0 MusicKit.framework, MKDSP.framework, MKPerformSndMIDI.framework.  \
+	Also, optionally MKUnitGenerators.framework, MKSynthPatches.framework\
 
 \fs16 \
 
 \f2\b\fs28 Header File Directory:	
 \f0\b0 /Local/Library/Frameworks/MusicKit.framework/Headers/  \
-	/Local/Library/Frameworks/synthpatches.framework/Headers/\
-	/Local/Library/Frameworks/unitgenerators.framework/Headers/\
-	/Local/Library/Frameworks/dsp.framework/Headers/\
+	/Local/Library/Frameworks/MKSynthPatches.framework/Headers/\
+	/Local/Library/Frameworks/MKUnitGenerators.framework/Headers/\
+	/Local/Library/Frameworks/MKDSP.framework/Headers/\
 
 \fs16 	\
 
-\f2\b\fs28 Import:	
-\f0\b0 MusicKit/MusicKit.h.  \
-	Also, optionally, synthpatches/synthpatches.h and unitgenerators/unitgenerators.h\
+\f2\b\fs28 Import:	<
+\f0\b0 MusicKit/MusicKit.h>  \
+	Also, optionally, <MKSynthPatches/SynthPatches.h> and <MKUnitGenerators/UnitGenerators.h>\
 
 \fs16 \
 \pard\li100\ql\qnatural
@@ -66,7 +67,7 @@
 \
 \pard\tx2480\tx2860\tx3240\li2100\ql\qnatural
 
-\f0\b0\fs28 \cf0 The Music Kit defines a set of Objective C classes and informal protocols, C functions, and assorted constants and data types that are useful for creating music, sound, DSP and MIDI applications under NeXTSTEP. \
+\f0\b0\fs28 \cf0 The Music Kit defines a set of Objective C classes and informal protocols, C functions, and assorted constants and data types that are useful for creating music, sound, DSP and MIDI applications under NeXTSTEP, OpenStep, Windows9X, MacOsX and MacOsX-Server. \
 
 \fs16 \
 \pard\tx2480\tx2860\tx3240\li2480\fi-380\ql\qnatural
@@ -84,8 +85,8 @@
 \b0 , 
 \b MKTimbre
 \b0 , and 
-\b MKPartials
-\b0 Ðthat provide a flexible high-level structure for musical data.  The Music Kit also provides a number of file formats for storing these structures.  
+\b MKPartial
+\b0 sÐthat provide a flexible high-level structure for musical data.  The Music Kit also provides a number of file formats for storing these structures.  
 \i ScoreFile
 \i0  is a simple text-based scripting language that allows musical data to be represented in a convenient, human-readable form and supports simple programming structures.  Alternatively, the Music Kit supports reading and writing musical data as Standard MIDI files, binary scorefiles (called 'playscore files' for historical reasons) and NeXTSTEP archived objects.   The Music Kit's representation system includes a number of enormously valuable features.  The noteTag construct supports representation of phrase structure and makes it easy to  create effects such as legato, which require continuity from one note to the next.  The noteUpdate construct allows any aspect of a sounding note to be changed at any time.  \
 
@@ -93,32 +94,34 @@
 
 \fs28 ·	The Music Kit makes scheduling and sequencing extremely simple.  A Music Kit "performance" consists of sending scheduled Objective-C messages and handling asynchronous events such as incoming MIDI and NeXTSTEP events.  The 
 \b MKConductor
-\b0  class is in charge of dispatching all messages and managing the notion of time.  A Conductor may have a tempo, a time map, or may be set to synchronize to MIDI time code.  Since all time control is managed in the Conductor itself, the difference between these time representations is completely transparent.  \
+\b0  class is in charge of dispatching all messages and managing the notion of time.  A MKConductor may have a tempo, a time map, or may be set to synchronize to MIDI time code.  Since all time control is managed in the MKConductor itself, the difference between these time representations is completely transparent.  \
 		Another aspect of the Music Kit performance is a dynamically patchable Note-handling network consisting of three classes, 
-\b MKPerformers
-\b0 , 
-\b MKNoteFilters
-\b0  and 
-\b MKInstruments
-\b0 .  
 \b MKPerformer
-\b0  subclasses are Note-generators, that sequence over Lists of 
-\b MKNotes
-\b0  or create 
-\b MKNotes
-\b0  on the fly.  They contain outputs that may be connected to 
-\b MKNoteFilters
-\b0  or Instruments.  Instrument subclasses realize Notes in some manner, for example by playing them on the DSP or via MIDI, and contain inputs that may be connected to 
-\b MKNoteFilters
-\b0  or 
-\b MKPerformers
-\b0 .   
-\b MKNoteFilters
-\b0  are intermediate processors that contain both inputs and outputs.  This scheme makes it easy to create a performance scheme for nearly any application.   The inputs and outputs are represented as 
-\b MKNoteSenders 
+\b0 s, 
+\b MKNoteFilter
+\b0 s and 
+\b MKInstrument
+\b0 s.  
+\b MKPerformer
+\b0  subclasses are MKNote-generators, that sequence over NSArrays of 
+\b MKNote
+\b0 s or create 
+\b MKNote
+\b0 s on the fly.  They contain outputs that may be connected to 
+\b MKNoteFilter
+\b0 s or MKInstruments.  MKInstrument subclasses realize MKNotes in some manner, for example by playing them on the DSP or via MIDI, and contain inputs that may be connected to 
+\b MKNoteFilter
+\b0 s or 
+\b MKPerformer
+\b0 s.   
+\b MKNoteFilter
+\b0 s are intermediate processors that contain both inputs and outputs.  This scheme makes it easy to create a performance scheme for nearly any application.   The inputs and outputs are represented as 
+\b MKNoteSender
+\b0 s
+\b  
 \b0 and 
-\b MKNoteReceivers
-\b0 ,
+\b MKNoteReceiver
+\b0 s,
 \b  
 \b0 respectively.\
 		The Music Kit's performance apparatus is based on the notion that messages execute quickly.   Thus, time stays constant during the execution of a scheduled or event-triggered message.  This has the advantage of allowing a large number of DSP updates to happen at the exact same time.  The DSP and MIDI driver support time-ordered queues of events, thus allowing the application some latitude in computing these updates, while still providing an instantaneous execution of the updates themselves.\
@@ -134,12 +137,12 @@
 \b0  class is provided.  Each 
 \b MKUnitGenerator
 \b0  subclass corresponds to  a DSP module such as a filter, oscillator, or delay unit.  By interconnecting these 
-\b UnitGenerators
-\b0  using "patchpoints", a huge variety of synthesis and processing techniques may be implemented.  The Music Kit UnitGenerator library is an auxilliary library that consists solely of 
+\b MKUnitGenerator
+\b0 s using "patchpoints", a huge variety of synthesis and processing techniques may be implemented.  The Music Kit UnitGenerator library is an auxilliary library that consists solely of 
 \b MKUnitGenerator
 \b0  subclasses.  Finally, adventurous developers may write their own DSP unit generators in DSP56001 assembly language (using an extensive set of macros to simplify the process) and use the tool 
 \b dspwrap
-\b0  to automatically generate Objeictive-C UnitGenerator  subclasses.\
+\b0  to automatically generate Objective-C MKUnitGenerator  subclasses.\
 		Currently, only the DSP56001 is supported.  The 
 \b ArielQP 
 \b0 and 
@@ -148,7 +151,7 @@
 \pard\li2100\ql\qnatural
 
 \f2\b\fs48 \cf0 \
-Music Kit Classes\
+MusicKit Classes\
 
 \fs16 \
 \pard\tx2480\tx2860\tx3240\li2100\ql\qnatural
@@ -159,8 +162,9 @@ Music Kit Classes\
 \fs16 \cf0 \
 \
 \
+\pard\li2100\ql\qnatural
 
-\f2\b\fs36 Encapsulating Musical Data\
+\f2\b\fs36 \cf0 Encapsulating Musical Data\
 \pard\li2100\ql\qnatural
 
 \fs16 \cf0 \
@@ -173,18 +177,18 @@ Music Kit Classes\
 \b0 , and 
 \b MKNote
 \b0  objects.  
-\b MKScores
-\b0  and 
-\b MKParts
-\b0  are analogous to orchestral scores and the instrumental parts that they contain:  a 
+\b MKScore
+\b0 s and 
+\b MKPart
+\b0 s are analogous to orchestral scores and the instrumental parts that they contain:  a 
 \b MKScore
 \b0  represents a musical composition while each 
 \b MKPart
 \b0  corresponds to a particular means of realization.  
 \b MKParts
 \b0  consists of a time-sorted collection of 
-\b MKNotes
-\b0 , each of which contains data that describes a musical event.  \
+\b MKNote
+\b0 s, each of which contains data that describes a musical event.  \
 \
 The information in a 
 \b MKNote
@@ -221,11 +225,11 @@ A Note's noteType and noteTag are used together to help interpret a
 ·	 noteOn establishes the beginning of a note \
 ·	 noteOff establishes the end of a note \
 ·	 noteUpdate represents the middle of a note \
-·	 mute represents a Note not directly associated with sound-production\
+·	 mute represents a MKNote not directly associated with sound-production\
 \
 noteDurs and noteOns both establish the beginning of a musical note.  The difference between them is that the noteDur also has information that tells when the note should end.  A note created by a noteOn simply keeps sounding until a noteOff comes along to stop it.  In either case, a noteUpdate can change the attributes of a musical note while it's sounding.  The mute noteType is used to represent any additional information, such as barlines or rehearsal numbers.\
 \
-A noteTag is an arbitrary integer that's used to identify different Notes as part of the same musical note or phrase.  For example, a noteOff is paired with a noteOn by matching noteTag values.  You can create a legato passage with a series of noteOns, all with the same noteTag, concluded by a single noteOff.\
+A noteTag is an arbitrary integer that's used to identify different MKNotes as part of the same musical note or phrase.  For example, a noteOff is paired with a noteOn by matching noteTag values.  You can create a legato passage with a series of noteOns, all with the same noteTag, concluded by a single noteOff.\
 \
 The Music Kit's noteTag system solves many of the problems inherent in MIDI, which uses a combination of key number and channel to identify events that are part of the same musical phrase.  For example, the Music Kit can create and manage an unlimited number of simultaneous legato phrases while MIDI can only manage 16 (in MIDI mono mode).  Also, with MIDI's tagging system, mixing streams of notes is difficultÐnotes can easily get clobbered or linger on beyond their appointed end.  The Music Kit avoids this problem by reassigning unique noteTag values when streams of Notes are mixed together.\
 \
@@ -243,7 +247,7 @@ A
 \
 An entire 
 \b MKScore
-\b0  can be stored in a scorefile.  The scorefile format is designed to represent any information that can be put in a Note object, including the Part to which the Note belongs.  Scorefiles are in ASCII format and can easily be created and modified with a text editor.  In addition, the Music Kit provides a language called 
+\b0  can be stored in a scorefile.  The scorefile format is designed to represent any information that can be put in a MKNote object, including the MKPart to which the MKNote belongs.  Scorefiles are in ASCII format and can easily be created and modified with a text editor.  In addition, the Music Kit provides a language called 
 \i ScoreFile
 \i0  that lets you add simple programming constructs such as variables, assignments, and arithmethic expressions to your scorefile.\
 \pard\li2100\ql\qnatural
@@ -272,36 +276,36 @@ An entire
 ·	 A 
 \b MKPerformer
 \b0  acquires 
-\b MKNotes
-\b0 , either by opening a file, looking in a 
+\b MKNote
+\b0 s, either by opening a file, looking in a 
 \b MKPart
 \b0  or 
 \b MKScore
 \b0 , or generating them itself, and sends them to one or more 
-\b MKInstruments
-\b0 .  Pseudo-performers such as 
+\b MKInstrument
+\b0 s.  Pseudo-performers such as 
 \b MKMidi
 \b0  or the application itself may act as 
-\b MKPerformers
-\b0 , supplying 
-\b MKNotes
-\b0  in response to asynchronous events.\
+\b MKPerformer
+\b0 s, supplying 
+\b MKNote
+\b0 s in response to asynchronous events.\
 \
 ·	 An 
 \b MKInstrument
 \b0  receives 
-\b MKNotes
-\b0  sent to it by one or more 
-\b MKPerformers
-\b0  and realizes them in some distinct manner.\
+\b MKNote
+\b0 s sent to it by one or more 
+\b MKPerformer
+\b0 s and realizes them in some distinct manner.\
 \
 ·	 The 
 \b MKConductor
 \b0  acts as a scheduler, ensuring that 
-\b MKNotes
-\b0  are transmitted from 
-\b MKPerformers
-\b0  to 
+\b MKNote
+\b0 s are transmitted from 
+\b MKPerformer
+\b0 s to 
 \b MKInstruments
 \b0  in order and at the right time.\
 \
@@ -316,10 +320,10 @@ Both
 \b0  and 
 \b MKInstrument
 \b0  are abstract classes.  This means that you never create and use instances of these classes directly in an application.  Rather, they define common protocol (for sending and receiving 
-\b MKNotes
-\b0 ) that's used by their subclasses.  The subclasses build on this protocol to generate or realize 
-\b Notes
-\b0  in some application-specific manner.\
+\b MKNote
+\b0 s) that's used by their subclasses.  The subclasses build on this protocol to generate or realize 
+\b MKNote
+\b0 s in some application-specific manner.\
 \
 The Music Kit provides a number of 
 \b MKPerformer
@@ -340,8 +344,8 @@ The Music Kit provides a number of
 \b0 , respectively.  
 \b MKScorePerformer
 \b0  is actually a collection of 
-\b MKPartPerformers
-\b0 , one for each 
+\b MKPartPerformer
+\b0 s, one for each 
 \b MKPart
 \b0  in the 
 \b MKScore
@@ -373,7 +377,9 @@ The
 \
 ·	 
 \b MKSynthInstrument
-\b0  objects realize Notes by synthesizing them on the DSP.\
+\b0  objects realize 
+\b MKNote
+\b0 s by synthesizing them on the DSP.\
 \
 ·	 
 \b MKMidi
@@ -385,7 +391,7 @@ The
 \b MKScoreRecorder
 \b0  and 
 \b MKPartRecorder
-\b0  receive Notes, copy them, and add them to a 
+\b0  receive MKNotes, copy them, and add them to a 
 \b MKScore
 \b0  and 
 \b MKPart
@@ -451,7 +457,7 @@ The
 \b MKSynthPatch 
 \b0 and 
 \b MKUnitGenerator 
-\b0 libraries, respectively.\
+\b0 frameworks, respectively.\
 \pard\li2100\ql\qnatural
 
 \f2\b\fs36 \cf0 \
@@ -459,12 +465,12 @@ The
 
 \fs16 \cf0 \
 
-\fs48 Music Kit Functions\
+\fs48 MusicKit Functions\
 
 \fs16 \
 \pard\tx2480\tx2860\tx3240\li2100\ql\qnatural
 
-\f0\b0\fs28 \cf0 The ªFunctionsº section, later in this chapter, describes the functions (and function-like macros) that are provided by the Music Kit.  Many of the functions are auxiliary to the Kit's classes in that they augment or are superceded by one or more classes.  Of the rest, some functions provide information or functionality that can't be gotten elsewhere, while some others are convenient but not necessarily the only way to address a particular topic.  \
+\f0\b0\fs28 \cf0 The ªFunctionsº section, later in this chapter, describes the functions (and function-like macros) that are provided by the MusicKit.  Many of the functions are auxiliary to the Kit's classes in that they augment or are superceded by one or more classes.  Of the rest, some functions provide information or functionality that can't be gotten elsewhere, while some others are convenient but not necessarily the only way to address a particular topic.  \
 
 \fs16 \
 
@@ -483,7 +489,9 @@ The
 \fs16 \cf0 \
 \pard\tx2480\tx2860\tx3240\li2100\ql\qnatural
 
-\f0\b0\fs28 \cf0 These functions convert between MIDI and Note amplitude representations:\
+\f0\b0\fs28 \cf0 These functions convert between MIDI and 
+\b MKNote
+\b0  amplitude representations:\
 
 \fs16 \
 
@@ -498,7 +506,9 @@ The
 \fs16 \cf0 \
 \pard\tx2480\tx2860\tx3240\li2100\ql\qnatural
 
-\f0\b0\fs28 \cf0 These functions convert between MIDI and Note frequency representations:\
+\f0\b0\fs28 \cf0 These functions convert between MIDI and 
+\b MKNote
+\b0  frequency representations:\
 
 \fs16 \
 
@@ -548,8 +558,9 @@ The
 \pard\li2100\ql\qnatural
 \cf0 MKSetNoteParToDouble(), MKSetNoteParToInt(), MKSetNoteParToString(),  MKSetNoteParToEnvelope(), MKSetNoteParToWaveTable(), MKSetNoteParToObject(), MKGetNoteParAsDouble(),  MKGetNoteParAsInt(), MKGetNoteParAsString(),  MKGetNoteParAsStringNoCopy(), MKGetNoteParAsEnvelope(), MKGetNoteParAsWaveTable(), MKGetNoteParAsObject()\
 \
+\pard\li2100\ql\qnatural
 
-\f2\b\fs36 Named Objects\
+\f2\b\fs36 \cf0 Named Objects\
 \pard\li2100\ql\qnatural
 
 \fs16 \cf0 \

@@ -1,6 +1,6 @@
 /* The following files must be imported. */
-#import <musickit/musickit.h>    
-#import <musickit/unitgenerators/unitgenerators.h>
+#import <MusicKit/MusicKit.h>    
+#import <MKUnitGenerators/UnitGenerators.h>
 #import <math.h>
 #import <stdio.h>
 
@@ -251,13 +251,13 @@ static int		ampAsymp,   	/* amplitude envelope UG */
     double	myVFreqAtt = [aNote parAsDouble:MK_svibFreqAtt];
     double	myVFreqRel = [aNote parAsDouble:MK_svibFreqRel];
 
-    int		RESO_sourceFader = [[Note class] parName: "RESO_sourceFader"];
+    int		RESO_sourceFader = [[MKNote class] parName: "RESO_sourceFader"];
     double	mySourceFader = [aNote parAsDouble: RESO_sourceFader];
     
-    int		RESO_oscLevel = [[Note class] parName: "RESO_oscLevel"];
+    int		RESO_oscLevel = [[MKNote class] parName: "RESO_oscLevel"];
     double	myOscLevel = [aNote parAsDouble: RESO_oscLevel];
     
-    int		RESO_noiseLevel = [[Note class] parName: "RESO_noiseLevel"];
+    int		RESO_noiseLevel = [[MKNote class] parName: "RESO_noiseLevel"];
     double	myNoiseLevel = [aNote parAsDouble: RESO_noiseLevel];
     
     id		myWaveTable  = [aNote parAsWaveTable:MK_waveform];

@@ -38,7 +38,7 @@
 "Edit can't open file.";
 
 /* This message appears when a file is being read.  It takes one argument which follows the message. E.g. 'Reading x.score...' */
-"Reading %s...";
+"Reading %@...";
 
 /* This message appears after the user aborts a scorefile parse due to errors. */
 "Fix scorefile errors and try again.";
@@ -59,19 +59,19 @@
 "Can't open DSP. Perhaps another application has it.";
 
 /* This message takes one leading argument, the name of a scorefile part.  It appears when a part is declared with no info. */
-"%s info missing.";
+"%@ info missing.";
 
 /* This message appears if a SynthPatch is specified in the scorefile for which no SynthPatch can be found.  Its one argument is the name of the SynthPatch. */
-"This scorefile calls for a synthesis instrument (%s) that isn't available in this application.";
+"This scorefile calls for a synthesis instrument (%@) that isn't available in this application.";
 
 /* Continue button name */
 "Continue";
 
 /* This message appears when a file is being played.  The trailing argument is the name of the file. */
-"Playing %s...";
+"Playing %@...";
 
 /* This message apepars when too many Synthpatches are requested in the scorefile for a given part. There are four arguments, which must appear in the following order. 1 = the number of patches that could be allocated, 2 = the number of patches that were requested to be allocated, 3 = the name of the synthpatch specified in the scorefile and 4 = the part name. */
-"Could only allocate %d instead of %d %ss for %s";
+"Could only allocate %d instead of %d %@s for %@";
 
 /* This appears in the SaveAs... panel */
 "Score File";

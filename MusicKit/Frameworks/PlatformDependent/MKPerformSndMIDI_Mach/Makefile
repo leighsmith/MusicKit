@@ -7,15 +7,16 @@
 # and Makefile.postamble (both optional), and Makefile will include them.
 #
 
-NAME = MKPerformMIDI
+NAME = MKPerformSndMIDI
 
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Framework
 
 HFILES = mididriver.h mididriver_types.h midi_driver.h
 
-CFILES = mididriverServer.c mididriverUser.c mididriver_nonMig.c\
-         mididriver_replyServer.c
+MFILES = mididriver_nonMig.m
+
+CFILES = mididriverServer.c mididriverUser.c mididriver_replyServer.c
 
 OTHERSRCS = Makefile.preamble Makefile Makefile.postamble m.template\
             h.template make.sh platform.make
@@ -23,7 +24,7 @@ OTHERSRCS = Makefile.preamble Makefile Makefile.postamble m.template\
 
 MAKEFILEDIR = .
 CURRENTLY_ACTIVE_VERSION = YES
-DEPLOY_WITH_VERSION_NAME = A
+DEPLOY_WITH_VERSION_NAME = 5.2
 CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = framework.make
 NEXTSTEP_INSTALLDIR = $(LOCAL_LIBRARY_DIR)/Frameworks

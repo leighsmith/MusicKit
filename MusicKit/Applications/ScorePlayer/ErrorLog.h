@@ -1,19 +1,19 @@
 #ifndef __MK_ErrorLog_H___
 #define __MK_ErrorLog_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#import <objc/Object.h>
+#import <Foundation/NSObject.h>
 #import <AppKit/AppKit.h>
 
-@interface ErrorLog : Object
+@interface ErrorLog : NSObject
 {
-    id	msg;
+    NSTextView *	msg;
     id	panel; /* Actually this is a window. */
 }
 
 - init;
-- buttonPressed:sender;
-- show;
-- addText:(char *)text;
+- (void)buttonPressed:sender;
+- (void)show;
+- (void)addText:(NSString *)text;
 - (BOOL)isVisible;
 
 @end

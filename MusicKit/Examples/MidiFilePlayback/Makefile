@@ -12,10 +12,16 @@ NAME = MIDIFilePlayback
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Application
 NEXTSTEP_APPICON = midi.tiff
-ICONSECTIONS =	-sectcreate __ICON app midi.tiff
+NEXTSTEP_DOCICONS = midi.tiff
 
+ICONSECTIONS =	-sectcreate __ICON app midi.tiff \
+		-sectcreate __ICON midi midi.tiff
 
-GLOBAL_RESOURCES = MIDIFilePlayback.nib midi.tiff
+English_RESOURCES = MIDIFilePlayback.nib
+
+LANGUAGES = English
+
+GLOBAL_RESOURCES = midi.tiff
 
 CLASSES = MIDIFileController.m
 
@@ -42,8 +48,7 @@ FRAMEWORK_PATHS = -F/Local/Library/Frameworks\
                   -F/System/Library/PrivateFrameworks\
                   -F$(LOCAL_DEVELOPER_DIR)/Frameworks
 FRAMEWORKS = -framework AppKit -framework Foundation\
-             -framework MKPerformSndMIDI -framework MusicKit\
-             -framework SndKit
+             -framework MKPerformSndMIDI -framework MusicKit
 
 
 NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc

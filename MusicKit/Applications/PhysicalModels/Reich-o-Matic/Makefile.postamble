@@ -18,7 +18,7 @@
 # 
 #	PRODUCT_ROOT - Name of top-level app-wrapper (e.g., Webster.app)
 #	OFILE_DIR - Directory into which .o object files are generated.
-#		    (Note that this name is calculated based on the target 
+#		    (MKNote that this name is calculated based on the target 
 #		     architectures specified in Project Builder).
 #	DERIVED_SRC_DIR - Directory used for all other derived files
 #	ALL_CFLAGS - All the flags passed to the cc(1) driver for compilations
@@ -57,7 +57,7 @@
 
 
 # Change defaults assumed by the standard app makefiles here.  Edit the 
-# following default values as appropriate. (Note that if no Makefile.postamble 
+# following default values as appropriate. (MKNote that if no Makefile.postamble 
 # exists, these values will have defaults set in common.make).
 
 # Add Makefile.preamble, Makefile.postamble, and Makefile.dependencies here if
@@ -88,7 +88,7 @@
 #DYLD_APP_STRIP_OPTS = -A -n
 #APP_STRIP_OPTS = 
 #TOOL_STRIP_OPTS = 
-# (Note: APP_STRIP_OPTS and TOOL_STRIP_OPTS default to empty, but
+# (MKNote: APP_STRIP_OPTS and TOOL_STRIP_OPTS default to empty, but
 #  developers doing their own dynamic loading should set this to 
 #  $(DYLD_APP_STRIP_OPTS)).
 

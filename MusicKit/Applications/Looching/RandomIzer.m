@@ -1,7 +1,7 @@
-#import <musickit/musickit.h>
+#import <MusicKit/MusicKit.h>
 #import "RandomIzer.h"
 
-@implementation RandomIzer:Object
+@implementation RandomIzer: NSObject
 
 static double ranNum(id self)
     /* Returns a random number between 0 and 1. */

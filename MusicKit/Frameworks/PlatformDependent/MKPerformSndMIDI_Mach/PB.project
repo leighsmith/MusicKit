@@ -1,15 +1,16 @@
 {
     CURRENTLY_ACTIVE_VERSION = YES; 
-    DEPLOY_WITH_VERSION_NAME = A; 
+    DEPLOY_WITH_VERSION_NAME = 5.2; 
     DYNAMIC_CODE_GEN = YES; 
     FILESTABLE = {
         CLASSES = (); 
         FRAMEWORKS = (Foundation.framework); 
+        FRAMEWORKSEARCH = (); 
         H_FILES = (mididriver.h, mididriver_types.h, midi_driver.h); 
         OTHER_LINKED = (
             mididriverServer.c, 
             mididriverUser.c, 
-            mididriver_nonMig.c, 
+            mididriver_nonMig.m, 
             mididriver_replyServer.c
         ); 
         OTHER_SOURCES = (
@@ -21,6 +22,7 @@
             make.sh, 
             platform.make
         ); 
+        PRECOMPILED_HEADERS = (); 
         PROJECT_HEADERS = (); 
         PUBLIC_HEADERS = (midi_driver.h, mididriver.h, mididriver_types.h); 
     }; 
@@ -34,7 +36,7 @@
     PDO_UNIX_INSTALLDIR = /Library/Frameworks; 
     PDO_UNIX_JAVA_COMPILER = "$(JDKBINDIR)/javac"; 
     PDO_UNIX_OBJCPLUS_COMPILER = "$(NEXTDEV_BIN)/gcc"; 
-    PROJECTNAME = MKPerformMIDI; 
+    PROJECTNAME = MKPerformSndMIDI; 
     PROJECTTYPE = Framework; 
     PROJECTVERSION = 2.8; 
     WINDOWS_BUILDTOOL = ./make.sh; 

@@ -1,3 +1,10 @@
 {
-    NSMACHOperatingSystem = {Archs = "18 "; ContinueAfterError = YES; Target = app; }; 
+    NSMACHOperatingSystem = {
+        Archs = "18 "; 
+        ContinueAfterError = YES; 
+        LauncherSelectedExec = (
+            "$[PBProject projectName].app/$[PBProject projectName]$[PBProjectType executableExtension]"
+        ); 
+        Target = app; 
+    }; 
 }

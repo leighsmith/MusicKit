@@ -1,0 +1,58 @@
+#!/bin/zsh
+# $Id$
+#
+# zsh script to automate the packaging of MusicKit source tree from
+# the CVS repository ready for download.
+#
+# Leigh Smith <leigh@tomandandy.com> 2000/1/3
+#
+APPNAME=MusicKit
+APPCHECKEDOUT_SRCLOC=/tmp/MKSRC
+PACKAGENAME=MK
+if [ x_$1 = x_ ]; then
+    echo "${APPNAME} source shipping script"
+    echo "Usage: $0 version_number"
+    echo "Where version_number is of the form V.R.P and matches the CVS tag ${APPNAME}_V-R-P"
+    exit 1;
+else
+    RELEASE=$1
+fi
+# Salt to taste:
+TAR=gnutar
+TARLOC=/tmp
+CVSTAG=${APPNAME}_`echo $RELEASE | tr '.' '-'`
+
+# Checkout the source tree
+echo Checking out $CVSTAG to $APPCHECKEDOUT_SRCLOC
+mkdir -p $APPCHECKEDOUT_SRCLOC
+cd $APPCHECKEDOUT_SRCLOC
+cvs -Q checkout -r $CVSTAG $APPNAME
+
+# unwrap the symbolic links, this will remove the symbolic links wrap file.
+unwrap_symlink $APPNAME
+
+# build a ChangeLog with spaces between filenames and comments, 
+# collected to half-day window, incorporating tags.
+cd $APPCHECKEDOUT_SRCLOC/$APPNAME
+cvs2cl --tags --no-wrap --separate-header --window 43200 --file Documentation/ChangeLog
+# copy it so it can be used for generating an announcement.
+cp Documentation/ChangeLog $TARLOC
+
+# create a readily reable copy of the MusicKit_README.sgml file
+# Unfortunately, the SGML tools don't work on MOXS, so we suffice by copying them...
+cp ~/MusicKit_README.pdf $APPCHECKEDOUT_SRCLOC/$APPNAME
+
+# remove CVS directories (they will be different for each user if checking out direct from the repository).
+find $APPCHECKEDOUT_SRCLOC -name CVS -type d -exec rm -r {} \; -prune
+
+# tar up the remaining source
+cd $APPCHECKEDOUT_SRCLOC
+# rename the directory to the current version.
+mv $APPNAME ${APPNAME}-$RELEASE
+$TAR czf $TARLOC/${PACKAGENAME}_V$RELEASE.s.tar.gz ${APPNAME}-$RELEASE
+
+echo Archive generated at $TARLOC/${PACKAGENAME}_V$RELEASE.s.tar.gz
+echo ChangeLog generated at $TARLOC/ChangeLog
+
+# blow away the checked out source.
+rm -r $APPCHECKEDOUT_SRCLOC

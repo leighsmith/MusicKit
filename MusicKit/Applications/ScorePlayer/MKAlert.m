@@ -14,95 +14,94 @@
 ///#import <appkit/errors.h>
 #import <stdarg.h>
 #import <objc/zone.h>
-#import <objc/NXBundle.h>
+#import <Foundation/NSBundle.h>
 
 @implementation MKAlert
 
 + new
 {
-    return [[self allocFromZone:NXDefaultMallocZone()] init];
+    return [[self allocWithZone:NSDefaultMallocZone()] init];
 }
 
 - init
 {
-    char buf[MAXPATHLEN + 1];
+    NSString *path;
     [super init];
-    if (![[NXBundle mainBundle] getPath:buf forResource:"MKAlertPanel.nib" 
-	ofType:"nib"])
+//#error StringConversion: This call to -[NXBundle getPath:forResource:ofType:] has been converted to the similar NSBundle method.  The conversion has been made assuming that the variable called buf will be changed into an (NSString *).  You must change the type of the variable called buf by hand.
+    if (((path = [[NSBundle mainBundle] pathForResource:@"MKAlertPanel" ofType:@"nib"]) == nil))
       fprintf(stderr,"Nib file missing for ScorePlayer!\n");
-    panel = [NXApp loadNibFile:buf owner:self withNames:NO];
+    else [NSBundle loadNibFile:path externalNameTable:[NSDictionary dictionaryWithObjectsAndKeys:self, @"NSOwner", nil] withZone:[self zone]];
     return self;
 }
 
-- free
+- (void)dealloc
 {
-    if (![first superview]) [first free];
-    if (![second superview]) [second free];
-    if (![third superview]) [third free];
-    [panel free];
-    return [super free];
+    if (![first superview]) [first release];
+    if (![second superview]) [second release];
+    if (![third superview]) [third release];
+    [panel release];
+    { [super dealloc]; return; };
 }
 
 - setIconButton:anObject
 {
-    [anObject setIcon:"app"];
+    [anObject setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
     return self;
 }
 
 - setMsg:anObject
 {
     msg = anObject;
-    [msg setFont:[Font newFont:"Courier" size:[[msg font] pointSize]]];
+    [msg setFont:[NSFont fontWithName:@"Courier" size:[[msg font] pointSize]]];
 #if 0
     [[msg cell] _setCentered:YES]; /* Private appkit method */
 #endif
-    [msg setOpaque:YES];
+    [msg setDrawsBackground:YES];
     return self;
 }
 
-- buttonPressed:sender
+- (void)buttonPressed:sender
 {
     int exitValue;
     if (sender == first) {
-	exitValue = NX_ALERTDEFAULT;
+	exitValue = NSAlertDefaultReturn;
     } else if (sender == second) {
-	exitValue = NX_ALERTALTERNATE;
+	exitValue = NSAlertAlternateReturn;
     } else if (sender == third) {
-	exitValue = NX_ALERTOTHER;
+	exitValue = NSAlertOtherReturn;
     } else {
-	exitValue = NX_ALERTERROR;
+	exitValue = NSAlertErrorReturn;
     }
-    [NXApp stopModal:exitValue];
-    return self;
+    [NSApp stopModalWithCode:exitValue]; 
 }
 
-- setMessage:(const char *)message
+- setMessage:(NSString *)message
 {
-    [msg setBackgroundGray:NX_LTGRAY];
+    [msg setBackgroundColor:[NSColor lightGrayColor]];
     [msg setStringValue:message];
     return self;
 }
 
 #define MAXMSGLENGTH 1024
 
-static id buildAlert(MKAlert *alert, const char *title, const char *s, const char *first, const char *second, const char *third)
+static id buildAlert(MKAlert *alert, NSString *title, NSString *s, NSString *first, NSString *second, NSString *third)
 {
-    const char *t;
+    NSString *t;
 
     if (first) {
-	[alert->first setTitle:first];
-	if (!title || !*title) {
-	    [alert->title setStringValueNoCopy:""];
+        [alert->first setTitle:first];
+        if (!title || ![title length]) {
+	    [alert->title setStringValue:@""];
 	} else {
 	    t = [alert->title stringValue];
-	    if (!t || strcmp(t, title)) [alert->title setStringValue:title];
+            if (!t || [t isEqualToString:title]) [alert->title setStringValue:title];
 	}
 	if (second) {
 	    [[alert->panel contentView] addSubview:alert->second];
-	    [alert->second setTitle:second];
+            [alert->second setTitle:second];
 	    if (third) {
 		[[alert->panel contentView] addSubview:alert->third];
-		[alert->third setTitle:third];
+                [alert->third setTitle:third];
 	    } else {
 		[alert->third removeFromSuperview];
 	    }
@@ -119,37 +118,39 @@ static id buildAlert(MKAlert *alert, const char *title, const char *s, const cha
     return alert->panel;
 }
 
-int mkRunAlertPanel(const char *title, const char *s, const char *first, const char *second, const char *third)
+int mkRunAlertPanel(NSString *title, NSString *s, NSString *first, NSString *second, NSString *third)
 {
     id panel;
-    NXZone *zone;
+    NSZone *zone;
     MKAlert *newAlert;
     static id cachedAlert = nil;
-    volatile NXHandler handler;
-    volatile int exitValue = NX_ALERTERROR;
+//#error FoundationConversion:  The NXHandler structure has been replaced by NSException objects.
+    NSException *handler = nil;
+    volatile int exitValue = NSAlertErrorReturn;
     if (cachedAlert) 
 	newAlert = cachedAlert;
     else {
-	zone = [NXApp zone];
-	if (!zone) zone = NXDefaultMallocZone();
-	zone = NXCreateChildZone(zone, 1024, 1024, YES);
-	newAlert = [[MKAlert allocFromZone:zone] init];
-	NXMergeZone(zone);
-	if (!newAlert) return NX_ALERTERROR;
+	zone = [NSApp zone];
+	if (!zone) zone = NSDefaultMallocZone();
+//	zone = NXCreateChildZone(zone, 1024, 1024, YES);
+	newAlert = [[MKAlert allocWithZone:zone] init];
+//	NXMergeZone(zone);
+	if (!newAlert) return NSAlertErrorReturn;
     }
     panel = buildAlert(newAlert, title , s, first, second, third);
-    NXPing();
-    NX_DURING {
-	handler.code = 0;
-	exitValue = [NXApp runModalFor:panel];
-    } NX_HANDLER {
-	handler = NXLocalHandler;
-	if (handler.code == dps_err_ps) NXReportError((NXHandler *)(&handler));
-    } NX_ENDHANDLER
+    PSWait();
+    NS_DURING {
+	exitValue = [NSApp runModalForWindow:panel];
+    } NS_HANDLER {
+        handler = [NSException exceptionWithName:[localException name]
+                                          reason:[localException reason]
+                                        userInfo:[localException userInfo]];
+        if ([[localException name] isEqualToString:DPSPostscriptErrorException]) [localException raise];
+    } NS_ENDHANDLER
     [panel orderOut:panel];
     cachedAlert = [panel delegate];
-    if (handler.code && handler.code != dps_err_ps) {
-	NX_RAISE(handler.code, handler.data1, handler.data2);
+    if (handler && ![[handler name] isEqualToString:DPSPostscriptErrorException]) {
+	[handler raise];
     }
     return exitValue;
 }

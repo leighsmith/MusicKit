@@ -1,6 +1,25 @@
 # Note that it is the makefile (small m that gets invoked by make)
 # It in turn invokes this Makefile
 #
+# LMS: And here is the small makefile contents since case insensitive
+# file systems don't like makefile and Makefile to reside in the
+# same directory:
+
+# Modifcation history
+# DAJ/Oct 3, 93 - Added SCOREInspector
+
+DIRS = . scorefiles inspector
+
+all local_install clean lean debug installsrc install profile fat_install fat_debug_install:
+	@for i in $(DIRS); do \
+		(cd ./$$i; echo "$$i:"; \
+		make -f Makefile $(MAKE_FLAGS) $@) || exit $? ; done
+	
+installhdrs:
+	echo 'No headers to install for scorefiles project' >/dev/null
+
+# LMS Begin original big Makefile contents:
+
 # Modifcation history
 # DAJ/July 10, 90 - Changed install to strip the binary.
 # DAJ/July 26, 90 - Removed chmod u+s

@@ -1,9 +1,24 @@
 /* 
-  playscorefilemidi.
-
-  Author: David A. Jaffe.
+  $Id$
   
-  See README for a description of this program.
+  Description:
+
+    This example illustrates playing a Music Kit scorefile on an external
+    MIDI synthesizer. It reads the scorefile from stdin and plays it 'on
+    the fly', i.e. as it is read.  This is analagous to the programming
+    example 'playscorefile2', which plays a scorefile on the DSP as it is
+    being read. An alternative is to first read the scorefile into a Score
+    object and then play it.
+
+    In the example program, the midi channel information for each part is gleaned
+    from the part 'info' statement in the scorefile. If none is found, all
+    notes go out on MIDI channel 1.
+
+  Original Author: David A. Jaffe.
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 
 /* playscorefilemidi is an example of a Music Kit performance that "spools" a 
@@ -28,7 +43,7 @@ int main(int ac, char * av[])
 	exit(1);
     }
     else {	
-	id scoreInfo;                                    
+	MKNote *scoreInfo;                                    
 	/* Read file from stdin. */
         NSFileHandle *stdinFileHandle = [NSFileHandle fileHandleWithStandardInput];
         NSData *stdinStream = [stdinFileHandle availableData];
@@ -59,9 +74,8 @@ int main(int ac, char * av[])
     midi = [MKMidi midi];
     { 
 	int partCount,chan;
-	NSMutableArray *noteSenders;
-//        NSArray *noteSenders;
-        id partInfo;
+	NSArray *noteSenders;
+        MKNote *partInfo;
         MKNoteSender *aNoteSender;
 
 	noteSenders = [aSFPerformer noteSenders];
@@ -73,10 +87,10 @@ int main(int ac, char * av[])
 	    /* Look in the partInfo for a midi channel. Default to 1. */
 	    if (!partInfo)               
 	      chan = 1;
-	    if (![partInfo isParPresent:MK_midiChan]) 
+	    if (![partInfo isParPresent: MK_midiChan]) 
 	      chan = 1;
 	    else chan = [partInfo parAsInt:MK_midiChan];
-	    [aNoteSender connect:[midi channelNoteReceiver:chan]];
+	    [aNoteSender connect: [midi channelNoteReceiver:chan]];
 	}
     }
 

@@ -1,6 +1,6 @@
 /* The following files must be imported. */
-#import <musickit/musickit.h>    
-#import <musickit/unitgenerators/unitgenerators.h> 
+#import <MusicKit/MusicKit.h>    
+#import <MKUnitGenerators/UnitGenerators.h> 
 
 #import "FluteIns.h"
 
@@ -163,17 +163,17 @@ static int		ampAsymp,   /* amplitude envelope UG */
     double	myAmpRel = [aNote parAsDouble:MK_ampAtt];
 
 
-    int		MY_envelopeSlew = [[Note class] parName: "MY_envelopeSlew"];
+    int		MY_envelopeSlew = [[MKNote class] parName: "MY_envelopeSlew"];
     double	myEnvelopeSlew   = [aNote parAsDouble:MY_envelopeSlew];
 
-    int		MY_noiseVolume = [[Note class] parName: "MY_noiseVolume"];
+    int		MY_noiseVolume = [[MKNote class] parName: "MY_noiseVolume"];
     double	myNoiseVolume   = [aNote parAsDouble:MY_noiseVolume];
 
-    int		MY_delay2Length = [[Note class] parName: "MY_delay2Length"];
+    int		MY_delay2Length = [[MKNote class] parName: "MY_delay2Length"];
     double	myDelay2Length   = [aNote parAsDouble:MY_delay2Length];
 
-    int		MY_outAmp = [[Note class] parName: "MY_outAmp"];
-    int		MY_dLineLength = [[Note class] parName: "MY_dLineLength"];
+    int		MY_outAmp = [[MKNote class] parName: "MY_outAmp"];
+    int		MY_dLineLength = [[MKNote class] parName: "MY_dLineLength"];
     double	myOutAmp   = [aNote parAsDouble:MY_outAmp];
     double	myDLineLength   = [aNote parAsDouble:MY_dLineLength];
 
@@ -275,10 +275,10 @@ static int		ampAsymp,   /* amplitude envelope UG */
 
 - noteOnSelf:aNote
 {
-    delayMemory = [Orchestra allocSynthData:MK_yData length:100];
+    delayMemory = [MKOrchestra allocSynthData:MK_yData length:100];
     [[self synthElementAt: delayLine] setDelayMemory: delayMemory];
     [delayMemory setToConstant:0 length:100 offset:0];  
-    delayMemory2 = [Orchestra allocSynthData:MK_yData length:40];
+    delayMemory2 = [MKOrchestra allocSynthData:MK_yData length:40];
     [[self synthElementAt: delayLine2] setDelayMemory: delayMemory2];
     [delayMemory2 setToConstant:0 length:40 offset:0];  
     /* Apply the parameters to the patch. */	

@@ -2,7 +2,7 @@
     APPCLASS = NSApplication; 
     English_RESOURCES = {}; 
     FILESTABLE = {
-        CLASSES = (Animator.m, ErrorLog.m, MKAlert.m, MyApp.m); 
+        CLASSES = (Animator.m, ErrorLog.m, MKAlert.m, ScorePlayerController.m); 
         C_FILES = (); 
         English_INTERFACES = (
             NextDACs.nib, 
@@ -12,8 +12,15 @@
             MKAlertPanel.nib, 
             ErrorLog.nib
         ); 
-        FRAMEWORKS = (AppKit.framework, Foundation.framework); 
-        H_FILES = (Animator.h, ErrorLog.h, MKAlert.h, MyApp.h); 
+        FRAMEWORKS = (
+            AppKit.framework, 
+            Foundation.framework, 
+            MKDSP.framework, 
+            MKPerformSndMIDI.framework, 
+            MusicKit.framework
+        ); 
+        FRAMEWORKSEARCH = ("$(LOCAL_LIBRARY_DIR)/Frameworks", "$(LOCAL_DEVELOPER_DIR)/Frameworks"); 
+        H_FILES = (Animator.h, ErrorLog.h, MKAlert.h, ScorePlayerController.h); 
         IMAGES = (
             Midi.tiff, 
             play.tiff, 
@@ -21,16 +28,20 @@
             Sound.tiff, 
             stop.tiff, 
             ScorePlayerDoc.tiff, 
-            ScorePlayerDoc2.tiff
+            ScorePlayerDoc2.tiff, 
+            ScorePlayerApp.tiff
         ); 
         INTERFACES = (); 
         M_FILES = (); 
-        OTHER_LIBS = (synthpatches, unitgenerators, musickit, dsp, NeXT_s, Driver); 
+        OTHER_LIBS = (); 
         OTHER_LINKED = (ScorePlayer_main.m); 
-        OTHER_RESOURCES = (ScorePlayer.strings); 
-        OTHER_SOURCES = (help.rtfd, Makefile); 
+        OTHER_RESOURCES = (help.rtfd, ScorePlayer.strings); 
+        OTHER_SOURCES = (Makefile); 
+        PRECOMPILED_HEADERS = (); 
+        PROJECT_HEADERS = (); 
         PSWM_FILES = (); 
         PSW_FILES = (); 
+        PUBLIC_HEADERS = (); 
         SOUNDS = (); 
         STRINGS_FILES = (); 
         SUBPROJECTS = (); 
@@ -44,7 +55,7 @@
         {Extension = score; Image = ScorePlayerDoc.tiff; }, 
         {Extension = playscore; Image = ScorePlayerDoc2.tiff; }
     ); 
-    NEXTSTEP_INSTALLDIR = /LocalApps; 
+    NEXTSTEP_INSTALLDIR = "$(LOCAL_APPLICATIONS_DIR)"; 
     NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 
     NEXTSTEP_MAINNIB = ScorePlayer; 
     NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc; 

@@ -1,4 +1,6 @@
-/* Based on Ensemble MidiFilter */
+/* $Id$
+   Based on Ensemble MidiFilter 
+ */
 
 /* Important note:
 
@@ -7,16 +9,8 @@
      This is the case for input direct from MIDI, but not necessarily the case 
      for arbitrary Notes from an application or scorefile.
 */
-
-
-#import <mididriver/midi_spec.h>
-#import <musickit/Note.h>
-#import <musickit/NoteSender.h>
-#import <musickit/params.h>
-#import <libc.h>
+#import <MusicKit/MusicKit.h>
 #import "MidiFilter.h"
-
-extern double MKGetTime(void);
 
 @implementation MidiFilter
   /* A simple note filter that thins or blocks pitchbend, aftertouch,
@@ -55,13 +49,13 @@ extern double MKGetTime(void);
     /* Sent when an instance is created. */
 {    
     [super init];
-    noteReceiver = [self addNoteReceiver:[[NoteReceiver alloc] init]];
-    noteSender = [self addNoteSender:[[NoteSender alloc] init]];
+    noteReceiver = [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
+    noteSender = [self addNoteSender:[[MKNoteSender alloc] init]];
     [self reset];
     return self;
 }
 
--realizeNote:aNote fromNoteReceiver:aNoteReceiver
+-realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
     /* Here's where the work is done.
      */
 {

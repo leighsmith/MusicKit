@@ -1,0 +1,46 @@
+#!/bin/sh
+# $Id$
+# Create a set of HTML pages suitable for distribution on the
+# web-site. We do this with a customised stylesheet (in DSSSL)
+# to produce the correct text coloring, background images etc.
+#
+# Leigh Smith <leigh@tomandandy.com>
+#
+
+JADE=openjade
+
+# HTML_DISTRIB_DIR makes it easier to install into SourceForge.
+HTML_DISTRIB_DIR=htdocs
+HTML_TMPDIR=/tmp/$HTML_DISTRIB_DIR
+HTML_TARBALL=MusicKitREADME.tar.gz
+
+PDF_TMPDIR=/tmp/mkpdf
+
+MKSRCDIR=`pwd`
+MKSRC=$MKSRCDIR/Documentation/MusicKit_README.sgml
+MK_STYLEDIR=$MKSRCDIR/Documentation/SGML
+MK_STYLESHEET=$MK_STYLEDIR/MusicKit_README.dsssl
+
+mkdir $HTML_TMPDIR
+cd $HTML_TMPDIR
+$JADE -t sgml -ihtml -d ${MK_STYLESHEET}\#html $MKSRC
+ln -s t1.html index.html
+cp $MK_STYLEDIR/Images/* .
+cd ..
+tar czf $HTML_TARBALL $HTML_DISTRIB_DIR
+echo MusicKit README HTML pages packaged into /tmp/$HTML_TARBALL
+rm -r $HTML_TMPDIR
+
+# Now create the PDF
+mkdir $PDF_TMPDIR
+cd $PDF_TMPDIR 
+cp $MK_STYLEDIR/Images/* .
+db2dvi $MKSRC
+FINAL=`basename $MKSRC .sgml`.pdf
+dvips -o intermediate.ps MusicKit_README.dvi
+# This allows us to incorporate any special postscript fonts.
+#psprepare intermediate.ps prepared.ps
+cp intermediate.ps prepared.ps
+ps2pdf prepared.ps /tmp/$FINAL
+echo MusicKit README PDF file generated into /tmp/$FINAL
+rm -r $PDF_TMPDIR

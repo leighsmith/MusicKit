@@ -2,7 +2,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 26;
+	objectVersion = 30;
 	objects = {
 		00D59F54FED5A538CFED3B93 = {
 			isa = PBXProject;
@@ -28,16 +28,11 @@
 		};
 		00D59F56FED5A538CFED3B93 = {
 			children = (
-				00D59F57FED5A538CFED3B93,
+				06D6961EFF81A5A1CFED3B93,
 			);
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
-		};
-		00D59F57FED5A538CFED3B93 = {
-			isa = PBXFrameworkReference;
-			path = MKDSP.framework;
-			refType = 3;
 		};
 		00D59F58FED5A538CFED3B93 = {
 			children = (
@@ -465,8 +460,9 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks\" /System/Library/Frameworks";
-				FRAMEWORK_VERSION = A;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(NEXT_ROOT)/$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks\"";
+				FRAMEWORK_VERSION = 5.2;
+				HEADER_SEARCH_PATHS = "";
 				LIBRARY_SEARCH_PATHS = "\"$(LOCAL_DEVELOPER_DIR)/Libraries\"";
 				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
@@ -486,20 +482,36 @@
 			name = "MKDSP (Framework)";
 			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 			productName = MKDSP;
-			productReference = 00D59F57FED5A538CFED3B93;
-			productSettings = {
-				CFBundleDevelopmentRegion = English;
-				CFBundleExecutable = MKDSP;
-				CFBundleGetInfoString = "";
-				CFBundleIconFile = "";
-				CFBundleIdentifier = "";
-				CFBundleInfoDictionaryVersion = 6.0;
-				CFBundleName = "";
-				CFBundlePackageType = FMWK;
-				CFBundleShortVersionString = "";
-				CFBundleSignature = "????";
-				CFBundleVersion = 0.0.1d1;
-			};
+			productReference = 06D6961EFF81A5A1CFED3B93;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
+<plist version=\"0.9\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>MKDSP</string>
+	<key>CFBundleGetInfoString</key>
+	<string>A collection of functions to manage interface to the DSP resources for the MusicKit</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string>org.musickit.MKDSP</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>MusicKit DSP functions</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>V5.2.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>5.2.0</string>
+</dict>
+</plist>
+";
 			shouldUseHeadermap = 0;
 		};
 		00D59F9DFED5A538CFED3B93 = {
@@ -1325,6 +1337,11 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
+		};
+		06D6961EFF81A5A1CFED3B93 = {
+			isa = PBXFrameworkReference;
+			path = MKDSP.framework;
+			refType = 3;
 		};
 	};
 	rootObject = 00D59F54FED5A538CFED3B93;

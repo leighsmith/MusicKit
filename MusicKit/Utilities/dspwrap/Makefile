@@ -29,7 +29,7 @@ BINIFLAGS = -s -c
 BASE_CFLAGS = -Wimplicit -g $(RC_CFLAGS) #-arch m68k -arch i386
 CFLAGS = $(BASE_CFLAGS) -O -F$(HOME)/Library/Frameworks -F/System/Library/PrivateFrameworks
 #-L$(DSTROOT)/usr/local/lib #-I$(DSTROOT)$(LOCAL_DEVELOPER_DIR)/Headers
-LIBS= -framework SoundKit -framework dsp #-ldsp -lDriver
+LIBS= -framework SndKit -framework MKDSP #-ldsp -lDriver
 DEBUG_LIBS = -ldsp_g -lsys_s -lDriver
 PROFILE_LIBS = -ldsp_p -lsys_s -lDriver
 DSP_LIB_DIR = ../../dsp_proj/dsp/src/lib

@@ -14,8 +14,9 @@ PROJECT_TYPE = Application
 NEXTSTEP_APPICON = Clarer.tiff
 ICONSECTIONS =	-sectcreate __ICON app Clarer.tiff
 
+English_RESOURCES = ClariNot.nib
 
-GLOBAL_RESOURCES = ClariNot.nib
+LANGUAGES = English
 
 CLASSES = ClarIns.m Controller.m MidiController.m
 

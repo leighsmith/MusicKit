@@ -4,7 +4,7 @@
 #import <objc/List.h>
 #import "Echo.h"
 #import "ParamInterface.h"
-#import "musickit/musickit.h"
+#import <MusicKit/MusicKit.h>
 
 extern long random();
 

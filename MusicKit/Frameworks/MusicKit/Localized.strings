@@ -1,0 +1,500 @@
+/*
+  $Id$
+  Defined In: The MusicKit
+
+  Description: 
+    This file contains general-purpose Music Kit errors.  Some of these
+    are visible to users--therefore they must be localized.  I have indicated
+    which errors are rarely seen by users.
+
+    To localize it, add a parallel directory (e.g. "Spanish.lproj"), copy this  
+    file into that directory, and add an "equals" clause to each line.
+    For example, change this line: "Music Kit: Can't open file %s.";
+                to the following: 
+    "Music Kit: Can't open file %s" = "Music Kit: No puedo abrir file %s";            
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
+/*
+Modification history:
+
+  $Log$
+  Revision 1.4  2000/11/26 00:22:11  leigh
+  Updated to reflect the multi-platform operation
+
+  Revision 1.3  2000/01/13 06:39:59  leigh
+  Matched the error message to the MKConductor version
+
+  Revision 1.2  1999/07/29 01:25:43  leigh
+  Added Win32 compatibility, CVS logs, SBs changes
+
+*/
+
+/*  This error is used as a way of specifying Music Kit errors not otherwise
+    defined in this list. 
+ */
+"Music Kit: %s.";
+
+/*  This error is used for errors from the operating system.  For example, the
+    MIDI object uses this error to report problems gaining access to the
+    MIDI device.  There are two arguments which must be in the order indicated.
+    The first argument is the Music Kit explanation of what's wrong.  The
+    second is the Mach explanation (as returned by mach_error_string). The
+    third is the offending function.
+ */
+"Music Kit: %s. Mach Error: %s in '%s'";  
+
+/*  This error warns that a file can't be opened. */
+"Music Kit: Can't open file %s.";
+
+/*  This error warns that a file can't be closed. */
+"Music Kit: Can't close file %s.";
+
+/*  This error warns that notes were found in a scorefile with times out of
+    order.  There are two arguments, which must be in the order indicated. 
+    The first is the time of the incorrect note.  The second is the 
+    current time.
+ */
+"Music Kit: Note at time %f out-of-order. Current time is %f.";
+
+/*  This error warns that the Samples object cannot change the sampling rate
+    of a Waveform.  This error will rarely be seen by a user.
+ */
+"Music Kit: Samples object cannot resample.";
+
+/*  This error warns that the Music Kit has run out of 'noteTags'.  This
+    will probably never be seen by a user. */
+"Music Kit: No more noteTags.";
+
+/*  This error warns that a class is specified in a scorefile as a 
+    'scorefile object type'; but that class does not implement the
+    appropriate methods to be used in that way.  This error will
+    rarely if ever occur in practice. */
+"Music Kit: The class %s does not have the appropriate methods to be used as a scorefile object type.";
+
+/***  The following errors are concerned with sound synthesis.  Most
+ ***  are rarely seen by users.  
+ ***/
+/*  This error indicates that the developer attempted to abort the
+    Orchestra while manually-allocated Unit Generators or SynthPatches
+    were still allocated.  This error rarely if ever is seen by users. 
+*/
+"Music Kit: Unit Generators are still in use.";
+
+/*  A DSP error occurred when trying to read data from DSP memory.  THis
+    error rarely if ever is seen by users.
+*/
+"Music Kit: Can't read SynthData array from the DSP.";
+
+/*  A DSP error occurred when trying to clear DSP memory.  This error rarely
+    if ever is seen by users.
+*/
+"Music Kit: Can't clear SynthData memory.";
+
+/*  A DSP error occurred when trying to load DSP memory.  This error rarely
+    if ever is seen by users. 
+*/
+"Music Kit: Can't load SynthData.";
+
+/*  This error appears when an application attempts to clear or load DSP
+    memory that is marked as 'read-only'.  This error rarely if ever is seen
+    by users. 
+*/
+"Music Kit: Can't clear or load read-only SynthData.";
+
+/*  This error occurs if there are not enough DSP resources to play a note.
+    Its one argument is the time of the note.
+*/
+"SynthInstrument: Omitting note at time %f.";
+
+/*  This error warns that a SynthInstrument object cannot do DSP synthesis 
+    because no SynthPatch class was set.
+*/
+"Music Kit: No SynthPatch class set in SynthInstrument.";
+
+/*  A DSP error occurred when trying to load a unit generator module into
+    DSP memory.  This error rarely if ever is seen by users. The one argument
+    is the class of the unit generator that could not be loaded.
+*/
+"Music Kit: Can't load unit generator %s.";
+
+/*  This error indicates that an illegal argument was specified for a 
+    unit generator.  The two arguments, which must be in the order indicated
+    are the number of the argument and the class of the unit generator.  This
+    error rarely if ever is seen by users. 
+*/
+"Music Kit: Argument %d out of bounds for %s.";
+
+/*  This error indicates that a DSP error occurred while attempting to set
+    a DSP unit generator argument to an address. The three arguments, 
+    which must be in the order indicated, are the address number, the
+    argument name and the unit generator name.  This error rarely if ever is
+    seen by users.
+*/
+"Music Kit: Could not put address %d into argument %s of %s.";
+
+/*  This error indicates that a DSP error occurred while attempting to set 
+    a DSP unit generator argument to a datum value.  The three arguments,
+    which must be in the order indicated, are the datum value, the argument
+    name and the unit generator name.  This error rarely if ever is seen by
+    users. 
+*/
+"Music Kit: Could not put datum %d into argument %s of %s.";
+
+/*  This error indicates that an attempt was made to put a DSP address into
+    a unit generator running on a different DSP Orchestra.  This error rarely
+    if ever is seen by users. 
+*/
+"Music Kit: Attempt to put address into argument of unit generator of a different orchestra.";
+
+/*  This error indicates that an attempt was made to put a DSP address value
+    with a memory space that does not match the memory space which the
+    DSP unit generator assumes.  The arguments, which must be in the order
+    specified, are the space of the address, the space of the agrument, the
+    name of the argument, and the name of the unit generator.   This error
+    rarely if ever is seen by users.
+*/
+"Music Kit: Attempt to put %s-space address into %s-space argument %s of %s.";
+
+/*  This error indicates that an attempt was made to set a DSP unit generator
+    argument to a datum value when that unit generator argument accepts only
+    an address.  The two arguments, which must be in the order indicated,
+    are the name of the argument and the unit generator name.
+*/
+"Music Kit: Attempt to set address-valued argument %s of %s to datum value.";
+
+/*  This error indicates that an attempt was made to set a DSP unit generator
+    argument to an address value when that unit generator argument accepts only
+    a datum.  The two arguments, which must be in the order indicated,
+    are the name of the argument and the unit generator name.
+*/
+"Music Kit: Attempt to set argument %s of %s to an address.";
+
+
+/*** The following errors occur while parsing a ScoreFile Language
+ *** document.  These errors ARE commonly seen by users.  
+ ***/
+/** The first group of errors indicates illegal constructs. **/
+/* Illegal expression. */
+"Illegal expression.";
+
+/*  Illegal definition.  The one argument is the type of the definition.
+    For example "Illegal envelope definition. 
+*/
+"Illegal %s definition.";
+
+/*  Illegal value for a Note's parameter. */
+"Illegal parameter value.";
+
+/*  This error warns that a certain kind of definition may not be nested.
+    The one argument is the type of definition.  For example 'Envelope
+    definitions cannot be nested.'
+*/
+"%s definitions cannot be nested.";
+
+/**  The following errors indicate missing constructs **/
+/*  This error indicates a missing or illegal declaration of some kind.
+    The kind of declaration is given by the one argument. For example
+    'Missing or illegal envelope declaration.'
+*/
+"Missing or illegal %s declaration.";
+
+/*  This error indicates that an expected construct of some kind is missing.
+    The one argument is the kind of thing that is missing.  For example,
+    'Missing envelope.'
+*/
+"Missing '%s'.";
+
+/*  This error indicates a bad note type or duration. */
+"Missing noteType or duration.";
+
+/*  This error indicates a missing note tag. */
+"Missing noteTag.";
+
+/*  This error occurs if a backslash appears outside of a string and the
+    backslash is not followed by a newline. */
+"Back-slash must preceed newline.";
+
+/*  This error occurs when an illegal statement is encountered and the
+    Music Kit thinks the problem may be a missing semicolon.  */
+"Illegal statement. (Missing semicolon?) ";
+
+/*  This error occurs when an undefined construct of a certain type is 
+    encountered.  There are two arguments, which must be in the order
+    indicated.  The first argument is the type of construct and the second
+    is the token encountered in the file.  For example, 
+    'Undefined envelope: dog'.
+*/
+"Undefined %s: %s";
+
+/*  This error occurs when an attempt is made to assign to a construct that
+    cannot accept an assignment.  Example: 'You can't assign to a number.'.
+    It is only legal to assign to a variable or similar construct.
+*/
+"You can't assign to a %s.";
+
+/*  This error occurs if matching constructs are not found in the same file.
+    For example: 'A { must appear in the same file as the matching }.'
+*/
+"A %s must appear in the same file as the matching %s";
+
+/*  This error occurs when something other than a note parameter name is 
+    found where a note parameter name is expected. 
+*/
+"Parameter name expected here.";
+
+/*  This error occurs when something other than a numeric value is found where 
+    a numeric value is expected. 
+*/
+"Numeric value expected here."; 
+
+/*  This error occurs when something other than a string value is found where
+    a string value is expected. 
+*/
+"String value expected here."; 
+
+/*  A construct that may not be global is declared as global. This error
+    rarely occurs, since global variables are not documented.
+*/
+"A %s may not be global.";
+
+/*  This error occurs when a request is made to import a global that cannot 
+    be found.  This error rarely occurs, since global variables are not 
+    documented. 
+*/
+"Can't find global %s.";
+
+/**  The following errors indicate duplicate constructs **/
+/*  This error occurs when the user attempts to define a token that is already
+    defined.  The two arguments, which must occur in the order indicated, are
+    the name of the token and the type it was previously defined as.
+*/
+"%s is already defined as a %s.";
+
+/*  This error indicates a duplicate declaration for the specified token. */
+"Duplicate declaration for %s.";
+
+/**  The following errors indicate a construct that is in the wrong place. **/
+/*  This error occurs when something occurs in the wrong place.  The single
+    argument is the type of the thing that is in the wrong place.
+*/
+"A %s may not appear here.";
+
+/*  This error occurs when something is declared where it should not be 
+    declared.  The two arguments, which must be in the order indicated, are
+    the token that the user is trying to declare and the type that he is trying
+    to declare it as. 
+*/
+"%s may not be declared as a %s here.";
+
+/*  This is a common error indicating an illegal header statement or 
+    declaration that begins with the token indicated.
+*/
+"A header statement or declaration may not begin with %s.";
+
+/*  This is a common error indicating a body statement or declaration 
+    that begins with the token indicated.
+*/
+"A body statement or declaration may not begin with %s.";
+
+/*  This error indicates an attempt to illegally initialize the specified
+    construct.
+*/
+"Illegal %s initialization.";
+
+/*  This error occurs when an illegal argument follows the 'tune' construct. */
+"Argument to 'tune' must be a pitch variable or number.";
+
+/*  This error occurs when individual statements are being typed in by the
+    user and the user attempts to 'include' a file.  This error never
+    occurs, since the functionality is not yet implemented.
+*/
+"Can't 'include' a file when not reading from a file.";
+
+/*  The specified file could not be found. The single argument is the name
+    of the file. 
+*/
+"Can't find file %s.";
+
+/*  The specified file could not be written. The single argument is the name
+    of the file. 
+*/
+"Can't write %s.";
+
+/*  This error occurs when values which must be increasing appear in some
+    other order.  The one argument is the type of values.  Example:
+    'Envelope x values must be increasing.'
+*/
+"%s values must be increasing.";
+
+/*  This error occurs when a 'comment' statement appears without a matching
+    'endComment' statement.
+*/
+"'comment' without matching 'endComment'.";
+
+/*  This error appears when a note that requires an active noteTag appears 
+    with a noteTag that is not active.  For example, it occurs if a noteOff
+    has a noteTag for which there was no preceeding noteOn.  The single 
+    argument is the type of the note.
+*/
+"%s without active noteTag.";
+
+/*  This error occurs when the Music Kit cannot find the requested class. */
+"Can't find class %s."; 
+
+/*  This error occurs when the lookup value specified in a '@' scorefile 
+    construct is out of bounds. 
+*/
+"Lookup value out of bounds.";
+
+/*  This error occurs when the user attempts an illegal type conversion.
+    For example, it occurs if he tries to assign an envelope to a variable
+    that is typed as an 'int'.
+*/
+"Illegal type conversion.";
+
+/*  This error occurs when the user tries to set a variable that is read only.
+    The single argument is the variable he tried to set.
+*/
+"Can't set %s. It is a readOnly variable.";
+
+/*  This error occurs an arithmetic error, such as division by 0. */
+"Arithmetic error.";
+
+/*  This error occurs if the user tries to read a file as a scorefile and
+    that file is not a scorefile. 
+*/
+"This doesn't look like a scorefile.";
+
+/*  This error occurs when the number of errors exceeds some limit.  (The
+    limit is set by the application.)
+*/
+"Too many parser errors. Quitting.";
+
+/*** The following errors are generated by the Music Kit UnitGenerator 
+ *** Library during DSP synthesis. They are rarely seen by the user.
+ ***/
+/*  This error occurs if a DSP UnitGenerator argument is left unset and then
+    the UnitGenerator is sent the -run message.  The two arguments, which must
+    be in the order indicated, are the argument that was left unset and the
+    name of the UnitGenerator.  This error is rarely if ever seen by the user.
+*/
+"Unitgenerator Library: %s must be set before running %s.";
+
+/*  This error indicates a request to load an oscillator table that is a size
+    which is not a power of 2.  This error is rarely seen by the user.
+*/
+"Unitgenerator Library: Table size of %s must be a power of 2.";
+
+/*  This error indicates that a particular argument of a particular 
+    DSP unit generator must be set before asking for the value of another
+    argument of that unit generator.  The three arguments, which must be
+    in the order specified, are the argument that needs to be set, the
+    unit generator for which it needs to be set, and the argument whose
+    value is being requested.  Users rarely see this error.
+*/
+"Unitgenerator Library: %s of %s must be set before getting %s.";
+
+/*** The following errors are generated by the Music Kit SynthPatch 
+ *** Library during DSP synthesis. 
+ ***/
+/* This error indicates that a particular kind of memory is not available.
+   The two arguments, which must be in the order indicated, are the type of 
+   memory and the time of the note for which the memory cannot be found.
+   For example: '...Out of wavetable memory at time 3.123'.
+*/
+"Synthpatch Library: Out of %s memory at time %.3f.";
+
+/*  This error is a special purpose version of the preceeding error.  It
+    indicates that there is no more wavetable memory at the indicated time
+    and that the DSP sine ROM is being used instead.  The argument is the
+    time at which the memory is not available.
+*/
+"Synthpatch Library: Out of wavetable memory at time %.3f. Using sine ROM.";
+
+/*  This error occurs if a scorefile or applicatin specifies a timbre
+    specifier that is invalid or does not correspond to a known timbre.  
+    The single argument is the timbre specifier.
+*/
+"Synthpatch Library: Invalid timbre database keyword: %s.";
+
+/*  This error occurs if a parameter is out of range for the SynthPatch.
+    The single argument is the parameter that is out of range.
+    For example, '...pitch out of range.'
+*/
+"Synthpatch Library: %s out of range.";
+
+/*  This error indicates that the SynthPatch could not allocate the specified
+    resource at the specifed time.  The two arguments, which must be in the
+    order specified, are the resource that could not be allocated and the
+    time at which it could not be allocated.  Example:
+    'Can't allocate Pluck noise generator at time 3.123.'
+*/
+"Synthpatch Library: Can't allocate %s at time %.3f.";
+
+/*** The following error messages are used as an argument to the "Mach Error"
+ *** above. 
+ ***/
+/* This error occurs if the Music Kit's Conductor class encounters a Mach error (this should never happen, so this error should never appear--in particular it, should never be seen by the user */
+"MKConductor encountered problem.";
+
+/* This error occurs when an error is received from the Mach MIDI driver when receiving MIDI data. */
+"Problem receiving MIDI from the MIDI device driver port";
+
+/* This error occurs when an error is received from the Mach MIDI driver when sending MIDI data. */
+"Problem sending MIDI to the MIDI device driver port";
+
+"MIDI serial port is unavailable. Perhaps another application is using the serial port";
+
+"MIDI driver is unavailable. Perhaps another application is using it";
+
+/* This error occurs when an attempt to become owner of the MIDI driver fails. */
+"Can't become owner of MIDI driver";
+
+/* This error occurs when a Mach error occurs in the course of setting up access to the MIDI device driver. */
+"Problem setting up MIDI device driver";
+
+/* This error occurs when the MIDI device driver cannot be found. */
+"Problem finding MIDI device driver";
+
+/* This error occurs when a Mach error occurs in the course of communicating between the Music Kit and the MIDI device driver clock. */
+"Problem communicating with MIDI device driver clock";
+
+/*** The following error messages indicate an unimplemented feature. 
+ ***/
+/* This error occurs if an application asks for a WaveTable size tha is not a power of 2. This error is rarely if ever seen by the user. */
+"Partials object currently supports table sizes of powers of 2 only.";
+
+/* This error occurs if an application asks for an inharmonic waveshaping partial. */
+"Waveshaping harmonics must be integers.";
+
+/*** The following error messages are used as arguments to larger error 
+ *** messages. 
+ ***/
+/* This string appears as part of a larger error message: 'Out of low pitch memory...' */
+"low pitch";
+
+/* This string appears as part of a larger error message: 'Out of pitch memory...' */
+"pitch";
+
+/* This string appears as part of a larger error message: 'Can't allocate Pluck noise...' */
+"Pluck noise";
+
+/* This string occurs in the context of a larger error message: 'Lookup Table... must be set before getting increment.'  This error is rarely if ever seen by the user. */
+"Lookup Table";
+
+/* This string occurs in the context of a larger error message: 'Lookup Table... must be set before getting increment.' This error is rarely if ever seen by the user. */
+"increment";
+
+/* This string occurs in the context of a larger error message: 'Wavetable must be set before running...' This error is rarely if ever seen by the user */
+"Oscgaf Wavetable" = "Wavetable";
+
+/* (Same as above) This string occurs in the context of a larger error message: 'Wavetable must be set before...' This error is rarely if ever seen by the user. */
+"Oscg Wavetable" = "Wavetable";
+
+/* User has wrong DSP montior */
+"Music Kit: DSP runtime monitor version does not match Music Kit version for object: %s";
