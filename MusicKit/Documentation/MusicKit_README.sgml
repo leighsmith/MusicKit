@@ -246,9 +246,10 @@ Release notes can be found in
 	<listitem>
 	  <para>
 The file 
+<ulink url="http://www.tomandandy.com/MusicKit/ChangeLog">
 <filename>
 ./Documentation/ChangeLog
-</filename>
+</filename></ulink>
 lists changes and is generated from the CVS logs.
 </para>
 	</listitem>
