@@ -7,15 +7,13 @@
  *
  *  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
  *
- *  07 Nov 2001, Copyright (c) 2001 tomandandy Music Inc.
+ *  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
  *
  *  Permission is granted to use and modify this code for commercial and non-
  *  commercial purposes so long as the author attribution and this copyright
  *  message remains intact and accompanies all derived code.
  *
  */
-
-
 
 #ifndef __SndKitDefines_INCLUDE
 #define __SndKitDefines_INCLUDE

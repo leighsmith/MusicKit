@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndBreakpoint.h
-//  SndKit
+//  $Id$
 //
 //  Created by Stephen Brandon on Wed Jun 25 2001. <stephen@brandonitconsulting.co.uk>
-//  Copyright (c) 2001 SndKit project
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and non-commercial
 //  purposes so long as the author attribution and copyright messages remain intact and

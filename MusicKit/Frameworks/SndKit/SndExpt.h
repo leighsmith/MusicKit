@@ -1,16 +1,21 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndExpt.h
-//  SndKit
+//  $Id$
 //
-//  Created by SKoT McDonald on Fri Jan 18 2002.
-//  Copyright (c) 2002 tomandandy. All rights reserved.
+//  Description:
+//    This class is to be regarded as HIGHLY EXPERIMENTAL.
+//    Don't use it for general Snd use!!!
 //
-//  This class is to be regarded as HIGHLY EXPERIMENTAL.
-//  Don't use it for general Snd use!!!
+//    Current experimental activity - stream from disk behaviour.
+//    Should be safe to use for playback ONLY!!
 //
-//  Current experimental activity - stream from disk behaviour.
-//  Should be safe to use for playback ONLY!!
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
+//
+//  Copyright (c) 2002, The MusicKit Project.  All rights reserved.
+//
+//  Permission is granted to use and modify this code for commercial and
+//  non-commercial purposes so long as the author attribution and copyright
+//  messages remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
