@@ -1,0 +1,26 @@
+#  $Id$
+#  Defined In: The MusicKit
+#  Description:
+#    Makefile preamble for GNUstep
+#
+#  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
+#
+#  17 October 2001, Copyright (c) 2001 Stephen Brandon.
+#
+#  Permission is granted to use and modify this code for commercial and non-
+#  commercial purposes so long as the author attribution and this copyright
+#  message remains intact and accompanies all derived code.
+
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
+
+  CYG_PREFIX = $(shell cygpath -w '/' | tr '\\' '/')
+
+# You need the DirectX SDK from Microsoft in the following location. The 
+# /usr/local/[include|lib] is where the shout and lame headers and libraries
+# should have been placed.
+
+  ADDITIONAL_FLAGS += -Ic:/DXVCSDK/include \
+           -I$(CYG_PREFIX)/usr/local/include
+
+endif
+
