@@ -15,6 +15,9 @@
 Modification history:
 
    $Log$
+   Revision 1.3  2000/10/05 08:06:40  skot
+   Added fastFFT.h, made fft functions extern linkable (non static)
+
    Revision 1.2  1999/07/29 01:26:04  leigh
    Added Win32 compatibility, CVS logs, SBs changes
 
@@ -92,9 +95,7 @@ static double s_cos(int n) {
 	return(-s_sin(n-quart));
 }
 
-static void fft_real_to_hermitian(z, n)
-	double *z;
-	int n;
+void fft_real_to_hermitian(double* z, int n)
 /* Output is {Re(z^[0]),...,Re(z^[n/2),Im(z^[n/2-1]),...,Im(z^[1]).
    This is a decimation-in-time, split-radix algorithm.
  */
@@ -205,8 +206,7 @@ static void fft_real_to_hermitian(z, n)
 	}
 }
 
-static void fftinv_hermitian_to_real(z, n)
-	double *z; int n;
+void fftinv_hermitian_to_real (double* z, int n)
 /* Input is {Re(z^[0]),...,Re(z^[n/2),Im(z^[n/2-1]),...,Im(z^[1]).
    This is a decimation-in-frequency, split-radix algorithm.
  */
