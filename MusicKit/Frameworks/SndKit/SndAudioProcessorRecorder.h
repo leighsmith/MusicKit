@@ -19,6 +19,8 @@
 
 #import <Foundation/Foundation.h>
 #import "SndAudioProcessor.h"
+//#import <stdio.h>
+#import <sndfile.h>
 
 @class SndAudioBuffer;
 
@@ -47,18 +49,16 @@ enum SndRecorderParam {
 @protected
     /*! @var recordBuffer A buffer of same format, but normally longer than a processor input buffer, used to cache samples before writing to disk. */
     SndAudioBuffer *recordBuffer;
-    /*! @var conversionBuffer */
-    short          *conversionBuffer;
     /*! @var fileFormat The format of the data to be stored in the file. Can differ from the format of recordBuffer. */
     SndFormat fileFormat;
     /*! @var recordPosition The location within the recordBuffer in bytes to write the next processed buffer. */
     long            recordPosition;
     /*! @var isRecording Indicates if recording is currently active. */
     BOOL            isRecording; 
-    /*! @var bytesrecorded */
-    long            bytesRecorded;  
+    /*! @var framesRecorded Number of sample frames written */
+    long            framesRecorded;  
     /*! @var recordFile */
-    FILE           *recordFile;
+    SNDFILE         *recordFile;
     /*! @var recordFileName */
     NSString       *recordFileName;
     /*! @var startedRecording Indicates if a minimum threshold or time trigger has passed and recording has begun. */
@@ -119,12 +119,12 @@ enum SndRecorderParam {
 - stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream;
 
 /*!
-    @method     bytesRecorded
-    @abstract 
+    @method     framesRecorded
+    @abstract Returns the number of frames recorded.
     @discussion 
     @result     
 */
-- (long) bytesRecorded;
+- (long) framesRecorded;
 
 /*!
     @method     primeStartTrigger

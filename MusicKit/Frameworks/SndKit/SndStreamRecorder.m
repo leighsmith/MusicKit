@@ -97,7 +97,7 @@
 {  
   if ([recorder isRecording]) {
     SndAudioBuffer *inB       = [self synthInputBuffer];  
-    if ([recorder bytesRecorded] == 0) {
+    if ([recorder framesRecorded] == 0) {
       if (delegate != nil && [delegate respondsToSelector: @selector(didStartRecording)]) 
         [delegate didStartRecording: self];
     }
@@ -111,22 +111,26 @@
 
 - (BOOL) prepareToRecordForDuration: (double) time
 {
-  BOOL r = FALSE;
-  
-  if ([recorder isRecording]) 
-    NSLog(@"SndStreamRecorder::prepareToRecordForDuration - Error: already recording!\n");
-  
-  else {
-    SndAudioBuffer *outB;
-    [self lockOutputBuffer];
-    outB = [self outputBuffer]; 
-    r    = [recorder prepareToRecordForDuration: time
-                                 withDataFormat: [outB dataFormat]
-                                   channelCount: [outB channelCount]
-                                   samplingRate: [outB samplingRate]];
-    [self unlockOutputBuffer];
-  }
-  return r;
+    BOOL r = FALSE;
+    
+    if ([recorder isRecording]) 
+	NSLog(@"SndStreamRecorder::prepareToRecordForDuration - Error: already recording!\n");
+    
+    else {
+#if 0
+	SndAudioBuffer *outB;
+	[self lockOutputBuffer];
+	outB = [self outputBuffer]; 
+	r    = [recorder prepareToRecordForDuration: time
+				     withDataFormat: [outB dataFormat]
+				       channelCount: [outB channelCount]
+				       samplingRate: [outB samplingRate]];
+	[self unlockOutputBuffer];
+#else
+	r    = [recorder prepareToRecordForDuration: time];
+#endif
+    }
+    return r;
 }      
 
 ////////////////////////////////////////////////////////////////////////////////
