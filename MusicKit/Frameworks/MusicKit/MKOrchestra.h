@@ -9,6 +9,9 @@
 */
 /*
   $Log$
+  Revision 1.4  1999/09/20 02:51:38  leigh
+  trace: now takes msg of NSString type
+
   Revision 1.3  1999/09/04 22:02:18  leigh
   Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
 
@@ -228,7 +231,7 @@ extern void MKSetPreemptDuration(double seconds);
 - (void)dealloc; 
 - useDSP:(BOOL )useIt; 
 -(BOOL ) isDSPUsed; 
-- trace:(int )typeOfInfo msg:(char * )fmt,...; 
+- trace: (int) typeOfInfo msg: (NSString *) fmt,...; 
 -(char * )segmentName:(int )whichSegment; 
 -(MKEMemType)externalMemoryIsOverlaid; 
 -(MKOrchMemStruct *)peekMemoryResources:(MKOrchMemStruct *)peek;
