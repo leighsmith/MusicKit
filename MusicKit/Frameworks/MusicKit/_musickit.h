@@ -4,19 +4,22 @@
 
   Description:
     Private MusicKit include file.
-    This file contains everything used by the Music Kit privately.
-    It should probably be broken up for compilation efficiency.
+    This file contains everything used by the MusicKit privately.
 
   Original Author: David A. Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000 The MusicKit Project
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.4  2000/10/11 16:56:10  leigh
+  Removed objc-runtime.h since it is included by FoundationKit.h
+
   Revision 1.3  2000/04/16 04:04:31  leigh
   removed unnecessary includes and defines
 
@@ -156,7 +159,7 @@ extern BOOL _MKInheritsFrom(id aFactObj,id superObj);
 extern void _MKCheckInit();
 
 //sb: needed?
-#import <objc/objc-runtime.h>
+//#import <objc/objc-runtime.h>
 
 /* The following finds the class or nil if its not there. */
 /*sb: this is the proper OpenStep way, as far as I know */
