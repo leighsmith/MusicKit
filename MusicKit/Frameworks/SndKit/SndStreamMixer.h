@@ -56,6 +56,9 @@
     @discussion
 */
 - (void) dealloc;
+
+- (NSString*) description;
+
 /*!
     @method   processInBuffer:outBuffer:nowTime:
     @abstract
@@ -111,6 +114,8 @@
     @param originTimeInSeconds
 */
 - (void) resetTime: (double) originTimeInSeconds;
+
+- (SndStreamClient*) clientAtIndex: (int) ndx;
 
 @end
 

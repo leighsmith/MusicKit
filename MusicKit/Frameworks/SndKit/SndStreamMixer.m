@@ -64,6 +64,16 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// description
+////////////////////////////////////////////////////////////////////////////////
+
+- (NSString*) description
+{
+  int c = [self clientCount];
+  return [NSString stringWithFormat: @"SndStreamMixer with %i client%s", c, c>1?"s":""];
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // processInBuffer:outBuffer:nowTime:
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -76,6 +86,7 @@
     lastNowTime = nowTime;
     nowTime = t;
     [streamClientsLock lock];
+
     clientCount = [streamClients count];
 
 //    [outB mixWithBuffer: inB];
@@ -85,6 +96,7 @@
 #endif
 
     [outB zeroForeignBuffer];
+    
     if (clientCount > 0) {
         for (i = 0; i < clientCount; i++) {
 
@@ -107,12 +119,14 @@
               [client unlockOutputBuffer];
             }
             // Each client should have a second synthing buffer, and a synth thread
+
             [client startProcessingNextBufferWithInput: inB nowTime: nowTime];
             
             // Do any audio processing on the mix
         }
     }
     [processorChain processBuffer: outB forTime:lastNowTime];
+
     [streamClientsLock unlock];
 
 #if SNDSTREAMMIXER_DEBUG    
@@ -218,6 +232,19 @@
         }
     }
     [streamClientsLock unlock];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+
+- (SndStreamClient*) clientAtIndex: (int) ndx
+{
+  SndStreamClient *client;
+  [streamClientsLock lock];
+  client = [[[streamClients objectAtIndex: ndx] retain] autorelease];
+  [streamClientsLock unlock];
+  return client;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
