@@ -93,7 +93,7 @@
 // setParam:toValue:
 ////////////////////////////////////////////////////////////////////////////////
 
-- setParam: (const int) index toValue: (const float) value
+- (void) setParam: (const int) index toValue: (const float) value
 {
   switch (index) {
     case noisegate_kThreshold:
@@ -112,7 +112,6 @@
       iChanMode   = (int)(2.0 * (value + (float)0.25));
       break;
   }
-  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

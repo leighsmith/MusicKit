@@ -113,7 +113,7 @@
 // look-and-feel, all params are set by floats, and return as floats. Rethink. 
 ////////////////////////////////////////////////////////////////////////////////
 
-- setParam: (const int) index toValue: (const float) v;
+- (void) setParam: (const int) index toValue: (const float) v;
 {
   if (v < 0.0f || v > 1.0f) {
       NSLog(@"SndAudioProcessorReverb::setParam: ERR: value must be in [0,1]");
@@ -128,7 +128,6 @@
     case rvrbMode:     setMode(cppFreeReverbObj, v);     break; 
     }
   }
-  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

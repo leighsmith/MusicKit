@@ -64,7 +64,7 @@
 // setParameter
 //////////////////////////////////////////////////////////////////////////////
 
-- setParam: (const int) index toValue: (const float) v
+- (void) setParam: (const int) index toValue: (const float) v
 {
   float value = v > 1.0 ? 1.0 : (v < 0.0 ? 0.0 : v);
   switch (index)  {
@@ -75,7 +75,6 @@
     case flanger_kPhase:    fPhaseDiff  = value; break;
     case flanger_kFeedback: fFeedback   = value; break;
   }
-  return self;
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -201,7 +201,7 @@
       [recordBuffer release];
 
     recordBuffer = [SndAudioBuffer audioBufferWithDataFormat: dataFormat
-                                                channelCount: chanChan
+						    channelCount: chanChan
                                                 samplingRate: samRate
                                                     duration: time];
     if (recordBuffer == nil) {

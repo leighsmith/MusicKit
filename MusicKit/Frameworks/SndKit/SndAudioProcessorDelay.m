@@ -127,7 +127,7 @@
 // setParam 
 ////////////////////////////////////////////////////////////////////////////////
 
-- setParam: (const int) index toValue: (const float) v
+- (void) setParam: (const int) index toValue: (const float) v
 {
   switch (index) {
     case dlyLength:   
@@ -138,7 +138,6 @@
       feedback = v > 1.0 ? 1.0 : (v < 0.0 ? 0.0 : v);
       break;
   }
-  return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
