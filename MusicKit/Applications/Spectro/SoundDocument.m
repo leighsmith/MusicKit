@@ -113,6 +113,20 @@ static int calcFormat(SndSoundStruct *s)
     return self;
 }
 
+// You can also choose to override -fileWrapperRepresentationOfType: or -writeToFile:ofType: instead.
+- (NSData *) dataRepresentationOfType: (NSString *) aType
+{
+    NSLog(@"write file of type: %@\n", aType);
+    return nil;
+}
+
+// You can also choose to override -loadFileWrapperRepresentation:ofType: or -readFromFile:ofType: instead.
+- (BOOL) loadDataRepresentation: (NSData *) data ofType: (NSString *) aType
+{
+    NSLog(@"loadDataRepresentation ofType: %@\n", aType);
+    return NO;
+}
+
 - sound
 {
     return [mySoundView sound];
@@ -215,14 +229,15 @@ static int calcFormat(SndSoundStruct *s)
     return self;
 }
 
-- load:sender
+- load: sender
 {	
     NSBundle *mainB = [NSBundle mainBundle];
     if (fileName) {
-        id newSound = [[Snd alloc] initFromSoundfile:fileName];
+        Snd *newSound = [[Snd alloc] initFromSoundfile: fileName];
+	
         if (newSound) {
             [soundWindow disableFlushWindow];
-            [scrollSound setSound:newSound];
+            [scrollSound setSound: newSound];
 #if 0 /*sb: can't determine displayability this way. Find some other way one day... */
             if (![scrollSound setSound:newSound]) { /* not displayable */
                 if ([newSound convertToFormat:SND_FORMAT_LINEAR_16]) {
@@ -233,7 +248,8 @@ static int calcFormat(SndSoundStruct *s)
                             [mainB localizedStringForKey:@"OK" value:@"OK" table:nil],
                                 nil, nil);
                     return nil;
-                } else
+                }
+		else
                     [scrollSound setSound:newSound];
             }
 #endif
@@ -241,13 +257,13 @@ static int calcFormat(SndSoundStruct *s)
             [soundWindow enableFlushWindow];
             [self zoomAll:self];
             [soundWindow flushWindow];
+	    [soundWindow setDocumentEdited:NO];
+	    [self setWindowTitle];
+	    fresh = NO;
+	    /*sb: do this now, as new windows have not yet been displayed. */
+	    [soundWindow makeKeyAndOrderFront:self];
         }
     }
-    [soundWindow setDocumentEdited:NO];
-    [self setWindowTitle];
-    fresh = NO;
-    [soundWindow makeKeyAndOrderFront:self];   /*sb: do this now, as new windows
-    						* have not yet been displayed	  */
     return self;
 }
 
@@ -333,7 +349,7 @@ static int calcFormat(SndSoundStruct *s)
 	[mySoundView getSelection:&start size:&size];
 	[sStartSamp setIntValue:start];
 	PUTVAL(sStartSec,[self sampToSec:start rate:srate]);
-	if (size > ([[mySoundView sound] sampleCount] - start))
+	if (size > ([[mySoundView sound] lengthInSampleFrames] - start))
 		return self;
 	[sDurSamp setIntValue:size];
 	PUTVAL(sDurSec,[self sampToSec:size rate:srate]);
@@ -350,7 +366,7 @@ static int calcFormat(SndSoundStruct *s)
 	cell = [sender selectedCell];
 	start = [wStartSamp intValue];
 	size = [wDurSamp intValue];
-	dur = [[mySoundView sound] sampleCount];
+	dur = [[mySoundView sound] lengthInSampleFrames];
 	rate = [self samplingRate];
 	startChanged = sizeChanged = NO;
 	switch ([cell tag]) {
@@ -400,7 +416,7 @@ static int calcFormat(SndSoundStruct *s)
 	cell = [sender selectedCell];
 	start = [sStartSamp intValue];
 	size = [sDurSamp intValue];
-	dur = [[mySoundView sound] sampleCount];
+	dur = [[mySoundView sound] lengthInSampleFrames];
 	rate = [self samplingRate];
 	switch ([cell tag]) {
 		case 0:	start = [cell intValue];
@@ -526,7 +542,7 @@ static int calcFormat(SndSoundStruct *s)
 	float scale = ([scrollSound reductionFactor] * ZOOM_FACTOR);
 
 	if (NSIsEmptyRect(aRect = [scrollSound documentVisibleRect])) return self;
-	maxRFactor = [[mySoundView sound] sampleCount] / aRect.size.width;
+	maxRFactor = [[mySoundView sound] lengthInSampleFrames] / aRect.size.width;
 	if (scale > maxRFactor) [self zoomAll:sender];
 	else [self zoom:scale center:[scrollSound centerSample]];
 	return self;
@@ -546,7 +562,7 @@ static int calcFormat(SndSoundStruct *s)
 	
 	size = [scrollSound contentSize];
 	width = size.width;
-	count = [[mySoundView sound] sampleCount];
+	count = [[mySoundView sound] lengthInSampleFrames];
 	[self zoom:(((float) count) / width) center:(count / 2)];
 	return self;
 }

@@ -38,7 +38,7 @@
 	NSRect tframe;
 	
 	p.y = p.x = 0.0;
-	if ((samples = [[(SndView *)soundView sound] sampleCount]) < 1) goto empty;
+	if ((samples = [[(SndView *)soundView sound] lengthInSampleFrames]) < 1) goto empty;
 	r = ((float) sample) / ((float) samples);
 	tframe = [soundView frame];
 	p.y = 0.0;
@@ -63,7 +63,7 @@
 	if (aRect.size.width == 0.0) return 0;
 	r = (r - aRect.origin.x) / aRect.size.width;
 	if (r > 1.0) r = 1.0;
-        return (int) (r * [[(SndView *)soundView sound] sampleCount] + 0.5);
+        return (int) (r * [[(SndView *)soundView sound] lengthInSampleFrames] + 0.5);
 }
 
 - (void)setDelegate:(id)anObject

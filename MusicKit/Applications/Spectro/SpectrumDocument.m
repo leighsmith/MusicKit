@@ -508,7 +508,7 @@
     if ([mySound dataFormat] == SND_FORMAT_MULAW_8) {
         mulawData = [(Snd *) mySound data];
         for (i=0; i<windowSize; i++)
-            samples[i] = (float) SndiMulaw(mulawData[startSample + i]);
+            samples[i] = (float) SndMuLawToLinear(mulawData[startSample + i]);
     }
     else {
         linearData = (short *)[(Snd *)mySound data];
@@ -602,7 +602,7 @@
                 if ([mySound dataFormat] == SND_FORMAT_MULAW_8) {
                         mulawData = [(Snd *)mySound data];
                         for (i=0; i<windowSize; i++)
-                                samples[i] = (float) SndiMulaw(mulawData[firstSample + k + i]);
+                                samples[i] = (float) SndMuLawToLinear(mulawData[firstSample + k + i]);
                 }
                 else {
                         linearData = (short *)[(Snd *)mySound data];
