@@ -18,7 +18,7 @@ Modification history:
 */
 
 #include <strings.h>
-#include <dsp/dsp.h>
+#include <MKDSP/dsp.h>
 
 /* private functions from libdsp */
 extern char *_DSPRemoveTail();

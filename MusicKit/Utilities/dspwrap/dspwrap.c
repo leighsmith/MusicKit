@@ -76,7 +76,7 @@ TO DO
 #define USAGE "dspwrap [-{ug,ap}] [-no{Doc,Link,C}] [-o<path>] [-trace <n>] [-xonly] [-local <path>] [-dsploadwrapDir <path>] [-macroDir <path>] [-prefixAPcalls <string> [-stackable]] <filename(s)>"
 
 #import <libc.h>
-#import <dsp/dsp.h>
+#import <MKDSP/dsp.h>
 #import <stdio.h>
 #import <strings.h>
 #import <sys/file.h>
