@@ -12,6 +12,9 @@
 #import "SndAudioProcessorToneGenerator.h"
 
 #define ROOTFREQ 55.0
+#ifndef M_PI
+#define M_PI            3.14159265358979323846  /* pi */
+#endif
 
 double freqparam2freq(float freq)
 {
