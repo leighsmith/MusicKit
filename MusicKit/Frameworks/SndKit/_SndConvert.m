@@ -1,14 +1,28 @@
 /******************************************************************************
 LEGAL:
-This framework and all source code supplied with it, except where specified, are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use the source code for any purpose, including commercial applications, as long as you reproduce this notice on all such software.
+This framework and all source code supplied with it, except where specified,
+are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free
+to use the source code for any purpose, including commercial applications, as
+long as you reproduce this notice on all such software.
 
-Software production is complex and we cannot warrant that the Software will be error free.  Further, we will not be liable to you if the Software is not fit for the purpose for which you acquired it, or of satisfactory quality. 
+Software production is complex and we cannot warrant that the Software will be
+error free.  Further, we will not be liable to you if the Software is not fit
+for the purpose for which you acquired it, or of satisfactory quality. 
 
-WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES OF QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD PARTIES RIGHTS.
+WE SPECIFICALLY EXCLUDE TO THE FULLEST EXTENT PERMITTED BY THE COURTS ALL
+WARRANTIES IMPLIED BY LAW INCLUDING (BUT NOT LIMITED TO) IMPLIED WARRANTIES OF
+QUALITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT OF THIRD
+PARTIES RIGHTS.
 
-If a court finds that we are liable for death or personal injury caused by our negligence our liability shall be unlimited.  
+If a court finds that we are liable for death or personal injury caused by our
+negligence our liability shall be unlimited.  
 
-WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND CONDITIONS OF THIS AGREEMENT.
+WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS
+OF DATA, LOSS OF GOODWILL, OR WORK STOPPAGE, WHICH MAY ARISE FROM YOUR
+POSSESSION OR USE OF THE SOFTWARE OR ASSOCIATED DOCUMENTATION.  WE SHALL HAVE
+NO LIABILITY IN RESPECT OF ANY USE OF THE SOFTWARE OR THE ASSOCIATED
+DOCUMENTATION WHERE SUCH USE IS NOT IN COMPLIANCE WITH THE TERMS AND CONDITIONS
+OF THIS AGREEMENT.
 
 ******************************************************************************/
 #ifdef GNUSTEP
@@ -17,6 +31,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #include "SndFunctions.h"
 #include "SndResample.h"
 #include <Foundation/NSByteOrder.h>
+#include <string.h>      /* for memmove   */
 
 #else
 
@@ -42,7 +57,8 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #endif /* GNUSTEP */
 
 /* forward decl */
-int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **toSound,BOOL largeFilter, BOOL interpFilter, BOOL fast);
+int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **toSound,
+                      BOOL largeFilter, BOOL interpFilter, BOOL fast);
 
 int SndConvertSound(const SndSoundStruct *fromSound, SndSoundStruct **toSound)
 /* fastest conversion, non-interpolated */
@@ -66,23 +82,20 @@ int SndConvertSoundHighQuality(const SndSoundStruct *fromSound, SndSoundStruct *
  * Convert from one sound struct to another, where toSound defines the format the data is to be converted to
  * and provides the location for the converted sound data.
  */
-int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **toSound,BOOL largeFilter, BOOL interpFilter, BOOL fast)
+int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **toSound,
+                            BOOL largeFilter, BOOL interpFilter, BOOL fast)
 {
-    static double ONE_OVER_TWO_SIXTEEN = 1.0/65536.0;
-    static double ONE_OVER_TWO_EIGHT = 1.0/256.0;
     int cc1,cc2;
     int df1,df2;
     int ds1,ds2; /* dataSize of toSound should really be 0. If it is fragmented, should I SndFree? */
     int sr1,sr2;
-    int dl1,dl2;
+    int dl1;
     double factor;
-    int inCount, outCount;
+    int outCount;
     int width;
     short *outPtr; /* output from resample is always 16 bit */
-    void *inPtr;   /* input to this routine can be any valid format */
-
-    int i = 0;
-    
+    int error;
+        
     int allocedSize;
     
     if (!fromSound) return SND_ERR_NOT_SOUND;
@@ -94,13 +107,15 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
     cc1 = fromSound->channelCount;	cc2 = (*toSound)->channelCount;
     ds1 = fromSound->dataSize;		ds2 = (*toSound)->dataSize;
     df1 = fromSound->dataFormat;	df2 = (*toSound)->dataFormat;
-    dl1 = fromSound->dataLocation;	dl2 = (*toSound)->dataLocation;
+    dl1 = fromSound->dataLocation;
     
     if (df2 == SND_FORMAT_INDIRECT)
         df2 = (((SndSoundStruct *)(*((SndSoundStruct **)
                ((*toSound)->dataLocation))))->dataFormat);
+	       
     if (sr1 == sr2 && cc1 == cc2 && df1 == df2)
         return SndCopySound(toSound,fromSound);
+	
     if (df1 == SND_FORMAT_INDIRECT) {
         df1 = ((SndSoundStruct *)(*((SndSoundStruct **) dl1)))->dataFormat;
         ds1 = SndSampleCount(fromSound) * cc1 * SndSampleWidth(df1);
@@ -115,22 +130,19 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
     SndFree(*toSound);
     factor = (double)sr2/(double)sr1;
     /* Here we allocate enough room for the new number of channels, and data
-        * format, but will adjust the supposed data size to reflect the INPUT data.
-        * This allows us to expand the number of channels etc. later, without having to
-        * create a new sound.
-        */
+     * format, but will adjust the supposed data size to reflect the INPUT data.
+     * This allows us to expand the number of channels etc. later, without having to
+     * create a new sound.
+     */
     allocedSize = (factor * (double)ds1 * (float)((float)cc2 / (float)cc1) * 
         MAX(SndSampleWidth(SND_FORMAT_LINEAR_16),
         MAX(SndSampleWidth(df1), SndSampleWidth(df2))) / (float)SndSampleWidth(df1)) + 1;
-    
-    SndAlloc(toSound,
-        allocedSize,
-        df2,
-        (int)(sr1 * factor + 0.5),
-        cc2,
-        (fromSound->dataFormat != SND_FORMAT_INDIRECT) ? 
-            fromSound->dataLocation - sizeof(SndSoundStruct) + 4 :
-            fromSound->dataSize - sizeof(SndSoundStruct) + 4);
+
+        SndAlloc(toSound, allocedSize,
+                 df2, sr2, cc2,
+                 (fromSound->dataFormat != SND_FORMAT_INDIRECT) ? 
+                    fromSound->dataLocation - sizeof(SndSoundStruct) + 4 :
+                    fromSound->dataSize - sizeof(SndSoundStruct) + 4);
     
     if (cc1 < cc2) {
         (*toSound)->dataSize = (int)(factor * (double)ds1) + 1;
@@ -138,23 +150,458 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
     }
 
     memmove((*toSound)->info,fromSound->info, (*toSound)->dataLocation - sizeof(SndSoundStruct) + 4);
+    
+    if (fromSound->dataFormat == SND_FORMAT_INDIRECT) {
+        SndChangeSampleRate(fromSound, *toSound, 
+			    largeFilter, 
+			    interpFilter, 
+			    fast, NULL, 
+			    (short *)((char *)*toSound + (*toSound)->dataLocation));
+    }
+    else {
+        SndChangeSampleRate(fromSound, *toSound, 
+                            largeFilter, 
+                            interpFilter, 
+                            fast, (char *)fromSound + dl1, 
+                            (short *)((char *)*toSound + (*toSound)->dataLocation));
+    }
+    /* now check channel count -- if we need to increase the number of channels from 1 to
+     * 2, or 4, we have hopefully got enough data malloced in *toSound to duplicate pairs
+     * of samples.
+     * Endian-wise, I simply avoid floats and doubles, re-casting as longs and long longs
+     * which should side step the issue nicely.
+     */
+    if (cc2 > (*toSound)->channelCount) {
+        int origChans,df;
+        SndGetDataPointer((*toSound), (char **)(&outPtr), &outCount, &width);
+        
+        origChans = (*toSound)->channelCount;
+        df = (*toSound)->dataFormat;         /* if we have changed rate, always linear 16, otherwise 'real' output format */
+	
+        SndChannelIncrease ((void *)outPtr, outCount / origChans, origChans, cc2, df );
+	
+        (*toSound)->channelCount = cc2;
+        (*toSound)->dataSize = outCount * cc2 * width;
+	df1 = (*toSound)->dataFormat; /* because the resample routine probably changed it */
+    }
+    
+    /* channel reduction will have already been done by resample routine if the sampling rate was changed */
+    if ((*toSound)->channelCount > cc2) {	
+        int df = (*toSound)->dataFormat;
+        int nChansIn = (*toSound)->channelCount;
 
-    if (sr1 != sr2) {	
-        SndGetDataPointer(*toSound, (char **)(&outPtr), &inCount, &width);
-//	printf("Out count: %d, oc * df: %d, alloced size: %d\n",inCount,inCount * 2, allocedSize);
-        if (fromSound->dataFormat != SND_FORMAT_INDIRECT) {
-            SndGetDataPointer(fromSound, (char **)(&inPtr), &inCount, &width);
-            inCount /= cc1;		/* to get sample frames */
+        SndGetDataPointer((*toSound), (char **)(&outPtr), &outCount, &width);
+	
+        SndChannelDecrease ((void *)outPtr, outCount / (*toSound)->channelCount, nChansIn, cc2, df );
+	
+        (*toSound)->channelCount = cc2;
+        (*toSound)->dataSize = outCount * cc2 * width;
+	df1 = (*toSound)->dataFormat; /* because the resample routine probably changed it */
+    }
+    
+//////////////////////////////////////////////////////////////
+//
+// This next section does an in-place conversion of a buffer
+// of audio from any type (eg ulaw, short, int, float, double
+// etc) to any other. The buffer must have enough allocated
+// memory for the new sound if it the new format requires more
+// memory than the old one.
+// If the new format is bigger, it expands from the last sample
+// to the first - if the new one is smaller, then the other way
+// around.
+//////////////////////////////////////////////////////////////
+
+    SndGetDataPointer(*toSound, (char **)(&outPtr), &outCount, &width);
+    error = SndChangeSampleType(outPtr, df1, df2, outCount);
+    if (error ==  SND_ERR_BAD_FORMAT) {
+        SndFree(*toSound);
+        return error;
+    }
+    (*toSound)->dataFormat = df2;
+    (*toSound)->dataSize = outCount * SndSampleWidth(df2);
+
+    df1 = (*toSound)->dataFormat; /* allow for current df to have been changed by rate change */
+    // printf("alloced size: %d official size: %d\n", allocedSize, (*toSound)->dataSize);
+    if ((*toSound)->dataSize < allocedSize) /* only decrease space if necessary */
+        *toSound = realloc(*toSound,(*toSound)->dataSize + (*toSound)->dataLocation);
+    return SND_ERR_NONE;
+}
+
+void SndChannelDecrease (void *outPtr, int frames, int oldNumChannels, int newNumChannels, int df )
+{
+    int chansToSum = oldNumChannels / newNumChannels;
+    int passes = newNumChannels; /* convenience name */
+    int m,n;
+    unsigned int frame;
+    unsigned int baseIndex;
+    long int sum     = 0;
+    float sumFloat   = 0;
+    double sumDouble = 0;
+
+    for (frame = 0; frame < frames; frame++) {
+        for (m = 0; m < passes; m++) { /* m and n take us through 1 channel independent sample */
+            baseIndex = frame * oldNumChannels + m * newNumChannels;
+            /* fairly inefficient.*/
+            for (n = 0; n < chansToSum; n++) { 
+                switch(df) {
+                  case SND_FORMAT_LINEAR_8: /* endian ok */
+                    sum += ((signed char *)outPtr)[baseIndex + n];
+                    break;
+                  case SND_FORMAT_MULAW_8: /* endian ok */
+                    sum += SndiMulaw(((unsigned char *)outPtr)[baseIndex + n]);
+                    break;
+                  case SND_FORMAT_LINEAR_32:
+                    sumDouble += (long int)(((signed long int *)outPtr)
+                            [baseIndex + n]);
+                    break;
+                  case SND_FORMAT_FLOAT:
+                    sumFloat += (float)(((float *)outPtr)[baseIndex + n]);
+                    break;
+                  case SND_FORMAT_DOUBLE:
+                    sumDouble += (double)(((double *)outPtr)[baseIndex + n]);
+                    break;
+                  default:
+                  case SND_FORMAT_LINEAR_16:
+                    sum += ((SND_HWORD *)outPtr)[baseIndex + n];
+                    break;
+                }
+            } /* summing several channels into 1 channel */
+	    
+            switch(df) {
+              case SND_FORMAT_FLOAT:
+                ((float *)outPtr)[frame * newNumChannels + m] = (float)(sumFloat / chansToSum);
+		sumFloat = 0;
+                break;
+              case SND_FORMAT_DOUBLE:
+                ((double *)outPtr)[frame * newNumChannels + m] = (double)(sumDouble / chansToSum);
+		sumDouble = 0;
+                break;
+              default:
+              case SND_FORMAT_LINEAR_16:
+                ((signed short *)outPtr)[frame * newNumChannels + m] =
+                        (signed short)(sum / chansToSum);
+		sum = 0;
+                break;
+              case SND_FORMAT_LINEAR_8:
+                ((signed char *)outPtr)[frame * newNumChannels + m] =
+                        (signed char)(sum / chansToSum);
+		sum = 0;
+                break;
+              case SND_FORMAT_MULAW_8:
+                ((unsigned char *)outPtr)[frame * newNumChannels + m] = 
+		        (unsigned char)SndMulaw((short)(sum / chansToSum));
+		sum = 0;
+                break;
+              case SND_FORMAT_LINEAR_32:
+                ((signed long int *)outPtr)[frame * newNumChannels + m] = 
+                        (signed long int)(sumDouble / chansToSum);
+		sumDouble = 0;
+            } 
+        } /* passes through channel independent sample */
+    }
+
+
+}
+
+void SndChannelIncrease (void *outPtr, int frames, int oldNumChannels, int newNumChannels, int df )
+/* endian-agnostic, as floats and doubles are cast to long and longlong respectively. */
+{
+    int c,j,k;
+    int frame;
+        
+    k = newNumChannels / oldNumChannels; /* multiply factor - num of new channels per original one */
+    switch (df) {
+        case SND_FORMAT_MULAW_8:
+        case SND_FORMAT_LINEAR_8:
+            for (frame = frames - 1; frame >= 0 ; frame--) { /* main slog backwards through the sound */
+                for (c = oldNumChannels - 1; c >= 0; c--) { /* the origin channel */
+		    unsigned baseIndex = frame * newNumChannels + c * k;
+		    char m = ((char *)outPtr)[frame * oldNumChannels + c];
+                    for (j = k - 1; j >= 0; j--) {        /* the number of new channels to create */
+                        ((char *)outPtr)[baseIndex + j] = m;
+		    }
+		}
+	    }
+	    break;
+        case SND_FORMAT_LINEAR_16:
+	default:
+            for (frame = frames - 1; frame >= 0 ; frame--) { /* main slog backwards through the sound */
+                for (c = oldNumChannels - 1; c >= 0; c--) { /* the origin channel */
+		    unsigned baseIndex = frame * newNumChannels + c * k;
+		    short m = ((short *)outPtr)[frame * oldNumChannels + c];
+                    for (j = k - 1; j >= 0; j--) {        /* the number of new channels to create */
+                        ((short *)outPtr)[baseIndex + j] = m;
+		    }
+		}
+	    }
+	    break;
+        case SND_FORMAT_LINEAR_32:
+        case SND_FORMAT_FLOAT: /* cast as long ints, assuming they are same size (32 bit == 4 bytes) as floats */
+            for (frame = frames - 1; frame >= 0 ; frame--) { /* main slog backwards through the sound */
+                for (c = oldNumChannels - 1; c >= 0; c--) { /* the origin channel */
+		    unsigned baseIndex = frame * newNumChannels + c * k;
+		    long int m = ((long int *)outPtr)[frame * oldNumChannels + c];
+                    for (j = k - 1; j >= 0; j--) {        /* the number of new channels to create */
+                        ((long int *)outPtr)[baseIndex + j] = m;
+		    }
+		}
+            }
+	    break;
+        case SND_FORMAT_DOUBLE:
+            for (frame = frames - 1; frame >= 0 ; frame--) { /* main slog backwards through the sound */
+                for (c = oldNumChannels - 1; c >= 0; c--) { /* the origin channel */
+		    unsigned baseIndex = frame * newNumChannels + c * k;
+		    long long m = ((long long *)outPtr)[frame * oldNumChannels + c];
+                    for (j = k - 1; j >= 0; j--) {        /* the number of new channels to create */
+/* cast as long longs, assuming they are same size (64 bit == 8 bytes) as doubles */
+                        ((long long *)outPtr)[baseIndex + j] = m;
+		    }
+		}
+	    }
+    }
+}
+
+int SndChangeSampleType(void *outPtr, int df1, int df2, unsigned int outCount)
+{
+    int i;
+    static double ONE_OVER_TWO_THIRTYONE = 1.0/2147483647.0f; /* ((2 ^ 31) - 1) */
+    static double ONE_OVER_TWO_FIFTEEN = 1.0/32767.0f; /* 1/(2 ^ 15 - 1) */
+    static double ONE_OVER_TWO_SEVEN = 1.0/127.0f; /* 1/(2 ^ 7 - 1) */
+
+#define LOOP_THRU_SOUND for (i = outCount - 1; i>=0; i--)
+
+    if (df2 > df1) { /* df2 takes up more space than df1, or is at least higher quality */
+
+        if (df2 == SND_FORMAT_LINEAR_8 && df1 == SND_FORMAT_MULAW_8) {
+            LOOP_THRU_SOUND {
+                ((signed char *)outPtr)[i] = (signed char)
+		    ((short)SndiMulaw(((unsigned char *)outPtr)[i]) >> 8);
+            }
         }
+        else if (df2 == SND_FORMAT_LINEAR_16 && df1 == SND_FORMAT_MULAW_8) {
+            LOOP_THRU_SOUND {
+                ((signed short *)outPtr)[i] = (signed short)
+                    SndiMulaw(((unsigned char *)outPtr)[i]);
+            }
+        }
+        else if (df2 == SND_FORMAT_LINEAR_32 && df1 == SND_FORMAT_MULAW_8) {
+            LOOP_THRU_SOUND {
+                ((signed int *)outPtr)[i] = (signed int)
+                    SndiMulaw(((unsigned char *)outPtr)[i]) << 16;
+            }
+        }
+        else if (df2 == SND_FORMAT_FLOAT && df1 == SND_FORMAT_MULAW_8) {
+            LOOP_THRU_SOUND {
+                ((float *)outPtr)[i] = (float)SndiMulaw(((unsigned char *)outPtr)[i]) * ONE_OVER_TWO_FIFTEEN;
+            }
+        }
+        else if (df2 == SND_FORMAT_DOUBLE && df1 == SND_FORMAT_MULAW_8) {
+            LOOP_THRU_SOUND {
+                ((double *)outPtr)[i] = (double)SndiMulaw(((unsigned char *)outPtr)[i]) * ONE_OVER_TWO_FIFTEEN;
+            }
+        }
+
+        else if (df2 == SND_FORMAT_LINEAR_16 && df1 == SND_FORMAT_LINEAR_8) {
+            LOOP_THRU_SOUND {
+                ((signed short *)outPtr)[i] = ((char*)outPtr)[i] << 8;
+            }
+        }
+        else if (df2 == SND_FORMAT_LINEAR_32 && df1 == SND_FORMAT_LINEAR_8) {
+            LOOP_THRU_SOUND {
+                ((signed int *)outPtr)[i] = (signed int)((signed char*)outPtr)[i] << 24;
+            }
+        }
+        else if (df2 == SND_FORMAT_FLOAT && df1 == SND_FORMAT_LINEAR_8) {
+            LOOP_THRU_SOUND {
+                ((float *)outPtr)[i] = (float)(((char *)outPtr)[i]) * ONE_OVER_TWO_SEVEN;
+            }
+        }
+        else if (df2 == SND_FORMAT_DOUBLE && df1 == SND_FORMAT_LINEAR_8) {
+            LOOP_THRU_SOUND {
+                ((double *)outPtr)[i] = (double)(((char *)outPtr)[i]) * ONE_OVER_TWO_SEVEN;
+            }
+        }
+
+        else if (df2 == SND_FORMAT_LINEAR_32 && df1 == SND_FORMAT_LINEAR_16) {
+            LOOP_THRU_SOUND {
+                ((signed int *)outPtr)[i] = (signed int)((signed short *)outPtr)[i] << 16;
+            }
+        }
+        else if (df2 == SND_FORMAT_FLOAT && df1 == SND_FORMAT_LINEAR_16) {
+            LOOP_THRU_SOUND {
+                ((float *)outPtr)[i] = (float)(((signed short *)outPtr)[i]) * ONE_OVER_TWO_FIFTEEN;
+            }
+        }
+        else if (df2 == SND_FORMAT_DOUBLE && df1 == SND_FORMAT_LINEAR_16) {
+            LOOP_THRU_SOUND {
+                ((double *)outPtr)[i] = (double)((signed short *)outPtr)[i] * ONE_OVER_TWO_FIFTEEN;
+            }
+        }
+
+        else if (df2 == SND_FORMAT_FLOAT && df1 == SND_FORMAT_LINEAR_32) {
+            LOOP_THRU_SOUND {
+                ((float *)outPtr)[i] = (float)(((signed int *)outPtr)[i] * ONE_OVER_TWO_THIRTYONE);
+            }
+        }
+        else if (df2 == SND_FORMAT_DOUBLE && df1 == SND_FORMAT_LINEAR_32) {
+            LOOP_THRU_SOUND {
+                ((double *)outPtr)[i] = (double)(((signed int *)outPtr)[i] * ONE_OVER_TWO_THIRTYONE);
+            }
+        }
+
+        else if (df2 == SND_FORMAT_DOUBLE && df1 == SND_FORMAT_FLOAT) {
+            LOOP_THRU_SOUND {
+                ((double *)outPtr)[i] = (double)(((float *)outPtr)[i]);
+            }
+        }
+        
+        /* that should be all the common ones. Maybe aLaw too? */
         else {
-            width = SndSampleWidth(df1);
-            inCount = ds1 / cc1 / width;
-            inPtr = NULL; /* because we hand the routine a SndSoundStruct */
+            printf("Sorry, format unsupported for conversion\n");
+            return SND_ERR_BAD_FORMAT;
         }
-//	printf("inCount used: %d\n",inCount);
-//	outCount = inCount * factor + 1;
-        outCount = factor * (ds1 / (float)cc1 / (float)SndSampleWidth(df1)) + 1;
-//	printf("outCount used: %d\n",outCount);
+
+    }
+    
+////////////////////////////////
+//
+// df2 takes up less space than df1, or is lower quality,
+// so we loop forward thru sound, reducing space as we do so
+//
+////////////////////////////////
+
+#define LOOP_FORWARD_THRU_SOUND for (i = 0 ; i < outCount; i++)
+    if (df2 < df1) { /* df2 takes up less space than df1, or is lower quality */
+
+        if (df1 == SND_FORMAT_LINEAR_8 && df2 == SND_FORMAT_MULAW_8) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((unsigned char *)outPtr)[i] = (unsigned char)
+                    SndMulaw((int)(((signed char *)outPtr)[i]) << 8);
+            }
+        }
+        else if (df1 == SND_FORMAT_LINEAR_16 && df2 == SND_FORMAT_MULAW_8) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((unsigned char *)outPtr)[i] = (unsigned char)
+                    SndMulaw(((signed short *)outPtr)[i]);
+            }
+        }
+        else if (df1 == SND_FORMAT_LINEAR_32 && df2 == SND_FORMAT_MULAW_8) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((unsigned char *)outPtr)[i] = (unsigned char)
+                    SndMulaw(((signed int *)outPtr)[i] >> 16);
+            }
+        }
+        else if (df1 == SND_FORMAT_FLOAT && df2 == SND_FORMAT_MULAW_8) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((unsigned char *)outPtr)[i] = (unsigned char)
+                    SndiMulaw(((float *)outPtr)[i] * 32767.0f);
+            }
+        }
+        else if (df1 == SND_FORMAT_DOUBLE && df2 == SND_FORMAT_MULAW_8) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((unsigned char *)outPtr)[i] = (unsigned char)
+                    SndiMulaw(((double *)outPtr)[i] * 32767.0f);
+            }
+        }
+
+        else if (df1 == SND_FORMAT_LINEAR_16 && df2 == SND_FORMAT_LINEAR_8) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((signed char*)outPtr)[i] = (((signed short *)outPtr)[i]) >> 8;
+            }
+        }
+        else if (df1 == SND_FORMAT_LINEAR_32 && df2 == SND_FORMAT_LINEAR_8) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((signed char *)outPtr)[i] = (int)(((signed int *)outPtr)[i]) >> 24;
+            }
+        }
+        else if (df1 == SND_FORMAT_FLOAT && df2 == SND_FORMAT_LINEAR_8) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((unsigned char *)outPtr)[i] = (unsigned char)
+                        ((((float *)outPtr)[i] * 127.0f));
+            }
+        }
+        else if (df1 == SND_FORMAT_DOUBLE && df2 == SND_FORMAT_LINEAR_8) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((unsigned char *)outPtr)[i] = (unsigned char)
+		        ((((double *)outPtr)[i]) * 127.0f);
+            }
+        }
+
+        else if (df1 == SND_FORMAT_LINEAR_32 && df2 == SND_FORMAT_LINEAR_16) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((signed short *)outPtr)[i] = ((signed int *)outPtr)[i] >> 16;
+            }
+        }
+        else if (df1 == SND_FORMAT_FLOAT && df2 == SND_FORMAT_LINEAR_16) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((signed short *)outPtr)[i] = ((float *)outPtr)[i] * 32767;
+            }
+        }
+        else if (df1 == SND_FORMAT_DOUBLE && df2 == SND_FORMAT_LINEAR_16) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((signed short *)outPtr)[i] = ((double *)outPtr)[i] * 32767;
+            }
+        }
+
+        else if (df1 == SND_FORMAT_FLOAT && df2 == SND_FORMAT_LINEAR_32) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((signed int *)outPtr)[i] = ((float *)outPtr)[i] * 2147483647; /* (2 ^ 31 - 1) */
+            }
+        }
+        else if (df1 == SND_FORMAT_DOUBLE && df2 == SND_FORMAT_LINEAR_32) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((signed int *)outPtr)[i] = ((double *)outPtr)[i] * 2147483647; /* (2 ^ 31 - 1) */
+            }
+        }
+
+        else if (df1 == SND_FORMAT_DOUBLE && df2 == SND_FORMAT_FLOAT) {
+            LOOP_FORWARD_THRU_SOUND {
+                ((float *)outPtr)[i] = ((double *)outPtr)[i];
+            }
+        }
+        
+        else {
+            printf("Sorry, format unsupported for conversion\n");
+	    return SND_ERR_BAD_FORMAT;
+        }
+    }
+    return SND_ERR_NONE;
+}
+     
+void SndChangeSampleRate(const SndSoundStruct *fromSound, SndSoundStruct *toSound,
+                      BOOL largeFilter, BOOL interpFilter, BOOL fast, void *alternativeInput, short *outPtr)
+{
+//////////////////////////////////////////////
+//
+// Adjust the sample rate if necessary, reading from
+// the fromSound and writing into the toSound. The
+// resample code has been modified to work with SndSoundStructs
+// for both in and out, and can read fragmented sounds directly.
+//
+//////////////////////////////////////////////
+
+    int inCount, outCount;
+    int width;
+    float factor;
+    int cc1 = fromSound->channelCount;
+    int cc2 = toSound->channelCount;
+    int df1 = fromSound->dataFormat;
+    int ds1 = fromSound->dataSize;
+    int dl1 = fromSound->dataLocation, dl2 = toSound->dataLocation;
+    int sr1 = fromSound->samplingRate;
+    int sr2 = toSound->samplingRate;
+
+    if (df1 == SND_FORMAT_INDIRECT) {
+        df1 = ((SndSoundStruct *)(*((SndSoundStruct **) dl1)))->dataFormat;
+        ds1 = SndSampleCount(fromSound) * cc1 * SndSampleWidth(df1);
+    }
+    
+    if (sr1 != sr2) {
+      factor = sr2 / sr1;
+      inCount = SndBytesToSamples(ds1, cc1, df1);
+      width   = SndSampleWidth(df1);
+
+      outCount = factor * inCount + 1;
 
         {
             /* (BOOL)interpFilter = interpolate within filter
@@ -166,12 +613,12 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
             BOOL linearInterp = fast;
             int outCountReal;
             outCountReal = resample(factor, outPtr, inCount, outCount, MIN(cc1,cc2),
-                                    interpFilter, linearInterp, largeFilter, filterFile, fromSound, 0);
-            (*toSound)->dataFormat = SND_FORMAT_LINEAR_16; /* this is the output format */
-            (*toSound)->channelCount = MIN(cc1,cc2); /* channel count is reduced if nec */
+                                    interpFilter, linearInterp, largeFilter, filterFile, fromSound, 0, alternativeInput);
+            toSound->dataFormat = SND_FORMAT_LINEAR_16; /* this is the output format */
+            toSound->channelCount = MIN(cc1,cc2); /* channel count is reduced if nec */
 //			printf("Completed resample. OutCount = %d\n", outCountReal);
-            (*toSound)->dataSize = outCountReal * (*toSound)->channelCount * 2; /* 2 is SND_FORMAT_LINEAR_16 */
-            SndSwapHostToSound(outPtr, outPtr, outCountReal, (*toSound)->channelCount, SND_FORMAT_LINEAR_16);
+            toSound->dataSize = outCountReal * toSound->channelCount * 2; /* 2 is SND_FORMAT_LINEAR_16 */
+//NO!            SndSwapHostToSound(outPtr, outPtr, outCountReal, toSound->channelCount, SND_FORMAT_LINEAR_16);
         }
     } 
     else {
@@ -179,11 +626,11 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
 	 * after this...
 	 */
         if (df1 != SND_FORMAT_INDIRECT)
-            memmove((char *)(*toSound) + (*toSound)->dataLocation, (char *)fromSound + dl1, fromSound->dataSize);
+            memmove((char *)toSound, (char *)fromSound, fromSound->dataSize + dl1);
         else {
-            int count = 0;
+            int count = 0, i=0;
             SndSoundStruct *theStruct;
-            char *startLocation = (char *)(*toSound) + dl2;
+            char *startLocation = (char *)toSound + dl2;
             SndSoundStruct **ssList = (SndSoundStruct **)dl1;
             while ((theStruct = ssList[i++]) != NULL) {
                 memmove(startLocation + count,
@@ -193,478 +640,4 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
             }
         }
     }
-    /* now check channel count -- if we need to increase the number of channels from 1 to
-     * 2, or 4, we have hopefully got enough data malloced in *toSound to duplicate pairs
-     * of samples.
-     */
-    /* endian-wise, I simply avoid floats and doubles, re-casting as longs and long longs
-     * which should side step the issue nicely.
-     */
-    if (cc2 > (*toSound)->channelCount) {
-        int c,j,k,origChans,df;
-        SndGetDataPointer((*toSound), (char **)(&outPtr), &outCount, &width);
-        
-        outCount /= (*toSound)->channelCount;		/* to get sample frames */
-        origChans = (*toSound)->channelCount;
-        df = (*toSound)->dataFormat;         /* if we have changed rate, always linear 16, otherwise 'real' output format */
-        k = cc2 / (*toSound)->channelCount;  /* multiply factor - num of new channels per original one */
-        for (i = outCount-1; i >= 0 ; i--) { /* main slog backwards through the sound */
-            for (j = 0; j < k; j++) {        /* the number of new channels to create */
-                for (c = 0; c < (*toSound)->channelCount; c++) { /* the origin channel */
-                    if (df == SND_FORMAT_MULAW_8 || df == SND_FORMAT_LINEAR_8)
-                        ((char *)outPtr)[k * (i + c) + j] = ((char *)outPtr)[i * origChans + c];
-                    else if (df == SND_FORMAT_LINEAR_16)
-                        ((short *)outPtr)[k * (i + c) + j] = ((short *)outPtr)[i * origChans + c];
-                    else if (df == SND_FORMAT_LINEAR_32)
-                        ((long int *)outPtr)[k * (i + c) + j] = ((long int *)outPtr)[i * origChans + c];
-                    else if (df == SND_FORMAT_FLOAT)
-                        ((long int *)outPtr)[k * (i + c) + j] = ((long int *)outPtr)[i * origChans + c];
-/* cast as long ints, assuming they are same size (32 bit == 4 bytes) as floats */
-/*			((float *)outPtr)[k * (i + c) + j] = ((float *)outPtr)[i * origChans + c]; */
-                    else if (df == SND_FORMAT_DOUBLE)
-/* cast as long longs, assuming they are same size (64 bit == 8 bytes) as doubles */
-                        ((long long *)outPtr)[k * (i + c) + j] = ((long long *)outPtr)[i * origChans + c];
-/*			((double *)outPtr)[k * (i + c) + j] = ((double *)outPtr)[i * origChans + c]; */
-                }
-            }
-        }
-        (*toSound)->channelCount = cc2;
-        (*toSound)->dataSize = outCount * cc2 * width;
-    }
-    
-    /* channel reduction will already be done by resample routine if the sampling rate was changed */
-    if ((*toSound)->channelCount > cc2) {	
-        int k;
-        int df = (*toSound)->dataFormat;
-#ifdef __LITTLE_ENDIAN__
-        SndSwappedFloat swFloat;
-        SndSwappedDouble swDouble;
-#endif
-        int nChansIn = (*toSound)->channelCount;
-        int chansToSum = nChansIn / cc2;
-        int passes = cc2;/*convenience name*/
-        int m,n;
-        long sum;
-        float sumFloat;
-        double sumDouble;
-
-        SndGetDataPointer((*toSound), (char **)(&outPtr), &outCount, &width);
-        outCount /= (*toSound)->channelCount;		/* to get sample frames */
-        k = cc2 / (*toSound)->channelCount;
-
-        for (i = 0; i < outCount; i++) {
-            for (m = 0; m < passes; m++) { /* m and n take us through 1 channel independent sample */
-                sum = 0;
-                sumFloat = 0.0;
-                sumDouble = 0.0;
-                /* fairly inefficient. Should pre-swap data for types which need it. */
-                for (n = 0; n < chansToSum; n++) { 
-                    switch(df) {
-                    case SND_FORMAT_LINEAR_8: /* endian ok */
-                        sum += ((signed char *)outPtr)[i * nChansIn + n];
-                        break;
-                    case SND_FORMAT_MULAW_8: /* endian ok */
-                        sum += SndiMulaw(((unsigned char *)outPtr)[i * nChansIn + n]);
-                        break;
-                    case SND_FORMAT_LINEAR_32:
-#ifndef __LITTLE_ENDIAN__
-                        sumDouble += (long int)(((signed long int *)outPtr)
-                                [i * nChansIn + n]);
-#else
-                        sumDouble += (long int)((long)NSSwapBigLongToHost(((signed long int *)outPtr)
-                                [i * nChansIn + n]));
-#endif
-                        break;
-                    case SND_FORMAT_FLOAT:
-#ifndef __LITTLE_ENDIAN__
-                        sumFloat += (float)(((float *)outPtr)[i * nChansIn + n]);
-#else
-                        swFloat = ((SndSwappedFloat *)outPtr)[i * nChansIn + n];
-                        sumFloat += (float)SndSwapSwappedFloatToHost(swFloat);
-#endif
-                        break;
-                    case SND_FORMAT_DOUBLE:
-#ifndef __LITTLE_ENDIAN__
-                        sumDouble += (double)(((double *)outPtr)[i * nChansIn + n]);
-#else
-                        swDouble = ((SndSwappedDouble *)outPtr)[i * nChansIn + n];
-                        sumDouble += (double)SndSwapSwappedDoubleToHost(swDouble);
-#endif
-                        break;
-                    default:
-                    case SND_FORMAT_LINEAR_16:
-#ifndef __LITTLE_ENDIAN__
-                        sum += ((SND_HWORD *)outPtr)[i * nChansIn + n];
-#else
-                        sum += (short)ntohs(((short *)outPtr)[i * nChansIn + n]);
-#endif
-                        break;
-                    }
-                } /* summing several channels into 1 channel */
-                switch(df) {
-                case SND_FORMAT_FLOAT:
-#ifdef __LITTLE_ENDIAN__
-                    ((SndSwappedFloat *)outPtr)[i * cc2 + m] = (SndSwappedFloat)
-                            SndSwapHostToSwappedFloat((float)(sumFloat / chansToSum));
-#else
-                    ((float *)outPtr)[i * cc2 + m] = (float)(sumFloat / chansToSum);
-#endif
-                    break;
-                case SND_FORMAT_DOUBLE:
-#ifdef __LITTLE_ENDIAN__
-                    ((SndSwappedDouble *)outPtr)[i * cc2 + m] = (SndSwappedDouble)
-                            SndSwapHostToSwappedDouble((double)(sumDouble / chansToSum));
-#else
-                    ((double *)outPtr)[i * cc2 + m] = (double)(sumDouble / chansToSum);
-#endif
-                    break;
-                default:
-                case SND_FORMAT_LINEAR_16:
-#ifdef __LITTLE_ENDIAN__
-                    ((signed short *)outPtr)[i * cc2 + m] = 
-                            (short)htons((signed short)(sumDouble / chansToSum));
-#else
-                    ((signed short *)outPtr)[i * cc2 + m] =
-                            (signed short)(sumDouble / chansToSum);
-#endif
-                    break;
-                case SND_FORMAT_LINEAR_8: /* endian ok */
-                    ((signed char *)outPtr)[i * cc2 + m] =
-                            (signed char)(sumDouble / chansToSum);
-                    break;
-                case SND_FORMAT_MULAW_8: /* endian ok */
-                    ((unsigned char *)outPtr)[i * cc2 + m] = (unsigned char)SndMulaw((short)(sumDouble / chansToSum));
-                    break;
-                case SND_FORMAT_LINEAR_32:
-#ifdef __LITTLE_ENDIAN__
-                    ((signed long int *)outPtr)[i * cc2 + m] = 
-                            (unsigned long int)NSSwapHostIntToBig((signed long int)(sumDouble / chansToSum));
-#else
-                    ((signed long int *)outPtr)[i * cc2 + m] = 
-                            (signed long int)(sumDouble / chansToSum);
-#endif
-                } 
-            } /* passes through channel independent sample */
-        }
-
-        (*toSound)->channelCount = cc2;
-        (*toSound)->dataSize = outCount * cc2 * width;
-    }
-
-    df1 = (*toSound)->dataFormat; /* allow for current df to have been changed by rate change */
-#define LOOP_THRU_SOUND for (i = outCount - 1; i>=0; i--)
-
-    if (df2 > df1) { /* df2 takes up more space than df1, or is at least higher quality */
-        SndGetDataPointer((*toSound), (char **)(&outPtr), &outCount, &width);
-
-        if (df2 == SND_FORMAT_LINEAR_8 && df1 == SND_FORMAT_MULAW_8) {
-            LOOP_THRU_SOUND {
-                ((signed char *)outPtr)[i] = (signed char)((short)SndiMulaw(((unsigned char *)outPtr)[i]) * ONE_OVER_TWO_EIGHT);
-            }
-        }
-        else if (df2 == SND_FORMAT_LINEAR_16 && df1 == SND_FORMAT_MULAW_8) {
-            LOOP_THRU_SOUND {
-                ((signed short *)outPtr)[i] = (signed short)
-                    htons((signed short)SndiMulaw(((unsigned char *)outPtr)[i]));
-            }
-        }
-        else if (df2 == SND_FORMAT_LINEAR_32 && df1 == SND_FORMAT_MULAW_8) {
-            LOOP_THRU_SOUND {
-                ((signed int *)outPtr)[i] = (signed int)
-                    NSSwapHostIntToBig((signed short)SndiMulaw(((unsigned char *)outPtr)[i]) << 16);
-            }
-        }
-        else if (df2 == SND_FORMAT_FLOAT && df1 == SND_FORMAT_MULAW_8) {
-            LOOP_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((SndSwappedFloat *)outPtr)[i] = (SndSwappedFloat)
-                        SndSwapHostToSwappedFloat((float)SndiMulaw(((unsigned char *)outPtr)[i]));
-#else
-                ((float *)outPtr)[i] = (float)SndiMulaw(((unsigned char *)outPtr)[i]);
-#endif
-            }
-        }
-        else if (df2 == SND_FORMAT_DOUBLE && df1 == SND_FORMAT_MULAW_8) {
-            LOOP_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((SndSwappedDouble *)outPtr)[i] = (SndSwappedDouble)
-                    SndSwapHostToSwappedDouble((double)SndiMulaw(((unsigned char *)outPtr)[i]));
-#else
-                ((double *)outPtr)[i] = (double)SndiMulaw(((unsigned char *)outPtr)[i]);
-#endif
-            }
-        }
-
-        else if (df2 == SND_FORMAT_LINEAR_16 && df1 == SND_FORMAT_LINEAR_8) {
-            LOOP_THRU_SOUND {
-                ((signed short *)outPtr)[i] = (signed short)htons((short)(((signed char*)outPtr)[i]) << 8);
-            }
-        }
-        else if (df2 == SND_FORMAT_LINEAR_32 && df1 == SND_FORMAT_LINEAR_8) {
-            LOOP_THRU_SOUND {
-                ((signed int *)outPtr)[i] = (signed int)NSSwapHostIntToBig((int)(((signed char*)outPtr)[i]) << 24);
-            }
-        }
-        else if (df2 == SND_FORMAT_FLOAT && df1 == SND_FORMAT_LINEAR_8) {
-            LOOP_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((SndSwappedFloat *)outPtr)[i] = (SndSwappedFloat)
-                        SndSwapHostToSwappedFloat((float)(((int)((unsigned char *)outPtr)[i]) << 8));
-#else
-                ((float *)outPtr)[i] = (float)(((int)((unsigned char *)outPtr)[i]) << 8);
-#endif
-            }
-        }
-        else if (df2 == SND_FORMAT_DOUBLE && df1 == SND_FORMAT_LINEAR_8) {
-            LOOP_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((SndSwappedDouble *)outPtr)[i] = (SndSwappedDouble)
-                        SndSwapHostToSwappedDouble((double)((int)(((unsigned char *)outPtr)[i]) << 8));
-#else
-                ((double *)outPtr)[i] = (double)((int)(((unsigned char *)outPtr)[i]) << 8);
-#endif
-            }
-        }
-
-        else if (df2 == SND_FORMAT_LINEAR_32 && df1 == SND_FORMAT_LINEAR_16) {
-            LOOP_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((signed int *)outPtr)[i] = (signed int)
-                        NSSwapHostIntToBig((signed int)ntohs(((signed short *)outPtr)[i]) << 16);
-#else
-                ((signed int *)outPtr)[i] = (signed int)((signed short *)outPtr)[i] << 16;
-#endif
-            }
-        }
-        else if (df2 == SND_FORMAT_FLOAT && df1 == SND_FORMAT_LINEAR_16) {
-            LOOP_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((SndSwappedFloat *)outPtr)[i] = (SndSwappedFloat)
-                        SndSwapHostToSwappedFloat(ntohs(((signed short *)outPtr)[i]));
-#else
-                ((float *)outPtr)[i] = (float)((signed short *)outPtr)[i];
-#endif
-            }
-        }
-        else if (df2 == SND_FORMAT_DOUBLE && df1 == SND_FORMAT_LINEAR_16) {
-            LOOP_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((SndSwappedDouble *)outPtr)[i] = (SndSwappedDouble)
-                        SndSwapHostToSwappedDouble(ntohs(((signed short *)outPtr)[i]));
-#else
-                ((double *)outPtr)[i] = (double)((signed short *)outPtr)[i];
-#endif
-            }
-        }
-
-        else if (df2 == SND_FORMAT_FLOAT && df1 == SND_FORMAT_LINEAR_32) {
-            LOOP_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((SndSwappedFloat *)outPtr)[i] = (SndSwappedFloat)
-                        SndSwapHostToSwappedFloat(NSSwapBigLongToHost(((signed int *)outPtr)[i]));
-#else
-                ((float *)outPtr)[i] = (float)(((signed int *)outPtr)[i] * ONE_OVER_TWO_SIXTEEN);
-#endif
-            }
-        }
-        else if (df2 == SND_FORMAT_DOUBLE && df1 == SND_FORMAT_LINEAR_32) {
-            LOOP_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((SndSwappedDouble *)outPtr)[i] = (SndSwappedDouble)
-                        SndSwapHostToSwappedDouble(NSSwapBigLongToHost(((signed int *)outPtr)[i]));
-#else
-                ((double *)outPtr)[i] = (double)(((signed int *)outPtr)[i] * ONE_OVER_TWO_SIXTEEN);
-#endif
-            }
-        }
-
-        else if (df2 == SND_FORMAT_DOUBLE && df1 == SND_FORMAT_FLOAT) {
-            LOOP_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((SndSwappedDouble *)outPtr)[i] = (SndSwappedDouble)
-                        SndSwapHostToSwappedDouble((float)SndSwapSwappedFloatToHost(
-                        ((SndSwappedFloat *)outPtr)[i]));
-#else
-                ((double *)outPtr)[i] = (double)(((float *)outPtr)[i]);
-#endif
-            }
-        }
-        
-        else {
-            printf("Sorry, format unsupported for conversion\n");
-            SndFree(*toSound);
-            return SND_ERR_BAD_FORMAT;
-        }
-        (*toSound)->dataFormat = df2;
-        /* that should be all the common ones. Maybe aLaw too? */
-        (*toSound)->dataSize = outCount * SndSampleWidth(df2);
-    }
-#define LOOP_FORWARD_THRU_SOUND for (i = 0 ; i < outCount; i++)
-    if (df2 < df1) { /* df2 takes up less space than df1, or is lower quality */
-        SndGetDataPointer((*toSound), (char **)(&outPtr), &outCount, &width);
-
-        if (df1 == SND_FORMAT_LINEAR_8 && df2 == SND_FORMAT_MULAW_8) {
-            LOOP_FORWARD_THRU_SOUND {
-                ((unsigned char *)outPtr)[i] = (unsigned char)
-                    ((int)SndMulaw(((signed char *)outPtr)[i] * 256));
-            }
-        }
-        else if (df1 == SND_FORMAT_LINEAR_16 && df2 == SND_FORMAT_MULAW_8) {
-            LOOP_FORWARD_THRU_SOUND {
-                ((unsigned char *)outPtr)[i] = (unsigned char)
-#ifdef __LITTLE_ENDIAN__
-                SndMulaw((signed short)ntohs(((signed short *)outPtr)[i]));
-#else
-                SndMulaw(((signed short *)outPtr)[i]);
-#endif
-            }
-        }
-        else if (df1 == SND_FORMAT_LINEAR_32 && df2 == SND_FORMAT_MULAW_8) {
-            LOOP_FORWARD_THRU_SOUND {
-                ((unsigned char *)outPtr)[i] = (unsigned char)
-#ifdef __LITTLE_ENDIAN__
-                SndMulaw((float)((signed int)NSSwapBigLongToHost(((signed int *)outPtr)[i]) * ONE_OVER_TWO_SIXTEEN));
-#else
-                SndMulaw(((signed int *)outPtr)[i] * ONE_OVER_TWO_SIXTEEN);
-#endif
-            }
-        }
-        else if (df1 == SND_FORMAT_FLOAT && df2 == SND_FORMAT_MULAW_8) {
-            LOOP_FORWARD_THRU_SOUND {
-                ((unsigned char *)outPtr)[i] = (unsigned char)
-#ifdef __LITTLE_ENDIAN__
-                SndiMulaw((float)SndSwapSwappedFloatToHost(((SndSwappedFloat *)outPtr)[i]));
-#else
-                SndiMulaw(((float *)outPtr)[i]);
-#endif
-            }
-        }
-        else if (df1 == SND_FORMAT_DOUBLE && df2 == SND_FORMAT_MULAW_8) {
-            LOOP_FORWARD_THRU_SOUND {
-                ((unsigned char *)outPtr)[i] = (unsigned char)
-#ifdef __LITTLE_ENDIAN__
-                SndiMulaw((double)SndSwapSwappedDoubleToHost(((SndSwappedDouble *)outPtr)[i]));
-#else
-                SndiMulaw(((double *)outPtr)[i]);
-#endif
-            }
-        }
-
-        else if (df1 == SND_FORMAT_LINEAR_16 && df2 == SND_FORMAT_LINEAR_8) {
-            LOOP_FORWARD_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((signed char*)outPtr)[i] = (signed short)ntohs(((signed short *)outPtr)[i]) >> 8;
-#else
-                ((signed char*)outPtr)[i] = (((signed short *)outPtr)[i]) >> 8;
-#endif
-            }
-        }
-        else if (df1 == SND_FORMAT_LINEAR_32 && df2 == SND_FORMAT_LINEAR_8) {
-            LOOP_FORWARD_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((signed char *)outPtr)[i] = (signed int)NSSwapBigLongToHost(((signed int *)outPtr)[i]) >> 24;
-#else
-                ((signed char *)outPtr)[i] = (int)(((signed int *)outPtr)[i]) >> 24;
-#endif
-            }
-        }
-        else if (df1 == SND_FORMAT_FLOAT && df2 == SND_FORMAT_LINEAR_8) {
-            LOOP_FORWARD_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((unsigned char *)outPtr)[i] = (unsigned char)
-                        (((int)SndSwapSwappedFloatToHost(((SndSwappedFloat *)outPtr)[i])) >> 8);
-#else
-                ((unsigned char *)outPtr)[i] = (unsigned char)
-                        (((int)((float *)outPtr)[i]) >> 8);
-#endif
-            }
-        }
-        else if (df1 == SND_FORMAT_DOUBLE && df2 == SND_FORMAT_LINEAR_8) {
-            LOOP_FORWARD_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((unsigned char *)outPtr)[i] = (unsigned char)
-                        (((int)SndSwapSwappedDoubleToHost(((SndSwappedDouble *)outPtr)[i])) >> 8);
-#else
-                ((unsigned char *)outPtr)[i] = ((int)(((double *)outPtr)[i]) >> 8);
-#endif
-            }
-        }
-
-        else if (df1 == SND_FORMAT_LINEAR_32 && df2 == SND_FORMAT_LINEAR_16) {
-            LOOP_FORWARD_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((signed short *)outPtr)[i] = (signed short)
-                        htons((int)NSSwapBigLongToHost(((signed int *)outPtr)[i]) >> 16);
-#else
-                ((signed short *)outPtr)[i] = ((signed int *)outPtr)[i] >> 16;
-#endif
-            }
-        }
-        else if (df1 == SND_FORMAT_FLOAT && df2 == SND_FORMAT_LINEAR_16) {
-            LOOP_FORWARD_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((signed short *)outPtr)[i] = (signed short)
-                        htons(SndSwapSwappedFloatToHost(((SndSwappedFloat *)outPtr)[i]));
-#else
-                ((signed short *)outPtr)[i] = ((float *)outPtr)[i];
-#endif
-            }
-        }
-        else if (df1 == SND_FORMAT_DOUBLE && df2 == SND_FORMAT_LINEAR_16) {
-            LOOP_FORWARD_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((signed short *)outPtr)[i] = (signed short)
-                        htons(SndSwapSwappedDoubleToHost(((SndSwappedDouble *)outPtr)[i]));
-#else
-                ((signed short *)outPtr)[i] = ((double *)outPtr)[i];
-#endif
-            }
-        }
-
-        else if (df1 == SND_FORMAT_FLOAT && df2 == SND_FORMAT_LINEAR_32) {
-            LOOP_FORWARD_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((signed int *)outPtr)[i] = (signed int)
-                        NSSwapHostIntToBig(SndSwapSwappedFloatToHost(((SndSwappedFloat *)outPtr)[i]) * 65536);
-#else
-                ((signed int *)outPtr)[i] = ((float *)outPtr)[i] * 65536;
-#endif
-            }
-        }
-        else if (df1 == SND_FORMAT_DOUBLE && df2 == SND_FORMAT_LINEAR_32) {
-            LOOP_FORWARD_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((signed int *)outPtr)[i] = (signed int)
-                        NSSwapHostIntToBig(SndSwapSwappedDoubleToHost(((SndSwappedDouble *)outPtr)[i]) * 65536);
-#else
-                ((signed int *)outPtr)[i] = ((double *)outPtr)[i] * 65536;
-#endif
-            }
-        }
-
-        else if (df1 == SND_FORMAT_DOUBLE && df2 == SND_FORMAT_FLOAT) {
-            LOOP_FORWARD_THRU_SOUND {
-#ifdef __LITTLE_ENDIAN__
-                ((SndSwappedFloat *)outPtr)[i] = (SndSwappedFloat)
-                        SndSwapHostToSwappedFloat((float)
-                        SndSwapSwappedDoubleToHost(((SndSwappedDouble *)outPtr)[i]));
-#else
-                ((float *)outPtr)[i] = ((double *)outPtr)[i];
-#endif
-            }
-        }
-        
-        else {
-            printf("Sorry, format unsupported for conversion\n");
-            SndFree(*toSound);
-            return SND_ERR_BAD_FORMAT;
-        }
-        (*toSound)->dataFormat = df2;
-        /* that should be all the common ones. Maybe aLaw too? */
-        (*toSound)->dataSize = outCount * SndSampleWidth(df2);
-    }
-    // printf("alloced size: %d official size: %d\n", allocedSize, (*toSound)->dataSize);
-    if ((*toSound)->dataSize < allocedSize) /* only decrease space if necessary */
-        *toSound = realloc(*toSound,(*toSound)->dataSize + (*toSound)->dataLocation);
-    return SND_ERR_NONE;
-}
+}  
