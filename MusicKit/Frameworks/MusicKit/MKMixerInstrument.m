@@ -134,16 +134,15 @@ static long secondsToFrames(Snd *s, double time)
 	    untilFrame = MAX([sampleToMix processingEndSample] - [sampleToMix currentSample] + curOutSamp, untilFrame);
 	}
     }
-    mixInBuffer = [[SndAudioBuffer alloc] initWithDataFormat: soundFormat.dataFormat
-						channelCount: soundFormat.channelCount
-						samplingRate: soundFormat.sampleRate
-						  frameCount: BUFFERSIZE];
 
     // Progress across the time line, in buffer region increments.
     // NSLog(@"curOutSamp = %d, untilFrame = %d\n", curOutSamp, untilFrame);
     while (curOutSamp < untilFrame) {
-	[mixInBuffer zero]; // Clear out buffer since we reuse it on each iteration.
 	currentBufferSize = MIN(untilFrame - curOutSamp, BUFFERSIZE);
+	mixInBuffer = [[SndAudioBuffer alloc] initWithDataFormat: soundFormat.dataFormat
+						    channelCount: soundFormat.channelCount
+						    samplingRate: soundFormat.sampleRate
+						      frameCount: currentBufferSize];
 	
 	// Retrieve each sound assigned to be mixed.
 	for (soundNum = 0; soundNum < [samplesToMix count]; soundNum++) {
@@ -159,8 +158,7 @@ static long secondsToFrames(Snd *s, double time)
 	    inSoundLastLocation = [sampleToMix processingEndSample];
 	    inSoundRange.location = [sampleToMix currentSample];
 	    // Size of remaining input data, capped at the maximum buffer size.
-	    // inSoundRange.length = MIN(inSoundLastLocation - inSoundRange.location, currentBufferSize);
-	    inSoundRange.length = inSoundLastLocation - inSoundRange.location;
+	    inSoundRange.length = MIN(inSoundLastLocation - inSoundRange.location, currentBufferSize);
 	    // NSLog(@"sampleToMix %@ inSoundRange = (%d,%d)\n", sampleToMix, inSoundRange.location, inSoundRange.length);
 	    
 	    inBuffer = [[sampleToMix sound] audioBufferForSamplesInRange: inSoundRange];
@@ -193,10 +191,7 @@ static long secondsToFrames(Snd *s, double time)
 	// TODO, there could be scope to use SndExpt aka SndDiskBased to directly write the file.
 	[sound appendAudioBuffer: mixInBuffer];
 	curOutSamp += currentBufferSize;
-    }
-    if (mixInBuffer) {
 	[mixInBuffer release];
-	mixInBuffer = nil;
     }
     return self;
 }
