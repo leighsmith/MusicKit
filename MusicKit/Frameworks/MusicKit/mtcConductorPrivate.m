@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/09/24 05:36:24  leigh
+  Uses new MKPerformSndMIDI framework
+
   Revision 1.3  1999/09/04 23:00:01  leigh
   midi_driver.h now included from MKPerformMIDI framework
 
@@ -24,7 +27,7 @@ Modification history:
 
 */
 //#import <midi_driver_compatability.h> // LMS obsolete 
-#import <MKPerformMIDI/midi_driver.h>
+#import <MKPerformSndMIDI/midi_driver.h>
 
 @implementation MKConductor(MTCPrivate)
 
