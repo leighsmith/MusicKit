@@ -45,6 +45,7 @@
 				36C5C1C10039F18CCFED3B96,
 				36C5C1C20039F18CCFED3B96,
 				36C5C1C30039F18CCFED3B96,
+				508F93C3003C7A83CFED3B96,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -100,6 +101,8 @@
 				36C5C1C40039F18CCFED3B96,
 				36C5C1C90039F2E2CFED3B96,
 				36C5C1CA0039F2E2CFED3B96,
+				508F93C0003B28C0CFED3B96,
+				508F93C5003C7F23CFED3B96,
 			);
 			isa = PBXGroup;
 			name = Headers;
@@ -344,6 +347,8 @@
 				36C5C1C50039F18CCFED3B96,
 				36C5C1CB0039F2E2CFED3B96,
 				36C5C1CC0039F2E2CFED3B96,
+				508F93C1003B28C0CFED3B96,
+				508F93C6003C7F23CFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -466,7 +471,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Public,
 				);
 				INCLUDED_OSS = (
 					MACOS,
@@ -546,6 +550,7 @@
 				36C5C1C60039F18CCFED3B96,
 				36C5C1C70039F18CCFED3B96,
 				36C5C1C80039F18CCFED3B96,
+				508F93C4003C7A83CFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -966,6 +971,63 @@
 		};
 		36C5C1CC0039F2E2CFED3B96 = {
 			fileRef = 36C5C1CA0039F2E2CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		508F93C0003B28C0CFED3B96 = {
+			isa = PBXFileReference;
+			path = SndMeter.h;
+			refType = 4;
+		};
+		508F93C1003B28C0CFED3B96 = {
+			fileRef = 508F93C0003B28C0CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		508F93C3003C7A83CFED3B96 = {
+			isa = PBXFileReference;
+			path = SndPlayer.m;
+			refType = 4;
+		};
+		508F93C4003C7A83CFED3B96 = {
+			fileRef = 508F93C3003C7A83CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		508F93C5003C7F23CFED3B96 = {
+			isa = PBXFileReference;
+			path = SndPlayer.h;
+			refType = 4;
+		};
+		508F93C6003C7F23CFED3B96 = {
+			fileRef = 508F93C5003C7F23CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
