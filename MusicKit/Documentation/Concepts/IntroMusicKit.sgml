@@ -1,0 +1,757 @@
+<!--
+$Id$
+
+Introduction to the MusicKit file, in the original DocBook SGML source.
+
+Edit this file, not the HTML, RTF or LaTeX output.
+-->
+
+<chapter id="IntroMusicKit">
+  <title><productname>MusicKit</productname></title>
+
+    <!--
+  <sect1 id="UsageSynopsis">
+  <synopsis>
+  <todo>Frameworks:</todo>
+  <filename>MusicKit.framework</filename>, <filename>MKDSP.framework</filename>, <filename>MKPerformSndMIDI.framework</filename>. 
+
+  <para>
+    Also, optionally <filename>MKUnitGenerators.framework</filename>, <filename>MKSynthPatches.framework</filename>
+  </para>
+
+  <todo>Header File Directory:</todo>
+  <para>
+  <filename class=directory>/Local/Library/Frameworks/MusicKit.framework/Headers/ </filename>
+
+  <filename class=directory>/Local/Library/Frameworks/MKSynthPatches.framework/Headers/</filename>
+  <filename class=directory>/Local/Library/Frameworks/MKUnitGenerators.framework/Headers/</filename>
+  <filename class=directory>/Local/Library/Frameworks/MKDSP.framework/Headers/</filename>
+  </para>
+    
+  <todo>Import:</todo>
+  <filename>MusicKit/MusicKit.h</filename>
+  <para>Also, optionally, <filename>MKSynthPatches/SynthPatches.h</filename> and 
+  <filename>MKUnitGenerators/UnitGenerators.h</filename>
+  </para>
+  </synopsis>
+  </sect1>
+    -->
+
+    <sect1 id="MusicKitIntroduction">
+      <title>MusicKit Introduction</title>
+
+      <para>
+The <productname>MusicKit</productname> defines a set of Objective C
+classes and informal protocols, C functions, and assorted constants
+and data types that are useful for creating music, sound,
+<acronym>DSP</acronym> and <acronym>MIDI</acronym> applications under
+<productname>NeXTSTEP</productname>,
+<productname>OpenStep</productname>,
+<productname>Windows9X</productname>, <productname>MacOS
+X</productname> and <productname>MacOS X-Server V1.2</productname>.
+</para>
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+The <productname>MusicKit</productname> provides a set of music
+representation classes&horbar;most notably
+<classname>MKNote</classname>, <classname>MKPart</classname> and
+<classname>MKScore</classname>, as well as
+<classname>MKEnvelope</classname>, <classname>MKWaveTable</classname>,
+<classname>MKTimbre</classname>, and
+<classname>MKPartial</classname>s&horbar;that provide a flexible
+high-level structure for musical data. The
+<productname>MusicKit</productname> also provides a number of file
+formats for storing these structures. <emphasis>ScoreFile</emphasis>
+is a simple text-based scripting language that allows musical data to
+be represented in a convenient, human-readable form and supports
+simple programming structures. Alternatively, the
+<productname>MusicKit</productname> supports reading and writing
+musical data as Standard <acronym>MIDI</acronym> files, binary
+scorefiles (called &ldquo;playscore files&rdquo; for historical
+reasons) and <productname>NeXTSTEP</productname> archived objects. The
+<productname>MusicKit</productname>'s representation system includes a
+number of enormously valuable features. The <varname>noteTag</varname>
+construct supports representation of phrase structure and makes it
+easy to create effects such as legato, which require continuity from
+one note to the next. The <constant>noteUpdate</constant> construct
+allows any aspect of a sounding note to be changed at any time.
+</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+The <productname>MusicKit</productname> makes scheduling and
+sequencing extremely simple. A <productname>MusicKit</productname>
+"performance" consists of sending scheduled Objective-C messages and
+handling asynchronous events such as incoming <acronym>MIDI</acronym>
+and <productname>NeXTSTEP</productname> events. The
+<classname>MKConductor</classname> class is in charge of dispatching
+all messages and managing the notion of time. A
+<classname>MKConductor</classname> may have a tempo, a time map, or
+may be set to synchronize to <acronym>MIDI</acronym> time code. Since
+all time control is managed in the <classname>MKConductor</classname>
+itself, the difference between these time representations is
+completely transparent.
+</para>
+	  <para>
+Another aspect of the <productname>MusicKit</productname> performance
+is a dynamically patchable <classname>MKNote</classname>-handling
+network consisting of three classes,
+<classname>MKPerformer</classname>s,
+<classname>MKNoteFilter</classname>s and
+<classname>MKInstrument</classname>s.
+<classname>MKPerformer</classname> subclasses are
+<classname>MKNote</classname>-generators, that sequence over
+<classname>NSArray</classname>s of <classname>MKNote</classname>s or
+create <classname>MKNote</classname>s on the fly. They contain outputs
+that may be connected to <classname>MKNoteFilter</classname>s or
+<classname>MKInstrument</classname>s. <classname>MKInstrument</classname>
+subclasses realize <classname>MKNote</classname>s in some manner, for
+example by playing them on the <acronym>DSP</acronym> or via
+<acronym>MIDI</acronym>, and contain inputs that may be connected to
+<classname>MKNoteFilter</classname>s or
+<classname>MKPerformer</classname>s. <classname>MKNoteFilter</classname>s
+are intermediate processors that contain both inputs and outputs. This
+scheme makes it easy to create a performance scheme for nearly any
+application.  The inputs and outputs are represented as
+<classname>MKNoteSender</classname>s and
+<classname>MKNoteReceiver</classname>s, respectively.
+</para>
+	  <para>
+The <productname>MusicKit</productname>'s performance apparatus is
+based on the notion that messages execute quickly. Thus, time stays
+constant during the execution of a scheduled or event-triggered
+message. This has the advantage of allowing a large number of
+<acronym>DSP</acronym> updates to happen at the exact same time. The
+<acronym>DSP</acronym> and <acronym>MIDI</acronym> driver support
+time-ordered queues of events, thus allowing the application some
+latitude in computing these updates, while still providing an
+instantaneous execution of the updates themselves.
+</para>
+	</listitem>
+
+	<listitem>
+	  <para>
+The <productname>MusicKit</productname> has extensive support for
+sound processing and synthesis on multiple <acronym>DSP</acronym>
+chips. Instances of the <classname>MKOrchestra</classname> class
+correspond to <acronym>DSP</acronym> chips and manage dynamic memory
+and processing time allocation. Full dynamic loading during a
+performance is supported. Synthesis insruments are represented as
+<classname>MKSynthPatch</classname> subclasses. The
+<productname>MusicKit</productname> SynthPatch library is an auxiliary
+library that consists solely of <classname>MKSynthPatch</classname>
+subclasses, each of which implements a generic synthesis
+technique. For developers or composers who want to create their own
+synthesis or processing configuration, the
+<classname>MKUnitGenerator</classname> class is provided. Each
+<classname>MKUnitGenerator</classname> subclass corresponds to a
+<acronym>DSP</acronym> module such as a filter, oscillator, or delay
+unit. By interconnecting these <classname>MKUnitGenerator</classname>s
+using "patchpoints", a huge variety of synthesis and processing
+techniques may be implemented.  The
+<productname>MusicKit</productname> UnitGenerator library is an
+auxilliary library that consists solely of
+<classname>MKUnitGenerator</classname> subclasses. Finally,
+adventurous developers may write their own <acronym>DSP</acronym> unit
+generators in <hardware>MC56001</hardware> assembly language (using
+an extensive set of macros to simplify the process) and use the tool
+<command>dspwrap</command> to automatically generate Objective-C
+<classname>MKUnitGenerator</classname> subclasses.
+</para>
+	  <para>
+Currently, only the <hardware>MC56001</hardware> is supported. The
+<classname>ArielQP</classname> and <classname>ArielQPSat</classname>
+classes support the Ariel QuintProcessor hardware, available for the
+<productname>NeXTcube</productname>.
+</para>
+	</listitem>
+      </itemizedlist>
+    </sect1>
+    <sect1 id=MusicKitClasses>
+      <title><productname>MusicKit</productname> Classes</title>
+
+      <para>
+The following sections briefly describe the topics that the 
+Kit addresses through its classes and protocols. Within the descriptions, 
+class and protocol names are highlighted as they're introduced 
+for easy identification.
+</para>
+
+      <sect2 id="EncapsulatingMusicalData">
+	<title>Encapsulating Musical Data</title>
+
+	<para>
+Music is represented in a three-level hierarchy of
+<classname>MKScore</classname>, <classname>MKPart</classname>,
+and <classname>MKNote</classname>
+objects. <classname>MKScore</classname>s and
+<classname>MKPart</classname>s are analogous to orchestral scores
+and the instrumental parts that they contain: a
+<classname>MKScore</classname> represents a musical composition
+while each <classname>MKPart</classname> corresponds to a
+particular means of realization. <classname>MKParts</classname>
+consists of a time-sorted collection of
+<classname>MKNote</classname>s, each of which contains data that
+describes a musical event.
+</para>
+
+	<para>
+The information in a <classname>MKNote</classname> object falls
+into four categories:
+</para>
+
+	<itemizedlist>
+	  <listitem>
+	    <para>
+A list of attribute-value pairs called <emphasis>parameters</emphasis> 
+that describe the characteristics of a musical event
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+A <varname>noteType</varname> that determines the general character 
+of the <classname>MKNote</classname>
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+An identifying integer called a <varname>noteTag</varname>, used to 
+associate different <classname>MKNote</classname>s with each other
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+A <varname>timeTag</varname>, or the onset time of the
+<classname>MKNote</classname>
+</para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>
+A parameter supplies a value for a particular attribute of a musical
+sound, its frequency or amplitude, for example. A parameter's value
+can be simple&horbar;an integer, floating point number, or character
+string&horbar;or it can be another object. The
+<classname>MKNote</classname> object provides special methods for
+setting the value of a parameter as an
+<classname>MKEnvelope</classname> object or a
+<classname>MKWaveTable</classname> object. With the
+<classname>MKEnvelope</classname> object you can create a value that
+varies over time. The <classname>MKWaveTable</classname> object
+contains sound or spectrum data that's used in various types of
+synthesis, such as wavetable synthesis.
+</para>
+
+	<para>
+The manner in which a parameter is interpreted depends
+on the object that realizes the <classname>MKNote</classname>. For
+example, one object could interpret a heightened brightness parameter
+by increasing the amplitude of the sound, while another, given the
+same <classname>MKNote</classname>, might increase the sound's spectral
+content. In this way, parameters are similar to Objective-C messages:
+The precise meaning of either depends on how they are implemented by
+the object that receives them.
+</para>
+
+	<para>
+A <classname>MKNote</classname>'s <varname>noteType</varname> and
+<varname>noteTag</varname> are used together to help interpret a
+<classname>MKNote</classname>'s parameters. There are five
+<varname>noteType</varname>s:
+</para>
+
+	<itemizedlist>
+	  <listitem>
+	    <para>
+<constant>noteDur</constant> represents an entire musical note (a note 
+with a duration).
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<constant>noteOn</constant> establishes the beginning of a note.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<constant>noteOff</constant> establishes the end of a note.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<constant>noteUpdate</constant> represents the middle of a note.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<constant>mute</constant> represents a <classname>MKNote</classname>
+not directly associated with sound-production.
+</para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>
+<constant>noteDur</constant>s and <constant>noteOn</constant>s both
+establish the beginning of a musical note. The difference between them
+is that the <constant>noteDur</constant> also has information that
+tells when the note should end. A note created by a
+<constant>noteOn</constant> simply keeps sounding until a
+<constant>noteOff</constant> comes along to stop it. In either case, a
+<constant>noteUpdate</constant> can change the attributes of a musical
+note while it's sounding. The <constant>mute</constant>
+<varname>noteType</varname> is used to represent any additional
+information, such as barlines or rehearsal numbers.
+</para>
+
+	<para>
+A <varname>noteTag</varname> is an arbitrary integer that's used to
+identify different <classname>MKNote</classname>s as part of the same musical note or
+phrase. For example, a <constant>noteOff</constant> is paired with a
+<constant>noteOn</constant> by matching <varname>noteTag</varname>
+values.  You can create a legato passage with a series of
+<constant>noteOn</constant>s, all with the same
+<varname>noteTag</varname>, concluded by a single
+<constant>noteOff</constant>.
+</para>
+
+	<para>
+The <productname>MusicKit</productname>'s <varname>noteTag</varname>
+system solves many of the problems inherent in
+<acronym>MIDI</acronym>, which uses a combination of key number and
+channel to identify events that are part of the same musical
+phrase. For example, the <productname>MusicKit</productname> can
+create and manage an unlimited number of simultaneous legato phrases
+while <acronym>MIDI</acronym> can only manage 16 (in
+<acronym>MIDI</acronym> mono mode). Also, with
+<acronym>MIDI</acronym>'s tagging system, mixing streams of notes is
+difficult&horbar;notes can easily get clobbered or linger on beyond
+their appointed end. The <productname>MusicKit</productname> avoids
+this problem by reassigning unique <varname>noteTag</varname> values
+when streams of <classname>MKNote</classname>s are mixed together.
+</para>
+
+	<para>
+A <classname>MKNote</classname>'s <varname>timeTag</varname> is
+relevant only when the <classname>MKNote</classname> is in a
+<classname>MKPart</classname>&horbar;it specifies the time of the
+<classname>MKNote</classname> relative to the start of its
+<classname>MKPart</classname>. <varname>timeTag</varname> values are
+measured in beats, where the value of a beat can be set by the
+user. If the <classname>MKNote</classname> is a noteDur, its duration
+is also computed in beats.
+</para>
+
+	<para>
+An entire <classname>MKScore</classname> can be stored in a
+scorefile. The scorefile format is designed to represent any
+information that can be put in a <classname>MKNote</classname> object,
+including the <classname>MKPart</classname> to which the
+<classname>MKNote</classname> belongs. Scorefiles are in ASCII format
+and can easily be created and modified with a text editor. In
+addition, the <productname>MusicKit</productname> provides a language called
+<emphasis>ScoreFile</emphasis> that lets you add simple programming
+constructs such as variables, assignments, and arithmethic expressions
+to your scorefile.
+</para>
+      </sect2>
+
+      <sect2 id="Scheduling">
+	<title>Note and Event Scheduling, Sequencing and Processing</title>
+
+	<para>
+During a <productname>MusicKit</productname> performance,
+<classname>MKNote</classname> objects are dispatched, in time order,
+to objects that realize them in some manner&horbar;usually by making a
+sound on the <acronym>DSP</acronym> or on an external
+<acronym>MIDI</acronym> synthesizer. This process involves, primarily,
+instances of <classname>MKPerformer</classname>,
+<classname>MKInstrument</classname>, and
+<classname>MKConductor</classname>:
+</para>
+
+	<itemizedlist>
+	  <listitem>
+	    <para>
+A <classname>MKPerformer</classname> acquires
+<classname>MKNote</classname>s, either by opening a file, looking
+in a <classname>MKPart</classname> or
+<classname>MKScore</classname>, or generating them itself, and
+sends them to one or more <classname>MKInstrument</classname>s.
+Pseudo-performers such as <classname>MKMidi</classname> or the
+application itself may act as <classname>MKPerformer</classname>s,
+supplying <classname>MKNote</classname>s in response to
+asynchronous events.
+</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+An <classname>MKInstrument</classname> receives
+<classname>MKNote</classname>s sent to it by one or more
+<classname>MKPerformer</classname>s and realizes them in some
+distinct manner.
+</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+The <classname>MKConductor</classname> acts as a scheduler,
+ensuring that <classname>MKNote</classname>s are transmitted from
+<classname>MKPerformer</classname>s to
+<classname>MKInstruments</classname> in order and at the right
+time.
+</para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>
+This system is useful for designing a wide variety of applications
+that process <classname>MKNote</classname>s sequentially. For example,
+a <productname>MusicKit</productname> performance can be configured to
+perform <acronym>MIDI</acronym> or <acronym>DSP</acronym> sequencing,
+graphic animation, <acronym>MIDI</acronym> real-time processing (such
+as echo, channel mapping, or doubling), sequential editing on a file,
+mixing and filtering of <classname>MKNote</classname> streams under
+interactive control, and so on.
+</para>
+
+	<para>
+Both <classname>MKPerformer</classname> and
+<classname>MKInstrument</classname> are abstract classes.  This
+means that you never create and use instances of these classes
+directly in an application. Rather, they define common protocol (for
+sending and receiving <classname>MKNote</classname>s) that's used
+by their subclasses. The subclasses build on this protocol to generate
+or realize <classname>MKNote</classname>s in some
+application-specific manner.
+</para>
+
+	<para>
+The <productname>MusicKit</productname> provides a number of
+<classname>MKPerformer</classname> and
+<classname>MKInstrument</classname> subclasses. The principle
+<classname>MKPerformer</classname> subclasses are:
+</para>
+
+	<itemizedlist>
+	  <listitem>
+	    <para>
+<classname>MKScorePerformer</classname> and
+<classname>MKPartPerformer</classname>. These read
+<classname>MKNote</classname>s from a designated
+<classname>MKScore</classname> and
+<classname>MKPart</classname>, respectively.
+<classname>MKScorePerformer</classname> is actually a collection
+of <classname>MKPartPerformer</classname>s, one for each
+<classname>MKPart</classname> in the
+<classname>MKScore</classname>.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para> <classname>MKScorefilePerformer</classname> reads a
+scorefiles, forming <classname>MKNote</classname> objects from the
+contents of the file. It's only advantage over
+<classname>MKScorePerformer</classname> is that there is no
+memory-resident representation of the
+<classname>MKScore</classname> is used. Thus, it can
+instantaneously perform huge <classname>MKScores</classname> that
+would require some time to read into a
+<classname>MKScore</classname>.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<classname>MKMidi</classname> (a
+pseudo-<classname>MKPerformer</classname>) creates
+<classname>MKNote</classname> objects from the byte stream
+generated by an external <acronym>MIDI</acronym> synthesizer attached to a serial port.
+</para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>
+The <classname>MKInstrument</classname> subclasses provided by the
+<productname>MusicKit</productname> are:
+</para>
+
+	<itemizedlist>
+	  <listitem>
+	    <para>
+<classname>MKSynthInstrument</classname> objects realize
+<classname>MKNote</classname>s by synthesizing them on the
+<acronym>DSP</acronym>.
+</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+<classname>MKMidi</classname> (a pseudo-Instrument) turns
+<classname>MKNote</classname> objects into <acronym>MIDI</acronym>
+commands and sends the resulting byte stream back out to an external
+<acronym>MIDI</acronym> synthesizer connected to a serial port.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<classname>MKScoreRecorder</classname> and
+<classname>MKPartRecorder</classname> receive
+<classname>MKNote</classname>s, copy them, and add them to a
+<classname>MKScore</classname> and <classname>MKPart</classname>,
+respectively.
+</para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+<classname>MKScorefileWriter</classname> writes scorefiles on the fly
+during a performance. It is analagous to
+<classname>MKScorefilePerformer</classname>.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<classname>MKNoteFilter</classname> is a subclass of
+<classname>MKInstrument</classname> that also implements
+<classname>MKPerformer</classname>'s
+<classname>MKNote</classname>-sending protocol, thus it can both
+receive and send <classname>MKNote</classname>s. Any number of
+<classname>MKNoteFilter</classname> objects can be interposed between
+a <classname>MKPerformer</classname> and an
+<classname>MKInstrument</classname>. <classname>MKNoteFilter</classname>
+is, itself, abstract.  The action a
+<classname>MKNoteFilter</classname> object takes in response to
+receiving a <classname>MKNote</classname> is defined by the
+subclass. For example, you can create a
+<classname>MKNoteFilter</classname> subclass that creates and
+activates a new <classname>MKPerformer</classname> for every
+<classname>MKNote</classname> it receives.
+</para>
+	  </listitem>
+	</itemizedlist>
+      </sect2>
+      <sect2 id="DSPSynthesis">
+	<title><acronym>DSP</acronym> Synthesis</title>
+
+	<para>
+<classname>MKOrchestra</classname> handles all allocation and
+<acronym>DSP</acronym> time management.
+<classname>MKSynthInstrument</classname> is a voice allocator and
+manages instances of <classname>MKSynthPatch</classname>, each of
+which representes a single sound-producing/processing voice on the
+<acronym>DSP</acronym>. <classname>MKSynthPatch</classname>es are
+comprised of <classname>MKUnitGenerator</classname>s, basic building
+blocks of <acronym>DSP</acronym> synthesis, as well as
+<classname>MKSynthData</classname>, <acronym>DSP</acronym> memory
+objects. The <productname>MusicKit</productname> provides an extensive
+set of <classname>MKSynthPatch</classname> and
+<classname>MKUnitGenerator</classname> subclasses, in the
+<classname>MKSynthPatch</classname> and
+<classname>MKUnitGenerator</classname> frameworks, respectively.
+</para>
+
+      </sect2>
+    </sect1>
+    <sect1 id="MusicKitFunctions">
+      <title>MusicKit Functions</title>
+      
+      <para>
+Refer to <xref linkend="Functions"> for descriptions of the functions
+(and function-like macros) that are provided by the MusicKit. Many of
+the functions are auxiliary to the Kit's classes in that they augment
+or are superceded by one or more classes. Of the rest, some functions
+provide information or functionality that can't be gotten elsewhere,
+while some others are convenient but not necessarily the only way to
+address a particular topic.
+</para>
+
+      <para>
+The following sections don't attempt to describe what individual 
+functions do&horbar;the names of the functions are fairly descriptive 
+in themselves&horbar;they merely list the functions as they fall into 
+broad categories.</para>
+
+      <sect2 id="AmplitudeScaling">
+	<title>Amplitude Scaling</title>
+
+	<para>
+These functions convert between <acronym>MIDI</acronym> and
+<classname>MKNote</classname> amplitude representations:
+</para>
+	<para>
+<function>MKAmpToMidi</function>(),
+<function>MKAmpAttenuationToMidi</function>(),
+<function>MKMidiToAmp</function>(),
+<function>MKMidiToAmpAttenuation</function>(),
+<function>MKMidiToAmpWithSensitivity</function>(),
+<function>MKMidiToAmpAttenuationWithSensitivity</function>(),
+<function>MKdB</function>()
+</para>
+      </sect2>
+
+      <sect2 id="FrequencyScaling">
+	<title>Frequency Scaling</title>
+
+	<para>
+These functions convert between <acronym>MIDI</acronym> and
+<classname>MKNote</classname> frequency representations:
+</para>
+	<para>
+<function>MKKeyNumToFreq</function>(),
+<function>MKFreqToKeyNum</function>(),
+<function>MKTranspose</function>(),
+<function>MKAdjustFreqWithPitchBend</function>()
+</para>
+      </sect2>
+      <sect2 id="ErrorHandling">
+	<title>Error Handling and Trace Debugging</title>
+
+	<para>
+<function>MKError</function>(), <function>MKSetErrorProc</function>(),
+<function>MKSetErrorStream</function>(),
+<function>MKErrorStream</function>(),
+<function>MKSetTrace</function>(),
+<function>MKClearTrace</function>(), <function>MKIsTraced</function>()
+</para>
+      </sect2>
+
+      <sect2 id="TimeManipulation"> 
+	<title>Time Manipulation</title>
+
+	<para>
+<function>MKGetTime</function>(), <function>MKGetDeltaT</function>(),
+<function>MKSetDeltaT</function>(),
+<function>MKGetDeltaTTime</function>(),
+<function>MKFinishPerformance</function>(),
+<function>MKSetTime</function>(),
+<function>MKSetLowDeltaTThreshold</function>(),
+<function>MKSetHighDeltaTThreshold</function>(),
+<function>MKSetDeltaTMode</function>(), 
+<function>MKGetDeltaTMode</function>()
+</para>
+      </sect2>
+      <sect2 id="NoValueReturn">
+	<title> No-Value Return from Floating Point Functions</title>
+
+
+	<para>
+<function>MKIsNoDVal</function>(),
+<function>MKGetNoDVal</function>()</para>
+      </sect2>
+
+      <sect2 id="NoteParameterAccess">
+	<title>Note Parameter Access</title>
+
+	<para>
+<function>MKIsNoteParPresent</function>(),
+<function>MKInitParameterIteration</function>(),
+<function>MKNextParameter</function>(),
+<function>MKHighestPar</function>(),
+<function>MKSetNoteParToDouble</function>(),
+<function>MKSetNoteParToInt</function>(),
+<function>MKSetNoteParToString</function>(),
+<function>MKSetNoteParToEnvelope</function>(),
+<function>MKSetNoteParToWaveTable</function>(),
+<function>MKSetNoteParToObject</function>(),
+<function>MKGetNoteParAsDouble</function>(),
+<function>MKGetNoteParAsInt</function>(),
+<function>MKGetNoteParAsString</function>(),
+<function>MKGetNoteParAsStringNoCopy</function>(),
+<function>MKGetNoteParAsEnvelope</function>(),
+<function>MKGetNoteParAsWaveTable</function>(),
+<function>MKGetNoteParAsObject</function>()
+</para>
+      </sect2>
+      <sect2 id="NamedObjects">
+	<title>Named Objects</title>
+
+	<para>
+These functions differ from the NeXTSTEP/OpenStep versions in being 
+stored in a separate symbol table.
+</para>
+
+	<para>
+<function>MKNameObject</function>(),
+<function>MKGetObjectName</function>(),
+<function>MKRemoveObjectName</function>(),
+<function>MKGetNamedObject</function>()
+</para>
+
+      </sect2>
+      <sect2 id="MessageScheduling">
+	<title>Message Scheduling</title>
+
+	<para>
+<function>MKNewMsgRequest</function>(),
+<function>MKScheduleMsgRequest</function>(),
+<function>MKRepositionMsgRequest</function>(),
+<function>MKCancelMsgRequest</function>(),
+<function>MKRescheduleMsgRequest</function>()
+</para>
+      </sect2>
+      <sect2 id="NoteTagAllocation">
+	<title>NoteTag Allocation</title>
+
+	<para>
+<function>MKNoteTag</function>(), <function>MKNoteTags</function>()
+</para>
+      </sect2>
+      <sect2 id="ClassSubstitution"> 
+	<title>Posing As&horbar;Class Substitution</title>
+
+	<para>
+<function>MKSetNoteClass</function>(),
+<function>MKSetPartClass</function>(),
+<function>MKSetEnvelopeClass</function>(),
+<function>MKSetPartialsClass</function>(),
+<function>MKSetSamplesClass</function>(),
+<function>MKGetNoteClass</function>(),
+<function>MKGetPartClass</function>(),
+<function>MKGetEnvelopeClass</function>(),
+<function>MKGetPartialsClass</function>(),
+<function>MKGetSamplesClass</function>()
+</para>
+      </sect2>
+      <sect2 id="NotePreemption">
+	<title>Note Preemption</title>
+
+
+	<para>
+<function>MKSetPreemptDuration</function>(),
+<function>MKGetPreemptDuration</function>()
+</para>
+      </sect2>
+      <sect2 id="ScorefileParsing">
+	<title>Scorefile Parsing and Writing</title>
+
+	<para>
+<function>MKSetScorefileParseErrorAbort</function>(),
+<function>MKWritePitchNames</function>()
+</para>
+      </sect2>
+
+      <sect2 id="UnitGenerator">
+	<title>UnitGenerator Implementation</title>
+
+
+	<para>
+<function>MKSetUGAddressArg</function>(),
+<function>MKSetUGAddressArgToInt</function>(),
+<function>MKSetUGDatumArg</function>(),
+<function>MKSetUGDatumArgLong</function>()
+</para>
+
+      </sect2>
+      <sect2 id="Envelope">
+	<title>Envelope Handling</title>
+
+	<para>
+<function>MKUpdateAsymp</function>()
+</para>
+
+      </sect2>
+  </sect1>
+</chapter>
+
