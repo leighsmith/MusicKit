@@ -21,6 +21,9 @@
 */
 /*
   $Log$
+  Revision 1.19  2001/08/31 20:54:25  skotmcdonald
+  Removed addition of deltaT to sound play times; this now requires the API user to play scores in sequence-ahead mode with a conductor deltaT greater than stream client latency to ensure sample-accurate notes
+
   Revision 1.18  2001/08/27 23:51:47  skotmcdonald
   deltaT fetched from conductor, took out accidently left behind debug messages (MKSampler). Conductor: renamed time methods to timeInBeat, timeInSamples to be more explicit
 
@@ -227,7 +230,9 @@
       duration  = [aNote dur] * factor;
     }
     
-    newPerformance = [existingSound playAtTimeInSeconds:  noteTime + [MKConductor deltaT]
+//    fprintf(stderr,"[MKSampler] Note timeTag:%f clientTime:%f\n",[aNote timeTag],[[SndStreamManager defaultStreamManager] nowTime]);
+    
+    newPerformance = [existingSound playAtTimeInSeconds:  noteTime  // + [MKConductor deltaT]
                                   withDurationInSeconds: duration];
 
     // keep a dictionary of playing notes (keyed by note instance, added in time order) and their performances.
