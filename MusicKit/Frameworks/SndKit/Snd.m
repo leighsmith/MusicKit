@@ -74,6 +74,8 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
 #define DEFAULT_SOUNDFILE_EXTENSION @"snd" // TODO this should probably be determined at run time.
 #define USE_STREAMING 1  // 0 will use the older monophonic sound API, 1 uses the newer SndPlayer API
 
+#define SHOW_DRIVER_SELECTED 0
+
 @implementation Snd
 
 static NSAutoreleasePool *pool;
@@ -91,7 +93,9 @@ static int ioTags = 1000;
         nameTable = [[NSMutableDictionary alloc] initWithCapacity:10];
         if(SNDInit(TRUE)) {
             driverNames = SNDGetAvailableDriverNames();
+#if SHOW_DRIVER_SELECTED          
             NSLog(@"driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
+#endif            
 //            sndPlayer = [[SndPlayer player] retain];
         }
         else {
