@@ -29,7 +29,10 @@ DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
 
-FRAMEWORKS = -framework Foundation
+FRAMEWORK_PATHS = -F/Local/Library/Frameworks
+FRAMEWORKS = -framework Foundation -framework MKDSP\
+             -framework MKPerformSndMIDI -framework MusicKit\
+             -framework SndKit
 
 
 NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc

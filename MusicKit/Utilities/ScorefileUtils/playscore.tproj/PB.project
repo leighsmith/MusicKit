@@ -1,7 +1,14 @@
 {
     DYNAMIC_CODE_GEN = YES; 
     FILESTABLE = {
-        FRAMEWORKS = (Foundation.framework); 
+        FRAMEWORKS = (
+            Foundation.framework, 
+            MKDSP.framework, 
+            MKPerformSndMIDI.framework, 
+            MusicKit.framework, 
+            SndKit.framework
+        ); 
+        FRAMEWORKSEARCH = (/Local/Library/Frameworks); 
         H_FILES = (); 
         OTHER_LINKED = (playscore_main.m); 
         OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble, m.template, h.template); 
