@@ -1,0 +1,238 @@
+# $Id$
+#
+# @configure_input@
+#
+# Documentation Makefile -- Just installs documentation
+#
+# Usage: make CHANGELOG=[ChangeLog] COPYREADMETO=[Directory for README.pdf]
+#
+# Create a set of HTML pages and PDFs from the SGML documentation suitable for
+# distribution on the musickit.org web-site. We do this with a
+# customised stylesheet (in DSSSL) to produce the correct text
+# colouring, background images etc.
+#
+# Also creates HTML pages of class documentation from header files
+# using HeaderDoc and copies in PDF's of documentation.
+# The entire tree of documentation is then packaged up suitable for
+# shipping to a webserver.
+#
+# Leigh Smith <leigh@leighsmith.com>
+#
+# Copyright (c) 2005, The MusicKit Project.  All rights reserved.
+#
+# Permission is granted to use and modify this code for commercial and 
+# non-commercial purposes so long as the author attribution and copyright 
+# messages remain intact and accompany all relevant code.
+#
+
+# We allow the path to the ChangeLog to be passed in so it can be
+# posted onto the web for inspection.
+CHANGELOG=
+
+# We specify where we want the README.pdf file to be copied into when
+# we drive the packaging of the documentation from the packageSource script.
+COPYREADMETO=
+
+SGMLTRANS=@SGMLTRANS@
+
+DOC_TARBALL=/tmp/MusicKitREADME.tar.bz2
+
+# HTML_DISTRIB_DIR makes it easier to install into SourceForge.
+HTML_DISTRIB_DIR=htdocs
+HTML_TMPDIR=/tmp/$(HTML_DISTRIB_DIR)
+PDF_TMPDIR=/tmp/mkpdf
+
+MK_STYLEDIR=SGML
+MK_STYLESHEET=$(MK_STYLEDIR)/MusicKit_README.dsssl
+CSS=MusicKit_README.css
+
+README=MusicKit_README
+
+PDFS=$(addprefix $(PDF_TMPDIR)/, $(README).pdf \
+	MusicKitTutorials.pdf \
+	MusicKitConcepts.pdf)
+
+HTMLS=$(addprefix $(HTML_TMPDIR)/, index.html \
+       Concepts/index.html \
+       TutorialClasses/index.html \
+       Frameworks/index.html)
+
+#
+# The MacOS X version of the MKPerformSndMIDI framework is the 
+# definitive documentation version.
+#
+FRAMEWORKS_TO_HEADERDOC=MusicKit \
+    SndKit \
+    MKSynthPatches \
+    MKUnitGenerators \
+    PlatformDependent/MKPerformSndMIDI_MacOSX \
+    PlatformDependent/MKPerformSndMIDI_portaudio
+
+URLDECL=<A HREF=$(FRAMEWORK_NAME)>$(FRAMEWORK_NAME)</A><P>
+FRAMEWORKURLS=$(foreach FRAMEWORK_NAME, $(FRAMEWORKS_TO_HEADERDOC), $(URLDECL))
+
+#
+# This is where the standard admonition images reside. This is set for
+# where fink installs Norman Walsh's images as part of his DocBook
+# DSSSL distribution.
+#
+ADMONIMAGESDIR=/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/images
+
+INSTALL_DIR=$(DSTROOT)/Library/Documentation
+
+# Generate the HTML tarball. The HTML tarball will create the PDF
+# before it copies it into the HTML directory.
+all: $(DOC_TARBALL)
+
+installhdrs:
+	@echo 'No headers to install for Documentation' >/dev/null
+
+clean:
+	-rm -r $(HTML_TMPDIR)
+	-rm -r $(PDF_TMPDIR) 
+
+installsrc:: $(SRCROOT)
+	tar cf - . | (cd $(SRCROOT); tar xfp -)
+	-chmod -R go-w $(SRCROOT)
+	-chmod -R ugo+r $(SRCROOT)
+
+install::
+	mkdirs $(INSTALL_DIR)
+	tar cf - DSP | (cd $(INSTALL_DIR); tar xfp -)
+	tar cf - MusicKit | (cd $(INSTALL_DIR); tar xfp -)
+	cp DocIntroduction.rtf $(INSTALL_DIR)/MusicKit
+	-chmod -R go-w $(INSTALL_DIR)
+	-chmod -R ugo+r $(INSTALL_DIR)
+	#
+	# If the user specified a location to additionally copy the README
+	# file to, we copy it there. It will typically be the source code
+	# packaging directory.
+	# 
+	if [ $(COPYREADMETO)_x != _x ]; then cp $(PDF_TMPDIR)/$(README).pdf $(COPYREADMETO); fi
+
+#
+# Create HTML from the supplied DocBook SGML file.
+# While we could just point all CSS references to a single CSS file,
+# by copying a CSS file into each subdirectory, this removes the
+# requirement to refer to the head of a document tree for the CSS
+# file, it's always within the HTML directory.
+#
+define create-html
+	mkdir -p $(dir $@)/Images
+	cp $(CSS) $(dir $@)
+	-cp -r $(dir $<)/Images/*.gif $(dir $@)/Images
+	cp -r $(ADMONIMAGESDIR)/*.gif $(dir $@)/Images
+	root=`pwd`; cd $(dir $@); \
+	$(SGMLTRANS) -t sgml -ihtml -d $$root/$(MK_STYLESHEET)\#html $$root/$< 
+endef
+
+#
+# We assume we flawlessly create a Jadetex document from the supplied
+# DocBook SGML file which never fails to process with jadetex.
+# We have to process the TeX file three times to properly resolve
+# references.
+#
+# We used to use:
+#	cp $(MK_STYLEDIR)/Images/*.eps $(dir $@)/Images
+#	-cp -r $(dir $<)/Images/*.eps $(dir $@)/Images
+#	cp $(ADMONIMAGESDIR)/*.eps $(dir $@)/Images
+# 	jadetex $(basename $@).tex; \
+# 	jadetex $(basename $@).tex; \
+# 	jadetex $(basename $@).tex; \
+# 	dvipdf $(basename $@).dvi $@
+#
+# However dvipdf produces pdf files with the top margin incorrect,
+# shifting the whole page too high. So we use pdfjadetex. This
+# would be fine except pdfjadetex does not accept images as .eps
+# files. It either accepts .png files, but doesn't manage
+# transparency correctly, or .pdfs, which are not valid imagedata
+# formats according to docbook...sigh. So we hack replacing .eps
+# files with .pdfs.
+#
+define create-pdf
+	mkdir -p $(dir $@)/Images
+	$(SGMLTRANS) -t tex -d $(MK_STYLESHEET)\#print -o /tmp/epsversion.tex $<
+	# ugly hack to swap .eps files for .pdfs for pdfjadetex to work
+	sed -e "s/\.eps/\.pdf/g" < /tmp/epsversion.tex > $(basename $@).tex
+	cp $(MK_STYLEDIR)/Images/*.pdf $(dir $@)/Images
+	-cp -r $(dir $<)/Images/*.pdf $(dir $@)/Images
+	cp $(ADMONIMAGESDIR)/*.pdf $(dir $@)/Images
+	cd $(dir $@); \
+	pdfjadetex $(basename $@).tex; \
+	pdfjadetex $(basename $@).tex; \
+	pdfjadetex $(basename $@).tex 
+endef
+
+#
+# Generate the README documentation
+#
+$(HTML_TMPDIR)/index.html: $(README).sgml $(CSS)
+	$(create-html)
+	-cp -r $(MK_STYLEDIR)/Images/*.png $(HTML_TMPDIR)/Images
+
+#
+# Generate the Concepts Book underneath the README directory, so it
+# can be referenced by URL independent of the README directory.
+#
+$(HTML_TMPDIR)/Concepts/index.html: Concepts/MusicKitConcepts.sgml $(CSS)
+	$(create-html)
+
+#
+# Generate the tutorials and also place them under the README directory.
+#
+$(HTML_TMPDIR)/TutorialClasses/index.html: TutorialClasses/MusicKitTutorials.sgml $(CSS)
+	$(create-html)
+
+#
+# Generate the MusicKit_README PDF.
+#
+$(PDF_TMPDIR)/$(README).pdf: $(README).sgml
+	$(create-pdf)
+
+$(PDF_TMPDIR)/MusicKitTutorials.pdf: TutorialClasses/MusicKitTutorials.sgml
+	$(create-pdf)
+
+$(PDF_TMPDIR)/MusicKitConcepts.pdf: Concepts/MusicKitConcepts.sgml
+	$(create-pdf)
+
+#
+# Run HeaderDoc over each framework.
+# We change into the HeaderDoc directory to pick up the headerdoc
+# config file. Apple should allow us to specify the location of the
+# config file.
+# Gatherheaderdoc generates a file MasterTOC.html, that we name the
+# default file.
+#
+# $(HTML_TMPDIR)/Frameworks/%/index.html: ../Frameworks/%/%.h
+$(FRAMEWORKS_TO_HEADERDOC):
+	mkdir -p $(HTML_TMPDIR)/Frameworks/$@
+	root=`pwd`; cd HeaderDoc; headerdoc2html -o $(HTML_TMPDIR)/Frameworks/$@ $(addprefix $$root/../Frameworks/, $@)
+	gatherheaderdoc $(HTML_TMPDIR)/Frameworks/$@ index.html
+
+#
+# Generate the Framework index file and other supporting files into
+# the HTML_TMPDIR.
+#
+$(HTML_TMPDIR)/Frameworks/index.html: $(FRAMEWORKS_TO_HEADERDOC) $(CSS) 
+	mkdir -p $(HTML_TMPDIR)/Frameworks/MKSynthPatches/Images
+	sed -e "s@FRAMEWORKS_TO_HEADERDOC@$(FRAMEWORKURLS)@" < Frameworks.html.in > $(HTML_TMPDIR)/Frameworks/index.html
+	cp $(CSS) $(HTML_TMPDIR)/Frameworks
+	# Copy images to appear in the class documentation into each
+	# respective class directory.
+	cp Frameworks/SynthPatches/Reference/Classes/Images/*.png $(HTML_TMPDIR)/Frameworks/MKSynthPatches/Images
+
+#
+# Create a tarball.
+#
+$(DOC_TARBALL): $(PDFS) $(HTMLS) Publications/*.pdf $(CHANGELOG)
+	# If we specified a changelog on the command line, copy it into the
+	# web directory.
+	if [ $(CHANGELOG)_x != _x ]; then cp $(CHANGELOG) $(HTML_TMPDIR); fi
+	# Copy all PDFs to be placed on the web-site, 
+	mkdir -p $(HTML_TMPDIR)/Publications
+	# those prepared beforehand... 
+	cp Publications/*.pdf $(HTML_TMPDIR)/Publications
+	# and those generated by this script.
+	cp $(PDFS) $(HTML_TMPDIR)
+	cd $(HTML_TMPDIR)/..; tar cjf $(DOC_TARBALL) $(HTML_DISTRIB_DIR)
+	echo $(basename $(HTML_TMPDIR))
