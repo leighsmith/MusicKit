@@ -23,13 +23,13 @@ CLASSES = AsympUG.m AsympenvUG.m Allpass1UG.m BiquadUG.m Add2UG.m\
           Scl2add2UG.m SnoiseUG.m Scl1add2UG.m ugUtilities.m\
           UnoiseUG.m
 
-HFILES = AsympUG.h AsympenvUG.h Allpass1UG.h BiquadUG.h Add2UG.h\
-         ConstantUG.h DelaymUG.h EnvFollowUG.h DelayUG.h DelayqpUG.h\
-         InterpUG.h In1aUG.h DswitchtUG.h DswitchUG.h In1qpUG.h\
-         In1bUG.h OscgUG.h Out2sumUG.h OnepoleUG.h Out1nUG.h\
-         Mul1add2UG.h OscgafiUG.h OnezeroUG.h Out1bUG.h OscgafUGs.h\
-         Out1aUG.h OscgafUG.h Mul2UG.h ScaleUG.h TablookiUG.h\
-         Scl2add2UG.h SnoiseUG.h Scl1add2UG.h timings.h UnoiseUG.h\
+HFILES = Add2UG.h AsympUG.h AsympenvUG.h Allpass1UG.h BiquadUG.h\
+         ConstantUG.h DelaymUG.h DelayUG.h DelayqpUG.h DswitchtUG.h\
+         DswitchUG.h EnvFollowUG.h InterpUG.h In1aUG.h In1qpUG.h\
+         In1bUG.h Mul1add2UG.h Mul2UG.h OnepoleUG.h OnezeroUG.h\
+         OscgUG.h OscgafiUG.h OscgafUGs.h OscgafUG.h Out1bUG.h\
+         Out1aUG.h Out1nUG.h Out2sumUG.h ScaleUG.h Scl1add2UG.h\
+         Scl2add2UG.h SnoiseUG.h UnoiseUG.h TablookiUG.h timings.h\
          unitgenerators.h _exportedPrivateMusickit.h\
          _unitGeneratorInclude.h
 
@@ -51,7 +51,15 @@ PROF_LIBS = $(LIBS)
 FRAMEWORK_PATHS = -F$(LOCAL_LIBRARY_DIR)/Frameworks
 FRAMEWORKS = -framework Foundation -framework MKDSP -framework MusicKit\
              -framework SndKit
-PUBLIC_HEADERS = unitgenerators.h
+PUBLIC_HEADERS = unitgenerators.h Allpass1UG.h AsympUG.h AsympenvUG.h\
+                 BiquadUG.h Add2UG.h ConstantUG.h DelaymUG.h\
+                 EnvFollowUG.h DelayUG.h DelayqpUG.h InterpUG.h\
+                 In1aUG.h DswitchtUG.h DswitchUG.h In1qpUG.h In1bUG.h\
+                 OscgUG.h Out2sumUG.h OnepoleUG.h Out1nUG.h\
+                 Mul1add2UG.h OscgafiUG.h OnezeroUG.h Out1bUG.h\
+                 OscgafUGs.h Out1aUG.h OscgafUG.h Mul2UG.h ScaleUG.h\
+                 TablookiUG.h Scl2add2UG.h SnoiseUG.h Scl1add2UG.h\
+                 UnoiseUG.h
 
 
 

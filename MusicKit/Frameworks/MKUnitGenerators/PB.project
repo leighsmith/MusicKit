@@ -44,9 +44,59 @@
         FRAMEWORKS = (Foundation.framework, MKDSP.framework, MusicKit.framework, SndKit.framework); 
         FRAMEWORKSEARCH = ("$(LOCAL_LIBRARY_DIR)/Frameworks"); 
         H_FILES = (
+            Add2UG.h, 
             AsympUG.h, 
             AsympenvUG.h, 
             Allpass1UG.h, 
+            BiquadUG.h, 
+            ConstantUG.h, 
+            DelaymUG.h, 
+            DelayUG.h, 
+            DelayqpUG.h, 
+            DswitchtUG.h, 
+            DswitchUG.h, 
+            EnvFollowUG.h, 
+            InterpUG.h, 
+            In1aUG.h, 
+            In1qpUG.h, 
+            In1bUG.h, 
+            Mul1add2UG.h, 
+            Mul2UG.h, 
+            OnepoleUG.h, 
+            OnezeroUG.h, 
+            OscgUG.h, 
+            OscgafiUG.h, 
+            OscgafUGs.h, 
+            OscgafUG.h, 
+            Out1bUG.h, 
+            Out1aUG.h, 
+            Out1nUG.h, 
+            Out2sumUG.h, 
+            ScaleUG.h, 
+            Scl1add2UG.h, 
+            Scl2add2UG.h, 
+            SnoiseUG.h, 
+            UnoiseUG.h, 
+            TablookiUG.h, 
+            timings.h, 
+            unitgenerators.h, 
+            _exportedPrivateMusickit.h, 
+            _unitGeneratorInclude.h
+        ); 
+        OTHER_RESOURCES = (RealityFailure); 
+        OTHER_SOURCES = (
+            Makefile.preamble, 
+            Makefile, 
+            Makefile.postamble, 
+            m.template, 
+            h.template, 
+            Makefile.extradependencies
+        ); 
+        PUBLIC_HEADERS = (
+            unitgenerators.h, 
+            Allpass1UG.h, 
+            AsympUG.h, 
+            AsympenvUG.h, 
             BiquadUG.h, 
             Add2UG.h, 
             ConstantUG.h, 
@@ -77,22 +127,8 @@
             Scl2add2UG.h, 
             SnoiseUG.h, 
             Scl1add2UG.h, 
-            timings.h, 
-            UnoiseUG.h, 
-            unitgenerators.h, 
-            _exportedPrivateMusickit.h, 
-            _unitGeneratorInclude.h
+            UnoiseUG.h
         ); 
-        OTHER_RESOURCES = (RealityFailure); 
-        OTHER_SOURCES = (
-            Makefile.preamble, 
-            Makefile, 
-            Makefile.postamble, 
-            m.template, 
-            h.template, 
-            Makefile.extradependencies
-        ); 
-        PUBLIC_HEADERS = (unitgenerators.h); 
     }; 
     LANGUAGE = English; 
     LOCALIZABLE_FILES = {}; 
