@@ -148,14 +148,14 @@
 
 /*!
   @method     mixWithBuffer:fromStart:toEnd:
-  @abstract   Initialization method
-  @discussion
-  @param      buff
-  @param      start
-  @param      end
-  @param      exp if TRUE, receiver is allowed to expand <i>buff</i> in place
+  @abstract   Mixes supplied SndAudioBuffer instance with the receiving instance, modifying it.
+  @discussion Mixes over the given range of the buffer.
+  @param      buff The SndAudioBuffer instance to mix.
+  @param      start The sample frame to begin mixing from.
+  @param      end The sample frame to end mixing at.
+  @param      exp If TRUE, receiver is allowed to expand <i>buff</i> in place
                   if required to change format before mixing.
-  @result     self.
+  @result     Returns self.
 */
 - mixWithBuffer: (SndAudioBuffer*) buff
       fromStart: (long) start
@@ -164,10 +164,10 @@
 
 /*!
   @method   mixWithBuffer:
-  @abstract
-  @discussion
-  @param      buff
-  @result     self.
+  @abstract Mixes supplied SndAudioBuffer instance with the receiving instance, modifying it.
+  @discussion Mixes the entire buffer onto the original buffer.
+  @param      buff The SndAudioBuffer instance to mix.
+  @result     Returns self.
 */
 - mixWithBuffer: (SndAudioBuffer*) buff;
 
