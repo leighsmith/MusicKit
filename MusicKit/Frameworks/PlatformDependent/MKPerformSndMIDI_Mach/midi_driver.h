@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/06/13 22:03:31  leigh
+  Removed incorrect avoidance of MD_ functions when on m68k
+
   Revision 1.3  2000/01/27 18:15:43  leigh
   upgraded to new typedef names for Mach
 
@@ -168,22 +171,19 @@ extern kern_return_t
 
 /*
  * Originally from <MusicKit/midi_driver_compatability.h
- *	Author:	David Jaffe
- *      CCRMA, Stanford University, 1994.
+ * Author: David Jaffe
+ * CCRMA, Stanford University, 1994.
  *
- *      This file provides compatability between the Music Kit
- *      Intel MIDI driver and the NeXT hardware driver.  If you
- *      want your software to run on both architectures, include
- *      this file before <mididriver/midi_driver.h> or anything else
- *      that includes <mididriver/midi_driver.h>.
+ * These definitions provide compatability between the Music Kit
+ * Intel MIDI driver and the NeXT hardware driver.  
  *
- *      31/12/98 Actually, now we only use the mididriver versions
- *      for NeXT hardware, and all other architectures use DriverKit
- *      MusicKit MIDI drivers.
+ * Actually, now we only use the mididriver versions
+ * for NeXT hardware, and all other architectures use DriverKit
+ * MusicKit MIDI drivers. However all architectures use the MD_ versions
+ * so these definitions apply for m68k in addition to non-NeXT systems.
  */
 
-#if !m68k
-/* These macros make the musickit functions and macros look like those in libdsp. */
+/* These macros make the MusicKit functions and macros look like those in libdsp. */
 #define MIDIRawEvent                       MDRawEvent
 #define MIDI_MAX_EVENT                     MD_MAX_EVENT
 #define MIDI_MAX_MSG_SIZE                  MD_MAX_MSG_SIZE
@@ -239,7 +239,6 @@ extern kern_return_t
 #define MIDIFilterMessage                  MDFilterMessage
 #define MIDIParseInput                     MDParseInput
 #define MIDIDownloadDLSInstruments         MDDownloadDLSInstruments
-#endif // !m68K compatability
 
 #endif _MD_
 
