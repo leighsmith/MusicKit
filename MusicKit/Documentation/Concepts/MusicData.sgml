@@ -196,10 +196,10 @@ value.</para>
 returns a pointer to the value itself.</para>
 	  </listitem>
 	</itemizedlist>
-<para><emphasis role="bold">Note:</emphasis> You shouldn't alter the
+<tip><para>You shouldn't alter the
 string returned by <emphasis
 role="bold">parAsStringNoCopy:</emphasis>.  It's owned by the
-<classname>MKNote</classname> object.</para>
+<classname>MKNote</classname> object.</para></tip>
 
 <para>If the parameter hasn't been set, the retrieval methods return
 values as follows:</para>
@@ -293,16 +293,18 @@ instances can be written to and read from a scorefile:</para>
       <itemizedlist>
 
 <listitem><para> <emphasis role="bold">writeASCIIStream:</emphasis>
-provides instructions for writing the object as ASCII text.  In a
-scorefile, the text that represents an object&horbar;this includes
-<classname>MKEnvelope</classname>s and <classname>MKWaveTable</classname>s&horbar;is enclosed
-in square brackets (<emphasis role="bold">[]</emphasis>).  The ASCII
+provides instructions for writing the object as
+<acronym>ASCII</acronym> text.  In a scorefile, the text that
+represents an object&horbar;this includes
+<classname>MKEnvelope</classname>s and
+<classname>MKWaveTable</classname>s&horbar;is enclosed in square
+brackets (<emphasis role="bold">[]</emphasis>).  The <acronym>ASCII</acronym>
 representation of an object must not include a close bracket.  The
 method's argument is the NXStream to which the text is written.</para>
 		</listitem>
 
 <listitem><para> <emphasis role="bold">readASCIIStream:</emphasis>
-provides instructions for creating an object from its ASCII
+provides instructions for creating an object from its <acronym>ASCII</acronym>
 representation.  When the method is called, the argument (an NXStream)
 is pointing to the first character after the open bracket.  You should
 leave the argument pointing to the close bracket.  In other words, you
@@ -1215,9 +1217,9 @@ defined proportions.</para>
 </figure>
 
 
-<para><emphasis role="bold">Note:</emphasis> Since they're set as
+<tip><para>Since they're set as
 seconds (not beats), the attack and release times aren't affected by
-tempo.</para>
+tempo.</para></tip>
 
 <para><xref linkend="figure3-8"> shows the same (amplitude)
 <classname>MKEnvelope</classname> used in the previous examples with
@@ -1767,22 +1769,22 @@ double amps[] = {1.0,0.5,0.25,0.12,0.06,0.03};
             orDefaultPhase: 0.0];
 </programlisting>
 
-<para><emphasis role="bold">Note:</emphasis> Phase is generally
+<tip><para>Phase is generally
 unimportant in creating musical timbres, although it can drastically
 affect a waveform that's used as a low-frequency control signal, such
-as vibrato.</para>
+as vibrato.</para></tip>
 
-<para>The frequencies in a <classname>MKPartials</classname> object are specified as ratios,
-or multiples, of a fundamental frequency (the fundamental is
-represented by a frequency ratio of 1.0).  The actual (fundamental)
-frequency of the waveform created from a <classname>MKPartials</classname> depends on the how
-the object is used by the <classname>MKSynthPatch</classname> that
-synthesizes it.  In general, the waveform is &ldquo;transposed&rdquo; to
-produce the frequency specified in a <classname>MKNote</classname>'s
-frequency parameter, <emphasis role="bold">MK_freq</emphasis>.
-Similarly, the amplitude of each partial is relative to the value of
-another parameter, usually <emphasis
-role="bold">MK_amp</emphasis>.</para>
+<para>The frequencies in a <classname>MKPartials</classname> object
+are specified as ratios, or multiples, of a fundamental frequency (the
+fundamental is represented by a frequency ratio of 1.0).  The actual
+(fundamental) frequency of the waveform created from a
+<classname>MKPartials</classname> depends on the how the object is
+used by the <classname>MKSynthPatch</classname> that synthesizes it.
+In general, the waveform is &ldquo;transposed&rdquo; to produce the
+frequency specified in a <classname>MKNote</classname>'s frequency
+parameter, <emphasis role="bold">MK_freq</emphasis>.  Similarly, the
+amplitude of each partial is relative to the value of another
+parameter, usually <emphasis role="bold">MK_amp</emphasis>.</para>
 	</sect4>
       </sect3>
       <sect3><title>The <classname>MKSamples</classname> Class</title>
