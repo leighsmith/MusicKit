@@ -13,10 +13,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #import "SndAudioUnitProcessor.h"
-
-// Perhaps this should eventually be a subclass of SndSystemAudioPluginProcessor when we devise a cross platform
-// superclass.
-
+#import <AudioToolbox/AudioUnitUtilities.h>
 
 @implementation SndAudioUnitProcessor
 
@@ -75,15 +72,23 @@ static BOOL getAudioUnitProperty(AudioUnit au, AudioUnitPropertyID propertyType,
     return componentDescription;
 }
 
++ (SndAudioProcessor *) audioProcessorNamed: (NSString *) processorName
+{
+    return [[[SndAudioUnitProcessor alloc] initWithParameterDictionary: nil 
+								  name: processorName] autorelease];
+}
+
 // Provide a list of the AUs which are available. 
 + (NSArray *) availableAudioProcessors
 {
     NSMutableArray *audioUnitNameArray;
     ComponentDescription desc;
     Component theAUComponent;
+#if 0
     // Get the superclasses list for merging.
     NSArray *audioProcessorNames = [super availableAudioProcessors];
-
+#endif
+    
     desc.componentType = kAudioUnitType_Effect; //'aufx'
     desc.componentSubType = 0;
     desc.componentManufacturer = 0;
@@ -125,8 +130,11 @@ static BOOL getAudioUnitProperty(AudioUnit au, AudioUnitPropertyID propertyType,
         theAUComponent = FindNextComponent(theAUComponent, &desc);
     }
 
+#if 0
     return [audioProcessorNames arrayByAddingObjectsFromArray: audioUnitNameArray];
-    //return [NSArray arrayWithArray: audioUnitNameArray];
+#else
+    return [NSArray arrayWithArray: audioUnitNameArray];
+#endif
 }
 
 - (AudioUnit) audioUnit
@@ -328,16 +336,97 @@ static OSStatus auInputCallback(void *inRefCon,
     }
 }
 
-- initWithManufacturer: (OSType) manufacturer andSubType: (OSType) subType, 
+- (void) messageDelegateOfParameter: (int) parameterID value: (float) inValue
+{
+    id delegate = [self parameterDelegate];
+    
+    if(delegate) {
+	unsigned int parameterIndex;
+	
+	for(parameterIndex = 0; parameterIndex < parameterListLength; parameterIndex++) {
+	    if(parameterIDList[parameterIndex] == parameterID)
+		[delegate parameter: parameterIndex ofAudioProcessor: self didChangeTo: inValue];
+	}
+    }
+}
+
+static void parameterListener(void *audioProcessorInstance, void *inObject, const AudioUnitParameter *inParameter, Float32 inValue)
+{
+#if 1
+    [(SndAudioUnitProcessor *) audioProcessorInstance messageDelegateOfParameter: inParameter->mParameterID value: inValue];
+#else
+    NSLog(@"parameter %d changed to %f\n", inParameter->mParameterID, inValue);
+#endif	
+}
+
+// Set up a parameter listener to report any parameter changes. 
+// In theory, we could simply listen to controller changes using AudioUnitCarbonViewSetEventListener()
+// however these messages are only called when the user clicks or releases the mouse, it doesn't indicate mouse drag parameter changes.
+// Note that only parameter changes issued through AUParameterSet will generate notifications to listeners. Luckily this interface
+// is used by the AudioUnit controllers. We register to be notified of all parameters changing.
+- (void) registerParameterListener
+{
+    AUParameterListenerRef outListener;
+    AudioUnitParameter parameterToMonitor;
+    int parameterIndex;
+    
+    for(parameterIndex = 0; parameterIndex < parameterListLength; parameterIndex++) {
+	OSStatus error = AUListenerCreate(parameterListener, self, NULL, NULL, 0.0, &outListener);
+	if(error != 0) // TODO need better constant than 0
+	    NSLog(@"Unable to AUListenerCreate %d\n", error);
+	
+	parameterToMonitor.mAudioUnit = audioUnit;
+	parameterToMonitor.mParameterID = parameterIDList[parameterIndex];
+	parameterToMonitor.mScope = kAudioUnitScope_Global;
+	parameterToMonitor.mElement = 0; // TODO this shouldn't be hardwired
+	
+	error = AUListenerAddParameter(outListener, NULL, &parameterToMonitor);
+	if(error != 0) // TODO need better constant than 0
+	    NSLog(@"Unable to AUListenerAddParameter %d\n", error);
+    }
+}
+
+// set stream format property
+// TODO this should probably be inside the processReplacingInputBuffer: method.
+- (void) setStreamFormat: (SndFormat) streamFormat
+{ 
+    AudioStreamBasicDescription newStreamFormat;
+    ComponentResult result;
+    
+    newStreamFormat.mSampleRate = streamFormat.sampleRate;
+    newStreamFormat.mFormatID = kAudioFormatLinearPCM;
+    newStreamFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked | kAudioFormatFlagIsNonInterleaved;
+    newStreamFormat.mBytesPerPacket = 4;        
+    newStreamFormat.mFramesPerPacket = 1;       
+    newStreamFormat.mBytesPerFrame = 4;         
+    newStreamFormat.mChannelsPerFrame = streamFormat.channelCount;      
+    newStreamFormat.mBitsPerChannel = sizeof(Float32) * 8;     
+    
+    result = AudioUnitSetProperty(audioUnit, 
+				  kAudioUnitProperty_StreamFormat,
+				  kAudioUnitScope_Input,
+				  inputBusNumber,
+				  &newStreamFormat,
+				  sizeof(newStreamFormat));
+    if(result != 0)
+	NSLog(@"Setting kAudioUnitProperty_StreamFormat result %d\n", result);
+}
+
+- initWithParamCount: (const int) count name: (NSString *) audioUnitName
 {
     Component auComp;
     OSErr result;
     AURenderCallbackStruct auRenderCallback;
     
-    self = [super init];
+    self = [super initWithParamCount: count name: audioUnitName];
+
     if (self != nil) {
 	ComponentDescription desc;
 	AudioStreamBasicDescription auFormatDescription;
+	// Run through the list of audio units [SndAudioUnitProcessor availableAudioUnits] cached into class ivar.
+	NSArray *componentArray = [namedComponents valueForKey: audioUnitName];
+	OSType manufacturer = [[componentArray objectAtIndex: 0] unsignedIntValue]; 
+	OSType subType = [[componentArray objectAtIndex: 1] unsignedIntValue];
 
 	desc.componentType = kAudioUnitType_Effect; //'aufx'
 	desc.componentSubType = subType;
@@ -389,35 +478,14 @@ static OSStatus auInputCallback(void *inRefCon,
 	    return nil;
 	
 	auIsNonInterleaved = (auFormatDescription.mFormatFlags & kAudioFormatFlagIsNonInterleaved) == kAudioFormatFlagIsNonInterleaved;
+#if 0
 	NSLog(@"native format number of channels %d\n", ([Snd nativeFormat]).channelCount);
 	NSLog(@"Number of channels for Audio Unit %d\n", auFormatDescription.mChannelsPerFrame);
 	NSLog(@"non-interleaved %d\n", auIsNonInterleaved);
-	
-#if 1
-	{  // TODO this should probably be inside the processReplacingInputBuffer: method.
-	    AudioStreamBasicDescription newStreamFormat;
-	    ComponentResult result;
-	    
-	    newStreamFormat.mSampleRate = 44100.0;
-	    newStreamFormat.mFormatID = kAudioFormatLinearPCM;
-	    newStreamFormat.mFormatFlags = kAudioFormatFlagsNativeFloatPacked | kAudioFormatFlagIsNonInterleaved;
-	    newStreamFormat.mBytesPerPacket = 4;        
-	    newStreamFormat.mFramesPerPacket = 1;       
-	    newStreamFormat.mBytesPerFrame = 4;         
-	    newStreamFormat.mChannelsPerFrame = ([Snd nativeFormat]).channelCount;      
-	    newStreamFormat.mBitsPerChannel = sizeof(Float32) * 8;     
-	    
-	    result = AudioUnitSetProperty(audioUnit, 
-				  kAudioUnitProperty_StreamFormat,
-				  kAudioUnitScope_Input,
-				  inputBusNumber,
-				  &newStreamFormat,
-				  sizeof(newStreamFormat));
-	    if(result != 0)
-		NSLog(@"Setting kAudioUnitProperty_StreamFormat result %d\n", result);
-	}
-	
 #endif
+
+	[self setStreamFormat: [Snd nativeFormat]];
+	
 	// OK, now we have the AudioUnit, set the render callback member function 
 	// which will supply the audio data to the Audio Unit in a "pull" operation. 
 	// SndAudioProcessors use a "push" operation, so we need to prime the audio 
@@ -437,36 +505,9 @@ static OSStatus auInputCallback(void *inRefCon,
 	    NSLog(@"Setting kAudioUnitProperty_SetRenderCallback result %d\n", result);
 	
 	[self discoverParameters];
+	[self registerParameterListener];
     }
     return self;
-}
-
-- initWithAudioUnitNamed: (NSString *) audioUnitName
-{
-    // Run through the list of audio units [SndAudioUnitProcessor availableAudioUnits] cached into class ivar.
-    NSArray *componentArray = [namedComponents valueForKey: audioUnitName];
-    
-    self = [self initWithManufacturer: [[componentArray objectAtIndex: 0] unsignedIntValue] 
-			   andSubType: [[componentArray objectAtIndex: 1] unsignedIntValue]];
-    [self setName: audioUnitName];
-    // When found, call 
-    return self;
-}
-
-- init
-{
-    // Choose a default AU
-    return [self initWithAudioUnitNamed: @"AUDelay"];
-}
-
-+ (SndAudioProcessor *) audioProcessorNamed: (NSString *) processorName
-{
-    SndAudioProcessor *superProcessorInstance = [super audioProcessorNamed: processorName];
-    
-    if(superProcessorInstance != nil)
-	return superProcessorInstance;
-    else
-	return [[[SndAudioUnitProcessor alloc] initWithAudioUnitNamed: processorName] autorelease];
 }
 
 - (void) dealloc
@@ -523,9 +564,12 @@ static OSStatus auInputCallback(void *inRefCon,
 	theAudioData->mBuffers[channelIndex].mData = NULL;
     }
     
+    // NSLog(@"rendering %d channels to audioUnit %p of buffer %d frames length\n", channelCount, audioUnit, bufferLengthInFrames);
     result = AudioUnitRender(audioUnit, &actionFlags, &auTimeStamp, outputBusNumber, bufferLengthInFrames, theAudioData); 
-    if(result != 0) // TODO better constant for this?
-	NSLog(@"Unable to AudioUnitRender at %ld, error %ld\n", auTimeStamp.mSampleTime, result);
+    if(result != noErr) {
+	NSLog(@"Unable to AudioUnitRender at %f, error %ld see AudioUnit/AUComponent.h\n", auTimeStamp.mSampleTime, result);
+	return NO;
+    }
     
     // now we have the rendered audio data in theAudioData,
     // interleave the audio unit result into the output buffer.
@@ -547,10 +591,11 @@ static OSStatus auInputCallback(void *inRefCon,
     }
     else {
 	NSLog(@"unimplemented non-interleaved audio unit!\n");
+	return NO;
     }
     
     // we're done - remember to free!!!
-    free (theAudioData);
+    free(theAudioData);
     
     // TODO this should change depending on whether the audio unit modifies the output. Most audio units produce output in the nominated output buffer.
     return YES;
