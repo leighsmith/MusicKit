@@ -29,11 +29,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.17  2000/10/01 00:49:03  leigh
+  Prototyped Factory methods, better naming of ivars.
+
   Revision 1.16  2000/06/16 23:22:10  leigh
   Removed extraneous AppKit import
 
@@ -194,7 +198,7 @@ Modification history:
 
 #import <stdio.h>               /* Contains FILE, etc. */
 
-/* FIXME Consider changing patch List and stack to non-objc linked lists. */
+/* FIXME Consider changing patch List and unitGeneratorStack to non-objc linked lists. */
 
 #define COMPACTION 1 /* Set to 0 to turn off compaction. */
 #define READDATA 0   /* Set to 1 to turn on read data to host */
@@ -440,7 +444,7 @@ static id *orchestraClasses = NULL;
 
 static id defaultOrchloopClass = nil;
 
-static id *dspNumToOrch = NULL; 
+static MKOrchestra **dspNumToOrch = NULL; 
 /* All orchestra instances, indexed by DSP number. (0 based) */
 
 static id *orchs = NULL;
@@ -541,7 +545,7 @@ static char * orchMemSegmentNames[(int)MK_numOrchMemSegments] =
     NSAssert(((DSP_SINE_SPACE == 2) && (DSP_MULAW_SPACE == 1)), @"Need to change SINTABLESPACE or MULAWTABLESPACE.");
     defaultOrchloopClass = [_OrchloopbeginUG class];
     nDSPs = (unsigned short)DSPGetDSPCount();
-    _MK_CALLOC(dspNumToOrch,id,(int)nDSPs);
+    _MK_CALLOC(dspNumToOrch, id, (int)nDSPs);
     _MK_CALLOC(orchs,id,(int)nDSPs+1); /* + 1 for trailing nil */
     _MK_CALLOC(orchestraClasses,id,(int)nDSPs);
 #if !m68k
@@ -590,14 +594,14 @@ static void classInit()
     return [[self alloc] init];
 }
 
-+newOnAllDSPs
++ (MKOrchestra *) newOnAllDSPs
   /* Create all orchestras (one per DSP) by sending them the newOnDSP: method
      (see below). Does not claim the DSP device at this time. 
      You can check to see which MKOrchestra objects are created by using
      the +nthOrchestra: method. Returns the first Orchesra instance. */
 {
     unsigned short i;
-    id rtn = nil;
+    MKOrchestra *rtn = nil;
     for (i=0; i<nDSPs; i++)  {
         [self newOnDSP:i];
         if (!rtn)
@@ -887,7 +891,7 @@ static NSMutableArray *synthInstruments = nil;
     return [[self allocFromZone:NSDefaultMallocZone() onDSP:index] init];
 }
 
-+nthOrchestra:(unsigned short)index
++ (MKOrchestra *) nthOrchestra:(unsigned short)index
   /* Returns the index'th orchestra or nil if none. */
 {
     if (index >= nDSPs)
@@ -1140,7 +1144,7 @@ static id broadcastAndRtn(MKOrchestra *self,SEL sel)
 
 /* Assorted instance methods and functions. ----------------------------- */
 
-NXHashTable *_MKGetSharedSynthGarbage(MKOrchestra *self)
+NSHashTable *_MKGetSharedSynthGarbage(MKOrchestra *self)
 {
     return self->sharedGarbage;
 }
@@ -1757,16 +1761,16 @@ static void freeUGs(self)
     popReso(self);                    /* Doesn't reset looper. */
     /* Note that patchpoints/synthdata is NOT automatically dealloc'ed! FIXME */
 
-    if ([self->stack count]) { /*sb: was lastObject */ 
+    if ([self->unitGeneratorStack count]) { /*sb: was lastObject */ 
 	id obj;
-	int i,count = [self->stack count];
+	int i,count = [self->unitGeneratorStack count];
 	for (i=0; i<count; i++)
-            [[self->stack objectAtIndex:i] mkdealloc]; /*sb: changed to mkdealloc */
+            [[self->unitGeneratorStack objectAtIndex:i] mkdealloc]; /*sb: changed to mkdealloc */
 
-        while ([self->stack count] > 0) {
-	    obj = [self->stack lastObject];
+        while ([self->unitGeneratorStack count] > 0) {
+	    obj = [self->unitGeneratorStack lastObject];
 	    [obj _free]; /* Added by DAJ.  Nov/21/95 */
-            [self->stack removeLastObject];/*sb: careful this releases last object... 
+            [self->unitGeneratorStack removeLastObject];/*sb: careful this releases last object... 
 					    *maybe ok cos I don't release as part of _free now*/
 	}
     }
@@ -1834,8 +1838,8 @@ self->muLawROM = self->sineROM = self->xZero = self->yZero =
 	break;
     }
     self->_sharedSet = _MKFreeSharedSet(self->_sharedSet, &self->sharedGarbage);
-    [self->stack release];
-    self->stack = nil;//sb: added
+    [self->unitGeneratorStack release];
+    self->unitGeneratorStack = nil;//sb: added
     free(self->_xPatch);
     free(self->_yPatch);
     self->_xPatch = NULL;
@@ -1913,7 +1917,7 @@ static id loadOrchLoop(self)
       self->_orchloopClass = defaultOrchloopClass;
     self->deviceStatus = MK_devOpen;
     self->_sharedSet = _MKNewSharedSet(&self->sharedGarbage);
-    self->stack = [[NSMutableArray alloc] initWithCapacity:INITIAL_STACK_SIZE];
+    self->unitGeneratorStack = [[NSMutableArray alloc] initWithCapacity:INITIAL_STACK_SIZE];
     self->computeTime = 0;
     self->isLoopOffChip = 0;  /* Added by DAJ. 11/21/95 */
     switch (self->_overlaidEMem) {
@@ -2194,7 +2198,7 @@ BOOL _MKOrchLateDeltaTMode(MKOrchestra *self)
 
 - (void)dealloc /* sb: was -free before OS conversion. probably ok */
   /* Frees a particular orchestra instance. This involves freeing all
-     unit generators in its unit generator stack, clearing all
+     unit generators in its unit generator unitGeneratorStack, clearing all
      synthpatch allocation lists and releasing the DSP. It is an error
      to free an orchestra with non-idle synthPatches or allocated unit
      generators which are not members of a synthPatch. An attempt to
@@ -2779,7 +2783,7 @@ static void adjustResources(self,time,reloc)
     register MKOrchestra *self;
     double time;
     MKOrchMemStruct *reloc;
-    /* Pops off stack the UG with given time and relocation. */ 
+    /* Pops off unitGeneratorStack the UG with given time and relocation. */ 
 {
     self->computeTime -= time;
     if (self->isLoopOffChip) 
@@ -2853,7 +2857,7 @@ static void freeUG(self,aUG,aSP)
 }
 
 static BOOL popResoAndSetLooper(MKOrchestra *self)
-    /* Pops the UnitGenerator stack and resets the looper. See popReso */
+    /* Pops the UnitGenerator unitGeneratorStack and resets the looper. See popReso */
 {
     BOOL resetLooper = popReso(self);
     if (resetLooper)
@@ -2863,7 +2867,7 @@ static BOOL popResoAndSetLooper(MKOrchestra *self)
 
 static BOOL popReso(self)
     MKOrchestra *self;
-    /* Frees up resources on top of DSP memory stack. This is ordinarily invoked
+    /* Frees up resources on top of DSP memory unitGeneratorStack. This is ordinarily invoked
        automatically by the orchestra instance. Returns YES if something is
        freed.
        */
@@ -2871,12 +2875,12 @@ static BOOL popReso(self)
     register id aUG;
     BOOL resetLooper = NO;
     id spHead = nil,spTail = nil,sp;
-    while ([self->stack count]) {
-        aUG = [self->stack lastObject];
+    while ([self->unitGeneratorStack count]) {
+        aUG = [self->unitGeneratorStack lastObject];
         if (![aUG isFreeable])
           break;
         [aUG retain]; /*sb: retain here to fend off pending release... */
-        [self->stack removeLastObject];/*sb: careful this releases last object...*/
+        [self->unitGeneratorStack removeLastObject];/*sb: careful this releases last object...*/
         resetLooper = YES;
         sp = [aUG synthPatch];
         if (sp)
@@ -2992,34 +2996,34 @@ static void bltLoop(MKOrchestra *self,MKOrchMemStruct *loopBLTFrom,
 }
 
 static BOOL compactResourceStack(MKOrchestra *self)
-    /* Frees up idle resources in entire DSP memory stack. 
+    /* Frees up idle resources in entire DSP memory unitGeneratorStack. 
        This is ordinarily invoked automatically by the orchestra instance.
        Returns YES if compaction was accomplished.
        */
 {
-    /* We start from the bottom of the stack (i.e. nearest the DSP system)
+    /* We start from the bottom of the unitGeneratorStack (i.e. nearest the DSP system)
        and work our way up. First we skip over all running UGs, since
        these can't be compacted -- they are already at the bottom of the
-       stack. The first time we find a ug that is freeable, we peel back
-       the stack as if that ug were the top of stack using freeUG. 
+       unitGeneratorStack. The first time we find a ug that is freeable, we peel back
+       the unitGeneratorStack as if that ug were the top of unitGeneratorStack using freeUG. 
        We also flush p-memory allocation at this point. The idea is that 
        the moved ugs are actually 'reallocated', i.e. we deallocate
        and then allocate again, as if this were a new ug. 
-       So it is as if we have a new stack that 
-       is growing over the old stack. Thus, for each 
-       subsequent freeable ugs, we need not reset the stack, since we
+       So it is as if we have a new unitGeneratorStack that 
+       is growing over the old unitGeneratorStack. Thus, for each 
+       subsequent freeable ugs, we need not reset the unitGeneratorStack, since we
        have already done so. Instead, we merely free any off-chip
        memory that ug has. This is done by the C-function freeUG2.
        The actual moving of the DSP code and argument values is done
        by the UnitGenerator function _MKMoveUGCodeAndArgs(). */
     
     int i;
-    unsigned n = [self->stack count];
+    unsigned n = [self->unitGeneratorStack count];
     id el; 
 
     /* check first here to avoid copying List */
     for (i = 0; i < n; i++) {
-        el = [self->stack objectAtIndex: i];
+        el = [self->unitGeneratorStack objectAtIndex: i];
         if ([el isFreeable])          /* Can we flush this UG? */
            break;
     }
@@ -3034,7 +3038,7 @@ static BOOL compactResourceStack(MKOrchestra *self)
         int pendingLoopBLT = -1; // *pendingLoopBLT = NULL;
         MKOrchMemStruct *ugReso,resoToBLT,newReloc,fromBLT,toBLT, *oldReloc;
         int pLoopNeeds;
-        register id aList = _MKLightweightArrayCopy(self->stack);//was [self->stack copy]; /* Local copy */
+        register id aList = _MKLightweightArrayCopy(self->unitGeneratorStack);//was [self->unitGeneratorStack copy]; /* Local copy */
         id spHead = nil;
         id spTail = nil;
         [self beginAtomicSection];
@@ -3043,19 +3047,19 @@ static BOOL compactResourceStack(MKOrchestra *self)
 //        el = &(NX_ADDRESS(aList)[i]);    /* Point into copied list. */
 //        aUG = *el++;                     /* el is now ready for loop below. */
         aUG = [aList objectAtIndex:elNum]; elNum++; //sb
-//        [self->stack removeObject:aUG];  /* First we free up aUG. */
+//        [self->unitGeneratorStack removeObject:aUG];  /* First we free up aUG. */
         [aUG retain]; //so we won't lose it after removal. Must release later.
-        [self->stack removeObjectAtIndex:(elNum - 1)];  //sb. removes from ORIGINAL array not copy.
+        [self->unitGeneratorStack removeObjectAtIndex:(elNum - 1)];  //sb. removes from ORIGINAL array not copy.
         if ((sp = [aUG synthPatch]))
             [sp _prepareToFree:&spHead :&spTail]; /* won't add twice */
         DSPSetCurrentDSP(self->orchIndex);
         if (_MK_ORCHTRACE(self,MK_TRACEORCHALLOC)) {
             _MKOrchTrace(self,MK_TRACEORCHALLOC,
-                         "Compacting stack.");
+                         "Compacting unitGeneratorStack.");
             _MKOrchTrace(self,MK_TRACEORCHALLOC,garbageMsg,[NSStringFromClass([aUG class]) cString],aUG);
         }
-        /* freeUG sets stacks to what they would be if this were actually
-           the top of the stack. */
+        /* freeUG sets unitGeneratorStacks to what they would be if this were actually
+           the top of the unitGeneratorStack. */
         UGIsOffChip = (([aUG relocation]->pLoop) >= 
 		       self->_bottomOfExternalMemory[P_EMEM]);
         if ((!UGIsOffChip) && self->isLoopOffChip) /* Clear offchip loop */
@@ -3069,7 +3073,7 @@ static BOOL compactResourceStack(MKOrchestra *self)
                     bltLoop(self,&fromBLT,&toBLT,&resoToBLT,&pendingLoopBLT,elNum,aList);//sb: FIXME! what does blt do? Uses address of el
                 if (pendingArgBLT != -1)
                     bltArgs(self,&fromBLT,&toBLT,&resoToBLT,&pendingArgBLT,elNum,aList);//sb: FIXME! what does blt do? Uses address of el
-                [self->stack removeObject:aUG]; /* Same routine as above.*/ 
+                [self->unitGeneratorStack removeObject:aUG]; /* Same routine as above.*/ 
                 if ((sp = [aUG synthPatch]))
                     [sp _prepareToFree:&spHead :&spTail]; 
                 if (_MK_ORCHTRACE(self,MK_TRACEORCHALLOC))
@@ -3171,7 +3175,7 @@ static BOOL compactResourceStack(MKOrchestra *self)
         [self endAtomicSection];
         
         /* Top of list might have been  freed so we need to set looper
-           explicitly. Actually, if we know for sure that the stack has been
+           explicitly. Actually, if we know for sure that the unitGeneratorStack has been
            popped, this is not necessary, we could just blt p one word more. */
         
         return YES; 
@@ -3455,7 +3459,7 @@ static DSPAddress getPELoop(self,size)
 static DSPAddress peekPELoop(self)
     MKOrchestra *self;
 {
-    /* Returns size of available PELOOP stack. */
+    /* Returns size of available PELOOP unitGeneratorStack. */
     dataMemBlockStruct *tmp = 
       ((dataMemBlockStruct *)self->_eMemList[P_IND(self)])->next;
     if (tmp->isAllocated) 
@@ -3471,7 +3475,7 @@ static BOOL givePELoop(self,freedPEAddr)
        size. freedPEAddr is the relocation of the peLoop being returned 
        (including the 3 preceeding noops). 
        Returns YES if there is still a non-zero PELoop after
-       the stack pop. */
+       the unitGeneratorStack pop. */
     register dataMemBlockStruct *peLoop = self->_eMemList[P_IND(self)];
     register dataMemBlockStruct *availData = peLoop->next;
     freedPEAddr += LOOPERSIZE;
@@ -3754,7 +3758,7 @@ id factObj,beforeObj,afterObj;
        Deallocated ug of correct type? If so, use it.
        Otherwise, is there a ug of the correct type in a deallocated synth patch?
        If so, use it.
-       Otherwise, pop stack. Enough resources for new ug?
+       Otherwise, pop unitGeneratorStack. Enough resources for new ug?
        If so, make it.
        Otherwise, do compaction. Enough resources for new ug?
        If so, make it.
@@ -3796,7 +3800,7 @@ id factObj,beforeObj,afterObj;
         MKOrchMemStruct reloc;
         popResoAndSetLooper(self);
         if (!beforeObj) 
-          /* We always add at the top of the stack. 
+          /* We always add at the top of the unitGeneratorStack. 
              So if we've made it to here, we know
              there can be no object after us. */    
           if ((allocErr = resoAlloc(self,factObj,&reloc)) == OK)
@@ -3827,7 +3831,7 @@ id factObj,beforeObj,afterObj;
                 return nil;
             }
         }
-        [self->stack addObject:rtnVal];
+        [self->unitGeneratorStack addObject:rtnVal];
         insertNoops(self,reloc.pLoop - noops);
         /* We add the noops after the UG (in time) but positioned in memory
            before the UG. This is guaranteed to be safe, since we know we have
@@ -3854,9 +3858,9 @@ id factObj,beforeObj,afterObj;
         _piLoop;
     if (!s)
       return nil;
-    for (cnt=[stack count], i=0; i<cnt; i++)
-        [[stack objectAtIndex:i] writeSymbolsToStream:s];
-//    [NX_ADDRESS(stack)[i] writeSymbolsToStream:s];
+    for (cnt=[unitGeneratorStack count], i=0; i<cnt; i++)
+        [[unitGeneratorStack objectAtIndex:i] writeSymbolsToStream:s];
+//    [NX_ADDRESS(unitGeneratorStack)[i] writeSymbolsToStream:s];
     [s appendData:[[NSString stringWithFormat:@"_SYMBOL P\nLOOPER I %06X\n_END %06X\n", looperAddr,ORCHLOOPLOC] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 
     /* _MKOpenFileStream(fileName,&fd,NX_WRITEONLY,
