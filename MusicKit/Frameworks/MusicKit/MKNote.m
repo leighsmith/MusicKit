@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2001/01/24 21:58:51  skot
+  Added note adjustment methods setEndTime, setTimeTagPreserveEndTime
+
   Revision 1.10  2000/10/04 06:30:18  skot
   Added endTime method
 
@@ -166,6 +169,9 @@ static BOOL parClassInited = NO;
 #define _ISPAR(_x) (_ISMKPAR(_x) || ISAPPPAR(_x))
 
 static id theSubclass = nil;
+
+static double getNoteEndTime(MKNote *aNote);
+
 
 BOOL MKSetNoteClass(id aClass)
 {
@@ -556,6 +562,40 @@ static double getNoteDur(MKNote *aNote);
     return tmp; 
 }
 
+-(double ) setTimeTagPreserveEndTime:(double )newTimeTag;
+ /*
+  * Sets the receiver's timeTag to newTimeTag and returns the old timeTag,
+  * or MK_ENDOFTIME if none.  If newTimeTag is negative, it's clipped to
+  * 0.0. If newTimeTag is greater than the endTime, it is clipped to endTime.
+  *
+  * If the receiver is a member of a Part, it's first removed from the
+  * Part, its timeTag is set, and then it's re-added to the Part.  This
+  * ensures that the receiver's position within its Part is correct.
+  *
+  * Duration is changed to preserve the endTime of the note
+  *
+  * Note: ONLY works for MK_noteDur type notes! MK_NODVAL returned otherwise.
+  */
+{
+    switch (noteType) {
+        case MK_noteDur: { 
+            double tmp     = timeTag;
+            double endTime = getNoteEndTime(self);
+            id aPart = part;    /* Save it because remove causes it to be set to nil */
+            newTimeTag = MIN(MAX(newTimeTag,0.0), endTime);
+            [aPart removeNote:self];
+            [self setDur: endTime - newTimeTag];
+            timeTag = newTimeTag;
+            [aPart addNote:self];
+            return tmp;
+        }
+        default:
+            break;
+    }
+    return MK_NODVAL;    
+}
+
+
 - removeFromPart
   /* TYPE: Acc; Removes the receiver from its Part.
    * Removes the receiver from its Part, if any.
@@ -701,6 +741,27 @@ static double getNoteDur(MKNote *aNote)
 {
     return getNoteDur(self);
 }
+
+- (double) setEndTime: (double) newEndTime;
+ /*
+  * Returns the receiver's old end time (duration + timeTag) and sets duration
+  * to newEndTime - timeTag, or MK_NODVAL if not a MK_noteDur or MK_mute.
+  */
+{
+    switch (noteType) {
+        case MK_noteDur: {
+            double oldEndTime = getNoteEndTime(self);
+            if (newEndTime > timeTag) {
+                [self setDur: newEndTime - timeTag];
+            }
+            return oldEndTime;
+        }
+        default:
+            break;
+    }
+    return MK_NODVAL;
+}
+
 
 // getNoteEndTime
 // SKoT: Added 4 Oct 2000

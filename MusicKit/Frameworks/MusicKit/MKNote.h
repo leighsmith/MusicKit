@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.12  2001/01/24 21:58:50  skot
+  Added note adjustment methods setEndTime, setTimeTagPreserveEndTime
+
   Revision 1.11  2000/11/25 22:54:14  leigh
   Enforced ivar privacy
 
@@ -306,12 +309,28 @@ MKDataType;
 -(double ) setTimeTag:(double )newTimeTag; 
  /* 
   * Sets the receiver's timeTag to newTimeTag and returns the old timeTag,
-  * or MK_ENDOFTIME if none.  If newTimeTag is negative, it's clipped to
+  * or MK_ENDOFTIME if none.  If newTimeTag is negative, it is clipped to
   * 0.0.
   * 
   * If the receiver is a member of a Part, it's first removed from the
   * Part, its timeTag is set, and then it's re-added to the Part.  This
-  * ensures that the receiver's position within its Part is correct.  */
+  * ensures that the receiver's position within its Part is correct.  
+  */
+
+-(double ) setTimeTagPreserveEndTime:(double )newTimeTag;
+/*
+ * Sets the receiver's timeTag to newTimeTag and returns the old timeTag,
+ * or MK_ENDOFTIME if none.  If newTimeTag is negative, it's clipped to
+ * 0.0. If newTimeTag is greater than the endTime, it is clipped to endTime.
+ *
+ * If the receiver is a member of a Part, it's first removed from the
+ * Part, its timeTag is set, and then it's re-added to the Part.  This
+ * ensures that the receiver's position within its Part is correct.
+ *
+ * Duration is changed to preserve the endTime of the note
+ *
+ * Note: ONLY works for MK_noteDur type notes! MK_NODVAL returned otherwise.
+ */
 
 - removeFromPart; 
  /* 
@@ -359,6 +378,12 @@ MKDataType;
   * Returns the receiver's duration, or MK_NODVAL if it isn't set or if
   * the receiver noteType isn't MK_noteDur.    
   * (Use MKIsNoDVal() to check for MK_NODVAL.)*/
+
+- (double) setEndTime: (double) newEndTime;
+ /*
+  * Returns the receiver's old end time (duration + timeTag) and sets duration 
+  * to newEndTime - timeTag, or MK_NODVAL if not a MK_noteDur or MK_mute.
+  */
 
 - (double) endTime;
  /* 
