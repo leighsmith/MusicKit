@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.3  2002/05/01 14:27:54  sbrandon
+  Defines the (private) PluginSupport category that contains addPlugin:
+
   Revision 1.2  1999/07/29 01:25:57  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -14,13 +17,21 @@
 
 #import "MKScore.h"
 
-@interface MKScore(Private)
+@interface MKScore (Private)
 
 +(BOOL)_isUnarchiving;
 -_newFilePartWithName:(NSString *)name;
 
 @end
 
+@interface MKScore (PluginSupport)
+/*!
+ @method addPlugin:
+ @param  a plugin object that has been loaded into the MusicKit
+ @result void.
+*/
++ (void) addPlugin: (id) plugin;
+@end
 
 
 #endif
