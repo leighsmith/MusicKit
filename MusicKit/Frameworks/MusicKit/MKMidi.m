@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2000/02/08 04:37:48  leigh
+  Added check to downloadDLS: to ensure the MIDI device is open
+
   Revision 1.13  2000/02/03 19:14:56  leigh
   Removed extraneous header imports
 
@@ -1756,11 +1759,13 @@ static void cancelQueueReq(MKMidi *self)
     unsigned int *dlsPatchArray;
     int i;
 
-    _MK_MALLOC(dlsPatchArray, unsigned int, [dlsPatches count]);
-    for(i = 0; i < [dlsPatches count]; i++)
-        dlsPatchArray[i] = [[dlsPatches objectAtIndex: i] unsignedIntValue];
-    MIDIDownloadDLSInstruments(dlsPatchArray, [dlsPatches count]);
-    free(dlsPatchArray);
+    if (OUTPUTENABLED(ioMode) && deviceStatus != MK_devClosed) {
+        _MK_MALLOC(dlsPatchArray, unsigned int, [dlsPatches count]);
+        for(i = 0; i < [dlsPatches count]; i++)
+            dlsPatchArray[i] = [[dlsPatches objectAtIndex: i] unsignedIntValue];
+        MIDIDownloadDLSInstruments(dlsPatchArray, [dlsPatches count]);
+        free(dlsPatchArray);
+    }
 }
 
 #import "mtcMidi.m"
