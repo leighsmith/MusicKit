@@ -12,6 +12,9 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef __SNDKIT_SNDAUDIOPROCESSORMP3ENCODER_H__
+#define __SNDKIT_SNDAUDIOPROCESSORMP3ENCODER_H__
+
 #import <Foundation/Foundation.h>
 #import "SndAudioProcessor.h"
 #import "SndAudioBuffer.h"
@@ -37,14 +40,13 @@
 // understand the implications of this. The license statement can be found
 // in the README file in the libshout source directory.
 
-/*! 
-    @class      SndAudioProcessorMP3Encoder
-    @abstract   An MP3 encoding/streaming processor
-    @discussion To come.
-*/
-
-#ifndef __SNDAUDIOPROCESSORMP3ENCODER_H_
-#define __SNDAUDIOPROCESSORMP3ENCODER_H_
+/*!
+ @enum     SndMP3EncoderParam
+ @constant mp3enc_kServerAddress
+ @constant mp3enc_kServerPort
+ @constant mp3enc_kServerPassword
+ @constant mp3enc_kNumParams
+ */
 
 enum {
   mp3enc_kServerAddress  = 0,
@@ -53,6 +55,13 @@ enum {
   mp3enc_kNumParams      = 3
 };
 
+////////////////////////////////////////////////////////////////////////////////
+
+/*!
+@class      SndAudioProcessorMP3Encoder
+@abstract   An MP3 encoding/streaming processor
+@discussion To come.
+*/
 @interface SndAudioProcessorMP3Encoder : SndAudioProcessor {
 /*! @var buffer_l Left audio channel data (pre-encoding)                      */
   float             *buffer_l;
@@ -160,9 +169,20 @@ enum {
 */
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
                         outputBuffer: (SndAudioBuffer*) outB;
-
-- (NSString*) paramName: (int) i;
-- (id) paramObjectForIndex: (int) i;
+/*!
+ @method     paramName:
+ @abstract
+ @discussion
+ @result
+*/
+- (NSString*) paramName: (const int) i;
+/*!
+ @method     paramObjectForIndex:
+ @abstract
+ @discussion
+ @result
+*/
+- (id) paramObjectForIndex: (const int) i;
                  
 @end
 

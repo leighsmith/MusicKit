@@ -81,7 +81,7 @@
 // getParamName
 //////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramName: (int) index
+- (NSString*) paramName: (const int) index
 {
   NSString *r = nil;
   switch (index)  {
@@ -97,7 +97,7 @@
 // getParam
 //////////////////////////////////////////////////////////////////////////////
 
-- (float) param: (int) index
+- (float) param: (const int) index
 {
   float r = 0.0f;
   switch (index)  {
@@ -113,7 +113,7 @@
 // setParam
 //////////////////////////////////////////////////////////////////////////////
 
-- (void) setParam: (int) index toValue: (float) value
+- (void) setParam: (const int) index toValue: (const float) value
 {
   switch (index) {
     case distort_kBoostAmount:
@@ -150,24 +150,24 @@
 // micro mutators
 //////////////////////////////////////////////////////////////////////////////
 
-- (void) setBoostRange: (float) fBoostRange
+- (void) setBoostRange: (const float) fBoostRange
 {
   m_fBoostRange = fBoostRange;
   m_fBoost = 1.0f + m_fBoostRange*m_fBoostAmount;
 }
 
-- (void) setBoostAmount: (float) fBoostAmount
+- (void) setBoostAmount: (const float) fBoostAmount
 {
   m_fBoostAmount = fBoostAmount;
   m_fBoost       = 1.0f + m_fBoostRange*m_fBoostAmount;
 }
 
-- (void) setKnee: (float) fKnee
+- (void) setKnee: (const float) fKnee
 {
   m_fKnee = fKnee;
 }
 
-- (void) setHardness: (float) fHard
+- (void) setHardness: (const float) fHard
 {
   m_fHardness = fHard;
 }
@@ -176,10 +176,10 @@
 // micro accessors
 //////////////////////////////////////////////////////////////////////////////
 
-- (float) getBoostAmount { return m_fBoostAmount; };
-- (float) getBoostRange  { return m_fBoostRange;  };
-- (float) getKnee        { return m_fKnee;        };
-- (float) getHardness    { return m_fHardness;    };
+- (float) boostAmount { return m_fBoostAmount; };
+- (float) boostRange  { return m_fBoostRange;  };
+- (float) knee        { return m_fKnee;        };
+- (float) hardness    { return m_fHardness;    };
 
 //////////////////////////////////////////////////////////////////////////////
 

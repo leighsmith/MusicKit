@@ -69,7 +69,7 @@
 // paramValue:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (float) paramValue: (int) index
+- (float) paramValue: (const int) index
 {
   float r;
   switch (index) {
@@ -88,7 +88,7 @@
 // paramName:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramName: (int) index
+- (NSString*) paramName: (const int) index
 {
   NSString *r = nil;
   switch (index) {
@@ -110,7 +110,7 @@
 // look-and-feel, all params are set by floats, and return as floats. Rethink. 
 ////////////////////////////////////////////////////////////////////////////////
 
-- setParam: (int) index toValue: (float) v;
+- setParam: (const int) index toValue: (const float) v;
 {
   if (v < 0.0f || v > 1.0f) {
       NSLog(@"SndAudioProcessorReverb::setParam: ERR: value must be in [0,1]");

@@ -38,7 +38,7 @@
   return self;
 }
 
-- initWithParamCount: (int) count name: (NSString*) s
+- initWithParamCount: (const int) count name: (NSString*) s
 {
   [super init];
   [self setName: s];
@@ -51,7 +51,7 @@
 // setNumParams 
 ////////////////////////////////////////////////////////////////////////////////
 
-- setNumParams: (int) c
+- setNumParams: (const int) c
 {
     numParams = c;
     return self;
@@ -79,7 +79,7 @@
 // paramValue:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (float) paramValue: (int) index
+- (float) paramValue: (const int) index
 {
     return 0.0f;
 }
@@ -88,7 +88,7 @@
 // paramName:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramName: (int) index
+- (NSString*) paramName: (const int) index
 {
     return @"<none>";
 }
@@ -97,7 +97,7 @@
 // setParam:toValue: 
 ////////////////////////////////////////////////////////////////////////////////
 
-- setParam: (int) index toValue: (float) v
+- setParam: (const int) index toValue: (const float) v
 {
 /*
     switch (index) {
@@ -150,7 +150,7 @@
   return bActive;
 }
 
-- setActive: (BOOL) b
+- setActive: (const BOOL) b
 {
   bActive = b;
   return self;
@@ -186,11 +186,9 @@
 // inspect
 //////////////////////////////////////////////////////////////////////////////
 
-- inspect
+- (SndAudioProcessorInspector*) inspect
 {
-  if (inspector == nil)
-    inspector = [[SndAudioProcessorInspector alloc] initWithAudioProcessor: self];
-  return self;
+  return [[SndAudioProcessorInspector alloc] initWithAudioProcessor: self];
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -199,8 +197,6 @@
 
 - (void) dealloc
 {
-  if (inspector)
-    [inspector release];
   [super dealloc];
 }
 
@@ -231,7 +227,7 @@
 // paramObjectForIndex:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (id) paramObjectForIndex: (int) i
+- (id) paramObjectForIndex: (const int) i
 {
   float    f = [self paramValue: i];
   NSValue *v = [NSValue value: &f withObjCType: @encode(float)];

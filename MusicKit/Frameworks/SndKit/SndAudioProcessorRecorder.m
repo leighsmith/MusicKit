@@ -30,10 +30,8 @@
 
 - init
 {
-  self = [super initWithParamCount: 0 name: @"Recorder"];
-  bStartTrigger = FALSE;
-  fStartTriggerThreshold = 0.002;
-
+  self = [super initWithParamCount: recorder_kNumParams name: @"Recorder"];
+  fStartTriggerThreshold = 0.002f;
   return self;
 }
 
@@ -412,6 +410,48 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 {
   fStartTriggerThreshold = f;
   return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// paramObjectForIndex:
+////////////////////////////////////////////////////////////////////////////////
+
+- (id) paramObjectForIndex: (const int) i
+{
+  id obj;
+  switch (i) {
+    case recorder_kRecordFile: if (recordFileName != nil) obj = recordFileName; else obj = @""; break;
+    default:
+      obj = [super paramObjectForIndex: i];
+  }
+  return obj;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// paramValue:
+////////////////////////////////////////////////////////////////////////////////
+
+- (float) paramValue: (const int) index
+{
+  float f = 0.0f;
+  switch (index) {
+    case recorder_kStartTriggerThreshold: f = fStartTriggerThreshold; break;
+  }
+  return f;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// paramValue:
+////////////////////////////////////////////////////////////////////////////////
+
+- (NSString*) paramName: (const int) index
+{
+  NSString *r;
+  switch (index) {
+    case recorder_kStartTriggerThreshold: r = @"StartTriggerThreshold"; break;
+    case recorder_kRecordFile:            r = @"RecordFileName";        break;
+  }
+  return r;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

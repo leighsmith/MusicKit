@@ -27,11 +27,8 @@ double freqparam2freq(float freq)
 - init
 {
   self     = [super initWithParamCount: toneGen_kNumParams name: @"ToneGenerator"];
-  freq     = 1.0;
-  amp      = 0.25;
-  phase    = 0.0;
-  waveform = 0;
-  t        = 0.0;
+  freq  = 1.0f;
+  amp   = 0.25f;  
   return self;
 }
 
@@ -57,12 +54,13 @@ double freqparam2freq(float freq)
   long  sampleFrames = [inB lengthInSamples];
   int   step = 2, i;
   double dt = 2.0 * M_PI / [inB samplingRate], y;
-  double theFreq = freqparam2freq(freq);
+  double theFreq  = freqparam2freq(freq);
+  double thePhase = phase * 2.0 *  M_PI;
 
   // assume stereo...
   
   for (i = 0; i < sampleFrames*2; i += step) {
-    y = amp * sin(theFreq * t + phase);
+    y = amp * sin(theFreq * t  + thePhase);
     outData[i]   = inData[i]   + y;
     outData[i+1] = inData[i+1] + y;
     t += dt;
@@ -74,14 +72,14 @@ double freqparam2freq(float freq)
 // setParam
 //////////////////////////////////////////////////////////////////////////////
 
-- (void)  setParam: (int) index toValue: (float) value
+- (void)  setParam: (const int) index toValue: (const float) value
 {
   switch (index) {
     case toneGen_kFreq:  freq     = value;
 //      fprintf(stderr,"freq: %.3fHz\n",freqparam2freq(freq));
       break;
     case toneGen_kAmp:   amp      = value; break;
-    case toneGen_kPhase: phase    = value * 2.0 *  M_PI; break;
+    case toneGen_kPhase: phase    = value; break;
     case toneGen_kWave:  waveform = value; break;
   }
 }
@@ -90,7 +88,7 @@ double freqparam2freq(float freq)
 // paramValue
 //////////////////////////////////////////////////////////////////////////////
 
-- (float) paramValue: (int) index
+- (float) paramValue: (const int) index
 {
   float r = 0.0;
   switch (index) {
@@ -106,7 +104,7 @@ double freqparam2freq(float freq)
 // paramName
 //////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramName: (int) index
+- (NSString*) paramName: (const int) index
 {
   NSString *r = nil;
   switch (index) {

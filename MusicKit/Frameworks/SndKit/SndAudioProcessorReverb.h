@@ -18,8 +18,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __SND_AUDIO_PROCESSOR_REVERB_H__
-#define __SND_AUDIO_PROCESSOR_REVERB_H__
+#ifndef __SNDKIT_SNDAUDIOPROCESSORREVERB_H__
+#define __SNDKIT_SNDAUDIOPROCESSORREVERB_H__
 
 #import <Foundation/Foundation.h>
 #import "SndAudioBuffer.h"
@@ -44,6 +44,8 @@ enum {
   rvrbMode      = 5, 
   rvrbNumParams = 6
 };
+
+////////////////////////////////////////////////////////////////////////////////
 
 /*! 
     @class      SndAudioProcessorReverb
@@ -77,23 +79,20 @@ enum {
 */
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
                  outputBuffer: (SndAudioBuffer*) outB;
-
 /*!
   @method paramValue:
   @param  index Parameter index
   @result A parameter value in the range [0..1] 
   @discussion See discussion in SndAudioProcessor 
 */
-- (float) paramValue: (int) index;
-
+- (float) paramValue: (const int) index;
 /*!
   @method paramName:
   @param  index Parameter index
   @result An NSString containing the name of the parameter referred to by index. 
   @discussion See discussion in SndAudioProcessor 
 */
-- (NSString*) paramName: (int) index;
-
+- (NSString*) paramName: (const int) index;
 /*!
   @method setParam:toValue:
   @param  index Parameter index
@@ -101,9 +100,8 @@ enum {
   @result self
   @discussion  See discussion in SndAudioProcessor
 */
-- setParam: (int) index toValue: (float) v;
+- setParam: (const int) index toValue: (const float) v;
 
-                 
 @end
 
 #endif

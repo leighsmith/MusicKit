@@ -64,15 +64,10 @@
 // setParameter
 //////////////////////////////////////////////////////////////////////////////
 
-- (void) setParam: (int) index toValue: (float) value
+- (void) setParam: (const int) index toValue: (const float) v
 {
-  if (value < 0.0f)
-    value = 0.0f;
-  else if (value > 1.0f)
-    value = 1.0f;
-
-  switch (index)
-  {
+  float value = v > 1.0 ? 1.0 : (v < 0.0 ? 0.0 : v);
+  switch (index)  {
     case flanger_kRate:     fRate = value;       break;
     case flanger_kMin:      fMin = (value <= fMax ? value : fMax);       break;
     case flanger_kMax:      fMax = value;  if (fMin > fMax) fMin = fMax; break;
@@ -86,7 +81,7 @@
 // paramValue
 //////////////////////////////////////////////////////////////////////////////
 
-- (float) paramValue: (int) index
+- (float) paramValue: (const int) index
 {
   float r = 0.0f;
   switch (index)
@@ -105,7 +100,7 @@
 // paramName
 //////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramName: (int) index
+- (NSString*) paramName: (const int) index
 {
   NSString *r = nil;
 	switch (index)
@@ -124,7 +119,7 @@
 // paramDisplay
 //////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramDisplay: (int) index
+- (NSString*) paramDisplay: (const int) index
 {
   NSString *r;
 	switch (index)
@@ -143,7 +138,7 @@
 // paramLabel
 //////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramLabel:(int) index
+- (NSString*) paramLabel:(const int) index
 {
   NSString *r = nil;
 	switch (index)
@@ -265,7 +260,7 @@
 // setActive:
 //////////////////////////////////////////////////////////////////////////////
 
-- setActive: (BOOL) b
+- setActive: (const BOOL) b
 {
   memset(m_pfBuff[0], 0, sizeof(float) * m_liBuffSize);
   memset(m_pfBuff[1], 0, sizeof(float) * m_liBuffSize);
@@ -290,19 +285,19 @@
 // micro accessors and mutators
 //////////////////////////////////////////////////////////////////////////////
 
-- (void)  setRate:     (float) f { [self setParam: flanger_kRate     toValue: f]; };
-- (void)  setMin:      (float) f { [self setParam: flanger_kMin      toValue: f]; };
-- (void)  setMax:      (float) f { [self setParam: flanger_kMax      toValue: f]; };
-- (void)  setSwap:     (float) f { [self setParam: flanger_kSwap     toValue: f]; };
-- (void)  setPhase:    (float) f { [self setParam: flanger_kPhase    toValue: f]; };
-- (void)  setFeedback: (float) f { [self setParam: flanger_kFeedback toValue: f]; };
+- (void)  setRate:     (const float) f { [self setParam: flanger_kRate     toValue: f]; };
+- (void)  setMin:      (const float) f { [self setParam: flanger_kMin      toValue: f]; };
+- (void)  setMax:      (const float) f { [self setParam: flanger_kMax      toValue: f]; };
+- (void)  setSwap:     (const float) f { [self setParam: flanger_kSwap     toValue: f]; };
+- (void)  setPhase:    (const float) f { [self setParam: flanger_kPhase    toValue: f]; };
+- (void)  setFeedback: (const float) f { [self setParam: flanger_kFeedback toValue: f]; };
 
-- (float) getRate      { return [self paramValue: flanger_kRate];     };
-- (float) getMin       { return [self paramValue: flanger_kMin];      };
-- (float) getMax       { return [self paramValue: flanger_kMax];      };
-- (float) getSwap      { return [self paramValue: flanger_kSwap];     };
-- (float) getPhase     { return [self paramValue: flanger_kPhase];    };
-- (float) getFeedback  { return [self paramValue: flanger_kFeedback]; };
+- (float) rate      { return [self paramValue: flanger_kRate];     };
+- (float) min       { return [self paramValue: flanger_kMin];      };
+- (float) max       { return [self paramValue: flanger_kMax];      };
+- (float) swap      { return [self paramValue: flanger_kSwap];     };
+- (float) phase     { return [self paramValue: flanger_kPhase];    };
+- (float) feedback  { return [self paramValue: flanger_kFeedback]; };
 
 //////////////////////////////////////////////////////////////////////////////
 

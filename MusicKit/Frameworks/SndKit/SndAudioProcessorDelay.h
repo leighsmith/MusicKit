@@ -12,8 +12,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef __SNDAUDIOPROCESSORDELAY_H_
-#define __SNDAUDIOPROCESSORDELAY_H_
+#ifndef __SNDKIT_SNDAUDIOPROCESSORDELAY_H__
+#define __SNDKIT_SNDAUDIOPROCESSORDELAY_H__
 
 #import <Foundation/Foundation.h>
 #import "SndAudioProcessor.h"
@@ -30,6 +30,8 @@ enum {
   dlyFeedback  = 1,
   dlyNumParams = 2
 };
+
+////////////////////////////////////////////////////////////////////////////////
 
 /*! 
     @class      SndAudioProcessorDelay
@@ -61,7 +63,7 @@ enum {
     @result     A Freshly initialized, autoreleased  delay processor.
     @discussion
 */
-+ delayWithLength: (long) nSams feedback: (float) fFB;
++ delayWithLength: (const long) nSams feedback: (const float) fFB;
 - init;
 /*!
     @method setLength:feedback:
@@ -71,7 +73,7 @@ enum {
     @result 
     @discussion
 */
-- setLength: (long) nSams andFeedback: (float) fFB;
+- setLength: (const long) nSams andFeedback: (const float) fFB;
 /*!
     @method     freemem
     @abstract 
@@ -95,7 +97,7 @@ enum {
     @result Parameter value in the range [0,1]
     @discussion
 */
-- (float) paramValue: (int) index;
+- (float) paramValue: (const int) index;
 /*!
     @method paramName
     @abstract 
@@ -103,7 +105,7 @@ enum {
     @result parameter name
     @discussion
 */
-- (NSString*) paramName: (int) index;
+- (NSString*) paramName: (const int) index;
 /*!
     @method setParam:toValue:
     @abstract 
@@ -112,7 +114,7 @@ enum {
     @result self
     @discussion
 */
-- setParam: (int) index toValue: (float) v;
+- setParam: (const int) index toValue: (const float) v;
 /*!
     @method processReplacingInputBuffer:outputBuffer:
     @abstract 

@@ -12,10 +12,27 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#ifndef __SNDKIT_SNDAUDIOPROCESSORRECORDER_H__
+#define __SNDKIT_SNDAUDIOPROCESSORRECORDER_H__
+
 #import <Foundation/Foundation.h>
 #import "SndAudioProcessor.h"
 
 @class SndAudioBuffer;
+
+/*!
+  @enum SndRecorderParam
+  @constant recorder_kStartTriggerThreshold
+  @constant recorder_kRecordFile
+  @constant recorder_kNumParams
+*/
+enum {
+  recorder_kStartTriggerThreshold = 0,
+  recorder_kRecordFile            = 1,
+  recorder_kNumParams             = 2
+};
+
+//////////////////////////////////////////////////////////////////////////////
 
 /*!
     @class      SndAudioProcessorRecorder
@@ -78,7 +95,7 @@
     @method     prepareToRecordForDuration:withFormat:
     @abstract 
     @discussion 
-    @result     
+    @result     BOOL indicating success when preparing for recording
 */
 - (BOOL) prepareToRecordForDuration: (double) time withFormat: (SndSoundStruct*) format;
 /*!
@@ -169,8 +186,32 @@
     @result     Boolean indicating success
 */
 - (BOOL) setUpRecordFile: (NSString*) filename withFormat: (SndSoundStruct*) format;
+/*!
+  @method     paramObjectForIndex:
+  @abstract
+  @discussion
+  @result
+*/
+- (id) paramObjectForIndex: (const int) i;
+/*!
+  @method     paramValue:
+  @abstract   Gets the value of the indexed parameter.
+  @discussion See superclass.
+  @param      index Index of the parameter
+  @result     parameter value
+*/
+- (float) paramValue: (const int) index;
+/*!
+  @method     paramName:
+  @abstract   Gets the name of indexed parameter.
+  @param      index Parameter index
+  @result     NSString with parameter name
+*/
+- (NSString*) paramName: (const int) index;
+
 
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
 
+#endif

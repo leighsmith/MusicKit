@@ -20,7 +20,7 @@
 // delayWithLength:feedback:
 ////////////////////////////////////////////////////////////////////////////////
 
-+ delayWithLength: (long) nSams feedback: (float) fFB
++ delayWithLength: (const long) nSams feedback: (const float) fFB
 {
   SndAudioProcessorDelay* delay = [[SndAudioProcessorDelay alloc] init];
   [delay setLength: nSams andFeedback: fFB];
@@ -72,7 +72,7 @@
 // initWithLength
 ////////////////////////////////////////////////////////////////////////////////
 
-- setLength: (long) nSams andFeedback: (float) fFB
+- setLength: (const long) nSams andFeedback: (const float) fFB
 {
   [lock lock];
   
@@ -95,7 +95,7 @@
 // paramValue
 ////////////////////////////////////////////////////////////////////////////////
 
-- (float) paramValue: (int) index
+- (float) paramValue: (const int) index
 {
   float r = 0.0f;
   switch (index) {
@@ -109,7 +109,7 @@
 // paramName
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramName: (int) index
+- (NSString*) paramName: (const int) index
 {
   NSString *r = nil;
   
@@ -124,7 +124,7 @@
 // setParam 
 ////////////////////////////////////////////////////////////////////////////////
 
-- setParam: (int) index toValue: (float) v
+- setParam: (const int) index toValue: (const float) v
 {
   switch (index) {
     case dlyLength:   
@@ -132,8 +132,7 @@
       [self setLength: length andFeedback: feedback];
       break;
     case dlyFeedback: 
-      v = v > 1.0 ? 1.0 : (v < 0.0 ? 0.0 : v);
-      feedback = v; 
+      feedback = v > 1.0 ? 1.0 : (v < 0.0 ? 0.0 : v);
       break;
   }
   return self;
@@ -141,7 +140,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // processReplacingInputBuffer: (SndAudioBuffer*) inB 
-//                 outputBuffer: (SndAudioBuffer*) outB
+//                outputBuffer: (SndAudioBuffer*) outB
 ////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
