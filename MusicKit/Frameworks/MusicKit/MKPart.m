@@ -90,6 +90,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2001/08/07 16:22:51  leighsmith
+  Moved return self in initWithCoder that was short-circuiting initialization
+
   Revision 1.13  2000/11/25 22:45:51  leigh
   info is now explicitly set nil in releaseNotes, doco cleanups
 
@@ -1080,7 +1083,8 @@ static void removeNote(MKPart *self, MKNote *aNote)
      See write:. */
 {
     NSString *str;
-    /*[super initWithCoder:aDecoder];*/ /*sb: unnec */
+    NSMutableDictionary *tagTable;
+
     if ([aDecoder versionForClassName:@"MKPart"] == VERSION2) {
         score = [[aDecoder decodeObject] retain];
         [aDecoder decodeValuesOfObjCTypes:"@@ic@i",&notes,&info,&noteCount,&isSorted,
@@ -1090,15 +1094,12 @@ static void removeNote(MKPart *self, MKNote *aNote)
 //            free(str);
         }
     }
-    return self;
     /* from awake (sb) */
-    {
-        NSMutableDictionary *tagTable;
-        if ([MKScore _isUnarchiving])
-          return self;
-        tagTable = [NSMutableDictionary dictionary];
-        [self _mapTags: tagTable];
-    }
+    if ([MKScore _isUnarchiving])
+        return self;
+    tagTable = [NSMutableDictionary dictionary];
+    [self _mapTags: tagTable];
+    return self;
 }
 
 // for debugging, just return the concatenation of the note descriptions (which have newlines).
