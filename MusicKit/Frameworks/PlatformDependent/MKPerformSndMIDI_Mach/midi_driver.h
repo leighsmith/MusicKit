@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2000/12/07 00:09:20  leigh
+  Added missing function prototypes, changed MKMDPort et al to mach_port_t
+
   Revision 1.5  2000/11/29 23:21:26  leigh
   Renamed MD functions to MKMD
 
@@ -45,13 +48,14 @@ Modification history:
 #import <mach/port.h>
 #import <mach/boolean.h>
 
-#define PORTS_ARE_NSOBJECTS 1
-#define MKMDPort NSMachPort *
-#define MKMDOwnerPort NSMachPort *
-#define MKMDReplyPort NSMachPort *
-typedef int MKMDReturn;
+#define MKMDPort mach_port_t
+#define MKMDOwnerPort mach_port_t
+#define MKMDReplyPort mach_port_t
+typedef kern_return_t MKMDReturn;
 
-#define MKMD_NAME @"Mididriver"  /* Name of driver (append unit number to use) */
+#define MKMD_RECEPTION_USING_PORTS 1
+#define MKMD_SUCCESS KERN_SUCCESS
+#define MKMD_PORT_NULL PORT_NULL
 
 /* Each event consists of a byte and a time stamp. */
 typedef struct {
@@ -117,6 +121,11 @@ typedef struct _MKMDReplyFunctions {
     MKMDQueueReplyFunction queueReply;
 } MKMDReplyFunctions;
 
+// returns NULL if unable to find the hostname, otherwise whatever value for MKMDPort
+// that has meaning.
+extern MKMDPort
+   MKMDGetMIDIDeviceOnHost(const char *hostname);
+
 /******* Managing ownership of the driver ********/
 extern kern_return_t 
     MKMDBecomeOwner(mach_port_t driver, mach_port_t owner);
@@ -175,6 +184,10 @@ extern kern_return_t
     MKMDFlushQueue(mach_port_t device_port, port_name_t owner_port, short unit);
 extern kern_return_t 
     MKMDDownloadDLSInstruments(unsigned int *patches, int patchCount);
+/* return the names of available drivers */
+extern const char **
+    MKMDGetAvailableDrivers(unsigned int *selectedDriver);
+
 
 /********************* Controling how incoming data is formated ***********/
 extern kern_return_t 
