@@ -27,9 +27,8 @@
 #define SNDSTREAMMANAGER_DEBUG                  0
 #define SNDSTREAMMANAGER_DELEGATE_DEBUG         0
 #define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
-#define SNDSTREAMMANAGER_SHOW_DRIVER_SELECTED   0
 
-static void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj);
+static void processAudio(double sampleCount, SNDStreamBuffer *cInB, SNDStreamBuffer *cOutB, void *obj);
 
 ////////////////////////////////////////////////////////////////////////////////
 // The enums are dual purpose -- they serve as condition locks for
@@ -59,7 +58,7 @@ enum {
 
 @implementation SndStreamManager
 
-static SndStreamManager *sm = nil;
+static SndStreamManager *defaultStreamManager = nil;
 
 ////////////////////////////////////////////////////////////////////////////////
 // streamManager factory
@@ -67,17 +66,18 @@ static SndStreamManager *sm = nil;
 
 + (void) initialize
 {
-  if (SNDInit(TRUE)) {
-#if SNDSTREAMMANAGER_SHOW_DRIVER_SELECTED
-    char **driverNames = SNDGetAvailableDriverNames();
-    NSLog(@"SndStreamManager::initialise: driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
-#endif
-  }
-  else {
-    NSLog(@"SndStreamManager::initialise: Error - Unable to initialise MKPerformSound!\n");
-  }
-  if (sm == nil)
-    sm = [SndStreamManager new];  // create our default
+    if (SNDInit(TRUE)) {
+        if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowDriverSelected"]) {
+            char **driverNames = SNDGetAvailableDriverNames();
+            
+            NSLog(@"SndStreamManager::initialise: driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
+        }
+    }
+    else {
+        NSLog(@"SndStreamManager::initialise: Error - Unable to initialise MKPerformSound!\n");
+    }
+    if (defaultStreamManager == nil)
+        defaultStreamManager = [SndStreamManager new];  // create our default
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ static SndStreamManager *sm = nil;
 
 + (SndStreamManager *) defaultStreamManager
 {
-  return [[sm retain] autorelease];
+  return [[defaultStreamManager retain] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -98,6 +98,7 @@ static SndStreamManager *sm = nil;
 - init
 {
   NSPort *managerReceivePort, *managerSendPort;
+  SNDStreamBuffer nativeStreamBufferFormat;
 
   self = [super init];
   if (!self)
@@ -111,7 +112,8 @@ static SndStreamManager *sm = nil;
   bg_active     = FALSE;
   nowTime       = 0;
   bDelegateMessagingEnabled = FALSE;
-  SNDStreamNativeFormat(&format);
+  SNDStreamNativeFormat(&nativeStreamBufferFormat);
+  format = SndFormatOfSNDStreamBuffer(&nativeStreamBufferFormat);
   if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowStreamingFormat"])
       NSLog(@"Native format of streaming audio buffer: %@\n", self);
 
@@ -178,9 +180,9 @@ static SndStreamManager *sm = nil;
 {
     return [NSString stringWithFormat: @"%@ (sample rate:%.1fKHz, channels:%i, length:%i frames)",
 	[super description],
-	format.samplingRate / 1000.0,
+	format.sampleRate / 1000.0,
 	format.channelCount,
-	format.dataSize/(format.channelCount*sizeof(float))];
+	format.frameCount];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -507,19 +509,20 @@ static void processAudio(double sampleCount, SNDStreamBuffer *cInB, SNDStreamBuf
     // around each of the SNDStreamBuffers, to avoid allocation costs.
 
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-    SndAudioBuffer *inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
-    SndAudioBuffer *outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
+    SndAudioBuffer *inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWithSNDStreamBuffer: cInB ];
+    SndAudioBuffer *outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWithSNDStreamBuffer: cOutB];
+    long outputStreamDataSizeInBytes = SndFramesToBytes(cOutB->frameCount, cOutB->channelCount, cOutB->dataFormat);
 
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] --> processAudio sampleCount = %d, cOutB = %p\n", (int) sampleCount, cOutB);
-    NSLog(@"[Manager] cOutB->dataSize = %d, cOutB->streamData = %p\n", cOutB->streamFormat.dataSize, cOutB->streamData);
+    NSLog(@"[Manager] --> processAudio sampleCount = %ld, cOutB = %p, cOutB->streamData = %p\n", 
+        (long) sampleCount, cOutB, cOutB->streamData);
 #endif
     [(SndStreamManager *) manager processStreamAtTime: sampleCount input: inB output: outB];
 
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] <-- processAudio, copying %d bytes to output buffer\n", cOutB->streamFormat.dataSize);
+    NSLog(@"[Manager] <-- processAudio, copying %d bytes to output buffer\n", outputStreamDataSizeInBytes);
 #endif
-    memcpy(cOutB->streamData, [outB bytes], cOutB->streamFormat.dataSize);
+    memcpy(cOutB->streamData, [outB bytes], outputStreamDataSizeInBytes);
 
 #if SNDSTREAMMANAGER_DEBUG
     NSLog(@"[Manager] About to release pool...\n");
@@ -538,8 +541,8 @@ static void processAudio(double sampleCount, SNDStreamBuffer *cInB, SNDStreamBuf
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) processStreamAtTime: (double) sampleCount
-                       input: (SndAudioBuffer*) inB
-                      output: (SndAudioBuffer*) outB
+                       input: (SndAudioBuffer *) inB
+                      output: (SndAudioBuffer *) outB
 {
 #if SNDSTREAMMANAGER_DEBUG
     NSLog(@"[Manager] Entering processStreamAtTime inB %@, outB %@\n", inB, outB);
@@ -591,8 +594,12 @@ static void processAudio(double sampleCount, SNDStreamBuffer *cInB, SNDStreamBuf
 - (double) nowTime         { return nowTime; }
 - (SndStreamMixer*) mixer  { return mixer;   }
 - (BOOL)   isActive        { return active;  }
-- (double) samplingRate    { return format.samplingRate; }
-- (SndSoundStruct*) format { return &format; }
+- (double) samplingRate    { return format.sampleRate; }
+
+- (SndFormat) format
+{
+    return format;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 // resetTime:
