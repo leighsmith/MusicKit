@@ -170,7 +170,7 @@ typedef double PaTimestamp;
 	between calls to Pa_Initialize() and Pa_Terminate().
 */
 
-const PaDeviceInfo* Pa_GetDeviceInfo( PaDeviceID id );
+const PaDeviceInfo* Pa_GetDeviceInfo( PaDeviceID devID );
 
 /*
 	PortAudioCallback is implemented by clients of the portable audio api.
