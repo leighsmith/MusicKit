@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2001/11/16 20:37:51  leighsmith
+  Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
+
   Revision 1.4  2001/09/10 17:38:28  leighsmith
   Added abstracts from IntroSynthPatches.rtf
 
@@ -34,7 +37,9 @@ For further information, see the LeBrun article sited below.   Other documentati
 Note that the result of the usual envelope computation (val = m1IndEnv(time) * (m1Ind1 - m1Ind0) + m1Ind0) must be between 0.0 and 1.0, otherwise you will be reading values outside of the table.  Note also that m1IndEnv can have some small effect on amplitude, even though its primary purpose is to affect timbre.  (The smallness of the effect is achieved through the Le Brun "signification" algorithm.) 
 	
 Here is a diagram of <b>Shape:</b>
-<img src="Images/Waveshape.gif"> 
+
+<img src="http://www.musickit.org/Frameworks/MKSynthPatches/Images/Waveshape.png">
+
 If the <b>m1Waveform</b> parameter's value is a Partials object, it gives a specification for the harmonic structure of the lookup table.  For example, if you want the table to produce two harmonics, you could specify a Partials object with two partials, one at harmonic number 1 and one at harmonic number 2.  Note also that using higher numbered harmonics in a waveshaping table Partials object, results in a greater compute time to create the table.  If you specify a Samples object to <b>m1Waveform</b>, it is used directly as the distortion lookup table.   
  
 Additional features that ambitious users might want to consider adding include doing some of the other things that Arfib, LeBrun, and Beauchamp described in their articles:

@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2001/11/16 20:37:51  leighsmith
+  Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
+
   Revision 1.5  2001/09/10 17:38:28  leighsmith
   Added abstracts from IntroSynthPatches.rtf
 
@@ -72,7 +75,7 @@ instrument.  These are best used with the MKSynthPatch DBWave2vi,
 which can interpolate between timbres.  Note also that for realism,
 appropriate envelopes, attack/decay values and vibrato must be used.
 
-<img src="Images/Wave2vi.gif">
+<img src="Images/Wave2vi.png">
 
 When using this MKSynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the MKSynthPatch.
 

@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2001/11/16 20:37:51  leighsmith
+  Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
+
   Revision 1.4  2001/09/10 17:38:28  leighsmith
   Added abstracts from IntroSynthPatches.rtf
 
@@ -29,7 +32,7 @@
 
 <b>Fm2pnvi</b> is a parallel-modulator frequency modulation SynthPatch, with an interpolating-oscillator as a carrier and a noise source modulating the frequency of the two wavetable modulators.  It provides for envelopes on amplitude, frequency, and a separate envelope on each modulator's FM index, as well as an envvelope on the noise source.  It also supports vibrato.   Although it does not inherit from <b>Fm2pvi</b>, it implements the same parameters, plus some of its own. 
 
-<img src="Images/FM2pnvi.gif"> 
+<img src="http://www.musickit.org/Frameworks/MKSynthPatches/Images/FM2pnvi.png"> 
 
 When using this SynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call <b>MKUseRealTimeEnvelopes()</b> before allocating the SynthPatch.
 

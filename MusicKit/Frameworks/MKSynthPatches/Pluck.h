@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2001/11/16 20:37:51  leighsmith
+  Made images use musickit.org URL since it will be too difficult to place the image into the generated class documentation directory and too location specific to specify relative URLs to images
+
   Revision 1.4  2001/09/10 17:38:28  leighsmith
   Added abstracts from IntroSynthPatches.rtf
 
@@ -33,7 +36,7 @@ Pluck creates a sound suggesting a struck or plucked string.  It uses a delay li
 
 Keep in mind that the highest frequency that Pluck can play is only 1300 Hz. for a sampling rate of 22050 and 2600 Hz for a sampling rate of 44100.  (For the curious, this annoying limitation could be lifted if the SynthPatch were redesigned to be one giant UnitGenerator.  The limitation comes in the pipeline delay, which is the tick size 16 samples.)
 
-<img src="Images/Pluck.gif"> 
+<img src="Images/Pluck.png"> 
 
 <h2>Parameter Interpretation</h2>
 
