@@ -14,9 +14,12 @@ PROJECT_TYPE = Application
 NEXTSTEP_APPICON = sndapp.tiff
 ICONSECTIONS =	-sectcreate __ICON app sndapp.tiff
 
+English_RESOURCES = edsnd.nib Envelope.nib FFT.nib snddoc.nib\
+                    Stopwatch.nib
 
-GLOBAL_RESOURCES = edsnd.nib Envelope.nib FFT.nib snddoc.nib\
-                   Stopwatch.nib sndapp.tiff
+LANGUAGES = English
+
+GLOBAL_RESOURCES = sndapp.tiff
 
 CLASSES = Animator.m EdsndApp.m EdSoundView.m Envelope.m\
           EnvelopeView.m FFT.m FFTView.m ScrollingSound.m\
