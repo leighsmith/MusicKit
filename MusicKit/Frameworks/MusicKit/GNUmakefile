@@ -15,6 +15,9 @@
 
 # Modification history:
 # $Log$
+# Revision 1.4  2002/03/12 23:19:13  sbrandon
+# bumped up optimisation and error logging levels
+#
 # Revision 1.3  2001/11/07 13:11:03  sbrandon
 # A number of changes to allow compilation on Windows/MinGW. Major change is
 # that it compiles as a library rather than a framework, due to deficiencies
@@ -54,7 +57,7 @@ $(MY_NAME)_RESOURCE_FILES =
 
 $(MY_NAME)_RESOURCE_DIRS = 
 
-ADDITIONAL_FLAGS = -g
+ADDITIONAL_FLAGS = -g -O2 -Wall
 
 # The Bundle Objective-C source files to be compiled
 $(MY_NAME)_OBJC_FILES = \
