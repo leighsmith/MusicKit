@@ -10,12 +10,15 @@
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 2000 The MusicKit Project
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2001 The MusicKit Project.
 */
 /*
   Modification history:
   $Log$
+  Revision 1.1  2001/09/15 17:11:59  leighsmith
+  Renamed unitgenerators.h to MKUnitGenerators.h
+
   Revision 1.3  2000/09/14 18:01:44  leigh
   Doco cleanups
 
