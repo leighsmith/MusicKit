@@ -21,7 +21,7 @@
 // Debug defines
 ////////////////////////////////////////////////////////////////////////////////
 
-#define SNDSTREAMMANAGER_DEBUG                  1
+#define SNDSTREAMMANAGER_DEBUG                  0
 #define SNDSTREAMMANAGER_DELEGATE_DEBUG         0
 #define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
 #define SNDSTREAMMANAGER_SHOW_DRIVER_SELECTED   0
