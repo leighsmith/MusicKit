@@ -7,13 +7,13 @@
 @interface ScorePlayerController: NSObject
 {
     IBOutlet NSButton *playButton;
-    id tempoSlider;
-    id tempoTitle;
-    id tempoTextField;
-    id theMainWindow;
-    id tooFastErrorMsg;
     IBOutlet NSPanel *soundSavePanel;
     IBOutlet NSTextField *soundWriteMsg;
+    IBOutlet id tempoSlider;
+    id tempoTitle;
+    id tempoTextField;
+    IBOutlet id theMainWindow;
+    id tooFastErrorMsg;
     id NeXTDacMuteSwitch;
     id NeXTDacVolumeSlider;
     id timeCodeButton;
@@ -26,27 +26,22 @@
     id NeXTDACPanel;
 }
 
-
-- (void)help:sender;
-- (void)openEditFile:sender;
-- (void)deviceSpecificSettings:sender;
-- (void)setSoundOutFrom:sender;
-- (void)saveAsDefaultDevice:sender;
-- (void)applicationWillFinishLaunching:(NSNotification *)notification;
-- (void)setTempoFrom:sender;
-- (void)playStop:sender;
-- (void)selectFile:sender;
-- (void)showErrorLog:sender;
-- (void)saveScoreAs:sender;
-- (void)setAD64xConsumer:sender;
-- (void)setAD64xProfessional:sender;
-- (void)setTimeCodeSynch:sender;
-- (void)setTimeCodeSerialPort:sender;
-- (void)setDAI2400CopyProhibit:sender;
-- (void)setDAI2400Emphasis:sender;
-- (void)setNeXTDACVolume:sender;
-- (void)setNeXTDACMute:sender;
-- (void)getNeXTDACCurrentValues:sender;
+- (void) help: (id) sender;
+- (void) openEditFile: (id) sender;
+- (void) deviceSpecificSettings: (id) sender;
+- (void) setSoundOutFrom: (id) sender;
+- (void) saveAsDefaultDevice: (id) sender;
+- (void) applicationWillFinishLaunching: (NSNotification *) notification;
+- (void) setTempoFrom: (id) sender;
+- (void) playStop: (id) sender;
+- (void) selectFile: (id) sender;
+- (void) showErrorLog: (id) sender;
+- (void) saveScoreAs: (id) sender;
+- (void) setTimeCodeSynch: (id) sender;
+- (void) setTimeCodeSerialPort: (id) sender;
+- (void) setNeXTDACVolume: (id) sender;
+- (void) setNeXTDACMute: (id) sender;
+- (void) getNeXTDACCurrentValues: (id) sender;
 - (BOOL) validateMenuItem: (NSMenuItem *) menuItem;
 
 @end
