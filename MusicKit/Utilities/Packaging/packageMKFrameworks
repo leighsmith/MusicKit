@@ -8,10 +8,18 @@
 # Leigh Smith <leigh@tomandandy.com> 1999/11/29
 #
 frameworkname=MK
-packagetitle="MusicKit"
+packagetitle="MusicKit and SndKit Frameworks"
+OS=`uname`
+if [ $OS = "Darwin" ]; then
+    packagefrom=/Library/Frameworks
+    installinto=/Library/Frameworks
+else
+    packagefrom=/Local/Library/Frameworks
+    installinto=/Local/Library/Frameworks
+fi
 
 if [ x_$MKICON = x_ ]; then
-    echo "Error: Environment variable MKICON must be set to point to the .tiff file used for the $packagetitle frameworks icon."
+    echo "Error: Environment variable MKICON must be set to point to the .tiff file used for the $packagetitle icon."
     exit 1;
 fi
 if [ x_$1 = x_ ]; then
@@ -21,7 +29,6 @@ if [ x_$1 = x_ ]; then
 else
     appversion=$1
 fi
-packagefrom=/Local/Library/Frameworks
 # TODO unitgenerators synthpatches
 packages=(MusicKit MKPerformSndMIDI MKDSP SndKit)
 workingdir=/tmp
@@ -34,14 +41,16 @@ foreach f ($packages)
   cp -r $packagefrom/$f.framework $install_file_directory/
 end
 
-# This is the point where you'll want to make sure that the permissions and ownership of
-# the files and directories in your application are set to the appropriate values. The
-# goal is to set all the files to the user-id that you'd expect when they are installed
-# by the root user, in most cases you'll want to set the ownership to root. Installations
-# by those other than root will correctly default to the installer's user-id. The
-# situation with respect to permissions is much simpler, since they'll be consistent
-# regardless of which user does the installation. To accomplish this, you'll need to be
-# logged in as root. 
+# This is the point where you'll want to make sure that the
+# permissions and ownership of the files and directories in your
+# application are set to the appropriate values. The goal is to set
+# all the files to the user-id that you'd expect when they are
+# installed by the root user, in most cases you'll want to set the
+# ownership to root. Installations by those other than root will
+# correctly default to the installer's user-id. The situation with
+# respect to permissions is much simpler, since they'll be consistent
+# regardless of which user does the installation. To accomplish this,
+# you'll need to be logged in as root.
 
 /bin/chmod -R ugo-w $install_file_directory/
 /bin/chmod -R ugo+rX $install_file_directory/
@@ -87,21 +96,22 @@ cat > $frameworkname.info << EOF
 Title                $packagetitle
 Version              $appversion
 Description          This package contains frameworks for the $packagetitle.
-DefaultLocation      /Local/Library/Frameworks
+DefaultLocation      $installinto
 Relocatable          YES
-
 Diskname             $frameworkname #%d
-
-NeedsAuthorization   NO
+NeedsAuthorization   YES
 Application          NO
 InstallOnly          NO
 DisableStop          NO
+RequiresReboot       NO
+InstallFat           NO
 EOF
 
-# DeleteWarning
+# perhaps use DeleteWarning
 
+package $install_file_directory $frameworkname.info $frameworkname.tiff 
 
-package $install_file_directory $frameworkname.info $frameworkname.tiff
+# -d $installinto
 
 # just tar the file ready for transmission, no point compressing.
 shipfile=$workingdir/$frameworkname-$appversion.pkg.tar
