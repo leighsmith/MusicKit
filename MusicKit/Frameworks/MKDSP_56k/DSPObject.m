@@ -6648,7 +6648,7 @@ typedef struct { /* Keep in sync with sound library performsound.c */
  */
 } commandsSubHeader;
 
-int DSPOpenCommandsFile(char *fn)			
+int DSPOpenCommandsFile(const char *fn)			
 {
 //    SNDSoundStruct dummySoundHeader;
     SndSoundStruct dummySoundHeader;
