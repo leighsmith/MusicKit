@@ -33,8 +33,11 @@
 */
 /*
 // $Log$
-// Revision 1.1  1999/11/17 17:57:14  leigh
-// Initial revision
+// Revision 1.2  1999/11/17 22:10:51  leigh
+// Added the VS-1 audio routines into project
+//
+// Revision 1.1.1.1  1999/11/17 17:57:14  leigh
+// Initial working version
 //
 // Revision 1.5  1999/07/24 23:20:17  leigh
 // multiple channel DirectSound Playback
@@ -51,8 +54,8 @@
 #include "dsound.h"
 #include "PerformSoundPrivate.h"
 // SKoT's combined WaveOut and DirectX routines.
-#include "../CAudOut/AudOutWO.h" // these should be in a standard place
-#include "../CAudOut/AudOutDX.h"
+#include "AudOutWO.h" // these should be in a standard place
+#include "AudOutDX.h"
 #include "sounderror.h"
 
 #ifdef __cplusplus
