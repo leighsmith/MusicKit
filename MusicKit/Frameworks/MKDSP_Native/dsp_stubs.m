@@ -27,10 +27,6 @@ int DSPMKMemoryFillSkipTimed(
     return 0;
 }
 
-void DSPEnableErrorFile(char *filename)
-{
-}
-
 int DSPMKSendArraySkipTimed(DSPFix48 *aTimeStampP,
 				   DSPFix24 *data,
 				   DSPMemorySpace space,
@@ -100,6 +96,7 @@ int _DSPReloc(DSPDataRecord *data, DSPFixup *fixups,
     return 0;
 }
 
+#if 0
 int _DSPError1(
     int errorcode,
     char *msg,
@@ -108,13 +105,18 @@ int _DSPError1(
     return 0;
 }
 
-
 int _DSPError(
     int errorcode,
     char *msg)
 {
     return 0;
 }
+
+int DSPEnableErrorFile(const char *fn)
+{
+    return 0;
+}
+#endif
 
 FILE *DSPGetSimulatorFP(void)
 {
@@ -140,10 +142,12 @@ return 0;
 }
 
 
+#if 0
 const char *DSPMemoryNames(int memSpaceNo)
 {
 return 0;
 }
+#endif
 
   /* Memory spaces (N,X,Y,L,P) */
  DSPAddress DSPGetHighestExternalUserAddress(void)
@@ -199,8 +203,9 @@ return 0;
 return 0;
 }
 
-
+#if 0
 int	DSPLCtoMS[DSP_LC_NUM] = {0,1,1,1,2,2,2,3,3,3,4,4,4};
+#endif
 
 int DSPBoot(DSPLoadSpec *system)
 {
@@ -225,12 +230,12 @@ return 0;
 return 0;
 }
 
-
+#if 0
  int DSPCloseErrorFP(void)
 {
 return 0;
 }
-
+#endif
 
  int DSPCloseSaveState(void)
 {
@@ -255,7 +260,9 @@ return 0;
 return 0;
 }
 
+#if 0
 int	 DSPErrorNo = 0;	/* Last DSP error */
+#endif
 
  int DSPGetDSPCount(void)
 {
@@ -584,11 +591,12 @@ int DSPGetDriverCount(void)
 return 0;
 }
 
+#if 0
 int _DSPErrorV(int errorcode,char *fmt,...)
 {
 return 0;
 }
-
+#endif
 
 int _DSPHostMessageTimed(DSPFix48 *aTimeStampP, int msg)
 {
@@ -599,4 +607,5 @@ int DSPSetHostMessageMode(void)
 {
 return 0;
 }
+
 
