@@ -21,9 +21,9 @@
     return self;
 }
 
-static void handleMKError(char *msg)
+static void handleMKError(NSString *msg)
 {
-    if (!NSRunAlertPanel(@"MidiLoop", [NSString stringWithCString:msg], @"OK", @"Quit", nil, NULL))
+    if (!NSRunAlertPanel(@"MidiLoop", msg, @"OK", @"Quit", nil, NULL))
 	[NSApp terminate:NSApp];
 }
 
@@ -32,15 +32,16 @@ static void handleMKError(char *msg)
     int i;
     if ([MKConductor inPerformance]) /* Already started */
       return self;
-    midiObj = [MKMidi midi];
+    if(midiObj)
+        [midiObj release];
+    midiObj = [[MKMidi midi] retain];
 
     MKSetErrorProc(handleMKError); /* Intercept Music Kit errors. */
 
     /* 16 midi channels plus one for system messages */
     for (i=0; i<=16; i++) 
 	/* Connect them up */
-	[[midiObj channelNoteSender:i] connect:
-	 [midiObj channelNoteReceiver:i]];
+	[[midiObj channelNoteSender:i] connect: [midiObj channelNoteReceiver:i]];
 
     /* No delay in sending out midi out events */
     [midiObj setOutputTimed:NO];  
