@@ -846,90 +846,11 @@ typedef enum {
 - (int) convertToNativeFormat;
 
 /*!
-  @method deleteSamples
-  @result Returns an int.
-  @discussion Deletes all the samples in the Snd's data. The Snd must be
-              editable. An error code is returned.
-*/
-- (int) deleteSamples;
-
-/*!
-  @method deleteSamplesAt:count:
-  @param  startSample is an int.
-  @param  sampleCount is an int.
-  @result Returns an int.
-  @discussion Deletes a range of samples from the Snd: <i>sampleCount</i>
-              samples are deleted starting with the <i>startSample</i>'th sample
-              (zero-based). The Snd must be editable and may become fragmented.
-              An error code is returned.
-*/
-- (int) deleteSamplesAt: (int) startSample count: (int) sampleCount;
-
-/*!
-  @method insertSamples:at:
-  @param  aSound is an id.
-  @param  startSample is an int.
-  @result Returns an int.
-  @discussion Pastes the sound data in <i>aSound</i> into the Snd receiving
-              this message, starting at the receiving Snd's <i>startSample</i>'th sample (zero-based).
-              The receiving Snd doesn't lose any of its original sound data - the samples greater than
-              or equal to <i>startSample</i> are moved to accommodate the inserted sound data. The receiving
-              Snd must be editable and the two Snds must be compatible (as determined by <b>isCompatible:</b>). If the method is successful, the receiving Snd is fragmented. An error code is returned.
-*/
-- (int) insertSamples: (Snd *) aSnd at: (int) startSample;
-
-
-/*!
   @method copyWithZone:
   @param  zone is an NSZone.
   @result Returns a new retained instance with duplicated data, or nil if unable to copy.
 */
 - (id) copyWithZone: (NSZone *) zone;
-
-/*!
-  @method copySamples:
-  @param  aSound is an id.
-  @param startSamplein an int.
-  @param sampleCount is an int.
-  @result Returns an int.
-  @discussion             
-              Replaces the Snd's sampled data with a copy of a
-              portion of <i>aSound</i>'s data. The copied portion starts at
-              <i>aSound</i>'s <i>startSample</i>'th sample (zero-based) and
-              extends over <i>sampleCount</i> samples. The Snd receiving this
-              message must be editable and the two Snds must be compatible. If
-              the specified portion of <i>aSound</i> is fragmented, the Snd
-              receiving this message will also be fragmented. An error code is
-              returned.
-*/
-- (int) copySamples: (Snd *) aSnd at: (int) startSample count: (int) sampleCount;
-
-/*!
-  @method compactSamples
-  @result Returns an int.
-  @discussion The Snd's sampled data is compacted into a contiguous block,
-              undoing the fragmentation that can occur during editing. If the
-
-              Snd's data isn't fragmented (its format isn't
-              SND_FORMAT_INDIRECT), then this method does
-              nothing. Compacting a large sound can take a long time;
-              keep in mind that when you copy a Snd to a pasteboard,
-              the object is automatically compacted before it's
-              copied. Also, the sound file representation of a Snd
-              contains contiguous data so there's no need to compact a
-              Snd before writing it to a sound file simply to ensure
-              that the file representation will be compact. An error
-              code is returned.  
-*/
-- (int) compactSamples;
-
-/*!
-  @method needsCompacting
-  @result Returns a BOOL.
-  @discussion Returns <b>YES</b> if the Snd's data is fragmented. Otherwise
-              returns <b>NO</b>.
-*/
-- (BOOL) needsCompacting;
 
 /*!
   @method data
@@ -1148,83 +1069,6 @@ typedef enum {
 - (int) performanceCount;
 
 /*!
-  @method audioBufferForSamplesInRange:looping:
-  @abstract Returns a SndAudioBuffer containing a range of samples in the Snd.
-  @param  sndFrameRange Range of sample <I>frames</I> (as opposed to individual single
- 	    channel samples) to stick into the audioBuffer.
-  @param isLooping Indicates whether to read from the loop start if the length of the sndFrameRange exceeds
-          the length of the Snd instance.
-  @result An SndAudioBuffer containing the samples in the range r.
- */
-- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) sndFrameRange
-					  looping: (BOOL) isLooping;
-
-/*!
-  @method audioBufferForSamplesInRange:
-  @abstract Returns a SndAudioBuffer containing a range of samples in the Snd.
-  @param  r Range of sample <I>frames</I> (as opposed to individual single
-          channel samples) to stick into the audioBuffer
-  @result An SndAudioBuffer containing the samples in the range r.
-*/
-- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) r;
-
-/*!
-  @method fillAudioBuffer:toLength:samplesStartingFrom:
-  @abstract Copies samples from self into the provided SndAudioBuffer
-  @discussion The SndAudioBuffer's data object's size is decreased if less than fillLength number
-              of samples can be read. The buffer is not expanded.
-  @param buff The SndAudioBuffer object into which to copy the data.
-  @param fillLength The number of sample frames in the buffer to copy into.
-  @param sndReadingRange The sample frame in the Snd to start reading from and maximum length of samples readable.
-  @result Returns the number of sample frames read from the Snd instance in filling the audio buffer.
-          This can be more or less than the number requested, if resampling occurs.
-*/
-- (long) fillAudioBuffer: (SndAudioBuffer *) buff
-	        toLength: (long) fillLength
-          samplesInRange: (NSRange) sndReadingRange;
-
-/*!
-  @method insertIntoAudioBuffer:intoFrameRange:samplesInRange:
-  @abstract Copies samples from self into a sub region of the provided SndAudioBuffer.
-  @discussion If the buffer and the Snd instance have different formats, a format
-              conversion will be performed to the buffers format, including resampling
-              if necessary. The Snd audio data will be read enough to fill the range of samples
-              specified according to the sample rate of the buffer compared to the sample rate
-              of the Snd instance. In the case where there are less than the needed number of
-              samples left in the sndFrameRange to completely insert into the specified buffer region, the
-              number of samples inserted will be returned less than bufferRange.length.
-  @param buff The SndAudioBuffer object into which to copy the data.
-  @param bufferRange An NSRange of sample frames (i.e channel independent time position specified in samples)
-		     in the buffer to copy into.
-  @param sndFrameRange An NSRange of sample frames (i.e channel independent time position specified in samples)
-                       within the Snd to start reading data from and the last permissible index to read from.
-  @result Returns the number of samples actually inserted. This may be less than the length specified
-          in the bufferRange if sndStartIndex is less than the number samples needed to convert to
-          insert in the specified buffer region.
- */
-- (long) insertIntoAudioBuffer: (SndAudioBuffer *) buff
-		intoFrameRange: (NSRange) bufferFrameRange
-		samplesInRange: (NSRange) sndFrameRange;
-
-/*!
-  @method insertAudioBuffer:intoFrameRange:
-  @abstract Copies in the given SndAudioBuffer into the Snd instance.
-  @param buffer The SndAudioBuffer to copy sound from.
-  @param writeIntoSndFrameRange The range of frames to copy. Can not be longer than the buffer.
-  @result Returns the new size of the buffer.
- */
-- (long) insertAudioBuffer: (SndAudioBuffer *) buffer
-	    intoFrameRange: (NSRange) writeIntoSndFrameRange;
-
-/*!
-  @method appendAudioBuffer:
-  @abstract Appends the given SndAudioBuffer to the end of the Snd instance.
-  @param buffer The SndAudioBuffer to copy sound from.
-  @result Returns the new size of the buffer.
- */
-- (long) appendAudioBuffer: (SndAudioBuffer *) buffer;
-
-/*!
   @method initWithAudioBuffer:
   @abstract Initialises a Snd instance from the provided SndAudioBuffer.
   @param aBuffer the SndAudioBuffer object from which to copy the data
@@ -1302,6 +1146,166 @@ typedef enum {
   @result     Returns a SndAudioProcessorChain instance.
  */
 - (SndAudioProcessorChain *) audioProcessorChain;
+
+@end
+
+@interface Snd(Editing)
+
+/*!
+  @method deleteSamples
+  @result Returns an int.
+  @discussion Deletes all the samples in the Snd's data. The Snd must be
+              editable. An error code is returned.
+ */
+- (int) deleteSamples;
+
+/*!
+  @method deleteSamplesAt:count:
+  @param  startFrame is an long.
+  @param  frameCount is an long.
+  @result Returns an int.
+  @discussion Deletes a range of samples from the Snd: <i>sampleCount</i>
+              samples are deleted starting with the <i>startSample</i>'th sample
+              (zero-based). The Snd must be editable and may become fragmented.
+ An error code is returned.
+ */
+- (int) deleteSamplesAt: (long) startFrame count: (long) frameCount;
+
+/*!
+  @method insertSamples:at:
+  @param  aSound is an id.
+  @param  startSample is an int.
+  @result Returns an int.
+  @discussion Pastes the sound data in <i>aSound</i> into the Snd receiving
+              this message, starting at the receiving Snd's <i>startSample</i>'th sample (zero-based).
+              The receiving Snd doesn't lose any of its original sound data - the samples greater than
+              or equal to <i>startSample</i> are moved to accommodate the inserted sound data. The receiving
+              Snd must be editable and the two Snds must be compatible (as determined by <b>isCompatible:</b>).
+              If the method is successful, the receiving Snd is fragmented. An error code is returned.
+ */
+- (int) insertSamples: (Snd *) aSnd at: (int) startSample;
+
+/*!
+  @method copySamples:
+  @param  aSound is an id.
+  @param startSamplein an int.
+  @param sampleCount is an int.
+  @result Returns an int.
+  @discussion Replaces the Snd's sampled data with a copy of a
+              portion of <i>aSound</i>'s data. The copied portion starts at
+              <i>aSound</i>'s <i>startSample</i>'th sample (zero-based) and
+              extends over <i>sampleCount</i> samples. The Snd receiving this
+              message must be editable and the two Snds must be compatible. If
+              the specified portion of <i>aSound</i> is fragmented, the Snd
+              receiving this message will also be fragmented. An error code is
+              returned.
+ */
+- (int) copySamples: (Snd *) aSnd at: (int) startSample count: (int) sampleCount;
+
+/*!
+  @method compactSamples
+  @result Returns an int.
+  @discussion The Snd's sampled data is compacted into a contiguous block,
+              undoing the fragmentation that can occur during editing. If the
+              Snd's data isn't fragmented (its format isn't SND_FORMAT_INDIRECT), then this method does
+              nothing. Compacting a large sound can take a long time;
+              keep in mind that when you copy a Snd to a pasteboard,
+              the object is automatically compacted before it's
+              copied. Also, the sound file representation of a Snd
+              contains contiguous data so there's no need to compact a
+              Snd before writing it to a sound file simply to ensure
+              that the file representation will be compact. An error
+              code is returned.  
+ */
+- (int) compactSamples;
+
+/*!
+  @method needsCompacting
+  @result Returns a BOOL.
+  @discussion Returns <b>YES</b> if the Snd's data is fragmented. Otherwise returns <b>NO</b>.
+ */
+- (BOOL) needsCompacting;
+
+/*!
+  @method fillAudioBuffer:toLength:samplesStartingFrom:
+  @abstract Copies samples from self into the provided SndAudioBuffer
+  @discussion The SndAudioBuffer's data object's size is decreased if less than fillLength number
+              of samples can be read. The buffer is not expanded.
+  @param buff The SndAudioBuffer object into which to copy the data.
+  @param fillLength The number of sample frames in the buffer to copy into.
+  @param sndReadingRange The sample frame in the Snd to start reading from and maximum length of samples readable.
+  @result Returns the number of sample frames read from the Snd instance in filling the audio buffer.
+          This can be more or less than the number requested, if resampling occurs.
+ */
+- (long) fillAudioBuffer: (SndAudioBuffer *) buff
+	        toLength: (long) fillLength
+          samplesInRange: (NSRange) sndReadingRange;
+
+/*!
+  @method insertIntoAudioBuffer:intoFrameRange:samplesInRange:
+  @abstract Copies samples from self into a sub region of the provided SndAudioBuffer.
+  @discussion If the buffer and the Snd instance have different formats, a format
+              conversion will be performed to the buffers format, including resampling
+              if necessary. The Snd audio data will be read enough to fill the range of samples
+              specified according to the sample rate of the buffer compared to the sample rate
+              of the Snd instance. In the case where there are less than the needed number of
+              samples left in the sndFrameRange to completely insert into the specified buffer region, the
+              number of samples inserted will be returned less than bufferRange.length.
+ @param buff The SndAudioBuffer object into which to copy the data.
+ @param bufferRange An NSRange of sample frames (i.e channel independent time position specified in samples)
+              in the buffer to copy into.
+ @param sndFrameRange An NSRange of sample frames (i.e channel independent time position specified in samples)
+              within the Snd to start reading data from and the last permissible index to read from.
+ @result Returns the number of samples actually inserted. This may be less than the length specified
+              in the bufferRange if sndStartIndex is less than the number samples needed to convert to
+              insert in the specified buffer region.
+ */
+- (long) insertIntoAudioBuffer: (SndAudioBuffer *) buff
+		intoFrameRange: (NSRange) bufferFrameRange
+		samplesInRange: (NSRange) sndFrameRange;
+
+/*!
+ @method insertAudioBuffer:intoFrameRange:
+ @abstract Copies in the given SndAudioBuffer into the Snd instance.
+ @param buffer The SndAudioBuffer to copy sound from.
+ @param writeIntoSndFrameRange The range of frames to copy. Can not be longer than the buffer.
+ @result Returns the new size of the buffer.
+ */
+- (long) insertAudioBuffer: (SndAudioBuffer *) buffer
+	    intoFrameRange: (NSRange) writeIntoSndFrameRange;
+
+/*!
+  @method appendAudioBuffer:
+  @abstract Appends the given SndAudioBuffer to the end of the Snd instance.
+  @param buffer The SndAudioBuffer to copy sound from.
+  @result Returns the new size of the buffer.
+ */
+- (long) appendAudioBuffer: (SndAudioBuffer *) buffer;
+
+/*!
+  @method audioBufferForSamplesInRange:looping:
+  @abstract Returns a SndAudioBuffer containing a range of samples in the Snd.
+  @param  sndFrameRange Range of sample <I>frames</I> (as opposed to individual single
+		        channel samples) to stick into the audioBuffer.
+  @param isLooping Indicates whether to read from the loop start if the length of the sndFrameRange exceeds
+                   the length of the Snd instance.
+  @result An SndAudioBuffer containing the samples in the range r.
+ */
+- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) sndFrameRange
+					  looping: (BOOL) isLooping;
+
+/*!
+  @method audioBufferForSamplesInRange:
+  @abstract Returns a SndAudioBuffer containing a range of samples in the Snd.
+  @param  r Range of sample <I>frames</I> (as opposed to individual single
+ 	    channel samples) to stick into the audioBuffer
+  @result An SndAudioBuffer containing the samples in the range r.
+ */
+- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) r;
+
+// TODO we have to export this for now while SndSoundStructs are still used.
+// This should be removed when an array of SndAudioBuffers is used instead.
+SndSoundStruct * _SndCopyFrag(const SndSoundStruct *fromSoundFrag);
 
 @end
 
