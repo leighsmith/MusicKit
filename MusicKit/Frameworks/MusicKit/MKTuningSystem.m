@@ -13,12 +13,16 @@
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University 
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.5  2000/10/01 06:41:30  leigh
+  Tightened function prototyping.
+
   Revision 1.4  2000/05/13 17:17:50  leigh
   Added MKPitchNameForKeyNum()
 
@@ -317,7 +321,7 @@ addAccidentalPitch(keyNumValue,name1,name2,oct1,oct2)
     pitchVars[keyNumValue] = obj1;
 }
 
-void _MKTuningSystemInit()
+void _MKTuningSystemInit(void)
     /* Sent by MKInit1() */
 {
     int i;
