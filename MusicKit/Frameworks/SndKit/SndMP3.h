@@ -19,6 +19,12 @@
 
   long          *frameLocations;
   long           frameLocationsCount;
+  double         duration;
+  long           sampleCount;
+  long           decodedSampledCount;
+  BOOL           bDecoding;
+
+  NSLock        *pcmDataLock;
 }
 
 - (void) dealloc;

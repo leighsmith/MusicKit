@@ -191,18 +191,22 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
     frameLocationsCount = 0;
     if (decoderLock == nil)
       decoderLock = [NSLock new];
+    pcmDataLock = [NSLock new];
+
   }
   return self;
 }
 
 - (int) sampleCount
 {
-  return [pcmData length] / (sizeof(short) * 2);
+// [pcmData length] / (sizeof(short) * 2);
+  return sampleCount; 
 }
 
 - (double) duration
 {
-  return [self sampleCount] / [self samplingRate];
+  return duration;
+//  return [self sampleCount] / [self samplingRate];
 }
 
 - (double) samplingRate
@@ -225,7 +229,84 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
     [pcmData release];
     pcmData = nil;
   }
+  if (pcmDataLock) {
+    [pcmDataLock release];
+    pcmDataLock = nil;
+  }
   [super dealloc];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// decodeThread
+////////////////////////////////////////////////////////////////////////////////
+
+- (void) decodeThread
+{
+  NSAutoreleasePool *localPool = [NSAutoreleasePool new];
+
+  int growSize = 44100 * 4;
+  int pcmSize  = growSize;
+  short pcm_l[10000], pcm_r[10000]; // conversion buffers
+  long mp3DataPos    = 0;
+  long mp3DataLength = [mp3Data length];
+  //    long length = 0;
+  long sams_created = 0;
+  long sams_created_total = 0;
+  unsigned char* mp3DataBytes = (unsigned char*) [mp3Data bytes];
+  //    long frameID = 0;
+
+  [decoderLock lock];
+  lame_decode_init();
+  
+  [pcmDataLock lock];
+  pcmData = [[NSMutableData alloc] initWithLength: pcmSize * sizeof(short) * 2];
+  [pcmDataLock unlock];
+  
+  while (mp3DataPos < mp3DataLength || sams_created > 0) {
+    int mp3FeedAmount = 417;
+    if (mp3DataPos + mp3FeedAmount > mp3DataLength)
+      mp3FeedAmount = mp3DataLength - mp3DataPos;
+
+    sams_created = lame_decode1(mp3DataBytes + mp3DataPos, mp3FeedAmount, pcm_l, pcm_r);
+    mp3DataPos += mp3FeedAmount;
+
+    [pcmDataLock lock];
+    if (sams_created > 0) {
+      while (sams_created_total + sams_created > pcmSize) {
+        pcmSize += growSize;
+        [pcmData setLength: pcmSize * sizeof(short) * 2];
+      }
+      {
+        short *pData = [pcmData mutableBytes]; // get fresh pointer in case resize moved our data
+        long i, pos = sams_created_total * 2;
+
+        for (i = 0; i < sams_created; i++) {
+          pData[pos++] = pcm_l[i];
+          pData[pos++] = pcm_r[i];
+        }
+      }
+    }
+    [pcmDataLock unlock];
+    sams_created_total  += sams_created;
+    decodedSampledCount += sams_created;
+#if SNDMP3_DEBUG_READING
+    printf("Decoded: %li/%li\n",decodedSampledCount,sampleCount);
+#endif    
+  }
+  sampleCount = decodedSampledCount;
+  [pcmDataLock lock];
+  [pcmData setLength: sams_created_total * sizeof(short) * 2];
+  duration = sams_created_total / 44100.0;
+  [pcmDataLock unlock];
+#if SNDMP3_DEBUG_READING
+  printf("Translated %li samples   pcmdata length: %i  time: %f\n",
+         sams_created_total, [pcmData length], -[startDate timeIntervalSinceNow]);
+#endif
+  
+  [decoderLock unlock];  
+  bDecoding = FALSE;
+  [localPool release];
+  [NSThread exit];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -235,70 +316,35 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 - (int) readSoundfile: (NSString*) filename
 {
   NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-  int growSize = 44100 * 4;
-  int pcmSize  = growSize;
 //  NSDate *startDate = [NSDate date];
   
   if (mp3Data) {
     [mp3Data release];
     mp3Data = nil;
   }
+  [pcmDataLock lock];
   if (pcmData) {
     [pcmData release];
     pcmData = nil;
   }
-  [decoderLock lock];
-  lame_decode_init();  
+  [pcmDataLock unlock];
   mp3Data = [[NSData alloc] initWithContentsOfMappedFile: filename]; // ho-ho, memory mapping! :)
 
   find_mp3_frame_headers(mp3Data, &frameLocations, &frameLocationsCount);
 
+  sampleCount = frameLocationsCount * 1152.0;
+  duration    = sampleCount / 44100.0;
+
+
 #if SNDMP3_DEBUG_READING
   printf("Found %li frames\n", frameLocationsCount);
 #endif  
-  pcmData = [[NSMutableData alloc] initWithLength: pcmSize * sizeof(short) * 2];
-  {
-    short pcm_l[10000], pcm_r[10000]; // conversion buffers
-    long mp3DataPos    = 0;
-    long mp3DataLength = [mp3Data length];
-//    long length = 0;
-    long sams_created = 0;
-    long sams_created_total = 0;
-    unsigned char* mp3DataBytes = (unsigned char*) [mp3Data bytes];
-//    long frameID = 0;
 
-    while (mp3DataPos < mp3DataLength || sams_created > 0) {
-      int mp3FeedAmount = 417;
-      if (mp3DataPos + mp3FeedAmount > mp3DataLength)
-        mp3FeedAmount = mp3DataLength - mp3DataPos;
-      
-      sams_created = lame_decode1(mp3DataBytes + mp3DataPos, mp3FeedAmount, pcm_l, pcm_r);
-      mp3DataPos += mp3FeedAmount;
-
-      if (sams_created > 0) {
-        while (sams_created_total + sams_created > pcmSize) {
-          pcmSize += growSize;
-          [pcmData setLength: pcmSize * sizeof(short) * 2];
-        }
-        {
-          short *pData = [pcmData mutableBytes]; // get fresh pointer in case resize moved our data
-          long i, pos = sams_created_total * 2;
-
-          for (i = 0; i < sams_created; i++) {
-            pData[pos++] = pcm_l[i];
-            pData[pos++] = pcm_r[i];
-          }
-        }
-      }
-      sams_created_total += sams_created;
-    }
-    [pcmData setLength: sams_created_total * sizeof(short) * 2];
-#if SNDMP3_DEBUG_READING
-    printf("Translated %li samples   pcmdata length: %i  time: %f\n",
-           sams_created_total, [pcmData length], -[startDate timeIntervalSinceNow]);
-#endif
-  }
-  [decoderLock unlock];
+   bDecoding = TRUE;
+ [NSThread detachNewThreadSelector: @selector(decodeThread)
+                           toTarget: self
+                         withObject: nil];
+  
   [localPool release];
   return SND_ERR_NONE;
 }
@@ -313,7 +359,10 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 // into memory.
 #if 1  
   int buffChans = [anAudioBuffer channelCount];
-  const short *pData = [pcmData bytes];
+  const short *pData = nil;
+
+  [pcmDataLock lock];
+  pData = [pcmData bytes];
   
   switch ([anAudioBuffer dataFormat]) {
     case SND_FORMAT_FLOAT:
@@ -334,6 +383,7 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
     default:
       NSLog(@"SndMP3::fillAudioBuffer - Urk 2");
   }
+  [pcmDataLock unlock];
 #endif
 
 #if 0
@@ -377,6 +427,15 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
 //  int   samSize       = 4; // hardcoded for 16 bit, 2 chans
 //  SndSoundStruct s;
 
+  long endIndex = r.length + r.location;
+
+  while (bDecoding && decodedSampledCount < endIndex)
+    sleep(1);
+
+#if SNDMP3_DEBUG_READING
+  printf("requested: [%li, %li] decoded: %li  %s\n",
+         r.location, endIndex, decodedSampledCount, decodedSampledCount > endIndex?"":"***");
+#endif
   [ab initWithFormat: SND_FORMAT_FLOAT
         channelCount: 2
         samplingRate: 44100
