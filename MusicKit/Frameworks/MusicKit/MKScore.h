@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.20  2002/03/06 07:54:33  skotmcdonald
+  Added method partNamed which returns the MKPart with a given info-note title
+
   Revision 1.19  2002/01/09 18:08:52  leighsmith
   Cleaned up headerdoc doco
 
@@ -888,6 +891,14 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 -writeMidifileStream:(NSMutableData *) aStream 
         firstTimeTag:(double) firstTimeTag
          lastTimeTag:(double) lastTimeTag;
+
+/*!
+  @method partNamed:
+  @param  partName
+  @result Returns an id to the part whose info note has an MK_title parameter
+   equal to partName, nil if it couldn't be found.
+*/
+- (MKPart*) partNamed: (NSString*) partTitle;
 
 @end
 
