@@ -72,6 +72,9 @@
 # MacOSX icon files
 *.icns			-k 'b'  -m 'COPY'
 
+# Glyphix, a MacOS-X structured diagram editor
+*.glyphix    		-k 'b'  -m 'COPY'
+
 # MusicKit stuff
 *.midi                  -k 'b'  -m 'COPY'
 *.dsp                   -k 'b'  -m 'COPY'
