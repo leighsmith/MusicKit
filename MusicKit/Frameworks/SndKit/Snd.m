@@ -1317,6 +1317,16 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return df;
 }
 
+- (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer*) buff
+{
+    if (buff == nil)
+	return FALSE;
+    else
+	return (soundStruct->dataFormat   == [buff dataFormat]  ) &&
+	       (soundStruct->channelCount == [buff channelCount]) &&
+	       (soundStruct->samplingRate == [buff samplingRate]);
+}
+
 - (int)setDataSize:(int)newDataSize
      dataFormat:(int)newDataFormat
      samplingRate:(double)newSamplingRate
@@ -1457,8 +1467,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     int   buffFrameSize = [buff frameSizeInBytes];
     NSRange bufferByteRange = { bufferStartIndex * buffFrameSize, sndSampleRange.length * buffFrameSize };
 
-    // TODO this test is insufficient, should use something similar to: [self hasSameFormatAsBuffer: buff]
-    if([buff dataFormat] != [self dataFormat] || [buff channelCount] != [self channelCount]) {
+    if(![self hasSameFormatAsBuffer: buff]) {
 	// If not the same, do a data conversion.
 	// NSLog(@"buffer to fill and sound mismatched in data formats %d vs. %d or channels %d vs. %d, converting",
 	// [buff dataFormat], [self dataFormat], [buff channelCount], [self channelCount]);

@@ -994,6 +994,15 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 - (int)dataFormat;
 
 /*!
+  @method hasSameFormatAsBuffer:
+  @param buff The SndAudioBuffer instance to compare.
+  @result Returns a BOOL.
+  @discussion Returns YES if the Snd's dataFormat, channelCount and sampling rate match the given SndAudioBuffer instance.
+              The number of samples are not compared.
+ */
+- (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer*) buff;
+
+/*!
   @method setDataSize:dataFormat:samplingRate:channelCount:infoSize:
   @param  newDataSize is an int.
   @param  newDataFormat is an int.
@@ -1180,7 +1189,9 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
   @abstract Copies samples from self into a sub region of the provided SndAudioBuffer.
   @discussion If the buffer and the Snd instance have different formats, a format
               conversion will be performed to the buffers format, including resampling
-              if necessary (TODO this is currently disabled).
+              if necessary. The Snd audio data will be read enough to fill the range of samples
+              specified according to the sample rate of the buffer compared to the sample rate
+              of the Snd instance.
   @param buff The SndAudioBuffer object into which to copy the data.
   @param bufferStartIndex The frame position (i.e the time position in samples) within the
                           buffer to start writing data at.
