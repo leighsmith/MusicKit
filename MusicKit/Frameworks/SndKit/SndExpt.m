@@ -140,7 +140,10 @@
         readAheadRange.location + readAheadRange.length <= playRegion.location + playRegion.length) {
       [readAheadLock lock];
       // damn, our play region is outside our cache zone. Throw ze buffers away!
-      if (cachedBuffer != nil)
+#if SERVER_DEBUG
+        NSLog(@"Jettisoning Buffer with location: %i play region %i", cachedBufferRange.location, playRegion.location);
+#endif
+        if (cachedBuffer != nil)
         [cachedBuffer release];
       cachedBuffer = nil;
       if (readAheadBuffer != nil)
@@ -210,6 +213,12 @@
       // woohoo! we are inside the cache...
       NSRange relativeRange = playRegion;
       relativeRange.location = playRegion.location - cachedBufferRange.location;
+#if SERVER_DEBUG
+      NSLog(@"Processing %@", [self filename]);
+      NSLog(@"Inside the cache (3) relativeRange: [%i, %i] playRegion: [%i, %i]", relativeRange.location, relativeRange.length,
+            playRegion.location, playRegion.length);
+      NSLog(@"cachedBufferRange: [%i, %i]",cachedBufferRange.location, cachedBufferRange.length);
+#endif
       if (relativeRange.location + relativeRange.length > cachedBufferRange.length)
         relativeRange.length = cachedBufferRange.length - relativeRange.location;
       [anAudioBuffer initWithBuffer: cachedBuffer range: relativeRange];
@@ -333,7 +342,7 @@ static SndExptAudioBufferServer *defaultServer = nil;
   [pendingJobsArray addObject: aJob];
   [pendingJobsArrayLock unlockWithCondition: SERVER_HAS_JOBS];
 #if SERVER_DEBUG              
-  NSLog(@"Added job");
+  NSLog(@"Added job for %@", [[aJob snd] filename]);
 #endif  
   return self;
 }
@@ -358,7 +367,7 @@ static SndExptAudioBufferServer *defaultServer = nil;
   [snd receiveRequestedBuffer: aBuffer];
   [aJob release];
 #if SERVER_DEBUG              
-  NSLog(@"Completed job");
+  NSLog(@"Completed job for %@", [[aJob snd] filename]);
 #endif  
 }
 
