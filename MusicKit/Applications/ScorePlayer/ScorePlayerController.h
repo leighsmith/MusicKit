@@ -14,8 +14,8 @@
 	id tooFastErrorMsg;
 	id editFileItem;
 	id saveAsFileItem;
-	id soundSavePanel;
-	id dspCommandsSavePanel;
+	IBOutlet NSPanel *soundSavePanel;
+	IBOutlet NSTextField *soundWriteMsg;
 	id NeXTDacMuteSwitch;
 	id NeXTDacVolumeSlider;
  	id timeCodeButton;
