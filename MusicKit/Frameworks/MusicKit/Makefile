@@ -11,7 +11,6 @@ NAME = MusicKit
 
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Framework
-LANGUAGE = English
 
 GLOBAL_RESOURCES = Localized.strings
 
@@ -21,16 +20,16 @@ CLASSES = ArielQP.m DSPSerialPortDevice.m MKConductor.m MKEnvelope.m\
           MKNoteReceiver.m MKNoteSender.m MKOrchestra.m MKPart.m\
           MKPartPerformer.m MKPartRecorder.m MKPartials.m\
           MKPartialsWaveshapingTable.m MKPatchTemplate.m MKPerformer.m\
-          MKSamples.m MKScore.m MKScorePerformer.m MKScoreRecorder.m\
-          MKScorefilePerformer.m MKScorefileWriter.m MKSynthData.m\
-          MKSynthInstrument.m MKSynthPatch.m MKTimbre.m\
-          MKTuningSystem.m MKUnitGenerator.m MKWaveTable.m\
-          OrchloopbeginUG.m _MKNameTable.m _MTCHelper.m\
+          MKSamplerInstrument.m MKSamples.m MKScore.m\
+          MKScorePerformer.m MKScoreRecorder.m MKScorefilePerformer.m\
+          MKScorefileWriter.m MKSynthData.m MKSynthInstrument.m\
+          MKSynthPatch.m MKTimbre.m MKTuningSystem.m MKUnitGenerator.m\
+          MKWaveTable.m OrchloopbeginUG.m _MKNameTable.m _MTCHelper.m\
           _OrchloopbeginUG.m _ParName.m _ScorefileVar.m\
           _SharedSynthInfo.m conversion.m midifile.m\
           noteRecorderCFuncs.m parseMidi.m parseScore.m time.m\
           tokenNames.m utilities.m writeBinary.m writeMidi.m\
-          writeScore.m MKSamplerInstrument.m
+          writeScore.m
 
 HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          EnvelopePrivate.h InstrumentPrivate.h MKConductor.h\
@@ -40,16 +39,17 @@ HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          MKNoteReceiver.h MKNoteSender.h MKOrchestra.h MKPart.h\
          MKPartPerformer.h MKPartRecorder.h MKPartials.h\
          MKPatchTemplate.h MKPerformer.h MKPerformerDelegate.h\
-         MKSamples.h MKScore.h MKScorePerformer.h MKScoreRecorder.h\
-         MKScorefilePerformer.h MKScorefileWriter.h MKSynthData.h\
-         MKSynthInstrument.h MKSynthPatch.h MKTimbre.h MKTuningSystem.h\
-         MKUnitGenerator.h MKWaveTable.h MidiPrivate.h MusicKit.h\
-         NotePrivate.h NoteReceiverPrivate.h OrchestraPrivate.h\
-         OrchloopbeginUG.h PartPerformerPrivate.h PartPrivate.h\
-         PartRecorderPrivate.h PartialsPrivate.h PatchTemplatePrivate.h\
-         PerformerPrivate.h ScorePerformerPrivate.h ScorePrivate.h\
-         ScoreRecorderPrivate.h ScorefilePerformerPrivate.h\
-         SynthDataPrivate.h SynthInstrumentPrivate.h SynthPatchPrivate.h\
+         MKSamplerInstrument.h MKSamples.h MKScore.h MKScorePerformer.h\
+         MKScoreRecorder.h MKScorefilePerformer.h MKScorefileWriter.h\
+         MKSynthData.h MKSynthInstrument.h MKSynthPatch.h MKTimbre.h\
+         MKTuningSystem.h MKUnitGenerator.h MKWaveTable.h MidiPrivate.h\
+         MusicKit.h NotePrivate.h NoteReceiverPrivate.h\
+         OrchestraPrivate.h OrchloopbeginUG.h PartPerformerPrivate.h\
+         PartPrivate.h PartRecorderPrivate.h PartialsPrivate.h\
+         PatchTemplatePrivate.h PerformerPrivate.h\
+         ScorePerformerPrivate.h ScorePrivate.h ScoreRecorderPrivate.h\
+         ScorefilePerformerPrivate.h SynthDataPrivate.h\
+         SynthInstrumentPrivate.h SynthPatchPrivate.h\
          TuningSystemPrivate.h UnitGeneratorPrivate.h _ArielQP.h\
          _DSPMK.h _MKNameTable.h _MKParameter.h _MTCHelper.h\
          _OrchloopbeginUG.h _ParName.h _ScorefileVar.h\
@@ -57,7 +57,7 @@ HFILES = ArielQP.h ConductorPrivate.h DSPSerialPortDevice.h\
          _noteRecorder.h _scorefile.h _time.h classFuncs.h dsp_types.h\
          dspwrap.h errors.h keynums.h midiTranslation.h midi_spec.h\
          midifile.h names.h noDVal.h orch.h params.h pitches.h\
-         scorefileObject.h timeunits.h tokens.h MKSamplerInstrument.h
+         scorefileObject.h timeunits.h tokens.h
 
 CFILES = sin.c fastFFT.c
 
@@ -92,9 +92,8 @@ FRAMEWORK_PATHS = -F$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\
                   -F$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\
                   -F$(HOME)//Library/Frameworks\
                   -F$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\
-                  -FC:/Local/Developer/Frameworks\
-                  -FC:/Apple/Local/Library/Frameworks\
-                  -F/Local/Library/Frameworks
+                  -F/Local/Library/Frameworks\
+                  -F$(HOMEDRIVE)$(LOCAL_DEVELOPER_LIB)/Frameworks
 FRAMEWORKS = -framework AppKit -framework dsp -framework Foundation\
              -framework MKPerformSndMIDI -framework SndKit\
              -framework System

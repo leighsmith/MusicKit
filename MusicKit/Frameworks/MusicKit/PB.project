@@ -26,6 +26,7 @@
             MKPartialsWaveshapingTable.m, 
             MKPatchTemplate.m, 
             MKPerformer.m, 
+            MKSamplerInstrument.m, 
             MKSamples.m, 
             MKScore.m, 
             MKScorePerformer.m, 
@@ -56,8 +57,7 @@
             utilities.m, 
             writeBinary.m, 
             writeMidi.m, 
-            writeScore.m, 
-            MKSamplerInstrument.m
+            writeScore.m
         ); 
         DOCUMENTATION = (); 
         FRAMEWORKS = (
@@ -75,9 +75,8 @@
             "$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework", 
             "$(HOME)//Library/Frameworks", 
             "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks", 
-            "C:\\Local\\Developer\\Frameworks", 
-            "C:\\Apple\\Local\\Library\\Frameworks", 
-            /Local/Library/Frameworks
+            /Local/Library/Frameworks, 
+            "$(HOMEDRIVE)$(LOCAL_DEVELOPER_LIB)/Frameworks"
         ); 
         HEADERSEARCH = (
             /Local/Users/leigh/Sources/Music/MusicKit/YellowBox/Frameworks/MusicKit_3.3_Headers
@@ -109,6 +108,7 @@
             MKPatchTemplate.h, 
             MKPerformer.h, 
             MKPerformerDelegate.h, 
+            MKSamplerInstrument.h, 
             MKSamples.h, 
             MKScore.h, 
             MKScorePerformer.h, 
@@ -173,8 +173,7 @@
             pitches.h, 
             scorefileObject.h, 
             timeunits.h, 
-            tokens.h, 
-            MKSamplerInstrument.h
+            tokens.h
         ); 
         LIBRARYSEARCH = (./); 
         OTHER_LIBS = (); 
