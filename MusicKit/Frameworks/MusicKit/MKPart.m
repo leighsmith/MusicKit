@@ -89,6 +89,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/03/31 00:10:33  leigh
+  Cleaned up splitNotes
+
   Revision 1.4  1999/09/20 03:15:48  leigh
   Added description method, removed disabled awake method
 
@@ -270,53 +273,53 @@ static void removeNote(MKPart *self,id aNote);
    * However, if an intervening noteOn or noteDur of the same tag
    * appears, the noteOff is not added (the noteDur is still converted
    * to a noteOn in this case).
-   * Returns the receiver, or \fBnil\fR if the receiver contains no Notes.
+   * Returns the receiver, or nil if the receiver contains no Notes.
    */
 {
-    register id aList,noteOff; //*el, *el2, *elEnd
-    int el,el2,elEnd; /*sb */
-    BOOL abort;
+    NSArray *aList;
+    MKNote *noteOff;
+    int noteIndex,el2,elEnd; /*sb */
+    BOOL matchFound;
     double timeTag;
     int noteTag;
-    unsigned n;
     IMP selfAddNote;
     if (!noteCount)
       return self;
-    aList = [self notes]; /* local copy of list */
+    aList = [self notes]; /* local copy of list (autoreleased) */
 
     elEnd = noteCount;
     selfAddNote = [self methodForSelector:@selector(addNote:)];
 #   define SELFADDNOTE(x) (*selfAddNote)(self, @selector(addNote:), (x))
 
-    for (el = 0, n = noteCount; n--; el++)
-        if ([AT(el) noteType] == MK_noteDur) {
-            noteOff = [AT(el) _splitNoteDurNoCopy];/* Split all noteDurs. */
+    for (noteIndex = 0; noteIndex < noteCount; noteIndex++) {
+        if ([AT(noteIndex) noteType] == MK_noteDur) {
+            noteOff = [AT(noteIndex) _splitNoteDurNoCopy];    /* Split all noteDurs. */
             noteTag = [noteOff noteTag];
             if (noteTag == MAXINT)              /* Add noteOff if no tag. */
                 SELFADDNOTE(noteOff);
             else {                /* Need to check for intervening Note. */
-                abort = NO;
+                matchFound = NO;
                 timeTag = [noteOff timeTag];
-                for (el2 = el + 1;
-                     (el2 < elEnd) && ([AT(el2) timeTag] <= timeTag);
-                     el2++)
-                    if ([AT(el2) noteTag] == noteTag)
+		// search for matching noteTag in the subsequent notes before the noteOff
+                for (el2 = noteIndex + 1; (el2 < elEnd) && ([AT(el2) timeTag] <= timeTag) && !matchFound; el2++) {
+                    if ([AT(el2) noteTag] == noteTag) {
                         switch ([AT(el2) noteType]) {
-                            case MK_noteOn:
-                            case MK_noteOff:
-                            case MK_noteDur:
-                                [noteOff release];
-                                el2  = elEnd;          /* Force break of loop. */
-                                abort = YES;          /* Forget it. */
-                                break;
-                            default:
-                                break;
-                         }
-                         if (!abort)                   /* No intervening notes. */
-                             SELFADDNOTE(noteOff);
-          }
-      }
-//    [aList release]; /*sb: unecessary as "notes" array returned is autoreleased */
+                        case MK_noteOn:
+                        case MK_noteOff:
+                        case MK_noteDur:
+                            [noteOff release];
+                            matchFound = YES;          /* Forget it. */
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                }
+                if (!matchFound)                   /* No intervening notes. */
+                    SELFADDNOTE(noteOff);
+            }
+        }
+    }
 #   undef SELFADDNOTE
     return self;
 }
@@ -340,7 +343,7 @@ static void removeNote(MKPart *self,id aNote);
 -addToScore:(id)newScore
   /* TYPE: Modifying
    * Removes the receiver from its present Score, if any, and adds it
-   * to \fInewScore\fR.  
+   * to newScore.  
    */
 {
     return [newScore addPart:self];
@@ -349,8 +352,8 @@ static void removeNote(MKPart *self,id aNote);
 -removeFromScore
   /* TYPE: Modifying
    * Removes the receiver from its present Score.
-   * Returns the receiver, or \fBnil\fR if it isn't part of a Score.
-   * (Implemented as \fB[score removePart:self]\fR.)
+   * Returns the receiver, or nil if it isn't part of a Score.
+   * (Implemented as [score removePart:self].)
    */
 {
     return [score removePart:self];
@@ -372,7 +375,7 @@ static void removeNote(MKPart *self,id aNote);
    *
    * Sent by the superclass upon creation;
    * You never invoke this method directly.
-   * An overriding subclass method should send \fB[super initialize]\fR
+   * An overriding subclass method should send [super initialize]
    * before setting its own defaults. 
    */
 {
@@ -572,7 +575,7 @@ static int findAtOrBeforeTime(MKPart *self,double lastTimeTag)
 
 -addNote:aNote
   /* TYPE: Editing
-   * Removes \fIaNote\fR from its present Part, if any, and adds it
+   * Removes aNote from its present Part, if any, and adds it
    * to the receiver.  aNote must be a Note.
    * Returns the old Part, if any.
    */
@@ -593,7 +596,7 @@ static int findAtOrBeforeTime(MKPart *self,double lastTimeTag)
 
 -addNoteCopy:aNote
   /* TYPE: Editing
-   * Adds a copy of \fIaNote\fR
+   * Adds a copy of aNote
    * to the receiver.  
    * Returns the new Note.
    */
@@ -614,8 +617,8 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 -removeNote:aNote
   /* TYPE: Editing
-   * Removes \fIaNote\fR from the receiver.
-   * Returns the removed Note or \fBnil\fR if not found.
+   * Removes aNote from the receiver.
+   * Returns the removed Note or nil if not found.
    * You shouldn't free the removed Note if
    * there are any active Performers using the receiver.
    * 
@@ -650,7 +653,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 - removeNotes:aList
   /* TYPE: Editing
    * Removes from the receiver all Notes common to the receiver
-   * and \fIaList\fR. 
+   * and aList. 
    * Returns the receiver.
    */
 { 
@@ -670,9 +673,9 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 - addNoteCopies:aList timeShift:(double) shift     
   /* TYPE: Editing
-   * Copies the Notes in \fIaList\fR, shifts the copies'
-   * timeTags by \fIshift\fR beats, and then adds them
-   * to the receiver.  \fIaList\fR isn't altered.
+   * Copies the Notes in aList, shifts the copies'
+   * timeTags by shift beats, and then adds them
+   * to the receiver.  aList isn't altered.
    * aList should contain only Notes.
    * Returns the receiver.
    */
@@ -704,9 +707,9 @@ static void removeNote(MKPart *self, MKNote *aNote)
 -addNotes:aList timeShift:(double) shift
   /* TYPE: Editing
    * aList should contain only Notes.
-   * For each Note in \fIaList\fR, removes the Note
+   * For each Note in aList, removes the Note
    * from its present Part, if any, shifts its timeTag by
-   * \fIshift\fR beats, and adds it to the receiver.
+   * shift beats, and adds it to the receiver.
    * 
    * Returns the receiver. 
    */
@@ -809,7 +812,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 - firstTimeTag:(double) firstTimeTag lastTimeTag:(double) lastTimeTag 
   /* TYPE: Querying the object
    * Creates and returns a List containing the receiver's Notes
-   * between \fIfirstTimeTag\fR and \fIlastTimeTag\fR in time order.
+   * between firstTimeTag and lastTimeTag in time order.
    * The notes are not copied. This method is useful in conjunction with
    * addNotes:timeShift:, removeNotes:, etc.
    */
@@ -843,7 +846,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 -(BOOL)containsNote:aNote
   /* TYPE: Querying
-   * Returns \fBYES\fR if the receiver contains \fIaNote\fR.
+   * Returns YES if the receiver contains aNote.
    */
 {
     return [aNote part] == self;
@@ -851,7 +854,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 -(BOOL)isEmpty
   /* TYPE: Querying
-   * Returns \fBYES\fR if the receiver contains no Notes.
+   * Returns YES if the receiver contains no Notes.
    */
 {
     return (noteCount == 0);
@@ -859,7 +862,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 - atTime:(double) timeTag
   /* TYPE: Accessing Notes
-   * Returns the first Note found at time \fItimeTag\fR, or \fBnil\fR if 
+   * Returns the first Note found at time timeTag, or nil if 
    * no such Note.
    * Doesn't copy the Note.
    */
@@ -877,8 +880,8 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 -atOrAfterTime:(double)timeTag
   /* TYPE: Accessing Notes
-   * Returns the first Note found at or after time \fItimeTag\fR, 
-   * or \fBnil\fR if no such Note. 
+   * Returns the first Note found at or after time timeTag, 
+   * or nil if no such Note. 
    * Doesn't copy the Note.
    */
 {
@@ -891,7 +894,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 - nth:(unsigned) n
   /* TYPE: Accessing Notes
-   * Returns the \fIn\fRth Note (0-based), or \fBnil\fR if no such Note.
+   * Returns the nth Note (0-based), or nil if no such Note.
    * Doesn't copy the Note. */
 {
     sortIfNeeded(self);
@@ -900,8 +903,8 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 -atOrAfterTime:(double)timeTag nth:(unsigned) n 
   /* TYPE: Accessing Notes
-   * Returns the \fIn\fRth Note (0-based) at or after time \fItimeTag\fR,
-   * or \fBnil\fR if no such Note. 
+   * Returns the nth Note (0-based) at or after time timeTag,
+   * or nil if no such Note. 
    * Doesn't copy the Note.
    */
 {
@@ -924,8 +927,8 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 -atTime:(double)timeTag nth:(unsigned) n
   /* TYPE: Accessing Notes
-   * Returns the \fIn\fRth Note (0-based) at time \fItimeTag\fR,
-   * or \fBnil\fR if no such Note. 
+   * Returns the nth Note (0-based) at time timeTag,
+   * or nil if no such Note. 
    * Doesn't copy the Note.
    */
 {
@@ -939,9 +942,9 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 -next:aNote  
   /* TYPE: Accessing Notes
-   * Returns the Note immediately following \fIaNote\fR, or \fBnil\fR
+   * Returns the Note immediately following aNote, or nil
    * if no such Note.  (A more efficient procedure is to create a
-   * List with \fBnotes\fR and then step down the List using NX_ADDRESS().
+   * List with notes and then step down the List using NX_ADDRESS().
    */
 /* sb: returns note that is retained and autoreleased, so the receiving method
  * does not have to dispose of it. If it needs to  keep a copy, it must take
