@@ -420,52 +420,62 @@ env = [MKEnvelope new];              /* or alloc/init in 2.0 */
       <TITLE>Example (review)</TITLE>
     
       <PROGRAMLISTING>
-#import &lt;musickit/musickit.h&gt;
-#import &lt;musickit/synthpatches/synthpatches.h&gt;
-Note *aNote;
-Part *aPart;
-Score *aScore;
-Envelope *env;	
+#import &lt;MusicKit/MusicKit.h&gt;
+#import &lt;MKSynthPatches/MKSynthPatches.h&gt;
+MKNote *aNote;
+MKPart *aPart;
+MKScore *aScore;
+MKEnvelope *env;
+	
 double times[] = {0,0.1,2.1,2.7,3.0};
 double values[] = {0,1,0.5,0.1,0};
-aScore = [[Score alloc] init];	
-aPart = [[Part alloc] init];	
-aNote = [[Note alloc] init];	
-env = [[Envelope alloc] init];
-[env setPointCount:5 xArray:times yArray:values];	
-[env setStickPoint:2]; 	
-[aNote setPar:MK_ampEnv toEnvelope:env];	
-[aNote setPar:MK_freq toDouble:440.0];
-[aNote setTimeTag:1.0]; /* Play after 1 beat */	
-[aNote setDur:1.0];          /* Duration is 1 beat */	
-[aScore addPart:aPart];	
-[aPart addNote:aNote];	
-aNote = [[Note alloc] init];      /* Another Note for info */
-[aNote setPar:MK_synthPatch toString:"Wave1i"];
-[aPart setInfo:aNote];
-[aScore writeScorefile:"test.score"];
-system("playscore test.score");    /* We'll show how to do this in the
-	    program later. */
+aScore = [[MKScore alloc] init];	
+aPart = [[MKPart alloc] init];	
+aNote = [[MKNote alloc] init];	
+env = [[MKEnvelope alloc] init];
+[env setPointCount: 5 xArray: times yArray: values];	
+[env setStickPoint: 2]; 	
+[aNote setPar: MK_ampEnv toEnvelope: env];
+[aNote setPar: MK_freq toDouble: 440.0];
+[aNote setTimeTag: 1.0];            /* Play after 1 beat */	
+[aNote setDur: 1.0];                /* Duration is 1 beat */	
+[aScore addPart: aPart];	
+[aPart addNote: aNote];	
+aNote = [[MKNote alloc] init];      /* Another Note for info */
+[aNote setPar: MK_synthPatch toString: @"Wave1i"];
+[aPart setInfo: aNote];
+[aScore writeScorefile: @"test.score"];
+system("playscore test.score");    /* We'll show how to do this in the program later. */
     </PROGRAMLISTING>
   </SECT1>
   
   <SECT1 ID="Assignment">
     <TITLE>Assignment - Week 2</TITLE>
 
-      <PARA>1. Do <APPLICATION>Interface Builder</APPLICATION> example
-      (MusicKitClass/example2.wn).</PARA>
+      <ORDEREDLIST>
+	<LISTITEM>
+	  <PARA>Do <APPLICATION>Interface Builder</APPLICATION> example
+	    (MusicKitClass/example2.wn).
+	  </PARA>
+	</LISTITEM>
       
-      <PARA>2. Create an <APPLICATION>Interface Builder</APPLICATION> program
-	that creates a <CLASSNAME>MKScore</CLASSNAME> algorithmically (based
-	on user input), writes a scorefile, and invokes playscore by </PARA>
+	<LISTITEM>
+	  <PARA>Create an <APPLICATION>Interface Builder</APPLICATION> program
+	    that creates a <CLASSNAME>MKScore</CLASSNAME> algorithmically (based
+	    on user input), writes a scorefile, and invokes playscore by:</PARA>
+
+	  <PROGRAMLISTING>
+system("playscore test.score");
+	  </PROGRAMLISTING>
       
-      <PARA>system("playscore test.score");</PARA>
-      
-      <PARA>Use MusicKitClass/example3/ as an example.  In a few weeks, we'll
-	show you how to play the score directly from Objective-C.
-      </para>
+	  <PARA>Use <FILENAME>Examples/example3</FILENAME> as an
+	example.  In a few weeks, we'll show you how to play the score
+	directly from Objective-C.
+	  </PARA>
+	</LISTITEM>
+      </ORDEREDLIST>
     </SECT1>
-</CHAPTER>
+  </CHAPTER>
     
 <!-- Keep this comment at the end of the file
 Local variables:
