@@ -4,22 +4,22 @@
   HEADER FILES: MusicKit.h
 
   Description:
-    A SynthPatch contains a List of unit generators which behave as
+    A MKSynthPatch contains a NSArray of unit generators which behave as
     a functional unit.
-    SynthPatches are not created by the application. Rather, they
-    are created by the Orchestra. The Orchestra is also
-    responsible for filling the SynthPatch instance with UnitGenerator and
-    SynthData instances. It does this on the basis of a template provided by the
-    SynthPatch class method +patchTemplate. The subclass designer implements
-    this method to provide a PatchTemplate which specifies what the mix of
-    UnitGenerators and SynthData objects should
+    MKSynthPatches are not created by the application. Rather, they
+    are created by the MKOrchestra. The MKOrchestra is also
+    responsible for filling the MKSynthPatch instance with MKUnitGenerator and
+    MKSynthData instances. It does this on the basis of a template provided by the
+    MKSynthPatch class method +patchTemplate. The subclass designer implements
+    this method to provide a MKPatchTemplate which specifies what the mix of
+    MKUnitGenerators and MKSynthData objects should
     be, in what order it should be allocated, and how to connect them up.
-    (See PatchTemplate.)
-    The SynthPatch instance, thus, is List
-    containing the UnitGenerators and SynthData objects in the order they were
-    specified in the template and connected as specified in the temlate.
+    (See MKPatchTemplate.)
+    The MKSynthPatch instance, thus, is an NSArray containing the MKUnitGenerators
+    and MKSynthData objects in the order they were specified in the template and
+    connected as specified in the template.
 
-    SynthPatches can be in one of three states:
+    MKSynthPatches can be in one of three states:
     MK_running
     MK_finishing
     MK_idle
@@ -28,12 +28,11 @@
     (creation), noteOn, noteOff, noteUpdate and end-of-note (noteEnd) times, as
     described below.
 
-    SynthPatches are ordinarilly used in conjunction with a Conducted
-    performance
-    by using a SynthInstrument. The SynthInstrument manages the allocation
-    of SynthPatches in response to incoming Notes. Alternatively, SynthPatches
+    MKSynthPatches are ordinarily used in conjunction with a Conducted
+    performance by using a MKSynthInstrument. The MKSynthInstrument manages the allocation
+    of MKSynthPatches in response to incoming MKNotes. Alternatively, MKSynthPatches
     may be used in a stand-alone fashion. In this case, you must allocate the
-    SynthPatch by sending the Orchestra the -allocSynthPatch: or
+    MKSynthPatch by sending the MKOrchestra the -allocSynthPatch: or
     allocSynthPatch:patchTemplate: method.
 
   Original Author: David A. Jaffe
@@ -41,11 +40,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.8  2000/11/25 22:37:52  leigh
+  Enabled NSBundle loading within findSynthPatchClass:
+
   Revision 1.7  2000/07/22 00:32:21  leigh
   Minor doco and typing cleanups.
 
@@ -1101,32 +1104,33 @@ static BOOL tryIt(NSString **filename,NSString *extension,NSString *name,int add
     //open([*filename cString],O_RDONLY,PERMS); 
 }
 
-static BOOL findClass(NSString *name, NSString **filename)
-    /* Returns fd or -1 if failure. Assumes name is non-NULL. */
+static NSString *findFilenameForClassname(NSString *name)
+    /* Returns filename or nil if failure. Assumes name is non-NULL. */
 {
     BOOL ok;
     NSString *p;
+    NSString *filename;
     int addExt = 0;
-    if (![[name pathExtension] isEqualToString:SYNTHPATCH_EXTENSION])
+    if (![[name pathExtension] isEqualToString: SYNTHPATCH_EXTENSION])
       addExt = 1;
-    ok = tryIt(filename,SYNTHPATCH_EXTENSION,name,addExt,nil,nil);
+    ok = tryIt(&filename, SYNTHPATCH_EXTENSION, name, addExt, nil, nil);
     if (ok) 
-      return ok;
+      return filename;
     if (![name isAbsolutePath]) { /* There's hope */
         if ((p = NSHomeDirectory())) {
-            ok = tryIt(filename,SYNTHPATCH_EXTENSION,name,addExt,p,HOME_SYNTHPATCH_DIR);
+            ok = tryIt(&filename, SYNTHPATCH_EXTENSION, name, addExt, p, HOME_SYNTHPATCH_DIR);
 	    if (ok) 
-	      return ok;
+	      return filename;
 	}
 	
-        ok = tryIt(filename,SYNTHPATCH_EXTENSION,name,addExt,LOCAL_SYNTHPATCH_DIR,nil);
+        ok = tryIt(&filename, SYNTHPATCH_EXTENSION, name, addExt, LOCAL_SYNTHPATCH_DIR, nil);
 	if (ok) 
-	  return ok;
+	  return filename;
     }
-    return ok;
+    return filename;
 }
 
-static id getClassWithoutWarning(NSString *clname)
+static Class getClassWithoutWarning(NSString *clname)
 /* sb: checks all loaded classes to see if we have the named class. Surely NSClassFromString()
  * would do exactly the same thing? (I've tried it for a couple of examples in gdb, and appears
  * to have the desired behaviour)
@@ -1136,30 +1140,33 @@ static id getClassWithoutWarning(NSString *clname)
 }
 
 + findSynthPatchClass:(NSString *)className
+    /* The user can load in arbitrary bundles. */
 {
-    /* sb: at present this just loads .o files. FIXME I need to add NSBundle support, so the
-     * user can load in arbitrary bundles.
-     */
-    BOOL ok;
     NSString *filename;
-    const char *modules[2];
-    id classObj;
-    classObj = getClassWithoutWarning(className);
-    if (classObj)
-	return classObj;
-    ok = findClass(className,&filename);
-    if (!ok) 
+//    const char *modules[2];
+    NSBundle *bundleToLoad;
+    Class loadedClass;
+    
+    loadedClass = getClassWithoutWarning(className);
+    if (loadedClass != nil)
+	return loadedClass;
+    filename = findFilenameForClassname(className);
+    if (filename == nil) 
 	return nil;
-    modules[0] = [filename cString];
-    modules[1] = '\0';
+//    modules[0] = [filename cString];
+//    modules[1] = '\0';
     /*sb: because of difficulties with ErrorStreams, I have removed the error reporting from
      * this function. Unfortunate, as it will be difficult to diagnose loading errors now.
      */
 //    if (objc_loadModules(modules,MKErrorStream(),NULL,NULL,NULL))
-    if (objc_loadModules(modules,NULL,NULL,NULL,NULL)) 
-	return nil;
-//    return objc_getClass(className);
-    return NSClassFromString(className);
+//    if (objc_loadModules(modules,NULL,NULL,NULL,NULL)) 
+//	return nil;
+//    return NSClassFromString(className);
+    bundleToLoad = [NSBundle bundleWithPath: filename];
+    if ((loadedClass = [bundleToLoad classNamed: className]) != nil)
+        return loadedClass;
+    else
+        return nil;
 }
 
 @end
