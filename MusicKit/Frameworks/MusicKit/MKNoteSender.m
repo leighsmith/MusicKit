@@ -108,12 +108,14 @@ Modification history prior to commit to CVS:
     if (isSending)
 	NSLog(@"Assertion failed: attempting to dealloc while MKNoteSender %@ is sending %d\n", self, isSending);
     
-    if (noteReceivers) {
+    if (noteReceivers != nil) {
+	// NSLog(@"in MKNoteSenders dealloc disconnecting all receivers %p\n", noteReceivers);
 	[self disconnectAllReceivers];
 	[noteReceivers release];
 	noteReceivers = nil;
     }
     [dataObject release];
+    dataObject = nil;
     // We don't release the owner since it is a weak reference.
     // Also removes the name, if any, from the name table. TODO check if appropriate to do here.
     MKRemoveObjectName(self);
@@ -162,42 +164,30 @@ Modification history prior to commit to CVS:
 
 - (void) disconnectAllReceivers
 {
-    if (noteReceivers) /* This can happen if you use finishUnarchiving to replace a MKNoteSender */
-        [noteReceivers removeAllObjects];
+    /* This can happen if you use finishUnarchiving to replace a MKNoteSender */
+    if (noteReceivers != nil) {
+	// causes a release of each element in the noteReceivers NSArray. dealloc in each noteReceiver
+	// must not then disconnect senders as this will cause a release cycle.
+	[noteReceivers removeAllObjects];
+    }
 }
 
-/* Sending; Sends aNote at beat time of the performance.
-* Schedules a request (with aNote's MKConductor) for 
-* sendNote:aNote to be sent to the receiver at time
-* time, measured in beats from the beginning of the
-* performance.
-* Returns the receiver.
-* 
-* Keep in mind that the connection set may change between the time that
-* this message is received and the time that the sendNote:
-* message is sent.
-*/
-- sendNote: (MKNote *) aNote atTime: (double) time
+/* Keep in mind that the connection set may change between the time that
+ * this message is received and the time that the sendNote:
+ * message is sent.
+ */
+- (void) sendNote: (MKNote *) aNote atTime: (double) time
 {	
     [[aNote conductor] sel: @selector(sendNote:) to: self atTime: time argCount: 1, aNote];
-    return self;
 }
 
-/* Sending; Sends aNote after deltaT beats.
-* Schedules a request (with aNote's Conductor) for 
-* sendNote:aNote to be sent to the receiver at time
-* deltaT measured in beats
-* from the time this message is received.
-* Returns the receiver.
-*
-* Keep in mind that the connection set may change between the time that
-* this message is received and the time that the sendNote:
-* message is sent.
-*/
-- sendNote: (MKNote *) aNote withDelay: (double) deltaT
+/* Keep in mind that the connection set may change between the time that
+ * this message is received and the time that the sendNote:
+ * message is sent.
+ */
+- (void) sendNote: (MKNote *) aNote withDelay: (double) deltaT
 {
     [[aNote conductor] sel: @selector(sendNote:) to: self withDelay: deltaT argCount: 1, aNote];
-    return self;
 }
 
 /* Sends the specifed note, delayed by delayTime from the
@@ -236,12 +226,12 @@ the note's MKConductor for time coordination. Then free the note. */
     if (![self connectionCount])
 	return self;
     if (_ownerIsAPerformer)
-	[aNote _setPerformer:owner];
+	[aNote _setPerformer: owner];
     isSending++;
     if(!isSquelched)
 	[noteReceivers makeObjectsPerformSelector: @selector(receiveNote:) withObject: aNote];
     if (_ownerIsAPerformer)
-	[aNote _setPerformer:nil];
+	[aNote _setPerformer: nil];
     isSending--;
     return (isSquelched) ? nil : self;
 }
@@ -256,7 +246,7 @@ the note's MKConductor for time coordination. Then free the note. */
     unsigned int noteReceiverIndex;
     MKNoteSender *newObj = NSCopyObject(self, 0, zone);
     
-    newObj->noteReceivers = [NSMutableArray arrayWithCapacity: [noteReceivers count]];
+    newObj->noteReceivers = [[NSMutableArray arrayWithCapacity: [noteReceivers count]] retain];
     for (noteReceiverIndex = 0; noteReceiverIndex < [noteReceivers count]; noteReceiverIndex++) {
         [newObj connect: [noteReceivers objectAtIndex: noteReceiverIndex]];
     }
