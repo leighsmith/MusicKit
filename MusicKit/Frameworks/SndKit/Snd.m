@@ -169,9 +169,9 @@ static int ioTags = 1000;
   self = [self init];
   if (soundStruct == NULL)
     if (!(soundStruct = malloc(sizeof(SndSoundStruct))))
-      [[NSException exceptionWithName:@"Sound Error"
-                               reason:@"Can't allocate memory for Snd class"
-                             userInfo:nil] raise];
+      [[NSException exceptionWithName: @"Sound Error"
+                               reason: @"Can't allocate memory for Snd class"
+                             userInfo: nil] raise];
 
   // TODO _why_ do we still have file format specific data in Snd???? History is the only reason,
   // it should eventually be removed now we use Sox for File I/O.
@@ -196,9 +196,9 @@ static int ioTags = 1000;
   self = [self init];
   if (soundStruct == NULL)
     if (!(soundStruct = malloc(sizeof(SndSoundStruct))))
-      [[NSException exceptionWithName:@"Sound Error"
-                               reason:@"Can't allocate memory for Snd class"
-                             userInfo:nil] raise];
+      [[NSException exceptionWithName: @"Sound Error"
+                               reason: @"Can't allocate memory for Snd class"
+                             userInfo: nil] raise];
 
   soundStruct->magic        = SND_MAGIC; // _why_ do we still have bloody file format specific data in Snd???? Grrrr.
   soundStruct->dataLocation = 0;
@@ -612,7 +612,7 @@ int endFun(SndSoundStruct *sound, int tag, int err)
      * here, whether or not it was used. Generally it's used for real-time
      * rate conversion for playback. (maybe recording etc too???)
      */
-    err = SNDUnreserve(3);
+    err = SNDTerminate(3);
     if(err) {
         NSLog(@"Unreserving error %d\n", err);
     }
@@ -739,7 +739,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     // the same soundStruct is used every time the sound is played, so we use the tag to differentiate.
     // We use an NSDictionary rather than a HashTable for strict OpenStep support.
     [playRecTable setObject: self forKey: [NSNumber numberWithInt: tag]];
-    err = SNDUnreserve(3);
+    err = SNDTerminate(3);
     if(err) {
         NSLog(@"Unreserving error %d\n", err);
     }
@@ -806,6 +806,8 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return SND_ERR_NONE;
 }
 
+// TODO this should probably become:
+// samplesProcessedOfPerformance: (SndPerformance *) performance
 - (int) samplesProcessed
 {
 #if !MKPERFORMSND_USE_STREAMING
@@ -819,6 +821,8 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (int) status
 {
+    // TODO We should compute the status by interogating any performances the
+    // Snd instance currently has, rather than storing in a variable.
     return status;
 }
 
@@ -1136,11 +1140,11 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (int) convertToNativeFormat
 {
-    SndSoundStruct nativeFormat;
+    SNDStreamBuffer nativeFormat;
 
     SNDStreamNativeFormat(&nativeFormat);
     return [self convertToFormat: nativeFormat.dataFormat
-                    samplingRate: nativeFormat.samplingRate
+                    samplingRate: nativeFormat.sampleRate
                     channelCount: nativeFormat.channelCount];
 }
 
@@ -1438,7 +1442,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
   memcpy(&s, soundStruct, sizeof(SndSoundStruct));
   s.dataSize = lengthInBytes;
-  [ab initWithFormat: &s data: dataPtr];
+  [ab initWithSoundStruct: &s data: dataPtr];
 
   return [ab autorelease];
 }
