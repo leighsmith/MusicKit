@@ -1,6 +1,6 @@
-/* This class is a NoteFilter that generates echoes and sends them to 
-   its successive NoteSenders. In MidiEcho, we connect the NoteSenders to 
-   the NoteReceivers of Midi, thus producing MIDI echoes on successive
+/* This class is a MKNoteFilter that generates echoes and sends them to 
+   its successive MKNoteSenders. In MidiEcho, we connect the MKNoteSenders to 
+   the MKNoteReceivers of MKMidi, thus producing MIDI echoes on successive
    MIDI channels. To use this app, you need to have a MIDI synthesizer that
    can receive on multiple channels, such as the Yamaha SY77 or FB01.
  */
