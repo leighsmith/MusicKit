@@ -1,19 +1,47 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
+
+  Description:
+    MKNoteSender provides a mechanism for broadcasting
+    MKNote objects during a MusicKit performance.
+
+    [aNoteSender connect:aNoteReceiver]
+
+    A connection can be any object that implements the method receiveNote:.
+    In a typical Music Kit performance, the connection set consists
+    exclusively of MKNoteReceivers which are owned by MKNoteFilters and MKInstruments.
+
+    MKNoteSender's sendNote: method defines the Note-sending
+    mechanism:  when a MKNoteSender receives the message sendNote:aNote,
+    it forwards the argument (a MKNote object) by sending the 
+    message receiveNote:aNote to each of its connections.
+    Similarly, an arbitrary message with two optional arguments
+    can be sent to the connections through one of the elementsPerform:
+    methods.
+
+    MKPerformers usually send sendNote: to self as part of their
+    perform: method and MKNoteFilter sends the message
+    from its receiveNote: method.
+  
+    You can squelch a MKNoteSender by sending it the squelch message.
+    A squelched MKNoteSender suppresses
+    messages that it would otherwise send to its connections.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University  
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  2000/02/07 23:43:03  leigh
+  Comment corrections
+
   Revision 1.2  1999/07/29 01:16:38  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -29,42 +57,6 @@ Modification history:
 #import "MKNoteSender.h"
 
 @implementation MKNoteSender:NSObject
-/* MKNoteSender provides a mechanism for broadcasting
- * Note objects during a Music Kit performance.
- *
- * [aNoteSender connect:aNoteReceiver]
- *
- * A connection can be any object that implements
- * the method receiveNote:.
- * In a typical Music Kit performance, the connection set consists
- * exclusively of NoteReceivers which are owned by NoteFilters and Instruments.
- *
- * MKNoteSender's sendNote: method defines the Note-sending
- * mechanism:  when a MKNoteSender receives the message sendNote:aNote,
- * it forwards the argument (a Note object)
- * by sending the message receiveNote:aNote
- * to each of its connections.  
- * Similarly, an arbitrary message with two optional arguments
- * can be sent to the connections through one of the elementsPerform:
- * methods.
- *
- * Performers usually send sendNote: to self as part of their
- * perform: method and NoteFilter sends the message 
- * from its receiveNote: method.
- *
- * You can squelch a MKNoteSender by sending it the squelch message.
- * A squelched MKNoteSender suppresses 
- * messages that it would otherwise send to its connections.
- *
- */
-{
-    NSMutableArray *noteReceivers;    /* Array of NoteReceivers */
-    BOOL isSquelched;     /* YES if the object is currently squelched. */
-    id owner;             /* NoteFilter or Performer owning this object. */
-    void *_myData;
-    BOOL _ownerIsAPerformer;
-    short isSending;
-}			
 
 #define VERSION2 2
 

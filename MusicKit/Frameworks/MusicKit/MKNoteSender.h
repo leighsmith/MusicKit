@@ -1,10 +1,59 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    During a MusicKit performance, MKPerformer objects perform MKNotes by
+    sending them to one or more MKInstrument objects.  The MKNoteSender class
+    defines the MKNote-sending mechanism used by MKPerformers; each MKNoteSender
+    object acts as a MKNote output for a MKPerformer.  Closely related to
+    MKNoteSender is the MKNoteReceiver class, which defines the MKNote-receiving
+    mechanism used by MKInstruments.  By separating these mechanisms into
+    distinct classes, any MKPerformer can have multiple outputs and any
+    MKInstrument, multiple inputs.
+
+    A MKNoteSender is added to a MKPerformer through the latter's
+    addNoteSender: method.  While you can create and add MKNoteSenders
+    yourself, this is typically done automatically by the MKPerformer when
+    it's created.  You can retrieve the object to which a MKNoteSender has
+    been added by invoking MKNoteSender's owner method.
+
+    To send Notes from a MKNoteSender to a MKNoteReceiver, the two objects must be
+    connected.  This is done through the connect: method:
+   
+   	[aNoteSender connect:aNoteReceiver]
+
+    Every MKNoteSender and MKNoteReceiver contains a list of connections.  The
+    connect: method adds either object to the other's list; in other
+    words, the MKNoteReceiver is added to the MKNoteSender's list and the
+    MKNoteSender is added to the MKNoteReceiver's list.  Both MKNoteReceiver and
+    MKNoteSender implement connect: as well as disconnect: and disconnect,
+    methods used to sever connections.  A MKNoteReceiver can be connected to
+    any number of MKNoteSenders.  Connections can be established and severed
+    during a performance.
+
+    MKNoteSender's sendNote: method defines the MKNote-sending mechanism.
+    When a MKNoteSender receives the message sendNote:aNote, it forwards the
+    MKNote object argument to its MKNoteReceivers by sending each of them the
+    message receiveNote:aNote.  sendNote: is invoked when the MKNoteSender's
+    owner performs (or, for MKNoteFilter, when it realizes) a MKNote.  You can
+    toggle a MKNoteSender's Note-sending capability through the squelch and
+    unsquelch methods; a MKNoteSender won't send any MKNotes while it's
+    squelched.  A newly created MKNoteSender is unsquelched.
+   
+    CF:  MKNoteReceiver, MKPerformer, MKNoteFilter
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
   $Log$
+  Revision 1.3  2000/02/07 23:43:03  leigh
+  Comment corrections
+
   Revision 1.2  1999/07/29 01:25:47  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -15,47 +64,6 @@
 #import <Foundation/NSObject.h>
 
 @interface MKNoteSender : NSObject 
-/* 
- * During a Music Kit performance, Performer objects perform Notes by
- * sending them to one or more Instrument objects.  The MKNoteSender class
- * defines the Note-sending mechanism used by Performers; each MKNoteSender
- * object acts as a Note output for a Performer.  Closely related to
- * MKNoteSender is the NoteReceiver class, which defines the Note-receiving
- * mechanism used by Instruments.  By separating these mechanisms into
- * distinct classes, any Performer can have multiple outputs and any
- * Instrument, multiple inputs.
- * 
- * A MKNoteSender is added to a Performer through the latter's
- * addNoteSender: method.  While you can create and add NoteSenders
- * yourself, this is typically done automatically by the Performer when
- * it's created.  You can retrieve the object to which a MKNoteSender has
- * been added by invoking MKNoteSender's owner method.
- * 
- * To send Notes from a MKNoteSender to a NoteReceiver, the two objects must be
- * connected.  This is done through the connect: method:
- * 
- *	[aNoteSender connect:aNoteReceiver]
- * 
- * Every MKNoteSender and NoteReceiver contains a list of connections.  The
- * connect: method adds either object to the other's list; in other
- * words, the NoteReceiver is added to the MKNoteSender's list and the
- * MKNoteSender is added to the NoteReceiver's list.  Both NoteReceiver and
- * MKNoteSender implement connect: as well as disconnect: and disconnect,
- * methods used to sever connections.  A NoteReceiver can be connected to
- * any number of NoteSenders.  Connections can be established and severed
- * during a performance.
- * 
- * MKNoteSender's sendNote: method defines the Note-sending mechanism.
- * When a MKNoteSender receives the message sendNote:aNote, it forwards the
- * Note object argument to its NoteReceivers by sending each of them the
- * message receiveNote:aNote.  sendNote: is invoked when the MKNoteSender's
- * owner performs (or, for NoteFilter, when it realizes) a Note.  You can
- * toggle a MKNoteSender's Note-sending capability through the squelch and
- * unsquelch methods; a MKNoteSender won't send any Notes while it's
- * squelched.  A newly created MKNoteSender is unsquelched.
- * 
- * CF:  NoteReceiver, Performer, NoteFilter
- */ 
 {
     NSMutableArray *noteReceivers;   /* Array of connected NoteReceivers. */
     BOOL isSquelched;    /* YES if the object is squelched. */
