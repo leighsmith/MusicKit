@@ -14,28 +14,21 @@
 #  Modification history:
 #
 #  $Log$
+#  Revision 1.2  2001/11/27 17:55:05  sbrandon
+#  simplified library importing for all platforms.
+#
 #  Revision 1.1  2001/11/07 13:32:15  sbrandon
 #  new file - adds correct dependencies for Win32 compilation - required in
 #  order to be able to use functions and methods from dlls.
 #
 #
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
-#  FRAMEWORK_LIBS +=  -ldsound -lgnustep-base -lwinmm -lobjc
-#  ADDITIONAL_FLAGS += -Ic:/DXVCSDK/include \
-#           -L$(GNUSTEP_SYSTEM_ROOT)/Libraries/$(GNUSTEP_TARGET_LDIR)
+  FRAMEWORK_LIBS +=  -ldsound -lwinmm
+  ADDITIONAL_FLAGS += -Ic:/DXVCSDK/include \
+           -L$(GNUSTEP_SYSTEM_ROOT)/Libraries/$(GNUSTEP_TARGET_LDIR)
 endif
 
-# What are the libraries this library depends upon. This is needed for some
-# systems where building a shared library requires to pass to the linker
-# all the libraries the target library depends upon.
+# MusicKit itself doesn't require any additional libraries, apart from those
+# imported by SndKit and MKDSP
 
-LIB_DEPEND_UPON = -l$(FOUNDATION_LIBRARY_NAME) -lobjc -lSndKit -lMKDSP \
-                  -lMKPerformSndMIDI
-
-ifeq ($(GNUSTEP_TARGET_OS),mingw32)
-$(MY_NAME)_LIBRARIES_DEPEND_UPON += $(LIB_DEPEND_UPON)
-endif
-ifeq ($(GNUSTEP_TARGET_OS),cygwin)
-$(MY_NAME)_LIBRARIES_DEPEND_UPON += $(LIB_DEPEND_UPON)
-endif
-
+LIBRARIES_DEPEND_UPON += -lSndKit -lMKDSP
