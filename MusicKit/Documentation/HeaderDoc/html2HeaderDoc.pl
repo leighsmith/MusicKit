@@ -37,6 +37,7 @@
 # /*\
 # New header\
 # */
+$nameMethods="method";		# or "function".
 
 eval 'exec /usr/bin/perl -S $0 ${1+"$@"}' if $running_under_some_shell;
 
@@ -140,24 +141,30 @@ while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<b
 
     # Format the prototype for HeaderDoc.
     # Match the return type and the method name prior to parameters.
-    if ($prototype =~ s/\s*(\(.*?\)|[^\s<]*?)\s*<b>\s*(.*)\s*<\/b>//) {
+    if ($prototype =~ s/\s*(\(.*?\)|[^\s<]*?)\s*<b>\s*(.*?)\s*<\/b>//) {
 	$returnType = $1;
 	$methodName = $2;  # The start of the method name.
 
 	$paramCount = 0;
 	while($prototype !~ /^\s*$/) {
+	    # print "methodName = $methodName prototype remaining: $prototype";
 	    # Match on parameter type (some won't be static)...
-	    if ($prototype =~ s/\s*(\(.*?\))//) {
+	    # Ensure an italicized parameter doesn't precede the type
+	    # (indicating we have missed an untyped (i.e id) parameter).
+	    if ($prototype =~ s/^\s*\((.*?)\)//) {
 		$paramType[$paramCount] = $1;
 	    }
-	    
+	    else {
+		$paramType[$paramCount] = "id";
+	    }
+
 	    # ...and parameter name
-	    if ($prototype =~ s/\s*<i>\s*(.*?)<\/i>//) {
+	    if ($prototype =~ s/\s*<i>\s*([^\s]*?)\s*<\/i>//) {
 		$paramName[$paramCount] = $1;
 	    }
 	    
 	    # ...and subsequent 'keyName:' keywords
-	    if ($prototype =~ s/\s*(.*?:)//) {
+	    if ($prototype =~ s/\s*<b>\s*(.*?:)\s*<\/b>//) {
 		$methodName .= $1;
 	    }
 	    $paramCount++;
@@ -173,21 +180,27 @@ while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<b
 	$commentPadding = "  ";
     }
     printf("/*!%s\n", $eolChar); 
-    printf("%s\@%s %s%s\n", $commentPadding, "function", $methodName, $eolChar);
+
+    printf("%s\@%s %s%s\n", $commentPadding, $nameMethods, $methodName, $eolChar);
     for($i = 0; $i < $paramCount; $i++) {
 	# no return type defaults to id.
 	if (length($paramType[$i]) == 0) {
-	    $paramType[$i] = "(id)";
+	    $paramType[$i] = "id";
 	}
-	printf("%s\@param %s is a %s%s\n", $commentPadding, $paramName[$i], $paramType[$i], $eolChar);
+	printf("%s\@param %s is %s %s.%s\n", $commentPadding,
+	       $paramName[$i], indefiniteArticle($paramType[$i]), $paramType[$i],
+	       $eolChar); 
 	$paramType[$i] = $paramName[$i] = "";
     }
     
     # no return type defaults to id.
     if (length($returnType) == 0) {
-	$returnType = "(id)";
+	$returnType = "id";
     }
-    printf("%s\@result A %s%s\n", $commentPadding, $returnType, $eolChar);
+    if ($returnType ne "(void)") {
+	printf("%s\@result Returns %s %s.%s\n", $commentPadding,
+	       indefiniteArticle($returnType), $returnType, $eolChar);
+    }
 
     # convert <br>'s to standard line breaks for headerDoc to do it's stuff.
     $discussion =~ s/<br>/\n/g;
@@ -197,4 +210,9 @@ while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<b
 # print what was not accounted for for debugging.
 if ($printMissing) { 
     print STDERR "remaining data not accounted for: $wholeFile";
+}
+
+sub indefiniteArticle
+{
+    return (index("aeiouh", substr($_[0],0,1)) == -1) ? "a" : "an";
 }
