@@ -56,16 +56,16 @@
 #define NXSoundPboard NXSoundPboardType
 
 extern NSString *NXSoundPboardType;
+#import <AppKit/NSPasteboard.h>
 #endif
 
-@class NSPasteboard;
 @class SndPlayer;
 @class SndPerformance;
 @class SndAudioBuffer;
 
 /*!
 @class Snd
-@abstract The Snd object encapsulates a SndSoundStruct, which represents a sound.
+@abstract The Snd object encapsulates a SndSoundStruct, which holds a sounds format parameters and it's sample data.
           It supports reading and writing to a soundfile, playback of sound,
           recording of sampled sound, conversion among various sampled formats, 
           basic editing of the sound, and name and storage
@@ -133,13 +133,13 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 */
 
 /*!
-@enum       SNDSoundConversion
- @abstract   Sound conversion quality codes
- @constant   SndConvertLowQuality Low quality conversion, using linear interpolation.
- @constant   SndConvertMediumQuality Medium quality conversion. Uses bandlimited interpolation,
-             using a small filter. Relatively fast.
- @constant   SndConvertHighQuality High quality conversion. Uses bandlimited interpolation, using a
- 	     large filter. Relatively slow.
+  @enum       SNDSoundConversion
+  @abstract   Sound conversion quality codes
+  @constant   SndConvertLowQuality Low quality conversion, using linear interpolation.
+  @constant   SndConvertMediumQuality Medium quality conversion. Uses bandlimited interpolation,
+              using a small filter. Relatively fast.
+  @constant   SndConvertHighQuality High quality conversion. Uses bandlimited interpolation, using a
+  	      large filter. Relatively slow.
  */
 typedef enum {
     SndConvertLowQuality = 0,
@@ -194,9 +194,9 @@ typedef enum {
 	 This is set from reading the sound file.
  */
     BOOL loopWhenPlaying;
-/*! @var loopStartIndex The sample the loop begins at. */
+/*! @var loopStartIndex The sample the loop begins at. This is just the priming value for each performance. */
     long loopStartIndex;
-/*! @var loopEndIndex The sample the loop ends at. */
+/*! @var loopEndIndex The sample the loop ends at. This is just the priming value for each performance. */
     long loopEndIndex;
 
 /*! @var useVolumeWhenPlaying Indicates whether to create a SndAudioFader per performance and assign it the allChannelsVolume setting. */
@@ -1365,7 +1365,13 @@ typedef enum {
     <i>newBalance</i> must be a floating-point number between
     -1.0 (left) 0.0 (centre) and 1.0 (right).
     If successful, returns <b>self</b>; otherwise returns <b>nil</b>.
-    */
+    For greater than 2 channel sound, balance must be defined as between
+    two lateral planes of outputs. So a 5.1 surround system should map balance
+    between the combined left front and left surround speaker vs. the right front
+    and right surround speaker. This needs further description as to how stereo panning
+    should map onto other multichannel formats and in the most general sense, i.e even is left,
+    odd is right.
+ */
 - setBalance: (float) newBalance;
 
 @end
@@ -1415,7 +1421,7 @@ typedef enum {
 /*!
   @enum       SNDSoundStatus
   @abstract   Status Codes
-  @discussion Categorizes beverages into groups of similar types.
+  @discussion Categorizes beverages, err sounds into groups of similar types.
   @constant   SND_SoundStopped
   @constant   SND_SoundRecording
   @constant   SND_SoundPlaying
