@@ -16,6 +16,9 @@
 /*
  Modification history:
    $Log$
+   Revision 1.6  2004/01/19 20:37:38  leighsmith
+   Replaced magic number checking with MKScore class methods
+
    Revision 1.5  2000/11/29 03:47:45  leigh
    Added copyright statement
 
@@ -29,7 +32,6 @@
 #define SCORE_DIR @"Music/Scores/"
 
 // Make sure these two match array indexes and order and then everything's sweet.
-enum fileFormat {none=-1,midi=0,score=1,playscore=2};
 static NSArray *scorefileExtensions;
 
 static NSString *findFile(NSString *name)
@@ -59,30 +61,7 @@ static NSString *findFile(NSString *name)
 
 static char *formatStr(int aFormat)
 {
-    return (aFormat == score) ? ".score" : (aFormat == playscore) ? ".playscore" : ".midi";
-}
-
-enum fileFormat determineInputFormat(NSString *inputFile)
-{
-    NSFileHandle *fh;
-    int firstWord;
-    NSData *firstWordData;
-    NSString *foundFile;
-
-    foundFile = findFile(inputFile);
-    if (foundFile == nil) {
-        fprintf(stderr,"Can't find %s.\n", [foundFile cString]);
-        exit(1);
-    }
-    fh = [NSFileHandle fileHandleForReadingAtPath: foundFile];
-    firstWordData = [fh readDataOfLength: 4];
-    firstWord = NSSwapBigIntToHost(*((int *)[firstWordData bytes]));
-    if (firstWord == MK_SCOREMAGIC)
-        return playscore;
-    else if (firstWord == MK_MIDIMAGIC)
-        return midi;
-    else
-        return score;
+    return (aFormat == MK_SCOREFILE) ? ".score" : (aFormat == MK_PLAYSCORE) ? ".playscore" : ".midi";
 }
 
 const char * const help = "\n"
@@ -102,7 +81,7 @@ int main (int argc, const char *argv[])
     NSString *inputFile;
     NSString *outputFile = nil;
     int errorFlag = 0;
-    enum fileFormat outFormat = none,inFormat = none;
+    MKScoreFormat outFormat = MK_UNRECOGNIZEDFORMAT, inFormat = MK_UNRECOGNIZEDFORMAT;
     int i;
     MKScore *aScore;
     BOOL combineNotes = NO;
@@ -111,17 +90,19 @@ int main (int argc, const char *argv[])
     				/* midifile & convert the time-tags without */
 				/* considering the tempo. */
     scorefileExtensions = [NSArray arrayWithObjects:  @"midi", @"score", @"playscore", nil];
+    
+    // TODO replace this with getopt.
     if (argc == 1) {
 	fprintf(stderr,help);
 	exit(1);
     }
     for (i=1; i<(argc-1); i++) {
 	if ((strcmp(argv[i],"-m") == 0))  /* midi */
-            outFormat = midi;
+            outFormat = MK_MIDIFILE;
 	else if ((strcmp(argv[i],"-p") == 0)) /* optimized scorefile */
-            outFormat = playscore;
+            outFormat = MK_PLAYSCORE;
 	else if (strcmp(argv[i],"-s") == 0)
-            outFormat = score;
+            outFormat = MK_SCOREFILE;
 	else if (strcmp(argv[i],"-t") == 0)
             absoluteTempo = YES;
         else if (strcmp(argv[i],"-n") == 0)
@@ -138,23 +119,23 @@ int main (int argc, const char *argv[])
     if (!outputFile)
         outputFile = [inputFile stringByDeletingPathExtension]; /* Extension added by write routine */
 
-    inFormat = determineInputFormat(inputFile);
+    inFormat = [MKScore scoreFormatOfFile: inputFile];
     [MKScore setMidifilesEvaluateTempo: absoluteTempo];
     MKWriteKeyNumNames(writeKeyNames);
     aScore = [MKScore score];
 
-    if (outFormat == none)
-        outFormat = (inFormat == playscore) ? score : playscore;
+    if (outFormat == MK_UNRECOGNIZEDFORMAT)
+        outFormat = (inFormat == MK_PLAYSCORE) ? MK_SCOREFILE : MK_PLAYSCORE;
     fprintf(stderr,"Converting from %s to %s format.\n", formatStr(inFormat), formatStr(outFormat));
     switch (inFormat) {
-    case score:
-    case playscore:
+    case MK_SCOREFILE:
+    case MK_PLAYSCORE:
         if (![aScore readScorefile: inputFile])  {
             fprintf(stderr,"Fix scorefile errors and try again.\n");
             exit(1);
         }
         break;
-    case midi: {
+    case MK_MIDIFILE: {
         MKNote *aNoteInfo = [[MKNote alloc] init];
         NSArray *parts;
         if (![aScore readMidifile: inputFile])  {
@@ -170,24 +151,26 @@ int main (int argc, const char *argv[])
         }
         break;
     }
-    case none:
+    default:
+    case MK_UNRECOGNIZEDFORMAT:
         fprintf(stderr, "Internal error, no inputFormat\n");
         exit(1);
     }
     switch (outFormat) {
-    case score:
+    case MK_SCOREFILE:
         if (![aScore writeScorefile: outputFile])
             errorFlag = 1;
         break;
-    case playscore:
+    case MK_PLAYSCORE:
         if (![aScore writeOptimizedScorefile: outputFile])
             errorFlag = 1;
         break;
-    case midi:
+    case MK_MIDIFILE:
         if (![aScore writeMidifile: outputFile])
             errorFlag = 1;
         break;
-    case none:
+    default:
+    case MK_UNRECOGNIZEDFORMAT:
         fprintf(stderr, "Internal error, no inputFormat\n");
         exit(1);
     }
