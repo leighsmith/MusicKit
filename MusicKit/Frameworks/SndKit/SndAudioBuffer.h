@@ -18,7 +18,7 @@
 
 @interface SndAudioBuffer : NSObject
 {
-    SndSoundStruct  format;
+    SndSoundStruct  formatSnd;
     void           *data;
     
 @private
