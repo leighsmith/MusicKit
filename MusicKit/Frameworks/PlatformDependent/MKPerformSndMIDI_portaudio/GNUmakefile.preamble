@@ -11,13 +11,36 @@
 #  purposes so long as the author attribution and this copyright message remains intact
 #  and accompanies all derived code.
 
-#Modification history:
+#  Modification history:
 #
 #  $Log$
+#  Revision 1.2  2001/10/31 17:22:47  sbrandon
+#  Changes to facilitate Win32/MinGW32 compilation. Relies on the DirectX SDK
+#  being installed in c:/DXVCSDK/
+#
 #  Revision 1.1  2001/07/02 22:03:48  sbrandon
 #  - initial revision. Still a work in progress, but does allow the MusicKit
 #    and SndKit to compile on GNUstep.
 #
 #
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
+  FRAMEWORK_LIBS +=  -ldsound -lgnustep-base -lwinmm -lobjc
+  ADDITIONAL_FLAGS += -Ic:/DXVCSDK/include \
+           -L$(GNUSTEP_SYSTEM_ROOT)/Libraries/$(GNUSTEP_TARGET_LDIR)
+endif
 
-ADDITIONAL_FLAGS = -Iportaudio/pa_common -g
+ADDITIONAL_FLAGS += -Iportaudio/pa_common -g
+
+# What are the libraries this library depends upon. This is needed for some
+# systems where building a shared library requires to pass to the linker
+# all the libraries the target library depends upon.
+
+LIBRARIES_DEPEND_UPON = -l$(FOUNDATION_LIBRARY_NAME) $(ADDITIONAL_DEPENDS)
+
+ifeq ($(GNUSTEP_TARGET_OS),mingw32)
+$(MY_NAME)_LIBRARIES_DEPEND_UPON += -ldsound -lwinmm -lgnustep-base -lobjc
+endif
+ifeq ($(GNUSTEP_TARGET_OS),cygwin)
+$(MY_NAME)_LIBRARIES_DEPEND_UPON += -ldsound -lwinmm -lgnustep-base -lobjc
+endif
+
