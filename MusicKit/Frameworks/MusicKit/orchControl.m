@@ -11,58 +11,10 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2004 The MusicKit Project.
 */
 /*
 Modification history:
-
-  $Log$
-  Revision 1.17  2003/08/16 22:29:11  leighsmith
-  replaced some i386 #if conditions with a tighter check to verify it is only in the case of Intel NeXTStep platforms, several chunks of code were being compiled on Intel machines running GnuStep
-
-  Revision 1.16  2002/01/29 16:45:53  sbrandon
-  changed all uses of _MKOrchTrace to use NSString args.
-
-  Revision 1.15  2001/12/07 20:13:04  skotmcdonald
-  Dealt with a minor typing warning
-
-  Revision 1.14  2001/11/07 13:02:47  sbrandon
-  removed unnecessary prototype for _DSPError1
-
-  Revision 1.13  2001/09/12 14:00:44  sbrandon
-  changed -cString to -fileSystemRepresentation
-
-  Revision 1.12  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.11  2001/05/12 09:35:19  sbrandon
-  - GNUSTEP: don't import mach headers
-
-  Revision 1.10  2000/04/26 01:19:24  leigh
-  outputCommandsFile now an NSString
-
-  Revision 1.9  2000/04/07 18:44:51  leigh
-  Upgraded logging to NSLog
-
-  Revision 1.8  2000/04/01 01:13:56  leigh
-  Converted to NSPort operation
-
-  Revision 1.7  2000/03/31 00:07:48  leigh
-  Added SBs notes
-
-  Revision 1.6  2000/03/07 18:19:17  leigh
-  Removed redundant getTime function (using NSDate nowdays)
-
-  Revision 1.5  2000/02/03 19:12:22  leigh
-  Renamed for MKDSP framework
-
-  Revision 1.4  2000/01/27 19:01:47  leigh
-  updated Mach port to NSPorts (even though the code is currently commented out
-
-  Revision 1.3  2000/01/19 19:55:07  leigh
-  Replaced mach port based millisecond timing with NSThread approach
-
-  Revision 1.2  1999/07/29 01:26:13  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
 
   01/30/90/daj - Created from MKOrchestra.m.
   01/31/90/daj - Changed select() to msg_receive() for uniformity with 
@@ -193,6 +145,8 @@ void PRINTSTAMPS(void) {
 #define IS_QP_HUB(self)  (self->orchIndex == 5)
 #define IS_QP_SAT(self)  (self->orchIndex <= 4 && self->orchIndex >=1)
 
+// @implementation MKOrchestra(Control)
+
 static void setupSerialPort(MKOrchestra *self)
 {
     if (self->serialPortDevice)
@@ -223,7 +177,7 @@ static void startSoundAndFillBuffers(MKOrchestra *self)
     DSPMKPauseSoundOut();
 #endif
     [self setUpDSP];
-    if (self->serialSoundOut || self->serialSoundIn) 
+    if (self->serialSoundOut || self->soundIn) 
       /* We let the serial port device decide if it wants to "setUp"
 	 before or after sound is "started".  Some DSP monitors configure
 	 codecs themselves and they use info passed in by the serialPortDevice
@@ -250,7 +204,7 @@ static void startSoundAndFillBuffers(MKOrchestra *self)
 	 * In at least one case, we have to unmute the serial port device
 	 * _after_ we have started up the DSP sending samples properly. LMS.
 	 */
-	if (self->serialSoundOut || self->serialSoundIn) 
+	if (self->serialSoundOut || self->soundIn) 
 	    [self->serialPortDevice unMuteSerialPort: self]; 
     }
     if (self->hostSoundOut) {
@@ -323,7 +277,7 @@ static int myDSPMKInit(MKOrchestra *self)
 		    [*foundFile cString]);
 	}
       } else reboot = YES;
-    if (self->serialSoundIn || self->serialSoundOut)
+    if (self->soundIn || self->serialSoundOut)
        [self->serialPortDevice adjustMonitor:self->mkSys forOrchestra:self];
     if (reboot)
       ec = DSPReboot(self->mkSys);
@@ -346,7 +300,7 @@ static int myDSPMKInit(MKOrchestra *self)
 -(int)inputChannelOffset
   /* Offset in DSP sound input buffer of the second channel */
 {
-    return ((serialPortDevice && serialSoundIn) ? 
+    return ((serialPortDevice && soundIn) ? 
 	    ([serialPortDevice inputSampleSkip] + 1) : 1);
 }
 
@@ -450,29 +404,24 @@ static void vmProc( msg_header_t *msg, void *userData)
 #endif
 #endif
 
-static void 
-  myWriteDataFunc(short *data,int dataCount,unsigned int dspNum)
+static void myWriteDataFunc(short *data, int dataCount, unsigned int dspNum)
 {
-    MKOrchestra *self;
-    self = dspNumToOrch[dspNum];
-    [[self outputSoundDelegate] orchestra:self
-     didRecordData:data size:dataCount];
+    MKOrchestra *self = [dspNumToOrch objectForKey: [NSNumber numberWithInt: dspNum]];
+    
+    [[self outputSoundDelegate] orchestra: self didRecordData: data size: dataCount];
 }
 
--open
-  /* Opens device if not already open. 
-     Resets orchestra loop if not already reset, freeing all Unit Generators 
-     and Synth Patches. Sets deviceStatus to MK_devOpen. Returns nil if some
-     problem occurs, else self. Note: In release 0.9, it will not work
-     to send open to an already opened, running or stopped MKOrchestra. 
-     */
+/* Opens device if not already open. 
+   Resets orchestra loop if not already reset, freeing all Unit Generators 
+   and Synth Patches. Sets deviceStatus to MK_devOpen. Returns nil if some
+   problem occurs, else self. Note: In release 0.9, it will not work
+   to send open to an already opened, running or stopped MKOrchestra. 
+ */
+- open
 {
     int outputSampleFrameW,outputSampleFrameR,outputChannelCount;
     int outputInitialOffset,outputTickSamps,outputChannelOffset,outputPadding;
     BOOL upSamplingOutput;
-#ifdef DEBUG
-    DSPEnableErrorFile("/dev/tty");
-#endif
     DSPSetCurrentDSP(orchIndex);
     DSPMKSetSamplingRate(samplingRate);
     switch (deviceStatus) {
@@ -485,23 +434,13 @@ static void
           DSPMKEnableSoundOut();
         if (serialSoundOut)
           DSPMKEnableSSISoundOut();     /* sound out to serial port */
-        if (serialSoundIn)
+        if (soundIn)
           DSPMKEnableSSIReadData();     /* sound out from serial port */
         if (fastResponse)
           DSPMKEnableSmallBuffers();
         if (outputSoundfile) 
 	  DSPMKSetWriteDataFile([outputSoundfile fileSystemRepresentation]); /* Must be before enable */
 	if (outputSoundDelegate) {
-#if 0
-	    if (!vmMsgPort) { /* One vmMsgPort for all orchestras */
-		/* We just do this once and never remove it */
-                vmMsgPort = [NSPort port];
-                if (vmMsgPort == nil) 
-		  return nil;
-                [vmMsgPort retain];
-		_MKAddPort(vmMsgPort,self,MSG_SIZE_MAX,self,_MK_DPSPRIORITY);
-	    }
-#endif
 	    DSPMKSetUserWriteDataFunc((DSPMKWriteDataUserFunc)myWriteDataFunc);
 	}
 	if (outputSoundfile || outputSoundDelegate)
@@ -606,7 +545,7 @@ static void
             /* start simulator file AFTER bootstrap */
             _simFP = DSPGetSimulatorFP();
         }
-        if ((outputSoundfile || outputSoundDelegate) && !serialSoundIn) 
+        if ((outputSoundfile || outputSoundDelegate) && !soundIn) 
           DSPMKEnableBlockingOnTMQEmptyTimed(DSPMK_UNTIMED);
         /* loadOrchLoop sets devStatus to MK_devOpen if it succeeds.
            If it fails, it does a DSPClose() and sets devStatus to 
@@ -632,7 +571,7 @@ static void
 	DSPWriteValue(outputSampleFrameW,DSP_MS_X,DSP_X_O_SFRAME_W);
 	DSPWriteValue(outputSampleFrameR,DSP_MS_X,DSP_X_O_SFRAME_R);
 	DSPWriteValue(outputPadding,DSP_MS_X,DSP_X_O_PADDING);
-	if (serialSoundIn) {
+	if (soundIn) {
 	    BOOL downSampleInput;
 	    int inputSampleFrameW,inputSampleFrameR,inputChannelCount,inputChanOffset;
 	    int inputInitialSkip;
@@ -676,12 +615,12 @@ static void
 #if i386 && defined(__NeXT__)
         DSPSetHostMessageMode();
 #endif
-	if (serialSoundIn)
+	if (soundIn)
 	  DSPMKStartSSIReadData();
 	if ([self startSoundWhenOpening]) {
 	    if (DMA_OR_SERIAL_SOUND_OUT(self))
 	      startSoundAndFillBuffers(self);
-	    else if (serialSoundIn) {
+	    else if (soundIn) {
 		setupSerialPort(self);
 		/* We do the DSPStartAtAddress() in run for this case and
 		 * for write data. 
@@ -713,7 +652,7 @@ static void
             DSPMKStopReadData();
             DSPMKRewindReadData();
         }
-	if (serialSoundIn)
+	if (soundIn)
 	  DSPMKStopSSIReadData();
         /* Clear sound-out buffers so junk doesn't go out at start of play */
         DSPMKClearDSPSoundOutBufferTimed(DSPMK_UNTIMED);
@@ -728,12 +667,12 @@ static void
             DSPFix48 zero = {0,0}; 
             DSPMKSetTime(&zero);
         }
-	if (serialSoundIn)
+	if (soundIn)
 	  DSPMKStartSSIReadData();
 	if ([self startSoundWhenOpening]) {
 	    if (DMA_OR_SERIAL_SOUND_OUT(self))
 	      startSoundAndFillBuffers(self);
-	    else if (serialSoundIn) {
+	    else if (soundIn) {
 		setupSerialPort(self);
 		/* We do the DSPStartAtAddress() in run */
 	    }
@@ -833,7 +772,7 @@ static void
 	if (IS_QP_HUB(self) || IS_QP_SAT(self))
 	  if (DMA_OR_SERIAL_SOUND_OUT(self) || IS_QP_SAT(self))
 	    startSoundAndFillBuffers(self);
-	  else if (serialSoundIn) {
+	  else if (soundIn) {
 	      setupSerialPort(self);
 	  }
         [_sysUG _unpause]; /* Poke orchloopbegin to continue on */
@@ -885,7 +824,7 @@ static void
 }
 #endif
 
--stop
+- stop
   /* If not open, does a [self open].
      Otherwise, stops DSP clock and sets deviceStatus to MK_devStopped.
      */
@@ -917,7 +856,7 @@ static void
     return self;
 }
 
--abort
+- abort
   /* Closes the receiver immediately, without waiting for all enqueued DSP 
      commands to be executed. This involves freeing all
      unit generators in its unit generator stack, clearing all
@@ -967,7 +906,7 @@ static void
      Returns self unless there's some problem
      closing the DSP, in which case, returns nil.
 
-     SB's MKNotes: bufferTime is absolute in seconds.
+     SB's Notes: bufferTime is absolute in seconds.
      */
 {
     if (deviceStatus == MK_devRunning) { /* If not, can't wait for end of time */ 
