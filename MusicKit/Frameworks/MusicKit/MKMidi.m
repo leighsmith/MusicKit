@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.36  2001/03/30 23:05:43  leighsmith
+  Enabled multiple ports (midi1, midi2 etc) to connect to the MKMD routines
+
   Revision 1.35  2001/03/12 01:57:55  leigh
   Introduced slowing bytes while sending SysEx messages
 
@@ -1119,14 +1122,12 @@ static unsigned ignoreBit(unsigned param)
     return nil; //sb: I assume this is what [super free] used to return...
 }
 
-#if !m68k
-
 /* This mechanism is more general than we need, because the rest of this
    object currently assumes that there's only one MIDI driver called 
    MK_NAME.  However, in case we ever support others, I want to support
    the general API.  And since this code was already written for the DSP
    case, I thought I'd just grab it from there.
-   LMS: The day is rapidly approaching when we need all of David's functionality
+   LMS: The day is rapidly approaching when we may need all of David's functionality
    with Win32 named ports, MacOS X CoreMIDI USB devices etc.
  */
 
@@ -1160,7 +1161,7 @@ static BOOL getAvailableMidiDevices(void)
     return YES;
 }
 
-static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDevStrArr)
+static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **driverNameAndUnit)
     /* Maps a name of the form "midi0" to a name of the form "Mididriver2".
      * See above long explanation.  Returns copy of hard name.
      */
@@ -1176,7 +1177,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
         return NO; 
     // devName can be of the soft form "midi0", or the hard description "Mididriver0" or "SB Live! MIDI Out"
     if (isSoft) {
-        midiNumStrArr = [NSString stringWithFormat:@"MKMIDI%d",num];
+        midiNumStrArr = [NSString stringWithFormat:@"MKMIDI%d", num];
 
         // The owner will be whatever application links against this framework. 
         // This is what we want to allow for different applications to use different MIDI
@@ -1185,17 +1186,23 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
 	if ([defaultsValue length]) 
             num = getNumSuffix(defaultsValue, &isSoft);
 	else if (num == 0) { 
-            // Use the system default MIDI driver
-            *midiDevStrArr = [[midiDriverNames objectAtIndex: systemDefaultDriverNum] copy];
+            // Use the system default MIDI driver for midi0, not necessarily the first entry.
+            // TODO this should probably be changed to allow "midiDefault" as a device name,
+            // or consign midi0 to be the default, midi1 as [midiDriverNames objectAtIndex: 0], etc.
+            *driverNameAndUnit = [[midiDriverNames objectAtIndex: systemDefaultDriverNum] copy];
             return YES;
 	}
+        else {
+            *driverNameAndUnit = [[midiDriverNames objectAtIndex: num] copy];
+            return YES;
+        }
     }
     // here we assume if we didn't have a soft device name, we are referring to a described device.
-    *midiDevStrArr = [[devName copy] retain];
+    *driverNameAndUnit = [[devName copy] retain];
 
     // ensure the driver was on the legitimate list
     for (i=0; i < [midiDriverNames count]; i++) {
-        if ([*midiDevStrArr isEqualToString: [midiDriverNames objectAtIndex:i]]) {
+        if ([*driverNameAndUnit isEqualToString: [midiDriverNames objectAtIndex:i]]) {
 	    // num will be NO_UNIT if there was no conversion from soft to hard driver names
 	    // LMS: Disabled unit check as getNumSuffix() will report MPU-401 as the 401st unit!
             // The check was really doing very little since we have verified the name is correct anyway.
@@ -1221,8 +1228,6 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
     getAvailableMidiDevices();
     return [[midiDriverUnits copy] autorelease];
 }
-
-#endif
 
 - (NSString *) driverName 
 {
@@ -1266,9 +1271,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
 // This is where all the initialisation is performed.
 - initOnDevice:(NSString *) devName hostName:(NSString *) hostName
 {
-#if !m68k
-    NSString *midiDevStrArr;
-#endif
+    NSString *driverNameAndUnit;
     MKMidi *obj;
     NSString *hostAndDevName;
     MKNoteSender *aNoteSender;
@@ -1278,14 +1281,14 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
 
 #if !m68k
     hostName = @""; /* Only on local host, see extensive comment above */
-    if (!mapSoftNameToDriverNameAndUnit(devName,&midiDevStrArr))
-      return nil;
-    devName = midiDevStrArr;
 #endif
+    if (!mapSoftNameToDriverNameAndUnit(devName, &driverNameAndUnit))
+        return nil;
+    devName = driverNameAndUnit;
     hostAndDevName = [hostName stringByAppendingString: devName];
     if ((obj = [portTable objectForKey: hostAndDevName]) == nil) {         // Doesn't already exist
         getTimeInfoFromHost(self, hostName);
-        [portTable setObject:self forKey: hostAndDevName]; 
+        [portTable setObject: self forKey: hostAndDevName]; 
     }
     // even if the device is in the portTable, we still need to set the device and host name
     hostname = [hostName copy];
@@ -1294,9 +1297,9 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
     if (noteSenders != nil) /* Already initialized */
         return nil;
     outputIsTimed = YES;               /* Default is outputIsTimed */
-    noteSenders = [NSMutableArray arrayWithCapacity:_MK_MIDINOTEPORTS];
+    noteSenders = [NSMutableArray arrayWithCapacity: _MK_MIDINOTEPORTS];
     [noteSenders retain];
-    noteReceivers = [NSMutableArray arrayWithCapacity:_MK_MIDINOTEPORTS];
+    noteReceivers = [NSMutableArray arrayWithCapacity: _MK_MIDINOTEPORTS];
     [noteReceivers retain];
     for (i = 0; i < _MK_MIDINOTEPORTS; i++) {
         aNoteReceiver = [MKNoteReceiver new];
