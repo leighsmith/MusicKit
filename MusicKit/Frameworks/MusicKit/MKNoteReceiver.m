@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/04/22 20:14:01  leigh
+  Properly typed connections returning an NSArray
+
   Revision 1.4  2000/04/16 04:08:49  leigh
   comment cleanup
 
@@ -111,7 +114,7 @@ Modification history:
     return [noteSenders count];
 }
 
--connections
+- (NSArray *) connections
   /* TYPE: Manipulating; Returns a copy of the List of the connections.
    * Returns a copy of the List of the receiver's noteSenders. 
    * The noteSenders themselves are not
@@ -136,6 +139,7 @@ Modification history:
 {
     self = [self allocWithZone:NSDefaultMallocZone()];
     [self init];
+//    return [self autorelease]; // should new return autoreleased...probably should be renamed noteReceiver
     return self;
 }
 

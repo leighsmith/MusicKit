@@ -52,6 +52,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2000/04/22 20:14:00  leigh
+  Properly typed connections returning an NSArray
+
   Revision 1.3  2000/02/07 23:49:52  leigh
   Comment corrections
 
@@ -148,7 +151,7 @@
  * Returns the number of NoteSenders connected to the receiver. 
  */
 
-- connections;
+- (NSArray *) connections;
  /* 
  * Creates and returns a List containing the NoteSenders that are connected
  * to the receiver.  It's the caller's responsibility to free the
