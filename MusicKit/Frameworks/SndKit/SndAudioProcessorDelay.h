@@ -62,15 +62,16 @@ enum {
     @discussion
 */
 + delayWithLength: (long) nSams feedback: (float) fFB;
+- init;
 /*!
-    @method intWithLength:feedback:
+    @method setLength:feedback:
     @abstract 
     @param nSams
     @param fFB
     @result 
     @discussion
 */
-- initWithLength: (long) nSams feedback: (float) fFB;
+- setLength: (long) nSams andFeedback: (float) fFB;
 /*!
     @method     freemem
     @abstract 
@@ -87,13 +88,6 @@ enum {
     @discussion
 */
 - (void) dealloc;
-/*!
-    @method paramCount
-    @abstract 
-    @result
-    @discussion
-*/
-- (int) paramCount;
 /*!
     @method paramValue:
     @abstract 

@@ -22,8 +22,8 @@
 
 + delayWithLength: (long) nSams feedback: (float) fFB
 {
-  SndAudioProcessorDelay* delay = [SndAudioProcessorDelay new];
-  [delay initWithLength: nSams feedback: fFB];
+  SndAudioProcessorDelay* delay = [[SndAudioProcessorDelay alloc] init];
+  [delay setLength: nSams andFeedback: fFB];
   return [delay autorelease];
 }
 
@@ -37,7 +37,7 @@
     [super initWithParamCount: dlyNumParams name: @"Delay"];
     lock = [[NSLock alloc] init];
   }
-  [self initWithLength: 11025 feedback: 0.25];
+  [self setLength: 11025 andFeedback: 0.25];
   return self;
 }
 
@@ -72,10 +72,8 @@
 // initWithLength
 ////////////////////////////////////////////////////////////////////////////////
 
-- initWithLength: (long) nSams feedback: (float) fFB
+- setLength: (long) nSams andFeedback: (float) fFB
 {
-  [super init];
-  
   [lock lock];
   
   [self freemem];
@@ -91,15 +89,6 @@
   [lock unlock];
 
   return self;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// paramCount
-////////////////////////////////////////////////////////////////////////////////
-
-- (int) paramCount
-{
-  return dlyNumParams;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -140,7 +129,7 @@
   switch (index) {
     case dlyLength:   
       length = v;   
-      [self initWithLength: length feedback: feedback];
+      [self setLength: length andFeedback: feedback];
       break;
     case dlyFeedback: 
       v = v > 1.0 ? 1.0 : (v < 0.0 ? 0.0 : v);
