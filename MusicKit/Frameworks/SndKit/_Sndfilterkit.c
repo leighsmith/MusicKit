@@ -321,8 +321,6 @@ ImpD = (SND_HWORD *) malloc(*Nwing * sizeof(SND_HWORD));
     return(0);
 }
 
-#ifndef SUPERCEDED
-
 SND_WORD FilterUp(SND_HWORD Imp[], SND_HWORD ImpD[],
                   SND_UHWORD Nwing, BOOL Interp,
                   SND_HWORD *Xp, SND_HWORD Ph, SND_HWORD Inc)
@@ -420,8 +418,6 @@ SND_WORD FilterUD( SND_HWORD Imp[], SND_HWORD ImpD[],
       }
     return(v);
 }
-
-#endif
 
 /*
  * double zerox(Data, Factor)
