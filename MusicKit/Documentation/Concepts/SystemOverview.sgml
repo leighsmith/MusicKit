@@ -65,33 +65,34 @@ a performance.</para>
 <sect2 id="TheSndKitOverview">
 <title>The <productname>SndKit</productname></title>
 
-<!-- This sucks -->
-<para>Many sound recordings, stored
-in files on the disk (called <emphasis>soundfiles</emphasis>), are
-now available.  Through the <productname>SndKit</productname>, you
-can easily access these files and incorporate the sounds into your
-application.  It's also extremely easy to record new sounds into a
-computer.  With a single message to the
-<productname>SndKit</productname>'s Sound object, you can simply
-record your own sound effect through a microphone.  Sound playback is just as simple: Another
-message and the sound is played on the internal speaker and sent to
-the stereo output jacks at the back of the display.</para>
+<!-- This sucks --> <para>Many sound recordings, stored in files on
+the disk (called <emphasis>soundfiles</emphasis>), are now available.
+Through the <productname>SndKit</productname>, you can easily access
+these files and incorporate the sounds into your application.  It's
+also extremely easy to record new sounds into a computer.  With a
+single message to the <productname>SndKit</productname>'s
+<classname>Sound</classname> object, you can simply record your own
+sound effect through a microphone.  <classname>Sound</classname>
+playback is just as simple: Another message and the sound is played
+to the stereo output jacks on your computer or sound-card.</para>
 
-<para>When you record a sound using the Sound object, a series of
-audio &ldquo;snapshots&rdquo; or <emphasis>samples</emphasis> is
-created.  By storing sound as samples, you can analyze and manipulate
-your sound data with an almost unlimited degree of precision.  The
-SoundView class lets you see your sounds by displaying the samples in
-a window.</para>
+<para>When you record a sound using the <classname>Sound</classname>
+object, a series of audio &ldquo;snapshots&rdquo; or
+<emphasis>samples</emphasis> is created.  By storing sound as samples,
+you can analyze and manipulate your sound data with an almost
+unlimited degree of precision.  The <classname>SoundView</classname>
+class lets you see your sounds by displaying the samples in a
+window.</para>
 
 <para>While the <productname>SndKit</productname> is designed
 primarily for use on sampled data, you can also use it to send
 instructions to the <acronym>DSP</acronym>.  The speed of the
 <acronym>DSP</acronym> makes it an ideal sound synthesizer and, in
 general, <acronym>DSP</acronym> instructions take up much less space
-than sampled data.  The Sound object manages the details of playing
-sounds for you, so you needn't be aware of whether a particular Sound
-contains samples or <acronym>DSP</acronym> instructions.</para>
+than sampled data.  The <classname>Sound</classname> object manages
+the details of playing sounds for you, so you needn't be aware of
+whether a particular <classname>Sound</classname> contains samples or
+<acronym>DSP</acronym> instructions.</para>
 </sect2>
 
 <sect2 id="TheMusicKit">
