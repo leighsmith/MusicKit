@@ -26,6 +26,9 @@
  Modification history:
 
  $Log$
+ Revision 1.13  2002/09/24 21:45:29  leighsmith
+ Cleaned up _normalize for gcc 3.1 warnings
+
  Revision 1.12  2002/04/15 14:20:40  sbrandon
  - remembered to encode/decode superclass in archival methods
  - added -hash and -isEqual: methods to aid in situations where object is
@@ -935,21 +938,22 @@ automatically if necessary by the various getData: methods
 
 -_normalize
 {
-  register double *dataEnd,*dataPtr;
-  double tmp;
-  double aScaling = scaling;
-  if (scaling == 0.0) { /* Figure out normalization */
-    for (dataPtr = dataDouble, dataEnd = dataDouble + length;
-         dataPtr < dataEnd; dataPtr++)
-      if ((tmp = ABS(*dataPtr)) > aScaling)
-        aScaling = tmp;
-    aScaling = 1.0/aScaling;
-  }
-  if (aScaling != 1.0)
-  for (dataPtr = dataDouble, dataEnd = dataDouble + length;
-       dataPtr < dataEnd;)
-  *dataPtr++ = *dataPtr * aScaling;
-  return self;
+    register double *dataEnd,*dataPtr;
+    double tmp;
+    double aScaling = scaling;
+    
+    if (scaling == 0.0) { /* Figure out normalization */
+	for (dataPtr = dataDouble, dataEnd = dataDouble + length; dataPtr < dataEnd; dataPtr++) {
+	    if ((tmp = ABS(*dataPtr)) > aScaling)
+		aScaling = tmp;
+	}
+	aScaling = 1.0/aScaling;
+    }
+    if (aScaling != 1.0) {
+	for (dataPtr = dataDouble, dataEnd = dataDouble + length; dataPtr < dataEnd; dataPtr++)
+	    *dataPtr = *dataPtr * aScaling;
+    }
+    return self;
 }
 
 @end
