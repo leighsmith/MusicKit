@@ -169,7 +169,11 @@ startPosition: (double) startPosition
 
 - (NSString *) description
 {
-  return [NSString stringWithFormat: @"%@, playing at %f, from %ld, to %ld", snd, playTime, startAtIndex, endAtIndex];
+    NSString *loopDescription = looping ? [NSString stringWithFormat: @"looping between %ld and %ld",
+	loopStartIndex, loopEndIndex] : @"";
+
+    return [NSString stringWithFormat: @"%@, playing at %f, from %ld, to %ld  %@", snd, playTime,
+	startAtIndex, endAtIndex, loopDescription];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -427,7 +431,9 @@ startPosition: (double) startPosition
 
 - (BOOL) atEndOfPerformance
 {
-    return playIndex >= endAtIndex - 1;
+    // Since endAtIndex specifies the first sample NOT played, if playIndex equals it or exceeds it, we have
+    // reached the end.
+    return playIndex >= endAtIndex;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
