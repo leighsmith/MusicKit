@@ -2,11 +2,9 @@
 //
 //  $Id$
 //
-//  Description:
-//
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
-//  Sat 10-Feb-2001, Copyright (c) 2001 SndKit project
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and 
 //  non-commercial purposes so long as the author attribution and copyright 
@@ -30,7 +28,8 @@ enum {
 @class SndAudioProcessorChain;
 
 #ifdef __MINGW32__
-@class SndConditionLock;
+# import "SndConditionLock.h"
+# define NSConditionLock SndConditionLock
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -45,18 +44,28 @@ enum {
 @protocol SndStreamClientDelegate
 
 /*!
-@method     inputBufferSkipped
- @abstract   Message sent when the client was not ready to accept the
+  @method     inputBufferSkipped:
+  @param The instance of SndStreamClient sending the message.
+  @abstract   Message sent when the client was not ready to accept the
  next input buffer
 */
 - inputBufferSkipped:  sender;
 
 /*!
- @method outputBufferSkipped
- @abstract Message sent when the client was not ready to provide the
+  @method outputBufferSkipped:
+  @param The instance of SndStreamClient sending the message.
+  @abstract Message sent when the client was not ready to provide the
            next outputBuffer
 */
 - outputBufferSkipped: sender;
+
+/*!
+  @method didProcessStreamBuffer:
+  @param The instance of SndStreamClient sending the message.
+  @abstract Message sent after each buffer has been processed. This is expensive.
+ */
+- didProcessStreamBuffer: sender;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,36 +74,27 @@ enum {
 
 /*!
 @class SndStreamClient
-@abstract Audio streaming / signal processing / synthesis module
-@discussion Provides basic streaming services such as double buffering, thread handling,
-automatic start up and and shut down of lower-level streaming services.
+@abstract A stream client is responsible for audio streaming, signal processing and synthesis.
+@discussion A SndStreamClient provides basic streaming services such as double buffering, thread handling,
+automatic start up and and shut down of lower-level streaming services. Each SndStreamClient instance has a SndAudioProcessorChain instance, so each client can be part of a signal processing chain.
 */
 @interface SndStreamClient : NSObject
 {
-/*! @var             exposedOutputBuffer */
+/*! @var             exposedOutputBuffer The buffer in the output queue retrieved by the SndStreamMixer (driven by the output thread). */
     SndAudioBuffer  *exposedOutputBuffer;
-/*! @var             synthOutputBuffer */
+/*! @var             synthOutputBuffer The buffer in the output queue modified by the synthesis thread. */
     SndAudioBuffer  *synthOutputBuffer;
 /*! @var             synthInputBuffer */
     SndAudioBuffer  *synthInputBuffer;
-/*! @var                 outputQueue */
+/*! @var                 outputQueue A FIFO queue of SndAudioBuffers holding those pending output and those processed. */
     SndAudioBufferQueue *outputQueue;
 /*! @var                 inputQueue */
     SndAudioBufferQueue *inputQueue;
     
-#ifndef __MINGW32__
 /*! @var       synthThreadLock */
     NSConditionLock *synthThreadLock;
-#else
-    SndConditionLock *synthThreadLock;
-#endif
-
-#ifndef __MINGW32__
-/*! @var       outputBufferLock */
+/*! @var       outputBufferLock Controls access to the output buffer, particularly when changing the exposedOutputBuffer. */
     NSConditionLock *outputBufferLock;
-#else
-    SndConditionLock *outputBufferLock;
-#endif
 
 /*! @var       active */
     BOOL       active;
@@ -106,21 +106,21 @@ automatic start up and and shut down of lower-level streaming services.
     SndAudioProcessorChain *processorChain;
 /*! @var       manager */
     SndStreamManager *manager;
-/*! @var       processFinishedCallback C callback function - should be replaced with a delegate system */
-    void     (*processFinishedCallback)(void);
 /*! @var       delegate; */
     id         delegate;    
-/*! @var       nowTime */
+/*! @var       clientNowTime */
     double     clientNowTime;
     
 /*! @var       clientName */
     NSString  *clientName;
     
 @private
-/*! @var       bDelegateRespondsToOutputBufferSkipSelector */
-    BOOL       bDelegateRespondsToOutputBufferSkipSelector;
-/*! @var       bDelegateRespondsToInputBufferSkipSelector */
-    BOOL       bDelegateRespondsToInputBufferSkipSelector;
+/*! @var       delegateRespondsToOutputBufferSkipSelector Conditional speeding up delegation messaging. */
+    BOOL       delegateRespondsToOutputBufferSkipSelector;
+/*! @var       delegateRespondsToInputBufferSkipSelector Conditional speeding up delegation messaging.*/
+    BOOL       delegateRespondsToInputBufferSkipSelector;
+/*! @var       delegateRespondsToDidProcessBufferSelector Conditional speeding up delegation messaging.*/
+    BOOL       delegateRespondsToDidProcessBufferSelector;
 /*! @var       bDisconnect */
     BOOL       bDisconnect;
 }
@@ -155,34 +155,47 @@ automatic start up and and shut down of lower-level streaming services.
 - (NSString*) description;
 
 /*!
-    @method   setProcessFinishedCallBack: 
-    @abstract 
-    @discussion 
-    @param      fn C callback function
-    @result     self
-*/
-- setProcessFinishedCallBack: (void*) fn;
-
-/*!
     @method     welcomeClientWithBuffer:manager:
-    @abstract
-    @discussion 
-    @param      buff
-    @param      m
-    @result     self
+    @abstract   Initialize the client with a buffer showing manager format and start its thread.
+    @discussion Each SndStreamClient instance receives welcomeClientWithBuffer:manager: message
+                from SndStreamManager when the client is first added to the manager. The receiving
+                instance is supplied the first output buffer to use. This method prepares input
+                and/or output queues as needed then initiates one thread per stream client.
+                The SndStreamClient method processingThread is executed by that thread.
+    @param      buff The buffer to use for output and as a prototype for I/O SndAudioBufferQueues.
+    @param      m The SndStreamManager responsible for this client.
+    @result     Returns self
 */
-- welcomeClientWithBuffer: (SndAudioBuffer*) buff manager: (SndStreamManager*) m;
+- welcomeClientWithBuffer: (SndAudioBuffer *) buff manager: (SndStreamManager *) m;
 
 /*!
     @method     startProcessingNextBufferWithInput:nowTime:
-    @abstract   Client welcomed with buffer showing manager format.
-    @discussion Ignore input buffer if you don't want it.
-    @param      inB
-    @param      t
-    @result     self
+    @abstract   Initiates the generation of the next buffer which will be retrieved by the
+		SndStreamMixer in the next iteration.
+    @discussion SndStreamMixer in the method processInBuffer:outBuffer:nowTime:
+                iterates through all its SndStreamClients sending them the message
+                startProcessingNextBufferWithInput:nowTime: after retrieving the
+                SndStreamClient's outputBuffer. This method is responsible for placing
+                the last exposedOutputBuffer onto the pending portion of the output queue
+                (an instance of SndAudioBufferQueue). The exposedOutputBuffer is then
+                retrieved as the next processed buffer using popNextProcessedBuffer.
+    @param      inB The Input Buffer. Ignore input buffer if you don't want it.
+    @param      t The current now time.
+    @result     Returns self.
 */
 - startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) t;
 
+/*!
+  @method     preemptQueuedStream
+  @discussion Any audio buffers which have been processed and awaiting to be retrieved by the
+              SndStreamMixer/SndStreamManager are preempted, clearing any sounds such that any
+              new buffer processed will be mixed without waiting for earlier processed buffers
+              to be mixed.
+  @param      nowTime The new now time.
+  @result     Returns the number of seconds that the stream has been preempted by.
+ */
+- (double) preemptQueuedStream;
+ 
 /*!
     @method     processingThread
     @abstract     Root method for the synthesis thread
@@ -280,7 +293,7 @@ automatic start up and and shut down of lower-level streaming services.
     @method     setDetectPeaks: (BOOL) detectPeaks
     @abstract   enables / disables peak detection
     @discussion Not implemented yet - not convinced this should be here - maybe inside an SndAudioProcessor?
-    @result     self.
+    @result     Returns self.
 */
 - setDetectPeaks: (BOOL) detectPeaks;
 
@@ -290,7 +303,7 @@ automatic start up and and shut down of lower-level streaming services.
     @discussion Not implemented yet - not convinced this should be here - maybe inside an SndAudioProcessor?
     @param      leftPeak Left peak value
     @param      rightPeak Righ peak value
-    @result     self.
+    @result     Returns self.
 */
 - getPeakLeft: (float *) leftPeak right: (float *) rightPeak;
 
@@ -314,7 +327,7 @@ automatic start up and and shut down of lower-level streaming services.
                 mixing downstream.
     @discussion Normally you should only need to call this when initializing a derived stream client
     @param      b Boolean switch 
-    @result     self.
+    @result     Returns self.
 */
 - setGeneratesOutput: (BOOL) b;
 
@@ -329,7 +342,7 @@ automatic start up and and shut down of lower-level streaming services.
                 assume that the client's copy of the previous input buffer may still
                 be in use.
     @param      b Boolean switch
-    @result     self.
+    @result     Returns self.
 */
 - setNeedsInput: (BOOL) b;
 
@@ -339,7 +352,7 @@ automatic start up and and shut down of lower-level streaming services.
     @discussion Should never be called explicitly, it is invoked as part of the 
                 process of a manager welcoming a client into the fray.
     @param      m
-    @result     self.
+    @result     Returns self.
 */
 - setManager: (SndStreamManager*) m;
 
@@ -348,23 +361,23 @@ automatic start up and and shut down of lower-level streaming services.
     @abstract   Blocks calling thread until outputBuffer is available for locking.  
     @discussion Lock the output buffer before doing anything with it, otherwise 
                 the synthesis thread may swap the buffers on you!
-    @result     self.
+    @result     Returns self.
 */
 - lockOutputBuffer;
 
 /*!
     @method   unlockOutputBuffer
     @abstract   Releases lock on the outputBuffer.
-    @result     self.
+    @result     Returns self.
 */
 - unlockOutputBuffer;
 /*!
     @method   prepareToStreamWithBuffer: 
-    @abstract   Prepare-to-stream-with-buffers-that-look-like-this message.
+    @abstract   Prepare to stream with buffers that look like the supplied buffer.
     @discussion Called before streaming commences to allow client an opportunity 
                 to setup internal generation buffers.
     @param      buff
-    @result     self.
+    @result     Returns self.
 */
 - prepareToStreamWithBuffer: (SndAudioBuffer*) buff;
 
@@ -373,7 +386,7 @@ automatic start up and and shut down of lower-level streaming services.
     @abstract   streaming thread is shutting down message.
     @discussion Called just before the streaming thread shuts down, giving a 
                 derived client a chance to clean up after itself.
-    @result     self.
+    @result     Returns self.
 */
 - didFinishStreaming;
 
@@ -389,7 +402,7 @@ automatic start up and and shut down of lower-level streaming services.
     @method   setDelegate:
     @abstract   Sets the client's delegate object
     @param      d
-    @result     self
+    @result     Returns self.
 */
 - (void) setDelegate: (id) d;
 
@@ -433,15 +446,22 @@ automatic start up and and shut down of lower-level streaming services.
     @method    outputLatencyInSeconds
     @abstract  Calculates the stream latency of the client 
     @discussion Number of buffers in queue times buffer duration.
-    @result    Latency, in seconds. 
+    @result    Returns latency, in seconds. 
 */
 - (double) outputLatencyInSeconds;
 
+/*!
+  @method    outputLatencyInSamples
+  @abstract  Calculates the current stream latency of the client
+  @discussion Number of buffers in queue times buffer duration.
+  @result    Returns latency, in samples.
+ */
+- (long) outputLatencyInSamples;
 
 /*!
     @method    clientName
     @abstract  Accessor to the client name 
-    @result    The NSString with the client's name 
+    @result    Returns the NSString with the client's name.
 */
 - (NSString*) clientName;
 
@@ -449,12 +469,18 @@ automatic start up and and shut down of lower-level streaming services.
     @method    setClientName:
     @abstract  Sets the client's name
     @param     name The client's name.
-    @discussion Useful identifying clients, especially when debugging - several SndStreamClient 
+    @discussion Useful for identifying clients, especially when debugging - several SndStreamClient 
                 warning and error messages will display the name of the client reporting the error.
-    @result    self 
+    @result    Returns self.
 */
 - setClientName: (NSString*) name;
 
+/*!
+  @method offlineProcessBuffer:nowTime:
+  @abstract To come
+  @param anAudioBuffer the audio buffer to process
+  @param t nowTime
+ */
 - offlineProcessBuffer: (SndAudioBuffer*) anAudioBuffer nowTime: (double) t;
 
 @end
