@@ -29,16 +29,6 @@
 @implementation SndAudioBuffer
 
 ////////////////////////////////////////////////////////////////////////////////
-// audioBufferWithSoundStruct:data:
-////////////////////////////////////////////////////////////////////////////////
-
-+ audioBufferWithSoundStruct: (SndSoundStruct*) f data: (void*) d
-{
-    SndAudioBuffer *ab = [[SndAudioBuffer alloc] initWithSoundStruct: f data: d];
-    return [ab autorelease];
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // audioBufferWithFormat:data:
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -66,21 +56,26 @@
 // audioBufferWithSnd:inRange:
 ////////////////////////////////////////////////////////////////////////////////
 
-+ audioBufferWithSnd: (Snd *) snd inRange: (NSRange) r
++ audioBufferWithSnd: (Snd *) snd inRange: (NSRange) rangeInFrames
 {
     SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
-    int frameSizeInBytes;
+    long byteCount;
     
     // PUT THIS IN AN INIT FN!!!!
     ab->format.dataFormat   = [snd dataFormat];
     ab->format.channelCount = [snd channelCount];
-    ab->format.sampleRate = [snd samplingRate];
-    frameSizeInBytes  = [ab frameSizeInBytes];
+    ab->format.sampleRate   = [snd samplingRate];
+    ab->format.frameCount   = rangeInFrames.length;
     if (ab->data != nil)
 	[ab->data release];
-    ab->byteCount = frameSizeInBytes * (r.length + r.location);
-    ab->data = [[NSMutableData dataWithBytes: [snd data] + r.location * frameSizeInBytes
-                                      length: ab->byteCount] retain];
+    byteCount = SndDataSize(ab->format);
+    if (byteCount > 0) {
+	ab->data = [[NSMutableData dataWithBytes: [snd data] + rangeInFrames.location * [ab frameSizeInBytes]
+					  length: byteCount] retain];	
+    }
+    else {
+	NSLog(@"audioBufferWithSnd: error, byteCount (%li) <= 0\n", byteCount);
+    }
     return [ab autorelease];
 }
 
@@ -88,14 +83,14 @@
 // audioBufferWithFormat:duration:
 ////////////////////////////////////////////////////////////////////////////////
 
-+ audioBufferWithFormat: (SndFormat *) f duration: (double) timeInSec
++ audioBufferWithFormat: (SndFormat) f
 {
     SndAudioBuffer *ab = [SndAudioBuffer alloc];
 
-    [ab initWithDataFormat: f->dataFormat
-              channelCount: f->channelCount
-              samplingRate: f->sampleRate
-                  duration: timeInSec];
+    [ab initWithDataFormat: f.dataFormat
+	      channelCount: f.channelCount
+              samplingRate: f.sampleRate
+		frameCount: f.frameCount];
 
     return [ab autorelease];
 }
@@ -105,18 +100,71 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 + audioBufferWithDataFormat: (SndSampleFormat) newDataFormat
-               channelCount: (int) newChannelCount
+	       channelCount: (int) newChannelCount
                samplingRate: (double) newSamplingRate
-                   duration: (double) time;
+                   duration: (double) timeInSeconds
 {
     SndAudioBuffer *ab = [SndAudioBuffer alloc];
 
     [ab initWithDataFormat: newDataFormat
-              channelCount: newChannelCount
+	      channelCount: newChannelCount
               samplingRate: newSamplingRate
-                  duration: time];
+                  duration: timeInSeconds];
 
     return [ab autorelease];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// audioBufferWithDataFormat:channelCount:samplingRate:frameCount:
+////////////////////////////////////////////////////////////////////////////////
+
++ audioBufferWithDataFormat: (SndSampleFormat) newDataFormat
+	       channelCount: (int) newChannelCount
+               samplingRate: (double) newSamplingRate
+		 frameCount: (long) newFrameCount
+{
+    SndAudioBuffer *ab = [SndAudioBuffer alloc];
+    
+    [ab initWithDataFormat: newDataFormat
+		  channelCount: newChannelCount
+              samplingRate: newSamplingRate
+                frameCount: newFrameCount];
+    
+    return [ab autorelease];
+}
+
+- (void) stereoChannels: (int *) leftAndRightChannels
+{
+    memcpy(leftAndRightChannels, speakerConfiguration, 2 * sizeof(int));
+}
+
+- (NSArray *) speakerConfiguration
+{
+    signed char speakerIndex;  // A maximum of 128 channels - plenty!
+    SndFormat nativeFormat = [Snd nativeFormat];
+    NSMutableArray *speakerNamesArray = [NSMutableArray arrayWithCapacity: nativeFormat.channelCount];
+    const char **speakerNames = SNDSpeakerConfiguration();
+    
+    if(speakerConfiguration != NULL)
+	free(speakerConfiguration);
+    speakerConfiguration = (signed char *) malloc(SND_SPEAKER_SIZE * sizeof(signed char));	
+
+    // Default to the left channel preceding the right in the sample data.
+    speakerConfiguration[SND_SPEAKER_LEFT] = 0;
+    speakerConfiguration[SND_SPEAKER_RIGHT] = 1;
+    
+    for(speakerIndex = 0; speakerIndex < nativeFormat.channelCount; speakerIndex++) {
+        // Cache the speaker configuration so that stereoChannels is a fast method.
+        if(strcmp("Left", speakerNames[speakerIndex]) == 0)
+            speakerConfiguration[SND_SPEAKER_LEFT] = speakerIndex;
+        else if(strcmp("Right", speakerNames[speakerIndex]) == 0)
+            speakerConfiguration[SND_SPEAKER_RIGHT] = speakerIndex;
+	else
+	    speakerConfiguration[SND_SPEAKER_RIGHT] = SND_SPEAKER_UNUSED;
+        [speakerNamesArray addObject: [NSString stringWithCString: speakerNames[speakerIndex]]];
+    }
+    
+    return [NSArray arrayWithArray: speakerNamesArray];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -125,17 +173,19 @@
 
 - init
 {
-  self = [super init];
-  if (self) {
-    format.sampleRate   = 44100.0;
-    format.dataFormat   = SND_FORMAT_LINEAR_16;
-    format.channelCount = 2;
-    if (data != nil)
-      [data release];
-    data = [[NSMutableData alloc] init];
-    byteCount = 0;
-  }
-  return self;
+    self = [super init];
+    if (self) {  // Default format typical for modern hardware.
+	format.sampleRate   = 44100.0;
+	format.dataFormat   = SND_FORMAT_LINEAR_16;
+	format.channelCount = 2;
+	format.frameCount   = 0;
+	if (data != nil)
+	    [data release];
+	data = [[NSMutableData alloc] init];
+	// TODO Perhaps cache this in +initialize and just copy the speaker configuration array.
+	// [self speakerConfiguration];
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -143,33 +193,33 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 - initWithBuffer: (SndAudioBuffer *) b
-           range: (NSRange) r
+           range: (NSRange) rangeInFrames
 {
-  self = [self init];
-  if (self) {
-    void *ptr = NULL;
-    int frameSize  = 0, length, offset;
-    int dataLength = 0;
-    
-    format = b->format;
-    frameSize    = [self frameSizeInBytes];
-    ptr = [b bytes] + frameSize * r.location;
-    length = frameSize * r.length;
-    offset = frameSize * r.location;
-
-    if (offset+length > [b lengthInBytes])
-      dataLength = [b lengthInBytes] - offset;
-    else
-      dataLength = length;
-
-    if (length < 0)
-      NSLog(@"SndAudioBuffer::initWithBuffer:range: ERR - length (%d) < 0! frameSize = %d, range.length = %d", length, frameSize, r.length);
+    self = [self init];
+    if (self) {
+	void *ptr = NULL;
+	int frameSize  = 0, length, offset;
+	int dataLength = 0;
+	
+	format = b->format;
+	frameSize = [self frameSizeInBytes];
+	ptr = [b bytes] + frameSize * rangeInFrames.location;
+	length = frameSize * rangeInFrames.length;
+	offset = frameSize * rangeInFrames.location;
+	
+	if (offset + length > [b lengthInBytes])
+	    dataLength = [b lengthInBytes] - offset;
+	else
+	    dataLength = length;
+	
+	if (length < 0)
+	    NSLog(@"SndAudioBuffer::initWithBuffer:range: ERR - length (%d) < 0! frameSize = %d, range.length = %d", length, frameSize, rangeInFrames.length);
         
-    [data setLength: length];
-    memcpy([data mutableBytes], ptr, dataLength);
-    byteCount = dataLength;
-  }
-  return self;
+	[data setLength: length];
+	memcpy([data mutableBytes], ptr, dataLength);
+	format.frameCount = dataLength / frameSize;
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -181,7 +231,6 @@
     self = [self init];
     if (self) {
         format = b->format;
-        byteCount = b->byteCount;
         [data release];
         data = [[NSMutableData alloc] initWithData: b->data];
     }
@@ -212,7 +261,7 @@
     else {
       data = [[NSMutableData alloc] initWithBytes: d length: f->dataSize];
     }
-    byteCount = f->dataSize;
+    format.frameCount = f->dataSize / [self frameSizeInBytes];
   }
   return self;
 }
@@ -225,6 +274,7 @@
 {
     self = [super init];
     if (self) {
+	long byteCount;
         format = *newFormat;
 
         if (data != nil)
@@ -246,25 +296,37 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// init
+// initWithDataFormat:channelCount:samplingRate:frameCount:
 ////////////////////////////////////////////////////////////////////////////////
 
 - initWithDataFormat: (SndSampleFormat) newDataFormat
-        channelCount: (int) newChannelCount
+	channelCount: (int) newChannelCount
         samplingRate: (double) newSamplingRate
-            duration: (double) time
+          frameCount: (long) newFrameCount
 {
     self = [super init];
     if (self) {
-	byteCount = (SndSampleWidth(newDataFormat) * newChannelCount) * (int)(time * newSamplingRate);
-	format.sampleRate   = newSamplingRate;
-	format.channelCount = newChannelCount;
-	format.dataFormat   = newDataFormat;
-	if (data != nil)
-	    [data release];
-	data = [[NSMutableData alloc] initWithLength: byteCount];
+	SndFormat newFormat;
+	
+	newFormat.sampleRate   = newSamplingRate;
+	newFormat.channelCount = newChannelCount;
+	newFormat.dataFormat   = newDataFormat;
+	newFormat.frameCount   = newFrameCount;
+	return [self initWithFormat: &newFormat data: NULL];
     }
     return self;
+}
+
+// Convenience method.
+- initWithDataFormat: (SndSampleFormat) newDataFormat
+	channelCount: (int) newChannelCount
+        samplingRate: (double) newSamplingRate
+            duration: (double) timeInSeconds
+{
+    return [self initWithDataFormat: newDataFormat
+		       channelCount: newChannelCount
+		       samplingRate: newSamplingRate
+			 frameCount: timeInSeconds * newSamplingRate];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -286,9 +348,8 @@
     float sampleMin, sampleMax;
     
     [self findMin: &sampleMin max: &sampleMax];
-    return [NSString stringWithFormat: @"%@ (dataLength: %i duration: %f dataFormat: %@ samplingRate: %.2f channels: %i min: %.2f, max: %.2f)",
-        [super description], byteCount, [self duration],
-        SndFormatName(format.dataFormat, NO), format.sampleRate, format.channelCount, sampleMin, sampleMax];
+    return [NSString stringWithFormat: @"%@ %@ (min: %.2f, max: %.2f)",
+        [super description], SndFormatDescription(format), sampleMin, sampleMax];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -347,8 +408,9 @@
         return FALSE;
     else
         return ( format.dataFormat   == buff->format.dataFormat   ) &&
+               ( format.sampleRate   == buff->format.sampleRate   ) &&
                ( format.channelCount == buff->format.channelCount ) &&
-               ( byteCount           == buff->byteCount    );
+               ( format.frameCount   == buff->format.frameCount   );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -385,8 +447,6 @@
 	endFrame = lengthInSampleFrames;
     }
 
-    if (endFrame > byteCount / sizeof(float))
-	endFrame = byteCount / sizeof(float);
     frameCount = MIN(incomingLengthInSampleFrames, endFrame - startFrame);
     lengthInSamples = frameCount * buffNumChannels; // number of samples for all channels.
 
@@ -398,7 +458,7 @@
 	}
 	else {
 	    convertedBuffer = [[buff audioBufferConvertedToFormat: selfDataFormat
-						     channelCount: selfNumChannels
+							 channelCount: selfNumChannels
 						     samplingRate: [self samplingRate]] retain];
 	    in = [convertedBuffer bytes];
 	}
@@ -470,7 +530,8 @@
 - copyData: (SndAudioBuffer *) from
 {
     if (from != nil) {
-        if (from->byteCount == byteCount)
+	// TODO [self formatSameAsBuffer: from];
+        if (from->format.frameCount == format.frameCount)
             [data setData: from->data];
         else {
             NSLog(@"Buffers are different lengths - need code to handle this case!");
@@ -488,6 +549,9 @@
 
 - copyBytes: (void *) bytes intoRange: (NSRange) bytesRange format: (SndFormat) newFormat
 {
+    long originalFrameCount = format.frameCount;
+    long lastFrameLocation;
+    
     if (!bytes) {
 	NSLog(@"AudioBuffer::copyBytes:intoRange:format: ERR: param 'from' is nil!");
 	return nil;
@@ -498,7 +562,9 @@
     }
     [data replaceBytesInRange: bytesRange withBytes: (const void *) bytes];
     format = newFormat;
-    byteCount    = bytesRange.location + bytesRange.length;
+    // Can extend the frame count.
+    lastFrameLocation = (bytesRange.location + bytesRange.length) / [self frameSizeInBytes];
+    format.frameCount = MAX(lastFrameLocation, originalFrameCount);
     return self;
 }
 
@@ -508,7 +574,7 @@
 
 - copyBytes: (void *) bytes count: (unsigned int) count format: (SndFormat) newFormat
 {
-  return [self copyBytes: bytes intoRange: NSMakeRange(0, count) format: newFormat];
+    return [self copyBytes: bytes intoRange: NSMakeRange(0, count) format: newFormat];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -531,13 +597,69 @@
     return nil;
 }
 
+// This is pretty kludgy, it only really works for SND_FORMAT_LINEAR_16 to SND_FORMAT_FLOAT conversions. It should
+// be revamped to work with all formats, and to do channel mapping if necessary.
+- (long) copyFromBuffer: (SndAudioBuffer *) fromBuffer
+	 intoFrameRange: (NSRange) bufferRange
+	 fromFrameRange: (NSRange) fromFrameRange
+{
+    int numOfChannelsInBuffer = [self channelCount];
+    // We could simply store all pcm data into a 2 channel (stereo) buffer and then do the conversion to larger
+    // number of channels later, but in the interests of efficiency and the mess of not properly filling our given
+    // buffer, we move the pcm channels into the stereo channels of the audio buffer.
+    // Left channel in 0th element, Right channel in 1st element.
+    short stereoChannels[2] = { 0, 1 };
+    // short stereoChannels[2];
+    // [fromBuffer stereoChannels: stereoChannels];
+    short *fromData = [fromBuffer bytes];
+    
+    switch ([self dataFormat]) {
+	case SND_FORMAT_FLOAT: {
+	    // Our buffer is in an array of floats, numOfChannelsInBuffer per frame.
+	    // TODO we should rewrite this to manipulate the audio data as array of bytes until we need to actually do the conversion.
+	    // This is preferable to having duplicated code with just a couple of changes for type definitions and arithmetic.
+	    // So the switch statement should be moved inside the loops.
+	    float *buff = [self bytes];  
+	    unsigned long frameIndex;
+	    unsigned long sampleIndex;
+	    unsigned short channelIndex;
+	    
+	    for (frameIndex = 0; frameIndex < fromFrameRange.length; frameIndex++) {
+		long currentBufferSample = (bufferRange.location + frameIndex) * numOfChannelsInBuffer;
+		// LAME always produces stereo data in two separate buffers
+		long currentSample = (fromFrameRange.location + frameIndex) * [fromBuffer channelCount];
+		
+		buff[currentBufferSample + stereoChannels[0]] = fromData[currentSample] / 32768.0;
+		buff[currentBufferSample + stereoChannels[1]] = fromData[currentSample + 1] / 32768.0;
+		// Silence any other (neither L or R) channels in the buffer.
+		for(channelIndex = 0; channelIndex < numOfChannelsInBuffer; channelIndex++) {
+		    if(channelIndex != stereoChannels[0] && channelIndex != stereoChannels[1]) {
+			// we use integer values for zero so they will cast appropriate to the size of buff[x].
+			buff[currentBufferSample + channelIndex] = 0;
+		    }
+		}
+	    }
+	    // Silence the rest of the buffer, all channels
+	    for (sampleIndex = (bufferRange.location + frameIndex) * numOfChannelsInBuffer; sampleIndex < (bufferRange.location + bufferRange.length) * numOfChannelsInBuffer; sampleIndex++) {
+		buff[sampleIndex] = 0;
+	    }
+	    
+	    break;
+	}
+	default:
+	    NSLog(@"SndMP3 -copyFromBuffer:intoFrameRange:fromRange: - unhandled data format %d", [self dataFormat]);
+    }
+    return fromFrameRange.length;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // frameSizeInBytes
 ////////////////////////////////////////////////////////////////////////////////
 
 - (int) frameSizeInBytes
 {
-  return format.channelCount * SndSampleWidth(format.dataFormat);
+    // TODO return SndFrameSize(format);
+    return format.channelCount * SndSampleWidth(format.dataFormat);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -546,7 +668,7 @@
 
 - (unsigned long) lengthInSampleFrames
 {
-  return byteCount / [self frameSizeInBytes];
+    return format.frameCount;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -556,23 +678,21 @@
 - setLengthInSampleFrames: (unsigned long) newSampleFrameCount
 {
     long frameSizeInBytes = [self frameSizeInBytes];
-    unsigned long oldLengthInBytes = byteCount;
+    unsigned long oldLengthInBytes = SndDataSize(format);
     unsigned long newLengthInBytes = frameSizeInBytes * newSampleFrameCount;
 
     if (newSampleFrameCount < 0) {
 	NSLog(@"SndAudioBuffer::setLengthInSampleFrames: newSampleFrameCount (%ld) < 0!", newSampleFrameCount);
     }
     else {
-	if (byteCount > newLengthInBytes)
-	    byteCount = newLengthInBytes;
-	else {
+	if (format.frameCount < newSampleFrameCount)  { // enlarge the data if setting longer
 	    [data setLength: newLengthInBytes];
 	    if (oldLengthInBytes < newLengthInBytes) {
 		NSRange r = {oldLengthInBytes, newLengthInBytes - oldLengthInBytes};
 		[data resetBytesInRange: r];
-	    }
-	    byteCount = newLengthInBytes;
+	    }	    
 	}
+	format.frameCount = newSampleFrameCount;
     }
     return self;
 }
@@ -583,7 +703,7 @@
 
 - (long) lengthInBytes
 {
-  return byteCount;
+    return SndDataSize(format);
 }
 
 - (void) findMin: (float *) pMin max: (float *) pMax
