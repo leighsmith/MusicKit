@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/08/26 20:02:44  leigh
+  new MKError Prototype and localised strings now searched within the Framework
+
   Revision 1.3  1999/08/04 16:35:45  leigh
   fixed copyright and removed _MKSprintf include
 
@@ -530,10 +533,10 @@ void _MKEnableErrorStream(void)
     errorStreamEnabled = YES;
 }
 
-id MKError(char * msg)
+id MKError(NSString * msg)
     /* Calls the user's error proc (set with MKSetErrorProc), if any, with 
-       one argument, the msg. Otherwise, writes the message on the Music
-       Kit error stream. Returns nil.
+       one argument, the msg. Otherwise, writes the message on the MusicKit error stream.
+       Returns nil.
        */
 {
     if (!msg)
@@ -544,7 +547,7 @@ id MKError(char * msg)
     }
     else if (!errorStreamEnabled)
       return nil;
-    [MKErrorStream() appendData:[[NSString stringWithCString:msg] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+    [MKErrorStream() appendData:[msg dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     [errorStream appendData:[@"\n" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 //#error StreamConversion: NXFlush should be converted to an NSData method
 //    NXFlush(errorStream); //sb: unnec
@@ -572,7 +575,7 @@ id _MKErrorf(int errorCode,...)
     if (errorProc) {
 	//_MKVsprintf(_errBuf,[fmt cString],ap); // LMS _MKVsprintf only existed to be thread-safe
 	// Immutable NSStrings are that:
-        MKError([[[[NSString alloc] initWithFormat:fmt arguments:ap] autorelease] cString]);
+        MKError([[[NSString alloc] initWithFormat:fmt arguments:ap] autorelease]);
         // MKError(_errBuf);
     }
     else if (!errorStreamEnabled)
@@ -835,13 +838,15 @@ int MKIsNoDVal(double val)
 
 NSBundle *_MKErrorBundle(void)
 {
-    static const NSBundle *musicKitBundle = nil;
-    if (!musicKitBundle) {
-	musicKitBundle = 
-	  [[NSBundle alloc] initWithPath:@"/usr/local/lib/MusicKit/Languages"];
+    static const NSBundle *musicKitStringsBundle = nil;
+    if (!musicKitStringsBundle) {
+	// Find the framework bundle, this is a global resource, so the path should be: framework_dir/Resources/Localized.strings
+        musicKitStringsBundle = [NSBundle bundleForClass: [MKNote class]];
+//	musicKitStringsBundle = 
+//	  [[NSBundle alloc] initWithPath:@"/usr/local/lib/MusicKit/Languages"];
     }
     /* Strings should be in the file "Localized.strings" */
-    return musicKitBundle;
+    return musicKitStringsBundle;
 }
 
 NSString *_MKErrorStringFile(void)
