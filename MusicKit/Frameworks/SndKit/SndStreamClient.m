@@ -12,11 +12,18 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-#define SET_MACH_THREAD_PRIORITY 0
+#define SET_THREAD_PRIORITY 1
 
-#if SET_MACH_THREAD_PRIORITY
-#import <mach/mach_init.h>
-#import <mach/thread_act.h>
+#if SET_THREAD_PRIORITY
+ #include <sched.h>
+ #if (defined(__ppc__) && defined(__APPLE__))
+  #include <mach/mach_init.h>
+  #include <mach/task_policy.h>
+  #include <mach/thread_act.h>
+  #include <mach/thread_policy.h>
+  #include <sys/sysctl.h>
+  int get_bus_speed(); /* forward decl */
+ #endif
 #endif
 
 #include <sys/time.h>
@@ -392,6 +399,31 @@ enum {
     return self;
 }
 
+#ifdef SET_THREAD_PRIORITY
+#if (defined(__ppc__) && defined(__APPLE__))
+int get_bus_speed()
+{
+    int mib[2];
+    unsigned int miblen;
+    int busspeed;
+    int retval;
+    size_t len;
+
+    mib[0]=CTL_HW;
+    mib[1]=HW_BUS_FREQ;
+    miblen=2;
+    len=4;
+    retval = sysctl(mib, miblen, &busspeed, &len, NULL, 0);
+
+/* Note: you should really check retval here, see man sysctl for info */
+
+    // printf("%d\n", busspeed);
+    return busspeed;
+}
+
+#endif
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////
 // processingThread
 ////////////////////////////////////////////////////////////////////////////////
@@ -404,28 +436,46 @@ enum {
     [self retain];
 
     {
-      /*
-      int r;
-      pthread_t threadID = pthread_self();
-      struct sched_param param;
-      param.sched_priority = 90;
-      r = pthread_setschedparam(threadID, SCHED_OTHER, &param);
-      fprintf(stderr,"Thread priority change returned: %i\n",r);
+#ifdef SET_THREAD_PRIORITY
+#if (defined(__ppc__) && defined(__APPLE__))
+      struct thread_time_constraint_policy ttcpolicy;
+      kern_return_t theError;
 
-      */
-/*
-#if SET_MACH_THREAD_PRIORITY
-      thread_precedence_policy_data_t policy_data;
-      policy_data.importance = 71;
+      /* This is in AbsoluteTime units, which are equal to
+         1/4 the bus speed on most machines. */
 
-      thread_policy_set(  mach_thread_self(),
-                          THREAD_PRECEDENCE_POLICY,
-                          (thread_policy_t) &policy_data ,
-                          THREAD_PRECEDENCE_POLICY_COUNT );
-      
-      setpriority(0, 0, 70);
+      // hard-coded numbers are approximations for 100 MHz bus speed.
+      // assume that app deals in frame-sized chunks, e.g. 30 per second.
+      // ttcpolicy.period=833333;
+      ttcpolicy.period=(get_bus_speed() / 120);
+      // ttcpolicy.computation=60000;
+      ttcpolicy.computation=(get_bus_speed() / 1440);
+      // ttcpolicy.constraint=120000;    
+      ttcpolicy.constraint=(get_bus_speed() / 720);
+      ttcpolicy.preemptible=1;
+
+      theError = thread_policy_set(mach_thread_self(),
+        THREAD_TIME_CONSTRAINT_POLICY, (int *)&ttcpolicy,
+        THREAD_TIME_CONSTRAINT_POLICY_COUNT);
+
+ #if SNDSTREAMCLIENT_DEBUG
+      if (theError != KERN_SUCCESS)
+        fprintf(stderr, "Can't do thread_policy_set\n");
+ #endif
+#else  /* POSIX_RT, must be running with root privileges */ 
+      struct sched_param sp;
+      int theError;
+
+      memset(&sp, 0, sizeof(struct sched_param));
+      sp.sched_priority = sched_get_priority_min(SCHED_FIFO);
+      theError = sched_setscheduler(0, SCHED_RR, &sp);                
+ #if SNDSTREAMCLIENT_DEBUG
+      if (theError == -1)
+        fprintf(stderr,"Can't get real-time priority\n");
+ #endif
 #endif
- */
+#endif
+
     }
     active = TRUE;
 #if SNDSTREAMCLIENT_DEBUG                  
