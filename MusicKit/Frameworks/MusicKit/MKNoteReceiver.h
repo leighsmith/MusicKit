@@ -1,10 +1,60 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    During a MusicKit performance, MKInstrument objects realize MKNotes that
+    are sent to them from MKPerformer objects.  The MKNoteReceiver class
+    defines the MKNote-receiving mechanism used by MKInstruments; each
+    MKNoteReceiver object acts as a MKNote input for an MKInstrument.  Closely
+    related to MKNoteReceiver is the MKNoteSender class, which defines the
+    MKNote-sending mechanism used by MKPerformers.  By separating these
+    mechanisms into distinct classes, any MKInstrument can have multiple
+    inputs and any MKPerformer, multiple outputs.
+   
+    A MKNoteReceiver is added to an MKInstrument through the latter's
+    addNoteReceiver: method.  While an application can create MKNoteReceivers
+    and add them to an MKInstrument, this is typically done by the MKInstrument itself
+    when it's created.  You can retrieve the object to which a MKNoteReceiver has
+    been added by invoking MKNoteReceiver's owner method.
+   
+    To send MKNotes from a MKNoteSender to a MKNoteReceiver, the two objects must be
+    connected.  This is done through the connect: method:
+   
+    	[aNoteReceiver connect:aNoteSender]
+   
+    Every MKNoteReceiver and MKNoteSender contains a list of connections.  The
+    connect: method adds either object to the other's list; in other
+    words, the MKNoteReceiver is added to the MKNoteSender's list and the
+    MKNoteSender is added to the MKNoteReceiver's list.  Both MKNoteReceiver and
+    MKNoteSender implement connect: as well as disconnect: and disconnect,
+    methods used to sever connections.  A MKNoteReceiver can be connected to
+    any number of MKNoteSenders.  Connections can be established and severed
+    during a performance.
+   
+    The MKNote-receiving mechanism is defined in the receiveNote: method.
+    When a MKNoteReceiver receives the message receiveNote: it sends the
+    message realizeNote:fromNoteReceiver: to its owner, with the received
+    MKNote as the first argument and its own id as the second.  receiveNote:
+    is automatically invoked when a connected MKNoteSender sends a Note.
+    You can toggle a MKNoteReceiver's MKNote-forwarding capability through the
+    squelch and unsquelch methods; a MKNoteReceiver ignores the MKNotes it
+    receives while it's squelched.  A newly created MKNoteReceiver is
+    unsquelched.
+   
+    CF:  MKNoteSender, MKInstrument
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
   $Log$
+  Revision 1.3  2000/02/07 23:49:52  leigh
+  Comment corrections
+
   Revision 1.2  1999/07/29 01:25:46  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -15,56 +65,13 @@
 #import <Foundation/NSObject.h>
 
 @interface MKNoteReceiver: NSObject
-/* 
- * During a Music Kit performance, Instrument objects realize Notes that
- * are sent to them from Performer objects.  The NoteReceiver class
- * defines the Note-receiving mechanism used by Instruments; each
- * NoteReceiver object acts as a Note input for an Instrument.  Closely
- * related to NoteReceiver is the MKNoteSender class, which defines the
- * Note-sending mechanism used by Performers.  By separating these
- * mechanisms into distinct classes, any Instrument can have multiple
- * inputs and any Performer, multiple outputs.
- * 
- * A NoteReceiver is added to an Instrument through the latter's
- * addNoteReceiver: method.  While an application can create NoteReceivers
- * and add them to an Instrument, this is typically done by the Instrument itself
- * when it's created.  You can retrieve the object to which a NoteReceiver has
- * been added by invoking NoteReceiver's owner method.
- * 
- * To send Notes from a MKNoteSender to a NoteReceiver, the two objects must be
- * connected.  This is done through the connect: method:
- *
- * 	[aNoteReceiver connect:aNoteSender]
- *
- * Every NoteReceiver and MKNoteSender contains a list of connections.  The
- * connect: method adds either object to the other's list; in other
- * words, the NoteReceiver is added to the MKNoteSender's list and the
- * MKNoteSender is added to the NoteReceiver's list.  Both NoteReceiver and
- * MKNoteSender implement connect: as well as disconnect: and disconnect,
- * methods used to sever connections.  A NoteReceiver can be connected to
- * any number of NoteSenders.  Connections can be established and severed
- * during a performance.
- *
- * The Note-receiving mechanism is defined in the receiveNote: method.
- * When a NoteReceiver receives the message receiveNote: it sends the
- * message realizeNote:fromNoteReceiver: to its owner, with the received
- * Note as the first argument and its own id as the second.  receiveNote:
- * is automatically invoked when a connected MKNoteSender sends a Note.
- * You can toggle a NoteReceiver's Note-forwarding capability through the
- * squelch and unsquelch methods; a NoteReceiver ignores the Notes it
- * receives while it's squelched.  A newly created NoteReceiver is
- * unsquelched.
- * 
- * CF:  MKNoteSender, Instrument
- */
 {
-    id noteSenders;       /* List of connected NoteSenders. */
+    id noteSenders;       /* List of connected MKNoteSenders. */
     BOOL isSquelched;     /* YES if the object is squelched. */
-    id owner;             /* Instrument that owns NoteReceiver. */
+    id owner;             /* Instrument that owns MKNoteReceiver. */
 
     /* The following is for internal use only.  */
     void *_myData;
-//    void *_reservedNoteReceiver2;
 }
  
 - owner; 
