@@ -1979,10 +1979,6 @@ int endRecord(SndSoundStruct *sound, int tag, int err)
 #endif /* NEXT_RECORDING_ENABLED */
 }
 
-#ifdef USE_NEXTSTEP_SOUND_IO
-char *SndSoundError(int err);
-#endif
-
 - (void)stop:(id)sender
 {
   [sound stop:self];  // TODO should self be sender?
@@ -2384,9 +2380,10 @@ char *SndSoundError(int err);
     }
     return self;
 }
-- hadError:sender
+
+- hadError: sender
 {
-    printf("SndView HAD ERROR %d: %s\n",[sender processingError], SndSoundError([sender processingError]));
+    NSLog(@"SndView HAD ERROR %d: %@\n", [sender processingError], SndSoundError([sender processingError]));
 	return self;
 }
 
