@@ -43,10 +43,10 @@ NSString *SndPasteboardType = @"SndPasteboardType";
     * to share the pasteboard between dissimilar machines...
     */
     BOOL ret;
-    NSMutableData *ts = [NSMutableData dataWithCapacity: soundStructSize];
+    NSData *ts;
     
     // [self compactSamples];
-    [self writeSoundToData: ts];
+    ts = [self dataEncodedAsFormat: @"au"];
     [thePboard declareTypes: [NSArray arrayWithObject: SndPasteboardType] owner: nil];	
     
     ret = [thePboard setData: ts forType: SndPasteboardType];
