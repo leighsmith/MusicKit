@@ -17,11 +17,13 @@
 Modification history:
 
   $Log$
+  Revision 1.2  2000/05/05 22:41:09  leigh
+  kludge around type definitions
+
   Revision 1.1  2000/03/11 01:42:20  leigh
   Initial Release
 
 */
-typedef int port_t;
 #include "mididriver_types.h"
 #include "mididriverUser.h"
 

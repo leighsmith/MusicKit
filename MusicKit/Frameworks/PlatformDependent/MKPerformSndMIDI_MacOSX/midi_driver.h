@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.2  2000/05/05 22:41:44  leigh
+  kludge around type definitions
+
   Revision 1.1  2000/03/11 01:42:20  leigh
   Initial Release
 
@@ -33,6 +36,9 @@ Modification history:
 #import <mach/message.h>
 #import <mach/port.h>
 #import <mach/boolean.h>
+
+// kludge around type definitions.
+typedef int msg_header_t;  // mach_msg_header_t
 
 #define MD_NAME @"Mididriver"  /* Name of driver (append unit number to use) */
 

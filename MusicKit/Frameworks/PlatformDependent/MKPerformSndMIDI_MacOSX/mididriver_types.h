@@ -10,6 +10,9 @@
 Modification history:
 
   $Log$
+  Revision 1.2  2000/05/05 22:40:21  leigh
+  kludge around type definitions
+
   Revision 1.1  2000/03/11 01:42:20  leigh
   Initial Release
 
@@ -30,11 +33,12 @@ Modification history:
   mididriver.h.  The reason for having two files is to simplify the
   API for users, allowing them to import only one file. ***/
 
-/*
 #import <mach/kern_return.h>
 #import <mach/message.h>
 #import <mach/port.h>
-*/
+
+// kludge around type definitions.
+typedef int msg_header_t;  // mach_msg_header_t
 
 /* Each event consists of a byte and a time stamp. */
 typedef struct {

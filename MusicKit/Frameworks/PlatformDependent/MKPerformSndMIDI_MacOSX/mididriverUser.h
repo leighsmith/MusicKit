@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.2  2000/05/05 22:41:10  leigh
+  kludge around type definitions
+
   Revision 1.1  2000/03/11 01:42:20  leigh
   Initial Release
 
@@ -42,10 +45,8 @@ Modification history:
 extern "C" {
 #endif 
 
-typedef int kern_return_t;
 //typedef void *MDRawEventPtr;
 //typedef int *MDReplyFunctions;
-typedef int msg_header_t;
 
 /* Routine MDBecomeOwner */
 PERFORM_API kern_return_t MDBecomeOwner (
