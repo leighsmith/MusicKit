@@ -23,17 +23,17 @@ CVSTAG=${APPNAME}_`echo $RELEASE | tr '.' '-'`
 echo Checking out $CVSTAG to $MKCHECKEDOUT_SRCLOC
 mkdir -p $MKCHECKEDOUT_SRCLOC
 cd $MKCHECKEDOUT_SRCLOC
-cvs -q checkout -r $CVSTAG $APPNAME
+cvs -Q checkout -r $CVSTAG $APPNAME
 
 # unwrap the symbolic links, this will remove the symbolic links wrap file.
 unwrap_symlink $APPNAME
 
 # build a ChangeLog
 cd $MKCHECKEDOUT_SRCLOC/$APPNAME
-cvs2cl
+cvs2cl -t -f Documentation/ChangeLog
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
-find $MKCHECKEDOUT_SRCLOC -name CVS -type d -exec rm -r {} \;
+find $MKCHECKEDOUT_SRCLOC -name CVS -type d -exec rm -r {} \; -prune
 
 # tar up the remaining source
 cd $MKCHECKEDOUT_SRCLOC
