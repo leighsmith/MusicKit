@@ -28,23 +28,40 @@
 */
 @interface SndAudioBuffer : NSObject
 {
-/*! @var            formatSnd */
-    SndSoundStruct  formatSnd;
-/*! @var            data      */
-    void           *data;
-/*! @var            bOwnsData */    
-    BOOL            bOwnsData;
+/*! @var samplingRate  */
+  double samplingRate;
+/*! @var dataFormat */
+  int    dataFormat;
+/*! @var channelCount  */
+  int    channelCount;
+/*! @var data */
+  NSMutableData *data;
 }
 
 /*!
-    @method     audioBufferWithFormat:duration:
-    @abstract   Factory method
-    @discussion
-    @param      format
-    @param      timeInSec
-    @result     An SndAudioBuffer
+  @method     audioBufferWithFormat:duration:
+  @abstract   Factory method
+  @discussion
+  @param      format
+  @param      timeInSec
+  @result     An SndAudioBuffer
 */
 + audioBufferWithFormat: (SndSoundStruct*) format duration: (double) timeInSec;
+
+/*!
+  @method     audioBufferWithFormat:channelCount:samplingRate:duration:
+  @abstract   Factory method
+  @discussion
+  @param      dataFormat
+  @param      chanCount
+  @param      samRate
+  @param      duration
+  @result     An SndAudioBuffer
+*/
++ audioBufferWithFormat: (int) dataFormat
+           channelCount: (int) chanCount
+           samplingRate: (double) samRate
+               duration: (double) time;
 
 /*!
     @method     audioBufferWithFormat:data:
@@ -76,125 +93,168 @@
 + audioBufferWithSndSeg: (Snd*) snd range: (NSRange) r;
 
 /*!
-    @method     initWithFormat:data:
-    @abstract   Initialization method
-    @discussion
-    @param      f
-    @param      d
-    @result     self.
+  @method     initWithFormat:data:
+  @abstract   Initialization method
+  @discussion
+  @param      f
+  @param      d
+  @result     self.
 */
 - initWithFormat: (SndSoundStruct*) f data: (void*) d;
 
 /*!
-    @method     mixWithBuffer:fromStart:toEnd:
-    @abstract   Initialization method
-    @discussion
-    @param      buff
-    @param      start
-    @param      end
-    @result     self.
+  @method     initWithFormat:data:
+  @abstract   Initialization method
+  @discussion
+  @param      b
+  @result     self.
+*/
+- initWithBuffer: (SndAudioBuffer*) b;
+/*!
+  @method     initWithBuffer:range:
+  @abstract   Initialization method
+  @discussion
+  @param      b
+  @param      r
+  @result     self.
+*/
+- initWithBuffer: (SndAudioBuffer*) b
+           range: (NSRange) r;
+
+/*!
+  @method     initWithFormat:channelCount:samplingRate:duration:
+  @abstract   Initialization method
+  @discussion
+  @param      _dataFormat
+  @param      _channelCount
+  @param      _samplingRate
+  @param      time
+  @result     An SndAudioBuffer
+*/
+- initWithFormat: (int) _dataFormat
+    channelCount: (int) _channelCount
+    samplingRate: (double) _samplingRate
+        duration: (double) time;
+
+/*!
+  @method     mixWithBuffer:fromStart:toEnd:
+  @abstract   Initialization method
+  @discussion
+  @param      buff
+  @param      start
+  @param      end
+  @result     self.
 */
 - mixWithBuffer: (SndAudioBuffer*) buff fromStart: (long) start toEnd: (long) end;
 
 /*!
-    @method   mixWithBuffer:
-    @abstract
-    @discussion
-    @param      buff
-    @result     self.
+  @method   mixWithBuffer:
+  @abstract
+  @discussion
+  @param      buff
+  @result     self.
 */
 - mixWithBuffer: (SndAudioBuffer*) buff;
 
 /*!
-    @method     copy
-    @abstract
-    @discussion
-    @result     A duplicate SndAudioBuffer with its own, identical data.
+  @method     copy
+  @abstract
+  @discussion
+  @result     A duplicate SndAudioBuffer with its own, identical data.
 */
 - copy;
 
 /*!
-    @method     copyData:
-    @abstract
-    @discussion
-    @param      ab
-    @result     self.
+  @method     copyData:
+  @abstract
+  @discussion
+  @param      ab
+  @result     self.
 */
 - copyData: (SndAudioBuffer*) ab;
 
 /*!
-    @method     lengthInSamples
-    @abstract
-    @discussion
-    @result     buffer length in sample frames
+  @method     lengthInSamples
+  @abstract
+  @discussion
+  @result     buffer length in sample frames
 */
-- (long) lengthInSamples;
+- (long) lengthInSampleFrames;
 
 /*!
-    @method     lengthInBytes
-    @abstract
-    @discussion
-    @result     buffer length in bytes
+  @method     lengthInBytes
+  @abstract
+  @discussion
+  @result     buffer length in bytes
 */
 - (long) lengthInBytes;
 
 /*!
-    @method     duration
-    @abstract
-    @discussion
-    @result     Duration in seconds (as determined by format sampling rate)
+  @method     duration
+  @abstract
+  @discussion
+  @result     Duration in seconds (as determined by format sampling rate)
 */
 - (double) duration;
 
 /*!
-    @method     samplingRate
-    @abstract
-    @discussion
-    @result     sampling rate
+  @method     samplingRate
+  @abstract
+  @discussion
+  @result     sampling rate
 */
 - (double) samplingRate;
-
 /*!
-    @method     channelCount
-    @abstract
-    @discussion
-    @result     Number of channels
+  @method     channelCount
+  @abstract
+  @discussion
+  @result     Number of channels
 */
 - (int) channelCount;
-
 /*!
-    @method     dataFormat
-    @abstract
-    @discussion
-    @result     Data format identifier
+  @method     dataFormat
+  @abstract
+  @discussion
+  @result     Data format identifier
 */
 - (int) dataFormat;
 
 /*!
-    @method     data
-    @abstract
-    @discussion
-    @result     pointer to raw data bytes
+  @method     data
+  @abstract
+  @discussion
+  @result     pointer to NSData object contaiing the audio data
 */
-- (void*) data;
+- (NSMutableData*) data;
 
 /*!
-    @method     hasSameFormatAsBuffer:
-    @abstract   compares the data format and length of this buffer to a second buffer
-    @param      buff
-    @result     TRUE if the buffers have the same format and length
+  @method     bytes
+  @abstract
+  @discussion
+  @result     pointer to NSData object contaiing the audio data
+*/
+- (void*) bytes;
+
+/*!
+  @method     hasSameFormatAsBuffer:
+  @abstract   compares the data format and length of this buffer to a second buffer
+  @param      buff
+  @result     TRUE if the buffers have the same format and length
 */
 - (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer*) buff;
 
 /*!
-    @method     format
-    @abstract
-    @discussion
-    @result     Pointer to SndSoundStruct format description
+  @method convertToFormat:
+  @param  sndFormatCode
 */
-- (SndSoundStruct*) format;
+- convertToFormat: (int) sndFormatCode;
 
-- (BOOL) convertDataToFormat: (int) newDataFormat resultBuffer: (void*) newData;
+/*!
+  @method convertDataToFormat:
+  @param  newDataFormat
+  @param  newData
+*/
+- (NSMutableData*) convertDataToFormat: (int) newDataFormat;
 
 /*!
     @method     zero
@@ -227,7 +287,6 @@
     @result     Integer size of sample frame (channels * sample size in bytes)
 */
 - (NSString*) description;
-- setOwnsData: (BOOL) b;
 
 @end
 
