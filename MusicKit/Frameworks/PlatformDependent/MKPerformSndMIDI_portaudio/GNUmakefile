@@ -14,9 +14,12 @@
 #  and accompanies all derived code.
 
 
-#Modification history:
+#  Modification history:
 #
 #  $Log$
+#  Revision 1.4  2001/10/31 17:34:11  sbrandon
+#  Substantial changes which were required to get it to work under MinGW.
+#
 #  Revision 1.3  2001/09/03 17:12:45  sbrandon
 #  put in extra compiler warnings
 #
@@ -41,13 +44,19 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 srcdir = .
 
+ifneq (mingw32, $(GNUSTEP_TARGET_OS))
 # The framework to be compiled
-FRAMEWORK_NAME = MKPerformSndMIDI
+  FRAMEWORK_NAME = MKPerformSndMIDI
+  MY_NAME = $(FRAMEWORK_NAME)
+else
+  LIBRARY_NAME = libMKPerformSndMIDI
+  MY_NAME = $(LIBRARY_NAME)
+endif
 
 # The framework resource files and directories
-MKPerformSndMIDI_RESOURCE_FILES = 
+$(MY_NAME)_RESOURCE_FILES = 
 
-MKPerformSndMIDI_RESOURCE_DIRS = 
+$(MY_NAME)_RESOURCE_DIRS = 
 
 # The framework libraries to link against
 #sb: not sure about this...
@@ -56,17 +65,26 @@ MKPerformSndMIDI_RESOURCE_DIRS =
 ADDITIONAL_CFLAGS += -g -Wall
 
 # The Bundle Objective-C source files to be compiled
-MKPerformSndMIDI_OBJC_FILES = PerformSound.m
+$(MY_NAME)_OBJC_FILES = PerformSound.m
 
-MKPerformSndMIDI_C_FILES = PerformMIDI.c \
-		portaudio/pa_common/pa_lib.c portaudio/pa_linux_oss/pa_linux_oss.c \
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
+  $(MY_NAME)_C_FILES = PerformMIDI.c \
+		portaudio/pa_common/pa_lib.c \
+                portaudio/pa_win_ds/dsound_wrapper.c \
+                portaudio/pa_win_ds/pa_dsound.c
+else
+  $(MY_NAME)_C_FILES = PerformMIDI.c \
+                portaudio/pa_common/pa_lib.c \
+                portaudio/pa_linux_oss/pa_linux_oss.c \
                 portaudio/pa_common/pa_trace.c
+endif
 		
 # The framework installed header files
-MKPerformSndMIDI_HEADER_FILES = PerformSound.h PerformMIDI.h \
+$(MY_NAME)_HEADER_FILES = PerformSound.h PerformMIDI.h \
          mididriver_types.h PerformSoundPrivate.h sounderror.h\
          SndStruct.h mididriverUser.h SndFormats.h
 
+$(MY_NAME)_HEADER_FILES_INSTALL_DIR = MKPerformSndMIDI
 
 SRCS = $(LIBRARY_NAME:=.m)
 HDRS = $(LIBRARY_NAME:=.h)
@@ -76,6 +94,10 @@ HDRS = $(LIBRARY_NAME:=.h)
 
 -include GNUmakefile.local
 
-include $(GNUSTEP_MAKEFILES)/framework.make
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
+  include $(GNUSTEP_MAKEFILES)/library.make
+else
+  include $(GNUSTEP_MAKEFILES)/framework.make
+endif
 
 -include GNUmakefile.postamble
