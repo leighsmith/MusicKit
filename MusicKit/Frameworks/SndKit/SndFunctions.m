@@ -225,12 +225,17 @@ int SndSampleCount(const SndSoundStruct *sound)
 
 NSString *SndStructDescription(SndSoundStruct *s)
 {
-  NSString *message = [NSString stringWithFormat: 
-           @"%slocation:%d size:%d format:%d sample rate:%d channels:%d info:%s\n",
-          (s->magic != SND_MAGIC) ? "(struct lacking magic number): " : "",
-          s->dataLocation, s->dataSize, s->dataFormat,
-          s->samplingRate, s->channelCount, s->info];
-  return message;
+    if(s != NULL) {
+        NSString *message = [NSString stringWithFormat: 
+                @"%slocation:%d size:%d format:%d sample rate:%d channels:%d info:%s\n",
+                (s->magic != SND_MAGIC) ? "(struct lacking magic number): " : "",
+                s->dataLocation, s->dataSize, s->dataFormat,
+                s->samplingRate, s->channelCount, s->info];
+        return message;
+    }
+    else {
+        return @"(NULL SndSoundStruct)";
+    }
 }
 
 void SndPrintStruct(SndSoundStruct *s)
