@@ -113,7 +113,7 @@ static SndStreamManager *sm = nil;
 
   if ([[NSRunLoop currentRunLoop] currentMode] || NSApp) {
 #if SNDSTREAMMANAGER_DELEGATE_DEBUG
-    fprintf(stderr,"[SndStreamManager::init] Run loop detected - delegate messaging enabled\n");
+    NSLog(@"[SndStreamManager::init] Run loop detected - delegate messaging enabled\n");
 #endif
     delegateMessageArray = [NSMutableArray new];
     managerReceivePort   = (NSPort *)[NSPort port]; /* we don't need to retain, the connection does that */
@@ -130,7 +130,7 @@ static SndStreamManager *sm = nil;
   }
   else {
 #if SNDSTREAMMANAGER_DELEGATE_DEBUG
-    fprintf(stderr,"[SndStreamManager::init] No runloop or NSApp detected - delegate messaging disabled\n");
+    NSLog(@"[SndStreamManager::init] No runloop or NSApp detected - delegate messaging disabled\n");
 #endif
   }
   return self;
@@ -143,7 +143,7 @@ static SndStreamManager *sm = nil;
 - (void) dealloc
 {
 #if SNDSTREAMMANAGER_DEBUG
-  fprintf(stderr,"[manager] starting dealloc\n");
+  NSLog(@"[manager] starting dealloc\n");
 #endif
 
   if (active)
@@ -158,7 +158,7 @@ static SndStreamManager *sm = nil;
   [bgdm_threadLock release];
 
 #if SNDSTREAMMANAGER_DEBUG
-  fprintf(stderr,"[manager] ending dealloc\n");
+  NSLog(@"[manager] ending dealloc\n");
 #endif
 
   [super dealloc];
@@ -266,7 +266,7 @@ static SndStreamManager *sm = nil;
       break;
     }
     else {
-      fprintf(stderr,"Semaphore status: %i\n",bgdm_sem);
+      NSLog(@"Semaphore status: %i\n",bgdm_sem);
       bgdm_sem = BGDM_ready;
     }
     [bgdm_threadLock unlockWithCondition: bgdm_sem];
@@ -336,7 +336,7 @@ static SndStreamManager *sm = nil;
       }
 
 #if SNDSTREAMMANAGER_DEBUG
-      fprintf(stderr,"[manager] delegete message thread is inactive.\n");
+      NSLog(@"[manager] delegete message thread is inactive.\n");
 #endif
 
       break;
@@ -419,11 +419,11 @@ static SndStreamManager *sm = nil;
   if (active) {
     isStopping = TRUE;
 #if SNDSTREAMMANAGER_DEBUG
-    fprintf(stderr,"[manager] sending shutdown to mixer...\n");
+    NSLog(@"[manager] sending shutdown to mixer...\n");
 #endif
     [mixer managerIsShuttingDown];
 #if SNDSTREAMMANAGER_DEBUG
-    fprintf(stderr,"[manager] about to send shutdown to stream...\n");
+    NSLog(@"[manager] about to send shutdown to stream...\n");
 #endif
 
     [bg_threadLock lock];
@@ -431,7 +431,7 @@ static SndStreamManager *sm = nil;
     [bg_threadLock unlockWithCondition:BG_hasFlag];
 
 #if SNDSTREAMMANAGER_DEBUG
-    fprintf(stderr,"[manager] shutdown sent.\n");
+    NSLog(@"[manager] shutdown sent.\n");
 #endif
   }
   else {
@@ -497,22 +497,22 @@ static void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuf
   outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
   
 #if SNDSTREAMMANAGER_DEBUG
-  fprintf(stderr,"[Manager] --> processAudio sampleCount = %d\n", (int)sampleCount);
+  NSLog(@"[Manager] --> processAudio sampleCount = %d\n", (int)sampleCount);
 #endif
   [(SndStreamManager *) obj processStreamAtTime: sampleCount input: inB output: outB];
 #if SNDSTREAMMANAGER_DEBUG
-  fprintf(stderr,"[Manager] <-- processAudio\n");
+  NSLog(@"[Manager] <-- processAudio\n");
 #endif
 
 #if SNDSTREAMMANAGER_DEBUG
-  fprintf(stderr,"[Manager] About to release pool...\n");
+  NSLog(@"[Manager] About to release pool...\n");
 #endif
 
   memcpy(cOutB->streamData, [outB bytes], cOutB->streamFormat.dataSize);
   
   [localPool release];
 #if SNDSTREAMMANAGER_DEBUG
-  fprintf(stderr,"[Manager] Released pool...\n");
+  NSLog(@"[Manager] Released pool...\n");
 #endif
 
 }
@@ -529,7 +529,7 @@ static void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuf
                       output: (SndAudioBuffer*) outB
 {
 #if SNDSTREAMMANAGER_DEBUG
-  fprintf(stderr,"[Manager] Entering...\n");
+  NSLog(@"[Manager] Entering...\n");
 #endif
   if (active) {
     // set our current notion of time.
@@ -539,16 +539,16 @@ static void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuf
       nowTime += [inB duration];
 
 #if SNDSTREAMMANAGER_DEBUG
-    fprintf(stderr,"[Manager] nowTime: %.3f sampleCount: %.3f\n",nowTime,sampleCount);
+    NSLog(@"[Manager] nowTime: %.3f sampleCount: %.3f\n",nowTime,sampleCount);
 #endif
     [mixer processInBuffer: inB outBuffer: outB nowTime: nowTime];
 #if SNDSTREAMMANAGER_DEBUG
-    fprintf(stderr,"[Manager] post mixer\n");
+    NSLog(@"[Manager] post mixer\n");
 #endif
     if ([mixer clientCount] == 0) {// Hmm, no clients hey? Shut down the Stream.
       [self stopStreaming];
 #if SNDSTREAMMANAGER_DEBUG
-      fprintf(stderr,"[Manager] signalling a stop stream...\n");
+      NSLog(@"[Manager] signalling a stop stream...\n");
 #endif
     }
 #if SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START
@@ -563,7 +563,7 @@ static void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuf
   else
     NSLog(@"SndStreamManager::processStreamAtTime - called when not active...?");
 #if SNDSTREAMMANAGER_DEBUG
-  fprintf(stderr,"[Manager] Leaving...\n");
+  NSLog(@"[Manager] Leaving...\n");
 #endif
 }
 
