@@ -2,8 +2,9 @@
   $Id$
   Description:
     This is basically a bare-bones duplicate of NeXT/Apples' performsound module
-    functionality. Compilable with VC++ 6.0 and typically for interface with 
-    Objective C routines, in particular, the SndKit.
+    functionality using the PortAudio library. Compilable with VC++
+    6.0 or MinGW and typically for interface with Objective C
+    routines, in particular, the SndKit.
 
     Only C functions are exported to avoid different C++ name mangling between VC++ and gcc
 
@@ -77,6 +78,14 @@ typedef void (*SNDStreamProcessor)(double sampleTime, SNDStreamBuffer *inStream,
 PERFORM_API BOOL SNDInit(BOOL guessTheDevice);
 
 /*!
+  @function       SNDTerminate
+  @abstract       Terminate the connection to the Sound hardware initialised with SNDInit.
+  @result         Returns YES if terminated correctly, NO if unable to terminate the device,
+                  such as an unavailable sound interface.
+ */
+PERFORM_API BOOL SNDTerminate(void);
+
+/*!
     @function       SNDGetAvailableDriverNames
     @abstract       Retrieve a list of available driver descriptions.
     @result         Returns a NULL terminated array of readable strings of each driver's name.
@@ -134,120 +143,19 @@ PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat);
 
 /*!
     @function       SNDStreamStart
-    @abstract       .
-    @param          newStreamProcessor
-                        .
-    @param          userData
-                        
-    @result         Returns YES if ?, NO if ?.
-*/
+    @abstract       Starts the streaming.
+    @param          newStreamProcessor Pointer to the function call-back for sending and receiving stream buffers.
+    @param          userData Any parameter to be passed back in the call-back function parameter list.
+    @result         Returns YES if streaming was able to start, NO if there was some problem starting streaming.
+ */
 PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *userData);
 
 /*!
-    @function       SNDStreamStop 
-    @abstract       .
-    @result         Returns YES if ?, NO if ?.
-*/
+    @function       SNDStreamStop
+    @abstract       Stops the streaming.
+    @result         Returns YES if streaming was able to be stopped, NO if there was some problem stopping streaming.
+ */
 PERFORM_API BOOL SNDStreamStop(void);
-
-
-#if !MKPERFORMSND_USE_STREAMING
-
-/*!
-    @typedef SNDNotificationFun
-    @param s
-    @param tag
-    @param err
-    @result
-*/
-typedef int (*SNDNotificationFun)(SndSoundStruct *s, int tag, int err);
-
-/*!
-    @defined SND_NULL_FUN
-    @discussion Indicates no function is to be called.
-*/
-#define SND_NULL_FUN ((SNDNotificationFun)0)
-
-/*!
-    @function       SNDStartPlaying
-    @abstract       .
-    @discussion	    This function need not be implemented if sound streaming is supported.
-    @param          soundStruct
-                        .
-    @param          tag
-    @param          priority
-    @param          preempt
-    @param          beginFun
-    @param          endFun
-    @result         Returns .
-*/
-PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct, int tag, int priority,  int preempt,
-  SNDNotificationFun beginFun, SNDNotificationFun endFun);
-
-/*!
-    @function       SNDStartRecording
-    @abstract       .
-    @discussion	    This function need not be implemented if sound streaming is supported.
-    @param          soundStruct
-                        .
-    @param          tag
-    @param          priority
-    @param          preempt
-    @param          beginRecFun
-    @param          endRecFun
-    @result         Returns .
-*/
-PERFORM_API int SNDStartRecording(SndSoundStruct *soundStruct, int tag, int priority, int preempt,
-  SNDNotificationFun beginRecFun, SNDNotificationFun endRecFun);
- 
-/*!
-    @function       SNDSamplesProcessed
-    @abstract       .
-    @param          tag
-                        The integer tag indicating the sound to inspect.
-    @result         Returns the number of samples processed.
-*/
-PERFORM_API int SNDSamplesProcessed(int tag);
-
-/*!
-    @function       SNDStop
-    @abstract       .
-    @param          tag
-                        The integer tag indicating the sound to stop.
-*/
-PERFORM_API void SNDStop(int tag);
-
-/*!
-    @function       SNDPause
-    @abstract       .
-    @param          tag
-                        The integer tag indicating the sound to pause.
-*/
-PERFORM_API void SNDPause(int tag);
-
-/*!
-    @function       SNDResume
-    @abstract       .
-    @param          tag
-                        The integer tag indicating the sound to resume.
-*/
-PERFORM_API void SNDResume(int tag);
-
-/*!
-    @function       SNDUnreserve
-    @abstract       .
-    @param          dunno
-                        .
-    @result         Returns a .
-*/
-PERFORM_API int SNDUnreserve(int dunno);
-
-/*!
-    @function       SNDTerminate
-    @abstract       .
-*/
-PERFORM_API void SNDTerminate(void);
-#endif
 
 #ifdef __cplusplus
 }
