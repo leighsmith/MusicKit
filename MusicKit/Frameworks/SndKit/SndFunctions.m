@@ -215,440 +215,440 @@ void *SndGetDataAddresses(int sample,
   *currentSample = -1;
   *lastSampleInBlock = -1;
   return NULL;
-                          }
+}
 
-                          int SndSampleCount(const SndSoundStruct *sound)
-                          {
-                            SndSoundStruct **ssList;
-                            SndSoundStruct *theStruct;
-                            int count = 0, i = 0, df;
+int SndSampleCount(const SndSoundStruct *sound)
+{
+  SndSoundStruct **ssList;
+  SndSoundStruct *theStruct;
+  int count = 0, i = 0, df;
 
-                            if (!sound) return SND_ERR_NOT_SOUND;
-                            if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-                            df = sound->dataFormat;
-                            if (df != SND_FORMAT_INDIRECT) /* simple case */
-                              return SndBytesToSamples(sound->dataSize, sound->channelCount, df);
-                            /* more complicated */
-                            ssList = (SndSoundStruct **)sound->dataLocation;
-                            if (ssList[0]) df = ssList[0]->dataFormat;
-                            else return 0; /* fragged sound with no frags! */
-                            while ((theStruct = ssList[i++]) != NULL)
-                              count += theStruct->dataSize;
-                            return SndBytesToSamples(count, sound->channelCount, df);
-                          }
+  if (!sound) return SND_ERR_NOT_SOUND;
+  if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+  df = sound->dataFormat;
+  if (df != SND_FORMAT_INDIRECT) /* simple case */
+    return SndBytesToSamples(sound->dataSize, sound->channelCount, df);
+  /* more complicated */
+  ssList = (SndSoundStruct **)sound->dataLocation;
+  if (ssList[0]) df = ssList[0]->dataFormat;
+  else return 0; /* fragged sound with no frags! */
+  while ((theStruct = ssList[i++]) != NULL)
+    count += theStruct->dataSize;
+  return SndBytesToSamples(count, sound->channelCount, df);
+}
 
-                          const char *SndStructDescription(SndSoundStruct *s)
-                          {
-                            static char message[256];
+const char *SndStructDescription(SndSoundStruct *s)
+{
+  static char message[256];
 
-                            sprintf(message, "%slocation:%d size:%d format:%d sample rate:%d channels:%d info:%s\n",
-                                    (s->magic != SND_MAGIC) ? "(struct lacking magic number): " : "",
-                                    s->dataLocation, s->dataSize, s->dataFormat,
-                                    s->samplingRate, s->channelCount, s->info);
-                            return message;
-                          }
+  sprintf(message, "%slocation:%d size:%d format:%d sample rate:%d channels:%d info:%s\n",
+          (s->magic != SND_MAGIC) ? "(struct lacking magic number): " : "",
+          s->dataLocation, s->dataSize, s->dataFormat,
+          s->samplingRate, s->channelCount, s->info);
+  return message;
+}
 
-                          void SndPrintStruct(SndSoundStruct *s)
-                          {
-                            puts(SndStructDescription(s));
-                          }
+void SndPrintStruct(SndSoundStruct *s)
+{
+  puts(SndStructDescription(s));
+}
 
-                          int SndPrintFrags(SndSoundStruct *sound)
-                          {
-                            SndSoundStruct **ssList;
-                            SndSoundStruct *theStruct;
-                            int count = 0, i = 0, df;
+int SndPrintFrags(SndSoundStruct *sound)
+{
+  SndSoundStruct **ssList;
+  SndSoundStruct *theStruct;
+  int count = 0, i = 0, df;
 
-                            if (!sound) return SND_ERR_NOT_SOUND;
-                            if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-                            df = sound->dataFormat;
-                            if (df != SND_FORMAT_INDIRECT) {
-                              printf("not fragmented\n");
-                              return SND_ERR_NONE;
-                            }
-                            /* more complicated */
-                            ssList = (SndSoundStruct **)sound->dataLocation;
-                            df = ssList[0]->dataFormat;
-                            while ((theStruct = ssList[i++]) != NULL) {
-                              printf("**** Frag %d: starts at byte %d\n",i-1,count);
-                              count += theStruct->dataSize;
-                              printf("...ends at byte: %d\n",count-theStruct->channelCount*SndSampleWidth(df));
-                              printf("channels: %d sample frames: %d samples in tot: %d\n",
-                                     theStruct->channelCount, theStruct->dataSize/theStruct->channelCount/SndSampleWidth(df),
-                                     theStruct->dataSize/theStruct->channelCount);
-                            }
-                            return SND_ERR_NONE;
-                          }
+  if (!sound) return SND_ERR_NOT_SOUND;
+  if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+  df = sound->dataFormat;
+  if (df != SND_FORMAT_INDIRECT) {
+    printf("not fragmented\n");
+    return SND_ERR_NONE;
+  }
+  /* more complicated */
+  ssList = (SndSoundStruct **)sound->dataLocation;
+  df = ssList[0]->dataFormat;
+  while ((theStruct = ssList[i++]) != NULL) {
+    printf("**** Frag %d: starts at byte %d\n",i-1,count);
+    count += theStruct->dataSize;
+    printf("...ends at byte: %d\n",count-theStruct->channelCount*SndSampleWidth(df));
+    printf("channels: %d sample frames: %d samples in tot: %d\n",
+           theStruct->channelCount, theStruct->dataSize/theStruct->channelCount/SndSampleWidth(df),
+           theStruct->dataSize/theStruct->channelCount);
+  }
+  return SND_ERR_NONE;
+}
 
-                          int SndGetDataPointer(const SndSoundStruct *sound, char **ptr, int *size, int *width)
-                          /* only useful for non-fragmented sounds */
-                          {
-                            int df;
-                            if (!sound) return SND_ERR_NOT_SOUND;
-                            if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-                            if ((df = sound->dataFormat) == SND_FORMAT_INDIRECT)
-                              return SND_ERR_BAD_FORMAT;
-                            *width = SndSampleWidth(df);
-                            *size = sound->dataSize / *width;
-                            *ptr = (char *)sound + sound->dataLocation;
-                            return SND_ERR_NONE;
-                          }
+int SndGetDataPointer(const SndSoundStruct *sound, char **ptr, int *size, int *width)
+/* only useful for non-fragmented sounds */
+{
+  int df;
+  if (!sound) return SND_ERR_NOT_SOUND;
+  if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+  if ((df = sound->dataFormat) == SND_FORMAT_INDIRECT)
+    return SND_ERR_BAD_FORMAT;
+  *width = SndSampleWidth(df);
+  *size = sound->dataSize / *width;
+  *ptr = (char *)sound + sound->dataLocation;
+  return SND_ERR_NONE;
+}
 
-                          int SndFree(SndSoundStruct *sound)
-                          {
-                            SndSoundStruct **ssList;
-                            SndSoundStruct *theStruct;
-                            int i = 0;
+int SndFree(SndSoundStruct *sound)
+{
+  SndSoundStruct **ssList;
+  SndSoundStruct *theStruct;
+  int i = 0;
 
-                            if (!sound) return SND_ERR_NOT_SOUND;
-                            if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-                            /* simple case: */
-                            if (sound->dataFormat != SND_FORMAT_INDIRECT) {
-                              free(sound);
-                              return SND_ERR_NONE;
-                            }
-                            /* more complicated */
-                            ssList = (SndSoundStruct **)sound->dataLocation;
-                            while ((theStruct = ssList[i++]) != NULL)
-                              free(theStruct);
-                            free(ssList);
-                            free(sound);
-                            return SND_ERR_NONE;
-                          }
+  if (!sound) return SND_ERR_NOT_SOUND;
+  if (sound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+  /* simple case: */
+  if (sound->dataFormat != SND_FORMAT_INDIRECT) {
+    free(sound);
+    return SND_ERR_NONE;
+  }
+  /* more complicated */
+  ssList = (SndSoundStruct **)sound->dataLocation;
+  while ((theStruct = ssList[i++]) != NULL)
+    free(theStruct);
+  free(ssList);
+  free(sound);
+  return SND_ERR_NONE;
+}
 
-                          int SndAlloc(SndSoundStruct **sound, int dataSize, int dataFormat,
-                                       int samplingRate, int channelCount, int infoSize)
-                          {
-                            int headerSize = 0;
-                            int extraInfoBytes;
+int SndAlloc(SndSoundStruct **sound, int dataSize, int dataFormat,
+             int samplingRate, int channelCount, int infoSize)
+{
+  int headerSize = 0;
+  int extraInfoBytes;
 
-                            if (samplingRate < 0) return SND_ERR_BAD_RATE;
-                            if (channelCount < 1 || channelCount > 16) return SND_ERR_BAD_CHANNEL;
-                            if (dataSize < 0) return SND_ERR_BAD_SIZE;
-                            if (infoSize > 16384 || infoSize < 0) return SND_ERR_INFO_TOO_BIG;
-                            if (dataFormat > SND_FORMAT_DELTA_MULAW_8) return SND_ERR_BAD_FORMAT;
+  if (samplingRate < 0) return SND_ERR_BAD_RATE;
+  if (channelCount < 1 || channelCount > 16) return SND_ERR_BAD_CHANNEL;
+  if (dataSize < 0) return SND_ERR_BAD_SIZE;
+  if (infoSize > 16384 || infoSize < 0) return SND_ERR_INFO_TOO_BIG;
+  if (dataFormat > SND_FORMAT_DELTA_MULAW_8) return SND_ERR_BAD_FORMAT;
 
-                            if (infoSize < 4) infoSize = 4;
-                            extraInfoBytes = infoSize & 3;
-                            if (extraInfoBytes) extraInfoBytes = 4 - extraInfoBytes;
-                            headerSize = sizeof(SndSoundStruct) + infoSize + extraInfoBytes - 4;
-                            /* normal size of header includes 4 info bytes, so I subtract here */
+  if (infoSize < 4) infoSize = 4;
+  extraInfoBytes = infoSize & 3;
+  if (extraInfoBytes) extraInfoBytes = 4 - extraInfoBytes;
+  headerSize = sizeof(SndSoundStruct) + infoSize + extraInfoBytes - 4;
+  /* normal size of header includes 4 info bytes, so I subtract here */
 
-                            *sound = calloc(headerSize + dataSize, sizeof(char));
-                            if (!*sound) return SND_ERR_CANNOT_ALLOC;
+  *sound = calloc(headerSize + dataSize, sizeof(char));
+  if (!*sound) return SND_ERR_CANNOT_ALLOC;
 
-                            (*sound)->magic = SND_MAGIC;
-                            (*sound)->dataLocation = headerSize;
-                            (*sound)->dataSize = dataSize;
-                            (*sound)->dataFormat = dataFormat;
-                            (*sound)->samplingRate = samplingRate;
-                            (*sound)->channelCount = channelCount;
-                            return SND_ERR_NONE;
-                          }
+  (*sound)->magic = SND_MAGIC;
+  (*sound)->dataLocation = headerSize;
+  (*sound)->dataSize = dataSize;
+  (*sound)->dataFormat = dataFormat;
+  (*sound)->samplingRate = samplingRate;
+  (*sound)->channelCount = channelCount;
+  return SND_ERR_NONE;
+}
 #if 0
-                          /* these lifted fairly directly from the Darwin sources: */
-                          int SndAlloc(SndSoundStruct **s,
-                                       int dataSize,
-                                       int dataFormat,
-                                       int samplingRate,
-                                       int channelCount,
-                                       int infoSize)
-                          {
-                            SndSoundStruct *pS;
-                            int size;
+/* these lifted fairly directly from the Darwin sources: */
+int SndAlloc(SndSoundStruct **s,
+             int dataSize,
+             int dataFormat,
+             int samplingRate,
+             int channelCount,
+             int infoSize)
+{
+  SndSoundStruct *pS;
+  int size;
 
-                            size = sizeof(SndSoundStruct) + dataSize;
-                            if (infoSize > 4)
-                              size += ((infoSize-1) & 0xfffffffc);
-                            if (vm_allocate(task_self(),(pointer_t *)(&pS),size,1) != KERN_SUCCESS) {
-                              return SND_ERR_CANNOT_ALLOC;
-                            }
-                            pS->magic = SND_MAGIC;
-                            pS->dataLocation = size-dataSize;
-                            pS->dataSize = dataSize;
-                            pS->dataFormat = dataFormat;
-                            pS->samplingRate = samplingRate;
-                            pS->channelCount = channelCount;
-                            pS->info[0] = '\0';
-                            *s = pS;
+  size = sizeof(SndSoundStruct) + dataSize;
+  if (infoSize > 4)
+    size += ((infoSize-1) & 0xfffffffc);
+  if (vm_allocate(task_self(),(pointer_t *)(&pS),size,1) != KERN_SUCCESS) {
+    return SND_ERR_CANNOT_ALLOC;
+  }
+  pS->magic = SND_MAGIC;
+  pS->dataLocation = size-dataSize;
+  pS->dataSize = dataSize;
+  pS->dataFormat = dataFormat;
+  pS->samplingRate = samplingRate;
+  pS->channelCount = channelCount;
+  pS->info[0] = '\0';
+  *s = pS;
 #if 0 /*sb: not really necessary I don't think */
-                            if (dataFormat == SND_FORMAT_COMPRESSED ||
-                                dataFormat == SND_FORMAT_COMPRESSED_EMPHASIZED)
-                              return SNDSetCompressionOptions(pS, SND_CFORMAT_ATC, 0); /* default */
-                            else
+  if (dataFormat == SND_FORMAT_COMPRESSED ||
+      dataFormat == SND_FORMAT_COMPRESSED_EMPHASIZED)
+    return SNDSetCompressionOptions(pS, SND_CFORMAT_ATC, 0); /* default */
+  else
 #endif
-                              return SND_ERR_NONE;
-                          }
-                          static int calcHeaderSize(SndSoundStruct *s)
-                          {
-                            int size = strlen(s->info) + 1;
-                            if (size < 4) size = 4;
-                            else size = (size + 3) & 3;
-                            return(sizeof(SndSoundStruct) - 4 + size);
-                          }
+    return SND_ERR_NONE;
+}
+static int calcHeaderSize(SndSoundStruct *s)
+{
+  int size = strlen(s->info) + 1;
+  if (size < 4) size = 4;
+  else size = (size + 3) & 3;
+  return(sizeof(SndSoundStruct) - 4 + size);
+}
 
-                          int SndFree(SndSoundStruct *s)
-                          {
-                            SndSoundStruct **ssList;
-                            SndSoundStruct *theStruct;
-                            int i=0;
-                            int size;
-                            if (!s || s->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-                            if (s->dataFormat == SND_FORMAT_INDIRECT) {
-                              ssList = (SndSoundStruct **)s->dataLocation;
-                              while ((theStruct = ssList[i++]) != NULL)
-                                vm_deallocate(task_self(), (pointer_t) theStruct, theStruct->dataSize + theStruct->dataLocation);
-                              //		if (vm_deallocate(task_self(),s->dataLocation,s->dataSize) !=
-                              //								KERN_SUCCESS)
-                              //	    	return SND_ERR_CANNOT_FREE;
-                              free((void *)s->dataLocation);
-                              size = calcHeaderSize(s);
-                              if (vm_deallocate(task_self(),(pointer_t)s,size) != KERN_SUCCESS)
-                                return SND_ERR_CANNOT_FREE;
-                            } else {
-                              size = s->dataLocation + s->dataSize;
-                              if (vm_deallocate(task_self(),(pointer_t)s,size) != KERN_SUCCESS)
-                                return SND_ERR_CANNOT_FREE;
-                            }
-                            return SND_ERR_NONE;
-                          }
-                          /* end liting from Darwin sources for SNDAlloc, SNDFree */
+int SndFree(SndSoundStruct *s)
+{
+  SndSoundStruct **ssList;
+  SndSoundStruct *theStruct;
+  int i=0;
+  int size;
+  if (!s || s->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+  if (s->dataFormat == SND_FORMAT_INDIRECT) {
+    ssList = (SndSoundStruct **)s->dataLocation;
+    while ((theStruct = ssList[i++]) != NULL)
+      vm_deallocate(task_self(), (pointer_t) theStruct, theStruct->dataSize + theStruct->dataLocation);
+    //		if (vm_deallocate(task_self(),s->dataLocation,s->dataSize) !=
+    //								KERN_SUCCESS)
+    //	    	return SND_ERR_CANNOT_FREE;
+    free((void *)s->dataLocation);
+    size = calcHeaderSize(s);
+    if (vm_deallocate(task_self(),(pointer_t)s,size) != KERN_SUCCESS)
+      return SND_ERR_CANNOT_FREE;
+  } else {
+    size = s->dataLocation + s->dataSize;
+    if (vm_deallocate(task_self(),(pointer_t)s,size) != KERN_SUCCESS)
+      return SND_ERR_CANNOT_FREE;
+  }
+  return SND_ERR_NONE;
+}
+/* end liting from Darwin sources for SNDAlloc, SNDFree */
 #endif
 
 #if 0
-                          int SndCompactSamples(SndSoundStruct **toSound, SndSoundStruct *fromSound)
-                          /* There's a wee bit of a problem when compacting sounds. That is the info
-                          * string. When a sound is fragmented, the size of the info string is held
-                          * in "dataLocation" by virtue of the fact that the info will always
-                          * directly precede the dataLocation. When a sound is fragmented though,
-                          * dataLocation is taken over for use as a pointer to the list of fragments.
-                          * What NeXTSTEP does is to then set the dataSize of the main SNDSoundStruct
-                          * to 8192 -- a page of VM. Therefore, there is no longer any explicit
-                          * record of how long the info string was. When the sound is compacted, bytes
-                          * seem to be read off the main SNDSoundStruct until a NULL is reached, and
-                          * that is assumed to be the end of the info string.
-                          * Therefore I am doing things differently. In a fragmented sound, dataSize
-                          * will be the length of the SndSoundStruct INCLUDING the info string, and
-                          * adjusted to the upper 4-byte boundary.
-                          */
-                          {
-                            SndSoundStruct **ssList;
-                            SndSoundStruct *theStruct;
-                            int count = 0, i = 0;
-                            int dataLength;
-                            char *startLocation;
-                            int cc;
-                            int df;
-                            int ds;
-                            int sr;
+int SndCompactSamples(SndSoundStruct **toSound, SndSoundStruct *fromSound)
+/* There's a wee bit of a problem when compacting sounds. That is the info
+* string. When a sound is fragmented, the size of the info string is held
+* in "dataLocation" by virtue of the fact that the info will always
+* directly precede the dataLocation. When a sound is fragmented though,
+* dataLocation is taken over for use as a pointer to the list of fragments.
+* What NeXTSTEP does is to then set the dataSize of the main SNDSoundStruct
+* to 8192 -- a page of VM. Therefore, there is no longer any explicit
+* record of how long the info string was. When the sound is compacted, bytes
+* seem to be read off the main SNDSoundStruct until a NULL is reached, and
+* that is assumed to be the end of the info string.
+* Therefore I am doing things differently. In a fragmented sound, dataSize
+* will be the length of the SndSoundStruct INCLUDING the info string, and
+* adjusted to the upper 4-byte boundary.
+*/
+{
+  SndSoundStruct **ssList;
+  SndSoundStruct *theStruct;
+  int count = 0, i = 0;
+  int dataLength;
+  char *startLocation;
+  int cc;
+  int df;
+  int ds;
+  int sr;
 
-                            if (!fromSound) return SND_ERR_NOT_SOUND;
-                            if (fromSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-                            cc = fromSound->channelCount;
-                            df = fromSound->dataFormat;
-                            ds = fromSound->dataSize; /*ie size of header including info string*/
-                            sr = fromSound->samplingRate;
+  if (!fromSound) return SND_ERR_NOT_SOUND;
+  if (fromSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+  cc = fromSound->channelCount;
+  df = fromSound->dataFormat;
+  ds = fromSound->dataSize; /*ie size of header including info string*/
+  sr = fromSound->samplingRate;
 
-                            if (df == SND_FORMAT_INDIRECT)
-                              df = ((SndSoundStruct *)(*((SndSoundStruct **)
-                                                         (fromSound->dataLocation))))->dataFormat;
-                            else return SndCopySound(toSound,fromSound);
+  if (df == SND_FORMAT_INDIRECT)
+    df = ((SndSoundStruct *)(*((SndSoundStruct **)
+                               (fromSound->dataLocation))))->dataFormat;
+  else return SndCopySound(toSound,fromSound);
 
-                            dataLength = SndSamplesToBytes(SndSampleCount(fromSound),cc,df);
+  dataLength = SndSamplesToBytes(SndSampleCount(fromSound),cc,df);
 
-                            if (SndAlloc(toSound, dataLength, df, sr, cc,
-                                         ds - sizeof(SndSoundStruct) + 4) != SND_ERR_NONE)
-                              return SND_ERR_CANNOT_ALLOC;
+  if (SndAlloc(toSound, dataLength, df, sr, cc,
+               ds - sizeof(SndSoundStruct) + 4) != SND_ERR_NONE)
+    return SND_ERR_CANNOT_ALLOC;
 
-                            memmove(&((*toSound)->info),&(fromSound->info),
-                                    ds - sizeof(SndSoundStruct) + 4);
+  memmove(&((*toSound)->info),&(fromSound->info),
+          ds - sizeof(SndSoundStruct) + 4);
 
-                            startLocation = (char *)(*toSound) + ds;
-                            ssList = (SndSoundStruct **)fromSound->dataLocation;
-                            while ((theStruct = ssList[i++]) != NULL) {
-                              memmove(startLocation + count,
-                                      (char *)theStruct + theStruct->dataLocation,
-                                      theStruct->dataSize);
-                              count += theStruct->dataSize;
-                            }
-                            return SND_ERR_NONE;
-                          }
+  startLocation = (char *)(*toSound) + ds;
+  ssList = (SndSoundStruct **)fromSound->dataLocation;
+  while ((theStruct = ssList[i++]) != NULL) {
+    memmove(startLocation + count,
+            (char *)theStruct + theStruct->dataLocation,
+            theStruct->dataSize);
+    count += theStruct->dataSize;
+  }
+  return SND_ERR_NONE;
+}
 #endif
 
-                          int SndCompactSamples(SndSoundStruct **s1, SndSoundStruct *s2)
-                          {
-                            SndSoundStruct *fragment, *newSound, **iBlock, *oldSound = s2;
-                            int format, nchan, rate, newSize, infoSize, err;
-                            char *src, *dst;
-                            if (oldSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-                            if (oldSound->dataFormat != SND_FORMAT_INDIRECT)
-                              return SND_ERR_NONE;
-                            iBlock = (SndSoundStruct **)oldSound->dataLocation;
-                            if (!*iBlock) {
-                              newSound = (SndSoundStruct *)0;
-                            } else {
-                              format = (*iBlock)->dataFormat;
-                              nchan = oldSound->channelCount;
-                              rate = oldSound->samplingRate;
-                              infoSize = oldSound->dataSize - sizeof(SndSoundStruct) + 4;
-                              newSize = SndSamplesToBytes(SndSampleCount(oldSound),nchan,format);
-                              err = SndAlloc(&newSound,newSize,format,rate,nchan,infoSize);
-                              if (err)
-                                return SND_ERR_CANNOT_ALLOC;
-                              //		strcpy(newSound->info,oldSound->info);
-                              memmove(&(newSound->info),&(oldSound->info),
-                                      infoSize);
-                              dst = (char *)newSound;
-                              dst += newSound->dataLocation;
-                              while((fragment = *iBlock++)) {
-                                src = (char *)fragment;
-                                src += fragment->dataLocation;
-                                memmove(dst,src,fragment->dataSize);
-                                dst += fragment->dataSize;
-                              }
-                            }
-                            *s1 = newSound;
-                            return SND_ERR_NONE;
-                          }
+int SndCompactSamples(SndSoundStruct **s1, SndSoundStruct *s2)
+{
+  SndSoundStruct *fragment, *newSound, **iBlock, *oldSound = s2;
+  int format, nchan, rate, newSize, infoSize, err;
+  char *src, *dst;
+  if (oldSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+  if (oldSound->dataFormat != SND_FORMAT_INDIRECT)
+    return SND_ERR_NONE;
+  iBlock = (SndSoundStruct **)oldSound->dataLocation;
+  if (!*iBlock) {
+    newSound = (SndSoundStruct *)0;
+  } else {
+    format = (*iBlock)->dataFormat;
+    nchan = oldSound->channelCount;
+    rate = oldSound->samplingRate;
+    infoSize = oldSound->dataSize - sizeof(SndSoundStruct) + 4;
+    newSize = SndSamplesToBytes(SndSampleCount(oldSound),nchan,format);
+    err = SndAlloc(&newSound,newSize,format,rate,nchan,infoSize);
+    if (err)
+      return SND_ERR_CANNOT_ALLOC;
+    //		strcpy(newSound->info,oldSound->info);
+    memmove(&(newSound->info),&(oldSound->info),
+            infoSize);
+    dst = (char *)newSound;
+    dst += newSound->dataLocation;
+    while((fragment = *iBlock++)) {
+      src = (char *)fragment;
+      src += fragment->dataLocation;
+      memmove(dst,src,fragment->dataSize);
+      dst += fragment->dataSize;
+    }
+  }
+  *s1 = newSound;
+  return SND_ERR_NONE;
+}
 
-                          int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSound)
-                          {
-                            SndSoundStruct **ssList=NULL,**newssList=NULL;
-                            SndSoundStruct *theStruct;
-                            int i = 0,ssPointer = 0;
-                            int cc;
-                            int df;
-                            int ds;
-                            int sr;
+int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSound)
+{
+  SndSoundStruct **ssList=NULL,**newssList=NULL;
+  SndSoundStruct *theStruct;
+  int i = 0,ssPointer = 0;
+  int cc;
+  int df;
+  int ds;
+  int sr;
 
-                            if (!fromSound) return SND_ERR_NOT_SOUND;
-                            if (fromSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-                            cc = fromSound->channelCount;
-                            df = fromSound->dataFormat;
-                            ds = fromSound->dataSize; /*ie size of header including info string*/
-                            sr = fromSound->samplingRate;
+  if (!fromSound) return SND_ERR_NOT_SOUND;
+  if (fromSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+  cc = fromSound->channelCount;
+  df = fromSound->dataFormat;
+  ds = fromSound->dataSize; /*ie size of header including info string*/
+  sr = fromSound->samplingRate;
 
-                            if (df == SND_FORMAT_INDIRECT) {
-                              df = ((SndSoundStruct *)(*((SndSoundStruct **)
-                                                         (fromSound->dataLocation))))->dataFormat;
+  if (df == SND_FORMAT_INDIRECT) {
+    df = ((SndSoundStruct *)(*((SndSoundStruct **)
+                               (fromSound->dataLocation))))->dataFormat;
 
-                              /*Copying fragged sound: */
-                              /* initial struct -- info and all */
-                              if (SndAlloc(toSound, 0, df, sr, cc,
-                                           ds - sizeof(SndSoundStruct) + 4) != SND_ERR_NONE)
-                                return SND_ERR_CANNOT_ALLOC;
+    /*Copying fragged sound: */
+    /* initial struct -- info and all */
+    if (SndAlloc(toSound, 0, df, sr, cc,
+                 ds - sizeof(SndSoundStruct) + 4) != SND_ERR_NONE)
+      return SND_ERR_CANNOT_ALLOC;
 
-                              memmove(&((*toSound)->info),&(fromSound->info),
-                                      ds - sizeof(SndSoundStruct) + 4);
+    memmove(&((*toSound)->info),&(fromSound->info),
+            ds - sizeof(SndSoundStruct) + 4);
 
-                              ssList = (SndSoundStruct **)fromSound->dataLocation;
-                              while ((theStruct = ssList[i++]) != NULL);
-                              i--;
-                              /* i is the number of frags */
-                              newssList = malloc((i+1) * sizeof(SndSoundStruct *));
-                              if (!newssList) {
-                                free (*toSound);
-                                return SND_ERR_CANNOT_ALLOC;
-                              }
-                              newssList[i] = NULL; /* do the last one now... */
+    ssList = (SndSoundStruct **)fromSound->dataLocation;
+    while ((theStruct = ssList[i++]) != NULL);
+    i--;
+    /* i is the number of frags */
+    newssList = malloc((i+1) * sizeof(SndSoundStruct *));
+    if (!newssList) {
+      free (*toSound);
+      return SND_ERR_CANNOT_ALLOC;
+    }
+    newssList[i] = NULL; /* do the last one now... */
 
-                              for (ssPointer = 0; ssPointer < i; ssPointer++) {
-                                if (!(newssList[ssPointer] = _SndCopyFrag(ssList[ssPointer]))) {
-                                  free (*toSound);
-                                  for (i = 0; i < ssPointer; i++) {
-                                    free (newssList[i]);
-                                  }
-                                  return SND_ERR_CANNOT_ALLOC;
-                                }
-                              }
-                              (SndSoundStruct **)((*toSound)->dataLocation) = newssList;
-                              (*toSound)->dataSize = fromSound->dataSize;
-                              (*toSound)->dataFormat = SND_FORMAT_INDIRECT;
-                              return SND_ERR_NONE;
-                            }
-                            else {
-                              /* copy unfragged sound */
-                              if (SndAlloc(toSound, ds, df, sr, cc, fromSound->dataLocation -
-                                           sizeof(SndSoundStruct) + 4) != SND_ERR_NONE)
-                                return SND_ERR_CANNOT_ALLOC;
-                              memmove(&((*toSound)->info),&(fromSound->info),
-                                      fromSound->dataLocation - sizeof(SndSoundStruct) + 4);
-                              memmove((char *)(*toSound)   + (*toSound)->dataLocation,
-                                      (char *)fromSound + fromSound->dataLocation, ds);
-                            }
-                            return SND_ERR_NONE;
-                          }
+    for (ssPointer = 0; ssPointer < i; ssPointer++) {
+      if (!(newssList[ssPointer] = _SndCopyFrag(ssList[ssPointer]))) {
+        free (*toSound);
+        for (i = 0; i < ssPointer; i++) {
+          free (newssList[i]);
+        }
+        return SND_ERR_CANNOT_ALLOC;
+      }
+    }
+    (SndSoundStruct **)((*toSound)->dataLocation) = newssList;
+    (*toSound)->dataSize = fromSound->dataSize;
+    (*toSound)->dataFormat = SND_FORMAT_INDIRECT;
+    return SND_ERR_NONE;
+  }
+  else {
+    /* copy unfragged sound */
+    if (SndAlloc(toSound, ds, df, sr, cc, fromSound->dataLocation -
+                 sizeof(SndSoundStruct) + 4) != SND_ERR_NONE)
+      return SND_ERR_CANNOT_ALLOC;
+    memmove(&((*toSound)->info),&(fromSound->info),
+            fromSound->dataLocation - sizeof(SndSoundStruct) + 4);
+    memmove((char *)(*toSound)   + (*toSound)->dataLocation,
+            (char *)fromSound + fromSound->dataLocation, ds);
+  }
+  return SND_ERR_NONE;
+}
 
-                          int SndCopySamples(SndSoundStruct **toSound, SndSoundStruct *fromSound,
-                                             int startSample, int sampleCount)
-                          /*
-                           * what do I need to do?
-                           * If fromSound is non-frag, create new sound and copy appropriate samples.
-                           * If fragged,
-                           * 		create frag header
-                           *		find 1st and last frag containing samples
-                           *		loop from 1st to last, creating new frag and copying appropriate samples
-                           */
-                          {
-                            SndSoundStruct **ssList = NULL,**newssList;
-                            SndSoundStruct *theStruct,*newStruct;
-                            int i = 0, ssPointer = 0;
-                            int cc;
-                            int df,originalFormat;
-                            int ds;
-                            int sr;
-                            int numBytes;
-                            int lastSample = startSample + sampleCount - 1;
-                            int firstFrag = -1, lastFrag = -1;
-                            int count = 0;
-                            int startOffset = 0, startLength = 0, endLength = 0;
-                            BOOL fromOneFrag = NO;
+int SndCopySamples(SndSoundStruct **toSound, SndSoundStruct *fromSound,
+                   int startSample, int sampleCount)
+/*
+ * what do I need to do?
+ * If fromSound is non-frag, create new sound and copy appropriate samples.
+ * If fragged,
+ * 		create frag header
+ *		find 1st and last frag containing samples
+ *		loop from 1st to last, creating new frag and copying appropriate samples
+ */
+{
+  SndSoundStruct **ssList = NULL,**newssList;
+  SndSoundStruct *theStruct,*newStruct;
+  int i = 0, ssPointer = 0;
+  int cc;
+  int df,originalFormat;
+  int ds;
+  int sr;
+  int numBytes;
+  int lastSample = startSample + sampleCount - 1;
+  int firstFrag = -1, lastFrag = -1;
+  int count = 0;
+  int startOffset = 0, startLength = 0, endLength = 0;
+  BOOL fromOneFrag = NO;
 
-                            if (!fromSound) return SND_ERR_NOT_SOUND;
-                            if (fromSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
-                            if (lastSample > SndSampleCount(fromSound)) return SND_ERR_BAD_SIZE;
-                            if (sampleCount < 1) return SND_ERR_BAD_SIZE;
+  if (!fromSound) return SND_ERR_NOT_SOUND;
+  if (fromSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+  if (lastSample > SndSampleCount(fromSound)) return SND_ERR_BAD_SIZE;
+  if (sampleCount < 1) return SND_ERR_BAD_SIZE;
 
-                            cc = fromSound->channelCount;
-                            originalFormat = df = fromSound->dataFormat;
-                            ds = fromSound->dataSize; /* ie size of header including info string; or data */
-                            sr = fromSound->samplingRate;
+  cc = fromSound->channelCount;
+  originalFormat = df = fromSound->dataFormat;
+  ds = fromSound->dataSize; /* ie size of header including info string; or data */
+  sr = fromSound->samplingRate;
 
-                            if (df == SND_FORMAT_INDIRECT) { /* check to see if samples lie within 1 frag */
-                              /* find 1st and last frag */
-                              df = ((SndSoundStruct *)(*((SndSoundStruct **)
-                                                         (fromSound->dataLocation))))->dataFormat;
-                              numBytes = SndSampleWidth(df);
-                              ssList = (SndSoundStruct **)fromSound->dataLocation;
-                              while ((theStruct = ssList[i++]) != NULL) {
-                                int thisCount = (theStruct->dataSize / cc / numBytes);
-                                if (startSample >= count && startSample < (count + thisCount))
-                                  {
-                                  firstFrag = i - 1;
-                                  startOffset = (startSample - count) * cc * numBytes;
-                                  startLength = theStruct->dataSize - startOffset;
-                                  }
-                                if (lastSample >= count && lastSample < (count + thisCount))
-                                  {lastFrag = i - 1; endLength = (lastSample - count + 1) * cc * numBytes; }
-                                count += thisCount;
-                              }
-                              i--;
-                              if (firstFrag == lastFrag) {
-                                fromSound = ssList[firstFrag];
-                                fromOneFrag = YES;
-                              }
-                            }
+  if (df == SND_FORMAT_INDIRECT) { /* check to see if samples lie within 1 frag */
+    /* find 1st and last frag */
+    df = ((SndSoundStruct *)(*((SndSoundStruct **)
+                               (fromSound->dataLocation))))->dataFormat;
+    numBytes = SndSampleWidth(df);
+    ssList = (SndSoundStruct **)fromSound->dataLocation;
+    while ((theStruct = ssList[i++]) != NULL) {
+      int thisCount = (theStruct->dataSize / cc / numBytes);
+      if (startSample >= count && startSample < (count + thisCount))
+        {
+        firstFrag = i - 1;
+        startOffset = (startSample - count) * cc * numBytes;
+        startLength = theStruct->dataSize - startOffset;
+        }
+      if (lastSample >= count && lastSample < (count + thisCount))
+        {lastFrag = i - 1; endLength = (lastSample - count + 1) * cc * numBytes; }
+      count += thisCount;
+    }
+    i--;
+    if (firstFrag == lastFrag) {
+      fromSound = ssList[firstFrag];
+      fromOneFrag = YES;
+    }
+  }
 
-                          if (originalFormat != SND_FORMAT_INDIRECT || fromOneFrag) {  /* simple case... */
-                          if (SndAlloc(toSound, sampleCount * cc * SndSampleWidth(df),
-                                       df, sr, cc, 4) != SND_ERR_NONE)
-                          return SND_ERR_CANNOT_ALLOC;
-                          memmove((char *)(*toSound)   + (*toSound)->dataLocation,
-                                  (char *)fromSound + fromSound->dataLocation +
-                                  (fromOneFrag ? startOffset : startSample * cc * SndSampleWidth(df)),
-                                  sampleCount * cc * SndSampleWidth(df));
-                          return SND_ERR_NONE;
-                          }
+if (originalFormat != SND_FORMAT_INDIRECT || fromOneFrag) {  /* simple case... */
+if (SndAlloc(toSound, sampleCount * cc * SndSampleWidth(df),
+             df, sr, cc, 4) != SND_ERR_NONE)
+return SND_ERR_CANNOT_ALLOC;
+memmove((char *)(*toSound)   + (*toSound)->dataLocation,
+        (char *)fromSound + fromSound->dataLocation +
+        (fromOneFrag ? startOffset : startSample * cc * SndSampleWidth(df)),
+        sampleCount * cc * SndSampleWidth(df));
+return SND_ERR_NONE;
+}
 /* complicated case (fragged) */
 
 if (lastFrag == -1 || firstFrag == -1) return SND_ERR_BAD_SIZE; /* should not really happen I don't think */
@@ -694,7 +694,7 @@ for (ssPointer = firstFrag; ssPointer <= lastFrag; ssPointer++) {
 }
 (SndSoundStruct **)((*toSound)->dataLocation) = newssList;
 return SND_ERR_NONE;
-                          }
+}
 
 int SndInsertSamples(SndSoundStruct *toSound, const SndSoundStruct *fromSound, int startSample)
 /*
@@ -1206,7 +1206,7 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
     if (samplesRead >= informat.length)
       break;
   } while(lenRead == SNDREADCHUNKSIZE); // sound files exactly modulo SNDREADCHUNKSIZE will read 0 bytes next time thru.
-  
+
   s->dataSize = samplesRead * informat.info.size;
   //        s = realloc((char *)s, headerLen + s->dataSize);
   free(readBuffer);
