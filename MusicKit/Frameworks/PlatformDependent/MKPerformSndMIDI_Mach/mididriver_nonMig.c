@@ -13,8 +13,11 @@
 Modification history:
 
   $Log$
-  Revision 1.1  1999/09/12 00:20:18  leigh
-  Initial revision
+  Revision 1.2  1999/11/24 17:30:12  leigh
+  Added a MDDownloadDLSInstruments stub
+
+  Revision 1.1.1.1  1999/09/12 00:20:18  leigh
+  separated out from MusicKit framework
 
   Revision 1.2  1999/07/29 01:26:08  leigh
   Added Win32 compatibility, CVS logs, SBs changes
@@ -113,3 +116,9 @@ kern_return_t MDHandleReply(msg_header_t *msg,
     return ret_code;
 }
 
+// Should download the given patch numbers to the DLS player.
+// For MacOsX, this is currently disabled until we have a DLS player.
+kern_return_t MDDownloadDLSInstruments(unsigned int *patches, int patchCount)
+{
+    return KERN_SUCCESS;
+}

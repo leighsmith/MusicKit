@@ -37,10 +37,10 @@
     [midiInstrument retain];
     NSLog(@"Initialised with %@ driver\n", [midiInstrument driverName]);
 
-    /* Create a PartPerformer to perform the Part. */
     aScorePerformer = [[MKScorePerformer alloc] init];
     [aScorePerformer retain];
 
+    /* Create a PartPerformer to perform the Part. */
     samplePartPerformer = [[MKPartPerformer alloc] init];
     [samplePartPerformer retain];
     [[samplePartPerformer noteSender] connect: [sampleInstrument noteReceiver]];
@@ -186,7 +186,7 @@
    [midiInstrument downloadDLS: instruments];
 
     [aScorePerformer activate];
-//    [samplePartPerformer activate];
+//    [samplePartPerformer activate]; // don't play the samplePart just now.
 
     [MKConductor setDeltaT: 0.5];            // Run (MKConductor) at least half a second ahead of DSP
     [MKConductor setClocked: YES];           // The conductor needs to be clocked when using MIDI.
@@ -220,7 +220,7 @@
    NSLog(@"stop\n");
    [midiInstrument stop];  // abort will actually close the device, whereas stop just stops it
    NSLog(@"finishPerformance\n");
-   [MKConductor unlockPerformance]; // need to unlock the performance before trying to finish it.
+   [MKConductor unlockPerformance]; // should unlock the performance before trying to finish it.
    NSLog(@"unlockPerformance\n");
    [MKConductor finishPerformance];
    NSLog(@"finished\n");

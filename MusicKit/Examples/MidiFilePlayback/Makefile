@@ -14,8 +14,11 @@ PROJECT_TYPE = Application
 NEXTSTEP_APPICON = midi.tiff
 ICONSECTIONS =	-sectcreate __ICON app midi.tiff
 
+English_RESOURCES = MIDIFilePlayback.nib
 
-GLOBAL_RESOURCES = MIDIFilePlayback.nib midi.tiff
+LANGUAGES = English
+
+GLOBAL_RESOURCES = midi.tiff
 
 CLASSES = MIDIFileController.m
 

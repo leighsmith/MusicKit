@@ -1,0 +1,47 @@
+#!/bin/zsh
+# $Id$
+#
+# zsh script to automate the packaging of MusicKit source tree from
+# the CVS repository ready for download.
+#
+# Leigh Smith <leigh@tomandandy.com> 2000/1/3
+#
+APPNAME=MusicKit
+MKCHECKEDOUT_SRCLOC=/tmp/MKSRC
+if [ x_$1 = x_ ]; then
+    echo "${APPNAME} source shipping script"
+    echo "Usage: $0 version_number"
+    echo "Where version_number is of the form V.R.P and matches the CVS tag ${APPNAME}_V-R-P"
+    exit 1;
+else
+    RELEASE=$1
+fi
+TARLOC=/tmp
+CVSTAG=${APPNAME}_`echo $RELEASE | tr '.' '-'`
+
+# Checkout the source tree
+echo Checking out $CVSTAG to $MKCHECKEDOUT_SRCLOC
+mkdir -p $MKCHECKEDOUT_SRCLOC
+cd $MKCHECKEDOUT_SRCLOC
+cvs -Q checkout -r $CVSTAG $APPNAME
+
+# unwrap the symbolic links, this will remove the symbolic links wrap file.
+unwrap_symlink $APPNAME
+
+# build a ChangeLog
+cd $MKCHECKEDOUT_SRCLOC/$APPNAME
+cvs2cl -t -f Documentation/ChangeLog
+
+# remove CVS directories (they will be different for each user if checking out direct from the repository).
+find $MKCHECKEDOUT_SRCLOC -name CVS -type d -exec rm -r {} \; -prune
+
+# tar up the remaining source
+cd $MKCHECKEDOUT_SRCLOC
+# rename the directory to the current version.
+mv $APPNAME ${APPNAME}-$RELEASE
+tar czf $TARLOC/MK_V$RELEASE.s.tar.gz ${APPNAME}-$RELEASE
+
+echo Archive generated at $TARLOC/MK_V$RELEASE.s.tar.gz
+
+# blow away the checked out source.
+rm -r $MKCHECKEDOUT_SRCLOC

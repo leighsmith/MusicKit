@@ -44,8 +44,11 @@
 */
 /*
  $Log$
- Revision 1.1  1999/11/17 17:57:14  leigh
- Initial revision
+ Revision 1.2  2000/01/03 20:36:18  leigh
+ Fixed bug from not distinguishing Output devices from Input, now initialise FUNCLOG
+
+ Revision 1.1.1.1  1999/11/17 17:57:14  leigh
+ Initial working version
 
 */
 #include "stdafx.h"
@@ -89,7 +92,7 @@ static char **portList;
 static int portListSize = 0;       // portListSize != 0 indicates the DLL has been initialised.
 static int defaultPortIndex = 0;   // defaultPort is that nominated by the user across applications
 static int selectedPortIndex = 0;  // which may be overriden per application.
-static BOOL selectedPortSupportsDLS;
+static BOOL selectedPortSupportsDLS = FALSE;
 
 // retrieves the default MS General MIDI DirectMusicCollection
 static HRESULT getGMCollection(IDirectMusicLoader *pILoader, IDirectMusicCollection **ppICollection)
@@ -185,6 +188,13 @@ int PMDownloadDLSInstruments(unsigned int *patchesToDownload, int patchesUsed)
 #ifdef FUNCLOG
   fprintf(debug, "In PMDownloadDLSInstruments\n");
 #endif
+
+  if(!selectedPortSupportsDLS) {
+#ifdef FUNCLOG
+    fprintf(debug, "spoofing the DLSInstruments download\n");
+#endif
+    return TRUE; // spoof the download
+  }
   // This came from RegEdit, but it may as well have come from Mars...
   // HKEY_CLASSES_ROOT\CLSID\{D2AC2892-B39B-11D1-8704-00600893B1BD} = "Microsoft.DirectMusicLoader.1"
   // while you can use the text description, you can't guarantee it will be found, only the CLSID can be.
@@ -261,13 +271,14 @@ BOOL PMReleaseMIDIPortNum(int portNum)
 // otherwise they will be unable to be created a second time.
 BOOL PMSetMIDIPort(char *newPortDescription)
 {
-  int portIndex;
+  int portIndex;         // keep a count off all ports (input and output)
+  int outputPortIndex;   // the output port count matches the description list presented to the user.
   DMUS_PORTPARAMS portParameters;
   DMUS_PORTCAPS portCapabilities;
   HRESULT hr;
   char portDescriptionStr[PORTDESCRIPTION_MAX];
 
-  portIndex = 0;
+  portIndex = outputPortIndex = 0;
   do {
 
 		memset(&portCapabilities, 0, sizeof(portCapabilities));
@@ -276,37 +287,41 @@ BOOL PMSetMIDIPort(char *newPortDescription)
 		hr = dm->EnumPort(portIndex, &portCapabilities);
 
 		// Don't add input ports. Need to check to see if port is output
-		if (hr == S_OK && portCapabilities.dwClass == DMUS_PC_OUTPUTCLASS) {
-			WideCharToMultiByte(CP_ACP, 0, portCapabilities.wszDescription, -1,
-													portDescriptionStr, PORTDESCRIPTION_MAX, 0, 0);
+    if (portCapabilities.dwClass == DMUS_PC_OUTPUTCLASS) {
+      if (hr == S_OK) {
+        WideCharToMultiByte(CP_ACP, 0, portCapabilities.wszDescription, -1,
+          portDescriptionStr, PORTDESCRIPTION_MAX, 0, 0);
 
-      if (strcmp(newPortDescription, portDescriptionStr) == 0) {
-        memset(&portParameters, 0, sizeof(portParameters));
-        portParameters.dwSize = sizeof(DMUS_PORTPARAMS);
-        portParameters.dwChannelGroups = 1;
-        portParameters.dwValidParams = DMUS_PORTPARAMS_CHANNELGROUPS;
+        if (strcmp(newPortDescription, portDescriptionStr) == 0) {
+          memset(&portParameters, 0, sizeof(portParameters));
+          portParameters.dwSize = sizeof(DMUS_PORTPARAMS);
+          portParameters.dwValidParams = DMUS_PORTPARAMS_CHANNELGROUPS | DMUS_PORTPARAMS_SAMPLERATE; 
+          portParameters.dwChannelGroups = 1;
+          portParameters.dwSampleRate = 44100;
 
-        // If the port has not been released with an explict call to PMReleaseMIDIPortNum, do it now.
-        // This can happen because the dealloc method of MKMidi has yet to be called (due to autorelease)
-        // after releasing a MKMidi instance. dealloc should close the MIDI device, and therefore release
-        // the claim of the MIDI unit.
-        if(playPort != NULL)  
-          PMReleaseMIDIPortNum(portIndex); // Not right TODO
+          // If the port has not been released with an explict call to PMReleaseMIDIPortNum, do it now.
+          // This can happen because the dealloc method of MKMidi has yet to be called (due to autorelease)
+          // after releasing a MKMidi instance. dealloc should close the MIDI device, and therefore release
+          // the claim of the MIDI unit.
+          if(playPort != NULL)  
+            PMReleaseMIDIPortNum(outputPortIndex); // Not right TODO
+          
+          if(FAILED(dm->CreatePort(portCapabilities.guidPort, &portParameters, &playPort, NULL)))
+            return FALSE;
 
-        if(FAILED(dm->CreatePort(portCapabilities.guidPort, &portParameters, &playPort, NULL)))
-          return FALSE;
-
-        selectedPortIndex = portIndex;
-        selectedPortSupportsDLS = (portCapabilities.dwFlags & DMUS_PC_DLS);
-        return TRUE;
-      }
-		} 
-		else if ((hr != S_FALSE) && (portCapabilities.dwClass != DMUS_PC_INPUTCLASS)) {
-			// EnumPort will return S_FALSE when all ports have been enumerated.
-			return FALSE;
+          selectedPortIndex = outputPortIndex;
+          selectedPortSupportsDLS = (portCapabilities.dwFlags & DMUS_PC_DLS);
+#ifdef FUNCLOG
+          fprintf(debug, "PMSetMidiPort defaultPort = %d  selected = %d, supports DLS = %d\n", 
+            defaultPortIndex, selectedPortIndex, selectedPortSupportsDLS);
+#endif
+          return TRUE;
+        }
+      } 
+      outputPortIndex++;
 		}
-		portIndex++;
- 	} while (hr == S_OK);
+    portIndex++;
+ 	} while (hr == S_OK); // EnumPort will return S_FALSE when all ports have been enumerated.
 
   return FALSE;
 }
@@ -330,10 +345,8 @@ const char **PMGetAvailableMIDIPorts(unsigned int *selectedPortIndexPtr)
   for(i = 0; i < portListSize; i++) {
     fprintf(debug, "port[%d] = %s\n", i, portList[i]);
   }
-#endif
-#ifdef FUNCLOG
-  fprintf(debug, "defaultPort = %d  selected = %d, supports DLS = %d\n", defaultPortIndex, selectedPortIndex,
-    selectedPortSupportsDLS);
+  fprintf(debug, "PMGetAvailableMIDIPorts defaultPort = %d  selected = %d, supports DLS = %d\n", 
+    defaultPortIndex, selectedPortIndex, selectedPortSupportsDLS);
 #endif
   *selectedPortIndexPtr = selectedPortIndex;
   return (const char **) portList; // make a const for export
@@ -352,7 +365,18 @@ int PMinitialise()
   LPDIRECTSOUND dirSndObj;
   HRESULT hr;
 
+#ifdef FUNCLOG
+  if(debug == NULL) {
+    // create a means to see where we are without having to tiptoe around the MS debugger.
+    if((debug = fopen("/tmp/PerformMIDI_debug.txt", "w")) == NULL)
+      return FALSE;
+  }
+#endif
+
   if(portListSize != 0) { // check in case we are attempting to initialise twice.
+#ifdef FUNCLOG
+    fprintf(debug, "Early exit from PMinitialise\n");
+#endif
     return TRUE;
   }
 
@@ -377,6 +401,9 @@ int PMinitialise()
   // and then make decisions about what differences to work around dependent on the version, rather than
   // playing 20 questions to figure out which version of DM is actually on the system so we can connect to it
   // before we can talk to it...
+  // Aparently we can query the most recent version for its version number.
+  // Unfortunately ProgIDs are not guaranteed to be unique across the registry or even defined for every
+  // object so the safest way to locate an object is to use its CLSID.
   if (FAILED(CoCreateInstance(CLSID_DirectMusic, NULL, CLSCTX_INPROC_SERVER,  IID_IDirectMusic, (LPVOID*)&dm))) {
     return FALSE;
   }
@@ -425,7 +452,7 @@ int PMinitialise()
   Need to determine the maximum polyphony so we can determine how much to synthesize.
 */
   portListSize = 0;
-  // TODO kludged maximum
+  // TODO kludged maximum number of devices
   if((portList = (char **) malloc(25 * sizeof(char *))) == NULL) {
     fprintf(stderr, "PMInitialise allocation error\n");
   }
@@ -495,11 +522,9 @@ int PMinitialise()
   instrument set. If you skip this step, the MIDI file will play silently."
   ...Grrr...A silent instrument, now that's a logical default...How about a sine tone???
   */
-#ifdef FUNCLOG
-  fprintf(debug, "calling PMDownloadDLSInstruments\n");
-#endif
-  unsigned int patches[] = {12, 3, 0, 0x200034};
-  //  PMDownloadDLSInstruments(patches, 4);
+//#ifdef FUNCLOG
+//  fprintf(debug, "calling PMDownloadDLSInstruments\n");
+//#endif
 
   // "Most applications will not need to call SetMasterClock. It should not be called
   // unless there is a need to synchronize tightly with a hardware timer other than
@@ -565,8 +590,10 @@ REFERENCE_TIME PMGetCurrentTime()
 {
   REFERENCE_TIME currentTime;
 
-  masterClock->GetTime(&currentTime);
-  return currentTime;
+  if(FAILED(masterClock->GetTime(&currentTime)))
+    return 0;
+  else
+    return currentTime;
 }
 
 // Pack the message into the buffer, requires PM 
@@ -687,6 +714,7 @@ int PMPlayBuffer(void)
 
 int PMterminate(void)
 {
+  portListSize = 0;  // indicate we are no longer initialised.
   // should release the DirectMusic object dm, masterClock, playPort
   dm->Activate(FALSE);
 

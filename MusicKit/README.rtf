@@ -3,13 +3,13 @@
 \paperw12080\paperh8400
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f0\b\fs36 \cf0 The MusicKit V5.1\
+\f0\b\fs36 \cf0 The MusicKit V5.1.1\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \b0\fs24 \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\i \cf0 25th August 1999\
+\i \cf0 3rd January 2000\
 Leigh Smith <leigh@tomandandy.com>\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
@@ -54,7 +54,9 @@ Keith Hamel tested and bug fixed the MacOsX Server version.\
 \i \cf0 What works:
 \i0 \
 The frameworks have been exercised fairly extensively and seem quite stable.\
-MIDI playback of scores & computed parts works. The example playscorefilemidi demonstrate these capabilities.\
+MIDI playback of scores & computed parts works. The examples MIDIFilePlayback and playscorefilemidi demonstrate these capabilities.\
+\
+At the moment, there is no single operation to build the entire source tree.\
 \
 Compile the dsp framework then either the MacOsX-Server or Windows MKPerformMIDI framework, then the MusicKit framework. They will install into /Local/Library/Frameworks. The unitgenerators framework won't compile on MacOsX-Server because the Motorola asm56000 and lnk56000 tools are missing. I've asked Apple and Motorola for a MacOsX-Server port, why don't you also? :-)\
 \
@@ -67,7 +69,7 @@ The documentation is about half converted and updated to the new naming conventi
 \i0 \
 After much fun with the pinnacle of Microsoft development tools, we have the MusicKit working on Windows. The solution was to emulate the Mach MIDI device driver with the core layer of DirectMusic. There is a fairly similar match in functionality between these API with the exception of the downloadable sound capability of DirectMusic, which provides a MIDI orientated sample playback API to PC soundcards.\
 \
-While the future of Apple's Windows for OpenStep/YellowBox/Cocoa/WebObjects (!) support is far from clear, the combination of Gnu technologies of GnuStep and cygwin would suggest in the near future that Apple's corporate interests will not dictate whether we can deploy applications on either platform.\
+While the future of Apple's Windows for OpenStep/YellowBox/Cocoa/WebObjects (!) support is far from clear, the combination of Gnu technologies of GnuStep and cygwin would suggest in the near future that Apple's corporate interests will not dictate whether applications can be deployed on either platform.\
 \
 
 \i What doesnt work:
@@ -76,6 +78,8 @@ DSP on MacOsX-Server. Stephen mentioned he got sound out under OS4.2. However no
 \
 There are several programs in the Examples and Applications directories which have yet to be converted to the OpenStep version. Please feel free to dive in and upgrade them!\
 \
+Documentation is currently RTF. It should be migrated to HTML.\
+\
 
 \i Contributing Fixes:\
 \
@@ -83,4 +87,8 @@ There are several programs in the Examples and Applications directories which ha
 
 \i0 \cf0 Please! I am maintaining changes via a closed CVS system at the moment. If you send me <
 \i leigh@tomandandy.com
-\i0 > changes I will incorporate them and check them in. If you are planning to do major work, I can provide access to the CVS server.}
+\i0 > changes I will incorporate them and check them in. If you are planning to do major work, I can provide access to the CVS server.\
+\
+The file 
+\i Documentation/ChangeLog 
+\i0 lists changes and is generated from the CVS logs.}

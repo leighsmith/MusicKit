@@ -13,8 +13,8 @@
 Modification history:
 
   $Log$
-  Revision 1.1  1999/09/12 00:20:18  leigh
-  Initial revision
+  Revision 1.2  1999/11/24 17:30:38  leigh
+  Added a MDDownloadDLSInstruments stub
 
   Revision 1.2  1999/07/29 01:26:06  leigh
   Added Win32 compatibility, CVS logs, SBs changes
@@ -150,6 +150,8 @@ extern kern_return_t
     MDClearQueue(port_t driver, port_t owner, short unit);
 extern kern_return_t 
     MDFlushQueue(port_t device_port, port_name_t owner_port, short unit);
+extern kern_return_t 
+    MDDownloadDLSInstruments(unsigned int *patches, int patchCount);
 
 /********************* Controling how incoming data is formated ***********/
 extern kern_return_t 
@@ -233,6 +235,7 @@ extern kern_return_t
 #define MIDIFlushQueue                     MDFlushQueue
 #define MIDIFilterMessage                  MDFilterMessage
 #define MIDIParseInput                     MDParseInput
+#define MIDIDownloadDLSInstruments         MDDownloadDLSInstruments
 #endif // !m68K compatability
 
 #endif _MD_
