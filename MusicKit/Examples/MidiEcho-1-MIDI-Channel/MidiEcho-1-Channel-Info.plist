@@ -23,7 +23,7 @@
 	<key>CFBundleVersion</key>
 	<string>5.5.0</string>
 	<key>NSMainNibFile</key>
-	<string>MainMenu</string>
+	<string>MidiEcho</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
