@@ -291,7 +291,8 @@
     // TODO SndFormatDescription(format)
 }
 
-- readSoundFromData: (NSData *) stream
+// TODO Assumes all data is formatted as .au only.
+- (BOOL) readSoundFromData: (NSData *) stream
 {
     SndSoundStruct *s;
     int finalSize;
@@ -304,11 +305,8 @@
         [[NSException exceptionWithName: @"Sound Error"
                                  reason: @"Can't allocate memory for Snd class"
                                userInfo: nil] raise];
-    [stream getBytes: s length: sizeof(SndSoundStruct)]; /* only gets 1st 4 bytes of info string */
-	
-    // [stream getBytes: nameCString length: s->dataLocation - sizeof(SndSoundStruct) - 4];
-    [name release];
-    // name = [NSString stringWithCString: nameCString];
+    [stream getBytes: s length: sizeof(SndSoundStruct) - 4]; /* SndSoundStruct includes the first 4 bytes of the info string */
+
 #ifdef __LITTLE_ENDIAN__
     s->magic = NSSwapBigLongToHost(s->magic);
     s->dataLocation = NSSwapBigLongToHost(s->dataLocation);
@@ -318,24 +316,41 @@
     s->channelCount = NSSwapBigLongToHost(s->channelCount);
 #endif
 
-    finalSize = s->dataSize + s->dataLocation;
-
-    // NSLog(@"%@\n", SndStructDescription(s), finalSize);
-
-    s = realloc((char *)s,finalSize);
-    [stream getBytes: (char *) s + sizeof(SndSoundStruct)
-               range: NSMakeRange(sizeof(SndSoundStruct), finalSize - sizeof(SndSoundStruct))];
-
-    soundStruct = s;
-    status = SND_SoundInitialized;
-    // Prime format. 
-    // TODO these should eventually be read in order direct from the NSData instance once SndSoundStruct is removed.
-    soundFormat.dataFormat = s->dataFormat;
-    soundFormat.channelCount = s->channelCount;
-    soundFormat.frameCount = SndFrameCount(soundStruct);
-    soundFormat.sampleRate = s->samplingRate;
-    loopEndIndex = [self lengthInSampleFrames] - 1;
-    return SND_ERR_NONE;
+    // Verify we do have a .au/.snd file.
+    if (s->magic == SND_MAGIC) {
+	int infoStringLength = s->dataLocation - sizeof(SndSoundStruct) + 4;
+	char *infoCString;
+	
+	if (!(infoCString = malloc(infoStringLength)))
+	    [[NSException exceptionWithName: @"Sound Error"
+				     reason: @"Can't allocate memory for info string"
+				   userInfo: nil] raise];
+	[stream getBytes: infoCString range: NSMakeRange(sizeof(SndSoundStruct) - 4, infoStringLength)];
+	[info release];
+	info = [[NSString stringWithCString: infoCString] retain];
+	free(infoCString);
+	
+	finalSize = s->dataSize + s->dataLocation;
+	
+	// NSLog(@"%@\n", SndStructDescription(s), finalSize);
+	
+	s = realloc((char *) s, finalSize);
+	[stream getBytes: (char *) s + sizeof(SndSoundStruct)
+		   range: NSMakeRange(sizeof(SndSoundStruct), finalSize - sizeof(SndSoundStruct))];
+	
+	soundStruct = s;
+	status = SND_SoundInitialized;
+	// Prime format. 
+	// TODO these should eventually be read in order direct from the NSData instance once SndSoundStruct is removed.
+	soundFormat.dataFormat = s->dataFormat;
+	soundFormat.channelCount = s->channelCount;
+	soundFormat.frameCount = SndFrameCount(soundStruct);
+	soundFormat.sampleRate = s->samplingRate;
+	loopEndIndex = [self lengthInSampleFrames] - 1;
+	return YES;
+    } 
+    else
+	return NO;
 }
 
 - (NSData *) dataEncodedAsFormat: (NSString *) dataFormat
@@ -349,10 +364,9 @@
     int i, j = 0;
 
     df = soundStruct->dataFormat;
-    NSLog(@"name length %d\n", [name length]);
     headerSize = (df == SND_FORMAT_INDIRECT) ? soundStruct->dataSize : soundStruct->dataLocation;
 
-    /* make new header with swapped bytes if nec */
+    /* make new header with swapped bytes if necessary */
     if (!(s = malloc(headerSize))) 
 	[[NSException exceptionWithName: @"Sound Error"
 				 reason: @"Can't allocate memory for Snd class"
@@ -368,6 +382,8 @@
         s->dataLocation = s->dataSize;
         s->dataSize = newCount;
     }
+    // TODO not sure this will work with indirect sounds.
+    s->dataLocation += [info length] - 4;
 
     stream = [NSMutableData dataWithCapacity: s->dataSize]; 
 
@@ -381,12 +397,14 @@
     s->channelCount = NSSwapHostIntToBig(s->channelCount);
 #endif
         
-    [stream appendBytes: s length: headerSize];
-    // TODO append the name
+    [stream appendBytes: s length: headerSize - 4]; // TODO may not be right in all cases if info stored between header and data.
+    // append the info
+    // NSLog(@"writing info %@ length %d\n", info, [info length]);
+    [stream appendBytes: [info cString] length: [info length]];
 
     if (df != SND_FORMAT_INDIRECT) { /* simple read/write of block of data */
         [stream appendBytes: (char *) soundStruct + soundStruct->dataLocation length: soundStruct->dataSize];
-	NSLog(@"writing %u bytes from %u, headerSize %u\n", soundStruct->dataSize, soundStruct->dataLocation, headerSize);
+	//NSLog(@"writing %u bytes from %u, headerSize %u\n", soundStruct->dataSize, soundStruct->dataLocation, headerSize);
         free(s);
     }
     else {
@@ -683,23 +701,23 @@
 - (BOOL) compatibleWithSound: (Snd *) aSound
 {
     BOOL formatsOk;
-    SndSoundStruct *aStruct;
-    int df1 = [self dataFormat];
-    int df2 = [aSound dataFormat];
+    SndSampleFormat df1 = [self dataFormat];
+    SndSampleFormat df2 = [aSound dataFormat];
     
-    if (df1 == SND_FORMAT_INDIRECT)
+    /* No longer needed since -dataFormat now checks indirect formats.
+	if (df1 == SND_FORMAT_INDIRECT)
         df1 = ((SndSoundStruct *) (*((SndSoundStruct **) (soundStruct->dataLocation))))->dataFormat;
     if (df2 == SND_FORMAT_INDIRECT)
         df2 = ((SndSoundStruct *) (*((SndSoundStruct **) ([aSound soundStruct]->dataLocation))))->dataFormat;
+    */
     formatsOk = ((df1 == df2) && df1 != SND_FORMAT_INDIRECT);
     
     if (!soundStruct) return YES;
     if (!aSound) return YES;
-    if (!(aStruct = [aSound soundStruct])) return YES;
-    if (soundStruct->samplingRate == aStruct->samplingRate &&
-	soundStruct->channelCount == aStruct->channelCount &&
+    if ([self samplingRate] == [aSound samplingRate] &&
+	[self channelCount] == [aSound channelCount] &&
 	formatsOk)
-	       return YES;
+	return YES;
     return NO;
 }
 
@@ -972,43 +990,35 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 	   indexInFragment: (int *) currentFrame 
        lastFrameInFragment: (int *) lastFrameInBlock
 		dataFormat: (SndSampleFormat *) dataFormat
-{
-    int cc = [self channelCount];
-    SndSampleFormat df = [self dataFormat];
-    int ds = [self dataSize];
-    int numBytes;
-    SndSoundStruct **ssList;
-    SndSoundStruct *theStruct;
-    int i = 0, count = 0, oldCount = 0;
-    
-    if (df == SND_FORMAT_INDIRECT) {
-	df = ((SndSoundStruct *)(*((SndSoundStruct **)([self soundStruct]->dataLocation))))->dataFormat;
-    }
-    
-    numBytes = SndSampleWidth(df);
-    
+{            
     *dataFormat = [self dataFormat];
-    if (df != SND_FORMAT_INDIRECT) {
-	*lastFrameInBlock = ds / cc / numBytes;
+    if (soundStruct->dataFormat != SND_FORMAT_INDIRECT) {
+	*lastFrameInBlock = [self lengthInSampleFrames];
 	*currentFrame = frame;
-	*dataFormat = df;
 	return [self data];
     }
-    ssList = (SndSoundStruct **)([self soundStruct]->dataLocation);
-    while ((theStruct = ssList[i++]) != NULL) {
-	int numberOfFramesInFragment = (theStruct->dataSize) / cc / numBytes;
-	
-	count += numberOfFramesInFragment;
-	if (count > frame) {
-	    *lastFrameInBlock = numberOfFramesInFragment;
-	    *currentFrame = frame - oldCount;
-	    return (char *)theStruct + theStruct->dataLocation;
+    else {
+	int frameSize = SndFrameSize(soundFormat);
+	SndSoundStruct **ssList;
+	SndSoundStruct *theStruct;
+	int i = 0, count = 0, oldCount = 0;
+
+	ssList = (SndSoundStruct **)([self soundStruct]->dataLocation);
+	while ((theStruct = ssList[i++]) != NULL) {
+	    int numberOfFramesInFragment = (theStruct->dataSize) / frameSize;
+	    
+	    count += numberOfFramesInFragment;
+	    if (count > frame) {
+		*lastFrameInBlock = numberOfFramesInFragment;
+		*currentFrame = frame - oldCount;
+		return (char *) theStruct + theStruct->dataLocation;
+	    }
+	    oldCount = count;
 	}
-	oldCount = count;
+	*currentFrame = -1;
+	*lastFrameInBlock = -1;
+	return NULL;	
     }
-    *currentFrame = -1;
-    *lastFrameInBlock = -1;
-    return NULL;
 }
 
 // retrieve a sound value at the given frame, for a specified channel, or average over all channels.
