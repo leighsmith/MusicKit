@@ -83,7 +83,11 @@ int SndSampleWidth(int format)
 }
 int mcheck()
 {
-return NXMallocCheck();
+#if defined(NeXT) || macosx_server
+    return NXMallocCheck();
+#else
+    return YES;
+#endif
 }
 int SndBytesToSamples(int byteCount, int channelCount, int dataFormat)
 {
