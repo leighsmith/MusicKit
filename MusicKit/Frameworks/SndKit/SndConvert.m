@@ -59,17 +59,6 @@ OF THIS AGREEMENT.
 
 @implementation SndAudioBuffer(SampleConversion)
 
-int SndConvertSound(const SndSoundStruct *fromSound,
-		    SndSoundStruct **toSound,
-                    BOOL allocate,
-		    BOOL largeFilter,
-		    BOOL interpFilter,
-		    BOOL fast)
-{
-    NSLog(@"SndConvertSound no longer implemented. I suggest rewriting the calling code to use SndAudioBuffer or Snd class conversion methods. Conversion not performed!\n");
-    return SND_ERR_NOT_SOUND;
-}
-
 //////////////////////////////////////////////
 //
 // Adjust the sample rate if necessary, reading from

@@ -526,28 +526,6 @@ interpolateFilter: (BOOL) interpolateFilter
 useLinearInterpolation: (BOOL) linearInterpolation;
 
 /*!
- @function SndConvertSound
- @abstract Convert from one sound struct format to another.
- @discussion <B>This is an obsolete function. Rewrite to use SndAudioBuffer instances and convertToFormat: methods!</B>
-             Converts from one sound struct to another, where toSound defines the format the data is to be
-             converted to and provides the location for the converted sound data.
- @param fromSound Defines the sound data to be converted.
- @param toSound Defines the format the data is to be converted to and provides the location
-                for the converted sound data.
- @param allocate Allocate the memory to use for the resulting converted sound, freeing the toSound passed in.
- @param largeFilter Use a large filter for better quality resampling.
- @param interpFilter Use interpolated filter for conversion for better quality resampling.
- @param fast Do the conversion fast, without filtering, low quality resampling.
- @result Returns various SND_ERR constants, or SND_ERR_NONE if the conversion worked.
- */
-SNDKIT_API int SndConvertSound(const SndSoundStruct *fromSound,
-				    SndSoundStruct **toSound,
-				BOOL allocate,
-				BOOL largeFilter,
-				BOOL interpFilter,
-				BOOL fast);
-
-/*!
   @function SndChangeSampleType
   @abstract Does an conversion from one sample type to another.
   @discussion If fromPtr and toPtr are the same it does the conversion inplace.
