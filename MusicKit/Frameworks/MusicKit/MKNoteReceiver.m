@@ -107,7 +107,7 @@ Modification history before commit to CVS:
 
 #define VERSION2 2
 
-+ (void)initialize
++ (void) initialize
 {
     if (self != [MKNoteReceiver class])
 	return;
@@ -116,9 +116,11 @@ Modification history before commit to CVS:
 
 - init 
 {
-    [super init];
-    noteSenders = [[NSMutableArray alloc] init];
-    owner = nil;
+    self = [super init];
+    if(self != nil) {
+	noteSenders = [[NSMutableArray alloc] init];
+	owner = nil;	
+    }
     return self;
 }
 
@@ -150,7 +152,7 @@ Modification history before commit to CVS:
 }
 
 - disconnect: (MKNoteSender *) aNoteSender
-     /* TYPE: Manipulating; Disconnects aNoteSender from the receiver.
+   /* TYPE: Manipulating; Disconnects aNoteSender from the receiver.
     * Disconnects aNoteSender from the receiver.
     * Returns self.
     */
@@ -165,7 +167,7 @@ Modification history before commit to CVS:
 }	
 
 - disconnect
-  /* TYPE: Manipulating; Disconnects all the receiver's noteSenders.
+   /* TYPE: Manipulating; Disconnects all the receiver's noteSenders.
     * Disconnects all the objects connected to the receiver.
     * Returns the receiver, unless the receiver is currently sending to its
     * noteSenders, in which case does nothing and returns nil.
@@ -179,7 +181,7 @@ Modification history before commit to CVS:
     return self;
 }
 
-- connect: (MKNoteSender *)aNoteSender 
+- connect: (MKNoteSender *) aNoteSender 
   /* TYPE: Manipulating; Connects aNoteSender to the receiver.
     * Connects aNoteSender to the receiver 
     * and returns self.  
@@ -221,32 +223,55 @@ Modification history before commit to CVS:
 }
 
 - (void) encodeWithCoder: (NSCoder *) aCoder
-    /* You never send this message directly.  
-    Archives isSquelched. Also archives MKNoteSender List and owner. */
 {
-    NSString *str;
-    
-    str = MKGetObjectName(self);
-    [aCoder encodeConditionalObject: noteSenders];
-    [aCoder encodeValuesOfObjCTypes: "@c", &str, &isSquelched];
-    [aCoder encodeConditionalObject: owner];
+    // Check if decoding a newer keyed coding archive
+    if([aCoder allowsKeyedCoding]) {
+	NSString *objectName = MKGetObjectName(self);
+	
+	[aCoder encodeConditionalObject: noteSenders forKey: @"MKNoteReceiver_noteSenders"];
+	[aCoder encodeObject: objectName forKey: @"MKNoteReceiver_objectName"];
+	[aCoder encodeBool: isSquelched forKey: @"MKNoteReceiver_isSquelched"];
+	[aCoder encodeConditionalObject: owner forKey: @"MKNoteReceiver_owner"];
+    }
+    else {
+	NSString *str;
+	
+	str = MKGetObjectName(self);
+	[aCoder encodeConditionalObject: noteSenders];
+	[aCoder encodeValuesOfObjCTypes: "@c", &str, &isSquelched];
+	[aCoder encodeConditionalObject: owner];	
+    }
 }
 
 - (id) initWithCoder: (NSCoder *) aDecoder
-    /* You never send this message directly.  
-	  See write:. */
 {
-    NSString *str;
-    
-    if ([aDecoder versionForClassName: @"MKNoteReceiver"] == VERSION2) {
-        noteSenders = [[aDecoder decodeObject] retain];
-	
-	[aDecoder decodeValuesOfObjCTypes: "@c", &str, &isSquelched];
-	if (str) {
-	    MKNameObject(str, self);
+    // Check if decoding a newer keyed coding archive
+    if([aDecoder allowsKeyedCoding]) {
+	NSString *objectName;
+
+	[noteSenders release];
+	noteSenders = [[aDecoder decodeObjectForKey: @"MKNoteReceiver_noteSenders"] retain];
+	objectName = [aDecoder decodeObjectForKey: @"MKNoteReceiver_objectName"];
+	if (objectName) {
+	    MKNameObject(objectName, self);
 	}
-	owner = [[aDecoder decodeObject] retain];
-    } 
+	isSquelched = [aDecoder decodeBoolForKey: @"MKNoteReceiver_isSquelched"];
+	[owner release];
+	owner = [[aDecoder decodeObjectForKey: @"MKNoteReceiver_owner"] retain];
+    }
+    else {
+	NSString *str;
+	
+	if ([aDecoder versionForClassName: @"MKNoteReceiver"] == VERSION2) {
+	    noteSenders = [[aDecoder decodeObject] retain];
+	    
+	    [aDecoder decodeValuesOfObjCTypes: "@c", &str, &isSquelched];
+	    if (str) {
+		MKNameObject(str, self);
+	    }
+	    owner = [[aDecoder decodeObject] retain];
+	}	
+    }
     return self;
 }
 
@@ -277,18 +302,18 @@ Modification history before commit to CVS:
 
 - _connect: (MKNoteSender *) aNoteSender
 {
-    int i = [noteSenders indexOfObject:aNoteSender];
-    if (i != NSNotFound)  /* Already there. */
+    if ([noteSenders indexOfObject: aNoteSender] != NSNotFound)  /* Already there. */
 	return nil;
-    /*aNoteSender = */ [noteSenders addObject:aNoteSender];
+    /*aNoteSender = */ [noteSenders addObject: aNoteSender];
     return self;
 }
 
 - _disconnect: (MKNoteSender *) aNoteSender
 {
     unsigned int returnedIndex;
-    if ((returnedIndex = [noteSenders indexOfObjectIdenticalTo:aNoteSender]) != NSNotFound) {
-        [noteSenders removeObjectAtIndex:returnedIndex];
+    
+    if ((returnedIndex = [noteSenders indexOfObjectIdenticalTo: aNoteSender]) != NSNotFound) {
+        [noteSenders removeObjectAtIndex: returnedIndex];
         return self; /* Returns aNoteSender if success */
     }
     /*    if ([noteSenders removeObject:aNoteSender])       return self;
