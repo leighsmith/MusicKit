@@ -25,7 +25,7 @@
 
 /*!
   @class SndAudioBuffer
-  @abstract   Audio Buffer
+  @abstract   An in-memory audio buffer
   @discussion A SndAudioBuffer represents sound data in memory. As distinct from a Snd class, it may hold small
 	      chunks of sound data ready for signal processing or performance. Using classes such as SndAudioBufferQueue
               enables a fragmented arrangement of buffers across memory, typically for processing constraints. SndAudioBuffers
@@ -93,14 +93,14 @@
 + audioBufferWrapperAroundSNDStreamBuffer: (SNDStreamBuffer*) cBuff;
 
 /*!
-    @method     audioBufferWithSndSeg:range:
-    @abstract   Factory method
+    @method     audioBufferWithSnd:inRange:
+    @abstract   Factory method creating audioBuffers from a region of the given Snd.
     @discussion
     @param      snd 
-    @param      r
+    @param      r An NSRange structure indicating the start and end of the region in samples.
     @result     An SndAudioBuffer 
 */
-+ audioBufferWithSndSeg: (Snd*) snd range: (NSRange) r;
++ audioBufferWithSnd: (Snd*) snd inRange: (NSRange) r;
 
 /*!
   @method     initWithFormat:data:
@@ -277,7 +277,7 @@
   @method     bytes
   @abstract
   @discussion
-  @result     pointer to NSData object contaiing the audio data
+  @result     pointer to NSData object containing the audio data
 */
 - (void*) bytes;
 
@@ -318,16 +318,16 @@
     @method     description
     @abstract    
     @discussion 
-    @result     Integer size of sample frame (channels * sample size in bytes)
+    @result     NSString describing the audio buffer.
 */
 - (NSString*) description;
 
-
-+ (void) resampleByLinearInterpolation: (SndAudioBuffer*) aBuffer
-                                  dest: (SndAudioBuffer*) tempBuffer
-                                factor: (double) deltaTime
-                                offset: (double) offset;
-
+/*!
+  @method findMin:max:
+  @abstract Finds the maximum and minimum sample values in the audio buffer and returns them as floats.
+  @param pMin Points to a float to store the minimum sample value (between -1.0 and 1.0).
+  @param pMax Points to a float to store the maximum sample value (between -1.0 and 1.0).
+ */
 - (void) findMin:(float*) pMin max:(float*) pMax;
 
 @end
@@ -337,22 +337,26 @@
 @interface SndAudioBuffer(SampleConversion)
 
 /*!
+  @method audioBufferConvertedToFormat:channelCount:samplingRate:
+  @discussion Creates a new autoreleased buffer of the same number of samples as the receiver
+              converted to the new format, sampling rate and channel count.
+  @param toDataFormat An integer representing different sample data formats.
+  @param toChannelCount
+  @param toSamplingRate
+  @result returns the new buffer instance.
+ */
+- (SndAudioBuffer *) audioBufferConvertedToFormat: (int) toDataFormat
+				     channelCount: (int) toChannelCount
+				     samplingRate: (double) toSamplingRate;
+
+/*!
   @method convertToFormat:
   @abstract Converts the sample data to the given format.
   @discussion Only the format is changed, the number of channels and sampling rate are preserved.
-  @param  sndFormatCode  An integer representing different sample data formats.
+  @param  newDataFormat  An integer representing different sample data formats.
   @result Returns self if conversion was successful, nil if conversion was not possible, such as due to incompatible channel counts.
  */
-- convertToFormat: (int) sndFormatCode;
-
-/*!
-  @method dataConvertedToFormat:
-  @abstract Converts the sample data to the given format.
-  @discussion Only the format is changed, the number of channels and sampling rate are preserved.
-  @param  newDataFormat An integer representing different sample data formats.
-  @result Returns an autoreleased NSData instance with the new sample data.
- */
-- (NSMutableData *) dataConvertedToFormat: (int) newDataFormat;
+- convertToFormat: (int) newDataFormat;
 
 /*!
   @method convertBytes:intoRange:fromFormat:channels:samplingRate:
@@ -384,29 +388,31 @@
      channelCount: (int) toChannelCount;
 
 /*!
-  @method convertToFormat:channelCount:samplingRate:useLargeFilter:interpolateFilter:useFastInterpolation:
+  @method convertToFormat:channelCount:samplingRate:useLargeFilter:interpolateFilter:useLinearInterpolation:
   @abstract Converts the sample data to the given format, channel count and sampling rate.
-  @discussion The parameter fields useLargeFilter: interpolateFilter:  and useFastInterpolation: control the
+  @discussion The parameter fields useLargeFilter: interpolateFilter:  and useLinearInterpolation: control the
               particular resampling methods used.
   @param toDataFormat    An integer representing different sample data formats.
-  @param toChannelCount
-  @param toSampleRate
-  @param largeFilter
-  @param interpFilter
-  @param fastInterpolation
+  @param toChannelCount  The new number of channels. Reallocation occurs if expanding buffers.
+  @param toSampleRate    The new sampling rate.
+  @param largeFilter     TRUE means use 65tap FIR filter, with higher quality.
+  @param interpolateFilter When not in "fast" mode, controls whether or not the
+                          filter coefficients are interpolated (disregarded in fast mode).
+  @param linearInterpolation If TRUE, linear interpolation uses a fast, noninterpolating resample routine but is relatively noisy.
   @result Returns self if conversion was successful, nil if conversion was not possible, such as due to incompatible channel counts.
  */
 - convertToFormat: (int) toDataFormat
      channelCount: (int) toChannelCount
      samplingRate: (double) toSampleRate
    useLargeFilter: (BOOL) largeFilter
-interpolateFilter: (BOOL) interpFilter
-useFastInterpolation: (BOOL) fastInterpolation;
+interpolateFilter: (BOOL) interpolateFilter
+useLinearInterpolation: (BOOL) linearInterpolation;
 
 /*!
  @function SndConvertSound
  @abstract Convert from one sound struct format to another.
- @discussion Converts from one sound struct to another, where toSound defines the format the data is to be
+ @discussion <B>This is an obsolete function. Rewrite to use SndAudioBuffer instances and convertToFormat: methods!</B>
+             Converts from one sound struct to another, where toSound defines the format the data is to be
              converted to and provides the location for the converted sound data.
  @param fromSound Defines the sound data to be converted.
  @param toSound Defines the format the data is to be converted to and provides the location
