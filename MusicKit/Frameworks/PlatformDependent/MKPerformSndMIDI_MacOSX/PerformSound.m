@@ -44,7 +44,7 @@ static BOOL inputInit = FALSE;
 
 static char         **driverList;
 static unsigned int driverIndex = 0;
-static int          numOfDevices;
+static unsigned int numOfDevices;
 static int          bufferSizeInFrames;
 static long         bufferSizeInBytes = DEFAULT_BUFFERSIZE;
 
@@ -109,7 +109,7 @@ static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID outDevice,
 						       void *inClientData)
 {
     SNDStreamBuffer inStream, outStream;
-    int bufferIndex;
+    unsigned int bufferIndex;
 
 #if DEBUG_CALLBACK
     fprintf(stderr,"[SND] starting vend...\n");
@@ -260,7 +260,7 @@ static BOOL retrieveDriverList(void)
     OSStatus CAstatus;
     UInt32 propertySize;
     Boolean propertyWritable;
-    int driverIndex = 0;
+    unsigned int driverIndex = 0;
     AudioDeviceID *allDeviceIDs;
 
     CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDevices, &propertySize, &propertyWritable);
@@ -355,6 +355,7 @@ static BOOL isDeviceRunning(AudioDeviceID deviceID, BOOL isInput)
 // dumpStreamDescription
 ////////////////////////////////////////////////////////////////////////////////
 
+#if DEBUG_DESCRIPTION
 static void dumpStreamDescription(AudioStreamBasicDescription *StrBasDesc)
 {
     fprintf(stderr,"samplerate:       %f\nformat:           %4s\nFormatFlags:      0x%X\n",
@@ -369,6 +370,7 @@ static void dumpStreamDescription(AudioStreamBasicDescription *StrBasDesc)
 	    StrBasDesc->mChannelsPerFrame,                    // the number of channels in each frame
 	    StrBasDesc->mBitsPerChannel);
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // determineBasicDescription
@@ -858,7 +860,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
 	return FALSE;
 
     {
-	int streamIndex;
+	unsigned int streamIndex;
 
 	// TODO turn off all but the first stream. This isn't right in the general case, we should use what the
 	// the user has nominated as the default AudioStream in the default AudioDevice, but there doesn't seem to be
