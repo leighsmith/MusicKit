@@ -1,19 +1,70 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
-  $Id$
-  Original Author: David A. Jaffe
-  
+  $Id$  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
+
+  Description:
+    PatchTemplate is a recipe for building a particular kind of SynthPatch.
+    The template is created with the PatchTemplate class method +new
+    and configured with the basic methods
+
+    -to:(unsigned)anObjInt sel:(SEL)aSelector arg:(unsigned)anArgInt
+    -(unsigned)addUnitGenerator:(id)aUGClass ordered:(BOOL)isOrdered
+    -(unsigned)addSynthData:(MKOrchMemSegment)segment length:(unsigned)len
+    -(unsigned)addPatchpoint:(MKOrchMemSegment)segment
+
+    The template consists of "ordered" UnitGenerator factories,
+    "unordered" UnitGenerator factories, "data memory blocks", and
+    "message requests". (The meaning of the terms is indicated below.)  These
+    are added to the template using the three methods shown above. In the
+    case of "ordered" UnitGenerators, the order used is the order of the
+    -addUnitGenerator: messages. -addUnitGenerator:ordered:, -addSynthData:length:,
+    and -addPatchpoint: return an int value to be used as an argument to
+    sendSel:to:with: or when referencing UnitGenerators in the SynthPatch.
+
+    When UnitGenerators are connected up, it usually doesn't matter if
+    there is a one-tick delay involved in the interconnection.  If it does
+    not matter one way or the other, you should specify the UnitGenerator
+    as an "unordered" UnitGenerator. However, if it is essential that no
+    pipe-line delay be incurred, you should specify the two unit
+    generators in the correct order as "ordered" UnitGenerators.
+    Similarly, if it is essential that exactly one pipe-line delay be
+    incurred, you should specify the two UnitGenerators in the reverse
+    order in the "ordered" UnitGenerator list.
+
+    Each data block used privately in the SynthPatch is allocated
+    by specifying the length and memory segment of that data block to the
+    PatchTemplate. The instances allocated are SynthData instances.
+
+    Finally, the message requests of the Template are specified with the
+    to:sel:arg: method. This mechanism is used primarily to specify the
+    interconnections of the UnitGenerators.
+    The to: and with: arguments are one of the values
+    returned by addUnitGenerator:ordered: or addSynthData:length:.
+    These connections are made automatically by the -initialize SynthPatch
+    method. When the initialize method is sent to the SynthPatch,
+    each of the connections is made in the order the to:sel:arg: messages
+    were sent.
+
+    It is important to point out that PatchTemplates are considered different
+    by the Orchestra, even if their contents are identical. A PatchTemplate should not
+    be changed once it has been used during a Musickit performance.
+
+    PatchTemplate should never be freed.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.5  2000/06/09 03:31:31  leigh
+  Added MKPatchConnection to remove a struct which required Storage
+
   Revision 1.4  2000/05/06 01:12:14  leigh
   Typed parameters to reduce warnings
 
@@ -23,7 +74,7 @@ Modification history:
   Revision 1.2  1999/07/29 01:16:40  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
-  01/02/90/daj - Deleted a comment.		      
+  01/02/90/daj - Deleted a comment.		       
   03/13/90/daj - Changes to support new categories for private methods.
   03/21/90/daj - Added archiving.
   04/21/90/daj - Small mods to get rid of -W compiler warnings.
@@ -41,68 +92,11 @@ Modification history:
 #import "OrchestraPrivate.h"
 #import "SynthPatchPrivate.h"
 #import "UnitGeneratorPrivate.h"
+#import "MKPatchConnection.h"
 
 #import "PatchTemplatePrivate.h"
+
 @implementation MKPatchTemplate:NSObject
-/* 
-  PatchTemplate is a recipe for building a particular kind of SynthPatch.
-  The template is created with the PatchTemplate class method +new
-  and configured with the basic methods 
-
-  -to:(unsigned)anObjInt sel:(SEL)aSelector arg:(unsigned)anArgInt
-  -(unsigned)addUnitGenerator:(id)aUGClass ordered:(BOOL)isOrdered
-  -(unsigned)addSynthData:(MKOrchMemSegment)segment length:(unsigned)len
-  -(unsigned)addPatchpoint:(MKOrchMemSegment)segment 
-   
-  The template consists of "ordered" UnitGenerator factories,
-  "unordered" UnitGenerator factories, "data memory blocks", and
-  "message requests". (The meaning of the terms is indicated below.)  These
-  are added to the template using the three methods shown above. In the
-  case of "ordered" UnitGenerators, the order used is the order of the
-  -addUnitGenerator: messages. -addUnitGenerator:ordered:, -addSynthData:length:,
-  and -addPatchpoint: return an int value to be used as an argument to 
-  sendSel:to:with: or when referencing UnitGenerators in the SynthPatch.
-  
-  When UnitGenerators are connected up, it usually doesn't matter if
-  there is a one-tick delay involved in the interconnection.  If it does
-  not matter one way or the other, you should specify the UnitGenerator
-  as an "unordered" UnitGenerator. However, if it is essential that no
-  pipe-line delay be incurred, you should specify the two unit
-  generators in the correct order as "ordered" UnitGenerators.
-  Similarly, if it is essential that exactly one pipe-line delay be
-  incurred, you should specify the two UnitGenerators in the reverse
-  order in the "ordered" UnitGenerator list. 
-  
-  Each data block used privately in the SynthPatch is allocated
-  by specifying the length and memory segment of that data block to the
-  PatchTemplate. The instances allocated are SynthData instances. 
-  
-  Finally, the message requests of the Template are specified with the
-  to:sel:arg: method. This mechanism is used primarily to specify the
-  interconnections of the UnitGenerators.  
-  The to: and with: arguments are one of the values 
-  returned by addUnitGenerator:ordered: or addSynthData:length:. 
-  These connections are made automatically by the -initialize SynthPatch 
-  method. When the initialize method is sent to the SynthPatch, 
-  each of the connections is made in the order the to:sel:arg: messages 
-  were sent.
-
-  It is important to point out that PatchTemplates are considered different
-  by the Orchestra, even if their contents are identical. A PatchTemplate should not
-  be changed once it has been used during a Musickit performance. 
-
-  PatchTemplate should never be freed.
-  */
-{
-    id _elementStorage; /* Storage class object of template entries */
-    id _connectionStorage; /* Storage class object of connection info */     
-    NSMutableArray **_deallocatedPatches; /* If Orchestra is loaded, 
-				this is an array of Lists 
-				of deallocated patches, one per DSP.  */
-    unsigned int _eMemSegments; /* External memory segment bit vector */    
-    void *_reservedPatchTemplate5;
-}
-
 
 typedef struct _templateEntry {
     id class;             /* Which class. */
@@ -111,16 +105,7 @@ typedef struct _templateEntry {
     unsigned length;      /* " Length of data. */ 
     } templateEntry;
 
-typedef struct _connection { 
-	unsigned _toObjectOffset;	       
-	unsigned _argObjectOffset;
-	SEL _aSelector;       
-	IMP _methodImp;
-    } connection;
 
-
-#define CONNSIZE	(sizeof(connection))
-#define CONNDESCR @"{ii:*}" /* FIXME SEL and IMP are handled funny */
 #define ENTRYSIZE	(sizeof(templateEntry))
 #define ENTRYDESCR @"{#SSI}"
 
@@ -136,8 +121,7 @@ typedef struct _connection {
 {
     [super init];
     _deallocatedPatches = [_MKClassOrchestra() _addTemplate:self];
-    _connectionStorage = 
-      [Storage newCount:0 elementSize:CONNSIZE description:[CONNDESCR cString]];
+    _connectionStorage = [[NSMutableArray array] retain];
     _elementStorage = 
       [Storage newCount:0 elementSize:ENTRYSIZE description:[ENTRYDESCR cString]];
     return self;
@@ -169,47 +153,26 @@ typedef struct _connection {
      See write:. */
 {
    /* [super initWithCoder:aDecoder]; */ /*sb: unnecessary */
-    if ([aDecoder versionForClassName:@"PatchTemplate"] == VERSION2) 
+    if ([aDecoder versionForClassName:@"MKPatchTemplate"] == VERSION2) 
       [aDecoder decodeValuesOfObjCTypes:"@@i",&_elementStorage,&_connectionStorage,
 		  &_eMemSegments];
     /* from awake (sb) */
 	{
             int i,count;
-            connection *conn;
+            MKPatchConnection *conn;
             templateEntry *templ;
 
             _deallocatedPatches = [_MKClassOrchestra() _addTemplate:self];
             /* Update IMP pointers */
             count = [_connectionStorage count];
             for (i=0; i<count; i++) {
-                conn = (connection *)[_connectionStorage elementAt:i];
+                conn = [_connectionStorage objectAtIndex:i];
                 templ = [_elementStorage elementAt:conn->_toObjectOffset];
                 conn->_methodImp = [templ->class instanceMethodForSelector:conn->_aSelector];
             }
           }
     return self;
 }
-
-//- awake
-//{
-/*
-    int i,count;
-    connection *conn;
-    templateEntry *templ;
- */
-//#warning DONE ArchiverConversion: put the contents of your 'awake' method at the end of your 'initWithCoder:' method instead
-//    [super awake];
-/*    _deallocatedPatches = [_MKClassOrchestra() _addTemplate:self]; */
-    /* Update IMP pointers */
-/*    count = [_connectionStorage count];
-    for (i=0; i<count; i++) {
-	conn = (connection *)[_connectionStorage elementAt:i];
-	templ = [_elementStorage elementAt:conn->_toObjectOffset];
-	conn->_methodImp = [templ->class instanceMethodForSelector:conn->_aSelector];
-    }
- */
-//    return self;
-//}
 
 -copy
 {
@@ -221,20 +184,16 @@ typedef struct _connection {
      the same connections and entries. */
 {
     MKPatchTemplate *newObj = NSCopyObject(self, 0, zone);
-    int elements,connections;
+    int elements;
+
     _deallocatedPatches = [_MKClassOrchestra() _addTemplate:newObj];
-    connections = [_connectionStorage count]; 
-    elements = [_elementStorage count]; 
-    newObj->_connectionStorage = [Storage newCount:connections
-				elementSize:CONNSIZE description:[CONNDESCR cString]];
+    elements = [_elementStorage count];
+    newObj->_connectionStorage = [_connectionStorage copy];
     newObj->_elementStorage = [Storage newCount:elements
 			     elementSize:ENTRYSIZE description:[ENTRYDESCR cString]];
     memcpy((templateEntry *)[newObj->_elementStorage elementAt:0],
 	   (templateEntry *)[_elementStorage elementAt:0],
 	   ENTRYSIZE * elements);
-    memcpy((templateEntry *)[newObj->_connectionStorage elementAt:0],
-	   (templateEntry *)[_connectionStorage elementAt:0],
-	   ENTRYSIZE * connections);
     return newObj;
 }
 
@@ -260,19 +219,19 @@ typedef struct _connection {
      will be sent. If toObjInt or withObjInt is invalid, returns nil, else self.
      */
 {
-    connection conn;
+    MKPatchConnection *conn = [[MKPatchConnection alloc] initWithTargetObjectOffset: toObjInt
+                                                                           selector: aSelector
+                                                                           argument: withObjInt];
     int i;
-    conn._toObjectOffset = toObjInt;
-    conn._argObjectOffset = withObjInt;
-    conn._aSelector = aSelector;
     i = [_elementStorage count];
     if ((toObjInt < i) && (withObjInt < i))
-      conn._methodImp = 
-	[((templateEntry *)[_elementStorage elementAt:conn._toObjectOffset])->
-	 class instanceMethodForSelector:conn._aSelector];
+// This implies that rather than keeping the instance method for the selector, we should retain the selector
+      conn->_methodImp =
+          [((templateEntry *)[_elementStorage elementAt:toObjInt])->
+	 class instanceMethodForSelector: aSelector];
     else 
       return nil;
-    [_connectionStorage insertElement:((char *)&conn) at:[_connectionStorage count]];
+    [_connectionStorage addObject: conn];
     return self;
 }
 
@@ -351,11 +310,11 @@ BOOL _MKIsClassInTemplate(MKPatchTemplate *templ,id factObj)
 
 void _MKEvalTemplateConnections(MKPatchTemplate *templ,id synthElements)
 {
-    register connection *conn;
+    register MKPatchConnection *conn;
     register unsigned n;
 //    int arr=0; //arr[conn->_toObjectOffset], arr[conn->_argObjectOffset]
 //    id *arr = NX_ADDRESS(synthElements);
-    conn = (connection *)([templ->_connectionStorage elementAt:0]);
+    conn = (MKPatchConnection *)([templ->_connectionStorage objectAtIndex:0]);
     for (n = [templ->_connectionStorage count]; n--; conn++)
         (*conn->_methodImp)([synthElements objectAtIndex:conn->_toObjectOffset],conn->_aSelector,
                             [synthElements objectAtIndex:conn->_argObjectOffset]);
