@@ -1,0 +1,5 @@
+Music Kit MKSynthpatch Library Classes
+
+The MusicKit MKSynthPatch Library supports a number of generic synthesis techniques.  A consistant naming convention using abbreviations makes it easy to remember the synthesis technique each MKSynthPatch represents.    
+
+The MusicKit MKSynthPatch Library also supports includes a Timbre Data base supported by several of the MKSynthPatches. 
