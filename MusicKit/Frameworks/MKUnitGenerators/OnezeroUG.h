@@ -99,7 +99,7 @@ the sign of the coefficent is switched in the OnepoleUG.
               1.0 (a negative gain is the same as its absolute value, but with a
               180 degree phase shift).  
 */
--setB0:(double)val;
+-setB0:(double)value;
 /* Sets gain of filter. */
 
 
@@ -112,7 +112,7 @@ the sign of the coefficent is switched in the OnepoleUG.
               object is a low-pass filter. For stability, the <i>value</i> should
               be between -1.0 and 1.0.  
 */
--setB1:(double)val;
+-setB1:(double)value;
 /* Sets coefficient of once-delayed input sample. */
 
 /*!
