@@ -78,20 +78,23 @@
 	  <PARA> Allows you to schedule an
 	    Objective-C message to be sent in the future.  Example: </PARA>
 	  <PROGRAMLISTING>
-[aConductor sel:@selector(hello:) to:anObject 	
-	atTime:3.0 argCount:1, anotherObject];
+[aConductor sel: @selector(hello:) 
+             to: anObject 	
+         atTime: 3.0
+       argCount: 1, anotherObject];
 	  </PROGRAMLISTING>
 	  <PARA>At time 3.0, aConductor will send:</PARA>   
 	  <PROGRAMLISTING>
-[anObject hello:anotherObject]; 
+[anObject hello: anotherObject]; 
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA>
-	    A <PRODUCTNAME>MusicKit</PRODUCTNAME> performance requires a
-	    <CLASSNAME>MKConductor</CLASSNAME>.  You need not create a
-	    <CLASSNAME>MKConductor</CLASSNAME> explicitly.  A &ldquo;defaultConductor&rdquo;
-	    is created for you and is obtained by:
+	    A <PRODUCTNAME>MusicKit</PRODUCTNAME> performance requires
+	    a <CLASSNAME>MKConductor</CLASSNAME>.  You need not create
+	    a <CLASSNAME>MKConductor</CLASSNAME> explicitly.  A
+	    &ldquo;defaultConductor&rdquo; is created for you and is
+	    obtained by:
 	  </PARA>
 	  <PROGRAMLISTING>
 [MKConductor defaultConductor];
@@ -127,15 +130,15 @@
 	    <PARA>
 	      <EMPHASIS>NO</EMPHASIS> (unclocked) &horbar; messages sent in
 	      time order, but ASAP.  Use this mode when no interaction is
-	      required.  Example: playscore
+	      required.  Example: <COMMAND>playscore</COMMAND>
 	    </PARA>
 	  </LISTITEM>
 	</VARLISTENTRY>
 	<VARLISTENTRY>
-	  <TERM><emphasis role="bold">+setFinishWhenEmpty:</emphasis>T</TERM>
+	  <TERM><emphasis role="bold">+setFinishWhenEmpty:</emphasis></TERM>
 	  <LISTITEM>
 	    <PARA>
-	      YES &horbar; <emphasis role="bold">[Conductor
+	      YES &horbar; <emphasis role="bold">[MKConductor
 		finishPerformance]</emphasis> is automatically triggered when
 	      the <CLASSNAME>MKConductor</CLASSNAME> has no more scheduled
 	      messages. This is the default.  Example:
@@ -176,18 +179,18 @@
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> <CLASSNAME>MKInstrument</CLASSNAME> subclasses provided by the
-	    <PRODUCTNAME>MusicKit</PRODUCTNAME>: 
-	  </PARA>
 	  <TABLE>
-	    <TITLE>	</TITLE>
+	    <TITLE>
+	      <CLASSNAME>MKInstrument</CLASSNAME> subclasses provided by the
+	      <PRODUCTNAME>MusicKit</PRODUCTNAME>
+	    </TITLE>
 	    <TGROUP COLS="2" ALIGN="LEFT">
 	      <COLSPEC COLNUM="1">
 	      <COLSPEC COLNUM="2">
 	      <THEAD>
 		<ROW> 
-		  <ENTRY> Class</ENTRY>
-		  <ENTRY> Means of realization</ENTRY>
+		  <ENTRY>Class</ENTRY>
+		  <ENTRY>Means of realization</ENTRY>
 		</ROW>
 	      </THEAD>
 	      <TBODY>
@@ -219,18 +222,17 @@
 	  </TABLE>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> Pseudo-Instrument classes provided by
-	    <PRODUCTNAME>MusicKit</PRODUCTNAME>: 
-	  </PARA>
 	  <TABLE>
-	    <TITLE>	</TITLE>
+	    <TITLE>Pseudo-Instrument classes provided by
+	      <PRODUCTNAME>MusicKit</PRODUCTNAME>
+	    </TITLE>
 	    <TGROUP COLS="2" ALIGN="LEFT">
 	      <COLSPEC COLNUM="1">
 	      <COLSPEC COLNUM="2">
 	      <THEAD>
 		<ROW>
-		  <ENTRY> Class</ENTRY> 
-		  <ENTRY> Means of realization</ENTRY>
+		  <ENTRY>Class</ENTRY> 
+		  <ENTRY>Means of realization</ENTRY>
 		</ROW>
 	      </THEAD>
 	      <TBODY>
@@ -350,49 +352,52 @@
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> <CLASSNAME>MKPerformer</CLASSNAME> subclasses provided by the
-	    <PRODUCTNAME>MusicKit</PRODUCTNAME>: </PARA>
-	  <TABLE>
-	    <TITLE>	</TITLE>
-	    <TGROUP COLS="2" ALIGN="LEFT">
-	      <COLSPEC COLNUM="1">
-	      <COLSPEC COLNUM="2">
-	      <THEAD>
-		<ROW> 
-		  <ENTRY> Class</ENTRY>
-		  <ENTRY> Means of performance</ENTRY>
-		</ROW>
-	      </THEAD>
-	      <TBODY>
-		<ROW>
-		  <ENTRY><CLASSNAME>MKPartPerformer</CLASSNAME></ENTRY> 
-		  <ENTRY> performs <CLASSNAME>MKNote</CLASSNAME>s from a
-		    <CLASSNAME>MKPart</CLASSNAME>.</ENTRY> 
-		</ROW>
-		<ROW>
-		  <ENTRY> <CLASSNAME>MKFilePerformer</CLASSNAME></ENTRY>
-		  <ENTRY> (abstract)
-		    performs <CLASSNAME>MKNote</CLASSNAME>s from a file.</ENTRY>  
-		</ROW>
-		<ROW>
-		  <ENTRY> <CLASSNAME>MKScorefilePerformer</CLASSNAME> </ENTRY>
-		  <ENTRY> performs <CLASSNAME>MKNote</CLASSNAME>s from a
-		    scorefile.</ENTRY>
-		</ROW>
-		<ROW>
-		  <ENTRY> <CLASSNAME>MKScorePerformer</CLASSNAME> </ENTRY>
-		  <ENTRY> manages a set of <CLASSNAME>MKPartPerformer</CLASSNAME>s
-		  </ENTRY>
-		</ROW>
-		<ROW>
-		  <ENTRY> <CLASSNAME>MKMidi</CLASSNAME> </ENTRY> 
-		  <ENTRY> (abstract)
-		    performs <CLASSNAME>MKNote</CLASSNAME>s it receives via
-		    <ACRONYM>MIDI</ACRONYM></ENTRY>
-		</ROW>
-	      </TBODY>
-	    </TGROUP>
-	  </TABLE>
+	  <PARA>
+	    <TABLE>
+	      <TITLE>
+		<CLASSNAME>MKPerformer</CLASSNAME> subclasses provided by the
+		<PRODUCTNAME>MusicKit</PRODUCTNAME>
+	      </TITLE>
+	      <TGROUP COLS="2" ALIGN="LEFT">
+		<COLSPEC COLNUM="1">
+		  <COLSPEC COLNUM="2">
+		    <THEAD>
+		      <ROW> 
+			<ENTRY> Class</ENTRY>
+			<ENTRY> Means of performance</ENTRY>
+		      </ROW>
+		    </THEAD>
+		    <TBODY>
+		      <ROW>
+			<ENTRY><CLASSNAME>MKPartPerformer</CLASSNAME></ENTRY> 
+			<ENTRY> performs <CLASSNAME>MKNote</CLASSNAME>s from a
+			  <CLASSNAME>MKPart</CLASSNAME>.</ENTRY> 
+		      </ROW>
+		      <ROW>
+			<ENTRY> <CLASSNAME>MKFilePerformer</CLASSNAME></ENTRY>
+			<ENTRY> (abstract)
+			  performs <CLASSNAME>MKNote</CLASSNAME>s from a file.</ENTRY>  
+		      </ROW>
+		      <ROW>
+			<ENTRY> <CLASSNAME>MKScorefilePerformer</CLASSNAME> </ENTRY>
+			<ENTRY> performs <CLASSNAME>MKNote</CLASSNAME>s from a
+			  scorefile.</ENTRY>
+		      </ROW>
+		      <ROW>
+			<ENTRY> <CLASSNAME>MKScorePerformer</CLASSNAME> </ENTRY>
+			<ENTRY> manages a set of <CLASSNAME>MKPartPerformer</CLASSNAME>s
+			</ENTRY>
+		      </ROW>
+		      <ROW>
+			<ENTRY> <CLASSNAME>MKMidi</CLASSNAME> </ENTRY> 
+			<ENTRY> (abstract)
+			  performs <CLASSNAME>MKNote</CLASSNAME>s it receives via
+			  <ACRONYM>MIDI</ACRONYM></ENTRY>
+		      </ROW>
+		    </TBODY>
+	      </TGROUP>
+	    </TABLE>
+	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> <CLASSNAME>MKPerformer</CLASSNAME>s send
@@ -439,9 +444,11 @@
 	  </TABLE>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> <CLASSNAME>MKPerformer</CLASSNAME>s may be paused, resumed,
-	    delayed, &amp; created dynamically.  Similar to <PRODUCTNAME>Pla</PRODUCTNAME> &ldquo;voices&rdquo; or
-	    <PRODUCTNAME>Common Music</PRODUCTNAME> &ldquo;parts&rdquo;.</PARA>
+	  <PARA> <CLASSNAME>MKPerformer</CLASSNAME>s may be paused,
+	    resumed, delayed, and created dynamically.  Similar to
+	    <PRODUCTNAME>Pla</PRODUCTNAME> &ldquo;voices&rdquo; or
+	    <PRODUCTNAME>Common Music</PRODUCTNAME>
+	    &ldquo;parts&rdquo;.</PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
     </SECT1>
@@ -577,37 +584,56 @@
     <SECT1 ID="SUMMARY">
       <TITLE>Summary of Performance Classes</TITLE>
       <PARA><CLASSNAME>MKConductor</CLASSNAME></PARA>
-      <PARA>
-	<CLASSNAME>MKPerformer</CLASSNAME>, <CLASSNAME>MKNoteFilter</CLASSNAME>
-	&amp; <CLASSNAME>MKInstrument</CLASSNAME>
-      </PARA>
-      <PARA>
-	<CLASSNAME>MKPartPerformer</CLASSNAME> &amp;
-	<CLASSNAME>MKPartRecorder</CLASSNAME>
-      </PARA>
-      <PARA>
-	<CLASSNAME>MKScorePerformer</CLASSNAME> &amp;
-	<CLASSNAME>MKScoreRecorder</CLASSNAME>
-      </PARA>
-      <PARA>
-	<CLASSNAME>MKFilePerformer</CLASSNAME> &amp;
-	<CLASSNAME>MKFileWriter</CLASSNAME>
-      </PARA>
-      <PARA>
-	<CLASSNAME>MKScorefilePerformer</CLASSNAME> &amp;
-	<CLASSNAME>MKScorefileWriter</CLASSNAME>
-      </PARA>
-      <PARA>
-	<CLASSNAME>MKNoteSender</CLASSNAME> &amp;
-	<CLASSNAME>MKNoteReceiver</CLASSNAME>
-      </PARA>
-      <PARA><CLASSNAME>MKSynthInstrument</CLASSNAME></PARA>
-      <PARA><CLASSNAME>MKMidi</CLASSNAME></PARA>
+      <ITEMIZEDLIST>
+	<LISTITEM>
+	  <PARA>
+	    <CLASSNAME>MKPerformer</CLASSNAME>, <CLASSNAME>MKNoteFilter</CLASSNAME>
+	    &amp; <CLASSNAME>MKInstrument</CLASSNAME>
+	  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>
+	    <CLASSNAME>MKPartPerformer</CLASSNAME> &amp;
+	    <CLASSNAME>MKPartRecorder</CLASSNAME>
+	  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>
+	    <CLASSNAME>MKScorePerformer</CLASSNAME> &amp;
+	    <CLASSNAME>MKScoreRecorder</CLASSNAME>
+	  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>
+	    <CLASSNAME>MKFilePerformer</CLASSNAME> &amp;
+	    <CLASSNAME>MKFileWriter</CLASSNAME>
+	  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>
+	    <CLASSNAME>MKScorefilePerformer</CLASSNAME> &amp;
+	    <CLASSNAME>MKScorefileWriter</CLASSNAME>
+	  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>
+	    <CLASSNAME>MKNoteSender</CLASSNAME> &amp;
+	    <CLASSNAME>MKNoteReceiver</CLASSNAME>
+	  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA><CLASSNAME>MKSynthInstrument</CLASSNAME></PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA><CLASSNAME>MKMidi</CLASSNAME></PARA>
+	</LISTITEM>
+      </ITEMIZEDLIST>
     </SECT1>
 
     <SECT1 ID="ASSIGNMENT3">
       <TITLE>Assignment - Week 3</TITLE>
-      <PARA>Copy and modify /NextDeveloper/Examples/MusicKit/MidiEcho to do
+      <PARA>Copy and modify 
+        <FILENAME class=directory>Examples/MusicKit/MidiEcho</FILENAME> to do
 	some other type of <CLASSNAME>MKNoteFilter</CLASSNAME> processing on
 	<ACRONYM>MIDI</ACRONYM> data.</PARA>
       <PARA>The following is an example
@@ -618,8 +644,8 @@
    the MKNoteReceivers of MKMidi, thus producing MIDI echoes on successive
    MIDI channels. To use this app, you need to have a MIDI synthesizer that
    can receive on multiple channels, such as the Yamaha SY77 or FB01. */
-#import &lt;musickit/musickit.h&gt;
-#import &lt;objc/List.h&gt;
+
+#import &lt;MusicKit/MusicKit.h&gt;
 #import "EchoFilter.h"
 #define NUMCHANS 8  /* My MIDI Synthesizer handles 8 channels. */
 
@@ -628,25 +654,28 @@
 {
     double delay;		    /* delay between echos, in seconds */
 }
+
 -init
   /* Called automatically when an instance is created. */
 {    int i;
      
      [super init]; 
      delay = .1;
-     for (i=0;i&lt;=NUMCHANS;i++)  /* 1 for each channel plus 'sys' messages */ 	
- [self addNoteSender:[[MKNoteSender alloc] init]];
+     for (i = 0; i &lt;= NUMCHANS; i++)  /* 1 for each channel plus 'sys' messages */
+         [self addNoteSender:[[MKNoteSender alloc] init]];
      [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
      return self;
  }
+
 -setDelay:(double)delayArg
   /* change the amount of delay (in seconds) between echoes */
 {
     delay = delayArg;
     return self;
 }
+
 -connectAcross:anInstOrNoteFilter    
-  /* Just connects successive NoteSenders of the receivers to successive
+  /* Just connects successive MKNoteSenders of the receivers to successive
      MKNoteReceivers of anInstOrNoteFilter. */
 {
     id pList = [self noteSenders];
@@ -654,45 +683,49 @@
     int i,siz;
     int pSiz = [pList count];
     int iSiz = [iList count];
-    siz = (pSiz &gt; iSiz) ? iSiz : pSiz; /* Take min length */
-    for (i = 0; i&lt;siz; i++)            /* Connect them up */
-      [[pList objectAt:i] connect:[iList objectAt:i]];
+    siz = (pSiz &gt; iSiz) ? iSiz : pSiz;   /* Take min length */
+    for (i = 0; i &lt; siz; i++)            /* Connect them up */
+        [[pList objectAtIndex: i] connect: [iList objectAtIndex: i]];
     [pList free]; /* Lists are copied above so we free them here */
     [iList free];
     return self;
 }
-#define NOTESENDER(_i) [noteSenders objectAt:_i]
+
+#define NOTESENDER(_i) [noteSenders objectAtIndex:_i]
+
 -realizeNote:aNote fromNoteReceiver:aNoteReceiver
   /* Here's where the work is done. */
 {
-    /* This relys on the knowledge that the MKMidi object sorts its incoming 
+    /* This relies on the knowledge that the MKMidi object sorts its incoming 
        notes by channel as well as by noteTag. Thus, duplicating a note with
        a particular noteTag on several channels works ok. In general, this 
        MKNoteFilter assumes each output (MKNoteSender) is assigned a unique
-       connectio (NoteReceiver). */
+       connectio (MKNoteReceiver). */
        
     int i;
     double curDly;
     int velocity,noteType;
     id newNote;
+
     noteType = [aNote noteType];
     if (noteType == MK_mute) {	
-[NOTESENDER(0) sendNote:aNote];          /* Just forward these */	
-return self;
+        [NOTESENDER(0) sendNote:aNote];          /* Just forward these */	
+        return self;
     }
     curDly = 0;
     [NOTESENDER(1) sendNote:aNote];              /* Send current note */
     velocity = [aNote parAsInt:MK_velocity];     /* Grab velocity */
-    for (i=2;i&lt;=NUMCHANS;i++) {                  /* Make echoes */	
-curDly += delay;                         	
-newNote = [aNote copy];                  /* Need to copy notes here */	
-if (noteType == MK_noteOn)               /* Decrement echo velocity */	
-  [newNote setPar:MK_velocity toInt:velocity -= 15];	
-                                         /* Schedule it for later */	
-[NOTESENDER(i) sendAndFreeNote:newNote withDelay:curDly];
+    for (i = 2; i &lt;= NUMCHANS; i++) {         /* Make echoes */	
+        curDly += delay;                         	
+        newNote = [aNote copy];                  /* Need to copy notes here */	
+        if (noteType == MK_noteOn)               /* Decrement echo velocity */	
+            [newNote setPar:MK_velocity toInt:velocity -= 15];	
+        /* Schedule it for later */	
+        [NOTESENDER(i) sendAndFreeNote:newNote withDelay:curDly];
     }
     return self;
 }
+
 @end
       </PROGRAMLISTING>
     </SECT1>
