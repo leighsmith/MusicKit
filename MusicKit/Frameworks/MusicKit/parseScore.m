@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2001/05/22 22:27:56  leighsmith
+  Added string.h to avoid warning on GnuStep
+
   Revision 1.13  2001/03/06 21:49:24  leigh
   renamed to pTypePtr to avoid name clashes
 
@@ -131,6 +134,7 @@ Modification history:
 #import "TuningSystemPrivate.h"
 #import "_error.h"
 #import <stdlib.h>
+#import <string.h>    // for strchr typing
 
 #define INT(x) (short) x
 
@@ -4035,7 +4039,6 @@ _MKParseScoreNote(_MKScoreInStruct * scorefileRPtr)
 /*** FIXME This stuff needs to be updated to handle binary files. 
   Also, see changes in utilities.m */
 
-#import <string.h>
 #import <stdlib.h>
 #import <pwd.h>
 #import <sys/types.h>
