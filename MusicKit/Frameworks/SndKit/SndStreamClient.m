@@ -12,8 +12,13 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#define SET_MACH_THREAD_PRIORITY 0
+
+#if SET_MACH_THREAD_PRIORITY
 #import <mach/mach_init.h>
 #import <mach/thread_act.h>
+#endif
+
 #import <pthread.h>
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -403,6 +408,7 @@ enum {
 
       */
 /*
+#if SET_MACH_THREAD_PRIORITY
       thread_precedence_policy_data_t policy_data;
       policy_data.importance = 71;
 
@@ -412,6 +418,7 @@ enum {
                           THREAD_PRECEDENCE_POLICY_COUNT );
       
       setpriority(0, 0, 70);
+#endif
  */
     }
     active = TRUE;
