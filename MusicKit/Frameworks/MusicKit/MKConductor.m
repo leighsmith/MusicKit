@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.24  2002/01/29 16:50:42  sbrandon
+  checked over MKCancelMsgRequest and other MsgStruct-related functions and methods, and fixed some leaks by retaining and releasing objects where appropriate.
+
   Revision 1.23  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -241,7 +244,6 @@ static MKMsgStruct *evalSpecialQueue();
  nextmsgtime: maybe relative time to start of performance YES
  clockTime: relative to start of performance
  pauseTime is absolute
- timeIntervalSinceDate seems to return reverse of what it should
 */
 
 /* The following implements the delta T high water/low water notification */
@@ -940,11 +942,10 @@ static void _runSetup()
 			       repeats: YES] retain];
         [[NSRunLoop currentRunLoop] addTimer: timedEntry forMode: _MK_DPSPRIORITY];
     }
-    if (startTime) [startTime autorelease];
-    startTime = [[NSDate date] retain];//sb: was getTime();
+    [startTime autorelease];
+    startTime = [[NSDate date] retain];
     if (MKGetDeltaTMode() == MK_DELTAT_SCHEDULER_ADVANCE) {
         [startTime autorelease];
-//        startTime -= MKGetDeltaT();
         startTime = [[startTime addTimeInterval:(0 - MKGetDeltaT())] retain];
     }
     if (separateThread) {
@@ -1058,7 +1059,7 @@ static void evalAfterQueues()
    if (!isClocked || weGotMTC())
      return nil;
    [pauseTime autorelease];
-   pauseTime = [[NSDate date] retain];//sb: was getTime();
+   pauseTime = [[NSDate date] retain];
    if (separateThread)
      removeTimedEntry(pauseThread);
    else if (timedEntry != NOTIMEDENTRY) {
@@ -1497,8 +1498,12 @@ MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr)
 	   set the _toObject field to nil and leave the struct in the list. */
 	if (!aMsgStructPtr->_toObject) /* Already canceled? */
 	  return NULL;
-        // [aMsgStructPtr->_toObject release];  // LMS decrement the retainCount
+        [aMsgStructPtr->_toObject release];
+        [aMsgStructPtr->_arg1 release];
+        [aMsgStructPtr->_arg2 release];
 	aMsgStructPtr->_toObject = nil;
+	aMsgStructPtr->_arg1 = nil;
+	aMsgStructPtr->_arg2 = nil;
 	if (aMsgStructPtr->_onQueue) 
 	  aMsgStructPtr->_conductorFrees = YES;
 	else freeSp(aMsgStructPtr);
@@ -1532,6 +1537,9 @@ MKCancelMsgRequest(MKMsgStruct *aMsgStructPtr)
 	    }
 	}
     }
+    [aMsgStructPtr->_toObject release];
+    [aMsgStructPtr->_arg1 release];
+    [aMsgStructPtr->_arg2 release];
     freeSp(aMsgStructPtr);
     return NULL;
 }
@@ -1621,7 +1629,7 @@ static MKMsgStruct *newMsgRequest(
       sp->_methodImp = [destinationObject methodForSelector:whichSelector];
     sp->_timeOfMsg = timeOfMsg;
     sp->_aSelector = whichSelector;
-    sp->_toObject = destinationObject;  // LMS: we should probably retain this.
+    sp->_toObject = [destinationObject retain];
     sp->_argCount = argCount;
     sp->_next = NULL;
     sp->_prev = NULL;
@@ -1632,9 +1640,9 @@ static MKMsgStruct *newMsgRequest(
 	freeSp(sp);
 	return NULL;
     case 2:
-        sp->_arg2 = arg2;    // LMS: we should probably retain this.
+        sp->_arg2 = [arg2 retain];
     case 1:
-        sp->_arg1 = arg1;    // LMS: we should probably retain this.
+        sp->_arg1 = [arg1 retain];
     case 0:
         break;
     }
@@ -1764,6 +1772,7 @@ static MKMsgStruct *evalSpecialQueue(MKMsgStruct *queue, MKMsgStruct **queueEnd)
     delegateFlags = 0;
     if ([aDecoder versionForClassName:@"MKConductor"] >= VERSION2) {
         [aDecoder decodeValuesOfObjCTypes: "ddc", &beatSize, &timeOffset, &(archivingFlags)];
+        activePerformers = nil;
     }
     if ([aDecoder versionForClassName:@"MKConductor"] >= VERSION3) {
           activePerformers = [[aDecoder decodeObject] retain];
