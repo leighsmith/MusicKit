@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		014CEA4F0018CE4811CA2923 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -23,6 +24,16 @@
 			isa = PBXBuildStyle;
 			name = Deployment;
 		};
+//010
+//011
+//012
+//013
+//014
+//020
+//021
+//022
+//023
+//024
 		0296329A013BDE62CFED3B94 = {
 			isa = PBXFrameworkReference;
 			name = SndKit.framework;
@@ -35,11 +46,31 @@
 			settings = {
 			};
 		};
+//020
+//021
+//022
+//023
+//024
+//030
+//031
+//032
+//033
+//034
 		034768E6FF38A76511DB9C8B = {
 			isa = PBXExecutableFileReference;
 			path = playsndfaders;
 			refType = 3;
 		};
+//030
+//031
+//032
+//033
+//034
+//080
+//081
+//082
+//083
+//084
 		08FB7793FE84155DC02AAC07 = {
 			buildStyles = (
 				014CEA4F0018CE4811CA2923,
@@ -47,7 +78,7 @@
 			);
 			isa = PBXProject;
 			mainGroup = 08FB7794FE84155DC02AAC07;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				08FB779FFE84155DC02AAC07,
 			);
@@ -102,7 +133,6 @@
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -110,8 +140,6 @@
 				REZ_EXECUTABLE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -167,6 +195,16 @@
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
 		};
+//080
+//081
+//082
+//083
+//084
+//1A0
+//1A1
+//1A2
+//1A3
+//1A4
 		1AB674ADFE9D54B511CA2CBB = {
 			children = (
 				034768E6FF38A76511DB9C8B,
