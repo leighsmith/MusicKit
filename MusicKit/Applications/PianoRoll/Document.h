@@ -13,7 +13,7 @@
 	BOOL current;
 }
 
-- initScore: (MKScore *) aScore;
+- initWithScore: (MKScore *) aScore;
 - partView;
 - (NSWindow *) docWindow;
 - setName: (NSString *) theName;

@@ -14,7 +14,7 @@
 
 @implementation Document
 
-- initScore: (MKScore *) aScore
+- initWithScore: (MKScore *) aScore
 {
 	NSRect aRect;
 	NSSize aSize, cSize;
@@ -37,7 +37,7 @@
 	[bigScroll setHasVerticalScroller:YES];
 	[docWindow setContentView:bigScroll];
 	
-	partView = [[PartView alloc] initScore:theScore];
+	partView = [[PartView alloc] initWithScore:theScore];
 	[bigScroll setDocumentView:partView];
 	[bigScroll setBackgroundColor:[NSColor darkGrayColor]];
 	

@@ -10,7 +10,7 @@
     NSMutableArray *selectedList;
 }
 
-- initScore: (MKScore *) aScore;
+- initWithScore: (MKScore *) aScore;
 - (void)gotClicked:sender with:(NSEvent *)theEvent;
 - (void)setBeatScale:(double)bscale;
 - (void)setFreqScale:(double)fscale;

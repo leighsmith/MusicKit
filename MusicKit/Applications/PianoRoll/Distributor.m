@@ -59,7 +59,7 @@
 		NSRunAlertPanel(@"PianoRoll", @"No parts in file.", @"OK", nil, nil);
 		return;
 	}
-	newDoc = [[Document alloc] initScore:aScore];
+	newDoc = [[Document alloc] initWithScore:aScore];
         [aScore release];
 	[newDoc setName:[openPanel filename]];
 	[[newDoc docWindow] setTitleWithRepresentedFilename:[openPanel filename]];
