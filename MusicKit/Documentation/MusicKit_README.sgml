@@ -18,8 +18,9 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity mkvertuple "5.3.0">
 <!entity sndvertuple "2.0.0">
 <!entity midisportvertuple "2.0.0">
-<!entity mkurl "http://musickit.sourceforge.net">
-<!entity mkdownload "http://ftp1.sourceforge.net/musickit">
+<!entity mkurl "http://www.musickit.org">
+<!entity mkdownload "http://ftp.musickit.org/musickit">
+<!entity mkcvsweb "http://cvs.musickit.org">
 <!entity soxdownload "http://ftp1.sourceforge.net/sox">
 ]>
 
@@ -1418,11 +1419,11 @@ compatibility issue.
   <sect1 id=fixes>
     <title>Contributing Fixes</title>
     <para>
-Please! Changes are maintained via an open CVS system (<systemitem
-class="systemname">cvs.musickit.sourceforge.net</systemitem>). If you
-send me <email>leigh@tomandandy.com</email> changes I will incorporate
+Please! Changes are maintained via an 
+<ulink url="&mkcvsweb;/cgi-bin/viewcvs.cgi/musickit">open CVS system</ulink>.
+If you send me <email>leigh@tomandandy.com</email> changes I will incorporate
 them and check them in. If you are planning to do major work, I can
-register you as a developer to provide access to the CVS server.
+register you as a developer to provide write access to the CVS server.
 </para>
 <para>
 If you have discovered a bug, please report it via the
