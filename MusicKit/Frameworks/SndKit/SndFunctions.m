@@ -1040,7 +1040,7 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
         informat.seekable = YES;
 	/* use a default file type in the absence of an explicit type -- the user shouldn't
            be forced to use file extensions -- snd is native to SndKit */
-        informat.filetype = *fileTypeStr == '\0' ? fileTypeStr : "snd";
+        informat.filetype = (*fileTypeStr != '\0') ? fileTypeStr : "snd";
         informat.info.rate = 0;
         informat.info.size = -1;
         informat.info.encoding = -1;
