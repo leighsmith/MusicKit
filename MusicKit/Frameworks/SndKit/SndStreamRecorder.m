@@ -85,8 +85,7 @@
 - stopRecordingWait: (BOOL) bWait disconnectFromStream: (BOOL) bDisconnectFromStream
 {
   [recorder stopRecordingWait: bWait disconnectFromStream: bDisconnectFromStream];
-  active = FALSE;
-
+  active = !bDisconnectFromStream;
   return self;
 }
 
