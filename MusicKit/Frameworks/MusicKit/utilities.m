@@ -18,6 +18,9 @@
 Modification history:
 
   $Log$
+  Revision 1.19  2003/01/29 02:57:39  leighsmith
+  Updated formatting
+
   Revision 1.18  2002/05/01 14:24:58  sbrandon
   Defined functions MKLoadAllBundlesOneOff() and MKLoadAllBundles() which attempt to load all plugins in standard Library directories/MusicKitPlugins/name.mkplugin
 
@@ -242,17 +245,17 @@ NSMutableArray *_MKLightweightArrayCopy(NSMutableArray *oldArray)
 NSMutableArray *_MKDeepMutableArrayCopy(NSMutableArray *oldArray)
 {
     NSMutableArray *newArray;
-	int i,count;
-	if (!oldArray) {
-	    return nil;
-	}
-	count = [oldArray count];
-	newArray = [[NSMutableArray alloc] initWithCapacity:count];
-    for (i = 0 ; i < count ; i++) {
-	    [newArray addObject:[[oldArray objectAtIndex:i] copy]];
-	}
-	[newArray makeObjectsPerformSelector:@selector(release)];
-	return newArray;
+    int i, count;
+    if (!oldArray) {
+	return nil;
+    }
+    count = [oldArray count];
+    newArray = [[NSMutableArray alloc] initWithCapacity: count];
+    for (i = 0; i < count; i++) {
+	[newArray addObject: [[oldArray objectAtIndex: i] copy]];
+    }
+    [newArray makeObjectsPerformSelector: @selector(release)];
+    return newArray;
 }
 
 /* Tracing */
