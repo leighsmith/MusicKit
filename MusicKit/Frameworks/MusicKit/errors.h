@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2004/12/06 18:09:41  leighsmith
+  Renamed _MKErrorf() to the meaningful MKErrorCode()
+
   Revision 1.9  2004/08/21 23:21:23  leighsmith
   Corrected doco
 
@@ -28,7 +31,7 @@ Modification history:
   Cleaned up
 
   Revision 1.5  2000/03/31 00:08:55  leigh
-  _MKErrorf doco cleanup
+  MKErrorCode doco cleanup
 
   Revision 1.4  1999/09/04 23:01:08  leigh
   MKSetErrorProc now takes a function with a NSString parameter
@@ -81,7 +84,7 @@ extern void MKSetScorefileParseErrorAbort(int cnt);
     performance-oriented class. 
    */
 extern void MKSetErrorProc(void (*errProc)(NSString *msg));
-    /* Sets proc to be used when MKError() and _MKErrorf() are called. 
+    /* Sets proc to be used when MKError() and MKErrorCode() are called. 
        If errProc is NULL, uses the default error proc, which writes to the 
        Music Kit error NSMutableData (see MKSetErrorStream()). 
        errProc takes one string argument. 
@@ -91,7 +94,7 @@ extern void MKSetErrorProc(void (*errProc)(NSString *msg));
        set; it's up to the application to set it, if desired. 
        */
 
-extern id MKError(NSString *msg);
+extern void MKError(NSString *msg);
     /* Calls the user's error proc (set with MKSetErrorProc), if any, with 
        one argument, the msg. Otherwise, writes the message on the Music
        Kit error stream. (See MKSetErrorStream) Returns nil.
@@ -209,10 +212,10 @@ typedef enum _MKErrno {
 
 /* The remaining functions are the Music Kit's own internal error handling
  * functions. Normally, you don't call these functions.  However, if you 
- * need to raise an error with a Music Kit error code, you call _MKErrorf().  
+ * need to raise an error with a Music Kit error code, you call MKErrorCode().  
  */
 
-extern id _MKErrorf(int errorCode, ...); 
+extern void MKErrorCode(int errorCode, ...); 
 /* Calling sequence like printf, but first arg is musickit error code instead
  * of formating info, the second arg is a formating NSString derived from the string in
  * /Local/Library/MusicKit/Languages/<language>.lproj/Localized.strings. 
