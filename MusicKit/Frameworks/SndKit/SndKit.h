@@ -32,6 +32,7 @@ OF THIS AGREEMENT.
 #import "Snd.h"
 #import "SndFunctions.h"
 #import "SndExpt.h"
+
 #import "SndView.h"
 #ifndef USE_NEXTSTEP_SOUND_IO
 # import "sounderror.h"
@@ -44,6 +45,7 @@ OF THIS AGREEMENT.
 
 #ifndef SK_NO_MP3_ENCODER
 # import "SndAudioProcessorMP3Encoder.h"
+# import "SndMP3.h"
 #endif
 
 #import "SndAudioProcessor.h"
