@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2001/02/23 03:19:04  leigh
+  Rewrote sending data to enable timing each byte when slowing SysEx streams
+
   Revision 1.9  2001/02/03 02:32:27  leigh
   Prepared for checking the incoming unit, hid error string assignments behind MKMDErrorString
 
@@ -51,9 +54,9 @@ Modification history:
 
 #include <mach/mach_error.h>  // temporary until we improve error reporting.
 
-#define FUNCLOG 0
+#define FUNCLOG 1
 
-#ifdef FUNCLOG
+#if FUNCLOG
 #include <stdio.h> // for fprintf and debug
 
 FILE *debug; // precedes extern "C".
@@ -175,7 +178,7 @@ PERFORM_API MKMDReturn MKMDBecomeOwner (
     // create client and ports
     NSString *executable;
 
-#ifdef FUNCLOG
+#if FUNCLOG
     if(debug == NULL) {
         // create a means to see where we are without having to tiptoe around the MS debugger.
         if((debug = fopen("/tmp/PerformMIDI_debug.txt", "w")) == NULL)
@@ -187,7 +190,7 @@ PERFORM_API MKMDReturn MKMDBecomeOwner (
         executable = @"tool"; // TODO, this should determine the name from argv[0]
     }
 
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDBecomeOwner called, appname: %s\n", [executable cString]);
 #endif
     MIDIClientCreate((CFStringRef) executable, NULL, NULL, &client);	
@@ -202,7 +205,7 @@ PERFORM_API MKMDReturn MKMDReleaseOwnership (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
     // TODO check the ports properly
     fprintf(debug, "MKMDReleaseOwnership called\n");
     fclose(debug); // hopefully save what we did.
@@ -226,7 +229,7 @@ PERFORM_API MKMDReturn MKMDSetClockMode (
 	short unit,
 	int clock_mode)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
   fprintf(debug, "MKMDSetClockMode called %d\n", clock_mode);
 #endif
   return MKMD_SUCCESS;
@@ -243,7 +246,7 @@ PERFORM_API MKMDReturn MKMDGetClockTime (
     currentRefTime = MIDIGetCurrentTime();
     *time = timeStampToMKTime(currentRefTime);
 
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDGetClockTime called currentRefTime = %f time = %d\n", 
         (double) currentRefTime, *time);
 #endif
@@ -260,7 +263,7 @@ PERFORM_API MKMDReturn MKMDGetMTCTime (
 	short *seconds,
 	short *frames)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
   fprintf(debug, "MKMDGetMTCTime called\n");
 #endif
     return MKMD_SUCCESS;
@@ -275,7 +278,7 @@ PERFORM_API MKMDReturn MKMDSetClockTime (
     // defines datum to associate the integer time to the nanosecond time
     datumRefTime = MIDIGetCurrentTime();
     datumMSecTime = time;
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDSetClockTime called %d, datumRefTime = %f\n", time, (double) datumRefTime);
 #endif
     return MKMD_SUCCESS;
@@ -288,7 +291,7 @@ PERFORM_API MKMDReturn MKMDRequestAlarm (
 	MKMDReplyPort reply_port,
 	int time)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDRequestAlarm called %d\n", time);
 #endif
     return MKMD_SUCCESS;
@@ -300,7 +303,7 @@ PERFORM_API MKMDReturn MKMDStartClock (
 	MKMDOwnerPort owner_port)
 {
     // TODO check the ports properly
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDStartClock called\n");
 #endif
     return MKMD_SUCCESS;
@@ -312,7 +315,7 @@ PERFORM_API MKMDReturn MKMDStopClock (
 	MKMDOwnerPort owner_port)
 {
     // TODO check the ports properly
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDStopClock called\n");
 #endif
     return MKMD_SUCCESS;
@@ -326,7 +329,7 @@ PERFORM_API MKMDReturn MKMDClaimUnit (
 {
     ItemCount destinationCount;
     ItemCount sourceCount;
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDClaimUnit called %d\n", unit);
 #endif
     // find the first destination
@@ -368,7 +371,7 @@ PERFORM_API MKMDReturn MKMDReleaseUnit (
 	MKMDOwnerPort owner_port,
 	short unit)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDReleaseUnit %d called\n", unit);
 #endif
     if(MIDIPortDisconnectSource(inPort, claimedSourceUnit) != noErr)
@@ -383,7 +386,7 @@ PERFORM_API MKMDReturn MKMDRequestExceptions (
 	MKMDOwnerPort owner_port,
 	MKMDReplyPort error_port)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
   fprintf(debug, "MKMDRequestExceptions called\n");
 #endif
   return MKMD_SUCCESS;
@@ -396,7 +399,7 @@ PERFORM_API MKMDReturn MKMDRequestData (
 	short unit,
 	MKMDReplyPort reply_port)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDRequestData called\n");
 #endif
     // reply_port is nil when indicating no data is to be returned.
@@ -419,53 +422,75 @@ PERFORM_API MKMDReturn MKMDSendData (
     unsigned int msgIndex;
     MIDITimeStamp playTime;
     Byte *buffer;
-    static Byte pbuf[512];
+    // Assume worst case that each byte must be individually timed. We use MKMD_MAX_EVENT to ensure
+    // we have enough bytes to cover MIDIPacketList's storage of the maximum number of packets
+    // receivable, plus the packet count itself.
+    // Unfortunately MIDISend expects that packet list to remain resident while playing, so we
+    // can't allocate the memory on the fly (and that would probably incur a processor burden).
+    static Byte pbuf[(sizeof(MIDIPacket) * MKMD_MAX_EVENT) + sizeof(UInt32)];
     MIDIPacketList *pktlist = (MIDIPacketList *) pbuf;
     MIDIPacket *packet;
     OSStatus errCode;
 
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDSendData called with %d events @ time %d\n", dataCnt, data[0].time);
 #endif
 
-    if((packet = MIDIPacketListInit(pktlist)) == NULL) {
+    // Assume worst case that we need to send the entire event list all at the same time.
+    if((buffer = (Byte *) malloc(dataCnt)) == NULL) {
         return MKMD_ERROR_QUEUE_FULL;
     }
 
-    // need to convert the times, extract the data and pack back into a buffer.
-    buffer = (Byte *) malloc(dataCnt);
-    for(msgIndex = 0; msgIndex < dataCnt; msgIndex++) {
-        buffer[msgIndex] = data[msgIndex].byte;
-#ifdef FUNCLOG
-        fprintf(debug, "%02X ", buffer[msgIndex]);
-#endif
-    }
-
-    // we erronously assume all events specified in a single call are intended
-    // to be sent immediately one after another.
-    playTime = (data[0].time - datumMSecTime) * quantumFactor + datumRefTime;
-#ifdef FUNCLOG
-    fprintf(debug, "\nCurrent time %f, play time %f\n", (double) MIDIGetCurrentTime(), (double) playTime);
-#endif
-    packet = MIDIPacketListAdd(pktlist, sizeof(pbuf), packet, playTime, dataCnt, buffer);
-    if(packet == NULL) {
-#ifdef FUNCLOG
-        fprintf(debug, "couldn't add packet to packet list\n");
-#endif
+    // Create a packet list, each packet will contain those bytes all to be played at the same time.
+    if((packet = MIDIPacketListInit(pktlist)) == NULL) {
         free(buffer);
         return MKMD_ERROR_QUEUE_FULL;
     }
+    
+    // Convert the times, extract the data and pack back into a buffer.
+    msgIndex = 0;
+    while(msgIndex < dataCnt) {
+        unsigned int firstUniqueTimeIndex = msgIndex;
+        unsigned int bufferIndex;
+
+        playTime = (data[msgIndex].time - datumMSecTime) * quantumFactor + datumRefTime;
+#if FUNCLOG
+        fprintf(debug, "Current time %f, play time %f:\n", (double) MIDIGetCurrentTime(), (double) playTime);
+#endif
+        // collect all event bytes marked with the same time into a single buffer.
+        for(bufferIndex = 0; data[msgIndex].time == data[firstUniqueTimeIndex].time && msgIndex < dataCnt; bufferIndex++) {
+            buffer[bufferIndex] = data[msgIndex++].byte;
+#if FUNCLOG
+            fprintf(debug, "%02X ", buffer[bufferIndex]);
+#endif
+        }
+#if FUNCLOG
+        fprintf(debug, "\n");
+#endif
+
+        // send all same-time bytes in a separate packet.
+        packet = MIDIPacketListAdd(pktlist, sizeof(pbuf), packet, playTime, bufferIndex, buffer);
+        if(packet == NULL) {
+#if FUNCLOG
+            fprintf(debug, "couldn't add packet to packet list\n");
+#endif
+            free(buffer);
+            return MKMD_ERROR_QUEUE_FULL;
+        }
+    }
     if((errCode = MIDISend(outPort, claimedDestinationUnit, pktlist)) != noErr) {
-#ifdef FUNCLOG
+#if FUNCLOG
         fprintf(debug, "couldn't send packet list errCode = %d\n", (int) errCode);
 #endif
         free(buffer);
         return MKMD_ERROR_UNKNOWN_ERROR;
     }
+
     // once the buffer has been packed, it can be discarded as packing copies the data.
     free(buffer);
-#ifdef FUNCLOG
-    fprintf(debug,"MKMDSendData returning ok\n");
+
+#if FUNCLOG
+    fprintf(debug, "MKMDSendData returning ok\n");
 #endif
     return MKMD_SUCCESS;
 }
@@ -477,7 +502,7 @@ PERFORM_API MKMDReturn MKMDGetAvailableQueueSize (
 	short unit,
 	int *size)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
   fprintf(debug, "MKMDGetAvailableQueueSize called %d\n", unit);
 #endif
   // return the queue size
@@ -497,7 +522,7 @@ PERFORM_API MKMDReturn MKMDRequestQueueNotification (
 	MKMDReplyPort notification_port,
 	int size)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
   fprintf(debug, "MKMDRequestQueueNotification called size = %d\n", size);
 #endif
   return MKMD_SUCCESS;
@@ -509,7 +534,7 @@ PERFORM_API MKMDReturn MKMDClearQueue (
 	MKMDOwnerPort owner_port,
 	short unit)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDClearQueue called\n");
 #endif
     return MKMD_SUCCESS;
@@ -521,7 +546,7 @@ PERFORM_API MKMDReturn MKMDFlushQueue (
 	MKMDOwnerPort owner_port,
 	short unit)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDFlushQueue called\n");
 #endif
     return MKMD_SUCCESS;
@@ -534,7 +559,7 @@ PERFORM_API MKMDReturn MKMDSetSystemIgnores (
 	short unit,
 	unsigned int sys_ignores)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDSetSystemIgnores called 0x%x sys_ignores\n", sys_ignores);
 #endif
     return MKMD_SUCCESS;
@@ -552,7 +577,7 @@ PERFORM_API MKMDReturn MKMDSetClockQuantum (
     AbsoluteTime absTimeFactor = NanosecondsToAbsolute(UInt64ToUnsignedWide(nanoseconds));
     quantumFactor = UnsignedWideToUInt64(absTimeFactor);
 
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDSetClockQuantum called %d microseconds, %f MIDITimeStamp units\n",
         microseconds, (double) quantumFactor);
 #endif
@@ -604,7 +629,7 @@ static void replyDispatch(MKMDReplyFunctions *userFuncs)
 // This should wait until a reply is received on port_set or until timeout
 PERFORM_API MKMDReturn MKMDAwaitReply(MKMDReplyPort port_set, MKMDReplyFunctions *funcs, int timeout)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDAwaitReply called %d timeout\n", timeout);
 #endif
     userFuncs = funcs;
@@ -620,7 +645,7 @@ PERFORM_API MKMDReturn MKMDAwaitReply(MKMDReplyPort port_set, MKMDReplyFunctions
 // Here we save up the reply functions and then dispatch them.
 PERFORM_API MKMDReturn MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions *funcs)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDHandleReply called\n");
 #endif
     userFuncs = funcs;
@@ -637,7 +662,7 @@ PERFORM_API MKMDReturn MKMDSetReplyCallback (
         void (*newCallbackFn)(void *),
         void *newCallbackParam)
 {
-#ifdef FUNCLOG
+#if FUNCLOG
     fprintf(debug, "MKMDSetReplyCallback called\n");
 #endif
     callbackFn = newCallbackFn;
