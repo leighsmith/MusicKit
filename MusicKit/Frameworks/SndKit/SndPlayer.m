@@ -87,7 +87,8 @@
     // The delay between receiving this delegate and when the audio is actually played 
     // is an extra buffer, therefore: delay == buffLength/sampleRate after the delegate 
     // message has been received.
-    [[performance snd] _setStatus:SND_SoundPlaying];
+    
+    [[performance snd] _setStatus:SND_SoundPlaying]; 
     [[performance snd] tellDelegate: @selector(willPlay:duringPerformance:)
                   duringPerformance: performance];
     return self;
@@ -141,10 +142,15 @@
 {
     double playT;
     
-     if (dt < 0.0)
-         playT = 0.0;
-     else
-         playT = [self streamTime] + dt;
+    if(![self isActive])
+        [[SndStreamManager defaultStreamManager] addClient: self];
+        
+    if (dt < 0.0)
+        playT = 0.0;
+    else
+        playT = [self streamTime] + dt;
+     
+//    fprintf"SndPlayer: timeOffset:%f playT:%f clientNowTime: %f\n", dt, playT,clientNowTime);
      
     return [self playSnd: s atTimeInSeconds: playT endAtIndex: endAtIndex];
 } 
