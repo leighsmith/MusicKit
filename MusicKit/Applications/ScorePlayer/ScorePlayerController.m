@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2001/04/16 23:16:56  leighsmith
+  Now uses the NSOpenPanel default location
+
   Revision 1.13  2001/03/22 20:17:49  leigh
   Made tempo changeable during playback
 
@@ -942,7 +945,7 @@ static void playIt(ScorePlayerController *self)
         NSLog([midis[i] driverName]);
 }
 
-static id LocalImage(NSString *s)
+static id localIconImage(NSString *s)
 {
     NSString * buf;
     buf = [[NSBundle mainBundle] pathForResource:s ofType:@"tiff"]; 
@@ -985,7 +988,7 @@ static void abortNow();
       @"",@"StealthDAI2400",@"SSAD64x",@"ArielProPort",@"DSPSerialPortDevice",nil];
 
     SSAD64xPanel = StealthDAI2400Panel = NeXTDACPanel = nil;
-    playImage = LocalImage(@"play");
+    playImage = localIconImage(@"play");
     [playButton setImage:playImage];
     [playButton display];
     openFileExtensions = [[MKScore fileExtensions] retain];  // accept both MIDI and Scorefiles.
@@ -1006,8 +1009,6 @@ static void abortNow();
     [[NSRunLoop currentRunLoop] addPort:[NSPort portWithMachPort:endOfTimePort] forMode:30];
 #endif
     MKSetErrorProc(handleMKError);
-// LMS disabled, the console is good enough for us to see ObjectiveC errors.
-//    objc_setClassHandler(handleObjcError);
    
     /* Create the tempo aminmator, but don't start it yet */
     tempoAnimator = [Animator newChronon: 0.0
@@ -1016,17 +1017,15 @@ static void abortNow();
 		           action:     @selector(animateTempo:)
 		           autoStart:  NO
 		           eventMask:  NSAnyEventMask];
-	
-	/* set up the playButton */			   
-	
-    stopImage = LocalImage(@"stop");
-    playHImage = LocalImage(@"playH");
+
+    /* set up the playButton */
+    stopImage = localIconImage(@"stop");
+    playHImage = localIconImage(@"playH");
     [playButton setAlternateImage:playHImage];
 	    
     [MKOrchestra setAbortNotification:self]; 
     theOrch = [MKOrchestra new];
     capabilities = [theOrch capabilities];
-
 
     if (capabilities & MK_hostSoundOut) {
         s = [scorePlayerDefaults stringForKey: @"MKOrchestraSoundOut"];
@@ -1048,12 +1047,20 @@ static void abortNow();
 	    [serialPortDeviceMatrix setEnabled:NO];
 	}
     }
+    
+    // initialise the device list for selecting MIDI drivers with the default.
+    // [driverPopup removeAllItems];
+    // [driverPopup addItemsWithTitles: [MKMidi getDriverNames]];
+    // [driverPopup selectItemWithTitle: [[MKMidi midi] driverName]]; 
+
 }
 
 static BOOL setUpFile(NSString *workspaceFileName)
 {
     int success;
-    static BOOL firstTime = YES;
+    // Look for a score in a default place if this is the first time this has been run
+    BOOL firstTime = [[NSUserDefaults standardUserDefaults] objectForKey: @"NSDefaultOpenDirectory"] == nil;
+    
     if (!openPanel)
         openPanel = [NSOpenPanel new];    
     if (!workspaceFileName) {
@@ -1087,11 +1094,11 @@ static BOOL setUpFile(NSString *workspaceFileName)
         [shortFileName release];
         shortFileName = [[workspaceFileName lastPathComponent] retain];
     }
-    if  ( [shortFileName isEqualToString:@"Jungle.score"] ||
-          [shortFileName isEqualToString:@"Jungle.playscore"]
-	 )
-      tempoExponent = 1.3;  /* A real hack to make the demos play ok. */
-    else tempoExponent = 1.5;
+    if ([shortFileName isEqualToString:@"Jungle.score"] ||
+        [shortFileName isEqualToString:@"Jungle.playscore"])
+        tempoExponent = 1.3;  /* A real hack to make the demos play ok. */
+    else
+        tempoExponent = 1.5;
     firstTime = NO;
     return YES;
 }
@@ -1103,6 +1110,8 @@ static void abortNow()
 	[MKConductor lockPerformance];
 	for (i=0; i<MAX_MIDIS; i++) {
             if (midis[i]) {
+                // This is tricky. allNotesOff sends note offs to all channels immediately,
+                //  while abort will remove any pending events beyond time 0.
                 [midis[i] allNotesOff];
                 [midis[i] abort];
             }
