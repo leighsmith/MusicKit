@@ -1,19 +1,27 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
   HEADER FILES: musickit.h
+
+  Description:
+    A score contains a collection of Parts and has methods for manipulating
+    those Parts. Scores and Parts work closely together. 
+    Scores can be performed. 
+    The score can read or write itself from a scorefile or midifile.
+     
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University  
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/08/06 00:38:10  leigh
+  converted strtols to NSScanners
+
   Revision 1.2  1999/07/29 01:16:42  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -57,7 +65,6 @@ Modification history:
    6/26/93/daj - Added replacePart:with: method.
 */
 
-#define NOT_YET 1 /* Force override of alloca with __builtin_alloca */
 #import <stdlib.h>
 #import "_musickit.h"  
 #import "PartPrivate.h"
@@ -69,11 +76,6 @@ Modification history:
 
 #import "ScorePrivate.h"
 @implementation MKScore:NSObject
-/*  A score contains a collection of Parts and has methods for manipulating
-    those Parts. Scores and Parts work closely together. 
-    Scores can be performed. 
-    The score can read or write itself from a scorefile or midifile.
-    */
 
 #define READIT 0
 #define WRITEIT 1
@@ -606,14 +608,21 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 	  MKMIDIFileWriteSequenceNumber(fileStructP,
 					 INTPAR(anInfo,MK_sequence));
 	if ([info isParPresent:MK_smpteOffset]) {
-	    const char *str = [STRPAR(info,MK_smpteOffset) cString];
-	    unsigned char hr,mn,sec,fr,ff;
-	    hr = (str) ? (unsigned char)strtol(str,&str,0) : 0;
-	    mn = (str) ? (unsigned char)strtol(str,&str,0) : 0;
-	    sec = (str) ? (unsigned char)strtol(str,&str,0) : 0;
-	    fr = (str) ? (unsigned char)strtol(str,&str,0) : 0;
-	    ff = (str) ? (unsigned char)strtol(str,&str,0) : 0;
-	    MKMIDIFileWriteSMPTEoffset(fileStructP,hr,mn,sec,fr,ff);
+            unsigned int hr, mn, sec, fr, ff;
+            NSString *smpteString = STRPAR(info, MK_smpteOffset);
+            NSScanner *smpteScan;
+            if(smpteString == nil) {
+                hr = mn = sec = fr = ff = 0;
+            }
+            else {
+                smpteScan = [NSScanner scannerWithString: smpteString];
+                [smpteScan scanInt: &hr];
+                [smpteScan scanInt: &mn];
+                [smpteScan scanInt: &sec];
+                [smpteScan scanInt: &fr];
+                [smpteScan scanInt: &ff];
+            }
+            MKMIDIFileWriteSMPTEoffset(fileStructP,hr,mn,sec,fr,ff);
 	}
     }
     for (i = 0; i < n; i++) {
@@ -670,30 +679,39 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 		    if (PRESENT(MK_marker))
 		      WRITETEXT(MKMIDI_marker,MK_marker);
 		    if (PRESENT(MK_timeSignature)) {
-			const char *str = [STRPAR(curNote,MK_timeSignature) cString];
-			unsigned char nn,dd,cc,bb;
-			unsigned int allData;
-			nn = (str) ? (unsigned char)strtol(str,&str,0) : 0;
-			dd = (str) ? (unsigned char)strtol(str,&str,0) : 0;
-			cc = (str) ? (unsigned char)strtol(str,&str,0) : 0;
-			bb = (str) ? (unsigned char)strtol(str,&str,0) : 0;
-			allData = (nn << 24) | (dd << 16) | (cc << 8) | bb;
-			MKMIDIFileWriteSig(fileStructP,T,MKMIDI_timeSig,
-					    allData);
+                        unsigned int nn, dd, cc, bb, allData;
+                        NSString *timeSigString = STRPAR(curNote, MK_timeSignature);
+                        NSScanner *timeSigScan;
+			if(timeSigString == nil) {
+			    allData = 0;
+			}
+			else {
+			    timeSigScan = [NSScanner scannerWithString: timeSigString];
+                            [timeSigScan scanInt: &nn];  // numerator
+                            [timeSigScan scanInt: &dd];  // denominator
+                            [timeSigScan scanInt: &cc];  // ?? to check against SMF spec
+                            [timeSigScan scanInt: &bb];  // ?? to check against SMF spec
+                            allData = (nn << 24) | (dd << 16) | (cc << 8) | bb;
+			}
+                        MKMIDIFileWriteSig(fileStructP,T,MKMIDI_timeSig, allData);
 		    }
 		    if (PRESENT(MK_keySignature)) {
-			const char *str = [STRPAR(curNote,MK_keySignature) cString];
-			unsigned char sf,mi;
-			unsigned int allData;
-			sf = (str) ? (unsigned char)strtol(str,&str,0) : 0;
-			mi = (str) ? (unsigned char)strtol(str,&str,0) : 0;
-			allData = (sf << 8) | mi;
-			MKMIDIFileWriteSig(fileStructP,T,MKMIDI_keySig,
-					    allData);
+                        NSString *keySigString = STRPAR(curNote,MK_keySignature);
+                        NSScanner *keySigScan;
+                        unsigned int sf, mi, allData;
+                        if(keySigString == nil) {
+                            allData = 0;
+			}
+                        else {
+                            keySigScan = [NSScanner scannerWithString: keySigString];
+                            [keySigScan scanInt: &sf];  // ??
+                            [keySigScan scanInt: &mi];  // ??
+                            allData = (sf << 8) | mi;
+                        }
+                        MKMIDIFileWriteSig(fileStructP, T, MKMIDI_keySig, allData);
 		    }
 		    if (PRESENT(MK_tempo))
-		      MKMIDIFileWriteTempo(fileStructP,T,
-					    DOUBLEPAR(curNote,MK_tempo));
+		      MKMIDIFileWriteTempo(fileStructP,T, DOUBLEPAR(curNote,MK_tempo));
 		}
 	    }
         }
