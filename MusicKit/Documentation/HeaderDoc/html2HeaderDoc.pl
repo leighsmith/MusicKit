@@ -113,8 +113,8 @@ if ($wholeFile =~ s/^.*?Class Description(.*?)(Instance Variables|Method Types)/
     # compact more than two consecutive \n's to a single one.
     $description =~ s/<br>\s*<br>\s*(<br>)+?/<br><br>/g;
     # convert HTML page breaks to standard EOLs (HeaderDoc generates its own).
-    $description =~ s/<br>/$eolChar\n/g;
-    printf("%s%s\n*/\n", $description, $eolChar);
+    $description =~ s/<br>/\n/g;
+    printf("%s\n*/\n", lineWrap($description, 80, ""));
 }
     
 # Remove the methods listed in the Method Types section
@@ -165,7 +165,7 @@ while ($wholeFile =~ s/<br>\s*(<b>)*\s*([\+\-])\s*(<\/b>)*\s*(.*?)(<br>\s*){2,}(
 	# Keep sucking out parameters, or until we obviously have
 	# something we can't digest, spit it out.
 	while(($prototype !~ /^\s*$/) && ($paramCount != 15)) {
-	    # print "methodName = $methodName\nprototype remaining: $prototype";
+	    #print "methodName = $methodName\nprototype remaining: $prototype";
 	    # Match on parameter type (some won't be static)...
 	    # Ensure an italicized parameter doesn't precede the type
 	    # (indicating we have missed an untyped (i.e id) parameter).
@@ -206,12 +206,13 @@ while ($wholeFile =~ s/<br>\s*(<b>)*\s*([\+\-])\s*(<\/b>)*\s*(.*?)(<br>\s*){2,}(
 	    # if return type is id, allow id or nothing, since it
 	    # is the default type.
 	    if ($returnType eq "id") {
-		$sedReturnType = "(*i*d*)*";
+		$sedReturnType = "(* *i*d* *)*";
 	    }
 	    else {
-		$sedReturnType = "\($returnType\)";
-		# preserve any pointers, don't make them wild cards.
+		$sedReturnType = $returnType;
 		$sedReturnType =~ s/\*/\\*/g;
+		$sedReturnType = "\( *$sedReturnType *\)";
+		# preserve any pointers, don't make them wild cards.
 	    }
 	}
 	else {
@@ -252,9 +253,19 @@ while ($wholeFile =~ s/<br>\s*(<b>)*\s*([\+\-])\s*(<\/b>)*\s*(.*?)(<br>\s*){2,}(
     if (length($returnType) == 0) {
 	$returnType = "id";
     }
+    # Attempt to make the return type slightly more readable, checking
+    # if we mention returning self in the discussion, if so, replacing
+    # id in the result and removing the statement in the discussion..
+    if ($discussion =~ s/Returns <b>self<\/b>.//) {
+	$returnType = "<b>self</b>";
+	$indefiniteArticle = "";
+    }
+    else {
+	$indefiniteArticle = indefiniteArticle($returnType) . " ";
+    }
     if ($returnType ne "void") {
-	printf("%s\@result Returns %s %s.%s\n", $commentPadding,
-	       indefiniteArticle($returnType), $returnType, $eolChar);
+	printf("%s\@result Returns %s%s.%s\n", $commentPadding,
+	       $indefiniteArticle, $returnType, $eolChar);
     }
 
     # convert <br>'s to standard line breaks for headerDoc to do it's stuff.
@@ -282,6 +293,7 @@ sub lineWrap
     local($formattedString);
     local($minWidth) = $lineWidth - 20;
     
+    # print "longString before any change: $longString\n(end of longstring)\n";
     $longString =~ s/\n/$eolChar\n$padding/sg;
     do {
 	# print "longstring = $longString\n";
