@@ -42,7 +42,7 @@ NSColor  *StringToColor(NSString *buf);
 - setDocument:aDocument;
 - document;
 - closeDoc:aDoc;
-- save:sender;
+- (void) save: (id) sender;
 - saveAs:sender;
 - saveAs:sender withAccessory:accessory;
 - saveTo:(id)sender;
