@@ -1161,8 +1161,8 @@ inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
       //      NSHighlightRect(highlightRect);
 
-		printf("HIGHLIGHT %g to %g\n",NSMinX(highlightRect),
-			NSMaxX(highlightRect));
+//		printf("HIGHLIGHT %g to %g\n",NSMinX(highlightRect),
+//			NSMaxX(highlightRect));
     }
 
     return;
