@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndAudioFader.h
-//  SndKit
+//  $Id$
 //
-//  Created by Stephen Brandon on Mon Jun 23 2001. <stephen@brandonitconsulting.co.uk>
-//  Copyright (c) 2001 SndKit project
+//  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and 
 //  non-commercial purposes so long as the author attribution and copyright 
@@ -62,7 +62,7 @@ typedef float (*XForBpIMP)(id, SEL, int);
 @class SndAudioFader
 @abstract An object providing basic amplitude and balance controls on
                 incoming audio buffers. "Fader" movements can be scheduled
-                for arbitrary times in the future,
+                for arbitrary times in the future.
     @discussion
 
 <P>
@@ -71,7 +71,7 @@ points. In addition, all SndAudioProcessorChains have a SndAudioFader which is r
 after any other user defined processors.</P>
 <P>
 Because both SndStreamMixer and SndStreamClient have processor chains, both the
-overall output and the individual clients can have faders.</P>
+overall output and the individual clients (respectively) can have faders.</P>
 <P>
 SndAudioFader is built to be as efficient as possible. If it does not have to do
 any processing on the incoming stream, it does not.</P>
@@ -101,39 +101,39 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
 
 @interface SndAudioFader : SndAudioProcessor
 {
-/*! @var envClass */  
-  id     envClass; /* Class object used in initialising new envelopes */
-/*! @var ampEnv */  
+  /*! @var envClass Class object used in initialising new envelopes*/  
+  id     envClass; 
+  /*! @var ampEnv */  
   id     <SndEnveloping, NSObject> ampEnv;
-/*! @var staticAmp */  
+  /*! @var staticAmp */  
   float  staticAmp;
-/*! @var balanceEnv */  
+  /*! @var balanceEnv */  
   id     <SndEnveloping,NSObject> balanceEnv;
-/*! @var staticBalance */  
+  /*! @var staticBalance */  
   float  staticBalance;
 
-/*! @var uee */  
+  /*! @var uee Unified Envelope Entry */  
   SndUnifiedEnvelopeEntry *uee;
   
-/*! @var lock */
-  NSLock *lock; // locks changes to the envelope objects (?)
-/*! @var balanceEnvLock */  
+  /*! @var lock locks changes to the envelope objects (?) */
+  NSLock *lock;
+  /*! @var balanceEnvLock */  
   NSLock *balanceEnvLock;
-/*! @var ampEnvLock */
+  /*! @var ampEnvLock */
   NSLock *ampEnvLock;
 
 @public
-/*! @var bpBeforeOrEqual */
+  /*! @var bpBeforeOrEqual */
   BpBeforeOrEqualIMP  bpBeforeOrEqual;
-/*! @var bpAfter */
+  /*! @var bpAfter */
   BpAfterIMP          bpAfter;
-/*! @var flagsForBp */
+  /*! @var flagsForBp */
   FlagsForBpIMP       flagsForBp;
-/*! @var yForBp */
+  /*! @var yForBp */
   YForBpIMP           yForBp;
-/*! @var yForX */
+  /*! @var yForX */
   YForXIMP            yForX;
-/*! @var xForBp */
+  /*! @var xForBp */
   XForBpIMP           xForBp;
 }
 
@@ -203,8 +203,8 @@ movements, then insert it into the SndAudioProcessorChain later.</P>
 
 /*!
     @method setAmp:clearingEnvelope:
-    @abstract Sets the instantaneous balance value, optionally clearing future scheduled events
-    @discussion The balance value takes effect from the next buffer to pass through the processor
+    @abstract Sets the instantaneous amplitude value, optionally clearing future scheduled events
+    @discussion The amplitude value takes effect from the next buffer to pass through the processor
     chain.
     @param amp (any float: ordinarily 0.0 to +1.0) This parameter is the scaling factor for both
     channels. Negative values will invert the audio stream. There is no checking done for

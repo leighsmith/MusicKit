@@ -1,14 +1,14 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndAudioFader.m
-//  SndKit
+//  $Id$
 //
-//  Created by S Brandon on Mon Jun 23 2001. <stephen@brandonitconsulting.co.uk>
-//  Copyright (c) 2001 SndKit project
+//  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and non-
 //  commercial purposes so long as the author attribution and copyright messages
-//   remain intact and accompany all relevant code.
+//  remain intact and accompany all relevant code.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -749,26 +749,24 @@ inline int _processBalance( int xPtr,
         }
 
       } /* end while */
-        /* always include end of buffer as last bp*/
-        tempXVal = maxX;
-        tempAmpFlags = nextAmpFlags;
-        tempBalanceFlags = nextBalanceFlags;
-        tempAmpY = ampEnv ? _lookupEnvForX(self, ampEnv, maxX) :
-            staticAmp;
-        tempBalanceY = balanceEnv ? _lookupEnvForX(self, balanceEnv,maxX) :
-            staticBalance;
-        xPtr = _processBalance( xPtr, uee+xPtr,
-                                tempXVal, tempAmpY,
-                                tempBalanceY,
-                                tempAmpFlags,
-                                tempBalanceFlags);
-        xPtr++;
+      /* always include end of buffer as last bp*/
+      tempXVal = maxX;
+      tempAmpFlags = nextAmpFlags;
+      tempBalanceFlags = nextBalanceFlags;
+      tempAmpY = ampEnv ? _lookupEnvForX(self, ampEnv, maxX) : staticAmp;
+      tempBalanceY = balanceEnv ? _lookupEnvForX(self, balanceEnv, maxX) : staticBalance;
+      xPtr = _processBalance( xPtr, uee+xPtr,
+  			    tempXVal, tempAmpY,
+			    tempBalanceY,
+			    tempAmpFlags,
+			    tempBalanceFlags);
+      xPtr++;
 
-        /* finished with ampEnv and balanceEnv now */
-        [balanceEnvLock unlock];
-        [ampEnvLock unlock];
+      /* finished with ampEnv and balanceEnv now */
+      [balanceEnvLock unlock];
+      [ampEnvLock unlock];
 
-        /* log 'em */
+      /* log 'em */
 #if 0
 //NSLog(@"time diff: %f at %f\n",GSTimeNow()-t,nowTime);
         NSLog(@"number of points: %d\n",xPtr);
