@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.2  2001/09/03 15:09:12  sbrandon
+// implemented SNDSetBufferSizeInBytes method for portaudio
+//
 // Revision 1.1  2001/07/18 12:47:08  sbrandon
 // - renamed PerformSound.c, so I can include ObjC style NSLogs etc.
 // - a number of changes to implement more of the API. Streaming now works.
@@ -60,7 +63,7 @@ extern "C" {
 #define PA_DEFAULT_BUFFERSIZE      (4096)
 #define PA_DEFAULT_DATA_FORMAT     (SND_FORMAT_FLOAT)
 #define PA_BYTES_PER_FRAME         (sizeof(float) * PA_DEFAULT_OUT_CHANNELS)
-#define PA_DEFAULT_BUFFER_SIZE_IN_FRAMES ( PA_DEFAULT_BUFFERSIZE \
+#define PA_DEFAULT_BUFFER_SIZE_IN_FRAMES ( bufferSizeInBytes \
         / PA_BYTES_PER_FRAME )
 
 // A linked list of sounds currently playing.
@@ -93,7 +96,7 @@ static BOOL             inputInit = FALSE;
 
 // new ones for portaudio
 static int              bufferSizeInFrames;
-//static long             bufferSizeInBytes = DEFAULT_BUFFERSIZE;
+static long             bufferSizeInBytes = PA_DEFAULT_BUFFERSIZE;
 static SNDPlayingSound  singlePlayingSound;
 static PortAudioStream  *stream;
 
@@ -141,12 +144,12 @@ static int paSKCallback( void *inputBuffer,
     int frameIndex;
     unsigned int sampleToPlay;
     SndSoundStruct *snd = singlePlayingSound.snd;
-    int bytesPerSample = 2;    // TODO assume its a short (2 byte / WORD format) needs checking dataFormat.
+    int bytesPerSample = 2;// TODO assume its a short (2 byte / WORD format) needs checking dataFormat.
+    int bytesPerFrame = bytesPerSample * snd->channelCount;
 
     int channelsPerFrame = snd->channelCount; // FIXME is this right?
 
     for (frameIndex = 0; frameIndex < framesPerBuffer; frameIndex++) {
-        int bytesPerFrame = bytesPerSample * snd->channelCount;
         unsigned int byteToPlayFrom = singlePlayingSound.sampleFramesGenerated * bytesPerFrame;
         sampleToPlay = frameIndex * channelsPerFrame;
             
@@ -167,7 +170,8 @@ static int paSKCallback( void *inputBuffer,
                 grabDataFrom = (unsigned char *) snd + snd->dataLocation + byteToPlayFrom;
                 // obtain data from big-endian ordered words
                 sampleWord = (((signed short) grabDataFrom[0]) << 8) + (grabDataFrom[1] & 0xff);
-                ((float *)outputBuffer)[sampleToPlay] = sampleWord / 32768.0f;  // make a float, do any other sounds, normalize and then write it.
+                // make a float, do any other sounds, normalize and then write it.
+                ((float *)outputBuffer)[sampleToPlay] = sampleWord / 32768.0f;
                 if(snd->channelCount != 1)	// play mono by sending same sample to all channels
                     byteToPlayFrom += bytesPerSample;
 #endif
@@ -177,7 +181,8 @@ static int paSKCallback( void *inputBuffer,
         }
         else {
             for(deviceChannel = 0; deviceChannel < channelsPerFrame; deviceChannel++) {
-                ((float *)outputBuffer)[sampleToPlay] = 0.0f;   // if at end of sound, play silence on all channels
+                // if at end of sound, play silence on all channels
+                ((float *)outputBuffer)[sampleToPlay] = 0.0f;
                 sampleToPlay++;
             }
             // Signal back to the rest of the world that we've finished playing the sound.
@@ -191,6 +196,18 @@ static int paSKCallback( void *inputBuffer,
     return 0; // TODO need better definition...
 }
 
+BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes)
+{
+  if (Pa_StreamActive(stream))
+      return FALSE;
+  if ((float)liBufferSizeInBytes/(float)8 != (int)(liBufferSizeInBytes/8)) {
+      fprintf(stderr, "output device - error setting buffer size. Buffer must be multiple of 8\n");
+      return FALSE;
+  }
+  bufferSizeInBytes = liBufferSizeInBytes;
+  return TRUE;
+}
+
 // Takes a parameter indicating whether to guess the device to select.
 // This allows us to hard code devices or use heuristics to prevent the user
 // having to always select the best device to use.
@@ -200,7 +217,7 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     if(!retrieveDriverList())
         return FALSE;
     if(!initialised)
-        initialised = TRUE;                   // SNDSetDriverIndex() needs to think we're initialised.
+        initialised = TRUE;   // SNDSetDriverIndex() needs to think we're initialised.
 
     return TRUE;
 }
@@ -268,9 +285,10 @@ PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct,
     if(!initialised)
         return SND_ERR_NOT_RESERVED;  // invalid sound structure.
  
-    if(soundStruct->magic != SND_MAGIC)
-        return SND_ERR_CANNOT_PLAY; // probably SND_ERROR_NOT_SOUND is more descriptive, but this matches SoundKit specs.
-
+    if(soundStruct->magic != SND_MAGIC) {
+        // probably SND_ERROR_NOT_SOUND is more descriptive, but this matches SoundKit specs.
+        return SND_ERR_CANNOT_PLAY;
+    }
     singlePlayingSound.playTag = tag;
     singlePlayingSound.snd = soundStruct;
     singlePlayingSound.sampleFramesGenerated = 0;
@@ -509,7 +527,7 @@ PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat)
     streamFormat->magic        = SND_MAGIC;
     streamFormat->dataLocation = 0;   /* Offset or pointer to the raw data */
     /* Number of bytes of data in a buffer */
-    streamFormat->dataSize     = PA_DEFAULT_BUFFERSIZE;
+    streamFormat->dataSize     = bufferSizeInBytes;
     streamFormat->dataFormat   = PA_DEFAULT_DATA_FORMAT;
     streamFormat->samplingRate = PA_DEFAULT_SAMPLE_RATE;
     streamFormat->channelCount = PA_DEFAULT_OUT_CHANNELS;
