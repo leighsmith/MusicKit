@@ -8,6 +8,13 @@
         }, 
         {
             ACTIONS = {go = id; setDelayFrom = id; setMidiDev = id; showInfoPanel = id; }; 
+            CLASS = MidiEchoController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {infoPanel = NSPanel; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {go = id; setDelayFrom = id; setMidiDev = id; showInfoPanel = id; }; 
             CLASS = MyApp; 
             LANGUAGE = ObjC; 
             OUTLETS = {infoPanel = id; midi = id; myFilter = id; }; 
