@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.16  2000/12/07 00:33:01  leigh
+  Standardised on NSMachPorts and machPorts as the mechanism for MKMD routines.
+
   Revision 1.15  2000/11/25 22:53:48  leigh
   Enforced ivar privacy and typed conductors and access methods
 
@@ -103,11 +106,12 @@
     double _timeOffset;
     enum {MKMidiInputOnly, MKMidiOutputOnly, MKMidiInputOutput} ioMode; 
     BOOL isOwner;
-    // These are handles used to identify the MIDI communication channel. 
-    MKMDPort  devicePort;        // Device port
-    MKMDOwnerPort ownerPort;     // Owner port, as for the device port.
-    MKMDReplyPort recvPort;      // Port on which we receive midiIn messages
-    MKMDReplyPort queuePort;     // Port on which we notify when there is space on the playback queue.
+    // These are handles used to identify the MIDI communication channel.
+    // We pretend they are Mach ports even though they function only as references.
+    NSMachPort *devicePort;      // Device port
+    NSMachPort *ownerPort;       // Owner port, as for the device port.
+    NSMachPort *recvPort;        // Port on which we receive midiIn messages
+    NSMachPort *queuePort;       // Port on which we notify when there is space on the playback queue.
     BOOL mergeInput;
     NSString *hostname;          // for MIDI communicated across hosts.
     int unit;
@@ -115,8 +119,8 @@
     MKConductor *conductor;      // Used by conductor and setConductor: methods
     // MIDI Time Code (MTC):
     MKConductor *synchConductor; // If non-nil, time mode is MTC Synch
-    MKMDReplyPort exceptionPort; // Exception port.  Only one unit per device may have one.
-    MKMDReplyPort alarmPort;     // Alarm port.  Only one unit per device may have one.
+    NSMachPort *exceptionPort;   // Exception port.  Only one unit per device may have one.
+    NSMachPort *alarmPort;       // Alarm port.  Only one unit per device may have one.
     MKMidi *mtcMidiObj;          // Which unit is receiving MTC.
     double alarmTime;
     int intAlarmTime;
