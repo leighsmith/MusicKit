@@ -38,10 +38,7 @@ extern "C" {
 
 #define DEFAULT_BUFFERSIZE 16384
 
-#define PADDING 3          // make sure this matches PADFORMAT changes below (including \0)
 #define PADFORMAT "%s: %s"
-
-#define ENABLE_INPUT
 
 // A linked list of sounds currently playing.
 typedef struct _audioStream {
@@ -76,10 +73,8 @@ static long         bufferSizeInBytes = DEFAULT_BUFFERSIZE;
 
 static AudioStreamBasicDescription outputStreamBasicDescription;
 static AudioDeviceID outputDeviceID;
-#ifdef ENABLE_INPUT
 static AudioStreamBasicDescription inputStreamBasicDescription;
 static AudioDeviceID inputDeviceID;
-#endif
 
 // Stream processing data.
 static SNDStreamProcessor streamProcessor;
@@ -169,10 +164,7 @@ static OSStatus sndPlayIOProc(AudioDeviceID inDevice,
                     // obtain data from big-endian ordered words
                     sampleWord = (((signed short) grabDataFrom[0]) << 8) + (grabDataFrom[1] & 0xff);
 
-                    if (!isMuted) {
-                        ((float *)outputBuffer)[sampleToPlay] = sampleWord / 32768.0f;
-                    }
-                    else ((float *)outputBuffer)[sampleToPlay] = 0.0f;
+		    ((float *)outputBuffer)[sampleToPlay] = !isMuted ? sampleWord / 32768.0f : 0.0f;
 
                     if(snd->channelCount != 1)	// play mono by sending same sample to all channels
                         byteToPlayFrom += bytesPerSample;
@@ -199,7 +191,7 @@ static OSStatus sndPlayIOProc(AudioDeviceID inDevice,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// vendBuffersToStreamManagerIOProc
+// vendOutputBuffersToStreamManagerIOProc
 //
 // We vend the output and input buffers in their native format to avoid 
 // redundant conversions. This allows postponing the conversion to the last 
@@ -207,16 +199,7 @@ static OSStatus sndPlayIOProc(AudioDeviceID inDevice,
 // easy way to do the conversion without anyone writing their own converter.
 ////////////////////////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////////////
-// vendBuffersToStreamManagerIOProc
-//
-// We vend the output and input buffers in their native format to avoid 
-// redundant conversions. This allows postponing the conversion to the last 
-// possible moment. The SndConvertFormat() function in the SndKit makes for an 
-// easy way to do the conversion without anyone writing their own converter.
-////////////////////////////////////////////////////////////////////////////////
-
-static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
+static OSStatus vendOutputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
                           const AudioTimeStamp *inNow,
                           const AudioBufferList *inInputData,
                           const AudioTimeStamp *inInputTime,
@@ -238,7 +221,7 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
         firstSampleTime = inOutputTime->mSampleTime;
     }
 
-    // fprintf(stderr, "vendBuffersToStreamManagerIOProc number of buffers = %ld\n", outOutputData->mNumberBuffers);
+    // fprintf(stderr, "vendOutputBuffersToStreamManagerIOProc number of buffers = %ld\n", outOutputData->mNumberBuffers);
     // 4K46 occasionally sends us a wierd number of buffers
     
     for(bufferIndex = 0; bufferIndex < 1 /* outOutputData->mNumberBuffers */ ; bufferIndex++) {
@@ -301,7 +284,9 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
     return 0; // TODO need better definition...
 }
 
-static OSStatus vendBuffersToStreamManagerIOProcAux(AudioDeviceID inDevice,
+// TODO This is only retrieving the audio buffer from the CoreAudio API, it does not hand the buffer
+// onto the streamProcessor() function within the SndKit, that is done in vendOutputBuffersToStreamManagerIOProc.
+static OSStatus vendInputBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
                           const AudioTimeStamp *inNow,
                           const AudioBufferList *inInputData,
                           const AudioTimeStamp *inInputTime,
@@ -313,7 +298,7 @@ static OSStatus vendBuffersToStreamManagerIOProcAux(AudioDeviceID inDevice,
 #if DEBUG_CALLBACK    
     fprintf(stderr,"[SND] starting vend aux...\n");
 #endif
-    if( fInputBuffer ) {
+    if (fInputBuffer) {
       SNDStreamBuffer inStream; //, outStream;
       int bufferIndex;
 
@@ -536,10 +521,41 @@ static BOOL determineBasicDescription(AudioDeviceID deviceID,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// getBufferSize
+////////////////////////////////////////////////////////////////////////////////
+
+static long getBufferSize(AudioDeviceID deviceID,
+			  BOOL isInput)
+{
+    OSStatus CAstatus;
+    UInt32 propertySize;
+    Boolean propertyWritable;
+    long currentBufferSizeInBytes;
+
+    /* fetch the buffer size for informational purposes */
+    CAstatus = AudioDeviceGetPropertyInfo(deviceID, 0, isInput, kAudioDevicePropertyBufferSize,
+                                          &propertySize, &propertyWritable);
+    if (CAstatus) {
+        fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyBufferSize returned %s\n", getCoreAudioErrorStr(CAstatus));
+        return FALSE;
+    }
+
+    CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput, kAudioDevicePropertyBufferSize,
+				      &propertySize, &currentBufferSizeInBytes);
+
+    if (CAstatus) {
+        fprintf(stderr, "AudioDeviceGetProperty kAudioDevicePropertyBufferSize returned %s\n", getCoreAudioErrorStr(CAstatus));
+        return FALSE;
+    }
+    
+    return currentBufferSizeInBytes;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // setBufferSize
 ////////////////////////////////////////////////////////////////////////////////
 
-BOOL setBufferSize(AudioDeviceID deviceID, 
+static BOOL setBufferSize(AudioDeviceID deviceID, 
                    long bufferSizeToSetInBytes, 
                    BOOL isInput)
 {
@@ -554,17 +570,6 @@ BOOL setBufferSize(AudioDeviceID deviceID,
         fprintf(stderr, "AudioDeviceGetPropertyInfo kAudioDevicePropertyBufferSize returned %s\n", getCoreAudioErrorStr(CAstatus));
         return FALSE;
     }
-#if DEBUG_BUFFERSIZE // only needed for debugging
-    CAstatus = AudioDeviceGetProperty(deviceID, 0, isInput, kAudioDevicePropertyBufferSize,
-                                    &propertySize, &bufferSizeInBytes);
-    
-    fprintf(stderr, "get buffer size CAstatus:%s, bufferSizeInBytes = %ld\n", getCoreAudioErrorStr(CAstatus), bufferSizeInBytes);
-    
-    if (CAstatus) {
-        fprintf(stderr, "AudioDeviceGetProperty 5 returned %s\n", getCoreAudioErrorStr(CAstatus));
-        return FALSE;
-    }
-#endif
     
     /* set the buffer size of the device */
     CAstatus = AudioDeviceSetProperty(deviceID, NULL, 0, isInput,
@@ -632,90 +637,105 @@ PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
     OSStatus CAstatus;
     UInt32 propertySize;
     Boolean propertyWritable;
-    
+
     if(!retrieveDriverList())
         return FALSE;
-    
+
     if(!initialised) {
         initialised = TRUE;                   // SNDSetDriverIndex() needs to think we're initialised.
-        inputLock   = [[NSLock alloc] init]; 
+        inputLock   = [[NSLock alloc] init];
     }
-    
+
     /* initialize CoreAudio device */
     if(guessTheDevice) {
-        /* Get the default sound output device */    
-        CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDefaultOutputDevice, 
+        /* Get the default sound output device */
+        CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDefaultOutputDevice,
                                                 &propertySize, &propertyWritable);
-      if (CAstatus) {
-        fprintf(stderr, "Output: AudioHardwareGetPropertyInfo returned %s\n",
-                getCoreAudioErrorStr(CAstatus));
-        return FALSE;
-      }
-      CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-                                            &propertySize, &outputDeviceID);
+	if (CAstatus) {
+	    fprintf(stderr, "SNDInit() Output: AudioHardwareGetPropertyInfo returned %s\n", getCoreAudioErrorStr(CAstatus));
+	    return FALSE;
+	}
+	CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
+				     &propertySize, &outputDeviceID);
         if (CAstatus) {
-            fprintf(stderr, "Output: AudioHardwareGetProperty returned %s\n",
+            fprintf(stderr, "SNDInit() Output: AudioHardwareGetProperty kAudioHardwarePropertyDefaultOutputDevice returned %s\n",
                     getCoreAudioErrorStr(CAstatus));
             return FALSE;
         }
-        CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDefaultInputDevice, 
+        CAstatus = AudioHardwareGetPropertyInfo(kAudioHardwarePropertyDefaultInputDevice,
                                                 &propertySize, &propertyWritable);
-        CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultInputDevice,
-                                                &propertySize, &inputDeviceID);
         if (CAstatus) {
-            fprintf(stderr, "Input: AudioHardwareGetProperty returned %s\n", getCoreAudioErrorStr(CAstatus));
+            fprintf(stderr, "SNDInit() Input: AudioHardwareGetPropertyInfo kAudioHardwarePropertyDefaultInputDevice returned %s\n",
+		    getCoreAudioErrorStr(CAstatus));
             return FALSE;
         }
+
+        CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultInputDevice,
+					    &propertySize, &inputDeviceID);
+        if (CAstatus) {
+            fprintf(stderr, "SNDInit() Input: AudioHardwareGetProperty kAudioHardwarePropertyDefaultInputDevice returned %s\n",
+		    getCoreAudioErrorStr(CAstatus));
+            return FALSE;
+        }
+
+	// If we are guessing the device, retrieve and use the standard buffer size.
+	bufferSizeInBytes = getBufferSize(outputDeviceID, NO);
+
+#if DEBUG_BUFFERSIZE
+	fprintf(stderr, "get buffer size bufferSizeInBytes = %ld\n", bufferSizeInBytes);
+#endif
         driverIndex = 0;  // TODO must find the default output device ID in the driver list and return its index
     }
     else {
-        fprintf(stderr, "Didn't guess the device\n");
+        fprintf(stderr, "SNDInit() Didn't guess the device\n");
         driverIndex = 0;
     }
-    
+
 #if DEBUG_DESCRIPTION
 //    fprintf(stderr,"OUTPUT ===========\n");
 #endif
-    
-    /* check the returned device */    
+
+    /* check the returned device */
     if (outputDeviceID == kAudioDeviceUnknown) {
-        fprintf(stderr, "outputDeviceID is kAudioDeviceUnknown\n");
+        fprintf(stderr, "SNDInit() outputDeviceID is kAudioDeviceUnknown\n");
         return FALSE;
     }
     if(!determineBasicDescription(outputDeviceID, &outputStreamBasicDescription, false)) {
-        fprintf(stderr, "output device - error determining basic description\n");
+        fprintf(stderr, "SNDInit() output device - error determining basic description\n");
         return FALSE;
     }
-    if(!setBufferSize(outputDeviceID, bufferSizeInBytes, false)) {
-        fprintf(stderr, "output device - error setting buffer size\n");
-        return FALSE;
+    if(!guessTheDevice) {
+	if(!setBufferSize(outputDeviceID, bufferSizeInBytes, false)) {
+	    fprintf(stderr, "SNDInit() output device - error setting buffer size\n");
+	    return FALSE;
+	}
     }
-    
+
 #if DEBUG_DESCRIPTION
 //    fprintf(stderr,"INPUT ===========\n");
 #endif
 
     if (inputDeviceID == kAudioDeviceUnknown) {
-        fprintf(stderr, "inputDeviceID is kAudioDeviceUnknown\n");
+        fprintf(stderr, "SNDInit() inputDeviceID is kAudioDeviceUnknown\n");
     }
     else if(!determineBasicDescription(inputDeviceID, &inputStreamBasicDescription, true)) {
-        fprintf(stderr, "input device - error determining basic setup\n");
+        fprintf(stderr, "SNDInit() input device - error determining basic setup\n");
     }
     else if(!setBufferSize(inputDeviceID, bufferSizeInBytes, true)) {
-        fprintf(stderr, "input device - error setting buffer size\n");
+        fprintf(stderr, "SNDInit() input device - error setting buffer size\n");
     }
     else {
-      inputInit = TRUE;
+	inputInit = TRUE;
     }
 
-#if CHECK_DEVICE_RUNNING_STATUS    
+#if CHECK_DEVICE_RUNNING_STATUS
     if(isDeviceRunning(outputDeviceID, false)) {
-      fprintf(stderr, "output device is already running... but this is ok in CoreAudio land\n");
-    }    
-    if(isDeviceRunning(inputDeviceID, true)) {
-      fprintf(stderr, "Input device is already running... but this is ok in CoreAudio land\n");
+	fprintf(stderr, "SNDInit() output device is already running... but this is ok in CoreAudio land\n");
     }
-#endif    
+    if(isDeviceRunning(inputDeviceID, true)) {
+	fprintf(stderr, "SNDInit() Input device is already running... but this is ok in CoreAudio land\n");
+    }
+#endif
 
     return TRUE;
 }
@@ -750,16 +770,6 @@ PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex)
 PERFORM_API unsigned int SNDGetAssignedDriverIndex(void)
 {
     return driverIndex;
-}
-
-PERFORM_API void SNDGetVolume(float *left, float * right)
-{
-    // TODO
-}
-
-PERFORM_API void SNDSetVolume(float left, float right)
-{
-    // TODO
 }
 
 PERFORM_API BOOL SNDIsMuted(void)
@@ -916,14 +926,14 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
     streamProcessor = newStreamProcessor;
     streamUserData  = newUserData;
     
-    CAstatus = AudioDeviceAddIOProc(outputDeviceID, vendBuffersToStreamManagerIOProc, NULL);
+    CAstatus = AudioDeviceAddIOProc(outputDeviceID, vendOutputBuffersToStreamManagerIOProc, NULL);
     if (CAstatus) {
         fprintf(stderr, "SNDStartStreaming: AudioDeviceAddIOProc returned %s\n",
                 getCoreAudioErrorStr(CAstatus));
         r = FALSE;
     }
     if (inputInit) {
-        CAstatus = AudioDeviceAddIOProc(inputDeviceID, vendBuffersToStreamManagerIOProcAux, NULL);
+        CAstatus = AudioDeviceAddIOProc(inputDeviceID, vendInputBuffersToStreamManagerIOProc, NULL);
         if (CAstatus) {
             fprintf(stderr, "SNDStartStreaming: AudioDeviceAddIOProc returned %s\n",
          				getCoreAudioErrorStr(CAstatus));
@@ -931,14 +941,14 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
         }
     }
     if (r) { // all is well so far...
-        CAstatus = AudioDeviceStart(outputDeviceID, vendBuffersToStreamManagerIOProc);
+        CAstatus = AudioDeviceStart(outputDeviceID, vendOutputBuffersToStreamManagerIOProc);
         if (CAstatus) {
             fprintf(stderr, "SNDStartStreaming: AudioDeviceStart returned %s\n",
                     getCoreAudioErrorStr(CAstatus));
             r = FALSE;
         }
         if (inputInit) {
-            CAstatus = AudioDeviceStart(inputDeviceID, vendBuffersToStreamManagerIOProcAux);
+            CAstatus = AudioDeviceStart(inputDeviceID, vendInputBuffersToStreamManagerIOProc);
             if (CAstatus) {
                 fprintf(stderr, "SNDStartStreaming: AudioDeviceStart returned %s\n", 
                         getCoreAudioErrorStr(CAstatus));
@@ -949,7 +959,7 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
     // printf("initialised stream start %d\n", r);
 #if DEBUG_STARTSTOPMSG    
     fprintf(stderr,"[SND] Stream Started: %s\n", r ? "OK":"ERR");
-#endif    
+#endif
     return r;
 }
 
@@ -964,14 +974,14 @@ PERFORM_API BOOL SNDStreamStop(void)
 
     // Must close input first !
     if (inputInit) {
-        CAstatus = AudioDeviceStop(inputDeviceID, vendBuffersToStreamManagerIOProc);
+        CAstatus = AudioDeviceStop(inputDeviceID, vendOutputBuffersToStreamManagerIOProc);
         if (CAstatus) {
             fprintf(stderr, "SNDStreamStop: input dev stop returned %s\n", getCoreAudioErrorStr(CAstatus));
             r = FALSE;
         }
     }
 
-    CAstatus =  AudioDeviceStop(outputDeviceID, vendBuffersToStreamManagerIOProc);
+    CAstatus =  AudioDeviceStop(outputDeviceID, vendOutputBuffersToStreamManagerIOProc);
 
 #if DEBUG_STARTSTOPMSG    
     fprintf(stderr,"[SND] Begining stream shutdown...\n");
