@@ -14,6 +14,9 @@
 #  Modification history:
 #
 #  $Log$
+#  Revision 1.2  2001/11/27 18:35:24  sbrandon
+#  cleaned up library importing for GNUstep
+#
 #  Revision 1.1  2001/11/08 22:47:53  sbrandon
 #  now we're using an objc class in the framework (NSDate) we have to explicitly
 #  mention the frameworks we require: foundation, objc.
@@ -27,12 +30,5 @@
 # systems where building a shared library requires to pass to the linker
 # all the libraries the target library depends upon.
 
-LIB_DEPEND_UPON = -l$(FOUNDATION_LIBRARY_NAME) -lobjc
-
-ifeq ($(GNUSTEP_TARGET_OS),mingw32)
-$(MY_NAME)_LIBRARIES_DEPEND_UPON += $(LIB_DEPEND_UPON)
-endif
-ifeq ($(GNUSTEP_TARGET_OS),cygwin)
-$(MY_NAME)_LIBRARIES_DEPEND_UPON += $(LIB_DEPEND_UPON)
-endif
+LIBRARIES_DEPEND_UPON = -lSndKit
 
