@@ -123,15 +123,6 @@ Modification history:
 }
 #define _extraVars _reservedFilePerformer1
 
-/* This struct is for instance variables added after the 2.0 instance variable
-   freeze. */
-typedef struct __extraInstanceVars {
-    int fd;
-} _extraInstanceVars;
-
-#define _fd(_self) \
-          ((_extraInstanceVars *)_self->_extraVars)->fd
-
 /* METHOD TYPES
  * Initializing a FilePerformer
  * Accessing files
@@ -171,7 +162,6 @@ typedef struct __extraInstanceVars {
 {
     [super initWithCoder:aDecoder];
     if ([aDecoder versionForClassName:@"FilePerformer"] == VERSION2) {
-	_MK_CALLOC(_extraVars,_extraInstanceVars,1);
 	[aDecoder decodeValuesOfObjCTypes:"*ddd",&filename,&firstTimeTag,&lastTimeTag];
     }
     return self;
@@ -188,7 +178,6 @@ typedef struct __extraInstanceVars {
    */
 {
     [super init];
-    _MK_CALLOC(_extraVars,_extraInstanceVars,1);
     lastTimeTag = MK_ENDOFTIME;
     return self;
 }
@@ -426,7 +415,6 @@ typedef struct __extraInstanceVars {
      [self finishFile];
    if (filename) {
        [stream release];
-       close(_fd(self));
    }
    stream = nil;
 }
@@ -450,9 +438,6 @@ typedef struct __extraInstanceVars {
      copy method is overridden); instead, an empty list is given.  */
 {
     MKFilePerformer *newObj = [super _copyFromZone:zone];
-//    _MK_CALLOC(newObj->_extraPerformerVars,_extraPerformerInstanceVars,1);
-    _MK_CALLOC(newObj->_extraVars,_extraInstanceVars,1);
-    bcopy(self->_extraVars,newObj->_extraVars,sizeof(_extraInstanceVars));
     newObj->filename = [filename copy];//_MKMakeStr(filename);
     newObj->stream = nil;
     return newObj;
