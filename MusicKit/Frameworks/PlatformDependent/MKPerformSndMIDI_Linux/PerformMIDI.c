@@ -17,6 +17,10 @@
 Modification history:
 
   $Log$
+  Revision 1.2  2001/05/12 08:43:43  sbrandon
+  - added MKMDGetMIDIDeviceOnHost from MacOSX framework
+  - changed return type of appropriate methods to MKMD_SUCCESS instead of 0
+
   Revision 1.1  2001/04/21 21:44:31  sbrandon
   renamed mididriverUser.c to PerformMIDI.c
 
@@ -56,6 +60,17 @@ extern "C" {
   //static REFERENCE_TIME datumRefTime;
   //static int datumMSecTime;
 
+PERFORM_API MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
+{
+    if(*hostname) {
+//      NSLog(@"MIDI on remote hosts not yet implemented on GNUstep\n");
+        fprintf(debug, "MIDI on remote hosts not yet implemented on GNUstep\n");
+        return MKMD_PORT_NULL;
+    }
+    else
+        return !MKMD_PORT_NULL; // kludge it so it seems initialised
+}
+
 /* Routine MKMDBecomeOwner */
 PERFORM_API kern_return_t MKMDBecomeOwner (
 	MKMDPort mididriver_port,
@@ -74,7 +89,7 @@ PERFORM_API kern_return_t MKMDBecomeOwner (
 //      return MKMD_ERROR_BUSY;
 //    }
 //  datumRefTime = PMGetCurrentTime();
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDReleaseOwnership */
@@ -91,7 +106,7 @@ PERFORM_API kern_return_t MKMDReleaseOwnership (
 //      return MKMD_ERROR_BUSY;
 //    }
 //    else
-    return 0;
+    return MKMD_SUCCESS;
 }
 
 /* Routine MKMDSetClockMode */
@@ -104,7 +119,7 @@ PERFORM_API kern_return_t MKMDSetClockMode (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDSetClockMode called %d\n", clock_mode);
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDGetClockTime */
@@ -121,7 +136,7 @@ PERFORM_API kern_return_t MKMDGetClockTime (
   //  currentRefTime = PMGetCurrentTime();
   // TODO we need to properly convert the result to an int, since the division will reduce the actual result within those bounds.
   // *time = (int) (currentRefTime - datumRefTime) / quantumFactor;
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDGetMTCTime */
@@ -137,7 +152,7 @@ PERFORM_API kern_return_t MKMDGetMTCTime (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDGetMTCTime called\n");
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDSetClockTime */
@@ -152,7 +167,7 @@ PERFORM_API kern_return_t MKMDSetClockTime (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDSetClockTime called %d, datumRefTime = %d\n", time, 0);
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* SimpleRoutine MKMDRequestAlarm */
@@ -165,7 +180,7 @@ PERFORM_API kern_return_t MKMDRequestAlarm (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDRequestAlarm called %d\n", time);
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDStartClock */
@@ -225,7 +240,7 @@ PERFORM_API kern_return_t MKMDRequestExceptions (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDRequestExceptions called\n");
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDRequestData */
@@ -238,7 +253,7 @@ PERFORM_API kern_return_t MKMDRequestData (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDRequestData called\n");
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDSendData */
@@ -282,7 +297,7 @@ PERFORM_API kern_return_t MKMDSendData (
 #ifdef FUNCLOG
   fprintf(debug,"MKMDSendData returning ok\n");
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDGetAvailableQueueSize */
@@ -299,7 +314,7 @@ PERFORM_API kern_return_t MKMDGetAvailableQueueSize (
   //if(!PMGetAvailableQueueSize(size)) {
   //  return MKMD_ERROR_UNKNOWN_ERROR;
   //}
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDRequestQueueNotification */
@@ -313,7 +328,7 @@ PERFORM_API kern_return_t MKMDRequestQueueNotification (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDRequestQueueNotification called %d\n", size);
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDClearQueue */
@@ -325,7 +340,7 @@ PERFORM_API kern_return_t MKMDClearQueue (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDClearQueue called\n");
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDFlushQueue */
@@ -337,7 +352,7 @@ PERFORM_API kern_return_t MKMDFlushQueue (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDFlushQueue called\n");
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDSetSystemIgnores */
@@ -350,7 +365,7 @@ PERFORM_API kern_return_t MKMDSetSystemIgnores (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDSetSystemIgnores called 0x%x sys_ignores\n", ignoreBits);
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /* Routine MKMDSetClockQuantum */
@@ -364,7 +379,7 @@ PERFORM_API kern_return_t MKMDSetClockQuantum (
 #ifdef FUNCLOG
   fprintf(debug, "MKMDSetClockQuantum called %d microseconds, %d 100ns units\n", microseconds, 0);
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 PERFORM_API kern_return_t MKMDAwaitReply(MKMDPort port_set, MKMDReplyFunctions *funcs, int timeout)
@@ -372,7 +387,7 @@ PERFORM_API kern_return_t MKMDAwaitReply(MKMDPort port_set, MKMDReplyFunctions *
 #ifdef FUNCLOG
   fprintf(debug, "MKMDAwaitReply called %d timeout\n", timeout);
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 PERFORM_API kern_return_t MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions *funcs)
@@ -380,7 +395,7 @@ PERFORM_API kern_return_t MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions 
 #ifdef FUNCLOG
   fprintf(debug, "MKMDHandleReply called\n");
 #endif
-  return 0;
+  return MKMD_SUCCESS;
 }
 
 /*
