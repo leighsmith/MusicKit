@@ -4,7 +4,7 @@
 ;   Exports for libSndKit DLL
 ;   Specific to WIN32 operating systems
 ;
-;   Copyright (C) 2001 tomandandy Inc.
+;   Copyright (C) 2001 tomandandy music inc.
 ;
 ;   Author:  Stephen Brandon <stephen@brandonitconsulting.co.uk>
 ;   Date: October 2001
@@ -19,14 +19,24 @@ __objc_class_name_SndAudioFader
 __objc_class_name_SndAudioProcessor
 __objc_class_name_SndAudioProcessorChain
 __objc_class_name_SndAudioProcessorDelay
+__objc_class_name_SndAudioProcessorDistortion
+__objc_class_name_SndAudioProcessorFlanger
+__objc_class_name_SndAudioProcessorInspector
+__objc_class_name_SndAudioProcessorNoiseGate
+__objc_class_name_SndAudioProcessorRecorder
 __objc_class_name_SndAudioProcessorReverb
+__objc_class_name_SndAudioProcessorToneGenerator
 __objc_class_name_SndBreakpoint
+__objc_class_name_SndConditionLock
 __objc_class_name_SndDisplayData
 __objc_class_name_SndDisplayDataList
 __objc_class_name_SndEnvelope
 __objc_class_name_SndPerformance
 __objc_class_name_SndPlayer
+__objc_class_name_SndAudioArchViewObject
+__objc_class_name_SndStreamArchitectureView
 __objc_class_name_SndStreamClient
 __objc_class_name_SndStreamManager
 __objc_class_name_SndStreamMixer
 __objc_class_name_SndStreamRecorder
+__objc_class_name_SndView
