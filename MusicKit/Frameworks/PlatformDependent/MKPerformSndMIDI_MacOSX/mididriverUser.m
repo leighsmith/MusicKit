@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/11/29 19:42:29  leigh
+  Checked if calling executable is actually a tool, not an app before posting the client name
+
   Revision 1.4  2000/11/27 21:48:29  leigh
   Added call back function for MIDI input, more MKMDReplyPort typing
 
@@ -147,6 +150,7 @@ PERFORM_API MKMDReturn MKMDBecomeOwner (
 	MKMDOwnerPort owner_port)
 {
     // create client and ports
+    NSString *executable;
 
 #ifdef FUNCLOG
     if(debug == NULL) {
@@ -154,12 +158,16 @@ PERFORM_API MKMDReturn MKMDBecomeOwner (
         if((debug = fopen("/tmp/PerformMIDI_debug.txt", "w")) == NULL)
             return MKMD_ERROR_UNKNOWN_ERROR;
     }
-    // NSLog(@"appname %@\n", [[[NSBundle mainBundle] infoDictionary] valueForKey: @"CFBundleExecutable"]);
-    fprintf(debug, "MKMDBecomeOwner called, appname: %s\n", 
-        [[[[NSBundle mainBundle] infoDictionary] objectForKey: @"CFBundleExecutable"] cString]);
 #endif
+    executable = [[[NSBundle mainBundle] infoDictionary] objectForKey: @"CFBundleExecutable"];
+    if(executable == nil) {
+        executable = @"tool"; // TODO, this should determine the name from argv[0]
+    }
 
-    MIDIClientCreate((CFStringRef) [[[NSBundle mainBundle] infoDictionary] objectForKey: @"CFBundleExecutable"], NULL, NULL, &client);	
+#ifdef FUNCLOG
+    fprintf(debug, "MKMDBecomeOwner called, appname: %s\n", [executable cString]);
+#endif
+    MIDIClientCreate((CFStringRef) executable, NULL, NULL, &client);	
     MIDIInputPortCreate(client, CFSTR("Input port"), readProc, NULL, &inPort);
     MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort);
 
