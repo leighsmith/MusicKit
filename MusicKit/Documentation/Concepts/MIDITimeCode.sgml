@@ -1,6 +1,6 @@
 <!-- $Id$ -->
-<chapter id="MIDITimeCode">
-<title>MIDI Time Code in the Music Kit</title>
+<appendix id="MIDITimeCode">
+<title>MIDI Time Code in the <productname>MusicKit</productname></title>
 
     <sect1 id="MTCIntroduction">
       <title>Introduction</title>
@@ -28,33 +28,36 @@ frames per second, depending on the MTC <emphasis>format</emphasis>.
 Additionally, there is a 30-frame <emphasis>drop-frame</emphasis>
 format used for color television.  MTC consists of occassional
 <emphasis>full-frame</emphasis> messages and a large number of
-<emphasis>quarter-frame </emphasis>messages.  MTC normally runs
+<emphasis>quarter-frame</emphasis> messages.  MTC normally runs
 forward, but can run backwards as well.  For further details of MTC,
-see the <emphasis role="bold"> </emphasis>MIDI Detailed Specification,
+see the 
+<!-- TODO Make into reference -->
+MIDI Detailed Specification,
 available from the The International MIDI Association.  Their address
 at the time of this writing is 5316 W. 57th St., Los Angeles,
-CA. 90056.  </para>
+CA. 90056.</para>
 
- <para>The Music Kit accepts MIDI Time Code (MTC)
+<para>The <productname>MusicKit</productname> accepts MIDI Time Code (MTC)
 through any MIDI device (either of the serial ports on NeXT hardware)
 and provides a way of synchronizing a <classname>MKConductor</classname>'s performance to the
 incoming time code.  It can also generate MTC and send it out any MIDI
 device.  It can even receive MTC and generate it at the same time,
 through the same or different MIDI devices.  Finally, it can receive
 and transmit ordinary MIDI through any MIDI device while receiving or
-generating time code.  </para>
+generating time code.</para>
     </sect1>
     <sect1 id="GeneratingMTC">
       <title>Generating MIDI Time Code</title>
 
 <para>Generating MIDI Time Code is quite easy.  You simply instantiate
-an instance of the class <classname>MKMTCPerformer</classname>.  This is a subclass of
-<classname>MKPerformer</classname> with a <emphasis
+an instance of the class <classname>MKMTCPerformer</classname>.  This
+is a subclass of <classname>MKPerformer</classname> with a <emphasis
 role="bold">perform</emphasis> method that sends MIDI time code
-messages.  To use an <classname>MKMTCPerformer</classname>,
-simply, instantiate the object, activate it, connect it to a <classname>MKMidi</classname>
-object and start the performance.  This is done with the usual
-<classname>MKPerformer</classname> methods: </para>
+messages.  To use an <classname>MKMTCPerformer</classname>, simply,
+instantiate the object, activate it, connect it to a
+<classname>MKMidi</classname> object and start the performance.  This
+is done with the usual <classname>MKPerformer</classname>
+methods:</para>
 
 <programlisting>
 MKMTCPerformer *myMTCPerformer =[[MKMTCPerformer alloc] init];
@@ -67,7 +70,7 @@ MKMidi *myMidi = [MKMidi midiOnDevice: @"midi0"];
 
 <para>This will begin generating time code in a forward direction,
 beginning with the value 0:0:0:0, using the default format (24
-frames/second).  </para>
+frames/second).</para>
 
       <sect2 id="CustomizingTimeCodeGeneration"
 	<title>Customizing Time Code Generation</title>
@@ -116,38 +119,39 @@ MKMTCPerformer *myMTCPerformer =[[MKMTCPerformer alloc] init];
 
 <para>If you want to generate time code beginning with a value of 2.0
 seconds and start sending that time that time code at time 3.0
-seconds, set <emphasis>firstTimeTag </emphasis>to 2.0 and
-<emphasis>timeShift </emphasis>to 1.0.  In general, the formula is:
+seconds, set <emphasis>firstTimeTag</emphasis> to 2.0 and
+<emphasis>timeShift</emphasis> to 1.0.  In general, the formula is:
 </para> 
 
-<para><emphasis>start time = timeShift + firstTimeTag+
+<!-- TODO better format this equation -->
+<para><emphasis>start time = timeShift + firstTimeTag +
 activation time</emphasis></para>
 
-<para>The default value for both
-<emphasis>timeShift </emphasis>and <emphasis>firstTimeTag
-</emphasis>is 0.0.  Keep in mind that the <emphasis>start
-time</emphasis> given in the formula above is relative to the time of
-activation.  </para> 
+<para>The default value for both <emphasis>timeShift</emphasis> and
+<emphasis>firstTimeTag</emphasis> is 0.0.  Keep in mind that the
+<emphasis>start time</emphasis> given in the formula above is relative
+to the time of activation.</para>
 
-<para>By default, time code generation continues
-until you deactivate the <classname>MKPerformer</classname> or finish the performance.
-However, you can specify that the <classname>MKPerformer</classname> automatically deactivate
-when it reaches a certain target MTC value by sending it the <emphasis
-role="bold">setLastTimeTag:</emphasis> message.  Normally,
-<emphasis>lastTimeTag</emphasis> should be greater than
-<emphasis>firstTimeTag</emphasis>. However, you can tell the
-<classname>MKPerformer</classname> to send reverse time code as follows:</para>
+<para>By default, time code generation continues until you deactivate
+the <classname>MKPerformer</classname> or finish the performance.
+However, you can specify that the <classname>MKPerformer</classname>
+automatically deactivate when it reaches a certain target MTC value by
+sending it the <emphasis role="bold">setLastTimeTag:</emphasis>
+message.  Normally, <emphasis>lastTimeTag</emphasis> should be greater
+than <emphasis>firstTimeTag</emphasis>. However, you can tell the
+<classname>MKPerformer</classname> to send reverse time code as
+follows:</para>
 
 <programlisting>
 [myMTCPerformer setDirection:MK_MTC_REVERSE];
 </programlisting> 
 
-<para>Then,
-<emphasis>lastTimeTag </emphasis>should be <emphasis role="bold">less
-</emphasis>than <emphasis>firstTimeTag.  </emphasis>Time code values
-will count down from <emphasis>firstTimeTag </emphasis>until
-<emphasis>lastTimeTag </emphasis>is reached.  You cancel generation of
-reverse time code by sending the message: </para>
+<para>Then, <emphasis>lastTimeTag</emphasis> should be <emphasis
+role="bold">less</emphasis> than
+<emphasis>firstTimeTag</emphasis>. Time code values will count down
+from <emphasis>firstTimeTag</emphasis> until
+<emphasis>lastTimeTag</emphasis> is reached.  You cancel generation of
+reverse time code by sending the message:</para>
 
 <programlisting>
 [myMTCPerformer setDirection:MK_MTC_FORWARD];
@@ -159,8 +163,8 @@ role="bold">setFirstTimeTag:</emphasis>, <emphasis
 role="bold">setLastTimeTag:</emphasis> and <emphasis
 role="bold">setTimeShift:</emphasis>, you can use met hods that allow
 you to specify the time directly in MTC units.  For example, to set
-<emphasis>firstTimeTag </emphasis>to a MTC value of 0:21:59:5, you
-send the following mesage: </para> 
+<emphasis>firstTimeTag</emphasis> to a MTC value of 0:21:59:5, you
+send the following mesage:</para> 
 
 <programlisting>
 [myMTCPerformer setFirstTimeTagMTCHours: 0
@@ -173,7 +177,7 @@ send the following mesage: </para>
 <para>This sets the <emphasis>firstTimeTag
 </emphasis>value as specified, assuming the current MTC format.
 Analagous methods are provided for setting <emphasis>lastTimeTag
-</emphasis>and <emphasis>timeShift</emphasis>.  </para> 
+</emphasis>and <emphasis>timeShift</emphasis>.</para> 
 
 <para>To
 conveniently convert between seconds and MTC time formats, the Music
@@ -198,7 +202,7 @@ extern void /* Returns (by reference) time in MTC units */
 
 <para>These functions do straight translation.
 They do not take into account any <emphasis>DeltaTime</emphasis> value
-(described later in this document.)  </para> 
+(described later in this document).</para> 
 
       </sect2>
       <sect2 id="PausingOrFreezingTimeCodeGeneration">
@@ -206,18 +210,18 @@ They do not take into account any <emphasis>DeltaTime</emphasis> value
 
 <para>You can pause
 time code generation using the standard <classname>MKPerformer</classname> <emphasis
-role="bold">pause </emphasis> method.  A paused <classname>MKPerformer</classname> stops
+role="bold">pause</emphasis> method.  A paused <classname>MKPerformer</classname> stops
 sending MIDI time code until it is resumed using the <emphasis
-role="bold">resume </emphasis>message.  When it is resumed, it sends a
+role="bold">resume</emphasis> message.  When it is resumed, it sends a
 MTC Full Message, then resumes time code generation where it left
-off. </para> 
+off.</para> 
 
-<para>You can also <emphasis>freeze </emphasis>the advance of time,
-using the <emphasis role="bold">freezeTimeCode </emphasis>method.  An
+<para>You can also <emphasis>freeze</emphasis> the advance of time,
+using the <emphasis role="bold">freezeTimeCode</emphasis> method.  An
 <classname>MKMTCPerformer</classname> that is frozen continues sending
 MTC messages, but the time code values remain the same.  Time code can
 be made to advance again by sending the <emphasis
-role="bold">thawTimeCode </emphasis>message.</para>
+role="bold">thawTimeCode</emphasis> message.</para>
 
       </sect2>
       <sect2 id="GeneratingFullMessagesandSMPTEUserBits">
@@ -229,8 +233,8 @@ this is sufficient.  However, you can send a Full Message at any time,
 by sending <emphasis role="bold">sendFullMTCMessage</emphasis>.
 </para> 
 
-<para><emphasis>User bits </emphasis>are part of the SMPTE
-specification.  They are not interpreted by the Music Kit.  You can
+<para><emphasis>User bits</emphasis> are part of the SMPTE
+specification.  They are not interpreted by the <productname>MusicKit</productname>.  You can
 send user bits by sending <emphasis
 role="bold">sendUserBits:groupFlagBits:</emphasis>.  See the MIDI Time
 Code specification or the SMPTE specification for the meaning of the
@@ -244,7 +248,7 @@ current MTC time with the <emphasis role="bold">timeTag</emphasis> or
 <emphasis role="bold">getMTCHours:minutes:seconds:frames:
 </emphasis>message, which return the time in seconds and MTC units,
 respectively.  The time tag returned is in the clock Conductor's time
-base.  See the discussion on deltaT later in this document.  </para>
+base.  See the discussion on deltaT later in this document.</para>
 
 <para>See the <classname>MKMTCPerformer</classname> Class Description
 for further information.</para>
@@ -255,26 +259,27 @@ for further information.</para>
       <sect2 id="Overview">
 	<title>Overview</title>
 
-<para>To synchronize a
-Music Kit performance to incoming MIDI Time Code, send a conductor the
-message <emphasis role="bold">setMTCSynch:</emphasis>, with a <classname>MKMidi</classname>
-object as the argument.  The <classname>MKMidi</classname> object passed to this method
-corresponds to the MIDI device to which the user will be sending MIDI
-time code.  You must send <emphasis
-role="bold">setMTCSynch:</emphasis> before the performance has
-started, i.e. before +<emphasis
+<para>To synchronize a <productname>MusicKit</productname> performance to incoming MIDI Time
+Code, send a conductor the message <emphasis
+role="bold">setMTCSynch:</emphasis>, with a
+<classname>MKMidi</classname> object as the argument.  The
+<classname>MKMidi</classname> object passed to this method corresponds
+to the MIDI device to which the user will be sending MIDI time code.
+You must send <emphasis role="bold">setMTCSynch:</emphasis> before the
+performance has started, i.e. before +<emphasis
 role="bold">startPerformance</emphasis> is sent.  You must also assign
-your conductor as the conductor for any <classname>MKPerformer</classname>s that you would
-like to synchronize to time code.  </para> 
+your conductor as the conductor for any
+<classname>MKPerformer</classname>s that you would like to synchronize
+to time code.</para>
 
 <para>Once you start the
 performance, the MIDI time code <classname>MKConductor</classname> waits until time code
 starts running.  It then tells its active performers the current time,
-reactivates them, and begins conducting them.  </para> 
+reactivates them, and begins conducting them.</para> 
 
-<para>Here is
-an example of a simple performance with one <classname>MKPartPerformer</classname> that is
-synchronized to MIDI time code: </para> 
+<para>Here is an example of a simple performance with one
+<classname>MKPartPerformer</classname> that is synchronized to MIDI
+time code:</para>
 
 <programlisting>
 MKMidi *aMidi = [MKMidi midiOnDevice: @"midi0"];  
@@ -298,18 +303,18 @@ mode.  If you send a second <classname>MKConductor</classname> the <emphasis
 role="bold">setMTCSynch:</emphasis> message, it steals the role of MTC
 Conductor from the <classname>MKConductor</classname> that previously received the <emphasis
 role="bold">setMTCSynch:</emphasis> message.  Thus, there can only be
-one MIDI time code source. </para> 
+one MIDI time code source.</para> 
       </sect2>
       <sect2 id="AddingaTimeOffsettoIncomingMTC">
 	<title>Adding a Time Offset to Incoming MIDI Time Code</title>
 
 	<para>MIDI Time
-Code provides an absolute time base.  The Music Kit allows you to
+Code provides an absolute time base.  The <productname>MusicKit</productname> allows you to
 shift that time base using the <classname>MKConductor</classname> method <emphasis
 role="bold">setTimeOffset:</emphasis>.  The offset you specify is
-subtracted from the MIDI time code.  All Music Kit time methods take
+subtracted from the MIDI time code.  All <productname>MusicKit</productname> time methods take
 this offset into account.  For example, if you would like a MIDI time
-code time of 30 minutes to correspond to a Music Kit time of 1 minute,
+code time of 30 minutes to correspond to a <productname>MusicKit</productname> time of 1 minute,
 you send:</para> 
 
 <programlisting>
@@ -317,7 +322,7 @@ you send:</para>
 </programlisting>
 
 <para>If, on the other hand, you want a MIDI time code time of 0 to
-correspond to a Music Kit time of 1 minute, you send</para>
+correspond to a <productname>MusicKit</productname> time of 1 minute, you send</para>
 
 <programlisting>
 [myConductor setTimeOffset:-60];
@@ -331,54 +336,57 @@ sends its delegate messages reflecting the status of MIDI Time Code.
 When time code starts the first time, the delegate receives the
 message <emphasis role="bold">conductorWillSeek:</emphasis>,
 indicating that the <classname>MKPerformer</classname>s were reactivated, followed by
-<emphasis role="bold">conductorDidSeek: </emphasis>and <emphasis
+<emphasis role="bold">conductorDidSeek:</emphasis> and <emphasis
 role="bold"> conductorDidResume:</emphasis>.  If time code stops, the
 <classname>MKConductor</classname> sends its delegate the message <emphasis
 role="bold">conductorDidPause:</emphasis>.  If time code starts again
 in the same place, the delegate receives <emphasis
 role="bold">conductorDidResume:</emphasis>.  If time code starts in a
 different place, the delegate receives <emphasis
-role="bold">conductorWillSeek: </emphasis>and <emphasis
-role="bold">conductorDidSeek: </emphasis>as well.  If time code jumps,
+role="bold">conductorWillSeek:</emphasis> and <emphasis
+role="bold">conductorDidSeek:</emphasis> as well.  If time code jumps,
 without stopping, the delegate receives <emphasis
-role="bold">conductorWillSeek: </emphasis>and <emphasis
+role="bold">conductorWillSeek:</emphasis> and <emphasis
 role="bold">conductorDidSeek:</emphasis>, but not <emphasis
 role="bold">conductorDidResume:</emphasis>, since it's already
 running.  Finally, if time code starts going backwards, the delegate
 receives the message <emphasis
-role="bold">conductorDidReverse:</emphasis>.  </para> 
+role="bold">conductorDidReverse:</emphasis>.</para> 
 
-<para>For
-example, you might want to silence any sounding notes when time code
-stops are seeks.  The <classname>MKSynthInstrument</classname> <emphasis
-role="bold">allNotesOff </emphasis>and the <classname>MKMidi</classname> method <emphasis
-role="bold">allNotesOffIfNeeded </emphasis>are useful for this
+<para>For example, you might want to silence any sounding notes when
+time code stops are seeks.  The
+<classname>MKSynthInstrument</classname> <emphasis
+role="bold">allNotesOff</emphasis> and the
+<classname>MKMidi</classname> method <emphasis
+role="bold">allNotesOffIfNeeded</emphasis> are useful for this
 purpose.  Another typical use of the delegate methods is to inform the
-user of the status of MIDI time code.  </para> 
-<para>As usual, if the
-delegate does not respond to one of these messages, the <classname>MKConductor</classname>
-does not send that message. </para> 
+user of the status of MIDI time code.</para>
 
-<para><emphasis
-role="bold">N.B. </emphasis>There is a known bug in the NeXTStep/OpenStep MIDI driver
+<para>As usual, if the delegate does not respond to one of these
+messages, the <classname>MKConductor</classname> does not send that
+message.</para>
+
+<important><para>There is a known bug in the NeXTStep/OpenStep MIDI driver
 that sometimes causes it to spuriously report backward time code.  The
 only work-around is to stop the SMPTE tape, wait a second, and then
-start it again.  That should unwedge the driver. </para>
+start it again.  That should unwedge the driver.</para>
+</important>
+
       </sect2>
       <sect2 id="SynchMKPerformerSubclassToMTC">
 	<title>Synchronizing Your Own <classname>MKPerformer</classname> Subclass to Incoming MIDI Time Code</title>
 
-<para>The Music Kit
+<para>The <productname>MusicKit</productname>
 <classname>MKPerformer</classname>s all synchronize correctly to MIDI time code.  If you make
 your own <classname>MKPerformer</classname> subclass synchronize, you need to support a
 simple informal protocol called <emphasis role="bold">Time Code
 Performer Protocol</emphasis>.  There are three parts to this
-protocol: </para> 
+protocol:</para> 
 	<orderedlist>
 	  <listitem>
 	    <para>A Time Code <classname>MKPerformer</classname> must implement a
 method <emphasis role="bold">setFirstTimeTag:</emphasis>, which takes
-a <emphasis>double </emphasis>argument, represnting the starting value
+a <emphasis>double</emphasis> argument, represnting the starting value
 of MIDI time code in seconds.  A common implementation of this method
 stores the value it is passed in an instance variable.  The
 <classname>MKPerformer</classname> class provides a default implementation, which does
@@ -386,11 +394,11 @@ nothing.</para>
       </listitem>
 
 	  <listitem><para>A Time Code <classname>MKPerformer</classname>'s <emphasis
-role="bold">activateSelf </emphasis>method must position itself at the
+role="bold">activateSelf</emphasis> method must position itself at the
 Note it wants to send at <emphasis>firstTimeTag</emphasis>.  If there
 is no Note for that time, it should position itself at the first Note
-<emphasis>following</emphasis> that time.<emphasis> </emphasis>It then
-sets its <emphasis>nextPerform </emphasis>instance variable<emphasis>
+<emphasis>following</emphasis> that time. It then
+sets its <emphasis>nextPerform</emphasis> instance variable<emphasis>
 </emphasis>to that Note's time (which will be greater than or equal to
 <emphasis>firstTimeTag.</emphasis>) In other words, it sets
 <emphasis>nextPerform</emphasis> to the first time it wants to run.
@@ -403,9 +411,9 @@ role="bold">nil</emphasis>.</para>
 	    <para>The first invocation of
 a Time Code <classname>MKPerformer</classname>'s <emphasis role="bold">perform
 </emphasis>method should send the selected Note, then choose the next
-Note and set <emphasis>nextPerform </emphasis>to the time until that
+Note and set <emphasis>nextPerform</emphasis> to the time until that
 Note, as usual.  You can identify the first invocation because the
-instance variable <emphasis>performCount </emphasis>will be set to 1.
+instance variable <emphasis>performCount</emphasis> will be set to 1.
 In the first invocation of <emphasis role="bold">perform</emphasis>,
 you may also want to send any <emphasis
 role="bold">noteUpdates</emphasis> that preceed
@@ -417,7 +425,7 @@ sometimes called "chasing controller values" in MIDI parlance.)
 	</orderedlist>
  
 <para>Here is an example of a simple, but complete, Time Code
-Perfomer.  This example is a simplified version of the Music Kit
+Perfomer.  This example is a simplified version of the <productname>MusicKit</productname>
 <classname>MKPartPerformer</classname>:</para> 
 
 <programlisting>
@@ -497,24 +505,26 @@ Perfomer.  This example is a simplified version of the Music Kit
 <para>Of course, any performer can be used
 with a MIDI time code conductor.  However, unless you follow the Time
 Code Performer protocol described above, it will not seek as you might
-expect.  </para> 
+expect.</para> 
 
-<para>N.B.  When a <classname>MKPerformer</classname> is activated
+<tip><para>When a <classname>MKPerformer</classname> is activated
 while a performance is in progress, the
-<classname>MKPerformer</classname> <emphasis role="bold">activate
-</emphasis>method adds its <emphasis>nextPerform </emphasis>to the
+<classname>MKPerformer</classname>
+<emphasis role="bold">activate</emphasis> method adds its
+<emphasis>nextPerform</emphasis> to the
 current <classname>MKConductor</classname> time to determine the time
 of the first invocation of the <classname>MKPerformer</classname>'s
-<emphasis role="bold">perform </emphasis>method.  Thus, the protocol
+<emphasis role="bold">perform</emphasis> method.  Thus, the protocol
 described above would seem to introduce an undesired offset equal to
 the <classname>MKConductor</classname>'s current time.  Therfore, the
-<emphasis role="bold">activate </emphasis>method makes a special case
+<emphasis role="bold">activate</emphasis> method makes a special case
 of <classname>MKPerformer</classname>s that are managed by a MIDI Time
 Code Conductor&horbar; it does <emphasis>not</emphasis> add in the
 <classname>MKConductor</classname>'s time when activating such
 <classname>MKPerformer</classname>s.  The distinction between the two
-interpretations of <emphasis>nextPerform </emphasis>is an historical
-artifact.  </para>
+interpretations of <emphasis>nextPerform</emphasis> is an historical
+artifact.</para>
+</tip>
       </sect2>
       <sect2 id="SpecifyingTempo">
 	<title>Specifying Tempo</title>
@@ -522,24 +532,28 @@ artifact.  </para>
 <para>MIDI Time Code is not intended for conveying tempo.  It is
 simply a steady stream reporting the passage of time.  If you want to
 incorporate tempo into your performance, you have two options.  You
-can use the <classname>MKConductor</classname>'s <emphasis>Tempo Protoco</emphasis>l or you
-can implement the <emphasis>Time Map Protocol </emphasis>(informal).
-You cannot use both for the same <classname>MKConductor</classname>.  In particular, if you
-implement the <emphasis>Time Map Protocol, </emphasis>the <classname>MKConductor</classname>
-<emphasis role="bold">setTempo: </emphasis>and <emphasis
-role="bold">setBeatSize: </emphasis>methods have no effect.</para>
+can use the <classname>MKConductor</classname>'s <emphasis>Tempo
+Protoco</emphasis>l or you can implement the <emphasis>Time Map
+Protocol</emphasis> (informal).  You cannot use both for the same
+<classname>MKConductor</classname>.  In particular, if you implement
+the <emphasis>Time Map Protocol</emphasis>, the
+<classname>MKConductor</classname> <emphasis
+role="bold">setTempo:</emphasis> and <emphasis
+role="bold">setBeatSize:</emphasis> methods have no effect.</para>
       </sect2>
       <sect2 id="UsingTheConductorsTempoProtocol">
 	<title>Using the Conductor's Tempo Protocol</title>
 
-<para>To use the <classname>MKConductor</classname>'s tempo in a MIDI time code performance,
-simply set the MIDI time code <classname>MKConductor</classname>'s tempo with the <emphasis
+<para>To use the <classname>MKConductor</classname>'s tempo in a MIDI
+time code performance, simply set the MIDI time code
+<classname>MKConductor</classname>'s tempo with the <emphasis
 role="bold">setTempo:</emphasis> method.  Changing the tempo during
 the course of a MIDI time code performance will work, but when the
-time code seeks, the <classname>MKConductor</classname> uses the current tempo as that of the
-entire piece.  It sets its new time based on that value.  For example,
-if the tempo is 120 beats per minute and MIDI time code starts at time
-30.0 seconds, the <classname>MKConductor</classname> sets its time to 60 beats. </para>
+time code seeks, the <classname>MKConductor</classname> uses the
+current tempo as that of the entire piece.  It sets its new time based
+on that value.  For example, if the tempo is 120 beats per minute and
+MIDI time code starts at time 30.0 seconds, the
+<classname>MKConductor</classname> sets its time to 60 beats.</para>
 
 <para>For more complex situations, when you want a planned and
 predicatable tempo trajectory synchronized to the MIDI time code, you
@@ -558,39 +572,41 @@ more information, see <xref linkend="MusicPerformance">.
       <sect2 id="OtherUsefulMethods">
 	<title>Other Useful Methods</title>
 
-<para>To round out the support for MIDI time code, the Music Kit
-provides the following support methods:</para> 
+<para>To round out the support for MIDI time code, the
+<productname>MusicKit</productname> provides the following support
+methods:</para>
 
 	<itemizedlist>
 	  <listitem>
 	    <para>The <classname>MKMidi</classname> method
 <emphasis role="bold">time</emphasis> returns the current time,
-according to the MIDI driver, adjusted as follows: </para> 
+according to the MIDI driver, adjusted as follows:</para> 
 
-	    <para>If
-<emphasis>deltaT</emphasis> mode is MK_DELTAT_SCHEDULER_ADVANCE,
-<emphasis>deltaT</emphasis> is added to this time.  If the receiver is
-providing time code for a <classname>MKConductor</classname>, that <classname>MKConductor</classname>'s time offset
-is reflected in the time returned by this method.  A similar <classname>MKMidi</classname>
+	    <para>If <emphasis>deltaT</emphasis> mode is
+MK_DELTAT_SCHEDULER_ADVANCE, <emphasis>deltaT</emphasis> is added to
+this time.  If the receiver is providing time code for a
+<classname>MKConductor</classname>, that
+<classname>MKConductor</classname>'s time offset is reflected in the
+time returned by this method.  A similar <classname>MKMidi</classname>
 method, <emphasis
-role="bold">getMTCFormat:hours:min:sec:frames:</emphasis>,<emphasis
-role="bold"> </emphasis>returns by reference the current MIDI time
-code time, according to the MIDI driver.  This method only works if a
-<classname>MKMidi</classname> object is open and acting as a source of MIDI time code.  The
-time is adjusted as with the <emphasis role="bold">time
-</emphasis>method.  Unlike most of the Music Kit time methods and
-functions, both <emphasis role="bold">time </emphasis>and <emphasis
-role="bold">getMTCFormat:hours:min:sec:frames:</emphasis> get the
-current time, whether or not [MKConductor adjustTime] or [MKConductor
-lockPerformance] was done.  </para> 
+role="bold">getMTCFormat:hours:min:sec:frames:</emphasis>, returns by
+reference the current MIDI time code time, according to the MIDI
+driver.  This method only works if a <classname>MKMidi</classname>
+object is open and acting as a source of MIDI time code.  The time is
+adjusted as with the <emphasis role="bold">time </emphasis>method.
+Unlike most of the <productname>MusicKit</productname> time methods
+and functions, both <emphasis role="bold">time</emphasis> and
+<emphasis role="bold">getMTCFormat:hours:min:sec:frames:</emphasis>
+get the current time, whether or not [MKConductor adjustTime] or
+[MKConductor lockPerformance] was done.</para>
       </listitem>
       <listitem>
 <para>The <classname>MKConductor</classname> method
-<emphasis role="bold">clockTime </emphasis>is a convenience method.
+<emphasis role="bold">clockTime</emphasis> is a convenience method.
 It returns a double representing the current clock time for the
 object.  If the object is a MIDI time code <classname>MKConductor</classname>, this is the
 current MIDI time code time, the same value returned by <classname>MKMidi</classname>'s
-<emphasis role="bold">time </emphasis>method.  If the object is not a
+<emphasis role="bold">time</emphasis> method.  If the object is not a
 MIDI time code <classname>MKConductor</classname>, it is the same as
 the value returned by:</para>
 
@@ -603,34 +619,34 @@ the value returned by:</para>
       </listitem>
       <listitem>
 <para>The <classname>MKConductor</classname> method <emphasis
-role="bold">MTCSynch </emphasis>returns the <classname>MKMidi</classname> object previously
+role="bold">MTCSynch</emphasis> returns the <classname>MKMidi</classname> object previously
 set with <emphasis role="bold">setMTCSynch:</emphasis>, if any, else
 nil.  Similarly,the <classname>MKMidi</classname> method <emphasis role="bold">synchConductor
 </emphasis>returns the <classname>MKConductor</classname> object
 managing MIDI time code, if any, else nil.  Keep in mind that only one
 <classname>MKConductor</classname> at a time may have an MTCSynch
-object. </para>
+object.</para>
       </listitem>
       <listitem>
 <para>The <classname>MKConductor</classname> method <emphasis
-role="bold">activePerformers </emphasis>returns a <classname>NSArray</classname> object of
+role="bold">activePerformers</emphasis> returns a <classname>NSArray</classname> object of
 active <classname>MKPerformer</classname>s using that <classname>MKConductor</classname>.  </para> 
       </listitem>
       <listitem>
 
 <para>The
 <classname>MKSynthInstrument</classname> method <emphasis role="bold">allNotesOff
-</emphasis>sends a <emphasis role="bold">noteOff: </emphasis>message
-to all running <classname>MKSynthPatch</classname>es.  </para> 
+</emphasis>sends a <emphasis role="bold">noteOff:</emphasis> message
+to all running <classname>MKSynthPatch</classname>es.</para> 
       </listitem>
 
       <listitem>
 <para>The <classname>MKMidi</classname> <emphasis
-role="bold">allNotesOff </emphasis>method sends a <emphasis
-role="bold">noteOff </emphasis>MIDI message for any notes that
+role="bold">allNotesOff</emphasis> method sends a <emphasis
+role="bold">noteOff</emphasis> MIDI message for any notes that
 previously were turned on.  In contrast, the method <emphasis
-role="bold">allNotesOffBlast </emphasis>sends a <emphasis
-role="bold">noteOff </emphasis>on every MIDI channel and key
+role="bold">allNotesOffBlast</emphasis> sends a <emphasis
+role="bold">noteOff</emphasis> on every MIDI channel and key
 number.</para> 
       </listitem>
 
@@ -639,7 +655,7 @@ number.</para>
 <classname>MKPartPerformer</classname> method <emphasis role="bold">perform</emphasis> now
 sends all noteUpdates up to the current time the first time it is
 invoked.  This makes sure that all <classname>MKSynthInstrument</classname>s and MIDI
-controllers have the proper values. </para> 
+controllers have the proper values.</para> 
       </listitem>
 	</itemizedlist>
       </sect2>
@@ -664,7 +680,7 @@ when time code seeks.</para>
 wo will be ignored.  Similarly, you cannot pause a MIDI time code
 <classname>MKConductor</classname>.  Unclocked performances involving
 MIDI time code conductors are not supported. Hence, <emphasis
-role="bold">setMTCSynch: </emphasis>sends [MKConductor
+role="bold">setMTCSynch:</emphasis> sends [MKConductor
 setClocked:YES];</para>
       </sect2>
       <sect2 id="ObsoleteMethods">
@@ -676,4 +692,4 @@ a way to control tempo.  Use the tempo protocols described
 above.</para>
       </sect2>
     </sect1>
-  </chapter>
+</appendix>
