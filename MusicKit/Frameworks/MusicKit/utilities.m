@@ -18,6 +18,11 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2002/01/24 13:25:43  sbrandon
+  added function _MKDeepMutableArrayCopy() which gives what it says it does, and
+  is guaranteed to do so cross-platform (NSArray:-mutableCopy does the same on
+  MacOSX but not GNUstep).
+
   Revision 1.15  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -211,12 +216,35 @@ char *_MKRealloc(ptr,size)
 // Now that we use NSArrays, a [List copyWithZone] did a shallow copy, whereas
 // [NSMutableArray copyWithZone] does a deep copy, so we emulate the List operation, creating
 // a new NSMutableArray, but populating it with the old array's elements, rather than duplicates.
+// Being a "copy" method, we return a fully allocated, retained, non-
+// auto-released object.
 NSMutableArray *_MKLightweightArrayCopy(NSMutableArray *oldArray)
 {
     NSMutableArray *newArray = [[NSMutableArray alloc] init];
 
     [newArray addObjectsFromArray: oldArray];
     return newArray;
+}
+
+// Allegedly, MacOSX 10.x does a deep copy of NSArrays with -mutableArray,
+// but this behaviour is not shared by GNUstep. Hence we make explicit
+// which behaviour we are requesting.
+// Being a "copy" method, we return a fully allocated, retained, non-
+// auto-released object.
+NSMutableArray *_MKDeepMutableArrayCopy(NSMutableArray *oldArray)
+{
+    NSMutableArray *newArray;
+	int i,count;
+	if (!oldArray) {
+	    return nil;
+	}
+	count = [oldArray count];
+	newArray = [[NSMutableArray alloc] initWithCapacity:count];
+    for (i = 0 ; i < count ; i++) {
+	    [newArray addObject:[[oldArray objectAtIndex:i] copy]];
+	}
+	[newArray makeObjectsPerformSelector:@selector(release)];
+	return newArray;
 }
 
 /* Tracing */
