@@ -4,10 +4,10 @@
   HEADER FILES: MusicKit.h
 
   Description:
-    A score contains a collection of Parts and has methods for manipulating
-    those Parts. Scores and Parts work closely together. 
-    Scores can be performed. 
-    The score can read or write itself from a scorefile or midifile.
+    A MKScore contains a collection of MKParts and has methods for manipulating
+    those MKParts. MKScores and MKParts work closely together. 
+    MKScores can be performed. 
+    The MKScore can read or write itself from a scorefile or midifile.
      
   Original Author: David A. Jaffe
 
@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2000/05/06 02:41:32  leigh
+  putSysExcl allocates a mutable char array to operate on, since _MKGetSysExByte writes to the string pointer
+
   Revision 1.16  2000/05/06 00:29:36  leigh
   Converted tagTable to NSMutableDictionary
 
@@ -545,11 +548,14 @@ static void putMidi(struct __MKMidiOutStruct *ptr)
 
 static void putSysExcl(struct __MKMidiOutStruct *ptr,NSString *sysExclString)
 {
-    const char *sysExclStr = [sysExclString cString];
-    unsigned char *buffer = alloca(strlen(sysExclStr)); /* More than enough */
+    int sysExStrLen = [sysExclString cStringLength];
+    char *sysExclStr = alloca(sysExStrLen);
+    unsigned char *buffer = alloca(sysExStrLen); /* More than enough */
     unsigned char *bufptr = buffer;
-    int len;
+    int bufferLen;
     unsigned char c;
+
+    [sysExclString getCString: sysExclStr];
     c = _MKGetSysExByte(&sysExclStr);
     if (c == MIDI_SYSEXCL) 
       c = _MKGetSysExByte(&sysExclStr);
@@ -558,13 +564,12 @@ static void putSysExcl(struct __MKMidiOutStruct *ptr,NSString *sysExclString)
       *bufptr++ = c = _MKGetSysExByte(&sysExclStr);
     if (c != MIDI_EOX) 
       *bufptr++ = MIDI_EOX;
-    len = bufptr - buffer;
-    MKMIDIFileWriteSysExcl(ptr->_midiFileStruct, timeInQuanta(ptr->_midiFileStruct,ptr->_timeTag), len, buffer);
+    bufferLen = bufptr - buffer;
+    MKMIDIFileWriteSysExcl(ptr->_midiFileStruct, timeInQuanta(ptr->_midiFileStruct,ptr->_timeTag), bufferLen, buffer);
 }
 
 static void sendBufferedData(struct __MKMidiOutStruct *ptr)
-    /* Dummy function. (Since we don't need an extra level of buffering
-       here */
+    /* Dummy function. (Since we don't need an extra level of buffering here) */
 {
 
 }
