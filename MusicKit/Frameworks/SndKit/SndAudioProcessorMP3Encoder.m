@@ -27,6 +27,15 @@
 @implementation SndAudioProcessorMP3Encoder
 
 ////////////////////////////////////////////////////////////////////////////////
+// initialize shoutcast library
+////////////////////////////////////////////////////////////////////////////////
+
++ (void) initialize
+{
+  shout_init();
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // defaults accessors
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -57,22 +66,24 @@
   buffer_r             = NULL;
   bufferSizeInSamples  = 0;  
   mp3buff              = NULL;
-  bShoutcastActive     = FALSE;
   encodeNShoutcastLock = [[NSLock alloc] init];
 
   lameGlobalFlags = lame_init();
-  shout_init_connection(&conn);
+  if ((conn = shout_new()) == NULL) {
+    NSLog(@"SndAudioProcessorMP3Encoder::init	- Arrrrrgh - error allocating shout data structure!\n");
+  }
   lame_set_scale(lameGlobalFlags, 32767.0f);
 
   if (lame_init_params(lameGlobalFlags) == -1) {
     NSLog(@"SndAudioProcessorMP3Encoder::init	- Arrrrrgh - error initing LAME params!\n");
   }
 
-  conn.ip         = strdup(DEFAULT_MP3SERVER_ADDRESS);
-  conn.port       = DEFAULT_MP3SERVER_PORT;
-  conn.password   = strdup(DEFAULT_MP3SERVER_PASSWORD);
-  conn.icy_compat = 1;
-    
+  shout_set_host(conn, DEFAULT_MP3SERVER_ADDRESS);
+  shout_set_port(conn, DEFAULT_MP3SERVER_PORT);
+  shout_set_password(conn, DEFAULT_MP3SERVER_PASSWORD);
+  shout_set_protocol(conn, SHOUT_PROTOCOL_ICY);
+  shout_set_format(conn, SHOUT_FORMAT_MP3);
+
   return self;
 }
 
@@ -86,18 +97,12 @@
 {
   [encodeNShoutcastLock lock];
     
-  if (!bShoutcastActive) {
-
-    if (conn.ip != NULL && address != nil)
-      free(conn.ip);
-    conn.ip   = strdup([address cString]);
-    
-    if (conn.password != NULL && password != nil)
-      free(conn.password);
-    conn.password   = strdup([password cString]);
-
-    conn.port       = port;    
-    conn.icy_compat = 1;
+  if (shout_get_connected(conn) != SHOUTERR_CONNECTED) {
+    shout_set_host(conn, [address cString]);
+    shout_set_port(conn, port);
+    shout_set_password(conn, [password cString]);
+    shout_set_protocol(conn, SHOUT_PROTOCOL_ICY);
+    shout_set_format(conn, SHOUT_FORMAT_MP3);
   }
   else {
     NSLog(@"SndAudioProcessorMP3Encoder: Error - can't change shoutcast server details whilst shoutcast is active!");
@@ -117,16 +122,16 @@
   
   [encodeNShoutcastLock lock];
   
-  if (!bShoutcastActive) {
-    if (shout_connect(&conn)) {
+  if (shout_get_connected(conn) != SHOUTERR_CONNECTED) {
+    if (shout_open(conn) == SHOUTERR_SUCCESS) {
       NSLog(@"SndAudioProcessorMP3Encoder::connectToShoutcastServer - Connected to server!\n");
-      bShoutcastActive = TRUE;
       r = TRUE;
     }
     else { 
       NSLog(@"SndAudioProcessorMP3Encoder::connectToShoutcastServer - Error: Couldn't connect to server %s:%i with password [%s]...%i\n", 
-            conn.ip, conn.port, conn.password, conn.error);
-    }  
+            shout_get_host(conn), shout_get_port(conn), shout_get_password(conn),
+            shout_get_error(conn));
+    }
   }
   else {
     NSLog(@"SndAudioProcessorMP3Encoder::connectToShoutcastServer - Error: Already connected");
@@ -143,8 +148,7 @@
 - disconnectFromShoutcastServer
 {
   [encodeNShoutcastLock lock];
-  shout_disconnect(&conn);  
-  bShoutcastActive = FALSE;  
+  shout_close(conn);  
   [encodeNShoutcastLock unlock];
   
   return self;
@@ -156,17 +160,17 @@
 
 - (NSString*) serverAddress
 {
-  return [NSString stringWithCString: conn.ip];
+  return [NSString stringWithCString: shout_get_host(conn)];
 }
  
 - (NSString*) serverPassword
 {
-  return [NSString stringWithCString: conn.password];
+  return [NSString stringWithCString: shout_get_password(conn)];
 }
 
 - (int) serverPort
 {
-  return conn.port;    
+  return shout_get_port(conn);    
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -175,8 +179,10 @@
 
 - (void) dealloc
 {
-  if (bShoutcastActive)
+  if (shout_get_connected(conn) == SHOUTERR_CONNECTED){
     [self disconnectFromShoutcastServer];  
+    shout_free(conn);
+  }
 
   if (buffer_l != NULL)
     free(buffer_l);
@@ -199,9 +205,10 @@
                         outputBuffer: (SndAudioBuffer*) outB
 {
 
-  if (bShoutcastActive) {
+  if (shout_get_connected(conn) == SHOUTERR_CONNECTED) {
     float *buff = (float*) [inB bytes];
     int retval, i, l = [inB lengthInSampleFrames], c = [inB channelCount];
+    shout_sync(conn);
     [encodeNShoutcastLock lock];
     if (l != bufferSizeInSamples) {
       if (buffer_l != NULL)
@@ -239,14 +246,13 @@
                                        
     if (retval >= 0) {
 //    fwrite(mp3buff,1,retval,stdout);
-      retval = shout_send_data(&conn, mp3buff, retval);
+      retval = shout_send(conn, mp3buff, retval);
       if (!retval) {
-        NSLog(@"SndAudioProcessorMP3Encoder::processReplacing... Send error: %i\n", conn.error);
+        NSLog(@"SndAudioProcessorMP3Encoder::processReplacing... Send error: %i\n", shout_get_errno(conn));
       }
     }
 
     [encodeNShoutcastLock unlock];
-  // shout_sleep(&conn);
   }
   return FALSE; // False because we haven't touched inB - signal that it is still 
                 // valid for next processor.
@@ -259,10 +265,11 @@
 - (id) paramObjectForIndex: (const int) i
 {
   id obj;
+  int conn_port;
   switch (i) {
-    case mp3enc_kServerAddress:  obj = [NSString stringWithCString: conn.ip];                  break;
-    case mp3enc_kServerPort:     obj = [NSValue value: &conn.port withObjCType: @encode(int)]; break;
-    case mp3enc_kServerPassword: obj = [NSString stringWithCString: conn.password];            break;
+    case mp3enc_kServerAddress:  obj = [NSString stringWithCString: shout_get_host(conn)];                  break;
+    case mp3enc_kServerPort:     conn_port = shout_get_port(conn); obj = [NSValue value: &conn_port withObjCType: @encode(int)]; break;
+    case mp3enc_kServerPassword: obj = [NSString stringWithCString: shout_get_password(conn)];            break;
     default:
       obj = [super paramObjectForIndex: i];
   }

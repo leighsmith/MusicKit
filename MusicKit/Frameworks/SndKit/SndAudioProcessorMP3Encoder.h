@@ -76,15 +76,12 @@ enum {
   unsigned char     *mp3buff;
   /*! @var mp3BufferSizeInBytes Size of the MP3 bitstream buffer, in bytes      */
   long               mp3BufferSizeInBytes;
-  /*! @var bShoutcastActive Flag determining whether streaming to an icecast
-    server is active or not                             */
-  BOOL               bShoutcastActive;
   /*! @var encodeNShoutcastLock Lock controlling access to icecasting code      */
   NSLock            *encodeNShoutcastLock;
   /*! @var lameGlobalFlags Data structure required for LAME encoding            */
   lame_global_flags *lameGlobalFlags;
   /*! @var conn icecast 'shout-cast' server connection data structure           */
-  shout_conn_t       conn;
+  shout_t           *conn;
 }
 /*!
  @method     defaultServerAddress
