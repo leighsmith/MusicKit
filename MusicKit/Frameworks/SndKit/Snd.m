@@ -545,6 +545,8 @@ int beginFun(SNDSoundStruct *sound, int tag, int err)
 int endFun(SNDSoundStruct *sound, int tag, int err)
 {
 	id theSnd;
+        int err;
+
 	theSnd = [playRecTable valueForKey:sound];
 	[theSnd _setStatus:NX_SoundStopped];
 	if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
@@ -556,7 +558,10 @@ int endFun(SNDSoundStruct *sound, int tag, int err)
 	 * here, whether or not it was used. Generally it's used for real-time
 	 * rate conversion for playback. (maybe recording etc too???)
 	 */
-	printf("Unreserving error %d\n",SNDUnreserve(3));
+        err = SNDUnreserve(3);
+        if(err) {
+            NSLog(@"Unreserving error %d\n", err);
+        }
 	((Snd *)theSnd)->tag = 0;
 	return 0;
 }
@@ -601,7 +606,10 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 	[playRecTable insertKey:soundStruct value:self];
 	tag = ioTags;
 	status = NX_SoundPlayingPending;
-	printf("Unreserving error %d\n",SNDUnreserve(3));
+        err = SNDUnreserve(3);
+        if(err) {
+            NSLog(@"Unreserving error %d\n", err);
+        }
 	err = SNDStartPlaying((SNDSoundStruct *)soundStruct,
 		ioTags++ /*	int tag			*/,
 		1 /*	int priority	*/,
