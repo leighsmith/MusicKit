@@ -132,6 +132,7 @@ Modification history before commit to CVS:
 {
     [self disconnect];
     [noteSenders release];
+    noteSenders = nil;
     MKRemoveObjectName(self);
     [super dealloc];
 }
