@@ -82,7 +82,7 @@ static NSMutableArray *fxClassesArray = nil;
     return [processor autorelease];
 }
 
-- initWithParamCount: (const int) count name: (NSString*) s
+- initWithParamCount: (const int) count name: (NSString *) s
 {
     self = [super init];
     if (self) {
@@ -92,6 +92,15 @@ static NSMutableArray *fxClassesArray = nil;
 	active   = FALSE;
     }
     return self;
+}
+
+- initWithParameterDictionary: (NSDictionary *) paramDictionary name: (NSString *) newName;
+{
+    SndAudioProcessor *newInstance = [self initWithParamCount: [paramDictionary count] name: newName];
+    
+    if(paramDictionary != nil)
+	[newInstance setParamsWithDictionary: paramDictionary];
+    return newInstance;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -169,7 +178,7 @@ static NSMutableArray *fxClassesArray = nil;
 // paramName:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramName: (const int) index
+- (NSString *) paramName: (const int) index
 {
   /* Example:
   switch (index) {
@@ -185,7 +194,7 @@ static NSMutableArray *fxClassesArray = nil;
 // paramLabel:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramLabel: (const int) index
+- (NSString *) paramLabel: (const int) index
 {
   /* Example:
   switch (index) {
@@ -201,7 +210,7 @@ static NSMutableArray *fxClassesArray = nil;
 // paramName:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSString*) paramDisplay: (const int) index
+- (NSString *) paramDisplay: (const int) index
 {
   /* Example:
   switch (index) {
@@ -232,8 +241,8 @@ static NSMutableArray *fxClassesArray = nil;
 // processReplacingInputBuffer:outputBuffer:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
-                        outputBuffer: (SndAudioBuffer*) outB
+- (BOOL) processReplacingInputBuffer: (SndAudioBuffer *) inB
+                        outputBuffer: (SndAudioBuffer *) outB
 {
   // no processing? return FALSE!
   // remember to check active in derived classes.
@@ -246,7 +255,7 @@ static NSMutableArray *fxClassesArray = nil;
 // setAudioProcessorChain
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) setAudioProcessorChain:(SndAudioProcessorChain*)inChain
+- (void) setAudioProcessorChain: (SndAudioProcessorChain *) inChain
 {
   audioProcessorChain = inChain; /* non retained back pointer */
 }
@@ -255,7 +264,7 @@ static NSMutableArray *fxClassesArray = nil;
 // audioProcessorChain
 ////////////////////////////////////////////////////////////////////////////////
 
-- (SndAudioProcessorChain*) audioProcessorChain
+- (SndAudioProcessorChain *) audioProcessorChain
 {
   return [[audioProcessorChain retain] autorelease];
 }
@@ -279,7 +288,7 @@ static NSMutableArray *fxClassesArray = nil;
 // name
 //////////////////////////////////////////////////////////////////////////////
 
-- setName: (NSString*) aName
+- setName: (NSString *) aName
 {
   if (name != nil)
     [name release];
@@ -287,7 +296,7 @@ static NSMutableArray *fxClassesArray = nil;
   return self;
 }
 
-- (NSString*) name
+- (NSString *) name
 {
   return [[name retain] autorelease];
 }
@@ -296,23 +305,49 @@ static NSMutableArray *fxClassesArray = nil;
 // paramDictionary
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSDictionary*) paramDictionary
+- (NSDictionary *) paramDictionary
 {
-  int i;
-  NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
-  for (i = 0; i < numParams; i++) {
-    [dictionary setObject: [self paramObjectForIndex: i] forKey: [self paramName: i]];
-  }
-  return dictionary;
+    int parameterIndex;
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionaryWithCapacity: numParams];
+    
+    for (parameterIndex = 0; parameterIndex < numParams; parameterIndex++) {
+	[dictionary setObject: [self paramObjectForIndex: parameterIndex] 
+		       forKey: [self paramName: parameterIndex]];
+    }
+    return [NSDictionary dictionaryWithDictionary: dictionary];
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// setParamsWithDictionary:
+////////////////////////////////////////////////////////////////////////////////
+
+- (void) setParamsWithDictionary: (NSDictionary *) paramDictionary
+{
+    NSEnumerator *keyEnumerator = [paramDictionary keyEnumerator];
+    NSString *key;
+    
+    while ((key = [keyEnumerator nextObject]) != nil) {
+	[self setParamWithKey: key toValue: [paramDictionary objectForKey: key]];
+    }    
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // setParamWithKey:toValue:
 ////////////////////////////////////////////////////////////////////////////////
 
-- setParamWithKey: (NSString*) keyName toValue: (NSValue*) value
+//- (void) setParamWithKey: (NSString *) keyName toValue: (NSValue *) value
+- (void) setParamWithKey: (NSString *) keyName toValue: (NSNumber *) value
 {
-  return self;
+    unsigned int paramIndex;
+    float floatValue;
+    
+    // [value getValue: &floatValue];
+    floatValue = [value floatValue];
+    
+    // Do an exhaustive search - slow, but we're lazy and the parameter lists will be short (< 20).
+    for (paramIndex = 0; paramIndex < [self paramCount]; paramIndex++)
+	if ([keyName isEqual: [self paramName: paramIndex]])
+	    [self setParam: paramIndex toValue: floatValue];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -321,8 +356,9 @@ static NSMutableArray *fxClassesArray = nil;
 
 - (id) paramObjectForIndex: (const int) i
 {
-  float f = [self paramValue: i];
-  return [NSValue value: &f withObjCType: @encode(float)];
+    float f = [self paramValue: i];
+  // return [NSValue value: &f withObjCType: @encode(float)];
+    return [NSNumber numberWithFloat: f];
 }
 
 ////////////////////////////////////////////////////////////////////////////////

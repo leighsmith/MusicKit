@@ -92,9 +92,20 @@
 /*!
   @method     initWithParamCount:name:
   @abstract   Initialization method
+  @param      count
+  @param      name
   @result     Returns <B>self</B>.
 */
-- initWithParamCount: (const int) count name: (NSString*) s;
+- initWithParamCount: (const int) count name: (NSString *) name;
+
+/*!
+  @method     initWithParameterDictionary:name:
+  @abstract   Initialization using a dictionary of parameters.
+  @param      paramDictionary
+  @param      name
+  @result     Returns <B>self</B>.
+ */
+- initWithParameterDictionary: (NSDictionary *) paramDictionary name: (NSString *) name;
 
 /*!
   @method      reset
@@ -128,16 +139,16 @@
  @param      index Parameter index
  @result     NSString with parameter name
 */
-- (NSString*) paramName: (const int) index;
+- (NSString *) paramName: (const int) index;
 
 /*!
  @method     paramLabel:
- @abstract   Returns a label or extra text associated with the parameter
+ @abstract   Returns a label or extra text describing the parameters units of measurement.
  @param      index Parameter index
  @discussion Example: if the parameter is in deciDels, one may want to return "dB"
  @result     Returns the label for the parameter.
 */
-- (NSString*) paramLabel: (const int) index;
+- (NSString *) paramLabel: (const int) index;
 
 /*!
   @method     paramDisplay:
@@ -148,7 +159,7 @@
               object to provide a more meaningful description of the parameter.
   @result     Returns a containing the alternative string representation of the parameter
 */
-- (NSString*) paramDisplay: (const int) index;
+- (NSString *) paramDisplay: (const int) index;
 
 /*!
  @method     setParam:toValue:
@@ -173,8 +184,8 @@
              Means that processors that decide not to touch their data at all don't 
              need to spend time copying between buffers.
 */
-- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB
-                        outputBuffer: (SndAudioBuffer*) outB;
+- (BOOL) processReplacingInputBuffer: (SndAudioBuffer *) inB
+                        outputBuffer: (SndAudioBuffer *) outB;
 
 /*!
  @method    setAudioProcessorChain:
@@ -187,7 +198,7 @@
  @param      inChain
  @result     void.
 */
-- (void) setAudioProcessorChain: (SndAudioProcessorChain*) inChain;
+- (void) setAudioProcessorChain: (SndAudioProcessorChain *) inChain;
 
 /*!
   @method     audioProcessorChain
@@ -196,7 +207,7 @@
   @discussion
   @result     id of the SndAudioProcessorChain
 */
-- (SndAudioProcessorChain*) audioProcessorChain;
+- (SndAudioProcessorChain *) audioProcessorChain;
 
 /*!
   @method     isActive
@@ -220,7 +231,7 @@
   @result
   @discussion
 */
-- setName: (NSString*) aName;
+- setName: (NSString *) aName;
 
 /*!
   @method     name
@@ -228,7 +239,7 @@
   @result
   @discussion
 */
-- (NSString*) name;
+- (NSString *) name;
 
 /*!
   @method     description
@@ -236,23 +247,35 @@
   @result
   @discussion
 */
-- (NSString*) description;
+- (NSString *) description;
 
 /*!
   @method     paramDictionary
-  @abstract
-  @result
-  @discussion
+  @abstract   Returns an NSDictionary holding all parameters of a SndAudioProcessor instance.
+  @result     An autoreleased NSDictionary.
+  @discussion Each element in the dictionary has a key with an NSString of the parameter name and an 
+              object which is an NSValue of a floating point value.
 */
-- (NSDictionary*) paramDictionary;
+- (NSDictionary *) paramDictionary;
+
+/*!
+  @method     setParamsWithDictionary:
+  @abstract   Creates parameters with names and values provided by the given NSDictionary.
+  @param      paramDictionary an NSDictionary holding NSString keys and NSValue float encoded objects.
+  @discussion Each element in the dictionary has a key with an NSString of the parameter name and an
+              object which is an NSValue of a floating point value.
+ */
+- (void) setParamsWithDictionary: (NSDictionary *) paramDictionary;
 
 /*!
   @method     setParamWithKey:toValue:
-  @abstract
-  @result
+  @abstract   Assigns the parameter named keyName to the passed value.
+  @param      keyName An NSString case-sensitively matching a parameter name.
+  @param      value An NSValue holding an encoded float value between 0.0 and 1.0.
   @discussion
 */
-- setParamWithKey: (NSString*) keyName toValue: (NSValue*) value;
+// - (void) setParamWithKey: (NSString *) keyName toValue: (NSValue *) value;
+- (void) setParamWithKey: (NSString *) keyName toValue: (NSNumber *) value;
 
 /*!
   @method     paramObjectForIndex:
@@ -260,7 +283,8 @@
   @result
   @discussion
 */
-- (id) paramObjectForIndex: (const int) i;
+// - (id) paramObjectForIndex: (const int) i;
+- (NSNumber *) paramObjectForIndex: (const int) i;
 
 @end
 
