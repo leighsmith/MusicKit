@@ -22,27 +22,6 @@
   Portions Copyright (c) 1994 CCRMA, Stanford University.
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.7  2001/09/08 21:53:16  leighsmith
-  Prefixed MK for UnitGenerators and SynthPatches
-
-  Revision 1.6  2001/09/07 18:38:20  leighsmith
-  adopted symbolic entity naming
-
-  Revision 1.5  2001/09/06 21:27:47  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.4  2000/11/25 22:57:21  leigh
-  Enforced ivar privacy
-
-  Revision 1.3  2000/10/04 06:16:15  skot
-  Added description selectors
-
-  Revision 1.2  1999/07/29 01:25:48  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKPartials
   @discussion
@@ -471,7 +450,7 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
               
               <i>Note that currently, only power-of-2 lengths are supported for oscTable format.</i>
 */
-- fillTableLength:(int)aLength scale:(double)aScaling;
+- fillTableLength: (unsigned int) aLength scale: (double) aScaling;
 
 @end
 
@@ -539,7 +518,7 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
               subclass has no data, returns NULL. The data should neither be modified
               nor freed by the sender.
 */
-- (DSPDatum *) dataDSPAsWaveshapingTableLength:(int)aLength scale:(double)aScaling;
+- (DSPDatum *) dataDSPAsWaveshapingTableLength: (unsigned int) aLength scale: (double) aScaling;
  
 /*!
   @method dataDoubleAsWaveshapingTable
@@ -600,10 +579,12 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
               subclass has no data, returns NULL. The data should neither be modified
               nor freed by the sender.
 */
-- (double *)   dataDoubleAsWaveshapingTableLength:(int)aLength scale:(double)aScaling; 
+- (double *) dataDoubleAsWaveshapingTableLength: (unsigned int) aLength scale: (double) aScaling; 
 
 /*!
   @method fillWaveshapingTableLength:scale:
+  @abstract Computes the waveshaping table from the current freq/amp/phase arrays.
+            Does the LeBrun "signification" algorithm on the result.
   @param  aLength is an int.
   @param  aScaling is a double.
   @result Returns an id.
@@ -619,10 +600,7 @@ For more information on waveshaping synthesis, see the <b>Shape</b>and
               <i>tableType</i> internal instance variable to <b>MK_waveshapingTable</b>.
               For best results, use an odd length.
 */
-- fillWaveshapingTableLength:(int)aLength scale:(double)aScaling;
- /* Computes the waveshaping table from the current freq/amp/phase arrays.
-    Does the LeBrun "signification" algorithm on the result.
-  */
+- fillWaveshapingTableLength: (unsigned int) aLength scale: (double) aScaling;
 
 @end
 

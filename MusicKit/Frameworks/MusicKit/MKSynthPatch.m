@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.18  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.17  2002/09/19 18:16:27  leighsmith
   Replaced [super factoryMethod] with [[self superclass] factoryMethod]
 
@@ -866,8 +869,9 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
 - _free
 {
     id el;
-    unsigned n;
-    int i;
+    unsigned int n;
+    unsigned int i;
+    
     cancelMsgs(self);
     [self freeSelf];
     n = [synthElements count];

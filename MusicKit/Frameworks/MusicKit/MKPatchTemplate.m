@@ -62,6 +62,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.10  2002/01/29 16:28:35  sbrandon
   fixed object leak in to:sel:arg
   changed _MKOrchTrace fn calls to use NSString args
@@ -221,7 +224,7 @@ Modification history:
     MKPatchConnection *conn = [[MKPatchConnection alloc] initWithTargetObjectOffset: toObjInt
                                                                            selector: aSelector
                                                                            argument: withObjInt];
-    int i = [_elementStorage count];
+    unsigned int i = [_elementStorage count];
     if ((toObjInt < i) && (withObjInt < i))
       // This implies that rather than keeping the instance method for the selector, we should retain the selector
       conn->_methodImp =
@@ -295,7 +298,7 @@ BOOL _MKIsClassInTemplate(MKPatchTemplate *templ,id factObj)
 {
     /* Returns YES if factObj is present in templ as a unit generator,
        ordered or unordered. */
-    int i;
+    unsigned int i;
     for (i = 0; i < [templ->_elementStorage count]; i++) {
         MKPatchEntry *el = [templ->_elementStorage objectAtIndex: i];
         if ([el entryClass] == factObj) 
@@ -391,7 +394,7 @@ id _MKAllocSynthPatch(MKPatchTemplate *templ,id synthPatchClass,id anOrch,
                    NSStringFromClass([synthPatchClass class]),aPatch);
     
     {
-        int entryIndex;
+        unsigned int entryIndex;
 	id anOrderedUG = nil;
 	id aSE = nil;
         BOOL firstOrdered = YES;

@@ -52,24 +52,6 @@
   Portions Copyright (c) 1994 Stanford University  
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.6  2001/09/08 21:53:16  leighsmith
-  Prefixed MK for UnitGenerators and SynthPatches
-
-  Revision 1.5  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.4  2000/11/25 23:04:40  leigh
-  Enforced ivar privacy
-
-  Revision 1.3  2000/03/29 03:35:41  leigh
-  Cleaned up doco and ivar declarations
-
-  Revision 1.2  1999/07/29 01:25:51  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKSynthData
   @discussion

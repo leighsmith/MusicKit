@@ -14,6 +14,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.3  1999/09/04 23:02:01  leigh
   Source cleanup
 
@@ -147,7 +150,7 @@ int _MKFix24ToInt(DSPFix24 ival)
 {
     /* Converts Fix24 to int. Included here so that libdsp doesn't always
        have to be loaded. */
-    return (ival &  0x800000) ? ival | 0xFF000000 /* sign extend */ : ival;
+    return (ival &  0x800000) ? (int) (ival | 0xFF000000) /* sign extend */ : ival;
 }
 
 double _MKFix24ToDouble(DSPFix24 ival)

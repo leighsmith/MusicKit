@@ -18,6 +18,9 @@
 Modification history:
 
   $Log$
+  Revision 1.20  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.19  2003/01/29 02:57:39  leighsmith
   Updated formatting
 
@@ -906,7 +909,7 @@ void MKLoadAllBundlesOneOff(void)
 BOOL MKLoadAllBundles(void)
 {
     NSArray *libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
-    int i,j;
+    unsigned int i, j;
     id newClass;
     BOOL loadedSome = FALSE;
 

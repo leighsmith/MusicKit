@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.3  2000/06/09 18:05:59  leigh
   Added braces to reduce finicky compiler warnings
 
@@ -25,7 +28,7 @@ Modification history:
 
 @implementation MKPartials(WaveshapingTable)
 
-- (DSPDatum *)dataDSPAsWaveshapingTableLength:(int)aLength scale:(double)aScaling
+- (DSPDatum *)dataDSPAsWaveshapingTableLength:(unsigned int)aLength scale:(double)aScaling
 {
    if ((tableType != MK_waveshapingTable) || 
        (length != aLength) || (scaling != aScaling) || (length == 0))
@@ -39,7 +42,7 @@ Modification history:
    return dataDSP;
 }
 
-- (double *)dataDoubleAsWaveshapingTableLength:(int)aLength scale:(double)aScaling
+- (double *)dataDoubleAsWaveshapingTableLength:(unsigned int)aLength scale:(double)aScaling
 {  
    if ((tableType != MK_waveshapingTable) || 
        (length != aLength) || (scaling != aScaling) || (length == 0))
@@ -110,7 +113,7 @@ static void makeshape(double *F, double *Hk, int Lf, int Lh)
 #define CHEBYCHEV_ERROR \
 NSLocalizedStringFromTableInBundle(@"Waveshaping harmonics must be integers.", _MK_ERRTAB, _MKErrorBundle(), "This error occurs if an application asks for an inharmonic waveshaping partial.")
 
-- fillWaveshapingTableLength:(int)aLength scale:(double)aScaling 
+- fillWaveshapingTableLength:(unsigned int)aLength scale:(double)aScaling 
 {
     double diff;
     int j,k,i;

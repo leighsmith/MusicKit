@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.7  2002/09/19 18:16:26  leighsmith
   Replaced [super factoryMethod] with [[self superclass] factoryMethod]
 
@@ -158,7 +161,7 @@ Modification history:
 static id sendPreamble(self,dataArray,len,off,value)
     MKSynthData *self;
     void *dataArray; /* Or CONSTANT */
-    int len;
+    unsigned int len;
     int off;
     DSPDatum value; /* Optional. Only supplied if CONSTANT */
 {
@@ -206,7 +209,7 @@ static id sendPreamble(self,dataArray,len,off,value)
     return self;
 }
 
--setData:(DSPDatum *)dataArray length:(unsigned int)len offset:(int)off
+-setData: (DSPDatum *) dataArray length: (unsigned int) len offset: (int) off
     /* Load data and check size. Offset is shift from start of memory block. */
 {
     int ec;
@@ -215,11 +218,11 @@ static id sendPreamble(self,dataArray,len,off,value)
     if (!sendPreamble(self,dataArray,len,off))
 	return nil;
     if (_MK_ORCHTRACE(orchestra,MK_TRACEDSPARRAYS)) {
-	int i;
+	unsigned int i;
 	_MKOrchTrace(orchestra,MK_TRACEDSPARRAYS,@"Setting array of %@%d.",
 		     [orchestra segmentName:orchAddr.memSegment],
 		     _instanceNumber);
-	for (i=0; i<len; i++)
+	for (i = 0; i < len; i++)
 	  _MKOrchTrace(orchestra,MK_TRACEDSPARRAYS,@"  0x%x",dataArray[i]);
     }
     ec = DSPMKSendArraySkipTimed(_MKCurSample(orchestra),dataArray,
@@ -249,11 +252,11 @@ static id sendPreamble(self,dataArray,len,off,value)
     if (!sendPreamble(self,dataArray,len,off))
 	return nil;
     if (_MK_ORCHTRACE(orchestra,MK_TRACEDSPARRAYS)) {
-	int i;
+	unsigned int i;
 	_MKOrchTrace(orchestra,MK_TRACEDSPARRAYS,@"Setting array of %@%d.",
 		     [orchestra segmentName:orchAddr.memSegment],
 		     _instanceNumber);
-	for (i=0; i<len; i++)
+	for (i = 0; i < len; i++)
 	  _MKOrchTrace(orchestra,MK_TRACEDSPARRAYS,@"  0x%x",dataArray[i]);
     }
     ec =  DSPMKSendShortArraySkipTimed(_MKCurSample(orchestra),dataArray,

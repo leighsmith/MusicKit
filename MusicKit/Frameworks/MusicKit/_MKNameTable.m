@@ -36,6 +36,9 @@
 Modification history:
 
  $Log$
+ Revision 1.13  2003/08/04 21:14:33  leighsmith
+ Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
  Revision 1.12  2002/04/16 15:07:06  sbrandon
  - now use proper capacity for new nametbles instead of default 10
  - included new debug tool "_MKPrintGlobalNameTables()" to view
@@ -545,24 +548,25 @@ static id addReadOnlyVar(NSString * name,int val)
   return rtnVal;
 }
 
-static void
-initKeyWords()
+static void initKeyWords()
 {
-  /* Init the symbol table used to store key words for score file parsing. */
-  static BOOL inited = NO;
-  int i,tok;
-  if (inited)
-    return;
-  addReadOnlyVar(@"NO",0);
-  addReadOnlyVar(@"YES",1);
-  _MKNameGlobal(@"PI", _MKNewScorefileVar(_MKNewDoublePar(M_PI,MK_noPar), @"PI", NO, YES),
-                (unsigned short)_MK_typedVar | _MK_NOFREESTRINGBIT,YES,NO);
-  for (i=0; i<NUMKEYWORDS; i++) {
-    tok = (int)(keyWordsArr[i]);
-    _MKNameGlobal([NSString stringWithCString:_MKTokName(tok)],@"",
-                  (unsigned short)tok | _MK_NOFREESTRINGBIT,YES,NO);
-  }
-  inited = YES;
+    /* Init the symbol table used to store key words for score file parsing. */
+    static BOOL initialised = NO;
+    unsigned int i;
+    int tok;
+    
+    if (initialised)
+	return;
+    addReadOnlyVar(@"NO",0);
+    addReadOnlyVar(@"YES",1);
+    _MKNameGlobal(@"PI", _MKNewScorefileVar(_MKNewDoublePar(M_PI,MK_noPar), @"PI", NO, YES),
+		  (unsigned short)_MK_typedVar | _MK_NOFREESTRINGBIT,YES,NO);
+    for (i=0; i<NUMKEYWORDS; i++) {
+	tok = (int)(keyWordsArr[i]);
+	_MKNameGlobal([NSString stringWithCString:_MKTokName(tok)],@"",
+	       (unsigned short)tok | _MK_NOFREESTRINGBIT,YES,NO);
+    }
+    initialised = YES;
 }
 
 /* set up defaults which will apply to each app linked to the MK framework. */

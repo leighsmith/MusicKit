@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.8  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -244,8 +247,7 @@ Modification history:
     /* Copies object and set of parts. The copy has a copy of 
        the noteReceivers and info notes. */
 {
-//    id el1,el2;
-    int i;
+    unsigned int i;
     unsigned n = [noteReceivers count];
     MKScorefileWriter *newObj =  [super copyWithZone:zone];
     newObj->_highTag = -1;
@@ -253,12 +255,9 @@ Modification history:
     newObj->_p = NULL;
     newObj->info = [info copy];
 
-    for (i=0;i<n;i++)
-        [[newObj->noteReceivers objectAtIndex:i] _setData:[PARTINFO([noteReceivers objectAtIndex:i]) copy]];
+    for (i = 0; i < n; i++)
+        [[newObj->noteReceivers objectAtIndex: i] _setData: [PARTINFO([noteReceivers objectAtIndex: i]) copy]];
     
-/*    for (el1 = NX_ADDRESS(noteReceivers), el2 = NX_ADDRESS(newObj->noteReceivers), n = [noteReceivers count];
-         n--;);
-    [*el2++ _setData:[PARTINFO(*el1++) copy]]; *//* Copy part info notes. */ 
     return newObj;
 }
 

@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.15  2002/09/19 18:16:27  leighsmith
   Replaced [super factoryMethod] with [[self superclass] factoryMethod]
 
@@ -873,10 +876,7 @@ id MKSetUGAddressArgToInt(MKUnitGenerator *self,unsigned argNum,DSPAddress addr)
     return MKSetUGAddressArgToInt(self,argNum,address);
 }
 
-static id specialAddressVal(self,argNum,orchSel)
-    MKUnitGenerator *self;
-    int argNum;
-    SEL orchSel;
+static id specialAddressVal(MKUnitGenerator *self, unsigned int argNum, SEL orchSel)
 {
 #   define INTARG(_x) ((id)_x)
     int ec;
@@ -1137,7 +1137,7 @@ extern int _MKOrchestraGetNoops(void);
     MKUnitGenerator **listP = (AVAIL(self,index));
     register MKUnitGenerator *tmp = *listP;
     MKUnitGenerator *rtnVal;
-    int r;
+    unsigned int r;
     if (!tmp) 
       return nil;
     r = PLOOP(anObj);
@@ -1165,7 +1165,7 @@ extern int _MKOrchestraGetNoops(void);
     MKUnitGenerator **listP = (AVAIL(self,index));
     register MKUnitGenerator *tmp = *listP;
     MKUnitGenerator *rtnVal;
-    register int r;
+    register unsigned int r;
     if (!tmp) 
       return nil;
     r = PLOOP(anObj);
@@ -1194,7 +1194,7 @@ extern int _MKOrchestraGetNoops(void);
     MKUnitGenerator **listP = (AVAIL(self,index));
     register MKUnitGenerator *tmp = *listP;
     MKUnitGenerator *rtnVal;
-    register int r2,r1;
+    register unsigned int r2, r1;
     if (!tmp) 
       return nil;
     r1 = PLOOP(anObj);
@@ -1300,7 +1300,7 @@ extern int _MKOrchestraGetNoops(void);
        list is sorted by reloc. */
 {
     MKUnitGenerator **listP = (IAVAIL(_orchIndex));
-    int myAddr = relocation.pLoop;
+    unsigned int myAddr = relocation.pLoop;
     register MKUnitGenerator *tmp = *listP;
     isAllocated = NO;
     if (!tmp) 

@@ -10,9 +10,9 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2000, The MusicKit Project.
+  Portions Copyright (c) 1999-2003, The MusicKit Project.
 
-  Modification history in CVS at musickit.sourceforge.net
+  Modification history in CVS at musickit.org
  */
 
 @class MKNote;
@@ -193,7 +193,7 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
  /*! @var info A MKNote used to store an arbitrary collection of info associated with the MKPart. */
     MKNote *info;      
 /*! @var noteCount Number of MKNotes in the MKPart. */
-    int noteCount;          
+    unsigned int noteCount;          
 /*! @var isSorted YES if the receiver is sorted. */
     BOOL isSorted;          
 
@@ -229,17 +229,6 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               See also: - <b>sort</b>
 */
 - (BOOL)isSorted;
-
-/*!
-  @method notesNoCopy
-  @result Returns an id.
-  @discussion Returns the NSMutableArray object that contains the MKPart's
-              MKNotes.  The NSMutableArray isn't guaranteed to be
-              sorted.
-              
-              See also: - <b>notes</b>, - <b>noteCount</b>
-*/
-- notesNoCopy;
 
 /*!
   @method combineNotes
@@ -457,7 +446,7 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               
               See also: - <b>notes</b>, - <b>isEmpty</b>
 */
--(unsigned) noteCount;
+- (unsigned) noteCount;
 
 /*!
   @method containsNote:
@@ -596,14 +585,25 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
 /*!
   @method notes
   @result Returns an NSMutableArray.
-  @discussion Creates and returns a NSMutableArray of the MKPart's MKNotes.  The
-              MKPart is sorted before the NSMutableArray is created.  The sender
-              is responsible for freeing the NSMutableArray.  The MKNotes
-              themselves are not copied.
+  @discussion Creates and returns a NSMutableArray of the MKPart's MKNotes in time order.
+              The MKPart is sorted before the NSMutableArray is created. The MKNotes
+              themselves are copied (for the moment, but ideally not).
+              The NSArray is autoreleased and should be retained if required.
               
               See also: - <b>notesNoCopy</b>, - <b>noteCount</b>
 */
 - (NSMutableArray *) notes;
+
+/*!
+  @method notesNoCopy
+  @result Returns an id.
+  @discussion Returns the NSMutableArray object that contains the MKPart's
+              MKNotes. The NSMutableArray isn't guaranteed to be sorted.
+              The MKNotes are not copied.
+
+     See also: - <b>notes</b>, - <b>noteCount</b>
+ */
+- (NSMutableArray *) notesNoCopy;
 
 /*!
   @method score

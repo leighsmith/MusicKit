@@ -1,45 +1,17 @@
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
   Defined In: The MusicKit
 
   Description:
+    MKWaveTable is an abstract class inherited by classes which produce or store
+    an array of data to be used as a lookup table in a MKUnitGenerator.
+
   Original Author: David Jaffe
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-*/
-/*
-Modification history:
-
-  $Log$
-  Revision 1.7  2002/04/15 14:25:03  sbrandon
-  - added -hash and -isEqual: methods to aid in situations where object is
-    used as a key in dictionaries or maptables.
-
-  Revision 1.6  2002/04/03 03:59:41  skotmcdonald
-  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
-  Revision 1.5  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.4  2001/08/07 16:10:32  leighsmith
-  Corrected class name during en/decode to match latest MK prefixed name
-
-  Revision 1.3  2001/07/02 16:52:20  sbrandon
-  - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
-    compliant)
-
-  Revision 1.2  1999/07/29 01:16:44  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-  04/21/90/daj - Small mods to get rid of -W compiler warnings.
-  08/27/90/daj - Changed to zone API.
-  06/29/98/sb - changed length to unsigned int. Hope compares still work.
+  Portions Copyright (c) 1999-, The MusicKit Project.
 */
 
 #import "_musickit.h"
@@ -48,36 +20,7 @@ Modification history:
 #import "_error.h"
 #import "MKWaveTable.h"
 
-@implementation MKWaveTable : NSObject
-/* MKWaveTable is an abstract class inherited by classes which produce or store 
-   an array of data to be used as a lookup table in a MKUnitGenerator.
-   Subclasses provided by the Music Kit are
-
-   * * MKPartials computes a MKWaveTable given an arrays of harmonic amplitudes, 
-   frequency ratios, and phases.
-
-   * * MKSamples stores a MKWaveTable of existing samples read in from a Sound 
-   object or soundfile.
-
-   The MKWaveTable class caches multiple formats for the data. This is
-   usefuly because it is expensive to recompute the data.
-   Access to the data is through one of the "data" methods (-dataDSP, 
-   -dataDouble, etc.).  The method
-   used depends on the data type needed (type DSPDatum for the DSP
-   or type double), the scaling needed, and the length of the array needed.
-   The caller should not free nor alter the array of data.
-
-   If necessary, the subclass is called upon to recompute the data.
-   The computation of the data is handled by the subclass method 
-   fillTableLength:scale:.
-*/
-{
-    unsigned int length;	         /* Non-0 if a data table exists, 0 otherwise */
-    double scaling;      /* Scaling or 0.0 for normalization. */
-    DSPDatum *dataDSP;   /* Computed DSPDatum data */
-    double *dataDouble;  /* Computed double data */
-    void *_reservedWaveTable1;
-}
+@implementation MKWaveTable
 
 +  new
   /* This is how you make up an empty seg envelope */
@@ -95,8 +38,7 @@ Modification history:
 {
     if (self != [MKWaveTable class])
       return;
-    [MKWaveTable setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
-    return;
+    [MKWaveTable setVersion: VERSION2];//sb: suggested by Stone conversion guide (replaced self)
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -231,13 +173,13 @@ Modification history:
     return scaling;
 }
 
-- (DSPDatum *)dataDSPLength:(int)aLength scale:(double)aScaling
+- (DSPDatum *) dataDSPLength:(unsigned int) aLength scale: (double) aScaling
 /* Returns the MKWaveTable as an array of DSPDatums, recomputing 
    the data if necessary at the requested scaling and length. If the 
    subclass has no data, returns NULL. The data should neither be modified
    nor freed by the sender. */
 {
-   if (((unsigned int)length != (int)aLength) || (scaling != aScaling) || (length == 0))
+   if ((length != aLength) || (scaling != aScaling) || (length == 0))
      if (![self fillTableLength:aLength scale:aScaling])
        return NULL;
    if (!dataDSP && dataDouble) {
@@ -248,13 +190,13 @@ Modification history:
    return dataDSP;
 }
 
-- (double *)dataDoubleLength:(int)aLength scale:(double)aScaling
+- (double *) dataDoubleLength: (unsigned int) aLength scale: (double) aScaling
 /* Returns the MKWaveTable as an array of doubles, recomputing 
    the data if necessary at the requested scaling and length. If the 
    subclass has no data, returns NULL. The data should neither be modified
    nor freed by the sender. */
 {  
-   if (((unsigned int)length != (int)aLength) || (scaling != aScaling) || (length == 0))
+   if ((length != aLength) || (scaling != aScaling) || (length == 0))
      if (![self fillTableLength:aLength scale:aScaling])
        return NULL;
    if (!dataDouble && dataDSP) {

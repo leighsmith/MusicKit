@@ -12,18 +12,6 @@
   Portions Copyright (c) 1994 Stanford University  
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.4  2001/09/08 21:53:16  leighsmith
-  Prefixed MK for UnitGenerators and SynthPatches
-
-  Revision 1.3  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.2  1999/07/29 01:25:52  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKWaveTable
   @discussion
@@ -61,6 +49,27 @@ setting length to 0.
     
 The computation of the data is handled by the subclass method
 fillTableLength:scale:.
+
+Subclasses provided by the MusicKit are
+
+<UL>
+ <LI>MKPartials computes a MKWaveTable given an arrays of harmonic amplitudes,
+ frequency ratios, and phases.
+
+ <LI>MKSamples stores a MKWaveTable of existing samples read in from a Sound
+ object or soundfile.
+</UL>
+ 
+The MKWaveTable class caches multiple formats for the data. This is
+useful because it is expensive to recompute the data.
+Access to the data is through one of the "data" methods (-dataDSP, -dataDouble, etc.).
+The method used depends on the data type needed (type DSPDatum for the DSP
+or type double), the scaling needed, and the length of the array needed.
+The caller should not free nor alter the array of data.
+
+If necessary, the subclass is called upon to recompute the data.
+The computation of the data is handled by the subclass method
+fillTableLength:scale:.
  
 */
 #ifndef __MK_WaveTable_H___
@@ -72,11 +81,10 @@ fillTableLength:scale:.
 
 @interface MKWaveTable : NSObject
 {
-    unsigned int length;             /* Non-0 if a data table exists, 0 otherwise */
+    unsigned int length;    /* Non-0 if a data table exists, 0 otherwise */
     double scaling;         /* 0.0 = normalization scaling */
     DSPDatum *dataDSP;      /* Loaded or computed 24-bit signed data */
     double *dataDouble;     /* Loaded or computed floating-point data */
-    void *_reservedWaveTable1;
 }
 
 + new; 
@@ -140,8 +148,11 @@ fillTableLength:scale:.
   @method dataDSPLength:scale:
   @param  aLength is an int.
   @param  aScaling is a double.
-  @result Returns a DSPDatum *.
-  @discussion Returns a pointer to the receiver's <b>dataDSP</b> array,
+  @result Returns a DSPDatum *. Returns the wavetable as an array of DSPDatums, recomputing
+          the data if necessary at the requested scaling and length. If the
+          subclass has no data, returns NULL. The data should neither be modified
+          nor freed by the sender.
+ @discussion Returns a pointer to the receiver's <b>dataDSP</b> array,
               recomputing the data if necessary (as defined in the class
               description).  The array is sized and scaled according to the
               arguments and the <b>length</b> and <b>scaling</b> instance
@@ -149,19 +160,17 @@ fillTableLength:scale:.
               array, NULL is returned.  You should neither modify nor free the
               data returned by this method.
 */
-- (DSPDatum *) dataDSPLength:(int)aLength scale:(double)aScaling;
- /* Returns the wavetable as an array of DSPDatums, recomputing 
-    the data if necessary at the requested scaling and length. If the 
-    subclass has no data, returns NULL. The data should neither be modified
-    nor freed by the sender. 
-    */
+- (DSPDatum *) dataDSPLength: (unsigned int) aLength scale: (double) aScaling;
  
 
 /*!
   @method dataDoubleLength:scale:
   @param  aLength is an int.
   @param  aScaling is a double.
-  @result Returns a double *.
+  @result Returns a double *. Returns the MKWaveTable as an array of doubles, recomputing
+          the data if necessary at the requested scaling and length. If the
+          subclass has no data, returns NULL. The data should neither be modified
+          nor freed by the sender.
   @discussion Returns a pointer to the receiver's <b>dataDouble</b> array,
               recomputing the data if necessary (as defined in the class
               description).  The array is sized and scaled according to the
@@ -170,12 +179,7 @@ fillTableLength:scale:.
               NULL is returned.  You should neither modify nor free the data
               returned by this method.
 */
-- (double *)   dataDoubleLength:(int)aLength scale:(double)aScaling ;
- /* Returns the MKWaveTable as an array of doubles, recomputing 
-    the data if necessary at the requested scaling and length. If the 
-    subclass has no data, returns NULL. The data should neither be modified
-    nor freed by the sender. 
-    */
+- (double *) dataDoubleLength: (unsigned int) aLength scale: (double) aScaling;
  
  /* The following methods are minor variations of 
     dataDSPScaling:length: and are implemented in terms of it. 

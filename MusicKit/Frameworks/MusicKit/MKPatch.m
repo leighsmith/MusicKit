@@ -14,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.5  2002/01/24 16:55:57  sbrandon
   fixed nasty release bug in findFilenameForClassname
 
@@ -59,7 +62,7 @@ static NSString *findFilenameForClassname(NSString *className)
 
     if (![filename isAbsolutePath]) {
         NSArray *libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
-        int i;
+        unsigned int i;
         
         for(i = 0; i < [libraryDirs count]; i++) {
             NSString *absolutePath = [[[libraryDirs objectAtIndex: i] 

@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.24  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.23  2002/04/16 15:21:40  sbrandon
   new envelopes read from scores are now autoreleased, since the ref counting
   system works properly for note parameters (they were being leaked before)
@@ -1476,10 +1479,10 @@ eval(_MKParameterUnion *val1,_MKParameterUnion *val2,short type1,short type2,
               v2.ival = v2.rval;
           else if (type2 != INT(MK_int))
               error(MK_sfNumberErr);
-          if (v2.ival >= [v1.sval length])//sb: was strlen(v1.sval)
+          if (v2.ival >= (signed) [v1.sval length])//sb: was strlen(v1.sval)
               rtnVal->sval = @"";//sb: was _MKMakeStr("");
           else {
-              rtnVal->sval = [[v1.sval substringWithRange:NSMakeRange(v2.ival,1)] retain];
+              rtnVal->sval = [[v1.sval substringWithRange: NSMakeRange(v2.ival,1)] retain];
 /*
               char *s;
               _MK_MALLOC(s,char,2);
@@ -1970,7 +1973,7 @@ static NSString *_warning(BOOL potentiallyFatal,MKErrno errCode,va_list ap)
         break;
     if (p < scoreStreamBuf_Base) /* sb: was scoreStream->buf_base */
       p = scoreStreamBuf_Base; /* sb: was scoreStream->buf_base */
-#   define LOOKAHEAD 10 
+#   define LOOKAHEAD 10U 
 #   define ABORTSIZE 34 /* In case this error puts us over threshold. */
 #   define EXTRA (8 + ABORTSIZE) /* 3 '/n's, one NULL and 4 for good luck */
     if (((scoreStreamBuf_Base + scoreStreamPointer - p) * 2 + msgLen + LOOKAHEAD + EXTRA) >= _MK_ERRLEN) 

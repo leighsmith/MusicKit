@@ -56,31 +56,6 @@
   Portions Copyright (c) 1994 Stanford University
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
-  $Log$
-  Revision 1.8  2002/01/29 16:44:25  sbrandon
-  changed +argName and argName() to return NSStrings; also changed all
-  uses of _MKOrchTrace to use NSString args.
-
-  Revision 1.7  2001/09/07 18:28:28  leighsmith
-  Replaced HTML numeric entity with correct symbolic entity for double quotes, further MK prefixing
-
-  Revision 1.6  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.5  2001/07/02 16:49:58  sbrandon
-  - commented out cruft after #endif
-
-  Revision 1.4  2000/11/25 23:24:03  leigh
-  Enforced ivar privacy
-
-  Revision 1.3  1999/08/26 19:57:47  leigh
-  extra doco
-
-  Revision 1.2  1999/07/29 01:25:52  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKUnitGenerator
   @discussion

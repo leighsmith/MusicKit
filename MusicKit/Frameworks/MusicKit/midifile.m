@@ -22,6 +22,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.5  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -236,13 +239,13 @@ static int readShort(NSMutableData *midiStream, short *n,unsigned int *streamPos
     return ok;
 }
 
-static int readVariableQuantity(NSMutableData *midiStream, int *n,unsigned int *streamPos)
+static int readVariableQuantity(NSMutableData *midiStream, int *n, unsigned int *streamPos)
 {
-    int lastByte = [midiStream length] -1;
+    int lastByte = [midiStream length] - 1;
     const char *theData = [midiStream bytes];
     int m=0;
     unsigned char temp;
-    while ((*streamPos)++ < lastByte) {
+    while ((signed) (*streamPos)++ < lastByte) {
         temp = theData[*streamPos - 1];
         if (128 & temp)
           m = (m<<7) + (temp & 127);

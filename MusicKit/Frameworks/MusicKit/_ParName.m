@@ -52,6 +52,9 @@
 Modification history:
 
  $Log$
+ Revision 1.17  2003/08/04 21:14:33  leighsmith
+ Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
  Revision 1.16  2002/04/16 15:15:26  sbrandon
  - brand new _MKParameters are calloced instead of malloced so any object
    pointers are sure to be nil
@@ -178,15 +181,14 @@ static _ParName **parIds = NULL; /* Par name array. */
 /* Define parameter names */
 #import "parNames.m"
 
-static void intParNames(fromPar,toPar)
-int fromPar,toPar;
+static void initParNames(unsigned int fromPar, unsigned int toPar)
 /* Initialize all NeXT parameters */
 {
   register unsigned i;
   register _ParName **parId = &(parIds[fromPar]);
   const NSString * *parNamePtr = (const NSString **) &(parNames[fromPar]);
-  for (i=fromPar; i<toPar; i++)
-    *parId++ = newParName((NSString *)*parNamePtr++,i);
+  for (i = fromPar; i < toPar; i++)
+    *parId++ = newParName((NSString *) *parNamePtr++, i);
 }
 
 static BOOL keywordsPrintfunc(_MKParameter *parameter, NSMutableData *aStream, _MKScoreOutStruct *p)
@@ -260,16 +262,17 @@ object by reference. */
 static void initSyns()
 /* Install synonyms. */
 {
-  register int i;
-  register const NSString * *parNamePtr = (const NSString **) &(parSynNames[0]);
-  register int *parSynPtr = (int *) &(parSyns[0]);
-  _ParName *oldObj,*newObj;
-  for (i = 0; i < SYNS; i++) {
-    oldObj = _MKParNameObj(*parSynPtr);
-    newObj = newParName((NSString *)*parNamePtr++,*parSynPtr++);
-    newObj->printfunc = oldObj->printfunc;
-    /* Same printfunc */
-  }
+    register unsigned int i;
+    register const NSString * *parNamePtr = (const NSString **) &(parSynNames[0]);
+    register int *parSynPtr = (int *) &(parSyns[0]);
+    _ParName *oldObj, *newObj;
+    
+    for (i = 0; i < SYNS; i++) {
+	oldObj = _MKParNameObj(*parSynPtr);
+	newObj = newParName((NSString *) *parNamePtr++, *parSynPtr++);
+	newObj->printfunc = oldObj->printfunc;
+	/* Same printfunc */
+    }
 }
 
 
@@ -279,9 +282,9 @@ BOOL
 _MKParInit(void)
 /* Sent once from Note. Returns YES. Initializes the world */
 {
-  _MK_CALLOC(parIds,id,_MK_maxPrivPar);
-  intParNames(MK_noPar,MK_privatePars);
-  intParNames(MK_privatePars+1,_MK_maxPrivPar);
+  _MK_CALLOC(parIds, id, _MK_maxPrivPar);
+  initParNames(MK_noPar, MK_privatePars);
+  initParNames(MK_privatePars + 1, _MK_maxPrivPar);
   initSyns();
   parIds[INT(MK_keyNum)]->printfunc = _MKKeyNumPrintfunc;
   parIds[INT(MK_freq)]->printfunc = _MKFreqPrintfunc;

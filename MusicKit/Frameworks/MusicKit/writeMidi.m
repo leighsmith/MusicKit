@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.16  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.15  2002/04/08 17:36:23  sbrandon
   changed _rescheduleMsgRequest: reference to _rescheduleMsgRequestWithObjectArgs:
 
@@ -318,7 +321,7 @@ void  _MKWriteMidiOut(MKNote *aNote, double timeTag, unsigned chan, /* 1 based *
 {
     int             midiPar = 0;
     int _ival;
-    int keyNum = MAXINT;
+    unsigned int keyNum = MAXINT;
     unsigned        pars;
     MKNoteType type;
 

@@ -7,87 +7,10 @@
  Copyright (c) 1988-1992, NeXT Computer, Inc.
  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
  Portions Copyright (c) 1994 Stanford University
- Portions Copyright (c) 1999-2000, The MusicKit Project.
+ Portions Copyright (c) 1999-2003, The MusicKit Project.
  */
 /*
-Modification history:
-
- Now in CVS - musickit.sourceforge.net
-
- $Log$
- Revision 1.26  2002/04/03 03:59:41  skotmcdonald
- Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
-
- Revision 1.25  2002/03/27 20:07:11  skotmcdonald
- Added method atOrBeforeTime:, symmetrical to preexisting atOrAfterTime: note accessor
-
- Revision 1.24  2002/03/14 00:08:55  leighsmith
- Removed warning on redefining OBJECTATINDEX macro by using single version
-
- Revision 1.23  2002/03/12 22:59:03  sbrandon
- Added -hash and -isEqual methods so that MKPart objects can be used
- successfully as keys in NSMutableDictionaries. Previously this failed and
- this caused various bugs including one in saving/loading binary scorefiles.
-
- Revision 1.22  2002/03/06 09:48:58  skotmcdonald
- Added not-nil checks around ivar releases in dealloc
-
- Revision 1.21  2002/01/24 14:49:43  sbrandon
- fixed typo in addNotes:timeShift:, and removed unused variable in
- -combineNotes
-
- Revision 1.20  2002/01/24 13:31:03  sbrandon
- +new and +part create instances of theSubclass, if set, instead of MKPart
- +part now returns an autoreleased object
- compact(): fixed bug where compacted notelist would autorelease; also
-     tightened up noteCount handling; cached IMP for objectAtIndex
- -combineNotes: removed old cruft; now operate on "notes" array directly
-     instead of on deep copy; cached IMP for objectAtIndex; don't bother
-     to check for nils in NSArrays (they cannot exist); went back to use
-     of placeholders in note lists during element deletion (then compact
-     afterwards) as it's much more efficient
- -splitNotes: cached IMP for objectAtIndex
- -initialize: removed old crufty method
- (fixed a number of comments to reflect current situation)
- -dealloc: now log a comment if dealloc method is called while
-     _activePerformanceObjs exists (should never happen?). We go ahead
-     and do the dealloc anyway.
- unsetPartLinks(): fixed crasher (going off end of NSArray); cached IMP
-     for objectAtIndex
- -releaseSelfOnly: marked as deprecated
- sortIfNeeded(): removed cruft
- findNote(): removed totally rubbish function. What was I thinking of when
-     I did the original OpenStep conversion? :-(
- findNoteIndex(): fixed comments
- -addNote: retain and release notes internally while swapping between parts
-     to prevent possible deallocation during processing.
- -addNoteCopy: now autoreleases the note returned (was leaking before)
- removeNote(): removed pointless use of findNote()
- -removeNotes: cached IMP for objectAtIndex
- -addNoteCopies: released leaking copies of notes during processing
- -addNotes: removed old cruft; added IMP caching; fixed bug where parts
-     would not be compacted after having notes removed from them
- -shiftTime: only take lightweight copy of notes instead of deep copy
- -scaleTime: only take lightweight copy of notes instead of deep copy;
-     cached IMP for objectAtIndex; remembered to release copied array
-     of notes
- -firstTimeTag:lastTimeTag: remembered to always return autoreleased objects
- -hasSoundingNotes: cached IMP for objectAtIndex; only make 1 -noteType
-     call instead of 2
- -atOrAfterTime:nth: simplified logic (what was I thinking???)
- -atTime:nth: don't bother to retain/autorelease the return value a second
-     time
- -next: removed crufty comments
- -notesNoCopy: fixed comment
- -notes: now implement in terms of unambiguous _MKDeepMutableArrayCopy()
-     function instead of -mutableCopy, which was not the same on GNUstep.
-     Eventually I think -notes should return a shallow copy, but I am
-     leaving it as Leigh last left it for now. Returns an autoreleased
-     deep copy.
- -infoNote: now returns autoreleased object
- -description: now returns autoreleased NSString
- -_setNoteSender: simplified
-
+Modification history now in CVS at musickit.org
 
  pre-CVS history:
  01/24/90/daj - Fixed bug in removeNote:.
@@ -405,6 +328,7 @@ static void removeNote(MKPart *self,id aNote);
     SEL oaiSel;
     IMP objectAtIndex;
     id othernotes;
+    
     if (!anObject)                           return NO;
     if (self == anObject)                    return YES;
     if ([self class] != [anObject class])    return NO;
@@ -533,23 +457,24 @@ static int findAux(MKPart *self,double timeTag)
 
 static int findAtOrAfterTime(MKPart *self,double firstTimeTag) /* sb did the change from id to int return */
 {
-  int el = findAux(self,firstTimeTag);
-  if (el == -1)
+    int el = findAux(self, firstTimeTag);
+
+    if (el == -1)
+	return -1;
+    if ([[self->notes objectAtIndex: el] timeTag] >= firstTimeTag)
+	return el;
+    if ((unsigned) ++el < self->noteCount)
+	return el;
     return -1;
-  if ([[self->notes objectAtIndex:el] timeTag] >= firstTimeTag)
-    return el;
-  if (++el < self->noteCount)
-    return el;
-  return -1;
 }
 
 static int findAtOrBeforeTime(MKPart *self,double lastTimeTag)
 {
-  int el = findAux(self,lastTimeTag);
+  int el = findAux(self, lastTimeTag);
   if (el == -1)
     return -1;
 
-  if (++el < self->noteCount)
+  if ((unsigned) ++el < self->noteCount)
     if ([[self->notes objectAtIndex:el] timeTag] <= lastTimeTag)
       return el;
   el--;
@@ -861,12 +786,12 @@ static void removeNote(MKPart *self, MKNote *aNote)
   return anArray;
 }
 
--(unsigned)noteCount
+- (unsigned) noteCount
  /* TYPE: Querying
   * Return the number of MKNotes in the receiver.
   */
 {
-  return noteCount;
+    return noteCount;
 }
 
 -(BOOL)containsNote:aNote
@@ -968,10 +893,11 @@ static void removeNote(MKPart *self, MKNote *aNote)
   * Doesn't copy the MKNote.
   */
 {
-  int arrEnd;
+  unsigned int arrEnd;
   int el;
+  
   sortIfNeeded(self);
-  el = findAtOrAfterTime(self,timeTag);
+  el = findAtOrAfterTime(self, timeTag);
   if (el == -1)
     return nil;
 
@@ -979,7 +905,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
   if (el + n >= arrEnd) {
     return nil;
   }
-  return [[[notes objectAtIndex:el+n] retain] autorelease];
+  return [[[notes objectAtIndex: el + n] retain] autorelease];
 }
 
 -atTime:(double)timeTag nth:(unsigned) n
@@ -1003,17 +929,18 @@ static void removeNote(MKPart *self, MKNote *aNote)
   * if no such MKNote.
   */
 {
-  int el;
-  if (!aNote)
-    return nil;
-  sortIfNeeded(self);
-  el = findNoteIndex(self,aNote);
-  if (el == -1)
-    return nil;
+    int el;
+    
+    if (!aNote)
+	return nil;
+    sortIfNeeded(self);
+    el = findNoteIndex(self, aNote);
+    if (el == -1)
+	return nil;
 
-  if (++el == noteCount)
-    return nil;
-  return [[[self->notes objectAtIndex:el] retain] autorelease];
+    if ((unsigned) ++el == noteCount)
+	return nil;
+    return [[[self->notes objectAtIndex: el] retain] autorelease];
 }
 
 /* Querying --------------------------------------------------- */
@@ -1036,29 +963,19 @@ static void removeNote(MKPart *self, MKNote *aNote)
   return [self copyWithZone:[self zone]];
 }
 
--notesNoCopy
-  /* TYPE: Accessing MKNotes
-   * Returns the actual NSMutableArray of MKNotes in the receiver.
-   * The MKNotes are not copied.
-   * The NSMutableArray is not copied and is not guaranteed to be sorted.
-   */
+- (NSMutableArray *) notesNoCopy
 {
-  return [[notes retain] autorelease];
+    return [[notes retain] autorelease];
 }
 
 - (NSMutableArray *) notes
-  /* TYPE: Accessing MKNotes
-  * Returns a Array of the MKNotes in the receiver, in time order.
-  * The MKNotes *are* copied. (for the moment, but ideally not)
-  * The list is autoreleased and should be retained if required.
-  */
 {
-  sortIfNeeded(self);
-  //    return _MKLightweightArrayCopy(notes); // LMS this should be (I think) the final version.
-  // Joerg reports [notes mutableCopy] is needed to produce a mutable deep
-  // copy, but this does not appear to be the case on GNUStep. Thus the MK
-  // defines its own explicit deep array copy mechanism.
-  return [_MKDeepMutableArrayCopy(notes) autorelease]; 
+    sortIfNeeded(self);
+    //    return _MKLightweightArrayCopy(notes);
+    // Joerg reports [notes mutableCopy] is needed to produce a mutable deep
+    // copy, but this does not appear to be the case on GNUStep. Thus the MK
+    // defines its own explicit deep array copy mechanism.
+    return [_MKDeepMutableArrayCopy(notes) autorelease];
 }
 
 - (MKScore *) score
@@ -1153,30 +1070,31 @@ static void removeNote(MKPart *self, MKNote *aNote)
 @implementation MKPart(Private)
 
 -(void) _mapTags: (NSMutableDictionary *) hashTable
-  /* Must be method to avoid loading MKScore. hashTable is a NSMutableDictionary object
-  that maps ints to ints. */
+    /* Must be method to avoid loading MKScore. hashTable is a NSMutableDictionary object
+    that maps ints to ints. */
 {
-  int oldTag,nc;
-  MKNote *el;
-  NSNumber *newTagNum;
-  NSNumber *oldTagNum;
-  unsigned noteIndex;
+    int oldTag;
+    unsigned nc;
+    MKNote *el;
+    NSNumber *newTagNum;
+    NSNumber *oldTagNum;
+    unsigned noteIndex;
 
-  sortIfNeeded(self);
-  nc = [notes count];
-  for (noteIndex = 0; noteIndex < nc; noteIndex++) {
-    el = [notes objectAtIndex: noteIndex];
-    oldTag = [el noteTag];
-    if (oldTag != MAXINT) { /* Ignore unset tags */
-      oldTagNum = [NSNumber numberWithInt: oldTag];
-      newTagNum = [hashTable objectForKey: oldTagNum];
-      if (!newTagNum) {
-        newTagNum = [NSNumber numberWithInt: MKNoteTag()];
-        [hashTable setObject: newTagNum forKey: oldTagNum];
-      }
-      [el setNoteTag: [newTagNum intValue]];
+    sortIfNeeded(self);
+    nc = [notes count];
+    for (noteIndex = 0; noteIndex < nc; noteIndex++) {
+	el = [notes objectAtIndex: noteIndex];
+	oldTag = [el noteTag];
+	if (oldTag != MAXINT) { /* Ignore unset tags */
+	    oldTagNum = [NSNumber numberWithInt: oldTag];
+	    newTagNum = [hashTable objectForKey: oldTagNum];
+	    if (!newTagNum) {
+		newTagNum = [NSNumber numberWithInt: MKNoteTag()];
+		[hashTable setObject: newTagNum forKey: oldTagNum];
+	    }
+	    [el setNoteTag: [newTagNum intValue]];
+	}
     }
-  }
 }
 
 -(void)_setNoteSender: (MKNoteSender *) aNS

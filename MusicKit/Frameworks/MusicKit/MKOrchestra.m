@@ -35,6 +35,9 @@
 Modification history:
 
   $Log$
+  Revision 1.28  2003/08/04 21:14:33  leighsmith
+  Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
   Revision 1.27  2002/09/19 18:16:26  leighsmith
   Replaced [super factoryMethod] with [[self superclass] factoryMethod]
 
@@ -2374,7 +2377,7 @@ DSPFix48 *_MKCurSample(MKOrchestra *self)
   /* Returns name of the specified OrchMemSegment. */
 {
     return ((whichSegment < 0 || whichSegment >= (int)MK_numOrchMemSegments)) ?
-      @"invalid" : orchMemSegmentNames[whichSegment];
+    @"invalid" : (NSString *) (orchMemSegmentNames[whichSegment]);
 }
 
 /* Instance methods for UnitGenerator's resource allocation. ------------  */
@@ -3082,7 +3085,7 @@ static BOOL compactResourceStack(MKOrchestra *self)
        The actual moving of the DSP code and argument values is done
        by the MKUnitGenerator function _MKMoveUGCodeAndArgs(). */
     
-    int i;
+    unsigned int i;
     unsigned n = [self->unitGeneratorStack count];
     id el; 
 
@@ -3679,9 +3682,9 @@ static int resoAlloc(MKOrchestra *self,id factObj,MKOrchMemStruct *reloc)
     pLoopNeeds = reso->pLoop + noops;
     time = getUGComputeTime(self,
 			    ((self->isLoopOffChip) ? 
-                             self->_bottomOfExternalMemory[P_EMEM] : 
+                             (int) self->_bottomOfExternalMemory[P_EMEM] : 
 			     /* any old off-chip address */
-                             (pLoopNeeds + self->_piLoop)), /* figure it */
+			    (pLoopNeeds + self->_piLoop)), /* figure it */
                             classInfo);
     if ((reloc->xData = allocMem(self,MK_xData,reso->xData,NO)) == 
         NOMEMORY) 

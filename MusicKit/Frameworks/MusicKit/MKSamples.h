@@ -26,33 +26,6 @@
    Portions Copyright (c) 1994 Stanford University.
    Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
-/*
- Modification history:
-
-  $Log$
-  Revision 1.8  2001/09/08 21:53:16  leighsmith
-  Prefixed MK for UnitGenerators and SynthPatches
-
-  Revision 1.7  2001/09/07 18:36:34  leighsmith
-  adopted symbolic entity naming and corrected parameter types in doco
-
-  Revision 1.6  2001/09/06 21:27:48  leighsmith
-  Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
-
-  Revision 1.5  2000/05/09 03:12:18  leigh
-  Removed NSSound use and fully replaced with SndKit,\
-   if necessary, SndKit will just become a wrapper around NSSound
-
-  Revision 1.4  2000/04/20 21:33:12  leigh
-  Added extra methods to allow processing regions of samples
-
-  Revision 1.3  2000/03/11 01:22:19  leigh
-  Now using NSSound to replace Snd. This means removing functionality until NSSound is full-featured
-
-  Revision 1.2  1999/07/29 01:25:49  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
-
-*/
 /*!
   @class MKSamples
   @discussion
@@ -419,7 +392,7 @@ See also:  MKWaveTable, MKPartials
               subclass has no data, returns NULL. The data should neither be modified
               nor freed by the sender.
 */
-- (DSPDatum *) dataDSPAsExcitationTableLength:(int)aLength scale:(double)aScaling;
+- (DSPDatum *) dataDSPAsExcitationTableLength: (unsigned int) aLength scale: (double) aScaling;
  
 /*!
   @method dataDoubleAsExcitationTableLength:scale:
@@ -438,7 +411,7 @@ See also:  MKWaveTable, MKPartials
               subclass has no data, returns NULL. The data should neither be modified
               nor freed by the sender.
 */
-- (double *)dataDoubleAsExcitationTableLength:(int)aLength scale:(double)aScaling;
+- (double *) dataDoubleAsExcitationTableLength: (unsigned int) aLength scale: (double) aScaling;
  
  /* The following methods are minor variations of 
     dataDoubleAsExcitationTableScaling:length: and

@@ -20,6 +20,9 @@
  Modification history:
 
  $Log$
+ Revision 1.35  2003/08/04 21:14:33  leighsmith
+ Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
  Revision 1.34  2002/08/20 23:26:02  leighsmith
  Removed warning of undeclared method class in bundleExtensions, added setAlternativeScorefileExtensions: to allow alternative names for scorefiles
 
@@ -1655,7 +1658,7 @@ static BOOL isUnarchiving = NO;
 
 - (NSString *) description
 {
-  int i;
+  unsigned int i;
   NSMutableString *scoreDescription = [[NSMutableString alloc] initWithString: @"MKScore containing MKParts:\n"];
   NSMutableArray *partList = [self parts];
   MKPart *aPart;

@@ -26,6 +26,9 @@
  Modification history:
 
  $Log$
+ Revision 1.15  2003/08/04 21:14:33  leighsmith
+ Changed typing of several variables and parameters to avoid warnings of mixing comparisons between signed and unsigned values.
+
  Revision 1.14  2002/09/25 22:28:52  leighsmith
  Renamed mySin and myCos to MKSine, MKCosine and placed into better named file and split out prototypes to a header for inclusion in MKPartials
 
@@ -711,7 +714,7 @@ NSLocalizedStringFromTableInBundle(@"MKPartials object currently supports table 
   return [self fillTableLength:aLength scale:aScaling];
 }
 
-- fillTableLength:(int)aLength scale:(double)aScaling
+- fillTableLength:(unsigned int)aLength scale:(double)aScaling
   /* Computes the wavetable from the data provided by the
              setN: method.  Returns self, or nil if an error is found. If
   scaling is 0.0, the waveform is normalized. This method is sent
@@ -799,7 +802,7 @@ automatically if necessary by the various getData: methods
   return self;
 }
 
-- (DSPDatum *)dataDSPLength:(int)aLength scale:(double)aScaling
+- (DSPDatum *) dataDSPLength: (unsigned int) aLength scale: (double) aScaling
   /* Returns the MKWaveTable as an array of DSPDatums, recomputing
   the data if necessary at the requested scaling and length. If the
   subclass has no data, returns NULL. The data should neither be modified
@@ -817,7 +820,7 @@ automatically if necessary by the various getData: methods
   return dataDSP;
 }
 
-- (double *)dataDoubleLength:(int)aLength scale:(double)aScaling
+- (double *) dataDoubleLength: (unsigned int) aLength scale: (double) aScaling
   /* Returns the MKWaveTable as an array of doubles, recomputing
   the data if necessary at the requested scaling and length. If the
   subclass has no data, returns NULL. The data should neither be modified
