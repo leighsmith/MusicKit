@@ -89,9 +89,9 @@ int computeNotes(void)
 #   define NOTES_PER_ITERATION 8
 #   define DUR .3
 
-    for (i=0; i<100; i++) {
+    for (i = 0; i < 100; i++) {
 	freqBase = pow(2.0,ranNum() * 4) * c2; /* Range is c2 to c6 */
-	for (j=0; j<NOTES_PER_ITERATION; j++) {
+	for (j = 0; j < NOTES_PER_ITERATION; j++) {
 	    curTime += DUR;
 	    aNote = [[MKNote alloc] initWithTimeTag:curTime];
 	    [aNote setDur:NOTES_PER_ITERATION * DUR]; 
@@ -119,19 +119,19 @@ int computeNotes(void)
 	exit(1);
     }
 
-    /* Create a PartPerformer to perform the Part. */
+    /* Create a MKPartPerformer to perform the Part. */
     aPartPerformer = [[MKPartPerformer alloc] init];
-    [aPartPerformer setPart:aPart];
+    [aPartPerformer setPart: aPart];
     [aPartPerformer activate]; 
 
     /* Create a SynthInstrument to manage voice (SynthPatch) allocation,
        assign it 10 SynthPatches of the DBWave1vi class, and connect it
-       to the PartPerformer. */
+       to the MKPartPerformer. */
     aSynthInstrument = [[MKSynthInstrument alloc] init];
 // LMS    [aSynthInstrument setSynthPatchClass:[DBWave1vi class]];
     [aSynthInstrument setSynthPatchCount:10];
     /* Connect the MKPartPerformer to the MKSynthInstrument */
-    [[aPartPerformer noteSender] connect:[aSynthInstrument noteReceiver]];
+    [[aPartPerformer noteSender] connect: [aSynthInstrument noteReceiver]];
 
     /* Prepare Conductor */
     MKSetDeltaT(1.0);              /* Run at least one second ahead of DSP */
