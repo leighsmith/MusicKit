@@ -14,15 +14,15 @@ DISTCHECKEDOUTSRCLOC=/tmp/MKSRC
 MKCVSROOT=:ext:leighsmith@cvs.musickit.sourceforge.net:/cvsroot/musickit
 # Salt to taste:
 TAR=gnutar
-CHGLOGGEN=cvs2cl.pl
+CHGLOGGEN=cvs2cl
 TARLOC=/tmp
 
 if [ x_$1 = x_ ]; then
     echo "source shipping script for the ${DISTNAME} projects"
-    echo "Usage: $0 distribution version_number previous_version\n"
+    echo "Usage: $0 distribution version_number [previous_version]\n"
     echo "Where distribution is either MusicKit or SndKit,"
     echo "      version_number is of the form V.R.P and matches the CVS tag ${DISTNAME}_V-R-P"
-    echo "      previous_version is previous version released for generating differential change logs."
+    echo "      previous_version is previous version released for generating differential change logs. This is only needed if it can't be determined automatically."
     exit 1;
 else
     DISTNAME=$1
@@ -38,9 +38,6 @@ fi
 
 CVSTAG=${DISTNAME}_`echo $RELEASE | tr '.' '-'`
 
-# determine the date of the last tagged release.
-PREVCVSTAG=${DISTNAME}_`echo $PREVRELEASE | tr '.' '-'`
-
 # Checkout the source tree
 echo Checking out $CVSTAG to $DISTCHECKEDOUTSRCLOC
 mkdir -p $DISTCHECKEDOUTSRCLOC
@@ -48,34 +45,64 @@ cd $DISTCHECKEDOUTSRCLOC
 cvs -d $MKCVSROOT -Q checkout -r $CVSTAG $DISTNAME
 
 # unwrap the symbolic links, this will remove the symbolic links wrap file.
-unwrap_symlink $DISTNAME
+# extract out the symlink masquerades to the CWD.
+# 
+commitdir=$DISTNAME
+symlinks=$commitdir/cvs_symbolic_links.tar 
+# Because we update the tar file with find, we need an initial near empty tar
+# file.
+placeholder=$commitdir/cvs_symlink_placeholder
+
+if [ -f $symlinks ]; then
+    $TAR xf $symlinks
+    rm $placeholder
+    rm $symlinks
+fi
 
 # build a ChangeLog with spaces between filenames and comments, 
 # collected to half-day window, incorporating tags.
 cd $DISTCHECKEDOUTSRCLOC/$DISTNAME
-$CHGLOGGEN --no-wrap --separate-header --window 43200 --file Documentation/ChangeLog
+# The SndKit doesn't have a Documentation directory, so we create one
+# for now. Eventually we will unify the code trees.
+mkdir Documentation
+$CHGLOGGEN --no-wrap --separate-header --file Documentation/ChangeLog
 # copy it so it can be used for generating an announcement.
 cp Documentation/ChangeLog $TARLOC/${DISTNAME}_ChangeLog
 
-echo Logging changes after $PREVCVSTAG to $CVSTAG
+# Determine the previous tagged release from a representative file in
+# the repository.
+LASTFILETOCHANGE=Frameworks/$DISTNAME/$DISTNAME.pbproj/project.pbxproj
+PREVCVSTAG=`cvs log $LASTFILETOCHANGE | grep ${DISTNAME}_ | sed -n -e "/$CVSTAG/{;n;s/[ \t]*\([^ :]*\): .*/\1/p;}"`
+# echo $PREVCVSTAG
+
+# catch all if the automatic method fails.
+if [ ${PREVCVSTAG}_ = _ ]; then
+    PREVCVSTAG=${DISTNAME}_`echo $PREVRELEASE | tr '.' '-'`
+    echo Using user supplied tag $PREVRELEASE
+fi
+
+# Determine the date of the previous tagged release.
+PREVRELEASEDATE=`cvs -f log -N -r$PREVCVSTAG $LASTFILETOCHANGE | awk '/date:/ { print $2 }' | tr / -`
+
+echo Logging changes after $PREVCVSTAG to $CVSTAG, from $PREVRELEASEDATE to now. 
+
 # This is the means to generate what we've done since last release.
-# '-d\>2000-10-09'
-$CHGLOGGEN --no-wrap --separate-header --window 43200 --file $TARLOC/${DISTNAME}_ChangeLog_${RELEASE} --log-opts "-r${PREVCVSTAG}:${CVSTAG}"
+$CHGLOGGEN --no-wrap --separate-header --window 86400 --file $TARLOC/${DISTNAME}_ChangeLog_${RELEASE} --log-opts "-d\>$PREVRELEASEDATE"
 
 # create a readily readable PDF version of the MusicKit_README.sgml file
 if [ $DISTNAME = MusicKit ]; then
-    # packageDocumentation $TARLOC/${DISTNAME}_ChangeLog $DISTCHECKOUTSRCLOC/$DISTNAME/${DISTNAME}_README.pdf
-    # Unfortunately, the SGML tools don't work on MacOS X, so we suffice by copying them...
-    cp /tmp/${DISTNAME}_README.pdf $DISTCHECKEDOUTSRCLOC/$DISTNAME
+    packageDocumentation $TARLOC/${DISTNAME}_ChangeLog $DISTCHECKOUTSRCLOC/$DISTNAME/${DISTNAME}_README.pdf
+    # the SGML tools didn't work on MacOS X, so we copied them...
+    # cp /tmp/${DISTNAME}_README.pdf $DISTCHECKEDOUTSRCLOC/$DISTNAME
 fi
 
 # remove CVS directories (they will be different for each user if checking out direct from the repository).
 find $DISTCHECKEDOUTSRCLOC -name CVS -type d -exec rm -r {} \; -prune
 
-# tar up the remaining source
 cd $DISTCHECKEDOUTSRCLOC
 # rename the directory to the current version.
 mv $DISTNAME ${DISTNAME}-$RELEASE
+# tar up the remaining source
 PACKAGEFILE=$TARLOC/${PACKAGENAME}-${RELEASE}.s.tar.gz
 $TAR czf $PACKAGEFILE ${DISTNAME}-${RELEASE}
 
