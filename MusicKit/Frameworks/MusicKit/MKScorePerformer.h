@@ -29,11 +29,15 @@
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /*
 Modification history:
   $Log$
+  Revision 1.6  2000/10/01 06:55:01  leigh
+  Typed noteSenders.
+
   Revision 1.5  2000/04/25 02:08:40  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -229,12 +233,12 @@ Modification history:
   * The sender is responsible for freeing the List.
   */
    
-- noteSenders; 
+- (NSArray *) noteSenders; 
  /* 
-  * Creates and returns a List containing the MKNoteSender objects that
-  * belong ot the receiver's PartPerformers.  (A PartPerformer contains at
-  * most one MKNoteSender, created when the PartPerformer is initialized.)
-  * The sender is responsible for freeing the List.
+  * Creates and returns a NSArray containing the MKNoteSender objects that
+  * belong to the receiver's MKPartPerformers.  (A MKPartPerformer contains at
+  * most one MKNoteSender, created when the MKPartPerformer is initialized.)
+  * The array is autoreleased.
   */
 
 -(int) status;

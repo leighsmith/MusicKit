@@ -58,7 +58,6 @@
     A MKPerformer has a status, represented as one of the following
     MKPerformerStatus values:
    
-   
     * Status       Meaning
     * MK_inactive  A deactivated or not-yet-activated MKPerformer.
     * MK_active    An activated, unpaused MKPerformer.
@@ -73,10 +72,14 @@
 
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
-  Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2000 The MusicKit Project. 
 */
 /*
   $Log$
+  Revision 1.5  2000/10/01 06:54:32  leigh
+  Typed noteSenders.
+
   Revision 1.4  2000/04/25 02:09:53  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -123,10 +126,11 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
     MKMsgStruct *_pauseForMsgPtr;
 }
 
-- noteSenders; 
+- (NSArray *) noteSenders; 
  /* 
-  * Creates and returns a List containing the receiver's NoteSenders.
-  * It's the sender's responsibility to free the List.  */
+  * Creates and returns a NSArray containing the receiver's MKNoteSenders.
+  * The NSArray is autoreleased.
+  */
 
 -(BOOL ) isNoteSenderPresent:aNoteSender; 
  /* 
