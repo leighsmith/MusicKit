@@ -34,15 +34,18 @@
   NSString       *theFileName;
   SndAudioBuffer *cachedBuffer;
   NSRange         cachedBufferRange;
+  NSLock         *cacheLock;
+  SndSoundStruct *cacheStruct;
 }
 
 - init;
 - (void) dealloc;
 - (unsigned char*) data;
 - (int) dataSize;
-- (int)readSoundfile:(NSString *)filename startFrame: (int) startFrame frameCount: (int) frameCount;
+- (int) readSoundfile:(NSString *)filename startFrame: (int) startFrame frameCount: (int) frameCount;
 - (int) readSoundfile: (NSString*) filename;
 - (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) playRegion;
+- (NSString*) filename;
 
 @end
 
