@@ -14,6 +14,60 @@ Modification history:
 
  Now in CVS - musickit.sourceforge.net
 
+ $Log$
+ Revision 1.20  2002/01/24 13:31:03  sbrandon
+ +new and +part create instances of theSubclass, if set, instead of MKPart
+ +part now returns an autoreleased object
+ compact(): fixed bug where compacted notelist would autorelease; also
+     tightened up noteCount handling; cached IMP for objectAtIndex
+ -combineNotes: removed old cruft; now operate on "notes" array directly
+     instead of on deep copy; cached IMP for objectAtIndex; don't bother
+     to check for nils in NSArrays (they cannot exist); went back to use
+     of placeholders in note lists during element deletion (then compact
+     afterwards) as it's much more efficient
+ -splitNotes: cached IMP for objectAtIndex
+ -initialize: removed old crufty method
+ (fixed a number of comments to reflect current situation)
+ -dealloc: now log a comment if dealloc method is called while
+     _activePerformanceObjs exists (should never happen?). We go ahead
+     and do the dealloc anyway.
+ unsetPartLinks(): fixed crasher (going off end of NSArray); cached IMP
+     for objectAtIndex
+ -releaseSelfOnly: marked as deprecated
+ sortIfNeeded(): removed cruft
+ findNote(): removed totally rubbish function. What was I thinking of when
+     I did the original OpenStep conversion? :-(
+ findNoteIndex(): fixed comments
+ -addNote: retain and release notes internally while swapping between parts
+     to prevent possible deallocation during processing.
+ -addNoteCopy: now autoreleases the note returned (was leaking before)
+ removeNote(): removed pointless use of findNote()
+ -removeNotes: cached IMP for objectAtIndex
+ -addNoteCopies: released leaking copies of notes during processing
+ -addNotes: removed old cruft; added IMP caching; fixed bug where parts
+     would not be compacted after having notes removed from them
+ -shiftTime: only take lightweight copy of notes instead of deep copy
+ -scaleTime: only take lightweight copy of notes instead of deep copy;
+     cached IMP for objectAtIndex; remembered to release copied array
+     of notes
+ -firstTimeTag:lastTimeTag: remembered to always return autoreleased objects
+ -hasSoundingNotes: cached IMP for objectAtIndex; only make 1 -noteType
+     call instead of 2
+ -atOrAfterTime:nth: simplified logic (what was I thinking???)
+ -atTime:nth: don't bother to retain/autorelease the return value a second
+     time
+ -next: removed crufty comments
+ -notesNoCopy: fixed comment
+ -notes: now implement in terms of unambiguous _MKDeepMutableArrayCopy()
+     function instead of -mutableCopy, which was not the same on GNUstep.
+     Eventually I think -notes should return a shallow copy, but I am
+     leaving it as Leigh last left it for now. Returns an autoreleased
+     deep copy.
+ -infoNote: now returns autoreleased object
+ -description: now returns autoreleased NSString
+ -_setNoteSender: simplified
+
+
  pre-CVS history:
  01/24/90/daj - Fixed bug in removeNote:.
  03/19/90/daj - Added MKSetPartClass() and MKGetPartClass().
@@ -54,24 +108,22 @@ id MKGetPartClass(void)
 
 + (void)initialize
 {
-  if (self != [MKPart class])
+  if (self != [MKPart class]) {
     return;
-  [MKPart setVersion:VERSION2];//sb: suggested by Stone conversion guide
-    return;
+  }
+  [MKPart setVersion:VERSION2];
+  return;
 }
 
 +new
-  /* Create a new instance and sends [self init]. */
+  /* Override default to return instance of theSubclass, if nec. */
 {
-  self = [self allocWithZone:NSDefaultMallocZone()];
-  [self init];
-  return self;
+  return [[MKGetPartClass() alloc] init];
 }
 
 + part
 {
-  // SKoT: or should we alloc a theSubClass??? Hmmmm....
-  return [[[MKPart alloc] init] autorelease]; 
+  return [[[MKGetPartClass() alloc] init] autorelease]; 
 }
 
 
@@ -80,45 +132,31 @@ id MKGetPartClass(void)
 
 static id compact(MKPart *self)
 {
-  //    id *el,*endEl;
-  NSMutableArray *newList = [NSMutableArray arrayWithCapacity:self->noteCount];
-  IMP addObjectImp;
-#   define ADDNEW(x) (*addObjectImp)(newList, @selector(addObject:),x)
-  addObjectImp = [newList methodForSelector:@selector(addObject:)];
-  {
-    int noteIndex, nc = [self->notes count];
-    MKNote *aNote;
-    for (noteIndex = 0; noteIndex < nc; noteIndex++) {
-      aNote = [self->notes objectAtIndex: noteIndex];
-      if (_MKNoteIsPlaceHolder(aNote)) {
-        [aNote _setPartLink:nil order:0];
-        self->noteCount--;
-      }
-      else ADDNEW(aNote);
+  NSMutableArray *newList = [[NSMutableArray alloc] initWithCapacity:self->noteCount];
+  IMP addObjectImp = [newList methodForSelector:@selector(addObject:)];
+# define ADDNEW(x) (*addObjectImp)(newList, @selector(addObject:),x)
+  int noteIndex, nc = [self->notes count];
+  MKNote *aNote;
+  SEL oaiSel = @selector(objectAtIndex:);
+  IMP objectAtIndex = [self->notes methodForSelector: oaiSel];
+# define OBJECTATINDEX(x)  (*objectAtIndex)(self->notes, oaiSel, (x))
+  
+  for (noteIndex = 0; noteIndex < nc; noteIndex++) {
+    aNote = OBJECTATINDEX( noteIndex );
+    if (_MKNoteIsPlaceHolder(aNote)) {
+      [aNote _setPartLink:nil order:0];
     }
-    [self->notes release]; /*sb: I am concerned about this, as the new Array class will release
-      * all contents as it is released itself. FIXME SOON
-      */
-    self->notes = newList;
-    return self;
+    else {
+      ADDNEW(aNote);
+    }
   }
+  [self->notes release];
+  self->notes = newList;
+  self->noteCount = [newList count];
+  return self;
+# undef ADDNEW
+# undef OBJECTATINDEX
 }
-
-/*
- el = NX_ADDRESS(self->notes);
- endEl = el + self->noteCount;
- while (el < endEl) {
-   if (_MKNoteIsPlaceHolder(*el)) {
-	    [*el++ _setPartLink:nil order:0];
-     self->noteCount--;
-   }
-   else ADDNEW(*el++);
- }
- [self->notes release];
- self->notes = newList;
- return self;
-}
-*/
 
 static void removeNote(MKPart *self,id aNote);
 
@@ -137,39 +175,30 @@ static void removeNote(MKPart *self,id aNote);
   id aList,noteOn,aNote;
   int noteTag,listSize;
   register int i,j;
+  SEL oaiSel = @selector(objectAtIndex:);
+  IMP objectAtIndex = [notes methodForSelector: oaiSel];
+# define OBJECTATINDEX(x)  (*objectAtIndex)(notes, oaiSel, (x))
+
   if (!noteCount)
     return self;
-  aList = [self notes]; /* a copy of the list, but sharing note ids. */
-  listSize = noteCount;
+  listSize = [notes count];
 
-  //#   define REMOVEAT(x) *(NX_ADDRESS(aList) + x) = nil
-  //#   define AT(x) NX_ADDRESS(aList)[x]
-  //#   define AT(x)
   for (i = 0; i < listSize; i++) {			/* For each note... */
-    if ([(noteOn = [aList objectAtIndex: i]) noteType] == MK_noteOn) {
+    if ([(noteOn = OBJECTATINDEX(i)) noteType] == MK_noteOn) {
       noteTag = [noteOn noteTag];			/* We got a noteOn */
       if (noteTag == MAXINT)			/* Malformed MKPart. */
         continue;
       for (j = i + 1; (j < listSize); j++) {	/* Search forward */
-        if ((aNote = [aList objectAtIndex: j]) &&			/* Watch out for nils */
-          ([aNote noteTag] == noteTag)) {	/* A hit ? */
-          switch ([aNote noteType]) {		/* Ok. What is it? */
+        if ([(aNote=OBJECTATINDEX(j)) noteTag] == noteTag) {	/* A hit ? */
+          switch ([aNote noteType]) {           /* Ok. What is it? */
             case MK_noteOff:
-              /* following not really necessary, as we can release the note
-              * and reclaim space in the array automatically */
-              //removeNote(self,aNote);	/* Remove aNote from us */ /*sb: by tagging as _MKMakePlaceHolder */
+              removeNote(self,aNote);           /* Remove aNote from us by tagging as _MKMakePlaceHolder */
               [noteOn setDur:([aNote timeTag] - [noteOn timeTag])];
-              [noteOn _unionWith:aNote];	/* Ah... love. */
-              /* sb: instead of this style of removal, I will use the official one. */
-              [aList removeObjectAtIndex:j];	 /* closes up this list, but will not release note 'til... */
-              [self->notes removeObjectAtIndex:j]; /* this releases the note and closes up the official list */
-              listSize--;
-              self->noteCount--;
-              /* REMOVEAT(j); */		/* Remove from aList */
-              /* [aNote release];	*/	/* No break; here */ /*sb: releases the actual note, not a copy */
-            case MK_noteOn:			/* We don't search on     */
-            case MK_noteDur:		/*   if we find on or dur */
-              j = listSize;		/* Force abort. No break; */
+              [noteOn _unionWith:aNote];        /* Ah... love. */
+                                                /* No break; here */
+            case MK_noteOn:                     /* We don't search on     */
+            case MK_noteDur:                    /*   if we find on or dur */
+              j = listSize;                     /* Force abort. No break; */
             default:
               break;
           }                           /* End of switch */
@@ -178,11 +207,11 @@ static void removeNote(MKPart *self,id aNote);
     }                                       /* End of if noteOn */
   }
 
-  //    [aList release];/*sb: this is just my local copy of the list, not the real thing UNNECESSARY NOW */
-     /*sb: don't need to compact, as this method now self-compacting */
-  //    compact(self); /* drops all notes that are PlaceHolder and remakes list without them */
+
+  compact(self); /* drops all notes that are PlaceHolder and remakes list without them */
   return self;
 }
+# undef OBJECTATINDEX
 
 -splitNotes
   /* TYPE: Editing
@@ -203,12 +232,17 @@ static void removeNote(MKPart *self,id aNote);
   double timeTag;
   int noteTag;
   int originalNoteCount = noteCount;  // noteCount is updated by addNote:
+  SEL oaiSel = @selector(objectAtIndex:);
+  IMP objectAtIndex;
+# define OBJECTATINDEX(x)  (*objectAtIndex)(aList, oaiSel, (x))
+
   if (!noteCount)
     return self;
   aList = [self notes]; /* local copy of list (autoreleased) */
-
+  objectAtIndex = [aList methodForSelector: oaiSel];
+  
   for (noteIndex = 0; noteIndex < originalNoteCount; noteIndex++) {
-    MKNote *note = [aList objectAtIndex: noteIndex];
+    MKNote *note = OBJECTATINDEX(noteIndex);
     if ([note noteType] == MK_noteDur) {
       noteOff = [note _splitNoteDurNoCopy];  // Split all noteDurs.
       noteTag = [noteOff noteTag];
@@ -221,7 +255,7 @@ static void removeNote(MKPart *self,id aNote);
         // search for matching noteTag in the subsequent notes before the noteOff.
         // since addNote: adds noteoffs at the end of the array, we can just search to the original length.
         for (matchIndex = noteIndex + 1; (matchIndex < originalNoteCount) && !matchFound; matchIndex++) {
-          MKNote *candidateNote = [aList objectAtIndex: matchIndex];
+          MKNote *candidateNote = OBJECTATINDEX(matchIndex);
           if ([candidateNote timeTag] > timeTag)
             break;
           if ([candidateNote noteTag] == noteTag) {
@@ -248,6 +282,7 @@ static void removeNote(MKPart *self,id aNote);
   }
   return self;
 }
+#undef OBJECTATINDEX
 
 /* Reading and Writing files. ------------------------------------ */
 
@@ -266,7 +301,7 @@ static void removeNote(MKPart *self,id aNote);
 
 
 -addToScore:(id)newScore
-    /* TYPE: Modifying
+ /* TYPE: Modifying
   * Removes the receiver from its present MKScore, if any, and adds it
   * to newScore.
   */
@@ -286,17 +321,9 @@ static void removeNote(MKPart *self,id aNote);
 
 /* Creation. ------------------------------------------------------------ */
 
-#if 0
-- (void)initialize
-  /* For backwards compatibility */
-{
-
-}
-#endif
-
 -init
-  /* TYPE: Creating and freeing a MKPart
-* Initializes the receiver:
+ /* TYPE: Creating and freeing a MKPart
+  * Initializes the receiver:
   *
   * Sent by the superclass upon creation;
   * You never invoke this method directly.
@@ -315,15 +342,17 @@ static void removeNote(MKPart *self,id aNote);
 /* Freeing. ------------------------------------------------------------- */
 
 - (void)dealloc
-  /* TYPE: Creating and freeing a MKPart
+ /* TYPE: Creating and freeing a MKPart
   * Frees the receiver and its MKNotes, including the info note, if any.
   * Also removes the name, if any, from the name table.
-  * Illegal while the receiver is being performed. In this case, does not
-  * free the receiver and returns self. Otherwise returns nil.
+  * Illegal while the receiver is being performed (and should not
+  * happen in this case).
   */
 {
-  if (![self releaseNotes])
-    return;
+  if (![self releaseNotes]) {
+    NSLog(@"MusicKit MKPart object: deallocation attempt while _activePerformanceObjs (should not happen). Ignoring.\n");
+    //return;
+  }
   MKRemoveObjectName(self);
   [score removePart:self];  // moved over from releaseSelfOnly
   [notes release];
@@ -333,17 +362,19 @@ static void removeNote(MKPart *self,id aNote);
 
 static void unsetPartLinks(MKPart *aPart)
 {
-  //    MKNote **el;
-  unsigned n;
-  /*
-   for (n = [aPart->notes count], el = (MKNote **)NX_ADDRESS(aPart->notes);
-        n--;
-        )
-   [*el++ _setPartLink:nil order:0];
-   */
-  if (aPart->notes)
-    for (n=[aPart->notes count];n--;)
-      [[aPart->notes objectAtIndex:n] _setPartLink:nil order:0];
+  id notes = aPart->notes;
+  int i,count;
+# define OBJECTATINDEX(x)  (*objectAtIndex)(notes, oaiSel, (x))
+
+  if (notes) {
+    SEL oaiSel = @selector(objectAtIndex:);
+    IMP objectAtIndex = [notes methodForSelector: oaiSel];
+    count = [notes count];
+    for (i = 0 ; i < count ; i++) {
+      [OBJECTATINDEX(i) _setPartLink:nil order:0];
+    }
+  }
+# undef OBJECTATINDEX
 }
 
 -releaseNotes
@@ -366,6 +397,8 @@ static void unsetPartLinks(MKPart *aPart)
   return self;
 }
 
+// DEPRECATED - should remove (sbrandon, 01/2002)
+
 -releaseSelfOnly
   /* TYPE: Creating and freeing a MKPart
   * Frees the receiver but not their MKNotes.
@@ -384,10 +417,6 @@ static void unsetPartLinks(MKPart *aPart)
 static id sortIfNeeded(MKPart *self)
 {
   if (!self->isSorted) {
-
-    /*        qsort((void *)NX_ADDRESS(self->notes),(size_t)self->noteCount,
-    (size_t)sizeof(id),_MKNoteCompare);
-*/
     [self->notes sortUsingSelector:@selector(compare:)];
     self->isSorted = YES;
     return self;
@@ -407,37 +436,8 @@ static id sortIfNeeded(MKPart *self)
   return sortIfNeeded(self);
 }
 
-static id findNote(MKPart *self, MKNote *aNote)
-{
-  /*
-   return bsearch((void *)&aNote,(void *)NX_ADDRESS(self->notes),
-                  (size_t)self->noteCount,(size_t)sizeof(id),_MKNoteCompare);
-   */
-  /*sb: first try at this a bit long winded. Realised that _MKNoteCompare only returns 0 (equal) iff ids match.
-  * also changed function to return actual note, rather than address within list.
-  */
-  /*
-   NSEnumerator *enumerator = [self->notes objectEnumerator];
-   MKNote *anObject;
-
-   while ((anObject = [enumerator nextObject])) {
-     if (_MKNoteCompare(&anObject,&aNote) == NSOrderedSame) return anObject;
-   }
-   return nil;
-   */
-  int matchedNote;
-  if ((matchedNote = [self->notes indexOfObjectIdenticalTo:aNote]) != NSNotFound)
-    return [self->notes objectAtIndex:matchedNote];
-  return nil;
-}
-
 static int findNoteIndex(MKPart *self, MKNote *aNote)
 {
-  /*sb: New function for OpenStep compliant kit. Returns the index in the
-  *    notelist, rather than the note itself. findNote is fine sometimes, but
-  *    if we want to use the returned note as a basis to find other notes in the list,
-  *    then we can no longer use NX_ADDRESS on the returned value. The index is better.
-  */
   int matchedNote;
   if ((matchedNote = [self->notes indexOfObjectIdenticalTo:aNote]) != NSNotFound)
     return matchedNote;
@@ -447,13 +447,13 @@ static int findNoteIndex(MKPart *self, MKNote *aNote)
 static int findAux(MKPart *self,double timeTag)
 {
   /* This function returns:
-  If no elements in list, NULL. sb: -1
+  If no elements in list, -1
   If the timeTag equals that of the first MKNote or the timeTag is less
-  than that of the first MKNote, a pointer to the first MKNote.
-  Otherwise, a pointer to the last MKNote with timeTag less than the one
+  than that of the first MKNote, the index of the first MKNote.
+  Otherwise, the index of the last MKNote with timeTag less than the one
   specified. */
-  /*sb: changed to returning index to note rather than pointer. -1 = notFound. */
-  register int low = 0;//NX_ADDRESS(self->notes);
+
+  register int low = 0;
   register int high = low + self->noteCount;
   register int tmp = low + ((unsigned)((high - low) >> 1));
   if (self->noteCount == 0)
@@ -508,6 +508,7 @@ static int findAtOrBeforeTime(MKPart *self,double lastTimeTag)
   id oldPart;
   if (!aNote)
     return nil;
+  [aNote retain]; /* so the next statement does not dealloc it */
   [oldPart = [aNote part] removeNote:aNote];
   [aNote _setPartLink:self order:++_highestOrderTag];
   if ((noteCount++) && (isSorted)) {
@@ -516,6 +517,7 @@ static int findAtOrBeforeTime(MKPart *self,double lastTimeTag)
       isSorted = NO;
   }
   [notes addObject:aNote];
+  [aNote release]; /* since "notes" holds the retain now */
   return oldPart;
 }
 
@@ -528,27 +530,27 @@ static int findAtOrBeforeTime(MKPart *self,double lastTimeTag)
 {
   MKNote *newNote = [aNote copyWithZone:NSDefaultMallocZone()];
   [self addNote:newNote];
-  return newNote;
+  /* we were holding an extra retain from the copyWithZone */
+  return [newNote autorelease];
 }
 
 static BOOL suspendCompaction = NO;
 
 static void removeNote(MKPart *self, MKNote *aNote)
 {
-  MKNote *where = findNote(self,aNote); /*sb: returns the note, not the address in the list */
-  if (where)  /* MKNote in MKPart? */
+  if ([self->notes containsObject:aNote])  /* MKNote in MKPart? */
     _MKMakePlaceHolder(aNote); /* Mark it as 'to be removed' */
 }
 
 -removeNote:aNote
-    /* TYPE: Editing
+ /* TYPE: Editing
   * Removes aNote from the receiver.
   * Returns the removed MKNote or nil if not found.
   * You shouldn't free the removed MKNote if
   * there are any active Performers using the receiver.
   *
   * Keep in mind that if you have to remove a large number of MKNotes,
-* it is more efficient to put them in a List and then use removeNotes:.
+  * it is more efficient to put them in a List and then use removeNotes:.
   */
 {
   int where;
@@ -581,15 +583,28 @@ static void removeNote(MKPart *self, MKNote *aNote)
   * Returns the receiver.
   */
 {
+  int i,count;
+  SEL oaiSel = @selector(objectAtIndex:);
+  IMP objectAtIndex;
+# define OBJECTATINDEX(x)  (*objectAtIndex)(aList, oaiSel, (x))
   if (!aList)
     return self;
+  objectAtIndex = [aList methodForSelector: oaiSel];
+  
   [self->notes removeObjectsInArray:aList];
-  //    compact(self); /*sb: remove placeholders (now unnecessary)*/
+  count = [aList count];
+  /* now unset partlink for each note, in case the notes are used in other
+   * parts
+   */
+  for (i=0;i<count;i++) {
+    [OBJECTATINDEX(i) _setPartLink:nil order:0];
+  }
   return self;
+# undef OBJECTATINDEX
 }
 
 - addNoteCopies:aList timeShift:(double) shift
-        /* TYPE: Editing
+ /* TYPE: Editing
   * Copies the MKNotes in aList, shifts the copies'
   * timeTags by shift beats, and then adds them
   * to the receiver.  aList isn't altered.
@@ -617,6 +632,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
     if (tTag < (MK_ENDOFTIME-1))
       [copyElement setTimeTag:tTag + shift];
     SELFADDNOTE(copyElement);
+    [copyElement release]; /* we're holding extra retain from "copyWithZone" */
   }
 #   undef SELFADDNOTE
   return self;
@@ -645,7 +661,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
   register MKNote *el;
   MKPart *elPart;
-  //    unsigned n;
+  SEL oaiSel = @selector(objectAtIndex:);
   if (aList == nil)
     return self;
   {
@@ -653,25 +669,22 @@ static void removeNote(MKPart *self, MKNote *aNote)
     NSMutableArray *parts = [[NSMutableArray alloc] init];
     int noteIndex;
     int partsIndex, alc, pc;
-    /*sb: the following are fairly obselete. addObjectIfAbsent is obselete, and must
-      be performed in 2 stages.
-      */
-    //        IMP addPart = [parts methodForSelector:@selector(addObjectIfAbsent:)];
-    //#       define ADDPART(x) (*addPart)(parts, @selector(addObjectIfAbsent:), (x))
+
+    IMP objectAtIndex = [aList methodForSelector: oaiSel];
+# define OBJECTATINDEX(x)  (*objectAtIndex)(aList, oaiSel, (x))
+    IMP addPart = [parts methodForSelector:@selector(addObject:)];
+# define ADDPART(x) (*addPart)(parts, @selector(addObject:), (x))
+    IMP partsContainsObject = [parts methodForSelector:@selector(containsObject:)];
+# define PARTSCONTAINSOBJECT(x) (*addPart)(parts, @selector(containsObject:), (x))
+
     suspendCompaction = YES;
-    /*sb:
-      removeObject
-      */
     alc = [aList count];
     for (noteIndex = 0; noteIndex < alc; noteIndex++) {
-      el = [aList objectAtIndex: noteIndex];
+      el = OBJECTATINDEX(noteIndex);
       aPart = [el part];
       if (aPart) {
-        //                ADDPART(aPart);
-        /*sb: do it manually...
-        */
-        if ([parts containsObject:aPart]) [parts addObject:aPart];
-        [aPart removeNote:el];
+        if (!PARTSCONTAINSOBJECT(aPart)) ADDPART(aPart);
+        removeNote(aPart, el);
       }
     }
     suspendCompaction = NO;
@@ -685,26 +698,31 @@ static void removeNote(MKPart *self, MKNote *aNote)
   {
     double tTag;
     int noteIndex, alc;
-    IMP selfAddNote;
-    selfAddNote = [self methodForSelector:@selector(addNote:)];
-#       define SELFADDNOTE(x) (*selfAddNote)(self, @selector(addNote:), (x))
+    IMP selfAddNote = [self methodForSelector:@selector(addNote:)];
+    IMP objectAtIndex = [aList methodForSelector: oaiSel];
+# define SELFADDNOTE(x) (*selfAddNote)(self, @selector(addNote:), (x))
     alc = [aList count];
     for (noteIndex = 0; noteIndex < alc; noteIndex++) {
-      el = [aList objectAtIndex: noteIndex];
+      el = OBJECTATINDEX(noteIndex);
       tTag = [el timeTag];
       if (tTag < (MK_ENDOFTIME-1))
         [el setTimeTag:tTag + shift];
+	  /* adding the note also gives it a positive ordertag, thus resetting
+	   * the "placeholder" status given it above
+	   */
       SELFADDNOTE(el);
     }
-#       undef SELFADDNOTE
+# undef SELFADDNOTE
+# undef OBJECTATINDEX
+# undef ADDPART
+# undef PARTSCONTAINSOBJECT
   }
   return self;
 }
 
 - (void)removeAllObjects
-  /* TYPE: Editing
-  * Removes the receiver's MKNotes but doesn't free them, except for
-  * placeHolder notes, which are freed.
+ /* TYPE: Editing
+  * Removes the receiver's MKNotes which may free them.
   * Returns the receiver.
   */
 {
@@ -716,68 +734,69 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 
 - shiftTime: (double) shift
-    /* TYPE: Editing
+ /* TYPE: Editing
   * Shift is added to the timeTags of all notes in the MKPart.
-* Implemented in terms of addNotes:timeShift:.
+  * Implemented in terms of addNotes:timeShift:.
   */
 {
-  id aList = [self notes];
-  id rtn = [self addNotes:aList timeShift:shift];
-  //    [aList release]; /*sb: unnecessary. It's autoreleased */
-  return rtn;
+  id aList = _MKLightweightArrayCopy(notes);
+  id ret = [self addNotes:aList timeShift:shift];
+  [aList release];
+  return ret;
 }
 
 - scaleTime: (double) scale
-    /* TYPE: Editing
+ /* TYPE: Editing
   * Shift is added to the timeTags of all notes in the MKPart.
-* Implemented in terms of addNotes:timeShift:.
+  * Implemented in terms of addNotes:timeShift:.
   */
 {
-  NSArray *aList = [self notes];
+  NSArray *aList = _MKLightweightArrayCopy(notes);
   MKNote  *mkn;
+  SEL oaiSel = @selector(objectAtIndex:);
+  IMP objectAtIndex = [aList methodForSelector: oaiSel];
+# define OBJECTATINDEX(x)  (*objectAtIndex)(aList, oaiSel, (x))
   int i,n = [aList count];
   for (i = 0 ; i < n; i++) {
-    mkn = [aList objectAtIndex: i];
+    mkn = OBJECTATINDEX(i);
     [mkn setTimeTag:  [mkn timeTag]  * scale];
     if ([mkn noteType] == MK_noteDur)
       [mkn setDur: [mkn dur] * scale];
   }
-  //    [aList release]; /*sb: unnecessary. It's autoreleased */
+  [aList release];
   return self;
 }
-
+# undef OBJECTATINDEX
 
 /* Accessing ------------------------------------------------------------- */
 
 - firstTimeTag:(double) firstTimeTag lastTimeTag:(double) lastTimeTag
-       /* TYPE: Querying the object
+ /* TYPE: Querying the object
   * Creates and returns a List containing the receiver's MKNotes
   * between firstTimeTag and lastTimeTag in time order.
   * The notes are not copied. This method is useful in conjunction with
-    * addNotes:timeShift:, removeNotes:, etc.
+  * addNotes:timeShift:, removeNotes:, etc.
   */
 {
-  NSMutableArray *aList;
-  //    id *firstEl,*lastEl;
+  NSMutableArray *anArray;
   int firstEl,lastEl;
   if (!noteCount)
-    return [[NSMutableArray alloc] init];
+    return [[[NSMutableArray alloc] init] autorelease];
   sortIfNeeded(self);
   firstEl = findAtOrAfterTime(self,firstTimeTag);
   lastEl = findAtOrBeforeTime(self,lastTimeTag);
-  if (firstEl == -1 || lastEl == -1 || firstEl > lastEl) /*sb change el from returning ids to ints */
-    return [[NSMutableArray alloc] init];
-  aList = [NSMutableArray arrayWithCapacity:(unsigned)(lastEl - firstEl) + 1];
-  [aList replaceObjectsInRange:NSMakeRange(0,0) withObjectsFromArray:self->notes
-                         range:NSMakeRange(firstEl,(lastEl - firstEl) + 1)];
-  /*    while (firstEl <= lastEl)
-    [aList addObject:*firstEl++];
-  */
-  return aList;
+  if (firstEl == -1 || lastEl == -1 || firstEl > lastEl) {
+    return [[[NSMutableArray alloc] init] autorelease];
+  }
+  anArray = [NSMutableArray arrayWithCapacity:(unsigned)(lastEl - firstEl) + 1];
+  [anArray replaceObjectsInRange:NSMakeRange(0,0)
+            withObjectsFromArray:self->notes
+                           range:NSMakeRange(firstEl,(lastEl - firstEl) + 1)];
+  return anArray;
 }
 
 -(unsigned)noteCount
-  /* TYPE: Querying
+ /* TYPE: Querying
   * Return the number of MKNotes in the receiver.
   */
 {
@@ -785,7 +804,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 }
 
 -(BOOL)containsNote:aNote
-            /* TYPE: Querying
+ /* TYPE: Querying
   * Returns YES if the receiver contains aNote.
   */
 {
@@ -796,21 +815,25 @@ static void removeNote(MKPart *self, MKNote *aNote)
 {
   int  j, c;
   BOOL bFound = FALSE;
+  SEL oaiSel = @selector(objectAtIndex:);
+  IMP objectAtIndex = [notes methodForSelector: oaiSel];
+# define OBJECTATINDEX(x)  (*objectAtIndex)(notes, oaiSel, (x))
   c = [notes count];
   for (j = 0; j < c; j++) {
-    MKNote *aNote = [notes objectAtIndex: j];
-    if ([aNote noteType] == MK_noteDur || [aNote noteType] == MK_noteOn) {
+    MKNote *aNote = OBJECTATINDEX(j);
+	MKNoteType t = [aNote noteType];
+    if (t == MK_noteDur || t == MK_noteOn) {
       bFound = TRUE;
       break;
     }
   }
   return bFound;
 }
-
+# undef OBJECTATINDEX
 
 
 -(BOOL)isEmpty
-  /* TYPE: Querying
+ /* TYPE: Querying
   * Returns YES if the receiver contains no MKNotes.
   */
 {
@@ -850,7 +873,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 }
 
 - nth:(unsigned) n
-/* TYPE: Accessing MKNotes
+ /* TYPE: Accessing MKNotes
   * Returns the nth MKNote (0-based), or nil if no such MKNote.
   * Doesn't copy the MKNote. */
 {
@@ -859,7 +882,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 }
 
 -atOrAfterTime:(double)timeTag nth:(unsigned) n
-       /* TYPE: Accessing MKNotes
+ /* TYPE: Accessing MKNotes
   * Returns the nth MKNote (0-based) at or after time timeTag,
   * or nil if no such MKNote.
   * Doesn't copy the MKNote.
@@ -872,18 +895,15 @@ static void removeNote(MKPart *self, MKNote *aNote)
   if (el == -1)
     return nil;
 
-  arrEnd = noteCount;
-  if (n == 0)
-    return [self->notes objectAtIndex:el];
-  while (n--) {
-    if (++el >= arrEnd)
-      return nil;
+  arrEnd = [notes count];
+  if (el + n >= arrEnd) {
+    return nil;
   }
-  return [[[self->notes objectAtIndex:el]retain] autorelease];
+  return [[[notes objectAtIndex:el+n] retain] autorelease];
 }
 
 -atTime:(double)timeTag nth:(unsigned) n
-/* TYPE: Accessing MKNotes
+ /* TYPE: Accessing MKNotes
   * Returns the nth MKNote (0-based) at time timeTag,
   * or nil if no such MKNote.
   * Doesn't copy the MKNote.
@@ -893,19 +913,14 @@ static void removeNote(MKPart *self, MKNote *aNote)
   if (!aNote)
     return nil;
   if ([aNote timeTag] == timeTag)
-    return [[aNote retain] autorelease];
+    return aNote;
   return nil;
 }
 
 -next:aNote
-/* TYPE: Accessing MKNotes
+ /* TYPE: Accessing MKNotes
   * Returns the MKNote immediately following aNote, or nil
-  * if no such MKNote.  (A more efficient procedure is to create a
-                         * List with notes and then step down the List using NX_ADDRESS().
-                         */
-/* sb: returns note that is retained and autoreleased, so the receiving method
-  * does not have to dispose of it. If it needs to  keep a copy, it must take
-  * an explicit copy. This should be the same for all methods returning a note.
+  * if no such MKNote.
   */
 {
   int el;
@@ -924,7 +939,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 /* Querying --------------------------------------------------- */
 
 - copyWithZone:(NSZone *)zone
-       /* TYPE: Creating a MKPart
+ /* TYPE: Creating a MKPart
   * Creates and returns a new MKPart that contains
   * a copy of the contents of the receiver. The info is copied as well.
   */
@@ -943,10 +958,10 @@ static void removeNote(MKPart *self, MKNote *aNote)
 
 -notesNoCopy
   /* TYPE: Accessing MKNotes
-  * Returns a List of the MKNotes in the receiver, in time order.
-  * The MKNotes are not copied.
-  * The List is not copied and is not guaranteed to be sorted.
-  */
+   * Returns the actual NSMutableArray of MKNotes in the receiver.
+   * The MKNotes are not copied.
+   * The NSMutableArray is not copied and is not guaranteed to be sorted.
+   */
 {
   return [[notes retain] autorelease];
 }
@@ -954,15 +969,16 @@ static void removeNote(MKPart *self, MKNote *aNote)
 - (NSMutableArray *) notes
   /* TYPE: Accessing MKNotes
   * Returns a Array of the MKNotes in the receiver, in time order.
-  * The MKNotes *are* copied.
-  //   * It is the sender's responsibility to free the List.
-  //   * sb: NOT TRUE. List will be autoreleased.
+  * The MKNotes *are* copied. (for the moment, but ideally not)
+  * The list is autoreleased and should be retained if required.
   */
 {
   sortIfNeeded(self);
-  //    return [notes copy];  // LMS at the moment this stops problems with overly freed objects.
   //    return _MKLightweightArrayCopy(notes); // LMS this should be (I think) the final version.
-  return [notes mutableCopy];  // Joerg reports this is needed to produce a mutable deep copy.
+  // Joerg reports [notes mutableCopy] is needed to produce a mutable deep
+  // copy, but this does not appear to be the case on GNUStep. Thus the MK
+  // defines its own explicit deep array copy mechanism.
+  return [_MKDeepMutableArrayCopy(notes) autorelease]; 
 }
 
 - (MKScore *) score
@@ -978,9 +994,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
   /* Returns 'header note', a collection of info associated with each MKPart,
   which may be used by the App in any way it wants. */
 {
-  //    return [[info retain] autorelease];
-  //    return [info retain];
-  return info;
+  return [[info retain] autorelease];
 }
 
 -setInfoNote:(MKNote *) aNote
@@ -1000,7 +1014,6 @@ static void removeNote(MKPart *self, MKNote *aNote)
   NXWriteObjectReference(). */
 {
   NSString *str;
-  /* [super encodeWithCoder:aCoder];*/ /*sb: unnec */
   sortIfNeeded(self);
   str = MKGetObjectName(self);
   [aCoder encodeConditionalObject:score];
@@ -1048,7 +1061,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
   }
   [partDescription appendFormat: @"With MKPart info note:\n%@", [[self infoNote] description]];
 
-  return partDescription;
+  return [partDescription autorelease];
 }
 
 @end
@@ -1085,10 +1098,8 @@ static void removeNote(MKPart *self, MKNote *aNote)
 -(void)_setNoteSender: (MKNoteSender *) aNS
   /* Private. Used only by scorefilePerformers. */
 {
-  if(_aNoteSender)
-    [_aNoteSender release];
-  _aNoteSender = aNS;
-  [_aNoteSender retain];
+  [_aNoteSender release];
+  _aNoteSender = [aNS retain];
 }
 
 - (MKNoteSender *) _noteSender
