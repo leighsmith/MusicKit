@@ -19,8 +19,8 @@
 #define __SNDAUDIOBUFFER_H__
 
 #import <Foundation/Foundation.h>
-#import "SndKit.h"
-
+#import <MKPerformSndMIDI/PerformSound.h>
+#import "Snd.h"
 /*!
     @class      SndAudioBuffer 
     @abstract   Audio Buffer
@@ -225,6 +225,7 @@
     @result     Integer size of sample frame (channels * sample size in bytes)
 */
 - (NSString*) description;
+- setOwnsData: (BOOL) b;
 
 @end
 

@@ -93,6 +93,47 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// init
+////////////////////////////////////////////////////////////////////////////////
+
+- init
+{
+  self = [super init];
+  if (self) {
+    memset(&formatSnd, 0, sizeof(SndSoundStruct));
+    if (data != NULL && bOwnsData) {
+      free(data);
+      data = NULL;
+    }
+    bOwnsData = TRUE;
+    data = NULL;
+  }
+  return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// initWithFormat:data:
+////////////////////////////////////////////////////////////////////////////////
+
+- initWithFormat: (SndSoundStruct*) f data: (void*) d
+{
+  [self init];
+  memcpy(&formatSnd, f, sizeof(SndSoundStruct));
+
+  if (d == NULL) {
+    if((data = malloc(formatSnd.dataSize)) == NULL)
+      NSLog(@"Unable to malloc %d bytes\n", formatSnd.dataSize);
+    memset(data, 0, formatSnd.dataSize);
+    bOwnsData = TRUE;
+  }
+  else {
+    data = d;
+    bOwnsData = FALSE;
+  }
+  return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // dealloc
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -111,33 +152,6 @@
 {
   return [NSString stringWithFormat: @"SndAudioBuffer [dataSize: %i dataFormat: %i samplingRate: %i channels: %i]", 
           formatSnd.dataSize, formatSnd.dataFormat, formatSnd.samplingRate, formatSnd.channelCount];
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// initWithFormat:data:
-////////////////////////////////////////////////////////////////////////////////
-
-- initWithFormat: (SndSoundStruct*) f data: (void*) d
-{
-    memcpy(&formatSnd, f, sizeof(SndSoundStruct));
-
-    if (data != NULL && bOwnsData) {
-        // NSLog(@"freeing\n");
-        free(data);
-        data = NULL;
-    }
-
-    if (d == NULL) {
-        if((data = malloc(formatSnd.dataSize)) == NULL)
-            NSLog(@"Unable to malloc %d bytes\n", formatSnd.dataSize);
-        memset(data, 0, formatSnd.dataSize);
-        bOwnsData = TRUE;
-    }
-    else {
-        data = d;
-        bOwnsData = FALSE;
-    }
-    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -411,6 +425,12 @@
 - (SndSoundStruct*) format
 {
   return &formatSnd;
+}
+
+- setOwnsData: (BOOL) b
+{
+  bOwnsData = b;
+  return self;
 }
 
 
