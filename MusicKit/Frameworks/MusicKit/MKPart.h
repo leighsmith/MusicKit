@@ -3,81 +3,7 @@
   Defined In: The MusicKit
 
   Description:
-    A MKPart is a time-ordered collection of MKNotes that can be edited,
-    performed, and realized.
-   
-    One or more MKParts can be grouped together in a MKScore.
-   
-    Editing a MKPart refers generally to adding and removing MKNotes,
-    not to changing the contents of the MKNotes themselves (although
-    some methods do both; see splitNotes and combineNotes).
-    MKNotes are ordered within the MKPart by their timeTag values.
-    To move a MKNote within a MKPart, you simply change its timeTag by
-    sending it the appropriate message (see the Note class).
-    This effectively removes the MKNote from its MKPart, changes the timeTag,
-    and then adds it back to its MKPart.
-   
-    A MKPart can be performed using a MKPartPerformer and can 'record' notes
-    by using a MKPartRecorder. You must not free a MKPart or any of the MKNotes
-    in a MKPart while there are any MKPartPerformers using the MKPart. It is ok
-    to record to a part and perform that part at the same time because the
-    MKPartPerformer takes a snap-shot of the MKPart when the MKPartPerformer
-    is activated.
-
-    The MKNotes in a MKPart are stored in a NSArray object. The NSArray is only sorted
-    when necessary. In particular, the NSArray is sorted, if necessary, when an
-    access method is invoked. The access methods are:
-   
-      - firstTimeTag:(double)firstTimeTag lastTimeTag:(double)lastTimeTag;
-      - atTime:(double )timeTag;
-      - atOrAfterTime:(double )timeTag;
-      - nth:(unsigned )n;
-      - atOrAfterTime:(double )timeTag nth:(unsigned )n;
-      - atTime:(double )timeTag nth:(unsigned )n;
-      - next:aNote;
-      - notes;
-   
-    Other methods that cause a sort, if necessary, are:
-   
-      - combineNotes;
-      - removeNotes:aList;
-      - removeNote:aNote;
-
-    Methods that may alter the List such that its MKNotes are no longer sorted are
-    the following:
-   
-      - addNoteCopies:aList timeShift:(double )shift;
-      - addNotes:aList timeShift:(double )shift;
-      - addNote:aNote;
-      - addNoteCopy:aNote;
-      - splitNotes
-   
-    This scheme works well for most cases. However, there are situations where
-    it can be problematic. For example:
-   
-      for (i=0; i<100; i++) {
-        [aPart addNote:anArray[i]];
-        [aPart removeNote:anotherArray[i]];
-      }
-
-    In this case, the MKPart will be sorted each time removeNote: is called,
-    causing N-squared behavior. You can get around this by first adding all the
-    notes using addNotes: and then removing all the notes using removeNotes:.
-   
-    In some cases, you may find it most convenient to
-    remove the MKNotes from the MKPart, modify them in your own
-    data structure, and then reinsert them into the MKPart.
-   
-    You can explicitly trigger a sort (if needed) by sending the -sort message.
-    This is useful if you ever subclass MKPart.
-   
-    To get a sorted copy of the NSArray of notes use the -notes method.
-    To get the NSArray of notes itself, use the -notesNoCopy method.
-      -notesNoCopy does not guarantee the MKNotes are sorted.
-    If you want to examine the MKNotes in-place sorted, first send -sort, then
-      -notesNoCopy.
-   
-    You can find out if the NSArray is currently sorted by the -isSorted method.
+    See the discussion below.
    
   Original Author: David A. Jaffe
   
@@ -88,6 +14,9 @@
 */
 /*
   $Log$
+  Revision 1.10  2001/08/28 23:39:34  leighsmith
+  Cleaned up doco (variable naming and tables)
+
   Revision 1.9  2001/08/28 20:39:40  leighsmith
   Incorporated RTF class documentation into headerdoc comments
 
@@ -115,10 +44,13 @@
 */
 /*!
   @class MKPart
+  @abstract A MKPart is a timeTag-ordered collection of MKNotes that can be edited
+            performed, and realized.  MKParts are typically grouped together in a MKScore.
+
   @discussion
 
 A MKPart is a timeTag-ordered collection of MKNotes that can be edited
-and performed.  MKParts are typically grouped together in a MKScore.
+performed, and realized.  MKParts are typically grouped together in a MKScore.
 
 A MKNote can belong to only one MKPart at a time, and a MKPart to only
 one MKScore.  When you add a MKNote to a MKPart, it's automatically
@@ -151,6 +83,13 @@ order.  While you shouldn't free a MKPart or any of its MKNotes while
 an associated MKPartPerformer is active, you can add MKNotes to and
 remove MKNotes from the MKPart at any time without affecting the
 MKPartPerformer's performance.
+
+    A MKPart can be performed using a MKPartPerformer and can 'record' notes
+    by using a MKPartRecorder. You must not free a MKPart or any of the MKNotes
+    in a MKPart while there are any MKPartPerformers using the MKPart. It is ok
+    to record to a part and perform that part at the same time because the
+    MKPartPerformer takes a snap-shot of the MKPart when the MKPartPerformer
+    is activated.
 
 A MKPartPerformer creates its own NSMutableArray of the MKPart's
 MKNotes when it receives the setPart: message (but keep in mind that
@@ -190,6 +129,69 @@ circumstances, such as when reading a MKScorefile.  The function
 of MKPart be used when MKParts are automatically created.  You
 retrieve the MKPart class with <b>MKGetPartClass()</b>.
 
+    Editing a MKPart refers generally to adding and removing MKNotes,
+    not to changing the contents of the MKNotes themselves (although
+    some methods do both; see <b>splitNotes</b> and <b>combineNotes</b>).
+    MKNotes are ordered within the MKPart by their timeTag values.
+    To move a MKNote within a MKPart, you simply change its timeTag by
+    sending it the appropriate message (see the Note class).
+    This effectively removes the MKNote from its MKPart, changes the timeTag,
+    and then adds it back to its MKPart.
+   
+    The MKNotes in a MKPart are stored in a NSArray object. The NSArray is only sorted
+    when necessary. In particular, the NSArray is sorted, if necessary, when an
+    access method is invoked. The access methods are:
+   
+      - firstTimeTag:(double)firstTimeTag lastTimeTag:(double)lastTimeTag;
+      - atTime:(double )timeTag;
+      - atOrAfterTime:(double )timeTag;
+      - nth:(unsigned )n;
+      - atOrAfterTime:(double )timeTag nth:(unsigned )n;
+      - atTime:(double )timeTag nth:(unsigned )n;
+      - next:aNote;
+      - notes;
+   
+    Other methods that cause a sort, if necessary, are:
+   
+      - combineNotes;
+      - removeNotes:aList;
+      - removeNote:aNote;
+
+    Methods that may alter the NSArray such that its MKNotes are no longer sorted are
+    the following:
+   
+      - addNoteCopies:aList timeShift:(double )shift;
+      - addNotes:aList timeShift:(double )shift;
+      - addNote:aNote;
+      - addNoteCopy:aNote;
+      - splitNotes
+   
+    This scheme works well for most cases. However, there are situations where
+    it can be problematic. For example:
+   
+      for (i=0; i<100; i++) {
+        [aPart addNote:anArray[i]];
+        [aPart removeNote:anotherArray[i]];
+      }
+
+    In this case, the MKPart will be sorted each time removeNote: is called,
+    causing N-squared behavior. You can get around this by first adding all the
+    notes using addNotes: and then removing all the notes using removeNotes:.
+   
+    In some cases, you may find it most convenient to
+    remove the MKNotes from the MKPart, modify them in your own
+    data structure, and then reinsert them into the MKPart.
+   
+    You can explicitly trigger a sort (if needed) by sending the -sort message.
+    This is useful if you ever subclass MKPart.
+   
+    To get a sorted copy of the NSArray of notes use the -notes method.
+    To get the NSArray of notes itself, use the -notesNoCopy method.
+      -notesNoCopy does not guarantee the MKNotes are sorted.
+    If you want to examine the MKNotes in-place sorted, first send -sort, then
+      -notesNoCopy.
+   
+    You can find out if the NSArray is currently sorted by the -isSorted method.
 */
 
 #ifndef __MK_Part_H___
@@ -203,11 +205,16 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
 
 @interface MKPart : NSObject
 {
-    MKScore *score;         /* The score to which this MKPart belongs. */
-    NSMutableArray *notes;  /* NSArray of MKNotes. */
-    MKNote *info;           /* A MKNote used to store an arbitrary collection of info associated with the MKPart. */
-    int noteCount;          /* Number of MKNotes in the MKPart. */
-    BOOL isSorted;          /* YES if the receiver is sorted. */
+/*! @var score The score to which this MKPart belongs. */
+    MKScore *score;
+/*! @var notes NSArray of MKNotes. */
+    NSMutableArray *notes;  
+ /*! @var info A MKNote used to store an arbitrary collection of info associated with the MKPart. */
+    MKNote *info;      
+/*! @var noteCount Number of MKNotes in the MKPart. */
+    int noteCount;          
+/*! @var isSorted YES if the receiver is sorted. */
+    BOOL isSorted;          
 
 @private
     MKNoteSender *_aNoteSender; /* Used only by MKScorefilePerformers. */
@@ -610,7 +617,7 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
 
 /*!
   @method setInfoNote:
-  @param  aNote is an id.
+  @param  aNote is an MKNote.
   @result Returns an id.
   @discussion Sets the MKPart's info MKNote to a copy of <i>aNote</i> and returns
               <b>self</b>.  The info MKNote can be given information (as
@@ -624,13 +631,41 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               Keep in mind that the info MKNote is be no means restricted to
               containing only these parameters:
               	
-              <b>Parameter Tag	Expected Value	Typical Use</b>	
-              MK_synthPatch	MKSynthPatch subclass	Argument to MKSynthInstrument's <b>setSynthPatchClass:</b> method.	
-              MK_synthPatchCount	integer	Argument to MKSynthInstrument's <b>setSynthPatchCount:</b> method.	
-              MK_midiChan	integer	Argument to MKMidi's <b>channelNoteReceiver:</b> method.	
-              MK_track	integer	Automatically set when a midifile is read into a MKScore.
-              
-              The info MKNote is stored separately from the MKPart's main body of MKNotes; methods such as <b>empty</b> don't affect it.  
+                
+<table cellspacing=2 cellpadding=0 align=center>
+<thead>
+<tr>
+<th align=center>Parameter Tag</th>
+<th align=center>Expected Value</th>
+<th align=center>Typical Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align=center>MK_synthPatch</td>
+<td align=center>MKSynthPatch subclass</td>
+<td align=center>Argument to MKSynthInstrument's <b>setSynthPatchClass:</b> method.</td>
+</tr>
+<tr>
+<td align=center>MK_synthPatchCount</td>
+<td align=center>integer</td>
+<td align=center>Argument to MKSynthInstrument's <b>setSynthPatchCount:</b> method.</td>
+</tr>
+<tr>
+<td align=center>MK_midiChan</td>
+<td align=center>integer</td>
+<td align=center>Argument to MKMidi's <b>channelNoteReceiver:</b> method.</td>
+</tr>
+<tr>
+<td align=center>MK_track</td>
+<td align=center>integer</td>
+<td align=center>Automatically set when a midifile is read into a MKScore.</td>
+</tr>
+</tbody>
+</table>
+
+              The info MKNote is stored separately from the MKPart's main body of MKNotes; 
+              methods such as <b>empty</b> don't affect it.  
               
               See also: - <b>infoNote</b>
 */
