@@ -9,10 +9,12 @@
 
 NAME = edsnd
 
-PROJECTVERSION = 1.1
-LANGUAGE = English
+PROJECTVERSION = 2.8
+PROJECT_TYPE = Application
+NEXTSTEP_APPICON = sndapp.tiff
+ICONSECTIONS =	-sectcreate __ICON app sndapp.tiff
 
-APPICON = sndapp.tiff
+
 GLOBAL_RESOURCES = edsnd.nib Envelope.nib FFT.nib snddoc.nib\
                    Stopwatch.nib sndapp.tiff
 
@@ -31,19 +33,27 @@ CFILES = fft_net.c
 PSWFILES = PWenv.psw PWfft.psw PWSpectrum.psw
 
 
-
-MAKEFILEDIR = $(SYSTEM_DEVELOPER_DIR)/Makefiles/app
+MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles
+CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = app.make
-INSTALLDIR = $(HOME)/Apps
-INSTALLFLAGS = -c -s -m 755
-SOURCEMODE = 444
-
-ICONSECTIONS =	-sectcreate __ICON app sndapp.tiff
-
+NEXTSTEP_INSTALLDIR = $(HOME)/Apps
+WINDOWS_INSTALLDIR = $(HOME)/Apps
+PDO_UNIX_INSTALLDIR = $(HOME)/Apps
 LIBS = -lMedia_s -lNeXT_s
 DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
+
+
+
+NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc
+WINDOWS_OBJCPLUS_COMPILER = $(DEVDIR)/gcc
+PDO_UNIX_OBJCPLUS_COMPILER = $(NEXTDEV_BIN)/gcc
+NEXTSTEP_JAVA_COMPILER = /usr/bin/javac
+WINDOWS_JAVA_COMPILER = $(JDKBINDIR)/javac.exe
+PDO_UNIX_JAVA_COMPILER = $(JDKBINDIR)/javac
+
+include $(MAKEFILEDIR)/platform.make
 
 -include Makefile.preamble
 
