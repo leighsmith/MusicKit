@@ -50,6 +50,8 @@ cmds=(playscore scorefile2stella convertscore playscorefilemidi example1 example
 # TODO MKUnitGenerators MKSynthPatches
 packages=(MusicKit MKPerformSndMIDI MKDSP SndKit)
 libraries=(libst.a)
+manuals=(playscore.1)
+music=(Music)
 
 workingdir=/tmp
 
