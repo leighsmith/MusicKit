@@ -15,10 +15,10 @@ PROJECT_TYPE = Framework
 GLOBAL_RESOURCES = Localized.strings
 
 CLASSES = ArielQP.m DSPSerialPortDevice.m MKConductor.m MKEnvelope.m\
-          MKFilePerformer.m MKFileWriter.m MKInstrument.m\
-          MKMTCPerformer.m MKMidi.m MKMixerInstrument.m MKNote.m\
-          MKNoteFilter.m MKNoteReceiver.m MKNoteSender.m MKOrchestra.m\
-          MKPart.m MKPartPerformer.m MKPartRecorder.m MKPartials.m\
+          MKFilePerformer.m MKFileWriter.m MKInstrument.m MKMidi.m\
+          MKMixerInstrument.m MKMTCPerformer.m MKNote.m MKNoteFilter.m\
+          MKNoteReceiver.m MKNoteSender.m MKOrchestra.m MKPart.m\
+          MKPartPerformer.m MKPartRecorder.m MKPartials.m\
           MKPartialsWaveshapingTable.m MKPatchTemplate.m MKPerformer.m\
           MKSamplerInstrument.m MKSamples.m MKScore.m\
           MKScorePerformer.m MKScoreRecorder.m MKScorefilePerformer.m\
