@@ -59,8 +59,12 @@
 #endif
     if ([elementName isEqualToString:@"score-partwise"]) { //that's us - no param to do
         id o;
+#ifdef DEBUG
+# ifndef GNUSTEP
         NSLog(@"ALL INFORMATION FROM SCORE: %@",[dict descriptionInStringsFileFormat]);
         NSLog(@"ALL INFORMATION FROM infodict: %@",[info->infoDict descriptionInStringsFileFormat]);
+# endif
+#endif
         if ((o = [dict objectForKey:@"movement-title"])) {
             [[info->score infoNote] setPar:[MKNote parTagForName:@"MK_movement_title"] toString:o];
         }
