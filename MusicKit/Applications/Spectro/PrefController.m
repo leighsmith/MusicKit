@@ -25,6 +25,8 @@
 
 	[spectrumColorWell setColor:StringToColor(
 		[[NSUserDefaults standardUserDefaults] objectForKey:@"SpectrumColor"])];
+	[waterfallColorWell setColor:StringToColor(
+		[[NSUserDefaults standardUserDefaults] objectForKey:@"WaterfallColor"])];
         [cursorColorWell setColor:StringToColor(
 		[[NSUserDefaults standardUserDefaults] objectForKey:@"CursorColor"])];
         [gridColorWell setColor:StringToColor(
@@ -83,6 +85,7 @@
             @"",@"WFPlotHeight",
             @"",@"DisplayType",
             @"",@"SpectrumColor",
+            @"",@"WaterfallColor",
             @"",@"CursorColor",
             @"",@"GridColor",
             NULL,NULL] retain];
@@ -164,6 +167,7 @@
                 break;
                 }
     [newDefaults setObject:colorToString([spectrumColorWell color]) forKey:@"SpectrumColor"];
+    [newDefaults setObject:colorToString([waterfallColorWell color]) forKey:@"WaterfallColor"];
     [newDefaults setObject:colorToString([cursorColorWell color]) forKey:@"CursorColor"];
     [newDefaults setObject:colorToString([gridColorWell color]) forKey:@"GridColor"];
 
