@@ -55,9 +55,6 @@ Modification history prior to commit to CVS:
 
 #import "equalTempered.m"
 
-static BOOL tuningInited = NO;
-
-
 /* Mapping from keyNum to freq. Not necessarily monotonically increasing. */
 static _ScorefileVar *pitchVars[MIDI_NUMKEYS] = { nil };   
 
@@ -99,8 +96,6 @@ static void sortPitches(id obj)
     register int tmp = MIDI_MAXDATA / 2;
     int hit;
     
-    if (!tuningInited)
-	_MKCheckInit();
     // Do a binary search for target. 
     while (low + 1 < high) {
 	tmp = (int) floor((double) (low + (high - low) / 2));
@@ -119,6 +114,7 @@ static void sortPitches(id obj)
 	double tuningError = 12 * log(freq / PITCH(hit)) / log(2.0);
 	/* tuning error is in semitones */
 	double bendRatio = tuningError / sensitivity;
+	
 	bendRatio = MAX(MIN(bendRatio, 1.0), -1.0);
 	*bendPtr = (int) MIDI_ZEROBEND + (bendRatio * (int) 0x1fff);
     }
@@ -137,11 +133,11 @@ double MKAdjustFreqWithPitchBend(double freq, int pitchBend, double sensitivity)
 /* Return the result of adjusting freq by the amount specified in
 pitchBend. Sensitivity is in semitones. */
 {
-#   define SCL ((1.0/ (double) MIDI_ZEROBEND))
     double bendAmount;
+    
     if ((pitchBend == MIDI_ZEROBEND) || (pitchBend == MAXINT))
 	return freq;
-    bendAmount = (pitchBend - (int) MIDI_ZEROBEND) * sensitivity * SCL;
+    bendAmount = (pitchBend - (int) MIDI_ZEROBEND) * sensitivity * (1.0 / (double) MIDI_ZEROBEND);
     if (bendAmount)
 	return MKTranspose(freq, (double) bendAmount);
     return freq;
@@ -169,8 +165,6 @@ BOOL _MKKeyNumPrintfunc(_MKParameter *param, NSMutableData *aStream, _MKScoreOut
     int i = _MKParAsInt(param);
     // NSString *pitchNameOrKeyNum;
     
-    if (!tuningInited)
-        _MKCheckInit();
     if ((param->_uType == MK_envelope) || !writeKeyNumNames)
         return NO;
     if (BINARY(p))
@@ -199,8 +193,6 @@ BOOL _MKFreqPrintfunc(_MKParameter *param, NSMutableData *aStream, _MKScoreOutSt
     
     if ((param->_uType == MK_envelope) || (!writePitches))
 	return NO;
-    if (!tuningInited)
-	_MKCheckInit();
     frq = _MKParAsDouble(param);
     keyNum = [MKTuningSystem keyNumForFreq: frq pitchBentBy: NULL bendSensitivity: 0];
     pitchName = [pitchVars[keyNum] varName];
@@ -214,7 +206,7 @@ BOOL _MKFreqPrintfunc(_MKParameter *param, NSMutableData *aStream, _MKScoreOutSt
 static void install(NSArray *arrOFreqs) 
 {
     unsigned int i;
-    register id *idp = pitchVars;
+    register _ScorefileVar **idp = pitchVars;
     
     dontSort = YES;
     for(i = 0; i < MIDI_NUMKEYS; i++) {
@@ -272,18 +264,19 @@ static void addAccidentalPitch(int keyNumValue, NSString *name1, NSString *name2
     pitchVars[keyNumValue] = obj1;
 }
 
-void _MKTuningSystemInit(void)
+#define VERSION2 2
+
++ (void) initialize
 {
-    int keyNumber;
+    int keyNumber = 0;
     static const char *octaveNames[] = { "00", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
     NSString *oct = [NSString stringWithCString: octaveNames[0]]; /* Pointer to const char */
     NSString *nOct = [NSString stringWithCString: octaveNames[1]];
     NSMutableArray *equalTempered12Array;
-    
-    if (tuningInited)
-	return; 
-    tuningInited = YES;
-    keyNumber = 0;
+
+    if (self != [MKTuningSystem class])
+	return;
+
     addPitch(keyNumber++, @"c", oct);       /* No low Bs */
     while (keyNumber < MIDI_NUMKEYS) {
 	addAccidentalPitch(keyNumber++, @"cs", @"df", oct, oct);  
@@ -302,28 +295,18 @@ void _MKTuningSystemInit(void)
 	if (keyNumber < MIDI_NUMKEYS)
 	    nOct = [NSString stringWithCString: octaveNames[1 + keyNumber / 12]];
 	keyNumber++;
-     }
-     for (keyNumber = 0; keyNumber < MIDI_NUMKEYS; keyNumber++) {  /* Init pitch x-ref. */
-	 _MK_MALLOC(freqToMidi[keyNumber], freqMidiStruct, 1);
-	 freqToMidi[keyNumber]->freqId = pitchVars[keyNumber];
-	 freqToMidi[keyNumber]->keyNum = keyNumber;
-     }
+    }
+    for (keyNumber = 0; keyNumber < MIDI_NUMKEYS; keyNumber++) {  /* Init pitch x-ref. */
+	_MK_MALLOC(freqToMidi[keyNumber], freqMidiStruct, 1);
+	freqToMidi[keyNumber]->freqId = pitchVars[keyNumber];
+	freqToMidi[keyNumber]->keyNum = keyNumber;
+    }
     equalTempered12Array = [NSMutableArray arrayWithCapacity: MIDI_NUMKEYS];
 
     for(keyNumber = 0; keyNumber < MIDI_NUMKEYS; keyNumber++) {
 	[equalTempered12Array insertObject: [NSNumber numberWithDouble: equalTempered12[keyNumber]] atIndex: keyNumber];
     }
     install(equalTempered12Array);
-}
-
-#define VERSION2 2
-
-+ (void) initialize
-{
-    if (self != [MKTuningSystem class])
-	return;
-    if (!tuningInited)
-	_MKCheckInit();
     [MKTuningSystem setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
 }
 
@@ -332,8 +315,6 @@ void _MKTuningSystemInit(void)
 {
     self = [super init];
     if (self != nil) {
-	if (!tuningInited)
-	    _MKCheckInit();
 	frequencies = [[NSMutableArray alloc] initWithCapacity: MIDI_NUMKEYS];
 	[self setTo12ToneTempered];
     }
@@ -420,15 +401,13 @@ void _MKTuningSystemInit(void)
 - initFromInstalledTuningSystem
 {
     register int i;
-    register id *pit;
+    register _ScorefileVar **pit;
     
     self = [super init];
     if (self != nil) {
-	if (!tuningInited)
-	    _MKCheckInit();
 	frequencies = [[NSMutableArray alloc] initWithCapacity: MIDI_NUMKEYS];
 	for (i = 0, pit = pitchVars; i < MIDI_NUMKEYS; i++) {
-	    double d =  _MKParAsDouble(_MKSFVarGetParameter(*pit++));
+	    double d = _MKParAsDouble(_MKSFVarGetParameter(*pit++));
 	    [frequencies addObject: [NSNumber numberWithDouble: d]];
 	}
     }
@@ -446,8 +425,6 @@ unless the -install message is sent. */
 
 + (double) freqForKeyNum: (MKKeyNum) keyNumber
 {
-    if (!tuningInited)
-	_MKCheckInit();
     // keyNum = MIDI_DATA(keyNum);
 
     if (keyNumber < 0 || keyNumber > MIDI_NUMKEYS)
@@ -455,18 +432,16 @@ unless the -install message is sent. */
     return _MKParAsDouble(_MKSFVarGetParameter(pitchVars[(int) keyNumber]));
 }
 
+/* Returns freq For specified keyNum in the receiver or MK_NODVAL if the keyNum is illegal. */ 
 - (double) freqForKeyNum: (MKKeyNum) keyNumber
-    /* Returns freq For specified keyNum in the receiver or MK_NODVAL if the
-    keyNum is illegal . */ 
 {
     if (keyNumber < 0 || keyNumber > MIDI_NUMKEYS)
 	return MK_NODVAL;
     return [[frequencies objectAtIndex: keyNumber] doubleValue];
 }
 
+/* Sets frequency for specified keyNum in the receiver. Note that the change is not installed. */
 - setKeyNum: (MKKeyNum) aKeyNum toFreq: (double) freq
-    /* Sets frequency for specified keyNum in the receiver. Note that the 
-    change is not installed. */
 {
     if (aKeyNum > MIDI_NUMKEYS)
 	return nil;
@@ -474,24 +449,22 @@ unless the -install message is sent. */
     return self;
 }
 
+/* Sets frequency for specified keyNum in the installed tuning system.
+Note that if several changes are going to be made at once, it is more
+efficient to make the changes in a MKTuningSystem instance and then send
+the install message to that object. 
+Returns self or nil if aKeyNum is out of bounds. */
 + setKeyNum: (MKKeyNum) aKeyNum toFreq: (double) freq
-    /* Sets frequency for specified keyNum in the installed tuning system.
-    Note that if several changes are going to be made at once, it is more
-    efficient to make the changes in a MKTuningSystem instance and then send
-    the install message to that object. 
-    Returns self or nil if aKeyNum is out of bounds. */
 {
-    if (!tuningInited)
-	_MKCheckInit();
     if (aKeyNum > MIDI_NUMKEYS)
 	return nil;
     _MKSetDoubleSFVar(pitchVars[(int)aKeyNum],freq);
     return self;
 }
 
+/* Sets frequency for specified keyNum and all its octaves in the receiver.
+Returns self or nil if aKeyNum is out of bounds. */
 - setKeyNumAndOctaves: (MKKeyNum) aKeyNum toFreq: (double) freq
-    /* Sets frequency for specified keyNum and all its octaves in the receiver.
-    Returns self or nil if aKeyNum is out of bounds. */
 {       
     register int i;
     register double fact;
@@ -504,21 +477,19 @@ unless the -install message is sent. */
     return self;
 }
 
+/* Sets frequency for specified keyNum and all its octaves in the installed
+tuning system.
+Note that if several changes are going to be made at once, it is more
+efficient to make the changes in a MKTuningSystem instance and then send
+the install message to that object. 
+Returns self or nil if aKeyNum is out of bounds. */
 + setKeyNumAndOctaves: (MKKeyNum) aKeyNum toFreq: (double) freq
-    /* Sets frequency for specified keyNum and all its octaves in the installed
-    tuning system.
-    Note that if several changes are going to be made at once, it is more
-    efficient to make the changes in a MKTuningSystem instance and then send
-    the install message to that object. 
-    Returns self or nil if aKeyNum is out of bounds. */
 {	
     register int i;
     register double fact;
     
     if (aKeyNum > MIDI_NUMKEYS)
 	return nil;
-    if (!tuningInited)
-	_MKCheckInit();
     dontSort = YES;
     for (fact = 1.0, i = aKeyNum; i >= 0; i -= 12, fact *= .5)
 	_MKSetDoubleSFVar(pitchVars[i],freq * fact);
@@ -529,13 +500,12 @@ unless the -install message is sent. */
     return self;
 }
 
-int _MKFindPitchVar(id aVar)
-/* Returns keyNum corresponding to the specified pitch variable or
-MAXINT if none. */
++ (int) findPitchVar: (id) aVar
 {
     register int i;
-    register id *pitch = pitchVars;
+    register _ScorefileVar **pitch = pitchVars;
     _MKParameter *aPar;
+    
     if (!aVar) 
 	return MAXINT;
     aPar = _MKSFVarGetParameter(aVar); 
@@ -552,12 +522,10 @@ MAXINT if none. */
     */
 {
     register int i;
-    register id *p = pitchVars;
+    register _ScorefileVar **p = pitchVars;
     double fact = pow(2.0, semitones / 12.0);
     
     dontSort = YES;
-    if (!tuningInited)
-	_MKCheckInit();
     for (i=0; i<MIDI_NUMKEYS; i++, p++)
 	_MKSetDoubleSFVar(*p,_MKParAsDouble(_MKSFVarGetParameter(*p)) * fact);
     dontSort = NO;
@@ -574,12 +542,10 @@ MAXINT if none. */
     */
 {
     register int keyNumIndex;
-    register id *p = pitchVars;
+    register _ScorefileVar **p = pitchVars;
     double fact = pow(2.0, semitones / 12.0);
     
     dontSort = YES;
-    if (!tuningInited)
-	_MKCheckInit();
     for (keyNumIndex = 0; keyNumIndex < MIDI_NUMKEYS; keyNumIndex++, p++) 
 	_MKSetDoubleSFVar(*p, _MKParAsDouble(_MKSFVarGetParameter(*p)) * fact);
     dontSort = NO;

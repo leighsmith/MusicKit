@@ -266,6 +266,12 @@ extern double MKTranspose(double freq, double semiTonesUp);
 */
 - (void) transpose: (double) semitones; 
 
+/*!
+  @method findPitchVar:
+  @abstract Returns keyNum corresponding to the specified pitch variable or MAXINT if none. 
+ */
++ (int) findPitchVar: (id) aVar;
+
 @end
 
 #endif
