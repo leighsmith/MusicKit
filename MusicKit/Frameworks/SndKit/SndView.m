@@ -1233,8 +1233,6 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     return backgroundColour;
 }
 
-#ifdef QUARTZ_RENDERING
-
 - (void) setSelectionColor : (NSColor *) color
 {
     [selectionColour release];
@@ -1247,9 +1245,6 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 {
     return selectionColour;
 }
-
-#endif
-
 
 - (void)setForegroundColor:(NSColor *)color
 {
