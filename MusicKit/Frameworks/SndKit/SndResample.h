@@ -1,5 +1,5 @@
 /*
- * FILE: resample.h
+ * $Id$
  *
  * The configuration constants below govern
  * the number of bits in the input sample and filter coefficients, the 
@@ -7,7 +7,7 @@
  *
  */
 #include "SndStdefs.h"
-#include <MKPerformSndMIDI/SndStruct.h>
+#include "SndFormat.h"
 #include "SndKitDefines.h"
 
 /* Conversion constants */
@@ -102,7 +102,7 @@ SNDKIT_API int resample(
     int  fastMode,		
     BOOL largeFilter,
     char *filterFile,
-    const SndSoundStruct *inSnd,
+    const SndFormat inSnd,
     int  resampleFrom,	
     void *inData
 );
