@@ -20,7 +20,11 @@ static NSString *getSavePath(NSString *defaultPath, NSView *accessory)
 
     savePanel = [NSSavePanel savePanel];
     [savePanel setRequiredFileType:@"snd"];
-    [savePanel setAccessoryView:accessory];
+    /* sbrandon, 23/11/2001 added extra retain to accessory view as it was
+       being released unexpectedly. I would have thought that because it's in
+       the nib file it would never be released fully, but looks like it was.
+     */
+    [savePanel setAccessoryView:[accessory retain]];
     if (defaultPath) if ([defaultPath length]) {
         ok = [savePanel runModalForDirectory:[defaultPath stringByDeletingLastPathComponent]
                                         file:[defaultPath lastPathComponent]];
