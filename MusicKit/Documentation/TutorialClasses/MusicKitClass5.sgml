@@ -114,7 +114,7 @@
 	  <PARA> Alternatively you can allocate and manage a collection of
 	    <CLASSNAME>MKSynthPatch</CLASSNAME>es yourself: </PARA>
 	  <PROGRAMLISTING>
-id  sp = [orch allocSynthPatch: [Pluck class ]];	
+id  sp = [orch allocSynthPatch: [Pluck class]];
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
@@ -128,7 +128,7 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
       <TITLE>The <PRODUCTNAME>MusicKit</PRODUCTNAME> SynthPatch Library
 	Classes</TITLE> 
       <TABLE>
-	<TITLE> WaveTable synthesis:	</TITLE>
+	<TITLE>WaveTable synthesis:</TITLE>
 	<TGROUP COLS="2" ALIGN="LEFT">
 	  <TBODY>
 	    <ROW>
@@ -161,7 +161,7 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 	</TGROUP>
       </TABLE>
       <TABLE>
-	<TITLE> Frequency Modulation synthesis:	</TITLE>
+	<TITLE>Frequency Modulation synthesis:</TITLE>
 	<TGROUP COLS="2" ALIGN="LEFT">
 	  <TBODY>
 	    <ROW>
@@ -204,7 +204,7 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 	</TGROUP>
       </TABLE>
       <TABLE>
-	<TITLE> Plucked string synthesis:	</TITLE>
+	<TITLE>Plucked string synthesis:</TITLE>
 	<TGROUP COLS="2" ALIGN="LEFT">
 	  <TBODY>
 	    <ROW>
@@ -251,7 +251,7 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
       <TITLE>Making Your Own <CLASSNAME>MKSynthPatch</CLASSNAME> Class</TITLE> 
 
       <PARA>A <CLASSNAME>MKSynthPatch</CLASSNAME> subclass consists of three
-	fundamental parts: </PARA>
+	fundamental parts:</PARA>
       <ORDEREDLIST>
 	<LISTITEM>
 	  <PARA>A specification of <emphasis>a collection of
@@ -266,9 +266,9 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 	      example, there may be an additive synthesis
 	      <CLASSNAME>MKSynthPatch</CLASSNAME> with an 8-oscillator flavor
 	      and a 16-oscillator flavor.  This is done by supplying the class
-	      method: </PARA>
+	      method:</PARA>
 	  <PROGRAMLISTING>
-+patchTemplateFor: 	
++ patchTemplateFor: 	
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
@@ -306,23 +306,29 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
     </SECT1>
     
     <SECT1 ID="SPECCOLLECTIONOFUNITGENERATORS">
-      <TITLE>1. Specifying a Collection of
+      <TITLE>Specifying a Collection of
 	<CLASSNAME>MKUnitGenerator</CLASSNAME>s</TITLE>
       
-      <PARA> To specify the collection, the <CLASSNAME>MKSynthPatch</CLASSNAME>
-	subclass implements a single class method: </PARA>
-      <PROGRAMLISTING>
-+patchTemplateFor: aNote	
-      </PROGRAMLISTING>
-      <PARA> This method creates the <CLASSNAME>MKPatchTemplate</CLASSNAME> used
-	to represent the connections.  The <CLASSNAME>MKNote</CLASSNAME> passed
-	to the method may be used to choose between various &ldquo;flavors&rdquo;.</PARA>
-      <PARA> The <CLASSNAME>MKPatchTemplate</CLASSNAME> consists of a list of
-	the <CLASSNAME>MKUnitGenerator</CLASSNAME> <emphasis>classes</emphasis>
-	and <CLASSNAME>MKSynthData</CLASSNAME> <emphasis>requests</emphasis>
-	needed to build an instance of the <CLASSNAME>MKSynthPatch</CLASSNAME>.
+      <PARA>To specify the collection, the <CLASSNAME>MKSynthPatch</CLASSNAME>
+	subclass implements a single class method:
       </PARA>
-      <PARA> The <CLASSNAME>MKOrchestra</CLASSNAME> uses the
+      <PROGRAMLISTING>
++ patchTemplateFor: aNote
+      </PROGRAMLISTING>
+      <PARA>This method creates the
+	<CLASSNAME>MKPatchTemplate</CLASSNAME> used to represent the
+	connections.  The <CLASSNAME>MKNote</CLASSNAME> passed to the
+	method may be used to choose between various
+	&ldquo;flavors&rdquo;.
+      </PARA>
+      <PARA>The <CLASSNAME>MKPatchTemplate</CLASSNAME> consists of a
+	list of the <CLASSNAME>MKUnitGenerator</CLASSNAME>
+	<emphasis>classes</emphasis> and
+	<CLASSNAME>MKSynthData</CLASSNAME>
+	<emphasis>requests</emphasis> needed to build an instance of
+	the <CLASSNAME>MKSynthPatch</CLASSNAME>.
+      </PARA>
+      <PARA>The <CLASSNAME>MKOrchestra</CLASSNAME> uses the
 	<CLASSNAME>MKPatchTemplate</CLASSNAME> to build an instance of the
 	<CLASSNAME>MKSynthPatch</CLASSNAME>.  For each entry in the
 	<CLASSNAME>MKPatchTemplate</CLASSNAME>, it allocates an appropriate
@@ -337,7 +343,7 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
 	message:
       </PARA>
       <PROGRAMLISTING>
-+synthElementAt: (int)index
++ synthElementAt: (int) index
       </PROGRAMLISTING>
       <PARA> The <CLASSNAME>MKUnitGenerator</CLASSNAME>s appear in the order
 	they were specified in the <CLASSNAME>MKPatchTemplate</CLASSNAME>.  For
@@ -354,32 +360,33 @@ id  sp = [orch allocSynthPatch: [Pluck class ]];
       <PROGRAMLISTING>
 static int  sc, patchPoint, out;
 
-+patchTemplateFor: aNote
-/* We ignore aNote in this simple SynthPatch */
++ patchTemplateFor: aNote
+/* We ignore aNote in this simple MKSynthPatch */
 {	static PatchTemplate  *t = nil;
 
       if (!t)  {             /* Only create template the first time. */	
                 t = [[PatchTemplate alloc]  init];  
-                osc = [t addUnitGenerator: [OscgUGxy class] ];
-                patchPoint = [t addPatchpoint:MK_xPatch ];
- 		out = [t addUnitGenerator: [Out2sumUGx class ]]; 	
+                osc = [t addUnitGenerator: [OscgUGxy class]];
+                patchPoint = [t addPatchpoint: MK_xPatch ];
+ 		out = [t addUnitGenerator: [Out2sumUGx class]]; 	
       } 	
       return t;	
 }
       </PROGRAMLISTING>
       <PARA> <emphasis role="bold">Alternative to
-	<CLASSNAME>MKPatchTemplate</CLASSNAME>: </emphasis>. Just allocate
-	directly from <CLASSNAME>MKOrchestra</CLASSNAME> in <emphasis
-	role="bold">-init </emphasis> method.  Advantage of using a
-	<CLASSNAME>MKPatchTemplate</CLASSNAME> is that patch is stored as data
-	and aborting on allocation failure is handled automatically. </PARA>
+	<CLASSNAME>MKPatchTemplate</CLASSNAME>:</emphasis>. Just
+	allocate directly from <CLASSNAME>MKOrchestra</CLASSNAME> in
+	<emphasis role="bold">-init </emphasis> method. The advantage
+	of using a <CLASSNAME>MKPatchTemplate</CLASSNAME> is that the
+	patch is stored as data and aborting on allocation failure is
+	handled automatically.</PARA>
     </SECT1>
     
     <SECT1 ID="SPECCONNECTIONS">
-      <TITLE>2. Specifying the Connections</TITLE> 
+      <TITLE>Specifying the Connections</TITLE> 
 
-      <PARA> Two <CLASSNAME>MKUnitGenerator</CLASSNAME> instances communicate
-	via a patchPoint.  The patchPoint's memory space must match the space
+      <PARA>Two <CLASSNAME>MKUnitGenerator</CLASSNAME> instances communicate
+	via a patchPoint. The patchPoint's memory space must match the space
 	of the input or output to which it is connected. Connections are made
 	by sending an appropriate message to the
 	<CLASSNAME>MKUnitGenerator</CLASSNAME>s with the patchPoint as an
@@ -417,7 +424,7 @@ static int  sc, patchPoint, out;
     </SECT1>
     
     <SECT1 ID="SPECPERFBEHAVIOR">
-      <TITLE>3. Specifying the Performance Behavior</TITLE>
+      <TITLE>Specifying the Performance Behavior</TITLE>
       
       <PARA> Behavior is defined by supplying the instance methods: </PARA>
       
@@ -456,21 +463,21 @@ static int  sc, patchPoint, out;
 	    noteEndSelf</emphasis> </PARA>
 	</LISTITEM>
       </ORDEREDLIST>
-      <PARA> Like a <CLASSNAME>MKUnitGenerator</CLASSNAME>, a
+      <PARA>Like a <CLASSNAME>MKUnitGenerator</CLASSNAME>, a
 	<CLASSNAME>MKSynthPatch</CLASSNAME> may be in one of three states: </PARA>
       <TABLE>
-	<TITLE>	</TITLE>
+	<TITLE><CLASSNAME>MKSynthPatch</CLASSNAME> States</TITLE>
 	<TGROUP COLS="2" ALIGN="LEFT">
 	  <TBODY>
 	    <ROW>
 	      <ENTRY><CONSTANT>MK_idle</CONSTANT></ENTRY> 
-	      <ENTRY> Not producing sound.</ENTRY>  </ROW> 
+	      <ENTRY>Not producing sound.</ENTRY></ROW> 
 	    <ROW>
 	      <ENTRY><CONSTANT>MK_running</CONSTANT></ENTRY>
-	      <ENTRY> Running.</ENTRY> </ROW> 
+	      <ENTRY>Running.</ENTRY> </ROW> 
 	    <ROW>
 	      <ENTRY><CONSTANT>MK_finishing</CONSTANT></ENTRY>
-	      <ENTRY><CLASSNAME>MKEnvelope</CLASSNAME> release. </ENTRY></ROW>
+	      <ENTRY><CLASSNAME>MKEnvelope</CLASSNAME> release.</ENTRY></ROW>
 	  </TBODY>
 	</TGROUP>
       </TABLE>
@@ -496,20 +503,20 @@ static int  sc, patchPoint, out;
 	      &ldquo;quiet&rdquo; when idle.</emphasis> </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> An easy way to make a <CLASSNAME>MKSynthPatch</CLASSNAME> quiet
-	    is to set its amplitude to 0.  </PARA>
+	  <PARA>An easy way to make a <CLASSNAME>MKSynthPatch</CLASSNAME> quiet
+	    is to set its amplitude to 0.</PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
     </SECT1>
     
     <SECT1 ID="SPECPERFBEHAVIOREXAMPLE">
-      <TITLE>3. Specifying the Performance Behavior + Example</TITLE>
+      <TITLE>Specifying the Performance Behavior + Example</TITLE>
       
-      <PARA> For our simple example we make several assumptions: </PARA>
+      <PARA>For our simple example we make several assumptions:</PARA>
 
       <ORDEREDLIST>
 	<LISTITEM>
-	  <PARA>We ignore noteUpdates for now.	</PARA></LISTITEM>
+	  <PARA>We ignore noteUpdates for now.</PARA></LISTITEM>
 	<LISTITEM>
 	  <PARA>We assume that every parameter about which we care is
 	    present in every note.
@@ -517,25 +524,27 @@ static int  sc, patchPoint, out;
 	</LISTITEM>
       </ORDEREDLIST>
 
-      <PARA> Since our simple example has no envelopes, we need not implement
-	the <emphasis role="bold">noteOffSelf: </emphasis> method.  We can just
+      <PARA>Since our simple example has no envelopes, we need not implement
+	the <emphasis role="bold">noteOffSelf:</emphasis> method.  We can just
 	use the default version that returns 0.</PARA>
       
-      <PARA> So we need to provide only two methods, <emphasis role="bold">
-      noteOnSelf: </emphasis> and <emphasis role="bold">
-      noteEndSelf</emphasis>. </PARA>
+      <PARA>So we need to provide only two methods, <emphasis
+      role="bold">noteOnSelf:</emphasis> and <emphasis
+      role="bold">noteEndSelf</emphasis>. 
+      </PARA>
       <PROGRAMLISTING>
-+noteOnSelf:aNote
++ noteOnSelf: aNote
 {	
-  [OSC setFreq:[aNote freq]];  
-  [OSC setAmp:[aNote parAsDouble:MK_amp]];              
-  [OUT setBearing:[aNote parAsDouble:MK_bearing]]; 
-  [synthElements makeObjectsPerform:@selector(run)];
+  [OSC setFreq: [aNote freq]];  
+  [OSC setAmp: [aNote parAsDouble: MK_amp]];
+  [OUT setBearing: [aNote parAsDouble: MK_bearing]]; 
+  [synthElements makeObjectsPerform: @selector(run)];
   return self;
 }
-+noteEndSelf   
+
++ noteEndSelf   
 {
-  [OSC setAmp:0.0]; 
+  [OSC setAmp: 0.0]; 
   return self;
 }
       </PROGRAMLISTING>
@@ -544,63 +553,70 @@ static int  sc, patchPoint, out;
     <SECT1 ID="COMPLETEEXAMPLE">
       <TITLE>Complete Example</TITLE>
       <PROGRAMLISTING>
-#import &lt;musickit/musickit.h&gt;
-#import &lt;musickit/unitgenerators/unitgenerators.h&gt;
+#import &lt;MusicKit/MusicKit.h&gt;
+#import &lt;MKUnitGenerators/MKUnitGenerators.h&gt;
 
-@implementation MySynthPatch : SynthPatch { }
+@implementation MySynthPatch : MKSynthPatch { }
 
 static int osc, patchPoint, out;  /* Used as indexes into synthElements array */
++ patchTemplateFor: aNote
+{	
+	static PatchTemplate *t = nil;
 
-+patchTemplateFor:aNote
-{	static PatchTemplate *t = nil;   	
-	if (!t)  {             /* Only create template the first time. */	
+	if (!t)  {             /* Only create template the first time. */
 	        t = [[PatchTemplate alloc] init];  
-  	 	osc = [t addUnitGenerator:[OscgUGxy class]];
- 	 	patchPoint = [t addPatchpoint:MK_xPatch];
- 	 	out = [t addUnitGenerator:[Out2sumUGx class]]; 	
-	} 	
+  	 	osc = [t addUnitGenerator: [OscgUGxy class]];
+ 	 	patchPoint = [t addPatchpoint: MK_xPatch];
+ 	 	out = [t addUnitGenerator: [Out2sumUGx class]]; 	
+	}
 	return t;   
 }
 
-#define OSC [self synthElementAt:osc]
-#define OUT [self synthElementAt:out]
-#define PATCHPOINT [self synthElementAt:patchpoint]
+#define OSC [self synthElementAt: osc]
+#define OUT [self synthElementAt: out]
+#define PATCHPOINT [self synthElementAt: patchpoint]
 
 + init /* Sent once when object is created */
-{ 	[OSC setOutput:PATCHPOINT];
-  	[OUT setInput:PATCHPOINT];  	
+{ 	
+	[OSC setOutput: PATCHPOINT];
+  	[OUT setInput: PATCHPOINT];  	
 	return self;
 }  
 
-+noteOnSelf:aNote
-{	[OSC setFreq:[aNote freq]];  
-  	[OSC setAmp:[aNote parAsDouble:MK_amp]];              
- 	[OUT setBearing:[aNote parAsDouble:MK_bearing]]; 	
-	[synthElements makeObjectsPerform:@selector(run)];	
++noteOnSelf: aNote
+{	
+	[OSC setFreq: [aNote freq]];
+  	[OSC setAmp: [aNote parAsDouble: MK_amp]];              
+ 	[OUT setBearing: [aNote parAsDouble: MK_bearing]]; 	
+	[synthElements makeObjectsPerform: @selector(run)];	
 	return self;
 }
 
-+noteEndSelf   
-{	[OSC setAmp:0.0];   return self;  }
++ noteEndSelf
+{
+	[OSC setAmp: 0.0];   
+	return self;  
+}
       </PROGRAMLISTING>
     </SECT1>
     
     <SECT1 ID="FANCIERSYNTHPATCHES">
       <TITLE>Fancier SynthPatches</TITLE>
 
-      <PARA> To support <CONSTANT>noteUpdates</CONSTANT>, you merely supply a
-	<emphasis role="bold">noteUpdateSelf: </emphasis> method.  It is up to
+      <PARA>To support <CONSTANT>noteUpdates</CONSTANT>, you merely supply a
+	<emphasis role="bold">noteUpdateSelf: </emphasis> method. It is up to
 	you what parameters you want to allow to change in a
 	<CONSTANT>noteUpdate</CONSTANT>.  Example:</PARA>
       <PROGRAMLISTING>
-+noteUpdateSelf:aNote
-{	[OSC setFreq:[aNote freq]];  
- 	[OSC setAmp:[aNote parAsDouble:MK_amp]];              
-  	[OUT setBearing:[aNote parAsDouble:MK_bearing]]; 
++ noteUpdateSelf: aNote
+{
+	[OSC setFreq: [aNote freq]];  
+ 	[OSC setAmp: [aNote parAsDouble: MK_amp]];
+  	[OUT setBearing: [aNote parAsDouble: MK_bearing]]; 
  	 return self;
 }
       </PROGRAMLISTING>
-      <PARA> To relax the restriction that all
+      <PARA>To relax the restriction that all
 	<CLASSNAME>MKNote</CLASSNAME>s need to have every parameter
 	present, you can set the parameter in <emphasis
 	role="bold">noteOnSelf:</emphasis> and <emphasis
@@ -610,15 +626,19 @@ static int osc, patchPoint, out;  /* Used as indexes into synthElements array */
 	E.g., if there is an instance variable
 	<emphasis>freq</emphasis>. </PARA>
       <PROGRAMLISTING>
-+noteOnSelf:aNote
-{	if ([aNote isParPresent:MK_freq]) 	
-	freq = [aNote freq];
- 	 [OSC setFreq:freq];  
++ noteOnSelf: aNote
+{
+	if ([aNote isParPresent: MK_freq]) 	
+	    freq = [aNote freq];
+ 	[OSC setFreq: freq];  
  	. . .
-+noteEndSelf
-{ 	freq = 440;
- 	 [OSC setAmp:0.0];  
- 	 return self;      
+}
+
++ noteEndSelf
+{
+ 	freq = 440;
+ 	[OSC setAmp: 0.0];  
+ 	return self;      
 }
       </PROGRAMLISTING>
       <PARA> To add an amplitude envelope, we need to use an
@@ -651,7 +671,7 @@ MKUpdateAsymp(
 	  phraseStatus</emphasis> ]; </PARA>
 
       <FIGURE ID="FIGURE5-2-NOTETYPES">
-	<TITLE>	noteTypes Time Line</TITLE>
+	<TITLE>noteTypes Time Line</TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/MusicKitClass5-noteTypes.eps" 
@@ -670,15 +690,15 @@ MKUpdateAsymp(
 
       <PARA> Phrase status defines, within a
 	<CLASSNAME>MKSynthPatch</CLASSNAME>, all the possible places we can be
-	in a <PRODUCTNAME>MusicKit</PRODUCTNAME> phrase: </PARA>
+	in a <PRODUCTNAME>MusicKit</PRODUCTNAME> phrase:</PARA>
       
       <TABLE>
-	<TITLE></TITLE>
+	<TITLE>Phrase States</TITLE>
 	<TGROUP COLS="2" ALIGN="LEFT">
 	  <TBODY>
 	    <ROW>
 	      <ENTRY>MK_phraseOn</ENTRY>
-	      <ENTRY>		New phrase	</ENTRY>
+	      <ENTRY>New phrase</ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>MK_phrasePreempt</ENTRY>
@@ -686,42 +706,41 @@ MKUpdateAsymp(
 	    </ROW>
 	    <ROW>
 	      <ENTRY>MK_phraseUpdate</ENTRY>
-	      <ENTRY>		Note update	</ENTRY>
+	      <ENTRY>Note update</ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>MK_phraseOff</ENTRY>
-	      <ENTRY>		Note off	</ENTRY>
+	      <ENTRY>Note off</ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>MK_phraseOffUpdate</ENTRY>
-	      <ENTRY>	Note update during release	</ENTRY>
+	      <ENTRY>Note update during release</ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>MK_phraseEnd</ENTRY>
-	      <ENTRY>		Note end	</ENTRY>
+	      <ENTRY>Note end</ENTRY>
 	    </ROW>
 	    <ROW>
 	      <ENTRY>MK_noPhraseStatus</ENTRY>
-	      <ENTRY>		Not in a SynthPatch method.	</ENTRY>
+	      <ENTRY>Not in a <CLASSNAME>MKSynthPatch</CLASSNAME> method.</ENTRY>
 	    </ROW>
 	  </TBODY>
 	</TGROUP>
       </TABLE>
-      <PARA> Preemption occurs when there is not enough <ACRONYM>DSP</ACRONYM>
+      <PARA>Preemption occurs when there is not enough <ACRONYM>DSP</ACRONYM>
 	resources to support the requested number of simultaneous notes.  It
 	is controlled by the <CLASSNAME>MKSynthInstrument</CLASSNAME>.  The
 	<CLASSNAME>MKSynthPatch</CLASSNAME> designer need only implement a
 	method:
       </PARA>
       <PROGRAMLISTING>
-+preemptFor:newNote 
++ preemptFor: newNote 
       </PROGRAMLISTING>
-      <PARA> A typical implementation aborts any running envelopes.
-	Example:</PARA>
+      <PARA>A typical implementation aborts any running envelopes. Example:</PARA>
       <PROGRAMLISTING>
-+preemptFor:newNote  {	
-[ampEnvelopeAsymp preemptEnvelope];	
-return self;
++ preemptFor: newNote  {	
+	[ampEnvelopeAsymp preemptEnvelope];	
+	return self;
 }
       </PROGRAMLISTING>
     </SECT1>
@@ -731,9 +750,10 @@ return self;
       <PARA>Study <filename>Examples/exampleSynthPatch</FILENAME>.
       </PARA>
       <PARA>Modify <filename>Envy.m</FILENAME> to set the
-	<CLASSNAME>MKWaveTable</CLASSNAME> of the synthesis.  Then recompile it,
-	create a scorefile that specifies a <CLASSNAME>MKWaveTable</CLASSNAME>,
-	and test it. </PARA>
+	<CLASSNAME>MKWaveTable</CLASSNAME> of the synthesis. Then
+	recompile it, create a scorefile that specifies a
+	<CLASSNAME>MKWaveTable</CLASSNAME>, and test it.
+      </PARA>
       <PARA>Modify any one of the example synthpatches on that directory to do
 	some other sort of synthesis, such as amplitude modulation.</para>
     </SECT1>

@@ -120,7 +120,7 @@
       <VARIABLELIST>
 	<TITLE>	</TITLE>
 	<VARLISTENTRY>
-	  <TERM> <EMPHASIS ROLE="bold">+setClocked:</EMPHASIS></TERM>
+	  <TERM> <EMPHASIS ROLE="bold">+ setClocked:</EMPHASIS></TERM>
 	  <LISTITEM>
 	    <PARA>
 	      <EMPHASIS>YES</EMPHASIS> (clocked) &horbar; messages sent at the
@@ -136,7 +136,7 @@
 	  </LISTITEM>
 	</VARLISTENTRY>
 	<VARLISTENTRY>
-	  <TERM><emphasis role="bold">+setFinishWhenEmpty:</emphasis></TERM>
+	  <TERM><emphasis role="bold">+ setFinishWhenEmpty:</emphasis></TERM>
 	  <LISTITEM>
 	    <PARA>
 	      YES &horbar; <emphasis role="bold">[MKConductor
@@ -269,14 +269,15 @@
 	    <CLASSNAME>MKScore</CLASSNAME>).
 	  </PARA>
 	  <TABLE>
-	    <TITLE>	</TITLE>
+	    <TITLE><CLASSNAME>MKNoteReceiver</CLASSNAME>s
+	    provided by <CLASSNAME>MKInstrument</CLASSNAME> subclasses</TITLE>
 	    <TGROUP COLS="2" ALIGN="LEFT">
 	  <COLSPEC COLNUM="1">
 	      <COLSPEC COLNUM="2">
 	      <THEAD>
 		<ROW>
-		  <ENTRY> Class</ENTRY> 
-		  <ENTRY> Number of <CLASSNAME>MKNoteReceiver</CLASSNAME>s</ENTRY>
+		  <ENTRY>Class</ENTRY> 
+		  <ENTRY>Number of <CLASSNAME>MKNoteReceiver</CLASSNAME>s</ENTRY>
 		</ROW>
 	  </THEAD>
 	      <TBODY>
@@ -326,8 +327,8 @@
 	    buffers are properly emptied.  Example:
 	  </PARA>
 	  <PROGRAMLISTING>
-[MKConductor lockPerformance];  	/*  (2.0 version) */	
-[[anInstrument noteReceiver] receiveNote:aNote];	
+[MKConductor lockPerformance];
+[[anInstrument noteReceiver] receiveNote: aNote];	
 [MKConductor unlockPerformance];
 	  </PROGRAMLISTING>
 	</LISTITEM>
@@ -401,28 +402,33 @@
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> <CLASSNAME>MKPerformer</CLASSNAME>s send
-	    <CLASSNAME>MKNote</CLASSNAME>s via their &ldquo;outputs&rdquo;, small objects
-	    called <CLASSNAME>MKNoteSender</CLASSNAME>s.  A
+	  <PARA> 
+	    <CLASSNAME>MKPerformer</CLASSNAME>s send
+	    <CLASSNAME>MKNote</CLASSNAME>s via their
+	    &ldquo;outputs&rdquo;, small objects called
+	    <CLASSNAME>MKNoteSender</CLASSNAME>s.  A
 	    <CLASSNAME>MKPerformer</CLASSNAME> sends a
 	    <CLASSNAME>MKNote</CLASSNAME> to one of its
-	    <CLASSNAME>MKNoteSender</CLASSNAME>s: [aNoteSender <emphasis
-	    role="bold">sendNote:</emphasis>aNote];
+	    <CLASSNAME>MKNoteSender</CLASSNAME>s: [aNoteSender
+	    <emphasis role="bold">sendNote:</emphasis> aNote];
 	  </PARA>
 	  <TABLE>
-	    <TITLE>	</TITLE>
+	    <TITLE>
+	      <CLASSNAME>MKNoteSender</CLASSNAME>s provided
+	      by <CLASSNAME>MKPerformer</CLASSNAME> subclasses.
+	    </TITLE>
 	    <TGROUP COLS="2" ALIGN="LEFT">
 	      <COLSPEC COLNUM="1">
 	      <COLSPEC COLNUM="2">
 	      <THEAD>
 		<ROW> 
-		  <ENTRY> Class</ENTRY>
-		  <ENTRY> Number of <CLASSNAME>MKNoteSender</CLASSNAME>s</ENTRY>
+		  <ENTRY>Class</ENTRY>
+		  <ENTRY>Number of <CLASSNAME>MKNoteSender</CLASSNAME>s</ENTRY>
 		</ROW>
 	      </THEAD>
 	      <TBODY>
 		<ROW>
-		  <ENTRY><CLASSNAME>MKPartPerformer</CLASSNAME> 	</ENTRY>
+		  <ENTRY><CLASSNAME>MKPartPerformer</CLASSNAME></ENTRY>
 		  <ENTRY>1</ENTRY>	
 		</ROW>
 		<ROW>
@@ -468,11 +474,11 @@
 	    <CLASSNAME>MKInstrument</CLASSNAME> as an argument.  Example:
 	    </PARA>
 	  <PROGRAMLISTING>
-[[aPerf noteSender] connect:[anIns noteReceiver]]; 
+[[aPerf noteSender] connect: [anIns noteReceiver]]; 
 	  </PROGRAMLISTING>
 	  <PARA>Or, equivalently:</PARA>
 	  <PROGRAMLISTING>
-[[anIns noteReceiver] connect:[aPerf noteSender]]; 
+[[anIns noteReceiver] connect: [aPerf noteSender]]; 
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
@@ -506,17 +512,18 @@
 	  <PARA> Like any other <CLASSNAME>MKInstrument</CLASSNAME>,
 	    <CLASSNAME>MKNoteFilter</CLASSNAME>s implement <emphasis
 	    role="bold">realizeNote:fromNoteReceiver:</emphasis> to process
-	    <CLASSNAME>MKNote</CLASSNAME>s it receives.  Example: MidiEcho.
+	    <CLASSNAME>MKNote</CLASSNAME>s it receives.  
+	    Example: <APPLICATION>MidiEcho</APPLICATION>.
 	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> Rules:	</PARA>
-	  <PARA>1. Copy Note on write. 	</PARA>
-	  <PARA>	(Or return Note to original condition)	</PARA>
-	  <PARA>2. Copy Note on store.</PARA>
+	  <PARA>1. Copy <CLASSNAME>MKNote</CLASSNAME> on write.</PARA>
+	  <PARA>(Or return <CLASSNAME>MKNote</CLASSNAME> to original condition)</PARA>
+	  <PARA>2. Copy <CLASSNAME>MKNote</CLASSNAME> on store.</PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> <APPLICATION>Ensemble</APPLICATION> is a 2.0 Application
+	  <PARA> <APPLICATION>Ensemble</APPLICATION> is an Application
 	    based on <CLASSNAME>MKNoteFilter</CLASSNAME>s.</PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
@@ -543,7 +550,8 @@
 	    <ACRONYM>DSP</ACRONYM>. Both implement the following protocol:
 	  </PARA>
 	  <TABLE>
-	    <TITLE>	</TITLE>
+	    <TITLE>Pseudo-<CLASSNAME>MKPerformer</CLASSNAME>
+	    Performance Protocol</TITLE>
 	    <TGROUP COLS="2" ALIGN="LEFT">
 	      <COLSPEC COLNUM="1">
 	      <COLSPEC COLNUM="2">
@@ -656,45 +664,43 @@
     double delay;		    /* delay between echos, in seconds */
 }
 
--init
+- init
   /* Called automatically when an instance is created. */
 {    int i;
      
      [super init]; 
      delay = .1;
      for (i = 0; i &lt;= NUMCHANS; i++)  /* 1 for each channel plus 'sys' messages */
-         [self addNoteSender:[[MKNoteSender alloc] init]];
-     [self addNoteReceiver:[[MKNoteReceiver alloc] init]];
+         [self addNoteSender: [[MKNoteSender alloc] init]];
+     [self addNoteReceiver: [[MKNoteReceiver alloc] init]];
      return self;
  }
 
--setDelay:(double)delayArg
+- setDelay: (double)delayArg
   /* change the amount of delay (in seconds) between echoes */
 {
     delay = delayArg;
     return self;
 }
 
--connectAcross:anInstOrNoteFilter    
+- connectAcross: anInstOrNoteFilter    
   /* Just connects successive MKNoteSenders of the receivers to successive
      MKNoteReceivers of anInstOrNoteFilter. */
 {
-    id pList = [self noteSenders];
-    id iList = [anInstOrNoteFilter noteReceivers];
+    NSArray *pList = [self noteSenders];
+    NSArray *iList = [anInstOrNoteFilter noteReceivers];
     int i,siz;
     int pSiz = [pList count];
     int iSiz = [iList count];
     siz = (pSiz &gt; iSiz) ? iSiz : pSiz;   /* Take min length */
     for (i = 0; i &lt; siz; i++)            /* Connect them up */
         [[pList objectAtIndex: i] connect: [iList objectAtIndex: i]];
-    [pList free]; /* Lists are copied above so we free them here */
-    [iList free];
     return self;
 }
 
-#define NOTESENDER(_i) [noteSenders objectAtIndex:_i]
+#define NOTESENDER(_i) [noteSenders objectAtIndex: _i]
 
--realizeNote:aNote fromNoteReceiver:aNoteReceiver
+- realizeNote: aNote fromNoteReceiver: aNoteReceiver
   /* Here's where the work is done. */
 {
     /* This relies on the knowledge that the MKMidi object sorts its incoming 
@@ -705,24 +711,24 @@
        
     int i;
     double curDly;
-    int velocity,noteType;
+    int velocity, noteType;
     id newNote;
 
     noteType = [aNote noteType];
     if (noteType == MK_mute) {	
-        [NOTESENDER(0) sendNote:aNote];          /* Just forward these */	
+        [NOTESENDER(0) sendNote: aNote];          /* Just forward these */
         return self;
     }
     curDly = 0;
-    [NOTESENDER(1) sendNote:aNote];              /* Send current note */
-    velocity = [aNote parAsInt:MK_velocity];     /* Grab velocity */
+    [NOTESENDER(1) sendNote: aNote];             /* Send current note */
+    velocity = [aNote parAsInt: MK_velocity];    /* Grab velocity */
     for (i = 2; i &lt;= NUMCHANS; i++) {         /* Make echoes */	
         curDly += delay;                         	
-        newNote = [aNote copy];                  /* Need to copy notes here */	
-        if (noteType == MK_noteOn)               /* Decrement echo velocity */	
-            [newNote setPar:MK_velocity toInt:velocity -= 15];	
+        newNote = [aNote copy];                  /* Need to copy notes here */
+        if (noteType == MK_noteOn)               /* Decrement echo velocity */
+            [newNote setPar: MK_velocity toInt: velocity -= 15];	
         /* Schedule it for later */	
-        [NOTESENDER(i) sendAndFreeNote:newNote withDelay:curDly];
+        [NOTESENDER(i) sendAndFreeNote: newNote withDelay: curDly];
     }
     return self;
 }

@@ -130,7 +130,7 @@ MKSynthInstrument *synthIns;
 MKOrchestra *orch = [MKOrchestra newOnDSP: 0];	
 synthIns = [[MKSynthInstrument alloc] init];	
 [orch open];	
-[synthIns setSynthPatchClass:[Pluck class]];	
+[synthIns setSynthPatchClass: [Pluck class]];	
 [orch run];	
 [MKConductor startPerformance];	
 	  </PROGRAMLISTING>
@@ -142,9 +142,9 @@ synthIns = [[MKSynthInstrument alloc] init];
 	    <CLASSNAME>MKPerformer</CLASSNAME>.  E.g.: </PARA>
 	  <PROGRAMLISTING>
 MKNote *aNote = [[MKNote alloc] init];	
-[aNote setDur:1.0]; 	
+[aNote setDur: 1.0]; 	
 [MKConductor lockPerformance];	
-[[synthIns noteReceiver] receiveNote:aNote];	
+[[synthIns noteReceiver] receiveNote: aNote];	
 [MKConductor unlockPerformance];
 	  </PROGRAMLISTING>
 	</LISTITEM>
@@ -156,13 +156,15 @@ MKNote *aNote = [[MKNote alloc] init];
 
       <ITEMIZEDLIST>
 	<LISTITEM>
-	  <PARA> Manages control of <ACRONYM>DSP</ACRONYM>:</PARA>
-	  <PARA><emphasis role="bold">new</emphasis> or <emphasis role="bold">
-	      newOnDSP:</emphasis>, <emphasis role="bold"> open</emphasis>,
-	      <emphasis role="bold"> run</emphasis>, <emphasis role="bold">
-	      stop</emphasis>, <emphasis role="bold">
-	  close</emphasis>, 
-	      <emphasis role="bold">abort</emphasis></PARA>
+	  <PARA>Manages control of <ACRONYM>DSP</ACRONYM>:</PARA>
+	  <PARA><emphasis role="bold">new</emphasis> or <emphasis
+	  role="bold">newOnDSP:</emphasis>, <emphasis
+	  role="bold">open</emphasis>, <emphasis
+	  role="bold">run</emphasis>, <emphasis
+	  role="bold">stop</emphasis>, <emphasis
+	  role="bold">close</emphasis>, <emphasis
+	  role="bold">abort</emphasis>
+	  </PARA>
 	</LISTITEM>
 	<LISTITEM>
       <PARA> Manages allocation of <ACRONYM>DSP</ACRONYM> resources: </PARA>
@@ -174,11 +176,11 @@ MKNote *aNote = [[MKNote alloc] init];
 	<LISTITEM>
 	  <PARA> Class object manages a collection of
 	    <ACRONYM>DSPs</ACRONYM>:</PARA> <PARA><emphasis role="bold">
-	    +open</emphasis>, <emphasis role="bold">+run</emphasis>,
-	    <emphasis role="bold">+allocSynthPatch:</emphasis>, etc.</PARA>
+	    + open</emphasis>, <emphasis role="bold">+ run</emphasis>,
+	    <emphasis role="bold">+ allocSynthPatch:</emphasis>, etc.</PARA>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> All allocation of <ACRONYM>DSP</ACRONYM> resources is done
+	  <PARA>All allocation of <ACRONYM>DSP</ACRONYM> resources is done
 	    through the <CLASSNAME>MKOrchestra</CLASSNAME>.  You don't send
 	    <emphasis role="bold">alloc</emphasis> directly to a
 	    <CLASSNAME>MKUnitGenerator</CLASSNAME> or
@@ -300,7 +302,7 @@ MKNote *aNote = [[MKNote alloc] init];
 	  </PARA>
 	  <PROGRAMLISTING>
 part p1;         /* Scorefile excerpt*/	
-p1 synthPatch:"Pluck" synthPatchCount:2;	
+p1 synthPatch: "Pluck" synthPatchCount: 2;	
 	  </PROGRAMLISTING>
 	</LISTITEM>
       </ITEMIZEDLIST>
@@ -364,7 +366,7 @@ p1 synthPatch:"Pluck" synthPatchCount:2;
     <SECT1 ID="UNITGENERATORLIBRARY">
       <TITLE>The <CLASSNAME>MKUnitGenerator</CLASSNAME> Library</TITLE>
       <TABLE FRAME="ALL">
-	<TITLE>	</TITLE>
+	<TITLE><CLASSNAME>MKUnitGenerator</CLASSNAME>s</TITLE>
 	<TGROUP COLS="2" ALIGN="LEFT">
 	  <TBODY>
 	    <ROW>
@@ -440,21 +442,21 @@ p1 synthPatch:"Pluck" synthPatchCount:2;
       <PARA> You can allocate a <CLASSNAME>MKUnitGenerator</CLASSNAME> from an
 	open <CLASSNAME>MKOrchestra</CLASSNAME>.  </PARA>
       <PROGRAMLISTING>
-[orch allocUnitGenerator:[Out2sumUGx class]];
+[orch allocUnitGenerator: [Out2sumUGx class]];
       </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
-      <PARA> An allocated UnitGenerator is, by definition, running on the DSP.
-	You can deallocate a UnitGenerator by sending: </PARA>
+      <PARA>An allocated <CLASSNAME>MKUnitGenerator</CLASSNAME> is, by definition, running on the DSP.
+	You can deallocate a <CLASSNAME>MKUnitGenerator</CLASSNAME> by sending: </PARA>
       <PROGRAMLISTING>
-[aUnitGenerator dealloc];
+[aUnitGenerator release];
       </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> <CLASSNAME>MKUnitGenerator</CLASSNAME>s are in one of three
 	    possible states: </PARA>
 	  <TABLE>
-	    <TITLE>	</TITLE>
+	    <TITLE><CLASSNAME>MKUnitGenerator</CLASSNAME> States</TITLE>
 	    <TGROUP COLS="2" ALIGN="LEFT">
 	      <TBODY>
 		<ROW>
@@ -496,11 +498,12 @@ p1 synthPatch:"Pluck" synthPatchCount:2;
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> In addition to these standard methods, individual
-	    <CLASSNAME>MKUnitGenerator</CLASSNAME> classes implement methods
-	    particular to their operation.  Common methods include <emphasis
-	    role="bold"> setInput:</emphasis> and <emphasis role="bold">
-	    setOutput:</emphasis>.  E.g. oscillators implement <emphasis
-	    role="bold"> setFreq:</emphasis>.
+	    <CLASSNAME>MKUnitGenerator</CLASSNAME> classes implement
+	    methods particular to their operation.  Common methods
+	    include <emphasis role="bold">setInput:</emphasis> and
+	    <emphasis role="bold">setOutput:</emphasis>.
+	    E.g. oscillators implement <emphasis
+	    role="bold">setFreq:</emphasis>.
 	  </PARA>
 	</LISTITEM>
       </ITEMIZEDLIST>
@@ -517,25 +520,25 @@ p1 synthPatch:"Pluck" synthPatchCount:2;
 	be reading/writing.  Example:</PARA>
 
       <PROGRAMLISTING>
-SynthData *pp;	
-UnitGenerator *osc,*out; 	
-Orchestra *orch = [Orchestra new];	
+MKSynthData *pp;	
+MKUnitGenerator *osc,*out; 	
+MKOrchestra *orch = [MKOrchestra new];	
 [orch open];	
-pp = [orch allocPatchpoint:MK_xPatch];	
-osc = [orch allocUnitGenerator:[OscgUGxy class]];	
-out = [orch allocUnitGenerator:[Out1aUGx class]];	
-[osc setOutput:pp];	
-[out setInput:pp];	
-[osc setFreq:440];	
-[osc setAmp:1.0];	
+pp = [orch allocPatchpoint: MK_xPatch];	
+osc = [orch allocUnitGenerator: [OscgUGxy class]];	
+out = [orch allocUnitGenerator: [Out1aUGx class]];	
+[osc setOutput: pp];	
+[out setInput: pp];	
+[osc setFreq: 440];	
+[osc setAmp: 1.0];	
 [osc setTableToSineROM];	
 [orch run];	
 [osc run];	
 [out run];	
 /* You now hear a full-amplitude sine wave at 440 hz */	
       </PROGRAMLISTING>
-      <PARA> Patchpoints may be reused, if you're careful about the order in
-	which <CLASSNAME>MKUnitGeneratos</CLASSNAME>s run.  (More on this
+      <PARA>Patchpoints may be reused, if you're careful about the order in
+	which <CLASSNAME>MKUnitGenerator</CLASSNAME>s run. (More on this
 	later.)</PARA>
     </SECT1>
 
@@ -553,34 +556,34 @@ out = [orch allocUnitGenerator:[Out1aUGx class]];
 	  <PARA> To allocate a <CLASSNAME>MKSynthData</CLASSNAME>, you specify
 	    the length and the space: </PARA>
 	  <PROGRAMLISTING>
-SynthData *sd  = [orch allocSynthData:MK_xData length:256];	
+MKSynthData *sd  = [orch allocSynthData: MK_xData length: 256];	
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
 	  <PARA> To load the <CLASSNAME>MKSynthData</CLASSNAME> with an array:
 	  </PARA>
 	  <PROGRAMLISTING>
-DSPDatum someData[256] = {0,1,2,3,...};	
-[sd setData:someData];
+DSPDatum someData[256] = {0, 1, 2, 3, ...};	
+[sd setData: someData];
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> To load the <CLASSNAME>MKSynthData</CLASSNAME> with a constant:
+	  <PARA>To load the <CLASSNAME>MKSynthData</CLASSNAME> with a constant:
 	  </PARA>
 
 	  <PROGRAMLISTING>
-[sd setToConstant:1];
+[sd setToConstant: 1];
 	  </PROGRAMLISTING>
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> Since patchponts are actually <CLASSNAME>MKSynthData</CLASSNAME>,
+	  <PARA>Since patchpoints are actually <CLASSNAME>MKSynthData</CLASSNAME>,
 	    you can use these methods for them as well.</PARA> 
 	</LISTITEM>
 	<LISTITEM>
-	  <PARA> For convenience, <CLASSNAME>MKWaveTables</CLASSNAME> have a
+	  <PARA>For convenience, <CLASSNAME>MKWaveTables</CLASSNAME> have a
 	    <emphasis role="bold">dataDSPLength:</emphasis> method: </PARA>
 	  <PROGRAMLISTING>
-[sd setData:[aWaveTable dataDSPLength:256]];
+[sd setData: [aWaveTable dataDSPLength: 256]];
 	  </PROGRAMLISTING>
 	</LISTITEM>
       </ITEMIZEDLIST>
@@ -593,22 +596,23 @@ DSPDatum someData[256] = {0,1,2,3,...};
 #import &lt;MusicKit/MusicKit.h&gt;
 #import &lt;MKUnitGenerators/MKUnitGenerators.h&gt;
 #import "MyCustomObject.h"
+
 @implementation MyCustomObject
 
 MKSynthData *pp;
 MKUnitGenerator *osc,*out; 	
 
-+init
++ init
 {	MKOrchestra *orch = [MKOrchestra new];	
-	[MKUnitGenerator enableErrorChecking:YES];	
+	[MKUnitGenerator enableErrorChecking: YES];	
 	[orch open];	
-	pp = [orch allocPatchpoint:MK_xData];	
-	osc = [orch allocUnitGenerator:[OscgUGxy class]];	
-	out = [orch allocUnitGenerator:[Out2sumUGx class]];	
-	[osc setOutput:pp];	
-	[out setInput:pp];	
-	[osc setFreq:440];	
-	[osc setAmp:0.1];	
+	pp = [orch allocPatchpoint: MK_xData];	
+	osc = [orch allocUnitGenerator: [OscgUGxy class]];	
+	out = [orch allocUnitGenerator: [Out2sumUGx class]];	
+	[osc setOutput: pp];	
+	[out setInput: pp];	
+	[osc setFreq: 440];	
+	[osc setAmp: 0.1];	
 	[osc setTableToSineROM];	
 	[osc run];	
 	[out run];	
@@ -616,21 +620,21 @@ MKUnitGenerator *osc,*out;
 	[MKConductor startPerformance];
 }
 
-+setFreqFrom:sender
++ setFreqFrom: sender
 {	[MKConductor lockPerformance];	
-	[osc setFreq:[sender doubleValue]];	
+	[osc setFreq: [sender doubleValue]];	
 	[MKConductor unlockPerformance];
 }
 
-+setBearingFrom:sender
++ setBearingFrom: sender
 {	[MKConductor lockPerformance];	
-	[out setBearing:[sender doubleValue]];	
+	[out setBearing: [sender doubleValue]];	
 	[MKConductor unlockPerformance];
 }
 
-+setAmplitudeFrom:sender
++ setAmplitudeFrom: sender
 {	[MKConductor lockPerformance];	
-	[osc setAmp:[sender doubleValue]];	
+	[osc setAmp: [sender doubleValue]];	
 	[MKConductor unlockPerformance];
 }
 
@@ -642,11 +646,11 @@ MKUnitGenerator *osc,*out;
       <TITLE>Assignment - Week 4</TITLE> 
 
       <PARA>Modify <filename>Examples/example4</FILENAME> to
-	make a different sound.  Try using some other
+	make a different sound. Try using some other
 	<CLASSNAME>MKUnitGenerator</CLASSNAME>s.  </PARA> 
       
       <PARA>Read the documentation on <ACRONYM>DSP</ACRONYM> synthesis in the
-	<ULINK URL="&MKConcepts;">MusicKit Concepts Manual</ULINK>.  Next
+	<ULINK URL="&MKConcepts;">MusicKit Concepts Manual</ULINK>. Next
 	week we'll cover <CLASSNAME>MKSynthPatches</CLASSNAME>.</para>
     </SECT1>
   </CHAPTER>
