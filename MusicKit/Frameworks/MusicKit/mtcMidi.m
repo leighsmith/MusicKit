@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/12/07 00:24:35  leigh
+  Standardised on machPorts as the mechanism for MKMD routines.
+
   Revision 1.6  2000/11/13 23:22:12  leigh
   Integrated tvs structure into MKMidi ivars, removed machPort dependency on comms ports
 
@@ -56,7 +59,7 @@ static double mangleTime(MKMidi *self,double driverTime)
 	 * has been set, this time has deltaT added to it. 
 	 */
 {
-    MKMDReturn r = MKMDGetMTCTime(devicePort, ownerPort, format, h, m, s, f);
+    MKMDReturn r = MKMDGetMTCTime((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], format, h, m, s, f);
     double seconds;
     if (r != MKMD_SUCCESS) 
         _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"getMTCFormat:");
@@ -78,7 +81,7 @@ static double mangleTime(MKMidi *self,double driverTime)
     double t;
     if (deviceStatus == MK_devClosed)
         return 0;
-    r = MKMDGetClockTime(devicePort, ownerPort, &theTime);
+    r = MKMDGetClockTime((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], &theTime);
     if (r != MKMD_SUCCESS) 
         _MKErrorf(MK_machErr, CLOCK_ERROR, midiDriverErrorString(r), @"time");
     t = theTime * _MK_MIDI_QUANTUM_PERIOD;
