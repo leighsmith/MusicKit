@@ -45,6 +45,7 @@ typedef enum {
               enables a fragmented arrangement of buffers across memory, typically for processing constraints. SndAudioBuffers
               are the closest SndKit match to the underlying audio hardware buffer. In addition to holding the sample data,
               SndAudioBuffer encapsulates sampling rate, number of channels, number of frames and the format of the sample data.
+	      A SndAudioBuffer is guaranteed to be uncompressed, therefore it can be processed as a linear buffer of memory.
 */
 @interface SndAudioBuffer : NSObject
 {
@@ -418,7 +419,8 @@ typedef enum {
   @abstract Retrieves a normalised sample given the frame number (time position) and channel number.
   @param frameIndex The frame index, between 0 and the value returned by <B>lengthInSampleFrames</B>
                     less one, inclusive.
-  @param channel The channel index, between 0 and the number of channels in the sound.
+  @param channel The channel index, between 0 and the number of channels in the buffer (channelCount - 1)
+                 to retrieve a single channel, channelCount to average all channels to a single value.
   @result Returns a normalised sample value as a float regardless of the data format.
  */
 - (float) sampleAtFrameIndex: (unsigned long) frameIndex channel: (int) channel;

@@ -16,6 +16,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #import "SndAudioBuffer.h"
+#import "SndMuLaw.h"
 
 // altivec support...
 #ifdef __VEC__
@@ -813,31 +814,74 @@
 #endif
 }
 
-- (float) sampleAtFrameIndex: (unsigned long) frameIndex channel: (int) channel
+// retrieve a sound value at the given frame, for a specified channel, or average over all channels.
+// channelNumber is 0 - channelCount to retrieve a single channel, channelCount to average all channels
+- (float) sampleAtFrameIndex: (unsigned long) frameIndex channel: (int) channelNumber
 {
-    unsigned long sampleIndex = frameIndex * format.channelCount + channel;
-    const void *samplePtr = [data bytes];
-    float sample = 0.0;
-
+    float theSampleValue = 0.0;
+    int averageOverChannels;
+    int startingChannel;
+    unsigned long sampleIndex;
+    unsigned long sampleNumber;
+    const void *pcmData = [data bytes];
+    
     if(frameIndex < 0 || frameIndex >= [self lengthInSampleFrames]) {
-	NSLog(@"frameIndex %ld out of range [0,%ld]\n", frameIndex, [self lengthInSampleFrames]);
+	NSLog(@"SndAudioBuffer sampleAtFrameIndex:channel: frameIndex %ld out of range [0,%ld]\n", frameIndex, [self lengthInSampleFrames]);
 	return 0.0;
     }
-    if(channel < 0 || channel >= format.channelCount) {
-	NSLog(@"channel %d out of range [0,%d]\n", channel, format.channelCount);
+    if(channelNumber < 0 || channelNumber > format.channelCount) {
+	NSLog(@"SndAudioBuffer sampleAtFrameIndex:channel: channel %d out of range [0,%d]\n", channelNumber, format.channelCount);
 	return 0.0;
     }
-    switch(format.dataFormat) {
-	case SND_FORMAT_FLOAT:
-	    sample = ((float *) samplePtr)[sampleIndex];
-	    break;
-	case SND_FORMAT_LINEAR_16:
-	    sample = ((short *) samplePtr)[sampleIndex];
-	    break;
-	default:
-	    NSLog(@"sampleAtFrameIndex:channel: unsupported format %d\n", format.dataFormat);
+    
+    if (channelNumber == format.channelCount) {
+	averageOverChannels = format.channelCount;
+	startingChannel = 0;
     }
-    return sample;
+    else {
+	averageOverChannels = 1;
+	startingChannel = channelNumber;
+    }
+    // 
+    sampleNumber = frameIndex * format.channelCount + startingChannel;
+    
+    for(sampleIndex = sampleNumber; sampleIndex < sampleNumber + averageOverChannels; sampleIndex++) {
+	switch (format.dataFormat) {
+	    case SND_FORMAT_LINEAR_8:
+		theSampleValue += ((char *) pcmData)[sampleIndex];
+		break;
+	    case SND_FORMAT_MULAW_8:
+		theSampleValue += SndMuLawToLinear(((char *) pcmData)[sampleIndex]);
+		break;
+	    case SND_FORMAT_EMPHASIZED:
+	    case SND_FORMAT_COMPRESSED:
+	    case SND_FORMAT_COMPRESSED_EMPHASIZED:
+	    case SND_FORMAT_DSP_DATA_16:
+	    case SND_FORMAT_LINEAR_16:
+		theSampleValue += ((short *) pcmData)[sampleIndex];
+		break;
+	    case SND_FORMAT_LINEAR_24:
+	    case SND_FORMAT_DSP_DATA_24:
+		// theSampleValue = ((short *) pcmData)[frameIndex];
+		theSampleValue += *((int *) ((char *) pcmData + sampleIndex * 3)) >> 8;
+		break;
+	    case SND_FORMAT_LINEAR_32:
+	    case SND_FORMAT_DSP_DATA_32:
+		theSampleValue += ((int *) pcmData)[sampleIndex];
+		break;
+	    case SND_FORMAT_FLOAT:
+		theSampleValue += ((float *) pcmData)[sampleIndex];
+		break;
+	    case SND_FORMAT_DOUBLE:
+		theSampleValue += ((double *) pcmData)[sampleIndex];
+		break;
+	    default: /* just in case */
+		theSampleValue += ((short *) pcmData)[sampleIndex];
+		NSLog(@"SndAudioBuffer sampleAtFrameIndex:channel: unhandled format %d\n", format.dataFormat);
+		break;
+	}	
+    }
+    return (averageOverChannels > 1) ? theSampleValue / averageOverChannels : theSampleValue;
 }
 
 @end
