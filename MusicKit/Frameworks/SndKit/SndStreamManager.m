@@ -74,8 +74,9 @@ static SndStreamManager *sm = nil;
     
     [super init];
 
-    mixer         = [[SndStreamMixer sndStreamMixer] retain];
-    bg_threadLock = [[NSConditionLock alloc] initWithCondition: BG_ready];
+    mixer           = [[SndStreamMixer sndStreamMixer] retain];
+    bg_threadLock   = [[NSConditionLock alloc] initWithCondition: BG_ready];
+    bgdm_threadLock = [[NSConditionLock alloc] initWithCondition: BG_ready];
     delegateMessageArrayLock = [[NSLock alloc] init];
     active        = FALSE;
     bg_active     = FALSE;
@@ -112,6 +113,9 @@ static SndStreamManager *sm = nil;
     [mixer release];
     [delegateMessageArray release];
     [delegateMessageArrayLock release];
+    [bg_threadLock release];
+    [bgdm_threadLock release];
+
 //    NSLog(@"Manager version: MIXER");
 
 #if SNDSTREAMMANAGER_DEBUG
@@ -162,37 +166,42 @@ static SndStreamManager *sm = nil;
     [bg_threadLock unlockWithCondition:BG_ready];
 }
 
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 - (void)delegateMessageThread:(NSArray*)ports
 {
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
+
     id controllerProxy = nil;
     [self retain];
+
     while (1) {
         [bgdm_threadLock lockWhenCondition:BG_hasFlag];
         if (bgdm_sem == BG_delegateMessageReady) {
             NSInvocation *delegateMessage = nil;
-            int count;
-            while (1) {
-                [delegateMessageArrayLock lock];
-                count = [delegateMessageArray count];
-                if (count) {
-                    delegateMessage = [[delegateMessageArray objectAtIndex:0] retain];
-                    [delegateMessageArray removeObjectAtIndex:0];
-                }
-                [delegateMessageArrayLock unlock];
-                if (!count) break;
-                if (!controllerProxy) {
-                    controllerProxy = [[NSConnection connectionWithReceivePort:[ports objectAtIndex:0]
+            int count, i;
+            
+            [delegateMessageArrayLock lock];            
+            count = [delegateMessageArray count];
+            
+            if (!controllerProxy) {
+              controllerProxy = [[NSConnection connectionWithReceivePort:[ports objectAtIndex:0]
                                                       sendPort:[ports objectAtIndex:1]] rootProxy];
-                    [controllerProxy setProtocolForProxy:@protocol(SndDelegateMessagePassing)];
-                }
-                /* cast to unsigned long to prevent compiler warnings */
+              [controllerProxy setProtocolForProxy:@protocol(SndDelegateMessagePassing)];
+            }
+            
+            for (i = 0; i < count; i++) {
+                delegateMessage = [[delegateMessageArray objectAtIndex: i] retain];
+                // cast to unsigned long to prevent compiler warnings 
                 [controllerProxy _sendDelegateInvocation:(unsigned long)delegateMessage];
             }
+            [delegateMessageArray removeAllObjects];
+            [delegateMessageArrayLock unlock];
         }
         [bgdm_threadLock unlockWithCondition:BG_ready];
     }
     [self release];
+
     [localPool release];
     /* even if there is a new thread is created between the following two
      * statements, that would be ok -- there would temporarily be one
@@ -200,7 +209,6 @@ static SndStreamManager *sm = nil;
      */
     [NSThread exit];
 }
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // streamStartStopThread: watches for semaphore from processing thread that it
