@@ -1,5 +1,6 @@
 #import "SubSoundView.h"
 #import "SpectrumDocument.h"
+#import "ScrollingSound.h"
 #import <Foundation/NSObject.h>
 #import <SndKit/SndView.h>
 
@@ -8,27 +9,27 @@ char *doFloat(float f, int a, int r);
 @interface SoundDocument:NSObject
 {
     id soundWindow;
-    id scrollSound;
+    ScrollingSound *scrollSound;
     id playButton;
     id recordButton;
     id stopButton;
     id pauseButton;
-	id spectrumButton;
-	id wStartSamp;
-	id wStartSec;
-	id wDurSamp;
-	id wDurSec;
-	id sStartSamp;
-	id sStartSec;
-	id sDurSamp;
-	id sDurSec;
-	id soundInfo;
-	id stringTable;
-	id spectrumDocument;
+    id spectrumButton;
+    id wStartSamp;
+    id wStartSec;
+    id wDurSamp;
+    id wDurSec;
+    id sStartSamp;
+    id sStartSec;
+    id sDurSamp;
+    id sDurSec;
+    id soundInfo;
+    id stringTable;
+    id spectrumDocument;
     NSString *fileName;
     SubSoundView *mySoundView;
-	SpectrumDocument *mySpectrumDocument;
-	BOOL fresh;
+    SpectrumDocument *mySpectrumDocument;
+    BOOL fresh;
 }
 
 - init;
@@ -79,7 +80,7 @@ char *doFloat(float f, int a, int r);
 
 @interface SoundDocument(SoundViewDelegate)
 
-- didPlay:sender;
+- didPlay:sender duringPerformance: (SndPerformance *) performance;
 - didRecord:sender;
 - hadError:sender;
 - selectionChanged:sender;

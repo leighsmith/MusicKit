@@ -16,7 +16,6 @@
 
 #import <stdlib.h>
 #import <string.h>
-#import <objc/NXStringTable.h>
 
 #define ZOOM_FACTOR 2.0
 #define WAVE_MODE 0
@@ -61,16 +60,16 @@ static int calcFormat(SndSoundStruct *s)
     [self newSoundLocation:&theFrame.origin];
     [soundWindow setFrameOrigin:NSMakePoint(theFrame.origin.x, theFrame.origin.y)];
 //    [soundWindow makeKeyAndOrderFront:nil];
-	[scrollSound setDelegate:self];
+    [scrollSound setDelegate:self];
     mySoundView = [scrollSound soundView];
-	if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"DisplayType"] floatValue] < 1.0)
-		[mySoundView setDisplayMode:NX_SOUNDVIEW_WAVE];
-	else
-		[mySoundView setDisplayMode:NX_SOUNDVIEW_MINMAX];
-	[mySoundView setDelegate:self];
-	[mySoundView setContinuous:YES];
-	soundInfo = [[SoundInfo alloc] init];
-	fresh = YES;
+    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"DisplayType"] floatValue] < 1.0)
+        [mySoundView setDisplayMode:NX_SOUNDVIEW_WAVE];
+    else
+        [mySoundView setDisplayMode:NX_SOUNDVIEW_MINMAX];
+    [mySoundView setDelegate:self];
+    [mySoundView setContinuous:YES];
+    soundInfo = [[SoundInfo alloc] init];
+    fresh = YES;
     return self;
 }
 
@@ -579,12 +578,12 @@ static int calcFormat(SndSoundStruct *s)
 
 @implementation SoundDocument(SoundViewDelegate)
 
-- didPlay:sender
+- didPlay: sender duringPerformance: (SndPerformance *) performance;
 {
     [playButton setState:0];
     [playButton setEnabled:YES];
     [recordButton setState:0];
-	[recordButton setEnabled:([self isRecordable]? YES : NO)];
+    [recordButton setEnabled:([self isRecordable]? YES : NO)];
     [pauseButton setState:0];
     return self;
 }
@@ -644,17 +643,17 @@ static int calcFormat(SndSoundStruct *s)
 
 - (void)windowDidBecomeMain:(NSNotification *)notification
 {
-    [[NSApp delegate] setDocument:self];
-	[soundWindow makeFirstResponder:mySoundView];
-	[mySoundView showCursor];
+    [(SoundController *)[NSApp delegate] setDocument:self];
+    [soundWindow makeFirstResponder:mySoundView];
+    [mySoundView showCursor];
 }
 
 - (void)windowDidResignMain:(NSNotification *)notification
 {
-    id theController = [NSApp delegate];
-	if ([theController document] == self)
-		[theController setDocument:nil];
-	[mySoundView hideCursor];
+    SoundController *theController = [NSApp delegate];
+    if ([theController document] == self)
+        [theController setDocument:nil];
+    [mySoundView hideCursor];
 }
 
 - (void)windowDidMiniaturize:(NSNotification *)notification
