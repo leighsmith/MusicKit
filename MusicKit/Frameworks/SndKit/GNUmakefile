@@ -15,6 +15,10 @@
 
 # Modification history:
 # $Log$
+# Revision 1.16  2002/01/15 13:19:59  sbrandon
+# added 2 new classes to GNUstep compilation: SndAudioProcessorNoiseGate.m and
+# SndStreamArchitectureView.m
+#
 # Revision 1.15  2002/01/04 11:01:46  sbrandon
 # added new file SndAudioProcessorToneGenerator.m to build
 #
@@ -115,7 +119,8 @@ $(MY_NAME)_OBJC_FILES = \
           SndAudioBufferQueue.m SndAudioProcessorReverb.m \
 	  SndAudioProcessorDistortion.m	SndAudioProcessorFlanger.m \
 	  SndAudioProcessorRecorder.m SndAudioProcessorInspector.m \
-          SndAudioProcessorToneGenerator.m
+          SndAudioProcessorToneGenerator.m SndAudioProcessorNoiseGate.m \
+          SndStreamArchitectureView.m
 	  #SndMeter.m
 
 $(MY_NAME)_C_FILES = \
@@ -136,7 +141,8 @@ $(MY_NAME)_HEADER_FILES = \
          SndAudioProcessorReverb.h SndKitDefines.h \
 	 SndAudioProcessorDistortion.h SndAudioProcessorFlanger.h \
 	 SndAudioProcessorRecorder.h SndAudioProcessorInspector.h \
-         SndAudioProcessorToneGenerator.h
+         SndAudioProcessorToneGenerator.h SndAudioProcessorNoiseGate.h \
+         SndStreamArchitectureView.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
 
