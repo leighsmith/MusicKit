@@ -4,6 +4,7 @@
     English_RESOURCES = {}; 
     FILESTABLE = {
         CLASSES = (MIDIFileController.m); 
+        English_INTERFACES = (MIDIFilePlayback.nib); 
         FRAMEWORKS = (
             AppKit.framework, 
             Foundation.framework, 
@@ -18,7 +19,7 @@
         ); 
         H_FILES = (MIDIFileController.h); 
         IMAGES = (midi.tiff); 
-        INTERFACES = (MIDIFilePlayback.nib); 
+        INTERFACES = (); 
         OTHER_LINKED = (MIDIFilePlayback_main.m); 
         OTHER_SOURCES = (
             Makefile.preamble, 
