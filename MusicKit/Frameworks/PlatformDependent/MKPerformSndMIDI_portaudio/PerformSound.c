@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.2  2001/07/18 12:48:11  sbrandon
+// - removed (renamed to PerformSound.m)
+//
 // Revision 1.1  2001/07/02 22:03:48  sbrandon
 // - initial revision. Still a work in progress, but does allow the MusicKit
 //   and SndKit to compile on GNUstep.
@@ -63,19 +66,20 @@ typedef struct _audioStream {
 
 
 // "class variables" 
-static BOOL         initialised = FALSE;
-static char         **driverList;
-static unsigned int driverIndex = 0;
+static BOOL             initialised = FALSE;
+static char             **driverList;
+static unsigned int     driverIndex = 0;
 // text constants used in formatting the driver names.
-static char         *directSoundPrefix = "DirectSound";
-static char         *waveOutPrefix = "WaveOut";
-static int          numOfDevices;
-static BOOL 		inputInit = FALSE;
+static char             *directSoundPrefix = "DirectSound";
+static char             *waveOutPrefix = "WaveOut";
+static int              numOfDevices;
+static BOOL             inputInit = FALSE;
 
 // new ones for portaudio
-static int          bufferSizeInFrames;
-static long         bufferSizeInBytes = DEFAULT_BUFFERSIZE;
-static SNDPlayingSound singlePlayingSound;
+static int              bufferSizeInFrames;
+static long             bufferSizeInBytes = DEFAULT_BUFFERSIZE;
+static SNDPlayingSound  singlePlayingSound;
+static PortAudioStream  *stream;
 
 // Stream processing data.
 static SNDStreamProcessor streamProcessor;
@@ -248,16 +252,15 @@ PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct,
 								   int tag, int priority,  int preempt, 
 								   SNDNotificationFun beginFun, SNDNotificationFun endFun)
 {
-	PaError err;
-	PortAudioStream *stream;
-	int data = 0;
+    PaError err;
+    int data = 0;
 	
     if(!initialised)
-		return SND_ERR_NOT_RESERVED;  // invalid sound structure.
+        return SND_ERR_NOT_RESERVED;  // invalid sound structure.
  
     if(soundStruct->magic != SND_MAGIC)
         return SND_ERR_CANNOT_PLAY; // probably SND_ERROR_NOT_SOUND is more descriptive, but this matches SoundKit specs.
-// begin portaudio coding
+
     singlePlayingSound.playTag = tag;
     singlePlayingSound.snd = soundStruct;
     singlePlayingSound.sampleFramesGenerated = 0;
@@ -269,31 +272,36 @@ PERFORM_API int SNDStartPlaying(SndSoundStruct *soundStruct,
 
     err = Pa_Initialize();
     if( err != paNoError )
-	    printf(  "PortAudio error: %s\n", Pa_GetErrorText( err ) );
-	err = Pa_OpenDefaultStream(
-    	&stream,        /* passes back stream pointer */
-    	0,              /* no input channels */
-    	2,              /* stereo output */
-    	paFloat32,      /* 32 bit floating point output */
-    	44100,          /* sample rate */
-    	256,            /* frames per buffer */
-    	0,              /* number of buffers, if zero then use default minimum */
-    	paSKCallback, /* specify our custom callback */
-    	&data );        /* pass our data through to callback */
-	err = Pa_StartStream( stream );
-	if( err != paNoError )
-		printf(  "PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText( err ) );
+        NSLog(@"PortAudio error: %@\n", [NSString stringWithCString:Pa_GetErrorText( err )] );
+    err = Pa_OpenDefaultStream(
+        &stream,        /* passes back stream pointer */
+        0,              /* no input channels */
+        2,              /* stereo output */
+        paFloat32,      /* 32 bit floating point output */
+        44100,          /* sample rate */
+        1024,           /* frames per buffer */
+        0,              /* number of buffers, if zero then use default minimum */
+        paSKCallback,   /* specify our custom callback */
+        &data );        /* pass our data through to callback */
+    if( err != paNoError )
+        NSLog(@"PortAudio Pa_OpenDefaultStream error: %s\n", Pa_GetErrorText( err ) );
+    err = Pa_StartStream( stream );
+    if( err != paNoError )
+        NSLog(@"PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText( err ) );
 
-	Pa_Sleep(2) ; /* seconds */
+    Pa_Sleep(2) ; /* seconds */
     return SND_ERR_NONE;
 }
 
 
 PERFORM_API int SNDStartRecording(SndSoundStruct *soundStruct, 
-									 int tag, int priority, int preempt, 
-									 SNDNotificationFun beginRecFun, SNDNotificationFun endRecFun)
+                                  int tag,
+                                  int priority,
+                                  int preempt, 
+                                  SNDNotificationFun beginRecFun,
+                                  SNDNotificationFun endRecFun)
 {
-	return FALSE; // TODO
+    return FALSE; // TODO
 }
 
  
@@ -323,6 +331,12 @@ PERFORM_API int SNDUnreserve(int dunno)
 
 PERFORM_API void SNDTerminate(void)
 {
+    PAError err;
+    err = PA_Terminate();
+    if( err != paNoError ) {
+        NSLog(@"PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText( err ) );
+        r = FALSE;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -343,13 +357,14 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
                           const AudioTimeStamp *inOutputTime,
                           void *inClientData)
  */
-static int vendBuffersToStreamManagerIOProc(	void 			*inputBuffer,
-												void 			*outputBuffer,
-												unsigned long	framesPerBuffer,
-												PaTimestamp		outTime,
-												void			*userData )
+static int vendBuffersToStreamManagerIOProc(void           *inputBuffer,
+                                            void           *outputBuffer,
+                                            unsigned long  framesPerBuffer,
+                                            PaTimestamp    outTime,
+                                            void           *userData )
 {
     SNDStreamBuffer inStream, outStream;
+    static int jj = 0;
 
 //    if(inOutputTime->mFlags & kAudioTimeStampSampleTimeValid == 0) {
 //        fprintf(stderr, "sample time is not valid!\n");
@@ -379,10 +394,20 @@ static int vendBuffersToStreamManagerIOProc(	void 			*inputBuffer,
     // hand over the stream buffers to the processor/stream manager.
     // the output time goes out as a relative time, noted from the 
     // first sample time we first receive.
-	fprintf(stderr,"vending  %d %d\n", (int)outTime,(int)firstSampleTime);
+	//fprintf(stderr,"vending  %d %d\n", (int)outTime,(int)firstSampleTime);
     (*streamProcessor)(outTime - firstSampleTime, 
                        &inStream, &outStream, streamUserData);
-    return 0; // TODO need better definition...
+    /*
+    if (jj++ < 14 && jj > 4) {
+	    int i;
+	    for (i = 0;i<1024;i++) {
+		    printf("%d %f ",i,((float*)outputBuffer)[i]);
+	    }
+	    printf("\n");
+	    fflush(stdout);
+    }
+    */
+    return 0; // returning 1 stops the stream
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -393,12 +418,9 @@ static int vendBuffersToStreamManagerIOProc(	void 			*inputBuffer,
 
 PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *newUserData)
 {
-	PaError err;
-	PortAudioStream *stream;
-	int data = 0;
-
+    PaError err;
+    int data = 0;
     BOOL r = TRUE;
-//    OSStatus CAstatus;
     
     if(!initialised)
         return FALSE;  // invalid sound structure.
@@ -417,33 +439,29 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
 
     streamProcessor = newStreamProcessor;
     streamUserData  = newUserData;
-    
 
-	
     err = Pa_Initialize();
     if( err != paNoError ) {
-	    printf(  "PortAudio error: %s\n", Pa_GetErrorText( err ) );
-		r = FALSE;
-	}
-	err = Pa_OpenDefaultStream(
-    	&stream,        /* passes back stream pointer */
-    	0,              /* no input channels */
-    	2,              /* stereo output */
-    	paFloat32,      /* 32 bit floating point output paFloat32*/
-    	44100,          /* sample rate */
-    	256,            /* frames per buffer */
-    	0,              /* number of buffers, if zero then use default minimum */
-    	vendBuffersToStreamManagerIOProc, /* specify our custom callback */
-    	&data );        /* pass our data through to callback */
-	err = Pa_StartStream( stream );
-	if( err != paNoError ) {
-		printf(  "PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText( err ) );
-		r = FALSE;
-	}
+        NSLog(@"PortAudio error: %s\n", Pa_GetErrorText( err ) );
+        r = FALSE;
+    }
+    err = Pa_OpenDefaultStream(
+        &stream,        /* passes back stream pointer */
+        0,              /* no input channels */
+        2,              /* stereo output */
+        paFloat32,      /* 32 bit floating point output paFloat32*/
+        44100,          /* sample rate */
+        1024,            /* frames per buffer */
+        0,              /* number of buffers, if zero then use default minimum */
+        vendBuffersToStreamManagerIOProc, /* specify our custom callback */
+        &data );        /* pass our data through to callback */
+    err = Pa_StartStream( stream );
+    if( err != paNoError ) {
+        NSLog(@"PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText( err ) );
+        r = FALSE;
+    }
 	
-	
-	
-	
+
 	/*****
     CAstatus = AudioDeviceAddIOProc(outputDeviceID, vendBuffersToStreamManagerIOProc, NULL);
     if (CAstatus) {
@@ -490,7 +508,12 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *new
 PERFORM_API BOOL SNDStreamStop(void)
 {
     BOOL r = TRUE;
-
+    PAError err;
+    err = PA_CloseStream(stream);
+    if( err != paNoError ) {
+        NSLog(@"PortAudio Pa_CloseStream error: %s\n", Pa_GetErrorText( err ) );
+        r = FALSE;
+    }
     return r;
 }
 
