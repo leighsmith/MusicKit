@@ -23,7 +23,7 @@
 
 #define SNDSTREAMMANAGER_DEBUG                  0
 #define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
-#define SNDSTREAMMANAGER_DELEGATEMESSAGING      1
+#define SNDSTREAMMANAGER_DELEGATEMESSAGING      0
 
 #ifdef __MINGW32__
 #define NSConditionLock SndConditionLock
@@ -87,7 +87,9 @@ static SndStreamManager *sm = nil;
 
 - init
 {
+#if SNDSTREAMMANAGER_DELEGATEMESSAGING
     NSPort *managerReceivePort,*managerSendPort;
+#endif
     
     [super init];
 
@@ -155,8 +157,9 @@ static SndStreamManager *sm = nil;
 
 - (NSString*) description
 {
-    return [NSString stringWithFormat: @"SndStreamManager object with %i clients",
-        [mixer clientCount]];
+  return [NSString stringWithFormat: @"SndStreamManager [buffer samrate::%.1fkHz, chans:%i, length:%i]",
+    format.samplingRate / 1000.0, format.channelCount,
+    format.dataSize/(format.channelCount*sizeof(float))];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -219,11 +222,12 @@ static SndStreamManager *sm = nil;
           }
           [delegateMessageArrayLock unlock];
           if (!count) break;
-#if 0
+#if 1
           if (!controllerProxy) {
             // SKoT: Thread blocks here... but _why_????
-            controllerProxy = [[NSConnection connectionWithReceivePort:[ports objectAtIndex:0]
-                                                  sendPort:[ports objectAtIndex:1]] rootProxy];
+            NSConnection *theConnection = [NSConnection connectionWithReceivePort:[ports objectAtIndex:0]
+                                                  sendPort:[ports objectAtIndex:1]];
+            controllerProxy = [theConnection rootProxy];
             [controllerProxy setProtocolForProxy:@protocol(SndDelegateMessagePassing)];
           }
           /* cast to unsigned long to prevent compiler warnings */
