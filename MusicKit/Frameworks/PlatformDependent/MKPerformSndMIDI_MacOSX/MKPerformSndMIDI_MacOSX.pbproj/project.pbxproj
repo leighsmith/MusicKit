@@ -18,7 +18,6 @@
 				016D5A24FED483BBCFED3B93,
 				016D5A26FED483BBCFED3B93,
 				016D5A2EFED483BBCFED3B93,
-				016D5A31FED483BBCFED3B93,
 				016D5A38FED483BBCFED3B93,
 			);
 			isa = PBXGroup;
@@ -89,51 +88,10 @@
 			path = PerformSound.c;
 			refType = 4;
 		};
-		016D5A31FED483BBCFED3B93 = {
-			children = (
-				016D5A32FED483BBCFED3B93,
-				016D5A33FED483BBCFED3B93,
-				016D5A34FED483BBCFED3B93,
-				016D5A35FED483BBCFED3B93,
-				016D5A36FED483BBCFED3B93,
-				016D5A37FED483BBCFED3B93,
-			);
-			isa = PBXGroup;
-			name = "Supporting Files";
-			refType = 4;
-		};
-		016D5A32FED483BBCFED3B93 = {
-			isa = PBXFileReference;
-			path = Makefile.preamble;
-			refType = 4;
-		};
-		016D5A33FED483BBCFED3B93 = {
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		016D5A34FED483BBCFED3B93 = {
-			isa = PBXFileReference;
-			path = Makefile.postamble;
-			refType = 4;
-		};
-		016D5A35FED483BBCFED3B93 = {
-			isa = PBXFileReference;
-			path = m.template;
-			refType = 4;
-		};
-		016D5A36FED483BBCFED3B93 = {
-			isa = PBXFileReference;
-			path = h.template;
-			refType = 4;
-		};
-		016D5A37FED483BBCFED3B93 = {
-			isa = PBXFileReference;
-			path = platform.make;
-			refType = 4;
-		};
 		016D5A38FED483BBCFED3B93 = {
 			children = (
+				1001C128FFAE92E2CFED3B93,
+				1001C124FFAE54A5CFED3B93,
 				016D5A39FED483BBCFED3B93,
 			);
 			isa = PBXGroup;
@@ -329,6 +287,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				016D5A48FED483BBCFED3B93,
+				1001C125FFAE54A5CFED3B93,
+				1001C129FFAE92E2CFED3B93,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -355,6 +315,40 @@
 			isa = PBXFrameworkReference;
 			path = MKPerformSndMIDI.framework;
 			refType = 3;
+		};
+		1001C124FFAE54A5CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = CoreMIDI.framework;
+			path = /System/Library/Frameworks/CoreMIDI.framework;
+			refType = 0;
+		};
+		1001C125FFAE54A5CFED3B93 = {
+			fileRef = 1001C124FFAE54A5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		1001C128FFAE92E2CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = CoreServices.framework;
+			path = /System/Library/Frameworks/CoreServices.framework;
+			refType = 0;
+		};
+		1001C129FFAE92E2CFED3B93 = {
+			fileRef = 1001C128FFAE92E2CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
 		};
 	};
 	rootObject = 016D5A22FED483BACFED3B93;
