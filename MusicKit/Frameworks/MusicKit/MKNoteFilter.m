@@ -25,6 +25,10 @@
 /* Modification history:
 
   $Log$
+  Revision 1.8  2002/01/29 16:23:35  sbrandon
+  we now call superclass methods in archival methods
+  copyWithZone: leaked objects - added releases where necessary
+
   Revision 1.7  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -64,8 +68,7 @@
 {
     if (self != [MKNoteFilter class])
       return;
-//    [self setVersion:VERSION2];
-    [MKNoteFilter setVersion:VERSION2]; //sb: suggested by Stone conversion guide
+    [MKNoteFilter setVersion:VERSION2];
     return;
 }
 
@@ -78,17 +81,17 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
   /* You never send this message directly.  
-     Should be invoked with NXWriteRootObject(). 
-     Invokes superclass write: and archives noteSender List. */
+     Invokes superclass encodeWithCoder: and archives noteSender List. */
 {
+    [super encodeWithCoder:aCoder];
     [aCoder encodeObject:noteSenders];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
   /* You never send this message directly.  
-     Should be invoked via NXReadObject(). 
-     See write:. */
+     See encodeWithCoder:. */
 {
+    self = [super initWithCoder:aDecoder];
     if ([aDecoder versionForClassName: @"MKNoteFilter"] == VERSION2) 
       noteSenders = [[aDecoder decodeObject] retain];
     return self;
@@ -100,12 +103,15 @@
   /* Copies object, copying MKNoteSenders and MKNoteReceivers. */
 {
     MKNoteFilter *newObj = [super copyWithZone:zone];
-//    id *el,newEl;
+    id ns_copy;
     int i;
     unsigned n;
-    newObj->noteSenders = [[NSMutableArray arrayWithCapacity:n = [noteSenders count]] retain];
-    for (i=0; i<n; i++) 
-      [newObj addNoteSender: [[noteSenders objectAtIndex:i] copy]];
+    newObj->noteSenders = [[NSMutableArray alloc] initWithCapacity:n = [noteSenders count]];
+    for (i=0; i<n; i++) {
+      ns_copy = [[noteSenders objectAtIndex:i] copy];
+      [newObj addNoteSender: ns_copy];
+      [ns_copy release];
+    }
     return newObj;
 }
 
