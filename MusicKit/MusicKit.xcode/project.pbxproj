@@ -3830,6 +3830,9 @@
 		D828F9C70780CC1E00215EB9 = {
 			buildActionMask = 2147483647;
 			files = (
+				D847900307A8B01700F7C83A,
+				D847900407A8B01700F7C83A,
+				D847900507A8B01700F7C83A,
 				D828FA410780CFD200215EB9,
 			);
 			isa = PBXFrameworksBuildPhase;
@@ -4221,6 +4224,9 @@
 		D828FA580780D1F400215EB9 = {
 			buildActionMask = 2147483647;
 			files = (
+				D847900607A8B06100F7C83A,
+				D847900707A8B06100F7C83A,
+				D847900807A8B06100F7C83A,
 				D8E8D5F8078465A500AAE755,
 			);
 			isa = PBXFrameworksBuildPhase;
@@ -5390,6 +5396,54 @@
 			path = "Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX/MKPerformSndMIDI-Info.plist";
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
+		};
+		D847900107A8AFD700F7C83A = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D847900207A8AFD700F7C83A = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D847900307A8B01700F7C83A = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D847900407A8B01700F7C83A = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D847900507A8B01700F7C83A = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D847900607A8B06100F7C83A = {
+			fileRef = D84395E9059FAA450054BEEE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D847900707A8B06100F7C83A = {
+			fileRef = D82AC3B905A0F6DA00780F57;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D847900807A8B06100F7C83A = {
+			fileRef = D88FED7105A10EAF0024FD88;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		D84AE06A0623249200A477FA = {
 			buildPhases = (
@@ -7678,6 +7732,8 @@
 		D85E27F206FA0C0100385C32 = {
 			buildActionMask = 2147483647;
 			files = (
+				D847900107A8AFD700F7C83A,
+				D847900207A8AFD700F7C83A,
 				D880FD0D0780882F00FD03CC,
 				D880FCC7077FEAD000FD03CC,
 			);
