@@ -43,7 +43,7 @@ static SEL xForBpSel;
 @implementation SndAudioFader
 
 /* forward decl */
-float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope, double theX);
+static float lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope, double theX);
 
 + (void)setEnvelopeClass:(id)aClass
 {
@@ -88,19 +88,19 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
 
 - init
 {
-  self = [super init];
-  if (self) {
-    envelopesLock           = [NSLock new];
-    balanceEnvLock = [NSLock new];
-    ampEnvLock     = [NSLock new];
-    ampEnv         = nil;
-    staticAmp      = 1;
-    balanceEnv     = nil;
-    staticBalance  = 0;
-    [self setEnvelopeClass:ENVCLASS];
-    uee = NULL;
-  }
-  return self;
+    self = [super initWithParamCount: 0 name: @"Fader"];
+    if (self) {
+	envelopesLock  = [NSLock new];
+	balanceEnvLock = [NSLock new];
+	ampEnvLock     = [NSLock new];
+	ampEnv         = nil;
+	staticAmp      = 1;
+	balanceEnv     = nil;
+	staticBalance  = 0;
+	[self setEnvelopeClass: ENVCLASS];
+	uee = NULL;
+    }
+    return self;
 }
 
 /*
@@ -137,7 +137,7 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
   }
   nowTime = [(SndStreamManager *)[SndStreamManager defaultStreamManager] nowTime];
   [balanceEnvLock lock];
-  yVal = _lookupEnvForX(self,balanceEnv,nowTime);
+  yVal = lookupEnvForX(self,balanceEnv,nowTime);
   [balanceEnvLock unlock];
   return yVal;
 }
@@ -173,7 +173,7 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
   }
   nowTime = [(SndStreamManager *)[SndStreamManager defaultStreamManager] nowTime];
   [ampEnvLock lock];
-  yVal = _lookupEnvForX(self,ampEnv,nowTime);
+  yVal = lookupEnvForX(self,ampEnv,nowTime);
   [ampEnvLock unlock];
   return yVal;
 }
@@ -233,10 +233,10 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
     // and SND_FADER_ATTACH_RAMP_RIGHT, respectively.
 
     if (dissectsAtStart) {
-      endPrecedingRampLevel = _lookupEnvForX(self,theEnv,startRampTime);
+      endPrecedingRampLevel = lookupEnvForX(self,theEnv,startRampTime);
     }
     if (dissectsAtEnd) {
-      startSucceedingRampLevel = _lookupEnvForX(self,theEnv,endRampTime);
+      startSucceedingRampLevel = lookupEnvForX(self,theEnv,endRampTime);
     }
 
     // do the deletion, backwards
@@ -386,7 +386,7 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
   double yVal;
   if (!balanceEnv) return staticBalance;
   [balanceEnvLock lock];
-  yVal = _lookupEnvForX(self,balanceEnv, atTime);
+  yVal = lookupEnvForX(self,balanceEnv, atTime);
   [balanceEnvLock unlock];
   return yVal;
 }
@@ -409,7 +409,7 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
   double yVal;
   if (!ampEnv) return staticAmp;
   [ampEnvLock lock];
-  yVal = _lookupEnvForX(self, ampEnv, atTime);
+  yVal = lookupEnvForX(self, ampEnv, atTime);
   [ampEnvLock unlock];
   return yVal;
 }
@@ -443,7 +443,7 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
 //{
 //}
 
-float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope, double theX)
+static float lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope, double theX)
 {
   //    int prevBreakpoint = [anEnvelope breakpointIndexBeforeOrEqualToX:theX];
   int prevBreakpoint = saf->bpBeforeOrEqual(anEnvelope,bpBeforeOrEqualSel,theX);
@@ -463,7 +463,7 @@ float _lookupEnvForX(SndAudioFader *saf, id <SndEnveloping, NSObject> anEnvelope
 
 }
 
-inline int _processBalance( int xPtr,
+static inline int processBalance(int xPtr,
                             SndUnifiedEnvelopeEntry *uee,
                             double tempXVal,
                             float tempAmpY,
@@ -650,7 +650,7 @@ inline int _processBalance( int xPtr,
                 if (b4AmpIndx != BP_NOT_FOUND) {
                     // uee[xPtr].ampFlags = [ampEnv lookupFlagsForBreakpoint:b4AmpIndx];
                     uee[xPtr].ampFlags = flagsForBp(ampEnv, flagsForBpSel, b4AmpIndx);
-                    uee[xPtr].ampY = _lookupEnvForX(self, ampEnv, ampX);
+                    uee[xPtr].ampY = lookupEnvForX(self, ampEnv, ampX);
                 }
                 else {
                     uee[xPtr].ampFlags = 0;
@@ -659,7 +659,7 @@ inline int _processBalance( int xPtr,
                 if (b4BalanceIndx != BP_NOT_FOUND) {
                     // uee[xPtr].balanceFlags = [balanceEnv lookupFlagsForBreakpoint: b4BalanceIndx];
                     uee[xPtr].balanceFlags = flagsForBp(balanceEnv, flagsForBpSel, b4BalanceIndx);
-                    uee[xPtr].balanceY = _lookupEnvForX(self, balanceEnv, ampX);
+                    uee[xPtr].balanceY = lookupEnvForX(self, balanceEnv, ampX);
                 }
                 else {
                     uee[xPtr].balanceFlags = 0;
@@ -689,7 +689,7 @@ inline int _processBalance( int xPtr,
                     tempAmpY = ampEnv ?
                         yForBp(ampEnv,yForBpSel,nextAmpIndx) : staticAmp;
                     tempBalanceY = balanceEnv ?
-                        _lookupEnvForX(self, balanceEnv, nextAmpX) : staticBalance;
+                        lookupEnvForX(self, balanceEnv, nextAmpX) : staticBalance;
             
                     /* since we're slotting in an unexpected bp as far as the balance env
                         * is concerned, make sure we tell the new bp to ramp on both sides,
@@ -702,7 +702,7 @@ inline int _processBalance( int xPtr,
                     else {
                         tempBalanceFlags = 0;
                     }
-                    xPtr = _processBalance( xPtr, uee+xPtr,
+                    xPtr = processBalance( xPtr, uee+xPtr,
                                             tempXVal, tempAmpY,
                                             tempBalanceY,
                                             tempAmpFlags,
@@ -728,7 +728,7 @@ inline int _processBalance( int xPtr,
                     tempAmpFlags = 0;
                     //[balanceEnv lookupYForBreakpoint:nextBalanceIndx]
                     tempAmpY = ampEnv ?
-                        _lookupEnvForX(self, ampEnv,nextBalanceX) : staticAmp;
+                        lookupEnvForX(self, ampEnv,nextBalanceX) : staticAmp;
                     tempBalanceY = balanceEnv ?
                         yForBp(balanceEnv,yForBpSel,nextBalanceIndx) : staticBalance;
             
@@ -743,7 +743,7 @@ inline int _processBalance( int xPtr,
                     else {
                         tempAmpFlags = 0;
                     }
-                    xPtr = _processBalance( xPtr, uee+xPtr,
+                    xPtr = processBalance( xPtr, uee+xPtr,
                                             tempXVal, tempAmpY,
                                             tempBalanceY,
                                             tempAmpFlags,
@@ -769,9 +769,9 @@ inline int _processBalance( int xPtr,
             tempXVal = maxX;
             tempAmpFlags = nextAmpFlags;
             tempBalanceFlags = nextBalanceFlags;
-            tempAmpY = ampEnv ? _lookupEnvForX(self, ampEnv, maxX) : staticAmp;
-            tempBalanceY = balanceEnv ? _lookupEnvForX(self, balanceEnv, maxX) : staticBalance;
-            xPtr = _processBalance( xPtr, uee+xPtr,
+            tempAmpY = ampEnv ? lookupEnvForX(self, ampEnv, maxX) : staticAmp;
+            tempBalanceY = balanceEnv ? lookupEnvForX(self, balanceEnv, maxX) : staticBalance;
+            xPtr = processBalance( xPtr, uee+xPtr,
                                     tempXVal, tempAmpY,
                                     tempBalanceY,
                                     tempAmpFlags,
@@ -885,7 +885,7 @@ inline int _processBalance( int xPtr,
                         }
                     }
                     else if (lDiff == 0.0F) {
-                        for (j = currSample ; j <= lastSample ; j+=2) {
+                        for (j = currSample; j <= lastSample; j += 2) {
                             proportion = (float) j / (float) timeDiff;
                             rScaler = rStartAmp + rDiff * proportion;
                             inD[j] *= lStartAmp;
