@@ -1,22 +1,32 @@
+/*
+  $Id$
+  
+  Defined In: The MusicKit
+  Description:
+    This is the header file for the MusicKit MKSynthPatch Library.
+
+    In the naming scheme used, the name refers to the algorithm, the number 
+    refers to the number of oscillators or (for fm) modulators and v stands for 
+    vibrato capabilities.  
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University.
+  Portions Copyright (c) 1999-2001, The MusicKit Project.
+*/
+/*
+  $Log$
+  Revision 1.1  2001/09/08 20:20:30  leighsmith
+  Renamed synthpatches.h to MKSynthPatches.h
+
+*/
 #ifndef __MK_synthpatches_H___
 #define __MK_synthpatches_H___
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-/* 
-	synthpatches.h 
 
-	This header file is part of the Music Kit MKSynthPatch Library.
-*/
 #ifndef SYNTHPATCHES_H
 #define SYNTHPATCHES_H
-
-/* This is the header file for the Music Kit MKSynthPatch Library. */
-   
-
-/*
-  In the naming scheme used, the name refers to the algorithm, the number 
-  refers to the number of oscillators or (for fm) modulators and v stands for 
-  vibrato capabilities.  
-*/
 
 /* Basic Wavetable synthesis, no envelopes. */
 #import "Simp.h"
