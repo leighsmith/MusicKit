@@ -14,15 +14,15 @@
   #define USE_PERFORM_SOUND_IO
 #elif (defined(__APPLE__) && defined(__MACH__))
   #define USE_PERFORM_SOUND_IO
-  #import <SoundKit/Sound.h>
+  #import "Sound.h"
 #elif defined(WIN32)
   #define USE_PERFORM_SOUND_IO
   #import <MKPerformSndMIDI/PerformSound.h>
+  #import "sounderror.h"
 #endif
 
 #ifdef USE_PERFORM_SOUND_IO
 #import "SndFormats.h"
-#import "sounderror.h"
 #endif
 
 #import "SndFunctions.h"
@@ -87,7 +87,7 @@ typedef enum {
  * --------------- Factory Methods
  */
 
-+ findSoundFor:(NSString *)aName;
++ soundNamed:(NSString *)aName;
 
 + addName:(NSString *)name sound:aSnd;
 + addName:(NSString *)name fromSoundfile:(NSString *)filename;
