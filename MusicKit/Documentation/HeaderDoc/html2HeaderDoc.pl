@@ -86,6 +86,15 @@ while (chop($_ = <>)) {
     s/&#172;//g;
     # For some reason, elongated hyphens were sometimes used for '-'.
     s/&#177;/-/g;
+
+    # Convert numeric left and right double quotes into their symbolic entities.
+    s/&#170;/&ldquo;/g;
+    s/&#186;/&rdquo;/g;
+
+    # Any HTML with spaces before closure of a tag is usually from a
+    # misplaced bold or italic in the original RTF and needs swapping.
+    s/(\s+)(<\/[a-zA-Z0-9]+>)/\2\1/g;
+
     # move any leading space before an end tag i.e 
     # <b>Text with trailing space </b>
     s/(  *)<\/(.*)>/<\/$2>$1/g;
@@ -113,7 +122,7 @@ if ($wholeFile =~ s/^.*?Class Description(.*?)(Instance Variables|Method Types|I
     if($sedOutput) {
 	printf("1i\\\n");
     }
-    printf("/*!%s\n  \@class $classname%s\n  \@discussion%s\n", $eolChar, $eolChar, $eolChar);
+    printf("/*!%s\n  \@class $classname%s\n  \@abstract%s\n  \@discussion%s\n", $eolChar, $eolChar, $eolChar, $eolChar);
 
     # Substitute any .eps files to be a figure
     $description =~ s/([^>\s]+)\.eps/\<img src=\"Images\/$1.gif\">/;
@@ -279,9 +288,12 @@ while ($wholeFile =~ s/<br>\s*(<b>)*\s*([\+\-])\s*(<\/b>)*\s*(.*?)(<br>\s*){2,}(
     if (length($returnType) == 0) {
 	$returnType = "id";
     }
+
     # Do MK prefixing of common classes
     $discussion =~ s/(\W)UnitGenerator/\1MKUnitGenerator/g;
     $discussion =~ s/(\W)SynthPatch/\1MKSynthPatch/g;
+    $discussion =~ s/(\W)Envelope/\1MKEnvelope/g;
+
     # Attempt to make the return type slightly more readable, checking
     # if we mention returning self in the discussion, if so, replacing
     # id in the result and removing the statement in the discussion..
