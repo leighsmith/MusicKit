@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.12  2000/06/09 18:09:19  leigh
+  added better platform definitions to deal with deprecated API
+
   Revision 1.11  2000/05/06 02:36:41  leigh
   Made Win32 declare regression class types also
 
@@ -70,26 +73,27 @@
 #import "MKDeviceStatus.h"
 #import "params.h"
 
-// this is a private structure that now has to live in a public header after the ivar freeze,
-// but it will become an object one day anyway.
-
-typedef struct _timeVars {
-    id synchConductor;         /* If non-nil, time mode is MTC Synch */
-    NSPort *exceptionPort; /* Exception port.  Only one unit per device may have one */
-    NSPort *alarmPort;     /* Alarm port.  Only one unit per device may have one */
-    id midiObj;                /* Which unit is receiving MTC. */
-    double alarmTime;
-    int intAlarmTime;
-    BOOL alarmTimeValid;
-    BOOL alarmPending;
-} timeVars;
-
 // Determine the MacOsX derivative being compiled on. This is a passing phase (MOXS 1.2) until the two O.S. merge API
 #define macosx (defined(__ppc__) && !defined(ppc))
 #define macosx_server (defined(__ppc__) && defined(ppc))
 #if macosx_server || WIN32
 #define NSMachPort NSPort
 #endif
+
+
+// this is a private structure that now has to live in a public header after the ivar freeze,
+// but it will become an object one day anyway.
+
+typedef struct _timeVars {
+    id synchConductor;         /* If non-nil, time mode is MTC Synch */
+    NSMachPort *exceptionPort; /* Exception port.  Only one unit per device may have one */
+    NSMachPort *alarmPort;     /* Alarm port.  Only one unit per device may have one */
+    id midiObj;                /* Which unit is receiving MTC. */
+    double alarmTime;
+    int intAlarmTime;
+    BOOL alarmTimeValid;
+    BOOL alarmPending;
+} timeVars;
 
 @interface MKMidi:NSObject
 {
