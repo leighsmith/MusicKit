@@ -160,7 +160,7 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
   else
   {
     SndSoundStruct *format = [[self outputBuffer] format];
-    if (format == nil) 
+    if (format == NULL)
       fprintf(stderr,"SndStreamRecorder::setupRecordFile - Error: synthBuffer format is NULL.\n");
     
     else {
@@ -168,7 +168,7 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
       if (recordFileName != nil)
         [recordFileName release];
         
-      recordFileName = [[filename copy] retain];
+      recordFileName = [filename copy];
       
       return TRUE;
     }
