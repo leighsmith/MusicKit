@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.31  2000/12/15 02:02:27  leigh
+  Cosmetic changes.
+
   Revision 1.30  2000/12/07 00:28:37  leigh
   Standardised on machPorts as the mechanism for MKMD routines.
 
@@ -287,9 +290,9 @@ static MKMidi *receivingMidi = nil;           // the instance that has received 
 static NSMutableArray *midiDriverNames = nil; // This and midiDriverUnits will have the same number of elements.
 static NSMutableArray *midiDriverUnits = nil;
 static unsigned int systemDefaultDriverNum;   // index into the midiDriverNames and units that the operating system has nominated as default
+static double mtcTimeOffset = 0;
 
 /* Some forward decls */
-static double mtcTimeOffset = 0;
 static BOOL tearDownMTC(MKMidi *self);
 static BOOL setUpMTC(MKMidi *self);
 void handleCallBack(void *midiObj);
