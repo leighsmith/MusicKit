@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2001/03/30 22:34:35  leighsmith
+  Now retrieves destinations as the driver list
+
   Revision 1.11  2001/03/08 18:42:36  leigh
   New include of header for new CoreAudio spec, removed Mach error use
 
@@ -74,7 +77,7 @@ static int             datumMSecTime;
 static MIDIClientRef   client = NULL;   // handle indicating we are a client of the MIDI server.
 static MIDIPortRef     outPort = NULL;
 static MIDIPortRef     inPort = NULL;
-static MIDIEndpointRef claimedDestinationUnit = NULL;
+static MIDIEndpointRef *claimedDestinations = NULL;
 static MIDIEndpointRef claimedSourceUnit = NULL;
 static MKMDReplyFunctions *userFuncs;   // functions to be called on reception from the driver.
 
@@ -106,48 +109,35 @@ static void readProc(const MIDIPacketList *pktlist, void *refCon, void *connRefC
     }
 }
 
-// Retrieve a list of strings giving driver names, and therefore (0 based) unit numbers.
+// Retrieve a list of strings giving driver names and available ports, and therefore
+// (0 based) unit numbers.
 // Return the available port names and the index of the current selected port.
 // A NULL char * terminates the list a la argv behaviour.
+//
+// Actually, this returns a collection of destinations rather than devices. 
+// Destinations reside within entities, which are configurations of system wide 
+// interoperating MIDI streams, including virtual streams.
 PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
 {
     const char **driverList = NULL;
-    ItemCount i, n;
-    CFStringRef pname, pmanuf, pmodel;
-    char name[64], manuf[64], model[64];
-	
-#if 1 // USE_DEVICES
-    // enumerate devices 
-    n = MIDIGetNumberOfDevices();
-    // always create at least one entry for the terminating NULL pointer.
-    driverList = (char **) calloc(n+1, sizeof(char *));
-    for (i = 0; i < n; ++i) {
-        MIDIDeviceRef dev = MIDIGetDevice(i);
+    NSMutableArray *driverNameList = [NSMutableArray array];
+    ItemCount destinationIndex, destinationCount = MIDIGetNumberOfDestinations();
+    CFStringRef pname;
+    unsigned int driverListIndex;
         
-        MIDIObjectGetStringProperty(dev, kMIDIPropertyName, &pname);
-        MIDIObjectGetStringProperty(dev, kMIDIPropertyManufacturer, &pmanuf);
-        MIDIObjectGetStringProperty(dev, kMIDIPropertyModel, &pmodel);
-        
-        CFStringGetCString(pname, name, sizeof(name), 0);
-        CFStringGetCString(pmanuf, manuf, sizeof(manuf), 0);
-        CFStringGetCString(pmodel, model, sizeof(model), 0);
-        driverList[i] = [[NSString stringWithFormat: @"%@ %@ %@", pmanuf, pname, pmodel] cString];
-        CFRelease(pname);
-        CFRelease(pmanuf);
-        CFRelease(pmodel);
-
-        // printf("driver[%ld] = %s\n", i, driverList[i]);
+    for(destinationIndex = 0; destinationIndex < destinationCount; destinationIndex++) {
+        MIDIEndpointRef destEndPoint = MIDIGetDestination(destinationIndex); 
+        MIDIObjectGetStringProperty(destEndPoint, kMIDIPropertyName, &pname);
+        [driverNameList addObject: (NSString *) pname];
     }
-    driverList[i] = NULL;
-#else
-    // TODO Actually, this should return a collection of entities rather than devices, which are configurations
-    // of system wide interoperating MIDI streams.
-    n = MIDIDeviceGetNumberOfEntities(MIDIDeviceRef device);
-
-#endif
-
-    *selectedDriver = 0;
     
+    // always create at least one entry for the terminating NULL pointer.
+    driverList = (char **) calloc([driverNameList count]+1, sizeof(char *));
+    for(driverListIndex = 0; driverListIndex < [driverNameList count]; driverListIndex++) {
+        driverList[driverListIndex] = [[driverNameList objectAtIndex: driverListIndex] cString]; 
+    }
+    driverList[driverListIndex] = NULL;
+    *selectedDriver = 0;
     return driverList;
 }
 
@@ -161,6 +151,7 @@ PERFORM_API char *MKMDErrorString(MKMDReturn errorCode)
 
 // returns NULL if unable to find the hostname, otherwise whatever value for MKMDPort
 // that has meaning.
+// hostname should eventually be a URL.
 PERFORM_API MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
 {
     if(*hostname) {
@@ -336,19 +327,20 @@ PERFORM_API MKMDReturn MKMDClaimUnit (
     // find the first destination
     destinationCount = MIDIGetNumberOfDestinations();
     if (destinationCount > 0) {
-        // should be unit?
-        claimedDestinationUnit = MIDIGetDestination(unit);
-    }
+        if(claimedDestinations == NULL) {
+            if((claimedDestinations = malloc(destinationCount * sizeof(MIDIEndpointRef))) == NULL)
+                fprintf(stderr, "Couldn't allocated %ld destinations\n", destinationCount);
+        }
+        claimedDestinations[unit] = MIDIGetDestination(unit);
 
-    if (claimedDestinationUnit != NULL) {
-        CFStringRef pname;
-        char name[64]; // TODO what is the size?
-
-        if(MIDIObjectGetStringProperty(claimedDestinationUnit, kMIDIPropertyName, &pname) != noErr)
-            return MKMD_ERROR_UNKNOWN_ERROR;
-        CFStringGetCString(pname, name, sizeof(name), 0);
-        CFRelease(pname);
-        printf("Output to %s\n", name);
+        if (claimedDestinations[unit] != NULL) {
+            CFStringRef pname;
+    
+            if(MIDIObjectGetStringProperty(claimedDestinations[unit], kMIDIPropertyName, &pname) != noErr)
+                return MKMD_ERROR_UNKNOWN_ERROR;
+            NSLog(@"Output to %@\n", pname);
+            CFRelease(pname);
+        }
     }
     else {
         printf("No MIDI destinations present\n");
@@ -377,7 +369,11 @@ PERFORM_API MKMDReturn MKMDReleaseUnit (
 #endif
     if(MIDIPortDisconnectSource(inPort, claimedSourceUnit) != noErr)
         return MKMD_ERROR_UNKNOWN_ERROR;
-
+// Not quite sure how to rescind destinations, or if we even need to.
+//    if(claimedDestinations != NULL) {
+//        MIDIDestination(claimedDestinations[unit]);
+//        claimedDestinations[unit] = NULL;
+//    }
     return MKMD_SUCCESS;
 }
 
@@ -434,7 +430,7 @@ PERFORM_API MKMDReturn MKMDSendData (
     OSStatus errCode;
 
 #if FUNCLOG
-    fprintf(debug, "MKMDSendData called with %d events @ time %d\n", dataCnt, data[0].time);
+    fprintf(debug, "MKMDSendData called with %d events to unit %d @ time %d\n", dataCnt, unit, data[0].time);
 #endif
 
     // Assume worst case that we need to send the entire event list all at the same time.
@@ -479,7 +475,7 @@ PERFORM_API MKMDReturn MKMDSendData (
             return MKMD_ERROR_QUEUE_FULL;
         }
     }
-    if((errCode = MIDISend(outPort, claimedDestinationUnit, pktlist)) != noErr) {
+    if((errCode = MIDISend(outPort, claimedDestinations[unit], pktlist)) != noErr) {
 #if FUNCLOG
         fprintf(debug, "couldn't send packet list errCode = %d\n", (int) errCode);
 #endif
