@@ -77,6 +77,10 @@
 Modification history:
 
   $Log$
+  Revision 1.43  2002/01/15 11:25:35  sbrandon
+  fixed casting problem which caused compiler warnings and may have led to
+  errors in reading sysex strings (thanks Nerijus Baliunas)
+
   Revision 1.42  2001/10/15 01:34:00  leighsmith
   Removed warning caused by assigning self in factory methods
 
@@ -831,7 +835,11 @@ static void putSysExcl(struct __MKMidiOutStruct *ptr, NSString *sysExclString)
 	The string may but need not begin with MIDI_SYSEXCL and end with
 	MIDI_EOX. 
        */
-    const char *sysExclStr = [sysExclString cString];
+    /* note we cast to char* not const char* because although we're not
+     * going to alter the contents of the string, we are going to need to
+     * alter the *sysExclStr pointer (in _MKGetSysExByte).
+     */
+    char *sysExclStr = (char *)[sysExclString cString];
     unsigned char c;
     unsigned int curTime = .5 + ptr->_timeTag * _MK_MIDI_QUANTUM;
     sendBufferedData(ptr);
