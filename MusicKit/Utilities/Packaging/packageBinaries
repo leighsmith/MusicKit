@@ -69,27 +69,31 @@ rm -r -f $install_file_directory
 
 # Gather up the packages...
 mkdir -p $workingdir/$install_file_directory/$installFrameworksInto
-foreach f ($packages)
+for f in $packages; do (
   cp -R $packageFrameworksFrom/$f.framework $workingdir/$install_file_directory/$installFrameworksInto
-end
+);
+done
 
 # ...the libraries...
 mkdir -p $workingdir/$install_file_directory/$installLibrariesInto
-foreach f ($libraries)
+for f in $libraries; do (
   cp -R $packageLibrariesFrom/$f $workingdir/$install_file_directory/$installLibrariesInto
-end
+);
+done
 
 # ...the applications...
 mkdir -p $workingdir/$install_file_directory/$installApplicationsInto
-foreach f ($applications)
+for f in $applications; do (
   cp -R $packageApplicationsFrom/$f $install_file_directory/$installApplicationsInto
-end
+);
+done
 
 # ...and the commands.
 mkdir -p $workingdir/$install_file_directory/$installCommandsInto
-foreach f ($cmds)
+for f in $cmds; do (
   cp -R $packageCommandsFrom/$f $install_file_directory/$installCommandsInto
-end
+);
+done
 
 # This is the point where you'll want to make sure that the
 # permissions and ownership of the files and directories in your
@@ -110,7 +114,7 @@ end
 # stops a second reinstall.
 /bin/chmod -R u+w $workingdir/$install_file_directory/
 
-echo "Changing ownership to root.wheel, log in as root."
+echo "Changing ownership to root.wheel, log in for sudo."
 sudo /usr/sbin/chown -R root.wheel $workingdir/$install_file_directory/
 
 #  The .info file is in a basic key/value format. The keys that are
@@ -166,10 +170,11 @@ package $install_file_directory $frameworkname.info
 shipfile=$workingdir/$frameworkname-$appversion.b.$osacronym.pkg.tar
 tar cf $shipfile $frameworkname.pkg
 
-echo "Deleting temporary files, log in as root."
+echo "Deleting temporary files, log in for sudo."
 sudo /bin/rm -r -f $workingdir/$install_file_directory
 
 rm -r -f $workingdir/$frameworkname.pkg
+rm $frameworkname.info
 
 echo "Finished. Final package is located at $shipfile"
 
