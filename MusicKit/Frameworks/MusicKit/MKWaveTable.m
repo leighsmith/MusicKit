@@ -17,6 +17,10 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2002/04/15 14:25:03  sbrandon
+  - added -hash and -isEqual: methods to aid in situations where object is
+    used as a key in dictionaries or maptables.
+
   Revision 1.6  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -112,7 +116,6 @@ Modification history:
      object using MKGetObjectName(). 
      */
 {
-    /*[super initWithCoder:aDecoder];*/ /*sb: unnecessary */
     if ([aDecoder versionForClassName: @"MKWaveTable"] == VERSION2) {
 	NSString *str;
 	[aDecoder decodeValueOfObjCType: "@" at: &str];
@@ -152,7 +155,37 @@ Modification history:
   }
   return self;
 }
- 
+
+- (unsigned) hash
+{
+// trivial hash
+  return length;
+}
+
+- (BOOL) isEqual: (MKWaveTable*)anObject
+{
+    double *otherDataDouble;
+    if (!anObject)                           return NO;
+    if (self == anObject)                    return YES;
+    if ([self class] != [anObject class])    return NO;
+    if ([self hash] != [anObject hash])      return NO;
+    if (scaling != [anObject scaling])       return NO;
+    if (length != [anObject length])         return NO;
+    // FIXME: if we ever really intend to use this class, then need
+    // to compare all the underlying data points as well. The above checks
+    // are just a stub for basic comparison.
+    
+    otherDataDouble = [anObject dataDouble];
+    if (otherDataDouble == dataDouble) {
+      return YES;
+    }
+    
+    if (memcmp(dataDouble,otherDataDouble,length * sizeof(double))) {
+      return NO;
+    }
+    return YES;
+}
+
 - copyWithZone:(NSZone *)zone
   /* Copies the receiver, setting all cached data arrays to NULL. 
      The scaling and length are copied from the receiver. */
