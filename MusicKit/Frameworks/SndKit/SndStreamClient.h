@@ -12,8 +12,11 @@
   accompany all relevant code.
 */
 
+#ifndef __SNDSTREAMCLIENT__
+#define __SNDSTREAMCLIENT__
+
 #import <Foundation/Foundation.h>
-#import <SndKit/SndKit.h>
+//#import <SndKit/SndKit.h>
 
 @class SndStreamManager;
 @class SndAudioBuffer;
@@ -78,3 +81,5 @@
 - unlockOutputBuffer;
 
 @end
+
+#endif
