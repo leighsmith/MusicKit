@@ -20,6 +20,9 @@
  Modification history:
 
  $Log$
+ Revision 1.38  2004/11/20 04:11:22  leighsmith
+ Corrected the parameter and return types of several methods
+
  Revision 1.37  2004/01/21 22:17:40  leighsmith
  Corrected typing of several parameters, added MKScoreFormat enum, earliestNoteTime, scoreFormatOfFile:, renamed partNamed: to partTitled: and added a new partNamed: distinguishing a MKParts name from it's MK_title
 
@@ -197,7 +200,7 @@ static NSArray *scoreFileExtensions = nil;
 
 #define VERSION2 2
 
-+ (void)initialize
++ (void) initialize
 {
     if (self != [MKScore class])
         return;
@@ -206,12 +209,12 @@ static NSArray *scoreFileExtensions = nil;
     scoreFileExtensions = [[NSArray arrayWithObjects: _MK_SCOREFILEEXT, _MK_BINARYSCOREFILEEXT, nil] retain];
 }
 
-+ score
-  /* Create a new instance and sends [self init]. */
+/* Create a new instance and sends [self init]. */
++ (MKScore *) score
 {
-  self = [self allocWithZone:NSDefaultMallocZone()];
-  [self init];
-  return [self autorelease];
+    MKScore *newScore = [[[self class] alloc] init];
+    
+    return [newScore autorelease];
 }
 
 + (MKScoreFormat) scoreFormatOfData: (NSData *) fileData;
@@ -1026,284 +1029,284 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
   free(str);
 }
 
-- readMidifileStream:(NSMutableData *) aStream firstTimeTag:(double) firstTimeTag
-         lastTimeTag:(double) lastTimeTag timeShift:(double)timeShift
+- readMidifileStream: (NSMutableData *) aStream
+	firstTimeTag: (double) firstTimeTag
+         lastTimeTag: (double) lastTimeTag
+	   timeShift: (double) timeShift
 {
-  int fileFormatLevel;
-  int trackCount;
-  double timeFactor,t,prevT,lastTempoTime = -1;
-  id              aPart;
-  int             i;
-  register id     aNote;
+    int fileFormatLevel;
+    int trackCount;
+    double timeFactor, t, prevT, lastTempoTime = -1;
+    id aPart;
+    int i;
+    register MKNote *aNote;
 #   define MIDIPARTS (16 + 1)
-  _MKMidiInStruct *midiInPtr;
-  id *midiParts,*curPart;
-  BOOL trackInfoMidiChanWritten = NO;
-  void *fileStructP;
-  int *quanta;
-  BOOL *metaevent;
-  int *nData;
-  unsigned char **data;
-  if (!(fileStructP = MKMIDIFileBeginReading(aStream,&quanta,&metaevent,&nData,&data,[MKScore midifilesEvaluateTempo])))
-    return nil;
+    _MKMidiInStruct *midiInPtr;
+    id *midiParts,*curPart;
+    BOOL trackInfoMidiChanWritten = NO;
+    void *fileStructP;
+    int *quanta;
+    BOOL *metaevent;
+    int *nData;
+    unsigned char **data;
+    if (!(fileStructP = MKMIDIFileBeginReading(aStream,&quanta,&metaevent,&nData,&data,[MKScore midifilesEvaluateTempo])))
+	return nil;
 #   define DATA (*data)
-  if (!MKMIDIFileReadPreamble(fileStructP,&fileFormatLevel,&trackCount))
-    return nil;
-  if (fileFormatLevel == 0)
-    trackCount = MIDIPARTS;
-  else trackCount++; 	/* trackCount doesn't include the 'tempo' track so
-    we increment here */
-  if (!(midiInPtr = _MKInitMidiIn())) {
-    MKMIDIFileEndReading(fileStructP);
-    return nil;
-  }
-  _MK_MALLOC(midiParts,id,trackCount);
-  curPart = midiParts;
-  for (i=0; i<trackCount; i++) {
-    aPart = [MKGetPartClass() new];
-    aNote = [MKGetNoteClass() new];
-    if ((fileFormatLevel == 0) && (i != 0))
-      [aNote setPar:MK_midiChan toInt:i];
-    [aPart setInfoNote:aNote];
-    [aNote release];
-    [self addPart:aPart];
-    *curPart++ = aPart;
-  }
-  lastTimeTag = MIN(lastTimeTag, MK_ENDOFTIME);
-  timeFactor = 1.0/(double)MKMIDI_DEFAULTQUANTASIZE;
-  /* In format 0 files, *curPart will be the _MK_MIDISYS part. */
-  curPart = midiParts;
+    if (!MKMIDIFileReadPreamble(fileStructP,&fileFormatLevel,&trackCount))
+	return nil;
+    if (fileFormatLevel == 0)
+	trackCount = MIDIPARTS;
+    else trackCount++; 	/* trackCount doesn't include the 'tempo' track so
+	we increment here */
+    if (!(midiInPtr = _MKInitMidiIn())) {
+	MKMIDIFileEndReading(fileStructP);
+	return nil;
+    }
+    _MK_MALLOC(midiParts,id,trackCount);
+    curPart = midiParts;
+    for (i=0; i<trackCount; i++) {
+	aPart = [MKGetPartClass() new];
+	aNote = [MKGetNoteClass() new];
+	if ((fileFormatLevel == 0) && (i != 0))
+	    [aNote setPar:MK_midiChan toInt:i];
+	[aPart setInfoNote:aNote];
+	[aNote release];
+	[self addPart:aPart];
+	*curPart++ = aPart;
+    }
+    lastTimeTag = MIN(lastTimeTag, MK_ENDOFTIME);
+    timeFactor = 1.0/(double)MKMIDI_DEFAULTQUANTASIZE;
+    /* In format 0 files, *curPart will be the _MK_MIDISYS part. */
+    curPart = midiParts;
 #   define FIRSTTRACK (MKPart *)*midiParts
 #   define CURPART (MKPart *)*curPart
-  prevT = -1;
-  if (!info)
-    info = [MKGetNoteClass() new];
+    prevT = -1;
+    if (!info)
+	info = [MKGetNoteClass() new];
 #   define SHORTDATA ((int)(*((short *)&(DATA[1]))))
 #   define LONGDATA ((int)(*((int *)&(DATA[1]))))
 #   define STRINGDATA ((char *)&(DATA[1]))
 #   define LEVEL0 (fileFormatLevel == 0)
 #   define LEVEL1 (fileFormatLevel == 1)
 #   define LEVEL2 (fileFormatLevel == 2)
-  if (LEVEL2) /* Sequences numbered consecutively from 0 by default. */
-    MKSetNoteParToInt([FIRSTTRACK infoNote],MK_sequence,0);
-  while (MKMIDIFileReadEvent(fileStructP)) {
-    if (*metaevent) {
-      /* First handle meta-events that are MKPart or MKScore info
-      parameters. We never want to skip these. */
-      switch (DATA[0]) {
-        case MKMIDI_sequenceNumber:
-          MKSetNoteParToInt(LEVEL2 ? [CURPART infoNote] : info,
-                            MK_sequence,SHORTDATA);
-          break;
-        case MKMIDI_smpteOffset:
-          writeDataAsNumString(LEVEL2 ? [CURPART infoNote] : info,
-                               MK_smpteOffset,DATA,5);
-          break;
-        case MKMIDI_sequenceOrTrackName:
-          /* Check if it is the first part. There is no MK_title in level 2 files, since
-          the title is merely the name of the first sequence. */
-          if ((curPart == midiParts) && !LEVEL2)
-            MKSetNoteParToString(info, MK_title, [NSString stringWithCString:STRINGDATA]);
-          /* In level 1 files, we name the current part with the
-          title. Note that we do this even if the name is a
-          sequence name rather than a track name. In level 0
-          files, we do not name the part. */
-          if(LEVEL1)
-            MKSetNoteParToString([CURPART infoNote], MK_title, [NSString stringWithCString:STRINGDATA]);
-            if (fileFormatLevel != 0)
-              MKNameObject([NSString stringWithCString:STRINGDATA], *curPart);
-              break;
-        case MKMIDI_copyright:
-          MKSetNoteParToString(info,MK_copyright,[NSString stringWithCString:STRINGDATA]);
-          break;
-        case MKMIDI_instrumentName:
-          /* An instrument name is the sort of thing you need in a part info note, but the strict definition of
-          the SMF spec allows you to rename the track at different time points, why? It would have been better
-        to define more tracks, each with a separate instrument. In that rather wierd case,
-          this code is wrong as it will take the last instrument name used as the info note. */
-          MKSetNoteParToString(LEVEL1 ? [CURPART infoNote] : info,
-                               MK_instrumentName, [NSString stringWithCString:STRINGDATA]);
-        default:
-          break;
-      }
-    }
-    t = *quanta * timeFactor;
-    /* FIXME Should do something better here. (need to change
-	   MKPart to allow ordering spec for simultaneous notes.) */
-    if (t < firstTimeTag)
-      continue;
-    if (t > lastTimeTag) {
-      if (LEVEL0)
-        break; /* We know we're done */
-      else
-        continue;
-    }
-    if (*metaevent) {
-      /* Now handle meta-events that can be in regular notes. These
-      are skipped when out of the time window, as are regular
-      MIDI messages. */
-      aNote = [[MKGetNoteClass() alloc] initWithTimeTag:t+timeShift]; /* retained */
-      switch (DATA[0]) {
-        case MKMIDI_trackChange:
-          /* Sent at the end of every track. May be missing from the
-          end of the file. */
-          if (t > (prevT + _MK_TINYTIME)) {
-            /* We've got a significant trackChange time. */
-            MKSetNoteParToString(aNote,LEVEL1 ? MK_track : MK_sequence,
-                                 @"end");
-            [CURPART addNote:aNote];    /* Put an end-of-track mark */
-          }
-          curPart++;
-          if (curPart >= midiParts + trackCount)
-            goto outOfLoop;
-            trackInfoMidiChanWritten = NO;
-          if (LEVEL1) /* Other files have no "tracks" */
-            MKSetNoteParToInt([CURPART infoNote],MK_track,SHORTDATA);
-          else if (LEVEL2) {
-            /* Assign ascending sequence number parameters */
-#		    define OLDNUM \
-            MKGetNoteParAsInt([(*(curPart-1)) infoNote],MK_sequence)
-            MKSetNoteParToInt([CURPART infoNote],MK_sequence,OLDNUM + 1);
-          }
-            lastTempoTime = -1;
-          prevT = -1;
-          [aNote release];
-          continue; /* Don't clobber prevT below */
-        case MKMIDI_tempoChange:
-          /* For MK-compatibility, tempo is duplicated in info
-          MKNotes, but only if it's at time 0 in file.    */
-          if (t == 0) {
-            if (lastTempoTime == 0) {
-              /* Supress duplicate tempi, which can arise because of
-                 the way we duplicate tempo in info (do it by bypassing
-                 the addNote, below) */
-              break;
-            }
-            else { /* First setting of tempo for current track. */
-              id theInfo = LEVEL2 ? [CURPART infoNote] : info;
-              if (!MKIsNoteParPresent(theInfo,MK_tempo))
-                MKSetNoteParToDouble(theInfo,MK_tempo,
-                                     [MKScore midifilesEvaluateTempo] ? 60 : 60000000.0/LONGDATA);
-            }
-          }
-          lastTempoTime = t;
-          if(![MKScore midifilesEvaluateTempo]) {
-            MKSetNoteParToDouble(aNote,MK_tempo,60000000.0/LONGDATA);
-            [(LEVEL2 ? FIRSTTRACK : CURPART) addNote:aNote];
-          }
-            break;
-        case MKMIDI_text:
-        case MKMIDI_cuePoint:
-        case MKMIDI_lyric:
-          MKSetNoteParToString(aNote,
-                               ((DATA[0] == MKMIDI_text) ? MK_text :
-                                (DATA[0] == MKMIDI_lyric) ? MK_lyric : MK_cuePoint),
-                               [NSString stringWithCString:STRINGDATA]);
-          [CURPART addNote:aNote];
-          break;
-        case MKMIDI_marker:
-          MKSetNoteParToString(aNote,MK_marker,[NSString stringWithCString:STRINGDATA]);
-          [(LEVEL2 ? FIRSTTRACK : CURPART) addNote:aNote];
-          break;
-        case MKMIDI_timeSig:
-          writeDataAsNumString(aNote,MK_timeSignature,DATA,4);
-          [(LEVEL2 ? FIRSTTRACK : CURPART) addNote:aNote];
-          break;
-        case MKMIDI_keySig: {
-          char str[5];
-          /* Want sf signed, hence (char) cast  */
-          int x = (int)((char)DATA[2]); /* sf */
-          sprintf(&(str[0]),"%-2d ",x);
-          x = (int)DATA[3]; /* mi */
-          sprintf(&(str[3]),"%d",x);
-          str[4] = '\0';
-          MKSetNoteParToString(aNote,MK_keySignature,[NSString stringWithCString:str]);
-          [(LEVEL2 ? FIRSTTRACK : CURPART) addNote:aNote];
-          break;
-        }
-        default:
-          break;
-      }
-      [aNote release];
-    }
-    else { /* Standard MIDI, not sys excl */
-      id arp;
-      switch (*nData) {
-        case 3:
-          midiInPtr->_dataByte2 = DATA[2];
-          /* No break */
-        case 2:
-          midiInPtr->_dataByte1 = DATA[1];
-          /* No break */
-        case 1:
-          /* Status passed directly below. */
-          break;
-        default: { /* Sys exclusive */
-          unsigned j;
-          char *str = alloca(*nData * 3); /* 3 chars per byte */
-          char *ptr = str;
-          unsigned char *p = *data;
-          unsigned char *endP = p + *nData;
-          sprintf(ptr,"%-2x",j = *p++);
-          ptr += 2;
-          while (p < endP) {
-            sprintf(ptr,",%-2x",j = *p++);
-            ptr += 3;
-          }
-          *ptr = '\0';
-          aNote = [[MKGetNoteClass() alloc] initWithTimeTag:t+timeShift];
-          MKSetNoteParToString(aNote,MK_sysExclusive,[NSString stringWithCString:str]); /* copy */
-          [CURPART addNote:aNote];
-          [aNote release];
-          continue;
-        }
-      }
-  arp = [NSAutoreleasePool new];
-  aNote = _MKMidiToMusicKit(midiInPtr,DATA[0]); /* autoreleased */
-  if (aNote) { /* _MKMidiToMusicKit can omit MKNotes sometimes. */
-		[aNote setTimeTag:t+timeShift];
-		/* Need to copy MKNote because it's "owned" by midiInPtr (pre-
-  * OpenStep).
-  * Now we just add to the part as-is, and it will retain or copy
-  * it as necessary. */
+    if (LEVEL2) /* Sequences numbered consecutively from 0 by default. */
+	MKSetNoteParToInt([FIRSTTRACK infoNote],MK_sequence,0);
+    while (MKMIDIFileReadEvent(fileStructP)) {
+	if (*metaevent) {
+	    /* First handle meta-events that are MKPart or MKScore info
+	    parameters. We never want to skip these. */
+	    switch (DATA[0]) {
+		case MKMIDI_sequenceNumber:
+		    MKSetNoteParToInt(LEVEL2 ? [CURPART infoNote] : info,
+				      MK_sequence,SHORTDATA);
+		    break;
+		case MKMIDI_smpteOffset:
+		    writeDataAsNumString(LEVEL2 ? [CURPART infoNote] : info,
+					 MK_smpteOffset,DATA,5);
+		    break;
+		case MKMIDI_sequenceOrTrackName:
+		    /* Check if it is the first part. There is no MK_title in level 2 files, since
+		    the title is merely the name of the first sequence. */
+		    if ((curPart == midiParts) && !LEVEL2)
+			MKSetNoteParToString(info, MK_title, [NSString stringWithCString:STRINGDATA]);
+		    /* In level 1 files, we name the current part with the
+		    title. Note that we do this even if the name is a
+		    sequence name rather than a track name. In level 0
+		    files, we do not name the part. */
+		    if(LEVEL1)
+			MKSetNoteParToString([CURPART infoNote], MK_title, [NSString stringWithCString:STRINGDATA]);
+			if (fileFormatLevel != 0)
+			    MKNameObject([NSString stringWithCString:STRINGDATA], *curPart);
+			    break;
+		case MKMIDI_copyright:
+		    MKSetNoteParToString(info,MK_copyright,[NSString stringWithCString:STRINGDATA]);
+		    break;
+		case MKMIDI_instrumentName:
+		    /* An instrument name is the sort of thing you need in a part info note, but the strict definition of
+		    the SMF spec allows you to rename the track at different time points, why? It would have been better
+		to define more tracks, each with a separate instrument. In that rather wierd case,
+		    this code is wrong as it will take the last instrument name used as the info note. */
+		    MKSetNoteParToString(LEVEL1 ? [CURPART infoNote] : info,
+					 MK_instrumentName, [NSString stringWithCString:STRINGDATA]);
+		default:
+		    break;
+	    }
+	}
+	t = *quanta * timeFactor;
+	/* FIXME Should do something better here. (need to change
+	MKPart to allow ordering spec for simultaneous notes.) */
+	if (t < firstTimeTag)
+	    continue;
+	if (t > lastTimeTag) {
+	    if (LEVEL0)
+		break; /* We know we're done */
+	    else
+		continue;
+	}
+	if (*metaevent) {
+	    /* Now handle meta-events that can be in regular notes. These
+	    are skipped when out of the time window, as are regular
+	    MIDI messages. */
+	    aNote = [[MKGetNoteClass() alloc] initWithTimeTag: t + timeShift]; /* retained */
+	    switch (DATA[0]) {
+		case MKMIDI_trackChange:
+		    /* Sent at the end of every track. May be missing from the end of the file. */
+		    if (t > (prevT + _MK_TINYTIME)) {
+			/* We've got a significant trackChange time. */
+			MKSetNoteParToString(aNote, LEVEL1 ? MK_track : MK_sequence, @"end");
+			[CURPART addNote: aNote];    /* Put an end-of-track mark */
+		    }
+		    curPart++;
+		    if (curPart >= midiParts + trackCount)
+			goto outOfLoop;
+			trackInfoMidiChanWritten = NO;
+		    if (LEVEL1) /* Other files have no "tracks" */
+			MKSetNoteParToInt([CURPART infoNote], MK_track, SHORTDATA);
+		    else if (LEVEL2) {
+			/* Assign ascending sequence number parameters */
+#define OLDNUM MKGetNoteParAsInt([(*(curPart-1)) infoNote], MK_sequence)
+			MKSetNoteParToInt([CURPART infoNote],MK_sequence, OLDNUM + 1);
+		    }
+		    lastTempoTime = -1;
+		    prevT = -1;
+		    [aNote release];
+		    continue; /* Don't clobber prevT below */
+		case MKMIDI_tempoChange:
+		    /* For MK-compatibility, tempo is duplicated in info
+		    MKNotes, but only if it's at time 0 in file.    */
+		    if (t == 0) {
+			if (lastTempoTime == 0) {
+			    /* Supress duplicate tempi, which can arise because of
+			    the way we duplicate tempo in info (do it by bypassing
+								the addNote, below) */
+			    break;
+			}
+			else { /* First setting of tempo for current track. */
+			    id theInfo = LEVEL2 ? [CURPART infoNote] : info;
+			    if (!MKIsNoteParPresent(theInfo, MK_tempo))
+				MKSetNoteParToDouble(theInfo, MK_tempo,
+						     [MKScore midifilesEvaluateTempo] ? 60 : 60000000.0 / LONGDATA);
+			}
+		    }
+		    lastTempoTime = t;
+		    if(![MKScore midifilesEvaluateTempo]) {
+			MKSetNoteParToDouble(aNote, MK_tempo, 60000000.0 / LONGDATA);
+			[(LEVEL2 ? FIRSTTRACK : CURPART) addNote: aNote];
+		    }
+		    break;
+		case MKMIDI_text:
+		case MKMIDI_cuePoint:
+		case MKMIDI_lyric:
+		    MKSetNoteParToString(aNote,
+					 ((DATA[0] == MKMIDI_text) ? MK_text :
+					  (DATA[0] == MKMIDI_lyric) ? MK_lyric : MK_cuePoint),
+					 [NSString stringWithCString: STRINGDATA]);
+		    [CURPART addNote: aNote];
+		    break;
+		case MKMIDI_marker:
+		    MKSetNoteParToString(aNote, MK_marker, [NSString stringWithCString: STRINGDATA]);
+		    [(LEVEL2 ? FIRSTTRACK : CURPART) addNote: aNote];
+		    break;
+		case MKMIDI_timeSig:
+		    writeDataAsNumString(aNote,MK_timeSignature,DATA,4);
+		    [(LEVEL2 ? FIRSTTRACK : CURPART) addNote: aNote];
+		    break;
+		case MKMIDI_keySig: {
+		    char str[5];
+		    /* Want sf signed, hence (char) cast  */
+		    int x = (int)((char) DATA[2]); /* sf */
+		    sprintf(&(str[0]), "%-2d ",x);
+		    x = (int) DATA[3]; /* mi */
+		    sprintf(&(str[3]), "%d", x);
+		    str[4] = '\0';
+		    MKSetNoteParToString(aNote, MK_keySignature, [NSString stringWithCString: str]);
+		    [(LEVEL2 ? FIRSTTRACK : CURPART) addNote: aNote];
+		    break;
+		}
+		default:
+		    break;
+	    }
+	    [aNote release];
+	}
+	else { /* Standard MIDI, not sys excl */
+	    NSAutoreleasePool *arp;
+	    switch (*nData) {
+		case 3:
+		    midiInPtr->_dataByte2 = DATA[2];
+		    /* No break */
+		case 2:
+		    midiInPtr->_dataByte1 = DATA[1];
+		    /* No break */
+		case 1:
+		    /* Status passed directly below. */
+		    break;
+		default: { /* Sys exclusive */
+		    unsigned j;
+		    char *str = alloca(*nData * 3); /* 3 chars per byte */
+		    char *ptr = str;
+		    unsigned char *p = *data;
+		    unsigned char *endP = p + *nData;
+		    
+		    sprintf(ptr,"%-2x",j = *p++);
+		    ptr += 2;
+		    while (p < endP) {
+			sprintf(ptr,",%-2x",j = *p++);
+			ptr += 3;
+		    }
+		    *ptr = '\0';
+		    aNote = [[MKGetNoteClass() alloc] initWithTimeTag:t+timeShift];
+		    MKSetNoteParToString(aNote,MK_sysExclusive,[NSString stringWithCString:str]); /* copy */
+		    [CURPART addNote:aNote];
+		    [aNote release];
+		    continue;
+		}
+	    }
+	    arp = [NSAutoreleasePool new];
+	    aNote = _MKMidiToMusicKit(midiInPtr, DATA[0]); /* autoreleased */
+	    if (aNote) { /* _MKMidiToMusicKit can omit MKNotes sometimes. */
+		[aNote setTimeTag: t + timeShift];
+		// Need to copy MKNote because it's "owned" by midiInPtr (pre-OpenStep).
+		// Now we just add to the part as-is, and it will retain or copy it as necessary.
 		if (LEVEL0) {
-      // LMS even if aNote has come from a Level0 file it should retain midiChannels from mode messages.
-      if (midiInPtr->chan != _MK_MIDISYS) {
-        MKSetNoteParToInt(aNote, MK_midiChan, midiInPtr->chan);
-      }
-      [midiParts[midiInPtr->chan] addNote:aNote];
-    }
+		    // LMS even if aNote has come from a Level0 file it should retain midiChannels from mode messages.
+		    if (midiInPtr->chan != _MK_MIDISYS) {
+			MKSetNoteParToInt(aNote, MK_midiChan, midiInPtr->chan);
+		    }
+		    [midiParts[midiInPtr->chan] addNote:aNote];
+		}
 		else {
 		    if (!trackInfoMidiChanWritten && midiInPtr->chan != _MK_MIDISYS) {
-          trackInfoMidiChanWritten = YES;
-          MKSetNoteParToInt([CURPART infoNote], MK_midiChan, midiInPtr->chan);
-          /* Set Part's chan to chan of first note in track. */
-        }
+			trackInfoMidiChanWritten = YES;
+			MKSetNoteParToInt([CURPART infoNote], MK_midiChan, midiInPtr->chan);
+			/* Set Part's chan to chan of first note in track. */
+		    }
 		    if (midiInPtr->chan != _MK_MIDISYS) {
-          MKSetNoteParToInt(aNote,MK_midiChan,midiInPtr->chan);
-        }
+			MKSetNoteParToInt(aNote,MK_midiChan,midiInPtr->chan);
+		    }
 		    [CURPART addNote:aNote];
-}
-  }
-[arp release]; /* take care of autoreleased notes one at a time */
-    } /* End of standard MIDI block */
-prevT = t;
-  } /* End of while loop */
+		}
+	    }
+	    [arp release]; /* take care of autoreleased notes one at a time */
+	} /* End of standard MIDI block */
+	prevT = t;
+    } /* End of while loop */
 outOfLoop:
-free(midiParts);
-_MKFinishMidiIn(midiInPtr);
-MKMIDIFileEndReading(fileStructP);
-return self;
+    free(midiParts);
+    _MKFinishMidiIn(midiInPtr);
+    MKMIDIFileEndReading(fileStructP);
+    return self;
 }
 
 /* Midifile reading "convenience methods"------------------------ */
 
--readMidifile:(NSString *)fileName
- firstTimeTag:(double)firstTimeTag
-  lastTimeTag:(double)lastTimeTag
+- readMidifile: (NSString *) fileName
+  firstTimeTag: (double) firstTimeTag
+   lastTimeTag: (double) lastTimeTag
 {
-  return [self readMidifile:fileName firstTimeTag:firstTimeTag
-                lastTimeTag:lastTimeTag timeShift:0.0];
+  return [self readMidifile: fileName 
+	       firstTimeTag: firstTimeTag
+                lastTimeTag: lastTimeTag
+		  timeShift: 0.0];
 }
 
 -readMidifileStream:(NSMutableData *)aStream
@@ -1350,7 +1353,7 @@ return self;
 
 /* Modifying the set of MKParts. ------------------------------- */
 
-- replacePart: (id) oldPart with: (id) newPart
+- (MKPart *) replacePart: (MKPart *) oldPart with: (MKPart *) newPart
   /* Removes oldPart from self and replaces it with newPart.
   * Returns newPart.
   * If oldPart is not a member of this score, returns nil
@@ -1359,36 +1362,37 @@ return self;
   * if newPart is not a kind of MKPart, returns nil.
   */
 {
-  int i = [parts indexOfObjectIdenticalTo:oldPart];
+  int i = [parts indexOfObjectIdenticalTo: oldPart];
+    
   if (i == NSNotFound)
-    return nil;
-  [self removePart:oldPart];
+      return nil;
+  [self removePart: oldPart];
   if ((!newPart) || ([newPart score] == self) || ![newPart isKindOfClass:[MKPart class]])
-    return nil;
-  [newPart _setScore:self];
-  [parts insertObject:newPart atIndex:i];
+      return nil;
+  [newPart _setScore: self];
+  [parts insertObject: newPart atIndex: i];
   return newPart;
 }
 
--addPart:(id)aPart
+- addPart: (MKPart *) aPart
   /* If aPart is already a member of the MKScore, returns nil. Otherwise,
   adds aPart to the receiver and returns aPart,
   first removing aPart from any other score of which it is a member. */
 {
-  if ((!aPart) || ([aPart score] == self) || ![aPart isKindOfClass:[MKPart class]])
+  if ((!aPart) || ([aPart score] == self) || ![aPart isKindOfClass: [MKPart class]])
     return nil;
-  [aPart _setScore:self];
-  if ([parts indexOfObjectIdenticalTo:aPart] == NSNotFound)
-    [parts addObject:aPart];
+  [aPart _setScore: self];
+  if ([parts indexOfObjectIdenticalTo: aPart] == NSNotFound)
+    [parts addObject: aPart];
   return self;
 }
 
--removePart:(id)aPart
+- removePart: (MKPart *) aPart
   /* Removes aPart from self and returns aPart.
   If aPart is not a member of this score, returns nil. */
 {
   [aPart _unsetScore];
-  [parts removeObjectIdenticalTo:aPart];
+  [parts removeObjectIdenticalTo: aPart];
   return self; //sb: assume self is correct. Arrays return void...
 }
 

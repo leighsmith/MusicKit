@@ -494,19 +494,19 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @result Returns an id.
   @discussion Adds <i>aPart</i> to the receiver.  The MKPart is first removed from
               the MKScore that it's presently a member of, if any.  Returns
-              <i>aPart</i>, or <b>nil</b> if it's already a member of the
+              <i>self</i>, or <b>nil</b> if it's already a member of the
               receiver.
 */
-- (MKPart *) addPart: (MKPart *) aPart; 
+- addPart: (MKPart *) aPart; 
 
 /*!
   @method removePart:
   @param  aPart is an MKPart instance.
   @result Returns an id.
-  @discussion Removes <i>aPart</i> from the receiver.  Returns <i>aPart</i> or
+  @discussion Removes <i>aPart</i> from the receiver.  Returns <i>self</i> or
               <b>nil</b> if it wasn't a member of the receiver.
 */
-- (MKPart *) removePart: (MKPart *) aPart;
+- removePart: (MKPart *) aPart;
 
 /*!
   @method shiftTime:
