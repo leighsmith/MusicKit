@@ -15,6 +15,8 @@
 # import <Foundation/NSPathUtilities.h>
 #endif
 
+#include <math.h>  // for pow()
+
 /* number of seconds of sound to display */
 #define SECONDS 0.2
 #define TWOPI 6.28318530718
@@ -327,9 +329,8 @@ void doCalc(int type, short *pointer, float theFreq, float theAmp)
 
 - updateNums:sender
 {
-    double a,b;
-    a = pow(10,[freqSlide1 floatValue]);
-    b = pow(10,[freqSlide2 floatValue]);
+    double a = pow(10.0, (double) [freqSlide1 floatValue]);
+    double b = pow(10.0, (double) [freqSlide2 floatValue]);
 
     somethingChanged = YES;
     [freqNum1 setIntValue:a];
