@@ -1,10 +1,33 @@
+// !$*UTF8*$!
 {
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 30;
+	objectVersion = 32;
 	objects = {
+		01575C4F0048D569CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		01575C500048D569CFED3B96 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
 		016D5A22FED483BACFED3B93 = {
+			buildStyles = (
+				01575C4F0048D569CFED3B96,
+				01575C500048D569CFED3B96,
+			);
 			isa = PBXProject;
 			mainGroup = 016D5A23FED483BBCFED3B93;
 			productRefGroup = 016D5A24FED483BBCFED3B93;
@@ -101,8 +124,9 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "";
-				FRAMEWORK_VERSION = 5.2;
+				FRAMEWORK_VERSION = 5.3;
 				HEADER_SEARCH_PATHS = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
@@ -110,6 +134,7 @@
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRINCIPAL_CLASS = "";
+				PRODUCT_NAME = MKPerformSndMIDI;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
@@ -132,7 +157,7 @@
 	<key>CFBundleExecutable</key>
 	<string>MKPerformSndMIDI</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Functions to interface the MusicKit and SndKit to the operating system MIDI and Sound API</string>
+	<string>The MusicKit sound and MIDI Performance driver interfaces to the operating system MIDI and Sound API</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -140,15 +165,15 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>The MusicKit Sound and MIDI Performance Driver Interfaces</string>
+	<string>MKPerformSndMIDI</string>
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>V5.2.3</string>
+	<string>MKPerformSndMIDI V5.3.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>5.2.3</string>
+	<string>5.3.0</string>
 </dict>
 </plist>
 ";
@@ -172,11 +197,6 @@
 				ATTRIBUTES = (
 					Public,
 				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		016D5A3EFED483BBCFED3B93 = {
@@ -185,11 +205,6 @@
 			settings = {
 				ATTRIBUTES = (
 					Public,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -214,12 +229,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -238,11 +247,6 @@
 			fileRef = 016D5A39FED483BBCFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		016D5A49FED483BBCFED3B93 = {
@@ -257,12 +261,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
@@ -281,11 +279,6 @@
 			fileRef = 07B2BE620034ACD5CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		07B2BE640034BFE6CFED3B96 = {
@@ -300,11 +293,6 @@
 				ATTRIBUTES = (
 					Public,
 				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		1001C124FFAE54A5CFED3B93 = {
@@ -317,11 +305,6 @@
 			fileRef = 1001C124FFAE54A5CFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		1001C128FFAE92E2CFED3B93 = {
@@ -334,11 +317,6 @@
 			fileRef = 1001C128FFAE92E2CFED3B93;
 			isa = PBXBuildFile;
 			settings = {
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
 			};
 		};
 		155A3D8F00376A7BCFED3B96 = {
@@ -352,11 +330,6 @@
 			settings = {
 				ATTRIBUTES = (
 					Public,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
 				);
 			};
 		};
