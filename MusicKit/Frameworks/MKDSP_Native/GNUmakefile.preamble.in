@@ -11,23 +11,6 @@
 #  commercial purposes so long as the author attribution and this copyright
 #  message remains intact and accompanies all derived code.
 
-#  Modification history:
-#
-#  $Log$
-#  Revision 1.3  2002/02/01 13:20:59  sbrandon
-#  added necessary additional libraries for Win32 dynamic linking
-#
-#  Revision 1.2  2001/11/27 18:35:24  sbrandon
-#  cleaned up library importing for GNUstep
-#
-#  Revision 1.1  2001/11/08 22:47:53  sbrandon
-#  now we're using an objc class in the framework (NSDate) we have to explicitly
-#  mention the frameworks we require: foundation, objc.
-#
-#  Revision 1.1  2001/11/07 13:32:15  sbrandon
-#  new file - adds correct dependencies for Win32 compilation - required in
-#  order to be able to use functions and methods from dlls.
-#
 
 # What are the libraries this library depends upon. This is needed for some
 # systems where building a shared library requires to pass to the linker
@@ -35,3 +18,4 @@
 
 LIBRARIES_DEPEND_UPON = -lSndKit -lobjc -l$(FOUNDATION_LIBRARY_NAME)
 
+ADDITIONAL_FLAGS += @DEFS@
