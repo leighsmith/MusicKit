@@ -19,8 +19,10 @@
 #import "SndStreamManager.h"
 #import "SndPerformance.h"
 
-#define SNDPLAYER_DEBUG             0
-#define SNDPLAYER_DEBUG_SYNTHTHREAD 0
+#define SNDPLAYER_DEBUG                          0
+#define SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS        0
+#define SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS 0
+
 ////////////////////////////////////////////////////////////////////////////////
 //  SndPlayer
 ////////////////////////////////////////////////////////////////////////////////
@@ -36,16 +38,13 @@ static SndPlayer *defaultSndPlayer;
 
 + player
 {
-    SndPlayer *sp = [SndPlayer new];
-    return [sp autorelease];
+    return [[SndPlayer new] autorelease];
 }
 
 + (SndPlayer*) defaultSndPlayer
 {
   if (defaultSndPlayer == nil) {
-    Snd *s = [Snd new];
-    defaultSndPlayer = [[SndPlayer alloc] init]; 
-    [s release];
+    defaultSndPlayer = [SndPlayer new]; 
   }
   return [[defaultSndPlayer retain] autorelease];
 }
@@ -57,17 +56,18 @@ static SndPlayer *defaultSndPlayer;
 - init
 {
   self = [super init];
+  if (self) {
     bRemainConnectedToManager = TRUE;
-  if (toBePlayed  == nil)
-    toBePlayed   = [[NSMutableArray arrayWithCapacity: 10] retain];
-  if (playing     == nil)
-    playing      = [[NSMutableArray arrayWithCapacity: 10] retain];
-  if (playingLock == nil)
-    playingLock  = [[NSLock alloc] init];  // controls adding and removing sounds from the playing list.
-  if (removalArray == nil)
-    removalArray = [[NSMutableArray alloc] init];
-
-  [self setClientName: @"SndPlayer"];
+    if (toBePlayed  == nil)
+      toBePlayed   = [[NSMutableArray alloc] initWithCapacity: 10];
+    if (playing     == nil)
+      playing      = [[NSMutableArray alloc] initWithCapacity: 10];
+    if (playingLock == nil)
+      playingLock  = [NSRecursiveLock new];  // controls adding and removing sounds from the playing list.
+    if (removalArray == nil)
+      removalArray = [NSMutableArray new];
+    [self setClientName: @"SndPlayer"];
+  }
   return self;
 }
 
@@ -92,8 +92,14 @@ static SndPlayer *defaultSndPlayer;
 {
     NSString *description;
     [playingLock lock];
+#if SNDPLAYER_DEBUG
+    fprintf(stderr,"SndPlayer::description - playingLock locked\n");
+#endif    
     description = [NSString stringWithFormat: @"SndPlayer to be played %@, playing %@", toBePlayed, playing];
     [playingLock unlock];
+#if SNDPLAYER_DEBUG
+    fprintf(stderr,"SndPlayer::description - playingLock locked\n");
+#endif
     return description;
 }
 
@@ -138,6 +144,10 @@ static SndPlayer *defaultSndPlayer;
         [[SndStreamManager defaultStreamManager] addClient: self];
     }
     [playingLock lock];
+#if SNDPLAYER_DEBUG
+  fprintf(stderr,"SndPlayer::stopPerformance - playingLock locked\n");    
+#endif
+
     whenToStop = [self streamTime] + inSeconds;
     beginPlayTime = [performance playTime]; // in seconds
     if(whenToStop < beginPlayTime) {
@@ -158,6 +168,9 @@ static SndPlayer *defaultSndPlayer;
       }
     }
     [playingLock unlock];
+#if SNDPLAYER_DEBUG
+    fprintf(stderr,"SndPlayer::stopPerformance - playingLock unlocked\n");
+#endif
     return self;
 }
 
@@ -277,8 +290,14 @@ static SndPlayer *defaultSndPlayer;
                                                endAtIndex: endAtIndex];
 
         [playingLock lock];
+#if SNDPLAYER_DEBUG
+        fprintf(stderr,"SndPlayer::playSnd(4) playing lock...\n");
+#endif
         [self _startPerformance: nowPerformance];    
         [playingLock unlock];
+#if SNDPLAYER_DEBUG
+        fprintf(stderr,"SndPlayer::playSnd(4) playing unlock...\n");
+#endif
         [s addPerformance: nowPerformance];
         return nowPerformance;
     }		
@@ -292,6 +311,9 @@ static SndPlayer *defaultSndPlayer;
                                                  endAtIndex: endAtIndex];
 
         [playingLock lock];
+#if SNDPLAYER_DEBUG
+        fprintf(stderr,"SndPlayer::playSnd(4) playing lock...\n");
+#endif
         numToBePlayed = [toBePlayed count];
         insertIndex = numToBePlayed;
         for (i = 0; i < numToBePlayed; i++) {
@@ -303,6 +325,9 @@ static SndPlayer *defaultSndPlayer;
         }
         [toBePlayed insertObject: laterPerformance atIndex: i];
         [playingLock unlock];
+#if SNDPLAYER_DEBUG
+        fprintf(stderr,"SndPlayer::playSnd(4) playing unlock...\n");
+#endif
         [s addPerformance: laterPerformance];
         return laterPerformance;
     }
@@ -385,6 +410,9 @@ static SndPlayer *defaultSndPlayer;
     int    i;
 
     [playingLock lock];
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
+    fprintf(stderr,"[SndPlayer][SYNTH THREAD] playing lock...\n");
+#endif
     
     // Are any of the 'toBePlayed' samples gonna fire off during this buffer?
     // If so, add 'em to the play array
@@ -405,7 +433,10 @@ static SndPlayer *defaultSndPlayer;
       [toBePlayed removeObjectsInArray: removalArray];
       [removalArray removeAllObjects];
     }
-    
+
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
+    fprintf(stderr,"[SndPlayer][SYNTH THREAD] playing zone...\n");
+#endif
     // The playing-sounds-mixing-zone.
     
     numberPlaying = [playing count];
@@ -431,8 +462,8 @@ static SndPlayer *defaultSndPlayer;
             playRegion.length += startIndex;
             playRegion.location = 0;
         }
-#if SNDPLAYER_DEBUG_SYNTHTHREAD            
-        NSLog(@"SYNTH THREAD: startIndex = %ld, endAtIndex = %ld,  location = %d, length = %d\n", 
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS            
+        NSLog(@"[SndPlayer][SYNTH THREAD] startIndex = %ld, endAtIndex = %ld,  location = %d, length = %d\n", 
         			startIndex, endAtIndex, playRegion.location, playRegion.length);
 #endif        
         // Negative buffer length means the endAtIndex was moved before the current playIndex, so we should skip any mixing and stop.
@@ -444,12 +475,12 @@ static SndPlayer *defaultSndPlayer;
           if (startIndex < 0)                 start = -startIndex;
           if (end + startIndex > endAtIndex)  end   = endAtIndex - startIndex;
 
-#if SNDPLAYER_DEBUG_SYNTHTHREAD            
-          NSLog(@"SYNTH THREAD: calling mixWithBuffer from SndPlayer processBuffers start = %ld, end = %ld\n", start, end);
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS            
+          NSLog(@"[SndPlayer][SYNTH THREAD] calling mixWithBuffer from SndPlayer processBuffers start = %ld, end = %ld\n", start, end);
 #endif          
           [ab mixWithBuffer: temp fromStart: start toEnd: end];
-#if SNDPLAYER_DEBUG_SYNTHTHREAD            
-	        NSLog(@"\nSndPlayer: mixing buffer from %d to %d, playregion %d for %d, val at start = %f\n",
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS            
+	        NSLog(@"[SndPlayer][SYNTH THREAD] mixing buffer from %d to %d, playregion %d for %d, val at start = %f\n",
 	              start, end, playRegion.location, playRegion.length, 
                 (((short *)[snd data])[playRegion.location])/(float)32768);
 #endif
@@ -474,30 +505,39 @@ static SndPlayer *defaultSndPlayer;
  * received in the NSRunLoop in the same way that keyboard, mouse or GUI actions are
  * received.
  */
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
+          fprintf(stderr,"[SndPlayer][SYNTH THREAD] sending delegate message...\n");
+#endif
           [manager sendMessageInMainThreadToTarget: snd
                                                sel: @selector(tellDelegateString:duringPerformance:)
                                               arg1: @"didPlay:duringPerformance:"
                                               arg2: performance];
         }
       }
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
+      fprintf(stderr,"[SndPlayer][SYNTH THREAD] playing remove...\n");
+#endif
       if ([removalArray count] > 0) {
         [playing removeObjectsInArray: removalArray];
         if ([toBePlayed count] == 0 && [playing count] == 0) {
           if (!bRemainConnectedToManager) {
                      active = FALSE;
-#if SNDPLAYER_DEBUG_SYNTHTHREAD            
-              fprintf(stderr,"[SndPlayer] Setting inactive...\n");
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS            
+              fprintf(stderr,"[SndPlayer][SYNTH THREAD] Setting inactive...\n");
 #endif
           }
           else {
-#if SNDPLAYER_DEBUG_SYNTHTHREAD            
-              fprintf(stderr,"[SndPlayer] remaining active...\n");
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_SNDPOSITIONS            
+              fprintf(stderr,"[SndPlayer][SYNTH THREAD] remaining active...\n");
 #endif
           }
         }
       }
     }
-    [playingLock unlock];    
+    [playingLock unlock];
+#if SNDPLAYER_DEBUG_SYNTHTHREAD_LOCKS
+    fprintf(stderr,"[SndPlayer][SYNTH THREAD] playing unlock...\n");
+#endif    
 }
 
 ////////////////////////////////////////////////////////////////////////////////

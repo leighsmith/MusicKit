@@ -32,16 +32,16 @@
 */
 @interface SndPlayer : SndStreamClient
 {
-/*! @var            toBePlayed An array of pending SndPerformance objects */
-    NSMutableArray *toBePlayed;
-/*! @var            playing An array of active SndPerformance objects */
-    NSMutableArray *playing;
-/*! @var            playinglock Provides thread safety on the SndPerformance arrays. */
-    NSLock         *playingLock; // controls access to the toBePlayed and playing arrays.
-/*! @var            bRemainConnectedToManager */
-    BOOL            bRemainConnectedToManager;
-/*! @var            removalArray */
-    NSMutableArray *removalArray;
+/*! @var             toBePlayed An array of pending SndPerformance objects */
+    NSMutableArray  *toBePlayed;
+/*! @var             playing An array of active SndPerformance objects */
+    NSMutableArray  *playing;
+/*! @var             playinglock Provides thread safety on the SndPerformance arrays. */
+    NSRecursiveLock *playingLock; // controls access to the toBePlayed and playing arrays.
+/*! @var             bRemainConnectedToManager */
+    BOOL             bRemainConnectedToManager;
+/*! @var             removalArray */
+    NSMutableArray  *removalArray;
 }
 /*!
   @method     player

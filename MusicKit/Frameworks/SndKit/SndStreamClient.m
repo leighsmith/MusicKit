@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  $Id$
+//  $Id$ 
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>, tomandandy music inc.
 //
@@ -325,23 +325,24 @@ enum {
     {
         oc = [outputQueue processedBuffersCount];
 #if SNDSTREAMCLIENT_DEBUG            
-      fprintf(stderr,"[%s] time: %f Processed: %i Pending: %i \n", [clientName cString], t, oc, [outputQueue pendingBuffersCount]);
+      fprintf(stderr,"[%s] time: %3.3f [output] Processed: %i Pending: %i \n", [clientName cString], t, oc, [outputQueue pendingBuffersCount]);
 #endif          
 
       if (oc > 0) {
         [outputQueue addPendingBuffer: exposedOutputBuffer];
-        [exposedOutputBuffer release];        
+        [exposedOutputBuffer autorelease];        
         exposedOutputBuffer = [[outputQueue popNextProcessedBuffer] retain];
       }
-      else if (bDelegateRespondsToOutputBufferSkipSelector)
+      else if (bDelegateRespondsToOutputBufferSkipSelector) {
         [delegate outputBufferSkipped: self];
+      }
       else if (active) {
 #if SNDSTREAMCLIENT_DEBUG            
-        NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked? [%s]", clientName);
+        fprintf(stderr,"[%s] SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked? \n", [clientName cString]);
 #endif
       }    
 #if SNDSTREAMCLIENT_DEBUG                  
-      NSLog(@"startprocessing: stage2");
+      fprintf(stderr,"startprocessing: stage2\n");
 #endif
     }
        
@@ -350,7 +351,7 @@ enum {
 #endif
     if (needsInput) {
       if (inB == nil)
-        NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n");
+        fprintf(stderr,"[%s] SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n", [clientName cString]);
       else {
         ic = [inputQueue processedBuffersCount];
         
@@ -358,13 +359,13 @@ enum {
           SndAudioBuffer *inBloc = [[inputQueue popNextProcessedBuffer] retain];
           [inBloc copyData: inB];
           [inputQueue addPendingBuffer: inBloc];                      
-          [inBloc release];
+          [inBloc autorelease];
         }
         else if (bDelegateRespondsToInputBufferSkipSelector)
           [delegate inputBufferSkipped: self];
         else if (active) {
 #if SNDSTREAMCLIENT_DEBUG                  
-          NSLog(@"[%@] SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?", clientName);
+          fprintf(stderr,"[%s] SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?", [clientName cString]);
 #endif
         }
       }
@@ -378,14 +379,14 @@ enum {
         [self didFinishStreaming];
         bDisconnect = FALSE;
 #if SNDSTREAMCLIENT_DEBUG            
-    fprintf(stderr,"SndStreamClient: disconnected\n");                       
+    fprintf(stderr,"[%s] SndStreamClient: disconnected\n", [clientName cString]);                       
 #endif        
       }
     }
 #if SNDSTREAMCLIENT_DEBUG                  
-    fprintf(stderr,"Input: pending:%i processed:%i  Output: pending:%i processed:%i\n",
-            [pendingInputBuffers count],  [processedInputBuffers count],
-            [pendingOutputBuffers count], [processedOutputBuffers count]);
+    fprintf(stderr,"[%s] Input: pending:%i processed:%i  Output: pending:%i processed:%i\n", [clientName cString],
+            [inputQueue pendingBuffersCount],  [inputQueue processedBuffersCount],
+            [outputQueue pendingBuffersCount], [outputQueue processedBuffersCount]);
 #endif        
 
     return self;
@@ -428,11 +429,9 @@ enum {
     }
     active = TRUE;
 #if SNDSTREAMCLIENT_DEBUG                  
-    NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
+//    NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
 #endif        
     while (active) {
-        innerPool = [[NSAutoreleasePool alloc] init];
-
         if (generatesOutput) {
           synthOutputBuffer = [[[outputQueue popNextPendingBuffer] retain] zero];
         }
@@ -440,13 +439,19 @@ enum {
           synthInputBuffer = [[inputQueue popNextPendingBuffer] retain];
         }
 #if SNDSTREAMCLIENT_DEBUG                  
-        NSLog(@"SYNTH THREAD: going to processBuffers\n");
+        fprintf(stderr,"[%s] SYNTH THREAD: going to processBuffers\n", [clientName cString]);
 #endif                        
         [synthThreadLock lock];
-        [self processBuffers];
-
+#if SNDSTREAMCLIENT_DEBUG
+        fprintf(stderr,"[%s] SYNTH THREAD: ... LOCKED\n", [clientName cString]);
+#endif
+        {
+          innerPool = [[NSAutoreleasePool alloc] init];
+          [self processBuffers];
+          [innerPool release];
+        }
 #if SNDSTREAMCLIENT_DEBUG                  
-        NSLog(@"SYNTH THREAD: ... done processBuffers\n");
+        fprintf(stderr,"[%s] SYNTH THREAD: ... done processBuffers\n", [clientName cString]);
 #endif
         if (synthOutputBuffer != nil) {
           [processorChain processBuffer: synthOutputBuffer forTime: clientNowTime];
@@ -465,18 +470,20 @@ enum {
 
         [synthThreadLock unlock];
 
+#if SNDSTREAMCLIENT_DEBUG
+        fprintf(stderr,"[%s] SYNTH THREAD: ... UNLOCKED\n", [clientName cString]);
+#endif
+        
         if (needsInput) {
           [inputQueue addProcessedBuffer: synthInputBuffer];
           [synthInputBuffer release];    
         }
-
-        [innerPool release];
     }
     bDisconnect = TRUE;
-    [self release];
+    [self autorelease];
     [localPool release];
 #if SNDSTREAMCLIENT_DEBUG            
-    fprintf(stderr,"SndStreamClient: processing thread stopped\n");                       
+    fprintf(stderr,"[%s] SndStreamClient: processing thread stopped\n", [clientName cString]);                       
 #endif
     [NSThread exit];
 }

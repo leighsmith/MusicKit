@@ -29,7 +29,7 @@ double freqparam2freq(float freq)
 
 - init
 {
-  self     = [super initWithParamCount: toneGen_kNumParams name: @"ToneGenerator"];
+  self  = [super initWithParamCount: toneGen_kNumParams name: @"ToneGenerator"];
   freq  = 1.0f;
   amp   = 0.25f;  
   return self;
