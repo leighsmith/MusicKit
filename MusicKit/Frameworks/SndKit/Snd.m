@@ -211,6 +211,8 @@
        channelCount: [aBuffer channelCount]
            infoSize: 0];
 
+  soundFormat = [aBuffer format];
+  
   memcpy([self data], [aBuffer bytes], [aBuffer lengthInBytes]);  
   return self;
 }
@@ -560,25 +562,27 @@
 {
     if (!soundStruct) return 0;
     return (double)(soundStruct->samplingRate);
+    // TODO return soundFormat.samplingRate
 }
 
 - (unsigned long) lengthInSampleFrames
 {
     if (!soundStruct) return 0;
     return SndFrameCount(soundStruct);
+    // TODO return soundFormat.frameCount
 }
 
 - (double) duration
 {
-    if (!soundStruct) return 0.0;
-    if ((double)(soundStruct->samplingRate) == 0) return 0.0; /* cop-out */
-    return (double)[self lengthInSampleFrames] / (double)(soundStruct->samplingRate);
+    double sampleRate = (double) [self samplingRate];
+    return (sampleRate == 0) ? 0.0 : (double) [self lengthInSampleFrames] / sampleRate;
 }
 
 - (int) channelCount
 {
     if (!soundStruct) return 0;
     return soundStruct->channelCount;
+    // TODO return soundFormat.channelCount
 }
 
 - (NSString *) info
@@ -601,6 +605,8 @@
     unsigned long playBegin = begin;
     unsigned long playEnd = begin + count;
     
+    [self compactSamples]; // in case this is a pasted sound.
+
     if (playBegin > [self lengthInSampleFrames] || playBegin < 0)
         playBegin = 0;
     
@@ -967,41 +973,72 @@
                     channelCount: nativeFormat.channelCount];
 }
 
-- (int) deleteSamples
+static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSound)
 {
-    return [self deleteSamplesAt: 0 count: [self lengthInSampleFrames]];
-}
-
-- (int) deleteSamplesAt: (int) startSample count: (int) sampleCount
-{
-    int err = SndDeleteSamples(soundStruct, startSample, sampleCount);
+    SndSoundStruct **ssList=NULL,**newssList=NULL;
+    SndSoundStruct *theStruct;
+    int i = 0,ssPointer = 0;
+    int cc;
+    SndSampleFormat df;
+    int ds;
+    int sr;
     
-    if (!err) {
-        if (soundStruct->dataFormat != SND_FORMAT_INDIRECT)
-            soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-        else
-	    soundStructSize = soundStruct->dataSize;		
-    }
-    return err;
-}
-
-- (int) insertSamples: (Snd *) aSnd at: (int) startSample
-{
-    int err;
-    SndSoundStruct *fromSound;
+    if (!fromSound) return SND_ERR_NOT_SOUND;
+    if (fromSound->magic != SND_MAGIC) return SND_ERR_NOT_SOUND;
+    cc = fromSound->channelCount;
+    df = fromSound->dataFormat;
+    ds = fromSound->dataSize; /*ie size of header including info string*/
+    sr = fromSound->samplingRate;
     
-    if (!aSnd)
-        return SND_ERR_NONE;
-    if (!(fromSound = [aSnd soundStruct]))
-        return SND_ERR_NONE;
-    err = SndInsertSamples(soundStruct, fromSound, startSample);
-    if (!err) {
-        if (soundStruct->dataFormat != SND_FORMAT_INDIRECT)
-            soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-        else
-            soundStructSize = soundStruct->dataSize;		
+    if (df == SND_FORMAT_INDIRECT) {
+	df = ((SndSoundStruct *)(*((SndSoundStruct **)
+				   (fromSound->dataLocation))))->dataFormat;
+	
+	/*Copying fragged sound: */
+	/* initial struct -- info and all */
+	if (SndAlloc(toSound, 0, df, sr, cc,
+		     ds - sizeof(SndSoundStruct) + 4) != SND_ERR_NONE)
+	    return SND_ERR_CANNOT_ALLOC;
+	
+	memmove(&((*toSound)->info),&(fromSound->info),
+		ds - sizeof(SndSoundStruct) + 4);
+	
+	ssList = (SndSoundStruct **)fromSound->dataLocation;
+	while ((theStruct = ssList[i++]) != NULL);
+	i--;
+	/* i is the number of frags */
+	newssList = malloc((i+1) * sizeof(SndSoundStruct *));
+	if (!newssList) {
+	    free (*toSound);
+	    return SND_ERR_CANNOT_ALLOC;
+	}
+	newssList[i] = NULL; /* do the last one now... */
+	
+	for (ssPointer = 0; ssPointer < i; ssPointer++) {
+	    if (!(newssList[ssPointer] = _SndCopyFrag(ssList[ssPointer]))) {
+		free (*toSound);
+		for (i = 0; i < ssPointer; i++) {
+		    free (newssList[i]);
+		}
+		return SND_ERR_CANNOT_ALLOC;
+	    }
+	}
+	(SndSoundStruct **)((*toSound)->dataLocation) = newssList;
+	(*toSound)->dataSize = fromSound->dataSize;
+	(*toSound)->dataFormat = SND_FORMAT_INDIRECT;
+	return SND_ERR_NONE;
     }
-    return err;
+    else {
+	/* copy unfragged sound */
+	if (SndAlloc(toSound, ds, df, sr, cc, fromSound->dataLocation -
+		     sizeof(SndSoundStruct) + 4) != SND_ERR_NONE)
+	    return SND_ERR_CANNOT_ALLOC;
+	memmove(&((*toSound)->info),&(fromSound->info),
+		fromSound->dataLocation - sizeof(SndSoundStruct) + 4);
+	memmove((char *)(*toSound)   + (*toSound)->dataLocation,
+		(char *)fromSound + fromSound->dataLocation, ds);
+    }
+    return SND_ERR_NONE;
 }
 
 - (id) copyWithZone: (NSZone *) zone
@@ -1043,59 +1080,6 @@
     [newSound setAudioProcessorChain: [self audioProcessorChain]];
     
     return newSound;
-}
-
-- (int) copySamples: (Snd *) aSnd at: (int) startSample count: (int) sampleCount
-{
-    int err;
-    
-    status = SND_SoundInitialized;
-    if (!aSnd) {
-        if (soundStruct) {
-            err = SndFree(soundStruct);
-            soundStruct = NULL;
-            soundStructSize = 0;
-            return err;
-        }
-        return SND_ERR_NONE;
-    }
-    if (soundStruct) {
-        if (![self isEditable]) return SND_ERR_CANNOT_EDIT;
-// following condition not in the original! Therefore removed.
-//		if (![aSnd compatibleWithSound:self]) return SND_ERR_CANNOT_COPY;
-        SndFree(soundStruct);
-        soundStruct = NULL;
-        soundStructSize = 0;
-    }
-    err = SndCopySamples(&soundStruct, [aSnd soundStruct],
-            startSample, sampleCount);
-    if (!err) {
-        if (soundStruct->dataFormat != SND_FORMAT_INDIRECT)
-                soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-        else soundStructSize = soundStruct->dataSize;		
-    }
-    return err;
-}
-
-- (int) compactSamples
-{
-    SndSoundStruct *newStruct;
-    int err;
-    
-    if (![self isEditable]) return SND_ERR_CANNOT_EDIT;
-    if (!soundStruct) return SND_ERR_NOT_SOUND;
-    if (soundStruct->dataFormat != SND_FORMAT_INDIRECT) return SND_ERR_NONE;
-    if ((err = SndCompactSamples(&newStruct, soundStruct))) return err;
-    if ((err = SndFree(soundStruct))) return err;
-    soundStruct = newStruct;
-    soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-    return SND_ERR_NONE;
-}
-
-- (BOOL) needsCompacting
-{
-    if (!soundStruct) return NO;
-    return (soundStruct->dataFormat == SND_FORMAT_INDIRECT);
 }
 
 - (void *) data
@@ -1249,233 +1233,6 @@
 - (int) performanceCount
 {
   return [performancesArray count];
-}
-
-
-- (long) insertIntoAudioBuffer: (SndAudioBuffer *) buff
-		intoFrameRange: (NSRange) bufferFrameRange
-	        samplesInRange: (NSRange) sndFrameRange
-{
-    void  *sndDataPtr = [self data] + sndFrameRange.location * SndFrameSize(soundStruct);
-    double stretchFactor = [buff samplingRate] / [self samplingRate];
-
-    //NSLog(@"bufferFrameRange [%ld, %ld] sndFrameRange [%ld,%ld]\n",
-    //	  bufferFrameRange.location, bufferFrameRange.location + bufferFrameRange.length,
-    //	  sndFrameRange.location, sndFrameRange.location + sndFrameRange.length);
-    
-    // Check if the number of frames to fill into the buffer will exceed the number of frames in the sound
-    // remaining to be played (including when downsampling). If so, reduce the number to fill into the buffer,
-    // pad the remainder of the buffer range with zeros. This will only occur at the end of a sound.
-
-    if((bufferFrameRange.length / stretchFactor) > sndFrameRange.length) {
-	long originalBufferFrameLength = bufferFrameRange.length;
-	NSRange toZero;
-	
-	bufferFrameRange.length = sndFrameRange.length * stretchFactor;
-	//NSLog(@"shortened buffer length to %ld\n", bufferFrameRange.length);
-	toZero.location = bufferFrameRange.length;
-	toZero.length = originalBufferFrameLength - bufferFrameRange.length;
-	[buff zeroFrameRange: toZero];
-    }
-    
-    if(![self hasSameFormatAsBuffer: buff]) { // If not the same, do a data conversion.
-	// The number of frames returned as read could be more or less than bufferFrameRange.length if resampling occurs.
-	long framesRead = [buff convertBytes: sndDataPtr
-			      intoFrameRange: bufferFrameRange
-			          fromFormat: [self dataFormat]
-				channelCount: [self channelCount]
-			        samplingRate: [self samplingRate]];
-	
-	//NSLog(@"buffer to fill %@ mismatched to %@, converted, read %ld\n", buff, self, framesRead);
-	return framesRead;  // framesRead depends on resampling.
-    }
-    else {
-	// Matching sound buffer formats, so we can just do a copy.
-	int buffFrameSize = [buff frameSizeInBytes];
-	NSRange bufferByteRange = { bufferFrameRange.location * buffFrameSize, bufferFrameRange.length * buffFrameSize };
-        SndFormat sndFormat;
-	
-        sndFormat.channelCount = soundStruct->channelCount;
-        sndFormat.dataFormat = soundStruct->dataFormat;
-        sndFormat.sampleRate = soundStruct->samplingRate;
-	// NSLog(@"channel count of sound = %d, of buffer = %d\n", soundStruct->channelCount, [buff channelCount]);
-	[buff copyBytes: sndDataPtr intoRange: bufferByteRange format: sndFormat];
-	return bufferFrameRange.length;
-    }
-}
-
-- (long) insertIntoAudioBuffer: (SndAudioBuffer *) bufferToFill
-		intoFrameRange: (NSRange) bufferFrameRange
-	        samplesInRange: (NSRange) sndFrameRange
-		       looping: (BOOL) isLooping
-		loopStartIndex: (long) thisLoopStartIndex
-		  loopEndIndex: (long) thisLoopEndIndex
-{
-    long fillBufferToLength = bufferFrameRange.length;
-    // long framesUntilEndOfLoop = loopEndIndex - sndFrameRange.location + 1;
-    // Determine number of frames in the loop, checking for resampling shortening that number.
-    double stretchFactor = [bufferToFill samplingRate] / [self samplingRate];
-    long framesUntilEndOfLoop = (thisLoopEndIndex - sndFrameRange.location + 1) * (stretchFactor < 1.0 ? stretchFactor : 1.0);
-    BOOL atEndOfLoop = isLooping && (bufferFrameRange.length >= framesUntilEndOfLoop);
-    // numOfSamplesFilled and numOfSamplesRead can differ if we resample in fillAudioBuffer.
-    long numOfSamplesFilled = 0;
-    long numOfSamplesRead = 0;
-    // specifies to fillAudioBuffer: and insertIntoAudioBuffer: the range of Snd samples permissible to read from.
-    NSRange samplesToReadRange;
-    
-    if (atEndOfLoop) {	// retrieve up to the end of the loop
-	fillBufferToLength = framesUntilEndOfLoop;
-    }
-    // specify the final boundary in the Snd fillAudioBuffer: can not read beyond.
-    samplesToReadRange.location = sndFrameRange.location;
-    samplesToReadRange.length = isLooping ? framesUntilEndOfLoop : sndFrameRange.length;
-    
-#if SND_DEBUG_LOOPING
-    NSLog(@"[SndPerformance][SYNTH THREAD] sndFrameRange.location = %ld, sndFrameRange.length = %ld, buffer length = %d, fill buffer to length = %d, framesUntilEndOfLoop = %ld\n",
-	  sndFrameRange.location, sndFrameRange.length, bufferFrameRange.length, fillBufferToLength, framesUntilEndOfLoop);
-#endif
-    
-    // Negative or zero buffer length means the endAtIndex was moved before or to the current sndFrameRange.location,
-    // so we should skip any mixing and stop.
-    // Nowdays, with better checking on the updates of sndFrameRange.length and sndFrameRange.location this should never occur,
-    // so this check is probably redundant, but hey, it adds robustness which translates into saving someones
-    // ears from hearing noise.
-    if (sndFrameRange.location >= 0 && bufferFrameRange.length > 0 && fillBufferToLength > 0) {
-	// NSLog(@"bufferToFill dataFormat before processing 1 %d\n", [bufferToFill dataFormat]);
-	numOfSamplesRead = [self fillAudioBuffer: bufferToFill
-				       toLength: fillBufferToLength
-				 samplesInRange: samplesToReadRange];
-	numOfSamplesFilled = fillBufferToLength;
-#if SND_DEBUG_LOOPING
-	{
-	    //NSLog(@"bufferToFill %@, numOfSamplesFilled = %ld, numOfSamplesRead = %ld\n",
-	    //    bufferToFill, numOfSamplesFilled, numOfSamplesRead);
-	    long i;
-	    for (i = 0; i < numOfSamplesFilled; i++)
-		NSLog(@"%f\n", [bufferToFill sampleAtFrameIndex: i channel: 0]);
-	}
-#endif
-	
-	if(atEndOfLoop) {
-	    // If we are at the end of the loop, copy in zero or more (when the loop is small) loop regions 
-	    // then any remaining beginning of the loop.
-	    int loopLength = thisLoopEndIndex - thisLoopStartIndex + 1;
-	    long fillBufferFrom = fillBufferToLength;
-	    long remainingLengthToFillWithLoop = bufferFrameRange.length - fillBufferFrom;
-	    
-	    // Reset sndFrameRange.location to the start of the loop. We do this before the loop in case we do no loops,
-	    // in the singular case that the loop ends at the end of a buffer, requiring no insertion of loop
-	    // regions for this buffer.
-	    sndFrameRange.location = thisLoopStartIndex;   
-	    while(remainingLengthToFillWithLoop > 0 && loopLength > 0) {
-		NSRange loopRegion;
-		
-		// give the range of Snd samples permissible to read from.
-		samplesToReadRange.location = thisLoopStartIndex;
-		samplesToReadRange.length = loopLength;
-		// give the range to fill in the buffer
-		loopRegion.location = fillBufferFrom;
-		loopRegion.length = MIN(remainingLengthToFillWithLoop, loopLength);
-		
-		numOfSamplesRead = [self insertIntoAudioBuffer: bufferToFill
-					       intoFrameRange: loopRegion
-					       samplesInRange: samplesToReadRange];
-#if SND_DEBUG_LOOPING
-		{
-		    long i;
-		    
-		    NSLog(@"%@ loopRegion.location = %ld, loopRegion.length = %ld, sndFrameRange.location = %ld, fillBufferFrom = %d, remainingLengthToFillWithLoop = %d\n",
-			  bufferToFill, loopRegion.location, loopRegion.length, sndFrameRange.location, fillBufferFrom, remainingLengthToFillWithLoop);
-		    for (i = fillBufferFrom - 5; i < fillBufferFrom + 5; i++)
-			NSLog(@"buffer[%ld] = %e\n", i, [bufferToFill sampleAtFrameIndex: i channel: 0]);
-		}
-#endif
-		numOfSamplesFilled += loopRegion.length;
-		sndFrameRange.location += numOfSamplesRead;
-		fillBufferFrom += loopRegion.length; 
-		remainingLengthToFillWithLoop -= loopRegion.length;
-	    }
-	}
-	else
-	    sndFrameRange.location += numOfSamplesRead;  // Update the read index accounting for change from resampling.
-		
-#if SND_DEBUG_LOOPING
-	NSLog(@"[SndPerformance][SYNTH THREAD] will mix buffer from %d to %d, old sndFrameRange.location %d for %d, val at start = %f\n",
-	      0, fillBufferToLength, samplesToReadRange.location, numOfSamplesFilled,
-	      (((short *) [self data])[samplesToReadRange.location]) / (float) 32768);
-#endif
-    }
-    else
-	sndFrameRange.location += bufferFrameRange.length;  // If there is a problem, push the sndFrameRange.location forward, we may improve...somehow...
-    
-    //NSLog(@"retrieved numOfSamplesFilled = %ld\n", numOfSamplesFilled);
-    return numOfSamplesFilled;    
-}
-
-- (long) fillAudioBuffer: (SndAudioBuffer *) buff
-		toLength: (long) fillLength
-          samplesInRange: (NSRange) readFromSndSample
-{
-    NSRange bufferRange;
-
-    bufferRange.location = 0;
-    bufferRange.length = fillLength; // TODO this may become [buff lengthInSamples] if we remove toLength: parameter.
-    
-    return [self insertIntoAudioBuffer: buff
-			intoFrameRange: bufferRange
-		        samplesInRange: readFromSndSample];
-}
-
-- (long) insertAudioBuffer: (SndAudioBuffer *) buffer
-	    intoFrameRange: (NSRange) writeIntoSndFrameRange
-{    
-    if(![self hasSameFormatAsBuffer: buffer]) { // If not the same, do a data conversion.
-	NSLog(@"mismatched buffer %@ and snd %@ formats, format conversion needs implementation\n", buffer, self);
-    }
-
-    memcpy([self data] + writeIntoSndFrameRange.location, [buffer bytes], writeIntoSndFrameRange.length);
-    return [self lengthInSampleFrames];
-}
-
-- (long) appendAudioBuffer: (SndAudioBuffer *) buffer
-{    
-    // If not the same, do a data conversion.
-    if(![self hasSameFormatAsBuffer: buffer]) {
-	NSLog(@"mismatched buffer %@ and snd %@ formats, format conversion needs implementation\n", buffer, self);
-    }
-    else {
-	Snd *fromSound = [[Snd alloc] initWithAudioBuffer: buffer];
-	
-	if(SndInsertSamples([self soundStruct], [fromSound soundStruct], [self lengthInSampleFrames]) != SND_ERR_NONE) {
-	    NSLog(@"appendAudioBuffer: Unable to insert samples\n");
-	    return 0;
-	}
-	[fromSound release];
-    }
-    return [self lengthInSampleFrames];
-}
-
-- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) sndFrameRange
-					  looping: (BOOL) isLooping
-{
-    SndAudioBuffer *newAudioBuffer  = [SndAudioBuffer audioBufferWithDataFormat: soundFormat.dataFormat
-								   channelCount: soundFormat.channelCount
-								   samplingRate: soundFormat.sampleRate
-								     frameCount: sndFrameRange.length];
-    NSRange bufferFrameRange = { 0, sndFrameRange.length };
-    
-    [self insertIntoAudioBuffer: newAudioBuffer
-		 intoFrameRange: bufferFrameRange
-		 samplesInRange: sndFrameRange
-			looping: isLooping
-		 loopStartIndex: loopStartIndex
-		   loopEndIndex: loopEndIndex];
-    return newAudioBuffer;
-}
-
-- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) sndFrameRange
-{
-    return [self audioBufferForSamplesInRange: sndFrameRange looping: NO];
 }
 
 - (void) normalise
