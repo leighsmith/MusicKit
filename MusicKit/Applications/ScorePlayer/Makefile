@@ -27,9 +27,9 @@ GLOBAL_RESOURCES = Midi.tiff play.tiff playH.tiff Sound.tiff stop.tiff\
                    ScorePlayerDoc.tiff ScorePlayerDoc2.tiff\
                    ScorePlayer.strings
 
-CLASSES = Animator.m ErrorLog.m MKAlert.m MyApp.m
+CLASSES = Animator.m ErrorLog.m MKAlert.m ScorePlayerController.m
 
-HFILES = Animator.h ErrorLog.h MKAlert.h MyApp.h
+HFILES = Animator.h ErrorLog.h MKAlert.h ScorePlayerController.h
 
 MFILES = ScorePlayer_main.m
 
@@ -39,16 +39,17 @@ OTHERSRCS = help.rtfd Makefile
 MAKEFILEDIR = /System/Developer/Makefiles/pb_makefiles
 CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = app.make
-NEXTSTEP_INSTALLDIR = /LocalApps
+NEXTSTEP_INSTALLDIR = /Local/Applications
 WINDOWS_INSTALLDIR = /LocalApps
 PDO_UNIX_INSTALLDIR = /LocalApps
-LIBS = -lsynthpatches -lunitgenerators -lmusickit -ldsp -lNeXT_s\
-       -lDriver
+LIBS = 
 DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
 
-FRAMEWORKS = -framework AppKit -framework Foundation
+FRAMEWORK_PATHS = -F/Local/Library/Frameworks
+FRAMEWORKS = -framework AppKit -framework Foundation -framework MKDSP\
+             -framework MKPerformSndMIDI -framework MusicKit
 
 
 NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc
