@@ -2,11 +2,9 @@
 <!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
 <plist version="0.9">
 <dict>
-	<key>IBDocumentLocation</key>
-	<string>52 47 354 230 0 4 1152 844 </string>
 	<key>IBUserGuides</key>
 	<dict>
-		<key>SSAD64xPanel</key>
+		<key>Panel</key>
 		<dict>
 			<key>guideLocations</key>
 			<array/>
