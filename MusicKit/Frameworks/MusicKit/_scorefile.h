@@ -7,6 +7,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/04/26 01:19:03  leigh
+  Corrected _MKNewScoreInStruct to take a NSData instead of NSMutableData instance
+
   Revision 1.2  1999/07/29 01:26:03  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -71,8 +74,8 @@ extern _MKScoreOutStruct *
 
 /* Functions for reading score files: */
 extern void _MKParseScoreHeader(_MKScoreInStruct *scorefileRPtr);
-extern _MKScoreInStruct *
-_MKNewScoreInStruct(NSMutableData *aStream,id owner,NSMutableData *printStream,
+extern _MKScoreInStruct *_MKNewScoreInStruct(NSData *aStream,id owner,
+                    NSMutableData *printStream,
                     BOOL mergeParts,NSString *name,unsigned int *pointer);
 extern BOOL _MKParseScoreHeaderStmt(_MKScoreInStruct *scorefileRPtr);
 extern id _MKParseScoreNote(_MKScoreInStruct * scorefileRPtr);
