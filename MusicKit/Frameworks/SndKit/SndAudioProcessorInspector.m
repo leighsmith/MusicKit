@@ -11,60 +11,73 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 #import "SndStreamArchitectureView.h"
+#import "SndStreamClient.h"
+#import "SndStreamMixer.h"
 #import "SndAudioProcessorInspector.h"
 #import "SndAudioProcessorDelay.h"
 #import "SndAudioProcessorDistortion.h"
 #import "SndAudioProcessorFlanger.h"
+#import "SndAudioProcessorNoiseGate.h"
 #import "SndAudioProcessorMP3Encoder.h"
-#import "SndAudioProcessorReverb.h"
 #import "SndAudioProcessorRecorder.h"
+#import "SndAudioProcessorReverb.h"
 #import "SndAudioProcessorToneGenerator.h"
 
-static NSMutableArray *fxClassesArray;
+static SndAudioProcessorInspector* defaultInspector = nil;
 
 @implementation SndAudioProcessorInspector
- 
+
++ defaultAudioProcessorInspector
+{
+  if (defaultInspector == nil) {
+    // Force registration of all known SndAudioProcessor classes
+    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorDelay class]];
+    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorDistortion class]];
+    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorFlanger class]];
+    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorNoiseGate class]];
+    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorReverb class]];
+    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorMP3Encoder class]];
+    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorRecorder class]];
+    [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorToneGenerator class]];
+    defaultInspector = [[SndAudioProcessorInspector alloc] init];
+  }
+  return defaultInspector;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // init
 ////////////////////////////////////////////////////////////////////////////////
 
 - init
 {
-  id w;
-  self = [super init];
+  if (defaultInspector != nil)
+    self = defaultInspector;
+  else {
+    self = [super init];
 
-  [NSBundle loadNibNamed:@"SndAudioProcessorInspector" owner:self];
-  w = [processorName window];
-  [w makeKeyAndOrderFront:self];
-  {
-    NSArray *tableColumns = [parameterTableView tableColumns];
-    id tcN = [tableColumns objectAtIndex: 0];
-    id tcV = [tableColumns objectAtIndex: 1];
-    [tcN setIdentifier: @"Name"];
-    [tcN setEditable: NO];
-    [tcV setIdentifier: @"Value"];
-    [tcV setEditable: NO];
-  }
-  [sndArchView setDelegate: self];
-
-  if (fxClassesArray == nil) {
-    fxClassesArray = [[NSMutableArray alloc] init];
-    [fxClassesArray addObject: [SndAudioProcessorFlanger       class]];
-    [fxClassesArray addObject: [SndAudioProcessorDelay         class]];
-    [fxClassesArray addObject: [SndAudioProcessorDistortion    class]];
-    [fxClassesArray addObject: [SndAudioProcessorReverb        class]];
-    [fxClassesArray addObject: [SndAudioProcessorRecorder      class]];
-    [fxClassesArray addObject: [SndAudioProcessorToneGenerator class]];
-    [fxClassesArray addObject: [SndAudioProcessorMP3Encoder    class]];
-  }
-
-  {
-    int i, c = [fxClassesArray count];
-    [fxChooser removeAllItems];
-    for (i = 0; i < c; i++) {
-      [fxChooser addItemWithObjectValue: NSStringFromClass([[fxClassesArray objectAtIndex: i] class])];
+    [NSBundle loadNibNamed:@"SndAudioProcessorInspector" owner:self];
+    [window makeKeyAndOrderFront:self];
+    {
+      NSArray *tableColumns = [parameterTableView tableColumns];
+      id tcN = [tableColumns objectAtIndex: 0];
+      id tcV = [tableColumns objectAtIndex: 1];
+      [tcN setIdentifier: @"Name"];
+      [tcN setEditable: NO];
+      [tcV setIdentifier: @"Value"];
+      [tcV setEditable: NO];
     }
-    [fxChooser selectItemAtIndex: 0];
+    [sndArchView setDelegate: self];
+
+    {
+      NSArray *fxClassesArray = [SndAudioProcessor fxClasses];
+      int i, c = [fxClassesArray count];
+      [fxChooser removeAllItems];
+      for (i = 0; i < c; i++) {
+        NSString *className = NSStringFromClass([[fxClassesArray objectAtIndex: i] class]);
+        [fxChooser addItemWithObjectValue: className];
+      }
+      [fxChooser selectItemAtIndex: 0];
+    }
   }
   return self;
 }
@@ -233,7 +246,7 @@ static NSMutableArray *fxClassesArray;
   
   if ([currentObj isKindOfClass: [SndStreamClient class]] ||
       [currentObj isKindOfClass: [SndStreamMixer class]]) {
-    id fxClass = [fxClassesArray objectAtIndex: [fxChooser indexOfSelectedItem]];
+    id fxClass = [[SndAudioProcessor fxClasses] objectAtIndex: [fxChooser indexOfSelectedItem]];
     SndAudioProcessor *newFX = [[fxClass alloc] init];
     [[currentObj audioProcessorChain] addAudioProcessor: newFX];
   }
