@@ -35,15 +35,19 @@ sample (initialized as 0.0) to the current input sample:
 
 Note that the two samples have their own scalers:  
 
-&#183;	<i>b0</i> scales the input sample; this is the gain of the filter. 
+<ul>
+<li><i>b0</i> scales the input sample; this is the gain of the filter. 
 Effective gain values are between 0.0 and 1.0 (a negative gain is the same as
 its absolute value, but with a 180 degree phase shift).
+</li>
 
-&#183;	<i>b1</i> scales the previous input sample.  This is the filter's
+<li><i>b1</i> scales the previous input sample.  This is the filter's
 coefficient:  If <i>b1</i> is less than 0.0, the OnezeroUG is a high-pass
 filter; if it's greater than 0.0, the object is a low-pass filter.  For
 stability, the value of <i>b1</i> should be between -1.0 and 1.0
 (non-inclusive).
+</li>
+</ul>
 
 Similar to the OnezeroUG is the OnepoleUG; it, too, is either a low-pass or a
 high-pass filter, but the frequency roll-off is steeper than with a OnezeroUG. 
@@ -61,13 +65,13 @@ the sign of the coefficent is switched in the OnepoleUG.
 
 #import <MusicKit/MKUnitGenerator.h>
 
-@interface OnezeroUG : MKUnitGenerator
+@interface OnezeroUG: MKUnitGenerator
 
 /*!
   @method setInput:
   @param  aPatchpoint is an id.
   @result Returns an id.
-  @discussion Sets the input patchpoint to <i>aPatchpoint</i>.  Returns <b>nil</b>
+  @discussion Sets the input patchpoint to <i>aPatchpoint</i>. Returns <b>nil</b>
               if the argument isn't a patchpoint; otherwise returns
               <b>self</b>.
 */
@@ -89,9 +93,9 @@ the sign of the coefficent is switched in the OnepoleUG.
 
 /*!
   @method setB0:
-  @param  (double)value is an id.
+  @param  value is a double.
   @result Returns <b>self</b>.
-  @discussion Sets the filter's gain.  Effective gain values are between 0.0 and
+  @discussion Sets the filter's gain. Effective gain values are between 0.0 and
               1.0 (a negative gain is the same as its absolute value, but with a
               180 degree phase shift).  
 */
@@ -101,11 +105,11 @@ the sign of the coefficent is switched in the OnepoleUG.
 
 /*!
   @method setB1:
-  @param  (double)value is an id.
+  @param  value is a double.
   @result Returns <b>self</b>.
-  @discussion Sets the filter's coefficient.   If <i>value</i> is less than 0.0,
+  @discussion Sets the filter's coefficient. If <i>value</i> is less than 0.0,
               the OnezeroUG is a high-pass filter; if it's greater than 0.0, the
-              object is a low-pass filter.  For stability, the <i>value</i> should
+              object is a low-pass filter. For stability, the <i>value</i> should
               be between -1.0 and 1.0.  
 */
 -setB1:(double)val;
