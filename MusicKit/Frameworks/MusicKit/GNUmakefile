@@ -5,7 +5,7 @@
 #  Description:
 #    Makefile for GNUstep
 #
-#  Original Author: Stephen Brandon <stephen@pyrusmalus.com>
+#  Original Author: Stephen Brandon <stephen@brandonitconsulting.co.uk>
 #
 #  21 April 2001, Copyright (c) 2001 Stephen Brandon.
 #
@@ -13,8 +13,13 @@
 #  purposes so long as the author attribution and this copyright message remains intact
 #  and accompanies all derived code.
 
-#Modification history:
+# Modification history:
 # $Log$
+# Revision 1.3  2001/11/07 13:11:03  sbrandon
+# A number of changes to allow compilation on Windows/MinGW. Major change is
+# that it compiles as a library rather than a framework, due to deficiencies
+# in GNUstep framework handling on Win32.
+#
 # Revision 1.2  2001/07/02 19:52:55  sbrandon
 # - (temporarily) added -g flag for better debugging
 # - added writeScore.[hm] (why were these not in there? They were not in the
@@ -35,22 +40,24 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 srcdir = .
 
+ifneq (mingw32, $(GNUSTEP_TARGET_OS))
 # The framework to be compiled
-FRAMEWORK_NAME = MusicKit
+  FRAMEWORK_NAME = MusicKit
+  MY_NAME = $(FRAMEWORK_NAME)
+else
+  LIBRARY_NAME = libMusicKit
+  MY_NAME = $(LIBRARY_NAME)
+endif
 
 # The framework resource files and directories
-$(FRAMEWORK_NAME)_RESOURCE_FILES = 
+$(MY_NAME)_RESOURCE_FILES = 
 
-$(FRAMEWORK_NAME)_RESOURCE_DIRS = 
-
-# The framework libraries to link against
-#sb: not sure about this...
-#$(FRAMEWORK_NAME)BUNDLE_LIBS = 
+$(MY_NAME)_RESOURCE_DIRS = 
 
 ADDITIONAL_FLAGS = -g
 
 # The Bundle Objective-C source files to be compiled
-$(FRAMEWORK_NAME)_OBJC_FILES = \
+$(MY_NAME)_OBJC_FILES = \
           MKConductor.m MKEnvelope.m\
           MKFilePerformer.m MKFileWriter.m MKInstrument.m MKMidi.m\
           MKMixerInstrument.m MKMTCPerformer.m MKNote.m MKNoteFilter.m\
@@ -69,10 +76,10 @@ $(FRAMEWORK_NAME)_OBJC_FILES = \
           tokenNames.m utilities.m writeBinary.m writeMidi.m\
           writeScore.m MKPatch.m #ArielQP.m DSPSerialPortDevice.m 
 
-$(FRAMEWORK_NAME)_C_FILES = fastFFT.c sin.c
+$(MY_NAME)_C_FILES = fastFFT.c sin.c
 
 # The framework installed header files
-$(FRAMEWORK_NAME)_HEADER_FILES = \
+$(MY_NAME)_HEADER_FILES = \
          ConductorPrivate.h \
          EnvelopePrivate.h InstrumentPrivate.h MKConductor.h\
          MKConductorDelegate.h MKDeviceStatus.h MKEnvelope.h\
@@ -103,15 +110,24 @@ $(FRAMEWORK_NAME)_HEADER_FILES = \
          timeunits.h tokens.h fastFFT.h MKPatch.h\
 		 #ArielQP.h DSPSerialPortDevice.h
 
+$(MY_NAME)_HEADER_FILES_INSTALL_DIR = MusicKit
+
+$(MY_NAME)_DLL_DEF = $(MY_NAME).def
+
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
+  ADDITIONAL_FLAGS += -DSK_NO_MP3_ENCODER
+endif
 
 SRCS = $(LIBRARY_NAME:=.m)
 HDRS = $(LIBRARY_NAME:=.h)
 
 
--include Makefile.preamble
+-include GNUmakefile.preamble
 
--include GNUmakefile.local
+ifeq (mingw32, $(GNUSTEP_TARGET_OS))
+  include $(GNUSTEP_MAKEFILES)/library.make
+else
+  include $(GNUSTEP_MAKEFILES)/framework.make
+endif
 
-include $(GNUSTEP_MAKEFILES)/framework.make
-
--include Makefile.postamble
+-include GNUmakefile.postamble
