@@ -876,13 +876,13 @@ with published interface specs).
 </para>
 <para>
 A more fruitful avenue seems to be to convert the unit generators to
-use Apples AltiVec vector libraries and then do an open source version
-of them to support other vector processors. Another option is to
-convert the unit generators to the MPEG Layer 4 structured audio
-language <ulink url="http://www.saol.net">SAOL</ulink>
+the MPEG Layer 4 structured audio language <ulink
+url="http://www.saol.net">SAOL</ulink>
 <citation>ScheirerVercoe99</citation> and modify the MKDSP framework
-to download to a supporting card (or do the emulation using the native
-processor).
+to download to a supporting card or do the emulation using the native
+processor.  If emulating with the native processor, it would then be
+possible to use Apples AltiVec vector libraries for increased
+performance.
 </para>
       </listitem>
 
