@@ -63,6 +63,7 @@
             AppKit.framework, 
             dsp.framework, 
             Foundation.framework, 
+            MKPerformMIDI.framework, 
             SndKit.framework, 
             System.framework
         ); 
@@ -162,10 +163,7 @@
             errors.h, 
             keynums.h, 
             midiTranslation.h, 
-            midi_driver.h, 
             midi_spec.h, 
-            mididriver.h, 
-            mididriver_types.h, 
             midifile.h, 
             names.h, 
             noDVal.h, 
@@ -178,14 +176,7 @@
         ); 
         LIBRARYSEARCH = (./); 
         OTHER_LIBS = (); 
-        OTHER_LINKED = (
-            sin.c, 
-            fastFFT.c, 
-            mididriver_nonMig.c, 
-            mididriver_replyServer.c, 
-            mididriverServer.c, 
-            mididriverUser.c
-        ); 
+        OTHER_LINKED = (sin.c, fastFFT.c); 
         OTHER_RESOURCES = (Localized.strings); 
         OTHER_SOURCES = (
             Makefile, 
@@ -194,8 +185,6 @@
             _synthElementMethods.m, 
             equalTempered.m, 
             h.template, 
-            lock_primitives.h, 
-            lock_primitives.m, 
             m.template, 
             make.sh, 
             mtcConductor.m, 
@@ -226,10 +215,7 @@
             errors.h, 
             keynums.h, 
             midiTranslation.h, 
-            midi_driver.h, 
             midi_spec.h, 
-            mididriver.h, 
-            mididriver_types.h, 
             midifile.h, 
             names.h, 
             noDVal.h, 
