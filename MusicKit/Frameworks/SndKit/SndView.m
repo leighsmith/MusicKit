@@ -181,7 +181,7 @@ OF THIS AGREEMENT.
     if (!sound) return;
     if ([sound lengthInSampleFrames] < NSMaxRange(selectionRange)) return;
     if (![sound isEditable]) return;
-    if (svFlags.notEditable) return;
+    if (![self isEditable]) return;
     [sound deleteSamplesInRange: selectionRange];
     [self invalidateCacheStartSample: selectionRange.location
 				 end: [sound lengthInSampleFrames]];
@@ -2381,7 +2381,7 @@ LMS: Nowdays we want to rescale to fit the entire sound into the view, regardles
     }
 
     if (![recordingSound compatibleWithSound: sound]) {
-        [recordingSound convertToFormat: [sound dataFormat]
+        [recordingSound convertToSampleFormat: [sound dataFormat]
 			   samplingRate: [sound samplingRate]
 			   channelCount: [sound channelCount]];
     }
@@ -2414,7 +2414,7 @@ LMS: Nowdays we want to rescale to fit the entire sound into the view, regardles
     Snd *pastedSound = nil;
     NSString *theType;
 
-    if (svFlags.notEditable) 
+    if (![self isEditable]) 
 	return YES;
 
     if (sound)
@@ -2450,7 +2450,7 @@ LMS: Nowdays we want to rescale to fit the entire sound into the view, regardles
     if (pastedSound != nil) {
         if (sound != nil) {
             if (![sound compatibleWithSound: pastedSound]) {
-                if ([pastedSound convertToFormat: [sound dataFormat]
+                if ([pastedSound convertToSampleFormat: [sound dataFormat]
 				    samplingRate: [sound samplingRate]
 				    channelCount: [sound channelCount]] != SND_ERR_NONE) {
                     [self tellDelegate: @selector(hadError:)];
