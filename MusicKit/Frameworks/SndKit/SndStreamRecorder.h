@@ -12,7 +12,7 @@
 
 @class SndAudioBuffer;
 @class SndStreamClient;
-
+@class SndAudioProcessorRecorder;
 /*!
     @class SndStreamRecorder
     @abstract 
@@ -50,30 +50,8 @@
       levels are like, etc  
 */
 @interface SndStreamRecorder : SndStreamClient {
-
-/*! @var recordBuffer */
-  SndAudioBuffer *recordBuffer;
-/*! @var conversionBuffer */
-  short          *conversionBuffer;
-/*! @var position */
-  long            position;
-/*! @var isRecording */
-  BOOL            isRecording; 
-/*! @var bytesrecorded */
-  long            bytesRecorded;  
-/*! @var recordFile */
-  FILE           *recordFile;
-/*! @var recordFileName */
-  NSString       *recordFileName;
+  SndAudioProcessorRecorder *recorder;
 }
-
-/*!
-    @method   streamRecorder
-    @abstract   Factory method
-    @discussion 
-    @result     An SndStreamRecorder
-*/
-+ streamRecorder;
 
 /*!
     @method   init
@@ -96,15 +74,6 @@
     @result     NSString with description
 */
 - (NSString*) description;
-
-/*!
-    @method   prepareToRecordForDuration: 
-    @abstract 
-    @discussion 
-    @param      time
-    @result     Boolean indicating success
-*/
-- (BOOL) prepareToRecordForDuration: (double) time;
 
 /*!
     @method   startRecording 
@@ -130,22 +99,6 @@
     @discussion 
     @param      filename
     @result     Boolean indicating success
-*/
-- (BOOL) setUpRecordFile: (NSString*) filename;
-
-/*!
-    @method   closeRecordFile 
-    @abstract 
-    @discussion 
-    @result     Boolean indicating success
-*/
-- (BOOL) closeRecordFile;
-
-/*!
-    @method   stopRecording
-    @abstract 
-    @discussion 
-    @result     self.
 */
 - stopRecording;
 
