@@ -8,7 +8,7 @@
     There is a PlayingSound for each sound file.
     A MKNote has a MK_filename parameter which is the soundfile to be played, together with any
     particular tuning deviation to be applied to it using a keynumber or frequency which forms a ratio
-    from the unity key number located in the (AIFF or ?WAV?). That does imply being able to load the file
+    from the unity key number located in the (AIFF or RIFF (.wav)). That does imply being able to load the file
     immediately (within the Delta) for playback. But then, we should be spooling from disk anyway.
 
   Original Author: Leigh M. Smith <leigh@tomandandy.com>
@@ -17,6 +17,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2000/03/11 01:16:21  leigh
+  Now using NSSound to replace Snd
+
   Revision 1.3  1999/09/26 20:05:31  leigh
   Removed definition of MK_filename
 
@@ -28,7 +31,6 @@
 
 */
 #import "_musickit.h"
-#import <SndKit/SndKit.h>
 #import "MKSamplerInstrument.h"
 
 #define MAX_PERFORMERS 128
@@ -71,10 +73,10 @@ int activeSoundCount = 0;
 
 - initPerformers
 {
+#if 0 // nothing of consequence
   int i;
-  Snd *sound;
+  NSSound *sound;
 
-//  sound = [[Snd alloc] init]; // gratituous kludge to force the PerformSound dll to initialise its DirectSound object fucking MS shit.
   for (i = 0; i < MAX_PERFORMERS; i++) {
     sound = [soundTable objectForKey: [NSNumber numberWithInt: keyMap[i]]];
     if (sound) {
@@ -91,7 +93,7 @@ int activeSoundCount = 0;
 //      playingSamples[i] = nil;
     }
   }
-
+#endif
   return self;
 }
 
@@ -130,8 +132,6 @@ int activeSoundCount = 0;
   }
 
   //	state = [soundTable initState];
-  //	while ([soundTable nextState:&state key:&keyNum value:&sound])
-  //		SNDFree((SNDSoundStruct *)sound);
 
   [soundTable removeAllObjects];
   [MKConductor unlockPerformance];
@@ -162,64 +162,60 @@ int activeSoundCount = 0;
 // Prepare by preparing the PlayingSound instance
 - prepareSound: (MKNote *) aNote
 {
-  int velocity;
-  int key;
-  int baseKey;
-  int noteTag;
-  Snd *newSound;
-  NSString *filePath;
+    int velocity;
+    int key;
+    int baseKey;
+    int noteTag;
+    NSSound *newSound;
+    NSString *filePath;
 
 //  [MKConductor lockPerformance]; // what do we need to protect?
 
-  // only prepare those notes which are samples.
-  if(![aNote isParPresent: MK_filename])
-      return nil;
+    // only prepare those notes which are samples.
+    if(![aNote isParPresent: MK_filename])
+        return nil;
 
-  key = [aNote keyNum];
-  // baseKey = [sound unityKeyNum];
-  baseKey = key;
-  noteTag = [aNote noteTag];
+    key = [aNote keyNum];
+    baseKey = key;   // should be baseKey = [sound unityKeyNum];
+    noteTag = [aNote noteTag];
 
-  // either retrieve playingSample from the table of PlayingSounds according to the filename or create afresh.
-  filePath = [aNote parAsString: MK_filename];
-  // check if the sound file is already loaded.
-  if ([Snd findSoundFor: filePath] != nil) {
-      return nil;
-  }
-  // no, load it now.
-  // read soundfile, for now loading it into a Snd object, eventually priming the buffers for play direct from disk.
-  if ((newSound = [Snd addName: filePath fromSoundfile: filePath]) == nil) {
-    NSLog(@"MKSamplerInstrument error: couldn't load file = %@\n", filePath);
-    return nil;
-  }
-  // [soundTable setObject: newSound forKey: [NSNumber numberWithInt: noteTag]];
+    filePath = [aNote parAsString: MK_filename];
+    // either retrieve playingSample from the table of playing sounds according to the filename or create afresh.
+    if ([NSSound soundNamed: filePath] != nil) {     // check if the sound file is already loaded.
+        return nil;
+    }
+    // not loaded, load it now.
+    // read soundfile, for now loading it into a NSSound object, eventually priming the buffers for play direct from disk.
+    if ((newSound = [[NSSound alloc] initWithContentsOfFile: filePath byReference: NO]) == nil) {
+        _MKErrorf(MK_cantOpenFileErr, filePath);
+        return nil;
+    }
+    [newSound setName: filePath];
+    // [soundTable setObject: newSound forKey: [NSNumber numberWithInt: noteTag]];
 
-//  playingSample = [[PlayingSound alloc] initWithSound: newSound andNote: aNote];
-  // [playingSamples[keyNumber] setDelegate:self];
+    NSLog(@"Preparing for keyNum %d %@\n", key, [newSound description]);
 
-//  NSLog(@"Preparing for keyNum %d %@\n", key, [playingSample description]);
+    velocity = [aNote parAsInt: MK_velocity];
+    //  [playingSample setDuration: MK_ENDOFTIME]; // [aNote dur];
+    //  [playingSample setNoteTag: noteTag];
+    if (velocity != MAXINT) {
+    //    float v = (float) velocity / 127.0;
+    //    [playingSample setVelocity: 1.0 - (1.0 - (v * v)) * velocitySensitivity];
+    }
+    //  [playingSample setAmp: linearAmp volume: volume bearing: bearing / 45.0];
+    //  [playingSample enableResampling: (pitchbendSensitivity || (key != baseKey))];
+    //  [playingSample setTransposition: (key != baseKey) ? pow(2.0, (double) (key - baseKey) / 12.0) : 1.0];
+    //  [playingSample setPitchBend: pitchBend];
 
-  velocity = [aNote parAsInt: MK_velocity];
-//  [playingSample setDuration: MK_ENDOFTIME]; // [aNote dur];
-//  [playingSample setNoteTag: noteTag];
-  if (velocity != MAXINT) {
-//    float v = (float) velocity / 127.0;
-//    [playingSample setVelocity: 1.0 - (1.0 - (v * v)) * velocitySensitivity];
-  }
-//  [playingSample setAmp: linearAmp volume: volume bearing: bearing / 45.0];
-//  [playingSample enableResampling: (pitchbendSensitivity || (key != baseKey))];
-//  [playingSample setTransposition: (key != baseKey) ? pow(2.0, (double) (key - baseKey) / 12.0) : 1.0];
-//  [playingSample setPitchBend: pitchBend];
+    //  [MKConductor unlockPerformance];
 
-//  [MKConductor unlockPerformance];
-
-//  return playingSample;
+    //  return playingSample;
     return self;
 }
 
 - playSampleNote: aNote
 {
-    Snd *existingSound;
+    NSSound *existingSound;
     NSString *filePath;
 
     // only play those notes which are samples.
@@ -228,10 +224,12 @@ int activeSoundCount = 0;
     filePath = [aNote parAsString: MK_filename];
     NSLog(@"playing file %@\n", filePath);
 
-    if ((existingSound = [Snd findSoundFor: filePath]) == nil) {
-        NSLog(@"MKSamplerInstrument error: couldn't find file = %@\n", filePath);
+    if ((existingSound = [NSSound soundNamed: filePath]) == nil) {
+        _MKErrorf(MK_cantOpenFileErr, filePath);
         return nil;
     }
+    [existingSound setDelegate:self];
+
     [existingSound play]; // just do it.
     return self;
 }
@@ -239,8 +237,10 @@ int activeSoundCount = 0;
 // Probably should revamp this to determine the playingSound instance to send the stop to.
 - stopSampleNote: aNote
 {
-    Snd *existingSound;
+    NSSound *existingSound;
     NSString *filePath;
+
+    NSLog(@"stopping sample note\n");
 
     // only play those notes which are samples.
     if(![aNote isParPresent: MK_filename])
@@ -248,8 +248,8 @@ int activeSoundCount = 0;
     filePath = [aNote parAsString: MK_filename];
     NSLog(@"stopping file %@\n", filePath);
 
-    if ((existingSound = [Snd findSoundFor: filePath]) == nil) {
-        NSLog(@"MKSamplerInstrument error: couldn't find file = %@\n", filePath);
+    if ((existingSound = [NSSound soundNamed: filePath]) == nil) {
+        _MKErrorf(MK_cantOpenFileErr, filePath);
         return nil;
     }
     [existingSound stop]; // just do it.
@@ -354,23 +354,20 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
 
 #if 0 // only needed when we are recording.
   if (noteTag == recordTag) {
-    SNDSoundStruct *newSound, *oldSound;
+    NSSound *newSound, *oldSound;
+
     [recorder stopRecording];
     newSound = [recorder soundStruct];
     oldSound = [soundTable insertKey:(const void *)recordKey value:(void *)newSound];
-    if (oldSound)
-      SNDFree(oldSound);
     [self clearAtKey:recordKey];
     keyMap[recordKey] = recordKey;
     if (!playingSamples[recordKey]) {
-      playingSamples[recordKey] = [[PlayingSound alloc] initWithSound:newSound];
+    playingSamples[recordKey] = [[NSSound alloc] initWithSound:newSound];
       [playingSamples[recordKey] setDelegate:self];
       [playingSamples[recordKey] enablePreloading:preloadingEnabled];
     }
     else
       [playingSamples[recordKey] setSoundStruct:newSound];
-    if (recordKey == keyNum)
-      [MKConductor sendMsgToApplicationThreadSel: @selector(updateDisplay) to:self argCount:0];
     recordTag = recordKey = UNASSIGNED_SAMPLE_KEYNUM; // LMS not the right definition.
   }
 #endif
@@ -419,11 +416,11 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
     else objc_msgSend(receiver,selector,arg); \
   }
 
-// The problem is we can't commit a Snd instance to playing at some future moment in time wrt to the
+// The problem is we can't commit a NSSound instance to playing at some future moment in time wrt to the
 // playback clock like we can with the MIDI driver used within MKMidi.
 // Therefore we use the conductor to time sending a message in the future to play the sound file at the
 // deltaT offset and pray there isn't too much overhead playing the sound.
-// Future playback methods should be introduced into the SndKit to take advantage of any 
+// Future playback methods should be introduced into NSSound to take advantage of any 
 // operating system support for playback scheduling.
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
 {
@@ -431,6 +428,7 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
   int     noteTag = [aNote noteTag];
   double  deltaT = MKGetDeltaT() / [conductor beatSize];
 
+  NSLog(@"deltaT = %lf beatSize = %lf\n", deltaT, [conductor beatSize]);
   if ((type == MK_noteOn) || (type == MK_noteDur)) {
     [self prepareSound: aNote];
     TIMEDSENDTO(self, @selector(playSampleNote:), deltaT, aNote);
@@ -499,6 +497,12 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
   return self;
 }
 
+// NSSound delegate
+- (void) sound:(NSSound *) sound didFinishPlaying:(BOOL)aBool
+{
+    NSLog(@"did finish playing %d sound named %@\n", aBool, [sound name]);
+}
+
 - (void) encodeWithCoder:(NSCoder *) coder
   /* Archive the instrument to a typed stream. */
 {
@@ -506,8 +510,6 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
   [coder encodeValuesOfObjCTypes:"ii@iccci", &keyNum, &testKey, &soundTable,
 	 &voiceCount, &diatonic, &tieRepeats, &preloadingEnabled,
 	 &recordModeController];
-  // TODO
-  //        NXWriteArray(stream, "i", 128, keyMap);
 }
 
 - (id)initWithCoder:(NSCoder *) decoder
@@ -517,12 +519,8 @@ NSLog(@"Got playingSample delegate deactivation notice\n");
   if ([decoder versionForClassName:@"SamplerInstrument"] == 1) {
     [decoder decodeValuesOfObjCTypes:"ii@iccci", &keyNum, &testKey, &soundTable,
 	     &voiceCount, &diatonic, &tieRepeats, &preloadingEnabled, &recordModeController];
-    //		NXReadArray(stream, "i", 128, keyMap);
   }
   /* Initialize certain non-archived data */
-  //NX_MALLOC(directory, char, MAXPATHLEN + 1);
-  //strcpy(directory, NXHomeDirectory());
-  //globalSoundDirectory = [[NSString alloc] init];
   linearAmp = MKdB(amp);
   [self reset];
   [self init];

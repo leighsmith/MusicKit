@@ -65,7 +65,6 @@
             Foundation.framework, 
             MKDSP.framework, 
             MKPerformSndMIDI.framework, 
-            SndKit.framework, 
             System.framework
         ); 
         FRAMEWORKSEARCH = (

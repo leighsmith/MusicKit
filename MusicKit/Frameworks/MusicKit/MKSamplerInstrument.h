@@ -18,15 +18,18 @@
 */
 /*
   $Log$
+  Revision 1.3  2000/03/11 01:16:21  leigh
+  Now using NSSound to replace Snd
+
   Revision 1.2  1999/09/24 17:03:05  leigh
   Added documentation
 
 */
 #ifndef __MK_SamplerInstrument_H___
 #define __MK_SamplerInstrument_H___
-#import <MusicKit/MKInstrument.h>
-#import <MusicKit/MKConductor.h>
-#import <SndKit/Snd.h>
+#import <AppKit/NSSound.h>
+#import "MKInstrument.h"
+#import "MKConductor.h"
 
 @interface MKSamplerInstrument: MKInstrument
     /* Plays sound files according to MIDI key numbers. */
@@ -68,7 +71,7 @@
     id recordModeInterface;
     int recordKey;
     int recordTag;
-    Snd *recorder;
+    NSSound *recorder;
 }
 
 - init;
@@ -80,6 +83,7 @@
 - releaseSounds;
 - prepareSound: (MKNote *) aNote;
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
+- (void) sound:(NSSound *) sound didFinishPlaying:(BOOL)aBool;
 - (void) encodeWithCoder:(NSCoder *) coder;
 - (id)initWithCoder:(NSCoder *) decoder;
 @end

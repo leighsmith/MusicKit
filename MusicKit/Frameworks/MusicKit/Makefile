@@ -95,8 +95,7 @@ FRAMEWORK_PATHS = -F$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\
                   -F/Local/Library/Frameworks\
                   -F$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks
 FRAMEWORKS = -framework AppKit -framework Foundation -framework MKDSP\
-             -framework MKPerformSndMIDI -framework SndKit\
-             -framework System
+             -framework MKPerformSndMIDI -framework System
 PUBLIC_HEADERS = ArielQP.h DSPSerialPortDevice.h MusicKit.h\
                  classFuncs.h dsp_types.h dspwrap.h errors.h keynums.h\
                  midiTranslation.h midi_spec.h midifile.h names.h\
