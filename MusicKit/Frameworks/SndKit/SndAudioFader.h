@@ -42,9 +42,11 @@
 typedef struct _UEE {
     double          xVal;
     int             ampFlags;
-    int             bearingFlags;
+    int             balanceFlags;
     float           ampY;
-    float           bearingY;
+    float           balanceY;
+    float           balanceL;
+    float           balanceR;
 } SndUnifiedEnvelopeEntry;
 
 /* Squeeze the last drop of performance out of this class by caching IMPs.
@@ -68,13 +70,13 @@ typedef float (*XForBpIMP)(id, SEL, int);
   id     envClass; /* Class object used in initialising new envelopes */
   id     <SndEnveloping, NSObject> ampEnv;
   float  staticAmp;
-  id     <SndEnveloping,NSObject> bearingEnv;
-  float  staticBearing;
+  id     <SndEnveloping,NSObject> balanceEnv;
+  float  staticBalance;
 
   SndUnifiedEnvelopeEntry *uee;
 
   NSLock *lock; // locks changes to the envelope objects (?)
-  NSLock *bearingEnvLock;
+  NSLock *balanceEnvLock;
   NSLock *ampEnvLock;
 
 @public
@@ -94,8 +96,8 @@ typedef float (*XForBpIMP)(id, SEL, int);
 /*
  * "instantaneous" getting and setting; applies from start of buffer
  */
-- setBearing:(float)bearing clearingEnvelope:(BOOL)clear;
-- (float)getBearing;
+- setBalance:(float)balance clearingEnvelope:(BOOL)clear;
+- (float)getBalance;
 - setAmp:(float)amp clearingEnvelope:(BOOL)clear;
 - (float)getAmp;
 
@@ -103,8 +105,8 @@ typedef float (*XForBpIMP)(id, SEL, int);
  * "future" getting and setting; transparently reads and writes
  * from/to the envelope object(s)
  */
-- setBearing:(float)bearing atTime:(double)atTime;
-- (float)getBearingAtTime:(double)atTime;
+- setBalance:(float)balance atTime:(double)atTime;
+- (float)getBalanceAtTime:(double)atTime;
 - setAmp:(float)amp atTime:(double)atTime;
 - (float)getAmpAtTime:(double)atTime;
 
@@ -115,7 +117,7 @@ typedef float (*XForBpIMP)(id, SEL, int);
            startTime:(double)startRampTime
              endTime:(double)endRampTime;
 
-- (BOOL) rampBearingFrom:(float)startRampLevel
+- (BOOL) rampBalanceFrom:(float)startRampLevel
                       to:(float)endRampLevel
                startTime:(double)startRampTime
                  endTime:(double)endRampTime;

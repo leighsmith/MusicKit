@@ -214,8 +214,8 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
     dissectsAtEnd = middleOfMovement(self,endRampTime,theEnv);
 
     if (dissectsAtStart || dissectsAtEnd) {
-        float   endPrecedingRampLevel;
-        float   startSucceedingRampLevel;
+        float   endPrecedingRampLevel    = 0.0f;
+        float   startSucceedingRampLevel = 0.0f;
         int i;
     // do we span any breakpoints, which we will need to delete?
         int index1 = [theEnv breakpointIndexBeforeOrEqualToX:startRampTime];
@@ -407,7 +407,7 @@ BOOL middleOfMovement(SndAudioFader *saf, double xVal, id <SndEnveloping,NSObjec
     double yVal;
     if (!ampEnv) return staticAmp;
     [ampEnvLock lock];
-    _lookupEnvForX(self,ampEnv, atTime);
+    yVal = _lookupEnvForX(self, ampEnv, atTime);
     [ampEnvLock unlock];
     return yVal;
 }
@@ -564,8 +564,8 @@ static int _processBalance( int xPtr,
         double x = nowTime;
         double maxX = x + [outB duration];
         int xPtr = 0;
-        int ampPtr = 0, balancePtr = 0;
-        double ampX = x, balanceX = x;
+//        int ampPtr = 0; //, balancePtr = 0;
+        double ampX = x; //, balanceX = x;
         double nextAmpX, nextBalanceX;
         int nextAmpIndx, nextBalanceIndx;
         int countAmp;
