@@ -169,8 +169,8 @@ wave over time.</para>
 <figure id="Figure2-1">
 <title>Air Pressure Wave</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS0.eps"></imageobject>
-<imageobject><imagedata fileref="EPS0.png"></imageobject>
+<imageobject><imagedata fileref="Images/IntroSndKit0.eps"></imageobject>
+<imageobject><imagedata fileref="Images/IntroSndKit0.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -277,8 +277,8 @@ sampled waveform.</para>
 <figure id="Figure2-2">
 <title>Sampled Waveform</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS1.eps"></imageobject>
-<imageobject><imagedata fileref="EPS1.png"></imageobject>
+<imageobject><imagedata fileref="Images/IntroSndKit1.eps"></imageobject>
+<imageobject><imagedata fileref="Images/IntroSndKit1.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -320,8 +320,8 @@ only eight possible values: .75, .5, .25, 0, -.25, -.5, -.75, and
 <figure id="Figure2-3">
 <title>Three-Bit Quantization</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS2.eps"></imageobject>
-<imageobject><imagedata fileref="EPS2.png"></imageobject>
+<imageobject><imagedata fileref="Images/IntroSndKit2.eps"></imageobject>
+<imageobject><imagedata fileref="Images/IntroSndKit2.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -656,7 +656,9 @@ knowledge of the <structname>SNDSoundStruct</structname> isn't
 necessary.  Nonetheless, the C functions are provided for generality
 and to allow sound manipulation without the
 <productname>SndKit</productname>.  The functions are fully described
-in <xref linkend="SKFunctionReferences">.</para>
+in <ulink url="&SKFunctionReferences;">
+<productname>SndKit</productname>
+Function References</ulink>.</para>
 </sect3>
 </sect2>
 </sect1>
@@ -752,7 +754,9 @@ many of the <classname>Sound</classname> methods, <emphasis
 role="bold">readSoundfile:</emphasis> returns an error code; the
 complete list of errors codes is given in the description of the
 <function>SNDSoundError()</function> C function in
-<xref linkend="SKFunctionReferences">. Success is indicated by the code
+<ulink url="&SKFunctionReferences;">
+<productname>SndKit</productname>
+Function References</ulink>. Success is indicated by the code
 <constant>SND_ERR_NONE</constant>.</para>
 
 <para>These two operations, initializing a
@@ -1209,10 +1213,12 @@ data that's inserted into the receiver of <emphasis
 role="bold">insertSamples:at:</emphasis> is automatically converted to
 be compatible with the data already in the receiver (see the
 description of the <function>SNDConvertSound()</function> C function
-in <xref linkend="SKFunctionReferences"> for a list of the conversions that
-are supported).  An error code indicating that the insertion failed is
-returned if the two <classname>Sound</classname>s aren't compatible or
-if the inserted data can't be converted.</para>
+in <ulink url="&SKFunctionReferences;">
+<productname>SndKit</productname> Function References</ulink> for a
+list of the conversions that are supported).  An error code indicating
+that the insertion failed is returned if the two
+<classname>Sound</classname>s aren't compatible or if the inserted
+data can't be converted.</para>
 
 </sect4>
 <sect4 id="Replace">
