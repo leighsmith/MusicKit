@@ -783,5 +783,20 @@ return self;
   }
 }
 
+- (void) findMin:(float*) pMin max:(float*) pMax
+{
+  int i, c = [self lengthInSampleFrames] * channelCount;
+  float *pE = [data bytes];
+  *pMin = 0.0;
+  *pMax = 0.0;
+
+  for (i = 0; i < c; i+=channelCount){
+    if (pE[i] < *pMin)
+      *pMin = pE[i];
+    else if (pE[i] > *pMax)
+      *pMax = pE[i];
+  }
+}
+
 
 @end

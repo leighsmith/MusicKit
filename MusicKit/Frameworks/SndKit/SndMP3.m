@@ -21,6 +21,7 @@
 #import <lame/lame.h>
 
 #define SNDMP3_DEBUG_READING 0
+#define SNDMP3_DEBUG 0
 
 #define MP3_BITRATE_BAD  -1
 #define MP3_BITRATE_FREE -2
@@ -271,7 +272,7 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
   unsigned char* mp3DataBytes = (unsigned char*) [mp3Data bytes];
   //    long frameID = 0;
 
-  [decoderLock lock];
+  [decoderLock lock]; 
   lame_decode_init();
 
   [pcmDataLock lock];
@@ -393,12 +394,28 @@ int find_mp3_frame_headers(NSData* mp3Data, long **ppFrameLocations, long *frame
       {
         float *pBuff = [anAudioBuffer bytes];
         if (buffChans == 2) {
-          int i, c = MIN(playRegion.location + playRegion.length, [pcmData length] / 4) - playRegion.location;
-          pData += playRegion.location * 2;
-          for (i = 0; i < c * 2; i += 2) {
-            pBuff[i]   = (float)pData[i]   / 32768.0;
-            pBuff[i+1] = (float)pData[i+1] / 32768.0;
+          int i = 0;
+          long dataLength = [pcmData length] / 4;
+          long bufferLength = [anAudioBuffer lengthInSampleFrames];
+          if (playRegion.location < dataLength) {
+            int c = MIN(playRegion.location + playRegion.length, dataLength) - playRegion.location;
+            pData += playRegion.location * 2;
+            for (; i < c * 2; i += 2) {
+              pBuff[i]   = (float)pData[i]   / 32768.0;
+              pBuff[i+1] = (float)pData[i+1] / 32768.0;
+            }
           }
+          for (; i < bufferLength * 2; i+= 2) {
+            pBuff[i]   = 0.0;
+            pBuff[i+1] = 0.0;
+          }
+#if SNDMP3_DEBUG  
+          {
+            float min, max;
+            [anAudioBuffer findMin: &min max: &max];
+            printf("  SndMP3: min: %5.3f max: %5.3f [dataLen:%li buffLen:%li loc:%i len:%i]\n",MAX(-1, min), MIN(1,max), dataLength, bufferLength, playRegion.location,playRegion.length);
+          }
+#endif          
         }
         else
           NSLog(@"SndMP3::fillAudioBuffer - Urk 1");

@@ -319,6 +319,8 @@
                                 factor: (double) deltaTime
                                 offset: (double) offset;
 
+- (void) findMin:(float*) pMin max:(float*) pMax;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
