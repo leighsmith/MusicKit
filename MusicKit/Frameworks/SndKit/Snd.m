@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.22  2001/05/12 09:45:22  sbrandon
+ * - GNUSTEP: don't include libc.h
+ *
  * Revision 1.21  2001/04/18 17:33:45  leighsmith
  * Introduced stopInFuture:, removeAllSounds, and stopPerformance: methods
  *
@@ -67,7 +70,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #ifdef WIN32
 #include <Winsock.h> // for htonl() functions
 #else
-#include <libc.h>
+# ifndef GNUSTEP
+#  include <libc.h>
+# endif
 #endif
 
 #include <stdlib.h>
