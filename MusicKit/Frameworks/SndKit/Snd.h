@@ -266,6 +266,9 @@ architecture, as described in the <b>SndStruct</b> header.
               derived from those formats supported by the underlying Sox library.
 */
 + (NSArray *) soundFileExtensions;
+/*!
+  @method defaultFileExtension
+*/
 + (NSString*) defaultFileExtension;
 
 - (NSString *) description;
@@ -315,6 +318,9 @@ architecture, as described in the <b>SndStruct</b> header.
 */
 - initFromPasteboard:(NSPasteboard *)thePboard;
 
+/*!
+  @method initWithFormat:channels:frames:samplingRate:
+*/
 - initWithFormat: (int) format channels: (int) channels frames: (int) frames samplingRate: (int) samplingRate;
 
 - (void)dealloc;
