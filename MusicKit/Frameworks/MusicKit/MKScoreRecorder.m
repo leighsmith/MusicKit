@@ -11,10 +11,14 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /* Modification History:
 
    $Log$
+   Revision 1.5  2000/11/25 22:32:04  leigh
+   Cleaned up, removed redundant releasePartRecorders
+
    Revision 1.4  2000/06/09 02:56:02  leigh
    Comment cleanup and correct typing of ivars
 
@@ -40,21 +44,44 @@
 #import "PartRecorderPrivate.h"
 #import "ScoreRecorderPrivate.h"
 
-@implementation MKScoreRecorder: NSObject
+@implementation MKScoreRecorder(Private)
 
+-(void)_firstNote:aNote
+{
+    if (!_noteSeen) {
+	[MKConductor _afterPerformanceSel:@selector(_afterPerformance) 
+       to:self argCount:0];
+	[self firstNote:aNote];
+	_noteSeen = YES;
+    }
+}
+
+-_afterPerformance
+  /* Sent by conductor at end of performance. Private */
+{
+    [self afterPerformance];
+    _noteSeen = NO;
+    return self;
+}
+
+@end
+
+@implementation MKScoreRecorder
+
+#if 0 // LMS redundant
 +new
 {
     self = [super allocWithZone:NSDefaultMallocZone()];
     [self init];
-//    [self initialize]; //sb: removed. Unnec.
     return self;
 }
+#endif
 
 -init
 {
     [super init];
     timeUnit = MK_second;
-    partRecorders = [[NSMutableArray alloc] init];
+    partRecorders = [[NSMutableArray array] retain];
     partRecorderClass = [MKPartRecorder class];
     return self;
 }
@@ -65,8 +92,8 @@
 + (void)initialize
 {
     if (self != [MKScoreRecorder class])
-      return;
-    [MKScoreRecorder setVersion:VERSION3];//sb: suggested by Stone conversion guide (replaced self)
+        return;
+    [MKScoreRecorder setVersion: VERSION3]; //sb: suggested by Stone conversion guide (replaced self)
     return;
 }
 
@@ -94,7 +121,7 @@
 {
     int version; 
     /* [super initWithCoder:aDecoder];*/ /*sb: unnec */
-    version = [aDecoder versionForClassName:@"ScoreRecorder"];
+    version = [aDecoder versionForClassName:@"MKScoreRecorder"];
     if (version >= VERSION2) {
 	partRecorders = [[aDecoder decodeObject] retain];
 	score = [[aDecoder decodeObject] retain];
@@ -106,35 +133,51 @@
     return self;
 }
 
--setScore:aScore
-  /* Sets score over which we will sequence and creates PartRecorders for
-     each Part in the Score. Note that any Parts added to aScore after
-     the setScore call will not appear in the performance. */
+// reset all the partRecorders of the ScoreRecorder to nil, release the score and set it's value nil
+static void unsetPartRecorders(MKScoreRecorder *self)
+{
+    unsigned n = [self->partRecorders count],i;
+    for (i = 0; i < n; i++)
+        _MKSetScoreRecorderOfPartRecorder([self->partRecorders objectAtIndex:i],nil);
+    if(self->score != nil)
+        [self->score release];
+    self->score = nil;
+}
+
+-setScore: (MKScore *) aScore
+  /* Sets score over which we will sequence and creates MKPartRecorders for
+     each MKPart in the MKScore. Note that any MKParts added to aScore after
+     the setScore: call will not appear in the performance. */
 {
     NSMutableArray *aListOfParts;
-    id el,newEl;
+    MKPart *part;
+    id newPartRecorder;
     unsigned n,i;
     if (aScore == score)
-      return self;
+        return self;
     if ([self inPerformance])
-      return nil;
-    [self releasePartRecorders];
+        return nil;
+    unsetPartRecorders(self);
+    [partRecorders release];
+    partRecorders = [[NSMutableArray array] retain];
     score = aScore;
-    if (!aScore)
-      return self;
-    aListOfParts = [aScore parts];
+    if (aScore == nil)
+        return self;  // early out if resetting the score to nil
+    [score retain];
+    aListOfParts = [score parts];
     n = [aListOfParts count];
     for (i = 0; i < n; i++) {
-        el = [aListOfParts objectAtIndex:i];
-       	[partRecorders addObject:newEl = [partRecorderClass new]];
-	[newEl setPart:el];
-	_MKSetScoreRecorderOfPartRecorder(newEl,self);
-        [newEl release]; /*sb */
+        part = [aListOfParts objectAtIndex:i];
+        newPartRecorder = [partRecorderClass new];
+        [newPartRecorder setPart: part];
+        _MKSetScoreRecorderOfPartRecorder(newPartRecorder, self);
+       	[partRecorders addObject: newPartRecorder];
+        [newPartRecorder release]; /* since +new will retain */
     }
     return self;
 }
 
--score
+- (MKScore *) score
   /* Returns current score. */
 {
     return score;
@@ -161,29 +204,8 @@
     return [self copyWithZone:[self zone]];
 }
 
-static void unsetPartRecorders(MKScoreRecorder *self)
-{
-    unsigned n = [self->partRecorders count],i;
-    for (i = 0; i < n; i++)
-        _MKSetScoreRecorderOfPartRecorder([self->partRecorders objectAtIndex:i],nil);
-    self->score = nil;
-}
-
--releasePartRecorders
-  /* Frees all PartRecorders. */
-{
-    if ([self inPerformance])
-      return nil;
-    unsetPartRecorders(self);
-    [partRecorders removeAllObjects];
-    return self;
-}
-
-//#define FOREACH() for (el = NX_ADDRESS(partRecorders), n = [partRecorders count]; n--; el++)
-
-
 -removePartRecorders
-  /* Sets score to nil and removes all PartRecorders, but doesn't free them.
+  /* Sets score to nil (in unsetPartRecorders) and removes all PartRecorders, but doesn't free them.
      Returns self.
      */
 {
@@ -199,7 +221,7 @@ static void unsetPartRecorders(MKScoreRecorder *self)
      * maybe need to put self in a global list of non-dealloced objects for later cleanup */
     if ([self inPerformance])
       return;
-    [self releasePartRecorders];
+    unsetPartRecorders(self);
     [partRecorders release];
     [super dealloc];
 }
@@ -243,9 +265,9 @@ static void unsetPartRecorders(MKScoreRecorder *self)
 
 -partRecorders
   /* TYPE: Processing
-   * Returns a copy of the Array of the receiver's PartRecorder collection.
+   * Returns a copy of the NSArray of the receiver's PartRecorder collection.
    * The PartRecorders themselves are not copied. It is the sender's
-   * responsibility to free the Array.
+   * responsibility to free the NSArray.
    */
 {
     return _MKLightweightArrayCopy(partRecorders);
@@ -281,15 +303,6 @@ static void unsetPartRecorders(MKScoreRecorder *self)
     NoteReceivers themselves are not copied. It is the sender's 
     responsibility to free the List. */
 {
-/*sb: the following is unbelievable! Why is this so convoluted?! */
-/*    id *el;
-    unsigned n;
-    id aList = [[NSMutableArray alloc] init];
-    IMP addImp = [aList methodForSelector:@selector(addObject:)];
-    for (el = NX_ADDRESS(partRecorders), n = [partRecorders count]; n--; el++)
-      (*addImp)(aList,@selector(addObject:),[*el noteReceiver]);
-    return aList;
- */
     // this functionality is now embodied in _MKLightweigthArrayCopy()
     // return [[NSMutableArray arrayWithArray:partRecorders] retain];
     return _MKLightweightArrayCopy(partRecorders);
@@ -336,26 +349,4 @@ static void unsetPartRecorders(MKScoreRecorder *self)
 
 @end
 
-
-@implementation MKScoreRecorder(Private)
-
--(void)_firstNote:aNote
-{
-    if (!_noteSeen) {
-	[MKConductor _afterPerformanceSel:@selector(_afterPerformance) 
-       to:self argCount:0];
-	[self firstNote:aNote];
-	_noteSeen = YES;
-    }
-}
-
--_afterPerformance
-  /* Sent by conductor at end of performance. Private */
-{
-    [self afterPerformance];
-    _noteSeen = NO;
-    return self;
-}
-
-@end
 
