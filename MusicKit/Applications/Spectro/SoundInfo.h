@@ -1,8 +1,8 @@
 #import <Foundation/NSObject.h>
 
-#import <SndKit/Snd.h>
+#import <SndKit/SndKit.h>
 
-@interface SoundInfo:NSObject
+@interface SoundInfo: NSObject
 {
     id	siSize;
     id	siFrames;
@@ -11,8 +11,8 @@
     id	siRate;
     id	siPanel;
     id	siChannels;
-	int ssize;
-	SndSoundStruct *sndhdr;
+    int ssize;
+    Snd *sndhdr;
 }
 
 - init;

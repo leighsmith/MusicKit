@@ -20,71 +20,30 @@
 
 - displaySound:sound title:(NSString *)title
 {
-	sndhdr = [sound soundStruct];
+	sndhdr = [sound retain];
 	[self display:title];
 	return self;
 }
 
 - setSoundHeader:sound
 {
-	sndhdr = [sound soundStruct];
+	sndhdr = [sound retain];
 	return self;
 }
 
 - (int)getSrate
 {
-	return sndhdr->samplingRate;
+	return [sndhdr samplingRate];
 }
 
 - (int)getChannelCount
 {
-	return sndhdr->channelCount;
+	return [sndhdr channelCount];
 }
 
 - (NSString *)getSoundFormat
 {
-	NSString *format;
-	
-	switch (sndhdr->dataFormat) {
-		case SND_FORMAT_MULAW_8:
-		case SND_FORMAT_MULAW_SQUELCH:
-			format = @"8-bit muLaw";
-			ssize = 1;
-			break;
-		case SND_FORMAT_LINEAR_8:
-			format = @"8-bit Linear";
-			ssize = 1;
-			break;
-		case SND_FORMAT_LINEAR_16:
-			format = @"16-bit Linear";
-			ssize = 2;
-			break;
-		case SND_FORMAT_LINEAR_24:
-			format = @"24-bit Linear";
-			ssize = 3;
-			break;
-		case SND_FORMAT_LINEAR_32:
-			format = @"32-bit Linear";
-			ssize = 4;
-			break;
-		case SND_FORMAT_FLOAT:
-			format = @"32-bit Floating Point";
-			ssize = 4;
-			break;
-		case SND_FORMAT_DOUBLE:
-			format = @"64-bit Floating Point";
-			ssize = 8;
-			break;
-		case SND_FORMAT_INDIRECT:
-			format = @"Fragmented";
-			ssize = 8;
-			break;
-		default:
-			format = @"DSP?";
-			ssize = 8;
-			break;
-	}
-	return format;
+	return SndFormatName([sndhdr dataFormat], NO);
 }
 
 - (void)display:(NSString *)title
@@ -94,15 +53,15 @@
 //	char time[32];
 	
         [siPanel setTitle:title];
-	[siSize setIntValue:sndhdr->dataSize];
+	[siSize setIntValue: [sndhdr dataSize]];
 	[siRate setIntValue:[self getSrate]];
 	channels = [self getChannelCount];
 	[siChannels setIntValue:channels];
 	if (channels < 1) channels = 1;
         [siFormat setStringValue:[self getSoundFormat]];
-	frames = sndhdr->dataSize / ssize / channels;
+	frames = [sndhdr lengthInSampleFrames];
 	[siFrames setIntValue:frames];
-	seconds = (float) frames / (float) sndhdr->samplingRate;
+	seconds = [sndhdr duration];
 	hours = (int) (seconds / 3600);
 	minutes = (int) ((seconds - hours * 3600) / 60);
 	seconds = seconds - hours * 3600 - minutes * 60;

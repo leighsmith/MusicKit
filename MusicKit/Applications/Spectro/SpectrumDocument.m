@@ -667,7 +667,7 @@
  */
         NSRect buttonBounds;
         NSPoint mousePosition;
-        int mouseDown;
+        int mouseDown = YES;
 
         mousePosition = [spectrumWindow mouseLocationOutsideOfEventStream];
         buttonBounds = [waterFallButton bounds];
