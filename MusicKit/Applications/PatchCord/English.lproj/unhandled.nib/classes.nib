@@ -1,0 +1,32 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {newPatch = id; }; 
+            CLASS = BankController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {currentSynth = id; patchTable = id; patchTableView = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {newBank = id; newPatch = id; showInfo = id; }; 
+            CLASS = Controller; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {infoPanel = id; newPatch = id; window = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            CLASS = MIDISysExSynth; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {window = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            CLASS = UnhandledSynth; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {scrollingDisplay = id; }; 
+            SUPERCLASS = MIDISysExSynth; 
+        }
+    ); 
+    IBVersion = 1; 
+}

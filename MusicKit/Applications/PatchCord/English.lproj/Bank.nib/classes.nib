@@ -1,0 +1,46 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                deletePatch = id; 
+                displayPatch = id; 
+                getFromSynth = id; 
+                newPatch = id; 
+                sendToSynth = id; 
+            }; 
+            CLASS = Bank; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                deleteSynthButton = id; 
+                patchIconButton = id; 
+                patchTableView = id; 
+                programNumList = id; 
+                sendToSynthButton = id; 
+                synthList = id; 
+            }; 
+            SUPERCLASS = NSDocument; 
+        }, 
+        {
+            ACTIONS = {getFromSynth = id; newPatch = id; sendToSynth = id; }; 
+            CLASS = BankController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                patchIconButton = id; 
+                patchTableView = id; 
+                programNumList = id; 
+                sendToSynthButton = id; 
+                synthList = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {newBank = id; newPatch = id; showInfo = id; }; 
+            CLASS = Controller; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {infoPanel = id; newPatch = id; window = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
