@@ -16,6 +16,9 @@
 /* Modification History:
 
    $Log$
+   Revision 1.4  2000/04/16 04:11:37  leigh
+   comment cleanup
+
    Revision 1.3  2000/03/29 02:57:05  leigh
    Cleaned up doco and ivar declarations
 
@@ -126,7 +129,7 @@
    * The default implementation returns the receiver and creates a single
    * NoteReceiver.
    * A subclass
-   * implementation should first send \fB[super init]\fR.
+   * implementation should first send [super init].
    */
 {
     [super init];

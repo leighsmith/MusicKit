@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/04/16 04:08:49  leigh
+  comment cleanup
+
   Revision 1.3  2000/02/07 23:49:52  leigh
   Comment corrections
 
@@ -57,8 +60,8 @@ Modification history:
 
 
 -(BOOL)isConnected:aNoteSender 
-  /* TYPE: Querying; \fBYES\fR if \fIaNoteSender\fR is a connection.
-   * Returns \fBYES\fR if \fIaNoteSender\fR is connected to the receiver.
+  /* TYPE: Querying; YES if aNoteSender is a connection.
+   * Returns YES if aNoteSender is connected to the receiver.
    */
 {
     return [noteSenders indexOfObject:aNoteSender] != NSNotFound; 
@@ -69,11 +72,11 @@ Modification history:
    * Squelches the receiver.  While a receiver is squelched it can't send
    * messages to its noteSenders.
    *
-   * Note:  You can schedule a \fBsendNote:\fR message through
-   * \fBsendNote:atTime:\fR or \fBsendNote:withDelay\fR even if the
+   * Note:  You can schedule a sendNote: message through
+   * sendNote:atTime: or sendNote:withDelay even if the
    * receiver is squelched.
    * However, if the receiver is still squelched when the
-   * \fBsendNote:\fR message is received, the Note isn't sent.
+   * sendNote: message is received, the Note isn't sent.
    *
    * Returns the receiver.
    */
@@ -92,8 +95,8 @@ Modification history:
 }
 
 -(BOOL)isSquelched
-  /* TYPE: Querying; \fBYES\fR if the receiver is squelched.
-   * Returns \fBYES\fR if the receiver is squelched.
+  /* TYPE: Querying; YES if the receiver is squelched.
+   * Returns YES if the receiver is squelched.
    */
 {
     return isSquelched;
@@ -197,8 +200,8 @@ Modification history:
 }
 
 - disconnect:aNoteSender
-  /* TYPE: Manipulating; Disconnects \fIaNoteSender\fR from the receiver.
-   * Disconnects \fIaNoteSender\fR from the receiver.
+  /* TYPE: Manipulating; Disconnects aNoteSender from the receiver.
+   * Disconnects aNoteSender from the receiver.
    * Returns self.
    */
 {
@@ -227,9 +230,9 @@ Modification history:
 }
 
 -connect:(id)aNoteSender 
-  /* TYPE: Manipulating; Connects \fIaNoteSender\fR to the receiver.
-   * Connects \fIaNoteSender\fR to the receiver 
-   * and returns \fIself\fR.  
+  /* TYPE: Manipulating; Connects aNoteSender to the receiver.
+   * Connects aNoteSender to the receiver 
+   * and returns self.  
    */
 {
     if (![aNoteSender isKindOfClass:[MKNoteSender class]])

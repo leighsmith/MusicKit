@@ -14,18 +14,21 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/04/16 04:03:38  leigh
+  comment cleanup
+
   Revision 1.2  1999/07/29 01:26:18  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
 
 -setFirstTimeTag:(double) aTimeTag
-  /* TYPE: Accessing time; Sets \fBfirstTimeTag\fR to \fIaTimeTag\fR
-   * Sets the variable \fBfirstTimeTag\fR to \fIaTimeTag\fR and 
+  /* TYPE: Accessing time; Sets firstTimeTag to aTimeTag
+   * Sets the variable firstTimeTag to aTimeTag and 
    * returns the receiver.
    * Illegal while the receiver is active. Returns nil in this case, else self.
    *
-   * \fBfirstTimeTag\fR is used in subclasses such as PartSegment
+   * firstTimeTag is used in subclasses such as PartSegment
    * to establish the smallest timeTag value that's considered for
    * performance.  
    */
@@ -37,12 +40,12 @@ Modification history:
 }		
 
 -setLastTimeTag:(double) aTimeTag
-  /* TYPE: Accessing time; Sets \fBlastTimeTag\fR to \fIaTimeTag\fR
-   * Sets the variable \fBlastTimeTag\fR to \fIaTimeTag\fR and 
+  /* TYPE: Accessing time; Sets lastTimeTag to aTimeTag
+   * Sets the variable lastTimeTag to aTimeTag and 
    * returns the receiver.
    * Illegal while the receiver is active. Returns nil in this case, else self.
    *
-   * \fBlastTimeTag\fR is used in subclasses such as PartSegment
+   * lastTimeTag is used in subclasses such as PartSegment
    * to establish the greatest timeTag value that's considered for
    * performance.  
    */
@@ -55,16 +58,16 @@ Modification history:
 
 
 -(double)firstTimeTag 
-  /* TYPE: Accessing time; Returns the value of \fBfirstTimeTag\fR.
-   * Returns the value of the receiver's \fBfirstTimeTag\fR variable.
+  /* TYPE: Accessing time; Returns the value of firstTimeTag.
+   * Returns the value of the receiver's firstTimeTag variable.
    */
 {
 	return firstTimeTag;
 }
 
 -(double)lastTimeTag 
-  /* TYPE: Accessing time; Returns the value of \fBlastTimeTag\fR.
-   * Returns the value of the receiver's \fBlastTimeTag\fR variable.
+  /* TYPE: Accessing time; Returns the value of lastTimeTag.
+   * Returns the value of the receiver's lastTimeTag variable.
    */
 {
 	return lastTimeTag;

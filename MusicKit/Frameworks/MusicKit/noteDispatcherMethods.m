@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/04/16 04:05:07  leigh
+  comment cleanup
+
   Revision 1.3  2000/04/04 00:14:10  leigh
   Removed crufty include file
 
@@ -47,7 +50,7 @@ Modification history:
 
 -freeNoteSenders
   /* TYPE: Creating
-   * Empties and frees contents of \fBnoteSenders\fR.
+   * Empties and frees contents of noteSenders.
    * Returns the receiver.
    */
 {

@@ -1,19 +1,57 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+  HEADER FILES: MusicKit.h
+
+  Description:
+    A MKFileWriter is an MKInstrument that realizes MKNotes by writing them to
+    a file on the disk. An abstract superclass, MKFileWriter
+    provides common functionality and declares subclass responsibilities
+    for the subclasses MKMidifileWriter and MKScorefileWriter.
+    Note: In this release, MKMidifileWriter is not provided. Use a MKScore object
+    to write a Midifile.
+   
+    A MKFileWriter is associated with a file, either by the
+    file's name or with a file pointer.  If you assoicate
+    a MKFileWriter with a file name (through the setFile:
+    method) the object will take care of opening and closing
+    the file for you:  the file is opened for writing when the
+    object first receives the realizeNote: message
+    and closed after the performance.  The
+    file is overwritten each time it's opened.
+   
+    The setStream: method associates a MKFileWriter with a file
+    pointer.  In this case, opening and closing the file
+    is the responsibility of the application.  The MKFileWriter's
+    file pointer is set to NULL after each performance.
+   
+    To design a subclass of MKFileWriter you must implement
+    the method realizeNote:fromNoteReceiver:.
+   
+    Two other methods, initializeFile and finishFile, can
+    be redefined in a subclass, although neither
+    must be.  initializeFile is invoked
+    just before the first Note is written to the
+    file and should perform any special
+    initialization such as writing a file header.
+   
+    finishFile is invoked after each performance
+    and should perform any post-performance cleanup.
+    The values returned by initializeFile and finishFile are ignored.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University 
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  2000/04/16 04:09:32  leigh
+  comment cleanup
+
   Revision 1.2  1999/07/29 01:16:36  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -34,52 +72,7 @@ Modification history:
 #import "MKFileWriter.h"
 #import "InstrumentPrivate.h" /*sb: moved to here from within implementation...! */
 
-@implementation MKFileWriter:MKInstrument
-/* A FileWriter is an Instrument that realizes Notes
- * by writing them to a file on the disk.
- * An abstract superclass, FileWriter
- * provides common functionality and declares subclass responsibilities
- * for the subclasses
- * MidifileWriter and ScorefileWriter.
- * Note: In release 1.0, MidifileWriter is not provided. Use a Score object
- * to write a Midifile.
- * 
- * A FileWriter is associated with a file, either by the
- * file's name or with a file pointer.  If you assoicate
- * a FileWriter with a file name (through the \fBsetFile:\fR
- * method) the object will take care of opening and closing
- * the file for you:  the file is opened for writing when the
- * object first receives the \fBrealizeNote:\fR message
- * and closed after the performance.  The 
- * file is overwritten each time it's opened.
- *
- * The \fBsetStream:\fR method associates a FileWriter with a file
- * pointer.  In this case, opening and closing the file
- * is the responsibility of the application.  The FileWriter's
- * file pointer is set to \fBNULL\fR after each performance.
- *
- * To design a subclass of FileWriter you must implement
- * the method \fBrealizeNote:fromNoteReceiver:\fR.
- *
- * Two other methods, \fBinitializeFile\fR and \fBfinishFile\fR, can
- * be redefined in a subclass, although neither
- * must be.  \fBinitializeFile\fR is invoked 
- * just before the first Note is written to the 
- * file and should perform any special
- * initialization such as writing a file header.
- *
- * \fBfinishFile\fR is invoked after each performance
- * and should perform any post-performance cleanup.  The values returned
- * by \fBinitializeFile\fR and \fBfinishFile\fR are ignored.
- */
-{
-    MKTimeUnit timeUnit;
-    NSMutableString *filename;        /* Or NULL. */
-    NSMutableData *stream;            /* Pointer of open file. */
-    double timeShift;
-    BOOL compensatesDeltaT;
-    int _fd;
-}
+@implementation MKFileWriter
 
 #import "noteRecorderMethods.m"
 
@@ -116,7 +109,7 @@ Modification history:
 {
     int version;
     [super initWithCoder:aDecoder];
-    version = [aDecoder versionForClassName:@"FileWriter"];
+    version = [aDecoder versionForClassName:@"MKFileWriter"];
     if (version >= VERSION2)
         [aDecoder decodeValuesOfObjCTypes:"i@d",&timeUnit,&filename,&timeShift];//sb: was i*d
     if (version >= VERSION3)
@@ -162,8 +155,8 @@ Modification history:
 }
 
 -setFile:(NSString *)aName
-  /* TYPE: Modifying; Associates the receiver with file \fIaName\fR.
-   * Associates the receiver with file \fIaName\fR. The string is copied.
+  /* TYPE: Modifying; Associates the receiver with file aName.
+   * Associates the receiver with file aName. The string is copied.
    * The file is opened when the first Note is realized
    * (written to the file) and closed at the end of the
    * performance.
@@ -188,8 +181,8 @@ Modification history:
 
 
 -setStream:(NSMutableData *)aStream
-  /* TYPE: Modifying; Associates the receiver with file pointer \fIaStream\fR.
-   * Associates the receiver with the file pointer \fIaStream\fR.
+  /* TYPE: Modifying; Associates the receiver with file pointer aStream.
+   * Associates the receiver with the file pointer aStream.
    * You must open and close the file yourself.
    * Returns the receiver.
    * It's illegal to invoke this method during a performance. Returns nil
@@ -208,8 +201,8 @@ Modification history:
 -(NSMutableData *)stream
   /* TYPE: Querying; Returns the receiver's file pointer.
    * Returns the file pointer associated with the receiver
-   * or \fBNULL\fR if it isn't set.
-   * Note that the receiver's file pointer is set to \fBNULL\fR 
+   * or NULL if it isn't set.
+   * Note that the receiver's file pointer is set to NULL 
    * after each performance.
    *
    * sb: now returns a NSMutableData object that can be written to.
@@ -230,9 +223,9 @@ Modification history:
 }
 
 -(NSString *)file
-  /* TYPE: Querying; Returns the name set through \fBsetFile:\fR.
+  /* TYPE: Querying; Returns the name set through setFile:.
    * If the file associated with the receiver was set through 
-   * \fBsetFile:\fR,
+   * setFile:,
    * returns the file name, otherwise returns NULL.
    */
 {
@@ -244,16 +237,16 @@ Modification history:
 -(double)timeShift 
   /* TYPE: Accessing time; Returns the receiver's performance begin time.
    * Returns the receiver's performance begin time, as set through
-   * \fBsetTimeShift:\fR.
+   * setTimeShift:.
    */
 {
 	return timeShift;
 }
 
 -setTimeShift:(double)shift
-  /* TYPE: Accessing time; Delays performance for \fIshift\fR beats.
+  /* TYPE: Accessing time; Delays performance for shift beats.
    * Sets the begin time of the receiver;
-   * the receiver's performance is delayed by \fIshift\fR beats.
+   * the receiver's performance is delayed by shift beats.
    * Returns the receiver.
    * Illegal while the receiver is active. Returns nil in this case, else self.
    */
@@ -271,8 +264,8 @@ Modification history:
    * close the file pointer as part of this method.
    * The return value is ignored; the default returns the receiver.
    *
-   * You never send the \fBfinishFile\fR message directly to a
-   * FileWriter; it's invoked automatically after each performance.
+   * You never send the finishFile message directly to a
+   * MKFileWriter; it's invoked automatically after each performance.
    */
 {
     return self;
@@ -284,8 +277,8 @@ Modification history:
    * file initialization, such as writing a file header..
    * The return value is ignored; the default returns the receiver.
    *
-   * You never send the \fBinitializeFile\fR message 
-   * directly to a FileWriter; it's invoked when the first \fBrealizeNote:\fR
+   * You never send the initializeFile message 
+   * directly to a MKFileWriter; it's invoked when the first realizeNote:
    * message is received.
    */
 {
