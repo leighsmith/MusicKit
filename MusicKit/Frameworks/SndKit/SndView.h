@@ -86,6 +86,16 @@ NSScrollView.  */
 #import <AppKit/AppKit.h>
 #import "SndKit.h"
 
+/* The following define maps most sound I/O functions to the SoundKit counterparts,
+* for OpenStep 4.2 Intel and m68k (black NeXT) machines. You could try it on PPC
+* MacOS-X machines if you wanted to, but this may then conflict with the ppc/YBWin
+* code for using NSSound objects for sound playback.
+*/
+#if !defined(macosx)
+#define macosx (defined(__ppc__) && !defined(ppc))
+#define macosx_server (defined(__ppc__) && defined(ppc))
+#endif
+
 #if macosx
 #define QUARTZ_RENDERING
 #endif
