@@ -185,7 +185,7 @@ static int ioTags = 1000;
   soundStruct->samplingRate = (int) samplingRate;
   soundStruct->channelCount = channels;
 
-  [self setDataSize: SndSamplesToBytes(frames, channels, format)
+  [self setDataSize: SndFramesToBytes(frames, channels, format)
          dataFormat: format
        samplingRate: (int) samplingRate
        channelCount: channels
@@ -1074,9 +1074,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 	   channelCount: (int) toChannelCount
 {
     NSRange wholeSound = { 0, [self lengthInSampleFrames] };
-    SndAudioBuffer *bufferToConvert = [SndAudioBuffer audioBufferWithSnd: self inRange: wholeSound];
+    SndAudioBuffer *bufferToConvert;
     SndAudioBuffer *error;
 
+    if([self dataFormat] == toFormat && [self samplingRate] == toRate && [self channelCount] == toChannelCount)
+	return SND_ERR_NONE;
+
+    bufferToConvert = [SndAudioBuffer audioBufferWithSnd: self inRange: wholeSound];
     switch (conversionQuality) {
     case SndConvertLowQuality:
     default:
@@ -1108,6 +1112,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 			  useLinearInterpolation: NO];
     }
     if (error != nil) {
+	double stretchFactor = toRate / [self samplingRate];
 	SndSoundStruct *toSound;
 	int err = SndAlloc(&toSound, [bufferToConvert lengthInBytes], toFormat, toRate, toChannelCount, 4);
 
@@ -1117,10 +1122,12 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
         SndFree(soundStruct);
 	// We need to copy the buffer sample data back into the soundStruct. In the future, post-soundStruct,
 	// we should just be able to use the buffer directly.
-	memcpy((void *) toSound->dataLocation, [bufferToConvert bytes], [bufferToConvert lengthInBytes]);
+	memcpy((void *) toSound + toSound->dataLocation, [bufferToConvert bytes], [bufferToConvert lengthInBytes]);
 	soundStruct = toSound;
         soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-	return SND_ERR_NONE;
+	loopStartIndex *= stretchFactor;  // adjust the loop pointers if the sound was resampled.
+	loopEndIndex *= stretchFactor;
+	return SND_ERR_NONE;
     }
     return SND_ERR_UNKNOWN;
 }
@@ -1139,7 +1146,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     SNDStreamNativeFormat(&nativeFormat);
     return [self convertToFormat: nativeFormat.dataFormat
                     samplingRate: nativeFormat.samplingRate
-                    channelCount: nativeFormat.channelCount];    
+                    channelCount: nativeFormat.channelCount];
 }
 
 - (int) deleteSamples
