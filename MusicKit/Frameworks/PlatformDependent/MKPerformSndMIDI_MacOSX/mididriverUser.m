@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/11/14 04:37:24  leigh
+  Further isolated mach port reliance, changing queuePort to MKMDReplyPort. Corrected quantumFactor to use the NanosecondsToAbsoluteTime converter.
+
   Revision 1.2  2000/11/10 23:12:11  leigh
   First stab at CoreMIDI support, changed return and port types to be more transparent.
 
@@ -26,6 +29,7 @@ Modification history:
 */
 #include "midi_driver.h"
 #include <CoreMIDI/MIDIServices.h>
+#include <CarbonCore/CarbonCore.h> // needed for AbsoluteTime definitions.
 
 #define FUNCLOG 1
 
@@ -52,10 +56,17 @@ static MIDIEndpointRef claimedSourceUnit = NULL;
 static MKMDReplyFunctions *userFuncs;   // functions to be called on reception from the driver.
 
 static MKMDReplyPort   dataReplyPort;	// NSPort-like port to reply received MIDI on.
-static port_t          queue_port;	// port_t port to reply when queue is available.
+static MKMDReplyPort   queue_port;	// NSPort-like port to reply when queue is available.
+
+// This should become part of the CoreMIDI library.
+MIDITimeStamp MIDIGetCurrentTime(void)
+{
+    AbsoluteTime now = UpTime();
+    return UnsignedWideToUInt64(now);
+}
 
 // TODO we need to properly convert the result to an int, since the division will reduce the actual result within those bounds.
-static int timeStampToMKTime(timeStamp)
+static int timeStampToMKTime(MIDITimeStamp timeStamp)
 {
     return (int) (timeStamp - datumRefTime) / quantumFactor;
 }
@@ -91,10 +102,11 @@ static void readProc(const MIDIPacketList *pktlist, void *refCon, void *connRefC
 PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
 {
     const char **driverList;
-    int i, n;
+    ItemCount i, n;
     CFStringRef pname, pmanuf, pmodel;
     char name[64], manuf[64], model[64];
 	
+#if 1 // USE_DEVICES
     // enumerate devices 
     n = MIDIGetNumberOfDevices();
     driverList = (char **) calloc(n, sizeof(char *));
@@ -113,8 +125,14 @@ PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
         CFRelease(pmanuf);
         CFRelease(pmodel);
 
-        printf("driver[%d] = %s\n", i, driverList[i]);
+        // printf("driver[%ld] = %s\n", i, driverList[i]);
     }
+#else
+    // Actually, this should return a collection of entities rather than devices, which are configurations
+    // of system wide interoperating MIDI streams.
+    n = MIDIDeviceGetNumberOfEntities(MIDIDeviceRef device);
+
+#endif
 
     *selectedDriver = 0;
     
@@ -151,6 +169,7 @@ PERFORM_API MKMDReturn MKMDBecomeOwner (
 #endif
 
     // NSApplicationName
+    // NSLog(@"appname %@\n", [[[NSBundle mainBundle] infoDictionary] valueForKey: NSExecutable]);
     MIDIClientCreate(CFSTR("MusicKit - This has to be whatever the app is"), NULL, NULL, &client);	
     MIDIInputPortCreate(client, CFSTR("Input port"), readProc, NULL, &inPort);
     MIDIOutputPortCreate(client, CFSTR("Output port"), &outPort);
@@ -168,6 +187,12 @@ PERFORM_API MKMDReturn MKMDReleaseOwnership (
     fprintf(debug, "MKMDReleaseOwnership called\n");
     fclose(debug); // hopefully save what we did.
 #endif
+    if(MIDIPortDispose(outPort) != noErr)
+        return MKMD_ERROR_BUSY;
+
+    if(MIDIPortDispose(inPort) != noErr)
+        return MKMD_ERROR_BUSY;
+        
     if(MIDIClientDispose(client) != noErr)
         return MKMD_ERROR_BUSY;
     else
@@ -185,14 +210,6 @@ PERFORM_API MKMDReturn MKMDSetClockMode (
   fprintf(debug, "MKMDSetClockMode called %d\n", clock_mode);
 #endif
   return MKMD_SUCCESS;
-}
-
-#include <CarbonCore/CarbonCore.h> // only needed for AbsoluteTime definitions.
-
-MIDITimeStamp MIDIGetCurrentTime(void)
-{
-    AbsoluteTime now = UpTime();
-    return UnsignedWideToUInt64(now);
 }
 
 /* Routine MKMDGetClockTime */
@@ -389,7 +406,7 @@ PERFORM_API MKMDReturn MKMDSendData (
         return MKMD_ERROR_UNKNOWN_ERROR;
     }
 
-    // need to convert the times, extract the data and pack back into buffer.
+    // need to convert the times, extract the data and pack back into a buffer.
     buffer = (Byte *) malloc(dataCnt);
     for(msgIndex = 0; msgIndex < dataCnt; msgIndex++) {
         buffer[msgIndex] = data[msgIndex].byte;
@@ -402,7 +419,7 @@ PERFORM_API MKMDReturn MKMDSendData (
     // to be sent immediately one after another.
     playTime = (data[0].time - datumMSecTime) * quantumFactor + datumRefTime;
 #ifdef FUNCLOG
-    fprintf(debug, "\nCurrent time %f\n", (double) playTime);
+    fprintf(debug, "\nCurrent time %f, play time %f\n", (double) MIDIGetCurrentTime(), (double) playTime);
 #endif
     packet = MIDIPacketListAdd(pktlist, sizeof(pbuf), packet, playTime, dataCnt, buffer);
     if(packet == NULL) {
@@ -439,15 +456,17 @@ PERFORM_API MKMDReturn MKMDGetAvailableQueueSize (
 }
 
 /* Routine MKMDRequestQueueNotification */
+// Send a message on notification_port when playback queue has size MIDI elements available.
+// notification_port can be nil to cancel the queue request.
 PERFORM_API MKMDReturn MKMDRequestQueueNotification (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
 	short unit,
-	port_t notification_port,
+	MKMDReplyPort notification_port,
 	int size)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MKMDRequestQueueNotification called %d\n", size);
+  fprintf(debug, "MKMDRequestQueueNotification called size = %d\n", size);
 #endif
   return MKMD_SUCCESS;
 }
@@ -495,18 +514,21 @@ PERFORM_API MKMDReturn MKMDSetClockQuantum (
 	MKMDOwnerPort owner_port,
 	int microseconds)
 {
-    // MIDITimeStamp measured in 100nS units, 
-//    quantumFactor = ((MIDITimeStamp) microseconds) * 10;
-    quantumFactor = ((MIDITimeStamp) microseconds);
+    // MIDITimeStamp is measured in AbsoluteTime units which is not counted in clock-time units.
+    // Therefore we need to convert to arrive at a divisor/multiplicand for conversion of quantum units.
+    UInt64 nanoseconds = ((UInt64) microseconds) * 1000;
+    AbsoluteTime absTimeFactor = NanosecondsToAbsolute(UInt64ToUnsignedWide(nanoseconds));
+    quantumFactor = UnsignedWideToUInt64(absTimeFactor);
+
 #ifdef FUNCLOG
-    fprintf(debug, "MKMDSetClockQuantum called %d microseconds, %f ? units\n",
+    fprintf(debug, "MKMDSetClockQuantum called %d microseconds, %f MIDITimeStamp units\n",
         microseconds, (double) quantumFactor);
 #endif
     return MKMD_SUCCESS;
 }
 
-// This should wait until a reply is received on port_set.
-PERFORM_API MKMDReturn MKMDAwaitReply(port_t port_set, MKMDReplyFunctions *funcs, int timeout)
+// This should wait until a reply is received on port_set or until timeout
+PERFORM_API MKMDReturn MKMDAwaitReply(MKMDReplyPort port_set, MKMDReplyFunctions *funcs, int timeout)
 {
 #ifdef FUNCLOG
     fprintf(debug, "MKMDAwaitReply called %d timeout\n", timeout);
