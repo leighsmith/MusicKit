@@ -46,6 +46,9 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2002/09/19 18:16:27  leighsmith
+  Replaced [super factoryMethod] with [[self superclass] factoryMethod]
+
   Revision 1.16  2002/04/08 17:35:25  sbrandon
   changed _rescheduleMsgRequest reference to _rescheduleMsgRequestWithObjectArgs
 
@@ -843,7 +846,7 @@ id _MKSynthPatchNoteDur(MKSynthPatch *synthP,id aNoteDur,BOOL noTag)
 //////////////////////////////////////////////////////////////////////////////*/
 + _newWithTemplate: (id) aTemplate inOrch: (id) anOrch index: (int) whichDSP
 {
-    MKSynthPatch *newObj  = [super allocWithZone:NSDefaultMallocZone()];
+    MKSynthPatch *newObj  = [[self superclass] allocWithZone: NSDefaultMallocZone()];
     newObj->synthElements = [[NSMutableArray alloc] initWithCapacity:[aTemplate synthElementCount]];
     newObj->status        = MK_idle;
     newObj->orchestra     = anOrch;
@@ -1220,7 +1223,7 @@ id _MKAddPatchToList(MKSynthPatch *self,MKSynthPatch **headP,MKSynthPatch **tail
 + findPatchClass: (NSString *) className
 {
     // TODO [@"MKSynthPatches" stringByAppendingPathComponent: className]
-    return [super findPatchClass: className];
+    return [[self superclass] findPatchClass: className];
 }
 
 @end

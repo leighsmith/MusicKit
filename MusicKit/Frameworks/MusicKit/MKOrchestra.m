@@ -35,6 +35,9 @@
 Modification history:
 
   $Log$
+  Revision 1.27  2002/09/19 18:16:26  leighsmith
+  Replaced [super factoryMethod] with [[self superclass] factoryMethod]
+
   Revision 1.26  2002/04/03 03:59:41  skotmcdonald
   Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -4037,7 +4040,7 @@ static BOOL driverPresent(unsigned short index)
 	if (orchestraClasses[index]) 
 	  return [orchestraClasses[index] allocFromZone:zone onDSP:index];
     }
-    orch = [super allocWithZone:zone];
+    orch = [[self superclass] allocWithZone:zone];
     orch->orchIndex = index;
     return orch;
 }

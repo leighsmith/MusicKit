@@ -33,6 +33,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2002/09/19 18:16:27  leighsmith
+  Replaced [super factoryMethod] with [[self superclass] factoryMethod]
+
   Revision 1.14  2002/04/16 15:20:01  sbrandon
   - several clumsy string-appending calls were simplified for speed
 
@@ -1221,7 +1224,7 @@ extern int _MKOrchestraGetNoops(void);
 {
     static int UGInstanceCount = 0; /* Just counts up forever (for debugging) */
     int ec;
-    MKUnitGenerator *aUG = [super allocWithZone:NSDefaultMallocZone()];
+    MKUnitGenerator *aUG = [[self superclass] allocWithZone:NSDefaultMallocZone()];
     /* Must send to super here because self version is overridden. */
     aUG->_instanceNumber = UGInstanceCount++;
     aUG->_classInfo = [[aUG class] classInfo];

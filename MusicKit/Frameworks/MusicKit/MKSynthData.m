@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2002/09/19 18:16:26  leighsmith
+  Replaced [super factoryMethod] with [[self superclass] factoryMethod]
+
   Revision 1.6  2002/01/29 16:33:55  sbrandon
   changed to use NSString args for _MKOrchTrace calls
 
@@ -422,8 +425,8 @@ extern int DSPReadValue(DSPMemorySpace space,
 {
     static int instanceCount[MK_numOrchMemSegments-MK_xData] = {0}; 
     /* Just counts up forever (for debugging) */
-//    MKSynthData *newObj = [super new]; //sb: this fails, saying that MKSynthData doesn't respond to alloc
-    MKSynthData *newObj = [[super allocWithZone:NSDefaultMallocZone()] init];
+    MKSynthData *newObj = [[self superclass] new];
+//    MKSynthData *newObj = [[[self superclass] allocWithZone:NSDefaultMallocZone()] init];
     newObj->_instanceNumber = instanceCount[whichSegment-MK_xData]++;
     newObj->orchestra = anOrch;
     newObj->_orchIndex = whichDSP;
