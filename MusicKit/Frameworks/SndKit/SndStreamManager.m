@@ -14,7 +14,7 @@
 
 // TODO This is needed since we check for NSApp, but I don't think checking for NSApp is the correct way to
 // check for an NSApplication generated run loop.
-#import <AppKit/AppKit.h>  
+#import <AppKit/AppKit.h>
 #import "SndAudioBuffer.h"
 #import "SndStreamClient.h"
 #import "SndStreamMixer.h"
@@ -117,7 +117,7 @@ static SndStreamManager *sm = nil;
 
   /* might as well set up the delegate background thread now too */
 
-  if ([[NSRunLoop currentRunLoop] currentMode] || NSApp) {
+  if ([[NSRunLoop currentRunLoop] currentMode] != nil || NSApp) {
 #if SNDSTREAMMANAGER_DELEGATE_DEBUG
     NSLog(@"[SndStreamManager::init] Run loop detected - delegate messaging enabled\n");
 #endif
@@ -215,81 +215,105 @@ static SndStreamManager *sm = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// _sendDelegateInvocation:
+//
+// INTERNAL USE ONLY. Used as part of the delegate system for passing
+// delegate messages out of background threads into the foreground thread.
+//
+// We cast to unsigned long to prevent MacOSX (and maybe GNUstep) from interpreting
+// the argument as an NSInvocation. When it does this, it tries to be too smart, and
+// creates a connection to the object in the thread the NSInvocation was created in
+// (which is what we're trying to avoid).
+//
+// This should only be called while in the main thread. Internal use only.
+//
+////////////////////////////////////////////////////////////////////////////////
+
+- (void) _sendDelegateInvocation: (in unsigned long) mesg
+{
+    [(NSInvocation *) mesg invoke];
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // delegateMessageThread:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) delegateMessageThread:(NSArray*) ports
+- (void) delegateMessageThread: (NSArray *) ports
 {
-  NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-  id controllerProxy = nil;
+    NSAutoreleasePool *localPool = [NSAutoreleasePool new];
+    id controllerProxy = nil;
 
-  [self retain];
+    [self retain]; // TODO eeek, why is this necessary?
 
 #if SNDSTREAMMANAGER_DEBUG
-  NSLog(@"SndManager::entering delegate thread\n");
+    NSLog(@"SndManager::entering delegate thread\n");
 #endif
 
-  while (bgdm_sem != BGDM_threadStopped) {
-    [bgdm_threadLock lockWhenCondition:BGDM_hasFlag];
-    if (bgdm_sem == BGDM_delegateMessageReady)  {
-      NSInvocation *delegateMessage = nil;
-      int count;
+    while (bgdm_sem != BGDM_threadStopped) {
+	[bgdm_threadLock lockWhenCondition: BGDM_hasFlag];
+	if (bgdm_sem == BGDM_delegateMessageReady)  {
+	    NSInvocation *delegateMessage = nil;
+	    int count;
+	    
       // quickly release the lock so we don't deadlock if the queued messages take
       // a while to go through.
-      [bgdm_threadLock unlockWithCondition: bgdm_sem];
-      while (1) {
-        [delegateMessageArrayLock lock];
-        count = [delegateMessageArray count];
-        if (count) {
-          delegateMessage = [[delegateMessageArray objectAtIndex:0] retain];
-          [delegateMessageArray removeObjectAtIndex:0];
-        }
-        [delegateMessageArrayLock unlock];
-        if (!count) break;
-        if (!controllerProxy) {
-          NSConnection *theConnection = [NSConnection connectionWithReceivePort:[ports objectAtIndex:0]
-                                                                       sendPort:[ports objectAtIndex:1]];
-          // Note: if there's a problem with the NSRunLoop not running or
-          // responding here, the -rootProxy method will block. We could
-          // set a timout here and catch the exception thrown as a result,
-          // but there may be valid reasons why the NSRunLoop does not respond
-          // (perhaps the main loop is busy doing other stuff?). THis could do
-          // with some testing cos I think a timeout exception would be the
-          // best way forward.
-
-          //[theConnection setReplyTimeout:0.1];
-          controllerProxy = [theConnection rootProxy];
-          [controllerProxy setProtocolForProxy:@protocol(SndDelegateMessagePassing)];
-        }
-        /* cast to unsigned long to prevent compiler warnings */
-        [controllerProxy _sendDelegateInvocation:(unsigned long)delegateMessage];
-      }
-      continue;
-    }
-    else if (bgdm_sem == BGDM_abortNow) {
+	    [bgdm_threadLock unlockWithCondition: bgdm_sem];
+	    while (1) {
+		[delegateMessageArrayLock lock];
+		count = [delegateMessageArray count];
+		if (count) { // Get the first message off the queue
+		    // retain lest the delegateMessage disappear when we remove it from the array.
+		    delegateMessage = [[delegateMessageArray objectAtIndex: 0] retain]; 
+		    [delegateMessageArray removeObjectAtIndex: 0];
+		}
+		[delegateMessageArrayLock unlock];
+		if (!count)
+		    break;
+		if (!controllerProxy) {
+		    NSConnection *theConnection = [NSConnection connectionWithReceivePort: [ports objectAtIndex: 0]
+										 sendPort: [ports objectAtIndex: 1]];
+		    // Note: if there's a problem with the NSRunLoop not running or
+		    // responding here, the -rootProxy method will block. We could
+		    // set a timout here and catch the exception thrown as a result,
+		    // but there may be valid reasons why the NSRunLoop does not respond
+		    // (perhaps the main loop is busy doing other stuff?). THis could do
+		    // with some testing cos I think a timeout exception would be the
+		    // best way forward.
+				
+		    //[theConnection setReplyTimeout:0.1];
+		    controllerProxy = [theConnection rootProxy];
+		    [controllerProxy setProtocolForProxy: @protocol(SndDelegateMessagePassing)];
+		}
+		/* cast to unsigned long to prevent compiler warnings */
+		[controllerProxy _sendDelegateInvocation: (unsigned long) delegateMessage];
+		[delegateMessage release];
+	    }
+	    continue;
+	}
+	else if (bgdm_sem == BGDM_abortNow) {
 #if SNDSTREAMMANAGER_DEBUG
-      NSLog(@"SndManager::Killing delegate message thread.\n");
+	    NSLog(@"SndManager::Killing delegate message thread.\n");
 #endif
-      bgdm_sem = BGDM_threadStopped;
-      break;
+	    bgdm_sem = BGDM_threadStopped;
+	    break;
+	}
+	else {
+	    NSLog(@"Semaphore status: %i\n", bgdm_sem);
+	    bgdm_sem = BGDM_ready;
+	}
+	[bgdm_threadLock unlockWithCondition: bgdm_sem];
     }
-    else {
-      NSLog(@"Semaphore status: %i\n",bgdm_sem);
-      bgdm_sem = BGDM_ready;
-    }
-    [bgdm_threadLock unlockWithCondition: bgdm_sem];
-  }
-  [self release];
-  [localPool release];
-  /* even if there is a new thread is created between the following two
-    * statements, that would be ok -- there would temporarily be one
-    * extra thread but it won't cause a problem
-    */
+    [self release];  // TODO eeek, why is this necessary?
+    [localPool release];
+    /* even if there is a new thread is created between the following two
+	* statements, that would be ok -- there would temporarily be one
+	* extra thread but it won't cause a problem
+	*/
 #if SNDSTREAMMANAGER_DEBUG
-  NSLog(@"SndManager::exiting delegate thread\n");
+    NSLog(@"SndManager::exiting delegate thread\n");
 #endif
 
-  [NSThread exit];
+    [NSThread exit];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -300,7 +324,7 @@ static SndStreamManager *sm = nil;
 // the thread telling it to stop (which until now was the same thread)
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void)streamStartStopThread
+- (void) streamStartStopThread
 {
   NSAutoreleasePool *localPool = [NSAutoreleasePool new];
 
@@ -313,9 +337,9 @@ static SndStreamManager *sm = nil;
 #endif
 
   while (1) {
-    [bg_threadLock lockWhenCondition:BG_hasFlag];
+    [bg_threadLock lockWhenCondition: BG_hasFlag];
     if (bg_sem == BG_startNow) {
-      active = SNDStreamStart(processAudio, (void*) self);
+      active = SNDStreamStart(processAudio, (void *) self);
       nowTime = 0.0;
       bg_sem = 0;
       isStopping = FALSE;
@@ -334,7 +358,7 @@ static SndStreamManager *sm = nil;
       nowTime = 0.0;
       bg_sem  = 0;
 
-      if ([[NSRunLoop currentRunLoop] currentMode] || NSApp) {
+      if ([[NSRunLoop currentRunLoop] currentMode] != nil || NSApp) {
         [bgdm_threadLock lock];
         bgdm_sem = BGDM_abortNow;
         [bgdm_threadLock unlockWithCondition: BGDM_hasFlag];
@@ -369,48 +393,32 @@ static SndStreamManager *sm = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// _sendDelegateInvocation:
-//
-// we cast to unsigned long to prevent MacOSX (and maybe GNUstep) from interpreting
-// the argument as an NSInvocation. When it does this, it tries to be too smart, and
-// creates a connection to the object in the thread the NSInvocation was created in
-// (which is what we're trying to avoid).
-//
-////////////////////////////////////////////////////////////////////////////////
-
-- (void) _sendDelegateInvocation:(in unsigned long) mesg
-  /* this should only be called while in the main thread. Internal use only. */
-{
-  [(NSInvocation *)mesg invoke];
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // sendMessageInMainThreadToTarget:sel:arg1:arg2:
 ////////////////////////////////////////////////////////////////////////////////
 
-- (void) sendMessageInMainThreadToTarget:(id)target sel:(SEL)sel arg1:(id)arg1 arg2:(id)arg2
+- (void) sendMessageInMainThreadToTarget: (id) target sel: (SEL) sel arg1: (id) arg1 arg2: (id) arg2
 {
-  if (!bDelegateMessagingEnabled) {
-    return;
-  }
-  else {
-    NSMethodSignature *aSignature   = [[target class] instanceMethodSignatureForSelector:sel];
-    NSInvocation      *anInvocation = [NSInvocation invocationWithMethodSignature:aSignature];
+    if (!bDelegateMessagingEnabled) {
+	return;
+    }
+    else {
+	NSMethodSignature *aSignature   = [[target class] instanceMethodSignatureForSelector: sel];
+	NSInvocation      *anInvocation = [NSInvocation invocationWithMethodSignature: aSignature];
 
-    [anInvocation setSelector:sel];
-    [anInvocation setTarget:target];
-    [anInvocation setArgument:&arg1 atIndex:2];
-    [anInvocation setArgument:&arg2 atIndex:3];
-    [anInvocation retainArguments];
+	[anInvocation setSelector: sel];
+	[anInvocation setTarget: target];
+	[anInvocation setArgument: &arg1 atIndex: 2];
+	[anInvocation setArgument: &arg2 atIndex: 3];
+	[anInvocation retainArguments];
 
-    [delegateMessageArrayLock lock];
-    [delegateMessageArray addObject: anInvocation];
-    [delegateMessageArrayLock unlock];
+	[delegateMessageArrayLock lock];
+	[delegateMessageArray addObject: anInvocation];
+	[delegateMessageArrayLock unlock];
 
-    [bgdm_threadLock lock];
-    bgdm_sem = BGDM_delegateMessageReady;
-    [bgdm_threadLock unlockWithCondition:BGDM_hasFlag];
-  }
+	[bgdm_threadLock lock];
+	bgdm_sem = BGDM_delegateMessageReady;
+	[bgdm_threadLock unlockWithCondition: BGDM_hasFlag];
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -493,31 +501,29 @@ static SndStreamManager *sm = nil;
 // processAudio
 ////////////////////////////////////////////////////////////////////////////////
 
-static void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj)
+static void processAudio(double sampleCount, SNDStreamBuffer *cInB, SNDStreamBuffer *cOutB, void *manager)
 {
     // Eventually these must be made instance variables which you just wrap
     // around each of the SNDStreamBuffers, to avoid allocation costs.
 
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
-    SndAudioBuffer *inB  = nil;
-    SndAudioBuffer *outB = nil;
-    inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
-    outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
+    SndAudioBuffer *inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
+    SndAudioBuffer *outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
 
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] --> processAudio sampleCount = %d\n", (int)sampleCount);
+    NSLog(@"[Manager] --> processAudio sampleCount = %d, cOutB = %p\n", (int) sampleCount, cOutB);
+    NSLog(@"[Manager] cOutB->dataSize = %d, cOutB->streamData = %p\n", cOutB->streamFormat.dataSize, cOutB->streamData);
 #endif
-    [(SndStreamManager *) obj processStreamAtTime: sampleCount input: inB output: outB];
+    [(SndStreamManager *) manager processStreamAtTime: sampleCount input: inB output: outB];
+
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] <-- processAudio\n");
+    NSLog(@"[Manager] <-- processAudio, copying %d bytes to output buffer\n", cOutB->streamFormat.dataSize);
 #endif
+    memcpy(cOutB->streamData, [outB bytes], cOutB->streamFormat.dataSize);
 
 #if SNDSTREAMMANAGER_DEBUG
     NSLog(@"[Manager] About to release pool...\n");
 #endif
-
-    memcpy(cOutB->streamData, [outB bytes], cOutB->streamFormat.dataSize);
-
     [localPool release];
 #if SNDSTREAMMANAGER_DEBUG
     NSLog(@"[Manager] Released pool...\n");
@@ -536,7 +542,7 @@ static void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuf
                       output: (SndAudioBuffer*) outB
 {
 #if SNDSTREAMMANAGER_DEBUG
-    NSLog(@"[Manager] Entering...\n");
+    NSLog(@"[Manager] Entering processStreamAtTime inB %@, outB %@\n", inB, outB);
 #endif
     if (active) {
 	// set our current notion of time.
