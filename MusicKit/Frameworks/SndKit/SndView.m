@@ -1,4 +1,6 @@
 /******************************************************************************
+$Id$
+
 LEGAL:
 This framework and all source code supplied with it, except where specified, are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use the source code for any purpose, including commercial applications, as long as you reproduce this notice on all such software.
 
@@ -13,10 +15,13 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 
 #import "SndView.h"
-//#define USE_PS_USER_PATHS
-//:raf:
-//#define DISPLAY_SOUNDDEVICE_INFO
-//#define DO_TIMING
+
+#ifndef QUARTZ_RENDERING
+#define USE_PS_USER_PATHS
+#define DISPLAY_SOUNDDEVICE_INFO
+#define DO_TIMING
+#endif
+
 /* For 250 pixels, on black m68k hardware, user paths take 1.872 s for 100 iterations.
  * Without user paths, the same operations take on average 8.4 seconds!
  * These timings were taken with the Timing class, bracketed around the part of
