@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.18  2002/02/05 15:51:44  leighsmith
+  Added extra checks that we were able to initialise a MIDI device
+
   Revision 1.17  2002/01/24 17:01:43  sbrandon
   fixed a number of release problems (mainly pathnames)
 
@@ -857,7 +860,7 @@ static void playIt(ScorePlayerController *self)
         }
         className = [partInfo parAsStringNoCopy: MK_synthPatch];
 	if (isMidiClassName(className)) {
-            MKMidi *newMIDI;
+            MKMidi *newMIDI = nil;
             
 	    midiChan = [partInfo parAsInt: MK_midiChan];
 	    if ((midiChan == MAXINT) || (midiChan > 16))
@@ -867,9 +870,12 @@ static void playIt(ScorePlayerController *self)
                        
 	    if ((newMIDI = [midis objectForKey: className]) == nil) {
                 newMIDI = [MKMidi midiOnDevice: className];
-                [midis setObject: newMIDI forKey: className];
+                // Check that newMIDI is not nil, i.e midiOnDevice did initialise
+                if(newMIDI != nil)
+                    [midis setObject: newMIDI forKey: className];
             }
-	    [[partPerformer noteSender] connect: [newMIDI channelNoteReceiver: midiChan]];
+            if(newMIDI != nil)
+                [[partPerformer noteSender] connect: [newMIDI channelNoteReceiver: midiChan]];
 	}
         else if([className isEqualToString: @"Samples"]) {
             sampleInstrument = [[MKSamplerInstrument alloc] init];
