@@ -183,7 +183,6 @@
     [aScorePerformer setScore: outputScore];
     [self connectPartsToChannels: aScorePerformer forInstrument: midiInstrument];
 
-   [midiInstrument downloadDLS: instruments];
 
     [aScorePerformer activate];
 //    [samplePartPerformer activate]; // don't play the samplePart just now.
@@ -198,6 +197,7 @@
     endRequest = [MKConductor afterPerformanceSel:@selector(haveFinishedPlaying) to: self argCount: 0];
     [MKConductor useSeparateThread: YES];
     [midiInstrument openOutputOnly];         /* No need for MKMidi input. */
+    [midiInstrument downloadDLS: instruments];
     [midiInstrument run];                    /* This starts the device driver clock. */
     [MKConductor startPerformance];  /* Start sending Notes, loops until done. */
 
