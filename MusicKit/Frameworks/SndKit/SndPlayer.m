@@ -109,7 +109,7 @@
     }
     else {
         stopAtSample = (whenToStop - beginPlayTime) * [[performance snd] samplingRate];
-        NSLog(@"stopping at sample %ld\n", stopAtSample);
+        // NSLog(@"stopping at sample %ld\n", stopAtSample);
         // check stopAtSample since it could be beyond the length of the sound. 
         // If so, leave it stop at the end of the sound.
         if(stopAtSample < [[performance snd] sampleCount])
