@@ -2163,27 +2163,8 @@ char *SndSoundError(int err);
 
 - (void)stop:(id)sender
 {
-#ifdef macosx
-  [sound stop:self];
+  [sound stop:self];  // TODO should self be sender?
   return;
-#else
-    int stat;
-    int error=0;
-    if (recordingSound) {
-//sb: not until we have some sound i/o routines written
-//            SndStop(1);
-        SndFree(recordingSound);
-        recordingSound = NULL;
-    }
-    if (_scratchSound) {
-        stat = [_scratchSound status];
-        if (stat != SND_SoundStopped && stat != SND_SoundInitialized && stat != SND_SoundFreed) {
-                error = [_scratchSound stop];
-            if (error) printf("Error: %s stopping playback\n", SndSoundError(error));
-                return;
-        }
-    }
-#endif
 }
 
 - (float)reductionFactor
