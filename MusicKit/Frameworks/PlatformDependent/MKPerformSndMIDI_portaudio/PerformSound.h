@@ -13,33 +13,6 @@
   non-commercial purposes so long as this copyright statement (noting the author) is
   preserved.
 */
-/*
-  $Log$
-  Revision 1.3  2001/10/31 17:17:17  sbrandon
-  Now define PERFORM_API in MKPerformSndMIDIDefines.h
-
-  Revision 1.2  2001/09/03 15:02:53  sbrandon
-  - added headerdoc comments from MKPerformSndMIDI_MACOSX project
-  - added SNDSetBufferSizeInBytes method
-
-  Revision 1.1  2001/07/02 22:03:48  sbrandon
-  - initial revision. Still a work in progress, but does allow the MusicKit
-    and SndKit to compile on GNUstep.
-
-  Revision 1.2  2001/05/12 08:51:48  sbrandon
-  - various header importing changes
-  - added some gsdoc comments from the MacOSX framework
-  - added SNDStream function declarations from the MacOSX framework
-
-  Revision 1.1.1.1  2000/01/14 00:14:34  leigh
-  Initial revision
-
-  Revision 1.1.1.1  1999/11/17 17:57:14  leigh
-  Initial working version
-
-  Revision 1.2  1999/07/21 19:19:42  leigh
-  Single Sound playback working
-*/
 
 #ifndef __PERFORMSOUND__
 #define __PERFORMSOUND__
@@ -60,18 +33,12 @@
 #include "SndStruct.h"
 #include "SndFormats.h"
 
+#define MKPERFORMSND_USE_STREAMING       1  // Uses the newer streaming API
+
 #ifdef __cplusplus
 extern "C" {
 #endif 
 
-/*!
-    @typedef SNDNotificationFun
-    @param s
-    @param tag
-    @param err
-    @result
-*/
-typedef int (*SNDNotificationFun)(SndSoundStruct *s, int tag, int err);
 
 /*!
     @typedef SNDStreamBuffer
@@ -95,12 +62,6 @@ typedef struct SNDStreamBuffer {
     @param userData
 */
 typedef void (*SNDStreamProcessor)(double sampleTime, SNDStreamBuffer *inStream, SNDStreamBuffer *outStream, void *userData);
-
-/*!
-    @defined SND_NULL_FUN
-    @discussion Indicates no function is to be called.
-*/
-#define SND_NULL_FUN ((SNDNotificationFun)0)
 
 /*!
     @function       SNDInit
@@ -139,27 +100,6 @@ PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex);
 PERFORM_API unsigned int SNDGetAssignedDriverIndex(void);
 
 /*!
-    @function       SNDGetVolume
-    @abstract       Retrieve the current volume.
-    @param          left
-                        Receives the current left volume value (what units?).
-    @param          right
-                        Receives the current right volume value (what units?).
-*/
-PERFORM_API void SNDGetVolume(float *left, float * right);
-
-/*!
-    @function       SNDSetVolume
-    @abstract       Sets the current volume.
-    @param          left
-                        Sets the current left volume value (what units?).
-    @param          right
-                        Sets the current right volume value (what units?).
-    @result         Returns a readable string.
-*/
-PERFORM_API void SNDSetVolume(float left, float right);
-
-/*!
     @function       SNDIsMuted
     @abstract       Determine if the currently playing sound is muted.
     @result         Returns YES if the currently playing sound is muted.
@@ -183,6 +123,50 @@ PERFORM_API void SNDSetMute(BOOL aFlag);
                         per sample frame.
 */
 PERFORM_API BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes);
+
+/*!
+    @function       SNDStreamNativeFormat
+    @abstract       Return in the struct the format of the sound data preferred by the operating system.
+    @param          streamFormat
+                        pointer to an allocated block of memory into which to put the SndSoundStruct
+*/
+PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat);
+
+/*!
+    @function       SNDStreamStart
+    @abstract       .
+    @param          newStreamProcessor
+                        .
+    @param          userData
+                        
+    @result         Returns YES if ?, NO if ?.
+*/
+PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *userData);
+
+/*!
+    @function       SNDStreamStop 
+    @abstract       .
+    @result         Returns YES if ?, NO if ?.
+*/
+PERFORM_API BOOL SNDStreamStop(void);
+
+
+#if !MKPERFORMSND_USE_STREAMING
+
+/*!
+    @typedef SNDNotificationFun
+    @param s
+    @param tag
+    @param err
+    @result
+*/
+typedef int (*SNDNotificationFun)(SndSoundStruct *s, int tag, int err);
+
+/*!
+    @defined SND_NULL_FUN
+    @discussion Indicates no function is to be called.
+*/
+#define SND_NULL_FUN ((SNDNotificationFun)0)
 
 /*!
     @function       SNDStartPlaying
@@ -263,33 +247,7 @@ PERFORM_API int SNDUnreserve(int dunno);
     @abstract       .
 */
 PERFORM_API void SNDTerminate(void);
-
-/*!
-    @function       SNDStreamNativeFormat
-    @abstract       Return in the struct the format of the sound data preferred by the operating system.
-    @param          streamFormat
-                        pointer to an allocated block of memory into which to put the SndSoundStruct
-*/
-PERFORM_API void SNDStreamNativeFormat(SndSoundStruct *streamFormat);
-
-/*!
-    @function       SNDStreamStart
-    @abstract       .
-    @param          newStreamProcessor
-                        .
-    @param          userData
-                        
-    @result         Returns YES if ?, NO if ?.
-*/
-PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *userData);
-
-/*!
-    @function       SNDStreamStop 
-    @abstract       .
-    @result         Returns YES if ?, NO if ?.
-*/
-PERFORM_API BOOL SNDStreamStop(void);
-
+#endif
 
 #ifdef __cplusplus
 }

@@ -18,41 +18,6 @@
   purposes so long as the author attribution and copyright messages remain intact and
   accompany all relevant code.
 */
-/*
-// $Log$
-// Revision 1.5  2001/09/12 11:28:11  sbrandon
-// added audio input routines (easier than I thought!)
-//
-// Revision 1.4  2001/09/05 10:07:39  sbrandon
-// - because of changes to SndStreamManager.m we can now properly stop streams
-//   in SNDStreamStop - therefore we now call Pa_CloseStream after Pa_StopStream
-// - implemented SNDSetMute and SndIsMuted, by zeroing out buffers as they are
-//   about to get sent off to the portaudio engine, if requested.
-// - changes to allow correct querying of driver list, and setting of selected
-//   driver
-//
-// Revision 1.3  2001/09/03 17:19:41  sbrandon
-// - increased default buffer size to 16k in line with MacOSX version
-// - properly implemented retrieveDriverList() for SNDGetAvailableDriverNames
-//
-// Revision 1.2  2001/09/03 15:09:12  sbrandon
-// implemented SNDSetBufferSizeInBytes method for portaudio
-//
-// Revision 1.1  2001/07/18 12:47:08  sbrandon
-// - renamed PerformSound.c, so I can include ObjC style NSLogs etc.
-// - a number of changes to implement more of the API. Streaming now works.
-// - Note: as of this release, SNDStreamStart() requires 16 bit sounds to
-//   have been byte swapped to host order back in the sndkit (though this
-//   function actually only works with float streams at this time), whereas
-//   SNDStartPlaying takes a SndSoundStruct in big-endian (network) order
-//   and byte swaps internally. This will change in the next release.
-//
-// Revision 1.1  2001/07/02 22:03:48  sbrandon
-// - initial revision. Still a work in progress, but does allow the MusicKit
-//   and SndKit to compile on GNUstep.
-//
-//
-*/
 
 #import <Foundation/Foundation.h>
 #include "PerformSoundPrivate.h"
@@ -96,8 +61,10 @@ typedef struct _audioStream {
   int          sampleFramesGenerated; 
   int          sampleToPlay;
 
+#if !MKPERFORMSND_USE_STREAMING
   SNDNotificationFun finishedPlayFun;
   SNDNotificationFun startedPlayFun;
+#endif
   struct _audioStream *next;   // Link to other playing sounds.
 } SNDPlayingSound;
 
@@ -113,7 +80,6 @@ static BOOL             inputInit = FALSE;
 // new ones for portaudio
 static int              bufferSizeInFrames;
 static long             bufferSizeInBytes = PA_DEFAULT_BUFFERSIZE;
-static SNDPlayingSound  singlePlayingSound;
 static PortAudioStream  *stream;
 static BOOL             isMuted = FALSE;
 
@@ -147,8 +113,83 @@ static BOOL retrieveDriverList(void)
     return TRUE;
 }
 
+BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes)
+{
+  if (Pa_StreamActive(stream))
+      return FALSE;
+  if ((float)liBufferSizeInBytes/(float)8 != (int)(liBufferSizeInBytes/8)) {
+      fprintf(stderr, "output device - error setting buffer size. Buffer must be multiple of 8\n");
+      return FALSE;
+  }
+  bufferSizeInBytes = liBufferSizeInBytes;
+  return TRUE;
+}
+
+// Takes a parameter indicating whether to guess the device to select.
+// This allows us to hard code devices or use heuristics to prevent the user
+// having to always select the best device to use.
+// If we guess or not, we still do get a driver initialised.
+PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
+{
+    if(!retrieveDriverList())
+        return FALSE;
+    if(!initialised)
+        initialised = TRUE;   // SNDSetDriverIndex() needs to think we're initialised.
+    inputInit = TRUE;
+
+    return TRUE;
+}
+
+
+// Returns an array of strings listing the available drivers.
+// Returns NULL if the driver names were unobtainable.
+// The client application should not attempt to free the pointers.
+// TODO return driverIndex by reference
+PERFORM_API char **SNDGetAvailableDriverNames(void)
+{
+    // We need the initialisation to retrieve the driver list.
+    if(!initialised)
+        SNDInit(TRUE);
+
+    return driverList;
+}
+
+
+// Match the driverDescription against the driverList
+PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex)
+{
+  // This needs to be called after initialising.
+  if(!initialised)
+    return FALSE;
+  else if(selectedIndex >= 0 && selectedIndex < numOfDevices) {
+    driverIndex = selectedIndex;
+    return TRUE;
+  }
+  return FALSE;
+}
+
+// Match the driverDescription against the driverList
+PERFORM_API unsigned int SNDGetAssignedDriverIndex(void)
+{
+  return driverIndex;
+}
+
+PERFORM_API BOOL SNDIsMuted(void)
+{
+    return isMuted;
+}
+
+PERFORM_API void SNDSetMute(BOOL aFlag)
+{
+    isMuted = aFlag;
+}
+
+#if !MKPERFORMSND_USE_STREAMING
+
+static SNDPlayingSound  singlePlayingSound;
+
 ////////////////////////////////////////////////////////////////////////////////
-// sndPlayIOProc
+// paSKCallback
 //
 // Routine to play a single sound. This could be generalised using the link-list 
 // behaviour to do multiple sound channels, but instead we will adopt the stream 
@@ -224,87 +265,6 @@ static int paSKCallback( void *inputBuffer,
         }
     }
     return 0; // TODO need better definition...
-}
-
-BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes)
-{
-  if (Pa_StreamActive(stream))
-      return FALSE;
-  if ((float)liBufferSizeInBytes/(float)8 != (int)(liBufferSizeInBytes/8)) {
-      fprintf(stderr, "output device - error setting buffer size. Buffer must be multiple of 8\n");
-      return FALSE;
-  }
-  bufferSizeInBytes = liBufferSizeInBytes;
-  return TRUE;
-}
-
-// Takes a parameter indicating whether to guess the device to select.
-// This allows us to hard code devices or use heuristics to prevent the user
-// having to always select the best device to use.
-// If we guess or not, we still do get a driver initialised.
-PERFORM_API BOOL SNDInit(BOOL guessTheDevice)
-{
-    if(!retrieveDriverList())
-        return FALSE;
-    if(!initialised)
-        initialised = TRUE;   // SNDSetDriverIndex() needs to think we're initialised.
-    inputInit = TRUE;
-
-    return TRUE;
-}
-
-
-// Returns an array of strings listing the available drivers.
-// Returns NULL if the driver names were unobtainable.
-// The client application should not attempt to free the pointers.
-// TODO return driverIndex by reference
-PERFORM_API char **SNDGetAvailableDriverNames(void)
-{
-    // We need the initialisation to retrieve the driver list.
-    if(!initialised)
-        SNDInit(TRUE);
-
-    return driverList;
-}
-
-
-// Match the driverDescription against the driverList
-PERFORM_API BOOL SNDSetDriverIndex(unsigned int selectedIndex)
-{
-  // This needs to be called after initialising.
-  if(!initialised)
-    return FALSE;
-  else if(selectedIndex >= 0 && selectedIndex < numOfDevices) {
-    driverIndex = selectedIndex;
-    return TRUE;
-  }
-  return FALSE;
-}
-
-// Match the driverDescription against the driverList
-PERFORM_API unsigned int SNDGetAssignedDriverIndex(void)
-{
-  return driverIndex;
-}
-
-PERFORM_API void SNDGetVolume(float *left, float * right)
-{
-    // TODO
-}
-
-PERFORM_API void SNDSetVolume(float left, float right)
-{
-    // TODO
-}
-
-PERFORM_API BOOL SNDIsMuted(void)
-{
-    return isMuted;
-}
-
-PERFORM_API void SNDSetMute(BOOL aFlag)
-{
-    isMuted = aFlag;
 }
 
 // Routine to begin playback
@@ -407,6 +367,7 @@ PERFORM_API void SNDTerminate(void)
         NSLog(@"PortAudio Pa_StartStream error: %s\n", Pa_GetErrorText( err ) );
     }
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // vendBuffersToStreamManagerIOProc
