@@ -506,14 +506,15 @@ int get_bus_speed()
 #endif
         if (synthOutputBuffer != nil) {
           [processorChain processBuffer: synthOutputBuffer forTime: clientNowTime];
-        }        
+        }
         if (processFinishedCallback != NULL)
             processFinishedCallback(); // SKoT: should this be a selector, hmm hmm...?
             
         if (generatesOutput) {
           clientNowTime = [self streamTime]  + [synthOutputBuffer duration] * [outputQueue processedBuffersCount];
           [outputQueue addProcessedBuffer: synthOutputBuffer];
-          [synthOutputBuffer release];    
+          [synthOutputBuffer release];
+	  synthOutputBuffer = nil;
         }
         else {
           clientNowTime += [synthOutputBuffer duration];
