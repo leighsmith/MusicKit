@@ -25,6 +25,11 @@ machines, but build only once.  Look up the rdist program in the UNIX
 Manual Pages for information on how to distribute the installation to
 multiple machines.
 
+When you say "make install DSTROOT=/root_dir" at the top level, all
+projects are built.  It is also possible to say "make install DSTROOT=/foo"
+(or any of the other make targets) within a particular project to build
+only that project.
+
 
 SHARED INSTALLATION IN A NETWORK
 
