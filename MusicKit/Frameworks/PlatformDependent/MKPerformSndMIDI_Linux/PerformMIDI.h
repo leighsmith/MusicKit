@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.6  2001/05/23 18:19:57  leighsmith
+  Added MKMDErrorString
+
   Revision 1.5  2001/05/12 08:46:59  sbrandon
   - added gsdoc comments to most method declarations
   - changed declarations from extern kern_return_t to PERFORM_API MKMDReturn,
@@ -191,6 +194,15 @@ typedef struct _MKMDReplyFunctions {
     @discussion This allows us to introduce anything necessary for library declarations, namely for Windows. Unused in MacOS X.
 */
 #define PERFORM_API
+
+/*!
+    @function       MKMDErrorString
+    @abstract       Interpret the errorCode and return the appropriate error string.
+    @param          errorCode
+                        The error code returned by a MKMD function.
+    @result         Returns a readable string.
+*/
+PERFORM_API char *MKMDErrorString(MKMDReturn errorCode);
 
 /*!
     @function       MKMDGetMIDIDeviceOnHost

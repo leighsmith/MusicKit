@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/05/23 18:21:53  leighsmith
+  Added MKMDErrorString
+
   Revision 1.2  2001/05/12 08:43:43  sbrandon
   - added MKMDGetMIDIDeviceOnHost from MacOSX framework
   - changed return type of appropriate methods to MKMD_SUCCESS instead of 0
@@ -69,6 +72,14 @@ PERFORM_API MKMDPort MKMDGetMIDIDeviceOnHost(const char *hostname)
     }
     else
         return !MKMD_PORT_NULL; // kludge it so it seems initialised
+}
+
+// Interpret the errorCode and return the appropriate error string
+PERFORM_API char *MKMDErrorString(MKMDReturn errorCode)
+{
+    static char errMsg[80];
+    sprintf(errMsg, "MusicKit Linux MIDI Driver error encountered, code %d", errorCode);
+    return errMsg;
 }
 
 /* Routine MKMDBecomeOwner */
