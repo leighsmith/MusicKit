@@ -44,6 +44,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/04/16 04:23:47  leigh
+  Comment cleanup
+
   Revision 1.4  2000/04/07 18:45:42  leigh
   Upgraded logging to NSLog
 
@@ -619,19 +622,16 @@ static void alternatePatchMsg(void)
 	  return self;
       }
       case MK_noteUpdate:
-	if (noteTag == MAXINT) { /* It's a broadcast */ 
-	    register patchList *tmp;
-	    register patchList *last;
-	    for (tmp  = (patchList *)[_patchLists elementAt:0],
-
-		 last = tmp + [_patchLists count];
-		 (tmp < last);
-		 tmp++) {
+	if (noteTag == MAXINT) { /* It's a broadcast */
+            register patchList *tmp = (patchList *)[_patchLists elementAt:0];
+            register patchList *last = tmp + [_patchLists count];
+	    for (; tmp < last; tmp++) {
 		currentPatch = tmp->activeOldest;
-		if (currentPatch) 
-		  do {
-		      [currentPatch noteUpdate:aNote];
-		  } while(currentPatch = NEXTSP(currentPatch)); 
+		if (currentPatch) {
+                    do {
+                        [currentPatch noteUpdate:aNote];
+                    } while((currentPatch = NEXTSP(currentPatch))); 
+                }
 	    }
 	    /* Now save the parameters in a note in updates so 
 	       that new  notes on this channel can be inited properly. */
@@ -668,9 +668,7 @@ static void alternatePatchMsg(void)
       default:
 	break;
     }
-#if _MK_MAKECOMPILERHAPPY
     return self; /* This can never happen */
-#endif
 }
 
 -orchestra

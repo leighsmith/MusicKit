@@ -14,6 +14,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.3  2000/04/16 04:21:33  leigh
+  Comment cleanup
+
   Revision 1.2  1999/07/29 01:16:39  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -156,9 +159,9 @@ static BOOL fastActivation = NO;
   /* TYPE: Copying: Returns a copy of the receiver.
    * Creates and returns a new inactive Performer as
    * a copy of the receiver.  
-   * The new object has the same \fBtimeShift\fR and 
-   * \fBduration\fR values as the reciever. Its
-   * \fBtime\fR and \fBnextPerform\fR variables 
+   * The new object has the same timeShift and 
+   * duration values as the reciever. Its
+   * time and nextPerform variables 
    * are set to 0.0. It has its own noteSenders which contains
    * copies of the values in the receiver's collection. The copies are 
    * added to the collection by addNoteSender:. 

@@ -25,6 +25,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.4  2000/04/16 04:20:36  leigh
+  Comment cleanup
+
   Revision 1.3  2000/04/02 17:12:08  leigh
   Cleaned up doco
 
@@ -144,7 +147,7 @@
 
 - (void)dealloc
   /* TYPE: Creating
-   * This invokes \fBfreenoteSenders\fR and \fBfreenoteReceivers\fR.
+   * This invokes freenoteSenders and freenoteReceivers.
    * Then it frees itself.
    */
 {

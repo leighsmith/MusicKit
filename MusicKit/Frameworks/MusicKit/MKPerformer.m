@@ -107,6 +107,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/04/16 04:22:01  leigh
+  Comment cleanup
+
   Revision 1.3  2000/03/29 03:17:08  leigh
   Cleaned up doco and ivar declarations
 
@@ -271,8 +274,8 @@ Modification history:
 /* Conductor control ------------------------------------------------ */
 
 -setConductor:(id)aConductor
-  /* TYPE: Accessing the Conductor; Sets the receiver's Conductor to \fIaConductor.
-   * Sets the receiver's Conductor to \fIaConductor
+  /* TYPE: Accessing the Conductor; Sets the receiver's Conductor to aConductor.
+   * Sets the receiver's Conductor to aConductor
    * and returns the receiver.
    * Illegal while the receiver is active. Returns nil in this case, else self.
    */
@@ -362,9 +365,9 @@ Modification history:
 /* Time window variables ------------------------------------------- */
 
 -setTimeShift:(double)shift
-  /* TYPE: Accessing time; Delays performance for \fIshift beats.
+  /* TYPE: Accessing time; Delays performance for shift beats.
    * Sets the begin time of the receiver;
-   * the receiver's performance is delayed by \fIshift beats.
+   * the receiver's performance is delayed by shift beats.
    * Returns the receiver.
    * Illegal while the receiver is active. Returns nil in this case, else self.
    */
@@ -376,8 +379,8 @@ Modification history:
 }		
 
 -setDuration:(double)dur
-  /* TYPE: Accessing time;Sets max duration of the receiver to \fIdur beats.
-   * Sets the maximum duration of the receiver to \fIdur beats.
+  /* TYPE: Accessing time;Sets max duration of the receiver to dur beats.
+   * Sets the maximum duration of the receiver to dur beats.
    * Returns the receiver.
    * Illegal while the receiver is active. Returns nil in this case, else self.
    */

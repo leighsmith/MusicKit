@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2000/04/16 04:20:36  leigh
+  Comment cleanup
+
   Revision 1.4  2000/03/31 00:06:21  leigh
   Adopted OpenStep naming of factory methods
 
@@ -202,7 +205,7 @@ MKDataType;
 #endif
     unsigned _mkPars[MK_MKPARBITVECTS]; /* Bit vectors specifying presence of Music Kit parameters. */
     unsigned *_appPars; /* Bit-vector for application-defined parameters. */
-    short _highAppPar; /* Highest bit in \fB_appPars\fR (0 if none). */
+    short _highAppPar; /* Highest bit in _appPars (0 if none). */
     /* _orderTag disambiguates simultaneous notes. If it's negative,
        it means that the Note is actually slated for deletion. In this case,
        the ordering is the absolute value of _orderTag. */
