@@ -17,6 +17,9 @@
 /* Modification History:
 
    $Log$
+   Revision 1.6  2001/01/31 21:32:56  leigh
+   Typed note parameters
+
    Revision 1.5  2000/11/25 21:53:29  leigh
    copyright added and source formatting
 
@@ -177,7 +180,7 @@ void _MKSetScoreRecorderOfPartRecorder(aPR,aSR)
     return part;
 }
 
--_realizeNote:aNote fromNoteReceiver:aNoteReceiver
+- _realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
   /* Private */
 {
     if (!_noteSeen) {

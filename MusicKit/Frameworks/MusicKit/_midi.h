@@ -16,6 +16,9 @@
   Modification history:
 
   $Log$
+  Revision 1.6  2001/01/31 21:32:56  leigh
+  Typed note parameters
+
   Revision 1.5  2000/10/01 06:57:01  leigh
   Made _map a NSMapTable.
 
@@ -88,7 +91,7 @@ extern _MKMidiInStruct *_MKFinishMidiIn(_MKMidiInStruct *ptr);
 /* Functions for MK->MIDI semantic conversion. */
 extern _MKMidiOutStruct *_MKInitMidiOut(void);
 extern  _MKMidiOutStruct *_MKFinishMidiOut(_MKMidiOutStruct *ptr);
-extern void _MKWriteMidiOut(id aNote,double timeTag,unsigned chan,
+extern void _MKWriteMidiOut(MKNote *aNote,double timeTag,unsigned chan,
 			    _MKMidiOutStruct *ptr,id noteReceiver);
 extern unsigned char _MKGetSysExByte(char **strP);
 

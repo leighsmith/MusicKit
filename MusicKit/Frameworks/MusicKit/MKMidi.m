@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.33  2001/01/31 21:36:45  leigh
+  Typed note parameters
+
   Revision 1.32  2001/01/17 22:59:50  leigh
   Fixed bug caused by driverInfoInitialized being set YES, even if there were no drivers available
 
@@ -237,7 +240,7 @@ Modification history:
 #import "NoteReceiverPrivate.h"
 #import "MidiPrivate.h"
 
-@implementation MKMidi: NSObject
+@implementation MKMidi
 
 #define MIDIINPTR(midiobj) ((_MKMidiInStruct *)((MKMidi *)(midiobj))->_pIn)
 #define MIDIOUTPTR(midiobj) ((_MKMidiOutStruct *)(midiobj)->_pOut)
@@ -1693,7 +1696,7 @@ static void cancelQueueReq(MKMidi *self)
 
 /* Receiving notes */
 
-- _realizeNote: aNote fromNoteReceiver: aNoteReceiver
+- _realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver
     /* Performs note by converting it to midi and emiting it. 
        Is careful about matching noteOns with noteOffs. For
        notes of type MK_noteDur, schedules up a message to

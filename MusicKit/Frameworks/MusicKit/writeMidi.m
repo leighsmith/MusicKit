@@ -29,6 +29,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2001/01/31 21:32:56  leigh
+  Typed note parameters
+
   Revision 1.8  2000/10/01 06:49:35  leigh
   Replaced HashTable with NSMapTable functions.
 
@@ -271,8 +274,8 @@ static void noteOff(unsigned char chan,
 
 #define MIDICLIP(_x) ((unsigned char) MIDI_DATA(MAX(0,_x)))
 
-void  _MKWriteMidiOut(id aNote,double timeTag,unsigned chan, /* 1 based */
-		      _MKMidiOutStruct *ptr,id noteReceiver)
+void  _MKWriteMidiOut(MKNote *aNote, double timeTag, unsigned chan, /* 1 based */
+		      _MKMidiOutStruct *ptr, MKNoteReceiver *noteReceiver)
     /*
      * Convert the note into midi messages and write them as specified 
      * in ptr. Also inserts timeTag. 

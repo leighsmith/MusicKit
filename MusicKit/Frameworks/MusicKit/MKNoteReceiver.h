@@ -53,6 +53,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2001/01/31 21:32:57  leigh
+  Typed note parameters
+
   Revision 1.6  2000/11/25 22:54:46  leigh
   Enforced ivar privacy
 
@@ -167,7 +170,7 @@
  * List.
  */
 
-- receiveNote:aNote; 
+- receiveNote: (MKNote *) aNote; 
  /* 
  * If the receiver isn't squelched, this sends the message
  * 
@@ -179,7 +182,7 @@
  * Returns the receiver, or nil if the receiver is squelched.
  */
 
-- receiveNote:aNote atTime:(double )time; 
+- receiveNote: (MKNote *) aNote atTime: (double) time; 
  /* 
  * Schedules a request (with aNote's Conductor) for 
  * receiveNote:aNote to be sent to the receiver at time
@@ -187,7 +190,7 @@
  * performance.  Returns the receiver.
  */
 
-- receiveNote:aNote withDelay:(double )delayTime; 
+- receiveNote: (MKNote *) aNote withDelay:(double) delayTime; 
  /* 
  * Schedules a request (with aNote's Conductor) for 
  * receiveNote:aNote to be sent to the receiver at time
@@ -195,7 +198,7 @@
  * is received.  Returns the receiver.
  */
 
-- receiveAndFreeNote:aNote withDelay:(double )delayTime; 
+- receiveAndFreeNote: (MKNote *) aNote withDelay:(double) delayTime; 
  /* 
  * Schedules a request (with aNote's Conductor) for 
  * receiveAndFreeNote:aNote to be sent to the receiver at time
@@ -203,14 +206,14 @@
  * is received.  Returns the receiver.
  */
 
-- receiveAndFreeNote:aNote; 
+- receiveAndFreeNote: (MKNote *) aNote; 
  /* 
  * Sends the message receiveNote:aNote to the receiver and
  * then frees the Note.
  * Returns the receiver.
  */
 
-- receiveAndFreeNote:aNote atTime:(double )time; 
+- receiveAndFreeNote: (MKNote *) aNote atTime:(double) time; 
  /* 
  * Schedules a request (with aNote's Conductor) for 
  * receiveAndFreeNote:aNote to be sent to the receiver at time

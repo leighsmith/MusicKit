@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2001/01/31 21:32:57  leigh
+  Typed note parameters
+
   Revision 1.6  2000/05/06 01:14:07  leigh
   Removed redundant ivar decls in implementation
 
@@ -241,7 +244,7 @@ Modification history:
     return self;
 }
  
--receiveNote:aNote
+-receiveNote: (MKNote *) aNote
   /* TYPE: Receiving; Forwards note to its owner, unless squelched.
      */
 {
@@ -251,7 +254,7 @@ Modification history:
     return self;
 }
 
--receiveNote:aNote atTime:(double)time 
+-receiveNote: (MKNote *) aNote atTime: (double) time 
     /* TYPE: Receiving; Receive Note at time specified in beats.
        Receives the specifed note at the specified time using
        the note's Conductor for time coordination. */
@@ -260,7 +263,7 @@ Modification history:
     return self;
 }
 
--receiveNote:aNote withDelay:(double)delayTime
+-receiveNote: (MKNote *) aNote withDelay:(double)delayTime
     /* Receives the specifed note, delayed by delayTime from the
        current time, as far as the note's conductor is concerned. 
        Uses the note's Conductor for time coordination. */
@@ -269,7 +272,7 @@ Modification history:
     return self;
 }
 
--receiveAndFreeNote:aNote withDelay:(double)delayTime
+-receiveAndFreeNote: (MKNote *) aNote withDelay:(double)delayTime
     /* Receives the specifed note, delayed by delayTime from the
        current time, as far as the note's conductor is concerned. Then
        frees the note. */
@@ -278,7 +281,7 @@ Modification history:
     return self;
 }
 
--receiveAndFreeNote:aNote
+-receiveAndFreeNote: (MKNote *) aNote
     /* Receive note and then free it. */
 {
     [self receiveNote:aNote];
@@ -286,7 +289,7 @@ Modification history:
     return self;
 }
 
--receiveAndFreeNote:aNote atTime:(double)time
+-receiveAndFreeNote: (MKNote *) aNote atTime:(double)time
     /* Receive the specifed note at the specified time using
        the note's Conductor for time coordination. Then free the note. */
 {
