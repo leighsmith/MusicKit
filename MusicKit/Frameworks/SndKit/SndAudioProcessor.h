@@ -103,8 +103,8 @@
 /*!
   @method     initWithParameterDictionary:name:
   @abstract   Initialization using a dictionary of parameters.
-  @param      paramDictionary
-  @param      name
+  @param      paramDictionary NSDictionary of parameters and values to initialise SndAudioProcessor instance with.
+  @param      name Name of the SndAudioProcessor to initialise.
   @result     Returns <B>self</B>.
  */
 - initWithParameterDictionary: (NSDictionary *) paramDictionary name: (NSString *) name;
@@ -147,7 +147,7 @@
  @method     paramLabel:
  @abstract   Returns a label or extra text describing the parameters units of measurement.
  @param      index Parameter index
- @discussion Example: if the parameter is in deciDels, one may want to return "dB"
+ @discussion Example: if the parameter is in deciBels, an appropriate result might be to return "dB"
  @result     Returns the label for the parameter.
 */
 - (NSString *) paramLabel: (const int) index;
@@ -159,7 +159,7 @@
   @discussion Example: An instance variable may have a floating point range [0,1], but it
               represents a deciBel amount for user purposes. This method is an opportunity for the
               object to provide a more meaningful description of the parameter.
-  @result     Returns a containing the alternative string representation of the parameter
+  @result     Returns an NSString containing the alternative string representation of the parameter
 */
 - (NSString *) paramDisplay: (const int) index;
 
@@ -198,7 +198,6 @@
              method gets called when a processor gets added to the chain,
              with the id of the chain.
  @param      inChain
- @result     void.
 */
 - (void) setAudioProcessorChain: (SndAudioProcessorChain *) inChain;
 
@@ -207,7 +206,7 @@
   @abstract   Returns the SndAudioProcessorChain to which the processor is
               attached
   @discussion
-  @result     id of the SndAudioProcessorChain
+  @result     Returns a SndAudioProcessorChain instance.
 */
 - (SndAudioProcessorChain *) audioProcessorChain;
 
@@ -229,43 +228,35 @@
 
 /*!
   @method     setName:
-  @abstract
-  @result
+  @abstract   Assigns the SndAudioProcessor instance a new name.
+  @result     Returns self.
   @discussion
 */
 - setName: (NSString *) aName;
 
 /*!
   @method     name
-  @abstract
-  @result
-  @discussion
+  @abstract   Returns the name of the audio processor.
+  @result     Returns an NSString instance.
+  @discussion The name may or may not be unique to each instance of a SndAudioProcessor.
 */
 - (NSString *) name;
-
-/*!
-  @method     description
-  @abstract
-  @result
-  @discussion
-*/
-- (NSString *) description;
 
 /*!
   @method     paramDictionary
   @abstract   Returns an NSDictionary holding all parameters of a SndAudioProcessor instance.
   @result     An autoreleased NSDictionary.
   @discussion Each element in the dictionary has a key with an NSString of the parameter name and an 
-              object which is an NSValue of a floating point value.
+              object which is an NSValue of the floating point parameter value.
 */
 - (NSDictionary *) paramDictionary;
 
 /*!
   @method     setParamsWithDictionary:
-  @abstract   Creates parameters with names and values provided by the given NSDictionary.
+  @abstract   Sets parameters with names and values provided by the given NSDictionary.
   @param      paramDictionary an NSDictionary holding NSString keys and NSValue float encoded objects.
   @discussion Each element in the dictionary has a key with an NSString of the parameter name and an
-              object which is an NSValue of a floating point value.
+              object which is an NSValue of the floating point parameter value.
  */
 - (void) setParamsWithDictionary: (NSDictionary *) paramDictionary;
 
@@ -301,6 +292,14 @@
  @result Returns the current parameter delegate. 
  */
 - (id) parameterDelegate;
+
+@end
+
+@protocol SndAudioProcessorParameterDelegate
+
+- (void) parameter: (unsigned int) parameter 
+  ofAudioProcessor: (SndAudioProcessor *) processor
+       didChangeTo: (float) inValue;
 
 @end
 
