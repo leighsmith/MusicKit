@@ -1,0 +1,142 @@
+#!/bin/zsh
+# $Id$
+#
+# zsh script to package the binaries of apps, examples and music which
+# currently are known to work ready for users.
+# We only want to preserve the latest app versions on the ftp location
+#
+# Leigh Smith <leigh@tomandandy.com> 2001/2/23
+#
+# Applications:
+applications=(MIDIFilePlayback.app ScorePlayer.app MidiRecord.app PianoRoll.app)
+# To check:
+# MidiEcho.app MidiLoop.app
+# Needs work:
+# EnvelopeEd.app
+
+# Command line utilities:
+cmds=(playscore scorefile2stella convertscore playscorefilemidi example1 example3)
+
+packagename=MKApps
+packagetitle="MusicKit Applications, Utilities and Examples"
+case `uname` in
+    "Darwin")
+        packagefrom=/Local/Applications
+        installinto=/Applications
+	osacronym=MOX
+	;;
+    "Rhapsody")
+        packagefrom=/Local/Library/Frameworks
+        installinto=/Local/Library/Frameworks
+	osacronym=MOXS
+	;;
+    *)
+	echo "Error: unsupported operating system `uname`"
+	exit 1;
+	;;
+esac
+
+if [ x_$MKICON = x_ ]; then
+    echo "Error: Environment variable MKICON must be set to point to the .tiff file used for the $packagetitle icon."
+    exit 1;
+fi
+if [ x_$1 = x_ ]; then
+    echo "Usage: $0 version_number"
+    echo "where version_number = V.R.P"
+    exit 1;
+else
+    appversion=$1
+fi
+
+workingdir=/tmp
+install_file_directory=${packagename}Install
+
+mkdir -p $workingdir/$install_file_directory
+cd $workingdir
+
+foreach f ($applications $cmds)
+  cp -r $packagefrom/$f $install_file_directory/
+end
+
+# This is the point where you'll want to make sure that the
+# permissions and ownership of the files and directories in your
+# application are set to the appropriate values. The goal is to set
+# all the files to the user-id that you'd expect when they are
+# installed by the root user, in most cases you'll want to set the
+# ownership to root. Installations by those other than root will
+# correctly default to the installer's user-id. The situation with
+# respect to permissions is much simpler, since they'll be consistent
+# regardless of which user does the installation. To accomplish this,
+# you'll need to be logged in as root.
+
+/bin/chmod -R ugo-w $install_file_directory/
+/bin/chmod -R ugo+rX $install_file_directory/
+
+# we make the install_file_directory user writable otherwise the installer
+# will set the parent directory the application is stored into read-only which
+# stops a second reinstall.
+/bin/chmod -R u+w $install_file_directory/
+
+echo "Changing ownership to root.wheel, log in as root."
+echo "/usr/sbin/chown -R root.wheel $workingdir/$install_file_directory/" | su root -s
+
+cp $MKICON ./$packagename.tiff
+
+
+#  The .info file is in a basic key/value format. The keys that are
+#  commonly used are defined below, a more complete list of keys is
+#  available in the Yellow Box release notes
+#  (file:/System/Documentation/Developer/YellowBox/ReleaseNotes/CreatingPackages.html).
+
+#  The Title, Version and Description keys are the values displayed in
+#  the Installer.app user interface. All are single line strings,
+#  including Description.
+
+#  The DefaultLocation key is the destination directory where the
+#  contents of the package will be installed. This can be changed by
+#  the user if the Relocatable key is set to YES.
+
+#  Some packages should only be installed as root, and those packages
+#  will have NeedsAuthorization set to YES. If there is no requirement
+#  to be root, you can set this key to NO.
+
+#  If the package is an application, set the Application key to YES,
+#  otherwise to No. If you do not want your package contents to be
+#  deletable from Installer.app, set InstallOnly to YES. Finally, in
+#  most cases, you will want to allow the installation of a package to
+#  be stopped during the process. There are cases where that may not
+#  be wise (if your application has a packageName.pre_install script
+#  for example), and in those cases you'll want to set the DisableStop
+#  to YES, otherwise it should be set to NO.
+
+cat > $packagename.info << EOF
+Title                $packagetitle
+Version              $appversion
+Description          This package contains frameworks for the $packagetitle.
+DefaultLocation      $installinto
+Relocatable          YES
+Diskname             $packagename #%d
+NeedsAuthorization   YES
+Application          NO
+InstallOnly          NO
+DisableStop          NO
+RequiresReboot       NO
+InstallFat           NO
+EOF
+
+# perhaps use DeleteWarning
+
+package $install_file_directory $packagename.info $packagename.tiff 
+
+# -d $installinto
+
+# just tar the file ready for transmission, no point compressing.
+shipfile=$workingdir/$packagename-$appversion.b.$osacronym.pkg.tar
+tar cf $shipfile $packagename.pkg
+
+echo "Deleting temporary files, log in as root."
+echo "/bin/rm -r -f $workingdir/$install_file_directory" | su root -s
+
+rm -r -f $workingdir/$packagename.pkg
+
+echo "Finished. Final package is located at $shipfile"
