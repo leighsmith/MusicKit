@@ -36,6 +36,12 @@
 Modification history:
 
  $Log$
+ Revision 1.11  2002/04/15 14:28:15  sbrandon
+ - changed symbols and types NSDictionaries to NSMapTables, because NSMapTables
+   do not have to retain their objects (and I have set them up not to do so).
+   This had been causing dealloc loops for objects held in the main dict
+   and trying to remove themselves in their -dealloc methods.
+
  Revision 1.10  2002/04/03 03:59:41  skotmcdonald
  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -105,21 +111,27 @@ Modification history:
 {
   self = [super init];
   if (self != nil) {
-    symbols = [NSMutableDictionary new];
-    types   = [NSMutableDictionary new];
+  // NSObjectMapKeyCallBacks are objects which will be retained/released (all our keys
+  // are NSStrings, so I'm happy with that)
+  // NSNonRetainedObjectMapValueCallBacks are objects, but will never be retained or
+  // released. This means that if the objects in question are ever dealloced, they MUST
+  // call MKRemoveObjectName() in their dealloc method, so the map tables don't hold
+  // dangling references.
+    symbols    = NSCreateMapTable(NSObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks,10); 
+    types      = NSCreateMapTable(NSObjectMapKeyCallBacks, NSNonRetainedObjectMapValueCallBacks,10);
   }
   return self;
 }
 
 - (void) dealloc
 {
-  if (symbols != nil) {
-    [symbols release];
-    symbols = nil;
+  if (symbols != NULL) {
+    NSFreeMapTable(symbols);
+    symbols = NULL;
   }
-  if (types != nil) {
-    types = nil;
-    [types release];
+  if (types != NULL) {
+    NSFreeMapTable(types);
+    types = NULL;
   }
   [super dealloc];
 }
@@ -132,17 +144,20 @@ strings aren't copied. The type is set to be global.
 MK_envelope, MK_waveTable or MK_object. (Actually, it's anything
                                          without the AUTOIMPORT bit on.) */
 {
-  NSEnumerator *enumerator = [globalTable->symbols keyEnumerator];
+//  NSEnumerator *enumerator = [globalTable->symbols keyEnumerator];
+  NSMapEnumerator enumerator = NSEnumerateMapTable(globalTable->symbols);
   id name;
   id obj;
   unsigned short type;
 
-  while ((name = [enumerator nextObject])) {
-    obj = [globalTable->symbols objectForKey: name];
-    type = [[globalTable->types objectForKey: name] unsignedShortValue];
+//  while ((name = [enumerator nextObject])) {
+  while (NSNextMapEnumeratorPair(&enumerator, (void**)&name, (void**)&obj)) {
+//    obj = [globalTable->symbols objectForKey: name];
+    type = [(id)NSMapGet(globalTable->types, name) unsignedShortValue];
     if (type & _MK_AUTOIMPORTBIT)
       _MKNameTableAddName(localTable, name, nil, obj, type | _MK_NOFREESTRINGBIT, NO);
   }
+  NSEndMapTableEnumeration(&enumerator);
 }
 
 _MKNameTable *_MKNameTableAddName(_MKNameTable * table, NSString *theName,id theOwner,
@@ -159,8 +174,11 @@ _MKNameTable *_MKNameTableAddName(_MKNameTable * table, NSString *theName,id the
 {
   if (!copyIt)
     theType |= _MK_NOFREESTRINGBIT;
-  [table->types setObject: [NSNumber numberWithUnsignedShort: theType] forKey: theName];
-  [table->symbols setObject: theObject forKey: theName];
+//  [table->types setObject: [NSNumber numberWithUnsignedShort: theType] forKey: theName];
+//  [table->symbols setObject: theObject forKey: theName];
+
+  NSMapInsert(table->types, theName, [[NSNumber numberWithUnsignedShort: theType] retain] );
+  NSMapInsert(table->symbols, theName, theObject);
   return table;
 }
 
@@ -171,11 +189,11 @@ id _MKNameTableGetObjectForName(_MKNameTable *table,NSString *theName,id theOwne
  * nil is returned.
  */
 {
-  id foundObject = [table->symbols objectForKey: theName];
+  id foundObject = NSMapGet(table->symbols, theName);
   id foundType;
 
   if(foundObject != nil) {
-    foundType = [table->types objectForKey: theName];
+    foundType = NSMapGet(table->types, theName);
     *typeP = TYPEMASK([foundType unsignedShortValue]); /* Clear bits */
     return foundObject;
   }
@@ -191,19 +209,26 @@ NSString * _MKNameTableGetObjectName(_MKNameTable *table,id theObject,id *theOwn
  * its name and sets theOwner to its owner (nil). Otherwise nil is returned.
  */
 {
-  NSArray *allFoundNames = [table->symbols allKeysForObject: theObject];
-  NSString *firstFoundName;
-
-  if (allFoundNames != nil && [allFoundNames count]) {
-    firstFoundName = [allFoundNames objectAtIndex: 0]; // only the first one.
+  NSMapEnumerator e = NSEnumerateMapTable(table->symbols);
+  id obj,key;
+  NSString* firstFoundName = nil;
+  while (NSNextMapEnumeratorPair(&e, (void **)&key, (void **)&obj)) {
+    if (obj == theObject) { // pointer equality, since the maptable does not copy objects
+      firstFoundName = key;
+      break;
+    }
+  }
+  NSEndMapTableEnumeration(&e);
+  
+  if (firstFoundName) {
     *theOwner = nil; // never used anyway
-    return firstFoundName;
+    return [[firstFoundName retain] autorelease];
   }
   else
     return nil;
 }
 
-#if 0
+#if 0 /* therefore not updated to NSMapTable usage */
 static _MKNameTable *_MKNameTableRemoveName(_MKNameTable *table,NSString *theName,id theOwner)
 /*
  * Removes the entry associated to (theName x theOwner) if any.
@@ -228,13 +253,21 @@ _MKNameTable *_MKNameTableRemoveObject(_MKNameTable *table,id theObject)
  * Find the key, then remove the symbol and type entries.
  */
 {
-  NSArray *allFoundNames = [table->symbols allKeysForObject: theObject];
-  NSString *firstFoundName;
+//  NSArray *allFoundNames = [table->symbols allKeysForObject: theObject];
+  NSMapEnumerator e = NSEnumerateMapTable(table->symbols);
+  id obj,key;
+  NSString* firstFoundName = nil;
+  while (NSNextMapEnumeratorPair(&e, (void **)&key, (void **)&obj)) {
+    if (obj == theObject) { // pointer equality, since the maptable does not copy objects
+      firstFoundName = key;
+      break;
+    }
+  }
+  NSEndMapTableEnumeration(&e);
 
-  if (allFoundNames != nil && [allFoundNames count]) {
-    firstFoundName = [allFoundNames objectAtIndex: 0]; // only the first one.
-    [table->symbols removeObjectForKey: firstFoundName];
-    [table->types removeObjectForKey: firstFoundName];
+  if (firstFoundName) {
+    NSMapRemove(table->symbols,firstFoundName);
+    NSMapRemove(table->types,firstFoundName);
     return table;
   }
   else
@@ -337,7 +370,7 @@ BOOL MKNameObject(NSString * nameStr,id object)
 
 NSString * MKGetObjectName(id object)
 /*
- * Returns object name if any. If object is not found, returns NULL. The name
+ * Returns object name if any. If object is not found, returns nil. The name
  * is not copied and should not be freed or altered by caller.
  */
 {

@@ -7,6 +7,12 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2002/04/15 14:28:15  sbrandon
+  - changed symbols and types NSDictionaries to NSMapTables, because NSMapTables
+    do not have to retain their objects (and I have set them up not to do so).
+    This had been causing dealloc loops for objects held in the main dict
+    and trying to remove themselves in their -dealloc methods.
+
   Revision 1.2  1999/07/29 01:25:59  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -26,8 +32,8 @@ Modification history:
 
 @interface _MKNameTable: NSObject
 {
-    NSMutableDictionary *symbols;
-    NSMutableDictionary *types;
+    NSMapTable *symbols;
+    NSMapTable *types;
 }
 
 - (id) initWithCapacity: (unsigned) capacity;
