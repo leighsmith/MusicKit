@@ -258,7 +258,7 @@
                 doing anything, it can tke a little while for the delegate message to
                 appear. Even if this is the case, this method should not block for long.
     @param      target id target object
-    @param      sel SEL the selector to be sent, eg @selector(description:withObject:)
+    @param      sel SEL the selector to be sent, eg \@selector(description:withObject:)
     @param      arg1 the first argument in the selector
     @param      arg2 the second argument in the selector
 */

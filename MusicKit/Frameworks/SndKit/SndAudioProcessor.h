@@ -267,17 +267,18 @@
   @param      value An NSValue holding an encoded float value between 0.0 and 1.0.
   @discussion
 */
-// - (void) setParamWithKey: (NSString *) keyName toValue: (NSValue *) value;
 - (void) setParamWithKey: (NSString *) keyName toValue: (NSNumber *) value;
+// TODO - (void) setParamWithKey: (NSString *) keyName toValue: (NSValue *) value;
+
 
 /*!
   @method     paramObjectForIndex:
-  @abstract
-  @result
+  @abstract   Returns the parameter value as an NSNumber given an index.
+  @result     Returns an NSNumber instance.
   @discussion
 */
-// - (id) paramObjectForIndex: (const int) i;
 - (NSNumber *) paramObjectForIndex: (const int) i;
+// TODO - (id) paramObjectForIndex: (const int) i;
 
 /*!
   @method setParameterDelegate:

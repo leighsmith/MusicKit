@@ -56,6 +56,21 @@
 @class SndAudioProcessorChain;
 
 /*!
+  @enum       SndConversionQuality
+  @abstract   Sound conversion quality codes
+  @constant   SndConvertLowQuality Low quality conversion, using linear interpolation.
+  @constant   SndConvertMediumQuality Medium quality conversion. Uses bandlimited interpolation,
+              using a small filter. Relatively fast.
+  @constant   SndConvertHighQuality High quality conversion. Uses bandlimited interpolation, using a
+              large filter. Relatively slow.
+ */
+typedef enum {
+    SndConvertLowQuality = 0,
+    SndConvertMediumQuality = 1,
+    SndConvertHighQuality  = 2
+} SndConversionQuality;
+
+/*!
 @class Snd
 @abstract The Snd object encapsulates a sounds format parameters and it's sample data.
           It supports reading and writing to a soundfile, playback of sound,
@@ -119,21 +134,6 @@ from 1 to many, many to 1, or any power of 2 to any other power of 2
 (eg 2 to 8, 4 to 2, 2 to 16 etc).
 
 */
-
-/*!
-  @enum       SndConversionQuality
-  @abstract   Sound conversion quality codes
-  @constant   SndConvertLowQuality Low quality conversion, using linear interpolation.
-  @constant   SndConvertMediumQuality Medium quality conversion. Uses bandlimited interpolation,
-              using a small filter. Relatively fast.
-  @constant   SndConvertHighQuality High quality conversion. Uses bandlimited interpolation, using a
-  	      large filter. Relatively slow.
- */
-typedef enum {
-    SndConvertLowQuality = 0,
-    SndConvertMediumQuality = 1,
-    SndConvertHighQuality  = 2
-} SndConversionQuality;
 
 @interface Snd : NSObject
 {
@@ -572,7 +572,7 @@ typedef enum {
 
 /*!
   @method dataEncodedAsFormat:
-  @abstract Writes the Snd's name (if any), sample format, and sound data (if any).
+  @abstract Creates an NSData instance holding the Snd's name (if any), sample format, and sound data (if any).
   @param  dataFormat is an NSString describing the data format.
   @result Returns an autoreleased NSData instance, or nil if unable to encode.
   @discussion The dataFormat parameter matches sound file extensions. Currently however,
@@ -602,7 +602,9 @@ typedef enum {
               sound is a pointer to a <b>NULL</b>-terminated list of
               pointers to SndSoundStructs, one for each fragment. To
               examine or manipulate the samples in a fragmented sound,
-              you must understand the SndSoundStruct structure.  
+              you must understand the SndSoundStruct structure.
+ 
+              TODO This should probably be renamed to "bytes" matching NSData's naming scheme.
 */
 - (void *) data;
 
