@@ -39,6 +39,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2001/07/02 16:37:58  sbrandon
+  - added newline onto end of file
+
   Revision 1.3  2000/02/07 23:43:03  leigh
   Comment corrections
 
