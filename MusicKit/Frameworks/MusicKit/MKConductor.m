@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/01/13 06:44:07  leigh
+  Added a missing (pre-OpenStep conversion!) _error: method, improved forward declaration of newMsgRequest
+
   Revision 1.4  1999/09/04 22:02:17  leigh
   Added setDeltaT, deltaT class methods. Merged to single masterConductorBody method.
 
@@ -760,7 +763,8 @@ popMsgQueue(msgQueue)
     return(sp);
 }
 
-static MKMsgStruct *newMsgRequest();
+// forward declaration
+static MKMsgStruct *newMsgRequest(BOOL,double,SEL,id,int,id,id);
 
 static void condInit()
 /*sb: changed from void to (id)callingObj because I need to tell initializeBackgroundThread which object the main conductor is, so that the conductor can be sent objC messages from the background thread.
@@ -782,14 +786,11 @@ static void condInit()
     //return nil;
 }
 
-
 -_initialize
     /* Private method that initializes the Conductor when it is created
        and after it finishes performing. Sent by self only. Returns self.
        BeatSize is not reset. It retains its previous value. */
 {	
-    static const char * const errorString = 
-      "Conductor's end-of-list was erroneously evaluated (shouldn't happen).\n";
     pauseFor = MKCancelMsgRequest(pauseFor);
     /* timeOffset is inititialized to 0 because it's an instance var. Nowdays so are the rest, but so what? */
     oldAdjustedClockTime = 0;
@@ -797,15 +798,13 @@ static void condInit()
     nextMsgTime = 0;
     _pauseOffset = 0;
     isPaused = NO;
+    /* If the end-of-list marker is ever sent, it will print an error. (It's a bug if this ever happens.) */
     if (!_msgQueue)
-      _msgQueue = newMsgRequest(CONDUCTORFREES,ENDOFLIST,@selector(error:),
-				self,1,errorString);
-    /* If the end-of-list marker is ever sent, it will print an error. 
-       (It's a bug if this ever happens.) */
-    _condLast = _condNext = nil; /* Remove links. We don't want to leave links
-			  around because they screw up repositionCond.
-			  The links are added at the last minute in
-			  _runSetup. */
+        _msgQueue = newMsgRequest(CONDUCTORFREES,ENDOFLIST, @selector(_error:), self,
+                                1, @"MKConductor's end-of-list was erroneously evaluated (shouldn't happen).\n", nil);
+    // Remove links. We don't want to leave links around because they screw up repositionCond.
+    // The links are added at the last minute in _runSetup.
+    _condLast = _condNext = nil; 
     return self;
 }
 
@@ -2061,6 +2060,14 @@ static double getNextMsgTime(MKConductor *aCond)
     if (deltaTThresholdLow > deltaTThresholdHigh)
       deltaTThresholdLow = deltaTThresholdHigh;
     return self;
+}
+
+// private error message method signalling an internal error from sending the end-of-list marker
+// an NSString is immutable and therefore thread-safe.
+- _error: (NSString *) errorMsg
+{
+   MKError(errorMsg);
+   return self;
 }
 
 @end
