@@ -28,6 +28,9 @@
  *
  */
 
+#ifndef __SNDERROR_H
+#define __SNDERROR_H 1
+
 typedef enum {
     SND_ERR_NONE		= 0,
     SND_ERR_NOT_SOUND		= 1,
@@ -74,3 +77,4 @@ char *SndSoundError(int err);
  * given error code. 
  */
 
+#endif

@@ -19,6 +19,10 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2001/05/12 08:53:38  sbrandon
+  - surrounded header file in ifndef/define/endif statements for better
+    includes
+
   Revision 1.2  2001/04/21 22:05:47  sbrandon
   - renamed MIDIDownloadDLSInstruments to MKMDDownloadDLSInstruments
   - renamed MIDIGetAvailableDrivers to MKMDGetAvailableDrivers
@@ -33,6 +37,10 @@ Modification history:
 
 
 */
+
+#ifndef __MIDIDRIVER_USER_H__
+#define __MIDIDRIVER_USER_H__
+
 // The following ifdef block is the standard way of creating macros which make exporting 
 // from a DLL simpler. All files within this DLL are compiled with the PERFORMMIDI_EXPORTS
 // symbol defined on the command line. this symbol should not be defined on any project
@@ -202,4 +210,6 @@ PERFORM_API const char **MKMDGetAvailableDrivers(
 
 #ifdef __cplusplus
 }
+#endif
+
 #endif
