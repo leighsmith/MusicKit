@@ -55,6 +55,13 @@ CHANGELOG=$1
 COPYREADMETO=$2
 
 #
+# This is where the standard admonition images reside. This is set for
+# where fink installs Norman Walsh's images as part of his DocBook
+# DSSSL distribution.
+#
+ADMONIMAGESDIR=/sw/share/sgml/dsssl/docbook-dsssl-nwalsh/images
+
+#
 # Create HTML from the supplied DocBook SGML file
 #
 generateHTML()
@@ -69,6 +76,7 @@ generateHTML()
     mkdir -p $HTML_TMPDIR/$WRITEHTMLTODIR/Images
     cd $HTML_TMPDIR/$WRITEHTMLTODIR
     cp -r $IMAGESDIR/Images/*.{gif,jpg,png} Images
+    cp -r $ADMONIMAGESDIR/*.gif Images
     $JADE -t sgml -ihtml -d ${STYLESHEET}\#html $SGMLFILE
     echo HTML of ${BASENAME}.sgml generated into $HTML_TMPDIR/$WRITEHTMLTODIR
 }
@@ -91,6 +99,7 @@ generatePDF()
     cd $PDF_TMPDIR 
     mkdir -p Images
     cp $IMAGESDIR/Images/*.eps Images
+    cp $ADMONIMAGESDIR/*.eps Images
     $JADE -t tex -d ${STYLESHEET}\#print -o $TEXINPUT $SGMLFILE
     jadetex $TEXINPUT
     jadetex $TEXINPUT
