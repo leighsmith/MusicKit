@@ -1136,7 +1136,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LIBRARY_SEARCH_PATHS = ./;
 				OTHER_CFLAGS = "-Wall";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "-seg1addr 800000";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRINCIPAL_CLASS = "";
