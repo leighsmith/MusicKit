@@ -88,7 +88,9 @@
     }
     if(filename != nil) {
         NSString *sampleFilePath = [keymapPathName stringByDeletingLastPathComponent];
-        soundPathName = [[sampleFilePath stringByAppendingPathComponent: filename] stringByAppendingPathExtension: SOUNDFILEEXT];
+        soundPathName = [sampleFilePath stringByAppendingPathComponent: filename];
+        if([[soundPathName pathExtension] length] == 0)
+            soundPathName = [soundPathName stringByAppendingPathExtension: SOUNDFILEEXT];
         NSLog(@"Assigning %@ to %@\n", soundPathName, chanAndKeyNum);
         [aNote setPar:MK_filename toString: soundPathName];
         [samplesIndexedByTag setObject: filename forKey: [NSNumber numberWithInt: [aNote noteTag]]];
