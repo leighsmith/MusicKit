@@ -41,9 +41,11 @@ technique.  Thus, for completeness, the same parameter description may
 be given in more than one section.</para>
 
 <para>For further information (or rather, the same info presented in a
-different style!), see <xref linkend="IntroSynthPatches">.</para>
+different style!), see <ulink
+url="&IntroSynthPatches;"><classname>MKSynthPatch</classname>es
+Introduction</ulink>.</para>
 
-<para>Note: When doing synthesis in a realtime
+<tip><para>When doing synthesis in a realtime
 interactive context, such as when playing it from a MIDI keyboard, you
 should invoke:</para>
 
@@ -51,11 +53,14 @@ should invoke:</para>
 [orchestra setTimed:NO]
 </programlisting>
 
-<para>and call</para>
+<para>and call:</para>
 
-<programlisting>MKUseRealTimeEnvelopes(YES)</programlisting>
+<programlisting>
+MKUseRealTimeEnvelopes(YES)
+</programlisting>
 
 <para>before allocating the <classname>MKSynthPatch</classname>.</para>
+</tip>
 
     <sect2 id="WaveTableSynthParams">
       <title>Wave Table Synthesis Parameters</title> 
