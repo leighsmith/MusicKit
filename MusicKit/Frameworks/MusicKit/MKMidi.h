@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.6  1999/09/24 17:06:26  leigh
+  added downloadDLS method prototype
+
   Revision 1.5  1999/09/04 22:02:17  leigh
   Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
 
@@ -274,8 +277,10 @@ typedef struct _timeVars {
    * Returns size of array.
    */
 
--(NSString *)driverName ;
+-(NSString *)driverName;
 -(int)driverUnit;
+
+- (void) downloadDLS: (NSArray *) dlsPatches;
 
 @end
 #endif
