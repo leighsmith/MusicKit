@@ -47,7 +47,7 @@ TwoWaves_OBJC_FILES = TwoWaves_main.m \
 
 SRCS = $(TEST_APP_NAME:=.m)
 
-HDRS =
+HDRS = Controller.h
 
 DIST_FILES = $(SRCS) $(HDRS)
 
