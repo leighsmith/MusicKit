@@ -49,8 +49,8 @@ enum {
 - (NSString*) paramName: (int) index;
 - setParam: (int) index toValue: (float) v;
 
-- processReplacingInputBuffer: (SndAudioBuffer*) inB 
-                 outputBuffer: (SndAudioBuffer*) outB;
+- (BOOL) processReplacingInputBuffer: (SndAudioBuffer*) inB 
+                        outputBuffer: (SndAudioBuffer*) outB;
 
 
 @end
