@@ -15,48 +15,7 @@
 #import "SndAudioBuffer.h"
 #import "SndPlayer.h"
 #import "SndStreamManager.h"
-
-////////////////////////////////////////////////////////////////////////////////
-// SndPlayerData
-////////////////////////////////////////////////////////////////////////////////
-
-@implementation SndPlayerData
-
-+ soundPlayerDataWithSnd: (Snd*) s playTime: (double) t 
-{
-    SndPlayerData *spd = [[SndPlayerData alloc] init];
-    spd->snd = [s retain];
-    spd->playTime = t;
-    spd->playIndex = 0;
-    return [spd autorelease];
-}
-
-- (void) dealloc
-{
-    [snd release];
-}
-
-- (Snd*) snd
-{
-    return snd;
-}
-
-- (double) playTime
-{
-    return playTime;
-}
-
-- (long) playIndex
-{
-    return playIndex;
-}
-
-- (void) setPlayIndex: (long) li
-{
-    playIndex = li;
-}
-
-@end
+#import "SndPerformance.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //  SndPlayer
@@ -117,48 +76,59 @@
 // playSnd:
 ////////////////////////////////////////////////////////////////////////////////
 
-- playSnd: (Snd*) s
+- (SndPerformance *) playSnd: (Snd*) s
 {
-    SndPlayerData *spd = [SndPlayerData soundPlayerDataWithSnd: s playTime: nowTime];
-    [playing addObject: spd];
-    return self;
+    SndPerformance *thisPerformance = [SndPerformance performanceOfSnd: s playTime: nowTime];
+    [playing addObject: thisPerformance];
+    return thisPerformance;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // playSnd:withTimeOffset:
 ////////////////////////////////////////////////////////////////////////////////
 
-- playSnd: (Snd*) s withTimeOffset: (double) dt
+- (SndPerformance *) playSnd: (Snd*) s withTimeOffset: (double) dt
 {
-    if(![self isActive])
-         [[SndStreamManager defaultStreamManager] addClient: self];
+    SndPerformance *thisPerformance;
+    if(![self isActive]) {
+        // NSLog(@"Added sndPlayer to defaultStreamManager\n");
+        [[SndStreamManager defaultStreamManager] addClient: self];
+    }
 
     if (dt == 0.0) {
-        SndPlayerData *spd = [SndPlayerData soundPlayerDataWithSnd: s playTime: nowTime];
-        [playing addObject: spd];    
+        thisPerformance = [SndPerformance performanceOfSnd: s playTime: nowTime];
+        [playing addObject: thisPerformance];    
     }		
     else {
         double playT = nowTime+dt;
         int i, c = [toBePlayed count];
-        SndPlayerData *spd = [SndPlayerData soundPlayerDataWithSnd: s playTime: playT];
         int insertIndex = c;
+        thisPerformance = [SndPerformance performanceOfSnd: s playTime: playT];
 
         for (i = 0; i < c; i++) {
-            SndPlayerData *this = [toBePlayed objectAtIndex: i];
+            SndPerformance *this = [toBePlayed objectAtIndex: i];
             if ([this playTime] > playT) {
                 insertIndex = i;
                 break;
             }
         }
-        [toBePlayed insertObject: spd atIndex: i];
+        [toBePlayed insertObject: thisPerformance atIndex: i];
     }
-    return self;
+    return thisPerformance;
 }
 
 // 
 - stopSnd: (Snd*) s withTimeOffset: (double) inSeconds
 {
     return self;
+}
+
+// Return an array of the performances of a given sound.
+- (NSArray *) performancesOfSnd: (Snd *) snd
+{
+    NSMutableArray *performances = [NSArray array];
+    // TODO, need to extract out from our playing/toBePlayed lists those with snds matching snd
+    return performances;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -180,17 +150,18 @@
     // If so, add 'em to the play array
     c = [toBePlayed count];
     for (i = 0; i < c; i++) {
-        SndPlayerData *spd = [toBePlayed objectAtIndex: i];
-        if ([spd playTime] < bufferEndTime) {
-            [removalArray addObject: spd];
-            [spd setPlayIndex: - [[spd snd] samplingRate] * ([spd playTime] - nowTime)];
-            [playing addObject: spd];
+        SndPerformance *performance = [toBePlayed objectAtIndex: i];
+        if ([performance playTime] < bufferEndTime) {
+            [removalArray addObject: performance];
+            [performance setPlayIndex: - [[performance snd] samplingRate] * ([performance playTime] - nowTime)];
+            [playing addObject: performance];
             // The delay between receiving this delegate and when the audio is actually played 
             // is an extra buffer, therefore: delay = buffLength/sampleRate after the delegate 
             // message has been received.
-            NSLog(@"telling delegate willPlay:");
-            [[spd snd] _setStatus:SND_SoundPlaying];
-            [[spd snd] tellDelegate:@selector(willPlay:)];
+            // NSLog(@"telling delegate willPlay:");
+            [[performance snd] _setStatus:SND_SoundPlaying];
+            [[performance snd] tellDelegate: @selector(willPlay:duringPerformance:)
+                          duringPerformance: performance];
         }
     }
     [toBePlayed removeObjectsInArray: removalArray];
@@ -202,9 +173,9 @@
 
     c = [playing count];
     for (i = 0; i < c; i++) {
-        SndPlayerData *spd = [playing objectAtIndex: i];
-        Snd    *snd        = [spd snd];
-        long    startIndex = [spd playIndex];
+        SndPerformance *performance = [playing objectAtIndex: i];
+        Snd    *snd        = [performance snd];
+        long    startIndex = [performance playIndex];
         long    sndLength  = [snd sampleCount];
         SndAudioBuffer *temp = nil;
         NSRange r = {startIndex, buffLength};
@@ -232,16 +203,17 @@
             // NSLog(@"calling mixWithBuffer from SndPlayer processBuffers\n");
             [ab mixWithBuffer: temp fromStart: start toEnd: end];
         }
-        [spd setPlayIndex: startIndex + buffLength];
+        [performance setPlayIndex: startIndex + buffLength];
         // When at the end of sounds, signal the delegate and 
-        if ([spd playIndex] >= sndLength) {
-            [removalArray addObject: spd];
-            [[spd snd] _setStatus: SND_SoundStopped];
-            [[spd snd] tellDelegate:@selector(didPlay:)];
+        if ([performance playIndex] >= sndLength) {
+            [removalArray addObject: performance];
+            [[performance snd] _setStatus: SND_SoundStopped];
+            [[performance snd] tellDelegate: @selector(didPlay:duringPerformance:)
+                          duringPerformance: performance];
         }
     }
 
-    // NSLog(@"playing %i sounds",[playing count]);
+    // NSLog(@"playing %d sounds", [playing count]);
     if ([removalArray count] == 1) {
         [playing removeObjectsInArray: removalArray];
         if([toBePlayed count] == 0 && [playing count] == 0) {
