@@ -35,7 +35,7 @@
 }
 
 /*!
-    @function   audioProcessor
+    @method   audioProcessor
     @abstract   Factory method
     @discussion
     @result     Returns a freshly initialized, autoreleased SndAudioProcessor
@@ -43,14 +43,14 @@
 + audioProcessor;
 
 /*!
-    @function   init
+    @method   init
     @abstract   Initialization method
     @result     Self.
 */
 - init;
 
 /*!
-    @function    reset
+    @method    reset
     @abstract    Message sent when host determines the SndAudioProcessor should reinitialize
                  its processing state. Eg, a delay processor would zero its z-buffers.
     @result      self
@@ -58,14 +58,14 @@
 - reset;
 
 /*!
-    @function   paramCount
+    @method   paramCount
     @abstract   Gets the number of parameters
     @result     number of parameters
 */
 - (int) paramCount;
 
 /*!
-    @function   paramValue:
+    @method   paramValue:
     @abstract   Gets the value of the indexed parameter. 
     @discussion Following the VST convention, this should be in the range [0,1]. No enforcement at the present time.
     @param      index Index of the parameter
@@ -74,7 +74,7 @@
 - (float) paramValue: (int) index;
 
 /*!
-    @function   paramName:
+    @method   paramName:
     @abstract   Gets the name of indexed parameter.
     @param      index Parameter index
     @result     NSString with parameter name
@@ -82,7 +82,7 @@
 - (NSString*) paramName: (int) index;
 
 /*!
-    @function   setParam:toValue:
+    @method   setParam:toValue:
     @abstract   Sets the indexed parameter to the value v.
     @discussion By VST convention, the argument v should be in the range [0,1]. If the
                 internal parameter has a different range, this should be mapped internally.
@@ -93,7 +93,7 @@
 - setParam: (int) index toValue: (float) v;
 
 /*!
-    @function   processReplacingInputBuffer:outputBuffer:
+    @method   processReplacingInputBuffer:outputBuffer:
     @abstract   process the inputBuffer, and replace the results in the output buffer
     @discussion Overide this method with your own FX processing routines.
                 There is nothing to stop inB and outB referring to the same buffer -  
@@ -109,7 +109,7 @@
                         outputBuffer: (SndAudioBuffer*) outB;
 
 /*!
-    @function    setAudioProcessorChain:
+    @method    setAudioProcessorChain:
     @abstract
     @discussion (Internal SndKit use only) Individual processors may want
                 to query their enclosing processor chain, for example to
@@ -122,7 +122,7 @@
 - (void) setAudioProcessorChain:(SndAudioProcessorChain*)inChain;
 
 /*!
-    @function audioProcessorChain
+    @method audioProcessorChain
     @abstract Returns the SndAudioProcessorChain to which the processor is
               attached
     @discussion

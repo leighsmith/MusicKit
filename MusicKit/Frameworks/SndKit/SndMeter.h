@@ -31,6 +31,11 @@
 
 @class Snd;
 
+/*!
+@class      SndMeter
+@abstract
+@discussion
+*/
 @interface SndMeter:NSView
 {
     id sound;

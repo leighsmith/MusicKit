@@ -472,10 +472,9 @@ NSScrollView.  */
 /*!
   @method reductionFactor
   @result Returns a float.
-  @discussion Returns the SoundView's reduction factor, computed as follows:\
-                            \
-              <tt>reductionFactor = sampleCount /
-              displayUnits</tt>
+  @discussion Returns the SoundView's reduction factor, computed as follows:
+                            
+              <tt>reductionFactor = sampleCount / displayUnits</tt>
 */
 - (float)reductionFactor;
 

@@ -51,7 +51,7 @@ enum {
 }
 
 /*!
-    @function   delayWithLength:feedback:
+    @method   delayWithLength:feedback:
     @abstract   Factory method
     @discussion
     @param      nSams
@@ -60,7 +60,7 @@ enum {
 */
 + delayWithLength: (long) nSams feedback: (float) fFB;
 /*!
-    @function intWithLength:feedback:
+    @method intWithLength:feedback:
     @abstract 
     @discussion
     @param nSams
@@ -69,7 +69,7 @@ enum {
 */
 - initWithLength: (long) nSams feedback: (float) fFB;
 /*!
-    @function freemem
+    @method freemem
     @abstract 
     @discussion
     @param nSams
@@ -78,21 +78,21 @@ enum {
 */
 - freemem;
 /*!
-    @function dealloc
+    @method dealloc
     @abstract 
     @discussion
     @result
 */
 - (void) dealloc;
 /*!
-    @function paramCount
+    @method paramCount
     @abstract 
     @discussion
     @result
 */
 - (int) paramCount;
 /*!
-    @function paramValue:
+    @method paramValue:
     @abstract 
     @discussion
     @param index
@@ -100,7 +100,7 @@ enum {
 */
 - (float) paramValue: (int) index;
 /*!
-    @function paramName
+    @method paramName
     @abstract 
     @discussion
     @param index
@@ -108,7 +108,7 @@ enum {
 */
 - (NSString*) paramName: (int) index;
 /*!
-    @function setParam:toValue:
+    @method setParam:toValue:
     @abstract 
     @discussion
     @param index
@@ -118,7 +118,7 @@ enum {
 - setParam: (int) index toValue: (float) v;
 
 /*!
-    @function processReplacingInputBuffer:outputBuffer:
+    @method processReplacingInputBuffer:outputBuffer:
     @abstract 
     @discussion
     @param      inB

@@ -38,7 +38,7 @@
 }
 
 /*!
-    @function   sndStreamMixer
+    @method   sndStreamMixer
     @abstract   Factory method
     @discussion
     @result     A freshly initialized and autoreleased SndStreamMixer object
@@ -46,7 +46,7 @@
 + sndStreamMixer;
 
 /*!
-    @function   init
+    @method   init
     @abstract   Initializer method
     @discussion
     @result     self.
@@ -54,14 +54,14 @@
 - init;
 
 /*!
-    @function   dealloc
+    @method   dealloc
     @abstract   Destructor method
     @discussion
 */
 - (void) dealloc;
 
 /*!
-    @function   processInBuffer:outBuffer:nowTime:
+    @method   processInBuffer:outBuffer:nowTime:
     @abstract
     @discussion
     @param      inB
@@ -74,7 +74,7 @@
           nowTime: (double) t;
 
 /*!
-    @function   removeClient:
+    @method   removeClient:
     @abstract
     @discussion
     @param      client
@@ -83,7 +83,7 @@
 - (BOOL) removeClient: (SndStreamClient*) client;
 
 /*!
-    @function   addClient:
+    @method   addClient:
     @abstract
     @discussion
     @param      client
@@ -92,7 +92,7 @@
 - (int) addClient: (SndStreamClient*) client;
 
 /*!
-    @function managerIsShuttingDown
+    @method managerIsShuttingDown
     @abstract
     @discussion
     @result self
@@ -100,7 +100,7 @@
 - managerIsShuttingDown;
 
 /*!
-    @function clientCount
+    @method clientCount
     @abstract
     @discussion
     @result     Number of stream clients currently connected to the mixer
@@ -108,7 +108,7 @@
 - (int) clientCount;
 
 /*!
-    @function   audioProcessorChain
+    @method   audioProcessorChain
     @abstract   Accessor
     @discussion
     @result     Reference to the data member audioprocessorChain

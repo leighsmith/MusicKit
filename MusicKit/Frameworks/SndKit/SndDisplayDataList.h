@@ -17,6 +17,12 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 #import <AppKit/AppKit.h>
 
+/*!
+@class      SndDisplayDataList
+@abstract
+@discussion
+*/
+
 @interface SndDisplayDataList: NSMutableArray
 {
     NSMutableArray *embeddedArray;

@@ -68,7 +68,7 @@
 }
 
 /*!
-    @function   streamRecorder
+    @method   streamRecorder
     @abstract   Factory method
     @discussion 
     @result     An SndStreamRecorder
@@ -76,7 +76,7 @@
 + streamRecorder;
 
 /*!
-    @function   init
+    @method   init
     @abstract   Initializor
     @discussion 
     @result     self
@@ -84,21 +84,21 @@
 - init;
 
 /*!
-    @function   dealloc
+    @method   dealloc
     @abstract   Destructor
     @discussion 
 */
 - (void) dealloc;
 
 /*!
-    @function   description
+    @method   description
     @abstract 
     @result     NSString with description
 */
 - (NSString*) description;
 
 /*!
-    @function   prepareToRecordForDuration: 
+    @method   prepareToRecordForDuration: 
     @abstract 
     @discussion 
     @param      time
@@ -107,7 +107,7 @@
 - (BOOL) prepareToRecordForDuration: (double) time;
 
 /*!
-    @function   startRecording 
+    @method   startRecording 
     @abstract 
     @discussion 
     @param      time
@@ -116,7 +116,7 @@
 - (BOOL) startRecording;
 
 /*!
-    @function   startRecordingToFile:
+    @method   startRecordingToFile:
     @abstract 
     @discussion 
     @param      filename
@@ -125,7 +125,7 @@
 - (BOOL) startRecordingToFile: (NSString*) filename;
 
 /*!
-    @function     setUpRecordFile:
+    @method     setUpRecordFile:
     @abstract 
     @discussion 
     @param      filename
@@ -134,7 +134,7 @@
 - (BOOL) setUpRecordFile: (NSString*) filename;
 
 /*!
-    @function   closeRecordFile 
+    @method   closeRecordFile 
     @abstract 
     @discussion 
     @result     Boolean indicating success
@@ -142,7 +142,7 @@
 - (BOOL) closeRecordFile;
 
 /*!
-    @function   stopRecording
+    @method   stopRecording
     @abstract 
     @discussion 
     @result     self.
@@ -153,13 +153,13 @@
 
 /*!
     @class      SndStreamRecorderDelegate
-    @abstract   Protocol for an SndStreamRecorder delegate
+    @abstract   Informal protocol for an SndStreamRecorder delegate
     @discussion To come.
 */
 @interface SndStreamRecorderDelegate : SndStreamClientDelegate
 
 /*!
-    @function   didStartRecording:sender
+    @method   didStartRecording:sender
     @abstract   Message sent to delegate just before the recording thread enters its
                 processBuffers loop, indicating it is waiting for the first buffer to
                 arrive.
@@ -169,7 +169,7 @@
 - didStartRecording:  sender;
 
 /*!
-    @function   didFinishRecording:sender
+    @method   didFinishRecording:sender
     @abstract   Message sent to delegate when recording has completed. This is caused
                 by either a user event stopping streaming to disk, or the recording
                 thread reaching the limit of a record-to-memory buffer, and is sent 

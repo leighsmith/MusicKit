@@ -22,6 +22,27 @@
 @class SndAudioProcessorChain;
 
 /*!
+    @class      SndStreamClientDelegate
+    @abstract   Informal protocol for a SndStreamClient delegate
+    @discussion To come
+*/
+@interface SndStreamClientDelegate
+
+/*!
+    @method   inputBufferSkipped
+    @abstract   Message sent when the client was not ready to accept the next input buffer
+*/
+- inputBufferSkipped:  sender;
+
+/*!
+    @method   outputBufferSkipped
+    @abstract   Message sent when the client was not ready to provide the next outputBuffer
+*/
+- outputBufferSkipped: sender;
+@end
+
+
+/*!
     @class      SndStreamClient
     @abstract   Audio streaming / signal processing / synthesis module 
     @discussion Provides basic streaming services such as double buffering, thread handling,
@@ -60,7 +81,7 @@
 }
 
 /*!
-    @function   streamClient
+    @method   streamClient
     @abstract   Factory method
     @discussion Creates and initializes an SndStreamObject
     @result     An autoreleased SndStreamClient object
@@ -68,14 +89,14 @@
 + streamClient;
 
 /*!
-    @function   dealloc 
+    @method   dealloc 
     @abstract   Destructor
     @discussion Releases SndAudioBuffers, NSLocks, and SndStreamManager
 */
 - (void) dealloc;
 
 /*!
-    @function   description
+    @method   description
     @abstract   Describes SndStreamClient
     @discussion Describes SndStreamClient 
     @result     Returns an NSString describing the SndStreamClient.
@@ -83,7 +104,7 @@
 - (NSString*) description;
 
 /*!
-    @function   setProcessFinishedCallBack: 
+    @method   setProcessFinishedCallBack: 
     @abstract 
     @discussion 
     @param      fn C callback function
@@ -92,7 +113,7 @@
 - setProcessFinishedCallBack: (void*) fn;
 
 /*!
-    @function     welcomeClientWithBuffer:manager:
+    @method     welcomeClientWithBuffer:manager:
     @abstract
     @discussion 
     @param      buff
@@ -102,7 +123,7 @@
 - welcomeClientWithBuffer: (SndAudioBuffer*) buff manager: (SndStreamManager*) m;
 
 /*!
-    @function     startProcessingNextBufferWithInput:nowTime:
+    @method     startProcessingNextBufferWithInput:nowTime:
     @abstract   Client welcomed with buffer showing manager format.
     @discussion Ignore input buffer if you don't want it.
     @param      inB
@@ -112,13 +133,13 @@
 - startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) t;
 
 /*!
-    @function     processingThread
+    @method     processingThread
     @abstract     Root method for the synthesis thread
 */
 - (void) processingThread;
 
 /*!
-    @function   outputBuffer
+    @method   outputBuffer
     @abstract   Accessor for the currently exposed output buffer
     @discussion Don't store the object returned, as the output buffer swaps to the synthesis buffer each processing cycle.
     @result     Returns the outputBuffer member
@@ -126,7 +147,7 @@
 - (SndAudioBuffer*) outputBuffer;
 
 /*!
-    @function   synthBuffer
+    @method   synthBuffer
     @abstract   Accessor for the current synthesis buffer
     @discussion 
     @result     Returns the synthBuffer member
@@ -134,7 +155,7 @@
 - (SndAudioBuffer*) synthBuffer;
 
 /*!
-    @function   inputBuffer
+    @method   inputBuffer
     @abstract   Accessor for the current input buffer
     @discussion 
     @result     Returns the inputBuffer member
@@ -142,7 +163,7 @@
 - (SndAudioBuffer*) inputBuffer;
 
 /*!
-    @function   managerIsShuttingDown
+    @method   managerIsShuttingDown
     @abstract 
     @discussion Message sent by the manager to tell any clients still connected to it that it is about to disappear
     @result     Returns self
@@ -150,14 +171,14 @@
 - managerIsShuttingDown;
 
 /*!
-    @function   processBuffers
+    @method   processBuffers
     @abstract   The main synthesis/processing thread method 
     @discussion Override this in your derived client with your own buffer processing functionality.
 */
 - (void) processBuffers; 
 
 /*!
-    @function   nowTime
+    @method   nowTime
     @abstract   Return the client's current time.
     @discussion The clients sense of time is just the manager's sense of time, defining a common clock among clients.
     @result     Returns the time in seconds.
@@ -165,14 +186,14 @@
 - (double) nowTime;
 
 /*!
-    @function   isActive
+    @method   isActive
     @abstract   Returns whether the client is active.
     @result     Returns a boolean indicating whether the client is active.
 */
 - (BOOL) isActive;
 
 /*!
-    @function     setDetectPeaks: (BOOL) detectPeaks
+    @method     setDetectPeaks: (BOOL) detectPeaks
     @abstract   enables / disables peak detection
     @discussion Not implemented yet - not convinced this should be here - maybe inside an SndAudioProcessor?
     @result     self.
@@ -180,7 +201,7 @@
 - setDetectPeaks: (BOOL) detectPeaks;
 
 /*!
-    @function   getPeakLeft:right:
+    @method   getPeakLeft:right:
     @abstract   Get the most recent peak values for the stereo stream
     @discussion Not implemented yet - not convinced this should be here - maybe inside an SndAudioProcessor?
     @param      leftPeak Left peak value
@@ -190,21 +211,21 @@
 - getPeakLeft: (float *) leftPeak right: (float *) rightPeak;
 
 /*!
-    @function   generatesOutput
+    @method   generatesOutput
     @abstract   Returns whether the client is an audio-producer (synthesizer, FX)
     @result     Returns TRUE if the client generates output
 */
 - (BOOL) generatesOutput;
 
 /*!
-    @function   needsInput
+    @method   needsInput
     @abstract   Returns whether the client is an audio-consumer (recorder, FX, signal analyzer)
     @result     Returns TRUE if the client requires an input stream.
 */
 - (BOOL) needsInput;
 
 /*!
-    @function     setGeneratesOutput:
+    @method     setGeneratesOutput:
     @abstract   Determines whether the client's output buffer will be considered for 
                 mixing downstream.
     @discussion Normally you should only need to call this when initializing a derived stream client
@@ -214,7 +235,7 @@
 - setGeneratesOutput: (BOOL) b;
 
 /*!
-    @function     setNeedsInput:
+    @method     setNeedsInput:
     @abstract   Sets whether the client requires an input uadio stream or not.
     @discussion Normally you should only need to call this when initializing a derived stream client.
                 If true, the stream manager will copy the most recent input buffer
@@ -229,7 +250,7 @@
 - setNeedsInput: (BOOL) b;
 
 /*!
-    @function     setManager:
+    @method     setManager:
     @abstract   Sets the SndStreamManager for this client.
     @discussion Should never be called explicitly, it is invoked as part of the 
                 process of a manager welcoming a client into the fray.
@@ -239,7 +260,7 @@
 - setManager: (SndStreamManager*) m;
 
 /*!
-    @function   lockOutputBuffer
+    @method   lockOutputBuffer
     @abstract   Blocks calling thread until outputBuffer is available for locking.  
     @discussion Lock the output buffer before doing anything with it, otherwise 
                 the synthesis thread may swap the buffers on you!
@@ -248,14 +269,14 @@
 - lockOutputBuffer;
 
 /*!
-    @function   unlockOutputBuffer
+    @method   unlockOutputBuffer
     @abstract   Releases lock on the outputBuffer.
     @result     self.
 */
 - unlockOutputBuffer;
 
 /*!
-    @function   lockInputBuffer
+    @method   lockInputBuffer
     @abstract   Blocks calling thread until inputBuffer is available for locking.  
     @discussion Lock the input buffer before doing anything with it, otherwise 
                 the synthesis thread may swap the buffers on you!
@@ -264,7 +285,7 @@
 - lockInputBuffer;
 
 /*!
-    @function   unlockInputBuffer
+    @method   unlockInputBuffer
     @abstract   Releases lock on the outputBuffer.
     @result     self.
 */
@@ -272,7 +293,7 @@
 
 
 /*!
-    @function   prepareToStreamWithBuffer: 
+    @method   prepareToStreamWithBuffer: 
     @abstract   Prepare-to-stream-with-buffers-that-look-like-this message.
     @discussion Called before streaming commences to allow client an opportunity 
                 to setup internal generation buffers.
@@ -282,7 +303,7 @@
 - prepareToStreamWithBuffer: (SndAudioBuffer*) buff;
 
 /*!
-    @function     didFinishStreaming
+    @method     didFinishStreaming
     @abstract   streaming thread is shutting down message.
     @discussion Called just before the streaming thread shuts down, giving a 
                 derived client a chance to clean up after itself.
@@ -291,7 +312,7 @@
 - didFinishStreaming;
 
 /*!
-    @function   audioProcessorChain
+    @method   audioProcessorChain
     @abstract   Accessor
     @discussion
     @result     Reference to the data member audioProcessorChain
@@ -299,7 +320,7 @@
 - (SndAudioProcessorChain*) audioProcessorChain;
 
 /*!
-    @function   setDelegate:
+    @method   setDelegate:
     @abstract   Sets the client's delegate object
     @param      d
     @result     self
@@ -307,34 +328,12 @@
 - setDelegate: (id) d;
 
 /*!
-    @function    delegate
+    @method    delegate
     @abstract   Accessor method to the delegate member.
     @result     The stream client's delegate object
 */
 - (id) delegate;
 
-@end
-
-/*!
-    @class      SndStreamClientDelegate
-    @abstract   Delegate protocol for the SndStreamClient 
-    @discussion To come
-*/
-@interface SndStreamClientDelegate : NSObject
-{
-}
-
-/*!
-    @function   inputBufferSkipped
-    @abstract   Message sent when the client was not ready to accept the next input buffer
-*/
-- inputBufferSkipped:  sender;
-
-/*!
-    @function   outputBufferSkipped
-    @abstract   Message sent when the client was not ready to provide the next outputBuffer
-*/
-- outputBufferSkipped: sender;
 @end
 
 #endif

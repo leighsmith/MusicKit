@@ -16,6 +16,12 @@
 
 #import <Foundation/Foundation.h>
 
+/*!
+@class      SndBreakpoint
+@abstract
+@discussion
+*/
+
 @interface SndBreakpoint : NSObject
 {
   int    flags;

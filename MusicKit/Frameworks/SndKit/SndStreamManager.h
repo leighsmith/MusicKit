@@ -42,7 +42,7 @@
 } 
 
 /*!
-    @function initialize
+    @method initialize
     @abstract Class initialization method
     @discussion Creates the default stream manager
     @result void.
@@ -50,7 +50,7 @@
 + (void) initialize;
 
 /*!
-    @function   defaultStreamManager
+    @method   defaultStreamManager
     @abstract   Accessor to the default stream manager created upon class initialization.
     @discussion SndStreamClients will usually connect to the default stream manager, unless
                 the user wishes to explicitly create their own manager.  
@@ -59,13 +59,13 @@
 + (SndStreamManager*) defaultStreamManager;
 
 /*!
-    @function   dealloc
+    @method   dealloc
     @abstract   Destructor
 */
 - (void) dealloc;
 
 /*!
-    @function   description
+    @method   description
     @abstract   Returns an NSString with description of SndStreamManager
     @discussion 
     @result     Returns an NSString with description of SndStreamManager
@@ -73,7 +73,7 @@
 - (NSString*) description;
 
 /*!
-    @function   startStreaming
+    @method   startStreaming
     @abstract   Starts streaming.
     @discussion You should never need to call this. Streaming is started automatically
                 whene the first client connects to the manager.   
@@ -82,7 +82,7 @@
 - (BOOL) startStreaming;
 
 /*!
-    @function   stopStreaming
+    @method   stopStreaming
     @abstract   Stops streaming.
     @discussion You should never need to call this. Streaming is stopped automatically
                 whene the last client disconnects from the manager.   
@@ -91,7 +91,7 @@
 - (BOOL) stopStreaming;
 
 /*!
-    @function   addClient: 
+    @method   addClient: 
     @abstract   Adds an SndStreamClient to the manager's mixer
     @discussion If the SndStreamClient is already a client of the mixer, it 
                 is NOT added again. If the client is the first connected to
@@ -102,7 +102,7 @@
 - (BOOL) addClient: (SndStreamClient*) client;
 
 /*!
-    @function   removeClient: 
+    @method   removeClient: 
     @abstract   Removes the SndStreamClient from the manager's mixer
     @discussion If the removed client was the last client connected to the
                 manager, streaming will be automatically shut down.
@@ -112,7 +112,7 @@
 - (BOOL) removeClient: (SndStreamClient*) client;
 
 /*!
-    @function   processStreamAtTime:input:output:
+    @method   processStreamAtTime:input:output:
     @abstract   Passes new input and output buffers from the underlaying API to the
                 mixer.
     @discussion Do not call this method - it is part of the audio callback handler.
@@ -125,7 +125,7 @@
                       output: (SNDStreamBuffer*) outB;
 
 /*!
-    @function   setFormat:
+    @method   setFormat:
     @abstract   Sets the format to be used during streaming
     @discussion Do not call this method - it is called as part of the start-streaming
                 process. The stream format used is the native format coming up from 
@@ -136,7 +136,7 @@
 - setFormat: (SndSoundStruct*) f;
 
 /*!
-    @function   nowTime
+    @method   nowTime
     @abstract   Return the current time as understood by the SndStreamManager
     @discussion 
     @result     nowTime as a double 
@@ -144,14 +144,14 @@
 - (double) nowTime;
 
 /*!
-    @function   mixer
+    @method   mixer
     @abstract   Mixer member accessor method
     @result     The internal SndStreamMixer
 */
 - (SndStreamMixer*) mixer;
 
 /*!
-    @function   isActive
+    @method   isActive
     @abstract   indicates whether streaming is happening (active) 
     @discussion 
     @result     TRUE if streaming is active

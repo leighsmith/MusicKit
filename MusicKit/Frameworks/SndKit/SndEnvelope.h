@@ -17,47 +17,204 @@
 #import <Foundation/Foundation.h>
 #import "SndBreakpoint.h"
 
-/*
- * declare formal protocol for objects to be used as envelopes
- */
+/*!
+  @protocol   SndEnveloping
+  @abstract   declare formal protocol for objects to be used as envelopes
+  @discussion To come
+*/
 @protocol SndEnveloping
-- (float)lookupYForX:(double)xVal;
+
 //- (double)lookupYForXAsymptotic:(double)xVal;
 
+/*! @method     lookupYForX:
+    @abstract   To come
+    @discussion To come
+    @param      xVal
+    @result     To come
+*/
+- (float)lookupYForX:(double)xVal;
+/*! @method     breakpointIndexBeforeOrEqualToX:
+    @abstract   To come
+    @discussion To come
+    @param      xVal
+    @result     To come
+*/
 - (int) breakpointIndexBeforeOrEqualToX:(double)xVal;
+/*! @method     breakpointIndexAfterX:
+    @abstract   To come
+    @discussion To come
+    @param      xVal
+    @result     To come
+*/
 - (int) breakpointIndexAfterX:(double)xVal;
+/*! @method     lookupXForBreakpoint:
+    @abstract   To come
+    @discussion To come
+    @param      bp
+    @result     To come
+*/
 - (double) lookupXForBreakpoint:(int)bp;
+/*! @method     lookupYForBreakpoint:
+    @abstract   To come
+    @discussion To come
+    @param      bp
+    @result     To come
+*/
 - (float) lookupYForBreakpoint:(int)bp;
+/*! @method     lookupFlagsForBreakpoint:
+    @abstract   To come
+    @discussion To come
+    @param      bp
+    @result     To come
+*/
 - (int) lookupFlagsForBreakpoint:(int)bp;
+/*! @method     breakpointCount
+    @abstract   To come
+    @discussion To come
+    @result     To come
+*/
 - (int) breakpointCount;
-
-/* returns new breakpoint index */
+/*! @method     insertXValue:yValue:flags:
+    @abstract   To come
+    @discussion To come
+    @param      xVal
+    @param      yVal
+    @param      flags
+    @result     returns new breakpoint index
+*/
 - (int) insertXValue:(double)xVal yValue:(float)yVal flags:(int)flags;
+/*! @method     insertXValue:yValue:flags:atBreakpoint:
+    @abstract   To come
+    @discussion To come
+    @param      xVal
+    @param      yVal
+    @param      flags
+    @param      bp
+    @result     To come
+*/
 - (int) insertXValue:(double)xVal yValue:(float)yVal flags:(int)flags atBreakpoint:(int)bp;
+/*! @method     removeBreakpoint:
+    @abstract   To come
+    @discussion To come
+    @param      aBreakpoint
+    @result     To come
+*/
 - (BOOL) removeBreakpoint:(int)aBreakpoint;
+/*! @method     removeBreakpointsBefore:
+    @abstract   To come
+    @discussion To come
+    @param      aBreakpoint
+    @result     To come
+*/
 - (BOOL) removeBreakpointsBefore:(int)aBreakpoint;
+/*! @method     removeBreakpointsAfter:
+    @abstract   To come
+    @discussion To come
+    @param      aBreakpoint
+    @result     To come
+*/
 - (BOOL) removeBreakpointsAfter:(int)aBreakpoint;
+/*! @method     replaceXValue:yValue:flags:atBreakpoint:
+    @abstract   To come
+    @discussion To come
+    @param      xVal
+    @param      yVal
+    @param      flags
+    @param      bp
+    @result     To come
+*/
 - (BOOL) replaceXValue:(double)xVal yValue:(float)yVal flags:(int)flags atBreakpoint:(int)bp;
 
 @end
 
+/*!
+@class      SndEnvelope
+@abstract   To come
+@discussion To come
+*/
 @interface SndEnvelope : NSObject <SndEnveloping>
 {
-  NSLock *lock; // locks changes to the envelope objects
-  NSMutableArray *breakpoints; /* SndBreakpoint objects */
+/*! @var lock locks changes to the envelope objects */
+  NSLock *lock;  
+/*! @var breakpoints SndBreakpoint objects */
+  NSMutableArray *breakpoints; 
 }
 
+/*! @method     
+    @abstract   To come
+    @discussion To come
+    @param      
+    @result     To come
+*/
 - (int) breakpointIndexBeforeOrEqualToX:(double)xVal;
+/*! @method     
+    @abstract   To come
+    @discussion To come
+    @param      
+    @result     To come
+*/
 - (int) breakpointIndexAfterX:(double)xVal;
+/*! @method     
+    @abstract   To come
+    @discussion To come
+    @param      
+    @result     To come
+*/
 - (float) lookupYForBreakpoint:(int)bp;
-/* returns new breakpoint index */
+/*! @method     insertXValue:yValue:flags:
+    @abstract   To come
+    @discussion To come
+    @param      xVal
+    @param      yVal
+    @param      flags
+    @result     Returns new breakpoint index
+*/
 - (int) insertXValue:(double)xVal yValue:(float)yVal flags:(int)flags;
+/*! @method     insertXValue:yValue:flags:atBreakpoint:
+    @abstract   To come
+    @discussion To come
+    @param      xVal
+    @param      yVal
+    @param      flags
+    @param      bp
+    @result     To come
+*/
 - (int) insertXValue:(double)xVal yValue:(float)yVal flags:(int)flags atBreakpoint:(int)bp;
+/*! @method     removeBreakpoint:
+    @abstract   To come
+    @discussion To come
+    @param      aBreakpoint
+    @result     To come
+*/
 - (BOOL) removeBreakpoint:(int)aBreakpoint;
+/*! @method     removeBreakpointsBefore:
+    @abstract   To come
+    @discussion To come
+    @param      aBreakpoint
+    @result     To come
+*/
 - (BOOL) removeBreakpointsBefore:(int)aBreakpoint;
+/*! @method     removeBreakpointsAfter:
+    @abstract   To come
+    @discussion To come
+    @param      aBreakpoint
+    @result     To come
+*/
 - (BOOL) removeBreakpointsAfter:(int)aBreakpoint;
+/*! @method     replaceXValue:yValue:flags:atBreakpoint:
+    @abstract   To come
+    @discussion To come
+    @param      xVal 
+    @param      yVal
+    @param      flags
+    @param      bp
+    @result     To come
+*/
 - (BOOL) replaceXValue:(double)xVal yValue:(float)yVal flags:(int)flags atBreakpoint:(int)bp;
-
+/*! @method     dealloc
+    @abstract   To come
+    @discussion To come
+*/
 - (void) dealloc;
 
 @end

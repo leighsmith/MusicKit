@@ -47,13 +47,13 @@ extern NSString *NXSoundPboardType;
 @interface Snd : NSObject
 {
  @private
-/*! @var the sound data structure */
+/*! @var soundStruct the sound data structure */
     SndSoundStruct *soundStruct;  
-/*! @var the length of the structure in bytes */
+/*! @var soundStructSize the length of the structure in bytes */
     int soundStructSize;	 
-/*! @var the priority of the sound */
+/*! @var priority the priority of the sound */
     int priority;		 
-/*! @var the target of notification messages */
+/*! @var delegate the target of notification messages */
     id delegate;		 
 /*! @var status what the object is currently doing */
     int status;			 
@@ -69,62 +69,10 @@ extern NSString *NXSoundPboardType;
     int conversionQuality;	 
     
 @public
-/*! @var tag */
+/*! @var tag A unique identifier tag for the Snd */
     int tag;
 }
 
-/*!
-  @enum       SNDSoundConversion 
-  @abstract   Sound conversion quality codes
-  @constant   SND_CONVERT_LOWQ Low quality
-  @constant   SND_CONVERT_MEDQ Medium quality
-  @constant   SND_CONVERT_HIQ  High quality
-*/
-typedef enum {
-    SND_CONVERT_LOWQ = 0,
-    SND_CONVERT_MEDQ = 1,
-    SND_CONVERT_HIQ  = 2
-} SNDSoundConversionQuality;
-
-/*!
-  @enum       SNDSoundStatus
-  @abstract   Status Codes
-  @discussion Categorizes beverages into groups of similar types.
-  @constant   SND_SoundStopped
-  @constant   SND_SoundRecording
-  @constant   SND_SoundPlaying
-  @constant   SND_SoundInitialized
-  @constant   SND_SoundRecordingPaused
-  @constant   SND_SoundRecordingPending
-  @constant   SND_SoundPlayingPending
-  @constant   SND_SoundFreed
-*/
-typedef enum {
-    SND_SoundStopped = 0,
-    SND_SoundRecording,
-    SND_SoundPlaying,
-    SND_SoundInitialized,
-    SND_SoundRecordingPaused,
-    SND_SoundPlayingPaused,
-    SND_SoundRecordingPending,
-    SND_SoundPlayingPending,
-    SND_SoundFreed = -1,
-} SNDSoundStatus;
-
-// legacy compatible
-#if !defined(USE_NEXTSTEP_SOUND_IO) && !defined(USE_PERFORM_SOUND_IO) || defined(WIN32)
-typedef enum {
-    NX_SoundStopped = SND_SoundStopped,
-    NX_SoundRecording = SND_SoundRecording,
-    NX_SoundPlaying = SND_SoundPlaying,
-    NX_SoundInitialized = SND_SoundInitialized,
-    NX_SoundRecordingPaused = SND_SoundRecordingPaused,
-    NX_SoundPlayingPaused = SND_SoundPlayingPaused,
-    NX_SoundRecordingPending = SND_SoundRecordingPending,
-    NX_SoundPlayingPending = SND_SoundPlayingPending,
-    NX_SoundFreed = SND_SoundFreed,
-} NXSoundStatus;
-#endif
 
 
 /*
@@ -149,7 +97,7 @@ typedef enum {
 + (void) removeSoundForName:(NSString *)name;
 
 /*!
-    @function removeAllSounds
+    @method removeAllSounds
     @abstract Remove all named sounds in the name table.
 */
 + (void) removeAllSounds;
@@ -184,14 +132,14 @@ typedef enum {
 - (int)infoSize;
 
 /*!
-    @function play
+    @method play
     @abstract Play the entire sound now.
     @result Returns SND_ERR_NONE if the sound played correctly.
 */
 - (int) play;
 
 /*!
-    @function play:
+    @method play:
     @abstract Play the entire sound now, for use as an action method.
     @param sender The sending object.
     @result Returns self if play occured correctly, nil if there was an error.
@@ -199,7 +147,7 @@ typedef enum {
 - play:sender;
 
 /*!
-    @function playInFuture:beginSample:sampleCount:
+    @method playInFuture:beginSample:sampleCount:
     @abstract Begin playback at some time in the future, over a region of the sound.
     @param inSeconds The number of seconds beyond the current time point to begin playback.
     @param begin The sample number to begin playing from. Use 0 to play from the start of the sound.
@@ -209,7 +157,7 @@ typedef enum {
 - (SndPerformance *) playInFuture: (double) inSeconds beginSample: (int) begin sampleCount: (int) count;
 
 /*!
-    @function play:beginSample:sampleCount:
+    @method play:beginSample:sampleCount:
     @abstract Begin playback now, over a region of the sound.
     @discussion This is a deprecated method for SoundKit compatability. 
                 You should use playInFuture:beginSample:sampleCount: instead.
@@ -220,7 +168,7 @@ typedef enum {
 - play:(id) sender beginSample:(int) begin sampleCount:(int) count;
 
 /*!
-    @function playInFuture:
+    @method playInFuture:
     @abstract Begin the playback of the sound at some future time, specified in seconds.
     @param inSeconds The number of seconds beyond the current time point to begin playback.
     @result Returns the performance that represents the sound playing.
@@ -228,7 +176,7 @@ typedef enum {
 - (SndPerformance *) playInFuture: (double) inSeconds;
 
 /*!
-    @function playAtDate:
+    @method playAtDate:
     @abstract Begin the playback of the sound at a specified date.
     @param date The date to begin playback.
     @result Returns the performance that represents the sound playing.
@@ -242,7 +190,7 @@ typedef enum {
 - (int)waitUntilStopped;
 
 /*!
-    @function stopPerformance:inFuture:
+    @method stopPerformance:inFuture:
     @abstract Stop the given playback of the sound at some future time, specified in seconds.
     @param inSeconds The number of seconds beyond the current time point to begin playback.
     @param performance The performance that represents the sound playing. 
@@ -312,5 +260,59 @@ typedef enum {
 - willPlay:   sender duringPerformance: (SndPerformance *) performance;
 - didPlay:    sender duringPerformance: (SndPerformance *) performance;
 @end
+
+/*!
+  @enum       SNDSoundConversion 
+  @abstract   Sound conversion quality codes
+  @constant   SND_CONVERT_LOWQ Low quality
+  @constant   SND_CONVERT_MEDQ Medium quality
+  @constant   SND_CONVERT_HIQ  High quality
+*/
+typedef enum {
+    SND_CONVERT_LOWQ = 0,
+    SND_CONVERT_MEDQ = 1,
+    SND_CONVERT_HIQ  = 2
+} SNDSoundConversionQuality;
+
+/*!
+  @enum       SNDSoundStatus
+  @abstract   Status Codes
+  @discussion Categorizes beverages into groups of similar types.
+  @constant   SND_SoundStopped
+  @constant   SND_SoundRecording
+  @constant   SND_SoundPlaying
+  @constant   SND_SoundInitialized
+  @constant   SND_SoundRecordingPaused
+  @constant   SND_SoundRecordingPending
+  @constant   SND_SoundPlayingPending
+  @constant   SND_SoundFreed
+*/
+typedef enum {
+    SND_SoundStopped = 0,
+    SND_SoundRecording,
+    SND_SoundPlaying,
+    SND_SoundInitialized,
+    SND_SoundRecordingPaused,
+    SND_SoundPlayingPaused,
+    SND_SoundRecordingPending,
+    SND_SoundPlayingPending,
+    SND_SoundFreed = -1,
+} SNDSoundStatus;
+
+// legacy compatible
+#if !defined(USE_NEXTSTEP_SOUND_IO) && !defined(USE_PERFORM_SOUND_IO) || defined(WIN32)
+typedef enum {
+    NX_SoundStopped = SND_SoundStopped,
+    NX_SoundRecording = SND_SoundRecording,
+    NX_SoundPlaying = SND_SoundPlaying,
+    NX_SoundInitialized = SND_SoundInitialized,
+    NX_SoundRecordingPaused = SND_SoundRecordingPaused,
+    NX_SoundPlayingPaused = SND_SoundPlayingPaused,
+    NX_SoundRecordingPending = SND_SoundRecordingPending,
+    NX_SoundPlayingPending = SND_SoundPlayingPending,
+    NX_SoundFreed = SND_SoundFreed,
+} NXSoundStatus;
+#endif
+
 
 #endif

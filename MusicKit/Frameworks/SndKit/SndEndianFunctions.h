@@ -49,7 +49,15 @@ SndSwappedFloat  SndSwapHostToSwappedFloat  (float aFloat);
 double 			     SndSwapSwappedDoubleToHost (SndSwappedDouble aSwappedDouble);
 SndSwappedDouble SndSwapHostToSwappedDouble (double aDouble);
 
+/*! @function SndSwap_Convert16BitNative2LittleEndian
+    @param si 2 byte native word to be byte swapped (if needed) to Little Endian
+    @result Pointer to the byte swapped value. Do NOT store this!  
+*/
 char* SndSwap_Convert16BitNative2LittleEndian(unsigned short si);
+/*! @function SndSwap_Convert32BitNative2LittleEndian
+    @param li 4 byte native word to be byte swapped (if needed) to Little Endian
+    @result Pointer to the byte swapped value. Do NOT store this!  
+*/
 char* SndSwap_Convert32BitNative2LittleEndian(unsigned long  li);
 
 

@@ -39,7 +39,7 @@
 }
 
 /*!
-    @function   performanceOfSnd:playingAtTime:
+    @method   performanceOfSnd:playingAtTime:
     @abstract   Create and return an autoreleased instance of SndPerformance with a sound
                 and a time to begin playing. Convenience method to
                 performanceOfSnd:playingAtTime:endAtIndex
@@ -50,7 +50,7 @@
 + (SndPerformance *) performanceOfSnd: (Snd *) s playingAtTime: (double) seconds;
 
 /*!
-    @function   performanceOfSnd:playingAtTime:endAtIndex:
+    @method   performanceOfSnd:playingAtTime:endAtIndex:
     @abstract   Create and return an autoreleased instance of SndPerformance with a sound
                 and a time to begin playing.
     @param      s
@@ -63,7 +63,7 @@
                            endAtIndex: (long) endIndex;
 
 /*!
-    @function   initWithSnd:playingAtTime:
+    @method   initWithSnd:playingAtTime:
     @abstract   Initialise a performance with a sound and a time to begin playing.
     @discussion Convenience method to initWithSnd:playingAtTime:endAtIndex:
     @param      s The sound to be played
@@ -74,7 +74,7 @@
 - initWithSnd: (Snd *) s playingAtTime: (double) t;
 
 /*!
-    @function   initWithSnd:playingAtTime:endAtIndex:
+    @method   initWithSnd:playingAtTime:endAtIndex:
     @abstract   Initialise a performance with a sound and a time to begin playing,
                 and the index of the last sample of the sound to play.
     @param      t The time to begin playback
@@ -84,69 +84,69 @@
 - initWithSnd: (Snd *) s playingAtTime: (double) t endAtIndex: (long) endIndex;
 
 /*!
-    @function   snd
+    @method   snd
     @abstract   Returns the Snd instance being played in this performance.
     @result     Returns the Snd instance being played in this performance.
 */
 - (Snd *) snd;
 
 /*!
-    @function   playTime
+    @method   playTime
     @abstract   Returns the time the sound is to begin playing.
     @result     Returns the time interval in seconds from the current time the sound is to begin playing.
 */
 - (double) playTime;
 
 /*!
-    @function   playIndex
+    @method   playIndex
     @abstract   Returns the sample to start playing from.
     @result     Returns the sample index to start playing from.
 */
 - (long) playIndex;
 
 /*!
-    @function   setPlayIndex:
+    @method   setPlayIndex:
     @abstract   Sets the sample to start playing from.
     @param      newPlayIndex The sample index that playing should begin from.
 */
 - (void) setPlayIndex: (long) newPlayIndex;
 
 /*!
-    @function   endAtIndex
+    @method   endAtIndex
     @abstract   Returns the sample to stop playing at.
     @result     Returns the sample index to stop playing at.
 */
 - (long) endAtIndex;
 
 /*!
-    @function   setEndAtIndex:
+    @method   setEndAtIndex:
     @abstract   Sets the sample to stop playing at.
     @param      newEndAtIndex The sample index that playing should stop after.
 */
 - (void) setEndAtIndex: (long) newEndAtIndex;
 
 /*!
-    @function   stopInFuture:
+    @method   stopInFuture:
     @abstract   Stop the currently playing performance at some time in the future.
     @param      inSeconds The time interval when to stop the performance.
 */
 - (void) stopInFuture: (double) inSeconds;
 
 /*!
-    @function   isEqual:
+    @method   isEqual:
     @abstract 
     @param      anotherPerformance
 */
 - (BOOL) isEqual: (id) anotherPerformance;
 
 /*!
-    @function   dealloc
+    @method   dealloc
     @abstract   Destructor
 */
 - (void) dealloc;
 
 /*!
-    @function   description
+    @method   description
     @abstract 
     @result     A string containing a brief description of the performance object
 */

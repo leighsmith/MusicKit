@@ -40,27 +40,27 @@
 }
 
 /*!
-    @function   audioProcessorChain
+    @method   audioProcessorChain
     @abstract   Factory method
     @result     A freshly initialized, autoreleased SndAudioProcessorChain.
 */
 + audioProcessorChain;
 
 /*!
-    @function   init
+    @method   init
     @abstract   Initializer
     @result     Self
 */
 - init;
 
 /*!
-    @function   dealloc
+    @method   dealloc
     @abstract   Destructor
 */
 - (void) dealloc;
 
 /*!
-    @function   bypassProcessors:
+    @method   bypassProcessors:
     @abstract   Sets the internal FX bypass flag
     @param      b Bypass flag - TRUE if bypass is to be enabled
     @result     self.
@@ -68,7 +68,7 @@
 - bypassProcessors: (BOOL) b; 
 
 /*!
-    @function   addAudioProcessor:
+    @method   addAudioProcessor:
     @abstract   Adds an SndAudioProcessor to the FX chain
     @discussion
     @param      proc The SndAudioProcessor to be added to the FX chain
@@ -77,7 +77,7 @@
 - addAudioProcessor: (SndAudioProcessor*) proc;
 
 /*!
-    @function   removeAudioProcessor:
+    @method   removeAudioProcessor:
     @abstract   Removes an SndAudioProcesor from the FX chain
     @discussion
     @param      proc SndAudioProcessor to be removed from the FX chain
@@ -86,7 +86,7 @@
 - removeAudioProcessor: (SndAudioProcessor*) proc;
 
 /*!
-    @function   processorAtIndex:
+    @method   processorAtIndex:
     @abstract   Get the processor at a certain index
     @discussion
     @param      index
@@ -95,14 +95,14 @@
 - (SndAudioProcessor*) processorAtIndex: (int) index;
 
 /*!
-    @function   removeAllProcessors
+    @method   removeAllProcessors
     @abstract   Removes all processors from the processor chain.
     @result     self
 */
 - removeAllProcessors;
 
 /*!
-    @function   processBuffer:
+    @method   processBuffer:
     @abstract
     @discussion The t parameter tells the processor chain at what time
                 the buffer is destined to start to be played. This
@@ -114,7 +114,7 @@
 - processBuffer: (SndAudioBuffer*) buff forTime:(double) t;
 
 /*!
-    @function   processorCount
+    @method   processorCount
     @abstract
     @discussion
     @result     number of processors in the processor chain.
@@ -122,7 +122,7 @@
 - (int) processorCount; 
 
 /*!
-    @function   processorArray
+    @method   processorArray
     @abstract   Accessor to the internal processor array
     @discussion Provided for speed
     @result     NSArray containing the processors (in order)
@@ -130,7 +130,7 @@
 - (NSArray*) processorArray;
 
 /*!
-    @function   isBypassingFX
+    @method   isBypassingFX
     @abstract
     @discussion
     @result     TRUE is FX chain is being bypassed
@@ -138,7 +138,7 @@
 - (BOOL) isBypassingFX;
 
 /*!
-    @function   setBypass:
+    @method   setBypass:
     @abstract
     @discussion
     @param      b Bypass flag - TRUE to enable bypass 
@@ -146,7 +146,7 @@
 - (void) setBypass: (BOOL) b;
 
 /*!
-    @function   postFader
+    @method   postFader
     @abstract
     @discussion
     @result     id of the postFader object at the end of the chain
@@ -154,7 +154,7 @@
 - (SndAudioFader *) postFader;
 
 /*!
-    @function   nowTime
+    @method   nowTime
     @abstract
     @discussion
     @result     double indicating the start time of the buffer being

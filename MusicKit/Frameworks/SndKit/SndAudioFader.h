@@ -27,6 +27,12 @@
 #define SND_FADER_ATTACH_RAMP_RIGHT 1
 #define SND_FADER_ATTACH_RAMP_LEFT  2
 
+/*!
+@class      SndAudioFader
+@abstract
+@discussion
+*/
+
 @interface SndAudioFader : SndAudioProcessor
 {
   id     envClass; /* Class object used in initialising new envelopes */
