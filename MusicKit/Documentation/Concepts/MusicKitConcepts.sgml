@@ -23,10 +23,10 @@ Leigh Smith <leigh@tomandandy.com>
 <!ENTITY ScoreFileSummary    SYSTEM "ScoreFileLanguage/ScoreFileSummary.sgml">
 <!ENTITY MusicTables         SYSTEM "MusicTables.sgml">
 <!ENTITY MIDITimeCode        SYSTEM "MIDITimeCode.sgml">
-<!ENTITY MKWeb               "http://www.sourceforge.net/projects/musickit">
-<!ENTITY MKClassReferences   "&MKWeb;">
+<!ENTITY MKWeb               "http://www.musickit.org">
+<!ENTITY MKClassReferences   "&MKWeb;/Frameworks/MusicKit">
 <!ENTITY MKFunctionReferences "&MKWeb;">
-<!ENTITY SKClassReferences   "&MKWeb;">
+<!ENTITY SKClassReferences   "&MKWeb;/Frameworks/SndKit">
 <!ENTITY SKFunctionReferences "&MKWeb;">
 <!ENTITY IntroSynthPatches   "&MKWeb;">
 ]>
