@@ -37,10 +37,14 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /* Modification history:
 
   $Log$
+  Revision 1.5  2001/07/10 17:03:54  leighsmith
+  Removed subclass specific note sender ivar so the super class method noteSender works correctly
+
   Revision 1.4  2000/04/25 02:09:53  leigh
   Renamed free methods to release methods to reflect OpenStep behaviour
 
@@ -111,7 +115,7 @@ static BOOL fastActivation = NO;
 {
     [super init];
     lastTimeTag = MK_ENDOFTIME;
-    [self addNoteSender:noteSender = [MKNoteSender new]];
+    [self addNoteSender: [MKNoteSender new]];    /* The object's only MKNoteSender. */
     return self;
 }
 
@@ -123,10 +127,10 @@ static BOOL fastActivation = NO;
      Optionally archives part using NXWriteObjectReference().
      */
 {
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeConditionalObject:part];
-    [aCoder encodeValuesOfObjCTypes:"dd",&firstTimeTag,&lastTimeTag];
-    [aCoder encodeConditionalObject:_scorePerformer];
+    [super encodeWithCoder: aCoder];
+    [aCoder encodeConditionalObject: part];
+    [aCoder encodeValuesOfObjCTypes: "dd", &firstTimeTag, &lastTimeTag];
+    [aCoder encodeConditionalObject: _scorePerformer];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -135,37 +139,23 @@ static BOOL fastActivation = NO;
      See write:. */
 {
     [super initWithCoder:aDecoder];
-    if ([aDecoder versionForClassName:@"PartPerformer"] == VERSION2) {
+    if ([aDecoder versionForClassName: @"MKPartPerformer"] == VERSION2) {
 	part = [[aDecoder decodeObject] retain];
-	[aDecoder decodeValuesOfObjCTypes:"dd",&firstTimeTag,&lastTimeTag];
+	[aDecoder decodeValuesOfObjCTypes: "dd", &firstTimeTag, &lastTimeTag];
 	_scorePerformer = [[aDecoder decodeObject] retain];
     }
-    /* from awake (sb) */
-    noteSender = [self noteSender];
 
     return self;
 }
 
-//- awake
-  /* Initializes noteSender instance variable. */
-//{
-//#warning DONE ArchiverConversion: put the contents of your 'awake' method at the end of your 'initWithCoder:' method instead
-//    [super awake];
-/*
-    noteSender = [self noteSender];
- */
-//    return self;
-//}
-
 - (void)dealloc
-  /* If receiver is a member of a ScorePerformer or is active, returns self
+  /* If receiver is a member of a MKScorePerformer or is active, returns self
      and does nothing. Otherwise frees the receiver. */
 {
     /*sb: FIXME!!! This is not the right place to decide whether or not to dealloc.
      * maybe need to put self in a global list of non-dealloced objects for later cleanup */
     if ((status != MK_inactive) || _scorePerformer) 
       return;
-    [noteSender release]; /* sb */
     [super dealloc];
 }
 
@@ -186,13 +176,12 @@ static BOOL fastActivation = NO;
     newObj->_loc = -1; /* sb: was NULL */
     newObj->_endLoc = -1; /* sb: was NULL */
     newObj->_scorePerformer = nil;
-    newObj->noteSender = [newObj noteSender];
     return newObj; 	//sb: do we need to retain and autorelease this? Or is this done
     			// as part of [super copyWithZone:zone] ?
 }
 
 -setPart:aPart
-  /* Sets Part over which we sequence. 
+  /* Sets MKPart over which we sequence. 
      If the receiver is active, does nothing and returns nil. Otherwise
      returns self. */
 {
@@ -203,15 +192,15 @@ static BOOL fastActivation = NO;
 }
 
 -part
-  /* Gets Part over which we sequence. */
+  /* Gets MKPart over which we sequence. */
 {
     return [[part retain] autorelease];
 }
 
 -activateSelf
   /* TYPE: Performing
-   * Activates the receiver for a performance. The Part is snapshotted at  
-   * this time. Any subsequent changes to the Part will not affect the
+   * Activates the receiver for a performance. The MKPart is snapshotted at  
+   * this time. Any subsequent changes to the MKPart will not affect the
    * current performance. Returns the receiver. 
    */
 /*sb: I have had to change _loc and _endLoc to Array indices rather than addresses.
@@ -273,7 +262,7 @@ static BOOL fastActivation = NO;
   /* TYPE: Performing
    * Sends nextNote and specifies the next time to perform.
    * Returns the receiver. You never send this message directly to an instance.
-   * Rather, it is invoked by the Conductor.
+   * Rather, it is invoked by the MKConductor.
    * You may override this method, e.g. to modify the note before it is 
    * performed or to modify nextPerform, 
    * but you must send [super perform] to perform the note. 
@@ -281,31 +270,26 @@ static BOOL fastActivation = NO;
 {
     double t = [nextNote timeTag];
     double tNew;
+    MKNoteSender *noteSender = [self noteSender];
+    
     if (performCount == 1 && (firstTimeTag > 0)) {  /* Send all noteUpdates up to now */
 	int nt;
-
         NSEnumerator *enumerator = [_list objectEnumerator];
-        id aNote;
+        MKNote *aNote;
 
         while ((aNote = [enumerator nextObject])) {
-            if (aNote == nextNote) break;
+            if (aNote == nextNote)
+                break;
             nt = [aNote noteType];
             if (nt == MK_noteUpdate || nt == MK_mute)
-              [noteSender sendNote:aNote];
+                [noteSender sendNote: aNote];
         }
-/*
-	for (aNote = NX_ADDRESS(_list); *aNote != nextNote; aNote++) {
-	    nt = [*aNote noteType];
-	    if (nt == MK_noteUpdate || nt == MK_mute) 
-	      [noteSender sendNote:*aNote];
-	}
- */
     }
-    [noteSender sendNote:nextNote];
-    if ((_loc == _endLoc) ||
-        ((tNew = [(nextNote = [_list objectAtIndex:_loc++]) timeTag]) > lastTimeTag)) //sb: was *_loc++
-      [self deactivate];
-    else nextPerform = tNew - t;
+    [noteSender sendNote: nextNote];
+    if ((_loc == _endLoc) || ((tNew = [(nextNote = [_list objectAtIndex:_loc++]) timeTag]) > lastTimeTag))
+        [self deactivate];
+    else
+        nextPerform = tNew - t;
     return self;
 }
 

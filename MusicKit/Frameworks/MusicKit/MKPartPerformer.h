@@ -40,6 +40,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2001/07/10 17:03:54  leighsmith
+  Removed subclass specific note sender ivar so the super class method noteSender works correctly
+
   Revision 1.4  2000/11/25 22:56:48  leigh
   Enforced ivar privacy
 
@@ -59,7 +62,6 @@
 @interface MKPartPerformer : MKPerformer
 {
     MKNote *nextNote;            /* The next note to perform. Updated in -perform. */ 
-    MKNoteSender *noteSender;    /* The object's only MKNoteSender. */
     MKPart *part;                /* The MKPart associated with this object. */
     double firstTimeTag;         /* The smallest timeTag value considered for performance.  */
     double lastTimeTag;          /* The greatest timeTag value considered for performance.  */
