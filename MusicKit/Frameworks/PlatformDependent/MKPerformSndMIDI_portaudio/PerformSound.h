@@ -160,6 +160,14 @@ PERFORM_API BOOL SNDStreamStart(SNDStreamProcessor newStreamProcessor, void *use
  */
 PERFORM_API BOOL SNDStreamStop(void);
 
+/*!
+  @function SNDSpeakerConfiguration
+  @abstract Returns an array of strings describing each audio channel's speaker assignment.
+  @result Returns an array of character pointers, with NULL terminating
+  the list.
+ */
+PERFORM_API const char **SNDSpeakerConfiguration(void);
+
 #ifdef __cplusplus
 }
 #endif
