@@ -32,7 +32,8 @@ ifeq (mingw32, $(GNUSTEP_TARGET_OS))
 # should have been placed.
 
   ADDITIONAL_FLAGS += -Ic:/DXVCSDK/include \
-           -I$(CYG_PREFIX)/usr/local/include
+           -I$(CYG_PREFIX)/usr/local/include \
+           -DSK_MP3_ENCODER
 
   SHARED_LD_POSTFLAGS += -L$(CYG_PREFIX)/usr/local/lib
 
