@@ -42,6 +42,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2001/09/07 00:12:52  leighsmith
+  Corrected naming of satellite class
+
   Revision 1.4  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -301,7 +304,7 @@ the macros <b>begin_dram_access</b> and <b>end_dram_access</b>.  See the file
 #import "MusicKit.h"
 
 /*!
-  @class ArielQP
+  @class ArielQPSat
   @discussion
 
 The ArieQPSat objects are used to represent the
