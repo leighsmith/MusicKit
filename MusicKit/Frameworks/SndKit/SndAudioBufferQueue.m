@@ -1,10 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  SndAudioBufferQueue.m
-//  SndKit
+//  $Id$
 //
-//  Created by SKoT McDonald on Wed Aug 29 2001.
-//  Copyright (c) 2001 tomandandy. All rights reserved.
+//  Original Author: SKoT McDonald, <skot@tomandandy.com>
+//
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and
 //  non-commercial purposes so long as the author attribution and copyright
@@ -20,10 +20,6 @@ enum {
   ABQ_noData,
   ABQ_hasData
 };
-
-#ifdef __MINGW32__
-# define NSConditionLock SndConditionLock
-#endif
 
 #define SNDABQ_DEBUG 0   
 
@@ -88,8 +84,8 @@ enum {
 
 - (NSString*) description
 {
-  return [NSString stringWithFormat: @"SndAudioBufferQueue numBuffers:%i pending:%i processed:%i",
-    numBuffers, [pendingBuffers count], [processedBuffers count]];
+  return [NSString stringWithFormat: @"%@ numBuffers:%i pending:%i processed:%i",
+    [super description], numBuffers, [pendingBuffers count], [processedBuffers count]];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -165,6 +161,29 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// cancelProcessedBuffers
+////////////////////////////////////////////////////////////////////////////////
+
+- (void) cancelProcessedBuffers
+{
+    int numOfProcessedBuffers, bufferIndex;
+    
+    [processedBuffersLock lock];
+    numOfProcessedBuffers = [processedBuffers count];
+#if SNDABQ_DEBUG
+    NSLog(@"moving %d processed buffers to pending...\n", numOfProcessedBuffers);
+#endif    
+    for(bufferIndex = 0; bufferIndex < numOfProcessedBuffers; bufferIndex++) {
+	SndAudioBuffer *processedAudioBuffer = [[processedBuffers objectAtIndex: 0] retain];
+	
+	[processedBuffers removeObjectAtIndex: 0];
+	[self addPendingBuffer: processedAudioBuffer];
+	[processedAudioBuffer release];
+    }
+    [processedBuffersLock unlockWithCondition: ABQ_noData];
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // pendingBuffersCount
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -206,7 +225,7 @@ enum {
 // prepareQueueAsType:withBufferPrototype:
 ////////////////////////////////////////////////////////////////////////////////
 
-- prepareQueueAsType: (AudioBufferQueueType) type withBufferPrototype: (SndAudioBuffer*) buff
+- prepareQueueAsType: (SndAudioBufferQueueType) type withBufferPrototype: (SndAudioBuffer*) buff
 {
   if (buff == nil) {
     NSLog(@"SndAudioBufferQueue::prepareQueueAsType - ERROR: buff is nil!\n");
