@@ -74,21 +74,18 @@
 
 + audioBufferWithFormat: (SndSoundStruct*) f duration: (double) timeInSec
 {
-  SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
-  long oldLength = f->dataSize;
-  long samWidth  = SndSampleWidth(f->dataFormat);
-  f->dataSize = (f->channelCount) *
-    samWidth *
-    (long)((f->samplingRate) * timeInSec);
-
-  [ab initWithFormat: f data: NULL];
-  f->dataSize = oldLength;
+  SndAudioBuffer *ab = [SndAudioBuffer alloc];
+  
+  [ab initWithFormat: f->dataFormat
+        channelCount: f->channelCount
+        samplingRate: f->samplingRate
+            duration: timeInSec];
 
   return [ab autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//
+// audioBufferWithFormat:channelCount:samplingRate:duration:
 ////////////////////////////////////////////////////////////////////////////////
 
 + audioBufferWithFormat: (int) _dataFormat
@@ -96,10 +93,14 @@
            samplingRate: (double) _samplingRate
                duration: (double) time;
 {
-  return [[[SndAudioBuffer alloc] initWithFormat: (int) _dataFormat
-                                    channelCount: (int) _channelCount
-                                    samplingRate: (double) _samplingRate
-                                        duration: (double) time] autorelease];
+  SndAudioBuffer *ab = [SndAudioBuffer alloc];
+  
+  [ab initWithFormat: (int) _dataFormat
+        channelCount: (int) _channelCount
+        samplingRate: (double) _samplingRate
+            duration: (double) time];
+    
+  return [ab autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -130,22 +131,32 @@
   self = [self init];
   if (self) {
     void *ptr = NULL;
-    int frameSize = 0, length;
+    int frameSize  = 0, length, offset;
+    int dataLength = 0;
     samplingRate = b->samplingRate;
     channelCount = b->channelCount;
     dataFormat   = b->dataFormat;
+    
     frameSize    = [self frameSizeInBytes];
     ptr = [b bytes] + frameSize * r.location;
     length = frameSize * r.length;
+    offset = frameSize * r.location;
     if (data != nil)
       [data release];
-    data = [[NSMutableData alloc] initWithBytes: ptr length: length];
+
+    if (offset+length > [[b data] length]) 
+      dataLength = [[b data] length] - offset;
+    else
+      dataLength = length;
+
+    data = [[NSMutableData alloc] initWithLength: length];
+    memcpy([data mutableBytes], ptr, dataLength);
   }
   return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// init
+// initWithBuffer:
 ////////////////////////////////////////////////////////////////////////////////
 
 - initWithBuffer: (SndAudioBuffer*) b
