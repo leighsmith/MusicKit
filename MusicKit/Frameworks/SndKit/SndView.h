@@ -25,7 +25,6 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #import <CoreGraphics/CoreGraphics.h>
 #endif
 
-//#import <SndKit/Timing.h>
 #import "SndDisplayDataList.h"
 #import "SndDisplayData.h"
 #import "Snd.h"
@@ -40,10 +39,14 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #define FASTSKIPAMOUNT 8
 #define CROSSTHRESH 0.34
 
-#define NX_SOUNDVIEW_MINMAX 0
-#define NX_SOUNDVIEW_WAVE 1
+#define SND_SOUNDVIEW_MINMAX 0
+#define SND_SOUNDVIEW_WAVE 1
+
+#define NX_SOUNDVIEW_MINMAX SND_SOUNDVIEW_MINMAX
+#define NX_SOUNDVIEW_WAVE SND_SOUNDVIEW_WAVE
 
 #define DEFAULT_RECORD_SECONDS 5
+
 @interface SndView:NSView
 {
     Snd*       	sound;
