@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/06/09 14:51:53  leigh
+  Removed objc.h
+
   Revision 1.6  2000/04/01 01:15:12  leigh
   Removed redundant MSG_SIZE_MAX definitions (which have gone under MacOsX)
 
@@ -32,7 +35,7 @@ Modification history:
   Added Win32 compatibility, CVS logs, SBs changes
 
 */
-#import <objc/objc.h>
+#import <Foundation/Foundation.h>
 
 #if _MK_ONLY_ONE_MTC_SUPPORTED
 
