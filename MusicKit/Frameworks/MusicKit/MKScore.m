@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.19  2000/06/09 15:01:03  leigh
+  typed the parameter returned by -parts
+
   Revision 1.18  2000/05/26 21:03:19  leigh
   Added combineNotes to do the combination over all MKParts
 
@@ -1448,8 +1451,7 @@ readScorefile(MKScore *self,
     return self;
 }
 
-
--parts
+- (NSMutableArray *) parts;
   /* Returns a copy of the List of Parts in the receiver. The Parts themselves are not copied.
      Now that we use NSArrays, a [List copyWithZone] did a shallow copy, whereas
      [NSMutableArray copyWithZone] does a deep copy, so we emulate the List operation.  */

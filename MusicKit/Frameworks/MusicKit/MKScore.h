@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.10  2000/06/09 15:01:03  leigh
+  typed the parameter returned by -parts
+
   Revision 1.9  2000/05/26 21:03:19  leigh
   Added combineNotes to do the combination over all MKParts
 
@@ -255,7 +258,7 @@
    Returns the number of Part contained in the receiver.
    */
 
-- parts;
+- (NSMutableArray *) parts;
  /* 
    Creates and returns a List containing the 
    receiver's Parts.  The Parts themselves
