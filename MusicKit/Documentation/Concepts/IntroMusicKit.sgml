@@ -558,7 +558,9 @@ set of <classname>MKSynthPatch</classname> and
       <title>MusicKit Functions</title>
       
       <para>
-Refer to <xref linkend="MKFunctionReferences"> for descriptions of the
+Refer to <ulink url="&MKFunctionReferences;">
+<productname>MusicKit</productname> Function References</ulink>
+for descriptions of the
 functions (and function-like macros) that are provided by the
 MusicKit. Many of the functions are auxiliary to the Kit's classes in
 that they augment or are superceded by one or more classes. Of the
