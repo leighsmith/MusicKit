@@ -134,16 +134,30 @@ int main (int argc, const char * argv[])
         PrintError("Can't find sound file",-2);
       }
       else {
+        int waitCount = 0;
+        int maxWait;
+        SndPlayer  *player = [SndPlayer defaultSndPlayer];
+
         [s readSoundfile: filename];
-        [[Snd sndPlayer] setRemainConnectedToManager:FALSE];
+        maxWait = [s duration] + 5 + timeOffset;
+        [player setRemainConnectedToManager: FALSE];
         SndSwapSoundToHost([s data],[s data],[s sampleCount],[s channelCount],[s dataFormat]);
+
         [s playInFuture: timeOffset beginSample: startTimeInSamples sampleCount: durationInSamples];
+
         if (bTimeOutputFlag) printf("Sound duration: %.3f\n",[s duration]);
+        
+        [player setRemainConnectedToManager: FALSE];
       
         // Wait for stream manager to go inactive, signalling the sound has finished playing
-        while ([[SndStreamManager defaultStreamManager] isActive]) {
+        while ([[SndStreamManager defaultStreamManager] isActive] && waitCount < maxWait) {
           sleep(1); 
           if (bTimeOutputFlag)  printf("Time: %i\n",i+1);
+          waitCount++;
+        }
+        if (waitCount >= maxWait) {
+          fprintf(stderr,"Aborting wait for stream manager shutdown - taking too long.\n");
+          fprintf(stderr,"(snd dur:%.3f, maxwait:%i)\n",[s duration],maxWait);
         }
       }
       [pool release];
