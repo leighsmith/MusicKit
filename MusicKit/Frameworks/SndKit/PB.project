@@ -12,6 +12,7 @@
             UserPath.m
         ); 
         FRAMEWORKS = (AppKit.framework, Foundation.framework, SoundKit.framework, System.framework); 
+        HEADERSEARCH = (/usr/local/include); 
         H_FILES = (
             Snd.h, 
             SndDisplayData.h, 
@@ -31,6 +32,8 @@
             _Sndsmallfilter.h, 
             _Sndstdefs.h
         ); 
+        LIBRARYSEARCH = (/usr/local/lib); 
+        OTHER_LIBS = (st); 
         OTHER_LINKED = (
             SndEndianFunctions.c, 
             SndFunctions.c, 
