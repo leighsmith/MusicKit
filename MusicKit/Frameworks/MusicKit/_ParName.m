@@ -51,6 +51,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  1999/11/07 05:12:44  leigh
+  Removal of redundant HashTable include
+
   Revision 1.3  1999/09/26 19:58:33  leigh
   Cleanup of documentation
 
@@ -87,8 +90,6 @@ Modification history:
   1/30/96/daj -  Changed _MKParWriteStdValueOn to use _MKParAsStringNoCopy().
                  Also changed default of _MKParAsStringNoCopy to do no copy.
 */
-
-#import <objc/HashTable.h>
 #import <ctype.h>
 
 #define MK_INLINE 1
