@@ -1042,6 +1042,8 @@ int SndRead(FILE *fp, SndSoundStruct **sound, const char *fileTypeStr)
         s->channelCount = informat.info.channels;
         if (informat.comment) // because SndSoundStruct locates comments at a fixed location, we have to copy them in.
 		strcpy(s->info, informat.comment);
+	else
+		s->info[0] = '\0';
 
 	// There is a semantic mismatch between sox and the SndKit's process of managing data. .snd files provide an upfront
 	// indication of sound file size in bytes, whereas sox only allows reading chunks until EOF to allow for pipe
