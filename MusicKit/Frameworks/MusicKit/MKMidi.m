@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.19  2000/04/22 20:15:25  leigh
+  user defaults standardised to MK prefix
+
   Revision 1.18  2000/04/16 04:19:42  leigh
   Removed assignment in condition warning
 
@@ -1138,7 +1141,7 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
     getAvailableMidiDevices(); // assigns midiDriverNames and midiDriverUnits
     // devName can be of the soft form "midi0", or the hard description "Mididriver0" or "SB Live! MIDI Out"
     if (isSoft) {
-        midiNumStrArr = [NSString stringWithFormat:@"MIDI%d",num];
+        midiNumStrArr = [NSString stringWithFormat:@"MKMIDI%d",num];
 
         // The owner will be whatever application links against this framework. This is what we want to allow for
         // different applications to use different MIDI devices if necessary.
@@ -1214,24 +1217,24 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
     portTable = [NSMutableDictionary dictionary];
     [portTable retain];
     MKMIDIDefaults = [NSDictionary dictionaryWithObjectsAndKeys:
-       @"",@"MIDI0",
-       @"",@"MIDI1",
-       @"",@"MIDI2",
-       @"",@"MIDI3",
-       @"",@"MIDI4",
-       @"",@"MIDI5",
-       @"",@"MIDI6",
-       @"",@"MIDI7",
-       @"",@"MIDI8",
-       @"",@"MIDI9",
-       @"",@"MIDI10",
-       @"",@"MIDI11",
-       @"",@"MIDI12",
-       @"",@"MIDI13",
-       @"",@"MIDI14",
-       @"",@"MIDI15",
-       NULL,NULL];
-    // stick these in the temporary defaults that are searched last.
+        @"", @"MKMIDI0",
+        @"", @"MKMIDI1",
+        @"", @"MKMIDI2",
+        @"", @"MKMIDI3",
+        @"", @"MKMIDI4",
+        @"", @"MKMIDI5",
+        @"", @"MKMIDI6",
+        @"", @"MKMIDI7",
+        @"", @"MKMIDI8",
+        @"", @"MKMIDI9",
+        @"", @"MKMIDI10",
+        @"", @"MKMIDI11",
+        @"", @"MKMIDI12",
+        @"", @"MKMIDI13",
+        @"", @"MKMIDI14",
+        @"", @"MKMIDI15",
+       NULL, NULL];
+    // insert these in the temporary defaults that are searched last.
     [[NSUserDefaults standardUserDefaults] registerDefaults: MKMIDIDefaults];  
 }
 

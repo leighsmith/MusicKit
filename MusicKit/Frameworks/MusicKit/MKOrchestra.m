@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2000/04/22 20:13:21  leigh
+  user defaults standardised to MK prefix
+
   Revision 1.11  2000/04/16 04:21:03  leigh
   Removed assignment in condition warning
 
@@ -790,8 +793,7 @@ static id synthInstruments = nil;
       return self;
     [super init];
     deviceStatus = MK_devClosed;
-//#warning DefaultsConversion: This used to be a call to NXGetDefaultValue with the owner "MusicKit".  If the owner was different from your applications name, you may need to modify this code.
-    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DSPDebug"])
+    if ([[NSUserDefaults standardUserDefaults] boolForKey:@"MKDSPDebug"])
       [self setOnChipMemoryConfigDebug:YES patchPoints:0];
     else 
       [self setOnChipMemoryConfigDebug:NO patchPoints:0];
@@ -829,8 +831,7 @@ static id synthInstruments = nil;
     [self setOutputCommandsFile:NULL];
     [self useDSP:YES];
 #if m68k
-    name = [NSString stringWithFormat:@"DSPSerialPortDevice%d",orchIndex];
-//#warning DefaultsConversion: This used to be a call to NXGetDefaultValue with the owner "MusicKit".  If the owner was different from your applications name, you may need to modify this code.
+    name = [NSString stringWithFormat:@"MKDSPSerialPortDevice%d",orchIndex];
     s = [[NSUserDefaults standardUserDefaults] objectForKey:name];
     _nextCompatibleSerialPort = YES;
 #else
@@ -838,8 +839,7 @@ static id synthInstruments = nil;
     _nextCompatibleSerialPort = (s && [s isEqualToString:@"NeXT"]);
     if (_nextCompatibleSerialPort) {
 	/* Get it from defaults data base */
-        name = [NSString stringWithFormat:@"DSPSerialPortDevice%d",orchIndex];
-//#warning DefaultsConversion: This used to be a call to NXGetDefaultValue with the owner "MusicKit".  If the owner was different from your applications name, you may need to modify this code.
+        name = [NSString stringWithFormat:@"MKDSPSerialPortDevice%d",orchIndex];
         s = [[NSUserDefaults standardUserDefaults] objectForKey:name];
     }
 #endif
@@ -848,7 +848,7 @@ static id synthInstruments = nil;
             serialPortDevice = [[NSClassFromString(s) alloc] init];
     /*sb: do I expect the device class, eg SSAD64x, to have been already loaded in? Hmmm. tests show it probably is */
 //#warning DefaultsConversion: This used to be a call to NXGetDefaultValue with the owner "MusicKit".  If the owner was different from your applications name, you may need to modify this code.
-    s = [[NSUserDefaults standardUserDefaults] objectForKey:@"OrchestraSoundOut"];
+    s = [[NSUserDefaults standardUserDefaults] objectForKey:@"MKOrchestraSoundOut"];
     if (!s || ![s length]) {
 #if m68k
 	[self setHostSoundOut:YES];

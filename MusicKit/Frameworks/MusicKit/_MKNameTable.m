@@ -36,6 +36,9 @@
 Modification history:
 
   $Log$
+  Revision 1.4  2000/04/22 20:10:24  leigh
+  user defaults standardised to MK prefix
+
   Revision 1.3  2000/04/07 22:45:03  leigh
   Cleaned up defaults usage, removed redundant DSP output assignments (which are better covered using the IOKit).
 
@@ -490,29 +493,29 @@ void _MKCheckInit(void)
     if (globalParseNameTable)  /* Been here? */
       return;
     MKDefaults = [[NSDictionary dictionaryWithObjectsAndKeys:
-        @"",@"MKTrace",
+        @"", @"MKTrace",
 #if 0  // disabled as it is becoming redundant as we move DSP to native CPU
-        @"ArielProPort",@"DSPSerialPortDevice0",
-        @"ArielProPort",@"DSPSerialPortDevice1",
-        @"ArielProPort",@"DSPSerialPortDevice2",
-        @"ArielProPort",@"DSPSerialPortDevice3",
-        @"ArielProPort",@"DSPSerialPortDevice4",
-        @"ArielProPort",@"DSPSerialPortDevice5",
-        @"ArielProPort",@"DSPSerialPortDevice6",
-        @"ArielProPort",@"DSPSerialPortDevice7",
-        @"ArielProPort",@"DSPSerialPortDevice8",
-        @"ArielProPort",@"DSPSerialPortDevice9",
-        @"ArielProPort",@"DSPSerialPortDevice10",
-        @"ArielProPort",@"DSPSerialPortDevice11",
-        @"ArielProPort",@"DSPSerialPortDevice12",
-        @"ArielProPort",@"DSPSerialPortDevice13",
-        @"ArielProPort",@"DSPSerialPortDevice14",
-        @"ArielProPort",@"DSPSerialPortDevice15",
+        @"", @"MKDSPSerialPortDevice0",
+        @"", @"MKDSPSerialPortDevice1",
+        @"", @"MKDSPSerialPortDevice2",
+        @"", @"MKDSPSerialPortDevice3",
+        @"", @"MKDSPSerialPortDevice4",
+        @"", @"MKDSPSerialPortDevice5",
+        @"", @"MKDSPSerialPortDevice6",
+        @"", @"MKDSPSerialPortDevice7",
+        @"", @"MKDSPSerialPortDevice8",
+        @"", @"MKDSPSerialPortDevice9",
+        @"", @"MKDSPSerialPortDevice10",
+        @"", @"MKDSPSerialPortDevice11",
+        @"", @"MKDSPSerialPortDevice12",
+        @"", @"MKDSPSerialPortDevice13",
+        @"", @"MKDSPSerialPortDevice14",
+        @"", @"MKDSPSerialPortDevice15",
 #endif
     #if i386
-        @"SSI",@"MKOrchestraSoundOut",   /* One of "Host", "SSI", "IRQA", "IRQB" */
+        @"SSI", @"MKOrchestraSoundOut",   /* One of "Host", "SSI", "IRQA", "IRQB" */
     #else
-        @"Host",@"MKOrchestraSoundOut",
+        @"Host", @"MKOrchestraSoundOut",
     #endif
         NULL,NULL] retain];
 
