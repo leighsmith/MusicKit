@@ -73,7 +73,7 @@
 		};
 		016D5A29FED483BBCFED3B93 = {
 			isa = PBXFileReference;
-			path = midi_driver.h;
+			path = PerformMIDI.h;
 			refType = 4;
 		};
 		016D5A2EFED483BBCFED3B93 = {
@@ -87,7 +87,7 @@
 		};
 		016D5A2FFED483BBCFED3B93 = {
 			isa = PBXFileReference;
-			path = mididriverUser.m;
+			path = PerformMIDI.m;
 			refType = 4;
 		};
 		016D5A30FED483BBCFED3B93 = {
