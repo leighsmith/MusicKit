@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.22  2002/08/20 23:26:02  leighsmith
+  Removed warning of undeclared method class in bundleExtensions, added setAlternativeScorefileExtensions: to allow alternative names for scorefiles
+
   Revision 1.21  2002/05/01 14:34:12  sbrandon
   Added doco and declaration of +bundleExtensions:
 
@@ -744,6 +747,14 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               reading scorefiles files appropriate for the native operating system.
 */
 + (NSArray *) scorefileExtensions;
+
+/*!
+  @method setAlternativeScorefileExtensions:
+  @result Returns an NSArray of NSStrings.
+  @discussion This method allows overriding the file extensions used in writing and
+     reading scorefiles files returned by <i>scorefileExtensions</i>.
+ */
++ (void) setAlternativeScorefileExtensions: (NSArray *) otherScoreFileExtensions;
 
 /*!
   @method fileExtensions

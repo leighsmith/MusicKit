@@ -20,6 +20,9 @@
  Modification history:
 
  $Log$
+ Revision 1.34  2002/08/20 23:26:02  leighsmith
+ Removed warning of undeclared method class in bundleExtensions, added setAlternativeScorefileExtensions: to allow alternative names for scorefiles
+
  Revision 1.33  2002/05/01 14:33:35  sbrandon
  Added static array to hold plugins, added +bundleExtensions to return info collected from plugins, added documentation from the Standard MIDI File Spec defining how time signatures are stored, added the implementation of +addPlugin:, fixed a problem in score merging that caused an endless loop under certain situations, altered readScoreFile to try to open files with plugins if extension is appropriate.
  Note that the plugin implementation is under review.
@@ -174,6 +177,7 @@
 #import "ScorePrivate.h"
 
 static NSMutableArray *plugins = nil;
+static NSArray *scoreFileExtensions = nil;
 
 @implementation MKScore
 
@@ -186,11 +190,11 @@ static NSMutableArray *plugins = nil;
 
 + (void)initialize
 {
-  if (self != [MKScore class])
-    return;
-  [MKScore setVersion:VERSION2];//sb: suggested by Stone conversion guide (replaced self)
+    if (self != [MKScore class])
+        return;
+    [MKScore setVersion: VERSION2]; //sb: suggested by Stone conversion guide (replaced self)
     _MKCheckInit();
-    return;
+    scoreFileExtensions = [[NSArray arrayWithObjects: _MK_SCOREFILEEXT, _MK_BINARYSCOREFILEEXT, nil] retain];
 }
 
 + score
@@ -627,14 +631,20 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
 // return the extension of scorefiles allowed
 + (NSArray *) scorefileExtensions
 {
-  return [NSArray arrayWithObjects: _MK_SCOREFILEEXT, _MK_BINARYSCOREFILEEXT, nil];
+    return [NSArray arrayWithArray: scoreFileExtensions];
+}
+
++ (void) setAlternativeScorefileExtensions: (NSArray *) otherScoreFileExtensions
+{
+    [scoreFileExtensions release];
+    scoreFileExtensions = [otherScoreFileExtensions retain];
 }
 
 + (NSArray *) bundleExtensions
 {
     int i,count;
     NSMutableArray *a = [NSMutableArray new];
-    id<MusicKitPlugin> p;
+    NSObject <MusicKitPlugin> *p;
     count = [plugins count];
     for (i = 0 ; i < count ; i++) {
         p = [plugins objectAtIndex:i];
