@@ -10,7 +10,7 @@ Edit this file, not the HTML, RTF or LaTeX output.
 
 -->
 
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
 <!ENTITY class1 SYSTEM "MusicKitClass1.sgml">
 <!ENTITY class2 SYSTEM "MusicKitClass2.sgml">
 <!ENTITY class3 SYSTEM "MusicKitClass3.sgml">
