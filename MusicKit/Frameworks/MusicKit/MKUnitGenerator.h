@@ -58,6 +58,10 @@
 */
 /*
   $Log$
+  Revision 1.8  2002/01/29 16:44:25  sbrandon
+  changed +argName and argName() to return NSStrings; also changed all
+  uses of _MKOrchTrace to use NSString args.
+
   Revision 1.7  2001/09/07 18:28:28  leighsmith
   Replaced HTML numeric entity with correct symbolic entity for double quotes, further MK prefixing
 
@@ -423,12 +427,12 @@ typedef struct _MKUGArgStruct {   /* Used to represent Unit Generator args */
 /*!
   @method argName:
   @param  argNum is an unsigned.
-  @result Returns a char *.
+  @result Returns an NSString*.
   @discussion Returns the name of the receiver's <i>argNum</i>'th DSP code
               argument, as declared in the DSP unit generator source code.  The
               name isn't copied.
 */
-+(char * ) argName:(unsigned )argNum; 
++(NSString *) argName:(unsigned )argNum; 
 
 /*!
   @method orchestraClass

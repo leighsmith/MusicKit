@@ -33,6 +33,10 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2002/01/29 16:44:26  sbrandon
+  changed +argName and argName() to return NSStrings; also changed all
+  uses of _MKOrchTrace to use NSString args.
+
   Revision 1.11  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -106,7 +110,7 @@ Modification history:
 
 /* Functions for doing dynamic loading, fixups, etc. */
 
-static char * argName(id self,int argNum)
+static NSString *argName(id self,int argNum)
 {
     return [[self class] argName:argNum];
 }
@@ -234,9 +238,9 @@ void _MKRerelocUG(MKUnitGenerator *self,MKOrchMemStruct *newReloc)
 {
     if (_MK_ORCHTRACE(self->orchestra,MK_TRACEORCHALLOC)) {
 	_MKOrchTrace(self->orchestra,MK_TRACEORCHALLOC,
-              "Moving %s_%p.",[NSStringFromClass([self class]) cString],self);
+              @"Moving %s_%p.",NSStringFromClass([self class]),self);
 	_MKOrchTrace(self->orchestra,MK_TRACEORCHALLOC,
-		     "NewReloc: pLoop %d, xArg %d, yArg %d, lArg %d.",
+		     @"NewReloc: pLoop %d, xArg %d, yArg %d, lArg %d.",
 		     newReloc->pLoop,newReloc->xArg,newReloc->yArg,
 		     newReloc->lArg);
       }
@@ -509,12 +513,12 @@ void MKInitUnitGeneratorClass(MKLeafUGStruct *classInfo)
 
 #define OUTOFBOUNDS(_self,_x)  (_x >= _self->_classInfo->master->argCount)
 
-+(char *)argName:(unsigned)argNum
++ (NSString *)argName:(unsigned)argNum
   /* Returns the name of the argument, as specified in the DSP macro .asm
      file from which the class was created. The name is not copied. */
 {
-    return (argNum >= [self argCount]) ? "invalidArgument" :
-      [self masterUGPtr]->argSymbols[argNum].name;
+    return (argNum >= [self argCount]) ? @"invalidArgument" :
+      [NSString stringWithCString:[self masterUGPtr]->argSymbols[argNum].name];
 }  
 
 static id argOutOfBoundsErr(unsigned argNum,MKUnitGenerator *self)
@@ -530,15 +534,15 @@ static id addrSetErr(MKUnitGenerator *self,unsigned argNum)
     if (OUTOFBOUNDS(self,argNum))
       argOutOfBoundsErr(argNum,self);
     return _MKErrorf((self->args[argNum].addressMemSpace != DSP_MS_N) ?  MK_ugNonAddrErr : MK_ugNonDatumErr,
-                     [NSString stringWithCString: argName(self,argNum)], NSStringFromClass([self class]));
+                     argName(self,argNum), NSStringFromClass([self class]));
 }
 
 static void reportOpt(MKUnitGenerator *self,unsigned argNum)
 {
     if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
       _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-		   "Optimizing away poke of %s of UG%d_%s.",
-                   argName(self,argNum),self->_instanceNumber,[NSStringFromClass([self class]) cString]);
+		   @"Optimizing away poke of %@ of UG%d_%@.",
+                   argName(self,argNum),self->_instanceNumber,NSStringFromClass([self class]));
 }
 
 /* Argument-setting methods. */
@@ -667,22 +671,22 @@ id MKSetUGDatumArg(MKUnitGenerator *self,unsigned argNum,DSPDatum val)
 	value.low24 = 0;
 	if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
             _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-		       "Setting (L-just, 0-filled) %s of UG%d_%s to datum 0x%x.",
-                argName(self,argNum),self->_instanceNumber,[NSStringFromClass([self class]) cString],val);
+		       @"Setting (L-just, 0-filled) %@ of UG%d_%@ to datum 0x%x.",
+                argName(self,argNum),self->_instanceNumber,NSStringFromClass([self class]),val);
 	ec = DSPMKSendLongTimed(aTimeStamp,&value,p->addrStruct.address);
         if (ec) {
             if (ec == DSP_EABORT)
                 [self->orchestra _notifyAbort];
             else
                 return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
-				argName(self,argNum), [NSStringFromClass([self class]) cString]);
+				argName(self,argNum), NSStringFromClass([self class]));
         }
         return self;
     }
     if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
 	_MKOrchTrace(self->orchestra,MK_TRACEDSP,
-		 "Setting %s of UG%d_%s to datum 0x%x.",argName(self,argNum),
-		 self->_instanceNumber,[NSStringFromClass([self class]) cString],val);
+		 @"Setting %@ of UG%d_%@ to datum 0x%x.",argName(self,argNum),
+		 self->_instanceNumber,NSStringFromClass([self class]),val);
     ec = DSPMKSendValueTimed(aTimeStamp,val,
 			    p->addrStruct.memSpace,
 			    p->addrStruct.address);
@@ -691,7 +695,7 @@ id MKSetUGDatumArg(MKUnitGenerator *self,unsigned argNum,DSPDatum val)
             [self->orchestra _notifyAbort];
         else
             return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
-			    argName(self,argNum),[NSStringFromClass([self class]) cString]);
+			    argName(self,argNum),NSStringFromClass([self class]));
     }
     return self;
 }
@@ -724,8 +728,8 @@ id MKSetUGDatumArgLong(MKUnitGenerator *self,unsigned argNum,DSPLongDatum *val)
     if (p->addrStruct.memSpace == DSP_MS_L) {
 	if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
 	  _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-		       "Setting %s of UG%d_%s to long: {0x%x,0x%x}.",
-		       argName(self,argNum),self->_instanceNumber,[NSStringFromClass([self class]) cString],
+		       @"Setting %@ of UG%d_%@ to long: {0x%x,0x%x}.",
+		       argName(self,argNum),self->_instanceNumber,NSStringFromClass([self class]),
 		       val->high24,val->low24);
 	ec = DSPMKSendLongTimed(aTimeStamp,val,p->addrStruct.address);
         if (ec) {
@@ -733,14 +737,14 @@ id MKSetUGDatumArgLong(MKUnitGenerator *self,unsigned argNum,DSPLongDatum *val)
                 [self->orchestra _notifyAbort];
             else
                 return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
-				argName(self,argNum), [NSStringFromClass([self class]) cString]);
+				argName(self,argNum), NSStringFromClass([self class]));
         }
     }
     else {
 	if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
 	  _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-		       "Setting %s of UG%d_%s to: 0x%x",
-		       argName(self,argNum),self->_instanceNumber,[NSStringFromClass([self class]) cString],
+		       @"Setting %@ of UG%d_%s to: 0x%x",
+		       argName(self,argNum),self->_instanceNumber,NSStringFromClass([self class]),
 		       val->high24);
 	ec = DSPMKSendValueTimed(aTimeStamp,val->high24,
 				 p->addrStruct.memSpace,
@@ -750,7 +754,7 @@ id MKSetUGDatumArgLong(MKUnitGenerator *self,unsigned argNum,DSPLongDatum *val)
                 [self->orchestra _notifyAbort];
             else
                 return _MKErrorf(MK_ugBadDatumPokeErr, [NSString stringWithCString: (char *) val],
-				argName(self,argNum), [NSStringFromClass([self class]) cString]);
+				argName(self,argNum), NSStringFromClass([self class]));
         }
     }
     return self;
@@ -781,7 +785,7 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
 	  return argOutOfBoundsErr(argNum,self);
 	if (self->_orchIndex != memP->orchIndex)            /* Right orch? */
           return _MKErrorf(MK_ugOrchMismatchErr, [NSString stringWithCString: (char *) memP->orchIndex],
-			   argName(self,argNum), [NSStringFromClass([self class]) cString],self->_orchIndex);
+			   argName(self,argNum), NSStringFromClass([self class]),self->_orchIndex);
 	if (argP->addressMemSpace == DSP_MS_N)        /* Address valued arg? */
 	  return addrSetErr(self,argNum);
 	if (argP->addressMemSpace != memP->memSpace)  /* space match? */ 
@@ -796,8 +800,8 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
         return self;
     if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP)) {
 	_MKOrchTrace(self->orchestra,MK_TRACEDSP,
-		     "Setting %s of UG%d_%s to %s%d (0x%x).",argName(self,argNum),
-		     self->_instanceNumber,[NSStringFromClass([self class]) cString],
+		     @"Setting %@ of UG%d_%@ to %@%d (0x%x).",argName(self,argNum),
+		     self->_instanceNumber,NSStringFromClass([self class]),
 		     [self->orchestra segmentName:memP->memSegment],
 		     [memoryObj instanceNumber],memP->address);
     }
@@ -811,7 +815,7 @@ id MKSetUGAddressArg(MKUnitGenerator *self,unsigned argNum,id memoryObj)
             [self->orchestra _notifyAbort];
         else
             return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
-			    argName(self,argNum), [NSStringFromClass([self class]) cString]);
+			    argName(self,argNum), NSStringFromClass([self class]));
     }
     return self;
 }
@@ -837,8 +841,8 @@ id MKSetUGAddressArgToInt(MKUnitGenerator *self,unsigned argNum,DSPAddress addr)
       return self;
     if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
 	_MKOrchTrace(self->orchestra,MK_TRACEDSP,
-		     "Setting %s of UG%d_%s to address 0x%x.",argName(self,argNum),
-		     self->_instanceNumber,[NSStringFromClass([self class]) cString],addr);
+		     @"Setting %@ of UG%d_%@ to address 0x%x.",argName(self,argNum),
+		     self->_instanceNumber,NSStringFromClass([self class]),addr);
     DSPSetCurrentDSP(self->_orchIndex);
     CHECKADJUSTTIME();
     ec = DSPMKSendValueTimed(TIMESTAMP(),addr,
@@ -849,7 +853,7 @@ id MKSetUGAddressArgToInt(MKUnitGenerator *self,unsigned argNum,DSPAddress addr)
             [self->orchestra _notifyAbort];
         else
             return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) addr],
-			    argName(self,argNum),[NSStringFromClass([self class]) cString]);
+			    argName(self,argNum),NSStringFromClass([self class]));
     }
     return self;
 }
@@ -884,8 +888,8 @@ static id specialAddressVal(self,argNum,orchSel)
       return self;
     if (_MK_ORCHTRACE(self->orchestra,MK_TRACEDSP))
       _MKOrchTrace(self->orchestra,MK_TRACEDSP,
-		   "Setting %s of UG%d_%s to address 0x%x.",
-		   argName(self,argNum),self->_instanceNumber,[NSStringFromClass([self class]) cString],
+		   @"Setting %@ of UG%d_%@ to address 0x%x.",
+		   argName(self,argNum),self->_instanceNumber,NSStringFromClass([self class]),
 		   memP->address);
     DSPSetCurrentDSP(self->_orchIndex);
     CHECKADJUSTTIME();
@@ -897,7 +901,7 @@ static id specialAddressVal(self,argNum,orchSel)
             [self->orchestra _notifyAbort];
         else
             return _MKErrorf(MK_ugBadAddrPokeErr, [NSString stringWithCString: (char *) memP->address],
-			    argName(self,argNum), [NSStringFromClass([self class]) cString]);
+			    argName(self,argNum), NSStringFromClass([self class]));
     }
     return self;
 }
@@ -958,17 +962,17 @@ extern int _MKOrchestraGetNoops(void);
 -writeSymbolsToStream:(NSMutableData *)s
 {
     int i;
-    [s appendData:[[NSString stringWithFormat:@"_COMMENT\nUG%d: %s",
+    [s appendData:[[NSString stringWithFormat:@"_COMMENT\nUG%d: %@",
         _instanceNumber,
-        [NSStringFromClass([self class]) cString]] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
+        NSStringFromClass([self class])] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     if (synthPatch)
         [s appendData:[[NSString stringWithFormat:@" in %s_0x%x\n",
             [NSStringFromClass([synthPatch class]) cString],
             synthPatch] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     else [s appendData:[@"\n" dataUsingEncoding:NSNEXTSTEPStringEncoding]];
-    [s appendData:[[NSString stringWithFormat:@"_SYMBOL P\nUG%d_%s I %06X\n",
+    [s appendData:[[NSString stringWithFormat:@"_SYMBOL P\nUG%d_%@ I %06X\n",
         _instanceNumber,
-        [NSStringFromClass([self class]) cString],
+        NSStringFromClass([self class]),
         relocation.pLoop] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     {   /* Write argument blocks */
 	/* FIXME Assumes args count up. */
@@ -996,19 +1000,19 @@ extern int _MKOrchestraGetNoops(void);
 	    }
 	}
 	if (lowestX != MAXINT)
-	  [s appendData:[[NSString stringWithFormat:@"_SYMBOL X\nUG%d_%s_XARGS I %06X\n",
+	  [s appendData:[[NSString stringWithFormat:@"_SYMBOL X\nUG%d_%@_XARGS I %06X\n",
               _instanceNumber,
-              [NSStringFromClass([self class]) cString],
+              NSStringFromClass([self class]),
               lowestX] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 	if (lowestY != MAXINT)
-	  [s appendData:[[NSString stringWithFormat:@"_SYMBOL Y\nUG%d_%s_YARGS I %06X\n",
+	  [s appendData:[[NSString stringWithFormat:@"_SYMBOL Y\nUG%d_%@_YARGS I %06X\n",
               _instanceNumber,
-              [NSStringFromClass([self class]) cString],
+              NSStringFromClass([self class]),
               lowestY] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
 	if (lowestL != MAXINT)
-	  [s appendData:[[NSString stringWithFormat:@"_SYMBOL L\nUG%d_%s_LARGS I %06X\n",
+	  [s appendData:[[NSString stringWithFormat:@"_SYMBOL L\nUG%d_%@_LARGS I %06X\n",
               _instanceNumber,
-              [NSStringFromClass([self class]) cString],
+              NSStringFromClass([self class]),
               lowestL] dataUsingEncoding:NSNEXTSTEPStringEncoding]];
     }
     {   /* Write arguments */
@@ -1221,7 +1225,9 @@ extern int _MKOrchestraGetNoops(void);
     /* Send relocated unit generator code to dsp. */
     if (_MK_ORCHTRACE(aUG->orchestra,MK_TRACEDSP))
 	_MKOrchTrace(aUG->orchestra,MK_TRACEDSP,
-              "Loading %s_%p as UG%d. ",[NSStringFromClass([aUG class]) cString],aUG,aUG->_instanceNumber);
+              @"Loading %@_%p as UG%d. ",
+              NSStringFromClass([aUG class]),
+              aUG,aUG->_instanceNumber);
     DSPSetCurrentDSP(aUG->_orchIndex);
     [aUG->orchestra beginAtomicSection];
     ec = sendUGTimed(_MKCurSample(anOrch),
@@ -1271,7 +1277,7 @@ extern int _MKOrchestraGetNoops(void);
     free(args);
 //    [super release];
     if (_MK_ORCHTRACE(orchestra,MK_TRACEORCHALLOC))
-        _MKOrchTrace(orchestra,MK_TRACEORCHALLOC,"Freeing %s_%p",[NSStringFromClass([self class]) cString],
+        _MKOrchTrace(orchestra,MK_TRACEORCHALLOC,@"Freeing %@_%p",NSStringFromClass([self class]),
                      self);
     return nil; /*sb: to maintain compatibility with return of old [super free] method */
 }
