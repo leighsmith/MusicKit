@@ -161,7 +161,6 @@
 				0F183AFC0035F7AECFED3B96,
 				0F183AFD0035F7AECFED3B96,
 				0F183AFE0035F7AECFED3B96,
-				0F183AFF0035F7AECFED3B96,
 				071719DE0156540D7F000001,
 			);
 			isa = PBXGroup;
@@ -228,12 +227,6 @@
 			path = SpectrumView.m;
 			refType = 4;
 		};
-		0F183AFF0035F7AECFED3B96 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SubSoundView.m;
-			refType = 4;
-		};
 		0F183B010035F7AECFED3B96 = {
 			children = (
 				0F183B020035F7AECFED3B96,
@@ -246,7 +239,6 @@
 				0F183B090035F7AECFED3B96,
 				0F183B0A0035F7AECFED3B96,
 				0F183B0B0035F7AECFED3B96,
-				0F183B0C0035F7AECFED3B96,
 				0F183B0D0035F7AECFED3B96,
 			);
 			isa = PBXGroup;
@@ -311,12 +303,6 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = SpectrumView.h;
-			refType = 4;
-		};
-		0F183B0C0035F7AECFED3B96 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SubSoundView.h;
 			refType = 4;
 		};
 		0F183B0D0035F7AECFED3B96 = {
@@ -518,7 +504,10 @@
 				0F183B5B0035F7AECFED3B96,
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" /Volumes/manray/Local/Library/Frameworks";
+				CC = "/usr/bin/gcc-3.3";
+				CPLUSPLUS = "/usr/bin/g++-3.3";
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				GCC_VERSION = 3.x;
 				INSTALL_PATH = "$(HOME)/Apps";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "";
@@ -591,7 +580,6 @@
 				0F183B390035F7AECFED3B96,
 				0F183B3A0035F7AECFED3B96,
 				0F183B3B0035F7AECFED3B96,
-				0F183B3C0035F7AECFED3B96,
 				0F183B3D0035F7AECFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
@@ -653,12 +641,6 @@
 		};
 		0F183B3B0035F7AECFED3B96 = {
 			fileRef = 0F183B0B0035F7AECFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		0F183B3C0035F7AECFED3B96 = {
-			fileRef = 0F183B0C0035F7AECFED3B96;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -754,7 +736,6 @@
 				0F183B510035F7AECFED3B96,
 				0F183B520035F7AECFED3B96,
 				0F183B530035F7AECFED3B96,
-				0F183B540035F7AECFED3B96,
 				0F183B560035F7AECFED3B96,
 				071719DF0156540D7F000001,
 			);
@@ -835,14 +816,6 @@
 		};
 		0F183B530035F7AECFED3B96 = {
 			fileRef = 0F183AFE0035F7AECFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-				);
-			};
-		};
-		0F183B540035F7AECFED3B96 = {
-			fileRef = 0F183AFF0035F7AECFED3B96;
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
