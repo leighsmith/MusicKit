@@ -471,7 +471,7 @@ int get_bus_speed()
       theError = sched_setscheduler(0, SCHED_RR, &sp);                
  #if SNDSTREAMCLIENT_DEBUG
       if (theError == -1)
-        fprintf(stderr,"Can't get real-time priority\n");
+        fprintf(stderr,"Can't get real-time priority, errno = %d, min priority = %d\n",errno,sp.sched_priority);
  #endif
 #endif
 #endif
