@@ -14,6 +14,9 @@
 /* 
 Modification history:
   $Log$
+  Revision 1.5  2000/09/30 20:04:46  leigh
+  Adopted getopt operation for extra command line operation
+
   Revision 1.4  2000/09/18 22:27:34  leigh
   reduced warnings from unassigned instruments and performers
 
@@ -307,7 +310,7 @@ static int openOrch(int orchIndex,BOOL waitForIt, BOOL quiet, BOOL allDSPs) {
 
 int main(int argc, const char *argv[])
 {
-    int i,repeatCount,repeat;
+    int i,repeatCount,repeat,optch;
     NSString *inputFile;
     int orchPar;
     NSMutableArray *instruments = nil;
@@ -331,15 +334,76 @@ int main(int argc, const char *argv[])
 
     orchPar = [MKNote parTagForName: @"orchestraIndex"];
 
-    if (argc == 1) {
-        showUsage();
-	exit(1);
-    }
     [MKConductor setThreadPriority:1.0];
     setuid(getuid());   
     repeatCount = 1;
     samplingRate = 22050;
 
+    if (argc == 1) {
+        showUsage();
+        exit(1);
+    }
+
+    while ((optch = getopt(argc, argv, "c:dn:afpqr:s:t:vw:h")) != -1) {
+        switch(optch) {
+        case 'c':
+            commandsFile = [[NSString stringWithCString: optarg] stringByAppendingPathExtension: SOUND_EXTENSION];
+            break;
+	case 'd':
+            debugIt = YES;
+            break;
+	case 'n':
+            orchIndex = atoi(optarg);
+            break;
+	case 'a':
+            [MKOrchestra newOnAllDSPs];
+            allDSPs = YES;
+            break;
+	case 'f':
+            onTheFly = YES;
+            break;
+        case 'p':
+            waitForIt = YES;
+            break;
+        case 'q':
+            MKSetErrorProc(nullErrorHandler);
+            quiet = YES;
+            break;
+        case 'r':
+            repeatCount = atoi(optarg);
+            break;
+        case 's':
+            if (strcmp(optarg, "SSAD64x") == 0)
+                soundOutType = AD64x;
+            else if (strcmp(optarg, "ArielProPort") == 0)
+                soundOutType = PROPORT;
+            else if (strcmp(optarg, "StealthDAI2400") == 0)
+                soundOutType = DAI2400;
+            else
+                soundOutType = GENERIC;
+            setSoundOutDevice();
+            break;
+        case 't':
+            MKSetTrace(atoi(optarg));
+            break;
+        case 'v':
+            DSPEnableErrorFile("/dev/tty");
+            break;
+        case 'w':
+            outputFile = [[NSString stringWithCString: optarg] stringByAppendingPathExtension: SOUND_EXTENSION];
+            break;
+	case 'y':  // override synthPatch for given part.
+            // NSDictionary of optarg, parsed into part "=" synthPatch
+            fprintf(stderr, "synthPatch assignment: %s\n", optarg);
+	    break;
+	case 'h':
+	default:
+            showUsage();
+            exit(1);
+	}
+    }
+
+#if 0
     for (i=1; i<(argc-1); i++) {
 	if (strcmp(argv[i],"-c") == 0) {
 	    ++i;
@@ -420,6 +484,7 @@ int main(int argc, const char *argv[])
             outputFile = [[NSString stringWithCString: argv[i]] stringByAppendingPathExtension: SOUND_EXTENSION];
 	}
     }
+#endif
     anOrch = [MKOrchestra newOnDSP:orchIndex];
     if ((soundOutType != DEFAULT_SOUND) && 
 	!([anOrch capabilities] & MK_nextCompatibleDSPPort)) {
