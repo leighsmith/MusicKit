@@ -25,6 +25,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/11/27 21:49:54  leigh
+  Added MKMDReplyPort typing to MKMDRequestAlarm
+
   Revision 1.6  2000/11/25 23:45:16  leigh
   Added prototype of MKMDSetReplyCallback and RECEPTION_USING_PORTS declaration
 
@@ -173,7 +176,7 @@ PERFORM_API MKMDReturn
 PERFORM_API MKMDReturn 
     MKMDRequestData(MKMDPort driver, MKMDOwnerPort owner, short unit, MKMDReplyPort replyPort);
 PERFORM_API MKMDReturn 
-    MKMDRequestAlarm(MKMDPort driver, MKMDOwnerPort owner, port_t replyPort, int time);
+    MKMDRequestAlarm(MKMDPort driver, MKMDOwnerPort owner, MKMDReplyPort replyPort, int time);
 PERFORM_API MKMDReturn 
     MKMDRequestExceptions(MKMDPort driver, MKMDOwnerPort owner, port_t exceptionPort);
 PERFORM_API MKMDReturn 
