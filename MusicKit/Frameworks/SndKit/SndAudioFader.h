@@ -27,11 +27,25 @@
 #define SND_FADER_ATTACH_RAMP_RIGHT 1
 #define SND_FADER_ATTACH_RAMP_LEFT  2
 
+/* this value limits the number of envelope points that can be held
+ * in the unified (amp + bearing) envelope. Unless providing for almost
+ * sample-level enveloping, the specified figure will be more than enough.
+ */
+#define MAX_ENV_POINTS_PER_BUFFER 256
+
 /*!
 @class      SndAudioFader
 @abstract
 @discussion
 */
+
+typedef struct _UEE {
+    double          xVal;
+    int             ampFlags;
+    int             bearingFlags;
+    float           ampY;
+    float           bearingY;
+} SndUnifiedEnvelopeEntry;
 
 @interface SndAudioFader : SndAudioProcessor
 {
@@ -40,6 +54,9 @@
   float  staticAmp;
   id     <SndEnveloping,NSObject> bearingEnv;
   float  staticBearing;
+
+  SndUnifiedEnvelopeEntry *uee;
+
   NSLock *lock; // locks changes to the envelope objects (?)
   NSLock *bearingEnvLock;
   NSLock *ampEnvLock;
