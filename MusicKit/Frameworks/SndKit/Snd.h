@@ -9,7 +9,7 @@
   #define USE_NEXTSTEP_SOUND_IO
   #define USE_PERFORM_SOUND_IO
 #elif (defined(__APPLE__) && defined(__MACH__))
-  #define USE_NEXTSTEP_SOUND_IO  // LMS currently this causes conflicts between #defines here and the Original Sound.h
+  #define USE_PERFORM_SOUND_IO  // LMS currently this causes conflicts between #defines here and the Original Sound.h
 #elif defined(WIN32)
   #define USE_PERFORM_SOUND_IO
 #endif
@@ -19,7 +19,7 @@
 #import <objc/hashtable.h>
 #import <Foundation/NSBundle.h>
 
-#ifdef USE_NEXTSTEP_SOUND_IO
+#ifdef USE_PERFORM_SOUND_IO
 #import <SoundKit/Sound.h>
 #else
 #import "SndFormats.h"
@@ -64,7 +64,7 @@ extern NSString *NXSoundPboardType;
 	int tag;
 }
 
-#ifndef USE_NEXTSTEP_SOUND_IO
+#if !defined(USE_NEXTSTEP_SOUND_IO) && !defined(USE_PERFORM_SOUND_IO)
 /*
  * Status codes
  */
