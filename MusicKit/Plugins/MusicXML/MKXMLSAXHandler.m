@@ -174,13 +174,13 @@ Boolean handleError(CFXMLParserRef parser, SInt32 error, void *info) {
 + (MKScore *) parseData:(NSData*)data intoScore:(MKScore *)s
 {
 #ifdef GNUSTEP
-    GSSAXHandler *h = [MKXMLSAXHandler handler];
+    MKXMLSAXHandler *h = [MKXMLSAXHandler handler];
     GSXMLParser       *p = [GSXMLParser parserWithSAXHandler: h
                                                     withData: data];
     [h setupWithScore:s];
     if ([p parse])
     {
-        return [p score];
+        return [h score];
     }
     return nil;
     
