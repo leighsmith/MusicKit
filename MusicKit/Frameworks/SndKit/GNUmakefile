@@ -15,6 +15,9 @@
 
 # Modification history:
 # $Log$
+# Revision 1.15  2002/01/04 11:01:46  sbrandon
+# added new file SndAudioProcessorToneGenerator.m to build
+#
 # Revision 1.14  2002/01/02 13:35:03  skotmcdonald
 # Added new files to GNU makefile
 #
@@ -111,7 +114,8 @@ $(MY_NAME)_OBJC_FILES = \
           SndAudioFader.m SndBreakpoint.m\
           SndAudioBufferQueue.m SndAudioProcessorReverb.m \
 	  SndAudioProcessorDistortion.m	SndAudioProcessorFlanger.m \
-	  SndAudioProcessorRecorder.m SndAudioProcessorInspector.m
+	  SndAudioProcessorRecorder.m SndAudioProcessorInspector.m \
+          SndAudioProcessorToneGenerator.m
 	  #SndMeter.m
 
 $(MY_NAME)_C_FILES = \
@@ -130,8 +134,9 @@ $(MY_NAME)_HEADER_FILES = \
          SndAudioProcessorChain.h SndAudioProcessor.h SndAudioProcessorDelay.h\
          SndAudioFader.h SndEnvelope.h SndBreakpoint.h SndAudioBufferQueue.h\
          SndAudioProcessorReverb.h SndKitDefines.h \
-	 SndAudioProcessorDistortion.h	SndAudioProcessorFlanger.h \
-	 SndAudioProcessorRecorder.h SndAudioProcessorInspector.h
+	 SndAudioProcessorDistortion.h SndAudioProcessorFlanger.h \
+	 SndAudioProcessorRecorder.h SndAudioProcessorInspector.h \
+         SndAudioProcessorToneGenerator.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = SndKit
 
