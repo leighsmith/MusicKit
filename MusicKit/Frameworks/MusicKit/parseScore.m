@@ -32,6 +32,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/02/11 22:52:40  leigh
+  Fixed memory leak reading scorefiles
+
   Revision 1.4  1999/08/26 20:00:53  leigh
   using new MKError prototype
 
@@ -2110,8 +2113,6 @@ _MKScoreInStruct * _MKFinishScoreIn(_MKScoreInStruct *scorefileRPtr)
     [scoreRPtr->_noteTagTable release];
     [scoreRPtr->_aNote release];
     if (scoreRPtr->_freeStream) {
-//#warning StreamConversion: NXFlush should be converted to an NSData method
-//	NXFlush(scoreRPtr->printStream); //sb: unnec?
 	[scoreRPtr->printStream release];
     }
 #ifndef WIN32
@@ -3584,10 +3585,10 @@ _MKNewScoreInStruct(NSMutableData *aStream,id owner,NSMutableData *printStream,
     }
     else scoreRPtr->_freeStream = NO;
     if (binary) 
-      scoreRPtr->_binaryIndexedObjects = [[NSMutableArray alloc] init];
+      scoreRPtr->_binaryIndexedObjects = [[NSMutableArray array] retain];
     scoreRPtr->printStream = printStream;
     scoreRPtr->_ranState = initRan();
-    scoreRPtr->_noteTagTable = [NSDictionary dictionary];
+    scoreRPtr->_noteTagTable = [[NSDictionary dictionary] retain];
     scoreRPtr->timeTag = 0;
     scoreRPtr->_fileHighTag = -1;
     scoreRPtr->_fileLowTag = 0;
@@ -3709,7 +3710,7 @@ static int
 
 	if (newTagNumber != nil)
            return [newTagNumber intValue];
-#if 0
+#if 0 // LMS I don't know why this is disabled...
 	else if (!binary && (noteType == MK_noteUpdate || noteType == MK_noteOff)) 
 	  error(MK_sfInactiveNoteTagErr,_MKTokNameNoCheck(noteType));
 #endif

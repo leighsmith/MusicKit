@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/02/11 22:52:39  leigh
+  Fixed memory leak reading scorefiles
+
   Revision 1.7  2000/02/08 04:15:18  leigh
   Added +midifileExtension
 
@@ -111,14 +114,14 @@ Modification history:
     self = [self allocWithZone:NSDefaultMallocZone()];
     [self init];
 //    [self initialize]; /* Avoid breaking pre-2.0 apps. */ //sb: removed
-    return self;
+    return [self autorelease];
 }
 
 -init
   /* TYPE: Creating and freeing a Part
    * Initializes the receiver:
    *
-   *  * Creates a new \fBnotes\fR collection.
+   *  * Creates a new notes collection.
    * 
    * Sent by the superclass upon creation;
    * you never invoke this method directly.
@@ -174,7 +177,7 @@ Modification history:
 {
     [parts makeObjectsPerformSelector:@selector(_unsetScore)];
     [parts release];
-    [super release];
+//    [super release];
     return nil; //sb: nil to correspond to old -free return value.
 }
 
@@ -645,7 +648,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
     MKPart *aPart, *curPart;
     NSArray *notes;
     MKNote *curNote;
-    unsigned i,j, n,m;
+    unsigned i,j, numOfParts, numOfNotes;
 
     NSAssert((INRANGE(MK_tempo) && INRANGE(MK_lyric) &&
                 INRANGE(MK_cuePoint) && INRANGE(MK_marker) &&
@@ -653,7 +656,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
                 INRANGE(MK_keySignature)), @"Illegal use of parVector.");
 
     if (!aStream) 
-      return nil;
+        return nil;
     tempo = 60;
     if (info) {
 	if ([info isParPresent:MK_title])
@@ -674,8 +677,8 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
     else p->_midiFileStruct = fileStructP; /* Needed so functions called from
 					      _MKWriteMidiOut can find 
 					      struct */
-    n = [parts count];
-    if (n == 0) {
+    numOfParts = [parts count];
+    if (numOfParts == 0) {
 	MKMIDIFileEndWriting(fileStructP);
 	_MKFinishMidiOut(p);
 	return self;
@@ -713,7 +716,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
     }
     MKMIDIFileEndWritingTrack(fileStructP, lastTimeTag < MK_ENDOFTIME ? lastTimeTag : 0); // 0 end time is a little kludgy
 
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < numOfParts; i++) {
         curPart = [parts objectAtIndex:i];
 	if ([curPart noteCount] == 0)
             continue;
@@ -735,8 +738,8 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
             }
             writeNoteToMidifile(p, fileStructP, anInfo, timeShift, defaultChan);
 	}
-        m = [notes count];
-        for (j = 0; j < m; j++) {
+        numOfNotes = [notes count];
+        for (j = 0; j < numOfNotes; j++) {
             curNote = [notes objectAtIndex:j];
             if ((t = [curNote timeTag]) >= firstTimeTag) {
                 if (t > lastTimeTag)
@@ -761,8 +764,10 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
     NSMutableData *stream = [NSMutableData data];
     BOOL success;
 
-    [self writeMidifileStream:stream firstTimeTag:firstTimeTag 
-      lastTimeTag:lastTimeTag timeShift:timeShift];
+    [self writeMidifileStream: stream
+                 firstTimeTag: firstTimeTag 
+                  lastTimeTag: lastTimeTag
+                    timeShift: timeShift];
     success = _MKOpenFileStreamForWriting(aFileName, [MKScore midifileExtension], stream, YES);
 
     // [stream release]; // this should be ok to do, but somehow isn't - indicative of a bigger leak elsewhere.
@@ -1321,11 +1326,10 @@ static void writeNotes(NSMutableData *aStream, MKScore *aScore, _MKScoreOutStruc
 }
 
 static id
-readScorefile(self,stream,firstTimeTag,lastTimeTag,timeShift,fileName)
-    MKScore *self;
-    NSMutableData *stream;
-    double firstTimeTag,lastTimeTag,timeShift;
-    NSString * fileName;
+readScorefile(MKScore *self,
+    NSMutableData *stream,
+    double firstTimeTag, double lastTimeTag, double timeShift,
+    NSString *fileName)
  {
      /* Read from scoreFile to receiver, creating new Parts as needed
        and including only those notes between times firstTimeTag to
@@ -1339,30 +1343,29 @@ readScorefile(self,stream,firstTimeTag,lastTimeTag,timeShift,fileName)
        Returns self or nil if error abort.  */
     register _MKScoreInStruct *p;
     register id aNote;
-    IMP noteCopy,partAddNote;
+    IMP noteCopy, partAddNote;
     id rtnVal;
-    unsigned int readPosition = 0;//sb: this is the top level -- hope this works.
+    unsigned int readPosition = 0;   //sb: this is the top level -- hope this works.
         
     partAddNote = [MKGetPartClass() instanceMethodForSelector:@selector(addNote:)];
     noteCopy = [MKGetNoteClass() instanceMethodForSelector:@selector(copy)];
-    p = _MKNewScoreInStruct(stream,self,self->scorefilePrintStream,NO,
-			    fileName,&readPosition);
+    p = _MKNewScoreInStruct(stream, self, self->scorefilePrintStream, NO, fileName, &readPosition);
     if (!p)
       return nil;
     _MKParseScoreHeader(p);
     lastTimeTag = MIN(lastTimeTag, MK_ENDOFTIME);
     firstTimeTag = MIN(firstTimeTag, MK_ENDOFTIME);
-    do 
+    do {
       aNote = _MKParseScoreNote(p);
-    while (p->timeTag < firstTimeTag);
+    } while (p->timeTag < firstTimeTag);
     /* Believe it or not, is actually better to copy the note here!
        I'm not sure why.  Maybe the hashtable has some hysteresis and
        it gets reallocated each time. */
     while (p->timeTag <= lastTimeTag) {
 	if (aNote) {
-	    aNote = (id)(*noteCopy)(aNote,@selector(copy));
-	    _MKNoteShiftTimeTag(aNote,timeShift);
-	    (*partAddNote)(p->part,@selector(addNote:),aNote);
+	    aNote = (id)(*noteCopy)(aNote, @selector(copy));
+	    _MKNoteShiftTimeTag(aNote, timeShift);
+	    (*partAddNote)(p->part, @selector(addNote:), aNote);
 	}
 	aNote = _MKParseScoreNote(p);
 	if ((!aNote) && (p->timeTag > (MK_ENDOFTIME-1)))
