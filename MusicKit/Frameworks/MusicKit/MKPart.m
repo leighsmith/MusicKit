@@ -84,11 +84,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.13  2000/11/25 22:45:51  leigh
+  info is now explicitly set nil in releaseNotes, doco cleanups
+
   Revision 1.12  2000/07/22 00:32:21  leigh
   Minor doco and typing cleanups.
 
@@ -425,7 +429,7 @@ static void removeNote(MKPart *self,id aNote);
     MKRemoveObjectName(self);
     [score removePart:self];  // moved over from releaseSelfOnly
     [super dealloc];
-    // Changed on K. Hamels suggestion, used to message to freeSelfOnly but this would cause a dealloc loop.
+    // Changed on K. Hamels suggestion, used to message to releaseSelfOnly but this would cause a dealloc loop.
 }
 
 static void unsetPartLinks(MKPart *aPart)
@@ -453,7 +457,8 @@ static void unsetPartLinks(MKPart *aPart)
 {
     if (_activePerformanceObjs)
       return nil;
-    /*info = */[info release]; /*sb FIXME should this be autorelease? set to nil? */
+    [info release];
+    info = nil;
     if (notes) {
 	unsetPartLinks(self);
 	[notes removeAllObjects];
@@ -682,15 +687,8 @@ static void removeNote(MKPart *self, MKNote *aNote)
    * Returns the receiver.
    */
 { 
-//    register id *el;
-//    unsigned n;
     if (!aList)
       return self;
-/*sb: ahhh, OpenStep! */
-/*    
-    for (el = NX_ADDRESS(aList), n = [aList count]; n--; el++)
-      removeNote(self,*el);
- */
     [self->notes removeObjectsInArray:aList];
 //    compact(self); /*sb: remove placeholders (now unnecessary)*/
     return self;
@@ -1038,6 +1036,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
    * Returns the Score of the receiver's owner.
    */
 {
+    // we didn't allocate it, so we don't autorelease it.
     return score;
 }
 
@@ -1152,10 +1151,8 @@ static void removeNote(MKPart *self, MKNote *aNote)
 -(void)_setNoteSender: (MKNoteSender *) aNS
   /* Private. Used only by scorefilePerformers. */
 {
-// LMS where the problem is
     if(_aNoteSender)
 	[_aNoteSender release];
-// _aNoteSender = [[aNS copy] retain];
     _aNoteSender = aNS;
     [_aNoteSender retain];
 }
@@ -1163,16 +1160,10 @@ static void removeNote(MKPart *self, MKNote *aNote)
 - (MKNoteSender *) _noteSender
   /* Private. Used only by scorefilePerformers. */
 {
-//    return [_aNoteSender autorelease];  // no, we didn't allocate it, so we don't autorelease it.
+    // we didn't allocate it, so we don't autorelease it.
     return _aNoteSender;
 }
 
--(void)_unsetScore
-    /* Private method. Sets score to nil. */
-{
-    score = nil;
-}
- 
 -_addPerformanceObj:aPerformer
 {
     if (!_activePerformanceObjs)
@@ -1184,7 +1175,7 @@ static void removeNote(MKPart *self, MKNote *aNote)
 -_removePerformanceObj:aPerformer
 {
      if (!_activePerformanceObjs)
-      return nil;
+        return nil;
      [_activePerformanceObjs removeObject:aPerformer];
      if ([_activePerformanceObjs count] == 0) {
          [_activePerformanceObjs release];
@@ -1193,14 +1184,26 @@ static void removeNote(MKPart *self, MKNote *aNote)
     return self;
 }
 
+-(void)_unsetScore
+    /* Private method. Sets score to nil.
+       Here we have the classic retain cycle in that the MKPart is retained by 
+       it's MKScore (indirectly by MKScore retaining the NSArray of MKParts).
+       The solution is that we don't release the score. */
+{
+    score = nil;
+}
+
 -_setScore:(id)newScore
     /* Removes receiver from the score it is a part of, if any. Does not
        add the receiver to newScore; just sets instance variable. It
-       is illegal to remove an active performer. */
+       is illegal to remove an active performer. 
+       Here we have the classic retain cycle in that the MKPart is retained by 
+       it's MKScore (indirectly by MKScore retaining the NSArray of MKParts).
+       The solution is that we don't retain the score. */
 {
     id oldScore = score;
     if (score) 
-      [score removePart:self];
+        [score removePart:self];
     score = newScore;
     return oldScore;
 }
