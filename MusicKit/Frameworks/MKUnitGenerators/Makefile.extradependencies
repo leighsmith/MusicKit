@@ -1,0 +1,315 @@
+DSP_SOURCE=$(DSTROOT)/usr/local/lib/dsp
+UGSRC=$(DSP_SOURCE)/ugsrc
+SMSRC=$(DSP_SOURCE)/smsrc
+DSPWRAP_SRC=$(DSTROOT)/usr/local/bin
+DSPWRAP=$(DSPWRAP_SRC)/dspwrap -ug -nodoc -l $(SMSRC) -d $(DSPWRAP_SRC) -macroDir $(UGSRC)
+
+# These should be produced by dspwrap as an optional part of the build process
+
+ADD2_CLASSES = \
+	Add2UGxxx.m Add2UGxxy.m Add2UGxyx.m Add2UGxyy.m \
+	Add2UGyxx.m Add2UGyxy.m Add2UGyyx.m Add2UGyyy.m
+
+ALLPASS1_CLASSES = Allpass1UGxx.m Allpass1UGxy.m Allpass1UGyx.m Allpass1UGyy.m
+
+ASYMP_CLASSES = AsympUGx.m AsympUGy.m
+
+ASYMPENV_CLASSES = AsympenvUGx.m AsympenvUGy.m
+
+CONSTANT_CLASSES = ConstantUGx.m ConstantUGy.m
+
+DELAY_CLASSES = \
+	DelayUGxxx.m DelayUGxxy.m DelayUGxyx.m DelayUGxyy.m \
+	DelayUGyxx.m DelayUGyxy.m DelayUGyyx.m DelayUGyyy.m
+
+DELAYM_CLASSES = \
+	DelaymUGxxx.m DelaymUGxxy.m DelaymUGxyx.m DelaymUGxyy.m \
+	DelaymUGyxx.m DelaymUGyxy.m DelaymUGyyx.m DelaymUGyyy.m
+
+ENVFOLLOW_CLASSES = \
+	EnvFollowUGxx.m EnvFollowUGxy.m EnvFollowUGyx.m EnvFollowUGyy.m 
+
+DSWITCH_CLASSES = DswitchUGxx.m DswitchUGxy.m DswitchUGyx.m DswitchUGyy.m
+
+DSWITCHT_CLASSES = DswitchtUGxx.m DswitchtUGxy.m DswitchtUGyx.m DswitchtUGyy.m
+
+INTERP_CLASSES = \
+	InterpUGxxxx.m InterpUGxxxy.m InterpUGxxyx.m InterpUGxxyy.m \
+	InterpUGxyxx.m InterpUGxyxy.m InterpUGxyyx.m InterpUGxyyy.m \
+	InterpUGyxxx.m InterpUGyxxy.m InterpUGyxyx.m InterpUGyxyy.m \
+	InterpUGyyxx.m InterpUGyyxy.m InterpUGyyyx.m InterpUGyyyy.m
+
+MUL1ADD2_CLASSES = \
+	Mul1add2UGxxxx.m Mul1add2UGxxxy.m Mul1add2UGxxyx.m Mul1add2UGxxyy.m \
+	Mul1add2UGxyxx.m Mul1add2UGxyxy.m Mul1add2UGxyyx.m Mul1add2UGxyyy.m \
+	Mul1add2UGyxxx.m Mul1add2UGyxxy.m Mul1add2UGyxyx.m Mul1add2UGyxyy.m \
+	Mul1add2UGyyxx.m Mul1add2UGyyxy.m Mul1add2UGyyyx.m Mul1add2UGyyyy.m
+
+MUL2_CLASSES = \
+	Mul2UGxxx.m Mul2UGxxy.m Mul2UGxyx.m Mul2UGxyy.m \
+	Mul2UGyxx.m Mul2UGyxy.m Mul2UGyyx.m Mul2UGyyy.m
+
+BIQUAD_CLASSES = \
+	BiquadUGx.m BiquadUGy.m
+
+ONEPOLE_CLASSES = \
+	OnepoleUGxy.m OnepoleUGyx.m OnepoleUGyy.m OnepoleUGxx.m
+
+ONEZERO_CLASSES = \
+	OnezeroUGxy.m OnezeroUGyx.m OnezeroUGyy.m OnezeroUGxx.m 
+
+OSCG_CLASSES = \
+	OscgUGxy.m OscgUGyx.m OscgUGyy.m OscgUGxx.m
+
+OSCGAF_CLASSES = \
+	OscgafUGxxxx.m OscgafUGxxxy.m OscgafUGxxyx.m OscgafUGxxyy.m \
+	OscgafUGxyxx.m OscgafUGxyxy.m OscgafUGxyyx.m OscgafUGxyyy.m \
+	OscgafUGyxxx.m OscgafUGyxxy.m OscgafUGyxyx.m OscgafUGyxyy.m \
+	OscgafUGyyxx.m OscgafUGyyxy.m OscgafUGyyyx.m OscgafUGyyyy.m
+
+OSCGAFI_CLASSES = \
+	OscgafiUGxxxx.m OscgafiUGxxxy.m OscgafiUGxxyx.m OscgafiUGxxyy.m \
+	OscgafiUGxyxx.m OscgafiUGxyxy.m OscgafiUGxyyx.m OscgafiUGxyyy.m \
+	OscgafiUGyxxx.m OscgafiUGyxxy.m OscgafiUGyxyx.m OscgafiUGyxyy.m \
+	OscgafiUGyyxx.m OscgafiUGyyxy.m OscgafiUGyyyx.m OscgafiUGyyyy.m
+
+OUT1A_CLASSES = Out1aUGx.m Out1aUGy.m
+
+OUT1B_CLASSES = Out1bUGx.m Out1bUGy.m
+
+OUT1N_CLASSES = Out1nUGx.m Out1nUGy.m
+
+OUT2SUM_CLASSES = Out2sumUGx.m Out2sumUGy.m
+
+SCALE_CLASSES = ScaleUGxy.m ScaleUGyx.m ScaleUGyy.m ScaleUGxx.m
+
+SCL1ADD2_CLASSES = \
+	Scl1add2UGxxx.m Scl1add2UGxxy.m Scl1add2UGxyx.m \
+	Scl1add2UGxyy.m Scl1add2UGyxx.m Scl1add2UGyxy.m \
+	Scl1add2UGyyx.m Scl1add2UGyyy.m
+
+SCL2ADD2_CLASSES = \
+	Scl2add2UGxxx.m Scl2add2UGxxy.m Scl2add2UGxyx.m \
+	Scl2add2UGxyy.m Scl2add2UGyxx.m Scl2add2UGyxy.m \
+	Scl2add2UGyyx.m Scl2add2UGyyy.m
+
+SNOISE_CLASSES = SnoiseUGx.m SnoiseUGy.m
+
+TABLOOKI_CLASSES = \
+	TablookiUGxxx.m TablookiUGxxy.m TablookiUGxyx.m \
+	TablookiUGxyy.m TablookiUGyxx.m TablookiUGyxy.m \
+	TablookiUGyyx.m TablookiUGyyy.m
+
+UNOISE_CLASSES = UnoiseUGx.m UnoiseUGy.m
+
+IN1A_CLASSES = In1aUGx.m In1aUGy.m
+
+IN1B_CLASSES = In1bUGx.m In1bUGy.m
+
+IN1QP_CLASSES = In1qpUGx.m In1qpUGy.m
+
+DELAYQP_CLASSES = DelayqpUGxx.m DelayqpUGyy.m DelayqpUGxy.m DelayqpUGyx.m 
+
+$(ADD2_CLASSES): $(UGSRC)/add2.asm
+	$(DSPWRAP) $(UGSRC)/add2.asm
+
+$(ALLPASS1_CLASSES): $(UGSRC)/allpass1.asm
+	$(DSPWRAP) $(UGSRC)/allpass1.asm
+
+$(ASYMP_CLASSES): $(UGSRC)/asymp.asm
+	$(DSPWRAP) $(UGSRC)/asymp.asm
+
+$(ASYMPENV_CLASSES): $(UGSRC)/asympenv.asm
+	$(DSPWRAP) $(UGSRC)/asympenv.asm
+
+$(CONSTANT_CLASSES): $(UGSRC)/constant.asm
+	$(DSPWRAP) $(UGSRC)/constant.asm
+
+$(DELAY_CLASSES): $(UGSRC)/delay.asm
+	$(DSPWRAP) $(UGSRC)/delay.asm
+
+$(DELAYM_CLASSES): $(UGSRC)/delaym.asm
+	$(DSPWRAP) $(UGSRC)/delaym.asm
+
+$(DSWITCH_CLASSES): $(UGSRC)/dswitch.asm
+	$(DSPWRAP) $(UGSRC)/dswitch.asm
+
+$(DSWITCHT_CLASSES): $(UGSRC)/dswitcht.asm
+	$(DSPWRAP) $(UGSRC)/dswitcht.asm
+
+$(ENVFOLLOW_CLASSES): $(UGSRC)/envFollow.asm
+	$(DSPWRAP) $(UGSRC)/envFollow.asm
+
+$(INTERP_CLASSES): $(UGSRC)/interp.asm
+	$(DSPWRAP) $(UGSRC)/interp.asm
+
+$(MUL1ADD2_CLASSES): $(UGSRC)/mul1add2.asm
+	$(DSPWRAP) $(UGSRC)/mul1add2.asm
+
+$(MUL2_CLASSES): $(UGSRC)/mul2.asm
+	$(DSPWRAP) $(UGSRC)/mul2.asm
+
+$(ONEPOLE_CLASSES): $(UGSRC)/onepole.asm
+	$(DSPWRAP) $(UGSRC)/onepole.asm
+
+$(BIQUAD_CLASSES): $(UGSRC)/biquad.asm
+	$(DSPWRAP) $(UGSRC)/biquad.asm
+
+$(ONEZERO_CLASSES): $(UGSRC)/onezero.asm
+	$(DSPWRAP) $(UGSRC)/onezero.asm
+
+$(OSCG_CLASSES): $(UGSRC)/oscg.asm
+	$(DSPWRAP) $(UGSRC)/oscg.asm
+
+$(OSCGAF_CLASSES): $(UGSRC)/oscgaf.asm
+	$(DSPWRAP) $(UGSRC)/oscgaf.asm
+
+$(OSCGAFI_CLASSES): $(UGSRC)/oscgafi.asm
+	$(DSPWRAP) $(UGSRC)/oscgafi.asm
+
+$(OUT1A_CLASSES): $(UGSRC)/out1a.asm
+	$(DSPWRAP) $(UGSRC)/out1a.asm
+
+$(OUT1B_CLASSES): $(UGSRC)/out1b.asm
+	$(DSPWRAP) $(UGSRC)/out1b.asm
+
+$(OUT1N_CLASSES): $(UGSRC)/out1n.asm
+	$(DSPWRAP) $(UGSRC)/out1n.asm
+
+$(OUT2SUM_CLASSES): $(UGSRC)/out2sum.asm
+	$(DSPWRAP) $(UGSRC)/out2sum.asm
+
+$(SCALE_CLASSES): $(UGSRC)/scale.asm
+	$(DSPWRAP) $(UGSRC)/scale.asm
+
+$(SCL1ADD2_CLASSES): $(UGSRC)/scl1add2.asm
+	$(DSPWRAP) $(UGSRC)/scl1add2.asm
+
+$(SCL2ADD2_CLASSES): $(UGSRC)/scl2add2.asm
+	$(DSPWRAP) $(UGSRC)/scl2add2.asm
+
+$(TABLOOKI_CLASSES): $(UGSRC)/tablooki.asm
+	$(DSPWRAP) $(UGSRC)/tablooki.asm
+
+$(SNOISE_CLASSES): $(UGSRC)/snoise.asm
+	$(DSPWRAP) $(UGSRC)/snoise.asm
+
+$(UNOISE_CLASSES): $(UGSRC)/unoise.asm
+	$(DSPWRAP) $(UGSRC)/unoise.asm
+
+$(IN1A_CLASSES): $(UGSRC)/in1a.asm
+	$(DSPWRAP) $(UGSRC)/in1a.asm
+
+$(IN1B_CLASSES): $(UGSRC)/in1b.asm
+	$(DSPWRAP) $(UGSRC)/in1b.asm
+
+$(IN1QP_CLASSES): $(UGSRC)/in1qp.asm
+	$(DSPWRAP) $(UGSRC)/in1qp.asm
+
+$(DELAYQP_CLASSES): $(UGSRC)/delayqp.asm
+	$(DSPWRAP) $(UGSRC)/delayqp.asm
+
+DERIVED_CLASSES = $(ADD2_CLASSES) \
+	$(ALLPASS1_CLASSES) $(ASYMP_CLASSES) $(ASYMPENV_CLASSES) $(BIQUAD_CLASSES) \
+	$(CONSTANT_CLASSES) $(DELAY_CLASSES) $(DSWITCH_CLASSES) \
+	$(INTERP_CLASSES) $(MUL1ADD2_CLASSES) $(MUL2_CLASSES) $(ONEPOLE_CLASSES) \
+	$(ONEZERO_CLASSES) $(OSCG_CLASSES) $(OSCGAF_CLASSES) $(OSCGAFI_CLASSES) \
+	$(OUT1A_CLASSES) $(OUT1B_CLASSES) $(OUT2SUM_CLASSES) $(SCALE_CLASSES) \
+	$(SCL1ADD2_CLASSES) $(SCL2ADD2_CLASSES) $(SNOISE_CLASSES) $(TABLOOKI_CLASSES)\
+	$(UNOISE_CLASSES) $(DSWITCHT_CLASSES) $(IN1A_CLASSES) $(IN1B_CLASSES) \
+	$(IN1QP_CLASSES) $(DELAYQP_CLASSES) $(OUT1N_CLASSES) $(DELAYM_CLASSES) \
+	$(ENVFOLLOW_CLASSES)
+
+
+DERIVED_HEADERS = $(DERIVED_CLASSES:.m=.h)
+#DERIVED_OBJS = $(DERIVED_CLASSES:.m=.o)
+#$(DERIVED_OBJS):
+
+DERIVED_INCLUDES = \
+	add2UGInclude.m allpass1UGInclude.m asympenvUGInclude.m \
+	asympUGInclude.m biquadUGInclude.m constantUGInclude.m \
+	delayUGInclude.m delaymUGInclude.m dswitchUGInclude.m interpUGInclude.m \
+	dswitchtUGInclude.m envFollowUGInclude.m mul1add2UGInclude.m mul2UGInclude.m \
+	onepoleUGInclude.m onezeroUGInclude.m \
+	oscgUGInclude.m	oscgafUGInclude.m oscgafiUGInclude.m \
+	out2sumUGInclude.m out1aUGInclude.m out1bUGInclude.m out1nUGInclude.m \
+	scaleUGInclude.m scl1add2UGInclude.m scl2add2UGInclude.m \
+	snoiseUGInclude.m unoiseUGInclude.m in1aUGInclude.m in1bUGInclude.m \
+	in1qpUGInclude.m delayqpUGInclude.m tablookiUGInclude.m
+
+#$(DERIVED_OBJS):
+
+Add2UG.o: $(ADD2_CLASSES)
+
+Allpass1UG.o: $(ALLPASS1_CLASSES)
+
+AsympUG.o: $(ASYMP_CLASSES)
+
+AsympenvUG.o: $(ASYMPENV_CLASSES)
+
+ConstantUG.o: $(CONSTANT_CLASSES)
+
+BiquadUG.o: $(BIQUAD_CLASSES)
+
+DelayUG.o: $(DELAY_CLASSES)
+
+DelaymUG.o: $(DELAYM_CLASSES)
+
+DswitchUG.o: $(DSWITCH_CLASSES)
+
+DswitchtUG.o: $(DSWITCHT_CLASSES)
+
+EnvFollowUG.o: $(ENVFOLLOW_CLASSES)
+
+InterpUG.o: $(INTERP_CLASSES)
+
+Mul1add2UG.o: $(MUL1ADD2_CLASSES)
+
+Mul2UG.o: $(MUL2_CLASSES)
+
+OnepoleUG.o: $(ONEPOLE_CLASSES)
+
+OnezeroUG.o: $(ONEZERO_CLASSES)
+
+OscgUG.o: $(OSCG_CLASSES)
+
+OscgafUG.o: $(OSCGAF_CLASSES)
+
+OscgafiUG.o: $(OSCGAFI_CLASSES)
+
+Out1aUG.o: $(OUT1A_CLASSES)
+
+Out1bUG.o: $(OUT1B_CLASSES)
+
+Out1nUG.o: $(OUT1N_CLASSES)
+
+Out2sumUG.o: $(OUT2SUM_CLASSES)
+
+ScaleUG.o: $(SCALE_CLASSES)
+
+Scl1add2UG.o: $(SCL1ADD2_CLASSES)
+
+Scl2add2UG.o: $(SCL2ADD2_CLASSES)
+
+SnoiseUG.o: $(SNOISE_CLASSES)
+
+TablookiUG.o: $(TABLOOKI_CLASSES)
+
+UnoiseUG.o: $(UNOISE_CLASSES)
+
+In1aUG.o: $(IN1A_CLASSES)
+
+In1bUG.o: $(IN1B_CLASSES)
+
+In1qpUG.o: $(IN1QP_CLASSES)
+
+DelayqpUG.o: $(DELAYQP_CLASSES)
+
+#######################################
+allderived: $(DERIVED_CLASSES:.m=.o)
+
+#	(for thefile in $(DERIVED_CLASSES) ; do \
+#           $(CC) $(ALL_MFLAGS) -c -o $(OFILE_DIR)/$$thefile.o $$thefile ;done;)
+#(filter %.o,$(files))
+#$(filter %x.o,$(DERIVED_CLASSES:.m=.o)): %.o :%.m
+#	$(CC) $(ALL_MFLAGS) -c -o $(OFILE_DIR)/$@ $<

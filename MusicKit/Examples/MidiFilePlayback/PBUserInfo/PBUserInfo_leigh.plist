@@ -4,9 +4,9 @@
         "Executable-$[PBProject projectName].app/$[PBProject projectName]$[PBProjectType executableExtension]" = {
             asrc_array = (
                 /Local/Users/leigh/SoundKit, 
-                /Local/Users/leigh/Sources/Music/MusicKit/PublicDomain/MusicKit/Frameworks/MusicKit, 
                 /Local/Users/leigh/SysDev/sox, 
-                /Local/Users/leigh/Sources/Music/SoundKit/SndKit
+                /Local/Users/leigh/Sources/Music/SoundKit/SndKit, 
+                /Local/Users/leigh/Sources/Music/MusicKit/MusicKit/Frameworks/MusicKit
             ); 
         }; 
         LauncherSelectedExec = (

@@ -5,7 +5,7 @@
 #import <objc/Object.h>
 #include <sys/time.h>
 
-@interface Animator : Object
+@interface Animator : NSObject
 {
 	int mask;
 	int teNum;

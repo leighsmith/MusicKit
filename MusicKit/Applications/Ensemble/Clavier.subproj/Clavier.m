@@ -3,17 +3,13 @@
  * a sustain button, and program change buttons.
  */
 
+#import <MusicKit/MusicKit.h>
+#import <AppKit/AppKit.h>
+#import <ctype.h>
 #import "Clavier.h"
 #import "PianoOctave.h"
 #import "MySlider.h"
-#import "ParamInterface.h"
-#import <MusicKit/Conductor.h>
-#import <MusicKit/Orchestra.h>
-#import <MusicKit/Note.h>
-#import <MusicKit/NoteSender.h>
-#import <MusicKit/midi_spec.h>
-#import <AppKit/AppKit.h>
-#import <ctype.h>
+#import "../ParamInterface.h"
 
 char *GeneralMidiGroupings[16] = {
 								  "Piano",
@@ -224,7 +220,7 @@ static char *shortName(int controller)
 	int i;
 
 	octave = 4;
-	noteSender = [[NoteSender alloc] init];
+	noteSender = [[MKNoteSender alloc] init];
 
 	for (i = 0; i < 128; i++)
 		noteTags[i] = MKNoteTag();
@@ -236,7 +232,7 @@ static char *shortName(int controller)
 	controllers[1] = 93;
 	controllers[2] = 11;
 
-	[NXApp loadNibSection:"Clavier.nib" owner:self withNames:NO];
+	[NSApp loadNibSection:"Clavier.nib" owner:self withNames:NO];
 	return self;
 }
 
@@ -293,9 +289,9 @@ static char *shortName(int controller)
 	static id note = nil;
 	int key = [sender intValue];
 
-	[Conductor lockPerformance];
+	[MKConductor lockPerformance];
 	if (!note) {
-		note = [[Note alloc] init];
+		note = [[MKNote alloc] init];
 		[note setPar:MK_velocity toInt:64];
 	}
 	[note setNoteType:([sender state:key]) ? MK_noteOn : MK_noteOff];
@@ -303,7 +299,7 @@ static char *shortName(int controller)
 	[note setPar:MK_keyNum toInt:key += 12 * (octave + [sender tag])];
 	[note setNoteTag:noteTags[key]];
 	[noteSender sendNote:note];
-	[Conductor unlockPerformance];
+	[MKConductor unlockPerformance];
 
 	return self;
 }
@@ -321,12 +317,12 @@ static char *shortName(int controller)
 	[variationDisplayer setStringValue:GeneralMidiSounds[timbre]];
 	[programChangeField setIntValue:timbre];
 
-	[Conductor lockPerformance];
+	[MKConductor lockPerformance];
 	if (!note)
-		[(note = [[Note alloc] init]) setNoteType :MK_noteUpdate];
+		[(note = [[MKNote alloc] init]) setNoteType :MK_noteUpdate];
 	[note setPar:MK_programChange toInt:timbre];
 	[noteSender sendNote:note];
-	[Conductor unlockPerformance];
+	[MKConductor unlockPerformance];
 
 	return self;
 }
@@ -360,12 +356,12 @@ static char *shortName(int controller)
 {
 	static id note = nil;
 	if (!note)
-		[(note = [[Note alloc] init]) setNoteType :MK_noteUpdate];
+		[(note = [[MKNote alloc] init]) setNoteType :MK_noteUpdate];
 	setControlValToInt(note, controller, value);
 
-	[Conductor lockPerformance];
+	[MKConductor lockPerformance];
 	[noteSender sendNote:note];
-	[Conductor unlockPerformance];
+	[MKConductor unlockPerformance];
 
 	removeControl(note, controller);
 	return self;

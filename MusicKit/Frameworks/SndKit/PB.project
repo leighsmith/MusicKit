@@ -1,0 +1,114 @@
+{
+    CURRENTLY_ACTIVE_VERSION = YES; 
+    DEPLOY_WITH_VERSION_NAME = A; 
+    DYNAMIC_CODE_GEN = YES; 
+    FILESTABLE = {
+        CLASSES = (
+            Snd.m, 
+            SndDisplayData.m, 
+            SndDisplayDataList.m, 
+            SndView.m, 
+            sounderror.m, 
+            UserPath.m
+        ); 
+        FRAMEWORKS = (
+            AppKit.framework, 
+            Foundation.framework, 
+            MKPerformSndMIDI.framework, 
+            SoundKit.framework, 
+            System.framework
+        ); 
+        FRAMEWORKSEARCH = (
+            "$(HOME_DRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks", 
+            /System/Library/PrivateFrameworks
+        ); 
+        HEADERSEARCH = (/usr/local/include); 
+        H_FILES = (
+            performsound.h, 
+            Snd.h, 
+            SndDisplayData.h, 
+            SndDisplayDataList.h, 
+            SndEndianFunctions.h, 
+            SndFormats.h, 
+            SndFunctions.h, 
+            SndKit.h, 
+            SndResample.h, 
+            SndStruct.h, 
+            SndView.h, 
+            Sound.h, 
+            sound.h, 
+            sounderror.h, 
+            soundstruct.h, 
+            UserPath.h, 
+            _Sndfilterkit.h, 
+            _Sndlargefilter.h, 
+            _Sndlibst.h, 
+            _Sndsmallfilter.h, 
+            SndStdefs.h
+        ); 
+        LIBRARYSEARCH = (/usr/local/lib); 
+        OTHER_LIBS = (st); 
+        OTHER_LINKED = (
+            SndEndianFunctions.c, 
+            _SndConvert.c, 
+            _Sndfilterkit.c, 
+            _Sndlibst.c, 
+            _Sndresamplesubs.c, 
+            SndFunctions.m
+        ); 
+        OTHER_SOURCES = (
+            Makefile.preamble, 
+            Makefile, 
+            Makefile.postamble, 
+            m.template, 
+            h.template, 
+            make.sh, 
+            platform.make, 
+            packageSndKit
+        ); 
+        PRECOMPILED_HEADERS = (); 
+        PROJECT_HEADERS = (); 
+        PUBLIC_HEADERS = (
+            SndFunctions.h, 
+            SndFormats.h, 
+            SndEndianFunctions.h, 
+            SndStruct.h, 
+            SndKit.h, 
+            Snd.h, 
+            sounderror.h, 
+            SndView.h, 
+            SndDisplayData.h, 
+            SndDisplayDataList.h, 
+            UserPath.h, 
+            _Sndlibst.h, 
+            Sound.h, 
+            sound.h, 
+            soundstruct.h, 
+            performsound.h, 
+            SndResample.h, 
+            SndStdefs.h
+        ); 
+        SUBPROJECTS = (); 
+    }; 
+    LANGUAGE = English; 
+    LOCALIZABLE_FILES = {}; 
+    MAKEFILEDIR = .; 
+    NEXTSTEP_BUILDTOOL = /bin/gnumake; 
+    NEXTSTEP_COMPILEROPTIONS = "-O2"; 
+    NEXTSTEP_INSTALLDIR = "$(LOCAL_LIBRARY_DIR)/Frameworks"; 
+    NEXTSTEP_JAVA_COMPILER = /usr/bin/javac; 
+    NEXTSTEP_LINKEROPTIONS = "-O2"; 
+    NEXTSTEP_OBJCPLUS_COMPILER = /usr/bin/cc; 
+    PDO_UNIX_BUILDTOOL = $NEXT_ROOT/NextDeveloper/bin/make; 
+    PDO_UNIX_JAVA_COMPILER = "$(JDKBINDIR)/javac"; 
+    PDO_UNIX_OBJCPLUS_COMPILER = "$(NEXTDEV_BIN)/gcc"; 
+    PROJECTNAME = SndKit; 
+    PROJECTTYPE = Framework; 
+    PROJECTVERSION = 2.8; 
+    WINDOWS_BUILDTOOL = ./make.sh; 
+    WINDOWS_COMPILEROPTIONS = "-O2"; 
+    WINDOWS_INSTALLDIR = "$(HOME_DRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks"; 
+    WINDOWS_JAVA_COMPILER = "$(JDKBINDIR)/javac.exe"; 
+    WINDOWS_LINKEROPTIONS = "-O2"; 
+    WINDOWS_OBJCPLUS_COMPILER = "$(DEVDIR)/gcc"; 
+}

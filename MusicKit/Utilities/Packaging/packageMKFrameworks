@@ -16,14 +16,14 @@ if [ x_$MKICON = x_ ]; then
 fi
 if [ x_$1 = x_ ]; then
     echo "Usage: $0 version_number"
-    echo "where version_number = V.RRR"
+    echo "where version_number = V.R.P"
     exit 1;
 else
     appversion=$1
 fi
 packagefrom=/Local/Library/Frameworks
 # TODO unitgenerators synthpatches
-packages=(MusicKit MKPerformSndMIDI dsp SndKit)
+packages=(MusicKit MKPerformSndMIDI MKDSP SndKit)
 workingdir=/tmp
 install_file_directory=${frameworkname}Install
 

@@ -13,8 +13,11 @@
 Modification history:
 
   $Log$
-  Revision 1.1  1999/09/12 00:20:18  leigh
-  Initial revision
+  Revision 1.2  2000/01/27 18:15:43  leigh
+  upgraded to new typedef names for Mach
+
+  Revision 1.1.1.1  1999/09/12 00:20:18  leigh
+  separated out from MusicKit framework
 
   Revision 1.2  1999/07/29 01:26:07  leigh
   Added Win32 compatibility, CVS logs, SBs changes
@@ -30,7 +33,7 @@ Modification history:
 #endif
 /* LINTLIBRARY */
 
-extern port_t mig_get_reply_port();
+extern mach_port_t mig_get_reply_port();
 extern void mig_dealloc_reply_port();
 
 #ifndef	mig_internal
@@ -59,13 +62,13 @@ extern void mig_dealloc_reply_port();
 
 /* Routine MDBecomeOwner */
 mig_external kern_return_t MDBecomeOwner (
-	port_t mididriver_port,
-	port_t owner_port)
+	mach_port_t mididriver_port,
+	mach_port_t owner_port)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 	} Request;
 
 	typedef struct {
@@ -179,13 +182,13 @@ mig_external kern_return_t MDBecomeOwner (
 
 /* Routine MDReleaseOwnership */
 mig_external kern_return_t MDReleaseOwnership (
-	port_t mididriver_port,
-	port_t owner_port)
+	mach_port_t mididriver_port,
+	mach_port_t owner_port)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 	} Request;
 
 	typedef struct {
@@ -299,15 +302,15 @@ mig_external kern_return_t MDReleaseOwnership (
 
 /* Routine MDSetClockMode */
 mig_external kern_return_t MDSetClockMode (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	short unit,
 	int clock_mode)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		short unit;
 		char unitPad[2];
@@ -476,14 +479,14 @@ mig_external kern_return_t MDSetClockMode (
 
 /* Routine MDGetClockTime */
 mig_external kern_return_t MDGetClockTime (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	int *time)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 	} Request;
 
 	typedef struct {
@@ -626,8 +629,8 @@ mig_external kern_return_t MDGetClockTime (
 
 /* Routine MDGetMTCTime */
 mig_external kern_return_t MDGetMTCTime (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	short *format,
 	short *hours,
 	short *minutes,
@@ -637,7 +640,7 @@ mig_external kern_return_t MDGetMTCTime (
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 	} Request;
 
 	typedef struct {
@@ -901,14 +904,14 @@ mig_external kern_return_t MDGetMTCTime (
 
 /* Routine MDSetClockTime */
 mig_external kern_return_t MDSetClockTime (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	int time)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t timeType;
 		int time;
 	} Request;
@@ -1049,17 +1052,17 @@ mig_external kern_return_t MDSetClockTime (
 
 /* SimpleRoutine MDRequestAlarm */
 mig_external kern_return_t MDRequestAlarm (
-	port_t mididriver_port,
-	port_t owner_port,
-	port_t reply_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
+	mach_port_t reply_port,
 	int time)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t timeType;
 		int time;
 	} Request;
@@ -1159,13 +1162,13 @@ mig_external kern_return_t MDRequestAlarm (
 
 /* Routine MDStartClock */
 mig_external kern_return_t MDStartClock (
-	port_t mididriver_port,
-	port_t owner_port)
+	mach_port_t mididriver_port,
+	mach_port_t owner_port)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 	} Request;
 
 	typedef struct {
@@ -1279,13 +1282,13 @@ mig_external kern_return_t MDStartClock (
 
 /* Routine MDStopClock */
 mig_external kern_return_t MDStopClock (
-	port_t mididriver_port,
-	port_t owner_port)
+	mach_port_t mididriver_port,
+	mach_port_t owner_port)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 	} Request;
 
 	typedef struct {
@@ -1399,14 +1402,14 @@ mig_external kern_return_t MDStopClock (
 
 /* Routine MDClaimUnit */
 mig_external kern_return_t MDClaimUnit (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	short unit)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		short unit;
 		char unitPad[2];
@@ -1548,14 +1551,14 @@ mig_external kern_return_t MDClaimUnit (
 
 /* Routine MDReleaseUnit */
 mig_external kern_return_t MDReleaseUnit (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	short unit)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		short unit;
 		char unitPad[2];
@@ -1697,16 +1700,16 @@ mig_external kern_return_t MDReleaseUnit (
 
 /* Routine MDRequestExceptions */
 mig_external kern_return_t MDRequestExceptions (
-	port_t mididriver_port,
-	port_t owner_port,
-	port_t error_port)
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
+	mach_port_t error_port)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t error_portType;
-		port_t error_port;
+		mach_port_t error_port;
 	} Request;
 
 	typedef struct {
@@ -1845,20 +1848,20 @@ mig_external kern_return_t MDRequestExceptions (
 
 /* Routine MDRequestData */
 mig_external kern_return_t MDRequestData (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	short unit,
-	port_t reply_port)
+	mach_port_t reply_port)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		short unit;
 		char unitPad[2];
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 	} Request;
 
 	typedef struct {
@@ -2022,8 +2025,8 @@ mig_external kern_return_t MDRequestData (
 
 /* Routine MDSendData */
 mig_external kern_return_t MDSendData (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	short unit,
 	MDRawEventPtr data,
 	unsigned int dataCnt)
@@ -2031,7 +2034,7 @@ mig_external kern_return_t MDSendData (
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		short unit;
 		char unitPad[2];
@@ -2208,15 +2211,15 @@ mig_external kern_return_t MDSendData (
 
 /* Routine MDGetAvailableQueueSize */
 mig_external kern_return_t MDGetAvailableQueueSize (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	short unit,
 	int *size)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		short unit;
 		char unitPad[2];
@@ -2387,21 +2390,21 @@ mig_external kern_return_t MDGetAvailableQueueSize (
 
 /* Routine MDRequestQueueNotification */
 mig_external kern_return_t MDRequestQueueNotification (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	short unit,
-	port_t notification_port,
+	mach_port_t notification_port,
 	int size)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		short unit;
 		char unitPad[2];
 		msg_type_t notification_portType;
-		port_t notification_port;
+		mach_port_t notification_port;
 		msg_type_t sizeType;
 		int size;
 	} Request;
@@ -2592,14 +2595,14 @@ mig_external kern_return_t MDRequestQueueNotification (
 
 /* Routine MDClearQueue */
 mig_external kern_return_t MDClearQueue (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	short unit)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		short unit;
 		char unitPad[2];
@@ -2741,14 +2744,14 @@ mig_external kern_return_t MDClearQueue (
 
 /* Routine MDFlushQueue */
 mig_external kern_return_t MDFlushQueue (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	short unit)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		short unit;
 		char unitPad[2];
@@ -2890,15 +2893,15 @@ mig_external kern_return_t MDFlushQueue (
 
 /* Routine MDSetSystemIgnores */
 mig_external kern_return_t MDSetSystemIgnores (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	short unit,
 	int sys_ignores)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		short unit;
 		char unitPad[2];
@@ -3067,14 +3070,14 @@ mig_external kern_return_t MDSetSystemIgnores (
 
 /* Routine MDSetClockQuantum */
 mig_external kern_return_t MDSetClockQuantum (
-	port_t mididriver_port,
-	port_t owner_port,
+	mach_port_t mididriver_port,
+	mach_port_t owner_port,
 	int microseconds)
 {
 	typedef struct {
 		msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t microsecondsType;
 		int microseconds;
 	} Request;

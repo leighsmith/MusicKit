@@ -2,7 +2,7 @@
 }
 {\colortbl;\red255\green255\blue255;}
 \paperw16220\paperh12580
-\pard
+\pard\ql\qnatural
 
 \f0\fs24 \cf0 Release 2.0  Copyright 
 \f1 „
@@ -20,15 +20,12 @@
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \fs28 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs28 \
 
-\fs16 \cf0 \
+\fs16 \
 \pard\li1100\ql\qnatural
 
 \b \cf0 \
@@ -61,19 +58,16 @@
 \b0 .  This method is automatically invoked by an MKInstrument's MKNoteReceivers, when such objects receive  
 \b receiveNote:
 \b0  messages.  \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 An MKInstrument is considered to be in performance from the time that one of its MKNoteReceivers invokes the 
+\fs28 An MKInstrument is considered to be in performance from the time that one of its MKNoteReceivers invokes the 
 \b realizeNote:fromNoteReceiver:
 \b0  method until the MKConductor class receives the 
 \b finishPerformance
 \b0  message.  There are two implications regarding an MKInstrument's involvement in a performance:\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
+\fs16 \
 \pard\tx3120\tx3620\tx4120\tx4620\li3120\fi-520\ql\qnatural
 
 \fs28 \cf0 ∑	An MKInstrument's 
@@ -81,26 +75,26 @@
 \b0  and 
 \b afterPerformance 
 \b0 methods are invoked as the MKInstrument begins and finishes its performance, respectively.  These methods can be implemented in a subclass to provide specialized initialization and post-performance cleanup.\
+\pard\tx3120\tx3620\tx4120\tx4620\li3120\fi-520\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\tx4620\li3120\fi-520\ql\qnatural
 
-\fs28 ∑	Some MKInstrument methods can't be invoked during a performance.  For example, you can't add or remove MKNoteReceivers while the MKInstrument is performing.\
+\fs28 \cf0 ∑	Some MKInstrument methods can't be invoked during a performance.  For example, you can't add or remove MKNoteReceivers while the MKInstrument is performing.\
+\pard\tx3120\tx3620\tx4120\tx4620\li3120\fi-520\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \fs28 \cf0 Creating and adding MKNoteReceivers to an MKInstrument object is generally the obligation of the MKInstrument subclass; most subclasses dispose of this duty in their 
 \b init
 \b0  methods.  However, instances of some subclasses are born with no MKNoteReceivers–they expect these objects to be added by your application.  You should visit the class description of the MKInstrument subclass that you're using to determine just what sort of varmint you're dealing with.\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 The MusicKit defines a number of MKInstrument subclasses.  Notable among these are: MKSynthInstrument, which synthesizes MKNotes on the DSP; MKPartRecorder adds MKNotes to a designated MKPart; MKScorefileWriter writes them to a scorefile; and MKNoteFilter, an abstract class that acts as a MKNote conduit, altering the MKNotes that it receives before passing them on to other MKInstruments.  In addition, the MKMidi class can be used as an MKInstrument to realize MKNotes on an external MIDI synthesizer.\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs28 The MusicKit defines a number of MKInstrument subclasses.  Notable among these are: MKSynthInstrument, which synthesizes MKNotes on the DSP; MKPartRecorder adds MKNotes to a designated MKPart; MKScorefileWriter writes them to a scorefile; and MKNoteFilter, an abstract class that acts as a MKNote conduit, altering the MKNotes that it receives before passing them on to other MKInstruments.  In addition, the MKMidi class can be used as an MKInstrument to realize MKNotes on an external MIDI synthesizer.\
 
-\fs16 \cf0 \
+\fs16 \
 \pard\tx7140\li2100\ql\qnatural
 \cf0 \
 \
@@ -238,12 +232,10 @@
 \b0 , otherwise returns 
 \i aNoteReceiver
 \i0 .\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 See also: 
+\fs28 See also: 
 \f1 - 
 \f0\b removeNoteReceiver:
 \b0 ,
@@ -271,12 +263,10 @@
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \b0\fs28 \cf0 You never invoke this method; it's automatically invoked when the performance is finished.  A subclass can implement this method to do post-performance cleanup.  The default implementation does nothing; the return value is ignored.\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 See also: 
+\fs28 See also: 
 \f1 - 
 \f0\b firstNote:
 \b0 , 
@@ -299,12 +289,10 @@
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \b0\fs28 \cf0 Creates and returns a new MKInstrument as a copy of the receiving MKInstrument.  The new object has its own MKNoteReceiver collection that contains copies of the MKInstrument's MKNoteReceivers.  The new MKNoteReceivers' connections (see the MKNoteReceiver class) are copied from the MKNoteReceivers in the receiving MKInstrument.\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 See also: 
+\fs28 See also: 
 \f1 - 
 \f0\b copyFromZone:\
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
@@ -329,12 +317,10 @@
 \b0 , but the new object is allocated from 
 \i zone
 \i0 .\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 See also: 
+\fs28 See also: 
 \f1 - 
 \f0\b copy\
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
@@ -405,12 +391,10 @@
 \b0 , otherwise returns 
 \b nil
 \b0 .\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 See also: 
+\fs28 See also: 
 \f1 - 
 \f0\b freeNoteReceivers\
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
@@ -432,12 +416,10 @@
 \b0\fs28 \cf0 Disconnects, removes, and frees the MKInstrument's MKNoteReceivers.  No checking is done to determine if the MKInstrument is in performance.  Returns 
 \b self
 \b0 .\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 See also: 
+\fs28 See also: 
 \f1 - 
 \f0\b removeNoteReceivers:\
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
@@ -493,14 +475,52 @@
 \b0 .  Returns 
 \b self
 \b0 .\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
+\fs16 \
 \pard\tx7140\li2100\ql\qnatural
 
 \b \cf0 \
 
-\fs28 isNoteReceiverPresent:\
+\fs28 indexOfNoteReceiver:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (int) 
+\b indexOfNoteReceiver:
+\i\b0 aNoteReceiver\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Returns the ordinal index of 
+\i aNoteReceiver
+\i0  in the MKInstrument's MKNoteReceiver NSArray.  Returns -1 if 
+\i aNoteReceiver 
+\i0 is not in the NSArray.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b addNoteReceiver
+\f1\b0 , - 
+\f0\b noteReceiver
+\b0 ,
+\b  
+\f1\b0 - 
+\f0\b noteReceivers
+\b0 ,
+\b  
+\f1\b0 - 
+\f0\b isNoteReceiverPresent\
+\pard\tx7140\li2100\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\cf0 \
+\pard\tx7140\li2100\ql\qnatural
+
+\fs28 \cf0 isNoteReceiverPresent:\
 \pard\li3620\fi-1020\ql\qnatural
 
 \f1\b0 \cf0 - 
@@ -514,12 +534,10 @@
 \i0\fs28 \cf0 Returns YES if 
 \i aNoteReceiver
 \i0  is in the MKInstrument's MKNoteReceiver NSArray.  Otherwise returns NO.\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 See also: 
+\fs28 See also: 
 \f1 - 
 \f0\b noteReceiver
 \b0 ,
@@ -543,14 +561,14 @@
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \b0\fs28 \cf0 Returns the first MKNoteReceiver in the MKInstrument's MKNoteReceiver NSArray.  This is useful if you want to send a MKNote directly to an MKInstrument, but you don't care which MKNoteReceiver does the receiving:\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
+\fs16 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \f2\fs24 \cf0 	[[anInstrument noteReceiver] receiveNote:aNote] \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \f0\fs28 \cf0 If there are currently no MKNoteReceivers, this method creates and adds a MKNoteReceiver.\
@@ -581,12 +599,10 @@ See also:
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \b0\fs28 \cf0 Creates and returns a NSArray that contains the MKInstrument's MKNoteReceivers.\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 See also: 
+\fs28 See also: 
 \f1 - 
 \f0\b addNoteReceiver
 \f1\b0 , - 
@@ -615,12 +631,10 @@ See also:
 \i0\fs28 \cf0 You never invoke this method directly; to read an archived MKNote, call the 
 \b NXReadObject()
 \b0  C function.  \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 See also: 
+\fs28 See also: 
 \f1 - 
 \f0\b write:\
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
@@ -646,19 +660,16 @@ See also:
 \i0  is the MKNote that's to be realized; 
 \i aNoteReceiver
 \i0  is the MKNoteReceiver that received it.  The default implementation does nothing; the return value is ignored.  \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 You never invoke this method from your application; it should only be invoked by the MKInstrument's MKNoteReceivers as they are sent 
+\fs28 You never invoke this method from your application; it should only be invoked by the MKInstrument's MKNoteReceivers as they are sent 
 \b receiveNote:
 \b0  messages.  Keep in mind that you can send 
 \b receiveNote:
 \b0  directly to a MKNoteReceiver for diagnostic or other untimed reception purposes. \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
+\fs16 \
 \pard\tx7140\li2100\ql\qnatural
 
 \b \cf0 \
@@ -676,9 +687,8 @@ See also:
 \i0\fs28 \cf0 Removes the object from the performance by disconnecting its MKNoteReceivers and invokes the 
 \b -afterPerformance
 \b0  method.  This method is needed in order to be able to free a MKNoteFilter or MKInstrument during a performance. \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
+\fs16 \
 \pard\tx7140\li2100\ql\qnatural
 
 \b \cf0 \
@@ -700,12 +710,10 @@ See also:
 \b0 , otherwise returns 
 \i aNoteReceiver
 \i0 .\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 See also: 
+\fs28 See also: 
 \f1 - 
 \f0\b removeNoteReceivers
 \f1\b0 , - 
@@ -735,12 +743,10 @@ See also:
 \b0\fs28 \cf0 Removes all the MKInstrument's MKNoteReceivers but neither disconnects nor frees them. Returns 
 \b self
 \b0 .\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 See also: 
+\fs28 See also: 
 \f1 - 
 \f0\b removeNoteReceiver
 \f1\b0 , - 
@@ -773,12 +779,10 @@ See also:
 \b0  C function.  The MKInstrument's MKNoteReceivers are archived through 
 \b NXWriteObject()
 \b0 .\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+\fs16 \
 
-\fs28 \cf0 See also:  
+\fs28 See also:  
 \f1  -
 \f0\b  read:\
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
@@ -787,7 +791,6 @@ See also:
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \b0\fs28 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\fs16 \cf0 \
+\fs16 \
 }

@@ -1,19 +1,35 @@
+/*
+  $Id$
+  Example Application within the MusicKit
+
+  Description:
+    This example program captures MIDI input in a scorefile.
+
+    Each time you push the button a new MIDI recording session begins. The
+    input is written to the file with the name specified in the graphic interface
+    field.
+
+    MidiRecord is an example of an interactive Music Kit performance.
+    Therefore, the Conductor is clocked. The Conductor is also set to not
+    'finishWhenEmpty'. This ensures the performance will continue, whether or
+    not the Conductor has any objective-c messages to send,
+    until the user decides to terminate the performance. Finally, we set
+    the midi object to 'useInputTimeStamps' so that the times written to the
+    output file are as precise as possible.
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
 #import "MidiRecord.h"
 
 @implementation MidiRecord
 
-#import <AppKit/NSSavePanel.h>
-#import <synthpatches/synthpatches.h>
+#import <AppKit/AppKit.h>
+//#import <synthpatches/synthpatches.h>
 
-/* MidiRecord is an example of an interactive Music Kit performance.
-   Therefore, the Conductor is clocked. The Conductor is also set to not 
-   'finishWhenEmpty'. This ensures the performance will continue, whether or 
-   not the Conductor has any objective-c messages to send, 
-   until the user decides to terminate the performance. Finally, we set
-   the midi object to 'useInputTimeStamps' so that the times written to the
-   output file are as precise as possible. */
-
-static BOOL needsUpdate = NO;
 
 static void handleMKError(char *msg) {
     if (!NSRunAlertPanel(@"MidiRecord", [NSString stringWithCString:msg], @"OK", @"Quit", nil, NULL))
@@ -23,43 +39,45 @@ static void handleMKError(char *msg) {
 - _start
     /* This method sets things up and begins the performance. */
 {
-    id partRecorders,aPart,info;
+    NSArray *partRecorders;
+    MKPart *aPart;
+    MKNote *info;
     int i;
 
     needsUpdate = YES;
-    MKSetErrorProc(handleMKError);
-    [saveAsMenuItem setEnabled:YES]; /* Something to save now. */
+    // MKSetErrorProc(handleMKError);  // FIXME
+    [saveAsMenuItem setEnabled:YES];  /* Something to save now. */
     [score release];                  /* Free old score, parts and notes. */
-    score = [[Score alloc] init];  /* Make a new Score to store Notes */
-    for (i = 0; i<17; i++) {       /* 16 channels and one for system msgs */
-	aPart =[[Part alloc] init];/* Make a new Part for each channel */
+    score = [[MKScore alloc] init];   /* Make a new Score to store Notes */
+    for (i = 0; i<17; i++) {          /* 16 channels and one for system msgs */
+	aPart =[[MKPart alloc] init]; /* Make a new Part for each channel */
 
 	/* Each Part has an 'info' MKNote which contains some special info
 	   for that Part. In this case we put the midiChan there. */
 	info = [[MKNote alloc] init];
 	if (i != 0)  {               /* The 0th 'channel' is our 'sys' Part */
-	    [info setPar:MK_midiChan toInt:i]; 
-	    [info setPar:MK_synthPatch toString:"midi"]; 
+	    [info setPar: MK_midiChan toInt: i]; 
+	    [info setPar: MK_synthPatch toString: @"midi"]; 
 	}
-	[aPart setInfo:info];
-	[score addPart:aPart];     /* Add the Part to the Score. */
+	[aPart setInfoNote: info];
+	[score addPart: aPart];     /* Add the Part to the Score. */
     }
-    scoreRecorder = [[ScoreRecorder alloc] init];
+    scoreRecorder = [[MKScoreRecorder alloc] init];
 
     /* ScoreRecorder is an Instrument that collects Notes and writes
        them to a Score. */
     [scoreRecorder setScore:score];
 
     /* ScoreRecorder automatically creates a PartRecorder for each Part in 
-       the Score. The -partRecorders method returns a List object. */
+       the Score. The -partRecorders method returns a NSArray object. */
     partRecorders = [scoreRecorder partRecorders]; 
-    midiIn = [Midi midi];           /* Get the Midi object for the default serial port (port A on NeXT hardware) */
+    midiIn = [[MKMidi midi] retain];           /* Get the Midi object for the default MIDI port */
 
     /* Connect the outputs of the Midi object to the inputs of each of 
        the PartRecorders. */
     for (i = 0; i<17; i++)         
-	[[midiIn channelNoteSender:i] connect:
-	 [[partRecorders objectAt:i] noteReceiver]];
+	[[midiIn channelNoteSender: i] connect:
+	 [[partRecorders objectAtIndex: i] noteReceiver]];
       
     [partRecorders release];               /* List is copied above so free here */
     [midiIn setUseInputTimeStamps:YES]; /* We want MIDI driver's time stamps */
@@ -70,15 +88,16 @@ static void handleMKError(char *msg) {
 					   has no more scheduled events.
 					   Instead, tell it to wait until 
 					   finishPerformance is received */
+    [MKConductor useSeparateThread: YES];
     [midiIn run];                  /* Start midi clock */
     [MKConductor startPerformance];  /* Start the performance */
     return self;
 }
 
-static char scoreFilePath[MAXPATHLEN+1] = "";
-static char scoreFileDir[MAXPATHLEN+1] = "";
-static char scoreFileName[MAXPATHLEN+1] = "";
-static id savePanel = nil;
+- (void) applicationDidFinishLaunching: (NSNotification *) aNotification 
+{
+    savePanel = [[NSSavePanel savePanel] retain];
+}
 
 -_finish
   /* This method is used to write the file and finish the performance. */
@@ -101,30 +120,23 @@ static id savePanel = nil;
     } 
 }
 
-static BOOL getSavePath(char *returnBuf, char *dir, char *name)
-{
-    if (!savePanel) {
-#warning FactoryMethods: [SavePanel savePanel] used to be [SavePanel new].  Save panels are no longer shared.  'savePanel' returns a new, autoreleased save panel in the default configuration.  To maintain state, retain and reuse one save panel (or manually re-set the state each time.)
-	savePanel = [NSSavePanel savePanel];
-	[savePanel setTitle:@"MidiRecord Save"];
-    }
-    [savePanel setRequiredFileType:@"score"];
-    if ([savePanel runModalForDirectory:@"" file:@""])  {
-	strcpy(returnBuf,[[savePanel filename] cString]);
-	return YES;
-    }
-    else return NO;
-}
-
 - (void)saveAs:sender
 {
-    if (sender != self)
-	if (!getSavePath(scoreFilePath,scoreFileDir, scoreFileName)) 
-	    return;
-	else [saveMenuItem setEnabled:YES];   /* We have a default now. */
+    if (sender != self) {
+        if (!savePanel) {
+            [savePanel setTitle:@"MidiRecord Save"];
+        }
+        [savePanel setRequiredFileType:@"score"];
+        if ([savePanel runModalForDirectory:@"" file:@""])  {
+            scoreFilePath = [savePanel filename];
+            [saveMenuItem setEnabled:YES];   /* We have a default now. */
+        }
+        else
+            return;
+    }
     if ([MKConductor inPerformance])
 	[self go:self];                       /* End performance. */
-    [myWindow setTitle:[NSString stringWithCString:scoreFilePath]];
+    [myWindow setTitle: scoreFilePath];
     [myWindow display];
     [score writeScorefile:scoreFilePath];     /* Write the file. */
     needsUpdate = NO; 
@@ -132,24 +144,23 @@ static BOOL getSavePath(char *returnBuf, char *dir, char *name)
 
 - (void)save:sender
 {
-    return [self saveAs:(strlen(scoreFilePath) > 0) ? self : nil];
+    return [self saveAs: ([scoreFilePath length] > 0) ? self : nil];
 }
 
 - (void)showInfoPanel:sender
 {
     [NSBundle loadNibNamed:@"Info.nib" owner:self];
-    [infoPanel orderFront:sender]; 
+//    [infoPanel orderFront:sender]; 
 }
 
-- (void)terminate:(id)sender
-  /* Sent from 'quit' option in menu. Terminates the app. */
+/* Sent via 'quit' option in menu. Before the app terminates. */
+- (void) applicationWillTerminate: (NSNotification *) aNotification
 {
     if ([MKConductor inPerformance]) 
 	[self _finish];
     if (needsUpdate)
         if (NSRunAlertPanel(@"MidiRecord", @"Save file before quitting?", @"Yes", @"No", nil))
 	    [self save:self];
-    [super terminate:self];
 }
 
 @end

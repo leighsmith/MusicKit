@@ -40,7 +40,7 @@ PROF_LIBS = $(LIBS)
 
 
 FRAMEWORK_PATHS = -F/Local/Library/Frameworks
-FRAMEWORKS = -framework AppKit -framework dsp -framework Foundation\
+FRAMEWORKS = -framework AppKit -framework Foundation -framework MKDSP\
              -framework MKPerformSndMIDI -framework MusicKit
 
 

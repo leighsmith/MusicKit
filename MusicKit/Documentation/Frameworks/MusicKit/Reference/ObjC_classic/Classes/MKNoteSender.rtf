@@ -271,8 +271,9 @@ id	owner;\
 \f1\b0 \cf0 - 
 \f0\b connect:
 \i\b0 aNoteReceiver\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \i0\fs28 \cf0 Connects 
@@ -397,8 +398,9 @@ id	owner;\
 \f0\b copyFromZone:
 \b0 (NXZone *)
 \i zone\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \i0\fs28 \cf0 This is the same as 
@@ -459,8 +461,9 @@ id	owner;\
 \f1\b0 \cf0 - 
 \f0\b disconnect:
 \i\b0 aNoteReceiver\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \i0\fs28 \cf0 Severs the connection between the MKNoteSender and 
@@ -544,8 +547,9 @@ id	owner;\
 \f0 (BOOL)
 \b isConnected:
 \i\b0 aNoteReceiver\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \i0\fs28 \cf0 Returns YES if 
@@ -620,37 +624,9 @@ id	owner;\
 \f1 - 
 \f0\b addNoteSender: 
 \b0 (MKPerformer, MKNoteFilter, MKMidi)\
-
-\fs16 \
-\pard\tx7140\li2100\ql\qnatural
-
-\b \cf0 \
-
-\fs28 read:\
-\pard\li3620\fi-1020\ql\qnatural
-
-\f1\b0 \cf0 - 
-\f0\b read:
-\b0 (NXTypedStream *)
-\i stream\
-
-\fs16 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
-\i0\fs28 \cf0 Unarchives the MKNoteSender by reading it from 
-\i stream
-\i0 .  You never invoke this method directly; to read an archived MKNoteSender, call the 
-\b NXReadObject()
-\b0  C function.\
-
-\fs16 \
-
-\fs28 See also: 
-\f1 - 
-\f0\b write:\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
-
-\fs16 \cf0 \
+\b\fs16 \cf0 \
 \pard\tx7140\li2100\ql\qnatural
 \cf0 \
 
@@ -660,8 +636,9 @@ id	owner;\
 \f1\b0 \cf0 - 
 \f0\b sendAndFreeNote:
 \i\b0 aNote\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \i0\fs28 \cf0 Sends the message 
@@ -704,8 +681,9 @@ id	owner;\
 \i0\b atTime:
 \b0 (double)
 \i beatsSinceStart\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \i0\fs28 \cf0 Enqueues, with the appropriate MKConductor, a request for 
@@ -750,8 +728,9 @@ id	owner;\
 \i0\b withDelay:
 \b0 (double)
 \i delayBeats\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \i0\fs28 \cf0 Enqueues, with the appropriate Conductor, a request for 
@@ -793,8 +772,9 @@ id	owner;\
 \f1\b0 \cf0 - 
 \f0\b sendNote:
 \i\b0 aNote\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \i0\fs28 \cf0 Sends the message 
@@ -832,8 +812,9 @@ id	owner;\
 \i0\b atTime:
 \b0 (double)
 \i beatsSinceStart\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \i0\fs28 \cf0 Enqueues, with the MKConductor object described below, a request for 
@@ -888,8 +869,9 @@ id	owner;\
 \i0\b withDelay:
 \b0 (double)
 \i delayBeats\
+\pard\li3620\fi-1020\ql\qnatural
 
-\fs16 \
+\fs16 \cf0 \
 \pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
 
 \i0\fs28 \cf0 Enqueues, with the appropriate MKConductor, a request for 
@@ -976,43 +958,10 @@ id	owner;\
 \b  
 \b0   
 \f1 - 
-\f0\b squelch\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
-
-\fs16 \cf0 \
-\pard\tx7140\li2100\ql\qnatural
-\cf0 \
-
-\fs28 write:\
-\pard\li3620\fi-1020\ql\qnatural
-
-\f1\b0 \cf0 - 
-\f0\b write:
-\b0 (NXTypedStream *)
-\i stream\
-
-\fs16 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
-
-\i0\fs28 \cf0 Archives the MKNoteSender by writing it to 
-\i stream
-\i0 .  The MKNoteSender's connections and owner are archived by reference.  You never invoke this method directly; to archive a MKNoteSender, call the 
-\b NXWriteRootObject()
-\b0  C function.\
-
+\f0\b squelch
 \fs16 \
 
-\fs28 See also: 
-\f1 - 
-\f0\b read:\
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
-
-\fs16 \cf0 \
-\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
-
-\b0\fs28 \cf0 \
-
-\fs16 \
+\b0 \
 
 \fs28 \
 

@@ -1,6 +1,20 @@
 {
     NSMACHOperatingSystem = {
         Archs = "18 "; 
+        "Executable-$[PBProject projectName]$[PBProjectType executableExtension]" = {
+            cla_array = (
+                (
+                    "-m", 
+                    "-o", 
+                    "~/Most.midi", 
+                    "~/Library/Lobe/PlaybackHistory/MostRecentlyPlayed.score"
+                ), 
+                ("-m", "-o", "~/rearticulation.midi", "~/rearticulation.score"), 
+                ("-s", "-n", "-o", "~/rearticulation_new.score", "~/rearticulation_new.midi"), 
+                ("-s", "-o", /tmp/foo.score, /tmp/foo.playscore)
+            ); 
+            cla_array_index = 2; 
+        }; 
         LauncherSelectedExec = ("$[PBProject projectName]$[PBProjectType executableExtension]"); 
         Target = tool; 
     }; 

@@ -7,8 +7,8 @@
         English_INTERFACES = ("example3-windows.nib", example3_new.nib, example3_orig.nib); 
         FRAMEWORKS = (
             AppKit.framework, 
-            dsp.framework, 
             Foundation.framework, 
+            MKDSP.framework, 
             MKPerformSndMIDI.framework, 
             MusicKit.framework
         ); 

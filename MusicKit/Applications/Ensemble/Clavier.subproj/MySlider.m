@@ -2,15 +2,13 @@
 #import "MySliderCell.h"
 
 @implementation MySlider
-  
-{}
 
-+ newFrame:(const NXRect *)frameRect
++ newFrame:(const NSRect *)frameRect
   /* We fool Interface Builder into creating an object of our class. */
 {
     [super setCellClass:[MySliderCell class]];
     self = [super newFrame:frameRect];
-    [super setCellClass:[SliderCell class]];
+    [super setCellClass:[NSSliderCell class]];
     return self;
 }
 

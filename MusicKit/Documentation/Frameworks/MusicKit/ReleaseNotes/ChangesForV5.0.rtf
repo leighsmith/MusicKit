@@ -3,15 +3,16 @@
 \paperw9840\paperh8400
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f0\b\fs24 \cf0 API Changes in MusicKit V5.0 frameworks\
+\f0\b\fs24 \cf0 API Changes in MusicKit V5.X frameworks\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\b0 \
+\b0 \cf0 \
+Version 5 of the MusicKit mostly consists of conversion to the OpenStep specification from the older NeXTStep API.\
+\
 Libraries have now been replaced as frameworks:\
 \
 MusicKit.framework\
 dsp.framework\
-\
-MusicKit.framework\
 \
 The root hierarchical include file is now #imported as <MusicKit/MusicKit.h> replacing\
 <musickit/musickit.h>\
@@ -20,8 +21,9 @@ Unitgenerators headers are included from unitgenerators framework, not musickit/
 \
 All the public MusicKit classes are now prefixed with MK to match the Foundation/AppKit model, ie MKNote, MKOrchestra. In a similar manner to the changes in other Frameworks when OpenStep-ified, as well as name changes, there are object allocation changes.\
 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\b Midi
+\b \cf0 MKMidi
 \b0 \
 +new has been renamed +midi in keeping with OpenStep conventions.\
 allocFromZone:onDevice: and allocFromZone:onDevice:hostName have been replaced with corresponding \
@@ -32,8 +34,11 @@ allocFromZone:onDevice: and allocFromZone:onDevice:hostName have been replaced w
 ** noteSenders and noteReceivers doesn't return a copy of the array. The parent object is expected to copy it. Perhaps it shouldn't??\
 \
 
-\b Note
+\b MKNote
 \b0 \
 +new is now +note\
 \
-}
+
+\b MKScore
+\b0 \
++new is now +score returning an autoreleased instance.}
