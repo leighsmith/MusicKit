@@ -945,7 +945,10 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (int)writeSoundfile:(NSString *)filename
 {
-    return SndWriteSoundfile([filename fileSystemRepresentation], soundStruct);
+    // compaction ideally should not be necessary, but the SOX saving requires it for now
+    [self compactSamples]; 
+    return SndWriteSoundfile(filename, soundStruct);
+    //return SndWriteSoundfile([filename fileSystemRepresentation], soundStruct);
 }
 
 - (void)writeToPasteboard:(NSPasteboard *)thePboard
