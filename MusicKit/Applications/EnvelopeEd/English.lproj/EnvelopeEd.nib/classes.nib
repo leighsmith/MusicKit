@@ -59,7 +59,7 @@
                 theYSnapCoord = id; 
                 theYrCoord = id; 
             }; 
-            SUPERCLASS = Object; 
+            SUPERCLASS = NSObject; 
         }, 
         {
             ACTIONS = {controllerIs = id; }; 
