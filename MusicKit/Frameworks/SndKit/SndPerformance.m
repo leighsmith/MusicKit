@@ -18,6 +18,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#import "SndPlayer.h"
 #import "SndPerformance.h"
 
 @implementation SndPerformance
@@ -189,8 +190,26 @@
 
 - (void) stopInFuture: (double) inSeconds
 {
-    [Snd stopPerformance: self inFuture: inSeconds];
+  if (paused) 
+    [self stopNow];
+  else
+    [[SndPlayer defaultSndPlayer] stopPerformance: self inFuture: inSeconds];
 }
+
+- (void) stopNow;
+{
+  paused = NO;
+  playIndex = endAtIndex;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Pausing stuff.
+////////////////////////////////////////////////////////////////////////////////
+
+- (BOOL) isPaused { return paused; };
+- setPaused: (BOOL) b  { paused = b; return self; }
+- pause  { paused = YES; return self; }
+- resume { paused = NO;  return self; }
 
 ////////////////////////////////////////////////////////////////////////////////
 

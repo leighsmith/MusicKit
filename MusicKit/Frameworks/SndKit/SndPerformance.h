@@ -36,7 +36,8 @@
     long    playIndex;
 /*! @var 				endAtIndex */
     long    endAtIndex;
-
+/*! @var 				paused */
+    BOOL    paused;
     // TODO playState should be here, not Snd.
 }
 
@@ -134,6 +135,7 @@
     @param      inSeconds The time interval when to stop the performance.
 */
 - (void) stopInFuture: (double) inSeconds;
+- (void) stopNow;
 
 /*!
     @method   isEqual:
@@ -154,7 +156,27 @@
     @result     A string containing a brief description of the performance object
 */
 - (NSString *) description;
-
+/*!
+  @method   isPaused
+  @result   Boolean - YES/TRUE if the performance is paused
+*/
+- (BOOL) isPaused;
+/*!
+  @method   setPaused
+  @param    b a flag to signal whether or not the performance is paused.
+  @result   self
+*/
+- setPaused: (BOOL) b;
+/*!
+  @method   pause
+  @abstract pauses a performance
+*/
+- pause;
+/*!
+  @method   resume
+  @abstract resumes a paused performance
+*/
+- resume;
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
