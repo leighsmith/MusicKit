@@ -18,6 +18,10 @@
 */
 /*
   $Log$
+  Revision 1.8  2000/05/09 03:12:06  leigh
+  Removed NSSound use and fully replaced with SndKit,\
+   if necessary, SndKit will just become a wrapper around NSSound
+
   Revision 1.7  2000/04/22 20:12:42  leigh
   Now correctly checks the notes conductor for tempo
 
@@ -40,18 +44,8 @@
 #ifndef __MK_SamplerInstrument_H___
 #define __MK_SamplerInstrument_H___
 
-// we optimistically assume NSSound is the best default.
-#ifndef USE_SNDKIT
-#define USE_SNDKIT 0
-#endif
-
-#if USE_SNDKIT
 #import <SndKit/SndKit.h>
 #define WorkingSoundClass Snd
-#else
-#import <AppKit/NSSound.h>
-#define WorkingSoundClass NSSound
-#endif
 #import "MKInstrument.h"
 
 @interface MKSamplerInstrument: MKInstrument

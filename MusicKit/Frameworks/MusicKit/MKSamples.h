@@ -30,6 +30,10 @@
  Modification history:
 
   $Log$
+  Revision 1.5  2000/05/09 03:12:18  leigh
+  Removed NSSound use and fully replaced with SndKit,\
+   if necessary, SndKit will just become a wrapper around NSSound
+
   Revision 1.4  2000/04/20 21:33:12  leigh
   Added extra methods to allow processing regions of samples
 
@@ -44,7 +48,7 @@
 #define __MK_Samples_H___
 
 #import "MKWaveTable.h"
-#import <AppKit/NSSound.h>
+#import <SndKit/SndKit.h>
 
 @interface MKSamples : MKWaveTable
 {
