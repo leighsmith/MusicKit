@@ -172,4 +172,8 @@
 	freqScale = fscale; 
 }
 
+- (void) documentView
+{
+}
+
 @end
