@@ -267,8 +267,8 @@ static void writeParameters(MKNote *aNote, unsigned modes)
 		    (([[MKNote parNameForTag:par] compare: @"freq"] == NSOrderedSame) ||
 		     ([[MKNote parNameForTag:par] compare: @"freq0"] == NSOrderedSame)))
 		{
-			int keyNum = MKFreqToKeyNum([aNote parAsDouble:par], NULL,1.0);
-			char *pitchNames[128] = {
+		    int keyNum = [MKTuningSystem keyNumForFreq: [aNote parAsDouble: par] pitchBentBy: NULL bendSensitivity: 1.0];
+		    char *pitchNames[128] = {
  "c00","cs00","d00","ds00","e00","f00","fs00","g00","gs00","a00","as00","b00",
  "c0","cs0","d0","ds0","e0","f0","fs0","g0","gs0","a0","as0","b0",
  "c1","cs1","d1","ds1","e1","f1","fs1","g1","gs1","a1","as1","b1",
