@@ -35,6 +35,9 @@
 /*
 Modification history:
   $Log$
+  Revision 1.8  2001/07/10 17:04:48  leighsmith
+  Correctly typed partPerformerForPart:
+
   Revision 1.7  2000/11/25 22:59:47  leigh
   Enforced ivar privacy
 
@@ -204,10 +207,10 @@ Modification history:
 
 - copyWithZone:(NSZone *) zone;
  /* 
-  * Creates and returns a new, inactive ScorePerformer that's a copy of
-  * the receiver.  The new object is associated with the same Score as the
-  * receiver, and has the same Conductor and timing window variables
-  * (timeShift, duration, fromTimeTag, and toTimeTag).  New PartPerformers
+  * Creates and returns a new, inactive MKScorePerformer that's a copy of
+  * the receiver.  The new object is associated with the same MKScore as the
+  * receiver, and has the same MKConductor and timing window variables
+  * (timeShift, duration, fromTimeTag, and toTimeTag).  New MKPartPerformers
   * are created for the new object.
   */
 
@@ -215,26 +218,25 @@ Modification history:
  /* Same as [self copyFromZone:[self zone]]; */
 
 - (void) dealloc; 
- /* Frees the receiver and its PartPerformers. */
+ /* Frees the receiver and its MKPartPerformers. */
    
 - setConductor: (MKConductor *) aConductor; 
  /* 
   * Sends the message setConductor:aConductor to each of the receiver's
-  * PartPerformers. 
+  * MKPartPerformers. 
   */
 
-- partPerformerForPart:aPart; 
+- partPerformerForPart: (MKPart *) aPart;
  /* 
-  * Returns the receiver's PartPerformer that's associated with aPart,
-  * where aPart is a Part in the receiver's Score.  Keep in mind that it's
-  * possible for a Part to have more than one PartPerformer; this method
-  * returns only the PartPerformer that was created by the receiver.
+  * Returns the receiver's MKPartPerformer that's associated with aPart,
+  * where aPart is a MKPart in the receiver's MKScore.  Keep in mind that it's
+  * possible for a MKPart to have more than one MKPartPerformer; this method
+  * returns only the MKPartPerformer that was created by the receiver.
   */
 
 - partPerformers; 
  /* 
-  * Creates and returns a List containing the receiver's PartPerformers.
-  * The sender is responsible for freeing the List.
+  * Creates and returns an NSArray containing the receiver's MKPartPerformers.
   */
    
 - (NSArray *) noteSenders; 
