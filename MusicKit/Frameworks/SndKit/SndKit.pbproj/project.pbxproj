@@ -1,0 +1,879 @@
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 26;
+	objects = {
+		00D2C427FEDB2CB5CFED3B93 = {
+			isa = PBXProject;
+			mainGroup = 00D2C428FEDB2CB5CFED3B93;
+			productRefGroup = 00D2C429FEDB2CB5CFED3B93;
+			projectDirPath = .;
+			targets = (
+				00D2C459FEDB2CB5CFED3B93,
+			);
+		};
+		00D2C428FEDB2CB5CFED3B93 = {
+			children = (
+				00D2C429FEDB2CB5CFED3B93,
+				00D2C42BFEDB2CB5CFED3B93,
+				00D2C432FEDB2CB5CFED3B93,
+				00D2C444FEDB2CB5CFED3B93,
+				00D2C44BFEDB2CB5CFED3B93,
+				00D2C454FEDB2CB5CFED3B93,
+			);
+			isa = PBXGroup;
+			name = SndKit;
+			refType = 4;
+		};
+		00D2C429FEDB2CB5CFED3B93 = {
+			children = (
+				00D2C42AFEDB2CB5CFED3B93,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		00D2C42AFEDB2CB5CFED3B93 = {
+			isa = PBXFrameworkReference;
+			path = SndKit.framework;
+			refType = 3;
+		};
+		00D2C42BFEDB2CB5CFED3B93 = {
+			children = (
+				00D2C42CFEDB2CB5CFED3B93,
+				00D2C42DFEDB2CB5CFED3B93,
+				00D2C42EFEDB2CB5CFED3B93,
+				00D2C42FFEDB2CB5CFED3B93,
+				00D2C430FEDB2CB5CFED3B93,
+				00D2C431FEDB2CB5CFED3B93,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+		};
+		00D2C42CFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = Snd.m;
+			refType = 4;
+		};
+		00D2C42DFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndDisplayData.m;
+			refType = 4;
+		};
+		00D2C42EFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndDisplayDataList.m;
+			refType = 4;
+		};
+		00D2C42FFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndView.m;
+			refType = 4;
+		};
+		00D2C430FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = sounderror.m;
+			refType = 4;
+		};
+		00D2C431FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = UserPath.m;
+			refType = 4;
+		};
+		00D2C432FEDB2CB5CFED3B93 = {
+			children = (
+				00D2C433FEDB2CB5CFED3B93,
+				00D2C434FEDB2CB5CFED3B93,
+				00D2C435FEDB2CB5CFED3B93,
+				00D2C436FEDB2CB5CFED3B93,
+				00D2C437FEDB2CB5CFED3B93,
+				00D2C438FEDB2CB5CFED3B93,
+				00D2C439FEDB2CB5CFED3B93,
+				00D2C43AFEDB2CB5CFED3B93,
+				00D2C43BFEDB2CB5CFED3B93,
+				00D2C43CFEDB2CB5CFED3B93,
+				00D2C43DFEDB2CB5CFED3B93,
+				00D2C43EFEDB2CB5CFED3B93,
+				00D2C43FFEDB2CB5CFED3B93,
+				00D2C440FEDB2CB5CFED3B93,
+				00D2C441FEDB2CB5CFED3B93,
+				00D2C442FEDB2CB5CFED3B93,
+				00D2C443FEDB2CB5CFED3B93,
+			);
+			isa = PBXGroup;
+			name = Headers;
+			refType = 4;
+		};
+		00D2C433FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = Snd.h;
+			refType = 4;
+		};
+		00D2C434FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndDisplayData.h;
+			refType = 4;
+		};
+		00D2C435FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndDisplayDataList.h;
+			refType = 4;
+		};
+		00D2C436FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndEndianFunctions.h;
+			refType = 4;
+		};
+		00D2C437FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndFormats.h;
+			refType = 4;
+		};
+		00D2C438FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndFunctions.h;
+			refType = 4;
+		};
+		00D2C439FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndKit.h;
+			refType = 4;
+		};
+		00D2C43AFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndStruct.h;
+			refType = 4;
+		};
+		00D2C43BFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndView.h;
+			refType = 4;
+		};
+		00D2C43CFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = sounderror.h;
+			refType = 4;
+		};
+		00D2C43DFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = UserPath.h;
+			refType = 4;
+		};
+		00D2C43EFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = _Sndfilterkit.h;
+			refType = 4;
+		};
+		00D2C43FFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = _Sndlargefilter.h;
+			refType = 4;
+		};
+		00D2C440FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = _Sndlibst.h;
+			refType = 4;
+		};
+		00D2C441FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = _Sndresample.h;
+			refType = 4;
+		};
+		00D2C442FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = _Sndsmallfilter.h;
+			refType = 4;
+		};
+		00D2C443FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = _Sndstdefs.h;
+			refType = 4;
+		};
+		00D2C444FEDB2CB5CFED3B93 = {
+			children = (
+				00D2C445FEDB2CB5CFED3B93,
+				00D2C446FEDB2CB5CFED3B93,
+				00D2C447FEDB2CB5CFED3B93,
+				00D2C448FEDB2CB5CFED3B93,
+				00D2C449FEDB2CB5CFED3B93,
+				00D2C44AFEDB2CB5CFED3B93,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+		};
+		00D2C445FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndEndianFunctions.c;
+			refType = 4;
+		};
+		00D2C446FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = SndFunctions.c;
+			refType = 4;
+		};
+		00D2C447FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = _SndConvert.c;
+			refType = 4;
+		};
+		00D2C448FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = _Sndfilterkit.c;
+			refType = 4;
+		};
+		00D2C449FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = _Sndlibst.c;
+			refType = 4;
+		};
+		00D2C44AFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = _Sndresamplesubs.c;
+			refType = 4;
+		};
+		00D2C44BFEDB2CB5CFED3B93 = {
+			children = (
+				00D2C44CFEDB2CB5CFED3B93,
+				00D2C44DFEDB2CB5CFED3B93,
+				00D2C44EFEDB2CB5CFED3B93,
+				00D2C44FFEDB2CB5CFED3B93,
+				00D2C450FEDB2CB5CFED3B93,
+				00D2C451FEDB2CB5CFED3B93,
+				00D2C452FEDB2CB5CFED3B93,
+				00D2C453FEDB2CB5CFED3B93,
+			);
+			isa = PBXGroup;
+			name = "Supporting Files";
+			refType = 4;
+		};
+		00D2C44CFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = Makefile.preamble;
+			refType = 4;
+		};
+		00D2C44DFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = Makefile;
+			refType = 4;
+		};
+		00D2C44EFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = Makefile.postamble;
+			refType = 4;
+		};
+		00D2C44FFEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = m.template;
+			refType = 4;
+		};
+		00D2C450FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = h.template;
+			refType = 4;
+		};
+		00D2C451FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = make.sh;
+			refType = 4;
+		};
+		00D2C452FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = platform.make;
+			refType = 4;
+		};
+		00D2C453FEDB2CB5CFED3B93 = {
+			isa = PBXFileReference;
+			path = README.rtf;
+			refType = 4;
+		};
+		00D2C454FEDB2CB5CFED3B93 = {
+			children = (
+				00D2C455FEDB2CB5CFED3B93,
+				00D2C456FEDB2CB5CFED3B93,
+				00D2C457FEDB2CB5CFED3B93,
+				00D2C458FEDB2CB5CFED3B93,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+		};
+		00D2C455FEDB2CB5CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = System.framework;
+			path = /System/Library/Frameworks/System.framework;
+			refType = 0;
+		};
+		00D2C456FEDB2CB5CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = CoreGraphics.framework;
+			path = /System/Library/Frameworks/CoreGraphics.framework;
+			refType = 0;
+		};
+		00D2C457FEDB2CB5CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = AppKit.framework;
+			path = /System/Library/Frameworks/AppKit.framework;
+			refType = 0;
+		};
+		00D2C458FEDB2CB5CFED3B93 = {
+			isa = PBXFrameworkReference;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+		};
+		00D2C459FEDB2CB5CFED3B93 = {
+			buildPhases = (
+				00D2C45AFEDB2CB5CFED3B93,
+				00D2C46CFEDB2CB5CFED3B93,
+				00D2C46DFEDB2CB5CFED3B93,
+				00D2C47AFEDB2CB5CFED3B93,
+				00D2C47FFEDB2CB5CFED3B93,
+			);
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "-O2 -Wall";
+				OTHER_LDFLAGS = "-O2 -Wall";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRINCIPAL_CLASS = "";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WRAPPER_EXTENSION = framework;
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXFrameworkTarget;
+			name = "SndKit (Framework)";
+			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+			productName = SndKit;
+			productReference = 00D2C42AFEDB2CB5CFED3B93;
+			productSettings = {
+				CFBundleDevelopmentRegion = English;
+				CFBundleExecutable = SndKit;
+				CFBundleGetInfoString = "";
+				CFBundleIconFile = "";
+				CFBundleIdentifier = "";
+				CFBundleInfoDictionaryVersion = 6.0;
+				CFBundleName = "";
+				CFBundlePackageType = FMWK;
+				CFBundleShortVersionString = "";
+				CFBundleSignature = "????";
+				CFBundleVersion = 0.0.1d1;
+			};
+			shouldUseHeadermap = 0;
+		};
+		00D2C45AFEDB2CB5CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				00D2C45BFEDB2CB5CFED3B93,
+				00D2C45CFEDB2CB5CFED3B93,
+				00D2C45DFEDB2CB5CFED3B93,
+				00D2C45EFEDB2CB5CFED3B93,
+				00D2C45FFEDB2CB5CFED3B93,
+				00D2C460FEDB2CB5CFED3B93,
+				00D2C461FEDB2CB5CFED3B93,
+				00D2C462FEDB2CB5CFED3B93,
+				00D2C463FEDB2CB5CFED3B93,
+				00D2C464FEDB2CB5CFED3B93,
+				00D2C465FEDB2CB5CFED3B93,
+				00D2C466FEDB2CB5CFED3B93,
+				00D2C467FEDB2CB5CFED3B93,
+				00D2C468FEDB2CB5CFED3B93,
+				00D2C469FEDB2CB5CFED3B93,
+				00D2C46AFEDB2CB5CFED3B93,
+				00D2C46BFEDB2CB5CFED3B93,
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		00D2C45BFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C433FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C45CFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C434FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C45DFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C435FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C45EFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C436FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C45FFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C437FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C460FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C438FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C461FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C439FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+					Project,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C462FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C43AFEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C463FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C43BFEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C464FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C43CFEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C465FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C43DFEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C466FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C43EFEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C467FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C43FFEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C468FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C440FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C469FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C441FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C46AFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C442FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C46BFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C443FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C46CFEDB2CB5CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXResourcesBuildPhase;
+			name = "Bundle Resources";
+		};
+		00D2C46DFEDB2CB5CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				00D2C46EFEDB2CB5CFED3B93,
+				00D2C46FFEDB2CB5CFED3B93,
+				00D2C470FEDB2CB5CFED3B93,
+				00D2C471FEDB2CB5CFED3B93,
+				00D2C472FEDB2CB5CFED3B93,
+				00D2C473FEDB2CB5CFED3B93,
+				00D2C474FEDB2CB5CFED3B93,
+				00D2C475FEDB2CB5CFED3B93,
+				00D2C476FEDB2CB5CFED3B93,
+				00D2C477FEDB2CB5CFED3B93,
+				00D2C478FEDB2CB5CFED3B93,
+				00D2C479FEDB2CB5CFED3B93,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		00D2C46EFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C42CFEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C46FFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C42DFEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C470FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C42EFEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C471FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C42FFEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C472FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C430FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C473FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C431FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C474FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C445FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C475FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C446FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C476FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C447FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C477FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C448FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C478FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C449FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C479FEDB2CB5CFED3B93 = {
+			fileRef = 00D2C44AFEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C47AFEDB2CB5CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+				00D2C47BFEDB2CB5CFED3B93,
+				00D2C47CFEDB2CB5CFED3B93,
+				00D2C47DFEDB2CB5CFED3B93,
+				00D2C47EFEDB2CB5CFED3B93,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		00D2C47BFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C455FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C47CFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C456FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C47DFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C457FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C47EFEDB2CB5CFED3B93 = {
+			fileRef = 00D2C458FEDB2CB5CFED3B93;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		00D2C47FFEDB2CB5CFED3B93 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+	};
+	rootObject = 00D2C427FEDB2CB5CFED3B93;
+}
