@@ -7,17 +7,12 @@
 	objects = {
 		0134D284FFE009B6CFED3B96 = {
 			children = (
-				0134D285FFE009B6CFED3B96,
+				329E92E0005C5DEECFED3B96,
+				329E92E1005C5DEECFED3B96,
 			);
 			isa = PBXVariantGroup;
 			name = Info.nib;
 			path = "";
-			refType = 4;
-		};
-		0134D285FFE009B6CFED3B96 = {
-			isa = PBXFileReference;
-			name = English;
-			path = "English.lproj/Info-macosx.nib";
 			refType = 4;
 		};
 		0134D288FFE009B6CFED3B96 = {
@@ -46,19 +41,12 @@
 		};
 		02859623002A4648CFED3B96 = {
 			children = (
-				02859624002A4648CFED3B96,
 				02859626002A467FCFED3B96,
-				02859627002A46AACFED3B96,
+				329E92E2005C5DEECFED3B96,
 			);
 			isa = PBXVariantGroup;
 			name = MidiRecord.nib;
 			path = "";
-			refType = 4;
-		};
-		02859624002A4648CFED3B96 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/MidiRecord.nib;
 			refType = 4;
 		};
 		02859625002A4648CFED3B96 = {
@@ -71,12 +59,6 @@
 			isa = PBXFileReference;
 			name = "English - openstep";
 			path = "English.lproj/MidiRecord-openstep.nib";
-			refType = 4;
-		};
-		02859627002A46AACFED3B96 = {
-			isa = PBXFileReference;
-			name = "English - macosx";
-			path = "English.lproj/MidiRecord-macosx.nib";
 			refType = 4;
 		};
 		02CD290AFFB89C2FCFED3B96 = {
@@ -283,7 +265,7 @@
 	<key>NSExtensions</key>
 	<dict/>
 	<key>NSMainNibFile</key>
-	<string>MidiRecord</string>
+	<string>MidiRecord-macos</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
@@ -373,6 +355,24 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
+		};
+		329E92E0005C5DEECFED3B96 = {
+			isa = PBXFileReference;
+			name = "English - macos";
+			path = "English.lproj/Info-macos.nib";
+			refType = 4;
+		};
+		329E92E1005C5DEECFED3B96 = {
+			isa = PBXFileReference;
+			name = "English - openstep";
+			path = "English.lproj/Info-openstep.nib";
+			refType = 4;
+		};
+		329E92E2005C5DEECFED3B96 = {
+			isa = PBXFileReference;
+			name = "English - macos";
+			path = "English.lproj/MidiRecord-macos.nib";
+			refType = 4;
 		};
 	};
 	rootObject = 02CD290AFFB89C2FCFED3B96;
