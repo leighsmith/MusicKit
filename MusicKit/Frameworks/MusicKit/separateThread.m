@@ -15,89 +15,7 @@
   Portions Copyright (c) 1999-2001, The MusicKit Project.
 */
 /* 
-  Modification history:
-
-  $Log$
-  Revision 1.27  2002/04/08 17:35:44  sbrandon
-  added newline at end of file
-
-  Revision 1.26  2002/03/20 17:05:11  sbrandon
-  New delegate message passing system, between any thread and the
-  appkit thread. This is basically the same as that in the SndKit
-  for passing delegate messages back from background thread, so
-  it works quite well.
-
-  Revision 1.25  2001/08/27 23:51:47  skotmcdonald
-  deltaT fetched from conductor, took out accidently left behind debug messages (MKSampler). Conductor: renamed time methods to timeInBeat, timeInSamples to be more explicit
-
-  Revision 1.24  2001/07/05 22:55:28  leighsmith
-  Simplified separate thread aborting using NSConditionLock, requiring abandonment of NSConnection comms between MK and AppKit threads.This is acceptable since MK to AppKit comms could be rethought entirely and is unimplemented currently
-
-  Revision 1.23  2001/04/15 01:55:50  leighsmith
-  Revamped to use NSRunLoop limit dates directly rather than NSTimers and corrected a race condition on locking
-
-  Revision 1.22  2001/04/11 23:25:54  leighsmith
-  Converted stopping code to NSConnection, avoiding port direction problems with NSMessagePort
-
-  Revision 1.21  2000/12/07 00:11:22  leigh
-  Added a FIXME comment
-
-  Revision 1.20  2000/09/18 23:43:12  leigh
-  Removed retain and releases to properly isolate problems if they exist
-
-  Revision 1.19  2000/06/16 23:21:01  leigh
-  Added other older OpenStep platforms to NSPort fudging
-
-  Revision 1.18  2000/05/06 02:35:41  leigh
-  Made Win32 declare regression class types also
-
-  Revision 1.17  2000/05/06 00:28:57  leigh
-  removed redundant setjmp include
-
-  Revision 1.16  2000/04/25 01:48:41  leigh
-  Properly retain the thread instance and check it
-
-  Revision 1.15  2000/04/16 04:06:55  leigh
-  Removed debugging messages
-
-  Revision 1.14  2000/04/08 00:59:04  leigh
-  Fixed bug when inPerformance set during final pending masterConductorBody
-
-  Revision 1.13  2000/04/02 17:21:22  leigh
-  set receive port of waking MKThread to nil, fixing crash
-
-  Revision 1.12  2000/04/01 01:17:23  leigh
-  made timeToWait checks use method interface in prep for moving separateThread to its own category. Properly defined NSPort workaround
-
-  Revision 1.11  2000/03/31 00:04:40  leigh
-  Moved the MK->AppKit communication to _MKAppProxy
-
-  Revision 1.10  2000/03/27 16:53:58  leigh
-  Removed mach messaging from separateThreadLoop
-
-  Revision 1.9  2000/01/27 19:17:58  leigh
-  Now using NSPort replacing C Mach port API, disabled the ErrorStream disabling (since NSLog is thread-safe)
-
-  Revision 1.8  2000/01/24 22:00:49  leigh
-  Manipulating MKToAppPort via the NSPort class
-
-  Revision 1.7  2000/01/13 06:41:13  leigh
-  Corrected _MKErrorf to take NSString error message
-
-  Revision 1.6  1999/12/20 17:07:53  leigh
-  Removed faulty diagnostic message
-
-  Revision 1.5  1999/11/14 21:30:16  leigh
-  Corrected _MKErrorf arguments to be NSStrings
-
-  Revision 1.4  1999/09/10 02:47:45  leigh
-  removed warnings
-
-  Revision 1.3  1999/09/04 22:59:18  leigh
-  Big overhaul, replaced cthreads with NSThreads, rec_mutexs with NSLocks
-
-  Revision 1.2  1999/07/29 01:26:16  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+  Modification history prior to commit to CVS:
 
   07/27/90/daj - Created.
   08/10/90/daj - Added thread_policy setting. 
@@ -185,11 +103,6 @@ static int oldPolicy = INVALID_POLICY;
 static NSString *interThreadThreshold = nil;
 // static NSConnection *appConnection = nil;
 
-// Methods used to communicate to the MusicKit thread. Used with NSConnection.
-@protocol MusicKitConductorThreadManagement
-+ (void) _wakeUpMKThread;
-@end
-
 /* Forward declarations */ 
 static void adjustTimedEntry(double nextMsgTime);
 
@@ -197,7 +110,7 @@ static void adjustTimedEntry(double nextMsgTime);
 // Unfortunately that would mean making many variables and functions public when they are currently private (static).
 // @implementation MKConductor(SeparateThread)
 
-+ useSeparateThread:(BOOL)yesOrNo
++ useSeparateThread: (BOOL) yesOrNo
   /* Returns self if successful. It's illegal to change this during a 
      performance. */
 {
@@ -234,7 +147,7 @@ static void adjustTimedEntry(double nextMsgTime);
    if we're running as root.  So we invoke a small setuid command-line program
    to enable the fixed policy.
  */
-+ setThreadPriority:(float)priorityFactor
++ setThreadPriority: (float) priorityFactor
 {
 #if PRIORITY_THREADING // LMS: disabled for safety for now 
     static BOOL fixedPolicyEnabled = NO;
@@ -281,7 +194,7 @@ void _MKUnlock(void)
 {  
     lockIt();
     if (inPerformance)
-      [self adjustTime];
+	[self adjustTime];
     return self;
 }
 
@@ -289,7 +202,7 @@ void _MKUnlock(void)
 {
     if ([musicKitLock tryLock]) {
 	if (inPerformance)
-	  [self adjustTime];
+	    [self adjustTime];
 	return YES;
     }
     return NO;
@@ -329,12 +242,6 @@ static void sendMessageToWakeUpMKThread(void)
     // Ensure MK doesn't have the lock
     if (separateThread && !musicKitHasLock()) {
         // NSLog(@"Sending message to wake up MK thread\n");
-        // There is the possibility the MusicKit thread times out its current run loop
-        // and waits on the lock, between the application thread gaining the lock in
-        // killMusicKitThread and before we can send _wakeUpMKThread. If sending the
-        // _wakeUpMKThread message blocks waiting on the MusicKit thread's run loop to
-        // consume the message, the application will never release the lock causing deadlock.
-        // We avoid this using setRequestTimeout: on the NSConnection of the proxy.
 
         // So get the MK thread out of its timed condition lock deep sleep.
         [abortPlayLock unlockWithCondition: MK_ABORTED_PLAYING]; 
@@ -363,14 +270,8 @@ static void killMusicKitThread(void)
 
 static BOOL notInMusicKitThread(void)
 {
-    return (musicKitThread != nil && ![musicKitThread isEqual: [NSThread currentThread]]); 
-}
-
-BOOL separateThreadedAndInMusicKitThread(void)
-{
-    return (separateThread && 
-            musicKitThread != nil &&
-            [musicKitThread isEqual: [NSThread currentThread]]);
+    return musicKitThread != nil && 
+           ![musicKitThread isEqual: [NSThread currentThread]]; 
 }
 
 /* Destroys the timed entry. */
@@ -425,7 +326,7 @@ void _MKAddPort(NSPort *aPort,
 {
     if (!allConductors)
         condInit();
-    [aPort setDelegate:handlerObj];
+    [aPort setDelegate: handlerObj];
 
     // If we are separate threaded, this will associate with the appropriate NSRunLoop of the MK thread.
     // Otherwise it will associate with the NSRunLoop of the AppKit thread.
@@ -443,16 +344,6 @@ void _MKRemovePort(NSPort *aPort)
     [aPort autorelease];
 }
 
-#if 0
-/* The following method wakeups the MK thread when it is sleeping in a run loop.
- */
-+ (void) _wakeUpMKThread
-{
-    if (MKIsTraced(MK_TRACECONDUCTOR))
-        NSLog(@"MK thread wakeup call\n");
-}
-#endif
-
 static id sendObjcMsg(id toObject, SEL aSelector, int argCount, id arg1, id arg2)
 {
     switch (argCount) {
@@ -460,10 +351,10 @@ static id sendObjcMsg(id toObject, SEL aSelector, int argCount, id arg1, id arg2
         [toObject performSelector: aSelector];
 	break;
     case 1:
-        [toObject performSelector: aSelector withObject:arg1];
+        [toObject performSelector: aSelector withObject: arg1];
 	break;
     case 2:
-        [toObject performSelector: aSelector withObject:arg1 withObject:arg2];
+        [toObject performSelector: aSelector withObject: arg1 withObject: arg2];
 	break;
     default: 
 	return nil;
@@ -471,15 +362,16 @@ static id sendObjcMsg(id toObject, SEL aSelector, int argCount, id arg1, id arg2
     return toObject;
 }
     
-+sendMsgToApplicationThreadSel:(SEL)aSelector 
-  to:(id)toObject 
-  argCount:(int)argCount, ...;
++ sendMsgToApplicationThreadSel: (SEL) aSelector 
+			     to: (id) toObject 
+		       argCount: (int) argCount, ...;
 {
-    id arg1,arg2;
+    id arg1, arg2;
     va_list ap;
-    va_start(ap,argCount); 
-    arg1 = va_arg(ap,id);
-    arg2 = va_arg(ap,id);
+    
+    va_start(ap, argCount); 
+    arg1 = va_arg(ap, id);
+    arg2 = va_arg(ap, id);
     va_end(ap);	
     if ([self separateThreadedAndInMusicKitThread]) {
         /* i.e. this means that the MKConductor has been called from WITHIN the detached
@@ -487,20 +379,20 @@ static id sendObjcMsg(id toObject, SEL aSelector, int argCount, id arg1, id arg2
          * is a Mach message, caught by the NSPort/NSRunLoop handler as an ObjC
          * method, and dispatched from handlePortMessage: in AppProxy.
          */
-        [self sendMessageInMainThreadToTarget:toObject 
-                                          sel:aSelector 
-                                         arg1:arg1 
-                                         arg2:arg2 
-                                        count:argCount];
+        [self sendMessageInMainThreadToTarget: toObject 
+                                          sel: aSelector 
+                                         arg1: arg1 
+                                         arg2: arg2 
+                                        count: argCount];
     }
     else { /* Just send it */
-	if (!sendObjcMsg(toObject,aSelector,argCount,arg1,arg2))
+	if (!sendObjcMsg(toObject, aSelector, argCount, arg1, arg2))
 	    return nil;
     }
     return self;
 }
 
-+setInterThreadThreshold:(NSString *)newThreshold
++ setInterThreadThreshold: (NSString *) newThreshold
 /* this seems fairly unnecessary, but its been left in. It should work ok. */
 {
     if ([self separateThreadedAndInMusicKitThread]) 
@@ -569,9 +461,7 @@ static BOOL getThreadInfo(int *info)
     }
     return YES;
 }
-#endif
 
-#if PRIORITY_THREADING // LMS: disabled until we find a OpenStep way of changing thread priority...i.e forever.
 static BOOL setThreadPriority(int priority)
 {
     kern_return_t ec = thread_priority(thread_self(), priority, 0);
@@ -718,12 +608,12 @@ static    BOOL             bDelegateMessagingEnabled;
 //static    BOOL             isStopping;
 
 enum {
-  BGDM_ready,
-  BGDM_hasFlag,
-  BGDM_abortNow,
-  BGDM_delegateMessageReady,
-  BGDM_threadStopped,
-  BGDM_threadInactive
+    BGDM_ready,
+    BGDM_hasFlag,
+    BGDM_abortNow,
+    BGDM_delegateMessageReady,
+    BGDM_threadStopped,
+    BGDM_threadInactive
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -732,35 +622,37 @@ enum {
 
 + (void) delegateMessageThread:(NSArray*) ports
 {
-  NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
-  id controllerProxy = nil;
-
-  [self retain];
-
+    NSAutoreleasePool *localPool = [[NSAutoreleasePool alloc] init];
+    id controllerProxy = nil;
+    
+    [self retain];
+    
 #if MKCONDUCTOR_DEBUG
-  NSLog(@"MKConductor::entering delegate thread\n");
+    NSLog(@"MKConductor::entering delegate thread\n");
 #endif
-
-  while (bgdm_sem != BGDM_threadStopped) {
-    [bgdm_threadLock lockWhenCondition:BGDM_hasFlag];
-    if (bgdm_sem == BGDM_delegateMessageReady)  {
-      NSInvocation *delegateMessage = nil;
-      int count;
+    
+    while (bgdm_sem != BGDM_threadStopped) {
+	[bgdm_threadLock lockWhenCondition: BGDM_hasFlag];
+	if (bgdm_sem == BGDM_delegateMessageReady)  {
+	    NSInvocation *delegateMessage = nil;
+	    int count;
+	    
       // quickly release the lock so we don't deadlock if the queued messages take
       // a while to go through.
-      [bgdm_threadLock unlockWithCondition: bgdm_sem];
-      while (1) {
-        [delegateMessageArrayLock lock];
-        count = [delegateMessageArray count];
-        if (count) {
-          delegateMessage = [[delegateMessageArray objectAtIndex:0] retain];
-          [delegateMessageArray removeObjectAtIndex:0];
-        }
-        [delegateMessageArrayLock unlock];
-        if (!count) break;
-        if (!controllerProxy) {
-          NSConnection *theConnection = [NSConnection connectionWithReceivePort:[ports objectAtIndex:0]
-                                                                       sendPort:[ports objectAtIndex:1]];
+	    [bgdm_threadLock unlockWithCondition: bgdm_sem];
+	    while (1) {
+		[delegateMessageArrayLock lock];
+		count = [delegateMessageArray count];
+		if (count) {
+		    delegateMessage = [[delegateMessageArray objectAtIndex: 0] retain];
+		    [delegateMessageArray removeObjectAtIndex: 0];
+		}
+		[delegateMessageArrayLock unlock];
+		if (!count)
+		    break;
+		if (!controllerProxy) {
+		    NSConnection *theConnection = [NSConnection connectionWithReceivePort: [ports objectAtIndex: 0]
+										 sendPort: [ports objectAtIndex: 1]];
           // Note: if there's a problem with the NSRunLoop not running or
           // responding here, the -rootProxy method will block. We could
           // set a timout here and catch the exception thrown as a result,
@@ -768,76 +660,76 @@ enum {
           // (perhaps the main loop is busy doing other stuff?). THis could do
           // with some testing cos I think a timeout exception would be the
           // best way forward.
-
+		    
           //[theConnection setReplyTimeout:0.1];
-          controllerProxy = [theConnection rootProxy];
+		    controllerProxy = [theConnection rootProxy];
 // this causes a problem, and shouldn't, becuase the same code works in the SndKit!
 //          [controllerProxy setProtocolForProxy:@protocol(SndDelegateMessagePassing)];
-        }
-        /* cast to unsigned long to prevent compiler warnings */
-        [controllerProxy _sendDelegateInvocation:(unsigned long)delegateMessage];
-      }
-      continue;
-    }
-    else if (bgdm_sem == BGDM_abortNow) {
+		}
+		/* cast to unsigned long to prevent compiler warnings */
+		[controllerProxy _sendDelegateInvocation:(unsigned long)delegateMessage];
+	    }
+	    continue;
+	}
+	else if (bgdm_sem == BGDM_abortNow) {
 #if MKCONDUCTOR_DEBUG
-      NSLog(@"MKConductor::Killing delegate message thread.\n");
+	    NSLog(@"MKConductor::Killing delegate message thread.\n");
 #endif
-      bgdm_sem = BGDM_threadStopped;
-      break;
+	    bgdm_sem = BGDM_threadStopped;
+	    break;
+	}
+	else {
+	    fprintf(stderr,"Semaphore status: %i\n", bgdm_sem);
+	    bgdm_sem = BGDM_ready;
+	}
+	[bgdm_threadLock unlockWithCondition: bgdm_sem];
     }
-    else {
-      fprintf(stderr,"Semaphore status: %i\n",bgdm_sem);
-      bgdm_sem = BGDM_ready;
-    }
-    [bgdm_threadLock unlockWithCondition: bgdm_sem];
-  }
-  [self release];
-  [localPool release];
-  /* even if there is a new thread is created between the following two
-   * statements, that would be ok -- there would temporarily be one
-   * extra thread but it won't cause a problem
-   */
+    [self release];
+    [localPool release];
+    /* even if there is a new thread is created between the following two
+     * statements, that would be ok -- there would temporarily be one
+     * extra thread but it won't cause a problem
+     */
 #if MKCONDUCTOR_DEBUG
-  NSLog(@"MKConductor::exiting delegate thread\n");
+    NSLog(@"MKConductor::exiting delegate thread\n");
 #endif
-
-  [NSThread exit];
+    
+    [NSThread exit];
 }
 
-+ (void)detachDelegateMessageThread
++ (void) detachDelegateMessageThread
 {
-  NSPort *managerReceivePort,*managerSendPort;
-
-  if (bDelegateMessagingEnabled) {
-    return;
-  }
-  bgdm_threadLock = [[NSConditionLock alloc] initWithCondition: BGDM_ready];
-  delegateMessageArrayLock = [[NSLock alloc] init];
-  bDelegateMessagingEnabled = FALSE;
-
-  if ([[NSRunLoop currentRunLoop] currentMode] || NSApp) {
+    NSPort *managerReceivePort,*managerSendPort;
+    
+    if (bDelegateMessagingEnabled) {
+	return;
+    }
+    bgdm_threadLock = [[NSConditionLock alloc] initWithCondition: BGDM_ready];
+    delegateMessageArrayLock = [[NSLock alloc] init];
+    bDelegateMessagingEnabled = FALSE;
+    
+    if ([[NSRunLoop currentRunLoop] currentMode] || NSApp) {
 #if MKCONDUCTOR_DEBUG
-    fprintf(stderr,"[MKConductor::detachDelegateMessageThread] Run loop detected - delegate messaging enabled\n");
+	fprintf(stderr,"[MKConductor::detachDelegateMessageThread] Run loop detected - delegate messaging enabled\n");
 #endif
-    delegateMessageArray = [[NSMutableArray alloc] init];
-    managerReceivePort   = (NSPort *)[NSPort port]; /* we don't need to retain, the connection does that */
-    managerSendPort      = (NSPort *)[NSPort port];
-
-    threadConnection     = [[NSConnection alloc] initWithReceivePort: managerReceivePort
-                                                            sendPort: managerSendPort];
-    [threadConnection setRootObject:self];
-
-    [NSThread detachNewThreadSelector: @selector(delegateMessageThread:)
-                             toTarget: self
-                           withObject: [NSArray arrayWithObjects: managerSendPort, managerReceivePort, nil]];
-    bDelegateMessagingEnabled = TRUE;
-  }
-  else {
+	delegateMessageArray = [[NSMutableArray alloc] init];
+	managerReceivePort   = (NSPort *)[NSPort port]; /* we don't need to retain, the connection does that */
+	managerSendPort      = (NSPort *)[NSPort port];
+	
+	threadConnection     = [[NSConnection alloc] initWithReceivePort: managerReceivePort
+								sendPort: managerSendPort];
+	[threadConnection setRootObject:self];
+	
+	[NSThread detachNewThreadSelector: @selector(delegateMessageThread:)
+				 toTarget: self
+			       withObject: [NSArray arrayWithObjects: managerSendPort, managerReceivePort, nil]];
+	bDelegateMessagingEnabled = TRUE;
+    }
+    else {
 #if MKCONDUCTOR_DEBUG
-    fprintf(stderr,"[MKConductor::detachDelegateMessageThread] No runloop or NSApp detected - delegate messaging disabled\n");
+	fprintf(stderr,"[MKConductor::detachDelegateMessageThread] No runloop or NSApp detected - delegate messaging disabled\n");
 #endif
-  }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -851,9 +743,9 @@ enum {
 ////////////////////////////////////////////////////////////////////////////////
 
 + (void) _sendDelegateInvocation:(in unsigned long) mesg
-  /* this should only be called while in the main thread. Internal use only. */
+    /* this should only be called while in the main thread. Internal use only. */
 {
-  [(NSInvocation *)mesg invoke];
+    [(NSInvocation *)mesg invoke];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -862,27 +754,27 @@ enum {
 
 + (void) sendMessageInMainThreadToTarget:(id)target sel:(SEL)sel arg1:(id)arg1 arg2:(id)arg2 count:(int)count
 {
-  if (!bDelegateMessagingEnabled) {
-    return;
-  }
-  else {
-    NSMethodSignature *aSignature   = [[target class] instanceMethodSignatureForSelector:sel];
-    NSInvocation      *anInvocation = [NSInvocation invocationWithMethodSignature:aSignature];
-
-    [anInvocation setSelector:sel];
-    [anInvocation setTarget:target];
-    if (count > 0) [anInvocation setArgument:&arg1 atIndex:2];
-    if (count > 1) [anInvocation setArgument:&arg2 atIndex:3];
-    [anInvocation retainArguments];
-
-    [delegateMessageArrayLock lock];
-    [delegateMessageArray addObject: anInvocation];
-    [delegateMessageArrayLock unlock];
-
-    [bgdm_threadLock lock];
-    bgdm_sem = BGDM_delegateMessageReady;
-    [bgdm_threadLock unlockWithCondition:BGDM_hasFlag];
-  }
+    if (!bDelegateMessagingEnabled) {
+	return;
+    }
+    else {
+	NSMethodSignature *aSignature   = [[target class] instanceMethodSignatureForSelector:sel];
+	NSInvocation      *anInvocation = [NSInvocation invocationWithMethodSignature:aSignature];
+	
+	[anInvocation setSelector:sel];
+	[anInvocation setTarget:target];
+	if (count > 0) [anInvocation setArgument:&arg1 atIndex:2];
+	if (count > 1) [anInvocation setArgument:&arg2 atIndex:3];
+	[anInvocation retainArguments];
+	
+	[delegateMessageArrayLock lock];
+	[delegateMessageArray addObject: anInvocation];
+	[delegateMessageArrayLock unlock];
+	
+	[bgdm_threadLock lock];
+	bgdm_sem = BGDM_delegateMessageReady;
+	[bgdm_threadLock unlockWithCondition:BGDM_hasFlag];
+    }
 }
 
 // @end
