@@ -5,6 +5,7 @@
     FILESTABLE = {
         CLASSES = (); 
         FRAMEWORKS = (Foundation.framework); 
+        FRAMEWORKSEARCH = (); 
         H_FILES = (mididriver.h, mididriver_types.h, midi_driver.h); 
         OTHER_LINKED = (
             mididriverServer.c, 
@@ -34,7 +35,7 @@
     PDO_UNIX_INSTALLDIR = /Library/Frameworks; 
     PDO_UNIX_JAVA_COMPILER = "$(JDKBINDIR)/javac"; 
     PDO_UNIX_OBJCPLUS_COMPILER = "$(NEXTDEV_BIN)/gcc"; 
-    PROJECTNAME = MKPerformMIDI; 
+    PROJECTNAME = MKPerformSndMIDI; 
     PROJECTTYPE = Framework; 
     PROJECTVERSION = 2.8; 
     WINDOWS_BUILDTOOL = ./make.sh; 
