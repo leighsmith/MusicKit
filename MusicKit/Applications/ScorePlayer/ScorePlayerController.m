@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2001/03/01 17:56:32  leigh
+  Removed unnecessary condClass define
+
   Revision 1.8  2001/02/15 01:51:08  leigh
   Added MKSamplerInstrument support, retrieved valid filename extensions from MKScore
 
@@ -83,7 +86,6 @@ static double lastTempo = 60.0;
 static double desiredTempo = 60.0;
 static NSArray *openFileExtensions;
 static NSString *dir = nil;
-#define condClass MKConductor
 static BOOL messageFlashed = NO;
 static BOOL isLate = NO;
 static BOOL wasLate = NO;
@@ -111,16 +113,18 @@ static BOOL writeData = NO;
 /* Scores can be saved as Scorefiles, Midi files, or DSPCommands files */
 
 static enum _saveType {NO_TYPE = -1, SAVE_SCORE, SAVE_PLAYSCORE, SAVE_MIDI, SAVE_COMMANDS, SAVE_SOUND} saveType = NO_TYPE;
-static NSArray* fileIcons;
-static NSArray* fileTypes;
-static NSArray* saveFileExtensions;
+static NSArray *fileIcons;
+static NSArray *fileTypes;
+static NSArray *saveFileExtensions;
 
 static NSButton *accessoryView = nil;
 static id savePanel = nil;
 static NSString *soundFile = nil;
 
+static int warnedAboutSrate = NO;
+static NSDate *lastModifyTime;
 
-#define PLAYING ([condClass inPerformance])
+#define PLAYING ([MKConductor inPerformance])
 #if m68k
 #define SOUND_OUT_PAUSE_BUG 1 /* Workaround for problem synching MIDI to DSP */
 #endif
@@ -177,7 +181,6 @@ static BOOL errorDuringPlayback = NO;
     return self;
 }
 
-static int warnedAboutSrate = NO;
 
 /* Localizable strings */
 #define MB [NSBundle mainBundle]
@@ -242,19 +245,16 @@ static void handleMKError(NSString *msg)
 {
     if (!PLAYING) {
         [errorLog addText:msg];
-	if (!mkRunAlertPanel(STR_SCOREPLAYER_ERROR,msg,STR_OK,STR_CANCEL,NULL))
-	    {
-		MKSetScorefileParseErrorAbort(0);
-		userCancelFileRead = YES;         /* A kludge for now. */
-	    }
+	if (!mkRunAlertPanel(STR_SCOREPLAYER_ERROR,msg,STR_OK,STR_CANCEL,NULL)) {
+            MKSetScorefileParseErrorAbort(0);
+            userCancelFileRead = YES;         /* A kludge for now. */
+        }
     }
     else {
         [MKConductor sendMsgToApplicationThreadSel:@selector(runAlert:) to:mySelf
          argCount:1, [msg copy]];
     }
 }
-
-static NSDate *lastModifyTime;
 
 static void setFileTime(void)
 {
@@ -346,7 +346,6 @@ static NSArray *soundOutputTagToName;
     }
     [serialPortDeviceNameField setStringValue:soundOutputName];
     /* Run alert panel here if we're playing? FIXME */
-    return;
 }
 
 + scoreFileEditorAppName
@@ -532,7 +531,7 @@ static BOOL setFile(ScorePlayerController *self)
     samplingRate = [theOrch defaultSamplingRate];
     headroom = .1;
     initialTempo = 60.0;
-    [[condClass defaultConductor] setTempo:initialTempo];
+    [[MKConductor defaultConductor] setTempo:initialTempo];
     scoreInfo = [(MKScore *)scoreObj infoNote];
     if (scoreInfo) { /* Configure performance as specified in info. */ 
 	int midiOffsetPar;
@@ -549,7 +548,7 @@ static BOOL setFile(ScorePlayerController *self)
             samplingRate = [scoreInfo parAsDouble:MK_samplingRate];
 	if ([scoreInfo isParPresent:MK_tempo]) {
 	    initialTempo = [scoreInfo parAsDouble:MK_tempo];
-	    [[condClass defaultConductor] setTempo:initialTempo];
+	    [[MKConductor defaultConductor] setTempo:initialTempo];
 	} 
 	if (soundOutType == NEXT_SOUND) {
 #if SOUND_OUT_PAUSE_BUG
@@ -847,7 +846,7 @@ static void playIt(ScorePlayerController *self)
     [self->theMainWindow display];
     MKSetDeltaT(.75);
     [MKOrchestra setTimed: YES];
-    [condClass afterPerformanceSel: @selector(endOfTime) to: self argCount: 0];
+    [MKConductor afterPerformanceSel: @selector(endOfTime) to: self argCount: 0];
     [self->button setImage: stopImage];
     [self->button display];
     if (synchToTimeCode)
@@ -876,7 +875,7 @@ static void playIt(ScorePlayerController *self)
     for (i=0; i<MAX_MIDIS; i++) 
 	[midis[i] run];
     [theOrch run];
-    [condClass startPerformance];     
+    [MKConductor startPerformance];     
 }
 
 -setTempoAdjustment:sender
@@ -935,11 +934,11 @@ static void abortNow();
     [button display];
     openFileExtensions = [[MKScore scorefileExtensions] retain];
     errorLog = [[ErrorLog alloc] init];
-    [condClass setThreadPriority:1.0];
+    [MKConductor setThreadPriority:1.0];
     [MKPartPerformer setFastActivation:YES]; /* We're not modifying parts while playing */
     setuid(getuid()); /* Must be after setThreadPriority. */
-    [condClass useSeparateThread:YES];
-//    [condClass setDelegate: self]; /* Default is no tempo adjustment */
+    [MKConductor useSeparateThread:YES];
+//    [MKConductor setDelegate: self]; /* Default is no tempo adjustment */
     [[MKConductor defaultConductor] setDelegate:self];
     /* These numbers could be endlessly tweaked */
     MKSetLowDeltaTThreshold(.25);
@@ -1046,7 +1045,7 @@ static void abortNow()
 {
     int i;
     if (PLAYING) {
-	[condClass lockPerformance];
+	[MKConductor lockPerformance];
 	for (i=0; i<MAX_MIDIS; i++) {
             if (midis[i]) {
                 [midis[i] allNotesOff];
@@ -1054,8 +1053,8 @@ static void abortNow()
             }
         }
 	[theOrch abort];
-	[condClass finishPerformance];
-	[condClass unlockPerformance];
+	[MKConductor finishPerformance];
+	[MKConductor unlockPerformance];
 
 //	while (PLAYING) /* Make sure it's really done. */
 //	  usleep(1000);
@@ -1125,7 +1124,7 @@ static void adjustTempo(double slowDown)
     if (MKGetTime() < PROTECT_PAGING_TIME)
       return self;
     adjustTempo(INITIAL_SLOWDOWN_FACTOR);
-    [[condClass defaultConductor] setTempo:desiredTempo];
+    [[MKConductor defaultConductor] setTempo:desiredTempo];
     isLate = YES;
     return self;
 }
@@ -1159,9 +1158,9 @@ static void adjustTempo(double slowDown)
       diff = -diff;
     if (!forceAdjustment && diff < ANIMATE_DIFF_THRESHOLD) /* diff too small */
       return self;
-    [condClass lockPerformance];
+    [MKConductor lockPerformance];
     [[MKConductor defaultConductor] setTempo:desiredTempo];
-    [condClass unlockPerformance];
+    [MKConductor unlockPerformance];
     [tempoTextField setFloatValue:desiredTempo];
     if (wasLate || isLate)
        [tempoSlider setFloatValue:getUntempo(desiredTempo)];
@@ -1174,7 +1173,7 @@ static void adjustTempo(double slowDown)
     double val = ([sender doubleValue]);
     desiredTempo = getTempo(val);
     if (!PLAYING) {
-	[[condClass defaultConductor] setTempo:desiredTempo];
+	[[MKConductor defaultConductor] setTempo:desiredTempo];
 	[tempoTextField setFloatValue:desiredTempo];
 	lastTempo = desiredTempo;
     }
