@@ -11,6 +11,13 @@
 				441ED0E1005D5AFACFED3B96,
 			);
 			isa = PBXProject;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+				macosx,
+			);
 			mainGroup = 01A886BDFFC5B347CFED3B96;
 			productRefGroup = 01A886D7FFC5B347CFED3B96;
 			projectDirPath = .;
@@ -86,39 +93,11 @@
 		};
 		01A886C6FFC5B347CFED3B96 = {
 			children = (
-				01A886C7FFC5B347CFED3B96,
-				01A886C9FFC5B347CFED3B96,
+				1B44C8D80072C3D4CFED3B96,
+				1B44C8DA0072C3D4CFED3B96,
 			);
 			isa = PBXGroup;
 			name = Interfaces;
-			refType = 4;
-		};
-		01A886C7FFC5B347CFED3B96 = {
-			children = (
-				01A886C8FFC5B347CFED3B96,
-			);
-			isa = PBXVariantGroup;
-			name = MidiEcho.nib;
-			refType = 4;
-		};
-		01A886C8FFC5B347CFED3B96 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/MidiEcho.nib;
-			refType = 4;
-		};
-		01A886C9FFC5B347CFED3B96 = {
-			children = (
-				01A886CAFFC5B347CFED3B96,
-			);
-			isa = PBXVariantGroup;
-			name = Info.nib;
-			refType = 4;
-		};
-		01A886CAFFC5B347CFED3B96 = {
-			isa = PBXFileReference;
-			name = English;
-			path = English.lproj/Info.nib;
 			refType = 4;
 		};
 		01A886CBFFC5B347CFED3B96 = {
@@ -253,7 +232,7 @@
 	<key>NSExtensions</key>
 	<dict/>
 	<key>NSMainNibFile</key>
-	<string>MidiEcho</string>
+	<string>MidiEcho-macosx</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>
@@ -285,25 +264,13 @@
 		01A886DDFFC5B347CFED3B96 = {
 			buildActionMask = 2147483647;
 			files = (
-				01A886DEFFC5B347CFED3B96,
-				01A886DFFFC5B347CFED3B96,
 				01A886E0FFC5B347CFED3B96,
 				01A88720FFC5D02ACFED3B96,
+				1B44C8DC0072C3D4CFED3B96,
+				1B44C8DD0072C3D4CFED3B96,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
-		};
-		01A886DEFFC5B347CFED3B96 = {
-			fileRef = 01A886C7FFC5B347CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		01A886DFFFC5B347CFED3B96 = {
-			fileRef = 01A886C9FFC5B347CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		01A886E0FFC5B347CFED3B96 = {
 			fileRef = 01A886CCFFC5B347CFED3B96;
@@ -387,6 +354,48 @@
 		};
 		01A88720FFC5D02ACFED3B96 = {
 			fileRef = 01A8871FFFC5D02ACFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1B44C8D80072C3D4CFED3B96 = {
+			children = (
+				1B44C8D90072C3D4CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = MidiEcho.nib;
+			path = "";
+			refType = 4;
+		};
+		1B44C8D90072C3D4CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = "English.lproj/MidiEcho-macosx.nib";
+			refType = 4;
+		};
+		1B44C8DA0072C3D4CFED3B96 = {
+			children = (
+				1B44C8DB0072C3D4CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = Info.nib;
+			path = "";
+			refType = 4;
+		};
+		1B44C8DB0072C3D4CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = "English.lproj/Info-macosx.nib";
+			refType = 4;
+		};
+		1B44C8DC0072C3D4CFED3B96 = {
+			fileRef = 1B44C8D80072C3D4CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1B44C8DD0072C3D4CFED3B96 = {
+			fileRef = 1B44C8DA0072C3D4CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
 			};
