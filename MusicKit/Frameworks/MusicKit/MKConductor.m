@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2000/04/22 20:17:02  leigh
+  Extra info in description, proper class ivar initialisations
+
   Revision 1.14  2000/04/20 21:39:00  leigh
   Removed flakey longjmp for unclocked MKConductors, improved description
 
@@ -141,19 +144,18 @@ Modification history:
 #define CONDUCTORFREES YES
 
 #define NOTIMEDENTRY nil
-static jmp_buf conductorJmp;       /* For long jump. */ //sb: moved to here
+// static jmp_buf conductorJmp;       /* For long jump. */ //sb: moved to here
 
 static BOOL separateThread = NO;
 static NSTimer *timedEntry = NOTIMEDENTRY; /* Only used for DPS client mode */
 					   /* sb: now NSTimer instead of void*. Not DPS. */
-static BOOL inPerformance = NO; /* YES if we're currently in performance. */
-static BOOL dontHang = YES;     /* NO if we are expecting asynchronous input, 
-				   e.g. MIDI or mouse */
-static BOOL _jmpSet;         /* YES if setjmp has been called. */
-static BOOL isClocked = YES; /* YES if we should stay synced up to the clock.
-				NO if we can run as fast as possible. */
-static NSDate * startTime = 0; /* Start of performance time. */
-static NSDate * pauseTime = 0; /* Time last paused. */
+static BOOL inPerformance = NO;   /* YES if we're currently in performance. */
+static BOOL dontHang = YES;       /* NO if we are expecting asynchronous input, e.g. MIDI or mouse */
+//static BOOL _jmpSet;            /* YES if setjmp has been called. */
+static BOOL isClocked = YES;      /* YES if we should stay synced up to the clock.
+				     NO if we can run as fast as possible. */
+static NSDate * startTime = nil;  /* Start of performance time. */
+static NSDate * pauseTime = nil;  /* Time last paused. */
 static double clockTime = 0.0;    /* Clock time. */
 static double oldClockTime = 0;
 
@@ -1814,16 +1816,19 @@ static double getNextMsgTime(MKConductor *aCond)
 {
     MKMsgStruct *p;
     NSString *queue = [NSString stringWithFormat:
-        @"MKConductor <0x%x>\n  Next conductor <0x%x>, Last conductor <0x%x>\n", self, _condNext, _condLast];
+        @"MKConductor 0x%x\n  Next conductor 0x%x, Last conductor 0x%x\n", self, _condNext, _condLast];
     NSString *timeStr = [NSString stringWithFormat: @"  time %lf beats, nextMsgTime %lf, timeOffset %lf\n",
        time, nextMsgTime, timeOffset];
     NSString *beatTime = [NSString stringWithFormat:
         @"  beatSize %lf Secs, inverseBeatSize %lf, oldAdjustedClockTime %lf\n",
         beatSize, inverseBeatSize, oldAdjustedClockTime];
     NSString *misc = [NSString stringWithFormat:
-        @"  %s, archivingFlags %x, delegateFlags %x, delegate %@, activePerformers %@\n",
-        isPaused ? "Paused" : "Not paused", archivingFlags, delegateFlags, delegate, activePerformers];
-    NSString *msgs = [NSString stringWithFormat: @"  msgQueue = %x: ", _msgQueue];
+        @"  archivingFlags %x, delegateFlags %x, delegate %@, activePerformers %@, MTCSynch %@\n",
+        archivingFlags, delegateFlags, delegate, activePerformers, MTCSynch];
+    NSString *pausing = [NSString stringWithFormat:
+        @"  %s, pauseOffset = %lf, pauseFor = 0x%x\n",
+        isPaused ? "Paused" : "Not paused", _pauseOffset, pauseFor];
+    NSString *msgs = [NSString stringWithFormat: @"  msgQueue = 0x%x: ", _msgQueue];
 
 //    for(p = _msgQueue; p != NULL; p = p->_next) {
 //        [msgs stringByAppendingFormat: @"t %lf [%@ arg1:%@ arg2:%@] conductor %s \n",
@@ -1832,13 +1837,7 @@ static double getNextMsgTime(MKConductor *aCond)
 //           p->_timeOfMsg];
 //    }
 
-#if 0
-id MTCSynch;
-double _pauseOffset;
-MKMsgStruct *pauseFor;
-#endif
-
-    return [queue stringByAppendingFormat: @"%@%@%@\n%@", timeStr, beatTime, msgs, misc];
+    return [queue stringByAppendingFormat: @"%@%@%@\n%@%@", timeStr, beatTime, msgs, pausing, misc];
 }
 
 #import "mtcConductor.m"
