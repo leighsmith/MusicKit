@@ -77,6 +77,9 @@
 Modification history:
 
   $Log$
+  Revision 1.35  2001/03/12 01:57:55  leigh
+  Introduced slowing bytes while sending SysEx messages
+
   Revision 1.34  2001/02/03 02:28:09  leigh
   Moved mach error string dependency to MKMDErrorString,
   fixed overly cautious check that receivedMidi was not being set properly, allowing for multiple calls of my_data_reply
@@ -676,7 +679,7 @@ static int setMidiSysIgnore(MKMidi *self,unsigned bits)
 static MKMDRawEvent midiBuf[MIDIBUFSIZE];
 static MKMDRawEvent *bufPtr = &(midiBuf[0]);
 
-static void putTimedByte(unsigned curTime,unsigned char aByte)
+static void putTimedByte(unsigned curTime, unsigned char aByte)
     /* output a MIDI byte */
 {
     bufPtr->time = curTime;
@@ -693,27 +696,27 @@ static void sendBufferedData(struct __MKMidiOutStruct *ptr)
     nBytes = bufPtr - &(midiBuf[0]);
     if (nBytes == 0)
 	return;
-    midiObj = ((MKMidi *)ptr->_owner);
+    midiObj = ((MKMidi *) ptr->_owner);
     for (; ;) {
 	r = MKMDSendData((MKMDPort) [midiObj->devicePort machPort],
 	                 (MKMDOwnerPort) [midiObj->ownerPort machPort],
                          midiObj->unit, &(midiBuf[0]), nBytes);
 	if (r == MKMD_ERROR_QUEUE_FULL) 
 	    waitForRoom(midiObj, nBytes, MKMD_NO_TIMEOUT);
-	else break;
+	else
+            break;
     }
     if (r != MKMD_SUCCESS) 
 	_MKErrorf(MK_machErr, OUTPUT_ERROR, midiDriverErrorString(r), @"sendBufferedData");
     bufPtr = &(midiBuf[0]);
 }
 
-static void putTimedByteWithCheck(struct __MKMidiOutStruct *ptr,
-				  unsigned curTime,unsigned char aByte)
+static void putTimedByteWithCheck(struct __MKMidiOutStruct *ptr, unsigned curTime, unsigned char aByte)
     /* Same as above, but checks for full buffer */
 {
     if ((&(midiBuf[MIDIBUFSIZE])) == bufPtr) 
-      sendBufferedData(ptr);
-    putTimedByte(curTime,aByte);
+        sendBufferedData(ptr);
+    putTimedByte(curTime, aByte);
 }
 
 
@@ -730,7 +733,7 @@ static void putMidi(struct __MKMidiOutStruct *ptr)
       putTimedByte(curTime,ptr->_bytes[2]);
 }
 
-static void putSysExcl(struct __MKMidiOutStruct *ptr,NSString *sysExclString)
+static void putSysExcl(struct __MKMidiOutStruct *ptr, NSString *sysExclString)
 {
     /* sysExStr is a string. The string consists of system exclusive bytes
 	separated by any non-digit delimiter. The musickit uses the 
@@ -739,7 +742,7 @@ static void putSysExcl(struct __MKMidiOutStruct *ptr,NSString *sysExclString)
        Note that if you want to give each sysex byte a different
        delay, you need to do a separate call to this function.
        On a higher level, this means that you need to put each
-       byte in a different Note object. 
+       byte in a different MKNote object. 
 	The string may but need not begin with MIDI_SYSEXCL and end with
 	MIDI_EOX. 
        */
@@ -749,16 +752,20 @@ static void putSysExcl(struct __MKMidiOutStruct *ptr,NSString *sysExclString)
     sendBufferedData(ptr);
     c = _MKGetSysExByte(&sysExclStr);
     if (c == MIDI_EOX)
-      return;
+        return;
     if (c != MIDI_SYSEXCL) 
-      putTimedByte(curTime,MIDI_SYSEXCL);
-    putTimedByte(curTime,c);
+        putTimedByte(curTime, MIDI_SYSEXCL);
+    putTimedByte(curTime, c);
     while (*sysExclStr) {
-	c = _MKGetSysExByte(&sysExclStr);
-	putTimedByteWithCheck(ptr,curTime,c);
+        c = _MKGetSysExByte(&sysExclStr);
+	putTimedByteWithCheck(ptr, curTime, c);
+        // Add an inter-byte delay of 300mS to avoid overflow problems in slow synthesisers.
+        // TODO this should actually be a note parameter: MK_interByteDelay
+//        curTime += 300 * _MK_MIDI_QUANTUM;
+        curTime += 300;
     }
     if (c != MIDI_EOX) 
-      putTimedByteWithCheck(ptr,curTime,MIDI_EOX);  /* Terminate it properly */
+        putTimedByteWithCheck(ptr, curTime, MIDI_EOX);  /* Terminate it properly */
 }
 
 /* Midi parsing. */
