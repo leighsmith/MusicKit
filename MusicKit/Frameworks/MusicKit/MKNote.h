@@ -104,6 +104,9 @@
 */
 /*
   $Log$
+  Revision 1.13  2001/08/09 15:12:51  skotmcdonald
+  Shifted MKNote C function declarations outside MKNote interface namespace - no reason for them to be inside, and they are not selectors. Rah consistency.
+
   Revision 1.12  2001/01/24 21:58:50  skot
   Added note adjustment methods setEndTime, setTimeTagPreserveEndTime
 
@@ -578,6 +581,13 @@ MKDataType;
 // for debugging
 - (NSString *) description;
 
++ note; 
++ noteWithTimeTag:(double )aTimeTag; 
++(int ) parName:(NSString * )aName; 
++(NSString *) nameOfPar:(int)aPar;
+
+@end
+
 extern NSHashEnumerator *MKInitParameterIteration(id aNote);
 extern int MKNextParameter(id aNote, NSHashEnumerator *aState);
  /* These functions provide iteration over the parameters of a Note. 
@@ -617,11 +627,5 @@ extern id MKGetNoteParAsWaveTable(id aNote,int par);
 extern id MKGetNoteParAsObject(id aNote,int par);
 extern BOOL MKIsNoteParPresent(id aNote,int par);
 
-+ note; 
-+ noteWithTimeTag:(double )aTimeTag; 
-+(int ) parName:(NSString * )aName; 
-+(NSString *) nameOfPar:(int)aPar;
-
-@end
 
 #endif
