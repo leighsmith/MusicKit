@@ -737,12 +737,12 @@ extern int DSPFlushMessageBuffer(void);
 
 /******************************* DSP Negotiation Port ************************/
 
-int DSPSetNegotiationPort(port_t neg_port);
+int DSPSetNegotiationPort(mach_port_t neg_port);
 /* 
  * Set port given to anyone attempting to open the DSP.
  */
 
-port_t DSPGetNegotiationPort(void);
+mach_port_t DSPGetNegotiationPort(void);
 /* 
  * Get port set by DSPSetNegotiationPort().
  */
@@ -754,40 +754,40 @@ port_t DSPGetNegotiationPort(void);
  * the DSP must be opened before asking for the ports.
  */
 
-port_t DSPGetOwnerPort(void);
+mach_port_t DSPGetOwnerPort(void);
 /* 
  * Get port conveying DSP and sound-out ownership capability.
  */
 
 
-port_t DSPGetHostMessagePort(void);
+mach_port_t DSPGetHostMessagePort(void);
 /* 
  * Get port used to send "host messages" to the DSP.
  * Also called the "command port" in other contexts.
  */
 
 
-port_t DSPGetDSPMessagePort(void);
+mach_port_t DSPGetDSPMessagePort(void);
 /* 
  * Get port used to send "DSP messages" from the DSP to the host.
  * Messages on this port are enabled by DSPEnableHostMsg().
  */
 
 
-port_t DSPGetErrorPort(void);
+mach_port_t DSPGetErrorPort(void);
 /* 
  * Get port used to send "DSP error messages" from the DSP to the host.
  * Error messages on this port are enabled by DSPEnableHostMsg().
  */
 
 
-port_t DSPMKGetSoundPort(void);
+mach_port_t DSPMKGetSoundPort(void);
 /* 
  * Get sound device port.
  */
 
 
-port_t DSPMKGetSoundOutStreamPort(void);
+mach_port_t DSPMKGetSoundOutStreamPort(void);
 /* 
  * Get stream port used to convey "sound out" buffers from the DSP
  * to the stereo DAC.

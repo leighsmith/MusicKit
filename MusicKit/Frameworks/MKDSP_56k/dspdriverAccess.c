@@ -68,8 +68,8 @@ void setDSPDriverErrorProc(void (*errFunc)
 static int dspInfoCount = 0;
 static int *units;
 static int *subUnits;
-static port_t *dPorts;
-static port_t uPort = PORT_NULL;
+static mach_port_t *dPorts;
+static mach_port_t uPort = PORT_NULL;
 
 #define UNIT units[dspId]
 #define DPORT dPorts[dspId]
@@ -112,7 +112,7 @@ int dsp_addDsp(dsp_id dspId,const char *driver,int unit,int subUnit)
 	subUnits = (int *)calloc(dspInfoCount,sizeof(int));
 	driverInfos = 
 	  (driverInfoStruct **)calloc(dspInfoCount,sizeof(driverInfoStruct *));
-	dPorts = (port_t *)calloc(dspInfoCount,sizeof(port_t));
+	dPorts = (mach_port_t *)calloc(dspInfoCount,sizeof(mach_port_t));
     }
     else if (dspInfoCount <= dspId) {
 	/* FIXME Should optimize this to avoid N^2 allocation behavior */
@@ -120,7 +120,7 @@ int dsp_addDsp(dsp_id dspId,const char *driver,int unit,int subUnit)
 	units = (int *)realloc(units,sizeof(int) * (dspId+1));
 	subUnits = (int *)realloc(subUnits,sizeof(int) * (dspId+1));
 	driverInfos = (driverInfoStruct **)realloc(driverInfos,sizeof(driverInfoStruct *) * (dspId+1));
-	dPorts = (port_t *)realloc(dPorts,sizeof(port_t) * (dspId+1));
+	dPorts = (mach_port_t *)realloc(dPorts,sizeof(mach_port_t) * (dspId+1));
 	for (i=dspInfoCount; i<dspId+1; i++) { /* Clear out new entries */
 	    dPorts[i] = PORT_NULL;
 	}
@@ -464,7 +464,7 @@ void dsp_executeMKHostMessage(dsp_id dspId)
 // added by Leonard Manzara
 void dsp_putPage(dsp_id dspId, vm_address_t pageAddress, int regionTag,
 		 boolean_t msgStarted, boolean_t msgCompleted,
-		 port_t reply_port)
+		 mach_port_t reply_port)
 {
     int r;
     dspIdCheckVoidReturn("dsp_putPage");
@@ -486,7 +486,7 @@ void dsp_setMessaging(dsp_id dspId, boolean_t flag)
 
 void dsp_queuePage(dsp_id dspId, vm_address_t pageAddress,
 		   int regionTag, boolean_t msgStarted,
-		   boolean_t msgCompleted, port_t reply_port)
+		   boolean_t msgCompleted, mach_port_t reply_port)
 {
     int r;
     dspIdCheckVoidReturn("dsp_queuePage");
@@ -519,7 +519,7 @@ static int notPowerOf2(int wordCount,int size) {
 #endif
 
 void dsp_setShortBigEndianReturn(dsp_id dspId, int regionTag,
-				 int wordCount, port_t reply_port,int chan)
+				 int wordCount, mach_port_t reply_port,int chan)
 {
     int r;
     dspIdCheckVoidReturn("dsp_setShortBigEndianReturn");
@@ -531,7 +531,7 @@ void dsp_setShortBigEndianReturn(dsp_id dspId, int regionTag,
 }
 
 void dsp_setShortReturn(dsp_id dspId, int regionTag,
-			int wordCount, port_t reply_port,int chan)
+			int wordCount, mach_port_t reply_port,int chan)
 {
     int r;
     dspIdCheckVoidReturn("dsp_setShortReturn");
@@ -543,7 +543,7 @@ void dsp_setShortReturn(dsp_id dspId, int regionTag,
 }
 
 void dsp_setLongReturn(dsp_id dspId, int regionTag,
-		       int wordCount, port_t reply_port,int chan)
+		       int wordCount, mach_port_t reply_port,int chan)
 {
     int r;
     dspIdCheckVoidReturn("dsp_setLongReturn");
@@ -554,7 +554,7 @@ void dsp_setLongReturn(dsp_id dspId, int regionTag,
       err(dspId,"dsp_setLongReturn",r);
 }
 
-void dsp_setMsgPort(dsp_id dspId, port_t replyPort)
+void dsp_setMsgPort(dsp_id dspId, mach_port_t replyPort)
 {
     int r;
     dspIdCheckVoidReturn("dsp_setMsgPort");
@@ -563,7 +563,7 @@ void dsp_setMsgPort(dsp_id dspId, port_t replyPort)
       err(dspId,"dsp_setMsgPort",r);
 }
 
-void dsp_setErrorPort(dsp_id dspId, port_t replyPort)
+void dsp_setErrorPort(dsp_id dspId, mach_port_t replyPort)
 {
     int r;
     dspIdCheckVoidReturn("dsp_setErrorPort");
@@ -587,7 +587,7 @@ void dsp_freePage(dsp_id dspId, int pageIndex)
 int dsp_debug(char *driverName,int flags) {
   char *hostName = "";
   int r;
-  port_t dport;
+  mach_port_t dport;
   if (!driverName)
     return -1;
   r = netname_look_up(name_server_port, hostName, driverName, &dport);

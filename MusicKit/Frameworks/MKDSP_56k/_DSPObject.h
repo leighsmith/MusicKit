@@ -10,7 +10,7 @@ extern int _DSPSetNumber(int i);
  */
 
 
-extern int _DSPAwaitMsgSendAck(msg_header_t *msg);
+extern int _DSPAwaitMsgSendAck(mach_msg_header_t *msg);
 /*
  * Read ack message sent to msg->local_port by Mach kernel in response to a 
  * msg_snd. Returns 0 if all is well.
@@ -46,7 +46,7 @@ extern int _DSPAwaitBit(
  *
  */
 extern int _DSPAwaitMsgSendAck(
-    msg_header_t *msg);
+    mach_msg_header_t *msg);
 /*
  * Read ack message sent to msg->local_port by Mach kernel in response to a 
  * msg_snd. Returns 0 if all is well.

@@ -169,10 +169,10 @@ static int s_dsp_count = 0;	/* Current DSP count */
 static int s_dsp_alloc = 0;	/* DSP count provided for in advance */
 
 /* Might want to make these per-DSP--DAJ 11/26/95 */
-static msg_header_t *s_dsprcv_msg = 0;  /* contains unread DSP data */
-static msg_header_t *s_dspcmd_msg = 0;  /* contains a re-useable dspcmd msg */
-static msg_header_t *s_msg = 0;  	/* general purpose message pointer */
-static msg_header_t *s_driver_reply_msg = 0; /* re-useable reply msg */
+static mach_msg_header_t *s_dsprcv_msg = 0;  /* contains unread DSP data */
+static mach_msg_header_t *s_dspcmd_msg = 0;  /* contains a re-useable dspcmd msg */
+static mach_msg_header_t *s_msg = 0;  	/* general purpose message pointer */
+static mach_msg_header_t *s_driver_reply_msg = 0; /* re-useable reply msg */
 
 /*** ------------------------- Per-DSP variables ------------------------ ***/
 
@@ -230,25 +230,25 @@ static cthread_t *s_rd_thread=NULL;
 static int *s_rd_error=NULL;
 static char **s_rd_error_str=NULL;
 static int *s_dsp_rd_buf0=NULL;
-static msg_header_t *s_rd_rmsg=NULL;
+static mach_msg_header_t *s_rd_rmsg=NULL;
 
 static int s_dsp_err_reader();
 static int *s_cur_pri=NULL;
 static int *s_cur_atomicity=NULL;
-static port_t *s_sound_dev_port=NULL;
-static port_t *s_dsp_owner_port=NULL;
-static port_t *s_dsp_hm_port=NULL;
-static port_t *s_dsp_dm_port=NULL;
-static port_t *s_driver_reply_port=NULL;
-static port_t *s_dsp_err_port=NULL;
-static port_t *s_dsp_neg_port=NULL;
+static mach_port_t *s_sound_dev_port=NULL;
+static mach_port_t *s_dsp_owner_port=NULL;
+static mach_port_t *s_dsp_hm_port=NULL;
+static mach_port_t *s_dsp_dm_port=NULL;
+static mach_port_t *s_driver_reply_port=NULL;
+static mach_port_t *s_dsp_err_port=NULL;
+static mach_port_t *s_dsp_neg_port=NULL;
 static cthread_t *s_dsp_err_thread=NULL;
 static cthread_t *s_dsp_msg_thread=NULL;
 static int *s_stop_msg_reader=NULL;
-static port_t *s_wd_stream_port=NULL;
-static port_t *s_wd_reply_port=NULL;
-static port_t *s_rd_stream_port=NULL;
-static port_t *s_rd_reply_port=NULL;
+static mach_port_t *s_wd_stream_port=NULL;
+static mach_port_t *s_wd_reply_port=NULL;
+static mach_port_t *s_rd_stream_port=NULL;
+static mach_port_t *s_rd_reply_port=NULL;
 static int *s_msg_read_pending=NULL;
 static int *s_optimizing=NULL;
 static int *s_timed_zero_noflush = NULL;
@@ -335,7 +335,7 @@ static DSPFix48 *s_curTimeStamp = NULL;
 static int *s_hm_ptr = NULL;
 static int **s_hm_array = NULL;
 
-static msg_header_t **s_wd_rmsg = NULL; /* DAJ. 11/26/95. Was static */
+static mach_msg_header_t **s_wd_rmsg = NULL; /* DAJ. 11/26/95. Was static */
 
 static int *s_min_dma_chan = NULL;
 static int *s_max_dma_chan = NULL;
@@ -717,7 +717,7 @@ static int s_checkMsgFrameOverflow(char *fn_name)
     /*** FIXME: Change to an automatic flush when there is a test case ***/
     int msg_frame_overflowed = 0;
     if (s_msg != s_dspcmd_msg) { 
-	if (s_msg == ((msg_header_t *)SEND_MSG_TOO_LARGE)) { 
+	if (s_msg == ((mach_msg_header_t *)SEND_MSG_TOO_LARGE)) { 
 	    if (((snd_dspcmd_msg_t *)s_dspcmd_msg)->header.msg_size 
 		== sizeof(snd_dspcmd_msg_t))
 	      /* A nonzero return will cause an infinite loop */
@@ -2081,20 +2081,20 @@ BRIEF int _DSPOwnershipIsJoint()
 
 /************ Getting/Setting Mach Ports associated with the DSP *************/
 
-BRIEF int DSPSetNegotiationPort(port_t np)
+BRIEF int DSPSetNegotiationPort(mach_port_t np)
 {
     CHECK_INIT;
     s_dsp_neg_port[s_idsp] = np;
     return 0;
 }
 
-port_t DSPGetNegotiationPort(void)
+mach_port_t DSPGetNegotiationPort(void)
 {
     CHECK_INIT;
     return s_dsp_neg_port[s_idsp];
 }
 
-port_t DSPMKGetSoundPort(void)
+mach_port_t DSPMKGetSoundPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2103,13 +2103,13 @@ port_t DSPMKGetSoundPort(void)
     return s_sound_dev_port[s_idsp];
 }
 
-port_t DSPGetSoundPort(void)
+mach_port_t DSPGetSoundPort(void)
 {
     CHECK_INIT;
     return DSPMKGetSoundPort();
 }
 
-port_t DSPGetOwnerPort(void)
+mach_port_t DSPGetOwnerPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2118,7 +2118,7 @@ port_t DSPGetOwnerPort(void)
     return s_dsp_owner_port[s_idsp];
 }
 
-port_t DSPGetHostMessagePort(void)
+mach_port_t DSPGetHostMessagePort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2127,7 +2127,7 @@ port_t DSPGetHostMessagePort(void)
     return s_dsp_hm_port[s_idsp];
 }
 
-port_t DSPGetDSPMessagePort(void)
+mach_port_t DSPGetDSPMessagePort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2136,7 +2136,7 @@ port_t DSPGetDSPMessagePort(void)
     return s_dsp_dm_port[s_idsp];
 }
 
-port_t DSPGetErrorPort(void)
+mach_port_t DSPGetErrorPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2145,7 +2145,7 @@ port_t DSPGetErrorPort(void)
     return s_dsp_err_port[s_idsp];
 }
 
-port_t DSPMKGetWriteDataStreamPort(void)
+mach_port_t DSPMKGetWriteDataStreamPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2155,7 +2155,7 @@ port_t DSPMKGetWriteDataStreamPort(void)
     return s_wd_stream_port[s_idsp];
 }
 
-port_t DSPMKGetReadDataStreamPort(void)
+mach_port_t DSPMKGetReadDataStreamPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2165,7 +2165,7 @@ port_t DSPMKGetReadDataStreamPort(void)
     return s_rd_stream_port[s_idsp];
 }
 
-port_t DSPMKGetWriteDataReplyPort(void)
+mach_port_t DSPMKGetWriteDataReplyPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2175,7 +2175,7 @@ port_t DSPMKGetWriteDataReplyPort(void)
     return s_wd_reply_port[s_idsp];
 }
 
-port_t DSPMKGetReadDataReplyPort(void)
+mach_port_t DSPMKGetReadDataReplyPort(void)
 {
     CHECK_INIT;
     if (!s_open[s_idsp])
@@ -2367,7 +2367,7 @@ BRIEF int DSPMKDisableBlockingOnTMQEmptyTimed(DSPFix48 *aTimeStampP)
     return DSPMKHostMessageTimed(aTimeStampP,dsp_hm_unblock_tmq_lwm[s_idsp]);
 }
 
-static int s_allocPort(port_t *portP)
+static int s_allocPort(mach_port_t *portP)
 /* 
  * Allocate Mach port.
  */
@@ -2380,7 +2380,7 @@ static int s_allocPort(port_t *portP)
       return 0;
 }
 
-static int s_freePort(port_t *portP)
+static int s_freePort(mach_port_t *portP)
 /* 
  * Deallocate Mach port.
  */
@@ -2406,7 +2406,7 @@ int DSPAwakenDriver(void)
  */
 {
 #if m68k 
-    static msg_header_t *dspcmd_msg = 0;
+    static mach_msg_header_t *dspcmd_msg = 0;
     if (s_mapped_only[s_idsp] == 0)
       return 0;
     CHECK_INIT;
@@ -2829,7 +2829,7 @@ static int s_wd_reader(int myDSP)
     /* timeout subdivision vars */
     int timeout=500;		/* timeout we really use in ms */
     int timeout_so_far=0;	/* total timeout used so far */
-    msg_header_t *wd_rmsg = s_wd_rmsg[myDSP];
+    mach_msg_header_t *wd_rmsg = s_wd_rmsg[myDSP];
     if (timeout > s_wd_timeout[myDSP])	/* take min */
       timeout = s_wd_timeout[myDSP];	/* do not exceed user-req'd timeout */
     while (1) {
@@ -4233,7 +4233,7 @@ BRIEF int DSPOpenNoBootHighPriority(void)
 
 int DSPAlternateReset(void)	/*** FIXME: This seems not to work ***/
 {
-    port_t neg_port;
+    mach_port_t neg_port;
 
     CHECK_INIT;
     if (s_dsp_neg_port[s_idsp])
@@ -4294,7 +4294,7 @@ int DSPOpenNoBoot(void)		/* open current DSP */
 {
     /*** FIXME: Move outside of single DSP instance ***/
     int ec=0,ecs;
-    port_t neg_port;
+    mach_port_t neg_port;
     char *host;
 
     CHECK_INIT;
@@ -6809,9 +6809,9 @@ int _DSPOpenStatePrint()
 
 /*************************** DSP SYNCHRONIZATION ***************************/
 
-/*** FIXME: Delete _DSPAwaitMsgSendAck(msg_header_t *msg) ***/
+/*** FIXME: Delete _DSPAwaitMsgSendAck(mach_msg_header_t *msg) ***/
 
-int _DSPAwaitMsgSendAck(msg_header_t *msg)
+int _DSPAwaitMsgSendAck(mach_msg_header_t *msg)
 {    
     int ec;
     
@@ -7205,7 +7205,7 @@ static int s_dsp_err_reader(int myDSP)
 {
     register int r, rsize, i;
     int err_read_pending = 0;	   /* set when err read request is out */
-    static msg_header_t *rcv_msg = 0; /* message frame for msg_receive */
+    static mach_msg_header_t *rcv_msg = 0; /* message frame for msg_receive */
 
     int kern_ack_op_code = DSP_DE_KERNEL_ACK;
     struct timeval atimeval;       /* Needs to be on a per-DSP basis FIXME */
@@ -9196,7 +9196,7 @@ int DSPSenseMem(int *memCount)
      */
 {
     int size, result;
-    port_t dev_port = 0, owner_port = 0, cmd_port;
+    mach_port_t dev_port = 0, owner_port = 0, cmd_port;
     SndSoundStruct *dspStruct;
     int i,*p,ec;
 #   define HEADERBYTES (128)

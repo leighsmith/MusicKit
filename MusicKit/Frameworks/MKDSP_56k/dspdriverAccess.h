@@ -130,7 +130,7 @@ extern void dsp_setMessaging(dsp_id dspId, boolean_t flag);
 
 extern void dsp_putPage(dsp_id dspId, vm_address_t pageAddress,
 			int regionTag, boolean_t msgStarted,
-			boolean_t msgCompleted, port_t reply_port);
+			boolean_t msgCompleted, mach_port_t reply_port);
     /* Puts a page of ints (actually 2048 DSPFix24s), located at
      * the vm allocated by the user at pageAddress, to the DSP.
      * A mach message is returned to the reply_port if the caller
@@ -149,7 +149,7 @@ extern void dsp_putPage(dsp_id dspId, vm_address_t pageAddress,
 
 extern void dsp_queuePage(dsp_id dspId, vm_address_t pageAddress,
 			  int regionTag, boolean_t msgStarted,
-			  boolean_t msgCompleted, port_t reply_port);
+			  boolean_t msgCompleted, mach_port_t reply_port);
     /* Queues a page of 2048 DSPFix24s to the driver.  This queue is
      * a circular buffer which can hold up to 16 pages, so be sure the
      * DSP starts reading data before the queue overfills.  The DSP
@@ -170,7 +170,7 @@ extern void dsp_queuePage(dsp_id dspId, vm_address_t pageAddress,
 #define DSPDRIVER_MAX_TRANSFER_CHAN             18
 
 extern void dsp_setShortBigEndianReturn(dsp_id dspId, int regionTag,
-					int wordCount, port_t reply_port, 
+					int wordCount, mach_port_t reply_port, 
 					int chan);
     /* Sets the reply_port, region tag, and buffer size for returning
      * 16 bit sample data to the host.  The wordCount is the buffer size
@@ -198,13 +198,13 @@ extern void dsp_setShortBigEndianReturn(dsp_id dspId, int regionTag,
      */
 
 extern void dsp_setShortReturn(dsp_id dspId, int regionTag,
-			       int wordCount, port_t reply_port, 
+			       int wordCount, mach_port_t reply_port, 
 			       int chan);
      /* Like dsp_setShortBigEndianReturn(), but little-endian.  */
 
 
 extern void dsp_setLongReturn(dsp_id dspId, int regionTag,
-			      int wordCount, port_t reply_port, 
+			      int wordCount, mach_port_t reply_port, 
 				int chan);
      /* Like dsp_setShortReturn(), but for 24-bit numbers, 
       * right justified in 32 bits. 
@@ -219,10 +219,10 @@ extern void dsp_freePage(dsp_id dspId, int pageIndex);
  * in the message.
  */
 
-extern void dsp_setMsgPort(dsp_id dspId, port_t replyPort);
+extern void dsp_setMsgPort(dsp_id dspId, mach_port_t replyPort);
 /* Set port to receive asynchronous DSP messages */
 
-extern void dsp_setErrorPort(dsp_id dspId, port_t replyPort);
+extern void dsp_setErrorPort(dsp_id dspId, mach_port_t replyPort);
 /* Set port to receive asynchronous DSP errors */
 
 /*** The following are for decoding messages returned via reply ports ***/
@@ -243,17 +243,17 @@ typedef struct {
     int regionTag;
     boolean_t msgStarted;
     boolean_t msgCompleted;
-    port_t replyPort;
+    mach_port_t replyPort;
 } DSPDRIVEROutputQueueMessage;
 
 typedef struct {
-    msg_header_t  h;
+    mach_msg_header_t  h;
     msg_type_t    t;
     int           regionTag; /* Also used for dsperror and dspmsg codes */
 } DSPDRIVERSimpleMessage;
 
 typedef struct {
-    msg_header_t  h;
+    mach_msg_header_t  h;
     msg_type_t    t1;
     int           regionTag;
     int           nbytes;

@@ -8,7 +8,7 @@
 #endif
 /* LINTLIBRARY */
 
-extern port_t mig_get_reply_port();
+extern mach_port_t mig_get_reply_port();
 extern void mig_dealloc_reply_port();
 
 #ifndef	mig_internal
@@ -37,20 +37,20 @@ extern void mig_dealloc_reply_port();
 
 /* Routine dsp_become_owner */
 mig_external kern_return_t dsp_become_owner (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 	} Reply;
@@ -185,15 +185,15 @@ mig_external kern_return_t dsp_become_owner (
 
 /* Routine dsp_reset_chip */
 mig_external kern_return_t dsp_reset_chip (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char on,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t onType;
 		char on;
 		char onPad[3];
@@ -202,7 +202,7 @@ mig_external kern_return_t dsp_reset_chip (
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 	} Reply;
@@ -362,20 +362,20 @@ mig_external kern_return_t dsp_reset_chip (
 
 /* Routine dsp_release_ownership */
 mig_external kern_return_t dsp_release_ownership (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 	} Reply;
@@ -510,21 +510,21 @@ mig_external kern_return_t dsp_release_ownership (
 
 /* Routine dsp_get_icr */
 mig_external kern_return_t dsp_get_icr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char *icr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t icrType;
@@ -689,21 +689,21 @@ mig_external kern_return_t dsp_get_icr (
 
 /* Routine dsp_get_cvr */
 mig_external kern_return_t dsp_get_cvr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char *cvr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t cvrType;
@@ -868,21 +868,21 @@ mig_external kern_return_t dsp_get_cvr (
 
 /* Routine dsp_get_isr */
 mig_external kern_return_t dsp_get_isr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char *isr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t isrType;
@@ -1047,21 +1047,21 @@ mig_external kern_return_t dsp_get_isr (
 
 /* Routine dsp_get_ivr */
 mig_external kern_return_t dsp_get_ivr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char *ivr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t ivrType;
@@ -1226,15 +1226,15 @@ mig_external kern_return_t dsp_get_ivr (
 
 /* SimpleRoutine dsp_put_icr */
 mig_external kern_return_t dsp_put_icr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char icr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t icrType;
 		char icr;
 		char icrPad[3];
@@ -1337,15 +1337,15 @@ mig_external kern_return_t dsp_put_icr (
 
 /* SimpleRoutine dsp_put_cvr */
 mig_external kern_return_t dsp_put_cvr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char cvr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t cvrType;
 		char cvr;
 		char cvrPad[3];
@@ -1448,15 +1448,15 @@ mig_external kern_return_t dsp_put_cvr (
 
 /* SimpleRoutine dsp_put_ivr */
 mig_external kern_return_t dsp_put_ivr (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char ivr,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t ivrType;
 		char ivr;
 		char ivrPad[3];
@@ -1559,17 +1559,17 @@ mig_external kern_return_t dsp_put_ivr (
 
 /* SimpleRoutine dsp_put_data_raw */
 mig_external kern_return_t dsp_put_data_raw (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char high,
 	char med,
 	char low,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t highType;
 		char high;
 		char highPad[3];
@@ -1728,23 +1728,23 @@ mig_external kern_return_t dsp_put_data_raw (
 
 /* Routine dsp_get_data_raw */
 mig_external kern_return_t dsp_get_data_raw (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char *high,
 	char *med,
 	char *low,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t highType;
@@ -1969,17 +1969,17 @@ mig_external kern_return_t dsp_get_data_raw (
 
 /* SimpleRoutine dsp_put_data */
 mig_external kern_return_t dsp_put_data (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char high,
 	char med,
 	char low,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t highType;
 		char high;
 		char highPad[3];
@@ -2138,23 +2138,23 @@ mig_external kern_return_t dsp_put_data (
 
 /* Routine dsp_get_data */
 mig_external kern_return_t dsp_get_data (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	char *high,
 	char *med,
 	char *low,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t highType;
@@ -2379,16 +2379,16 @@ mig_external kern_return_t dsp_get_data (
 
 /* SimpleRoutine dsp_put_data_array */
 mig_external kern_return_t dsp_put_data_array (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPWordPtr data,
 	unsigned int dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t dataType;
 		int data[512];
 		msg_type_t unitType;
@@ -2500,16 +2500,16 @@ mig_external kern_return_t dsp_put_data_array (
 
 /* SimpleRoutine dsp_put_data_byte_array */
 mig_external kern_return_t dsp_put_data_byte_array (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPCharPtr data,
 	unsigned int dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t dataType;
 		char data[2048];
 		msg_type_t unitType;
@@ -2621,16 +2621,16 @@ mig_external kern_return_t dsp_put_data_byte_array (
 
 /* SimpleRoutine dsp_put_data_short_array */
 mig_external kern_return_t dsp_put_data_short_array (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPShortPtr data,
 	unsigned int dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t dataType;
 		short data[1024];
 		msg_type_t unitType;
@@ -2742,16 +2742,16 @@ mig_external kern_return_t dsp_put_data_short_array (
 
 /* SimpleRoutine dsp_put_data_packed_array */
 mig_external kern_return_t dsp_put_data_packed_array (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPCharPtr data,
 	unsigned int dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t dataType;
 		char data[2048];
 		msg_type_t unitType;
@@ -2863,16 +2863,16 @@ mig_external kern_return_t dsp_put_data_packed_array (
 
 /* SimpleRoutine dsp_put_data_left_array */
 mig_external kern_return_t dsp_put_data_left_array (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPWordPtr data,
 	unsigned int dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t dataType;
 		int data[512];
 		msg_type_t unitType;
@@ -2984,17 +2984,17 @@ mig_external kern_return_t dsp_put_data_left_array (
 
 /* Routine dsp_get_data_array */
 mig_external kern_return_t dsp_get_data_array (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int count,
 	DSPWordPtr data,
 	unsigned int *dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t countType;
 		int count;
 		msg_type_t unitType;
@@ -3002,7 +3002,7 @@ mig_external kern_return_t dsp_get_data_array (
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t dataType;
@@ -3189,17 +3189,17 @@ mig_external kern_return_t dsp_get_data_array (
 
 /* SimpleRoutine dsp_put_mk_timed_message */
 mig_external kern_return_t dsp_put_mk_timed_message (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int highWord,
 	int lowWord,
 	int opCode,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t highWordType;
 		int highWord;
 		msg_type_t lowWordType;
@@ -3355,14 +3355,14 @@ mig_external kern_return_t dsp_put_mk_timed_message (
 
 /* SimpleRoutine dsp_exec_mk_host_message */
 mig_external kern_return_t dsp_exec_mk_host_message (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
@@ -3437,21 +3437,21 @@ mig_external kern_return_t dsp_exec_mk_host_message (
 
 /* Routine dsp_get_hi */
 mig_external kern_return_t dsp_get_hi (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int *hi,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
 
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t RetCodeType;
 		kern_return_t RetCode;
 		msg_type_t hiType;
@@ -3615,16 +3615,16 @@ mig_external kern_return_t dsp_get_hi (
 
 /* SimpleRoutine dsp_put_and_exec_mk_host_message */
 mig_external kern_return_t dsp_put_and_exec_mk_host_message (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPWordPtr data,
 	unsigned int dataCnt,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t dataType;
 		int data[512];
 		msg_type_t unitType;
@@ -3736,15 +3736,15 @@ mig_external kern_return_t dsp_put_and_exec_mk_host_message (
 
 /* SimpleRoutine dsp_set_sub_unit */
 mig_external kern_return_t dsp_set_sub_unit (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int sub_unit,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t sub_unitType;
 		int sub_unit;
 		msg_type_t unitType;
@@ -3846,19 +3846,19 @@ mig_external kern_return_t dsp_set_sub_unit (
 
 /* SimpleRoutine dsp_put_page */
 mig_external kern_return_t dsp_put_page (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPPagePtr pageAddress,
 	int regionTag,
 	boolean_t msgStarted,
 	boolean_t msgCompleted,
-	port_t reply_port,
+	mach_port_t reply_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t pageAddressType;
 		DSPPagePtr pageAddress;
 		msg_type_t regionTagType;
@@ -3868,7 +3868,7 @@ mig_external kern_return_t dsp_put_page (
 		msg_type_t msgCompletedType;
 		boolean_t msgCompleted;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
@@ -4068,15 +4068,15 @@ mig_external kern_return_t dsp_put_page (
 
 /* SimpleRoutine dsp_set_messaging */
 mig_external kern_return_t dsp_set_messaging (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	boolean_t flag,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t flagType;
 		boolean_t flag;
 		msg_type_t unitType;
@@ -4178,19 +4178,19 @@ mig_external kern_return_t dsp_set_messaging (
 
 /* SimpleRoutine dsp_queue_page */
 mig_external kern_return_t dsp_queue_page (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	DSPPagePtr pageAddress,
 	int regionTag,
 	boolean_t msgStarted,
 	boolean_t msgCompleted,
-	port_t reply_port,
+	mach_port_t reply_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t pageAddressType;
 		DSPPagePtr pageAddress;
 		msg_type_t regionTagType;
@@ -4200,7 +4200,7 @@ mig_external kern_return_t dsp_queue_page (
 		msg_type_t msgCompletedType;
 		boolean_t msgCompleted;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
@@ -4400,24 +4400,24 @@ mig_external kern_return_t dsp_queue_page (
 
 /* SimpleRoutine dsp_set_short_big_endian_return */
 mig_external kern_return_t dsp_set_short_big_endian_return (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int regionTag,
 	int wordCount,
-	port_t reply_port,
+	mach_port_t reply_port,
 	int chan,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t regionTagType;
 		int regionTag;
 		msg_type_t wordCountType;
 		int wordCount;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t chanType;
 		int chan;
 		msg_type_t unitType;
@@ -4594,24 +4594,24 @@ mig_external kern_return_t dsp_set_short_big_endian_return (
 
 /* SimpleRoutine dsp_set_short_return */
 mig_external kern_return_t dsp_set_short_return (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int regionTag,
 	int wordCount,
-	port_t reply_port,
+	mach_port_t reply_port,
 	int chan,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t regionTagType;
 		int regionTag;
 		msg_type_t wordCountType;
 		int wordCount;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t chanType;
 		int chan;
 		msg_type_t unitType;
@@ -4788,24 +4788,24 @@ mig_external kern_return_t dsp_set_short_return (
 
 /* SimpleRoutine dsp_set_long_return */
 mig_external kern_return_t dsp_set_long_return (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int regionTag,
 	int wordCount,
-	port_t reply_port,
+	mach_port_t reply_port,
 	int chan,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t regionTagType;
 		int regionTag;
 		msg_type_t wordCountType;
 		int wordCount;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t chanType;
 		int chan;
 		msg_type_t unitType;
@@ -4982,17 +4982,17 @@ mig_external kern_return_t dsp_set_long_return (
 
 /* SimpleRoutine dsp_set_error_port */
 mig_external kern_return_t dsp_set_error_port (
-	port_t dspdriver_port,
-	port_t owner_port,
-	port_t reply_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
+	mach_port_t reply_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
@@ -5092,17 +5092,17 @@ mig_external kern_return_t dsp_set_error_port (
 
 /* SimpleRoutine dsp_set_msg_port */
 mig_external kern_return_t dsp_set_msg_port (
-	port_t dspdriver_port,
-	port_t owner_port,
-	port_t reply_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
+	mach_port_t reply_port,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t reply_portType;
-		port_t reply_port;
+		mach_port_t reply_port;
 		msg_type_t unitType;
 		int unit;
 	} Request;
@@ -5202,11 +5202,11 @@ mig_external kern_return_t dsp_set_msg_port (
 
 /* SimpleRoutine dsp_set_debug */
 mig_external kern_return_t dsp_set_debug (
-	port_t dspdriver_port,
+	mach_port_t dspdriver_port,
 	int debug_flags)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t debug_flagsType;
 		int debug_flags;
 	} Request;
@@ -5256,15 +5256,15 @@ mig_external kern_return_t dsp_set_debug (
 
 /* SimpleRoutine dsp_free_page */
 mig_external kern_return_t dsp_free_page (
-	port_t dspdriver_port,
-	port_t owner_port,
+	mach_port_t dspdriver_port,
+	mach_port_t owner_port,
 	int page_index,
 	int unit)
 {
 	typedef struct {
-		msg_header_t Head;
+		mach_msg_header_t Head;
 		msg_type_t owner_portType;
-		port_t owner_port;
+		mach_port_t owner_port;
 		msg_type_t page_indexType;
 		int page_index;
 		msg_type_t unitType;
