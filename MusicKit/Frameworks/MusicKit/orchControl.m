@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2001/05/12 09:35:19  sbrandon
+  - GNUSTEP: don't import mach headers
+
   Revision 1.10  2000/04/26 01:19:24  leigh
   outputCommandsFile now an NSString
 
@@ -115,8 +118,10 @@ Modification history:
    6/25/97/daj - Added support for X/P overlaied, Y not overlaid
   */
 
-#import <mach/message.h>
-#import <mach/mach_error.h>
+#ifndef GNUSTEP
+# import <mach/message.h>
+# import <mach/mach_error.h>
+#endif
 #import <MKDSP/dsp_memory_map.h>
 #import <Foundation/NSDate.h>
 #import "MKOrchestra.h" /*these 2 added by sb */
