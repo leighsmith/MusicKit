@@ -1,0 +1,335 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 32;
+	objects = {
+		03722A5600750E32CFED3B96 = {
+			buildStyles = (
+			);
+			isa = PBXProject;
+			mainGroup = 03722A5700750E32CFED3B96;
+			productRefGroup = 03722A7200750E32CFED3B96;
+			projectDirPath = .;
+			targets = (
+				03722A7400750E32CFED3B96,
+			);
+		};
+		03722A5700750E32CFED3B96 = {
+			children = (
+				03722A5800750E32CFED3B96,
+				03722A5A00750E32CFED3B96,
+				03722A5C00750E32CFED3B96,
+				03722A5E00750E32CFED3B96,
+				03722A6B00750E32CFED3B96,
+				03722A7200750E32CFED3B96,
+			);
+			isa = PBXGroup;
+			name = metronome;
+			refType = 4;
+		};
+		03722A5800750E32CFED3B96 = {
+			children = (
+				03722A5900750E32CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+		};
+		03722A5900750E32CFED3B96 = {
+			isa = PBXFileReference;
+			path = Metronome.m;
+			refType = 4;
+		};
+		03722A5A00750E32CFED3B96 = {
+			children = (
+				03722A5B00750E32CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Headers;
+			refType = 4;
+		};
+		03722A5B00750E32CFED3B96 = {
+			isa = PBXFileReference;
+			path = Metronome.h;
+			refType = 4;
+		};
+		03722A5C00750E32CFED3B96 = {
+			children = (
+				03722A5D00750E32CFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+		};
+		03722A5D00750E32CFED3B96 = {
+			isa = PBXFileReference;
+			path = metronome_main.m;
+			refType = 4;
+		};
+		03722A5E00750E32CFED3B96 = {
+			children = (
+				03722A5F00750E32CFED3B96,
+				03722A6200750E32CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Interfaces;
+			refType = 4;
+		};
+		03722A5F00750E32CFED3B96 = {
+			children = (
+				03722A6000750E32CFED3B96,
+				03722A6100750E32CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = metronome.nib;
+			refType = 4;
+		};
+		03722A6000750E32CFED3B96 = {
+			isa = PBXFileReference;
+			name = "English - windows";
+			path = "English.lproj/metronome-windows.nib";
+			refType = 4;
+		};
+		03722A6100750E32CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/metronome.nib;
+			refType = 4;
+		};
+		03722A6200750E32CFED3B96 = {
+			children = (
+				03722A6300750E32CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = metronome_new.nib;
+			refType = 4;
+		};
+		03722A6300750E32CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/metronome_new.nib;
+			refType = 4;
+		};
+		03722A6B00750E32CFED3B96 = {
+			children = (
+				03722A6D00750E32CFED3B96,
+				03722A6E00750E32CFED3B96,
+				03722A6F00750E32CFED3B96,
+				03722A7000750E32CFED3B96,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+		};
+		03722A6D00750E32CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = MKPerformSndMIDI.framework;
+			path = /Network/Servers/whiteley/lauren/Local/Library/Frameworks/MKPerformSndMIDI.framework;
+			refType = 0;
+		};
+		03722A6E00750E32CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = MusicKit.framework;
+			path = /Network/Servers/whiteley/lauren/Local/Library/Frameworks/MusicKit.framework;
+			refType = 0;
+		};
+		03722A6F00750E32CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = AppKit.framework;
+			path = /System/Library/Frameworks/AppKit.framework;
+			refType = 0;
+		};
+		03722A7000750E32CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+		};
+		03722A7200750E32CFED3B96 = {
+			children = (
+				03722A7300750E32CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		03722A7300750E32CFED3B96 = {
+			isa = PBXApplicationReference;
+			path = metronome.app;
+			refType = 3;
+		};
+		03722A7400750E32CFED3B96 = {
+			buildPhases = (
+				03722A7500750E32CFED3B96,
+				03722A7700750E32CFED3B96,
+				03722A7A00750E32CFED3B96,
+				03722A7D00750E32CFED3B96,
+				03722A8300750E32CFED3B96,
+			);
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" /Network/Servers/whiteley/lauren/Local/Library/Frameworks";
+				INSTALL_PATH = /Applications;
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = metronome;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WRAPPER_EXTENSION = app;
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXApplicationTarget;
+			name = "metronome (Application)";
+			productInstallPath = /Applications;
+			productName = "metronome (Application)";
+			productReference = 03722A7300750E32CFED3B96;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
+<plist version=\"0.9\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>metronome</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+	<key>NSExtensions</key>
+	<dict/>
+	<key>NSMainNibFile</key>
+	<string>metronome.nib</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+			shouldUseHeadermap = 0;
+		};
+		03722A7500750E32CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				03722A7600750E32CFED3B96,
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		03722A7600750E32CFED3B96 = {
+			fileRef = 03722A5B00750E32CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722A7700750E32CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				03722A7800750E32CFED3B96,
+				03722A7900750E32CFED3B96,
+			);
+			isa = PBXResourcesBuildPhase;
+			name = "Bundle Resources";
+		};
+		03722A7800750E32CFED3B96 = {
+			fileRef = 03722A5F00750E32CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722A7900750E32CFED3B96 = {
+			fileRef = 03722A6200750E32CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722A7A00750E32CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				03722A7B00750E32CFED3B96,
+				03722A7C00750E32CFED3B96,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		03722A7B00750E32CFED3B96 = {
+			fileRef = 03722A5900750E32CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+			};
+		};
+		03722A7C00750E32CFED3B96 = {
+			fileRef = 03722A5D00750E32CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+			};
+		};
+		03722A7D00750E32CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				03722A7F00750E32CFED3B96,
+				03722A8000750E32CFED3B96,
+				03722A8100750E32CFED3B96,
+				03722A8200750E32CFED3B96,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		03722A7F00750E32CFED3B96 = {
+			fileRef = 03722A6D00750E32CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722A8000750E32CFED3B96 = {
+			fileRef = 03722A6E00750E32CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722A8100750E32CFED3B96 = {
+			fileRef = 03722A6F00750E32CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722A8200750E32CFED3B96 = {
+			fileRef = 03722A7000750E32CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		03722A8300750E32CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+	};
+	rootObject = 03722A5600750E32CFED3B96;
+}
