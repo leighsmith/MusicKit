@@ -26,8 +26,20 @@ TOOL_NAME = \
 
 ADDITIONAL_LIB_DIRS =
 
-ADDITIONAL_TOOL_LIBS += -lMKPerformSndMIDI -lSndKit -lgnustep-base \
-                        -lgnustep-gui -lst -ljpeg
+ADDITIONAL_TOOL_LIBS += -lMKPerformSndMIDI -lSndKit -lgnustep-base -lst
+ 
+ADDITIONAL_CFLAGS += -g
+ 
+playsnd_LIBRARIES_DEPEND_UPON += -lSndKit -lgnustep-base -lst -lobjc
+ 
+ifneq (mingw32, $(GNUSTEP_HOST_OS))
+  ADDITIONAL_TOOL_LIBS += -lgnustep-gui -lmp3lame -lshout
+  playsnd_LIBRARIES_DEPEND_UPON +=  -lgnustep-gui
+else
+  ADDITIONAL_LIB_DIRS = -Ld:/cygwin/usr/local/lib
+  ADDITIONAL_FLAGS += -Id:/cygwin/usr/local/include
+  playsndfaders_LIBRARIES_DEPEND_UPON += -Ld:/cygwin/usr/local/lib
+endif
 
 ADDITIONAL_FLAGS += -g
 ADDITIONAL_LDFLAGS += -g
