@@ -46,23 +46,25 @@
 	      aims for compatibility to the SoundKit.
  */
 
-#import "SndKitDefines.h"
+#if HAVE_CONFIG_H
+# import "SndKitConfig.h"
+#endif
+
 #import "SndFormat.h"
 
 #ifdef GNUSTEP
 # import <Foundation/NSArray.h>
-# include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
-# include <stdio.h>     /* for FILE */
+//# include <stdio.h>     /* for FILE */
 #else
-# ifndef USE_NEXTSTEP_SOUND_IO
 #  import <Foundation/Foundation.h>
-# endif
 #endif /* GNUSTEP */
 
 #import "SndError.h"
 #import "SndEndianFunctions.h"
 
-#import <sndfile.h> /* for libsndfile SNDFILE declaration */
+#if HAVE_LIBSNDFILE
+# import <sndfile.h> /* for libsndfile SNDFILE declaration */
+#endif
 
 /*!
   @function SndFormatDescription
