@@ -20,23 +20,36 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 
 @implementation SndStreamManager
 
+static SndStreamManager *sm = nil;
+
 ////////////////////////////////////////////////////////////////////////////////
 // streamManager factory
 ////////////////////////////////////////////////////////////////////////////////
 
-+ streamManager
++ (void) initialize
 {
-    SndStreamManager *sm = [SndStreamManager alloc];
-    
-    // How many clients? 10 for now - can always auto-grow...
-    sm->streamClients = [NSMutableArray arrayWithCapacity: 10];
-    sm->streamClientsLock = [[NSLock alloc] init];
-    [sm->streamClientsLock retain];
-    [sm->streamClients retain]; 
-    sm->active = FALSE;
-
-    return [sm autorelease];
+    sm = [[SndStreamManager alloc] init];  // create our default
 }
+
+// Always return our initialized stream manager.
++ (SndStreamManager *) defaultStreamManager
+{
+    return sm;
+}
+
+- init
+{
+    [super init];
+    // How many clients? 10 for now - can always auto-grow...
+    if(streamClients == nil)
+        streamClients = [NSMutableArray arrayWithCapacity: 10];
+    streamClientsLock = [[NSLock alloc] init];
+    [streamClientsLock retain];
+    [streamClients retain]; 
+    active = FALSE;
+    return self;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // dealloc 
@@ -63,7 +76,7 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
     [streamClientsLock lock];
     s = [NSString stringWithFormat: @"SndStreamManager object with %i clients",
         [streamClients count]];
-    [streamClients release];
+    [streamClientsLock unlock];
 
     return s;
 }
@@ -130,17 +143,17 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 - (BOOL) addClient: (SndStreamClient*) client
 {
     int c;
-    BOOL b;
+    BOOL clientPresent;
     
     [streamClientsLock lock];
     c = [streamClients count];
-    b = [streamClients containsObject: client];
+    clientPresent = [streamClients containsObject: client];
     [streamClientsLock unlock];
 
     if (c == 0) // There are no clients - better start the stream...
         [self startStreaming];
 
-    if (!b && active) {
+    if (!clientPresent && active) {
         SndAudioBuffer *buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
 
         [client welcomeClientWithBuffer: buff manager: self];
@@ -150,7 +163,7 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
         [streamClientsLock unlock];
     }
     
-    return (b && active);
+    return (clientPresent && active);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -189,7 +202,7 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 
 void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj)
 {
-    objc_msgSend(obj,@selector(processStreamAtTime:input:output:), sampleCount,cInB,cOutB);
+    objc_msgSend(obj,@selector(processStreamAtTime:input:output:), sampleCount, cInB, cOutB);
 }
 
 - (void) processStreamAtTime: (double) sampleCount
@@ -216,10 +229,9 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 
             // Each client should have a second synthing buffer, and a synth thread
             [client startProcessingNextBufferWithInput: inB nowTime: t];
-
         }
-        [streamClientsLock unlock];
     }
+    [streamClientsLock unlock];
 
     if (clientCount == 0) // Hmm, no clients hey? Shut down the Stream.
         [self stopStreaming];
