@@ -18,8 +18,7 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity readinglist         SYSTEM "Publications/SuggestedReadingList.sgml">
 <!entity maintaineremail "leigh@leighsmith.com">
 <!entity mkvers "5.4">
-<!entity mkvertuple "5.4.3">
-<!entity sndvertuple "2.3.2">
+<!entity mkvertuple "5.4.4">
 <!entity mkurl "http://www.musickit.org">
 <!entity mkdownload "http://prdownloads.sourceforge.net/musickit">
 <!entity mkcvsweb "http://cvs.musickit.org">
@@ -27,14 +26,14 @@ and binary distributions. Likewise if the distribution web site changes.
 <!-- GNUstep Libraries used -->
 <!entity gnustepdownload "http://www.gnustep.org">
 <!entity gsmakevertuple "1.6.0">
-<!entity gsbasevertuple "1.6.0">
+<!entity gsbasevertuple "1.8.1">
 <!entity gsguivertuple "0.8.5">
 <!-- Libraries used -->
 <!entity soxvertuple "12.17.3">
 <!entity soxdownload "http://prdownloads.sourceforge.net/sox">
 <!entity libsndfileweb "http://www.zipworld.com.au/~erikd/libsndfile/">
-<!entity libsndfilevertuple "1.0.5">
-<!entity libsndfiledownload "http://www.zipworld.com.au/~erikd/libsndfile/">
+<!entity libsndfilevertuple "1.0.6pre12">
+<!entity libsndfiledownload "http://www.zipworld.com.au/~erikd/">
 <!entity lameweb "http://www.sourceforge.net/projects/lame">
 <!entity lamevertuple "3.93.1">
 <!entity lamedownload "http://prdownloads.sourceforge.net/lame">
@@ -46,6 +45,9 @@ and binary distributions. Likewise if the distribution web site changes.
 <!entity libshoutweb "http://www.icecast.org">
 <!entity libshoutvertuple "2.0">
 <!entity libshoutdownload "http://www.icecast.org/files/libshout">
+<!entity portaudioweb "http://www.portaudio.com/">
+<!entity portaudiovertuple "19">
+<!entity portaudiodownload "http://www.portaudio.com/archives">
 ]>
 
 <article id="README">
@@ -300,9 +302,10 @@ standard audio effects such as reverb.
           <para>
 <acronym>MP3</acronym> and <productname>Ogg/Vorbis</productname>
 streaming of audio output to web servers using the <ulink
-url="&libshoutweb;">libshout</ulink> library. The portions of the
-library used are <acronym>LGPL</acronym>, not <acronym>GPL</acronym>
-and so do not compromise the <productname>MusicKit</productname> <link
+url="&libshoutweb;"><productname>libshout</productname></ulink>
+library. The <productname>libshout</productname> library license is
+<acronym>LGPL</acronym>, not <acronym>GPL</acronym> and so do not
+compromise the <productname>MusicKit</productname> <link
 linkend="license">license</link>
 </para>
         </listitem>
@@ -503,9 +506,8 @@ function and <productname>Objective-C</productname> class.
 	    <entry>Y</entry>
 	  </row>
 	  <row>
-	    <entry>Windows 98 (using OpenStep
-	    Enterprise, Rhapsody DR2/NT, WebObjects 4.5/NT) (Win2000 untested)</entry>
-	    <entry>Y</entry>
+	    <entry>Windows XP (using <productname>GNUstep</productname>)</entry>
+	    <entry>N</entry>
 	    <entry>Y</entry>
 	    <entry>N</entry>
 	  </row>
@@ -524,7 +526,7 @@ function and <productname>Objective-C</productname> class.
 	  <row>
 	    <entry>Linux/Unix (Using
  <productname>GNUstep</productname>,
- <productname>PortAudio</productname>/<productname>PortMusic</productname>)</entry>
+ <productname>portaudio</productname>/<productname>portmusic</productname>)</entry>
 	    <entry>N</entry>
 	    <entry>Y</entry>
 	    <entry>N</entry>
@@ -542,15 +544,17 @@ function and <productname>Objective-C</productname> class.
         <productname>MusicKit</productname> and
         <productname>SndKit</productname> interface to
         <filename>MKPerformSndMIDI</filename> using a C
-        <acronym>API</acronym> was originally modelled after some NeXT
-        <acronym>API</acronym> (although that is now history,
-        particularly for streaming audio).  There are several versions
-        of <filename>MKPerformSndMIDI</filename> underneath <filename
+        <acronym>API</acronym> which was originally modelled after
+        some <productname>NeXT</productname> <acronym>API</acronym>
+        (although that is now history, particularly for streaming
+        audio).  There are several versions of
+        <filename>MKPerformSndMIDI</filename> underneath <filename
         class=directory>MusicKit/Frameworks/PlatformSpecific</filename>.
         You only compile one, all the versions are intended to produce
         one framework named
         <filename>MKPerformSndMIDI.framework</filename> which the
-        'kits link to.
+        <productname>MusicKit</productname> and
+        <productname>SndKit</productname> link to.
       </para>
 
       <para>
@@ -558,7 +562,7 @@ function and <productname>Objective-C</productname> class.
         <filename>MKPerformSndMIDI_MacOSX</filename> and
         <filename>MKPerformSndMIDI_portaudio</filename>. The latter
         uses the multiplatform <ulink
-        url="http://www.cs.cmu.edu/~music/portmusic/"><productname>portaudio</productname></ulink>
+        url="http://www.portaudio.com"><productname>portaudio</productname></ulink>
         (and eventually <productname>portmidi</productname>) library
         to map down to the platform specific <acronym>API</acronym>
         and this is the means to interface with
@@ -568,7 +572,7 @@ function and <productname>Objective-C</productname> class.
     </sect2>
 
     <sect2 id="macosx">
-      <title>MacOS X support</title>
+      <title><productname>MacOS X</productname> support</title>
 
       <para>
         While there is now <productname>MacOS X</productname> support
@@ -605,20 +609,21 @@ this depends on Apple.
       <title>Linux support</title>
 
       <para>
-Linux/Unix support using the <ulink
-url="http://www.gnustep.org">GNUstep</ulink> library is partially
-completed and looking for more volunteers. A performance framework
+<productname>Linux</productname>/<productname>Unix</productname>
+support using the <ulink url="http://www.gnustep.org">GNUstep</ulink>
+library is partially completed and looking for more volunteers. A
+performance framework
 (<filename>MKPerformSndMIDI_portaudio.framework</filename>) using the
-<ulink url="http://www.cs.cmu.edu/~music/portmusic/">PortAudio</ulink>
-library has been partially completed, porting the
+<ulink url="http://www.portaudio.com">portaudio</ulink> library has
+been partially completed, porting the
 <productname>MusicKit</productname> to
 <productname>Intel</productname>
 <productname>Linux</productname>. Streaming sound works, but
 <acronym>MIDI</acronym> needs further work, please help! Potentially
 other <productname>Unix</productname> platforms will work
-(<productname>Solaris</productname>,
+(<productname>SGI</productname>, <productname>Solaris</productname>,
 <productname>FreeBSD</productname>, <productname>AIX</productname>
-etc) if they are supported in the <productname>PortAudio</productname>
+etc) if they are supported in the <productname>portaudio</productname>
 library and <productname>GNUstep</productname>.
 </para>
     <sect3 id=installinggnustep>
@@ -698,44 +703,198 @@ sudo make install
     </sect2>
 
     <sect2 id="windows">
-      <title>Windows support</title>
+      <title><productname>Windows</productname> support</title>
 
       <para>
-After much fun with the pinnacle of Microsoft development tools, we
-have the <productname>MusicKit</productname> working on
-<productname>Windows9X</productname>. The solution was to emulate the
-Mach <acronym>MIDI</acronym> device driver with the core layer of
-<productname>DirectMusic</productname>. There is a fairly similar
-match in functionality between these <acronym>API</acronym>.
+While other means of using the <productname>MusicKit</productname> on
+<productname>Windows</productname> is possible, the current recommended approach
+is using <ulink url="http://www.mingw.org">MinGW</ulink>, the
+&ldquo;Minimal Gnu for Windows&rdquo;, together with
+<ulink url="http://www.gnustep.org">GNUstep</ulink>
+and the 
+<filename>MKPerformSndMIDI_portaudio</filename> framework.
 </para>
 
       <para>
-The downloadable sound (<acronym>DLS</acronym>) capability of
+Currently the <productname>GNUstep</productname>
+<productname>AppKit</productname> support on
+<productname>Windows</productname> is incomplete, so your success
+running <acronym>GUI</acronym> applications will vary. However the
+<productname>MusicKit</productname> and
+<productname>SndKit</productname> run fine.
+</para>
+
+      <para>
+These instructions document the success I have had in getting
+<productname>MinGW</productname>, <productname>GNUstep</productname>,
+<productname>SndKit</productname> and
+<productname>MusicKit</productname> and all the supporting libraries
+compiled and running on a <productname>Windows XP</productname>
+system. Instead of repeating instructions for installation of each
+package that is better described by the package's documentation, I
+have listed the order and version number of each package that needs
+installing and the location of the documentation file. Please report
+problems you may encounter in getting things to build.
+</para>
+      <sect3>
+	<title>Install <productname>MinGW</productname> and friends</title>
+
+	<para>
+Install the minimal command line <acronym>GNU</acronym> system by
+running <filename>MSYS-1.0.9.exe</filename>.  Install complier,
+libraries and headers by running
+<filename>Mingw-3.1.0.exe</filename>. Install into the <filename
+class=directory>C:/msys/mingw</filename> location.  Install the
+<acronym>CVS</acronym> and other development tools
+<filename>msysDTK-1.0.1.exe</filename> Install
+<filename>gcc-3.3.1.tar.gz</filename>.
+</para>
+
+	<para>
+When installing MSYS, ensure that the user name or at least the home
+directory is a single name without a space, as this tends to break
+<command>configure</command>. This is further described in GNUstep's
+<filename>gnustep/core/make/Documentation/README.MinGW</filename>
+</para>
+      </sect3>
+      <sect3>
+	<title>Install libraries supporting GNUstep</title>
+	<itemizedlist>
+	  <listitem>
+	    <para>
+<ulink
+       url="ftp://ftp.remotesensing.org/pub/libtiff/tiff-3.6.0-beta2">libtiff V3.6.0</ulink>
+needs patching to accept ./configure --libdir and --includedir
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+I couldn't get a version of libiconv to compile with MinGW, even 
+<ulink url="http://www.gnu.org/software/libiconv-1.9.1.tar.gz">
+libiconv 1.9.1</ulink> and had to settle for installing a binary version.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<ulink url="ftp://xmlsoft.org/libxml2-2.5.11.tar.gz">
+libxml2 V2.5.11</ulink>
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<ulink url="ftp://ftp.gnustep.org/pub/gnustep/libs/ffcall-1.8d.tar.gz">ffcall V1.8d</ulink>
+</para>
+	  </listitem>
+
+<!--
+zlib
+
+libjpeg
+-->
+	</itemizedlist>
+      </sect3>
+      <sect3>
+	<title>Install <productname>GNUstep</productname></title>
+	<para>
+Read the instructions in
+<filename>gnustep/core/make/Documentation/README.MinGW</filename>. I
+installed <productname>GNUstep</productname> from the head of the
+<acronym>CVS</acronym> tree. If you are working from the head of the
+<acronym>CVS</acronym> tree also use:
+</para>
+	<informalexample>
+	  <screen>
+. /usr/GNUstep/System/Library/Makefiles/GNUstep.sh
+</screen>
+	</informalexample>
+	<para>
+instead of
+</para>
+	<informalexample>
+	  <screen>
+. /usr/GNUstep/System/Makefiles/GNUstep.sh
+</screen>
+	</informalexample>
+	<para>
+Configure the <filename>gnustep-gui</filename> (until
+<filename>libtiff</filename> can install into the
+<productname>GNUstep</productname> tree):
+</para>
+	<informalexample>
+	  <screen>
+./configure --with-tiff-library=/usr/local/lib --with-tiff-include=/usr/local/include
+</screen>
+	</informalexample>
+      </sect3>
+      <sect3>
+	<title>Installation of Libraries Supporting <productname>SndKit</productname></title>
+
+	<para>
+In addition to <link linkend="support">installing the common
+support libraries</link>, the following steps need to be performed:
+</para>
+
+	<itemizedlist>
+	  <listitem>
+	    <para>
+The Microsoft <ulink url="http://www.microsoft.com/downloads/details.aspx?displaylang=en&amp;familyid=bc7ddedd-af62-493d-8055-5e57bab71e1a">DirectX 9.0b
+<acronym>SDK</acronym></ulink> (free) needs to be installed for
+<productname>DirectSound</productname> operation.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+The <productname>libogg</productname> needs <ulink
+url="http://www.xiph.org/archives/vorbis-dev/200310/0068.html">patches</ulink>
+to compile under <productname>MinGW</productname>. These patches may
+soon be incorporated into a <productname>libogg</productname>
+distribution newer than &oggvertuple;.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+The <productname>lame</productname> project needs 
+<ulink url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=809315&amp;group_id=290&amp;atid=300290">
+patches</ulink> to compile under
+<productname>MinGW</productname>. These patches may soon be
+incorporated into a <productname>lame</productname> distribution
+newer than &lamevertuple;.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+The <productname>libshout</productname> project needs <ulink
+url="http://www.xiph.org/archives/icecast-dev/0660.html">patches</ulink>
+to compile under <productname>MinGW</productname>. These patches may
+soon be incorporated into a <productname>libshout</productname>
+distribution newer than &libshoutvertuple;.
+</para>
+	  </listitem>
+	</itemizedlist>
+      </sect3>
+
+      <sect3>
+	<title><acronym>MIDI</acronym> on <productname>Windows</productname></title>
+	<para>
+The <filename>MKPerformSndMIDI_portaudio</filename> framework does not
+currently support <acronym>MIDI</acronym>. An earlier
+<productname>Windows</productname> only framework
+<filename>MKPerformSndMIDI_Win32</filename> which implements
+<acronym>MIDI</acronym> with the core layer of
+<productname>DirectMusic</productname> is available.  The downloadable
+sound (<acronym>DLS</acronym>) capability of
 <productname>DirectMusic</productname> (providing a
 <acronym>MIDI</acronym> oriented sample playback
 <acronym>API</acronym> to <acronym>PC</acronym> soundcards) is also
 supported when playing to a <productname>DirectMusic</productname>
 software synthesiser. There is minimal but usable support for
 downloading new <acronym>DLS</acronym> instruments to the software
-synthesiser.
+synthesiser. Eventually this functionality will be managed by <ulink
+url="http://www-2.cs.cmu.edu/~music/portmusic/">portmusic</ulink>
+cross platform in
+<filename>MKPerformSndMIDI_portaudio.framework</filename>
 </para>
-
-      <para>
-While the future of Apple's
-<productname>OpenStep/YellowBox/Cocoa/WebObjects</productname> (!)
-for <productname>Windows</productname> support is far from clear, the
-combination of Gnu technologies of <ulink
-url="http://www.gnustep.org">GNUstep</ulink> and <ulink
-url="http://www.cygnus.com/cygwin">cygwin</ulink> have ensured that
-Apple's corporate interests don't prevent deploying applications on
-the platform. Currently the <productname>AppKit</productname> support
-on <productname>Windows</productname> is incomplete, so it is unlikely
-that <acronym>GUI</acronym> applications will run. As
-<productname>GNUstep</productname> on
-<productname>Windows</productname> matures,
-<productname>MusicKit</productname> applications will compile and run
-correctly.
-</para>
+      </sect3>
     </sect2>
   </sect1>
 
@@ -978,6 +1137,42 @@ application, the version tuple encoded in the framework is of the form
 be installed over the top of the old same numbered framework with the
 knowledge it will continue to work.
 </para>
+
+    <sect2>
+      <title><acronym>CVS</acronym> Branch Structure</title>
+
+      <para>
+Different software projects adopt different procedures for dealing
+with <emphasis>branching</emphasis> of the code base. The MusicKit
+project currently has few branches, however this is an attempt to
+define a policy for developers to conform to and to therefore be able
+to use when retrieving from the CVS tree.  For example, some projects
+use branches for the &ldquo;bleeding-edge&rdquo; or experimental
+development, with the &ldquo;head&rdquo; or &ldquo;trunk&rdquo; of the
+code tree being stable. Positive experiments are then merged back into
+the head of the main branch of the tree.
+</para>
+      <para>
+The head of the MusicKit can be considered unstable, but should be
+considered to represent
+a concensus of development strategies. As explained above, any
+diverging approaches or experiments will be handled in
+sub-branch. Likewise, any patches to an existing release other than
+next impending release will be found in a sub-branch. 
+</para>
+      <para>
+This can be counter intuitive. For example, when 5.4.1 is the most
+recent patch, it is found at the head of the tree. If however,
+eventually 5.5.0 was released, and then a patch needed to be made to
+5.4.1, to be named 5.4.2, this would need to be made in a sub-branch
+at 5.4.1. In practice, the amount of branching has proven to be nearly
+zero. If indeed it starts to become necessary to simultaneously
+support an existing release and an developmental release, this will
+probably be at the release of a new version (i.e 5.5.0) and we can
+properly branch there. Comments are welcome!
+</para>
+    </sect2>
+
   </sect1>
 
   <sect1 id="license">
@@ -1016,25 +1211,33 @@ In regard of version V&mkvertuple;
 documentation beyond V4.2), the current license follows.
 </para>
 
-<para>The <productname>MusicKit</productname> software is distributed free of charge.  Copyright
-remains with the owner indicated in each file and copyright of the
-modifications to each file remains with the contributor of the
-changes. The software in this distribution may be freely incorporated
-into any commercial application, any academic application, and public
-domain application or any musical composition so long as the
-attribution of authorship of the software is retained in the original
-source and documentation files.</para>
+      <para>
+The <productname>MusicKit</productname> software is distributed free
+of charge.  Copyright remains with the owner indicated in each file
+and copyright of the modifications to each file remains with the
+contributor of the changes. The software in this distribution may be
+freely incorporated into any commercial application, any academic
+application, and public domain application or any musical composition
+so long as the attribution of authorship of the software is retained
+in the original source and documentation files.
+</para>
 
-<para>By sharing your contributions back to the public domain, this
-helps others as well as yourself. It is not intended that your changes
-be enforced to be returned to the public domain, but it is hoped that
+      <para>
+By sharing your contributions back to the public domain, this helps
+others as well as yourself. It is not intended that your changes be
+enforced to be returned to the public domain, but it is hoped that
 common sense will prevail and that everyone will realise that reward
-does not mean avoiding openness.</para>
+does not mean avoiding openness.
+</para>
 
-<para>We (the contributors to the <productname>MusicKit</productname>) would appreciate you
-acknowledging the use of the <productname>MusicKit</productname> in any academic paper, music
+      <para>
+We (the contributors to the <productname>MusicKit</productname>) would
+appreciate you acknowledging the use of the
+<productname>MusicKit</productname> in any academic paper, music
 program notes and application documentation that use the
-<productname>MusicKit</productname> or <productname>SndKit</productname>. </para>
+<productname>MusicKit</productname> or
+<productname>SndKit</productname>. 
+</para>
     </sect2>
   </sect1>
 
@@ -1145,6 +1348,7 @@ The source files consist of:
 	      <listitem>
 		<para>
 The source to <filename>MusicKit</filename>,
+<filename>SndKit</filename>,
 <filename>MKDSP</filename>, <filename>MKPerformSndMIDI</filename>,
 <filename>MKUnitGenerators</filename> and
 <filename>MKSynthPatches</filename> frameworks and all utilites,
@@ -1156,17 +1360,6 @@ located at the <ulink url="&mkdownload;">sourceforge site</ulink>
 for regression testing.
               </para>
 	      </listitem>
-	    </varlistentry>
-	    <varlistentry>
-	      <term>
-              <ulink url="&mkdownload;/SndKit-&sndvertuple;.s.tar.gz?download">SndKit-&sndvertuple;.s.tar.gz</ulink>
-            </term>
-	      <listitem>
-		<para>
-                The version of the <productname>SndKit</productname>
-                which matches the <productname>MusicKit</productname>.
-              </para>
-	    </listitem>
 	    </varlistentry>
 	    <varlistentry id=ZilogDriverSource>
 	      <term>
@@ -1227,6 +1420,41 @@ class=directory>/usr/local/lib/pkgconfig</filename>. See
         </note>
 
 	<variablelist>
+	  <varlistentry id=oggvorbis>
+	    <term>
+            <ulink url="&oggdownload;/libogg-&oggvertuple;.tar.gz">libogg-&oggvertuple;.tar.gz</ulink>. 
+            </term>
+	    <term>
+            <ulink url="&vorbisdownload;/libvorbis-&vorbisvertuple;.tar.gz">libvorbis-&vorbisvertuple;.tar.gz</ulink>. 
+            </term>
+	    <listitem>
+	      <para>
+              The <ulink url="&oggvorbisweb;">Ogg/Vorbis</ulink> libraries
+provide patent-free <productname>Vorbis</productname>
+encoding/decoding of <acronym>PCM</acronym> audio
+to and from <productname>Ogg</productname> format bitstreams for use by
+<link linkend=libshout>libshout</link>.  Newer versions than
+&oggvertuple; for <productname>Ogg</productname> and &vorbisvertuple;
+for <productname>Vorbis</productname> will probably just work.
+              </para>
+              <para>
+Install the library using:
+                <informalexample>
+                  <screen>
+tar xzvf libogg-&oggvertuple;.tar.gz
+cd libogg-&oggvertuple;
+sh ./configure
+sudo make install
+cd ..
+tar xzvf libvorbis-&vorbisvertuple;.tar.gz
+cd libvorbis-&vorbisvertuple;
+sh ./configure
+sudo make install
+</screen>
+                </informalexample>
+              </para>
+	    </listitem>
+	  </varlistentry>
 	  <varlistentry id=libsndfile>
 	    <term>
             <ulink url="&libsndfiledownload;/libsndfile-&libsndfilevertuple;.tar.gz">libsndfile-&libsndfilevertuple;.tar.gz</ulink>. 
@@ -1307,41 +1535,6 @@ sudo make install
               </para>
 	    </listitem>
 	  </varlistentry>
-	  <varlistentry id=oggvorbis>
-	    <term>
-            <ulink url="&oggdownload;/libogg-&oggvertuple;.tar.gz">libogg-&oggvertuple;.tar.gz</ulink>. 
-            </term>
-	    <term>
-            <ulink url="&vorbisdownload;/libvorbis-&vorbisvertuple;.tar.gz">libvorbis-&vorbisvertuple;.tar.gz</ulink>. 
-            </term>
-	    <listitem>
-	      <para>
-              The <ulink url="&oggvorbisweb;">Ogg/Vorbis</ulink> libraries
-provide patent-free <productname>Vorbis</productname>
-encoding/decoding of <acronym>PCM</acronym> audio
-to and from <productname>Ogg</productname> format bitstreams for use by
-<link linkend=libshout>libshout</link>.  Newer versions than
-&oggvertuple; for <productname>Ogg</productname> and &vorbisvertuple;
-for <productname>Vorbis</productname> will probably just work.
-              </para>
-              <para>
-Install the library using:
-                <informalexample>
-                  <screen>
-tar xzvf libogg-&oggvertuple;.tar.gz
-cd libogg-&oggvertuple;
-sh ./configure
-sudo make install
-cd ..
-tar xzvf libvorbis-&vorbisvertuple;.tar.gz
-cd libvorbis-&vorbisvertuple;
-sh ./configure
-sudo make install
-</screen>
-                </informalexample>
-              </para>
-	    </listitem>
-	  </varlistentry>
 	  <varlistentry id=libshout>
 	    <term>
             <ulink url="&libshoutdownload;/libshout-&libshoutvertuple;.tar.gz">libshout-&libshoutvertuple;.tar.gz</ulink>. 
@@ -1366,6 +1559,57 @@ sudo make install
 </screen>
                 </informalexample>
               </para>
+	    </listitem>
+	  </varlistentry>
+	  <varlistentry id=portaudio>
+	    <term>
+            <ulink url="&portaudiodownload;/portaudio_v&portaudiovertuple;.zip">portaudio_v&portaudiovertuple;.zip</ulink>. 
+            </term>
+	    <listitem>
+	      <para>
+Portaudio needs to be installed on <productname>Windows</productname>,
+<productname>Linux</productname> and other Unixen except for
+<productname>MacOS X</productname>,
+<productname>OpenStep</productname>/<productname>NeXTStep</productname>
+systems.
+</para>
+	      <para>
+At the moment, the <acronym>CVS</acronym> repository version is the
+only version that works on <productname>MinGW</productname> and so
+<filename>MKPerformSndMIDI_portaudio</filename> uses the upcoming
+V&portaudiovertuple; release.  Using <acronym>CVS</acronym>, checkout
+the portaudio version &portaudiovertuple; development branch. On
+<productname>Linux</productname>/<productname><acronym>BSD</acronym></productname>/<productname><acronym>SGI</acronym></productname>
+etc do:
+</para>
+	      <para>
+	      <informalexample>
+		  <screen>
+cvs -d:pserver:anonymous@www.portaudio.com:/home/cvs co -r v19-devel portaudio
+cd portaudio
+./configure --libdir=$GNUSTEP_SYSTEM_ROOT/Libraries
+ --includedir=$GNUSTEP_SYSTEM_ROOT/Local/Libraries/Headers
+sudo make install
+</screen>
+		</informalexample>
+</para>
+
+	      <para>
+On <productname>Windows XP</productname> do:
+
+	      <informalexample>
+		  <screen>
+cvs -d:pserver:anonymous@www.portaudio.com:/home/cvs co -r v19-devel portaudio
+cd portaudio
+./configure --libdir=$GNUSTEP_SYSTEM_ROOT/Libraries
+ --includedir=$GNUSTEP_SYSTEM_ROOT/Local/Libraries/Headers
+--with-winapi=directx
+--with-dxdir=/c/DXSDK
+sudo make install
+</screen>
+		</informalexample>
+</para>
+
 	    </listitem>
 	  </varlistentry>
 	</variablelist>
@@ -1852,8 +2096,10 @@ Compile and install
 <link linkend=oggvorbis><command>libogg</command></link>,
 <link linkend=oggvorbis><command>libvorbis</command></link>,
 <link linkend=libsndfile><command>libsndfile</command></link>,
-<link linkend=lame><command>lame</command></link> and <link
-linkend=libshout><command>libshout</command></link> libraries into
+<link linkend=lame><command>lame</command></link>,
+<link linkend=libshout><command>libshout</command></link>  and 
+<link linkend=portaudio><command>portaudio</command></link>
+libraries into
 <filename class=directory>/usr/local/lib</filename>.
 </para>
 	</listitem>
@@ -1873,8 +2119,7 @@ Compile and install the <filename>SndKit</filename> framework.
 Compile and install <filename>MKDSP_56k</filename> framework if on
 <productname>OpenStep</productname>, or
 <filename>MKDSP_Native</filename> framework if on
-<productname>Windows</productname>, <productname>MacOS X-Server
-V1.2</productname> or <productname>MacOS X</productname>.
+any other operating system.
 </para>
 	</listitem>
 	<listitem>
@@ -1901,6 +2146,12 @@ Compile and install applications and examples located in the
 directories <filename
 class=directory>Applications</filename> and <filename
 class=directory>Examples</filename> respectively.
+Depending on whether you are able to build and install
+<filename>MKUnitGenerators</filename> and
+<filename>MKSynthPatches</filename> in the step above on your platform
+will determine which applications and examples will build for you. The
+application <application>ScorePlayer</application> and the command
+<command>playsnd</command> will build without those frameworks.
 </para>
 	</listitem>
         <listitem>
