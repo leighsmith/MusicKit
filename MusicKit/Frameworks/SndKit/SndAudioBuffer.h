@@ -185,12 +185,19 @@
 - (SndSoundStruct*) format;
 
 /*!
-    @method   zero
+    @method     zero
     @abstract   Sets data to zero
     @discussion
     @result     self
 */
 - zero;
+
+/*!
+    @method     zeroForeignBuffer
+    @abstract   Sets buffer data to zero, regardless of whether the buffer is owned by the SndAudioBuffer or not.
+    @discussion Same as zero, but skips a buffer ownership test.
+    @result     self
+*/
 - (void) zeroForeignBuffer;
 
 /*!

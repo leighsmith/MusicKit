@@ -21,6 +21,12 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
+ 
+#import <AppKit/NSView.h>
+
+@class Snd;
+ 
+ 
 /*
 	SndMeter.h
 	Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
@@ -53,10 +59,6 @@ and <b>maxValue</b>. All SndMeter amplitude levels are normalized to
 fit between 0.0 (inaudible) and 1.0 (maximum amplitude).
 */
 
-#import <AppKit/NSView.h>
-
-@class Snd;
-
 @interface SndMeter:NSView
 {
     id sound;
@@ -70,10 +72,10 @@ fit between 0.0 (inaudible) and 1.0 (maximum amplitude).
     NSColor *foregroundColor;
     NSColor *peakColor;
     struct {
-	unsigned int running:1;
-	unsigned int bezeled:1;
-	unsigned int shouldStop:1;
-	unsigned int _reservedFlags:13;
+      unsigned int running:1;
+      unsigned int bezeled:1;
+      unsigned int shouldStop:1;
+      unsigned int _reservedFlags:13;
     } smFlags;
     void *_timedEntry;
     int _valTime;
@@ -81,7 +83,6 @@ fit between 0.0 (inaudible) and 1.0 (maximum amplitude).
     float _valOneAgo;
     float _valTwoAgo;
 }
-
 
 /*!
   @method initWithFrame:

@@ -115,6 +115,11 @@
 */
 - (SndAudioProcessorChain*) audioProcessorChain;
 
+/*!
+    @method resetTime:
+    @abstract Resets the mixer's sense of time, and pro
+    @param originTimeInSeconds
+*/
 - (void) resetTime: (double) originTimeInSeconds;
 
 @end

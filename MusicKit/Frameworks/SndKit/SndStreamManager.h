@@ -175,8 +175,18 @@
 */
 - (BOOL) isActive;
 
+/*!
+    @method samplingrate
+    @result The streaming sampling rate.
+*/
 - (double) samplingRate;
 
+/*!
+    @method   resetTime:
+    @abstract Resets the global stream time to originTimeInSeconds
+    @param originTimeInSeconds New origin time, in seconds.
+    @discussion The new origin time is propagated to the mixer, and thus to the stream clients.
+*/
 - (void) resetTime: (double) originTimeInSeconds;
 
 @end

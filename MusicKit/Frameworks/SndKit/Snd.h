@@ -393,8 +393,14 @@ architecture, as described in the <b>SndStruct</b> header.
 */
 - (SndPerformance *) playInFuture: (double) inSeconds beginSample: (int) begin sampleCount: (int) count;
 
+/*!
+    @method   playAtTimeInSeconds:withDurationInSeconds:
+    @abstract Begin playback at a cerain absolute stream time, for a certain duration.
+    @param    t Start time in seconds
+    @param    d Duration in seconds
+    @result   Returns the performance that represents the sound playing.
+*/
 - (SndPerformance *) playAtTimeInSeconds: (double) t withDurationInSeconds: (double) d;
-
 
 /*!
     @method play:beginSample:sampleCount:

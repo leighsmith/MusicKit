@@ -57,21 +57,9 @@
     SndAudioBuffer  *synthOutputBuffer;
 /*! @var             synthInputBuffer */
     SndAudioBuffer  *synthInputBuffer;
-
-/*
-    NSMutableArray  *pendingOutputBuffers;
-    NSMutableArray  *processedOutputBuffers;
-    NSConditionLock *pendingOutputBuffersLock;
-    NSConditionLock *processedOutputBuffersLock;
-    int              numOutputBuffers;
-
-    NSMutableArray  *pendingInputBuffers;
-    NSMutableArray  *processedInputBuffers;
-    NSConditionLock *pendingInputBuffersLock;
-    NSConditionLock *processedInputBuffersLock;
-    int              numInputBuffers;
-*/
+/*! @var                 outputQueue */
     SndAudioBufferQueue *outputQueue;
+/*! @var                 inputQueue */
     SndAudioBufferQueue *inputQueue;
     
 /*! @var       synthThreadLock */
@@ -224,10 +212,15 @@
 
     @result     Returns the synthesis thread time, in seconds.
 */
+- (double) synthesisTime;
 
+/*!
+    @method resetTime:
+    @abstract Sets the clients sense of streamTime. Internal clientNowTime is recalculated relative to the new Time.
+    @param originTimeInSeconds New now time.
+*/
 - (void) resetTime: (double) originTimeInSeconds;
 
-- (double) synthesisTime;
 /*!
     @method     streamTime
     @abstract   Return the global (the MANAGER'S) current time.
@@ -393,14 +386,59 @@
 */
 - (id) delegate;
 
+/*!
+    @method    inputBufferCount
+    @result    Returns the number of buffers in the input queue.
+*/
 - (int) inputBufferCount;
+
+/*!
+    @method    outputBufferCount
+    @result    Returns the number of buffers in the output queue.
+*/
 - (int) outputBufferCount;
+
+/*!
+    @method   setInputBufferCount: 
+    @abstract Sets the input buffer queue length (only when client is NOT active)  
+    @param    n Number of buffers
+    @result   TRUE if all is well, FALSE if input buffer length could not be set. 
+*/
 - (BOOL) setInputBufferCount: (int) n;
+
+/*!
+    @method   setOutputBufferCount:   
+    @abstract Sets the output buffer queue length (only when client is NOT active)  
+    @param    n Number of buffers
+    @result   TRUE if all is well, FALSE if output buffer length could not be set.  
+*/
 - (BOOL) setOutputBufferCount: (int) n;
 
+
+/*!
+    @method    outputLatencyInSeconds
+    @abstract  Calculates the stream latency of the client 
+    @discussion Number of buffers in queue times buffer duration.
+    @result    Latency, in seconds. 
+*/
 - (double) outputLatencyInSeconds;
 
+
+/*!
+    @method    clientName
+    @abstract  Accessor to the client name 
+    @result    The NSString with the client's name 
+*/
 - (NSString*) clientName;
+
+/*!
+    @method    setClientName:
+    @abstract  Sets the client's name
+    @param     name The client's name.
+    @discussion Useful identifying clients, especially when debugging - several SndStreamClient 
+                warning and error messages will display the name of the client reporting the error.
+    @result    self 
+*/
 - setClientName: (NSString*) name;
 
 @end
