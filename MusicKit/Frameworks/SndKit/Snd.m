@@ -281,16 +281,7 @@ static int ioTags = 1000;
 // return the file extensions supported by sox.
 + (NSArray *) soundFileExtensions
 {
-    NSMutableArray *fileTypes = [NSMutableArray array];
-    int formatIndex, aliasIndex;
-    
-    for (formatIndex = 0; st_formats[formatIndex].names != NULL; formatIndex++) {
-        // include all the alternative namings.
-	for(aliasIndex = 0; st_formats[formatIndex].names[aliasIndex] != NULL; aliasIndex++) {
-            [fileTypes addObject: [NSString stringWithCString: st_formats[formatIndex].names[aliasIndex]]];
-        }
-    }
-    return [NSArray arrayWithArray: fileTypes]; // make it immutable
+    return SndFileExtensions();
 }
 
 + (BOOL) isPathForSoundFile: (NSString *) path
@@ -975,7 +966,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular)
         return SND_ERR_CANNOT_OPEN;
 
-    err = SndReadSoundfile([filename fileSystemRepresentation], &soundStruct);
+    err = SndReadSoundfile(filename, &soundStruct);
 
     // SndPrintStruct(soundStruct);
     if (!err) {
