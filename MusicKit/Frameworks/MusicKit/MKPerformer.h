@@ -77,6 +77,9 @@
 */
 /*
   $Log$
+  Revision 1.9  2001/09/07 00:13:42  leighsmith
+  Reformatted discussion
+
   Revision 1.8  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -103,52 +106,57 @@
   @class MKPerformer
   @discussion
 
-MKPerformer is an abstract class that defines a mechanism for performing MKNotes
-during a MusicKit performance.  Each subclass of MKPerformer implements the
-<b>perform</b> method to define how it obtains and performs MKNotes.
+MKPerformer is an abstract class that defines a mechanism for
+performing MKNotes during a MusicKit performance.  Each subclass of
+MKPerformer implements the <b>perform</b> method to define how it
+obtains and performs MKNotes.
 
-During a performance, a MKPerformer receives a series of <b>perform</b>
-messages.  In its implementation of <b>perform</b>, a MKPerformer subclass must
-set the <b>nextPerform</b> variable.  <b>nextPerform</b> indicates the number of
-beats to wait before the next <b>perform</b> message is sent.  The messages are
-sent by the MKPerformer's MKConductor.  Every MKPerformer is managed by a
+During a performance, a MKPerformer receives a series of
+<b>perform</b> messages.  In its implementation of <b>perform</b>, a
+MKPerformer subclass must set the <b>nextPerform</b> variable.
+<b>nextPerform</b> indicates the number of beats to wait before the
+next <b>perform</b> message is sent.  The messages are sent by the
+MKPerformer's MKConductor.  Every MKPerformer is managed by a
 MKConductor; unless you set its MKConductor explicitly, through the
 <b>setConductor:</b> method, a MKPerformer is managed by the the
 defaultConductor.
 
-A MKPerformer contains a NSArray of MKNoteSenders, objects that send MKNotes (to
-MKNoteReceivers) during a performance.  MKPerformer subclasses should implement
-the <b>init</b> method to create and add some number of MKNoteSenders to a newly
-created instance.  As part of its <b>perform</b> method, a MKPerformer typically
-creates or otherwise obtains a MKNote (for example, by reading it from a MKPart
-or a scorefile) and sends it by invoking MKNoteSender's <b>sendNote:</b>
-method.
+A MKPerformer contains a NSArray of MKNoteSenders, objects that send
+MKNotes (to MKNoteReceivers) during a performance.  MKPerformer
+subclasses should implement the <b>init</b> method to create and add
+some number of MKNoteSenders to a newly created instance.  As part of
+its <b>perform</b> method, a MKPerformer typically creates or
+otherwise obtains a MKNote (for example, by reading it from a MKPart
+or a scorefile) and sends it by invoking MKNoteSender's
+<b>sendNote:</b> method.
 
 To use a MKPerformer in a performance, you must first send it the
-<b>activate</b> message.  <b>activate</b> invokes the <b>activateSelf</b> method
-and then schedules the first <b>perform</b> message request with the
-MKConductor.  <b>activateSelf</b> can be overridden in a subclass to provide
-further initialization of the MKPerformer.  The performance begins when the
-MKConductor class receives the <b>startPerformance</b> message.  It's legal to
-activate a MKPerformer after the performance has started.
+<b>activate</b> message.  <b>activate</b> invokes the
+<b>activateSelf</b> method and then schedules the first <b>perform</b>
+message request with the MKConductor.  <b>activateSelf</b> can be
+overridden in a subclass to provide further initialization of the
+MKPerformer.  The performance begins when the MKConductor class
+receives the <b>startPerformance</b> message.  It's legal to activate
+a MKPerformer after the performance has started.
 
 Sending the <b>deactivate</b> message removes the MKPerformer from the
-performance and invokes the <b>deactivateSelf</b> method.  This method can be
-overridden to implement any necessary finalization, such as freeing contained
-objects.
+performance and invokes the <b>deactivateSelf</b> method.  This method
+can be overridden to implement any necessary finalization, such as
+freeing contained objects.
 
 During a performance, a MKPerformer can be stopped and restarted by sending it
 the <b>pause</b> and <b>resume</b> messages, respectively.  <b>perform</b>
 messages destined for a paused MKPerformer are delayed until the object is
 resumed.
 
-You can shift a MKPerformer's performance timing by setting its <b>timeShift</b>
-variable.  <b>timeShift</b>, measured in beats, is added to the initial setting
-of <b>nextPerform</b>.  If the value of <b>timeShift</b> is negative, the
-MKPerformer's MKNotes are sent earlier than otherwise expected; this is
-particularly useful for a MKPerformer that's performing MKNotes starting from
-the middle of a MKPart or MKScore.  A positive <b>timeShift</b> delays the
-performance of a MKNote.
+You can shift a MKPerformer's performance timing by setting its
+<b>timeShift</b> variable.  <b>timeShift</b>, measured in beats, is
+added to the initial setting of <b>nextPerform</b>.  If the value of
+<b>timeShift</b> is negative, the MKPerformer's MKNotes are sent
+earlier than otherwise expected; this is particularly useful for a
+MKPerformer that's performing MKNotes starting from the middle of a
+MKPart or MKScore.  A positive <b>timeShift</b> delays the performance
+of a MKNote.
 
 You can also set a MKPerformer's maximum duration.  A MKPerformer is
 automatically deactivated if its performance extends beyond <b>duration</b>
@@ -165,10 +173,11 @@ MK_paused	The MKPerformer is activated but currently paused.
 Some messages can only be sent to an inactive (MK_inactive) MKPerformer.  A
 MKPerformer's status can be queried with the <b>status</b> message.
 
-If you subclass MKPerformer, some care is required to make sure that it
-synchronizes correctly to MIDI time code.  To make your own MKPerformer subclass
-synchronize, you need to support a simple informal protocol called <b>MKPerformer Time Code
-Protocol</b>, which is described in the next section.
+If you subclass MKPerformer, some care is required to make sure that
+it synchronizes correctly to MIDI time code.  To make your own
+MKPerformer subclass synchronize, you need to support a simple
+informal protocol called <b>MKPerformer Time Code Protocol</b>, which
+is described in the next section.
 
 
 <h2>MKPerformer Time Code Protocol</h2>
@@ -223,7 +232,7 @@ the MusicKit MKPartPerformer:
 }
 </tt>
 
-See also:  MKConductor, MKNoteSender
+See also: MKConductor, MKNoteSender 
 */
 #ifndef __MK_Performer_H___
 #define __MK_Performer_H___
