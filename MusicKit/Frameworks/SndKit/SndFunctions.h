@@ -42,9 +42,10 @@
 /*!
   @header SndFunctions
   @abstract A library of functions originally intended to be compatible with NeXTs now defunct SoundKit.
+  @discussion Nowdays, compatibility with NeXT SoundKit functions is not enforced, only the OO class API
+	      aims for compatibility to the SoundKit.
  */
 
-//#define USE_MACH_MEMORY_ALLOCATION
 #import "SndKitDefines.h"
 #import "SndFormat.h"
 
@@ -60,6 +61,8 @@
 
 #import "SndError.h"
 #import "SndEndianFunctions.h"
+
+#import <sndfile.h> /* for libsndfile SNDFILE declaration */
 
 /*!
   @function SndFormatDescription
@@ -234,6 +237,10 @@ SNDKIT_API int SndReadHeader(NSString *path,
 SNDKIT_API int SndReadSoundfile(NSString *path, SndSoundStruct **sound);
 
 SNDKIT_API int SndReadSoundfileRange(NSString *path, SndSoundStruct **sound, int startFrame, int frameCount, BOOL bReadData);
+
+SNDKIT_API int SndDataFormatToSndFileEncoding(const char *extension, int sndFormatCode);
+
+SNDKIT_API int SndWriteSampleData(SNDFILE *sfp, void *soundData, SndFormat soundDataFormat);
 
 /*!
   @function SndSwapBigEndianSoundToHost

@@ -39,15 +39,11 @@
 
 #import "SndFunctions.h"
 #import "SndMuLaw.h"
-#import <Foundation/Foundation.h>
 #import "Snd.h"
-
-#import <stdio.h>
-#import <sndfile.h>
 
 @implementation Snd(FileIO)
 
-static int SndDataFormatToSndFileEncoding(const char *extension, int sndFormatCode)
+int SndDataFormatToSndFileEncoding(const char *extension, int sndFormatCode)
 {
     int sndfileFormat;
     int formatIndex, formatCount;
@@ -147,6 +143,12 @@ static int SndDataFormatToSndFileEncoding(const char *extension, int sndFormatCo
 ////////////////////////////////////////////////////////////////////////////////
 // SndReadHeader
 ////////////////////////////////////////////////////////////////////////////////
+
+// TODO just return a SndFormat 
+// - (SndFormat) soundFormatOfFilename: (NSString *) path
+// {
+// SndFormat headerFormat = SndReadHeader(sfp);
+// }
 
 int SndReadHeader(NSString *path, SndSoundStruct **sound, const char *fileTypeStr)
 {
@@ -289,6 +291,7 @@ int SndReadRange(SNDFILE *sfp, SndSoundStruct **sound, SF_INFO *sfinfo, int star
     return SND_ERR_NONE;
 }
 
+// - (int) readSoundfile: filename range: 0, -1];
 int SndReadSoundfileRange(NSString *path, SndSoundStruct **sound, int startFrame, int frameCount, BOOL bReadData)
 {
     int errorReading, errorClosing;
@@ -351,6 +354,8 @@ int SndReadSoundfile(NSString *path, SndSoundStruct **sound)
         return SND_ERR_CANNOT_OPEN;
     
     // TODO this needs to retrieve loop pointers and an info NSString.
+    //   [self readSoundfile: filename range: 0, -1];
+
     err = SndReadSoundfile(filename, &soundStruct);
     
     // NSLog(@"%@\n", SndStructDescription(soundStruct));
