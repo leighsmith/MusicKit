@@ -53,6 +53,9 @@
 */
 /*
   $Log$
+  Revision 1.13  2002/04/15 14:18:17  sbrandon
+  removed redundant +new method
+
   Revision 1.12  2001/09/08 21:55:34  leighsmith
   Leigh learns lesson that putting comment characters into CVS entries is not a good idea
 
@@ -386,9 +389,6 @@ their assumption of the role of MKInstrument.
     See write:. 
 */
 - (id)initWithCoder:(NSCoder *)aDecoder;
-
-/* Obsolete */
-+ new; 
 
 @end
 

@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2002/04/15 14:18:17  sbrandon
+  removed redundant +new method
+
   Revision 1.12  2002/01/29 16:24:16  sbrandon
   removed redundant comments relating to NeXTSTEP-isms
 
@@ -151,16 +154,6 @@ Modification history:
     return;
 }
 
-+new
-  /* Create a new instance and sends [self init]. */
-{
-    self = [self allocWithZone:NSDefaultMallocZone()];
-    [self init];
-//    return [self autorelease]; // should new return autoreleased...probably should be renamed noteReceiver
-    return self;
-}
-
-
 -init 
 {
     [super init];
@@ -171,9 +164,8 @@ Modification history:
 
 - (void)dealloc
   /* TYPE: Creating; Frees the receiver.
-   * Frees the receiver. Illegal while the receiver is sending. Returns nil
+   * Frees the receiver. Illegal while the receiver is sending.
    * Also removes the name, if any, from the name table.
-   * if the receiver is freed.
    */
 {
     [self disconnect];
