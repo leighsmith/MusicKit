@@ -38,7 +38,7 @@
     [super init];
     if (audioProcessorArray == nil)
         audioProcessorArray = [[NSMutableArray arrayWithCapacity: 2] retain];
-    bBypass = FALSE;
+    bypassProcessing = FALSE;
     nowTime = 0.0;
     postFader = [[SndAudioFader alloc] init];
     [postFader setActive: YES]; // By default, our post effects fader is active.
@@ -53,16 +53,45 @@
 - (void) dealloc;
 {
     [audioProcessorArray release];
-    [tempBuffer release];
+    [processorOutputBuffer release];
     [postFader release];
     [super dealloc];
 }
 
+- copyWithZone: (NSZone *) zone
+{
+    SndAudioProcessorChain *newSAPC = [[[self class] allocWithZone: zone] init];
+    unsigned int processorIndex;
+    
+    // Do deep copy of all elements of the array
+    for(processorIndex = 0; processorIndex < [audioProcessorArray count]; processorIndex++)
+	[newSAPC->audioProcessorArray addObject: [[audioProcessorArray objectAtIndex: processorIndex] copy]];
+    [newSAPC->postFader release];
+    newSAPC->postFader = [postFader copy];
+
+    newSAPC->nowTime = [self nowTime];
+    [newSAPC setBypass: [self isBypassingFX]];
+    
+    return newSAPC; // don't release, copy is supposed to retain.
+}
+
+- writeScorefileStream: (NSMutableData *) aStream
+{
+    unsigned int audioProcessorIndex;
+    
+    for(audioProcessorIndex = 0; audioProcessorIndex < [audioProcessorArray count]; audioProcessorIndex++) {
+	SndAudioProcessor *audioProcessor = [audioProcessorArray objectAtIndex: audioProcessorIndex];
+	NSString *processorName = [NSString stringWithFormat: @"%@%s", [audioProcessor name], audioProcessorIndex == [audioProcessorArray count] - 1 ? "" : ","];
+
+	[aStream appendData: [processorName dataUsingEncoding: NSNEXTSTEPStringEncoding]];
+    }
+    return self;
+}
 
 - (NSString *) description
 {
     return [NSString stringWithFormat: @"%@ audioProcessors: %@, postFader %@ %@\n", 
-	[super description], audioProcessorArray, postFader, bBypass ? @"(bypassed)" : @"(active)"];
+	[super description], audioProcessorArray, postFader, bypassProcessing ? @"(bypassed)" : @"(active)"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,7 +100,7 @@
 
 - bypassProcessors: (BOOL) b
 {
-    bBypass = b;
+    bypassProcessing = b;
     return self;
 }
 
@@ -145,33 +174,49 @@
 - processBuffer: (SndAudioBuffer *) buff forTime: (double) t
 {
     int audioProcessorIndex, audioProcessorCount = [audioProcessorArray count];
-    if (bBypass)
+    if (bypassProcessing)
         return self;
 
     nowTime = t;
-    // TODO: make sure temp buffer is in same format and size as buff too.
-
-    if (tempBuffer == nil) {
-        tempBuffer = [[SndAudioBuffer alloc] initWithBuffer: buff];
+    
+    // make sure temp buffer is in same format and size as buff too.
+    if (processorOutputBuffer == nil) {
+        processorOutputBuffer = [[SndAudioBuffer alloc] initWithBuffer: buff];
     }
+    else if(![processorOutputBuffer hasSameFormatAsBuffer: buff]) {
+	[processorOutputBuffer release];
+	processorOutputBuffer = [[SndAudioBuffer alloc] initWithBuffer: buff];
+    }
+
+    // TODO inputBuffer = buff; outputBuffer = processorOutputBuffer;
     for (audioProcessorIndex = 0; audioProcessorIndex < audioProcessorCount; audioProcessorIndex++) {
 	SndAudioProcessor *proc = [audioProcessorArray objectAtIndex: audioProcessorIndex];
+	
 	if ([proc isActive]) {
+	    // TODO [proc processReplacingInputBuffer: inputBuffer outputBuffer: outputBuffer]
 	    if ([proc processReplacingInputBuffer: buff
-				     outputBuffer: tempBuffer]) {
+				     outputBuffer: processorOutputBuffer]) {
+		// TODO rather than copying between each stage of the chain, just swap input and output buffers
+		// tempBuffer = (inputBuffer == buff) ? secondOutputBuffer : inputBuffer
+		// inputBuffer = outputBuffer
+		// outputBuffer = tempBuffer
+		//
 		// NSLog(@"buff %@\n", buff);
-		[buff copyData: tempBuffer];
+		[buff copyDataFromBuffer: processorOutputBuffer];
 		// NSLog(@"after buff %@\n", buff);
 	    }
 	}
     }
     if ([postFader isActive]) {
+	// TODO [proc processReplacingInputBuffer: inputBuffer outputBuffer: outputBuffer]
 	if ([postFader processReplacingInputBuffer: buff
-				      outputBuffer: tempBuffer]) {
-	    [buff copyData: tempBuffer];
+				      outputBuffer: processorOutputBuffer]) {
+	    [buff copyDataFromBuffer: processorOutputBuffer];
 	}
 	// NSLog(@"fader after buff %@\n", buff);
     }
+    // TODO Do a final copy, could make this conditional on at least one processor in the chain needing to replace.
+    // TODO [buff copyDataFromBuffer: outputBuffer];
     return self;
 }
 
@@ -199,7 +244,7 @@
 
 - (BOOL) isBypassingFX
 {
-  return bBypass;
+  return bypassProcessing;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -208,7 +253,7 @@
 
 - (void) setBypass: (BOOL) b
 {
-  bBypass = b;
+  bypassProcessing = b;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
