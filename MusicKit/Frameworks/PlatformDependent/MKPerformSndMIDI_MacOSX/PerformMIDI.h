@@ -38,6 +38,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2001/05/14 21:03:09  leighsmith
+  Replaced port_t with correct MKMDReplyPort definition
+
   Revision 1.14  2001/04/20 23:46:28  leighsmith
   Cleaned up parameters, results and abstracts
 
@@ -195,13 +198,13 @@ typedef MKMDRawEvent *MKMDRawEventPtr;
 */
 #define MKMD_SUCCESS KERN_SUCCESS  // use this until all the MKMidi checks have been converted to MKMD_SUCCESS.
 //#define MKMD_SUCCESS 0
-#define MKMD_ERROR_BUSY 100
-#define MKMD_ERROR_NOT_OWNER 101
-#define MKMD_ERROR_QUEUE_FULL 102
-#define MKMD_ERROR_BAD_MODE 103
-#define MKMD_ERROR_UNIT_UNAVAILABLE 104
-#define MKMD_ERROR_ILLEGAL_OPERATION 105
-#define MKMD_ERROR_UNKNOWN_ERROR 106
+#define MKMD_ERROR_BUSY			100
+#define MKMD_ERROR_NOT_OWNER		101
+#define MKMD_ERROR_QUEUE_FULL		102
+#define MKMD_ERROR_BAD_MODE		103
+#define MKMD_ERROR_UNIT_UNAVAILABLE	104
+#define MKMD_ERROR_ILLEGAL_OPERATION	105
+#define MKMD_ERROR_UNKNOWN_ERROR	106
 
 /* exception codes */
 #define MKMD_EXCEPTION_MTC_STOPPED 1
@@ -232,45 +235,54 @@ typedef MKMDRawEvent *MKMDRawEventPtr;
 /* Reply function types. */
 /*!
     @typedef MKMDDataReplyFunction
-    @abstract Reply function
-    @param replyPort
-    @param unit The MIDI port (cable) the data is to be sent to.
-    @param events A count terminated array of MIDI events.
-    @param count Number of MIDI events received.
+    @abstract Reply function communicating received MIDI data.
+    @param	replyPort
+                    The communications port for the reply.
+    @param	unit
+                    The MIDI port (cable) the data is to be sent to.
+    @param	events
+                    A count terminated array of MIDI events.
+    @param	count
+                    Number of MIDI events received.
 */
 typedef void (*MKMDDataReplyFunction)
-    (port_t replyPort, short unit, MKMDRawEvent *events, unsigned int count);
+    (MKMDReplyPort replyPort, short unit, MKMDRawEvent *events, unsigned int count);
 
 /*!
     @typedef MKMDAlarmReplyFunction
-    @abstract Reply function
-    @param replyPort
-    @param requestedTime The time the alarm was requested to be sent.
-    @param actualTime The time the alarm was actually sent.
+    @abstract Reply function indicating a problem occured reading MIDI data.
+    @param	replyPort
+                    The communications port for the reply.
+    @param	requestedTime
+                    The time the alarm was requested to be sent.
+    @param	actualTime
+                    The time the alarm was actually sent.
 */
 typedef void (*MKMDAlarmReplyFunction)
-    (port_t replyPort, int requestedTime, int actualTime);
+    (MKMDReplyPort replyPort, int requestedTime, int actualTime);
 
 /*!
     @typedef MKMDExceptionReplyFunction
-    @abstract Reply function
-    @param replyPort
-    @param exception The exception code.
+    @abstract Reply function indicating an exception occured reading MIDI data.
+    @param	replyPort
+                    The communications port for the reply.
+    @param	exception
+                    The exception code.
 */
 typedef void (*MKMDExceptionReplyFunction)
-    (port_t replyPort, int exception);
+    (MKMDReplyPort replyPort, int exception);
 
 /*!
     @typedef MKMDQueueReplyFunction
     @abstract Reply function called when queue has the number of MKMDRawEvents available as requested
               by <b>MKMDRequestQueueNotification</b>.
     @param	replyPort
-                    The port that received the reply. 
+                    The communications port that received the reply. 
     @param	unit
                     The MIDI port (cable) the reply is from.
 */
 typedef void (*MKMDQueueReplyFunction)
-    (port_t replyPort, short unit);
+    (MKMDReplyPort replyPort, short unit);
 
 /*!
     @typedef MKMDReplyFunctions
@@ -586,17 +598,12 @@ PERFORM_API MKMDReturn
 
 /*!
     @function       MKMDHandleReply
-
-    @abstract       Handle Reply
-    
+    @abstract       Manage the received message and  call the appropriate reply function from those supplied.
     @param          msg
-                        
-
+                        The message reply to be handled.
     @param          funcs
-
-
+                        The functions handling received data, exceptions, alarms, and queue reports.
     @result         Returns MKMD_SUCCESS if on correct completion, otherwise an error code.
-
 */
 PERFORM_API MKMDReturn 
     MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions *funcs);
