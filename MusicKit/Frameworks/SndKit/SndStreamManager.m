@@ -17,7 +17,8 @@
 #import "SndStreamMixer.h"
 #import "SndStreamManager.h"
 
-#define SNDSTREAMMANAGER_DEBUG 0
+#define SNDSTREAMMANAGER_DEBUG                  0
+#define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
 
 void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj);
 
@@ -211,8 +212,9 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
       SndAudioBuffer *outB = nil;
       inB  = (cInB  == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
       outB = (cOutB == NULL) ? nil : [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
+      
       // set our current notion of time.
-      nowTime = sampleCount / [outB samplingRate];
+      nowTime += [outB duration];
     
 #if SNDSTREAMMANAGER_DEBUG
       fprintf(stderr,"[Manager] nowTime: %.3f sampleCount: %.3f\n",nowTime,sampleCount);
@@ -222,6 +224,13 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
       if ([mixer clientCount] == 0) // Hmm, no clients hey? Shut down the Stream.
         [self stopStreaming];
 
+#if SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START 
+      {
+        float *pF =  [outB data];
+        pF[0] = 1.0f;
+        pF[1] = 1.0f;
+      }
+#endif
       [localPool release];
     }
     else
@@ -246,6 +255,18 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 {
   return active;
 }
+
+- (double) samplingRate
+{
+  return format.samplingRate;
+}
+
+- (void) resetTime: (double) originTimeInSeconds
+{
+  nowTime = originTimeInSeconds;
+  [mixer resetTime: originTimeInSeconds];
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -115,6 +115,8 @@
 */
 - (SndAudioProcessorChain*) audioProcessorChain;
 
+- (void) resetTime: (double) originTimeInSeconds;
+
 @end
 
 #endif

@@ -158,6 +158,10 @@
 */
 - (BOOL) isActive;
 
+- (double) samplingRate;
+
+- (void) resetTime: (double) originTimeInSeconds;
+
 @end
 
 #endif

@@ -173,7 +173,26 @@
 
 - (SndAudioProcessorChain*) audioProcessorChain
 {
-  return [[processorChain retain] autorelease]; // SKoT: err... why all this retain/release action???
+  return [[processorChain retain] autorelease]; 
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+////////////////////////////////////////////////////////////////////////////////
+
+- (void) resetTime: (double) originTimeInSeconds
+{
+    int clientCount, i;
+    [streamClientsLock lock];   
+    clientCount = [streamClients count];
+    if (clientCount > 0) {
+        for (i = 0; i < clientCount; i++) {
+            SndStreamClient *client = [streamClients objectAtIndex: i];
+            [client resetTime: originTimeInSeconds];
+        }
+    }
+    [streamClientsLock unlock];
+  
 }
 
 ////////////////////////////////////////////////////////////////////////////////

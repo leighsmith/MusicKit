@@ -401,9 +401,9 @@ enum {
         [self processBuffers];
 
 //        NSLog(@"SYNTH THREAD: ... done processBuffers\n");
-        if (synthOutputBuffer != nil) 
+        if (synthOutputBuffer != nil) {
           [processorChain processBuffer: synthOutputBuffer forTime: clientNowTime];
-
+        }
         clientNowTime += [synthOutputBuffer duration];
         
         if (processFinishedCallback != NULL)
@@ -421,7 +421,6 @@ enum {
           [synthInputBuffer release];    
           [processedInputBuffersLock unlockWithCondition: SC_hasData];
         }
-        
         [synthThreadLock unlock];
     }
     bDisconnect = TRUE;
@@ -649,6 +648,14 @@ enum {
   numOutputBuffers = n;
   return TRUE;
 }
+
+- (void) resetTime: (double) originTimeInSeconds
+{
+//  [synthThreadLock lock];
+  clientNowTime = originTimeInSeconds + [synthOutputBuffer duration] * [processedOutputBuffers count];
+//  [synthThreadLock unlock];
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

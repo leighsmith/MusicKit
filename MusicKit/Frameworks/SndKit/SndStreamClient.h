@@ -214,6 +214,9 @@
 
     @result     Returns the synthesis thread time, in seconds.
 */
+
+- (void) resetTime: (double) originTimeInSeconds;
+
 - (double) synthesisTime;
 /*!
     @method     streamTime
