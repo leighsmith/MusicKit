@@ -325,11 +325,11 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>SndKit V2.2.0</string>
+	<string>SndKit V2.2.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2.2.0</string>
+	<string>2.2.1</string>
 </dict>
 </plist>
 ";
