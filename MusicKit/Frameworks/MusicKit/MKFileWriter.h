@@ -47,6 +47,10 @@
 */
 /*
   $Log$
+  Revision 1.5  2002/01/29 16:11:42  sbrandon
+  removed/altered headerdoc comments about NXStreams (we use
+  NSMutableData objects now)
+
   Revision 1.4  2001/09/06 21:27:47  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -66,18 +70,18 @@ the disk.  An abstract class, MKFileWriter provides common functionality for the
 Music Kit subclasses such as MKScorefileWriter (currently the only subclass of
 MKFileWriter).
 
-A MKFileWriter is associated with a file, either by the file's name or through an
-NXStream.  If you assoicate a MKFileWriter with a file name (through the
-<b>setFile:</b> method) the object opens and closes the file for you:  The file
-is opened for writing when the object first receives the <b>realizeNote:</b>
+A MKFileWriter is associated with a file on disk or a data object, either by the file's
+name or through an NSMutableData object.  If you associate a MKFileWriter with a file
+name (through the <b>setFile:</b> method) the object opens and closes the file for you:
+The file is opened for writing when the object first receives the <b>realizeNote:</b>
 message and closed after the performance.  A MKFileWriter remembers its file name
 between performances, but the file is overwritten each time it's
 opened.
 
 The <b>setStream:</b> method sets the FileWriter's <b>stream</b> instance
-variable to the given NXStream pointer.  Opening and closing the NXStream is the
-responsibility of the application.  After each performance, <b>stream</b> is set
-to NULL.
+variable to the given NSMutableData object.  Creating and saving the NSMutableData
+object is the responsibility of the application.  After each performance, <b>stream</b>
+is set to NULL.
 
 The subclass responsibility <b>realizeNote:fromNoteReceiver:</b>, inherited from
 MKInstrument, is passed on to the MKFileWriter subclasses.  Two other methods,
@@ -210,8 +214,7 @@ returned by <b>initializeFile</b> and <b>finishFile</b> are ignored.
   @method finishFile
   @result Returns an id.
   @discussion This can be overridden by a subclass to perform post-performance
-              activities.  However, the implementation shouldn't close the
-              object's NXStream pointer.  You never send the <b>finishFile</b>
+              activities.  You never send the <b>finishFile</b>
               message directly to a MKFileWriter; it's invoked automatically after
               each performance.  The return value is ignored.
 */
