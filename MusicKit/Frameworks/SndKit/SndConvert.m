@@ -661,13 +661,14 @@ useLinearInterpolation: (BOOL) fastInterpolation
 
 	SndChangeSampleRate(fromSoundFormat, fromDataPtr, &toSoundFormat, (short *) toDataPtr, largeFilter, interpFilter, fastInterpolation);
 
-	// assign dataFormat here in case we don't do any conversion using SndChangeSampleType() below.
-	format.dataFormat = toSoundFormat.dataFormat;
-
 	// replace the old data with the new sample rate converted data.
 	[data release];
 	data = [toData retain];
-	format.sampleRate = toSampleRate;
+
+	// assign dataFormat here in case we don't do any conversion using SndChangeSampleType() below.
+	format.dataFormat = toSoundFormat.dataFormat;
+	format.sampleRate = toSoundFormat.sampleRate; // reassign it in case SndChangeSampleRate modifies the rate.
+	format.frameCount = toSoundFormat.frameCount; // The resampling will produce a different number of frames.
     }
     
     // The sample rate converted sample data is now ready for channel/format conversion
