@@ -4,7 +4,7 @@
 #import <objc/Object.h>
 #import <AppKit/AppKit.h>
 
-@interface ErrorLog : Object
+@interface ErrorLog : NSObject
 {
     id	msg;
     id	panel; /* Actually this is a window. */
