@@ -497,15 +497,15 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     if ((end != -1 && end < start) || start < 0) return NO;
     if (end == -1) end = NSWidth([self bounds]) - 1;
 
-    for (i = [dataList count] - 1;i >= 0 ; i--) {
-        theObj = [dataList objectAtIndex:i];
+    for (i = [(NSMutableArray *)dataList count] - 1;i >= 0 ; i--) {
+        theObj = [(NSMutableArray *)dataList objectAtIndex:i];
         startpix = [theObj startPixel];
         endpix = [theObj endPixel];
         if (startpix > end) continue; /* this cache is higher than region */
         if (endpix < start) break; /* this cache is lower than region */
         if (startpix >= start && startpix <= end &&
             endpix >= start && endpix <= end) { /* cache is enclosed in region, and deleted */
-                [dataList removeObjectAtIndex: i];
+                [(NSMutableArray *)dataList removeObjectAtIndex: i];
                 continue;
         }
         if (startpix < start && endpix >= start && endpix <= end) {
@@ -527,7 +527,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
                 min:&[theObj pixelDataMin][end + 1 - startOfCache]
                 count:[theObj endPixel] - end
                 start:end+1];
-        [dataList insertObject:newObj atIndex:i+1];
+        [(NSMutableArray *)dataList insertObject:newObj atIndex:i+1];
         [theObj truncateToLastPixel:start-1];
     }
     return YES;
@@ -536,7 +536,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 - (void)invalidateCache /* blast 'em all away */
 {
     if (!dataList) return;
-    [dataList removeAllObjects];
+    [(NSMutableArray *)dataList removeAllObjects];
 }
 
 - (BOOL)isOpaque
@@ -771,7 +771,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
             int k,numToMove,cachedStart;
             float *maxVals,*minVals;
 //			printf("Using cached data %d\n",cacheIndex);
-            currentCacheObject = (SndDisplayData *)[dataList objectAtIndex:cacheIndex];
+            currentCacheObject = (SndDisplayData *)[(NSMutableArray *)dataList objectAtIndex:cacheIndex];
             numToMove = [currentCacheObject endPixel];
             cachedStart = [currentCacheObject startPixel];
             if (numToMove > endX) numToMove = endX - currStartPoint + 1;
@@ -787,7 +787,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
             continue;
         }
         if (nextCache != -1) {
-            localMax = [[dataList objectAtIndex:nextCache] startPixel] - 1;
+            localMax = [[(NSMutableArray *)dataList objectAtIndex:nextCache] startPixel] - 1;
             if (localMax > endX) localMax = endX;
         }
         else localMax = endX;
@@ -861,7 +861,8 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
                     * Continue...
                     */
         if (leadsOnFrom != -1) { /* we have calculated a new region which exactly appends an existing cache */
-            SndDisplayData * cacheToExtend = (SndDisplayData *)[dataList objectAtIndex:leadsOnFrom];
+            SndDisplayData * cacheToExtend = 
+                (SndDisplayData *)[(NSMutableArray *)dataList objectAtIndex:leadsOnFrom];
             [cacheToExtend addPixelDataMax:&cacheMaxArray[currStartPoint - startX]
                                        min:&cacheMinArray[currStartPoint - startX]
                                      count:localMax - currStartPoint + 1
@@ -874,15 +875,16 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
                                   min:&cacheMinArray[currStartPoint - startX]
                                 count:localMax - currStartPoint + 1
                                 start:(int)currStartPoint];
-            [dataList addObject:newCache];
+            [(NSMutableArray *)dataList addObject:newCache];
             [dataList sort];
 //	printf("setting new cache: start %d count %d\n", currStartPoint, localMax - currStartPoint + 1);
         }
         /* now see if we should join up to following cache */
         cacheIndex = [dataList findObjectContaining:localMax + 1 next:&nextCache leadsOnFrom:&leadsOnFrom];
         if (cacheIndex != -1 && leadsOnFrom != -1) {
-            [[dataList objectAtIndex:leadsOnFrom] addDataFrom:[dataList objectAtIndex:cacheIndex]];
-            [dataList removeObjectAtIndex:cacheIndex];
+            [[(NSMutableArray *)dataList objectAtIndex:leadsOnFrom] 
+                addDataFrom:[(NSMutableArray *)dataList objectAtIndex:cacheIndex]];
+            [(NSMutableArray *)dataList removeObjectAtIndex:cacheIndex];
 //	printf("Compacted %d with %d. Now %d caches\n", leadsOnFrom, cacheIndex,[dataList count]);
         }
 
@@ -1279,8 +1281,8 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     [foregroundColour release];
     if (recordingSound) SndFree(recordingSound);/* just in case */
     if (dataList) {
-        [dataList removeAllObjects];
-        [dataList release];
+        [(NSMutableArray *)dataList removeAllObjects];
+        [(NSMutableArray *)dataList release];
     }
     [super dealloc];
     return;
