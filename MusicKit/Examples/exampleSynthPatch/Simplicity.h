@@ -1,6 +1,8 @@
-#import <musickit/SynthPatch.h>
+#ifndef __MK_Simplicity_H___
+#define __MK_Simplicity_H___
+#import <MusicKit/MusicKit.h>
 
-@interface Simplicity : SynthPatch
+@interface Simplicity : MKSynthPatch
 {}
 
 + patchTemplateFor:aNote;
@@ -10,3 +12,4 @@
 
 @end
 
+#endif

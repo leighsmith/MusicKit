@@ -16,9 +16,6 @@
 #import <musickit/musickit.h>
 #import <musickit/synthpatches/synthpatches.h>
 
-static int handleObjcError(char *className) 
-{    return 0; }
-
 main(ac, av)
   int ac;
   char * av[];
@@ -39,6 +36,7 @@ main(ac, av)
 	exit(1);
     }
 
+    anOrch = [Orchestra new];
     {	/* Create a Score object and read a scorefile into it. Then create a 
 	   ScorePerformer to perform the Score and configure the performance 
 	   from the 'info' field of the scorefile . */
@@ -52,7 +50,7 @@ main(ac, av)
 
 	scoreInfo = [aSFPerformer info];
 	if (scoreInfo) { /* Configure performance as specified in info. */ 
-
+	    double samplingRate;
 	    /* "headroom" determines how close to the limit of the DSP we want
 	       to run. If headroom is 0 or negative, there is a higher risk
 	       of falling out of real time (interruptions will be heard).
@@ -60,26 +58,28 @@ main(ac, av)
 	       fall out of real time. */
 	    if ([scoreInfo isParPresent:MK_headroom])
 		[Orchestra setHeadroom:[scoreInfo parAsDouble:MK_headroom]];
-	    
 	    /* Set sampling rate. The Sound hardware only functions at 
 	       44100 or 22050. */
-	    if ([scoreInfo isParPresent:MK_samplingRate]) {
-		double samplingRate = [scoreInfo parAsDouble:MK_samplingRate];
-		if ((samplingRate == 44100.0) || (samplingRate == 22050.0)) 
-		  [Orchestra setSamplingRate:samplingRate];
-		else fprintf(stderr,
-			     "Sampling rate must be 44100 or 22050.\n");
+	    samplingRate = [anOrch defaultSamplingRate];
+	    if ([anOrch prefersAlternativeSamplingRate] && 
+		[scoreInfo isParPresent:MK_alternativeSamplingRate])
+	      samplingRate = [scoreInfo parAsDouble:MK_alternativeSamplingRate];
+	    else if ([scoreInfo isParPresent:MK_samplingRate]) {
+		samplingRate = [scoreInfo parAsDouble:MK_samplingRate];
 	    }
+	    if ([anOrch supportsSamplingRate:samplingRate])
+	      [Orchestra setSamplingRate:samplingRate];
+	    else fprintf(stderr,"Unsupported sampling rate. %f\n",samplingRate);
+
 	    /* Get tempo and set the tempo of the default Conductor. */
 	    if ([scoreInfo isParPresent:MK_tempo]) {
 		double tempo = [scoreInfo parAsDouble:MK_tempo];
 		[[Conductor defaultConductor] setTempo:tempo];
 	    }
-    	}
+	}
     }
 
     /* Open the Orchestra. */
-    anOrch = [Orchestra new];
     if (![anOrch open]) {
 	fprintf(stderr,"Can't open DSP.\n");
 	exit(1);
@@ -112,14 +112,13 @@ main(ac, av)
 		continue;
 	    }
 
-	    /* Now set the SynthPatch of this part as specified in the info */
+	    /* Now set the SynthPatch of this Part as specified in the info */
 	    className = [partInfo parAsStringNoCopy:MK_synthPatch];
-	    /* We find the class. */ 
-	    objc_setClassHandler(handleObjcError); /* Supress error printing */
 	    synthPatchClass = (strlen(className) ? 
-			       objc_getClass(className) : nil);
+			       [SynthPatch findSynthPatchClass:className] : nil);
+	    /* See comment in Makefile about dynamic loading requirements */
 	    if (!synthPatchClass) {         /* Class not loaded in program? */ 
-		fprintf(stderr,"Class %s not loaded into program.\n",
+		fprintf(stderr,"Can't find SynthPatch class %s.\n",
 			className);
 		continue;
 	    }

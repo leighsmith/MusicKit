@@ -1,4 +1,4 @@
-#import <musickit/unitgenerators/unitgenerators.h> 
+#import <MKUnitGenerators/UnitGenerators.h> 
 #import "Simplicity.h"
 
 /* We call our simple SynthPatch 'Simplicity'. */
@@ -18,7 +18,7 @@ static int	osc,        	/* sine wave UnitGenerator */
        created the first time this method is invoked.  If the 
        object has already been created, it's immediately returned.  
 	  */
-    static PatchTemplate *theTemplate = nil;
+    static MKPatchTemplate *theTemplate = nil;
     if (theTemplate)
 	return theTemplate;
     theTemplate = [[PatchTemplate alloc] init];
