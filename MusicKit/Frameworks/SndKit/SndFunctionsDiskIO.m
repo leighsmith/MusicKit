@@ -167,7 +167,7 @@ NSArray *SndFileExtensions(void)
 {
     // libsndfile doesn't have a concept of aliases for common file extensions so
     // we have to add them manually. This is bad. libsndfile should provide an alias list.
-    NSMutableArray *fileTypes = [NSMutableArray arrayWithObjects: @"aif", @"nist", @"aifc", nil];
+    NSMutableArray *fileTypes = [NSMutableArray arrayWithObjects: @"aif", @"nist", @"aifc", @"snd", nil];
     int formatIndex, formatCount;
     SF_FORMAT_INFO sfFormatInfo;
 
@@ -176,10 +176,15 @@ NSArray *SndFileExtensions(void)
     sf_command (NULL, SFC_GET_FORMAT_MAJOR_COUNT, &formatCount, sizeof(int));
 
     for (formatIndex = 0; formatIndex < formatCount; formatIndex++) {
+	NSString *fileExtension;
+	
 	// include all the alternative namings.
 	sfFormatInfo.format = formatIndex;
 	sf_command(NULL, SFC_GET_FORMAT_MAJOR, &sfFormatInfo, sizeof(sfFormatInfo));
-	[fileTypes addObject: [NSString stringWithCString: sfFormatInfo.extension]];
+	fileExtension = [NSString stringWithCString: sfFormatInfo.extension];
+	[fileTypes addObject: fileExtension];
+	// Accept upper case equivalent. TODO This should probably be an optional behaviour.
+	[fileTypes addObject: [fileExtension uppercaseString]];
     }
     return [NSArray arrayWithArray: fileTypes]; // make it immutable
 }
@@ -537,8 +542,12 @@ int SndReadSoundfileRange(NSString *path, SndSoundStruct **sound, int startFrame
     if ([path length] == 0)
 	return SND_ERR_BAD_FILENAME;
 #ifdef LIBSNDFILE_AVAILABLE
-    if ((sfp = sf_open([path fileSystemRepresentation], SFM_READ, &sfinfo)) == NULL)
+    if ((sfp = sf_open([path fileSystemRepresentation], SFM_READ, &sfinfo)) == NULL) {
+	if(sf_error(sfp) != SF_ERR_NO_ERROR) {
+	    NSLog(@"%s\n", sf_strerror(sfp));
+	}	
 	return SND_ERR_CANNOT_OPEN;
+    }
     errorReading = SndReadRange(sfp, &aSound, &sfinfo, startFrame, frameCount, bReadData);
     errorClosing = sf_close(sfp);
     if (errorClosing != 0)
