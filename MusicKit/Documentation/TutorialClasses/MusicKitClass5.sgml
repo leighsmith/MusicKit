@@ -1,0 +1,755 @@
+<!-- $Id$ -->
+
+  <CHAPTER>
+    <TITLE><PRODUCTNAME>MusicKit</PRODUCTNAME> Class</TITLE>
+
+    <SECT1 ID="CLASS5">
+      <TITLE>Class 5 - Synthpatches</TITLE>
+
+      <PARA>Review: classes in the <PRODUCTNAME>MusicKit</PRODUCTNAME>:</PARA>
+      <VARIABLELIST>
+	<TITLE>	</TITLE>
+	<VARLISTENTRY>
+	  <TERM> Representation classes (7)	</TERM>
+	  <LISTITEM>
+	    <PARA><CLASSNAME>Note</CLASSNAME>, <CLASSNAME>Part</CLASSNAME>,
+	      <CLASSNAME>Score</CLASSNAME>, etc.</PARA>
+	  </LISTITEM>
+	</VARLISTENTRY>
+	<VARLISTENTRY>
+	  <TERM> Performance classes (16)	</TERM>
+	  <LISTITEM>
+	    <PARA><CLASSNAME>Conductor</CLASSNAME>,
+	      <CLASSNAME>Performer</CLASSNAME>,
+	      <CLASSNAME>Instrument</CLASSNAME>, etc.</PARA>
+	  </LISTITEM>
+	</VARLISTENTRY>
+	<VARLISTENTRY>
+	  <TERM> <ACRONYM>DSP</ACRONYM> Synthesis classes (5) 	</TERM>
+	  <LISTITEM>
+	    <PARA> <CLASSNAME>Orchestra</CLASSNAME>,
+	      <CLASSNAME>UnitGenerator</CLASSNAME>,
+	      <CLASSNAME>SynthPatch</CLASSNAME>,
+	      <CLASSNAME>SynthData</CLASSNAME>,
+	      <CLASSNAME>PatchTemplate</CLASSNAME> (also
+	      <CLASSNAME>SynthInstrument</CLASSNAME>)
+	    </PARA>
+	  </LISTITEM>
+	</VARLISTENTRY>
+      </VARIABLELIST>
+    </SECT1>
+
+    <SECT1 ID="SYNTHESISCLASSESREVIEW">
+      <TITLE><PRODUCTNAME>MusicKit</PRODUCTNAME> Synthesis Classes
+	(review)</TITLE>
+      
+      <ITEMIZEDLIST>
+	<LISTITEM>
+	  <PARA> The <CLASSNAME>Orchestra</CLASSNAME> class manages the
+	    <CLASSNAME>DSP</CLASSNAME> as a whole. 
+	  </PARA> 
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> The <CLASSNAME>UnitGenerator</CLASSNAME> class (abstract)
+	    represents a <ACRONYM>DSP</ACRONYM> processing or generating module,
+	    such as an oscillator or a filter.
+	  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> The <CLASSNAME>SynthData</CLASSNAME> class represents a piece
+	    of <ACRONYM>DSP</ACRONYM> memory.  A special type of
+	    <CLASSNAME>SynthData</CLASSNAME> called a "patchpoint" is used to
+	    connect <CLASSNAME>UnitGenerators</CLASSNAME>.
+	  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> The <CLASSNAME>SynthPatch</CLASSNAME> class (abstract)
+	    contains a list of <CLASSNAME>UnitGenerators</CLASSNAME> that make
+	    up a single sound-producing entity.  To produce a chord, multiple
+	    instances of a <CLASSNAME>SynthPatch</CLASSNAME> subclass are
+	    required.
+	  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> The <CLASSNAME>SynthInstrument</CLASSNAME> class manages a
+	    set of <CLASSNAME>SynthPatches</CLASSNAME> (voice allocation).
+	  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> The <CLASSNAME>PatchTemplate</CLASSNAME> class is an auxiliary
+	    class used to define the <CLASSNAME>UnitGenerators</CLASSNAME> that
+	    make up a <CLASSNAME>SynthPatch</CLASSNAME>. 
+	  </PARA>
+	</LISTITEM>
+      </ITEMIZEDLIST>
+    </SECT1>
+
+    <SECT1 ID="SYNTHPATCHCLASS">
+    <TITLE>The <CLASSNAME>SynthPatch</CLASSNAME> Class</TITLE>
+
+      <ITEMIZEDLIST>
+	<LISTITEM>
+	  <PARA> Abstract class.  You never directly instantiate an instance of
+	    the <CLASSNAME>SynthPatch</CLASSNAME> class.  You instantiate its
+	    subclasses. </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> Each subclass represents a particular synthesis technique.
+	    E.g. frequency modulation synthesis, additive synthesis, etc. </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> An instance is a single sound-producing entity. Can not
+	    ordinarily produce chords.  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> A collections of <CLASSNAME>SynthPatch</CLASSNAME> instances
+	    of a particular class are most conveniently managed by a
+	    <CLASSNAME>SynthInstrument</CLASSNAME>.  Multiple collections of
+	    instances of different classes may be managed by multiple
+	    <CLASSNAME>SynthInstruments</CLASSNAME>. </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> Alternatively you can allocate and manage a collection of
+	    <CLASSNAME>SynthPatches</CLASSNAME> yourself: </PARA>
+	  <PROGRAMLISTING>
+id  sp = [orch allocSynthPatch: [Pluck class ]];	
+	  </PROGRAMLISTING>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> The <PRODUCTNAME>MusicKit</PRODUCTNAME> provides a library of
+	    <CLASSNAME>SynthPatches</CLASSNAME>.</PARA>
+	</LISTITEM>
+      </ITEMIZEDLIST>
+    </SECT1>
+
+    <SECT1 ID="SYNTHPATCHLIBRARYCLASSES">
+      <TITLE>The <PRODUCTNAME>MusicKit</PRODUCTNAME> SynthPatch Library
+	Classes</TITLE> 
+      <TABLE>
+	<TITLE> WaveTable synthesis:	</TITLE>
+	<TGROUP COLS="2" ALIGN="LEFT">
+	  <TBODY>
+	    <ROW>
+	      <ENTRY>Wave1</ENTRY>
+	      <ENTRY>"1" stands for one oscillator	</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>Wave1i</ENTRY>
+	      <ENTRY>"i" stands for interpolating oscillator
+	      </ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>Wave1v</ENTRY>
+	      <ENTRY>"v" stands for vibrato (random,periodic)</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>Wave1vi</ENTRY>
+	      <ENTRY> 	</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>DBWave1vi</ENTRY>
+	      <ENTRY>"DB" stands for "data base of timbres"
+	      </ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>DBWave2vi</ENTRY>
+	      <ENTRY> "2" stands for two oscillators</ENTRY>
+	    </ROW>
+	  </TBODY>
+	</TGROUP>
+      </TABLE>
+      <TABLE>
+	<TITLE> Frequency Modulation synthesis:	</TITLE>
+	<TGROUP COLS="2" ALIGN="LEFT">
+	  <TBODY>
+	    <ROW>
+	      <ENTRY>Fm1</ENTRY>
+	      <ENTRY>"1" stands for one modulator	</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>Fm1i</ENTRY>
+	      <ENTRY>"i" stands for interpolating carrier	</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>Fm1v</ENTRY>
+	      <ENTRY>"v" stands for vibrato (random,periodic)</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>Fm1vi</ENTRY>
+	      <ENTRY>	</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>DBFm1vi</ENTRY>
+	      <ENTRY>"DB" stands for "data base of timbres"   </ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>Fm2pvi</ENTRY>
+	      <ENTRY>  "2p" stands for 2 modulators in parallel    </ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>Fm2cvi</ENTRY>
+	      <ENTRY>  "2c" stands for 2 modulators in cascade  </ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>Fm2pnvi</ENTRY>
+	      <ENTRY>  "n" stands for a noise modulator	</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>Fm2cnvi</ENTRY>
+	      <ENTRY>	</ENTRY>
+	    </ROW>
+	  </TBODY>
+	</TGROUP>
+      </TABLE>
+      <TABLE>
+	<TITLE> Plucked string synthesis:	</TITLE>
+	<TGROUP COLS="2" ALIGN="LEFT">
+	  <TBODY>
+	    <ROW>
+	      <ENTRY>Pluck</ENTRY>	
+	      <ENTRY>Karplus/Strong/Jaffe/Smith plucked string simulation</ENTRY>
+	    </ROW>
+	  </TBODY>
+	</TGROUP>
+      </TABLE>
+      <PARA>All Wave and Fm <CLASSNAME>SynthPatches</CLASSNAME> have separate
+	envelopes with arbitrarily many points on amplitude, frequency, and
+	the various FM indecies.  Vibrato may run at audio rates.  Both
+	carrier and modulators may have any periodic waveform.</PARA>
+    </SECT1>
+    
+    <SECT1 ID="TIMBREDATABASE">
+      <TITLE>The <CLASSNAME>SynthPatch</CLASSNAME> Library Timbre Data
+	Base</TITLE>
+
+      <PARA> You specify a "timbre" as a string to the <emphasis role="bold">
+	  waveform</emphasis> parameter.  For the
+	  <CLASSNAME>DBFm1vi</CLASSNAME>, you can also specify the modulating
+	  wave as a timbre.</PARA>
+
+      <PARA> Each "timbre" represents a family of
+	<CLASSNAME>WaveTables</CLASSNAME>, one for each frequency range.  This
+	is very similar to how samplers work.  By changing waveforms as the
+	pitch changes, the "munchkin" effect is avoided.  Also, the waveforms
+	are band-limited, preventing aliasing.</PARA>
+      
+      <PARA> List of timbres, derived from analysis of recorded data,
+	includes: </PARA>
+      <PARA> soprano, tenor and bass voices singing various vowels woodwind
+	instrments such as clarinet, oboe and sax.  stringed instruments such as
+	violin and cello </PARA>
+      <PARA>piano 	</PARA>
+      <PARA>various electronic waveforms such as square wave</PARA>
+      <PARA> Interpolation from one timbre to another is supported in some of
+	the <CLASSNAME>SynthPatches</CLASSNAME>.</PARA>
+      <PARA> In release 3.0 the data base is user-extendable.</PARA>
+    </SECT1>
+    
+    <SECT1>
+      <TITLE>Making Your Own <CLASSNAME>SynthPatch</CLASSNAME> Class</TITLE> 
+
+      <PARA>A <CLASSNAME>SynthPatch</CLASSNAME> subclass consists of three
+	fundamental parts: </PARA>
+      <ORDEREDLIST>
+	<LISTITEM>
+	  <PARA>A specification of <emphasis>a collection of
+	      <CLASSNAME>UnitGenerators</CLASSNAME> Classes</emphasis>
+	      instances of which comprise each
+	      <CLASSNAME>SynthPatch</CLASSNAME> instance.  This is done using
+	      an auxiliary object called a
+	      "<CLASSNAME>PatchTemplate</CLASSNAME>."  A single
+	      <CLASSNAME>SynthPatch</CLASSNAME> class may supply various
+	      <CLASSNAME>PatchTemplates</CLASSNAME> representing various
+	      "flavors" of the <CLASSNAME>SynthPatch</CLASSNAME>.  For
+	      example, there may be an additive synthesis
+	      <CLASSNAME>SynthPatch</CLASSNAME> with an 8-oscillator flavor
+	      and a 16-oscillator flavor.  This is done by supplying the class
+	      method: </PARA>
+	  <PROGRAMLISTING>
++patchTemplateFor: 	
+	  </PROGRAMLISTING>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>A description of the <emphasis>interconnections</emphasis> of
+	  the <CLASSNAME>UnitGenerator</CLASSNAME> instances.  This may be
+	  done in the <CLASSNAME>PatchTemplate</CLASSNAME> or in the
+	  <CLASSNAME>SynthPatch</CLASSNAME> <emphasis role="bold">init
+	  </emphasis> instance method.  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>A description of the <emphasis>behavior </emphasis> of the
+	    <CLASSNAME>SynthPatch</CLASSNAME> when sent notes.  This is done
+	    by supplying the instance methods: </PARA>
+	  <PARA><emphasis role="bold">noteOnSelf:</emphasis> </PARA> 
+	  <PARA><emphasis role="bold">noteOffSelf:</emphasis> </PARA>
+	  <PARA><emphasis role="bold">noteUpdateSelf:</emphasis> </PARA>
+	  <PARA><emphasis role="bold">noteEnd</emphasis> </PARA>
+	</LISTITEM>
+      </ORDEREDLIST>
+      
+      <FIGURE ID="FIGURE5-1-SIMPLESYNTHPATCH">
+	<TITLE>	A Simple Synth Patch</TITLE>
+	<MEDIAOBJECT>
+	  <IMAGEOBJECT>
+	    <IMAGEDATA FILEREF="MusicKitClass5-SimpleSynthPatch.eps" 
+		       FORMAT="EPS">
+	  </IMAGEOBJECT>
+	  <IMAGEOBJECT>
+	    <IMAGEDATA FILEREF="MusicKitClass5-SimpleSynthPatch.gif"
+		       FORMAT="GIF">
+	  </IMAGEOBJECT>
+	</MEDIAOBJECT>
+      </FIGURE>
+
+    </SECT1>
+    
+    <SECT1 ID="SPECCOLLECTIONOFUNITGENERATORS">
+      <TITLE>1. Specifying a Collection of
+	<CLASSNAME>UnitGenerators</CLASSNAME></TITLE>
+      
+      <PARA> To specify the collection, the <CLASSNAME>SynthPatch</CLASSNAME>
+	subclass implements a single class method: </PARA>
+      <PROGRAMLISTING>
++patchTemplateFor: aNote	
+      </PROGRAMLISTING>
+      <PARA> This method creates the <CLASSNAME>PatchTemplate</CLASSNAME> used
+	to represent the connections.  The <CLASSNAME>Note</CLASSNAME> passed
+	to the method may be used to choose between various "flavors".</PARA>
+      <PARA> The <CLASSNAME>PatchTemplate</CLASSNAME> consists of a list of
+	the <CLASSNAME>UnitGenerator</CLASSNAME> <emphasis>classes</emphasis>
+	and <CLASSNAME>SynthData</CLASSNAME> <emphasis>requests</emphasis>
+	needed to build an instance of the <CLASSNAME>SynthPatch</CLASSNAME>.
+      </PARA>
+      <PARA> The <CLASSNAME>Orchestra</CLASSNAME> uses the
+	<CLASSNAME>PatchTemplate</CLASSNAME> to build an instance of the
+	<CLASSNAME>SynthPatch</CLASSNAME>.  For each entry in the
+	<CLASSNAME>PatchTemplate</CLASSNAME>, it allocates an appropriate
+	<CLASSNAME>UnitGenerator</CLASSNAME> or
+	<CLASSNAME>SynthData</CLASSNAME> <emphasis>instance</emphasis>. The
+	collection of <CLASSNAME>UnitGenerators</CLASSNAME> appears in the
+	<CLASSNAME>SynthPatch</CLASSNAME> instance as a
+	<CLASSNAME>List</CLASSNAME> object in the instance variable
+	<emphasis>synthElements.  </emphasis> The instance can retrieve a
+	particular <CLASSNAME>UnitGenerator</CLASSNAME> or
+	<CLASSNAME>SynthData</CLASSNAME> instance by sending itself the
+	message:
+      </PARA>
+      <PROGRAMLISTING>
++synthElementAt: (int)index
+      </PROGRAMLISTING>
+      <PARA> The <CLASSNAME>UnitGenerators</CLASSNAME> appear in the order
+	they were specified in the <CLASSNAME>PatchTemplate</CLASSNAME>.  For
+	convenience, the <CLASSNAME>PatchTemplate</CLASSNAME> specification
+	methods return the integer used to later access the particular
+	element.  By convention a <CLASSNAME>SynthPatch</CLASSNAME> stores
+	this integer in a static int variable.  </PARA>
+      <PARA> <CLASSNAME>UnitGenerators</CLASSNAME> may be specified as ordered
+	or unordered.  By default, they are ordered.  Note that you must specify
+	the particular <CLASSNAME>UnitGenerator</CLASSNAME> leaf class.</PARA>
+      <PARA> <CLASSNAME>SynthData</CLASSNAME> are specified by supplying a
+	memory space and a length.</PARA>
+      <PARA>   Example for simple <CLASSNAME>SynthPatch</CLASSNAME>:</PARA>
+      <PROGRAMLISTING>
+static int  sc, patchPoint, out;
+
++patchTemplateFor: aNote
+/* We ignore aNote in this simple SynthPatch */
+{	static PatchTemplate  *t = nil;
+
+      if (!t)  {             /* Only create template the first time. */	
+                t = [[PatchTemplate alloc]  init];  
+                osc = [t addUnitGenerator: [OscgUGxy class] ];
+                patchPoint = [t addPatchpoint:MK_xPatch ];
+ 		out = [t addUnitGenerator: [Out2sumUGx class ]]; 	
+      } 	
+      return t;	
+}
+      </PROGRAMLISTING>
+      <PARA> <emphasis role="bold">Alternative to
+	<CLASSNAME>PatchTemplate</CLASSNAME>: </emphasis>. Just allocate
+	directly from <CLASSNAME>Orchestra</CLASSNAME> in <emphasis
+	role="bold">-init </emphasis> method.  Advantage of using a
+	<CLASSNAME>PatchTemplate</CLASSNAME> is that patch is stored as data
+	and aborting on allocation failure is handled automatically. </PARA>
+    </SECT1>
+    
+    <SECT1 ID="SPECCONNECTIONS">
+      <TITLE>2. Specifying the Connections</TITLE> 
+
+      <PARA> Two <CLASSNAME>UnitGenerator</CLASSNAME> instances communicate
+	via a patchPoint.  The patchPoint's memory space must match the space
+	of the input or output to which it is connected. Connections are made
+	by sending an appropriate message to the
+	<CLASSNAME>UnitGenerators</CLASSNAME> with the patchPoint as an
+	argument.</PARA>
+      <PARA> There are two ways to specify the connections:	</PARA>
+      <ORDEREDLIST>
+	<LISTITEM>
+	  <PARA>1. In the <emphasis role="bold">init </emphasis>
+	    method. </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>2. In the <CLASSNAME>PatchTemplate</CLASSNAME> itself.</PARA>
+	</LISTITEM>
+      </ORDEREDLIST>
+      <PARA> It is a bit easier to specify the connections in the <emphasis
+	role="bold"> init</emphasis> method.  The only advantage of using the
+	<CLASSNAME>PatchTemplate</CLASSNAME> is that it allows
+	<CLASSNAME>SynthPatches</CLASSNAME> to be more easily edited using a
+	patch editor, since the connections can be stored as data using the
+	NXTypedStream mechanism.  For now, we will address only the <emphasis
+	role="bold">init </emphasis> approach.</PARA> <PARA> Let's continue
+	our example.  To make it easy to read, let's define some
+	macros:</PARA>
+      <PROGRAMLISTING>
+#define  OSC [self synthElementAt: osc]
+#define  OUT [self synthElementAt: out]
+#define  PATCHPOINT [self synthElementAt: patchpoint]
+
++ init  
+{ 	[OSC setOutput:PATCHPOINT];
+  	[OUT setInput:PATCHPOINT];  
+ 	return self;
+}  
+      </PROGRAMLISTING>
+    </SECT1>
+    
+    <SECT1 ID="SPECPERFBEHAVIOR">
+      <TITLE>3. Specifying the Performance Behavior</TITLE>
+      
+      <PARA> Behavior is defined by supplying the instance methods: </PARA>
+      
+      <PARA><emphasis role="bold">noteOnSelf:</emphasis> </PARA>
+      <PARA><emphasis role="bold">noteUpdateSelf:</emphasis> </PARA>
+      <PARA><emphasis role="bold">noteOffSelf:</emphasis> </PARA>
+      <PARA><emphasis role="bold">noteEndSelf</emphasis> </PARA>
+
+      <PARA> These are invoked as follows: </PARA>
+      <ORDEREDLIST>
+	<LISTITEM>
+	  <PARA>When a <CONSTANT>noteOn</CONSTANT> or
+	    <CONSTANT>noteDur</CONSTANT> arrives, the <emphasis role="bold">
+	    noteOn:</emphasis> message is sent.  This invokes <emphasis
+	    role="bold"> noteOnSelf:</emphasis> </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> When a <CONSTANT>noteUpdate</CONSTANT> arrives, the
+	    <emphasis role="bold">noteUpdate: </emphasis> message is sent.
+	    This invokes <emphasis role="bold">noteUpdateSelf:</emphasis>
+	    </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> When a <CONSTANT>noteOff</CONSTANT> arrives or the end of the
+	    duration occurs, the <emphasis role="bold">noteOff: </emphasis>
+	    message is sent.  This invokes <emphasis role="bold">
+	    noteOffSelf:</emphasis> <emphasis role="bold">
+	    noteOffSelf:</emphasis> returns the time required to finish, in
+	    seconds.  This is ordinarily the time for the amplitude envelope
+	    to finish its release portion.  </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA>When the phrase is really finished (the release portion is
+	    finished) , the <emphasis role="bold">noteEnd</emphasis> message
+	    is sent.  This invokes <emphasis role="bold">
+	    noteEndSelf</emphasis> </PARA>
+	</LISTITEM>
+      </ORDEREDLIST>
+      <PARA> Like a <CLASSNAME>UnitGenerator</CLASSNAME>, a
+	<CLASSNAME>SynthPatch</CLASSNAME> may be in one of three states: </PARA>
+      <TABLE>
+	<TITLE>	</TITLE>
+	<TGROUP COLS="2" ALIGN="LEFT">
+	  <TBODY>
+	    <ROW>
+	      <ENTRY><CONSTANT>MK_idle</CONSTANT></ENTRY> 
+	      <ENTRY> Not producing sound.</ENTRY>  </ROW> 
+	    <ROW>
+	      <ENTRY><CONSTANT>MK_running</CONSTANT></ENTRY>
+	      <ENTRY> Running.</ENTRY> </ROW> 
+	    <ROW>
+	      <ENTRY><CONSTANT>MK_finishing</CONSTANT></ENTRY>
+	      <ENTRY><CLASSNAME>Envelope</CLASSNAME> release. </ENTRY></ROW>
+	  </TBODY>
+	</TGROUP>
+      </TABLE>
+      <ITEMIZEDLIST>
+	<LISTITEM>
+	  <PARA> A <CLASSNAME>SynthPatch</CLASSNAME> is in the idle state when
+	    it is first created or after it has received
+	    <CONSTANT>noteEnd</CONSTANT> </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> A <CLASSNAME>SynthPatch</CLASSNAME> is in the running state
+	    when it has received a <CONSTANT>noteOn</CONSTANT> or
+	    <CONSTANT>noteDur</CONSTANT>.</PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> A <CLASSNAME>SynthPatch</CLASSNAME> is in the finishing state
+	    when it has received a <CONSTANT>noteOff</CONSTANT> or its duration
+	    has elapsed.</PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA><emphasis> The only requirement for the behavior of a
+	      <CLASSNAME>SynthPatch</CLASSNAME> is that it be left "safe" and
+	      "quiet" when idle.</emphasis> </PARA>
+	</LISTITEM>
+	<LISTITEM>
+	  <PARA> An easy way to make a <CLASSNAME>SynthPatch</CLASSNAME> quiet
+	    is to set its amplitude to 0.  </PARA>
+	</LISTITEM>
+      </ITEMIZEDLIST>
+    </SECT1>
+    
+    <SECT1 ID="SPECPERFBEHAVIOREXAMPLE">
+      <TITLE>3. Specifying the Performance Behavior + Example</TITLE>
+      
+      <PARA> For our simple example we make several assumptions: </PARA>
+
+      <ORDEREDLIST>
+	<LISTITEM>
+	  <PARA>We ignore noteUpdates for now.	</PARA></LISTITEM>
+	<LISTITEM>
+	  <PARA>We assume that every parameter about which we care is
+	    present in every note.
+	  </PARA>
+	</LISTITEM>
+      </ORDEREDLIST>
+
+      <PARA> Since our simple example has no envelopes, we need not implement
+	the <emphasis role="bold">noteOffSelf: </emphasis> method.  We can just
+	use the default version that returns 0.</PARA>
+      
+      <PARA> So we need to provide only two methods, <emphasis role="bold">
+      noteOnSelf: </emphasis> and <emphasis role="bold">
+      noteEndSelf</emphasis>. </PARA>
+      <PROGRAMLISTING>
++noteOnSelf:aNote
+{	
+  [OSC setFreq:[aNote freq]];  
+  [OSC setAmp:[aNote parAsDouble:MK_amp]];              
+  [OUT setBearing:[aNote parAsDouble:MK_bearing]]; 
+  [synthElements makeObjectsPerform:@selector(run)];
+  return self;
+}
++noteEndSelf   
+{
+  [OSC setAmp:0.0]; 
+  return self;
+}
+      </PROGRAMLISTING>
+    </SECT1>
+    
+    <SECT1 ID="COMPLETEEXAMPLE">
+      <TITLE>Complete Example</TITLE>
+      <PROGRAMLISTING>
+#import &lt;musickit/musickit.h&gt;
+#import &lt;musickit/unitgenerators/unitgenerators.h&gt;
+
+@implementation MySynthPatch : SynthPatch { }
+
+static int osc, patchPoint, out;  /* Used as indexes into synthElements array */
+
++patchTemplateFor:aNote
+{	static PatchTemplate *t = nil;   	
+	if (!t)  {             /* Only create template the first time. */	
+	        t = [[PatchTemplate alloc] init];  
+  	 	osc = [t addUnitGenerator:[OscgUGxy class]];
+ 	 	patchPoint = [t addPatchpoint:MK_xPatch];
+ 	 	out = [t addUnitGenerator:[Out2sumUGx class]]; 	
+	} 	
+	return t;   
+}
+
+#define OSC [self synthElementAt:osc]
+#define OUT [self synthElementAt:out]
+#define PATCHPOINT [self synthElementAt:patchpoint]
+
++ init /* Sent once when object is created */
+{ 	[OSC setOutput:PATCHPOINT];
+  	[OUT setInput:PATCHPOINT];  	
+	return self;
+}  
+
++noteOnSelf:aNote
+{	[OSC setFreq:[aNote freq]];  
+  	[OSC setAmp:[aNote parAsDouble:MK_amp]];              
+ 	[OUT setBearing:[aNote parAsDouble:MK_bearing]]; 	
+	[synthElements makeObjectsPerform:@selector(run)];	
+	return self;
+}
+
++noteEndSelf   
+{	[OSC setAmp:0.0];   return self;  }
+      </PROGRAMLISTING>
+    </SECT1>
+    
+    <SECT1 ID="FANCIERSYNTHPATCHES">
+      <TITLE>Fancier SynthPatches</TITLE>
+
+      <PARA> To support <CONSTANT>noteUpdates</CONSTANT>, you merely supply a
+	<emphasis role="bold">noteUpdateSelf: </emphasis> method.  It is up to
+	you what parameters you want to allow to change in a
+	<CONSTANT>noteUpdate</CONSTANT>.  Example:</PARA>
+      <PROGRAMLISTING>
++noteUpdateSelf:aNote
+{	[OSC setFreq:[aNote freq]];  
+ 	[OSC setAmp:[aNote parAsDouble:MK_amp]];              
+  	[OUT setBearing:[aNote parAsDouble:MK_bearing]]; 
+ 	 return self;
+}
+      </PROGRAMLISTING>
+      <PARA> To relax the restriction that all Notes need to have every
+	parameter present, you can set the parameter in <emphasis role="bold">
+	noteOnSelf: </emphasis> and <emphasis role="bold">noteUpdateSelf:
+	</emphasis> only when it is present, store its value in an instance
+	variable, and set it back to a default value in
+	<CLASSNAME>noteEnd</CLASSNAME>.  E.g., if there is an instance
+	variable<emphasis> freq</emphasis>. </PARA>
+      <PROGRAMLISTING>
++noteOnSelf:aNote
+{	if ([aNote isParPresent:MK_freq]) 	
+	freq = [aNote freq];
+ 	 [OSC setFreq:freq];  
+ 	. . .
++noteEndSelf
+{ 	freq = 440;
+ 	 [OSC setAmp:0.0];  
+ 	 return self;      
+}
+      </PROGRAMLISTING>
+      <PARA> To add an amplitude envelope, we need to use an
+	<CLASSNAME>AsympUG</CLASSNAME> <CLASSNAME>UnitGenerator</CLASSNAME> to
+	create the envelope, write it to a patch point and use an oscillator
+	that is capable of reading its amplitude from a patchpoint.  The
+	<CLASSNAME>OscgafiUG </CLASSNAME>supports reading both its amplitude
+	and its frequency from a patchpoint.  The C function
+	<FUNCTION>MKUpdateAsymp() </FUNCTION>makes it easy to apply an
+	envelope with <CLASSNAME>AsympUG </CLASSNAME>and supports attack and
+	release times, scaling values, and phrase transitions: </PARA>
+      <PROGRAMLISTING>
+MKUpdateAsymp(	
+	AsympUG *anAsymp,	// asymp instance	
+	Envelope *ampEnv,	// the envelope	
+	double amp0,	// value when env at 0 	
+	double amp1,	// value when env at 1	
+	double ampAtt,	// attack time	
+	double ampRel,	// release time	
+	double portamento, 	// transition time on rearticulation	
+	MKPhraseStatus phraseStatus);  	// see below
+      </PROGRAMLISTING>
+      <PARA>Any argument may be omitted.  For double arguments, omitting the
+	argument means supplying the special value
+	<CONSTANT>MK_NODVAL</CONSTANT> (which stands for "No Double
+	Value").</PARA>
+
+      <PARA>Phrase status is obtained by sending [<emphasis role="bold">self
+	  phraseStatus</emphasis> ]; </PARA>
+
+      <FIGURE ID="FIGURE5-2-NOTETYPES">
+	<TITLE>	noteTypes Time Line</TITLE>
+	<MEDIAOBJECT>
+	  <IMAGEOBJECT>
+	    <IMAGEDATA FILEREF="MusicKitClass5-noteTypes.eps" 
+		       FORMAT="EPS">
+	  </IMAGEOBJECT>
+	  <IMAGEOBJECT>
+	    <IMAGEDATA FILEREF="MusicKitClass5-noteTypes.gif"
+		       FORMAT="GIF">
+	  </IMAGEOBJECT>
+	</MEDIAOBJECT>
+      </FIGURE>
+    </SECT1>
+    
+    <SECT1 ID="PHRASESTATUS">
+      <TITLE>The Complete Story About Phrase Status</TITLE>
+
+      <PARA> Phrase status defines, within a
+	<CLASSNAME>SynthPatch</CLASSNAME>, all the possible places we can be
+	in a <PRODUCTNAME>MusicKit</PRODUCTNAME> phrase: </PARA>
+      
+      <TABLE>
+	<TITLE></TITLE>
+	<TGROUP COLS="2" ALIGN="LEFT">
+	  <TBODY>
+	    <ROW>
+	      <ENTRY>MK_phraseOn</ENTRY>
+	      <ENTRY>		New phrase	</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>MK_phrasePreempt</ENTRY>
+	      <ENTRY>New phrase, but from preempted patch </ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>MK_phraseUpdate</ENTRY>
+	      <ENTRY>		Note update	</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>MK_phraseOff</ENTRY>
+	      <ENTRY>		Note off	</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>MK_phraseOffUpdate</ENTRY>
+	      <ENTRY>	Note update during release	</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>MK_phraseEnd</ENTRY>
+	      <ENTRY>		Note end	</ENTRY>
+	    </ROW>
+	    <ROW>
+	      <ENTRY>MK_noPhraseStatus</ENTRY>
+	      <ENTRY>		Not in a SynthPatch method.	</ENTRY>
+	    </ROW>
+	  </TBODY>
+	</TGROUP>
+      </TABLE>
+      <PARA> Preemption occurs when there is not enough <ACRONYM>DSP</ACRONYM>
+	resources to support the requested number of simultaneous notes.  It
+	is controlled by the <CLASSNAME>SynthInstrument</CLASSNAME>.  The
+	<CLASSNAME>SynthPatch</CLASSNAME> designer need only implement a
+	method:
+      </PARA>
+      <PROGRAMLISTING>
++preemptFor:newNote 
+      </PROGRAMLISTING>
+      <PARA> A typical implementation aborts any running envelopes.
+	Example:</PARA>
+      <PROGRAMLISTING>
++preemptFor:newNote  {	
+[ampEnvelopeAsymp preemptEnvelope];	
+return self;
+}
+      </PROGRAMLISTING>
+    </SECT1>
+    
+    <SECT1 ID="ASSIGNMENT5">
+      <TITLE>Assignment - Week 5</TITLE>
+      <PARA>Study <emphasis role="bold">MusicKitClass/exampsynthpatch
+	</emphasis> also available in <emphasis role="bold">
+	/NextDeveloper/Examples/MusicKit</emphasis> directory).
+      </PARA>
+      <PARA>Modify <emphasis role="bold">Envy.m</emphasis> to set the
+	<CLASSNAME>WaveTable</CLASSNAME> of the synthesis.  Then recompile it,
+	create a scorefile that specifies a <CLASSNAME>WaveTable</CLASSNAME>,
+	and test it. </PARA>
+      <PARA>Modify any one of the example synthpatches on that directory to do
+	some other sort of synthesis, such as amplitude modulation.</para>
+    </SECT1>
+</CHAPTER>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:nil
+sgml-shorttag:t
+sgml-namecase-general:t
+sgml-general-insert-case:upper
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document: "MusicKitTutorials.sgml"
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
