@@ -34,6 +34,9 @@
 Modification history:
 
   $Log$
+  Revision 1.15  2000/06/09 03:27:54  leigh
+  Typing of parameters passed to installSharedSynthDataWithSegmentAndLength methods
+
   Revision 1.14  2000/05/06 01:13:21  leigh
   Typed parameters to reduce warnings and Parenthetised to remove warnings
 
@@ -1277,7 +1280,7 @@ static id installSharedObject(MKOrchestra *self,
     return nil;
 }
 
--installSharedSynthDataWithSegmentAndLength:aSynthDataObj
+-installSharedSynthDataWithSegmentAndLength: (MKSynthData *) aSynthDataObj
  for:aKeyObj
 {
     return installSharedObject(self,aSynthDataObj,aKeyObj,
@@ -1286,7 +1289,7 @@ static id installSharedObject(MKOrchestra *self,
 			       MK_noOrchSharedType);
 }
 
--installSharedSynthDataWithSegmentAndLength:aSynthDataObj
+-installSharedSynthDataWithSegmentAndLength: (MKSynthData *) aSynthDataObj
  for:aKeyObj type:(MKOrchSharedType)aType
 {
     return installSharedObject(self,aSynthDataObj,aKeyObj,

@@ -9,6 +9,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2000/06/09 03:27:53  leigh
+  Typing of parameters passed to installSharedSynthDataWithSegmentAndLength methods
+
   Revision 1.5  2000/04/26 01:22:32  leigh
   outputCommandsFile now an NSString
 
@@ -29,6 +32,7 @@
 #import <Foundation/NSTimer.h>
 #import "orch.h"
 #import "MKDeviceStatus.h"
+#import "MKSynthData.h"
 #import <objc/HashTable.h> // for NXHashTable
 
 typedef enum _MKOrchSharedType {
@@ -209,9 +213,9 @@ extern void MKSetPreemptDuration(double seconds);
 -installSharedSynthDataWithSegment:aSynthDataObj for:aKeyObj;
 -installSharedSynthDataWithSegment:aSynthDataObj for:aKeyObj 
  type:(MKOrchSharedType)aType;
--installSharedSynthDataWithSegmentAndLength:aSynthDataObj
+-installSharedSynthDataWithSegmentAndLength: (MKSynthData *) aSynthDataObj
  for:aKeyObj;
--installSharedSynthDataWithSegmentAndLength:aSynthDataObj for:aKeyObj 
+-installSharedSynthDataWithSegmentAndLength: (MKSynthData *) aSynthDataObj for:aKeyObj 
  type:(MKOrchSharedType)aType;
 - sharedObjectFor:aKeyObj;
 - sharedObjectFor:aKeyObj type:(MKOrchSharedType)aType;
