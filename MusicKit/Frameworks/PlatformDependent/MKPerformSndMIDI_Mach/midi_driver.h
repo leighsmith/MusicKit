@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/01/27 18:15:43  leigh
+  upgraded to new typedef names for Mach
+
   Revision 1.2  1999/11/24 17:30:38  leigh
   Added a MDDownloadDLSInstruments stub
 
@@ -78,13 +81,13 @@ typedef struct {
 
 /* Reply function types. */
 typedef void (*MDDataReplyFunction)
-    (port_t replyPort, short unit, MDRawEvent *events, unsigned int count);
+    (mach_port_t replyPort, short unit, MDRawEvent *events, unsigned int count);
 typedef void (*MDAlarmReplyFunction)
-    (port_t replyPort, int requestedTime, int actualTime);
+    (mach_port_t replyPort, int requestedTime, int actualTime);
 typedef void (*MDExceptionReplyFunction)
-    (port_t replyPort, int exception);
+    (mach_port_t replyPort, int exception);
 typedef void (*MDQueueReplyFunction)
-    (port_t replyPort, short unit);
+    (mach_port_t replyPort, short unit);
 
 /* Struct for passing reply functions to midi_driver library. */
 typedef struct _MDReplyFunctions {
@@ -96,45 +99,45 @@ typedef struct _MDReplyFunctions {
 
 /******* Managing ownership of the driver ********/
 extern kern_return_t 
-    MDBecomeOwner(port_t driver, port_t owner);
+    MDBecomeOwner(mach_port_t driver, mach_port_t owner);
 extern kern_return_t 
-    MDReleaseOwnership(port_t driver, port_t owner);
+    MDReleaseOwnership(mach_port_t driver, mach_port_t owner);
 
 /*** Claiming a particular serial port (ownership of driver required) *****/
 extern kern_return_t 
-    MDClaimUnit(port_t driver, port_t owner, short unit);
+    MDClaimUnit(mach_port_t driver, mach_port_t owner, short unit);
 extern kern_return_t 
-    MDReleaseUnit(port_t driver, port_t owner, short unit);
+    MDReleaseUnit(mach_port_t driver, mach_port_t owner, short unit);
 
 /******** Controlling the clock ****************/
 extern kern_return_t 
-    MDSetClockMode(port_t driver, port_t owner, short synchUnit, int mode);
+    MDSetClockMode(mach_port_t driver, mach_port_t owner, short synchUnit, int mode);
 extern kern_return_t 
-    MDSetClockQuantum(port_t driver, port_t owner, int microseconds);
+    MDSetClockQuantum(mach_port_t driver, mach_port_t owner, int microseconds);
 extern kern_return_t 
-    MDSetClockTime(port_t driver, port_t owner, int time);
+    MDSetClockTime(mach_port_t driver, mach_port_t owner, int time);
 extern kern_return_t 
-    MDGetClockTime(port_t driver, port_t owner, int *time);
+    MDGetClockTime(mach_port_t driver, mach_port_t owner, int *time);
 extern kern_return_t 
-    MDGetMTCTime(port_t driver, port_t owner, short *format, short *hours, short *minutes, short *seconds, short *frames);
+    MDGetMTCTime(mach_port_t driver, mach_port_t owner, short *format, short *hours, short *minutes, short *seconds, short *frames);
 extern kern_return_t 
-    MDStartClock(port_t driver, port_t owner);
+    MDStartClock(mach_port_t driver, mach_port_t owner);
 extern kern_return_t 
-    MDStopClock(port_t driver, port_t owner);
+    MDStopClock(mach_port_t driver, mach_port_t owner);
 
 /****************** Requesting asynchronous messages *******************/
 extern kern_return_t 
-    MDRequestData(port_t driver, port_t owner, short unit, port_t replyPort);
+    MDRequestData(mach_port_t driver, mach_port_t owner, short unit, mach_port_t replyPort);
 extern kern_return_t 
-    MDRequestAlarm(port_t driver, port_t owner, port_t replyPort, int time);
+    MDRequestAlarm(mach_port_t driver, mach_port_t owner, mach_port_t replyPort, int time);
 extern kern_return_t 
-    MDRequestExceptions(port_t driver, port_t owner, port_t exceptionPort);
+    MDRequestExceptions(mach_port_t driver, mach_port_t owner, mach_port_t exceptionPort);
 extern kern_return_t 
-    MDRequestQueueNotification(port_t driver, port_t owner, short unit, port_t notificationPort, int size);
+    MDRequestQueueNotification(mach_port_t driver, mach_port_t owner, short unit, mach_port_t notificationPort, int size);
 
 /****************** Receiving asynchronous messages *******************/
 extern kern_return_t 
-    MDAwaitReply(port_t ports, MDReplyFunctions *funcs, int timeout);
+    MDAwaitReply(mach_port_t ports, MDReplyFunctions *funcs, int timeout);
 
 #define MD_NO_TIMEOUT (-1)
 
@@ -143,25 +146,25 @@ extern kern_return_t
 
 /****************** Writing MD data to the driver *********************/
 extern kern_return_t 
-    MDSendData(port_t driver, port_t owner, short unit, MDRawEvent *data, unsigned int count);
+    MDSendData(mach_port_t driver, mach_port_t owner, short unit, MDRawEvent *data, unsigned int count);
 extern kern_return_t 
-    MDGetAvailableQueueSize(port_t driver, port_t owner, short unit, int *size);
+    MDGetAvailableQueueSize(mach_port_t driver, mach_port_t owner, short unit, int *size);
 extern kern_return_t 
-    MDClearQueue(port_t driver, port_t owner, short unit);
+    MDClearQueue(mach_port_t driver, mach_port_t owner, short unit);
 extern kern_return_t 
-    MDFlushQueue(port_t device_port, port_name_t owner_port, short unit);
+    MDFlushQueue(mach_port_t device_port, port_name_t owner_port, short unit);
 extern kern_return_t 
     MDDownloadDLSInstruments(unsigned int *patches, int patchCount);
 
 /********************* Controling how incoming data is formated ***********/
 extern kern_return_t 
-    MDFilterMessage(port_t driver, port_t owner, short unit, unsigned char statusByte, boolean_t filterIt);
+    MDFilterMessage(mach_port_t driver, mach_port_t owner, short unit, unsigned char statusByte, boolean_t filterIt);
 extern kern_return_t 
-    MDParseInput(port_t driver, port_t owner, short unit, boolean_t parseIt);
+    MDParseInput(mach_port_t driver, mach_port_t owner, short unit, boolean_t parseIt);
 
 /* This will be obsolete soon: */
 extern kern_return_t 
-    MDSetSystemIgnores(port_t driver, port_t owner, short unit, unsigned int ignoreBits);
+    MDSetSystemIgnores(mach_port_t driver, mach_port_t owner, short unit, unsigned int ignoreBits);
 
 /*
  * Originally from <MusicKit/midi_driver_compatability.h
