@@ -38,6 +38,9 @@
 */
 /*
   $Log$
+  Revision 1.5  2000/04/25 02:11:02  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.4  2000/04/16 04:16:53  leigh
   class typing
 
@@ -133,7 +136,7 @@
   * If the receiver is not in performance, does nothing and returns nil.
   */
 
-- freeNoteReceivers; 
+- releaseNoteReceivers; 
  /* 
   * Disconnects, removes, and frees the receiver's NoteReceivers.  Returns
   * the receiver.  */

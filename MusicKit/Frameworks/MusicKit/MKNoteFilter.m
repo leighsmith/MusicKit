@@ -25,6 +25,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.5  2000/04/25 02:11:02  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.4  2000/04/16 04:20:36  leigh
   Comment cleanup
 
@@ -147,11 +150,11 @@
 
 - (void)dealloc
   /* TYPE: Creating
-   * This invokes freenoteSenders and freenoteReceivers.
+   * This invokes releaseNoteSenders and releaseNoteReceivers.
    * Then it frees itself.
    */
 {
-    [self freeNoteSenders];
+    [self releaseNoteSenders];
     [noteSenders release];
     [super dealloc];
 }

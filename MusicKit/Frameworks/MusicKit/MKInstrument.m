@@ -14,6 +14,9 @@
 /* Modification history:
 
   $Log$
+  Revision 1.5  2000/04/25 02:11:02  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.4  2000/04/16 04:18:32  leigh
   class typing and comment cleanup
 
@@ -166,7 +169,7 @@
 {
     if (_noteSeen)
       return;
-    [self freeNoteReceivers];
+    [self releaseNoteReceivers];
     [noteReceivers release];
     [super dealloc];
 }
@@ -190,7 +193,7 @@
     return self;
 }
 
--freeNoteReceivers
+-releaseNoteReceivers
   /* TYPE: Creating; Frees the receiver's NoteReceivers.
    * Removes and frees the receiver's NoteReceivers.
    * The NoteReceiver's connections are severed (see the PerfLink class).

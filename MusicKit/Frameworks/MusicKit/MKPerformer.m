@@ -107,6 +107,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/04/25 02:09:53  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.4  2000/04/16 04:22:01  leigh
   Comment cleanup
 
@@ -506,14 +509,6 @@ Modification history:
 
 /* Creation ------------------------------------------------------- */
 
-#if 0
-- (void)initialize 
-  /* For backwards compatibility */
-{ 
-    
-} 
-#endif
-
 -init
   /* TYPE: Initializing; Initializes the receiver.
    * Initializes the receiver.
@@ -695,7 +690,7 @@ static id copyFields(MKPerformer *self,MKPerformer *newObj)
     if (status != MK_inactive)
       return;
     free(_performMsgPtr);
-    [self freeNoteSenders];
+    [self releaseNoteSenders];
     [noteSenders release];
     [super dealloc];
 }

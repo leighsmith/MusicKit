@@ -1,19 +1,49 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
-*/
+  HEADER FILES: MusicKit.h
 
+  Description:
+    A MKPartPerformer object performs the MKNotes in a particular MKPart.
+    Every MKPartPerformer has exactly one MKNoteSender.  A MKPartPerformer is
+    associated with a MKPart through its setPart: method.  While a single
+    MKPartPerformer can only be associated with one MKPart, any number of
+    MKPartPerformers can by associated with the same MKPart.  If you're
+    performing a MKScore, you can use MKScorePerformer to create
+    MKPartPerformers for you (one for each MKPart in the MKScore).
+
+    When you activate a MKPartPerformer (through activateSelf) the object
+    copies its MKPart's NSArray of MKNotes (it doesn't copy the MKNotes
+    themselves).  When it's performed, the MKPartPerformer sequences over
+    its copy of the NSArray, allowing you to edit the MKPart (by adding or
+    removing MKNotes) without disturbing the performance -- changes made to
+    a MKPart during a performance are not seen by the MKPartPerformer.
+    However, since only the NSArray of MKNotes is copied but not the MKNotes
+    themselves, you should neither alter nor free a MKPart's MKNotes during a
+    performance.
+
+    The timing variables firstTimeTag, lastTimeTag, beginTime,
+    and duration affect the timing and performance duration of a
+    MKPartPerformer.  Only the MKNotes with timeTag values between
+    firstTimeTag and lastTimeTag (inclusive) are performed.  Each of these
+    notes performance times is computed as its timeTag plus timeShift.
+    If the newly computed performance time is greater than duration, the MKNote
+    is suppressed and the MKPartPerformer is deactivated.
+
+    CF: MKScorePerformer, MKPart
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+*/
 /* Modification history:
 
   $Log$
+  Revision 1.4  2000/04/25 02:09:53  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.3  2000/04/16 04:21:33  leigh
   Comment cleanup
 
@@ -41,27 +71,11 @@
 #import "ScorePerformerPrivate.h"
 #import "MKPartPerformer.h"
 
-@implementation MKPartPerformer: MKPerformer
-/* The simplest Performer, PartPerformer performs a Part. */
-{
-    id nextNote; /* The next note, updated in -perform. */
-    id noteSender;/* The one-and-only MKNoteSender. */
-    id part;     /* Part over which we're sequencing. */
-    double firstTimeTag; /* The smallest timeTag value considered for performance.  */
-    double lastTimeTag;   /* The greatest timeTag value considered for performance.  */
-/*  id *_loc;
-    id *_endLoc;
- */
-    int _loc,_endLoc;
-    id _list;
-    id _scorePerformer;
-}
+@implementation MKPartPerformer
 
 #import "timetagInclude.m"
 
-void _MKSetScorePerformerOfPartPerformer(aPP,aSP)
-    MKPartPerformer *aPP;
-    id aSP;
+void _MKSetScorePerformerOfPartPerformer(MKPartPerformer *aPP, id aSP)
 {
     aPP->_scorePerformer = aSP;
 }

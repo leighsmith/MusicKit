@@ -19,6 +19,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2000/04/25 02:11:02  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.3  2000/04/02 17:12:08  leigh
   Cleaned up doco
 
@@ -57,7 +60,7 @@
   * NoteReceivers. CF superclass copy
   */
 
-- freeNoteSenders; 
+- releaseNoteSenders; 
  /* 
   * Removes and frees the receiver's NoteSenders.
   * Returns the receiver.
@@ -91,8 +94,8 @@
   */
 
 - (void)dealloc; 
- /* 
-  * Sends freeNoteSenders and freeNoteReceivers to the receiver
+ /*
+  * Sends releaseNoteSenders and releaseNoteReceivers to the receiver
   * then frees the receiver.
   */
 

@@ -13,6 +13,9 @@
 /* Modification History:
 
    $Log$
+   Revision 1.3  2000/04/25 02:08:39  leigh
+   Renamed free methods to release methods to reflect OpenStep behaviour
+
    Revision 1.2  1999/07/29 01:16:42  leigh
    Added Win32 compatibility, CVS logs, SBs changes
 
@@ -132,7 +135,7 @@
       return self;
     if ([self inPerformance])
       return nil;
-    [self freePartRecorders];
+    [self releasePartRecorders];
     score = aScore;
     if (!aScore)
       return self;
@@ -183,7 +186,7 @@ static void unsetPartRecorders(MKScoreRecorder *self)
     self->score = nil;
 }
 
--freePartRecorders
+-releasePartRecorders
   /* Frees all PartRecorders. */
 {
     if ([self inPerformance])
@@ -213,7 +216,7 @@ static void unsetPartRecorders(MKScoreRecorder *self)
      * maybe need to put self in a global list of non-dealloced objects for later cleanup */
     if ([self inPerformance])
       return;
-    [self freePartRecorders];
+    [self releasePartRecorders];
     [partRecorders release];
     [super dealloc];
 }

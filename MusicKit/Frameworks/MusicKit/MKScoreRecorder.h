@@ -5,6 +5,9 @@
 */
 /*
   $Log$
+  Revision 1.3  2000/04/25 02:08:40  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.2  1999/07/29 01:25:50  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -87,7 +90,7 @@
 -copy;
  /* Same as [self copyFromZone:[self zone]]; */
 
-- freePartRecorders;
+- releasePartRecorders;
  /* 
   * If the receiver is in performance, returns nil and does nothing. Otherwise,
   * Frees the receiver's PartRecorders and sets its Score to nil.

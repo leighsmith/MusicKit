@@ -13,6 +13,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/04/25 02:08:39  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.4  2000/04/16 04:05:07  leigh
   comment cleanup
 
@@ -48,7 +51,7 @@ Modification history:
     return [noteSenders containsObject:aNoteSender];
 }
 
--freeNoteSenders
+-releaseNoteSenders
   /* TYPE: Creating
    * Empties and frees contents of noteSenders.
    * Returns the receiver.
@@ -62,7 +65,7 @@ Modification history:
     [aList removeAllObjects];  /* Split this up because elements may try
 			     and remove themselves from noteSenders
 			     when they are freed. */
-//    [aList release]; // don't release because aList is autoreleased
+    // don't release aList because it is autoreleased by _MKLightweightArrayCopy
     return self;
 }
 

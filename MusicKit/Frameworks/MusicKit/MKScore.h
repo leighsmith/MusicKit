@@ -32,6 +32,9 @@
 */
 /*
   $Log$
+  Revision 1.7  2000/04/25 02:08:40  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.6  2000/03/29 03:17:47  leigh
   Cleaned up doco and ivar declarations
 
@@ -72,13 +75,13 @@
  Frees the receiver and its contents.
  */
 
-- freeNotes; 
+- releaseNotes; 
  /* 
  Removes and frees the MKNotes contained in the receiver's MKParts.
  Also frees the receiver's info MKNote.  Returns the receiver.
  */
 
-- freeParts; 
+- releaseParts; 
  /* 
  Removes and frees the receiver's MKParts and the MKNotes contained therein.
  Doesn't free the receiver's info MKNote.  MKParts that are currently
@@ -86,14 +89,14 @@
  Returns the receiver.
  */
 
-- freePartsOnly; 
+- releasePartsOnly; 
  /* 
  Removes and frees the receiver's Parts but doesn't free the Notes contained
  therein.  Parts that are currently being performed by a PartPerformer aren't
  freed.  Returns the receiver.  
  */
 
-- freeSelfOnly; 
+- releaseSelfOnly; 
  /* 
  Frees the receiver but not its Parts nor their Notes.  The info Note isn't
  freed.  Returns the receiver.  

@@ -77,6 +77,9 @@
 */
 /*
   $Log$
+  Revision 1.4  2000/04/25 02:09:53  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.3  2000/03/29 03:17:07  leigh
   Cleaned up doco and ivar declarations
 
@@ -135,7 +138,7 @@ typedef enum _MKPerformerStatus { /* Status for Performers. */
   * Sends disconnect to each of the receiver's NoteSenders. 
   */
 
-- freeNoteSenders; 
+- releaseNoteSenders; 
  /* 
   * Disconnects and frees the receiver's NoteSenders.
   * Returns the receiver.

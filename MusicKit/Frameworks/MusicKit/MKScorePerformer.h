@@ -34,6 +34,9 @@
 /*
 Modification history:
   $Log$
+  Revision 1.5  2000/04/25 02:08:40  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.4  2000/02/24 22:55:21  leigh
   Clean up of comments, parameter typing
 
@@ -81,7 +84,7 @@ Modification history:
   * The return value is ignored.  
   */
 
-- freePartPerformers;
+- releasePartPerformers;
  /* 
   * If the receiver is in performance, does nothing and returns nil.
   * Otherwise, removes and frees the receiver's PartPerformers and sets the 

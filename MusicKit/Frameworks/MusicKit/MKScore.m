@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2000/04/25 02:08:40  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.13  2000/04/16 04:22:44  leigh
   Comment cleanup and removed assignment in condition warning
 
@@ -148,20 +151,20 @@ Modification history:
     return self;
 }
 
--freeNotes
+-releaseNotes
     /* Frees the notes contained in the parts. Does not freeParts
        nor does it free the receiver. Implemented as 
-       [parts makeObjectsPerformSelector:@selector(freeNotes)];
+       [parts makeObjectsPerformSelector:@selector(releaseNotes)];
        Also frees the receivers info.
        */
 {
-    [parts makeObjectsPerformSelector:@selector(freeNotes)];
+    [parts makeObjectsPerformSelector:@selector(releaseNotes)];
     [info release];
     info = nil;
     return self;
 }
 
--freeParts
+-releaseParts
     /* frees contained parts and their notes. Does not free the
        receiver. Use -free to free, all at once,
        parts, receiver and notes. Does not free Score's info. */
@@ -172,7 +175,7 @@ Modification history:
     return self;
 }
 
--freePartsOnly
+-releasePartsOnly
     /* Frees contained Parts, but not their notes. It is illegal
        to free a part which is performing or which has a PartSegment which
        is performing. Implemented as 
@@ -185,7 +188,7 @@ Modification history:
     return self;
 }
 
--freeSelfOnly
+-releaseSelfOnly
     /* Frees receiver. Does not free contained Parts nor their notes.  
        Does not free info.
     */
@@ -199,7 +202,7 @@ Modification history:
 - (void)dealloc
   /* Frees receiver, parts and Notes, including info. */
 {
-    [self freeParts];
+    [self releaseParts];
     [info release];
     [parts release];
     [super dealloc];

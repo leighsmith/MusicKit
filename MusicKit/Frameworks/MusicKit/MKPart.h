@@ -6,6 +6,9 @@
 */
 /*
   $Log$
+  Revision 1.6  2000/04/25 02:11:01  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.5  2000/04/10 18:05:01  leigh
   Typed parameters to methods to reduce warnings for client applications
 
@@ -49,9 +52,9 @@
 - addToScore:newScore; 
 - removeFromScore; 
 - init; 
-- (void)dealloc; 
-- freeNotes; 
-- freeSelfOnly; 
+- (void)dealloc;
+- releaseNotes;
+- releaseSelfOnly; 
 - firstTimeTag:(double)firstTimeTag lastTimeTag:(double)lastTimeTag;
 - addNote: (MKNote *) aNote;
 - addNoteCopy: (MKNote *) aNote;

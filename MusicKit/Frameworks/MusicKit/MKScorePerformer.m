@@ -24,6 +24,9 @@
 /* Modification history:
 
    $Log$
+   Revision 1.5  2000/04/25 02:08:40  leigh
+   Renamed free methods to release methods to reflect OpenStep behaviour
+
    Revision 1.4  2000/02/24 22:55:21  leigh
    Clean up of comments, parameter typing
 
@@ -157,7 +160,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
     self->score = nil;
 }
 
--freePartPerformers
+-releasePartPerformers
   /* Frees all PartPerformers. Returns self. */
 {
     if (status != MK_inactive)
@@ -236,7 +239,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
       return self;
     if (status != MK_inactive)
       return nil;
-    [self freePartPerformers]; // also releases score
+    [self releasePartPerformers]; // also releases score
     score = [aScore retain];
     if (!score)
       return self;
@@ -433,7 +436,7 @@ static void unsetPartPerformers(MKScorePerformer *self)
      * maybe need to put self in a global list of non-dealloced objects for later cleanup */
     if (status != MK_inactive)
       return;
-    [self freePartPerformers]; /* this includes releasing the score object */
+    [self releasePartPerformers]; /* this includes releasing the score object */
     [partPerformers release];
     [super dealloc];
 }

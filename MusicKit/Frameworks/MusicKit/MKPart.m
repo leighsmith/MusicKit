@@ -89,6 +89,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/04/25 02:11:02  leigh
+  Renamed free methods to release methods to reflect OpenStep behaviour
+
   Revision 1.7  2000/04/10 18:04:01  leigh
   Fixed overrun bug in splitNotes
 
@@ -410,10 +413,10 @@ static void removeNote(MKPart *self,id aNote);
    * free the receiver and returns self. Otherwise returns nil.
    */
 {
-    if (![self freeNotes])
+    if (![self releaseNotes])
       return;
     MKRemoveObjectName(self);
-    [score removePart:self];  // moved over from freeSelfOnly
+    [score removePart:self];  // moved over from releaseSelfOnly
     [super dealloc];
     // Changed on K. Hamels suggestion, used to message to freeSelfOnly but this would cause a dealloc loop.
 }
@@ -433,7 +436,7 @@ static void unsetPartLinks(MKPart *aPart)
             [[aPart->notes objectAtIndex:n] _setPartLink:nil order:0];
 }
 
--freeNotes
+-releaseNotes
   /* TYPE: Editing
    * Removes and frees all Notes from the receiver including the info 
    * note, if any.
@@ -454,7 +457,7 @@ static void unsetPartLinks(MKPart *aPart)
     return self;
 }
 
--freeSelfOnly
+-releaseSelfOnly
   /* TYPE: Creating and freeing a Part
    * Frees the receiver but not their Notes.
    * Returns the receiver. */
