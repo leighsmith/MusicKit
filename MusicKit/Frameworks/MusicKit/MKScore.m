@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.23  2000/11/28 19:02:50  leigh
+  replaced malloc with _MKMalloc (which does error checking), added -fileExtensions, -scorefileExtensions, changed -midiExtensions to produce a list of possible midifile extensions
+
   Revision 1.22  2000/11/25 22:27:55  leigh
   Removed redundant and potentially bug inducing releaseParts
 
@@ -566,13 +569,25 @@ static void putSysExcl(struct __MKMidiOutStruct *ptr,NSString *sysExclString)
 static void sendBufferedData(struct __MKMidiOutStruct *ptr)
     /* Dummy function. (Since we don't need an extra level of buffering here) */
 {
-
+    // intentionally left blank
 }
 
-// return the extension of MIDI files for pathnames
-+ (NSString *) midifileExtension
+// return the possible extensions of MIDI files for pathnames
++ (NSArray *) midifileExtensions
 {
-    return [[_MK_MIDIFILEEXT retain] autorelease];
+    return [NSArray arrayWithObjects: _MK_MIDIFILEEXT, nil];
+}
+
+// return the extension of scorefiles allowed
++ (NSArray *) scorefileExtensions
+{
+    return [NSArray arrayWithObjects: _MK_SCOREFILEEXT, _MK_BINARYSCOREFILEEXT, nil];
+}
+
+// return all fileExtensions readable/writable by this class.
++ (NSArray *) fileExtensions
+{
+    return [[MKScore scorefileExtensions] arrayByAddingObjectsFromArray: [MKScore midifileExtensions]];
 }
 
 #define T timeInQuanta(fileStructP,(t+timeShift))
@@ -782,7 +797,7 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
                  firstTimeTag: firstTimeTag 
                   lastTimeTag: lastTimeTag
                     timeShift: timeShift];
-    success = _MKOpenFileStreamForWriting(aFileName, [MKScore midifileExtension], stream, YES);
+    success = _MKOpenFileStreamForWriting(aFileName, [[MKScore midifileExtensions] objectAtIndex: 0], stream, YES);
 
     if (!success) {
         _MKErrorf(MK_cantCloseFileErr, aFileName);
@@ -832,12 +847,11 @@ static void writeNoteToMidifile(_MKMidiOutStruct *p, void *fileStructP, MKNote *
     id rtnVal;
     id stream;/*sb: could be NSMutableData or NSData */
 
-    stream = _MKOpenFileStreamForReading(aFileName, [MKScore midifileExtension], YES);
+    stream = _MKOpenFileStreamForReading(aFileName, [[MKScore midifileExtensions] objectAtIndex: 0], YES);
     if (!stream)
        return nil;
     rtnVal = [self readMidifileStream:stream firstTimeTag:firstTimeTag 
 	    lastTimeTag:lastTimeTag timeShift:timeShift];
-//    [stream release]; //sb: no. _MKOpenFileStreamForReading autoreleases.
     return rtnVal;
 }
 
@@ -846,7 +860,7 @@ static void writeDataAsNumString(id aNote,int par,unsigned char *data,
 {
 #   define ROOM 4 /* Up to 3 digits per number followed by space */
     int size = nBytes * ROOM;
-    char *str = malloc(size);//sb: was alloca
+    char *str = _MKMalloc(size); // was alloca
     NSString * retStr;
     int i,j;
     for (i=0; i<nBytes; i++) 
