@@ -66,14 +66,24 @@ ln -s musickittutorials.html index.html
 #
 mkdir $HTML_TMPDIR/Frameworks
 cd $MKHEADERDOC
-# The MacOS X version of the MKPerformSndMIDI framework is the definitive documentation version.
-headerdoc2html -o $HTML_TMPDIR/Frameworks/MKPerformSndMIDI $MKSRCDIR/Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX
-headerdoc2html -o $HTML_TMPDIR/Frameworks/SndKit $SKSRCDIR/Frameworks/SndKit
-# Gatherheaderdoc generates a file MasterTOC.html, that we make the
-# default file. 
-gatherheaderdoc -p "MusicKit" $HTML_TMPDIR/Frameworks
-cd $HTML_TMPDIR/Frameworks
-ln -s MasterTOC.html index.html
+# The MacOS X version of the MKPerformSndMIDI framework is the 
+# definitive documentation version.
+FRAMEWORKS_TO_HEADERDOC="$MKSRCDIR/Frameworks/PlatformDependent/MKPerformSndMIDI_MacOSX $SKSRCDIR/Frameworks/SndKit $MKSRCDIR/Frameworks/MusicKit"
+
+for frameworkDir in $FRAMEWORKS_TO_HEADERDOC; do (
+    # We get a bit sneaky here and assume any part of the framework name
+    # following an underscore is not what we want to have appear in
+    # the output.
+    CLEANED_FRAMEWORK=`basename $frameworkDir`
+    FRAMEWORK_DOC_OUT_DIR=$HTML_TMPDIR/Frameworks/$CLEANED_FRAMEWORK
+    headerdoc2html -o $FRAMEWORK_DOC_OUT_DIR $frameworkDir
+    gatherheaderdoc -p "$CLEANED_FRAMEWORK" $FRAMEWORK_DOC_OUT_DIR
+    cd $FRAMEWORK_DOC_OUT_DIR
+    # Gatherheaderdoc generates a file MasterTOC.html, that we make the
+    # default file. 
+    ln -s MasterTOC.html index.html
+); 
+done
 
 #
 # Now create the PDF of the README
@@ -82,7 +92,7 @@ rm -rf $PDF_TMPDIR
 mkdir $PDF_TMPDIR
 cd $PDF_TMPDIR 
 cp $MK_STYLEDIR/Images/*.eps .
-db2dvi $MKREADMESRC
+db2dvi $MKREADMESRC # 2>1 /tmp/db.log
 PDFFINAL=`basename $MKREADMESRC .sgml`.pdf
 dvips -o intermediate.ps MusicKit_README.dvi
 # This allows us to incorporate any special postscript fonts.
