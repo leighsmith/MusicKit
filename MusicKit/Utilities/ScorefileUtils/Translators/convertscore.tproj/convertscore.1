@@ -1,0 +1,56 @@
+.TH CONVERTSCORE 1 "11 Feb 1991" "NeXT Computer, Inc."
+.UC 4
+.SH NAME
+convertscore \- change scorefile or MIDI file format
+.SH SYNOPSIS
+.B convertscore [\-m][\-p][\-s][\-o <ouputfile>] <file>
+.SH DESCRIPTION
+Converts the specified Music Kit scorefile or Standard MIDI file to
+another format, as indicated by the flag.  If no flag is given, .score
+files and MIDI files write .playscore files and .playscore files write
+.score files.  The default output file name is the stem of the input
+file with the appropriate extension appended. Note that convertscore
+can read any MIDI file, but it can write only level 1 MIDI files.
+Thus, it can be used to convert MIDI files to level 1. (See the
+Standard MIDI File spec for details.)  If the input file is not found
+on the current directory and is not an absolute path, the following
+directories are searched:
+.LP
+~/Library/Music/Scores
+.LP
+/Local/Library/Music/Scores
+.LP
+/System/Library/Music/Scores
+.SH OPTIONS
+.TP
+.B \-m
+Specifies conversion to a MIDI file (with the extension ".midi").
+.TP
+.B \-s 
+Specifies a conversion to scorefile (with the extension ".score").
+.TP
+.B \-p 
+Specifies a conversion to optimized scorefile (with the extension ".playscore").
+.TP
+.B \-o file
+Sets output file name as indicated. 
+.TP
+.B \-t
+Sets conversion from MIDI files to evaluate the tempo into the new 
+time tags, defaulting tempo to 60 beats per minute.
+.TP
+.SH FILES
+Example scorefiles are found in /Local/Library/Music/Scores.  Example
+MIDI files are found in /Local/Library/Music/Midi.
+.SH SEE ALSO
+See the MusicKit section of the reference manual for general
+information about scorefiles.
+.SH DIAGNOSTICS
+Exit status is 0 on success, 1 if there is an error in a file.
+
+
+
+
+
+
+
