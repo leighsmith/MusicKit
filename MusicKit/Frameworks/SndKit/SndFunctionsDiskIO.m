@@ -451,7 +451,7 @@ int SndWriteSoundfile(NSString* filename, SndSoundStruct *sound)
   return SND_ERR_NONE;
 }
 
-// This is the original Sun/NeXT sound savig routine.
+// This is the original Sun/NeXT sound saving routine.
 int SndWriteSoundfileClassic(const char *path, SndSoundStruct *sound)
 {
   int error,error2;
