@@ -95,7 +95,7 @@
                 the user wishes to explicitly create their own manager.  
     @result     Returns the default manager
 */
-+ (SndStreamManager*) defaultStreamManager;
++ (SndStreamManager *) defaultStreamManager;
 
 /*!
     @method   dealloc
@@ -109,7 +109,7 @@
     @discussion 
     @result     Returns an NSString with description of SndStreamManager
 */
-- (NSString*) description;
+- (NSString *) description;
 
 /*!
     @method   startStreaming
@@ -154,7 +154,7 @@
                 via Distributed Objects, and will be sent on to the requested
                 delegate at the next convenient time in the NSRunLoop.
 */
-- (void) delegateMessageThread: (NSArray*) ports;
+- (void) delegateMessageThread: (NSArray *) ports;
 
 /*!
     @method     addClient: 
@@ -166,7 +166,7 @@
     @result     TRUE if client was successfully added, FALSE if the client is
                 already registered, or the audio device couldn't start streaming.
 */
-- (BOOL) addClient: (SndStreamClient*) client;
+- (BOOL) addClient: (SndStreamClient *) client;
 
 /*!
     @method   removeClient: 
@@ -176,7 +176,7 @@
     @param      client The client to be disconnected from the manager.
     @result     TRUE if the client was successfully removed.
 */
-- (BOOL) removeClient: (SndStreamClient*) client;
+- (BOOL) removeClient: (SndStreamClient *) client;
 
 /*!
     @method   processStreamAtTime:input:output:
@@ -188,19 +188,19 @@
     @param      outB
 */
 - (void) processStreamAtTime: (double) sampleCount
-                       input: (SndAudioBuffer*) inB
-                      output: (SndAudioBuffer*) outB;
+                       input: (SndAudioBuffer *) inB
+                      output: (SndAudioBuffer *) outB;
 
 /*!
-    @method   setFormat:
+    @method     setFormat:
     @abstract   Sets the format to be used during streaming
     @discussion Do not call this method - it is called as part of the start-streaming
                 process. The stream format used is the native format coming up from 
                 the devices below.
-    @param      f
-    @result     self
+    @param      newFormat A SndFormat structure.
+    @result     Returns self.
 */
-- setFormat: (SndSoundStruct*) f;
+- setFormat: (SndFormat) newFormat;
 
 
 /*!

@@ -98,7 +98,6 @@ static SndStreamManager *defaultStreamManager = nil;
 - init
 {
   NSPort *managerReceivePort, *managerSendPort;
-  SNDStreamBuffer nativeStreamBufferFormat;
 
   self = [super init];
   if (!self)
@@ -112,8 +111,7 @@ static SndStreamManager *defaultStreamManager = nil;
   bg_active     = FALSE;
   nowTime       = 0;
   bDelegateMessagingEnabled = FALSE;
-  SNDStreamNativeFormat(&nativeStreamBufferFormat);
-  format = SndFormatOfSNDStreamBuffer(&nativeStreamBufferFormat);
+  format = [Snd nativeFormat];
   if([[NSUserDefaults standardUserDefaults] boolForKey: @"SndShowStreamingFormat"])
       NSLog(@"Native format of streaming audio buffer: %@\n", self);
 
@@ -187,14 +185,14 @@ static SndStreamManager *defaultStreamManager = nil;
 
 ////////////////////////////////////////////////////////////////////////////////
 // startStreaming: responsible for calling low-level C stuff to get a stream
-// happening, and register the processAudioAtTime: selector as the callback
+// happening, and register the processStreamAtTime: selector as the callback
 // function.
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) startStreaming
 {
   // Tell MKPerformSndMidi to start sending us buffers, register the
-  // processAudioAtTime selector as the callback for it to use.
+  // processStreamAtTime: selector as the callback for it to use.
   // keep a copy of the format we decided to open to build the initial
   // buffers for each Client. (Recall: Buffers have format info, hence
   // we send a buffer to each client as a way of passing format as well
@@ -426,7 +424,7 @@ static SndStreamManager *defaultStreamManager = nil;
 ////////////////////////////////////////////////////////////////////////////////
 // stopStreaming
 // Responsible for calling low-level C stuff to stop a stream,
-// and unregister the processAudioAtTime: selector as the callback function.
+// and unregister the processStreamAtTime: selector as the callback function.
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void) stopStreaming
@@ -493,10 +491,10 @@ static SndStreamManager *defaultStreamManager = nil;
 //  Don't call!!! only for setting format properties for testing.
 ////////////////////////////////////////////////////////////////////////////////
 
-- setFormat: (SndSoundStruct*) f
+- setFormat: (SndFormat) newFormat
 {
-  memcpy(&format, f, sizeof(SndSoundStruct));
-  return self;
+    format = newFormat;
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -534,7 +532,7 @@ static void processAudio(double sampleCount, SNDStreamBuffer *cInB, SNDStreamBuf
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// processAudioAtTime:input:output:
+// processStreamAtTime:input:output:
 //
 // Poll all the clients for their current output buffers, tell them to start
 // processing
@@ -561,7 +559,7 @@ static void processAudio(double sampleCount, SNDStreamBuffer *cInB, SNDStreamBuf
 #if SNDSTREAMMANAGER_DEBUG
 	NSLog(@"[Manager] post mixer\n");
 #endif
-	if ([mixer clientCount] == 0) {// Hmm, no clients hey? Shut down the Stream.
+	if ([mixer clientCount] == 0) { // Hmm, no clients hey? Shut down the Stream.
 	    [self stopStreaming];
 #if SNDSTREAMMANAGER_DEBUG
 	    NSLog(@"[Manager] signalling a stop stream...\n");
