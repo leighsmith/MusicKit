@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.7  2000/04/04 00:13:21  leigh
+  Made class reference clear in description
+
   Revision 1.6  2000/03/31 00:07:05  leigh
   Adopted OpenStep naming of factory methods
 
@@ -1830,7 +1833,7 @@ static void setNoteOffFields(MKNote *aNoteOff,int aNoteTag,id aPerformer,id aCon
     else
         durAndNoteTagString = [NSString stringWithFormat: @"%.5lf %d", duration, noteTag];
 
-    return [NSString stringWithFormat: @"At %lf: %s(%@) %@ %@\n%@\n",
+    return [NSString stringWithFormat: @"MKNote at %lf: %s(%@) %@ %@\n%@\n",
         timeTag, _MKTokName(noteType), durAndNoteTagString, partString, performerString, paramString];
 }
 
