@@ -96,7 +96,7 @@ typedef enum {
  */
 + audioBufferWithFormat: (SndFormat) format;
 
-    /*!
+/*!
     @method     audioBufferWithFormat:data:
     @abstract   Factory method
     @discussion The frameCount member of format MUST match the length of d (in bytes)!
@@ -140,20 +140,20 @@ typedef enum {
   @method     initWithBuffer:
   @abstract   Initialize a buffer with a matching format to the supplied buffer
   @discussion Creates a duplicated buffer (with a shallow copy, the data is referenced)
-  @param      b is a SndAudioBuffer.
+  @param      sndBuffer An existing initialised SndAudioBuffer.
   @result     Returns self.
 */
-- initWithBuffer: (SndAudioBuffer *) b;
+- initWithBuffer: (SndAudioBuffer *) sndBuffer;
 
 /*!
   @method     initWithBuffer:range:
-  @abstract   Initialize a buffer with a matching format to the supplied buffer method
+  @abstract   Initialize a buffer with a matching format to the supplied buffer, for a subset range of that sound.
   @discussion
-  @param      b
+  @param      sndBuffer An existing initialised SndAudioBuffer.
   @param      rangeInFrames
   @result     Returns self.
 */
-- initWithBuffer: (SndAudioBuffer *) b
+- initWithBuffer: (SndAudioBuffer *) sndBuffer
            range: (NSRange) rangeInFrames;
 
 /*!
@@ -168,22 +168,22 @@ typedef enum {
   @result     Returns self.
  */
 - initWithDataFormat: (SndSampleFormat) dataFormat
-	    channelCount: (int) channelCount
+	channelCount: (int) channelCount
         samplingRate: (double) samplingRate
           frameCount: (long) newFrameCount;
 
 /*!
   @method     initWithDataFormat:channelCount:samplingRate:duration:
-  @abstract   Initialization method
-  @discussion
+  @abstract   Initializes this audio buffer with sound data of the given format, channels, sample rate and duration.
+  @discussion The samples are all silence.
   @param      dataFormat A SndSampleFormat.
-  @param      channelCount
-  @param      samplingRate
-  @param      timeInSeconds
+  @param      channelCount Number of audio channels, 1 for mono, 2 for stereo, 4 for quad etc..
+  @param      samplingRate Sample rate in Hertz.
+  @param      timeInSeconds The size of the buffer in seconds.
   @result     Returns self.
 */
 - initWithDataFormat: (SndSampleFormat) dataFormat
-	    channelCount: (int) channelCount
+	channelCount: (int) channelCount
         samplingRate: (double) samplingRate
             duration: (double) timeInSeconds;
 
@@ -194,14 +194,14 @@ typedef enum {
   @param      buff The SndAudioBuffer instance to mix.
   @param      start The sample frame to begin mixing from.
   @param      end The sample frame to end mixing at.
-  @param      exp If TRUE, receiver is allowed to expand <i>buff</i> in place
+  @param      expand If TRUE, receiver is allowed to expand <i>buff</i> in place
                   if required to change data format before mixing, (not sample rate).
   @result     Returns the number of frames mixed.
 */
 - (long) mixWithBuffer: (SndAudioBuffer *) buff
 	     fromStart: (unsigned long) start
 		 toEnd: (unsigned long) end
-	     canExpand: (BOOL) exp;
+	     canExpand: (BOOL) expand;
 
 /*!
   @method   mixWithBuffer:
@@ -276,6 +276,16 @@ typedef enum {
 	 fromFrameRange: (NSRange) fromFrameRange;
 
 /*!
+  @method audioBufferOfChannel:
+  @abstract Returns a mono SndAudioBuffer instance extracting out the given audio channel of the receiving buffer.
+  @discussion Use this to retrieve a single buffer from a multichannel buffer. Sending this to a mono buffer returns the
+              buffer verbatim.
+  @param channel The channel to extract. Must be in the range {0..[self channelCount] - 1}.
+  @result Returns an autoreleased SndAudioBuffer instance.
+ */
+- (SndAudioBuffer *) audioBufferOfChannel: (int) channel;
+
+/*!
   @method     lengthInSampleFrames
   @abstract   Returns the number of sample frames in the audio buffer.
   @discussion A sample frame is a channel independent time position duration, it's duration is the reciprocal
@@ -287,13 +297,13 @@ typedef enum {
 /*!
   @method     setLengthInSampleFrames
   @abstract   Changes the length of the buffer to <I>newSampleFrameCount</I> sample frames.
-*/
+  @discussion TODO Need to explain the consequences of setting the length longer or shorter than current. See the source code.
+ */
 - setLengthInSampleFrames: (unsigned long) newSampleFrameCount;
 
 /*!
   @method     lengthInBytes
-  @abstract
-  @discussion
+  @abstract   Returns the length of the buffer's sample data in bytes.
   @result     buffer length in bytes
 */
 - (long) lengthInBytes;
@@ -359,8 +369,7 @@ typedef enum {
 /*!
     @method     zero
     @abstract   Sets buffer data to zero. Silence.
-    @discussion
-    @result     self
+    @result     Returns self.
 */
 - zero;
 
@@ -374,8 +383,7 @@ typedef enum {
  
 /*!
     @method     frameSizeInBytes
-    @abstract
-    @discussion
+    @abstract   Returns the size of a sample frame in bytes.
     @result     Integer size of sample frame (channels * sample size in bytes)
 */
 - (int) frameSizeInBytes;
@@ -425,6 +433,7 @@ typedef enum {
 /*!
   @method stereoChannels:
   @abstract Retrieve the channels used for stereo presentation (left and right).
+  @discussion This allows multichannel sound buffers to have a stereo version.
   @param leftAndRightChannels An array of at least two integers which will be assigned
          the channel number of the left speaker in the zeroth element of the array,
          the channel number of the right speaker in the first element of the array.

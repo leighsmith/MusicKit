@@ -458,6 +458,27 @@
                      canExpand: NO];
 }
 
+- (SndAudioBuffer *) audioBufferOfChannel: (int) channelNumber
+{
+    SndAudioBuffer *monoBuffer;
+    SndSampleFormat dataFormat = [self dataFormat];
+    long frameCount = [self lengthInSampleFrames];
+    short mapChannel = channelNumber;
+    
+    if(channelNumber < 0 || channelNumber > format.channelCount) {
+	NSLog(@"SndAudioBuffer audioBufferOfChannel: channel %d out of range [0,%d]\n", channelNumber, format.channelCount);
+	return nil;
+    }
+    
+    monoBuffer = [SndAudioBuffer audioBufferWithDataFormat: dataFormat
+					      channelCount: 1
+					      samplingRate: [self samplingRate]
+						frameCount: frameCount];
+    SndChannelMap([self bytes], [monoBuffer bytes], frameCount, [self channelCount], 1, dataFormat, &mapChannel);
+	
+    return monoBuffer;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // copyWithZone:
 ////////////////////////////////////////////////////////////////////////////////
