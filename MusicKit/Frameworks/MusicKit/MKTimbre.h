@@ -46,9 +46,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.5  2000/11/25 23:23:15  leigh
+  Removed redundant freeSelfOnly
+
   Revision 1.4  2000/06/27 18:08:41  leigh
   Converted hashtable into a NSDictionary timbreDictionary
 
@@ -68,7 +72,7 @@
 {
     NSString *timbreName;               /* Name of this timbre */
     NSMutableArray *freqs;              /* Array object of frequencies */
-    NSMutableArray *waveTables;         /* Array object of WaveTables */
+    NSMutableArray *waveTables;         /* Array object of MKWaveTables */
 }
 
 #define MK_MAXTIMBRENAMELEN 64
@@ -117,10 +121,6 @@
 
 - (void)dealloc;
   /* Frees receiver and removes it from Data Base.  Frees WaveTables. */
-
--freeSelfOnly;
-  /* Frees receiver and removes it from Data Base.  
-     Does not free the WaveTables. */
 
 - (void)removeAllObjects;
  /* Empties the WaveTable Lits and freqs NSArray. */
