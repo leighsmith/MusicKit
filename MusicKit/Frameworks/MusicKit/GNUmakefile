@@ -55,7 +55,7 @@ $(MY_NAME)_OBJC_FILES = \
           _SharedSynthInfo.m SynthPatchList.m conversion.m midifile.m\
           noteRecorderCFuncs.m parseMidi.m parseScore.m time.m\
           tokenNames.m utilities.m writeBinary.m writeMidi.m\
-          writeScore.m MKPatch.m #ArielQP.m DSPSerialPortDevice.m 
+          writeScore.m MKPatch.m mtcConductor.m
 
 $(MY_NAME)_C_FILES = fastFFT.c trigonometry.c
 
