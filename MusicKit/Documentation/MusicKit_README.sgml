@@ -16,7 +16,7 @@ $Id$
 <!-- exact version tuple of the source code (as a CVS version tag) -->
 <!-- this document refers to. -->
 
-<article>
+<article id="README">
 
   <artheader>
     <title>The MusicKit V&mkvers;</title>
@@ -551,7 +551,9 @@ in bug fixes for the MacOS X-Server version.</para></listitem>
   <sect1 id="license">
     <title>License</title>
 
-    <para>
+    <sect2 id="OriginalMKLicense">
+      <title>Original MusicKit License</title>
+      <para>
 The source code as distributed by Stanford (V4.2) included the
 following usage message:
 </para>
@@ -573,15 +575,35 @@ Kit.
 </para>
     </blockquote>
 
+    </sect2>
+    <sect2 id="CurrentMKLicense">
+      <title>MusicKit Usage</title>
     <para>
-In regard of this version as indicated at the top of this file
+In regard of version V&mkvertuple;
 (consitituting all changes and modifications, porting efforts and
-documentation), I am continuing this usage philosophy. The latest
-usage file is found in 
-<filename>
-./Documentation/Administration/Usage.rtf
-</filename>
+documentation beyond V4.2), the current license follows.
 </para>
+
+<para>The MusicKit software is distributed free of charge.  Copyright
+remains with the owner indicated in each file and copyright of the
+modifications to each file remains with the contributor of the
+changes. The software in this distribution may be freely incorporated
+into any commercial application, any academic application, and public
+domain application or any musical composition so long as the
+attribution of authorship of the software is retained in the original
+source and documentation files.</para>
+
+<para>By sharing your contributions back to the public domain, this
+helps others as well as yourself. It is not intended that your changes
+be enforced to be returned to the public domain, but it is hoped that
+common sense will prevail and that everyone will realise that reward
+does not mean avoiding openness.</para>
+
+<para>We (the contributors to the MusicKit) would appreciate your
+acknowledging the use of the MusicKit in any academic paper, music
+program notes and application documentation that use the
+MusicKit. </para>
+    </sect2>
   </sect1>
 
   <sect1 id="VersionNumbering">
@@ -1129,13 +1151,14 @@ English.
     <title>Contributing Fixes</title>
     <para>
 Please! I am maintaining changes via a closed CVS system (<systemitem
-class="systemname">cvs.tomandandy.com</systemitem>) at the moment,
+class="systemname">anoncvs.tomandandy.com</systemitem>) at the moment,
 since <systemitem class="systemname">sourceforge</systemitem> does not
-provide a CVS which supports -t/-f wrappers necessary for .nib
+provide a CVS which supports -t/-f wrappers necessary for .rtfd
 support. If you send me <email>leigh@tomandandy.com</email> changes I
 will incorporate them and check them in. If you are planning to do
 major work, I can provide access to the CVS server. The long-term goal
-is to make the CVS tree fully available to all interested developers,
+is to make the CVS tree fully available to all interested developers
+on sourceforge, but this requires all .rtfd files to be replaced.
 please help!
 </para>
   </sect1>
