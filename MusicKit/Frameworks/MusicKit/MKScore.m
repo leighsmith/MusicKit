@@ -20,6 +20,9 @@
 Modification history:
 
   $Log$
+  Revision 1.25  2001/08/07 16:17:06  leighsmith
+  Cleaned up encoding and decoding
+
   Revision 1.24  2001/02/23 03:29:44  leigh
   Removed redundant and dangerous releasePartsOnly method
 
@@ -1476,10 +1479,9 @@ readScorefile(MKScore *self,
 - (void)encodeWithCoder:(NSCoder *)aCoder
   /* You never send this message directly.  
      Should be invoked with NXWriteRootObject(). 
-     Archives Parts, Notes and info. */
+     Archives MKParts, MKNotes and info. */
 {
-    /*[super encodeWithCoder:aCoder];*/ /*sb: unnec */
-    [aCoder encodeValuesOfObjCTypes:"@@",&parts,&info];
+    [aCoder encodeValuesOfObjCTypes: "@@", &parts, &info];
 }
 
 static BOOL isUnarchiving = NO;
@@ -1489,19 +1491,16 @@ static BOOL isUnarchiving = NO;
      Should be invoked via NXReadObject(). 
      See write:. */
 {
+    NSMutableDictionary *tagTable = [NSMutableDictionary dictionary];
     isUnarchiving = YES; /* Inhibit Parts' mapping of noteTags. */
-    /*[super initWithCoder:aDecoder];*/ /*sb: unnec */
-    if ([aDecoder versionForClassName:@"MKScore"] == VERSION2) 
-      [aDecoder decodeValuesOfObjCTypes:"@@",&parts,&info];
+
+    if ([aDecoder versionForClassName: @"MKScore"] == VERSION2) 
+      [aDecoder decodeValuesOfObjCTypes: "@@", &parts, &info];
     /* Maps noteTags as represented in the archive file onto a set that is
        unused in the current application. This insures that the integrity
        of the noteTag is maintained. */
-    {
-        NSMutableDictionary *tagTable = [NSMutableDictionary dictionary];
-        [parts makeObjectsPerformSelector:@selector(_mapTags:) withObject:tagTable];
-        isUnarchiving = NO;
-    }
-    /****/
+    [parts makeObjectsPerformSelector:@selector(_mapTags:) withObject:tagTable];
+    isUnarchiving = NO;
     return self;
 }
 
