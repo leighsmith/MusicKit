@@ -1,41 +1,44 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David Jaffe
-  
   Defined In: The MusicKit
 
-  Note:
-  * back-hashing is optionally supported.
-  * the name is owned by the name table (it is copied and freed)
-  * a type is associated with the name.
+  Description:
+  
+    Note:
+    * back-hashing is optionally supported.
+    * the name is owned by the name table (it is copied and freed)
+    * a type is associated with the name.
+    
+    Note that if back-hashing is not specified (via the _MK_BACKHASH bit),
+    the object name is NOT accessible from the object. We use backhashing
+    except for things such as pitch names and keywords, where backhashing
+    is never done.
+    
+    We should convert it to an NSDictionary, however:
+    1. NSDictionary always copies but memory's cheap so big deal.
+    2. using the object as reference (back-hashing) needs somewhere to save the type,
+    otherwise an enclosing object needs to be defined holding the object and the type
+    parameters as the value. This means a search won't work.
+    We could do this by making the type be an instance var of the object, or just having two dictionaries.
+    
+    Also, should NOT copy strings. Or, at least, have a no-copy bit
+    that can be set for the strings that exist elsewhere (e.g. the
+    ones for the keywords and such) in the program.
 
-  Note that if back-hashing is not specified (via the _MK_BACKHASH bit),
-  the object name is NOT accessible from the object. We use backhashing
-  except for things such as pitch names and keywords, where backhashing
-  is never done.
-
-  Should convert this to Bertrand's hashtable.
-
-  LMS: Nowdays we should convert it to NSDictionary, however:
-  1. NSDictionary always copies but memory's cheap so big deal.
-  2. using the object as reference (back-hashing) needs somewhere to save the type, otherwise an enclosing
-  object needs to be defined holding the object and the type parameters as the value. This means a search
-  won't work.
-  We could do this by making the type be an instance var of the object, or just having two dictionaries.
-
-  Also, should NOT copy strings. Or, at least, have a no-copy bit
-  that can be set for the strings that exist elsewhere (e.g. the
-  ones for the keywords and such) in the program.
+  Original Author: David Jaffe
+  
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.7  2000/10/01 06:42:47  leigh
+  Doco cleanup.
+
   Revision 1.6  2000/07/22 00:34:05  leigh
   Minor doco and typing cleanups.
 
@@ -192,9 +195,9 @@ static _MKNameTable *_MKNameTableRemoveName(_MKNameTable *table,NSString *theNam
     nameRecord *symbolRec1,*symbolRec2;
     symbol.name = theName;
     symbol.owner = theOwner;
-    symbolRec1 = NXHashRemove(table->hTab, &symbol);
+    symbolRec1 = NSHashRemove(table->hTab, &symbol);
     if (symbolRec1) 
-      symbolRec2 = NXHashRemove(table->bTab, symbolRec1);
+      symbolRec2 = NSHashRemove(table->bTab, symbolRec1);
     else return NULL;
     giveSymbol(symbolRec1);
     return table;
