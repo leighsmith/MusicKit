@@ -26,6 +26,11 @@
  Modification history:
 
  $Log$
+ Revision 1.12  2002/04/15 14:20:40  sbrandon
+ - remembered to encode/decode superclass in archival methods
+ - added -hash and -isEqual: methods to aid in situations where object is
+   used as a key in dictionaries or maptables.
+
  Revision 1.11  2002/04/03 03:59:41  skotmcdonald
  Bulk = NULL after free type paranoia, lots of ensuring pointers are not nil before freeing, lots of self = [super init] style init action
 
@@ -248,6 +253,7 @@ double **arrPtr)
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
+  [super encodeWithCoder:aCoder];
   NORMALFORM(self);
   [aCoder encodeValuesOfObjCTypes: "iddd", &partialCount, &defaultPhase, &minFreq, &maxFreq];
   putArray(partialCount, aCoder, ampRatios);
@@ -257,6 +263,7 @@ double **arrPtr)
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
+  self = [super initWithCoder:aDecoder];
   if ([aDecoder versionForClassName: @"MKPartials"] == VERSION2) {
     [aDecoder decodeValuesOfObjCTypes: "iddd", &partialCount, &defaultPhase, &minFreq, &maxFreq];
     getArray(partialCount, aDecoder, &_ampArrayFreeable, &ampRatios);
@@ -286,11 +293,60 @@ double **arrPtr)
   [super dealloc];
 }
 
+- (unsigned) hash
+{
+//trivial hash
+  double p = 0;
+  if (phases && partialCount) {
+    p = phases[0];
+  }
+  return partialCount + 256.0f * defaultPhase +
+    (partialCount ? 10000.0f * (ampRatios[0] + freqRatios[0] + p) : 0);
+}
+
+- (BOOL) isEqual: (MKPartials*)anObject
+{
+    double *otherAmpRatios,*otherFreqRatios,*otherPhases;
+    if (!anObject)                           return NO;
+    if (self == anObject)                    return YES;
+    if ([self class] != [anObject class])    return NO;
+    if ([self hash] != [anObject hash])      return NO;
+    if (partialCount != [anObject partialCount])       return NO;
+    if (defaultPhase != [anObject defaultPhase])       return NO;
+
+    otherAmpRatios  = [anObject ampRatios];
+    otherFreqRatios = [anObject freqRatios];
+    otherPhases     = [anObject phases];
+    
+    if ((freqRatios == otherFreqRatios) && 
+        (ampRatios == otherAmpRatios)   && 
+	(phases == otherPhases))          {
+      return YES;
+    }
+    // phases can be pointers, or null.
+    if (((phases == NULL) && (otherPhases != NULL)) ||
+       ((phases != NULL) && (otherPhases == NULL))) {
+      return NO;
+    }
+    if (memcmp(freqRatios,otherFreqRatios,partialCount*sizeof(double))) {
+      return NO;
+    }
+    if (memcmp(ampRatios,otherAmpRatios,partialCount*sizeof(double))) {
+      return NO;
+    }
+    if (phases && otherPhases) {
+      if (memcmp(phases,otherPhases,partialCount*sizeof(double))) {
+        return NO;
+      }
+    }
+    return YES;
+}
+
 - setPartialCount:	(int)howMany
        freqRatios: (double *)fRatios
         ampRatios: (double *)aRatios
            phases: (double *)phs
-   orDefaultPhase: (double)defPhase
+   orDefaultPhase:   (double)defPhase
   /* This method is used to specify the amplitude and frequency
   ratios and initial phases of a set of partials representing a
   waveform.  If one of the getData methods is called (inherited from
