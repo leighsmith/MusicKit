@@ -174,14 +174,6 @@
 - (NSString *) description;
 
 /*!
-    @method performancesOfSnd:
-    @abstract Return an array of the performances of a given sound.
-    @param    snd The Snd instance to check which performances are playing or pending play.
-    @result   An array containing all performance instances of a particular Snd. 
-*/
-- (NSArray *) performancesOfSnd: (Snd *) snd;
-
-/*!
     @method     setRemainConnectedToManager:
     @abstract   Sets the SndPlayer disconnection behaviour when no sounds
                 remain in the pending or play arrays. 

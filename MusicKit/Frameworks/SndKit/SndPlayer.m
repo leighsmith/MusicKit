@@ -233,6 +233,7 @@ static SndPlayer *defaultSndPlayer;
         [playingLock lock];
         [self _startPerformance: nowPerformance];    
         [playingLock unlock];
+        [s addPerformance: nowPerformance];
         return nowPerformance;
     }		
     else {            // play later!
@@ -258,6 +259,7 @@ static SndPlayer *defaultSndPlayer;
         }
         [toBePlayed insertObject: laterPerformance atIndex: i];
         [playingLock unlock];
+        [s addPerformance: laterPerformance];
         return laterPerformance;
     }
 }
@@ -274,10 +276,10 @@ static SndPlayer *defaultSndPlayer;
 // stop all performances of the sound, at some point in the future.
 - stopSnd: (Snd *) s withTimeOffset: (double) inSeconds
 {
-    NSArray *performancesToStop = [self performancesOfSnd: s];
-    int performanceIndex;
+    NSArray *performancesToStop = [s performances];
+    int performanceIndex, count = [performancesToStop count];
 
-    for(performanceIndex = 0; performanceIndex < [performancesToStop count]; performanceIndex++) {
+    for(performanceIndex = 0; performanceIndex < count; performanceIndex++) {
         [self stopPerformance: [performancesToStop objectAtIndex: performanceIndex] inFuture: inSeconds];
     }
     return self;
@@ -287,34 +289,6 @@ static SndPlayer *defaultSndPlayer;
 - stopSnd: (Snd *) s
 {
     return [self stopSnd: s withTimeOffset: 0.0];
-}
-
-// Return an array of the performances of a given sound.
-- (NSArray *) performancesOfSnd: (Snd *) snd
-{
-    int performanceIndex;
-    NSMutableArray *performances = [NSMutableArray arrayWithCapacity: 10];
-    SndPerformance *aPerformance;
-    int count;
-
-    // extract out from our playing/toBePlayed lists those with Snds matching snd
-    [playingLock lock];
-    count = [playing count];
-    for (performanceIndex = 0; performanceIndex < count; performanceIndex++) {
-        aPerformance = [playing objectAtIndex: performanceIndex];
-        if([snd isEqual: [aPerformance snd]]) {
-            [performances addObject: aPerformance];
-        }
-    }
-    count = [toBePlayed count];
-    for (performanceIndex = 0; performanceIndex < count; performanceIndex++) {
-        aPerformance = [toBePlayed objectAtIndex: performanceIndex];
-        if([snd isEqual: [aPerformance snd]]) {
-            [performances addObject: aPerformance];
-        }
-    }
-    [playingLock unlock];
-    return performances;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -394,11 +368,10 @@ static SndPlayer *defaultSndPlayer;
         // When at the end of sounds, signal the delegate and remove the performance.
         
         if ([performance playIndex] >= endAtIndex) {
-            int count;
-            int performanceIndex;
-            SndPerformance *aPerformance;
-            
             [removalArray addObject: performance];
+            [snd removePerformance: performance];
+//            fprintf(stderr,"Detected an end of performance... %i objs\n",[removalArray count]); 
+            
   // SKoT: Dangerous - what if we have multiple performances of a single sound? Comment out for now.       
  //           [[performance snd] _setStatus: SND_SoundStopped];
  //           [[performance snd] tellDelegate: @selector(didPlay:duringPerformance:)
@@ -407,15 +380,7 @@ static SndPlayer *defaultSndPlayer;
 /* sbrandon Nov 2001: now check thru all performances, and if this one was the last
  * one using this snd, we set the snd to SND_SoundStopped
  */
-            count = [playing count];
-            for (performanceIndex = 0; performanceIndex < count; performanceIndex++) {
-                aPerformance = [playing objectAtIndex: performanceIndex];
-                if([snd isEqual: [aPerformance snd]] && performance != aPerformance) {
-                    performanceIndex = -1;
-                    break;
-                }
-            }
-            if (performanceIndex != -1) {
+            if ([snd performanceCount] == 0) {
                 [snd _setStatus: SND_SoundStopped];
             }
 
@@ -436,13 +401,16 @@ static SndPlayer *defaultSndPlayer;
 
     // NSLog(@"SYNTH THREAD: playing %d sounds", [playing count]);
     if ([removalArray count] > 0) {
+//        fprintf(stderr,"removing... removal:%i toBePlayed:%i playing:%i\n",[removalArray count],[toBePlayed count],[playing count]);
         [playing removeObjectsInArray: removalArray];
-        if (!bRemainConnectedToManager &&
-            [toBePlayed count] == 0 && 
-            [playing count] == 0) 
-        {
-            active = FALSE;
-            // NSLog(@"SYNTH THREAD: Setting active false\n");
+        if ([toBePlayed count] == 0 && [playing count] == 0) {
+            if (!bRemainConnectedToManager) {
+                active = FALSE;
+//                fprintf(stderr,"[SndPlayer] Setting inactive...\n");
+            }
+            else {
+//                fprintf(stderr,"[SndPlayer] remaining active...\n");
+            }
         }
     }
     [playingLock unlock];    
