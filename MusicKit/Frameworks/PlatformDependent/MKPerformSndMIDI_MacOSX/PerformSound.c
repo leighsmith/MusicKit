@@ -20,6 +20,9 @@
 */
 /*
 // $Log$
+// Revision 1.18  2001/09/12 11:26:44  sbrandon
+// added snd muting functions (output only)
+//
 // Revision 1.17  2001/09/05 17:01:49  skotmcdonald
 // Fixed nasty bug: freeing input buffer memory BEFORE the streaming shutdown function call had been made - this has appeared due to the across-thread stop call made by the new startStop signalling SK thread. Added extra paranoia debug statements, gated by #ifs
 //
@@ -84,7 +87,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 
 #define DEBUG_SQUAREWAVE    0  // generate a square wave, rather than the real audio data
 #define DEBUG_DESCRIPTION   0  // dump the description of the audio device.
@@ -111,7 +114,7 @@ typedef struct _audioStream {
 
   // Number of samples per frame (frame = 1 or more channels per time instant) so we
   // can keep track of time inbetween sndPlayIOProc calls.
-  int          sampleFramesGenerated; 
+  int          sampleFramesGenerated;
   int          sampleToPlay;
 
   SNDNotificationFun finishedPlayFun;
@@ -140,10 +143,11 @@ static AudioDeviceID inputDeviceID;
 
 // Stream processing data.
 static SNDStreamProcessor streamProcessor;
-static void *streamUserData;
-static double firstSampleTime = -1.0; // indicates this has not been assigned.
+static void          *streamUserData;
+static double        firstSampleTime = -1.0; // indicates this has not been assigned.
 
-static float *fInputBuffer = NULL;
+static float         *fInputBuffer = NULL;
+static BOOL          isMuted = FALSE;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -222,7 +226,12 @@ static OSStatus sndPlayIOProc(AudioDeviceID inDevice,
                     grabDataFrom = (unsigned char *) snd + snd->dataLocation + byteToPlayFrom;
                     // obtain data from big-endian ordered words
                     sampleWord = (((signed short) grabDataFrom[0]) << 8) + (grabDataFrom[1] & 0xff);
-                    outputBuffer[sampleToPlay] = sampleWord / 32768.0f;  // make a float, do any other sounds, normalize and then write it.
+
+                    if (!isMuted) {
+                        ((float *)outputBuffer)[sampleToPlay] = sampleWord / 32768.0f;
+                    }
+                    else ((float *)outputBuffer)[sampleToPlay] = 0.0f;
+
                     if(snd->channelCount != 1)	// play mono by sending same sample to all channels
                         byteToPlayFrom += bytesPerSample;
 #endif
@@ -321,8 +330,12 @@ static OSStatus vendBuffersToStreamManagerIOProc(AudioDeviceID inDevice,
           // hand over the stream buffers to the processor/stream manager.
           // the output time goes out as a relative time, noted from the 
           // first sample time we first receive.
-          (*streamProcessor)(inOutputTime->mSampleTime - firstSampleTime, 
+          (*streamProcessor)(inOutputTime->mSampleTime - firstSampleTime,
                              &inStream, &outStream, streamUserData);
+
+          if (isMuted) {
+              memset(outputBuffer,0,bufferSizeInBytes);
+          }
         }
     }
 #if DEBUG_CALLBACK    
@@ -737,12 +750,12 @@ PERFORM_API void SNDSetVolume(float left, float right)
 
 PERFORM_API BOOL SNDIsMuted(void)
 {
-    return FALSE; // TODO
+    return isMuted;
 }
 
 PERFORM_API void SNDSetMute(BOOL aFlag)
 {
-    // TODO
+    isMuted = aFlag;
 }
 
 // Routine to begin playback of a sound struct
