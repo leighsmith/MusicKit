@@ -18,7 +18,7 @@
 // Version info
 #define V_MAJ  1
 #define V_MIN  0
-#define V_TINY 2
+#define V_TINY 3
 
 static int iReturnCode = 0;
 
@@ -223,7 +223,9 @@ int main (int argc, const char * argv[])
         [player setRemainConnectedToManager: FALSE];
 
         if (useReverb) {
-            [pchain addAudioProcessor:[[[SndAudioProcessorReverb alloc] init] autorelease]];
+            SndAudioProcessorReverb *rv = [[[SndAudioProcessorReverb alloc] init] autorelease];
+            [rv setActive: TRUE];
+            [pchain addAudioProcessor:rv];
         }
         
         [s playInFuture: timeOffset beginSample: startTimeInSamples sampleCount: durationInSamples];
