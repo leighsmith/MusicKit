@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2002/09/25 17:40:37  leighsmith
+  Commented out unused myCos function to stop warnings
+
   Revision 1.4  2001/05/12 09:37:37  sbrandon
   - GNUSTEP: include headers, don't import them
 
@@ -73,7 +76,10 @@ static double mySin(double x)
     else return sinTab[floorVal] * (1-diff) + sinTab[floorVal+1] * diff;
 }
 
+// LMS Not used so commented out to stop warnings, but can be uncommented if you need it.
+#if 0 
 static double myCos(double x)
 {
     return mySin(x + M_PI_2);
 }
+#endif
