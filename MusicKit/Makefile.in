@@ -23,3 +23,6 @@ install:
 
 frameworks:
 	xcodebuild $(PROJECT) -target "Frameworks Only (Aggregate)" -buildstyle Embedded install DSTROOT=/ $(CONFIG)
+
+clean:
+	xcodebuild $(PROJECT) -target "MusicKit (Aggregate)" clean DSTROOT=/ $(CONFIG)
