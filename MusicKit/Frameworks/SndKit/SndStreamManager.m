@@ -201,7 +201,7 @@ static SndStreamManager *sm = nil;
 
 void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cOutB, void* obj)
 {
-    objc_msgSend(obj,@selector(processStreamAtTime:input:output:), sampleCount, cInB, cOutB);
+    [(SndStreamManager *) obj processStreamAtTime: sampleCount input: cInB output: cOutB];
 }
 
 - (void) processStreamAtTime: (double) sampleCount
