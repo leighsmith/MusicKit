@@ -45,7 +45,7 @@ else
 fi
 
 # What we package up.
-applications=(MIDIFilePlayback.app ScorePlayer.app MidiRecord.app PianoRoll.app)
+applications=(MIDIFilePlayback.app ScorePlayer.app MidiRecord.app PianoRoll.app Spectro.app)
 cmds=(playscore scorefile2stella convertscore playscorefilemidi example1 example3)
 # TODO MKUnitGenerators MKSynthPatches
 packages=(MusicKit MKPerformSndMIDI MKDSP SndKit)
@@ -111,7 +111,7 @@ end
 /bin/chmod -R u+w $workingdir/$install_file_directory/
 
 echo "Changing ownership to root.wheel, log in as root."
-echo "/usr/sbin/chown -R root.wheel $workingdir/$install_file_directory/" | su root -s
+sudo /usr/sbin/chown -R root.wheel $workingdir/$install_file_directory/
 
 #  The .info file is in a basic key/value format. The keys that are
 #  commonly used are defined below, a more complete list of keys is
@@ -167,7 +167,7 @@ shipfile=$workingdir/$frameworkname-$appversion.b.$osacronym.pkg.tar
 tar cf $shipfile $frameworkname.pkg
 
 echo "Deleting temporary files, log in as root."
-echo "/bin/rm -r -f $workingdir/$install_file_directory" | su root -s
+sudo /bin/rm -r -f $workingdir/$install_file_directory
 
 rm -r -f $workingdir/$frameworkname.pkg
 
