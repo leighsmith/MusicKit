@@ -129,22 +129,29 @@ $wholeFile =~ s/Instance Methods//i;
 
 # Prefix each method definition with HeaderDoc opening.
 # find the +/-, the method prototype and the discussion. 
+#
 # Look for a non-blank string of characters, possibly
 # terminated with a colon that indicates this is the preluding
 # method title to the next prototype, effectively the end of the
 # description.
+#
 # We rewrite this as a <br> to ensure we don't break other prototype
 # boundaries.
-while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<br>\s|<br>$)/<br>/) {
-    $classOrInstanceMethod = $1;
-    $prototype = $2;
-    $discussion = $4;
+while ($wholeFile =~ s/<br>\s*(<b>)*\s*([\+\-])\s*(<\/b>)*\s*(.*?)(<br>\s*){2,}(.*?)(<br>\s*)+(<br>\S+<br>|<br>\s|<br>$)/<br>/) {
+    $classOrInstanceMethod = $2;
+    $prototype = $4;
+    $lineBreaksBetweenPrototypeAndDiscussion = $5;
+    $discussion = $6;
+    $lineBreaksBetweenDiscussionAndNextPrototype = "first break=\"$7\" second break=\"$8\"";
     $formattedPrototype = $classOrInstanceMethod . $prototype;
     # give ourselves a clean description
     # $formattedPrototype =~ s/<\/*[bi]>//g;
 
-    # print "prototype for matching = $prototype\n";
-    # print "discussion = $discussion\n";
+    #print "method type = $classOrInstanceMethod prototype for matching = $prototype\n";
+    #print "line breaks between prototype and discussion = $lineBreaksBetweenPrototypeAndDiscussion\n";
+    #print "discussion = $discussion\n";
+    #print "line breaks between discussion and next prototype = $lineBreaksBetweenDiscussionAndNextPrototype\n";
+
     # Format the prototype for HeaderDoc.
     # Match the return type and the method name prior to parameters.
     if ($prototype =~ s/\s*(\(.*?\)|[^\s<]*?)\s*<b>\s*(.*?)\s*<\/b>//) {
@@ -155,8 +162,10 @@ while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<b
 	$returnType =~ s/[\(\)]//g;
 
 	$paramCount = 0;
-	while($prototype !~ /^\s*$/) {
-	    # print "methodName = $methodName prototype remaining: $prototype";
+	# Keep sucking out parameters, or until we obviously have
+	# something we can't digest, spit it out.
+	while(($prototype !~ /^\s*$/) && ($paramCount != 15)) {
+	    # print "methodName = $methodName\nprototype remaining: $prototype";
 	    # Match on parameter type (some won't be static)...
 	    # Ensure an italicized parameter doesn't precede the type
 	    # (indicating we have missed an untyped (i.e id) parameter).
@@ -175,14 +184,19 @@ while ($wholeFile =~ s/<br>\s*([\+\-])\s*(.*?)(<br>)+(.*?)(<br>)+(<br>\S+<br>|<b
 	    # ...and wierd cruft like trailing semicolons, invisible
 	    # italics and bolding...arrggh!
 	    $prototype =~ s/;//;
-	    $prototype =~ s/<b><\/b>//;
-	    $prototype =~ s/<i><\/i>//;
+	    $prototype =~ s/<b>\s*<\/b>//;
+	    $prototype =~ s/<i>\s*<\/i>//;
+            $prototype =~ s/<br>//;
 
 	    # ...and subsequent 'keyName:' keywords
 	    if ($prototype =~ s/\s*((<b>\s*)|())(.*?:)\s*((<\/b>)|())//) {
 		$methodName .= $4;
 	    }
 	    $paramCount++;
+	}
+	if($paramCount >= 15 && !$sedOutput) {
+	    # if we hit an undigestible morsel.
+	    print "Couldn't eat \"$prototype\" - bleuch!\n";
 	}
     }
     
@@ -273,7 +287,7 @@ sub lineWrap
 	# print "longstring = $longString\n";
 	# print "formattedString = $formattedString\n";
 	while($longString =~ s/^([^\n\\]{$minWidth,$lineWidth})\s//s) {
-	    $formattedString .= $1 . $eolChar. "\n" . $padding;
+	    $formattedString .= $1 . $eolChar . "\n" . $padding;
 	}
 	$longString =~ s/^(.*?)(\n|$)//s;
 	if($2 eq "\n") {
