@@ -396,8 +396,8 @@ env = [MKEnvelope new];              /* or alloc/init in 2.0 */
 	<TITLE>EnvelopeEd</TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
-	    <IMAGEDATA FILEREF="Images/MusicKitClass2-EnvelopeEd.tiff"
-		       FORMAT="tiff">
+	    <IMAGEDATA FILEREF="Images/MusicKitClass2-EnvelopeEd.eps"
+		       FORMAT="eps" SCALE=50>
 	  </IMAGEOBJECT>
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/MusicKitClass2-EnvelopeEd.gif"
@@ -410,8 +410,8 @@ env = [MKEnvelope new];              /* or alloc/init in 2.0 */
 	<TITLE>Wave Form Display</TITLE>
 	<MEDIAOBJECT>
 	  <IMAGEOBJECT>
-	    <IMAGEDATA FILEREF="Images/MusicKitClass2-Wave_Form_Display.tiff"
-		       FORMAT="tiff">
+	    <IMAGEDATA FILEREF="Images/MusicKitClass2-Wave_Form_Display.eps"
+		       FORMAT="eps" SCALE=50>
 	  </IMAGEOBJECT>
 	  <IMAGEOBJECT>
 	    <IMAGEDATA FILEREF="Images/MusicKitClass2-Wave_Form_Display.gif"
