@@ -74,7 +74,7 @@ MKDSP_API int _DSPError(
     if (s_error_log_disabled)
         return errorcode;       /* To avoid memory leak assoc. w DSPCat() */
     else
-        return(_DSPError1(errorcode,[NSString stringWithFormat:@"%s%s",msg,"%s"],""));
+        return(_DSPError1(errorcode,(char *)[[NSString stringWithFormat:@"%s%s",msg,"%s"] cString],""));
 }
 int DSPEnableErrorLog(void)
 {
@@ -101,7 +101,7 @@ MKDSP_API int DSPEnableErrorFile(
 {
     //DSP_UNTIL_ERROR(DSPEnableErrorLog());
     DSPEnableErrorLog();
-    return DSPSetErrorFile(fn);
+    return DSPSetErrorFile((char *)fn);
 }
 int _DSPCheckErrorFP(void)
 {
