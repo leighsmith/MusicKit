@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.13  2000/11/28 19:05:49  leigh
+  Added -fileExtensions, -scorefileExtensions, changed -midiExtensions to produce a NSArray of possible midifile extensions
+
   Revision 1.12  2000/11/25 22:59:17  leigh
   Removed -releaseParts and renamed -removeAllObjects to the more meaningful -removeAllParts
 
@@ -319,8 +322,14 @@
 +(BOOL)midifilesEvaluateTempo;
   /* Returns value set with setMidifilesEvaluateTempo: */
 
-+ (NSString *) midifileExtension;
-  /* returns the extension used in writing and reading MIDI files */  
++ (NSArray *) midifileExtensions;
+  /* Returns the possible extensions used in writing and reading MIDI files */  
+
++ (NSArray *) scorefileExtensions;
+  /* Return the possible extensions of scorefiles allowed */
+
++ (NSArray *) fileExtensions;
+  /* Return the possible extensions of scorefiles and MIDI files allowed */
 
 + score;
   /* manufactures an allocated, initialised and autoreleased instance */
