@@ -6,8 +6,8 @@
 
 @interface ErrorLog : NSObject
 {
-    NSTextView *	msg;
-    id	panel; /* Actually this is a window. */
+    IBOutlet NSTextView *msg;
+    IBOutlet NSWindow   *panel;
 }
 
 - init;
