@@ -53,6 +53,9 @@
 /* 
   Modification history:
   $Log$
+  Revision 1.4  2001/09/15 18:24:08  leighsmith
+  Corrected headerfile name include
+
   Revision 1.3  2000/06/13 19:25:01  leigh
   Now use SndKit and MKDSP frameworks, cleaned doco
 
@@ -101,7 +104,7 @@ typedef enum _args { aina, atab, inc, ainf, aout, mtab, phs} args;
 //NXLocalStringFromTableInBundle(_MK_ERRTAB,_MKErrorBundle(),"Oscgaf Wavetable","Wavetable","This string occurs in the context of a larger error message: 'Wavetable must be set before running...' This error is rarely if ever seen by the user")
 
 #define MK_OSCFREQSCALE 256.0 /* Used by Oscg and Oscgaf */
-/* #import "unitgenerators.h" /* Has MK_OSCFREQSCALE */ 
+/* #import "MKUnitGenerators.h" /* Has MK_OSCFREQSCALE */ 
 
 #if _MK_UGOPTIMIZE 
 +(BOOL)shouldOptimize:(unsigned) arg
