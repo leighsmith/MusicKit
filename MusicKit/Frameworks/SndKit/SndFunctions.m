@@ -14,15 +14,20 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 ******************************************************************************/
 
-#ifndef WIN32
-#import <libc.h>
+#ifndef GNUSTEP
+# ifndef WIN32
+#  import <libc.h>
+# else
+#  import <stdio.h>
+#  import <fcntl.h>
+#  import <Winsock.h>
+#  import <malloc.h>
+#  import <io.h>
+# endif
 #else
-#import <stdio.h>
-#import <fcntl.h>
-#import <Winsock.h>
-#import <malloc.h>
-#import <io.h>
+# import <fcntl.h>
 #endif
+
 #import <math.h>
 #import <Foundation/Foundation.h>
 
