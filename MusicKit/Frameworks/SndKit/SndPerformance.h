@@ -28,10 +28,12 @@
 */
 @interface SndPerformance : NSObject
 {
-/*! @var 				snd */
+/*! @var  	snd */
     Snd    *snd;
 /*! @var 				playTime */
     double  playTime;
+/*! @var    startIndex */
+    long    startAtIndex;
 /*! @var 				playIndex */
     long    playIndex;
 /*! @var 				endAtIndex */
@@ -39,6 +41,8 @@
 /*! @var 				paused */
     BOOL    paused;
     // TODO playState should be here, not Snd.
+/*! @var audioProcessorChain */
+    SndAudioProcessorChain *audioProcessorChain;
 }
 
 /*!
@@ -65,7 +69,6 @@
                         playingAtTime: (double) seconds
                          beginAtIndex: (long) beginIndex
                            endAtIndex: (long) endIndex;
-
 /*!
     @method   initWithSnd:playingAtTime:
     @abstract   Initialise a performance with a sound and a time to begin playing.
@@ -86,7 +89,6 @@
     @result     Returns self if able to initialise, nil if unable.
 */
 - initWithSnd: (Snd *) s playingAtTime: (double) t beginAtIndex: (long) beginIndex endAtIndex: (long) endIndex;
-
 /*!
     @method   snd
     @abstract   Returns the Snd instance being played in this performance.
@@ -100,6 +102,8 @@
     @result     Returns the time interval in seconds from the current time the sound is to begin playing.
 */
 - (double) playTime;
+
+- setPlayTime: (double) t;
 
 /*!
     @method   playIndex
@@ -121,6 +125,12 @@
     @result     Returns the sample index to stop playing at.
 */
 - (long) endAtIndex;
+/*!
+  @method   startAtIndex
+  @abstract   Returns the sample to start playing at.
+  @result     Returns the sample index to start playing at.
+*/
+- (long) startAtIndex;
 
 /*!
     @method   setEndAtIndex:
@@ -135,8 +145,11 @@
     @param      inSeconds The time interval when to stop the performance.
 */
 - (void) stopInFuture: (double) inSeconds;
-- (void) stopNow;
 
+/*!
+    @method stopNow
+*/
+- (void) stopNow;
 /*!
     @method   isEqual:
     @abstract 
@@ -177,6 +190,22 @@
   @abstract resumes a paused performance
 */
 - resume;
+/*!
+  @method audioProcessorChain
+  @result The audioProcessorChain associated with this performance 
+*/
+- (SndAudioProcessorChain*) audioProcessorChain;
+/*!
+  @method setAudioProcessorChain:
+  @param anAudioProcessorChain
+*/
+- setAudioProcessorChain: (SndAudioProcessorChain*) anAudioProcessorChain;
+/*!
+  @method processBuffer:
+  @param aBuffer
+*/
+- processBuffer: (SndAudioBuffer*) aBuffer;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
