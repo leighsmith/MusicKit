@@ -128,6 +128,78 @@ NSScrollView.
 
  - willRecord:sender
  Sent to the delegate just before the SndView's sound is recorded into.
+
+ <H2>SndView Adds These Features:</H2>
+ <UL>
+ <LI> Configurable speed optimizations (see below)
+ <LI> Non-integer reduction factors (r.f), and r.f. down to 0.04 (1 sample per 25 pixels) [SoundView only goes as low as 1]
+ <LI> For 0.04 <= r.f < 0.34, SndView can be instructed to draw small horizontal bars at each sample (this is the default). This allows for great accuracy in specifying selections for copy/paste operations.
+ <LI> Configurable maximum recording time
+ <LI> Intelligent recording - converts recorded sounds to the format of the rest of the displayed sound if the format is not compatible. Queries hardware for allowable sampling rates/formats [NOT CURRENTLY SUPPORTED ON ANY PLATFORM]
+ <LI> Can be instructed to display only left channel, only right channel, or average of both channels
+ <LI> Triple-click does a Select-All
+ </UL>
+
+ <H2>SndView fixes these bugs:</H2>
+ <UL>
+ <LI> SndView is not susceptable to the "info length" bug (I think...)
+ <LI> SndView copes a lot better with recording into the sound [NOT CURRENTLY SUPPORTED ON ANY PLATFORM]
+ <LI> SndView displays "Waveform" view perfectly, without the PostScript errors that plague SoundView
+ <LI> SndView is scrupulous about floating point numbers and rounding, and should never leave cursor "turds" on the screen
+ <LI> SndView does not alter the length of the selection if you change r.f. Even if you extend the selection at a r.f. different to the one you created the selection at, the sample at the non-changed end will remain the same.
+ </UL>
+
+ <H2>SndView has these bugs:</H2>
+ <UL>
+ <LI> If SndView is destroyed without freeing it, and it has told the pasteboard that it has data ready for pasting (from a Copy or Cut operation) the application that requested the data will probably crash. If the application containing SndView quits normally, SndView does provide the data though (as does SoundView, I think).
+ <LI>  With r.f. <= 1, reducing the selection while auto-scrolling leaves a horrible mess on the screen, until you take your finger off the mouse. This is because when a section of the view is drawn, it highlights the part of the new section that it thinks is within the selection rectangle. For r.f <= 1, this is not immediately obvious, and I need to force the start and end of selection rectangle in this case to be midway between samples.
+ </UL>
+
+ <H2>SndView is incompatible in these ways:</H2>
+ <UL>
+ <LI> The bounds rectangle is not scaled the same as SoundView's is. SoundView scales it's bounds so that (y = 0) runs through the centre of the view, and the maximum +y and -y limits correspond to the limits of the format of the sound it is displaying. SndView does not scale at all. It could be changed quite easily. As it is, this breaks any subclasses of SoundView that draw into the view.
+ <LI> "drawSamples from:to:" is not implemented (yet). But all you would have to do would be to invalidate the caches for that area (if necessary), and -display: the SndView
+ <LI> Because of the caching mechanism, if you change samples "behind SndView's back" you must invalidate the cache for the affected samples, with "invalidateCacheStartSample:end:" before displaying.
+ <LI> SoundView considers the left and right channels of the sound individually when it comes to finding maximum and minimum values for display. This makes display at some resolutions look very odd, and it's not really intuitive, although at low resolutions it does have the side effect of in fact showing both channels (one as maximum and 1 as minimum). SndView on the other hand shows either only one channel, or the average of both channels. Ideally it should have the option of showing both.
+ </UL>
+
+ <H2>The optimization mechanism:</H2>
+ When the r.f. starts to climb, more samples are crammed into each horizontal pixel in the view. Each pixel shows the maximum and minimum value represented within that number of samples.
+
+ To display a very large sound in a small view, the r.f. may be in the 1000's. This means that eg 10,000 samples may need to be read, times the width of the view (perhaps 300).
+ SndView seeks to reduce this number of reads by skipping samples when they are nowhere near its current maximum or minimum.
+
+ <UL>
+ <LI> optimization only kicks in when r.f > "threshold"
+ <LI> At the start of the read for any particular pixel, SndView single-steps through the samples until it finds a local maximum/minimum. Thereafter it calculates 5% of the top of the peaks (or bottom of troughs), and if a particular sample is not within this "hot region", it takes bigger jumps until it finds a sample that is within the region. Once it finds this, it goes back to looking at every sample, until it moves out of the hot region again.
+ <LI> "peak fraction" sets the percentage of the hot region (0.05 == 5%, default). Theoretically, the smaller this region, the faster the calculation, but in practice it doesn't make a lot of difference.
+ <LI> "skip" should ideally increase in some sort of proportion to the r.f. At present it is a fixed value, but a controller object could set it to, say, sqrroot(r.f). I have not really tested this, but that's what this test application is for!
+ </UL>
+
+ <H2>The caching mechanism</H2>
+ <UL>
+ <LI> When r.f > 1, all display data is cached using the SndDisplayData and SndDisplayDataList classes.
+ <LI> If r.f. changes, the caches are destroyed.
+ <LI> Caches for display data after the origin of a paste or cut operation are destroyed.
+ <LI> Adjacent caches are joined together as the user scrolls through the view
+ <LI> Caching can make it hard to test the optimization mechanism
+ </UL>
+
+ <H2>Other Features of the Source Code</H2>
+ <UL>
+ <LI> There are #ifdefs for turning on/off the SndView UserPath support, and the timing. There's not much reason to use the timing any more really.
+ <LI> I have put any thought into the setting of zones. If anyone would like to advise on this I'd be happy to hear from you.
+ <LI> The mechanism for retrieving data from fragmented sound files is (I think) rather elegant and should be really fast.
+ <LI> The archival -read and -write methods are untested.
+ <LI> Support for "floating point" and "double" sound format files is included, but is untested.
+ </UL>
+
+ <H2>Future Enhancements for SndView</H2>
+ <UL>
+ <LI> SndView should be able to accept SoundStructs instead of / as well as Sound objects. This would open the door for opening a memory mapped stream to read a sound file, then passing the stream to SndView. Saves having to load the entire file into memory before it is displayed (though once it has been displayed, there's no difference to the amount of actual memory/swap space used).
+ <LI> SndView should utilise a control/cell paradigm so that channels can be displayed separately within the view.
+ </UL>
+
  
 */
 
@@ -178,11 +250,11 @@ NSScrollView.
 
 #define DEFAULT_RECORD_SECONDS 5
 
-@interface SndView:NSView
+@interface SndView: NSView
 {
-    Snd*       	sound;
-    Snd* 	_scratchSound;
-    Snd*	_pasteboardSound;
+    Snd       	*sound;
+    Snd 	*_scratchSound;
+    Snd		*_pasteboardSound;
     id 		delegate;
     NSRect	selectionRect;
     int		displayMode;
@@ -191,7 +263,10 @@ NSScrollView.
     NSColor	*backgroundColour;
     NSColor	*foregroundColour;
 
+    /*! @var reductionFactor Reduction in the horizontal time axis */
     float	reductionFactor;
+    /*! @var amplitudeZoom Zoom in the vertical amplitude axis */
+    float       amplitudeZoom;
     struct {
         unsigned int  disabled:1;
         unsigned int  continuous:1;
@@ -242,7 +317,7 @@ NSScrollView.
 - showCursor;
 
 - (void) initVars;
-- (BOOL) scrollPointToVisible: (const NSPoint)point;
+- (BOOL) scrollPointToVisible: (const NSPoint) point;
 
 /*!
   @method resignFirstResponder
@@ -315,10 +390,11 @@ NSScrollView.
 /*!
   @method didPlay:
   @param  sender is an id.
+  @param  performance is a SndPerformance.
   @discussion Used to redirect delegate messages from the SndView's Snd
               object; you never invoke this method directly.
 */
-- didPlay:sender duringPerformance: performance;
+- didPlay: (id) sender duringPerformance: (SndPerformance *) performance;
 
 /*!
   @method didRecord:
@@ -326,7 +402,7 @@ NSScrollView.
   @discussion Used to redirect delegate messages from the SndView's Snd
               object; you never invoke this method directly.
 */
-- didRecord:sender;
+- didRecord: (id) sender;
 
 /*!
   @method displayMode
@@ -397,7 +473,7 @@ NSScrollView.
               pointing to by <i>frameRect</i>. The initialized SndView doesn't
               contain any sound data.   Returns <b>self</b>.
 */
-- initWithFrame: (NSRect)frameRect;
+- initWithFrame: (NSRect) frameRect;
 
 /*!
   @method isAutoScale
@@ -468,7 +544,7 @@ NSScrollView.
               is being dragged. You never invoke this method; it's invoked
               automatically in response to the user's actions.
 */
-- (void) mouseDown: (NSEvent *)theEvent;
+- (void) mouseDown: (NSEvent *) theEvent;
 
 /*!
   @method pasteboard:provideData:
@@ -478,7 +554,7 @@ NSScrollView.
               Currently, the <i>type</i> argument must be &#ldquo;NXSoundPboardType&#rdquo;,
               the pasteboard type that represents sound data.
 */
-- (void) pasteboard: (NSPasteboard *)thePasteboard provideDataForType: (NSString *)pboardType;
+- (void) pasteboard: (NSPasteboard *) thePasteboard provideDataForType: (NSString *) pboardType;
 
 /*!
   @method pause:
@@ -486,7 +562,7 @@ NSScrollView.
   @discussion Pauses the current playback or recording session by invoking Snd's
               <b>pause:</b> method.
 */
-- (void) pause:sender;
+- (void) pause: sender;
 
 /*!
   @method play:
@@ -497,7 +573,7 @@ NSScrollView.
               selection is played; <b>didPlay:</b> is sent when the selection is
               done playing.
 */
-- (void) play:sender;
+- (void) play: sender;
 
 /*!
   @method resume:
@@ -505,7 +581,7 @@ NSScrollView.
   @discussion Resumes the current playback or recording session by invoking
               Snd's <b>resume:</b> method.
 */
-- (void) resume:sender;
+- (void) resume: sender;
 
 /*!
   @method record:
@@ -517,7 +593,7 @@ NSScrollView.
               recording has completed. Recorded data is always taken from the
               CODEC microphone input.
 */
-- (void) record:sender;
+- (void) record: sender;
 
 /*!
   @method stop:
@@ -541,9 +617,27 @@ NSScrollView.
 - (BOOL) readSelectionFromPasteboard: (NSPasteboard *) thePasteboard;
 
 /*!
+  @method setAmplitudeZoom:
+  @param newAmplitudeZoom The new amplitude zoom factor.
+  @discussion Sets the current vertical amplitude axis zoom factor. If 1.0, this displays
+              a full amplitude signal in the maximum vertical view width. If greater than 1.0
+              a signal will be zoomed and clipped against the view. If less than 1.0 the signal will
+              be reduced within the view. Values less than or equal to zero are not set.
+ */
+- (void) setAmplitudeZoom: (float) newAmplitudeZoom;
+
+/*!
+  @method amplitudeZoom
+  @result Returns a float.
+  @discussion Returns the current vertical amplitude axis zoom factor.
+ */
+- (float) amplitudeZoom;
+
+/*!
   @method reductionFactor
   @result Returns a float.
-  @discussion Returns the SndView's reduction factor, computed as follows:
+  @discussion Returns the SndView's reduction factor in the horizontal time axis,
+              computed as follows:
                             
               <tt>reductionFactor = sampleCount / displayUnits</tt>
 */
@@ -653,6 +747,7 @@ NSScrollView.
               selection.
 */
 - (void) setDelegate: (id) anObject;
+
 - (void) setDefaultRecordTime: (float) seconds;
 
 /*!
@@ -703,14 +798,14 @@ NSScrollView.
               autodisplaying is enabled, the SndView is automatically
               redisplayed.
 */
-- (void) setSound: (Snd *)aSound;
+- (void) setSound: (Snd *) aSound;
 
 /*!
   @method sound
   @result Returns a Snd *.
   @discussion Returns a pointer to the SndView's Snd object.
 */
-- sound;
+- (Snd *) sound;
 
 /*!
   @method setFrameSize:
@@ -719,11 +814,11 @@ NSScrollView.
               autodisplaying is enabled, the SndView is automatically
               redisplayed.
 */
-- (void) setFrameSize: (NSSize)_newSize;
+- (void) setFrameSize: (NSSize) _newSize;
 
 /*!
   @method soundBeingProcessed
-  @result Returns an id.
+  @result Returns an Snd.
   @discussion Returns the Snd object that's currently being played or recorded
               into. Note that the actual Snd object that's being performed isn't
               necessarily the object returned by SndView's <b>sound</b> method;
@@ -756,7 +851,7 @@ NSScrollView.
               editing, is performed. However, you can invoke it in the design of a
               SndView subclass.
 */
-- (void) tellDelegate: (SEL) theMessage duringPerformance: performance;
+- (void) tellDelegate: (SEL) theMessage duringPerformance: (SndPerformance *) performance;
 
 /*!
   @method validRequestorForSendType:returnType:
@@ -766,7 +861,7 @@ NSScrollView.
   @discussion You never invoke this method; it's implemented to support services
               that act on sound data.
 */
-- validRequestorForSendType: (NSString *) sendType returnType: (NSString *)returnType;
+- validRequestorForSendType: (NSString *) sendType returnType: (NSString *) returnType;
 
 /*!
   @method willPlay:
@@ -774,7 +869,7 @@ NSScrollView.
   @discussion Used to redirect delegate messages from the SndView's Snd
               object; you never invoke this method directly.
 */
-- (void) willPlay: sender duringPerformance: performance;
+- (void) willPlay: sender duringPerformance: (SndPerformance *) performance;
 
 /*!
   @method willRecord:
@@ -783,6 +878,7 @@ NSScrollView.
               object; you never invoke this method directly.
 */
 - (void) willRecord:sender;
+
 - (BOOL) writeSelectionToPasteboard: (NSPasteboard *) thePasteboard types: (NSArray *) pboardTypes;
 - (BOOL) writeSelectionToPasteboardNoProvide: thePasteboard types: (NSArray *) pboardTypes;
 - (id) initWithCoder: (NSCoder *) aDecoder;
