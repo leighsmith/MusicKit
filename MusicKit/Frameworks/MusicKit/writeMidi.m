@@ -29,6 +29,10 @@
 Modification history:
 
   $Log$
+  Revision 1.12  2002/01/15 10:50:55  sbrandon
+  tightened up type casting on NSNextMapEnumeratorPair() to prevent compiler
+  warning
+
   Revision 1.11  2001/09/06 21:27:48  leighsmith
   Merged RTF Reference documentation into headerdoc comments and prepended MK to any older class names
 
@@ -210,7 +214,7 @@ NSMutableArray *_MKGetNoteOns(_MKMidiOutStruct *ptr,int chan)
     midiOutNode *value;
     NSMapEnumerator state = NSEnumerateMapTable(map);
     
-    while (NSNextMapEnumeratorPair(&state, (const void **)&noteTag, (void **)&value)) {
+    while (NSNextMapEnumeratorPair(&state, (void **)&noteTag, (void **)&value)) {
 	aNote = [[MKNote alloc] init];
 	[aNote setNoteType:MK_noteOff];
 	[aNote setPar:MK_keyNum toInt:value->key];
