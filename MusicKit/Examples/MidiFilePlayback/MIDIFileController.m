@@ -104,7 +104,7 @@
 // All we do is add a MK_filename parameter with the appropriate sample file.
 - (BOOL) convertPartToSamples: (MKPart *) aPart
 {
-   NSMutableArray *noteList = [aPart notes];
+   NSArray *noteList = [aPart notes];
    int i;
    MKNote *aNote;
    BOOL modify = NO;
@@ -286,8 +286,8 @@ NSLog(@"Completed startPerformance\n");
     if (result == NSOKButton) {
         NSArray *filesToOpen = [oPanel filenames];
         int i, count = [filesToOpen count];
-        for (i=0; i<count; i++) {
-            keymapPathName = [filesToOpen objectAtIndex:i];
+        for (i = 0; i < count; i++) {
+            keymapPathName = [filesToOpen objectAtIndex: i];
             keymap = [NSDictionary dictionaryWithContentsOfFile: keymapPathName];
             if(keymap == nil) {
                 NSLog(@"Couldn't load keymap file %@.\n", keymapPathName);
