@@ -29,7 +29,6 @@ OF THIS AGREEMENT.
 ******************************************************************************/
 #ifdef GNUSTEP
 #include <objc/objc.h> /* for BOOL, YES, NO, TRUE, FALSE */
-#include "sounderror.h"
 #include <Foundation/NSByteOrder.h>
 #include "SndFunctions.h"
 #include "SndResample.h"
@@ -45,15 +44,12 @@ OF THIS AGREEMENT.
 #import <malloc.h>
 #import <stdio.h>
 #else
-#import <libc.h>
-#endif
-
-#ifndef USE_NEXTSTEP_SOUND_IO
-#import "sounderror.h"
+//#import <libc.h>
 #endif
 
 #endif /* GNUSTEP */
 
+#import "SndError.h"
 #import "SndFunctions.h"
 #import "SndMuLaw.h"
 #import "SndResample.h"
