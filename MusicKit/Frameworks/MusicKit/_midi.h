@@ -10,26 +10,10 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
-  Portions Copyright (c) 1999-2000 The MusicKit Project.
+  Portions Copyright (c) 1999-2004 The MusicKit Project.
 */
 /*
-  Modification history:
-
-  $Log$
-  Revision 1.6  2001/01/31 21:32:56  leigh
-  Typed note parameters
-
-  Revision 1.5  2000/10/01 06:57:01  leigh
-  Made _map a NSMapTable.
-
-  Revision 1.4  2000/07/22 00:26:32  leigh
-  Typed _MKGetNoteOns
-
-  Revision 1.3  2000/04/22 20:09:35  leigh
-  comment improvements
-
-  Revision 1.2  1999/07/29 01:26:02  leigh
-  Added Win32 compatibility, CVS logs, SBs changes
+  Modification history prior to CVS commit:
 
   daj/04/23/90 - Created from _musickit.h 
 */
@@ -85,18 +69,17 @@ typedef struct __MKMidiOutStruct { /* Midi output structure */
 
 /* Functions for MIDI->MK semantic conversion. */
 extern _MKMidiInStruct *_MKInitMidiIn(void);
-extern id _MKMidiToMusicKit(_MKMidiInStruct *ptr,unsigned statusByte);
+extern MKNote *_MKMidiToMusicKit(_MKMidiInStruct *ptr, unsigned statusByte);
 extern _MKMidiInStruct *_MKFinishMidiIn(_MKMidiInStruct *ptr);
 
 /* Functions for MK->MIDI semantic conversion. */
 extern _MKMidiOutStruct *_MKInitMidiOut(void);
 extern  _MKMidiOutStruct *_MKFinishMidiOut(_MKMidiOutStruct *ptr);
-extern void _MKWriteMidiOut(MKNote *aNote,double timeTag,unsigned chan,
-			    _MKMidiOutStruct *ptr,id noteReceiver);
+extern void _MKWriteMidiOut(MKNote *aNote, double timeTag, unsigned chan, _MKMidiOutStruct *ptr, MKNoteReceiver *noteReceiver);
 extern unsigned char _MKGetSysExByte(char **strP);
 
 /* Useful for sending allNotesOff */
-extern NSMutableArray *_MKGetNoteOns(_MKMidiOutStruct *ptr,int chan);
+extern NSMutableArray *_MKGetNoteOns(_MKMidiOutStruct *ptr, int chan);
 
 
 #endif
