@@ -40,6 +40,8 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 
 #endif /* GNUSTEP */
 
+#include <Foundation/NSByteOrder.h>
+
 /* forward decl */
 int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **toSound,BOOL largeFilter, BOOL interpFilter, BOOL fast);
 
@@ -270,7 +272,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
                         sumDouble += (long int)(((signed long int *)outPtr)
                                 [i * nChansIn + n]);
 #else
-                        sumDouble += (long int)((long)ntohl(((signed long int *)outPtr)
+                        sumDouble += (long int)((long)NSSwapBigLongToHost(((signed long int *)outPtr)
                                 [i * nChansIn + n]));
 #endif
                         break;
@@ -337,7 +339,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
                 case SND_FORMAT_LINEAR_32:
 #ifdef __LITTLE_ENDIAN__
                     ((signed long int *)outPtr)[i * cc2 + m] = 
-                            (short)htonl((signed long int)(sumDouble / chansToSum));
+                            (unsigned long int)NSSwapHostIntToBig((signed long int)(sumDouble / chansToSum));
 #else
                     ((signed long int *)outPtr)[i * cc2 + m] = 
                             (signed long int)(sumDouble / chansToSum);
@@ -370,7 +372,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
         else if (df2 == SND_FORMAT_LINEAR_32 && df1 == SND_FORMAT_MULAW_8) {
             LOOP_THRU_SOUND {
                 ((signed int *)outPtr)[i] = (signed int)
-                    htonl((signed short)SndiMulaw(((unsigned char *)outPtr)[i]) << 16);
+                    NSSwapHostIntToBig((signed short)SndiMulaw(((unsigned char *)outPtr)[i]) << 16);
             }
         }
         else if (df2 == SND_FORMAT_FLOAT && df1 == SND_FORMAT_MULAW_8) {
@@ -401,7 +403,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
         }
         else if (df2 == SND_FORMAT_LINEAR_32 && df1 == SND_FORMAT_LINEAR_8) {
             LOOP_THRU_SOUND {
-                ((signed int *)outPtr)[i] = (signed int)htonl((int)(((signed char*)outPtr)[i]) << 24);
+                ((signed int *)outPtr)[i] = (signed int)NSSwapHostIntToBig((int)(((signed char*)outPtr)[i]) << 24);
             }
         }
         else if (df2 == SND_FORMAT_FLOAT && df1 == SND_FORMAT_LINEAR_8) {
@@ -429,7 +431,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
             LOOP_THRU_SOUND {
 #ifdef __LITTLE_ENDIAN__
                 ((signed int *)outPtr)[i] = (signed int)
-                        htonl((signed int)ntohs(((signed short *)outPtr)[i]) << 16);
+                        NSSwapHostIntToBig((signed int)ntohs(((signed short *)outPtr)[i]) << 16);
 #else
                 ((signed int *)outPtr)[i] = (signed int)((signed short *)outPtr)[i] << 16;
 #endif
@@ -460,7 +462,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
             LOOP_THRU_SOUND {
 #ifdef __LITTLE_ENDIAN__
                 ((SndSwappedFloat *)outPtr)[i] = (SndSwappedFloat)
-                        SndSwapHostToSwappedFloat(ntohl(((signed int *)outPtr)[i]));
+                        SndSwapHostToSwappedFloat(NSSwapBigLongToHost(((signed int *)outPtr)[i]));
 #else
                 ((float *)outPtr)[i] = (float)(((signed int *)outPtr)[i] * ONE_OVER_TWO_SIXTEEN);
 #endif
@@ -470,7 +472,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
             LOOP_THRU_SOUND {
 #ifdef __LITTLE_ENDIAN__
                 ((SndSwappedDouble *)outPtr)[i] = (SndSwappedDouble)
-                        SndSwapHostToSwappedDouble(ntohl(((signed int *)outPtr)[i]));
+                        SndSwapHostToSwappedDouble(NSSwapBigLongToHost(((signed int *)outPtr)[i]));
 #else
                 ((double *)outPtr)[i] = (double)(((signed int *)outPtr)[i] * ONE_OVER_TWO_SIXTEEN);
 #endif
@@ -522,7 +524,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
             LOOP_FORWARD_THRU_SOUND {
                 ((unsigned char *)outPtr)[i] = (unsigned char)
 #ifdef __LITTLE_ENDIAN__
-                SndMulaw((float)((signed int)ntohl(((signed int *)outPtr)[i]) * ONE_OVER_TWO_SIXTEEN));
+                SndMulaw((float)((signed int)NSSwapBigLongToHost(((signed int *)outPtr)[i]) * ONE_OVER_TWO_SIXTEEN));
 #else
                 SndMulaw(((signed int *)outPtr)[i] * ONE_OVER_TWO_SIXTEEN);
 #endif
@@ -561,7 +563,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
         else if (df1 == SND_FORMAT_LINEAR_32 && df2 == SND_FORMAT_LINEAR_8) {
             LOOP_FORWARD_THRU_SOUND {
 #ifdef __LITTLE_ENDIAN__
-                ((signed char *)outPtr)[i] = (signed int)ntohl(((signed int *)outPtr)[i]) >> 24;
+                ((signed char *)outPtr)[i] = (signed int)NSSwapBigLongToHost(((signed int *)outPtr)[i]) >> 24;
 #else
                 ((signed char *)outPtr)[i] = (int)(((signed int *)outPtr)[i]) >> 24;
 #endif
@@ -593,7 +595,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
             LOOP_FORWARD_THRU_SOUND {
 #ifdef __LITTLE_ENDIAN__
                 ((signed short *)outPtr)[i] = (signed short)
-                        htons((int)ntohl(((signed int *)outPtr)[i]) >> 16);
+                        htons((int)NSSwapBigLongToHost(((signed int *)outPtr)[i]) >> 16);
 #else
                 ((signed short *)outPtr)[i] = ((signed int *)outPtr)[i] >> 16;
 #endif
@@ -624,7 +626,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
             LOOP_FORWARD_THRU_SOUND {
 #ifdef __LITTLE_ENDIAN__
                 ((signed int *)outPtr)[i] = (signed int)
-                        htonl(SndSwapSwappedFloatToHost(((SndSwappedFloat *)outPtr)[i]) * 65536);
+                        NSSwapHostIntToBig(SndSwapSwappedFloatToHost(((SndSwappedFloat *)outPtr)[i]) * 65536);
 #else
                 ((signed int *)outPtr)[i] = ((float *)outPtr)[i] * 65536;
 #endif
@@ -634,7 +636,7 @@ int SndConvertSoundInternal(const SndSoundStruct *fromSound, SndSoundStruct **to
             LOOP_FORWARD_THRU_SOUND {
 #ifdef __LITTLE_ENDIAN__
                 ((signed int *)outPtr)[i] = (signed int)
-                        htonl(SndSwapSwappedDoubleToHost(((SndSwappedDouble *)outPtr)[i]) * 65536);
+                        NSSwapHostIntToBig(SndSwapSwappedDoubleToHost(((SndSwappedDouble *)outPtr)[i]) * 65536);
 #else
                 ((signed int *)outPtr)[i] = ((double *)outPtr)[i] * 65536;
 #endif
