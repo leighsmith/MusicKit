@@ -19,6 +19,11 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.29  2001/09/11 20:36:00  sbrandon
+ * Added methods to Snd object for data endian swapping - swapHostToSnd and
+ * swapSndToHost. These methods wrap the corresponding Snd functions. To swap
+ * just a part of a Snd use the function interface not the method.
+ *
  * Revision 1.28  2001/09/04 19:26:10  skotmcdonald
  * Shifted default SndPlayer var to SndPlayer, added accessor, updated Snd.
  *
@@ -451,6 +456,18 @@ static int ioTags = 1000;
         [stream appendBytes:(char *)theStruct + theStruct->dataLocation length:theStruct->dataSize];
     }
     return SND_ERR_NONE;
+}
+
+- (void) swapHostToSnd
+{
+    void *d = [self data];
+    SndSwapHostToSound(d,d,[self sampleCount],[self channelCount],[self dataFormat]);
+}
+
+- (void) swapSndToHost
+{
+    void *d = [self data];
+    SndSwapSoundToHost(d,d,[self sampleCount],[self channelCount],[self dataFormat]);
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder

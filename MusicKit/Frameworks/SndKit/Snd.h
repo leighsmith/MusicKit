@@ -280,6 +280,42 @@ architecture, as described in the <b>SndStruct</b> header.
 */
 - writeSoundToStream:(NSMutableData *)stream;
 
+/*!
+  @method      swapSndToHost
+  @discussion  The Sun/NeXT audio file format is specifies big-endian storage,
+               which is fine for big-endian machines (eg Motorola 68k, PPC) but
+               a pain for little endian (eg Intel). The swapSndToHost method
+               swaps the byte order of the receiver if it is running on a little-
+               endian architecture, and has no effect on a big-endian architecture.
+               Note that no checks are done as to whether or not the receiver was
+               already byte-swapped, so you have to keep track of the status of
+               Snd objects yourself.<br>
+               Always use the appropriate method to convert your Snd objects; either
+               swapSndToHost to convert a Snd from the pasteboard or from a soundfile,
+               or swapHostToSnd to prepare a Snd which was in host order to be saved
+               or put onto the pasteboard.
+  @result      void
+ */
+- (void) swapSndToHost;
+
+/*!
+  @method      swapHostToSnd
+  @discussion  The Sun/NeXT audio file format is specifies big-endian storage,
+               which is fine for big-endian machines (eg Motorola 68k, PPC) but
+               a pain for little endian (eg Intel). The swapHostToSnd method
+               swaps the byte order of the receiver if it is running on a little-
+               endian architecture, and has no effect on a big-endian architecture.
+               Note that no checks are done as to whether or not the receiver was
+               already byte-swapped, so you have to keep track of the status of
+               Snd objects yourself.<br>
+               Always use the appropriate method to convert your Snd objects; either
+               swapSndToHost to convert a Snd from the pasteboard or from a soundfile,
+               or swapHostToSnd to prepare a Snd which was in host order to be saved
+               or put onto the pasteboard.
+  @result      void
+ */
+- (void) swapHostToSnd;
+
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 - awakeAfterUsingCoder:(NSCoder *)aDecoder;
