@@ -17,6 +17,9 @@
 #  Modification history:
 #
 #  $Log$
+#  Revision 1.6  2001/11/21 23:08:45  sbrandon
+#  added MKPerformSndMIDIDefines.h as an installed header (oops)
+#
 #  Revision 1.5  2001/11/07 14:49:25  sbrandon
 #  removed unecessary lines
 #
@@ -80,8 +83,9 @@ endif
 		
 # The framework installed header files
 $(MY_NAME)_HEADER_FILES = PerformSound.h PerformMIDI.h \
-         mididriver_types.h PerformSoundPrivate.h sounderror.h\
-         SndStruct.h mididriverUser.h SndFormats.h
+         mididriver_types.h PerformSoundPrivate.h sounderror.h \
+         SndStruct.h mididriverUser.h SndFormats.h \
+         MKPerformSndMIDIDefines.h
 
 $(MY_NAME)_HEADER_FILES_INSTALL_DIR = MKPerformSndMIDI
 
