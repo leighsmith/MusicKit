@@ -1065,7 +1065,7 @@ extern int DSPIsSavingCommandsOnly(void);
  * without opening the DSP.
  */
 
-extern int DSPOpenCommandsFile(char *fn);
+extern int DSPOpenCommandsFile(const char *fn);
 /*
  * Opens a "DSP Commands file" which will receive all Mach messages
  * to the DSP.  The filename suffix should be ".snd".  This pseudo-
