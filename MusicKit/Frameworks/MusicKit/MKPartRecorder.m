@@ -12,10 +12,14 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /* Modification History:
 
    $Log$
+   Revision 1.5  2000/11/25 21:53:29  leigh
+   copyright added and source formatting
+
    Revision 1.4  2000/04/16 04:11:37  leigh
    comment cleanup
 
@@ -161,7 +165,7 @@ void _MKSetScoreRecorderOfPartRecorder(aPR,aSR)
     aPR->_scoreRecorder = aSR;
 }
 
--setPart:aPart
+-setPart: aPart
   /* Sets Part to which notes are sent. */
 {
     part = aPart;
@@ -200,11 +204,11 @@ void _MKSetScoreRecorderOfPartRecorder(aPR,aSR)
   /* Copies the note, adjusting its timetag and possibly adjusting its 
      duration according to tempo, then sends addNote: to the Part. */
 {
-    aNote = [aNote copyWithZone:NSDefaultMallocZone()];
-    [aNote setTimeTag:_MKTimeTagForTimeUnit(aNote,timeUnit,compensatesDeltaT)];
+    aNote = [aNote copyWithZone: NSDefaultMallocZone()];
+    [aNote setTimeTag: _MKTimeTagForTimeUnit(aNote, timeUnit, compensatesDeltaT)];
     if ([aNote noteType] == MK_noteDur) 
-      [aNote setDur:_MKDurForTimeUnit(aNote,timeUnit)];
-    [part addNote:aNote];
+        [aNote setDur: _MKDurForTimeUnit(aNote,timeUnit)];
+    [part addNote: aNote];
     return self;
 }
 
