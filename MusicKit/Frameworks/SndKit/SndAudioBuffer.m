@@ -15,7 +15,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #import "SndAudioBuffer.h"
-#import "SndFunctions.h"
+
 // altivec support...
 #ifdef __VEC__
 #import <vecLib/vecLib.h>
@@ -89,16 +89,16 @@
 // audioBufferWithFormat:channelCount:samplingRate:duration:
 ////////////////////////////////////////////////////////////////////////////////
 
-+ audioBufferWithFormat: (int) _dataFormat
-           channelCount: (int) _channelCount
-           samplingRate: (double) _samplingRate
++ audioBufferWithFormat: (int) newDataFormat
+           channelCount: (int) newChannelCount
+           samplingRate: (double) newSamplingRate
                duration: (double) time;
 {
   SndAudioBuffer *ab = [SndAudioBuffer alloc];
 
-  [ab initWithFormat: (int) _dataFormat
-        channelCount: (int) _channelCount
-        samplingRate: (double) _samplingRate
+  [ab initWithFormat: (int) newDataFormat
+        channelCount: (int) newChannelCount
+        samplingRate: (double) newSamplingRate
             duration: (double) time];
 
   return [ab autorelease];
@@ -307,212 +307,6 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// convertDataToFormat:
-////////////////////////////////////////////////////////////////////////////////
-
-- (NSMutableData*) convertDataToFormat: (int) newDataFormat
-{
-  long  dataItems;
-  long  i;
-  NSMutableData *nData;
-  void *newData;
-
-  if (newDataFormat == dataFormat)
-    return data;
-
-  dataItems   = [self lengthInSampleFrames] * [self channelCount];
-  nData       = [NSMutableData dataWithLength: dataItems * SndSampleWidth(newDataFormat)];
-  newData     = [nData mutableBytes];
-  byteCount   = maxByteCount = [nData length];
-
-  //  newDataSize = dataItems * SndSampleWidth(newDataFormat);
-  //  newData = (char*) malloc(newDataSize);
-
-  switch (dataFormat) {
-
-    case SND_FORMAT_LINEAR_8: {
-      char *pData = [data mutableBytes];
-      switch (newDataFormat) {
-        case SND_FORMAT_LINEAR_16:
-          for (i=0;i<dataItems;i++) {
-            short v = pData[i];
-            ((short*)newData)[i] = v << 8;
-          }
-          break;
-        case SND_FORMAT_LINEAR_32:
-          for (i=0;i<dataItems;i++) {
-            long v = pData[i];
-            ((long*)newData)[i] = v << 24;
-          }
-          break;
-        case SND_FORMAT_FLOAT:
-          for (i = 0;i<dataItems;i++) {
-            float v = pData[i];
-            ((float*)newData)[i] = v / 128.0;
-          }
-          break;
-        case SND_FORMAT_DOUBLE:
-          for (i = 0;i < dataItems;i++) {
-            double v = pData[i];
-            ((double*)newData)[i] = v / 128.0;
-          }
-          break;
-      }
-    }
-      break;
-
-    case SND_FORMAT_LINEAR_16: {
-      short *pData = [data mutableBytes];
-      switch (newDataFormat) {
-        case SND_FORMAT_LINEAR_8:
-          for (i=0;i<dataItems;i++) {
-            short v = pData[i];
-            ((char*)newData)[i] = v >> 8;
-          }
-          break;
-        case SND_FORMAT_LINEAR_32:
-          for (i=0;i<dataItems;i++) {
-            long v = pData[i];
-            ((long*)newData)[i] = v >> 24;
-          }
-          break;
-        case SND_FORMAT_FLOAT:
-          for (i=0;i<dataItems;i++) {
-            float v = pData[i];
-            v *= (1.0 / (128.0 * 256.0));
-            ((float*)newData)[i] = v;
-#if RANGE_PARANOIA_CHECK
-            if (v > 1.0 || v < -1.0) {
-              printf("Weird value!\n");
-            }
-#endif            
-          }
-          break;
-        case SND_FORMAT_DOUBLE:
-          for (i = 0; i < dataItems;i++) {
-            double v = pData[i];
-            ((double*)newData)[i] = (double)(v / (128.0 * 256.0));
-          }
-          break;
-      }
-    }
-      break;
-
-    case SND_FORMAT_LINEAR_32: {
-      long* pData = [data mutableBytes];
-      switch (newDataFormat) {
-        case SND_FORMAT_LINEAR_8:
-          for (i=0;i<dataItems;i++) {
-            long v = pData[i];
-            ((char*)newData)[i] = (char)(v >> 24);
-          }
-          break;
-        case SND_FORMAT_LINEAR_16:
-          for (i=0;i<dataItems;i++) {
-            long v = pData[i];
-            ((short*)newData)[i] = (short)(v >> 8);
-          }
-          break;
-        case SND_FORMAT_FLOAT:
-          for (i=0;i<dataItems;i++) {
-            double v = pData[i];
-            ((float*)newData)[i] = (float)(v / (128.0 * 256.0 * 256.0 * 256.0));
-          }
-          break;
-        case SND_FORMAT_DOUBLE:
-          for (i=0;i<dataItems;i++) {
-            double v = pData[i];
-            ((double*)newData)[i] = (double)(v / (128.0 * 256.0 * 256.0 * 256.0));
-          }
-          break;
-      }
-      break;
-    }
-    case SND_FORMAT_FLOAT: {
-      float *pData = [data mutableBytes];
-      switch (newDataFormat) {
-        case SND_FORMAT_LINEAR_8:
-          for (i=0;i<dataItems;i++) {
-            float v = pData[i];
-            ((char*)newData)[i] = (char)(v * 128.0);
-          }
-          break;
-        case SND_FORMAT_LINEAR_16:
-          for (i=0;i<dataItems;i++) {
-            float v = pData[i];
-            ((short*)newData)[i] = (short)(v * 128.0 * 256.0);
-          }
-          break;
-        case SND_FORMAT_LINEAR_32:
-          for (i=0;i<dataItems;i++) {
-            float v = pData[i];
-            ((long*)newData)[i] = (long)(v * 128.0 * 256.0 * 256.0 * 256.0);
-          }
-          break;
-        case SND_FORMAT_DOUBLE:
-          for (i=0;i<dataItems;i++) {
-            float v = pData[i];
-            ((double*)newData)[i] = (double) v;
-          }
-          break;
-      }
-      break;
-    }
-    case SND_FORMAT_DOUBLE: {
-      double *pData = [data mutableBytes];
-      switch (newDataFormat) {
-        case SND_FORMAT_LINEAR_8:
-          for (i = 0; i < dataItems; i++) {
-            double v = pData[i];
-            ((char*)newData)[i] = (char)(v * 128.0);
-          }
-          break;
-        case SND_FORMAT_LINEAR_16:
-          for (i = 0; i < dataItems; i++) {
-            double v = pData[i];
-            ((short*)newData)[i] = (short)(v * (128.0 * 256.0));
-          }
-          break;
-        case SND_FORMAT_LINEAR_32:
-          for (i = 0; i < dataItems; i++) {
-            double v = pData[i];
-            ((long*)newData)[i] = (long)(v * (128.0 * 256.0 * 256.0 * 256.0));
-          }
-          break;
-        case SND_FORMAT_FLOAT:
-          for (i = 0; i < dataItems; i++) {
-            double v = pData[i];
-            ((float*)newData)[i] = (float)(v);
-          }
-          break;
-      }
-    }
-      break;
-  }
-
-  //  if (bOwnsData)
-  //    free(data);
-  //  data = newData;
-  //  bOwnsData = TRUE;
-  //  formatSnd.dataFormat = newDataFormat;
-  //  formatSnd.dataSize   = newDataSize;
-
-  return nData;
-}
-
-- convertToFormat: (int) sndFormatCode
-{
-  if (dataFormat != sndFormatCode) {
-    NSMutableData *newData = [self convertDataToFormat: sndFormatCode];
-    [data release];
-    data = [newData retain];
-    dataFormat = sndFormatCode;
-    //    NSLog(@"convert: %@", [self description]);
-  }
-  return self;
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // mixWithBuffer:fromStart:toEnd:canExpand
 //
 // Note: This is only an interim proof of concept implementation and doesn't
@@ -556,7 +350,7 @@
 		in = [buff bytes];
 	    }
 	    else {
-		convertData = [[buff convertDataToFormat: SND_FORMAT_FLOAT] retain];
+		convertData = [[buff dataConvertedToFormat: SND_FORMAT_FLOAT] retain];
 		convertBuffer = [convertData mutableBytes];
 		in = convertBuffer;
 	    }
