@@ -3,7 +3,15 @@
   Defined In: The MusicKit
 
   Description:
-    Interface routines emulating the MIDI Mach device driver of OpenStep on MacOS X
+    Interface routines emulating the MIDI Mach device driver of OpenStep on MacOS X.
+    
+    Apple's MIDI driver currently sucks because:
+    
+    1. There is no means to know when a single MIDI message has actually been sent or
+       when a list of packets has completed being played.
+    2. There is no means to time individual Sysex bytes to avoid swamping a MIDI device.
+    3. There is no means to cancel notes that are pending to be played.
+    4. There is no means to flush any notes that are waiting to be played immediately.
 
   Original Author: Leigh M. Smith, <leigh@tomandandy.com>, tomandandy music inc.
 
@@ -17,6 +25,9 @@
 Modification history:
 
   $Log$
+  Revision 1.14  2001/04/20 23:42:53  leighsmith
+  Added a passable emulation of queue waiting (in absence of an Apple notification, added a packet debug function
+
   Revision 1.13  2001/04/06 19:23:54  leighsmith
   Renamed to more meaningful naming
 
@@ -75,7 +86,8 @@ extern "C" {
 // multiplicative factor difference between MusicKit quantum and MIDITimeStamp
 static MIDITimeStamp   quantumFactor; 
 static MIDITimeStamp   datumRefTime;
-static int             datumMSecTime;
+static int             datumMilliSecTime;
+static float           quantumInSeconds = 0.0;
 
 static MIDIClientRef   client = NULL;   // handle indicating we are a client of the MIDI server.
 static MIDIPortRef     outPort = NULL;
@@ -89,6 +101,9 @@ static MKMDReplyPort   dataReplyPort;	// mach port-like port to reply received M
 static const MIDIPacketList *receivedPacketList;
 static void (*callbackFn)(void *);
 static void *callbackParam;
+
+// Amount of time in seconds estimated for the current collection of MIDI packets to play.
+static long playTimeEstimate = 0;
 
 // This should become part of the CoreMIDI library.
 MIDITimeStamp MIDIGetCurrentTime(void)
@@ -272,7 +287,7 @@ PERFORM_API MKMDReturn MKMDSetClockTime (
 {
     // defines datum to associate the integer time to the nanosecond time
     datumRefTime = MIDIGetCurrentTime();
-    datumMSecTime = time;
+    datumMilliSecTime = time;
 #if FUNCLOG
     fprintf(debug, "MKMDSetClockTime called %d, datumRefTime = %f\n", time, (double) datumRefTime);
 #endif
@@ -407,6 +422,23 @@ PERFORM_API MKMDReturn MKMDRequestData (
     return MKMD_SUCCESS;
 }
 
+static void dumpPackets(MIDIPacketList *pktlist)
+{
+    unsigned int i, j;
+    MIDIPacket *packet;
+
+    printf("number of packets = %ld\n", pktlist->numPackets);
+    
+    packet = (MIDIPacket *) pktlist->packet;	// remove const (!)
+    for(i = 0; i < pktlist->numPackets; i++) {
+        printf("timestamp = %f, length = %d\n", (double) packet->timeStamp, packet->length);
+        for(j = 0; j < packet->length; j++)
+            printf("data[%d] = 0x%X ", j, packet->data[j]);
+        printf("\n");
+        packet = MIDIPacketNext(packet);
+    }
+}
+
 /* Routine MKMDSendData */
 // Each event consists of a time stamp per byte. This was done to allow slowing byte output
 // to stop choking synths with sysex messages. Nowdays it would seem better just to specify
@@ -453,8 +485,12 @@ PERFORM_API MKMDReturn MKMDSendData (
         unsigned int firstUniqueTimeIndex = msgIndex;
         unsigned int bufferIndex;
 
-        playTime = (data[msgIndex].time - datumMSecTime) * quantumFactor + datumRefTime;
+        playTime = (data[msgIndex].time - datumMilliSecTime) * quantumFactor + datumRefTime;
+        if(data[msgIndex].time > playTimeEstimate)
+            playTimeEstimate = data[msgIndex].time;
+
 #if FUNCLOG
+        printf("MK time %d, playTimeEstimate %ld\n", data[msgIndex].time, playTimeEstimate);
         fprintf(debug, "Current time %f, play time %f:\n", (double) MIDIGetCurrentTime(), (double) playTime);
 #endif
         // collect all event bytes marked with the same time into a single buffer.
@@ -478,6 +514,8 @@ PERFORM_API MKMDReturn MKMDSendData (
             return MKMD_ERROR_QUEUE_FULL;
         }
     }
+    // dumpPackets(pktlist);
+
     if((errCode = MIDISend(outPort, claimedDestinations[unit], pktlist)) != noErr) {
 #if FUNCLOG
         fprintf(debug, "couldn't send packet list errCode = %d\n", (int) errCode);
@@ -496,6 +534,10 @@ PERFORM_API MKMDReturn MKMDSendData (
 }
 
 /* Routine MKMDGetAvailableQueueSize */
+// Return the queue size. On MacOS X, the queues are dynamic, or at least, their sizes are 
+// unable to be retrieved. Since we can't (as of 10.0.1) obtain an indication of when a
+// queued message list has been played, we fudge this so MKMDRequestQueueNotification with
+// the returned size becomes the question "when have all the messages been sent?".
 PERFORM_API MKMDReturn MKMDGetAvailableQueueSize (
 	MKMDPort mididriver_port,
 	MKMDOwnerPort owner_port,
@@ -503,13 +545,10 @@ PERFORM_API MKMDReturn MKMDGetAvailableQueueSize (
 	int *size)
 {
 #if FUNCLOG
-  fprintf(debug, "MKMDGetAvailableQueueSize called %d\n", unit);
+    fprintf(debug, "MKMDGetAvailableQueueSize called %d\n", unit);
 #endif
-  // return the queue size
-  //if(!PMGetAvailableQueueSize(size)) {
-  //  return MKMD_ERROR_UNKNOWN_ERROR;
-  //}
-  return MKMD_SUCCESS;
+    *size = 1; // we create an arbitary non-zero size to differentiate from a flush queue.
+    return MKMD_SUCCESS;
 }
 
 /* Routine MKMDRequestQueueNotification */
@@ -576,6 +615,7 @@ PERFORM_API MKMDReturn MKMDSetClockQuantum (
     UInt64 nanoseconds = ((UInt64) microseconds) * 1000;
     AbsoluteTime absTimeFactor = NanosecondsToAbsolute(UInt64ToUnsignedWide(nanoseconds));
     quantumFactor = UnsignedWideToUInt64(absTimeFactor);
+    quantumInSeconds = (float) microseconds / 1000000.0;
 
 #if FUNCLOG
     fprintf(debug, "MKMDSetClockQuantum called %d microseconds, %f MIDITimeStamp units\n",
@@ -626,19 +666,30 @@ static void replyDispatch(MKMDReplyFunctions *userFuncs)
 #endif
 }
 
-// This should wait until a reply is received on port_set or until timeout
+// This should wait until a reply is received on port_set or until timeout.
+// For MacOS X, this is achieved by waiting for the playTimeEstimate, which is the time we
+// assume all the notes have been played at. This is a bodge because cancelling should
+// shorten this playTimeEstimate to 0 and/or cancel the run loop...#@$%# Apple...
 PERFORM_API MKMDReturn MKMDAwaitReply(MKMDReplyPort port_set, MKMDReplyFunctions *funcs, int timeout)
 {
+    double estimateInSeconds;
+    
 #if FUNCLOG
     fprintf(debug, "MKMDAwaitReply called %d timeout\n", timeout);
 #endif
     userFuncs = funcs;
     // since readProc will be called asynchronously when data is available, don't wait, just return
     if(timeout != MKMD_NO_TIMEOUT) { 
- //       r = msg_receive(msg, RCV_TIMEOUT, timeout);
- //       if (r != KERN_SUCCESS) 
- //           return r;
+        playTimeEstimate = playTimeEstimate < timeout ? playTimeEstimate : timeout;
     }
+    estimateInSeconds = playTimeEstimate * quantumInSeconds;
+    // printf("MKMDAwaitReply waiting %ld quantums or %f seconds\n", playTimeEstimate, estimateInSeconds);
+
+    [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
+                             beforeDate: [NSDate dateWithTimeIntervalSinceNow: estimateInSeconds]];
+
+    // Should be calling userFuncs appropriately.
+    playTimeEstimate = 0;
     return MKMD_SUCCESS;
 }
 
