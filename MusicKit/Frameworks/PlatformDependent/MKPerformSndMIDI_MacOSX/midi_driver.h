@@ -25,6 +25,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2001/02/03 02:32:49  leigh
+  Hid error string assignments behind MKMDErrorString
+
   Revision 1.8  2000/12/07 18:31:11  leigh
   Standardised to mach ports for driver handles, properly prefixed constants
 
@@ -226,6 +229,9 @@ PERFORM_API MKMDReturn
     MKMDFilterMessage(MKMDPort driver, MKMDOwnerPort owner, short unit, unsigned char statusByte, boolean_t filterIt);
 PERFORM_API MKMDReturn 
     MKMDParseInput(MKMDPort driver, MKMDOwnerPort owner, short unit, boolean_t parseIt);
+
+// interpreting error codes into a readable string.
+PERFORM_API char *MKMDErrorString(MKMDReturn errorCode);
 
 /* This will be obsolete soon: */
 PERFORM_API MKMDReturn 
