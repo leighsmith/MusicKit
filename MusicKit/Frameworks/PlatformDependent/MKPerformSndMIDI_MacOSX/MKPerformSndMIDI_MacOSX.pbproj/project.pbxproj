@@ -87,7 +87,7 @@
 				016D5A30FED483BBCFED3B93,
 			);
 			isa = PBXGroup;
-			name = "Other Sources";
+			name = Sources;
 			refType = 4;
 		};
 		016D5A2FFED483BBCFED3B93 = {
@@ -405,7 +405,8 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_INSTALLED_NAME = "@executable_path$(/)..$(/)Frameworks$(/)$(PRODUCT_NAME).$(WRAPPER_EXTENSION)$(/)Versions$(/)$(FRAMEWORK_VERSION)$(/)$(PRODUCT_NAME)";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/EmbeddedFrameworks";
+				INSTALL_PATH = "@executable_path$(/)..$(/)Frameworks";
+				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Embedded;
