@@ -12,9 +12,10 @@
   accompany all relevant code.
 */
 
-#import "SndStreamManager.h"
-#import "SndStreamClient.h"
+#import <MKPerformSndMidi/SndStruct.h>
 #import "SndAudioBuffer.h"
+#import "SndStreamManager.h"
+#import "SndStreamClient.h" 
 
 enum {
     SC_processBuffer,
@@ -40,6 +41,7 @@ enum {
 {
     [super init];
     outputBufferLock = [NSLock new];
+    inputBufferLock  = [NSLock new];
     synthThreadLock  = [[[NSConditionLock alloc] initWithCondition: SC_processBuffer] retain];    
     outputBuffer     = nil;
     synthBuffer      = nil;
@@ -76,23 +78,33 @@ enum {
 
 - setNeedsInput: (BOOL) b
 {
-    needsInput = b;
+    if (!active)
+        needsInput = b;
+    else
+        NSLog(@"SndStreamClient::setNeedsInput - Warn: Can't change needsInput whilst streaming!");
     return self;
 }
 
 - setGeneratesOutput: (BOOL) b 
 {
-  generatesOutput = b;
+    if (!active)
+        generatesOutput = b;
+    else
+        NSLog(@"SndStreamClient::setGeneratesOutput - Warn: Can't change needsInput whilst streaming!");
   return self; 
 }
 
 - setManager: (SndStreamManager*) m
 {
-    if (manager)
-        [manager release];
-    manager = m;
-    if (manager != nil)
-        [manager retain];
+    if (!active) {
+        if (manager)
+            [manager release];
+        manager = m;
+        if (manager != nil)
+            [manager retain];
+    }
+    else
+        NSLog(@"SndStreamClient::setManager - Warn: Can't setManager whilst streaming!");
     return self;
 }
 
@@ -120,9 +132,10 @@ enum {
     
     if (outputBufferLock)
         [outputBufferLock release];
+    if (inputBufferLock)
+        [inputBufferLock release];
     if (synthThreadLock)  
         [synthThreadLock release];    
-
     if (manager)
         [manager release];
     
@@ -187,7 +200,7 @@ enum {
         return self;
     }
     else {
-        NSLog(@"Couldn't welcome client with buffer since it's already active!\n");
+        NSLog(@"SndStreamClient::welcomeClientWithBuffer - Warn: Couldn't welcome client with buffer since it's already active!\n");
         return nil;
     }
 }
@@ -206,7 +219,7 @@ enum {
     gotLock = [synthThreadLock tryLockWhenCondition: SC_bufferReady];
     NS_HANDLER
     {
-        NSLog(@"SndStreamClient: mutex bug workaround\n");
+        NSLog(@"SndStreamClient::startProcessingNextBuffer - Warn: mutex bug workaround\n");
         gotLock = FALSE;
     }
     NS_ENDHANDLER
@@ -224,13 +237,26 @@ enum {
         // printf("startProcessingNextBufferWithInput nowTime = %f\n", t);
 
         if (needsInput) {
-            if (inB) 
-                [inputBuffer copyData: inB];
+            if (inB) {
+                if ([inputBufferLock tryLock]) {
+                    [inputBuffer copyData: inB];
+                    [inputBufferLock unlock];
+                }
+                else if ( delegate != nil && [delegate respondsToSelector: @selector(outputBufferSkipped)] )
+                    [delegate inputBufferSkipped: self];
+                else
+                    NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped input buffer - CPU choked?");
+            }
             else
                 NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: inBuffer is nil!\n");
         }
         [synthThreadLock unlockWithCondition: SC_processBuffer];
     }
+    else if ( delegate != nil && [delegate respondsToSelector: @selector(outputBufferSkipped)] )
+        [delegate outputBufferSkipped: self];
+    else
+        NSLog(@"SndStreamClient::startProcessingNextBuffer - Error: Skipped output buffer - CPU choked?");
+        
     return self;
 }
 
@@ -321,7 +347,7 @@ enum {
 
 - (void) processBuffers
 {
-  NSLog(@"SndStreamClient::processBuffers is being called - have you remembered to override this in your strem client?");
+  NSLog(@"SndStreamClient::processBuffers - Warn: base class method is being called - have you remembered to override this in your stream client?");
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -406,6 +432,37 @@ enum {
 {
   [outputBufferLock unlock];
   return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Input buffer lock / unlock
+////////////////////////////////////////////////////////////////////////////////
+
+- lockInputBuffer
+{
+  [inputBufferLock lock];
+  return self;
+}
+
+- unlockInputBuffer
+{
+  [inputBufferLock unlock];
+  return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// delegate mutator/accessor methods
+////////////////////////////////////////////////////////////////////////////////
+
+- setDelegate: (id) d
+{
+  delegate = d;
+  return self;
+}
+
+- (id) delegate
+{
+  return delegate;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
