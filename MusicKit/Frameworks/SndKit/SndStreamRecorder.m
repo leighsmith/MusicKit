@@ -251,7 +251,7 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 //    fprintf(stderr,"Waiting...\n");
     while (recordFile != NULL) {
 //      usleep(100000);
-      [NSThread sleepUntilDate:[[NSDate date] dateWithTimeIntervalSinceNow:0.1]];
+      [NSThread sleepUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
 //      fprintf(stderr,"."); fflush(stderr);
     }
 //    fprintf(stderr,"Waiting done.\n");
