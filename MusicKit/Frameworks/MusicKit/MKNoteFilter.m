@@ -1,18 +1,33 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
-*/
+  HEADER FILES: MusicKit.h
+
+  Description:
+    MKNoteFilter is an abstract class.
+    MKNoteFilter adds some of the functionality of MKPerformer to that of
+    MKInstrument. In particular, it adds the ability to send to elements
+    in a collection of MKNoteSenders.
+ 
+    You subclass MKNoteFilter and override realizeNote:fromNoteSender:
+    to do multiplexing of the input and output paths of the MKNoteFilter.
+    MKNoteFilters may modify MKNotes.
+    The only requirement is that any modification
+    you make before sending a MKNote is undone afterwards. I.e. the
+    'copy on write or memory' principle is used.
+ 
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
+ */
 /* Modification history:
 
   $Log$
+  Revision 1.3  2000/04/02 17:12:08  leigh
+  Cleaned up doco
+
   Revision 1.2  1999/07/29 01:16:38  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -29,21 +44,7 @@
 #import "NoteReceiverPrivate.h"
 
 #import "MKNoteFilter.h"
-@implementation MKNoteFilter: MKInstrument
-  /* NoteFilter is an abstract class. 
-     NoteFilter adds some of the functionality of Performer to that of 
-     Instrument. In particular, it adds the ability to send to elements
-     in a collection of NoteSenders.
-     You subclass NoteFilter and override
-     realizeNote:fromNoteSender: to do multiplexing of the input and output
-     paths of the NoteFilter. NoteFilters may modify Notes.
-     The only requirement is that any modification
-     you make before sending a Note is undone afterwards. I.e. the 
-     'copy on write or memory' principle is used.
-     */
-{
-    id noteSenders;    /* Collection of NoteSenders. */
-}
+@implementation MKNoteFilter
 
 #define VERSION2 2
 

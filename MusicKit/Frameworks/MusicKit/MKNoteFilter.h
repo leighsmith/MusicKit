@@ -1,10 +1,27 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    MKNoteFilter is an abstract class that combines the functionality it
+    inherits from MKInstrument with the protocol defined in the MKPerformer
+    class.  MKNoteFilter objects can both receive and send MKNotes; they're
+    interposed between MKPerformers and MKInstruments to create a MKNote
+    processing pipeline.  The subclass responsibility
+    realizeNote:fromNoteReceiver: is passed on to MKNoteFilter subclasses.
+    Keep in mind that notes must be copied on write or store.
+
+  Original Author: David A. Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /*
   $Log$
+  Revision 1.3  2000/04/02 17:12:08  leigh
+  Cleaned up doco
+
   Revision 1.2  1999/07/29 01:25:46  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -15,26 +32,16 @@
 #import "MKInstrument.h"
 
 @interface MKNoteFilter : MKInstrument
-/*
- * NoteFilter is an abstract class that combines the functionality it
- * inherits from Instrument with the protocol defined in the Performer
- * class.  NoteFilter objects can both receive and send Notes; they're
- * interposed between Performers and Instruments to create a Note
- * processing pipeline.  The subclass responsibility
- * realizeNote:fromNoteReceiver: is passed on to NoteFilter subclasses.
- * Keep in mind that notes must be copied on write or store.  
- */
 {
-	id noteSenders;     /* Collection of NoteSenders. */
+    NSMutableArray *noteSenders;     /* Collection of MKNoteSenders. */
 }
 
 - init;
- /* Creates NoteSenders and sends [super init]. */
+ /* Creates MKNoteSenders and sends [super init]. */
 
 - noteSenders; 
  /* 
-  * Returns a copy of the receiver's List of NoteSenders.  It is the sender's
-  * responsibility to free the List.  
+  * Returns a copy of the receiver's List of MKNoteSenders.
   */
 
 -(BOOL ) isNoteSenderPresent:aNoteSender; 
