@@ -59,8 +59,8 @@ $Id$
 
     <abstract>
       <para>
-        These are overall comments (incorporating original notes by David A. Jaffe)
-        and serve as the highest level overview of the MusicKit.
+These are overall comments (incorporating original notes by David
+A. Jaffe) and serve as the highest level overview of the MusicKit.
       </para>
     </abstract>
   </artheader>
@@ -99,14 +99,13 @@ as open source to the community.
    </para>
 
    <para>
-     The <ulink url="http://www.sourceforge.net/projects/musickit">
-     MusicKit Distribution</ulink>
-     is a comprehensive package that
-     includes on-line documentation, programming examples, utilities,
-     applications and sample score documents. The MusicKit is
-     dependent on the SndKit distribution,
-     originally written by Stephen Brandon, and both Framework
-     collections are available at the same distribution site.
+The <link linkend="availability">MusicKit Distribution</link> is a
+comprehensive package that includes on-line documentation, <link
+linkend=examples>programming examples</link>, <link
+linkend=applications>utilities, applications</link> and sample score
+documents. The MusicKit is dependent on the SndKit distribution,
+originally written by Stephen Brandon, and both Framework collections
+are available at the same distribution site.
 </para>
 
 <para>
@@ -129,10 +128,35 @@ platforms.)
 The following is a partial list of the highlights of the Music Kit
 provided by David Jaffe on his <link linkend=otherlinks>web-page</link>: 
 </para>
+
+
       <itemizedlist>
 	<listitem>
 	  <para>
-Extensible, high-level object-oriented framework that is a super-set of Music V and MIDI paradigms.
+Applicable to composers writing real-time computer music applications.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Applicable to programmers writing cross-platform audio/music applications.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Extensible, high-level object-oriented frameworks that are a super-set
+of Music V and MIDI paradigms.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Written in Objective C and C, using Apple's OpenStep/Cocoa API, the
+FoundationKit.
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+Functionally comparable (although architecturally dissimilar) to JMSL
+(Java Music Specification Language).
 </para>
 	</listitem>
 	<listitem>
@@ -143,17 +167,20 @@ as legato transitions.
 	</listitem>
 	<listitem>
 	  <para>
-General time management/scheduling mechanism, supporting synchronization to MIDI time code.
+General time management/scheduling mechanism, supporting
+synchronization to MIDI time code.
 </para>
 	</listitem>
 	<listitem>
 	  <para>
-Efficient real-time synthesis and sound processing, including option for quadraphonic sound.
+Efficient real-time synthesis and sound processing, including option
+for quadraphonic sound.
 </para>
 	</listitem>
 	<listitem>
 	  <para>
-Fully-dynamic DSP resource allocation system with dynamic linking and loading, on multiple DSPs.
+Fully-dynamic DSP resource allocation system with dynamic linking and
+loading, on multiple DSPs.
 </para>
 	</listitem>
 	<listitem>
@@ -163,22 +190,28 @@ Complete support for multiple MIDI inputs and outputs.
 	</listitem>
 	<listitem>
 	  <para>
-Digital sound I/O from the DSP port with support for serial port devices by all popular vendors.
+Digital sound I/O from the DSP port with support for serial port
+devices by all popular vendors.
 </para>
 	</listitem>
 	<listitem>
 	  <para>
-Non-real time mode, where the DSP returns data to the application or writes a sound file.
+Non-real time mode, where the DSP returns data to the application or
+writes a sound file.
 </para>
 	</listitem>
 	<listitem>
 	  <para>
-Suite of applications, including <application>Ensemble</application>--an interactive algorithmic composition and performance environment (including a built-in sampler) and <application>ScorePlayer</application>.
+Suite of <link linkend=applications>applications</link>, including
+<application>Ensemble</application>--an interactive algorithmic
+composition and performance environment (including a built-in sampler)
+and <application>ScorePlayer</application>.
 </para>
 	</listitem>
 	<listitem>
 	  <para>
-Library of instruments, including FM, wavetable, physical modeling and waveshaping synthesis.
+Library of instruments, including FM, wavetable, physical modeling and
+waveshaping synthesis.
 </para>
 	</listitem>
 	<listitem>
@@ -217,24 +250,6 @@ ScoreFile, a textual scripting language for music.
                 David Jaffe's (the original author) MusicKit site.
             </ulink>
 	  </para>
-	</listitem>
-	<listitem>
-	  <para>
-            <ulink url="http://sourceforge.net">
-	      <inlinemediaobject>
-		<imageobject>
-		  <imagedata fileref="http://sourceforge.net/sflogo.php?group_id=9881" 
-			     width="88"
-			     depth="31"
-			     align=left>
-		</imageobject>
-		<textobject>
-		  <phrase>SourceForge Logo</phrase>
-		</textobject>
-	      </inlinemediaobject>
-                The SourceForge site hosting the package.
-             </ulink>
-	   </para>
 	</listitem>
       </itemizedlist>
     </sect2>
@@ -474,164 +489,136 @@ usage file is found in
 </para>
   </sect1>
 
-  <sect1 id="works">
-    <title>What works?</title>
+  <sect1 id=availability>
+    <title>Availablity</title>
     <para>
-The frameworks have been exercised fairly extensively and seem quite
-stable. MIDI recording and playback of scores and computed parts works
-on all supported platforms. The examples
-<application>MIDIFilePlayback</application> and
-<command>playscorefilemidi</command> and the utility
-<command>playscore</command> demonstrate these capabilities.
+The MusicKit is listed on the following open source portals:
 </para>
-
-    <sect2 id="installation">
-      <title>Installation</title>
-
-      <para>
-At the moment, there is no single make operation to build the entire
-source tree. Compile either the MacOsX-Server or Windows
-<filename>MKPerformSndMIDI</filename> framework, then either the
-<filename>MKDSP_56k</filename> or <filename>MKDSP_Native</filename>
-framework, then the <filename>MusicKit</filename> framework. They will
-install into <filename
-class=directory>/Local/Library/Frameworks</filename>. The
-<filename>MKUnitGenerators</filename>/<filename>MKSynthPatches</filename>
-framework won't compile on MacOsX-Server because the Motorola
-<command>asm56000</command> and <command>lnk56000</command> tools are
-missing. I've asked Apple and Motorola for a MacOsX-Server port, why
-don't you also? :-) At the moment header files are problematic. I
-copied over the 3.3 headers to compile against the SoundKit and to
-compile the MIDI driver. These legacy headers may not actually be
-needed and could be removed in time. You can get them from the Darwin
-distribution of the SoundKit or just copy them from a NeXTStep
-3.3/OpenStep 4.2 system.
-</para>
-    </sect2>
-
-  </sect1>
-
-  <sect1 id="notworking">
-    <title>What doesn't work?</title>
 
     <itemizedlist>
       <listitem>
 	<para>
-DSP on MacOsX-Server. Stephen
-mentioned he got sound out under OS4.2. However none of the dsp
-drivers have been ported from NeXTStep V3.3 (as they are all ISA bus
-cards and I don't know of a PCI 56K card with published interface
-specs). A more fruitful avenue seems to be to convert the unit
-generators to use Apples AltiVec vector libraries and then do an open
-source version of them to support other vector processors. Another
-option is to convert the unit generators to the MPEG Layer 4
-structured audio language SAOL <citation>SAOL</citation>
-<emphasis>
-(Need CMJ reference)
-</emphasis>
-and modify the
-MKDSP framework to download to a supporting card (or do the emulation
-using the native processor).
+	<ulink url="http://www.freshmeat.net/projects/musickit/">
+	<inlinemediaobject>
+	      <imageobject>
+		<imagedata fileref="freshmeat.jpg">
+	      </imageobject>
+	    </inlinemediaobject>
+freshmeat.net
+</ulink>
 </para>
       </listitem>
-
       <listitem>
 	<para>
-There are several programs in the <filename
-class=directory>Examples</filename> and <filename
-class=directory>Applications</filename> directories which have yet to
-be fully converted to the OpenStep version. Please feel free to dive in and
-upgrade them!
+	<ulink url="http://www.sourceforge.net/projects/musickit">
+	<inlinemediaobject>
+	      <imageobject>
+		<imagedata fileref="sourceforge.png">
+	      </imageobject>
+
+	    </inlinemediaobject>
+sourceforge.net
+</ulink>
 </para>
       </listitem>
-
       <listitem>
 	<para>
-Documentation is currently in Rich Text Format (RTF). Beginning with
-this README document, the documentation has begun to be converted to
-the SGML DocBook DTD used by the Linux Documentation Project. Anyone
-who has access to a commercial RTF to SGML converter can make a very
-helpful contribution here!  The documentation is about half converted
-and updated to the new naming convention and OpenStep behaviour and
-needs to be completed.
-</para>
-      </listitem>
-
-      <listitem>
-	<para>
-For this current revision the .nibs have been
-upgraded to work with MacOsX and MacOsX-Server and will not load with
-OpenStep 4.2. Please contact <email>leigh@tomandandy.com</email>
-to obtain a set
-that work with OpenStep 4.2. Future versions of the MusicKit will have
-both nib sets for backward compatibility with OpenStep 4.2. Eventually
-Apple's InterfaceBuilder will produce XML based nibs which should
-reduce the compatibility issue.
+	<ulink url="http://www.stepwise.com">
+	<inlinemediaobject>
+	      <imageobject>
+		<imagedata fileref="Stepwise.gif">
+	      </imageobject>
+	    </inlinemediaobject>
+SoftTrak on Stepwise.com (search for MusicKit)
+</ulink>
 </para>
       </listitem>
     </itemizedlist>
-  </sect1>
-  
-  <sect1 id=downloads>
-    <title>Downloads of the Distribution</title>
-    <para>
-       The files consist of:
-    </para>
+    
+    <sect2 id=downloads>
+      <title>Downloading the Distribution</title>
 
-    <para>
+      <sect3 id=sources>
+	<title>Source tarballs</title>
+	<para>
+The Source files consist of:
+</para>
+	
+	<para>
         <variablelist>
-	  <varlistentry>
-	    <term>
+	    <varlistentry>
+	      <term>
               <ulink url="http://www.sourceforge.net/projects/musickit">MusicKit</ulink>
             </term>
-	    <listitem>
-	      <para>
+	      <listitem>
+		<para>
 The source to MusicKit, MKDSP, MKPerformSndMIDI,
 MKUnitGenerators and MKSynthPatches frameworks and all utilites,
 applications, documentation and example code.
               </para>
-	      <para>
+		<para>
 This is the most recent revision and patch. Older revisions are
 located at the 
 <ulink url="ftp://ftp.tomandandy.com/pub/MusicKit">tomandandy ftp site</ulink>
 for regression testing.
               </para>
-            </listitem>
-          </varlistentry>
-	  <varlistentry>
-	    <term>
-              <ulink url="http://www.tomandandy.com/MusicKit/ZilogSCCMIDI.s.tar.gz">ZilogSCCMIDI.s.tar.gz</ulink>
-            </term>
-	    <listitem>
-	      <para>
-                The MacOsX-Server MIDI driver source.
-              </para>
-	    </listitem>
-	  </varlistentry>
-          <varlistentry>
-            <term>
-               <ulink url="http://www.tomandandy.com/MusicKit/DriverKitHeaders.tar.gz">DriverKitHeaders.tar.gz</ulink>
-            </term>
-	    <listitem>
-	      <para>
-                NS3.3 headers required to compile a driver on MacOsX-Server. 
-              </para>
-	    </listitem>
-	  </varlistentry>
-          <varlistentry>
-            <term>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term>
               <ulink url="http://www.sourceforge.net/projects/musickit/">SndKit</ulink>
             </term>
-	    <listitem>
-	      <para>
+	      <listitem>
+		<para>
                 The version of the SndKit which matches the MusicKit.
               </para>
 	    </listitem>
-	  </varlistentry>
-        </variablelist>
+	    </varlistentry>
+	    <varlistentry>
+	      <term>
+              <ulink url="http://www.sourceforge.net/projects/musickit/">ZilogSCCMIDI.s.tar.gz</ulink>
+            </term>
+	      <listitem>
+		<para>
+                The MacOS X-Server V1.0-1.2 MIDI driver source.
+              </para>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term>
+               <ulink url="http://www.tomandandy.com/MusicKit/DriverKitHeaders.tar.gz">DriverKitHeaders.tar.gz</ulink>
+            </term>
+	      <listitem>
+		<para>
+                NS3.3 headers required to compile a driver on MacOsX-Server. 
+              </para>
+	      </listitem>
+	    </varlistentry>
+	  </variablelist>
       </para>
+      </sect3>
 
-      <sect2 id=binaries>
+      <sect3 id=support>
+	<title>Supporting Libraries</title>
+	<para>
+The following libraries need to be installed to compile the source:
+</para>
+	<variablelist>
+	  <varlistentry>
+	    <term>
+            <ulink url="http://www.sourceforge.net/projects/sox">
+SoX</ulink>
+            </term>
+	    <listitem>
+	      <para>
+              The SoX sound tools library provides sound file format conversion.
+              </para>
+	    </listitem>
+	  </varlistentry>
+	</variablelist>
+      </sect3>
+
+      <sect3 id=binaries>
 	<title>Binaries</title>
 	<para>
           Binaries for the compiled frameworks for various operating
@@ -640,36 +627,36 @@ for regression testing.
 
         <para>
 	<variablelist>
-	  <varlistentry>
-	    <term>
+	    <varlistentry>
+	      <term>
             <ulink url="http://www.tomandandy.com/MusicKit/binaries/MacOsX-Server/MK-5.1.9.pkg.tar">MK-5.1.9.pkg.tar</ulink>
             </term>
-	    <listitem>
-	      <para>
-              The MacOsX-Server frameworks (including the SndKit).
+	      <listitem>
+		<para>
+              The MacOS X-Server frameworks (including the SndKit).
               </para>
-	    </listitem>
-	  </varlistentry>
-          <varlistentry>
-            <term>
-              <ulink url="http://www.tomandandy.com/MusicKit/binaries/MacOsX-Server/ZilogSCCMIDI.b.tar.gz">ZilogSCCMIDI.b.tar.gz</ulink>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term>
+              <ulink url="http://www.sourceforge.net/projects/musickit">ZilogSCCMIDI.b.tar.gz</ulink>
             </term>
-	    <listitem>
-	      <para>
-                The MacOsX-Server MIDI driver binary for SCC UARTs in the Mac.
+	      <listitem>
+		<para>
+                The MacOS X-Server MIDI driver binary for SCC UARTs in 8500/8600/9500/9600/G3/G4 PowerMacs.
               </para>
-	    </listitem>
-	  </varlistentry>
-	  <varlistentry>
-	    <term>
+	      </listitem>
+	    </varlistentry>
+	    <varlistentry>
+	      <term>
             <ulink url="http://www.tomandandy.com/MusicKit/binaries/MacOsX/MK-5.1.9.pkg.tar">MK-5.1.9.pkg.tar</ulink>
             </term>
-	    <listitem>
-	      <para>
-              The MacOsX frameworks (including the SndKit).
+	      <listitem>
+		<para>
+              The MacOS X frameworks (including the SndKit).
               </para>
-	    </listitem>
-	  </varlistentry>
+	      </listitem>
+	    </varlistentry>
 <!--
 	  <varlistentry>
 	    <term>
@@ -692,11 +679,250 @@ for regression testing.
 	    </listitem>
 	  </varlistentry>
 -->
-        </variablelist>
+	  </variablelist>
       </para>
+      </sect3>
     </sect2>
   </sect1>
 
+  <sect1 id="appsandexs">
+    <title>Included Applications and Example Code</title>
+
+    <sect2 id="applications">
+      <title>Applications in the distribution</title>
+      <itemizedlist>
+	<listitem>    
+	  <para><application>ScorePlayer</application> (David Jaffe)</para>
+	</listitem>
+	<listitem>
+	  <para><application>WaveEdit</application> (David Jaffe)</para>
+	</listitem>
+	<listitem>
+	  <para><application>	Ensemble</application> (Michael McNabb)</para>
+	</listitem>
+	<listitem>
+	  <para><application>	EnvelopeEd</application> (Fernando Lopez Lezcano)</para>
+	</listitem>
+	<listitem>
+	  <para><application>	PianoRoll</application> (Jonathan Knudsen)</para>
+	</listitem>
+	<listitem>
+	  <para><application>	HosePlayer</application> (Perry Cook)</para>
+	</listitem>
+	<listitem>
+	  <para><application>	SlideFlute</application> (Perry Cook)</para>
+	</listitem>
+	<listitem>
+	  <para><application>	edsnd</application> (Lee Boynton)</para>
+	</listitem>
+	<listitem>
+	  <para><application>	Reich-o-Matic</application> (Brad Garton)</para>
+	</listitem>
+	<listitem>
+	  <para><application>	Looching</application> (Brad Garton)</para>
+	</listitem>
+	<listitem>
+	  <para><application>	ResoLab</application> (Perry Cook)</para>
+	</listitem>
+	<listitem>
+	  <para><application>	ClariNot</application> (Perry Cook)</para>
+	</listitem>
+	<listitem>
+	  <para><application>	ResonSound</application> (David Jaffe)</para>
+	</listitem>
+      </itemizedlist>
+    </sect2>
+
+    <sect2 id="examples">
+      <title>Example code in the distribution</title>
+      <itemizedlist>
+	<listitem>
+	  <para><application>MIDIFilePlayback</application></para>
+	</listitem>
+	<listitem>
+	  <para><application>MidiEcho</application></para>
+	</listitem>
+	<listitem>
+	  <para><application>MidiLoop</application></para>
+	</listitem>
+	<listitem>
+	  <para><application>MidiPlay</application></para>
+	</listitem>
+	<listitem>
+	  <para><application>MidiRecord</application></para>
+	</listitem>
+	<listitem>
+	  <para><application>PerformerExample</application></para>
+	</listitem>
+	<listitem>
+	  <para><application>PlayNote</application></para>
+	</listitem>
+	<listitem>
+	  <para><application>QuintProcessor</application></para>
+	</listitem>
+	<listitem>
+	  <para><application>ResonSound</application></para>
+	</listitem>
+	<listitem>
+	  <para><application>SineGen</application></para>
+	</listitem>
+	<listitem>
+	  <para>	playpart</para>
+	</listitem>
+	<listitem>
+	  <para>	playscorefile2</para>
+	</listitem>
+	<listitem>
+	  <para>	process_soundfiles_dsp</para>
+	</listitem>
+	<listitem>
+	  <para>	mixscorefiles</para>
+	</listitem>
+	<listitem>
+	  <para>	mixsounds</para>
+	</listitem>
+	<listitem>
+	  <para>	playscorefile</para>
+	</listitem>
+	<listitem>
+	  <para>	playscorefilemidi</para>
+	</listitem>
+	<listitem>
+	  <para>	example1</para>
+	</listitem>
+	<listitem>
+	  <para>	example3</para>
+	</listitem>
+	<listitem>
+	  <para>	example4</para>
+	</listitem>
+	<listitem>
+	  <para>	example5</para>
+	</listitem>
+	<listitem>
+	  <para>	exampleSynthPatch</para>
+	</listitem>
+	<listitem>
+	  <para>	exampsynthpatch</para>
+	</listitem>
+	<listitem>
+	  <para>	exampunitgenerator</para>
+	</listitem>
+	<listitem>
+	  <para>	metronome</para>
+	</listitem>
+      </itemizedlist>
+    </sect2>
+  </sect1>
+
+  <sect1 id="works">
+    <title>What works?</title>
+    <para>
+The frameworks have been exercised fairly extensively and seem quite
+stable. MIDI recording and playback of scores and computed parts works
+on all supported platforms. The examples
+<application>MIDIFilePlayback</application> and
+<command>playscorefilemidi</command> and the utility
+<command>playscore</command> demonstrate these capabilities.
+</para>
+
+    <sect2 id="installation">
+      <title>Installation</title>
+
+      <para>
+At the moment, there is no single make operation to build the entire
+source tree. Compile and install sox, then compile and install either the MacOS X-Server or Windows
+<filename>MKPerformSndMIDI</filename> framework, then either the
+<filename>MKDSP_56k</filename> or <filename>MKDSP_Native</filename>
+framework, then the <filename>MusicKit</filename> framework. They will
+install into <filename
+class=directory>/Local/Library/Frameworks</filename>. The
+<filename>MKUnitGenerators</filename>/<filename>MKSynthPatches</filename>
+framework won't compile on MacOS X-Server because the Motorola
+<command>asm56000</command> and <command>lnk56000</command> tools are
+missing. I've asked Apple and Motorola for a MacOS X-Server port, why
+don't you also? :-) At the moment header files are problematic. I
+copied over the 3.3 headers to compile against the SoundKit and to
+compile the MIDI driver. These legacy headers may not actually be
+needed and could be removed in time. You can get them from the Darwin
+distribution of the SoundKit or just copy them from a NeXTStep
+3.3/OpenStep 4.2 system.
+</para>
+    </sect2>
+
+  </sect1>
+
+  <sect1 id="notworking">
+    <title>What doesn't work? / What needs doing?</title>
+
+    <itemizedlist>
+      <listitem>
+	<para>
+DSP on non-56K DSP systems. Stephen mentioned he got sound out under
+OS4.2. However none of the dsp drivers have been ported from NeXTStep
+V3.3 (as they are all ISA bus cards and I don't know of a PCI 56K card
+with published interface specs).
+</para>
+<para>
+A more fruitful avenue seems to be to convert the unit generators to
+use Apples AltiVec vector libraries and then do an open source version
+of them to support other vector processors. Another option is to
+convert the unit generators to the MPEG Layer 4 structured audio
+language <ulink url="http://www.saol.net">SAOL</ulink>
+<citation>ScheirerVercoe99</citation> and modify the MKDSP framework
+to download to a supporting card (or do the emulation using the native
+processor).
+</para>
+      </listitem>
+
+      <listitem>
+	<para>
+There are several programs in the <filename
+class=directory>Examples</filename> and <filename
+class=directory>Applications</filename> directories which have yet to
+be fully converted to the OpenStep version. Please feel free to dive in and
+upgrade them!
+</para>
+      </listitem>
+
+      <listitem>
+	<para>
+Documentation is currently in Rich Text Format (RTF). Beginning with
+this README document, the documentation has begun to be converted to
+the SGML DocBook DTD used by the Linux Documentation Project and the
+class documentation to be incorporated into the sourcefiles with
+<application>HeaderDoc</application> tags.
+</para>
+
+<para>
+Anyone who has access to a commercial RTF to SGML converter can make
+a very helpful contribution here!  The documentation is about half
+converted and updated to the new naming convention and OpenStep
+behaviour and needs to be completed.
+</para>
+      </listitem>
+
+      <listitem>
+	<para>
+For this current revision the .nibs have been upgraded to work with
+MacOS X and MacOS X-Server and will not load with OpenStep 4.2. Please
+contact <email>leigh@tomandandy.com</email> to obtain a set that work
+with OpenStep 4.2. Future versions of the MusicKit will have both nib
+sets for backward compatibility with OpenStep 4.2. Eventually Apple's
+InterfaceBuilder will produce XML based nibs which should reduce the
+compatibility issue.
+</para>
+      </listitem>
+
+      <listitem>
+	<para>
+Creating a set of bindings to Java is planned using the Java bridge
+and Apple's <application>WrapIt.app</application> utility.
+</para>
+	</listitem>
+    </itemizedlist>
+  </sect1>
+  
   <sect1 id=fixes>
     <title>Contributing Fixes</title>
     <para>
@@ -729,9 +955,51 @@ Computer Music Journal
       <pagenums>48-55</pagenums>
       <publishername>MIT Press</publishername>
     </bibliomset>
+
+    <bibliomset relation=article>
+      <authorgroup>
+	  <author>
+	    <firstname>Eric</firstname> <othername>D.</othername>
+	    <surname>Scheirer</surname>
+	  </author>
+	  <author>
+	    <firstname>Barry</firstname> <othername>L.</othername>
+	    <surname>Vercoe</surname>
+	  </author>
+	</authorgroup>
+
+      <title role=article>SAOL: The MPEG-4 Structured Audio Orchestra Language</title>
+Computer Music Journal
+      <volumenum>23</volumenum>(<issuenum>2</issuenum>)
+      <pubdate>1999</pubdate>
+      <pagenums>31-51</pagenums>
+      <publishername>MIT Press</publishername>
+    </bibliomset>
+
   </bibliomixed>
   </bibliography>
 
+  <ackno>
+   <ulink url="http://sourceforge.net">
+	      <inlinemediaobject>
+	<imageobject>
+	  <imagedata fileref="sourceforge.png">
+<!--
+	<imagedata fileref="http://sourceforge.net/sflogo.php?group_id=9881"
+	  width="88"
+	  depth="31"
+	  align=left>
+-->
+	</imageobject>
+<!--
+		<textobject>
+		  <phrase>SourceForge Logo</phrase>
+      </textobject>
+-->
+      </inlinemediaobject>
+                SourceForge kindly hosts the MusicKit.
+             </ulink>
+</ackno>
 </article>
 
 <!--
