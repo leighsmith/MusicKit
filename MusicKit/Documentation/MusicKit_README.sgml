@@ -996,6 +996,13 @@ the MK source. These may be installable using <ulink url="http://www.sourceforge
 sound tools library provides sound file format conversion.
 Newer versions than &soxvertuple; will probably just work.
               </para>
+              <para>
+Install the library using:
+<screen>
+cd sox-&soxvertuple;
+sudo make install-lib
+</screen>
+              </para>
 	    </listitem>
 	  </varlistentry>
 	  <varlistentry id=lame>
