@@ -159,8 +159,8 @@
   @result     Returns self.
 */
 - mixWithBuffer: (SndAudioBuffer*) buff
-      fromStart: (long) start
-          toEnd: (long) end
+      fromStart: (unsigned long) start
+          toEnd: (unsigned long) end
       canExpand: (BOOL) exp;
 
 /*!
@@ -230,12 +230,12 @@
               of the sample rate.
   @result     Returns the buffer length in sample frames.
 */
-- (long) lengthInSampleFrames;
+- (unsigned long) lengthInSampleFrames;
 /*!
   @method     setLengthInSampleFrames
   @abstract   Changes the length of the buffer to <I>newSampleFrameCount</I> sample frames.
 */
-- setLengthInSampleFrames: (long) newSampleFrameCount;
+- setLengthInSampleFrames: (unsigned long) newSampleFrameCount;
 /*!
   @method     lengthInBytes
   @abstract
@@ -340,7 +340,7 @@
   @param channel The channel index, between 0 and the number of channels in the sound.
   @result Returns a normalized sample value as a float regardless of the data format.
  */
-- (float) sampleAtFrameIndex: (long) frameIndex channel: (int) channel;
+- (float) sampleAtFrameIndex: (unsigned long) frameIndex channel: (int) channel;
 
 @end
 
@@ -534,7 +534,7 @@ SNDKIT_API void SndChannelIncrease (void *inPtr,
 
 SNDKIT_API void SndChannelDecrease (void *inPtr,
 				    void *outPtr,
-				    int frames,
+				    unsigned int frames,
 				    int oldNumChannels,
 				    int newNumChannels,
 				    int df );

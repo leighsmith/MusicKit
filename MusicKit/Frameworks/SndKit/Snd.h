@@ -334,12 +334,14 @@ typedef enum {
               derived from those formats supported by the underlying Sox library.
 */
 + (NSArray *) soundFileExtensions;
+
 /*!
  @method isPathForSoundFile:
  @param path A file path
  @result TRUE if the file at path is a sound file.
  */
 + (BOOL) isPathForSoundFile: (NSString*) path;
+
 /*!
   @method defaultFileExtension
 */
@@ -520,7 +522,7 @@ typedef enum {
   @discussion Returns the number of sample frames, or channel count-independent
               samples, in the Snd.
 */
-- (long) lengthInSampleFrames;
+- (unsigned long) lengthInSampleFrames;
 
 /*!
   @method duration
@@ -576,11 +578,22 @@ typedef enum {
     @param count The number of samples to play. Use sampleCount to play the entire sound.
     @result Returns the performance that represents the sound playing.
 */
-- (SndPerformance *) playInFuture: (double) inSeconds beginSample: (int) begin sampleCount: (int) count;
-
 - (SndPerformance *) playInFuture: (double) inSeconds
-           startPositionInSeconds: (double) startPos
-                durationInSeconds: (double) d; 
+		      beginSample: (unsigned long) begin
+		      sampleCount: (unsigned long) count;
+
+/*!
+  @method playInFuture:startPositionInSeconds:durationInSeconds:
+  @abstract Begin playback at some time in the future, over a region of the sound.
+  @param inSeconds The number of seconds beyond the current time point to begin playback.
+  @param startPosition The time in seconds in the Snd to begin playing from.
+                       Use 0.0 to play from the start of the sound.
+  @param duration The duration of the Snd to play in seconds. Use -[Snd duration] to play the entire sound.
+  @result Returns the performance that represents the sound playing.
+ */
+- (SndPerformance *) playInFuture: (double) inSeconds
+           startPositionInSeconds: (double) startPosition
+                durationInSeconds: (double) duration; 
 /*!
     @method   playAtTimeInSeconds:withDurationInSeconds:
     @abstract Begin playback at a certain absolute stream time, for a certain duration.

@@ -106,6 +106,7 @@
   @result     The SndPerformance object assocaited with this instance of the Snd's performance 
 */
 - (SndPerformance *) playSnd: (Snd*) s;
+
 /*!
   @method   playSnd:withTimeOffset:
   @abstract   Begin playing a Snd instance at some in point time in the future.
@@ -114,32 +115,35 @@
   @result     The SndPerformance object assocaited with this instance of the Snd's performance
 */
 - (SndPerformance *) playSnd: (Snd*) s withTimeOffset: (double) inSeconds;
+
 /*!
   @method playSnd:withTimeOffset:beginAtIndex:endAtIndex:
   @abstract Begin playing a Snd instance at some time in the future.
   @param s The sound to start playing
   @param inSeconds The future time interval in seconds when to start playing.
-  @param beginIndex The first sample of the sound to play; negative signals play all
-  @param endIndex The last sample of the sound to play; negative signals play all
+  @param beginIndex The first sample of the sound to play.
+  @param endIndex The last sample of the sound to play.
   @result The SndPerformance object assocaited with this instance of the Snd's performance
 */
 - (SndPerformance *) playSnd: (Snd*) s 
               withTimeOffset: (double) inSeconds
-                beginAtIndex: (long) beginAtIndex
-                  endAtIndex: (long) endIndex;
+                beginAtIndex: (unsigned long) beginAtIndex
+                  endAtIndex: (unsigned long) endIndex;
+
 /*!
   @method playSnd:atTimeInSeconds:beginAtIndex:endAtIndex:
   @abstract Begin playing a Snd instance at some absolute stream time.
   @param s The sound to start playing
   @param playT The absolute stream time, in seconds, to start play back.
-  @param beginIndex The first sample of the sound to play; negative signals play all
-  @param endIndex The last sample of the sound to play; negative signals play all
+  @param beginIndex The first sample of the sound to play.
+  @param endIndex The last sample of the sound to play.
   @result The SndPerformance object assocaited with this instance of the Snd's performance
 */
 - (SndPerformance *) playSnd: (Snd *) s
              atTimeInSeconds: (double) playT
-                beginAtIndex: (long) beginAtIndex
-                  endAtIndex: (long) endAtIndex;                  
+                beginAtIndex: (unsigned long) beginAtIndex
+                  endAtIndex: (unsigned long) endAtIndex;
+
 /*!
   @method playSnd:atTimeInSeconds:startPositionInSeconds:durationInSeconds:
   @abstract Begin playing a Snd instance at some absolute stream time.
