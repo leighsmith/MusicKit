@@ -17,8 +17,8 @@
 #import "SndAudioBufferQueue.h"
 
 enum {
-  ABQ_noData,
-  ABQ_hasData
+    ABQ_noData,
+    ABQ_hasData
 };
 
 #define SNDABQ_DEBUG 0   
@@ -32,7 +32,7 @@ enum {
 
 + audioBufferQueueWithLength: (int) n
 {
-  return [[[self alloc] initQueueWithLength: n] autorelease];
+    return [[[self alloc] initQueueWithLength: n] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,8 +41,8 @@ enum {
 
 - init
 {
-  self = [self initQueueWithLength: 4];
-  return self;
+    self = [self initQueueWithLength: 4];
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,18 +51,20 @@ enum {
 
 - initQueueWithLength: (int) n
 {
-  self = [super init];
-  numBuffers = n;
-  if (pendingBuffersLock == nil) {
-    pendingBuffersLock   = [[NSConditionLock alloc] initWithCondition: ABQ_noData];
-    processedBuffersLock = [[NSConditionLock alloc] initWithCondition: ABQ_noData];
-    pendingBuffers       = [[NSMutableArray arrayWithCapacity: numBuffers] retain];
-    processedBuffers     = [[NSMutableArray arrayWithCapacity: numBuffers] retain];
-
-    [processedBuffersLock lock];
-    [processedBuffersLock unlockWithCondition: ABQ_noData];
-  }
-  return self;
+    self = [super init];
+    if(self != nil) {
+	numBuffers = n;
+	if (pendingBuffersLock == nil) {
+	    pendingBuffersLock   = [[NSConditionLock alloc] initWithCondition: ABQ_noData];
+	    processedBuffersLock = [[NSConditionLock alloc] initWithCondition: ABQ_noData];
+	    pendingBuffers       = [[NSMutableArray arrayWithCapacity: numBuffers] retain];
+	    processedBuffers     = [[NSMutableArray arrayWithCapacity: numBuffers] retain];
+	    
+	    [processedBuffersLock lock];
+	    [processedBuffersLock unlockWithCondition: ABQ_noData];
+	}	
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -71,11 +73,27 @@ enum {
 
 - (void) dealloc
 {
-  [pendingBuffersLock   release];
-  [processedBuffersLock release];
-  [pendingBuffers       release];
-  [processedBuffers     release];
-  [super dealloc];
+    [pendingBuffersLock release];
+    pendingBuffersLock = nil;
+    [processedBuffersLock release];
+    processedBuffersLock = nil;
+    [pendingBuffers release];
+    pendingBuffers = nil;
+    [processedBuffers release];
+    processedBuffers = nil;
+    [super dealloc];
+}
+
+- copyWithZone: (NSZone *) zone
+{
+    SndAudioBufferQueue *queueCopy = [[[self class] allocWithZone: zone] init];
+    
+    [queueCopy->pendingBuffers release];
+    queueCopy->pendingBuffers = [pendingBuffers copy];
+    [queueCopy->processedBuffers release];
+    queueCopy->processedBuffers = [processedBuffers copy];
+
+    return queueCopy;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,8 +102,8 @@ enum {
 
 - (NSString*) description
 {
-  return [NSString stringWithFormat: @"%@ numBuffers:%i pending:%i processed:%i",
-    [super description], numBuffers, [pendingBuffers count], [processedBuffers count]];
+    return [NSString stringWithFormat: @"%@ numBuffers:%i pending:%i processed:%i",
+	[super description], numBuffers, [pendingBuffers count], [processedBuffers count]];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,15 +112,18 @@ enum {
 
 - (SndAudioBuffer*) popNextPendingBuffer
 {
-  SndAudioBuffer *ab = nil;
-  [pendingBuffersLock lockWhenCondition: ABQ_hasData];
+    SndAudioBuffer *ab = nil;
+    [pendingBuffersLock lockWhenCondition: ABQ_hasData];
 #if SNDABQ_DEBUG    
-  printf("pop pending...\n");
+    printf("pop pending...\n");
 #endif
-  ab = [[pendingBuffers objectAtIndex: 0] retain];
-  [pendingBuffers removeObjectAtIndex: 0];
-  [pendingBuffersLock unlockWithCondition: ([pendingBuffers count] > 0 ? ABQ_hasData : ABQ_noData)];
-  return [ab autorelease];
+  // NSLog(@"[pendingBuffers objectAtIndex: 0] retainCount %d\n", [[pendingBuffers objectAtIndex: 0] retainCount]);
+    ab = [[pendingBuffers objectAtIndex: 0] retain]; // retain so it's not released by removeObjectAtIndex: below.
+						     // NSLog(@"ab %@ retainCount %d\n", ab, [ab retainCount]);
+    [pendingBuffers removeObjectAtIndex: 0];
+  // NSLog(@"after remove [pendingBuffers objectAtIndex: 0] retainCount %d\n", [[pendingBuffers objectAtIndex: 0] retainCount]);
+    [pendingBuffersLock unlockWithCondition: ([pendingBuffers count] > 0 ? ABQ_hasData : ABQ_noData)];
+    return [ab autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -111,15 +132,15 @@ enum {
 
 - (SndAudioBuffer*) popNextProcessedBuffer
 {
-  SndAudioBuffer *ab = nil;
-  [processedBuffersLock lockWhenCondition: ABQ_hasData];
+    SndAudioBuffer *ab = nil;
+    [processedBuffersLock lockWhenCondition: ABQ_hasData];
 #if SNDABQ_DEBUG    
-  printf("pop processed...\n");
+    printf("pop processed...\n");
 #endif
-  ab = [[processedBuffers objectAtIndex: 0] retain];
-  [processedBuffers removeObjectAtIndex: 0];
-  [processedBuffersLock unlockWithCondition: ([processedBuffers count] > 0 ? ABQ_hasData : ABQ_noData)];
-  return [ab autorelease];
+    ab = [[processedBuffers objectAtIndex: 0] retain]; // retain so it's not released by removeObjectAtIndex: below.
+    [processedBuffers removeObjectAtIndex: 0];
+    [processedBuffersLock unlockWithCondition: ([processedBuffers count] > 0 ? ABQ_hasData : ABQ_noData)];
+    return [ab autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -128,17 +149,17 @@ enum {
 
 - addPendingBuffer: (SndAudioBuffer*) audioBuffer
 {
-  if (audioBuffer == nil)
-    NSLog(@"SndAudioBufferQueue::addPendingBuffer - audioBuffer is nil!");
-  else {
-    [pendingBuffersLock lock];
+    if (audioBuffer == nil)
+	NSLog(@"SndAudioBufferQueue::addPendingBuffer - audioBuffer is nil!");
+    else {
+	[pendingBuffersLock lock];
 #if SNDABQ_DEBUG    
-    printf("add pending...\n");
+	printf("add pending...\n");
 #endif
-    [pendingBuffers addObject: audioBuffer];
-    [pendingBuffersLock unlockWithCondition: ABQ_hasData];
-  }
-  return self;
+	[pendingBuffers addObject: audioBuffer];
+	[pendingBuffersLock unlockWithCondition: ABQ_hasData];
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -147,17 +168,17 @@ enum {
 
 - addProcessedBuffer: (SndAudioBuffer*) audioBuffer
 {
-  if (audioBuffer == nil)
-    NSLog(@"SndAudioBufferQueue::addProcessedBuffer - audioBuffer is nil!");
-  else {
-    [processedBuffersLock lock];
+    if (audioBuffer == nil)
+	NSLog(@"SndAudioBufferQueue::addProcessedBuffer - audioBuffer is nil!");
+    else {
+	[processedBuffersLock lock];
 #if SNDABQ_DEBUG    
-    printf("add processed...\n");
+	printf("add processed...\n");
 #endif    
-    [processedBuffers addObject: audioBuffer];
-    [processedBuffersLock unlockWithCondition: ABQ_hasData];
-  }
-  return self;
+	[processedBuffers addObject: audioBuffer];
+	[processedBuffersLock unlockWithCondition: ABQ_hasData];
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -189,7 +210,7 @@ enum {
 
 - (int) pendingBuffersCount
 {
-  return [pendingBuffers count];
+    return [pendingBuffers count];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -198,7 +219,7 @@ enum {
 
 - (int) processedBuffersCount
 {
-  return [processedBuffers count];
+    return [processedBuffers count];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -207,7 +228,7 @@ enum {
 
 - (int) bufferCount
 {
-  return numBuffers;
+    return numBuffers;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -216,9 +237,9 @@ enum {
 
 - freeBuffers
 {
-  [pendingBuffers   removeAllObjects];
-  [processedBuffers removeAllObjects];
-  return self;
+    [pendingBuffers   removeAllObjects];
+    [processedBuffers removeAllObjects];
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
