@@ -15,6 +15,9 @@
 Modification history:
 
   $Log$
+  Revision 1.8  2000/04/16 04:28:17  leigh
+  Class typing and added description method
+
   Revision 1.7  2000/03/31 00:14:43  leigh
   typed defaultConductor
 
@@ -49,6 +52,8 @@ extern "C" {
  /* The Conductor message structure.  All fields are private and
   * shouldn't be altered directly from an application. 
   */
+@class MKConductor;
+
 typedef struct _MKMsgStruct { 
     double _timeOfMsg;     
     SEL _aSelector;       
@@ -62,10 +67,10 @@ typedef struct _MKMsgStruct {
     BOOL _conductorFrees;  
     BOOL _onQueue;      
     struct _MKMsgStruct *_prev;
-    id _conductor;
+    MKConductor *_conductor;
 } MKMsgStruct;
 
-#define MK_ENDOFTIME (6000000000.0) /* A long time, but not as long as NX_FOREVER */
+#define MK_ENDOFTIME (6000000000.0) /* A long time, but not as long as MK_FOREVER */
 
 /* Time functions */
 extern double MKGetTime(void);           /* Returns the time in seconds. */
@@ -118,8 +123,8 @@ extern void MKFinishPerformance(void);
 
     /* Internal use only */
     MKMsgStruct *_msgQueue;
-    id _condNext;
-    id _condLast;
+    MKConductor *_condNext;
+    MKConductor *_condLast;
     double _pauseOffset;
     double inverseBeatSize;
     double oldAdjustedClockTime;

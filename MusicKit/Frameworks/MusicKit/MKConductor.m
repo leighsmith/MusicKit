@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.13  2000/04/16 04:28:17  leigh
+  Class typing and added description method
+
   Revision 1.12  2000/04/08 01:01:33  leigh
   Fixed bug when inPerformance set during final pending masterConductorBody
 
@@ -121,10 +124,10 @@ Modification history:
 
 #define MK_INLINE 1
 
-// sb: OS does not define NX_FOREVER. There's no reason not to include it manually though.
-#define NX_FOREVER	(6307200000.0)	/* 200 years of seconds */
+// This used to be NX_FOREVER which is obsolete with OpenStep. There's no reason not to include it manually though.
+#define MK_FOREVER	(6307200000.0)	/* 200 years of seconds */
 
-#define ENDOFLIST (NX_FOREVER)
+#define ENDOFLIST (MK_FOREVER)
 #define PAUSETIME (MK_ENDOFTIME - 2.0) /* See ISENDOFTIME below */
 
 /* Macros for safe float compares */
@@ -189,7 +192,7 @@ static MKConductor *clockCond = nil;   /* clock time Conductor. */
 #define VERSION2 2
 #define VERSION3 3
 
-static id allConductors = nil; /* A NSArray of all conductors. */
+static NSMutableArray *allConductors = nil; /* An array of all conductors. */
 static void condInit();    /* Forward decl */
 
 + (void)initialize
@@ -563,10 +566,6 @@ unclockedLoop()
     if (inPerformance)
       for (; ;) {
 	  [MKConductor masterConductorBody: nil];
-#if 0 // LMS unnecess
-	  if (pollProc)
-	    pollProc();
-#endif
       }
 }
 
@@ -582,8 +581,8 @@ insertSpecialQueue(sp,queue,queueEnd)
     register MKMsgStruct **queueEnd;
     /* insert at end of special msgQueues used for start and end messages */
 {
-    if (!sp) 
-      return queue;
+    if (!sp)
+        return queue;
     sp->_onQueue = YES;
     if (*queueEnd) {
 	(*queueEnd)->_next = sp;
@@ -612,7 +611,7 @@ insertMsgQueue(sp,self)
     register double t;
     register MKMsgStruct * tmp;
     if (!sp)
-      return nil;
+        return nil;
     t = MIN(sp->_timeOfMsg,MK_ENDOFTIME);
     t = MAX(t,self->time);
     sp->_onQueue = YES;
@@ -717,7 +716,7 @@ popMsgQueue(msgQueue)
 {
     register MKMsgStruct * sp;
     sp = *msgQueue;		/* Pop msgQueue. */
-    if (*msgQueue = (*msgQueue)->_next)
+    if ((*msgQueue = (*msgQueue)->_next))
       (*msgQueue)->_prev = NULL;
     return(sp);
 }
@@ -855,8 +854,7 @@ static void _runSetup()
     isClocked=YES;
     curRunningCond = clockCond;
     condQueue = clockCond; 
-    /* Set head of queue to an arbitrary conductor. Sorting is done by 
-       _runSetup. */
+    /* Set head of queue to an arbitrary conductor. Sorting is done by _runSetup. */
     [allConductors makeObjectsPerformSelector:@selector(_runSetup)];
     dontHang = noHng;
     isClocked = clk;
@@ -873,8 +871,8 @@ static void _runSetup()
    * NSApp has not been created, startPerformance does nothing and return nil.
    */
 {
-    if (inPerformance) 
-      return self;
+    if (inPerformance)
+        return self;
     _MKSetConductedPerformance(YES, self);
     inPerformance = YES;   /* Set this before doing _runSetup so that repositionCond() works right. */
     [self _adjustDeltaTThresholds]; /* For automatic notification */
@@ -882,7 +880,7 @@ static void _runSetup()
     _runSetup(); // Was before setTime()
     setupMTC();
     if (MKIsTraced(MK_TRACECONDUCTOR))
-      NSLog(@"Evaluating beforePerformance queue, separateThread = %d.\n", separateThread);
+        NSLog(@"Evaluating the beforePerformance queue,%s separate threaded.\n", separateThread ? "" : " not");
     beforePerformanceQueue = evalSpecialQueue(beforePerformanceQueue, &beforePerformanceQueueEnd);
     if (checkForEndOfTime()) {
 	[self finishPerformance];
@@ -939,7 +937,7 @@ static void evalAfterQueues()
        queues. */
 {
     if (MKIsTraced(MK_TRACECONDUCTOR))
-      NSLog(@"Evaluating afterPerformance queue.\n");
+        NSLog(@"Evaluating afterPerformance queue.\n");
    _afterPerformanceQueue = evalSpecialQueue(_afterPerformanceQueue, &_afterPerformanceQueueEnd);
    afterPerformanceQueue = evalSpecialQueue(afterPerformanceQueue, &afterPerformanceQueueEnd);
 }
@@ -1353,9 +1351,7 @@ static void evalAfterQueues()
     arg1 = va_arg(ap,id);
     arg2 = va_arg(ap,id);
     va_end(ap);	
-    return insertMsgQueue(newMsgRequest(CONDUCTORFREES,t,aSelector,toObject,
-				 argCount,arg1,arg2),
-			  self);
+    return insertMsgQueue(newMsgRequest(CONDUCTORFREES, t, aSelector, toObject, argCount, arg1, arg2), self);
 }
 
 - _runSetup
@@ -1363,9 +1359,10 @@ static void evalAfterQueues()
 {
     _pauseOffset = timeOffset;
     if (MTCSynch)
-      return [self _pause];
-    if (ISENDOFLIST(PEEKTIME(_msgQueue)))
-      nextMsgTime = MK_ENDOFTIME;
+        return [self _pause];
+    if (ISENDOFLIST(PEEKTIME(_msgQueue))) {
+        nextMsgTime = MK_ENDOFTIME;
+    }
     else {
 //	nextMsgTime = PEEKTIME(_msgQueue) * beatSize + timeOffset;
 //	nextMsgTime = MIN(nextMsgTime,MK_ENDOFTIME);    
@@ -1515,7 +1512,7 @@ MKNewMsgRequest(double timeOfMsg,SEL whichSelector,id destinationObject,
 
 void MKScheduleMsgRequest(MKMsgStruct *aMsgStructPtr, id conductor)
     /* Reschedule the specified msg. */
-{	
+{
     if (aMsgStructPtr && conductor && (!aMsgStructPtr->_onQueue))
       insertMsgQueue(aMsgStructPtr,conductor);
 }
@@ -1803,6 +1800,38 @@ static double getNextMsgTime(MKConductor *aCond)
     return aCond->nextMsgTime;
 }
 
+// for debugging
+- (NSString *) description
+{
+    MKMsgStruct *p;
+    NSString *timeStr = [NSString stringWithFormat:
+        @"MKConductor time %lf beats, nextMsgTime %lf, beatSize %lf Secs, timeOffset %lf\n", time, nextMsgTime, beatSize, timeOffset];
+    NSString *misc = [NSString stringWithFormat:
+        @"%sPaused, archivingFlags %x, delegateFlags %x\ndelegate %@, activePerformers %@\n",
+            isPaused ? "" : "not ", archivingFlags, delegateFlags, delegate, activePerformers];
+    NSString *msgs = [NSString stringWithFormat: @"msgQueue = %x: ", _msgQueue];
+//    for(p = _msgQueue; p != NULL; p = p->_next) {
+//        [msgs stringByAppendingFormat: @"t %lf [%@ arg1:%@ arg2:%@] conductor %s \n",
+//            p->_timeOfMsg, p->_toObject, p->_arg1, p->_arg2, p->_conductorFrees ? "frees" : "doesn't free"];
+//        [msgs stringByAppendingFormat: @"t %lf\n",
+//           p->_timeOfMsg];
+//    }
+
+    
+#if 0
+id MTCSynch;
+
+MKConductor *_condNext;
+MKConductor *_condLast;
+double _pauseOffset;
+double inverseBeatSize;
+double oldAdjustedClockTime;
+MKMsgStruct *pauseFor;
+#endif
+
+    return [timeStr stringByAppendingFormat: @"%@%@", msgs, misc];
+}
+
 #import "mtcConductor.m"
 
 @end
@@ -1821,8 +1850,11 @@ static double getNextMsgTime(MKConductor *aCond)
     // Since masterConductorBody can be called from a NSTimer in a separate thread NSRunLoop without being
     // able to check the performance status, it's possible for the performance to end while waiting, 
     // such that by the time we arrive here, we don't want to perform anything, so we split this crazy scene...
-    if(!inPerformance)
+    if(!inPerformance) {
+        if (MKIsTraced(MK_TRACECONDUCTOR))
+            NSLog(@"Early escape from masterConductorBody as not in performance\n"); 
         return;
+    }
 
     /* Preamble */
     curRunningCond = condQueue;
@@ -1938,7 +1970,7 @@ static double getNextMsgTime(MKConductor *aCond)
    */
 {
     if (aMsgStructPtr && (!aMsgStructPtr->_onQueue))
-      insertMsgQueue(aMsgStructPtr,self);
+        insertMsgQueue(aMsgStructPtr,self);
 }
 
 +(void)_scheduleMsgRequest:(MKMsgStruct *)aMsgStructPtr
@@ -1946,7 +1978,7 @@ static double getNextMsgTime(MKConductor *aCond)
    */
 {
     if (aMsgStructPtr && (!aMsgStructPtr->_onQueue))
-      insertMsgQueue(aMsgStructPtr,clockCond);
+        insertMsgQueue(aMsgStructPtr,clockCond);
 }
 
 -(MKMsgStruct *)_rescheduleMsgRequest:(MKMsgStruct *)aMsgStructPtr
