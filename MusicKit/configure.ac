@@ -48,8 +48,14 @@ AC_CHECK_PROGS(SGMLTRANS, openjade)
 
 AC_HEADER_STDC
 
+# Check for pthreads (needed for portaudio)
+AC_CHECK_LIB(pthread, pthread_create)
+
 # Check if we have portaudio installed, if so, use MKPerformSndMIDI_portaudio
 AC_CHECK_LIB(portaudio, Pa_Initialize)
+
+# separately check the portaudio header was installed.
+AC_CHECK_HEADERS(portaudio.h)
 
 # These are used by lame and libshout but we check for them ourselves
 # since we will want them for Ogg I/O ourselves soon.
@@ -73,7 +79,8 @@ AC_MSG_NOTICE([checking for MP3 decoding libraries])
 AC_CHECK_LIB(mp3hip, hip_decode_init)
 
 # Create configure headers to control which library headers are included.
-AC_CONFIG_HEADERS(Frameworks/SndKit/SndKitConfig.h \
+AC_CONFIG_HEADERS(Frameworks/PlatformDependent/MKPerformSndMIDI_portaudio/MKPerformSndMIDIConfig.h \
+                  Frameworks/SndKit/SndKitConfig.h \
                   Frameworks/MusicKit/MusicKitConfig.h)
 
 # Configures a top-level GNUmakefile for GNUstep systems or a
