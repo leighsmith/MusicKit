@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.21  2002/05/01 14:34:12  sbrandon
+  Added doco and declaration of +bundleExtensions:
+
   Revision 1.20  2002/03/06 07:54:33  skotmcdonald
   Added method partNamed which returns the MKPart with a given info-note title
 
@@ -750,6 +753,16 @@ printed by invoking <b>setScorefilePrintStream:</b>.
               native operating system.
 */
 + (NSArray *) fileExtensions;
+
+/*!
+  @method bundleExtensions
+  @result Returns an NSArray of NSStrings.
+  @discussion Returns the possible file extensions supported by any available
+              plugins. It does not make a distinction between extensions supported
+              for reading and those for writing, so query each plugin in turn to see
+              what it supports.
+ */
++ (NSArray *) bundleExtensions;
 
 /*!
   @method score
