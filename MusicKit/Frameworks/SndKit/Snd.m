@@ -529,45 +529,45 @@ void merror(int er)
 #ifdef USE_PERFORM_SOUND_IO
 int beginFun(SNDSoundStruct *sound, int tag, int err)
 {
-	id theSnd;
-	theSnd = [playRecTable valueForKey: (void *) tag];
-	if (err) {
-		[theSnd _setStatus:NX_SoundStopped];
-		[theSnd tellDelegate:@selector(hadError:)];
-	}
-	else {
-		[theSnd _setStatus:NX_SoundPlaying];
-		[theSnd tellDelegate:@selector(willPlay:)];
-	}
-	return 0;
+    Snd *theSnd;
+    theSnd = [playRecTable valueForKey: (void *) tag];
+    if (err) {
+            [theSnd _setStatus:NX_SoundStopped];
+            [theSnd tellDelegate:@selector(hadError:)];
+    }
+    else {
+            [theSnd _setStatus:NX_SoundPlaying];
+            [theSnd tellDelegate:@selector(willPlay:)];
+    }
+    return 0;
 }
 
 int endFun(SNDSoundStruct *sound, int tag, int err)
 {
-	id theSnd;
+    Snd *theSnd;
 
-	theSnd = [playRecTable valueForKey: (void *) tag];
-	[theSnd _setStatus:NX_SoundStopped];
-	if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
-	if (err) [theSnd tellDelegate:@selector(hadError:)];
-	else [theSnd tellDelegate:@selector(didPlay:)];
-	[playRecTable removeKey: (void *) tag];
-	/* bug fix for SoundKit: if DSP was used, its access is not
-	 * released as it should be. So I just automatically release it
-	 * here, whether or not it was used. Generally it's used for real-time
-	 * rate conversion for playback. (maybe recording etc too???)
-	 */
-        err = SNDUnreserve(3);
-        if(err) {
-            NSLog(@"Unreserving error %d\n", err);
-        }
-	((Snd *)theSnd)->tag = 0;
-	return 0;
+    theSnd = [playRecTable valueForKey: (void *) tag];
+    [theSnd _setStatus:NX_SoundStopped];
+    if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
+    if (err) [theSnd tellDelegate:@selector(hadError:)];
+    else [theSnd tellDelegate:@selector(didPlay:)];
+    [playRecTable removeKey: (void *) tag];
+    /* bug fix for SoundKit: if DSP was used, its access is not
+     * released as it should be. So I just automatically release it
+     * here, whether or not it was used. Generally it's used for real-time
+     * rate conversion for playback. (maybe recording etc too???)
+     */
+    err = SNDUnreserve(3);
+    if(err) {
+        NSLog(@"Unreserving error %d\n", err);
+    }
+    ((Snd *)theSnd)->tag = 0;
+    return 0;
 }
 
 int beginRecFun(SNDSoundStruct *sound, int tag, int err)
 {
-	id theSnd;
+	Snd *theSnd;
 	theSnd = [playRecTable valueForKey: (void *) tag];
 	if (err) {
 		[theSnd _setStatus:NX_SoundStopped];
@@ -582,7 +582,7 @@ int beginRecFun(SNDSoundStruct *sound, int tag, int err)
 
 int endRecFun(SNDSoundStruct *sound, int tag, int err)
 {
-	id theSnd;
+	Snd *theSnd;
 	theSnd = [playRecTable valueForKey: (void *) tag];
 	[theSnd _setStatus:NX_SoundStopped];
 	printf("End recording error: %d\n",err);
