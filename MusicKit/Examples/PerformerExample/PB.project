@@ -14,18 +14,11 @@
         FRAMEWORKSEARCH = (/Local/Library/Frameworks); 
         H_FILES = (PerformerController.h, RandomPerformer.h); 
         IMAGES = (); 
-        INTERFACES = (); 
+        INTERFACES = (InfoPanel.nib, PerformerExample.nib); 
         M_FILES = (); 
-        OTHER_LIBS = (synthpatches, unitgenerators, musickit, dsp, NeXT_s, Driver); 
+        OTHER_LIBS = (synthpatches, unitgenerators); 
         OTHER_LINKED = (PerformerExample_main.m); 
-        OTHER_RESOURCES = (
-            mkmon_A_32k.dsp, 
-            mkmon_A_8k.dsp, 
-            mkmon_A_192k.dsp, 
-            mkmon_A_turtlebeachms.dsp, 
-            mkmon_A_arielpc56d.dsp, 
-            mkmon_A_ilinki56.dsp
-        ); 
+        OTHER_RESOURCES = (); 
         OTHER_SOURCES = (Makefile, PerformerExample.iconheader, README); 
         PSWM_FILES = (); 
         PSW_FILES = (); 

@@ -14,9 +14,7 @@ PROJECT_TYPE = Application
 ICONSECTIONS =	-sectcreate __ICON app $(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework/Resources/NSDefaultApplicationIcon.tiff
 
 
-GLOBAL_RESOURCES = mkmon_A_32k.dsp mkmon_A_8k.dsp mkmon_A_192k.dsp\
-                   mkmon_A_turtlebeachms.dsp mkmon_A_arielpc56d.dsp\
-                   mkmon_A_ilinki56.dsp
+GLOBAL_RESOURCES = InfoPanel.nib PerformerExample.nib
 
 CLASSES = PerformerController.m RandomPerformer.m
 
@@ -33,8 +31,7 @@ MAKEFILE = app.make
 NEXTSTEP_INSTALLDIR = $(HOME)/Apps
 WINDOWS_INSTALLDIR = $(HOME)/Apps
 PDO_UNIX_INSTALLDIR = $(HOME)/Apps
-LIBS = -lsynthpatches -lunitgenerators -lmusickit -ldsp -lNeXT_s\
-       -lDriver
+LIBS = -lsynthpatches -lunitgenerators
 DEBUG_LIBS = $(LIBS)
 PROF_LIBS = $(LIBS)
 
