@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.15  2001/02/22 22:49:18  leigh
+ * Removed crufty stopping code, maintained status
+ *
  * Revision 1.14  2001/02/16 21:30:03  leigh
  * Added description function and SndPlayer usage, replacing Snd() functions with streams
  *
@@ -58,6 +61,7 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #import "Snd.h"
 #import "SndPlayer.h"
 
+// TODO this needs upgrading
 #ifndef USE_NEXTSTEP_SOUND_IO
 NSString *NXSoundPboardType = @"NXSoundPboardType";
 #endif
@@ -628,19 +632,20 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 // Begin the playback of the sound at some future time, specified in seconds.
 - play: (id) sender inFuture: (double) inSeconds 
 {
-#if 0
-    int err;
-    if (!soundStruct) return self;
+    // int err;
+    if (!soundStruct)
+        return self;
+    status = SND_SoundPlayingPending;
+#if 0 // disabled for playing using SndStreams instead.
     if (!playRecTable) {
-            playRecTable = [NSMutableDictionary dictionaryWithCapacity: 20];
-            [playRecTable retain];
+        playRecTable = [NSMutableDictionary dictionaryWithCapacity: 20];
+        [playRecTable retain];
     }
     
     tag = ioTags;
     // the same soundStruct is used every time the sound is played, so we use the tag to differentiate.
     // We use an NSDictionary rather than a HashTable for strict OpenStep support.
     [playRecTable setObject: self forKey: [NSNumber numberWithInt: tag]];
-    status = SND_SoundPlayingPending;
     err = SNDUnreserve(3);
     if(err) {
         NSLog(@"Unreserving error %d\n", err);
@@ -685,7 +690,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - play: (id) sender atDate: (NSDate *) date
 {
-//    return [self play: sender inFuture: [date dateInSeconds]];
+    return [self play: sender inFuture: [date timeIntervalSinceNow]];
 }
 
 - record:sender
@@ -744,23 +749,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
 - (void)stop:(id)sender
 {
-    NSNumber *tagNumber = [NSNumber numberWithInt: tag];
-
-    if (tag) {
-        SNDStop(tag);
-    }
     if (status == SND_SoundRecording || status == SND_SoundRecordingPaused) {
-        [playRecTable removeObjectForKey: tagNumber];
         status = SND_SoundStopped;
         [self tellDelegate:@selector(didRecord:)];	
     }
     if (status == SND_SoundPlaying || status == SND_SoundPlayingPaused) {
-        [playRecTable removeObjectForKey: tagNumber];
         status = SND_SoundStopped;
         [self tellDelegate:@selector(didPlay:)];	
-    }
-    if(tag) {
-        tag = 0;
     }
 }
 
@@ -920,15 +915,15 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     sr = soundStruct->samplingRate;
     if (sr < 4000 || sr > 48000) return NO; /* need to check hardware here */
     switch (df) {
-        case SND_FORMAT_MULAW_8:
-        case SND_FORMAT_LINEAR_8:
-        case SND_FORMAT_LINEAR_16:
-        case SND_FORMAT_LINEAR_32:
-        case SND_FORMAT_FLOAT:
-        case SND_FORMAT_DOUBLE:
-            return YES;
-        default:
-            break;
+    case SND_FORMAT_MULAW_8:
+    case SND_FORMAT_LINEAR_8:
+    case SND_FORMAT_LINEAR_16:
+    case SND_FORMAT_LINEAR_32:
+    case SND_FORMAT_FLOAT:
+    case SND_FORMAT_DOUBLE:
+        return YES;
+    default:
+        break;
     }
     return NO;
 }
@@ -942,15 +937,15 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     err = SndAlloc(&toSound,0,aFormat,aRate,aChannelCount,4);
     if (err) return err;
     switch (conversionQuality) {
-        case SND_CONVERT_LOWQ:
-        default:
-            err = SndConvertSound(soundStruct, &toSound);
-            break;
-        case SND_CONVERT_MEDQ:
-            err = SndConvertSoundGoodQuality(soundStruct, &toSound);
-            break;
-        case SND_CONVERT_HIQ:
-            err = SndConvertSoundHighQuality(soundStruct, &toSound);
+    case SND_CONVERT_LOWQ:
+    default:
+        err = SndConvertSound(soundStruct, &toSound);
+        break;
+    case SND_CONVERT_MEDQ:
+        err = SndConvertSoundGoodQuality(soundStruct, &toSound);
+        break;
+    case SND_CONVERT_HIQ:
+        err = SndConvertSoundHighQuality(soundStruct, &toSound);
     }
     if (!err) {
         soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
@@ -977,9 +972,9 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     int err;
     err = SndDeleteSamples(soundStruct, startSample, sampleCount);
     if (!err) {
-            if (soundStruct->dataFormat != SND_FORMAT_INDIRECT)
-                    soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-            else soundStructSize = soundStruct->dataSize;		
+        if (soundStruct->dataFormat != SND_FORMAT_INDIRECT)
+            soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
+        else soundStructSize = soundStruct->dataSize;		
     }
     return err;
 }
@@ -988,14 +983,16 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 {
     int err;
     SndSoundStruct *fromSound;
-    if (!aSnd) return SND_ERR_NONE;
+    if (!aSnd)
+        return SND_ERR_NONE;
     if (!(fromSound = [aSnd soundStruct]))
         return SND_ERR_NONE;
     err = SndInsertSamples(soundStruct, fromSound, startSample);
     if (!err) {
         if (soundStruct->dataFormat != SND_FORMAT_INDIRECT)
-                soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-        else soundStructSize = soundStruct->dataSize;		
+            soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
+        else
+            soundStructSize = soundStruct->dataSize;		
     }
     return err;
 }
@@ -1030,8 +1027,9 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     err = SndCopySound(&soundStruct,fromSound);
     if (!err) {
         if (soundStruct->dataFormat != SND_FORMAT_INDIRECT)
-                soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-        else soundStructSize = soundStruct->dataSize;		
+            soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
+        else
+            soundStructSize = soundStruct->dataSize;		
     }
     return err;
 }
