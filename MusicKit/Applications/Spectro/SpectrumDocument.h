@@ -43,7 +43,6 @@
 	id wfCurrentFrameCell;
 	id wfCurrentFrameTime;
 	id totalFramesCell;
-	id stringTable;
 	int dataSize;
 	int windowSize;
 	int firstSample;

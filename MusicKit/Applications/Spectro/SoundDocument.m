@@ -26,7 +26,8 @@ extern int access();
 
 char *doFloat(float f, int x, int y)	/* Trims float values */
 {
-	static char s[32];
+	static char *s = NULL;
+        if (!s) s = malloc(32);
 
 	sprintf(s,"%*.*f", x, y, f);
 	return s;
@@ -152,13 +153,13 @@ static int calcFormat(SndSoundStruct *s)
 	return samples / srate;
 }
 
-- saveError:(const char *)msg arg: (const char *)arg
+- saveError:(NSString *)msg arg: (NSString *)arg
 {
-    if (!stringTable)
-        stringTable = [[NSApp delegate] stringTable];
-    NSRunAlertPanel([NSString stringWithCString:[stringTable valueForStringKey:"Save"]],
-                    [NSString stringWithCString:[stringTable valueForStringKey:msg]],
-                    [NSString stringWithCString:[stringTable valueForStringKey:"OK"]], nil, nil, arg);
+    NSBundle *mainB = [NSBundle mainBundle];
+
+    NSRunAlertPanel([mainB localizedStringForKey:@"Save" value:@"Save" table:nil],
+                    [mainB localizedStringForKey:msg value:msg table:nil],
+                    [mainB localizedStringForKey:@"OK" value:@"OK" table:nil], nil, nil, arg);
     return nil;
 }
 
@@ -175,7 +176,7 @@ static int calcFormat(SndSoundStruct *s)
 	    if (err) {
 		/* The DSP is required for compression or decompression */
 		return [self saveError: 
-			"Cannot do format conversion %s (DSP busy?)" arg:""];
+			@"Cannot do format conversion %@ (DSP busy?)" arg:@""];
 	    }
 	}
         if ([[NSFileManager defaultManager] fileExistsAtPath:fn])
@@ -183,7 +184,7 @@ static int calcFormat(SndSoundStruct *s)
 
         err = [theSound writeSoundfile:fn];
 	if (err) {
-	    return [self saveError:"Cannot write %s" arg:[fn cString]];
+	    return [self saveError:@"Cannot write %@" arg:fn];
 	}
 	else 
 	  [soundWindow setDocumentEdited:NO];
@@ -199,22 +200,24 @@ static int calcFormat(SndSoundStruct *s)
 
 - revertToSaved:sender
 {
+    NSBundle *mainB = [NSBundle mainBundle];
     if([soundWindow isDocumentEdited] && fileName
        && ![[fileName lastPathComponent] isEqualToString:@"/UNTITLED"]) {
-        if (!stringTable)
-            stringTable = [[NSApp delegate] stringTable];
-		if (NSRunAlertPanel([NSString stringWithCString:[stringTable valueForStringKey:"Revert"]],
-                      [NSString stringWithCString:[stringTable valueForStringKey:"Revert to saved version of %@?"]],
-                      [NSString stringWithCString:[stringTable valueForStringKey:"Revert"]],
-                      [NSString stringWithCString:[stringTable valueForStringKey:"Cancel"]], nil, fileName)
-      == NSAlertDefaultReturn)
-			[self load:nil];
+        if (NSRunAlertPanel(
+                [mainB localizedStringForKey:@"Revert" value:@"Revert" table:nil],
+                [mainB localizedStringForKey:@"Revert to saved version of %@?"
+                                       value:@"Revert to saved version of %@?" table:nil],
+                [mainB localizedStringForKey:@"Revert" value:@"Revert" table:nil],
+                [mainB localizedStringForKey:@"Cancel" value:@"Cancel" table:nil],
+                 nil, fileName) == NSAlertDefaultReturn)
+            [self load:nil];
     }
     return self;
 }
 
 - load:sender
 {	
+    NSBundle *mainB = [NSBundle mainBundle];
     if (fileName) {
         id newSound = [[Snd alloc] initFromSoundfile:fileName];
         if (newSound) {
@@ -223,12 +226,12 @@ static int calcFormat(SndSoundStruct *s)
 #if 0 /*sb: can't determine displayability this way. Find some other way one day... */
             if (![scrollSound setSound:newSound]) { /* not displayable */
                 if ([newSound convertToFormat:SND_FORMAT_LINEAR_16]) {
-                    if (!stringTable) stringTable = [[NSApp delegate] stringTable];
-                    NSRunAlertPanel([NSString stringWithCString:[stringTable valueForStringKey:"Open"]],
-                                    [NSString stringWithCString:[stringTable valueForStringKey:
-                                        "Cannot convert format for display "
-						"(DSP busy?)"]],
-                                    [NSString stringWithCString:[stringTable valueForStringKey:"OK"]], nil, nil);
+                    NSRunAlertPanel(
+                            [mainB localizedStringForKey:@"Open" value:@"Open" table:nil],
+                            [mainB localizedStringForKey:@"Cannot convert format for display (DSP Busy?)"
+                                value:@"Cannot convert format for display (DSP Busy?)" table:nil],
+                            [mainB localizedStringForKey:@"OK" value:@"OK" table:nil],
+                                nil, nil);
                     return nil;
                 } else
                     [scrollSound setSound:newSound];
@@ -601,18 +604,21 @@ static int calcFormat(SndSoundStruct *s)
 - hadError:sender
 {
     int err = [[sender soundBeingProcessed] processingError];
-	if (!stringTable)
-		stringTable = [[NSApp delegate] stringTable];
+    NSBundle *mainB = [NSBundle mainBundle];
     if ([playButton state]) 
-		NSRunAlertPanel(
-                  [NSString stringWithCString:[stringTable valueForStringKey:"Play error"]],
-                  [NSString stringWithCString:SndSoundError(err)],
-                  [NSString stringWithCString:[stringTable valueForStringKey:"OK"]], nil, nil);
+        NSRunAlertPanel(
+            [mainB localizedStringForKey:@"Play error" value:@"Play error" table:nil],
+            [mainB localizedStringForKey:[NSString stringWithCString:SndSoundError(err)]
+                    value:[NSString stringWithCString:SndSoundError(err)] table:nil],
+            [mainB localizedStringForKey:@"OK" value:@"OK" table:nil],
+            nil, nil);
     else if ([recordButton state])
-		NSRunAlertPanel(
-                  [NSString stringWithCString:[stringTable valueForStringKey:"Record error"]],
-                  [NSString stringWithCString:SndSoundError(err)],
-                  [NSString stringWithCString:[stringTable valueForStringKey:"OK"]], nil, nil);
+        NSRunAlertPanel(
+            [mainB localizedStringForKey:@"Record error" value:@"Record error" table:nil],
+            [mainB localizedStringForKey:[NSString stringWithCString:SndSoundError(err)]
+                   value:[NSString stringWithCString:SndSoundError(err)] table:nil],
+            [mainB localizedStringForKey:@"OK" value:@"OK" table:nil],
+            nil, nil);
     [self stop:self];
     return self;
 }
@@ -679,15 +685,15 @@ static int calcFormat(SndSoundStruct *s)
 - (BOOL)windowShouldClose:(id)sender
 {
 	int choice;
-
+        NSBundle *mainB = [NSBundle mainBundle];
 	if ([soundWindow isDocumentEdited]) {
-		if (!stringTable)
-			stringTable = [[NSApp delegate] stringTable];
-		choice = NSRunAlertPanel([NSString stringWithCString:[stringTable valueForStringKey:"Close"]],
-                           [NSString stringWithCString:[stringTable valueForStringKey:"Sound is modified.\nSave it?"]],
-                           [NSString stringWithCString:[stringTable valueForStringKey:"Yes"]],
-                           [NSString stringWithCString:[stringTable valueForStringKey:"No"]],
-                           [NSString stringWithCString:[stringTable valueForStringKey:"Cancel"]]); 
+		choice = NSRunAlertPanel(
+                    [mainB localizedStringForKey:@"Close" value:@"Close" table:nil],
+                    [mainB localizedStringForKey:@"Sound is modified.\nSave it?"
+                                           value:@"Sound is modified.\nSave it?" table:nil],
+                    [mainB localizedStringForKey:@"Yes" value:@"Yes" table:nil],
+                    [mainB localizedStringForKey:@"No" value:@"No" table:nil],
+                    [mainB localizedStringForKey:@"Cancel" value:@"Cancel" table:nil]); 
 		switch (choice) {
 			case NSAlertAlternateReturn:
 				break;

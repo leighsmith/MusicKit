@@ -128,21 +128,20 @@
         int sMaxFreq, wfMaxFreq;
         float srate;
         float *w;
-
+        NSBundle *mainB = [NSBundle mainBundle];
+        
         mySoundView = aSoundView;
         mySound = [mySoundView sound];
         srate = [mySound samplingRate];
 
         if  ([mySound channelCount] > 1) {
-                if (!stringTable)
-                stringTable = [[NSApp delegate] stringTable];
                 channel = 1 +
                     NSRunAlertPanel(
-                                    [NSString stringWithCString:[stringTable valueForStringKey:"Spectro is Confused"]],
-                                    [NSString stringWithCString:[stringTable valueForStringKey:"The Current Sound"]],
-                                    [NSString stringWithCString:[stringTable valueForStringKey:"Both Mixed"]],
-                                    [NSString stringWithCString:[stringTable valueForStringKey:"Right"]],
-                                    [NSString stringWithCString:[stringTable valueForStringKey:"Left"]]);
+                        [mainB localizedStringForKey:@"Spectro is Confused" value:@"Spectro is Confused" table:nil],
+                        [mainB localizedStringForKey:@"The Current Sound" value:@"The Current Sound" table:nil],
+                        [mainB localizedStringForKey:@"Both Mixed" value:@"Both Mixed" table:nil],
+                        [mainB localizedStringForKey:@"Right" value:@"Right" table:nil],
+                        [mainB localizedStringForKey:@"Left" value:@"Left" table:nil]);
         }
         else channel = -1;	/* Mixed = 2, Right = 1, Left = 0, One = -1 */
 
@@ -478,18 +477,19 @@
     unsigned char *mulawData;
     short *linearData;
     float floor;
-
+    NSBundle *mainB = [NSBundle mainBundle];
+    
     if ((windowSize != [windowSizeCell intValue]) ||
         (![[NSString stringWithCString:doFloat(hopRatio, 2, 3)] isEqualToString:[hopRatioCell stringValue]]) ||
         (![[NSString stringWithCString:doFloat(zpFactor, 2, 3)] isEqualToString:[zpFactorCell stringValue]]))
         [self changeWindowSize:self];
     [self setTotalFrames];
     if (!totalFrames) {
-        if (!stringTable)
-            stringTable = [[NSApp delegate] stringTable];
-        NSRunAlertPanel([NSString stringWithCString:[stringTable valueForStringKey:"Alert"]],
-                        [NSString stringWithCString:[stringTable valueForStringKey:"Sound Selection"]],
-                        [NSString stringWithCString:[stringTable valueForStringKey:"OK"]], nil, nil);
+        NSRunAlertPanel(
+            [mainB localizedStringForKey:@"Alert" value:@"Alert" table:nil],
+            [mainB localizedStringForKey:@"Sound Selection" value:@"Sound Selection" table:nil],
+            [mainB localizedStringForKey:@"OK" value:@"OK" table:nil],
+           nil, nil);
         [mySpectrumView frames:NO];
         [mySpectrumView drawSpectrum:(int)(dataSize/2) array:NULL];
         currentFrame = 0;
@@ -559,11 +559,12 @@
 {
         int i, k, j, hopSize, maxFreq;
         short swappedInt;
-    unsigned char *mulawData;
+        unsigned char *mulawData;
         short *linearData;
         float floor, srate;
         float startTime, timeDur;
-
+        NSBundle *mainB = [NSBundle mainBundle];
+        
         if (stop) {
                 stop = NO;
                 return self;
@@ -574,9 +575,10 @@
                 [self changeWindowSize:self];
         [self setTotalFrames];
         if (!totalFrames) {
-                if (!stringTable)
-                stringTable = [[NSApp delegate] stringTable];
-                NSRunAlertPanel([NSString stringWithCString:[stringTable valueForStringKey:"Alert"]], [NSString stringWithCString:[stringTable valueForStringKey:"Sound Selection"]], [NSString stringWithCString:[stringTable valueForStringKey:"OK"]], nil, nil);
+                NSRunAlertPanel(
+                    [mainB localizedStringForKey:@"Alert" value:@"Alert" table:nil],
+                    [mainB localizedStringForKey:@"Sound Selection" value:@"Sound Selection" table:nil],
+                    [mainB localizedStringForKey:@"OK" value:@"OK" table:nil], nil, nil);
                 [mySpectrumView frames:NO];
                 currentFrame = 0;
                 [wfFrameSlider setIntValue:0];
@@ -670,7 +672,9 @@
         mousePosition = [spectrumWindow mouseLocationOutsideOfEventStream];
         buttonBounds = [waterFallButton bounds];
         [waterFallButton convertRect:buttonBounds toView:[waterFallButton superview]];
-        PSbuttondown(&mouseDown);
+// sbrandon 17/9/2001 commented out because does not work on MacOSX, and  there should
+// be a more elegant solution anyway.
+//        PSbuttondown(&mouseDown);
         if ([waterFallButton mouse:mousePosition inRect:buttonBounds]
                                 && mouseDown) stop = YES;
         else stop = NO;

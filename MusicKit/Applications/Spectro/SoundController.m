@@ -221,11 +221,6 @@ NSColor *StringToColor(NSString *buffer)
     return self;
 }
 
-- stringTable
-{
-    return stringTable;	
-}
-
 - showInfoPanel:sender
 {
     [infoPanel makeKeyAndOrderFront:nil];

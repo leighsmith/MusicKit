@@ -24,6 +24,11 @@
     return self;
 }
 
+- (void)setBounds:(NSRect) theBounds
+{ 
+ [super setBounds:theBounds];
+}
+
 - (void)setDelegate:(id)anObject
 {
     delegate = anObject;
