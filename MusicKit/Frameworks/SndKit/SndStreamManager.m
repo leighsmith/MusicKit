@@ -178,6 +178,7 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
     [(SndStreamManager *) obj processStreamAtTime: sampleCount input: cInB output: cOutB];
 }
 
+
 - (void) processStreamAtTime: (double) sampleCount
                        input: (SNDStreamBuffer*) cInB
                       output: (SNDStreamBuffer*) cOutB
@@ -189,7 +190,14 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
     SndAudioBuffer *inB  = [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cInB ];
     SndAudioBuffer *outB = [SndAudioBuffer audioBufferWrapperAroundSNDStreamBuffer: cOutB];
     double t = sampleCount / [outB samplingRate];
-
+/*
+    if (cInB != NULL && cInB->streamData != NULL) {
+      long   length = cInB->streamFormat.dataSize / sizeof(float);
+      float *data = cInB->streamData;
+      printf("length: %li signal: %f format: %i\n", length, data[0], 
+             cInB->streamFormat.dataFormat);
+    }
+    */
     [mixer processInBuffer: inB outBuffer: outB nowTime: t];
     if ([mixer clientCount] == 0) // Hmm, no clients hey? Shut down the Stream.
         [self stopStreaming];
@@ -205,6 +213,12 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 {
     return mixer;
 }
+
+- (BOOL) isActive
+{
+  return active;
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -108,6 +108,7 @@
                  outputBuffer: (SndAudioBuffer*) outB
 {
     // no processing? copy data!
+    // remember to check bActive in derived classes.
     [outB copyData: inB];
     return self;
 }

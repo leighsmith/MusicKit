@@ -23,7 +23,7 @@ enum {
 @implementation SndStreamClient
 
 ////////////////////////////////////////////////////////////////////////////////
-// @streamClient
+// streamClient
 ////////////////////////////////////////////////////////////////////////////////
 
 + streamClient
@@ -32,6 +32,10 @@ enum {
     
     return [sc autorelease];
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// init
+////////////////////////////////////////////////////////////////////////////////
 
 - init
 {
@@ -42,6 +46,7 @@ enum {
     synthBuffer      = nil;
     active           = FALSE;
     needsInput       = FALSE;
+    generatesOutput  = TRUE;
     nowTime          = 0.0;
     processFinishedCallback = NULL;
     return self;
@@ -71,6 +76,22 @@ enum {
 {
     needsInput = b;
     return self;
+}
+
+- setGeneratesOutput: (BOOL) b 
+{
+  generatesOutput = b;
+  return self; 
+}
+
+- (BOOL) needsInput
+{
+  return needsInput;
+}
+
+- (BOOL) generatesOutput
+{
+  return generatesOutput;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -119,11 +140,16 @@ enum {
 {
     outputBuffer = buff;
     [outputBuffer retain];
-    synthBuffer = [outputBuffer copy];
-    [synthBuffer retain];
-    inputBuffer = [outputBuffer copy];
-    [inputBuffer retain];
+    
+    if (needsInput) {
+      inputBuffer = [buff copy];
+      [inputBuffer retain];
+    }
 
+    if (generatesOutput) {
+      synthBuffer = [buff copy];
+      [synthBuffer retain];
+    }
     [NSThread detachNewThreadSelector: @selector(processingThread)
                              toTarget: self
                            withObject: nil];
@@ -143,9 +169,14 @@ enum {
         
     if([synthThreadLock tryLockWhenCondition: SC_bufferReady]) {
         // swap the synth and output buffers, fire off next round of synthing
+        
+        [outputBufferLock lock];
+
         temp            = synthBuffer;
         synthBuffer     = outputBuffer;
         outputBuffer    = temp;
+
+        [outputBufferLock unlock];
 
         nowTime = t;
         
@@ -223,7 +254,7 @@ enum {
 
 - (SndAudioBuffer*) outputBuffer
 {
-    return outputBuffer;
+  return outputBuffer;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -232,7 +263,16 @@ enum {
 
 - (SndAudioBuffer*) synthBuffer
 {
-    return synthBuffer;
+  return synthBuffer;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// inputBuffer
+////////////////////////////////////////////////////////////////////////////////
+
+- (SndAudioBuffer*) inputBuffer
+{
+  return inputBuffer;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -276,5 +316,18 @@ enum {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+- lockOutputBuffer
+{
+  [outputBufferLock lock];
+  return self;
+}
+
+- unlockOutputBuffer
+{
+  [outputBufferLock unlock];
+  return self;
+}
+
 
 @end

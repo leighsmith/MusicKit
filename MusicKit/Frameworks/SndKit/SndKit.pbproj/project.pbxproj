@@ -56,6 +56,7 @@
 				017A8C4D004DDCB1CFED3B96,
 				0224068700713935CFED3B8B,
 				02240692007269D2CFED3B8B,
+				06C30561007CD69BCFED3B8B,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -101,6 +102,9 @@
 				00D2C434FEDB2CB5CFED3B93,
 				00D2C435FEDB2CB5CFED3B93,
 				02240683007138A9CFED3B8B,
+				36C5C1C90039F2E2CFED3B96,
+				36C5C1CA0039F2E2CFED3B96,
+				06C30562007CD69BCFED3B8B,
 				00D2C436FEDB2CB5CFED3B93,
 				00D2C438FEDB2CB5CFED3B93,
 				00D2C439FEDB2CB5CFED3B93,
@@ -108,8 +112,6 @@
 				095E1FC30030E169CFED3B96,
 				095E1FC50030E3C7CFED3B96,
 				00D2C43CFEDB2CB5CFED3B93,
-				36C5C1C90039F2E2CFED3B96,
-				36C5C1CA0039F2E2CFED3B96,
 				508F93C0003B28C0CFED3B96,
 				508F93C5003C7F23CFED3B96,
 				017A8C4C004DDCB1CFED3B96,
@@ -241,12 +243,12 @@
 		};
 		00D2C454FEDB2CB5CFED3B93 = {
 			children = (
-				014F3C4700581EE9CFED3B96,
 				00D2C455FEDB2CB5CFED3B93,
 				00D2C457FEDB2CB5CFED3B93,
 				00D2C458FEDB2CB5CFED3B93,
 				0B0671370034C9D6CFED3B96,
 				055C7F3A0049CD79CFED3B96,
+				3AE3B96C007931DBCFED3B8B,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -365,6 +367,7 @@
 				0224068A00713935CFED3B8B,
 				0224068B00713935CFED3B8B,
 				02240694007269D2CFED3B8B,
+				06C30563007CD69BCFED3B8B,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -507,6 +510,7 @@
 				0224068C00713935CFED3B8B,
 				0224068D00713935CFED3B8B,
 				02240695007269D2CFED3B8B,
+				06C30564007CD69BCFED3B8B,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -607,7 +611,7 @@
 				00D2C47EFEDB2CB5CFED3B93,
 				0B0671380034C9D6CFED3B96,
 				055C7F3B0049CD79CFED3B96,
-				014F3C4800581EE9CFED3B96,
+				3AE3B96D007931DBCFED3B8B,
 			);
 			isa = PBXFrameworksBuildPhase;
 			name = "Frameworks & Libraries";
@@ -636,18 +640,6 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
-		};
-		014F3C4700581EE9CFED3B96 = {
-			isa = PBXFileReference;
-			name = libst.a;
-			path = /Volumes/manray/Local/Unix/lib/libst.a;
-			refType = 0;
-		};
-		014F3C4800581EE9CFED3B96 = {
-			fileRef = 014F3C4700581EE9CFED3B96;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		017A8C4C004DDCB1CFED3B96 = {
 			isa = PBXFileReference;
@@ -685,6 +677,9 @@
 			fileRef = 02240683007138A9CFED3B8B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		02240685007138A9CFED3B8B = {
@@ -717,12 +712,18 @@
 			fileRef = 0224068800713935CFED3B8B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		0224068B00713935CFED3B8B = {
 			fileRef = 0224068900713935CFED3B8B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		0224068C00713935CFED3B8B = {
@@ -751,6 +752,9 @@
 			fileRef = 02240693007269D2CFED3B8B;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		02240695007269D2CFED3B8B = {
@@ -806,6 +810,31 @@
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
+		};
+		06C30561007CD69BCFED3B8B = {
+			isa = PBXFileReference;
+			path = SndStreamRecorder.m;
+			refType = 4;
+		};
+		06C30562007CD69BCFED3B8B = {
+			isa = PBXFileReference;
+			path = SndStreamRecorder.h;
+			refType = 4;
+		};
+		06C30563007CD69BCFED3B8B = {
+			fileRef = 06C30562007CD69BCFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		06C30564007CD69BCFED3B8B = {
+			fileRef = 06C30561007CD69BCFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		095E1FC30030E169CFED3B96 = {
 			isa = PBXFileReference;
@@ -926,6 +955,18 @@
 				ATTRIBUTES = (
 					Public,
 				);
+			};
+		};
+		3AE3B96C007931DBCFED3B8B = {
+			isa = PBXFileReference;
+			name = libst.a;
+			path = /usr/local/lib/libst.a;
+			refType = 0;
+		};
+		3AE3B96D007931DBCFED3B8B = {
+			fileRef = 3AE3B96C007931DBCFED3B8B;
+			isa = PBXBuildFile;
+			settings = {
 			};
 		};
 		508F93C0003B28C0CFED3B96 = {

@@ -21,14 +21,15 @@
 
 @interface SndStreamClient : NSObject
 {
-    NSLock          *outputBufferLock;
+    NSLock             *outputBufferLock;
     SndAudioBuffer     *outputBuffer;
     SndAudioBuffer     *synthBuffer;
     SndAudioBuffer     *inputBuffer;
-    NSConditionLock *synthThreadLock;
-    BOOL             active;
-    BOOL             needsInput;
-    double           nowTime;
+    NSConditionLock    *synthThreadLock;
+    BOOL                active;
+    BOOL                needsInput;
+    BOOL                generatesOutput;
+    double              nowTime;
 
     SndStreamManager *manager;
     
@@ -48,7 +49,7 @@
 - (void) processingThread;
 - (SndAudioBuffer*) outputBuffer;
 - (SndAudioBuffer*) synthBuffer;
-- setNeedsInput: (BOOL) b;
+- (SndAudioBuffer*) inputBuffer;
 - managerIsShuttingDown;
 
 - (void) processBuffers; // The big one for the sub classes - override!.
@@ -57,5 +58,13 @@
 // Peak detection
 - setDetectPeaks: (BOOL) detectPeaks;
 - getPeakLeft: (float *) leftPeak right: (float *) rightPeak;
+
+- (BOOL) generatesOutput;
+- (BOOL) needsInput;
+- setGeneratesOutput: (BOOL) b;
+- setNeedsInput: (BOOL) b;
+
+- lockOutputBuffer;
+- unlockOutputBuffer;
 
 @end

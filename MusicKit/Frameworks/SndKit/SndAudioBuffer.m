@@ -60,6 +60,22 @@
     return [ab autorelease];
 }
 
++ audioBufferWithFormat: (SndSoundStruct*) f duration: (double) timeInSec
+{
+    SndAudioBuffer *ab = [[SndAudioBuffer alloc] init];
+    long oldLength = f->dataSize;
+    long samWidth = SndSampleWidth(f);
+    f->dataSize = (f->channelCount) * 
+                  samWidth *
+                  (long)((f->samplingRate) * timeInSec);
+                          
+    [ab initWithFormat: f data: NULL];
+        
+    f->dataSize = oldLength;
+    
+    return [ab autorelease];
+}
+
 - (void) dealloc
 {
     if (bOwnsData)
@@ -281,6 +297,11 @@
 - (long) lengthInSamples
 {
     return formatSnd.dataSize / [self multiChannelSampleSizeInBytes];
+}
+
+- (long) lengthInBytes
+{
+  return formatSnd.dataSize;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

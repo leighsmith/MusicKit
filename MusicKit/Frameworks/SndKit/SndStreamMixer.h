@@ -36,4 +36,6 @@
 - managerIsShuttingDown;
 - (int) clientCount;
 
+- (SndAudioProcessorChain*) audioProcessorChain;
+
 @end

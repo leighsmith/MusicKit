@@ -52,4 +52,6 @@
 
 - (SndStreamMixer*) mixer;
 
+- (BOOL) isActive;
+
 @end

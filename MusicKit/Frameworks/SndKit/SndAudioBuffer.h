@@ -25,6 +25,7 @@
     BOOL            bOwnsData;
 }
 
++ audioBufferWithFormat: (SndSoundStruct*) format duration: (double) timeInSec;
 + audioBufferWithFormat: (SndSoundStruct*) format data: (void*) d;
 + audioBufferWrapperAroundSNDStreamBuffer: (SNDStreamBuffer*) cBuff;
 + audioBufferWithSndSeg: (Snd*) snd range: (NSRange) r;
@@ -37,10 +38,11 @@
 - copy;
 - copyData: (SndAudioBuffer*) ab;
 - (long) lengthInSamples;
+- (long) lengthInBytes;
 - (double) duration;
 - (double) samplingRate;
 - (int) channelCount;
--(int) dataFormat;
+- (int) dataFormat;
 - (void*) data;
 - (SndSoundStruct*) format;
 

@@ -34,5 +34,7 @@
 - processBuffer: (SndAudioBuffer*) buff;
 - (int) processorCount; 
 - (NSArray*) processorArray;
+- (BOOL) isBypassingFX;
+- (void) setBypass: (BOOL) b;
 
 @end

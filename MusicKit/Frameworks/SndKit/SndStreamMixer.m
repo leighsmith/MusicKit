@@ -71,24 +71,26 @@
     [streamClientsLock lock];
     clientCount = [streamClients count];
 
+//    [outB mixWithBuffer: inB];
     if (clientCount > 0) {
         for (i = 0; i < clientCount; i++) {
         
             SndStreamClient *client = [streamClients objectAtIndex: i];
 
-            // Look at each client's currently exposed output buffer, and add 
-            // to mix.
-            
-            // NSLog(@"calling mixWithBuffer from processStreamAtTime, %@\n", client);
-            [outB mixWithBuffer: [client outputBuffer]];
+            if ([client generatesOutput]) {
+              // Look at each client's currently exposed output buffer, and add  to mix.
 
+              [client lockOutputBuffer];
+              [outB mixWithBuffer: [client outputBuffer]];
+              [client unlockOutputBuffer];
+            }
             // Each client should have a second synthing buffer, and a synth thread
             [client startProcessingNextBufferWithInput: inB nowTime: t];
             
             // Do any audio processing on the mix
-            [processorChain processBuffer: outB];
         }
     }
+    [processorChain processBuffer: outB];
     [streamClientsLock unlock];
     return self;
 }
@@ -152,6 +154,15 @@
     [streamClients makeObjectsPerformSelector: @selector(managerIsShuttingDown)];    
     [streamClientsLock unlock];
     return self;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// @audioProcessorChain
+////////////////////////////////////////////////////////////////////////////////
+
+- (SndAudioProcessorChain*) audioProcessorChain
+{
+  return processorChain;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
