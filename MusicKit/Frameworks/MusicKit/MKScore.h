@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.23  2003/01/29 03:13:28  leighsmith
+  Comment fix
+
   Revision 1.22  2002/08/20 23:26:02  leighsmith
   Removed warning of undeclared method class in bundleExtensions, added setAlternativeScorefileExtensions: to allow alternative names for scorefiles
 
@@ -234,7 +237,7 @@ printed by invoking <b>setScorefilePrintStream:</b>.
   @method writeScorefile:
   @param  aFileName is a NSString *.
   @result Returns an id.
-  @discussion Opens the scorefile named <b>fileName</b> and writes the receiver to
+  @discussion Opens the scorefile named <b>aFileName</b> and writes the receiver to
               it (the file is overwritten).  The file is automatically closed. 
               Returns the receiver or <b>nil</b> if the file couldn't be
               written.
