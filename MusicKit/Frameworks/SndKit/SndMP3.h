@@ -29,6 +29,14 @@
 - (int) readSoundfile: (NSString*) filename;
 - (void) fillAudioBuffer: (SndAudioBuffer*) anAudioBuffer withSamplesInRange: (NSRange) playRegion;
 
+/*!
+  @method soundFileExtensions
+  @result Returns an array of file extensions available for reading and writing.
+  @discussion Returns an array of file extensions indicating the file format (and file extension)
+  that audio files may be read from or written to. Includes all of Snd's formats and "mp3".
+ */
++ (NSArray *) soundFileExtensions;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////

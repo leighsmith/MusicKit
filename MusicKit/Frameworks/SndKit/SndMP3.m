@@ -29,6 +29,11 @@
 
 @implementation SndMP3
 
++ (NSArray *) soundFileExtensions
+{
+    return [[super soundFileExtensions] arrayByAddingObject: @"mp3"];
+}
+
 static int bitrateLookupTable[16][6] = {
   { MP3_BITRATE_BAD, MP3_BITRATE_BAD, MP3_BITRATE_BAD, MP3_BITRATE_BAD, MP3_BITRATE_BAD, MP3_BITRATE_BAD },
   {  32,  32,  32,  32,   8,   8 },
