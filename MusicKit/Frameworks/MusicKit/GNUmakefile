@@ -13,29 +13,6 @@
 #  purposes so long as the author attribution and this copyright message remains intact
 #  and accompanies all derived code.
 
-# Modification history:
-# $Log$
-# Revision 1.5  2003/06/01 20:36:04  leighsmith
-# Added changes suggested by Matt Rice
-#
-# Revision 1.4  2002/03/12 23:19:13  sbrandon
-# bumped up optimisation and error logging levels
-#
-# Revision 1.3  2001/11/07 13:11:03  sbrandon
-# A number of changes to allow compilation on Windows/MinGW. Major change is
-# that it compiles as a library rather than a framework, due to deficiencies
-# in GNUstep framework handling on Win32.
-#
-# Revision 1.2  2001/07/02 19:52:55  sbrandon
-# - (temporarily) added -g flag for better debugging
-# - added writeScore.[hm] (why were these not in there? They were not in the
-#   OpenStep Makefile either.
-#
-# Revision 1.1  2001/05/12 09:07:25  sbrandon
-# - first attempt at compilation on GNUSTEP. This makefile needs to be kept
-#   in sync as much as possible with file additions/removals done on MacOSX.
-#
-#
 
 # Install into the local root by default
 GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
@@ -97,7 +74,7 @@ $(MY_NAME)_HEADER_FILES = \
          MKScorefileObject.h MKScorefilePerformer.h MKScorefileWriter.h\
          MKSynthData.h MKSynthInstrument.h MKSynthPatch.h MKTimbre.h\
          MKTuningSystem.h MKUnitGenerator.h MKWaveTable.h MidiPrivate.h\
-         MusicKit.h NotePrivate.h NoteReceiverPrivate.h\
+         MusicKit.h NotePrivate.h \
          OrchestraPrivate.h OrchloopbeginUG.h PartPerformerPrivate.h\
          PartPrivate.h PartRecorderPrivate.h PartialsPrivate.h\
          PatchTemplatePrivate.h PerformerPrivate.h\
