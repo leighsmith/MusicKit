@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  1999/09/28 03:06:52  leigh
+  trace: now takes NSString fmt argument
+
   Revision 1.4  1999/09/04 22:02:18  leigh
   Removed mididriver source and header files as they now reside in the MKPerformMIDI framework
 
@@ -2230,14 +2233,14 @@ char *ap;
     }
 }
 
-- trace:(int)typeOfInfo msg:(char *)fmt, ...;
+- trace:(int)typeOfInfo msg:(NSString *) fmt, ...;
 /* Arguments are like printf. Writes text, as a comment, to the
    simulator file, if any. Text may not contain new-lines. 
    If the typeOfInfo trace is set, prints info to stderr as well. */
 {
     va_list ap;
     va_start(ap,fmt); 
-    _traceMsg(_simFP,typeOfInfo,fmt,ap);
+    _traceMsg(_simFP,typeOfInfo,[fmt cString], ap);
     va_end(ap);
     return self;
 }
