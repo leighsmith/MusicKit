@@ -15,8 +15,8 @@
 #import <MKPerformSndMIDI/SndStruct.h>
 #import "SndAudioProcessorRecorder.h"
 #import "SndAudioBuffer.h"
+#import "SndStreamManager.h"
 #import "SndStreamRecorder.h"
-#import "SndStreamClient.h"
 #import "SndEndianFunctions.h"
 #include <unistd.h>
 

@@ -17,8 +17,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "SndStreamClient.h"
 @class SndAudioBuffer;
-@class SndStreamClient;
 @class SndAudioProcessorRecorder;
 
 /*! 
