@@ -148,7 +148,7 @@ static void handleMKError(NSString *msg) {
 
 - (void)showInfoPanel:sender
 {
-    [NSBundle loadNibNamed:@"Info.nib" owner:self];
+    [NSBundle loadNibNamed:@"Info" owner:self];
     [infoPanel orderFront:sender]; 
 }
 
