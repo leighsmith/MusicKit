@@ -36,6 +36,11 @@
 #import "SndFormats.h"
 #endif
 
+#ifdef macosx
+#import <CoreAudio/AudioHardware.h>
+#import <pthread.h>
+#endif
+
 #import "SndFunctions.h"
 
 @class NSPasteboard;
@@ -48,6 +53,8 @@ extern NSString *NXSoundPboardType;
 /*
  * This is the sound pasteboard type.
  */
+
+
 
 @interface Snd : NSObject
 /*
@@ -70,6 +77,32 @@ extern NSString *NXSoundPboardType;
 #if defined(__ppc__) || defined(WIN32)
     id plSound;			 /* NSSound object for playback */
 #endif
+
+#ifdef macosx
+
+    int		playBegin,
+		playEnd;
+
+    int		bufferCount,
+		bufferFrameSize;
+
+    float	*bufferEven,
+		*bufferOdd;
+
+    BOOL        stopRequest,
+                soundPlaying;
+
+    id		playSender;
+
+    pthread_t             soundThread;
+    pthread_cond_t        soundCondition;
+    pthread_mutex_t       soundMutex;
+
+    AudioDeviceID                 outputDeviceID;
+    AudioStreamBasicDescription   outputStreamBasicDescription;
+
+#endif
+
 @public
     int tag;
 }
@@ -141,6 +174,11 @@ typedef enum {
 - (char *)info;
 - (int)infoSize;
 - play:sender;
+
+#ifdef macosx
+- play:(id) sender beginSample:(int) begin sampleCount:(int) count;
+#endif
+
 - (int)play;
 - record:sender;
 - (int)record;
@@ -194,6 +232,21 @@ typedef enum {
      *************************/
 - (void)setConversionQuality:(int)quality; /* default is SND_CONVERT_LOWQ */
 - (int)conversionQuality;
+
+#ifdef macosx
+- (void) playSoundThread;
+- (void) wait;
+
+- (int) bufferCount;
+- (int) bufferFrameSize;
+
+- (float *) bufferEven;
+- (float *) bufferOdd;
+
+- (pthread_t *) soundThread;
+- (pthread_cond_t *) soundCondition;
+- (pthread_mutex_t *) soundMutex;
+#endif
 
 @end
 
