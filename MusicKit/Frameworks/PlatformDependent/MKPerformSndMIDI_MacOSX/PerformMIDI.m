@@ -25,6 +25,9 @@
 Modification history:
 
   $Log$
+  Revision 1.17  2002/09/18 17:48:47  leighsmith
+  Corrected warning
+
   Revision 1.16  2001/05/30 00:35:40  leighsmith
   Corrected MKMDAwaitReply to time waiting from clock set time
 
@@ -158,7 +161,7 @@ PERFORM_API const char **MKMDGetAvailableDrivers(unsigned int *selectedDriver)
     }
     
     // always create at least one entry for the terminating NULL pointer.
-    driverList = (char **) calloc([driverNameList count]+1, sizeof(char *));
+    driverList = (const char **) calloc([driverNameList count]+1, sizeof(char *));
     for(driverListIndex = 0; driverListIndex < [driverNameList count]; driverListIndex++) {
         driverList[driverListIndex] = [[driverNameList objectAtIndex: driverListIndex] cString]; 
     }
