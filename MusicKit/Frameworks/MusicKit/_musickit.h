@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2002/01/29 16:04:36  sbrandon
+  changed declaration of _MKOrchTrace to use NSString
+
   Revision 1.8  2002/01/24 13:26:09  sbrandon
   added function prototype for _MKDeepMutableArrayCopy (new in utilities.m)
 
@@ -221,7 +224,7 @@ extern int _MKFindAppWrapperFile(NSString *fileName,NSString **returnNameBuffer)
 #define _MK_VARRESOLUTION (((double)1.0/(double)44000.0)/(double)2.0)
 
 /* For debugging */
-extern void _MKOrchTrace(id orch,int typeOfInfo,char * fmt, ...);
+extern void _MKOrchTrace(id orch,int typeOfInfo,NSString * fmt, ...);
 extern unsigned _MKTraceFlag;
 #define _MKTrace() _MKTraceFlag
 
