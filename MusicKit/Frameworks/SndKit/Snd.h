@@ -3,14 +3,14 @@
 //  $Id$
 //
 //  Description: Main class defining a sound object.
+//    Designed to emulate some Sound Kit behaviour.
 //
 //  Original Author: Stephen Brandon
 //
-//  Substantially based on Sound Kit, Release 2.0, Copyright (c) 1988, 1989, 1990, NeXT, Inc.  All rights reserved.
-//  Additions Copyright (c) 1999 Stephen Brandon and the University of Glasgow
+//  Copyright (c) 1999 Stephen Brandon and the University of Glasgow
 //  Additions Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
-//  Legal Statement Covering Additions by Stephen Brandon and the University of Glasgow:
+//  Legal Statement Covering Work by Stephen Brandon and the University of Glasgow:
 //
 //    This framework and all source code supplied with it, except where specified,
 //    are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free
@@ -912,17 +912,13 @@ typedef enum {
 */
 - (int) insertSamples: (Snd *) aSnd at: (int) startSample;
 
-- (id) copyWithZone: (NSZone *) zone;
 
 /*!
-  @method copySound:
-  @param  aSound is an id.
-  @result Returns an int.
-  @discussion Replaces the Snd's data with a copy of <i>aSound</i>'s data. The
-              Snd receiving this message needn't be editable, nor must the two
-              Snds be compatible. An error code is returned.
+  @method copyWithZone:
+  @param  zone is an NSZone.
+  @result Returns a new retained instance with duplicated data, or nil if unable to copy.
 */
-- (int) copySound: (Snd *) aSnd;
+- (id) copyWithZone: (NSZone *) zone;
 
 /*!
   @method copySamples:
@@ -1184,6 +1180,18 @@ typedef enum {
   @discussion Mainly for use by SndPlayer
 */
 - (int) performanceCount;
+
+/*!
+  @method audioBufferForSamplesInRange:looping:
+  @abstract Returns a SndAudioBuffer containing a range of samples in the Snd.
+  @param  sndFrameRange Range of sample <I>frames</I> (as opposed to individual single
+ 	    channel samples) to stick into the audioBuffer.
+  @param isLooping Indicates whether to read from the loop start if the length of the sndFrameRange exceeds
+          the length of the Snd instance.
+  @result An SndAudioBuffer containing the samples in the range r.
+ */
+- (SndAudioBuffer *) audioBufferForSamplesInRange: (NSRange) sndFrameRange
+					  looping: (BOOL) isLooping;
 
 /*!
   @method audioBufferForSamplesInRange:
