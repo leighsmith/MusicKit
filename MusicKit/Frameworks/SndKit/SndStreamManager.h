@@ -76,6 +76,8 @@
     NSLock          *delegateMessageArrayLock;
     NSMutableArray  *delegateMessageArray;
     NSConnection    *threadConnection;
+
+    BOOL             bDelegateMessagingEnabled;
 }
 
 /*!

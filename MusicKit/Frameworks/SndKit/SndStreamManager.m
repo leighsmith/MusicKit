@@ -22,6 +22,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 #define SNDSTREAMMANAGER_DEBUG                  0
+#define SNDSTREAMMANAGER_DELEGATE_DEBUG         0
 #define SNDSTREAMMANAGER_SPIKE_AT_BUFFER_START  0
 #define SNDSTREAMMANAGER_SHOW_DRIVER_SELECTED   0
 
@@ -77,7 +78,8 @@ static SndStreamManager *sm = nil;
   else {
     NSLog(@"SndStreamManager::initialise: Error - Unable to initialise MKPerformSound!\n");
   }
-  sm = [SndStreamManager new];  // create our default
+  if (sm == nil)
+    sm = [SndStreamManager new];  // create our default
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +101,9 @@ static SndStreamManager *sm = nil;
 {
   NSPort *managerReceivePort,*managerSendPort;
 
-  [super init];
+  self = [super init];
+  if (!self)
+    return nil;
 
   mixer           = [[SndStreamMixer sndStreamMixer] retain];
   bg_threadLock   = [[NSConditionLock alloc] initWithCondition: BG_ready];
@@ -108,24 +112,31 @@ static SndStreamManager *sm = nil;
   active        = FALSE;
   bg_active     = FALSE;
   nowTime       = 0;
+  bDelegateMessagingEnabled = FALSE;
   SNDStreamNativeFormat(&format);
   /* might as well set up the delegate background thread now too */
 
   if ([[NSRunLoop currentRunLoop] currentMode] || NSApp) {
-#if SNDSTREAMMANAGER_DEBUG
-    fprintf(stderr,"Run loop detected - delegate messaging enabled\n");
+#if SNDSTREAMMANAGER_DELEGATE_DEBUG
+    fprintf(stderr,"[SndStreamManager::init] Run loop detected - delegate messaging enabled\n");
 #endif
     delegateMessageArray = [[NSMutableArray alloc] init];
     managerReceivePort   = (NSPort *)[NSPort port]; /* we don't need to retain, the connection does that */
     managerSendPort      = (NSPort *)[NSPort port];
 
     threadConnection     = [[NSConnection alloc] initWithReceivePort: managerReceivePort
-                                                            sendPort: managerSendPort];
+                                                                sendPort: managerSendPort];
     [threadConnection setRootObject:self];
 
     [NSThread detachNewThreadSelector: @selector(delegateMessageThread:)
                              toTarget: self
                            withObject: [NSArray arrayWithObjects: managerSendPort, managerReceivePort, nil]];
+    bDelegateMessagingEnabled = TRUE;
+  }
+  else {
+#if SNDSTREAMMANAGER_DELEGATE_DEBUG
+    fprintf(stderr,"[SndStreamManager::init] No runloop or NSApp detected - delegate messaging disabled\n");
+#endif
   }
   return self;
 }
@@ -370,29 +381,27 @@ static SndStreamManager *sm = nil;
 
 - (void) sendMessageInMainThreadToTarget:(id)target sel:(SEL)sel arg1:(id)arg1 arg2:(id)arg2
 {
-  NSMethodSignature *aSignature;
-  NSInvocation *anInvocation;
-
-  if ([[NSRunLoop currentRunLoop] currentMode] == nil && NSApp == nil) {
+  if (!bDelegateMessagingEnabled) {
     return;
   }
+  else {
+    NSMethodSignature *aSignature   = [[target class] instanceMethodSignatureForSelector:sel];
+    NSInvocation      *anInvocation = [NSInvocation invocationWithMethodSignature:aSignature];
 
-  aSignature = [[target class] instanceMethodSignatureForSelector:sel];
-  anInvocation = [NSInvocation invocationWithMethodSignature:aSignature];
+    [anInvocation setSelector:sel];
+    [anInvocation setTarget:target];
+    [anInvocation setArgument:&arg1 atIndex:2];
+    [anInvocation setArgument:&arg2 atIndex:3];
+    [anInvocation retainArguments];
 
-  [anInvocation setSelector:sel];
-  [anInvocation setTarget:target];
-  [anInvocation setArgument:&arg1 atIndex:2];
-  [anInvocation setArgument:&arg2 atIndex:3];
-  [anInvocation retainArguments];
+    [delegateMessageArrayLock lock];
+    [delegateMessageArray addObject: anInvocation];
+    [delegateMessageArrayLock unlock];
 
-  [delegateMessageArrayLock lock];
-  [delegateMessageArray addObject: anInvocation];
-  [delegateMessageArrayLock unlock];
-
-  [bgdm_threadLock lock];
-  bgdm_sem = BGDM_delegateMessageReady;
-  [bgdm_threadLock unlockWithCondition:BG_hasFlag];
+    [bgdm_threadLock lock];
+    bgdm_sem = BGDM_delegateMessageReady;
+    [bgdm_threadLock unlockWithCondition:BG_hasFlag];
+  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -550,9 +559,9 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
 - (double) samplingRate    { return format.samplingRate; }
 - (SndSoundStruct*) format { return &format; }
 
-  ////////////////////////////////////////////////////////////////////////////////
-  // resetTime:
-  ////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// resetTime:
+////////////////////////////////////////////////////////////////////////////////
 
 - (void) resetTime: (double) originTimeInSeconds
 {
