@@ -2,7 +2,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 26;
+	objectVersion = 30;
 	objects = {
 		00D5A006FED5ABC1CFED3B93 = {
 			isa = PBXProject;
@@ -29,16 +29,11 @@
 		};
 		00D5A008FED5ABC1CFED3B93 = {
 			children = (
-				00D5A009FED5ABC1CFED3B93,
+				016EB772FF8071FFCFED3B93,
 			);
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
-		};
-		00D5A009FED5ABC1CFED3B93 = {
-			isa = PBXFrameworkReference;
-			path = MusicKit.framework;
-			refType = 3;
 		};
 		00D5A00AFED5ABC1CFED3B93 = {
 			children = (
@@ -1191,9 +1186,9 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/SoundKit.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)//Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" /Local/Library/Frameworks \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
-				FRAMEWORK_VERSION = A;
-				HEADER_SEARCH_PATHS = /Local/Users/leigh/Sources/Music/MusicKit/YellowBox/Frameworks/MusicKit_3.3_Headers;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/SoundKit.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)//Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
+				FRAMEWORK_VERSION = 5.2;
+				HEADER_SEARCH_PATHS = "";
 				LIBRARY_SEARCH_PATHS = ./;
 				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "-Wall";
@@ -1213,20 +1208,36 @@
 			name = "MusicKit (Framework)";
 			productInstallPath = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 			productName = MusicKit;
-			productReference = 00D5A009FED5ABC1CFED3B93;
-			productSettings = {
-				CFBundleDevelopmentRegion = English;
-				CFBundleExecutable = MusicKit;
-				CFBundleGetInfoString = "";
-				CFBundleIconFile = "";
-				CFBundleIdentifier = "";
-				CFBundleInfoDictionaryVersion = 6.0;
-				CFBundleName = "";
-				CFBundlePackageType = FMWK;
-				CFBundleShortVersionString = "";
-				CFBundleSignature = "????";
-				CFBundleVersion = 0.0.1d1;
-			};
+			productReference = 016EB772FF8071FFCFED3B93;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
+<plist version=\"0.9\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>MusicKit</string>
+	<key>CFBundleGetInfoString</key>
+	<string>A collection of classes for representing, synthesizing and performing music</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>The MusicKit</string>
+	<key>CFBundlePackageType</key>
+	<string>FMWK</string>
+	<key>CFBundleShortVersionString</key>
+	<string>V5.2</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>5.2.0</string>
+</dict>
+</plist>
+";
 			shouldUseHeadermap = 0;
 		};
 		00D5A0C6FED5ABC1CFED3B93 = {
@@ -3484,6 +3495,11 @@
 			);
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
+		};
+		016EB772FF8071FFCFED3B93 = {
+			isa = PBXFrameworkReference;
+			path = MusicKit.framework;
+			refType = 3;
 		};
 		02CDDD26FEF14087CFED3B93 = {
 			isa = PBXFileReference;
