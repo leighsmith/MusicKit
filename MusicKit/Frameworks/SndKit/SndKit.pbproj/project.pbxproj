@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		00D2C427FEDB2CB5CFED3B93 = {
 			buildStyles = (
@@ -13,7 +13,7 @@
 			isa = PBXProject;
 			mainGroup = 00D2C428FEDB2CB5CFED3B93;
 			productRefGroup = 00D2C429FEDB2CB5CFED3B93;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				00D2C459FEDB2CB5CFED3B93,
 			);
@@ -292,9 +292,8 @@
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "-O2 -Wall";
-				OTHER_LDFLAGS = "-O2 -Wall";
+				OTHER_LDFLAGS = "-O2 -Wall -seg1addr 20000";
 				OTHER_LIBTOOL_FLAGS = "";
 				OTHER_REZFLAGS = "";
 				PRINCIPAL_CLASS = "";
@@ -302,8 +301,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = framework;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -644,6 +641,16 @@
 			isa = PBXRezBuildPhase;
 			name = "ResourceManager Resources";
 		};
+//000
+//001
+//002
+//003
+//004
+//010
+//011
+//012
+//013
+//014
 		0109B284014D0BC3CFED3B94 = {
 			children = (
 				0109B285014D0BC3CFED3B94,
@@ -870,6 +877,16 @@
 			settings = {
 			};
 		};
+//010
+//011
+//012
+//013
+//014
+//020
+//021
+//022
+//023
+//024
 		02240682007138A9CFED3B8B = {
 			isa = PBXFileReference;
 			path = SndStreamMixer.m;
@@ -970,6 +987,16 @@
 			settings = {
 			};
 		};
+//020
+//021
+//022
+//023
+//024
+//040
+//041
+//042
+//043
+//044
 		0422778F0030C8C0CFED3B96 = {
 			isa = PBXFrameworkReference;
 			path = SndKit.framework;
@@ -1000,6 +1027,16 @@
 			settings = {
 			};
 		};
+//040
+//041
+//042
+//043
+//044
+//050
+//051
+//052
+//053
+//054
 		055C7F3A0049CD79CFED3B96 = {
 			isa = PBXFrameworkReference;
 			name = ApplicationServices.framework;
@@ -1017,6 +1054,7 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -1030,6 +1068,16 @@
 			isa = PBXBuildStyle;
 			name = Deployment;
 		};
+//050
+//051
+//052
+//053
+//054
+//060
+//061
+//062
+//063
+//064
 		06C30561007CD69BCFED3B8B = {
 			isa = PBXFileReference;
 			path = SndStreamRecorder.m;
@@ -1055,6 +1103,16 @@
 			settings = {
 			};
 		};
+//060
+//061
+//062
+//063
+//064
+//070
+//071
+//072
+//073
+//074
 		07986ABF013D43C8CFED3B94 = {
 			isa = PBXFileReference;
 			path = SndAudioBufferQueue.h;
@@ -1080,6 +1138,16 @@
 			settings = {
 			};
 		};
+//070
+//071
+//072
+//073
+//074
+//090
+//091
+//092
+//093
+//094
 		095E1FC30030E169CFED3B96 = {
 			isa = PBXFileReference;
 			path = SndResample.h;
@@ -1108,12 +1176,32 @@
 				);
 			};
 		};
+//090
+//091
+//092
+//093
+//094
+//0B0
+//0B1
+//0B2
+//0B3
+//0B4
 		0BDB7E070156573D7F000001 = {
 			fileRef = 00D2C42FFEDB2CB5CFED3B93;
 			isa = PBXBuildFile;
 			settings = {
 			};
 		};
+//0B0
+//0B1
+//0B2
+//0B3
+//0B4
+//2F0
+//2F1
+//2F2
+//2F3
+//2F4
 		2F3AE79E012B0CF7CFED3B8B = {
 			isa = PBXFrameworkReference;
 			name = MKPerformSndMIDI.framework;
@@ -1126,6 +1214,16 @@
 			settings = {
 			};
 		};
+//2F0
+//2F1
+//2F2
+//2F3
+//2F4
+//360
+//361
+//362
+//363
+//364
 		36C5C1C10039F18CCFED3B96 = {
 			isa = PBXFileReference;
 			path = SndAudioBuffer.m;
@@ -1207,6 +1305,16 @@
 				);
 			};
 		};
+//360
+//361
+//362
+//363
+//364
+//3A0
+//3A1
+//3A2
+//3A3
+//3A4
 		3AE3B96C007931DBCFED3B8B = {
 			isa = PBXFileReference;
 			name = libst.a;
@@ -1219,6 +1327,16 @@
 			settings = {
 			};
 		};
+//3A0
+//3A1
+//3A2
+//3A3
+//3A4
+//4E0
+//4E1
+//4E2
+//4E3
+//4E4
 		4E8FE8650122ECB1CFED3B8B = {
 			isa = PBXFileReference;
 			path = SndAudioFader.m;
@@ -1294,6 +1412,16 @@
 			settings = {
 			};
 		};
+//4E0
+//4E1
+//4E2
+//4E3
+//4E4
+//500
+//501
+//502
+//503
+//504
 		508F93C0003B28C0CFED3B96 = {
 			isa = PBXFileReference;
 			path = SndMeter.h;
