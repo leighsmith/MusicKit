@@ -16,7 +16,7 @@
 #import "SndStreamMixer.h"
 #import "SndAudioProcessor.h"
 
-#define SNDSTREAMMIXER_DEBUG 1
+#define SNDSTREAMMIXER_DEBUG 0
 
 @implementation SndStreamMixer
 

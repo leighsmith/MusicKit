@@ -47,8 +47,8 @@ enum {
 
     [super init];
     
-    outputQueue = [SndAudioBufferQueue audioBufferQueueWithLength: 4];
-    inputQueue  = [SndAudioBufferQueue audioBufferQueueWithLength: 4];
+    outputQueue = [[SndAudioBufferQueue audioBufferQueueWithLength: 4] retain];
+    inputQueue  = [[SndAudioBufferQueue audioBufferQueueWithLength: 4] retain];
 
 
 /*
@@ -69,7 +69,7 @@ enum {
     }
 */
     if (synthThreadLock == nil)
-      synthThreadLock = [[NSLock new] retain];    
+      synthThreadLock = [NSLock new];    
 
     if (processorChain == nil)
       processorChain = [[SndAudioProcessorChain audioProcessorChain] retain];
@@ -103,11 +103,8 @@ enum {
 
 - setClientName: (NSString*) name
 {
-  if (clientName != nil)
-    [clientName release];
-  clientName = name;
-  if (clientName != nil)
-    [clientName retain];
+  [clientName release];
+  clientName = [name retain];
   return self;
 }
 

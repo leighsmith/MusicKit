@@ -44,8 +44,7 @@
 
 - (void) dealloc
 {
-  if (recordBuffer != nil) 
-    [recordBuffer release];
+  [recordBuffer release];
   [super dealloc];
 }
 

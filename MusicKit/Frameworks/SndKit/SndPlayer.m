@@ -59,7 +59,7 @@ static SndPlayer *defaultSndPlayer;
     if (playing     == nil)
         playing     = [[NSMutableArray arrayWithCapacity: 10] retain];
     if (playingLock == nil)
-        playingLock = [[NSLock new] retain];  // controls adding and removing sounds from the playing list.
+        playingLock = [[NSLock alloc] init];  // controls adding and removing sounds from the playing list.
     [self setClientName: @"SndPlayer"];
     return self;
 }
@@ -70,12 +70,9 @@ static SndPlayer *defaultSndPlayer;
 
 - (void) dealloc
 {
-    if (toBePlayed != nil)
-        [toBePlayed release];
-    if (playing != nil)
-        [playing release];
-    if (playingLock != nil)
-        [playingLock release];
+    [toBePlayed release];
+    [playing release];
+    [playingLock release];
     [super dealloc];
 }
 

@@ -69,11 +69,11 @@
     SndPerformance *newPerformance = [[SndPerformance allocWithZone: zone] init];
     
     // We do a lightweight copy since this is just a reference to the Snd anyway.
-    newPerformance->snd        = snd; 
+    newPerformance->snd        = [snd retain]; 
     newPerformance->playTime   = playTime;
     newPerformance->playIndex  = playIndex;
     newPerformance->endAtIndex = endAtIndex;
-    return newPerformance; // should we autorelease?
+    return newPerformance; // no need to autorelease (by definition, "copy" is retained)
 }
 
 // We consider the performances to be equal if they are the same sound and start at the same time.
@@ -95,7 +95,7 @@
 
 - (Snd*) snd
 {
-    return snd;
+    return [[snd retain] autorelease];
 }
 
 - (double) playTime

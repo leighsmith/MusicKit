@@ -20,7 +20,7 @@ enum {
 
 + audioBufferQueueWithLength: (int) n
 {
-    return [[self alloc] initQueueWithLength: 4];
+    return [[[self alloc] initQueueWithLength: 4] autorelease];
 }
 
 - init
@@ -34,8 +34,8 @@ enum {
     [super init];
      numBuffers = n;
     if (pendingBuffersLock == nil) {
-        pendingBuffersLock   = [[[NSConditionLock alloc] initWithCondition: ABQ_noData] retain];
-        processedBuffersLock = [[[NSConditionLock alloc] initWithCondition: ABQ_noData] retain];
+        pendingBuffersLock   = [[NSConditionLock alloc] initWithCondition: ABQ_noData];
+        processedBuffersLock = [[NSConditionLock alloc] initWithCondition: ABQ_noData];
         pendingBuffers       = [[NSMutableArray arrayWithCapacity: numBuffers] retain];
         processedBuffers     = [[NSMutableArray arrayWithCapacity: numBuffers] retain];
         

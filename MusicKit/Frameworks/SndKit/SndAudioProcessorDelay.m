@@ -36,7 +36,7 @@
   [super init];
   
   if (lock == nil)
-    lock    = [[NSLock new] retain];
+    lock    = [[NSLock alloc] init];
    length   = 0;
    feedback = 0;
    chanL    = NULL;

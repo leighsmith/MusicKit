@@ -27,7 +27,7 @@
 
 + reverb
 {
-  return [SndAudioProcessorReverb new];
+  return [[SndAudioProcessorReverb new] autorelease];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
