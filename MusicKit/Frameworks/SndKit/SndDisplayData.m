@@ -1,4 +1,10 @@
 /******************************************************************************
+$Id$
+
+Description: Hold-all for displaying a sound.
+
+Original Author: Stephen Brandon
+
 LEGAL:
 This framework and all source code supplied with it, except where specified, are Copyright Stephen Brandon and the University of Glasgow, 1999. You are free to use the source code for any purpose, including commercial applications, as long as you reproduce this notice on all such software.
 
