@@ -1,13 +1,13 @@
 <!-- $Id$ -->
 
-<chapter id=MusicTables>
+<appendix id=MusicTables>
 <title>Music Tables</title>
 
   <sect1 id=MusicKitParameters>
-    <title>Music Kit Parameters</title>
+    <title><productname>MusicKit</productname> Parameters</title>
 
     <para>This section lists and describes the parameters that are
-recognized by the Music Kit <classname>MKSynthPatch</classname>es.
+recognized by the <productname>MusicKit</productname> <classname>MKSynthPatch</classname>es.
 The following information is given for each parameter:</para>
 
 <itemizedlist>
@@ -26,7 +26,7 @@ role="bold">amp</emphasis> is identified in an application as
 
 <para>As described in <xref linkend="MusicData">, a constant-valued
 parameter can be retrieved as any data type, regardless of how it was
-set.  However, the Music Kit <classname>MKSynthPatch</classname>es
+set.  However, the <productname>MusicKit</productname> <classname>MKSynthPatch</classname>es
 always retrieve parameter values as specific types.  The type by which
 a particular parameter is retrieved is implied by the value range.
 For example, a value range of [0.0, 1.0] implies that the parameter
@@ -45,14 +45,17 @@ different style!), see <xref linkend="IntroSynthPatches">.</para>
 
 <para>Note: When doing synthesis in a realtime
 interactive context, such as when playing it from a MIDI keyboard, you
-should invoke 
+should invoke:</para>
 
 <programlisting>
 [orchestra setTimed:NO]
-</programlisting> and call
-<programlisting>MKUseRealTimeEnvelopes(YES)</programlisting> before
-allocating the <classname>MKSynthPatch</classname>.</para>
+</programlisting>
 
+<para>and call</para>
+
+<programlisting>MKUseRealTimeEnvelopes(YES)</programlisting>
+
+<para>before allocating the <classname>MKSynthPatch</classname>.</para>
 
     <sect2 id="WaveTableSynthParams">
       <title>Wave Table Synthesis Parameters</title> 
@@ -60,7 +63,7 @@ allocating the <classname>MKSynthPatch</classname>.</para>
 <para>There are seven subclasses of
 <classname>MKSynthPatch</classname> that implement wave table
 synthesis.  The first four use <classname>MKWaveTable</classname>
-objects that you supply, the others have access to the Music Kit
+objects that you supply, the others have access to the <productname>MusicKit</productname>
 <classname>MKWaveTable</classname> database:</para>
 
       <table frame=all><title>Wave Table Subclasses of <classname>MKSynthPatch</classname></title>
@@ -316,7 +319,7 @@ vibrato.</entry></row>
 <para>There are nine subclasses of <classname>MKSynthPatch</classname>
 that perform frequency modulation (FM).  The simplest of these are
 single-modulator instruments. There's also a simple FM that has access
-to the Music Kit <classname>MKWaveTable</classname> database for use
+to the <productname>MusicKit</productname> <classname>MKWaveTable</classname> database for use
 in the carrier oscillator. The rest of the FM
 <classname>MKSynthPatch</classname>es use two modulators.  All of
 these classes provide frequency interpolation and vibrato:</para>
@@ -854,12 +857,16 @@ waveform.</entry></row>
   </sect1>
 
   <sect1 id="MKWaveTableDatabase">
-    <title><classname>MKWaveTable</classname> Database</title> <para>The Music Kit provides a
-library of <classname>MKWaveTable</classname> objects that can be accessed by the DB family of
-<classname>MKSynthPatch</classname>es: DBFm1vi, DBWave1v(i), and
-DBWave2vi.  The entries in the database are referred to by string
-names, both in an application and in a scorefile.  The precise
-<classname>MKWaveTable</classname> that's used depends on the frequency of the Note that's
+    <title><classname>MKWaveTable</classname> Database</title> 
+
+<para>The <productname>MusicKit</productname> provides a library of
+<classname>MKWaveTable</classname> objects that can be accessed by the
+DB family of <classname>MKSynthPatch</classname>es:
+<classname>DBFm1vi</classname>, <classname>DBWave1v(i)</classname>,
+and <classname>DBWave2vi</classname>.  The entries in the database are
+referred to by string names, both in an application and in a
+scorefile.  The precise <classname>MKWaveTable</classname> that's used
+depends on the frequency of the <classname>MKNote</classname> that's
 being synthesized.  By default, the value of <emphasis
 role="bold">freq</emphasis> (or its synonym <emphasis
 role="bold">freq1</emphasis>) is used to determine the Note's
@@ -1251,4 +1258,4 @@ that corresponds to the key number.  A key number's lowest frequency
 	</tgroup>
       </table>
   </sect1>
-</chapter>
+</appendix>
