@@ -74,59 +74,19 @@
    non-commercial purposes so long as the author attribution and copyright
    messages remain intact and accompany all relevant code.
   
- Modification History:
+ Modification history prior to commital to CVS repository:
 
-  $Log$
-  Revision 1.4  2003/06/18 18:50:01  leighsmith
-  Fixed readData always reading from the start of the buffer. Replaced SndSoundStruct with SndFormat
-
-  Revision 1.3  2003/06/13 03:33:15  leighsmith
-  Big cleanup of code, stripped copious cruft from readData as part of the great purge of SndSoundStruct
-
-  Revision 1.2  2003/06/03 04:40:26  leighsmith
-  Renamed the uLaw and aLaw translation routines removing wrapper functions and more meaningful namings
-
-  Revision 1.1  2003/05/30 04:20:23  leighsmith
-  Renamed _Sndresamplesubs.m to SndResample.m, improved error reporting
-
-  Revision 1.3  2003/05/12 17:23:27  leighsmith
-  Updated copyright message and CVS Id
-
-  Revision 1.2  2002/03/06 11:45:48  sbrandon
-  changed resample routines in 2 ways:
-  - now only operate on host endian data
-  - resample now takes an additional argument which takes an alternative input
-    buffer. If non-null, this buffer is used intead of the input SndStruct.
-    This allows the routine to be used on arbitrary buffers of data.
-
-  Revision 1.1  2002/02/26 13:07:39  sbrandon
-  recent changes in compiler tools on MacOSX refuse to compile these
-  functions as "c" files since they contain ObjC code. Renamed as .m.
-
-  Revision 1.4  2002/01/29 22:35:02  sbrandon
-  added new BSD-style license courtesy of Julius Smith, for files derived
-  from his "resample" project. Thanks Julius.
-
-  Revision 1.3  2001/05/12 16:57:03  sbrandon
-  - tidied up all the imports
-  - added some includes for GNUstep
-
-  Revision 1.2  2000/04/16 21:51:50  leigh
-  Big cleanup, enabled resampling from other than beginning of sound
-
-
-*      06/07/88/clf    Version received from Chris Fraley
-*	04/23/90/mtm	Made function prototypes.
-*			Made local functions static.
-*			Use #import.
-*      03/06/91 mcnabb Modified to read & write NeXT mono & stereo
-*                      sound files
-*      06/06/91 jos	Modification to contain default filter file.
-*			Switched from prompts to command-line options.
-*			Modified filter file format to include Nmult.
-*			Added choice between "small" and "large" filters.
-*      06/18/91 jos	Split resample.c into itself plus resamplesubs.c
-*      11/21/92 jos	Added linear interpolation and saturating overflow.
+      06/07/88/clf    Version received from Chris Fraley
+      04/23/90/mtm	Made function prototypes.
+			Made local functions static.
+			Use #import.
+      03/06/91 mcnabb Modified to read & write NeXT mono & stereo sound files
+      06/06/91 jos	Modification to contain default filter file.
+			Switched from prompts to command-line options.
+			Modified filter file format to include Nmult.
+			Added choice between "small" and "large" filters.
+      06/18/91 jos	Split resample.c into itself plus resamplesubs.c
+      11/21/92 jos	Added linear interpolation and saturating overflow.
 */
 
 #define IBUFFSIZE 4096                         /* Input buffer size */
@@ -140,15 +100,8 @@
 # include <stdarg.h>
 #else
 # import "SndResample.h"
-# ifndef WIN32
-//#  import <libc.h>
-# else
-#  import <stdio.h>
-#  import <malloc.h>
-# endif
-
-# include "_Sndsmallfilter.h"
-# include "_Sndlargefilter.h"
+# import "_Sndsmallfilter.h"
+# import "_Sndlargefilter.h"
 # import "_Sndfilterkit.h"
 # import "SndFunctions.h"
 # import "SndMuLaw.h"
