@@ -1,0 +1,1243 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;}
+\paperw16220
+\paperh12580
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f1 ã
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+Release 4.0  Updates Copyright 
+\f1 ã
+\f0 1993 by CCRMA, Stanford University.  All Rights Reserved.\
+\
+
+\pard\tx2620\tx3120\tx3620\fs16\li2100\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\fs56\li2100\fc0\cf0 Music Tables\
+
+\fs16 \
+\
+\
+
+\b\fs36\li100 Music Kit Parameters\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 This section lists and describes the parameters that are recognized by the Music Kit SynthPatches.  The following information is given for each parameter:\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\tx4120\fs28\fi-520\li2620\fc0\cf0 ·	Print name\
+·	Typical value range\
+·	Description of use \
+
+\pard\tx2620\tx3120\tx3620\fs16\li2100\fc0\cf0 \
+
+\fs28 Keep in mind that a parameter's print name is used when the parameter is written to a scorefile.  In an application, a parameter is known as an integer identifier that's represented as 
+\b MK_
+\b0\i printName.  
+\i0 For example, the parameter listed below as 
+\b amp
+\b0  is identified in an application as 
+\b MK_amp
+\b0 .\
+
+\fs16 \
+
+\fs28 As described in Chapter 3 of the 
+\i Concepts
+\i0  manual, a constant-valued parameter can be retrieved as any data type, regardless of how it was set.  However, the Music Kit SynthPatches always retrieve parameter values as specific types.  The type by which a particular parameter is retrieved is implied by the value range.  For example, a value range of [0.0, 1.0] implies that the parameter value is retrieved as a 
+\b double
+\b0 ; the range [0, 127] means that the type is 
+\b int
+\b0 .\
+
+\fs16 \
+
+\fs28 The parameters are organized according to synthesis technique.  Many of the parameters, such as those that affect frequency, are common to more than one synthesis technique.  Thus, for completeness, the same parameter description may be given in more than one section.\
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+
+\b0\fs28\li2100\fc1\cf1 For further information (or rather, the same info presented in a different style!), see  \
+\
+
+\pard\tx2520\tx2880\tx3240\li2160\fc0\cf0 Note: When dong synthesis in a realtime interactive context, such as when playing it from a MIDI keyboard, you should invoke 
+\b [orchestra setTimed:NO] 
+\b0 and call
+\b  MKUseRealTimeEnvelopes(YES) 
+\b0 before allocating the SynthPatch.\
+
+\pard\li2100\fc1\cf1 \
+		
+{\b{\NeXTHelpLink1765 \markername ;\linkFilename /LocalLibrary/Documentation/MusicKit/SynthPatches/IntroSynthPatches.rtf;\linkMarkername ;}
+¬}\f0\b\i0\ulnone\ql\fs28\fi0\li2100\gray0\fc1\cf1\up0\dn0  /LocalLibrary/Documentation/MusicKit/SynthPatches/IntroSynthPatches.rtf
+\b0 \
+
+\b\fs16\li1100\fc0\cf0 \
+\
+
+\fs36 Wave Table Synthesis Parameters\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 There are seven subclasses of SynthPatch that implement wave table synthesis.  The first four use WaveTable objects that you supply:\
+
+\fs16 \
+
+\pard\tx4620\tx6640\tx8660\tx10680\b\fs28\li2620\fc0\cf0 SynthPatch	Description\
+
+\b0 Wave1	One WaveTable\
+Wave1v	One WaveTable with vibrato\
+Wave1i	One WaveTable with frequency interpolation\
+Wave1vi	One WaveTable with vibrato and interpolation\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 The others have access to the Music Kit WaveTable database:\
+
+\fs16 \
+
+\pard\tx4620\tx6640\tx8660\tx10680\b\fs28\li2620\fc0\cf0 SynthPatch	Description\
+
+\b0 DBWave1v	One database WaveTable with vibrato\
+DBWave1vi	One database WaveTable with vibrato and interpolation\
+DBWave2vi	Two database WaveTables with vibrato and interpolation\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 The wave table synthesis parameters are:\
+
+\fs16 \
+
+\pard\tx4380\tx7140\b\fs28\li2100\fc0\cf0 Name	Value Range	Description\
+
+\pard\tx4380\tx4380\tx7140\tx7140\b0\li2100\fc0\cf0 amp	[0.0, 1.0] or	Basic amplitude (but see 
+\b amp1
+\b0 ).  The dB\
+	[
+\f1 -¥
+\f0 , 0.0] dB	(decibel) scaling is obtained through the 
+\b MKdB() \
+
+\b0 		C function; in a scorefile, with the 
+\b dB
+\b0  postfix \
+		operator.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 amp0	same as 
+\b amp
+\b0 	Amplitude when 
+\b ampEnv
+\b0  = 0.0.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 amp1	same as 
+\b amp
+\b0 	Amplitude when 
+\b ampEnv
+\b0  = 1.0; synonym for 
+\b amp
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 ampAtt	[0.0, 
+\f1 ¥
+\f0 ]	
+\b ampEnv
+\b0  attack duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 ampEnv	Envelope object	Amplitude envelope.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 ampRel	[0.0, 
+\f1 ¥
+\f0 ]	
+\b ampEnv
+\b0  release duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 bearing	[
+\f1 -
+\f0 45.0, 45.0]	Stereophonic placement in degrees.  0.0 is center, 
+\f1 -
+\f0 45.0 is hard left, and 45.0 is hard right.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 controlChange	[0,127]	If controlChange is 7, then controlVal is MIDI volume.  Implemented as an \
+		attenuation of amplitude.  Default is 127 (no attenuation.)\
+		If controlChange is 1, then controlVal is MIDI modWheel.  Implemented as \
+		an attenuation of vibrato.  Default is 127 (no attenuation.)\
+		Some Wave SynthPatches also implement MIDI pan and MIDI balance.\
+\
+controlVal	[0,127]	See controlChange.\
+\
+
+\pard\fs16\li2100\fc0\cf0 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freq	[~15.0, ~11000.0]	Fundamental frequency (but see 
+\b freq1
+\b0 ).\
+	or pitch variable\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freq0	same as 
+\b freq	
+\b0 Frequency when 
+\b freqEnv
+\b0  = 0.0.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 freq1	same as 
+\b freq
+\b0 	Frequency when 
+\b freqEnv
+\b0  = 1.0; synonym for 
+\b freq
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freqAtt	[0.0, 
+\f1 ¥
+\f0 ]	
+\b freqEnv
+\b0  attack duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freqEnv	Envelope object	Frequency envelope.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freqRel	[0.0, 
+\f1 ¥
+\f0 ]	
+\b freqEnv
+\b0  release duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 keyNum	[0, 127] or	Specifies pitch as an index into the default\
+	key number	TuningSystem, an array of frequencies.  Used \
+		only in the absence of 
+\b freq
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 phase	[
+\f1 -
+\f0 180.0, 180]	Initial phase of the first WaveTable, in degrees.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 pitchbend 	[0,0x3fff]	MIDI pitch bend.  Default is no bend\
+\
+pitchbendSensitivity [0,
+\f1 ¥
+\f0 ]	Number of semitones represented by full pitch bend deviation.  Default is 3.\
+\
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fi-5040\li7140\fc0\cf0 portamento	[0.0, 
+\f1 ¥
+\f0 ]	Phrase rearticulation time in seconds.  Resets the x value of the second point of 
+\i all 
+\i0 Envelopes.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 rvibAmp	[0.0, 1.0]	Random vibrato amplitude; unused by Fm1 and Fm1i.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 svibAmp	[0.0, 1.0]	Sinusoidal vibrato amplitude; see above.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 svibFreq	[0.0, ~15.0]	Sinusoidal vibrato frequency; see above.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 velocity 	[0,127]	MIDI velocity is a scaling on amplitude.  64 produces no modification.  \
+		Below produces an attenuation.  Above produces an amplification.\
+\
+velocitySensitivity 	[0.0, 1.0]	Scaling on velocity.  If velocitySensitivity is 0, velocity has no effect. If it is 		1.0, a velocity of 0 produces silence.  Default is 0.5.\
+\
+waveform	WaveTable object	First WaveTable (but see 
+\b waveform1
+\b0 ).  The\
+	or database string	database string is used only by database \
+		SynthPatches.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 waveform0	same as 
+\b waveform
+\b0 	WaveTable when 
+\b waveformEnv
+\b0  = 0.0.  Used by DBWave2vi only.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 waveform1	same as 
+\b waveform
+\b0 	WaveTable when 
+\b waveformEnv
+\b0  = 1.0; synonym for 
+\b waveform
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 waveformEnv	Envelope object	Envelope that pans between the two WaveTables.  Used by DBWave2vi only.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 waveLen	power of 2	
+\b waveform 
+\b0 length (optimal value by default).\
+
+\fs16 \
+
+\fs28 vibWaveform	WaveTable object	Specifies shape of vibrato.\
+
+\pard\b\fs16\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 Frequency Modulation Parameters\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 There are nine subclasses of SynthPatch that perform frequency modulation (fm).  The simplest of these are single-modulator instruments:\
+
+\fs16 \
+
+\pard\tx4620\tx6640\tx8660\tx10680\b\fs28\li2620\fc0\cf0 SynthPatch	Description\
+
+\b0 Fm1	Simple (one-modulator) fm\
+Fm1i	Simple fm with frequency interpolation\
+Fm1v	Simple fm with vibrato\
+Fm1vi	Simple fm with interpolation and vibrato\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 There's also a simple fm that has access to the Music Kit WaveTable database for use in the carrier oscillator:\
+
+\fs16 \
+
+\pard\tx4620\tx6640\tx8660\tx10680\b\fs28\li2620\fc0\cf0 SynthPatch	Description\
+
+\b0 DBFm1vi	Simple fm with interpolation, vibrato, and WaveTable database\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 The database contents are listed in ªWaveTable Database,º later in this appendix.\
+
+\fs16 \
+
+\fs28 The rest of the fm SynthPatches use two modulators.  All of these classes provide frequency interpolation and vibrato:\
+
+\fs16 \
+
+\pard\tx4620\tx6640\tx8660\tx10680\b\fs28\li2620\fc0\cf0 SynthPatch	Description\
+
+\b0 Fm2cvi	Cascade fm\
+Fm2cnvi	Cascade fm with random modulation (noise) on the modulators\
+Fm2pvi	Parallel fm\
+Fm2pnvi	Parallel fm with noise\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\fs28\li2100\fc0\cf0 The parameters recognized by the fm SynthPatches are listed below; parameters that are recognized by only a subset of the SynthPatches are so noted.  \
+
+\fs16 \
+
+\pard\tx4380\tx7140\b\fs28\li2100\fc0\cf0 Name	Value Range	Description\
+
+\pard\tx4380\tx4380\tx7140\tx7140\b0\li2100\fc0\cf0 amp	[0.0, 1.0] or	Basic amplitude (but see 
+\b amp1
+\b0 ).  The dB \
+	[
+\f1 -¥
+\f0 , 0.0] dB	(decibel) scaling is obtained through the 
+\b MKdB()\
+
+\b0 		C function; in a scorefile, with the 
+\b dB
+\b0  postfix \
+		operator.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 amp0	same as 
+\b amp
+\b0 	Amplitude when 
+\b ampEnv
+\b0  = 0.0.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 amp1	same as 
+\b amp
+\b0 	Amplitude when 
+\b ampEnv
+\b0  = 1.0; synonym for 
+\b amp
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 ampAtt	[0.0, 
+\f1 ¥
+\f0 ]	
+\b ampEnv
+\b0  attack duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 ampEnv	Envelope object	Amplitude envelope.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 ampRel	[0.0, 
+\f1 ¥
+\f0 ]	
+\b ampEnv
+\b0  release duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 bearing	[
+\f1 -
+\f0 45.0, 45.0]	Stereophonic placement in degrees.  0.0 is center, 
+\f1 -
+\f0 45.0 is hard left, and 45.0 is hard right.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 bright	[0.0, 1.0]	Modulation index scaler (defaults to 1.0).\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 controlChange	[0,127]	If controlChange is 7, then controlVal is MIDI volume.  Implemented as an \
+		attenuation of amplitude.  Default is 127 (no attenuation.)\
+		If controlChange is 1, then controlVal is MIDI modWheel.  Implemented as \
+		an attenuation of vibrato.  Default is 127 (no attenuation.)\
+		Some FM SynthPatches also implement MIDI pan and MIDI balance.\
+\
+controlVal	[0,127]	See controlChange.\
+\
+
+\pard\fs16\li2100\fc0\cf0 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 cRatio	[0.0, ~10.0]	Carrier frequency as a ratio of the fundamental.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 c1Ratio	same as 
+\b cRatio
+\b0 	Synonym for 
+\b cRatio
+\b0  \
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freq	[~15.0, ~11000.0]	Fundamental frequency (but see 
+\b freq1
+\b0 ).\
+	or pitch variable\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freq0	same as 
+\b freq	
+\b0 Frequency when 
+\b freqEnv
+\b0  = 0.0.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 freq1	same as 
+\b freq
+\b0 	Frequency when 
+\b freqEnv
+\b0  = 1.0; synonym for 
+\b freq
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freqAtt	[0.0, 
+\f1 ¥
+\f0 ]	
+\b freqEnv
+\b0  attack duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freqEnv	Envelope object	Frequency envelope.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freqRel	[0.0, 
+\f1 ¥
+\f0 ]	
+\b freqEnv
+\b0  release duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 keyNum	[0, 127] or	Specifies pitch as an index into the default\
+	key number	TuningSystem, an array of frequencies.  Used \
+		only in the absence of 
+\b freq
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 m1Ind	[0.0, ~10.0]	Index of modulator 1 (but see 
+\b m1Ind1
+\b0 ).\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 m1Ind0	same as 
+\b m1Ind
+\b0 	Index of modulator 1 when 
+\b m1IndEnv
+\b0  = 0.0.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 m1Ind1	same as 
+\b m1Ind
+\b0 	Index of modulator 1 when 
+\b m1IndEnv
+\b0  = 1.0; synonym for 
+\b m1Ind
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 m1IndAtt	[0.0, 
+\f1 ¥
+\f0 ]	
+\b m1IndEnv 
+\b0 attack duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 m1IndEnv	Envelope object	Index Envelope for modulator 1.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 m1IndRel	[0.0, 
+\f1 ¥
+\f0 ]	
+\b m1IndEnv 
+\b0 release duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 m1Phase	[
+\f1 -
+\f0 180.0, 180]	Initial phase of modulator 1.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 m1Ratio	[0.0, ~10.0]	Modulator 1 frequency as a ratio of the fundamental.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 m1Waveform	WaveTable object	Waveform of modulator 1.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 m2Ind	Same as the similarly named parameters above, applied to modulator 2.  \
+
+\i through
+\i0 	Used by the two-modulator SynthPatches only (Fm2cvi, Fm2cnvi, \
+m2Waveform	Fm2pvi, and Fm2pnvi).\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 noiseAmp	[0.0, 1.0]	Amplitude of noise.  This parameter and the following noise parameters are used by Fm2cnvi and Fm2pnvi only.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 noiseAmp0	same as 
+\b noiseAmp	
+\b0 Amplitude of noise when 
+\b noiseAmpEnv
+\b0  = 0.0.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 noiseAmp1	same as 
+\b noiseAmp	
+\b0 Amplitude of noise when
+\b  noiseAmpEnv 
+\b0 = 1.0
+\b ; 
+\b0 synonym for 
+\b noiseAmp
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 noiseAmpAtt	[0.0, 
+\f1 ¥
+\f0 ]	
+\b noiseAmpEnv
+\b0  attack duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 noiseAmpEnv	Envelope object	Noise amplitude Envelope.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 noiseAmpRel	[0.0, 
+\f1 ¥
+\f0 ]	
+\b noiseAmpEnv
+\b0  release duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 phase	[
+\f1 -
+\f0 180.0, 180]	Initial phase of the carrier, in degrees.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 pitchbend 	[0,0x3fff]	MIDI pitch bend.  Default is no bend\
+\
+pitchbendSensitivity [0,
+\f1 ¥
+\f0 ]	Number of semitones represented by full pitch bend deviation.  Default is 3.\
+\
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fi-5040\li7140\fc0\cf0 portamento	[0.0, 
+\f1 ¥
+\f0 ]	Phrase rearticulation time in seconds.  Resets the x value of the second point of 
+\i all 
+\i0 Envelopes.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 rvibAmp	[0.0, 1.0]	Random vibrato amplitude; unused by Fm1 and Fm1i.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 svibAmp	[0.0, 1.0]	Sinusoidal vibrato amplitude; see above.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 svibFreq	[0.0, ~15.0]	Sinusoidal vibrato frequency; see above.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 waveform	WaveTable object	Waveform of the carrier (sine wave by default).\
+	or database string	The database string is used only by DBFm1vi.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 waveLen	power of 2	
+\b waveform 
+\b0 length (optimal value by default).\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 velocity 	[0,127]	MIDI velocity is a scaling on amplitude.  64 produces no modification.  \
+		Below produces an attenuation.  Above produces an amplification.\
+\
+velocitySensitivity 	[0.0, 1.0]	Scaling on velocity.  If velocitySensitivity is 0, velocity has no effect. If it is 		1.0, a velocity of 0 produces silence.  Default is 0.5.\
+\
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\li2100\fc0\cf0 vibWaveform	WaveTable object	Specifies shape of vibrato.\
+
+\pard\b\fs16\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 Pluck Parameters\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 There's only one Pluck.  An example of physical modeling synthesis, Pluck derives much of its characteristic sound naturally, without requiring much attention.  As such, it recognizes fewer parameters than the other SynthPatches:\
+
+\fs16 \
+
+\pard\tx4380\tx7140\b\fs28\li2100\fc0\cf0 Name	Value Range	Description\
+
+\pard\tx4380\tx4380\tx7140\tx7140\b0\li2100\fc0\cf0 amp	[0.0, 1.0] or	Basic amplitude (but see 
+\b amp1
+\b0 ).  The dB\
+	[
+\f1 -¥
+\f0 , 0.0] dB	(decibel) scaling is obtained through the 
+\b MKdB() \
+
+\b0 		C function; in a scorefile, with the 
+\b dB
+\b0  postfix \
+		operator.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 ampRel	[0.0, 
+\f1 ¥
+\f0 ]	noteOff release time in seconds (to 
+\f1 -
+\f0 60 dB).\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 bright	[0.0, 1.0]	Dynamic level (a timbral parameter).  1.0 is the sharpest (brightest).\
+
+\pard\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\li2100\fc0\cf0 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\fi-5040\li7140\fc0\cf0 bearing	[-45.0, 45.0]	Stereophonic placement in degrees.  0.0 is center, 
+\f1 -
+\f0 45.0 is hard left, and 45.0 is hard right.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 controlChange	[0,127]	If controlChange is 7, then controlVal is MIDI volume.  Implemented as an \
+		attenuation of amplitude.  Default is 127 (no attenuation.)\
+		\
+controlVal	[0,127]	See controlChange.\
+\
+
+\pard\fs16\li2100\fc0\cf0 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 decay	[0.0, 
+\f1 ¥
+\f0 ]	Initial decay in seconds (to 
+\f1 -
+\f0 60 dB).  0.0 means no decay.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freq	[~15.0, ~1300 or ~2600, depending on sampling rate]		Fundamental frequency.  Or pitch variable\
+		
+\i NOTE LOW UPPER LIMIT!  ALSO NOTE THAT VERY LOW		FREQUENCIES MAY CAUSE YOU TO RUN OUT OF DSP MEMORY!
+\i0 \
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 keyNum	[0, 127] or	Specifies pitch as an index into the default\
+	key number	TuningSystem, an array of frequencies.  Used \
+		only in the absence of 
+\b freq
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 lowestFreq	same as 
+\b freq	
+\b0 Lowest frequency among subsequent noteUpdates.  \
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 pickNoise	[0.0, ~0.06]	Duration of initial noise burst in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 pitchbend 	[0,0x3fff]	MIDI pitch bend.  Default is no bend\
+\
+pitchbendSensitivity [0,
+\f1 ¥
+\f0 ]	Number of semitones represented by full pitch bend deviation.  Default is 3.\
+\
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\li2100\fc0\cf0 sustain	[0.0, 1.0]	Level of sustain.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 velocity 	[0,127]	MIDI velocity is a scaling on amplitude.  64 produces no modification.  \
+		Below produces an attenuation.  Above produces an amplification.\
+\
+velocitySensitivity 	[0.0, 1.0]	Scaling on velocity.  If velocitySensitivity is 0, velocity has no effect. If it is 		1.0, a velocity of 0 produces silence.  Default is 0.5.\
+\
+
+\pard\b\fs16\li100\fc0\cf0 \
+\
+\
+
+\fs36 Waveshaping Parameters\
+\
+
+\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 There are two waveshaping SynthPatches, 
+\b Shape 
+\b0 and 
+\b Shapev
+\b0 .  They differ in that the vibrato parameters are supported only by 
+\b Shapev
+\b0 .  \
+\
+These SynthPatches implement non-linear distortion synthesis, which means that they produce sound by using an  oscillator to drive a lookup table.   Normally, the oscillator is a sine wave and the complexity of the resulting waveform is a function of the lookup table.  However, for added flexibility, you may set the oscillator waveform to anything you want.   The parameters are as follows:\
+
+\fs16 \
+
+\pard\tx4380\tx7140\b\fs28\li2100\fc0\cf0 Name	Value Range	Description\
+
+\pard\tx4380\tx4380\tx7140\tx7140\b0\li2100\fc0\cf0 amp	[0.0, 1.0] or	Basic amplitude (but see 
+\b amp1
+\b0 ).  The dB \
+	[
+\f1 -¥
+\f0 , 0.0] dB	(decibel) scaling is obtained through the 
+\b MKdB()\
+
+\b0 		C function; in a scorefile, with the 
+\b dB
+\b0  postfix \
+		operator.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 amp0	same as 
+\b amp
+\b0 	Amplitude when 
+\b ampEnv
+\b0  = 0.0.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 amp1	same as 
+\b amp
+\b0 	Amplitude when 
+\b ampEnv
+\b0  = 1.0; synonym for 
+\b amp
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 ampAtt	[0.0, 
+\f1 ¥
+\f0 ]	
+\b ampEnv
+\b0  attack duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 ampEnv	Envelope object	Amplitude envelope.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 ampRel	[0.0, 
+\f1 ¥
+\f0 ]	
+\b ampEnv
+\b0  release duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 bearing	[
+\f1 -
+\f0 45.0, 45.0]	Stereophonic placement in degrees.  0.0 is center, 
+\f1 -
+\f0 45.0 is hard left, and 45.0 is hard right.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 bright	[0.0, 1.0]	Modulation index scaler (defaults to 1.0).\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 controlChange	[0,127]	If controlChange is 7, then controlVal is MIDI volume.  Implemented as an \
+		attenuation of amplitude.  Default is 127 (no attenuation.)\
+		If controlChange is 1, then controlVal is MIDI modWheel.  Implemented as \
+		an attenuation of vibrato.  Default is 127 (no attenuation.)\
+\
+controlVal	[0,127]	See controlChange.\
+\
+
+\pard\fs16\li2100\fc0\cf0 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freq	[~15.0, ~11000.0]	Fundamental frequency (but see 
+\b freq1
+\b0 ).\
+	or pitch variable\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freq0	same as 
+\b freq	
+\b0 Frequency when 
+\b freqEnv
+\b0  = 0.0.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 freq1	same as 
+\b freq
+\b0 	Frequency when 
+\b freqEnv
+\b0  = 1.0; synonym for 
+\b freq
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freqAtt	[0.0, 
+\f1 ¥
+\f0 ]	
+\b freqEnv
+\b0  attack duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freqEnv	Envelope object	Frequency envelope.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 freqRel	[0.0, 
+\f1 ¥
+\f0 ]	
+\b freqEnv
+\b0  release duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 keyNum	[0, 127] or	Specifies pitch as an index into the default\
+	key number	TuningSystem, an array of frequencies.  Used \
+		only in the absence of 
+\b freq
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 m1Ind	[0.0, ~10.0]	Waveshaping index of waveshaping modulator (but see 
+\b m1Ind1
+\b0 ).\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 m1Ind0	same as 
+\b m1Ind
+\b0 	Waveshaping index of waveshaping modulator when 
+\b m1IndEnv
+\b0  = 0.0.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 m1Ind1	same as 
+\b m1Ind
+\b0 	Waveshaping index of waveshaping modulator when 
+\b m1IndEnv
+\b0  = 1.0; synonym for 
+\b m1Ind
+\b0 .\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 m1IndAtt	[0.0, 
+\f1 ¥
+\f0 ]	
+\b m1IndEnv 
+\b0 attack duration in seconds. \
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 m1IndEnv	Envelope object	Index Envelope for waveshaping modulator.   Note:  the result of the calculation of (m1Ind1-m1Ind0) * m1IndEnv + m1Ind1 must be less than or equal to 1.  Otherwise, distortion will result.   Also note that the 
+\b m1IndEnv
+\b0  can affect amplitude somewhat.   The effect is minimized by the use of the Le Brun "signification" algorithm.\
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs16\li2100\fc0\cf0 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 m1IndRel	[0.0, 
+\f1 ¥
+\f0 ]	
+\b m1IndEnv 
+\b0 release duration in seconds.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\fi-5040\li7140\fc0\cf0 m1Waveform	WaveTable object	Waveform used to specify consitution of the distortion table.  If the object is a Samples object, the Samples are used directly as the distortion table.    If the object is a Partials object, the Chebychev polynomial calculation is performed to convert it into a distortion table.   Note that using high-numbered harmonics increases the time it takes to compute the table.\
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs16\li2100\fc0\cf0 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 pitchbend 	[0,0x3fff]	MIDI pitch bend.  Default is no bend\
+\
+pitchbendSensitivity [0,
+\f1 ¥
+\f0 ]	Number of semitones represented by full pitch bend deviation.  Default is 3.\
+\
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fi-5040\li7140\fc0\cf0 portamento	[0.0, 
+\f1 ¥
+\f0 ]	Phrase rearticulation time in seconds.  Resets the x value of the second point of 
+\i all 
+\i0 Envelopes.\
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs16\fi-5040\li7140\fc0\cf0 \
+
+\pard\b\li1100\fc0\cf0 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\b0\fs28\fi-5040\li7140\fc0\cf0 rvibAmp	[0.0, 1.0]	Random vibrato amplitude; unused by Fm1 and Fm1i.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 svibAmp	[0.0, 1.0]	Sinusoidal vibrato amplitude; see above.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 svibFreq	[0.0, ~15.0]	Sinusoidal vibrato frequency; see above.\
+
+\fs16 \
+
+\pard\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx4380\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\tx7140\fs28\li2100\fc0\cf0 velocity 	[0,127]	MIDI velocity is a scaling on amplitude.  64 produces no modification.  \
+		Below produces an attenuation.  Above produces an amplification.\
+\
+velocitySensitivity 	[0.0, 1.0]	Scaling on velocity.  If velocitySensitivity is 0, velocity has no effect. If it is 		1.0, a velocity of 0 produces silence.  Default is 0.5.\
+\
+waveform	WaveTable object	Oscillator waveform.\
+
+\fs16 \
+
+\pard\b\li100\fc0\cf0 \
+
+\fs36 WaveTable Database\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The Music Kit provides a library of WaveTable objects that can be accessed by the DB family of SynthPatches:  DBFm1vi, DBWave1v(i), and DBWave2vi.  The entries in the database are referred to by string names, both in an application and in a scorefile.  The precise WaveTable that's used depends on the frequency of the Note that's being synthesized.  By default, the value of 
+\b freq
+\b0  (or its synonym 
+\b freq1
+\b0 ) is used to determine the Note's frequency; you can find an entry based on the value of 
+\b freq0 
+\b0 by preceding the database string name with the character ª0º (zero); for example, ª0BAº.\
+
+\fs16 \
+
+\pard\tx4620\tx6640\tx8660\tx10680\b\fs28\li2620\fc0\cf0 Name	Description\
+
+\b0 ªBAº	Bass voice ªahº\
+ªBEº	Bass voice ªehº\
+ªBOº	Bass voice ªohº\
+ªBUº	Bass voice ªooº\
+ªTAº	Tenor voice ªahº\
+ªTEº	Tenor voice ªehº\
+ªTIº	Tenor voice ªeeº\
+ªTOº	Tenor voice ªohº\
+ªTUº	Tenor voice ªooº\
+ªSAº	Soprano voice ªahº\
+ªSEº	Soprano voice ªehº\
+ªSIº	Soprano voice ªeeº\
+ªSOº	Soprano voice ªohº\
+ªSUº	Soprano voice ªooº\
+ªVCAº	Cello attack\
+ªVCSº	Cello sustain\
+ªVNAº	Violin attack\
+ªVNSº	Violin sustain\
+ªTRº	Trumpet\
+ªBNº	Bassoon\
+ªASº	Alto saxophone\
+ªSSº	Soprano saxophone\
+ªBCº	Bass clarinet\
+ªCLº	Clarinet\
+ªEHº	English horn\
+ªOBº	Oboe\
+ªPNº	Piano\
+ªTWº	Triangle wave\
+ªSWº	Sawtooth wave\
+ªIWº	Impulse wave\
+
+\fs16 \
+
+\pard\b\li100\fc0\cf0 \
+\
+
+\pard\tx2620\tx3120\tx3620\b0\li2100\fc0\cf0 \
+
+\pard\b\fs36\li100\fc0\cf0 Pitches and Frequencies\
+
+\fs16 \
+
+\pard\tx2620\tx3120\tx3620\b0\fs28\li2100\fc0\cf0 The following table shows the correspondence between pitch name variables, key numbers, and the frequencies (in Hz) that they represent.\
+
+\fs16 \
+
+\fs28 Key number constants, not explicitly listed here, are the same as pitch name variables, but with an appended ªk.º\
+
+\fs16 \
+
+\fs28 The rightmost column, Upper Limit, shows the highest frequency (inclusive) that corresponds to the key number.  A key number's lowest frequency (non-inclusive) is the upper limit of the previous key number.  \
+
+\fs16 \
+
+\pard\tx4620\tx6640\tx8660\tx10680\b\fs28\li2620\fc0\cf0 Pitch Name	Frequency	Key #	Upper Limit\
+
+\b0 C00	8.175625	0	8.418725\
+Cs00/Df00	8.661875	1	8.919375\
+D00	9.176875	2	9.449775\
+Ds00/Ef00	9.722812	3	10.011812\
+E00/Ff00	10.300937	4	10.607137\
+F00/Es00	10.913438	5	11.237738\
+Fs00/Gf00	11.562188	6	11.905888\
+G00	12.249688	7	12.613988\
+Gs00/Af00	12.978438	8	13.364138\
+A00	13.75	9	14.1587\
+As00/Bf00	14.5675	10	15.0007\
+B00/Cf0	15.434062	11	15.892562\
+C0/Bs00	16.35125	12	16.83745\
+Cs0/Df0	17.32375	13	17.83865\
+D0	18.35375	14	18.89965\
+Ds0/Ef0	19.445625	15	20.023725\
+E0/Ff0	20.601875	16	21.214275\
+F0/Es0	21.826875	17	22.475575\
+Fs0/Gf0	23.124375	18	23.811775\
+G0	24.499375	19	25.228075\
+Gs0/Af0	25.956875	20	26.728375\
+A0	27.5	21	28.3174\
+As0/Bf0	29.135	22	30.0015\
+B0/Cf1	30.868125	23	31.785225\
+C1/Bs0	32.7025	24	33.6749\
+Cs1/Df1	34.6475	25	35.6775\
+D1	36.7075	26	37.7993\
+Ds1/Ef1	38.89125	27	40.04745\
+E1/Ff1	41.20375	28	42.42875\
+F1/Es1	43.65375	29	44.95125\
+Fs1/Gf1	46.24875	30	47.62375\
+G1	48.99875	31	50.45625\
+Gs1/Af1	51.91375	32	53.45685\
+A1	55.0	33	56.635\
+As1/Bf1	58.27	34	60.0031\
+B1/Cf2	61.73625	35	63.57055\
+C2/Bs1	65.405	36	67.35\
+Cs2/Df2	69.295	37	71.3549\
+D2	73.415	38	75.5987\
+Ds2/Ef2	77.7825	39	80.0949\
+E2/Ff2	82.4075	40	84.8574\
+F2/Es2	87.3075	41	89.9024\
+Fs2/Gf2	92.4975	42	95.2475\
+G2	97.9975	43	100.9125\
+Gs2/Af2	103.8275	44	106.9137\
+A2	110.0	45	113.2699\
+As2/Bf2	116.54	46	120.0062\
+B2/Cf3	123.4725	47	127.1412\
+C3/Bs2	130.81	48	134.7\
+Cs3/Df3	138.59	49	142.71\
+D3	146.83	50	151.1975\
+Ds3/Ef3	155.565	51	160.19\
+E3/Ff3	164.815	52	169.715\
+F3/Es3	174.615	53	179.805\
+Fs3/Gf3	184.995	54	190.495\
+G3	195.995	55	201.825\
+Gs3/Af3	207.655	56	213.8275\
+A3	220.0	57	226.54\
+As3/Bf3	233.08	58	240.0125\
+B3/Cf4	246.945	59	254.2824\
+C4/Bs3	261.62	60	269.4\
+Cs4/Df4	277.18	61	285.42\
+D4	293.66	62	302.395\
+Ds4/Ef4	311.13	63	320.38\
+E4/Ff4	329.63	64	339.43\
+F4/Es4	349.23	65	359.61\
+Fs4/Gf4	369.99	66	380.99\
+G4	391.99	67	403.65\
+Gs4/Af4	415.31	68	427.655\
+A4	440.0	69	453.08\
+As4/Bf4	466.16	70	480.025\
+B4/Cf5	493.89	71	508.565\
+C5/Bs4	523.24	72	538.8\
+Cs5/Df5	554.36	73	570.84\
+D5	587.32	74	604.79\
+Ds5/Ef5	622.26	75	640.76\
+E5/Ff5	659.26	76	678.86\
+F5/Es5	698.46	77	719.22\
+Fs5/Gf5	739.98	78	761.98\
+G5	783.98	79	807.3\
+Gs5/Af5	830.62	80	855.31\
+A5	880.0	81	906.16\
+As5/Bf5	932.32	82	960.05\
+B5/Cf6	987.78	83	1017.13\
+C6/Bs5	1046.48	84	1077.6\
+Cs6/Df6	1108.72	85	1141.68\
+D6	1174.64	86	1209.58\
+Ds6/Ef6	1244.52	87	1281.52\
+E6/Ff6	1318.52	88	1357.72\
+F6/Es6	1396.92	89	1438.44\
+Fs6/Gf6	1479.96	90	1523.96\
+G6	1567.96	91	1614.6\
+Gs6/Af6	1661.24	92	1710.62\
+A6	1760.0	93	1812.32\
+As6/Bf6	1864.64	94	1920.1\
+B6/Cf7	1975.56	95	2034.26\
+C7/Bs6	2092.96	96	2155.1999\
+Cs7/Df7	2217.44	97	2283.36\
+D7	2349.28	98	2419.1599\
+Ds7/Ef7	2489.04	99	2563.04\
+E7/Ff7	2637.04	100	2715.44\
+F7/Es7	2793.84	101	2876.8799\
+Fs7/Gf7	2959.92	102	3047.92\
+G7	3135.92	103	3229.1999\
+Gs7/Af7	3322.48	104	3421.2399\
+A7	3520.0	105	3624.6399\
+As7/Bf7	3729.28	106	3840.2\
+B7/Cf8	3951.12	107	4068.52\
+C8/Bs7	4185.92	108	4310.3999\
+Cs8/Df8	4434.88	109	4566.7199\
+D8	4698.56	110	4838.3199\
+Ds8/Ef8	4978.08	111	5126.0799\
+E8/Ff8	5274.08	112	5430.8799\
+F8/Es8	5587.68	113	5753.7599\
+Fs8/Gf8	5919.84	114	6095.8399\
+G8	6271.84	115	6458.3999\
+Gs8/Af8	6644.96	116	6842.4799\
+A8	7040.0	117	7249.2799\
+As8/Bf8	7458.56	118	7680.3999\
+B8/Cf9	7902.24	119	8137.0399\
+C9/Bs8	8371.84	120	8620.8\
+Cs9/Df9	8869.76	121	9133.44\
+D9	9397.12	122	9676.64\
+Ds9/Ef9	9956.16	123	10252.1599\
+E9/Ff9	10548.16	124	10861.76\
+F9/Es9	11175.36	125	11507.52\
+Fs9/Gf9	11839.68	126	12191.6799\
+G9	12543.68	127	12543.68\
+
+\fs16 \
+
+\b\li100 \
+\
+\
+\
+
+\pard\b0\li2100\fc0\cf0 \
+\
+\
+\
+\
+
+}

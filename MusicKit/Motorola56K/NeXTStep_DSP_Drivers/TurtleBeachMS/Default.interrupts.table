@@ -1,0 +1,10 @@
+"Class Names" = "TurtleBeachMS";
+"DMA Channels" = "";
+"Family" = "DSP";
+"Instance" = "0";
+"I/O Ports" = "0x290-0x29f";
+"IRQ Levels" = "5";
+"Memory Maps" = "";
+"Valid IRQ Levels" = "5 7 9 10 11 12 15";
+"Version" = "0.95";
+"Driver Version" = "Version 0.95 Turtle Beach Multisound DSP driver, Music Kit 4.2 version";

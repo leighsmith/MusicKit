@@ -1,0 +1,1020 @@
+{\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\ftech\fcharset2 Symbol;}
+{\colortbl;\red255\green255\blue255;}
+\paperw16220\paperh14980
+\pard\ql\qnatural
+
+\f0\fs24 \cf0 Release 2.0  Copyright 
+\f1 „
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+\pard\li1100\ql\qnatural
+
+\b \cf0 \
+\
+\
+\
+
+\fs36 MKNoteSender\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b0\fs28 \cf0 INHERITS FROM	NSObject\
+
+\fs16 \
+
+\fs28 DECLARED IN	MusicKit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs28 \cf0 MKNoteSender is an auxilliary class that completes the implementation of MKPerformer.  Instances are created and owned by MKPerformer objects, normally when the MKPerformer itself is created or initialized.  A MKNoteSender object performs two functions:\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\tx4620\li3120\fi-520\ql\qnatural
+
+\fs28 \cf0 ∑	It's part of the link between a MKPerformer and an MKInstrument.  MKNoteSender's 
+\b connect
+\b0 : method connects a MKNoteSender to a MKNoteReceiver, which is owned by an MKInstrument in much the same way that a MKNoteSender is owned by a MKPerformer.  By connecting a MKNoteSender to a MKNoteReceiver, their respective owners are said to be connected.   MKNoteReceiver defines an equivalent 
+\b connect:
+\b0  method–it doesn't matter which of the two objects is the receiver and which is the argument when sending a 
+\b connect:
+\b0  message.\
+
+\fs16 \
+
+\fs28 ∑	MKNoteSender's 
+\b sendNote:
+\b0  method defines the mechanism by which a MKPerformer relays a MKNote to a set of MKInstruments.  When a MKNoteSender receives a 
+\b sendNote:
+\b0  message, it sends 
+\b receiveNote:
+\b0  to its connected MKNoteReceivers which, in turn, send 
+\b realizeNote:fromNoteReceiver:
+\b0  to their owners (MKInstrument objects).  You can toggle a MKNoteSender's ability to send MKNotes through the 
+\b squelch
+\b0  and 
+\b unsquelch
+\b0  methods; a MKNoteSender won't send 
+\b receiveNote:
+\b0  messages while it's squelched.\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs28 \cf0 There's a fundamental difference between these two tasks in that while you connect MKNoteSenders to MKNoteReceivers from your application, sending MKNotes is a MKPerformer's responsibility
+\b :  
+\b0 Subclasses of MKPerformer should invoke 
+\b sendNote:
+\b0  as part of their
+\b  
+\b0 implementations of the
+\b  perform
+\b0  method.\
+
+\fs16 \
+
+\fs28 Keep in mind that while you can create MKNoteSenders and add them to MKPerformers through messages sent by your application (a MKNoteSender is added to a MKPerformer through the latter's 
+\b addNoteSender:
+\b0  method), they're designed to be created and added by the MKPerformers themselves.  Before adding your own MKNoteSenders to a MKPerformer, you should check the description of the MKPerformer subclass that you're using to ensure that your MKNoteSenders will be recognized.\
+
+\fs16 \
+
+\fs28 A MKNoteSender can be owned by only one MKPerformer at a time; however, it can be connected to any number of MKNoteReceivers.  In addition, two different MKNoteSenders can be connected to the same MKNoteReceiver.  Thus the connections between MKPerformers and MKInstruments can describe an arbitrarily complicated network.  To retrieve the MKNoteSenders that are owned by a particular MKPerformer–to connect them to MKNoteReceivers, or to squelch and unsquelch them–you invoke the MKPerformer's 
+\b noteSender
+\b0  or 
+\b noteSenders
+\b0  method.\
+
+\fs16 \
+
+\fs28 MKNoteSenders are also created, owned, and used by instances of MKNoteFilter and MKMidi–neither of which are actual MKPerformers–as part of their assumptions of the role of MKPerformer.  A MKNoteFilter subclass should send 
+\b sendNote:
+\b0  to its MKNoteSenders as part of its implementation of 
+\b realizeNote:fromNoteSender:
+\b0 .  It isn't anticipated that MKMidi will be subclassed (at least not to override its 
+\b sendNote
+\b0 : invocation).\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\i\fs28 \cf0 Inherited from NSObject
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in MKNoteSender
+\i0 	id	*noteReceivers;\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+\cf0 int	connectionCount;\
+BOOL	isSquelched;\
+id	owner;\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 noteReceivers 	NSMutableArray of connected MKNoteReceivers.\
+
+\fs16 \
+
+\fs28 connectionCount 	Number of connections.\
+
+\fs16 \
+
+\fs28 isSquelched 	YES if the MKNoteSender is squelched.  NO by default.\
+
+\fs16 \
+
+\fs28 owner 	MKPerformer (or MKNoteFilter or MKMidi) that owns the MKNoteSender.\
+\pard\tx7140\li2100\ql\qnatural
+
+\fs16 \cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs28 \cf0 Creating a MKNoteSender	
+\f1 - 
+\f0 copy\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 copyFromZone:\
+
+\f1 - 
+\f0 init\
+
+\f1 - 
+\f0 free\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 The object's owner
+\f1 \U9 - 
+\f0 owner\
+
+\fs16 \
+
+\fs28 Connecting the object	
+\f1 - 
+\f0 connect:\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 disconnect:\
+
+\f1 - 
+\f0 disconnect\
+
+\f1 - 
+\f0 connections\
+
+\f1 - 
+\f0 connectionCount\
+
+\f1 - 
+\f0 isConnected:\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Squelching the object	
+\f1 - 
+\f0 squelch\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 unsquelch\
+
+\f1 - 
+\f0 isSquelched\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Sending MKNotes	
+\f1 - 
+\f0 sendNote:\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 sendNote:atTime:\
+
+\f1 - 
+\f0 sendNote:withDelay:\
+
+\f1 - 
+\f0 sendAndFreeNote:\
+
+\f1 - 
+\f0 sendAndFreeNote:atTime:\
+
+\f1 - 
+\f0 sendAndFreeNote:withDelay:\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Archiving the object	
+\f1 - 
+\f0 write:\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 read:\
+\pard\tx7140\li2100\ql\qnatural
+
+\fs16 \cf0 \
+\
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 connect:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b connect:
+\i\b0 aNoteReceiver\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Connects 
+\i aNoteReceiver
+\i0  to the MKNoteSender; if the argument isn't a MKNoteReceiver, the connection isn't made.   Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b disconnect:
+\b0 ,
+\b  
+\f1\b0 - 
+\f0\b isConnected
+\b0 ,
+\b  
+\f1\b0 - 
+\f0\b connections\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 connectionCount\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (unsigned int)
+\b connectionCount\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the number of MKNoteReceivers that are connected to the MKNoteSender.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b connect:
+\b0 ,
+\b  
+\f1\b0 - 
+\f0\b disconnect:
+\b0 ,
+\b  
+\f1\b0 - 
+\f0\b isConnected
+\b0 ,
+\b  
+\f1\b0 - 
+\f0\b connections\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 connections\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b connections\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Creates and returns a List of the MKNoteReceivers that are connected to the MKNoteSender.  It's the sender's responsibility to free the List.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b connect:
+\b0 ,
+\b  
+\f1\b0 - 
+\f0\b disconnect:
+\b0 ,
+\b  
+\f1\b0 - 
+\f0\b isConnected\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 copy\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b copy\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Creates and returns an unowned MKNoteSender that's connected to the same MKNoteReceivers as the receiver of this message.  If the receiving MKNoteSender is squelched, so, too, shall be the copy.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b copyFromZone:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 copyFromZone:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b copyFromZone:
+\b0 (NXZone *)
+\i zone\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 This is the same as 
+\b copy
+\b0 , but the new object is allocated from 
+\i zone
+\i0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b copy\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 disconnect\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b disconnect\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Severs the connections between the MKNoteSender and all the MKNoteReceivers it's connected to.   Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b disconnect:
+\b0 , 
+\f1 - 
+\f0\b connect:
+\b0 , 
+\f1 - 
+\f0\b isConnected:
+\b0 , 
+\f1 - 
+\f0\b connections
+\b0  \
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 disconnect:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b disconnect:
+\i\b0 aNoteReceiver\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Severs the connection between the MKNoteSender and 
+\i aNoteReceiver
+\i0 ; if the MKNoteReceiver isn't connected, this does nothing.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b disconnect
+\b0 , 
+\f1 - 
+\f0\b connect:
+\b0 , 
+\f1 - 
+\f0\b isConnected:
+\b0 , 
+\f1 - 
+\f0\b connections
+\b0  \
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 free\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b free\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Severs the connections between the MKNoteSender and all its connected MKNoteReceivers and then frees the MKNoteSender.  You can't free a MKNoteSender that's in the process of sending a MKNote–specifically, an MKInstrument shouldn't invoke this method as part of its 
+\b realizeNote:fromNoteReceiver:
+\b0  method.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b disconnect
+\b0  \
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 init\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b init\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Initializes a MKNoteSender that was created through 
+\b allocFromZone:
+\b0 .   The new MKNoteSender is unsquelched and unowned.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 isConnected:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (BOOL)
+\b isConnected:
+\i\b0 aNoteReceiver\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Returns YES if 
+\i aNoteReceiver
+\i0  is connected to the MKNoteSender, otherwise returns NO.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b connect
+\b0 , 
+\f1 - 
+\f0\b disconnect
+\b0 , 
+\f1 - 
+\f0\b connections
+\b0 , 
+\f1 - 
+\f0\b connectionCount
+\b0 ,  \
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 isSquelched\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (BOOL)
+\b isSquelched\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns YES if the MKNoteSender is squelched (its Note-sending ability is disabled), otherwise returns NO.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b squelch
+\b0 ,
+\b  
+\b0   
+\f1 - 
+\f0\b unsquelch\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 owner\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b owner\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the MKPerformer (or MKNoteFilter or MKMidi object) that owns the MKNoteSender.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b addNoteSender: 
+\b0 (MKPerformer, MKNoteFilter, MKMidi)\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 read:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b read:
+\b0 (NXTypedStream *)
+\i stream\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Unarchives the MKNoteSender by reading it from 
+\i stream
+\i0 .  You never invoke this method directly; to read an archived MKNoteSender, call the 
+\b NXReadObject()
+\b0  C function.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b write:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 sendAndFreeNote:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b sendAndFreeNote:
+\i\b0 aNote\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Sends the message 
+\b sendNote:
+\i\b0 aNote
+\i0  to 
+\b self
+\b0  and then frees 
+\i aNote
+\i0 .  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b sendNote:
+\b0 ,
+\b  
+\f1\b0 -
+\f0\b  sendAndFreeNote:atTime:
+\b0 ,
+\b  
+\f1\b0 -
+\f0\b  sendAndFreeNote:withDelay:
+\b0 ,\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 sendAndFreeNote:atTime:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b sendAndFreeNote:
+\i\b0 aNote 
+\i0\b atTime:
+\b0 (double)
+\i beatsSinceStart\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Enqueues, with the appropriate MKConductor, a request for 
+\b sendAndFreeNote:
+\i\b0 aNote
+\i0  to be sent to 
+\b self
+\b0  at time 
+\i beatsSinceStart
+\i0 , measured in beats from the beginning of the MKConductor's performance.  See 
+\b sendNote:atTime:
+\b0  for a description of the MKConductor that's used.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b sendNote:
+\b0 ,
+\b  
+\f1\b0 -
+\f0\b  sendAndFreeNote:
+\b0 ,
+\b  
+\f1\b0 -
+\f0\b  sendAndFreeNote:withDelay:
+\b0 ,\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 sendAndFreeNote:withDelay:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b sendAndFreeNote:
+\i\b0 aNote 
+\i0\b withDelay:
+\b0 (double)
+\i delayBeats\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Enqueues, with the appropriate Conductor, a request for 
+\b sendAndFreeNote:
+\i\b0 aNote
+\i0  to be sent to 
+\b self
+\b0  after 
+\i delayBeats
+\i0 .  See 
+\b sendNote:atTime:
+\b0  for a description of the MKConductor that's used.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b sendNote:
+\b0 ,
+\b  
+\f1\b0 -
+\f0\b  sendAndFreeNote:
+\b0 ,
+\b  
+\f1\b0 -
+\f0\b  sendAndFreeNote:atTime:
+\b0 ,\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 sendNote:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b sendNote:
+\i\b0 aNote\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Sends the message 
+\b receiveNote:
+\i\b0 aNote
+\i0  to the MKNoteReceivers that are connected to the MKNoteSender.  If the MKNoteSender is squelched, the messages aren't sent.  Normally, this method is only invoked by the MKNoteSender's owner.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b sendAndFreeNote:
+\b0 ,
+\b  
+\f1\b0 -
+\f0\b  sendNote:withDelay:
+\b0 ,
+\f1  -
+\f0\b  sendNote:atTime:
+\b0 ,\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 sendNote:atTime:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b sendNote:
+\i\b0 aNote 
+\i0\b atTime:
+\b0 (double)
+\i beatsSinceStart\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Enqueues, with the MKConductor object described below, a request for 
+\b sendNote:
+\i\b0 aNote
+\i0  to be sent to 
+\b self
+\b0  at time 
+\i beatsSinceStart
+\i0 , measured in beats from the beginning of the MKConductor's performance.  If 
+\i beatsSinceStart
+\i0  has already passed, the enqueued message is sent immediately.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 The request is enqueued with
+\i  
+\i0 the object that's returned by
+\b  [
+\i\b0 aNote
+\i0  
+\b conductor]
+\b0 .  Normally–if the owner is a MKPerformer–this is the owner's MKConductor.  However, if the owner is a MKNoteFilter, the request is enqueued with the MKConductor of the MKPerformer (or MKMidi) that originally sent 
+\i aNote
+\i0  into the performance (or the defaultConductor if the MKNoteFilter itself created the MKNote).\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b sendNote:
+\b0 ,
+\b  
+\f1\b0 -
+\f0\b  sendNote:withDelay:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b0\fs28 \cf0  
+\b sendNote:withDelay:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b sendNote:
+\i\b0 aNote 
+\i0\b withDelay:
+\b0 (double)
+\i delayBeats\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Enqueues, with the appropriate MKConductor, a request for 
+\b sendNote:
+\i\b0 aNote
+\i0  to be sent to 
+\b self
+\b0  after 
+\i delayBeats
+\i0 .  See 
+\b sendNote:atTime:
+\b0  for a description of the MKConductor that's used.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b sendNote:
+\b0 ,
+\b  
+\f1\b0 -
+\f0\b  sendNote:atTime:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 squelch\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b squelch\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Disables the MKNoteSender's ability to send 
+\b receiveNote:
+\b0  to its MKNoteReceivers.   Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b isSquelched
+\b0 ,
+\b  
+\b0   
+\f1 - 
+\f0\b unsquelch\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 unsquelch\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b unsquelch\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Enables the MKNoteSender ability to send MKNotes, undoing the effect of a previous 
+\b squelch message.  Returns self.\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 See also: 
+\f1 - 
+\f0\b isSquelched
+\b0 ,
+\b  
+\b0   
+\f1 - 
+\f0\b squelch\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 write:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b write:
+\b0 (NXTypedStream *)
+\i stream\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Archives the MKNoteSender by writing it to 
+\i stream
+\i0 .  The MKNoteSender's connections and owner are archived by reference.  You never invoke this method directly; to archive a MKNoteSender, call the 
+\b NXWriteRootObject()
+\b0  C function.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b read:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+}

@@ -1,0 +1,769 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f3\fmodern Ohlfs;}
+\paperw16220
+\paperh12580
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\pard\tx3120\tx3620\tx4120\f0\b0\i0\ulnone\fs24\fc0\cf0 Release 4.0  Copyright 
+\f1 „
+\f0 1993 by CCRMA, Stanford University.  All Rights Reserved.\
+
+\fs16\li2620 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 ArielQP  (see also ArielQPSat, described later in this document)\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Orchestra\
+
+\fs16 \
+
+\fs28 DECLARED IN	ArielQP.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 The Ariel QuintProcessor is a board that fits into the NeXT cube.  It features four "satellite" ("slave") DSPs with 16 or 32K of static RAM (SRAM), a hub DSP with 8K of SRAM, a bank of dynamic RAM (DRAM) a set of serial ports, two per DSP, and a SCSI chip.   The Music Kit supports the DSPs, the DSP ports, and the DRAM.  It does not currently support the SCSI.\
+
+\fs16 \
+
+\b\fs28 ArielQP
+\b0  class serves a dual purpose.  First it is a subclass of Orchestra that represnts the hub DSP.  As such, it can be sent Orchestra messages such as 
+\b allocUnitGenerator:
+\b0 , 
+\b open
+\b0 , 
+\b run
+\b0 , etc.   Second, it represents the Quint Processor as a whole.   The satellite DSPs are represented by instances of the class 
+\b ArielQPSat
+\b0  (see below).  Creating an instance of ArielQP automatically creates the associated 
+\b ArielQPSat
+\b0  objects.   Freeing an 
+\b ArielQP
+\b0  object frees its 
+\b ArielQPSat
+\b0  objects.\
+\
+The 
+\b ArielQP
+\b0  (hub DSP)  may be used as just another DSP, or it may be used as the hub of the 5-DSP configuration.   To use it alone, send it the message 
+\b setSatSoundIn:NO.  
+\b0 In this mode, it sends and optionally receives sound from its DSP serial port.   The satellite DSPs need not be used.  If they are used, each sends and optionally receives sound from its serial port.   Note that in this mode you 
+\i must 
+\i0 have an Ariel ProPort plugged into any DSP that you intend to use.  If you leave a DSP with no ProPort, its clock will never advance.  Thus, for example, if you plan to use only DSP 'D', you should send 'run' to it alone, not to the Orchestra class.\
+\
+
+\i Note: 
+\fc1\cf1 The Quint Processor SCI port does not function like the NeXT DSP's SCI port.   Therefore, when using a DSPSerialPortDevice with the QuintProcessor, you should send setSendSettings:NO to disable sending of any commands to the SCI port.  This implies that the only serial port device you should use with the QuintProcess is the Ariel ProPort. 	\
+
+\i0\fc0\cf0 To use the hub as part of a 5-DSP configuration, send the message 
+\b setSatSoundIn:YES 
+\b0 to the 
+\b ArielQP.  
+\b0  The model here is of four satellites doing synthesis or sound processing of sound received by their serial ports and the hub merging these sounds, possibly doing more processing, and sending the result out its serial port.   Since this is the most common way of using the QuintProcessor, the default value of 
+\b satSoundIn 
+\b0 and 
+\b hubSoundOut 
+\b0 are 
+\b YES
+\b0 .  And since the hub is usually responsible for sending sound to its serial port, the default value of 
+\b serialSoundOut
+\b0  for an 
+\b ArielQP
+\b0  object is 
+\b YES.   
+\b0  Note that in this mode you 
+\i must 
+\i0 have an Ariel ProPort or equivalent plugged into DSP 'E'. \
+\
+Note that 
+\b setSatSoundIn:YES 
+\b0 only 
+\i enables
+\i0  inter-DSP communication.   In order to actually use the sound from the satellites, you must have one or more instances of the unit generator 
+\b In1qpUG
+\b0  running on the hub.   Each instance provides access to one channel of sound from one of the satellite DSPs.   Multiple 
+\b In1qpUG
+\b0  instances may be accessing the same satellite DSP channel.   In addition, the Music Kit provides a SynthPatch for the common case of simply adding all the satellites into the output stream.  This SynthPatch is called 
+\b ArielQPMix
+\b0 .  Simply allocating an instance of this SynthPatch immediately starts summing the satellites' sound into the hub DSP's output stream.  You do not have to send the SynthPatch a Note.   
+\b ArielQPMix
+\b0  is part of the Music Kit SynthPatch Library.\
+\
+The hub has another special funtion–it alone can access the bank of DRAM.  To access the DRAM, you need a unit generator that reads and writes the DRAM to be running on the hub.   The Music Kit provides one such unit generator, 
+\b DelayqpUG
+\b0 , which implements a digital delay line using the DRAM.  To use it, simply allocate one from the 
+\b ArielQP
+\b0  object that represents the hub.  
+\b DelayqpUG
+\b0  is very much like the DelayUG except that it is capable of much longer delays.   Note that currently, the 
+\b ArielQP
+\b0  class does not support automatic allocation of DRAM–the  
+\b SynthData
+\b0  class is not used and the application has to keep track of what memory it is using.   By combining instances of In1qpUG and DelayqpUG, it is easy to make a SynthPatch that reverberates the sound from the other DSPs.  Note that in the current implemenation, the satellites do not have direct access to the DRAM.   To do reverberation, they send their sound to the hub, either via inter-process sound or via the DSP serial ports.  (Chaining DSP serial ports is a practical and useful technique and is another approach to combining the power of the five DSPs. )\
+\
+The Music Kit does not automatically clear DRAM, with the exception of the "zero" location.  If you want to clear a segment of DRAM, use a 
+\b DelayqpUG
+\b0 , set the input location to [orchestra segmentZero:MK_xPatch] (or MK_yPatch), and let the 
+\b DelayqpUG
+\b0  run for a while.    DRAM requires periodic refreshing.  You can control whether this is "implicit" (done by the mere accessing of the memory) or "automatic" (done by the Quint Processor refresh hardware.)  The 
+\b ArielQP
+\b0  method 
+\b setDRAMAutoRefresh: 
+\b0 controls the refresh mode.  \
+\
+The current version of
+\b  mkmon_A_qp_hub_8k.dsp
+\b0  assumes a 256K DRAM bank.  If you upgrade to larger DRAM, you have to change the configuration code in 
+\b smsrc/reset_boot.asm
+\b0 .
+\b \
+
+\b0 \
+For an example of how to write a DSP unit generator that uses DRAM, see 
+\b ugsrc/delayqp.asm
+\b0 .  You should bracket any reading/writing of DRAM with the macros 
+\b begin_dram_access 
+\b0 and 
+\b end_dram_access
+\b0 .  See the file 
+\b smsrc/qp.asm
+\b0  for other useful QuintProcessor DSP macros.\
+ 
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Objec
+\i0 t	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Inherited from Orchestra
+\i0 	double	computeTime;\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 double	samplingRate;\
+id	stack;\
+char	*outputSoundfile;\
+char	*outputCommandsFile;\
+id	xZero;\
+id	yZero;\
+id	xSink;\
+id	ySink;\
+id	sineROM;\
+id	muLawROM;\
+MKDeviceStatus	deviceStatus;\
+unsigned short	orchIndex;\
+BOOL	isTimed;\
+BOOL	useDSP;\
+BOOL	soundOut;\
+BOOL	serialSoundOut;\
+BOOL	serialSoundIn;\
+BOOL	isLoopOffChip;\
+BOOL	fastResponse;\
+double	localDeltaT;\
+short	onChipPatchPoints;\
+id	serialPortDevice;\
+int	release;\
+char	version;\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\i\fs28 Declared in ArielQP	
+\i0 int	slot;\
+
+\i 	
+\i0 BOOL
+\i  	
+\i0 satSoundIn
+\i ; \
+\
+
+\i0 slot 	Which slot this Ariel QuintProcessor is in.  One of 2,4 or 6.\
+
+\fs16 \
+
+\fs28 satSoundIn 	YES if the hub DSP is receiving sound from the satellites.\
+
+\fs16 \
+
+\fs28\fc1\cf1 DRAMAutoRefresh
+\fc0\cf0  	YES if the hub DSP is doing DRAM auto refresh.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Creating and freeing an ArielQP	
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 + new\
++ newInSlot:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Modifying the object	
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 setSatSoundIn: \
+
+\f1 - 
+\f0 setDRAMAutoRefresh:
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 \
+Querying the object	
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 satSoundIn\
+
+\f1 - 
+\f0 DRAMAutoRefresh\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Controlling all five DSPs	
+\f1 - 
+\f0 makeQPPerform:\
+
+\f1 	- 
+\f0 makeQPPerform:with:\
+\
+Accessing the satellites	
+\f1 - 
+\f0 makeSatellitesPerform:\
+
+\f1 	- 
+\f0 makeSatellitesPerform:with:\
+
+\f1 	- 
+\f0 satellite:
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 CLASS METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28  new\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b new\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 If an ArielQP for slot 2 already exists, returns it.   Otherwise, if an Ariel QuintProcessor board is installed in slot 2, creates and returns a new instance of ArielQP and creates, if necessary, four instances of ArielQPSat.  Otherwise returns nil.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28  newInSlot:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b newInSlot:
+\b0 (int)
+\i slot\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 If an ArielQP for the specified already exists, returns it.   Otherwise, if an Ariel QuintProcessor board is installed in the specified, creates and returns a new instance of ArielQP and creates, if necessary, four instances of ArielQPSat.  Otherwise returns nil.  
+\i <<Note:  In release 4.0 of the Music Kit, the first Ariel QuintProcessor must be in slot 2, the second must be in slot 4 and the third must be in slot 6. >>\
+
+\i0\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\b0 \
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28\fc1\cf1 DRAMAutoRefresh\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\fc1\cf1 (BOOL)
+\b DRAMAutoRefresh\
+
+\b0\i\fs16\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns whether Auto Refresh is on.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28\fc1\cf1 init  \
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b\fc1\cf1 init\
+
+\b0\i\fs16\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Does various initialization, including setting the monitor file name to "mkmon_A_qp_hub_8k.dsp".  Also creates an ArielQPSat for each of the satellite DSPs if one doesn't already exist.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28\fc1\cf1 makeQPPerform:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b\fc1\cf1 makeQPPerform:
+\b0 (SEL)
+\i selector
+\b\i0 \
+
+\b0\i\fs16\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sends the specified selector to the objects representing all five DSPs.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28\fc1\cf1 makeQPPerform:with:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b\fc1\cf1 makeQPPerform:
+\b0 (SEL)
+\i selector 
+\b\i0 with:
+\b0\i arg
+\b\i0 \
+
+\b0\i\fs16\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sends the specified selector to the objects representing all five DSPs with the specified argument.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28\fc1\cf1 makeSatellitesPerform:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b\fc1\cf1 makeSatellitesPerform:
+\b0 (SEL)
+\i selector
+\b\i0 \
+
+\b0\i\fs16\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sends the specified selector to the four ArielQPSat objects .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28\fc1\cf1 makeSatellitesPerform:with:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b\fc1\cf1 makeSatellitesPerform:
+\b0 (SEL)
+\i selector 
+\b\i0 with:
+\b0\i arg
+\b\i0 \
+
+\b0\i\fs16\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sends the specified selector to the four ArielQPSat objects with the specified argument.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setDRAMAutoRefresh:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setDRAMAutoRefresh:
+\b0 (BOOL)
+\i yesOrNo
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 If 
+\i yesOrNo
+\i0 , enables the DRAM refresh.   If you use the macros provided in the file 
+\b smsrc/qp.asm
+\b0 , your unit generator will automatically turn off refresh before accessing memory, then turn it on again.  Refresh is off by default.  For very low sampling rates or non-sequential DRAM accesses, it may be necessary to turn it on.   You'll know if you need to turn it on because you'll hear clicks and pops.\
+
+\b \
+
+\pard\tx7140\li2100\fc0\cf0 setSatSoundIn:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setSatSoundIn:
+\b0 (BOOL)
+\i yesOrNo
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 If 
+\i yesOrNo
+\i0 , enables the hub/satellite inter-process sound link.  Note that if the link is enabled, all five DSPs must be sent the 
+\b run
+\b0  message.  Otherwise, the hub DSP will block waiting for sound from the satellites that are not running.   If the link is not enabled, then the hub does not block and the other DSPs need not be running.  
+\b setSatSoundIn: 
+\b0 must be sent when the ArielQP and ArielQPSat objects are closed (i.e. before they have been sent the 
+\b -open 
+\b0 message.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 satSoundIn\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (BOOL)
+\b satSoundIn\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns whether the hub/satellite inter-process sound link is enabled.\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 satellite:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b satellite:
+\b0 (char)
+\i satellite
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the specified satellite, which should be one of 'A', 'B', 'C', or 'D'.\
+
+\fs16 \
+\
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 ArielQPSat  \
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Orchestra\
+
+\fs16 \
+
+\fs28 DECLARED IN	ArielQP.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 The ArieQPSat objects are used to represent the QuintProcessor's satellite DSPs, one per instance of ArielQPSat. The satellite DSPs can either be used individually, sending their sound out their serial port (by sending the message 
+\b setSerialSoundOut:YES
+\b0 ) or they can be used as a group, sending their sound to the hub DSP (by sending the message 
+\b setHubSoundOut:YES
+\b0 .)   These two modes cannot be combined.   Sending one message, automatically disables the other.\
+\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Objec
+\i0 t	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Inherited from Orchestra
+\i0 	<<See ArielQP above>>\
+
+\fs16 \
+
+\i\fs28 Declared in ArielQPSat	
+\i0 BOOL
+\i  	
+\i0 hubSoundOut
+\i ; \
+\
+
+\i0 hubSoundOut 	YES if this satellite DSP is sending sound to the hub.\
+
+\fs16 \
+\
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Modifying the object	
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 set
+\pard\tx7140\tx10180\tx10680\fi-4540\li7140\fc0\cf0 Hub
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 Sound
+\pard\tx7140\tx10180\tx10680\fi-4540\li7140\fc0\cf0 Out
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 : \
+
+\f1 - 
+\f0 setSerialSound
+\pard\tx7140\tx10180\tx10680\fi-4540\li7140\fc0\cf0 Out
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 :
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 \
+Querying the object	
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 hubSoundOut\
+
+\f1 - 
+\f0 hub\
+
+\f1 - 
+\f0 (BOOL)isRealTime
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\pard\tx10180\tx10680\f1\fs28\fi-520\li7660\fc0\cf0 - (
+\f0\fc1\cf1 int
+\f1\fc0\cf0 )
+\f0 outputChannelOffset
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\pard\tx10180\tx10680\f1\fs28\fi-520\li7660\fc0\cf0 - (
+\f0\fc1\cf1 int
+\f1\fc0\cf0 )
+\f0 outputChannelCount
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\pard\tx10180\tx10680\f1\fs28\fi-520\li7660\fc0\cf0 - (
+\f0\fc1\cf1 int
+\f1\fc0\cf0 )
+\f0 outputInitialOffset
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\pard\tx10180\tx10680\f1\fs28\fi-520\li7660\fc0\cf0 - (
+\f0\fc1\cf1 BOOL
+\f1\fc0\cf0 )
+\f0\fc1\cf1 upSamplingOutput
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+\
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28\fc1\cf1 init  \
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b\fc1\cf1 init\
+
+\b0\i\fs16\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Does various initialization, including setting the monitor file name to "mkmon_A_qp_sat_16k.dsp".\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 hub \
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b hub\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the hub corresponding to this satellite.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+hubSoundOut\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (BOOL)
+\b hubSoundOut\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns whether the hub/satellite inter-process sound link is enabled.\
+
+\fs16 \
+\
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 monitorFileName \
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\fc1\cf1 (char *)
+\b\fc0\cf0 monitorFileName
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns the name of the satellite monitor, "mkmon_A_qp_sat_16k.dsp".\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 isRealTime \
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\fc1\cf1 (BOOL)
+\b isRealTime
+\b0\i\fc0\cf0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 If hub sound out, forwards this message to the hub.  Otherwise invokes super's version of this method.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28  outputChannelOffset \
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\fc1\cf1 (int)
+\b\fc0\cf0 outputChannelOffset
+\b0\i \
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+
+\i0\fs28 If hub sound out, forwards this message to the hub.  Otherwise invokes super's version of this method.\
+
+\fs16 \
+
+\b \
+
+\fs28 outputChannelCount \
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\fc1\cf1 (int)
+\b\fc0\cf0 outputChannelCount
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 If hub sound out, forwards this message to the hub.  Otherwise invokes super's version of this method.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 outputInitialOffset\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\fc1\cf1 (int)
+\b\fc0\cf0 outputInitialOffset
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 If hub sound out, forwards this message to the hub.  Otherwise invokes super's version of this method.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setHubSoundOut:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setHubSoundOut:
+\b0 (BOOL)
+\i yesOrNo
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 If 
+\i yesOrNo
+\i0 , enables the hub/satellite inter-process sound link.  Note that if the link is enabled, all five DSPs must be sent the 
+\b run
+\b0  message.  Otherwise, the hub DSP will block waiting for sound from the satellites that are not running.   If the link is not enabled, then the hub does not block and the other DSPs need not be running.  
+\b setSatSoundIn: 
+\b0 must be sent when the ArielQP and ArielQPSat objects are closed (i.e. before they have been sent the 
+\b -open 
+\b0 message.   Sending this message automatically sends 
+\b setSerialSoundOut:NO 
+\b0 if serialSoundOut is enabled.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setSerialSoundOut:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setSerialSoundOut:
+\b0 (BOOL)
+\i yesOrNo
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Same as superclass method except that sending this message automatically sends 
+\b setHubSoundOut:NO 
+\b0 if hubSoundOut is enabled.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 upSamplingOutput\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\fc1\cf1 (BOOL)
+\b\fc0\cf0 upSamplingOutput
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 If hub sound out, forwards this message to the hub.  Otherwise invokes super's version of this method.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+}

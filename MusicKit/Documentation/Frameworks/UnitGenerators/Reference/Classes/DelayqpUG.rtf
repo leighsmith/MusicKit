@@ -1,0 +1,247 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f3\fmodern Ohlfs;}
+\paperw16220
+\paperh14020
+\margl120
+\margr0
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 4.0  Copyright 
+\f1 „
+\f0 1993 by CCRMA, Stanford University.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 DelayqpUG\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	UnitGenerator\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit/unitgenerators/unitgenerators.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 DelayqpUG may only be used on the hub (master) DSP of the Ariel QuintProcessor.   It delays its input signal by some number of samples, using the dynamic RAM (DRAM), before producing it at its output.  Each DelayqpUG maintains a single pointer into the delay memory.  When the object is run, a tick's worth of samples are read and replaced with an equal number of samples from the input signal.  The pointer is then incremented by a tick.  When the pointer reaches the end of the delay memory, it automatically jumps back to the beginning, even if it's in the middle of a tick–in other words, the length of the delay memory 
+\i needn't
+\i0  be a multiple of the tick size.  The rate at which the pointer is incremented can't be modified, nor can you offset the beginning of the delay memory.  However, you can reposition the pointer to any arbitrary sample in the delay memory through the 
+\b setPointer:
+\b0  method.\
+\
+DRAM requires periodic refreshing.  You can control whether this is "implicit" (done by the mere accessing of the memory) or "automatic" (done by the Quint Processor refresh hardware.)  The ArielQP method 
+\b setDRAMAutoRefresh: 
+\b0 controls the refresh mode. \
+\
+Currently there is no support for automatic allocation of DRAM.  That is, there is no parallel to the automatic system provided for DSP SRAM.  The application must keep track of allocation itself.    By convention, location 1 is used as a "sink" location (a place to write garbage) and location 0 is a "zero" location (a place that is guaranteed to always hold a zero, assuming nobody overwrites it.)\
+\
+The Music Kit does not automatically clear DRAM, with the exception of the "zero" location.  If you want to clear a segment of DRAM, use a DelayqpUG, set the input location to 
+\b [orchestra segmentZero:MK_xPatch]
+\b0  (or 
+\b MK_yPatch
+\b0 ), and let the DelayqpUG run for a while.  \
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 MEMORY SPACES\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 DelayqpUG
+\i ab \
+
+\b0 a	
+\i0 output\
+
+\i b	
+\i0 input\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 adjustLength:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b adjustLength:
+\b0\i (int)delayLength\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the number of delayed samples to 
+\i delayLength
+\i0 .   \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 idleSelf\
+
+\pard\f1\b0\li2620\fc0\cf0 - 
+\f0\b idleSelf
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 You never send this message.  It's invoked by sending the 
+\b idle 
+\b0 message to the object.  \
+Sets the output patchpoint to 
+\i sink, 
+\i0 thus ensuring that the object does not produce any output. 
+\i  
+\i0 Also , sets the DRAM delay memory segment to DRAM's 
+\i sink 
+\i0 (location 0) and the length to 1, so that the object.  Note that you must send 
+\b setOutput:
+\b0  and 
+\b run 
+\b0 again to use the UnitGenerator after sending 
+\b idle
+\b0 .  \
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 length\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (int)
+\b length\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the number of samples delay. \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 resetPointer\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b resetPointer\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Resets the pointer to the beginning of the DRAM segment used as delay memory.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setDelayAddress:length:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setDelayAddress:
+\b0 (DSPDatum)
+\i address
+\b\i0  length:
+\b0 (DSPDatum)
+\i length\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the address and length of the DRAM segment used as delay memory.   Also sets the pointer to the start of the DRAM segment.   Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setInput:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setInput:
+\b0\i aPatchpoint\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the input patchpoint to 
+\i aPatchpoint
+\i0 .  Returns 
+\b nil
+\b0  if the argument isn't a patchpoint; otherwise returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setOutput:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setOutput:
+\b0\i aPatchpoint\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the output patchpoint to 
+\i aPatchpoint
+\i0 .   Returns 
+\b nil
+\b0  if the argument isn't a patchpoint; otherwise returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setPointer:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setPointer:
+\b0\i (int)n\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Repositions the pointer to point to the 
+\i n
+\i0 'th sample in the DRAM segment used as delay memory, counting from sample 0.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+}

@@ -1,0 +1,11 @@
+LANGUAGE = English;
+FILESTABLE = {
+    OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble, Allegro.ens, Chorale.ens, Easy.ens, GnuAge.ens, Touring.ens, Allegro.midi, Easy.midi, Fugue.midi, Prelude.midi);
+    OTHER_RESOURCES = ();
+};
+LOCALIZABLE_FILES = {
+};
+PROJECTVERSION = 1.1;
+PROJECTTYPE = Subproject;
+PROJECTNAME = Examples;
+GENERATEMAIN = YES;

@@ -1,0 +1,187 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fswiss Helvetica;\f3\fmodern Courier;}
+\paperw16220
+\paperh13060
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 4.0  Copyright 
+\f1 „
+\f0 1993 by CCRMA, Stanford University.  All Rights Reserved.\
+\
+
+\pard\tx2480\tx2860\tx3240\fs16\li2100\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\i\fs88\fc0\cf0 Music Kit UnitGenerators Library\
+
+\fs16 \
+\
+\
+\
+\
+\
+\
+\
+
+\pard\tx5640\f2\b\i0\fs28\fi-3540\li5640\fc0\cf0 Library:	
+\f0\b0 libunitgenerators.a\
+
+\fs16 \
+
+\f2\b\fs28 Header File Directory:	
+\f0\b0 /LocalDeveloper/Headers/musickit/unitgenerators.   \
+
+\fs16 	\
+
+\f2\b\fs28 Import:	
+\f0\b0 musickit/unitgenerators/unitgenerators.h
+\fs16 \
+
+\pard\f2\b\li100\fc0\cf0 \
+\
+\
+\
+\
+
+\fs48\li2100 Music Kit UnitGenerator Library Classes\
+
+\fs16 \
+
+\pard\tx2480\tx2860\tx3240\f0\b0\fs28\li2100\fc0\cf0 UnitGenerators have two types of state:\
+	\
+
+\fc1\cf1 ∑	
+\i memory 
+\fc0\cf0 arguments
+\i0  describe the UnitGenerator state and are assumed to be relatively slowly-changing and not necessarily at a constant sampling rate.   They can be updated, at the fastest, at the audio sampling rate divided by the "tick size" (which is 16 on the DSP56001).\
+\
+
+\fc1\cf1 ∑	
+\i patchpoints 
+\i0 represent the signal connections between UnitGenerators.   They are accessed at a constant sampling rate, which is the same as the audio sampling rate.  
+\fc0\cf0 \
+\
+The Music Kit UnitGenerator library supplies the following classes:\
+\
+
+\f2\b\fs36 Oscillators and Waveform Generators\
+
+\fs16 \
+
+\f0\fs28 OscgUG 
+\b0 is the basic oscillator and supports amplitude and frequency as memory arguments.  
+\b OscgafUG
+\b0  is similar, but supports patchpoints for frequency and amplitude.  
+\b OscgafiUG
+\b0  is the same as 
+\b OscgafUG
+\b0 , but it implements a high-quality interpolating oscillator.  
+\b UnoiseUG
+\b0  produces white noise at the sampling rate.  
+\b SnoiseUG
+\b0  produces sample-and-hold noise at the tick rate.\
+\
+
+\f2\b\fs36 Filters\
+
+\f0\b0\fs28 \
+
+\b OnepoleUG 
+\b0 is a simple one-pole (recursive) filter, useful for low and high-pass filter.  
+\b OnezeroUG
+\b0  is a one-zero (FIR) fiter useful for mild low and high-pass filtering.  
+\b BiquadUG
+\b0  is a two-pole, two-zero filter useful for adding resonances.  
+\b Allpass1UG
+\b0  is a first-order all-pass filter, useful for phase modifications.  \
+\
+
+\f2\b\fs36 Envelope Handlers and Followers\
+
+\f0\b0\fs28 \
+
+\b AsympUG 
+\b0 handles an Envelope, passing it to the DSP one segment at a time and implementing asymptotic envelope segments. 
+\b AsympenvUG
+\b0  is similar, except that it loads the entire envelope down to the DSP, providing better real-time performance. 
+\b EnvFollowUG
+\b0  derives an amplitude envelope from an input signal.\
+
+\f2\b\fs36 \
+Sound Inputs and Outputs\
+
+\f0\b0\fs28 \
+
+\b Out2sumUG 
+\b0 sends its monaural input patchpoint to a stereo output stream, panning the sound as indicated by its memory arguments.  
+\b Out1aUG
+\b0  simply writes its input patchpoint to the left channel, while 
+\b Out1bUG
+\b0  writes to the right channel.  
+\b Out1nUG 
+\b0 may be used for quadraphonic and other multi-channel output.  
+\b In1aUG 
+\b0 reads sound from the left channel of DSP serial port and writes it to its output patchpoint.  
+\b In1bUG 
+\b0 is similar but reads from the right channel.  
+\b In1qpUG 
+\b0 is useful when using the Ariel QuintProcessor–it provides the "hub" DSP with the signals from the "satellite" DSPs.\
+
+\f2\b\fs36 \
+Delays and Time-Modification Units\
+
+\f0\b0\fs28 \
+
+\b DelayUG 
+\b0 delays its input patchpoint signal by some amount, then writes it to its output patchpoint.  
+\b DelayqpUG 
+\b0 is similar, but it uses the Ariel QuintProcessor's DRAM memory to produce the delay.  
+\b DelaymUG 
+\b0 is similar, but it uses "modulo memory" and is more efficient than 
+\b DelayUG
+\b0 .  
+\b DswitchUG 
+\b0 switches between two inputs after a certain amount of time.  
+\b DswitchtUG
+\b0  is similar, but its time is constrained to be a multiple of the tick size.\
+
+\f2\b\fs36 \
+Table Lookup\
+
+\f0\b0\fs28 \
+
+\b TablookiUG 
+\b0 does interpolated table lookup, using its input as an index into the table.\
+
+\f2\b\fs36 \
+Patchpoint Arithmetic\
+
+\f0\b0\fs28 \
+
+\b ConstantUG 
+\b0 simply writes a constant to its output patchpoint. 
+\b ScaleUG 
+\b0 multiplies a patchpoint by a value that is specified in its memory argument.  
+\b Mul2UG 
+\b0 multiplies two patchpoints.  
+\b Add2UG 
+\b0 adds two patchpoints.  
+\b InterpUG
+\b0  does linear interpolation between two patchpoints, based on the value of a third patchpoint.  
+\b Mul1add2UG 
+\b0 adds two patchpoints and multiplies the result by a third.  
+\b Scale1add2 
+\b0 multiplies the first input by a  scale factor, and adds it to the second input patchpoint to produce a  third.  S
+\b cale2add2
+\b0  multiplies two input patchpoints times scalers then adds them together. \
+
+\pard\f2\b\fs48\li2100\fc0\cf0 \
+
+}

@@ -1,0 +1,36 @@
+======================== FTP INFO ================================== 
+
+1. To obtain the Music Kit and DSP Tools INSTALLATION PACKAGE:
+
+>From a shell, type "ftp ccrma-ftp.stanford.edu".  Then login with the
+name "anonymous" and your email address as a password.  Type "cd pub",
+then "bin" to choose binary transfer mode.  Say "get
+MusicKit_xxx.pkg.tar" to start the transfer, where "xxx" is the version
+number you want (usually you want the latest one).  Once it is complete, say
+"bye" to exit ftp, and unpack the file by typing "tar xvf
+MusicKit_xxx.pgk.tar" followed by "open MusicKit_xxx.pkg" (or open the
+package directly from the program /NextAdmin/Installer.app/Installer).
+
+The Installer program will let you choose a directory in which to place the
+installation tree.  If you are on a stand-alone machine, you should be
+logged in (or running Installer) as root and choose "/" for the
+installation directory (the default).  This will cause files to be placed
+in the directories /LocalApps, /LocalLibrary, /LocalDeveloper, and
+/usr/local.  If you are the system administrator for a network of NeXT
+Computers, you probably want to choose a local directory which can be
+exported and create symbolic links into that directory on the networked
+machines.  Alternatively, if you have a single server that exports /Local*
+and /usr/local, simply install the package there and you're done.
+
+The size of the uninstalled package is about 10 mb.
+The size of the installed package is about 24 mb.
+
+2. ftp directions for obtaining SOURCE CODE:
+
+As above, but the filename is instead "MusicKitSource_xxx.pkg.tar".  The
+Installer program will let you choose a directory in which to place the
+source tree, which can be anywhere.  Building this package creates the
+installation package above.  Please read the README file to get started.  
+
+The size of the uninstalled package is about 7 mb.
+The size of the installed (but not built) package is about 21 mb.

@@ -1,0 +1,14 @@
+FILESTABLE = {
+    OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble, Makefile.driver_preamble, Load_Commands.sect, DSPMKDriver.h, DSPMKDriver.m, dspdriver_server.c, dspdriverServer.c);
+    H_FILES = (dspdriver.h, dspdriverServer.h, dspdriver_types.h, TurtleBeachMS.h);
+    CLASSES = (TurtleBeachMS.m);
+};
+LOCALIZABLE_FILES = {
+};
+
+PROJECTVERSION = 1.1;
+INSTALLDIR = "";
+PROJECTTYPE = Tool;
+PROJECTNAME = TurtleBeachMS_reloc;
+GENERATEMAIN = YES;
+DOCICONFILES = ();

@@ -1,0 +1,10 @@
+4/27/92/mtm **************
+SoundTest2 is the sama as SoundTest but resets attenuation everytime the
+run button is hit.  This allows the sound board to be reset.
+*****************
+
+This is like the SineGen example EXCEPT:
+
+1. Speaker mute is forced off and speaker volume is forced full.
+
+2. The attenuation slider control speaker volume, not sinewave amplitude.

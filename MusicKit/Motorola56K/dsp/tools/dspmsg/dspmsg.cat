@@ -1,0 +1,22 @@
+NAME
+     dspmsg - create include file dspmessages.h from mkmon8k assembly
+
+SYNOPSIS
+     dspmsg [infile[.lnk]]
+
+DESCRIPTION
+     The DSP music monitor, mkmon8k.asm, is assembled in relative mode to
+     produce mkmon8k.lnk.  dspmsg reads this file, parses its symbol table,
+     and writes out three files:
+
+	dspmessages.h - file included by <dsp/dsp.h> containing DSP music
+			system information such as memory partition boundaries.
+
+	sys_decl.asm  - same as dspmessages.h but for inclusion within DSP
+			assembly language source.
+
+	_dspmessagenames.h - C include file used by error libdsp error
+			handler to get name associated with DSP error code.
+
+    dspmsg should only need to be run when rebuilding libdsp after a change
+    to the DSP music monitor which invalidates something in dspmessages.h .

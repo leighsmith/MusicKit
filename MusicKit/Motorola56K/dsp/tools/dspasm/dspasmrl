@@ -1,0 +1,3 @@
+echo asm56000 $2 $3 $4 $5 -b -l -I$HOME/music_proj/music/dsp/smsrc/ $1
+asm56000 $2 $3 $4 $5 -b -l -I$HOME/music_proj/music/dsp/smsrc/ $1
+

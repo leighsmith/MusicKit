@@ -1,0 +1,413 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f2\ftech Symbol;\f1\fmodern Ohlfs;}
+\paperw16220
+\paperh13060
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f2 ã
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 ScorefileWriter\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	FileWriter : Instrument : Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 A ScorefileWriter is an Instrument that realizes Notes by writing them to a scorefile.  The name of the scorefile to which the Notes are written is set through methods inherited from FileWriter.\
+
+\fs16 \
+
+\fs28 Each of a ScorefileWriter's NoteReceivers corresponds to a Part that will appear in the scorefile.  Unlike most Instruments, the ScorefileWriter class doesn't add any NoteReceivers to a newly created object, they must be added by invoking the 
+\b addNoteReceiver:
+\b0  method.\
+
+\fs16 \
+
+\fs28 The names of the Parts represented in the scorefile are taken from the NoteRecievers for which they were created.  You can name a NoteReceiver by calling the 
+\b MKNameObject()
+\b0  function.\
+
+\fs16 \
+
+\fs28 The header of the scorefile always includes a 
+\b part
+\b0  statement that names the Parts represented in the Score, and a 
+\b tagRange
+\b0  statement that states the range of noteTag values used in the Note statements.  A ScorefileWriter can be given an info Note that's written as a Score info statement in the file; similarly, the ScorefileWriter's NoteReceivers can each contain a Part info Note.  These, too, are written to the scorefile, each in a separate Part info statement.\
+
+\fs16 \
+
+\fs28 You shouldn't change the name of a data object (such as an Envelope, WaveTable, or NoteReceiver) during a performance involving a ScorefileWriter.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Inherited from Instrument
+\i0 	id	noteReceivers;\
+
+\fs16 \
+
+\i\fs28 Inherited from FileWriter
+\i0 	MKTimeUnit	timeUnit;\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 char	*filename;\
+NXStream	*stream;\
+double	timeShift;\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\i\fs28 Declared in ScorefileWriter
+\i0 	id	info;\
+
+\fs16 \
+
+\fs28 info 	The info Note to be written to the file.\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Creating a ScorefileWriter	
+\f2 - 
+\f0 copy \
+
+\fs16 \
+
+\fs28 Modifying the object	
+\f2 - 
+\f0 copy \
+
+\pard\tx10180\tx10680\f2\fi-520\li7660\fc0\cf0 - 
+\f0 init\
+
+\f2 - 
+\f0 setInfo:\
+
+\f2 - 
+\f0 setInfo:forNoteReceiver:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Querying the object	± fileExtension \
+
+\pard\tx10180\tx10680\f2\fi-520\li7660\fc0\cf0 - 
+\f0 info\
+
+\f2 - 
+\f0 infoForNoteReceiver:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Performing	
+\f2 - 
+\f0 finishFile\
+
+\pard\tx10180\tx10680\f2\fi-520\li7660\fc0\cf0 - 
+\f0 initializeFile\
+
+\f2 - 
+\f0 realizeNote:fromNoteReceiver:\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Setting the file	
+\f2 - 
+\f0 setFile:\
+
+\f2 	- 
+\f0 setOptimizedFile:\
+
+\f2 	- 
+\f0 setStream:\
+
+\f2 	- 
+\f0 setOptimizedStream:\
+\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+
+\fs28 CLASS METHODS\
+
+\fs16 \
+
+\b \
+
+\b0 \
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 copy\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b copy\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Creates and returns a new ScorefileWriter as a copy of the receiver.  The new object copies the receivers NoteReceivers and info Notes.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 fileExtension\
+
+\pard\tx3120\tx3620\tx4120\b0\fs16\li2620\fc0\cf0 \
+
+\fs28 ± (char *)
+\b fileExtension\
+
+\fs16 \
+
+\b0\fs28 Returns "score", the default file extension for score files if the file was set with 
+\b setFile:
+\b0  or 
+\b setStream:
+\b0 . Returns "playscore", the default file extension for optimized format score files if the file was set with 
+\b setOptimizedFile:
+\b0  or 
+\b setOptimizedStream:
+\b0 .  The string is not copied.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\b\fs28 finishFile\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b finishFile\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 You never invoke this method; it's invoked automatically at the end of a performance.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 info\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b info\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the receiver's info Note, as set through 
+\b setInfo:
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 infoForNoteReceiver:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b infoForNoteReceiver:
+\b0\i aNoteReceiver\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns the info Note that's associated with a 
+\i NoteReceiver
+\i0  (as set through 
+\b setInfo:forNoteReceiver:
+\b0 ).\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 init\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b init\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Initializes the receiver.  You must invoke this method when creating a new ScorefileWriter.  A subclass implementation should send 
+\b [super init]
+\b0  before performing its own initialization.  \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 initializeFile\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b initializeFile\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Initializes the scorefile.  You never invoke this method; it's invoked automatically just before the receiver writes its first Note to the scorefile.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 realizeNote:fromNoteReceiver:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b realizeNote:
+\b0\i aNote 
+\b\i0 fromNoteReceiver:
+\b0\i aNoteReceiver\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Realizes 
+\i aNote
+\i0  by writing it to the scorefile.  The Note statement created from 
+\i aNote
+\i0  is assigned to the Part that corresponds to 
+\i aNoteReceiver
+\i0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setFile:\
+
+\pard\fi-1020\li3620\fc0\cf0 ±setFile:
+\b0 (char *)
+\i aName
+\b\i0  \
+
+\pard\tx7140\li2100\fc0\cf0  \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1  Sets file and specifies that the data be written in ascii (.score) format.   See superclass documentation for details.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+setStream:\
+
+\pard\fi-1020\li3620\fc0\cf0 ±setStream:
+\b0 (NXStream *)
+\i aStream
+\b\i0  \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 \
+Sets stream and specifies that the data be written in ascii (.score) format. See superclass documentation for details.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+setOptimizedStream:\
+
+\pard\fi-1020\li3620\fc0\cf0 ±setOptimizedStream:
+\b0 (NXStream *)
+\i aStream
+\b\i0  \
+
+\pard\tx3120\tx3620\tx4120\li2620\fc0\cf0 \
+
+\b0\fc1\cf1  Same as setStream: but specifies that the data be written in optimized scorefile (
+\b .playscore
+\b0 ) format. \
+
+\b\fc0\cf0 \
+
+\pard\tx7140\li2100\fc0\cf0 setOptimizedFile:\
+
+\pard\fi-1020\li3620\fc0\cf0 ±setOptimizedFile:
+\b0 (char *)
+\i aName
+\b\i0  \
+
+\pard\tx3120\tx3620\tx4120\li2620\fc1\cf1 \
+
+\b0 Same as setFile: but specifies that the data be written in optimized (
+\b .playscore
+\b0 ) format. \
+
+\b \
+
+\pard\tx7140\li2100\fc0\cf0 setInfo:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setInfo:
+\b0\i aNote\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the receiver's info Note, freeing a previously set info Note, if any.  The Note is written, in the scorefile, as a Score info statement.  Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setInfo:forNoteReceiver:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setInfo:
+\b0\i aPartInfo 
+\b\i0 forNoteReceiver:
+\b0\i aNoteReceiver\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets 
+\i aPartInfo
+\i0  as the Note that's written as the info Note for the Part that corresponds to the NoteReceiver 
+\i aNoteReceiver
+\i0 .  The Part's previously set info Note, if any, is freed.  If the receiver is in performance, or if 
+\i aNoteReceiver
+\i0  doesn't belong to the receiver, does nothing and returns 
+\b nil
+\b0 , otherwise returns the receiver.\
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+}

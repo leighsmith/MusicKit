@@ -1,0 +1,4 @@
+fft_net.o: fft.h
+	cc -bsd -c fft_net.c
+fft.m: fft.h
+	cc -O -c fft.m

@@ -1,0 +1,9 @@
+CALL		_dsp_init		0
+
+SMAP	TurtleBeachMS	dspdriver_server		0
+ADVERTISE	TurtleBeachMS
+
+PORT_DEATH	_dsp_portDeath
+
+WIRE
+

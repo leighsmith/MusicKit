@@ -1,0 +1,11 @@
+"Class Names" = "ArielPC56D";
+"DMA Channels" = "";
+"Family" = "DSP";
+"Instance" = "0";
+"I/O Ports" = "0x340-0x347";
+"IRQ Levels" = "";
+"Memory Maps" = "";
+"Valid IRQ Levels" = "";
+"Version" = "0.95";
+"Driver Version" = "Version 0.95 Ariel PC56D DSP driver for Music Kit 4.2 version";
+

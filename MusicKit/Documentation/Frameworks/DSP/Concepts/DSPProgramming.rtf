@@ -1,0 +1,1000 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f2\fmodern Courier;\f1\ftech Symbol;}
+\paperw12240
+\paperh12580
+\margl0
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\pard\tx2520\tx2880\tx3240\f0\b0\i0\ulnone\fs16\li2160\fc0\cf0 \
+
+\fs22 \
+
+\fs16 \
+
+\fs22 \
+
+\fs16 \
+
+\pard\fs40\li2160\fc0\cf0 Chapter 7\
+Programming the DSP--Table of Contents\
+
+\fs16 \
+\
+\
+\
+\
+\
+
+\pard\tx2880\b\fs24\fi-720\li2880\fc0\cf0 7-3	DSP Hardware\
+
+\fs16 \
+
+\fs24 7-3	Booting the DSP\
+
+\b0\fs22 7-4	DSP Assembly\
+7-5	DSP Tools Documentation\
+7-5	Binary DSP Object File Format\
+7-5	Loading the DSP Bootstrap Program\
+
+\b\fs16 \
+
+\fs24 7-6	Software Access to the DSP\
+
+\b0\fs22 7-6	Host Interface Access\
+
+\pard\tx3240\fi-1080\li3240\fc0\cf0 7-6	Host Interface Programming Example\
+7-7	DSP Error Handling\
+7-8	Restrictions on Host Interface Programming\
+7-8	Host Interface Access Functions\
+
+\pard\tx3600\fi-1440\li3600\fc0\cf0 7-8	Orienting the Host\
+7-9	Opening and Closing the DSP\
+7-10	DSP Ownership Information\
+7-10	Reading and Writing DSP/Host Interface Flags\
+7-10	Reading and Writing Interface Registers\
+7-10	Reading and Writing Commands and Data\
+7-11	Synchronization\
+7-11	Ports\
+7-12	The Simulator\
+
+\pard\tx2160\tx2520\tx2880\tx3240\fs16\li2160\fc0\cf0 \
+
+\fs22 \
+
+\fs16 \
+
+\pard\fs40\li2160\fc0\cf0 \
+Chapter 7\
+Programming the DSP\
+
+\fs16 \
+\
+\
+\
+\
+\
+
+\pard\tx2520\tx2880\tx3240\fs22\li2160\fc0\cf0 This chapter explains how to access the DSP from software on a NeXT computer.  A brief review of the hardware is presented, followed by a description of ways to access the DSP.  Familiarity with the DSP56001, especially the host interface port, is assumed.\
+
+\fs16 \
+
+\fs22 DSP details, including the D-15 connector pinouts, DSP memory map, and DSP instruction summary, can be found in 
+\i Reference
+\i0 .\
+
+\fs16 \
+
+\pard\b\li720\fc0\cf0 \
+\
+\
+
+\fs32 DSP Hardware\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 The hardware associated with the DSP includes:\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\fs22\fi-360\li2520\fc0\cf0 ·	The Motorola DSP56001 clocked at 25 MHz \
+·	8K 24-bit words of zero-wait-state RAM, private to the DSP \
+·	Memory-mapped and DMA access (5 megabytes/sec) to the DSP host interface \
+·	A D-15 connector that provides access to the DSP SSI and SCI serial ports\
+
+\pard\b\fs16\li720\fc0\cf0 \
+\
+\
+\
+
+\fs32 Booting the DSP\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 The DSP is in the reset state while not in use by some task.  When first accessed, it exits the reset state awaiting a bootstrap program.  You can write a DSP program to be fed to the DSP during the bootstrap sequence.  This and the following sections describe how to create, load, and communicate with your own DSP bootstrap program.\
+
+\fs16 \
+
+\fs22 The DSP bootstrap program must be a single contiguous program segment starting at location p:0 in on-chip program memory, and it must not exceed 512 words in length (the size of on-chip program RAM).  Below is an example DSP bootstrap program:\
+
+\fs16 \
+
+\pard\f2\fs18\li2520\fc0\cf0 ; boot56k.asm - Example DSP bootstrap program that goes into an \
+; infinite loop as it reads HRX, right-shifts one place, and\
+; writes HTX\
+\
+         org p:0 \
+reset  jmp >rcv_buz\
+\
+         dup $40-2  ; output must be a contiguous segment \
+         nop\
+         endm\
+\
+         org p:$40  ; typical starting address\
+\
+rcv_buz jclr #0,x:$FFE9,rcv_buz  ; wait for data from host \
+         move x:$FFEB,A1\
+\
+         LSR A  ; right-shift one place\
+\
+xmt_buz jclr #1,x:$FFE9,xmt_buz  ; send shifted word to host\
+         move A1,x:$FFEB\
+\
+         jmp rcv_buz\
+\
+    end $40\
+
+\f0\b\fs16\li1440 \
+\
+\
+\
+
+\fs26 DSP Assembly\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 To assemble this file (named 
+\b boot56k.asm
+\b0 ) and create the object file 
+\b boot56k.lod
+\b0 , type\
+
+\fs16 \
+
+\pard\f2\fs18\li2520\fc0\cf0 asm56000 -b -a -l -os,so boot56k\
+
+\pard\tx2520\tx2880\tx3240\f0\fs16\li2160\fc0\cf0 \
+
+\fs22 in a Terminal window.  
+\b asm56000
+\b0  is the Motorola DSP assembler program.  The command-line arguments used in the example are:\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\fs22\fi-360\li2520\fc0\cf0 ·	
+\b -b
+\b0  option tells the program to create an object file.\
+
+\fs16 \
+
+\fs22 ·	
+\b -a
+\b0  indicates that the object file should be absolute, or nonrelocatable.  Absolute files are indicated by the extension ª.lodº.  If 
+\b -a 
+\b0 is omitted, a relocatable file (extension ª.lnkº) is created.  You can convert a ª.lnkº file to a ª.lodº file by using the DSP linker program, 
+\b lnk56000
+\b0 .\
+
+\fs16 \
+
+\fs22 ·	
+\b -l
+\b0  produces a listing file (extension ª.lstº).  The file contains a script of the operations performed by the assembler and is useful while debugging.\
+
+\fs16 \
+
+\fs22 ·	
+\b -os,so 
+\b0 causes the assembler to put symbol information in the object file.  This information is used by Bug56
+\f1\up6 Ô
+\f0\up0 , the DSP symbolic debugger.  Bug56 is available for NeXT hardware via ftp from:\
+\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\li720\fc1\cf1 				ftp://ccrma-ftp.stanford.edu:/pub/NeXT/DSP/Bug56.next_hardware.tar.Z
+\pard\tx2520\tx2880\tx3240\tx3600\fs16\fi-360\li2520\fc0\cf0 \
+
+\pard\b\li1440\fc0\cf0 \
+\
+\
+
+\fs26 DSP Tools Documentation\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 There are three UNIX manual pages documenting the DSP assembler
+\b  asm56000
+\b0 , linker
+\b  lnk56000
+\b0 , and librarian
+\b  lib56000
+\b0 .  Complete documentation of these tools is also provided in the directory 
+\b /NextLibrary/Documentation/Motorola
+\b0 .  
+\fs16 \
+
+\pard\b\li1440\fc0\cf0 \
+\
+\
+
+\fs26 Binary DSP Object File Format\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 The ª.lodº object file written by the assembler is in a machine-independent ASCII format.  NeXT supports a more efficient binary ª.dspº format.  A ª.lodº file can be converted to a ª.dspº file using the program 
+\b dspimg
+\b0 .  For example,\
+
+\fs16 \
+
+\pard\f2\fs18\li2520\fc0\cf0 dspimg boot56k.lod boot56k.dsp\
+
+\pard\tx2520\tx2880\tx3240\f0\fs16\li2160\fc0\cf0 \
+
+\fs22 converts 
+\b boot56k.lod
+\b0  to ª.dspº format.  As a convenience, the extension of the input file name defaults to ª.lod,º and the output file name, when omitted, is derived from the input file name, so this example can also appear as\
+
+\fs16 \
+
+\pard\f2\fs18\li2520\fc0\cf0 dspimg boot56k\
+
+\f0\b\fs16\li1440 \
+\
+\
+\
+
+\fs26 Loading the DSP Bootstrap Program\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 After you've prepared the bootstrap program 
+\b boot56k.lod
+\b0  or 
+\b boot56k.dsp
+\b0 , you can load it into the DSP from a C program by calling the 
+\b DSPBootFile()
+\b0  function.  As shown in the following example, the function takes the name of the bootstrap program file as its single argument.\
+
+\fs16 \
+
+\pard\f2\fs18\li2520\fc0\cf0 /*\
+ * test_boot56k.c - read and load boot56k.dsp (bootstrap file)\
+ * To compile and link:  \
+ *     cc test_boot56k.c -ldsp_s -lsys_s\
+ */\
+#include <dsp/dsp.h>   /* needed by programs that use the DSP */\
+main()\
+\{\
+    DSPBootFile("boot56k.dsp");  /* "boot56k.lod" works, too */\
+    /* Communicate with DSP program here */\
+\}\
+
+\pard\tx2520\tx2880\tx3240\f0\fs16\li2160\fc0\cf0 \
+
+\fs22 After the call to 
+\b DSPBootFile()
+\b0 , the DSP remains open and can be accessed via the Mach driver or by simple host interface programming, as discussed in the next section.\
+
+\fs16 \
+
+\pard\b\li720\fc0\cf0 \
+\
+\
+
+\fs32 Software Access to the DSP\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 There are two basic ways to access the DSP:\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\fs22\fi-360\li2520\fc0\cf0 ·	Reading and writing the host interface registers\
+·	Sending and receiving Mach messages to and from the sound/DSP driver\
+
+\pard\tx2520\tx2880\tx3240\fs16\li2160\fc0\cf0 \
+
+\fs22 These access modes are described below.\
+
+\fs16 \
+
+\pard\b\li1440\fc0\cf0 \
+\
+\
+
+\fs26 Host Interface Access\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 Reading and writing the eight bytes of the DSP host interface is the simplest and most general way to access the DSP.  In this access mode, you have complete control over the DSP software.  There are no programming conventions to obey and no reserved DSP resources.  The disadvantages are that you must write your own DSP communication services, and the DSP can't interrupt the host processor.  Lack of interrupt capability implies lack of direct memory access (DMA) transfer between the DSP and host memory.  The Mach driver interface must be used to field DSP device interrupts.\
+
+\fs16 \
+
+\pard\b\li2160\fc0\cf0 \
+\
+\
+
+\fs24 Host Interface Programming Example\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 The following example illustrates communication with the example bootstrap program 
+\b boot56k.asm
+\b0  given above.\
+
+\fs16 \
+
+\pard\f2\fs18\li2520\fc0\cf0 /* To compile and link: cc test_getput.c -ldsp_s -lsys_s */\
+#include <dsp/dsp.h>\
+main() \{\
+    int tval,reply;\
+\
+    DSPBootFile("boot56k");\
+\
+    DSPSetHF0();  /* Set HF0 */\
+    DSPSetHF1();  /* Set HF1 */\
+    DSPReadICR(&reply);       /* 8 bits, right-justified */\
+    printf("\\n\\ticr = 0x%X\\n",reply);\
+\
+    DSPReadISR(&reply);       /* 8 bits, right-justified */\
+    printf("\\tisr = 0x%X\\n",reply);\
+\
+    tval = 0xBBCCDD;          /* test value */\
+    DSPWriteTX(tval);         /* 24 bits, right-justified in 32 */\
+\
+    /* Wait for the data to become ready (RXDF on). */\
+    while (!DSPDataIsAvailable());\
+    while (DSPDataIsAvailable()) \{\
+        DSPReadRX(&reply); /* 24 bits, right-justified */\
+        printf("\\trx = 0x%X\\n",reply); \}\
+\
+    if (reply != tval>>1)\
+        printf("ERROR: rx should be = 0x%X\\n",tval>>1);\
+\
+    DSPClose();\
+\}\
+
+\pard\tx2520\tx2880\tx3240\f0\fs16\li2160\fc0\cf0 \
+
+\fs22 The output of this program should be\
+
+\fs16 \
+
+\pard\f2\fs18\li2520\fc0\cf0 icr = 0x18\
+isr = 0x6\
+rx = 0x5DE66E\
+
+\f0\fs16\li2160 \
+
+\b\fs22 Note:  
+\b0 Since IVR isn't used in the DSP host interface, there are no functions for reading and writing that register.\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\fs22\li2160\fc0\cf0 For convenience (and efficiency), whole arrays can be written to the transmit registers using\
+
+\fs16 \
+
+\fs22 	
+\b DSPWriteTXArray(
+\b0\i intArray
+\i0 , 
+\i numberOfInts
+\b\i0 )\
+
+\fs16 \
+
+\b0\fs22 and read from the receive registers of the DSP using\
+
+\fs16 \
+
+\fs22 	
+\b DSPReadRXArray(
+\b0\i intArray
+\i0 ,
+\i  numberOfInts
+\b\i0 )\
+
+\fs16 \
+
+\b0\fs22 Each word of the transfer is conditioned on TXDE for 
+\b DSPWriteTXArray()
+\b0  and on RXDF for 
+\b DSPReadRXArray()
+\b0 .\
+
+\fs16 \
+
+\pard\b\li2160\fc0\cf0 \
+\
+\
+
+\fs24 DSP Error Handling\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 Most of the DSP system functions (prefix ªDSPº) return an integer error code, where 0 indicates success and nonzero indicates failure.  These functions also write a string describing the error to the file name passed as the single argument to 
+\b DSPEnableErrorFile()
+\b0 .\
+
+\fs16 \
+
+\pard\b\li2160\fc0\cf0 \
+\
+\
+
+\fs24 Restrictions on Host Interface Programming\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 Certain restrictions apply to the operation of the write/read primitives (which are implemented using the Mach driver):\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\fs22\fi-360\li2520\fc0\cf0 ·	To write the ICR, you use the functions 
+\b DSPSetHF1()
+\b0 ,
+\b  DSPSetHF0()
+\b0 ,
+\b  DSPClearHF1()
+\b0 , and 
+\b DSPClearHF0()
+\b0 .  \
+
+\fs16 \
+
+\fs22 ·	To write the CVR, you pass a host command identifier (an integer) to the 
+\b DSPHostCommand() 
+\b0 function.  The host commands are described in the 
+\i Motorola DSP56001 User's Manual
+\i0 .\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\fs22\li2160\fc0\cf0 These restrictions are necessary because the DSP driver uses TREQ and HREQ for its own purposes.  In particular, HREQ causes an interrupt that causes the driver to read all available words from the DSP into a kernel buffer.  A call to 
+\b DSPGetRX()
+\b0  actually fetches words from this buffer rather than from the DSP directly.\
+
+\fs16 \
+
+\pard\b\li2160\fc0\cf0 \
+\
+\
+
+\fs24 Host Interface Access Functions\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\fs22\li2160\fc0\cf0 Functions
+\b  
+\b0 that support simple host interface programming, such as 
+\b DSPReadRX()
+\b0 , are currently documented in the procedure prototypes defined in the following header files in the directory 
+\b /usr/include/dsp
+\b0 :\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\fs22\fi-360\li2520\fc0\cf0 ·	
+\b dsp.h 
+\b0 is a
+\b  
+\b0 master header file that pulls in all function prototypes for the DSP library (
+\b libdsp_s.a
+\b0 ).\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPError.h 
+\b0 contains prototypes for the DSP error handling functions.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPConversion.h
+\b0  prototypes the functions that convert data between type DSPFix24 and 
+\b int
+\b0 , 
+\b float
+\b0 , and 
+\b double
+\b0 .\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPObject.h 
+\b0 prototypes the low-level DSP interface functions.\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b\fs22\li2160\fc0\cf0 DSPObject.h
+\b0  contains many functions that are useful only in conjunction with the Music Kit monitors.  The following sections list the functions that are useful regardless of the DSP monitor that you use.\
+
+\fs16 \
+
+\pard\b\i\li2160\fc0\cf0 \
+\
+\
+
+\fs22 Orienting the Host\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\b0\i0\fs22\fi-360\li2520\fc0\cf0 ·	
+\b DSPGetDSPCount()
+\b0  returns the number of DSPs in your cube.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPSetCurrentDSP(
+\b0 int 
+\i index
+\b\i0 )
+\b0  and 
+\b DSPGetCurrentDSP()
+\b0  set and return, respectively, the zero-based index of the DSP upon which subsequent DSP functions will act.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPSetMessagePriority(
+\b0 int 
+\i priority
+\b\i0 ) 
+\b0 and
+\b  DSPGetMessagePriority() 
+\b0 set and return, respectively, the priority of messages sent to the current DSP.  There are three priorities, represented as the constants DSP_MSG_HIGH, DSP_MSG_MED, and DSP_MSG_LOW.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPSetOpenPriority(
+\b0 int 
+\i priority
+\b\i0 )
+\b0  and 
+\b DSPGetOpenPriority()
+\b0  set and return, respectively, the priority with which a subsequent call to 
+\b DSPOpenNoBoot() 
+\b0 opens the DSP.  There are two priorities:  0 is low and 1 is high.  With high priority, a process can gain access to the DSP even if it has already been opened by another process.  This is used mostly by the DSP debugger.  The original process should be frozen while the new process steps in and looks around.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPEnableHostMsg() 
+\b0 and
+\b  DSPDisableHostMsg() 
+\b0 enable and disable, respectively, DSP host message protocol.  
+\b DSPHostMsgIsEnabled()
+\b0  returns the current state of the protocol.  With this protocol, DSP error messages are sent on the DSP error port.  Otherwise, all messages arrive on the DSP message port.\
+
+\fs16 \
+
+\pard\b\i\li2160\fc0\cf0 \
+\
+\
+
+\fs22 Opening and Closing the DSP\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\b0\i0\fs22\fi-360\li2520\fc0\cf0 ·	
+\b DSPInit()
+\b0  opens the DSP and loads a minimal, generic DSP boot program.  This is the function that's most commonly called to open the DSP.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPOpenNoBoot() 
+\b0 opens the DSP without loading a boot program.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPOpenNoBootHighPriority() 
+\b0 performs a high-priority
+\b  
+\b0 open without loading a boot program.  This is normally used only by the DSP debugger.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPReset()
+\b0  resets the DSP (which must already be open).  A reset DSP is awaiting a bootstrap program.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPBootFile(
+\b0 char *
+\i filename
+\b\i0 ) 
+\b0 opens (if necessary) and
+\b  
+\b0 boots the DSP from the given program file.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPBoot(
+\b0 DSPLoadSpec *
+\i system
+\b\i0 ) 
+\b0 opens (if necessary) and boots the DSP from the given program.  DSPLoadSpec is defined in 
+\b /usr/local/lib/include/dsp_structs.h
+\b0 .\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPClose() 
+\b0 and
+\b  DSPRawClose()
+\b0  close the DSP; the Raw close doesn't clean up the device.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPCloseSaveState() 
+\b0 and 
+\b DSPRawCloseSaveState() 
+\b0 are like the previous functions, but the state of the open modes are retained and used in a subsequent reopening of the DSP.\
+
+\fs16 \
+
+\pard\b\i\li2160\fc0\cf0 \
+\
+\
+
+\fs22 DSP Ownership Information\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\b0\i0\fs22\fi-360\li2520\fc0\cf0 ·	
+\b DSPIsOpen() 
+\b0 returns nonzero if the DSP is open.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPGetOwnerString() 
+\b0 returns a pointer to a string that contains information about the process that currently owns the DSP.  It's in a form exemplified by the following:\
+
+\fs16 \
+
+\pard\f2\fs18\li2880\fc0\cf0 DSP opened in PID 351 by me on Sun Jun 18 17:50:46 1989\
+
+\pard\tx2520\tx2880\tx3240\tx3600\f0\fs16\fi-360\li2520\fc0\cf0 \
+
+\fs22 ·	
+\b DSPOpenWhoFile() 
+\b0 registers the current owner of the DSP in the DSP log file.  This is called implicitly by the functions that open the DSP
+\b .\
+
+\fs16 \
+
+\b0\fs22 ·	
+\b DSPCloseWhoFile() 
+\b0 deletes the DSP log file.  This is called implicitly by the functions that close the DSP.\
+
+\fs16 \
+
+\pard\b\i\li2160\fc0\cf0 \
+\
+\
+
+\fs22 Reading and Writing DSP/Host Interface Flags\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\b0\i0\fs22\fi-360\li2520\fc0\cf0 ·	
+\b DSPSetHF0()
+\b0 ,
+\b  DSPClearHF0()
+\b0 , and
+\b  DSPGetHF0() 
+\b0 set, clear, and return the state of HF0 (host flag 0), respectively.\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\fs22\li2160\fc0\cf0 An analogous set of functions is provided for HF1, and a 
+\b DSPGet...
+\b0  function
+\b  
+\b0 (only) is provided for HF2 and HF3.\
+
+\fs16 \
+
+\pard\b\i\li2160\fc0\cf0 \
+\
+\
+
+\fs22 Reading and Writing Interface Registers\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\b0\i0\fs22\fi-360\li2520\fc0\cf0 ·	
+\b DSPReadICR(
+\b0 int
+\b  *
+\b0\i registerValuePtr
+\b\i0 )
+\b0  reads the DSP Interrupt Control Register into the integer pointed to by the argument
+\i  
+\i0 (8 bits, right-justified).\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPGetICR()
+\b0  returns the ICR register.\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\fs22\li2160\fc0\cf0 An analogous set of functions is provided for the Command Vector Register (CVR), and the Interrupt Status Register (ISR).\
+
+\fs16 \
+
+\pard\b\i\li2160\fc0\cf0 \
+\
+\
+
+\fs22 Reading and Writing Commands and Data\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\b0\i0\fs22\fi-360\li2520\fc0\cf0 ·	
+\b DSPHostCommand(
+\b0 int 
+\i cmd
+\b\i0 )
+\b0  issues the given host command.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPWriteTX(
+\b0 DSPFix24 
+\i word
+\b\i0 ) 
+\b0 writes the low-order 24 bits of 
+\i word 
+\i0 into the DSP Transmit Byte registers.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPWriteTXArray(
+\b0 DSPFix24 *
+\i dataPtr
+\i0 , int 
+\i n
+\b\i0 ) 
+\b0 writes 
+\i n 
+\i0 words from 
+\i dataPtr 
+\i0 into the DSP Transmit Byte registers.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPWriteTXArrayB(
+\b0 DSPFix24 *
+\i dataPtr
+\i0 , int 
+\i n
+\b\i0 ) 
+\b0 writes the data backwards.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPReadRX(
+\b0 DSPFix24 *
+\i wordPtr
+\b\i0 )
+\b0  reads the next word from the DSP Receive Byte registers into the 24-bit word (right-justified) pointed to by the argument.  The function waits for the time limit returned by 
+\b DSPDefaultTimeLimit()
+\b0  to expire before giving up (and returning an error code).\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPReadRXArray(
+\b0 DSPFix24 *
+\i dataPtr
+\i0 , int 
+\i n
+\b\i0 )
+\b0  reads the next 
+\i n 
+\i0 words from the RX registers into 
+\i dataPtr.\
+
+\fs16 \
+
+\i0\fs22 ·	
+\b DSPGetRX() 
+\b0 returns the RX register.\
+
+\fs16 \
+
+\pard\b\i\li2160\fc0\cf0 \
+\
+\
+
+\fs22 Synchronization\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\b0\i0\fs22\fi-360\li2520\fc0\cf0 ·	
+\b DSPAwaitHC(
+\b0 int 
+\i msTimeLimit
+\b\i0 ) 
+\b0 waits for the HC bit to clear.  This happens when the next instruction to be executed on the DSP is the first word of the Host Command interrupt vector.  
+\i msTimeLimit
+\i0  is the maximum wait time; 0 means wait forever.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPAwaitTRDY(
+\b0 int 
+\i msTimeLimit
+\b\i0 )
+\b0  waits for the TRDY bit to be set.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPAwaitData(
+\b0 int 
+\i msTimeLimit
+\b\i0 ) 
+\b0 waits for the DSP to send data to the host.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPDataIsAvailable() 
+\b0 returns nonzero if data from the DSP is available.\
+
+\fs16 \
+
+\pard\b\i\li2160\fc0\cf0 \
+\
+\
+
+\fs22 Ports\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\i0\fs22\li2160\fc0\cf0 The following functions return a 
+\b port_t
+\b0  value; the 
+\b port_t
+\b0  data type is defined in 
+\b /usr/include/sys/message.h
+\b0 .  The DSP must be open before you call any of these functions.\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\fs22\fi-360\li2520\fc0\cf0 ·	
+\b DSPGetOwnerPort() 
+\b0 returns the port that conveys DSP and sound-out ownership
+\b .\
+
+\fs16 \
+
+\b0\fs22 ·	
+\b DSPGetHostMessagePort()
+\b0  returns the port that's used to send host messages to the DSP.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPGetDSPMessagePort() 
+\b0 returns the port that's used to receive DSP messages sent from the DSP to the host.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPGetErrorPort() 
+\b0 returns the port that receives error messages from the DSP.\
+
+\fs16 \
+
+\pard\b\i\li2160\fc0\cf0 \
+\
+\
+
+\fs22 The Simulator \
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\b0\i0\fs22\li2160\fc0\cf0 The Motorola DSP56001 simulator, 
+\b sim56000
+\b0 , isn't provided by NeXT; it can be obtained directly from Motorola.\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\tx3600\fs22\fi-360\li2520\fc0\cf0 ·	
+\b DSPIsSimulated() 
+\b0 returns nonzero if the DSP is being simulated.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPIsSimulatedOnly() 
+\b0 returns nonzero if the DSP simulator output is open while the DSP is closed.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPOpenSimulatorFile(
+\b0 char
+\b  
+\b0 *
+\i filename
+\b\i0 ) 
+\b0 opens 
+\i filename
+\i0  for simulator output.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPCloseSimulatorFile() 
+\b0 closes the simulator output file.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPStartSimulatorFP(
+\b0 FILE *
+\i filePtr
+\b\i0 ) 
+\b0 starts the simulator, with output 
+\i filePtr
+\i0 .\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPGetSimulatorFP() 
+\b0 returns a pointer to the simulator output file.\
+
+\fs16 \
+
+\fs22 ·	
+\b DSPStopSimulator() 
+\b0 stops the simulator.\
+
+\fs16 \
+
+\pard\tx2520\tx2880\tx3240\fs22\li2160\fc0\cf0 \
+
+\fs16 \
+
+\fs22 \
+
+\fs16 \
+
+\fs22 \
+
+\fs16 \
+
+}

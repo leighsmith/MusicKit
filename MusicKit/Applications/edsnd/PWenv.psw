@@ -1,0 +1,30 @@
+/* env.psw -- PSwrapped functions for EnvelopeView
+ */
+
+/* PWdraw1() draws one line segment
+ * PWdraw2() draws two segments 
+ */
+
+defineps PWdraw1(float x1, y1, x2, y2, grayval)
+	x1 3 sub y1 3 sub 7 7 Highlight compositerect
+	x2 3 sub y2 3 sub 7 7 Highlight compositerect
+	newpath
+	x1 y1 moveto
+	x2 y2 lineto
+	grayval setgray
+	stroke
+endps
+
+defineps PWdraw2(float x1, y1, x2, y2, x3, y3, grayval)
+	x1 3 sub y1 3 sub 7 7 Highlight compositerect
+	x2 3 sub y2 3 sub 7 7 Highlight compositerect
+	x3 3 sub y3 3 sub 7 7 Highlight compositerect
+	newpath
+	x1 y1 moveto
+	x2 y2 lineto
+	x3 y3 lineto
+	grayval setgray
+	stroke
+endps
+
+

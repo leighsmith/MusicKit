@@ -1,0 +1,12 @@
+"Class Names" = "Frankenstein";
+"DMA Channels" = "";
+"Family" = "DSP";
+"Instance" = "0";
+"I/O Ports" = "0x290-0x29f";
+"IRQ Levels" = "";
+"Memory Maps" = "";
+"Valid IRQ Levels" = "";
+"Version" = "0.95";
+"Driver Version" = "Version 0.95, CCRMA Frankenstein DSP driver for Music Kit 4.2 version";
+
+

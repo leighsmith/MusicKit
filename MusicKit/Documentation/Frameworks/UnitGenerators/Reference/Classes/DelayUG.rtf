@@ -1,0 +1,272 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;}
+\paperw16220
+\paperh13060
+\margl120
+\margr0
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f1 „
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+Delaym support, Release 4.2, Copyright 
+\f1 „
+\f0 1996 by Stanford University.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 DelayUG and DelaymUG\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	UnitGenerator\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit/unitgenerators/unitgenerators.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 DelayUG and DelaymUG both delay their input signal by some number of samples before producing it at its output.  They require a SynthData object to store the delayed signal.  They differ in that DelayUG will accept any SynthData object, while DelaymUG requires a SynthData object allocated as "moduls", using the Orchestra method 
+\b allocModulsSynthData:. 
+\b0 DelaymUG is much more computationally efficient than DelaymUG.\
+\
+Each DelayUG maintains a single pointer into the delay memory.  When the object is run, a tick's worth of samples are read and replaced with an equal number of samples from the input signal.  The pointer is then incremented by a tick.  When the pointer reaches the end of the delay memory, it automatically jumps back to the beginning, even if it's in the middle of a tick–in other words, the length of the delay memory 
+\i needn't
+\i0  be a multiple of the tick size.  The rate at which the pointer is incremented can't be modified, nor can you offset the beginning of the delay memory.  However, you can reposition the pointer to any arbitrary sample in the delay memory through the 
+\b setPointer:
+\b0  method.\
+\
+
+\pard\tx7140\li2100\fc0\cf0 MEMORY SPACES\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 DelayUG
+\i abc\
+
+\b0 a	
+\i0 output\
+
+\i b	
+\i0 input\
+
+\i c	
+\i0 delay memory\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 adjustLength:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b adjustLength:
+\b0\i (int)delayLength\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the number of delayed samples to 
+\i delayLength
+\i0 .  The argument must be no greater than the length of the SynthData object that's used as the delay memory.  Returns 
+\b nil 
+\b0 if
+\b  
+\b0\i delayLength
+\i0  is too great or if the delay memory hasn't been set
+\b ; 
+\b0 otherwise returns
+\b  self
+\b0 .  \
+
+\fs16 \
+
+\fs28 By default, the length of the delay is that of the SynthData that's used as the delay memory.  Decreasing the delay length of a running DelayUG (or DelaymUG) doesn't free (nor does it clear) the fallow memory, which is always taken from the end of the SynthData.  Keep in mind that decreasing the length may cause the pointer to be considered out of bounds (in the case of DelayUG) or to be aligned improperly (in the case of DelaymUG); to avoid this, you should send a 
+\b resetPointer
+\b0  (or 
+\b setPointer:
+\b0 ) message to the DelayUG (or DelaymUG) just before you invoke this method.  \
+
+\fs16 \
+
+\fs28 Before increasing the length of the delay memory, you may want to clear the recommissioned portion by sending a 
+\b setToConstant:length:offset:
+\b0  message to the SynthData. \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 idleSelf\
+
+\pard\f1\b0\li2620\fc0\cf0 - 
+\f0\b idleSelf
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 You never send this message.  It's invoked by sending the 
+\b idle 
+\b0 message to the object.  \
+Sets the output patchpoint, as well as the delay memory, to 
+\i sink
+\i0 ,
+\i  
+\i0 thus ensuring that the object does not produce any output.  Note that you must send 
+\b setOutput:
+\b0  and 
+\b run 
+\b0 again to use the UnitGenerator after sending 
+\b idle
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 length\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (int)
+\b length\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the number of samples in the delay memory.  Note that this is the length that's currently being used; it isn't necessarily the same as the length of the SynthData that's being used as the delay memory.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 resetPointer\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b resetPointer\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Resets the pointer to the beginning of the delay memory.   Returns 
+\b nil
+\b0  if the SynthData hasn't been set; otherwise returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setDelayMemory:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setDelayMemory:
+\b0\i aSynthData\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the SynthData object used as the delay memory to 
+\i aSynthData
+\i0 .  The length of the SynthData must be greater than or equal to the amount of delay (in samples) that's desired.  If 
+\i aSynthData
+\i0  is 
+\b nil
+\b0 , the delay memory is set to the sink location.  For DelaymUG, 
+\i aSynthData 
+\i0 must be allocated as "modulus" memory. Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setInput:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setInput:
+\b0\i aPatchpoint\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the input patchpoint to 
+\i aPatchpoint
+\i0 .  Returns 
+\b nil
+\b0  if the argument isn't a patchpoint; otherwise returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setOutput:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setOutput:
+\b0\i aPatchpoint\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the output patchpoint to 
+\i aPatchpoint
+\i0 .   Returns 
+\b nil
+\b0  if the argument isn't a patchpoint; otherwise returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setPointer:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setPointer:
+\b0\i (int)n\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Repositions the pointer to point to the 
+\i n
+\i0 'th sample in the delay memory, counting from sample 0.  Returns  
+\b nil
+\b0  if 
+\i n
+\i0  is greater than the current length of the delay, or if the delay memory hasn't been set; otherwise returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+}

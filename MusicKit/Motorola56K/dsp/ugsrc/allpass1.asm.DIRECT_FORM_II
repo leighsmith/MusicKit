@@ -1,0 +1,134 @@
+;;  Copyright 1990 NeXT Computer, Inc.  All rights reserved.
+;;  Author - Julius Smith
+;;
+;;  Modification history
+;;  --------------------
+;;  10/06/88/jos - initial file created from /usr/local/lib/dsp/ugsrc/onepole.asm
+;;  10/06/88/jos - passed tallpass1.asm
+;;  03/10/95/jos - converted from direct-form-2 to direct-form-1 to inhibit overflow
+;;
+;;------------------------------ DOCUMENTATION ---------------------------
+;;  NAME
+;;      allpass1 (UG macro) - one-pole digital allpass filter section
+;;
+;;  SYNOPSIS
+;;      allpass1 pf,ic,sout,aout0,sinp,ainp0,sy0,sx0,bb00
+;;
+;;  MACRO ARGUMENTS
+;;      pf        = global label prefix (any text unique to invoking macro)
+;;      ic        = instance count (s.t. pf\_allpass1_\ic\_ is globally unique)
+;;      sout      = output vector memory space ('x' or 'y')
+;;      aout0     = initial output vector memory address
+;;      sinp      = input vector memory space ('x' or 'y')
+;;      ainp0     = initial input vector memory address
+;;      bb00      = initial coefficient of undelayed input and delayed output
+;;      sy0        = state variable
+;;      sx0        = state variable
+;;
+;;  DSP MEMORY ARGUMENTS
+;;      Access         Description              Initialization
+;;      ------         -----------              --------------
+;;      x:(R_X)+       Current input address    ainp0
+;;      y:(R_Y)+       Current output address   aout0
+;;      x:(R_X)+       bb0 coefficient          bb00
+;;      y:(R_Y)+       sy state variable        sy0
+;;      y:(R_X)+       sx state variable        sx0
+;;
+;;  DESCRIPTION
+;;      The allpassy unit-generator implements a one-pole, one-zero
+;;      allpass filter section using the "direct form 1" filter structure.
+;;
+;;      The transfer function implemented is
+;;
+;;              bb0 + 1/z
+;;      H(z) =  ---------
+;;              1 + bb0/z
+;;
+;;      In pseudo-C notation:
+;;
+;;      ainp = x:(R_X)+;
+;;      aout = y:(R_Y)+;
+;;      bb0 = x:(R_X)+;
+;;      sy = y:(R_Y);
+;;      sx = x:(R_Y);
+;;
+;;      for (n=0;n<I_NTICK;n++) {
+;;           t = sinp:ainp[n];
+;;           sy = bb0 * t + sx - bb0 * sy;
+;;           sx = t;
+;;           sout:aout[n] = sy;
+;;      }
+;;
+;;      y:(R_Y)+ = sy;
+;;      x:(R_X)+ = sx;
+;;        
+;;  DSPWRAP ARGUMENT INFO
+;;      allpass1 (prefix)pf,(instance)ic,
+;;         (dspace)sout,(output)aout,
+;;         (dspace)sinp,(input)ainp,sy,sx,bb0
+;;
+;;  MAXIMUM EXECUTION TIME
+;;
+;;  MINIMUM EXECUTION TIME
+;;
+;;  TEST PROGRAM
+;;
+;;  SOURCE
+;;      <UGBundleSource>/Allpass1UGGraphic.bproj/dspwrap/allpass1.asm
+;;
+;;  SEE ALSO
+;;      /usr/local/lib/dsp/ugsrc/onezero.asm     - one-zero filter section
+;;      /usr/local/lib/dsp/ugsrc/onepole.asm     - one-pole filter section
+;;      /usr/local/lib/dsp/ugsrc/twopole.asm     - two-pole filter section
+;;      /usr/local/lib/dsp/ugsrc/allpass.asm     - like allpass1 but with large delay
+;;  
+;;  ALU REGISTER USE
+;;      X0 = bb0 = undelayed input coefficient = once-delayed-output coeff.
+;;      Y1 = v(n-1) = s = once delayed auxiliary signal
+;;      A  = (1) x(n) (current input signal), then (2) v(n)
+;;      B  = v(n) (auxiliary signal), then (2) y(n) (current output)
+;;
+allpass1 macro pf,ic,sout,aout0,sinp,ainp0,sy0,sx0,bb00
+             new_xarg pf\_allpass1_\ic\_,ainp,ainp0   ; input address arg
+             new_yarg pf\_allpass1_\ic\_,aout,aout0   ; output address arg
+             new_xarg pf\_allpass1_\ic\_,bb0,bb00     ; undelayed input coeff
+             new_yarg pf\_allpass1_\ic\_,sy,sy0       ; once delayed output
+             new_xarg pf\_allpass1_\ic\_,sx,sx0       ; once delayed input
+
+             move x:(R_X)+,R_I1                 ; input address to R_I1
+             move y:(R_Y)+,R_O                  ; output address to R_O
+
+             move sinp:(R_I1)+,X1               ; x(n) to X1
+             move sout:-(R_O),Y0                 ; y(n+1) to B
+             move x:(R_X)+,X0 y:(R_Y),Y0        ; bb0 to X0, sy to Y0
+	     move x:(R_X),A			; sx to A
+
+             do #I_NTICK/2,pf\_allpass1_\ic\_tickloop
+
+;;           sy = bb0 * x + sx - bb0 * sy;  sx = x;
+
+		mac X0,X1,A	Y0,sout:(R_O)+	; ship y, A = bb0 * x + sx
+		mac -X0,Y0,A	X1,B		; A -= bb0 * sy, x to B
+		if "sinp"=='x'
+	  	  move sinp:(R_I1)+,X1 	A,Y0	; next x to X1, y to Y0
+		else
+	  	  move sinp:(R_I1)+,X1
+		  move A,Y0
+		endif
+
+		mac X0,X1,B	Y0,sout:(R_O)+	; ship y, B = bb0 * x + sx
+		mac -X0,Y0,B	X1,A		; B -= bb0 * sy, x to A
+		if "sinp"=='x'
+	  	  move sinp:(R_I1)+,X1 	B,Y0	; next x to X1, y to Y0
+		else
+	  	  move sinp:(R_I1)+,X1
+		  move B,Y0
+		endif
+
+pf\_allpass1_\ic\_tickloop    
+		move	Y0,sout:(R_O)+
+                move  A,x:(R_X)+        ; save filter state x in mem arg
+                move Y0,y:(R_Y)+        ; save filter state y in mem arg
+     endm
+
+

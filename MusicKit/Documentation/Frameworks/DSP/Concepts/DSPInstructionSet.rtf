@@ -1,0 +1,113 @@
+{\rtf0\ansi\paperw16228 \paperh22175 \margl-907 \margr0 \margt0 \margb0 {\fonttbl\f0\fswiss Helvetica;\f1\froman Times;\f2\fmodern Courier;\f3\ftech Symbol;\f4\froman Palantino;}
+{\stylesheet{\s0 \li2620 \fi-503 \ri1007 \ql \tx2620 \tx3124 \tx3628 \tx4132   BulletLong;}{\s1 \li0 \fi0 \ri0 \ql \tx11313 \tx12196   FooterRight;}{\s2 \li0 \fi0 \ri0 \ql \tx-26 \tx5644 \tx12196   FooterLeft;}{\s3 \li2620 \fi0 \ri1007 \ql \tx3124 \tx3628 \tx4132   BodyIndented;}{\s4 \li2116 \fi-2015 \ri1007 \ql \tx1743 \tx2116   Warning;}{\s5 \li2116 \fi0 \ri1007 \ql   ChapterNum;}{\s6 \li2620 \fi0 \ri1007 \ql   CodeExamp;}{\s7 \li2116 \fi0 \ri1007 \ql   Troubleshooting;}{\s8 \li3124 \fi0 \ri1007 \ql   CodeExamp2;}{\s9 \li0 \fi0 \ri0 \ql   Figure;}{\s10 \li2116 \fi0 \ri1007 \ql   Note;}{\s11 \li2620 \fi-503 \ri1007 \ql \tx2620 \tx3124 \tx3628 \tx4132   BulletShort;}{\s12 \li2116 \fi0 \ri1007 \ql \tx2620 \tx3124 \tx3628   Body;}{\s13 \li2116 \fi0 \ri1007 \ql   Fig1Caption;}{\s14 \li2116 \fi0 \ri1007 \ql   Tip;}{\s15 \li2116 \fi0 \ri1007 \ql   FigCaption;}{\s16 \li2620 \fi0 \ri1007 \ql \tx4636 \tx6652 \tx8668 \tx10684   TableBody;}{\s17 \li2620 \fi0 \ri1007 \ql   TableHead;}{\s18 \li2620 \fi-503 \ri1007 \ql \tx2620 \tx3124 \tx3628 \tx4132   Num1Long;}{\s19 \li2116 \fi0 \ri1007 \ql   ChapterTitle;}{\s20 \li2620 \fi-503 \ri1007 \ql \tx2620 \tx3124 \tx3628 \tx4132   Step1;}{\s21 \li2620 \fi-503 \ri1007 \ql   NumLong;}{\s22 \li2620 \fi-503 \ri1007 \ql   Step;}{\s23 \li100 \fi0 \ri1007 \ql   1Head;}{\s24 \li1108 \fi0 \ri1007 \ql   2Head;}{\s25 \li2116 \fi0 \ri1007 \ql   3Head;}{\s26 \li2116 \fi0 \ri1007 \ql   4Head;}{\s27 \li2620 \fi-503 \ri1007 \ql \tx2620 \tx3124 \tx3628 \tx4132   Num1Short;}{\s28 \li2620 \fi-503 \ri1007 \ql   NumShort;}{\s29 \li2116 \fi0 \ri1007 \ql   GlossTerm;}{\s30 \li2116 \fi0 \ri1007 \ql   GlossDef;}}
+\li0 \fi0 \ri0 \ql \sb0 \f1 \fs24 
+Release 2.0  Copyright \f3 \'e3\f1 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+\b \fs36 \f1 \ql \ri1007 \li100 \fi0 DSP56001 Instruction Set Summary\
+\fs16 \
+\fs36 \pard \s12 \li2116 \fi0 \ri1007 \ql \tx2620 \tx3124 \tx3628 \b0 \fs28 \fs16 \fs28 The following notation is used in the summary:\
+\fs16 \
+\fs28 \pard \s17 \li2620 \fi0 \ri1007 \ql \tx4636 \tx6652 \tx8668 \tx10684 \b \fs16 \fs28 Notation	Denotes\
+\s16 \b0 \'d4*\'27	Instructions that don\'27t allow parallel data moves\
+\fi0 [a,b]	One of a or b\
+\fi0 <a,b>	Either a,b or b,a\
+\fi0 <n>	A nonnegative integer\
+\fi0 #I<n>	n-bit immediate value\
+\fi0 A<n>	n-bit absolute address\
+\fi0 An	A0, A1, or A2  (similarly for Bn)\
+\fi0 Xn	X0 or X1  (similarly for Yn)\
+\fi0 Rn	R0, R1, R2, R3, R4, R5, R6, or R7  (similarly for Nn, Mn)\
+\fi0 AnyEa	Addressing modes (Rn)[\f3 -\f1 [Nn]], (Rn+Nn), \f3 -\f1 (Rn), (similarly for An)\
+\fi0 AnyXY	[x,y]:AnyEa\
+\fi0 AnyIO	[x,y]:<<pp (x or y peripheral address, 6 bits, 1\'27s extended)\
+\fi0 Creg	Registers Mn, SR,OMR,SP,SSH,SSL,LA,LC\
+\fi0 Dreg	Registers Xn,Yn,An,Bn,A,B\
+\fi0 Areg	Registers Rn, Nn\
+\fi0 AnyReg	Registers Dreg, Areg, Creg\
+\fi0 cc	CC(HS) CS(LO) EC EQ ES GE GT LC LE LS LT MI NE NR PL NN\
+\fs16 \
+\fs28 \fi0 left-justified moves: \f3 \'ae\f1  [A,B,Xn,Yn] \
+\fi0 right-justified moves: \f3 \'ae\f1  [An,Bn,Rn,Nn]\
+\fs16 \
+\fs28 \s17 \fi0 \b \li2116 \fi503 \fi0 \fs16 \fs28 Arithmetic Instructions \
+\pard \s16 \li2620 \fi0 \ri1007 \ql \b0 \li2116 \fi503 \fi0 \tx7156 \tx10684 ABS [A,B]	Absolute Value \
+\fi0 ADC [X,Y],[A,B]	Add Long with Carry \
+\fi0 ADD [X,Xn,Y,Yn,B,A],[A,B]	Add \
+\fi0 ADDL [B,A],[A,B]	Shift Left then Add  (D=2*D+S) \
+\fi0 ADDR [B,A],[A,B]	Shift Right then Add  (D=D/2+S) \
+\fi0 ASL [A,B]	Arithmetic Shift Left  (D1=D1*2) \
+\fi0 ASR [A,B]	Arithmetic Shift Right  (D1=D1/2) \
+\fi0 CLR [A,B]	Clear Accumulator \
+\fi0 CMP [Xn,Yn,B,A],[A,B]	Compare  (CCR=Sign(D1\f3 -\f1 S)) \
+\fi0 CMPM [Xn,Yn,B,A],[A,B]	Compare magnitude  (CCR=Sign(D\f3 -\f1 S)) \
+\fi0 *DIV [Xn,Yn],[A,B]	Divide Iteration  (D/S iteration) \
+\fi0 MAC \f3 \'b1\f1 [Xn,Yn],[Xn,Yn],[A,B]	Signed Multiply-Add  (no X1*X1, Y1*Y1) \
+\fi0 MACR \f3 \'b1\f1 [Xn,Yn],[Xn,Yn],[A,B]	Signed Multiply, Accumulate, and Round\
+\fi0 MPY \f3 \'b1\f1 [Xn,Yn],[Xn,Yn],[A,B]	Signed Multiply  (no X1*X1, Y1*Y1) \
+\fi0 MPYR \f3 \'b1\f1 [Xn,Yn],[Xn,Yn],[A,B]	Signed Multiply-Round  (no X1*X1, Y1*Y1)\
+\fi0 NEG [A,B]	Negate Accumulator \
+\fi0 *NORM [A,B]	Normalize Accumulator Iteration \
+\fi0 RND [A,B]	Round Accumulator \
+\fi0 SBC [X,Y],[A,B]	Subtract Long with Carry  (D = D \f3 -\f1  S \f3 -\f1  C) \
+\fi0 SUB [X,Xn,Y,Yn,B,A],[A,B]	Subtract  (D = D \f3 -\f1  S) \
+\fi0 SUBL [B,A],[A,B]	Shift Left then Subtract  (D = 2*D \f3 -\f1  S) \
+\fi0 SUBR [B,A],[A,B]	Shift Right then Subtract  (D = D/2 \f3 -\f1  S) \
+\fi0 *Tcc [Xn,Yn,B,A],[A,B]	Transfer Conditionally \
+\fi0 TFR [Xn,Yn,B,A],[A,B]	Transfer Data ALU Register \
+\fi0 TST [A,B]	Test Accumulator\
+\fs16 \
+\fs28 \pard \s17 \li2620 \fi0 \ri1007 \ql \tx4636 \tx6652 \tx8668 \tx10684 \b \li2116 \fi503 \fi0 \fs16 \fs28 Logical Instructions \
+\pard \s16 \li2620 \fi0 \ri1007 \ql \b0 \li2116 \fi503 \fi0 \tx7156 \tx10684 AND [Xn,Yn],[A,B]	Logical AND  (D1=D1&S) \
+\fi0 *ANDI #I8,[MR,CCR,OMR]	AND Immediate with Control Register \
+\fi0 EOR [Xn,Yn],[A,B]	Logical Exclusive OR  (D1=D1 XOR S) \
+\fi0 LSL [A,B]	Logical Shift Accumulator Left  (D1=D1<<1) \
+\fi0 LSR [A,B]	Logical Shift Accumulator Right  (D1=D1>>1) \
+\fi0 NOT [A,B]	Logical Complement on Accumulator  (D1=~D1) \
+\fi0 OR [Xn,Yn],[A,B]	Logical Inclusive OR  (D1=D1S) \
+\fi0 *ORI #I8,[MR,CCR,OMR]	OR Immediate with Control Register \
+\fi0 ROL [A,B]	Rotate Accumulator Left  ([C,D1] ROL) \
+\fi0 ROR [A,B]	Rotate Accumulator Right  ([D1,C] ROR)\
+\fs16 \
+\fs28 \pard \s17 \li2620 \fi0 \ri1007 \ql \tx4636 \tx6652 \tx8668 \tx10684 \b \li2116 \fi503 \fi0 \fs16 \fs28 Bit Manipulation Instructions \
+\pard \s16 \li2620 \fi0 \ri1007 \ql \b0 \li2116 \fi503 \fi0 \tx7156 \tx10684 *BCLR #B5,AnyXY	Bit Test and Clear  (C = Selected bit) \
+\fi0 *BSET #B5,AnyXY	Bit Test and Set  (C = Selected bit) \
+\fi0 *BCHG #B5,AnyXY	Bit Test and Change  (C = Selected bit) \
+\fi0 *BTST #B5,AnyXY	Bit Test on Memory  (C = Selected bit) \
+\fi0 *JCLR #B5,[AnyXY,AnyIO],xxxx	Jump if Bit Clear \
+\fi0 *JSET #B5,[AnyXY,AnyIO],xxxx	Jump if Bit Set \
+\fi0 *JSCLR #B5,[AnyXY,AnyIO],xxxx	Jump to Subroutine if Bit Clear \
+\fi0 *JSSET #B5,[AnyXY,AnyIO],xxxx	Jump to Subroutine if Bit Set\
+\fs16 \
+\fs28 \pard \s17 \li2620 \fi0 \ri1007 \ql \tx4636 \tx6652 \tx8668 \tx10684 \b \li2116 \fi503 \fi0 \fs16 \fs28 Loop Instructions \
+\pard \s16 \li2620 \fi0 \ri1007 \ql \b0 \li2116 \fi503 \fi0 \tx7156 \tx10684 *DO [[x,y]:[AnyEa,A12],AnyReg],L	Start Hardware Loop  (L=Label after end) \
+\fi0 *ENDDO	Exit from Hardware Loop\
+\fs16 \
+\fs28 \pard \s17 \li2620 \fi0 \ri1007 \ql \tx4636 \tx6652 \tx8668 \tx10684 \b \li2116 \fi503 \fi0 \fs16 \fs28 Move Instructions \
+\pard \s16 \li2620 \fi0 \ri1007 \ql \b0 \li2116 \fi503 \fi0 \tx7156 \tx10684 *LUA (Rn)[\f3 \'b1\f1 [Nn]],[Rn,Nn]	Load Updated Register \
+\fi0 MOVE (NOP)	Move Data  (see parallel move summary) \
+\fi0 *MOVEC <AnyXY,Creg>	Move Control Register \
+\fi0 *MOVEC [#I16,#I8],Creg	Move Control Register \
+\fi0 *MOVEC <Creg,AnyReg>	Move Control Register \
+\fi0 *MOVEM <p:AnyEa,AnyReg>	Move Program Memory \
+\fi0 *MOVEP <[AnyReg,AnyXY],AnyIO>	Move Peripheral Data \
+\fi0 *MOVEP #I24,AnyIO	Move Peripheral Data\
+\fs16 \
+\fs28 \pard \s17 \li2620 \fi0 \ri1007 \ql \tx4636 \tx6652 \tx8668 \tx10684 \b \li2116 \fi503 \fi0 \fs16 \fs28 Program Control Instructions \
+\pard \s16 \li2620 \fi0 \ri1007 \ql \b0 \li2116 \fi503 \fi0 \tx7156 \tx10684 *Jcc [A12,AnyEa]	Jump Conditionally \
+\fi0 *JMP [A12,AnyEa]	Jump \
+\fi0 *JScc [A12,AnyEa]	Jump to Subroutine Conditionally \
+\fi0 *JSR [A12,AnyEa]	Jump to Subroutine \
+\fi0 *NOP	No Operation \
+\fi0 *REP [AnyXY,#I12,AnyReg]	Repeat Next Instruction \
+\fi0 *RESET	Reset Peripherals \
+\fi0 RTI	Return from Interrupt \
+\fi0 RTS	Return from Subroutine \
+\fi0 *STOP	Stop Processing \
+\fi0 *SWI	Software Interrupt \
+\fi0 *WAIT	Wait for Interrupt\
+\fs16 \
+\fs28 \pard \s12 \li2116 \fi0 \ri1007 \ql \tx2620 \tx3124 \tx3628 \fs16 \fs28 \
+\fs16 \
+\fs28 \fs16 \fs28 \
+\fs16 \
+\fs28 }

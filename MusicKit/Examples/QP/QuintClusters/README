@@ -1,0 +1,18 @@
+QuintClusters 
+by David A. Jaffe
+(c) CCRMA, Stanford University, 1993.
+
+This example illustrates real-time control of the Ariel QuintProcessor.
+
+To use this program, you need an Ariel QuintProcessor installed in
+slot 2, with an Ariel ProPort attached to the serial port of DSP E.
+You should set the ProPort's sampling rate adjustment to 0, "Auto 1".
+You must be running release NeXTstep 3.0 and have the slot drivers
+correctly installed with the BusProbe application.
+
+See the Help menu item for an explanation of the interface.
+
+This example consists of two source files, ExampApp.m, a subclass of 
+Application that handles the interface work, and DramEchos.m, a simple
+file that sets up and manages a Quint Processor Dynamic RAM echo patch.
+

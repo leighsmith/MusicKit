@@ -1,0 +1,1568 @@
+{\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\ftech\fcharset2 Symbol;}
+{\colortbl;\red255\green255\blue255;}
+\paperw16220\paperh13540
+\pard\ql\qnatural
+
+\f0\fs24 \cf0 Release 2.0  Copyright 
+\f1 „
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+\pard\li1100\ql\qnatural
+
+\b \cf0 \
+\
+\
+\
+
+\fs36 MKPart\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b0\fs28 \cf0 INHERITS FROM	NSObject\
+
+\fs16 \
+
+\fs28 DECLARED IN	MusicKit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs28 \cf0 A MKPart is a timeTag-ordered collection of MKNotes that can be edited and performed.  MKParts are typically grouped together in a MKScore.  \
+
+\fs16 \
+
+\fs28 A MKNote can belong to only one MKPart at a time, and a MKPart to only one MKScore.  When you add a MKNote to a MKPart, it's automatically removed from its old MKPart.  Similarly, adding a MKPart to a MKScore removes it from its previous MKScore.  \
+
+\fs16 \
+
+\fs28 You can add MKNotes to a MKPart either by invoking one of MKPart's 
+\b addNote:
+\b0  methods, or by   ™recording∫ them with a MKPartRecorder, a type of MKInstrument that realizes MKNotes by adding copies of them to a specified MKPart.  Any number of MKPartRecorders can simultaneously record into the same MKPart.  A MKPart is added to a MKScore through MKPart's 
+\b addToScore:
+\b0  method (or the equivalent MKScore method 
+\b addPart:
+\b0 ).\
+
+\fs16 \
+
+\fs28 Within a MKPart, MKNotes are ordered by their time tag values, lowest to highest.  To move a MKNote within a MKPart, you simply change the MKNote's time tag (through MKNote's 
+\b setTimeTag:
+\b0  method).  For efficiency, a MKPart sorts itself only when its MKNotes are retrieved or when a MKNote is moved within the MKPart (or removed altogether).  In other words, adding a MKNote to a MKPart won't cause the MKPart to sort itself; but keep in mind that since adding a MKNote to a MKPart automatically removes it from its current MKPart, the act will cause the moved-from MKPart to sort itself.  You can force a MKPart to sort itself by sending it a 
+\b sort 
+\b0 message. \
+
+\fs16 \
+
+\fs28 A MKPart can be a source of MKNotes in a performance through association with a MKPartPerformer.  During a performance, the MKPartPerformer reads the MKNotes in the MKPart, performing them in order.  While you shouldn't free a MKPart or any of its MKNotes while an associated MKPartPerformer is active, you can add MKNotes to and remove MKNotes from the MKPart at any time without affecting the MKPartPerformer's performance.\
+
+\fs16 \
+
+\fs28 A MKPartPerformer creates its own NSMutableArray of the MKPart's MKNotes when it receives the setPart: message (but keep in mind that it doesn't make copies of the Notes themselves); changes to the MKPart made during a performance won't affect the MKPartPerformer.  This allows a MKPart to be performed by a MKPartPerformer and used for recording by a MKPartRecorder at the same time.\
+
+\fs16 \
+
+\fs28 To each MKPart you can give an info MKNote, a sort of header for the MKPart that can contain any amount and type of information.  Info MKNotes are typically used to describe a performance setup; for example, an info MKNote might contain, as a parameter, the name of the MKSynthPatch subclass on which the MKNotes in the MKPart are meant to be synthesized.   When the MKPart's MKScore is written to a scorefile, the info MKNote is written in the file's header; this is in distinction to the MKPart's other MKNotes, which make up the body of the scorefile.  (To store a MKPart in a scorefile you must first add it to a MKScore and then write the MKScore.)\
+\
+Keep in mind that a MKPart's info MKNote must be interpreted by your application if it is to have any effect.  A few parameters defined by the MusicKit are designed specifically to be used in a MKPart's info MKNote.  These are listed in the description of the 
+\b setInfo:
+\b0  method, below.  The info MKNote is stored separately from the MKNotes in the body of the MKPart; most of the MKNote-accessing methods, such as 
+\b empty
+\b0 ,
+\b  nth:
+\b0 , and 
+\b next:
+\b0 , don't apply to the info MKNote.  The exceptions–the methods that 
+\i do
+\i0  affect the info MKNote–are so noted in their descriptions below.\
+
+\fs16 \
+
+\fs28 MKParts are commonly given string name identifiers, through the 
+\b MKNameObject()
+\b0  C function.  The most important use of a MKPart's name is to identify the MKPart in a scorefile.  \
+
+\fs16 \
+
+\fs28 MKParts are automatically created by the MusicKit in a number of circumstances, such as when reading a MKScorefile.  The function 
+\b MKSetPartClass() 
+\b0 allows you to specify that your own subclass of MKPart be used when MKParts are automatically created.   You retrieve the MKPart class with 
+\b MKGetPartClass()
+\b0 .  \
+\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\i\fs28 \cf0 Inherited from NSObject
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in MKPart
+\i0 	id	score;\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+\cf0 id	notes;\
+id	info;\
+int	noteCount;\
+BOOL	isSorted;\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 score 	The MKScore the MKPart is a member of.\
+
+\fs16 \
+
+\fs28 notes 	The MKPart's NSMutableArray of MKNotes.\
+
+\fs16 \
+
+\fs28 info 	The MKPart's info MKNote.\
+
+\fs16 \
+
+\fs28 noteCount 	Number of MKNotes in the MKPart.\
+
+\fs16 \
+
+\fs28 isSorted 	YES if the MKPart is currently sorted.\
+\pard\tx7140\li2100\ql\qnatural
+
+\fs16 \cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs28 \cf0 Creating and freeing a Part	
+\f1 - 
+\f0 copy\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 copyFromZone:\
+
+\f1 - 
+\f0 init\
+
+\f1 - 
+\f0 free\
+
+\f1 - 
+\f0 freeSelfOnly\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Storing the object	
+\f1 - 
+\f0 addToScore: \
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 score\
+
+\f1 - 
+\f0 removeFromScore\
+
+\f1 - 
+\f0 read:\
+
+\f1 - 
+\f0 write:\
+
+\f1 - 
+\f0 awake\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Adding Notes
+\f1 \U9 - 
+\f0 addNote:  \
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 addNoteCopy: \
+
+\f1 - 
+\f0 addNotes:timeShift: \
+
+\f1 - 
+\f0 addNoteCopies:timeShift: \
+
+\f1 - 
+\f0 noteCount\
+
+\f1 - 
+\f0 setInfo:\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Removing Notes
+\f1 \U9 - 
+\f0 removeNote: \
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 removeNotes: \
+
+\f1 - 
+\f0 empty\
+
+\f1 - 
+\f0 isEmpty\
+
+\f1 - 
+\f0 freeNotes\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Retrieving Notes	
+\f1 - 
+\f0 notes\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 notesNoCopy\
+
+\f1 - 
+\f0 atTime: \
+
+\f1 - 
+\f0 atTime:nth: \
+
+\f1 - 
+\f0 atOrAfterTime: \
+
+\f1 - 
+\f0 atOrAfterTime:nth: \
+
+\f1 - 
+\f0 firstTimeTag:lastTimeTag: \
+
+\f1 - 
+\f0 nth:\
+
+\f1 - 
+\f0 next: \
+
+\f1 - 
+\f0 containsNote: \
+
+\f1 - 
+\f0 infoNote\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Manipulating and Sorting Notes
+\f1 \U9 - 
+\f0 combineNotes\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 splitNotes\
+
+\f1 - 
+\f0 shiftTime: \
+
+\f1 - 
+\f0 sort\
+
+\f1 - 
+\f0 isSorted\
+\pard\tx7140\li2100\ql\qnatural
+
+\fs16 \cf0 \
+\
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 addNote:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b addNote:
+\i\b0 aNote\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Moves 
+\i aNote
+\i0  from its present MKPart to the receiving MKPart.  Returns 
+\i aNote
+\i0 's old MKPart, or 
+\b nil
+\b0  if none.  \
+
+\fs16 \
+
+\fs28 See also: 
+\f1 -
+\f0  
+\b addNoteCopy:
+\b0 , 
+\f1 -
+\f0  
+\b addNotes:timeShift:
+\b0 , 
+\f1 -
+\f0  
+\b removeNote:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 addNoteCopy:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b addNoteCopy:
+\i\b0 aNote\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Adds a copy of 
+\i aNote
+\i0  to the MKPart.  Implemented in terms of 
+\b addNote:
+\b0 .  Returns the new MKNote.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 -
+\f0  
+\b addNote:
+\b0 , 
+\f1 -
+\f0  
+\b addNoteCopies:timeShift:
+\b0 , 
+\f1 -
+\f0  
+\b removeNote:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 addNotes:timeShift:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b addNotes:
+\i\b0 aNoteList 
+\i0\b timeShift:
+\b0 (double)
+\i shift\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Moves each MKNote in 
+\i aNoteList
+\i0  from its present MKPart to the receiving MKPart, adding 
+\i shift
+\i0  to each MKNote's time tag in the process.  Implemented in terms of 
+\b addNote:
+\b0 . The NSMutableArray argument is typically generated through MKPart's 
+\b notes
+\b0  or 
+\b firstTimeTag:lastTimeTag:
+\b0  method.  In this way, all or a portion of one MKPart can be merged into another.  Returns 
+\b self
+\b0 , or 
+\b nil
+\b0  if 
+\i aNoteList
+\i0  is 
+\b nil
+\b0 .\
+
+\fs16 \
+
+\fs28 See also:  
+\f1 -
+\f0  
+\b addNoteCopies:timeShift:
+\b0 ,
+\b  
+\f1\b0 -
+\f0  
+\b shift:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 addNoteCopies:timeShift:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b addNoteCopies:
+\i\b0 aNoteList 
+\i0\b timeShift:
+\b0 (double)
+\i shift\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Copies each MKNote in 
+\i aNoteList
+\i0  (which should be a NSMutableArray object) adds 
+\i shift
+\i0  to each new MKNote's time tag, then adds the new MKNotes to the MKPart by repeatedly invoking 
+\b addNote:.  
+\b0 The MKNotes in 
+\i aNoteList
+\i0  are unaffected.  
+\i aNoteList
+\i0  is typically generated through MKPart's 
+\b notes
+\b0  or 
+\b firstTimeTag:lastTimeTag:
+\b0  method.  In this way, all or a portion of one MKPart can be copied into another.  Returns 
+\b self
+\b0 , or 
+\b nil
+\b0  if 
+\i aNoteList
+\i0  is 
+\b nil
+\b0 .\
+
+\fs16 \
+
+\fs28 See also:  
+\f1 -
+\f0  
+\b addNotes:timeShift:
+\b0 ,
+\b  
+\f1\b0 -
+\f0  
+\b shift\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 addToScore:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b addToScore:
+\i\b0 aScore\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Moves the MKPart from its present MKScore, if any, to 
+\i aScore
+\i0 .  Implemented in terms of MKScore's 
+\b addPart:
+\b0  method.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also:  
+\f1 -
+\f0  
+\b removeFromScore:
+\b0 ,
+\b  
+\f1\b0 -
+\f0  
+\b score\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 atOrAfterTime:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b atOrAfterTime:
+\b0 (double)
+\i timeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Returns the first MKNote with a time tag equal to or greater than 
+\i timeTag
+\i0 , or 
+\b nil
+\b0  if none.\
+
+\fs16 \
+
+\fs28 See also:  
+\f1 -
+\f0\b  atTime:
+\b0 ,
+\b  
+\f1\b0 -
+\f0\b  atOrAfterTime:nth:
+\b0 ,
+\b  
+\f1\b0 -
+\f0  
+\b next\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 atOrAfterTime:nth:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b atOrAfterTime:
+\b0 (double)
+\i timeTag 
+\i0\b nth:
+\b0 (unsigned)
+\i n\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Returns the 
+\i n
+\i0 th MKNote (zero-based) in the MKPart that has a time tag equal to or greater than 
+\i timeTag
+\i0 , or 
+\b nil
+\b0  if none.\
+
+\fs16 \
+
+\fs28 See also:  
+\f1 -
+\f0\b  atTime:
+\b0 ,
+\b  
+\f1\b0 -
+\f0\b  atOrAfterTime:
+\b0 ,
+\b  
+\f1\b0 -
+\f0  
+\b next\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 atTime:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b atTime:
+\b0 (double)
+\i timeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Returns the (first) MKNote in the MKPart that has a time tag of 
+\i timeTag
+\i0 , or 
+\b nil
+\b0  if none.  Invokes MKNote's 
+\b compareNotes:
+\b0  method if the MKPart contains more than one such MKNote.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 -
+\f0\b  atOrAfterTime:
+\b0 ,
+\b  
+\f1\b0 -
+\f0\b  atTime:nth:
+\b0 ,
+\f1 -
+\f0  
+\b next\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 atTime:nth:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b atTime:
+\b0 (double)
+\i timeTag 
+\i0\b nth:
+\b0 (unsigned)
+\i n\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Returns the 
+\i n
+\i0 th MKNote (zero-based) in the MKPart that has a time tag of 
+\i timeTag
+\i0 , or 
+\b nil 
+\b0 if none.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 -
+\f0\b  atTime:
+\b0 ,
+\b   
+\f1\b0 -
+\f0\b  atOrAfterTime:
+\b0 ,
+\b  
+\f1\b0 -
+\f0  
+\b next\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 awake\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b awake
+\i\b0 \
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Invoked automatically after an archived MKPart is read in.  Maps noteTags as represented in the archive file onto a set that is unused in the current application. This insures that the integrity of the noteTag is maintained. If the MKPart is unarchived as part of a MKScore, the noteTags of all MKParts in the MKScore are considered part of a single noteTag space. \
+
+\fs16 \
+
+\fs28 See also: 
+\f1 -
+\f0\b  read:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 combineNotes\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b combineNotes\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Creates and adds a single noteDur for each noteOn/noteOff pair in the MKPart.  A noteOn/noteOff pair is identified by pairing a noteOn with the earliest subsequent noteOff that has a matching note tag.  The parameters from the two MKNotes are merged in the noteDur.  If the noteOn and its noteOff have different values for the same parameter, the value from the noteOn takes precedence.  The noteDur's duration is the time tag difference between the two original MKNotes.  After the noteDur is created and added to the MKPart, the noteOn and noteOff are removed and freed.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 -
+\f0\b  splitNotes\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 containsNote:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (BOOL)
+\b containsNote:
+\i\b0 aNote\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Returns 
+\b YES 
+\b0 if the MKPart contains
+\b  
+\i\b0 aNote
+\i0 , otherwise 
+\b returns 
+\b0 NO.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 -
+\f0\b  isEmpty
+\b0 ,
+\b   
+\f1\b0 -
+\f0\b  noteCount\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 copy\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b copy\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Creates and returns a new MKPart as a copy of the receiving MKPart.  The new MKPart contains copies of receiving MKPart's MKNotes (including the info MKNote).   The new MKPart is added to the same MKScore as the receiving MKPart, but is left unnamed.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 -
+\f0\b  copyFromZone:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 copyFromZone:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b copyfromZone:
+\b0 (NSZone *)
+\i aZone\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 This is the same as 
+\b copy
+\b0 , but the new MKNote is allocated in 
+\i aZone
+\i0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 -
+\f0\b  copy\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 empty\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b empty\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Removes the MKPart's MKNotes but not its info MKNote.  Does not free the MKNotes. Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 -
+\f0\b  removeNote:
+\b0 , 
+\f1 - 
+\f0\b freeNotes\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 firstTimeTag:lastTimeTag:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b firstTimeTag:
+\b0 (double)
+\i firstTimeTag 
+\i0\b lastTimeTag:
+\b0 (double)
+\i lastTimeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Creates and returns a NSMutableArray of the MKPart's MKNotes that have time tag values between 
+\i firstTimeTag
+\i0  and 
+\i lastTimeTag
+\i0 , inclusive.  The MKNotes themselves are not copied.  The sender is responsible for freeing the NSMutableArray.  The object returned by this method is useful as the NSMutableArray argument in methods such as 
+\b addNotes:
+\b0  (sent to another MKPart), 
+\b addNotes:timeShift:
+\b0 , and 
+\b removeNotes:
+\b0 .\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 free\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b free\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Frees the MKPart, its MKNotes and its info MKNote.  Removes the MKPart's name from the MusicKit name table.  If the MKPart has an active MKPartPerformer associated with it, this does nothing. \
+
+\fs16 \
+
+\fs28 See also: 
+\f1 -
+\f0\b  freeSelfOnly
+\b0 , 
+\f1 - 
+\f0\b freeNotes\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 freeNotes\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b freeNotes\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Removes and frees the MKPart's MKNotes and its info MKNote.  Removes the receiver's name from the name table.  If the MKPart has an active MKPartPerformer associated with it, this does nothing.   Returns 
+\b nil
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b empty, 
+\b0  
+\f1 -
+\f0\b  removeNotes:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 freeSelfOnly\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b freeSelfOnly\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Frees the MKPart but not its MKNotes.  The MKPart is removed from its MKScore, if any.  You 
+\i can
+\i0  free a MKPart while its being performed by a MKPartPerformer–it's the MKPart's MKNotes, not the MKPart itself, that's performed.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b empty, 
+\b0  
+\f1 -
+\f0\b  removeNotes:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 infoNote\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b infoNote\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the MKPart's info MKNote.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b setInfoNote:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 init\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b init\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Initializes the object.  This should be invoked when alloc'ing a new MKPart. \
+\pard\tx7140\li2100\ql\qnatural
+
+\b\fs16 \cf0 \
+
+\fs28 isEmpty\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (BOOL)
+\b isEmpty\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns YES if the MKPart contains no MKNotes (not including the info MKNote), otherwise returns NO.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b noteCount\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 isSorted\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (BOOL)
+\b isSorted\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns YES if the MKPart's MKNotes are currently guaranteed to be in time tag order, otherwise returns NO.   \
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b sort\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 next:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b next:
+\i\b0 aNote\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Returns the MKNote immediately following 
+\i aNote
+\i0 , or 
+\b nil
+\b0  if 
+\i aNote
+\i0  isn't a member of the MKPart, or if it's the last MKNote in the MKPart.  For greater efficiency, you should create a NSMutableArray from the 
+\b notes
+\b0  method and then call 
+\b NX_ADDRESS()
+\b0 .\
+\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b nth:
+\b0 , 
+\f1 - 
+\f0\b atTime:
+\b0 ,
+\b  
+\f1\b0 - 
+\f0\b atOrAfterTime:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 noteCount\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (unsigned)
+\b noteCount\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the number of MKNotes in the MKPart (not counting the info MKNote).\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b notes
+\b0 , 
+\f1 - 
+\f0\b isEmpty\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 notes\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b notes\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Creates and returns a NSMutableArray of the MKPart's MKNotes.  The MKPart is sorted before the NSMutableArray is created.  The sender is responsible for freeing the NSMutableArray.  The MKNotes themselves are not copied.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b notesNoCopy
+\b0 , 
+\f1 - 
+\f0\b noteCount\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 notesNoCopy\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b notesNoCopy\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the NSMutableArray object that contains the MKPart's MKNotes.  The NSMutableArray isn't guaranteed to be sorted.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b notes
+\b0 , 
+\f1 - 
+\f0\b noteCount\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 nth:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b nth:
+\b0 (unsigned)
+\i n\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Returns the 
+\i n
+\i0 th MKNote (0-based), or 
+\b nil
+\b0  if 
+\i n
+\i0  is out of bounds (negative or greater than the MKPart's MKNote count).\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b notes
+\b0 , 
+\f1 - 
+\f0\b noteCount
+\b0 , 
+\f1 - 
+\f0\b atTime:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 read:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b read:
+\b0 (NXTypedStream *)
+\i aTypedStream
+\i0 \
+\pard\li3620\fi-1020\ql\qnatural
+
+\b\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 You never send this message directly.   Should be invoked via
+\b  NXReadObject()
+\b0 .  Sets object name (using 
+\b MKNameObject()
+\b0 ), if any.  Note that 
+\b -init
+\b0  is not sent to newly unarchived objects.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b awake
+\b0 , 
+\f1 -
+\f0\b  write:
+\b0 \
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b\fs28 \cf0 removeFromScore\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b removeFromScore\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Removes the MKPart from its present MKScore.  This is implemented in terms of MKScore's 
+\b removePart:
+\b0  method.  Returns 
+\b self
+\b0 , or 
+\b nil
+\b0  if it isn't part of a MKScore.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b addToScore:
+\b0 , 
+\f1 - 
+\f0\b score\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 removeNote:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b removeNote:
+\i\b0 aNote\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Removes 
+\i aNote
+\i0  from the MKPart.  Returns the MKNote or 
+\b nil
+\b0  if it isn't found.  You shouldn't invoke this method if the MKPart has an active MKPartPerformer associated with it.  \
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b removeNotes:
+\b0 , 
+\f1 - 
+\f0\b empty
+\b0 , 
+\f1 - 
+\f0\b addNote\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 removeNotes:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b removeNotes:
+\i\b0 aList\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Removes all the MKNotes the MKPart has in common with 
+\i aList
+\i0 .  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b removeNote:
+\b0 , 
+\f1 - 
+\f0\b empty
+\f1\b0 , - 
+\f0\b addNote:
+\b0 , 
+\f1 -
+\f0  
+\b firstTimeTag:lastTimeTag:\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 score\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b score\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the MKScore the MKPart is a member of, or 
+\b nil
+\b0  if none.\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b addToScore:
+\b0 , 
+\f1 - 
+\f0\b removeFromScore\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 setInfoNote:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b setInfoNote:
+\i\b0 aNote\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Sets the MKPart's info MKNote to a copy of 
+\i aNote
+\i0  and returns 
+\b self
+\b0 .  The info MKNote can be given information (as parameters) that helps define how the MKPart should be interpreted; in particular, special MusicKit parameters (more accurately, parameter tags) are by convention used in a MKPart info MKNote.  Listed below, these parameters pertain to the manner in which the MKNotes in the MKPart are synthesized, although as with any MKNote, the info MKNote's parameters must be read and applied by some other object (or your application) in order for them to have an effect.  Keep in mind that the info MKNote is be no means restricted to containing only these parameters:\
+
+\fs16 \
+\pard\tx2860\tx5880\tx8660\li8660\fi-6060\ql\qnatural
+
+\b\fs28 \cf0 	Parameter Tag	Expected Value	Typical Use\
+\pard\tx2860\tx2860\tx5880\tx5880\tx8660\tx8660\li8660\fi-6060\ql\qnatural
+\cf0 	
+\b0 MK_synthPatch	MKSynthPatch subclass	Argument to MKSynthInstrument's 
+\b setSynthPatchClass:
+\b0  method.\
+\pard\tx2860\tx2860\tx2860\tx5880\tx5880\tx5880\tx8660\tx8660\tx8660\li8660\fi-6060\ql\qnatural
+
+\b \cf0 	
+\b0 MK_synthPatchCount	integer	Argument to MKSynthInstrument's 
+\b setSynthPatchCount:
+\b0  method.\
+\pard\tx2860\tx2860\tx2860\tx2860\tx5880\tx5880\tx5880\tx5880\tx8660\tx8660\tx8660\tx8660\li8660\fi-6060\ql\qnatural
+\cf0 	MK_midiChan	integer	Argument to MKMidi's 
+\b channelNoteReceiver:
+\b0  method.\
+\pard\tx2860\tx2860\tx2860\tx2860\tx2860\tx5880\tx5880\tx5880\tx5880\tx5880\tx8660\tx8660\tx8660\tx8660\tx8660\li8660\fi-6060\ql\qnatural
+\cf0 	MK_track	integer	Automatically set when a midifile is read into a MKScore.\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 The info MKNote is stored separately from the MKPart's main body of MKNotes; methods such as 
+\b empty
+\b0  don't affect it.  \
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b infoNote\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 shiftTime:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b shiftTime:
+\b0 (double)
+\i shift\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Shifts the MKPart's contents by adding 
+\i shift
+\i0  to each of the MKNotes' time tags.  Returns 
+\b self
+\b0 .  Implemented in terms of 
+\b addNotes:timeShift:
+\b0 .  Notice that this means the MKNotes are removed and then readded to the MKPart.  Returns the MKPart.\
+\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 sort\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b sort\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Causes the MKPart to sort itself if it's currently unsorted.  Normally, a MKPart sorts itself only when MKNotes are accessed, moved, or removed.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b isSorted\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+
+\fs28 splitNotes\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b splitNotes\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Splits the MKPart's noteDurs into noteOn/noteOff pairs.  Each noteDur's note type is set to noteOn and a noteOff is created (and added) to complement it.  The original parameters and note tag are divided between the two MKNotes as described in MKNote's 
+\b split::
+\b0  method.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b combineNotes:
+\b0 , 
+\f1 -
+\f0\b  split:: 
+\b0 (Note)\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b\fs28 \cf0 write:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b write:
+\b0 (NXTypedStream *)
+\i aTypedStream
+\i0 \
+\pard\li3620\fi-1020\ql\qnatural
+
+\b\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 You never send this message directly.  Should be invoked with 
+\b NXWriteRootObject()
+\b0 .  Archives MKNotes, info and name, if any (using 
+\b MKGetObjectName()
+\b0 ).  Also optionally archives MKScore using 
+\b NXWriteObjectReference()
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f1 - 
+\f0\b awake
+\b0 , 
+\f1 -
+\f0\b  read:
+\b0 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+}

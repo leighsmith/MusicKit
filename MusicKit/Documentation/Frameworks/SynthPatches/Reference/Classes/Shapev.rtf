@@ -1,0 +1,318 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;}
+\paperw16220
+\paperh13060
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 4.0  Copyright 
+\f1 ã
+\f0 1993 by Stanford University.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 Shapev
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 \
+INHERITS FROM	Fm1i\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit/synthpatches/synthpatches.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\b\fs28 Shapev
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1  is like 
+\pard\tx7140\b\li2100\fc1\cf1 Shape
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 , but it includes periodic and random vibrato.\
+
+\pard\tx7140\fs24\li2100\fc0\cf0 \
+\
+
+\fs28\fc1\cf1 When using this SynthPatch in an interactive real-time context, such as playing from a MIDI keyboard, call 
+\b MKUseRealTimeEnvelopes()
+\b0  before allocating the SynthPatch.\
+
+\pard\tx3120\tx3620\tx4120\li2620\fc1\cf1 \
+
+\pard\tx7140\li2100\fc0\cf0 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Inherited from SynthPatch
+\i0 	id	synthElements;\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 id	synthInstrument;\
+int	noteTag;\
+MKSynthStatus	status;\
+id	patchTemplate;\
+BOOL	isAllocated;\
+id	orchestra;\
+
+\pard\tx7140\tx10180\tx10680\i\fi-4540\li7140\fc0\cf0 Declared in Shape
+\i0 	Envelope *	ampEnv\
+	double  	amp1\
+	double 	amp0\
+	double 	ampAtt\
+	double	ampRel\
+	Envelope *	freqEnv\
+	double  	freq1\
+	double	freq0\
+	double	freqAtt\
+	double	freqRel\
+	Envelope *	indEnv\
+	double  	indAtt\
+	double	indRel\
+	double  	m1Ind0\
+	double	m1Ind1\
+	double    	portamento\
+	double    	bearing\
+	id 	tabl\
+	WaveTable *	tableInfo\
+	double 	phase\
+	double 	velocitySensitivity\
+	double 	pitchbendSensitivity\
+	id 	waveform\
+	int 	wavelen\
+	int 	velocity\
+	int	pitchbend\
+	int 	volume\
+	double 	bright\
+
+\fs16 \
+
+\i\fs28 Declared in Shapev
+\i0 	WaveTable *	vibWaveform\
+	double 	svibAmp0\
+	double 	svibAmp1\
+	double 	svibFreq0\
+	double 	svibFreq1\
+	double 	rvibAmp\
+	 int 	modWheel\
+		
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fi-4540\li7140\fc0\cf0 	
+\fs28 + patchTemplateFor:\
+
+\f1 	- 
+\f0 freeSelf\
+
+\f1 	- 
+\f0 controllerValues:	\
+
+\fs16 	
+\f1\fs28 - 
+\f0 noteOnSelf:
+\fs16 \
+
+\fs28 	
+\f1 - 
+\f0 noteOffSelf:
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 	
+\f1 - 
+\f0 noteUpdateSelf:
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 	
+\f1 - 
+\f0 noteEndSelf	\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+
+\fs28 CLASS METHODS\
+\
+
+\b patchTemplateFor:\
+
+\pard\tx3120\tx3620\tx4120\b0\fs16\li2620\fc0\cf0 \
+
+\f1\fs28 + 
+\f0\b patchTemplateFor:
+\b0\i aNote\
+
+\fs16 \
+
+\i0\fs28 Returns a template. A non-zero for 
+\b svibAmp 
+\b0 and 
+\b rvibAmp 
+\b0 determines whether vibrato resources are allocated. \
+
+\pard\tx7140\b\fs16\li2100\fc0\cf0 \
+
+\b0\fs28 \
+INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 noteOnSelf:\
+
+\pard\tx3120\tx3620\tx4120\b0\fs16\li2620\fc0\cf0 \
+
+\f1\fs28 - 
+\f0\b noteOnSelf:
+\b0\i aNote\
+
+\fs16 \
+
+\fs28 aNote 
+\i0 is assumed to be a noteOn or noteDur.  This method triggers (or retriggers) the Note's envelopes, if any.  If this is a new phrase, all instance variables are set to default values, then the values are read from the Note.  \
+
+\pard\tx7140\b\fs16\li2100\fc0\cf0 \
+
+\fs28 noteUpdateSelf:\
+
+\pard\tx3120\tx3620\tx4120\b0\fs16\li2620\fc0\cf0 \
+
+\f1\fs28 - 
+\f0\b noteUpdateSelf:
+\b0\i aNote\
+
+\fs16 \
+
+\fs28 aNote 
+\i0 is assumed to be a noteUpdate and the receiver is assumed to be currently playing a Note.  Sets parameters as specified in 
+\i aNote.
+\i0 \
+
+\pard\tx7140\b\fs16\li2100\fc0\cf0 \
+
+\fs28 noteOffSelf:\
+
+\pard\tx3120\tx3620\tx4120\b0\fs16\li2620\fc0\cf0 \
+
+\f1\fs28 - (
+\f0\fc1\cf1 double
+\f1\fc0\cf0 )
+\f0\b noteOffSelf:
+\b0\i aNote\
+
+\fs16 \
+
+\fs28 aNote 
+\i0 is assumed to be a noteOff.  This method causes the Note's envelopes (if any) to begin its release portion and returns the time for the envelopes to finish.  Also sets any parameters present in 
+\i aNote.
+\pard\tx7140\b\i0\fs16\li2100\fc0\cf0 \
+
+\fs28 \
+noteEndSelf\
+
+\pard\tx3120\tx3620\tx4120\b0\fs16\li2620\fc0\cf0 \
+
+\f1\fs28 - 
+\f0\b noteEndSelf
+\b0\i \
+
+\fs16 \
+
+\i0\fs28 Resest instance variables to default values.
+\pard\tx7140\b\fs16\li2100\fc0\cf0 \
+
+\fs28 \
+preemptFor:\
+
+\pard\tx3120\tx3620\tx4120\b0\fs16\li2620\fc0\cf0 \
+
+\f1\fs28 - 
+\f0\b\fc1\cf1 preemptFor:
+\b0\i aNote
+\fc0\cf0 \
+
+\fs16 \
+
+\i0\fs28 Preempts envelope, if any.
+\pard\tx7140\b\fs16\li2100\fc0\cf0 \
+
+\fs28 \
+
+\b0 PARAMETER INTERPRETATION\
+\
+
+\fc1\cf1 In addition to the parameters described in 
+\b\fc0\cf0 Shape
+\fc1\cf1 .rtfd
+\b0 , the following parameters are supported:\
+\
+
+\b controlChange
+\b0  - MIDI modulation wheel (controller 1) interpolates simultaneously between 
+\b svibAmp0
+\b0  and 
+\b svibAmp
+\b0 , and 
+\b svibFreq0
+\b0  and 
+\b svibFreq
+\b0 .  The default value (127) results in svibFreq and svibAmp.  The value is given by the companion parameter controlVal.  In the range 0:127.\
+
+\b \
+controlVal
+\b0  - See controlChange.\
+
+\b \
+svibFreq
+\b0  - Sinusoidal vibrato rate in hz.  Default is 0.0.\
+
+\b \
+svibAmp-
+\b0  Sinusoidal vibrato amplitude as a percentage of the fundamental frequency.  In the range 0.0:1.0.  Default is 0.0.\
+
+\b \
+svibFreq0
+\b0  - See 
+\b controlChange
+\b0 .  Default is 0.0.\
+
+\b \
+svibAmp0
+\b0  - See 
+\b controlChange.
+\b0   Default is 0.0.\
+
+\b \
+rvibAmp
+\b0  - Random vibrato amplitude as roughly a percentage of the fundamental frequency.  In the range 0.0:1.0.  Default is 0.0.\
+
+\b \
+vibWaveform
+\b0  - WaveTable object that specifies shape of vibrato.\
+
+}

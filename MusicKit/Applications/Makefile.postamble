@@ -1,0 +1,11 @@
+APP_STRIP_OPTS = $(DYLD_APP_STRIP_OPTS)
+
+OTHER_LDFLAGS = -u libNeXT_s -u libsys_s
+
+install::
+	cp -rp help.rtfd $(DSTROOT)$(INSTALLDIR)/$(NAME).app/help.rtfd
+	chmod 644 $(DSTROOT)$(INSTALLDIR)/$(NAME).app/help.rtfd/*
+	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_[0-9]*k.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app
+	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_turtlebeachms.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app
+	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_ilinki56.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app
+	-cp -p $(DSTROOT)/usr/local/lib/dsp/monitor/mkmon_A_arielpc56d.dsp $(DSTROOT)$(INSTALLDIR)/$(NAME).app

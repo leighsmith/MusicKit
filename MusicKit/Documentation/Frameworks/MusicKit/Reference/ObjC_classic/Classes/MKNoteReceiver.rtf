@@ -1,0 +1,914 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f2\ftech Symbol;\f1\fmodern Ohlfs;}
+\paperw16220
+\paperh13060
+\margl120
+\margr0
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f2 „
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 NoteReceiver\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 NoteReceiver is an auxilliary class that completes the implementation of Instrument.  Instances of NoteReceiver are owned by Instrument objects to provide the following:\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\tx4620\fs28\fi-520\li3120\fc0\cf0 ∑	It's part of the link between a Performer and an Instrument.  NoteReceiver's 
+\b connect
+\b0 : method connects a NoteReceiver to a NoteSender, which is owned by a Performer in much the same way that a NoteReceiver is owned by an Instrument.  By connecting a NoteReceiver to a NoteSender, their respective owners are said to be connected.   NoteSender defines an equivalent 
+\b connect:
+\b0  method–it doesn't matter which of the two objects is the receiver and which is the argument when sending a 
+\b connect:
+\b0  message.\
+
+\fs16 \
+
+\fs28 ∑	NoteReceiver's 
+\b receiveNote:
+\b0  method defines the mechanism by which an Instrument obtains Notes.  When a NoteReceiver receives the 
+\b receiveNote:
+\b0  message, it forwards the argument (a Note object) to its owner by invoking the Instrument method
+\b  realizeNote:fromNoteReceiver:
+\b0 .  The 
+\b receiveNote:
+\b0  method itself is sent when a connected NoteSender receives a 
+\b sendNote:
+\b0  message from its owner; you can also send 
+\b receiveNote:
+\b0  (or one of its five sister methods) directly to a NoteReceiver from your application.  You can toggle a NoteReceiver's ability to pass Notes to its owner through the 
+\b squelch
+\b0  and 
+\b unsquelch
+\b0  methods; a NoteReceive won't send 
+\b realizeNote:fromNoteReceiver:
+\b0  messages while it's squelched.\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 Unlike NoteSenders, which are generally expected to be created by the Performers that own them, NoteReceivers can be created either by their owners or by your application.  For example, each SynthInstrument object creates and adds to itself a single NoteReceiver.  ScorefileWriter objects, on the other hand, don't create any NoteReceivers; it's left to your application to create and add them.  A NoteReceiver is created through the 
+\b new
+\b0  class method and added to an Instrument through the latter's 
+\b addNoteReceiver:
+\b0 .\
+
+\fs16 \
+
+\fs28 A NoteReceiver can be owned by only one Instrument at a time; however, it can be connected to any number of NoteSenders.  In addition, two different NoteReceivers can be connected to the same NoteSender.  Thus the connections between Performers and Instruments can describe an arbitrarily complicated network.    To retrieve the NoteReceivers that are owned by a particular Instrument you invoke the Instrument's 
+\b noteReceiver
+\b0  or 
+\b noteReceivers
+\b0  method. \
+
+\fs16 \
+
+\fs28 NoteReceivers are also created, owned, and used by Midi objects as part of their assumption of the role of Instrument.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in NoteReceiver
+\i0 	id	noteSenders;\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 BOOL	isSquelched;\
+id	owner;\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 noteSenders 	List of connected NoteSenders.\
+
+\fs16 \
+
+\fs28 isSquelched 	YES if the NoteReceiver is squelched.  No by default.\
+
+\fs16 \
+
+\fs28 owner 	Instrument (or Midi) that owns the NoteReceiver.\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Creating a NoteReceiver
+\f2 	
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 - 
+\f0 copy\
+
+\f2 - 
+\f0 copyFromZone:\
+
+\f2 - 
+\f0 init\
+
+\f2 - 
+\f0 free\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 The object's owner
+\f2 	- 
+\f0 owner\
+
+\fs16 \
+
+\fs28 Connecting the object	
+\f2 - 
+\f0 connect:\
+
+\pard\tx10180\tx10680\f2\fi-520\li7660\fc0\cf0 - 
+\f0 disconnect:\
+
+\f2 - 
+\f0 disconnect\
+
+\f2 - 
+\f0 connections\
+
+\f2 - 
+\f0 connectionCount\
+
+\f2 - 
+\f0 isConnected:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Squelching the object	
+\f2 - 
+\f0 squelch\
+
+\pard\tx10180\tx10680\f2\fi-520\li7660\fc0\cf0 - 
+\f0 unsquelch\
+
+\f2 - 
+\f0 isSquelched\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Receiving Notes	
+\f2 - 
+\f0 receiveNote: \
+
+\pard\tx10180\tx10680\f2\fi-520\li7660\fc0\cf0 - 
+\f0 receiveNote:atTime: \
+
+\f2 - 
+\f0 receiveNote:withDelay:\
+
+\f2 - 
+\f0 receiveAndFreeNote: \
+
+\f2 - 
+\f0 receiveAndFreeNote:atTime: \
+
+\f2 - 
+\f0 receiveAndFreeNote:withDelay: \
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Archiving the object	
+\f2 - 
+\f0 write:\
+
+\pard\tx10180\tx10680\f2\fi-520\li7660\fc0\cf0 - 
+\f0 read:\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 connect:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b connect:
+\b0\i aNoteSender\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Connects 
+\i aNoteSender
+\i0  to the NoteReceiver; if the argument isn't a NoteSender, the connection isn't made.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b disconnect:
+\b0 ,
+\b  
+\f2\b0 - 
+\f0\b isConnected
+\b0 ,
+\b  
+\f2\b0 - 
+\f0\b connections\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 connectionCount\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (unsigned int)
+\b connectionCount\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the number of NoteSenders that are connected to the NoteReceiver.\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b connect:
+\b0 ,
+\b  
+\f2\b0 - 
+\f0\b disconnect:
+\b0 ,
+\b  
+\f2\b0 - 
+\f0\b isConnected
+\b0 ,
+\b  
+\f2\b0 - 
+\f0\b connections\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 connections\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b connections\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Creates and returns a List of the NoteSenders that are connected to the NoteReceiver.  It's the sender's responsibility to free the List.\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b connect:
+\b0 ,
+\b  
+\f2\b0 - 
+\f0\b disconnect:
+\b0 ,
+\b  
+\f2\b0 - 
+\f0\b isConnected\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 copy\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b copy\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Creates and returns an unowned NoteReceiver that's connected to the same NoteSenders as the receiver of this message.  If the receiving NoteReceiver is squelched, so, too, shall be the copy.\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b copyFromZone:\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 copyFromZone:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b copyFromZone:
+\b0 (NXZone *)
+\i zone\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 This is the same as 
+\b copy
+\b0 , but the new object is allocated from 
+\i zone
+\i0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b copy\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 disconnect\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b disconnect\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Severs the connections between the NoteReceiver and all the NoteSenders it's connected to.   Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b disconnect:
+\b0 , 
+\f2 - 
+\f0\b connect:
+\b0 , 
+\f2 - 
+\f0\b isConnected:
+\b0 , 
+\f2 - 
+\f0\b connections
+\b0  \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 disconnect:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b disconnect:
+\b0\i aNoteSender\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Severs the connection between the NoteReceiver and 
+\i aNoteSender
+\i0 ; if the NoteSender isn't connected, this does nothing.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b disconnect
+\b0 , 
+\f2 - 
+\f0\b connect:
+\b0 , 
+\f2 - 
+\f0\b isConnected:
+\b0 , 
+\f2 - 
+\f0\b connections
+\b0  \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 free\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b free\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Severs the connections between the NoteReceiver and all its connected NoteSenders and then frees the NoteReceiver.\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b disconnect
+\b0  \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 init\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b init\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Initializes a NoteReceiver that was created through 
+\b allocFromZone:
+\b0 .  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 isConnected:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (BOOL)
+\b isConnected:
+\b0\i aNoteSender\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns YES if 
+\i aNoteSender
+\i0  is connected to the NoteReceiver, otherwise returns NO.\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b connect
+\b0 , 
+\f2 - 
+\f0\b disconnect
+\b0 , 
+\f2 - 
+\f0\b connections
+\b0 , 
+\f2 - 
+\f0\b connectionCount
+\b0 ,  \
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 isSquelched\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (BOOL)
+\b isSquelched\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns YES if the NoteReceiver is squelched, otherwise returns NO.  A squelched NoteReceiver won't invoke its owner's 
+\b realizeNote:fromNoteReceiver:
+\b0  method.\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b squelch
+\b0 ,
+\b  
+\b0   
+\f2 - 
+\f0\b unsquelch\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 owner\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b owner\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the Instrument (or Midi object) that owns the NoteReceiver.\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b addNoteReceiver: 
+\b0 (Instrument, Midi)\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 read:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b read:
+\b0 (NXTypedStream *)
+\i stream\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Unarchives the NoteReceiver by reading it from 
+\i stream
+\i0 .  You never invoke this method directly; to read an archived NoteReceiver, call the 
+\b NXReadObject()
+\b0  C function.\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b write:\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 receiveAndFreeNote:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b receiveAndFreeNote:
+\b0\i aNote\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sends the message 
+\b receiveNote:
+\b0\i aNote
+\i0  to 
+\b self
+\b0  and then frees 
+\i aNote
+\i0 .  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b receiveNote:
+\b0 ,
+\b  
+\f2\b0 -
+\f0\b  receiveAndFreeNote:atTime:
+\b0 ,
+\b  
+\f2\b0 -
+\f0\b  receiveAndFreeNote:withDelay:
+\b0 ,\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 receiveAndFreeNote:atTime:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b receiveAndFreeNote:
+\b0\i aNote 
+\b\i0 atTime:
+\b0 (double)
+\i time\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Enqueues, with the appropriate Conductor, a request for 
+\b receiveAndFreeNote:
+\b0\i aNote
+\i0  to be sent to 
+\b self
+\b0  at time 
+\i beatsSinceStart
+\i0 , measured in beats from the beginning of the Conductor's performance.  See 
+\b receiveNote:atTime:
+\b0  for a description of the Conductor that's used.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b receiveNote:
+\b0 ,
+\b  
+\f2\b0 -
+\f0\b  receiveAndFreeNote:
+\b0 ,
+\b  
+\f2\b0 -
+\f0\b  receiveAndFreeNote:withDelay:
+\b0 ,\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 receiveAndFreeNote:withDelay:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b receiveAndFreeNote:
+\b0\i aNote 
+\b\i0 withDelay:
+\b0 (double)
+\i delayTime\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Enqueues, with the appropriate Conductor, a request for 
+\b receiveAndFreeNote:
+\b0\i aNote
+\i0  to be sent to 
+\b self
+\b0  after 
+\i delayBeats
+\i0 .  See 
+\b receiveNote:atTime:
+\b0  for a description of the Conductor that's used.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b receiveNote:
+\b0 ,
+\b  
+\f2\b0 -
+\f0\b  receiveAndFreeNote:
+\b0 ,
+\b  
+\f2\b0 -
+\f0\b  receiveAndFreeNote:atTime:
+\b0 ,\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 receiveNote:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b receiveNote:
+\b0\i aNote\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sends the message 
+\b realizeNote:
+\b0\i aNote
+\i0  
+\b fromNoteReceiver:self
+\b0  to the NoteReceiver's owner.  If the NoteReceiver is squelched, the message isn't sent.  This method is invoked automatically as the NoteReceiver's connected NoteSenders receive 
+\b sendNote:
+\b0  messages; you can also invoke this method directly.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b receiveAndFreeNote:
+\b0 ,
+\b  
+\f2\b0 -
+\f0\b  receiveNote:withDelay:
+\b0 ,
+\f2  -
+\f0\b  receiveNote:atTime:
+\b0 ,\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 receiveNote:atTime:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b receiveNote:
+\b0\i aNote 
+\b\i0 atTime:
+\b0 (double)
+\i time\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Enqueues, with the Conductor object described below, a request for 
+\b receiveNote:
+\b0\i aNote
+\i0  to be sent to 
+\b self
+\b0  at time 
+\i beatsSinceStart
+\i0 , measured in beats from the beginning of the Conductor's performance.  If 
+\i beatsSinceStart
+\i0  has already passed, the enqueued message is sent immediately.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 The request is enqueued with
+\i  
+\i0 the object that's returned by
+\b  [
+\b0\i aNote
+\i0  
+\b conductor]
+\b0 .  If the Note was received from a NoteSender, this is the Conductor of the Performer that originally sent 
+\i aNote
+\i0  into the performance.  If you invoke this method (or any of the 
+\b receiveNote: 
+\b0 methods that enqueue a message request) directly, or if Midi is the originator of the Note, then the defaultConductor is used.\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b receiveNote:
+\b0 ,
+\b  
+\f2\b0 -
+\f0\b  receiveNote:withDelay:\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 receiveNote:withDelay:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b receiveNote:
+\b0\i aNote 
+\b\i0 withDelay:
+\b0 (double)
+\i delayTime\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Enqueues, with the appropriate Conductor, a request for 
+\b receiveNote:
+\b0\i aNote
+\i0  to be sent to 
+\b self
+\b0  after 
+\i delayBeats
+\i0 .  See 
+\b receiveNote:atTime:
+\b0  for a description of the Conductor that's used.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b receiveNote:
+\b0 ,
+\b  
+\f2\b0 -
+\f0\b  receiveNote:atTime:\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 squelch\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b squelch\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Disables the NoteReceiver's ability to send 
+\b realizeNote:fromNoteReceiver:
+\b0  messages to its owner.   Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b isSquelched
+\b0 ,
+\b  
+\b0   
+\f2 - 
+\f0\b unsquelch\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 unsquelch\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b unsquelch\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Enables the NoteReceiver's ability to send 
+\b realizeNote:fromNoteReceiver:
+\b0  messages to its owner, undoing the effect of a previous 
+\b squelch
+\b0  message.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b isSquelched
+\b0 ,
+\b  
+\b0   
+\f2 - 
+\f0\b squelch\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 write:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b write:
+\b0 (NXTypedStream *)
+\i stream\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Archives the NoteReceiver by writing it to 
+\i stream
+\i0 .  The NoteReceiver's connections and owner are archived by reference.  You never invoke this method directly; to archive a NoteSender, call the 
+\b NXWriteRootObject()
+\b0  C function.\
+
+\fs16 \
+
+\fs28 See also: 
+\f2 - 
+\f0\b read:\
+
+\fs16 \
+
+\b0\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+}

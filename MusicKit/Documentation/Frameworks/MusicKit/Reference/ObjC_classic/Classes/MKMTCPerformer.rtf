@@ -1,0 +1,677 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;\f3\fmodern Ohlfs;}
+\paperw16220
+\paperh12580
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 4.0  
+\fc1\cf1 Copyright 
+\f1 ã
+\f0  Pinnacle Research, 1993
+\fc0\cf0 \
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 MTCPerformer\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Performer : Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\pard\tx3120\tx3620\tx4120\li2620\fc1\cf1 \
+MTCPerformer is used to generate Notes with MIDI time code parameters.  The main use of this class is to send the Notes to a Midi object.   To use an MTCPerformer, simply, instantiate the object, activate it, connect a Midi object to its one NoteSender and start the performance.    This is done with the usual Performer methods:\
+\
+	
+\f2\fs24 id myMTCPerformer =[[MTCPerformer alloc] init];\
+	id myMidi = [Midi newOnDevice:"midi0"];\
+	[[myMTCPerformer noteSender] connect:[myMidi noteReceiver]];\
+	[myMTCPerformer activate];\
+	[myMidi run];\
+	[Conductor startPerformance];\
+
+\f0\fs28 \
+This will begin generating time code in a forward direction, beginning with the value 0:0:0:0, using the default format (24 frames/second).  \
+\
+You set the format of the time code to be generated with the method 
+\b setFormat:
+\b0 .  The argument should be one of the following constants, defined in
+\b  <musickit/MTCPerformer.h>
+\b0 :\
+	\
+	MK_MTC_FORMAT_24\
+   	MK_MTC_FORMAT_25\
+   	MK_MTC_FORMAT_DROP_30\
+   	MK_MTC_FORMAT_30\
+\
+These are the standard MIDI time code formats.  For more information, see the MIDI Time Code Specification (available from the MIDI Manufacturer's Association).\
+\
+You set the first and last MTC value using the methods 
+\b setFirstTimeTag:
+\b0 , 
+\b setLastTimeTag:
+\b0  and 
+\b setTimeShift:
+\b0 .    To set the first value the Performer will generate, you use 
+\b setFirstTimetTag:
+\b0 .   Note that this method also sets the time from activation at which the Performer will start sending time code.  For example, if (before the performance) you set a Performer's 
+\i firstTimeTag
+\i0  to 10.0 seconds, then activate the Performer and start the performance, the Performer will begin sending time code at time 10.0 seconds and the values will begin at the MTC time 0:0:10:0  (zero hours, zero minutes, ten seconds, zero frames).   \
+\
+You may want the time code to begin sending immediately, regardless of 
+\i firstTimeTag
+\i0 .  To do this, use the Performer method 
+\b setTimeShift:
+\b0  and pass it an argument of 
+\i firstTimeTag
+\b\i0 :
+\b0 \
+\
+	
+\f2\fs24 id myMTCPerformer =[[MTCPerformer alloc] init];\
+	[myMTCPerformer setFirstTimeTag:10.0];\
+	[myMTCPerformer setTimeShift:-10.0];\
+	[myMTCPerformer activate];\
+	[Conductor startPerformance];\
+
+\f0\fs28 \
+If you want to generate time code beginning with a value of 2.0 seconds and start sending that time that time code at time 3.0 seconds, set 
+\i firstTimeTag
+\i0  to 2.0 and 
+\i timeShift
+\i0  to 1.0.  In general, the formula is:\
+	\
+
+\i 	start time = timeShift + firstTimeTag+ activation time\
+
+\i0 \
+The default value for both 
+\i timeShift
+\i0  and 
+\i firstTimeTag
+\i0  is 0.0.  Keep in mind that the start time given in the formula above is relative to the time of activation.  \
+\
+By default, time code generation continues until you deactivate the Performer or finish the performance.  However, you can specify that the Performer automatically deactivate when it reaches a certain target MTC value by sending it the 
+\b  setLastTimeTag:  
+\b0 message.   Normally, 
+\i lastTimeTag 
+\i0 should be greater than 
+\i firstTimeTag
+\i0 .  However, you can tell the Performer to send reverse time code as follows:\
+\
+
+\f2\fs24 	[myMTCPerformer setDirection:MK_MTC_REVERSE];\
+
+\f0\fs28 \
+Then, 
+\i lastTimeTag
+\i0  should be less than 
+\i firstTimeTag
+\i0 .  Time code values will count down from 
+\i firstTimeTag
+\i0  until 
+\i lastTimeTag
+\i0  is reached.   You cancel generation of reverse time code by sending the message:\
+\
+
+\f2\fs24 	[myMTCPerformer setDirection:MK_MTC_FORWARD];\
+
+\f0\fs28 \
+As an alternative to using
+\b  setFirstTimeTag:
+\b0 , 
+\b setLastTimeTag:
+\b0  and 
+\b setTimeShift:
+\b0 , you can use methods that allow you to specify the time directly in MTC units.   For example, to set 
+\i firstTimeTag
+\i0  to a MTC value of 0:21:59:5, you send the following mesage:\
+\
+	
+\f2\fs24 [myMTCPerformer setFirstTimeTagMTCHours:0 minutes:21 seconds:59 frames:5];\
+
+\f0\fs28 \
+This sets the firstTimeTag value as specified, assuming the current MTC format.  Analagous methods are provided for setting lastTimeTag and timeShift.  \
+\
+To conveniently convert between seconds and MTC time formats, the Music Kit provides two C functions:\
+\
+
+\f2\fs24 extern double  /* Returns time in seconds */\
+  MKConvertMTCToSeconds(\
+		short format,\
+		short hours,\
+		short minutes,\
+		short seconds,\
+       short frames);\
+\
+extern void    /* Returns (by reference) time in MTC units */\
+  MKConvertSecondsToMTC(\
+		double seconds,\
+		short format,\
+		short *hoursPtr,\
+		short *minutesPtr,\
+		short *secondsPtr,\
+		short *framesPtr);\
+
+\f0\fs28 \
+These functions do straight translation.  They do not take into account any DeltaTime value.  \
+\
+You can pause time code generation using the standard Performer 
+\b pause
+\b0   method.   A paused Performer stops sending MIDI time code until it is resumed using the resume message.  When it is resumed, it sends a MTC Full Message, then resumes time code generation where it left off. \
+\
+You can also freeze the advance of time, using the 
+\b freezeTimeCode
+\b0  method.  An MTCPerformer that is frozen continues sending MTC messages, but the time code values remain the same.  Time code can be made to advance again by sending the 
+\b thawTimeCode
+\b0  message.\
+\
+A MTC Full Message is sent when the performer is resumed and the first time it is activated.  Normally, this is sufficient.  However, you can send a Full Message at any time, by sending  
+\b sendFullMTCMessage
+\b0 .  \
+\
+User bits are part of the SMPTE specification.  They are not interpreted by the Music Kit.  You can send user bits by sending 
+\b sendUserBits:groupFlagBits:
+\b0 .  See the MIDI Time Code specification or the SMPTE specification for the meaning of the arguments.\
+\
+You can ask the MTCPerformer the current MTC time with the 
+\b timeTag
+\b0  or 
+\b getMTCHours:minutes:seconds:frames: 
+\b0 message, which return the time in seconds and MTC units, respectively.  The time tag returned is in the clock Conductor's time base.  \
+\
+
+\fc0\cf0 See also:  Performer, Midi\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Inherited from Performer
+\i0 	id	conductor;\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 MKPerformerStatus	status;\
+int	performCount;\
+double	timeShift;\
+double	duration;\
+double	time;\
+double	nextPerform;\
+id	noteSenders;\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\i\fs28 Declared in MTCPerformer
+\i0 	double 	firstTimeTag;   \
+    	double 	lastTimeTag;  \
+   	int 	direction;\
+   	short 	format;\
+    	id 	noteSender;\
+   	id 	aNote;\
+    	BOOL 	frozen;\
+\
+firstTimeTag 	Controls when performer begins and where MTC starts.\
+
+\fs16 \
+
+\fs28 lastTimeTag 	Controls when performer ends and where MTC ends.\
+
+\fs16 \
+
+\fs28 direction 	1 for forward time code, -1 for backward time code.\
+
+\fs16 \
+
+\fs28 format 	MTC format.\
+
+\fs16 \
+
+\fs28 noteSender 	The one-and-only NoteSender.\
+
+\fs16 \
+
+\fs28 aNote 	A Note object that gets reused.\
+
+\fs16 \
+
+\fs28 frozen 	YES if time code is frozen.\
+
+\fs16 \
+\
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Creating the object	
+\f1\fc1\cf1 - 
+\f0 init
+\f1 \
+
+\f0\fc0\cf0 Modifying the object	
+\f1\fc1\cf1 - 
+\f0 freezeTimeCode\
+
+\f1 	- 
+\f0 sendFullMTCMessage\
+
+\f1\fc0\cf0 	
+\fc1\cf1 - 
+\f0 sendUserBits:groupFlagBits:
+\f1 \
+
+\fc0\cf0 	- 
+\f0 setFirstTimeTag:\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc1\cf1 - 
+\f0 setFirstTimeTagMTCHours:minutes:seconds:frames:\
+
+\f1 - 
+\f0 setFormat:\
+
+\f1\fc0\cf0 - 
+\f0 setLastTimeTag:\
+
+\f1\fc1\cf1 - 
+\f0 setLastTimeTagMTCHours:minutes:seconds:frames:\
+
+\f1 - 
+\f0 setTimeShiftMTCHours:minutes:seconds:frames:\
+
+\f1 - 
+\f0 setDirection:\
+
+\f1 - 
+\f0 thawTimeCode\
+
+\pard\tx7140\tx10180\tx10680\fi-4540\li7140\fc0\cf0 Querying the object	
+\f1\fc1\cf1 - 
+\f0 getMTCHours:minutes:seconds:frames:\
+
+\f1 	- 
+\f0 firstTimeTag
+\fc0\cf0 \
+
+\f1\fc1\cf1 	- 
+\f0 lastTimeTag
+\fc0\cf0 \
+
+\f1\fc1\cf1 	- 
+\f0 timeTag
+\fc0\cf0 \
+
+\f1\fc1\cf1 	- 
+\f0 format
+\fc0\cf0 \
+Performing	
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 deactivateSelf\
+
+\f1 - 
+\f0 pause\
+
+\f1 - 
+\f0 resume\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 init\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b init\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Initialize the receiver.   Must be sent when a new object is allocated.  If you override this method, you must first send [super init] before doing your own initialization.\
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fc1\cf1 deactivateSelf\
+
+\pard\f1\b0\fi-1020\li3620\fc1\cf1 -
+\f0\b  deactivateSelf\
+
+\b0 	Sends a MIDI system exclusive "NAK" message to signal that time code has stopped.   \
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\b\fs24\fc0\cf0 \
+
+\pard\tx7140\fs28\li2100\fc1\cf1 firstTimeTag
+\b0\i \
+
+\pard\f1\i0\fi-1020\li3620\fc1\cf1 - 
+\f0 (double)
+\b firstTimeTag
+\b0\i \
+
+\pard\tx3120\tx3620\tx4120\i0\li2620\fc1\cf1 Returns 
+\i firstTimeTag
+\i0 , as previously set with 
+\b setLastTimeTag:
+\b0  or s
+\b etFirstTimeTagMTCHours:minutes:seconds:frames:.
+\b0 \
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 freezeTimeCode\
+
+\pard\f1\b0\fi-1020\li3620\fc1\cf1 - 
+\f0\b freezeTimeCode\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Stops the advance of time code, but doesn't pause performer.  Time code will continue to be generated, but the same value will be sent over and over.\
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 getMTCHours:minutes:seconds:frames:
+\b0\i \
+
+\pard\f1\i0\fi-1020\li3620\fc1\cf1 - 
+\f0\b getMTCHours:
+\b0 (short *)
+\i h 
+\b\i0 minutes:
+\b0 (short *)
+\i m
+\i0  
+\b seconds:
+\b0 (short *)
+\i s
+\i0  
+\b frames:
+\b0 (short *)
+\i f
+\f1\i0 \
+
+\pard\tx3120\tx3620\tx4120\f0\li2620\fc1\cf1 Same as timeTag, except that the time is returned in Midi time code units.  Assumes the current format.\
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 lastTimeTag
+\b0\i \
+
+\pard\f1\i0\fi-1020\li3620\fc1\cf1 - 
+\f0 (double)
+\b lastTimeTag
+\b0\i \
+
+\pard\tx3120\tx3620\tx4120\i0\li2620\fc1\cf1 Returns 
+\i lastTimeTag
+\i0 , as previously set with 
+\b setLastTimeTag:
+\b0  or s
+\b etLastTimeTagMTCHours:minutes:seconds:frames:.
+\b0 \
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 pause\
+
+\pard\f1\b0\fi-1020\li3620\fc1\cf1 -
+\f0\b  pause\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Sends a MIDI system exclusive "NAK" message to signal that time code has stopped.    Then invokes superclass version of method to pause the MTCPerformer.\
+
+\b\fs24\fc0\cf0 \
+
+\pard\tx7140\fs28\li2100\fc1\cf1 resume\
+
+\pard\f1\b0\fi-1020\li3620\fc1\cf1 -
+\f0\b  resume\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Sends a MIDI time code Full Message.     Then invokes superclass version of method to resume the MTCPerformer.\
+
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\b\fs24\fc0\cf0 \
+
+\pard\tx7140\fs28\li2100\fc0\cf0 setFirstTimeTag:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setFirstTimeTag:
+\b0 (double)
+\i firstTimeTag
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Sets 
+\i firstTimeTag 
+\i0 as specified.  This controls the time from activation at which the Performer will begin sending time code.   It also controls the first time code value it will send.  
+\fc1\cf1 You can decouple the time the performer runs from the time code it outputs by using Performer's setTimeShift:.  For example, to generate time code, beginning with time 2, and to start sending that time code at time 3, you'd send:\
+\
+	
+\f2\fs24 [perf setFirstTimeTag:2]; \
+ 	[perf setTimeOffset:1];\
+
+\f0\b\fc0\cf0  \
+
+\pard\tx7140\fs28\li2100\fc1\cf1 setFirstTimeTagMTCHours
+\fs24\fc0\cf0 :
+\fs28\fc1\cf1 minutes:seconds:frames:
+\b0\i \
+
+\pard\f1\i0\fi-1020\li3620\fc1\cf1 - 
+\f0\b setFirstTimeTagMTCHours
+\fs24\fc0\cf0 :
+\b0\fs28\fc1\cf1 (short)
+\i h
+\i0  
+\b minutes:
+\b0 (short)
+\i m
+\i0  
+\b seconds:
+\b0 (short)
+\i s
+\b  
+\i0 frames:
+\b0 (short)
+\i f\
+
+\pard\tx3120\tx3620\tx4120\i0\li2620\fc1\cf1 Same as setFirstTimeTag:, except that the time is specified in Midi time code units.  Assumes the current format. (See 
+\b setFormat:
+\b0 )\
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 setFormat:
+\b0\i \
+
+\pard\f1\i0\fi-1020\li3620\fc1\cf1 - 
+\f0\b setFormat:
+\b0 (int)
+\i fmt\
+
+\pard\tx3120\tx3620\tx4120\i0\li2620\fc1\cf1 Sets format of the timecode to one of the following:\
+   \
+	MK_MTC_FORMAT_24  (24 frames/second)\
+   	MK_MTC_FORMAT_25  (25 frames/second)\
+  	MK_MTC_FORMAT_DROP_30  (30 frames/second, drop-frame)\
+   	MK_MTC_FORMAT_30 (30 frames/second, no drop-frame)\
+
+\pard\tx7140\b\li2100\fc1\cf1 \
+
+\fc0\cf0 setLastTimeTag:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setLastTimeTag:
+\b0 (double)
+\i lastTimeTag
+\b\i0 \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc1\cf1 Sets 
+\i lastTimetTag
+\i0 , the last time code value that will be sent.  The Performer runs until lastTimeTag is sent.  If direction is 
+\b MK_MTC_REVERSE
+\b0 , 
+\i lastTimeTag
+\i0  should be less than 
+\i firstTimeTag
+\i0 .  Otherwise, 
+\i lastTimeTag
+\i0  should be greater than 
+\i firstTimeTag
+\i0 .\
+
+\b\fs24\fc0\cf0  \
+
+\pard\tx7140\fs28\li2100\fc1\cf1 setLastTimeTagMTCHours
+\fs24\fc0\cf0 :
+\fs28\fc1\cf1 minutes:seconds:frames:
+\b0\i \
+
+\pard\f1\i0\fi-1020\li3620\fc1\cf1 - 
+\f0\b setLastTimeTagMTCHours
+\fs24\fc0\cf0 :
+\b0\fs28\fc1\cf1 (short)
+\i h
+\i0  
+\b minutes:
+\b0 (short)
+\i m
+\i0  
+\b seconds:
+\b0 (short)
+\i s
+\b  
+\i0 frames:
+\b0 (short)
+\i f\
+
+\pard\tx3120\tx3620\tx4120\i0\li2620\fc1\cf1 Same as setLastTimeTag:, except that the time is specified in Midi time code units.  Assumes the current format. (See 
+\b setFormat:
+\b0 )\
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 setTimeShiftMTCHours
+\fs24\fc0\cf0 :
+\fs28\fc1\cf1 minutes:seconds:frames:
+\b0\i \
+
+\pard\f1\i0\fi-1020\li3620\fc1\cf1 - 
+\f0\b setTimeShiftMTCHours
+\fs24\fc0\cf0 :
+\b0\fs28\fc1\cf1 (short)
+\i h
+\i0  
+\b minutes:
+\b0 (short)
+\i m
+\i0  
+\b seconds:
+\b0 (short)
+\i s
+\b  
+\i0 frames:
+\b0 (short)
+\i f\
+
+\pard\tx3120\tx3620\tx4120\i0\li2620\fc1\cf1 Same as setTimeShift:, except that the time is specified in Midi time code units.  Assumes the current format. (See 
+\b setFormat:
+\b0 )\
+
+\pard\tx7140\b\li2100\fc1\cf1 \
+timeTag
+\b0\i \
+
+\pard\f1\i0\fi-1020\li3620\fc1\cf1 - 
+\f0 (double)
+\b timeTag
+\b0\i \
+
+\pard\tx3120\tx3620\tx4120\i0\li2620\fc1\cf1 Returns the time code value most recently sent.\
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 setDirection:
+\b0\i \
+
+\pard\f1\i0\fi-1020\li3620\fc1\cf1 - 
+\f0\b setDirection:
+\b0 (int)
+\i newDirection
+\f1\i0 \
+
+\pard\tx3120\tx3620\tx4120\f0\li2620\fc1\cf1 Sets direction of time code to be generated.   If 
+\i newDirection 
+\i0 is 1, forward time code is generated.  If 
+\i newDirectino 
+\i0 is 0, backward time code is generated.\
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 setDirection:
+\b0\i \
+
+\pard\f1\i0\fi-1020\li3620\fc1\cf1 -
+\f0\b sendUserBits:
+\b0 (unsigned int)
+\i userBits
+\b\i0  groupFlagBits:
+\b0 (unsigned char)
+\i groupFlagBits
+\b\i0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Sends SMPTE user bits as indicated.   These are defined by the SMPTE specification.   The Music Kit ignores their content.\
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 thawTimeCode\
+
+\pard\f1\b0\fi-1020\li3620\fc1\cf1 - 
+\f0\b thawTimeCode\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Undoes the effect of 
+\b freezeTimeCode
+\b0 .\
+\
+
+\pard\tx7140\b\li2100\fc1\cf1 sendFullMTCMessage\
+
+\pard\f1\b0\fi-1020\li3620\fc1\cf1 -
+\f0\b  sendFullMTCMessage\
+
+\b0 	
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\fc1\cf1 Sends the current time as a MIDI 
+\pard\fi-1020\li3620\fc1\cf1 time code Full Message
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\fc1\cf1 .
+\pard\fi-1020\li3620\fc1\cf1    See the MIDI Time Code Specification for details.
+\pard\tx960\tx1920\tx2880\tx3840\tx4800\tx5760\tx6720\tx7680\tx8640\tx9600\fc1\cf1 \
+
+\b\fs24\fc0\cf0 \
+
+}

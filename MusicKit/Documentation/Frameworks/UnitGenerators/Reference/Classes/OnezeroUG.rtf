@@ -1,0 +1,235 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f3\fmodern Ohlfs;}
+\paperw16220
+\paperh14500
+\margl120
+\margr0
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f1 ã
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 OnezeroUG\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	UnitGenerator\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit/unitgenerators/unitgenerators.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 OnezeroUG is a one-zero filter that's implemented by adding the previous input sample (initialized as 0.0) to the current input sample:\
+\
+
+\i 	output
+\i0   = (
+\i b0 * input
+\i0 ) 
+\f1 + 
+\f0 (
+\i b1 * previousInput
+\i0 )\
+	
+\i previousInput
+\i0  = 
+\i input\
+
+\fs16 \
+
+\i0\fs28 Note that the two samples have their own scalers:  \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\tx4620\fs28\fi-520\li3120\fc0\cf0 ·	
+\i b0
+\i0  scales the input sample; this is the gain of the filter.  Effective gain values are between 0.0 and 1.0 (a negative gain is the same as its absolute value, but with a 180 degree phase shift).\
+
+\fs16 \
+
+\fs28 ·	
+\i b1
+\i0  scales the previous input sample.  This is the filter's coefficient:  If 
+\i b1
+\i0  is less than 0.0, the OnezeroUG is a high-pass filter; if it's greater than 0.0, the object is a low-pass filter.  For stability, the value of 
+\i b1
+\i0  should be between ±1.0 and 1.0 (non-inclusive).\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 Similar to the OnezeroUG is the OnepoleUG; it, too, is either a low-pass or a high-pass filter, but the frequency roll-off is steeper than with a OnezeroUG.  You should also note that the high-pass/low-pass determination with regard to the sign of the coefficent is switched in the OnepoleUG.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 MEMORY SPACES\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 OnezeroUG
+\i ab\
+
+\b0 a	
+\i0 output\
+
+\i b	
+\i0 input \
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 clear\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b clear\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Clears the filter by setting the delayed sample (the previous input sample) to 0.0.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 idleSelf\
+
+\pard\f1\b0\li2620\fc0\cf0 - 
+\f0\b idleSelf
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 You never send this message.  It's invoked by sending the 
+\b idle 
+\b0 message to the object.  \
+Sets the output patchpoint to 
+\i sink
+\i0 ,
+\i  
+\i0 thus ensuring that the object does not produce any output.  Note that you must send 
+\b setOutput:
+\b0  and 
+\b run 
+\b0 again to use the UnitGenerator after sending 
+\b idle
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 setB0:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setB0:
+\b0\i (double)value\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the filter's gain.  Effective gain values are between 0.0 and 1.0 (a negative gain is the same as its absolute value, but with a 180 degree phase shift).  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setB1:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setB1:
+\b0\i (double)value\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the filter's coefficient.   If 
+\i value
+\i0  is less than 0.0, the OnezeroUG is a high-pass filter; if it's greater than 0.0, the object is a low-pass filter.  For stability, the 
+\i value
+\i0  should be between ±1.0 and 1.0.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setInput:\
+
+\pard\f1\b0\li2620\fc0\cf0 - 
+\f0\b setInput:
+\b0\i aPatchpoint\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the input patchpoint to 
+\i aPatchpoint
+\i0 .  Returns 
+\b nil
+\b0  if the argument isn't a patchpoint; otherwise returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setOutput:\
+
+\pard\f1\b0\li2620\fc0\cf0 - 
+\f0\b setOutput:
+\b0\i aPatchpoint\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the output patchpoint to 
+\i aPatchpoint
+\i0 .  Returns 
+\b nil
+\b0  if the argument isn't a patchpoint; otherwise returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+}

@@ -1,0 +1,85 @@
+PianoRoll -- A displayer/editor for Music Kit Scorefiles.
+
+By Jonathan Knudsen.
+
+
+PianoRoll is a GUI for scorefiles.  It displays scorefiles on a
+log(freq) vs. time graph, which is roughly analagous to real music
+notation.  Notes can be selected, picked up, and moved in time and
+pitch.  A note's Part is displayed by the color of the head of the
+note.
+
+All items in the Document menu work except New.
+
+As it stands now, this program is mildly useful.  You can open a
+scorefile, change it, and write it out again.  It will probably work
+best on scorefiles that are comprised of noteDurs.
+
+There are four custom classes:
+1.  Distributor keeps track of all the different scorefiles that are currently
+opened for editing.  For every scorefile opened, it creates a
+2.  Document object, which in turn creates a window and a ScrollView.  Inside
+the ScrollView it creates a
+3.  PartView (a misnomer--should really be ScoreView but my program structure
+used to be different).  For every note in the score, the PartView creates a
+4.  TadPole object.  Each TadPole knows how to draw itself based upon the
+note(s) that it is associated with.
+
+It's pretty easy to deal with noteDurs, but the problem becomes complicated
+because a noteOn can be paired with a noteOff or a noteUpdate.  Some TadPoles
+have a second note (the terminating note) asssociated with them.  One of
+the most serious problems involves moving notes; currently, PianoRoll
+doesn't worry about the terminating note and changes only the parameters of
+the beginning note.
+
+Suggested Improvements:
+1.  This is really easy.  Add the ability to select multiple notes by 
+shift-clicking.  This involves a simple test in gotClicked: in PartView.
+If the shift key is held down, then selectedList should not be cleared.
+(I still don't know how to test to see if the shift key is down.)
+
+2.  This is relatively easy.  Axes need to be added.  I envisioned
+something along the vertical axis that would look like a piano keyboard
+and show the user where, pitchwise, all the notes are.  The horizontal
+axis just needs something simple with numbers and tic marks to indicate
+beats.  I think this could be done by making these subviews of the
+window's contentView and somehow updating them whenever the ScrollView
+changed.
+
+3.  Implement cut, paste, and copy.  This involves making decisions
+about what to do about note terminators (create a new noteOff when
+moving?).  Also, where do notes get pasted?  There's really no cursor,
+so I'm not sure what to do about this.  This also involves deciding what
+to do if the user pastes something at the very end of the scorefile,
+thus extending it.  I also thought it would be neat to have a Paste Special
+option, which would rearrange the notes (like "in heap" of CommonMusic).
+
+4.  Add the capability to "quantize" pitch and/or time.  This is kind of
+like "snap to grid" in drawing programs.
+
+5.  Add rubberband box selection for multiple notes.
+
+6.  Add zooming capability.  This should be pretty easy, since PartView
+(or TadPole, I can't remember) already uses instance variables called
+freqScale and beatScale.
+
+Things that bother me:
+1.  In odd scorefiles like /NextLibrary/Music/Scores/Jungle.score, some
+notes (like the bass drum) do not show up.  This is because they have no
+frequency, since the frequency for the bass drum part was set with a
+noteUpdate at the beginning of the score.  It would be nice to figure
+out how to display these sorts of things in a non-klugey way.
+
+2.  When notes are first moved, I have to erase where the note started
+from by drawing a gray rectangle over it.  This is pretty tacky, so I
+figure there must be some clever way to do it.  I just don't know enough
+about the AppKit to find it.
+
+That's all I know.  If you make any improvements, please tell me.
+
+Enjoy!
+
+Jonathan Knudsen
+jknudsen@phoenix.princeton.edu
+
+

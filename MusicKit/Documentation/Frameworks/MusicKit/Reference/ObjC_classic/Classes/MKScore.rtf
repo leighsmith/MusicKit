@@ -1,0 +1,1449 @@
+{\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\ftech\fcharset2 Symbol;}
+{\colortbl;\red255\green255\blue255;}
+\paperw16220\paperh12580
+\pard\ql\qnatural
+
+\f0\fs24 \cf0 Release 2.0  Copyright 
+\f1 ã
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+Release 4.0  Updates Copyright 
+\f1 ã
+\f0 1993 by CCRMA, Stanford University.  All Rights Reserved.\
+Release 5.0  Updates Copyright 
+\f1 ã
+\f0 1999 by ?, ?.  All Rights Reserved.\
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+\pard\li1100\ql\qnatural
+
+\b \cf0 \
+\
+\
+\
+
+\fs36 MKScore\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b0\fs28 \cf0 INHERITS FROM	NSObject\
+
+\fs16 \
+
+\fs28 DECLARED IN	MusicKit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\fs28 \cf0 A MKScore is a collection of MKPart objects.  Scores can be read from and written to a  
+\b .score 
+\b0 or 
+\b .playscore 
+\b0 scorefile or a  Standard MIDI file, performed with a MKScorePerformer, and can be used to record MKNotes from a MKScoreRecorder.\
+
+\fs16 \
+
+\fs28 Each MKScore has an info MKNote (a mute) that defines, in its parameters, information that can be useful in performing or otherwise interpreting the MKScore.  Typical information includes tempo, DSP headroom (see the MKOrchestra Class), and sampling rate (the parameters MK_tempo, MK_headroom, and MK_samplingRate are provided to accommodate this utility).\
+
+\fs16 \
+
+\fs28 When you read a scorefile into a MKScore, a MKPart object is created and added to the MKScore for each Part name in the file's 
+\b part
+\b0  statement.  If the MKScore already contains a MKPart with the same name as a Part in the file, the MKNotes from the two sources are merged together in the existing MKPart in the MKScore.\
+
+\fs16 \
+
+\fs28 MKScoreFile 
+\b print
+\b0  statements are printed as the scorefile is read into a MKScore.  You can set the stream on which the messages are printed by invoking 
+\b setScorefilePrintStream:
+\b0 .\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\i\fs28 \cf0 Inherited from NSObject
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in MKScore
+\i0 	NSMutableArray	*parts;\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+\cf0 NSMutableData	*scorefilePrintStream;\
+id	info;\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 parts 	The object's collection of MKParts.\
+
+\fs16 \
+
+\fs28 scorefilePrintStream 	The stream used by scorefile 
+\b print
+\b0  statements.\
+
+\fs16 \
+
+\fs28 info 	The object's info Note.\
+\pard\tx7140\li2100\ql\qnatural
+
+\fs16 \cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs28 \cf0 Creating and freeing a MKScore	
+\f1 - 
+\f0 copy\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 free\
+
+\f1 - 
+\f0 freeNotes\
+
+\f1 - 
+\f0 freeSelfOnly\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Modifying the object	
+\f1 - 
+\f0 addPart: \
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 empty\
+
+\f1 - 
+\f0 freeParts\
+
+\f1 - 
+\f0 freePartsOnly\
+
+\f1 - 
+\f0 init\
+
+\f1 - 
+\f0 removePart: \
+
+\f1 - 
+\f0 removePart: with:\
+
+\f1 - 
+\f0 setInfoNote: \
+
+\f1 - 
+\f0 setScorefilePrintStream: \
+
+\f1 - 
+\f0 shiftTime:\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Querying the object	
+\f1 - 
+\f0 infoNote\
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 isPartPresent: \
+
+\f1 - 
+\f0 midiPart: \
+
+\f1 - 
+\f0 noteCount\
+
+\f1 - 
+\f0 partCount\
+
+\f1 - 
+\f0 parts\
+
+\f1 - 
+\f0 scorefilePrintStream\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\fs16 \cf0 \
+
+\fs28 Reading and writing files	+ midifilesEvaluateTempo\
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\f1 \cf0 \U9 + 
+\f0 setMidifilesEvaluateTempo:
+\f1 \
+\U9 - 
+\f0 readScorefile: \
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 readScorefileStream: \
+
+\f1 - 
+\f0 readScorefile:firstTimeTag:lastTimeTag: \
+\pard\tx10180\tx10680\li7660\ql\qnatural
+\cf0 timeShift: \
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 readScorefileStream:firstTimeTag:\
+\pard\tx10180\tx10680\li7660\ql\qnatural
+\cf0 lastTimeTag:timeShift: \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\f1 \cf0 \U9 - 
+\f0 readMidifile: \
+
+\f1 \U9 - 
+\f0 readMidifileStream: \
+
+\f1 \U9 - 
+\f0 readMidifile:firstTimeTag:lastTimeTag: \
+\pard\tx10180\tx10680\li7660\ql\qnatural
+\cf0 timeShift: \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\f1 \cf0 \U9 - 
+\f0 readMidifileStream:firstTimeTag:\
+\pard\tx10180\tx10680\li7660\ql\qnatural
+\cf0 lastTimeTag:timeShift: \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\f1 \cf0 \U9 - 
+\f0 writeMidifile: \
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 writeMidifileStream: \
+
+\f1 - 
+\f0 writeMidifile:firstTimeTag:lastTimeTag: \
+\pard\tx10180\tx10680\li7660\ql\qnatural
+\cf0 timeShift: \
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 writeMidifileStream:firstTimeTag:\
+\pard\tx10180\tx10680\li7660\ql\qnatural
+\cf0 lastTimeTag:timeShift: \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\f1 \cf0 \U9 - 
+\f0 writeOptimizedScorefile: \
+
+\f1 \U9 - 
+\f0 writeOptimizedScorefileStream: \
+
+\f1 \U9 - 
+\f0 writeOptimizedScorefile:firstTimeTag:lastTimeTag: \
+\pard\tx10180\tx10680\li7660\ql\qnatural
+\cf0 timeShift: \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\f1 \cf0 \U9 - 
+\f0 writeOptimizedScorefileStream:firstTimeTag:\
+\pard\tx10180\tx10680\li7660\ql\qnatural
+\cf0 lastTimeTag:timeShift: \
+\pard\tx7140\tx10180\tx10680\li7140\fi-4540\ql\qnatural
+
+\f1 \cf0 \U9 - 
+\f0 writeScorefile: \
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 writeScorefileStream: \
+
+\f1 - 
+\f0 writeScorefile:firstTimeTag:lastTimeTag: \
+\pard\tx10180\tx10680\li7660\ql\qnatural
+\cf0 timeShift: \
+\pard\tx10180\tx10680\li7660\fi-520\ql\qnatural
+
+\f1 \cf0 - 
+\f0 writeScorefileStream:firstTimeTag:\
+\pard\tx10180\tx10680\li7660\ql\qnatural
+\cf0 lastTimeTag:timeShift: \
+\pard\tx7140\li2100\ql\qnatural
+
+\fs16 \cf0 \
+	\
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 addPart:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b addPart:
+\i\b0 aPart\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Adds 
+\i aPart
+\i0  to the receiver.  The MKPart is first removed from the MKScore that it's presently a member of, if any.  Returns 
+\i aPart
+\i0 , or 
+\b nil
+\b0  if it's already a member of the receiver.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 copy\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b copy\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Creates and returns a new MKScore as a copy of the receiver.  The receiver's MKPart, MKNotes, and info MKNote are all copied.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 empty\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b empty\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Removes the receiver's MKParts but doesn't free them.  Returns the receiver.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 free\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b free\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Frees the receiver and its contents.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 freeNotes\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b freeNotes\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Removes and frees the MKNotes contained in the receiver's MKParts.  Also frees the receiver's info MKNote.  Returns the receiver.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 freeParts\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b freeParts\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Removes and frees the receiver's MKParts and the MKNotes contained therein.  Doesn't free the receiver's info MKNote.  MKParts that are currently being performed by a MKPartPerformer aren't freed.  Returns the receiver.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 freePartsOnly\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b freePartsOnly\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Removes and frees the receiver's MKParts but doesn't free the MKNotes contained therein.  MKParts that are currently being performed by a MKPartPerformer aren't freed.  Returns the receiver.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 freeSelfOnly\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b freeSelfOnly\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Frees the receiver but not its MKParts nor their MKNotes.  The info MKNote isn't freed.  Returns the receiver.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 infoNote\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b infoNote\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the receiver's info MKNote.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 init\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b init\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Initializes the receiver.  You invoke this method when creating a new instance.  A subclass implementation should send 
+\b [super init]
+\b0  before performing its own initialization. \
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 isPartPresent:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (BOOL)
+\b isPartPresent:
+\i\b0 aPart\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Returns 
+\b YES
+\b0  if 
+\i aPart
+\i0  has been added to the receiver, otherwise returns 
+\b NO
+\b0 .\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 midifilesEvaluateTempo\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (BOOL)
+\b midifilesEvaluateTempo
+\i\b0 \
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Returns the value of the class variable 
+\i midifilesEvaluateTempo.  
+\i0  See 
+\b setMidifilesEvaluateTempo:
+\b0 .\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 midiPart:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b midiPart:
+\b0 (int)
+\i aChan\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Returns the MKPart object that represents MIDI Channel 
+\i aChan.  
+\i0 There are 17 MIDI Channels:  0 represents the channel for MIDI System and Channel Mode messages and 1 through 16 represent the Voice Channels.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 noteCount\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (unsigned)
+\b noteCount\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the number of MKNotes in all the receiver's MKParts.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 partCount\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (unsigned)
+\b partCount\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the number of MKPart contained in the receiver.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 parts\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b parts\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Creates and returns a NSMutableArray containing the receiver's MKParts.  The MKParts themselves aren't copied.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 readMidifile:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b readMidifile:
+\b0 (NSString *)
+\i fileName\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Reads the midifile 
+\i fileName
+\i0  into the receiver, creating MKParts for each MIDI Channel represented in the file and MKNotes for each MIDI message.  See the 
+\b readMidiFileStream
+\b0 : method for a discussion of MIDI to MKNote conversion.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 readMidifile:firstTimeTag:lastTimeTag:timeShift:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b readMidifile:
+\b0 (NSString *)
+\i aFileName
+\i0  \
+\pard\li3620\ql\qnatural
+
+\b \cf0 firstTimeTag:
+\b0 (double)
+\i firstTimeTag
+\i0  \
+
+\b lastTimeTag:
+\b0 (double)
+\i lastTimeTag\
+\pard\tx7140\li3620\ql\qnatural
+
+\i0\b \cf0 timeShift:
+\b0 (double)
+\i timeShift\
+\pard\tx7140\li2100\ql\qnatural
+
+\i0\b \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0 \cf0 Reads the midifile 
+\i aFileName 
+\i0  into the receiver.  The MKNotes that are created are retained in the receiver only if their timeTags are within the given boundaries.  
+\i TimeShift
+\i0  is added to each timeTag.\
+
+\fs16 \
+
+\fs28 See the 
+\b readMidiFileStream
+\b0 : method for a discussion of MIDI to MKNote conversion.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 readMidifileStream:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b readMidifileStream:
+\b0 (NSMutableData *)
+\i aStream\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Reads the midifile from aStream, converting the messages therein into MKNote objects.  A midifile is converted into MKNotes as follows:\
+
+\fs16 \
+
+\fs28 If the file is format 0, the Channel Voice messages are written into 16 Parts, one for each channel.  Channel Mode and System messages are combined in an additional MKPart.  The midi channel of a particular MKPart can be determined by examining the MK_midiChan parameter of the MKPart info MKNote.  The special MKPart has no MK_midiChan parameter.\
+
+\fs16 \
+
+\fs28 If the file is format 1, each track is written to a separate MKPart.  The track number is set in the MKPart info's MK_track parameter.\
+
+\fs16 \
+
+\fs28 If the file is format 2, each track is written to a separate MKPart.  The track number is set in the MKPart info's MK_sequence parameter.\
+
+\fs16 \
+
+\fs28 Tempo is encoded in the MK_tempo parameter of the MKScore's info.   Similarly, copyright shows up in the MKScore's info as an MK_copyright parameter.  \
+\
+The info of each MKPart that corresponds to a track is given an MK_instrumentName parameter if a corresponding meta-event appears in the file.\
+\
+Other MIDI file meta-events such as time signature, lyric, etc. appear as corresponding MKNote parameters in mute MKNotes in the appropriate MKPart. \
+
+\fs16 \
+
+\fs28 The current contents of the MKScore are not affected.  The new MKParts are never merged with the current contents.  Instead, new MKParts are added to the MKScore.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 readMidifileStream:firstTimeTag:lastTimeTag:timeShift:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b readMidifileStream:
+\b0 (NSMutableData *)
+\i aStream
+\i0  \
+\pard\li3620\ql\qnatural
+
+\b \cf0 firstTimeTag:
+\b0 (double)
+\i firstTimeTag
+\i0  \
+
+\b lastTimeTag:
+\b0 (double)
+\i lastTimeTag\
+
+\i0\b timeShift:
+\b0 (double)
+\i timeShift\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Reads the midifile from 
+\i aStream 
+\i0 into the receiver.  Only the MKNote objects that have timeTags within the given boundaries are retained in the receiver.  
+\i timeShift
+\b  
+\i0\b0 is added to each MKNote's timeTag.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 readScorefile:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b readScorefile:
+\b0 (NSString *)
+\i fileName\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Opens the scorefile named 
+\i fileName
+\i0  and merges its contents with the receiver.  The file is automatically closed.  Returns the receiver or 
+\b nil
+\b0  if the file couldn't be read.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 readScorefile:firstTimeTag:lastTimeTag:timeShift:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b readScorefile:
+\b0 (NSString *)
+\i fileName
+\i0  \
+\pard\li3620\ql\qnatural
+
+\b \cf0 firstTimeTag:
+\b0 (double)
+\i firstTimeTag
+\i0  \
+
+\b lastTimeTag:
+\b0 (double)
+\i lastTimeTag
+\i0  \
+
+\b timeShift:
+\b0 (double)
+\i timeShift\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 The same as 
+\b readScorefile:
+\b0 , but only those MKNotes with timeTags in the specified range are added to the receiver.  The added MKNotes' timeTags are shifted by 
+\i timeShift
+\i0  beats.  Returns the receiver or 
+\b nil
+\b0  if the file couldn't be read.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 readScorefileStream:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b readScorefileStream:
+\b0 (NSMutableData *)
+\i stream\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Reads the scorefile pointed to by 
+\i stream
+\i0  into the receiver.  The file must be open for reading; the sender is responsible for closing the file.  Returns the receiver or 
+\b nil
+\b0  if the file couldn't be read.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 readScorefileStream:firstTimeTag:lastTimeTag:timeShift:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b readScorefileStream:
+\b0 (NSMutableData *)
+\i stream
+\i0  \
+\pard\li3620\ql\qnatural
+
+\b \cf0 firstTimeTag:
+\b0 (double)
+\i firstTimeTag
+\i0  \
+
+\b lastTimeTag:
+\b0 (double)
+\i lastTimeTag
+\i0  \
+
+\b timeShift:
+\b0 (double)
+\i timeShift\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 The same as 
+\b readScorefileStream:
+\b0 , but only those MKNotes with timeTags in the specified range are added to the receiver.  The added MKNotes' timeTags are shifted by 
+\i timeShift
+\i0  beats.  Returns the receiver or 
+\b nil
+\b0  if the file couldn't be read.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 removePart:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b removePart:
+\i\b0 aPart\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Removes 
+\i aPart
+\i0  from the receiver.  Returns 
+\i aPart
+\i0  or 
+\b nil
+\b0  if it wasn't a member of the receiver.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 replacePart:with:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b replacePart:
+\i\b0 aPart 
+\i0\b with:
+\i\b0 bPart\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Removes 
+\i aPart
+\i0  from the receiver and replaces it with 
+\i bPart
+\i0 .   Returns 
+\i bPart
+\i0 .  If 
+\i aPart
+\i0  is not a member of this score, returns 
+\b nil 
+\b0 and doesn't add 
+\i bPart
+\i0 .  If 
+\i aPart
+\i0  is 
+\b nil
+\b0 , or if 
+\i bPart
+\i0  is already a member of this score, or if 
+\i aPart
+\i0  is not a kind of MKPart, returns 
+\b nil
+\b0 .\
+\pard\tx7140\li2100\ql\qnatural
+
+\b\fs16 \cf0 \
+
+\fs28 scorefilePrintStream\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0 (NSMutableData *)
+\b scorefilePrintStream\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\b0\fs28 \cf0 Returns the receiver's ScoreFile 
+\b print
+\b0  statement stream.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 setInfoNote:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b setInfoNote:
+\i\b0 aNote\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Sets the receiver's info MKNote to a copy of 
+\i aNote
+\i0 .  The receiver's previous info MKNote is removed and freed.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 setMidifilesEvaluateTempo:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b setMidifilesEvaluateTempo:
+\b0 (BOOL)
+\i yesOrNo\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Sets the class variable 
+\i midifilesEvaluateTempo
+\i0 , which specifies how tempo is interpreted when reading or writing MIDI files as follows:\
+\
+If 
+\i midifilesEvaluateTempo 
+\i0 is YES, the MKNotes' timeTags and durations are modified according to the tempo.  For example, if the tempo is 120 and a MIDI note begins at time 1.0 in the file and lasts for a half of a beat, the corresponding Music Kit MKNote will have a timeTag of 0.5 and a duration of 0.25.   Similarly, when writing files, the tempo is taken into account.  For example, if the tempo is 120 and a Music Kit MKNote has a timeTag of 0.5 and a duration of 0.25, it is converted back to a MIDI note that begins at time 1.0 and lasts for a half of a beat.\
+\
+If 
+\i midifilesEvaluateTempo
+\i0  is NO, the modification of timeTags and durations is not performed.   NO is an appropriate value when you are doing real-time tempo modification with a slider or other control.\
+\
+Whatever the value of 
+\i midifilesEvaluateTempo
+\i0 , the first tempo event found in the file is supplied as the MKScore info's MK_tempo parameter.   Note that the Music Kit does not currently support evaluating time-varying tempos found in Standard MIDI Files.\
+\
+The default value of 
+\i midifilesEvaluateTempo 
+\i0 is YES.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 setScorefilePrintStream:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b setScorefilePrintStream:
+\b0 (NSMutableData *)
+\i aStream\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Sets the stream used by ScoreFile 
+\b print
+\b0  statements to 
+\b aStream
+\b0 .  Returns the receiver.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 shiftTime:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b shiftTime:
+\b0 (double)
+\i shift\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Shifts the timeTags of all receiver's MKNotes by 
+\i shift
+\i0  beats.  Returns the receiver.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 writeMidifile:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b writeMidifile:
+\b0 (NSString *)
+\i aFileName\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 The receiver is written as a format 1 midifile as follows:\
+
+\fs16 \
+
+\fs28 The MKParts are written in the order they appear in the MKScore as separate tracks.  The track number encoded in the MKPart's info MKNote is ignored.  MKNoteDurs are split into noteOns and noteOffs as defined by MKPart's 
+\b splitNotes
+\b0  method.  The original MKPart isn't altered.\
+
+\fs16 \
+
+\fs28 If the receiver's info has a title or tempo parameter, these are written to the midifile.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 writeMidifile:firstTimeTag:lastTimeTag:timeShift:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b writeMidifile:
+\b0 (NSString *)
+\i aFileName
+\i0  \
+\pard\li3620\ql\qnatural
+
+\b \cf0 firstTimeTag:
+\b0 (double)
+\i firstTimeTag
+\i0  \
+
+\b lastTimeTag:
+\b0 (double)
+\i lastTimeTag\
+
+\i0\b timeShift:
+\b0 (double)
+\i timeShift\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Writes the receiver's MKNotes, within the given timeTag range,  as a midifile named 
+\i aFileName
+\i0 .  See 
+\b writeMidifile
+\b0 : for conversion details.  
+\i timeShift 
+\i0 is added to each MKNote's timeTag.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 writeMidifileStream:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b writeMidifileStream:
+\b0 (NSMutableData *)
+\i aStream\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Write the receiver, as a midifile, to 
+\i aStream
+\i0 .\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 writeMidifileStream:firstTimeTag:lastTimeTag:timeShift:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b writeMidifileStream:
+\b0 (NSMutableData *)
+\i aStream
+\i0  \
+\pard\li3620\ql\qnatural
+
+\b \cf0 firstTimeTag:
+\b0 (double)
+\i firstTimeTag
+\i0  \
+
+\b lastTimeTag:
+\b0 (double)
+\i lastTimeTag\
+
+\i0\b timeShift:
+\b0 (double)
+\i timeShift\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Write the receiver, as a midifile, to 
+\i aStream
+\i0 .  Only the MKNotes within the given timeTag boundaries are written.  
+\i timeShift 
+\i0 is added to each MKNote's timeTag.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 writeScorefile:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b writeScorefile:
+\b0 (NSString *)
+\i aFileName\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Opens the scorefile named 
+\b fileName
+\b0  and writes the receiver to it (the file is overwritten).  The file is automatically closed.  Returns the receiver or 
+\b nil
+\b0  if the file couldn't be written.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 writeScorefile:firstTimeTag:lastTimeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b writeScorefile:
+\b0 (NSString *)
+\i aFileName
+\i0  \
+\pard\li3620\ql\qnatural
+
+\b \cf0 firstTimeTag:
+\b0 (double)
+\i firstTimeTag
+\i0  \
+
+\b lastTimeTag:
+\b0 (double)
+\i lastTimeTag
+\i0  \
+
+\b timeShift:
+\b0 (double)
+\i timeShift\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 The same as 
+\b writeScorefile:
+\b0 , but only those MKNotes with timeTags in the specified range are written to the file.  The written MKNotes' timeTags are shifted by 
+\i timeShift
+\i0  beats.  Returns the receiver or 
+\b nil
+\b0  if the file couldn't be written.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 writeScorefileStream:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b writeScorefileStream:
+\b0 (NSMutableData *)
+\i aStream\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Writes the receiver into the scorefile pointed to by 
+\i aStream
+\i0 .  The file must be open for reading; the sender is responsible for closing the file.  Returns the receiver or 
+\b nil
+\b0  if the file couldn't be written.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 writeScorefileStream:firstTimeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b writeScorefileStream:
+\b0 (NSMutableData *)
+\i aStream
+\i0  \
+\pard\li3620\ql\qnatural
+
+\b \cf0 firstTimeTag:
+\b0 (double)
+\i firstTimeTag
+\i0  \
+
+\b lastTimeTag:
+\b0 (double)
+\i lastTimeTag
+\i0  \
+
+\b timeShift:
+\b0 (double)
+\i timeShift\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 The same as 
+\b writeScorefileStream:
+\b0 , but only those MKNotes with timeTags in the specified range are written to the file.  The written MKNotes' timeTags are shifted by 
+\i timeShift
+\i0  beats.  Returns the receiver or 
+\b nil
+\b0  if the file couldn't be written.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b\fs28 \cf0 writeOptimizedScorefile:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b writeOptimizedScorefile:
+\b0 (NSString *)
+\i aFileName\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Opens the OptimizedScorefile named 
+\b fileName
+\b0  and writes the receiver to it (the file is overwritten).  The file is automatically closed.  Returns the receiver or 
+\b nil
+\b0  if the file couldn't be written.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 writeOptimizedScorefile:firstTimeTag:lastTimeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b writeOptimizedScorefile:
+\b0 (NSString *)
+\i aFileName
+\i0  \
+\pard\li3620\ql\qnatural
+
+\b \cf0 firstTimeTag:
+\b0 (double)
+\i firstTimeTag
+\i0  \
+
+\b lastTimeTag:
+\b0 (double)
+\i lastTimeTag
+\i0  \
+
+\b timeShift:
+\b0 (double)
+\i timeShift\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 The same as 
+\b writeOptimizedScorefile:
+\b0 , but only those MKNotes with timeTags in the specified range are written to the file.  The written MKNotes' timeTags are shifted by 
+\i timeShift
+\i0  beats.  Returns the receiver or 
+\b nil
+\b0  if the file couldn't be written.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 writeOptimizedScorefileStream:\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b writeOptimizedScorefileStream:
+\b0 (NSMutableData *)
+\i aStream\
+\pard\li3620\fi-1020\ql\qnatural
+
+\fs16 \cf0 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 Writes the receiver into the OptimizedScorefile pointed to by 
+\i aStream
+\i0 .  The file must be open for reading; the sender is responsible for closing the file.  Returns the receiver or 
+\b nil
+\b0  if the file couldn't be written.\
+
+\fs16 \
+\pard\tx7140\li2100\ql\qnatural
+
+\b \cf0 \
+
+\fs28 writeOptimizedScorefileStream:firstTimeTag\
+\pard\li3620\fi-1020\ql\qnatural
+
+\f1\b0 \cf0 - 
+\f0\b writeOptimizedScorefileStream:
+\b0 (NSMutableData *)
+\i aStream
+\i0  \
+\pard\li3620\ql\qnatural
+
+\b \cf0 firstTimeTag:
+\b0 (double)
+\i firstTimeTag
+\i0  \
+
+\b lastTimeTag:
+\b0 (double)
+\i lastTimeTag
+\i0  \
+
+\b timeShift:
+\b0 (double)
+\i timeShift\
+
+\fs16 \
+\pard\tx3120\tx3620\tx4120\li2620\ql\qnatural
+
+\i0\fs28 \cf0 The same as 
+\b writeOptimizedScorefileStream:
+\b0 , but only those MKNotes with timeTags in the specified range are written to the file.  The written MKNotes' timeTags are shifted by 
+\i timeShift
+\i0  beats.  Returns the receiver or 
+\b nil
+\b0  if the file couldn't be written.\
+
+\fs16 \
+
+\fs28 \
+\
+
+\fs16 \
+}

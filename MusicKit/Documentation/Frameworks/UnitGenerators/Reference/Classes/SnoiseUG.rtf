@@ -1,0 +1,161 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f3\fmodern Ohlfs;}
+\paperw16220
+\paperh13060
+\margl120
+\margr0
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f1 ã
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 SnoiseUG\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	UnitGenerator\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit/unitgenerators/unitgenerators.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 SnoiseUG produces a series of random values within the range\
+
+\fs16 \
+
+\i\fs28 	
+\i0 -1.0 <=
+\i  f
+\i0  < 1.0\
+
+\fs16 \
+
+\fs28 A new random value is generated once per tick.  A similar class, UnoiseUG, produces a new random value every sample.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 MEMORY SPACES\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b\fs28\li2620\fc0\cf0 SnoiseUG
+\i a\
+
+\b0 a	
+\i0 output \
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE METHODS \
+
+\fs16 \
+
+\b \
+
+\fs28 anySeed\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b anySeed\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Sets the random number seed to a value that's guaranteed never to have been used in previous invocations of this method.  This is particularly useful if you're using more than one SnoiseUG and you want to ensure that they all produce different signals.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 idleSelf\
+
+\pard\f1\b0\li2620\fc0\cf0 - 
+\f0\b idleSelf
+\b0\i \
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 You never send this message.  It's invoked by sending the 
+\b idle 
+\b0 message to the object.  \
+Sets the output patchpoint to 
+\i sink
+\i0 ,
+\i  
+\i0 thus ensuring that the object does not produce any output.  Note that you must send 
+\b setOutput:
+\b0  and 
+\b run 
+\b0 again to use the UnitGenerator after sending 
+\b idle
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\fs28\li2100\fc0\cf0 setOutput:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setOutput:
+\b0\i aPatchpoint\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the output patchpoint to 
+\i aPatchpoint
+\i0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setSeed:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setSeed:
+\b0\i (DSPDatum)seed\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the seed that's used to prime the random number generator.  If you want to create a unique series of random numbers, you should invoke the 
+\b anySeed
+\b0  method instead of this one.  Returns 
+\b self
+\b0 .\
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+}

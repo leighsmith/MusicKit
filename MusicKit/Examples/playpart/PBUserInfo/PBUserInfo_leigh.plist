@@ -1,0 +1,12 @@
+{
+    NSMACHOperatingSystem = {
+        Archs = "18 "; 
+        "Executable-$[PBProject projectName]$[PBProjectType executableExtension]" = {
+            asrc_array = (
+                /Local/Users/leigh/Sources/Music/MusicKit/PublicDomain/MusicKit/Frameworks/MusicKit
+            ); 
+        }; 
+        LauncherSelectedExec = ("$[PBProject projectName]$[PBProjectType executableExtension]"); 
+        Target = tool; 
+    }; 
+}

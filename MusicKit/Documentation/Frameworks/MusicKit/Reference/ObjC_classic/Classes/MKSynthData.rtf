@@ -1,0 +1,723 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;}
+\paperw16220
+\paperh14500
+\margl120
+\margr0
+{\colortbl;\red0\green0\blue0;}
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f1 ã
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+Release 4.1 Updates Copyright 
+\f1 ã
+\f0 1994 by CCRMA, Stanford University.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 SynthData\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 SynthData objects represent DSP memory that's used in music synthesis.  For example, you can use a SynthData object to load predefined data for wavetable synthesis or to store DSP-computed data to create a digital delay.  Perhaps the most common use of SynthData is to create a location through which UnitGenerators can pass data.  This type of SynthData object is called a 
+\i patchpoint
+\i0 .  For example, in frequency modulation an oscillator UnitGenerator writes its output to a patchpoint which can then be read by another oscillator as its frequency input.\
+
+\fs16 \
+
+\fs28 You never create SynthData objects directly in an application, they can only be created by the Orchestra through its 
+\b allocSynthData:length:
+\b0  or 
+\b allocPatchpoint:
+\b0  methods.  SynthData objects are typically owned by a SynthPatch, an object that configures a set of SynthData and UnitGenerator objects into a DSP software instrument.\
+
+\fs16 \
+
+\fs28 The methods 
+\b setData:
+\b0  and 
+\b setConstant:
+\b0  are used to load a SynthData object with data from an array or as a constant, respectively.  These methods are simple versions of the more thorough methods 
+\b setData:length:offset:
+\b0  and 
+\b setConstant:length:offset:
+\b0 , which allow you to load an arbitrary amount of data into any portion of the SynthData's memory.  The data in a SynthData object, like all DSP data used in music synthesis, is 24-bit fixed point words (data type DSPDatum).  You can declare a SynthData to be read-only by sending it the message 
+\b setReadOnly:YES
+\b0 .  You can't change the data in a read-only SynthData object.\
+
+\fs16 \
+
+\fs28 An instance of SynthData consists of an MKOrchAddrStruct, a structure that describes the DSP location of the object's data, and a 
+\b length
+\b0  instance variable, an integer value that measures the size of the data in DSPDatum words.  However, it doesn't contain a copy of the memory itself.  When you load data into a SynthData, it's instantly sent to the DSP device driver.\
+
+\fs16 \
+
+\fs28 DSP memory allocation and management is explained in the Orchestra class description; many of the return types used here, such as DSPAddress and DSPMemorySpace, are described in Orchestra.  In general, the design of the Orchestra makes intimate knowledge of the details of the DSP unnecessary.\
+
+\fs16 \
+
+\fs28 See also:  SynthPatch, Orchestra, UnitGenerator\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in SynthData
+\i0 	id	synthPatch;\
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 id	orchestra;\
+int	length;\
+MKOrchAddrStruct	orchAddr;\
+BOOL	readOnly;\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 synthPatch 	The SynthPatch that owns this object (if any).\
+
+\fs16 \
+
+\fs28 orchestra 	The orchestra on which the object is allocated.\
+
+\fs16 \
+
+\fs28 length 	Length of allocated memory in words.\
+
+\fs16 \
+
+\fs28 orchAddr 	Structure that directly represents DSP memory.\
+
+\fs16 \
+
+\fs28 readOnly 	YES if the object's data is read-only.\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Modifying the object	
+\f1 - 
+\f0 clear\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 dealloc\
+
+\f1 - 
+\f0 setData: \
+
+\f1 - 
+\f0 setData:length:offset: \
+
+\f1 - 
+\f0 setReadOnly: \
+
+\f1 - 
+\f0 setToConstant: \
+
+\f1 - 
+\f0 setToConstant:length:offset:\
+
+\f1 - 
+\f0\fc1\cf1 setShortData:length:offset:\
+
+\f1\fc0\cf0 - 
+\f0\fc1\cf1 setShortData:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Querying the object	
+\f1 - 
+\f0 address\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 instanceNumber\
+
+\f1 - 
+\f0 isAllocated\
+
+\f1 - 
+\f0 isFreeable\
+
+\f1 - 
+\f0 length\
+
+\f1 - 
+\f0 memorySpace\
+
+\f1 - 
+\f0 orchAddrPtr\
+
+\f1 - 
+\f0 orchestra\
++ orchestraClass\
+
+\f1 - 
+\f0 readOnly\
+
+\f1 - 
+\f0\fc1\cf1 readDataUntimed:length:offset:
+\b \
+
+\f1\b0\fc0\cf0 - 
+\f0\fc1\cf1 readShortDataUntimed:length:offset:
+\b \
+
+\f1\b0\fc0\cf0 - 
+\f0 referenceCount\
+
+\f1 - 
+\f0 synthPatch\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Running the object	
+\f1 - 
+\f0 finish\
+
+\pard\tx10180\tx10680\f1\fi-520\li7660\fc0\cf0 - 
+\f0 idle\
+
+\f1 - 
+\f0 run\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 CLASS METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 orchestraClass\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b orchestraClass\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 This method always returns the 
+\b id
+\b0  of the Orchestra class.  It's provided for applications that extend the Music Kit to use other synthesis hardware.  If you're using more than one type of hardware, you should create a subclass of SynthData for each.  The default hardware is that represented by Orchestra, the DSP56001.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 address\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (DSPAddress)
+\b address\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the DSP address of the receiver's memory block.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 clear\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b clear\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Clears the receiver's memory but doesn't deallocate it.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 dealloc\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b dealloc\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Deallocates the receiver and frees its SynthPatch, if any. Returns nil.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 finish\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double)
+\b finish\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 This does nothing and returns 0.0.  It's provided for compatibility with UnitGenerator; specifically, it allows a SynthPatch to send 
+\b finish
+\b0  to all its SynthElement objects without regard for their class.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 idle\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b idle\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 This does nothing and returns the receiver.  It's provided for compatibility with UnitGenerator; specifically, it allows a SynthPatch to send 
+\b idle
+\b0  to all its SynthElement objects without regard for their class.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 instanceNumber\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - (
+\f0\fc1\cf1 int
+\f1\fc0\cf0 )
+\f0\b instanceNumber\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a low integer that uniquely identifies this SynthData.  This integer is unique for the duration of the execution of the program, unlike object 
+\b id
+\b0  values, which may be reassigned after an object is freed.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 isAllocated\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (BOOL)
+\b isAllocated\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Provided for compatability with UnitGenerator. Always returns YES, since deallocated SynthDatas are freed immediately.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 isFreeable\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (BOOL)
+\b isFreeable\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Invoked by the Orchestra to determine whether the receiver may be freed.  Returns YES if it can, NO if it can't.  (A SynthData can be freed if its a member of a Synthpatch that can be freed.)\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 length\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (int)
+\b length\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the size (in words) of the receiver's memory block.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 memorySpace\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (DSPMemorySpace)
+\b memorySpace\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the DSP space in which the receiver's memory block is allocated.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 orchAddrPtr\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (MKOrchAddrStruct *)
+\b orchAddrPtr\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a pointer to the receiver's address structure.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 orchestra\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b orchestra\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the receiver's Orchestra object.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28\fc1\cf1 readDataUntimed:length:offset:\
+
+\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b\fi0\li2100\fc1\cf1 readDataUntimed:
+\b0 (DSPDatum *)
+\i dataArray
+\b\i0  length:
+\b0 (int )
+\i len
+\b\i0  offset:
+\b0 (int )
+\i off
+\b\i0\fi-1020\li3620  
+\fi0\li2100 \
+\
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Queries the DSP for the value of the given DSP memory.\
+\
+This returns a valid value by reference only when one of the following is true:\
+ ·   the data was allocated before the Orchestra started running\
+ ·   the data was allocated more than deltaT in the past\
+ ·   delta-t is 0\
+ ·   there is no Conductor performing\
+
+\pard\tx7140\f1\fi-1020\li3620\fc0\cf0 \
+
+\f0\b\fi0\li2100\fc1\cf1 readShortDataUntimed:length:offset:\
+
+\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b\fi0\li2100\fc1\cf1 readShortDataUntimed:
+\b0 (short *)
+\i dataArray
+\b\i0  length:
+\b0 (int)
+\i len
+\b\i0  offset:
+\b0 (int)
+\i off
+\b\i0\fi-1020\li3620  
+\fi0\li2100 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1  \
+Queries the DSP for the value of the given DSP memory.  Same as readDataUntimed:length:offset: for 16-bit arrays of data. \
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 readOnly\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (BOOL)
+\b readOnly\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns YES if the receiver is read-only.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 referenceCount\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (int)
+\b referenceCount\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 If the receiver is installed in its Orchestra's shared object table, this returns the number of objects that have allocated it. Otherwise returns 1.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 run\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b run\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 This does nothing and returns the receiver.  It's provided for compatibility with UnitGenerator; specifically, it allows a SynthPatch to send 
+\b run
+\b0  to all its SynthElement objects without regard for their class.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setData:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setData:
+\b0 (DSPDatum *)
+\i dataArray\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Loads 
+\i dataArray
+\i0  into the receiver's memory.  Implemented as (and returns the value of)\
+
+\fs16 \
+
+\pard\f2\fs24\li3120\fc0\cf0 [self setData:dataArray length:length offset:0];\
+
+\pard\tx3120\tx3620\tx4120\f0\fs16\li2620\fc0\cf0 \
+
+\fs28 where the second argument is the instance variable 
+\b length
+\b0 .  This assumes that 
+\i dataArray
+\i0  is the same length as the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setData:length:offset:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setData:
+\b0 (DSPDatum *)
+\i dataArray
+\i0  \
+
+\b\fi0 length:
+\b0 (int)
+\i len
+\i0  \
+
+\b offset:
+\b0 (int)
+\i off\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Loads (at most) 
+\i len
+\i0  words of data from 
+\i dataArray
+\i0  into the receiver's memory, starting at location 
+\i off
+\i0  words from the beginning of the receiver's memory block.  If 
+\i off
+\i0  + 
+\i len
+\i0  is greater than the receiver's length (as returned by the 
+\b length
+\b0  method), or if the data couldn't otherwise be loaded, the error MK_synthDataLoadErr is generated and 
+\b nil
+\b0  is returned.  Otherwise returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setReadOnly:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setReadOnly:
+\b0 (BOOL)
+\i readOnlyFlag\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Sets the receiver to read-only if 
+\i readOnlyFlag
+\i0  is YES and read-write if it's NO.  The default access for a SynthData object is read-write.  Returns the receiver.  The Orchestra automatically creates some read-only SynthData objects (SineROM, MuLawROM, and the zero and sink patchpoints) that ignore this method.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setShortData:length:offset:\
+
+\pard\tx3120\tx3620\tx4120\f1\b0\li2620\fc0\cf0 - 
+\f0\b setShortData:
+\b0 (short *)
+\i dataArray
+\b\i0  length:
+\b0 (int)
+\i len
+\b\i0  offset:
+\b0 (int)
+\i off
+\b\i0  \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Loads (at most) len words of data from 
+\i dataArray
+\i0  into the receiver's memory, right justified, starting at location 
+\i off
+\i0  words from the beginning of the receiver's memory block.  If 
+\i off
+\i0  + 
+\i len
+\i0  is greater than the receiver's length (as returned by the 
+\b length
+\b0  method), or if the data couldn't otherwise be loaded, the error MK_synthDataLoadErr is generated and 
+\b nil
+\b0  is returned. Otherwise returns the receiver.\
+
+\b\fc0\cf0 \
+
+\pard\tx7140\li2100\fc0\cf0 setShortData:\
+
+\pard\tx3120\tx3620\tx4120\f1\b0\li2620\fc0\cf0 -
+\f0\b  setShortData:
+\b0 (short *)
+\i dataArray
+\b\i0  \
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\pard\tx3120\tx3620\tx4120\b0\li2620\fc1\cf1 Loads 
+\i dataArray
+\i0  into the receiver's memory, right justified.  Implemented as (and returns the value of)\
+
+\b \
+	 [self setShortData:dataArray length:length offset:0];\
+
+\b0 \
+where the second argument is the instance variable length.  This assumes that dataArray is the same length as the receiver.\
+\
+
+\pard\tx7140\b\li2100\fc0\cf0 setToConstant:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setToConstant:
+\b0 (DSPDatum)
+\i value\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Fills the receiver's memory with the constant 
+\i value
+\i0 .  Implemented as (and returns the value of)\
+
+\fs16 \
+
+\pard\f2\fs24\li3120\fc0\cf0 [self setToConstant:value length:length offset:0];\
+
+\pard\tx3120\tx3620\tx4120\f0\fs16\li2620\fc0\cf0 \
+
+\fs28 where the second argument is the instance variable 
+\b length
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setToConstant:length:offset:\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setToConstant:
+\b0 (DSPDatum)
+\i value
+\i0  \
+
+\b\fi0 length:
+\b0 (int)
+\i len
+\i0  \
+
+\b offset:
+\b0 (int)
+\i off\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Similar to 
+\b setData:length:offset:
+\b0 , but loads the constant 
+\i value
+\i0  rather than an array; see 
+\b setData:length:offset:
+\b0  for details.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 synthPatch\
+
+\pard\f1\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b synthPatch\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the SynthPatch that the receiver is part of, if any.\
+
+\fs16 \
+
+\fs28 \
+
+}

@@ -1,0 +1,455 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f2\ftech Symbol;\f3\fswiss Helvetica;\f4\fmodern Courier;\f1\fmodern Ohlfs;}
+\paperw16220
+\paperh14020
+\margl120
+\margr0
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f2 ã
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fs16\li2620\fc0\cf0 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 TuningSystem
+\f3  \
+
+\fs16 \
+
+\pard\tx7140\f0\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 A TuningSystem object represents a musical tuning system by mapping key numbers to frequencies.  The method 
+\b setFreq:forKeyNum:
+\b0  establishes a frequency/key number correspondence.  To tune a key number and its octaves at the same time, invoke the method 
+\b setFreq:forKeyNumAndOctaves:
+\b0 .  The frequencies in a TuningSystem object don't have to increase as the key numbers increaseÐyou can even create a TuningSystem that descends in pitch as the key numbers ascend the scale.  The 
+\b freqForKeyNum:
+\b0  method retrieves the frequency value of the argument key number.  Such values are typically used to set the frequency of a Note object:\
+
+\fs16 \
+
+\pard\f4\fs24\li3120\fc0\cf0 [aNote setPar:MK_freq \
+    toDouble:[aTuningSystem freqForKeyNum:c4k]];\
+
+\pard\tx3120\tx3620\tx4120\f0\fs16\li2620\fc0\cf0 \
+
+\fs28 The TuningSystem class maintains a master system called the 
+\i installed tuning system
+\i0 .  By default, the installed tuning system is set to 12-tone equal-temperament with A above middle C set to 440 Hz.  A key number that doesn't reference a TuningSystem object takes its frequency value from the installed tuning system.  The frequency value of a pitch variable is also taken from the installed system.  The difference between key numbers and pitch variables is explained in Volume 1, Chapter 3.  The entire map of key numbers, pitch variables, and frequency values in the default 12-tone equal-tempered system is given in Appendix D, ªMusic Tables.º\
+
+\fs16 \
+
+\fs28 You can install a tuning system by sending the 
+\b install
+\b0  message to a TuningSystem object.  Keep in mind that this doesn't install the object itself, it simply copies its key number-frequency map.  Subsequent changes to the object won't affect the installed tuning system (unless you again send the object the 
+\b install
+\b0  message).\
+
+\fs16 \
+
+\fs28 Note that while key numbers can also be used to define pitch for Notes used in MIDI performance, the TuningSystem object has no affect on the precise frequency of a Note sent to a MIDI instrument.  The relationship between key numbers and frequencies on a MIDI instrument is set on the instrument itself. (An application can, of course, use the information in a TuningSystem object to configure the MIDI instrument.)\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Declared in TuningSystem
+\i0 	id	frequencies;\
+
+\fs16 \
+
+\fs28 frequencies 	Array of frequencies, indexed by keyNum.\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Creating and freeing a TuningSystem\
+
+\fi0 + installedTuningSystem\
+
+\pard\tx10180\tx10680\f2\fi-520\li7660\fc0\cf0 - 
+\f0 copy\
+
+\f2 - 
+\f0 copyFromZone:\
+
+\f2 - 
+\f0 free\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Tuning the object	
+\f2 - 
+\f0 install\
+
+\pard\tx10180\tx10680\f2\fi-520\li7660\fc0\cf0 - 
+\f0 setKeyNum:toFreq: \
+
+\f2 - 
+\f0 setKeyNumAndOctaves:toFreq: \
+
+\f2 - 
+\f0 setTo12ToneTempered\
+
+\f2 - 
+\f0 transpose:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Querying the object	
+\f2 - 
+\f0 freqForKeyNum:\
+
+\fs16 \
+
+\fs28 Tuning the installed tuning system	+ setKeyNum:toFreq: \
+
+\pard\tx10180\tx10680\fi-520\li7660\fc0\cf0 + setKeyNumAndOctaves:toFreq: \
++ transpose:\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Querying the installed tuning system\
+
+\fi0 + freqForKeyNum:\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 CLASS METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 freqForKeyNum:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + (double)
+\b freqForKeyNum:
+\b0 (MKKeyNum)
+\i aKeyNum\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns the installed frequency for the key number 
+\i aKeyNum
+\i0 .  If 
+\i aKeyNum
+\i0  is out of bounds, returns MK_NODVAL.  The value returned by this method is the same value as 
+\i aKeyNum
+\i0 's analogous pitch variable.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 installedTuningSystem\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b installedTuningSystem\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Creates a TuningSystem object and tunes it to the installed tuning system.  Returns the newly created object.  Tuning the returned object won't affect the installed TuningSystem.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 new\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b new\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a new 12-tone equal-tempered TuningSystem object.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setKeyNum:toFreq:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b setKeyNum:
+\b0 (MKKeyNum)
+\i aKeyNum 
+\b\i0 toFreq:
+\b0 (double)
+\i freq\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Tunes the installed tuning system's 
+\i aKeyNum
+\i0  key number to 
+\i freq
+\i0  and returns the receiver.  If 
+\i aKeyNum
+\i0  is out of bounds, returns MK_NODVAL.\
+
+\fs16 \
+
+\pard\b\fs28\li2620\fc0\cf0 Note:  
+\b0 If you're making several changes to the installed tuning system, it's more 	efficient to make the changes in a TuningSystem instance and then send it the install 	message than it is to repeatedly invoke this method.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setKeyNumAndOctaves:toFreq:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b setKeyNumAndOctaves:
+\b0 (MKKeyNum)
+\i aKeyNum 
+\b\i0 toFreq:
+\b0 (double)
+\i freq\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Tunes the key numbers in the installed tuning system that are the same pitch class as 
+\i aKeyNum
+\i0  to octaves of 
+\i freq
+\i0  such that 
+\i aKeyNum
+\i0  is tuned to 
+\i freq
+\i0 .  Returns the receiver or 
+\b nil
+\b0  if aKeyNum is out of bounds.\
+
+\fs16 \
+
+\pard\b\fs28\li2620\fc0\cf0 Note:  
+\b0 If you're making several changes to the installed tuning system, it's more 	efficient to make the changes in a TuningSystem instance and then send it the install 	message than it is to repeatedly invoke this method.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 transpose:\
+
+\pard\b0\fi-1020\li3620\fc0\cf0 + 
+\b transpose:
+\b0 (double)
+\i semitones\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Transposes the installed tuning system by 
+\i semitones
+\i0  half-steps.  (The half-step used here is 12-tone equal-tempered.)  If 
+\i semitones
+\i0  is positive, the transposition is up, if it's negative, the transposition is down.  
+\i semitones
+\i0  can be any 
+\b double
+\b0  value, thus you can transpose the tuning system by increments smaller than a half-step.  Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 copy\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b copy\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Creates and returns a new TuningSystem as a copy of the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 free\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b free\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Frees the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 freqForKeyNum:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (double)
+\b freqForKeyNum:
+\b0 (MKKeyNum)
+\i aKeyNum\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns the receiver's frequency for the key number 
+\i aKeyNum
+\i0 .  If 
+\i aKeyNum
+\i0  is out of bounds, returns MK_NODVAL.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 install\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b install\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Installs the receiver's tuning as the current tuning system.  The receiver itself isn't installed, only its tuning system; subsequent changes to the receiver won't affect the installed system unless you resend the 
+\b install
+\b0  message to the receiver.  Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setKeyNum:toFreq:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setKeyNum:
+\b0 (MKKeyNum)
+\i aKeyNum 
+\b\i0 toFreq:
+\b0 (double)
+\i freq\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Tunes the receiver's 
+\i aKeyNum
+\i0  key number to 
+\i freq
+\i0  and returns the receiver.  If 
+\i aKeyNum
+\i0  is out of bounds, returns MK_NODVAL.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setKeyNumAndOctaves:toFreq:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setKeyNumAndOctaves:
+\b0 (MKKeyNum)
+\i aKeyNum 
+\b\i0 toFreq:
+\b0 (double)
+\i freq\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Tunes all the receiver's key numbers with the same pitch class as 
+\i aKeyNum
+\i0  to octaves of 
+\i freq
+\i0  such that 
+\i aKeyNum
+\i0  is tuned to 
+\i freq
+\i0 .  Returns the receiver or 
+\b nil
+\b0  if aKeyNum is out of bounds.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 setTo12ToneTempered\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b setTo12ToneTempered\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Sets the receiver's tuning to 12-tone equal-tempered.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 transpose:\
+
+\pard\f2\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b transpose:
+\b0 (double)
+\i semitones\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Transposes the receiver by 
+\i semitones
+\i0  half-steps.  (The half-step used here is 12-tone equal-tempered.)  If 
+\i semitones
+\i0  is positive, the transposition is up, if it's negative, the transposition is down.  
+\i semitones
+\i0  can be any 
+\b double
+\b0  value, thus you can transpose the receiver by increments smaller than a half-step.  Returns the receiver.\
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+}

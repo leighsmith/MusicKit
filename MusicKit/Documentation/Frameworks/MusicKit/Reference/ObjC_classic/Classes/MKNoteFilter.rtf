@@ -1,0 +1,272 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f3\ftech Symbol;\f1\fmodern Courier;}
+\paperw16220
+\paperh14020
+\margl120
+\margr0
+\f0\b0\i0\ulnone\ql\fs24\fi0\li0\gray0\fc0\cf0\up0\dn0 Release 2.0  Copyright 
+\f3 ã
+\f0 1990 by NeXT Computer, Inc.  All Rights Reserved.\
+\
+
+\pard\tx3120\tx3620\tx4120\fc0\cf0 Release 4.0  Copyright 
+\f3 ã
+\f0 1993 by CCRMA, Stanford University.  All Rights Reserved.\
+\
+
+\fs16\li2620 \
+
+\fs28 \
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+\pard\b\li1100\fc0\cf0 \
+\
+\
+\
+
+\fs36 NoteFilter\
+
+\fs16 \
+
+\pard\tx7140\b0\fs28\li2100\fc0\cf0 INHERITS FROM	Instrument : Object\
+
+\fs16 \
+
+\fs28 DECLARED IN	musickit.h\
+
+\fs16 \
+\
+\
+
+\fs28 CLASS DESCRIPTION\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\fs28\li2620\fc0\cf0 NoteFilter is an abstract class that combines the functionality it inherits from Instrument with the protocol defined in the Performer class.  NoteFilter objects can both receive and send Notes; they're interposed between Performers and Instruments to create a Note processing pipeline.  The subclass responsibility 
+\b realizeNote:fromNoteReceiver:
+\b0  is passed on to NoteFilter subclasses.\
+
+\fs16 \
+
+\pard\tx7140\li2100\fc0\cf0 \
+\
+
+\fs28 INSTANCE VARIABLES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\i\fs28\fi-4540\li7140\fc0\cf0 Inherited from Object
+\i0 	Class	isa;\
+
+\fs16 \
+
+\i\fs28 Inherited from Instrument
+\i0 	id	noteReceivers;\
+
+\fs16 \
+
+\i\fs28 Declared in NoteFilter
+\i0 	id	noteSenders;\
+
+\fs16 \
+
+\fs28 noteSenders 	Collection of NoteSenders.\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 METHOD TYPES\
+
+\fs16 \
+
+\pard\tx7140\tx10180\tx10680\fs28\fi-4540\li7140\fc0\cf0 Creating and freeing a NoteFilter	
+\f3 - 
+\f0 copy\
+
+\pard\tx10180\tx10680\f3\fi-520\li7660\fc0\cf0 - 
+\f0 free\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Modifying the object	
+\f3 - 
+\f0 addNoteSender: \
+
+\pard\tx10180\tx10680\f3\fi-520\li7660\fc0\cf0 - 
+\f0 freeNoteSenders\
+
+\f3 - 
+\f0 removeNoteSender: \
+
+\f3 - 
+\f0 removeNoteSenders\
+
+\pard\tx7140\tx10180\tx10680\fs16\fi-4540\li7140\fc0\cf0 \
+
+\fs28 Querying the object	
+\f3 - 
+\f0 isNoteSenderPresent: \
+
+\pard\tx10180\tx10680\f3\fi-520\li7660\fc0\cf0 - 
+\f0 noteSender\
+
+\f3 - 
+\f0 noteSenders\
+
+\pard\tx7140\fs16\li2100\fc0\cf0 \
+\
+\
+
+\fs28 INSTANCE METHODS\
+
+\fs16 \
+
+\b \
+
+\fs28 addNoteSender:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b addNoteSender:
+\b0\i aNoteSender\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Removes 
+\i aNoteSender
+\i0  from its present owner (if any) and adds it to the receiver.  Returns 
+\i aNoteSender
+\i0 .  If the receiver is in performance, or if 
+\i aNoteSender
+\i0  is already a member of the receiver, does nothing and returns 
+\b nil
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 copy\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b copy\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Creates and returns a NoteFilter as a copy of the receiver.  The new object contains copies of the receiver's NoteSenders and NoteReceivers.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 free\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b free\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Sends 
+\b freenoteSenders
+\b0  and 
+\b freenoteReceivers
+\b0  to the receiver then frees the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 freeNoteSenders\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b freeNoteSenders\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Removes and frees the receiver's NoteSenders.  Returns the receiver.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 isNoteSenderPresent:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f0 (BOOL)
+\b isNoteSenderPresent:
+\b0\i aNoteSender\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Returns YES if 
+\i aNoteSender
+\i0  is one of the receiver's NoteSenders.  Otherwise returns NO.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 noteSender\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b noteSender\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns the receiver's first NoteSender.  This is method should only by invoked if the receiver only contains one NoteSender or if you don't care which NoteSender you get.  If there are currently no NoteSenders, this method creates and adds a NoteSender.\
+
+\pard\tx7140\li2100\fc0\cf0 \
+
+\b\fs16 \
+
+\fs28 noteSenders\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b noteSenders\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Returns a copy of the receiver's List of NoteSenders.  It is the sender's responsibility to free the List.\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 removeNoteSender:\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b removeNoteSender:
+\b0\i aNoteSender\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\i0\fs28\li2620\fc0\cf0 Removes aNoteSender from the receiver's List of NoteSenders.  Returns 
+\i aNoteSender
+\i0 .  If the receiver is in a performance, does nothing and returns 
+\b nil
+\b0 .\
+
+\fs16 \
+
+\pard\tx7140\b\li2100\fc0\cf0 \
+
+\fs28 removeNoteSenders\
+
+\pard\f3\b0\fi-1020\li3620\fc0\cf0 - 
+\f0\b removeNoteSenders\
+
+\fs16 \
+
+\pard\tx3120\tx3620\tx4120\b0\fs28\li2620\fc0\cf0 Removes all the receiver's NoteSenders.  Returns the receiver.\
+
+\fs16 \
+
+\fs28 \
+
+\fs16 \
+
+}

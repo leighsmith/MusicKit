@@ -1,0 +1,7 @@
+LOCALMAKEFILEDIR = /LocalDeveloper/Makefiles/driverkit
+LOCALMAKEFILE = Makefile.local_preamble
+-include $(LOCALMAKEFILEDIR)/$(LOCALMAKEFILE)
+INSTALLDIR = /LocalLibrary/Devices
+
+
+

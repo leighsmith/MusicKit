@@ -1,0 +1,30 @@
+INSTALLDIR = "$(HOME)/Apps";
+APPICON = "";
+GENERATEMAIN = YES;
+DOCICONFILES = ();
+FILESTABLE = {
+    M_FILES = (PerformerExample_main.m);
+    OTHER_LINKED = ();
+    H_FILES = (PerformerController.h, RandomPerformer.h);
+    CLASSES = (PerformerController.m, RandomPerformer.m);
+    IMAGES = ();
+    PSW_FILES = ();
+    C_FILES = ();
+    OTHER_RESOURCES = (mkmon_A_32k.dsp, mkmon_A_8k.dsp, mkmon_A_192k.dsp, mkmon_A_turtlebeachms.dsp, mkmon_A_arielpc56d.dsp, mkmon_A_ilinki56.dsp);
+    OTHER_SOURCES = (Makefile, PerformerExample.iconheader, README);
+    SUBPROJECTS = ();
+    PSWM_FILES = ();
+    SOUNDS = ();
+    OTHER_LIBS = (synthpatches, unitgenerators, musickit, dsp, NeXT_s, Driver);
+    INTERFACES = (InfoPanel.nib, PerformerExample.nib);
+};
+APPCLASS = PerformerController;
+MAINNIB = PerformerExample;
+DOCEXTENSIONS = ();
+PROJECTTYPE = Application;
+PROJECTVERSION = 1.1;
+LOCALIZABLE_FILES = {
+};
+PROJECTNAME = PerformerExample;
+SYSTEMEXTENSIONS = ();
+LANGUAGE = English;

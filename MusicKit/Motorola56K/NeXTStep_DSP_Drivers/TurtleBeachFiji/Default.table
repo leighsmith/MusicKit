@@ -1,0 +1,10 @@
+"Class Names" = "TurtleBeachFiji";
+"DMA Channels" = "";
+"Family" = "DSP";
+"Instance" = "0";
+"I/O Ports" = "0x290-0x29f 0x250-0x250";
+"IRQ Levels" = "";
+"Memory Maps" = "";
+"Valid IRQ Levels" = "";
+"Version" = "0.95";
+"Driver Version" = "Version 0.95 Turtle Beach Fiji and Pinnacle DSP driver, Music Kit 4.2 version";

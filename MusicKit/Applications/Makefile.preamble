@@ -1,0 +1,1 @@
+OTHER_CFLAGS = -I$(DSTROOT)$(LOCAL_DEVELOPER_DIR)/Headers -L$(DSTROOT)/usr/local/lib

@@ -1,0 +1,2459 @@
+{\rtf0\nextcset {\fonttbl{\f21\fswiss Helvetica;}{\f22\fmodern 
+Courier;}{\f20\froman Times-Roman;}{\f3\fswiss Helvetica;}}
+\paperw12240\paperh15840 \margl1440\margr-1200\margt0\margb0 
+\pgnstart1\ftnstart1 \deftab31680 \sectd\sbknone \linemod0\linex0 
+\ftnbj \headery0\footery0 \cols1 {\header \pard \li360\ri3000\fi0\sl320 
+\tx1080 \tx1800 \tx2520 \tx3240 \tx3960 \tx4680 \tx5400 
+\tx6120 \tx6840 \tx7560 \tx8280 \plain \f20\fs18\i \par 
+\par 
+}{\footerl \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 
+\plain \f20\fs18\i \par 
+\par 
+15-\chpgn      \tab PRELIMINARY\par 
+\par 
+\par 
+}\pard \li1440\ri2640\fi0\sl260 \tx0 \tx2520 \tx2880 \tx3240 
+\plain \f20\fs40 Sound/DSP Driver\fs22 \fs40 \par 
+\pard \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22 \par 
+\par 
+\par 
+\par 
+\par 
+\par 
+\pard \li1440\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \fs24\b \tab Driver Overview\par 
+\fs22\b0 \par 
+\fs24\b \tab Obtaining Access to the Driver\par 
+\par 
+\tab Playing Sounds\par 
+\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tab Interacting with the DSP\b0 \par 
+\fs22 \tab Host Messages\par 
+\tab DSP Messages\par 
+\tab DSP Protocol Levels\par 
+\tab DSP DMA Channels\par 
+\tab DSP DMA Protocol Description\par 
+\tab \tab DSP-Initiated DSP to Host Transfer\par 
+\tab \tab DSP-Initiated Host to DSP Transfer\par 
+\tab \tab Host-Initiated DSP to Host Transfer\par 
+\par 
+\fs24\b \tab Playing Sounds from the DSP\par 
+\par 
+\tab Playing Sounds through the DSP\par 
+\par 
+\tab Recording Sounds\par 
+\par 
+\tab Incidental Sound and DSP Functions\par 
+\par 
+\tab Sound/DSP Driver Interface\par 
+\fs22\b0 \pard \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 
+\tx2520 \par 
+\page \par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerl \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+15-\chpgn       File:  SysRefNotes/15_Mach/Drivers/SoundDriver.wn\tab 
+PRELIMINARY\par 
+\par 
+\par 
+}\page \pard \li1440\ri2640\fi0\sl260 \tx0 \tx2520 \tx2880 
+\tx3240 \fs40 Sound/DSP Driver\fs22 \fs40 \par 
+\pard \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22 \par 
+\par 
+\par 
+\par 
+\par 
+\par 
+This file describes the interface supporting playing and 
+recording of sounds, either directly to the 22/44kHz 
+DACs (Digital to Analog Converter)/8kHz ADC (Analog to 
+Digital Converter) in the monitor, or through the DSP. 
+ Interfaces are also supported for generic messages to/from 
+the DSP, and for linking the DSP directly to the monitor 
+sound hardware.\par 
+\par 
+The interface to the sound facilities is represented 
+by several ports.  Messages may be sent to these ports 
+to control, play, and record large pieces of data, access 
+the DSP host interface registers, or retrieve messages 
+sent from the DSP.\par 
+\par 
+Functions for using the driver are listed in the final 
+section \'aaSound/DSP Driver Interface.\'ba\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab Driver Overview      15-\chpgn \par 
+\par 
+\par 
+}\pard \keep \li0\ri2640\fi0\sl260 \tx2520 \tx2880 \tx3240 
+\fs32\b Driver Overview\fs22\b0 \fs32\b \par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+The Sound/DSP driver is organized using several Mach 
+threads and ports.  The main thread receives messages 
+on a set of ports, directly processing the messages, 
+passing them to other threads, or enqueuing the requests 
+for interrupt-level processing.  When initialized, the 
+driver listens on two ports:  the device port is registered 
+with the network name server under the name \'aasound.\'ba 
+ It is used for generic driver commands and to receive 
+access to other ports.  The notify port is used for 
+cleaning up connections represented by registered ports 
+as the ports are deallocated (Mach sends port death 
+messages to a task's registered notify port when receive 
+rights to a port which the task has send rights to 
+have been deallocated).\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab Obtaining Access to the Driver     
+ 15-\chpgn \par 
+\par 
+\par 
+}\pard \keep \li0\ri2640\fi0\sl260 \tx2520 \tx2880 \tx3240 
+\fs32\b Obtaining Access to the Driver\fs22\b0 \fs32\b 
+\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+The device port may be used to acquire ownership for 
+other parts of the sound/DSP system.  It is necessary 
+to have access to the registered owner port to use 
+corresponding parts of the system:\par 
+\par 
+\pard \keep \li1800\ri2640\fi-360\sl-260 \tx2160 \tx2520 
+\tx2880 \'b7\tab To access DSP stream ports and the 
+DSP command port, you must have access to the DSP owner 
+port.  \par 
+\pard \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\par 
+\pard \keep \li1800\ri2640\fi-360\sl-260 \tx2160 \tx2520 
+\tx2880 \'b7\tab To play sound through the DACs, you 
+must have access to the Sound-out owner port.  This 
+port is used to acquire either the 44 kHz or 22 kHz 
+Sound-out stream ports, or to link the DSP directly 
+to sound-out.\par 
+\pard \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\par 
+\pard \li1800\ri2640\fi-360\sl-260 \tx2160 \tx2520 \tx2880 
+\'b7\tab To record in from the built-in 8 kHz CODEC 
+ADC, you must have access to the Sound-in owner port. 
+ This port may then be used to acquire the Sound-in 
+stream port, or to link sound-in directly to the DSP.\par 
+\pard \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\par 
+The functions \b snddriver_set_dsp_owner_port()\b0 , \b 
+snddriver_set_sndin_owner_port()\b0 , and \b snddriver_set_sndout_owner_port()\b0 
+ are used for registering ownership for the DSP, sound-in, 
+and sound-out, respectively.  The \i owner_port\i0  parameter 
+is a port to be registered as the owner of this device. 
+ When the registered\i  owner_port\i0  is deallocated 
+the device is released.  The \i negotiation_port\i0  
+parameter specifies a port to be used for negotiating 
+access to the device.  If the function is successful, 
+the port referenced by \i negotiation_port\i0  is registered 
+with the driver to be returned when ownership is requested 
+for a device which is already owned.  Thus, if the 
+call fails, a port will be returned in \i negotiation_port\i0 
+ that can be used to gain further access to the driver.\par 
+\pard \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab Playing Sounds      15-\chpgn \par 
+\par 
+\par 
+}\pard \keep \li0\ri2640\fi0\sl260 \tx2520 \tx2880 \tx3240 
+\fs32\b Playing Sounds \fs22\b0 \fs32\b \par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+22kHz or 44kHz 16-bit stereo sounds can be played back 
+directly by the sound-out digital-to-analog converters 
+(DACs).  To do this you must first obtain ownership 
+of the sound-out channel using the function \b snddriver_set_sndout_owner_port()\b0 
+.  The owner and device ports are then used to get 
+the appropriate sound-out stream port.  The \b snddriver_get_stream\b0 
+ message takes the appropriate owner port and a specification 
+of which stream to return and returns a sound-out stream 
+port.\par 
+\par 
+Sounds are played using the function \b snddriver_stream_start_writing()\b0 
+.  Requests are queued in the output stream so that 
+multiple sounds can be played back-to-back.\par 
+\par 
+Sound data is passed by reference (using the Mach out-of-line 
+message facility) from the user's task directly into 
+the driver's address space.  There is no imposed limit 
+to the amount of data that can be sent in any given 
+message.  Once the message is sent you can do anything 
+you like with the data that was sent, as the data 
+is mapped copy-on-write.  Sound files are played by 
+first mapping the file into your address space (using 
+the mapfd(2) system call) and using the return address 
+range in a message component.  The driver takes care 
+of locking down the data before playing it.\par 
+\par 
+Each sound can have a distinct data tag associated with 
+it that can be used for subsequent control of that 
+message.  Sounds enqueued to be played (sound regions) 
+may be controlled using the \b snddriver_stream_control()\b0 
+ function, to pause, resume, abort, or awaiting them. 
+ The control function encodes one or more of these 
+operations to act on all those sound regions having 
+the specified data tag.  A data tag value of zero 
+(0) acts on all enqueued messages.  Pausing a region 
+causes all sound to stop if that region is currently 
+being played, or to stop once the region becomes the 
+next region to play.  Resuming a region causes sound 
+to start up again.  Aborting a region causes that region 
+to be terminated immediately.\par 
+\par 
+Each sound region can have a distinct port associated 
+with it for reporting back status information.  Messages 
+can be sent when the region is started (the first dma 
+packet has been sent through the sound-out hardware), 
+when the region is complete (the last dma packet has 
+been sent through the DACs), if the region is aborted, 
+paused, or resumed, or if a hardware underflow is detected 
+while playing the region (the device containing the data 
+to be played was unable to keep up with the data requirements 
+of the sound-out DACs).  These messages should be processed 
+with the \b snddriver_reply_handler()\b0  function, described 
+in the section \'aaDSP Messages.\'ba\par 
+\par 
+When sound-out ownership is released (by deallocating 
+the registered owner port) all enqueued regions are aborted 
+and any other resources are deallocated.\par 
+\par 
+The driver attempts to gracefully handle any sound starting 
+from, or ending on a non-zero value by calculating a 
+ramp from zero to the initial value.  The ramp is 
+calculated using a single physical page so that a click 
+may be heard, but a large pop should be avoided.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab Interracting with the DSP      15-\chpgn 
+\par 
+\par 
+\par 
+}\pard \keep \li0\ri2640\fi0\sl260 \tx2520 \tx2880 \tx3240 
+\fs32\b Interacting with the DSP\fs22\b0 \fs32\b \par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+The sound driver provides a message oriented interface 
+to the Motorola DSP56000 digital signal processor (DSP). 
+ The DSP is accessed using the 8-byte host interface 
+register.  The sound driver gives access to the DSP 
+by abstracting the operations that can be performed on 
+the host interface.  In addition to the raw host interface, 
+a DMA channel is available to stream data into/out of 
+the DSP for high-bandwidth data movement.\par 
+\par 
+Generalized facilities are available for interacting with 
+the DSP.  The driver supports a prioritized message 
+queue for sending control and data to the DSP, a protocol 
+for separating sound output from DSP messages when receiving 
+data from the DSP, a mechanism for linking DSP generated 
+sound to the DACs, and a facility for streaming data 
+into the DSP (exclusive of the DSP command queue).  
+These facilities allow efficient use of the DSP for 
+generating sounds, translating data from one format to 
+another, interacting with the DSP serial ports, or anything 
+else that one may care to use the DSP for.\par 
+\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+Most operations on the DSP require the DSP command port. 
+ This port is retrieved using the function \b snddriver_get_dsp_cmd_port()\b0 
+.\par 
+\par 
+\par 
+\par 
+\pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 \tx2880 
+\tx3240 \fs26\b Host Messages\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+The driver maintains a prioritized queue of operations 
+to be performed on the DSP host interface.  Using the 
+\b snd_dspcmd_msg\b0  message the user may enqueue a 
+set of DSP host interface operations to be performed 
+in the driver.\par 
+\par 
+A higher priority message may preempt an active lower 
+priority message that is not atomic, but will be enqueued 
+behind an active lower priority message that is atomic. 
+ This allows a set of operations to be initiated and 
+not be subjected to interface changes affected by higher 
+priority messages (the driver uses high priority messages 
+as part of the DMA protocol).  An exception to this 
+rule is that DSP data that is in the process of being 
+sent to the DSP may never be preempted.\par 
+\par 
+The \b snddriver_dspcmd_req_condition()\b0  function causes 
+the driver to wait for the host interface to achieve 
+the desired state before continuing to process other 
+messages in the queue (unless preempted).  The contents 
+of the four host interface registers (Interrupt Control, 
+Command Vector, Interrupt Status, and Interrupt Vector) 
+are anded with the mask parameter and the result is 
+compared with the flags parameter.\par 
+\par 
+The \b snddriver_dsp_write()\b0  function sends the specified 
+data through the DSP transmit registers.  Parameters 
+include a pointer to the data, the size of the data 
+(1, 2, or 4 bytes), and the number of elements of 
+data to be sent.  When encountered in the command queue 
+the driver will programmatically send each element in 
+turn to the DSP.  For the data to start to be processed 
+the TXDE bit must be set in the Interrupt Status Register. 
+ If the TXDE bit becomes false during the course of 
+sending data through the transmit register the data will 
+be suspended until TXDE becomes true again.  In this 
+case, all further queue processing is suspended until 
+all the data has been sent.\par 
+\par 
+The \b snddriver_dsp_host_cmd()\b0  function causes the 
+specified integer to be written to the Command Vector 
+Register.  When written, the HC bit is also set in 
+the Command Vector Register.  The message component cannot 
+be executed until the HC bit is clear in the Command 
+Vector Register.\par 
+\par 
+The \b snddriver_set_dsp_host_flag()\b0  function causes 
+the bits specified in the mask parameter to be set 
+to the value specified in the flags parameter.  Only 
+the HF0 and HF1 bits may be modified.  Note that in 
+Complex DMA Mode (see DSP protocol levels, below) HF1 
+is used by the driver to indicate that the driver is 
+ready to accept DMA data.\par 
+\par 
+\par 
+\par 
+\pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 \tx2880 
+\tx3240 \fs26\b DSP Messages\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+In the absence of any other protocol specification, the 
+driver receives any data written by the DSP and places 
+it in a queue.  Using the \b snddriver_dspcmd_req_msg()\b0 
+ function the user can retrieve any data received from 
+the DSP.  In the absence of any queued data the provided 
+reply port will be saved so that a message will be 
+sent when data does arrive.  The kernel will respond 
+with the \b snd_reply_dsp_msg\b0  message containing all 
+data in the message queue.  If the message queue fills 
+up the driver will stop listening to the DSP until 
+the queue is emptied.  Normally, a \b snddriver_dspcmd_req_msg()\b0 
+ function is sent to \'aaprime\'ba the driver so that 
+as soon as data is available it will be sent off in 
+a message to the user.  Upon receiving the \b snd_reply_dsp_msg\b0 
+ message the user should promptly send another \b snddriver_dspcmd_req_msg()\b0 
+ to the driver so that the queue doesn't fill up.\par 
+\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+Messages are received using the \b msg_receive()\b0  
+system call.  Messages sent to the data reply port 
+are parsed and distributed by passing them to \b snddriver_reply_handler()\b0 
+ function, which takes two arguments:  the first is 
+the received message, and the second is a pointer to 
+a structure containing references to user-supplied routines 
+that will be called when data in the appropriate format 
+is received.  \par 
+\par 
+If the host message protocol is enabled (see DSP protocol 
+levels, below) data received from the DSP is divided 
+into messages and errors.  Errors are returned on the 
+port specified with the \b snddriver_dspcmd_req_err()\b0 
+ function.  The driver then replies with the \b snd_reply_dsp_err\b0 
+ message.  Other protocol specifications may cause the 
+driver to directly interpret messages sent by the DSP.\par 
+\par 
+\par 
+\par 
+\pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 \tx2880 
+\tx3240 \fs26\b DSP Protocol Levels\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+In its initial configuration, the driver does not make 
+any assumptions about the program running on the DSP 
+itself.  Often, it is necessary for the driver to have 
+a better understanding of what the DSP is doing, so 
+that frequent operations can be made more efficient. 
+ For this purpose, the \b snddriver_dsp_protocol()\b0 
+ function is used to specify the protocol that the 
+driver is to use.\par 
+\par 
+The \b snddriver_dsp_protocol()\b0  function specifies 
+a set of capabilities that the driver directly implements. 
+ They are as follows:\par 
+\par 
+\pard \keep \li4480\ri2640\fi-3040\sl-260 \tx4480 \b SND_DSP_PROTO_HOSTMSG\f22\fs20\b0 
+\par 
+\par 
+\pard \keep \li2160\ri2640\fi-720\sl-260 \tx2280 \f20\fs22 
+\tab This mode enables special processing in the driver's 
+treatment of the host-interface.  Input from the DSP 
+is divided into errors and messages.\par 
+\par 
+\pard \keep \li2160\ri2640\fi-720\sl-260 \tx2280 \tab Any 
+word received from the DSP RX register is compared to 
+DSP_OPERROR (see \b sys/snd_dsp.h\b0 ), and if greater-than 
+or equal to is considered an error.  Errors are enqueued 
+in a separate queue from other DSP messages.  Errors 
+are returned using the snd_reply_dsp_err message (after 
+having been registered by the \b snd_dspcmd_req_err \b0 
+message, see DSP messages above).\par 
+\par 
+\tab If the value DSP_dm_TMQ_LWM is encountered, it is 
+discarded and the DSP command queue is examined (DSP 
+code sets HF3 when an internal resource is not available, 
+and sends the \b DSP_dm_TMQ_LWM\b0  DSP message when 
+HF3 is cleared).\par 
+\par 
+\tab The DSP sends the DSP_dm_KERNEL_ACK message in response 
+to a \b DSP_hc_ACK\b0  host command.  The kernel sends 
+this host message when trying to send an enqueued host 
+command when HF2 is set.  The DSP will send the \b 
+DSP_dm_KERNEL_ACK\b0  in response to this host command. 
+ If the driver receives a kernel ack without expecting 
+it, it is enqueued along with other DSP messages.\par 
+\pard \li4480\ri2640\fi-3040\sl-260 \tx4480 \par 
+\b \pard \keep \li4480\ri2640\fi-3040\sl-260 \tx4480 SND_DSP_PROTO_LINKOUT\par 
+\f22\fs20\b0 \par 
+\pard \keep \li2160\ri2640\fi-720\sl-260 \tx2280 \f20\fs22 
+\tab Link DSP sound-out DMA output channel from the 
+DSP to the sound-out DACs.\par 
+\pard \li4480\ri2640\fi-3040\sl-260 \tx4480 \par 
+\b \pard \keep \li4480\ri2640\fi-3040\sl-260 \tx4480 SND_DSP_PROTO_LINKIN\par 
+\f22\fs20\b0 \par 
+\pard \keep \li2160\ri2640\fi-720\sl-260 \tx2280 \f20\fs22 
+\tab Link the sound-in CODEC ADC directly to the DSP 
+sound-input channel.\par 
+\pard \li4480\ri2640\fi-3040\sl-260 \tx4480 \par 
+\b \pard \keep \li4480\ri2640\fi-3040\sl-260 \tx4480 SND_DSP_PROTO_HIGH\par 
+\f22\fs20\b0 \par 
+\pard \keep \li2160\ri2640\fi-720\sl-260 \tx2280 \f20\fs22 
+\tab Configure the sound-out DMA channel to play at 
+44kHz rather than 22kHz.\par 
+\pard \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\par 
+\par 
+\par 
+\pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 \tx2880 
+\tx3240 \fs26\b DSP DMA Channels\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+The driver maintains nineteen DMA channels that can be 
+used for reading or writing to the DSP.  Channel zero 
+(\b DSP_USER_REQ_CHAN\b0 ) is reserved for driver-controlled 
+access to the DSP.  Channel one (\b DSP_SO_CHAN\b0 ) 
+is used for output from the DSP of 44kHz or 22kHz 
+16-bit linear sound, compatible with the sound-out DACs. 
+ Channel two (\b DSP_SI_CHAN\b0 ) is used for 8kHz 
+8-bit mu-law input from the sound-in ADC to the DSP. 
+ Sixteen other channels are available for application-specific 
+data transfer.\par 
+\par 
+DMA channels are initialized when the stream port is 
+acquired via the snddriver_stream_setup() function.  The 
+size of the DSP buffer is specified in DSP words.  
+The number of bytes needed to fill that buffer is dependent 
+on the DMA mode to be used.  It can vary from \i 
+buffer_size\i0  characters (using DSP_MODE8), to \i buffer_size\i0 
+*4 bytes (using DSP_MODE32).  The number of bytes in 
+a DMA packet must be a multiple of 2 (greater than 
+or equal to 16), and less than or equal to the hardware 
+page size.\par 
+\par 
+A stream port can be allocated for each DSP channel. 
+ The buffer sizes must correspond to the information 
+set up by the \b snddriver_stream_setup()\b0  function, 
+and each channel can be used for either reading or 
+writing, but not both.  Data enqueued on the stream 
+is supplied to the DSP-specific driver code to satisfy 
+DMA requests for the associated DMA channel.\par 
+\par 
+\par 
+\par 
+\pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 \tx2880 
+\tx3240 \fs26\b DSP DMA Protocol Description\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+This section describes the protocol used between the 
+driver and the code running in the DSP to implement 
+complex DMA mode.  DMA can either be host- initiated 
+or DSP-initiated, to or from the DSP.  Presently, the 
+driver only supports DSP-initiated DMA from the DSP to 
+the host (for the purposes of sending sound-out data 
+to the DACs).  The other protocols are documented for 
+the sake of completeness.\par 
+\par 
+\par 
+\par 
+\pard \keep \li1440\ri2640\fi0\sl260 \tx720 \tx2520 \tx2880 
+\tx3240 \fs24\b DSP-Initiated DSP to Host Transfer\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+The DSP sends a transfer request (\b DSP_dm_R_REQ\b0 
+) indicating its readiness to begin transferring data 
+to the host.  The channel to transfer on is indicated 
+in the low-order 16 bits of the DSPs message.  The 
+channel must have previously been initialized with a 
+\b snddriver_dspcmd_chandata\b0  message.  The DSP will 
+await HF1 being set before sending the data (HF1 being 
+set indicates that the driver is in DMA mode).\par 
+\par 
+Once a host memory buffer is available to transfer the 
+data into, the host responds to the DSP by or'ing (INIT|RREQ) 
+in the ICR (along with the appropriate set of HM0 and 
+HM1, depending on the DMA mode as specified in the 
+chandata structure) starting the DMA transfer and then 
+setting the HF1 bit in the ICR.\par 
+\par 
+When the DSP has transferred the required amount of 
+data, the host will get a DMA completion interrupt and 
+proceed to terminate the DMA transfer.  (Note that the 
+DSP will need to send more than a buffers worth of 
+data for the host to recognize that all data has been 
+sent.  Data in excess of that actually used in the 
+transfer is thrown away by the hardware.)  The host 
+completes the DMA operation by enqueuing a \b DSP_hc_HOST_RD\b0 
+ host command, followed by clearing HF1 in the ICR 
+and re-INITing the interface to go out of DMA mode 
+(these messages are enqueued at high priority in the 
+DSP command queue so they won't interrupt an in-progress 
+host message).  At this point the driver is back in 
+its initial state.  The filled buffer is sent to higher 
+level software for subsequent processing.\par 
+\par 
+\par 
+\par 
+\pard \keep \li1440\ri2640\fi0\sl260 \tx720 \tx2520 \tx2880 
+\tx3240 \fs24\b DSP-Initiated Host to DSP Transfer\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+The DSP sends a transfer request (\b DSP_dm_W_REQ\b0 
+) indicating its readiness to begin receiving data from 
+the host.  The channel to transfer on is indicated 
+in the low-order 15 bits of the DSP's message and the 
+DSP buffer to transfer in bit 16.  The channel must 
+have previously been initialized with a \b snddriver_dspcmd_chandata\b0 
+ message to indicate DMA transfer modes, sizes and DSP 
+buffer addresses.  The DSP can specify one of two buffers 
+to be used for the transfer.  The second buffer is 
+located size words beyond the DSP address specified in 
+the chandata structure.  The DSP must wait for a host-initiated 
+DMA request to proceed.\par 
+\par 
+\par 
+\par 
+\pard \keep \li1440\ri2640\fi0\sl260 \tx720 \tx2520 \tx2880 
+\tx3240 \fs24\b Host-Initiated DSP to Host Transfer\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+The host sends four integers (DSP space, DSP address, 
+and DMA skip factor \b DSP_hm_HOST_R\b0 ) followed by 
+a \b DSP_hc_XHM\b0  host command to the DSP.  The 
+host then awaits a \b DSP_dm_R_REQ DSP\b0  message to 
+complete the DMA transfer.  The DSP determines the channel 
+to use in the \b DSP_dm_R_REQ\b0  based upon the address 
+sent in the request.\par 
+\par 
+\par 
+\par 
+\pard \keep \li1440\ri2640\fi0\sl260 \tx720 \tx2520 \tx2880 
+\tx3240 \fs24\b Host-Initiated Host to DSP Transfer\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+The host sends four integers (DSP space, DSP address 
+and DMA skip factor \b DSP_hm_HOST_W\b0 ) followed by 
+a \b DSP_hc_XHM\b0  host command to the DSP.  It then 
+waits for TRDY to be set in the ISR and sets the 
+HF1 bit in the ICR, indicating to the DSP to expect 
+the DMA data subsequently.  The host interface is then 
+initialized to the proper DMA mode and the DMA is initiated.\par 
+\par 
+When the DMA completes, HF1 is cleared in the ICR and 
+the host is again ready to continue with normal processing.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab Playing Sounds from the DSP      15-\chpgn 
+\par 
+\par 
+\par 
+}\pard \keep \li0\ri2640\fi0\sl260 \tx2520 \tx2880 \tx3240 
+\fs32\b Playing Sounds from the DSP \fs22\b0 \fs32\b 
+\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+As indicated above, the DSP protocol can be set up 
+to output data received on the \b DSP_SO_CHAN\b0  port 
+and send it directly to the sound-out DACs.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab Playing Sounds through the DSP     
+ 15-\chpgn \par 
+\par 
+\par 
+}\pard \keep \li0\ri2640\fi0\sl260 \tx2520 \tx2880 \tx3240 
+\fs32\b Playing Sounds through the DSP\fs22\b0 \fs32\b 
+\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+The sound library uses the DSP primarily for transforming 
+8kHz u-law sound data (or other non-native sound formats) 
+to 44 or 22kHz data for playing out through the sound-out 
+DACs.  This is done by setting the protocol to \b 
+SND_DSP_PROTO_C_DMA | SND_DSP_PROTO_SOUNDDATA | SND_DSP_PROTO_LINKOUT\b0 
+, opening a stream to the sound-out channel, and enqueuing 
+the sound data on the stream.  The driver will play 
+the data through the DSP as if it were playing it 
+to a physical DAC with the properties of the sound 
+data being played.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab Recording Sounds      15-\chpgn \par 
+\par 
+\par 
+}\pard \keep \li0\ri2640\fi0\sl260 \tx2520 \tx2880 \tx3240 
+\fs32\b Recording Sounds\fs22\b0 \fs32\b \par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+Conceptually, recording data with the \b snddriver_start_reading()\b0 
+ function is the same as playing data, either from 
+the 8kHz CODEC ADC or from the DSP.  In this case 
+the size of the region to enqueue is specified rather 
+than the data to be enqueued.  When the region is 
+completed the driver sends all recorded data back with 
+a \b snddriver_reply_recorded_data\b0  message.  Data 
+can be retrieved at intermediate stages by sending an 
+await message to the stream.  This effectively causes 
+the region to be split into two portions:  the first 
+one contains all data that's been recorded into the 
+region so far, and a message is returned with the recorded 
+data.  The driver automatically goes on to record into 
+the newly created region which behaves like the original, 
+except that its size is diminished.\par 
+\par 
+Using this mechanism, data of arbitrary length can be 
+reliably recorded at virtually any rate.  By always 
+ensuring that that the high/low water marks are set 
+appropriately, and ensuring that at least one region 
+is enqueued at any given time, user level software can 
+record as much data as it wants.  Typically, a program 
+would await data, receiving some amount, and write it 
+to a disk file.  After the write call returns, another 
+await would be performed, causing more data to be returned. 
+ As long as the device that the data is being written 
+to can keep up with the rate at which it is being 
+generated, recording can go on indefinitely.  It is 
+common to connect high-quality 44kHz stereo ADC's to 
+the DSP serial port; using this mechanism, the data 
+can be reliably captured.  The sound library and sndrecord 
+utility are designed to record from either the 8kHz 
+CODEC ADC or from the DSP.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab Incidental Sound and DSP Functions   
+   15-\chpgn \par 
+\par 
+\par 
+}\pard \keep \li0\ri2640\fi0\sl260 \tx2520 \tx2880 \tx3240 
+\fs32\b Incidental Sound and DSP Functions \fs22\b0 \fs32\b 
+\par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+The \b snddriver_stream_nsamples()\b0  function returns 
+the number of bytes sent to a stream port (playing 
+or recording) since the stream was initialized.\par 
+\par 
+The \b snddriver_get_device_parms()\b0  and \b snddriver_set_device_parms()\b0 
+ functions are used to modify the state of the sound-out 
+hardware.  This is used to enable/disable the speaker, 
+enable/disable a low-pass filter, and specify the type 
+of 22kHz playback to be used.  By default, 22kHz playback 
+is achieved by playing each sample twice; alternatively, 
+a zero can be played every other sample.\par 
+\par 
+The \b snddriver_get_volume()\b0  and \b snddriver_set_volume()\b0 
+ functions manipulate the volume of the headphone jack 
+and internal speaker; the line-out jacks are not affected. 
+ Both right and left volume may be set independently.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab Sound and DSP Driver Interface     
+ 15-\chpgn \par 
+\par 
+\par 
+}\pard \keep \li0\ri2640\fi0\sl260 \tx2520 \tx2880 \tx3240 
+\fs32\b Sound/DSP Driver Interface \fs22\b0 \fs32\b \par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\fs22\b0 \par 
+This section lists the sound/DSP driver interface functions 
+defined in the header file \b sounddriver.h\b0 .  By 
+using these functions to access the DSP, your code will 
+remain compatible with future releases even if the underlying 
+implementation of the driver changes.  \par 
+\par 
+Several examples demonstrating the use of these functions 
+can be found on-line in the directory \b /NextDeveloper/Examples\b0 
+.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_set_dsp_owner_port()      15-\chpgn 
+\par 
+\par 
+\par 
+}\pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 \tx2880 
+\tx3240 \fs26\b snddriver_set_dsp_owner_port()\fs22\b0 \par 
+\pard \keep \li1440\ri2640\fi0\sl-260 \tx1800 \tx2160 \tx2520 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Acquire 
+ownership of the DSP.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_set_dsp_owner_port(\b0 port_t\'80\i 
+device_port\i0 ,\i  \i0 port_t\i \'80owner_port, \i0 port\i 
+\'80*negotiation_port\b\i0 )\b0 \par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i device_port\i0 :  The sound device 
+port (retrieved from \b netname_look_up()\b0 ).\par 
+\par 
+\i owner_port\i0 :  The port to register as the owner 
+port.\par 
+\par 
+\i negotiation_port\i0 :  The port to register as the 
+target for access requests by non-owners.  On failure, 
+the current negotiation port is returned in this parameter.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_set_dsp_owner_port\b0  establishes 
+ownership of the DSP.  The \i device_port \i0 parameter 
+is obtained by looking up the port named \i sound\i0 
+ from the netname server (see the documentation for 
+\b netname\b0  in \i The NeXT System Reference Manual\i0 
+).  The \i owner_port\i0  parameter is a port to be 
+registered as the owner of this device.  When the registered 
+owner_port is deallocated the device is released.  The 
+\i negotiation_port\i0  parameter is registered with the 
+driver to be returned when ownership is requested for 
+and the DSP is already owned.  Thus, if the call fails, 
+a port will be returned in \i negotiation_port\i0  that 
+can be used to gain further access to the driver.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab device_port, owner_port, *negotiation_port;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_set_dsp_owner(device_port, owner_port,\par 
+\tab \tab &negotiation_port);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("set_dsp_owner returned value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1440\ri2640\fi0\sl260 \tx1800 \tx2160 \tx2520 \tx2880 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 \f20\fs22 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  DSP Ownership obtained.\par 
+\par 
+SND_BAD_PARM:  \i Message \i0 malformed\i .\i0 \par 
+\par 
+SND_PORT_BUSY:  The DSP is already owned, negotiation_port 
+contains port to current owner.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_set_sndin_owner_port()      
+15-\chpgn \par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_set_sndin_owner_port()\fs22\b0 \par 
+\pard \keep \li1440\ri2640\fi0\qj\sl260 \tx1800 \tx2160 
+\tx2520 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Acquire 
+ownership of the sound input device.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_set_sndin_owner_port(\b0 port_t\'80\i 
+device_port\i0 ,\i  \i0 port_t\i \'80owner_port, \i0 port\i 
+\'80*negotiation_port\b\i0 )\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i device_port\i0 :  The sound device 
+port (retrieved from \b netname_look_up()\b0 ).\par 
+\par 
+\i owner_port\i0 :  The port to register as the owner 
+port.\par 
+\par 
+\i negotiation_port\i0 :  The port to register as the 
+target for access requests by non-owners.  On failure, 
+the current negotiation port is returned in this parameter.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_set_sndin_owner_port\f21\b0 
+ \f20 establishes ownership of the 8Khz \i CODEC\i0 
+ used for sound input through a microphone jack on 
+the back of the monitor.  The treatment of \i owner_port\i0 
+ and \i negotiation_port\i0  is the same as in \b 
+snddriver_set_dsp_owner_port\b0 .\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab device_port, owner_port, *negotiation_port;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_set_sndin_owner(device_port, owner_port,\par 
+\tab \tab &negotiation_port);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("set_sndin_owner returned value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1440\ri2640\fi0\sl260 \tx1800 \tx2160 \tx2520 \tx2880 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 \f20\fs22 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Sound int Ownership obtained.\par 
+\par 
+SND_BAD_PARM:  \i Message \i0 malformed\i .\i0 \par 
+\par 
+SND_PORT_BUSY:  The DSP is already owned, negotiation_port 
+contains port to current owner.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_set_sndout_owner_port()      
+15-\chpgn \par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_set_sndout_owner_port()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Acquire 
+ownership of the sound output device.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_set_sndout_owner_port(\b0 port_t\'80\i 
+device_port\i0 ,\i  \i0 port_t\i \'80owner_port, \i0 port\i 
+\'80*negotiation_port\b\i0 )\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i device_port\i0 :  The sound device 
+port (retrieved from \b netname_look_up()\b0 ).\par 
+\par 
+\i owner_port\i0 :  The port to register as the owner 
+port.\par 
+\par 
+\i negotiation_port\i0 :  The port to register as the 
+target for access requests by non-owners.  On failure, 
+the current negotiation port is returned in this parameter.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_set_sndout_owner_port\b0  establishes 
+ownership of the 44Khz DACs used for sound output.  
+The treatment of \i owner_port\i0  and \i negotiation_port\i0 
+ is the same as in \b snddriver_set_dsp_owner_port\b0 
+.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab device_port, owner_port, *negotiation_port;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_set_sndout_owner(device_port, owner_port,\par 
+\tab \tab &negotiation_port);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("set_sndout_owner returned value of ", 
+error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Sound out Ownership obtained.\par 
+\par 
+SND_BAD_PARM:  \i Message \i0 malformed\i .\i0 \par 
+\par 
+SND_PORT_BUSY:  The DSP is already owned, negotiation_port 
+contains port to current owner.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_set_device_parms()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_set_device_parms()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Set 
+sound-out parameters.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_set_device_parms(\b0 port_t\'80\i 
+device_port\i0 , boolean_t\i \'80speaker, \i0 boolean_t\i 
+\'80lowpass, \i0 boolean_t\i \'80zerofill\b\i0 )\b0 \par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i device_port\i0 :  The sound device 
+port (retrieved from \b netname_look_up()\b0 ).\par 
+\par 
+\i speaker\i0 :  Enable the external speaker if true.\par 
+\par 
+\i lowpass\i0 :  Enable the low-pass filter if true.\par 
+\par 
+\i zerofill\i0 :  Zero fill doubled samples if true.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_set_device_parms\b0  sets 
+parameters maintained by the sound hardware specific to 
+playing back sounds.  The \i device_port\i0  parameter 
+references the sound device.  The \i speaker\i0  parameter 
+either turns on or off the external speaker in the 
+back of the monitor based on it's boolean value.  The 
+\i lowpass\i0  parameter, if true, enables the lowpass 
+filter played through either the speaker or the headphone 
+jacks in the back of the monitor.  Has no effect for 
+sound going through the line-out jacks.  The \i zerofill\i0 
+ parameter has meaning only when playing 22Khz sounds. 
+ If set, every other sample played through the \i DAC\i0 
+ is zero, otherwise samples are repeated.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab device_port;\par 
+boolean_t\tab \tab speaker, lowpass, zerofill;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_set_device_parms(device_port, speaker,\par 
+\tab \tab lowpass, zerofill);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("set_device_parms returned value of ", 
+error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Device parameters set.\par 
+\par 
+SND_BAD_PARM:  \i Message \i0 malformed\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_get_device_parms()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_get_device_parms()\par 
+\pard \keep \li1440\ri2640\fi0\qj\sl260 \tx1800 \tx2160 
+\tx2520 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Get 
+sound-out parameters.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_get_device_parms(\b0 port_t\'80\i 
+device_port\i0 ,\i  \i0 boolean_t\i \'80*speaker, \i0 
+boolean_t\i \'80*lowpass, \i0 boolean_t\i \'80*zerofill\b\i0 
+)\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i device_port\i0 :  The sound device 
+port (retrieved from \b netname_look_up()\b0 ).\par 
+\par 
+\i speaker\i0 :  Enable the external speaker if true.\par 
+\par 
+\i lowpass\i0 :  Enable the low-pass filter if true.\par 
+\par 
+\i zerofill\i0 :  Zero fill doubled samples if true.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_get_device_parms\b0  returns 
+the value of those parameters set using \b snddriver_set_device_parms 
+\b0 or the default information if nothing has been set.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab device_port;\par 
+boolean_t\tab \tab speaker, lowpass, zerofill;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_get_device_parms(device_port, &speaker,\par 
+\tab \tab &lowpass, &zerofill);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("get_device_parms returned value of ", 
+error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Device parameters returned.\par 
+\par 
+SND_BAD_PARM:  \i Message \i0 malformed\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_set_volume()     15-\chpgn \par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_set_volume()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Set 
+sound-out speaker and headphone volume.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_set_volume(\b0 port_t\'80\i device_port\i0 
+,\i  \i0 int\i \'80left_chan, \i0 int\i \'80right_chan\b\i0 
+)\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i device_port\i0 :  The sound device 
+port (retrieved from \b netname_look_up()\b0 ).\par 
+\par 
+\i left_chan\i0 :  Left channel volume.\par 
+\par 
+\i right_chan\i0 :  Right channel volume.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_set_volume\b0  sets the volume 
+of the left and right channels for sound output either 
+through the speaker or the headphone jacks.  Sounds 
+played through the line-out jacks are not affected.  
+Legal values for \i left_chan\i0  and \i right_chan\i0 
+ are 0 (quietist setting) through \i VOLUME_MAX\i0  
+(loudest setting, see \b nextdev/snd_snd.h\b0 ).\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab device_port;\par 
+int\tab \tab \tab \tab left_chan, right_chan;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_set_volume(device_port, left_chan, right_chan);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("set_volume returned value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Volume set.\par 
+\par 
+SND_BAD_PARM:  \i Message \i0 malformed\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_get_volume()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_get_volume()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Get 
+sound-out speaker and headphone volume.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_get_volume(\b0 port_t\'80\i device_port\i0 
+,\i  \i0 int\i \'80*left_chan, \i0 int\i \'80*right_chan\b\i0 
+)\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i device_port\i0 :  The sound device 
+port (retrieved from \b netname_look_up()\b0 ).\par 
+\par 
+\i left_chan\i0 :  Left channel volume.\par 
+\par 
+\i right_chan\i0 :  Right channel volume.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_get_volume\b0  gets the current 
+volume settings.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab device_port;\par 
+int\tab \tab \tab \tab left_chan, right_chan;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_get_volume(device_port, &left_chan, &right_chan);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("get_volume returned value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Device parameters returned.\par 
+\par 
+SND_BAD_PARM:  \i Message \i0 malformed\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_get_dsp_cmd_port()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_get_dsp_cmd_port()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Get 
+a port for sending commands to the DSP\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_get_dsp_cmd_port(\b0 port_t\'80\i 
+device_port\i0 ,\i  \i0 port_t\i \'80owner_port, \i0 port_\i 
+\'80*cmd_port\b\i0 )\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i device_port\i0 :  The sound device 
+port (retrieved from \b netname_look_up()\b0 ).\par 
+\par 
+\i owner_port\i0 :  Registered DSP owner port.\par 
+\par 
+\i cmd_port\i0 :  Returned DSP command port.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_get_dsp_cmd_port\b0  returns 
+a port used for enqueuing commands for the DSP.  \i 
+Device_port\i0  is the sound device port, \i owner_port\i0 
+ is the port registered as owning the DSP.  The DSP 
+command port is returned in \i cmd_port\i0 .\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab device_port, owner_port, cmd_port;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_get_dsp_cmd_port(device_port, owner_port,\par 
+\tab &cmd_port);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("get_dsp_cmd_port returned value of ", 
+error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  DSP command port returned.\par 
+\par 
+SND_NOT_OWNER:  Must of DSP ownership.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_dspcmd_req_msg()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_dspcmd_req_msg()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Request 
+queued DSP messages.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_dspcmd_req_msg(\b0 port_t\'80\i 
+cmd_port\i0 ,\i  \i0 port_t\i \'80reply_port\b\i0 )\b0 
+\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i cmd_port\i0 :  The DSP command port.\par 
+\par 
+\i reply_port\i0 :  Where to return DSP messages.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_dspcmd_req_msg\b0  causes 
+data received from the DSP by the driver to be returned. 
+ The \i cmd_port\i0  parameter is the DSP command port. 
+ When data has been received it will be forwarded to 
+the user in a message sent to the port specified in 
+the \i reply_port\i0  parameter (see \b snddriver_reply_handler\b0 
+).\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab cmd_port, reply_port;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_dspcmd_req_msg(cmd_port, reply_port);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("get_ dspcmd_req_msg returned value of 
+", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Port registered.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_dspcmd_req_err()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_dspcmd_req_err()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Request 
+queued DSP error messages.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_dspcmd_req_err(\b0 port_t\'80\i 
+cmd_port\i0 ,\i  \i0 port_t\i \'80reply_port\b\i0 )\b0 
+\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i cmd_port\i0 :  The DSP command port.\par 
+\par 
+\i reply_port\i0 :  Where to return DSP error messages.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 If the \i HOST MESSAGE\i0  protocol 
+is enabled \b snddriver_dspcmd_req_err\b0  returns data 
+received from the DSP identified as \i error messages\i0 
+ separately from data received as messages (and thus 
+returned by \b snddriver_dspcmd_req_msg\b0 ), see \b snddriver_dsp_protocol\b0 
+).  \i Cmd_port\i0  and \i reply_port\i0  are treated 
+the same as in \b snddriver_dspcmd_req_msg\b0 .\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab cmd_port, reply_port;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_dspcmd_req_err(cmd_port, reply_port);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("get_ dspcmd_req_err returned value of 
+", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Port registered.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_dspcmd_req_condition()      
+15-\chpgn \par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_dspcmd_req_condition()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Wait 
+for DSP to attain state and return a message.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_dspcmd_req_condition(\b0 port_t\'80\i 
+cmd_port\i0 , u_int\'80\i mask\i0 , u_int\'80\i flags\i0 
+, int\'80\i priority\i0 , port_t\'80\i reply_port\b\i0 
+)\b0 \par 
+\pard \li1800\ri2640\fi-20\sl260 \tx2640 \tx3940 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i cmd_port\i0 :  The DSP command port.\par 
+\par 
+\i mask\i0 :  Mask to apply to DSP host interface 
+registers.\par 
+\par 
+\i flags\i0 :  Bits which must be set in DSP host 
+interface registers\par 
+\par 
+\i priority\i0 :  Priority of this DSP command.\par 
+\par 
+\i reply_port\i0 :  Where to send reply.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_dspcmd_req_condition\b0  enqueues 
+a condition block event onto the DSP command port.  
+The contents of the four DSP host interface registers 
+(\b Interrupt Control, Command Vector\b0 , \b Interrupt 
+Status\b0 , and \b Interrupt Vector\b0 ) are \b and\b0 
+ed with the \i mask\i0  parameter and the result is 
+compared with the \i flags\i0  parameter.  If the comparison 
+is successful the condition is complete and other enqueued 
+events can be further processed.  The \i priority\i0 
+ parameter is used to enqueue the event relative to 
+other events in the DSP command queue.  Its values 
+can be \i SNDDRIVER_LOW_PRIORITY\i0 , \i SNDDRIVER_MED_PRIORITY\i0 
+, or \i SNDDRIVER_HIGH_PRIORITY\i0 .  If the \i reply_port\i0 
+ is set to a value other than \i PORT_NULL\i0  the 
+value of the DSP host interface registers will be returned 
+in a message to the specified port.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab cmd_port, reply_port;\par 
+u_int\tab \tab \tab mask, flags, priority\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_dspcmd_req_condition(\par 
+\tab cmd_port, mask, flags, priority, reply_port);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("dspcmd_req_ condition returned value of 
+",\par 
+\tab \tab error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Command enqueued.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_dsp_set_flags()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_dsp_set_flags()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Set 
+DSP host flags.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_dsp_set_flags(\b0 port_t\'80\i 
+cmd_port\i0 , u_int\'80\i mask\i0 , u_int\'80\i flags\i0 
+, int\'80\i priority\b\i0 )\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i cmd_port\i0 :  The DSP command port.\par 
+\par 
+\i mask\i0 :  Mask to apply to DSP host interface 
+registers.\par 
+\par 
+\i flags\i0 :  Bits which must be set in DSP host 
+interface registers\par 
+\par 
+\i priority\i0 :  Priority of this DSP command.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_dsp_set_flags\b0  enqueues 
+an event to modify the state of either \i HF0\i0  
+or \i HF1\i0  in the DSP \b interrupt control register\b0 
+.  The DSP host interface registers are first \b and\b0 
+ed with the value of the \i mask\i0  parameter, then 
+\b or\b0 ed with the value of the \i flags\i0  parameter.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab cmd_port;\par 
+u_int\tab \tab \tab mask, flags, priority\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_dsp_set_flags(cmd_port, mask, flags, priority);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("dsp_set_flags returned value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Command enqueued.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_dsp_host_cmd()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_dsp_host_cmd()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Execute 
+DSP host command.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_dsp_host_cmd(\b0 port_t\'80\i 
+cmd_port\i0 , u_int\'80\i host_command\i0 , int\'80\i priority\b\i0 
+)\b0 \par 
+\pard \li1800\ri2640\fi-20\sl260 \tx2640 \tx3940 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i cmd_port\i0 :  The DSP command port.\par 
+\par 
+\i host_command\i0 :  Host command to execute.\par 
+\par 
+\i priority\i0 :  Priority of this DSP command.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_dsp_host_cmd\b0  enqueues 
+an event to generate a host command.  The value of 
+the \i host_command\i0  parameter is loaded into the 
+DSP \b Command Vector\b0  \b Register\b0  and the \i 
+HC\i0  bit is to cause the host command to be sent. 
+ This event will not be executed until the \i HC\i0 
+ bit is clear.  If in \i HOST\i0 _\i MESSAGE\i0  
+protocol is set \i HF2\i0  must also be clear before 
+the host command will be sent (see \b snddriver_dsp_protocol\b0 
+).\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab cmd_port;\par 
+u_int\tab \tab \tab host_command, priority\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_dsp_host_cmd(cmd_port, host_command, priority,);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("dsp_host_cmd returned value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Command enqueued.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_dsp_boot()      15-\chpgn \par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_dsp_boot()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Boot 
+the DSP.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_dsp_boot(\b0 port_t\'80\i cmd_port\i0 
+, int\'80*\i bootImage\i0 , int\'80bootImageSize, int\'80\i 
+priority\b\i0 )\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i cmd_port\i0 :  The DSP command port.\par 
+\par 
+\i bootImage\i0 :  Pointer to code to load into DSP.\par 
+\par 
+\i bootImageSize\i0 :  Size of code to download.\par 
+\par 
+\i priority\i0 :  Priority of this DSP command.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_dsp_boot \b0 performs a hard 
+boot of the DSP utilizing the DSP's on-chip bootstrapping 
+program.  The specified instructions (starting at location 
+zero) are into on-chip program memory, after which execution 
+at location zero External DSP memory and on-chip data 
+memory is not affected by this \par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab  cmd_port;\par 
+int\tab \tab \tab \tab *bootImage, bootImageSize, priority\par 
+kern_return_t\tab  error;\par 
+\par 
+error = snddriver_dsp_boot(cmd_port, bootImage, bootImageSize,\par 
+\tab priority);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("dsp_boot returned value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Command enqueued.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_dsp_write()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_dsp_write()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Write 
+data to the DSP.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_dsp_write(\b0 port_t\'80\i cmd_port\i0 
+, void\'80*\i data\i0 , int\'80count, int\'80data_size, 
+int\'80\i priority\b\i0 )\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i cmd_port\i0 :  The DSP command port.\par 
+\par 
+\i data\i0 :  Data to write to the DSP.\par 
+\par 
+\i count\i0 :  Number of \i data\i0  elements to write.\par 
+\par 
+\i data_size\i0 :  Size of each \i data\i0  element.\par 
+\par 
+\i priority\i0 :  Priority of this DSP command.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_dsp_write \b0 writes the 
+specified buffer to the DSP data registers.  Valid for 
+\i data_size\i0  are 1, 2, and 4.  For a \i data_size\i0 
+ of 4, the low-order bits of the bit values are written 
+to the DSP's 24-bit register\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab  cmd_port;\par 
+int\tab \tab \tab \tab *data, count, data_size, priority\par 
+kern_return_t\tab  error;\par 
+\par 
+error = snddriver_dsp_write(cmd_port, data, count, data_size,\par 
+\tab priority);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("dsp_write returned value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Command enqueued.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_dsp_read()      15-\chpgn \par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_dsp_read()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Read 
+data from the DSP.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_dsp_read(\b0 port_t\'80\i cmd_port\i0 
+, void\'80*\i data\i0 , int\'80count, int\'80data_size, 
+int\'80\i priority\b\i0 )\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i cmd_port\i0 :  The DSP command port.\par 
+\par 
+\i data\i0 :  Data to read from the DSP.\par 
+\par 
+\i count\i0 :  Number of \i data\i0  elements to read.\par 
+\par 
+\i data_size\i0 :  Size of each \i data\i0  element.\par 
+\par 
+\i priority\i0 :  Priority of this DSP command.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_dsp_read \b0 reads data from 
+the DSP's data registers into the specified buffer.  
+The \i count\i0  argument is modified on return to 
+indicate the actual number of words transferred.  The 
+\i data_size\i0  argument has the same meaning and restrictions 
+as in \b snddriver_dsp_write\b0 .\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab  cmd_port;\par 
+int\tab \tab \tab \tab *data, count, data_size, priority\par 
+kern_return_t\tab  error;\par 
+\par 
+error = snddriver_dsp_read(cmd_port, data, count, data_size,\par 
+\tab priority);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("dsp_read returned value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li4480\ri2640\fi-2680\sl260 KERN_SUCCESS:  
+Command enqueued.\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_stream_setup()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_stream_setup()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Initialize 
+I/O stream.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_stream_setup(\b0 port_t\'80\i 
+dev_port\i0 , port_t\'80\i owner_port\i0 , int\'80\i config\i0 
+, int\'80\i buf_size\i0 , int\'80\i sample_size\i0 , int\'80\i 
+low_water\i0 , int\'80\i high_water\i0 , int\'80*\i protocol\i0 
+, port_t\'80*\i stream_port\b\i0 )\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i dev_port\i0 :  Sound device port.\par 
+\par 
+\i owner_port\i0 :  Appropriate owner port.\par 
+\par 
+\i config\i0 :  Stream identification.\par 
+\par 
+\i buf_size\i0 :  DMA buffer size of stream.\par 
+\par 
+\i sample_size\i0 :  Size of a sample.\par 
+\par 
+\i low_water\i0 :  Low water mark to use on stream.\par 
+\par 
+\i high_water\i0 :  High water mark to use on stream.\par 
+\par 
+\i protocol\i0 :  In/Out DSP protocol.\par 
+\par 
+\i stream_port:  \i0 Returned port.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_stream_setup\b0  provides 
+a way to obtain a \i stream_port\i0  with given characteristics. 
+ \i Dev_port\i0  is the sound device port, \i owner_port\i0 
+ is the port registered as owning the DSP.  \i Config\i0 
+ is a constant identifying the data path of the steam. 
+ Its value may be one of the following:\par 
+\par 
+\pard \keep \li2160\ri2640\fi0\sl-260 \tx2520 \tx2880 \tx3240 
+\tx3600 SNDDRIVER_STREAM_FROM_SNDIN\par 
+SNDDRIVER_STREAM_TO_SNDOUT_22\par 
+SNDDRIVER_STREAM_TO_SNDOUT_44\par 
+SNDDRIVER_STREAM_FROM_DSP\par 
+SNDDRIVER_STREAM_TO_DSP\par 
+SNDDRIVER_STREAM_SNDIN_TO_DSP\par 
+SNDDRIVER_STREAM_DSP_TO_SNDOUT_22\par 
+SNDDRIVER_STREAM_DSP_TO_SNDOUT_44\par 
+SNDDRIVER_STREAM_FROM_SNDIN_THROUGH_DSP\par 
+SNDDRIVER_STREAM_THROUGH_DSP_TO_SNDOUT_22\par 
+SNDDRIVER_STREAM_THROUGH_DSP_TO_SNDOUT_44\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\i Buf_size\i0  is the size of the DMA transfers employed 
+in stream transfers, and should be a multiple of 16. 
+ The supported \i sample_sizes\i0  are 1, 2, and 4 
+bytes.  The \i low_water\i0  and \i high_water\i0  
+values are used by the driver to optimize control flow 
+on the stream.  The \i protocol\i0  value passed by 
+reference is modified to accommodate the new stream; 
+initially, it should be set to zero, and after any 
+number of calls to \b snddriver_stream_setup\b0 , it 
+contains the value that needs to be passed to \b snddriver_dsp_protocol\b0 
+.  The stream port that corresponds to the specified 
+configuration is returned in \i stream_port\i0 .\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab dev_port, owner_port, stream_port;\par 
+int\tab \tab \tab \tab config, buf_size, sample_size, 
+low_water, \par 
+\tab \tab \tab \tab high_water, protocol;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_stream_setup(\par 
+\tab dev_port,\par 
+\tab owner_port,\par 
+\tab config,\par 
+\tab buf_size,\par 
+\tab sample_size,\par 
+\tab low_water,\par 
+\tab high_water,\par 
+\tab &protocol,\par 
+\tab &stream_port);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("stream_setup value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Stream port returned.\par 
+\par 
+SND_BAD_PARM:  Config for bad stream.\par 
+\par 
+SND_NOT_OWNER:  Owner port wrong for this stream.\par 
+\fs26\b \par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_dsp_protocol()      15-\chpgn 
+\par 
+\par 
+\par 
+}\pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 \tx2880 
+\tx3240 snddriver_dsp_protocol()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Specify 
+DSP protocol.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_dsp_protocol\b0 \b (\b0 port_t\'80\i 
+dev_port\i0 , port_t\'80\i owner_port\i0 , int\'80\i protocol\b\i0 
+)\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i dev_port\i0 :  Sound device port.\par 
+\par 
+\i owner_port\i0 :  Appropriate owner port.\par 
+\par 
+\i protocol\i0 :  Protocol to use for DSP processing.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_dsp_protocol\b0  sets protocol 
+information used by the driver in interpreting DSP output 
+and in sending data to the DSP.  Details of the protocols 
+are layed out in the \b Sound Driver\b0  section of\i 
+ \i0 the\i  System Reference Manual\i0 .\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab dev_port, owner_port;\par 
+int\tab \tab \tab \tab protocol;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_dsp_protocol(dev_port,owner_port, protocol);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("dsp_protocol value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  DSP protocol specified.\par 
+\par 
+SND_BAD_CHAN:  Can't link sound out/in without being 
+owner.\par 
+\par 
+SND_NOT_OWNER:  Owner port wrong for this stream.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_stream_start_reading()      
+15-\chpgn \par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_stream_start_reading()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Start 
+reading on a stream.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_stream_start_reading\b0 \b (\b0 
+port_t\'80\i stream_port\i0 , char\'80*\i filename\i0 , 
+int\'80\i data_size\i0 , int\'80\i tag\i0 , boolean_t\'80\i 
+started_msg\i0 , boolean_t\'80\i completed_msg\i0 , boolean_t\'80\i 
+aborted_msg\i0 , boolean_t\'80\i paused_msg\i0 , boolean_t\'80\i 
+resumed_msg\i0 , boolean_t\'80\i overflow_msg\i0 , port_t\'80\i 
+reply_port\b\i0 )\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i stream\i0 :  Stream port.\par 
+\par 
+\i filename\i0 :  File to record into (must be NULL).\par 
+\par 
+\i data_size\i0 :  Sample size of data being recorded.\par 
+\par 
+\i tag\i0 :  Tag to associate with this request identifying 
+this region.\par 
+\par 
+\i started_msg\i0 :  Return a message when region is 
+started.\par 
+\par 
+\i completed_msg\i0 :  Return a message when region 
+is complete.\par 
+\par 
+\i aborted_msg\i0 :  Return a message if this region 
+is aborted.\par 
+\par 
+\i paused_msg\i0 :  Return a message if the region 
+is paused.\par 
+\par 
+\i resumed_msg\i0 :  Return a message when this region 
+is resumed.\par 
+\par 
+\i overflow_msg\i0 :  Return a message if an input 
+overrun is detected.\par 
+\par 
+\i reply_port\i0 :  Where to return messages to.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_stream_start_reading\b0  causes 
+a region to be enqueued on the specified stream for 
+reading data.  The \i stream_port\i0  parameter represents 
+a stream returned by \b snddriver_stream_setup\b0 .  
+The \i data_size\i0  parameter specifies the number of 
+samples to be read into this region.  The \i tag\i0 
+ parameter associates the specified value with the region 
+for subsequent control by \b snddriver_stream_control\b0 
+.  The \i started_msg\i0 , \i completed_msg\i0 , \i 
+aborted_msg\i0 , \i paused_msg\i0 , \i resumed_msg\i0 
+, and \i overflow_msg\i0  parameters indicate which asynchronous 
+messages should be sent at critical points during the 
+life of this region.  Such messages are sent to the 
+port specified in the \i reply_port\i0  parameter.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab stream _port,reply_port;\par 
+int\tab \tab \tab \tab data_size, tag;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_stream_start_reading(\par 
+\tab stream_port,\par 
+\tab NULL,\par 
+\tab data_size,\par 
+\tab tag,\par 
+\tab TRUE,\par 
+\tab TRUE,\par 
+\tab TRUE,\par 
+\tab FALSE,\par 
+\tab FALSE,\par 
+\tab FALSE,\par 
+\tab reply_port);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("stream_start_reading value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Samples being read from 
+stream.\par 
+\par 
+SND_BAD_PARM:  Can only play or record on this stream, 
+not both.\par 
+\par 
+SND_NOT_ALIGNED:  Data request not properly aligned.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_stream_start_writing()      
+15-\chpgn \par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_stream_start_writing()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Start 
+writing on a stream.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_stream_start_writing\b0 \b (\b0 
+port_t\'80\i stream_port\i0 , void\'80*\i data\i0 , int\'80\i 
+data_size\i0 , int\'80\i tag\i0 , boolean_t\'80\i started_msg\i0 
+, boolean_t\'80\i completed_msg\i0 , boolean_t\'80\i aborted_msg\i0 
+, boolean_t\'80\i paused_msg\i0 , boolean_t\'80\i resumed_msg\i0 
+, boolean_t\'80\i overflow_msg\i0 , port_t\'80\i reply_port\b\i0 
+)\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i stream\i0 :  Stream port.\par 
+\par 
+\i data\i0 :  Data to write through the stream.\par 
+\par 
+\i data_size\i0 :  Sample size of data being recorded.\par 
+\par 
+\i tag\i0 :  Tag to associate with this request identifying 
+this region.\par 
+\par 
+\i started_msg\i0 :  Return a message when region is 
+started.\par 
+\par 
+\i completed_msg\i0 :  Return a message when region 
+is complete.\par 
+\par 
+\i aborted_msg\i0 :  Return a message if this region 
+is aborted.\par 
+\par 
+\i paused_msg\i0 :  Return a message if the region 
+is paused.\par 
+\par 
+\i resumed_msg\i0 :  Return a message when this region 
+is resumed.\par 
+\par 
+\i overflow_msg\i0 :  Return a message if an input 
+overrun is detected.\par 
+\par 
+\i reply_port\i0 :  Where to return messages to.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_stream_start_writing\b0  causes 
+a region to be enqueued on the specified stream for 
+writing data.  The \i data\i0  parameter points to 
+the data to be written.  The \i preempt\i0  parameter, 
+if true, specifies that this region should preempt (abort) 
+other regions enqueued on this stream.  Other parameters 
+are treated as in \b snddriver_stream_start_reading\b0 
+.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab  stream_port,reply_port;\par 
+int\tab \tab \tab \tab *data, data_size, tag;\par 
+kern_return_t\tab  error;\par 
+\par 
+error = snddriver_stream_start_writing(\par 
+\tab stream_port,\par 
+\tab data,\par 
+\tab data_size,\par 
+\tab tag,\par 
+\tab TRUE,\par 
+\tab TRUE,\par 
+\tab TRUE,\par 
+\tab FALSE,\par 
+\tab FALSE,\par 
+\tab FALSE,\par 
+\tab reply_port);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("stream_start_writing value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Samples written to stream.\par 
+\par 
+SND_BAD_PARM:  Can only play or record on this stream, 
+not both.\par 
+\par 
+SND_NOT_ALIGNED:  Data request not properly aligned.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_stream_control()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_stream_control()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Control 
+a stream.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_stream_control\b0 \b (\b0 port_t\'80\i 
+stream_port\i0 , int\'80\i tag\i0 , int\'80\i snd_control\b\i0 
+)\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i stream\i0 :  Stream port.\par 
+\par 
+\i tag\i0 :  Tag of region to control.\par 
+\par 
+\i snd_control\i0 :  Control to apply.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_stream_control\b0  implements 
+some control on the region with tag value \i tag\i0 
+ on the specified stream.  The \i snd_control\i0  parameter 
+represents one, or more, controls to be applied.  Values 
+are made up from a conjunction of \i SNDDRIVER_AWAIT_STREAM\i0 
+, to cause partially full read streams to return all 
+data read so far, \i SNDDRIVER_ABORT_STREAM\i0 , to cause 
+the specified region to terminate early, \i SNDDRIVER_PAUSE_STREAM, 
+\i0 to pause the current active region, and \i SNDDRIVER_RESUME_STREAM\i0 
+, to resume the active region.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab stream_port;\par 
+int\tab \tab \tab \tab tag, snd_control;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_stream_control(stream_port, tag, snd_control);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("stream_control value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li4480\ri2640\fi-2680\sl260 KERN_SUCCESS:  
+Control applied.\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_stream_nsamples()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_stream_nsamples()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Control 
+a stream.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_stream_control\b0 \b (\b0 port_t\'80\i 
+stream_port\i0 , int\'80\i *nsamples\b\i0 )\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i stream\i0 :  Stream port.\par 
+\par 
+\i nsamples\i0 :  Number of samples read or written 
+on the stream.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \b Snddriver_stream_nsamples\b0  returns 
+the number of samples read or written on the specified 
+stream since the device's ownership was established.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 port_t\tab 
+\tab \tab stream_port;\par 
+int\tab \tab \tab \tab nsamples;\par 
+kern_return_t\tab error;\par 
+\par 
+error = snddriver_stream_nsamples(stream_port, &nsamples);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("stream_nsamples value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Number of samples returned.\par 
+\par 
+\par 
+\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerr \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+PRELIMINARY\tab snddriver_reply_handler()      15-\chpgn 
+\par 
+\par 
+\par 
+}\fs26\b \pard \keep \li720\ri2640\fi0\sl260 \tx0 \tx2520 
+\tx2880 \tx3240 snddriver_reply_handler()\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \fs22\b0 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 SUMMARY\tab Control 
+a stream.\par 
+SYNOPSIS\par 
+\pard \keep \li2160\ri2640\fi-360\sl-260 \tx2520 \tx2880 
+\tx3240 \tx3600 \b #include <sound/sounddriver.h>\b0 \par 
+\par 
+kern_return_t \b snddriver_reply_handler\b0 \b (\b0 msg_header_t\'80\i 
+*msg\i0  snddriver_handlers_t\'80\i *handlers\b\i0 )\b0 
+\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 ARGUMENTS\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \i msg\i0 :  Message received from sound 
+driver.\par 
+\par 
+\i handlers\i0 :  Structure specifying dispersal of message.\par 
+\par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 DESCRIPTION\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 Certain calls to the sound driver may 
+result in messages being sent asynchronously back to 
+the calling application (actually, to the port that was 
+registered in the call resulting in the asynchronous 
+event).  The routine \b snddriver_reply_handler\b0  takes 
+the received message (resulting from a \b msg_receive\b0 
+; see the section on \b Mach programming\b0  in the\i 
+ System Reference Manual\i0 ) and a pointer to a \b 
+snddriver_handlers_t\b0  structure (see \b sound/sounddriver.h\b0 
+).  The structure referenced by the \i handlers \i0 
+parameter\i  \i0 contains pointers to (user supplied) 
+routines that will be called when the corresponding message 
+is received.  It also contains a \b void *\b0  argument 
+that is passed as the first parameter to the user-supplied 
+routine.  If no routine is specified (value of the 
+structure member is zero) the message is thrown away. 
+ The \b snddriver_handlers_t\b0  structure is as follows:\par 
+\par 
+\b \pard \keep \li2140\ri0\fi0\sl260 \tx2600 \tx3220 typedef 
+void (*sndreply_tagged_t) (\par 
+\pard \keep \li2140\ri0\fi0\sl-260 \tx2600 \tx3220 \tab 
+void\tab *arg,\par 
+\tab int\tab tag);\par 
+\par 
+\pard \keep \li2140\ri0\fi0\sl-260 \tx2600 \tx3220 typedef 
+void (*sndreply_recorded_data_t) (\par 
+\tab void\tab *arg,\par 
+\tab int\tab tag, \par 
+ \tab void\tab *data,\par 
+\tab int\tab size);\par 
+\par 
+\pard \keep \li2140\ri0\fi0\sl-260 \tx2600 \tx3220 typedef 
+void (*sndreply_dsp_cond_true_t) (\par 
+\tab void\tab *arg,\par 
+\tab u_int\tab mask, \par 
+ \tab u_int\tab flags,\par 
+\tab u_int\tab regs);\par 
+\par 
+\pard \keep \li2140\ri0\fi0\sl-260 \tx2600 \tx3220 typedef 
+void (*sndreply_dsp_msg_t) (\par 
+\tab void\tab *arg,\par 
+\tab int\tab *data,\par 
+\tab int\tab size);\par 
+\pard \li2140\ri0\fi0\sl260 \tx2600 \tx3040 \tx3480 \tx3940 
+\tx4380 \tx4820 \tx5280 \par 
+\pard \keep \li2140\ri0\fi0\sl-260 \tx2600 \tx5280 typedef 
+struct snddriver_handlers \{\par 
+\tab void\tab *arg;\par 
+\tab int\tab timeout;\par 
+\tab sndreply_tagged_t\tab started;\par 
+\tab sndreply_tagged_t\tab completed;\par 
+\tab sndreply_tagged_t\tab aborted;\par 
+\tab sndreply_tagged_t\tab paused;\par 
+\tab sndreply_tagged_t\tab resumed;\par 
+\tab sndreply_tagged_t\tab overflow;\par 
+\tab sndreply_recorded_data_t\tab recorded_data;\par 
+\tab sndreply_dsp_cond_true_t\tab condition_true;\par 
+\tab sndreply_dsp_msg_t\tab dsp_message;\par 
+\tab sndreply_dsp_msg_t\tab dsp_error;\par 
+\} snddriver_handlers_t;\b0 \par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\pard \keep \li3240\ri2640\fi-1800\sl440 EXAMPLE\par 
+\pard \keep \li1800\ri2640\fi0\sl260 \tx2280 \tx2760 \tx3240 
+\tx3720 \tx4200 \tx4680 \tx5160 \tx5640 \tx6120 \tx6600 
+\tx7080 \tx7560 \tx8040 \tx8520 \tx9000 \f22\fs20 msg_header_t\tab 
+\tab \tab msg;\par 
+snddriver_handlers_t\tab handlers = \{...\};\par 
+kern_return_t\tab \tab \tab error;\par 
+\par 
+error = snddriver_reply_handler(&msg, &handlers);\par 
+if (error != KERN_SUCCESS) \{\par 
+\tab mach_error("reply_handler value of ", error);\par 
+\tab exit(1);\par 
+\}\par 
+\pard \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 \par 
+\f20\fs22 \pard \keep \li3240\ri2640\fi-1800\sl440 RETURN\par 
+\pard \keep \li1800\ri2640\fi0\sl-260 \tx2160 \tx2520 \tx2880 
+\tx3240 \tx3600 KERN_SUCCESS:  Message dispatched.\par 
+\sect \sectd\sbknone \headery0\footery0 \cols1 \linemod0\linex0 
+{\footerl \pard \li0\ri2640\fi0\sl360 \tx0 \tqr\tx9360 \plain 
+\f20\fs18\i \par 
+\par 
+15-\chpgn      \tab PRELIMINARY\par 
+\par 
+\par 
+}\page \fs40 \par 
+}

@@ -1,0 +1,404 @@
+{\rtf0\ansi{\fonttbl\f0\fnil Times-Roman;\f1\ftech Symbol;\f2\fmodern Courier;\f3\fmodern Ohlfs;}
+\paperw12240
+\paperh13060
+\margl1440
+\margr1440
+\pard\tx0\tx720\tx1440\tx2140\tx2880\tx3600\tx4320\f0\b0\i0\ulnone\qc\fs40\fi20\li340\fc0\cf0 DSP Monitors for Array Processing and Computer Music on the NeXT Computer
+\f1\fs26\up6 Ô
+\f0\fs40\up0 \
+
+\ql\fs24\fi0\li360 \
+
+\qc\fs32\fi20\li340 by J.O. Smith (jos@ccrma.stanford.edu)\
+
+\ql\fs24\fi0\li360 \
+
+\qc\fs40\fi20\li340 (Last updated July 26, 1992)\
+
+\b\ql\fs32\fi0\li0 \
+Introduction\
+
+\b0\fs24\li360 \
+This document describes the design of the music and array processing monitor programs which run on the Motorola DSP56001 on the NeXT Computer.  These monitors support use of the DSP by the Music Kit and array processing library.\
+\
+
+\b\fs32\li0 \
+DSP System Software\
+
+\b0\fs22 \
+
+\fs24\li360 The DSP software falls into two categories:\
+\
+·	 Music Kit support\
+·	 array processing support\
+
+\fs22\li0 \
+
+\fs24\li360 The 
+\b Music Kit DSP Monitor
+\b0  provides timed-message support, unit generators (DSP subprograms) for generating computer music, audio buffering and DMA support, and other features needed by the Music Kit.  \
+\
+The 
+\b dspwrap
+\b0  program creates an Objective-C class from a unit generator macro (written in DSP assembly language).  Each of these classes is a subclass of the Music Kit's UnitGenerator class.  A number of UnitGenerator subclasses are provided by the Music Kit.  These include signal generators, digital filters, mixers, and envelope handlers.\
+\
+The array processing support software provides array and program loading, elementary vector function macros for array processing, and a few other features needed for array processing.  For array processing macros, dspwrap translates an elementary function DSP macro to a corresponding C function; when this C function is executed in a user's program on the host (a Motorola 68030 processor), the pre-assembled code is downloaded to the DSP and executed.  Example array processing functions include FFTs, spectrum analysis support, digital filters, and complex vector and matrix arithmetic.\
+\
+Conceptually, array processing macros are very similar to unit generator macros.  They differ in that unit generators run in real time (when possible) on short contiguous signal vectors.  Array processing functions, on the other hand, are typically executed out of real time on arrays (vectors or matrices) of arbitrary length, and skip factors (supported directly in the DSP addressing hardware) are often used to access every nth array element (required when accessing rows and columns of matrices, or when processing the the real or imaginary part of complex vectors).  Unit generators thus form a general basis for real-time signal processing, while array processing functions are more attuned to off-line analysis of recorded data.\
+
+\fs22\li0 \
+\
+
+\b\fs26\li360 The Array Processing DSP Monitor\
+
+\b0\fs22\li0 \
+
+\fs24\li360 The default AP monitor, 
+\b /usr/local/lib/dsp/monitor/apmon_8k.lod
+\fs26 , 
+\b0 is actually just a simplification of the Music Kit monitor.  Anything having to do with real time is removed via conditional assembly, such as the Timed Message Queue (1024 words), the DMA buffer pool for sound-in and sound-out (1024 words), and miscellaneous system facilities for supporting timed messages and fast response.  In addition, many DSP-resident functions used by the Music Kit are replaced by user-written AP modules.  This trade-off gives more memory to the AP system and faster response to the MK system.  The AP monitor source program is 
+\b\fs24 /usr/local/lib/dsp/smsrc/apmon_8k.asm
+\b0 , reproduced below:
+\fs26 \
+
+\b \
+
+\f2\b0\fs20 ; apmon_8k.asm - Array Processing DSP Monitor for 8K static memory\
+apmon_8k	ident 1,14		; NeXT DSP resident array processing monitor\
+NEXT_8K set 1		   	; Assemble for NeXT hardware, 8K memory\
+ASM_SYS set 1			; Include system \
+AP_MON  set 1			; Enable array proc monitor assembly\
+	include 'music_macros'	; Monitor code\
+	end 0				; start at location 0 to execute bootstrap\
+
+\f0\b\fs26 \
+\
+Music Kit DSP Monitor\
+
+\b0\fs22\li0 \
+
+\fs24\li360 The default MK monitor, 
+\b /usr/local/lib/dsp/monitor/mkmon_8k.lod
+\fs26 , 
+\b0 is resident on the DSP during a Music Kit performance.  
+\fs24 This section outlines aspects of the MK Monitor that support the downloading and control of DSP musical instruments in real time.  The only complete documentation of the MK monitor at present is its source code, available on line by following 
+\b /usr/local/lib/dsp/smsrc/music_macros.asm.
+\b0 \
+
+\fs22\li0 \
+
+\b\fs24 \
+
+\li360 DSP Messages\
+
+\b0 \
+A 
+\i DSP message
+\i0  is defined an unsolicited 
+\i single-word write
+\i0  from the DSP to the host processor.  When the DSP writes a word to its Transmit Data registers, an interrupt is generated in the host.  In response, the host reads as many words as possible and places them into a Mach message which the user can elect to receive on a Mach port, the ª
+\i DSP message port
+\i0 .º\
+\
+Each DSP message is on DSP word, or 3 bytes. This is to allow a DSP message to be atomically written into the host-interface Transmit Byte Registers.  The first byte is an opcode, and it is followed by two data bytes. Opcodes between 0 and 127 are normal messages, and opcodes between 128 and 255 are error messages (the MSB of the first byte is set if and only if the DSP message is an error message of some kind).  \
+\
+
+\b DSP Error Messages\
+
+\b0 \
+The MK and AP monitors use the MSB of the opcode of a DSP message to indicate at ªerror message.º  When so-called HOST_MSG protocol is enabled in the DSP driver, DSP error message are separated from other DSP messages by the Mach driver so that they can be received on a separate Mach port, the ª
+\i DSP error port
+\i0 .º \
+\
+Inside the DSP, outgoing messages are enqueued, and the queue is emptied by the Host Transmit Data interrupt which strikes every time the host reads a word from the DSP.  If the DSP message queue fills up, the DSP blocks, unless a flag has been set which allows overwriting of unsent DSP messages in the circular buffer.\
+\
+If a DSP-to-host DMA transfer is in progress, DSP messages can be enqueued, but they will not be sent until after the DMA terminates.  If a host-to-DSP DMA transfer is in progress, DSP messages can be sent, but there is no interrupt of the host. Instead, the user task must read the host interface register ISR containing the RXDF flag. When this flag is set, it means there is data in the receive byte registers RXH, RXM, and RXL.\
+\
+
+\b \
+Host Messages\
+
+\b0 \
+A 
+\i host message
+\i0  is defined as a message from the host processor to the DSP.   All host messages look like a remote procedure call on the DSP initiated by the host.  That is, a number of arguments are ªpushedº onto the DSP argument stack, followed by an ªop codeº which is just some address in the DSP to jump to.  The jump within the DSP is triggered by a particular ªhost commandº which is a DSP software interrupt triggered externally by the host.\
+\
+There are three types of host message:\
+\
+1.	Untimed \
+2.	Timed (absolute or relative) \
+3.	Timed with a time stamp of 0\
+\
+In more detail,\
+\
+(1) Untimed messages are executed immediately at interrupt level on the DSP.  Array processing applications use this type of message, and so does the Music Kit before the orchestra loop is started.\
+\
+(2) Timed messages are copied to a large Timed Message Queue (TMQ) within the DSP (currently close to 1000 words).  They are executed when the sample counter reaches or exceeds the time stamp of the message.  Relative times (not used by the Music Kit) are measured from the DSP sample counter at the time the DSP is copying the message to the TMQ.  They are like messages for ªnow plus a fixed time delay.º€ Only ªreal timeº applications can use timed messages, for unless there is an active orchestra loop, no sample counter is maintained. (ªReal timeº doesn't necessarily mean true real time, e.g., when directing output to disk.)\
+\
+(3) A zero time stamp means ªnowº but defferred to the end of the current tick.  This is useful for real-time events when an orchestra loop is running.  The messages will bypass the timed message queue, but they will not update unit generator parameters at an unpredictable point in the orchestra loop execution.\
+\
+Untimed and timed-zero messages are processed by the Mach driver at a higher priority than timed messages.  This is so that they will bypass messages destined for the timed message queue.\
+\
+
+\b \
+Issuing a Host Message from C\
+
+\b0 \
+The easiest way to execute a host message from C is to use the function DSPCall from libdsp.  The format of this call is\
+\
+       ierr = DSPCall(Opcode,Nargs,Arg1,...,ArgNargs);\
+\
+where all arguments are of type int, and 
+\i Opcode
+\i0  is the actual address of the DSP subroutine.  The timed version is\
+\
+       ierr = DSPCallTimed(timeStamp,Opcode,Nargs,Arg1,...,ArgNargs);\
+\
+C functions with prefix ªDSPº all reside in the DSP C library, /usr/local/lib/libdsp.a.  The header files are all included by including <dsp/dsp.h>.  The functions are documented in the System Reference Manual in the chapter called ªProgramming the DSP.º\
+
+\b \
+\
+The Host Message Stack (HMS)\
+
+\b0 \
+When the host calls a subroutine on the DSP remotely as above, it must have some place to write the time-stamp, opcode, and arguments.   The host message stack (HMS) exists in the DSP for this purpose.\
+\
+The HMS is currently 64 words, and this limits the maximum number of arguments to a host message.  It also limits the number of host messages that can be ªbatchedº into one host command.\
+\
+
+\b \
+Host Commands\
+
+\b0 \
+DSP host commands are interrupts generated in the DSP when the host writes the Command Vector Register (CVR) of the Host Interface (cf. the DSP56000 User's Manual, p. 7
+\f1 -
+\f0 9).  There are a total of 32 types of interrupts possible within the DSP.  The first 19 are predefined by Motorola (cf. p.  8
+\f1 -
+\f0 6).  The remaining 13 interrupt cases are called 
+\i host commands
+\i0  and are either defined by NeXT or available for definition and support by the user.\
+\
+The DSP Mach driver reserves two DSP host-commands:\
+\
+\
+
+\f1 ·	 
+\f0 DSP_HC_DMAWT - DMA write termination (host-to-DSP)\
+
+\f1 ·	 
+\f0 DSP_HC_KERNEL_ACK - Interrupt kernel when DSP can accept data\
+\
+\
+The DSP_HC_DMAWT host command terminates DMA writes to the DSP; it's necessary because host-receive interrupts are usurped by the DMA transfer when the direction is into the DSP, thereby stifling host messages.\
+\
+The DSP_HC_KERNEL_ACK host command provides a way for the kernel to sleep when the DSP busy, and obtain an interrupt when the DSP is no longer busy.  This works because the DSP can accept exactly one pending host command while it has host interrupts disabled.  When the DSP enables host interrupts, the 
+\b ack
+\b0  host message is executed, and the result is the DSP message DSP_DM_KERNEL_ACK which causes an interrupt of the host. The kernel intercepts the DSP message and goes on with whatever it was doing when the DSP originally blocked (typically sending a series of messages to the DSP).\
+\
+The Music Kit DSP Monitor additionally defines one more DSP host-command:\
+\
+\
+
+\f1 ·	 
+\f0 DSP_HC_XHM - Execute host message\
+\
+\
+The DSP_HC_XHM host command triggers all host messages to the DSP.  It causes the DSP to jump to the address sitting on top of the HMS.  This will initiate a subroutine call which implements the host message and consumes the arguments on the HMS.\
+\
+When processing a host message, the DSP sets the ªDSP Busyº flag (HF2).  The host looks for this flag to clear as a signal that the message has been digested.  (More precisely, to avoid a race, the host must watch for HC to clear, wait at least 400ns, and then wait for HF2 to clear.)\
+\
+\
+
+\b Host Message Format
+\b0 \
+\
+A host message contains a variable number of arguments followed by an opcode (dispatch address) in the lower two bytes or'd with a time stamp type (absolute, relative, or untimed) in the upper byte.  Timed host messages include also a time stamp after the opcode:\
+\
+<Arg1>...<ArgN> \{<TimeStamp>\} <TimeStampType  OpCode> [<hostCommand>]\
+\
+Each argument is one 24-bit word (handled right-justified in 32 bits by the host).  The time stamp is one 24-bit word for relative time, two 24-bit words for absolute time, and absent for untimed.   The ªtypeº of the time stamp is an 8-bit code in the upper byte of the 24-bit word containing the opcode.  The timestamp type has one of three values:\
+\
+	0x88	Untimed\
+	0x99	Timed absolute\
+	0xAA	Timed relative\
+\
+The opcode is a 16-bit DSP address indicating the place to jump in the DSP.\
+
+\b \
+\
+How Host Messages Work in the DSP\
+
+\b0 \
+To issue a host message, the host writes arguments, opcode, and time stamp (if any) to the TX registers of the DSP followed by the ªXHMº host command (meaning ªexecute host messageº).  Each TX write by the host interrupts the DSP.  A fast, two-word interrupt handler pushes the word onto the host message stack (HMS).  Thus, the orchestra loop continues to execute as the arguments of the host message trickle in from the host. Then the opcode (subroutine start address), and if the message is timed, a two-word time stamp is written.  Finally, the XHM host command kicks off processing of the message.  \
+\
+The maximum host message size is currently 62 words for arguments, opcode, and time stamp (if any).  (Two words are used for a begin-marker and end-marker.)  Low-level routines in the DSP C library break up long timed messages into digestible chunks.  This same software layer also optimizes by combining short messages with the same time stamp into a single Mach message.  Untimed messages do not get batched by the DSP C library.\
+\
+\
+
+\b Untimed Messages
+\b0 \
+\
+
+\i Untimed messages
+\i0  are executed immediately by the interrupt handler for the XHM host command.  This means they can happen anywhere inside an orchestra loop, even half way through the computation of a DO loop.   Several untimed messages can be batched by placing several on the host message stack (HMS).  However, because the HMS is a stack, the messages will be executed in order opposite to the order they came in.\
+\
+
+\b \
+Time-Zero Messages (TZM)
+\b0 \
+\
+Things like recursive filter coefficients should not be changed in the middle of a sample computation.  Therefore, 
+\i time-zero messages
+\i0  were devised to deal with this.  A timed message with a zero time stamp is executed on a tick boundary, i.e., at the top of the orchestra loop.  When the time stamp is seen to be zero in the XHM interrupt handler, interrupts are disabled, the ªTZM_PENDINGº bit is set in the DSP run status, and the interrupt is dismissed.  The remainder of the orchestra loop is executed with host messages locked out (HF2 is set in the DSP host interface and host interrupts are disabled in the DSP).  At the top of the orchestra loop, when the TZM_PENDING bit is set, control is transferred back to the XHM interrupt handler, and all TZMs on the host message stack (HMS) are  executed right off the HMS just like untimed messages.  The size of the HMS limits the number of TZMs which can execute per tick.\
+\
+
+\b \
+Timed Message Queue (TMQ)
+\b0 \
+\
+Timed host messages are enqueued on the TMQ.  The TMQ is a circular buffer similar to the DMA buffers and the HMS.  Relative time is converted to absolute time before enqueuing.  Timed messages can be inserted only at the top of the queue which means timed messages must be sent in time order.  Real-time preemption of the timed message queue is accomplished using untimed or timed-zero host messages. If the time stamp is earlier than the current DSP time, whether because a message arrived out of order or because the host process sent the message too late, it will be executed immediately, and an underrun condition will be logged if such logging is enabled.\
+\
+When a host message of maximum size will not fit in the TMQ, host flag HF3 is set in the DSP host interface to tell the driver not to send any more.  As soon as a maximum length message can fit, HF3 clears, and the driver can resume sending timed messages.  Something must cause the driver to run, such as a new host message from the user or a DMA-completion interrupt for a sound buffer, before it will check HF3.  This is a possible source of deadlock, especially if sound is not flowing to the D/A converters.  A new host interrupt using TXD on the DSP was added in release 2.1 to provide a way to prevent this deadlock.  Of course, using this feature precludes use of the SCI to send serial data.  Rather than using the TXD interrupt, the DSP library periodically polls the driver (via a Mach message_send() timeout) to make it check non-interrupting status bits in the DSP host interface.\
+\
+The maximum absolute time representable in the TMQ is 2
+\up6 47
+\f1\up0 -
+\f0 1 samples (approximately one century).  The maximum relative time is 2
+\up6 24
+\f1\up0 -
+\f0 1 samples, which is about 6 minutes at 44.1 kHz.\
+\
+
+\b \
+Implementation of Queues\
+
+\b0 \
+All Queues (FIFOs) are implemented using the 
+\i modulo storage
+\i0  feature of the DSP56001.  The benefit of doing this is DSP memory protection.  For example, DMA transfers are double-buffered; a two-word interrupt handler, driven by data transmission interrupts, is set up which looks, in the host-message handling case, as follows:\
+
+\pard\tx1800\tx2160\tx2520\fs22\li1440\fc0\cf0 \
+
+\pard\tx1800\tx2160\tx2520\tx2880\tx3240\tx3600\tx3960\li1440\fc0\cf0 	movep x:$FFEB,y:(R_HMS)+ \
+	nop\
+\
+
+\pard\tx0\tx720\tx1440\tx2140\tx2880\tx3600\tx4320\fs24\li360\fc0\cf0 Without modulo storage (M_HMS set to the double-buffer length minus 1), it would be possible for an unchecked transfer to wipe out DSP y memory.  Using modulo storage, the transfer can only spin around inside the provided buffer.\
+
+\pard\tx1800\tx2160\tx2520\tx2880\tx3240\tx3600\tx3960\fs22\li1440\fc0\cf0 \
+
+\pard\tx0\tx720\tx1440\tx2140\tx2880\tx3600\tx4320\fs24\li360\fc0\cf0 Message queues are additionally protected by special markers at the beginning and end.  They are checked to make sure they have not been overwritten when the monitor is assembled with the SYS_DEBUG flag set in smsrc/config.asm.\
+
+\pard\tx1800\tx2160\tx2520\tx2880\tx3240\tx3600\tx3960\fs22\li1440\fc0\cf0 \
+
+\pard\tx720\tx2520\tx2880\tx3240\b\fs24\li1440\fc0\cf0 \
+
+\pard\tx0\tx720\tx1440\tx2140\tx2880\tx3600\tx4320\li360\fc0\cf0 User Memory Segments in the DSP Orchestra\
+
+\pard\tx1800\tx2160\tx2520\b0\fs22\li1440\fc0\cf0 \
+
+\pard\tx0\tx720\tx1440\tx2140\tx2880\tx3600\tx4320\fs24\li360\fc0\cf0 Each user memory space (x,y,p) has an upper, middle, and lower segment, corresponding to the three location counters in each memory space provided by the Motorola DSP assembler.  The following table describes their use by the Music Kit DSP Monitor:\
+
+\pard\tx1800\tx2160\tx2520\fs22\li1440\fc0\cf0 \
+
+\pard\tx1800\tx2540\tx4680\tx6660\b\li1780\fc0\cf0 Space	Lower Segment	Middle Segment	Upper Segment
+\b0 \
+\
+  p	On-chip subroutines	Orchestra tick-loop	Off-chip subroutines and 				  orchestra loop \
+  x	On-chip patch points	UG arguments	Off-chip patch points and data \
+  y	On-chip patch points	UG arguments	Off-chip patch points and data \
+  l	On-chip long data	UG arguments	(No off-chip long data)\
+
+\pard\tx1800\tx2160\tx2520\tx2880\tx3240\tx3600\tx3960\li1440\fc0\cf0 \
+
+\pard\tx0\tx720\tx1440\tx2140\tx2880\tx3600\tx4320\fs24\li360\fc0\cf0 The assignment of location counters to each of these memory segments is given below:\
+
+\pard\tx1800\tx2160\tx2520\tx2880\tx3240\tx3600\tx3960\fs22\li1440\fc0\cf0 \
+
+\pard\tx2520\tx3240\tx4120\b\li1800\fc0\cf0 Space	Lower	Middle	Upper 
+\b0 \
+  p	 pl:	  p:	  ph:  \
+  x	 xl:	  x:	  xh:  \
+  y	 yl:	  y:	  yh:  \
+  l	 ll:	  l:	  lh:\
+
+\pard\tx0\tx720\tx1440\tx2140\tx2880\tx3600\tx4320\fs24\li360\fc0\cf0 \
+A hard partition is defined by the Orchestra class (in the Music Kit) between lower-segment and middle-segment on-chip memory. Any on-chip requests which do not fit in the provided partition are relocated off-chip (i.e., the lower and upper segments are combined off-chip). The on-chip request is analogous to the register allocation request in C: it is advised by the programmer, but the system does not guarantee it will happen.\
+\
+Note that only the upper segment is certainly in external memory.  The lower segment can be in either as discussed above.  The middle p segment will often straddle on-chip and off-chip memory.  A ªleaperº unit generator (consisting of nothing but a JMP instruction) is inserted to connect the on-chip to the off-chip portion of the orchestra loop.\
+\
+Within the Music Kit, the memory segments above are mapped onto logical memory segments as follows:\
+\
+
+\pard\tx1800\tx2160\tx2520\tx2880\tx3240\tx3600\tx3960\f1\fs22\li1440\fc0\cf0 ·	 
+\f0 xData	- X data memory.  Always off-chip.  Used for delay and wave tables.  \
+
+\f1 ·	 
+\f0 yData	- Same as x data memory since spaces are overlaid off-chip.  \
+
+\f1 ·	 
+\f0 pLoop	- Orchestra loop. On-chip with overflow to off-chip.  \
+
+\f1 ·	 
+\f0 pSubr	- Orchestra subroutines. Always off-chip.  \
+
+\f1 ·	 
+\f0 lArg	- L memory arguments. Always on-chip.  \
+
+\f1 ·	 
+\f0 xArg	- X memory arguments. On-chip with overflow to off-chip.  \
+
+\f1 ·	 
+\f0 yArg	- Y memory arguments. On-chip with overflow to off-chip.\
+\
+
+\pard\tx720\tx2520\tx2880\tx3240\b\fs24\li1440\fc0\cf0 \
+
+\pard\tx0\tx720\tx1440\tx2140\tx2880\tx3600\tx4320\fs32\fc0\cf0 Use of DSP56001 Host Flags
+\fs48 \
+
+\fs36\li360 \
+
+\f1\b0\fs24 ·	 
+\f0\b HF0
+\b0  ± Tell DSP to abort current program \
+
+\f1 ·	 
+\f0\b HF1
+\b0  ± Tell DSP that requested DMA transfer is pending \
+
+\f1 ·	 
+\f0\b HF2
+\b0  ± Tell host DSP is busy executing last host message\
+
+\f1 ·	 
+\f0\b HF3
+\b0  ± Tell host Timed Message Queue is full\
+
+\pard\tx0\tx720\tx1480\tx2140\tx2880\tx3600\tx4320\li360\fc0\cf0 		or that array-processing function is still running\
+
+\pard\tx0\tx720\tx1440\tx2140\tx2880\tx3600\tx4320\f1\li360\fc0\cf0 ·	 
+\f0\b HF2 & HF3
+\b0  ± Tell host DSP is in debugger\
+\
+While processing a host message, HF3 is always cleared.  This is done so that the combination of both HF2 and HF3 may mean that the DSP has aborted.  In this state, the DSP is at a breakpoint, and it must be either restarted, or taken over by Bug56.\
+\
+
+\b\fs32\li0 \
+Interrupt Priority Levels Used in the DSP\
+
+\fs24\li360 \
+0
+\b0  ± Default (used by all unit generators and most updates)\
+
+\b 1
+\b0  ± Host  (DMA word, message interrupts, host commands) \
+
+\b 2
+\b0  ± Serial port interrupts  (SSI serial port sound in or out)\
+
+\b 3
+\b0  ± Critical sections and non-maskable interrupt service\
+\
+
+}

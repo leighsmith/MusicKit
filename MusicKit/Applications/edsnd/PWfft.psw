@@ -1,0 +1,34 @@
+/* PWfft -- pswrap-able code for FFTView
+ * jwp@silvertone.Princeton.edu
+ * 02/21/90:  Removed plotdata() function (now done via user paths)
+ */
+
+/* PWinit() -- Initialize stuff
+ */
+defineps PWinit()
+	/rulerfont /Helvetica findfont 8 scalefont def 
+endps
+
+/* PWdrawruler -- draws the hashmarks and KHz numbers
+ * Arguments:  nmin, nmax, dn = controls for loop (these are KHz vals)
+ * 	       dx             = distance between hashmarks
+ * Display is always 20 pixels high.
+ * BUG: last # tends to get clipped.
+ */
+
+defineps PWdrawruler(int nmin,nmax,dn; float dx)
+	rulerfont setfont
+	0 setgray
+	gsave
+	nmin dn nmax {
+		0 0 moveto		% Use 'translate' to locate
+		(    ) cvs show		% Convert n to string and print
+		0 10 moveto		% Draw the hash mark
+		0 10 rlineto
+		stroke
+		dx 0 translate		% Move over by dx for next
+	} for				% for (n = nmin; n <= nmax; n += dn)
+	grestore
+endps
+
+

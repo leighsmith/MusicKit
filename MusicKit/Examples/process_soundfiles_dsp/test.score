@@ -1,0 +1,47 @@
+info samplingRate:22050;
+part rooster,pluckPart,resonatedRooster;
+rooster synthPatch:"EnvelopeSound";
+pluckPart synthPatch:"Pluck";
+resonatedRooster synthPatch:"ResonSound";
+envelope ampEnvelope = [(0,0)(1,1)|(2,0)];
+
+BEGIN;
+rooster (.075) soundfile:"rooster.snd" bearing:0;
+t +.2;
+pluckPart (.1) keyNum:a4k;
+t +.2;
+rooster (2.3) soundfile:"rooster.snd" bearing:-45 ampEnv:ampEnvelope amp:.3
+	ampAtt:.001 ampRel:.01;
+t +.2;
+resonatedRooster (2.3) soundfile:"rooster.snd" freq:25 amp:.2;
+pluckPart (.1) keyNum:g4k;
+t +.2;
+rooster (2.3) soundfile:"rooster.snd" bearing:0 ampEnv:ampEnvelope amp:.3
+	ampAtt:.001 ampRel:.02;
+t +.2;
+rooster (2.3) soundfile:"rooster.snd" bearing:45 ampEnv:ampEnvelope amp:.3
+	ampAtt:.001 ampRel:.03;
+t +.2;
+resonatedRooster (2.3) soundfile:"rooster.snd" freq:200 amp:.2;
+rooster (2.3) soundfile:"rooster.snd" bearing:0 ampEnv:ampEnvelope amp:.3
+	ampAtt:.001 ampRel:.04;
+t +.2;
+rooster (2.3) soundfile:"rooster.snd" bearing:-45 ampEnv:ampEnvelope amp:.3
+	ampRel:.001 ampAtt:.01;
+t +.2;
+rooster (2.3) soundfile:"rooster.snd" bearing:0 ampEnv:ampEnvelope amp:.3
+	ampRel:.001 ampAtt:.02;
+t +.2;
+rooster (2.3) soundfile:"rooster.snd" bearing:45 ampEnv:ampEnvelope amp:.3
+	ampRel:.001 ampAtt:.03; 
+t +.2;
+rooster (2.3) soundfile:"rooster.snd" bearing:0 ampEnv:ampEnvelope amp:.3
+	ampRel:.001 ampAtt:.04;
+t +.2;
+pluckPart (.1) keyNum:f4k;
+t +.2;
+resonatedRooster (2.3) soundfile:"rooster.snd" freq:400 amp:.2;
+END;
+
+
+

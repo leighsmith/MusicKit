@@ -1,0 +1,23 @@
+This directory contains the driver code for the Turtle Beach Multisound DSP 
+card.
+
+We try to present a uniform interface to all Motorolla DSP56001-based
+cards.  However, NEXTSTEP's Driver Kit does not currently allow for
+shared abstract superclasses.  (There's some debate about whether it
+supports abstract super- classes at all.  Hence, to avoid trouble, I
+haven't used one.)  Neither does it allow for user-level Driver Kit
+objects.  Therefore, we implement a pseudo-object orientation as
+follows:
+
+Any files beginning with the name "dspdriver" are "shared".  That is, no
+changes should be made to these files without propogating the changes to 
+the other drivers.  No code specific to the Turtle Beach card should be in 
+these files.  All code specific to the Turtle Beach card should be in files 
+beginning with TurtleBeachMS. 
+
+To make a driver for a new card:
+
+1. Copy the upstairs directory recursively.
+2. Change all references to TurtleBeachMS to <YourCard>, including file names.
+3. Add your card's special-purpose code.
+4. Adjust the Default.table appropriately for your card's requirements.
