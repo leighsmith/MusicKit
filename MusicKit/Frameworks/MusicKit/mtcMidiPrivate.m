@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.11  2001/05/12 09:33:51  sbrandon
+  - changed KERN_SUCCESS to MKMD_SUCCESS. Need to check this is ok on MacOSX.
+
   Revision 1.10  2000/12/07 00:23:46  leigh
   Standardised on machPorts as the mechanism for MKMD routines, now checking ports are the reception mechanism before adding them.
 
@@ -106,7 +109,7 @@ static void my_exception_reply(mach_port_t replyPort, int exception)
     if (deviceStatus == MK_devClosed)
         return 0;
     r = MKMDGetClockTime((MKMDPort) [devicePort machPort], (MKMDOwnerPort) [ownerPort machPort], &theTime);
-    if (r != KERN_SUCCESS)
+    if (r != MKMD_SUCCESS)
         _MKErrorf(MK_machErr,CLOCK_ERROR,midiDriverErrorString(r), "_time");
     t = theTime * _MK_MIDI_QUANTUM_PERIOD;
     if (self->synchConductor)
