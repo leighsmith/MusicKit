@@ -211,12 +211,12 @@
 - (void) zeroForeignBuffer;
 
 /*!
-    @method     multiChannelSampleSizeInBytes
+    @method     frameSizeInBytes
     @abstract
     @discussion
     @result     Integer size of sample frame (channels * sample size in bytes)
 */
-- (int) multiChannelSampleSizeInBytes;
+- (int) frameSizeInBytes;
 
 /*!
     @method     description

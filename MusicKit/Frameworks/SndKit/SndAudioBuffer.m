@@ -59,7 +59,7 @@
 
     memcpy(&(ab->formatSnd),[snd soundStruct], sizeof(SndSoundStruct));
     {
-        int samSize       = [ab multiChannelSampleSizeInBytes];
+        int samSize       = [ab frameSizeInBytes];
         int lengthInBytes = r.length * samSize;
         ab->formatSnd.dataSize = lengthInBytes;
         ab->data  = [snd data] + samSize * r.location;
@@ -325,7 +325,7 @@
     // NSLog(@"buffer = %x\n", buff);
     // NSLog(@"buffer to mix: %s", SndStructDescription(&(buff->formatSnd)));
     
-    [self mixWithBuffer: buff fromStart: 0 toEnd: formatSnd.dataSize / [self multiChannelSampleSizeInBytes]];
+    [self mixWithBuffer: buff fromStart: 0 toEnd: [self lengthInSamples]];
     return self;
 }
 
@@ -360,10 +360,10 @@
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// multiChannelSampleSizeInBytes
+// frameSizeInBytes
 ////////////////////////////////////////////////////////////////////////////////
 
-- (int) multiChannelSampleSizeInBytes
+- (int) frameSizeInBytes
 {
     return formatSnd.channelCount * SndSampleWidth([self dataFormat]);
 }
@@ -374,7 +374,7 @@
 
 - (long) lengthInSamples
 {
-    return formatSnd.dataSize / [self multiChannelSampleSizeInBytes];
+    return formatSnd.dataSize / [self frameSizeInBytes];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
