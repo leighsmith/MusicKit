@@ -581,11 +581,6 @@ static int calcFormat(SndSoundStruct *s)
 
 @implementation SoundDocument(SoundViewDelegate)
 
-- didPlay: sender duringPerformance: (SndPerformance *) performance;
-{
-    return [self didPlay:sender];
-}
-
 - didPlay: sender;
 {
     [playButton setState:0];
@@ -594,6 +589,11 @@ static int calcFormat(SndSoundStruct *s)
     [recordButton setEnabled:([self isRecordable]? YES : NO)];
     [pauseButton setState:0];
     return self;
+}
+
+- didPlay: sender duringPerformance: (SndPerformance *) performance;
+{
+    return [self didPlay:sender];
 }
 
 - didRecord:sender
