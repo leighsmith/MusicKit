@@ -93,7 +93,7 @@ tomandandy music inc.
     <abstract>
       <para>
 These are overall comments (incorporating original notes by David
-A. Jaffe) and serve as the highest level overview of the MusicKit.
+A. Jaffe) and serve as the highest level overview of the MusicKit &horbar; the &ldquo;README&rdquo;.
       </para>
     </abstract>
   </artheader>
@@ -384,30 +384,105 @@ The file
 </filename>
 lists changes and is generated from the CVS logs.
 </para>
-</listitem>
+      </listitem>
     </itemizedlist>
 
     <sect2 id="onlinedoco">
       <title>Online Documentation</title>
       <itemizedlist>
-      <listitem>
-        <para>
+	<listitem>
+	  <para>
 <ulink url="&mkurl;/MusicKitConcepts">
 MusicKit and SndKit Concepts
 </ulink>
 &horbar; Thorough documentation of the MusicKit and SndKit in operation.
 </para>
-      </listitem>
-      <listitem>
-        <para>
+	</listitem>
+	<listitem>
+	  <para>
 <ulink url="&mkurl;/TutorialClasses">
 MusicKit Tutorials
 </ulink>
-&horbar; Tutorial exercises by David A. Jaffe, used in his Lecture series.
+&horbar; Tutorial exercises by David A. Jaffe, used in his lecture series.
 </para>
-</listitem>
-</itemizedlist>
-</sect2>
+	</listitem>
+	<listitem>
+	  <para>
+<ulink url="&mkurl;/MusicKit_README.pdf">
+README in <acronym>PDF</acronym>
+</ulink>
+&horbar; 
+This README document in the 
+<productname>Adobe Portable Document Format</productname>
+(e.g <productname>Acrobat</productname>).
+</para>
+	</listitem>
+	<listitem>
+	  <para>
+<ulink url="&mkurl;/Frameworks">
+Class Documentation
+</ulink>
+&horbar; Documentation for each module, <productname>C</productname>
+function and <productname>Objective-C</productname> class.
+</para>
+	</listitem>
+      </itemizedlist>
+      <sect3 id="PublishedPapers">
+	<title>Published Papers</title>
+	<para>
+	Conference papers and lecture slides in
+	<acronym>PDF</acronym> or <acronym>HTML</acronym>:
+</para>
+
+
+	<itemizedlist>
+	  <listitem>
+	    <para>
+<ulink url="&mkurl;/Publications/ICMC2000.pdf">
+&ldquo;Next Steps from NeXTSTEP: MusicKit and SoundKit in a New
+World&rdquo;
+</ulink>
+&horbar; Most recent publication describing the OpenStep conversion
+and cross-platform approach.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<ulink url="&mkurl;/Publications/MusicApplications.pdf">
+&ldquo;Musical and Extra-Musical Applications of the NeXT Music Kit&rdquo;
+</ulink>
+&horbar; Original Design Philosophies.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<ulink url="&mkurl;/Publications/SoundMusicDSP.pdf">
+&ldquo;Sound and Music on the NeXT Computer&rdquo;
+</ulink>
+&horbar; A general (if dated) overview.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<ulink url="&mkurl;/Publications/DSPSoftwareDesign.pdf">
+&ldquo;Computer Music on the NeXT Computer&rdquo;
+</ulink>
+&horbar; Documentation of the DSP architecture.
+</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+<ulink url="&mkurl;/Publications/MusicKit-NWExpo93.pdf">
+&ldquo;Real Time Sound Processing & Synthesis on Multiple DSPs Using
+the Music Kit and the Ariel QuintProcessor&rdquo;
+</ulink>
+&horbar; Documents multiple DSP operation.
+</para>
+	  </listitem>
+	</itemizedlist>
+      </sect3>
+    </sect2>
+
 
   </sect1>
 
