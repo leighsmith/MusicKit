@@ -15,7 +15,7 @@
 
 #define DEFAULT_MP3SERVER_PASSWORD     "letmein"
 #define DEFAULT_MP3SERVER_PORT         8000
-#define DEFAULT_MP3SERVER_ADDRESS      "localhost"      
+#define DEFAULT_MP3SERVER_ADDRESS      "127.0.0.1"      
 // could also be "localhost" - icecast accepts both.
 
 @implementation SndAudioProcessorMP3Encoder
@@ -118,7 +118,8 @@
       r = TRUE;
     }
     else { 
-      NSLog(@"SndAudioProcessorMP3Encoder::connectToShoutcastServer - Error: Couldn't connect to server...%i\n", conn.error);
+      NSLog(@"SndAudioProcessorMP3Encoder::connectToShoutcastServer - Error: Couldn't connect to server %s:%i with password [%s]...%i\n", 
+            conn.ip, conn.port, conn.password, conn.error);
     }  
   }
   else {
