@@ -17,6 +17,9 @@
 Modification history:
 
   $Log$
+  Revision 1.3  2000/11/29 19:44:38  leigh
+  Updated to new function naming
+
   Revision 1.2  2000/03/11 01:58:55  leigh
   Removed uncompilable references to Windows PerformMidi cruft
 
@@ -46,8 +49,8 @@ extern "C" {
   //static REFERENCE_TIME datumRefTime;
   //static int datumMSecTime;
 
-/* Routine MDBecomeOwner */
-PERFORM_API kern_return_t MDBecomeOwner (
+/* Routine MKMDBecomeOwner */
+PERFORM_API kern_return_t MKMDBecomeOwner (
 	port_t mididriver_port,
 	port_t owner_port)
 {
@@ -55,50 +58,50 @@ PERFORM_API kern_return_t MDBecomeOwner (
   if(debug == NULL) {
     // create a means to see where we are without having to tiptoe around the MS debugger.
     if((debug = fopen("/tmp/PerformMIDI_debug.txt", "w")) == NULL)
-      return MD_ERROR_UNKNOWN_ERROR;
+      return MKMD_ERROR_UNKNOWN_ERROR;
   }
-  fprintf(debug, "MDBecomeOwner called\n");
+  fprintf(debug, "MKMDBecomeOwner called\n");
 #endif
   // TODO check the ports properly
 //    if(!PMinitialise()) {
-//      return MD_ERROR_BUSY;
+//      return MKMD_ERROR_BUSY;
 //    }
 //  datumRefTime = PMGetCurrentTime();
   return 0;
 }
 
-/* Routine MDReleaseOwnership */
-PERFORM_API kern_return_t MDReleaseOwnership (
+/* Routine MKMDReleaseOwnership */
+PERFORM_API kern_return_t MKMDReleaseOwnership (
 	port_t mididriver_port,
 	port_t owner_port)
 {
 #ifdef FUNCLOG
   // TODO check the ports properly
-  fprintf(debug, "MDReleaseOwnership called\n");
+  fprintf(debug, "MKMDReleaseOwnership called\n");
   fclose(debug); // hopefully save what we did.
 #endif
 //  if(!PMterminate()) {
-//      return MD_ERROR_BUSY;
+//      return MKMD_ERROR_BUSY;
 //    }
 //    else
     return 0;
 }
 
-/* Routine MDSetClockMode */
-PERFORM_API kern_return_t MDSetClockMode (
+/* Routine MKMDSetClockMode */
+PERFORM_API kern_return_t MKMDSetClockMode (
 	port_t mididriver_port,
 	port_t owner_port,
 	short unit,
 	int clock_mode)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDSetClockMode called %d\n", clock_mode);
+  fprintf(debug, "MKMDSetClockMode called %d\n", clock_mode);
 #endif
   return 0;
 }
 
-/* Routine MDGetClockTime */
-PERFORM_API kern_return_t MDGetClockTime (
+/* Routine MKMDGetClockTime */
+PERFORM_API kern_return_t MKMDGetClockTime (
 	port_t mididriver_port,
 	port_t owner_port,
 	int *time)
@@ -106,7 +109,7 @@ PERFORM_API kern_return_t MDGetClockTime (
   //  REFERENCE_TIME currentRefTime;
 
 #ifdef FUNCLOG
-  fprintf(debug, "MDGetClockTime called\n");
+  fprintf(debug, "MKMDGetClockTime called\n");
 #endif
   //  currentRefTime = PMGetCurrentTime();
   // TODO we need to properly convert the result to an int, since the division will reduce the actual result within those bounds.
@@ -114,8 +117,8 @@ PERFORM_API kern_return_t MDGetClockTime (
   return 0;
 }
 
-/* Routine MDGetMTCTime */
-PERFORM_API kern_return_t MDGetMTCTime (
+/* Routine MKMDGetMTCTime */
+PERFORM_API kern_return_t MKMDGetMTCTime (
 	port_t mididriver_port,
 	port_t owner_port,
 	short *format,
@@ -125,13 +128,13 @@ PERFORM_API kern_return_t MDGetMTCTime (
 	short *frames)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDGetMTCTime called\n");
+  fprintf(debug, "MKMDGetMTCTime called\n");
 #endif
   return 0;
 }
 
-/* Routine MDSetClockTime */
-PERFORM_API kern_return_t MDSetClockTime (
+/* Routine MKMDSetClockTime */
+PERFORM_API kern_return_t MKMDSetClockTime (
 	port_t mididriver_port,
 	port_t owner_port,
 	int time)
@@ -140,106 +143,106 @@ PERFORM_API kern_return_t MDSetClockTime (
   //datumRefTime = PMGetCurrentTime();
   //datumMSecTime = time;
 #ifdef FUNCLOG
-  fprintf(debug, "MDSetClockTime called %d, datumRefTime = %d\n", time, 0);
+  fprintf(debug, "MKMDSetClockTime called %d, datumRefTime = %d\n", time, 0);
 #endif
   return 0;
 }
 
-/* SimpleRoutine MDRequestAlarm */
-PERFORM_API kern_return_t MDRequestAlarm (
+/* SimpleRoutine MKMDRequestAlarm */
+PERFORM_API kern_return_t MKMDRequestAlarm (
 	port_t mididriver_port,
 	port_t owner_port,
 	port_t reply_port,
 	int time)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDRequestAlarm called %d\n", time);
+  fprintf(debug, "MKMDRequestAlarm called %d\n", time);
 #endif
   return 0;
 }
 
-/* Routine MDStartClock */
-PERFORM_API kern_return_t MDStartClock (
+/* Routine MKMDStartClock */
+PERFORM_API kern_return_t MKMDStartClock (
 	port_t mididriver_port,
 	port_t owner_port)
 {
   // TODO check the ports properly
 #ifdef FUNCLOG
-  fprintf(debug, "MDStartClock called\n");
+  fprintf(debug, "MKMDStartClock called\n");
 #endif
   return TRUE;
 }
 
-/* Routine MDStopClock */
-PERFORM_API kern_return_t MDStopClock (
+/* Routine MKMDStopClock */
+PERFORM_API kern_return_t MKMDStopClock (
 	port_t mididriver_port,
 	port_t owner_port)
 {
   // TODO check the ports properly
 #ifdef FUNCLOG
-  fprintf(debug, "MDStopClock called\n");
+  fprintf(debug, "MKMDStopClock called\n");
 #endif
   return TRUE;
 }
 
-/* Routine MDClaimUnit */
-PERFORM_API kern_return_t MDClaimUnit (
+/* Routine MKMDClaimUnit */
+PERFORM_API kern_return_t MKMDClaimUnit (
 	port_t mididriver_port,
 	port_t owner_port,
 	short unit)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDClaimUnit called %d\n", unit);
+  fprintf(debug, "MKMDClaimUnit called %d\n", unit);
 #endif
   return TRUE;
 }
 
-/* Routine MDReleaseUnit */
-PERFORM_API kern_return_t MDReleaseUnit (
+/* Routine MKMDReleaseUnit */
+PERFORM_API kern_return_t MKMDReleaseUnit (
 	port_t mididriver_port,
 	port_t owner_port,
 	short unit)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDReleaseUnit called\n");
+  fprintf(debug, "MKMDReleaseUnit called\n");
 #endif
   return TRUE;
 }
 
-/* Routine MDRequestExceptions */
-PERFORM_API kern_return_t MDRequestExceptions (
+/* Routine MKMDRequestExceptions */
+PERFORM_API kern_return_t MKMDRequestExceptions (
 	port_t mididriver_port,
 	port_t owner_port,
 	port_t error_port)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDRequestExceptions called\n");
+  fprintf(debug, "MKMDRequestExceptions called\n");
 #endif
   return 0;
 }
 
-/* Routine MDRequestData */
-PERFORM_API kern_return_t MDRequestData (
+/* Routine MKMDRequestData */
+PERFORM_API kern_return_t MKMDRequestData (
 	port_t mididriver_port,
 	port_t owner_port,
 	short unit,
 	port_t reply_port)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDRequestData called\n");
+  fprintf(debug, "MKMDRequestData called\n");
 #endif
   return 0;
 }
 
-/* Routine MDSendData */
+/* Routine MKMDSendData */
 // Each event consists of a time stamp per byte. This was done to allow slowing byte output
 // to stop choking synths with sysex messages. Nowdays it would seem better just to specify
 // an inter-byte delay and specify the start time of the channel byte.
-PERFORM_API kern_return_t MDSendData (
+PERFORM_API kern_return_t MKMDSendData (
 	port_t mididriver_port,
 	port_t owner_port,
 	short unit,
-	MDRawEventPtr data,
+	MKMDRawEventPtr data,
 	unsigned int dataCnt)
 {
   //  unsigned int msgIndex;
@@ -247,7 +250,7 @@ PERFORM_API kern_return_t MDSendData (
   //REFERENCE_TIME dmTime;
 
 #ifdef FUNCLOG
-  fprintf(debug, "MDSendData called with %d events @ time %d\n", dataCnt, data[0].time);
+  fprintf(debug, "MKMDSendData called with %d events @ time %d\n", dataCnt, data[0].time);
 #endif
 
   // need to convert the times, extract the data and pack back into buffer.
@@ -263,37 +266,37 @@ PERFORM_API kern_return_t MDSendData (
 #endif
   //if(!PMPackMessageForPlay(dmTime, buffer, dataCnt)) {
   //  free(buffer);
-  //  return MD_ERROR_UNKNOWN_ERROR;
+  //  return MKMD_ERROR_UNKNOWN_ERROR;
   //}
   // once the buffer has been packed, it can be discarded as packing copies the data.
   //free(buffer);
   //if(!PMPlayBuffer())
-  //  return MD_ERROR_UNKNOWN_ERROR;
+  //  return MKMD_ERROR_UNKNOWN_ERROR;
 #ifdef FUNCLOG
-  fprintf(debug,"MDSendData returning ok\n");
+  fprintf(debug,"MKMDSendData returning ok\n");
 #endif
   return 0;
 }
 
-/* Routine MDGetAvailableQueueSize */
-PERFORM_API kern_return_t MDGetAvailableQueueSize (
+/* Routine MKMDGetAvailableQueueSize */
+PERFORM_API kern_return_t MKMDGetAvailableQueueSize (
 	port_t mididriver_port,
 	port_t owner_port,
 	short unit,
 	int *size)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDGetAvailableQueueSize called\n");
+  fprintf(debug, "MKMDGetAvailableQueueSize called\n");
 #endif
   // return the queue size
   //if(!PMGetAvailableQueueSize(size)) {
-  //  return MD_ERROR_UNKNOWN_ERROR;
+  //  return MKMD_ERROR_UNKNOWN_ERROR;
   //}
   return 0;
 }
 
-/* Routine MDRequestQueueNotification */
-PERFORM_API kern_return_t MDRequestQueueNotification (
+/* Routine MKMDRequestQueueNotification */
+PERFORM_API kern_return_t MKMDRequestQueueNotification (
 	port_t mididriver_port,
 	port_t owner_port,
 	short unit,
@@ -301,50 +304,50 @@ PERFORM_API kern_return_t MDRequestQueueNotification (
 	int size)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDRequestQueueNotification called %d\n", size);
+  fprintf(debug, "MKMDRequestQueueNotification called %d\n", size);
 #endif
   return 0;
 }
 
-/* Routine MDClearQueue */
-PERFORM_API kern_return_t MDClearQueue (
+/* Routine MKMDClearQueue */
+PERFORM_API kern_return_t MKMDClearQueue (
 	port_t mididriver_port,
 	port_t owner_port,
 	short unit)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDClearQueue called\n");
+  fprintf(debug, "MKMDClearQueue called\n");
 #endif
   return 0;
 }
 
-/* Routine MDFlushQueue */
-PERFORM_API kern_return_t MDFlushQueue (
+/* Routine MKMDFlushQueue */
+PERFORM_API kern_return_t MKMDFlushQueue (
 	port_t mididriver_port,
 	port_t owner_port,
 	short unit)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDFlushQueue called\n");
+  fprintf(debug, "MKMDFlushQueue called\n");
 #endif
   return 0;
 }
 
-/* Routine MDSetSystemIgnores */
-PERFORM_API kern_return_t MDSetSystemIgnores (
+/* Routine MKMDSetSystemIgnores */
+PERFORM_API kern_return_t MKMDSetSystemIgnores (
 	port_t mididriver_port,
 	port_t owner_port,
 	short unit,
 	int sys_ignores)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDSetSystemIgnores called 0x%x sys_ignores\n", sys_ignores);
+  fprintf(debug, "MKMDSetSystemIgnores called 0x%x sys_ignores\n", sys_ignores);
 #endif
   return 0;
 }
 
-/* Routine MDSetClockQuantum */
-PERFORM_API kern_return_t MDSetClockQuantum (
+/* Routine MKMDSetClockQuantum */
+PERFORM_API kern_return_t MKMDSetClockQuantum (
 	port_t mididriver_port,
 	port_t owner_port,
 	int microseconds)
@@ -352,23 +355,23 @@ PERFORM_API kern_return_t MDSetClockQuantum (
   // REFERENCE_TIME measured in 100ns units, I don't understand why MS needs such accuracy as it is well beyond perception...
   //quantumFactor = microseconds * 10;
 #ifdef FUNCLOG
-  fprintf(debug, "MDSetClockQuantum called %d microseconds, %d 100ns units\n", microseconds, 0);
+  fprintf(debug, "MKMDSetClockQuantum called %d microseconds, %d 100ns units\n", microseconds, 0);
 #endif
   return 0;
 }
 
-PERFORM_API kern_return_t MDAwaitReply(port_t port_set, MDReplyFunctions *funcs, int timeout)
+PERFORM_API kern_return_t MKMDAwaitReply(port_t port_set, MKMDReplyFunctions *funcs, int timeout)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDAwaitReply called %d timeout\n", timeout);
+  fprintf(debug, "MKMDAwaitReply called %d timeout\n", timeout);
 #endif
   return 0;
 }
 
-PERFORM_API kern_return_t MDHandleReply(msg_header_t *msg, MDReplyFunctions *funcs)
+PERFORM_API kern_return_t MKMDHandleReply(msg_header_t *msg, MKMDReplyFunctions *funcs)
 {
 #ifdef FUNCLOG
-  fprintf(debug, "MDHandleReply called\n");
+  fprintf(debug, "MKMDHandleReply called\n");
 #endif
   return 0;
 }
