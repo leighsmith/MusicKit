@@ -33,10 +33,10 @@ include $(GNUSTEP_MAKEFILES)/common.make
 # The tools to be compiled
 TOOL_NAME = \
 	example1
-	
+
 ADDITIONAL_LIB_DIRS =  
 
-ADDITIONAL_TOOL_LIBS += -lMKDSP -lMKPerformSndMIDI -lSndKit -lgnustep-base -lst -lMusicKit
+ADDITIONAL_TOOL_LIBS += -lMKDSP -lMKPerformSndMIDI -lSndKit -lgnustep-base -lMusicKit
 
 ADDITIONAL_FLAGS += -g
 
