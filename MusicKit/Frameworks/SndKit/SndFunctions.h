@@ -214,13 +214,6 @@ SNDKIT_API int SndAlloc(SndSoundStruct **sound,
                                    int infoSize);
 
 /*!
-  @function SndFileExtensions
-  @abstract Returns an NSArray of valid file extensions to read or write.
-  @result Returns an NSArray of NSStrings of file extensions.
- */
-NSArray *SndFileExtensions(void);
-
-/*!
 @function SndReadHeader
  @abstract To come 
  @param f
@@ -240,17 +233,7 @@ SNDKIT_API int SndReadHeader(NSString *path,
  */
 SNDKIT_API int SndReadSoundfile(NSString *path, SndSoundStruct **sound);
 
-int SndReadSoundfileRange(NSString *path, SndSoundStruct **sound, int startFrame, int frameCount, BOOL bReadData);
-
-/*!
-  @function SndWriteSoundfile
-  @abstract Writes a soundStruct to the named file. The extension is used to determine the format of the output file.
-  @discussion  Expects the sound to not be fragmented, and to be in host order.
-  @param path An NSString formatted path.
-  @param sound An SndSoundStruct containing the format of the data and a pointer to the data itself.
-  @result Returns SND_ERR_NONE if the writing went correctly, otherwise an error value.
- */
-SNDKIT_API int SndWriteSoundfile(NSString *path, SndSoundStruct *sound);
+SNDKIT_API int SndReadSoundfileRange(NSString *path, SndSoundStruct **sound, int startFrame, int frameCount, BOOL bReadData);
 
 /*!
   @function SndSwapBigEndianSoundToHost

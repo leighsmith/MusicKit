@@ -223,31 +223,6 @@
   return [name length] * 256 + 512 * tag + ss + 1023 * soundStructSize;
 }
 
-// return the file extensions supported by our sound file reading library, typically sox or sndlibfile.
-+ (NSArray *) soundFileExtensions
-{
-    return SndFileExtensions();
-}
-
-+ (NSString *) defaultFileExtension
-{
-    return @"au"; // TODO this should probably be determined at run time based on the operating system
-}
-
-+ (BOOL) isPathForSoundFile: (NSString *) path
-{
-    NSArray *exts = [[self class] soundFileExtensions];
-    NSString *ext  = [path pathExtension];
-    int extensionIndex, extensionCount = [exts count];
-    
-    for (extensionIndex = 0; extensionIndex < extensionCount; extensionIndex++) {
-	NSString *anExt = [exts objectAtIndex: extensionIndex];
-	if ([ext compare: anExt options: NSCaseInsensitiveSearch] == NSOrderedSame)
-	    return YES;
-    }
-    return NO;
-}
-
 - (void) dealloc
 {
     if (name) {
@@ -457,8 +432,8 @@
     * of endian issues for us.
     */
     [aCoder encodeValuesOfObjCTypes:"iiiiii", s->magic, s->dataLocation, s->dataSize,
-            s->dataFormat, s->samplingRate,s->channelCount];
-    [aCoder encodeArrayOfObjCType:"c" count:headerSize - sizeof(SndSoundStruct) + 4 at: [info cString]];
+            s->dataFormat, s->samplingRate, soundFormat.channelCount];
+    [aCoder encodeArrayOfObjCType:"c" count: headerSize - sizeof(SndSoundStruct) + 4 at: [info cString]];
 
     if (df != SND_FORMAT_INDIRECT) { /* simple read/write of block of data */
         [aCoder encodeArrayOfObjCType:"s"
@@ -491,7 +466,7 @@
                                userInfo:nil] raise];
 
     [aDecoder decodeValuesOfObjCTypes:"iiiiii", &(s->magic), &(s->dataLocation), &(s->dataSize),
-            &(s->dataFormat), &(s->samplingRate), &(s->channelCount)];
+            &(s->dataFormat), &(s->samplingRate), &(soundFormat.channelCount)];
     s = realloc((char *)s, s->dataLocation + 1); /* allocate enough room for info string */
     [aDecoder decodeArrayOfObjCType:"c" count:s->dataLocation - sizeof(SndSoundStruct) + 4 at:s->info];
 
@@ -576,9 +551,7 @@
 
 - (int) channelCount
 {
-    if (!soundStruct) return 0;
-    return soundStruct->channelCount;
-    // TODO return soundFormat.channelCount
+    return soundFormat.channelCount;
 }
 
 - (NSString *) info
@@ -603,58 +576,6 @@
     /* for use in the beginFunc and endFunc routines and the SndPlayer */
 {
     status = newStatus;
-}
-
-- (int) readSoundfile: (NSString *) filename
-{
-    int err;
-    NSDictionary *fileAttributeDictionary;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-
-    if (soundStruct)
-        SndFree(soundStruct);
-
-    [name release];
-    name = nil;
-
-    if (![[NSFileManager defaultManager] fileExistsAtPath: filename]) {
-//      NSLog(@"Snd::readSoundfile: sound file %@ doesn't exist",filename);
-      return SND_ERR_CANNOT_OPEN;
-    }
-
-    // check its seekable, by checking its POSIX regular.
-    fileAttributeDictionary = [fileManager fileAttributesAtPath: filename
-					           traverseLink: YES];
-
-    if([fileAttributeDictionary objectForKey: NSFileType] != NSFileTypeRegular)
-        return SND_ERR_CANNOT_OPEN;
-
-    // TODO this needs to retrieve loop pointers and an info NSString.
-    err = SndReadSoundfile(filename, &soundStruct);
-
-    // NSLog(@"%@\n", SndStructDescription(soundStruct));
-    if (!err) {
-	// Set ivars after reading the file.
-	info = [[NSString stringWithCString: (char *)(soundStruct->info)] retain];
-        soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
-	// TODO These are only needed until the soundStruct parameter to SndReadSoundfile becomes a SndFormat.
-	soundFormat.sampleRate = soundStruct->samplingRate;
-	soundFormat.channelCount = soundStruct->channelCount;
-	soundFormat.dataFormat = soundStruct->dataFormat;
-	soundFormat.frameCount = SndFrameCount(soundStruct);
-        // This is probably a bit kludgy but it will do for now.
-	// TODO when we can retrieve the loop indexes from the sound file, this should become the default value.
-        loopEndIndex = [self lengthInSampleFrames] - 1;
-    }
-    return err;
-}
-
-- (int) writeSoundfile: (NSString *) filename
-{
-    // compaction ideally should not be necessary, but SoX saving requires it for now
-    [self compactSamples]; 
-    return SndWriteSoundfile(filename, soundStruct);
-    //return SndWriteSoundfile([filename fileSystemRepresentation], soundStruct);
 }
 
 - (BOOL) isEmpty
@@ -762,8 +683,8 @@
 - (int) convertToFormat: (SndSampleFormat) aFormat
 {
     return [self convertToFormat: aFormat
-                    samplingRate: soundStruct->samplingRate
-                    channelCount: soundStruct->channelCount];
+                    samplingRate: soundFormat.sampleRate
+                    channelCount: soundFormat.channelCount];
 }
 
 + (SndFormat) nativeFormat
@@ -869,7 +790,7 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 	    return nil;
     }
 
-    err = SndCopySound(&(newSound->soundStruct), soundStruct);
+    err = SndCopySound(&(newSound->soundStruct), [self soundStruct]);
     if (err) {
 	return nil;
     }
@@ -941,16 +862,21 @@ static int SndCopySound(SndSoundStruct **toSound, const SndSoundStruct *fromSoun
 	       ([self samplingRate] == [buff samplingRate]);
 }
 
+- (SndFormat) format
+{
+    return soundFormat;
+}
+
 - (SndSoundStruct *) soundStruct
 {
 #if 0
     // TODO Prepare the soundStruct from the soundFormat once soundFormat is the authorative source.
     soundStruct->dataFormat = soundFormat.dataFormat;
-    soundStruct->channelCount = soundFormat.channelCount;
     soundStruct->samplingRate = soundFormat.samplingRate;
     etc
 #endif
     
+    soundStruct->channelCount = soundFormat.channelCount; // soundFormat has the authorative channelCount.
     return soundStruct;
 }
 

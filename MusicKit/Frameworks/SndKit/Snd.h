@@ -276,27 +276,6 @@ typedef enum {
 */
 + (void) removeAllSounds;
 
-/*!
-  @method soundFileExtensions
-  @result Returns an array of file extensions available for reading and writing.
-  @discussion Returns an array of file extensions indicating the file format (and file extension)
-              that audio files may be read from or written to. This list may be used for limiting NSOpenPanel
-              to those formats supported. The list can be expected to vary between platforms, but is ultimately
-              derived from those formats supported by the underlying Sox library.
-*/
-+ (NSArray *) soundFileExtensions;
-
-/*!
- @method isPathForSoundFile:
- @param path A file path
- @result TRUE if the file at path is a sound file.
- */
-+ (BOOL) isPathForSoundFile: (NSString*) path;
-
-/*!
-  @method defaultFileExtension
-*/
-+ (NSString *) defaultFileExtension;
 
 - (NSString *) description;
 
@@ -497,26 +476,6 @@ typedef enum {
 - (int) status;
 
 /*!
-  @method readSoundfile:
-  @param  filename is a NSString *.
-  @result Returns an int.
-  @discussion Replaces the Snd's contents with those of the sound file
-              <i>filename</i>. The Snd loses its current name, if any. An error
-              code is returned.
-*/
-- (int) readSoundfile: (NSString *) filename;
-
-/*!
-  @method writeSoundfile:
-  @param  filename is a NSString *.
-  @result Returns an int.
-  @discussion Writes the Snd's contents (its sample format and sound data) to
-              the sound file <i>filename</i>. An error code is
-              returned.
-*/
-- (int) writeSoundfile: (NSString *) filename;
-
-/*!
   @method isEmpty
   @result Returns a BOOL.
   @discussion Returns <b>YES</b> if the Snd doesn't contain any sound data,
@@ -672,6 +631,14 @@ typedef enum {
 - (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer *) buff;
 
 /*!
+  @method     format
+  @abstract   Returns the format (number of frames, channels, dataFormat) of the audio buffer as a SndFormat structure.
+  @discussion
+  @result     Returns a SndFormat.
+ */
+- (SndFormat) format;
+
+/*!
   @method soundStruct
   @result Returns a SndSoundStruct *.
   @discussion Returns a pointer to the Snd's SndSoundStruct structure that holds
@@ -792,6 +759,78 @@ typedef enum {
   @result Returns the maximum value of a sample.
  */
 - (double) maximumAmplitude;
+
+@end
+
+@interface Snd(FileIO)
+
+/*!
+  @method soundFileExtensions
+  @abstract Returns an array of valid file extensions available for reading and writing.
+  @result Returns an NSArray of NSStrings of file extensions.
+  @discussion Returns an array of file extensions indicating the file format (and file extension)
+              that audio files may be read from or written to. This list may be used for limiting NSOpenPanel
+              to those formats supported. The list can be expected to vary between platforms, but is ultimately
+              derived from those formats supported by the underlying libsndfile library.
+ */
++ (NSArray *) soundFileExtensions;
+
+/*!
+  @method isPathForSoundFile:
+  @param path A file path
+  @result TRUE if the file at path is a sound file.
+ */
++ (BOOL) isPathForSoundFile: (NSString*) path;
+
+/*!
+  @method defaultFileExtension
+  @abstract Returns the extension of the standard file format. This may differ between platforms.
+ */
++ (NSString *) defaultFileExtension;
+
+/*!
+  @method readSoundfile:
+  @param  filename is a NSString *.
+  @result Returns an int.
+  @discussion Replaces the Snd's contents with those of the sound file
+              <i>filename</i>. The Snd loses its current name, if any. An error
+              code is returned.
+ */
+- (int) readSoundfile: (NSString *) filename;
+
+
+    /*!
+    @function SndWriteSoundfile
+     @param path An NSString formatted path.
+     @param sound An SndSoundStruct containing the format of the data and a pointer to the data itself.
+     */
+
+/*!
+  @method writeSoundfile:fileFormat:dataFormat:
+  @abstract Writes the Snd's contents (its sample format and sound data) to the sound file <i>filename</i> in
+            the given file format and data encoding.
+  @param filename is a NSString instance.
+  @param fileFormat An NSString giving the extension format name (.au, .wav, .aiff etc) to write out the sound
+         which matches one of the encodings returned by +soundFileExtensions.
+  @param fileDataFormat a SndSampleFormat allowing the sound to be written out in a different format (e.g SND_FORMAT_LINEAR_16)
+         than it is held in (e.g SND_FORMAT_FLOAT).
+  @discussion Expects the sound to not be fragmented, and to be in host endian order.
+  @result Returns SND_ERR_NONE if the writing went correctly, otherwise an error value.
+ */
+- (int) writeSoundfile: (NSString *) filename
+	    fileFormat: (NSString *) fileFormat
+	    dataFormat: (SndSampleFormat) fileDataFormat;
+
+/*!
+  @method writeSoundfile:
+  @param  filename is a NSString instance.
+  @result Returns SND_ERR_NONE if the writing went correctly, otherwise an error value.
+  @abstract Writes the Snd's contents (its sample format and sound data) to the sound file <i>filename</i>. 
+  @discussion The filename is expected to have an extension which indicates the format to write and which matches
+              one of the encodings returned by +soundFileExtensions. Use writeSoundfile:fileFormat:dataFormat: to
+              write a filename without an extension. An error code is returned.
+ */
+- (int) writeSoundfile: (NSString *) filename;
 
 @end
 
