@@ -1,19 +1,27 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
   HEADER FILES: musickit.h
+
+  Description: 
+    This file makes it possible to do a non-conducted performance. It 
+    implements a "loose link" to Condutor and provides defaults when there's
+    no Conducted performance. It also insures that the "after performance
+    queues" get implemented in a non-conducted performance.
+
+  Original Author: David Jaffe
+
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */ 
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/08/06 17:27:53  leigh
+  cleaned copyright and comments
+
   Revision 1.2  1999/07/29 01:26:17  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -27,10 +35,6 @@ Modification history:
       
 */
 
-/* This file makes it possible to do a non-conducted performance. It 
-   implements a "loose link" to Condutor and provides defaults when there's
-   no Conducted performance. It also insures that the "after performance
-   queues" get implemented in a non-conducted performance. */
 
 #define MK_INLINE 1
 #import "_musickit.h"
