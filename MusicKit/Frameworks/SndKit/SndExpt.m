@@ -173,8 +173,6 @@
 - (SndAudioBuffer*) audioBufferForSamplesInRange: (NSRange) playRegion
 {
   SndAudioBuffer *ab = [SndAudioBuffer new];
-  [cacheLock lock];
-
   [self fillAudioBuffer: ab withSamplesInRange: playRegion];
   return [ab autorelease];
 }
