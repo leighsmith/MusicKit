@@ -96,31 +96,92 @@ biblioentry (database) format.
       <address>Glasgow, Scotland</address>
     </publisher>
   </bibliomset>
+  <bibliomset relation=online>
+    <bibliomisc>
+      <ulink url="&mkurl;/Publications/OrchestraDetails.pdf">
+        OrchestraDetails.pdf
+      </ulink>
+    </bibliomisc>
+  </bibliomset>
+  <abstract>
+    <para>
+An in depth discussion of the <PRODUCTNAME>MusicKit</PRODUCTNAME>
+<CLASSNAME>Orchestra</CLASSNAME>'s dynamic allocation system,
+<ACRONYM>DSP</ACRONYM> memory management, and
+multi-<ACRONYM>DSP</ACRONYM> support.
+</para>
+  </abstract>
 </bibliomixed>
 
 <bibliomixed>
-<!-- <abbrev>jaffe91:musicalapplications</abbrev> -->
-<bibliomset relation=article>
-  <authorgroup>
-<author>
-<firstname>David</firstname>
-<othername>A.</othername>
-	 <surname>Jaffe</surname>
-</author>
-</authorgroup>
-  <title role=article>Musical and Extra-Musical Applications of the NeXT
+  <!-- <abbrev>jaffe91:musicalapplications</abbrev> -->
+  <bibliomset relation=article>
+    <authorgroup>
+      <author>
+        <firstname>David</firstname>
+        <othername>A.</othername>
+	<surname>Jaffe</surname>
+      </author>
+    </authorgroup>
+    <title role=article>Musical and Extra-Musical Applications of the NeXT
                   Music Kit</title>
   </bibliomset>
-<bibliomset relation=proceedings>
-<title role=proceedings>Proceedings of the 1991 International Computer Music
+  <bibliomset relation=proceedings>
+    <title role=proceedings>Proceedings of the 1991 International Computer Music
                   Conference</title>
-  <pagenums>521-4</pagenums>
-  <pubdate>1991</pubdate>
-  <publisher>
-  <publishername>International Computer Music Association</publishername>
-  <address>Montreal, Canada</address>
-  </publisher>
-</bibliomset>
+    <pagenums>521-4</pagenums>
+    <pubdate>1991</pubdate>
+    <publisher>
+      <publishername>International Computer Music Association</publishername>
+      <address>Montreal, Canada</address>
+    </publisher>
+  </bibliomset>
+  <bibliomset relation=online>
+    <bibliomisc>
+      <ulink url="&mkurl;/Publications/MusicApplications.pdf">
+        MusicApplications.pdf
+      </ulink>
+    </bibliomisc>
+  </bibliomset>
+  <abstract>
+Paper by David Jaffe from the 1991 International Computer
+Music Conference describing some of the uses to which the
+<productname>MusicKit</productname> has been put.
+  </abstract>
+</bibliomixed>
+
+<bibliomixed>
+  <bibliomset relation=article>
+    <authorgroup>
+      <author>
+  	<firstname>David</firstname>
+        <othername>A.</othername>
+        <surname>Jaffe</surname>
+      </author>
+      <author>
+        <firstname>Julius</firstname>
+        <othername>O.</othername>
+        <surname>Smith</surname>
+        <lineage>III</lineage>
+      </author>
+    </authorgroup>
+    <title>Real Time Sound Processing &amp; Synthesis on Multiple DSPs Using
+the Music Kit and the Ariel QuintProcessor</title>
+  </bibliomset>
+  <bibliomset relation=proceedings>
+    <title>NW Expo</title>
+    <pubdate>1993</pubdate>
+  </bibliomset>
+  <bibliomset relation=online>
+    <bibliomisc>
+      <ulink url="&mkurl;/Publications/MusicKit-NWExpo93.pdf">
+        MusicKit-NWExpo93.pdf
+      </ulink>
+    </bibliomisc>
+  </bibliomset>
+  <abstract>
+Documents multiple DSP operation.
+  </abstract>
 </bibliomixed>
 
       <bibliomixed>
@@ -145,6 +206,7 @@ biblioentry (database) format.
           <publishername>MIT Press</publishername>
         </publisher>
       </bibliomset>
+Reprinted in book form in
       <bibliomset relation=book>
         <title role=book>The Well-Tempered Object</title>
         <publisher>
@@ -192,6 +254,10 @@ biblioentry (database) format.
           </ulink>
         </bibliomisc>
       </bibliomset>
+      <abstract>
+Most recent publication describing the OpenStep conversion
+and cross-platform approach.
+</abstract>
     </bibliomixed>
 
 <bibliomixed>
@@ -253,6 +319,9 @@ biblioentry (database) format.
       </ulink>
     </bibliomisc>
   </bibliomset>
+  <abstract>
+A general (if dated) overview.
+  </abstract>
 </bibliomixed>
 
 <bibliomixed>
@@ -284,6 +353,12 @@ biblioentry (database) format.
       </ulink>
     </bibliomisc>
   </bibliomset>
+  <abstract>
+    <para>
+Transparencies for a talk describing the use of the
+<productname>DSP56001</productname> for music synthesis. 
+</para>
+  </abstract>
 </bibliomixed>
 
 <bibliomixed>
@@ -307,6 +382,44 @@ biblioentry (database) format.
     <publisher>
       <publishername>International Computer Music Association</publishername>
       <address>San Francisco, CA</address>
+    </publisher>
+  </bibliomset>
+</bibliomixed>
+
+<bibliomixed>
+  <!-- Tanaka91 -->
+  <bibliomset relation=article>
+    <author>
+      <firstname>Atau</firstname>
+      <surname>Tanaka</surname>
+    </author>
+    <title role=article>Implementing Quadraphonic Audio on the NeXT</title>
+  </bibliomset>
+  <bibliomset relation=proceedings>
+    <title role=proceedings>Proceedings of the 1991 International Computer Music Conference</title>
+    <pubdate>1991</pubdate>
+    <publisher>
+      <publishername>International Computer Music Association</publishername>
+      <address>Montreal, Canada</address>
+    </publisher>
+  </bibliomset>
+</bibliomixed>
+
+<bibliomixed>
+  <!-- Lopez-Lezcano93 --> 
+  <bibliomset relation=article>
+    <author>
+      <firstname>Fernando</firstname>
+      <surname>Lopez-Lezcano</surname>
+    </author>
+    <title role=article>A Four Channel Dynamic Sound Location System</title>
+  </bibliomset>
+  <bibliomset relation=proceedings>
+    <title role=proceedings>Proceedings of the 1993 Japan Music and Computer Society</title>
+    <pubdate>1993</pubdate>
+    <publisher>
+      <publishername>Japan Music and Computer Society</publishername>
+      <address>Japan</address>
     </publisher>
   </bibliomset>
 </bibliomixed>
