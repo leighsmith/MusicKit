@@ -14,11 +14,17 @@
 */
 /*
   $Log$
+  Revision 1.2  2001/03/12 01:55:38  leigh
+  Moved patch locations inside the class implementation since they shouldn't be accessible to apps at compile time, only at run time
+
   Revision 1.1  2001/03/06 21:47:32  leigh
   Abstracted patch loading from SynthPatches into MKPatch
 
 */
 #import "MKPatch.h"
+
+#define MK_SYNTHPATCH_DIR @"MusicKit/SynthPatches/"
+#define MK_PATCH_EXTENSION @"bundle"
 
 @implementation MKPatch
 
