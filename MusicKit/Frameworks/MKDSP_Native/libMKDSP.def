@@ -1,0 +1,15 @@
+;
+;   libMKDSP.def
+;
+;   Exports for libMKDSP DLL
+;   Specific to WIN32 operating systems
+;
+;   Copyright (C) 2001 tomandandy Inc.
+;
+;   Author:  Stephen Brandon <stephen@brandonitconsulting.co.uk>
+;   Date: November 2001
+;
+;
+LIBRARY libMKDSP
+EXPORTS
+
