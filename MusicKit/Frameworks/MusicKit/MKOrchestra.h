@@ -1,14 +1,40 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. 
- * DSP Serial Port and subclass support and other 4.0 release extensions,
- * Copyright 1993, CCRMA, Stanford Univ. 
- * Author: David A. Jaffe.
- */ 
 /*
   $Id$
   Defined In: The MusicKit
+
+  Description:
+    This is the allocator and manager of DSP resources.
+
+    The MKOrchestra class is used for managing DSP allocation and control for
+    doing sound and music on the DSP. Actually, the MKOrchestra object supports
+    multiple DSPs, although in the basic NeXT configuration, there is only one
+    DSP.
+
+    The MKOrchestra factory object manages all programs running on all the DSPs.
+    Each instances of the MKOrchestra class corresponds to a single DSP. We call
+    these instances "orchestra instances"
+    or, simply, "orchestras". We call the sum total of all orchestras the
+    "Orchestra". Each orchestra instance is referred to by an integer
+    'orchIndex'. These indecies start at 0. For the basic
+    NeXT configuration, orchIndex is always 0.
+
+    There are two levels of allocation: MKSynthPatch allocation and
+    unit generator allocation. MKSynthPatches are higher-level entities,
+    collections of MKUnitGenerators. Both levels may be used at the same time.
+
+    CF: MKUnitGenerator.m, MKSynthPatch.m, MKSynthData.m and MKPatchTemplate.m.
+
+  Original Author: David A. Jaffe
+
+  Copyright 1988-1992, NeXT Inc.  All rights reserved.
+  DSP Serial Port and subclass support and other 4.0 release extensions,
+  Copyright 1993, CCRMA, Stanford Univ.
 */
 /*
   $Log$
+  Revision 1.7  2000/06/16 23:22:54  leigh
+  Imported all of Foundation since we are typing against several classes
+
   Revision 1.6  2000/06/09 03:27:53  leigh
   Typing of parameters passed to installSharedSynthDataWithSegmentAndLength methods
 
@@ -28,8 +54,7 @@
 #ifndef __MK_Orchestra_H___
 #define __MK_Orchestra_H___
 
-#import <Foundation/NSObject.h>
-#import <Foundation/NSTimer.h>
+#import <Foundation/Foundation.h>
 #import "orch.h"
 #import "MKDeviceStatus.h"
 #import "MKSynthData.h"
