@@ -40,11 +40,12 @@
 - init
 {
     [super init];
-    if(toBePlayed == nil)
-        toBePlayed = [[NSMutableArray arrayWithCapacity: 10] retain];
-    if(playing == nil)
-        playing    = [[NSMutableArray arrayWithCapacity: 10] retain];
-    playingLock = [NSLock new];  // controls adding and removing sounds from the playing list.
+    if (toBePlayed  == nil)
+        toBePlayed  = [[NSMutableArray arrayWithCapacity: 10] retain];
+    if (playing     == nil)
+        playing     = [[NSMutableArray arrayWithCapacity: 10] retain];
+    if (playingLock == nil)
+        playingLock = [[NSLock new] retain];  // controls adding and removing sounds from the playing list.
     return self;
 }
 
@@ -58,6 +59,8 @@
         [toBePlayed release];
     if (playing != nil)
         [playing release];
+    if (playingLock != nil)
+        [playingLock release];
     [super dealloc];
 }
 
@@ -96,7 +99,7 @@
     long stopAtSample;
 
     [playingLock lock];
-    whenToStop = [self nowTime] + inSeconds;
+    whenToStop = [self streamTime] + inSeconds;
     beginPlayTime = [performance playTime]; // in seconds
     if(whenToStop < beginPlayTime) {
         // stop before we even begin, delete the performance from the toBePlayed queue
@@ -129,7 +132,7 @@
 
 - (SndPerformance *) playSnd: (Snd *) s
               withTimeOffset: (double) dt
-                  endAtIndex: (double)endAtIndex
+                  endAtIndex: (double) endAtIndex
 {
     if(![self isActive]) {
         [[SndStreamManager defaultStreamManager] addClient: self];
@@ -138,12 +141,12 @@
         SndPerformance *nowPerformance;
         if (endAtIndex >= 0) {
             nowPerformance = [SndPerformance performanceOfSnd: s 
-                                                playingAtTime: [self nowTime]
+                                                playingAtTime: [self streamTime]
                                                    endAtIndex: endAtIndex];
         }
         else {
             nowPerformance = [SndPerformance performanceOfSnd: s
-                                                playingAtTime: [self nowTime]];
+                                                playingAtTime: [self streamTime]];
         }
         [playingLock lock];
         [self _startPerformance: nowPerformance];    
@@ -151,7 +154,7 @@
         return nowPerformance;
     }		
     else {            // play later!
-        double playT = [self nowTime] + dt;
+        double playT = [self streamTime] + dt;
         int i;
         int numToBePlayed;
         int insertIndex;
@@ -235,6 +238,9 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 // processBuffers
+// nowTime must be the CLIENT now time as this is a process-head capable
+// thread - our client's synthesis sense of time is ahead of the manager's
+// closer-to-absolute sense of time.
 ////////////////////////////////////////////////////////////////////////////////
  
 - (void) processBuffers  
@@ -242,7 +248,7 @@
     SndAudioBuffer* ab   = [self synthOutputBuffer];
     double       bufferDur     = [ab duration];
 //    double       sampleRate    = [ab samplingRate];
-    double       bufferEndTime = [self nowTime] + bufferDur;
+    double       bufferEndTime = [self synthesisTime] + bufferDur;
     int numberToBePlayed;
     int numberPlaying;
     int buffLength = [ab lengthInSamples];
@@ -257,7 +263,7 @@
         SndPerformance *performance = [toBePlayed objectAtIndex: i];
         if ([performance playTime] < bufferEndTime) {
             [removalArray addObject: performance];
-            [performance setPlayIndex: - [[performance snd] samplingRate] * ([performance playTime] - [self nowTime])];
+            [performance setPlayIndex: - [[performance snd] samplingRate] * ([performance playTime] - [self synthesisTime])];
             [self _startPerformance: performance];
         }
     }
@@ -313,7 +319,7 @@
     }
 
     // NSLog(@"SYNTH THREAD: playing %d sounds", [playing count]);
-    if ([removalArray count] == 1) {
+    if ([removalArray count] > 0) {
         [playing removeObjectsInArray: removalArray];
         if([toBePlayed count] == 0 && [playing count] == 0) {
             active = FALSE;
