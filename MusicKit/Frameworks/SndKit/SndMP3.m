@@ -385,7 +385,7 @@ static int bitrateLookupTable[16][6] = {
     SNDStreamNativeFormat(&nativeFormat);
     
     if(nativeFormat.samplingRate != [self samplingRate] || nativeFormat.channelCount != [self channelCount]) {
-	NSLog(@"MP3 file sample rate %d, channels %d not of native format sample rate %lf, channels %d\n",
+	NSLog(@"MP3 file sample rate %lf, channels %d not of native format sample rate %d, channels %d\n",
 	    [self samplingRate], [self channelCount], nativeFormat.samplingRate, nativeFormat.channelCount);
 	return SND_ERR_UNKNOWN;
     }
