@@ -16,6 +16,13 @@
 Modification history:
 
   $Log$
+  Revision 1.23  2002/04/01 11:58:57  sbrandon
+  paranoia check on MKNotes as they are deallocated - set various hashtables
+  to null. This is because MKNotes are not actually deallocated - just added
+  to a pool of notes which can be quickly created. Problem is that if
+  "de-allocated" notes are referenced they will not behave as normal zombies
+  and could allow double-frees.
+
   Revision 1.22  2002/03/12 22:50:31  sbrandon
   change _binaryIndecies from NSMutableDictionary to NSMapTable
 
@@ -425,8 +432,10 @@ static unsigned noteCachePtr = 0;
 {
     [part removeNote:self];
     freeHashTable(_parameters);
+    _parameters = NULL;
     if (_highAppPar) 
       free(_appPars);
+    _appPars = NULL;
     if (((NSObject *)(self->isa)) == noteClass)
       if (noteCachePtr < NOTECACHESIZE) {
           noteCache[noteCachePtr++] = self;
