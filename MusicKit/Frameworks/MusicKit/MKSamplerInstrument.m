@@ -21,6 +21,9 @@
 */
 /*
   $Log$
+  Revision 1.12  2001/04/06 19:36:31  leighsmith
+  Moved to use the SndKits playInFuture: method
+
   Revision 1.11  2000/07/22 00:31:17  leigh
   Reassert Snd as the one true way to deal with sound.
 
@@ -61,11 +64,6 @@
 #import "MKConductor.h"
 
 #define UNASSIGNED_SAMPLE_KEYNUM (-1)
-
-// This should be zero or I should rot in purgatory for my sins.
-// This can typically be expected to be so dependent on operating system and platform that it will be
-// nearly impossible to set correctly. See realizeNote: for why this has to exist.
-static float uglySamplerTimingHack = 0.0;
 
 @implementation MKSamplerInstrument
 
@@ -164,7 +162,7 @@ static float uglySamplerTimingHack = 0.0;
     return self;
 }
 
-- playSampleNote: aNote
+- playSampleNote: aNote inFuture: (double) inSeconds
 {
     Snd *existingSound;
     NSString *filePath;
@@ -173,7 +171,7 @@ static float uglySamplerTimingHack = 0.0;
     if(![aNote isParPresent: MK_filename])
         return nil;
     filePath = [aNote parAsString: MK_filename];
-    // NSLog(@"playing file %@\n", filePath);
+    NSLog(@"playing file %@\n", filePath);
 
     if ((existingSound = [Snd soundNamed: filePath]) == nil) {
         _MKErrorf(MK_cantOpenFileErr, filePath);
@@ -181,8 +179,13 @@ static float uglySamplerTimingHack = 0.0;
     }
     [existingSound setDelegate:self];
     [playingNotes addObject: aNote];    // keep a list (ordered oldest to youngest) of playing notes.
-    [existingSound play]; // just do it.
+    [existingSound playInFuture: inSeconds]; // just do it.
     return self;
+}
+
+- playSampleNote: aNote
+{
+    return [self playSampleNote: aNote inFuture: 0.0];
 }
 
 // Probably should revamp this to determine the playingSound instance to send the stop to.
@@ -225,8 +228,6 @@ static float uglySamplerTimingHack = 0.0;
 - firstNote: (MKNote *) aNote
 {
     [super firstNote: aNote];
-    // if you thought this was bad, it probably isn't thread safe either! Erase Me Erase Me soon!
-    uglySamplerTimingHack = [[NSUserDefaults standardUserDefaults] floatForKey: @"MKUglySamplerTimingHack"];
     [self prepareSoundWithNote: aNote];
     return self;
 }
@@ -392,12 +393,12 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
     MKConductor *conductor = [aNote conductor];
 
     // [MKConductor sel:to:withDelay:argCount:] takes delay parameters in beats.
-    double  deltaT = (MKGetDeltaT() + uglySamplerTimingHack) / [conductor beatSize]; 
+    double  deltaT = MKGetDeltaT() / [conductor beatSize]; 
 
-    // NSLog(@"deltaT = %lf beatSize = %lf tempo = %lf\n", deltaT, [conductor beatSize], [conductor tempo]);
+    NSLog(@"deltaT = %lf beatSize = %lf tempo = %lf\n", deltaT, [conductor beatSize], [conductor tempo]);
     if ((type == MK_noteOn) || (type == MK_noteDur)) {
         [self prepareSoundWithNote: aNote];
-        TIMEDSENDTO(conductor, self, @selector(playSampleNote:), deltaT, aNote);
+        [self playSampleNote: aNote inFuture: deltaT];
         if (type == MK_noteDur) {
             // NSLog(@"Date: %@\n", [NSDate date]);
             TIMEDSENDTO(conductor, self, @selector(stopSampleNote:), deltaT+[aNote dur], aNote);
@@ -466,13 +467,11 @@ NSLog(@"in MKSamplerInstrument deactivate:\n");
     return self;
 }
 
-// NSSound delegate
-- (void) sound:(Snd *) sound didFinishPlaying:(BOOL) finished
+// Snd delegate
+- (void) didPlay: (Snd *) sound duringPerformance: (SndPerformance *) performance
 {
-    NSLog(@"did finish playing %d sound named %@\n", finished, [sound name]);
-    if(finished) {
-        // unlock playback
-    }
+    NSLog(@"did finish playing sound named %@, performance %@\n", [sound name], performance);
+    // unlock playback??
 }
 
 - (void) encodeWithCoder:(NSCoder *) coder

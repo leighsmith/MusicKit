@@ -18,6 +18,9 @@
 */
 /*
   $Log$
+  Revision 1.10  2001/04/06 19:38:01  leighsmith
+  Moved to use the SndKits playInFuture: method
+
   Revision 1.9  2000/07/22 00:31:17  leigh
   Reassert Snd as the one true way to deal with sound.
 
@@ -52,6 +55,7 @@
 
 @interface MKSamplerInstrument: MKInstrument
 {
+@private
     double volume;
     double pitchBend;
     double pbSensitivity;
@@ -99,7 +103,8 @@
 - prepareSoundWithNote: (MKNote *) aNote;
 - (void) removePreparedSounds;
 - realizeNote: (MKNote *) aNote fromNoteReceiver: (MKNoteReceiver *) aNoteReceiver;
-- (void) sound: (Snd *) sound didFinishPlaying:(BOOL)aBool;
+// Snd delegate
+- (void) didPlay: (Snd *) sound duringPerformance: (SndPerformance *) performance;
 - (void) encodeWithCoder:(NSCoder *) coder;
 - (id) initWithCoder:(NSCoder *) decoder;
 - performerDidDeactivate: (id) sender;
