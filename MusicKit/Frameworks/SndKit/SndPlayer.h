@@ -40,9 +40,20 @@
     @method playSnd:withTimeOffset:
     @abstract Begin playing a Snd instance at some in point time in the future.
     @param s The sound to start playing
-    @param inSeconds The future time interval in seconds when to stop playing.
+    @param inSeconds The future time interval in seconds when to start playing.
 */
 - (SndPerformance *) playSnd: (Snd*) s withTimeOffset: (double) inSeconds;
+
+/*!
+    @method playSnd:withTimeOffset:endAtIndex:
+    @abstract Begin playing a Snd instance at some time in the future.
+    @param s The sound to start playing
+    @param inSeconds The future time interval in seconds when to start playing.
+    @param endIndex The last sample of the sound to play; negative signals play all
+*/
+- (SndPerformance *) playSnd: (Snd*) s 
+              withTimeOffset: (double) inSeconds
+                  endAtIndex: (double) endIndex;
 
 /*!
     @method stopSnd:withTimeOffset:
