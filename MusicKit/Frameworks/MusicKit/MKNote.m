@@ -1279,45 +1279,47 @@ static void copyPars(); /* forward ref */
     int midiVel = [self parAsInt:MK_velocity];
     if (midiVel != MAXINT)
       return MAX(0,MIDI_DATA(midiVel));
-    if ((similarPar = [self parAsDouble:MK_amp]) != MAXDOUBLE)
+    if ((similarPar = [self parAsDouble: MK_amp]) != MAXDOUBLE)
       return MKAmpToMidi(similarPar);
     return MAXINT;
 }
 #endif
 
--(double)freq
+- (double) freq
   /* TYPE: Parameters; Returns the frequency of the receiver.
-   * Returns the value of MK_freq, if present.  If not,
-   * converts and returns the value of MK_keyNum.
-   * And if that parameter is missing, returns MK_NODVAL.
-   */
+    * Returns the value of MK_freq, if present.  If not,
+    * converts and returns the value of MK_keyNum.
+    * And if that parameter is missing, returns MK_NODVAL.
+    */
 {
     int keyNumVal;
-    double freqVal = MKGetNoteParAsDouble(self,MK_freq);
+    double freqVal = MKGetNoteParAsDouble(self, MK_freq);
+    
     if (!MKIsNoDVal(freqVal))
-      return freqVal;
-    keyNumVal = MKGetNoteParAsInt(self,MK_keyNum);
+	return freqVal;
+    keyNumVal = MKGetNoteParAsInt(self, MK_keyNum);
     if (keyNumVal == MAXINT)
-      return MK_NODVAL;
-    return MKKeyNumToFreq(keyNumVal);
+	return MK_NODVAL;
+    return [MKTuningSystem freqForKeyNum: keyNumVal];
 }
 
--(int)keyNum
+- (int) keyNum
   /* TYPE: Parameters; Returns the key number of the recevier.
    * Returns the value of MK_keyNum, if present.  If not,
    * converts and returns the value of MK_freq.
    * If MK_freq isn't present, returns MAXINT.
    */
 {
-    int keyNum;
-    keyNum = MKGetNoteParAsInt(self,MK_keyNum);
+    int keyNum = MKGetNoteParAsInt(self, MK_keyNum);
+    
     if (keyNum != MAXINT)
-      return MIDI_DATA(MAX(0,keyNum));
-    {
-        double freqPar = MKGetNoteParAsDouble(self,MK_freq);
+	return MIDI_DATA(MAX(0, keyNum));
+    else {
+        double freqPar = MKGetNoteParAsDouble(self, MK_freq);
+	
         if (MKIsNoDVal(freqPar))
-          return MAXINT;
-        return MKFreqToKeyNum(freqPar,NULL,0);
+	    return MAXINT;
+        return [MKTuningSystem keyNumForFreq: freqPar pitchBentBy: NULL bendSensitivity: 0];
     }
 }
 
