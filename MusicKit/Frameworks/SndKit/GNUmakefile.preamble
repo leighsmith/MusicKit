@@ -14,6 +14,13 @@
 #  Modification history:
 #
 #  $Log$
+#  Revision 1.6  2002/02/01 12:22:17  sbrandon
+#  Tidied path situation for Win32 by using "cygpath" utility to decide which
+#  drive the external libraries would have been installed in. Added libmm as
+#  well for Win32/MinGW. Note the lame and shout headers and libs should be
+#  installed in /usr/local/[include|lib], which usually translates to something
+#  like /cygdrive/d/cygwin/usr/local/lib, aka d:/cygwin/usr/local/lib
+#
 #  Revision 1.5  2002/01/15 16:59:50  sbrandon
 #  tidied up for mingw32/win32
 #
@@ -45,10 +52,20 @@ LIBRARIES_DEPEND_UPON += -lMKPerformSndMIDI \
                          -lobjc -lst #-lgsm
 
 ifeq (mingw32, $(GNUSTEP_TARGET_OS))
-  LIBRARIES_DEPEND_UPON += -lobjc -l$(FOUNDATION_LIBRARY_NAME) -lgnustep-gui
-  ADDITIONAL_FLAGS += -Ic:/DXVCSDK/include -Id:/cygwin/usr/local/include \
-           -L$(GNUSTEP_SYSTEM_ROOT)/Libraries/$(GNUSTEP_TARGET_LDIR) \
-           -Ld:/cygwin/usr/local/lib
+  LIBRARIES_DEPEND_UPON += -lobjc -l$(FOUNDATION_LIBRARY_NAME) -lgnustep-gui \
+                           -lshout -lmp3lame -lwinmm
+
+  CYG_PREFIX = $(shell cygpath -w '/' | tr '\\' '/')
+
+# You need the DirectX SDK from Microsoft in the following location. The 
+# /usr/local/[include|lib] is where the shout and lame headers and libraries
+# should have been placed.
+
+  ADDITIONAL_FLAGS += -Ic:/DXVCSDK/include \
+           -I$(CYG_PREFIX)/usr/local/include
+
+  SHARED_LD_POSTFLAGS += -L$(CYG_PREFIX)/usr/local/lib
+
 else
   LIBRARIES_DEPEND_UPON += -lgnustep-gui -lshout -lmp3lame
 endif
