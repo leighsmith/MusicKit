@@ -18,6 +18,9 @@
 Modification history:
 
   $Log$
+  Revision 1.18  2002/05/01 14:24:58  sbrandon
+  Defined functions MKLoadAllBundlesOneOff() and MKLoadAllBundles() which attempt to load all plugins in standard Library directories/MusicKitPlugins/name.mkplugin
+
   Revision 1.17  2002/04/16 15:22:33  sbrandon
   a couple of string-appending functions simplified for speed
 
@@ -107,6 +110,8 @@ Modification history:
 
 #import <stddef.h>  /* errno */
 #import <Foundation/NSBundle.h>
+#import "MKPlugin.h"
+#import "ScorePrivate.h"
 
 /* globals */
 
@@ -132,7 +137,7 @@ static id checkClass(_MKClassLoaded *cl,NSString *className)
 {
     cl->alreadyChecked = YES;
     cl->aClass = _MK_FINDCLASS(className);
-    [(Class) (cl->aClass) initialize]; /* Initialize it now, not later.*/
+    [(Class) (cl->aClass) performSelector:@selector(initialize)]; /* Initialize it now, not later.*/
     return cl->aClass;
 }
 
@@ -886,3 +891,47 @@ int _MKFindAppWrapperFile(NSString *fileName, NSString **returnName)
 	return (retName != nil);
 }
 
+void MKLoadAllBundlesOneOff(void)
+{
+    static BOOL done = NO;
+    if (!done) {
+        MKLoadAllBundles();
+        done = YES;
+    }
+}
+
+BOOL MKLoadAllBundles(void)
+{
+    NSArray *libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
+    int i,j;
+    id newClass;
+    BOOL loadedSome = FALSE;
+
+    for(i = 0; i < [libraryDirs count]; i++) {
+        NSString *path = [[libraryDirs objectAtIndex: i]
+                            stringByAppendingPathComponent: MK_BUNDLE_DIR];
+        NSArray *files = [[NSFileManager defaultManager]
+                            directoryContentsAtPath:path];
+
+        for (j = 0 ; j < [files count] ; j++) {
+            NSString *tryFile = [files objectAtIndex:j];
+            if ([[tryFile pathExtension] isEqualToString: MK_BUNDLE_EXTENSION]) {
+                tryFile = [path stringByAppendingPathComponent:tryFile];
+                if ([[NSFileManager defaultManager] isReadableFileAtPath: tryFile]) {
+                    NSBundle *bundleToLoad = [NSBundle bundleWithPath:tryFile];
+                    NSLog(@"Attempting to load bundle at %@",tryFile);
+                    if ((newClass = [[[bundleToLoad principalClass] alloc] init])) {
+                        NSLog(@"Managed to load principal class");
+                        loadedSome = TRUE;
+                        if ([newClass conformsToProtocol:@protocol(MusicKitPlugin)]) {
+                            [(id<MusicKitPlugin>)newClass setDelegate:[MKScore class]];
+                            [MKScore addPlugin:newClass];
+                        }
+                        [newClass release];
+                    }
+                }
+            }
+        }
+    }
+    return loadedSome;
+}    
