@@ -15,12 +15,12 @@
 		};
 		00D2C428FEDB2CB5CFED3B93 = {
 			children = (
-				00D2C429FEDB2CB5CFED3B93,
 				00D2C42BFEDB2CB5CFED3B93,
 				00D2C432FEDB2CB5CFED3B93,
 				00D2C444FEDB2CB5CFED3B93,
 				00D2C44BFEDB2CB5CFED3B93,
 				00D2C454FEDB2CB5CFED3B93,
+				00D2C429FEDB2CB5CFED3B93,
 			);
 			isa = PBXGroup;
 			name = SndKit;
@@ -42,6 +42,9 @@
 				00D2C42FFEDB2CB5CFED3B93,
 				00D2C430FEDB2CB5CFED3B93,
 				00D2C431FEDB2CB5CFED3B93,
+				36C5C1C10039F18CCFED3B96,
+				36C5C1C20039F18CCFED3B96,
+				36C5C1C30039F18CCFED3B96,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -83,17 +86,20 @@
 				00D2C434FEDB2CB5CFED3B93,
 				00D2C435FEDB2CB5CFED3B93,
 				00D2C436FEDB2CB5CFED3B93,
-				00D2C437FEDB2CB5CFED3B93,
 				00D2C438FEDB2CB5CFED3B93,
 				00D2C439FEDB2CB5CFED3B93,
-				00D2C43AFEDB2CB5CFED3B93,
 				00D2C43BFEDB2CB5CFED3B93,
-				00D2C43CFEDB2CB5CFED3B93,
 				00D2C43DFEDB2CB5CFED3B93,
 				00D2C43EFEDB2CB5CFED3B93,
 				00D2C43FFEDB2CB5CFED3B93,
 				00D2C440FEDB2CB5CFED3B93,
 				00D2C442FEDB2CB5CFED3B93,
+				095E1FC30030E169CFED3B96,
+				095E1FC50030E3C7CFED3B96,
+				00D2C43CFEDB2CB5CFED3B93,
+				36C5C1C40039F18CCFED3B96,
+				36C5C1C90039F2E2CFED3B96,
+				36C5C1CA0039F2E2CFED3B96,
 			);
 			isa = PBXGroup;
 			name = Headers;
@@ -119,11 +125,6 @@
 			path = SndEndianFunctions.h;
 			refType = 4;
 		};
-		00D2C437FEDB2CB5CFED3B93 = {
-			isa = PBXFileReference;
-			path = SndFormats.h;
-			refType = 4;
-		};
 		00D2C438FEDB2CB5CFED3B93 = {
 			isa = PBXFileReference;
 			path = SndFunctions.h;
@@ -132,11 +133,6 @@
 		00D2C439FEDB2CB5CFED3B93 = {
 			isa = PBXFileReference;
 			path = SndKit.h;
-			refType = 4;
-		};
-		00D2C43AFEDB2CB5CFED3B93 = {
-			isa = PBXFileReference;
-			path = SndStruct.h;
 			refType = 4;
 		};
 		00D2C43BFEDB2CB5CFED3B93 = {
@@ -232,6 +228,7 @@
 				00D2C456FEDB2CB5CFED3B93,
 				00D2C457FEDB2CB5CFED3B93,
 				00D2C458FEDB2CB5CFED3B93,
+				0B0671370034C9D6CFED3B96,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -272,7 +269,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/Frameworks/AppKit.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/System.framework\" \"$(HOME)/Library/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" \"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(HOMEDRIVE)$(LOCAL_DEVELOPER_DIR)/Frameworks\"";
 				FRAMEWORK_VERSION = 1.4;
 				HEADER_SEARCH_PATHS = "";
 				LIBRARY_SEARCH_PATHS = "";
@@ -333,10 +330,8 @@
 				00D2C45CFEDB2CB5CFED3B93,
 				00D2C45DFEDB2CB5CFED3B93,
 				00D2C45EFEDB2CB5CFED3B93,
-				00D2C45FFEDB2CB5CFED3B93,
 				00D2C460FEDB2CB5CFED3B93,
 				00D2C461FEDB2CB5CFED3B93,
-				00D2C462FEDB2CB5CFED3B93,
 				00D2C463FEDB2CB5CFED3B93,
 				00D2C464FEDB2CB5CFED3B93,
 				00D2C465FEDB2CB5CFED3B93,
@@ -344,6 +339,11 @@
 				00D2C467FEDB2CB5CFED3B93,
 				00D2C468FEDB2CB5CFED3B93,
 				00D2C46AFEDB2CB5CFED3B93,
+				095E1FC40030E169CFED3B96,
+				095E1FC60030E3C7CFED3B96,
+				36C5C1C50039F18CCFED3B96,
+				36C5C1CB0039F2E2CFED3B96,
+				36C5C1CC0039F2E2CFED3B96,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -404,20 +404,6 @@
 				);
 			};
 		};
-		00D2C45FFEDB2CB5CFED3B93 = {
-			fileRef = 00D2C437FEDB2CB5CFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
 		00D2C460FEDB2CB5CFED3B93 = {
 			fileRef = 00D2C438FEDB2CB5CFED3B93;
 			isa = PBXBuildFile;
@@ -439,20 +425,6 @@
 				ATTRIBUTES = (
 					Public,
 					Project,
-				);
-				INCLUDED_OSS = (
-					MACOS,
-					WINDOWS,
-					PDOUNIX,
-				);
-			};
-		};
-		00D2C462FEDB2CB5CFED3B93 = {
-			fileRef = 00D2C43AFEDB2CB5CFED3B93;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
 				);
 				INCLUDED_OSS = (
 					MACOS,
@@ -530,7 +502,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Public,
 				);
 				INCLUDED_OSS = (
 					MACOS,
@@ -572,6 +543,9 @@
 				00D2C478FEDB2CB5CFED3B93,
 				00D2C479FEDB2CB5CFED3B93,
 				042277910030C91CCFED3B96,
+				36C5C1C60039F18CCFED3B96,
+				36C5C1C70039F18CCFED3B96,
+				36C5C1C80039F18CCFED3B96,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -737,6 +711,7 @@
 				00D2C47CFEDB2CB5CFED3B93,
 				00D2C47DFEDB2CB5CFED3B93,
 				00D2C47EFEDB2CB5CFED3B93,
+				0B0671380034C9D6CFED3B96,
 				042277930030CC78CFED3B96,
 			);
 			isa = PBXFrameworksBuildPhase;
@@ -827,6 +802,175 @@
 			fileRef = 042277920030CC78CFED3B96;
 			isa = PBXBuildFile;
 			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		095E1FC30030E169CFED3B96 = {
+			isa = PBXFileReference;
+			path = SndResample.h;
+			refType = 4;
+		};
+		095E1FC40030E169CFED3B96 = {
+			fileRef = 095E1FC30030E169CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		095E1FC50030E3C7CFED3B96 = {
+			isa = PBXFileReference;
+			path = SndStdefs.h;
+			refType = 4;
+		};
+		095E1FC60030E3C7CFED3B96 = {
+			fileRef = 095E1FC50030E3C7CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		0B0671370034C9D6CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = MKPerformSndMIDI.framework;
+			path = /Library/Frameworks/MKPerformSndMIDI.framework;
+			refType = 0;
+		};
+		0B0671380034C9D6CFED3B96 = {
+			fileRef = 0B0671370034C9D6CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		36C5C1C10039F18CCFED3B96 = {
+			isa = PBXFileReference;
+			path = SndAudioBuffer.m;
+			refType = 4;
+		};
+		36C5C1C20039F18CCFED3B96 = {
+			isa = PBXFileReference;
+			path = SndStreamClient.m;
+			refType = 4;
+		};
+		36C5C1C30039F18CCFED3B96 = {
+			isa = PBXFileReference;
+			path = SndStreamManager.m;
+			refType = 4;
+		};
+		36C5C1C40039F18CCFED3B96 = {
+			isa = PBXFileReference;
+			path = SndAudioBuffer.h;
+			refType = 4;
+		};
+		36C5C1C50039F18CCFED3B96 = {
+			fileRef = 36C5C1C40039F18CCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		36C5C1C60039F18CCFED3B96 = {
+			fileRef = 36C5C1C10039F18CCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		36C5C1C70039F18CCFED3B96 = {
+			fileRef = 36C5C1C20039F18CCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		36C5C1C80039F18CCFED3B96 = {
+			fileRef = 36C5C1C30039F18CCFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		36C5C1C90039F2E2CFED3B96 = {
+			isa = PBXFileReference;
+			path = SndStreamClient.h;
+			refType = 4;
+		};
+		36C5C1CA0039F2E2CFED3B96 = {
+			isa = PBXFileReference;
+			path = SndStreamManager.h;
+			refType = 4;
+		};
+		36C5C1CB0039F2E2CFED3B96 = {
+			fileRef = 36C5C1C90039F2E2CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		36C5C1CC0039F2E2CFED3B96 = {
+			fileRef = 36C5C1CA0039F2E2CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 				INCLUDED_OSS = (
 					MACOS,
 					WINDOWS,
