@@ -139,6 +139,17 @@ PERFORM_API void SNDSetMute(BOOL aFlag);
 PERFORM_API BOOL SNDSetBufferSizeInBytes(long liBufferSizeInBytes);
 
 /*!
+    @function SNDSpeakerConfiguration
+    @abstract Returns an array of character pointers listing the names of each channel.
+    @discussion There will be the same number of strings returned as the channel count, with a NULL terminating.
+                The naming of all channels is system dependent, but is guaranteed to have two channels named
+                "Left" and "Right" to ensure that stereo can always be used. On MacOS X, the naming is determined
+                by the devices speaker configuration defined in the Audio/MIDI configuration application.
+    @result Returns a constant array of strings (char *) with each string naming that channels speaker.
+ */
+PERFORM_API const char **SNDSpeakerConfiguration(void);
+
+/*!
     @function       SNDStreamNativeFormat
     @abstract       Return in the SNDStreamBuffer, the format of the sound data preferred by the operating system.
     @param          streamFormat Pointer to an allocated block of memory into which to put the SNDStreamBuffer format parameters.
