@@ -20,6 +20,9 @@
   Modification history:
 
   $Log$
+  Revision 1.21  2000/12/07 00:11:22  leigh
+  Added a FIXME comment
+
   Revision 1.20  2000/09/18 23:43:12  leigh
   Removed retain and releases to properly isolate problems if they exist
 
@@ -471,6 +474,8 @@ static id sendObjcMsg(id toObject,SEL aSelector,int argCount,id arg1,id arg2)
         /* end of sb changes */
 //	(void)msg_send(&msg.header, SEND_TIMEOUT, 0);
 	(void)msg_send(&msg.header, MSG_OPTION_NONE, 0);  /* Jan, 1996-DAJ */
+        // LMS FIXME this could be what we use if we can figure out how to transport objects
+        [MKToAppPortObj sendBeforeDate:components:from:reserved:]; 
 #endif
     }
     else { /* Just send it */
