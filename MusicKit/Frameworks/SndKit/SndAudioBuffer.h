@@ -236,6 +236,7 @@
   @result     Number of channels
 */
 - (int) channelCount;
+
 /*!
   @method     dataFormat
   @abstract
@@ -243,14 +244,6 @@
   @result     Data format identifier
 */
 - (int) dataFormat;
-
-/*!
-  @method     data
-  @abstract
-  @discussion
-  @result     pointer to NSData object contaiing the audio data
-*/
-//- (NSMutableData*) data;
 
 /*!
   @method     bytes
