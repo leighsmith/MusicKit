@@ -471,12 +471,13 @@ enum {
 - (void) processingThread
 {
     NSAutoreleasePool *localPool = [NSAutoreleasePool new];
+    NSAutoreleasePool *innerPool;
     
     [self retain];
     active = TRUE;
     // NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
     while (active) {
-
+        innerPool = [[NSAutoreleasePool alloc] init];
         [synthThreadLock lock];
 
         if (generatesOutput) {
@@ -538,6 +539,7 @@ enum {
 
         }
         [synthThreadLock unlock];
+        [innerPool release];
     }
     bDisconnect = TRUE;
     [self release];
