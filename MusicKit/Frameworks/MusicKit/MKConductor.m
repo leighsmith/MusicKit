@@ -19,6 +19,9 @@
 Modification history:
 
   $Log$
+  Revision 1.18  2000/05/06 00:57:16  leigh
+  Parenthetised to remove warnings
+
   Revision 1.17  2000/05/06 00:29:58  leigh
   removed redundant setjmp include
 
@@ -261,17 +264,18 @@ double _MKTheTimeToWait(double nextMsgTime)
     t = [[NSDate date] timeIntervalSinceDate:startTime]; //sb: replaced previous 2 lines.
     t = nextMsgTime - t; /* relative time */
     t = MIN(t, MK_ENDOFTIME); /* clip */
-    if (delegateRespondsToThresholdMsgs)
-      if (t < deltaTThresholdLow && !lowThresholdCrossed) {
-	  if (delegateRespondsToLowThresholdMsg)
-	    [classDelegate conductorCrossedLowDeltaTThreshold];
-	  lowThresholdCrossed = YES;
-      } 
-      else if (t > deltaTThresholdHigh && lowThresholdCrossed) {
-	  if (delegateRespondsToHighThresholdMsg)
-	    [classDelegate conductorCrossedHighDeltaTThreshold];
-	  lowThresholdCrossed = NO;
-      }
+    if (delegateRespondsToThresholdMsgs) {
+        if (t < deltaTThresholdLow && !lowThresholdCrossed) {
+            if (delegateRespondsToLowThresholdMsg)
+                [classDelegate conductorCrossedLowDeltaTThreshold];
+            lowThresholdCrossed = YES;
+        }
+        else if (t > deltaTThresholdHigh && lowThresholdCrossed) {
+            if (delegateRespondsToHighThresholdMsg)
+                [classDelegate conductorCrossedHighDeltaTThreshold];
+            lowThresholdCrossed = NO;
+        }
+    }
     t = MAX(t,0);
     return t; /*sb: returns relative time... */
 }
@@ -1424,11 +1428,13 @@ static void evalAfterQueues()
 {
     register MKMsgStruct *curProc;
     while (!ISENDOFLIST(PEEKTIME(_msgQueue))) {
-	curProc = popMsgQueue(&(_msgQueue)); 
-	if (curProc) /* This test shouldn't be needed */
-	  if (curProc->_conductorFrees) 
-	    freeSp(curProc);
-	  else curProc->_onQueue = NO;
+	curProc = popMsgQueue(&(_msgQueue));
+        if (curProc) { /* This test shouldn't be needed */
+            if (curProc->_conductorFrees)
+                freeSp(curProc);
+            else
+                curProc->_onQueue = NO;
+        }
     }
     if (!isPaused)
       repositionCond(self,MK_ENDOFTIME);

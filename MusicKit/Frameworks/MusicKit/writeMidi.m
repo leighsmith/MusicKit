@@ -18,6 +18,9 @@
 Modification history:
 
   $Log$
+  Revision 1.5  2000/05/06 00:54:33  leigh
+  Parenthetised to remove warnings
+
   Revision 1.4  2000/04/07 18:33:06  leigh
   Unified tracing to the function for data hiding
 
@@ -430,28 +433,31 @@ void  _MKWriteMidiOut(id aNote,double timeTag,unsigned chan, /* 1 based */
 	    /* Every noteOn must have a keyNumber or it gets the default
 	       keyNumber, not(!) the keyNumber of the previous note with
 	       this note tag. */
-	    if (noteTag == MAXINT) 
-	      if (type == MK_noteOn) {
-                  if (MKIsTraced(MK_TRACEMIDI)) {
-		      NSLog(@"NoteOn missing a noteTag at time %f",
-			      ptr->_timeTag);
-		  }
-		  (*ptr->_sendBufferedData)(ptr);
-		  return;
-	      }
-	      else {
-		  [aNote setNoteTag:noteTag = MKNoteTag()];
-		  newTag = YES;
-	      }
+            if (noteTag == MAXINT) {
+                if (type == MK_noteOn) {
+                    if (MKIsTraced(MK_TRACEMIDI)) {
+                        NSLog(@"NoteOn missing a noteTag at time %f",
+                                ptr->_timeTag);
+                    }
+                    (*ptr->_sendBufferedData)(ptr);
+                    return;
+                }
+                else {
+                    [aNote setNoteTag:noteTag = MKNoteTag()];
+                    newTag = YES;
+                }
+            }
 	    velocity = MKGetNoteParAsInt(aNote,MK_velocity);
 	    if (velocity == MAXINT)
 	      velocity = 64;
 	    mapNode = (midiOutNode *)[ptr->_map[chan] valueForKey: (const void *)noteTag];
 	    keyNum = [aNote keyNum];
-	    if (keyNum == MAXINT) 
-	      if (mapNode)
-		keyNum = mapNode->key;
-	      else keyNum = 64;
+            if (keyNum == MAXINT) {
+                if (mapNode)
+                    keyNum = mapNode->key;
+                else
+                    keyNum = 64;
+            }
 	    if (mapNode) {
 		BOOL sameKey = (mapNode->key == keyNum);
 		/* If the key is the same, we do the noteOff first. The point
