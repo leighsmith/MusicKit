@@ -274,7 +274,7 @@
 
 - (NSString*) paramName: (const int) i
 {
-  NSString * s;
+  NSString *s = nil;
   switch (i) {
     case mp3enc_kServerAddress:  s = @"ServerAddress";  break;
     case mp3enc_kServerPort:     s = @"ServerPort";     break;

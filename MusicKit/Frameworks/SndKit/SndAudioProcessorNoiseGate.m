@@ -45,7 +45,7 @@
 
 - (float) paramValue: (const int) index;
 {
-  float r;
+  float r=0.0f;
   switch (index) {
     case noisegate_kThreshold:
       r = fThreshold;

@@ -122,7 +122,7 @@
 
 - (NSString*) paramDisplay: (const int) index
 {
-  NSString *r;
+  NSString *r = nil;
 	switch (index)
   {
     case flanger_kRate:     r = [NSString stringWithFormat: @"%f", (44100*fRate)/11025]; break;

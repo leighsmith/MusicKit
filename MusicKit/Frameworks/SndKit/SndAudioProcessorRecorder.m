@@ -446,7 +446,7 @@ void writeWavFormatHeader(SndSoundStruct* format, FILE* f, unsigned long dataLen
 
 - (NSString*) paramName: (const int) index
 {
-  NSString *r;
+  NSString *r = nil;
   switch (index) {
     case recorder_kStartTriggerThreshold: r = @"StartTriggerThreshold"; break;
     case recorder_kRecordFile:            r = @"RecordFileName";        break;
