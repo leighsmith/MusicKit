@@ -12,6 +12,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 
+#import <mach/mach_init.h>
+#import <mach/thread_act.h>
+#import <pthread.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 #import <MKPerformSndMIDI/SndStruct.h>
 #import "SndAudioBuffer.h"
 #import "SndStreamManager.h"
@@ -145,8 +150,10 @@ enum {
 
 - (NSString*) description
 {
-    return [NSString stringWithFormat: @"SndStreamClient %sactive, client nowTime %f, %s",
-        active ? " " : "not ", [self synthesisTime], needsInput ? "needs input" : "doesn't need input"];
+  return [NSString stringWithFormat: @"%s: %sactive, nowTime: %.3f, input: %s output: %s",
+    (clientName == nil ? "SndStreamClient" : [clientName cString]),
+    (active ? "" : "in"),
+    [self synthesisTime], needsInput ? "YES" : "NO", generatesOutput ? "YES" : "NO"];
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -303,13 +310,12 @@ enum {
 {
     int ic = 0, oc = 0;
     // swap the synth and output buffers, fire off next round of synthing   
-    
+ 
     if (generatesOutput)
     {
         oc = [outputQueue processedBuffersCount];
 #if SNDSTREAMCLIENT_DEBUG            
-      fprintf(stderr,"[%s] time: %f Processed: %i Pending: %i \n", 
-              [clientName cString], t, oc, [outputQueue pendingBuffersCount]);
+      fprintf(stderr,"[%s] time: %f Processed: %i Pending: %i \n", [clientName cString], t, oc, [outputQueue pendingBuffersCount]);
 #endif          
 
       if (oc > 0) {
@@ -328,7 +334,7 @@ enum {
       NSLog(@"startprocessing: stage2");
 #endif
     }
-
+       
 #if SNDSTREAMCLIENT_DEBUG                  
     // printf("startProcessingNextBufferWithInput nowTime = %f\n", t);
 #endif
@@ -353,7 +359,7 @@ enum {
         }
       }
     }
-  
+ 
     if (bDisconnect) {
       if (ic == 0 && oc == 0) {
         [manager removeClient: self];
@@ -371,6 +377,7 @@ enum {
             [pendingInputBuffers count],  [processedInputBuffers count],
             [pendingOutputBuffers count], [processedOutputBuffers count]);
 #endif        
+
     return self;
 }
 
@@ -384,13 +391,35 @@ enum {
     NSAutoreleasePool *innerPool;
     
     [self retain];
+
+    {
+      /*
+      int r;
+      pthread_t threadID = pthread_self();
+      struct sched_param param;
+      param.sched_priority = 90;
+      r = pthread_setschedparam(threadID, SCHED_OTHER, &param);
+      fprintf(stderr,"Thread priority change returned: %i\n",r);
+
+      */
+/*
+      thread_precedence_policy_data_t policy_data;
+      policy_data.importance = 71;
+
+      thread_policy_set(  mach_thread_self(),
+                          THREAD_PRECEDENCE_POLICY,
+                          (thread_policy_t) &policy_data ,
+                          THREAD_PRECEDENCE_POLICY_COUNT );
+      
+      setpriority(0, 0, 70);
+ */
+    }
     active = TRUE;
 #if SNDSTREAMCLIENT_DEBUG                  
     NSLog(@"SYNTH THREAD: starting processing thread (thread id %p)\n",objc_thread_id());
 #endif        
     while (active) {
         innerPool = [[NSAutoreleasePool alloc] init];
-        [synthThreadLock lock];
 
         if (generatesOutput) {
           synthOutputBuffer = [[[outputQueue popNextPendingBuffer] retain] zero];
@@ -401,7 +430,9 @@ enum {
 #if SNDSTREAMCLIENT_DEBUG                  
         NSLog(@"SYNTH THREAD: going to processBuffers\n");
 #endif                        
+        [synthThreadLock lock];
         [self processBuffers];
+
 #if SNDSTREAMCLIENT_DEBUG                  
         NSLog(@"SYNTH THREAD: ... done processBuffers\n");
 #endif
@@ -416,14 +447,17 @@ enum {
           [outputQueue addProcessedBuffer: synthOutputBuffer];
           [synthOutputBuffer release];    
         }
-        else
+        else {
           clientNowTime += [synthOutputBuffer duration];
-          
+        }
+
+        [synthThreadLock unlock];
+
         if (needsInput) {
           [inputQueue addProcessedBuffer: synthInputBuffer];
           [synthInputBuffer release];    
         }
-        [synthThreadLock unlock];
+
         [innerPool release];
     }
     bDisconnect = TRUE;
