@@ -957,7 +957,6 @@ extern void MKFinishPerformance(void);
 - awakeAfterUsingCoder: (NSCoder *) aDecoder;
 
 /* Obsolete methods */
-+ new; 
 - (double) predictTime:(double)beatTime; 
 
 @end
