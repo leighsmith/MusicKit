@@ -87,7 +87,7 @@ Leigh Smith <leigh@tomandandy.com>
     </copyright>
   </bookinfo>
 
-<preface>
+<preface id="EditorsPreface">
 <title>Editors Forward</title>
 <para>
 Befitting its origins, this documentation still retains some of its
