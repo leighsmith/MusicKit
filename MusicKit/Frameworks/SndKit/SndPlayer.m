@@ -58,6 +58,7 @@ static SndPlayer *defaultSndPlayer;
   self = [super init];
   if (self) {
     SndSoundStruct s;
+      
     SNDStreamNativeFormat(&s); /* get maximum length for processing buffer */
     //NSLog(@"Native format of streaming audio buffer:\n");
     //SndPrintStruct(&s);
@@ -517,7 +518,7 @@ static SndPlayer *defaultSndPlayer;
 
 - (void) processBuffers
 {
-    SndAudioBuffer *ab = [self synthOutputBuffer];
+    SndAudioBuffer *currentSynthOutputBuffer = [self synthOutputBuffer];
     int    numberPlaying;
     int    i;
 
@@ -529,7 +530,7 @@ static SndPlayer *defaultSndPlayer;
     // Are any of the 'toBePlayed' samples gonna fire off during this buffer?
     // If so, add 'em to the play array
     {
-	double bufferDur     = [ab duration];
+	double bufferDur     = [currentSynthOutputBuffer duration];
 	double bufferEndTime = [self synthesisTime] + bufferDur;
 	int numberToBePlayed = [toBePlayed count];
 	for (i = 0; i < numberToBePlayed; i++) {
@@ -554,7 +555,7 @@ static SndPlayer *defaultSndPlayer;
     numberPlaying = [playing count];
 
     if (numberPlaying > 0) {
-        long synthOutputBufferLength = [ab lengthInSampleFrames];
+        long synthOutputBufferLength = [currentSynthOutputBuffer lengthInSampleFrames];
 	
 	for (i = 0; i < numberPlaying; i++) {
 	    SndPerformance *performance = [playing objectAtIndex: i];
@@ -563,16 +564,19 @@ static SndPlayer *defaultSndPlayer;
 	    if ([performance isPaused])
 		continue;
 
+	    // Ensure we have the buffer set big enough to accept what we want to read. This needs doing since
+	    // at the end of a sound, the dataLength will be set shorter than the output buffer length.
+	    [nativelyFormattedStreamingBuffer setLengthInSampleFrames: synthOutputBufferLength]; 
 	    synthOutputBufferLength = [performance retrievePerformBuffer: nativelyFormattedStreamingBuffer
-								 ofLength: synthOutputBufferLength];
+								ofLength: synthOutputBufferLength];
 #if SNDPLAYER_DEBUG
 	    NSLog(@"[SndPlayer] retrieved from performance %d, buffer %@ at clock %ld\n", i, nativelyFormattedStreamingBuffer, clock());
 #endif
-	    [ab mixWithBuffer: nativelyFormattedStreamingBuffer
-		    fromStart: 0
-		        toEnd: synthOutputBufferLength
-		    canExpand: YES];
-	     
+	    [currentSynthOutputBuffer mixWithBuffer: nativelyFormattedStreamingBuffer
+					  fromStart: 0
+					      toEnd: synthOutputBufferLength
+					  canExpand: YES];
+	    
             // When at the end of sounds, signal the delegate and remove the performance.
 	    if ([performance atEndOfPerformance] == YES) {
 		[removalArray addObject: performance];
@@ -621,7 +625,7 @@ static SndPlayer *defaultSndPlayer;
 	}
     }
 #if SNDPLAYER_DEBUG
-    NSLog(@"[SndPlayer] synthOutputBuffer: %@\n", ab);
+    NSLog(@"[SndPlayer] synthOutputBuffer: %@\n", currentSynthOutputBuffer);
 #endif
 
     [playingLock unlock];
