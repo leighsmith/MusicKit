@@ -27,8 +27,8 @@ Leigh Smith <leigh@tomandandy.com>
 -->
 
 <book id="MusicKitConcepts">
-  <title>MusicKit and SndKit Concepts</title>
   <bookinfo>
+    <title>MusicKit and SndKit Concepts</title>
     <authorgroup>
       <author>
 	<firstname>Doug</firstname>
@@ -39,13 +39,30 @@ Leigh Smith <leigh@tomandandy.com>
 	<othername role=mi>A.</othername>
 	<surname>Jaffe</surname>
       </author>
+    </authorgroup>
       <editor>
 	<firstname>Leigh</firstname>
 	<othername role=mi>M.</othername>
 	<surname>Smith</surname>
       </editor>
-    </authorgroup>
-
+    <releaseinfo>Current for MusicKit V5.2.2</releaseinfo>
+    <printhistory>
+      <para>January 2001: First SGML version</para>
+    </printhistory>
+    <revhistory>
+      <revision>
+	<revnumber>Release 2.0</revnumber>
+	<date>1990</date>
+      </revision>
+      <revision>
+	<revnumber>Release 4.0</revnumber>
+	<date>1993</date>
+      </revision>
+      <revision>
+        <revnumber>Release 5.0</revnumber>
+	<date>1999-2000</date>
+      </revision>
+    </revhistory>
     <copyright>
       <year>1990</year>
       <holder>NeXT Computer, Inc.  All Rights Reserved.</holder>
@@ -62,20 +79,6 @@ Leigh Smith <leigh@tomandandy.com>
       <year>1999-2000</year>
       <holder>The MusicKit Project (Updates). All Rights Reserved.</holder>
     </copyright>
-    <revhistory>
-      <revision>
-	<revnumber>Release 2.0</revnumber>
-	<date>1990</date>
-      </revision>
-      <revision>
-	<revnumber>Release 4.0</revnumber>
-	<date>1993</date>
-      </revision>
-      <revision>
-        <revnumber>Release 5.0</revnumber>
-	<date>1999-2000</date>
-      </revision>
-    </revhistory>
   </bookinfo>
 
 &SystemOverview;
