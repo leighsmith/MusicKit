@@ -1,4 +1,5 @@
-{\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\ftech\fcharset2 Symbol;}
+{\rtf0\ansi{\fonttbl\f0\froman Times-Roman;\f1\ftech\fcharset2 Symbol;\f2\fmodern Courier;
+}
 {\colortbl;\red255\green255\blue255;}
 \paperw16220\paperh13540
 \pard\ql\qnatural
@@ -1091,13 +1092,9 @@ tune
 
 \b\fs28 \cf0 t
 \b0  can be used as a read-only variable in an expression.\
-\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
-
-\fs16 \cf0 \
 \pard\li100\ql\qnatural
 
-\b \cf0 \
-\
+\b\fs16 \cf0 \
 \
 
 \fs36 Operators\
@@ -1541,7 +1538,92 @@ omniModeOn	sysStop\
 
 \b \cf0 \
 \
+
+\fs36 Procedural Statements\
 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\b0\fs28 \cf0 ScoreFile supports simple loop constructs, boolean expressions, and conditional statements.  These are legal in both the header and the body of the scorefile.  These constructs are:\
+\pard\tx1800\tx2160\tx2520\tx2880\li1800\fi-360\ql\qnatural
+\cf0 \
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\b \cf0 	if (
+\b0 <
+\i boolean expression
+\i0 >
+\b ) \{
+\b0  <
+\i anything
+\i0 > 
+\b \} 
+\b0 \
+
+\b 	else if \{ 
+\b0 <
+\i anything
+\i0 > 
+\b \} 
+\b0 /* optional */\
+
+\b 	else \{
+\b0  <
+\i anything
+\i0 > 
+\b \} 
+\b0    /* optional */\
 \
+
+\b 	repeat 
+\b0 <
+\i integer expression
+\i0 > 
+\b \{ 
+\b0 <
+\i anything
+\i0 > 
+\b \}
+\b0 \
+	\
+	
+\b while (
+\b0 <
+\i boolean expression
+\i0 >
+\b ) \{
+\b0  <
+\i anything
+\i0 > 
+\b \} 
+\b0 \
+	\
+
+\b 	do \{
+\b0  <
+\i anything
+\i0 > 
+\b \} while (
+\b0 <
+\i boolean expression
+\i0 >
+\b )
+\b0 ; \
+	\
+Note that in all cases, the braces and parenthesis are not optional.  Also, if you are using included files, the start and end of the loop or conditional block must be in the same file.  \
+\
+	Example:\
+	\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\f2\fs26 \cf0 	repeat 3 \{ 	  t +.1	  if (t > 3) \{aPart (2) keyNum:c4k;\} 	  else       \{bPart (1) keyNum:c2k;\}\
+	\}\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\f0\b\fs28 \cf0 			\
+\pard\tx2620\tx3120\tx3620\li2100\ql\qnatural
+
+\fs16 \cf0 \
+\pard\li100\ql\qnatural
+\cf0 \
 \
 }
