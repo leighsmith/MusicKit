@@ -1,19 +1,37 @@
-/* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
-#ifdef SHLIB
-#include "shlib.h"
-#endif
-
 /*
   $Id$
-  Original Author: David A. Jaffe
-  
   Defined In: The MusicKit
-  HEADER FILES: musickit.h
+
+  Description: 
+    MKScorefilePerformers are used to access and perform scorefiles.
+    Instances of this class are used directly in an application;
+    you don't have to design your own subclass.
+   
+    A ScorefilePerformer creates
+    a separate MKNoteSender object for each part name in the file
+    (as given in the file's part statements).  The MKNoteSender objects
+    are maintained as an List in the inherited variable \fBnoteSenders\fR.
+    The MKNoteSenders are named with the names of the MKParts in the file.
+    Thus, you can find out the names of the MKParts in the file by getting
+    a List of the noteSenders (using -noteSenders) and using the function
+    MKGetObjectName(noteSender).
+   
+    Much of MKScorefilePeformer's functionality is
+    documented under MKFilePerformer, and MKPerformer.
+
+  Original Author: David A. Jaffe
+ 
+  Copyright (c) 1988-1992, NeXT Computer, Inc.
+  Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
+  Portions Copyright (c) 1994 Stanford University
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.3  1999/09/04 22:43:23  leigh
+  documentation cleanup
+
   Revision 1.2  1999/07/29 01:16:42  leigh
   Added Win32 compatibility, CVS logs, SBs changes
 
@@ -32,22 +50,6 @@ Modification history:
 
 #import "ScorefilePerformerPrivate.h"
 @implementation MKScorefilePerformer:MKFilePerformer  
-/* ScorefilePerformers are used to access and perform scorefiles.
- * Instances of this class are used directly in an application;
- * you don't have to design your own subclass.
- *
- * A ScorefilePerformer creates
- * a separate MKNoteSender object for each part name in the file
- * (as given in the file's part statements).  The MKNoteSender objects
- * are maintained as an List in the inherited variable \fBnoteSenders\fR.
- * The NoteSenders are named with the names of the Parts in the file. 
- * Thus, you can find out the names of the Parts in the file by getting 
- * a List of the noteSenders (using -noteSenders) and using the function
- * MKGetObjectName(noteSender).
- *
- * Much of ScorefilePeformer's functionality is 
- * documented under FilePerformer, and Performer. 
- */
 {
     NSMutableData *scorefilePrintStream; /* NXStream used for scorefile print 
 				       statements output */
@@ -207,9 +209,9 @@ Modification history:
 }
 
 -midiNoteSender:(int)aChan
-  /* Returns the first MKNoteSender whose corresponding Part has 
+  /* Returns the first MKNoteSender whose corresponding MKPart has 
      a MK_midiChan info parameter equal to
-     aChan, if any. aChan equal to 0 corresponds to the Part representing
+     aChan, if any. aChan equal to 0 corresponds to the MKPart representing
      MIDI system and channel mode messages. */
 {
     MKNoteSender *el;
