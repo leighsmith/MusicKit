@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 32;
+	objectVersion = 34;
 	objects = {
 		014780A1FFC46F29CFED3B96 = {
 			buildStyles = (
@@ -13,7 +13,7 @@
 			isa = PBXProject;
 			mainGroup = 014780A2FFC46F29CFED3B96;
 			productRefGroup = 014780BFFFC46F29CFED3B96;
-			projectDirPath = .;
+			projectDirPath = "";
 			targets = (
 				014780C1FFC46F29CFED3B96,
 			);
@@ -197,7 +197,6 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				INSTALL_PATH = "$(HOME)/Apps";
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -205,8 +204,6 @@
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
-			};
-			conditionalBuildSettings = {
 			};
 			dependencies = (
 			);
@@ -422,11 +419,22 @@
 			settings = {
 			};
 		};
+//010
+//011
+//012
+//013
+//014
+//260
+//261
+//262
+//263
+//264
 		26063802005AEBA3CFED3B96 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -451,6 +459,16 @@
 			settings = {
 			};
 		};
+//260
+//261
+//262
+//263
+//264
+//5A0
+//5A1
+//5A2
+//5A3
+//5A4
 		5A1B8FFDFFEA9AC4CFED3B96 = {
 			children = (
 				5A1B8FFEFFEA9AC4CFED3B96,
