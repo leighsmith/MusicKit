@@ -319,83 +319,6 @@ OF THIS AGREEMENT.
 {
     return self;
 }
-/*
-int bytesFromFormat(int format)
-{
-    int numBytes;
-        switch (format) {
-            case SND_FORMAT_MULAW_8:
-            case SND_FORMAT_LINEAR_8:
-                numBytes = 1;
-                break;
-            case SND_FORMAT_EMPHASIZED:
-            case SND_FORMAT_COMPRESSED:
-            case SND_FORMAT_COMPRESSED_EMPHASIZED:
-            case SND_FORMAT_DSP_DATA_16:
-            case SND_FORMAT_LINEAR_16:
-                numBytes = 2;
-                break;
-            case SND_FORMAT_LINEAR_24:
-            case SND_FORMAT_DSP_DATA_24:
-                numBytes = 3;
-                break;
-            case SND_FORMAT_LINEAR_32:
-            case SND_FORMAT_DSP_DATA_32:
-                numBytes = 4;
-                break;
-            case SND_FORMAT_FLOAT:
-                numBytes = sizeof(float);
-                break;
-            case SND_FORMAT_DOUBLE:
-                numBytes = sizeof(double);
-                break;
-            default: // just in case 
-                numBytes = 2;
-                break;
-        }
-    return numBytes;
-}
-*/
-void *getDataAddresses(int sample,
-		SndSoundStruct *theSound,
-		int *lastSampleInBlock,
-		int *currentSample)
-/* returns the base address of the block the sample resides in, with appropriate indices for the 
- * last sample the block holds. Indices count from 0 so they can be utilised directly.
- */
-{
-    int cc = theSound->channelCount;
-    int df = theSound->dataFormat;
-    int ds = theSound->dataSize;
-    int numBytes;
-    SndSoundStruct **ssList;
-    SndSoundStruct *theStruct;
-    int i=0,count=0,oldCount = 0;
-
-    if (df == SND_FORMAT_INDIRECT)
-        df = ((SndSoundStruct *)(*((SndSoundStruct **)(theSound->dataLocation))))->dataFormat;
-
-    numBytes = SndSampleWidth(df);
-
-    if ((theSound->dataFormat) != SND_FORMAT_INDIRECT) {
-        *lastSampleInBlock = ds / cc / numBytes;
-        *currentSample = sample;
-        return (char *)theSound + theSound->dataLocation;
-    }
-    ssList = (SndSoundStruct **)theSound->dataLocation;
-    while ((theStruct = ssList[i++]) != NULL) {
-        count += ((theStruct->dataSize) / cc / numBytes);
-        if (count > sample) {
-            *lastSampleInBlock = ((theStruct->dataSize) / cc / numBytes);
-            *currentSample = sample - oldCount;
-            return (char *)theStruct + theStruct->dataLocation;
-        }
-        oldCount = count;
-    }
-    *currentSample = -1;
-    *lastSampleInBlock = -1;
-    return NULL;
-}
 
 double getSoundValue(void *myData,int myType,int myActualSample)
 {
@@ -412,7 +335,8 @@ double getSoundValue(void *myData,int myType,int myActualSample)
         case SND_FORMAT_COMPRESSED_EMPHASIZED:
         case SND_FORMAT_DSP_DATA_16:
         case SND_FORMAT_LINEAR_16:
-            theValue = (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]);
+//            theValue = (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]);
+            theValue = ((short *)myData)[myActualSample];
             break;
         case SND_FORMAT_LINEAR_24:
         case SND_FORMAT_DSP_DATA_24:
@@ -420,35 +344,38 @@ double getSoundValue(void *myData,int myType,int myActualSample)
             break; /* don't know how to get 24 bit number! */
         case SND_FORMAT_LINEAR_32:
         case SND_FORMAT_DSP_DATA_32:
-            theValue = (signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample]);
+//            theValue = (signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample]);
+            theValue = ((int *)myData)[myActualSample];
             break;
         case SND_FORMAT_FLOAT:
-#ifdef __LITTLE_ENDIAN__
-            theValue = (float)NSConvertSwappedFloatToHost(((NSSwappedFloat *)myData)[myActualSample]);
-#else
+//#ifdef __LITTLE_ENDIAN__
+//            theValue = (float)NSConvertSwappedFloatToHost(((NSSwappedFloat *)myData)[myActualSample]);
+//#else
             theValue = ((float *)myData)[myActualSample];
-#endif
+//#endif
             break;
         case SND_FORMAT_DOUBLE:
-#ifdef __LITTLE_ENDIAN__
-            theValue = NSConvertSwappedDoubleToHost(((NSSwappedDouble *)myData)[myActualSample]);
-#else
+//#ifdef __LITTLE_ENDIAN__
+//            theValue = NSConvertSwappedDoubleToHost(((NSSwappedDouble *)myData)[myActualSample]);
+//#else
             theValue = ((double *)myData)[myActualSample];
-#endif
+//#endif
             break;
         default: /* just in case */
-            theValue = (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]);
+//            theValue = (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]);
+            theValue = ((short *)myData)[myActualSample];
             break;
     }
     return theValue;
 }
-double getSoundValueStereo(void *myData,int myType,int myActualSample)
+
+inline double getSoundValueStereo(void *myData,int myType,int myActualSample)
 {
     double theValue;
     switch (myType) {
         case SND_FORMAT_LINEAR_8:
             theValue = (((char *)myData)[myActualSample] +
-                    ((char *)myData)[myActualSample + 1]) * 0.5;
+                    ((char *)myData)[myActualSample + 1]) >> 1;
             break;
         case SND_FORMAT_MULAW_8:
             theValue = SndiMulaw(((char *)myData)[myActualSample]);
@@ -458,40 +385,48 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
         case SND_FORMAT_COMPRESSED_EMPHASIZED:
         case SND_FORMAT_DSP_DATA_16:
         case SND_FORMAT_LINEAR_16:
-            theValue = (int)(((signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]) + 
-                    (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample + 1])) * 0.5);
+//            theValue = (int)(((signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]) + 
+//                    (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample + 1])) * 0.5);
+            theValue = (int)( (((short *)myData)[myActualSample] + 
+                               ((short *)myData)[myActualSample + 1]) >> 1);
             break;
         case SND_FORMAT_LINEAR_24:
         case SND_FORMAT_DSP_DATA_24:
-            theValue = ((signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample]) +
-                    (signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample + 1])) * 0.5;
+//            theValue = ((signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample]) +
+//                    (signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample + 1])) * 0.5;
+            theValue = ( ((int *)myData)[myActualSample] +
+                         ((int *)myData)[myActualSample + 1] ) * 0.5;
             break; /* don't know how to get 24 bit number! */
         case SND_FORMAT_LINEAR_32:
         case SND_FORMAT_DSP_DATA_32:
-            theValue = ((signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample]) +
-                    (signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample + 1])) * 0.5;
+//            theValue = ((signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample]) +
+//                    (signed int)NSSwapBigIntToHost(((int *)myData)[myActualSample + 1])) * 0.5;
+            theValue = (long int)( ((int *)myData)[myActualSample] +
+                         ((int *)myData)[myActualSample + 1] ) >> 1;
             break;
         case SND_FORMAT_FLOAT:
-#ifdef __LITTLE_ENDIAN__
-            theValue = 0.5 * (NSConvertSwappedFloatToHost(((NSSwappedFloat *)myData)[myActualSample])
-                    + NSConvertSwappedFloatToHost(((NSSwappedFloat *)myData)[myActualSample + 1]));
-#else
-            theValue = 0.5 * (((float *)myData)[myActualSample] +
-                    ((float *)myData)[myActualSample + 1]);
-#endif
+//#ifdef __LITTLE_ENDIAN__
+//            theValue = 0.5 * (NSConvertSwappedFloatToHost(((NSSwappedFloat *)myData)[myActualSample])
+//                    + NSConvertSwappedFloatToHost(((NSSwappedFloat *)myData)[myActualSample + 1]));
+//#else
+            theValue = 0.5 * ( ((float *)myData)[myActualSample] +
+                               ((float *)myData)[myActualSample + 1] );
+//#endif
             break;
         case SND_FORMAT_DOUBLE:
-#ifdef __LITTLE_ENDIAN__
-            theValue = 0.5 * (NSConvertSwappedDoubleToHost(((NSSwappedDouble *)myData)[myActualSample])
-                    + NSConvertSwappedDoubleToHost(((NSSwappedDouble *)myData)[myActualSample + 1]));
-#else
-            theValue = 0.5 * (((double *)myData)[myActualSample] +
-                    ((double *)myData)[myActualSample + 1]);
-#endif
+//#ifdef __LITTLE_ENDIAN__
+//            theValue = 0.5 * (NSConvertSwappedDoubleToHost(((NSSwappedDouble *)myData)[myActualSample])
+//                    + NSConvertSwappedDoubleToHost(((NSSwappedDouble *)myData)[myActualSample + 1]));
+//#else
+            theValue = 0.5 * ( ((double *)myData)[myActualSample] +
+                               ((double *)myData)[myActualSample + 1] );
+//#endif
             break;
         default: /* just in case */
-            theValue = 0.5 * ((signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]) +
-                    (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample + 1]));
+//            theValue = 0.5 * ((signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample]) +
+//                    (signed short)NSSwapBigShortToHost(((short *)myData)[myActualSample + 1]));
+            theValue = 0.5 * ( ((short *)myData)[myActualSample] +
+                               ((short *)myData)[myActualSample + 1] );
             break;
     }
     return theValue;
@@ -668,48 +603,42 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
     frag = (((SndSoundStruct *) [sound soundStruct])->dataFormat ==
 	    SND_FORMAT_INDIRECT);
 
-    if (type == SND_FORMAT_LINEAR_8) {
-      maxAmp = 127;
-      sampleSize = 1;
+    switch (type) {
+        case SND_FORMAT_LINEAR_8:
+            maxAmp = 127;
+            sampleSize = 1;
+            break;
+        case SND_FORMAT_LINEAR_24:
+        case SND_FORMAT_DSP_DATA_24:
+            maxAmp = (1 << 23) - 1;
+            sampleSize = 3;
+            break;
+        case SND_FORMAT_LINEAR_32:
+        case SND_FORMAT_DSP_DATA_32:
+            maxAmp = (1 << 31) - 1;
+            sampleSize = 4;
+	    break;
+        case SND_FORMAT_MULAW_8:
+            maxAmp = 32767;
+            sampleSize = 1;
+	    break;
+        case SND_FORMAT_LINEAR_16:
+        case SND_FORMAT_EMPHASIZED:
+        case SND_FORMAT_COMPRESSED:
+        case SND_FORMAT_COMPRESSED_EMPHASIZED:
+        case SND_FORMAT_DSP_DATA_16:
+        default:
+            maxAmp = 32767;
+            sampleSize = 2;
+            break;
+        case SND_FORMAT_FLOAT:
+            maxAmp = 1;
+            sampleSize = 4;
+            break;
+        case SND_FORMAT_DOUBLE:
+            maxAmp = 1;
+            sampleSize = 8;
     }
-
-    else
-
-      if (type == SND_FORMAT_LINEAR_24 || type == SND_FORMAT_DSP_DATA_24) {
-	maxAmp = (2 << 23) - 1;
-	sampleSize = 3;
-      }
-
-      else
-
-	if (type == SND_FORMAT_LINEAR_32 || type == SND_FORMAT_DSP_DATA_32) {
-            maxAmp = (2 << 31) - 1;
-	    sampleSize = 4;
-	}
-
-	else
-
-	  if (type == SND_FORMAT_MULAW_8 || 
-                    type == SND_FORMAT_LINEAR_16 || 
-                    type == SND_FORMAT_EMPHASIZED || 
-                    type == SND_FORMAT_COMPRESSED || 
-                    type == SND_FORMAT_COMPRESSED_EMPHASIZED || 
-                    type == SND_FORMAT_DSP_DATA_16) {
-	    maxAmp = 32767;
-	    sampleSize = 2;
-	  }
-
- /* floating point: should search for max value */
-
-	  else {
-	    maxAmp = 32767;
-	    sampleSize = 4;
-	  };
-
-    /* mulaw has only one sample, but a maxAmp of 32767 */
-
-    if (type == SND_FORMAT_MULAW_8)
-      sampleSize = 1;
 
     chanCount = [sound channelCount];
     theData = [(Snd *)sound data];
@@ -730,18 +659,18 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 	whichChannel = stereoMode;
     }
 
-    if (doStereo)
-
+    if (doStereo) {
       if (chanCount < 2) {
 	doStereo = NO;
 	whichChannel = 0;
       }
+    }
 
     /* does the following:
-          * 1. set up loop from frame left to right, stepping 1 pixel
-          * 2. scan sound data for time equiv to 1 pixel, finding max and min vals
-          * 3. plot max and min values, and remember last ones.
-          */
+     * 1. set up loop from frame left to right, stepping 1 pixel
+     * 2. scan sound data for time equiv to 1 pixel, finding max and min vals
+     * 3. plot max and min values, and remember last ones.
+     */
 
     cacheMaxArray = (float *)malloc(sizeof(float) * (NSWidth(rects) + 3));
     cacheMinArray = (float *)malloc(sizeof(float) * (NSWidth(rects) + 3));
@@ -815,7 +744,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
         if ((int)actualBaseF != ceil(actualBaseF)) actualBase = ceil(actualBaseF);
         else actualBase = (int)(actualBaseF);
         j = firstOfNext = actualBase; /* just initialise it for now */
-        theData = getDataAddresses(actualBase,
+        theData = SndGetDataAddresses(actualBase,
                         [sound soundStruct],
                         &m1, 
                         &c1);
@@ -836,7 +765,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
             j = actualBase;
             /* need to establish initial values for base and counter here, for fragged sounds */
             while (j < firstOfNext) {
-                if (c1 >= m1) theData = getDataAddresses(actualBase,
+                if (c1 >= m1) theData = SndGetDataAddresses(actualBase,
                                                 [sound soundStruct],&m1,&c1);
                 if (j < sampCount)
                     theValue = doStereo ? 
@@ -1004,44 +933,42 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
         float max1 = cacheMaxArray[0] * ampScaler + halfHeight;
         float min1 = cacheMinArray[0] * ampScaler + halfHeight;
 
-        if (endX >= NSWidth([self frame]))
-	  endX = NSWidth([self frame]) - 1;
+        if (endX >= NSWidth([self frame])) {
+            endX = NSWidth([self frame]) - 1;
+        }
 
         for (i = startX;i<endX;i++) {
 
             float max2 = cacheMaxArray[i + 1 - startX] *
-			ampScaler + halfHeight;
+                        ampScaler + halfHeight;
 
             float min2 = cacheMinArray[i + 1 - startX] *
-			ampScaler + halfHeight;
+                        ampScaler + halfHeight;
 
             CGContextMoveToPoint(ctx, i+0.5, max1);
             CGContextAddLineToPoint(ctx, i+0.5, min1);
 
-	    /* still one more cached point */
+            /* still one more cached point */
 
             if (i < endX) {
 
 /* if part of the line is outside the one before if both points encompass */
 
-                if ((min2 <= max1 && min2 >= min1) 			
-                    || (max2 >= min1 && max2 <= max1) 		
-                    || (max2 >= max1 && min2 <= min1)) {		
+                if ((min2 <= max1 && min2 >= min1)
+                    || (max2 >= min1 && max2 <= max1)
+                    || (max2 >= max1 && min2 <= min1)) {
                     max1 = max2; min1 = min2;
                     continue;
                 }
 
 /* so we draw line from appropriate end, to start of next line */
 
-                if (min2 > max1 && max1 != min1) {
-
-		  /*reverse to top if necessary */
-
-		  CGContextMoveToPoint(ctx, i+0.5, max1);
-		}
+                if (min2 > max1 && max1 != min1) { /*reverse to top if necessary */
+                  CGContextMoveToPoint(ctx, i+0.5, max1);
+                }
 
                 CGContextAddLineToPoint(ctx, i + 1 + 0.5,
-					(min2 > max1) ? min2 : max2);
+                                (min2 > max1) ? min2 : max2);
 
                 max1 = max2; min1 = min2;
             }
@@ -1061,7 +988,6 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 			     cacheMinArray[0] * ampScaler + halfHeight);
 
         for (i = startX;i<endX;i++) {
-
             CGContextAddLineToPoint(ctx, i + 0.5,
 			cacheMinArray[i - startX]* ampScaler + halfHeight);
         }
@@ -1094,7 +1020,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
         if (i > 0)
 	  i--;
 
-        theData = getDataAddresses(i,
+        theData = SndGetDataAddresses(i,
                         [sound soundStruct],
                         &m1, 
                         &c1);
@@ -1129,7 +1055,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
         while (i <= myLast) {
 
 	  if (c1 >= m1)
-	    theData = getDataAddresses(i, [sound soundStruct],
+	    theData = SndGetDataAddresses(i, [sound soundStruct],
 				       &m1,&c1);
 	  theValue = doStereo ? 
                 getSoundValueStereo(theData,type,c1 * chanCount) :
