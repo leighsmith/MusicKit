@@ -60,8 +60,8 @@ communication between the <acronym>DSP</acronym> and the host.  Requests for use
 <figure id="synthesis">
 <title>Synthesis classes</title>
 <mediaobject>
-<imageobject><imagedata fileref="Synthesis.eps"></imageobject>
-<imageobject><imagedata fileref="Synthesis.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicSynthesis.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicSynthesis.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -227,19 +227,19 @@ values:</para>
 
 	  <tbody>
 	    <row>
-<entry>MK_devOpen</entry>
+<entry><constant>MK_devOpen</constant></entry>
 <entry>The <classname>MKOrchestra</classname> is open but not running.</entry>
 	    </row>
 	    <row>
-<entry>MK_devRunning</entry>
+<entry><constant>MK_devRunning</constant></entry>
 <entry>The <classname>MKOrchestra</classname> is open and running.</entry>
 	    </row>
 	    <row>
-<entry>MK_devStopped</entry>
+<entry><constant>MK_devStopped</constant></entry>
 <entry>The <classname>MKOrchestra</classname> has been running but is now stopped.</entry>
 	    </row>
 	    <row>
-<entry>MK_devClosed</entry>
+<entry><constant>MK_devClosed</constant></entry>
 <entry>The <classname>MKOrchestra</classname> is closed.</entry>
 	    </row>
 	</tbody>
@@ -767,29 +767,30 @@ or y memory, while <classname>MKUnitGenerator</classname>s represent
 <figure id="DSPMemoryDivision">
 <title>DSP Memory Division</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS0.eps"></imageobject>
-<imageobject><imagedata fileref="Synthesis.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicSynthAndProc0.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicSynthAndProc0.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
 
-<para>The <productname>MusicKit</productname> further divides <acronym>DSP</acronym> memory into logical segments,
-represented as integer constants.  In designing a
+<para>The <productname>MusicKit</productname> further divides
+<acronym>DSP</acronym> memory into logical segments, represented as
+integer constants.  In designing a
 <classname>MKSynthPatch</classname>, you only need to be concerned
 with four of these segments:</para>
 
 <itemizedlist>
-<listitem><para><emphasis role="bold">MK_xPatch</emphasis> is used for
+<listitem><para><constant>MK_xPatch</constant> is used for
 patchpoints in x memory.</para></listitem>
 
-<listitem><para><emphasis role="bold">MK_yPatch</emphasis> is for
+<listitem><para><constant>MK_yPatch</constant> is for
 patchpoints in y memory.</para></listitem>
 
-<listitem><para><emphasis role="bold">MK_xData</emphasis> is for
+<listitem><para><constant>MK_xData</constant> is for
 non-patchpoint <classname>MKSynthData</classname> objects in x
 memory.</para></listitem>
 
-<listitem><para><emphasis role="bold">MK_yData</emphasis> is for
+<listitem><para><constant>MK_yData</constant> is for
 non-patchpoint <classname>MKSynthData</classname> objects in y
 memory.</para></listitem>
 </itemizedlist>
@@ -866,16 +867,17 @@ that adds a stream of (two-channel) sample data to the stereo output
 sample stream.  The single memory argument (the &ldquo;x&rdquo; in
 Out2sumUGx) is the <classname>MKUnitGenerator</classname>'s input.
 Simplicity uses the Out2sumUGx leaf class so the
-<classname>MKUnitGenerator</classname> can read the MK_xPatch
-patchpoint that's written to by OscgUGxy.  <xref
-linkend="SimplicitysPatch"> shows a diagram of the complete patch,
-superimposed on the <acronym>DSP</acronym> memory layout.</para>
+<classname>MKUnitGenerator</classname> can read the
+<constant>MK_xPatch</constant> patchpoint that's written to by
+OscgUGxy.  <xref linkend="SimplicitysPatch"> shows a diagram of the
+complete patch, superimposed on the <acronym>DSP</acronym> memory
+layout.</para>
 
 <figure id="SimplicitysPatch">
 <title>Simplicity's Patch</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS1.eps"></imageobject>
-<imageobject><imagedata fileref="Synthesis.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicSynthAndProc1.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicSynthAndProc1.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -924,8 +926,8 @@ and output.</para>
 <figure id="ConventionalPatchDiagram">
 <title>Conventional Patch Diagram</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS2.eps"></imageobject>
-<imageobject><imagedata fileref="Synthesis.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicSynthAndProc2.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicSynthAndProc2.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -1309,8 +1311,8 @@ applications. The patch is illustrated in <xref linkend="EnvysPatch">.</para>
 <figure id="EnvysPatch">
 <title>Envy's Patch</title>
 <mediaobject>
-<imageobject><imagedata fileref="EPS3.eps"></imageobject>
-<imageobject><imagedata fileref="Synthesis.png"></imageobject>
+<imageobject><imagedata fileref="Images/MusicSynthAndProc3.eps"></imageobject>
+<imageobject><imagedata fileref="Images/MusicSynthAndProc3.gif"></imageobject>
 <textobject><phrase>MusicKit Image</phrase></textobject>
 </mediaobject>
 </figure>
@@ -1515,10 +1517,10 @@ used when applying parameter values.</para>
 
 <para>The Asymp and Asympenv <classname>MKUnitGenerator</classname>s
 are envelope handlers; they translates the data in an
-<classname>MKEnvelope</classname> object and load it onto the <acronym>DSP</acronym>.  An
-<classname>MKEnvelope</classname> object is associated with an Asymp
-or Asympenv through the <emphasis
-role="bold">MKUpdateAsymp()</emphasis> function. The only difference
+<classname>MKEnvelope</classname> object and load it onto the
+<acronym>DSP</acronym>.  An <classname>MKEnvelope</classname> object
+is associated with an Asymp or Asympenv through the
+<function>MKUpdateAsymp()</function> function. The only difference
 between Asymp and Asympenv is that the former allows for arbitrarily
 long envelopes and the latter is better-suited to interactive
 real-time applications.</para>
@@ -1735,44 +1737,44 @@ role="bold">noteUpdate:</emphasis>).  There are seven phrase
 states:</para>
 
 <itemizedlist>
-<listitem><para><emphasis role="bold">MK_phraseOn</emphasis> means
+<listitem><para><constant>MK_phraseOn</constant> means
 that the received <classname>MKNote</classname> is a noteOn and the
 <classname>MKSynthPatch</classname> has been freshly allocated to
 synthesize the <classname>MKNote</classname>.  This status indicates
 the beginning of a new phrase.</para>
 </listitem>
 
-<listitem><para><emphasis role="bold">MK_phraseRearticulate</emphasis>
+<listitem><para><constant>MK_phraseRearticulate</constant>
 indicates a noteOn that rearticulates an existing phrase.</para>
 </listitem>
 
-<listitem><para><emphasis role="bold">MK_phraseOnPreempt</emphasis> is
-also used for noteOns, but it indicates that the
+<listitem><para><constant>MK_phraseOnPreempt</constant> is also used
+for noteOns, but it indicates that the
 <classname>MKSynthPatch</classname> has been preempted to synthesize
-the <classname>MKNote</classname>.  Like <emphasis
-role="bold">MK_phraseOn</emphasis>, this status means that a new
-phrase is beginning.</para>
+the <classname>MKNote</classname>.  Like
+<constant>MK_phraseOn</constant>, this status means that a new phrase
+is beginning.</para>
 </listitem>
 
-<listitem><para><emphasis role="bold">MK_phraseUpdate</emphasis> means
+<listitem><para><constant>MK_phraseUpdate</constant> means
 that the <classname>MKNote</classname> is a noteUpdate and the
 <classname>MKSynthPatch</classname> is in the attack or stickpoint
 portions of its <classname>MKEnvelope</classname>s (the
-<classname>MKSynthPatch</classname>'s synthStatus is <emphasis
-role="bold">MK_running</emphasis>).</para>
+<classname>MKSynthPatch</classname>'s synthStatus is
+<constant>MK_running</constant>).</para>
 </listitem>
 
-<listitem><para><emphasis role="bold">MK_phraseOff</emphasis>
+<listitem><para><constant>MK_phraseOff</constant>
 indicates a noteOff.</para>
 </listitem>
 
-<listitem><para><emphasis role="bold">MK_phraseOffUpdate</emphasis> is
+<listitem><para><constant>MK_phraseOffUpdate</constant> is
 for a noteUpdate that arrives during the release portion of the
-<classname>MKEnvelope</classname>s (synthStatus is <emphasis
-role="bold">MK_finishing</emphasis>).</para>
+<classname>MKEnvelope</classname>s (synthStatus is
+<constant>MK_finishing</constant>).</para>
 </listitem>
 
-<listitem><para><emphasis role="bold">MK_phraseEnd</emphasis> is used
+<listitem><para><constant>MK_phraseEnd</constant> is used
 to indicate the end of a phrase.</para>
 </listitem>
 </itemizedlist>
@@ -1794,10 +1796,10 @@ role="bold">MK_noPhraseActivity</emphasis>.</para>
 <classname>MKSynthPatch</classname> in a test that leads to
 specialized behavior.  For example, you may want to apply certain
 noteUpdate parameters differently, depending on whether the phrase
-status is <emphasis role="bold">MK_phraseUpdate</emphasis> or
-<emphasis role="bold">MK_phraseOffUpdate</emphasis>.  Two conventional
-uses of phrase status&horbar;as an argument to the <emphasis
-role="bold">MKUpdateAsymp()</emphasis> function and to determine if a
+status is <constant>MK_phraseUpdate</constant> or
+<constant>MK_phraseOffUpdate</constant>.  Two conventional uses of
+phrase status&horbar;as an argument to the
+<function>MKUpdateAsymp()</function> function and to determine if a
 <classname>MKNote</classname> is the beginning of a new
 phrase&horbar;are demonstrated in the next section.</para>
 </sect4>
@@ -1820,10 +1822,10 @@ appropriate variable.</para>
 more complicated in the implementation of Envy than in that of
 Simplicity.  Because of its use of <classname>MKEnvelope</classname>
 objects, Envy's amplitude and frequency depend on the values of a
-number of related parameters.  The <productname>MusicKit</productname> provides a C function
-called <function>MKUpdateAsymp()</function> that helps to
-untangle this web.  The function takes, as arguments, all the objects
-and parameter values associated with a particular
+number of related parameters.  The <productname>MusicKit</productname>
+provides a C function called <function>MKUpdateAsymp()</function> that
+helps to untangle this web.  The function takes, as arguments, all the
+objects and parameter values associated with a particular
 <classname>MKEnvelope</classname> and applies them in a predictable
 manner to the attribute that the <classname>MKEnvelope</classname>
 controls.</para>
@@ -1854,13 +1856,15 @@ Asympenv)</para></listitem>
 <listitem><para>The current phrase status</para></listitem>
 </orderedlist>
 
-<para>The function's behavior is described in <xref linkend=MKFunctionReferences>.
+<para>The function's behavior is described in 
+<ulink url="&MKFunctionReferences;">
+<productname>MusicKit</productname> Function References</ulink>.
 Briefly, it applies an <classname>MKEnvelope</classname> (argument 2)
 to an Asymp or Asympenv (argument 1) after properly scaling the
 <classname>MKEnvelope</classname>'s value range (arguments 3 and 4)
 and setting its attack and release times (arguments 5 and 6).
 Portamento (argument 7) is used only if the phrase status (argument 8)
-is <emphasis role="bold">MK_phraseRearticulate</emphasis>.</para>
+is <constant>MK_phraseRearticulate</constant>.</para>
 
 <para>Envy's implementation of the <emphasis
 role="bold">applyParameters:</emphasis> method demonstrates the
