@@ -3,13 +3,16 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 34;
+	objectVersion = 39;
 	objects = {
 		F5D048B50280381201A80103 = {
+			buildSettings = {
+			};
 			buildStyles = (
 				F5D048CE0280381201A80103,
 				F5D048CF0280381201A80103,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = F5D048B60280381201A80103;
 			productRefGroup = F5D048C40280381201A80103;
@@ -23,12 +26,12 @@
 				F5D048B70280381201A80103,
 				F5D048B90280381201A80103,
 				F5D048C00280381201A80103,
-				F5D048C30280381201A80103,
 				F5D048C40280381201A80103,
 			);
 			isa = PBXGroup;
 			name = mixscorefiles;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5D048B70280381201A80103 = {
 			children = (
@@ -37,54 +40,32 @@
 			isa = PBXGroup;
 			name = "Other Sources";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5D048B80280381201A80103 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = mixscorefiles_main.m;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5D048B90280381201A80103 = {
 			children = (
-				F5D048BA0280381201A80103,
-				F5D048BB0280381201A80103,
-				F5D048BC0280381201A80103,
-				F5D048BD0280381201A80103,
-				F5D048BE0280381201A80103,
 				F5D048BF0280381201A80103,
 			);
 			isa = PBXGroup;
 			name = "Supporting Files";
 			refType = 4;
-		};
-		F5D048BA0280381201A80103 = {
-			isa = PBXFileReference;
-			path = Makefile.preamble;
-			refType = 4;
-		};
-		F5D048BB0280381201A80103 = {
-			isa = PBXFileReference;
-			path = Makefile;
-			refType = 4;
-		};
-		F5D048BC0280381201A80103 = {
-			isa = PBXFileReference;
-			path = Makefile.postamble;
-			refType = 4;
-		};
-		F5D048BD0280381201A80103 = {
-			isa = PBXFileReference;
-			path = m.template;
-			refType = 4;
-		};
-		F5D048BE0280381201A80103 = {
-			isa = PBXFileReference;
-			path = h.template;
-			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5D048BF0280381201A80103 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = README;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5D048C00280381201A80103 = {
 			children = (
@@ -94,24 +75,25 @@
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5D048C10280381201A80103 = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = Foundation.framework;
 			path = /System/Library/Frameworks/Foundation.framework;
 			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		F5D048C20280381201A80103 = {
+			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = MusicKit.framework;
 			path = /Library/Frameworks/MusicKit.framework;
 			refType = 0;
-		};
-		F5D048C30280381201A80103 = {
-			isa = PBXFileReference;
-			name = "Import Log.rtf";
-			path = "/Users/sbrandon/MK/MusicKit/Examples/mixscorefiles/Import Log.rtf";
-			refType = 0;
+			sourceTree = "<absolute>";
 		};
 		F5D048C40280381201A80103 = {
 			children = (
@@ -120,11 +102,15 @@
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5D048C50280381201A80103 = {
+			explicitFileType = "compiled.mach-o.executable";
+			fallbackIsa = PBXFileReference;
 			isa = PBXExecutableFileReference;
 			path = mixscorefiles;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F5D048C60280381201A80103 = {
 			buildPhases = (
@@ -136,7 +122,6 @@
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
 				INSTALL_PATH = /bin;
-				OPTIMIZATION_CFLAGS = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -152,14 +137,13 @@
 			productInstallPath = /bin;
 			productName = "mixscorefiles (Tool)";
 			productReference = F5D048C50280381201A80103;
-			shouldUseHeadermap = 0;
 		};
 		F5D048C70280381201A80103 = {
 			buildActionMask = 2147483647;
 			files = (
 			);
 			isa = PBXHeadersBuildPhase;
-			name = Headers;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F5D048C80280381201A80103 = {
 			buildActionMask = 2147483647;
@@ -167,14 +151,13 @@
 				F5D048C90280381201A80103,
 			);
 			isa = PBXSourcesBuildPhase;
-			name = Sources;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F5D048C90280381201A80103 = {
 			fileRef = F5D048B80280381201A80103;
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Debug,
 				);
 			};
 		};
@@ -185,7 +168,7 @@
 				F5D048CC0280381201A80103,
 			);
 			isa = PBXFrameworksBuildPhase;
-			name = "Frameworks & Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F5D048CB0280381201A80103 = {
 			fileRef = F5D048C10280381201A80103;
@@ -204,13 +187,18 @@
 			files = (
 			);
 			isa = PBXRezBuildPhase;
-			name = "ResourceManager Resources";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F5D048CE0280381201A80103 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -220,6 +208,8 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
