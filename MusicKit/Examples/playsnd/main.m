@@ -7,7 +7,7 @@
 //
 //  Original Author: SKoT McDonald <skot@tomandandy.com>
 //
-//  Contributors: Stephen Brandon
+//  Contributors: Stephen Brandon, Leigh Smith
 //
 //  Copyright (c) 2001-2002, The MusicKit Project.  All rights reserved.
 //
@@ -24,7 +24,7 @@
 // Version info
 #define V_MAJ  1
 #define V_MIN  1
-#define V_TINY 1
+#define V_PATCH 2
 
 #define USE_SNDEXPT 0
 
@@ -47,7 +47,7 @@ void printError(char* msg, int iPossibleReturnCode)
 
 void showHelp(const char *absolutePath)
 {
-    const char *commandLineName = rindex(absolutePath, '/');
+    const char *commandLineName = strrchr(absolutePath, '/');
 
     if(commandLineName == NULL)
         commandLineName = absolutePath;
@@ -122,7 +122,8 @@ int main (int argc, const char * argv[])
 		    if (i < argc) deltaTime = atof(argv[i]);
 		    else          printError("No relative playback rate given after option -R",-1);
 		    break;
-		case 'v': printf("playsnd %i.%i.%i  skot@tomandandy.com  Oct 2 2001\n",V_MAJ,V_MIN,V_TINY); break;
+		case 'v': printf("playsnd %i.%i.%i\n", V_MAJ, V_MIN, V_PATCH);
+                    break;
 		case 'h': showHelp(argv[0]); break;
 		case 'd':
 		    i++;
