@@ -1,0 +1,367 @@
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 30;
+	objects = {
+		11F73AE4001E6990CFED3B96 = {
+			isa = PBXProject;
+			mainGroup = 11F73AE5001E6990CFED3B96;
+			productRefGroup = 11F73AFE001E6990CFED3B96;
+			projectDirPath = .;
+			targets = (
+				11F73B00001E6990CFED3B96,
+			);
+		};
+		11F73AE5001E6990CFED3B96 = {
+			children = (
+				11F73AE6001E6990CFED3B96,
+				11F73AE8001E6990CFED3B96,
+				11F73AEA001E6990CFED3B96,
+				11F73AEC001E6990CFED3B96,
+				11F73AF7001E6990CFED3B96,
+				11F73AFE001E6990CFED3B96,
+			);
+			isa = PBXGroup;
+			name = example3;
+			refType = 4;
+		};
+		11F73AE6001E6990CFED3B96 = {
+			children = (
+				11F73AE7001E6990CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+		};
+		11F73AE7001E6990CFED3B96 = {
+			isa = PBXFileReference;
+			path = MyObject.m;
+			refType = 4;
+		};
+		11F73AE8001E6990CFED3B96 = {
+			children = (
+				11F73AE9001E6990CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Headers;
+			refType = 4;
+		};
+		11F73AE9001E6990CFED3B96 = {
+			isa = PBXFileReference;
+			path = MyObject.h;
+			refType = 4;
+		};
+		11F73AEA001E6990CFED3B96 = {
+			children = (
+				11F73AEB001E6990CFED3B96,
+			);
+			isa = PBXGroup;
+			name = "Other Sources";
+			refType = 4;
+		};
+		11F73AEB001E6990CFED3B96 = {
+			isa = PBXFileReference;
+			path = example3_main.m;
+			refType = 4;
+		};
+		11F73AEC001E6990CFED3B96 = {
+			children = (
+				11F73AED001E6990CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Interfaces;
+			refType = 4;
+		};
+		11F73AED001E6990CFED3B96 = {
+			children = (
+				11F73AEE001E6990CFED3B96,
+				11F73AEF001E6990CFED3B96,
+			);
+			isa = PBXVariantGroup;
+			name = example3.nib;
+			refType = 4;
+		};
+		11F73AEE001E6990CFED3B96 = {
+			isa = PBXFileReference;
+			name = "English - windows";
+			path = "English.lproj/example3-windows.nib";
+			refType = 4;
+		};
+		11F73AEF001E6990CFED3B96 = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/example3.nib;
+			refType = 4;
+		};
+		11F73AF7001E6990CFED3B96 = {
+			children = (
+				11F73AF8001E6990CFED3B96,
+				11F73AF9001E6990CFED3B96,
+				11F73AFA001E6990CFED3B96,
+				11F73AFB001E6990CFED3B96,
+				11F73AFC001E6990CFED3B96,
+			);
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			refType = 4;
+		};
+		11F73AF8001E6990CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = MKPerformSndMIDI.framework;
+			path = /Library/Frameworks/MKPerformSndMIDI.framework;
+			refType = 0;
+		};
+		11F73AF9001E6990CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = MKDSP.framework;
+			path = /Library/Frameworks/MKDSP.framework;
+			refType = 0;
+		};
+		11F73AFA001E6990CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = MusicKit.framework;
+			path = /Library/Frameworks/MusicKit.framework;
+			refType = 0;
+		};
+		11F73AFB001E6990CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = AppKit.framework;
+			path = /System/Library/Frameworks/AppKit.framework;
+			refType = 0;
+		};
+		11F73AFC001E6990CFED3B96 = {
+			isa = PBXFrameworkReference;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+		};
+		11F73AFE001E6990CFED3B96 = {
+			children = (
+				11F73AFF001E6990CFED3B96,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+		11F73AFF001E6990CFED3B96 = {
+			isa = PBXApplicationReference;
+			path = example3.app;
+			refType = 3;
+		};
+		11F73B00001E6990CFED3B96 = {
+			buildPhases = (
+				11F73B01001E6990CFED3B96,
+				11F73B03001E6990CFED3B96,
+				11F73B05001E6990CFED3B96,
+				11F73B08001E6990CFED3B96,
+				11F73B0E001E6990CFED3B96,
+			);
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\"";
+				OPTIMIZATION_CFLAGS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WRAPPER_EXTENSION = app;
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+			);
+			isa = PBXApplicationTarget;
+			name = "example3 (Application)";
+			productInstallPath = /Applications;
+			productName = example3;
+			productReference = 11F73AFF001E6990CFED3B96;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
+<plist version=\"0.9\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>example3</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.0.1d1</string>
+	<key>NSExtensions</key>
+	<dict/>
+	<key>NSMainNibFile</key>
+	<string>example3.nib</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+</dict>
+</plist>
+";
+			shouldUseHeadermap = 0;
+		};
+		11F73B01001E6990CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				11F73B02001E6990CFED3B96,
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		11F73B02001E6990CFED3B96 = {
+			fileRef = 11F73AE9001E6990CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		11F73B03001E6990CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				11F73B04001E6990CFED3B96,
+			);
+			isa = PBXResourcesBuildPhase;
+			name = "Bundle Resources";
+		};
+		11F73B04001E6990CFED3B96 = {
+			fileRef = 11F73AED001E6990CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		11F73B05001E6990CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				11F73B06001E6990CFED3B96,
+				11F73B07001E6990CFED3B96,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		11F73B06001E6990CFED3B96 = {
+			fileRef = 11F73AE7001E6990CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		11F73B07001E6990CFED3B96 = {
+			fileRef = 11F73AEB001E6990CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Debug,
+				);
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		11F73B08001E6990CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+				11F73B09001E6990CFED3B96,
+				11F73B0A001E6990CFED3B96,
+				11F73B0B001E6990CFED3B96,
+				11F73B0C001E6990CFED3B96,
+				11F73B0D001E6990CFED3B96,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		11F73B09001E6990CFED3B96 = {
+			fileRef = 11F73AF8001E6990CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		11F73B0A001E6990CFED3B96 = {
+			fileRef = 11F73AF9001E6990CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		11F73B0B001E6990CFED3B96 = {
+			fileRef = 11F73AFA001E6990CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		11F73B0C001E6990CFED3B96 = {
+			fileRef = 11F73AFB001E6990CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		11F73B0D001E6990CFED3B96 = {
+			fileRef = 11F73AFC001E6990CFED3B96;
+			isa = PBXBuildFile;
+			settings = {
+				INCLUDED_OSS = (
+					MACOS,
+					WINDOWS,
+					PDOUNIX,
+				);
+			};
+		};
+		11F73B0E001E6990CFED3B96 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+	};
+	rootObject = 11F73AE4001E6990CFED3B96;
+}
