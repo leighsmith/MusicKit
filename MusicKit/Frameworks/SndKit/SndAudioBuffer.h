@@ -179,6 +179,14 @@
 - (void*) data;
 
 /*!
+    @method     hasSameFormatAsBuffer:
+    @abstract   compares the data format and length of this buffer to a second buffer
+    @param      buff
+    @result     TRUE if the buffers have the same format and length
+*/
+- (BOOL) hasSameFormatAsBuffer: (SndAudioBuffer*) buff;
+
+/*!
     @method     format
     @abstract
     @discussion
