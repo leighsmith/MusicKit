@@ -112,89 +112,105 @@ void SndChangeSampleRate(const SndFormat fromSound,
 // dataFormat is the same going in and going out.
 // This is capable of in place conversion if inPtr and outPtr are the same.
 // TODO This is a good candidate for Altivec optimisation
-void SndChannelDecrease(void *inPtr, void *outPtr, unsigned int numberOfSampleFrames, int oldNumChannels, int newNumChannels, SndSampleFormat dataFormat)
+void SndChannelDecrease(void *inPtr, 
+			void *outPtr, 
+			unsigned long numberOfSampleFrames, 
+			int oldNumChannels, 
+			int newNumChannels, 
+			SndSampleFormat dataFormat, 
+			short *map)
 {
-    int chansToSum = oldNumChannels / newNumChannels;
-    int passes = newNumChannels; /* convenience name */
-    int m, n;
-    unsigned int frame;
-    unsigned int baseIndex;
-    long int sum     = 0;
-    float sumFloat   = 0;
-    double sumDouble = 0;
-
-    for (frame = 0; frame < numberOfSampleFrames; frame++) {
-        for (m = 0; m < passes; m++) { /* m and n take us through 1 channel independent sample */
-            baseIndex = frame * oldNumChannels + m * newNumChannels;
-            /* fairly inefficient.*/
-            for (n = 0; n < chansToSum; n++) {
-                switch(dataFormat) {
-		    case SND_FORMAT_LINEAR_8: /* endian ok */
-			sum += ((signed char *) inPtr)[baseIndex + n];
-			break;
-		    case SND_FORMAT_MULAW_8: /* endian ok */
-			sum += SndMuLawToLinear(((unsigned char *) inPtr)[baseIndex + n]);
-			break;
-		    case SND_FORMAT_LINEAR_16:
-			sum += ((SND_HWORD *) inPtr)[baseIndex + n];
-			break;
-		    case SND_FORMAT_LINEAR_24:
-			// TODO Not endian ok, the shift down currently assumes big endian!
-			sum += *((long int *)((signed char *) inPtr + (baseIndex + n) * 3)) >> 8;
-			break;
-		    case SND_FORMAT_LINEAR_32:
-			sumDouble += (long int)(((signed long int *) inPtr)[baseIndex + n]);
-			break;
-		    case SND_FORMAT_FLOAT:
-			sumFloat += (float)(((float *) inPtr)[baseIndex + n]);
-			break;
-		    case SND_FORMAT_DOUBLE:
-			sumDouble += (double)(((double *) inPtr)[baseIndex + n]);
-			break;
-		    default:
-			NSLog(@"SndChannelDecrease: can\'t decrease channels of format %d samples\n", dataFormat);
-                }
-            } /* summing several channels into 1 channel */
-	    
-            switch(dataFormat) {
-		case SND_FORMAT_FLOAT:
-		    ((float *) outPtr)[frame * newNumChannels + m] = (float)(sumFloat / chansToSum);
-		    sumFloat = 0;
-		    break;
-		case SND_FORMAT_DOUBLE:
-		    ((double *) outPtr)[frame * newNumChannels + m] = (double)(sumDouble / chansToSum);
-		    sumDouble = 0;
-		    break;
-		case SND_FORMAT_LINEAR_16:
-		    ((signed short *) outPtr)[frame * newNumChannels + m] = (signed short)(sum / chansToSum);
-		    sum = 0;
-		    break;
-		case SND_FORMAT_LINEAR_8:
-		    ((signed char *) outPtr)[frame * newNumChannels + m] = (signed char)(sum / chansToSum);
-		    sum = 0;
-		    break;
-		case SND_FORMAT_MULAW_8:
-		    ((unsigned char *) outPtr)[frame * newNumChannels + m] = (unsigned char)SndLinearToMuLaw((short)(sum / chansToSum));
-		    sum = 0;
-		    break;
-		case SND_FORMAT_LINEAR_32:
-		    ((signed long int *) outPtr)[frame * newNumChannels + m] = (signed long int)(sumDouble / chansToSum);
-		    sumDouble = 0;
-		default:
-		    NSLog(@"SndChannelDecrease: can\'t decrease channels of format %d samples\n", dataFormat);
-            }
-        } /* passes through channel independent sample */
+    int oldChannelIndex;
+    int newChannelIndex;
+    unsigned long frame;
+    long int *sumInteger = (long int *) calloc(newNumChannels, sizeof(long int));
+    float *sumFloat = (float *) calloc(newNumChannels, sizeof(float));
+    double *sumDouble = (double *) calloc(newNumChannels, sizeof(double));
+    int *channelSumCount = (int *) calloc(newNumChannels, sizeof(int));
+    
+    // Now determine how many old channels are to be summed for each new channel.
+    channelSumCount = calloc(newNumChannels, sizeof(int));
+    for (oldChannelIndex = 0; oldChannelIndex < oldNumChannels; oldChannelIndex++) {
+	channelSumCount[map[oldChannelIndex]]++;
     }
+        
+    for (frame = 0; frame < numberOfSampleFrames; frame++) {
+	unsigned long sampleIndex = frame * oldNumChannels;
+	
+	// Sum old channels according to map into newNumChannels long summing array.
+        for (oldChannelIndex = 0; oldChannelIndex < oldNumChannels; oldChannelIndex++) {
+	    switch(dataFormat) {
+	    case SND_FORMAT_LINEAR_8: /* endian ok */
+		sumInteger[map[oldChannelIndex]] += ((signed char *) inPtr)[sampleIndex + oldChannelIndex];
+		break;
+	    case SND_FORMAT_MULAW_8: /* endian ok */
+		sumInteger[map[oldChannelIndex]] += SndMuLawToLinear(((unsigned char *) inPtr)[sampleIndex + oldChannelIndex]);
+		break;
+	    case SND_FORMAT_LINEAR_16: /* endian ok */
+		sumInteger[map[oldChannelIndex]] += ((SND_HWORD *) inPtr)[sampleIndex + oldChannelIndex];
+		break;
+	    case SND_FORMAT_LINEAR_24:
+		// TODO Not endian ok, the shift down currently assumes big endian!
+		sumInteger[map[oldChannelIndex]] += *((long int *)((signed char *) inPtr + (sampleIndex + oldChannelIndex) * 3)) >> 8;
+		break;
+	    case SND_FORMAT_LINEAR_32:
+		sumDouble[map[oldChannelIndex]] += (long int)(((signed long int *) inPtr)[sampleIndex + oldChannelIndex]);
+		break;
+	    case SND_FORMAT_FLOAT:
+		sumFloat[map[oldChannelIndex]] += (float)(((float *) inPtr)[sampleIndex + oldChannelIndex]);
+		break;
+	    case SND_FORMAT_DOUBLE:
+		sumDouble[map[oldChannelIndex]] += (double)(((double *) inPtr)[sampleIndex + oldChannelIndex]);
+		break;
+	    default:
+		NSLog(@"SndChannelDecrease: can\'t decrease channels of format %d samples\n", dataFormat);
+	    }
+	}
+	// Divide each new channel by the number of old channels which were summed.
+	for (newChannelIndex = 0; newChannelIndex < newNumChannels; newChannelIndex++) {
+	    switch(dataFormat) {
+	    case SND_FORMAT_LINEAR_8:
+		((signed char *) outPtr)[frame * newNumChannels + newChannelIndex] = (signed char)(sumInteger[newChannelIndex] / channelSumCount[newChannelIndex]);
+		sumInteger[newChannelIndex] = 0;
+		break;
+	    case SND_FORMAT_MULAW_8:
+		((unsigned char *) outPtr)[frame * newNumChannels + newChannelIndex] = (unsigned char)SndLinearToMuLaw((short)(sumInteger[newChannelIndex] / channelSumCount[newChannelIndex]));
+		sumInteger[newChannelIndex] = 0;
+		break;
+	    case SND_FORMAT_LINEAR_16:
+		((signed short *) outPtr)[frame * newNumChannels + newChannelIndex] = (signed short)(sumInteger[newChannelIndex] / channelSumCount[newChannelIndex]);
+		sumInteger[newChannelIndex] = 0;
+		break;
+	    case SND_FORMAT_LINEAR_32:
+		((signed long int *) outPtr)[frame * newNumChannels + newChannelIndex] = (signed long int)(sumDouble[newChannelIndex] / channelSumCount[newChannelIndex]);
+		sumDouble[newChannelIndex] = 0;
+	    case SND_FORMAT_FLOAT:
+		((float *) outPtr)[frame * newNumChannels + newChannelIndex] = (float)(sumFloat[newChannelIndex] / channelSumCount[newChannelIndex]);
+		sumFloat[newChannelIndex] = 0;
+		break;
+	    case SND_FORMAT_DOUBLE:
+		((double *) outPtr)[frame * newNumChannels + newChannelIndex] = (double)(sumDouble[newChannelIndex] / channelSumCount[newChannelIndex]);
+		sumDouble[newChannelIndex] = 0;
+		break;
+	    default:
+		NSLog(@"SndChannelDecrease: can\'t decrease channels of format %d samples\n", dataFormat);
+	    }
+	} // each new channel.
+    }  // each frame
+    free(sumInteger);
+    free(sumFloat);
+    free(sumDouble);
+    free(channelSumCount);
 }
 
 // endian-agnostic, as all formats are cast to memory pointers and duplicated as memory regions.
 // dataFormat is the same going in and going out.
 // This is capable of in place conversion if inPtr and outPtr are the same.
 // TODO Perhaps a good candidate for AltiVec optimisation
-void SndChannelMap(void *inPtr, void *outPtr, int numberOfSampleFrames, int oldNumChannels, int newNumChannels, SndSampleFormat dataFormat, short *map)
+void SndChannelMap(void *inPtr, void *outPtr, long numberOfSampleFrames, int oldNumChannels, int newNumChannels, SndSampleFormat dataFormat, short *map)
 {
     int newChanIndex;
-    int frame;
+    long frame; // TODO frames should be unsigned long, not signed, but this makes testing a decrementing index at or below zero impossible.
     int sampleWidth = SndSampleWidth(dataFormat);
 
 #if DEBUG_CHANNEL_MAPPING
@@ -229,11 +245,11 @@ void SndChannelMap(void *inPtr, void *outPtr, int numberOfSampleFrames, int oldN
                     frameCount: (unsigned int) numberOfSampleFrames
                     dataFormat: (SndSampleFormat) theDataFormat
 {
-    if ((newNumChannels > oldNumChannels) && (newNumChannels % oldNumChannels == 0)) {
-        short *map;
+    short *channelMap; // TODO either pass this in or use the speakerConfiguration ivar.
 
-        if((map = malloc(newNumChannels * sizeof(short))) == NULL)
-            NSLog(@"Unable to malloc map for %d channels\n", newNumChannels);
+    if ((newNumChannels > oldNumChannels) && (newNumChannels % oldNumChannels == 0)) {
+        if((channelMap = malloc(newNumChannels * sizeof(short))) == NULL)
+            NSLog(@"Unable to malloc channelMap for %d channels\n", newNumChannels);
 
 	if(oldNumChannels == 2 && newNumChannels > 2) {
             unsigned int chanIndex;
@@ -241,31 +257,46 @@ void SndChannelMap(void *inPtr, void *outPtr, int numberOfSampleFrames, int oldN
             // TODO this is totally KLUDGED! CHANGE CHANGE!
             // We should check if we have a ivar indicating a specific speaker configuration/channel arrangement.
             // TODO Mapping onto a center channel should be done by mixing L+R down to the channel before all others.
-            // Perhaps SndChannelMap should replace SndChannelIncrease/Decrease decision with a map derivation 
+            // Perhaps SndChannelMap should replace SndChannelIncrease/Decrease decision with a channelMap derivation 
             // and use SndChannelDecrease as a means to decrease during mapping.
-            map[0] = 0;
-            map[1] = 1;
-            // [self stereoChannels: map];
+            channelMap[0] = 0;
+            channelMap[1] = 1;
+            // [self stereoChannels: channelMap];
             // Silence the remaining channels.
             for(chanIndex = 2; chanIndex < newNumChannels; chanIndex++)
-                map[chanIndex] = -1;
+                channelMap[chanIndex] = -1;
         }
         else {
             unsigned int oldChanIndex, newChanIndex;
             unsigned int newChansPerOld = newNumChannels / oldNumChannels; /* multiply factor - number of new channels per original one */
-            // short map[128]; // If malloc proves to be too processor heavy 
+            // short channelMap[128]; // If malloc proves to be too processor heavy 
 
-            // create the map duplicating the old index every newChansPerOld 
+            // create the channelMap duplicating the old index every newChansPerOld 
             for (oldChanIndex = 0; oldChanIndex < oldNumChannels; oldChanIndex++)
                 for (newChanIndex = 0; newChanIndex < newChansPerOld; newChanIndex++)
-                    map[oldChanIndex * newChansPerOld + newChanIndex] = oldChanIndex;
+                    channelMap[oldChanIndex * newChansPerOld + newChanIndex] = oldChanIndex;
         }
-        SndChannelMap(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, format.dataFormat, map);
-        free(map);
+        SndChannelMap(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, format.dataFormat, channelMap);
+        free(channelMap);
     }
-    else if ((oldNumChannels > newNumChannels) && (oldNumChannels % newNumChannels == 0))
+    else if ((oldNumChannels > newNumChannels) && (oldNumChannels % newNumChannels == 0)) {
+	unsigned int oldChanIndex, newChanIndex;
+	if((channelMap = malloc(oldNumChannels * sizeof(short))) == NULL)
+            NSLog(@"Unable to malloc channelMap for %d channels\n", oldNumChannels);
+
+	// NSLog(@"channel mapping old %d to new %d\n", oldNumChannels, newNumChannels);
+	// create the channelMap duplicating the new indexes in sequence
+	newChanIndex = 0;
+	for (oldChanIndex = 0; oldChanIndex < oldNumChannels; oldChanIndex++) {
+	    channelMap[oldChanIndex] = newChanIndex++;
+	    if(newChanIndex >= newNumChannels)
+		newChanIndex = 0;
+	    // NSLog(@"channelMap[%d] = %d\n", oldChanIndex, channelMap[oldChanIndex]);
+	}
+		
 	/* channel reduction will have already been done by resample routine if the sampling rate was changed */
-	SndChannelDecrease(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, theDataFormat);
+	SndChannelDecrease(inPtr, outPtr, numberOfSampleFrames, oldNumChannels, newNumChannels, theDataFormat, channelMap);
+    }
     else {
 	NSLog(@"Can't convert from %d to %d channels (output must be %s of input)\n", oldNumChannels, newNumChannels,
 	    newNumChannels > oldNumChannels ? "multiple" : "divisor");
@@ -596,14 +627,14 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
     return SND_ERR_NONE;
 }
 
-- convertToFormat: (SndSampleFormat) toDataFormat
+- convertToSampleFormat: (SndSampleFormat) toDataFormat
 {
     if (format.dataFormat != toDataFormat) {
-	long dataItems = [self lengthInSampleFrames] * [self channelCount];
-	NSMutableData *toData = [NSMutableData dataWithLength: dataItems * SndSampleWidth(toDataFormat)];
+	long numOfSamples = [self lengthInSampleFrames] * [self channelCount];
+	NSMutableData *toData = [NSMutableData dataWithLength: numOfSamples * SndSampleWidth(toDataFormat)];
 	void *fromDataPtr = [data mutableBytes];
 	void *toDataPtr = [toData mutableBytes];
-	int error = SndChangeSampleType(fromDataPtr, toDataPtr, format.dataFormat, toDataFormat, dataItems);
+	int error = SndChangeSampleType(fromDataPtr, toDataPtr, format.dataFormat, toDataFormat, numOfSamples);
 
 	if (error == SND_ERR_BAD_FORMAT)
 	    return nil;
@@ -616,13 +647,13 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
     return self;
 }
 
-- convertToFormat: (SndSampleFormat) toDataFormat
-     channelCount: (int) toChannelCount
+- convertToSampleFormat: (SndSampleFormat) toDataFormat
+	   channelCount: (int) toChannelCount
 {
     if(format.channelCount != toChannelCount) {
 	unsigned int sampleFrames = [self lengthInSampleFrames];
-	long dataItems = sampleFrames * toChannelCount;
-	NSMutableData *toData = [NSMutableData dataWithLength: dataItems * SndSampleWidth(format.dataFormat)];
+	long toNumOfSamples = sampleFrames * toChannelCount;
+	NSMutableData *toData = [NSMutableData dataWithLength: toNumOfSamples * SndSampleWidth(format.dataFormat)];
 	void *fromDataPtr = [data mutableBytes];
 	void *toDataPtr = [toData mutableBytes];
         int error = [self changeFromChannelCount: format.channelCount
@@ -639,21 +670,21 @@ int SndChangeSampleType(void *fromPtr, void *toPtr, SndSampleFormat fromDataForm
 	data = [toData retain];
 	format.channelCount = toChannelCount;
     }    
-    return [self convertToFormat: toDataFormat];
+    return [self convertToSampleFormat: toDataFormat];
 }
 
-- convertToFormat: (SndSampleFormat) toDataFormat
-     channelCount: (int) toChannelCount
-     samplingRate: (double) toSampleRate
-   useLargeFilter: (BOOL) largeFilter
-interpolateFilter: (BOOL) interpFilter
-useLinearInterpolation: (BOOL) fastInterpolation
+- convertToSampleFormat: (SndSampleFormat) toDataFormat
+	   channelCount: (int) toChannelCount
+	   samplingRate: (double) toSampleRate
+	 useLargeFilter: (BOOL) largeFilter
+      interpolateFilter: (BOOL) interpFilter
+ useLinearInterpolation: (BOOL) fastInterpolation
 {
     if (format.sampleRate != toSampleRate) {
 	double stretchFactor = toSampleRate / format.sampleRate;
 	long sampleFrames = [self lengthInSampleFrames];
-	long dataItems = sampleFrames * format.channelCount;
-	NSMutableData *toData = [NSMutableData dataWithLength: dataItems * stretchFactor * SndSampleWidth(SND_FORMAT_LINEAR_16)];
+	long numOfSamples = sampleFrames * format.channelCount;
+	NSMutableData *toData = [NSMutableData dataWithLength: numOfSamples * stretchFactor * SndSampleWidth(SND_FORMAT_LINEAR_16)];
 	void *fromDataPtr = [data mutableBytes];
 	void *toDataPtr = [toData mutableBytes];
 	SndFormat toSoundFormat = { SND_FORMAT_LINEAR_16, 0, format.channelCount, toSampleRate };
@@ -672,7 +703,7 @@ useLinearInterpolation: (BOOL) fastInterpolation
     }
     
     // The sample rate converted sample data is now ready for channel/format conversion
-    return [self convertToFormat: toDataFormat channelCount: toChannelCount];
+    return [self convertToSampleFormat: toDataFormat channelCount: toChannelCount];
 }
 
 - (long) convertBytes: (void *) fromDataPtr
@@ -759,6 +790,16 @@ useLinearInterpolation: (BOOL) fastInterpolation
     return fromSampleFrames;
 }
 
+- convertToFormat: (SndFormat) newFormat
+{
+    return [self convertToSampleFormat: newFormat.dataFormat
+			  channelCount: newFormat.channelCount
+			  samplingRate: newFormat.sampleRate
+			useLargeFilter: YES
+		     interpolateFilter: YES
+		useLinearInterpolation: NO];
+}
+
 // Create a new buffer of the same number of samples as the receiver
 // converted to the new format, sampling rate and channel count.
 // returns the new buffer instance.
@@ -766,15 +807,14 @@ useLinearInterpolation: (BOOL) fastInterpolation
 				     channelCount: (int) toChannelCount
 				     samplingRate: (double) toSamplingRate
 {
-    SndAudioBuffer *newBuffer = [SndAudioBuffer audioBufferWithDataFormat: toDataFormat
+    unsigned int sampleFrames = [self lengthInSampleFrames];
+    // We do the channel conversion with the current data format, then convert the format afterwards.
+    SndAudioBuffer *newBuffer = [SndAudioBuffer audioBufferWithDataFormat: format.dataFormat
 							     channelCount: toChannelCount
 							     samplingRate: toSamplingRate
-							         duration: [self duration]];
-    unsigned int sampleFrames = [self lengthInSampleFrames];
-    long dataItems = sampleFrames * toChannelCount;
+							       frameCount: sampleFrames];
     void *fromDataPtr = [data mutableBytes];
     void *toDataPtr = [newBuffer bytes];
-    int error;
 
     // TODO need to do sample conversion.
     if(format.sampleRate != toSamplingRate) {
@@ -784,26 +824,20 @@ useLinearInterpolation: (BOOL) fastInterpolation
     
     // do conversion into the new data buffer.
     if(format.channelCount != toChannelCount) {
-	error = [self changeFromChannelCount: format.channelCount
-                              fromSampleData: fromDataPtr
-                              toChannelCount: toChannelCount
-                                toSampleData: toDataPtr
-                                  frameCount: sampleFrames
-                                  dataFormat: format.dataFormat];
-
-	if(error != SND_ERR_NONE)
-	    return nil;
-
-	fromDataPtr = toDataPtr; // This will then do the sample type conversion in place, which is ok by SndChangeSampleType.
-    }
-
-    if(format.dataFormat != toDataFormat) {
-	error = SndChangeSampleType(fromDataPtr, toDataPtr, format.dataFormat, toDataFormat, dataItems);
+	int error = [self changeFromChannelCount: format.channelCount
+				  fromSampleData: fromDataPtr
+				  toChannelCount: toChannelCount
+				    toSampleData: toDataPtr
+				      frameCount: sampleFrames
+				      dataFormat: format.dataFormat];
 
 	if(error != SND_ERR_NONE)
 	    return nil;
     }
-    
+
+    if([newBuffer convertToSampleFormat: toDataFormat] == nil)
+	return nil;
+
     return newBuffer;
 }
 
