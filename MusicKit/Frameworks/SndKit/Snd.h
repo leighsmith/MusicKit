@@ -31,6 +31,8 @@
 
 extern NSString *NXSoundPboardType;
 
+@class SndPlayer;
+
 /*
  * This is the sound pasteboard type.
  */
@@ -42,6 +44,7 @@ extern NSString *NXSoundPboardType;
  * basic editing of the sound, and name and storage management for sounds.
  */
  {
+ @private
     SndSoundStruct *soundStruct; /* the sound data structure */
     int soundStructSize;	 /* the length of the structure in bytes */
     int priority;		 /* the priority of the sound */
@@ -52,9 +55,7 @@ extern NSString *NXSoundPboardType;
     int _scratchSize;
     int currentError;
     int conversionQuality;	 /* see defines below */
-
-    int		playBegin,
-		playEnd;
+    
 @public
     int tag;
 }
@@ -118,6 +119,8 @@ typedef enum {
 + setVolume:(float)left :(float)right;
 + (BOOL)isMuted;
 + setMute:(BOOL)aFlag;
+
+- (NSString *) description;
 
 - initFromSoundfile:(NSString *)filename;
 - initFromSection:(NSString *)sectionName;

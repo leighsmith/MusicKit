@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.14  2001/02/16 21:30:03  leigh
+ * Added description function and SndPlayer usage, replacing Snd() functions with streams
+ *
  * Revision 1.13  2001/02/14 17:54:28  leigh
  * Renamed status messages to SND prefixes
  *
@@ -53,12 +56,11 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 #include <AppKit/NSApplication.h>
 
 #import "Snd.h"
+#import "SndPlayer.h"
 
 #ifndef USE_NEXTSTEP_SOUND_IO
 NSString *NXSoundPboardType = @"NXSoundPboardType";
 #endif
-
-
 
 @implementation Snd
 
@@ -66,6 +68,7 @@ static NSAutoreleasePool *pool;
 static NSMutableDictionary *nameTable = nil;
 static NSMutableDictionary *playRecTable = nil;
 static int ioTags = 1000;
+static SndPlayer *sndPlayer;
 
 + (void)initialize
 {
@@ -76,6 +79,7 @@ static int ioTags = 1000;
         SNDInit(TRUE);
         driverNames = SNDGetAvailableDriverNames();
         NSLog(@"driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
+        sndPlayer = [[SndPlayer player] retain];
     }
 }
 
@@ -249,12 +253,10 @@ static int ioTags = 1000;
     [super dealloc];
 }
 
-// Debugging function
-void soundStructDescription(SndSoundStruct *s)
+// for debugging
+- (NSString *) description
 {
-    NSLog(@"read sound Location:%d size:%d format:%d sr:%d cc:%d info:%s\n",
-		s->dataLocation, s->dataSize, s->dataFormat,
-		s->samplingRate, s->channelCount, s->info);
+    return [NSString stringWithCString: SndStructDescription(soundStruct)];
 }
 
 - readSoundFromStream:(NSData *)stream
@@ -287,7 +289,7 @@ void soundStructDescription(SndSoundStruct *s)
     s->channelCount = ntohl(s->channelCount);
 #endif
 
-//  soundStructDescription(s);
+//  SndPrintStruct(s);
     finalSize = s->dataSize + s->dataLocation;
 
     s = realloc((char *)s,finalSize);
@@ -445,7 +447,7 @@ void soundStructDescription(SndSoundStruct *s)
     s = realloc((char *)s, s->dataLocation + 1); /* allocate enough room for info string */
     [aDecoder decodeArrayOfObjCType:"c" count:s->dataLocation - sizeof(SndSoundStruct) + 4 at:s->info];
 
-//	soundStructDescription(s);
+//	SndPrintStruct(s);
 
     finalSize = s->dataSize + s->dataLocation;
 
@@ -548,7 +550,7 @@ int beginFun(SndSoundStruct *sound, int tag, int err)
     Snd *theSnd;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     theSnd = [playRecTable objectForKey: [NSNumber numberWithInt: tag]];
-    NSLog(@"beginFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
+    // NSLog(@"beginFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
     if (err) {
         [theSnd _setStatus:SND_SoundStopped];
         [theSnd tellDelegate:@selector(hadError:)];
@@ -568,7 +570,7 @@ int endFun(SndSoundStruct *sound, int tag, int err)
     NSNumber *tagNumber = [NSNumber numberWithInt: tag];
 
     theSnd = [playRecTable objectForKey: tagNumber];
-    NSLog(@"endFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
+    // NSLog(@"endFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
     [theSnd _setStatus:SND_SoundStopped];
     if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
     if (err) [theSnd tellDelegate:@selector(hadError:)];
@@ -620,22 +622,13 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
     return 0;
 }
 
-- play:(id) sender beginSample:(int) begin sampleCount: (int) count 
-{
-    playBegin = begin;
-    playEnd = begin + count;
-    
-    if (playBegin > [self sampleCount] || playBegin < 0)
-        playBegin = 0;
-    
-    if (playEnd > [self sampleCount] || playEnd < playBegin)
-        playEnd = [self sampleCount];
-        
-    return self;
-}
+// [sndPlayer playSnd: self];
+// 
 
-- play:sender
+// Begin the playback of the sound at some future time, specified in seconds.
+- play: (id) sender inFuture: (double) inSeconds 
 {
+#if 0
     int err;
     if (!soundStruct) return self;
     if (!playRecTable) {
@@ -659,13 +652,40 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
             (SNDNotificationFun) beginFun,
             (SNDNotificationFun) endFun);
     if (err) NSLog(@"Playback error %d\n",err);
+#else
+    [sndPlayer playSnd: self withTimeOffset: inSeconds];
+#endif
     return self;
+}
+
+- play:sender
+{
+    return [self play: sender inFuture: 0.0];
 }
 
 - (int)play
 {
     [self play:self];
     return SND_ERR_NONE;
+}
+
+- play:(id) sender beginSample:(int) begin sampleCount: (int) count 
+{
+    int playBegin = begin;
+    int playEnd = begin + count;
+    
+    if (playBegin > [self sampleCount] || playBegin < 0)
+        playBegin = 0;
+    
+    if (playEnd > [self sampleCount] || playEnd < playBegin)
+        playEnd = [self sampleCount];
+    
+    return [self play: sender];
+}
+
+- play: (id) sender atDate: (NSDate *) date
+{
+//    return [self play: sender inFuture: [date dateInSeconds]];
 }
 
 - record:sender
@@ -793,7 +813,7 @@ int endRecFun(SndSoundStruct *sound, int tag, int err)
 
     err = SndReadSoundfile([filename cString], &soundStruct);
 
-    // soundStructDescription(soundStruct);
+    // SndPrintStruct(soundStruct);
     if (!err)
         soundStructSize = soundStruct->dataLocation + soundStruct->dataSize;
 
