@@ -212,31 +212,15 @@ NSScrollView.
 
 #import <AppKit/AppKit.h>
 
-/* The following define maps most sound I/O functions to the SoundKit counterparts,
-* for OpenStep 4.2 Intel and m68k (black NeXT) machines. You could try it on PPC
-* MacOS-X machines if you wanted to, but this may then conflict with the ppc/YBWin
-* code for using NSSound objects for sound playback.
-*/
-#if !defined(macosx)
-#define macosx (defined(__ppc__) && !defined(ppc))
-#define macosx_server (defined(__ppc__) && defined(ppc))
-#endif
-
-#if macosx
-#define QUARTZ_RENDERING
-#endif
-
-#ifdef QUARTZ_RENDERING
-#import <ApplicationServices/ApplicationServices.h>
-#endif
-
 #import "SndDisplayDataList.h"
 #import "SndDisplayData.h"
 #import "Snd.h"
 
-#define SV_LEFTONLY 0
-#define SV_RIGHTONLY 1
-#define SV_STEREOMODE 256 /* (open the way for up to 8 channel sound) */
+enum SndViewStereoMode {
+    SNDVIEW_LEFTONLY = 0,
+    SNDVIEW_RIGHTONLY = 1,
+    SNDVIEW_STEREOMODE = 256  /* (open the way for up to 8 channel sound) */
+};
 
 #define SND_SOUNDVIEW_MINMAX 0
 #define SND_SOUNDVIEW_WAVE 1
@@ -244,7 +228,6 @@ NSScrollView.
 // Legacy definitions
 #define NX_SOUNDVIEW_MINMAX SND_SOUNDVIEW_MINMAX
 #define NX_SOUNDVIEW_WAVE SND_SOUNDVIEW_WAVE
-
 
 @interface SndView: NSView <NSCoding>
 {
@@ -310,17 +293,15 @@ NSScrollView.
     int		lastCopyCount;
     BOOL 	notProvidedData;
     BOOL	noSelectionDraw;
-    BOOL	firstDraw;
+    BOOL	firstDraw; // flag indicating lack of initialisation within drawRect:
 
+    /*! @var dataList A SndDisplayDataList instance which holds all of the SndDisplayData instances caching drawn views. */
     SndDisplayDataList *dataList;
     
 @private
     float ampScaler;
     float amplitudeDisplayHeight;
-#ifdef QUARTZ_RENDERING
-    CGContextRef ctx;
-#endif
-    /*! @var types valid */
+    /*! @var validPasteboardSendTypes valid pasteboard types. */
     NSArray *validPasteboardSendTypes;
     NSArray *validPasteboardReturnTypes;
 }
@@ -340,16 +321,16 @@ NSScrollView.
 /*!
   @method resignFirstResponder
   @result Returns a BOOL.
-  @discussion Resigns the position of first responder. Returns
-              YES.
+  @abstract Resigns the position of first responder. 
+  @discussion Returns YES.
 */
 - (BOOL) resignFirstResponder;
 
 /*!
   @method becomeFirstResponder
   @result Returns a BOOL.
-  @discussion Promotes the SndView to first responder, and returns YES. You
-              never invoke this method directly.
+  @abstract Promotes the SndView to first responder, and returns YES. 
+  @discussion You never invoke this method directly.
 */
 - (BOOL) becomeFirstResponder;
 
@@ -382,10 +363,10 @@ NSScrollView.
 /*!
   @method paste:
   @param  sender is an id.
-  @discussion Replaces the current selection with a copy of the sound data
-              currently on the pasteboard. If there is no selection the pasteboard
-              data is inserted at the cursor position. The pasteboard data must be
-              compatible with the SndView's data, as determined by the Snd
+  @abstract Replaces the current selection with a copy of the sound data
+            currently on the pasteboard. 
+  @discussion If there is no selection the pasteboard data is inserted at the cursor position. 
+              The pasteboard data must be compatible with the SndView's data, as determined by the Snd
               method <b>compatibleWithSound:</b>. If the paste is successful, the
               <b>soundDidChange:</b> message is sent to the delegate.
 */
@@ -394,14 +375,14 @@ NSScrollView.
 /*!
   @method selectAll:
   @param  sender is an id.
-  @discussion Creates a selection over the SndView's entire Snd.
+  @abstract Creates a selection over the SndView's entire Snd.
 */
 - (void) selectAll: (id) sender;
 
 /*!
   @method delegate
   @result Returns an id.
-  @discussion Returns the SndView's delegate object.
+  @abstract Returns the SndView's delegate object.
 */
 - delegate;
 
@@ -476,68 +457,69 @@ NSScrollView.
   @method initWithFrame:
   @param  frameRect is a NSRect.
   @result Returns <b>self</b>.
-  @discussion Initializes the SndView, fitting the object within the rectangle
-              pointing to by <i>frameRect</i>. The initialized SndView doesn't
-              contain any sound data.   
+  @abstract Initializes the SndView, fitting the object within the rectangle given by <i>frameRect</i>. 
+  @discussion The initialized SndView doesn't contain any sound data.   
 */
 - initWithFrame: (NSRect) frameRect;
 
 /*!
   @method isAutoScale
   @result Returns a BOOL.
-  @discussion Returns YES if the SndView is in autoscaling mode, otherwise
-              returns NO.
+  @abstract Returns YES if the SndView is in autoscaling mode, otherwise returns NO.
 */
 - (BOOL) isAutoScale;
 
 /*!
   @method isBezeled
   @result Returns a BOOL.
-  @discussion Returns YES if the SndView has a bezeled border, otherwise returns
-              NO (the default).
+  @abstract Returns YES if the SndView has a bezeled border, otherwise returns NO (the default).
 */
 - (BOOL) isBezeled;
 
 /*!
   @method isContinuous
   @result Returns a BOOL.
-  @discussion Returns YES if the SndView responds to mouse-dragged events (as
-              set through <b>setContinuous:</b>). The default is NO.
+  @abstract Returns YES if the SndView responds to mouse-dragged events (as set through <b>setContinuous:</b>). 
+  @discussion The default is NO.
 */
 - (BOOL) isContinuous;
 
 /*!
   @method isEditable
   @result Returns a BOOL.
-  @discussion Returns YES if the SndView's sound data can be
-              edited.
+  @abstract Returns YES if the SndView's sound data can be edited.
 */
 - (BOOL) isEditable;
 
 /*!
   @method isEnabled
   @result Returns a BOOL.
-  @discussion Returns YES if the SndView is enabled, otherwise returns NO. The
-              mouse has no effect in a disabled SndView. By default, a SndView
-              is enabled.
+  @abstract Returns YES if the SndView is enabled, otherwise returns NO.
+  @discussion The mouse has no effect in a disabled SndView. By default, a SndView is enabled.
 */
 - (BOOL) isEnabled;
 
 /*!
   @method isOptimizedForSpeed
   @result Returns a BOOL.
-  @discussion Returns YES if the SndView is optimized for speedy display.
-              SndViews are optimized by default.
+  @abstract Returns YES if the SndView is optimized for speedy display.
+  @discussion SndViews are optimized by default.
 */
 - (BOOL) isOptimizedForSpeed;
 
 /*!
   @method isPlayable
   @result Returns a BOOL.
-  @discussion Returns YES if the SndView's sound data can be played without
-              first being converted.
+  @abstract Returns YES if the SndView's sound data can be played without first being converted.
 */
 - (BOOL) isPlayable;
+
+/*!
+  @method isEntireSoundVisible
+  @result Returns a BOOL
+  @abstract Returns YES if the receiver is displaying the entire sound within the visible rectangle of it's enclosing scrollview.
+ */
+- (BOOL) isEntireSoundVisible;
 
 - (float) getDefaultRecordTime;
 - (void) setDefaultRecordTime: (float) seconds;
@@ -607,7 +589,7 @@ NSScrollView.
 /*!
   @method stop:
   @param  sender is an id.
-  @discussion Stops the SndView's current recording or playback.
+  @abstract Stops the SndView's current recording or playback.
 */
 - (void) stop: (id) sender;
 
@@ -628,27 +610,26 @@ NSScrollView.
 /*!
   @method setAmplitudeZoom:
   @param newAmplitudeZoom The new amplitude zoom factor.
-  @discussion Sets the current vertical amplitude axis zoom factor. If 1.0, this displays
-              a full amplitude signal in the maximum vertical view width. If greater than 1.0
-              a signal will be zoomed and clipped against the view. If less than 1.0 the signal will
-              be reduced within the view. Values less than or equal to zero are not set.
+  @abstract Sets the current vertical amplitude axis zoom factor. 
+  @discussion If 1.0, this displays a full amplitude signal in the maximum vertical view width. 
+              If greater than 1.0 a signal will be zoomed and clipped against the view. 
+              If less than 1.0 the signal will be reduced within the view. 
+              Values less than or equal to zero are not set.
  */
 - (void) setAmplitudeZoom: (float) newAmplitudeZoom;
 
 /*!
   @method amplitudeZoom
   @result Returns a float.
-  @discussion Returns the current vertical amplitude axis zoom factor.
+  @abstract Returns the current vertical amplitude axis zoom factor.
  */
 - (float) amplitudeZoom;
 
 /*!
   @method reductionFactor
   @result Returns a float.
-  @discussion Returns the SndView's reduction factor in the horizontal time axis,
-              computed as follows:
-                            
-              <tt>reductionFactor = sampleCount / displayUnits</tt>
+  @abstract Returns the SndView's reduction factor in the horizontal time axis.
+  @discussion Computed as follows: <tt>reductionFactor = sampleCount / displayUnits</tt>
 */
 - (float) reductionFactor;
 
@@ -656,8 +637,9 @@ NSScrollView.
   @method setReductionFactor:
   @param  reductionFactor is a float.
   @result Returns a BOOL.
-  @discussion Recomputes the size of the SndView's frame, if autoscaling is
-              disabled. The frame's size (in display units) is set according to
+  @abstract Assigns the reduction factor in the horizontal time axis. 
+  @discussion Recomputes the size of the SndView's frame, if autoscaling is disabled.
+	      The frame's size (in display units) is set according to
               the following formula:
               
               <tt>displayUnits = sampleCount / reductionFactor</tt>
@@ -678,48 +660,64 @@ NSScrollView.
 - (BOOL) setReductionFactor: (float) redFactor;
 
 /*!
+  @method scaleTo:
+  @abstract Sets the proportion of the sound displayed within the SndView frame.
+  @discussion Recomputes the SndViews reduction factor to fit a portion of the sound data (horizontally) within the views frame.
+  @param scaleRatio The ratio of displayed content within the frame 1.0 = entire sound, 0.5 = half the sound etc.
+ */
+- (void) scaleTo: (float) scaleRatio;
+
+/*!
   @method scaleToFit
-  @discussion Recomputes the SndView's reduction factor to fit the sound data
-              (horizontally) within the current frame. Invoked automatically when
-              the SndView's data changes and the SndView is in autoscale mode.
-              If the SndView isn't in autoscale mode, <b>sizeToFit</b> is
+  @abstract Recomputes the SndView's reduction factor to fit the sound data
+            (horizontally) within the current frame.
+  @discussion Invoked automatically when the SndView's data changes and the SndView is in autoscale mode.
+              If the SndView isn't in autoscale mode, <b>resizeToFit</b> is
               invoked when the data changes. You never invoke this method
               directly; a subclass can reimplement this method to provide
               specialized behavior.
 */
-- scaleToFit;
+- (void) scaleToFit;
 
 /*!
-  @method sizeToFit
-  @discussion Resizes the SndView's frame (horizontally) to maintain a constant
-              reduction factor. This method is invoked automatically when the
+  @method resizeToFit
+  @abstract Resizes the SndView's frame (horizontally) to maintain a constant reduction factor. 
+  @discussion This method is invoked automatically when the
               SndView's data changes and the SndView isn't in autoscale mode.
               If the SndView is in autoscale mode, <b>scaleToFit</b> is invoked
               when the data changes. You never invoke this method directly; a
               subclass can reimplement this method to provide specialized
               behavior.
 */
-- (void) sizeToFit;
+- (void) resizeToFit;
 
 /*!
-  @method sizeToFit:
+  @method resizeToFit:
   @param  withAutoscaling is a BOOL.
-  @discussion Resizes the SndView's frame (horizontally) to maintain a constant
-              reduction factor. This method is invoked automatically when the
+  @abstract Resizes the SndView's frame (horizontally) to maintain a constant reduction factor.
+  @discussion This method is invoked automatically when the
               SndView's data changes and the SndView isn't in autoscale mode.
               If the SndView is in autoscale mode, <b>scaleToFit</b> is invoked
               when the data changes. You never invoke this method directly; a
               subclass can reimplement this method to provide specialized
               behavior.
 */
-- (void) sizeToFit: (BOOL) withAutoscaling;
+- (void) resizeToFit: (BOOL) withAutoscaling;
+
+/*!
+  @method resizeToScale:
+  @param scaleRatio Scaling of the sound within the frame:  0 > scaleRatio <= 1.0 
+  @abstract Resizes the sound within the frame to a normalized scale.
+  @discussion 
+ */
+- (void) resizeToScale: (float) scaleRatio;
 
 /*!
   @method setAutoscale:
   @param  aFlag is a BOOL.
-  @discussion Sets the SndView's automatic scaling mode, used to determine how
-              the SndView is redisplayed when its data changes. With autoscaling
-              enabled (<i>aFlag</i> is YES), the SndView's reduction factor is
+  @abstract Sets the SndView's automatic scaling mode, used to determine how the SndView is
+            redisplayed when its data changes.
+  @discussion With autoscaling enabled (<i>aFlag</i> is YES), the SndView's reduction factor is
               recomputed so the sound data fits within the view frame. If it's
               disabled (<i>aFlag</i> is NO), the frame is resized and the
               reduction factor is unchanged. If the SndView is in an
@@ -741,8 +739,8 @@ NSScrollView.
 /*!
   @method setContinuous:
   @param  aFlag is a BOOL.
-  @discussion Sets the state of continuous action messages. If <i>aFlag</i> is
-              YES, <b>selectionChanged:</b> messages are sent to the delegate as
+  @abstract Sets the state of continuous action messages.
+  @discussion If <i>aFlag</i> is YES, <b>selectionChanged:</b> messages are sent to the delegate as
               the mouse is being dragged. If NO, the message is sent only on mouse
               up. The default is NO. 
 */
@@ -751,8 +749,8 @@ NSScrollView.
 /*!
   @method setDelegate:
   @param  anObject is an id.
-  @discussion Sets the SndView's delegate to <i>anObject</i>. The delegate is
-              sent messages when the user changes or acts on the
+  @abstract Sets the SndView's delegate to <i>anObject</i>.
+  @discussion The delegate is sent messages when the user changes or acts on the
               selection.
 */
 - (void) setDelegate: (id) anObject;
@@ -761,9 +759,8 @@ NSScrollView.
 /*!
   @method setDisplayMode:
   @param  aMode is an int.
-  @discussion Sets the SndView's display mode, either SND_SOUNDVIEW_WAVE or
-              SND_SOUNDVIEW_MINMAX (the default). If autodisplaying is enabled, the
-              Snd is automatically redisplayed.
+  @abstract Sets the SndView's display mode, either SND_SOUNDVIEW_WAVE or SND_SOUNDVIEW_MINMAX (the default).
+  @discussion If autodisplaying is enabled, the Snd is automatically redisplayed.
 */
 - (void) setDisplayMode: (int) aMode;
 
@@ -799,8 +796,8 @@ NSScrollView.
 /*!
   @method setSound:
   @param  aSound is a Snd *.
-  @discussion Sets the SndView's Snd object to <i>aSound</i>. If autoscaling
-              is enabled, the drawing coordinate system is adjusted so
+  @abstract Sets the SndView's Snd object to <i>aSound</i>.
+  @discussion If autoscaling is enabled, the drawing coordinate system is adjusted so
               <i>aSound</i>'s data fits within the current frame. Otherwise, the
               frame is resized to accommodate the length of the data. If
               autodisplaying is enabled, the SndView is automatically
@@ -810,17 +807,16 @@ NSScrollView.
 
 /*!
   @method sound
-  @result Returns a Snd *.
-  @discussion Returns a pointer to the SndView's Snd object.
+  @result Returns a Snd instance.
+  @abstract Returns the SndView's Snd object being displayed.
 */
 - (Snd *) sound;
 
 /*!
   @method setFrameSize:
   @param  newSize is a NSSize.
-  @discussion Sets the width and height of the SndView's frame. If
-              autodisplaying is enabled, the SndView is automatically
-              redisplayed.
+  @abstract Sets the width and height of the SndView's frame.
+  @discussion If autodisplaying is enabled, the SndView is automatically redisplayed.
 */
 - (void) setFrameSize: (NSSize) _newSize;
 
@@ -928,7 +924,7 @@ NSScrollView.
  */
 - (BOOL) drawsCrosses;
 
-/* see README for explanation of optimisation thresholds and skips, and peak fractions */
+/* see class description for explanation of optimisation thresholds and skips, and peak fractions */
 - (void) setOptThreshold: (int) threshold;
 - (int) getOptThreshold;
 - (void) setOptSkip: (int) skip;
@@ -941,14 +937,14 @@ NSScrollView.
   @abstract Determines how to draw multichannel sounds.
   @param stereoMode one of the values SV_LEFTONLY, SV_RIGHTONLY, SV_STEREOMODE
  */
-- (BOOL) setStereoMode: (int) stereoMode;
+- (BOOL) setStereoMode: (enum SndViewStereoMode) stereoMode;
 
 /*!
   @method getStereoMode
   @abstract Returns the mode of drawing multichannel sounds.
   @result Returns 
  */
-- (int) getStereoMode;
+- (enum SndViewStereoMode) getStereoMode;
 
 /*!
   @method setSelectionColor:
