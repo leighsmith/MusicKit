@@ -38,7 +38,7 @@ capabilities and data conversion routines.</para>
 	Work is underway to remove the requirement of specific DSP
 	hardware to do synthesis, instead using the MPEG-4 Structured
 	Audio language <acronym>SAOL</acronym> and any MPEG-4
-	compatible hardware, on the <productname>sfront</productname>
+	compatible hardware, or the <productname>sfront</productname>
 	<acronym>SAOL</acronym> interpreter running on the native processor.
       </para>
     </tip>
