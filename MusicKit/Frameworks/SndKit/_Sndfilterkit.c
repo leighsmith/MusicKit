@@ -59,9 +59,11 @@
 #define SUPERCEDED 1 
 
 #ifdef GNUSTEP
+#include <stdio.h>
 #include "SndResample.h"
 #include "_Sndfilterkit.h"
 #include <math.h>
+#include <malloc.h>
 #else
 
 #import "SndResample.h"
@@ -535,8 +537,8 @@ double zerox(SND_HWORD *Data, double Factor)
    for (i=0; i<MAXITER; i++)
       {
       x = (hi+lo)/2.0;
-   v  = FilterUD(Imp,ImpD,Nwing,TRUE,Data,  (SND_HWORD)(x*Pmask),    -1,dhb);
-   v += FilterUD(Imp,ImpD,Nwing,TRUE,Data+1,(SND_HWORD)((1-x)*Pmask), 1,dhb);
+   v  = FilterUD(Imp,ImpD,Nwing,YES,Data,  (SND_HWORD)(x*Pmask),    -1,dhb);
+   v += FilterUD(Imp,ImpD,Nwing,YES,Data+1,(SND_HWORD)((1-x)*Pmask), 1,dhb);
       v >>= Nhg;
       v *= LpScl;
       out = (double)v / (double)(1<<NLpScl);
