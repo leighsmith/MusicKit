@@ -1,8 +1,0 @@
-#!/bin/csh -f
-#
-# DSP assembler invocation for STANDARD assembly, i.e., including macros
-# from /usr/local/lib/dsp.
-#
-set dsp_dir=/usr/local/lib/dsp
-echo asm56000 -A -B -L -OS,SO -I$dsp_dir/smsrc/ -M$dsp_dir/ugsrc/ $*
-asm56000 -A -B -L -OS,SO -I$dsp_dir/smsrc/ -M$dsp_dir/ugsrc/ $*

@@ -1,9 +1,0 @@
-# MusicKitPrefs.m: driverinfo
-
-driverinfo: driverinfo.o
-	${CC} ${CFLAGS}  -o $@ driverinfo.o -lDriver
-#	strip driverinfo
-
-# Removed by DAJ, Jan 1, 1996--caused problems doing single-arch compile.
-# TARGET_ARCHS=m68k i386
-
