@@ -23,6 +23,9 @@
 Modification history:
 
   $Log$
+  Revision 1.9  2003/06/20 20:27:08  leighsmith
+  Changed Snd -sampleCount to lengthInSampleFrames
+
   Revision 1.8  2002/04/15 14:22:35  sbrandon
   - set a couple of ivars to nil after releasing, in -init
   - added -hash and -isEqual: methods to aid in situations where object is
@@ -377,7 +380,7 @@ of it.
     DSPDatum  *newData;
     if (!sound)
       return nil;
-    originalLength = [sound sampleCount];
+    originalLength = [sound lengthInSampleFrames];
     if (aLength == 0)
       aLength = originalLength;
     if (tableType == MK_oscTable) {

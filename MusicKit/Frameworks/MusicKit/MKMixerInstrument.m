@@ -40,6 +40,9 @@
 Modification history:
 
  $Log$
+ Revision 1.15  2003/06/20 20:27:08  leighsmith
+ Changed Snd -sampleCount to lengthInSampleFrames
+
  Revision 1.14  2002/09/24 21:48:45  leighsmith
  Simplified combined pointer assignments and increments to remove gcc 3.1 warnings
 
@@ -517,12 +520,14 @@ static int timeToSamp(Snd *s,double time)
 	    if ((factor>32) || (factor<.03125))
 		NSLog(@"Warning: resampling more than 5 octaves.\n");
 	    if (fabs(factor-1.0)>.0001) {
+		// TODO resample can be removed and replaced with Snd convertToFormat:sampleRate:
+		// As this is it will probably break using resample
 		Snd *inSound = [newSoundFileSamples sound];
 		Snd *outSound = [[[Snd alloc] init] autorelease];
 		int inSampleFrames, outSampleFrames;
 		inSampleFrames = 
 		    (MIN([newSoundFileSamples processingEndSample],
-			 [inSound sampleCount]*[inSound channelCount])
+			 [inSound lengthInSampleFrames] * [inSound channelCount])
 		     - [newSoundFileSamples currentSample])/[inSound channelCount];
 		outSampleFrames = inSampleFrames * factor;
 		[outSound
