@@ -34,7 +34,7 @@
     The _MKParameter contains the data, the type of the data, and the
     low integer. There's an array that maps low integers to _ParNames.
    
-    MKNote objects contain an NXHashTable of _MKParameters. CF: MKNote.m 
+    MKNote objects contain an NSHashTable of _MKParameters. CF: MKNote.m 
 
     Note that the code for writing scorefiles is spread between writeScore.m,
     MKNote.m, and _ParName.m. This is for reasons of avoiding inter-module
@@ -46,11 +46,15 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University
+  Portions Copyright (c) 1999-2000 The MusicKit Project.
 */
 /* 
 Modification history:
 
   $Log$
+  Revision 1.9  2000/10/01 06:34:15  leigh
+  Chagned to modern function prototyping, removed NXUniqueString use.
+
   Revision 1.8  2000/05/06 00:27:49  leigh
   Converted _binaryIndecies to NSMutableDictionary
 
@@ -112,13 +116,10 @@ Modification history:
 #import "_MKNameTable.h"
 #import "PartialsPrivate.h"
 #import "MKEnvelope.h"
-#import "_ParName.h"
-
-#import <objc/hashtable.h>
-
+#import "_ParName.h"
 /* First, here's how parameter names are represented: */
 
-@implementation _ParName:NSObject
+@implementation _ParName
 
 #define BINARY(_p) (_p && _p->_binary) /* writing a binary scorefile? */
 
@@ -241,19 +242,11 @@ static void initSyns()
     }
 }
 
-/* Avoid propogating multiple copies of the null string */
-static const char *uniqueNull = NULL;
-
-const char *_MKUniqueNull()
-{
-    return uniqueNull;
-}
-
 
 #define INT(_x) ((int)_x)
 
 BOOL
-_MKParInit()
+_MKParInit(void)
   /* Sent once from Note. Returns YES. Initializes the world */
 {
     _MK_CALLOC(parIds,id,_MK_maxPrivPar);
@@ -265,7 +258,6 @@ _MKParInit()
     parIds[INT(MK_freq0)]->printfunc = _MKFreqPrintfunc;
     parIds[INT(MK_chanMode)]->printfunc = keywordsPrintfunc;
     parIds[INT(MK_sysRealTime)]->printfunc = keywordsPrintfunc;
-    uniqueNull = NXUniqueString("");
     return YES;
 }
 
@@ -311,8 +303,7 @@ _MKParameter *_MKFreeParameter(_MKParameter *param)
     return NULL;
 }
 
-BOOL _MKIsParPublic(param)
-    _MKParameter *param;
+BOOL _MKIsParPublic(_MKParameter *param)
     /* Returns whether this is a public parameter. */
 {
     return _MKIsPar(parIds[param->parNum]->par);
@@ -334,9 +325,7 @@ _MKParameter *_MKCopyParameter(_MKParameter *param)
 /* All of the following return a new _MKParameter struct initialized as 
    specified */
 
-_MKParameter * _MKNewDoublePar(value,parNum)
-    double value;
-    int parNum;
+_MKParameter * _MKNewDoublePar(double value, int parNum)
 {
     register _MKParameter *param = newPar(parNum);
     param->_uType = MK_double;
@@ -344,9 +333,7 @@ _MKParameter * _MKNewDoublePar(value,parNum)
     return param;
 }
 
-_MKParameter * _MKNewStringPar(value,parNum)
-    NSString * value;
-    int parNum;
+_MKParameter * _MKNewStringPar(NSString * value, int parNum)
 {
     register _MKParameter *param = newPar(parNum);
     param->_uType = MK_string;
@@ -354,9 +341,7 @@ _MKParameter * _MKNewStringPar(value,parNum)
     return param;
 }
 
-_MKParameter * _MKNewIntPar(value,parNum)
-    int value;
-    int parNum;
+_MKParameter * _MKNewIntPar(int value, int parNum)
 {
     register _MKParameter *param = newPar(parNum);
     param->_uType = MK_int;
@@ -364,10 +349,7 @@ _MKParameter * _MKNewIntPar(value,parNum)
     return param;
 }
 
-_MKParameter * _MKNewObjPar(value,parNum,type)
-    id value;
-    int parNum;
-    _MKToken type;
+_MKParameter * _MKNewObjPar(id value, int parNum, _MKToken type)
 {
     register _MKParameter *param = newPar(parNum);
     param->_uType = type;
@@ -378,9 +360,7 @@ _MKParameter * _MKNewObjPar(value,parNum,type)
 
 /* All of the following set the parameter struct to the value indicated */
 
-_MKParameter * _MKSetDoublePar(param,value)
-    _MKParameter *param;
-    double value;
+_MKParameter * _MKSetDoublePar(_MKParameter * param, double value)
     /* Set the Parameter to type and double and assign doubleVal. */
 {
     param->_uType = MK_double;
@@ -388,9 +368,7 @@ _MKParameter * _MKSetDoublePar(param,value)
     return param;
 }
 
-_MKParameter * _MKSetIntPar(param,value)
-    _MKParameter *param;
-    int value;
+_MKParameter * _MKSetIntPar(_MKParameter *param, int value)
     /* Set the Parameter to type int and assign intVal. */
 {
     param->_uType = MK_int;
@@ -398,9 +376,7 @@ _MKParameter * _MKSetIntPar(param,value)
     return param;
 }
 
-_MKParameter * _MKSetStringPar(param,value)
-    _MKParameter *param;
-    NSString * value;
+_MKParameter * _MKSetStringPar(_MKParameter *param, NSString *value)
     /* Set the Parameter to type string and assign a copy of stringVal. */
 {
     param->_uVal.sval = [value copy];//sb was: (char *)NXUniqueString(value);
@@ -408,10 +384,7 @@ _MKParameter * _MKSetStringPar(param,value)
     return param;
 }
 
-_MKParameter * _MKSetObjPar(param,value,type)
-    _MKParameter *param;
-    id value;
-    _MKToken type;
+_MKParameter * _MKSetObjPar(_MKParameter *param, id value, _MKToken type)
     /* Sets obj field and type */
 {
     param->_uVal.symbol = value;
@@ -458,8 +431,7 @@ int _MKParAsInt(_MKParameter *param)
     return MAXINT;
 }
 
-double _MKParAsDouble(param)
-    _MKParameter *param;
+double _MKParAsDouble(_MKParameter *param)
     /* Get the current value as a double. If the receiver is envelope-valued,
        returns firstEnvValue(param). If the receiver is waveTable-valued
        returns MK_NODVAL. */
@@ -479,8 +451,7 @@ double _MKParAsDouble(param)
     return MK_NODVAL;
 }
 
-NSString * _MKParAsString(param)
-    _MKParameter *param;
+NSString * _MKParAsString(_MKParameter *param)
     /* Returns a copy of the datum as a string. If the receiver is envelope-
        valued, returns a description of the envelope. */
 {
@@ -501,8 +472,7 @@ NSString * _MKParAsString(param)
     return @"";//sb: was _MKMakeStr("");
 }
 
-NSString * _MKParAsStringNoCopy(param)
-    _MKParameter *param;
+NSString * _MKParAsStringNoCopy(_MKParameter *param)
     /* Returns the value as a string , but does
        not copy that string. Application should not
        delete the returned value and should not rely on its
@@ -527,8 +497,7 @@ NSString * _MKParAsStringNoCopy(param)
     return @"";
 }
 
-id _MKParAsEnv(param)
-    _MKParameter *param;
+id _MKParAsEnv(_MKParameter *param)
   /* Returns envelope if any, else nil. The envelope is not copied. */
 {
     if (param->_uType == MK_envelope)
@@ -536,8 +505,7 @@ id _MKParAsEnv(param)
     return nil;
 }
 
-id _MKParAsObj(param)
-    _MKParameter *param;
+id _MKParAsObj(_MKParameter *param)
   /* If type is MK_envelope, MK_waveTable or MK_object, returns the object.
      Otherwise, returns nil. */
 {
@@ -551,8 +519,7 @@ id _MKParAsObj(param)
     }
 }
 
-id _MKParAsWave(param)
-    _MKParameter *param;
+id _MKParAsWave(_MKParameter *param)
   /* Returns waveTable if any, else nil. The waveTable is not copied. */
 {
     if (param->_uType == MK_waveTable)
@@ -560,8 +527,7 @@ id _MKParAsWave(param)
     else return nil;
 }
 
-_MKParameterUnion *_MKParRaw(param)
-    _MKParameter *param;
+_MKParameterUnion *_MKParRaw(_MKParameter *param)
     /* Returns the raw _MKParameterUnion *. */
 {
     return &param->_uVal;
