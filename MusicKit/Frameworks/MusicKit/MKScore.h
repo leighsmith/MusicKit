@@ -33,6 +33,9 @@
 */
 /*
   $Log$
+  Revision 1.19  2002/01/09 18:08:52  leighsmith
+  Cleaned up headerdoc doco
+
   Revision 1.18  2001/11/16 19:56:45  skotmcdonald
   Added scaleTime method to MKPart and MKScore, which adjusts the timeTags and durations of notes by a scaling factor (useful for compensating for changes in score tempo). Note: parameters inside individual MKNotes (apart from MK_dur) will need to receive scaling msgs, eg envelopes that match physical sample or synthesis parameters that should(n't) be scaled... a conundrum for discussion at present.
 
@@ -90,12 +93,12 @@
 
 @abstract A MKScore is a collection of MKPart objects.  MKScores can be read from and
           written to a scorefile or midifile, performed with a MKScorePerformer,
-	  and an be used to record MKNotes from a MKScoreRecorder.
+	  and can be used to record MKNotes from a MKScoreRecorder.
 
 @discussion
 
 A MKScore is a collection of MKPart objects.  MKScores can be read from
-and written to a <b>.score</b>or <b>.playscore </b> scorefile or a
+and written to a <b>.score</b> or <b>.playscore </b> scorefile or a
 Standard MIDI file, performed with a MKScorePerformer, and can be used
 to record MKNotes from a MKScoreRecorder.
 
@@ -746,8 +749,8 @@ printed by invoking <b>setScorefilePrintStream:</b>.
 + (NSArray *) fileExtensions;
 
 /*!
-  @method MKScore *) score
-  @result Returns an id.
+  @method score
+  @result Returns a newly allocated MKScore instance.
   @discussion Creates and returns an allocated, initialised and autoreleased MKScore instance.
 */
 + score;
