@@ -16,6 +16,9 @@
 /*
  Modification history:
    $Log$
+   Revision 1.7  2005/01/31 00:42:34  leighsmith
+   Removed unused function causing warning
+
    Revision 1.6  2004/01/19 20:37:38  leighsmith
    Replaced magic number checking with MKScore class methods
 
@@ -34,6 +37,7 @@
 // Make sure these two match array indexes and order and then everything's sweet.
 static NSArray *scorefileExtensions;
 
+#if 0
 static NSString *findFile(NSString *name)
 {
     NSArray *libraryDirs = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSAllDomainsMask, YES);
@@ -58,6 +62,7 @@ static NSString *findFile(NSString *name)
     }
     return nil;
 }
+#endif
 
 static char *formatStr(int aFormat)
 {
