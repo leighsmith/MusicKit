@@ -1,8 +1,0 @@
-This program takes MIDI through midi0 (serial port A on NeXT hardware)
-and sends it out MIDI again. While this is a pointless application by
-itself, it does demonstrate the simplest Music Kit MIDI application.
-See the example MidiEcho for an example of more sophisticated MIDI
-processing. MidiEcho also allows you to select which serial port to
-use.
-
-

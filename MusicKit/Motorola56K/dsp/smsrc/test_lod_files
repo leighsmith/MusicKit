@@ -1,8 +1,0 @@
-diff -cb /usr/local/lib/dsp/monitor/mkmon_A_8k.lod mkmon_A_8k.lod | openfile
-
-diff -cb /usr/local/lib/dsp/monitor/mkmon_A_32k.lod mkmon_A_32k.lod | openfile
-
-diff -cb /usr/local/lib/dsp/monitor/mkmon_A_qp_hub_8k.lod mkmon_A_qp_hub_8k.lod | openfile
-
-diff -cb /usr/local/lib/dsp/monitor/mkmon_A_qp_sat_16k.lod mkmon_A_qp_sat_16k.lod | openfile
-
