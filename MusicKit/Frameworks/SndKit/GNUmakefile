@@ -71,6 +71,7 @@ $(MY_NAME)_OBJC_FILES = \
          SndMeter.m \
 	 SndMuLaw.m \
          SndMP3.m \
+	 SndPasteboard.m \
          SndPerformance.m \
          SndPlayer.m \
          SndResample.m \
@@ -124,6 +125,7 @@ $(MY_NAME)_HEADER_FILES = \
          SndMuLaw.h \
          SndMeter.h \
          SndMP3.h \
+	 SndPasteboard.h \
          SndPerformance.h \
          SndPlayer.h \
          SndResample.h \
