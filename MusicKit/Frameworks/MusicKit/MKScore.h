@@ -29,9 +29,13 @@
   Copyright (c) 1988-1992, NeXT Computer, Inc.
   Portions Copyright (c) 1994 NeXT Computer, Inc. and reproduced under license from NeXT
   Portions Copyright (c) 1994 Stanford University  
+  Portions Copyright (c) 1999-2000, The MusicKit Project.
 */
 /*
   $Log$
+  Revision 1.12  2000/11/25 22:59:17  leigh
+  Removed -releaseParts and renamed -removeAllObjects to the more meaningful -removeAllParts
+
   Revision 1.11  2000/11/21 19:48:56  leigh
   Improved release methods description
 
@@ -93,14 +97,6 @@
  Also releases the receiver's info MKNote.  Returns the receiver.
  */
 
-- releaseParts; 
- /* 
- Removes and releases the receiver's MKParts and the MKNotes contained therein.
- Doesn't release the receiver's info MKNote.  MKParts that are currently
- being performed by a MKPartPerformer aren't released.
- Returns the receiver.
- */
-
 - releasePartsOnly; 
  /* 
  Removes and releases the receiver's MKParts but doesn't free the MKNotes contained
@@ -108,7 +104,7 @@
  freed.  Returns the receiver.  
  */
 
-- (void)removeAllObjects; 
+- (void)removeAllParts; 
  /* 
  Removes the receiver's MKParts.
  Returns the receiver.
