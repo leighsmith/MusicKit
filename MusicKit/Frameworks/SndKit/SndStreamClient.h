@@ -17,7 +17,7 @@
 
 @class SndStreamManager;
 @class SndAudioBuffer;
-
+@class SndStreamManager;
 
 @interface SndStreamClient : NSObject
 {
@@ -30,6 +30,8 @@
     BOOL             needsInput;
     double           nowTime;
 
+    SndStreamManager *manager;
+    
     void             (*processFinishedCallback)(void);
 }
 
@@ -39,7 +41,8 @@
 
 - setProcessFinishedCallBack: (void*)fn;
 
-- welcomeClientWithBuffer: (SndAudioBuffer*) buff; // client welcomed with buffer showing manager format.
+- welcomeClientWithBuffer: (SndAudioBuffer*) buff manager: (SndStreamManager*) m;
+    // client welcomed with buffer showing manager format.
 - startProcessingNextBufferWithInput: (SndAudioBuffer*) inB nowTime: (double) t;
                                // ignore input buffer if you don't want it.
 - (void) processingThread;
@@ -50,7 +53,8 @@
 
 - (void) processBuffers; // The big one for the sub classes - override!.
 - (double) nowTime;
-
+- (SndStreamManager*) manager;
+- (BOOL) active;
 // Peak detection
 - setDetectPeaks: (BOOL) detectPeaks;
 - getPeakLeft: (float *) leftPeak right: (float *) rightPeak;

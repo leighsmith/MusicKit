@@ -1211,7 +1211,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
       [selectionColour set];
 
-      NSRectFillUsingOperation(highlightRect, NSCompositeDestinationOver);
+//      NSRectFillUsingOperation(highlightRect, NSCompositeDestinationOver);
 
       //      NSHighlightRect(highlightRect);
 
@@ -1478,7 +1478,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
 	  [selectionColour set];
 
-	  NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
+//	  NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
 
 
 	  //			printf("zapping %g to %g\n",NX_X(&adjSelRect),NX_MAXX(&adjSelRect));
@@ -1759,7 +1759,7 @@ double getSoundValueStereo(void *myData,int myType,int myActualSample)
 
       [selectionColour set];
 	      
-      NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
+//      NSRectFillUsingOperation(adjSelRect, NSCompositeDestinationOver);
 
 	      //	      NSHighlightRect(adjSelRect);
 	      //	      [self setNeedsDisplay:YES];

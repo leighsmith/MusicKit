@@ -143,7 +143,7 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
     if (!b && active) {
         SndAudioBuffer *buff = [SndAudioBuffer audioBufferWithFormat: &format data: NULL];
 
-        [client welcomeClientWithBuffer: buff];
+        [client welcomeClientWithBuffer: buff manager: self];
 
         [streamClientsLock lock];
         [streamClients addObject: client];
@@ -164,6 +164,9 @@ void processAudio(double sampleCount, SNDStreamBuffer* cInB, SNDStreamBuffer* cO
     if (b) {
         [streamClientsLock lock];
         [streamClients removeObject: client];
+        
+//        if ([streamClients count] == 0 && active)
+//            [self stopStreaming];
         [streamClientsLock unlock];
     }
     return b;

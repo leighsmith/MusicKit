@@ -36,7 +36,8 @@ enum {
     sc->active           = FALSE;
     sc->needsInput       = FALSE;
     sc->nowTime          = 0.0;
-    sc->processFinishedCallback = NULL;    
+    sc->processFinishedCallback = NULL;
+    sc->manager          = nil;
     return [sc autorelease];
 }
 
@@ -94,11 +95,16 @@ enum {
     return nowTime;
 }
 
+- (SndStreamManager*) manager
+{
+    return manager;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-- welcomeClientWithBuffer: (SndAudioBuffer*) buff
+- welcomeClientWithBuffer: (SndAudioBuffer*) buff manager: (SndStreamManager*) m
 {
     [self freeBufferMem];
 
@@ -111,6 +117,9 @@ enum {
 
     synthThreadLock = [[NSConditionLock alloc] initWithCondition: SC_processBuffer];
     [synthThreadLock retain];
+
+    manager = m;
+    [manager retain];
     
     [NSThread detachNewThreadSelector: @selector(processingThread)
                              toTarget: self
@@ -165,9 +174,16 @@ enum {
 
         [synthThreadLock unlockWithCondition: SC_bufferReady];
     }
-    [synthThreadLock release];
+    [synthThreadLock release];    
+    [[self manager] removeClient: self];
+    [manager release];
     [localPool release];
     [NSThread exit];
+}
+
+- (BOOL) active
+{
+    return active;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -208,7 +224,10 @@ enum {
 
 - managerIsShuttingDown
 {
+    // make sure the synthesis thread is paused
+    [synthThreadLock lockWhenCondition:   SC_bufferReady ]; 
     active = FALSE;
+    [synthThreadLock unlockWithCondition: SC_processBuffer];
     return self;
 }
 

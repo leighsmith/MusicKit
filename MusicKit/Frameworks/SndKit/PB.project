@@ -1,12 +1,15 @@
 {
     CURRENTLY_ACTIVE_VERSION = YES; 
-    DEPLOY_WITH_VERSION_NAME = A; 
+    DEPLOY_WITH_VERSION_NAME = 1.3; 
     DYNAMIC_CODE_GEN = YES; 
     FILESTABLE = {
         CLASSES = (
             Snd.m, 
+            SndAudioBuffer.m, 
             SndDisplayData.m, 
             SndDisplayDataList.m, 
+            SndStreamClient.m, 
+            SndStreamManager.m, 
             SndView.m, 
             sounderror.m, 
             UserPath.m
@@ -23,26 +26,25 @@
         ); 
         HEADERSEARCH = (/usr/local/include); 
         H_FILES = (
-            performsound.h, 
             Snd.h, 
+            SndAudioBuffer.h, 
             SndDisplayData.h, 
             SndDisplayDataList.h, 
             SndEndianFunctions.h, 
-            SndFormats.h, 
             SndFunctions.h, 
             SndKit.h, 
             SndResample.h, 
-            SndStruct.h, 
+            SndStdefs.h, 
+            SndStreamClient.h, 
+            SndStreamManager.h, 
             SndView.h, 
             Sound.h, 
             sounderror.h, 
-            soundstruct.h, 
             UserPath.h, 
             _Sndfilterkit.h, 
             _Sndlargefilter.h, 
             _Sndlibst.h, 
-            _Sndsmallfilter.h, 
-            SndStdefs.h
+            _Sndsmallfilter.h
         ); 
         LIBRARYSEARCH = (/usr/local/lib); 
         OTHER_LIBS = (st); 
@@ -68,9 +70,7 @@
         PROJECT_HEADERS = (); 
         PUBLIC_HEADERS = (
             SndFunctions.h, 
-            SndFormats.h, 
             SndEndianFunctions.h, 
-            SndStruct.h, 
             SndKit.h, 
             Snd.h, 
             sounderror.h, 
@@ -80,10 +80,11 @@
             UserPath.h, 
             _Sndlibst.h, 
             Sound.h, 
-            soundstruct.h, 
-            performsound.h, 
             SndResample.h, 
-            SndStdefs.h
+            SndStdefs.h, 
+            SndStreamClient.h, 
+            SndAudioBuffer.h, 
+            SndStreamManager.h
         ); 
         SUBPROJECTS = (); 
     }; 

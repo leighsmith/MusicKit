@@ -12,14 +12,15 @@ NAME = SndKit
 PROJECTVERSION = 2.8
 PROJECT_TYPE = Framework
 
-CLASSES = Snd.m SndDisplayData.m SndDisplayDataList.m SndView.m\
-          sounderror.m UserPath.m
+CLASSES = Snd.m SndAudioBuffer.m SndDisplayData.m SndDisplayDataList.m\
+          SndStreamClient.m SndStreamManager.m SndView.m sounderror.m\
+          UserPath.m
 
-HFILES = performsound.h Snd.h SndDisplayData.h SndDisplayDataList.h\
-         SndEndianFunctions.h SndFormats.h SndFunctions.h SndKit.h\
-         SndResample.h SndStruct.h SndView.h Sound.h sounderror.h\
-         soundstruct.h UserPath.h _Sndfilterkit.h _Sndlargefilter.h\
-         _Sndlibst.h _Sndsmallfilter.h SndStdefs.h
+HFILES = Snd.h SndAudioBuffer.h SndDisplayData.h SndDisplayDataList.h\
+         SndEndianFunctions.h SndFunctions.h SndKit.h SndResample.h\
+         SndStdefs.h SndStreamClient.h SndStreamManager.h SndView.h\
+         Sound.h sounderror.h UserPath.h _Sndfilterkit.h\
+         _Sndlargefilter.h _Sndlibst.h _Sndsmallfilter.h
 
 MFILES = SndFunctions.m
 
@@ -32,7 +33,7 @@ OTHERSRCS = Makefile.preamble Makefile Makefile.postamble m.template\
 
 MAKEFILEDIR = .
 CURRENTLY_ACTIVE_VERSION = YES
-DEPLOY_WITH_VERSION_NAME = A
+DEPLOY_WITH_VERSION_NAME = 1.3
 CODE_GEN_STYLE = DYNAMIC
 MAKEFILE = framework.make
 NEXTSTEP_INSTALLDIR = $(LOCAL_LIBRARY_DIR)/Frameworks
@@ -52,11 +53,11 @@ WINDOWS_PB_CFLAGS = -O2
 WINDOWS_PB_LDFLAGS = -O2
 FRAMEWORKS = -framework AppKit -framework Foundation\
              -framework MKPerformSndMIDI -framework System
-PUBLIC_HEADERS = SndFunctions.h SndFormats.h SndEndianFunctions.h\
-                 SndStruct.h SndKit.h Snd.h sounderror.h SndView.h\
-                 SndDisplayData.h SndDisplayDataList.h UserPath.h\
-                 _Sndlibst.h Sound.h soundstruct.h performsound.h\
-                 SndResample.h SndStdefs.h
+PUBLIC_HEADERS = SndFunctions.h SndEndianFunctions.h SndKit.h Snd.h\
+                 sounderror.h SndView.h SndDisplayData.h\
+                 SndDisplayDataList.h UserPath.h _Sndlibst.h Sound.h\
+                 SndResample.h SndStdefs.h SndStreamClient.h\
+                 SndAudioBuffer.h SndStreamManager.h
 
 
 
