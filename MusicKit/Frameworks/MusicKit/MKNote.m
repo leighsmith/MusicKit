@@ -16,6 +16,9 @@
 Modification history:
 
   $Log$
+  Revision 1.27  2002/04/16 15:28:47  sbrandon
+  tightened up a couple of casts to keep compiler happy
+
   Revision 1.26  2002/04/16 15:19:10  sbrandon
   - several clumsy string-appending calls were simplified for speed
   - a couple of _MKFreeParameter calls removed, since removal from the
@@ -1528,7 +1531,7 @@ static id writeNoteAux(MKNote *self,_MKScoreOutStruct *p,
       case MK_noteOff:
       case MK_noteUpdate:
        {
-        char *tnnc = _MKTokNameNoCheck(self->noteType);
+        const char *tnnc = _MKTokNameNoCheck(self->noteType);
         [aStream appendBytes:tnnc length:strlen(tnnc)];
         if (self->noteTag != MAXINT)
           [aStream appendData:
@@ -1539,7 +1542,7 @@ static id writeNoteAux(MKNote *self,_MKScoreOutStruct *p,
       case MK_mute:
       default:
        {
-       char *tnnc = _MKTokNameNoCheck(self->noteType);
+        const char *tnnc = _MKTokNameNoCheck(self->noteType);
         [aStream appendBytes:tnnc length:strlen(tnnc)];
         break;
        }
