@@ -247,12 +247,13 @@ startPosition: (double) startPosition
 
 /*!
     @method stopNow
+    @abstract Stops the performance immediately.
 */
 - (void) stopNow;
 
 /*!
     @method   isEqual:
-    @abstract 
+    @abstract Compares two performances.
     @param      anotherPerformance
 */
 - (BOOL) isEqual: (id) anotherPerformance;
@@ -285,15 +286,22 @@ startPosition: (double) startPosition
 
 /*!
   @method   pause
-  @abstract pauses a performance
+  @abstract Pauses a performance
 */
 - pause;
 
 /*!
   @method   resume
-  @abstract resumes a paused performance
+  @abstract Resumes a paused performance
 */
 - resume;
+
+/*!
+  @method isPlaying
+  @abstract Indicates whether the current performance is actually sounding.
+  @result Returns YES if the performance is currently sounding, NO if it is paused, has yet to be begin playing or has finished.
+ */
+- (BOOL) isPlaying;
 
 /*!
   @method audioProcessorChain
