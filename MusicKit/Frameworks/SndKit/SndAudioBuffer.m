@@ -3,6 +3,7 @@
 //  $Id$
 //
 //  Description:
+//    In memory audio buffer. See SndAudioBuffer.h for description.
 //
 //  Original Author: SKoT McDonald, <skot@tomandandy.com>
 //
@@ -552,7 +553,7 @@
 
     // Check all channels
     for (i = 0; i < samplesInBuffer; i++) {
-	float sample;
+	float sample = 0.0;
 
 	switch(dataFormat) {
 	case SND_FORMAT_FLOAT:
@@ -570,6 +571,33 @@
 	else if (sample > *pMax)
 	    *pMax = sample;
     }
+}
+
+- (float) sampleAtFrameIndex: (long) frameIndex channel: (int) channel
+{
+    long sampleIndex = frameIndex * channelCount + channel;
+    const void *samplePtr = [data bytes];
+    float sample = 0.0;
+
+    if(frameIndex < 0 || frameIndex >= [self lengthInSampleFrames]) {
+	NSLog(@"frameIndex %ld out of range [0,%ld]\n", frameIndex, [self lengthInSampleFrames]);
+	return 0.0;
+    }
+    if(channel < 0 || channel >= channelCount) {
+	NSLog(@"channel %d out of range [0,%d]\n", channel, channelCount);
+	return 0.0;
+    }
+    switch(dataFormat) {
+	case SND_FORMAT_FLOAT:
+	    sample = ((float *) samplePtr)[sampleIndex];
+	    break;
+	case SND_FORMAT_LINEAR_16:
+	    sample = ((short *) samplePtr)[sampleIndex];
+	    break;
+	default:
+	    NSLog(@"sampleAtFrameIndex:channel: unsupported format %d\n", dataFormat);
+    }
+    return sample;
 }
 
 @end

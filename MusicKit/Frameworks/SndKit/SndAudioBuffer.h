@@ -154,7 +154,7 @@
   @param      start The sample frame to begin mixing from.
   @param      end The sample frame to end mixing at.
   @param      exp If TRUE, receiver is allowed to expand <i>buff</i> in place
-                  if required to change format before mixing.
+                  if required to change data format before mixing, (not sample rate).
   @result     Returns self.
 */
 - mixWithBuffer: (SndAudioBuffer*) buff
@@ -329,6 +329,16 @@
   @param pMax Points to a float to store the maximum sample value (between -1.0 and 1.0).
  */
 - (void) findMin:(float*) pMin max:(float*) pMax;
+
+/*!
+  @method sampleAtFrameIndex:channel:
+  @abstract Retrieves a normalized sample given the frame number (time position) and channel number.
+  @param frameIndex The frame index, between 0 and the value returned by <B>lengthInSampleFrames</B>
+                    less one, inclusive.
+  @param channel The channel index, between 0 and the number of channels in the sound.
+  @result Returns a normalized sample value as a float regardless of the data format.
+ */
+- (float) sampleAtFrameIndex: (long) frameIndex channel: (int) channel;
 
 @end
 
