@@ -46,6 +46,11 @@
 Modification history:
 
   $Log$
+  Revision 1.10  2001/07/02 16:44:07  sbrandon
+  - replaced sel_getName with NSStringFromSelector (hopefully more OpenStep
+    compliant)
+  - added newline onto end of file
+
   Revision 1.9  2001/03/06 21:47:33  leigh
   Abstracted patch loading from SynthPatches into MKPatch
 
@@ -256,7 +261,7 @@ static void cancelMsgs(register id self)
        The subclass should implement this method such that when
        currentNote is nil, a default template is returned. */
 {
-    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", sel_getName(_cmd)];
+    [NSException raise:NSInvalidArgumentException format:@"*** Subclass responsibility: %s", NSStringFromSelector(_cmd)];
     return nil;
 }
 
