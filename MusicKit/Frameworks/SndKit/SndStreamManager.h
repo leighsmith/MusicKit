@@ -26,7 +26,8 @@
     SndSoundStruct  format; 
 }
 
-+ (SndStreamManager *) streamManager;
++ (void) initialize;
++ (SndStreamManager *) defaultStreamManager;
 
 - (void) dealloc;
 - (NSString*) description;
