@@ -51,7 +51,7 @@
 
     For Win32, the "driver" within the MKPerformSndMIDI framework interfacing to
     DirectMusic will return a list of DirectMusic "ports", which can be hardware MIDI
-    interfaces, PCM ROM playback engines on soundcards, the Microsoft Sound Synthesiser
+    interfaces, PCM ROM playback engines on soundcards, the Microsoft DLS Sound Synthesiser
     etc. The device name can be either a port description string (exactly matching one of
     the driverNames), or can be "midiX" i.e. the soft form described above, where X is the
     0 base index referring to a driver.
@@ -66,6 +66,9 @@
 Modification history:
 
   $Log$
+  Revision 1.22  2000/06/15 01:10:28  leigh
+  Added possibly more correct search for the Midi driver for MOX/DP4
+
   Revision 1.21  2000/05/06 02:36:42  leigh
   Made Win32 declare regression class types also
 
@@ -372,7 +375,9 @@ static int openMidiDev(MKMidi *self)
     NSMutableArray *otherUnits;
 #if macosx
     self->unit = getNumSuffix(self->midiDevName, &isSoftDevice);
-    self->devicePort = [[NSPortNameServer defaultPortNameServer] portForName: DRIVER_NAME onHost: self->hostname];
+    // for some bizarre reason (most probably a copy/paste oversight),
+    // [NSMachBootstrapServer portForName] returns a NSPort, so we cast things to keep the compiler happy.
+    self->devicePort = (NSMachPort *) [[NSMachBootstrapServer systemDefaultPortNameServer] portForName: DRIVER_NAME host: self->hostname];
 
     if (self->devicePort == nil) {
         _MKErrorf(MK_machErr, NETNAME_ERROR, @"Unable to find devicePort", @"MIDI Port Server lookup");
@@ -397,12 +402,12 @@ static int openMidiDev(MKMidi *self)
 #elif macosx_server
     self->unit = getNumSuffix(self->midiDevName, &isSoftDevice);
     self->devicePort = [[NSPortNameServer defaultPortNameServer] portForName: DRIVER_NAME onHost: self->hostname];
-    [self->devicePort retain];
 
     if (self->devicePort == nil) {
         _MKErrorf(MK_machErr, NETNAME_ERROR, @"Unable to find devicePort", @"MIDI Port Server lookup");
 	return !KERN_SUCCESS;
     }
+    [self->devicePort retain];
     otherUnits = [MKMidi midisOnHost: self->hostname otherThanUnit: self->unit];
     if ([otherUnits count]) {
 	MKMidi *aMidi;
@@ -1377,14 +1382,16 @@ static BOOL mapSoftNameToDriverNameAndUnit(NSString *devName, NSString **midiDev
 static id openMidi(MKMidi *self)
 {
     if (openMidiDev(self) != KERN_SUCCESS)
-      return nil;
-    if (INPUTENABLED(self->ioMode))
-      if (!(self->_pIn = (void *)_MKInitMidiIn()))
-	return nil;
-      else setMidiSysIgnore(self,self->_ignoreBits);
+        return nil;
+    if (INPUTENABLED(self->ioMode)) {
+        if (!(self->_pIn = (void *)_MKInitMidiIn()))
+            return nil;
+        else
+            setMidiSysIgnore(self,self->_ignoreBits);
+    }
     if (OUTPUTENABLED(self->ioMode)) {
 	if (!(self->_pOut = (void *)_MKInitMidiOut()))
-	  return nil;
+            return nil;
 	else {
 	    _MKMidiOutStruct *p = self->_pOut;
 	    p->_owner = self;
