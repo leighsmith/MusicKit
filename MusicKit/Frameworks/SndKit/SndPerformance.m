@@ -10,7 +10,7 @@
 //
 //  Original Author: Leigh Smith, <leigh@tomandandy.com>
 //
-//  Copyright (c) 2001-2002, The MusicKit Project.  All rights reserved.
+//  Copyright (c) 2001, The MusicKit Project.  All rights reserved.
 //
 //  Permission is granted to use and modify this code for commercial and
 //  non-commercial purposes so long as the author attribution and copyright
@@ -71,17 +71,22 @@ playingAtTime: (double) t
  beginAtIndex: (long) beginIndex
    endAtIndex: (long) endIndex
 {
-  self = [super init];
-  if (self) {
-    snd          = [s retain];
-    playTime     = t;
-    startAtIndex = beginIndex;
-    playIndex    = beginIndex;
-    endAtIndex   = endIndex;
-    deltaTime    = 1.0;
-    actualTime   = 0.0;
-  }
-  return self;
+    self = [super init];
+    if (self) {
+	snd          = [s retain];
+	playTime     = t;
+	startAtIndex = beginIndex;
+	playIndex    = beginIndex;
+	endAtIndex   = endIndex;
+	deltaTime    = 1.0;
+	actualTime   = 0.0;
+	// Prime the loop behaviour during performance from the Snd's settings.
+	// It is possible to change the loop behaviour of the performance during play.
+	[self setLoopStartIndex: [s loopStartIndex]];
+	[self setLoopEndIndex: [s loopEndIndex]];
+	[self setLooping: [s loopWhenPlaying]];
+    }
+    return self;
 }
 
 - initWithSnd: (Snd *) s
@@ -90,19 +95,18 @@ startPosition: (double) startPosition
      duration: (double) duration
     deltaTime: (double) _deltaTime;
 {
-  self = [super init];
-  if (self) {
-    double samplingRate = [s samplingRate];
-    snd          = [s retain];
-    playTime     = _playTime;
-    deltaTime    = _deltaTime;
+    self = [super init];
+    if (self) {
+	double samplingRate = [s samplingRate];
+	
+	[self initWithSnd: s
+	    playingAtTime: _playTime
+	     beginAtIndex: (long) (samplingRate * startPosition)
+	       endAtIndex: (long) (startAtIndex + samplingRate * duration * deltaTime)];
 
-    startAtIndex = samplingRate * startPosition;
-    playIndex    = startAtIndex;
-    endAtIndex   = startAtIndex + samplingRate * duration * deltaTime;
-    actualTime   = 0.0;
-  }
-  return self;
+	deltaTime = _deltaTime;
+    }
+    return self;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -225,6 +229,22 @@ startPosition: (double) startPosition
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// rewindPlayIndexBySamples:
+////////////////////////////////////////////////////////////////////////////////
+
+- (double) rewindPlayIndexBySamples: (long) numberOfSamplesToRewind
+{
+    long distanceFromLoopStart = playIndex - loopStartIndex;
+    
+    // check if we need to wrap around the loop start index if we are looping and we have entered the loop.
+    if(looping && distanceFromLoopStart > 0 && distanceFromLoopStart < numberOfSamplesToRewind)
+	playIndex = loopEndIndex - (numberOfSamplesToRewind - distanceFromLoopStart);
+    else
+	playIndex -= numberOfSamplesToRewind;
+    return playIndex;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // endAtIndex
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -293,7 +313,7 @@ startPosition: (double) startPosition
 // Fills the given buffer with sound data, reading from the playIndex up until endAtIndex
 // (which allows us to play a sub-section of a sound). playIndex is updated, and looping is
 // respected.
-- (long) retrieveAPerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength
+- (long) retrievePerformBuffer: (SndAudioBuffer *) bufferToFill ofLength: (long) buffLength
 {
     // deltaTime may be a misnomer, it is a multiple of buffers
     double  stretchedBufferLength = deltaTime * buffLength;
