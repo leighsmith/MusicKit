@@ -14,6 +14,9 @@
 /* 
 Modification history:
   $Log$
+  Revision 1.11  2004/08/09 20:17:41  leighsmith
+  Removed const declaration of argv since it clashed with getopt prototype
+
   Revision 1.10  2004/01/19 20:35:21  leighsmith
   Changed argv typing to reduce warnings
 
@@ -329,7 +332,7 @@ static int openOrch(int orchIndex,BOOL waitForIt, BOOL quiet, BOOL allDSPs) {
     return 0;
 }
 
-int main(int argc, const char **argv)
+int main(int argc, char *argv[])
 {
     int i, repeatCount, repeat, optch;
     NSString *inputFile;
