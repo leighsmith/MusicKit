@@ -19,6 +19,9 @@ WE SHALL HAVE NO LIABILITY TO YOU FOR LOSS OF PROFITS, LOSS OF CONTRACTS, LOSS O
 ******************************************************************************/
 /* HISTORY
  * $Log$
+ * Revision 1.11  2001/02/11 03:15:22  leigh
+ * Factored all platform specific code for playback and recording into MKPerformSndMIDI.framework
+ *
  * Revision 1.10  2001/02/08 00:17:56  leigh
  * Added Christopher Penroses additions for MacOS X Public Beta CoreAudio
  *
@@ -58,83 +61,20 @@ NSString *NXSoundPboardType = @"NXSoundPboardType";
 @implementation Snd
 
 static NSAutoreleasePool *pool;
-static NSMutableDictionary* nameTable = nil;
-static NSMutableDictionary* playRecTable = nil;
+static NSMutableDictionary *nameTable = nil;
+static NSMutableDictionary *playRecTable = nil;
 static int ioTags = 1000;
-
-void merror(int er)
-{
-    NSLog(@"mem error %i\n",er);
-    return;
-}
-
-#ifdef macosx
-
-static id	clientDataHack;
-static BOOL	isPlaying = NO;
-
-OSStatus SndKitSndIOProc(AudioDeviceID inDevice,
-                         const AudioTimeStamp *inNow,
-                         const void *inInputData,
-			 const AudioTimeStamp *inInputTime,
-                         void  *outOutputData,
-                         const AudioTimeStamp *inOutputTime,
-			 void *inClientData)
-{
-    
-    register int  i;
-    
-    float         *inputBuffer,
-                    *outputBuffer = outOutputData;
-    
-    id            me = (id) *( (id *) inClientData);
-    
-    /* select input buffer */
-    
-    if ([me bufferCount] % 2)
-        inputBuffer = (float *) [me bufferOdd];
-    
-    else
-        inputBuffer = (float *) [me bufferEven];
-    
-    /* fill outputBuffer with floating-point data */
-    
-    for ( i=0; i < [me bufferFrameSize]; i++ )
-        *(outputBuffer+i) = *(inputBuffer+i);
-    
-    /* unblock main thread waiting on this condition variable */
-    
-    pthread_cond_signal( [me soundCondition] );
-    
-    return 0;
-}
-
-static void *playSoundFunc(void *obj)
-{
-  [((id)obj) playSoundThread];
-  return 0;
-}
-
-#endif
-
 
 + (void)initialize
 {
-#if defined(WIN32) && defined(USE_PERFORM_SOUND_IO)
     char **driverNames;
-#endif
-//	printf("Snd class initialize\n");
-//	malloc_error(&merror);
     pool = [[NSAutoreleasePool alloc] init];
     if ( self == [Snd class] ) {
         nameTable = [[NSMutableDictionary alloc] initWithCapacity:10];
-#if defined(WIN32) && defined(USE_PERFORM_SOUND_IO)
         SNDInit(TRUE);
         driverNames = SNDGetAvailableDriverNames();
-        printf("driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
-#endif
+        NSLog(@"driver selected is %s\n", driverNames[SNDGetAssignedDriverIndex()]);
     }
-    return;
 }
 
 + soundNamed:(NSString *)aName
@@ -218,11 +158,11 @@ static void *playSoundFunc(void *obj)
     if ([nameTable objectForKey:aName]) return nil; /* already exists */
     found = ((path = [aBundle pathForResource:aName ofType:@"snd"]) != nil);
     if (found) {
-            newSound = [[Snd alloc] initFromSoundfile:path];
-            if (newSound) {
-                    [Snd addName:aName sound:newSound];
-                    return [newSound autorelease];
-            }
+        newSound = [[Snd alloc] initFromSoundfile: path];
+        if (newSound) {
+            [Snd addName: aName sound: newSound];
+            return [newSound autorelease];
+        }
     }
     return nil;
 }
@@ -234,45 +174,25 @@ static void *playSoundFunc(void *obj)
 
 + getVolume:(float *)left :(float *)right
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
-	return [Sound getVolume:(float *)left :(float *)right];
-#else
-    *left = 0.0;
-    *right = 0.0;
+    SNDGetVolume(left, right);
     return [self class];
-#endif
 }
 
 + setVolume:(float)left :(float)right
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
-    return [Sound setVolume:(float)left :(float)right];
-#else
+    SNDSetVolume(left, right);
     return [self class];
-#endif
 }
 
 + (BOOL)isMuted
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
-    return [Sound isMuted];
-#elif defined(USE_PERFORM_SOUND_IO) && defined(WIN32)
     return SNDIsMuted();
-#else
-    return NO;
-#endif
 }
 
 + setMute:(BOOL)aFlag
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
-    return [Sound setMute:(BOOL)aFlag];
-#elif defined(USE_PERFORM_SOUND_IO) && defined(WIN32)
     SNDSetMute(aFlag);
     return self;
-#else
-    return self;
-#endif
 }
 
 - init
@@ -285,9 +205,6 @@ static void *playSoundFunc(void *obj)
     currentError = 0;
     _scratchSnd = NULL;
     _scratchSize = 0;
-#if defined(__ppc__) || defined(WIN32)
-    plSound = nil;
-#endif
     tag = 0;
 
     /*
@@ -298,13 +215,6 @@ static void *playSoundFunc(void *obj)
     soundStruct->dataSize = 0;
     soundStruct->dataFormat = SND_FORMAT_UNSPECIFIED;
     */
-
-#ifdef macosx
-
-    soundPlaying = NO;
-    stopRequest = NO;
-
-#endif
 
     return [super init];
 }
@@ -329,14 +239,11 @@ static void *playSoundFunc(void *obj)
 {
     if (name) {
         if ([nameTable objectForKey:name] == self)
-                [Snd removeSoundForName:name];
+            [Snd removeSoundForName:name];
         [name release];
     }
     if (soundStruct) SndFree(soundStruct);
     if (_scratchSnd) SndFree(_scratchSnd);
-#if defined(__ppc__) || defined(WIN32)
-    [plSound release];
-#endif
     [super dealloc];
 }
 
@@ -378,7 +285,7 @@ void soundStructDescription(SndSoundStruct *s)
     s->channelCount = ntohl(s->channelCount);
 #endif
 
-//  dumpSoundStruct(s);
+//  soundStructDescription(s);
     finalSize = s->dataSize + s->dataLocation;
 
     s = realloc((char *)s,finalSize);
@@ -446,7 +353,7 @@ void soundStructDescription(SndSoundStruct *s)
         [stream appendBytes:(char *)soundStruct + soundStruct->dataLocation length:soundStruct->dataSize];
         free(s);
         return SND_ERR_NONE;
-        }
+    }
 
     ssList = (SndSoundStruct **)soundStruct->dataLocation;
     free(s);
@@ -454,7 +361,7 @@ void soundStructDescription(SndSoundStruct *s)
 //		NXWrite(stream, (char *)theStruct + theStruct->dataLocation,
 //			theStruct->dataSize);
         [stream appendBytes:(char *)theStruct + theStruct->dataLocation length:theStruct->dataSize];
-        }
+    }
     return SND_ERR_NONE;
 }
 
@@ -633,11 +540,11 @@ void soundStructDescription(SndSoundStruct *s)
     return strlen((char *)(soundStruct->info));
 }
 
-#ifdef USE_PERFORM_SOUND_IO
-int beginFun(SNDSoundStruct *sound, int tag, int err)
+int beginFun(SndSoundStruct *sound, int tag, int err)
 {
     Snd *theSnd;
     theSnd = [playRecTable objectForKey: [NSNumber numberWithInt: tag]];
+    NSLog(@"beginFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
     if (err) {
         [theSnd _setStatus:NX_SoundStopped];
         [theSnd tellDelegate:@selector(hadError:)];
@@ -649,13 +556,13 @@ int beginFun(SNDSoundStruct *sound, int tag, int err)
     return 0;
 }
 
-int endFun(SNDSoundStruct *sound, int tag, int err)
+int endFun(SndSoundStruct *sound, int tag, int err)
 {
     Snd *theSnd;
     NSNumber *tagNumber = [NSNumber numberWithInt: tag];
 
     theSnd = [playRecTable objectForKey: tagNumber];
-    // NSLog(@"endFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
+    NSLog(@"endFun theSnd = %x, err = %d tag = %d\n", theSnd, err, tag);
     [theSnd _setStatus:NX_SoundStopped];
     if (err == SND_ERR_ABORTED) err = SND_ERR_NONE;
     if (err) [theSnd tellDelegate:@selector(hadError:)];
@@ -675,7 +582,7 @@ int endFun(SNDSoundStruct *sound, int tag, int err)
     return 0;
 }
 
-int beginRecFun(SNDSoundStruct *sound, int tag, int err)
+int beginRecFun(SndSoundStruct *sound, int tag, int err)
 {
     Snd *theSnd;
     theSnd = [playRecTable objectForKey: [NSNumber numberWithInt: tag]];
@@ -690,7 +597,7 @@ int beginRecFun(SNDSoundStruct *sound, int tag, int err)
     return 0;
 }
 
-int endRecFun(SNDSoundStruct *sound, int tag, int err)
+int endRecFun(SndSoundStruct *sound, int tag, int err)
 {
     Snd *theSnd;
     NSNumber *tagNumber = [NSNumber numberWithInt: tag];
@@ -706,13 +613,8 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
     return 0;
 }
 
-#endif
-
-#ifdef macosx
 - play:(id) sender beginSample:(int) begin sampleCount: (int) count 
 {
-    playSender = sender;
-    
     playBegin = begin;
     playEnd = begin + count;
     
@@ -721,571 +623,52 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
     
     if (playEnd > [self sampleCount] || playEnd < playBegin)
         playEnd = [self sampleCount];
-    
-    /* tell our self that we are playing */
-    
-    soundPlaying = YES;
-    
-    /* detach thread */
-    
-    pthread_create( &soundThread, NULL, playSoundFunc, (void *) self );
-    
+        
     return self;
 }
-
-#endif
 
 - play:sender
 {
-#if macosx
-    playSender = sender;
-    
-    playBegin = 0;
-    playEnd = [self sampleCount];
-    
-    /* tell our self that we are playing */
-    
-    soundPlaying = YES;
-    
-    /* detach thread */
-    
-    pthread_create( &soundThread, NULL, playSoundFunc, (void *) self );
-    
-    return self;
-#else
-#ifdef USE_PERFORM_SOUND_IO
-	int err;
-	if (!soundStruct) return self;
-	if (!playRecTable) {
-		playRecTable = [NSMutableDictionary dictionaryWithCapacity: 20];
-		[playRecTable retain];
-	}
-	
-	tag = ioTags;
-        // the same soundStruct is used every time the sound is played, so we use the tag to differentiate.
-        // We use an NSDictionary rather than a HashTable for strict OpenStep support.
-        [playRecTable setObject: self forKey: [NSNumber numberWithInt: tag]];
-	status = NX_SoundPlayingPending;
-        err = SNDUnreserve(3);
-        if(err) {
-            NSLog(@"Unreserving error %d\n", err);
-        }
-	err = SNDStartPlaying((SNDSoundStruct *)soundStruct,
-		ioTags++ /*	int tag			*/,
-		1 /*	int priority	*/,
-		0 /*	int preempt		*/, 
-		(SNDNotificationFun) beginFun,
-		(SNDNotificationFun) endFun);
-	if (err) NSLog(@"Playback error %d\n",err);
-	return self;
-#else
-#if defined(__ppc__) || defined(WIN32)
-    NSString *tempfile = [NSTemporaryDirectory() stringByAppendingPathExtension:
-        [NSString stringWithFormat:@"SK%s.snd",tmpfile()]];
+    int err;
     if (!soundStruct) return self;
-    [self writeSoundfile:tempfile];
-    [plSound release]; /* get rid of old one */
-    plSound = [[NSSound alloc] initWithContentsOfFile:tempfile byReference:NO];
-    [[NSFileManager defaultManager] removeFileAtPath:tempfile handler:nil];
-    [self tellDelegate:@selector(willPlay:)];
-    [(NSSound *)plSound setDelegate:self];
-    [(NSSound *)plSound play];
+    if (!playRecTable) {
+            playRecTable = [NSMutableDictionary dictionaryWithCapacity: 20];
+            [playRecTable retain];
+    }
+    
+    tag = ioTags;
+    // the same soundStruct is used every time the sound is played, so we use the tag to differentiate.
+    // We use an NSDictionary rather than a HashTable for strict OpenStep support.
+    [playRecTable setObject: self forKey: [NSNumber numberWithInt: tag]];
+    status = NX_SoundPlayingPending;
+    err = SNDUnreserve(3);
+    if(err) {
+        NSLog(@"Unreserving error %d\n", err);
+    }
+    err = SNDStartPlaying((SndSoundStruct *)soundStruct,
+            ioTags++ /*	int tag			*/,
+            1 /*	int priority	*/,
+            0 /*	int preempt		*/, 
+            (SNDNotificationFun) beginFun,
+            (SNDNotificationFun) endFun);
+    if (err) NSLog(@"Playback error %d\n",err);
     return self;
-# endif
-    return self;
-#endif
-#endif  // macosx
 }
 
-#ifdef macosx
 
-- (void) playSoundThread
-{
-
-  int			bufferByteSize,
-			currentSample = playBegin * [self channelCount];
-
-  UInt32                intFetch,
-			propertySize;
-
-  float			*soundBuffer;
-
-  double		deviceSampleRate;
-
-  BOOL			first = YES,
-			finished = NO;
-
-  OSStatus              CAstatus;
-
-
-  /* our playback buffer size in bytes */
-
-  bufferByteSize = 32768;
-  bufferFrameSize = bufferByteSize / sizeof(float);
-
-  bufferCount = 0;
-
-  /* allocate our buffers */
-
-  bufferEven = (float *)
-	NSZoneCalloc(NSDefaultMallocZone(),
-		     bufferFrameSize, sizeof(float));
-
-  bufferOdd = (float *)
-	NSZoneCalloc(NSDefaultMallocZone(),
-		     bufferFrameSize, sizeof(float));
-
-  soundBuffer = bufferEven;
-
-  /* initialize CoreAudio device */
-
-  /* Get the default sound output device */
-
-  propertySize = sizeof(outputDeviceID);
-  CAstatus = AudioHardwareGetProperty(kAudioHardwarePropertyDefaultOutputDevice,
-		&propertySize, &outputDeviceID);
-
-  //  fprintf(stderr, "%p\n", (void *) &outputDeviceID);
-  //  fprintf(stderr, "output device CAstatus:%s\n", (char *) &CAstatus);
-
-  if (CAstatus) {
-    fprintf(stderr, "300AudioHardwareGetProperty returned %d\n", (int) CAstatus);
-    exit(1);
-  }
-
-  /* check the returned device */
-
-  if (outputDeviceID == kAudioDeviceUnknown) {
-    fprintf(stderr, "outputDeviceID is kAudioDeviceUnknown\n");
-    exit(1);
-  }
-
-
-  /* get name of device */
-
-  {
-
-    char        deviceName[256];
-
-    propertySize = 256;
-    CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
-				    kAudioDevicePropertyDeviceName,
-				    &propertySize, deviceName);
-
-        NSLog(@"%s\n", deviceName);
-
-    //    NSLog(@"get device name CAstatus:%s\n", (char *) &CAstatus);
-
-    if (CAstatus) {
-      fprintf(stderr, "AudioDeviceGetProperty returned %s\n", (char *) &CAstatus);
-      exit(1);
-    }
-  }
-
-
-  /* check device CAstatus */
-
-  {
-
-    UInt32      running;
-
-    propertySize = sizeof(UInt32);
-    CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
-				    kAudioDevicePropertyDeviceIsRunning,
-				    &propertySize, &running);
-
-    //    fprintf(stderr,"%d\n", (int) running);
-
-    //    fprintf(stderr, "get isrunning CAstatus:%s\n", (char *) &CAstatus);
-
-
-    if (CAstatus) {
-      fprintf(stderr, "///AudioDeviceGetProperty returned %d\n", (int) CAstatus);
-      exit(1);
-    }
-
-  }
-
-
-
-  /* set the sampleRate of the device */
-
-  propertySize = sizeof(double);
-  deviceSampleRate = [self samplingRate];
-  CAstatus = AudioDeviceSetProperty(outputDeviceID, NULL, 0, false,
-                                  kAudioDevicePropertyRateScalar,
-				  propertySize, &deviceSampleRate);
-
-  NSLog(@"set sampling rate CAstatus:%s deviceSampleRate = %lf\n", (char *) &CAstatus, deviceSampleRate);
-
-  /*
-  if (CAstatus) {
-    fprintf(stderr, "320AudioDeviceSetProperty returned %d\n", (int) CAstatus);
-    exit(1);
-  }
-  */
-  
-  /* get the sampleRate of the device */
-
-  propertySize = sizeof(double);
-  CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
-                                  kAudioDevicePropertyRateScalar,
-                                  &propertySize, &deviceSampleRate);
-
-  //  fprintf(stderr, "get sampling rate CAstatus:%s\n", (char *) &CAstatus);
-
-  /*
-  if (CAstatus) {
-    fprintf(stderr, "332AudioDeviceGetProperty returned %d\n", (int) CAstatus);
-    exit(1);
-  }
-  */
-
-  /* compare the sample rate of our input sound with that of the device */
-
-  if ((double) [self samplingRate] != deviceSampleRate) {
-    NSLog(@"input sound sample rate doesn't match device sample rate\n");
-    exit(1);
-  }
-
-
-  /* set the buffer size of the device */
-
-  propertySize = sizeof(bufferByteSize);
-
-  CAstatus = AudioDeviceSetProperty(outputDeviceID, NULL, 0, false,
-                                  kAudioDevicePropertyBufferSize,
-                                  propertySize, &bufferByteSize);
-
-  //  fprintf(stderr, "set buffer size CAstatus:%s\n", (char *) &CAstatus);
-
-  /*
-  if (CAstatus) {
-    fprintf(stderr, "354AudioDeviceSetProperty returned %d\n", (int) CAstatus);
-    exit(1);
-  }
-  */
-
-  /* fetch the buffer size to checking */
-
-  propertySize = sizeof(intFetch);
-  CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
-                                  kAudioDevicePropertyBufferSize,
-                                  &propertySize, &intFetch);
-
-  //  fprintf(stderr, "get buffer size CAstatus:%s\n", (char *) &CAstatus);
-
-  /*
-  if (CAstatus) {
-    fprintf(stderr, "365AudioDeviceGetProperty returned %d\n", (int) CAstatus);
-    exit(1);
-  }
-  */
-
-  if (bufferByteSize != intFetch ) {
-    fprintf(stderr, "device did not set desired buffer size\n");
-    fprintf(stderr, "desired: %d\nactual: %d\n", (int) bufferByteSize,
-	    (int) intFetch);
-    exit(1);
-  }
-
-
-  /* Get the basic device description */
-
-  propertySize = sizeof(outputStreamBasicDescription);
-  CAstatus = AudioDeviceGetProperty(outputDeviceID, 0, false,
-                                  kAudioDevicePropertyStreamFormat,
-                                  &propertySize,&outputStreamBasicDescription);
-
-  //  fprintf(stderr, "get stream format CAstatus:%s\n", (char *) &CAstatus);
-
-  /*
-  if (CAstatus) {
-    fprintf(stderr, "384AudioDeviceGetProperty returned %d\n", (int) CAstatus);
-    exit(1);
-  }
-  */
-
-  /* channel management */
-
-  NSLog(@"device channels:      %d\n", 
-                        (int) outputStreamBasicDescription.mChannelsPerFrame);
-
-
-  outputStreamBasicDescription.mChannelsPerFrame = 1;
-  propertySize = sizeof(outputStreamBasicDescription);
-  CAstatus = AudioDeviceSetProperty(outputDeviceID, NULL, 0, false,
-                                  kAudioDevicePropertyStreamFormat,
-                                  propertySize, &outputStreamBasicDescription);
-
-    fprintf(stderr, "get stream format CAstatus:%s\n", (char *) &CAstatus);
-
-  if (CAstatus) {
-    fprintf(stderr, "384AudioDeviceGetProperty returned %d\n", (int) CAstatus);
-    exit(1);
-  }
-
-  /* put our sound data into successive overlapped buffers and play them */
-
-  while (!finished) {
-
-    int		index,
-		dataFormat = [self dataFormat];
-
-    void	*data = [self data];
-
-    /* send zeros for the first buffer */
-
-    if (!first) {
-
-      if ( dataFormat == SND_FORMAT_INDIRECT ) {
-
-	int			fragmentSamples = 0,
-				sizeAdj,
-				sampleLocation = currentSample;
-
-	SndSoundStruct		**sound_structs = (SndSoundStruct **)
-							[self data];
-
-	void   *sampleLand = (short *) ( (char *) (*sound_structs) +
-					    (*sound_structs)->dataLocation);
-
-	/* add format switch here */
-
-	switch ( (*sound_structs)->dataFormat ) {
-
-	  case SND_FORMAT_FLOAT:
-	    sizeAdj = (sizeof(float)>>1);
-	    break;
-
-	  case SND_FORMAT_LINEAR_16:
-	    sizeAdj = (sizeof(short)>>1);
-	    break;
-
-	  case SND_FORMAT_DOUBLE:
-	    sizeAdj = (sizeof(double)>>1);
-	    break;
-
-	  case SND_FORMAT_MULAW_8:
-	    sizeAdj = (sizeof(char)>>1);
-	    break;
-	    
-	  default:
-	    sizeAdj = (sizeof(short)>>1);
-	    break;
-	}
-
-	/* find the first sound_struct that contains the first sample
-	   of our output data */
-
-	while ( sampleLocation >= fragmentSamples ) {
-
-	  if ( *sound_structs == NULL )
-	    fprintf(stderr,"Uh oh! Grievous inconsistency!\n");
-
-	  sampleLocation -= fragmentSamples;
-	  fragmentSamples = ((*sound_structs)->dataSize) >> sizeAdj;
-	  
-	  sampleLand = (void *) ((char *) (*sound_structs) +
-				  (*sound_structs)->dataLocation);
-	  ++sound_structs;
-	}
-
-	/* construct out output buffer given the current format */
-
-	for ( index=0; index < bufferFrameSize; index++ ) {
-
-	  if ( currentSample >= playEnd * [self channelCount] ) {
-	      
-	    finished = YES;
-	    break;
-	  }
-
-	  switch ( (*sound_structs)->dataFormat ) {
-
-	    case SND_FORMAT_FLOAT:
-	      *(soundBuffer+index) = *((float *) sampleLand + sampleLocation);
-	      break;
-
-	    case SND_FORMAT_LINEAR_16:
-	      *(soundBuffer+index) = *((short *) sampleLand + sampleLocation) /
-				32767.;
-	      break;
-	      
-	    case SND_FORMAT_DOUBLE:
-	      *(soundBuffer+index) = *((double *) sampleLand + sampleLocation);
-	      break;
-
-	    case SND_FORMAT_MULAW_8:
-	      *(soundBuffer+index) = SndiMulaw( *((char *) sampleLand +
-						  sampleLocation) ) / 32767.;
-	      break;
-	      
-	    default:
-	      *(soundBuffer+index) = 0.;
-	      break;
-	  }
-
-	  currentSample++;
-	  sampleLocation++;
-	}
-      }
-
-      else {
-
-	for ( index=0; index < bufferFrameSize; index++ ) {
-
-	  if ( currentSample >= playEnd * [self channelCount] ) {
-	      
-	    finished = YES;
-	    break;
-	  }
-
-	  switch ([self dataFormat]) {
-
-	  case SND_FORMAT_FLOAT:
-
-	    *(soundBuffer+index) = *((float *) data+currentSample);
-	    break;
-	    
-	  case SND_FORMAT_LINEAR_16:
-
-	    *(soundBuffer+index) = *((short *) data + currentSample) /
-								32767.;
-	    break;
-	      
-	  case SND_FORMAT_DOUBLE:
-	    
-	    *(soundBuffer+index) = *((double *) data+currentSample);
-	    break;
-
-	  case SND_FORMAT_MULAW_8:
-
-	    *(soundBuffer+index) = 
-		    SndiMulaw( *((char *) data + currentSample) ) / 32767.;
-	    break;
-	  
-	  default:
-	    break;
-	  }
-
-	  currentSample++;
-	}
-      }
-    }
-
-    /*
-      fwrite( soundBuffer, bufferFrameSize, sizeof(float), stdout);
-    */
-
-    if (first) {
-
-      /* start playback */
-
-      clientDataHack = self;
-
-      CAstatus = AudioDeviceAddIOProc(outputDeviceID, SndKitSndIOProc,
-				    (void *) &clientDataHack);
-      if (CAstatus) {
-	fprintf(stderr, "AudioDeviceAddIOProc returned %d\n", (int) CAstatus);
-	exit(1);
-      }
-
-      CAstatus = AudioDeviceStart(outputDeviceID, SndKitSndIOProc);
-
-      if (CAstatus) {
-	fprintf(stderr, "AudioDeviceStart returned %d\n", (int) CAstatus);
-	exit(1);
-      }
-
-      /* we won't need to return here */
-
-      first = NO;
-    }
-
-    /* otherwise we sleep until resumed by the callback function */
-
-    else {
-
-      /* have thread wait for sound driver  to send data before filling up
-	 the next buffer */
-
-      [self wait];
-    }
-
-    /* we might have the chance to use the most beautiful function in
-       computer science */
-
-    if (stopRequest) {
-
-      stopRequest = NO;
-      goto CLEANUP;
-    }
-
-    bufferCount++;
-
-    if (bufferCount % 2)
-      soundBuffer = bufferOdd;
-
-    else
-      soundBuffer = bufferEven;
-
-    bzero(soundBuffer, bufferByteSize);
-  }
-
-  [self wait];
-
- CLEANUP:
-
-  /* stop audio playback */
-
-  CAstatus = AudioDeviceStop(outputDeviceID, SndKitSndIOProc);
-
-  if (CAstatus) {
-    fprintf(stderr, "AudioDeviceStop returned %d\n", (int) CAstatus);
-    exit(1);
-  }
-
-  soundPlaying = NO;
-
-  /* free our audio buffers */
-
-  NSZoneFree( NSDefaultMallocZone(), bufferEven );
-  NSZoneFree( NSDefaultMallocZone(), bufferOdd );
-
-/* disable the objective-c runtime thread protection, assuming that
-   only one MixDocument is playing at a time, submix concerns abound! */
-
-//  objc_setMultithreaded(NO);
-
-  if (playSender && [playSender respondsToSelector:@selector(didPlay:)])
-    [playSender didPlay:self];
-
-  /* end our thread */
-
-  pthread_join(soundThread, NULL);
-
-  return;
-}
-
-#endif
-
-//#if defined(__ppc__) || defined(WIN32)
 - (void)sound:(NSSound *)sound didFinishPlaying:(BOOL)aBool;
 {
     [self tellDelegate:@selector(didPlay:)];
 }
-//#endif
 
 - (int)play
 {
-	[self play:self];
-	return SND_ERR_NONE;
+    [self play:self];
+    return SND_ERR_NONE;
 }
 
 - record:sender
 {
-#ifdef USE_NEXTSTEP_SOUND_IO
     int err;
     if (!playRecTable) {
         playRecTable = [NSMutableDictionary dictionaryWithCapacity: 20];
@@ -1302,41 +685,14 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
     tag = ioTags;
     [playRecTable setObject: self forKey: [NSNumber numberWithInt: tag]];
     status = NX_SoundRecordingPending;
-    err = SNDStartRecording((SNDSoundStruct *)soundStruct,
+    err = SNDStartRecording((SndSoundStruct *)soundStruct,
             ioTags++, /*	int tag			*/
             9, /*	int priority	*/
             1, /*	int preempt		*/
             (SNDNotificationFun) beginRecFun,
             (SNDNotificationFun) endRecFun);
     return self;
-#else
-    return self;
-#endif
 }
-
-#ifdef macosx
-- (void) wait {
-
-  /* ask current thread to wait on condition */
-
-  /* initialize mutex lock */
-  pthread_mutex_init( &soundMutex, NULL );
-
-  /* initialize condition for waiting */
-  pthread_cond_init ( &soundCondition, NULL );
-
-  /* acquire the lock */
-  pthread_mutex_lock( &soundMutex );
-
-  /* wait */
-  pthread_cond_wait( &soundCondition, &soundMutex );
-
-  /* relinguish the lock */
-  pthread_mutex_unlock( &soundMutex );
-
-  return;
-}
-#endif
 
 - (int)record
 {
@@ -1346,11 +702,7 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 - (int)samplesProcessed
 {
-#ifdef USE_PERFORM_SOUND_IO
-	return (tag == 0) ? -1 : SNDSamplesProcessed(tag);
-#else
-    return -1; /* not yet implemented */
-#endif
+    return (tag == 0) ? -1 : SNDSamplesProcessed(tag);
 }
 
 - (int)status
@@ -1371,14 +723,6 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
 
 - (void)stop:(id)sender
 {
-#if defined(macosx)
-
-  if (soundPlaying)
-    stopRequest = YES;
-
-  return;
-
-#elif defined(USE_PERFORM_SOUND_IO)
     NSNumber *tagNumber = [NSNumber numberWithInt: tag];
 
     if (tag) {
@@ -1397,17 +741,12 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
     if(tag) {
         tag = 0;
     }
-#endif // macosx
 }
 
 - (int)stop
 {
-#ifdef USE_PERFORM_SOUND_IO
     [self stop:self];
     return SND_ERR_NONE;
-#else
-    return SND_ERR_NOT_IMPLEMENTED;
-#endif
 }
 
 - pause:sender
@@ -1771,16 +1110,19 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
             newSamplingRate, newChannelCount, newInfoSize);
 }
 
-- (SndSoundStruct *)soundStruct
-{   return soundStruct; }
+- (SndSoundStruct *) soundStruct
+{
+    return soundStruct;
+}
 
-- (int)soundStructSize
+- (int) soundStructSize
 /* if the sound is fragmented, returns only the size of the FIRST fragment */
 {
     if (!soundStruct) return 0;
     if (soundStruct->dataFormat != SND_FORMAT_INDIRECT)
-            return soundStruct->dataSize + soundStruct->dataLocation;
-    else return soundStruct->dataSize; /* see SndFunctions.h */
+        return soundStruct->dataSize + soundStruct->dataLocation;
+    else
+        return soundStruct->dataSize; /* see SndFunctions.h */
 }
 
 - setSoundStruct:(SndSoundStruct *)aStruct soundStructSize:(int)aSize
@@ -1793,70 +1135,40 @@ int endRecFun(SNDSoundStruct *sound, int tag, int err)
     return self;
 }
 
-- (SndSoundStruct *)soundStructBeingProcessed
-{ return soundStruct; } /* when we implement i/o, need to return different */
+/* when we implement i/o, need to return different */
+- (SndSoundStruct *) soundStructBeingProcessed
+{
+    return soundStruct;
+}
 
-- (int)processingError
+- (int) processingError
 {
     return currentError;
 }
 
+/* default implementation. Provided for subclassing */
 - soundBeingProcessed
-{ return self; } /* default implementation. Provided for subclassing */
-
-- (void)tellDelegate:(SEL)theMessage
 {
-    if (delegate)
-        if ([delegate respondsToSelector:theMessage])
-            [delegate performSelector:theMessage withObject:self];
+    return self;
 }
-- (void)setConversionQuality:(int)quality /* default is SND_CONVERT_LOWQ */
+
+- (void) tellDelegate:(SEL)theMessage
+{
+    if (delegate) {
+        if ([delegate respondsToSelector:theMessage]) {
+            [delegate performSelector:theMessage withObject:self];
+        }
+    }
+}
+
+- (void) setConversionQuality:(int)quality /* default is SND_CONVERT_LOWQ */
 {
     conversionQuality = quality;
 }
-- (int)conversionQuality
+
+- (int) conversionQuality
 {
     return conversionQuality;
 }
-
-#ifdef macosx
-
-- (int) bufferCount {
-
-  return bufferCount;
-}
-
-- (int) bufferFrameSize {
-
-  return bufferFrameSize;
-}
-
-
-- (float *) bufferEven {
-
-  return bufferEven;
-}
-
-- (float *) bufferOdd {
-
-  return bufferOdd;
-}
-
-- (pthread_t *) soundThread {
-
-  return &soundThread;
-}
-
-- (pthread_cond_t *) soundCondition {
-
-  return &soundCondition;
-}
-
-- (pthread_mutex_t *) soundMutex {
-
-  return &soundMutex;
-}
-
-#endif
 
 @end

@@ -20,21 +20,9 @@
 #define macosx_server (defined(__ppc__) && defined(ppc))
 #endif
 
-#if defined(NeXT) 
-  #define USE_NEXTSTEP_SOUND_IO
-  #define USE_PERFORM_SOUND_IO
-#elif macosx_server
-  #define USE_PERFORM_SOUND_IO
-  #import "Sound.h"
-#elif defined(WIN32)
-  #define USE_PERFORM_SOUND_IO
-  #import <MKPerformSndMIDI/PerformSound.h>
-  #import "sounderror.h"
-#endif
-
-#ifdef USE_PERFORM_SOUND_IO
+#import <MKPerformSndMIDI/PerformSound.h>
+#import "sounderror.h"
 #import "SndFormats.h"
-#endif
 
 #ifdef macosx
 #import <CoreAudio/AudioHardware.h>
@@ -49,13 +37,12 @@
 #define NXSoundPboard NXSoundPboardType
 
 extern NSString *NXSoundPboardType;
-;
+
 /*
  * This is the sound pasteboard type.
  */
-
-
-
+ 
+ 
 @interface Snd : NSObject
 /*
  * The Snd object encapsulates a SndSoundStruct, which represents a sound.
@@ -74,9 +61,6 @@ extern NSString *NXSoundPboardType;
     int _scratchSize;
     int currentError;
     int conversionQuality;	 /* see defines below */
-#if defined(__ppc__) || defined(WIN32)
-    id plSound;			 /* NSSound object for playback */
-#endif
 
 #ifdef macosx
 
@@ -99,7 +83,6 @@ extern NSString *NXSoundPboardType;
     pthread_mutex_t       soundMutex;
 
     AudioDeviceID                 outputDeviceID;
-    AudioStreamBasicDescription   outputStreamBasicDescription;
 
 #endif
 
@@ -174,10 +157,7 @@ typedef enum {
 - (char *)info;
 - (int)infoSize;
 - play:sender;
-
-#ifdef macosx
 - play:(id) sender beginSample:(int) begin sampleCount:(int) count;
-#endif
 
 - (int)play;
 - record:sender;
@@ -232,21 +212,6 @@ typedef enum {
      *************************/
 - (void)setConversionQuality:(int)quality; /* default is SND_CONVERT_LOWQ */
 - (int)conversionQuality;
-
-#ifdef macosx
-- (void) playSoundThread;
-- (void) wait;
-
-- (int) bufferCount;
-- (int) bufferFrameSize;
-
-- (float *) bufferEven;
-- (float *) bufferOdd;
-
-- (pthread_t *) soundThread;
-- (pthread_cond_t *) soundCondition;
-- (pthread_mutex_t *) soundMutex;
-#endif
 
 @end
 
