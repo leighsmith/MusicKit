@@ -4337,9 +4337,8 @@
 		};
 		D82AC39605A0F39F00780F57 = {
 			children = (
+				D8F8011007A1C6E7005C1665,
 				D88FE34D05A0FC990024FD88,
-				D88FE34E05A0FC990024FD88,
-				D88FE34F05A0FC990024FD88,
 				D88FE34005A0FBC10024FD88,
 				D88FE33F05A0FBC10024FD88,
 				D88FE35505A0FCC00024FD88,
@@ -4353,7 +4352,6 @@
 			children = (
 				D88FE38E05A101050024FD88,
 				D88FE39305A101200024FD88,
-				D88FEA5A05A102640024FD88,
 			);
 			isa = PBXGroup;
 			name = "External Frameworks and Libraries";
@@ -4460,7 +4458,6 @@
 				D88FE34805A0FBC10024FD88,
 				D88FE35005A0FC990024FD88,
 				D88FE35105A0FC990024FD88,
-				D88FE35205A0FC990024FD88,
 				D88FE35605A0FCC00024FD88,
 				D88FE37805A0FEB80024FD88,
 				D88FE37A05A0FEB80024FD88,
@@ -4544,12 +4541,6 @@
 				D88FE39D05A101690024FD88,
 				D88FE39E05A101690024FD88,
 				D88FE39F05A101690024FD88,
-				D88FEA4F05A101F10024FD88,
-				D88FEA5005A101F10024FD88,
-				D88FEA5105A101F10024FD88,
-				D88FEA5205A101F10024FD88,
-				D88FEA5305A101F10024FD88,
-				D88FEA5705A102300024FD88,
 				D880FBC7077FD9B700FD03CC,
 			);
 			isa = PBXFrameworksBuildPhase;
@@ -4565,6 +4556,7 @@
 			buildRules = (
 			);
 			buildSettings = {
+				CONFIGURED_LIBS = "-lmp3hip -lmp3lame -lshout -lsndfile -lvorbis -logg";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = 5.5;
@@ -4578,8 +4570,7 @@
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LIBRARY_SEARCH_PATHS = "/usr/local/lib /sw/lib";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-framework Foundation -seg1addr 18000";
-				OTHER_REZFLAGS = "";
+				OTHER_LDFLAGS = "-seg1addr 18000 $(CONFIGURED_LIBS)";
 				PRODUCT_NAME = SndKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost";
@@ -13102,17 +13093,8 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.h;
-			name = SndKitDefines.h;
-			path = Frameworks/SndKit/SndKitDefines.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		D88FE34F05A0FC990024FD88 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			name = SndStdefs.h;
-			path = Frameworks/SndKit/SndStdefs.h;
+			name = SndKitConfig.h;
+			path = Frameworks/SndKit/SndKitConfig.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -13132,12 +13114,6 @@
 				ATTRIBUTES = (
 					Public,
 				);
-			};
-		};
-		D88FE35205A0FC990024FD88 = {
-			fileRef = D88FE34F05A0FC990024FD88;
-			isa = PBXBuildFile;
-			settings = {
 			};
 		};
 		D88FE35505A0FCC00024FD88 = {
@@ -13403,12 +13379,6 @@
 		};
 		D88FE39305A101200024FD88 = {
 			children = (
-				D88FEA4D05A101F10024FD88,
-				D88FEA4B05A101F10024FD88,
-				D88FEA4E05A101F10024FD88,
-				D88FEA4A05A101F10024FD88,
-				D88FEA5605A102300024FD88,
-				D88FEA4C05A101F10024FD88,
 			);
 			isa = PBXGroup;
 			name = Libraries;
@@ -13484,98 +13454,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		D88FEA4A05A101F10024FD88 = {
-			isa = PBXFileReference;
-			lastKnownFileType = archive.ar;
-			name = libmp3hip.a;
-			path = /Local/Unix/lib/libmp3hip.a;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D88FEA4B05A101F10024FD88 = {
-			isa = PBXFileReference;
-			lastKnownFileType = archive.ar;
-			name = libogg.a;
-			path = /Local/Unix/lib/libogg.a;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D88FEA4C05A101F10024FD88 = {
-			isa = PBXFileReference;
-			lastKnownFileType = archive.ar;
-			name = libshout.a;
-			path = /Local/Unix/lib/libshout.a;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D88FEA4D05A101F10024FD88 = {
-			isa = PBXFileReference;
-			lastKnownFileType = archive.ar;
-			name = libsndfile.a;
-			path = /Local/Unix/lib/libsndfile.a;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D88FEA4E05A101F10024FD88 = {
-			isa = PBXFileReference;
-			lastKnownFileType = archive.ar;
-			name = libvorbis.a;
-			path = /Local/Unix/lib/libvorbis.a;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D88FEA4F05A101F10024FD88 = {
-			fileRef = D88FEA4A05A101F10024FD88;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D88FEA5005A101F10024FD88 = {
-			fileRef = D88FEA4B05A101F10024FD88;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D88FEA5105A101F10024FD88 = {
-			fileRef = D88FEA4C05A101F10024FD88;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D88FEA5205A101F10024FD88 = {
-			fileRef = D88FEA4D05A101F10024FD88;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D88FEA5305A101F10024FD88 = {
-			fileRef = D88FEA4E05A101F10024FD88;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D88FEA5605A102300024FD88 = {
-			isa = PBXFileReference;
-			lastKnownFileType = archive.ar;
-			name = libmp3lame.a;
-			path = /Local/Unix/lib/libmp3lame.a;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		D88FEA5705A102300024FD88 = {
-			fileRef = D88FEA5605A102300024FD88;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		D88FEA5A05A102640024FD88 = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = MKPerformSndMIDI.framework;
-			path = /Library/Frameworks/MKPerformSndMIDI.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
 		};
 		D88FEA6105A102D70024FD88 = {
 			containerPortal = D8DB4E4C059FA05500624233;
@@ -15549,6 +15427,8 @@
 		D8DB4E4A059FA05500624233 = {
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				OTHER_CFLAGS = "-DHAVE_CONFIG_H";
+				ZERO_LINK = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -15556,6 +15436,7 @@
 		D8DB4E4B059FA05500624233 = {
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				HEADER_SEARCH_PATHS = .;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -16071,6 +15952,25 @@
 			isa = PBXTargetDependency;
 			target = D828FA590780D1F400215EB9;
 			targetProxy = D8E8D6CE0784844300AAE755;
+		};
+		D8F8011007A1C6E7005C1665 = {
+			children = (
+				D8F8011307A1C749005C1665,
+				D88FE34E05A0FC990024FD88,
+			);
+			isa = PBXGroup;
+			name = "Configured Headers";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D8F8011307A1C749005C1665 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = SndKitConfig.h.in;
+			path = Frameworks/SndKit/SndKitConfig.h.in;
+			refType = 4;
+			sourceTree = "<group>";
 		};
 	};
 	rootObject = D8DB4E4C059FA05500624233;
