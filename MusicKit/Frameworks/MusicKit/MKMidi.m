@@ -66,6 +66,9 @@
 Modification history:
 
   $Log$
+  Revision 1.23  2000/06/23 20:30:30  leigh
+  Added fixes for OpenStep MIDI
+
   Revision 1.22  2000/06/15 01:10:28  leigh
   Added possibly more correct search for the Midi driver for MOX/DP4
 
@@ -185,6 +188,12 @@ Modification history:
 #import <Foundation/NSUserDefaults.h>
 
 #import <MKPerformSndMIDI/midi_driver.h>
+
+#if openstep_i386
+#import <driverkit/IOConfigTable.h>
+#import <driverkit/IODeviceMaster.h>
+#import <driverkit/IODevice.h>
+#endif
 
 /* MusicKit include files */
 #import "_musickit.h"
@@ -1059,12 +1068,14 @@ static unsigned ignoreBit(unsigned param)
 // Returns NO if there was no MIDI driver found. 
 static BOOL getAvailableMidiDevices(void)
 {
-#if  i386  && !WIN32
+#if openstep_i386
     char *s;
     const char *familyStr;
     List *installedDrivers;
     NSMutableArray *midiDriverList;
     id aConfigTable;
+    int midiDriverCount;
+    int i;
 #elif WIN32 || macosx
     const char **systemDriverNames;
     int i;
@@ -1078,7 +1089,8 @@ static BOOL getAvailableMidiDevices(void)
         driverInfoInitialized = YES;
 #if WIN32 || macosx
     // Windows98/NT YellowBox/NT, WebObjects or OpenStep Enterprise using the MKPerformSndMIDI framework
-    // In future, this should become the cross-platform means to obtain the available drivers.
+    // In future, this should become the cross-platform means to obtain the available drivers, the others below
+    // are legacy.
     systemDriverNames = MIDIGetAvailableDrivers(&systemDefaultDriverNum);
     midiDriverNames = [NSMutableArray array];
     midiDriverUnits = [NSMutableArray array];
@@ -1088,7 +1100,7 @@ static BOOL getAvailableMidiDevices(void)
     }
     if([midiDriverNames count] == 0)
         return NO;
-#elif  i386 
+#elif openstep_i386 
     // RDR2/Intel or OpenStep 4.X/Intel using DriverKit
     // The IOConfigTable access should become part of the MKPerformSndMIDI framework (suitably #if i386'd)
     installedDrivers = [IOConfigTable tablesForInstalledDrivers];
@@ -1125,7 +1137,7 @@ static BOOL getAvailableMidiDevices(void)
         [midiDriverNames insertObject: [NSString stringWithCString:(char *)[aConfigTable valueForStringKey:"Class Names"]]
 	                 atIndex: i];
 	s = (char *)[aConfigTable valueForStringKey:"Instance"];
-	[midiDriverUnits insertObject: s ? atoi(s) : 0 atIndex: i];
+        [midiDriverUnits insertObject: s ? [NSNumber numberWithInt: atoi(s)] : [NSNumber numberWithInt: 0] atIndex: i];
     }
 #elif macosx_server
     // hardwire this for MOXS1.0 until tablesForInstalledDrivers gives us what we expect
