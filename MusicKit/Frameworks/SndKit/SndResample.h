@@ -76,17 +76,19 @@ Description of constants:
 @function resample
  @abstract To come
  @discussion To come
- @param factor 		   factor = Sndout/Sndin 
- @param outPtr		   output data pointer 
- @param inCount		   number of input samples to convert 
- @param outCount		 number of output samples to compute
- @param nChans			 number of sound channels (1 or 2) 
- @param interpFilt	 TRUE means interpolate filter coeffs 
- @param fastMode		 0 = highest quality, slowest speed 
- @param largeFilter	 TRUE means use 65-tap FIR filter 
- @param filterFile	 NULL for internal filter, else filename 
- @param inSnd	       for data format etc 
- @param resampleFrom		 The sample number within the sound to begin the resampling from 
+ @param factor        factor = Sndout/Sndin 
+ @param outPtr        output data pointer 
+ @param inCount       number of input samples to convert 
+ @param outCount      number of output samples to compute
+ @param nChans        number of sound channels (1 or 2) 
+ @param interpFilt    TRUE means interpolate filter coeffs 
+ @param fastMode      0 = highest quality, slowest speed 
+ @param largeFilter   TRUE means use 65-tap FIR filter 
+ @param filterFile    NULL for internal filter, else filename 
+ @param inSnd         for data format etc 
+ @param resampleFrom  The sample number within the sound to begin the resampling from
+ @param inData        If non-null, gives an alternative source of contiguous audio data.
+                      The inSnd structure would still hold the channels, type etc.
  @result The number of output samples returned
  */
 
@@ -101,5 +103,6 @@ SNDKIT_API int resample(
     BOOL largeFilter,
     char *filterFile,
     const SndSoundStruct *inSnd,
-    int  resampleFrom		
+    int  resampleFrom,	
+    void *inData
 );
