@@ -36,7 +36,10 @@ static SndAudioProcessorInspector* defaultInspector = nil;
     [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorFlanger class]];
     [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorNoiseGate class]];
     [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorReverb class]];
+//temporary: don't register this one on mingw32 since we can't get it working
+#ifndef SK_NO_MP3_ENCODER
     [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorMP3Encoder class]];
+#endif
     [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorRecorder class]];
     [SndAudioProcessor registerAudioProcessorClass: [SndAudioProcessorToneGenerator class]];
     defaultInspector = [[SndAudioProcessorInspector alloc] init];
