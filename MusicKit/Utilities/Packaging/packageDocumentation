@@ -12,14 +12,14 @@ JADE=jade
 # HTML_DISTRIB_DIR makes it easier to install into SourceForge.
 HTML_DISTRIB_DIR=htdocs
 HTML_TMPDIR=/tmp/$HTML_DISTRIB_DIR
-HTML_TARBALL=MusicKitREADME.tar.gz
+HTML_TARBALL=/tmp/MusicKitREADME.tar.gz
 
 PDF_TMPDIR=/tmp/mkpdf
 
 # Assume we are standing at the top of the source tree, since with NFS
 # it's a bit hard to be universal with paths.
 MKSRCDIR=`pwd`
-MKDOCDIR-$MKSRCDIR/Documentation
+MKDOCDIR=$MKSRCDIR/Documentation
 MKREADMESRC=$MKDOCDIR/MusicKit_README.sgml
 MKCONCEPTS=$MKDOCDIR/Concepts/
 MKTUTORIALS=$MKDOCDIR/TutorialClasses/
@@ -92,7 +92,7 @@ cp /tmp/$PDFFINAL $HTML_TMPDIR
 #
 # Now create a tarball
 #
-cd ../..
+cd /tmp
 tar czf $HTML_TARBALL $HTML_DISTRIB_DIR
-echo MusicKit README HTML pages packaged into /tmp/$HTML_TARBALL
+echo MusicKit README HTML pages packaged into $HTML_TARBALL
 rm -r $HTML_TMPDIR
