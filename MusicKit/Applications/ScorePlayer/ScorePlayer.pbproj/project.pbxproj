@@ -543,7 +543,7 @@
 				11E07F30FFA3719CCFED3B93,
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Volumes/manray/Local/Library/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "\"$(LOCAL_LIBRARY_DIR)/Frameworks\" \"$(LOCAL_DEVELOPER_DIR)/Frameworks\" /Local/Library/Frameworks";
 				INSTALL_PATH = "$(LOCAL_APPLICATIONS_DIR)";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
