@@ -15,6 +15,9 @@ Modification history:
  Now in CVS - musickit.sourceforge.net
 
  $Log$
+ Revision 1.25  2002/03/27 20:07:11  skotmcdonald
+ Added method atOrBeforeTime:, symmetrical to preexisting atOrAfterTime: note accessor
+
  Revision 1.24  2002/03/14 00:08:55  leighsmith
  Removed warning on redefining OBJECTATINDEX macro by using single version
 
@@ -926,6 +929,20 @@ static void removeNote(MKPart *self, MKNote *aNote)
   int elReturned;
   sortIfNeeded(self);
   elReturned = findAtOrAfterTime(self,timeTag);
+  if (elReturned == -1) return nil;
+  return [[[self->notes objectAtIndex:elReturned] retain] autorelease];
+}
+
+- atOrBeforeTime: (double) timeTag
+ /* TYPE: Accessing MKNotes
+  * Returns the first MKNote found at or after time timeTag,
+  * or nil if no such MKNote.
+  * Doesn't copy the MKNote.
+  */
+{
+  int elReturned;
+  sortIfNeeded(self);
+  elReturned = findAtOrBeforeTime(self,timeTag);
   if (elReturned == -1) return nil;
   return [[[self->notes objectAtIndex:elReturned] retain] autorelease];
 }

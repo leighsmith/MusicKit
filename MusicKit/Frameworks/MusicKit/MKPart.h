@@ -509,8 +509,15 @@ retrieve the MKPart class with <b>MKGetPartClass()</b>.
               
               See also:  -<b> atTime:</b>,<b></b>-<b> atOrAfterTime:nth:</b>,<b>  </b>- <b>next</b>
 */
-- atOrAfterTime:(double) timeTag; 
-
+- atOrAfterTime:(double) timeTag;
+/*!
+  @method atOrBeforeTime:
+  @param  timeTag is a double.
+  @result Returns an id.
+  @discussion Returns the first MKNote with a time tag equal to or less than
+   <i>timeTag</i>, or <b>nil</b> if none.
+*/
+- atOrBeforeTime: (double) timeTag;
 /*!
   @method nth:
   @param  n is an unsigned.
