@@ -43,6 +43,7 @@ OF THIS AGREEMENT.
 #endif
 #import "SndAudioProcessorChain.h"
 #import "SndAudioProcessorReverb.h"
+#import "SndAudioProcessorRecorder.h"
 #import "SndAudioProcessor.h"
 #import "SndPerformance.h"
 #import "SndPlayer.h"
