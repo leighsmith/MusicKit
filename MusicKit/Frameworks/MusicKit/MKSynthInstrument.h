@@ -1,10 +1,17 @@
-#ifndef __MK_SynthInstrument_H___
-#define __MK_SynthInstrument_H___
 /* Copyright 1988-1992, NeXT Inc.  All rights reserved. */
 /*
-  MKSynthInstrument.h
-  DEFINED IN: The Music Kit
-  */
+  $Id$
+  Defined In: The MusicKit
+*/
+/*
+  $Log$
+  Revision 1.3  1999/07/29 01:43:30  leigh
+  Added CVS logs
+
+*/
+#ifndef __MK_SynthInstrument_H___
+#define __MK_SynthInstrument_H___
+
 #define MK_AUTOALLOC 0
 #define MK_MANUALALLOC 1
 #define MK_MIXEDALLOC 2
